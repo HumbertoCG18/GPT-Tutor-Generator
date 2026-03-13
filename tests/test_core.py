@@ -310,8 +310,14 @@ class TestBackendSelector:
         )
         report = DocumentProfileReport(suggested_profile="general")
         decision = selector.decide(entry, report)
-        # formula_priority tries to activate advanced
-        assert "formula_priority" in " ".join(decision.reasons) or decision.advanced_backend is None
+        available = selector.available_backends()
+        has_advanced = available.get("docling") or available.get("marker")
+        if has_advanced:
+            assert decision.advanced_backend is not None
+            assert "formula_priority" in " ".join(decision.reasons)
+        else:
+            # No advanced backend installed; formula_priority cannot activate one
+            assert decision.advanced_backend is None
 
     def test_available_backends_returns_dict(self):
         selector = BackendSelector()
