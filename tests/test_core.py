@@ -19,19 +19,23 @@ sys.modules.setdefault("tkinter.ttk", _tk_mock)
 
 import pytest
 
-from academic_tutor_repo_builder_v3 import (
+from src.builder.engine import (
     BackendSelector,
+    rows_to_markdown_table,
+    wrap_frontmatter,
+)
+from src.models.core import (
     DocumentProfileReport,
     FileEntry,
     PipelineDecision,
+)
+from src.utils.helpers import (
     ensure_dir,
     file_size_mb,
     pages_to_marker_range,
     parse_page_range,
-    rows_to_markdown_table,
     safe_rel,
     slugify,
-    wrap_frontmatter,
     write_text,
 )
 
