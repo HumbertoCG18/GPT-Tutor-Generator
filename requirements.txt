@@ -1,0 +1,8 @@
+# Core dependencies
+pymupdf>=1.24.0
+pymupdf4llm>=0.0.10
+pdfplumber>=0.10.0
+
+# Optional advanced backends (install separately if needed):
+# pip install docling
+# pip install marker-pdf

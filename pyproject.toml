@@ -1,0 +1,21 @@
+[project]
+name = "academic-tutor-repo-builder"
+version = "3.0.0"
+description = "Converts academic PDFs into curated knowledge repositories for AI tutoring systems."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+dependencies = [
+    "pymupdf>=1.24.0",
+    "pymupdf4llm>=0.0.10",
+    "pdfplumber>=0.10.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

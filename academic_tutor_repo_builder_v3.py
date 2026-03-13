@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import csv
 import json
+import logging
 import os
 import re
 import shutil
@@ -32,6 +33,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 
+logger = logging.getLogger(__name__)
+
 import tkinter as tk
 from tkinter import filedialog, messagebox, simpledialog, ttk
 
@@ -42,6 +45,7 @@ try:
 except Exception:
     pymupdf = None
     HAS_PYMUPDF = False
+    logger.info("pymupdf not available; PyMuPDF backend disabled.")
 
 try:
     import pymupdf4llm
@@ -49,6 +53,7 @@ try:
 except Exception:
     pymupdf4llm = None
     HAS_PYMUPDF4LLM = False
+    logger.info("pymupdf4llm not available; PyMuPDF4LLM backend disabled.")
 
 try:
     import pdfplumber
@@ -56,8 +61,9 @@ try:
 except Exception:
     pdfplumber = None
     HAS_PDFPLUMBER = False
+    logger.info("pdfplumber not available; table extraction via pdfplumber disabled.")
 
-DOCILING_CLI = shutil.which("docling")
+DOCLING_CLI = shutil.which("docling")
 MARKER_CLI = shutil.which("marker_single")
 
 APP_NAME = "Academic Tutor Repo Builder V3"
@@ -394,14 +400,14 @@ class DoclingCLIBackend(ExtractionBackend):
     layer = "advanced"
 
     def available(self) -> bool:
-        return bool(DOCILING_CLI)
+        return bool(DOCLING_CLI)
 
     def run(self, ctx: BackendContext) -> BackendRunResult:
         out_dir = ctx.root_dir / "staging" / "markdown-auto" / "docling" / ctx.entry_id
         ensure_dir(out_dir)
 
         cmd = [
-            DOCILING_CLI,
+            DOCLING_CLI,
             str(ctx.raw_target),
             "--to", "md",
             "--output", str(out_dir),
@@ -612,6 +618,7 @@ class RepoBuilder:
         self.selector = BackendSelector()
 
     def build(self) -> None:
+        logger.info("Building repository at %s", self.root_dir)
         self._create_structure()
         self._write_root_files()
 
@@ -625,13 +632,14 @@ class RepoBuilder:
                 "pymupdf": HAS_PYMUPDF,
                 "pymupdf4llm": HAS_PYMUPDF4LLM,
                 "pdfplumber": HAS_PDFPLUMBER,
-                "docling_cli": bool(DOCILING_CLI),
+                "docling_cli": bool(DOCLING_CLI),
                 "marker_cli": bool(MARKER_CLI),
             },
             "entries": [],
         }
 
         for entry in self.entries:
+            logger.info("Processing entry: %s (%s)", entry.title, entry.file_type)
             item_result = self._process_entry(entry)
             manifest["entries"].append(item_result)
 
@@ -640,6 +648,7 @@ class RepoBuilder:
         self._write_source_registry(manifest)
         self._write_bundle_seed(manifest)
         self._write_build_report(manifest)
+        logger.info("Repository built successfully at %s", self.root_dir)
 
     def _create_structure(self) -> None:
         dirs = [
@@ -771,7 +780,7 @@ curado e reutilizável para um GPT Tutor acadêmico.
             f"- pymupdf: {HAS_PYMUPDF}",
             f"- pymupdf4llm: {HAS_PYMUPDF4LLM}",
             f"- pdfplumber: {HAS_PDFPLUMBER}",
-            f"- docling_cli: {bool(DOCILING_CLI)}",
+            f"- docling_cli: {bool(DOCLING_CLI)}",
             f"- marker_cli: {bool(MARKER_CLI)}",
             "",
             "## Regras práticas",
@@ -800,6 +809,8 @@ curado e reutilizável para um GPT Tutor acadêmico.
         }
 
         src = Path(entry.source_path)
+        if not src.exists():
+            raise FileNotFoundError(f"Source file not found: {src}")
         safe_name = f"{entry.id()}{src.suffix.lower()}"
 
         if entry.file_type == "pdf":
@@ -850,6 +861,7 @@ curado e reutilizável para um GPT Tutor acadêmico.
             if result.status == "ok":
                 item["base_markdown"] = result.markdown_path
             else:
+                logger.warning("Base backend %s failed for %s: %s", decision.base_backend, entry.id(), result.error)
                 item.setdefault("backend_errors", []).append({decision.base_backend: result.error})
 
         if decision.advanced_backend:
@@ -861,6 +873,7 @@ curado e reutilizável para um GPT Tutor acadêmico.
                 item["advanced_asset_dir"] = result.asset_dir
                 item["advanced_metadata_path"] = result.metadata_path
             else:
+                logger.warning("Advanced backend %s failed for %s: %s", decision.advanced_backend, entry.id(), result.error)
                 item.setdefault("backend_errors", []).append({decision.advanced_backend: result.error})
 
         if HAS_PYMUPDF and entry.extract_images:
@@ -870,6 +883,7 @@ curado e reutilizável para um GPT Tutor acadêmico.
                 item["images_dir"] = safe_rel(images_dir, self.root_dir)
                 self.logs.append({"entry": entry.id(), "step": "extract_images", "status": "ok", "count": count})
             except Exception as e:
+                logger.error("Image extraction failed for %s: %s", entry.id(), e)
                 self.logs.append({"entry": entry.id(), "step": "extract_images", "status": "error", "error": str(e)})
 
         if HAS_PYMUPDF and entry.export_page_previews:
@@ -879,6 +893,7 @@ curado e reutilizável para um GPT Tutor acadêmico.
                 item["page_previews_dir"] = safe_rel(previews_dir, self.root_dir)
                 self.logs.append({"entry": entry.id(), "step": "page_previews", "status": "ok", "count": count})
             except Exception as e:
+                logger.error("Page preview export failed for %s: %s", entry.id(), e)
                 self.logs.append({"entry": entry.id(), "step": "page_previews", "status": "error", "error": str(e)})
 
         if entry.extract_tables:
@@ -889,6 +904,7 @@ curado e reutilizável para um GPT Tutor acadêmico.
                     item["tables_dir"] = safe_rel(tables_dir, self.root_dir)
                     self.logs.append({"entry": entry.id(), "step": "extract_tables_pdfplumber", "status": "ok", "count": count})
                 except Exception as e:
+                    logger.error("Table extraction (pdfplumber) failed for %s: %s", entry.id(), e)
                     self.logs.append({"entry": entry.id(), "step": "extract_tables_pdfplumber", "status": "error", "error": str(e)})
             if HAS_PYMUPDF:
                 try:
@@ -897,6 +913,7 @@ curado e reutilizável para um GPT Tutor acadêmico.
                     item["table_detection_dir"] = safe_rel(det_dir, self.root_dir)
                     self.logs.append({"entry": entry.id(), "step": "detect_tables_pymupdf", "status": "ok", "count": count})
                 except Exception as e:
+                    logger.error("Table detection (pymupdf) failed for %s: %s", entry.id(), e)
                     self.logs.append({"entry": entry.id(), "step": "detect_tables_pymupdf", "status": "error", "error": str(e)})
 
         manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
@@ -1612,7 +1629,7 @@ class App(tk.Tk):
             f"PyMuPDF: {HAS_PYMUPDF} | "
             f"PyMuPDF4LLM: {HAS_PYMUPDF4LLM} | "
             f"pdfplumber: {HAS_PDFPLUMBER} | "
-            f"docling: {bool(DOCILING_CLI)} | "
+            f"docling: {bool(DOCLING_CLI)} | "
             f"marker_single: {bool(MARKER_CLI)}"
         )
         ttk.Label(help_box, text=env_text).pack(anchor="w")
@@ -1759,6 +1776,10 @@ class App(tk.Tk):
 
 
 def main():
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    )
     app = App()
     app.mainloop()
 

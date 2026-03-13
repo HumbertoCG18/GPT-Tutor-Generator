@@ -30,18 +30,36 @@ Versão com **backends em camadas** para conversão de PDFs acadêmicos.
 python academic_tutor_repo_builder_v3.py
 ```
 
-## Dependências mínimas recomendadas
+## Instalação de dependências
+```bash
+pip install -r requirements.txt
+```
+
+### Dependências mínimas recomendadas
 ```bash
 pip install pymupdf pymupdf4llm pdfplumber
 ```
 
-## Dependências avançadas opcionais
-### Docling CLI
+### Dependências avançadas opcionais
+#### Docling CLI
 Instale o Docling e garanta que o comando `docling` esteja disponível no terminal.
 
-### Marker CLI
+#### Marker CLI
 ```bash
 pip install marker-pdf
+```
+
+## Desenvolvimento
+
+### Configuração do ambiente
+```bash
+pip install -r requirements.txt
+pip install pytest
+```
+
+### Executar testes
+```bash
+python -m pytest tests/ -v
 ```
 
 ## Como a decisão funciona
