@@ -1442,7 +1442,7 @@ class FileEntryDialog(simpledialog.Dialog):
         self.var_imgs = tk.BooleanVar(value=self.initial.extract_images if self.initial else True)
         self.var_tables = tk.BooleanVar(value=self.initial.extract_tables if self.initial else True)
         self.var_page_range = tk.StringVar(value=self.initial.page_range if self.initial else "")
-        self.var_ocr_lang = tk.StringVar(value=self.initial.ocr_language if self.initial else default_ocr_language)
+        self.var_ocr_lang = tk.StringVar(value=self.initial.ocr_language if self.initial else self.default_ocr_language)
 
         row = 1
         ttk.Label(master, text="Título").grid(row=row, column=0, sticky="w")
