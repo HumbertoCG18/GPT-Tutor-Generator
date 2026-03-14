@@ -57,6 +57,18 @@ class ExtractionBackend:
     def run(self, ctx: BackendContext) -> BackendRunResult:
         raise NotImplementedError
 
+    def _fix_image_links(self, body: str, abs_img_dir: Path, rel_prefix: str) -> str:
+        """Converte caminhos absolutos em relativos no Markdown."""
+        abs_path_str = str(abs_img_dir.resolve())
+        # Replace absolute with relative (canonicalizing slashes)
+        res = body.replace(abs_path_str.replace("\\", "/"), rel_prefix)
+        res = res.replace(abs_path_str.replace("/", "\\"), rel_prefix)
+        res = res.replace(str(abs_img_dir.resolve()), rel_prefix)
+        # Fix potential escaped/mixed slashes
+        res = res.replace(rel_prefix + "\\", rel_prefix + "/")
+        res = res.replace(rel_prefix.replace("/", "\\"), rel_prefix)
+        return res
+
 
 class PyMuPDF4LLMBackend(ExtractionBackend):
     name = "pymupdf4llm"
@@ -70,10 +82,20 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
         ensure_dir(out_dir)
         out_path = out_dir / f"{ctx.entry_id}.md"
 
+        img_dir = ctx.root_dir / "staging" / "assets" / "inline-images" / ctx.entry_id
+        ensure_dir(img_dir)
+        
+        # relative path from md file to images
+        # md is in staging/markdown-auto/pymupdf4llm/id.md
+        # imgs are in staging/assets/inline-images/id/
+        # path is ../../assets/inline-images/id
+        rel_img_prefix = f"../../assets/inline-images/{ctx.entry_id}"
+
         kwargs = {
             "pages": ctx.pages,
             "write_images": bool(ctx.entry.preserve_pdf_images_in_markdown),
-            "image_path": str((ctx.root_dir / "staging" / "assets" / "inline-images" / ctx.entry_id).resolve()),
+            "image_path": str(img_dir.resolve()),
+            "write_tables": bool(ctx.entry.extract_tables),
             "force_ocr": bool(ctx.entry.force_ocr),
             "ocr_language": ctx.entry.ocr_language.replace(",", "+"),
             "page_separators": True,
@@ -89,6 +111,19 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
         else:
             body = md
 
+        # Post-process to make images relative
+        if kwargs.get("write_images"):
+            abs_path_str = str(img_dir.resolve())
+            # Handle both slashes
+            body = body.replace(abs_path_str.replace("\\", "/"), rel_img_prefix)
+            body = body.replace(abs_path_str.replace("/", "\\"), rel_img_prefix)
+            # And potentially the resolved path if it differs
+            body = body.replace(str(img_dir.resolve()), rel_img_prefix)
+            
+            # Re-fix internal links if they were escaped or used backslashes
+            # we want forward slashes in markdown usually
+            body = body.replace(rel_img_prefix.replace("/", "\\"), rel_img_prefix)
+
         write_text(out_path, wrap_frontmatter({
             "entry_id": ctx.entry_id,
             "title": ctx.entry.title,
@@ -102,8 +137,8 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
             layer=self.layer,
             status="ok",
             markdown_path=safe_rel(out_path, ctx.root_dir),
-            asset_dir=safe_rel(ctx.root_dir / "staging" / "assets" / "inline-images" / ctx.entry_id, ctx.root_dir) if ctx.entry.preserve_pdf_images_in_markdown else None,
-            notes=["Markdown gerado com PyMuPDF4LLM."],
+            asset_dir=safe_rel(img_dir, ctx.root_dir) if ctx.entry.preserve_pdf_images_in_markdown else None,
+            notes=["Markdown gerado com PyMuPDF4LLM com links relativos."],
         )
 
 
@@ -203,6 +238,15 @@ class DoclingCLIBackend(ExtractionBackend):
             "stderr_tail": (proc.stderr or "")[-2000:],
         }, indent=2, ensure_ascii=False))
 
+        if md_path and md_path.exists():
+            body = md_path.read_text(encoding="utf-8")
+            # Docling might use absolute paths in generated MD
+            # MD is in out_dir/filename.md
+            # Assets are in out_dir/ or subfolder
+            # Since we point to out_dir, relative is just "." or "./images"
+            body = self._fix_image_links(body, out_dir, ".")
+            write_text(md_path, body)
+
         return BackendRunResult(
             name=self.name,
             layer=self.layer,
@@ -211,7 +255,7 @@ class DoclingCLIBackend(ExtractionBackend):
             asset_dir=safe_rel(out_dir, ctx.root_dir),
             metadata_path=safe_rel(metadata_path, ctx.root_dir),
             command=cmd,
-            notes=["Saída avançada gerada com Docling CLI."],
+            notes=["Saída avançada gerada com Docling CLI com links normalizados."],
         )
 
 
@@ -251,6 +295,13 @@ class MarkerCLIBackend(ExtractionBackend):
 
         produced_md = sorted(out_dir.glob("**/*.md"))
         md_path = produced_md[0] if produced_md else None
+        
+        if md_path and md_path.exists():
+            body = md_path.read_text(encoding="utf-8")
+            # Marker usually puts assets in the same folder
+            body = self._fix_image_links(body, out_dir, ".")
+            write_text(md_path, body)
+
         metadata_path = out_dir / "marker-run.json"
         write_text(metadata_path, json.dumps({
             "command": cmd,
@@ -266,7 +317,7 @@ class MarkerCLIBackend(ExtractionBackend):
             asset_dir=safe_rel(out_dir, ctx.root_dir),
             metadata_path=safe_rel(metadata_path, ctx.root_dir),
             command=cmd,
-            notes=["Saída avançada gerada com Marker CLI."],
+            notes=["Saída avançada gerada com Marker CLI com links normalizados."],
         )
 
 
@@ -683,7 +734,7 @@ schedule: {subj.schedule}
         write_text(md_file, markdown_content)
         item["base_markdown"] = safe_rel(md_file, self.root_dir)
         manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
-        write_text(manual, manual_pdf_review_template(entry, item))
+        write_text(manual, manual_pdf_review_template(entry, item, markdown_content))
         item["manual_review"] = safe_rel(manual, self.root_dir)
         return item
 
@@ -761,8 +812,19 @@ schedule: {subj.schedule}
                 except Exception as e:
                     logger.error("Table detection (pymupdf) failed for %s: %s", entry.id(), e)
                     self.logs.append({"entry": entry.id(), "step": "detect_tables_pymupdf", "status": "error", "error": str(e)})
+        # Carregar conteúdo do MD (Avançado ou Base) para a revisão manual se existir
+        md_content = ""
+        try:
+            target_md = item.get("advanced_markdown") or item.get("base_markdown")
+            if target_md:
+                target_md_path = self.root_dir / target_md
+                if target_md_path.exists():
+                    md_content = target_md_path.read_text(encoding="utf-8")
+        except Exception as e:
+            logger.warning(f"Failed to read markdown content for review of {entry.id()}: {e}")
+
         manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
-        write_text(manual, manual_pdf_review_template(entry, item))
+        write_text(manual, manual_pdf_review_template(entry, item, md_content))
         item["manual_review"] = safe_rel(manual, self.root_dir)
         return item
 
@@ -897,8 +959,6 @@ schedule: {subj.schedule}
                     with csv_path.open("w", newline="", encoding="utf-8") as f:
                         writer = csv.writer(f)
                         writer.writerows(normalized)
-                    md_path = out_dir / f"page-{page_num + 1:03d}-table-{table_idx:02d}.md"
-                    write_text(md_path, rows_to_markdown_table(normalized))
                     count += 1
         return count
 
@@ -977,6 +1037,99 @@ schedule: {subj.schedule}
         self._write_bundle_seed(manifest)
         self._write_build_report(manifest)
         logger.info("Incremental build completed. %d new entries added.", len(new_entries))
+
+    def process_single(self, entry: FileEntry) -> Dict[str, object]:
+        """Processa um único item e atualiza o manifest."""
+        manifest_path = self.root_dir / "manifest.json"
+        if manifest_path.exists():
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                manifest = json.load(f)
+        else:
+            self._create_structure()
+            manifest = {
+                "app": APP_NAME,
+                "generated_at": datetime.now().isoformat(timespec="seconds"),
+                "course": self.course_meta,
+                "options": self.options,
+                "entries": [],
+                "logs": []
+            }
+
+        logger.info("Processing single entry: %s", entry.title)
+        item_result = self._process_entry(entry)
+        
+        # Upsert in manifest
+        existing_idx = next((i for i, e in enumerate(manifest["entries"]) if e["id"] == entry.id()), None)
+        if existing_idx is not None:
+            manifest["entries"][existing_idx] = item_result
+        else:
+            manifest["entries"].append(item_result)
+            
+        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+        manifest.setdefault("logs", []).extend(self.logs)
+
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        self._write_root_files() # Refresh core files if needed
+        self._write_source_registry(manifest)
+        self._write_bundle_seed(manifest)
+        self._write_build_report(manifest)
+        
+        return item_result
+
+    def unprocess(self, entry_id: str) -> bool:
+        """Remove todos os arquivos gerados para um ID e limpa do manifest."""
+        manifest_path = self.root_dir / "manifest.json"
+        if not manifest_path.exists():
+            return False
+
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            manifest = json.load(f)
+
+        entry = next((e for e in manifest["entries"] if e["id"] == entry_id), None)
+        if not entry:
+            return False
+
+        # 1. Deletar arquivos físicos
+        paths_to_delete = [
+            entry.get("raw_target"),
+            entry.get("base_markdown"),
+            entry.get("advanced_markdown"),
+            entry.get("manual_review"),
+            entry.get("advanced_metadata_path")
+        ]
+        
+        # Deletar diretórios de assets
+        dirs_to_delete = [
+            entry.get("images_dir"),
+            entry.get("tables_dir"),
+            entry.get("page_previews_dir"),
+            entry.get("table_detection_dir"),
+            entry.get("advanced_asset_dir")
+        ]
+
+        for p in paths_to_delete:
+            if p:
+                full_p = self.root_dir / p
+                if full_p.exists():
+                    full_p.unlink()
+
+        for d in dirs_to_delete:
+            if d:
+                full_d = self.root_dir / d
+                if full_d.exists() and full_d.is_dir():
+                    shutil.rmtree(full_d)
+
+        # 2. Remover do manifest
+        manifest["entries"] = [e for e in manifest["entries"] if e["id"] != entry_id]
+        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+
+        # 3. Reescrever manifest e metadados
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        self._write_source_registry(manifest)
+        self._write_bundle_seed(manifest)
+        self._write_build_report(manifest)
+        
+        return True
 
 
 # ---------------------------------------------------------------------------
@@ -1179,7 +1332,7 @@ def rows_to_markdown_table(rows: list) -> str:
     return "\n".join(lines) + "\n"
 
 
-def manual_pdf_review_template(entry: FileEntry, item: Dict[str, object]) -> str:
+def manual_pdf_review_template(entry: FileEntry, item: Dict[str, object], markdown_content: str = "") -> str:
     report = item.get("document_report") or {}
     decision = item.get("pipeline_decision") or {}
     return f"""---
@@ -1220,8 +1373,12 @@ advanced_markdown: {json_str(item.get('advanced_markdown'))}
 - [ ] Verificar imagens/figuras importantes
 - [ ] Registrar pistas sobre o professor
 
-## Markdown corrigido
-<!-- Cole aqui a versão corrigida -->
+## Markdown extraído
+{markdown_content or '<!-- Nenhum conteúdo extraído disponível -->'}
+
+## Markdown corrigido (Gabarito)
+<!-- Use o espaço abaixo para salvar a versão final curada se desejar revisar aqui -->
+
 
 ## Destino curado sugerido
 - [ ] `content/curated/`

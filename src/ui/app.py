@@ -147,6 +147,8 @@ class App(tk.Tk):
         ttk.Button(toolbar, text="✏ Editar", command=self.edit_selected).pack(side="left")
         ttk.Button(toolbar, text="⧉ Duplicar", command=self.duplicate_selected).pack(side="left", padx=(6, 0))
         ttk.Button(toolbar, text="✖ Remover", command=self.remove_selected).pack(side="left", padx=(6, 0))
+        ttk.Button(toolbar, text="⚡ Processar",
+                   command=self.process_selected_single).pack(side="left", padx=(6, 0))
         ttk.Separator(toolbar, orient="vertical").pack(side="left", fill="y", padx=10)
         ttk.Button(toolbar, text="📂 Abrir Repo", command=self.open_existing_repo).pack(side="left")
 
@@ -193,7 +195,14 @@ class App(tk.Tk):
         self.notebook.add(tab_backlog, text="  📁 Backlog (Já Processados)  ")
         
         btn_refresh = ttk.Button(tab_backlog, text="🔄 Atualizar Backlog", command=self._refresh_backlog)
-        btn_refresh.pack(anchor="w", pady=(8, 4), padx=8)
+        btn_refresh.pack(side="left", pady=(8, 4), padx=8)
+        
+        btn_unprocess = ttk.Button(tab_backlog, text="🗑 Limpar Processamento", command=self.remove_processed_single)
+        btn_unprocess.pack(side="left", pady=(8, 4), padx=4)
+        
+        # New frame for table below buttons
+        bk_table_frame = ttk.Frame(tab_backlog)
+        bk_table_frame.pack(fill="both", expand=True)
 
         columns_bk = ("category", "layer", "status", "title", "backend", "file")
         self.repo_tree = ttk.Treeview(tab_backlog, columns=columns_bk, show="headings", height=14)
@@ -238,6 +247,16 @@ class App(tk.Tk):
     def _set_status(self, msg: str):
         self._status_var.set(msg)
         self.update_idletasks()
+
+    def _save_current_queue(self):
+        """Persiste a fila atual de arquivos no perfil da matéria ativa."""
+        name = self._var_active_subject.get()
+        if name == "(nenhuma)":
+            return
+        sp = self.subject_store.get(name)
+        if sp:
+            sp.queue = self.entries
+            self.subject_store.add(sp)  # calls save() internally
 
     # ── Actions ──────────────────────────────────────────────────────────────
 
@@ -306,7 +325,12 @@ class App(tk.Tk):
         self.var_default_ocr_language.set(sp.default_ocr_lang)
         if sp.repo_root:
             self.var_repo_root.set(sp.repo_root)
-        self._set_status(f"Matéria carregada: {sp.name}")
+        
+        # Carrega a fila salva
+        self.entries = [FileEntry.from_dict(e.to_dict()) if hasattr(e, "to_dict") else FileEntry.from_dict(e) for e in sp.queue]
+        self.refresh_tree()
+        
+        self._set_status(f"Matéria carregada: {sp.name} ({len(self.entries)} itens na fila)")
         self._refresh_backlog()
 
     def _refresh_backlog(self):
@@ -328,12 +352,12 @@ class App(tk.Tk):
             with open(manifest_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
                 
-            files = data.get("files", [])
-            for i, f_data in enumerate(files):
-                pipeline = f_data.get("pipeline", {})
-                layer = pipeline.get("layer_achieved", "unknown")
-                status = pipeline.get("status", "unknown")
-                backend = pipeline.get("backend_used", "unknown")
+            entries = data.get("entries", [])
+            for i, f_data in enumerate(entries):
+                decision = f_data.get("pipeline_decision", {})
+                layer = f_data.get("effective_profile", "unknown")
+                status = "ok" # Default for manifest items
+                backend = f_data.get("base_backend", "unknown")
                 
                 self.repo_tree.insert(
                     "",
@@ -345,7 +369,7 @@ class App(tk.Tk):
                         status,
                         f_data.get("title", ""),
                         backend,
-                        Path(f_data.get("source_file", "")).name
+                        Path(f_data.get("source_path", f_data.get("source_file", ""))).name
                     )
                 )
         except Exception as e:
@@ -385,6 +409,7 @@ class App(tk.Tk):
                 if entry:
                     self.entries.append(entry)
         self.refresh_tree()
+        self._save_current_queue()
         self._set_status(f"{len(self.entries)} arquivo(s) na lista.")
 
     def add_images(self):
@@ -401,6 +426,7 @@ class App(tk.Tk):
                 if entry:
                     self.entries.append(entry)
         self.refresh_tree()
+        self._save_current_queue()
         self._set_status(f"{len(self.entries)} arquivo(s) na lista.")
 
     def add_url(self):
@@ -409,6 +435,7 @@ class App(tk.Tk):
         if dialog.result_entry:
             self.entries.append(dialog.result_entry)
             self.refresh_tree()
+            self._save_current_queue()
             self._set_status(f"{len(self.entries)} arquivo(s) na lista.")
 
 
@@ -428,6 +455,7 @@ class App(tk.Tk):
         if updated:
             self.entries[idx] = updated
             self.refresh_tree()
+            self._save_current_queue()
 
     def duplicate_selected(self):
         idx = self.selected_index()
@@ -439,6 +467,7 @@ class App(tk.Tk):
         copied.title = f"{entry.title} (cópia)"
         self.entries.insert(idx + 1, copied)
         self.refresh_tree()
+        self._save_current_queue()
         self._set_status(f"Item duplicado: {copied.title}")
 
     def remove_selected(self):
@@ -449,6 +478,7 @@ class App(tk.Tk):
         removed = self.entries[idx].title
         del self.entries[idx]
         self.refresh_tree()
+        self._save_current_queue()
         self._set_status(f"Removido: {removed}")
 
     def refresh_tree(self):
@@ -632,6 +662,10 @@ class App(tk.Tk):
             return
 
         n_entries = len(self.entries)
+        self.entries = []
+        self.refresh_tree()
+        self._save_current_queue()
+        
         self._set_status(f"✓ Repositório {'atualizado' if incremental else 'criado'} em: {repo_dir}")
 
         if incremental:
@@ -653,6 +687,91 @@ class App(tk.Tk):
                 f"4. Subir no GitHub"
             )
         self._refresh_backlog()
+
+    def process_selected_single(self):
+        idx = self.selected_index()
+        if idx is None:
+            messagebox.showinfo(APP_NAME, "Selecione um arquivo na fila para processar.")
+            return
+            
+        meta = self._course_meta()
+        if not meta: return
+        
+        entry = self.entries[idx]
+        repo_dir = Path(self.var_repo_root.get().strip()) / meta["course_slug"]
+        
+        active_subj_name = self._var_active_subject.get()
+        active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
+
+        self._set_status(f"Processando item: {entry.title}...")
+        
+        def worker():
+            try:
+                builder = RepoBuilder(
+                    root_dir=repo_dir,
+                    course_meta=meta,
+                    entries=self.entries,
+                    options={
+                        "default_processing_mode": self.var_default_mode.get(),
+                        "default_ocr_language": self.var_default_ocr_language.get(),
+                    },
+                    student_profile=self.student_store.profile,
+                    subject_profile=active_subj
+                )
+                builder.process_single(entry)
+                
+                self.after(0, lambda: self._on_single_processed_success(idx))
+            except Exception:
+                traceback_str = traceback.format_exc()
+                self.after(0, lambda: messagebox.showerror(APP_NAME, f"Erro ao processar item:\n\n{traceback_str}"))
+                self.after(0, lambda: self._set_status("Erro no processamento."))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _on_single_processed_success(self, idx):
+        if idx < len(self.entries):
+            del self.entries[idx]
+            self.refresh_tree()
+            self._save_current_queue()
+        self._refresh_backlog()
+        self._set_status("Item processado com sucesso.")
+
+    def remove_processed_single(self):
+        selected = self.repo_tree.selection()
+        if not selected:
+            messagebox.showinfo(APP_NAME, "Selecione um item no backlog para remover o processamento.")
+            return
+
+        meta = self._course_meta()
+        if not meta: return
+        
+        repo_dir = Path(self.var_repo_root.get().strip()) / meta["course_slug"]
+        manifest_path = repo_dir / "manifest.json"
+        
+        if not manifest_path.exists(): return
+        
+        try:
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            
+            idx_str = selected[0]
+            if not idx_str.startswith("backlog_"): return
+            idx = int(idx_str.replace("backlog_", ""))
+            
+            entry_data = data["entries"][idx]
+            entry_id = entry_data["id"]
+
+            if not messagebox.askyesno(APP_NAME, f"Deseja remover o processamento de '{entry_data['title']}'?\n\nOs arquivos gerados no repositório serão deletados."):
+                return
+
+            builder = RepoBuilder(repo_dir, meta, [], {})
+            if builder.unprocess(entry_id):
+                self._refresh_backlog()
+                self._set_status(f"Processamento de '{entry_id}' removido.")
+            else:
+                self._set_status("Falha ao remover processamento.")
+        except Exception as e:
+            messagebox.showerror(APP_NAME, f"Erro ao remover processamento: {e}")
 
     def open_existing_repo(self):
         """Abre um repositório existente e carrega seus dados."""

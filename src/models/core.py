@@ -36,6 +36,14 @@ class FileEntry:
             return slugify(self.title)
         return slugify(Path(self.source_path).stem)
 
+    def to_dict(self) -> Dict:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, d: Dict) -> "FileEntry":
+        valid = {f.name for f in fields(cls)}
+        return cls(**{k: v for k, v in d.items() if k in valid})
+
 
 @dataclass
 class DocumentProfileReport:
@@ -86,14 +94,24 @@ class SubjectProfile:
     default_mode: str = "auto"
     default_ocr_lang: str = "por,eng"
     repo_root: str = ""
+    queue: List[FileEntry] = field(default_factory=list)
 
-    def to_dict(self) -> Dict[str, str]:
-        return asdict(self)
+    def to_dict(self) -> Dict[str, any]:
+        d = asdict(self)
+        # Ensure queue is serialized correctly
+        d["queue"] = [e.to_dict() for e in self.queue]
+        return d
 
     @classmethod
-    def from_dict(cls, d: Dict[str, str]) -> "SubjectProfile":
+    def from_dict(cls, d: Dict[str, any]) -> "SubjectProfile":
         valid = {f.name for f in fields(cls)}
-        return cls(**{k: v for k, v in d.items() if k in valid})
+        # Pre-process queue
+        queue_raw = d.get("queue", [])
+        # Construct with other fields
+        filtered = {k: v for k, v in d.items() if k in valid and k != "queue"}
+        sp = cls(**filtered)
+        sp.queue = [FileEntry.from_dict(item) for item in queue_raw]
+        return sp
 
 
 @dataclass
