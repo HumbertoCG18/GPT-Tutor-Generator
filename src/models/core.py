@@ -82,6 +82,7 @@ class SubjectProfile:
     semester: str = ""
     schedule: str = ""           # "Seg/Qua 10:15-11:55"
     syllabus: str = ""           # Cronograma multilinea
+    teaching_plan: str = ""      # Plano de ensino (Ementa, Objetivos, Metodologia)
     default_mode: str = "auto"
     default_ocr_lang: str = "por,eng"
     repo_root: str = ""
@@ -134,7 +135,7 @@ class SubjectStore:
 
     def save(self):
         with open(self._path, "w", encoding="utf-8") as f:
-            json.dumps({k: v.to_dict() for k, v in self._data.items()}, f, indent=2, ensure_ascii=False)
+            json.dump({k: v.to_dict() for k, v in self._data.items()}, f, indent=2, ensure_ascii=False)
 
     def get(self, name: str) -> Optional[SubjectProfile]:
         return self._data.get(name)

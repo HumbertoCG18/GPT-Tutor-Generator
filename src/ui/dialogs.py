@@ -8,7 +8,8 @@ from src.models.core import FileEntry, SubjectProfile, StudentProfile, SubjectSt
 from src.utils.helpers import (
     CATEGORY_LABELS, DEFAULT_CATEGORIES, PROCESSING_MODES, 
     DOCUMENT_PROFILES, PREFERRED_BACKENDS, OCR_LANGS,
-    slugify, parse_html_schedule, auto_detect_category, auto_detect_title
+    slugify, parse_html_schedule, auto_detect_category, auto_detect_title,
+    APP_NAME, HAS_PYMUPDF4LLM
 )
 from src.builder.engine import BackendSelector
 from src.ui.theme import ThemeManager, AppConfig, THEMES
@@ -174,6 +175,32 @@ class SettingsDialog(tk.Toplevel):
                           width=22).grid(row=r, column=1, sticky="ew")
         tab_proc.columnconfigure(1, weight=1)
 
+        # ── LLM AI tab ──────────────────────────────────────────────
+        tab_ia = ttk.Frame(nb, padding=16)
+        nb.add(tab_ia, text="  🤖  Inteligência Artificial  ")
+
+        self._var_ai_provider = tk.StringVar(value=self.config.get("default_ai_provider", "openai"))
+        self._var_openai_key = tk.StringVar(value=self.config.get("openai_api_key", ""))
+        self._var_gemini_key = tk.StringVar(value=self.config.get("gemini_api_key", ""))
+
+        ttk.Label(tab_ia, text="Provedor Padrão para Categorização", style="Accent.TLabel").grid(
+            row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
+            
+        ttk.Combobox(tab_ia, textvariable=self._var_ai_provider, values=["openai", "gemini"], 
+                     state="readonly", width=15).grid(row=0, column=2, sticky="ew", pady=(0, 8))
+
+        ttk.Label(tab_ia, text="OpenAI API Key (GPT-4o-mini)").grid(row=1, column=0, sticky="w", pady=6)
+        ttk.Entry(tab_ia, textvariable=self._var_openai_key, show="*", width=35).grid(row=1, column=1, columnspan=2, sticky="ew", padx=(8,0))
+
+        ttk.Label(tab_ia, text="Google Gemini API Key (1.5 Flash)").grid(row=2, column=0, sticky="w", pady=6)
+        ttk.Entry(tab_ia, textvariable=self._var_gemini_key, show="*", width=35).grid(row=2, column=1, columnspan=2, sticky="ew", padx=(8,0))
+        
+        ttk.Label(tab_ia, text="A chave é salva localmente e só sai de sua máquina direto para o provedor oficial.",
+                  foreground=p["muted"], font=("Segoe UI", 8)).grid(row=3, column=0, columnspan=3, sticky="w", pady=(12, 0))
+                  
+        tab_ia.columnconfigure(2, weight=1)
+
+
         # ── Buttons ─────────────────────────────────────────────────────
         btn_frame = ttk.Frame(self, padding=(16, 0, 16, 16))
         btn_frame.pack(fill="x")
@@ -194,6 +221,9 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("default_ocr_language", self._var_ocr.get())
         self.config.set("default_profile", self._var_profile.get())
         self.config.set("default_backend", self._var_backend.get())
+        self.config.set("default_ai_provider", self._var_ai_provider.get())
+        self.config.set("openai_api_key", self._var_openai_key.get().strip())
+        self.config.set("gemini_api_key", self._var_gemini_key.get().strip())
         self.config.save()
         self.theme_mgr.apply(self.parent, self._var_theme.get())
         self.parent._theme_name = self._var_theme.get()  # type: ignore[attr-defined]
@@ -401,6 +431,34 @@ RECURSOS
 USO
   Selecione a matéria no menu suspenso (Combobox) na tela principal para aplicar.
 """),
+    ("Handoff e CURRENT_STATE", """Garantindo a continuidade do trabalho em chats longos.
+
+CURRENT_STATE.md (A Fonte de Verdade)
+  • É o estado vivo e oficial do projeto, salvo no repositório.
+  • Contém: dados, arquivos processados, arquitetura e pendências.
+  • QUANDO USAR: Peça ao GPT para gerar/atualizar sempre que decisões 
+    importantes forem tomadas, para registrar o progresso permanentemente.
+
+HANDOFF (O Pacote de Transferência)
+  • É um resumo rápido e situacional para transição entre chats.
+  • QUANDO USAR: Quando o chat ficar muito grande/lento, peça ao GPT
+    para gerar um "Handoff".
+  • FLUXO:
+    1. O GPT gera o Handoff (contexto, decisões, próximos passos).
+    2. Você copia o Handoff + o arquivo CURRENT_STATE.md atualizado.
+    3. Cola tudo em um NOVO chat.
+    4. O GPT lê o estado e continua de onde parou, sem repetir trabalho.
+
+ATUALIZAÇÃO INCREMENTAL
+  Ao clicar em "🚀 Criar Repositório" com um repositório existente:
+  • O sistema pergunta: "Adicionar novos arquivos ou recriar do zero?"
+  • No modo incremental, apenas os NOVOS arquivos são processados.
+  • O manifest.json é mesclado (não substituído).
+
+BOTÃO "📂 Abrir Repo"
+  Permite selecionar um repositório existente e carregar seus dados
+  (nome da disciplina, professor, semestre, etc.) automaticamente no app.
+"""),
     ("Atalhos e Dicas", """ATALHOS
   F1          → Abre esta janela de ajuda
   Double-click → Edita o item selecionado na tabela
@@ -413,6 +471,7 @@ DICAS GERAIS
   • O arquivo manifest.json gerado contém o histórico completo de todas as decisões de pipeline.
   • Use o modo 'high_fidelity' para PDFs digitais com fórmulas.
   • Use 'scanned' para fotos de provas (ativa OCR avançado).
+
 
 AMBIENTE DETECTADO
   Se PyMuPDF, PyMuPDF4LLM ou pdfplumber aparecem como False na barra inferior,
@@ -776,6 +835,21 @@ class SubjectManagerDialog(tk.Toplevel):
         self._syllabus_text.grid(row=row_syl, column=1, sticky="nsew", padx=(8, 0), pady=3)
         form.rowconfigure(row_syl, weight=1)
 
+        # Teaching Plan (Plano de ensino) — multiline
+        row_tp = row_syl + 1
+        lbl_tp_frame = ttk.Frame(form)
+        lbl_tp_frame.grid(row=row_tp, column=0, sticky="nw", pady=3)
+        lbl_tp = ttk.Label(lbl_tp_frame, text="Plano de Ensino\n(Ementa, Objetivos)")
+        lbl_tp.pack(anchor="w")
+        
+        btn_pdf = ttk.Button(lbl_tp_frame, text="📥 Extrair PDF", width=12, command=self._import_pdf_teaching_plan)
+        btn_pdf.pack(anchor="w", pady=(8, 0))
+        add_tooltip(btn_pdf, "Selecione o arquivo PDF do Plano de Ensino da faculdade. A aplicação extrairá todo o texto estruturado e o converterá para Markdown perfeitamente usando pymupdf4llm.")
+
+        self._teaching_plan_text = tk.Text(form, height=6, width=36, font=("Segoe UI", 9), wrap="word")
+        self._teaching_plan_text.grid(row=row_tp, column=1, sticky="nsew", padx=(8, 0), pady=3)
+        form.rowconfigure(row_tp, weight=1)
+
         # Save button
         ttk.Button(right, text="💾  Salvar matéria", style="Accent.TButton",
                    command=self._save).pack(fill="x", pady=(10, 0))
@@ -798,6 +872,8 @@ class SubjectManagerDialog(tk.Toplevel):
             var.set(getattr(sp, key, ""))
         self._syllabus_text.delete("1.0", "end")
         self._syllabus_text.insert("1.0", sp.syllabus)
+        self._teaching_plan_text.delete("1.0", "end")
+        self._teaching_plan_text.insert("1.0", getattr(sp, "teaching_plan", ""))
 
     def _new(self):
         self._current_name = None
@@ -807,6 +883,7 @@ class SubjectManagerDialog(tk.Toplevel):
         self._vars["default_mode"].set("auto")
         self._vars["default_ocr_lang"].set("por,eng")
         self._syllabus_text.delete("1.0", "end")
+        self._teaching_plan_text.delete("1.0", "end")
 
     def _save(self):
         name = self._vars["name"].get().strip()
@@ -822,6 +899,7 @@ class SubjectManagerDialog(tk.Toplevel):
             semester=self._vars["semester"].get().strip(),
             schedule=self._vars["schedule"].get().strip(),
             syllabus=self._syllabus_text.get("1.0", "end-1c").strip(),
+            teaching_plan=self._teaching_plan_text.get("1.0", "end-1c").strip(),
             default_mode=self._vars["default_mode"].get(),
             default_ocr_lang=self._vars["default_ocr_lang"].get().strip() or "por,eng",
             repo_root=self._vars["repo_root"].get().strip(),
@@ -833,6 +911,35 @@ class SubjectManagerDialog(tk.Toplevel):
         
     def _import_html(self):
         HTMLImportDialog(self)
+
+    def _import_pdf_teaching_plan(self):
+        if not HAS_PYMUPDF4LLM:
+            messagebox.showerror(APP_NAME, "pymupdf4llm não está instalado. Feche a aplicação e execute 'pip install pymupdf4llm'.")
+            return
+            
+        pdf_path = filedialog.askopenfilename(
+            parent=self, 
+            title="Selecione o Plano de Ensino em PDF", 
+            filetypes=[("Arquivos PDF", "*.pdf")]
+        )
+        if not pdf_path:
+            return
+            
+        import threading
+        
+        def worker():
+            try:
+                import pymupdf4llm
+                self.after(0, lambda: messagebox.showinfo(APP_NAME, "Iniciando extração do PDF, aguarde...", parent=self))
+                md_text = pymupdf4llm.to_markdown(pdf_path)
+                
+                self.after(0, lambda: self._teaching_plan_text.delete("1.0", "end"))
+                self.after(0, lambda: self._teaching_plan_text.insert("1.0", md_text))
+                self.after(0, lambda: messagebox.showinfo(APP_NAME, "Plano de Ensino extraído com sucesso!", parent=self))
+            except Exception as e:
+                self.after(0, lambda: messagebox.showerror(APP_NAME, f"Erro ao extrair PDF:\n{e}", parent=self))
+                
+        threading.Thread(target=worker, daemon=True).start()
 
     def _delete(self):
         sel = self._listbox.curselection()

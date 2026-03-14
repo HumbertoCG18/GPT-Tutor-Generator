@@ -80,8 +80,17 @@ THEMES: Dict[str, Dict[str, str]] = {
 }
 
 
+import json
+import os
+from pathlib import Path
+from typing import Dict, Optional
+import dotenv
+
+CONFIG_PATH = Path.home() / ".gpt_tutor_config.json"
+ENV_PATH = Path.cwd() / ".env"
+
 class AppConfig:
-    """Manages persistent app configuration via ~/.gpt_tutor_config.json."""
+    """Manages persistent app configuration via ~/.gpt_tutor_config.json and .env for API keys."""
 
     DEFAULTS: Dict[str, object] = {
         "theme": "dark",
@@ -101,12 +110,32 @@ class AppConfig:
             if CONFIG_PATH.exists():
                 stored = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
                 self.data.update({k: v for k, v in stored.items() if k in self.DEFAULTS})
+            # Carregar chaves de API independentemente
+            dotenv.load_dotenv(ENV_PATH)
+            self.data["openai_api_key"] = os.getenv("OPENAI_API_KEY", "")
+            self.data["gemini_api_key"] = os.getenv("GEMINI_API_KEY", "")
         except Exception:
             pass
 
     def save(self) -> None:
         try:
-            CONFIG_PATH.write_text(json.dumps(self.data, indent=2, ensure_ascii=False), encoding="utf-8")
+            # Separar o que vai pro JSON do que vai pro .env
+            json_data = {k: v for k, v in self.data.items() if k not in ["openai_api_key", "gemini_api_key"]}
+            CONFIG_PATH.write_text(json.dumps(json_data, indent=2, ensure_ascii=False), encoding="utf-8")
+            
+            # Gravar as chaves no .env file local
+            if not ENV_PATH.exists():
+                ENV_PATH.touch()
+            
+            openai_val = self.data.get("openai_api_key", "")
+            gemini_val = self.data.get("gemini_api_key", "")
+            
+            dotenv.set_key(str(ENV_PATH), "OPENAI_API_KEY", str(openai_val))
+            dotenv.set_key(str(ENV_PATH), "GEMINI_API_KEY", str(gemini_val))
+            
+            # Recarregar variaveis de ambiente na memoria atual
+            dotenv.load_dotenv(ENV_PATH, override=True)
+            
         except Exception:
             pass
 

@@ -7,12 +7,14 @@ import logging
 import threading
 from pathlib import Path
 import json
+import pymupdf
 
 from src.models.core import FileEntry, SubjectStore, StudentStore, SubjectProfile
 from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, slugify
 from src.builder.engine import RepoBuilder
 from src.ui.theme import ThemeManager, AppConfig
 from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, MarkdownPreviewWindow, HelpWindow, add_tooltip, SettingsDialog
+from src.services.llm import LLMCategorizer
 
 logger = logging.getLogger(__name__)
 
@@ -145,6 +147,8 @@ class App(tk.Tk):
         ttk.Button(toolbar, text="✏ Editar", command=self.edit_selected).pack(side="left")
         ttk.Button(toolbar, text="⧉ Duplicar", command=self.duplicate_selected).pack(side="left", padx=(6, 0))
         ttk.Button(toolbar, text="✖ Remover", command=self.remove_selected).pack(side="left", padx=(6, 0))
+        ttk.Separator(toolbar, orient="vertical").pack(side="left", fill="y", padx=10)
+        ttk.Button(toolbar, text="📂 Abrir Repo", command=self.open_existing_repo).pack(side="left")
 
         ttk.Button(toolbar, text="⚙ Configurações", command=self.open_settings).pack(side="right", padx=(6, 0))
         ttk.Button(toolbar, text="? Ajuda  F1", command=self.open_help).pack(side="right", padx=(6, 0))
@@ -152,6 +156,8 @@ class App(tk.Tk):
         ttk.Button(toolbar, text="🖌 Curator Studio", command=self.open_curator_studio).pack(side="right", padx=(6, 0))
         ttk.Button(toolbar, text="🚀 Criar Repositório", style="Accent.TButton",
                    command=self.build_repo).pack(side="right", padx=(0, 6))
+        ttk.Button(toolbar, text="✨ Auto-Categorizar",
+                   command=self.trigger_auto_categorize).pack(side="right", padx=(6, 6))
 
         # ── Table Notebook ──────────────────────────────────────────────────
         self.notebook = ttk.Notebook(top)
@@ -479,6 +485,74 @@ class App(tk.Tk):
             "institution": self.var_institution.get().strip() or "PUCRS",
         }
 
+    def trigger_auto_categorize(self):
+        """Dispara a categorização por LLM em uma Thread separada."""
+        if not self.entries:
+            messagebox.showinfo(APP_NAME, "Nenhum arquivo na lista para categorizar.")
+            return
+
+        meta = self._course_meta()
+        if not meta:
+            return
+
+        sp = self.subject_store.get(meta["course_name"])
+        if not sp or (not sp.syllabus and not getattr(sp, "teaching_plan", "")):
+            messagebox.showwarning(APP_NAME, "A matéria selecionada não possui Plano de Ensino ou Cronograma salvos para fazer o pareamento.")
+            return
+
+        provider = self.config_obj.get("default_ai_provider", "openai")
+        openai_key = self.config_obj.get("openai_api_key", "")
+        gemini_key = self.config_obj.get("gemini_api_key", "")
+        
+        llm = LLMCategorizer(provider, openai_key, gemini_key)
+        if not llm.is_configured():
+            messagebox.showwarning(APP_NAME, "Por favor, configure sua chave de API (OpenAI ou Gemini) em ⚙ Configurações antes de usar esta função.")
+            return
+
+        self._set_status(f"Iniciando Auto-Categorização via {provider.upper()}...")
+        threading.Thread(target=self._run_auto_categorize_worker, args=(llm, meta, sp, False), daemon=True).start()
+
+    def _run_auto_categorize_worker(self, llm: LLMCategorizer, meta: dict, sp: SubjectProfile, fallback_build: bool):
+        course_name = meta.get("course_name", "")
+        syllabus = sp.syllabus
+        teaching_plan = getattr(sp, "teaching_plan", "")
+
+        updates = 0
+        total = len([e for e in self.entries if e.file_type == "pdf" and e.category in ("", "pdf")])
+        if total == 0 and not fallback_build:
+            self.after(0, lambda: self._set_status("Todos os PDFs já pareciam estar categorizados!"))
+            targets = [e for e in self.entries if e.file_type == "pdf"]
+        else:
+            targets = [e for e in self.entries if e.file_type == "pdf" and e.category in ("", "pdf")]
+
+        for entry in targets:
+            self.after(0, lambda e=entry: self._set_status(f"🔮 Categorizando: {e.title}..."))
+            
+            preview_text = ""
+            try:
+                doc = pymupdf.open(entry.source_path)
+                if doc.page_count > 0:
+                    preview_text = doc[0].get_text("text") + "\\n"
+                    if len(preview_text.strip()) < 100 and doc.page_count > 1:
+                        preview_text += doc[1].get_text("text")
+                doc.close()
+            except Exception as e:
+                logger.error(f"Erro ao ler PDF para auto-cat: {e}")
+                
+            if not preview_text.strip():
+                preview_text = entry.title
+                
+            cat = llm.categorize_pdf(course_name, syllabus, teaching_plan, preview_text)
+            if cat and cat != "pdf":
+                entry.category = cat
+                updates += 1
+                self.after(0, self.refresh_tree)
+
+        self.after(0, lambda: self._set_status(f"✨ Auto-Categorização concluída! {updates} itens atualizados."))
+        
+        if fallback_build:
+            self.after(100, lambda: self._continue_build_repo(meta))
+
     def build_repo(self):
         meta = self._course_meta()
         if meta is None:
@@ -487,9 +561,47 @@ class App(tk.Tk):
             if not messagebox.askyesno(APP_NAME, "Nenhum arquivo foi adicionado. Criar apenas a estrutura do repositório?"):
                 return
 
+        # Fallback Auto-categorization
+        needs_cat = any(e.category in ("", "pdf") for e in self.entries if e.file_type == "pdf")
+        if needs_cat:
+            provider = self.config_obj.get("default_ai_provider", "openai")
+            openai_key = self.config_obj.get("openai_api_key", "")
+            gemini_key = self.config_obj.get("gemini_api_key", "")
+            llm = LLMCategorizer(provider, openai_key, gemini_key)
+            if llm.is_configured():
+                sp = self.subject_store.get(meta["course_name"])
+                if sp and (sp.syllabus or getattr(sp, "teaching_plan", "")):
+                    self._set_status("Detectados PDFs sem categoria. Rodando auto-categorização pré-build...")
+                    self.update()
+                    threading.Thread(
+                        target=self._run_auto_categorize_worker, 
+                        args=(llm, meta, sp, True), 
+                        daemon=True
+                    ).start()
+                    return
+
+        self._continue_build_repo(meta)
+        
+    def _continue_build_repo(self, meta: dict):
         root_base = Path(self.var_repo_root.get().strip())
         repo_dir = root_base / meta["course_slug"]
-        self._set_status(f"Criando repositório em {repo_dir} ...")
+        manifest_path = repo_dir / "manifest.json"
+
+        # Detecta repositório existente
+        incremental = False
+        if manifest_path.exists() and self.entries:
+            answer = messagebox.askyesnocancel(
+                APP_NAME,
+                f"Repositório existente detectado em:\n{repo_dir}\n\n"
+                f"Deseja adicionar os novos arquivos (Sim)\n"
+                f"ou recriar do zero (Não)?\n\n"
+                f"Cancelar para abortar."
+            )
+            if answer is None:  # Cancel
+                return
+            incremental = answer  # True = incremental, False = full rebuild
+
+        self._set_status(f"{'Atualizando' if incremental else 'Criando'} repositório em {repo_dir} ...")
 
         try:
             # Gather student & subject for export
@@ -508,22 +620,64 @@ class App(tk.Tk):
                 student_profile=student_p,
                 subject_profile=active_subj,
             )
-            builder.build()
+
+            if incremental:
+                builder.incremental_build()
+            else:
+                builder.build()
         except Exception:
             traceback_str = traceback.format_exc()
             self._set_status("Erro ao criar repositório.")
             messagebox.showerror(APP_NAME, f"Erro ao criar repositório:\n\n{traceback_str}")
             return
 
-        self._set_status(f"✓ Repositório criado em: {repo_dir}")
-        messagebox.showinfo(
-            APP_NAME,
-            f"Repositório criado com sucesso em:\n{repo_dir}\n\n"
-            f"Próximo passo recomendado:\n"
-            f"1. Revisar manual-review/\n"
-            f"2. Escolher a melhor saída entre base e avançada\n"
-            f"3. Promover conteúdo curado\n"
-            f"4. Subir no GitHub"
-        )
+        n_entries = len(self.entries)
+        self._set_status(f"✓ Repositório {'atualizado' if incremental else 'criado'} em: {repo_dir}")
+
+        if incremental:
+            messagebox.showinfo(
+                APP_NAME,
+                f"Repositório atualizado com sucesso em:\n{repo_dir}\n\n"
+                f"{n_entries} arquivo(s) na fila (novos foram adicionados).\n\n"
+                f"CURRENT_STATE.md foi regenerado.\n"
+                f"Próximo passo: dar push no GitHub."
+            )
+        else:
+            messagebox.showinfo(
+                APP_NAME,
+                f"Repositório criado com sucesso em:\n{repo_dir}\n\n"
+                f"Próximo passo recomendado:\n"
+                f"1. Revisar manual-review/\n"
+                f"2. Escolher a melhor saída entre base e avançada\n"
+                f"3. Promover conteúdo curado\n"
+                f"4. Subir no GitHub"
+            )
+        self._refresh_backlog()
+
+    def open_existing_repo(self):
+        """Abre um repositório existente e carrega seus dados."""
+        path = filedialog.askdirectory(title="Selecione a pasta raiz do repositório")
+        if not path:
+            return
+        repo_dir = Path(path)
+        manifest_path = repo_dir / "manifest.json"
+        if not manifest_path.exists():
+            messagebox.showerror(APP_NAME, f"Nenhum manifest.json encontrado em:\n{repo_dir}\n\nEsta pasta não parece ser um repositório gerado.")
+            return
+        try:
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            course = data.get("course", {})
+            self.var_course_name.set(course.get("course_name", ""))
+            self.var_course_slug.set(course.get("course_slug", ""))
+            self.var_professor.set(course.get("professor", ""))
+            self.var_institution.set(course.get("institution", "PUCRS"))
+            self.var_semester.set(course.get("semester", ""))
+            # A pasta pai é o repo_root
+            self.var_repo_root.set(str(repo_dir.parent))
+            self._set_status(f"Repositório carregado: {course.get('course_name', repo_dir.name)}")
+            self._refresh_backlog()
+        except Exception as e:
+            messagebox.showerror(APP_NAME, f"Erro ao carregar repositório:\n{e}")
 
 

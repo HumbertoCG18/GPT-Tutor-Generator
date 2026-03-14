@@ -489,8 +489,642 @@ curado e reutilizável para um GPT Tutor acadêmico.
 
         write_text(self.root_dir / "system" / "PDF_CURATION_GUIDE.md", pdf_curation_guide())
         write_text(self.root_dir / "system" / "BACKEND_ARCHITECTURE.md", backend_architecture_md())
-def generate_system_prompt(course_meta: dict, student_profile: dict, subject_profile: dict) -> str:
-    return "Tutor System Prompt"
+        write_text(self.root_dir / "system" / "BACKEND_POLICY.yaml", backend_policy_yaml(self.options))
+        write_text(self.root_dir / "README.md", root_readme(self.course_meta))
+        write_text(self.root_dir / ".gitignore", "__pycache__/\n*.pyc\n.DS_Store\nThumbs.db\n")
+
+        # System Prompt Generation
+        sprompt = generate_system_prompt(self.course_meta, self.student_profile, self.subject_profile)
+        write_text(self.root_dir / "INSTRUCOES_DO_GPT.txt", sprompt)
+
+        # Student profile
+        if self.student_profile:
+            sp = self.student_profile
+            write_text(
+                self.root_dir / "student" / "STUDENT_PROFILE.md",
+                f"""---
+nickname: {sp.nickname or sp.full_name}
+semester: {sp.semester}
+institution: {sp.institution}
+---
+
+# Perfil do Aluno
+
+- **Nome:** {sp.full_name}
+- **Apelido:** {sp.nickname or sp.full_name}
+- **Semestre:** {sp.semester}
+- **Instituição:** {sp.institution}
+
+## Personalidade do Tutor
+
+{sp.personality}
+""",
+            )
+
+        # Syllabus (cronograma)
+        if self.subject_profile and self.subject_profile.syllabus:
+            subj = self.subject_profile
+            write_text(
+                self.root_dir / "course" / "SYLLABUS.md",
+                f"""---
+course: {subj.name}
+professor: {subj.professor}
+schedule: {subj.schedule}
+---
+
+# Cronograma — {subj.name}
+
+**Horário:** {subj.schedule}
+
+{subj.syllabus}
+""",
+            )
+
+    def _write_source_registry(self, manifest: Dict[str, object]) -> None:
+        lines = [
+            f"generated_at: {manifest['generated_at']}",
+            "sources:",
+        ]
+        for item in manifest["entries"]:
+            lines.extend(
+                [
+                    f"  - id: {item['id']}",
+                    f"    title: {json_str(item['title'])}",
+                    f"    category: {item['category']}",
+                    f"    file_type: {item['file_type']}",
+                    f"    source_path: {json_str(item['source_path'])}",
+                    f"    raw_target: {json_str(item.get('raw_target'))}",
+                    f"    processing_mode: {item.get('processing_mode', 'auto')}",
+                    f"    effective_profile: {item.get('effective_profile', 'general')}",
+                    f"    include_in_bundle: {str(item.get('include_in_bundle', True)).lower()}",
+                    f"    professor_signal: {json_str(item.get('professor_signal', ''))}",
+                ]
+            )
+        write_text(self.root_dir / "course" / "SOURCE_REGISTRY.yaml", "\n".join(lines) + "\n")
+
+    def _write_bundle_seed(self, manifest: Dict[str, object]) -> None:
+        selected = [e for e in manifest["entries"] if e.get("include_in_bundle")]
+        seed = {
+            "generated_at": manifest["generated_at"],
+            "course_slug": self.course_meta["course_slug"],
+            "bundle_candidates": [
+                {
+                    "id": e["id"],
+                    "title": e["title"],
+                    "category": e["category"],
+                    "preferred_manual_review": e.get("manual_review"),
+                    "base_markdown": e.get("base_markdown"),
+                    "advanced_markdown": e.get("advanced_markdown"),
+                    "effective_profile": e.get("effective_profile"),
+                }
+                for e in selected
+            ],
+        }
+        write_text(self.root_dir / "build" / "gpt-knowledge" / "bundle.seed.json", json.dumps(seed, indent=2, ensure_ascii=False))
+
+    def _write_build_report(self, manifest: Dict[str, object]) -> None:
+        report = [
+            "# BUILD_REPORT",
+            "",
+            f"- generated_at: {manifest['generated_at']}",
+            f"- pymupdf: {HAS_PYMUPDF}",
+            f"- pymupdf4llm: {HAS_PYMUPDF4LLM}",
+            f"- pdfplumber: {HAS_PDFPLUMBER}",
+            f"- docling_cli: {bool(DOCLING_CLI)}",
+            f"- marker_cli: {bool(MARKER_CLI)}",
+            "",
+            "## Regras práticas",
+            "- PDFs simples: camada base costuma bastar.",
+            "- PDFs com fórmulas, scans, layout complexo ou provas: camada avançada + revisão manual.",
+            "- Imagens, tabelas e previews são preservados como artefatos auxiliares.",
+            "- O conhecimento final do tutor deve sair de `manual-review/` e depois ser promovido para `content/`, `exercises/` e `exams/`.",
+        ]
+        write_text(self.root_dir / "BUILD_REPORT.md", "\n".join(report) + "\n")
+
+    def _process_entry(self, entry: FileEntry) -> Dict[str, object]:
+        item: Dict[str, object] = {
+            "id": entry.id(),
+            "title": entry.title,
+            "category": entry.category,
+            "file_type": entry.file_type,
+            "source_path": entry.source_path,
+            "tags": entry.tags,
+            "notes": entry.notes,
+            "professor_signal": entry.professor_signal,
+            "include_in_bundle": entry.include_in_bundle,
+            "relevant_for_exam": entry.relevant_for_exam,
+            "processing_mode": entry.processing_mode,
+            "document_profile": entry.document_profile,
+            "preferred_backend": entry.preferred_backend,
+        }
+
+        src = Path(entry.source_path)
+        if entry.file_type != "url" and not src.exists():
+            raise FileNotFoundError(f"Source file not found: {src}")
+
+        if entry.file_type == "url":
+            item.update(self._process_url(entry))
+            return item
+
+        safe_name = f"{entry.id()}{src.suffix.lower()}"
+
+        if entry.file_type == "pdf":
+            raw_target = self.root_dir / "raw" / "pdfs" / entry.category / safe_name
+            ensure_dir(raw_target.parent)
+            shutil.copy2(src, raw_target)
+            item["raw_target"] = safe_rel(raw_target, self.root_dir)
+            item.update(self._process_pdf(entry, raw_target))
+        else:
+            image_category = entry.category if entry.category in IMAGE_CATEGORIES else "other"
+            raw_target = self.root_dir / "raw" / "images" / image_category / safe_name
+            ensure_dir(raw_target.parent)
+            shutil.copy2(src, raw_target)
+            item["raw_target"] = safe_rel(raw_target, self.root_dir)
+            item.update(self._process_image(entry, raw_target))
+
+        return item
+
+    def _process_url(self, entry: FileEntry) -> Dict[str, object]:
+        item: Dict[str, object] = {
+            "document_report": None, "pipeline_decision": None,
+            "base_markdown": None, "advanced_markdown": None,
+            "advanced_backend": None, "base_backend": "url_fetcher",
+            "manual_review": None,
+        }
+        url_dest = self.root_dir / "staging" / "markdown-auto" / "url_fetcher"
+        ensure_dir(url_dest)
+        md_file = url_dest / f"{entry.id()}.md"
+        url = entry.source_path
+        markdown_content = f"# {entry.title}\n\n**Link:** [{url}]({url})\n\n"
+        try:
+            import urllib.request
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req, timeout=10) as response:
+                content_type = response.info().get_content_charset('utf-8')
+                html = response.read().decode(content_type, errors='replace')
+            try:
+                from bs4 import BeautifulSoup
+                soup = BeautifulSoup(html, "html.parser")
+                for script in soup(["script", "style"]):
+                    script.extract()
+                text = soup.get_text(separator='\n', strip=True)
+                markdown_content += "## Conteúdo Extraído\n\n```text\n"
+                markdown_content += text[:15000]
+                if len(text) > 15000:
+                    markdown_content += "\n... (conteúdo truncado)\n"
+                markdown_content += "\n```\n"
+            except ImportError:
+                markdown_content += "> BeautifulSoup não instalado. Conteúdo de texto não foi processado.\n"
+            self.logs.append({"entry": entry.id(), "step": "url_fetch", "status": "ok"})
+        except Exception as e:
+            logger.warning(f"Failed to fetch content from URL {url}: {e}")
+            markdown_content += f"> Não foi possível carregar o conteúdo: {e}\n"
+            self.logs.append({"entry": entry.id(), "step": "url_fetch", "status": "error", "error": str(e)})
+        write_text(md_file, markdown_content)
+        item["base_markdown"] = safe_rel(md_file, self.root_dir)
+        manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
+        write_text(manual, manual_pdf_review_template(entry, item))
+        item["manual_review"] = safe_rel(manual, self.root_dir)
+        return item
+
+    def _process_pdf(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
+        item: Dict[str, object] = {
+            "document_report": None, "pipeline_decision": None,
+            "base_markdown": None, "advanced_markdown": None,
+            "advanced_backend": None, "base_backend": None,
+            "images_dir": None, "tables_dir": None,
+            "page_previews_dir": None, "table_detection_dir": None,
+            "manual_review": None,
+        }
+        report = self._profile_pdf(raw_target, entry)
+        decision = self.selector.decide(entry, report)
+        item["document_report"] = asdict(report)
+        item["pipeline_decision"] = asdict(decision)
+        item["effective_profile"] = decision.effective_profile
+        item["base_backend"] = decision.base_backend
+        item["advanced_backend"] = decision.advanced_backend
+        ctx = BackendContext(self.root_dir, raw_target, entry, report)
+        if decision.base_backend:
+            backend = self.selector.backends[decision.base_backend]
+            result = backend.run(ctx)
+            self._log_backend_result(entry.id(), result)
+            if result.status == "ok":
+                item["base_markdown"] = result.markdown_path
+            else:
+                logger.warning("Base backend %s failed for %s: %s", decision.base_backend, entry.id(), result.error)
+                item.setdefault("backend_errors", []).append({decision.base_backend: result.error})
+        if decision.advanced_backend:
+            backend = self.selector.backends[decision.advanced_backend]
+            result = backend.run(ctx)
+            self._log_backend_result(entry.id(), result)
+            if result.status == "ok":
+                item["advanced_markdown"] = result.markdown_path
+                item["advanced_asset_dir"] = result.asset_dir
+                item["advanced_metadata_path"] = result.metadata_path
+            else:
+                logger.warning("Advanced backend %s failed for %s: %s", decision.advanced_backend, entry.id(), result.error)
+                item.setdefault("backend_errors", []).append({decision.advanced_backend: result.error})
+        if HAS_PYMUPDF and entry.extract_images:
+            try:
+                images_dir = self.root_dir / "staging" / "assets" / "images" / entry.id()
+                count = self._extract_pdf_images(raw_target, images_dir, pages=parse_page_range(entry.page_range))
+                item["images_dir"] = safe_rel(images_dir, self.root_dir)
+                self.logs.append({"entry": entry.id(), "step": "extract_images", "status": "ok", "count": count})
+            except Exception as e:
+                logger.error("Image extraction failed for %s: %s", entry.id(), e)
+                self.logs.append({"entry": entry.id(), "step": "extract_images", "status": "error", "error": str(e)})
+        if HAS_PYMUPDF and entry.export_page_previews:
+            try:
+                previews_dir = self.root_dir / "staging" / "assets" / "page-previews" / entry.id()
+                count = self._export_page_previews(raw_target, previews_dir, pages=parse_page_range(entry.page_range))
+                item["page_previews_dir"] = safe_rel(previews_dir, self.root_dir)
+                self.logs.append({"entry": entry.id(), "step": "page_previews", "status": "ok", "count": count})
+            except Exception as e:
+                logger.error("Page preview export failed for %s: %s", entry.id(), e)
+                self.logs.append({"entry": entry.id(), "step": "page_previews", "status": "error", "error": str(e)})
+        if entry.extract_tables:
+            if HAS_PDFPLUMBER:
+                try:
+                    tables_dir = self.root_dir / "staging" / "assets" / "tables" / entry.id()
+                    count = self._extract_tables_pdfplumber(raw_target, tables_dir, pages=parse_page_range(entry.page_range))
+                    item["tables_dir"] = safe_rel(tables_dir, self.root_dir)
+                    self.logs.append({"entry": entry.id(), "step": "extract_tables_pdfplumber", "status": "ok", "count": count})
+                except Exception as e:
+                    logger.error("Table extraction (pdfplumber) failed for %s: %s", entry.id(), e)
+                    self.logs.append({"entry": entry.id(), "step": "extract_tables_pdfplumber", "status": "error", "error": str(e)})
+            if HAS_PYMUPDF:
+                try:
+                    det_dir = self.root_dir / "staging" / "assets" / "table-detections" / entry.id()
+                    count = self._detect_tables_pymupdf(raw_target, det_dir, pages=parse_page_range(entry.page_range))
+                    item["table_detection_dir"] = safe_rel(det_dir, self.root_dir)
+                    self.logs.append({"entry": entry.id(), "step": "detect_tables_pymupdf", "status": "ok", "count": count})
+                except Exception as e:
+                    logger.error("Table detection (pymupdf) failed for %s: %s", entry.id(), e)
+                    self.logs.append({"entry": entry.id(), "step": "detect_tables_pymupdf", "status": "error", "error": str(e)})
+        manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
+        write_text(manual, manual_pdf_review_template(entry, item))
+        item["manual_review"] = safe_rel(manual, self.root_dir)
+        return item
+
+    def _process_image(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
+        item: Dict[str, object] = {"manual_review": None}
+        manual = self.root_dir / "manual-review" / "images" / f"{entry.id()}.md"
+        write_text(manual, manual_image_review_template(entry, raw_target, self.root_dir))
+        item["manual_review"] = safe_rel(manual, self.root_dir)
+        self.logs.append({"entry": entry.id(), "step": "image_import", "status": "ok"})
+        return item
+
+    def _profile_pdf(self, pdf_path: Path, entry: FileEntry) -> DocumentProfileReport:
+        report = DocumentProfileReport()
+        if not HAS_PYMUPDF:
+            report.suggested_profile = entry.document_profile if entry.document_profile != "auto" else "general"
+            report.notes.append("PyMuPDF não disponível; perfil automático limitado.")
+            return report
+        doc = pymupdf.open(str(pdf_path))
+        pages = parse_page_range(entry.page_range) or list(range(doc.page_count))
+        pages = [p for p in pages if 0 <= p < doc.page_count]
+        report.page_count = len(pages)
+        total_text = 0
+        total_images = 0
+        table_candidates = 0
+        low_text_pages = 0
+        for page_num in pages:
+            page = doc[page_num]
+            text = page.get_text("text") or ""
+            total_text += len(text.strip())
+            images = page.get_images(full=True) or []
+            total_images += len(images)
+            try:
+                tables = page.find_tables()
+                table_candidates += len(getattr(tables, "tables", []) or [])
+            except Exception:
+                pass
+            if len(text.strip()) < 60 and len(images) > 0:
+                low_text_pages += 1
+        report.text_chars = total_text
+        report.images_count = total_images
+        report.table_candidates = table_candidates
+        report.text_density = round(total_text / max(report.page_count, 1), 2)
+        report.suspected_scan = (low_text_pages / max(report.page_count, 1)) >= 0.5 and total_images > 0
+        if entry.document_profile != "auto":
+            report.suggested_profile = entry.document_profile
+            report.notes.append("Perfil definido manualmente pelo usuário.")
+            return report
+        name_hint = f"{entry.title} {entry.tags} {entry.notes}".lower()
+        if report.suspected_scan:
+            report.suggested_profile = "scanned"
+            report.notes.append("Muitas páginas com pouco texto e imagens presentes: provável scan.")
+        elif entry.category == "provas" or "prova" in name_hint or "questão" in name_hint or "questao" in name_hint:
+            report.suggested_profile = "exam_pdf"
+            report.notes.append("Detectado como material de prova/exame.")
+        elif entry.formula_priority or re.search(r"\b(latex|equação|equation|fórmula|teorema|prova formal|indução)\b", name_hint):
+            report.suggested_profile = "math_heavy"
+            report.notes.append("Sinais de conteúdo matemático/formal.")
+        elif report.table_candidates >= 2 or report.images_count >= max(3, report.page_count):
+            report.suggested_profile = "layout_heavy"
+            report.notes.append("Layout com tabelas/imagens relevantes.")
+        else:
+            report.suggested_profile = "general"
+            report.notes.append("Documento geral detectado.")
+        return report
+
+    def _log_backend_result(self, entry_id: str, result: BackendRunResult) -> None:
+        payload = {
+            "entry": entry_id, "step": result.name, "layer": result.layer,
+            "status": result.status, "markdown_path": result.markdown_path,
+            "asset_dir": result.asset_dir, "metadata_path": result.metadata_path,
+            "notes": result.notes,
+        }
+        if result.command:
+            payload["command"] = result.command
+        if result.error:
+            payload["error"] = result.error
+        self.logs.append(payload)
+
+    def _extract_pdf_images(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
+        ensure_dir(out_dir)
+        doc = pymupdf.open(str(pdf_path))
+        target_pages = pages or list(range(doc.page_count))
+        count = 0
+        for page_num in target_pages:
+            if not (0 <= page_num < doc.page_count):
+                continue
+            page = doc[page_num]
+            for img_idx, img in enumerate(page.get_images(full=True), start=1):
+                xref = img[0]
+                image = doc.extract_image(xref)
+                ext = image.get("ext", "png")
+                data = image["image"]
+                fname = out_dir / f"page-{page_num + 1:03d}-img-{img_idx:02d}.{ext}"
+                fname.write_bytes(data)
+                count += 1
+        return count
+
+    def _export_page_previews(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
+        ensure_dir(out_dir)
+        doc = pymupdf.open(str(pdf_path))
+        target_pages = pages or list(range(doc.page_count))
+        count = 0
+        for page_num in target_pages:
+            if not (0 <= page_num < doc.page_count):
+                continue
+            page = doc[page_num]
+            pix = page.get_pixmap(matrix=pymupdf.Matrix(1.5, 1.5))
+            out = out_dir / f"page-{page_num + 1:03d}.png"
+            pix.save(str(out))
+            count += 1
+        return count
+
+    def _extract_tables_pdfplumber(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
+        ensure_dir(out_dir)
+        count = 0
+        with pdfplumber.open(str(pdf_path)) as pdf:
+            selected = pages or list(range(len(pdf.pages)))
+            for page_num in selected:
+                if not (0 <= page_num < len(pdf.pages)):
+                    continue
+                page = pdf.pages[page_num]
+                tables = page.extract_tables() or []
+                for table_idx, table in enumerate(tables, start=1):
+                    normalized = [
+                        [("" if cell is None else str(cell).strip()) for cell in row]
+                        for row in table if row and any(cell not in (None, "", " ") for cell in row)
+                    ]
+                    if not normalized:
+                        continue
+                    csv_path = out_dir / f"page-{page_num + 1:03d}-table-{table_idx:02d}.csv"
+                    ensure_dir(csv_path.parent)
+                    with csv_path.open("w", newline="", encoding="utf-8") as f:
+                        writer = csv.writer(f)
+                        writer.writerows(normalized)
+                    md_path = out_dir / f"page-{page_num + 1:03d}-table-{table_idx:02d}.md"
+                    write_text(md_path, rows_to_markdown_table(normalized))
+                    count += 1
+        return count
+
+    def _detect_tables_pymupdf(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
+        ensure_dir(out_dir)
+        doc = pymupdf.open(str(pdf_path))
+        selected = pages or list(range(doc.page_count))
+        count = 0
+        for page_num in selected:
+            if not (0 <= page_num < doc.page_count):
+                continue
+            page = doc[page_num]
+            try:
+                tables = page.find_tables()
+                found = getattr(tables, "tables", []) or []
+                if not found:
+                    continue
+                serializable = []
+                for idx, tbl in enumerate(found, start=1):
+                    bbox = getattr(tbl, "bbox", None)
+                    rows = []
+                    try:
+                        extracted = tbl.extract() or []
+                        rows = [["" if cell is None else str(cell) for cell in row] for row in extracted]
+                    except Exception:
+                        pass
+                    serializable.append({"table_index": idx, "bbox": list(bbox) if bbox else None, "rows": rows})
+                meta_path = out_dir / f"page-{page_num + 1:03d}.json"
+                write_text(meta_path, json.dumps(serializable, indent=2, ensure_ascii=False))
+                count += len(serializable)
+            except Exception:
+                continue
+        return count
+
+    def incremental_build(self) -> None:
+        """Adiciona novos arquivos a um repositório existente sem recriar do zero."""
+        manifest_path = self.root_dir / "manifest.json"
+        if not manifest_path.exists():
+            logger.info("No existing manifest found, falling back to full build.")
+            self.build()
+            return
+
+        logger.info("Incremental build at %s", self.root_dir)
+
+        # Carrega manifest existente
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            manifest = json.load(f)
+
+        existing_sources = {e.get("source_path") for e in manifest.get("entries", [])}
+
+        # Filtra apenas novos entries
+        new_entries = [e for e in self.entries if e.source_path not in existing_sources]
+        if not new_entries:
+            logger.info("No new entries to process.")
+            return
+
+        logger.info("Processing %d new entries (skipping %d existing).",
+                     len(new_entries), len(self.entries) - len(new_entries))
+
+        # Garante que a estrutura existe
+        self._create_structure()
+
+        # Processa apenas os novos
+        for entry in new_entries:
+            logger.info("Processing new entry: %s (%s)", entry.title, entry.file_type)
+            item_result = self._process_entry(entry)
+            manifest["entries"].append(item_result)
+
+        # Atualiza timestamp e logs
+        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+        manifest.setdefault("logs", []).extend(self.logs)
+
+        # Reescreve tudo que depende do manifest
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        self._write_source_registry(manifest)
+        self._write_bundle_seed(manifest)
+        self._write_build_report(manifest)
+        logger.info("Incremental build completed. %d new entries added.", len(new_entries))
+
+
+# ---------------------------------------------------------------------------
+# Free functions (templates, prompts)
+# ---------------------------------------------------------------------------
+
+def generate_system_prompt(course_meta: dict, student_profile=None, subject_profile=None) -> str:
+    """Gera as instruções completas do GPT Tutor, incluindo política de handoff."""
+    course_name = course_meta.get("course_name", "Curso")
+    professor = course_meta.get("professor", "")
+    institution = course_meta.get("institution", "PUCRS")
+    semester = course_meta.get("semester", "")
+    slug = course_meta.get("course_slug", "")
+
+    student_section = ""
+    if student_profile:
+        nick = student_profile.nickname or student_profile.full_name or "Aluno"
+        student_section = f"""
+## Sobre o Aluno
+- Chame o aluno de **{nick}**.
+- Semestre atual: {student_profile.semester}
+- Instituição: {student_profile.institution}
+
+### Estilo preferido
+{student_profile.personality or 'Nenhuma preferência definida.'}
+"""
+
+    subject_section = ""
+    if subject_profile:
+        subject_section = f"""
+## Detalhes da Matéria
+- Horário: {subject_profile.schedule}
+- Modo padrão: {subject_profile.default_mode}
+"""
+        if subject_profile.syllabus:
+            subject_section += f"\n### Cronograma\n{subject_profile.syllabus}\n"
+        if getattr(subject_profile, "teaching_plan", ""):
+            subject_section += f"\n### Plano de Ensino (Ementa, Objetivos)\n{subject_profile.teaching_plan}\n"
+
+    return f"""# Instruções do GPT Tutor — {course_name}
+
+Você é um tutor acadêmico especializado na disciplina **{course_name}**,
+ministrada pelo professor **{professor}** na **{institution}**, semestre **{semester}**.
+
+## Seu Papel
+- Ajude o aluno a entender os conceitos da disciplina.
+- Use os materiais do repositório (pasta `content/`, `exercises/`, `exams/`) como fonte de verdade.
+- Quando referenciar conteúdo, cite o arquivo de origem.
+- Priorize materiais marcados como "relevante para prova".
+- Adapte suas explicações ao estilo preferido do aluno.
+
+## Fontes de Conhecimento
+O repositório **{slug}** contém:
+- `content/`: material curado de aulas
+- `exercises/`: listas de exercícios
+- `exams/`: provas anteriores e gabaritos
+- `build/gpt-knowledge/bundle.seed.json`: índice de todo o material disponível
+{student_section}{subject_section}
+## Política de Continuidade — CURRENT_STATE e Handoff
+
+### REGRA FUNDAMENTAL
+Este chat é **temporário**. O repositório no GitHub é **permanente**.
+Tudo que for decidido aqui deve ser salvo no repositório.
+
+### Dois Mecanismos de Preservação
+
+#### 1. CURRENT_STATE.md — Fonte de Verdade Operacional
+É um **arquivo do repositório**. Representa o estado vivo e oficial do projeto.
+Registra:
+- Estado atual do projeto
+- Decisões vigentes
+- Próximos passos e pendências abertas
+- Versão atual da arquitetura
+- Arquivos e histórico de mudanças
+
+**Quando gerar/atualizar:** quando o aluno pedir, ou quando decisões importantes
+forem tomadas que precisam ser registradas. Salvar como `CURRENT_STATE.md` na
+raiz do repositório e dar push no GitHub.
+
+Modelo sugerido:
+```markdown
+# Estado Atual — {course_name}
+
+## Dados da Disciplina
+- Nome: {course_name}
+- Professor: {professor}
+- Semestre: {semester}
+- Instituição: {institution}
+
+## Decisões Vigentes
+<!-- Listar decisões técnicas e arquiteturais já fechadas -->
+
+## Arquivos Relevantes
+<!-- Tabela com arquivos do repositório e status -->
+
+## Pendências Abertas
+<!-- Coisas que ainda precisam ser feitas -->
+
+## Próximos Passos
+<!-- O que fazer em seguida -->
+```
+
+#### 2. Handoff — Pacote de Transferência entre Chats
+É uma **mensagem de passagem de contexto**, mais curta e situacional.
+Serve para abrir um novo chat sem perder o fio da conversa atual.
+
+**Quando gerar:**
+- **Proativamente**, quando o chat começar a ficar longo e lento.
+- Quando o aluno pedir.
+
+O handoff deve conter:
+- **Contexto:** o que estava sendo discutido nesta sessão
+- **Decisões tomadas:** o que foi decidido e fechado
+- **Arquivos criados/modificados:** lista de mudanças feitas
+- **Próximos passos:** exatamente o que falta fazer
+- **Prompt de continuação:** texto colável para iniciar o próximo chat
+
+O handoff **evita** que a próxima conversa:
+- Volte ao zero
+- Repita decisões já fechadas
+- Perca contexto importante
+- Gere inconsistência
+
+### Ao receber um CURRENT_STATE.md ou Handoff de outra sessão:
+1. Leia o conteúdo fornecido.
+2. **Assuma o estado descrito como verdade.**
+3. **Não repita trabalho já feito.**
+4. Continue de onde parou.
+
+### O que deve estar no repositório (não só no chat):
+- Arquitetura e schemas (JSON/YAML)
+- Decisões técnicas
+- Roadmap e pendências
+- Templates e políticas do tutor
+- CURRENT_STATE.md atualizado
+
+### Fluxo Ideal
+```
+Chat GPT conversa e implementa
+→ Salva decisões no GitHub
+→ Quando decisões importantes são tomadas, atualiza CURRENT_STATE.md
+→ Quando o chat crescer demais e ficar lento, gera um handoff
+→ Novo chat recebe handoff + CURRENT_STATE.md
+→ Continua sem perder progresso
+```
+"""
+
+
 
 def root_readme(course_meta: dict) -> str:
     return f"""# {course_meta.get('course_name', 'Curso')}
@@ -503,6 +1137,7 @@ Repositório gerado pelo **Academic Tutor Repo Builder V3**.
 - `manual-review/`: revisão guiada
 - `content/`, `exercises/`, `exams/`: conhecimento curado
 - `build/gpt-knowledge/`: bundle inicial para GPT
+- `CURRENT_STATE.md`: memória operacional (handoff entre chats)
 
 ## Fluxo recomendado
 1. Adicionar PDFs e imagens
@@ -510,6 +1145,7 @@ Repositório gerado pelo **Academic Tutor Repo Builder V3**.
 3. Revisar `manual-review/`
 4. Promover conteúdo curado para `content/`, `exercises/` e `exams/`
 5. Atualizar `build/gpt-knowledge/`
+6. Manter `CURRENT_STATE.md` atualizado
 
 ## Backends em camadas
 - Base: PyMuPDF4LLM / PyMuPDF
@@ -517,8 +1153,8 @@ Repositório gerado pelo **Academic Tutor Repo Builder V3**.
 - Revisão humana obrigatória para materiais críticos de prova
 """
 
+
 def wrap_frontmatter(meta: dict, body: str) -> str:
-    from src.utils.helpers import json_str
     header = ["---"]
     for k, v in meta.items():
         header.append(f"{k}: {json_str(v)}")
@@ -541,3 +1177,165 @@ def rows_to_markdown_table(rows: list) -> str:
     for row in fixed[1:]:
         lines.append("| " + " | ".join(row) + " |")
     return "\n".join(lines) + "\n"
+
+
+def manual_pdf_review_template(entry: FileEntry, item: Dict[str, object]) -> str:
+    report = item.get("document_report") or {}
+    decision = item.get("pipeline_decision") or {}
+    return f"""---
+id: {entry.id()}
+title: {json_str(entry.title)}
+type: manual_pdf_review
+category: {entry.category}
+source_pdf: {json_str(item.get('raw_target'))}
+processing_mode: {json_str(entry.processing_mode)}
+document_profile: {json_str(entry.document_profile)}
+effective_profile: {json_str(item.get('effective_profile'))}
+base_backend: {json_str(item.get('base_backend'))}
+advanced_backend: {json_str(item.get('advanced_backend'))}
+base_markdown: {json_str(item.get('base_markdown'))}
+advanced_markdown: {json_str(item.get('advanced_markdown'))}
+---
+
+# Revisão Manual — {entry.title}
+
+## Perfil detectado
+- Perfil efetivo: `{item.get('effective_profile')}`
+- Páginas: `{report.get('page_count')}`
+- Texto: `{report.get('text_chars')}` chars
+- Imagens: `{report.get('images_count')}`
+- Tabelas: `{report.get('table_candidates')}`
+- Scan: `{report.get('suspected_scan')}`
+
+## Pipeline
+- Modo: `{decision.get('processing_mode')}`
+- Base: `{decision.get('base_backend')}`
+- Avançado: `{decision.get('advanced_backend')}`
+
+## Checklist
+- [ ] Conferir títulos e subtítulos
+- [ ] Corrigir ordem de leitura
+- [ ] Revisar fórmulas e converter para LaTeX
+- [ ] Revisar tabelas exportadas
+- [ ] Verificar imagens/figuras importantes
+- [ ] Registrar pistas sobre o professor
+
+## Markdown corrigido
+<!-- Cole aqui a versão corrigida -->
+
+## Destino curado sugerido
+- [ ] `content/curated/`
+- [ ] `exercises/lists/`
+- [ ] `exams/past-exams/`
+"""
+
+
+def manual_image_review_template(entry: FileEntry, raw_target: Path, root_dir: Path) -> str:
+    image_path = safe_rel(raw_target, root_dir)
+    return f"""---
+id: {entry.id()}
+title: {json_str(entry.title)}
+type: manual_image_review
+category: {entry.category}
+source_image: {json_str(image_path)}
+---
+
+# Revisão Manual — Imagem
+
+## Metadados
+- Tags: `{entry.tags}`
+- Relevante para prova: `{entry.relevant_for_exam}`
+- Sinal do professor: `{entry.professor_signal}`
+
+## Transcrição fiel
+<!-- Escreva o texto da imagem aqui -->
+
+## Destino curado sugerido
+- [ ] `exams/past-exams/`
+- [ ] `content/curated/`
+"""
+
+
+def pdf_curation_guide() -> str:
+    return """# PDF_CURATION_GUIDE
+
+## Regra central
+PDF bruto não é conhecimento final.
+Ele é insumo para:
+1. extração automática
+2. revisão manual
+3. curadoria por função pedagógica
+
+## Quando usar cada camada
+- Base: PDFs simples, texto corrido, listas e cronogramas.
+- Avançada: fórmulas, tabelas difíceis, layout complexo, scans, provas.
+- Manual assisted: qualquer material que influencie a lógica de prova.
+
+## Artefatos gerados
+- `raw/`: arquivo original
+- `staging/`: extração automática
+- `manual-review/`: revisão humana guiada
+- `content/` e `exams/`: conhecimento curado
+"""
+
+
+def backend_architecture_md() -> str:
+    return """# BACKEND_ARCHITECTURE
+
+## Visão geral
+A V3 usa arquitetura de backends em camadas.
+
+```text
+PDF bruto
+ -> camada base
+ -> camada avançada (quando necessário)
+ -> extração de artefatos
+ -> revisão manual guiada
+ -> conteúdo curado
+```
+
+## Camada base
+- `pymupdf4llm`: Markdown rápido para PDFs digitais.
+- `pymupdf`: fallback bruto.
+
+## Camada avançada
+- `docling`: OCR, fórmulas, tabelas e imagens referenciadas.
+- `marker`: equações, inline math, tabelas e imagens.
+
+## Modos de processamento
+- `quick`: só camada base.
+- `high_fidelity`: base + avançada.
+- `manual_assisted`: base + artefatos + revisão humana.
+- `auto`: decide pelo perfil do documento.
+
+## Regra de ouro
+O tutor não deve consumir o PDF bruto como fonte final.
+A fonte final deve ser o Markdown curado derivado da revisão manual.
+"""
+
+
+def backend_policy_yaml(options: Dict[str, object]) -> str:
+    return f"""version: 3
+policy:
+  default_processing_mode: {options.get('default_processing_mode', 'auto')}
+  default_ocr_language: {json_str(options.get('default_ocr_language', 'por,eng'))}
+  require_manual_review_for:
+    - math_heavy
+    - scanned
+    - exam_pdf
+    - layout_heavy
+  base_layer_priority:
+    - pymupdf4llm
+    - pymupdf
+  advanced_layer_priority:
+    - docling
+    - marker
+  asset_pipeline:
+    extract_images: true
+    export_page_previews: true
+    extract_tables: true
+  promotion_rule: |
+    Nenhum arquivo de staging é conhecimento final.
+    O conhecimento final deve sair de manual-review/ e depois ser promovido.
+"""
+
