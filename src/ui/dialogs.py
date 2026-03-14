@@ -1070,8 +1070,31 @@ class MarkdownPreviewWindow(tk.Toplevel):
 
         # Populate
         self._md_files: List[Path] = []
+        pdf_md_paths = set()
+        
+        manifest_path = self._repo_dir / "manifest.json"
+        if manifest_path.exists():
+            try:
+                import json
+                with open(manifest_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                for entry in data.get("entries", []):
+                    if entry.get("file_type") == "pdf":
+                        for key in ["base_markdown", "advanced_markdown", "manual_review"]:
+                            if val := entry.get(key):
+                                pdf_md_paths.add(str(Path(val)))
+            except Exception as e:
+                print(f"Erro ao filtrar PDFs no preview: {e}")
+
         if self._repo_dir.exists():
-            self._md_files = sorted(self._repo_dir.rglob("*.md"))
+            all_mds = sorted(self._repo_dir.rglob("*.md"))
+            if pdf_md_paths:
+                # Filter to only show those listed in manifest as PDF outputs
+                self._md_files = [f for f in all_mds if str(f.relative_to(self._repo_dir)) in pdf_md_paths]
+            else:
+                # Fallback: if no manifest or no pdf entries, show all (original behavior)
+                self._md_files = all_mds
+
         for f in self._md_files:
             rel = f.relative_to(self._repo_dir)
             self._file_list.insert("end", str(rel))
