@@ -1025,6 +1025,109 @@ schedule: {subj.schedule}
         self._write_build_report(manifest)
         logger.info("Incremental build completed. %d new entries added.", len(new_entries))
 
+    def process_single(self, entry: "FileEntry") -> None:
+        """
+        Processa um único FileEntry e adiciona ao repositório existente.
+        Chamado pelo botão '⚡ Processar' da UI para processar item a item.
+        Se o repositório ainda não existir, cria a estrutura primeiro.
+        """
+        manifest_path = self.root_dir / "manifest.json"
+
+        # Garante estrutura mínima existente
+        self._create_structure()
+
+        # Carrega ou inicializa manifest
+        if manifest_path.exists():
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                manifest = json.load(f)
+        else:
+            # Primeiro item — cria manifest + arquivos raiz
+            self._write_root_files()
+            manifest = {
+                "app": APP_NAME,
+                "generated_at": datetime.now().isoformat(timespec="seconds"),
+                "course": self.course_meta,
+                "options": self.options,
+                "environment": {
+                    "python": sys.version.split()[0],
+                    "pymupdf": HAS_PYMUPDF,
+                    "pymupdf4llm": HAS_PYMUPDF4LLM,
+                    "pdfplumber": HAS_PDFPLUMBER,
+                    "docling_cli": bool(DOCLING_CLI),
+                    "marker_cli": bool(MARKER_CLI),
+                },
+                "entries": [],
+                "logs": [],
+            }
+
+        # Verifica duplicata por source_path
+        existing_sources = {e.get("source_path") for e in manifest.get("entries", [])}
+        if entry.source_path in existing_sources:
+            logger.info("Entry already processed, skipping: %s", entry.source_path)
+            return
+
+        logger.info("Processing single entry: %s (%s)", entry.title, entry.file_type)
+        item_result = self._process_entry(entry)
+        manifest["entries"].append(item_result)
+        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+        manifest.setdefault("logs", []).extend(self.logs)
+        self.logs = []  # reset para próxima chamada
+
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        self._write_source_registry(manifest)
+        self._write_bundle_seed(manifest)
+        self._write_build_report(manifest)
+        logger.info("Single entry processed: %s", entry.id())
+
+    def unprocess(self, entry_id: str) -> bool:
+        """
+        Remove todos os arquivos gerados para um entry_id e o retira do manifest.
+        Chamado pelo botão '🗑 Limpar Processamento' da UI.
+        Retorna True se removeu com sucesso, False caso contrário.
+        """
+        manifest_path = self.root_dir / "manifest.json"
+        if not manifest_path.exists():
+            logger.warning("No manifest found at %s", manifest_path)
+            return False
+
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            manifest = json.load(f)
+
+        target = next((e for e in manifest["entries"] if e.get("id") == entry_id), None)
+        if not target:
+            logger.warning("Entry not found in manifest: %s", entry_id)
+            return False
+
+        paths_to_remove: List[str] = []
+        for key in ["raw_target", "base_markdown", "advanced_markdown", "manual_review",
+                    "images_dir", "tables_dir", "page_previews_dir", "table_detection_dir",
+                    "advanced_asset_dir"]:
+            val = target.get(key)
+            if val:
+                paths_to_remove.append(val)
+
+        removed_count = 0
+        for rel_path in paths_to_remove:
+            full = self.root_dir / rel_path
+            try:
+                if full.is_dir():
+                    shutil.rmtree(full)
+                    removed_count += 1
+                elif full.is_file():
+                    full.unlink()
+                    removed_count += 1
+            except Exception as e:
+                logger.warning("Could not remove %s: %s", full, e)
+
+        manifest["entries"] = [e for e in manifest["entries"] if e.get("id") != entry_id]
+        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        self._write_source_registry(manifest)
+        self._write_bundle_seed(manifest)
+        logger.info("Unprocessed entry %s (%d files removed)", entry_id, removed_count)
+        return True
+
 
 # ---------------------------------------------------------------------------
 # Free functions — Claude Project instructions (replaces generate_system_prompt)
@@ -1091,10 +1194,22 @@ Identifique o modo da sessão pela frase do aluno e ajuste seu comportamento:
 
 - **`study`** — "quero entender X", "explica Y" → ensinar do zero
 - **`assignment`** — "tenho uma lista", "exercício X" → guiar sem entregar tudo
-- **`exam_prep`** — "prova semana que vem", "revisão" → foco em incidência e padrões
+- **`exam_prep`** — "prova semana que vem", "revisão" → foco em incidência e padrões; provas são cumulativas com peso maior no conteúdo mais recente
 - **`class_companion`** — "estou na aula", "o prof falou X" → resumir e contextualizar
 
 Se o modo não for claro, pergunte: *"Você quer entender o conceito, resolver um exercício ou revisar para prova?"*
+
+## Lógica de escopo das provas
+
+As provas são **cumulativas com peso progressivo**. Sempre que entrar em modo `exam_prep`, identifique qual prova está próxima via `course/SYLLABUS.md` e aplique esta lógica:
+
+| Prova | Escopo total | Foco principal | Foco secundário |
+|---|---|---|---|
+| P1 | Início → P1 | Todo o conteúdo (100%) | — |
+| P2 | Início → P2 | Conteúdo entre P1 e P2 (~70%) | Conteúdo pré-P1 (~30%) |
+| P3 | Início → P3 | Conteúdo entre P2 e P3 (~70%) | P1→P2 (~20%), pré-P1 (~10%) |
+
+**Regra:** comece sempre pelos tópicos do período mais recente. Sinalize claramente o que é foco principal vs secundário antes de iniciar a revisão.
 
 ## Regras fundamentais
 
@@ -1209,6 +1324,40 @@ Ao explicar um tópico, verifique `exams/EXAM_INDEX.md`:
 - Se o tópico tem alta incidência → mencione o padrão de cobrança
 - Se há questão representativa → use como exercício guiado
 - Se há erro recorrente registrado → alerte proativamente
+
+## Lógica de escopo das provas
+
+As provas seguem um modelo cumulativo com foco progressivo:
+
+```
+P1: cobre TODO o conteúdo do início até a P1
+        → foco: 100% no conteúdo pré-P1
+
+P2: cobre TODO o conteúdo do início até a P2
+        → foco primário:   conteúdo entre P1 e P2  (~70%)
+        → foco secundário: conteúdo pré-P1          (~30%)
+
+P3: cobre TODO o conteúdo do início até a P3
+        → foco primário:   conteúdo entre P2 e P3  (~70%)
+        → foco secundário: conteúdo entre P1 e P2  (~20%)
+        → foco terciário:  conteúdo pré-P1          (~10%)
+```
+
+**Regra prática para o tutor:**
+
+Ao entrar no modo `exam_prep`, identifique qual prova está próxima consultando
+`course/SYLLABUS.md`. Então:
+
+1. Liste todos os tópicos no escopo daquela prova
+2. Priorize os tópicos do período mais recente (entre a última prova e esta)
+3. Reserve tempo menor para revisar tópicos de provas anteriores
+4. Use provas antigas do mesmo tipo para calibrar o peso de cada assunto
+
+**Exemplo de resposta em exam_prep:**
+
+> "Para a P2, vou focar primeiro em [tópicos pós-P1] porque esse é o
+> conteúdo novo desta prova. Depois revisamos [tópicos pré-P1] que
+> costumam aparecer com menos peso mas ainda caem."
 """
 
 
@@ -1260,14 +1409,24 @@ O tutor opera em quatro modos. Cada modo tem objetivo, postura e formato de resp
 
 **Objetivo:** maximizar performance na avaliação
 
+**Primeira ação obrigatória:** identificar qual prova está próxima via `course/SYLLABUS.md`
+
+**Lógica de escopo (regra fundamental):**
+
+As provas são cumulativas mas com peso progressivo:
+
+- **P1** → cobre tudo do início até a P1. Foco total no conteúdo pré-P1.
+- **P2** → cobre tudo até a P2. Foco principal no conteúdo entre P1 e P2 (~70%). Conteúdo da P1 ainda cai, mas com menos peso (~30%).
+- **P3** → cobre tudo até a P3. Foco principal no conteúdo entre P2 e P3 (~70%). Conteúdo entre P1-P2 cai menos (~20%). Conteúdo pré-P1 cai pouco (~10%).
+
 **Postura:**
-- Priorize tópicos de alta incidência (consulte `exams/EXAM_INDEX.md`)
-- Use questões de provas anteriores como exercícios
-- Sinalize armadilhas e erros recorrentes
-- Foque no formato de cobrança do professor
+- Comece sempre pelos tópicos do período mais recente
+- Sinalize explicitamente quais tópicos são "foco principal" vs "foco secundário"
+- Use questões de provas anteriores para calibrar o nível de cobrança
+- Sinalize armadilhas e erros recorrentes de cada tópico
 
 **Formato de resposta:**
-- Mapa de tópicos por prioridade → Questão representativa → Armadilha → Checklist
+- Identificar a prova → Mapear escopo completo → Priorizar por período → Questão representativa → Armadilha → Checklist
 
 ---
 
@@ -1343,26 +1502,38 @@ def output_templates_md() -> str:
 ### exam_prep — Revisão para prova
 
 ```
-## Revisão: [Tópico]
+## Revisão para [P1 / P2 / P3] — [Disciplina]
 
-**Incidência:** Alta / Média / Baixa
-**Formato usual:** [dissertativa / múltipla escolha / cálculo]
+**Escopo desta prova:** [todo o conteúdo até esta prova]
 
-**O que saber:**
-- [ponto 1]
-- [ponto 2]
-- [ponto 3]
+### 🎯 Foco principal — conteúdo do período recente
+*Estes tópicos têm maior peso nesta prova*
 
-**Questão representativa:**
-[questão de prova anterior ou similar]
+- [Tópico A] | Incidência: Alta | Formato: [dissertativa/cálculo/múltipla]
+- [Tópico B] | Incidência: Alta
+- [Tópico C] | Incidência: Média
 
-**Armadilha comum:**
+### 📌 Foco secundário — conteúdo de provas anteriores
+*Ainda cai, mas com menos peso*
+
+- [Tópico X] — revisão rápida suficiente
+- [Tópico Y] — revisar definição e um exemplo
+
+### Questão representativa
+[questão de prova anterior ou similar ao estilo do professor]
+
+### Armadilha mais comum
 [o que os alunos erram com frequência]
 
-**Checklist:**
-- [ ] Sei definir
-- [ ] Sei calcular / aplicar
-- [ ] Sei identificar em questão
+### Checklist de prontidão
+Foco principal:
+- [ ] Sei definir [Tópico A]
+- [ ] Sei calcular / aplicar [Tópico A]
+- [ ] Identifiquei em questão de prova anterior
+
+Foco secundário:
+- [ ] Consigo lembrar a definição de [Tópico X]
+- [ ] Consigo resolver um exemplo básico de [Tópico X]
 ```
 
 ---
