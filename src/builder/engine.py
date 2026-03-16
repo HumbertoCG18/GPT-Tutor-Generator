@@ -31,6 +31,7 @@ import pdfplumber
 
 logger = logging.getLogger(__name__)
 
+# ---------------------------------------------------------------------------
 # Backend architecture
 # ---------------------------------------------------------------------------
 
@@ -57,18 +58,6 @@ class ExtractionBackend:
     def run(self, ctx: BackendContext) -> BackendRunResult:
         raise NotImplementedError
 
-    def _fix_image_links(self, body: str, abs_img_dir: Path, rel_prefix: str) -> str:
-        """Converte caminhos absolutos em relativos no Markdown."""
-        abs_path_str = str(abs_img_dir.resolve())
-        # Replace absolute with relative (canonicalizing slashes)
-        res = body.replace(abs_path_str.replace("\\", "/"), rel_prefix)
-        res = res.replace(abs_path_str.replace("/", "\\"), rel_prefix)
-        res = res.replace(str(abs_img_dir.resolve()), rel_prefix)
-        # Fix potential escaped/mixed slashes
-        res = res.replace(rel_prefix + "\\", rel_prefix + "/")
-        res = res.replace(rel_prefix.replace("/", "\\"), rel_prefix)
-        return res
-
 
 class PyMuPDF4LLMBackend(ExtractionBackend):
     name = "pymupdf4llm"
@@ -82,20 +71,10 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
         ensure_dir(out_dir)
         out_path = out_dir / f"{ctx.entry_id}.md"
 
-        img_dir = ctx.root_dir / "staging" / "assets" / "inline-images" / ctx.entry_id
-        ensure_dir(img_dir)
-        
-        # relative path from md file to images
-        # md is in staging/markdown-auto/pymupdf4llm/id.md
-        # imgs are in staging/assets/inline-images/id/
-        # path is ../../assets/inline-images/id
-        rel_img_prefix = f"../../assets/inline-images/{ctx.entry_id}"
-
         kwargs = {
             "pages": ctx.pages,
             "write_images": bool(ctx.entry.preserve_pdf_images_in_markdown),
-            "image_path": str(img_dir.resolve()),
-            "write_tables": bool(ctx.entry.extract_tables),
+            "image_path": str((ctx.root_dir / "staging" / "assets" / "inline-images" / ctx.entry_id).resolve()),
             "force_ocr": bool(ctx.entry.force_ocr),
             "ocr_language": ctx.entry.ocr_language.replace(",", "+"),
             "page_separators": True,
@@ -111,19 +90,6 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
         else:
             body = md
 
-        # Post-process to make images relative
-        if kwargs.get("write_images"):
-            abs_path_str = str(img_dir.resolve())
-            # Handle both slashes
-            body = body.replace(abs_path_str.replace("\\", "/"), rel_img_prefix)
-            body = body.replace(abs_path_str.replace("/", "\\"), rel_img_prefix)
-            # And potentially the resolved path if it differs
-            body = body.replace(str(img_dir.resolve()), rel_img_prefix)
-            
-            # Re-fix internal links if they were escaped or used backslashes
-            # we want forward slashes in markdown usually
-            body = body.replace(rel_img_prefix.replace("/", "\\"), rel_img_prefix)
-
         write_text(out_path, wrap_frontmatter({
             "entry_id": ctx.entry_id,
             "title": ctx.entry.title,
@@ -137,8 +103,8 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
             layer=self.layer,
             status="ok",
             markdown_path=safe_rel(out_path, ctx.root_dir),
-            asset_dir=safe_rel(img_dir, ctx.root_dir) if ctx.entry.preserve_pdf_images_in_markdown else None,
-            notes=["Markdown gerado com PyMuPDF4LLM com links relativos."],
+            asset_dir=safe_rel(ctx.root_dir / "staging" / "assets" / "inline-images" / ctx.entry_id, ctx.root_dir) if ctx.entry.preserve_pdf_images_in_markdown else None,
+            notes=["Markdown gerado com PyMuPDF4LLM."],
         )
 
 
@@ -238,15 +204,6 @@ class DoclingCLIBackend(ExtractionBackend):
             "stderr_tail": (proc.stderr or "")[-2000:],
         }, indent=2, ensure_ascii=False))
 
-        if md_path and md_path.exists():
-            body = md_path.read_text(encoding="utf-8")
-            # Docling might use absolute paths in generated MD
-            # MD is in out_dir/filename.md
-            # Assets are in out_dir/ or subfolder
-            # Since we point to out_dir, relative is just "." or "./images"
-            body = self._fix_image_links(body, out_dir, ".")
-            write_text(md_path, body)
-
         return BackendRunResult(
             name=self.name,
             layer=self.layer,
@@ -255,7 +212,7 @@ class DoclingCLIBackend(ExtractionBackend):
             asset_dir=safe_rel(out_dir, ctx.root_dir),
             metadata_path=safe_rel(metadata_path, ctx.root_dir),
             command=cmd,
-            notes=["Saída avançada gerada com Docling CLI com links normalizados."],
+            notes=["Saída avançada gerada com Docling CLI."],
         )
 
 
@@ -295,13 +252,6 @@ class MarkerCLIBackend(ExtractionBackend):
 
         produced_md = sorted(out_dir.glob("**/*.md"))
         md_path = produced_md[0] if produced_md else None
-        
-        if md_path and md_path.exists():
-            body = md_path.read_text(encoding="utf-8")
-            # Marker usually puts assets in the same folder
-            body = self._fix_image_links(body, out_dir, ".")
-            write_text(md_path, body)
-
         metadata_path = out_dir / "marker-run.json"
         write_text(metadata_path, json.dumps({
             "command": cmd,
@@ -317,7 +267,7 @@ class MarkerCLIBackend(ExtractionBackend):
             asset_dir=safe_rel(out_dir, ctx.root_dir),
             metadata_path=safe_rel(metadata_path, ctx.root_dir),
             command=cmd,
-            notes=["Saída avançada gerada com Marker CLI com links normalizados."],
+            notes=["Saída avançada gerada com Marker CLI."],
         )
 
 
@@ -480,19 +430,19 @@ class RepoBuilder:
             "exams/exam-index",
             "student",
             "scripts",
-            "raw/pdfs/course-material",
-            "raw/pdfs/exams",
-            "raw/pdfs/exercise-lists",
-            "raw/pdfs/rubrics",
-            "raw/pdfs/schedule",
-            "raw/pdfs/references",
-            "raw/pdfs/photos-of-exams",
-            "raw/pdfs/answer-keys",
-            "raw/pdfs/other",
-            "raw/images/photos-of-exams",
-            "raw/images/exams",
-            "raw/images/course-material",
-            "raw/images/other",
+            "raw/pdfs/material-de-aula",
+            "raw/pdfs/provas",
+            "raw/pdfs/listas",
+            "raw/pdfs/gabaritos",
+            "raw/pdfs/cronograma",
+            "raw/pdfs/referencias",
+            "raw/pdfs/bibliografia",
+            "raw/pdfs/fotos-de-prova",
+            "raw/pdfs/outros",
+            "raw/images/fotos-de-prova",
+            "raw/images/provas",
+            "raw/images/material-de-aula",
+            "raw/images/outros",
             "staging/markdown-auto/pymupdf4llm",
             "staging/markdown-auto/pymupdf",
             "staging/markdown-auto/docling",
@@ -504,14 +454,15 @@ class RepoBuilder:
             "staging/assets/table-detections",
             "manual-review/pdfs",
             "manual-review/images",
-            "build/gpt-knowledge",
-            "student",
+            "build/claude-knowledge",
         ]
         for d in dirs:
             ensure_dir(self.root_dir / d)
 
     def _write_root_files(self) -> None:
         course_slug = self.course_meta["course_slug"]
+
+        # ── COURSE_IDENTITY ──────────────────────────────────────────
         write_text(
             self.root_dir / "course" / "COURSE_IDENTITY.md",
             f"""---
@@ -534,21 +485,31 @@ created_at: {datetime.now().isoformat(timespec='seconds')}
 
 ## Objetivo
 Este repositório organiza o conhecimento da disciplina em formato rastreável,
-curado e reutilizável para um GPT Tutor acadêmico.
+curado e reutilizável para um tutor acadêmico baseado no Claude.
 """,
         )
 
+        # ── System files ─────────────────────────────────────────────
         write_text(self.root_dir / "system" / "PDF_CURATION_GUIDE.md", pdf_curation_guide())
         write_text(self.root_dir / "system" / "BACKEND_ARCHITECTURE.md", backend_architecture_md())
         write_text(self.root_dir / "system" / "BACKEND_POLICY.yaml", backend_policy_yaml(self.options))
-        write_text(self.root_dir / "README.md", root_readme(self.course_meta))
-        write_text(self.root_dir / ".gitignore", "__pycache__/\n*.pyc\n.DS_Store\nThumbs.db\n")
+        write_text(self.root_dir / "system" / "TUTOR_POLICY.md", tutor_policy_md())
+        write_text(self.root_dir / "system" / "PEDAGOGY.md", pedagogy_md())
+        write_text(self.root_dir / "system" / "MODES.md", modes_md())
+        write_text(self.root_dir / "system" / "OUTPUT_TEMPLATES.md", output_templates_md())
 
-        # System Prompt Generation
-        sprompt = generate_system_prompt(self.course_meta, self.student_profile, self.subject_profile)
-        write_text(self.root_dir / "INSTRUCOES_DO_GPT.txt", sprompt)
+        # ── Course files ─────────────────────────────────────────────
+        write_text(self.root_dir / "course" / "COURSE_MAP.md",
+                   course_map_md(self.course_meta, self.subject_profile))
+        write_text(self.root_dir / "course" / "GLOSSARY.md",
+                   glossary_md(self.course_meta))
 
-        # Student profile
+        # ── Student files ─────────────────────────────────────────────
+        write_text(self.root_dir / "student" / "STUDENT_STATE.md",
+                   student_state_md(self.course_meta, self.student_profile))
+        write_text(self.root_dir / "student" / "PROGRESS_SCHEMA.md", progress_schema_md())
+
+        # ── Student profile ───────────────────────────────────────────
         if self.student_profile:
             sp = self.student_profile
             write_text(
@@ -566,13 +527,13 @@ institution: {sp.institution}
 - **Semestre:** {sp.semester}
 - **Instituição:** {sp.institution}
 
-## Personalidade do Tutor
+## Estilo de aprendizado preferido
 
 {sp.personality}
 """,
             )
 
-        # Syllabus (cronograma)
+        # ── Syllabus ──────────────────────────────────────────────────
         if self.subject_profile and self.subject_profile.syllabus:
             subj = self.subject_profile
             write_text(
@@ -590,6 +551,21 @@ schedule: {subj.schedule}
 {subj.syllabus}
 """,
             )
+
+        # ── Bibliography ──────────────────────────────────────────────
+        bib_entries = [e for e in self.entries if e.category == "bibliografia"]
+        write_text(self.root_dir / "content" / "BIBLIOGRAPHY.md",
+                   bibliography_md(self.course_meta, bib_entries))
+
+        # ── Root files ────────────────────────────────────────────────
+        write_text(self.root_dir / "README.md", root_readme(self.course_meta))
+        write_text(self.root_dir / ".gitignore", "__pycache__/\n*.pyc\n.DS_Store\nThumbs.db\n")
+
+        # ── Claude Project instructions (replaces INSTRUCOES_DO_GPT.txt)
+        instructions = generate_claude_project_instructions(
+            self.course_meta, self.student_profile, self.subject_profile
+        )
+        write_text(self.root_dir / "INSTRUCOES_CLAUDE_PROJETO.md", instructions)
 
     def _write_source_registry(self, manifest: Dict[str, object]) -> None:
         lines = [
@@ -618,6 +594,7 @@ schedule: {subj.schedule}
         seed = {
             "generated_at": manifest["generated_at"],
             "course_slug": self.course_meta["course_slug"],
+            "target_platform": "claude-projects",
             "bundle_candidates": [
                 {
                     "id": e["id"],
@@ -631,24 +608,34 @@ schedule: {subj.schedule}
                 for e in selected
             ],
         }
-        write_text(self.root_dir / "build" / "gpt-knowledge" / "bundle.seed.json", json.dumps(seed, indent=2, ensure_ascii=False))
+        write_text(
+            self.root_dir / "build" / "claude-knowledge" / "bundle.seed.json",
+            json.dumps(seed, indent=2, ensure_ascii=False)
+        )
 
     def _write_build_report(self, manifest: Dict[str, object]) -> None:
         report = [
             "# BUILD_REPORT",
             "",
             f"- generated_at: {manifest['generated_at']}",
+            f"- target_platform: Claude Projects",
             f"- pymupdf: {HAS_PYMUPDF}",
             f"- pymupdf4llm: {HAS_PYMUPDF4LLM}",
             f"- pdfplumber: {HAS_PDFPLUMBER}",
             f"- docling_cli: {bool(DOCLING_CLI)}",
             f"- marker_cli: {bool(MARKER_CLI)}",
             "",
-            "## Regras práticas",
+            "## Como usar com Claude Projects",
+            "1. Crie um Projeto no Claude.ai para esta disciplina",
+            "2. Cole o conteúdo de `INSTRUCOES_CLAUDE_PROJETO.md` no system prompt do Projeto",
+            "3. Conecte este repositório GitHub ao Projeto (Settings → GitHub)",
+            "4. Ou faça upload manual dos arquivos de `build/claude-knowledge/`",
+            "",
+            "## Regras práticas de curadoria",
             "- PDFs simples: camada base costuma bastar.",
             "- PDFs com fórmulas, scans, layout complexo ou provas: camada avançada + revisão manual.",
-            "- Imagens, tabelas e previews são preservados como artefatos auxiliares.",
-            "- O conhecimento final do tutor deve sair de `manual-review/` e depois ser promovido para `content/`, `exercises/` e `exams/`.",
+            "- O conhecimento final do tutor deve sair de `manual-review/` e depois ser promovido.",
+            "- Atualizar `student/STUDENT_STATE.md` após cada sessão de estudo.",
         ]
         write_text(self.root_dir / "BUILD_REPORT.md", "\n".join(report) + "\n")
 
@@ -686,7 +673,7 @@ schedule: {subj.schedule}
             item["raw_target"] = safe_rel(raw_target, self.root_dir)
             item.update(self._process_pdf(entry, raw_target))
         else:
-            image_category = entry.category if entry.category in IMAGE_CATEGORIES else "other"
+            image_category = entry.category if entry.category in IMAGE_CATEGORIES else "outros"
             raw_target = self.root_dir / "raw" / "images" / image_category / safe_name
             ensure_dir(raw_target.parent)
             shutil.copy2(src, raw_target)
@@ -734,7 +721,7 @@ schedule: {subj.schedule}
         write_text(md_file, markdown_content)
         item["base_markdown"] = safe_rel(md_file, self.root_dir)
         manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
-        write_text(manual, manual_pdf_review_template(entry, item, markdown_content))
+        write_text(manual, manual_pdf_review_template(entry, item))
         item["manual_review"] = safe_rel(manual, self.root_dir)
         return item
 
@@ -812,19 +799,8 @@ schedule: {subj.schedule}
                 except Exception as e:
                     logger.error("Table detection (pymupdf) failed for %s: %s", entry.id(), e)
                     self.logs.append({"entry": entry.id(), "step": "detect_tables_pymupdf", "status": "error", "error": str(e)})
-        # Carregar conteúdo do MD (Avançado ou Base) para a revisão manual se existir
-        md_content = ""
-        try:
-            target_md = item.get("advanced_markdown") or item.get("base_markdown")
-            if target_md:
-                target_md_path = self.root_dir / target_md
-                if target_md_path.exists():
-                    md_content = target_md_path.read_text(encoding="utf-8")
-        except Exception as e:
-            logger.warning(f"Failed to read markdown content for review of {entry.id()}: {e}")
-
         manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
-        write_text(manual, manual_pdf_review_template(entry, item, md_content))
+        write_text(manual, manual_pdf_review_template(entry, item))
         item["manual_review"] = safe_rel(manual, self.root_dir)
         return item
 
@@ -959,6 +935,8 @@ schedule: {subj.schedule}
                     with csv_path.open("w", newline="", encoding="utf-8") as f:
                         writer = csv.writer(f)
                         writer.writerows(normalized)
+                    md_path = out_dir / f"page-{page_num + 1:03d}-table-{table_idx:02d}.md"
+                    write_text(md_path, rows_to_markdown_table(normalized))
                     count += 1
         return count
 
@@ -1002,14 +980,10 @@ schedule: {subj.schedule}
             return
 
         logger.info("Incremental build at %s", self.root_dir)
-
-        # Carrega manifest existente
         with open(manifest_path, "r", encoding="utf-8") as f:
             manifest = json.load(f)
 
         existing_sources = {e.get("source_path") for e in manifest.get("entries", [])}
-
-        # Filtra apenas novos entries
         new_entries = [e for e in self.entries if e.source_path not in existing_sources]
         if not new_entries:
             logger.info("No new entries to process.")
@@ -1018,292 +992,701 @@ schedule: {subj.schedule}
         logger.info("Processing %d new entries (skipping %d existing).",
                      len(new_entries), len(self.entries) - len(new_entries))
 
-        # Garante que a estrutura existe
         self._create_structure()
 
-        # Processa apenas os novos
         for entry in new_entries:
             logger.info("Processing new entry: %s (%s)", entry.title, entry.file_type)
             item_result = self._process_entry(entry)
             manifest["entries"].append(item_result)
 
-        # Atualiza timestamp e logs
         manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
         manifest.setdefault("logs", []).extend(self.logs)
 
-        # Reescreve tudo que depende do manifest
+        # Atualiza bibliography com novos entries
+        bib_entries = [e for e in self.entries if e.category == "bibliografia"]
+        if bib_entries:
+            write_text(self.root_dir / "content" / "BIBLIOGRAPHY.md",
+                       bibliography_md(self.course_meta, bib_entries))
+
+        # Atualiza student state timestamp
+        state_path = self.root_dir / "student" / "STUDENT_STATE.md"
+        if state_path.exists():
+            content = state_path.read_text(encoding="utf-8")
+            content = re.sub(
+                r"last_updated:.*",
+                f"last_updated: {datetime.now().strftime('%Y-%m-%d')}",
+                content
+            )
+            state_path.write_text(content, encoding="utf-8")
+
         write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
         self._write_source_registry(manifest)
         self._write_bundle_seed(manifest)
         self._write_build_report(manifest)
         logger.info("Incremental build completed. %d new entries added.", len(new_entries))
 
-    def process_single(self, entry: FileEntry) -> Dict[str, object]:
-        """Processa um único item e atualiza o manifest."""
-        manifest_path = self.root_dir / "manifest.json"
-        if manifest_path.exists():
-            with open(manifest_path, "r", encoding="utf-8") as f:
-                manifest = json.load(f)
-        else:
-            self._create_structure()
-            manifest = {
-                "app": APP_NAME,
-                "generated_at": datetime.now().isoformat(timespec="seconds"),
-                "course": self.course_meta,
-                "options": self.options,
-                "entries": [],
-                "logs": []
-            }
-
-        logger.info("Processing single entry: %s", entry.title)
-        item_result = self._process_entry(entry)
-        
-        # Upsert in manifest
-        existing_idx = next((i for i, e in enumerate(manifest["entries"]) if e["id"] == entry.id()), None)
-        if existing_idx is not None:
-            manifest["entries"][existing_idx] = item_result
-        else:
-            manifest["entries"].append(item_result)
-            
-        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
-        manifest.setdefault("logs", []).extend(self.logs)
-
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
-        self._write_root_files() # Refresh core files if needed
-        self._write_source_registry(manifest)
-        self._write_bundle_seed(manifest)
-        self._write_build_report(manifest)
-        
-        return item_result
-
-    def unprocess(self, entry_id: str) -> bool:
-        """Remove todos os arquivos gerados para um ID e limpa do manifest."""
-        manifest_path = self.root_dir / "manifest.json"
-        if not manifest_path.exists():
-            return False
-
-        with open(manifest_path, "r", encoding="utf-8") as f:
-            manifest = json.load(f)
-
-        entry = next((e for e in manifest["entries"] if e["id"] == entry_id), None)
-        if not entry:
-            return False
-
-        # 1. Deletar arquivos físicos
-        paths_to_delete = [
-            entry.get("raw_target"),
-            entry.get("base_markdown"),
-            entry.get("advanced_markdown"),
-            entry.get("manual_review"),
-            entry.get("advanced_metadata_path")
-        ]
-        
-        # Deletar diretórios de assets
-        dirs_to_delete = [
-            entry.get("images_dir"),
-            entry.get("tables_dir"),
-            entry.get("page_previews_dir"),
-            entry.get("table_detection_dir"),
-            entry.get("advanced_asset_dir")
-        ]
-
-        for p in paths_to_delete:
-            if p:
-                full_p = self.root_dir / p
-                if full_p.exists():
-                    full_p.unlink()
-
-        for d in dirs_to_delete:
-            if d:
-                full_d = self.root_dir / d
-                if full_d.exists() and full_d.is_dir():
-                    shutil.rmtree(full_d)
-
-        # 2. Remover do manifest
-        manifest["entries"] = [e for e in manifest["entries"] if e["id"] != entry_id]
-        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
-
-        # 3. Reescrever manifest e metadados
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
-        self._write_source_registry(manifest)
-        self._write_bundle_seed(manifest)
-        self._write_build_report(manifest)
-        
-        return True
-
 
 # ---------------------------------------------------------------------------
-# Free functions (templates, prompts)
+# Free functions — Claude Project instructions (replaces generate_system_prompt)
 # ---------------------------------------------------------------------------
 
-def generate_system_prompt(course_meta: dict, student_profile=None, subject_profile=None) -> str:
-    """Gera as instruções completas do GPT Tutor, incluindo política de handoff."""
+def generate_claude_project_instructions(
+    course_meta: dict,
+    student_profile=None,
+    subject_profile=None
+) -> str:
+    """
+    Gera o system prompt no formato ideal para Claude Projects.
+    Resultado: INSTRUCOES_CLAUDE_PROJETO.md
+    Cole este conteúdo no campo 'Instructions' do Projeto no Claude.ai.
+    """
     course_name = course_meta.get("course_name", "Curso")
     professor = course_meta.get("professor", "")
-    institution = course_meta.get("institution", "PUCRS")
+    institution = course_meta.get("institution", "")
     semester = course_meta.get("semester", "")
-    slug = course_meta.get("course_slug", "")
 
-    student_section = ""
-    if student_profile:
-        nick = student_profile.nickname or student_profile.full_name or "Aluno"
-        student_section = f"""
-## Sobre o Aluno
-- Chame o aluno de **{nick}**.
-- Semestre atual: {student_profile.semester}
-- Instituição: {student_profile.institution}
+    nick = "Aluno"
+    personality_block = ""
+    if student_profile and student_profile.full_name:
+        nick = student_profile.nickname or student_profile.full_name
+        if student_profile.personality:
+            personality_block = f"\n**Estilo de aprendizado do aluno:** {student_profile.personality}\n"
 
-### Estilo preferido
-{student_profile.personality or 'Nenhuma preferência definida.'}
+    schedule_block = ""
+    if subject_profile and subject_profile.schedule:
+        schedule_block = f"\n**Horário:** {subject_profile.schedule}"
+
+    return f"""# Instruções do Tutor — {course_name}
+
+## Identidade
+
+Você é o tutor acadêmico da disciplina **{course_name}**, ministrada pelo professor **{professor}** na **{institution}**, semestre **{semester}**.
+
+Chame o aluno de **{nick}**.{personality_block}{schedule_block}
+
+## Arquivos de referência deste Projeto
+
+Antes de responder, consulte os arquivos relevantes abaixo. Eles são sua fonte de verdade — não invente conteúdo que não esteja neles.
+
+| Arquivo | Quando consultar |
+|---|---|
+| `system/TUTOR_POLICY.md` | Sempre — regras de comportamento |
+| `system/PEDAGOGY.md` | Ao explicar qualquer conceito |
+| `system/MODES.md` | Para identificar o modo da sessão |
+| `system/OUTPUT_TEMPLATES.md` | Para formatar respostas |
+| `course/COURSE_IDENTITY.md` | Dados gerais da disciplina |
+| `course/COURSE_MAP.md` | Ordem dos tópicos e dependências |
+| `course/SYLLABUS.md` | Cronograma e datas |
+| `course/GLOSSARY.md` | Terminologia da disciplina |
+| `student/STUDENT_STATE.md` | Estado atual do aluno — SEMPRE consulte |
+| `student/STUDENT_PROFILE.md` | Perfil e estilo do aluno |
+| `content/BIBLIOGRAPHY.md` | Referências bibliográficas |
+| `content/` | Material de aula curado |
+| `exercises/` | Listas de exercícios |
+| `exams/` | Provas anteriores e gabaritos |
+
+## Modos de operação
+
+Identifique o modo da sessão pela frase do aluno e ajuste seu comportamento:
+
+- **`study`** — "quero entender X", "explica Y" → ensinar do zero
+- **`assignment`** — "tenho uma lista", "exercício X" → guiar sem entregar tudo
+- **`exam_prep`** — "prova semana que vem", "revisão" → foco em incidência e padrões
+- **`class_companion`** — "estou na aula", "o prof falou X" → resumir e contextualizar
+
+Se o modo não for claro, pergunte: *"Você quer entender o conceito, resolver um exercício ou revisar para prova?"*
+
+## Regras fundamentais
+
+1. **Nunca invente** conteúdo não presente nos arquivos do Projeto
+2. **Sempre cite** o arquivo de origem ao referenciar conteúdo
+3. **Consulte `STUDENT_STATE.md`** antes de responder — não repita o que já foi explicado
+4. **Não entregue** a resposta de exercícios de imediato — guie o raciocínio
+5. **Ao final de cada sessão**, sugira atualizar `student/STUDENT_STATE.md`
+
+## Atualização de estado
+
+Ao final de cada sessão de estudo, gere um bloco para atualizar `student/STUDENT_STATE.md`:
+
+```
+## Atualização sugerida para STUDENT_STATE.md
+- Tópico estudado: [tópico]
+- Status: [compreendido / em progresso / com dúvidas]
+- Dúvidas pendentes: [lista]
+- Próximo passo sugerido: [próximo tópico]
+```
+
+O aluno faz o commit no GitHub. Na próxima sessão, o estado estará atualizado automaticamente.
 """
 
-    subject_section = ""
-    if subject_profile:
-        subject_section = f"""
-## Detalhes da Matéria
-- Horário: {subject_profile.schedule}
-- Modo padrão: {subject_profile.default_mode}
+
+# Mantém compatibilidade com código legado que chame generate_system_prompt
+def generate_system_prompt(course_meta, student_profile=None, subject_profile=None) -> str:
+    return generate_claude_project_instructions(course_meta, student_profile, subject_profile)
+
+
+# ---------------------------------------------------------------------------
+# Free functions — Pedagogical file generators
+# ---------------------------------------------------------------------------
+
+def tutor_policy_md() -> str:
+    return """# TUTOR_POLICY
+
+## Propósito
+Define as regras de comportamento do tutor acadêmico.
+Este arquivo é lido pelo Claude antes de responder qualquer pergunta.
+
+## Regras de comportamento
+
+### O que o tutor SEMPRE faz
+- Consulta `STUDENT_STATE.md` antes de explicar qualquer tópico
+- Cita o arquivo de origem ao usar conteúdo curado
+- Adapta a profundidade da explicação ao nível atual do aluno
+- Conecta cada conceito novo ao que o aluno já estudou
+- Sinaliza quando um tópico tem alta incidência em provas
+
+### O que o tutor NUNCA faz
+- Inventa conteúdo não presente nos arquivos do Projeto
+- Entrega a resposta de exercícios sem guiar o raciocínio
+- Avança para tópico novo sem confirmar entendimento do atual
+- Repete explicação idêntica se o aluno já entendeu
+- Ignora o progresso registrado em `STUDENT_STATE.md`
+
+### Ao receber uma pergunta ambígua
+Identifique o modo antes de responder:
+> "Você quer entender o conceito, resolver um exercício ou revisar para prova?"
+
+### Ao detectar erro conceitual do aluno
+1. Não corrija abruptamente
+2. Faça uma pergunta que revele a inconsistência
+3. Guie o aluno ao raciocínio correto
+4. Confirme a compreensão antes de continuar
+
+### Qualidade das respostas
+- Use LaTeX para fórmulas: `$f(x)$` inline, `$$...$$` em bloco
+- Use code blocks para código
+- Prefira exemplos concretos antes de definições formais
+- Máximo de 3 conceitos novos por resposta
 """
-        if subject_profile.syllabus:
-            subject_section += f"\n### Cronograma\n{subject_profile.syllabus}\n"
-        if getattr(subject_profile, "teaching_plan", ""):
-            subject_section += f"\n### Plano de Ensino (Ementa, Objetivos)\n{subject_profile.teaching_plan}\n"
 
-    return f"""# Instruções do GPT Tutor — {course_name}
 
-Você é um tutor acadêmico especializado na disciplina **{course_name}**,
-ministrada pelo professor **{professor}** na **{institution}**, semestre **{semester}**.
+def pedagogy_md() -> str:
+    return """# PEDAGOGY
 
-## Seu Papel
-- Ajude o aluno a entender os conceitos da disciplina.
-- Use os materiais do repositório (pasta `content/`, `exercises/`, `exams/`) como fonte de verdade.
-- Quando referenciar conteúdo, cite o arquivo de origem.
-- Priorize materiais marcados como "relevante para prova".
-- Adapte suas explicações ao estilo preferido do aluno.
+## Estrutura padrão de explicação
 
-## Fontes de Conhecimento
-O repositório **{slug}** contém:
-- `content/`: material curado de aulas
-- `exercises/`: listas de exercícios
-- `exams/`: provas anteriores e gabaritos
-- `build/gpt-knowledge/bundle.seed.json`: índice de todo o material disponível
-{student_section}{subject_section}
-## Política de Continuidade — CURRENT_STATE e Handoff
+Para cada conceito novo, siga esta sequência:
 
-### REGRA FUNDAMENTAL
-Este chat é **temporário**. O repositório no GitHub é **permanente**.
-Tudo que for decidido aqui deve ser salvo no repositório.
+1. **Contexto** — Por que este conceito existe? Que problema resolve?
+2. **Definição** — O que é, em termos precisos
+3. **Intuição** — Como pensar sobre isso sem formalismo
+4. **Exemplo mínimo** — O caso mais simples possível
+5. **Aplicação** — Como aparece na disciplina / em computação
+6. **Erros comuns** — O que os alunos costumam confundir
+7. **Exercício guiado** — Uma pergunta para o aluno aplicar
+8. **Resumo** — Uma frase que captura a essência
 
-### Dois Mecanismos de Preservação
+## Adaptação de profundidade
 
-#### 1. CURRENT_STATE.md — Fonte de Verdade Operacional
-É um **arquivo do repositório**. Representa o estado vivo e oficial do projeto.
-Registra:
-- Estado atual do projeto
-- Decisões vigentes
-- Próximos passos e pendências abertas
-- Versão atual da arquitetura
-- Arquivos e histórico de mudanças
+| Situação | Ajuste |
+|---|---|
+| Aluno nunca viu o tópico | Comece pelo contexto e intuição |
+| Aluno tem dúvida pontual | Vá direto ao ponto de dúvida |
+| Aluno preparando prova | Foque em erros comuns e formatos de questão |
+| Aluno resolvendo exercício | Guie sem revelar resposta |
 
-**Quando gerar/atualizar:** quando o aluno pedir, ou quando decisões importantes
-forem tomadas que precisam ser registradas. Salvar como `CURRENT_STATE.md` na
-raiz do repositório e dar push no GitHub.
+## Princípios pedagógicos
 
-Modelo sugerido:
+- **Concretude antes da abstração** — Exemplo antes de definição
+- **Andaime** — Construa sobre o que o aluno já sabe
+- **Verificação ativa** — Pergunte antes de continuar
+- **Espaçamento** — Reforce tópicos anteriores ao introduzir novos
+- **Erros como dados** — Erros do aluno revelam onde focar
+
+## Quando usar provas anteriores
+
+Ao explicar um tópico, verifique `exams/EXAM_INDEX.md`:
+- Se o tópico tem alta incidência → mencione o padrão de cobrança
+- Se há questão representativa → use como exercício guiado
+- Se há erro recorrente registrado → alerte proativamente
+"""
+
+
+def modes_md() -> str:
+    return """# MODES
+
+## Modos de operação do tutor
+
+O tutor opera em quatro modos. Cada modo tem objetivo, postura e formato de resposta diferentes.
+
+---
+
+## study — Aprendizado de conceito novo
+
+**Ativado por:** "quero entender X", "o que é Y", "explica Z"
+
+**Objetivo:** construir compreensão sólida do zero
+
+**Postura:**
+- Siga a estrutura completa de PEDAGOGY.md
+- Não assuma conhecimento prévio
+- Verifique compreensão antes de avançar
+
+**Formato de resposta:**
+- Contexto → Intuição → Definição → Exemplo → Exercício
+
+---
+
+## assignment — Resolução de exercício
+
+**Ativado por:** "tenho uma lista", "não entendi essa questão", "como resolver X"
+
+**Objetivo:** desenvolver habilidade de resolução sem dependência
+
+**Postura:**
+- NUNCA entregue a resposta diretamente
+- Identifique onde o aluno está travado
+- Faça perguntas que revelem o próximo passo
+- Entregue a resolução completa só depois que o aluno chegou lá
+
+**Formato de resposta:**
+- Diagnóstico → Pergunta socrática → Dica mínima → Confirmação
+
+---
+
+## exam_prep — Preparação para prova
+
+**Ativado por:** "tenho prova", "revisão", "o que cai", "resumo para prova"
+
+**Objetivo:** maximizar performance na avaliação
+
+**Postura:**
+- Priorize tópicos de alta incidência (consulte `exams/EXAM_INDEX.md`)
+- Use questões de provas anteriores como exercícios
+- Sinalize armadilhas e erros recorrentes
+- Foque no formato de cobrança do professor
+
+**Formato de resposta:**
+- Mapa de tópicos por prioridade → Questão representativa → Armadilha → Checklist
+
+---
+
+## class_companion — Acompanhamento de aula
+
+**Ativado por:** "estou na aula", "o professor falou X", "não entendi o que ele disse"
+
+**Objetivo:** apoio em tempo real durante ou logo após a aula
+
+**Postura:**
+- Respostas curtas e diretas
+- Contextualize o que o professor disse com o material curado
+- Não entre em detalhes desnecessários — o aluno está ocupado
+- Sugira registrar dúvidas para explorar depois
+
+**Formato de resposta:**
+- Resposta em até 3 parágrafos → Conexão com material → Sugestão de follow-up
+"""
+
+
+def output_templates_md() -> str:
+    return """# OUTPUT_TEMPLATES
+
+## Templates de resposta por modo
+
+### study — Conceito novo
+
+```
+## [Nome do conceito]
+
+**Por que existe:** [contexto em 1-2 frases]
+
+**Intuição:** [analogia ou imagem mental]
+
+**Definição formal:**
+[definição precisa, com LaTeX se necessário]
+
+**Exemplo mínimo:**
+[exemplo mais simples possível]
+
+**Como aparece na disciplina:**
+[conexão com o conteúdo do curso]
+
+**Cuidado com:**
+[erro mais comum]
+
+**Agora você:** [pergunta para o aluno aplicar o conceito]
+
+*Fonte: [arquivo de origem]*
+```
+
+---
+
+### assignment — Guia de exercício
+
+```
+## Analisando a questão
+
+[Identifica o que está sendo pedido]
+
+**O que você já tentou?** [pergunta ao aluno]
+
+*Se o aluno tentou algo:*
+> Você está no caminho certo / Tem um ponto a revisar em [etapa X]
+
+**Dica mínima:** [menor hint possível que desbloqueie o raciocínio]
+
+[Aguarda o aluno tentar antes de revelar mais]
+```
+
+---
+
+### exam_prep — Revisão para prova
+
+```
+## Revisão: [Tópico]
+
+**Incidência:** Alta / Média / Baixa
+**Formato usual:** [dissertativa / múltipla escolha / cálculo]
+
+**O que saber:**
+- [ponto 1]
+- [ponto 2]
+- [ponto 3]
+
+**Questão representativa:**
+[questão de prova anterior ou similar]
+
+**Armadilha comum:**
+[o que os alunos erram com frequência]
+
+**Checklist:**
+- [ ] Sei definir
+- [ ] Sei calcular / aplicar
+- [ ] Sei identificar em questão
+```
+
+---
+
+### class_companion — Suporte durante aula
+
+```
+**[Conceito mencionado]**
+
+[Explicação em 2-3 frases diretas]
+
+*Isso está em: [arquivo relevante]*
+
+Para explorar melhor depois: [sugestão rápida]
+```
+"""
+
+
+def course_map_md(course_meta: dict, subject_profile=None) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    syllabus_hint = ""
+    if subject_profile and subject_profile.syllabus:
+        syllabus_hint = f"\n> Cronograma completo disponível em `course/SYLLABUS.md`\n"
+
+    return f"""# COURSE_MAP — {course_name}
+
+> **Como usar:** Este arquivo define a ordem pedagógica dos tópicos.
+> O tutor consulta este mapa para saber o que o aluno já deveria ter visto
+> e o que ainda não foi apresentado formalmente.
+{syllabus_hint}
+## Estrutura do curso
+
+<!-- 
+INSTRUÇÃO PARA O MANTENEDOR:
+Preencha os tópicos abaixo em ordem pedagógica.
+Use indentação para indicar subtópicos.
+Marque dependências com "→ requer: [tópico]"
+-->
+
+### Unidade 1 — [Nome da unidade]
+- [ ] Tópico 1.1
+- [ ] Tópico 1.2
+- [ ] Tópico 1.3
+
+### Unidade 2 — [Nome da unidade]
+- [ ] Tópico 2.1 → requer: Tópico 1.2
+- [ ] Tópico 2.2
+- [ ] Tópico 2.3
+
+<!-- Continue adicionando unidades conforme o cronograma -->
+
+## Mapa de dependências
+
+```
+Tópico 1.1
+    └── Tópico 1.2
+            └── Tópico 2.1
+                    └── Tópico 2.2
+```
+
+## Tópicos de alta incidência em prova
+
+<!-- Preencha com base nas provas anteriores em exams/ -->
+
+| Tópico | Unidade | Incidência |
+|---|---|---|
+| [a preencher] | | |
+
+## Notas do professor
+
+<!-- Padrões observados no estilo de cobrança do professor -->
+- [a preencher após análise das provas anteriores]
+"""
+
+
+def glossary_md(course_meta: dict) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    return f"""# GLOSSARY — {course_name}
+
+> **Como usar:** Terminologia oficial da disciplina.
+> O tutor consulta este arquivo para usar os mesmos termos que o professor.
+> Inconsistência terminológica é fonte de confusão em provas.
+
+<!--
+INSTRUÇÃO PARA O MANTENEDOR:
+Adicione termos conforme aparecem nas aulas e materiais.
+Formato: ## Termo | Definição | Sinônimos | Cuidado com
+-->
+
+## Formato de entrada
+
+```
+## [Termo]
+**Definição:** [definição precisa usada nesta disciplina]
+**Sinônimos aceitos:** [outros nomes para o mesmo conceito]
+**Não confundir com:** [termo similar mas diferente]
+**Aparece em:** [unidades / tópicos onde é usado]
+```
+
+---
+
+## Termos
+
+<!-- Preencha conforme o conteúdo da disciplina for sendo curado -->
+
+"""
+
+
+def student_state_md(course_meta: dict, student_profile=None) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    nick = "Aluno"
+    if student_profile and student_profile.full_name:
+        nick = student_profile.nickname or student_profile.full_name
+
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    return f"""---
+course: {course_name}
+student: {nick}
+last_updated: {today}
+---
+
+# STUDENT_STATE — {nick}
+
+> **Como usar:** Este arquivo é a memória do tutor sobre o progresso do aluno.
+> Atualize após cada sessão de estudo. Faça commit no GitHub.
+> O tutor lê este arquivo SEMPRE antes de responder.
+
+## Posição atual no curso
+
+- **Último tópico estudado:** [a preencher]
+- **Unidade atual:** [a preencher]
+- **Status geral:** Início do semestre
+
+## Tópicos concluídos
+
+<!-- Marque com ✅ quando o aluno demonstrar compreensão sólida -->
+
+| Tópico | Status | Data |
+|---|---|---|
+| [a preencher] | | |
+
+## Dúvidas pendentes
+
+<!-- Registre dúvidas que ficaram em aberto para retomar -->
+
+- [ ] [a preencher]
+
+## Erros recorrentes
+
+<!-- Padrões de erro observados — ajuda o tutor a antecipar problemas -->
+
+| Tópico | Erro observado | Frequência |
+|---|---|---|
+| [a preencher] | | |
+
+## Próximos passos sugeridos
+
+1. [a preencher após primeira sessão]
+
+## Histórico de sessões
+
+| Data | Modo | Tópicos | Observações |
+|---|---|---|---|
+| {today} | — | Início | Repositório criado |
+"""
+
+
+def progress_schema_md() -> str:
+    return """# PROGRESS_SCHEMA
+
+## Schema do estado do aluno
+
+Define a estrutura esperada de `STUDENT_STATE.md`.
+Use este arquivo como referência ao atualizar o estado manualmente
+ou ao pedir ao Claude para gerar uma atualização.
+
+## Campos obrigatórios
+
+```yaml
+---
+course: string          # Nome da disciplina
+student: string         # Nome/apelido do aluno
+last_updated: YYYY-MM-DD
+---
+```
+
+## Status válidos para tópicos
+
+| Status | Significado |
+|---|---|
+| `não iniciado` | Ainda não foi estudado |
+| `em progresso` | Estudado mas não consolidado |
+| `com dúvidas` | Estudado com pontos em aberto |
+| `concluído` | Compreensão sólida demonstrada |
+| `revisão` | Concluído mas precisa reforçar para prova |
+
+## Ciclo de atualização recomendado
+
+```
+Sessão de estudo
+    → Claude sugere bloco de atualização
+    → Aluno revisa e ajusta
+    → Aluno faz commit no GitHub
+    → Na próxima sessão: Claude lê o estado atualizado
+```
+
+## Template de atualização (gerado pelo Claude ao final da sessão)
+
 ```markdown
-# Estado Atual — {course_name}
+## Atualização sugerida — [DATA]
 
-## Dados da Disciplina
-- Nome: {course_name}
-- Professor: {professor}
-- Semestre: {semester}
-- Instituição: {institution}
-
-## Decisões Vigentes
-<!-- Listar decisões técnicas e arquiteturais já fechadas -->
-
-## Arquivos Relevantes
-<!-- Tabela com arquivos do repositório e status -->
-
-## Pendências Abertas
-<!-- Coisas que ainda precisam ser feitas -->
-
-## Próximos Passos
-<!-- O que fazer em seguida -->
-```
-
-#### 2. Handoff — Pacote de Transferência entre Chats
-É uma **mensagem de passagem de contexto**, mais curta e situacional.
-Serve para abrir um novo chat sem perder o fio da conversa atual.
-
-**Quando gerar:**
-- **Proativamente**, quando o chat começar a ficar longo e lento.
-- Quando o aluno pedir.
-
-O handoff deve conter:
-- **Contexto:** o que estava sendo discutido nesta sessão
-- **Decisões tomadas:** o que foi decidido e fechado
-- **Arquivos criados/modificados:** lista de mudanças feitas
-- **Próximos passos:** exatamente o que falta fazer
-- **Prompt de continuação:** texto colável para iniciar o próximo chat
-
-O handoff **evita** que a próxima conversa:
-- Volte ao zero
-- Repita decisões já fechadas
-- Perca contexto importante
-- Gere inconsistência
-
-### Ao receber um CURRENT_STATE.md ou Handoff de outra sessão:
-1. Leia o conteúdo fornecido.
-2. **Assuma o estado descrito como verdade.**
-3. **Não repita trabalho já feito.**
-4. Continue de onde parou.
-
-### O que deve estar no repositório (não só no chat):
-- Arquitetura e schemas (JSON/YAML)
-- Decisões técnicas
-- Roadmap e pendências
-- Templates e políticas do tutor
-- CURRENT_STATE.md atualizado
-
-### Fluxo Ideal
-```
-Chat GPT conversa e implementa
-→ Salva decisões no GitHub
-→ Quando decisões importantes são tomadas, atualiza CURRENT_STATE.md
-→ Quando o chat crescer demais e ficar lento, gera um handoff
-→ Novo chat recebe handoff + CURRENT_STATE.md
-→ Continua sem perder progresso
+**Tópico estudado:** [nome]
+**Status:** [status válido acima]
+**Dúvidas identificadas:** [lista ou "nenhuma"]
+**Erros observados:** [lista ou "nenhum"]
+**Próximo passo:** [próximo tópico sugerido]
 ```
 """
 
 
+def bibliography_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+
+    lines = [
+        f"# BIBLIOGRAPHY — {course_name}",
+        "",
+        "> **Como usar:** Links e referências da disciplina.",
+        "> O tutor consulta este arquivo quando o aluno pede fontes",
+        "> ou quando uma explicação pode ser aprofundada com leitura adicional.",
+        "",
+        "## Como preencher uma entrada",
+        "",
+        "```markdown",
+        "### [Título da referência]",
+        "- **URL:** [link]",
+        "- **Tipo:** livro / artigo / documentação / vídeo / curso",
+        "- **Relevante para:** [tópicos ou unidades]",
+        "- **Acessível:** sim / não (paywall)",
+        "- **Nota:** [observação sobre o conteúdo]",
+        "```",
+        "",
+    ]
+
+    if entries:
+        lines.append("## Referências importadas")
+        lines.append("")
+        for entry in entries:
+            lines.append(f"### {entry.title}")
+            lines.append(f"- **URL:** {entry.source_path}")
+            if entry.tags:
+                lines.append(f"- **Tags:** {entry.tags}")
+            if entry.notes:
+                lines.append(f"- **Nota:** {entry.notes}")
+            if entry.professor_signal:
+                lines.append(f"- **Indicação do professor:** {entry.professor_signal}")
+            lines.append(f"- **Incluir no bundle:** {'sim' if entry.include_in_bundle else 'não'}")
+            lines.append("")
+    else:
+        lines.append("## Referências")
+        lines.append("")
+        lines.append("<!-- Adicione referências aqui ou importe links pelo app -->")
+        lines.append("")
+
+    lines.append("## Mapa de relevância por tópico")
+    lines.append("")
+    lines.append("<!-- Preencha após organizar as referências -->")
+    lines.append("")
+    lines.append("| Tópico | Referência principal | Acessível | Incidência em prova |")
+    lines.append("|---|---|---|---|")
+    lines.append("| [a preencher] | | | |")
+    lines.append("")
+
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Free functions — existing templates (unchanged)
+# ---------------------------------------------------------------------------
 
 def root_readme(course_meta: dict) -> str:
     return f"""# {course_meta.get('course_name', 'Curso')}
 
 Repositório gerado pelo **Academic Tutor Repo Builder V3**.
+Plataforma alvo: **Claude Projects** (claude.ai)
+
+## Como usar com Claude
+
+1. Crie um **Projeto** no Claude.ai com o nome desta disciplina
+2. Cole o conteúdo de `INSTRUCOES_CLAUDE_PROJETO.md` no campo **Instructions** do Projeto
+3. Conecte este repositório GitHub ao Projeto (aba Settings → GitHub)
+4. Inicie uma conversa — o Claude lerá os arquivos automaticamente
 
 ## Estrutura
-- `raw/`: materiais originais
-- `staging/`: extração automática
-- `manual-review/`: revisão guiada
-- `content/`, `exercises/`, `exams/`: conhecimento curado
-- `build/gpt-knowledge/`: bundle inicial para GPT
-- `CURRENT_STATE.md`: memória operacional (handoff entre chats)
+- `system/` — política do tutor, pedagogia, modos, templates
+- `course/` — identidade, mapa, cronograma, glossário, bibliografia
+- `student/` — estado atual, perfil, schema de progresso
+- `content/` — material de aula curado
+- `exercises/` — listas de exercícios
+- `exams/` — provas anteriores e gabaritos
+- `raw/` — materiais originais (PDFs, imagens)
+- `staging/` — extração automática (para revisão)
+- `manual-review/` — revisão humana guiada
+- `build/claude-knowledge/` — bundle para upload manual se necessário
+
+## Arquivos-chave para o tutor
+
+| Arquivo | Função |
+|---|---|
+| `INSTRUCOES_CLAUDE_PROJETO.md` | System prompt do Projeto |
+| `student/STUDENT_STATE.md` | Estado atual do aluno — atualizar após cada sessão |
+| `course/COURSE_MAP.md` | Preencher com os tópicos em ordem |
+| `course/GLOSSARY.md` | Preencher com terminologia da disciplina |
+| `content/BIBLIOGRAPHY.md` | Referências bibliográficas |
 
 ## Fluxo recomendado
-1. Adicionar PDFs e imagens
-2. Rodar extração automática
-3. Revisar `manual-review/`
-4. Promover conteúdo curado para `content/`, `exercises/` e `exams/`
-5. Atualizar `build/gpt-knowledge/`
-6. Manter `CURRENT_STATE.md` atualizado
 
-## Backends em camadas
-- Base: PyMuPDF4LLM / PyMuPDF
-- Avançado: Docling / Marker
-- Revisão humana obrigatória para materiais críticos de prova
+1. Rodar extração automática no app
+2. Revisar `manual-review/`
+3. Promover conteúdo curado para `content/`, `exercises/`, `exams/`
+4. Preencher `COURSE_MAP.md` e `GLOSSARY.md`
+5. Conectar ao Projeto no Claude.ai
+6. Após cada sessão de estudo: atualizar `student/STUDENT_STATE.md` e fazer push
 """
 
 
@@ -1332,7 +1715,7 @@ def rows_to_markdown_table(rows: list) -> str:
     return "\n".join(lines) + "\n"
 
 
-def manual_pdf_review_template(entry: FileEntry, item: Dict[str, object], markdown_content: str = "") -> str:
+def manual_pdf_review_template(entry: FileEntry, item: Dict[str, object]) -> str:
     report = item.get("document_report") or {}
     decision = item.get("pipeline_decision") or {}
     return f"""---
@@ -1373,12 +1756,8 @@ advanced_markdown: {json_str(item.get('advanced_markdown'))}
 - [ ] Verificar imagens/figuras importantes
 - [ ] Registrar pistas sobre o professor
 
-## Markdown extraído
-{markdown_content or '<!-- Nenhum conteúdo extraído disponível -->'}
-
-## Markdown corrigido (Gabarito)
-<!-- Use o espaço abaixo para salvar a versão final curada se desejar revisar aqui -->
-
+## Markdown corrigido
+<!-- Cole aqui a versão corrigida -->
 
 ## Destino curado sugerido
 - [ ] `content/curated/`
@@ -1433,6 +1812,10 @@ Ele é insumo para:
 - `staging/`: extração automática
 - `manual-review/`: revisão humana guiada
 - `content/` e `exams/`: conhecimento curado
+
+## Destino final no Claude Project
+Todo arquivo curado deve estar em formato Markdown limpo
+para ser lido eficientemente pelo Claude via integração GitHub.
 """
 
 
@@ -1449,6 +1832,7 @@ PDF bruto
  -> extração de artefatos
  -> revisão manual guiada
  -> conteúdo curado
+ -> Claude Project (via GitHub sync)
 ```
 
 ## Camada base
@@ -1467,12 +1851,14 @@ PDF bruto
 
 ## Regra de ouro
 O tutor não deve consumir o PDF bruto como fonte final.
-A fonte final deve ser o Markdown curado derivado da revisão manual.
+A fonte final deve ser o Markdown curado derivado da revisão manual,
+sincronizado com o Claude Project via GitHub.
 """
 
 
 def backend_policy_yaml(options: Dict[str, object]) -> str:
     return f"""version: 3
+target_platform: claude-projects
 policy:
   default_processing_mode: {options.get('default_processing_mode', 'auto')}
   default_ocr_language: {json_str(options.get('default_ocr_language', 'por,eng'))}
@@ -1493,6 +1879,6 @@ policy:
     extract_tables: true
   promotion_rule: |
     Nenhum arquivo de staging é conhecimento final.
-    O conhecimento final deve sair de manual-review/ e depois ser promovido.
+    O conhecimento final deve sair de manual-review/ e depois ser promovido
+    para content/, exercises/ ou exams/, e então sincronizado com o Claude Project.
 """
-

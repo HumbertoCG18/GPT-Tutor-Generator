@@ -6,6 +6,7 @@ import traceback
 import logging
 import threading
 from pathlib import Path
+from dataclasses import asdict
 import json
 import pymupdf
 
