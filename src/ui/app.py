@@ -14,7 +14,7 @@ from src.models.core import FileEntry, SubjectStore, StudentStore, SubjectProfil
 from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, slugify
 from src.builder.engine import RepoBuilder
 from src.ui.theme import ThemeManager, AppConfig
-from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, MarkdownPreviewWindow, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog
+from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, MarkdownPreviewWindow, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, CategorizationReviewDialog
 from src.services.llm import LLMCategorizer
 
 logger = logging.getLogger(__name__)
@@ -246,9 +246,33 @@ class App(tk.Tk):
         tk.Label(status_bar, text=env_text,
                  bg=p["header_bg"], fg=p["muted"], font=("Segoe UI", 9),
                  anchor="e", padx=10, pady=4).pack(side="right")
+        self._progress_bar = ttk.Progressbar(status_bar, mode="determinate", length=200)
+        # oculta por padrão; aparece durante operações longas
 
     def _set_status(self, msg: str):
         self._status_var.set(msg)
+        self.update_idletasks()
+
+    def _start_progress(self, total: int):
+        """Exibe a barra de progresso. total=0 → modo indeterminate (spinning)."""
+        self._progress_bar.stop()
+        if total > 0:
+            self._progress_bar.configure(mode="determinate", maximum=total, value=0)
+        else:
+            self._progress_bar.configure(mode="indeterminate", value=0)
+        self._progress_bar.pack(side="right", padx=(0, 120), pady=3)
+        if total == 0:
+            self._progress_bar.start(12)
+        self.update_idletasks()
+
+    def _step_progress(self, current: int, total: int):
+        self._progress_bar["value"] = current + 1
+        self.update_idletasks()
+
+    def _end_progress(self):
+        self._progress_bar.stop()
+        self._progress_bar.pack_forget()
+        self._progress_bar["value"] = 0
         self.update_idletasks()
 
     def _save_current_queue(self):
@@ -538,6 +562,7 @@ class App(tk.Tk):
             messagebox.showwarning(APP_NAME, "Por favor, configure sua chave de API (OpenAI ou Gemini) em ⚙ Configurações antes de usar esta função.")
             return
 
+        self._start_progress(0)  # indeterminate — não sabemos o total antes do worker
         self._set_status(f"Iniciando Auto-Categorização via {provider.upper()}...")
         threading.Thread(target=self._run_auto_categorize_worker, args=(llm, meta, sp, False), daemon=True).start()
 
@@ -546,21 +571,22 @@ class App(tk.Tk):
         syllabus = sp.syllabus
         teaching_plan = getattr(sp, "teaching_plan", "")
 
-        updates = 0
         targets = [
             e for e in self.entries
             if e.file_type == "pdf"
-            and (
-                e.category in ("", "pdf", "outros")
-                or not e.tags.strip()
-            )
+            and (e.category in ("", "pdf", "outros") or not e.tags.strip())
         ]
         if not targets and not fallback_build:
-            self.after(0, lambda: self._set_status("Todos os PDFs já pareciam estar categorizados!"))
             targets = [e for e in self.entries if e.file_type == "pdf"]
 
-        for entry in targets:
+        total = len(targets)
+        # Agora que sabemos o total, troca para progresso determinado
+        self.after(0, lambda t=total: self._start_progress(t))
+
+        results = []  # List[(entry, category, unit)]
+        for i, entry in enumerate(targets):
             self.after(0, lambda e=entry: self._set_status(f"🔮 Categorizando: {e.title}..."))
+            self.after(0, lambda c=i, t=total: self._step_progress(c, t))
 
             preview_text = ""
             try:
@@ -580,24 +606,43 @@ class App(tk.Tk):
             category = result.get("category", "")
             unit = result.get("unit", "")
 
+            if (category and category != "outros") or unit:
+                results.append((entry, category, unit))
+
+        self.after(0, lambda: self._show_categorize_review(results, meta, fallback_build))
+
+    def _show_categorize_review(self, results: list, meta: dict, fallback_build: bool):
+        self._end_progress()
+
+        if not results:
+            self._set_status("✨ Auto-Categorização: nenhuma classificação encontrada pela IA.")
+            if fallback_build:
+                self.after(100, lambda: self._continue_build_repo(meta))
+            return
+
+        dialog = CategorizationReviewDialog(self, results)
+
+        updates = 0
+        for entry, category, unit in dialog.confirmed:
             changed = False
             if category and category != "outros":
                 entry.category = category
                 changed = True
-
             if unit:
                 existing = [t.strip() for t in entry.tags.split(",") if t.strip()]
                 if unit not in existing:
                     existing.append(unit)
                     entry.tags = ", ".join(existing)
                 changed = True
-
             if changed:
                 updates += 1
-                self.after(0, self.refresh_tree)
 
-        self.after(0, lambda: self._set_status(f"✨ Auto-Categorização concluída! {updates} itens atualizados."))
-        
+        if updates:
+            self.refresh_tree()
+            self._save_current_queue()
+
+        self._set_status(f"✨ Auto-Categorização: {updates} item(s) atualizado(s).")
+
         if fallback_build:
             self.after(100, lambda: self._continue_build_repo(meta))
 
@@ -638,7 +683,7 @@ class App(tk.Tk):
         repo_dir = root_base / meta["course_slug"]
         manifest_path = repo_dir / "manifest.json"
 
-        # Detecta repositório existente
+        # Diálogos devem rodar na thread principal
         incremental = False
         if manifest_path.exists() and self.entries:
             answer = messagebox.askyesnocancel(
@@ -648,47 +693,56 @@ class App(tk.Tk):
                 f"ou recriar do zero (Não)?\n\n"
                 f"Cancelar para abortar."
             )
-            if answer is None:  # Cancel
+            if answer is None:
                 return
-            incremental = answer  # True = incremental, False = full rebuild
+            incremental = answer
 
+        total = len(self.entries)
+        self._start_progress(max(total, 1))
         self._set_status(f"{'Atualizando' if incremental else 'Criando'} repositório em {repo_dir} ...")
 
-        try:
-            # Gather student & subject for export
-            student_p = self.student_store.profile if self.student_store.profile.full_name else None
-            active_subj_name = self._var_active_subject.get()
-            active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
+        student_p = self.student_store.profile if self.student_store.profile.full_name else None
+        active_subj_name = self._var_active_subject.get()
+        active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
 
-            builder = RepoBuilder(
-                root_dir=repo_dir,
-                course_meta=meta,
-                entries=self.entries,
-                options={
-                    "default_processing_mode": self.var_default_mode.get(),
-                    "default_ocr_language": self.var_default_ocr_language.get(),
-                },
-                student_profile=student_p,
-                subject_profile=active_subj,
-            )
+        def on_progress(current, t, title):
+            self.after(0, lambda c=current, tot=t: self._step_progress(c, tot))
+            if title:
+                self.after(0, lambda c=current, tot=t, ti=title:
+                           self._set_status(f"({c + 1}/{tot}) Processando: {ti}..."))
 
-            if incremental:
-                builder.incremental_build()
-            else:
-                builder.build()
-        except Exception:
-            traceback_str = traceback.format_exc()
-            self._set_status("Erro ao criar repositório.")
-            messagebox.showerror(APP_NAME, f"Erro ao criar repositório:\n\n{traceback_str}")
-            return
+        def worker():
+            try:
+                builder = RepoBuilder(
+                    root_dir=repo_dir,
+                    course_meta=meta,
+                    entries=self.entries,
+                    options={
+                        "default_processing_mode": self.var_default_mode.get(),
+                        "default_ocr_language": self.var_default_ocr_language.get(),
+                    },
+                    student_profile=student_p,
+                    subject_profile=active_subj,
+                    progress_callback=on_progress,
+                )
+                if incremental:
+                    builder.incremental_build()
+                else:
+                    builder.build()
+                self.after(0, lambda: self._on_build_complete(meta, repo_dir, incremental))
+            except Exception:
+                tb = traceback.format_exc()
+                self.after(0, lambda: self._on_build_error(tb))
 
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _on_build_complete(self, meta: dict, repo_dir: Path, incremental: bool):
+        self._end_progress()
         n_entries = len(self.entries)
         self.entries = []
         self.refresh_tree()
         self._save_current_queue()
-        
         self._set_status(f"✓ Repositório {'atualizado' if incremental else 'criado'} em: {repo_dir}")
-
         if incremental:
             messagebox.showinfo(
                 APP_NAME,
@@ -708,6 +762,11 @@ class App(tk.Tk):
             )
         self._refresh_backlog()
 
+    def _on_build_error(self, traceback_str: str):
+        self._end_progress()
+        self._set_status("Erro ao criar repositório.")
+        messagebox.showerror(APP_NAME, f"Erro ao criar repositório:\n\n{traceback_str}")
+
     def process_selected_single(self):
         idx = self.selected_index()
         if idx is None:
@@ -724,7 +783,8 @@ class App(tk.Tk):
         active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
 
         self._set_status(f"Processando item: {entry.title}...")
-        
+        self._start_progress(0)  # indeterminate para arquivo único
+
         def worker():
             try:
                 builder = RepoBuilder(
@@ -743,12 +803,14 @@ class App(tk.Tk):
                 self.after(0, lambda: self._on_single_processed_success(idx))
             except Exception:
                 traceback_str = traceback.format_exc()
+                self.after(0, self._end_progress)
                 self.after(0, lambda: messagebox.showerror(APP_NAME, f"Erro ao processar item:\n\n{traceback_str}"))
                 self.after(0, lambda: self._set_status("Erro no processamento."))
 
         threading.Thread(target=worker, daemon=True).start()
 
     def _on_single_processed_success(self, idx):
+        self._end_progress()
         if idx < len(self.entries):
             del self.entries[idx]
             self.refresh_tree()

@@ -992,6 +992,115 @@ class StudentProfileDialog(tk.Toplevel):
 
 
 # ---------------------------------------------------------------------------
+# GUI — Categorization Review Dialog
+# ---------------------------------------------------------------------------
+
+class CategorizationReviewDialog(tk.Toplevel):
+    """Mostra os resultados da auto-categorização para revisão antes de aplicar."""
+
+    def __init__(self, parent, results: list):
+        """results: List of (FileEntry, category: str, unit: str)"""
+        super().__init__(parent)
+        self.title("🔮  Revisão — Auto-Categorização")
+        self.geometry("760x460")
+        self.minsize(600, 360)
+        self.transient(parent)
+        self.grab_set()
+        self.resizable(True, True)
+
+        self._results = results
+        self._selected = [True] * len(results)
+        self.confirmed: list = []  # populated on OK
+
+        self._build_ui()
+        self.wait_window(self)
+
+    def _build_ui(self):
+        ttk.Label(self, text="Revise as classificações sugeridas pela IA. Desmarque o que não quiser aplicar.",
+                  font=("Segoe UI", 10)).pack(padx=14, pady=(12, 6), anchor="w")
+
+        frame = ttk.Frame(self)
+        frame.pack(fill="both", expand=True, padx=14, pady=(0, 4))
+
+        cols = ("apply", "file", "category", "unit")
+        self._tree = ttk.Treeview(frame, columns=cols, show="headings", height=12)
+        self._tree.heading("apply",    text="Aplicar")
+        self._tree.heading("file",     text="Arquivo")
+        self._tree.heading("category", text="Categoria")
+        self._tree.heading("unit",     text="Unidade")
+        self._tree.column("apply",    width=65,  anchor="center", stretch=False)
+        self._tree.column("file",     width=240)
+        self._tree.column("category", width=150, anchor="center")
+        self._tree.column("unit",     width=130, anchor="center")
+
+        sb = ttk.Scrollbar(frame, orient="vertical", command=self._tree.yview)
+        self._tree.configure(yscroll=sb.set)
+        self._tree.pack(side="left", fill="both", expand=True)
+        sb.pack(side="right", fill="y")
+
+        for i, (entry, category, unit) in enumerate(self._results):
+            self._tree.insert("", "end", iid=str(i), values=(
+                "✓",
+                Path(entry.source_path).name,
+                category or "—",
+                unit or "—",
+            ))
+
+        self._tree.bind("<ButtonRelease-1>", self._on_click)
+
+        # Select / Deselect all
+        sel_frame = ttk.Frame(self)
+        sel_frame.pack(fill="x", padx=14, pady=(0, 4))
+        ttk.Button(sel_frame, text="Selecionar todos",
+                   command=lambda: self._toggle_all(True)).pack(side="left")
+        ttk.Button(sel_frame, text="Desmarcar todos",
+                   command=lambda: self._toggle_all(False)).pack(side="left", padx=(6, 0))
+        ttk.Label(sel_frame, text=f"{len(self._results)} arquivo(s) classificado(s)",
+                  style="Muted.TLabel").pack(side="right")
+
+        # OK / Cancel
+        btn_frame = ttk.Frame(self)
+        btn_frame.pack(fill="x", padx=14, pady=(0, 12))
+        ttk.Button(btn_frame, text="Cancelar",
+                   command=self._cancel).pack(side="right")
+        ttk.Button(btn_frame, text="✓ Aplicar selecionados", style="Accent.TButton",
+                   command=self._ok).pack(side="right", padx=(0, 8))
+
+    def _on_click(self, event):
+        if self._tree.identify_region(event.x, event.y) != "cell":
+            return
+        if self._tree.identify_column(event.x) != "#1":
+            return
+        row_id = self._tree.identify_row(event.y)
+        if not row_id:
+            return
+        idx = int(row_id)
+        self._selected[idx] = not self._selected[idx]
+        vals = list(self._tree.item(row_id, "values"))
+        vals[0] = "✓" if self._selected[idx] else "✗"
+        self._tree.item(row_id, values=vals)
+
+    def _toggle_all(self, state: bool):
+        for i in range(len(self._results)):
+            self._selected[i] = state
+            vals = list(self._tree.item(str(i), "values"))
+            vals[0] = "✓" if state else "✗"
+            self._tree.item(str(i), values=vals)
+
+    def _ok(self):
+        self.confirmed = [
+            (entry, category, unit)
+            for i, (entry, category, unit) in enumerate(self._results)
+            if self._selected[i]
+        ]
+        self.destroy()
+
+    def _cancel(self):
+        self.confirmed = []
+        self.destroy()
+
+
+# ---------------------------------------------------------------------------
 # GUI — Backlog Entry Edit Dialog
 # ---------------------------------------------------------------------------
 

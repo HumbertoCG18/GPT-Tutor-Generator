@@ -23,9 +23,12 @@ from src.utils.helpers import (
     parse_page_range, safe_rel, slugify, write_text,
 )
 
-import pymupdf
-import pymupdf4llm
-import pdfplumber
+if HAS_PYMUPDF:
+    import pymupdf
+if HAS_PYMUPDF4LLM:
+    import pymupdf4llm
+if HAS_PDFPLUMBER:
+    import pdfplumber
 
 logger = logging.getLogger(__name__)
 
@@ -368,13 +371,15 @@ class RepoBuilder:
     def __init__(self, root_dir: Path, course_meta: Dict[str, str], entries: List[FileEntry],
                  options: Dict[str, object], *,
                  student_profile: Optional[StudentProfile] = None,
-                 subject_profile: Optional[SubjectProfile] = None):
+                 subject_profile: Optional[SubjectProfile] = None,
+                 progress_callback=None):
         self.root_dir = root_dir
         self.course_meta = course_meta
         self.entries = entries
         self.options = options
         self.student_profile = student_profile
         self.subject_profile = subject_profile
+        self.progress_callback = progress_callback  # Callable[[int, int, str], None] | None
         self.logs: List[Dict[str, object]] = []
         self.selector = BackendSelector()
 
@@ -399,10 +404,15 @@ class RepoBuilder:
             "entries": [],
         }
 
-        for entry in self.entries:
+        total = len(self.entries)
+        for i, entry in enumerate(self.entries):
             logger.info("Processing entry: %s (%s)", entry.title, entry.file_type)
+            if self.progress_callback:
+                self.progress_callback(i, total, entry.title)
             item_result = self._process_entry(entry)
             manifest["entries"].append(item_result)
+        if self.progress_callback:
+            self.progress_callback(total, total, "")
 
         manifest["logs"] = self.logs
         write_text(self.root_dir / "manifest.json", json.dumps(manifest, indent=2, ensure_ascii=False))
@@ -970,10 +980,15 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
 
         self._create_structure()
 
-        for entry in new_entries:
+        total = len(new_entries)
+        for i, entry in enumerate(new_entries):
             logger.info("Processing new entry: %s (%s)", entry.title, entry.file_type)
+            if self.progress_callback:
+                self.progress_callback(i, total, entry.title)
             item_result = self._process_entry(entry)
             manifest["entries"].append(item_result)
+        if self.progress_callback:
+            self.progress_callback(total, total, "")
 
         manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
         manifest.setdefault("logs", []).extend(self.logs)
@@ -1014,7 +1029,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             write_text(self.root_dir / "student" / "STUDENT_PROFILE.md",
                        student_profile_md(self.student_profile))
 
-        # Atualiza student state timestamp
+        # Atualiza ou cria student state / progress schema
         state_path = self.root_dir / "student" / "STUDENT_STATE.md"
         if state_path.exists():
             content = state_path.read_text(encoding="utf-8")
@@ -1024,6 +1039,12 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
                 content
             )
             state_path.write_text(content, encoding="utf-8")
+        else:
+            write_text(state_path,
+                       student_state_md(self.course_meta, self.student_profile))
+        progress_path = self.root_dir / "student" / "PROGRESS_SCHEMA.md"
+        if not progress_path.exists():
+            write_text(progress_path, progress_schema_md())
 
         write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
         self._write_source_registry(manifest)
@@ -1107,7 +1128,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         paths_to_remove: List[str] = []
         for key in ["raw_target", "base_markdown", "advanced_markdown", "manual_review",
                     "images_dir", "tables_dir", "page_previews_dir", "table_detection_dir",
-                    "advanced_asset_dir"]:
+                    "advanced_asset_dir", "advanced_metadata_path"]:
             val = target.get(key)
             if val:
                 paths_to_remove.append(val)
