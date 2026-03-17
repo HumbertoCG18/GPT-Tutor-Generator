@@ -1653,7 +1653,7 @@ def _parse_units_from_teaching_plan(text: str):
 
     pucrs_unit_re = re.compile(r'N[°º]?\.\s*DA\s+UNIDADE\s*:\s*(\d+)', re.IGNORECASE)
     pucrs_content_re = re.compile(r'CONTE[ÚU]DO\s*:\s*(.+)', re.IGNORECASE)
-    generic_unit_re = re.compile(r'^unidade\s+[\divxlc]+[\s\-–:—]+(.+)', re.IGNORECASE)
+    generic_unit_re = re.compile(r'^#{0,4}\s*unidade\s+[\divxlc]+[\s\-–:—]+(.+)', re.IGNORECASE)
     numbered_topic_re = re.compile(r'^(\d+\.\d+(?:\.\d+)*)\.\s+(.+)')
     bullet_topic_re = re.compile(r'^[-•*]\s+(.+)')
 
@@ -1682,12 +1682,12 @@ def _parse_units_from_teaching_plan(text: str):
                 current_title = f"Unidade {current_unit_num} — {m.group(1).strip()}"
                 continue
 
-        # Genérico: "Unidade N – Título"
+        # Genérico: "Unidade N – Título" ou "### Unidade N – Título"
         m = generic_unit_re.match(line)
         if m:
             if current_title is not None:
                 units.append((current_title, current_topics))
-            current_title = line
+            current_title = line.lstrip("#").strip()
             current_unit_num = None
             current_topics = []
             continue
