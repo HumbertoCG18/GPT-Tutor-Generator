@@ -1014,6 +1014,7 @@ class BacklogEntryEditDialog(simpledialog.Dialog):
         ]
 
         self._vars: Dict[str, tk.StringVar] = {}
+        first_entry = None
         for row, (label, key, _) in enumerate(fields):
             ttk.Label(master, text=label).grid(row=row, column=0, sticky="w", padx=(0, 12), pady=4)
             var = tk.StringVar(value=self._data.get(key, ""))
@@ -1026,7 +1027,10 @@ class BacklogEntryEditDialog(simpledialog.Dialog):
                 ttk.Combobox(master, textvariable=var, values=DOCUMENT_PROFILES,
                              state="readonly", width=28).grid(row=row, column=1, sticky="ew", pady=4)
             else:
-                ttk.Entry(master, textvariable=var, width=38).grid(row=row, column=1, sticky="ew", pady=4)
+                widget = ttk.Entry(master, textvariable=var, width=38)
+                widget.grid(row=row, column=1, sticky="ew", pady=4)
+                if first_entry is None:
+                    first_entry = widget
 
         # Notes — multiline
         row_notes = len(fields)
@@ -1044,7 +1048,7 @@ class BacklogEntryEditDialog(simpledialog.Dialog):
         ttk.Checkbutton(master, text="Relevante para prova", variable=self._var_exam).grid(
             row=row_cb + 1, column=0, columnspan=2, sticky="w", pady=2)
 
-        return self._vars["title"]  # initial focus
+        return first_entry  # widget que recebe o foco inicial
 
     def apply(self):
         self.result_data = {
