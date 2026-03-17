@@ -17,7 +17,7 @@ from src.models.core import (
     PipelineDecision, StudentProfile, SubjectProfile
 )
 from src.utils.helpers import (
-    APP_NAME, DOCLING_CLI, EXAM_CATEGORIES, EXERCISE_CATEGORIES,
+    APP_NAME, DEFAULT_OCR_LANGUAGE, DOCLING_CLI, EXAM_CATEGORIES, EXERCISE_CATEGORIES,
     HAS_PDFPLUMBER, HAS_PYMUPDF, HAS_PYMUPDF4LLM, IMAGE_CATEGORIES, MARKER_CLI,
     ensure_dir, file_size_mb, json_str, pages_to_marker_range,
     parse_page_range, safe_rel, slugify, write_text,
@@ -1241,11 +1241,6 @@ O aluno faz o commit no GitHub. Na próxima sessão, o estado estará atualizado
 """
 
 
-# Mantém compatibilidade com código legado que chame generate_system_prompt
-def generate_system_prompt(course_meta, student_profile=None, subject_profile=None) -> str:
-    return generate_claude_project_instructions(course_meta, student_profile, subject_profile)
-
-
 # ---------------------------------------------------------------------------
 # Free functions — Pedagogical file generators
 # ---------------------------------------------------------------------------
@@ -1717,16 +1712,12 @@ def student_profile_md(student_profile) -> str:
     sp = student_profile
     return f"""---
 nickname: {sp.nickname or sp.full_name}
-semester: {sp.semester}
-institution: {sp.institution}
 ---
 
 # Perfil do Aluno
 
 - **Nome:** {sp.full_name}
 - **Apelido:** {sp.nickname or sp.full_name}
-- **Semestre:** {sp.semester}
-- **Instituição:** {sp.institution}
 
 ## Estilo de aprendizado preferido
 
@@ -2348,7 +2339,7 @@ def backend_policy_yaml(options: Dict[str, object]) -> str:
 target_platform: claude-projects
 policy:
   default_processing_mode: {options.get('default_processing_mode', 'auto')}
-  default_ocr_language: {json_str(options.get('default_ocr_language', 'por,eng'))}
+  default_ocr_language: {json_str(options.get('default_ocr_language', DEFAULT_OCR_LANGUAGE))}
   require_manual_review_for:
     - math_heavy
     - scanned

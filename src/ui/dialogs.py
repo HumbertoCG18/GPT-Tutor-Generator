@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 from src.models.core import FileEntry, SubjectProfile, StudentProfile, SubjectStore, StudentStore
 from src.utils.helpers import (
-    CATEGORY_LABELS, DEFAULT_CATEGORIES, PROCESSING_MODES, 
+    CATEGORY_LABELS, DEFAULT_CATEGORIES, DEFAULT_OCR_LANGUAGE, PROCESSING_MODES,
     DOCUMENT_PROFILES, PREFERRED_BACKENDS, OCR_LANGS,
     slugify, parse_html_schedule, auto_detect_category, auto_detect_title,
     APP_NAME, HAS_PYMUPDF4LLM
@@ -752,7 +752,7 @@ class SubjectManagerDialog(tk.Toplevel):
             ("semester", "Semestre", "Ex: 2025/1"),
             ("schedule", "Horário", "Ex: Seg/Qua 10:15-11:55"),
             ("default_mode", "Modo padrão", "auto, quick, high_fidelity, manual_assisted"),
-            ("default_ocr_lang", "OCR padrão", "por,eng"),
+            ("default_ocr_lang", "OCR padrão", DEFAULT_OCR_LANGUAGE),
             ("repo_root", "Pasta do repositório", "Pasta base para criar repos"),
         ]
 
@@ -837,7 +837,7 @@ class SubjectManagerDialog(tk.Toplevel):
             var.set("")
         self._vars["institution"].set("PUCRS")
         self._vars["default_mode"].set("auto")
-        self._vars["default_ocr_lang"].set("por,eng")
+        self._vars["default_ocr_lang"].set(DEFAULT_OCR_LANGUAGE)
         self._syllabus_text.delete("1.0", "end")
         self._teaching_plan_text.delete("1.0", "end")
 
@@ -857,7 +857,7 @@ class SubjectManagerDialog(tk.Toplevel):
             syllabus=self._syllabus_text.get("1.0", "end-1c").strip(),
             teaching_plan=self._teaching_plan_text.get("1.0", "end-1c").strip(),
             default_mode=self._vars["default_mode"].get(),
-            default_ocr_lang=self._vars["default_ocr_lang"].get().strip() or "por,eng",
+            default_ocr_lang=self._vars["default_ocr_lang"].get().strip() or DEFAULT_OCR_LANGUAGE,
             repo_root=self._vars["repo_root"].get().strip(),
         )
         self._store.add(sp)
@@ -935,8 +935,6 @@ class StudentProfileDialog(tk.Toplevel):
         entries = [
             ("full_name", "Nome completo", "Seu nome completo, como aparece no sistema acadêmico."),
             ("nickname", "Como prefere ser chamado", "Nome/apelido que o tutor Claude deve usar ao se referir a você.\nEx: Humberto, Beto, Hu"),
-            ("semester", "Semestre atual", "Em qual semestre você está.\nEx: 3º semestre, 5º período"),
-            ("institution", "Instituição", "Nome da sua universidade."),
         ]
         for i, (key, label, tip) in enumerate(entries):
             lbl = ttk.Label(frm, text=label)
@@ -986,8 +984,6 @@ class StudentProfileDialog(tk.Toplevel):
         sp = StudentProfile(
             full_name=self._vars["full_name"].get().strip(),
             nickname=self._vars["nickname"].get().strip(),
-            semester=self._vars["semester"].get().strip(),
-            institution=self._vars["institution"].get().strip() or "PUCRS",
             personality=self._personality_text.get("1.0", "end-1c").strip(),
         )
         self._store.profile = sp
@@ -1132,7 +1128,7 @@ class MarkdownPreviewWindow(tk.Toplevel):
 # ---------------------------------------------------------------------------
 
 class FileEntryDialog(simpledialog.Dialog):
-    def __init__(self, parent, path: str, initial: Optional[FileEntry] = None, default_mode: str = "auto", default_ocr_language: str = "por,eng"):
+    def __init__(self, parent, path: str, initial: Optional[FileEntry] = None, default_mode: str = "auto", default_ocr_language: str = DEFAULT_OCR_LANGUAGE):
         self.path = path
         self.initial = initial
         self.default_mode = default_mode

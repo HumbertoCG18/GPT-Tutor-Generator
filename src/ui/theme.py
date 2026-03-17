@@ -1,11 +1,13 @@
+import json
+import os
 import tkinter as tk
-from tkinter import ttk
-from typing import Dict
 from pathlib import Path
-from src.utils.helpers import ensure_dir
+from tkinter import ttk
+from typing import Dict, Optional
 
+import dotenv
 
-CONFIG_PATH = Path.home() / ".gpt_tutor_config.json"
+from src.utils.helpers import DEFAULT_OCR_LANGUAGE
 
 THEMES: Dict[str, Dict[str, str]] = {
     "dark": {
@@ -80,12 +82,6 @@ THEMES: Dict[str, Dict[str, str]] = {
 }
 
 
-import json
-import os
-from pathlib import Path
-from typing import Dict, Optional
-import dotenv
-
 CONFIG_PATH = Path.home() / ".gpt_tutor_config.json"
 ENV_PATH = Path.cwd() / ".env"
 
@@ -95,7 +91,7 @@ class AppConfig:
     DEFAULTS: Dict[str, object] = {
         "theme": "dark",
         "default_mode": "auto",
-        "default_ocr_language": "por,eng",
+        "default_ocr_language": DEFAULT_OCR_LANGUAGE,
         "default_profile": "auto",
         "default_backend": "auto",
         "font_size": 10,

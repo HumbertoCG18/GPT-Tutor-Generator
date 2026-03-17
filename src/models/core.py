@@ -3,7 +3,7 @@ from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from src.utils.helpers import get_app_data_dir, slugify
+from src.utils.helpers import DEFAULT_OCR_LANGUAGE, get_app_data_dir, slugify
 
 
 @dataclass
@@ -29,7 +29,7 @@ class FileEntry:
     extract_images: bool = True
     extract_tables: bool = True
     page_range: str = ""
-    ocr_language: str = "por,eng"
+    ocr_language: str = DEFAULT_OCR_LANGUAGE
 
     def id(self) -> str:
         if self.file_type == "url":
@@ -92,7 +92,7 @@ class SubjectProfile:
     syllabus: str = ""           # Cronograma multilinea
     teaching_plan: str = ""      # Plano de ensino (Ementa, Objetivos, Metodologia)
     default_mode: str = "auto"
-    default_ocr_lang: str = "por,eng"
+    default_ocr_lang: str = DEFAULT_OCR_LANGUAGE
     repo_root: str = ""
     queue: List[FileEntry] = field(default_factory=list)
 
@@ -119,8 +119,6 @@ class StudentProfile:
     """Perfil do aluno — exportado nos repositórios gerados."""
     full_name: str = ""
     nickname: str = ""           # Como o GPT chama o aluno
-    semester: str = ""           # "3º semestre"
-    institution: str = "PUCRS"
     personality: str = ""        # Como o GPT deve ajudar (texto livre)
 
     def to_dict(self) -> Dict[str, str]:
