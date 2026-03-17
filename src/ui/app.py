@@ -169,10 +169,11 @@ class App(tk.Tk):
         tab_queue = ttk.Frame(self.notebook)
         self.notebook.add(tab_queue, text="  ⏳ Fila a Processar  ")
 
-        columns = ("type", "category", "mode", "profile", "backend", "title", "source")
+        columns = ("type", "category", "tags", "mode", "profile", "backend", "title", "source")
         self.tree = ttk.Treeview(tab_queue, columns=columns, show="headings", height=14)
         self.tree.heading("type", text="Tipo")
         self.tree.heading("category", text="Categoria")
+        self.tree.heading("tags", text="Unidade / Tags")
         self.tree.heading("mode", text="Modo")
         self.tree.heading("profile", text="Perfil")
         self.tree.heading("backend", text="Backend")
@@ -180,11 +181,12 @@ class App(tk.Tk):
         self.tree.heading("source", text="Arquivo")
         self.tree.column("type", width=75, anchor="center")
         self.tree.column("category", width=140, anchor="center")
+        self.tree.column("tags", width=120, anchor="center")
         self.tree.column("mode", width=120, anchor="center")
         self.tree.column("profile", width=120, anchor="center")
         self.tree.column("backend", width=120, anchor="center")
-        self.tree.column("title", width=330)
-        self.tree.column("source", width=360)
+        self.tree.column("title", width=280)
+        self.tree.column("source", width=300)
         self.tree.pack(side="left", fill="both", expand=True)
         self.tree.bind("<Double-1>", lambda _e: self.edit_selected())
 
@@ -493,6 +495,7 @@ class App(tk.Tk):
                 values=(
                     entry.file_type,
                     entry.category,
+                    entry.tags,
                     entry.processing_mode,
                     entry.document_profile,
                     entry.preferred_backend,
@@ -549,16 +552,21 @@ class App(tk.Tk):
         teaching_plan = getattr(sp, "teaching_plan", "")
 
         updates = 0
-        total = len([e for e in self.entries if e.file_type == "pdf" and e.category in ("", "pdf")])
-        if total == 0 and not fallback_build:
+        targets = [
+            e for e in self.entries
+            if e.file_type == "pdf"
+            and (
+                e.category in ("", "pdf", "outros")
+                or not e.tags.strip()
+            )
+        ]
+        if not targets and not fallback_build:
             self.after(0, lambda: self._set_status("Todos os PDFs já pareciam estar categorizados!"))
             targets = [e for e in self.entries if e.file_type == "pdf"]
-        else:
-            targets = [e for e in self.entries if e.file_type == "pdf" and e.category in ("", "pdf")]
 
         for entry in targets:
             self.after(0, lambda e=entry: self._set_status(f"🔮 Categorizando: {e.title}..."))
-            
+
             preview_text = ""
             try:
                 doc = pymupdf.open(entry.source_path)
@@ -569,13 +577,27 @@ class App(tk.Tk):
                 doc.close()
             except Exception as e:
                 logger.error(f"Erro ao ler PDF para auto-cat: {e}")
-                
+
             if not preview_text.strip():
                 preview_text = entry.title
-                
-            cat = llm.categorize_pdf(course_name, syllabus, teaching_plan, preview_text)
-            if cat and cat != "pdf":
-                entry.category = cat
+
+            result = llm.classify_pdf(course_name, syllabus, teaching_plan, preview_text)
+            category = result.get("category", "")
+            unit = result.get("unit", "")
+
+            changed = False
+            if category and category != "outros":
+                entry.category = category
+                changed = True
+
+            if unit:
+                existing = [t.strip() for t in entry.tags.split(",") if t.strip()]
+                if unit not in existing:
+                    existing.append(unit)
+                    entry.tags = ", ".join(existing)
+                changed = True
+
+            if changed:
                 updates += 1
                 self.after(0, self.refresh_tree)
 
@@ -593,7 +615,10 @@ class App(tk.Tk):
                 return
 
         # Fallback Auto-categorization
-        needs_cat = any(e.category in ("", "pdf") for e in self.entries if e.file_type == "pdf")
+        needs_cat = any(
+            e.category in ("", "pdf", "outros") or not e.tags.strip()
+            for e in self.entries if e.file_type == "pdf"
+        )
         if needs_cat:
             provider = self.config_obj.get("default_ai_provider", "openai")
             openai_key = self.config_obj.get("openai_api_key", "")

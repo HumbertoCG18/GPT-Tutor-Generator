@@ -487,3 +487,55 @@ class TestParseBibliographyFromTeachingPlan:
         result = _parse_bibliography_from_teaching_plan("")
         assert result["basica"] == []
         assert result["complementar"] == []
+
+
+# ---------------------------------------------------------------------------
+# LLMCategorizer — parsing defensivo
+# ---------------------------------------------------------------------------
+
+class TestLLMCategorizerParsing:
+    """Testa o parsing defensivo do JSON retornado pelo LLM."""
+
+    def setup_method(self):
+        from src.services.llm import LLMCategorizer
+        self.llm = LLMCategorizer("openai", "", "")
+
+    def test_valid_json(self):
+        result = self.llm._parse_llm_json('{"category": "provas", "unit": "unidade-1"}')
+        assert result["category"] == "provas"
+        assert result["unit"] == "unidade-1"
+
+    def test_json_with_markdown_fences(self):
+        result = self.llm._parse_llm_json('```json\n{"category": "listas", "unit": "unidade-2"}\n```')
+        assert result["category"] == "listas"
+        assert result["unit"] == "unidade-2"
+
+    def test_invalid_category_falls_back(self):
+        result = self.llm._parse_llm_json('{"category": "apostila", "unit": ""}')
+        assert result["category"] == "outros"
+
+    def test_malformed_json_returns_defaults(self):
+        result = self.llm._parse_llm_json("não é json")
+        assert result["category"] == "outros"
+        assert result["unit"] == ""
+
+    def test_empty_unit_preserved(self):
+        result = self.llm._parse_llm_json('{"category": "material-de-aula", "unit": ""}')
+        assert result["unit"] == ""
+
+    def test_all_valid_categories_accepted(self):
+        valid = [
+            "material-de-aula", "provas", "listas", "gabaritos",
+            "fotos-de-prova", "referencias", "bibliografia", "cronograma", "outros"
+        ]
+        for cat in valid:
+            result = self.llm._parse_llm_json(f'{{"category": "{cat}", "unit": ""}}')
+            assert result["category"] == cat
+
+    def test_categorize_pdf_alias_returns_string(self):
+        """categorize_pdf legado retorna só a string de category."""
+        from unittest.mock import patch
+        with patch.object(self.llm, "classify_pdf", return_value={"category": "provas", "unit": "unidade-1"}):
+            cat = self.llm.categorize_pdf("Disciplina", "", "", "texto")
+        assert cat == "provas"
+        assert isinstance(cat, str)
