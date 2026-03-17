@@ -660,50 +660,6 @@ class HelpWindow(tk.Toplevel):
         self._text.see("1.0")
 
 
-# ---------------------------------------------------------------------------
-# HTML Schedule Parser
-# ---------------------------------------------------------------------------
-
-def parse_html_schedule(html_content: str) -> str:
-    """Extrai tabela do cronograma em HTML e converte em Markdown (útil para LLMs e leitura)."""
-    try:
-        from bs4 import BeautifulSoup
-    except ImportError:
-        return "Erro: A biblioteca 'beautifulsoup4' não está instalada.\nUse no terminal: pip install beautifulsoup4"
-
-    soup = BeautifulSoup(html_content, "html.parser")
-    table = soup.find("table")
-    if not table:
-        return "Erro: Nenhuma tabela (<table>) encontrada no HTML fornecido."
-
-    rows = table.find_all("tr")
-    if not rows:
-        return "Erro: A tabela não possui linhas (<tr>)."
-
-    output = []
-    
-    # Headers
-    header_cells = rows[0].find_all(["th", "td"])
-    headers = [c.get_text(" ", strip=True) for c in header_cells]
-    if not headers:
-        return "Erro: Tabela sem colunas reconhecíveis."
-        
-    output.append("| " + " | ".join(headers) + " |")
-    output.append("|" + "|".join(["---"] * len(headers)) + "|")
-
-    # Body
-    for row in rows[1:]:
-        cells = row.find_all(["td", "th"])
-        row_data = []
-        for cell in cells:
-            text = " ".join(cell.get_text(" ", strip=True).replace("\n", " ").replace("\r", " ").split())
-            row_data.append(text)
-            
-        if any(row_data):
-            output.append("| " + " | ".join(row_data) + " |")
-
-    return "\n".join(output) + "\n"
-
 class HTMLImportDialog(tk.Toplevel):
     """Diálogo para colar código HTML do cronograma e converter."""
     def __init__(self, parent: "SubjectManagerDialog"):

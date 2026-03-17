@@ -557,6 +557,15 @@ schedule: {subj.schedule}
         write_text(self.root_dir / "content" / "BIBLIOGRAPHY.md",
                    bibliography_md(self.course_meta, bib_entries))
 
+        # ── Exam & Exercise indexes ───────────────────────────────────
+        exam_entries = [e for e in self.entries if e.category in ("provas", "fotos-de-prova")]
+        write_text(self.root_dir / "exams" / "EXAM_INDEX.md",
+                   exam_index_md(self.course_meta, exam_entries))
+
+        exercise_entries = [e for e in self.entries if e.category in ("listas", "gabaritos")]
+        write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
+                   exercise_index_md(self.course_meta, exercise_entries))
+
         # ── Root files ────────────────────────────────────────────────
         write_text(self.root_dir / "README.md", root_readme(self.course_meta))
         write_text(self.root_dir / ".gitignore", "__pycache__/\n*.pyc\n.DS_Store\nThumbs.db\n")
@@ -1008,6 +1017,15 @@ schedule: {subj.schedule}
             write_text(self.root_dir / "content" / "BIBLIOGRAPHY.md",
                        bibliography_md(self.course_meta, bib_entries))
 
+        # Atualiza exam & exercise indexes
+        all_entries = [FileEntry.from_dict(e) for e in manifest.get("entries", [])]
+        exam_entries = [e for e in all_entries if e.category in ("provas", "fotos-de-prova")]
+        write_text(self.root_dir / "exams" / "EXAM_INDEX.md",
+                   exam_index_md(self.course_meta, exam_entries))
+        exercise_entries = [e for e in all_entries if e.category in ("listas", "gabaritos")]
+        write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
+                   exercise_index_md(self.course_meta, exercise_entries))
+
         # Atualiza student state timestamp
         state_path = self.root_dir / "student" / "STUDENT_STATE.md"
         if state_path.exists():
@@ -1396,6 +1414,7 @@ O tutor opera em quatro modos. Cada modo tem objetivo, postura e formato de resp
 - NUNCA entregue a resposta diretamente
 - Identifique onde o aluno está travado
 - Faça perguntas que revelem o próximo passo
+- Consulte `exercises/EXERCISE_INDEX.md` para localizar o exercício no mapa da disciplina
 - Entregue a resolução completa só depois que o aluno chegou lá
 
 **Formato de resposta:**
@@ -1422,6 +1441,7 @@ As provas são cumulativas mas com peso progressivo:
 **Postura:**
 - Comece sempre pelos tópicos do período mais recente
 - Sinalize explicitamente quais tópicos são "foco principal" vs "foco secundário"
+- Consulte `exams/EXAM_INDEX.md` para identificar tópicos com alta incidência e padrões recorrentes
 - Use questões de provas anteriores para calibrar o nível de cobrança
 - Sinalize armadilhas e erros recorrentes de cada tópico
 
@@ -1807,6 +1827,97 @@ def bibliography_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
     lines.append("|---|---|---|---|")
     lines.append("| [a preencher] | | | |")
     lines.append("")
+
+    return "\n".join(lines)
+
+
+def exam_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+
+    lines = [
+        f"# EXAM_INDEX — {course_name}",
+        "",
+        "> **Como usar:** Índice de provas anteriores por tópico.",
+        "> O tutor consulta este arquivo no modo `exam_prep` para identificar",
+        "> quais tópicos têm maior incidência e quais padrões de questão se repetem.",
+        "",
+        "## Provas disponíveis",
+        "",
+    ]
+
+    if entries:
+        lines.append("| Arquivo | Tipo | Prova | Data | Observação |")
+        lines.append("|---|---|---|---|---|")
+        for entry in entries:
+            tipo = "foto" if entry.category == "fotos-de-prova" else "original"
+            lines.append(
+                f"| {Path(entry.source_path).name} | {tipo} | {entry.title} "
+                f"| — | {entry.notes or ''} |"
+            )
+    else:
+        lines.append("| Arquivo | Tipo | Prova | Data | Observação |")
+        lines.append("|---|---|---|---|---|")
+        lines.append("| [a preencher] | | | | |")
+
+    lines += [
+        "",
+        "## Incidência de tópicos por prova",
+        "",
+        "> Preencha após revisar cada prova. O tutor usa esta tabela no modo `exam_prep`.",
+        "",
+        "| Tópico | P1 | P2 | P3 | Total | Peso estimado |",
+        "|---|---|---|---|---|---|",
+        "| [a preencher] | | | | | |",
+        "",
+        "## Padrões de questão observados",
+        "",
+        "<!-- Liste padrões recorrentes: tipos de enunciado, estrutura, pegadinhas comuns -->",
+        "",
+    ]
+
+    return "\n".join(lines)
+
+
+def exercise_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+
+    lines = [
+        f"# EXERCISE_INDEX — {course_name}",
+        "",
+        "> **Como usar:** Mapa de listas de exercícios por tópico.",
+        "> O tutor consulta este arquivo no modo `assignment` para contextualizar",
+        "> exercícios e no modo `exam_prep` para indicar prática por tema.",
+        "",
+        "## Listas disponíveis",
+        "",
+    ]
+
+    if entries:
+        lines.append("| Arquivo | Título | Categoria | Observação |")
+        lines.append("|---|---|---|---|")
+        for entry in entries:
+            lines.append(
+                f"| {Path(entry.source_path).name} | {entry.title} "
+                f"| {entry.category} | {entry.notes or ''} |"
+            )
+    else:
+        lines.append("| Arquivo | Título | Categoria | Observação |")
+        lines.append("|---|---|---|---|")
+        lines.append("| [a preencher] | | | |")
+
+    lines += [
+        "",
+        "## Mapeamento de exercícios por tópico",
+        "",
+        "> Preencha após organizar as listas. O tutor usa esta tabela para sugerir exercícios relevantes.",
+        "",
+        "| Tópico | Lista | Exercícios | Dificuldade | Notas |",
+        "|---|---|---|---|---|",
+        "| [a preencher] | | | | |",
+        "",
+    ]
 
     return "\n".join(lines)
 

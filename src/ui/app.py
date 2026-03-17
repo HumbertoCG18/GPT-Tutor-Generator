@@ -673,8 +673,7 @@ class App(tk.Tk):
             messagebox.showinfo(
                 APP_NAME,
                 f"Repositório atualizado com sucesso em:\n{repo_dir}\n\n"
-                f"{n_entries} arquivo(s) na fila (novos foram adicionados).\n\n"
-                f"CURRENT_STATE.md foi regenerado.\n"
+                f"{n_entries} arquivo(s) processado(s).\n\n"
                 f"Próximo passo: dar push no GitHub."
             )
         else:
