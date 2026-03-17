@@ -992,6 +992,73 @@ class StudentProfileDialog(tk.Toplevel):
 
 
 # ---------------------------------------------------------------------------
+# GUI — Backlog Entry Edit Dialog
+# ---------------------------------------------------------------------------
+
+class BacklogEntryEditDialog(simpledialog.Dialog):
+    """Edita metadados de uma entrada já processada no manifest.json."""
+
+    def __init__(self, parent, entry_data: dict):
+        self._data = dict(entry_data)
+        self.result_data: Optional[dict] = None
+        super().__init__(parent, title="✏  Editar entrada do Backlog")
+
+    def body(self, master):
+        master.columnconfigure(1, weight=1)
+
+        fields = [
+            ("Título",    "title",            False),
+            ("Categoria", "category",          False),
+            ("Tags",      "tags",              False),
+            ("Camada",    "effective_profile", False),
+        ]
+
+        self._vars: Dict[str, tk.StringVar] = {}
+        for row, (label, key, _) in enumerate(fields):
+            ttk.Label(master, text=label).grid(row=row, column=0, sticky="w", padx=(0, 12), pady=4)
+            var = tk.StringVar(value=self._data.get(key, ""))
+            self._vars[key] = var
+            if key == "category":
+                ttk.Combobox(master, textvariable=var, values=DEFAULT_CATEGORIES,
+                             state="readonly", width=28).grid(row=row, column=1, sticky="ew", pady=4)
+            elif key == "effective_profile":
+                from src.utils.helpers import DOCUMENT_PROFILES
+                ttk.Combobox(master, textvariable=var, values=DOCUMENT_PROFILES,
+                             state="readonly", width=28).grid(row=row, column=1, sticky="ew", pady=4)
+            else:
+                ttk.Entry(master, textvariable=var, width=38).grid(row=row, column=1, sticky="ew", pady=4)
+
+        # Notes — multiline
+        row_notes = len(fields)
+        ttk.Label(master, text="Notas").grid(row=row_notes, column=0, sticky="nw", padx=(0, 12), pady=4)
+        self._notes_text = tk.Text(master, height=4, width=38, font=("Segoe UI", 9), wrap="word")
+        self._notes_text.grid(row=row_notes, column=1, sticky="ew", pady=4)
+        self._notes_text.insert("1.0", self._data.get("notes", ""))
+
+        # Checkboxes
+        row_cb = row_notes + 1
+        self._var_bundle = tk.BooleanVar(value=bool(self._data.get("include_in_bundle", True)))
+        self._var_exam   = tk.BooleanVar(value=bool(self._data.get("relevant_for_exam", True)))
+        ttk.Checkbutton(master, text="Incluir no bundle",   variable=self._var_bundle).grid(
+            row=row_cb, column=0, columnspan=2, sticky="w", pady=(6, 2))
+        ttk.Checkbutton(master, text="Relevante para prova", variable=self._var_exam).grid(
+            row=row_cb + 1, column=0, columnspan=2, sticky="w", pady=2)
+
+        return self._vars["title"]  # initial focus
+
+    def apply(self):
+        self.result_data = {
+            "title":            self._vars["title"].get().strip(),
+            "category":         self._vars["category"].get().strip(),
+            "tags":             self._vars["tags"].get().strip(),
+            "effective_profile": self._vars["effective_profile"].get().strip(),
+            "notes":            self._notes_text.get("1.0", "end-1c").strip(),
+            "include_in_bundle": self._var_bundle.get(),
+            "relevant_for_exam": self._var_exam.get(),
+        }
+
+
+# ---------------------------------------------------------------------------
 # GUI — Markdown Preview Window
 # ---------------------------------------------------------------------------
 

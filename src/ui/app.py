@@ -14,7 +14,7 @@ from src.models.core import FileEntry, SubjectStore, StudentStore, SubjectProfil
 from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, slugify
 from src.builder.engine import RepoBuilder
 from src.ui.theme import ThemeManager, AppConfig
-from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, MarkdownPreviewWindow, HelpWindow, add_tooltip, SettingsDialog
+from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, MarkdownPreviewWindow, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog
 from src.services.llm import LLMCategorizer
 
 logger = logging.getLogger(__name__)
@@ -199,29 +199,29 @@ class App(tk.Tk):
         
         btn_refresh = ttk.Button(tab_backlog, text="🔄 Atualizar Backlog", command=self._refresh_backlog)
         btn_refresh.pack(side="left", pady=(8, 4), padx=8)
-        
+
+        btn_edit_bk = ttk.Button(tab_backlog, text="✏ Editar", command=self.edit_backlog_entry)
+        btn_edit_bk.pack(side="left", pady=(8, 4), padx=4)
+
         btn_unprocess = ttk.Button(tab_backlog, text="🗑 Limpar Processamento", command=self.remove_processed_single)
         btn_unprocess.pack(side="left", pady=(8, 4), padx=4)
-        
-        # New frame for table below buttons
-        bk_table_frame = ttk.Frame(tab_backlog)
-        bk_table_frame.pack(fill="both", expand=True)
 
-        columns_bk = ("category", "layer", "status", "title", "backend", "file")
+        columns_bk = ("category", "layer", "tags", "title", "backend", "file")
         self.repo_tree = ttk.Treeview(tab_backlog, columns=columns_bk, show="headings", height=14)
         self.repo_tree.heading("category", text="Categoria")
         self.repo_tree.heading("layer", text="Camada")
-        self.repo_tree.heading("status", text="Status")
+        self.repo_tree.heading("tags", text="Tags")
         self.repo_tree.heading("title", text="Título")
         self.repo_tree.heading("backend", text="Backend")
         self.repo_tree.heading("file", text="Arquivo Original")
-        self.repo_tree.column("category", width=140, anchor="center")
+        self.repo_tree.column("category", width=130, anchor="center")
         self.repo_tree.column("layer", width=100, anchor="center")
-        self.repo_tree.column("status", width=90, anchor="center")
-        self.repo_tree.column("title", width=330)
-        self.repo_tree.column("backend", width=120, anchor="center")
-        self.repo_tree.column("file", width=360)
+        self.repo_tree.column("tags", width=110, anchor="center")
+        self.repo_tree.column("title", width=280)
+        self.repo_tree.column("backend", width=110, anchor="center")
+        self.repo_tree.column("file", width=300)
         self.repo_tree.pack(side="left", fill="both", expand=True, padx=(8, 0), pady=(0, 8))
+        self.repo_tree.bind("<Double-1>", lambda _e: self.edit_backlog_entry())
 
         scroll_bk = ttk.Scrollbar(tab_backlog, orient="vertical", command=self.repo_tree.yview)
         self.repo_tree.configure(yscroll=scroll_bk.set)
@@ -357,22 +357,17 @@ class App(tk.Tk):
                 
             entries = data.get("entries", [])
             for i, f_data in enumerate(entries):
-                decision = f_data.get("pipeline_decision", {})
-                layer = f_data.get("effective_profile", "unknown")
-                status = "ok" # Default for manifest items
-                backend = f_data.get("base_backend", "unknown")
-                
                 self.repo_tree.insert(
                     "",
                     "end",
                     iid=f"backlog_{i}",
                     values=(
                         f_data.get("category", ""),
-                        layer,
-                        status,
+                        f_data.get("effective_profile", ""),
+                        f_data.get("tags", ""),
                         f_data.get("title", ""),
-                        backend,
-                        Path(f_data.get("source_path", f_data.get("source_file", ""))).name
+                        f_data.get("base_backend", ""),
+                        Path(f_data.get("source_path", f_data.get("source_file", ""))).name,
                     )
                 )
         except Exception as e:
@@ -797,6 +792,47 @@ class App(tk.Tk):
                 self._set_status("Falha ao remover processamento.")
         except Exception as e:
             messagebox.showerror(APP_NAME, f"Erro ao remover processamento: {e}")
+
+    def _manifest_path(self) -> Optional[Path]:
+        """Retorna o caminho do manifest.json do repositório ativo, ou None."""
+        repo_root = self.var_repo_root.get().strip()
+        slug = self.var_course_slug.get().strip()
+        if not repo_root or not slug:
+            return None
+        p = Path(repo_root) / slug / "manifest.json"
+        return p if p.exists() else None
+
+    def edit_backlog_entry(self):
+        selected = self.repo_tree.selection()
+        if not selected:
+            messagebox.showinfo(APP_NAME, "Selecione um item no backlog para editar.")
+            return
+
+        idx_str = selected[0]
+        if not idx_str.startswith("backlog_"):
+            return
+        idx = int(idx_str.replace("backlog_", ""))
+
+        manifest_path = self._manifest_path()
+        if not manifest_path:
+            messagebox.showerror(APP_NAME, "Repositório não encontrado.")
+            return
+
+        try:
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+
+            entry_data = data["entries"][idx]
+            dialog = BacklogEntryEditDialog(self, entry_data)
+
+            if dialog.result_data:
+                data["entries"][idx].update(dialog.result_data)
+                with open(manifest_path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=2, ensure_ascii=False)
+                self._refresh_backlog()
+                self._set_status(f"✓ Entrada '{dialog.result_data['title']}' atualizada.")
+        except Exception as e:
+            messagebox.showerror(APP_NAME, f"Erro ao editar entrada: {e}")
 
     def open_existing_repo(self):
         """Abre um repositório existente e carrega seus dados."""
