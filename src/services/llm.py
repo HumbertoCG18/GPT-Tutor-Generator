@@ -14,13 +14,11 @@ try:
 except ImportError:
     genai = None
 
+from src.utils.helpers import DEFAULT_CATEGORIES
+
 logger = logging.getLogger(__name__)
 
-_VALID_CATEGORIES = {
-    "material-de-aula", "provas", "listas", "gabaritos",
-    "fotos-de-prova", "referencias", "bibliografia",
-    "cronograma", "outros"
-}
+_VALID_CATEGORIES = set(DEFAULT_CATEGORIES)
 
 class LLMCategorizer:
     def __init__(self, provider: str, openai_key: str, gemini_key: str):

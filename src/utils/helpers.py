@@ -77,6 +77,11 @@ _LEGACY_CATEGORY_MAP: Dict[str, str] = {
 
 IMAGE_CATEGORIES = {"fotos-de-prova", "provas", "material-de-aula", "outros"}
 
+EXAM_CATEGORIES = ("provas", "fotos-de-prova")
+EXERCISE_CATEGORIES = ("listas", "gabaritos")
+
+DEFAULT_OCR_LANGUAGE = "por,eng"
+
 PROCESSING_MODES = ["auto", "quick", "high_fidelity", "manual_assisted"]
 DOCUMENT_PROFILES = ["auto", "general", "math_heavy", "layout_heavy", "scanned", "exam_pdf"]
 PREFERRED_BACKENDS = ["auto", "pymupdf4llm", "pymupdf", "docling", "marker"]

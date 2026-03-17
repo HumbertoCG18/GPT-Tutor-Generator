@@ -17,12 +17,10 @@ from src.models.core import (
     PipelineDecision, StudentProfile, SubjectProfile
 )
 from src.utils.helpers import (
-    APP_NAME, DOCLING_CLI, HAS_PDFPLUMBER, HAS_PYMUPDF,
-    HAS_PYMUPDF4LLM, IMAGE_CATEGORIES, MARKER_CLI
-)
-from src.utils.helpers import (
+    APP_NAME, DOCLING_CLI, EXAM_CATEGORIES, EXERCISE_CATEGORIES,
+    HAS_PDFPLUMBER, HAS_PYMUPDF, HAS_PYMUPDF4LLM, IMAGE_CATEGORIES, MARKER_CLI,
     ensure_dir, file_size_mb, json_str, pages_to_marker_range,
-    parse_page_range, safe_rel, slugify, write_text
+    parse_page_range, safe_rel, slugify, write_text,
 )
 
 import pymupdf
@@ -511,46 +509,13 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
 
         # ── Student profile ───────────────────────────────────────────
         if self.student_profile:
-            sp = self.student_profile
-            write_text(
-                self.root_dir / "student" / "STUDENT_PROFILE.md",
-                f"""---
-nickname: {sp.nickname or sp.full_name}
-semester: {sp.semester}
-institution: {sp.institution}
----
-
-# Perfil do Aluno
-
-- **Nome:** {sp.full_name}
-- **Apelido:** {sp.nickname or sp.full_name}
-- **Semestre:** {sp.semester}
-- **Instituição:** {sp.institution}
-
-## Estilo de aprendizado preferido
-
-{sp.personality}
-""",
-            )
+            write_text(self.root_dir / "student" / "STUDENT_PROFILE.md",
+                       student_profile_md(self.student_profile))
 
         # ── Syllabus ──────────────────────────────────────────────────
         if self.subject_profile and self.subject_profile.syllabus:
-            subj = self.subject_profile
-            write_text(
-                self.root_dir / "course" / "SYLLABUS.md",
-                f"""---
-course: {subj.name}
-professor: {subj.professor}
-schedule: {subj.schedule}
----
-
-# Cronograma — {subj.name}
-
-**Horário:** {subj.schedule}
-
-{subj.syllabus}
-""",
-            )
+            write_text(self.root_dir / "course" / "SYLLABUS.md",
+                       syllabus_md(self.subject_profile))
 
         # ── Bibliography ──────────────────────────────────────────────
         bib_entries = [e for e in self.entries if e.category == "bibliografia"]
@@ -558,12 +523,12 @@ schedule: {subj.schedule}
                    bibliography_md(self.course_meta, bib_entries, self.subject_profile))
 
         # ── Exam & Exercise indexes ───────────────────────────────────
-        exam_entries = [e for e in self.entries if e.category in ("provas", "fotos-de-prova")]
+        exam_entries = [e for e in self.entries if e.category in EXAM_CATEGORIES]
         if exam_entries:
             write_text(self.root_dir / "exams" / "EXAM_INDEX.md",
                        exam_index_md(self.course_meta, exam_entries))
 
-        exercise_entries = [e for e in self.entries if e.category in ("listas", "gabaritos")]
+        exercise_entries = [e for e in self.entries if e.category in EXERCISE_CATEGORIES]
         if exercise_entries:
             write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
                        exercise_index_md(self.course_meta, exercise_entries))
@@ -1021,11 +986,11 @@ schedule: {subj.schedule}
 
         # Atualiza exam & exercise indexes
         all_entries = [FileEntry.from_dict(e) for e in manifest.get("entries", [])]
-        exam_entries = [e for e in all_entries if e.category in ("provas", "fotos-de-prova")]
+        exam_entries = [e for e in all_entries if e.category in EXAM_CATEGORIES]
         if exam_entries:
             write_text(self.root_dir / "exams" / "EXAM_INDEX.md",
                        exam_index_md(self.course_meta, exam_entries))
-        exercise_entries = [e for e in all_entries if e.category in ("listas", "gabaritos")]
+        exercise_entries = [e for e in all_entries if e.category in EXERCISE_CATEGORIES]
         if exercise_entries:
             write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
                        exercise_index_md(self.course_meta, exercise_entries))
@@ -1042,45 +1007,12 @@ schedule: {subj.schedule}
                    glossary_md(self.course_meta, self.subject_profile))
 
         if self.subject_profile and self.subject_profile.syllabus:
-            subj = self.subject_profile
-            write_text(
-                self.root_dir / "course" / "SYLLABUS.md",
-                f"""---
-course: {subj.name}
-professor: {subj.professor}
-schedule: {subj.schedule}
----
-
-# Cronograma — {subj.name}
-
-**Horário:** {subj.schedule}
-
-{subj.syllabus}
-""",
-            )
+            write_text(self.root_dir / "course" / "SYLLABUS.md",
+                       syllabus_md(self.subject_profile))
 
         if self.student_profile:
-            sp = self.student_profile
-            write_text(
-                self.root_dir / "student" / "STUDENT_PROFILE.md",
-                f"""---
-nickname: {sp.nickname or sp.full_name}
-semester: {sp.semester}
-institution: {sp.institution}
----
-
-# Perfil do Aluno
-
-- **Nome:** {sp.full_name}
-- **Apelido:** {sp.nickname or sp.full_name}
-- **Semestre:** {sp.semester}
-- **Instituição:** {sp.institution}
-
-## Estilo de aprendizado preferido
-
-{sp.personality}
-""",
-            )
+            write_text(self.root_dir / "student" / "STUDENT_PROFILE.md",
+                       student_profile_md(self.student_profile))
 
         # Atualiza student state timestamp
         state_path = self.root_dir / "student" / "STUDENT_STATE.md"
@@ -1761,6 +1693,45 @@ def _parse_bibliography_from_teaching_plan(text: str) -> dict:
 
     _flush()
     return result
+
+
+def syllabus_md(subject_profile) -> str:
+    """Gera o conteúdo de course/SYLLABUS.md a partir do SubjectProfile."""
+    subj = subject_profile
+    return f"""---
+course: {subj.name}
+professor: {subj.professor}
+schedule: {subj.schedule}
+---
+
+# Cronograma — {subj.name}
+
+**Horário:** {subj.schedule}
+
+{subj.syllabus}
+"""
+
+
+def student_profile_md(student_profile) -> str:
+    """Gera o conteúdo de student/STUDENT_PROFILE.md a partir do StudentProfile."""
+    sp = student_profile
+    return f"""---
+nickname: {sp.nickname or sp.full_name}
+semester: {sp.semester}
+institution: {sp.institution}
+---
+
+# Perfil do Aluno
+
+- **Nome:** {sp.full_name}
+- **Apelido:** {sp.nickname or sp.full_name}
+- **Semestre:** {sp.semester}
+- **Instituição:** {sp.institution}
+
+## Estilo de aprendizado preferido
+
+{sp.personality}
+"""
 
 
 def course_map_md(course_meta: dict, subject_profile=None) -> str:
