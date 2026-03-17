@@ -23,6 +23,8 @@ from src.builder.engine import (
     BackendSelector,
     rows_to_markdown_table,
     wrap_frontmatter,
+    _parse_units_from_teaching_plan,
+    _parse_bibliography_from_teaching_plan,
 )
 from src.models.core import (
     DocumentProfileReport,
@@ -349,3 +351,139 @@ class TestDocumentProfileReport:
         data = asdict(report)
         json_output = json.dumps(data)
         assert '"page_count": 5' in json_output
+
+
+# ---------------------------------------------------------------------------
+# _parse_units_from_teaching_plan
+# ---------------------------------------------------------------------------
+
+PUCRS_PLAN = """
+N°. DA UNIDADE: 01
+CONTEÚDO: Métodos Formais
+1.1. Sistemas Formais
+1.2. Linguagens de Especificação e Lógicas
+1.2.1. Fundamentos de Lógica de Primeira Ordem
+1.3. Abordagens para Verificação Formal
+
+N°. DA UNIDADE: 02
+CONTEÚDO: Verificação de Programas
+2.1. Lógica de Hoare
+2.1.1. Pré e Pós Condições
+2.2. Softwares de Suporte
+
+N°. DA UNIDADE: 03
+CONTEÚDO: Verificação de Modelos
+3.1. Máquinas de Estado
+3.2. Fundamentos de Lógicas Temporais
+
+PROCEDIMENTOS METODOLÓGICOS
+Texto que não deve ser parseado.
+"""
+
+GENERIC_PLAN = """
+### Unidade 1 — Fundamentos
+- Lógica proposicional
+- Conjuntos indutivos
+
+### Unidade 2 — Verificação
+- Lógica de Hoare
+- Dafny
+
+### Unidade 3 — Modelos
+- Model checking
+- TLA+
+"""
+
+
+class TestParseUnitsFromTeachingPlan:
+    def test_pucrs_format_detects_three_units(self):
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        assert len(units) == 3
+
+    def test_pucrs_format_unit_titles(self):
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        titles = [u[0] for u in units]
+        assert any("Métodos Formais" in t for t in titles)
+        assert any("Verificação de Programas" in t for t in titles)
+        assert any("Verificação de Modelos" in t for t in titles)
+
+    def test_pucrs_format_extracts_topics(self):
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        topics_u1 = units[0][1]
+        assert any("Sistemas Formais" in t for t in topics_u1)
+        assert any("Lógica de Primeira Ordem" in t for t in topics_u1)
+
+    def test_pucrs_stops_at_procedimentos(self):
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        all_topics = [t for _, topics in units for t in topics]
+        assert not any("não deve" in t for t in all_topics)
+
+    def test_generic_markdown_detects_three_units(self):
+        units = _parse_units_from_teaching_plan(GENERIC_PLAN)
+        assert len(units) == 3
+
+    def test_generic_markdown_strips_hashes_from_title(self):
+        units = _parse_units_from_teaching_plan(GENERIC_PLAN)
+        for title, _ in units:
+            assert not title.startswith("#")
+
+    def test_generic_markdown_extracts_bullet_topics(self):
+        units = _parse_units_from_teaching_plan(GENERIC_PLAN)
+        topics_u1 = units[0][1]
+        assert "Lógica proposicional" in topics_u1
+        assert "Conjuntos indutivos" in topics_u1
+
+    def test_empty_string_returns_empty(self):
+        assert _parse_units_from_teaching_plan("") == []
+
+    def test_no_units_returns_empty(self):
+        assert _parse_units_from_teaching_plan("Texto sem unidades aqui.") == []
+
+
+# ---------------------------------------------------------------------------
+# _parse_bibliography_from_teaching_plan
+# ---------------------------------------------------------------------------
+
+BIB_PLAN = """
+CONTEÚDO ANTERIOR
+
+BIBLIOGRAFIA
+
+BÁSICA:
+1. HUTH, M. R. A; RYAN, M. D. Lógica em Ciência da Computação. 2ª ed. LTC, 2008.
+2. MONIN, J.F. Understanding Formal Methods. Springer Verlag, 2003.
+3. KRÖGER, F.; MERZ, S. Temporal Logic and State Systems. Springer, 2008.
+
+COMPLEMENTAR:
+1. ALMEIDA, J. B. et al. Rigorous Software Development. Springer-Verlag, 2011.
+2. KOURIE, D.G; WATSON, B.W. The correctness-by-construction approach. Springer, 2012.
+"""
+
+
+class TestParseBibliographyFromTeachingPlan:
+    def test_detects_three_basic_refs(self):
+        result = _parse_bibliography_from_teaching_plan(BIB_PLAN)
+        assert len(result["basica"]) == 3
+
+    def test_detects_two_complementar_refs(self):
+        result = _parse_bibliography_from_teaching_plan(BIB_PLAN)
+        assert len(result["complementar"]) == 2
+
+    def test_basic_ref_content(self):
+        result = _parse_bibliography_from_teaching_plan(BIB_PLAN)
+        assert any("HUTH" in r for r in result["basica"])
+        assert any("MONIN" in r for r in result["basica"])
+
+    def test_complementar_ref_content(self):
+        result = _parse_bibliography_from_teaching_plan(BIB_PLAN)
+        assert any("ALMEIDA" in r for r in result["complementar"])
+
+    def test_no_bibliografia_section_returns_empty(self):
+        result = _parse_bibliography_from_teaching_plan("Texto sem bibliografia.")
+        assert result["basica"] == []
+        assert result["complementar"] == []
+
+    def test_empty_string_returns_empty(self):
+        result = _parse_bibliography_from_teaching_plan("")
+        assert result["basica"] == []
+        assert result["complementar"] == []
