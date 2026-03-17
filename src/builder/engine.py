@@ -502,7 +502,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         write_text(self.root_dir / "course" / "COURSE_MAP.md",
                    course_map_md(self.course_meta, self.subject_profile))
         write_text(self.root_dir / "course" / "GLOSSARY.md",
-                   glossary_md(self.course_meta))
+                   glossary_md(self.course_meta, self.subject_profile))
 
         # ── Student files ─────────────────────────────────────────────
         write_text(self.root_dir / "student" / "STUDENT_STATE.md",
@@ -555,16 +555,18 @@ schedule: {subj.schedule}
         # ── Bibliography ──────────────────────────────────────────────
         bib_entries = [e for e in self.entries if e.category == "bibliografia"]
         write_text(self.root_dir / "content" / "BIBLIOGRAPHY.md",
-                   bibliography_md(self.course_meta, bib_entries))
+                   bibliography_md(self.course_meta, bib_entries, self.subject_profile))
 
         # ── Exam & Exercise indexes ───────────────────────────────────
         exam_entries = [e for e in self.entries if e.category in ("provas", "fotos-de-prova")]
-        write_text(self.root_dir / "exams" / "EXAM_INDEX.md",
-                   exam_index_md(self.course_meta, exam_entries))
+        if exam_entries:
+            write_text(self.root_dir / "exams" / "EXAM_INDEX.md",
+                       exam_index_md(self.course_meta, exam_entries))
 
         exercise_entries = [e for e in self.entries if e.category in ("listas", "gabaritos")]
-        write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
-                   exercise_index_md(self.course_meta, exercise_entries))
+        if exercise_entries:
+            write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
+                       exercise_index_md(self.course_meta, exercise_entries))
 
         # ── Root files ────────────────────────────────────────────────
         write_text(self.root_dir / "README.md", root_readme(self.course_meta))
@@ -1013,18 +1015,72 @@ schedule: {subj.schedule}
 
         # Atualiza bibliography com novos entries
         bib_entries = [e for e in self.entries if e.category == "bibliografia"]
-        if bib_entries:
+        if bib_entries or getattr(self.subject_profile, "teaching_plan", ""):
             write_text(self.root_dir / "content" / "BIBLIOGRAPHY.md",
-                       bibliography_md(self.course_meta, bib_entries))
+                       bibliography_md(self.course_meta, bib_entries, self.subject_profile))
 
         # Atualiza exam & exercise indexes
         all_entries = [FileEntry.from_dict(e) for e in manifest.get("entries", [])]
         exam_entries = [e for e in all_entries if e.category in ("provas", "fotos-de-prova")]
-        write_text(self.root_dir / "exams" / "EXAM_INDEX.md",
-                   exam_index_md(self.course_meta, exam_entries))
+        if exam_entries:
+            write_text(self.root_dir / "exams" / "EXAM_INDEX.md",
+                       exam_index_md(self.course_meta, exam_entries))
         exercise_entries = [e for e in all_entries if e.category in ("listas", "gabaritos")]
-        write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
-                   exercise_index_md(self.course_meta, exercise_entries))
+        if exercise_entries:
+            write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
+                       exercise_index_md(self.course_meta, exercise_entries))
+
+        # Regenera arquivos que dependem do perfil da matéria/aluno
+        instructions = generate_claude_project_instructions(
+            self.course_meta, self.student_profile, self.subject_profile
+        )
+        write_text(self.root_dir / "INSTRUCOES_CLAUDE_PROJETO.md", instructions)
+
+        write_text(self.root_dir / "course" / "COURSE_MAP.md",
+                   course_map_md(self.course_meta, self.subject_profile))
+        write_text(self.root_dir / "course" / "GLOSSARY.md",
+                   glossary_md(self.course_meta, self.subject_profile))
+
+        if self.subject_profile and self.subject_profile.syllabus:
+            subj = self.subject_profile
+            write_text(
+                self.root_dir / "course" / "SYLLABUS.md",
+                f"""---
+course: {subj.name}
+professor: {subj.professor}
+schedule: {subj.schedule}
+---
+
+# Cronograma — {subj.name}
+
+**Horário:** {subj.schedule}
+
+{subj.syllabus}
+""",
+            )
+
+        if self.student_profile:
+            sp = self.student_profile
+            write_text(
+                self.root_dir / "student" / "STUDENT_PROFILE.md",
+                f"""---
+nickname: {sp.nickname or sp.full_name}
+semester: {sp.semester}
+institution: {sp.institution}
+---
+
+# Perfil do Aluno
+
+- **Nome:** {sp.full_name}
+- **Apelido:** {sp.nickname or sp.full_name}
+- **Semestre:** {sp.semester}
+- **Instituição:** {sp.institution}
+
+## Estilo de aprendizado preferido
+
+{sp.personality}
+""",
+            )
 
         # Atualiza student state timestamp
         state_path = self.root_dir / "student" / "STUDENT_STATE.md"
@@ -1572,94 +1628,259 @@ Para explorar melhor depois: [sugestão rápida]
 """
 
 
+_TEACHING_PLAN_SECTION_STOP = re.compile(
+    r'^(?:PROCEDIMENTOS|AVALIA[ÇC][AÃ]O|BIBLIOGRAFIA|METODOLOGIA)',
+    re.IGNORECASE,
+)
+
+def _parse_units_from_teaching_plan(text: str):
+    """
+    Extrai (título_da_unidade, [tópicos]) do texto livre do plano de ensino.
+
+    Suporta dois formatos:
+      Formato PUCRS:  "N°. DA UNIDADE: N" seguido de "CONTEÚDO: Título"
+                      Tópicos numerados como "1.1.", "1.2.1." etc.
+      Formato genérico: "Unidade N – Título" / "UNIDADE N: Título"
+                        Tópicos com marcadores (-, •, *) ou numerados (1.1)
+
+    Para quando encontra seções pós-conteúdo (PROCEDIMENTOS, AVALIAÇÃO, BIBLIOGRAFIA).
+    Retorna lista de (str, List[str]).
+    """
+    units: list = []
+    current_title: Optional[str] = None
+    current_unit_num: Optional[str] = None
+    current_topics: list = []
+
+    pucrs_unit_re = re.compile(r'N[°º]?\.\s*DA\s+UNIDADE\s*:\s*(\d+)', re.IGNORECASE)
+    pucrs_content_re = re.compile(r'CONTE[ÚU]DO\s*:\s*(.+)', re.IGNORECASE)
+    generic_unit_re = re.compile(r'^unidade\s+[\divxlc]+[\s\-–:—]+(.+)', re.IGNORECASE)
+    numbered_topic_re = re.compile(r'^(\d+\.\d+(?:\.\d+)*)\.\s+(.+)')
+    bullet_topic_re = re.compile(r'^[-•*]\s+(.+)')
+
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+
+        if _TEACHING_PLAN_SECTION_STOP.match(line):
+            break
+
+        # PUCRS: "N°. DA UNIDADE: N"
+        m = pucrs_unit_re.match(line)
+        if m:
+            if current_title is not None:
+                units.append((current_title, current_topics))
+            current_unit_num = m.group(1)
+            current_title = None
+            current_topics = []
+            continue
+
+        # PUCRS: "CONTEÚDO: Título" — título da unidade atual
+        if current_unit_num is not None and current_title is None:
+            m = pucrs_content_re.match(line)
+            if m:
+                current_title = f"Unidade {current_unit_num} — {m.group(1).strip()}"
+                continue
+
+        # Genérico: "Unidade N – Título"
+        m = generic_unit_re.match(line)
+        if m:
+            if current_title is not None:
+                units.append((current_title, current_topics))
+            current_title = line
+            current_unit_num = None
+            current_topics = []
+            continue
+
+        # Tópicos numerados (1.1., 1.2.1.) ou com marcador (-, •)
+        if current_title is not None:
+            m = numbered_topic_re.match(line)
+            if m:
+                current_topics.append(m.group(2).strip())
+                continue
+            m = bullet_topic_re.match(line)
+            if m:
+                current_topics.append(m.group(1).strip())
+
+    if current_title is not None:
+        units.append((current_title, current_topics))
+
+    return units
+
+
+def _parse_bibliography_from_teaching_plan(text: str) -> dict:
+    """
+    Extrai referências bibliográficas do texto do plano de ensino.
+    Detecta seção BIBLIOGRAFIA com sub-seções BÁSICA e COMPLEMENTAR.
+    Retorna {"basica": [str, ...], "complementar": [str, ...]}.
+    """
+    result: dict = {"basica": [], "complementar": []}
+
+    bib_match = re.search(r'^BIBLIOGRAFIA', text, re.MULTILINE | re.IGNORECASE)
+    if not bib_match:
+        return result
+
+    bib_text = text[bib_match.start():]
+    current_section: Optional[str] = None
+    current_ref: Optional[str] = None
+    ref_start_re = re.compile(r'^\d+\.\s+(.+)')
+
+    def _flush():
+        if current_ref and current_section:
+            result[current_section].append(current_ref.strip())
+
+    for raw in bib_text.splitlines():
+        line = raw.strip()
+
+        if re.match(r'^B[ÁA]SICA\s*:', line, re.IGNORECASE):
+            _flush()
+            current_ref = None
+            current_section = "basica"
+            continue
+
+        if re.match(r'^COMPLEMENTAR\s*:', line, re.IGNORECASE):
+            _flush()
+            current_ref = None
+            current_section = "complementar"
+            continue
+
+        if not current_section:
+            continue
+
+        if not line:
+            _flush()
+            current_ref = None
+            continue
+
+        m = ref_start_re.match(line)
+        if m:
+            _flush()
+            current_ref = m.group(1).strip()
+        elif current_ref is not None:
+            current_ref += " " + line
+
+    _flush()
+    return result
+
+
 def course_map_md(course_meta: dict, subject_profile=None) -> str:
     course_name = course_meta.get("course_name", "Curso")
-    syllabus_hint = ""
+
+    lines = [
+        f"# COURSE_MAP — {course_name}",
+        "",
+        "> **Como usar:** Este arquivo define a ordem pedagógica dos tópicos.",
+        "> O tutor consulta este mapa para saber o que o aluno já deveria ter visto",
+        "> e o que ainda não foi apresentado formalmente.",
+    ]
+
     if subject_profile and subject_profile.syllabus:
-        syllabus_hint = f"\n> Cronograma completo disponível em `course/SYLLABUS.md`\n"
+        lines.append("> Cronograma completo disponível em `course/SYLLABUS.md`")
+    lines.append("")
 
-    return f"""# COURSE_MAP — {course_name}
+    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
+    units = _parse_units_from_teaching_plan(teaching_plan) if teaching_plan else []
 
-> **Como usar:** Este arquivo define a ordem pedagógica dos tópicos.
-> O tutor consulta este mapa para saber o que o aluno já deveria ter visto
-> e o que ainda não foi apresentado formalmente.
-{syllabus_hint}
-## Estrutura do curso
+    lines.append("## Estrutura do curso")
+    lines.append("")
 
-<!-- 
-INSTRUÇÃO PARA O MANTENEDOR:
-Preencha os tópicos abaixo em ordem pedagógica.
-Use indentação para indicar subtópicos.
-Marque dependências com "→ requer: [tópico]"
--->
+    if units:
+        for unit_title, topics in units:
+            lines.append(f"### {unit_title}")
+            if topics:
+                for t in topics:
+                    lines.append(f"- [ ] {t}")
+            else:
+                lines.append("- [ ] [tópicos a preencher]")
+            lines.append("")
+    else:
+        lines += [
+            "<!--",
+            "INSTRUÇÃO PARA O MANTENEDOR:",
+            "Preencha os tópicos abaixo em ordem pedagógica.",
+            "Use indentação para indicar subtópicos.",
+            "Marque dependências com '→ requer: [tópico]'",
+            "-->",
+            "",
+            "### Unidade 1 — [Nome da unidade]",
+            "- [ ] Tópico 1.1",
+            "- [ ] Tópico 1.2",
+            "",
+            "### Unidade 2 — [Nome da unidade]",
+            "- [ ] Tópico 2.1 → requer: Tópico 1.2",
+            "- [ ] Tópico 2.2",
+            "",
+        ]
 
-### Unidade 1 — [Nome da unidade]
-- [ ] Tópico 1.1
-- [ ] Tópico 1.2
-- [ ] Tópico 1.3
+    lines += [
+        "## Tópicos de alta incidência em prova",
+        "",
+        "<!-- Preencha com base nas provas anteriores em exams/ -->",
+        "",
+        "| Tópico | Unidade | Incidência |",
+        "|---|---|---|",
+        "| [a preencher] | | |",
+        "",
+        "## Notas do professor",
+        "",
+        "<!-- Padrões observados no estilo de cobrança do professor -->",
+        "- [a preencher após análise das provas anteriores]",
+    ]
 
-### Unidade 2 — [Nome da unidade]
-- [ ] Tópico 2.1 → requer: Tópico 1.2
-- [ ] Tópico 2.2
-- [ ] Tópico 2.3
-
-<!-- Continue adicionando unidades conforme o cronograma -->
-
-## Mapa de dependências
-
-```
-Tópico 1.1
-    └── Tópico 1.2
-            └── Tópico 2.1
-                    └── Tópico 2.2
-```
-
-## Tópicos de alta incidência em prova
-
-<!-- Preencha com base nas provas anteriores em exams/ -->
-
-| Tópico | Unidade | Incidência |
-|---|---|---|
-| [a preencher] | | |
-
-## Notas do professor
-
-<!-- Padrões observados no estilo de cobrança do professor -->
-- [a preencher após análise das provas anteriores]
-"""
+    return "\n".join(lines)
 
 
-def glossary_md(course_meta: dict) -> str:
+def glossary_md(course_meta: dict, subject_profile=None) -> str:
     course_name = course_meta.get("course_name", "Curso")
-    return f"""# GLOSSARY — {course_name}
 
-> **Como usar:** Terminologia oficial da disciplina.
-> O tutor consulta este arquivo para usar os mesmos termos que o professor.
-> Inconsistência terminológica é fonte de confusão em provas.
+    lines = [
+        f"# GLOSSARY — {course_name}",
+        "",
+        "> **Como usar:** Terminologia oficial da disciplina.",
+        "> O tutor consulta este arquivo para usar os mesmos termos que o professor.",
+        "> Inconsistência terminológica é fonte de confusão em provas.",
+        "",
+        "## Formato de entrada",
+        "",
+        "```",
+        "## [Termo]",
+        "**Definição:** [definição precisa usada nesta disciplina]",
+        "**Sinônimos aceitos:** [outros nomes para o mesmo conceito]",
+        "**Não confundir com:** [termo similar mas diferente]",
+        "**Aparece em:** [unidades / tópicos onde é usado]",
+        "```",
+        "",
+        "---",
+        "",
+        "## Termos",
+        "",
+    ]
 
-<!--
-INSTRUÇÃO PARA O MANTENEDOR:
-Adicione termos conforme aparecem nas aulas e materiais.
-Formato: ## Termo | Definição | Sinônimos | Cuidado com
--->
+    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
+    units = _parse_units_from_teaching_plan(teaching_plan) if teaching_plan else []
 
-## Formato de entrada
+    # Collect all leaf topics as candidate terms
+    candidates = []
+    for _unit_title, topics in units:
+        candidates.extend(topics)
 
-```
-## [Termo]
-**Definição:** [definição precisa usada nesta disciplina]
-**Sinônimos aceitos:** [outros nomes para o mesmo conceito]
-**Não confundir com:** [termo similar mas diferente]
-**Aparece em:** [unidades / tópicos onde é usado]
-```
+    if candidates:
+        lines.append("<!-- Termos extraídos automaticamente do plano de ensino. Preencha as definições. -->")
+        lines.append("")
+        for term in candidates:
+            lines += [
+                f"## {term}",
+                "**Definição:** [a preencher]",
+                "**Sinônimos aceitos:** —",
+                "**Não confundir com:** —",
+                f"**Aparece em:** [unidade a identificar]",
+                "",
+            ]
+    else:
+        lines.append("<!-- Preencha conforme o conteúdo da disciplina for sendo curado -->")
+        lines.append("")
 
----
-
-## Termos
-
-<!-- Preencha conforme o conteúdo da disciplina for sendo curado -->
-
-"""
+    return "\n".join(lines)
 
 
 def student_state_md(course_meta: dict, student_profile=None) -> str:
@@ -1775,7 +1996,7 @@ Sessão de estudo
 """
 
 
-def bibliography_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
+def bibliography_md(course_meta: dict, entries: List[FileEntry] = None, subject_profile=None) -> str:
     course_name = course_meta.get("course_name", "Curso")
     entries = entries or []
 
@@ -1786,19 +2007,31 @@ def bibliography_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
         "> O tutor consulta este arquivo quando o aluno pede fontes",
         "> ou quando uma explicação pode ser aprofundada com leitura adicional.",
         "",
-        "## Como preencher uma entrada",
-        "",
-        "```markdown",
-        "### [Título da referência]",
-        "- **URL:** [link]",
-        "- **Tipo:** livro / artigo / documentação / vídeo / curso",
-        "- **Relevante para:** [tópicos ou unidades]",
-        "- **Acessível:** sim / não (paywall)",
-        "- **Nota:** [observação sobre o conteúdo]",
-        "```",
-        "",
     ]
 
+    # Referências extraídas do plano de ensino
+    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
+    parsed = _parse_bibliography_from_teaching_plan(teaching_plan) if teaching_plan else {}
+    basica = parsed.get("basica", [])
+    complementar = parsed.get("complementar", [])
+
+    if basica or complementar:
+        lines.append("## Bibliografia do plano de ensino")
+        lines.append("")
+        if basica:
+            lines.append("### Básica")
+            lines.append("")
+            for ref in basica:
+                lines.append(f"- {ref}")
+            lines.append("")
+        if complementar:
+            lines.append("### Complementar")
+            lines.append("")
+            for ref in complementar:
+                lines.append(f"- {ref}")
+            lines.append("")
+
+    # Referências importadas manualmente via app (categoria "bibliografia")
     if entries:
         lines.append("## Referências importadas")
         lines.append("")
@@ -1813,20 +2046,26 @@ def bibliography_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
                 lines.append(f"- **Indicação do professor:** {entry.professor_signal}")
             lines.append(f"- **Incluir no bundle:** {'sim' if entry.include_in_bundle else 'não'}")
             lines.append("")
-    else:
-        lines.append("## Referências")
-        lines.append("")
-        lines.append("<!-- Adicione referências aqui ou importe links pelo app -->")
-        lines.append("")
 
-    lines.append("## Mapa de relevância por tópico")
-    lines.append("")
-    lines.append("<!-- Preencha após organizar as referências -->")
-    lines.append("")
-    lines.append("| Tópico | Referência principal | Acessível | Incidência em prova |")
-    lines.append("|---|---|---|---|")
-    lines.append("| [a preencher] | | | |")
-    lines.append("")
+    if not basica and not complementar and not entries:
+        lines += [
+            "## Referências",
+            "",
+            "<!-- Adicione referências aqui, importe links pelo app,",
+            "     ou preencha o Plano de Ensino no Gerenciador de Matérias. -->",
+            "",
+        ]
+
+    lines += [
+        "## Mapa de relevância por tópico",
+        "",
+        "<!-- Preencha após organizar as referências -->",
+        "",
+        "| Tópico | Referência principal | Acessível | Incidência em prova |",
+        "|---|---|---|---|",
+        "| [a preencher] | | | |",
+        "",
+    ]
 
     return "\n".join(lines)
 
@@ -1846,19 +2085,14 @@ def exam_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
         "",
     ]
 
-    if entries:
-        lines.append("| Arquivo | Tipo | Prova | Data | Observação |")
-        lines.append("|---|---|---|---|---|")
-        for entry in entries:
-            tipo = "foto" if entry.category == "fotos-de-prova" else "original"
-            lines.append(
-                f"| {Path(entry.source_path).name} | {tipo} | {entry.title} "
-                f"| — | {entry.notes or ''} |"
-            )
-    else:
-        lines.append("| Arquivo | Tipo | Prova | Data | Observação |")
-        lines.append("|---|---|---|---|---|")
-        lines.append("| [a preencher] | | | | |")
+    lines.append("| Arquivo | Tipo | Prova | Observação | Padrão do professor |")
+    lines.append("|---|---|---|---|---|")
+    for entry in entries:
+        tipo = "foto" if entry.category == "fotos-de-prova" else "original"
+        lines.append(
+            f"| {Path(entry.source_path).name} | {tipo} | {entry.title} "
+            f"| {entry.notes or ''} | {entry.professor_signal or ''} |"
+        )
 
     lines += [
         "",

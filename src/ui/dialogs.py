@@ -242,7 +242,7 @@ class SettingsDialog(tk.Toplevel):
 # ---------------------------------------------------------------------------
 
 HELP_SECTIONS: List[Tuple[str, str]] = [
-    ("Visão Geral", """O Academic Tutor Repo Builder converte PDFs e imagens acadêmicas em repositórios estruturados de conhecimento, prontos para uso com GPTs tutores.
+    ("Visão Geral", """O Academic Tutor Repo Builder converte PDFs e imagens acadêmicas em repositórios estruturados de conhecimento, prontos para uso com tutores no Claude Projects.
 
 Fluxo recomendado:
   1. Gerencie suas matérias no botão "📚 Gerenciar".
@@ -251,7 +251,7 @@ Fluxo recomendado:
   4. Configure cada arquivo (categoria, modo, perfil).
   5. Clique em "🚀 Criar repositório".
   6. Use o "🖌 Curator Studio" para revisar arquivos em manual-review/.
-  7. Mova o conteúdo aprovado para a estrutura final do GPT.
+  7. Mova o conteúdo aprovado para a estrutura final do repositório.
 """),
     ("Dados da Disciplina", """NOME DA DISCIPLINA
   Nome completo como aparece no sistema acadêmico. Obrigatório.
@@ -367,7 +367,7 @@ RELEVANTE PARA PROVA
   Marca o material como importante para preparação de provas. Afeta priorização no bundle.
 
 INCLUIR NO BUNDLE INICIAL
-  Se marcado, o arquivo entra no bundle.seed.json para alimentar o GPT tutor.
+  Se marcado, o arquivo entra no bundle.seed.json para alimentar o tutor Claude.
 
 PRIORIDADE EM FÓRMULAS
   Força ativação do backend avançado mesmo em modo auto ou quick.
@@ -431,23 +431,23 @@ RECURSOS
 USO
   Selecione a matéria no menu suspenso (Combobox) na tela principal para aplicar.
 """),
-    ("Handoff e CURRENT_STATE", """Garantindo a continuidade do trabalho em chats longos.
+    ("Handoff e Continuidade", """Garantindo a continuidade do trabalho em chats longos.
 
-CURRENT_STATE.md (A Fonte de Verdade)
-  • É o estado vivo e oficial do projeto, salvo no repositório.
-  • Contém: dados, arquivos processados, arquitetura e pendências.
-  • QUANDO USAR: Peça ao GPT para gerar/atualizar sempre que decisões 
-    importantes forem tomadas, para registrar o progresso permanentemente.
+STUDENT_STATE.md (O Estado do Aluno)
+  • Registra progresso, tópicos estudados e próximas metas.
+  • Salvo em student/STUDENT_STATE.md no repositório.
+  • QUANDO USAR: Ao final de cada sessão de estudo, peça ao Claude para
+    sugerir uma atualização — então faça commit e push no GitHub.
 
 HANDOFF (O Pacote de Transferência)
   • É um resumo rápido e situacional para transição entre chats.
-  • QUANDO USAR: Quando o chat ficar muito grande/lento, peça ao GPT
+  • QUANDO USAR: Quando o chat ficar muito grande/lento, peça ao Claude
     para gerar um "Handoff".
   • FLUXO:
-    1. O GPT gera o Handoff (contexto, decisões, próximos passos).
-    2. Você copia o Handoff + o arquivo CURRENT_STATE.md atualizado.
-    3. Cola tudo em um NOVO chat.
-    4. O GPT lê o estado e continua de onde parou, sem repetir trabalho.
+    1. O Claude gera o Handoff (contexto, decisões, próximos passos).
+    2. Você copia o Handoff + o STUDENT_STATE.md atualizado.
+    3. Cola tudo em um NOVO chat do Projeto Claude.
+    4. O Claude lê o estado e continua de onde parou, sem repetir trabalho.
 
 ATUALIZAÇÃO INCREMENTAL
   Ao clicar em "🚀 Criar Repositório" com um repositório existente:
@@ -934,7 +934,7 @@ class StudentProfileDialog(tk.Toplevel):
         self._vars: Dict[str, tk.StringVar] = {}
         entries = [
             ("full_name", "Nome completo", "Seu nome completo, como aparece no sistema acadêmico."),
-            ("nickname", "Como prefere ser chamado", "Nome/apelido que o GPT deve usar ao se referir a você.\nEx: Humberto, Beto, Hu"),
+            ("nickname", "Como prefere ser chamado", "Nome/apelido que o tutor Claude deve usar ao se referir a você.\nEx: Humberto, Beto, Hu"),
             ("semester", "Semestre atual", "Em qual semestre você está.\nEx: 3º semestre, 5º período"),
             ("institution", "Instituição", "Nome da sua universidade."),
         ]
@@ -951,10 +951,10 @@ class StudentProfileDialog(tk.Toplevel):
         pers_frame = ttk.LabelFrame(self, text="  🧠  Personalidade do Tutor", padding=14)
         pers_frame.pack(fill="both", expand=True, padx=14, pady=(0, 8))
 
-        hint = ttk.Label(pers_frame, text="Como o GPT deve te ajudar? Descreva o estilo que funciona para você:",
+        hint = ttk.Label(pers_frame, text="Como o tutor Claude deve te ajudar? Descreva o estilo que funciona para você:",
                          style="Muted.TLabel")
         hint.pack(anchor="w", pady=(0, 6))
-        add_tooltip(hint, "Este texto será exportado nos repositórios e define como o tutor GPT interage com você.\nDica: seja específico sobre estilo de explicação, nível de detalhe, e preferências.")
+        add_tooltip(hint, "Este texto será exportado nos repositórios e define como o tutor Claude interage com você.\nDica: seja específico sobre estilo de explicação, nível de detalhe, e preferências.")
 
         self._personality_text = tk.Text(pers_frame, height=10, font=("Segoe UI", 10), wrap="word")
         self._personality_text.pack(fill="both", expand=True)
@@ -1222,11 +1222,11 @@ class FileEntryDialog(simpledialog.Dialog):
 
         cb_exam = ttk.Checkbutton(master, text="Relevante para prova", variable=self.var_exam)
         cb_exam.grid(row=row, column=0, sticky="w", pady=4)
-        add_tooltip(cb_exam, "Marca este material como importante para preparação de provas. Afeta priorização no bundle do GPT tutor.")
+        add_tooltip(cb_exam, "Marca este material como importante para preparação de provas. Afeta priorização no bundle do tutor Claude.")
 
         cb_bundle = ttk.Checkbutton(master, text="Incluir no bundle inicial", variable=self.var_bundle)
         cb_bundle.grid(row=row, column=1, sticky="w")
-        add_tooltip(cb_bundle, "Se marcado, o arquivo entra no bundle.seed.json para alimentar o GPT tutor como conhecimento base.")
+        add_tooltip(cb_bundle, "Se marcado, o arquivo entra no bundle.seed.json para alimentar o tutor Claude como conhecimento base.")
 
         cb_formula = ttk.Checkbutton(master, text="Prioridade em fórmulas", variable=self.var_formula)
         cb_formula.grid(row=row, column=2, sticky="w")

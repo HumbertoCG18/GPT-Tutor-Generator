@@ -99,6 +99,7 @@ class AppConfig:
         "default_profile": "auto",
         "default_backend": "auto",
         "font_size": 10,
+        "default_ai_provider": "gemini",
     }
 
     def __init__(self):
