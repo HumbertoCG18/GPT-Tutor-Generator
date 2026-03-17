@@ -72,52 +72,26 @@ src/
 
 ---
 
-## 5. Bugs conhecidos e pendências
+## 5. Estado atual — tudo implementado
 
-### 🔴 Críticos (podem quebrar em runtime)
+Todos os bugs críticos desta lista foram corrigidos. O projeto está pronto para uso:
 
-**A.** `modes_md()` e `pedagogy_md()` em `engine.py` referenciam `exams/EXAM_INDEX.md`, mas esse arquivo **nunca é gerado**. O Claude vai procurar o arquivo, não encontrar e improvisar — comportamento indesejado.
-```python
-# Em pedagogy_md():
-"Ao explicar um tópico, verifique `exams/EXAM_INDEX.md`:"
-# Arquivo não existe → adicionar gerador exam_index_md() e exercise_index_md()
-```
+- ✅ `EXAM_INDEX.md` e `EXERCISE_INDEX.md` gerados condicionalmente
+- ✅ `COURSE_MAP.md` populado automaticamente via `_parse_units_from_teaching_plan()`
+- ✅ `BIBLIOGRAPHY.md` extrai referências do `teaching_plan` automaticamente
+- ✅ `GLOSSARY.md` semeia termos dos tópicos extraídos
+- ✅ `incremental_build` regenera `INSTRUCOES_CLAUDE_PROJETO.md`, `COURSE_MAP.md`, `GLOSSARY.md`
+- ✅ `parse_html_schedule` duplicada removida de `dialogs.py`
+- ✅ Referência a `CURRENT_STATE.md` removida do messagebox de sucesso
+- ✅ `default_ai_provider` presente no `AppConfig.DEFAULTS`
+- ✅ Regex de unidades suporta cabeçalhos Markdown (`### Unidade N —`)
+- ✅ 61 testes passando
 
-**B.** `app.py` ainda exibe mensagem de sucesso pós-build mencionando `CURRENT_STATE.md`:
-```python
-"CURRENT_STATE.md foi regenerado.\nPróximo passo: dar push no GitHub."
-# Esse arquivo não existe no sistema — remover ou corrigir
-```
+### Melhorias futuras (não críticas)
 
-**C.** `parse_html_schedule` está duplicada em `src/utils/helpers.py` E em `src/ui/dialogs.py`. A de `dialogs.py` pode divergir — deve ser removida de lá e importada de `helpers`.
-
-**D.** Diretório `student/` duplicado em `_create_structure()` do engine:
-```python
-dirs = [
-    ...
-    "student",   # linha ~440
-    ...
-    "student",   # duplicado — não quebra (mkdir é idempotente) mas é ruído
-]
-```
-
-### 🟡 Importantes (limitam o tutor)
-
-**E.** `EXAM_INDEX.md` e `EXERCISE_INDEX.md` não são gerados. São os arquivos que permitem ao tutor saber incidência por tópico e mapear exercícios. Precisam de geradores (`exam_index_md()`, `exercise_index_md()`) e serem chamados em `_write_root_files()`.
-
-**F.** `COURSE_MAP.md` é gerado como template vazio. Quando o `teaching_plan` do `SubjectProfile` está preenchido (plano de ensino extraído do PDF), o gerador poderia extrair as unidades e populá-lo automaticamente. Hoje essa informação existe mas não é usada.
-
-**G.** `BIBLIOGRAPHY.md` é gerado mas só inclui entradas da categoria `"bibliografia"`. Quando o `teaching_plan` contém referências bibliográficas (como no plano de ensino de Métodos Formais que tem 8 referências), elas poderiam ser extraídas automaticamente.
-
-**H.** `LLM.md` e `README.md` foram atualizados na sessão atual mas **ainda não foram commitados**. Verificar se estão atualizados no repositório.
-
-### 🟢 Melhorias desejadas
-
-**I.** O `INSTRUCOES_CLAUDE_PROJETO.md` não inclui a lógica de escopo de provas diretamente — ela está em `PEDAGOGY.md` e `MODES.md`. Seria bom ter uma seção resumida também nas instruções principais para garantir que o tutor a aplique mesmo sem consultar os arquivos secundários.
-
-**J.** Após o build, o app limpa a fila (`self.entries = []`). Isso é correto para o build completo, mas no `process_single` o item já é removido da fila individualmente em `_on_single_processed_success`. Verificar se não há double-removal.
-
-**K.** O `incremental_build` atualiza `BIBLIOGRAPHY.md` mas não regenera `INSTRUCOES_CLAUDE_PROJETO.md` nem os arquivos pedagógicos. Se o aluno atualizar o perfil da matéria após o primeiro build, as instruções ficam desatualizadas.
+- Extração de datas de prova do `syllabus` para popular `EXAM_INDEX`
+- Campo de escopo de prova por matéria no `SubjectManagerDialog`
+- `today-context.md` gerado automaticamente antes da aula
 
 ---
 

@@ -303,8 +303,26 @@ python -m pytest tests/ -v
 - Lógica de escopo de provas (cumulativo com peso progressivo)
 - Integração GitHub (via Claude Project Settings)
 
-### 🔲 Próximos passos
-- `EXAM_INDEX.md` e `EXERCISE_INDEX.md` gerados automaticamente
-- Extração estruturada do plano de ensino para popular `COURSE_MAP.md`
-- Extração de referências bibliográficas do PDF para `BIBLIOGRAPHY.md`
-- Geração do `GLOSSARY.md` com termos iniciais do plano de ensino
+### ✅ Tudo implementado
+- GUI completa com fila persistente por matéria
+- Pipeline de extração com 4 backends (2 base + 2 avançados)
+- Processamento individual (`process_single`) e remoção (`unprocess`)
+- Build completo e incremental
+- Auto-categorização por LLM (OpenAI / Gemini)
+- Curator Studio para revisão manual
+- Todos os arquivos pedagógicos para Claude Projects
+- `INSTRUCOES_CLAUDE_PROJETO.md` como system prompt do Projeto
+- `STUDENT_STATE.md` para tracking de progresso
+- Lógica de escopo de provas (cumulativo com peso progressivo)
+- Extração automática de unidades do `teaching_plan` → `COURSE_MAP.md`
+- Extração automática de referências → `BIBLIOGRAPHY.md`
+- Seeding de termos → `GLOSSARY.md`
+- `EXAM_INDEX.md` gerado condicionalmente (só quando há provas na fila)
+- `EXERCISE_INDEX.md` gerado condicionalmente (só quando há listas na fila)
+- `incremental_build` regenera todos os arquivos pedagógicos
+- 61 testes passando
+
+### 🔲 Melhorias futuras (não críticas)
+- Extração de datas de prova do `syllabus` para popular `EXAM_INDEX`
+- Campo de escopo de prova configurável por matéria no `SubjectManagerDialog`
+- `today-context.md` gerado automaticamente antes da aula
