@@ -7,7 +7,7 @@ from typing import Dict, Optional
 
 import dotenv
 
-from src.utils.helpers import DEFAULT_OCR_LANGUAGE
+from src.utils.helpers import DEFAULT_OCR_LANGUAGE, get_app_data_dir
 
 THEMES: Dict[str, Dict[str, str]] = {
     "dark": {
@@ -83,7 +83,7 @@ THEMES: Dict[str, Dict[str, str]] = {
 
 
 CONFIG_PATH = Path.home() / ".gpt_tutor_config.json"
-ENV_PATH = Path.cwd() / ".env"
+ENV_PATH = get_app_data_dir() / ".env"
 
 class AppConfig:
     """Manages persistent app configuration via ~/.gpt_tutor_config.json and .env for API keys."""
@@ -283,7 +283,7 @@ class ThemeManager:
         style.configure("TSeparator", background=p["border"])
 
         # Progressbar
-        style.configure("TProgressbar", background=p["accent"], troughcolor=p["bg"])
+        style.configure("TProgressbar", background=p["accent"], troughcolor=p["border"])
 
         # Status bar style
         style.configure("Status.TLabel", background=p["header_bg"], foreground=p["muted"],

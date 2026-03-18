@@ -8,16 +8,54 @@ import threading
 from pathlib import Path
 from dataclasses import asdict
 import json
-import pymupdf
+try:
+    import pymupdf
+except ImportError:
+    pymupdf = None
 
 from src.models.core import FileEntry, SubjectStore, StudentStore, SubjectProfile
-from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, slugify
+from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify
 from src.builder.engine import RepoBuilder
 from src.ui.theme import ThemeManager, AppConfig
-from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, MarkdownPreviewWindow, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, CategorizationReviewDialog
+from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, MarkdownPreviewWindow, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, CategorizationReviewDialog, StatusDialog
 from src.services.llm import LLMCategorizer
 
 logger = logging.getLogger(__name__)
+
+
+class _UILogHandler(logging.Handler):
+    """Handler que encaminha registros de log para um widget tk.Text."""
+
+    LEVEL_TAG = {
+        logging.DEBUG:    "debug",
+        logging.INFO:     "info",
+        logging.WARNING:  "warning",
+        logging.ERROR:    "error",
+        logging.CRITICAL: "error",
+    }
+
+    def __init__(self, text_widget: "tk.Text", app: "tk.Misc"):
+        super().__init__()
+        self._text = text_widget
+        self._app = app
+        fmt = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s — %(message)s",
+                                datefmt="%H:%M:%S")
+        self.setFormatter(fmt)
+
+    def emit(self, record: logging.LogRecord):
+        msg = self.format(record) + "\n"
+        tag = self.LEVEL_TAG.get(record.levelno, "info")
+        self._app.after(0, self._write, msg, tag)
+
+    def _write(self, msg: str, tag: str):
+        try:
+            self._text.configure(state="normal")
+            self._text.insert("end", msg, tag)
+            self._text.configure(state="disabled")
+            self._text.see("end")
+        except tk.TclError:
+            pass
+
 
 class App(tk.Tk):
     def __init__(self):
@@ -32,6 +70,7 @@ class App(tk.Tk):
         self.minsize(900, 600)
         self.entries: List[FileEntry] = []
         self._quick_import = tk.BooleanVar(value=False)
+        self._cancel_event = threading.Event()
 
         # Apply theme before building UI
         self.theme_mgr.apply(self, self._theme_name)
@@ -42,6 +81,8 @@ class App(tk.Tk):
 
     def _on_close(self):
         self.config_obj.save()
+        if hasattr(self, "_ui_log_handler"):
+            logging.getLogger("src").removeHandler(self._ui_log_handler)
         self.destroy()
 
     # ── UI Construction ──────────────────────────────────────────────────────
@@ -85,6 +126,7 @@ class App(tk.Tk):
         ttk.Button(subj_frame, text="📝 Gerenciar", command=self.open_subject_manager).pack(side="left")
         ttk.Separator(subj_frame, orient="vertical").pack(side="left", fill="y", padx=12)
         ttk.Button(subj_frame, text="👤 Aluno", command=self.open_student_profile).pack(side="left")
+        ttk.Button(subj_frame, text="📊 Status", command=self.open_status).pack(side="left", padx=(6, 0))
 
         # Quick import toggle
         cb_quick = ttk.Checkbutton(subj_frame, text="⚡ Importação rápida", variable=self._quick_import)
@@ -145,11 +187,10 @@ class App(tk.Tk):
         ttk.Button(toolbar, text="🖼 Imagens/Fotos", command=self.add_images).pack(side="left", padx=(6, 0))
         ttk.Button(toolbar, text="🔗 Adicionar Link", command=self.add_url).pack(side="left", padx=(6, 0))
         ttk.Separator(toolbar, orient="vertical").pack(side="left", fill="y", padx=10)
-        ttk.Button(toolbar, text="✏ Editar", command=self.edit_selected).pack(side="left")
-        ttk.Button(toolbar, text="⧉ Duplicar", command=self.duplicate_selected).pack(side="left", padx=(6, 0))
-        ttk.Button(toolbar, text="✖ Remover", command=self.remove_selected).pack(side="left", padx=(6, 0))
-        ttk.Button(toolbar, text="⚡ Processar",
-                   command=self.process_selected_single).pack(side="left", padx=(6, 0))
+        self._btn_process = ttk.Button(toolbar, text="⚡ Processar",
+                                       command=self.process_selected_single)
+        self._btn_process.pack(side="left")
+        ttk.Button(toolbar, text="🔁 Todos → Auto", command=self._set_all_modes_auto).pack(side="left", padx=(6, 0))
         ttk.Separator(toolbar, orient="vertical").pack(side="left", fill="y", padx=10)
         ttk.Button(toolbar, text="📂 Abrir Repo", command=self.open_existing_repo).pack(side="left")
 
@@ -157,8 +198,9 @@ class App(tk.Tk):
         ttk.Button(toolbar, text="? Ajuda  F1", command=self.open_help).pack(side="right", padx=(6, 0))
         ttk.Button(toolbar, text="📄 Preview", command=self.open_preview).pack(side="right", padx=(6, 0))
         ttk.Button(toolbar, text="🖌 Curator Studio", command=self.open_curator_studio).pack(side="right", padx=(6, 0))
-        ttk.Button(toolbar, text="🚀 Criar Repositório", style="Accent.TButton",
-                   command=self.build_repo).pack(side="right", padx=(0, 6))
+        self._btn_build = ttk.Button(toolbar, text="🚀 Criar Repositório",
+                                      style="Accent.TButton", command=self.build_repo)
+        self._btn_build.pack(side="right", padx=(0, 6))
         ttk.Button(toolbar, text="✨ Auto-Categorizar",
                    command=self.trigger_auto_categorize).pack(side="right", padx=(6, 6))
 
@@ -189,6 +231,7 @@ class App(tk.Tk):
         self.tree.column("source", width=300)
         self.tree.pack(side="left", fill="both", expand=True)
         self.tree.bind("<Double-1>", lambda _e: self.edit_selected())
+        self.tree.bind("<Delete>", lambda _e: self.remove_selected())
 
         scroll_q = ttk.Scrollbar(tab_queue, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscroll=scroll_q.set)
@@ -227,6 +270,47 @@ class App(tk.Tk):
         self.repo_tree.configure(yscroll=scroll_bk.set)
         scroll_bk.pack(side="right", fill="y", pady=(0, 8))
 
+        # ── Aba LOG ──────────────────────────────────────────────────────
+        tab_log = ttk.Frame(self.notebook)
+        self.notebook.add(tab_log, text="  📋 Log  ")
+
+        log_toolbar = ttk.Frame(tab_log)
+        log_toolbar.pack(fill="x", padx=8, pady=(6, 2))
+        ttk.Button(log_toolbar, text="🗑 Limpar", command=self._clear_log).pack(side="left")
+
+        log_text_frame = ttk.Frame(tab_log)
+        log_text_frame.pack(fill="both", expand=True, padx=8, pady=(0, 8))
+
+        self._log_text = tk.Text(
+            log_text_frame,
+            state="disabled",
+            wrap="none",
+            font=("Consolas", 9),
+            bg=p["input_bg"],
+            fg=p["fg"],
+            relief="flat",
+            highlightthickness=1,
+            highlightcolor=p["border"],
+            highlightbackground=p["border"],
+        )
+        self._log_text.tag_configure("debug",   foreground=p["muted"])
+        self._log_text.tag_configure("info",    foreground=p["fg"])
+        self._log_text.tag_configure("warning", foreground="#f9e2af")
+        self._log_text.tag_configure("error",   foreground="#f38ba8")
+
+        scroll_log_y = ttk.Scrollbar(log_text_frame, orient="vertical",   command=self._log_text.yview)
+        scroll_log_x = ttk.Scrollbar(log_text_frame, orient="horizontal", command=self._log_text.xview)
+        self._log_text.configure(yscrollcommand=scroll_log_y.set, xscrollcommand=scroll_log_x.set)
+
+        scroll_log_y.pack(side="right",  fill="y")
+        scroll_log_x.pack(side="bottom", fill="x")
+        self._log_text.pack(side="left", fill="both", expand=True)
+
+        # Registra o handler no logger raiz do projeto
+        self._ui_log_handler = _UILogHandler(self._log_text, self)
+        self._ui_log_handler.setLevel(logging.DEBUG)
+        logging.getLogger("src").addHandler(self._ui_log_handler)
+
         # ── Status bar ──────────────────────────────────────────────────
         status_bar = tk.Frame(self, bg=p["header_bg"])
         status_bar.pack(fill="x", side="bottom")
@@ -237,6 +321,7 @@ class App(tk.Tk):
         env_parts.append(f"pdfplumber: {'✓' if HAS_PDFPLUMBER else '✗'}")
         env_parts.append(f"docling: {'✓' if DOCLING_CLI else '✗'}")
         env_parts.append(f"marker: {'✓' if MARKER_CLI else '✗'}")
+        env_parts.append(f"tessdata: {'✓' if TESSDATA_PATH else '✗'}")
         env_text = "  |  ".join(env_parts)
 
         self._status_var = tk.StringVar(value="Pronto.")
@@ -253,24 +338,54 @@ class App(tk.Tk):
         self._status_var.set(msg)
         self.update_idletasks()
 
-    def _start_progress(self, total: int):
-        """Exibe a barra de progresso. total=0 → modo indeterminate (spinning)."""
-        self._progress_bar.stop()
-        if total > 0:
-            self._progress_bar.configure(mode="determinate", maximum=total, value=0)
+    def _clear_log(self):
+        self._log_text.configure(state="normal")
+        self._log_text.delete("1.0", "end")
+        self._log_text.configure(state="disabled")
+
+    def _set_building_state(self, building: bool):
+        """Muda a UI para o estado de build (botão Cancelar) ou estado normal."""
+        if building:
+            self._btn_process.configure(state="disabled")
+            self._btn_build.configure(text="⏹ Cancelar Build",
+                                      style="TButton", command=self._cancel_build)
+            # Navega para a aba Log automaticamente
+            log_idx = self.notebook.index("end") - 1
+            self.notebook.select(log_idx)
         else:
-            self._progress_bar.configure(mode="indeterminate", value=0)
-        self._progress_bar.pack(side="right", padx=(0, 120), pady=3)
+            self._btn_process.configure(state="normal")
+            self._btn_build.configure(text="🚀 Criar Repositório",
+                                      style="Accent.TButton", command=self.build_repo)
+
+    def _cancel_build(self):
+        self._cancel_event.set()
+        self._btn_build.configure(state="disabled", text="⏳ Cancelando...")
+
+    def _start_progress(self, total: int):
+        """Exibe a barra de progresso. total=0 → animação manual (fake indeterminate)."""
+        self._progress_animate = False  # para animação anterior, se houver
+        self._progress_bar.configure(mode="determinate", value=0,
+                                     maximum=100 if total == 0 else total)
+        self._progress_bar.pack(side="right", padx=6, pady=3)
         if total == 0:
-            self._progress_bar.start(12)
+            self._progress_animate = True
+            self._tick_fake_indeterminate()
         self.update_idletasks()
+
+    def _tick_fake_indeterminate(self):
+        """Avança a barra manualmente para simular animação indeterminate."""
+        if not getattr(self, "_progress_animate", False):
+            return
+        v = self._progress_bar["value"]
+        self._progress_bar["value"] = (v + 4) % 101
+        self.after(40, self._tick_fake_indeterminate)
 
     def _step_progress(self, current: int, total: int):
         self._progress_bar["value"] = current + 1
         self.update_idletasks()
 
     def _end_progress(self):
-        self._progress_bar.stop()
+        self._progress_animate = False
         self._progress_bar.pack_forget()
         self._progress_bar["value"] = 0
         self.update_idletasks()
@@ -309,6 +424,9 @@ class App(tk.Tk):
 
     def open_student_profile(self):
         StudentProfileDialog(self, self.student_store, self.theme_mgr)
+
+    def open_status(self):
+        StatusDialog(self, self.config_obj, self.student_store, self.theme_mgr)
 
     def open_preview(self):
         repo_root = self.var_repo_root.get().strip()
@@ -405,10 +523,22 @@ class App(tk.Tk):
         )
         return dialog.result_entry
 
+    @staticmethod
+    def _pdf_page_range(path: str) -> str:
+        """Retorna ' 1-N' com o total de páginas do PDF, ou '' em caso de erro."""
+        try:
+            doc = pymupdf.open(path)
+            n = doc.page_count
+            doc.close()
+            return f"1-{n}" if n > 0 else ""
+        except Exception:
+            return ""
+
     def _quick_add_file(self, path: str, is_image: bool = False) -> FileEntry:
         """Cria FileEntry automaticamente sem abrir diálogo."""
         src = Path(path)
         file_type = "image" if is_image else ("pdf" if src.suffix.lower() == ".pdf" else "image")
+        page_range = self._pdf_page_range(path) if file_type == "pdf" else ""
         return FileEntry(
             source_path=path,
             file_type=file_type,
@@ -418,6 +548,7 @@ class App(tk.Tk):
             document_profile="auto",
             preferred_backend="auto",
             ocr_language=self.var_default_ocr_language.get(),
+            page_range=page_range,
         )
 
     def add_pdfs(self):
@@ -427,7 +558,16 @@ class App(tk.Tk):
                 self.entries.append(self._quick_add_file(path))
         else:
             for path in paths:
-                entry = self._entry_dialog(path)
+                initial = FileEntry(
+                    source_path=path,
+                    file_type="pdf",
+                    title=auto_detect_title(path),
+                    category=auto_detect_category(Path(path).name, False),
+                    page_range=self._pdf_page_range(path),
+                    processing_mode=self.var_default_mode.get(),
+                    ocr_language=self.var_default_ocr_language.get(),
+                )
+                entry = self._entry_dialog(path, initial=initial)
                 if entry:
                     self.entries.append(entry)
         self.refresh_tree()
@@ -503,6 +643,15 @@ class App(tk.Tk):
         self._save_current_queue()
         self._set_status(f"Removido: {removed}")
 
+    def _set_all_modes_auto(self):
+        if not self.entries:
+            return
+        for e in self.entries:
+            e.processing_mode = "auto"
+        self.refresh_tree()
+        self._save_current_queue()
+        self._set_status(f"✓ {len(self.entries)} arquivo(s) definidos como modo Auto.")
+
     def refresh_tree(self):
         for item in self.tree.get_children():
             self.tree.delete(item)
@@ -571,19 +720,27 @@ class App(tk.Tk):
         syllabus = sp.syllabus
         teaching_plan = getattr(sp, "teaching_plan", "")
 
+        # Inclui PDFs sem categoria OU sem unidade (tags vazias)
+        # Para provas/listas/gabaritos já categorizados, reprocessa se ainda não tem unidade
+        _academic = {"provas", "listas", "gabaritos", "fotos-de-prova", "material-de-aula"}
         targets = [
             e for e in self.entries
             if e.file_type == "pdf"
-            and (e.category in ("", "pdf", "outros") or not e.tags.strip())
+            and (
+                e.category in ("", "pdf", "outros")
+                or not e.tags.strip()
+                or (e.category in _academic and not e.tags.strip())
+            )
         ]
         if not targets and not fallback_build:
             targets = [e for e in self.entries if e.file_type == "pdf"]
 
+        other_titles = [e.title for e in self.entries if e.file_type == "pdf"]
+
         total = len(targets)
-        # Agora que sabemos o total, troca para progresso determinado
         self.after(0, lambda t=total: self._start_progress(t))
 
-        results = []  # List[(entry, category, unit)]
+        results = []  # List[(entry, category, unit, exam_ref)]
         for i, entry in enumerate(targets):
             self.after(0, lambda e=entry: self._set_status(f"🔮 Categorizando: {e.title}..."))
             self.after(0, lambda c=i, t=total: self._step_progress(c, t))
@@ -592,7 +749,7 @@ class App(tk.Tk):
             try:
                 doc = pymupdf.open(entry.source_path)
                 if doc.page_count > 0:
-                    preview_text = doc[0].get_text("text") + "\\n"
+                    preview_text = doc[0].get_text("text") + "\n"
                     if len(preview_text.strip()) < 100 and doc.page_count > 1:
                         preview_text += doc[1].get_text("text")
                 doc.close()
@@ -602,12 +759,18 @@ class App(tk.Tk):
             if not preview_text.strip():
                 preview_text = entry.title
 
-            result = llm.classify_pdf(course_name, syllabus, teaching_plan, preview_text)
+            other_for_entry = [t for t in other_titles if t != entry.title]
+            result = llm.classify_pdf(
+                course_name, syllabus, teaching_plan, preview_text,
+                known_category=entry.category,
+                other_file_titles=other_for_entry,
+            )
             category = result.get("category", "")
             unit = result.get("unit", "")
+            exam_ref = result.get("exam_ref", "")
 
-            if (category and category != "outros") or unit:
-                results.append((entry, category, unit))
+            if (category and category != "outros") or unit or exam_ref:
+                results.append((entry, category, unit, exam_ref))
 
         self.after(0, lambda: self._show_categorize_review(results, meta, fallback_build))
 
@@ -623,18 +786,19 @@ class App(tk.Tk):
         dialog = CategorizationReviewDialog(self, results)
 
         updates = 0
-        for entry, category, unit in dialog.confirmed:
+        for item in dialog.confirmed:
+            entry, category, unit, exam_ref = item if len(item) == 4 else (*item, "")
             changed = False
             if category and category != "outros":
                 entry.category = category
                 changed = True
-            if unit:
-                existing = [t.strip() for t in entry.tags.split(",") if t.strip()]
-                if unit not in existing:
-                    existing.append(unit)
-                    entry.tags = ", ".join(existing)
-                changed = True
+            existing = [t.strip() for t in entry.tags.split(",") if t.strip()]
+            for tag in filter(None, [unit, exam_ref]):
+                if tag not in existing:
+                    existing.append(tag)
+                    changed = True
             if changed:
+                entry.tags = ", ".join(existing)
                 updates += 1
 
         if updates:
@@ -697,8 +861,9 @@ class App(tk.Tk):
                 return
             incremental = answer
 
+        self._cancel_event.clear()
+        self._set_building_state(True)
         total = len(self.entries)
-        self._start_progress(max(total, 1))
         self._set_status(f"{'Atualizando' if incremental else 'Criando'} repositório em {repo_dir} ...")
 
         student_p = self.student_store.profile if self.student_store.profile.full_name else None
@@ -706,7 +871,8 @@ class App(tk.Tk):
         active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
 
         def on_progress(current, t, title):
-            self.after(0, lambda c=current, tot=t: self._step_progress(c, tot))
+            if self._cancel_event.is_set():
+                raise InterruptedError("Build cancelado pelo usuário.")
             if title:
                 self.after(0, lambda c=current, tot=t, ti=title:
                            self._set_status(f"({c + 1}/{tot}) Processando: {ti}..."))
@@ -730,14 +896,20 @@ class App(tk.Tk):
                 else:
                     builder.build()
                 self.after(0, lambda: self._on_build_complete(meta, repo_dir, incremental))
+            except InterruptedError:
+                self.after(0, self._on_build_cancelled)
             except Exception:
                 tb = traceback.format_exc()
                 self.after(0, lambda: self._on_build_error(tb))
 
         threading.Thread(target=worker, daemon=True).start()
 
+    def _on_build_cancelled(self):
+        self._set_building_state(False)
+        self._set_status("Build cancelado.")
+
     def _on_build_complete(self, meta: dict, repo_dir: Path, incremental: bool):
-        self._end_progress()
+        self._set_building_state(False)
         n_entries = len(self.entries)
         self.entries = []
         self.refresh_tree()
@@ -763,7 +935,7 @@ class App(tk.Tk):
         self._refresh_backlog()
 
     def _on_build_error(self, traceback_str: str):
-        self._end_progress()
+        self._set_building_state(False)
         self._set_status("Erro ao criar repositório.")
         messagebox.showerror(APP_NAME, f"Erro ao criar repositório:\n\n{traceback_str}")
 

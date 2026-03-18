@@ -37,6 +37,56 @@ except Exception:
 DOCLING_CLI = shutil.which("docling")
 MARKER_CLI = shutil.which("marker_single")
 
+
+def _configure_tessdata() -> Optional[str]:
+    """Detecta a instalação do Tesseract e configura TESSDATA_PREFIX se necessário.
+    Retorna o caminho do tessdata encontrado, ou None."""
+    # Se já está configurado e o diretório existe, não mexe
+    existing = os.environ.get("TESSDATA_PREFIX", "")
+    if existing and Path(existing).is_dir():
+        return existing
+
+    candidates: List[Path] = []
+
+    # 1. Derivar do executável tesseract no PATH
+    tess_bin = shutil.which("tesseract")
+    if tess_bin:
+        bin_dir = Path(tess_bin).parent
+        candidates += [
+            bin_dir / "tessdata",
+            bin_dir.parent / "tessdata",
+            bin_dir.parent / "share" / "tessdata",
+        ]
+
+    # 2. Caminhos padrão no Windows
+    if sys.platform == "win32":
+        for prog in [
+            Path(os.environ.get("ProgramFiles", r"C:\Program Files")),
+            Path(os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)")),
+            Path(r"C:\Tesseract-OCR"),
+        ]:
+            candidates += [prog / "Tesseract-OCR" / "tessdata", prog / "tessdata"]
+
+    # 3. Caminhos padrão no Linux/macOS
+    candidates += [
+        Path("/usr/share/tesseract-ocr/4.00/tessdata"),
+        Path("/usr/share/tesseract-ocr/tessdata"),
+        Path("/usr/local/share/tessdata"),
+        Path("/opt/homebrew/share/tessdata"),
+    ]
+
+    for candidate in candidates:
+        if candidate.is_dir() and any(candidate.glob("*.traineddata")):
+            os.environ["TESSDATA_PREFIX"] = str(candidate)
+            logger.info("TESSDATA_PREFIX configurado automaticamente: %s", candidate)
+            return str(candidate)
+
+    logger.warning("tessdata não encontrado; OCR por Tesseract pode não funcionar.")
+    return None
+
+
+TESSDATA_PATH = _configure_tessdata()
+
 APP_NAME = "Academic Tutor Repo Builder V3"
 
 DEFAULT_CATEGORIES = [

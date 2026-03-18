@@ -1,7 +1,10 @@
 import json
+import logging
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 from src.utils.helpers import DEFAULT_OCR_LANGUAGE, get_app_data_dir, slugify
 
@@ -96,14 +99,14 @@ class SubjectProfile:
     repo_root: str = ""
     queue: List[FileEntry] = field(default_factory=list)
 
-    def to_dict(self) -> Dict[str, any]:
+    def to_dict(self) -> Dict[str, Any]:
         d = asdict(self)
         # Ensure queue is serialized correctly
         d["queue"] = [e.to_dict() for e in self.queue]
         return d
 
     @classmethod
-    def from_dict(cls, d: Dict[str, any]) -> "SubjectProfile":
+    def from_dict(cls, d: Dict[str, Any]) -> "SubjectProfile":
         valid = {f.name for f in fields(cls)}
         # Pre-process queue
         queue_raw = d.get("queue", [])
@@ -146,8 +149,8 @@ class SubjectStore:
                 raw = json.load(f)
                 for k, v in raw.items():
                     self._data[k] = SubjectProfile.from_dict(v)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("Failed to load subjects from %s: %s", self._path, e)
 
     def save(self):
         with open(self._path, "w", encoding="utf-8") as f:
@@ -184,8 +187,8 @@ class StudentStore:
             with open(self._path, "r", encoding="utf-8") as f:
                 d = json.load(f)
                 self.profile = StudentProfile.from_dict(d)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("Failed to load student profile from %s: %s", self._path, e)
 
     def save(self):
         with open(self._path, "w", encoding="utf-8") as f:

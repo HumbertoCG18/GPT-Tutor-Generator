@@ -72,14 +72,16 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
         ensure_dir(out_dir)
         out_path = out_dir / f"{ctx.entry_id}.md"
 
+        use_ocr = bool(ctx.entry.force_ocr) or ctx.report.suspected_scan
         kwargs = {
             "pages": ctx.pages,
             "write_images": bool(ctx.entry.preserve_pdf_images_in_markdown),
             "image_path": str((ctx.root_dir / "staging" / "assets" / "inline-images" / ctx.entry_id).resolve()),
-            "force_ocr": bool(ctx.entry.force_ocr),
-            "ocr_language": ctx.entry.ocr_language.replace(",", "+"),
+            "force_ocr": use_ocr,
             "page_separators": True,
         }
+        if use_ocr:
+            kwargs["ocr_language"] = ctx.entry.ocr_language.replace(",", "+")
         if not ctx.entry.preserve_pdf_images_in_markdown:
             kwargs["write_images"] = False
             kwargs.pop("image_path", None)

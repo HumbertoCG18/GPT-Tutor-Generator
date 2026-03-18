@@ -956,6 +956,7 @@ class StudentProfileDialog(tk.Toplevel):
 
         self._personality_text = tk.Text(pers_frame, height=10, font=("Segoe UI", 10), wrap="word")
         self._personality_text.pack(fill="both", expand=True)
+        self._text_normal_fg = self._personality_text.cget("fg")
         if p.personality:
             self._personality_text.insert("1.0", p.personality)
         else:
@@ -978,7 +979,7 @@ class StudentProfileDialog(tk.Toplevel):
     def _clear_placeholder(self, _event=None):
         if self._personality_text.get("1.0", "2.0").startswith("Exemplo:"):
             self._personality_text.delete("1.0", "end")
-            self._personality_text.config(fg="")
+            self._personality_text.config(fg=self._text_normal_fg)
 
     def _save(self):
         sp = StudentProfile(
@@ -999,17 +1000,20 @@ class CategorizationReviewDialog(tk.Toplevel):
     """Mostra os resultados da auto-categorização para revisão antes de aplicar."""
 
     def __init__(self, parent, results: list):
-        """results: List of (FileEntry, category: str, unit: str)"""
+        """results: List of (FileEntry, category, unit, exam_ref) ou (FileEntry, category, unit)"""
         super().__init__(parent)
         self.title("🔮  Revisão — Auto-Categorização")
-        self.geometry("760x460")
-        self.minsize(600, 360)
+        self.geometry("920x460")
+        self.minsize(700, 360)
         self.transient(parent)
         self.grab_set()
         self.resizable(True, True)
 
-        self._results = results
-        self._selected = [True] * len(results)
+        # Normaliza para 4-tuplas
+        self._results = [
+            r if len(r) == 4 else (*r, "") for r in results
+        ]
+        self._selected = [True] * len(self._results)
         self.confirmed: list = []  # populated on OK
 
         self._build_ui()
@@ -1022,28 +1026,31 @@ class CategorizationReviewDialog(tk.Toplevel):
         frame = ttk.Frame(self)
         frame.pack(fill="both", expand=True, padx=14, pady=(0, 4))
 
-        cols = ("apply", "file", "category", "unit")
+        cols = ("apply", "file", "category", "unit", "exam_ref")
         self._tree = ttk.Treeview(frame, columns=cols, show="headings", height=12)
         self._tree.heading("apply",    text="Aplicar")
         self._tree.heading("file",     text="Arquivo")
         self._tree.heading("category", text="Categoria")
         self._tree.heading("unit",     text="Unidade")
+        self._tree.heading("exam_ref", text="Referência (gabarito/lista)")
         self._tree.column("apply",    width=65,  anchor="center", stretch=False)
-        self._tree.column("file",     width=240)
-        self._tree.column("category", width=150, anchor="center")
-        self._tree.column("unit",     width=130, anchor="center")
+        self._tree.column("file",     width=220)
+        self._tree.column("category", width=140, anchor="center")
+        self._tree.column("unit",     width=110, anchor="center")
+        self._tree.column("exam_ref", width=220)
 
         sb = ttk.Scrollbar(frame, orient="vertical", command=self._tree.yview)
         self._tree.configure(yscroll=sb.set)
         self._tree.pack(side="left", fill="both", expand=True)
         sb.pack(side="right", fill="y")
 
-        for i, (entry, category, unit) in enumerate(self._results):
+        for i, (entry, category, unit, exam_ref) in enumerate(self._results):
             self._tree.insert("", "end", iid=str(i), values=(
                 "✓",
                 Path(entry.source_path).name,
                 category or "—",
                 unit or "—",
+                exam_ref or "—",
             ))
 
         self._tree.bind("<ButtonRelease-1>", self._on_click)
@@ -1089,8 +1096,8 @@ class CategorizationReviewDialog(tk.Toplevel):
 
     def _ok(self):
         self.confirmed = [
-            (entry, category, unit)
-            for i, (entry, category, unit) in enumerate(self._results)
+            (entry, category, unit, exam_ref)
+            for i, (entry, category, unit, exam_ref) in enumerate(self._results)
             if self._selected[i]
         ]
         self.destroy()
@@ -1542,4 +1549,114 @@ class URLEntryDialog(tk.Toplevel):
             preferred_backend="url_fetcher"
         )
         self.destroy()
+
+
+class StatusDialog(tk.Toplevel):
+    """Janela de diagnóstico: mostra se todos os serviços estão configurados."""
+
+    def __init__(self, parent, config_obj: "AppConfig", student_store, theme_mgr: "ThemeManager"):
+        super().__init__(parent)
+        self.title("📊 Status dos Serviços")
+        self.resizable(False, False)
+        self.grab_set()
+
+        theme_name = config_obj.get("theme", "dark")
+        p = theme_mgr.palette(theme_name)
+
+        self.configure(bg=p["bg"])
+
+        # importações locais para evitar ciclo
+        import shutil
+        from src.utils.helpers import (
+            HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER,
+            DOCLING_CLI, MARKER_CLI, TESSDATA_PATH,
+        )
+
+        outer = ttk.Frame(self, padding=20)
+        outer.pack(fill="both", expand=True)
+
+        def section(title: str) -> ttk.LabelFrame:
+            f = ttk.LabelFrame(outer, text=f"  {title}", padding=(12, 8))
+            f.pack(fill="x", pady=(0, 10))
+            return f
+
+        def row(frame, label: str, ok: bool, detail: str = ""):
+            icon = "✅" if ok else "❌"
+            color = p["accent"] if ok else "#f38ba8"
+            r = ttk.Frame(frame)
+            r.pack(fill="x", pady=2)
+            tk.Label(r, text=icon, bg=p["bg"], font=("Segoe UI", 10)).pack(side="left")
+            tk.Label(r, text=f"  {label}", bg=p["bg"], fg=p["fg"],
+                     font=("Segoe UI", 10)).pack(side="left")
+            if detail:
+                tk.Label(r, text=f"  —  {detail}", bg=p["bg"], fg=p["muted"],
+                         font=("Consolas", 9)).pack(side="left")
+
+        def warn_row(frame, label: str, detail: str = ""):
+            r = ttk.Frame(frame)
+            r.pack(fill="x", pady=2)
+            tk.Label(r, text="⚠️", bg=p["bg"], font=("Segoe UI", 10)).pack(side="left")
+            tk.Label(r, text=f"  {label}", bg=p["bg"], fg="#f9e2af",
+                     font=("Segoe UI", 10)).pack(side="left")
+            if detail:
+                tk.Label(r, text=f"  —  {detail}", bg=p["bg"], fg=p["muted"],
+                         font=("Consolas", 9)).pack(side="left")
+
+        def mask_key(key: str) -> str:
+            if not key:
+                return "(não definida)"
+            if len(key) <= 8:
+                return "***"
+            return key[:4] + "..." + key[-4:]
+
+        # ── Backends de Extração ─────────────────────────────────────────
+        f_ext = section("Backends de Extração de PDF")
+        row(f_ext, "PyMuPDF",      HAS_PYMUPDF,      "pymupdf" if HAS_PYMUPDF else "pip install pymupdf")
+        row(f_ext, "PyMuPDF4LLM", HAS_PYMUPDF4LLM,  "pymupdf4llm" if HAS_PYMUPDF4LLM else "pip install pymupdf4llm")
+        row(f_ext, "pdfplumber",   HAS_PDFPLUMBER,   "pdfplumber" if HAS_PDFPLUMBER else "pip install pdfplumber")
+        row(f_ext, "docling CLI",  bool(DOCLING_CLI), DOCLING_CLI or "não encontrado no PATH")
+        row(f_ext, "marker CLI",   bool(MARKER_CLI),  MARKER_CLI  or "não encontrado no PATH")
+
+        # ── OCR / Tesseract ──────────────────────────────────────────────
+        f_ocr = section("OCR (Tesseract)")
+        tess_bin = shutil.which("tesseract")
+        row(f_ocr, "Executável tesseract", bool(tess_bin), tess_bin or "não encontrado no PATH")
+        row(f_ocr, "Dados de idioma (tessdata)", bool(TESSDATA_PATH),
+            TESSDATA_PATH or "defina TESSDATA_PREFIX nas variáveis de ambiente")
+
+        # ── IA / Auto-categorização ──────────────────────────────────────
+        f_ai = section("IA / Auto-categorização")
+        provider = config_obj.get("default_ai_provider", "gemini")
+        openai_key = config_obj.get("openai_api_key", "")
+        gemini_key = config_obj.get("gemini_api_key", "")
+
+        tk.Label(f_ai, text=f"  Provider ativo: {provider}", bg=p["bg"], fg=p["accent"],
+                 font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(0, 4))
+
+        has_openai = bool(openai_key)
+        has_gemini = bool(gemini_key)
+        row(f_ai, "OpenAI API Key",
+            has_openai, mask_key(openai_key) if has_openai else "não definida (OPENAI_API_KEY)")
+        row(f_ai, "Gemini API Key",
+            has_gemini, mask_key(gemini_key) if has_gemini else "não definida (GEMINI_API_KEY)")
+
+        active_key_ok = (provider == "openai" and has_openai) or (provider == "gemini" and has_gemini)
+        if not active_key_ok:
+            warn_row(f_ai, f"Provider '{provider}' ativo mas sem chave configurada",
+                     "configure em ⚙ Configurações > aba IA")
+
+        # ── Perfil do Aluno ──────────────────────────────────────────────
+        f_stu = section("Perfil do Aluno")
+        profile = student_store.profile
+        has_name = bool(getattr(profile, "full_name", ""))
+        has_pers = bool(getattr(profile, "personality", ""))
+        row(f_stu, "Nome configurado",         has_name, getattr(profile, "full_name", "") or "não definido")
+        row(f_stu, "Personalidade/preferências", has_pers,
+            (getattr(profile, "personality", "")[:60] + "...") if has_pers else "não definida")
+
+        # ── Botão fechar ─────────────────────────────────────────────────
+        ttk.Button(outer, text="Fechar", command=self.destroy).pack(pady=(4, 0))
+
+        self.update_idletasks()
+        self.geometry(f"{self.winfo_reqwidth() + 20}x{self.winfo_reqheight() + 10}")
 

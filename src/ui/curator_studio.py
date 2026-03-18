@@ -72,7 +72,10 @@ class CuratorStudio(tk.Toplevel):
         
         self.inner_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
         self.canvas.bind("<Configure>", lambda e: self.canvas.itemconfig(self.canvas_window, width=e.width))
-        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+        self.canvas.bind("<MouseWheel>", self._on_mousewheel)
+        self.canvas.bind("<Enter>", lambda e: self.canvas.bind_all("<MouseWheel>", self._on_mousewheel))
+        self.canvas.bind("<Leave>", lambda e: self.canvas.unbind_all("<MouseWheel>"))
+        self.bind("<Destroy>", self._on_destroy)
         
         # 3. Text Editor
         editor_frame = ttk.Frame(self.paned)
@@ -91,8 +94,18 @@ class CuratorStudio(tk.Toplevel):
         ed_scroll.pack(side="right", fill="y")
         self.editor.config(yscrollcommand=ed_scroll.set)
         
+    def _on_destroy(self, event):
+        if event.widget is self:
+            try:
+                self.canvas.unbind_all("<MouseWheel>")
+            except Exception:
+                pass
+
     def _on_mousewheel(self, event):
-        self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        try:
+            self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        except tk.TclError:
+            pass
         
     def _load_files(self):
         self.file_list.delete(0, tk.END)
