@@ -6,7 +6,6 @@ import re
 import shutil
 import subprocess
 import sys
-import tkinter as tk
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
@@ -72,15 +71,19 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
         ensure_dir(out_dir)
         out_path = out_dir / f"{ctx.entry_id}.md"
 
-        use_ocr = bool(ctx.entry.force_ocr) or ctx.report.suspected_scan
+        # Nota: NÃO usar force_ocr=True — pymupdf4llm tem um bug onde chama
+        # ocr_function(page) sem verificar se é None quando force_ocr=True.
+        # Em vez disso, usamos use_ocr=True (default) que detecta páginas
+        # scaneadas automaticamente e usa o OCR embutido do pymupdf (pdfocr_tobytes).
+        wants_ocr = bool(ctx.entry.force_ocr) or ctx.report.suspected_scan
         kwargs = {
             "pages": ctx.pages,
             "write_images": bool(ctx.entry.preserve_pdf_images_in_markdown),
             "image_path": str((ctx.root_dir / "staging" / "assets" / "inline-images" / ctx.entry_id).resolve()),
-            "force_ocr": use_ocr,
+            "use_ocr": wants_ocr,
             "page_separators": True,
         }
-        if use_ocr:
+        if wants_ocr:
             kwargs["ocr_language"] = ctx.entry.ocr_language.replace(",", "+")
         if not ctx.entry.preserve_pdf_images_in_markdown:
             kwargs["write_images"] = False
@@ -124,20 +127,23 @@ class PyMuPDFBackend(ExtractionBackend):
         out_path = out_dir / f"{ctx.entry_id}.md"
 
         doc = pymupdf.open(str(ctx.raw_target))
-        target_pages = ctx.pages or list(range(doc.page_count))
-        pieces = [f"# {ctx.entry.title}", ""]
-        for i in target_pages:
-            if i < 0 or i >= doc.page_count:
-                continue
-            page = doc[i]
-            pieces.append(f"## Página {i + 1}")
-            pieces.append("")
-            text = page.get_text("text")
-            text = re.sub(r"[ \t]+\n", "\n", text)
-            text = re.sub(r"\n{3,}", "\n\n", text)
-            pieces.append(text.strip())
-            pieces.append("")
-        body = "\n".join(pieces).strip() + "\n"
+        try:
+            target_pages = ctx.pages or list(range(doc.page_count))
+            pieces = [f"# {ctx.entry.title}", ""]
+            for i in target_pages:
+                if i < 0 or i >= doc.page_count:
+                    continue
+                page = doc[i]
+                pieces.append(f"## Página {i + 1}")
+                pieces.append("")
+                text = page.get_text("text")
+                text = re.sub(r"[ \t]+\n", "\n", text)
+                text = re.sub(r"\n{3,}", "\n\n", text)
+                pieces.append(text.strip())
+                pieces.append("")
+            body = "\n".join(pieces).strip() + "\n"
+        finally:
+            doc.close()
 
         write_text(out_path, wrap_frontmatter({
             "entry_id": ctx.entry_id,
@@ -177,25 +183,72 @@ class DoclingCLIBackend(ExtractionBackend):
             "--ocr",
             "--ocr-lang", ctx.entry.ocr_language,
             "--table-mode", "accurate",
+            "-vv",
         ]
 
         if ctx.entry.force_ocr or ctx.report.suspected_scan:
             cmd.append("--force-ocr")
         if ctx.entry.formula_priority or ctx.report.suggested_profile in {"math_heavy", "exam_pdf"}:
             cmd.append("--enrich-formula")
-        if ctx.report.suggested_profile in {"layout_heavy", "exam_pdf"}:
+        if ctx.report.suggested_profile in {"layout_heavy", "exam_pdf", "math_light"}:
             cmd.append("--enrich-picture-classes")
-        if ctx.report.suggested_profile == "layout_heavy":
-            cmd.extend(["--image-export-mode", "referenced"])
 
-        proc = subprocess.run(cmd, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        if proc.returncode != 0:
+        logger.info("  [docling] Comando: %s", " ".join(cmd))
+        logger.info("  [docling] Iniciando processo...")
+
+        # Usa Popen para streaming de output em tempo real
+        stdout_lines: list = []
+        stderr_lines: list = []
+        try:
+            proc = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                bufsize=1,  # line-buffered
+            )
+            logger.info("  [docling] PID=%d — aguardando saída...", proc.pid)
+
+            # Lê stderr em thread separada (docling escreve progresso lá)
+            import threading
+            def _read_stderr():
+                for line in proc.stderr:
+                    line = line.rstrip()
+                    if line:
+                        stderr_lines.append(line)
+                        logger.info("  [docling stderr] %s", line)
+
+            stderr_thread = threading.Thread(target=_read_stderr, daemon=True)
+            stderr_thread.start()
+
+            # Lê stdout na thread principal
+            for line in proc.stdout:
+                line = line.rstrip()
+                if line:
+                    stdout_lines.append(line)
+                    logger.info("  [docling stdout] %s", line)
+
+            proc.wait()
+            stderr_thread.join(timeout=5)
+            returncode = proc.returncode
+            logger.info("  [docling] Processo finalizado com código %d", returncode)
+
+        except Exception as e:
+            logger.error("  [docling] Erro ao executar: %s", e)
             return BackendRunResult(
-                name=self.name,
-                layer=self.layer,
-                status="error",
-                command=cmd,
-                error=(proc.stderr or proc.stdout or "Docling CLI falhou")[-4000:],
+                name=self.name, layer=self.layer, status="error",
+                command=cmd, error=str(e),
+            )
+
+        stdout_text = "\n".join(stdout_lines)
+        stderr_text = "\n".join(stderr_lines)
+
+        if returncode != 0:
+            error_msg = (stderr_text or stdout_text or "Docling CLI falhou")[-4000:]
+            logger.error("  [docling] Falhou: %s", error_msg[:500])
+            return BackendRunResult(
+                name=self.name, layer=self.layer, status="error",
+                command=cmd, error=error_msg,
             )
 
         produced_md = sorted(out_dir.glob("**/*.md"))
@@ -203,8 +256,8 @@ class DoclingCLIBackend(ExtractionBackend):
         metadata_path = out_dir / "docling-run.json"
         write_text(metadata_path, json.dumps({
             "command": cmd,
-            "stdout_tail": (proc.stdout or "")[-2000:],
-            "stderr_tail": (proc.stderr or "")[-2000:],
+            "stdout_tail": stdout_text[-2000:],
+            "stderr_tail": stderr_text[-2000:],
         }, indent=2, ensure_ascii=False))
 
         return BackendRunResult(
@@ -243,14 +296,59 @@ class MarkerCLIBackend(ExtractionBackend):
         if ctx.entry.force_ocr or ctx.entry.formula_priority or ctx.report.suspected_scan:
             cmd.append("--force_ocr")
 
-        proc = subprocess.run(cmd, check=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        if proc.returncode != 0:
+        logger.info("  [marker] Comando: %s", " ".join(cmd))
+        logger.info("  [marker] Iniciando processo...")
+
+        stdout_lines: list = []
+        stderr_lines: list = []
+        try:
+            proc = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                bufsize=1,
+            )
+            logger.info("  [marker] PID=%d — aguardando saída...", proc.pid)
+
+            import threading
+            def _read_stderr():
+                for line in proc.stderr:
+                    line = line.rstrip()
+                    if line:
+                        stderr_lines.append(line)
+                        logger.info("  [marker stderr] %s", line)
+
+            stderr_thread = threading.Thread(target=_read_stderr, daemon=True)
+            stderr_thread.start()
+
+            for line in proc.stdout:
+                line = line.rstrip()
+                if line:
+                    stdout_lines.append(line)
+                    logger.info("  [marker stdout] %s", line)
+
+            proc.wait()
+            stderr_thread.join(timeout=5)
+            returncode = proc.returncode
+            logger.info("  [marker] Processo finalizado com código %d", returncode)
+
+        except Exception as e:
+            logger.error("  [marker] Erro ao executar: %s", e)
             return BackendRunResult(
-                name=self.name,
-                layer=self.layer,
-                status="error",
-                command=cmd,
-                error=(proc.stderr or proc.stdout or "Marker CLI falhou")[-4000:],
+                name=self.name, layer=self.layer, status="error",
+                command=cmd, error=str(e),
+            )
+
+        stdout_text = "\n".join(stdout_lines)
+        stderr_text = "\n".join(stderr_lines)
+
+        if returncode != 0:
+            error_msg = (stderr_text or stdout_text or "Marker CLI falhou")[-4000:]
+            logger.error("  [marker] Falhou: %s", error_msg[:500])
+            return BackendRunResult(
+                name=self.name, layer=self.layer, status="error",
+                command=cmd, error=error_msg,
             )
 
         produced_md = sorted(out_dir.glob("**/*.md"))
@@ -258,8 +356,8 @@ class MarkerCLIBackend(ExtractionBackend):
         metadata_path = out_dir / "marker-run.json"
         write_text(metadata_path, json.dumps({
             "command": cmd,
-            "stdout_tail": (proc.stdout or "")[-2000:],
-            "stderr_tail": (proc.stderr or "")[-2000:],
+            "stdout_tail": stdout_text[-2000:],
+            "stderr_tail": stderr_text[-2000:],
         }, indent=2, ensure_ascii=False))
 
         return BackendRunResult(
@@ -322,7 +420,7 @@ class BackendSelector:
 
         elif mode == "manual_assisted":
             base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
-            if effective_profile in {"math_heavy", "layout_heavy", "scanned", "exam_pdf"}:
+            if effective_profile in {"math_heavy", "math_light", "layout_heavy", "scanned", "exam_pdf"}:
                 advanced_backend = advanced_backend or pick_first(["docling", "marker"])
             reasons.append("Modo manual_assisted gera base automática e exige revisão humana guiada.")
 
@@ -330,7 +428,10 @@ class BackendSelector:
             base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
             if effective_profile == "math_heavy":
                 advanced_backend = advanced_backend or pick_first(["docling", "marker"])
-                reasons.append("Documento math_heavy pede backend avançado para fórmulas.")
+                reasons.append("Documento math_heavy pede backend avançado com enrich-formula.")
+            elif effective_profile == "math_light":
+                advanced_backend = advanced_backend or pick_first(["docling", "marker"])
+                reasons.append("Documento math_light pede backend avançado para fórmulas moderadas.")
             elif effective_profile in {"layout_heavy", "scanned", "exam_pdf"}:
                 advanced_backend = advanced_backend or pick_first(["docling", "marker"])
                 reasons.append("Documento com layout/scan/exam pede backend avançado.")
@@ -341,7 +442,7 @@ class BackendSelector:
 
         else:  # auto
             base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
-            if effective_profile in {"math_heavy", "layout_heavy", "scanned", "exam_pdf"}:
+            if effective_profile in {"math_heavy", "math_light", "layout_heavy", "scanned", "exam_pdf"}:
                 advanced_backend = advanced_backend or pick_first(["docling", "marker"])
                 reasons.append(f"Modo auto detectou perfil {effective_profile} e ativou camada avançada.")
             else:
@@ -387,8 +488,11 @@ class RepoBuilder:
 
     def build(self) -> None:
         logger.info("Building repository at %s", self.root_dir)
+        logger.info("Creating directory structure...")
         self._create_structure()
+        logger.info("Writing root/pedagogical files...")
         self._write_root_files()
+        logger.info("Root files written. Starting entry processing...")
 
         manifest = {
             "app": APP_NAME,
@@ -406,18 +510,27 @@ class RepoBuilder:
             "entries": [],
         }
 
-        total = len(self.entries)
-        for i, entry in enumerate(self.entries):
-            logger.info("Processing entry: %s (%s)", entry.title, entry.file_type)
+        manifest_path = self.root_dir / "manifest.json"
+        active_entries = [e for e in self.entries if getattr(e, "enabled", True)]
+        skipped = len(self.entries) - len(active_entries)
+        if skipped:
+            logger.info("Pulando %d entries desabilitados.", skipped)
+        total = len(active_entries)
+        for i, entry in enumerate(active_entries):
+            logger.info("[%d/%d] Processing: %s (%s)", i + 1, total, entry.title, entry.file_type)
             if self.progress_callback:
                 self.progress_callback(i, total, entry.title)
             item_result = self._process_entry(entry)
             manifest["entries"].append(item_result)
+            # Salva manifest após cada entry para não perder progresso
+            manifest["logs"] = self.logs
+            write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+            logger.info("[%d/%d] Concluído e salvo: %s", i + 1, total, entry.title)
         if self.progress_callback:
             self.progress_callback(total, total, "")
 
         manifest["logs"] = self.logs
-        write_text(self.root_dir / "manifest.json", json.dumps(manifest, indent=2, ensure_ascii=False))
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
         self._write_source_registry(manifest)
         self._write_bundle_seed(manifest)
         self._write_build_report(manifest)
@@ -713,7 +826,29 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         item["manual_review"] = safe_rel(manual, self.root_dir)
         return item
 
+    def _check_cancel(self):
+        """Levanta InterruptedError se o build foi cancelado."""
+        if self.progress_callback:
+            # O progress_callback da UI verifica o cancel_event e levanta InterruptedError
+            try:
+                self.progress_callback(-1, -1, "")
+            except InterruptedError:
+                raise
+
+    @staticmethod
+    def _quick_page_count(pdf_path: Path) -> int:
+        if not HAS_PYMUPDF:
+            return 0
+        try:
+            doc = pymupdf.open(str(pdf_path))
+            n = doc.page_count
+            doc.close()
+            return n
+        except Exception:
+            return 0
+
     def _process_pdf(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
+        import time
         item: Dict[str, object] = {
             "document_report": None, "pipeline_decision": None,
             "base_markdown": None, "advanced_markdown": None,
@@ -722,71 +857,122 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             "page_previews_dir": None, "table_detection_dir": None,
             "manual_review": None,
         }
+        t0 = time.time()
+
+        logger.info("  [1/6] Profiling PDF: %s (%d págs, %.1f MB)",
+                     entry.title,
+                     self._quick_page_count(raw_target),
+                     raw_target.stat().st_size / 1048576)
         report = self._profile_pdf(raw_target, entry)
         decision = self.selector.decide(entry, report)
+        logger.info("  [1/6] Profile=%s, pages=%d, text=%d chars, images=%d, scan=%s",
+                     decision.effective_profile, report.page_count,
+                     report.text_chars, report.images_count, report.suspected_scan)
         item["document_report"] = asdict(report)
         item["pipeline_decision"] = asdict(decision)
         item["effective_profile"] = decision.effective_profile
         item["base_backend"] = decision.base_backend
         item["advanced_backend"] = decision.advanced_backend
         ctx = BackendContext(self.root_dir, raw_target, entry, report)
+
+        self._check_cancel()
+
         if decision.base_backend:
+            logger.info("  [2/6] Backend base: %s → iniciando...", decision.base_backend)
+            t1 = time.time()
             backend = self.selector.backends[decision.base_backend]
             result = backend.run(ctx)
+            logger.info("  [2/6] Backend base: %s → %s (%.1fs)",
+                         decision.base_backend, result.status, time.time() - t1)
             self._log_backend_result(entry.id(), result)
             if result.status == "ok":
                 item["base_markdown"] = result.markdown_path
             else:
-                logger.warning("Base backend %s failed for %s: %s", decision.base_backend, entry.id(), result.error)
+                logger.warning("  Base backend %s failed: %s", decision.base_backend, result.error)
                 item.setdefault("backend_errors", []).append({decision.base_backend: result.error})
+        else:
+            logger.info("  [2/6] Backend base: nenhum selecionado")
+
+        self._check_cancel()
+
         if decision.advanced_backend:
+            logger.info("  [3/6] Backend avançado: %s → iniciando...", decision.advanced_backend)
+            t1 = time.time()
             backend = self.selector.backends[decision.advanced_backend]
             result = backend.run(ctx)
+            logger.info("  [3/6] Backend avançado: %s → %s (%.1fs)",
+                         decision.advanced_backend, result.status, time.time() - t1)
             self._log_backend_result(entry.id(), result)
             if result.status == "ok":
                 item["advanced_markdown"] = result.markdown_path
                 item["advanced_asset_dir"] = result.asset_dir
                 item["advanced_metadata_path"] = result.metadata_path
             else:
-                logger.warning("Advanced backend %s failed for %s: %s", decision.advanced_backend, entry.id(), result.error)
+                logger.warning("  Advanced backend %s failed: %s", decision.advanced_backend, result.error)
                 item.setdefault("backend_errors", []).append({decision.advanced_backend: result.error})
+        else:
+            logger.info("  [3/6] Backend avançado: nenhum selecionado")
+
+        self._check_cancel()
+
         if HAS_PYMUPDF and entry.extract_images:
+            logger.info("  [4/6] Extraindo imagens...")
             try:
                 images_dir = self.root_dir / "staging" / "assets" / "images" / entry.id()
                 count = self._extract_pdf_images(raw_target, images_dir, pages=parse_page_range(entry.page_range))
                 item["images_dir"] = safe_rel(images_dir, self.root_dir)
+                logger.info("  [4/6] %d imagens extraídas", count)
                 self.logs.append({"entry": entry.id(), "step": "extract_images", "status": "ok", "count": count})
             except Exception as e:
-                logger.error("Image extraction failed for %s: %s", entry.id(), e)
+                logger.error("  [4/6] Falha na extração de imagens: %s", e)
                 self.logs.append({"entry": entry.id(), "step": "extract_images", "status": "error", "error": str(e)})
+        else:
+            logger.info("  [4/6] Extração de imagens: pulado")
+
+        self._check_cancel()
+
         if HAS_PYMUPDF and entry.export_page_previews:
+            logger.info("  [5/6] Gerando previews de páginas...")
             try:
                 previews_dir = self.root_dir / "staging" / "assets" / "page-previews" / entry.id()
                 count = self._export_page_previews(raw_target, previews_dir, pages=parse_page_range(entry.page_range))
                 item["page_previews_dir"] = safe_rel(previews_dir, self.root_dir)
+                logger.info("  [5/6] %d previews gerados", count)
                 self.logs.append({"entry": entry.id(), "step": "page_previews", "status": "ok", "count": count})
             except Exception as e:
-                logger.error("Page preview export failed for %s: %s", entry.id(), e)
+                logger.error("  [5/6] Falha nos previews: %s", e)
                 self.logs.append({"entry": entry.id(), "step": "page_previews", "status": "error", "error": str(e)})
+        else:
+            logger.info("  [5/6] Previews: pulado")
+
+        self._check_cancel()
+
         if entry.extract_tables:
+            logger.info("  [6/6] Extraindo tabelas...")
             if HAS_PDFPLUMBER:
                 try:
                     tables_dir = self.root_dir / "staging" / "assets" / "tables" / entry.id()
                     count = self._extract_tables_pdfplumber(raw_target, tables_dir, pages=parse_page_range(entry.page_range))
                     item["tables_dir"] = safe_rel(tables_dir, self.root_dir)
+                    logger.info("  [6/6] pdfplumber: %d tabelas extraídas", count)
                     self.logs.append({"entry": entry.id(), "step": "extract_tables_pdfplumber", "status": "ok", "count": count})
                 except Exception as e:
-                    logger.error("Table extraction (pdfplumber) failed for %s: %s", entry.id(), e)
+                    logger.error("  [6/6] pdfplumber falhou: %s", e)
                     self.logs.append({"entry": entry.id(), "step": "extract_tables_pdfplumber", "status": "error", "error": str(e)})
             if HAS_PYMUPDF:
                 try:
                     det_dir = self.root_dir / "staging" / "assets" / "table-detections" / entry.id()
                     count = self._detect_tables_pymupdf(raw_target, det_dir, pages=parse_page_range(entry.page_range))
                     item["table_detection_dir"] = safe_rel(det_dir, self.root_dir)
+                    logger.info("  [6/6] pymupdf: %d detecções de tabela", count)
                     self.logs.append({"entry": entry.id(), "step": "detect_tables_pymupdf", "status": "ok", "count": count})
                 except Exception as e:
-                    logger.error("Table detection (pymupdf) failed for %s: %s", entry.id(), e)
+                    logger.error("  [6/6] pymupdf table detection falhou: %s", e)
                     self.logs.append({"entry": entry.id(), "step": "detect_tables_pymupdf", "status": "error", "error": str(e)})
+        else:
+            logger.info("  [6/6] Tabelas: pulado")
+
+        logger.info("  ✓ PDF concluído em %.1fs: %s", time.time() - t0, entry.title)
         manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
         write_text(manual, manual_pdf_review_template(entry, item))
         item["manual_review"] = safe_rel(manual, self.root_dir)
@@ -807,31 +993,34 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             report.notes.append("PyMuPDF não disponível; perfil automático limitado.")
             return report
         doc = pymupdf.open(str(pdf_path))
-        pages = parse_page_range(entry.page_range) or list(range(doc.page_count))
-        pages = [p for p in pages if 0 <= p < doc.page_count]
-        report.page_count = len(pages)
-        total_text = 0
-        total_images = 0
-        table_candidates = 0
-        low_text_pages = 0
-        for page_num in pages:
-            page = doc[page_num]
-            text = page.get_text("text") or ""
-            total_text += len(text.strip())
-            images = page.get_images(full=True) or []
-            total_images += len(images)
-            try:
-                tables = page.find_tables()
-                table_candidates += len(getattr(tables, "tables", []) or [])
-            except Exception:
-                pass
-            if len(text.strip()) < 60 and len(images) > 0:
-                low_text_pages += 1
-        report.text_chars = total_text
-        report.images_count = total_images
-        report.table_candidates = table_candidates
-        report.text_density = round(total_text / max(report.page_count, 1), 2)
-        report.suspected_scan = (low_text_pages / max(report.page_count, 1)) >= 0.5 and total_images > 0
+        try:
+            pages = parse_page_range(entry.page_range) or list(range(doc.page_count))
+            pages = [p for p in pages if 0 <= p < doc.page_count]
+            report.page_count = len(pages)
+            total_text = 0
+            total_images = 0
+            table_candidates = 0
+            low_text_pages = 0
+            for page_num in pages:
+                page = doc[page_num]
+                text = page.get_text("text") or ""
+                total_text += len(text.strip())
+                images = page.get_images(full=True) or []
+                total_images += len(images)
+                try:
+                    tables = page.find_tables()
+                    table_candidates += len(getattr(tables, "tables", []) or [])
+                except Exception:
+                    pass
+                if len(text.strip()) < 60 and len(images) > 0:
+                    low_text_pages += 1
+            report.text_chars = total_text
+            report.images_count = total_images
+            report.table_candidates = table_candidates
+            report.text_density = round(total_text / max(report.page_count, 1), 2)
+            report.suspected_scan = (low_text_pages / max(report.page_count, 1)) >= 0.5 and total_images > 0
+        finally:
+            doc.close()
         if entry.document_profile != "auto":
             report.suggested_profile = entry.document_profile
             report.notes.append("Perfil definido manualmente pelo usuário.")
@@ -870,36 +1059,44 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
     def _extract_pdf_images(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
         ensure_dir(out_dir)
         doc = pymupdf.open(str(pdf_path))
-        target_pages = pages or list(range(doc.page_count))
-        count = 0
-        for page_num in target_pages:
-            if not (0 <= page_num < doc.page_count):
-                continue
-            page = doc[page_num]
-            for img_idx, img in enumerate(page.get_images(full=True), start=1):
-                xref = img[0]
-                image = doc.extract_image(xref)
-                ext = image.get("ext", "png")
-                data = image["image"]
-                fname = out_dir / f"page-{page_num + 1:03d}-img-{img_idx:02d}.{ext}"
-                fname.write_bytes(data)
-                count += 1
-        return count
+        try:
+            target_pages = pages or list(range(doc.page_count))
+            count = 0
+            for page_num in target_pages:
+                if not (0 <= page_num < doc.page_count):
+                    continue
+                page = doc[page_num]
+                for img_idx, img in enumerate(page.get_images(full=True), start=1):
+                    xref = img[0]
+                    image = doc.extract_image(xref)
+                    if not image or "image" not in image:
+                        continue
+                    ext = image.get("ext", "png")
+                    data = image["image"]
+                    fname = out_dir / f"page-{page_num + 1:03d}-img-{img_idx:02d}.{ext}"
+                    fname.write_bytes(data)
+                    count += 1
+            return count
+        finally:
+            doc.close()
 
     def _export_page_previews(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
         ensure_dir(out_dir)
         doc = pymupdf.open(str(pdf_path))
-        target_pages = pages or list(range(doc.page_count))
-        count = 0
-        for page_num in target_pages:
-            if not (0 <= page_num < doc.page_count):
-                continue
-            page = doc[page_num]
-            pix = page.get_pixmap(matrix=pymupdf.Matrix(1.5, 1.5))
-            out = out_dir / f"page-{page_num + 1:03d}.png"
-            pix.save(str(out))
-            count += 1
-        return count
+        try:
+            target_pages = pages or list(range(doc.page_count))
+            count = 0
+            for page_num in target_pages:
+                if not (0 <= page_num < doc.page_count):
+                    continue
+                page = doc[page_num]
+                pix = page.get_pixmap(matrix=pymupdf.Matrix(1.5, 1.5))
+                out = out_dir / f"page-{page_num + 1:03d}.png"
+                pix.save(str(out))
+                count += 1
+            return count
+        finally:
+            doc.close()
 
     def _extract_tables_pdfplumber(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
         ensure_dir(out_dir)
@@ -931,33 +1128,36 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
     def _detect_tables_pymupdf(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
         ensure_dir(out_dir)
         doc = pymupdf.open(str(pdf_path))
-        selected = pages or list(range(doc.page_count))
-        count = 0
-        for page_num in selected:
-            if not (0 <= page_num < doc.page_count):
-                continue
-            page = doc[page_num]
-            try:
-                tables = page.find_tables()
-                found = getattr(tables, "tables", []) or []
-                if not found:
+        try:
+            selected = pages or list(range(doc.page_count))
+            count = 0
+            for page_num in selected:
+                if not (0 <= page_num < doc.page_count):
                     continue
-                serializable = []
-                for idx, tbl in enumerate(found, start=1):
-                    bbox = getattr(tbl, "bbox", None)
-                    rows = []
-                    try:
-                        extracted = tbl.extract() or []
-                        rows = [["" if cell is None else str(cell) for cell in row] for row in extracted]
-                    except Exception:
-                        pass
-                    serializable.append({"table_index": idx, "bbox": list(bbox) if bbox else None, "rows": rows})
-                meta_path = out_dir / f"page-{page_num + 1:03d}.json"
-                write_text(meta_path, json.dumps(serializable, indent=2, ensure_ascii=False))
-                count += len(serializable)
-            except Exception:
-                continue
-        return count
+                page = doc[page_num]
+                try:
+                    tables = page.find_tables()
+                    found = getattr(tables, "tables", []) or []
+                    if not found:
+                        continue
+                    serializable = []
+                    for idx, tbl in enumerate(found, start=1):
+                        bbox = getattr(tbl, "bbox", None)
+                        rows = []
+                        try:
+                            extracted = tbl.extract() or []
+                            rows = [["" if cell is None else str(cell) for cell in row] for row in extracted]
+                        except Exception:
+                            pass
+                        serializable.append({"table_index": idx, "bbox": list(bbox) if bbox else None, "rows": rows})
+                    meta_path = out_dir / f"page-{page_num + 1:03d}.json"
+                    write_text(meta_path, json.dumps(serializable, indent=2, ensure_ascii=False))
+                    count += len(serializable)
+                except Exception:
+                    continue
+            return count
+        finally:
+            doc.close()
 
     def incremental_build(self) -> None:
         """Adiciona novos arquivos a um repositório existente sem recriar do zero."""
@@ -972,25 +1172,32 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             manifest = json.load(f)
 
         existing_sources = {e.get("source_path") for e in manifest.get("entries", [])}
-        new_entries = [e for e in self.entries if e.source_path not in existing_sources]
+        new_entries = [e for e in self.entries
+                       if e.source_path not in existing_sources and getattr(e, "enabled", True)]
+
         if not new_entries:
-            logger.info("No new entries to process.")
-            return
+            logger.info("No new entries to process — regenerating pedagogical files only.")
+        else:
+            logger.info("Processing %d new entries (skipping %d existing).",
+                         len(new_entries), len(self.entries) - len(new_entries))
 
-        logger.info("Processing %d new entries (skipping %d existing).",
-                     len(new_entries), len(self.entries) - len(new_entries))
+            self._create_structure()
 
-        self._create_structure()
-
-        total = len(new_entries)
-        for i, entry in enumerate(new_entries):
-            logger.info("Processing new entry: %s (%s)", entry.title, entry.file_type)
+            total = len(new_entries)
+            for i, entry in enumerate(new_entries):
+                logger.info("[%d/%d] Processing: %s (%s)", i + 1, total, entry.title, entry.file_type)
+                if self.progress_callback:
+                    self.progress_callback(i, total, entry.title)
+                item_result = self._process_entry(entry)
+                manifest["entries"].append(item_result)
+                # Salva manifest após cada entry para não perder progresso
+                manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+                manifest.setdefault("logs", []).extend(self.logs)
+                self.logs = []
+                write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+                logger.info("[%d/%d] Concluído e salvo: %s", i + 1, total, entry.title)
             if self.progress_callback:
-                self.progress_callback(i, total, entry.title)
-            item_result = self._process_entry(entry)
-            manifest["entries"].append(item_result)
-        if self.progress_callback:
-            self.progress_callback(total, total, "")
+                self.progress_callback(total, total, "")
 
         manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
         manifest.setdefault("logs", []).extend(self.logs)
@@ -1054,11 +1261,15 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         self._write_build_report(manifest)
         logger.info("Incremental build completed. %d new entries added.", len(new_entries))
 
-    def process_single(self, entry: "FileEntry") -> None:
+    def process_single(self, entry: "FileEntry", force: bool = False) -> str:
         """
         Processa um único FileEntry e adiciona ao repositório existente.
         Chamado pelo botão '⚡ Processar' da UI para processar item a item.
         Se o repositório ainda não existir, cria a estrutura primeiro.
+
+        Returns:
+            "ok" — processado com sucesso
+            "already_exists" — já existia no manifest (quando force=False)
         """
         manifest_path = self.root_dir / "manifest.json"
 
@@ -1092,8 +1303,16 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         # Verifica duplicata por source_path
         existing_sources = {e.get("source_path") for e in manifest.get("entries", [])}
         if entry.source_path in existing_sources:
-            logger.info("Entry already processed, skipping: %s", entry.source_path)
-            return
+            if not force:
+                logger.info("Entry already processed: %s", entry.source_path)
+                return "already_exists"
+            # force=True: remove a entrada antiga antes de reprocessar
+            old_id = entry.id()
+            logger.info("Reprocessing (force): removing old entry %s", old_id)
+            self.unprocess(old_id)
+            # Reload manifest after unprocess
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                manifest = json.load(f)
 
         logger.info("Processing single entry: %s (%s)", entry.title, entry.file_type)
         item_result = self._process_entry(entry)
@@ -1107,6 +1326,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         self._write_bundle_seed(manifest)
         self._write_build_report(manifest)
         logger.info("Single entry processed: %s", entry.id())
+        return "ok"
 
     def unprocess(self, entry_id: str) -> bool:
         """
@@ -1243,24 +1463,62 @@ As provas são **cumulativas com peso progressivo**. Sempre que entrar em modo `
 ## Regras fundamentais
 
 1. **Nunca invente** conteúdo não presente nos arquivos do Projeto
-2. **Sempre cite** o arquivo de origem ao referenciar conteúdo
+2. **Sempre cite a fonte** — ao usar conteúdo dos arquivos, indique o nome do PDF original e o arquivo markdown correspondente (ex: *"Conforme o material **Aula 03 - Derivadas** (`staging/markdown-auto/pymupdf4llm/aula-03-derivadas.md`, PDF original: `raw/pdfs/material-de-aula/aula-03-derivadas.pdf`)"*). Isso permite ao aluno acompanhar com o arquivo aberto no computador.
 3. **Consulte `STUDENT_STATE.md`** antes de responder — não repita o que já foi explicado
 4. **Não entregue** a resposta de exercícios de imediato — guie o raciocínio
 5. **Ao final de cada sessão**, sugira atualizar `student/STUDENT_STATE.md`
 
-## Atualização de estado
+## Rastreabilidade de fontes
+
+Toda vez que usar informação dos arquivos do Projeto, inclua ao final do bloco uma referência no formato:
+
+> 📄 **Fonte:** `[título do material]` — arquivo: `[caminho do markdown]` | PDF: `[caminho do PDF original]`
+
+Isso é fundamental para que o aluno consiga abrir o material no computador e acompanhar a explicação.
+
+## Atualização de estado e progresso
 
 Ao final de cada sessão de estudo, gere um bloco para atualizar `student/STUDENT_STATE.md`:
 
-```
+```markdown
 ## Atualização sugerida para STUDENT_STATE.md
+- Data: [YYYY-MM-DD]
 - Tópico estudado: [tópico]
+- Unidade: [unidade correspondente do COURSE_MAP]
 - Status: [compreendido / em progresso / com dúvidas]
 - Dúvidas pendentes: [lista]
+- Exercícios feitos: [lista de exercícios, se houver]
 - Próximo passo sugerido: [próximo tópico]
 ```
 
-O aluno faz o commit no GitHub. Na próxima sessão, o estado estará atualizado automaticamente.
+**Instrua o aluno a fazer commit no GitHub** com a mensagem sugerida:
+```
+git add student/STUDENT_STATE.md
+git commit -m "study: [tópico] - [status]"
+git push
+```
+
+Na próxima sessão, o estado estará atualizado automaticamente.
+
+## Captura de conteúdo novo (fotos, anotações)
+
+Quando o aluno enviar uma **foto** (do quadro, caderno, anotação, etc.) no chat:
+
+1. Analise o conteúdo da imagem e resuma os pontos principais
+2. Pergunte: *"Quer que eu prepare esse conteúdo para salvar no repositório da matéria?"*
+3. Se sim, gere:
+   - Um arquivo markdown com o conteúdo extraído da foto
+   - O caminho sugerido: `content/curated/[slug-do-topico].md`
+   - Instruções de commit:
+```
+# Salve a foto e o markdown gerado:
+git add content/curated/[arquivo].md
+git add raw/images/material-de-aula/[foto].jpg
+git commit -m "add: [descrição do conteúdo capturado]"
+git push
+```
+
+Isso transforma anotações efêmeras em conhecimento permanente no repositório.
 """
 
 

@@ -133,7 +133,7 @@ EXERCISE_CATEGORIES = ("listas", "gabaritos")
 DEFAULT_OCR_LANGUAGE = "por,eng"
 
 PROCESSING_MODES = ["auto", "quick", "high_fidelity", "manual_assisted"]
-DOCUMENT_PROFILES = ["auto", "general", "math_heavy", "layout_heavy", "scanned", "exam_pdf"]
+DOCUMENT_PROFILES = ["auto", "general", "math_light", "math_heavy", "layout_heavy", "scanned", "exam_pdf"]
 PREFERRED_BACKENDS = ["auto", "pymupdf4llm", "pymupdf", "docling", "marker"]
 OCR_LANGS = ["por", "eng", "por,eng", "eng,por"]
 
@@ -274,7 +274,7 @@ def parse_html_schedule(html_content: str) -> str:
 def get_app_data_dir() -> Path:
     """Retorna o diretório base para configurações do aplicativo."""
     if sys.platform == "win32":
-        base_dir = Path(os.getenv("APPDATA")) / "GPTTutorGenerator"
+        base_dir = Path(os.getenv("APPDATA") or str(Path.home())) / "GPTTutorGenerator"
     else:
         base_dir = Path.home() / ".config" / "gpt_tutor_generator"
     ensure_dir(base_dir)
@@ -284,8 +284,11 @@ def auto_detect_category(name: str, is_image: bool = False) -> str:
     if is_image:
         return "fotos-de-prova"
     
+    import re as _re
     name = name.lower()
-    if any(k in name for k in ["prova", "exame", "test", "p1", "p2", "p3", "av1", "av2"]):
+    # Use word-boundary regex for short codes to avoid false positives (e.g. "cap1" matching "p1")
+    _wb = lambda pattern: bool(_re.search(r'(?:^|[\W_])' + pattern + r'(?:$|[\W_])', name))
+    if any(k in name for k in ["prova", "exame"]) or _wb("test") or _wb("p1") or _wb("p2") or _wb("p3") or _wb("av1") or _wb("av2"):
         return "provas"
     if any(k in name for k in ["lista", "exerc", "quest", "trab", "exer"]):
         return "listas"
@@ -308,3 +311,35 @@ def auto_detect_title(path_or_name: str) -> str:
     # Remove espaços duplos
     name = " ".join(name.split())
     return name.title()
+
+
+def fetch_url_title(url: str, timeout: float = 5.0) -> str:
+    """Busca o <title> de uma URL. Retorna '' em caso de erro.
+
+    Funciona com YouTube, sites genéricos, etc.
+    Usa apenas stdlib (urllib) para evitar dependências extras.
+    """
+    import urllib.request
+    import html as html_mod
+
+    try:
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0",
+            "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.8",
+        })
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            # Lê só os primeiros 64KB para não baixar a página inteira
+            raw = resp.read(65536)
+            charset = resp.headers.get_content_charset() or "utf-8"
+            text = raw.decode(charset, errors="replace")
+        # Extrai <title>...</title>
+        m = re.search(r"<title[^>]*>(.*?)</title>", text, re.IGNORECASE | re.DOTALL)
+        if m:
+            title = m.group(1).strip()
+            title = html_mod.unescape(title)
+            # YouTube: remove " - YouTube" do final
+            title = re.sub(r"\s*[-–—]\s*YouTube\s*$", "", title)
+            return title
+    except Exception:
+        pass
+    return ""

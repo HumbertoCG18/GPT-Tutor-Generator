@@ -9,7 +9,7 @@ from src.utils.helpers import (
     CATEGORY_LABELS, DEFAULT_CATEGORIES, DEFAULT_OCR_LANGUAGE, PROCESSING_MODES,
     DOCUMENT_PROFILES, PREFERRED_BACKENDS, OCR_LANGS,
     slugify, parse_html_schedule, auto_detect_category, auto_detect_title,
-    APP_NAME, HAS_PYMUPDF4LLM
+    fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM
 )
 from src.builder.engine import BackendSelector
 from src.ui.theme import ThemeManager, AppConfig, THEMES
@@ -295,30 +295,33 @@ manual_assisted
   Use para provas, gabaritos, materiais críticos onde a precisão é essencial.
   Exige que você revise o conteúdo gerado antes de publicar.
 """),
-    ("Perfis de Documento", """Os perfis descrevem o TIPO de conteúdo do documento e guiam a escolha de backend.
+    ("Perfis de Documento", """Os perfis descrevem o TIPO de conteúdo do documento e ajustam modo + backend automaticamente.
 
 auto
   O sistema analisa o PDF (texto, imagens, tabelas, densidade) e decide.
   Recomendado por padrão.
 
-general
+general  (modo: auto | backend: pymupdf4llm)
   Documento de texto comum. Slides simples, ementas, cronogramas.
+  Sem fórmulas — processamento rápido.
 
-math_heavy
-  Material com fórmulas matemáticas, notação LaTeX, teoremas.
-  Ativa backends com suporte a fórmulas (docling --enrich-formula).
+math_light  (modo: high_fidelity | backend: docling)
+  Algumas fórmulas LaTeX ou notação matemática.
+  Usa docling para melhor extração, sem enrich-formula.
 
-layout_heavy
-  Documento com layout complexo: múltiplas colunas, figuras, tabelas elaboradas.
-  Ativa processamento de imagens e layout referenciado.
+math_heavy  (modo: high_fidelity | backend: docling + enrich-formula)
+  Muitas fórmulas, LaTeX, teoremas, provas formais.
+  Ativa docling com reconhecimento IA de fórmulas em imagens.
 
-scanned
+layout_heavy  (modo: high_fidelity | backend: docling)
+  Layout complexo: múltiplas colunas, figuras, tabelas elaboradas.
+
+scanned  (modo: auto | force_ocr)
   PDF gerado a partir de scanner ou foto, sem texto digital.
-  Ativa OCR obrigatório em todos os backends.
+  Ativa OCR obrigatório.
 
-exam_pdf
+exam_pdf  (modo: auto | backend: auto)
   Prova ou lista de exercícios. Combina necessidades de layout e fórmulas.
-  Ativa camada avançada e revisão manual.
 """),
     ("Backends de Extração", """Os backends são os motores que extraem texto e conteúdo dos PDFs.
 
@@ -847,6 +850,9 @@ class SubjectManagerDialog(tk.Toplevel):
             messagebox.showwarning("Matéria", "Preencha o nome da matéria.")
             return
         slug = self._vars["slug"].get().strip() or slugify(name)
+        # Preserve existing queue from the store (avoid wiping queued files)
+        existing = self._store.get(name)
+        existing_queue = existing.queue if existing else []
         sp = SubjectProfile(
             name=name,
             slug=slug,
@@ -859,6 +865,7 @@ class SubjectManagerDialog(tk.Toplevel):
             default_mode=self._vars["default_mode"].get(),
             default_ocr_lang=self._vars["default_ocr_lang"].get().strip() or DEFAULT_OCR_LANGUAGE,
             repo_root=self._vars["repo_root"].get().strip(),
+            queue=existing_queue,
         )
         self._store.add(sp)
         self._current_name = name
@@ -886,15 +893,19 @@ class SubjectManagerDialog(tk.Toplevel):
         def worker():
             try:
                 import pymupdf4llm
-                self.after(0, lambda: messagebox.showinfo(APP_NAME, "Iniciando extração do PDF, aguarde...", parent=self))
                 md_text = pymupdf4llm.to_markdown(pdf_path)
-                
-                self.after(0, lambda: self._teaching_plan_text.delete("1.0", "end"))
-                self.after(0, lambda: self._teaching_plan_text.insert("1.0", md_text))
-                self.after(0, lambda: messagebox.showinfo(APP_NAME, "Plano de Ensino extraído com sucesso!", parent=self))
+
+                def _apply():
+                    try:
+                        self._teaching_plan_text.delete("1.0", "end")
+                        self._teaching_plan_text.insert("1.0", md_text)
+                        messagebox.showinfo(APP_NAME, "Plano de Ensino extraído com sucesso!", parent=self)
+                    except Exception:
+                        pass  # widget destroyed while extracting
+                self.after(0, _apply)
             except Exception as e:
                 self.after(0, lambda: messagebox.showerror(APP_NAME, f"Erro ao extrair PDF:\n{e}", parent=self))
-                
+
         threading.Thread(target=worker, daemon=True).start()
 
     def _delete(self):
@@ -988,6 +999,7 @@ class StudentProfileDialog(tk.Toplevel):
             personality=self._personality_text.get("1.0", "end-1c").strip(),
         )
         self._store.profile = sp
+        self._store.save()
         messagebox.showinfo("Perfil", "Perfil salvo com sucesso!")
         self.destroy()
 
@@ -1323,9 +1335,14 @@ class FileEntryDialog(simpledialog.Dialog):
         self.result_entry: Optional[FileEntry] = None
         super().__init__(parent, title="Editar item")
 
+    _FILE_TYPES = ["pdf", "image", "url"]
+
     def body(self, master):
         src = Path(self.path)
-        self.file_type = "pdf" if src.suffix.lower() == ".pdf" else "image"
+        if self.initial:
+            self.file_type = self.initial.file_type
+        else:
+            self.file_type = "pdf" if src.suffix.lower() == ".pdf" else "image"
 
         ttk.Label(master, text=f"Arquivo: {src.name}", style="Accent.TLabel").grid(
             row=0, column=0, columnspan=4, sticky="w", pady=(0, 10))
@@ -1350,12 +1367,22 @@ class FileEntryDialog(simpledialog.Dialog):
         self.var_page_range = tk.StringVar(value=self.initial.page_range if self.initial else "")
         self.var_ocr_lang = tk.StringVar(value=self.initial.ocr_language if self.initial else self.default_ocr_language)
 
+        self.var_file_type = tk.StringVar(value=self.file_type)
+
         row = 1
 
         lbl_title = ttk.Label(master, text="Título")
         lbl_title.grid(row=row, column=0, sticky="w", pady=4)
         add_tooltip(lbl_title, "Nome legível do documento. Aparece nos metadados e no índice do repositório.")
         ttk.Entry(master, textvariable=self.var_title, width=54).grid(row=row, column=1, columnspan=3, sticky="ew")
+        row += 1
+
+        lbl_type = ttk.Label(master, text="Tipo")
+        lbl_type.grid(row=row, column=0, sticky="w", pady=4)
+        add_tooltip(lbl_type, "Tipo do item.\npdf → documento PDF\nimage → imagem (foto de prova, slide, etc.)\nurl → link web (YouTube, artigo, etc.)")
+        cb_type = ttk.Combobox(master, textvariable=self.var_file_type, values=self._FILE_TYPES, state="readonly", width=22)
+        cb_type.grid(row=row, column=1, sticky="ew")
+        cb_type.bind("<<ComboboxSelected>>", self._on_type_changed)
         row += 1
 
         lbl_cat = ttk.Label(master, text="Categoria")
@@ -1371,8 +1398,10 @@ class FileEntryDialog(simpledialog.Dialog):
 
         lbl_profile = ttk.Label(master, text="Perfil")
         lbl_profile.grid(row=row, column=0, sticky="w", pady=4)
-        add_tooltip(lbl_profile, "Descreve o tipo de conteúdo do PDF.\nauto → detecta automaticamente\ngeneral → texto simples\nmath_heavy → fórmulas e LaTeX\nlayout_heavy → colunas, figuras, tabelas\nscanned → PDF de scan/foto (ativa OCR)\nexam_pdf → prova/lista de exercícios")
-        ttk.Combobox(master, textvariable=self.var_profile, values=DOCUMENT_PROFILES, state="readonly", width=22).grid(row=row, column=1, sticky="ew")
+        add_tooltip(lbl_profile, "Descreve o tipo de conteúdo do PDF. Cada perfil ajusta modo e backend automaticamente.\n\nauto → detecta automaticamente\ngeneral → texto simples, sem fórmulas (pymupdf4llm, rápido)\nmath_light → algumas fórmulas (docling, high_fidelity)\nmath_heavy → muitas fórmulas/LaTeX (docling + enrich-formula)\nlayout_heavy → colunas, figuras, tabelas complexas (docling)\nscanned → PDF de scan/foto (ativa OCR)\nexam_pdf → prova/lista de exercícios")
+        combo_profile = ttk.Combobox(master, textvariable=self.var_profile, values=DOCUMENT_PROFILES, state="readonly", width=22)
+        combo_profile.grid(row=row, column=1, sticky="ew")
+        combo_profile.bind("<<ComboboxSelected>>", self._on_profile_changed)
 
         lbl_backend = ttk.Label(master, text="Backend preferido")
         lbl_backend.grid(row=row, column=2, sticky="w", padx=(12, 0))
@@ -1416,39 +1445,92 @@ class FileEntryDialog(simpledialog.Dialog):
         add_tooltip(cb_formula, "Força ativação do backend avançado (docling/marker) mesmo em modo auto ou quick.\nUse quando o documento tem muitas equações matemáticas críticas.")
         row += 1
 
-        if self.file_type == "pdf":
-            cb_keep = ttk.Checkbutton(master, text="Preservar imagens do PDF no Markdown base", variable=self.var_keep_images)
-            cb_keep.grid(row=row, column=0, columnspan=2, sticky="w", pady=4)
-            add_tooltip(cb_keep, "Se marcado, o pymupdf4llm extrai as imagens embutidas no PDF e as referencia no Markdown. Útil para manter figuras após a extração.")
+        # --- PDF-only options frame ---
+        self._pdf_frame = ttk.LabelFrame(master, text="Opções de PDF", padding=4)
+        self._pdf_row = row  # remember grid row for show/hide
 
-            cb_ocr = ttk.Checkbutton(master, text="Forçar OCR", variable=self.var_force_ocr)
-            cb_ocr.grid(row=row, column=2, sticky="w")
-            add_tooltip(cb_ocr, "Ignora o texto digital do PDF e passa tudo pelo OCR.\nUse para PDFs com texto não selecionável, imagens de texto, ou codificação incorreta.")
-            row += 1
+        pr = 0
+        cb_keep = ttk.Checkbutton(self._pdf_frame, text="Preservar imagens do PDF no Markdown base", variable=self.var_keep_images)
+        cb_keep.grid(row=pr, column=0, columnspan=2, sticky="w", pady=4)
+        add_tooltip(cb_keep, "Se marcado, o pymupdf4llm extrai as imagens embutidas no PDF e as referencia no Markdown. Útil para manter figuras após a extração.")
 
-            cb_prev = ttk.Checkbutton(master, text="Exportar previews das páginas", variable=self.var_previews)
-            cb_prev.grid(row=row, column=0, sticky="w")
-            add_tooltip(cb_prev, "Gera imagens PNG de cada página (resolução 1.5x) em staging/assets/page-previews/.\nConsome mais espaço, mas facilita a revisão visual do conteúdo extraído.")
+        cb_ocr = ttk.Checkbutton(self._pdf_frame, text="Forçar OCR", variable=self.var_force_ocr)
+        cb_ocr.grid(row=pr, column=2, sticky="w")
+        add_tooltip(cb_ocr, "Ignora o texto digital do PDF e passa tudo pelo OCR.\nUse para PDFs com texto não selecionável, imagens de texto, ou codificação incorreta.")
+        pr += 1
 
-            cb_imgs = ttk.Checkbutton(master, text="Extrair imagens do PDF", variable=self.var_imgs)
-            cb_imgs.grid(row=row, column=1, sticky="w")
-            add_tooltip(cb_imgs, "Extrai todas as imagens embutidas no PDF para staging/assets/images/.\nRequer PyMuPDF instalado.")
+        cb_prev = ttk.Checkbutton(self._pdf_frame, text="Exportar previews das páginas", variable=self.var_previews)
+        cb_prev.grid(row=pr, column=0, sticky="w")
+        add_tooltip(cb_prev, "Gera imagens PNG de cada página (resolução 1.5x) em staging/assets/page-previews/.\nConsome mais espaço, mas facilita a revisão visual do conteúdo extraído.")
 
-            cb_tbl = ttk.Checkbutton(master, text="Extrair tabelas", variable=self.var_tables)
-            cb_tbl.grid(row=row, column=2, sticky="w")
-            add_tooltip(cb_tbl, "Detecta e exporta tabelas como CSV e Markdown em staging/assets/tables/.\nRequer pdfplumber e/ou PyMuPDF instalados.")
-            row += 1
+        cb_imgs = ttk.Checkbutton(self._pdf_frame, text="Extrair imagens do PDF", variable=self.var_imgs)
+        cb_imgs.grid(row=pr, column=1, sticky="w")
+        add_tooltip(cb_imgs, "Extrai todas as imagens embutidas no PDF para staging/assets/images/.\nRequer PyMuPDF instalado.")
 
-            lbl_pr = ttk.Label(master, text="Page range")
-            lbl_pr.grid(row=row, column=0, sticky="w", pady=4)
-            add_tooltip(lbl_pr, 'Limita o processamento a páginas específicas. Deixe vazio para processar todas.\nFormatos aceitos: "1-5" (págs 1 a 5) | "1,3,7" (págs específicas) | "2, 5-8" (misto)\nNota: sem o zero, é interpretado como base-1 (página 1 = primeira página).')
-            ttk.Entry(master, textvariable=self.var_page_range, width=18).grid(row=row, column=1, sticky="w")
-            ttk.Label(master, text='Ex.: "1-4" ou "0,2,5-7"', style="Muted.TLabel").grid(row=row, column=2, columnspan=2, sticky="w")
-            row += 1
+        cb_tbl = ttk.Checkbutton(self._pdf_frame, text="Extrair tabelas", variable=self.var_tables)
+        cb_tbl.grid(row=pr, column=2, sticky="w")
+        add_tooltip(cb_tbl, "Detecta e exporta tabelas como CSV e Markdown em staging/assets/tables/.\nRequer pdfplumber e/ou PyMuPDF instalados.")
+        pr += 1
+
+        lbl_pr = ttk.Label(self._pdf_frame, text="Page range")
+        lbl_pr.grid(row=pr, column=0, sticky="w", pady=4)
+        add_tooltip(lbl_pr, 'Limita o processamento a páginas específicas. Deixe vazio para processar todas.\nFormatos aceitos: "1-5" (págs 1 a 5) | "1,3,7" (págs específicas) | "2, 5-8" (misto)\nNota: sem o zero, é interpretado como base-1 (página 1 = primeira página).')
+        ttk.Entry(self._pdf_frame, textvariable=self.var_page_range, width=18).grid(row=pr, column=1, sticky="w")
+        ttk.Label(self._pdf_frame, text='Ex.: "1-4" ou "0,2,5-7"', style="Muted.TLabel").grid(row=pr, column=2, columnspan=2, sticky="w")
+
+        self._pdf_frame.columnconfigure(1, weight=1)
+
+        # Show/hide based on current type
+        self._update_pdf_frame_visibility()
 
         master.columnconfigure(1, weight=1)
         master.columnconfigure(3, weight=1)
         return master
+
+    def _on_type_changed(self, _event=None):
+        self.file_type = self.var_file_type.get()
+        self._update_pdf_frame_visibility()
+
+    def _on_profile_changed(self, _event=None):
+        """Quando o perfil muda, ajusta backend e modo automaticamente.
+        Presets baseados no nível de complexidade do documento."""
+        profile = self.var_profile.get()
+        # Reset para defaults antes de aplicar preset
+        self.var_formula.set(False)
+        self.var_force_ocr.set(False)
+
+        if profile == "general":
+            # Texto simples, sem fórmulas → rápido
+            self.var_mode.set("auto")
+            self.var_backend.set("auto")
+        elif profile == "math_light":
+            # Algumas fórmulas → docling sem enrich-formula
+            self.var_mode.set("high_fidelity")
+            self.var_backend.set("docling")
+        elif profile == "math_heavy":
+            # Muitas fórmulas → docling com enrich-formula
+            self.var_mode.set("high_fidelity")
+            self.var_backend.set("docling")
+            self.var_formula.set(True)
+        elif profile == "layout_heavy":
+            # Layout complexo (colunas, muitas figuras/tabelas)
+            self.var_mode.set("high_fidelity")
+            self.var_backend.set("docling")
+        elif profile == "scanned":
+            # PDF digitalizado/foto → força OCR
+            self.var_mode.set("auto")
+            self.var_backend.set("auto")
+            self.var_force_ocr.set(True)
+        elif profile == "exam_pdf":
+            # Prova/lista → auto com docling se disponível
+            self.var_mode.set("auto")
+            self.var_backend.set("auto")
+
+    def _update_pdf_frame_visibility(self):
+        if self.file_type == "pdf":
+            self._pdf_frame.grid(row=self._pdf_row, column=0, columnspan=4, sticky="ew", pady=(4, 0))
+        else:
+            self._pdf_frame.grid_remove()
 
 
     def apply(self):
@@ -1501,11 +1583,16 @@ class URLEntryDialog(tk.Toplevel):
         
         r = 0
         ttk.Label(form, text="URL do material:").grid(row=r, column=0, sticky="w", pady=4)
-        ttk.Entry(form, textvariable=self.var_url, width=40).grid(row=r, column=1, sticky="w", padx=8)
-        
+        url_entry = ttk.Entry(form, textvariable=self.var_url, width=40)
+        url_entry.grid(row=r, column=1, sticky="w", padx=8)
+        url_entry.bind("<FocusOut>", self._on_url_focus_out)
+
         r += 1
         ttk.Label(form, text="Título:").grid(row=r, column=0, sticky="w", pady=4)
-        ttk.Entry(form, textvariable=self.var_title, width=40).grid(row=r, column=1, sticky="w", padx=8)
+        self._title_entry = ttk.Entry(form, textvariable=self.var_title, width=40)
+        self._title_entry.grid(row=r, column=1, sticky="w", padx=8)
+        self._title_hint = ttk.Label(form, text="", style="Muted.TLabel")
+        self._title_hint.grid(row=r+1, column=1, sticky="w", padx=8)
         
         r += 1
         ttk.Label(form, text="Categoria:").grid(row=r, column=0, sticky="w", pady=4)
@@ -1527,6 +1614,25 @@ class URLEntryDialog(tk.Toplevel):
         ttk.Button(btn_frame, text="Cancelar", command=self.destroy).pack(side="right", padx=(6, 0))
         ttk.Button(btn_frame, text="Salvar Link", style="Accent.TButton", command=self._save).pack(side="right")
         
+    def _on_url_focus_out(self, _event=None):
+        """Auto-busca o título da página quando o campo URL perde o foco."""
+        url = self.var_url.get().strip()
+        if not url or self.var_title.get().strip():
+            return  # Nada para buscar ou título já preenchido
+        if not url.startswith(("http://", "https://")):
+            return
+        self._title_hint.config(text="Buscando título...")
+        import threading
+        def _fetch():
+            title = fetch_url_title(url)
+            self.after(0, lambda: self._apply_fetched_title(title))
+        threading.Thread(target=_fetch, daemon=True).start()
+
+    def _apply_fetched_title(self, title: str):
+        self._title_hint.config(text="")
+        if title and not self.var_title.get().strip():
+            self.var_title.set(title)
+
     def _save(self):
         url = self.var_url.get().strip()
         title = self.var_title.get().strip()

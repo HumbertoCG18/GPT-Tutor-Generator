@@ -33,10 +33,14 @@ class FileEntry:
     extract_tables: bool = True
     page_range: str = ""
     ocr_language: str = DEFAULT_OCR_LANGUAGE
+    enabled: bool = True
 
     def id(self) -> str:
         if self.file_type == "url":
-            return slugify(self.title)
+            import hashlib
+            base = slugify(self.title) or "url"
+            url_hash = hashlib.md5(self.source_path.encode()).hexdigest()[:6]
+            return f"{base}-{url_hash}"
         return slugify(Path(self.source_path).stem)
 
     def to_dict(self) -> Dict:

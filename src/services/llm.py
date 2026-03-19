@@ -22,9 +22,9 @@ _VALID_CATEGORIES = set(DEFAULT_CATEGORIES)
 
 class LLMCategorizer:
     def __init__(self, provider: str, openai_key: str, gemini_key: str):
-        self.provider = provider.lower().strip()
-        self.openai_key = openai_key.strip()
-        self.gemini_key = gemini_key.strip()
+        self.provider = (provider or "").lower().strip()
+        self.openai_key = (openai_key or "").strip()
+        self.gemini_key = (gemini_key or "").strip()
 
     def is_configured(self) -> bool:
         if self.provider == "openai" and self.openai_key:
@@ -102,9 +102,9 @@ REGRAS:
 """
         try:
             if self.provider == "openai":
-                raw = self._call_openai(prompt, max_tokens=150)
+                raw = self._call_openai(prompt, max_tokens=256)
             elif self.provider == "gemini":
-                raw = self._call_gemini(prompt, max_output_tokens=150)
+                raw = self._call_gemini(prompt, max_output_tokens=1024)
             else:
                 return {"category": "outros", "unit": "", "exam_ref": ""}
             return self._parse_llm_json(raw)
@@ -113,18 +113,26 @@ REGRAS:
             return {"category": "outros", "unit": "", "exam_ref": ""}
 
     def _parse_llm_json(self, raw: str) -> dict:
-        """Extrai JSON da resposta, tolerante a markdown e whitespace."""
-        raw = raw.strip()
-        raw = re.sub(r"```(?:json)?", "", raw).strip()
+        """Extrai JSON da resposta, tolerante a markdown, thinking e whitespace."""
+        logger.debug("LLM raw response: %s", raw[:500])
+        cleaned = raw.strip()
+        # Remove blocos de código markdown
+        cleaned = re.sub(r"```(?:json)?", "", cleaned).strip()
+        # Tenta extrair o primeiro objeto JSON { ... } da resposta
+        match = re.search(r'\{[^{}]*\}', cleaned)
+        if match:
+            cleaned = match.group(0)
         try:
-            data = json.loads(raw)
+            data = json.loads(cleaned)
             category = data.get("category", "outros").strip().lower()
             unit = data.get("unit", "").strip().lower()
             exam_ref = data.get("exam_ref", "").strip()
             if category not in _VALID_CATEGORIES:
                 category = "outros"
+            logger.info("LLM parsed: category=%s, unit=%s, exam_ref=%s", category, unit, exam_ref)
             return {"category": category, "unit": unit, "exam_ref": exam_ref}
-        except Exception:
+        except Exception as e:
+            logger.error("Falha ao parsear JSON do LLM: %s | raw: %s", e, raw[:300])
             return {"category": "outros", "unit": "", "exam_ref": ""}
 
     def categorize_pdf(self, course_name: str, syllabus: str, teaching_plan: str, pdf_preview_text: str) -> str:
@@ -146,7 +154,7 @@ REGRAS:
             temperature=0.0,
             max_tokens=max_tokens
         )
-        return response.choices[0].message.content.strip()
+        return (response.choices[0].message.content or "").strip()
 
     def _call_gemini(self, prompt: str, max_output_tokens: int = 50) -> str:
         if not genai:
@@ -154,13 +162,17 @@ REGRAS:
             return ""
 
         client = genai.Client(api_key=self.gemini_key)
-        response = client.models.generate_content(
-            model='gemini-1.5-flash',
-            contents=prompt,
-            config=genai.types.GenerateContentConfig(
-                temperature=0.0,
-                max_output_tokens=max_output_tokens,
-                system_instruction="Você é uma ferramenta estrita de categorização acadêmica. Responda apenas com JSON puro."
-            )
+        config_kwargs = dict(
+            temperature=0.0,
+            max_output_tokens=max_output_tokens,
+            system_instruction="Você é uma ferramenta estrita de categorização acadêmica. Responda apenas com JSON puro.",
         )
-        return response.text.strip()
+        # Desabilita thinking no 2.5-flash para respostas diretas
+        if hasattr(genai.types, "ThinkingConfig"):
+            config_kwargs["thinking_config"] = genai.types.ThinkingConfig(thinking_budget=0)
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+            config=genai.types.GenerateContentConfig(**config_kwargs),
+        )
+        return (response.text or "").strip()

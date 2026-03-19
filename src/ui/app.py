@@ -211,8 +211,9 @@ class App(tk.Tk):
         tab_queue = ttk.Frame(self.notebook)
         self.notebook.add(tab_queue, text="  ⏳ Fila a Processar  ")
 
-        columns = ("type", "category", "tags", "mode", "profile", "backend", "title", "source")
+        columns = ("enabled", "type", "category", "tags", "mode", "profile", "backend", "title", "source")
         self.tree = ttk.Treeview(tab_queue, columns=columns, show="headings", height=14)
+        self.tree.heading("enabled", text="On")
         self.tree.heading("type", text="Tipo")
         self.tree.heading("category", text="Categoria")
         self.tree.heading("tags", text="Unidade / Tags")
@@ -221,6 +222,7 @@ class App(tk.Tk):
         self.tree.heading("backend", text="Backend")
         self.tree.heading("title", text="Título")
         self.tree.heading("source", text="Arquivo")
+        self.tree.column("enabled", width=40, anchor="center", stretch=False)
         self.tree.column("type", width=75, anchor="center")
         self.tree.column("category", width=140, anchor="center")
         self.tree.column("tags", width=120, anchor="center")
@@ -232,6 +234,8 @@ class App(tk.Tk):
         self.tree.pack(side="left", fill="both", expand=True)
         self.tree.bind("<Double-1>", lambda _e: self.edit_selected())
         self.tree.bind("<Delete>", lambda _e: self.remove_selected())
+        self.tree.bind("<space>", lambda _e: self._toggle_selected_enabled())
+        self.tree.bind("<ButtonRelease-1>", self._on_tree_click)
 
         scroll_q = ttk.Scrollbar(tab_queue, orient="vertical", command=self.tree.yview)
         self.tree.configure(yscroll=scroll_q.set)
@@ -265,6 +269,7 @@ class App(tk.Tk):
         self.repo_tree.column("file", width=300)
         self.repo_tree.pack(side="left", fill="both", expand=True, padx=(8, 0), pady=(0, 8))
         self.repo_tree.bind("<Double-1>", lambda _e: self.edit_backlog_entry())
+        self.repo_tree.bind("<Delete>", lambda _e: self.remove_processed_single())
 
         scroll_bk = ttk.Scrollbar(tab_backlog, orient="vertical", command=self.repo_tree.yview)
         self.repo_tree.configure(yscroll=scroll_bk.set)
@@ -525,7 +530,7 @@ class App(tk.Tk):
 
     @staticmethod
     def _pdf_page_range(path: str) -> str:
-        """Retorna ' 1-N' com o total de páginas do PDF, ou '' em caso de erro."""
+        """Retorna '1-N' com o total de páginas do PDF, ou '' em caso de erro."""
         try:
             doc = pymupdf.open(path)
             n = doc.page_count
@@ -533,6 +538,25 @@ class App(tk.Tk):
             return f"1-{n}" if n > 0 else ""
         except Exception:
             return ""
+
+    @staticmethod
+    def _get_page_count(entry) -> int:
+        """Retorna o número de páginas a partir do page_range ou abrindo o PDF."""
+        pr = entry.page_range.strip()
+        if pr:
+            # "1-50" → 50
+            parts = pr.split("-")
+            try:
+                return int(parts[-1])
+            except ValueError:
+                pass
+        try:
+            doc = pymupdf.open(entry.source_path)
+            n = doc.page_count
+            doc.close()
+            return n
+        except Exception:
+            return 0
 
     def _quick_add_file(self, path: str, is_image: bool = False) -> FileEntry:
         """Cria FileEntry automaticamente sem abrir diálogo."""
@@ -643,6 +667,43 @@ class App(tk.Tk):
         self._save_current_queue()
         self._set_status(f"Removido: {removed}")
 
+    def _on_tree_click(self, event):
+        """Toggle enabled quando clica na coluna 'On'."""
+        region = self.tree.identify_region(event.x, event.y)
+        col = self.tree.identify_column(event.x)
+        row_id = self.tree.identify_row(event.y)
+        logger.debug("Tree click: region=%s col=%s row=%s x=%d", region, col, row_id, event.x)
+        if region != "cell":
+            return
+        if col != "#1":  # coluna "enabled" é a primeira
+            return
+        if not row_id:
+            return
+        idx = int(row_id)
+        old_val = getattr(self.entries[idx], "enabled", True)
+        self.entries[idx].enabled = not old_val
+        logger.debug("Toggled entry %d (%s) enabled: %s → %s", idx, self.entries[idx].title, old_val, self.entries[idx].enabled)
+        self.refresh_tree()
+        self._save_current_queue()
+        if self.tree.exists(row_id):
+            self.tree.selection_set(row_id)
+
+    def _toggle_selected_enabled(self):
+        """Toggle enabled/disabled para os itens selecionados (Space ou clique na coluna On)."""
+        selected = self.tree.selection()
+        if not selected:
+            return
+        for iid in selected:
+            idx = int(iid)
+            entry = self.entries[idx]
+            entry.enabled = not getattr(entry, "enabled", True)
+        self.refresh_tree()
+        self._save_current_queue()
+        # Re-selecionar os mesmos itens
+        for iid in selected:
+            if self.tree.exists(iid):
+                self.tree.selection_add(iid)
+
     def _set_all_modes_auto(self):
         if not self.entries:
             return
@@ -655,12 +716,15 @@ class App(tk.Tk):
     def refresh_tree(self):
         for item in self.tree.get_children():
             self.tree.delete(item)
+        self.tree.tag_configure("disabled", foreground="#888888")
         for i, entry in enumerate(self.entries):
+            enabled = getattr(entry, "enabled", True)
             self.tree.insert(
                 "",
                 "end",
                 iid=str(i),
                 values=(
+                    "✓" if enabled else "✗",
                     entry.file_type,
                     entry.category,
                     entry.tags,
@@ -670,6 +734,7 @@ class App(tk.Tk):
                     entry.title,
                     Path(entry.source_path).name,
                 ),
+                tags=() if enabled else ("disabled",),
             )
 
     def _course_meta(self) -> Optional[Dict[str, str]]:
@@ -713,9 +778,12 @@ class App(tk.Tk):
 
         self._start_progress(0)  # indeterminate — não sabemos o total antes do worker
         self._set_status(f"Iniciando Auto-Categorização via {provider.upper()}...")
-        threading.Thread(target=self._run_auto_categorize_worker, args=(llm, meta, sp, False), daemon=True).start()
+        entries_snapshot = list(self.entries)
+        threading.Thread(target=self._run_auto_categorize_worker, args=(llm, meta, sp, False, entries_snapshot), daemon=True).start()
 
-    def _run_auto_categorize_worker(self, llm: LLMCategorizer, meta: dict, sp: SubjectProfile, fallback_build: bool):
+    def _run_auto_categorize_worker(self, llm: LLMCategorizer, meta: dict, sp: SubjectProfile, fallback_build: bool, entries_snapshot: list = None):
+        if entries_snapshot is None:
+            entries_snapshot = list(self.entries)
         course_name = meta.get("course_name", "")
         syllabus = sp.syllabus
         teaching_plan = getattr(sp, "teaching_plan", "")
@@ -724,8 +792,8 @@ class App(tk.Tk):
         # Para provas/listas/gabaritos já categorizados, reprocessa se ainda não tem unidade
         _academic = {"provas", "listas", "gabaritos", "fotos-de-prova", "material-de-aula"}
         targets = [
-            e for e in self.entries
-            if e.file_type == "pdf"
+            e for e in entries_snapshot
+            if e.file_type == "pdf" and getattr(e, "enabled", True)
             and (
                 e.category in ("", "pdf", "outros")
                 or not e.tags.strip()
@@ -733,9 +801,9 @@ class App(tk.Tk):
             )
         ]
         if not targets and not fallback_build:
-            targets = [e for e in self.entries if e.file_type == "pdf"]
+            targets = [e for e in entries_snapshot if e.file_type == "pdf" and getattr(e, "enabled", True)]
 
-        other_titles = [e.title for e in self.entries if e.file_type == "pdf"]
+        other_titles = [e.title for e in entries_snapshot if e.file_type == "pdf"]
 
         total = len(targets)
         self.after(0, lambda t=total: self._start_progress(t))
@@ -834,8 +902,8 @@ class App(tk.Tk):
                     self._set_status("Detectados PDFs sem categoria. Rodando auto-categorização pré-build...")
                     self.update()
                     threading.Thread(
-                        target=self._run_auto_categorize_worker, 
-                        args=(llm, meta, sp, True), 
+                        target=self._run_auto_categorize_worker,
+                        args=(llm, meta, sp, True, list(self.entries)),
                         daemon=True
                     ).start()
                     return
@@ -861,6 +929,27 @@ class App(tk.Tk):
                 return
             incremental = answer
 
+        # Detecta PDFs grandes (50+ páginas) e pergunta a ordem
+        large_pdfs = [e for e in self.entries if e.file_type == "pdf" and self._get_page_count(e) >= 50]
+        if large_pdfs:
+            names = "\n".join(f"  • {e.title} ({self._get_page_count(e)} págs)" for e in large_pdfs)
+            answer = messagebox.askyesnocancel(
+                APP_NAME,
+                f"Os seguintes PDFs têm 50+ páginas e podem demorar:\n\n{names}\n\n"
+                f"Sim → Processar esses primeiro (prioridade)\n"
+                f"Não → Processar esses por último\n"
+                f"Cancelar → Manter ordem atual"
+            )
+            if answer is True:
+                # Grandes primeiro
+                small = [e for e in self.entries if e not in large_pdfs]
+                self.entries = large_pdfs + small
+            elif answer is False:
+                # Grandes por último
+                small = [e for e in self.entries if e not in large_pdfs]
+                self.entries = small + large_pdfs
+            # None = manter ordem
+
         self._cancel_event.clear()
         self._set_building_state(True)
         total = len(self.entries)
@@ -879,10 +968,12 @@ class App(tk.Tk):
 
         def worker():
             try:
+                logger.info("Worker iniciado — modo %s, %d entries, repo=%s",
+                            "incremental" if incremental else "full", len(self.entries), repo_dir)
                 builder = RepoBuilder(
                     root_dir=repo_dir,
                     course_meta=meta,
-                    entries=self.entries,
+                    entries=list(self.entries),  # cópia da lista para thread safety
                     options={
                         "default_processing_mode": self.var_default_mode.get(),
                         "default_ocr_language": self.var_default_ocr_language.get(),
@@ -895,11 +986,13 @@ class App(tk.Tk):
                     builder.incremental_build()
                 else:
                     builder.build()
+                logger.info("Worker concluído com sucesso.")
                 self.after(0, lambda: self._on_build_complete(meta, repo_dir, incremental))
             except InterruptedError:
                 self.after(0, self._on_build_cancelled)
             except Exception:
                 tb = traceback.format_exc()
+                logger.error("Worker falhou:\n%s", tb)
                 self.after(0, lambda: self._on_build_error(tb))
 
         threading.Thread(target=worker, daemon=True).start()
@@ -957,12 +1050,12 @@ class App(tk.Tk):
         self._set_status(f"Processando item: {entry.title}...")
         self._start_progress(0)  # indeterminate para arquivo único
 
-        def worker():
+        def worker(force=False):
             try:
                 builder = RepoBuilder(
                     root_dir=repo_dir,
                     course_meta=meta,
-                    entries=self.entries,
+                    entries=list(self.entries),
                     options={
                         "default_processing_mode": self.var_default_mode.get(),
                         "default_ocr_language": self.var_default_ocr_language.get(),
@@ -970,9 +1063,12 @@ class App(tk.Tk):
                     student_profile=self.student_store.profile,
                     subject_profile=active_subj
                 )
-                builder.process_single(entry)
-                
-                self.after(0, lambda: self._on_single_processed_success(idx))
+                result = builder.process_single(entry, force=force)
+
+                if result == "already_exists":
+                    self.after(0, lambda: self._ask_reprocess(entry, idx, meta, active_subj, repo_dir))
+                else:
+                    self.after(0, lambda: self._on_single_processed_success(idx))
             except Exception:
                 traceback_str = traceback.format_exc()
                 self.after(0, self._end_progress)
@@ -980,6 +1076,46 @@ class App(tk.Tk):
                 self.after(0, lambda: self._set_status("Erro no processamento."))
 
         threading.Thread(target=worker, daemon=True).start()
+
+    def _ask_reprocess(self, entry, idx, meta, active_subj, repo_dir):
+        """Pergunta ao usuário se quer reprocessar um arquivo já existente."""
+        self._end_progress()
+        answer = messagebox.askyesno(
+            APP_NAME,
+            f"O arquivo já foi processado anteriormente:\n\n"
+            f"  {entry.title}\n"
+            f"  ({entry.source_path})\n\n"
+            f"Deseja reprocessar, substituindo o resultado anterior?",
+        )
+        if not answer:
+            self._set_status("Reprocessamento cancelado.")
+            return
+
+        self._set_status(f"Reprocessando: {entry.title}...")
+        self._start_progress(0)
+
+        def reprocess_worker():
+            try:
+                builder = RepoBuilder(
+                    root_dir=repo_dir,
+                    course_meta=meta,
+                    entries=list(self.entries),
+                    options={
+                        "default_processing_mode": self.var_default_mode.get(),
+                        "default_ocr_language": self.var_default_ocr_language.get(),
+                    },
+                    student_profile=self.student_store.profile,
+                    subject_profile=active_subj,
+                )
+                builder.process_single(entry, force=True)
+                self.after(0, lambda: self._on_single_processed_success(idx))
+            except Exception:
+                traceback_str = traceback.format_exc()
+                self.after(0, self._end_progress)
+                self.after(0, lambda: messagebox.showerror(APP_NAME, f"Erro ao reprocessar:\n\n{traceback_str}"))
+                self.after(0, lambda: self._set_status("Erro no reprocessamento."))
+
+        threading.Thread(target=reprocess_worker, daemon=True).start()
 
     def _on_single_processed_success(self, idx):
         self._end_progress()
