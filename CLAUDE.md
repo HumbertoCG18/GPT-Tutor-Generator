@@ -13,8 +13,8 @@ Aplicação desktop **Python/tkinter** que converte PDFs acadêmicos em reposit�
 App → adicionar PDFs → build → push GitHub → Claude Project → estudar
 ```
 
-**Stack:** Python 3.8+, tkinter, pymupdf, pymupdf4llm, pdfplumber, Pillow, python-dotenv.  
-Backends opcionais: docling, marker-pdf (CLI externos), openai, google-genai (auto-categorização).
+**Stack:** Python 3.8+, tkinter, pymupdf, pymupdf4llm, pdfplumber, Pillow, python-dotenv.
+Backends opcionais: docling, marker-pdf (CLI externos).
 
 ---
 
@@ -24,7 +24,7 @@ Backends opcionais: docling, marker-pdf (CLI externos), openai, google-genai (au
 src/
 ├── builder/engine.py     # Motor principal — ARQUIVO MAIS IMPORTANTE
 ├── models/core.py        # DataClasses de domínio
-├── services/llm.py       # Auto-categorização via OpenAI/Gemini
+├── services/             # (reservado para serviços futuros)
 ├── utils/helpers.py      # Utilitários puros (sem estado)
 └── ui/
     ├── app.py            # Janela principal

@@ -17,8 +17,7 @@ from src.models.core import FileEntry, SubjectStore, StudentStore, SubjectProfil
 from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS
 from src.builder.engine import RepoBuilder
 from src.ui.theme import ThemeManager, AppConfig
-from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, MarkdownPreviewWindow, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, CategorizationReviewDialog, StatusDialog
-from src.services.llm import LLMCategorizer
+from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, MarkdownPreviewWindow, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, StatusDialog
 
 logger = logging.getLogger(__name__)
 
@@ -202,8 +201,6 @@ class App(tk.Tk):
         self._btn_build = ttk.Button(toolbar, text="🚀 Criar Repositório",
                                       style="Accent.TButton", command=self.build_repo)
         self._btn_build.pack(side="right", padx=(0, 6))
-        ttk.Button(toolbar, text="✨ Auto-Categorizar",
-                   command=self.trigger_auto_categorize).pack(side="right", padx=(6, 6))
 
         # ── Table Notebook ──────────────────────────────────────────────────
         self.notebook = ttk.Notebook(top)
@@ -797,131 +794,6 @@ class App(tk.Tk):
             "institution": self.var_institution.get().strip() or "PUCRS",
         }
 
-    def trigger_auto_categorize(self):
-        """Dispara a categorização por LLM em uma Thread separada."""
-        if not self.entries:
-            messagebox.showinfo(APP_NAME, "Nenhum arquivo na lista para categorizar.")
-            return
-
-        meta = self._course_meta()
-        if not meta:
-            return
-
-        sp = self.subject_store.get(meta["course_name"])
-        if not sp or (not sp.syllabus and not getattr(sp, "teaching_plan", "")):
-            messagebox.showwarning(APP_NAME, "A matéria selecionada não possui Plano de Ensino ou Cronograma salvos para fazer o pareamento.")
-            return
-
-        provider = self.config_obj.get("default_ai_provider", "openai")
-        openai_key = self.config_obj.get("openai_api_key", "")
-        gemini_key = self.config_obj.get("gemini_api_key", "")
-        
-        llm = LLMCategorizer(provider, openai_key, gemini_key)
-        if not llm.is_configured():
-            messagebox.showwarning(APP_NAME, "Por favor, configure sua chave de API (OpenAI ou Gemini) em ⚙ Configurações antes de usar esta função.")
-            return
-
-        self._start_progress(0)  # indeterminate — não sabemos o total antes do worker
-        self._set_status(f"Iniciando Auto-Categorização via {provider.upper()}...")
-        entries_snapshot = list(self.entries)
-        threading.Thread(target=self._run_auto_categorize_worker, args=(llm, meta, sp, False, entries_snapshot), daemon=True).start()
-
-    def _run_auto_categorize_worker(self, llm: LLMCategorizer, meta: dict, sp: SubjectProfile, fallback_build: bool, entries_snapshot: list = None):
-        if entries_snapshot is None:
-            entries_snapshot = list(self.entries)
-        course_name = meta.get("course_name", "")
-        syllabus = sp.syllabus
-        teaching_plan = getattr(sp, "teaching_plan", "")
-
-        # Categorias que NÃO precisam de unidade (cobrem o curso inteiro)
-        _no_unit = {"cronograma", "bibliografia", "referencias"}
-        targets = [
-            e for e in entries_snapshot
-            if e.file_type == "pdf" and getattr(e, "enabled", True)
-            and (
-                e.category in ("", "pdf", "outros")                   # precisa de categoria
-                or (e.category not in _no_unit and not e.tags.strip())  # precisa de unidade
-            )
-        ]
-        if not targets and not fallback_build:
-            targets = [e for e in entries_snapshot if e.file_type == "pdf" and getattr(e, "enabled", True)]
-
-        other_titles = [e.title for e in entries_snapshot if e.file_type == "pdf"]
-
-        total = len(targets)
-        self.after(0, lambda t=total: self._start_progress(t))
-
-        results = []  # List[(entry, category, unit, exam_ref)]
-        for i, entry in enumerate(targets):
-            self.after(0, lambda e=entry: self._set_status(f"🔮 Categorizando: {e.title}..."))
-            self.after(0, lambda c=i, t=total: self._step_progress(c, t))
-
-            preview_text = ""
-            try:
-                doc = pymupdf.open(entry.source_path)
-                if doc.page_count > 0:
-                    preview_text = doc[0].get_text("text") + "\n"
-                    if len(preview_text.strip()) < 100 and doc.page_count > 1:
-                        preview_text += doc[1].get_text("text")
-                doc.close()
-            except Exception as e:
-                logger.error(f"Erro ao ler PDF para auto-cat: {e}")
-
-            if not preview_text.strip():
-                preview_text = entry.title
-
-            other_for_entry = [t for t in other_titles if t != entry.title]
-            result = llm.classify_pdf(
-                course_name, syllabus, teaching_plan, preview_text,
-                known_category=entry.category,
-                other_file_titles=other_for_entry,
-            )
-            category = result.get("category", "")
-            unit = result.get("unit", "")
-            exam_ref = result.get("exam_ref", "")
-
-            if (category and category != "outros") or unit or exam_ref:
-                results.append((entry, category, unit, exam_ref))
-
-        self.after(0, lambda: self._show_categorize_review(results, meta, fallback_build))
-
-    def _show_categorize_review(self, results: list, meta: dict, fallback_build: bool):
-        self._end_progress()
-
-        if not results:
-            self._set_status("✨ Auto-Categorização: nenhuma classificação encontrada pela IA.")
-            if fallback_build:
-                self.after(100, lambda: self._continue_build_repo(meta))
-            return
-
-        dialog = CategorizationReviewDialog(self, results)
-
-        updates = 0
-        for item in dialog.confirmed:
-            entry, category, unit, exam_ref = item if len(item) == 4 else (*item, "")
-            changed = False
-            # Só atribui categoria se a entry ainda não tem uma válida
-            if category and category != "outros" and entry.category in ("", "pdf", "outros"):
-                entry.category = category
-                changed = True
-            existing = [t.strip() for t in entry.tags.split(",") if t.strip()]
-            for tag in filter(None, [unit, exam_ref]):
-                if tag not in existing:
-                    existing.append(tag)
-                    changed = True
-            if changed:
-                entry.tags = ", ".join(existing)
-                updates += 1
-
-        if updates:
-            self.refresh_tree()
-            self._save_current_queue()
-
-        self._set_status(f"✨ Auto-Categorização: {updates} item(s) atualizado(s).")
-
-        if fallback_build:
-            self.after(100, lambda: self._continue_build_repo(meta))
-
     def build_repo(self):
         meta = self._course_meta()
         if meta is None:
@@ -929,30 +801,6 @@ class App(tk.Tk):
         if not self.entries:
             if not messagebox.askyesno(APP_NAME, "Nenhum arquivo foi adicionado. Criar apenas a estrutura do repositório?"):
                 return
-
-        # Fallback Auto-categorization
-        _no_unit = {"cronograma", "bibliografia", "referencias"}
-        needs_cat = any(
-            e.category in ("", "pdf", "outros")
-            or (e.category not in _no_unit and not e.tags.strip())
-            for e in self.entries if e.file_type == "pdf"
-        )
-        if needs_cat:
-            provider = self.config_obj.get("default_ai_provider", "openai")
-            openai_key = self.config_obj.get("openai_api_key", "")
-            gemini_key = self.config_obj.get("gemini_api_key", "")
-            llm = LLMCategorizer(provider, openai_key, gemini_key)
-            if llm.is_configured():
-                sp = self.subject_store.get(meta["course_name"])
-                if sp and (sp.syllabus or getattr(sp, "teaching_plan", "")):
-                    self._set_status("Detectados PDFs sem categoria. Rodando auto-categorização pré-build...")
-                    self.update()
-                    threading.Thread(
-                        target=self._run_auto_categorize_worker,
-                        args=(llm, meta, sp, True, list(self.entries)),
-                        daemon=True
-                    ).start()
-                    return
 
         self._continue_build_repo(meta)
         
@@ -1218,58 +1066,6 @@ class App(tk.Tk):
         p = Path(repo_root) / slug / "manifest.json"
         return p if p.exists() else None
 
-    def _make_backlog_auto_categorize_fn(self):
-        """Cria callback para auto-categorização de uma entrada do backlog via LLM.
-
-        Retorna None se LLM não está configurado ou falta contexto de matéria.
-        O callback é chamado numa thread de background pelo diálogo.
-        """
-        meta = self._course_meta()
-        if not meta:
-            return None
-
-        sp = self.subject_store.get(meta["course_name"])
-        if not sp or (not sp.syllabus and not getattr(sp, "teaching_plan", "")):
-            return None
-
-        provider = self.config_obj.get("default_ai_provider", "openai")
-        openai_key = self.config_obj.get("openai_api_key", "")
-        gemini_key = self.config_obj.get("gemini_api_key", "")
-        llm = LLMCategorizer(provider, openai_key, gemini_key)
-        if not llm.is_configured():
-            return None
-
-        def _classify(entry_data: dict) -> dict:
-            preview_text = ""
-            raw_path = entry_data.get("raw_path", "")
-            if raw_path:
-                repo_root = self.var_repo_root.get().strip()
-                slug = self.var_course_slug.get().strip()
-                full_path = Path(repo_root) / slug / raw_path
-                if full_path.exists() and full_path.suffix.lower() == ".pdf":
-                    try:
-                        doc = pymupdf.open(str(full_path))
-                        if doc.page_count > 0:
-                            preview_text = doc[0].get_text("text") + "\n"
-                            if len(preview_text.strip()) < 100 and doc.page_count > 1:
-                                preview_text += doc[1].get_text("text")
-                        doc.close()
-                    except Exception:
-                        pass
-
-            if not preview_text.strip():
-                preview_text = entry_data.get("title", "")
-
-            return llm.classify_pdf(
-                meta["course_name"],
-                sp.syllabus,
-                getattr(sp, "teaching_plan", ""),
-                preview_text,
-                known_category=entry_data.get("category", ""),
-            )
-
-        return _classify
-
     def edit_backlog_entry(self):
         selected = self.repo_tree.selection()
         if not selected:
@@ -1291,10 +1087,7 @@ class App(tk.Tk):
                 data = json.load(f)
 
             entry_data = data["entries"][idx]
-
-            # Build auto-categorize callback for single-entry LLM classification
-            auto_fn = self._make_backlog_auto_categorize_fn()
-            dialog = BacklogEntryEditDialog(self, entry_data, auto_categorize_fn=auto_fn)
+            dialog = BacklogEntryEditDialog(self, entry_data)
 
             if dialog.result_data:
                 data["entries"][idx].update(dialog.result_data)

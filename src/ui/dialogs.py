@@ -175,32 +175,6 @@ class SettingsDialog(tk.Toplevel):
                           width=22).grid(row=r, column=1, sticky="ew")
         tab_proc.columnconfigure(1, weight=1)
 
-        # ── LLM AI tab ──────────────────────────────────────────────
-        tab_ia = ttk.Frame(nb, padding=16)
-        nb.add(tab_ia, text="  🤖  Inteligência Artificial  ")
-
-        self._var_ai_provider = tk.StringVar(value=self.config.get("default_ai_provider", "openai"))
-        self._var_openai_key = tk.StringVar(value=self.config.get("openai_api_key", ""))
-        self._var_gemini_key = tk.StringVar(value=self.config.get("gemini_api_key", ""))
-
-        ttk.Label(tab_ia, text="Provedor Padrão para Categorização", style="Accent.TLabel").grid(
-            row=0, column=0, columnspan=2, sticky="w", pady=(0, 8))
-            
-        ttk.Combobox(tab_ia, textvariable=self._var_ai_provider, values=["openai", "gemini"], 
-                     state="readonly", width=15).grid(row=0, column=2, sticky="ew", pady=(0, 8))
-
-        ttk.Label(tab_ia, text="OpenAI API Key (GPT-4o-mini)").grid(row=1, column=0, sticky="w", pady=6)
-        ttk.Entry(tab_ia, textvariable=self._var_openai_key, show="*", width=35).grid(row=1, column=1, columnspan=2, sticky="ew", padx=(8,0))
-
-        ttk.Label(tab_ia, text="Google Gemini API Key (1.5 Flash)").grid(row=2, column=0, sticky="w", pady=6)
-        ttk.Entry(tab_ia, textvariable=self._var_gemini_key, show="*", width=35).grid(row=2, column=1, columnspan=2, sticky="ew", padx=(8,0))
-        
-        ttk.Label(tab_ia, text="A chave é salva localmente e só sai de sua máquina direto para o provedor oficial.",
-                  foreground=p["muted"], font=("Segoe UI", 8)).grid(row=3, column=0, columnspan=3, sticky="w", pady=(12, 0))
-                  
-        tab_ia.columnconfigure(2, weight=1)
-
-
         # ── Buttons ─────────────────────────────────────────────────────
         btn_frame = ttk.Frame(self, padding=(16, 0, 16, 16))
         btn_frame.pack(fill="x")
@@ -221,9 +195,6 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("default_ocr_language", self._var_ocr.get())
         self.config.set("default_profile", self._var_profile.get())
         self.config.set("default_backend", self._var_backend.get())
-        self.config.set("default_ai_provider", self._var_ai_provider.get())
-        self.config.set("openai_api_key", self._var_openai_key.get().strip())
-        self.config.set("gemini_api_key", self._var_gemini_key.get().strip())
         self.config.save()
         self.theme_mgr.apply(self.parent, self._var_theme.get())
         self.parent._theme_name = self._var_theme.get()  # type: ignore[attr-defined]
@@ -1005,130 +976,14 @@ class StudentProfileDialog(tk.Toplevel):
 
 
 # ---------------------------------------------------------------------------
-# GUI — Categorization Review Dialog
-# ---------------------------------------------------------------------------
-
-class CategorizationReviewDialog(tk.Toplevel):
-    """Mostra os resultados da auto-categorização para revisão antes de aplicar."""
-
-    def __init__(self, parent, results: list):
-        """results: List of (FileEntry, category, unit, exam_ref) ou (FileEntry, category, unit)"""
-        super().__init__(parent)
-        self.title("🔮  Revisão — Auto-Categorização")
-        self.geometry("920x460")
-        self.minsize(700, 360)
-        self.transient(parent)
-        self.grab_set()
-        self.resizable(True, True)
-
-        # Normaliza para 4-tuplas
-        self._results = [
-            r if len(r) == 4 else (*r, "") for r in results
-        ]
-        self._selected = [True] * len(self._results)
-        self.confirmed: list = []  # populated on OK
-
-        self._build_ui()
-        self.wait_window(self)
-
-    def _build_ui(self):
-        ttk.Label(self, text="Revise as classificações sugeridas pela IA. Desmarque o que não quiser aplicar.",
-                  font=("Segoe UI", 10)).pack(padx=14, pady=(12, 6), anchor="w")
-
-        frame = ttk.Frame(self)
-        frame.pack(fill="both", expand=True, padx=14, pady=(0, 4))
-
-        cols = ("apply", "file", "category", "unit", "exam_ref")
-        self._tree = ttk.Treeview(frame, columns=cols, show="headings", height=12)
-        self._tree.heading("apply",    text="Aplicar")
-        self._tree.heading("file",     text="Arquivo")
-        self._tree.heading("category", text="Categoria")
-        self._tree.heading("unit",     text="Unidade")
-        self._tree.heading("exam_ref", text="Referência (gabarito/lista)")
-        self._tree.column("apply",    width=65,  anchor="center", stretch=False)
-        self._tree.column("file",     width=220)
-        self._tree.column("category", width=140, anchor="center")
-        self._tree.column("unit",     width=110, anchor="center")
-        self._tree.column("exam_ref", width=220)
-
-        sb = ttk.Scrollbar(frame, orient="vertical", command=self._tree.yview)
-        self._tree.configure(yscroll=sb.set)
-        self._tree.pack(side="left", fill="both", expand=True)
-        sb.pack(side="right", fill="y")
-
-        for i, (entry, category, unit, exam_ref) in enumerate(self._results):
-            self._tree.insert("", "end", iid=str(i), values=(
-                "✓",
-                Path(entry.source_path).name,
-                category or "—",
-                unit or "—",
-                exam_ref or "—",
-            ))
-
-        self._tree.bind("<ButtonRelease-1>", self._on_click)
-
-        # Select / Deselect all
-        sel_frame = ttk.Frame(self)
-        sel_frame.pack(fill="x", padx=14, pady=(0, 4))
-        ttk.Button(sel_frame, text="Selecionar todos",
-                   command=lambda: self._toggle_all(True)).pack(side="left")
-        ttk.Button(sel_frame, text="Desmarcar todos",
-                   command=lambda: self._toggle_all(False)).pack(side="left", padx=(6, 0))
-        ttk.Label(sel_frame, text=f"{len(self._results)} arquivo(s) classificado(s)",
-                  style="Muted.TLabel").pack(side="right")
-
-        # OK / Cancel
-        btn_frame = ttk.Frame(self)
-        btn_frame.pack(fill="x", padx=14, pady=(0, 12))
-        ttk.Button(btn_frame, text="Cancelar",
-                   command=self._cancel).pack(side="right")
-        ttk.Button(btn_frame, text="✓ Aplicar selecionados", style="Accent.TButton",
-                   command=self._ok).pack(side="right", padx=(0, 8))
-
-    def _on_click(self, event):
-        if self._tree.identify_region(event.x, event.y) != "cell":
-            return
-        if self._tree.identify_column(event.x) != "#1":
-            return
-        row_id = self._tree.identify_row(event.y)
-        if not row_id:
-            return
-        idx = int(row_id)
-        self._selected[idx] = not self._selected[idx]
-        vals = list(self._tree.item(row_id, "values"))
-        vals[0] = "✓" if self._selected[idx] else "✗"
-        self._tree.item(row_id, values=vals)
-
-    def _toggle_all(self, state: bool):
-        for i in range(len(self._results)):
-            self._selected[i] = state
-            vals = list(self._tree.item(str(i), "values"))
-            vals[0] = "✓" if state else "✗"
-            self._tree.item(str(i), values=vals)
-
-    def _ok(self):
-        self.confirmed = [
-            (entry, category, unit, exam_ref)
-            for i, (entry, category, unit, exam_ref) in enumerate(self._results)
-            if self._selected[i]
-        ]
-        self.destroy()
-
-    def _cancel(self):
-        self.confirmed = []
-        self.destroy()
-
-
-# ---------------------------------------------------------------------------
 # GUI — Backlog Entry Edit Dialog
 # ---------------------------------------------------------------------------
 
 class BacklogEntryEditDialog(simpledialog.Dialog):
     """Edita metadados de uma entrada já processada no manifest.json."""
 
-    def __init__(self, parent, entry_data: dict, auto_categorize_fn=None):
+    def __init__(self, parent, entry_data: dict):
         self._data = dict(entry_data)
-        self._auto_categorize_fn = auto_categorize_fn
         self.result_data: Optional[dict] = None
         super().__init__(parent, title="✏  Editar entrada do Backlog")
 
@@ -1177,59 +1032,7 @@ class BacklogEntryEditDialog(simpledialog.Dialog):
         ttk.Checkbutton(master, text="Relevante para prova", variable=self._var_exam).grid(
             row=row_cb + 1, column=0, columnspan=2, sticky="w", pady=2)
 
-        # Auto-categorize button
-        row_auto = row_cb + 2
-        self._auto_status = ttk.Label(master, text="", style="Muted.TLabel")
-        if self._auto_categorize_fn:
-            self._btn_auto = ttk.Button(master, text="🔮 Auto-Categorizar (IA)",
-                                        command=self._on_auto_categorize)
-            self._btn_auto.grid(row=row_auto, column=0, columnspan=2, sticky="w", pady=(10, 2))
-            self._auto_status.grid(row=row_auto + 1, column=0, columnspan=2, sticky="w")
-
         return first_entry  # widget que recebe o foco inicial
-
-    def _on_auto_categorize(self):
-        """Chama a LLM para auto-categorizar e preenche os campos."""
-        self._btn_auto.config(state="disabled")
-        self._auto_status.config(text="Categorizando...")
-        import threading
-        def _worker():
-            try:
-                result = self._auto_categorize_fn(self._data)
-                self.after(0, lambda: self._apply_auto_result(result))
-            except Exception as e:
-                self.after(0, lambda: self._auto_status.config(text=f"Erro: {e}"))
-                self.after(0, lambda: self._btn_auto.config(state="normal"))
-        threading.Thread(target=_worker, daemon=True).start()
-
-    def _apply_auto_result(self, result: dict):
-        """Aplica o resultado da auto-categorização nos campos do diálogo."""
-        self._btn_auto.config(state="normal")
-        if not result:
-            self._auto_status.config(text="Sem resultado da IA.")
-            return
-        cat = result.get("category", "")
-        unit = result.get("unit", "")
-        exam_ref = result.get("exam_ref", "")
-        changes = []
-        current_cat = self._vars["category"].get().strip()
-        if cat and cat != "outros" and current_cat in ("", "pdf", "outros"):
-            self._vars["category"].set(cat)
-            changes.append(f"cat={cat}")
-        if unit:
-            existing_tags = [t.strip() for t in self._vars["tags"].get().split(",") if t.strip()]
-            if unit not in existing_tags:
-                existing_tags.append(unit)
-                self._vars["tags"].set(", ".join(existing_tags))
-            changes.append(f"unit={unit}")
-        if exam_ref:
-            current_notes = self._notes_text.get("1.0", "end-1c").strip()
-            if exam_ref not in current_notes:
-                sep = "\n" if current_notes else ""
-                self._notes_text.insert("end", f"{sep}Ref: {exam_ref}")
-            changes.append(f"ref={exam_ref}")
-        summary = ", ".join(changes) if changes else "sem alterações"
-        self._auto_status.config(text=f"IA: {summary}")
 
     def apply(self):
         self.result_data = {
@@ -1847,27 +1650,6 @@ class StatusDialog(tk.Toplevel):
         row(f_ocr, "Executável tesseract", bool(tess_bin), tess_bin or "não encontrado no PATH")
         row(f_ocr, "Dados de idioma (tessdata)", bool(TESSDATA_PATH),
             TESSDATA_PATH or "defina TESSDATA_PREFIX nas variáveis de ambiente")
-
-        # ── IA / Auto-categorização ──────────────────────────────────────
-        f_ai = section("IA / Auto-categorização")
-        provider = config_obj.get("default_ai_provider", "gemini")
-        openai_key = config_obj.get("openai_api_key", "")
-        gemini_key = config_obj.get("gemini_api_key", "")
-
-        tk.Label(f_ai, text=f"  Provider ativo: {provider}", bg=p["bg"], fg=p["accent"],
-                 font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(0, 4))
-
-        has_openai = bool(openai_key)
-        has_gemini = bool(gemini_key)
-        row(f_ai, "OpenAI API Key",
-            has_openai, mask_key(openai_key) if has_openai else "não definida (OPENAI_API_KEY)")
-        row(f_ai, "Gemini API Key",
-            has_gemini, mask_key(gemini_key) if has_gemini else "não definida (GEMINI_API_KEY)")
-
-        active_key_ok = (provider == "openai" and has_openai) or (provider == "gemini" and has_gemini)
-        if not active_key_ok:
-            warn_row(f_ai, f"Provider '{provider}' ativo mas sem chave configurada",
-                     "configure em ⚙ Configurações > aba IA")
 
         # ── Perfil do Aluno ──────────────────────────────────────────────
         f_stu = section("Perfil do Aluno")
