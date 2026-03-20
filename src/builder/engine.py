@@ -1202,37 +1202,8 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
         manifest.setdefault("logs", []).extend(self.logs)
 
-        # Atualiza bibliography com novos entries
-        bib_entries = [e for e in self.entries if e.category == "bibliografia"]
-        if bib_entries or getattr(self.subject_profile, "teaching_plan", ""):
-            write_text(self.root_dir / "content" / "BIBLIOGRAPHY.md",
-                       bibliography_md(self.course_meta, bib_entries, self.subject_profile))
-
-        # Atualiza exam & exercise indexes
-        all_entries = [FileEntry.from_dict(e) for e in manifest.get("entries", [])]
-        exam_entries = [e for e in all_entries if e.category in EXAM_CATEGORIES]
-        if exam_entries:
-            write_text(self.root_dir / "exams" / "EXAM_INDEX.md",
-                       exam_index_md(self.course_meta, exam_entries))
-        exercise_entries = [e for e in all_entries if e.category in EXERCISE_CATEGORIES]
-        if exercise_entries:
-            write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
-                       exercise_index_md(self.course_meta, exercise_entries))
-
-        # Regenera arquivos que dependem do perfil da matéria/aluno
-        instructions = generate_claude_project_instructions(
-            self.course_meta, self.student_profile, self.subject_profile
-        )
-        write_text(self.root_dir / "INSTRUCOES_CLAUDE_PROJETO.md", instructions)
-
-        write_text(self.root_dir / "course" / "COURSE_MAP.md",
-                   course_map_md(self.course_meta, self.subject_profile))
-        write_text(self.root_dir / "course" / "GLOSSARY.md",
-                   glossary_md(self.course_meta, self.subject_profile))
-
-        if self.subject_profile and self.subject_profile.syllabus:
-            write_text(self.root_dir / "course" / "SYLLABUS.md",
-                       syllabus_md(self.subject_profile))
+        # Regenera todos os arquivos pedagógicos (indexes, course map, glossary, etc.)
+        self._regenerate_pedagogical_files(manifest)
 
         if self.student_profile:
             write_text(self.root_dir / "student" / "STUDENT_PROFILE.md",
@@ -1260,6 +1231,54 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         self._write_bundle_seed(manifest)
         self._write_build_report(manifest)
         logger.info("Incremental build completed. %d new entries added.", len(new_entries))
+
+    def _regenerate_pedagogical_files(self, manifest: dict) -> None:
+        """Regenera todos os arquivos pedagógicos a partir do manifest atual.
+
+        Chamado por process_single() e pode ser reutilizado em outros contextos.
+        Garante que COURSE_MAP, GLOSSARY, indexes e system prompt estejam
+        sincronizados com o conjunto atual de entries.
+        """
+        try:
+            all_entries = [FileEntry.from_dict(e) for e in manifest.get("entries", [])]
+        except Exception:
+            all_entries = []
+
+        # System prompt
+        write_text(self.root_dir / "INSTRUCOES_CLAUDE_PROJETO.md",
+                   generate_claude_project_instructions(
+                       self.course_meta, self.student_profile, self.subject_profile))
+
+        # Course map (com timeline cronograma × unidades)
+        write_text(self.root_dir / "course" / "COURSE_MAP.md",
+                   course_map_md(self.course_meta, self.subject_profile))
+
+        # Glossary
+        write_text(self.root_dir / "course" / "GLOSSARY.md",
+                   glossary_md(self.course_meta, self.subject_profile))
+
+        # Syllabus
+        if self.subject_profile and self.subject_profile.syllabus:
+            write_text(self.root_dir / "course" / "SYLLABUS.md",
+                       syllabus_md(self.subject_profile))
+
+        # Exam index
+        exam_entries = [e for e in all_entries if e.category in EXAM_CATEGORIES]
+        if exam_entries:
+            write_text(self.root_dir / "exams" / "EXAM_INDEX.md",
+                       exam_index_md(self.course_meta, exam_entries))
+
+        # Exercise index
+        exercise_entries = [e for e in all_entries if e.category in EXERCISE_CATEGORIES]
+        if exercise_entries:
+            write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
+                       exercise_index_md(self.course_meta, exercise_entries))
+
+        # Bibliography
+        bib_entries = [e for e in all_entries if e.category == "bibliografia"]
+        if bib_entries or getattr(self.subject_profile, "teaching_plan", ""):
+            write_text(self.root_dir / "content" / "BIBLIOGRAPHY.md",
+                       bibliography_md(self.course_meta, bib_entries, self.subject_profile))
 
     def process_single(self, entry: "FileEntry", force: bool = False) -> str:
         """
@@ -1325,6 +1344,10 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         self._write_source_registry(manifest)
         self._write_bundle_seed(manifest)
         self._write_build_report(manifest)
+
+        # Regenera arquivos pedagógicos que dependem do conjunto completo de entries
+        self._regenerate_pedagogical_files(manifest)
+
         logger.info("Single entry processed: %s", entry.id())
         return "ok"
 
