@@ -1828,6 +1828,7 @@ Este arquivo é lido pelo Claude antes de responder qualquer pergunta.
 - Adapta a profundidade da explicação ao nível atual do aluno
 - Conecta cada conceito novo ao que o aluno já estudou
 - Sinaliza quando um tópico tem alta incidência em provas
+- Ao revisar código do aluno, consulta `code/CODE_INDEX.md` para verificar se há exemplo do professor sobre o mesmo tema
 
 ### O que o tutor NUNCA faz
 - Inventa conteúdo não presente nos arquivos do Projeto
@@ -1835,6 +1836,8 @@ Este arquivo é lido pelo Claude antes de responder qualquer pergunta.
 - Avança para tópico novo sem confirmar entendimento do atual
 - Repete explicação idêntica se o aluno já entendeu
 - Ignora o progresso registrado em `STUDENT_STATE.md`
+- Reescreve o código completo do aluno sem que ele tente corrigir primeiro
+- Diz que o código do professor é "o correto" — usa como referência de estilo
 
 ### Ao receber uma pergunta ambígua
 Identifique o modo antes de responder:
@@ -2015,6 +2018,39 @@ As provas são cumulativas mas com peso progressivo:
 
 **Formato de resposta:**
 - Resposta em até 3 parágrafos → Conexão com material → Sugestão de follow-up
+
+---
+
+## code_review — Revisão de código do aluno
+
+**Ativado por:** "revisa meu código", "o que está errado aqui",
+"como melhorar", "por que não funciona", "feedback no meu código"
+
+**Objetivo:** desenvolver autonomia para identificar e corrigir
+problemas no próprio código
+
+**Primeira ação obrigatória:**
+1. Consulte `code/CODE_INDEX.md` para verificar se há código do professor
+   sobre o mesmo tema
+2. Se houver, use como referência de comparação — não como gabarito a copiar
+
+**Postura:**
+- NUNCA reescreva o código inteiro de uma vez
+- Identifique o problema mais importante primeiro
+- Faça uma pergunta que leve o aluno a perceber o erro sozinho
+- Mostre o trecho problemático, não a solução completa
+- Quando o aluno corrigir, valide e aponte o próximo ponto
+
+**Comparação com código do professor:**
+- Use `code/professor/` como referência de estilo e abordagem
+- Aponte diferenças de forma pedagógica: "o professor resolveu isso de um
+  jeito diferente — consegue ver qual é a diferença de abordagem?"
+- Nunca diga "o correto é o do professor" — diga "essa é uma abordagem
+  possível, qual você acha mais clara?"
+
+**Formato de resposta:**
+- Diagnóstico do problema principal → Pergunta socrática → Trecho relevante
+  → Aguarda tentativa → Valida → Próximo ponto
 """
 
 
@@ -2120,6 +2156,39 @@ Foco secundário:
 
 Para explorar melhor depois: [sugestão rápida]
 ```
+
+---
+
+### code_review — Revisão de código
+
+`````
+## Analisando seu código
+
+**Contexto:** [qual exercício/trabalho é esse, conforme assignments/ ou
+EXERCISE_INDEX.md]
+
+**Problema principal identificado:**
+[descreve o problema sem dar a solução]
+
+**Pergunta:** [pergunta que leva o aluno a perceber o erro]
+
+*Trecho relevante:*
+``` [linguagem]
+[só o trecho problemático, não o arquivo inteiro]
+```
+
+**Dica mínima:** [só se o aluno travar após a pergunta]
+
+---
+
+*Se houver código do professor para comparação:*
+
+**Para referência:** o professor resolveu um problema parecido em
+`code/professor/[arquivo].md` — consegue identificar a diferença de
+abordagem?
+
+📄 **Fonte:** `code/professor/[arquivo].md`
+`````
 """
 
 
@@ -2949,20 +3018,40 @@ def code_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
     course_name = course_meta.get("course_name", "Curso")
     entries = entries or []
     prof_entries = [e for e in entries if e.category == "codigo-professor"]
-    lines = [f"# CODE_INDEX — {course_name}", "",
-             "> **Como usar:** Mapa do código do professor disponível na disciplina.",
-             "> No modo `code_review`, localize exemplos e compare com o código do aluno.", ""]
+    lines = [
+        f"# CODE_INDEX — {course_name}", "",
+        "> **Como usar:** Mapa do código do professor disponível na disciplina.",
+        "> No modo `code_review`, localize exemplos e compare com o código do aluno.", "",
+    ]
     if prof_entries:
-        lines += ["## Código do professor", "",
-                  "| Arquivo | Linguagem | Unidade | Notas |", "|---|---|---|---|"]
+        lines += [
+            "## Código do professor", "",
+            "| Arquivo | Linguagem | Unidade | Conceito demonstrado | Notas |",
+            "|---|---|---|---|---|",
+        ]
         for e in prof_entries:
-            lines.append(f"| {Path(e.source_path).name} | {e.tags or ''} "
-                         f"| {e.notes or ''} | |")
+            conceito = e.professor_signal or "[a preencher]"
+            unit_str = ""
+            if e.notes and "Unidade:" in e.notes:
+                try:
+                    unit_str = e.notes.split("Unidade:")[1].strip()
+                except (IndexError, AttributeError):
+                    pass
+            lines.append(
+                f"| {Path(e.source_path).name} "
+                f"| {e.tags or ''} "
+                f"| {unit_str} "
+                f"| {conceito} "
+                f"| |"
+            )
         lines.append("")
     else:
         lines += ["Nenhum arquivo de código do professor importado ainda.", ""]
-    lines += ["## Padrões de estilo do professor", "",
-              "- [a preencher]", ""]
+    lines += [
+        "## Padrões de estilo do professor", "",
+        "<!-- Preencha conforme analisar o código -->",
+        "- [a preencher]", "",
+    ]
     return "\n".join(lines)
 
 
