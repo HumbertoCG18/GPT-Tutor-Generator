@@ -17,7 +17,7 @@ from src.models.core import FileEntry, SubjectStore, StudentStore, SubjectProfil
 from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS
 from src.builder.engine import RepoBuilder
 from src.ui.theme import ThemeManager, AppConfig
-from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, MarkdownPreviewWindow, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, StatusDialog
+from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, StatusDialog
 
 logger = logging.getLogger(__name__)
 
@@ -196,7 +196,6 @@ class App(tk.Tk):
 
         ttk.Button(toolbar, text="⚙ Configurações", command=self.open_settings).pack(side="right", padx=(6, 0))
         ttk.Button(toolbar, text="? Ajuda  F1", command=self.open_help).pack(side="right", padx=(6, 0))
-        ttk.Button(toolbar, text="📄 Preview", command=self.open_preview).pack(side="right", padx=(6, 0))
         ttk.Button(toolbar, text="🖌 Curator Studio", command=self.open_curator_studio).pack(side="right", padx=(6, 0))
         self._btn_build = ttk.Button(toolbar, text="🚀 Criar Repositório",
                                       style="Accent.TButton", command=self.build_repo)
@@ -250,6 +249,10 @@ class App(tk.Tk):
 
         btn_unprocess = ttk.Button(tab_backlog, text="🗑 Limpar Processamento", command=self.remove_processed_single)
         btn_unprocess.pack(side="left", pady=(8, 4), padx=4)
+
+        ttk.Separator(tab_backlog, orient="vertical").pack(side="left", fill="y", padx=6, pady=(8, 4))
+        btn_reprocess = ttk.Button(tab_backlog, text="🔄 Reprocessar Repositório", command=self._reprocess_repo)
+        btn_reprocess.pack(side="left", pady=(8, 4), padx=4)
 
         columns_bk = ("category", "layer", "tags", "title", "backend", "file")
         self.repo_tree = ttk.Treeview(tab_backlog, columns=columns_bk, show="headings", height=14)
@@ -430,13 +433,6 @@ class App(tk.Tk):
 
     def open_status(self):
         StatusDialog(self, self.config_obj, self.student_store, self.theme_mgr)
-
-    def open_preview(self):
-        repo_dir = self._repo_dir()
-        if not repo_dir:
-            messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório para visualizar os Markdowns.")
-            return
-        MarkdownPreviewWindow(self, str(repo_dir), self.theme_mgr)
 
     def open_curator_studio(self):
         repo_dir = self._repo_dir()
@@ -1059,6 +1055,58 @@ class App(tk.Tk):
         except Exception as e:
             messagebox.showerror(APP_NAME, f"Erro ao remover processamento: {e}")
 
+    def _reprocess_repo(self):
+        """Regenera todos os arquivos pedagógicos do repositório com o código atual."""
+        repo_dir = self._repo_dir()
+        if not repo_dir:
+            messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório.")
+            return
+        manifest_path = repo_dir / "manifest.json"
+        if not manifest_path.exists():
+            messagebox.showinfo(APP_NAME, "Nenhum repositório encontrado nessa pasta.")
+            return
+        meta = self._course_meta()
+        if meta is None:
+            return
+
+        if not messagebox.askyesno(
+            APP_NAME,
+            "Isso vai regenerar todos os arquivos pedagógicos (instruções, course map, glossário, etc.) "
+            "com o código atual.\n\nDeseja continuar?"
+        ):
+            return
+
+        active_subj = self._active_subject()
+
+        def worker():
+            try:
+                builder = RepoBuilder(
+                    root_dir=repo_dir,
+                    course_meta=meta,
+                    entries=[],
+                    options={
+                        "default_processing_mode": self.var_default_mode.get(),
+                        "default_ocr_language": self.var_default_ocr_language.get(),
+                    },
+                    student_profile=self.student_store.profile,
+                    subject_profile=active_subj,
+                )
+                builder.incremental_build()
+                self.after(0, lambda: self._on_reprocess_done(None))
+            except Exception as e:
+                self.after(0, lambda: self._on_reprocess_done(e))
+
+        self._set_status("Reprocessando repositório...")
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _on_reprocess_done(self, error):
+        if error:
+            messagebox.showerror(APP_NAME, f"Erro ao reprocessar: {error}")
+            self._set_status("Erro ao reprocessar.")
+        else:
+            self._refresh_backlog()
+            self._set_status("Repositório reprocessado com sucesso.")
+
     def _manifest_path(self) -> Optional[Path]:
         """Retorna o caminho do manifest.json do repositório ativo, ou None."""
         repo_dir = self._repo_dir()
@@ -1083,12 +1131,14 @@ class App(tk.Tk):
             messagebox.showerror(APP_NAME, "Repositório não encontrado.")
             return
 
+        repo_dir = self._repo_dir()
+
         try:
             with open(manifest_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
             entry_data = data["entries"][idx]
-            dialog = BacklogEntryEditDialog(self, entry_data)
+            dialog = BacklogEntryEditDialog(self, entry_data, repo_dir=repo_dir)
 
             if dialog.result_data:
                 data["entries"][idx].update(dialog.result_data)

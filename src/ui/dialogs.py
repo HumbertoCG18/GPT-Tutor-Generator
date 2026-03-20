@@ -976,59 +976,181 @@ class StudentProfileDialog(tk.Toplevel):
 # ---------------------------------------------------------------------------
 
 class BacklogEntryEditDialog(simpledialog.Dialog):
-    """Edita metadados de uma entrada já processada no manifest.json."""
+    """Edita metadados de uma entrada já processada, com visualização MD e PDF."""
 
-    def __init__(self, parent, entry_data: dict):
+    def __init__(self, parent, entry_data: dict, repo_dir=None):
         self._data = dict(entry_data)
+        self._repo_dir = Path(repo_dir) if repo_dir else None
         self.result_data: Optional[dict] = None
         super().__init__(parent, title="✏  Editar entrada do Backlog")
 
     def body(self, master):
-        master.columnconfigure(1, weight=1)
+        self.resizable(True, True)
+        self.geometry("900x600")
+
+        nb = ttk.Notebook(master)
+        nb.pack(fill="both", expand=True)
+
+        # ── Tab 1: Editar ──────────────────────────────────────────────
+        tab_edit = ttk.Frame(nb, padding=10)
+        nb.add(tab_edit, text="  Editar  ")
+        tab_edit.columnconfigure(1, weight=1)
 
         fields = [
-            ("Título",    "title",            False),
-            ("Categoria", "category",          False),
-            ("Tags",      "tags",              False),
-            ("Camada",    "effective_profile", False),
+            ("Título",    "title"),
+            ("Categoria", "category"),
+            ("Tags",      "tags"),
+            ("Camada",    "effective_profile"),
         ]
 
         self._vars: Dict[str, tk.StringVar] = {}
         first_entry = None
-        for row, (label, key, _) in enumerate(fields):
-            ttk.Label(master, text=label).grid(row=row, column=0, sticky="w", padx=(0, 12), pady=4)
+        for row, (label, key) in enumerate(fields):
+            ttk.Label(tab_edit, text=label).grid(row=row, column=0, sticky="w", padx=(0, 12), pady=4)
             var = tk.StringVar(value=self._data.get(key, ""))
             self._vars[key] = var
             if key == "category":
-                ttk.Combobox(master, textvariable=var, values=DEFAULT_CATEGORIES,
+                ttk.Combobox(tab_edit, textvariable=var, values=DEFAULT_CATEGORIES,
                              state="readonly", width=28).grid(row=row, column=1, sticky="ew", pady=4)
             elif key == "effective_profile":
                 from src.utils.helpers import DOCUMENT_PROFILES
-                ttk.Combobox(master, textvariable=var, values=DOCUMENT_PROFILES,
+                ttk.Combobox(tab_edit, textvariable=var, values=DOCUMENT_PROFILES,
                              state="readonly", width=28).grid(row=row, column=1, sticky="ew", pady=4)
             else:
-                widget = ttk.Entry(master, textvariable=var, width=38)
+                widget = ttk.Entry(tab_edit, textvariable=var, width=38)
                 widget.grid(row=row, column=1, sticky="ew", pady=4)
                 if first_entry is None:
                     first_entry = widget
 
-        # Notes — multiline
         row_notes = len(fields)
-        ttk.Label(master, text="Notas").grid(row=row_notes, column=0, sticky="nw", padx=(0, 12), pady=4)
-        self._notes_text = tk.Text(master, height=4, width=38, font=("Segoe UI", 9), wrap="word")
+        ttk.Label(tab_edit, text="Notas").grid(row=row_notes, column=0, sticky="nw", padx=(0, 12), pady=4)
+        self._notes_text = tk.Text(tab_edit, height=4, width=38, font=("Segoe UI", 9), wrap="word")
         self._notes_text.grid(row=row_notes, column=1, sticky="ew", pady=4)
         self._notes_text.insert("1.0", self._data.get("notes", ""))
 
-        # Checkboxes
         row_cb = row_notes + 1
         self._var_bundle = tk.BooleanVar(value=bool(self._data.get("include_in_bundle", True)))
         self._var_exam   = tk.BooleanVar(value=bool(self._data.get("relevant_for_exam", True)))
-        ttk.Checkbutton(master, text="Incluir no bundle",   variable=self._var_bundle).grid(
+        ttk.Checkbutton(tab_edit, text="Incluir no bundle",   variable=self._var_bundle).grid(
             row=row_cb, column=0, columnspan=2, sticky="w", pady=(6, 2))
-        ttk.Checkbutton(master, text="Relevante para prova", variable=self._var_exam).grid(
+        ttk.Checkbutton(tab_edit, text="Relevante para prova", variable=self._var_exam).grid(
             row=row_cb + 1, column=0, columnspan=2, sticky="w", pady=2)
 
-        return first_entry  # widget que recebe o foco inicial
+        # ── Tab 2: Visualização MD ─────────────────────────────────────
+        tab_md = ttk.Frame(nb, padding=5)
+        nb.add(tab_md, text="  Visualização MD  ")
+        self._build_md_tab(tab_md)
+
+        return first_entry
+
+    def _build_md_tab(self, parent):
+        """Build the markdown visualization tab with PDF button."""
+        toolbar = ttk.Frame(parent)
+        toolbar.pack(fill="x", pady=(0, 5))
+
+        # Source selector
+        ttk.Label(toolbar, text="Fonte:").pack(side="left")
+        self._md_source_var = tk.StringVar()
+        self._md_source_combo = ttk.Combobox(
+            toolbar, textvariable=self._md_source_var,
+            state="readonly", width=50,
+        )
+        self._md_source_combo.pack(side="left", padx=5)
+        self._md_source_combo.bind("<<ComboboxSelected>>", self._on_md_source_changed)
+
+        # PDF button
+        ttk.Button(toolbar, text="📄 Ver PDF Original", command=self._open_pdf_viewer).pack(side="right", padx=5)
+
+        # Stats bar
+        self._md_stats_var = tk.StringVar(value="")
+        ttk.Label(parent, textvariable=self._md_stats_var, style="Muted.TLabel").pack(anchor="w", pady=(0, 3))
+
+        # Text viewer
+        self._md_text = tk.Text(parent, wrap="word", font=("Consolas", 10), state="disabled")
+        scroll = ttk.Scrollbar(parent, orient="vertical", command=self._md_text.yview)
+        self._md_text.configure(yscrollcommand=scroll.set)
+        self._md_text.pack(side="left", fill="both", expand=True)
+        scroll.pack(side="right", fill="y")
+
+        self._md_text.tag_configure("heading", font=("Segoe UI", 12, "bold"), foreground="#89b4fa")
+        self._md_text.tag_configure("latex", foreground="#f9e2af", font=("Consolas", 10, "italic"))
+        self._md_text.tag_configure("code", background="#313244", font=("Consolas", 10))
+        self._md_text.tag_configure("table_row", foreground="#a6e3a1")
+
+        # Populate sources
+        self._md_sources: Dict[str, Path] = {}
+        if self._repo_dir:
+            for key, label in [("base_markdown", "Base"), ("advanced_markdown", "Avançado"), ("manual_review", "Revisão")]:
+                val = self._data.get(key)
+                if val:
+                    p = self._repo_dir / val
+                    if p.exists():
+                        backend = self._data.get("base_backend" if "base" in key else "advanced_backend", "")
+                        display = f"{label} — {backend} ({p.name})" if backend else f"{label} ({p.name})"
+                        self._md_sources[display] = p
+
+        self._md_source_combo["values"] = list(self._md_sources.keys())
+        if self._md_sources:
+            first = list(self._md_sources.keys())[0]
+            self._md_source_var.set(first)
+            self._load_md_content(self._md_sources[first])
+
+    def _on_md_source_changed(self, _event=None):
+        name = self._md_source_var.get()
+        if name in self._md_sources:
+            self._load_md_content(self._md_sources[name])
+
+    def _load_md_content(self, fpath: Path):
+        try:
+            content = fpath.read_text("utf-8", errors="replace")
+        except Exception as e:
+            content = f"Erro ao ler arquivo: {e}"
+
+        lines = content.split("\n")
+        latex_count = content.count("$")
+        latex_blocks = content.count("$$")
+        img_refs = content.count("![")
+        self._md_stats_var.set(
+            f"{len(lines)} linhas  |  "
+            f"LaTeX inline: ~{latex_count - latex_blocks*2}  |  "
+            f"LaTeX blocos: {latex_blocks}  |  "
+            f"Imagens: {img_refs}"
+        )
+
+        self._md_text.configure(state="normal")
+        self._md_text.delete("1.0", "end")
+        self._md_text.insert("1.0", content)
+
+        for i, line in enumerate(lines, 1):
+            tag = f"{i}.0"
+            tag_end = f"{i}.end"
+            if line.startswith("#"):
+                self._md_text.tag_add("heading", tag, tag_end)
+            elif "$$" in line or line.strip().startswith("\\"):
+                self._md_text.tag_add("latex", tag, tag_end)
+            elif "$" in line:
+                self._md_text.tag_add("latex", tag, tag_end)
+            elif line.startswith("|") and "|" in line[1:]:
+                self._md_text.tag_add("table_row", tag, tag_end)
+            elif line.startswith("```"):
+                self._md_text.tag_add("code", tag, tag_end)
+
+        self._md_text.configure(state="disabled")
+
+    def _open_pdf_viewer(self):
+        """Open the source PDF in the system's default PDF viewer."""
+        if not self._repo_dir:
+            return
+        raw_target = self._data.get("raw_target")
+        if not raw_target:
+            messagebox.showinfo("PDF", "Nenhum PDF original associado a esta entrada.")
+            return
+        pdf_path = self._repo_dir / raw_target
+        if not pdf_path.exists():
+            messagebox.showinfo("PDF", f"Arquivo não encontrado:\n{pdf_path}")
+            return
+        import os
+        os.startfile(str(pdf_path))
 
     def apply(self):
         self.result_data = {
