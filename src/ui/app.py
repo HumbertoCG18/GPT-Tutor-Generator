@@ -833,16 +833,14 @@ class App(tk.Tk):
         syllabus = sp.syllabus
         teaching_plan = getattr(sp, "teaching_plan", "")
 
-        # Inclui PDFs sem categoria OU sem unidade (tags vazias)
-        # Para provas/listas/gabaritos já categorizados, reprocessa se ainda não tem unidade
-        _academic = {"provas", "listas", "gabaritos", "fotos-de-prova", "material-de-aula"}
+        # Categorias que NÃO precisam de unidade (cobrem o curso inteiro)
+        _no_unit = {"cronograma", "bibliografia", "referencias"}
         targets = [
             e for e in entries_snapshot
             if e.file_type == "pdf" and getattr(e, "enabled", True)
             and (
-                e.category in ("", "pdf", "outros")
-                or not e.tags.strip()
-                or (e.category in _academic and not e.tags.strip())
+                e.category in ("", "pdf", "outros")                   # precisa de categoria
+                or (e.category not in _no_unit and not e.tags.strip())  # precisa de unidade
             )
         ]
         if not targets and not fallback_build:
@@ -902,7 +900,8 @@ class App(tk.Tk):
         for item in dialog.confirmed:
             entry, category, unit, exam_ref = item if len(item) == 4 else (*item, "")
             changed = False
-            if category and category != "outros":
+            # Só atribui categoria se a entry ainda não tem uma válida
+            if category and category != "outros" and entry.category in ("", "pdf", "outros"):
                 entry.category = category
                 changed = True
             existing = [t.strip() for t in entry.tags.split(",") if t.strip()]
@@ -932,8 +931,10 @@ class App(tk.Tk):
                 return
 
         # Fallback Auto-categorization
+        _no_unit = {"cronograma", "bibliografia", "referencias"}
         needs_cat = any(
-            e.category in ("", "pdf", "outros") or not e.tags.strip()
+            e.category in ("", "pdf", "outros")
+            or (e.category not in _no_unit and not e.tags.strip())
             for e in self.entries if e.file_type == "pdf"
         )
         if needs_cat:
@@ -1217,6 +1218,58 @@ class App(tk.Tk):
         p = Path(repo_root) / slug / "manifest.json"
         return p if p.exists() else None
 
+    def _make_backlog_auto_categorize_fn(self):
+        """Cria callback para auto-categorização de uma entrada do backlog via LLM.
+
+        Retorna None se LLM não está configurado ou falta contexto de matéria.
+        O callback é chamado numa thread de background pelo diálogo.
+        """
+        meta = self._course_meta()
+        if not meta:
+            return None
+
+        sp = self.subject_store.get(meta["course_name"])
+        if not sp or (not sp.syllabus and not getattr(sp, "teaching_plan", "")):
+            return None
+
+        provider = self.config_obj.get("default_ai_provider", "openai")
+        openai_key = self.config_obj.get("openai_api_key", "")
+        gemini_key = self.config_obj.get("gemini_api_key", "")
+        llm = LLMCategorizer(provider, openai_key, gemini_key)
+        if not llm.is_configured():
+            return None
+
+        def _classify(entry_data: dict) -> dict:
+            preview_text = ""
+            raw_path = entry_data.get("raw_path", "")
+            if raw_path:
+                repo_root = self.var_repo_root.get().strip()
+                slug = self.var_course_slug.get().strip()
+                full_path = Path(repo_root) / slug / raw_path
+                if full_path.exists() and full_path.suffix.lower() == ".pdf":
+                    try:
+                        doc = pymupdf.open(str(full_path))
+                        if doc.page_count > 0:
+                            preview_text = doc[0].get_text("text") + "\n"
+                            if len(preview_text.strip()) < 100 and doc.page_count > 1:
+                                preview_text += doc[1].get_text("text")
+                        doc.close()
+                    except Exception:
+                        pass
+
+            if not preview_text.strip():
+                preview_text = entry_data.get("title", "")
+
+            return llm.classify_pdf(
+                meta["course_name"],
+                sp.syllabus,
+                getattr(sp, "teaching_plan", ""),
+                preview_text,
+                known_category=entry_data.get("category", ""),
+            )
+
+        return _classify
+
     def edit_backlog_entry(self):
         selected = self.repo_tree.selection()
         if not selected:
@@ -1238,7 +1291,10 @@ class App(tk.Tk):
                 data = json.load(f)
 
             entry_data = data["entries"][idx]
-            dialog = BacklogEntryEditDialog(self, entry_data)
+
+            # Build auto-categorize callback for single-entry LLM classification
+            auto_fn = self._make_backlog_auto_categorize_fn()
+            dialog = BacklogEntryEditDialog(self, entry_data, auto_categorize_fn=auto_fn)
 
             if dialog.result_data:
                 data["entries"][idx].update(dialog.result_data)

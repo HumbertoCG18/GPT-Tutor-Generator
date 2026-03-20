@@ -31,6 +31,7 @@ from src.builder.engine import (
     _topic_depth,
     _format_units_for_prompt,
     course_map_md,
+    file_map_md,
 )
 from src.models.core import (
     DocumentProfileReport,
@@ -615,6 +616,25 @@ class TestLLMCategorizerParsing:
         assert isinstance(cat, str)
 
 
+class TestLLMPromptCategories:
+    """Verifica que o prompt do LLM inclui todas as categorias válidas."""
+
+    def test_prompt_includes_all_categories(self):
+        from src.services.llm import LLMCategorizer
+        from src.utils.helpers import DEFAULT_CATEGORIES
+        from unittest.mock import patch
+        llm = LLMCategorizer("openai", "fake-key", "")
+        captured = {}
+        def mock_openai(self_inner, prompt, max_tokens=50):
+            captured["prompt"] = prompt
+            return '{"category": "outros", "unit": "", "exam_ref": ""}'
+        with patch.object(LLMCategorizer, "_call_openai", mock_openai):
+            llm.classify_pdf("Test", "", "", "test text")
+        prompt = captured["prompt"]
+        for cat in DEFAULT_CATEGORIES:
+            assert cat in prompt, f"Category '{cat}' missing from LLM prompt"
+
+
 # ---------------------------------------------------------------------------
 # _parse_syllabus_timeline / _match_timeline_to_units
 # ---------------------------------------------------------------------------
@@ -725,6 +745,86 @@ class TestCourseMapTimeline:
         )
         result = course_map_md({"course_name": "Métodos Formais"}, sp)
         assert "Timeline" not in result
+
+
+# ---------------------------------------------------------------------------
+# System prompt — file references + first session protocol
+# ---------------------------------------------------------------------------
+
+class TestSystemPromptFileReferences:
+    META = {"course_name": "Test", "professor": "P", "institution": "I", "semester": "S"}
+
+    def test_no_conditional_dirs_without_entries(self):
+        from src.builder.engine import generate_claude_project_instructions
+        result = generate_claude_project_instructions(self.META)
+        # These should NOT appear as rows in the file reference table
+        assert "| `assignments/`" not in result
+        assert "| `code/professor/`" not in result
+        assert "| `whiteboard/`" not in result
+
+    def test_conditional_dirs_with_flags(self):
+        from src.builder.engine import generate_claude_project_instructions
+        result = generate_claude_project_instructions(
+            self.META, has_assignments=True, has_code=True, has_whiteboard=True)
+        assert "| `assignments/`" in result
+        assert "| `code/professor/`" in result
+        assert "| `whiteboard/`" in result
+
+    def test_file_map_always_referenced(self):
+        from src.builder.engine import generate_claude_project_instructions
+        result = generate_claude_project_instructions(self.META)
+        assert "FILE_MAP.md" in result
+
+    def test_first_session_protocol_present(self):
+        from src.builder.engine import generate_claude_project_instructions
+        result = generate_claude_project_instructions(self.META)
+        assert "Primeira Sessão" in result
+        assert "FILE_MAP" in result
+        assert "COURSE_MAP" in result
+        assert "GLOSSARY" in result
+
+    def test_first_session_has_checklist(self):
+        from src.builder.engine import generate_claude_project_instructions
+        result = generate_claude_project_instructions(self.META)
+        assert "Mapear arquivos" in result
+        assert "alta incidência" in result
+        assert "glossário" in result.lower()
+
+
+# ---------------------------------------------------------------------------
+# file_map_md
+# ---------------------------------------------------------------------------
+
+class TestFileMapMd:
+    META = {"course_name": "Métodos Formais"}
+
+    def test_empty_entries(self):
+        result = file_map_md(self.META, [])
+        assert "FILE_MAP" in result
+        assert "Nenhum arquivo processado ainda." in result
+
+    def test_with_entries(self):
+        entries = [
+            {"title": "Aula 1", "category": "material-de-aula",
+             "tags": "", "base_markdown": "content/aula-1.md", "raw_target": "raw/aula-1.pdf"},
+            {"title": "Prova 1", "category": "provas",
+             "tags": "unidade-01", "base_markdown": "exams/prova-1.md", "raw_target": "raw/prova-1.pdf"},
+        ]
+        result = file_map_md(self.META, entries)
+        assert "| 1 |" in result
+        assert "Aula 1" in result
+        assert "Prova 1" in result
+        assert "material-de-aula" in result
+        assert "`content/aula-1.md`" in result
+        assert "unidade-01" in result
+
+    def test_cronograma_auto_tagged(self):
+        entries = [
+            {"title": "Cronograma 2026", "category": "cronograma",
+             "tags": "", "base_markdown": "content/crono.md", "raw_target": ""},
+        ]
+        result = file_map_md(self.META, entries)
+        assert "curso-inteiro" in result
 
 
 # ---------------------------------------------------------------------------

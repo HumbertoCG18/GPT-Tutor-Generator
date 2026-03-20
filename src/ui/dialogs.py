@@ -1126,8 +1126,9 @@ class CategorizationReviewDialog(tk.Toplevel):
 class BacklogEntryEditDialog(simpledialog.Dialog):
     """Edita metadados de uma entrada já processada no manifest.json."""
 
-    def __init__(self, parent, entry_data: dict):
+    def __init__(self, parent, entry_data: dict, auto_categorize_fn=None):
         self._data = dict(entry_data)
+        self._auto_categorize_fn = auto_categorize_fn
         self.result_data: Optional[dict] = None
         super().__init__(parent, title="✏  Editar entrada do Backlog")
 
@@ -1176,7 +1177,59 @@ class BacklogEntryEditDialog(simpledialog.Dialog):
         ttk.Checkbutton(master, text="Relevante para prova", variable=self._var_exam).grid(
             row=row_cb + 1, column=0, columnspan=2, sticky="w", pady=2)
 
+        # Auto-categorize button
+        row_auto = row_cb + 2
+        self._auto_status = ttk.Label(master, text="", style="Muted.TLabel")
+        if self._auto_categorize_fn:
+            self._btn_auto = ttk.Button(master, text="🔮 Auto-Categorizar (IA)",
+                                        command=self._on_auto_categorize)
+            self._btn_auto.grid(row=row_auto, column=0, columnspan=2, sticky="w", pady=(10, 2))
+            self._auto_status.grid(row=row_auto + 1, column=0, columnspan=2, sticky="w")
+
         return first_entry  # widget que recebe o foco inicial
+
+    def _on_auto_categorize(self):
+        """Chama a LLM para auto-categorizar e preenche os campos."""
+        self._btn_auto.config(state="disabled")
+        self._auto_status.config(text="Categorizando...")
+        import threading
+        def _worker():
+            try:
+                result = self._auto_categorize_fn(self._data)
+                self.after(0, lambda: self._apply_auto_result(result))
+            except Exception as e:
+                self.after(0, lambda: self._auto_status.config(text=f"Erro: {e}"))
+                self.after(0, lambda: self._btn_auto.config(state="normal"))
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _apply_auto_result(self, result: dict):
+        """Aplica o resultado da auto-categorização nos campos do diálogo."""
+        self._btn_auto.config(state="normal")
+        if not result:
+            self._auto_status.config(text="Sem resultado da IA.")
+            return
+        cat = result.get("category", "")
+        unit = result.get("unit", "")
+        exam_ref = result.get("exam_ref", "")
+        changes = []
+        current_cat = self._vars["category"].get().strip()
+        if cat and cat != "outros" and current_cat in ("", "pdf", "outros"):
+            self._vars["category"].set(cat)
+            changes.append(f"cat={cat}")
+        if unit:
+            existing_tags = [t.strip() for t in self._vars["tags"].get().split(",") if t.strip()]
+            if unit not in existing_tags:
+                existing_tags.append(unit)
+                self._vars["tags"].set(", ".join(existing_tags))
+            changes.append(f"unit={unit}")
+        if exam_ref:
+            current_notes = self._notes_text.get("1.0", "end-1c").strip()
+            if exam_ref not in current_notes:
+                sep = "\n" if current_notes else ""
+                self._notes_text.insert("end", f"{sep}Ref: {exam_ref}")
+            changes.append(f"ref={exam_ref}")
+        summary = ", ".join(changes) if changes else "sem alterações"
+        self._auto_status.config(text=f"IA: {summary}")
 
     def apply(self):
         self.result_data = {

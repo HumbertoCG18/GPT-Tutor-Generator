@@ -536,6 +536,11 @@ class RepoBuilder:
         self._write_source_registry(manifest)
         self._write_bundle_seed(manifest)
         self._write_build_report(manifest)
+
+        # FILE_MAP — generated after all entries are processed
+        write_text(self.root_dir / "course" / "FILE_MAP.md",
+                   file_map_md(self.course_meta, manifest["entries"]))
+
         logger.info("Repository built successfully at %s", self.root_dir)
 
     def _create_structure(self) -> None:
@@ -690,8 +695,13 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         write_text(self.root_dir / ".gitignore", "__pycache__/\n*.pyc\n.DS_Store\nThumbs.db\n")
 
         # ── Claude Project instructions (replaces INSTRUCOES_DO_GPT.txt)
+        # Note: flags are False here because entries haven't been processed yet.
+        # _regenerate_pedagogical_files() re-generates this with real flags.
         instructions = generate_claude_project_instructions(
-            self.course_meta, self.student_profile, self.subject_profile
+            self.course_meta, self.student_profile, self.subject_profile,
+            has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in self.entries),
+            has_code=any(e.category in CODE_CATEGORIES for e in self.entries),
+            has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in self.entries),
         )
         write_text(self.root_dir / "INSTRUCOES_CLAUDE_PROJETO.md", instructions)
 
@@ -1474,10 +1484,14 @@ unit: {entry.tags}
         except Exception:
             all_entries = []
 
-        # System prompt
+        # System prompt (with conditional file references)
         write_text(self.root_dir / "INSTRUCOES_CLAUDE_PROJETO.md",
                    generate_claude_project_instructions(
-                       self.course_meta, self.student_profile, self.subject_profile))
+                       self.course_meta, self.student_profile, self.subject_profile,
+                       has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in all_entries),
+                       has_code=any(e.category in CODE_CATEGORIES for e in all_entries),
+                       has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in all_entries),
+                   ))
 
         # Course map (com timeline cronograma × unidades)
         write_text(self.root_dir / "course" / "COURSE_MAP.md",
@@ -1527,6 +1541,20 @@ unit: {entry.tags}
         if wb_entries:
             write_text(self.root_dir / "whiteboard" / "WHITEBOARD_INDEX.md",
                        whiteboard_index_md(self.course_meta, wb_entries))
+
+        # FILE_MAP
+        write_text(self.root_dir / "course" / "FILE_MAP.md",
+                   file_map_md(self.course_meta, manifest.get("entries", [])))
+
+        # Student files
+        if self.student_profile:
+            write_text(self.root_dir / "student" / "STUDENT_PROFILE.md",
+                       student_profile_md(self.student_profile))
+        write_text(self.root_dir / "student" / "STUDENT_STATE.md",
+                   student_state_md(self.course_meta, self.student_profile))
+        progress_path = self.root_dir / "student" / "PROGRESS_SCHEMA.md"
+        if not progress_path.exists():
+            write_text(progress_path, progress_schema_md())
 
     def process_single(self, entry: "FileEntry", force: bool = False) -> str:
         """
@@ -1656,7 +1684,10 @@ unit: {entry.tags}
 def generate_claude_project_instructions(
     course_meta: dict,
     student_profile=None,
-    subject_profile=None
+    subject_profile=None,
+    has_assignments: bool = False,
+    has_code: bool = False,
+    has_whiteboard: bool = False,
 ) -> str:
     """
     Gera o system prompt no formato ideal para Claude Projects.
@@ -1679,6 +1710,32 @@ def generate_claude_project_instructions(
     if subject_profile and subject_profile.schedule:
         schedule_block = f"\n**Horário:** {subject_profile.schedule}"
 
+    # Build conditional file reference table
+    file_rows = [
+        "| `system/TUTOR_POLICY.md` | Sempre — regras de comportamento |",
+        "| `system/PEDAGOGY.md` | Ao explicar qualquer conceito |",
+        "| `system/MODES.md` | Para identificar o modo da sessão |",
+        "| `system/OUTPUT_TEMPLATES.md` | Para formatar respostas |",
+        "| `course/COURSE_IDENTITY.md` | Dados gerais da disciplina |",
+        "| `course/COURSE_MAP.md` | Ordem dos tópicos e dependências |",
+        "| `course/SYLLABUS.md` | Cronograma e datas |",
+        "| `course/GLOSSARY.md` | Terminologia da disciplina |",
+        "| `course/FILE_MAP.md` | Mapeamento arquivo→unidade — **consulte para rastreabilidade** |",
+        "| `student/STUDENT_STATE.md` | Estado atual do aluno — SEMPRE consulte |",
+        "| `student/STUDENT_PROFILE.md` | Perfil e estilo do aluno |",
+        "| `content/BIBLIOGRAPHY.md` | Referências bibliográficas |",
+        "| `content/` | Material de aula curado |",
+        "| `exercises/` | Listas de exercícios |",
+        "| `exams/` | Provas anteriores e gabaritos |",
+    ]
+    if has_assignments:
+        file_rows.append("| `assignments/` | Enunciados de trabalhos — consulte antes de guiar |")
+    if has_code:
+        file_rows.append("| `code/professor/` | Código do professor — exemplos e implementações |")
+    if has_whiteboard:
+        file_rows.append("| `whiteboard/` | Explicações do professor no quadro |")
+    file_table = "\n".join(file_rows)
+
     return f"""# Instruções do Tutor — {course_name}
 
 ## Identidade
@@ -1693,23 +1750,7 @@ Antes de responder, consulte os arquivos relevantes abaixo. Eles são sua fonte 
 
 | Arquivo | Quando consultar |
 |---|---|
-| `system/TUTOR_POLICY.md` | Sempre — regras de comportamento |
-| `system/PEDAGOGY.md` | Ao explicar qualquer conceito |
-| `system/MODES.md` | Para identificar o modo da sessão |
-| `system/OUTPUT_TEMPLATES.md` | Para formatar respostas |
-| `course/COURSE_IDENTITY.md` | Dados gerais da disciplina |
-| `course/COURSE_MAP.md` | Ordem dos tópicos e dependências |
-| `course/SYLLABUS.md` | Cronograma e datas |
-| `course/GLOSSARY.md` | Terminologia da disciplina |
-| `student/STUDENT_STATE.md` | Estado atual do aluno — SEMPRE consulte |
-| `student/STUDENT_PROFILE.md` | Perfil e estilo do aluno |
-| `content/BIBLIOGRAPHY.md` | Referências bibliográficas |
-| `content/` | Material de aula curado |
-| `exercises/` | Listas de exercícios |
-| `exams/` | Provas anteriores e gabaritos |
-| `assignments/` | Enunciados de trabalhos — consulte antes de guiar |
-| `code/professor/` | Código do professor — exemplos e implementações |
-| `whiteboard/` | Explicações do professor no quadro |
+{file_table}
 
 ## Modos de operação
 
@@ -1806,6 +1847,38 @@ git push
 ```
 
 Isso transforma anotações efêmeras em conhecimento permanente no repositório.
+
+## Protocolo de Primeira Sessão
+
+Quando o aluno abrir o **primeiro chat** deste Projeto (ou quando `course/FILE_MAP.md` tiver `status: pending_review`), execute este protocolo antes de qualquer outra coisa:
+
+**Mensagem de boas-vindas:**
+> "Olá {nick}! Sou seu tutor de {course_name}. Antes de começarmos a estudar, preciso organizar seus materiais. Vou analisar cada arquivo e mapear para a unidade correspondente do curso. Isso vai levar um momento."
+
+**Checklist de inicialização:**
+
+1. **Mapear arquivos → unidades**: Leia `course/FILE_MAP.md`. Para cada arquivo com a coluna "Unidade" vazia:
+   - Abra o arquivo Markdown referenciado na coluna "Markdown"
+   - Leia o conteúdo e identifique o(s) tópico(s) abordado(s)
+   - Cruze com as unidades em `course/COURSE_MAP.md`
+   - Se necessário, use `course/SYLLABUS.md` para identificar o período
+   - Preencha a coluna "Unidade" com o slug correto (ex: `unidade-01-métodos-formais`)
+   - Preencha "Tags" com informações adicionais relevantes (ex: `pré-P1`, `Dafny`, `laboratório`)
+
+2. **Preencher alta incidência em provas**: Se existirem provas em `exams/`, analise-as e preencha a seção "Tópicos de alta incidência em prova" em `course/COURSE_MAP.md`
+
+3. **Semear glossário**: Leia `course/GLOSSARY.md`. Para cada termo aguardando preenchimento, escreva uma definição baseada no material disponível
+
+4. **Apresentar resultado**: Mostre o FILE_MAP preenchido ao aluno em formato de tabela e peça confirmação
+
+5. **Instruir o commit**:
+```
+git add course/FILE_MAP.md course/COURSE_MAP.md course/GLOSSARY.md
+git commit -m "init: mapeamento de arquivos e glossário pelo tutor"
+git push
+```
+
+**Após a primeira sessão**, nas sessões seguintes, consulte `course/FILE_MAP.md` para saber qual arquivo pertence a qual unidade. Se o FILE_MAP tiver `status: pending_review`, execute o protocolo novamente.
 """
 
 
@@ -2652,16 +2725,17 @@ def course_map_md(course_meta: dict, subject_profile=None) -> str:
     lines += [
         "## Tópicos de alta incidência em prova",
         "",
-        "<!-- Preencha com base nas provas anteriores em exams/ -->",
+        "> ⏳ **Aguardando análise do tutor** — na primeira sessão, o tutor cruzará as provas",
+        "> em `exams/` com as unidades acima e preencherá esta tabela.",
         "",
         "| Tópico | Unidade | Incidência |",
         "|---|---|---|",
-        "| [a preencher] | | |",
         "",
         "## Notas do professor",
         "",
-        "<!-- Padrões observados no estilo de cobrança do professor -->",
-        "- [a preencher após análise das provas anteriores]",
+        "> ⏳ **Aguardando análise do tutor** — padrões de cobrança serão identificados",
+        "> a partir das provas e gabaritos disponíveis.",
+        "",
     ]
 
     return "\n".join(lines)
@@ -2703,20 +2777,91 @@ def glossary_md(course_meta: dict, subject_profile=None) -> str:
             candidates.append((_topic_text(topic), unit_title))
 
     if candidates:
-        lines.append("<!-- Termos extraídos automaticamente do plano de ensino. Preencha as definições. -->")
+        lines.append("> Termos extraídos automaticamente do plano de ensino.")
+        lines.append("> ⏳ **Definições serão preenchidas pelo tutor na primeira sessão.**")
         lines.append("")
         for term, unit_title in candidates:
             lines += [
                 f"## {term}",
-                "**Definição:** [a preencher]",
+                "**Definição:** ⏳ aguardando análise do tutor",
                 "**Sinônimos aceitos:** —",
                 "**Não confundir com:** —",
                 f"**Aparece em:** {unit_title}",
                 "",
             ]
     else:
-        lines.append("<!-- Preencha conforme o conteúdo da disciplina for sendo curado -->")
+        lines.append("> ⏳ **Termos serão adicionados pelo tutor na primeira sessão.**")
         lines.append("")
+
+    return "\n".join(lines)
+
+
+_NO_UNIT_CATEGORIES = {"cronograma", "bibliografia", "referencias"}
+
+
+def file_map_md(course_meta: dict, manifest_entries: list) -> str:
+    """Gera FILE_MAP.md a partir das entries do manifest.
+
+    Cada entry é um dict vindo do manifest.json (não FileEntry).
+    Campos usados: id, title, category, tags, base_markdown, raw_target.
+    """
+    course_name = course_meta.get("course_name", "Curso")
+    lines = [
+        "---",
+        f"course: {course_name}",
+        "status: pending_review",
+        "---",
+        "",
+        f"# FILE_MAP — {course_name}",
+        "",
+        "> **Status:** ⏳ Aguardando mapeamento de unidades pelo tutor.",
+        "> Na primeira sessão, o tutor lerá cada arquivo e preencherá as colunas",
+        "> **Unidade** e **Tags** cruzando com `course/COURSE_MAP.md` e `course/SYLLABUS.md`.",
+        "",
+        "## Arquivos do repositório",
+        "",
+    ]
+
+    if not manifest_entries:
+        lines.append("Nenhum arquivo processado ainda.")
+        return "\n".join(lines)
+
+    lines += [
+        "| # | Título | Categoria | Markdown | Raw | Unidade | Tags |",
+        "|---|---|---|---|---|---|---|",
+    ]
+
+    for i, entry in enumerate(manifest_entries, 1):
+        title = entry.get("title", "")
+        category = entry.get("category", "")
+        tags = entry.get("tags", "")
+        md_path = entry.get("base_markdown") or entry.get("advanced_markdown") or ""
+        raw_path = entry.get("raw_target") or ""
+
+        # Categories that cover the whole course get auto-tagged
+        if category in _NO_UNIT_CATEGORIES and not tags:
+            unit = "curso-inteiro"
+        else:
+            unit = ""
+
+        md_cell = f"`{md_path}`" if md_path else "—"
+        raw_cell = f"`{raw_path}`" if raw_path else "—"
+        unit_cell = unit or ""
+        tags_cell = tags or ""
+
+        lines.append(
+            f"| {i} | {title} | {category} | {md_cell} | {raw_cell} | {unit_cell} | {tags_cell} |"
+        )
+
+    lines += [
+        "",
+        "## Legenda",
+        "",
+        "- **Unidade**: slug da unidade do COURSE_MAP (ex: `unidade-01-métodos-formais`)",
+        "- **Tags**: informações adicionais (ex: `pré-P1`, `Dafny`, `exercício-lab`)",
+        "- **Categoria**: tipo do arquivo — **não** deve ser alterada pelo tutor",
+        "",
+    ]
 
     return "\n".join(lines)
 

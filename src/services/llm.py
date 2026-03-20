@@ -108,13 +108,12 @@ Analise o trecho inicial do PDF e classifique-o.
 {plan_section}
 
 ## Cronograma:
-{syllabus[:1000]}
+{syllabus[:4000]}
 {other_ctx}
 # Tarefa
 Retorne APENAS um objeto JSON com exatamente três campos:
 - "category": tipo do arquivo. Escolha UM dentre:
-  material-de-aula, provas, listas, gabaritos, fotos-de-prova,
-  referencias, bibliografia, cronograma, outros
+  {", ".join(DEFAULT_CATEGORIES)}
 {unit_instruction}{exam_ref_instruction}
 
 REGRAS:
