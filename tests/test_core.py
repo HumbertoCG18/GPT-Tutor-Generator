@@ -725,3 +725,68 @@ class TestCourseMapTimeline:
         )
         result = course_map_md({"course_name": "Métodos Formais"}, sp)
         assert "Timeline" not in result
+
+
+# ---------------------------------------------------------------------------
+# Incremento 1 — Novos geradores e detecção GitHub
+# ---------------------------------------------------------------------------
+
+class TestNewGenerators:
+    COURSE_META = {"course_name": "Estruturas de Dados",
+                   "course_slug": "ed", "professor": "Prof",
+                   "semester": "2026/1", "institution": "PUCRS"}
+
+    def _e(self, cat, title, ext=".py"):
+        return FileEntry(source_path=f"/fake/{title}{ext}",
+                         file_type="code", category=cat, title=title)
+
+    def test_assignment_index_empty(self):
+        from src.builder.engine import assignment_index_md
+        assert "ASSIGNMENT_INDEX" in assignment_index_md(self.COURSE_META, [])
+
+    def test_assignment_index_entries(self):
+        from src.builder.engine import assignment_index_md
+        r = assignment_index_md(self.COURSE_META,
+                                [self._e("trabalhos", "T1", ".pdf")])
+        assert "T1" in r
+
+    def test_code_index_professor(self):
+        from src.builder.engine import code_index_md
+        r = code_index_md(self.COURSE_META,
+                          [self._e("codigo-professor", "linked_list")])
+        assert "linked_list" in r
+
+    def test_code_index_empty(self):
+        from src.builder.engine import code_index_md
+        assert "Nenhum arquivo" in code_index_md(self.COURSE_META, [])
+
+    def test_whiteboard_professor_signal(self):
+        from src.builder.engine import whiteboard_index_md
+        e = self._e("quadro-branco", "AulaHash", ".png")
+        e.professor_signal = "usa colisão linear"
+        assert "colisão linear" in whiteboard_index_md(self.COURSE_META, [e])
+
+    def test_whiteboard_empty(self):
+        from src.builder.engine import whiteboard_index_md
+        assert "WHITEBOARD_INDEX" in whiteboard_index_md(self.COURSE_META, [])
+
+
+class TestGitHubDetection:
+    def test_detects_repo(self):
+        from src.ui.dialogs import _is_github_repo
+        assert _is_github_repo("https://github.com/user/repo")
+        assert _is_github_repo("https://github.com/user/repo.git")
+
+    def test_rejects_file(self):
+        from src.ui.dialogs import _is_github_repo
+        assert not _is_github_repo(
+            "https://github.com/user/repo/blob/main/file.py")
+        assert not _is_github_repo("https://google.com")
+
+    def test_base_is_professor(self):
+        from src.utils.helpers import STUDENT_BRANCHES
+        assert "base" not in STUDENT_BRANCHES
+
+    def test_main_is_student(self):
+        from src.utils.helpers import STUDENT_BRANCHES
+        assert "main" in STUDENT_BRANCHES

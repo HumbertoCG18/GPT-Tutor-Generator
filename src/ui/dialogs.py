@@ -7,7 +7,7 @@ from pathlib import Path
 from src.models.core import FileEntry, SubjectProfile, StudentProfile, SubjectStore, StudentStore
 from src.utils.helpers import (
     CATEGORY_LABELS, DEFAULT_CATEGORIES, DEFAULT_OCR_LANGUAGE, PROCESSING_MODES,
-    DOCUMENT_PROFILES, PREFERRED_BACKENDS, OCR_LANGS,
+    DOCUMENT_PROFILES, PREFERRED_BACKENDS, OCR_LANGS, CODE_EXTENSIONS,
     slugify, parse_html_schedule, auto_detect_category, auto_detect_title,
     fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM
 )
@@ -1327,22 +1327,33 @@ class MarkdownPreviewWindow(tk.Toplevel):
 # ---------------------------------------------------------------------------
 
 class FileEntryDialog(simpledialog.Dialog):
-    def __init__(self, parent, path: str, initial: Optional[FileEntry] = None, default_mode: str = "auto", default_ocr_language: str = DEFAULT_OCR_LANGUAGE):
+    def __init__(self, parent, path: str, initial: Optional[FileEntry] = None,
+                 default_mode: str = "auto", default_ocr_language: str = DEFAULT_OCR_LANGUAGE,
+                 file_type_hint: str = ""):
         self.path = path
         self.initial = initial
         self.default_mode = default_mode
         self.default_ocr_language = default_ocr_language
+        self.file_type_hint = file_type_hint
         self.result_entry: Optional[FileEntry] = None
         super().__init__(parent, title="Editar item")
 
-    _FILE_TYPES = ["pdf", "image", "url"]
+    _FILE_TYPES = ["pdf", "image", "url", "code", "zip", "github-repo"]
 
     def body(self, master):
         src = Path(self.path)
         if self.initial:
             self.file_type = self.initial.file_type
+        elif self.file_type_hint:
+            self.file_type = self.file_type_hint
+        elif src.suffix.lower() == ".pdf":
+            self.file_type = "pdf"
+        elif src.suffix.lower() == ".zip":
+            self.file_type = "zip"
+        elif src.suffix.lower() in CODE_EXTENSIONS:
+            self.file_type = "code"
         else:
-            self.file_type = "pdf" if src.suffix.lower() == ".pdf" else "image"
+            self.file_type = "image"
 
         ttk.Label(master, text=f"Arquivo: {src.name}", style="Accent.TLabel").grid(
             row=0, column=0, columnspan=4, sticky="w", pady=(0, 10))
@@ -1376,6 +1387,18 @@ class FileEntryDialog(simpledialog.Dialog):
         add_tooltip(lbl_title, "Nome legível do documento. Aparece nos metadados e no índice do repositório.")
         ttk.Entry(master, textvariable=self.var_title, width=54).grid(row=row, column=1, columnspan=3, sticky="ew")
         row += 1
+
+        # Language field for code files
+        self.var_language = tk.StringVar(
+            value=self.initial.tags if self.initial and self.file_type == "code"
+            else src.suffix.lower().lstrip(".") if self.file_type == "code" else "")
+        self._lang_label = ttk.Label(master, text="Linguagem")
+        self._lang_entry = ttk.Entry(master, textvariable=self.var_language, width=20)
+        if self.file_type == "code":
+            self._lang_label.grid(row=row, column=0, sticky="w", pady=4)
+            self._lang_entry.grid(row=row, column=1, sticky="w")
+            row += 1
+        self._lang_row = row - 1 if self.file_type == "code" else None
 
         lbl_type = ttk.Label(master, text="Tipo")
         lbl_type.grid(row=row, column=0, sticky="w", pady=4)
@@ -1534,12 +1557,16 @@ class FileEntryDialog(simpledialog.Dialog):
 
 
     def apply(self):
+        # For code files, tags come from the language field
+        tags = (self.var_language.get().strip()
+                if self.file_type == "code"
+                else self.var_tags.get().strip())
         self.result_entry = FileEntry(
             source_path=self.path,
             file_type=self.file_type,
             category=self.var_category.get(),
             title=self.var_title.get().strip() or Path(self.path).stem,
-            tags=self.var_tags.get().strip(),
+            tags=tags,
             notes=self.var_notes.get().strip(),
             professor_signal=self.var_prof.get().strip(),
             relevant_for_exam=self.var_exam.get(),
@@ -1558,15 +1585,25 @@ class FileEntryDialog(simpledialog.Dialog):
         )
 
 
+def _is_github_repo(url: str) -> bool:
+    """Detecta se a URL é um repositório GitHub (não um arquivo dentro dele)."""
+    import re
+    url = url.strip().rstrip("/")
+    return bool(re.match(
+        r'^https?://github\.com/[\w.-]+/[\w.-]+(\.git)?$', url))
+
+
 class URLEntryDialog(tk.Toplevel):
     """Dialog specifically for entering a URL representing a web bibliography/document."""
+    _is_github_repo = staticmethod(_is_github_repo)
+
     def __init__(self, parent, default_category: str = "references"):
         super().__init__(parent)
         self.title("🔗 Importar Link / Bibliografia")
-        self.geometry("560x420")
+        self.geometry("560x460")
         self.transient(parent)
         self.grab_set()
-        
+
         self.result_entry: Optional[FileEntry] = None
         self.var_url = tk.StringVar()
         self.var_title = tk.StringVar()
@@ -1574,13 +1611,14 @@ class URLEntryDialog(tk.Toplevel):
         self.var_tags = tk.StringVar()
         self.var_notes = tk.StringVar()
         self.var_bundle = tk.BooleanVar(value=True)
-        
+        self.var_branch = tk.StringVar(value="main")
+
         self._build_ui()
-        
+
     def _build_ui(self):
         form = ttk.Frame(self, padding=14)
         form.pack(fill="both", expand=True)
-        
+
         r = 0
         ttk.Label(form, text="URL do material:").grid(row=r, column=0, sticky="w", pady=4)
         url_entry = ttk.Entry(form, textvariable=self.var_url, width=40)
@@ -1593,30 +1631,53 @@ class URLEntryDialog(tk.Toplevel):
         self._title_entry.grid(row=r, column=1, sticky="w", padx=8)
         self._title_hint = ttk.Label(form, text="", style="Muted.TLabel")
         self._title_hint.grid(row=r+1, column=1, sticky="w", padx=8)
-        
+
+        r += 2
+        # GitHub repo branch field (hidden by default)
+        self._github_lbl = ttk.Label(form, text="Branch:")
+        self._github_entry = ttk.Entry(form, textvariable=self.var_branch, width=20)
+        self._github_hint = ttk.Label(form, text="(GitHub repo detectado)", style="Muted.TLabel")
+        self._github_row = r
+        # Don't grid yet — shown by _check_github
+
         r += 1
         ttk.Label(form, text="Categoria:").grid(row=r, column=0, sticky="w", pady=4)
         ttk.Combobox(form, textvariable=self.var_category, values=list(CATEGORY_LABELS.keys()), state="readonly", width=38).grid(row=r, column=1, sticky="w", padx=8)
-        
+
         r += 1
         ttk.Label(form, text="Tags (vírgulas):").grid(row=r, column=0, sticky="w", pady=4)
         ttk.Entry(form, textvariable=self.var_tags, width=40).grid(row=r, column=1, sticky="w", padx=8)
-        
+
         r += 1
         ttk.Label(form, text="Notas:").grid(row=r, column=0, sticky="w", pady=4)
         ttk.Entry(form, textvariable=self.var_notes, width=40).grid(row=r, column=1, sticky="w", padx=8)
-        
+
         r += 1
         ttk.Checkbutton(form, text="Incluir no bundle base", variable=self.var_bundle).grid(row=r, column=0, columnspan=2, sticky="w", pady=8)
-        
+
         btn_frame = ttk.Frame(self, padding=(14, 0, 14, 14))
         btn_frame.pack(fill="x")
         ttk.Button(btn_frame, text="Cancelar", command=self.destroy).pack(side="right", padx=(6, 0))
         ttk.Button(btn_frame, text="Salvar Link", style="Accent.TButton", command=self._save).pack(side="right")
+
+    def _check_github(self):
+        """Show/hide GitHub branch field based on URL."""
+        url = self.var_url.get().strip()
+        if self._is_github_repo(url):
+            self._github_lbl.grid(row=self._github_row, column=0, sticky="w", pady=4)
+            self._github_entry.grid(row=self._github_row, column=1, sticky="w", padx=8)
+            self._github_hint.grid(row=self._github_row, column=1, sticky="e", padx=8)
+            if not self.var_category.get() or self.var_category.get() == "references":
+                self.var_category.set("codigo-professor")
+        else:
+            self._github_lbl.grid_forget()
+            self._github_entry.grid_forget()
+            self._github_hint.grid_forget()
         
     def _on_url_focus_out(self, _event=None):
         """Auto-busca o título da página quando o campo URL perde o foco."""
         url = self.var_url.get().strip()
+        self._check_github()
         if not url or self.var_title.get().strip():
             return  # Nada para buscar ou título já preenchido
         if not url.startswith(("http://", "https://")):
@@ -1641,18 +1702,22 @@ class URLEntryDialog(tk.Toplevel):
             return
         if not title:
             title = url.split("://")[-1].split("/")[0] # fallback pro domínio
-            
+
+        is_gh = self._is_github_repo(url)
+        file_type = "github-repo" if is_gh else "url"
+        tags = self.var_branch.get().strip() if is_gh else self.var_tags.get().strip()
+
         self.result_entry = FileEntry(
             source_path=url,
-            file_type="url",
+            file_type=file_type,
             category=self.var_category.get(),
             title=title,
-            tags=self.var_tags.get().strip(),
+            tags=tags,
             notes=self.var_notes.get().strip(),
             include_in_bundle=self.var_bundle.get(),
             document_profile="general",
             processing_mode="auto",
-            preferred_backend="url_fetcher"
+            preferred_backend="url_fetcher" if not is_gh else "auto",
         )
         self.destroy()
 

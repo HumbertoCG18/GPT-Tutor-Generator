@@ -98,6 +98,10 @@ DEFAULT_CATEGORIES = [
     "referencias",
     "bibliografia",
     "cronograma",
+    "trabalhos",
+    "codigo-professor",
+    "codigo-aluno",
+    "quadro-branco",
     "outros",
 ]
 
@@ -110,6 +114,10 @@ CATEGORY_LABELS: Dict[str, str] = {
     "referencias": "📚 Referências e documentos",
     "bibliografia": "🔗 Bibliografia (livros, artigos, links)",
     "cronograma": "📅 Cronograma da disciplina",
+    "trabalhos": "📋 Trabalhos e projetos (enunciados, requisitos)",
+    "codigo-professor": "💻 Código do professor (exemplos, base de código)",
+    "codigo-aluno": "🧑‍💻 Meu código (para revisão e feedback)",
+    "quadro-branco": "🖊 Quadro branco (foto de aula ou explicação)",
     "outros": "📦 Outros materiais",
 }
 
@@ -125,10 +133,33 @@ _LEGACY_CATEGORY_MAP: Dict[str, str] = {
     "other": "outros",
 }
 
-IMAGE_CATEGORIES = {"fotos-de-prova", "provas", "material-de-aula", "outros"}
+IMAGE_CATEGORIES = {"fotos-de-prova", "provas", "material-de-aula", "quadro-branco", "outros"}
 
 EXAM_CATEGORIES = ("provas", "fotos-de-prova")
 EXERCISE_CATEGORIES = ("listas", "gabaritos")
+
+CODE_EXTENSIONS: set = {
+    ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".c", ".cpp", ".h",
+    ".hpp", ".cs", ".go", ".rs", ".rb", ".php", ".swift", ".kt",
+    ".scala", ".r", ".m", ".sh", ".bat", ".ps1", ".sql", ".html",
+    ".css", ".scss", ".ipynb",
+}
+
+LANG_MAP: Dict[str, str] = {
+    "py": "python", "js": "javascript", "ts": "typescript",
+    "jsx": "jsx", "tsx": "tsx", "java": "java", "c": "c",
+    "cpp": "cpp", "h": "c", "hpp": "cpp", "cs": "csharp",
+    "go": "go", "rs": "rust", "rb": "ruby", "php": "php",
+    "swift": "swift", "kt": "kotlin", "scala": "scala",
+    "r": "r", "sh": "bash", "bat": "batch", "ps1": "powershell",
+    "sql": "sql", "html": "html", "css": "css", "scss": "scss",
+    "ipynb": "json",
+}
+
+CODE_CATEGORIES       = ("codigo-professor", "codigo-aluno")
+ASSIGNMENT_CATEGORIES = ("trabalhos",)
+WHITEBOARD_CATEGORIES = ("quadro-branco",)
+STUDENT_BRANCHES      = {"main", "master", "minha-solucao", "aluno", "student"}
 
 DEFAULT_OCR_LANGUAGE = "por,eng"
 
@@ -300,7 +331,15 @@ def auto_detect_category(name: str, is_image: bool = False) -> str:
         return "material-de-aula"
     if any(k in name for k in ["livro", "referencia", "biblio", "artigo", "paper"]):
         return "bibliografia"
-    
+
+    if any(k in name for k in ["trabalho", "projeto", "assignment",
+                                "enunciado", "spec", "requisito"]):
+        return "trabalhos"
+
+    ext = Path(name).suffix.lower()
+    if ext in CODE_EXTENSIONS:
+        return "codigo-professor"
+
     return "outros"
 
 def auto_detect_title(path_or_name: str) -> str:

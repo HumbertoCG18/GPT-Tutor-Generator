@@ -18,6 +18,8 @@ from src.models.core import (
 from src.utils.helpers import (
     APP_NAME, DEFAULT_OCR_LANGUAGE, DOCLING_CLI, EXAM_CATEGORIES, EXERCISE_CATEGORIES,
     HAS_PDFPLUMBER, HAS_PYMUPDF, HAS_PYMUPDF4LLM, IMAGE_CATEGORIES, MARKER_CLI,
+    CODE_EXTENSIONS, LANG_MAP, CODE_CATEGORIES, ASSIGNMENT_CATEGORIES,
+    WHITEBOARD_CATEGORIES, STUDENT_BRANCHES,
     ensure_dir, file_size_mb, json_str, pages_to_marker_range,
     parse_page_range, safe_rel, slugify, write_text,
 )
@@ -566,10 +568,19 @@ class RepoBuilder:
             "raw/images/provas",
             "raw/images/material-de-aula",
             "raw/images/outros",
+            "code/professor", "code/student",
+            "raw/code/professor", "raw/code/student",
+            "raw/zip", "raw/repos",
+            "assignments/enunciados", "assignments/entregas",
+            "raw/pdfs/trabalhos",
+            "whiteboard/raw", "whiteboard/transcriptions",
+            "raw/images/quadro-branco",
             "staging/markdown-auto/pymupdf4llm",
             "staging/markdown-auto/pymupdf",
             "staging/markdown-auto/docling",
             "staging/markdown-auto/marker",
+            "staging/markdown-auto/code", "staging/zip-extract",
+            "manual-review/code",
             "staging/assets/images",
             "staging/assets/inline-images",
             "staging/assets/page-previews",
@@ -657,6 +668,22 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         if exercise_entries:
             write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
                        exercise_index_md(self.course_meta, exercise_entries))
+
+        # ── Assignment, Code & Whiteboard indexes ─────────────────────
+        assignment_entries = [e for e in self.entries if e.category in ASSIGNMENT_CATEGORIES]
+        if assignment_entries:
+            write_text(self.root_dir / "assignments" / "ASSIGNMENT_INDEX.md",
+                       assignment_index_md(self.course_meta, assignment_entries))
+
+        code_entries = [e for e in self.entries if e.category in CODE_CATEGORIES]
+        if code_entries:
+            write_text(self.root_dir / "code" / "CODE_INDEX.md",
+                       code_index_md(self.course_meta, code_entries))
+
+        wb_entries = [e for e in self.entries if e.category in WHITEBOARD_CATEGORIES]
+        if wb_entries:
+            write_text(self.root_dir / "whiteboard" / "WHITEBOARD_INDEX.md",
+                       whiteboard_index_md(self.course_meta, wb_entries))
 
         # ── Root files ────────────────────────────────────────────────
         write_text(self.root_dir / "README.md", root_readme(self.course_meta))
@@ -758,14 +785,35 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         }
 
         src = Path(entry.source_path)
-        if entry.file_type != "url" and not src.exists():
+        if entry.file_type not in ("url", "github-repo") and not src.exists():
             raise FileNotFoundError(f"Source file not found: {src}")
 
         if entry.file_type == "url":
             item.update(self._process_url(entry))
             return item
 
+        if entry.file_type == "github-repo":
+            item.update(self._process_github_repo(entry))
+            return item
+
         safe_name = f"{entry.id()}{src.suffix.lower()}"
+
+        if entry.file_type == "code":
+            code_subdir = "student" if entry.category == "codigo-aluno" else "professor"
+            raw_target  = self.root_dir / "raw" / "code" / code_subdir / safe_name
+            ensure_dir(raw_target.parent)
+            shutil.copy2(src, raw_target)
+            item["raw_target"] = safe_rel(raw_target, self.root_dir)
+            item.update(self._process_code(entry, raw_target))
+            return item
+
+        if entry.file_type == "zip":
+            raw_target = self.root_dir / "raw" / "zip" / safe_name
+            ensure_dir(raw_target.parent)
+            shutil.copy2(src, raw_target)
+            item["raw_target"] = safe_rel(raw_target, self.root_dir)
+            item.update(self._process_zip(entry, raw_target))
+            return item
 
         if entry.file_type == "pdf":
             raw_target = self.root_dir / "raw" / "pdfs" / entry.category / safe_name
@@ -984,6 +1032,188 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         write_text(manual, manual_image_review_template(entry, raw_target, self.root_dir))
         item["manual_review"] = safe_rel(manual, self.root_dir)
         self.logs.append({"entry": entry.id(), "step": "image_import", "status": "ok"})
+        return item
+
+    def _process_code(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
+        item: Dict[str, object] = {"manual_review": None, "base_markdown": None}
+        ext  = raw_target.suffix.lower().lstrip(".")
+        lang = LANG_MAP.get(ext, ext)
+        try:
+            code_content = raw_target.read_text(encoding="utf-8", errors="replace")
+        except Exception as e:
+            logger.error("Could not read code file %s: %s", raw_target, e)
+            code_content = f"[Erro ao ler arquivo: {e}]"
+
+        curated_subdir = "student" if entry.category == "codigo-aluno" else "professor"
+        curated_dir    = self.root_dir / "code" / curated_subdir
+        ensure_dir(curated_dir)
+        curated_path   = curated_dir / f"{entry.id()}.md"
+
+        body  = f"# {entry.title}\n\n"
+        body += f"> **Linguagem:** {lang}"
+        if entry.tags:
+            body += f"  |  **Unidade:** {entry.tags}"
+        if entry.notes:
+            body += f"\n> {entry.notes}"
+        body += f"\n\n```{lang}\n{code_content}\n```\n"
+
+        write_text(curated_path, wrap_frontmatter({
+            "entry_id": entry.id(), "title": entry.title,
+            "language": lang, "category": entry.category,
+            "unit": entry.tags, "source": safe_rel(raw_target, self.root_dir),
+        }, body))
+
+        item["base_markdown"] = safe_rel(curated_path, self.root_dir)
+        item["language"]      = lang
+
+        manual = self.root_dir / "manual-review" / "code" / f"{entry.id()}.md"
+        write_text(manual, f"""---
+id: {entry.id()}
+title: {json_str(entry.title)}
+type: manual_code_review
+category: {entry.category}
+language: {lang}
+unit: {entry.tags}
+---
+
+# Revisão — {entry.title}
+
+## Checklist
+- [ ] Código compila/executa sem erros
+- [ ] Anotar padrões de estilo do professor
+- [ ] Identificar conceitos demonstrados
+
+## Destino
+`{safe_rel(curated_path, self.root_dir)}`
+""")
+        item["manual_review"] = safe_rel(manual, self.root_dir)
+        self.logs.append({"entry": entry.id(), "step": "code_import",
+                          "status": "ok", "language": lang})
+        return item
+
+    def _process_zip(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
+        import zipfile
+        item: Dict[str, object] = {"extracted_files": [], "base_markdown": None,
+                                    "extraction_error": None}
+        extract_dir = self.root_dir / "staging" / "zip-extract" / entry.id()
+        ensure_dir(extract_dir)
+        try:
+            with zipfile.ZipFile(raw_target, "r") as zf:
+                zf.extractall(extract_dir)
+        except Exception as e:
+            item["extraction_error"] = str(e)
+            self.logs.append({"entry": entry.id(), "step": "zip_extract",
+                              "status": "error", "error": str(e)})
+            return item
+
+        processed = []
+        for code_path in sorted(extract_dir.rglob("*")):
+            if not code_path.is_file():
+                continue
+            parts = code_path.relative_to(extract_dir).parts
+            if any(p.startswith(".") or p in {
+                "__pycache__", "node_modules", "dist", "build", ".git"
+            } for p in parts):
+                continue
+            if code_path.suffix.lower() not in CODE_EXTENSIONS:
+                continue
+            if code_path.stat().st_size > 500_000:
+                continue
+
+            relative_name = str(code_path.relative_to(extract_dir))
+            sub_entry = FileEntry(
+                source_path=str(code_path), file_type="code",
+                category=entry.category, title=relative_name,
+                tags=entry.tags, notes=f"Extraído de: {entry.title}",
+                professor_signal=entry.professor_signal,
+                include_in_bundle=entry.include_in_bundle,
+            )
+            code_subdir  = "student" if entry.category == "codigo-aluno" else "professor"
+            safe_name_c  = f"{sub_entry.id()}{code_path.suffix.lower()}"
+            raw_target_c = self.root_dir / "raw" / "code" / code_subdir / safe_name_c
+            ensure_dir(raw_target_c.parent)
+            shutil.copy2(code_path, raw_target_c)
+
+            sub_result = self._process_code(sub_entry, raw_target_c)
+            sub_result["title"] = relative_name
+            processed.append(sub_result)
+
+        item["extracted_files"] = processed
+        item["file_count"]      = len(processed)
+        self.logs.append({"entry": entry.id(), "step": "zip_extract",
+                          "status": "ok", "file_count": len(processed)})
+        return item
+
+    def _process_github_repo(self, entry: FileEntry) -> Dict[str, object]:
+        item: Dict[str, object] = {"extracted_files": [], "base_markdown": None,
+                                    "clone_error": None}
+        url    = entry.source_path
+        branch = entry.tags.strip() or "main"
+        slug   = entry.id()
+        clone_dir = self.root_dir / "raw" / "repos" / slug / branch
+        if clone_dir.exists():
+            shutil.rmtree(clone_dir)
+        ensure_dir(clone_dir.parent)
+
+        cmd = ["git", "clone", "--depth", "1", "--branch", branch,
+               "--single-branch", url, str(clone_dir)]
+        try:
+            proc = subprocess.run(cmd, check=False, capture_output=True,
+                                  text=True, timeout=120)
+        except FileNotFoundError:
+            err = "git não encontrado no PATH."
+            item["clone_error"] = err
+            self.logs.append({"entry": slug, "step": "github_clone",
+                              "status": "error", "error": err})
+            return item
+
+        if proc.returncode != 0:
+            err = (proc.stderr or proc.stdout or "git clone falhou")[-2000:]
+            item["clone_error"] = err
+            self.logs.append({"entry": slug, "step": "github_clone",
+                              "status": "error", "error": err})
+            return item
+
+        category  = "codigo-aluno" if branch.lower() in STUDENT_BRANCHES \
+                    else "codigo-professor"
+        processed = []
+        for code_path in sorted(clone_dir.rglob("*")):
+            if not code_path.is_file():
+                continue
+            parts = code_path.relative_to(clone_dir).parts
+            if any(p.startswith(".") or p in {
+                "__pycache__", "node_modules", "dist", "build", ".git"
+            } for p in parts):
+                continue
+            if code_path.suffix.lower() not in CODE_EXTENSIONS:
+                continue
+            if code_path.stat().st_size > 500_000:
+                continue
+
+            relative_name = str(code_path.relative_to(clone_dir))
+            sub_entry = FileEntry(
+                source_path=str(code_path), file_type="code",
+                category=category, title=relative_name,
+                tags=entry.tags, notes=f"Branch: {branch} — {url}",
+                professor_signal=entry.professor_signal,
+                include_in_bundle=entry.include_in_bundle,
+            )
+            code_subdir  = "student" if category == "codigo-aluno" else "professor"
+            safe_name_c  = f"{sub_entry.id()}{code_path.suffix.lower()}"
+            raw_target_c = self.root_dir / "raw" / "code" / code_subdir / safe_name_c
+            ensure_dir(raw_target_c.parent)
+            shutil.copy2(code_path, raw_target_c)
+
+            sub_result = self._process_code(sub_entry, raw_target_c)
+            sub_result["title"]  = relative_name
+            sub_result["branch"] = branch
+            processed.append(sub_result)
+
+        item["extracted_files"] = processed
+        item["file_count"]      = len(processed)
+        item["category"]        = category
+        self.logs.append({"entry": slug, "step": "github_clone",
+                          "status": "ok", "file_count": len(processed)})
         return item
 
     def _profile_pdf(self, pdf_path: Path, entry: FileEntry) -> DocumentProfileReport:
@@ -1280,6 +1510,24 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             write_text(self.root_dir / "content" / "BIBLIOGRAPHY.md",
                        bibliography_md(self.course_meta, bib_entries, self.subject_profile))
 
+        # Assignment index
+        assignment_entries = [e for e in all_entries if e.category in ASSIGNMENT_CATEGORIES]
+        if assignment_entries:
+            write_text(self.root_dir / "assignments" / "ASSIGNMENT_INDEX.md",
+                       assignment_index_md(self.course_meta, assignment_entries))
+
+        # Code index
+        code_entries = [e for e in all_entries if e.category in CODE_CATEGORIES]
+        if code_entries:
+            write_text(self.root_dir / "code" / "CODE_INDEX.md",
+                       code_index_md(self.course_meta, code_entries))
+
+        # Whiteboard index
+        wb_entries = [e for e in all_entries if e.category in WHITEBOARD_CATEGORIES]
+        if wb_entries:
+            write_text(self.root_dir / "whiteboard" / "WHITEBOARD_INDEX.md",
+                       whiteboard_index_md(self.course_meta, wb_entries))
+
     def process_single(self, entry: "FileEntry", force: bool = False) -> str:
         """
         Processa um único FileEntry e adiciona ao repositório existente.
@@ -1459,6 +1707,9 @@ Antes de responder, consulte os arquivos relevantes abaixo. Eles são sua fonte 
 | `content/` | Material de aula curado |
 | `exercises/` | Listas de exercícios |
 | `exams/` | Provas anteriores e gabaritos |
+| `assignments/` | Enunciados de trabalhos — consulte antes de guiar |
+| `code/professor/` | Código do professor — exemplos e implementações |
+| `whiteboard/` | Explicações do professor no quadro |
 
 ## Modos de operação
 
@@ -1468,6 +1719,7 @@ Identifique o modo da sessão pela frase do aluno e ajuste seu comportamento:
 - **`assignment`** — "tenho uma lista", "exercício X" → guiar sem entregar tudo
 - **`exam_prep`** — "prova semana que vem", "revisão" → foco em incidência e padrões; provas são cumulativas com peso maior no conteúdo mais recente
 - **`class_companion`** — "estou na aula", "o prof falou X" → resumir e contextualizar
+- **`code_review`** — "revisa meu código", "o que está errado", "como melhorar" → analisar comparando com `code/professor/` quando disponível; guiar sem reescrever tudo de uma vez
 
 Se o modo não for claro, pergunte: *"Você quer entender o conceito, resolver um exercício ou revisar para prova?"*
 
@@ -2670,6 +2922,66 @@ def exercise_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str
         "",
     ]
 
+    return "\n".join(lines)
+
+
+def assignment_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+    lines = [f"# ASSIGNMENT_INDEX — {course_name}", "",
+             "> **Como usar:** Índice de trabalhos e projetos.",
+             "> Consulte antes de guiar o aluno — não entregue a solução.", "",
+             "## Trabalhos", ""]
+    if entries:
+        lines += ["| Arquivo | Título | Unidade | Status |", "|---|---|---|---|"]
+        for e in entries:
+            lines.append(f"| {Path(e.source_path).name} | {e.title} "
+                         f"| {e.tags or ''} | pendente |")
+    else:
+        lines += ["| Arquivo | Título | Unidade | Status |", "|---|---|---|---|",
+                  "| [a preencher] | | | |"]
+    lines += ["", "## Padrões do professor", "",
+              "- [a preencher]", ""]
+    return "\n".join(lines)
+
+
+def code_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+    prof_entries = [e for e in entries if e.category == "codigo-professor"]
+    lines = [f"# CODE_INDEX — {course_name}", "",
+             "> **Como usar:** Mapa do código do professor disponível na disciplina.",
+             "> No modo `code_review`, localize exemplos e compare com o código do aluno.", ""]
+    if prof_entries:
+        lines += ["## Código do professor", "",
+                  "| Arquivo | Linguagem | Unidade | Notas |", "|---|---|---|---|"]
+        for e in prof_entries:
+            lines.append(f"| {Path(e.source_path).name} | {e.tags or ''} "
+                         f"| {e.notes or ''} | |")
+        lines.append("")
+    else:
+        lines += ["Nenhum arquivo de código do professor importado ainda.", ""]
+    lines += ["## Padrões de estilo do professor", "",
+              "- [a preencher]", ""]
+    return "\n".join(lines)
+
+
+def whiteboard_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+    lines = [f"# WHITEBOARD_INDEX — {course_name}", "",
+             "> Fotos de quadro branco com explicações do professor.", ""]
+    if entries:
+        lines += ["| Arquivo | Título | Unidade | Padrão identificado |",
+                  "|---|---|---|---|"]
+        for e in entries:
+            lines.append(f"| {Path(e.source_path).name} | {e.title} "
+                         f"| {e.tags or ''} | {e.professor_signal or ''} |")
+    else:
+        lines += ["| Arquivo | Título | Unidade | Padrão identificado |",
+                  "|---|---|---|---|", "| [a preencher] | | | |"]
+    lines += ["", "## Padrões pedagógicos", "",
+              "- [a preencher]", ""]
     return "\n".join(lines)
 
 

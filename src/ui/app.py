@@ -14,7 +14,7 @@ except ImportError:
     pymupdf = None
 
 from src.models.core import FileEntry, SubjectStore, StudentStore, SubjectProfile
-from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify
+from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS
 from src.builder.engine import RepoBuilder
 from src.ui.theme import ThemeManager, AppConfig
 from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, MarkdownPreviewWindow, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, CategorizationReviewDialog, StatusDialog
@@ -186,6 +186,7 @@ class App(tk.Tk):
         ttk.Button(toolbar, text="➕ PDFs", command=self.add_pdfs).pack(side="left")
         ttk.Button(toolbar, text="🖼 Imagens/Fotos", command=self.add_images).pack(side="left", padx=(6, 0))
         ttk.Button(toolbar, text="🔗 Adicionar Link", command=self.add_url).pack(side="left", padx=(6, 0))
+        ttk.Button(toolbar, text="💻 Código / ZIP", command=self.add_code_files).pack(side="left", padx=(6, 0))
         ttk.Separator(toolbar, orient="vertical").pack(side="left", fill="y", padx=10)
         self._btn_process = ttk.Button(toolbar, text="⚡ Processar",
                                        command=self.process_selected_single)
@@ -520,11 +521,13 @@ class App(tk.Tk):
         except Exception as e:
             logging.error(f"Erro ao ler backlog: {e}")
 
-    def _entry_dialog(self, path: str, initial: Optional[FileEntry] = None) -> Optional[FileEntry]:
+    def _entry_dialog(self, path: str, initial: Optional[FileEntry] = None,
+                      file_type_hint: str = "") -> Optional[FileEntry]:
         dialog = FileEntryDialog(
             self, path, initial=initial,
             default_mode=self.var_default_mode.get(),
             default_ocr_language=self.var_default_ocr_language.get(),
+            file_type_hint=file_type_hint,
         )
         return dialog.result_entry
 
@@ -558,16 +561,30 @@ class App(tk.Tk):
         except Exception:
             return 0
 
-    def _quick_add_file(self, path: str, is_image: bool = False) -> FileEntry:
+    def _quick_add_file(self, path: str, is_image: bool = False,
+                        file_type_hint: str = "") -> FileEntry:
         """Cria FileEntry automaticamente sem abrir diálogo."""
         src = Path(path)
-        file_type = "image" if is_image else ("pdf" if src.suffix.lower() == ".pdf" else "image")
-        page_range = self._pdf_page_range(path) if file_type == "pdf" else ""
+        if file_type_hint:
+            ft = file_type_hint
+        elif is_image:
+            ft = "image"
+        elif src.suffix.lower() == ".pdf":
+            ft = "pdf"
+        elif src.suffix.lower() == ".zip":
+            ft = "zip"
+        elif src.suffix.lower() in CODE_EXTENSIONS:
+            ft = "code"
+        else:
+            ft = "image"
+        cat = auto_detect_category(src.name, is_image=(ft == "image"))
+        page_range = self._pdf_page_range(path) if ft == "pdf" else ""
         return FileEntry(
             source_path=path,
-            file_type=file_type,
-            category=auto_detect_category(src.name, is_image),
+            file_type=ft,
+            category=cat,
             title=auto_detect_title(path),
+            tags=src.suffix.lower().lstrip(".") if ft == "code" else "",
             processing_mode=self.var_default_mode.get(),
             document_profile="auto",
             preferred_backend="auto",
@@ -624,6 +641,34 @@ class App(tk.Tk):
             self._save_current_queue()
             self._set_status(f"{len(self.entries)} arquivo(s) na lista.")
 
+    def add_code_files(self):
+        ext_str = " ".join(f"*{e}" for e in sorted(CODE_EXTENSIONS))
+        paths = filedialog.askopenfilenames(
+            title="Selecione arquivos de código ou .zip",
+            filetypes=[
+                ("Código e ZIP", f"{ext_str} *.zip"),
+                ("Python",                  "*.py"),
+                ("JavaScript / TypeScript", "*.js *.ts *.jsx *.tsx"),
+                ("Java / Kotlin",           "*.java *.kt"),
+                ("C / C++",                 "*.c *.cpp *.h *.hpp"),
+                ("ZIP com código",          "*.zip"),
+                ("Todos os arquivos",       "*.*"),
+            ]
+        )
+        if not paths:
+            return
+        for path in paths:
+            src = Path(path)
+            ft  = "zip" if src.suffix.lower() == ".zip" else "code"
+            if self._quick_import.get():
+                entry = self._quick_add_file(path, file_type_hint=ft)
+            else:
+                entry = self._entry_dialog(path, file_type_hint=ft)
+            if entry:
+                self.entries.append(entry)
+        self.refresh_tree()
+        self._save_current_queue()
+        self._set_status(f"{len(self.entries)} arquivo(s) na lista.")
 
     def selected_index(self) -> Optional[int]:
         selected = self.tree.selection()
