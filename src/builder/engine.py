@@ -1443,11 +1443,8 @@ unit: {entry.tags}
         manifest.setdefault("logs", []).extend(self.logs)
 
         # Regenera todos os arquivos pedagógicos (indexes, course map, glossary, etc.)
+        # Nota: _regenerate_pedagogical_files já escreve STUDENT_PROFILE.md
         self._regenerate_pedagogical_files(manifest)
-
-        if self.student_profile:
-            write_text(self.root_dir / "student" / "STUDENT_PROFILE.md",
-                       student_profile_md(self.student_profile))
 
         # Atualiza ou cria student state / progress schema
         state_path = self.root_dir / "student" / "STUDENT_STATE.md"
@@ -1550,8 +1547,9 @@ unit: {entry.tags}
         if self.student_profile:
             write_text(self.root_dir / "student" / "STUDENT_PROFILE.md",
                        student_profile_md(self.student_profile))
-        write_text(self.root_dir / "student" / "STUDENT_STATE.md",
-                   student_state_md(self.course_meta, self.student_profile))
+        state_path = self.root_dir / "student" / "STUDENT_STATE.md"
+        if not state_path.exists():
+            write_text(state_path, student_state_md(self.course_meta, self.student_profile))
         progress_path = self.root_dir / "student" / "PROGRESS_SCHEMA.md"
         if not progress_path.exists():
             write_text(progress_path, progress_schema_md())
