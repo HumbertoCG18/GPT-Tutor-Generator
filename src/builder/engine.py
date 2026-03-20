@@ -541,6 +541,9 @@ class RepoBuilder:
         write_text(self.root_dir / "course" / "FILE_MAP.md",
                    file_map_md(self.course_meta, manifest["entries"]))
 
+        # Resolve image references in markdowns → content/images/
+        self._resolve_content_images()
+
         logger.info("Repository built successfully at %s", self.root_dir)
 
     def _create_structure(self) -> None:
@@ -552,6 +555,7 @@ class RepoBuilder:
             "content/summaries",
             "content/references",
             "content/curated",
+            "content/images",
             "exercises/lists",
             "exercises/solved",
             "exercises/index",
@@ -692,7 +696,27 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
 
         # ── Root files ────────────────────────────────────────────────
         write_text(self.root_dir / "README.md", root_readme(self.course_meta))
-        write_text(self.root_dir / ".gitignore", "__pycache__/\n*.pyc\n.DS_Store\nThumbs.db\n")
+        gitignore = "\n".join([
+            "# === Não essencial para o Tutor ===",
+            "# Cache de build (assets, markdowns intermediários)",
+            "staging/",
+            "# Fontes originais (tutor lê os markdowns convertidos)",
+            "raw/",
+            "# Artefatos de build",
+            "build/",
+            "# Workspace de revisão manual",
+            "manual-review/",
+            "# Scripts utilitários locais",
+            "scripts/",
+            "",
+            "# === Sistema ===",
+            "__pycache__/",
+            "*.pyc",
+            ".DS_Store",
+            "Thumbs.db",
+            "",
+        ])
+        write_text(self.root_dir / ".gitignore", gitignore)
 
         # ── Claude Project instructions (replaces INSTRUCOES_DO_GPT.txt)
         # Note: flags are False here because entries haven't been processed yet.
@@ -704,6 +728,126 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in self.entries),
         )
         write_text(self.root_dir / "INSTRUCOES_CLAUDE_PROJETO.md", instructions)
+
+    # ------------------------------------------------------------------
+    # Image resolution — copies referenced images into content/images/
+    # ------------------------------------------------------------------
+
+    _IMG_RE = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
+
+    def _resolve_content_images(self) -> None:
+        """Scan markdowns under content/ and staging/markdown-auto/ for image
+        references.  Copy each referenced image into ``content/images/`` with a
+        short, deterministic name and rewrite the markdown link to a relative
+        path.  This keeps the repo uploadable to Claude Projects without
+        thousands of staging assets.
+        """
+        images_dir = self.root_dir / "content" / "images"
+        ensure_dir(images_dir)
+
+        # Directories to scan for markdowns that the tutor will read
+        scan_dirs = [
+            self.root_dir / "content",
+            self.root_dir / "staging" / "markdown-auto",
+        ]
+
+        seen: Dict[str, Path] = {}  # original_path -> new_path (dedup)
+        copied = 0
+
+        for scan_dir in scan_dirs:
+            if not scan_dir.exists():
+                continue
+            for md_file in scan_dir.rglob("*.md"):
+                try:
+                    text = md_file.read_text(encoding="utf-8")
+                except Exception:
+                    continue
+
+                replacements: List[tuple] = []
+                for match in self._IMG_RE.finditer(text):
+                    alt = match.group(1)
+                    raw_path = match.group(2)
+
+                    # Resolve the image file
+                    img_path = self._find_image(raw_path, md_file)
+                    if img_path is None or not img_path.exists():
+                        continue
+
+                    img_key = str(img_path)
+                    if img_key in seen:
+                        new_path = seen[img_key]
+                    else:
+                        # Build a short name: <parent-slug>-<filename>
+                        parent_slug = slugify(img_path.parent.name) if img_path.parent.name else ""
+                        short_name = f"{parent_slug}-{img_path.name}" if parent_slug else img_path.name
+                        new_path = images_dir / short_name
+
+                        # Handle collisions
+                        if new_path.exists() and new_path.stat().st_size != img_path.stat().st_size:
+                            stem = new_path.stem
+                            suffix = new_path.suffix
+                            counter = 2
+                            while new_path.exists():
+                                new_path = images_dir / f"{stem}-{counter}{suffix}"
+                                counter += 1
+
+                        if not new_path.exists():
+                            shutil.copy2(str(img_path), str(new_path))
+                            copied += 1
+                        seen[img_key] = new_path
+
+                    # Build relative path from this markdown to the image
+                    try:
+                        rel = Path(new_path).relative_to(md_file.parent)
+                    except ValueError:
+                        # Different directory trees — use repo-relative path
+                        rel = Path(new_path).relative_to(self.root_dir)
+
+                    rel_str = str(rel).replace("\\", "/")
+                    old_ref = match.group(0)
+                    new_ref = f"![{alt}]({rel_str})"
+                    if old_ref != new_ref:
+                        replacements.append((old_ref, new_ref))
+
+                if replacements:
+                    for old, new in replacements:
+                        text = text.replace(old, new)
+                    md_file.write_text(text, encoding="utf-8")
+
+        if copied:
+            logger.info("Resolved %d images into content/images/", copied)
+
+    def _find_image(self, raw_path: str, md_file: Path) -> Optional[Path]:
+        """Try to locate an image file from a markdown reference path."""
+        # Normalize separators
+        normalized = raw_path.replace("\\", "/")
+
+        # 1) Absolute path — use directly
+        p = Path(normalized)
+        if p.is_absolute() and p.exists():
+            return p
+
+        # 2) Try relative to the markdown file's directory
+        rel_to_md = md_file.parent / normalized
+        if rel_to_md.exists():
+            return rel_to_md
+
+        # 3) Try relative to repo root
+        rel_to_root = self.root_dir / normalized
+        if rel_to_root.exists():
+            return rel_to_root
+
+        # 4) Extract the staging-relative portion from absolute paths
+        # Pattern: .../staging/assets/... or .../staging/markdown-auto/...
+        for marker in ("staging/assets/", "staging/markdown-auto/"):
+            idx = normalized.find(marker)
+            if idx >= 0:
+                staging_rel = normalized[idx:]
+                candidate = self.root_dir / staging_rel
+                if candidate.exists():
+                    return candidate
+
+        return None
 
     def _write_source_registry(self, manifest: Dict[str, object]) -> None:
         lines = [
@@ -1553,6 +1697,9 @@ unit: {entry.tags}
         progress_path = self.root_dir / "student" / "PROGRESS_SCHEMA.md"
         if not progress_path.exists():
             write_text(progress_path, progress_schema_md())
+
+        # Resolve image references in markdowns → content/images/
+        self._resolve_content_images()
 
     def process_single(self, entry: "FileEntry", force: bool = False) -> str:
         """
