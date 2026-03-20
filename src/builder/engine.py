@@ -592,7 +592,6 @@ class RepoBuilder:
             "manual-review/code",
             "staging/assets/images",
             "staging/assets/inline-images",
-            "staging/assets/page-previews",
             "staging/assets/tables",
             "staging/assets/table-detections",
             "manual-review/pdfs",
@@ -1056,7 +1055,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             "base_markdown": None, "advanced_markdown": None,
             "advanced_backend": None, "base_backend": None,
             "images_dir": None, "tables_dir": None,
-            "page_previews_dir": None, "table_detection_dir": None,
+            "table_detection_dir": None,
             "manual_review": None,
         }
         t0 = time.time()
@@ -1133,19 +1132,8 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
 
         self._check_cancel()
 
-        if HAS_PYMUPDF and entry.export_page_previews:
-            logger.info("  [5/6] Gerando previews de páginas...")
-            try:
-                previews_dir = self.root_dir / "staging" / "assets" / "page-previews" / entry.id()
-                count = self._export_page_previews(raw_target, previews_dir, pages=parse_page_range(entry.page_range))
-                item["page_previews_dir"] = safe_rel(previews_dir, self.root_dir)
-                logger.info("  [5/6] %d previews gerados", count)
-                self.logs.append({"entry": entry.id(), "step": "page_previews", "status": "ok", "count": count})
-            except Exception as e:
-                logger.error("  [5/6] Falha nos previews: %s", e)
-                self.logs.append({"entry": entry.id(), "step": "page_previews", "status": "error", "error": str(e)})
-        else:
-            logger.info("  [5/6] Previews: pulado")
+        # Page previews are now rendered on-the-fly by Curator Studio
+        # from the source PDF — no need to pre-generate PNGs.
 
         self._check_cancel()
 
@@ -1464,24 +1452,6 @@ unit: {entry.tags}
         finally:
             doc.close()
 
-    def _export_page_previews(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
-        ensure_dir(out_dir)
-        doc = pymupdf.open(str(pdf_path))
-        try:
-            target_pages = pages or list(range(doc.page_count))
-            count = 0
-            for page_num in target_pages:
-                if not (0 <= page_num < doc.page_count):
-                    continue
-                page = doc[page_num]
-                pix = page.get_pixmap(matrix=pymupdf.Matrix(1.5, 1.5))
-                out = out_dir / f"page-{page_num + 1:03d}.png"
-                pix.save(str(out))
-                count += 1
-            return count
-        finally:
-            doc.close()
-
     def _extract_tables_pdfplumber(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
         ensure_dir(out_dir)
         count = 0
@@ -1793,7 +1763,7 @@ unit: {entry.tags}
 
         paths_to_remove: List[str] = []
         for key in ["raw_target", "base_markdown", "advanced_markdown", "manual_review",
-                    "images_dir", "tables_dir", "page_previews_dir", "table_detection_dir",
+                    "images_dir", "tables_dir", "table_detection_dir",
                     "advanced_asset_dir", "advanced_metadata_path"]:
             val = target.get(key)
             if val:
@@ -3599,7 +3569,6 @@ policy:
     - marker
   asset_pipeline:
     extract_images: true
-    export_page_previews: true
     extract_tables: true
   promotion_rule: |
     Nenhum arquivo de staging é conhecimento final.

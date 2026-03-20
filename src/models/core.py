@@ -28,7 +28,6 @@ class FileEntry:
     formula_priority: bool = False
     preserve_pdf_images_in_markdown: bool = True
     force_ocr: bool = False
-    export_page_previews: bool = True
     extract_images: bool = True
     extract_tables: bool = True
     page_range: str = ""

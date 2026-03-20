@@ -6,6 +6,11 @@ import logging
 from pathlib import Path
 from PIL import Image, ImageTk
 
+from src.utils.helpers import HAS_PYMUPDF
+
+if HAS_PYMUPDF:
+    import pymupdf
+
 logger = logging.getLogger(__name__)
 
 
@@ -225,9 +230,8 @@ class CuratorStudio(tk.Toplevel):
             self._source_var.set(best)
             self._load_selected_source()
 
-        # Load previews
-        file_id = self.current_md_path.stem
-        self._load_previews(file_id)
+        # Load previews — prefer rendering from source PDF directly
+        self._load_previews(fm)
 
     def _parse_frontmatter(self, content: str) -> dict:
         """Parse YAML frontmatter from a review markdown file."""
@@ -320,18 +324,42 @@ class CuratorStudio(tk.Toplevel):
 
     # ── Image Previews ──────────────────────────────────────────────────
 
-    def _load_previews(self, file_id: str):
+    def _load_previews(self, fm: dict):
+        """Render preview from source PDF (via PyMuPDF) or raw images."""
         for widget in self.inner_frame.winfo_children():
             widget.destroy()
         self.preview_images.clear()
 
-        # Look in page-previews
-        preview_dir = self.repo_dir / "staging" / "assets" / "page-previews" / file_id
+        bg = self.theme_mgr.palette(self._theme_name)["frame_bg"]
+        target_width = 400
+
+        # 1) Try rendering directly from the source PDF
+        source_pdf = fm.get("source_pdf")
+        if source_pdf and HAS_PYMUPDF:
+            pdf_path = self.repo_dir / source_pdf
+            if pdf_path.exists():
+                try:
+                    doc = pymupdf.open(str(pdf_path))
+                    for page_num in range(doc.page_count):
+                        page = doc[page_num]
+                        pix = page.get_pixmap(matrix=pymupdf.Matrix(1.5, 1.5))
+                        pil_img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+                        w, h = pil_img.size
+                        new_h = int(target_width * (h / w))
+                        pil_img = pil_img.resize((target_width, new_h), Image.Resampling.LANCZOS)
+                        tk_img = ImageTk.PhotoImage(pil_img)
+                        self.preview_images.append(tk_img)
+                        lbl = tk.Label(self.inner_frame, image=tk_img, bg=bg)
+                        lbl.pack(pady=5, padx=5)
+                    doc.close()
+                    return
+                except Exception as e:
+                    logger.error("Erro ao renderizar PDF %s: %s", pdf_path, e)
+
+        # 2) Fallback: raw images (for image-type entries)
+        file_id = self.current_md_path.stem if self.current_md_path else ""
         images_found = []
-        if preview_dir.exists():
-            images_found = sorted(preview_dir.glob("*.png"))
-        else:
-            # Maybe it's a direct image review
+        if file_id:
             for ext in ("*.png", "*.jpg", "*.jpeg"):
                 images_found.extend(
                     list((self.repo_dir / "raw" / "images").rglob(f"{file_id}{ext[1:]}"))
@@ -341,21 +369,15 @@ class CuratorStudio(tk.Toplevel):
             ttk.Label(self.inner_frame, text="Nenhuma visualização disponível.").pack(pady=20)
             return
 
-        target_width = 400
         for img_path in images_found:
             try:
                 pil_img = Image.open(img_path)
                 w, h = pil_img.size
-                ratio = h / w
-                new_h = int(target_width * ratio)
+                new_h = int(target_width * (h / w))
                 pil_img = pil_img.resize((target_width, new_h), Image.Resampling.LANCZOS)
                 tk_img = ImageTk.PhotoImage(pil_img)
-                self.preview_images.append(tk_img)  # Keep ref
-
-                lbl = tk.Label(
-                    self.inner_frame, image=tk_img,
-                    bg=self.theme_mgr.palette(self._theme_name)["frame_bg"],
-                )
+                self.preview_images.append(tk_img)
+                lbl = tk.Label(self.inner_frame, image=tk_img, bg=bg)
                 lbl.pack(pady=5, padx=5)
             except Exception as e:
                 logger.error("Erro ao carregar preview %s: %s", img_path, e)

@@ -355,10 +355,6 @@ FORÇAR OCR
   Ignora o texto digital do PDF e passa tudo pelo OCR.
   Use para PDFs com texto não selecionável ou codificação incorreta.
 
-EXPORTAR PREVIEWS DAS PÁGINAS
-  Gera imagens PNG de cada página (resolução 1.5x) em staging/assets/page-previews/.
-  Consome mais espaço mas facilita a revisão visual do conteúdo.
-
 EXTRAIR IMAGENS DO PDF
   Extrai todas as imagens embutidas no PDF para staging/assets/images/.
   Requer PyMuPDF instalado.
@@ -1228,7 +1224,6 @@ class FileEntryDialog(simpledialog.Dialog):
         self.var_formula = tk.BooleanVar(value=self.initial.formula_priority if self.initial else False)
         self.var_keep_images = tk.BooleanVar(value=self.initial.preserve_pdf_images_in_markdown if self.initial else True)
         self.var_force_ocr = tk.BooleanVar(value=self.initial.force_ocr if self.initial else False)
-        self.var_previews = tk.BooleanVar(value=self.initial.export_page_previews if self.initial else True)
         self.var_imgs = tk.BooleanVar(value=self.initial.extract_images if self.initial else True)
         self.var_tables = tk.BooleanVar(value=self.initial.extract_tables if self.initial else True)
         self.var_page_range = tk.StringVar(value=self.initial.page_range if self.initial else "")
@@ -1338,12 +1333,8 @@ class FileEntryDialog(simpledialog.Dialog):
         add_tooltip(cb_ocr, "Ignora o texto digital do PDF e passa tudo pelo OCR.\nUse para PDFs com texto não selecionável, imagens de texto, ou codificação incorreta.")
         pr += 1
 
-        cb_prev = ttk.Checkbutton(self._pdf_frame, text="Exportar previews das páginas", variable=self.var_previews)
-        cb_prev.grid(row=pr, column=0, sticky="w")
-        add_tooltip(cb_prev, "Gera imagens PNG de cada página (resolução 1.5x) em staging/assets/page-previews/.\nConsome mais espaço, mas facilita a revisão visual do conteúdo extraído.")
-
         cb_imgs = ttk.Checkbutton(self._pdf_frame, text="Extrair imagens do PDF", variable=self.var_imgs)
-        cb_imgs.grid(row=pr, column=1, sticky="w")
+        cb_imgs.grid(row=pr, column=0, sticky="w")
         add_tooltip(cb_imgs, "Extrai todas as imagens embutidas no PDF para staging/assets/images/.\nRequer PyMuPDF instalado.")
 
         cb_tbl = ttk.Checkbutton(self._pdf_frame, text="Extrair tabelas", variable=self.var_tables)
@@ -1433,7 +1424,6 @@ class FileEntryDialog(simpledialog.Dialog):
             formula_priority=self.var_formula.get() if self.file_type == "pdf" else False,
             preserve_pdf_images_in_markdown=self.var_keep_images.get() if self.file_type == "pdf" else False,
             force_ocr=self.var_force_ocr.get() if self.file_type == "pdf" else False,
-            export_page_previews=self.var_previews.get() if self.file_type == "pdf" else False,
             extract_images=self.var_imgs.get() if self.file_type == "pdf" else False,
             extract_tables=self.var_tables.get() if self.file_type == "pdf" else False,
             page_range=self.var_page_range.get().strip() if self.file_type == "pdf" else "",
