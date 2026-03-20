@@ -162,7 +162,7 @@ class App(tk.Tk):
         # Row 3: Repo path
         lbl_repo = ttk.Label(course, text="Pasta do repositório")
         lbl_repo.grid(row=3, column=0, sticky="w", pady=4)
-        add_tooltip(lbl_repo, "Pasta onde o repositório será criado.\nDentro dela, uma subpasta com o slug da disciplina será gerada automaticamente.")
+        add_tooltip(lbl_repo, "Caminho completo da pasta do repositório.\nExemplo: C:\\Users\\Humberto\\Documents\\GitHub\\Metodos-Formais-Tutor")
         ttk.Entry(course, textvariable=self.var_repo_root).grid(row=3, column=1, columnspan=2, sticky="ew", padx=(8, 8))
         ttk.Button(course, text="📁 Escolher", width=12, command=self.pick_repo_root).grid(row=3, column=3, sticky="w")
 
@@ -432,30 +432,20 @@ class App(tk.Tk):
         StatusDialog(self, self.config_obj, self.student_store, self.theme_mgr)
 
     def open_preview(self):
-        repo_root = self.var_repo_root.get().strip()
-        slug = self.var_course_slug.get().strip() or slugify(self.var_course_name.get().strip())
-        if repo_root and slug:
-            repo_dir = str(Path(repo_root) / slug)
-        elif repo_root:
-            repo_dir = repo_root
-        else:
+        repo_dir = self._repo_dir()
+        if not repo_dir:
             messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório para visualizar os Markdowns.")
             return
-        MarkdownPreviewWindow(self, repo_dir, self.theme_mgr)
+        MarkdownPreviewWindow(self, str(repo_dir), self.theme_mgr)
 
     def open_curator_studio(self):
-        repo_root = self.var_repo_root.get().strip()
-        slug = self.var_course_slug.get().strip() or slugify(self.var_course_name.get().strip())
-        if repo_root and slug:
-            repo_dir = str(Path(repo_root) / slug)
-        elif repo_root:
-            repo_dir = repo_root
-        else:
+        repo_dir = self._repo_dir()
+        if not repo_dir:
             messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório para abrir o Curator Studio.")
             return
         
         from src.ui.curator_studio import CuratorStudio
-        CuratorStudio(self, repo_dir, self.theme_mgr)
+        CuratorStudio(self, str(repo_dir), self.theme_mgr)
 
     def _on_subject_selected(self, _event=None):
         name = self._var_active_subject.get()
@@ -484,13 +474,11 @@ class App(tk.Tk):
     def _refresh_backlog(self):
         for item in self.repo_tree.get_children():
             self.repo_tree.delete(item)
-            
-        repo_root = self.var_repo_root.get().strip()
-        slug = self.var_course_slug.get().strip()
-        if not repo_root or not slug:
+
+        repo_dir = self._repo_dir()
+        if not repo_dir:
             return
-            
-        repo_dir = Path(repo_root) / slug
+
         manifest_path = repo_dir / "manifest.json"
         
         if not manifest_path.exists():
@@ -794,6 +782,16 @@ class App(tk.Tk):
             "institution": self.var_institution.get().strip() or "PUCRS",
         }
 
+    def _repo_dir(self) -> Optional[Path]:
+        """Retorna o caminho completo do repositório a partir de var_repo_root.
+
+        var_repo_root armazena o caminho direto da pasta do repo (sem slug).
+        """
+        repo_root = self.var_repo_root.get().strip()
+        if not repo_root:
+            return None
+        return Path(repo_root)
+
     def build_repo(self):
         meta = self._course_meta()
         if meta is None:
@@ -805,8 +803,9 @@ class App(tk.Tk):
         self._continue_build_repo(meta)
         
     def _continue_build_repo(self, meta: dict):
-        root_base = Path(self.var_repo_root.get().strip())
-        repo_dir = root_base / meta["course_slug"]
+        repo_dir = self._repo_dir()
+        if not repo_dir:
+            return
         manifest_path = repo_dir / "manifest.json"
 
         # Diálogos devem rodar na thread principal
@@ -936,7 +935,9 @@ class App(tk.Tk):
         if not meta: return
         
         entry = self.entries[idx]
-        repo_dir = Path(self.var_repo_root.get().strip()) / meta["course_slug"]
+        repo_dir = self._repo_dir()
+        if not repo_dir:
+            return
         
         active_subj_name = self._var_active_subject.get()
         active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
@@ -1028,10 +1029,11 @@ class App(tk.Tk):
 
         meta = self._course_meta()
         if not meta: return
-        
-        repo_dir = Path(self.var_repo_root.get().strip()) / meta["course_slug"]
+
+        repo_dir = self._repo_dir()
+        if not repo_dir: return
         manifest_path = repo_dir / "manifest.json"
-        
+
         if not manifest_path.exists(): return
         
         try:
@@ -1059,11 +1061,10 @@ class App(tk.Tk):
 
     def _manifest_path(self) -> Optional[Path]:
         """Retorna o caminho do manifest.json do repositório ativo, ou None."""
-        repo_root = self.var_repo_root.get().strip()
-        slug = self.var_course_slug.get().strip()
-        if not repo_root or not slug:
+        repo_dir = self._repo_dir()
+        if not repo_dir:
             return None
-        p = Path(repo_root) / slug / "manifest.json"
+        p = repo_dir / "manifest.json"
         return p if p.exists() else None
 
     def edit_backlog_entry(self):
@@ -1117,8 +1118,8 @@ class App(tk.Tk):
             self.var_professor.set(course.get("professor", ""))
             self.var_institution.set(course.get("institution", "PUCRS"))
             self.var_semester.set(course.get("semester", ""))
-            # A pasta pai é o repo_root
-            self.var_repo_root.set(str(repo_dir.parent))
+            # Caminho completo do repositório
+            self.var_repo_root.set(str(repo_dir))
             self._set_status(f"Repositório carregado: {course.get('course_name', repo_dir.name)}")
             self._refresh_backlog()
         except Exception as e:

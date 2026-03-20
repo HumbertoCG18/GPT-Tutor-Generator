@@ -47,7 +47,7 @@ Serialização via `to_dict()` / `from_dict()`.
 ### `SubjectProfile` — perfil de matéria
 Campos críticos: `name`, `slug`, `professor`, `syllabus` (cronograma em Markdown),  
 `teaching_plan` (plano de ensino extraído do PDF — campo mais rico, usado para auto-extração),  
-`queue: List[FileEntry]` (fila persistida por matéria), `repo_root`.  
+`queue: List[FileEntry]` (fila persistida por matéria), `repo_root` (caminho completo do repo, ex: `C:\Users\...\Metodos-Formais-Tutor`).  
 **Atenção:** `queue` tem serialização manual em `to_dict()`/`from_dict()` — não usar `asdict()` diretamente no SubjectProfile.
 
 ### `StudentProfile` — perfil do aluno (único no sistema)

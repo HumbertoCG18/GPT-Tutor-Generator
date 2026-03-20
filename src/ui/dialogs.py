@@ -727,7 +727,7 @@ class SubjectManagerDialog(tk.Toplevel):
             ("schedule", "Horário", "Ex: Seg/Qua 10:15-11:55"),
             ("default_mode", "Modo padrão", "auto, quick, high_fidelity, manual_assisted"),
             ("default_ocr_lang", "OCR padrão", DEFAULT_OCR_LANGUAGE),
-            ("repo_root", "Pasta do repositório", "Pasta base para criar repos"),
+            ("repo_root", "Pasta do repositório", "Caminho completo do repo (ex: C:\\Users\\...\\Metodos-Formais-Tutor)"),
         ]
 
         for i, (key, label, tip) in enumerate(labels):
