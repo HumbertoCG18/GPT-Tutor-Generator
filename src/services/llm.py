@@ -14,7 +14,7 @@ try:
 except ImportError:
     genai = None
 
-from src.utils.helpers import DEFAULT_CATEGORIES
+from src.utils.helpers import DEFAULT_CATEGORIES, slugify
 
 logger = logging.getLogger(__name__)
 
@@ -45,13 +45,25 @@ class LLMCategorizer:
         """
         Retorna {"category": str, "unit": str, "exam_ref": str}.
         - category: um dos valores de DEFAULT_CATEGORIES.
-        - unit: slug da unidade (ex: "unidade-1"), ou "".
+        - unit: slug da unidade (ex: "unidade-01-metodos-formais"), ou "".
         - exam_ref: para gabaritos/listas, referência ao item correspondente
           (ex: "Prova 1 - Unidade 2"), ou "".
         """
         if not self.is_configured():
             logger.warning("LLMCategorizer não está configurado.")
             return {"category": "outros", "unit": "", "exam_ref": ""}
+
+        # Build structured unit map from teaching plan (if available)
+        structured_plan = ""
+        valid_slugs: List[str] = []
+        try:
+            from src.builder.engine import _parse_units_from_teaching_plan, _format_units_for_prompt
+            units = _parse_units_from_teaching_plan(teaching_plan) if teaching_plan else []
+            if units:
+                structured_plan = _format_units_for_prompt(units)
+                valid_slugs = [slugify(title) for title, _ in units]
+        except Exception as e:
+            logger.debug("Could not parse teaching plan for structured prompt: %s", e)
 
         other_ctx = ""
         if other_file_titles:
@@ -72,13 +84,28 @@ class LLMCategorizer:
         else:
             exam_ref_instruction = '\n- "exam_ref": deixe "".'
 
+        # Use structured plan if available, fallback to raw text
+        if structured_plan:
+            plan_section = f"## Estrutura do curso (unidades e tópicos):\n{structured_plan}"
+        else:
+            plan_section = f"## Plano de Ensino:\n{teaching_plan[:3000]}"
+
+        # Build slug instruction
+        if valid_slugs:
+            slugs_list = ", ".join(f'"{s}"' for s in valid_slugs)
+            unit_instruction = (
+                f'- "unit": slug da unidade. Use EXATAMENTE um dos seguintes: {slugs_list}. '
+                f'Se não souber, use "".'
+            )
+        else:
+            unit_instruction = '- "unit": slug da unidade (ex: "unidade-1"). Se não souber, use "".'
+
         prompt = f"""Você é um assistente de curadoria acadêmica.
 Analise o trecho inicial do PDF e classifique-o.
 
 # Disciplina: {course_name}
 {category_hint}
-## Plano de Ensino:
-{teaching_plan[:3000]}
+{plan_section}
 
 ## Cronograma:
 {syllabus[:1000]}
@@ -88,11 +115,11 @@ Retorne APENAS um objeto JSON com exatamente três campos:
 - "category": tipo do arquivo. Escolha UM dentre:
   material-de-aula, provas, listas, gabaritos, fotos-de-prova,
   referencias, bibliografia, cronograma, outros
-- "unit": unidade do cronograma. Use slug (ex: "unidade-1"). Se não souber, use "".{exam_ref_instruction}
+{unit_instruction}{exam_ref_instruction}
 
 REGRAS:
 - Retorne APENAS o JSON cru, sem markdown, sem crases, sem explicações.
-- Exemplo: {{"category": "listas", "unit": "unidade-2", "exam_ref": "Lista 3 - Unidade 2"}}
+- Exemplo: {{"category": "listas", "unit": "unidade-02-verificacao-de-programas", "exam_ref": "Lista 3 - Unidade 2"}}
 - Em caso de dúvida no tipo, use "material-de-aula". Na unidade, use "".
 
 # Trecho do PDF:

@@ -1448,9 +1448,21 @@ Identifique o modo da sessão pela frase do aluno e ajuste seu comportamento:
 
 Se o modo não for claro, pergunte: *"Você quer entender o conceito, resolver um exercício ou revisar para prova?"*
 
+## Sincronização temporal
+
+Antes de responder, identifique **onde o aluno está no semestre**:
+1. Consulte a seção **"Timeline — Cronograma × Unidades"** em `course/COURSE_MAP.md`
+2. Cruze a data atual com o período de cada unidade
+3. Isso determina: qual unidade é a atual, quais já foram vistas, quais ainda virão
+
+Use essa informação para:
+- Contextualizar explicações ("isso é da Unidade 2, que vocês viram na semana passada")
+- Priorizar revisão ("a P1 cobre Unidades 1 e 2, que vão até [data]")
+- Antecipar o próximo conteúdo ("na próxima semana começa Unidade 3")
+
 ## Lógica de escopo das provas
 
-As provas são **cumulativas com peso progressivo**. Sempre que entrar em modo `exam_prep`, identifique qual prova está próxima via `course/SYLLABUS.md` e aplique esta lógica:
+As provas são **cumulativas com peso progressivo**. Sempre que entrar em modo `exam_prep`, identifique qual prova está próxima via `course/SYLLABUS.md` e a seção Timeline do `course/COURSE_MAP.md`, e aplique esta lógica:
 
 | Prova | Escopo total | Foco principal | Foco secundário |
 |---|---|---|---|
@@ -1852,7 +1864,17 @@ def _parse_units_from_teaching_plan(text: str):
                         Tópicos com marcadores (-, •, *) ou numerados (1.1)
 
     Para quando encontra seções pós-conteúdo (PROCEDIMENTOS, AVALIAÇÃO, BIBLIOGRAFIA).
-    Retorna lista de (str, List[str]).
+
+    Cada tópico é uma tupla (texto, depth):
+      - depth 0 → tópico principal (1.1., 1.2.)
+      - depth 1 → sub-tópico (1.2.1., 1.2.2.)
+      - depth 2+ → sub-sub-tópico (1.2.1.1.)
+      - marcadores (-, •) → depth 0
+
+    Retorna lista de (str, List[tuple[str, int]]).
+
+    Para compatibilidade, tópicos como strings simples ainda funcionam
+    nos consumidores que fazem ``for t in topics`` — eles verão tuplas.
     """
     units: list = []
     current_title: Optional[str] = None
@@ -1904,16 +1926,217 @@ def _parse_units_from_teaching_plan(text: str):
         if current_title is not None:
             m = numbered_topic_re.match(line)
             if m:
-                current_topics.append(m.group(2).strip())
+                numbering = m.group(1)  # e.g. "1.2.1"
+                # depth = number of dots minus 1 (1.1 → 0, 1.2.1 → 1, 1.2.1.1 → 2)
+                depth = numbering.count(".") - 1
+                current_topics.append((m.group(2).strip(), max(depth, 0)))
                 continue
             m = bullet_topic_re.match(line)
             if m:
-                current_topics.append(m.group(1).strip())
+                current_topics.append((m.group(1).strip(), 0))
 
     if current_title is not None:
         units.append((current_title, current_topics))
 
     return units
+
+
+def _topic_text(topic) -> str:
+    """Extrai o texto de um tópico, seja tupla (text, depth) ou string legada."""
+    if isinstance(topic, tuple):
+        return topic[0]
+    return str(topic)
+
+
+def _topic_depth(topic) -> int:
+    """Extrai a profundidade de um tópico, seja tupla (text, depth) ou string legada."""
+    if isinstance(topic, tuple):
+        return topic[1]
+    return 0
+
+
+def _format_units_for_prompt(units) -> str:
+    """Formata unidades parseadas em texto compacto e estruturado para prompts LLM.
+
+    Retorna algo como:
+        Unidade 01 — Métodos Formais [slug: unidade-01-metodos-formais]
+          1. Sistemas Formais
+          2. Linguagens de Especificação e Lógicas
+            2.1. Fundamentos de Lógica de Primeira Ordem
+    """
+    from src.utils.helpers import slugify
+    lines = []
+    for title, topics in units:
+        slug = slugify(title)
+        lines.append(f"{title} [slug: {slug}]")
+        for topic in topics:
+            text = _topic_text(topic)
+            depth = _topic_depth(topic)
+            indent = "  " * (depth + 1)
+            lines.append(f"{indent}- {text}")
+        lines.append("")
+    return "\n".join(lines)
+
+
+def _parse_syllabus_timeline(syllabus: str) -> List[Dict[str, str]]:
+    """
+    Parseia o cronograma (Markdown table) e retorna lista de dicts.
+
+    Cada dict tem chaves normalizadas das colunas do cronograma.
+    Exemplo de retorno:
+        [
+            {"semana": "1", "data": "2026-03-02", "conteúdo": "Unidade 1: Métodos Formais"},
+            {"semana": "2", "data": "2026-03-09", "conteúdo": "Continuação Unidade 1"},
+            ...
+        ]
+
+    Suporta tabelas Markdown com qualquer nome de coluna — normaliza para minúsculas.
+    """
+    if not syllabus or not syllabus.strip():
+        return []
+
+    lines = [l.strip() for l in syllabus.strip().splitlines() if l.strip()]
+
+    # Find header line (first line with |)
+    header_line = None
+    data_start = 0
+    for i, line in enumerate(lines):
+        if "|" in line and not all(c in "|-: " for c in line):
+            header_line = line
+            data_start = i + 1
+            break
+
+    if not header_line:
+        return []
+
+    headers = [h.strip().lower() for h in header_line.split("|") if h.strip()]
+    if not headers:
+        return []
+
+    result = []
+    for line in lines[data_start:]:
+        # Skip separator lines (|---|---|)
+        if not line.startswith("|"):
+            continue
+        stripped = line.replace("|", " | ")
+        if all(c in "-|: " for c in line):
+            continue
+
+        cells = [c.strip() for c in line.split("|") if c.strip() or line.count("|") > 1]
+        # Re-split properly
+        cells = [c.strip() for c in line.split("|")]
+        cells = [c for c in cells if c or len(cells) > len(headers)]
+        # Remove empty leading/trailing from pipe split
+        if cells and not cells[0]:
+            cells = cells[1:]
+        if cells and not cells[-1]:
+            cells = cells[:-1]
+
+        if len(cells) < len(headers):
+            cells += [""] * (len(headers) - len(cells))
+
+        row = {}
+        for j, h in enumerate(headers):
+            row[h] = cells[j].strip() if j < len(cells) else ""
+        result.append(row)
+
+    return result
+
+
+def _match_timeline_to_units(
+    timeline: List[Dict[str, str]],
+    units: list,
+) -> List[Dict[str, str]]:
+    """
+    Cruza linhas do cronograma com unidades do plano de ensino.
+
+    Para cada unidade, tenta encontrar a(s) linha(s) do cronograma que
+    mencionam o título ou número da unidade. Retorna lista de dicts:
+        [{"unit_title": str, "unit_slug": str, "period": str, "dates": str}, ...]
+
+    O matching usa heurísticas:
+      - Busca "unidade N", "unid N", "un N" no texto do conteúdo
+      - Busca o título da unidade (ou parte dele) no conteúdo
+      - Busca "P1", "P2", "P3" para marcar provas
+    """
+    if not timeline or not units:
+        return []
+
+    # Detect which column has the content
+    content_keys = []
+    for key in timeline[0].keys():
+        if any(k in key for k in ["conteúdo", "conteudo", "assunto", "tema", "descrição",
+                                    "descricao", "atividade", "tópico", "topico", "content"]):
+            content_keys.append(key)
+    if not content_keys:
+        # Fallback: use the column with longest average text
+        avg_lens = {}
+        for key in timeline[0].keys():
+            avg_lens[key] = sum(len(row.get(key, "")) for row in timeline) / max(len(timeline), 1)
+        if avg_lens:
+            content_keys = [max(avg_lens, key=avg_lens.get)]
+
+    # Detect date/week column
+    date_keys = []
+    for key in timeline[0].keys():
+        if any(k in key for k in ["data", "date", "semana", "week", "sem", "aula"]):
+            date_keys.append(key)
+    if not date_keys:
+        # First column as fallback
+        date_keys = [list(timeline[0].keys())[0]] if timeline[0] else []
+
+    result = []
+    for unit_title, _ in units:
+        # Extract unit number from title: "Unidade 01 — Métodos Formais" → "01", "1"
+        unit_num_match = re.search(r'(\d+)', unit_title)
+        unit_num = unit_num_match.group(1) if unit_num_match else ""
+        unit_num_int = str(int(unit_num)) if unit_num else ""  # "01" → "1"
+
+        # Extract the descriptive part: "Métodos Formais"
+        desc_match = re.search(r'[—–\-:]\s*(.+)', unit_title)
+        unit_desc = desc_match.group(1).strip().lower() if desc_match else ""
+        # Use first significant words for matching
+        desc_words = [w for w in unit_desc.split() if len(w) > 3][:3]
+
+        matched_dates = []
+        for row in timeline:
+            content = " ".join(row.get(k, "") for k in content_keys).lower()
+            if not content.strip():
+                continue
+
+            matched = False
+            # Try: "unidade 01", "unidade 1", "unid 1", "un 1"
+            if unit_num:
+                patterns = [
+                    rf'\bunidade\s*{unit_num}\b',
+                    rf'\bunidade\s*{unit_num_int}\b',
+                    rf'\bunid\.?\s*{unit_num_int}\b',
+                    rf'\bun\.?\s*{unit_num_int}\b',
+                ]
+                for pat in patterns:
+                    if re.search(pat, content, re.IGNORECASE):
+                        matched = True
+                        break
+
+            # Try: descriptive words match
+            if not matched and desc_words:
+                matches = sum(1 for w in desc_words if w in content)
+                if matches >= min(2, len(desc_words)):
+                    matched = True
+
+            if matched:
+                date_str = " / ".join(row.get(k, "") for k in date_keys if row.get(k, "")).strip()
+                if date_str:
+                    matched_dates.append(date_str)
+
+        result.append({
+            "unit_title": unit_title,
+            "unit_slug": slugify(unit_title),
+            "period": f"{matched_dates[0]} → {matched_dates[-1]}" if len(matched_dates) > 1 else (matched_dates[0] if matched_dates else ""),
+            "dates": ", ".join(matched_dates),
+        })
+
+    return result
 
 
 def _parse_bibliography_from_teaching_plan(text: str) -> dict:
@@ -2031,8 +2254,11 @@ def course_map_md(course_meta: dict, subject_profile=None) -> str:
         for unit_title, topics in units:
             lines.append(f"### {unit_title}")
             if topics:
-                for t in topics:
-                    lines.append(f"- [ ] {t}")
+                for topic in topics:
+                    text = _topic_text(topic)
+                    depth = _topic_depth(topic)
+                    indent = "  " * depth
+                    lines.append(f"{indent}- [ ] {text}")
             else:
                 lines.append("- [ ] [tópicos a preencher]")
             lines.append("")
@@ -2054,6 +2280,30 @@ def course_map_md(course_meta: dict, subject_profile=None) -> str:
             "- [ ] Tópico 2.2",
             "",
         ]
+
+    # ── Timeline: cruzamento cronograma ↔ unidades ──────────────
+    syllabus = getattr(subject_profile, "syllabus", "") if subject_profile else ""
+    if units and syllabus:
+        try:
+            timeline = _parse_syllabus_timeline(syllabus)
+            mapping = _match_timeline_to_units(timeline, units)
+            has_dates = any(m["period"] for m in mapping)
+            if has_dates:
+                lines += [
+                    "## Timeline — Cronograma × Unidades",
+                    "",
+                    "> Mapeamento automático entre o cronograma e as unidades do plano de ensino.",
+                    "> O tutor usa esta tabela para saber em qual unidade o aluno está baseado na data atual.",
+                    "",
+                    "| Unidade | Período | Slug (referência) |",
+                    "|---|---|---|",
+                ]
+                for m in mapping:
+                    period = m["period"] or "[não identificado]"
+                    lines.append(f"| {m['unit_title']} | {period} | `{m['unit_slug']}` |")
+                lines.append("")
+        except Exception as e:
+            logger.debug("Could not generate timeline mapping: %s", e)
 
     lines += [
         "## Tópicos de alta incidência em prova",
@@ -2102,21 +2352,22 @@ def glossary_md(course_meta: dict, subject_profile=None) -> str:
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     units = _parse_units_from_teaching_plan(teaching_plan) if teaching_plan else []
 
-    # Collect all leaf topics as candidate terms
-    candidates = []
-    for _unit_title, topics in units:
-        candidates.extend(topics)
+    # Collect all topics as candidate terms, preserving unit association
+    candidates = []  # List of (term_text, unit_title)
+    for unit_title, topics in units:
+        for topic in topics:
+            candidates.append((_topic_text(topic), unit_title))
 
     if candidates:
         lines.append("<!-- Termos extraídos automaticamente do plano de ensino. Preencha as definições. -->")
         lines.append("")
-        for term in candidates:
+        for term, unit_title in candidates:
             lines += [
                 f"## {term}",
                 "**Definição:** [a preencher]",
                 "**Sinônimos aceitos:** —",
                 "**Não confundir com:** —",
-                f"**Aparece em:** [unidade a identificar]",
+                f"**Aparece em:** {unit_title}",
                 "",
             ]
     else:

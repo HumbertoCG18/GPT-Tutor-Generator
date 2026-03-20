@@ -25,6 +25,12 @@ from src.builder.engine import (
     wrap_frontmatter,
     _parse_units_from_teaching_plan,
     _parse_bibliography_from_teaching_plan,
+    _parse_syllabus_timeline,
+    _match_timeline_to_units,
+    _topic_text,
+    _topic_depth,
+    _format_units_for_prompt,
+    course_map_md,
 )
 from src.models.core import (
     DocumentProfileReport,
@@ -409,13 +415,13 @@ class TestParseUnitsFromTeachingPlan:
 
     def test_pucrs_format_extracts_topics(self):
         units = _parse_units_from_teaching_plan(PUCRS_PLAN)
-        topics_u1 = units[0][1]
+        topics_u1 = [_topic_text(t) for t in units[0][1]]
         assert any("Sistemas Formais" in t for t in topics_u1)
         assert any("Lógica de Primeira Ordem" in t for t in topics_u1)
 
     def test_pucrs_stops_at_procedimentos(self):
         units = _parse_units_from_teaching_plan(PUCRS_PLAN)
-        all_topics = [t for _, topics in units for t in topics]
+        all_topics = [_topic_text(t) for _, topics in units for t in topics]
         assert not any("não deve" in t for t in all_topics)
 
     def test_generic_markdown_detects_three_units(self):
@@ -429,7 +435,7 @@ class TestParseUnitsFromTeachingPlan:
 
     def test_generic_markdown_extracts_bullet_topics(self):
         units = _parse_units_from_teaching_plan(GENERIC_PLAN)
-        topics_u1 = units[0][1]
+        topics_u1 = [_topic_text(t) for t in units[0][1]]
         assert "Lógica proposicional" in topics_u1
         assert "Conjuntos indutivos" in topics_u1
 
@@ -438,6 +444,74 @@ class TestParseUnitsFromTeachingPlan:
 
     def test_no_units_returns_empty(self):
         assert _parse_units_from_teaching_plan("Texto sem unidades aqui.") == []
+
+    # ── Hierarchy / depth tests ──────────────────────────────────────
+
+    def test_pucrs_topics_are_tuples(self):
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        for _, topics in units:
+            for topic in topics:
+                assert isinstance(topic, tuple), f"Expected tuple, got {type(topic)}"
+                assert len(topic) == 2
+
+    def test_pucrs_depth_main_topic(self):
+        """1.1. Sistemas Formais → depth 0 (tópico principal)"""
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        topics_u1 = units[0][1]
+        sistemas = [t for t in topics_u1 if _topic_text(t) == "Sistemas Formais"]
+        assert len(sistemas) == 1
+        assert _topic_depth(sistemas[0]) == 0
+
+    def test_pucrs_depth_subtopic(self):
+        """1.2.1. Fundamentos de Lógica de Primeira Ordem → depth 1 (sub-tópico)"""
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        topics_u1 = units[0][1]
+        fundamentos = [t for t in topics_u1 if "Lógica de Primeira Ordem" in _topic_text(t)]
+        assert len(fundamentos) == 1
+        assert _topic_depth(fundamentos[0]) == 1
+
+    def test_pucrs_depth_second_unit(self):
+        """2.1.1. Pré e Pós Condições → depth 1"""
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        topics_u2 = units[1][1]
+        pre_pos = [t for t in topics_u2 if "Pré e Pós Condições" in _topic_text(t)]
+        assert len(pre_pos) == 1
+        assert _topic_depth(pre_pos[0]) == 1
+
+    def test_generic_bullets_depth_zero(self):
+        """Marcadores genéricos (-, •) → depth 0"""
+        units = _parse_units_from_teaching_plan(GENERIC_PLAN)
+        for _, topics in units:
+            for topic in topics:
+                assert _topic_depth(topic) == 0
+
+    def test_topic_text_helper_with_tuple(self):
+        assert _topic_text(("Foo", 2)) == "Foo"
+
+    def test_topic_text_helper_with_string(self):
+        assert _topic_text("Bar") == "Bar"
+
+    def test_topic_depth_helper_with_tuple(self):
+        assert _topic_depth(("Foo", 3)) == 3
+
+    def test_topic_depth_helper_with_string(self):
+        assert _topic_depth("Bar") == 0
+
+    def test_format_units_for_prompt_structure(self):
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        result = _format_units_for_prompt(units)
+        assert "slug:" in result
+        assert "Métodos Formais" in result
+        assert "Sistemas Formais" in result
+        # Sub-topics should be more indented
+        lines = result.split("\n")
+        sistemas_line = [l for l in lines if "Sistemas Formais" in l][0]
+        fundamentos_line = [l for l in lines if "Lógica de Primeira Ordem" in l][0]
+        # fundamentos should have more leading whitespace
+        assert len(fundamentos_line) - len(fundamentos_line.lstrip()) > len(sistemas_line) - len(sistemas_line.lstrip())
+
+    def test_format_units_for_prompt_empty(self):
+        assert _format_units_for_prompt([]) == ""
 
 
 # ---------------------------------------------------------------------------
@@ -539,3 +613,115 @@ class TestLLMCategorizerParsing:
             cat = self.llm.categorize_pdf("Disciplina", "", "", "texto")
         assert cat == "provas"
         assert isinstance(cat, str)
+
+
+# ---------------------------------------------------------------------------
+# _parse_syllabus_timeline / _match_timeline_to_units
+# ---------------------------------------------------------------------------
+
+SYLLABUS_TABLE = """\
+| Semana | Data | Conteúdo |
+|---|---|---|
+| 1 | 2026-03-02 | Apresentação e Unidade 1: Métodos Formais |
+| 2 | 2026-03-09 | Continuação Unidade 1 |
+| 3 | 2026-03-16 | Unidade 1 — finalização |
+| 4 | 2026-03-23 | Unidade 2: Verificação de Programas |
+| 5 | 2026-03-30 | Continuação Unidade 2 |
+| 6 | 2026-04-06 | Unidade 3: Verificação de Modelos |
+| 7 | 2026-04-13 | Continuação Unidade 3 |
+| 8 | 2026-04-20 | Revisão |
+| 9 | 2026-04-27 | P1 |
+"""
+
+
+class TestParseSyllabusTimeline:
+    def test_parses_markdown_table(self):
+        rows = _parse_syllabus_timeline(SYLLABUS_TABLE)
+        assert len(rows) == 9
+        assert rows[0]["semana"] == "1"
+        assert rows[0]["data"] == "2026-03-02"
+
+    def test_empty_input(self):
+        assert _parse_syllabus_timeline("") == []
+        assert _parse_syllabus_timeline(None) == []
+
+    def test_no_table(self):
+        assert _parse_syllabus_timeline("Texto sem tabela nenhuma.") == []
+
+    def test_column_names_normalized(self):
+        rows = _parse_syllabus_timeline(SYLLABUS_TABLE)
+        for row in rows:
+            for key in row:
+                assert key == key.lower()
+
+
+class TestMatchTimelineToUnits:
+    def test_matches_units_to_timeline(self):
+        timeline = _parse_syllabus_timeline(SYLLABUS_TABLE)
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        mapping = _match_timeline_to_units(timeline, units)
+
+        assert len(mapping) == 3  # 3 units
+        # Unit 1 should match weeks 1-3
+        u1 = mapping[0]
+        assert "Métodos Formais" in u1["unit_title"]
+        assert u1["period"]  # should have date range
+        assert "2026-03-02" in u1["dates"]
+
+    def test_unit_2_matched(self):
+        timeline = _parse_syllabus_timeline(SYLLABUS_TABLE)
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        mapping = _match_timeline_to_units(timeline, units)
+        u2 = mapping[1]
+        assert "Verificação de Programas" in u2["unit_title"]
+        assert "2026-03-23" in u2["dates"]
+
+    def test_slug_generated(self):
+        timeline = _parse_syllabus_timeline(SYLLABUS_TABLE)
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        mapping = _match_timeline_to_units(timeline, units)
+        for m in mapping:
+            assert m["unit_slug"]
+            assert " " not in m["unit_slug"]
+
+    def test_empty_inputs(self):
+        assert _match_timeline_to_units([], []) == []
+        assert _match_timeline_to_units([], [("Unit 1", [])]) == []
+
+
+class TestCourseMapTimeline:
+    """Testa que course_map_md inclui a seção Timeline quando há cronograma."""
+
+    def test_timeline_section_present(self):
+        from src.models.core import SubjectProfile
+        sp = SubjectProfile(
+            name="Métodos Formais",
+            slug="metodos-formais",
+            syllabus=SYLLABUS_TABLE,
+            teaching_plan=PUCRS_PLAN,
+        )
+        result = course_map_md({"course_name": "Métodos Formais"}, sp)
+        assert "Timeline" in result
+        assert "Cronograma" in result
+
+    def test_no_timeline_without_syllabus(self):
+        from src.models.core import SubjectProfile
+        sp = SubjectProfile(
+            name="Métodos Formais",
+            slug="metodos-formais",
+            syllabus="",
+            teaching_plan=PUCRS_PLAN,
+        )
+        result = course_map_md({"course_name": "Métodos Formais"}, sp)
+        assert "Timeline" not in result
+
+    def test_no_timeline_without_teaching_plan(self):
+        from src.models.core import SubjectProfile
+        sp = SubjectProfile(
+            name="Métodos Formais",
+            slug="metodos-formais",
+            syllabus=SYLLABUS_TABLE,
+            teaching_plan="",
+        )
+        result = course_map_md({"course_name": "Métodos Formais"}, sp)
+        assert "Timeline" not in result
