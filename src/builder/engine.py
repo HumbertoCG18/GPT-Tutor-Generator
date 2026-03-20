@@ -1871,12 +1871,12 @@ Quando o aluno abrir o **primeiro chat** deste Projeto (ou quando `course/FILE_M
 
 4. **Apresentar resultado**: Mostre o FILE_MAP preenchido ao aluno em formato de tabela e peça confirmação
 
-5. **Instruir o commit**:
-```
-git add course/FILE_MAP.md course/COURSE_MAP.md course/GLOSSARY.md
-git commit -m "init: mapeamento de arquivos e glossário pelo tutor"
-git push
-```
+5. **Confirmar com o aluno**: Após apresentar o FILE_MAP preenchido, diga ao aluno:
+   > "Mapeamento concluído. Você pode sincronizar com o GitHub rodando
+   > `git pull` na sua máquina para puxar as edições, e `git push` se
+   > quiser versionar o estado atual."
+
+**Pré-requisito de escrita:** Para que o tutor consiga editar os arquivos do Projeto (FILE_MAP, COURSE_MAP, GLOSSARY), o repositório GitHub deve estar conectado ao Projeto Claude com permissão de escrita. Se o aluno não habilitou isso, o tutor deve ditar as alterações e pedir ao aluno que cole manualmente nos arquivos.
 
 **Após a primeira sessão**, nas sessões seguintes, consulte `course/FILE_MAP.md` para saber qual arquivo pertence a qual unidade. Se o FILE_MAP tiver `status: pending_review`, execute o protocolo novamente.
 """
