@@ -1057,6 +1057,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             "images_dir": None, "tables_dir": None,
             "table_detection_dir": None,
             "manual_review": None,
+            "raw_target": safe_rel(raw_target, self.root_dir),
         }
         t0 = time.time()
 

@@ -335,6 +335,9 @@ class CuratorStudio(tk.Toplevel):
 
         # 1) Try rendering directly from the source PDF
         source_pdf = fm.get("source_pdf")
+        # Fallback: if frontmatter has no source_pdf, try manifest
+        if not source_pdf:
+            source_pdf = self._lookup_raw_target(fm.get("id"))
         if source_pdf and HAS_PYMUPDF:
             pdf_path = self.repo_dir / source_pdf
             if pdf_path.exists():
@@ -381,6 +384,23 @@ class CuratorStudio(tk.Toplevel):
                 lbl.pack(pady=5, padx=5)
             except Exception as e:
                 logger.error("Erro ao carregar preview %s: %s", img_path, e)
+
+    def _lookup_raw_target(self, entry_id: str):
+        """Look up raw_target from manifest.json for a given entry id."""
+        if not entry_id:
+            return None
+        manifest_path = self.repo_dir / "manifest.json"
+        if not manifest_path.exists():
+            return None
+        try:
+            import json
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            for e in manifest.get("entries", []):
+                if e.get("id") == entry_id:
+                    return e.get("raw_target")
+        except Exception:
+            pass
+        return None
 
     # ── Save / Approve ──────────────────────────────────────────────────
 
