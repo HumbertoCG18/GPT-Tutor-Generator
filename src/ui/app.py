@@ -1139,7 +1139,8 @@ class App(tk.Tk):
                 data = json.load(f)
 
             entry_data = data["entries"][idx]
-            dialog = BacklogEntryEditDialog(self, entry_data, repo_dir=repo_dir)
+            dialog = BacklogEntryEditDialog(self, entry_data, repo_dir=repo_dir, theme_mgr=self.theme_mgr)
+            self.wait_window(dialog)
 
             if dialog.result_data:
                 data["entries"][idx].update(dialog.result_data)

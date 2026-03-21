@@ -975,24 +975,55 @@ class StudentProfileDialog(tk.Toplevel):
 # GUI — Backlog Entry Edit Dialog
 # ---------------------------------------------------------------------------
 
-class BacklogEntryEditDialog(simpledialog.Dialog):
+class BacklogEntryEditDialog(tk.Toplevel):
     """Edita metadados de uma entrada já processada, com visualização MD e PDF."""
 
-    def __init__(self, parent, entry_data: dict, repo_dir=None):
+    def __init__(self, parent, entry_data: dict, repo_dir=None, theme_mgr: ThemeManager = None):
+        super().__init__(parent)
         self._data = dict(entry_data)
         self._repo_dir = Path(repo_dir) if repo_dir else None
+        self._theme_mgr = theme_mgr
         self.result_data: Optional[dict] = None
-        super().__init__(parent, title="✏  Editar entrada do Backlog")
 
-    def body(self, master):
-        self.resizable(True, True)
+        self.title("✏  Editar entrada do Backlog")
         self.geometry("900x600")
+        self.minsize(700, 450)
+        self.transient(parent)
+        self.grab_set()
 
-        nb = ttk.Notebook(master)
-        nb.pack(fill="both", expand=True)
+        # Apply theme
+        if theme_mgr:
+            self._p = theme_mgr.palette(theme_mgr.current)
+        else:
+            self._p = {"bg": "#1e1e2e", "fg": "#cdd6f4", "header_bg": "#181825",
+                       "header_fg": "#cdd6f4", "input_bg": "#313244", "border": "#45475a",
+                       "select_bg": "#585b70", "select_fg": "#cdd6f4", "frame_bg": "#1e1e2e",
+                       "muted": "#6c7086", "accent": "#89b4fa"}
+        p = self._p
+        self.configure(bg=p["bg"])
+
+        self._build_ui(p)
+
+    def _build_ui(self, p):
+        # ── Header ─────────────────────────────────────────────────────
+        hdr = tk.Frame(self, bg=p["header_bg"], pady=8, padx=16)
+        hdr.pack(fill="x")
+        title_text = self._data.get("title", "Sem título")
+        tk.Label(hdr, text=f"✏  {title_text}", bg=p["header_bg"], fg=p["header_fg"],
+                 font=("Segoe UI", 12, "bold")).pack(side="left")
+
+        # Buttons on header
+        btn_frame = tk.Frame(hdr, bg=p["header_bg"])
+        btn_frame.pack(side="right")
+        ttk.Button(btn_frame, text="Salvar", command=self._on_save).pack(side="left", padx=4)
+        ttk.Button(btn_frame, text="Cancelar", command=self.destroy).pack(side="left", padx=4)
+
+        # ── Notebook ───────────────────────────────────────────────────
+        nb = ttk.Notebook(self)
+        nb.pack(fill="both", expand=True, padx=10, pady=(5, 10))
 
         # ── Tab 1: Editar ──────────────────────────────────────────────
-        tab_edit = ttk.Frame(nb, padding=10)
+        tab_edit = tk.Frame(nb, bg=p["bg"], padx=16, pady=12)
         nb.add(tab_edit, text="  Editar  ")
         tab_edit.columnconfigure(1, weight=1)
 
@@ -1004,52 +1035,56 @@ class BacklogEntryEditDialog(simpledialog.Dialog):
         ]
 
         self._vars: Dict[str, tk.StringVar] = {}
-        first_entry = None
         for row, (label, key) in enumerate(fields):
-            ttk.Label(tab_edit, text=label).grid(row=row, column=0, sticky="w", padx=(0, 12), pady=4)
+            tk.Label(tab_edit, text=label, bg=p["bg"], fg=p["fg"],
+                     font=("Segoe UI", 10)).grid(row=row, column=0, sticky="w", padx=(0, 12), pady=6)
             var = tk.StringVar(value=self._data.get(key, ""))
             self._vars[key] = var
             if key == "category":
                 ttk.Combobox(tab_edit, textvariable=var, values=DEFAULT_CATEGORIES,
-                             state="readonly", width=28).grid(row=row, column=1, sticky="ew", pady=4)
+                             state="readonly", width=32).grid(row=row, column=1, sticky="ew", pady=6)
             elif key == "effective_profile":
                 from src.utils.helpers import DOCUMENT_PROFILES
                 ttk.Combobox(tab_edit, textvariable=var, values=DOCUMENT_PROFILES,
-                             state="readonly", width=28).grid(row=row, column=1, sticky="ew", pady=4)
+                             state="readonly", width=32).grid(row=row, column=1, sticky="ew", pady=6)
             else:
-                widget = ttk.Entry(tab_edit, textvariable=var, width=38)
-                widget.grid(row=row, column=1, sticky="ew", pady=4)
-                if first_entry is None:
-                    first_entry = widget
+                tk.Entry(tab_edit, textvariable=var, width=40,
+                         bg=p["input_bg"], fg=p["fg"], insertbackground=p["fg"],
+                         relief="flat", highlightthickness=1,
+                         highlightcolor=p["border"], highlightbackground=p["border"],
+                         font=("Segoe UI", 10)).grid(row=row, column=1, sticky="ew", pady=6)
 
         row_notes = len(fields)
-        ttk.Label(tab_edit, text="Notas").grid(row=row_notes, column=0, sticky="nw", padx=(0, 12), pady=4)
-        self._notes_text = tk.Text(tab_edit, height=4, width=38, font=("Segoe UI", 9), wrap="word")
-        self._notes_text.grid(row=row_notes, column=1, sticky="ew", pady=4)
+        tk.Label(tab_edit, text="Notas", bg=p["bg"], fg=p["fg"],
+                 font=("Segoe UI", 10)).grid(row=row_notes, column=0, sticky="nw", padx=(0, 12), pady=6)
+        self._notes_text = tk.Text(tab_edit, height=4, width=40, font=("Segoe UI", 10), wrap="word",
+                                   bg=p["input_bg"], fg=p["fg"], insertbackground=p["fg"],
+                                   relief="flat", highlightthickness=1,
+                                   highlightcolor=p["border"], highlightbackground=p["border"])
+        self._notes_text.grid(row=row_notes, column=1, sticky="ew", pady=6)
         self._notes_text.insert("1.0", self._data.get("notes", ""))
 
         row_cb = row_notes + 1
         self._var_bundle = tk.BooleanVar(value=bool(self._data.get("include_in_bundle", True)))
         self._var_exam   = tk.BooleanVar(value=bool(self._data.get("relevant_for_exam", True)))
         ttk.Checkbutton(tab_edit, text="Incluir no bundle",   variable=self._var_bundle).grid(
-            row=row_cb, column=0, columnspan=2, sticky="w", pady=(6, 2))
+            row=row_cb, column=0, columnspan=2, sticky="w", pady=(8, 2))
         ttk.Checkbutton(tab_edit, text="Relevante para prova", variable=self._var_exam).grid(
             row=row_cb + 1, column=0, columnspan=2, sticky="w", pady=2)
 
         # ── Tab 2: Visualização MD ─────────────────────────────────────
-        tab_md = ttk.Frame(nb, padding=5)
+        tab_md = tk.Frame(nb, bg=p["bg"], padx=8, pady=5)
         nb.add(tab_md, text="  Visualização MD  ")
-        self._build_md_tab(tab_md)
+        self._build_md_tab(tab_md, p)
 
-        return first_entry
-
-    def _build_md_tab(self, parent):
+    def _build_md_tab(self, parent, p):
         """Build the markdown visualization tab with PDF button."""
-        toolbar = ttk.Frame(parent)
+        toolbar = tk.Frame(parent, bg=p["bg"])
         toolbar.pack(fill="x", pady=(0, 5))
 
         # Source selector
-        ttk.Label(toolbar, text="Fonte:").pack(side="left")
+        tk.Label(toolbar, text="Fonte:", bg=p["bg"], fg=p["fg"],
+                 font=("Segoe UI", 9, "bold")).pack(side="left")
         self._md_source_var = tk.StringVar()
         self._md_source_combo = ttk.Combobox(
             toolbar, textvariable=self._md_source_var,
@@ -1063,18 +1098,26 @@ class BacklogEntryEditDialog(simpledialog.Dialog):
 
         # Stats bar
         self._md_stats_var = tk.StringVar(value="")
-        ttk.Label(parent, textvariable=self._md_stats_var, style="Muted.TLabel").pack(anchor="w", pady=(0, 3))
+        tk.Label(parent, textvariable=self._md_stats_var, bg=p["bg"], fg=p["muted"],
+                 font=("Segoe UI", 9)).pack(anchor="w", pady=(0, 3))
 
         # Text viewer
-        self._md_text = tk.Text(parent, wrap="word", font=("Consolas", 10), state="disabled")
-        scroll = ttk.Scrollbar(parent, orient="vertical", command=self._md_text.yview)
+        viewer_frame = tk.Frame(parent, bg=p["bg"])
+        viewer_frame.pack(fill="both", expand=True)
+
+        self._md_text = tk.Text(viewer_frame, wrap="word", font=("Consolas", 10), state="disabled",
+                                bg=p["input_bg"], fg=p["fg"], insertbackground=p["fg"],
+                                relief="flat", highlightthickness=1,
+                                highlightcolor=p["border"], highlightbackground=p["border"],
+                                selectbackground=p["select_bg"], selectforeground=p["select_fg"])
+        scroll = ttk.Scrollbar(viewer_frame, orient="vertical", command=self._md_text.yview)
         self._md_text.configure(yscrollcommand=scroll.set)
         self._md_text.pack(side="left", fill="both", expand=True)
         scroll.pack(side="right", fill="y")
 
         self._md_text.tag_configure("heading", font=("Segoe UI", 12, "bold"), foreground="#89b4fa")
         self._md_text.tag_configure("latex", foreground="#f9e2af", font=("Consolas", 10, "italic"))
-        self._md_text.tag_configure("code", background="#313244", font=("Consolas", 10))
+        self._md_text.tag_configure("code", background="#45475a", font=("Consolas", 10))
         self._md_text.tag_configure("table_row", foreground="#a6e3a1")
 
         # Populate sources
@@ -1083,11 +1126,11 @@ class BacklogEntryEditDialog(simpledialog.Dialog):
             for key, label in [("base_markdown", "Base"), ("advanced_markdown", "Avançado"), ("manual_review", "Revisão")]:
                 val = self._data.get(key)
                 if val:
-                    p = self._repo_dir / val
-                    if p.exists():
+                    path = self._repo_dir / val
+                    if path.exists():
                         backend = self._data.get("base_backend" if "base" in key else "advanced_backend", "")
-                        display = f"{label} — {backend} ({p.name})" if backend else f"{label} ({p.name})"
-                        self._md_sources[display] = p
+                        display = f"{label} — {backend} ({path.name})" if backend else f"{label} ({path.name})"
+                        self._md_sources[display] = path
 
         self._md_source_combo["values"] = list(self._md_sources.keys())
         if self._md_sources:
@@ -1152,7 +1195,7 @@ class BacklogEntryEditDialog(simpledialog.Dialog):
         import os
         os.startfile(str(pdf_path))
 
-    def apply(self):
+    def _on_save(self):
         self.result_data = {
             "title":            self._vars["title"].get().strip(),
             "category":         self._vars["category"].get().strip(),
@@ -1162,6 +1205,7 @@ class BacklogEntryEditDialog(simpledialog.Dialog):
             "include_in_bundle": self._var_bundle.get(),
             "relevant_for_exam": self._var_exam.get(),
         }
+        self.destroy()
 
 
 # ---------------------------------------------------------------------------
