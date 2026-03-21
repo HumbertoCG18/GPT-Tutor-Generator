@@ -1076,7 +1076,8 @@ class App(tk.Tk):
         ):
             return
 
-        active_subj = self._active_subject()
+        active_subj_name = self._var_active_subject.get()
+        active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
 
         def worker():
             try:
