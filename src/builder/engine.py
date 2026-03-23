@@ -786,7 +786,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
                     # Skip noise images (too small or solid color)
                     if img_path.stat().st_size < self._MIN_IMG_BYTES:
                         continue
-                    if self._is_solid_color(img_path.read_bytes()):
+                    if self._is_noise_image(img_path.read_bytes()):
                         continue
 
                     img_key = str(img_path)
@@ -1449,19 +1449,29 @@ unit: {entry.tags}
     # Minimum thresholds to skip noise images (tiny icons, solid-color rects, etc.)
     _MIN_IMG_BYTES = 2000     # < 2 KB is almost always an artifact
     _MIN_IMG_DIMENSION = 20   # width or height < 20px
-    _MIN_UNIQUE_COLORS = 2    # solid-color images (all white, all black) are noise
+    _MAX_ASPECT_RATIO = 8.0   # extreme aspect ratios are banners/bars (e.g. 1500x74)
+    _MAX_NOISE_COLORS = 4     # images with ≤4 unique colors are decorative
 
     @staticmethod
-    def _is_solid_color(data: bytes) -> bool:
-        """Return True if the image is a single solid color (white, black, etc.)."""
+    def _is_noise_image(data: bytes) -> bool:
+        """Return True if image is noise: solid color, near-solid, or extreme aspect ratio."""
         try:
             from PIL import Image as PILImage
             import io
             img = PILImage.open(io.BytesIO(data))
-            # Sample up to 256 colors; solid images have exactly 1
-            colors = img.getcolors(maxcolors=2)
-            if colors is not None and len(colors) <= 1:
+            w, h = img.size
+
+            # Extreme aspect ratio — banners, header/footer bars
+            if w > 0 and h > 0:
+                ratio = max(w / h, h / w)
+                if ratio > RepoBuilder._MAX_ASPECT_RATIO:
+                    return True
+
+            # Very few unique colors — solid or near-solid (decorative elements)
+            colors = img.getcolors(maxcolors=RepoBuilder._MAX_NOISE_COLORS + 1)
+            if colors is not None and len(colors) <= RepoBuilder._MAX_NOISE_COLORS:
                 return True
+
             return False
         except Exception:
             return False
@@ -1497,7 +1507,7 @@ unit: {entry.tags}
                     if w < self._MIN_IMG_DIMENSION or h < self._MIN_IMG_DIMENSION:
                         continue
                     # Skip solid-color images (all white, all black, etc.)
-                    if self._is_solid_color(data):
+                    if self._is_noise_image(data):
                         continue
 
                     ext = image.get("ext", "png")

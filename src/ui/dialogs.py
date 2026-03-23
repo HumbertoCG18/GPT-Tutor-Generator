@@ -1085,27 +1085,51 @@ class BacklogEntryEditDialog(tk.Toplevel):
         nb.add(tab_imgs, text="  Imagens  ")
         self._build_images_tab(tab_imgs, p)
 
+    _IMG_EXTS = ("*.png", "*.jpg", "*.jpeg", "*.webp", "*.bmp")
+
     def _build_images_tab(self, parent, p):
         """Build the extracted images gallery tab."""
         self._img_refs = []  # keep references to prevent GC
 
-        # Collect images from staging/assets/images/<entry_id>/
+        # Collect images — prefer inline-images (referenced in MD), fallback to extracted
         images_found: List[Path] = []
         if self._repo_dir:
-            images_dir = self._data.get("images_dir")
-            if images_dir:
-                d = self._repo_dir / images_dir
-                if d.exists():
-                    for ext in ("*.png", "*.jpg", "*.jpeg", "*.webp", "*.bmp"):
-                        images_found.extend(d.glob(ext))
-            # Also check inline-images from pymupdf4llm
             entry_id = self._data.get("id", "")
+            # 1) inline-images from pymupdf4llm (these are the ones in the markdown)
             if entry_id:
                 inline_dir = self._repo_dir / "staging" / "assets" / "inline-images" / entry_id
                 if inline_dir.exists():
-                    for ext in ("*.png", "*.jpg", "*.jpeg", "*.webp", "*.bmp"):
+                    for ext in self._IMG_EXTS:
                         images_found.extend(inline_dir.glob(ext))
+            # 2) Only add extract_images if no inline-images found (avoid duplicates)
+            if not images_found:
+                images_dir = self._data.get("images_dir")
+                if images_dir:
+                    d = self._repo_dir / images_dir
+                    if d.exists():
+                        for ext in self._IMG_EXTS:
+                            images_found.extend(d.glob(ext))
         images_found.sort(key=lambda x: x.name)
+
+        # Filter noise images (too small, solid color, extreme aspect ratio)
+        def _is_useful(img_path: Path) -> bool:
+            if img_path.stat().st_size < 2000:
+                return False
+            try:
+                from PIL import Image as PILImage
+                img = PILImage.open(img_path)
+                w, h = img.size
+                if w < 20 or h < 20:
+                    return False
+                if max(w / h, h / w) > 8.0:
+                    return False
+                colors = img.getcolors(maxcolors=5)
+                if colors is not None and len(colors) <= 4:
+                    return False
+            except Exception:
+                return False
+            return True
+        images_found = [f for f in images_found if _is_useful(f)]
 
         # Header with count
         hdr = tk.Frame(parent, bg=p["bg"])
