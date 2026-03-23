@@ -742,6 +742,10 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         thousands of staging assets.
         """
         images_dir = self.root_dir / "content" / "images"
+
+        # Clean previous resolved images to avoid stale/duplicate files
+        if images_dir.exists():
+            shutil.rmtree(images_dir)
         ensure_dir(images_dir)
 
         # Directories to scan for markdowns that the tutor will read
@@ -757,6 +761,9 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             if not scan_dir.exists():
                 continue
             for md_file in scan_dir.rglob("*.md"):
+                # Skip markdowns inside content/images/ itself
+                if images_dir in md_file.parents:
+                    continue
                 try:
                     text = md_file.read_text(encoding="utf-8")
                 except Exception:
@@ -767,9 +774,17 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
                     alt = match.group(1)
                     raw_path = match.group(2)
 
+                    # Skip references already pointing to content/images/
+                    if "content/images/" in raw_path.replace("\\", "/"):
+                        continue
+
                     # Resolve the image file
                     img_path = self._find_image(raw_path, md_file)
                     if img_path is None or not img_path.exists():
+                        continue
+
+                    # Skip noise images (too small to be meaningful)
+                    if img_path.stat().st_size < self._MIN_IMG_BYTES:
                         continue
 
                     img_key = str(img_path)
@@ -1429,9 +1444,14 @@ unit: {entry.tags}
             payload["error"] = result.error
         self.logs.append(payload)
 
+    # Minimum thresholds to skip noise images (tiny icons, black rects, etc.)
+    _MIN_IMG_BYTES = 2000     # < 2 KB is almost always an artifact
+    _MIN_IMG_DIMENSION = 20   # width or height < 20px
+
     def _extract_pdf_images(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
         ensure_dir(out_dir)
         doc = pymupdf.open(str(pdf_path))
+        seen_xrefs: set = set()  # deduplicate images that appear on multiple pages
         try:
             target_pages = pages or list(range(doc.page_count))
             count = 0
@@ -1441,11 +1461,25 @@ unit: {entry.tags}
                 page = doc[page_num]
                 for img_idx, img in enumerate(page.get_images(full=True), start=1):
                     xref = img[0]
+                    if xref in seen_xrefs:
+                        continue
+                    seen_xrefs.add(xref)
+
                     image = doc.extract_image(xref)
                     if not image or "image" not in image:
                         continue
-                    ext = image.get("ext", "png")
+
                     data = image["image"]
+                    w = image.get("width", 0)
+                    h = image.get("height", 0)
+
+                    # Skip noise: too small or too few bytes
+                    if len(data) < self._MIN_IMG_BYTES:
+                        continue
+                    if w < self._MIN_IMG_DIMENSION or h < self._MIN_IMG_DIMENSION:
+                        continue
+
+                    ext = image.get("ext", "png")
                     fname = out_dir / f"page-{page_num + 1:03d}-img-{img_idx:02d}.{ext}"
                     fname.write_bytes(data)
                     count += 1
