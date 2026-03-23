@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import logging
 from pathlib import Path
+from typing import List
 from PIL import Image, ImageTk
 
 from src.utils.helpers import HAS_PYMUPDF
@@ -384,6 +385,93 @@ class CuratorStudio(tk.Toplevel):
                 lbl.pack(pady=5, padx=5)
             except Exception as e:
                 logger.error("Erro ao carregar preview %s: %s", img_path, e)
+                
+    def _repo_relative(self, path: Path) -> str:
+        """Converte um Path absoluto para caminho relativo ao repositório."""
+        try:
+            return str(path.relative_to(self.repo_dir)).replace("\\", "/")
+        except Exception:
+            return str(path).replace("\\", "/")
+
+    def _update_manifest_for_approval(self, fm: dict, dest_path: Path, deleted_paths: List[Path]):
+        """
+        Atualiza o manifest.json após aprovação no Curator Studio.
+
+        Regras:
+        - grava o markdown final aprovado em approved_markdown e curated_markdown
+        - limpa ponteiros antigos que foram apagados
+        - preserva raw_target/source_path
+        - adiciona log de aprovação
+        """
+        entry_id = fm.get("id")
+        if not entry_id:
+            logger.warning("Approve manifest sync: frontmatter sem id.")
+            return
+
+        manifest_path = self.repo_dir / "manifest.json"
+        if not manifest_path.exists():
+            logger.warning("Approve manifest sync: manifest.json não encontrado em %s", manifest_path)
+            return
+
+        try:
+            import json
+            from datetime import datetime
+
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            entries = manifest.get("entries", [])
+            target = next((e for e in entries if e.get("id") == entry_id), None)
+            if not target:
+                logger.warning("Approve manifest sync: entry %s não encontrada no manifest.", entry_id)
+                return
+
+            approved_rel = self._repo_relative(dest_path)
+            approved_source_rel = None
+            if self._current_content_path:
+                approved_source_rel = self._repo_relative(self._current_content_path)
+
+            deleted_rel_set = set()
+            for p in deleted_paths:
+                try:
+                    deleted_rel_set.add(self._repo_relative(p))
+                except Exception:
+                    pass
+
+            # Campo novo e explícito para o backlog / viewers
+            target["approved_markdown"] = approved_rel
+            target["curated_markdown"] = approved_rel
+            target["approved_source_markdown"] = approved_source_rel
+            target["approved_at"] = datetime.now().isoformat(timespec="seconds")
+            target["review_status"] = "approved"
+
+            # Limpa ponteiros antigos se eles foram apagados ou não existem mais
+            for key in ("base_markdown", "advanced_markdown", "manual_review"):
+                val = target.get(key)
+                if not val:
+                    continue
+
+                abs_old = (self.repo_dir / val)
+                was_deleted = val in deleted_rel_set
+                if was_deleted or not abs_old.exists():
+                    target[key] = None
+
+            manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+            manifest.setdefault("logs", []).append({
+                "entry": entry_id,
+                "step": "curator_approve",
+                "status": "ok",
+                "approved_markdown": approved_rel,
+                "approved_source_markdown": approved_source_rel,
+                "category": fm.get("category", ""),
+            })
+
+            manifest_path.write_text(
+                json.dumps(manifest, indent=2, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            logger.info("Approve manifest sync: entry %s atualizada com approved_markdown=%s", entry_id, approved_rel)
+
+        except Exception as e:
+            logger.warning("Approve manifest sync falhou para entry %s: %s", entry_id, e)
 
     def _lookup_raw_target(self, entry_id: str):
         """Look up raw_target from manifest.json for a given entry id."""
@@ -439,7 +527,6 @@ class CuratorStudio(tk.Toplevel):
         file_id = fm.get("id", self.current_md_path.stem)
         dest_path = dest_dir / f"{file_id}.md"
 
-        # Confirm
         msg = (
             f"Aprovar e copiar para:\n"
             f"  {dest_label}{file_id}.md\n\n"
@@ -476,7 +563,6 @@ class CuratorStudio(tk.Toplevel):
             messagebox.showerror("Erro", f"Erro ao copiar: {e}")
             return
 
-        # ── Cleanup: delete all OTHER source files ────────────────────
         approved_path = self._current_content_path.resolve()
         files_to_delete = []
 
@@ -507,8 +593,10 @@ class CuratorStudio(tk.Toplevel):
             except Exception as e:
                 logger.warning("Approve cleanup: failed to delete %s: %s", f, e)
 
-        # ── Remove entry from file list ───────────────────────────────
-        # Find the index of the current review template in the list
+        # Atualiza manifest.json para refletir a aprovação
+        self._update_manifest_for_approval(fm, dest_path, files_to_delete)
+
+        # Remove entry from file list
         try:
             list_idx = self.file_paths.index(self.current_md_path)
             self.file_paths.pop(list_idx)
@@ -516,7 +604,7 @@ class CuratorStudio(tk.Toplevel):
         except ValueError:
             pass
 
-        # ── Reset editor state ────────────────────────────────────────
+        # Reset editor state
         self.editor.delete("1.0", tk.END)
         self.editor.edit_modified(False)
         self.current_md_path = None
@@ -532,6 +620,5 @@ class CuratorStudio(tk.Toplevel):
             widget.destroy()
         self.preview_images.clear()
 
-        # Status
         cleanup_msg = f" | Removidos: {', '.join(deleted)}" if deleted else ""
         self.status_var.set(f"✅ Aprovado → {dest_label}{file_id}.md{cleanup_msg}")

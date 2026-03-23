@@ -984,6 +984,9 @@ class BacklogEntryEditDialog(tk.Toplevel):
         self._repo_dir = Path(repo_dir) if repo_dir else None
         self._theme_mgr = theme_mgr
         self.result_data: Optional[dict] = None
+        self.result_data: Optional[dict] = None
+        self._current_md_source_path: Optional[Path] = None
+        self._current_md_source_pdf: Optional[str] = None
 
         self.title("✏  Editar entrada do Backlog")
         self.geometry("900x600")
@@ -1077,39 +1080,113 @@ class BacklogEntryEditDialog(tk.Toplevel):
         nb.add(tab_md, text="  Visualização MD  ")
         self._build_md_tab(tab_md, p)
 
+    def _parse_md_frontmatter(self, fpath: Path) -> Dict[str, str]:
+        """Parse simples do frontmatter YAML do markdown selecionado."""
+        try:
+            content = fpath.read_text("utf-8", errors="replace")
+        except Exception:
+            return {}
+
+        lines = content.splitlines()
+        if not lines or lines[0].strip() != "---":
+            return {}
+
+        fm: Dict[str, str] = {}
+        for line in lines[1:]:
+            if line.strip() == "---":
+                break
+            if ":" not in line:
+                continue
+            key, _, value = line.partition(":")
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if value.lower() in ("null", "none"):
+                value = ""
+            fm[key] = value
+        return fm
+
+    def _add_md_source(self, display: str, path: Path) -> None:
+        """Adiciona uma fonte MD ao combobox, evitando duplicatas."""
+        if not path.exists():
+            return
+
+        try:
+            candidate = path.resolve()
+        except Exception:
+            candidate = path
+
+        for existing in self._md_sources.values():
+            try:
+                if existing.resolve() == candidate:
+                    return
+            except Exception:
+                if existing == path:
+                    return
+
+        self._md_sources[display] = path
+
+    def _approved_md_candidates(self) -> List[Tuple[str, Path]]:
+        """
+        Retorna possíveis markdowns aprovados pelo Curator Studio.
+        O Curator copia o arquivo aprovado para uma pasta final, mas hoje
+        o manifest não é atualizado com esse novo caminho.
+        """
+        if not self._repo_dir:
+            return []
+
+        entry_id = self._data.get("id")
+        if not entry_id:
+            return []
+
+        candidates = [
+            ("Aprovado — content/curated", self._repo_dir / "content" / "curated" / f"{entry_id}.md"),
+            ("Aprovado — exercises/lists", self._repo_dir / "exercises" / "lists" / f"{entry_id}.md"),
+            ("Aprovado — exams/past-exams", self._repo_dir / "exams" / "past-exams" / f"{entry_id}.md"),
+        ]
+
+        return [(label, path) for label, path in candidates if path.exists()]
     def _build_md_tab(self, parent, p):
         """Build the markdown visualization tab with PDF button."""
         toolbar = tk.Frame(parent, bg=p["bg"])
         toolbar.pack(fill="x", pady=(0, 5))
 
-        # Source selector
         tk.Label(toolbar, text="Fonte:", bg=p["bg"], fg=p["fg"],
                  font=("Segoe UI", 9, "bold")).pack(side="left")
+
         self._md_source_var = tk.StringVar()
         self._md_source_combo = ttk.Combobox(
-            toolbar, textvariable=self._md_source_var,
-            state="readonly", width=50,
+            toolbar,
+            textvariable=self._md_source_var,
+            state="readonly",
+            width=50,
         )
         self._md_source_combo.pack(side="left", padx=5)
         self._md_source_combo.bind("<<ComboboxSelected>>", self._on_md_source_changed)
 
-        # PDF button
         ttk.Button(toolbar, text="📄 Ver PDF Original", command=self._open_pdf_viewer).pack(side="right", padx=5)
 
-        # Stats bar
         self._md_stats_var = tk.StringVar(value="")
         tk.Label(parent, textvariable=self._md_stats_var, bg=p["bg"], fg=p["muted"],
                  font=("Segoe UI", 9)).pack(anchor="w", pady=(0, 3))
 
-        # Text viewer
         viewer_frame = tk.Frame(parent, bg=p["bg"])
         viewer_frame.pack(fill="both", expand=True)
 
-        self._md_text = tk.Text(viewer_frame, wrap="word", font=("Consolas", 10), state="disabled",
-                                bg=p["input_bg"], fg=p["fg"], insertbackground=p["fg"],
-                                relief="flat", highlightthickness=1,
-                                highlightcolor=p["border"], highlightbackground=p["border"],
-                                selectbackground=p["select_bg"], selectforeground=p["select_fg"])
+        self._md_text = tk.Text(
+            viewer_frame,
+            wrap="word",
+            font=("Consolas", 10),
+            state="disabled",
+            bg=p["input_bg"],
+            fg=p["fg"],
+            insertbackground=p["fg"],
+            relief="flat",
+            highlightthickness=1,
+            highlightcolor=p["border"],
+            highlightbackground=p["border"],
+            selectbackground=p["select_bg"],
+            selectforeground=p["select_fg"],
+        )
         scroll = ttk.Scrollbar(viewer_frame, orient="vertical", command=self._md_text.yview)
         self._md_text.configure(yscrollcommand=scroll.set)
         self._md_text.pack(side="left", fill="both", expand=True)
@@ -1122,21 +1199,46 @@ class BacklogEntryEditDialog(tk.Toplevel):
 
         # Populate sources
         self._md_sources: Dict[str, Path] = {}
+
         if self._repo_dir:
-            for key, label in [("base_markdown", "Base"), ("advanced_markdown", "Avançado"), ("manual_review", "Revisão")]:
+            # 1) Primeiro tenta arquivos já aprovados pelo Curator Studio
+            for label, path in self._approved_md_candidates():
+                self._add_md_source(f"{label} ({path.name})", path)
+
+            # 2) Depois tenta as fontes clássicas do manifest
+            for key, label in [
+                ("base_markdown", "Base"),
+                ("advanced_markdown", "Avançado"),
+                ("manual_review", "Revisão"),
+            ]:
                 val = self._data.get(key)
-                if val:
-                    path = self._repo_dir / val
-                    if path.exists():
-                        backend = self._data.get("base_backend" if "base" in key else "advanced_backend", "")
-                        display = f"{label} — {backend} ({path.name})" if backend else f"{label} ({path.name})"
-                        self._md_sources[display] = path
+                if not val:
+                    continue
+
+                path = self._repo_dir / val
+                if not path.exists():
+                    continue
+
+                if key == "base_markdown":
+                    backend = self._data.get("base_backend", "")
+                elif key == "advanced_markdown":
+                    backend = self._data.get("advanced_backend", "")
+                else:
+                    backend = ""
+
+                display = f"{label} — {backend} ({path.name})" if backend else f"{label} ({path.name})"
+                self._add_md_source(display, path)
 
         self._md_source_combo["values"] = list(self._md_sources.keys())
+
         if self._md_sources:
             first = list(self._md_sources.keys())[0]
             self._md_source_var.set(first)
             self._load_md_content(self._md_sources[first])
+        else:
+            self._current_md_source_path = None
+            self._current_md_source_pdf = None
+            self._md_stats_var.set("Nenhum markdown disponível para esta entrada.")
 
     def _on_md_source_changed(self, _event=None):
         name = self._md_source_var.get()
@@ -1144,6 +1246,10 @@ class BacklogEntryEditDialog(tk.Toplevel):
             self._load_md_content(self._md_sources[name])
 
     def _load_md_content(self, fpath: Path):
+        self._current_md_source_path = fpath
+        fm = self._parse_md_frontmatter(fpath)
+        self._current_md_source_pdf = fm.get("source_pdf") or self._data.get("raw_target")
+
         try:
             content = fpath.read_text("utf-8", errors="replace")
         except Exception as e:
@@ -1153,9 +1259,10 @@ class BacklogEntryEditDialog(tk.Toplevel):
         latex_count = content.count("$")
         latex_blocks = content.count("$$")
         img_refs = content.count("![")
+
         self._md_stats_var.set(
             f"{len(lines)} linhas  |  "
-            f"LaTeX inline: ~{latex_count - latex_blocks*2}  |  "
+            f"LaTeX inline: ~{latex_count - latex_blocks * 2}  |  "
             f"LaTeX blocos: {latex_blocks}  |  "
             f"Imagens: {img_refs}"
         )
@@ -1181,18 +1288,23 @@ class BacklogEntryEditDialog(tk.Toplevel):
         self._md_text.configure(state="disabled")
 
     def _open_pdf_viewer(self):
-        """Open the source PDF in the system's default PDF viewer."""
+        """Open the original PDF associated with the currently selected markdown source."""
         if not self._repo_dir:
             return
-        raw_target = self._data.get("raw_target")
+
+        raw_target = self._current_md_source_pdf or self._data.get("raw_target")
         if not raw_target:
             messagebox.showinfo("PDF", "Nenhum PDF original associado a esta entrada.")
             return
-        pdf_path = self._repo_dir / raw_target
+
+        pdf_path = Path(raw_target)
+        if not pdf_path.is_absolute():
+            pdf_path = self._repo_dir / raw_target
+
         if not pdf_path.exists():
             messagebox.showinfo("PDF", f"Arquivo não encontrado:\n{pdf_path}")
             return
-        import os
+
         os.startfile(str(pdf_path))
 
     def _on_save(self):
