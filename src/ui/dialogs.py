@@ -1348,6 +1348,7 @@ class FileEntryDialog(simpledialog.Dialog):
     def __init__(self, parent, path: str, initial: Optional[FileEntry] = None,
                  default_mode: str = "auto", default_ocr_language: str = DEFAULT_OCR_LANGUAGE,
                  file_type_hint: str = ""):
+        self._parent = parent
         self.path = path
         self.initial = initial
         self.default_mode = default_mode
@@ -1357,9 +1358,43 @@ class FileEntryDialog(simpledialog.Dialog):
         super().__init__(parent, title="Editar item")
 
     _FILE_TYPES = ["pdf", "image", "url", "code", "zip", "github-repo"]
+    
+    def _get_palette(self) -> Dict[str, str]:
+        theme_name = getattr(self._parent, "_theme_name", "dark")
+        return THEMES.get(theme_name, THEMES["dark"])
+
+    def buttonbox(self):
+        """Rodapé customizado no tema do app, substituindo o buttonbox branco do simpledialog."""
+        p = self._get_palette()
+
+        box = tk.Frame(self, bg=p["bg"], padx=12, pady=12)
+        box.pack(fill="x")
+
+        btn_cancel = ttk.Button(box, text="Cancel", command=self.cancel)
+        btn_cancel.pack(side="right", padx=(8, 0))
+
+        btn_ok = ttk.Button(box, text="OK", style="Accent.TButton", command=self.ok)
+        btn_ok.pack(side="right")
+
+        self.bind("<Return>", self.ok)
+        self.bind("<Escape>", self.cancel)
+
+        try:
+            btn_ok.focus_set()
+        except Exception:
+            pass
+    
+    
 
     def body(self, master):
+        p = self._get_palette()
+        self.configure(bg=p["bg"])
+        master.configure(bg=p["bg"])
+        self._theme_name = getattr(self._parent, "_theme_name", "dark")
+
         src = Path(self.path)
+        src = Path(self.path)
+        
         if self.initial:
             self.file_type = self.initial.file_type
         elif self.file_type_hint:
