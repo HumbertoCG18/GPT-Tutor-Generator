@@ -1080,6 +1080,93 @@ class BacklogEntryEditDialog(tk.Toplevel):
         nb.add(tab_md, text="  Visualização MD  ")
         self._build_md_tab(tab_md, p)
 
+        # ── Tab 3: Imagens Extraídas ──────────────────────────────────
+        tab_imgs = tk.Frame(nb, bg=p["bg"], padx=8, pady=5)
+        nb.add(tab_imgs, text="  Imagens  ")
+        self._build_images_tab(tab_imgs, p)
+
+    def _build_images_tab(self, parent, p):
+        """Build the extracted images gallery tab."""
+        self._img_refs = []  # keep references to prevent GC
+
+        # Collect images from staging/assets/images/<entry_id>/
+        images_found: List[Path] = []
+        if self._repo_dir:
+            images_dir = self._data.get("images_dir")
+            if images_dir:
+                d = self._repo_dir / images_dir
+                if d.exists():
+                    for ext in ("*.png", "*.jpg", "*.jpeg", "*.webp", "*.bmp"):
+                        images_found.extend(d.glob(ext))
+            # Also check inline-images from pymupdf4llm
+            entry_id = self._data.get("id", "")
+            if entry_id:
+                inline_dir = self._repo_dir / "staging" / "assets" / "inline-images" / entry_id
+                if inline_dir.exists():
+                    for ext in ("*.png", "*.jpg", "*.jpeg", "*.webp", "*.bmp"):
+                        images_found.extend(inline_dir.glob(ext))
+        images_found.sort(key=lambda x: x.name)
+
+        # Header with count
+        hdr = tk.Frame(parent, bg=p["bg"])
+        hdr.pack(fill="x", pady=(0, 5))
+        tk.Label(hdr, text=f"{len(images_found)} imagem(ns) extraída(s)",
+                 bg=p["bg"], fg=p["muted"], font=("Segoe UI", 9)).pack(side="left")
+
+        if not images_found:
+            tk.Label(parent, text="Nenhuma imagem extraída para este arquivo.",
+                     bg=p["bg"], fg=p["muted"], font=("Segoe UI", 10)).pack(pady=30)
+            return
+
+        # Scrollable canvas
+        canvas = tk.Canvas(parent, bg=p["bg"], highlightthickness=0)
+        scroll = ttk.Scrollbar(parent, orient="vertical", command=canvas.yview)
+        canvas.configure(yscrollcommand=scroll.set)
+        scroll.pack(side="right", fill="y")
+        canvas.pack(side="left", fill="both", expand=True)
+
+        inner = tk.Frame(canvas, bg=p["bg"])
+        canvas_win = canvas.create_window((0, 0), window=inner, anchor="nw")
+        inner.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.bind("<Configure>", lambda e: canvas.itemconfig(canvas_win, width=e.width))
+
+        def _on_mousewheel(event):
+            try:
+                canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+            except tk.TclError:
+                pass
+        canvas.bind("<Enter>", lambda e: canvas.bind_all("<MouseWheel>", _on_mousewheel))
+        canvas.bind("<Leave>", lambda e: canvas.unbind_all("<MouseWheel>"))
+
+        # Render images in a grid (2 columns)
+        target_width = 380
+        col_count = 2
+        for idx, img_path in enumerate(images_found):
+            try:
+                from PIL import Image as PILImage, ImageTk as PILImageTk
+                pil_img = PILImage.open(img_path)
+                w, h = pil_img.size
+                new_w = min(target_width, w)
+                new_h = int(new_w * (h / w))
+                pil_img = pil_img.resize((new_w, new_h), PILImage.Resampling.LANCZOS)
+                tk_img = PILImageTk.PhotoImage(pil_img)
+                self._img_refs.append(tk_img)
+
+                row = idx // col_count
+                col = idx % col_count
+
+                frame = tk.Frame(inner, bg=p["input_bg"], padx=4, pady=4)
+                frame.grid(row=row * 2, column=col, padx=6, pady=6, sticky="n")
+
+                lbl_img = tk.Label(frame, image=tk_img, bg=p["input_bg"])
+                lbl_img.pack()
+
+                lbl_name = tk.Label(frame, text=img_path.name, bg=p["input_bg"], fg=p["muted"],
+                                    font=("Consolas", 8), wraplength=target_width)
+                lbl_name.pack(pady=(2, 0))
+            except Exception:
+                pass
+
     def _parse_md_frontmatter(self, fpath: Path) -> Dict[str, str]:
         """Parse simples do frontmatter YAML do markdown selecionado."""
         try:
