@@ -573,8 +573,42 @@ class App(tk.Tk):
             page_range=page_range,
         )
 
+    def _get_backlog_sources(self) -> set:
+        """Return set of source filenames already in the manifest (backlog)."""
+        manifest_path = self._manifest_path()
+        if not manifest_path:
+            return set()
+        try:
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            return {Path(e.get("source_path", "")).name for e in data.get("entries", []) if e.get("source_path")}
+        except Exception:
+            return set()
+
+    def _warn_if_in_backlog(self, paths) -> list:
+        """Filter paths, warning about files already in backlog. Returns paths to add."""
+        backlog_names = self._get_backlog_sources()
+        if not backlog_names:
+            return list(paths)
+
+        to_add = []
+        for path in paths:
+            fname = Path(path).name
+            if fname in backlog_names:
+                if not messagebox.askyesno(
+                    APP_NAME,
+                    f"O arquivo '{fname}' já está no backlog (já processado).\n\n"
+                    "Deseja adicioná-lo à fila mesmo assim?"
+                ):
+                    continue
+            to_add.append(path)
+        return to_add
+
     def add_pdfs(self):
         paths = filedialog.askopenfilenames(title="Selecione PDFs", filetypes=[("PDF files", "*.pdf")])
+        if not paths:
+            return
+        paths = self._warn_if_in_backlog(paths)
         if self._quick_import.get():
             for path in paths:
                 self.entries.append(self._quick_add_file(path))
@@ -601,6 +635,9 @@ class App(tk.Tk):
             title="Selecione imagens/fotos",
             filetypes=[("Images", "*.png *.jpg *.jpeg *.webp *.bmp *.tif *.tiff")],
         )
+        if not paths:
+            return
+        paths = self._warn_if_in_backlog(paths)
         if self._quick_import.get():
             for path in paths:
                 self.entries.append(self._quick_add_file(path, is_image=True))
@@ -638,6 +675,7 @@ class App(tk.Tk):
         )
         if not paths:
             return
+        paths = self._warn_if_in_backlog(paths)
         for path in paths:
             src = Path(path)
             ft  = "zip" if src.suffix.lower() == ".zip" else "code"

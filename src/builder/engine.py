@@ -1844,6 +1844,10 @@ unit: {entry.tags}
         write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
         self._write_source_registry(manifest)
         self._write_bundle_seed(manifest)
+
+        # Re-resolve content/images/ — clears stale images from removed entry
+        self._resolve_content_images()
+
         logger.info("Unprocessed entry %s (%d files removed)", entry_id, removed_count)
         return True
 
