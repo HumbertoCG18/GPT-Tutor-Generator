@@ -783,8 +783,10 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
                     if img_path is None or not img_path.exists():
                         continue
 
-                    # Skip noise images (too small to be meaningful)
+                    # Skip noise images (too small or solid color)
                     if img_path.stat().st_size < self._MIN_IMG_BYTES:
+                        continue
+                    if self._is_solid_color(img_path.read_bytes()):
                         continue
 
                     img_key = str(img_path)
@@ -1444,9 +1446,25 @@ unit: {entry.tags}
             payload["error"] = result.error
         self.logs.append(payload)
 
-    # Minimum thresholds to skip noise images (tiny icons, black rects, etc.)
+    # Minimum thresholds to skip noise images (tiny icons, solid-color rects, etc.)
     _MIN_IMG_BYTES = 2000     # < 2 KB is almost always an artifact
     _MIN_IMG_DIMENSION = 20   # width or height < 20px
+    _MIN_UNIQUE_COLORS = 2    # solid-color images (all white, all black) are noise
+
+    @staticmethod
+    def _is_solid_color(data: bytes) -> bool:
+        """Return True if the image is a single solid color (white, black, etc.)."""
+        try:
+            from PIL import Image as PILImage
+            import io
+            img = PILImage.open(io.BytesIO(data))
+            # Sample up to 256 colors; solid images have exactly 1
+            colors = img.getcolors(maxcolors=2)
+            if colors is not None and len(colors) <= 1:
+                return True
+            return False
+        except Exception:
+            return False
 
     def _extract_pdf_images(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
         ensure_dir(out_dir)
@@ -1477,6 +1495,9 @@ unit: {entry.tags}
                     if len(data) < self._MIN_IMG_BYTES:
                         continue
                     if w < self._MIN_IMG_DIMENSION or h < self._MIN_IMG_DIMENSION:
+                        continue
+                    # Skip solid-color images (all white, all black, etc.)
+                    if self._is_solid_color(data):
                         continue
 
                     ext = image.get("ext", "png")
