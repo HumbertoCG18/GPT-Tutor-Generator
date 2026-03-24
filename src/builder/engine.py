@@ -385,6 +385,74 @@ def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext"):
     return returncode, stdout_lines, stderr_lines
 
 
+_MARKER_CAPABILITIES_CACHE = None
+
+
+def _detect_marker_capabilities() -> Dict[str, object]:
+    """
+    Detecta quais flags a versão instalada do Marker suporta.
+
+    Resultado esperado:
+    {
+        "page_range_flag": "--page_range" | "--page-range" | None,
+        "force_ocr_flag": "--force_ocr" | "--force-ocr" | None,
+        "language_flag": "--languages" | "--language" | "--lang" | "--langs" | None,
+    }
+    """
+    global _MARKER_CAPABILITIES_CACHE
+
+    if _MARKER_CAPABILITIES_CACHE is not None:
+        return dict(_MARKER_CAPABILITIES_CACHE)
+
+    caps = {
+        "page_range_flag": "--page_range",
+        "force_ocr_flag": "--force_ocr",
+        "language_flag": None,
+    }
+
+    if not MARKER_CLI:
+        _MARKER_CAPABILITIES_CACHE = dict(caps)
+        return dict(caps)
+
+    try:
+        proc = subprocess.run(
+            [MARKER_CLI, "--help"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        help_text = ((proc.stdout or "") + "\n" + (proc.stderr or "")).lower()
+    except Exception as e:
+        logger.warning("  [marker] Não foi possível inspecionar --help: %s", e)
+        _MARKER_CAPABILITIES_CACHE = dict(caps)
+        return dict(caps)
+
+    # Page range
+    if "--page-range" in help_text:
+        caps["page_range_flag"] = "--page-range"
+    elif "--page_range" in help_text:
+        caps["page_range_flag"] = "--page_range"
+    else:
+        caps["page_range_flag"] = None
+
+    # Force OCR
+    if "--force-ocr" in help_text:
+        caps["force_ocr_flag"] = "--force-ocr"
+    elif "--force_ocr" in help_text:
+        caps["force_ocr_flag"] = "--force_ocr"
+    else:
+        caps["force_ocr_flag"] = None
+
+    # OCR language flag
+    for candidate in ("--languages", "--language", "--langs", "--lang"):
+        if candidate in help_text:
+            caps["language_flag"] = candidate
+            break
+
+    _MARKER_CAPABILITIES_CACHE = dict(caps)
+    logger.info("  [marker] Capabilities detectadas: %s", caps)
+    return dict(caps)
+
 class DoclingCLIBackend(ExtractionBackend):
     name = "docling"
     layer = "advanced"
@@ -476,6 +544,8 @@ class MarkerCLIBackend(ExtractionBackend):
         out_dir = ctx.root_dir / "staging" / "markdown-auto" / "marker" / ctx.entry_id
         ensure_dir(out_dir)
 
+        caps = _detect_marker_capabilities()
+
         cmd = [
             MARKER_CLI,
             str(ctx.raw_target),
@@ -484,15 +554,25 @@ class MarkerCLIBackend(ExtractionBackend):
         ]
 
         marker_range = pages_to_marker_range(ctx.pages)
-        if marker_range:
-            cmd.extend(["--page_range", marker_range])
-        if ctx.entry.force_ocr or ctx.entry.formula_priority or ctx.report.suspected_scan:
-            cmd.append("--force_ocr")
+        page_range_flag = caps.get("page_range_flag")
+        if marker_range and page_range_flag:
+            cmd.extend([page_range_flag, marker_range])
+        elif marker_range:
+            logger.info("  [marker] Versão atual não suporta page_range; processando o documento inteiro.")
 
-        # Pass OCR language to improve recognition accuracy
+        wants_force_ocr = ctx.entry.force_ocr or ctx.entry.formula_priority or ctx.report.suspected_scan
+        force_ocr_flag = caps.get("force_ocr_flag")
+        if wants_force_ocr and force_ocr_flag:
+            cmd.append(force_ocr_flag)
+        elif wants_force_ocr:
+            logger.info("  [marker] Versão atual não suporta force_ocr; prosseguindo sem essa flag.")
+
         ocr_lang = getattr(ctx.entry, "ocr_language", None)
-        if ocr_lang and ocr_lang.strip():
-            cmd.extend(["--languages", ocr_lang.strip()])
+        language_flag = caps.get("language_flag")
+        if language_flag and ocr_lang and ocr_lang.strip():
+            cmd.extend([language_flag, ocr_lang.strip()])
+        elif ocr_lang and ocr_lang.strip():
+            logger.info("  [marker] Versão atual não suporta flag de idioma OCR; ignorando ocr_language=%s", ocr_lang)
 
         logger.info("  [marker] Comando: %s", " ".join(cmd))
         logger.info("  [marker] Iniciando processo...")
@@ -529,6 +609,7 @@ class MarkerCLIBackend(ExtractionBackend):
             "command": cmd,
             "stdout_tail": stdout_text[-2000:],
             "stderr_tail": stderr_text[-2000:],
+            "capabilities": caps,
         }, indent=2, ensure_ascii=False))
 
         return BackendRunResult(
