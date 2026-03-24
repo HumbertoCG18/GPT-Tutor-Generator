@@ -884,13 +884,15 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         )
 
         # ── System files ─────────────────────────────────────────────
-        write_text(self.root_dir / "system" / "PDF_CURATION_GUIDE.md", pdf_curation_guide())
-        write_text(self.root_dir / "system" / "BACKEND_ARCHITECTURE.md", backend_architecture_md())
-        write_text(self.root_dir / "system" / "BACKEND_POLICY.yaml", backend_policy_yaml(self.options))
         write_text(self.root_dir / "system" / "TUTOR_POLICY.md", tutor_policy_md())
         write_text(self.root_dir / "system" / "PEDAGOGY.md", pedagogy_md())
         write_text(self.root_dir / "system" / "MODES.md", modes_md())
         write_text(self.root_dir / "system" / "OUTPUT_TEMPLATES.md", output_templates_md())
+
+        # ── Documentação interna do app — fica em build/, não no repo do tutor
+        write_text(self.root_dir / "build" / "PDF_CURATION_GUIDE.md", pdf_curation_guide())
+        write_text(self.root_dir / "build" / "BACKEND_ARCHITECTURE.md", backend_architecture_md())
+        write_text(self.root_dir / "build" / "BACKEND_POLICY.yaml", backend_policy_yaml(self.options))
 
         # ── Course files ─────────────────────────────────────────────
         write_text(self.root_dir / "course" / "COURSE_MAP.md",
@@ -901,7 +903,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         # ── Student files ─────────────────────────────────────────────
         write_text(self.root_dir / "student" / "STUDENT_STATE.md",
                    student_state_md(self.course_meta, self.student_profile))
-        write_text(self.root_dir / "student" / "PROGRESS_SCHEMA.md", progress_schema_md())
+        write_text(self.root_dir / "build" / "PROGRESS_SCHEMA.md", progress_schema_md())
 
         # ── Student profile ───────────────────────────────────────────
         if self.student_profile:
@@ -977,6 +979,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in self.entries),
             has_code=any(e.category in CODE_CATEGORIES for e in self.entries),
             has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in self.entries),
+            first_session_pending=self._first_session_pending(),
         )
         write_text(self.root_dir / "INSTRUCOES_CLAUDE_PROJETO.md", instructions)
 
@@ -1340,6 +1343,17 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             return n
         except Exception:
             return 0
+
+    def _first_session_pending(self) -> bool:
+        """Retorna True se FILE_MAP.md ainda tem status: pending_review."""
+        file_map_path = self.root_dir / "course" / "FILE_MAP.md"
+        if not file_map_path.exists():
+            return True
+        try:
+            content = file_map_path.read_text(encoding="utf-8")
+            return "status: pending_review" in content
+        except Exception:
+            return True
 
     def _apply_math_normalization(self, md_rel_path: Optional[str]) -> None:
         """Read a generated markdown file and normalize Unicode math → LaTeX."""
@@ -2132,7 +2146,7 @@ unit: {entry.tags}
         else:
             write_text(state_path,
                        student_state_md(self.course_meta, self.student_profile))
-        progress_path = self.root_dir / "student" / "PROGRESS_SCHEMA.md"
+        progress_path = self.root_dir / "build" / "PROGRESS_SCHEMA.md"
         if not progress_path.exists():
             write_text(progress_path, progress_schema_md())
 
@@ -2149,6 +2163,21 @@ unit: {entry.tags}
         Garante que COURSE_MAP, GLOSSARY, indexes e system prompt estejam
         sincronizados com o conjunto atual de entries.
         """
+        # Limpa arquivos internos que foram movidos para build/ em versões anteriores
+        _stale_files = [
+            self.root_dir / "system" / "PDF_CURATION_GUIDE.md",
+            self.root_dir / "system" / "BACKEND_ARCHITECTURE.md",
+            self.root_dir / "system" / "BACKEND_POLICY.yaml",
+            self.root_dir / "student" / "PROGRESS_SCHEMA.md",
+        ]
+        for stale in _stale_files:
+            if stale.exists():
+                try:
+                    stale.unlink()
+                    logger.info("Removido arquivo obsoleto: %s", stale)
+                except Exception as e:
+                    logger.warning("Falha ao remover %s: %s", stale, e)
+
         try:
             all_entries = [FileEntry.from_dict(e) for e in manifest.get("entries", [])]
         except Exception:
@@ -2161,6 +2190,7 @@ unit: {entry.tags}
                        has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in all_entries),
                        has_code=any(e.category in CODE_CATEGORIES for e in all_entries),
                        has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in all_entries),
+                       first_session_pending=self._first_session_pending(),
                    ))
 
         # Course map (com timeline cronograma × unidades)
@@ -2223,7 +2253,7 @@ unit: {entry.tags}
         state_path = self.root_dir / "student" / "STUDENT_STATE.md"
         if not state_path.exists():
             write_text(state_path, student_state_md(self.course_meta, self.student_profile))
-        progress_path = self.root_dir / "student" / "PROGRESS_SCHEMA.md"
+        progress_path = self.root_dir / "build" / "PROGRESS_SCHEMA.md"
         if not progress_path.exists():
             write_text(progress_path, progress_schema_md())
 
@@ -2285,6 +2315,10 @@ unit: {entry.tags}
 
         logger.info("Processing single entry: %s (%s)", entry.title, entry.file_type)
         item_result = self._process_entry(entry)
+        # TODO(token-optimization): adicionar etapa de limpeza pós-extração
+        # para remover ruído do pymupdf4llm (cabeçalhos repetidos, rodapés,
+        # numeração de página, linhas em branco excessivas).
+        # Estimativa: redução de ~25% no tamanho dos arquivos de content/.
         manifest["entries"].append(item_result)
         manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
         manifest.setdefault("logs", []).extend(self.logs)
@@ -2427,6 +2461,7 @@ def generate_claude_project_instructions(
     has_assignments: bool = False,
     has_code: bool = False,
     has_whiteboard: bool = False,
+    first_session_pending: bool = True,
 ) -> str:
     """
     Gera o system prompt no formato ideal para Claude Projects.
@@ -2474,6 +2509,42 @@ def generate_claude_project_instructions(
     if has_whiteboard:
         file_rows.append("| `whiteboard/` | Explicações do professor no quadro |")
     file_table = "\n".join(file_rows)
+
+    first_session_block = ""
+    if first_session_pending:
+        first_session_block = f"""
+## Protocolo de Primeira Sessão
+
+Quando o aluno abrir o **primeiro chat** deste Projeto (ou quando `course/FILE_MAP.md` tiver `status: pending_review`), execute este protocolo antes de qualquer outra coisa:
+
+**Mensagem de boas-vindas:**
+> "Olá {nick}! Sou seu tutor de {course_name}. Antes de começarmos a estudar, preciso organizar seus materiais. Vou analisar cada arquivo e mapear para a unidade correspondente do curso. Isso vai levar um momento."
+
+**Checklist de inicialização:**
+
+1. **Mapear arquivos → unidades**: Leia `course/FILE_MAP.md`. Para cada arquivo com a coluna "Unidade" vazia:
+   - Abra o arquivo Markdown referenciado na coluna "Markdown"
+   - Leia o conteúdo e identifique o(s) tópico(s) abordado(s)
+   - Cruze com as unidades em `course/COURSE_MAP.md`
+   - Se necessário, use `course/SYLLABUS.md` para identificar o período
+   - Preencha a coluna "Unidade" com o slug correto (ex: `unidade-01-métodos-formais`)
+   - Preencha "Tags" com informações adicionais relevantes (ex: `pré-P1`, `Dafny`, `laboratório`)
+
+2. **Preencher alta incidência em provas**: Se existirem provas em `exams/`, analise-as e preencha a seção "Tópicos de alta incidência em prova" em `course/COURSE_MAP.md`
+
+3. **Semear glossário**: Leia `course/GLOSSARY.md`. Para cada termo aguardando preenchimento, escreva uma definição baseada no material disponível
+
+4. **Apresentar resultado**: Mostre o FILE_MAP preenchido ao aluno em formato de tabela e peça confirmação
+
+5. **Confirmar com o aluno**: Após apresentar o FILE_MAP preenchido, diga ao aluno:
+   > "Mapeamento concluído. Você pode sincronizar com o GitHub rodando
+   > `git pull` na sua máquina para puxar as edições, e `git push` se
+   > quiser versionar o estado atual."
+
+**Pré-requisito de escrita:** Para que o tutor consiga editar os arquivos do Projeto (FILE_MAP, COURSE_MAP, GLOSSARY), o repositório GitHub deve estar conectado ao Projeto Claude com permissão de escrita. Se o aluno não habilitou isso, o tutor deve ditar as alterações e pedir ao aluno que cole manualmente nos arquivos.
+
+**Após a primeira sessão**, nas sessões seguintes, consulte `course/FILE_MAP.md` para saber qual arquivo pertence a qual unidade. Se o FILE_MAP tiver `status: pending_review`, execute o protocolo novamente.
+"""
 
     return f"""# Instruções do Tutor — {course_name}
 
@@ -2586,39 +2657,7 @@ git push
 ```
 
 Isso transforma anotações efêmeras em conhecimento permanente no repositório.
-
-## Protocolo de Primeira Sessão
-
-Quando o aluno abrir o **primeiro chat** deste Projeto (ou quando `course/FILE_MAP.md` tiver `status: pending_review`), execute este protocolo antes de qualquer outra coisa:
-
-**Mensagem de boas-vindas:**
-> "Olá {nick}! Sou seu tutor de {course_name}. Antes de começarmos a estudar, preciso organizar seus materiais. Vou analisar cada arquivo e mapear para a unidade correspondente do curso. Isso vai levar um momento."
-
-**Checklist de inicialização:**
-
-1. **Mapear arquivos → unidades**: Leia `course/FILE_MAP.md`. Para cada arquivo com a coluna "Unidade" vazia:
-   - Abra o arquivo Markdown referenciado na coluna "Markdown"
-   - Leia o conteúdo e identifique o(s) tópico(s) abordado(s)
-   - Cruze com as unidades em `course/COURSE_MAP.md`
-   - Se necessário, use `course/SYLLABUS.md` para identificar o período
-   - Preencha a coluna "Unidade" com o slug correto (ex: `unidade-01-métodos-formais`)
-   - Preencha "Tags" com informações adicionais relevantes (ex: `pré-P1`, `Dafny`, `laboratório`)
-
-2. **Preencher alta incidência em provas**: Se existirem provas em `exams/`, analise-as e preencha a seção "Tópicos de alta incidência em prova" em `course/COURSE_MAP.md`
-
-3. **Semear glossário**: Leia `course/GLOSSARY.md`. Para cada termo aguardando preenchimento, escreva uma definição baseada no material disponível
-
-4. **Apresentar resultado**: Mostre o FILE_MAP preenchido ao aluno em formato de tabela e peça confirmação
-
-5. **Confirmar com o aluno**: Após apresentar o FILE_MAP preenchido, diga ao aluno:
-   > "Mapeamento concluído. Você pode sincronizar com o GitHub rodando
-   > `git pull` na sua máquina para puxar as edições, e `git push` se
-   > quiser versionar o estado atual."
-
-**Pré-requisito de escrita:** Para que o tutor consiga editar os arquivos do Projeto (FILE_MAP, COURSE_MAP, GLOSSARY), o repositório GitHub deve estar conectado ao Projeto Claude com permissão de escrita. Se o aluno não habilitou isso, o tutor deve ditar as alterações e pedir ao aluno que cole manualmente nos arquivos.
-
-**Após a primeira sessão**, nas sessões seguintes, consulte `course/FILE_MAP.md` para saber qual arquivo pertence a qual unidade. Se o FILE_MAP tiver `status: pending_review`, execute o protocolo novamente.
-"""
+{first_session_block}"""
 
 
 # ---------------------------------------------------------------------------
