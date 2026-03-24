@@ -34,17 +34,146 @@ if HAS_PDFPLUMBER:
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
+# Unicode math → LaTeX normalization
+# ---------------------------------------------------------------------------
+
+# Mapa de símbolos Unicode matemáticos → comandos LaTeX.
+# Aplicado pós-extração para normalizar output de OCR/backends.
+_UNICODE_MATH_TO_LATEX = {
+    # Quantificadores e lógica
+    "∃": r"\exists", "∄": r"\nexists", "∀": r"\forall",
+    "∧": r"\land", "∨": r"\lor", "¬": r"\neg", "⊻": r"\oplus",
+    "⊢": r"\vdash", "⊣": r"\dashv", "⊨": r"\models",
+    "⊤": r"\top", "⊥": r"\bot",
+    "⇒": r"\Rightarrow", "⇐": r"\Leftarrow", "⇔": r"\Leftrightarrow",
+    "↔": r"\leftrightarrow", "↦": r"\mapsto",
+    # Teoria dos conjuntos
+    "∈": r"\in", "∉": r"\notin", "∋": r"\ni",
+    "⊂": r"\subset", "⊃": r"\supset",
+    "⊆": r"\subseteq", "⊇": r"\supseteq",
+    "⊄": r"\not\subset", "⊅": r"\not\supset",
+    "∪": r"\cup", "∩": r"\cap",
+    "∅": r"\emptyset", "∖": r"\setminus",
+    # Relações
+    "≤": r"\leq", "≥": r"\geq", "≠": r"\neq",
+    "≈": r"\approx", "≡": r"\equiv", "≅": r"\cong",
+    "∼": r"\sim", "≺": r"\prec", "≻": r"\succ",
+    "≪": r"\ll", "≫": r"\gg",
+    "≜": r"\triangleq", "≐": r"\doteq",
+    # Operadores
+    "×": r"\times", "÷": r"\div", "±": r"\pm", "∓": r"\mp",
+    "∘": r"\circ", "⊕": r"\oplus", "⊗": r"\otimes",
+    "⊙": r"\odot", "†": r"\dagger", "‡": r"\ddagger",
+    # Cálculo e análise
+    "∫": r"\int", "∬": r"\iint", "∭": r"\iiint",
+    "∂": r"\partial", "∇": r"\nabla",
+    "∑": r"\sum", "∏": r"\prod", "∐": r"\coprod",
+    "∞": r"\infty", "√": r"\sqrt",
+    "ℓ": r"\ell", "ℏ": r"\hbar", "ℜ": r"\Re", "ℑ": r"\Im",
+    # Letras gregas minúsculas
+    "α": r"\alpha", "β": r"\beta", "γ": r"\gamma", "δ": r"\delta",
+    "ε": r"\epsilon", "ζ": r"\zeta", "η": r"\eta", "θ": r"\theta",
+    "ι": r"\iota", "κ": r"\kappa", "λ": r"\lambda", "μ": r"\mu",
+    "ν": r"\nu", "ξ": r"\xi", "ρ": r"\rho", "σ": r"\sigma",
+    "τ": r"\tau", "υ": r"\upsilon", "φ": r"\phi", "χ": r"\chi",
+    "ψ": r"\psi", "ω": r"\omega", "ϵ": r"\varepsilon", "ϕ": r"\varphi",
+    "ϑ": r"\vartheta", "ϱ": r"\varrho", "ς": r"\varsigma",
+    # Letras gregas maiúsculas
+    "Γ": r"\Gamma", "Δ": r"\Delta", "Θ": r"\Theta", "Λ": r"\Lambda",
+    "Ξ": r"\Xi", "Π": r"\Pi", "Σ": r"\Sigma", "Υ": r"\Upsilon",
+    "Φ": r"\Phi", "Ψ": r"\Psi", "Ω": r"\Omega",
+    # Setas (apenas as inambíguas)
+    "⟶": r"\longrightarrow", "⟵": r"\longleftarrow",
+    "⟹": r"\Longrightarrow", "⟸": r"\Longleftarrow",
+    "↑": r"\uparrow", "↓": r"\downarrow",
+    "⟨": r"\langle", "⟩": r"\rangle",
+    # Miscelânea
+    "□": r"\square", "◇": r"\diamond", "△": r"\triangle",
+    "▽": r"\triangledown", "★": r"\star", "⋆": r"\star",
+    "⋅": r"\cdot", "…": r"\ldots", "⋯": r"\cdots", "⋮": r"\vdots",
+    "ℕ": r"\mathbb{N}", "ℤ": r"\mathbb{Z}", "ℚ": r"\mathbb{Q}",
+    "ℝ": r"\mathbb{R}", "ℂ": r"\mathbb{C}",
+}
+
+# Regex para encontrar regiões de math (inline e display)
+_MATH_INLINE_RE = re.compile(r"(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)", re.DOTALL)
+_MATH_DISPLAY_RE = re.compile(r"\$\$(.+?)\$\$", re.DOTALL)
+_MATH_PAREN_RE = re.compile(r"\\\((.+?)\\\)", re.DOTALL)
+_MATH_BRACKET_RE = re.compile(r"\\\[(.+?)\\\]", re.DOTALL)
+
+# Build regex para substituição — escapar caracteres regex-special
+_UNICODE_MATH_PATTERN = re.compile(
+    "|".join(re.escape(ch) for ch in sorted(_UNICODE_MATH_TO_LATEX.keys(), key=len, reverse=True))
+)
+
+
+def _normalize_unicode_math(text: str) -> str:
+    """Replace Unicode math symbols with LaTeX commands in a markdown string.
+
+    Strategy:
+    - Inside math delimiters ($...$, $$...$$, \\(...\\), \\[...\\]):
+      replace Unicode symbols with LaTeX commands (e.g., ∀ → \\forall)
+    - Outside math: wrap isolated Unicode math symbols with $...$
+    """
+    if not text:
+        return text
+
+    # Phase 1: Replace inside existing math regions
+    def _replace_in_math(m):
+        content = m.group(0)
+        return _UNICODE_MATH_PATTERN.sub(
+            lambda sym: _UNICODE_MATH_TO_LATEX.get(sym.group(0), sym.group(0)),
+            content,
+        )
+
+    for pattern in (_MATH_DISPLAY_RE, _MATH_INLINE_RE, _MATH_PAREN_RE, _MATH_BRACKET_RE):
+        text = pattern.sub(_replace_in_math, text)
+
+    # Phase 2: Wrap remaining Unicode math symbols outside of math delimiters.
+    # We split by math regions, process only non-math parts.
+    def _wrap_outside_math(text_str: str) -> str:
+        # Split on all math delimiters to identify non-math segments
+        math_regions = re.compile(
+            r"(\$\$.+?\$\$"          # display $$...$$
+            r"|(?<!\$)\$(?!\$).+?(?<!\$)\$(?!\$)"  # inline $...$
+            r"|\\\(.+?\\\)"          # \(...\)
+            r"|\\\[.+?\\\])",        # \[...\]
+            re.DOTALL,
+        )
+        parts = math_regions.split(text_str)
+        result = []
+        for i, part in enumerate(parts):
+            if i % 2 == 1:
+                # This is a math region — keep as-is
+                result.append(part)
+            else:
+                # Non-math — wrap isolated Unicode math symbols
+                part = _UNICODE_MATH_PATTERN.sub(
+                    lambda sym: f"${_UNICODE_MATH_TO_LATEX[sym.group(0)]}$",
+                    part,
+                )
+                result.append(part)
+        return "".join(result)
+
+    text = _wrap_outside_math(text)
+    return text
+
+
+# ---------------------------------------------------------------------------
 # Backend architecture
 # ---------------------------------------------------------------------------
 
 class BackendContext:
-    def __init__(self, root_dir: Path, raw_target: Path, entry: FileEntry, report: DocumentProfileReport):
+    def __init__(self, root_dir: Path, raw_target: Path, entry: FileEntry, report: DocumentProfileReport,
+                 cancel_check=None, stall_timeout: int = 300):
         self.root_dir = root_dir
         self.raw_target = raw_target
         self.entry = entry
         self.report = report
         self.entry_id = entry.id()
         self.pages = parse_page_range(entry.page_range)
+        self.cancel_check = cancel_check    # callable que levanta InterruptedError se cancelado
+        self.stall_timeout = stall_timeout  # segundos sem output antes de matar o processo
 
     def page_label(self) -> str:
         return self.entry.page_range.strip() or "all"
@@ -164,6 +293,98 @@ class PyMuPDFBackend(ExtractionBackend):
         )
 
 
+def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext"):
+    """Run an external CLI process with stall timeout and cancel support.
+
+    Returns (returncode, stdout_lines, stderr_lines).
+    Raises InterruptedError if cancelled, TimeoutError if stalled.
+    """
+    import threading as _th
+    import time as _time
+
+    stdout_lines: list = []
+    stderr_lines: list = []
+    last_output_time = _time.monotonic()
+    lock = _th.Lock()
+    killed_by_cancel = _th.Event()
+    killed_by_stall = _th.Event()
+
+    proc = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        bufsize=1,
+    )
+    logger.info("  [%s] PID=%d — aguardando saída...", backend_name, proc.pid)
+
+    def _read_stderr():
+        nonlocal last_output_time
+        for line in proc.stderr:
+            line = line.rstrip()
+            if line:
+                with lock:
+                    stderr_lines.append(line)
+                    last_output_time = _time.monotonic()
+                logger.info("  [%s stderr] %s", backend_name, line)
+
+    stderr_thread = _th.Thread(target=_read_stderr, daemon=True)
+    stderr_thread.start()
+
+    def _watchdog():
+        """Mata o processo se parar de produzir output ou se cancelado."""
+        while proc.poll() is None:
+            _time.sleep(2)
+            # Check cancel
+            if ctx.cancel_check:
+                try:
+                    ctx.cancel_check()
+                except InterruptedError:
+                    logger.warning("  [%s] Cancelado pelo usuário — matando PID %d",
+                                   backend_name, proc.pid)
+                    killed_by_cancel.set()
+                    proc.kill()
+                    return
+            # Check stall
+            with lock:
+                elapsed = _time.monotonic() - last_output_time
+            if elapsed > ctx.stall_timeout:
+                logger.error("  [%s] Sem output por %ds — matando PID %d (stall timeout)",
+                             backend_name, ctx.stall_timeout, proc.pid)
+                killed_by_stall.set()
+                proc.kill()
+                return
+
+    watchdog_thread = _th.Thread(target=_watchdog, daemon=True)
+    watchdog_thread.start()
+
+    for line in proc.stdout:
+        line = line.rstrip()
+        if line:
+            stdout_lines.append(line)
+            with lock:
+                last_output_time = _time.monotonic()
+            logger.info("  [%s stdout] %s", backend_name, line)
+
+    proc.wait()
+    stderr_thread.join(timeout=5)
+    watchdog_thread.join(timeout=2)
+
+    if killed_by_cancel.is_set():
+        raise InterruptedError(f"{backend_name} cancelado pelo usuário.")
+
+    if killed_by_stall.is_set():
+        last_line = (stderr_lines or stdout_lines or ["(nenhum)"])[-1]
+        raise TimeoutError(
+            f"{backend_name} travou (sem output por {ctx.stall_timeout}s). "
+            f"Último output:\n{last_line}"
+        )
+
+    returncode = proc.returncode
+    logger.info("  [%s] Processo finalizado com código %d", backend_name, returncode)
+    return returncode, stdout_lines, stderr_lines
+
+
 class DoclingCLIBackend(ExtractionBackend):
     name = "docling"
     layer = "advanced"
@@ -198,43 +419,13 @@ class DoclingCLIBackend(ExtractionBackend):
         logger.info("  [docling] Comando: %s", " ".join(cmd))
         logger.info("  [docling] Iniciando processo...")
 
-        # Usa Popen para streaming de output em tempo real
-        stdout_lines: list = []
-        stderr_lines: list = []
         try:
-            proc = subprocess.Popen(
-                cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                bufsize=1,  # line-buffered
+            returncode, stdout_lines, stderr_lines = _run_cli_with_timeout(cmd, "docling", ctx)
+        except (InterruptedError, TimeoutError) as e:
+            return BackendRunResult(
+                name=self.name, layer=self.layer, status="error",
+                command=cmd, error=str(e),
             )
-            logger.info("  [docling] PID=%d — aguardando saída...", proc.pid)
-
-            # Lê stderr em thread separada (docling escreve progresso lá)
-            import threading
-            def _read_stderr():
-                for line in proc.stderr:
-                    line = line.rstrip()
-                    if line:
-                        stderr_lines.append(line)
-                        logger.info("  [docling stderr] %s", line)
-
-            stderr_thread = threading.Thread(target=_read_stderr, daemon=True)
-            stderr_thread.start()
-
-            # Lê stdout na thread principal
-            for line in proc.stdout:
-                line = line.rstrip()
-                if line:
-                    stdout_lines.append(line)
-                    logger.info("  [docling stdout] %s", line)
-
-            proc.wait()
-            stderr_thread.join(timeout=5)
-            returncode = proc.returncode
-            logger.info("  [docling] Processo finalizado com código %d", returncode)
-
         except Exception as e:
             logger.error("  [docling] Erro ao executar: %s", e)
             return BackendRunResult(
@@ -298,43 +489,21 @@ class MarkerCLIBackend(ExtractionBackend):
         if ctx.entry.force_ocr or ctx.entry.formula_priority or ctx.report.suspected_scan:
             cmd.append("--force_ocr")
 
+        # Pass OCR language to improve recognition accuracy
+        ocr_lang = getattr(ctx.entry, "ocr_language", None)
+        if ocr_lang and ocr_lang.strip():
+            cmd.extend(["--languages", ocr_lang.strip()])
+
         logger.info("  [marker] Comando: %s", " ".join(cmd))
         logger.info("  [marker] Iniciando processo...")
 
-        stdout_lines: list = []
-        stderr_lines: list = []
         try:
-            proc = subprocess.Popen(
-                cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                bufsize=1,
+            returncode, stdout_lines, stderr_lines = _run_cli_with_timeout(cmd, "marker", ctx)
+        except (InterruptedError, TimeoutError) as e:
+            return BackendRunResult(
+                name=self.name, layer=self.layer, status="error",
+                command=cmd, error=str(e),
             )
-            logger.info("  [marker] PID=%d — aguardando saída...", proc.pid)
-
-            import threading
-            def _read_stderr():
-                for line in proc.stderr:
-                    line = line.rstrip()
-                    if line:
-                        stderr_lines.append(line)
-                        logger.info("  [marker stderr] %s", line)
-
-            stderr_thread = threading.Thread(target=_read_stderr, daemon=True)
-            stderr_thread.start()
-
-            for line in proc.stdout:
-                line = line.rstrip()
-                if line:
-                    stdout_lines.append(line)
-                    logger.info("  [marker stdout] %s", line)
-
-            proc.wait()
-            stderr_thread.join(timeout=5)
-            returncode = proc.returncode
-            logger.info("  [marker] Processo finalizado com código %d", returncode)
-
         except Exception as e:
             logger.error("  [marker] Erro ao executar: %s", e)
             return BackendRunResult(
@@ -740,13 +909,16 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         short, deterministic name and rewrite the markdown link to a relative
         path.  This keeps the repo uploadable to Claude Projects without
         thousands of staging assets.
+
+        Incremental: keeps existing images and only copies new ones.
+        Stale images (from removed entries) are cleaned up at the end.
         """
         images_dir = self.root_dir / "content" / "images"
-
-        # Clean previous resolved images to avoid stale/duplicate files
-        if images_dir.exists():
-            shutil.rmtree(images_dir)
         ensure_dir(images_dir)
+
+        # Track existing files for stale cleanup later
+        existing_files = {f for f in images_dir.iterdir() if f.is_file()} if images_dir.exists() else set()
+        referenced_files: set = set()
 
         # Directories to scan for markdowns that the tutor will read
         scan_dirs = [
@@ -754,6 +926,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             self.root_dir / "staging" / "markdown-auto",
         ]
 
+        target_ext = f".{self._image_format}" if self._image_format != "jpeg" else ".jpg"
         seen: Dict[str, Path] = {}  # original_path -> new_path (dedup)
         copied = 0
 
@@ -776,6 +949,10 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
 
                     # Skip references already pointing to content/images/
                     if "content/images/" in raw_path.replace("\\", "/"):
+                        # Track the file as referenced so it doesn't get cleaned up
+                        ref_path = self._find_image(raw_path, md_file)
+                        if ref_path and ref_path.exists():
+                            referenced_files.add(ref_path)
                         continue
 
                     # Resolve the image file
@@ -809,8 +986,14 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
 
                         if not new_path.exists():
                             shutil.copy2(str(img_path), str(new_path))
+                            new_path = self._convert_image_format(new_path)
                             copied += 1
+                        elif new_path.suffix.lower() not in (target_ext, ".jpeg" if target_ext == ".jpg" else ""):
+                            # Existing file in wrong format — convert
+                            new_path = self._convert_image_format(new_path)
                         seen[img_key] = new_path
+
+                    referenced_files.add(new_path)
 
                     # Build relative path from this markdown to the image
                     try:
@@ -830,8 +1013,18 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
                         text = text.replace(old, new)
                     md_file.write_text(text, encoding="utf-8")
 
+        # Clean up stale images (from removed entries)
+        stale = existing_files - referenced_files
+        for f in stale:
+            try:
+                f.unlink(missing_ok=True)
+            except Exception:
+                pass
+        if stale:
+            logger.info("Cleaned up %d stale images from content/images/", len(stale))
+
         if copied:
-            logger.info("Resolved %d images into content/images/", copied)
+            logger.info("Resolved %d new images into content/images/", copied)
 
     def _find_image(self, raw_path: str, md_file: Path) -> Optional[Path]:
         """Try to locate an image file from a markdown reference path."""
@@ -1065,6 +1258,22 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         except Exception:
             return 0
 
+    def _apply_math_normalization(self, md_rel_path: Optional[str]) -> None:
+        """Read a generated markdown file and normalize Unicode math → LaTeX."""
+        if not md_rel_path:
+            return
+        try:
+            md_path = self.root_dir / md_rel_path
+            if not md_path.exists():
+                return
+            original = md_path.read_text(encoding="utf-8")
+            normalized = _normalize_unicode_math(original)
+            if normalized != original:
+                write_text(md_path, normalized)
+                logger.info("  [math-norm] Normalizado símbolos Unicode → LaTeX em %s", md_rel_path)
+        except Exception as e:
+            logger.warning("  [math-norm] Falha ao normalizar %s: %s", md_rel_path, e)
+
     def _process_pdf(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
         import time
         item: Dict[str, object] = {
@@ -1092,7 +1301,9 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         item["effective_profile"] = decision.effective_profile
         item["base_backend"] = decision.base_backend
         item["advanced_backend"] = decision.advanced_backend
-        ctx = BackendContext(self.root_dir, raw_target, entry, report)
+        stall_timeout = int(self.options.get("stall_timeout", 300))
+        ctx = BackendContext(self.root_dir, raw_target, entry, report,
+                             cancel_check=self._check_cancel, stall_timeout=stall_timeout)
 
         self._check_cancel()
 
@@ -1106,6 +1317,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             self._log_backend_result(entry.id(), result)
             if result.status == "ok":
                 item["base_markdown"] = result.markdown_path
+                self._apply_math_normalization(result.markdown_path)
             else:
                 logger.warning("  Base backend %s failed: %s", decision.base_backend, result.error)
                 item.setdefault("backend_errors", []).append({decision.base_backend: result.error})
@@ -1126,6 +1338,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
                 item["advanced_markdown"] = result.markdown_path
                 item["advanced_asset_dir"] = result.asset_dir
                 item["advanced_metadata_path"] = result.metadata_path
+                self._apply_math_normalization(result.markdown_path)
             else:
                 logger.warning("  Advanced backend %s failed: %s", decision.advanced_backend, result.error)
                 item.setdefault("backend_errors", []).append({decision.advanced_backend: result.error})
@@ -1476,6 +1689,31 @@ unit: {entry.tags}
         except Exception:
             return False
 
+    @property
+    def _image_format(self) -> str:
+        """Return the configured image format ('png' or 'jpeg')."""
+        fmt = self.options.get("image_format", "png")
+        return fmt if fmt in ("png", "jpeg") else "png"
+
+    def _convert_image_format(self, src: Path) -> Path:
+        """Convert image at *src* to the configured format. Returns new path (or src if already correct)."""
+        target_ext = f".{self._image_format}" if self._image_format != "jpeg" else ".jpg"
+        if src.suffix.lower() in (target_ext, ".jpeg" if target_ext == ".jpg" else ""):
+            return src
+        try:
+            from PIL import Image as PILImage
+            img = PILImage.open(src)
+            if self._image_format == "jpeg" and img.mode in ("RGBA", "P", "LA"):
+                img = img.convert("RGB")
+            new_path = src.with_suffix(target_ext)
+            save_kwargs = {"quality": 90} if self._image_format == "jpeg" else {}
+            img.save(new_path, **save_kwargs)
+            if new_path != src:
+                src.unlink(missing_ok=True)
+            return new_path
+        except Exception:
+            return src
+
     def _extract_pdf_images(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
         ensure_dir(out_dir)
         doc = pymupdf.open(str(pdf_path))
@@ -1513,6 +1751,8 @@ unit: {entry.tags}
                     ext = image.get("ext", "png")
                     fname = out_dir / f"page-{page_num + 1:03d}-img-{img_idx:02d}.{ext}"
                     fname.write_bytes(data)
+                    # Conversão de formato acontece na consolidação final
+                    # (_resolve_content_images), não aqui no staging.
                     count += 1
             return count
         finally:
@@ -1860,6 +2100,70 @@ unit: {entry.tags}
 
         logger.info("Unprocessed entry %s (%d files removed)", entry_id, removed_count)
         return True
+
+    def reject(self, entry_id: str) -> Optional[Dict[str, object]]:
+        """
+        Reprova um entry: remove arquivos gerados mas preserva o raw PDF.
+        Retorna os dados do manifest entry (para reconstruir FileEntry na fila)
+        ou None se não encontrou.
+        """
+        manifest_path = self.root_dir / "manifest.json"
+        if not manifest_path.exists():
+            logger.warning("reject: manifest não encontrado em %s", manifest_path)
+            return None
+
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            manifest = json.load(f)
+
+        target = next((e for e in manifest["entries"] if e.get("id") == entry_id), None)
+        if not target:
+            logger.warning("reject: entry %s não encontrada no manifest", entry_id)
+            return None
+
+        # Preservar dados para reconstruir FileEntry
+        entry_data = dict(target)
+
+        # Remover apenas arquivos gerados (NÃO raw_target)
+        keys_to_clean = [
+            "base_markdown", "advanced_markdown", "manual_review",
+            "images_dir", "tables_dir", "table_detection_dir",
+            "advanced_asset_dir", "advanced_metadata_path",
+            "approved_markdown", "curated_markdown",
+        ]
+        removed_count = 0
+        for key in keys_to_clean:
+            val = target.get(key)
+            if not val:
+                continue
+            full = self.root_dir / val
+            try:
+                if full.is_dir():
+                    shutil.rmtree(full)
+                    removed_count += 1
+                elif full.is_file():
+                    full.unlink()
+                    removed_count += 1
+            except Exception as e:
+                logger.warning("reject: não foi possível remover %s: %s", full, e)
+
+        # Remover entry do manifest
+        manifest["entries"] = [e for e in manifest["entries"] if e.get("id") != entry_id]
+        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+        manifest.setdefault("logs", []).append({
+            "entry": entry_id,
+            "step": "curator_reject",
+            "status": "ok",
+        })
+
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        self._write_source_registry(manifest)
+        self._write_bundle_seed(manifest)
+
+        # Re-resolve content/images/ — limpa imagens órfãs
+        self._resolve_content_images()
+
+        logger.info("Rejected entry %s (%d files removed, raw preserved)", entry_id, removed_count)
+        return entry_data
 
 
 # ---------------------------------------------------------------------------

@@ -90,6 +90,8 @@ class AppConfig:
         "default_ocr_language": DEFAULT_OCR_LANGUAGE,
         "default_profile": "auto",
         "default_backend": "auto",
+        "image_format": "png",
+        "stall_timeout": 300,
         "font_size": 10,
     }
 

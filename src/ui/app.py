@@ -70,6 +70,8 @@ class App(tk.Tk):
         self.entries: List[FileEntry] = []
         self._quick_import = tk.BooleanVar(value=False)
         self._cancel_event = threading.Event()
+        self._pause_event = threading.Event()   # clear = paused, set = running
+        self._pause_event.set()                 # start in "running" state
 
         # Apply theme before building UI
         self.theme_mgr.apply(self, self._theme_name)
@@ -366,6 +368,53 @@ class App(tk.Tk):
     def _cancel_build(self):
         self._cancel_event.set()
         self._btn_build.configure(state="disabled", text="⏳ Cancelando...")
+
+    # ── Processing-single state (Cancel / Pause / Resume) ─────────────
+
+    def _set_processing_state(self, processing: bool):
+        """Muda a UI para o estado de processamento individual."""
+        if processing:
+            self._cancel_event.clear()
+            self._pause_event.set()  # not paused
+            self._btn_build.configure(state="disabled")
+            self._btn_process.configure(text="⏹ Cancelar",
+                                        command=self._cancel_single)
+            # Adiciona botão Pausar ao lado (se ainda não existe)
+            if not hasattr(self, "_btn_pause"):
+                self._btn_pause = ttk.Button(self._btn_process.master,
+                                             text="⏸ Pausar",
+                                             command=self._toggle_pause_single)
+            self._btn_pause.configure(text="⏸ Pausar", state="normal")
+            self._btn_pause.pack(side="left", padx=(6, 0),
+                                 after=self._btn_process)
+        else:
+            self._btn_build.configure(state="normal")
+            self._btn_process.configure(text="⚡ Processar",
+                                        command=self.process_selected_single)
+            if hasattr(self, "_btn_pause"):
+                self._btn_pause.pack_forget()
+
+    def _cancel_single(self):
+        self._cancel_event.set()
+        self._pause_event.set()  # desbloqueia se estiver pausado
+        self._btn_process.configure(state="disabled", text="⏳ Cancelando...")
+        if hasattr(self, "_btn_pause"):
+            self._btn_pause.configure(state="disabled")
+
+    def _toggle_pause_single(self):
+        if self._pause_event.is_set():
+            # Pausar
+            self._pause_event.clear()
+            self._btn_pause.configure(text="▶ Retomar")
+            self._progress_animate = False
+            self._set_status("Processamento pausado.")
+        else:
+            # Retomar
+            self._pause_event.set()
+            self._btn_pause.configure(text="⏸ Pausar")
+            self._progress_animate = True
+            self._tick_fake_indeterminate()
+            self._set_status("Processamento retomado...")
 
     def _start_progress(self, total: int):
         """Exibe a barra de progresso. total=0 → animação manual (fake indeterminate)."""
@@ -816,6 +865,15 @@ class App(tk.Tk):
             "institution": self.var_institution.get().strip() or "PUCRS",
         }
 
+    def _build_options(self) -> Dict[str, object]:
+        """Monta o dict de opções para o RepoBuilder."""
+        return {
+            "default_processing_mode": self.var_default_mode.get(),
+            "default_ocr_language": self.var_default_ocr_language.get(),
+            "image_format": self.config_obj.get("image_format"),
+            "stall_timeout": self.config_obj.get("stall_timeout"),
+        }
+
     def _repo_dir(self) -> Optional[Path]:
         """Retorna o caminho completo do repositório a partir de var_repo_root.
 
@@ -901,10 +959,7 @@ class App(tk.Tk):
                     root_dir=repo_dir,
                     course_meta=meta,
                     entries=list(self.entries),  # cópia da lista para thread safety
-                    options={
-                        "default_processing_mode": self.var_default_mode.get(),
-                        "default_ocr_language": self.var_default_ocr_language.get(),
-                    },
+                    options=self._build_options(),
                     student_profile=student_p,
                     subject_profile=active_subj,
                     progress_callback=on_progress,
@@ -964,20 +1019,27 @@ class App(tk.Tk):
         if idx is None:
             messagebox.showinfo(APP_NAME, "Selecione um arquivo na fila para processar.")
             return
-            
+
         meta = self._course_meta()
         if not meta: return
-        
+
         entry = self.entries[idx]
         repo_dir = self._repo_dir()
         if not repo_dir:
             return
-        
+
         active_subj_name = self._var_active_subject.get()
         active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
 
+        self._set_processing_state(True)
         self._set_status(f"Processando item: {entry.title}...")
         self._start_progress(0)  # indeterminate para arquivo único
+
+        def on_progress(current, t, title):
+            # Pausa: bloqueia a thread worker até retomar
+            self._pause_event.wait()
+            if self._cancel_event.is_set():
+                raise InterruptedError("Processamento cancelado pelo usuário.")
 
         def worker(force=False):
             try:
@@ -985,12 +1047,10 @@ class App(tk.Tk):
                     root_dir=repo_dir,
                     course_meta=meta,
                     entries=list(self.entries),
-                    options={
-                        "default_processing_mode": self.var_default_mode.get(),
-                        "default_ocr_language": self.var_default_ocr_language.get(),
-                    },
+                    options=self._build_options(),
                     student_profile=self.student_store.profile,
-                    subject_profile=active_subj
+                    subject_profile=active_subj,
+                    progress_callback=on_progress,
                 )
                 result = builder.process_single(entry, force=force)
 
@@ -998,9 +1058,14 @@ class App(tk.Tk):
                     self.after(0, lambda: self._ask_reprocess(entry, idx, meta, active_subj, repo_dir))
                 else:
                     self.after(0, lambda: self._on_single_processed_success(idx))
+            except InterruptedError:
+                self.after(0, self._end_progress)
+                self.after(0, lambda: self._set_processing_state(False))
+                self.after(0, lambda: self._set_status("Processamento cancelado."))
             except Exception:
                 traceback_str = traceback.format_exc()
                 self.after(0, self._end_progress)
+                self.after(0, lambda: self._set_processing_state(False))
                 self.after(0, lambda: messagebox.showerror(APP_NAME, f"Erro ao processar item:\n\n{traceback_str}"))
                 self.after(0, lambda: self._set_status("Erro no processamento."))
 
@@ -1009,6 +1074,7 @@ class App(tk.Tk):
     def _ask_reprocess(self, entry, idx, meta, active_subj, repo_dir):
         """Pergunta ao usuário se quer reprocessar um arquivo já existente."""
         self._end_progress()
+        self._set_processing_state(False)
         answer = messagebox.askyesno(
             APP_NAME,
             f"O arquivo já foi processado anteriormente:\n\n"
@@ -1020,8 +1086,14 @@ class App(tk.Tk):
             self._set_status("Reprocessamento cancelado.")
             return
 
+        self._set_processing_state(True)
         self._set_status(f"Reprocessando: {entry.title}...")
         self._start_progress(0)
+
+        def on_progress(current, t, title):
+            self._pause_event.wait()
+            if self._cancel_event.is_set():
+                raise InterruptedError("Reprocessamento cancelado pelo usuário.")
 
         def reprocess_worker():
             try:
@@ -1029,18 +1101,21 @@ class App(tk.Tk):
                     root_dir=repo_dir,
                     course_meta=meta,
                     entries=list(self.entries),
-                    options={
-                        "default_processing_mode": self.var_default_mode.get(),
-                        "default_ocr_language": self.var_default_ocr_language.get(),
-                    },
+                    options=self._build_options(),
                     student_profile=self.student_store.profile,
                     subject_profile=active_subj,
+                    progress_callback=on_progress,
                 )
                 builder.process_single(entry, force=True)
                 self.after(0, lambda: self._on_single_processed_success(idx))
+            except InterruptedError:
+                self.after(0, self._end_progress)
+                self.after(0, lambda: self._set_processing_state(False))
+                self.after(0, lambda: self._set_status("Reprocessamento cancelado."))
             except Exception:
                 traceback_str = traceback.format_exc()
                 self.after(0, self._end_progress)
+                self.after(0, lambda: self._set_processing_state(False))
                 self.after(0, lambda: messagebox.showerror(APP_NAME, f"Erro ao reprocessar:\n\n{traceback_str}"))
                 self.after(0, lambda: self._set_status("Erro no reprocessamento."))
 
@@ -1048,6 +1123,7 @@ class App(tk.Tk):
 
     def _on_single_processed_success(self, idx):
         self._end_progress()
+        self._set_processing_state(False)
         if idx < len(self.entries):
             del self.entries[idx]
             self.refresh_tree()
@@ -1123,10 +1199,7 @@ class App(tk.Tk):
                     root_dir=repo_dir,
                     course_meta=meta,
                     entries=[],
-                    options={
-                        "default_processing_mode": self.var_default_mode.get(),
-                        "default_ocr_language": self.var_default_ocr_language.get(),
-                    },
+                    options=self._build_options(),
                     student_profile=self.student_store.profile,
                     subject_profile=active_subj,
                 )

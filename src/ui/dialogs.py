@@ -162,17 +162,36 @@ class SettingsDialog(tk.Toplevel):
         self._var_ocr = tk.StringVar(value=self.config.get("default_ocr_language"))
         self._var_profile = tk.StringVar(value=self.config.get("default_profile"))
         self._var_backend = tk.StringVar(value=self.config.get("default_backend"))
+        self._var_image_format = tk.StringVar(value=self.config.get("image_format"))
 
+        IMAGE_FORMATS = ["png", "jpeg"]
         fields = [
             ("Modo de processamento padrão", self._var_mode, PROCESSING_MODES),
             ("Idioma OCR padrão", self._var_ocr, OCR_LANGS),
             ("Perfil de documento padrão", self._var_profile, DOCUMENT_PROFILES),
             ("Backend preferido padrão", self._var_backend, PREFERRED_BACKENDS),
+            ("Formato de imagem no Markdown", self._var_image_format, IMAGE_FORMATS),
         ]
         for r, (label, var, vals) in enumerate(fields):
             ttk.Label(tab_proc, text=label).grid(row=r, column=0, sticky="w", pady=6, padx=(0, 16))
-            ttk.Combobox(tab_proc, textvariable=var, values=vals, state="readonly",
-                          width=22).grid(row=r, column=1, sticky="ew")
+            cb = ttk.Combobox(tab_proc, textvariable=var, values=vals, state="readonly", width=22)
+            cb.grid(row=r, column=1, sticky="ew")
+        add_tooltip(cb, "PNG: qualidade máxima, sem perda (arquivos maiores).\n"
+                        "JPEG: arquivos menores, boa qualidade (leve perda).\n"
+                        "Afeta extração e consolidação de imagens no repositório.")
+
+        # Stall timeout (spinbox)
+        next_row = len(fields)
+        self._var_stall_timeout = tk.IntVar(value=int(self.config.get("stall_timeout", 300)))
+        ttk.Label(tab_proc, text="Timeout de inatividade (seg)").grid(
+            row=next_row, column=0, sticky="w", pady=6, padx=(0, 16))
+        stall_spin = ttk.Spinbox(tab_proc, from_=60, to=1800, increment=30,
+                                  textvariable=self._var_stall_timeout, width=8)
+        stall_spin.grid(row=next_row, column=1, sticky="w")
+        add_tooltip(stall_spin,
+                    "Se o Marker/Docling parar de produzir output por este tempo,\n"
+                    "o processo é encerrado automaticamente para evitar travamento.\n"
+                    "Padrão: 300s (5 min). Para PDFs grandes, aumente para 600-900s.")
         tab_proc.columnconfigure(1, weight=1)
 
         # ── Buttons ─────────────────────────────────────────────────────
@@ -195,6 +214,8 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("default_ocr_language", self._var_ocr.get())
         self.config.set("default_profile", self._var_profile.get())
         self.config.set("default_backend", self._var_backend.get())
+        self.config.set("image_format", self._var_image_format.get())
+        self.config.set("stall_timeout", self._var_stall_timeout.get())
         self.config.save()
         self.theme_mgr.apply(self.parent, self._var_theme.get())
         self.parent._theme_name = self._var_theme.get()  # type: ignore[attr-defined]
@@ -1091,24 +1112,29 @@ class BacklogEntryEditDialog(tk.Toplevel):
         """Build the extracted images gallery tab."""
         self._img_refs = []  # keep references to prevent GC
 
-        # Collect images — prefer inline-images (referenced in MD), fallback to extracted
+        # Collect images from entry-specific sources (dedup by resolved path)
+        seen_paths: set = set()
         images_found: List[Path] = []
+
+        def _collect_from(directory: Path):
+            if not directory.exists():
+                return
+            for ext in self._IMG_EXTS:
+                for img in directory.glob(ext):
+                    resolved = img.resolve()
+                    if resolved not in seen_paths:
+                        seen_paths.add(resolved)
+                        images_found.append(img)
+
         if self._repo_dir:
             entry_id = self._data.get("id", "")
-            # 1) inline-images from pymupdf4llm (these are the ones in the markdown)
+            # 1) inline-images from pymupdf4llm (referenced in markdown)
             if entry_id:
-                inline_dir = self._repo_dir / "staging" / "assets" / "inline-images" / entry_id
-                if inline_dir.exists():
-                    for ext in self._IMG_EXTS:
-                        images_found.extend(inline_dir.glob(ext))
-            # 2) Only add extract_images if no inline-images found (avoid duplicates)
-            if not images_found:
-                images_dir = self._data.get("images_dir")
-                if images_dir:
-                    d = self._repo_dir / images_dir
-                    if d.exists():
-                        for ext in self._IMG_EXTS:
-                            images_found.extend(d.glob(ext))
+                _collect_from(self._repo_dir / "staging" / "assets" / "inline-images" / entry_id)
+            # 2) extracted images (extract_images flag) — entry-specific dir
+            images_dir = self._data.get("images_dir")
+            if images_dir:
+                _collect_from(self._repo_dir / images_dir)
         images_found.sort(key=lambda x: x.name)
 
         # Filter noise images (too small, solid color, extreme aspect ratio)
