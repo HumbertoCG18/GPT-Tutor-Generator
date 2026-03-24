@@ -839,6 +839,7 @@ class RepoBuilder:
             "staging/markdown-auto/pymupdf",
             "staging/markdown-auto/docling",
             "staging/markdown-auto/marker",
+            "staging/markdown-auto/scanned",
             "staging/markdown-auto/code", "staging/zip-extract",
             "manual-review/code",
             "staging/assets/images",
@@ -1356,16 +1357,18 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         except Exception as e:
             logger.warning("  [math-norm] Falha ao normalizar %s: %s", md_rel_path, e)
 
-
+    
     def _render_scanned_pdf_as_images(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
         """
         Para PDFs escaneados:
         - renderiza cada página como imagem
         - cria um markdown base que referencia essas imagens
-        - evita depender de OCR ruim do docling/marker
+        - usa JPEG para reduzir peso
         """
         if not HAS_PYMUPDF:
             raise RuntimeError("PyMuPDF é obrigatório para tratar PDFs scanned como imagens.")
+
+        from PIL import Image as PILImage
 
         entry_id = entry.id()
         images_dir = self.root_dir / "content" / "images" / "scanned" / entry_id
@@ -1386,9 +1389,11 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
 
             for page_num in pages:
                 page = doc[page_num]
-                pix = page.get_pixmap(matrix=pymupdf.Matrix(1.6, 1.6), alpha=False)
-                img_path = images_dir / f"page-{page_num + 1:03d}.png"
-                pix.save(str(img_path))
+                pix = page.get_pixmap(matrix=pymupdf.Matrix(1.35, 1.35), alpha=False)
+
+                pil_img = PILImage.frombytes("RGB", (pix.width, pix.height), pix.samples)
+                img_path = images_dir / f"page-{page_num + 1:03d}.jpg"
+                pil_img.save(img_path, format="JPEG", quality=82, optimize=True)
 
                 rel = os.path.relpath(str(img_path), str(md_path.parent)).replace("\\", "/")
                 refs.append(
@@ -1401,7 +1406,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         body = (
             f"# {entry.title}\n\n"
             "> Documento tratado como **imagem** porque o perfil efetivo foi `scanned`.\n"
-            "> Leia o conteúdo visualmente pelas páginas renderizadas abaixo.\n\n"
+            "> Cada página foi convertida em imagem para leitura visual.\n\n"
             + "\n".join(refs)
         )
 
@@ -1421,50 +1426,104 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             "advanced_backend": None,
             "rendered_pages_dir": safe_rel(images_dir, self.root_dir),
         }
+        
 
 
 
     def _process_pdf(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
         import time
         item: Dict[str, object] = {
-            "document_report": None, "pipeline_decision": None,
-            "base_markdown": None, "advanced_markdown": None,
-            "advanced_backend": None, "base_backend": None,
-            "images_dir": None, "tables_dir": None,
+            "document_report": None,
+            "pipeline_decision": None,
+            "base_markdown": None,
+            "advanced_markdown": None,
+            "advanced_backend": None,
+            "base_backend": None,
+            "images_dir": None,
+            "tables_dir": None,
             "table_detection_dir": None,
             "manual_review": None,
             "raw_target": safe_rel(raw_target, self.root_dir),
         }
         t0 = time.time()
 
-        logger.info("  [1/6] Profiling PDF: %s (%d págs, %.1f MB)",
-                     entry.title,
-                     self._quick_page_count(raw_target),
-                     raw_target.stat().st_size / 1048576)
+        logger.info(
+            "  [1/6] Profiling PDF: %s (%d págs, %.1f MB)",
+            entry.title,
+            self._quick_page_count(raw_target),
+            raw_target.stat().st_size / 1048576,
+        )
         report = self._profile_pdf(raw_target, entry)
         decision = self.selector.decide(entry, report)
-        logger.info("  [1/6] Profile=%s, pages=%d, text=%d chars, images=%d, scan=%s",
-                     decision.effective_profile, report.page_count,
-                     report.text_chars, report.images_count, report.suspected_scan)
+        logger.info(
+            "  [1/6] Profile=%s, pages=%d, text=%d chars, images=%d, scan=%s",
+            decision.effective_profile,
+            report.page_count,
+            report.text_chars,
+            report.images_count,
+            report.suspected_scan,
+        )
+
         item["document_report"] = asdict(report)
         item["pipeline_decision"] = asdict(decision)
         item["effective_profile"] = decision.effective_profile
         item["base_backend"] = decision.base_backend
         item["advanced_backend"] = decision.advanced_backend
+
         stall_timeout = int(self.options.get("stall_timeout", 300))
-        ctx = BackendContext(self.root_dir, raw_target, entry, report,
-                             cancel_check=self._check_cancel, stall_timeout=stall_timeout)
+        ctx = BackendContext(
+            self.root_dir,
+            raw_target,
+            entry,
+            report,
+            cancel_check=self._check_cancel,
+            stall_timeout=stall_timeout,
+        )
 
         self._check_cancel()
+
+        # PDFs scanned: 1 página = 1 imagem
+        if decision.effective_profile == "scanned":
+            logger.info("  [2/6] Perfil scanned detectado → convertendo páginas em imagens.")
+            try:
+                scanned_result = self._render_scanned_pdf_as_images(entry, raw_target)
+                item.update(scanned_result)
+                self.logs.append({
+                    "entry": entry.id(),
+                    "step": "scanned_pages",
+                    "status": "ok",
+                    "rendered_pages_dir": scanned_result.get("rendered_pages_dir"),
+                })
+            except Exception as e:
+                logger.error("  [2/6] Falha ao tratar scanned como imagens: %s", e)
+                self.logs.append({
+                    "entry": entry.id(),
+                    "step": "scanned_pages",
+                    "status": "error",
+                    "error": str(e),
+                })
+                raise
+
+            manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
+            write_text(manual, manual_pdf_review_template(entry, item))
+            item["manual_review"] = safe_rel(manual, self.root_dir)
+
+            logger.info("  ✓ PDF scanned concluído como páginas-imagem: %s", entry.title)
+            return item
 
         if decision.base_backend:
             logger.info("  [2/6] Backend base: %s → iniciando...", decision.base_backend)
             t1 = time.time()
             backend = self.selector.backends[decision.base_backend]
             result = backend.run(ctx)
-            logger.info("  [2/6] Backend base: %s → %s (%.1fs)",
-                         decision.base_backend, result.status, time.time() - t1)
+            logger.info(
+                "  [2/6] Backend base: %s → %s (%.1fs)",
+                decision.base_backend,
+                result.status,
+                time.time() - t1,
+            )
             self._log_backend_result(entry.id(), result)
+
             if result.status == "ok":
                 item["base_markdown"] = result.markdown_path
                 self._apply_math_normalization(result.markdown_path)
@@ -1481,9 +1540,14 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             t1 = time.time()
             backend = self.selector.backends[decision.advanced_backend]
             result = backend.run(ctx)
-            logger.info("  [3/6] Backend avançado: %s → %s (%.1fs)",
-                         decision.advanced_backend, result.status, time.time() - t1)
+            logger.info(
+                "  [3/6] Backend avançado: %s → %s (%.1fs)",
+                decision.advanced_backend,
+                result.status,
+                time.time() - t1,
+            )
             self._log_backend_result(entry.id(), result)
+
             if result.status == "ok":
                 item["advanced_markdown"] = result.markdown_path
                 item["advanced_asset_dir"] = result.asset_dir
@@ -1501,49 +1565,93 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             logger.info("  [4/6] Extraindo imagens...")
             try:
                 images_dir = self.root_dir / "staging" / "assets" / "images" / entry.id()
-                count = self._extract_pdf_images(raw_target, images_dir, pages=parse_page_range(entry.page_range))
+                count = self._extract_pdf_images(
+                    raw_target,
+                    images_dir,
+                    pages=parse_page_range(entry.page_range),
+                )
                 item["images_dir"] = safe_rel(images_dir, self.root_dir)
                 logger.info("  [4/6] %d imagens extraídas", count)
-                self.logs.append({"entry": entry.id(), "step": "extract_images", "status": "ok", "count": count})
+                self.logs.append({
+                    "entry": entry.id(),
+                    "step": "extract_images",
+                    "status": "ok",
+                    "count": count,
+                })
             except Exception as e:
                 logger.error("  [4/6] Falha na extração de imagens: %s", e)
-                self.logs.append({"entry": entry.id(), "step": "extract_images", "status": "error", "error": str(e)})
+                self.logs.append({
+                    "entry": entry.id(),
+                    "step": "extract_images",
+                    "status": "error",
+                    "error": str(e),
+                })
         else:
             logger.info("  [4/6] Extração de imagens: pulado")
 
         self._check_cancel()
 
-        # Page previews are now rendered on-the-fly by Curator Studio
-        # from the source PDF — no need to pre-generate PNGs.
+        # Page previews são renderizados on-the-fly no Curator Studio
 
         self._check_cancel()
 
         if entry.extract_tables:
             logger.info("  [6/6] Extraindo tabelas...")
+
             if HAS_PDFPLUMBER:
                 try:
                     tables_dir = self.root_dir / "staging" / "assets" / "tables" / entry.id()
-                    count = self._extract_tables_pdfplumber(raw_target, tables_dir, pages=parse_page_range(entry.page_range))
+                    count = self._extract_tables_pdfplumber(
+                        raw_target,
+                        tables_dir,
+                        pages=parse_page_range(entry.page_range),
+                    )
                     item["tables_dir"] = safe_rel(tables_dir, self.root_dir)
                     logger.info("  [6/6] pdfplumber: %d tabelas extraídas", count)
-                    self.logs.append({"entry": entry.id(), "step": "extract_tables_pdfplumber", "status": "ok", "count": count})
+                    self.logs.append({
+                        "entry": entry.id(),
+                        "step": "extract_tables_pdfplumber",
+                        "status": "ok",
+                        "count": count,
+                    })
                 except Exception as e:
                     logger.error("  [6/6] pdfplumber falhou: %s", e)
-                    self.logs.append({"entry": entry.id(), "step": "extract_tables_pdfplumber", "status": "error", "error": str(e)})
+                    self.logs.append({
+                        "entry": entry.id(),
+                        "step": "extract_tables_pdfplumber",
+                        "status": "error",
+                        "error": str(e),
+                    })
+
             if HAS_PYMUPDF:
                 try:
                     det_dir = self.root_dir / "staging" / "assets" / "table-detections" / entry.id()
-                    count = self._detect_tables_pymupdf(raw_target, det_dir, pages=parse_page_range(entry.page_range))
+                    count = self._detect_tables_pymupdf(
+                        raw_target,
+                        det_dir,
+                        pages=parse_page_range(entry.page_range),
+                    )
                     item["table_detection_dir"] = safe_rel(det_dir, self.root_dir)
                     logger.info("  [6/6] pymupdf: %d detecções de tabela", count)
-                    self.logs.append({"entry": entry.id(), "step": "detect_tables_pymupdf", "status": "ok", "count": count})
+                    self.logs.append({
+                        "entry": entry.id(),
+                        "step": "detect_tables_pymupdf",
+                        "status": "ok",
+                        "count": count,
+                    })
                 except Exception as e:
                     logger.error("  [6/6] pymupdf table detection falhou: %s", e)
-                    self.logs.append({"entry": entry.id(), "step": "detect_tables_pymupdf", "status": "error", "error": str(e)})
+                    self.logs.append({
+                        "entry": entry.id(),
+                        "step": "detect_tables_pymupdf",
+                        "status": "error",
+                        "error": str(e),
+                    })
         else:
             logger.info("  [6/6] Tabelas: pulado")
 
         logger.info("  ✓ PDF concluído em %.1fs: %s", time.time() - t0, entry.title)
+
         manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
         write_text(manual, manual_pdf_review_template(entry, item))
         item["manual_review"] = safe_rel(manual, self.root_dir)

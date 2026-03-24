@@ -493,7 +493,7 @@ class CuratorStudio(tk.Toplevel):
             pass
         return None
 
-    # ── Save / Approve ──────────────────────────────────────────────────
+    # ── Save / Approve / Reject ───────────────────────────────────────
 
     def save_current(self):
         if not self._current_content_path:
@@ -508,6 +508,118 @@ class CuratorStudio(tk.Toplevel):
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao salvar: {e}")
 
+    def _reset_current_view(self, status_msg: str):
+        """Limpa a seleção atual da UI após aprovar/reprovar."""
+        try:
+            list_idx = self.file_paths.index(self.current_md_path)
+            self.file_paths.pop(list_idx)
+            self.file_list.delete(list_idx)
+        except Exception:
+            pass
+
+        self.editor.delete("1.0", tk.END)
+        self.editor.edit_modified(False)
+        self.current_md_path = None
+        self._current_content_path = None
+        self._current_frontmatter = {}
+        self._available_sources = {}
+        self._source_combo["values"] = []
+        self._source_var.set("")
+        self.info_label.config(text="Nenhum arquivo selecionado")
+
+        for widget in self.inner_frame.winfo_children():
+            widget.destroy()
+        self.preview_images.clear()
+
+        self.status_var.set(status_msg)
+
+    def _reject_current(self):
+        """
+        Reprova o item atual:
+        - remove os arquivos gerados
+        - remove o PDF/raw do repo
+        - tira a entry do manifest
+        - devolve o FileEntry para a fila principal
+        """
+        if not self._current_frontmatter:
+            messagebox.showwarning("Nada selecionado", "Selecione um arquivo primeiro.")
+            return
+
+        fm = self._current_frontmatter
+        entry_id = fm.get("id")
+        if not entry_id:
+            messagebox.showerror("Erro", "O arquivo selecionado não possui id no frontmatter.")
+            return
+
+        msg = (
+            "Reprovar este arquivo?\n\n"
+            "Isso irá:\n"
+            "- remover os arquivos Markdown gerados\n"
+            "- remover o PDF/arquivo bruto copiado para o repositório\n"
+            "- retirar a entry do manifest\n"
+            "- devolver o arquivo para a fila 'A Processar'\n"
+        )
+        if not messagebox.askyesno("Reprovar arquivo", msg):
+            return
+
+        try:
+            builder = RepoBuilder(
+                root_dir=self.repo_dir,
+                course_meta={},
+                entries=[],
+                options={},
+            )
+            entry_data = builder.reject(entry_id, preserve_raw=False)
+        except TypeError:
+            # Compatibilidade se o engine local ainda estiver com assinatura antiga
+            try:
+                builder = RepoBuilder(
+                    root_dir=self.repo_dir,
+                    course_meta={},
+                    entries=[],
+                    options={},
+                )
+                entry_data = builder.reject(entry_id)
+            except Exception as e:
+                messagebox.showerror("Erro", f"Falha ao reprovar:\n{e}")
+                return
+        except Exception as e:
+            messagebox.showerror("Erro", f"Falha ao reprovar:\n{e}")
+            return
+
+        if not entry_data:
+            messagebox.showerror("Erro", "Não foi possível localizar a entry no manifest.")
+            return
+
+        try:
+            queue_entry = FileEntry.from_dict({
+                **entry_data,
+                "enabled": True,
+            })
+        except Exception as e:
+            messagebox.showerror("Erro", f"Falha ao reconstruir item para a fila:\n{e}")
+            return
+
+        parent_app = self.master
+        try:
+            if hasattr(parent_app, "entries"):
+                existing_sources = {getattr(e, "source_path", "") for e in parent_app.entries}
+                if queue_entry.source_path not in existing_sources:
+                    parent_app.entries.append(queue_entry)
+                    if hasattr(parent_app, "refresh_tree"):
+                        parent_app.refresh_tree()
+                    if hasattr(parent_app, "_save_current_queue"):
+                        parent_app._save_current_queue()
+
+            if hasattr(parent_app, "_refresh_backlog"):
+                parent_app._refresh_backlog()
+            if hasattr(parent_app, "_set_status"):
+                parent_app._set_status(f"Item reprovado e devolvido à fila: {queue_entry.title}")
+        except Exception as e:
+            logger.warning("Rejeição concluída, mas falhou ao sincronizar com a UI principal: %s", e)
+
+        self._reset_current_view(f"⛔ Reprovado → devolvido para a fila: {queue_entry.title}")
+
     def _approve_current(self):
         if not self._current_content_path or not self._current_frontmatter:
             messagebox.showwarning("Nada selecionado", "Selecione um arquivo primeiro.")
@@ -516,7 +628,6 @@ class CuratorStudio(tk.Toplevel):
         fm = self._current_frontmatter
         category = fm.get("category", "")
 
-        # Determine destination based on category
         if category in ("provas", "fotos-de-prova"):
             dest_dir = self.repo_dir / "exams" / "past-exams"
             dest_label = "exams/past-exams/"
@@ -550,7 +661,6 @@ class CuratorStudio(tk.Toplevel):
             ):
                 return
 
-        # Save current editor content to the selected source
         content = self.editor.get("1.0", tk.END).strip() + "\n"
         try:
             self._current_content_path.write_text(content, encoding="utf-8")
@@ -559,7 +669,6 @@ class CuratorStudio(tk.Toplevel):
             messagebox.showerror("Erro", f"Erro ao salvar fonte: {e}")
             return
 
-        # Copy approved source to destination
         try:
             shutil.copy2(self._current_content_path, dest_path)
         except Exception as e:
@@ -569,7 +678,6 @@ class CuratorStudio(tk.Toplevel):
         approved_path = self._current_content_path.resolve()
         files_to_delete = []
 
-        # Collect all source paths from frontmatter (base, advanced, template)
         for key in ("base_markdown", "advanced_markdown"):
             rel = fm.get(key)
             if rel:
@@ -577,12 +685,10 @@ class CuratorStudio(tk.Toplevel):
                 if p.exists() and p != approved_path:
                     files_to_delete.append(p)
 
-        # The manual-review template itself
         if self.current_md_path and self.current_md_path.resolve() != approved_path:
             if self.current_md_path.exists():
                 files_to_delete.append(self.current_md_path.resolve())
 
-        # Also delete the approved source file if it's NOT the destination
         if approved_path != dest_path.resolve() and approved_path.exists():
             files_to_delete.append(approved_path)
 
@@ -595,149 +701,8 @@ class CuratorStudio(tk.Toplevel):
             except Exception as e:
                 logger.warning("Approve cleanup: failed to delete %s: %s", f, e)
 
-        # Atualiza manifest.json para refletir a aprovação
         self._update_manifest_for_approval(fm, dest_path, files_to_delete)
-
-        # Remove entry from file list
-        try:
-            list_idx = self.file_paths.index(self.current_md_path)
-            self.file_paths.pop(list_idx)
-            self.file_list.delete(list_idx)
-        except ValueError:
-            pass
-
-        # Reset editor state
-        self.editor.delete("1.0", tk.END)
-        self.editor.edit_modified(False)
-        self.current_md_path = None
-        self._current_content_path = None
-        self._current_frontmatter = {}
-        self._available_sources = {}
-        self._source_combo["values"] = []
-        self._source_var.set("")
-        self.info_label.config(text="Nenhum arquivo selecionado")
-
-        # Clear previews
-        for widget in self.inner_frame.winfo_children():
-            widget.destroy()
-        self.preview_images.clear()
-
-        cleanup_msg = f" | Removidos: {', '.join(deleted)}" if deleted else ""
-        self.status_var.set(f"✅ Aprovado → {dest_label}{file_id}.md{cleanup_msg}")
-    def _approve_current(self):
-        if not self._current_content_path or not self._current_frontmatter:
-            messagebox.showwarning("Nada selecionado", "Selecione um arquivo primeiro.")
-            return
-
-        fm = self._current_frontmatter
-        category = fm.get("category", "")
-
-        # Determine destination based on category
-        if category in ("provas", "fotos-de-prova"):
-            dest_dir = self.repo_dir / "exams" / "past-exams"
-            dest_label = "exams/past-exams/"
-        elif category in ("listas", "gabaritos"):
-            dest_dir = self.repo_dir / "exercises" / "lists"
-            dest_label = "exercises/lists/"
-        else:
-            dest_dir = self.repo_dir / "content" / "curated"
-            dest_label = "content/curated/"
-
-        file_id = fm.get("id", self.current_md_path.stem)
-        dest_path = dest_dir / f"{file_id}.md"
-
-        msg = (
-            f"Aprovar e copiar para:\n"
-            f"  {dest_label}{file_id}.md\n\n"
-            f"Categoria detectada: {category}\n"
-            f"Fonte selecionada: {self._current_content_path.name}\n\n"
-            f"Os demais arquivos MD deste documento serão excluídos.\n"
-            f"Continuar?"
+        self._reset_current_view(
+            f"✅ Aprovado → {dest_label}{file_id}.md"
+            + (f" | Removidos: {', '.join(deleted)}" if deleted else "")
         )
-        if not messagebox.askyesno("Aprovar arquivo", msg):
-            return
-
-        dest_dir.mkdir(parents=True, exist_ok=True)
-
-        if dest_path.exists():
-            if not messagebox.askyesno(
-                "Sobrescrever?",
-                f"O arquivo já existe:\n{dest_path.relative_to(self.repo_dir)}\n\nDeseja sobrescrever?",
-            ):
-                return
-
-        # Save current editor content to the selected source
-        content = self.editor.get("1.0", tk.END).strip() + "\n"
-        try:
-            self._current_content_path.write_text(content, encoding="utf-8")
-            self.editor.edit_modified(False)
-        except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao salvar fonte: {e}")
-            return
-
-        # Copy approved source to destination
-        try:
-            shutil.copy2(self._current_content_path, dest_path)
-        except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao copiar: {e}")
-            return
-
-        approved_path = self._current_content_path.resolve()
-        files_to_delete = []
-
-        # Collect all source paths from frontmatter (base, advanced, template)
-        for key in ("base_markdown", "advanced_markdown"):
-            rel = fm.get(key)
-            if rel:
-                p = (self.repo_dir / rel).resolve()
-                if p.exists() and p != approved_path:
-                    files_to_delete.append(p)
-
-        # The manual-review template itself
-        if self.current_md_path and self.current_md_path.resolve() != approved_path:
-            if self.current_md_path.exists():
-                files_to_delete.append(self.current_md_path.resolve())
-
-        # Also delete the approved source file if it's NOT the destination
-        # (it was already copied to dest_path)
-        if approved_path != dest_path.resolve() and approved_path.exists():
-            files_to_delete.append(approved_path)
-
-        deleted = []
-        for f in files_to_delete:
-            try:
-                f.unlink()
-                deleted.append(f.name)
-                logger.info("Approve cleanup: deleted %s", f)
-            except Exception as e:
-                logger.warning("Approve cleanup: failed to delete %s: %s", f, e)
-
-        # Atualiza manifest.json para refletir a aprovação
-        self._update_manifest_for_approval(fm, dest_path, files_to_delete)
-
-        # Remove entry from file list
-        try:
-            list_idx = self.file_paths.index(self.current_md_path)
-            self.file_paths.pop(list_idx)
-            self.file_list.delete(list_idx)
-        except ValueError:
-            pass
-
-        # Reset editor state
-        self.editor.delete("1.0", tk.END)
-        self.editor.edit_modified(False)
-        self.current_md_path = None
-        self._current_content_path = None
-        self._current_frontmatter = {}
-        self._available_sources = {}
-        self._source_combo["values"] = []
-        self._source_var.set("")
-        self.info_label.config(text="Nenhum arquivo selecionado")
-
-        # Clear previews
-        for widget in self.inner_frame.winfo_children():
-            widget.destroy()
-        self.preview_images.clear()
-
-        cleanup_msg = f" | Removidos: {', '.join(deleted)}" if deleted else ""
-        self.status_var.set(f"✅ Aprovado → {dest_label}{file_id}.md{cleanup_msg}")
