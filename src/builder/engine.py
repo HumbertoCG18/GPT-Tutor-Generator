@@ -1363,7 +1363,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         Para PDFs escaneados:
         - renderiza cada página como imagem
         - cria um markdown base que referencia essas imagens
-        - usa JPEG para reduzir peso
+        - usa JPG / JPEG para reduzir peso
         """
         if not HAS_PYMUPDF:
             raise RuntimeError("PyMuPDF é obrigatório para tratar PDFs scanned como imagens.")
@@ -1456,7 +1456,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         report = self._profile_pdf(raw_target, entry)
         decision = self.selector.decide(entry, report)
         logger.info(
-            "  [1/6] Profile=%s, pages=%d, text=%d chars, images=%d, scan=%s",
+            "  [1/6] Profile=%s, Paginas=%d, Texto=%d chars, Imagens=%d, Scan=%s",
             decision.effective_profile,
             report.page_count,
             report.text_chars,
@@ -1588,10 +1588,6 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
                 })
         else:
             logger.info("  [4/6] Extração de imagens: pulado")
-
-        self._check_cancel()
-
-        # Page previews são renderizados on-the-fly no Curator Studio
 
         self._check_cancel()
 
@@ -2010,7 +2006,6 @@ unit: {entry.tags}
                     fname = out_dir / f"page-{page_num + 1:03d}-img-{img_idx:02d}.{ext}"
                     fname.write_bytes(data)
                     # Conversão de formato acontece na consolidação final
-                    # (_resolve_content_images), não aqui no staging.
                     count += 1
             return count
         finally:
@@ -2424,10 +2419,6 @@ unit: {entry.tags}
         logger.info("Rejected entry %s (%d files removed, raw preserved)", entry_id, removed_count)
         return entry_data
 
-
-# ---------------------------------------------------------------------------
-# Free functions — Claude Project instructions (replaces generate_system_prompt)
-# ---------------------------------------------------------------------------
 
 def generate_claude_project_instructions(
     course_meta: dict,

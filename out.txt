@@ -1,5 +1,0 @@
-Traceback (most recent call last):
-  File "<string>", line 6, in <module>
-  File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\tests\test_core.py", line 22, in <module>
-    from src.builder.engine import (
-ImportError: cannot import name 'rows_to_markdown_table' from 'src.builder.engine' (C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\src\builder\engine.py)
