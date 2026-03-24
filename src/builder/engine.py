@@ -2,6 +2,7 @@ from __future__ import annotations
 import csv
 import json
 import logging
+import os
 import re
 import shutil
 import subprocess
@@ -1355,6 +1356,74 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         except Exception as e:
             logger.warning("  [math-norm] Falha ao normalizar %s: %s", md_rel_path, e)
 
+
+    def _render_scanned_pdf_as_images(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
+        """
+        Para PDFs escaneados:
+        - renderiza cada página como imagem
+        - cria um markdown base que referencia essas imagens
+        - evita depender de OCR ruim do docling/marker
+        """
+        if not HAS_PYMUPDF:
+            raise RuntimeError("PyMuPDF é obrigatório para tratar PDFs scanned como imagens.")
+
+        entry_id = entry.id()
+        images_dir = self.root_dir / "content" / "images" / "scanned" / entry_id
+        md_dir = self.root_dir / "staging" / "markdown-auto" / "scanned"
+
+        ensure_dir(md_dir)
+        if images_dir.exists():
+            shutil.rmtree(images_dir)
+        ensure_dir(images_dir)
+
+        md_path = md_dir / f"{entry_id}.md"
+
+        doc = pymupdf.open(str(raw_target))
+        refs = []
+        try:
+            pages = parse_page_range(entry.page_range) or list(range(doc.page_count))
+            pages = [p for p in pages if 0 <= p < doc.page_count]
+
+            for page_num in pages:
+                page = doc[page_num]
+                pix = page.get_pixmap(matrix=pymupdf.Matrix(1.6, 1.6), alpha=False)
+                img_path = images_dir / f"page-{page_num + 1:03d}.png"
+                pix.save(str(img_path))
+
+                rel = os.path.relpath(str(img_path), str(md_path.parent)).replace("\\", "/")
+                refs.append(
+                    f"## Página {page_num + 1}\n\n"
+                    f"![Página {page_num + 1}]({rel})\n"
+                )
+        finally:
+            doc.close()
+
+        body = (
+            f"# {entry.title}\n\n"
+            "> Documento tratado como **imagem** porque o perfil efetivo foi `scanned`.\n"
+            "> Leia o conteúdo visualmente pelas páginas renderizadas abaixo.\n\n"
+            + "\n".join(refs)
+        )
+
+        write_text(md_path, wrap_frontmatter({
+            "entry_id": entry_id,
+            "title": entry.title,
+            "backend": "scanned-pages",
+            "source_pdf": safe_rel(raw_target, self.root_dir),
+            "page_range": entry.page_range,
+            "effective_profile": "scanned",
+        }, body))
+
+        return {
+            "base_markdown": safe_rel(md_path, self.root_dir),
+            "base_backend": "scanned-pages",
+            "advanced_markdown": None,
+            "advanced_backend": None,
+            "rendered_pages_dir": safe_rel(images_dir, self.root_dir),
+        }
+
+
+
     def _process_pdf(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
         import time
         item: Dict[str, object] = {
@@ -2210,6 +2279,7 @@ unit: {entry.tags}
             "images_dir", "tables_dir", "table_detection_dir",
             "advanced_asset_dir", "advanced_metadata_path",
             "approved_markdown", "curated_markdown",
+            "rendered_pages_dir",
         ]
         removed_count = 0
         for key in keys_to_clean:
