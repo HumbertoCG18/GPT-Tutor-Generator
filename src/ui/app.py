@@ -6,6 +6,7 @@ import traceback
 import logging
 import threading
 import subprocess
+import os
 from pathlib import Path
 from dataclasses import asdict
 from datetime import datetime
@@ -234,7 +235,8 @@ class App(tk.Tk):
             "Ao concluir com sucesso, o Windows será desligado automaticamente.",
         )
         ttk.Separator(repo_actions, orient="vertical").pack(side="right", fill="y", padx=10)
-        ttk.Button(repo_actions, text="📂 Abrir Repo", command=self.open_existing_repo).pack(side="right")
+        ttk.Button(repo_actions, text="🗂 FILE_MAP", command=self.open_file_map).pack(side="right")
+        ttk.Button(repo_actions, text="📂 Abrir Repo", command=self.open_repo_folder).pack(side="right", padx=(6, 0))
         self._btn_process = ttk.Button(repo_actions, text="⚡ Processar",
                                        command=self.process_selected_single)
         self._btn_process.pack(side="right", padx=(6, 0))
@@ -1038,6 +1040,25 @@ class App(tk.Tk):
             return None
         return Path(repo_root)
 
+    def _repo_dir_from_active_subject(self) -> Optional[Path]:
+        active_name = self._var_active_subject.get()
+        if active_name and active_name != "(nenhuma)":
+            sp = self.subject_store.get(active_name)
+            if sp and getattr(sp, "repo_root", "").strip():
+                return Path(sp.repo_root.strip())
+        return self._repo_dir()
+
+    def _open_path_in_system(self, path: Path) -> None:
+        try:
+            if sys.platform == "win32":
+                os.startfile(str(path))  # type: ignore[attr-defined]
+            elif sys.platform == "darwin":
+                subprocess.Popen(["open", str(path)])
+            else:
+                subprocess.Popen(["xdg-open", str(path)])
+        except Exception as e:
+            messagebox.showerror(APP_NAME, f"Não foi possível abrir:\n{path}\n\n{e}")
+
     def build_repo(self):
         meta = self._course_meta()
         if meta is None:
@@ -1701,30 +1722,33 @@ class App(tk.Tk):
         except Exception as e:
             messagebox.showerror(APP_NAME, f"Erro ao editar entrada: {e}")
 
-    def open_existing_repo(self):
-        """Abre um repositório existente e carrega seus dados."""
-        path = filedialog.askdirectory(title="Selecione a pasta raiz do repositório")
-        if not path:
+    def open_repo_folder(self):
+        """Abre a pasta do repositório da matéria ativa no explorador de arquivos."""
+        repo_dir = self._repo_dir_from_active_subject()
+        if not repo_dir:
+            messagebox.showinfo(APP_NAME, "Nenhum repositório configurado para a matéria ativa.")
             return
-        repo_dir = Path(path)
-        manifest_path = repo_dir / "manifest.json"
-        if not manifest_path.exists():
-            messagebox.showerror(APP_NAME, f"Nenhum manifest.json encontrado em:\n{repo_dir}\n\nEsta pasta não parece ser um repositório gerado.")
+        if not repo_dir.exists():
+            messagebox.showerror(APP_NAME, f"A pasta do repositório não existe:\n{repo_dir}")
             return
-        try:
-            with open(manifest_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            course = data.get("course", {})
-            self.var_course_name.set(course.get("course_name", ""))
-            self.var_course_slug.set(course.get("course_slug", ""))
-            self.var_professor.set(course.get("professor", ""))
-            self.var_institution.set(course.get("institution", "PUCRS"))
-            self.var_semester.set(course.get("semester", ""))
-            # Caminho completo do repositório
-            self.var_repo_root.set(str(repo_dir))
-            self._set_status(f"Repositório carregado: {course.get('course_name', repo_dir.name)}")
-            self._refresh_backlog()
-        except Exception as e:
-            messagebox.showerror(APP_NAME, f"Erro ao carregar repositório:\n{e}")
+        self._open_path_in_system(repo_dir)
+        self._set_status(f"Pasta do repositório aberta: {repo_dir}")
+
+    def open_file_map(self):
+        """Abre course/FILE_MAP.md do repositório da matéria ativa."""
+        repo_dir = self._repo_dir_from_active_subject()
+        if not repo_dir:
+            messagebox.showinfo(APP_NAME, "Nenhum repositório configurado para a matéria ativa.")
+            return
+        file_map_path = repo_dir / "course" / "FILE_MAP.md"
+        if not file_map_path.exists():
+            messagebox.showerror(
+                APP_NAME,
+                f"FILE_MAP.md não encontrado em:\n{file_map_path}\n\n"
+                f"Crie ou processe o repositório antes de tentar abrir esse arquivo."
+            )
+            return
+        self._open_path_in_system(file_map_path)
+        self._set_status(f"FILE_MAP aberto: {file_map_path}")
 
 
