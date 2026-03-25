@@ -1,328 +1,399 @@
-# LLM.md — Contexto Completo do Projeto GPT-Tutor-Generator
+# LLM.md — Contexto Expandido do Projeto
 
-> **Use este arquivo para dar contexto a qualquer LLM de coding (Claude Code, Codex, etc.).**
-> Última atualização: 2026-03-16
+> Use este arquivo para dar contexto a qualquer agente de coding que precise entender o estado atual deste repositório.
 
----
-
-## 1. O Que É Este Projeto
-
-**Academic Tutor Repo Builder V3** — aplicação desktop Python/tkinter que converte PDFs acadêmicos em repositórios de conhecimento curado para sistemas de tutoria baseados em LLM.
-
-O objetivo final é criar um **template reutilizável de tutor acadêmico** para diversas disciplinas universitárias. Cada repositório de disciplina é conectado a um **Projeto no Claude.ai**, onde o Claude atua como tutor com política pedagógica estruturada.
-
-### Decisões Arquiteturais
-
-- **Plataforma alvo:** Claude Projects (claude.ai) — substituiu o ChatGPT Custom GPT
-- **Repositório GitHub como fonte da verdade** para cada disciplina
-- **Markdown como formato principal** — PDFs ficam como material bruto, conteúdo curado vai para `.md`
-- A pasta `build/claude-knowledge/` contém os arquivos para conectar ao Claude Project
-- Sistema escalável e replicável para múltiplas disciplinas
-
-### Visão do Tutor
-
-O tutor no Claude deve ser capaz de:
-- Ensinar conteúdo da disciplina (modo `study`)
-- Resolver listas de exercícios sem entregar a resposta (modo `assignment`)
-- Preparar para provas com foco em incidência e padrões (modo `exam_prep`)
-- Acompanhar o aluno durante a aula (modo `class_companion`)
-- Acompanhar progresso via `student/STUDENT_STATE.md`
-- Usar cronograma e provas como parte da lógica pedagógica
+Última atualização: 2026-03-25
 
 ---
 
-## 2. Stack Técnica
+## 1. Resumo do Projeto
 
-| Item | Valor |
-|------|-------|
-| Linguagem | Python 3.8+ |
-| UI | tkinter (desktop GUI) |
-| Versão | 3.0.0 |
-| Licença | MIT |
-| Gerenciamento | pyproject.toml (PEP 517) |
-| Testes | pytest |
-| Launcher Windows | `run.bat` / `run.ps1` |
+O **Academic Tutor Repo Builder V3** é uma aplicação desktop em `Python/tkinter` que converte materiais acadêmicos em repositórios Markdown curados para estudo assistido por IA.
 
-### Dependências
+O produto hoje gera instruções e estrutura para:
 
-**Core** (obrigatórias):
-- `pymupdf>=1.24.0` — manipulação de PDF, extração de imagens
-- `pymupdf4llm>=0.0.10` — extração Markdown otimizada para LLM
-- `pdfplumber>=0.10.0` — extração de tabelas
-- `Pillow>=10.0.0` — processamento de imagens
-- `python-dotenv` — gerenciamento de variáveis de ambiente
+- `Claude`
+- `GPT`
+- `Gemini`
 
-**Opcionais** (backends avançados):
-- `docling` — CLI para fórmulas, layout complexo, OCR avançado
-- `marker-pdf` — CLI para extração semântica
-
-**Opcionais** (auto-categorização por LLM):
-- `openai` — categorização via GPT-4o-mini
-- `google-genai` — categorização via Gemini 1.5 Flash
+Ele não deve mais ser descrito como uma ferramenta exclusiva para Claude, embora Claude continue sendo uma plataforma importante do fluxo.
 
 ---
 
-## 3. Estrutura do Repositório (código-fonte)
+## 2. Objetivo do Produto
 
+O objetivo é produzir um repositório versionável por disciplina que concentre:
+
+- materiais brutos
+- extrações automáticas
+- conteúdos revisados
+- arquivos pedagógicos
+- estado do aluno
+- instruções para a IA principal
+
+Fluxo conceitual:
+
+```text
+importar -> processar -> revisar -> organizar -> gerar instruções -> estudar
 ```
+
+---
+
+## 3. Arquitetura Atual
+
+```text
 GPT-Tutor-Generator/
-├── app.py                              # Entry point (thin wrapper)
-├── run.bat                             # Launcher Windows (CMD)
-├── run.ps1                             # Launcher Windows (PowerShell)
-├── src/
-│   ├── __main__.py                     # Inicialização e logging
-│   ├── builder/
-│   │   └── engine.py                   # Pipeline de extração + geradores pedagógicos
-│   ├── models/
-│   │   └── core.py                     # DataClasses: FileEntry, SubjectProfile, etc.
-│   ├── services/
-│   │   └── llm.py                      # LLMCategorizer (OpenAI / Gemini)
-│   └── ui/
-│       ├── app.py                      # Janela principal (App)
-│       ├── curator_studio.py           # Editor de revisão manual
-│       ├── dialogs.py                  # Todos os diálogos modais
-│       └── theme.py                    # ThemeManager + AppConfig
-├── tests/
-│   ├── __init__.py
-│   └── test_core.py                    # Suite de testes (11 classes, 60+ assertions)
+├── app.py
+├── run.bat
+├── run.ps1
+├── README.md
+├── CODEX.md
+├── CLAUDE.md
+├── LLM.md
 ├── pyproject.toml
 ├── requirements.txt
-├── LLM.md                              # Este arquivo
-└── README.md
+├── src/
+│   ├── __main__.py
+│   ├── builder/
+│   │   └── engine.py
+│   ├── models/
+│   │   └── core.py
+│   ├── ui/
+│   │   ├── app.py
+│   │   ├── dialogs.py
+│   │   ├── curator_studio.py
+│   │   └── theme.py
+│   └── utils/
+│       └── helpers.py
+└── tests/
+    └── test_core.py
 ```
+
+Observação importante:
+
+- hoje não existe um `src/services/llm.py` ativo na arquitetura atual do código-fonte
+- não documente auto-categorização por LLM como funcionalidade vigente sem verificar antes
 
 ---
 
-## 4. Organização do Código
+## 4. Módulos Principais
 
-### 4.1 `src/models/core.py` — Data Classes
+### `src/builder/engine.py`
 
-| Classe | Função |
-|--------|--------|
-| `FileEntry` | Representa um arquivo de entrada (PDF, imagem, URL). Tem `to_dict()`/`from_dict()` para serialização |
-| `DocumentProfileReport` | Resultado da análise de perfil de um PDF |
-| `BackendRunResult` | Resultado da execução de um backend |
-| `PipelineDecision` | Decisão de quais backends usar (com trilha de auditoria) |
-| `SubjectProfile` | Perfil de uma matéria, inclui `queue: List[FileEntry]` persistida |
-| `StudentProfile` | Perfil do aluno exportado nos repositórios |
-| `SubjectStore` | Persistência de perfis em `~/.config/gpt_tutor_generator/subjects.json` |
-| `StudentStore` | Persistência do perfil do aluno em `student.json` |
+É o núcleo do sistema.
 
-**Importante:** `SubjectProfile.queue` persiste a fila de arquivos pendentes por matéria. Ao selecionar uma matéria na UI, a fila é restaurada automaticamente.
+Responsabilidades:
 
-### 4.2 `src/builder/engine.py` — Motor principal
+- processar PDF, imagem, URL, código, ZIP e links GitHub
+- escolher backend base e avançado
+- gerar markdowns automáticos
+- manter manifest
+- criar arquivos pedagógicos
+- executar `build()`, `incremental_build()`, `process_single()` e `unprocess()`
 
-**Backends de extração:**
+Pontos recentes:
 
-```
-ExtractionBackend (base abstrata)
-├── PyMuPDF4LLMBackend  (layer="base")
-├── PyMuPDFBackend       (layer="base")
-├── DoclingCLIBackend    (layer="advanced")
-└── MarkerCLIBackend     (layer="advanced")
-```
+- o `URL Fetcher` foi melhorado para gerar Markdown estruturado
+- a seleção de conteúdo principal da página tenta evitar sidebar, menu e footer
 
-**Classe `RepoBuilder` — métodos principais:**
+### `src/models/core.py`
 
-| Método | Função |
-|--------|--------|
-| `build()` | Build completo do zero |
-| `incremental_build()` | Adiciona novos entries sem recriar |
-| `process_single(entry)` | Processa um único arquivo e adiciona ao manifest |
-| `unprocess(entry_id)` | Remove todos os arquivos gerados de um entry e o retira do manifest |
+Modelos principais:
 
-**Geradores de arquivos pedagógicos (funções livres):**
+- `FileEntry`
+- `DocumentProfileReport`
+- `BackendRunResult`
+- `PipelineDecision`
+- `SubjectProfile`
+- `StudentProfile`
+- `SubjectStore`
+- `StudentStore`
 
-| Função | Arquivo gerado |
-|--------|---------------|
-| `generate_claude_project_instructions()` | `INSTRUCOES_CLAUDE_PROJETO.md` |
-| `tutor_policy_md()` | `system/TUTOR_POLICY.md` |
-| `pedagogy_md()` | `system/PEDAGOGY.md` |
-| `modes_md()` | `system/MODES.md` |
-| `output_templates_md()` | `system/OUTPUT_TEMPLATES.md` |
-| `course_map_md()` | `course/COURSE_MAP.md` |
-| `glossary_md()` | `course/GLOSSARY.md` |
-| `student_state_md()` | `student/STUDENT_STATE.md` |
-| `progress_schema_md()` | `student/PROGRESS_SCHEMA.md` |
-| `bibliography_md()` | `content/BIBLIOGRAPHY.md` |
+Ponto crítico:
 
-### 4.3 `src/ui/app.py` — Interface principal
+- `SubjectProfile.queue` usa serialização customizada
+- não usar `asdict()` diretamente nesse modelo
 
-**Funcionalidades-chave:**
-- Fila de arquivos salva automaticamente por matéria (`_save_current_queue()`)
-- Processamento individual via botão "⚡ Processar" (`process_selected_single()`)
-- Remoção de processamento via "🗑 Limpar Processamento" (`remove_processed_single()`)
-- Importação rápida sem diálogo (`⚡ Importação rápida`)
-- Auto-categorização por LLM antes do build
-- Build incremental (detecta repositório existente e pergunta)
-- Backlog tab mostra arquivos já processados via `manifest.json`
+### `src/ui/app.py`
 
-### 4.4 `src/services/llm.py` — Auto-categorização
+Janela principal.
 
-`LLMCategorizer` usa OpenAI (gpt-4o-mini) ou Gemini (1.5-flash) para classificar PDFs automaticamente em categorias/unidades do plano de ensino.
+Hoje inclui:
+
+- matéria ativa
+- perfil do aluno
+- status do ambiente
+- fila a processar
+- backlog
+- log
+- abertura de repositório existente
+- Curator Studio
+- geração de instruções LLM
+
+### `src/ui/dialogs.py`
+
+Concentra:
+
+- dialogs de matéria
+- perfil do aluno
+- edição de entry
+- visualizador de markdown
+- ajuda `F1`
+- entrada de URL
+- janela de status
+
+### `src/ui/curator_studio.py`
+
+Faz revisão manual dos artefatos em `manual-review/`.
+
+Funções importantes:
+
+- abrir fontes base/avançada/template
+- salvar edição
+- aprovar conteúdo para diretório final
+- reprovar e devolver item para fila
+- atualizar `manifest.json`
+
+### `src/ui/theme.py`
+
+Centraliza:
+
+- paletas
+- aplicação de tema
+- `AppConfig`
+- convenções de estilo para `tk` e `ttk`
 
 ---
 
-## 5. Estrutura Gerada (Repositório de Disciplina)
+## 5. Funcionalidades Atuais
 
-```
-{course-slug}/
-├── INSTRUCOES_CLAUDE_PROJETO.md       # System prompt para Claude Projects ← NOVO
-├── README.md
+### Perfis persistentes
+
+- matéria com fila persistida
+- aluno com preferências pedagógicas
+
+### Importação
+
+Tipos aceitos:
+
+- `pdf`
+- `image`
+- `url`
+- `github-repo`
+- `code`
+- `zip`
+
+### Modos de processamento
+
+- `auto`
+- `quick`
+- `high_fidelity`
+- `manual_assisted`
+
+### Perfis de documento
+
+- `auto`
+- `general`
+- `math_light`
+- `math_heavy`
+- `layout_heavy`
+- `scanned`
+- `exam_pdf`
+
+### Backends
+
+Base:
+
+- `pymupdf4llm`
+- `pymupdf`
+
+Avançados:
+
+- `docling`
+- `marker`
+
+### Curadoria
+
+- `manual-review/`
+- Curator Studio
+- aprovação sincronizada no manifest
+
+### Backlog
+
+- leitura do `manifest.json`
+- edição de entry já processada
+- limpeza de processamento
+- reprocessamento do repositório
+- geração de instruções LLM
+
+### Instruções para IA
+
+Arquivos gerados:
+
+- `INSTRUCOES_CLAUDE_PROJETO.md`
+- `INSTRUCOES_GPT_PROJETO.md`
+- `INSTRUCOES_GEMINI_PROJETO.md`
+
+---
+
+## 6. Estrutura Gerada no Repositório da Disciplina
+
+Estrutura típica:
+
+```text
+{repo-root}/
+├── INSTRUCOES_CLAUDE_PROJETO.md
+├── INSTRUCOES_GPT_PROJETO.md
+├── INSTRUCOES_GEMINI_PROJETO.md
 ├── manifest.json
-├── BUILD_REPORT.md
-│
-├── system/                            # Política pedagógica do tutor ← NOVO
-│   ├── TUTOR_POLICY.md
-│   ├── PEDAGOGY.md
-│   ├── MODES.md
-│   ├── OUTPUT_TEMPLATES.md
-│   ├── BACKEND_ARCHITECTURE.md
-│   ├── PDF_CURATION_GUIDE.md
-│   └── BACKEND_POLICY.yaml
-│
+├── system/
 ├── course/
-│   ├── COURSE_IDENTITY.md
-│   ├── COURSE_MAP.md                  # Mapa pedagógico ← NOVO
-│   ├── GLOSSARY.md                    # Terminologia ← NOVO
-│   ├── SYLLABUS.md                    # Cronograma (se preenchido)
-│   └── SOURCE_REGISTRY.yaml
-│
-├── content/
-│   ├── BIBLIOGRAPHY.md               # Referências bibliográficas ← NOVO
-│   ├── units/
-│   ├── concepts/
-│   ├── summaries/
-│   ├── references/
-│   └── curated/
-│
-├── exercises/
-│   ├── lists/
-│   ├── solved/
-│   └── index/
-│
-├── exams/
-│   ├── past-exams/
-│   ├── answer-keys/
-│   └── exam-index/
-│
 ├── student/
-│   ├── STUDENT_STATE.md              # Progresso do aluno ← NOVO
-│   ├── STUDENT_PROFILE.md
-│   └── PROGRESS_SCHEMA.md            # Schema de tracking ← NOVO
-│
-├── scripts/
-├── raw/pdfs/{category}/
-├── raw/images/{category}/
-├── staging/markdown-auto/{backend}/
-├── staging/assets/
+├── content/
+├── exercises/
+├── exams/
+├── raw/
+├── staging/
 ├── manual-review/
-└── build/claude-knowledge/
-    └── bundle.seed.json
+└── build/
 ```
+
+Diretórios-chave:
+
+- `raw/` -> origem copiada para o repo
+- `staging/` -> artefatos automáticos
+- `manual-review/` -> revisão humana guiada
+- `content/`, `exercises/`, `exams/` -> conteúdo aprovado
+- `build/claude-knowledge/bundle.seed.json` -> bundle inicial de materiais prioritários
 
 ---
 
-## 6. Integração com Claude Projects
+## 7. Categorias Atuais
 
-### Fluxo completo
-
+```python
+[
+    "material-de-aula",
+    "provas",
+    "listas",
+    "gabaritos",
+    "fotos-de-prova",
+    "referencias",
+    "bibliografia",
+    "cronograma",
+    "trabalhos",
+    "codigo-professor",
+    "codigo-aluno",
+    "quadro-branco",
+    "outros",
+]
 ```
-1. Abrir app → selecionar matéria → adicionar PDFs
-2. Clicar "🚀 Criar Repositório" → gera estrutura + arquivos pedagógicos
-3. Revisar staging/markdown-auto/ e manual-review/
-4. Promover conteúdo curado para content/, exercises/, exams/
-5. Preencher COURSE_MAP.md e GLOSSARY.md manualmente
-6. Push para GitHub
-7. No Claude.ai → criar Projeto → Settings → conectar repositório GitHub
-8. Colar conteúdo de INSTRUCOES_CLAUDE_PROJETO.md no campo "Instructions"
-9. Estudar → ao final de cada sessão: Claude sugere update do STUDENT_STATE.md → commit → push
-```
 
-### Lógica de escopo das provas (embutida nos arquivos pedagógicos)
+Categorias com efeito estrutural:
 
-As provas são cumulativas com peso progressivo:
-- **P1** → 100% conteúdo pré-P1
-- **P2** → ~70% conteúdo entre P1-P2, ~30% conteúdo pré-P1
-- **P3** → ~70% conteúdo entre P2-P3, ~20% P1→P2, ~10% pré-P1
+- `provas`, `fotos-de-prova` -> exames
+- `listas`, `gabaritos` -> exercícios
+- `trabalhos` -> contexto de assignment
+- `codigo-professor`, `codigo-aluno` -> contexto de código
+- `quadro-branco` -> apoio visual/aula
 
 ---
 
-## 7. Testes
+## 8. Regras de Trabalho no Código
+
+### UI
+
+Novo `tk.Toplevel` deve usar:
+
+```python
+p = apply_theme_to_toplevel(self, parent)
+```
+
+Além disso:
+
+- `tk.Frame` e `tk.Label` precisam de `bg`
+- `tk.Text` precisa de `bg`, `fg`, `insertbackground`
+- `tk.Canvas` precisa de `bg` e `highlightthickness=0`
+
+### Modelos
+
+- preserve `to_dict()` / `from_dict()`
+- trate `FileEntry.from_dict()` com tolerância a campos faltantes
+
+### Build
+
+- mudanças em geradores pedagógicos normalmente exigem ajuste em `build()` e `incremental_build()`
+- se criar novo arquivo gerado, atualize a geração e os testes
+
+### Manifest
+
+- trate `manifest.json` como fonte de verdade do backlog
+- não quebre compatibilidade de campos sem necessidade
+
+---
+
+## 9. Testes
+
+Rodar tudo:
 
 ```bash
 python -m pytest tests/ -v
 ```
 
-O tkinter é mockado para CI headless. 11 classes de teste, 60+ assertions cobrindo utilidades, backends e data classes.
-
----
-
-## 8. Comandos de Desenvolvimento
+Compacto:
 
 ```bash
-# Instalar dependências
-pip install -r requirements.txt
-
-# Instalar dev
-pip install -e ".[dev]"
-
-# Rodar o app
-python app.py
-# ou no Windows:
-run.bat
-
-# Rodar testes
-python -m pytest tests/ -v
+python -m pytest tests/ -q
 ```
 
----
+Exemplo focado:
 
-## 9. Princípios de Design
+```bash
+python -m pytest tests/test_core.py -k "UrlFetcher" -q
+```
 
-1. **Separar comportamento de conteúdo** — system prompt ≠ material da matéria
-2. **Separar disciplina de aluno** — conteúdo do curso ≠ estado do estudante
-3. **PDF é material bruto** — Markdown curado é conhecimento operacional
-4. **GitHub é a fonte da verdade** — tudo versionável, não depende de um chat
-5. **Claude como camada pedagógica** — não como depósito de tudo
+Os testes rodam headless porque `tkinter` é mockado em `tests/test_core.py`.
 
 ---
 
-## 10. Estado Atual
+## 10. Dependências
 
-### ✅ Implementado
-- GUI completa com fila persistente por matéria
-- Pipeline de extração com 4 backends (2 base + 2 avançados)
-- Processamento individual (`process_single`) e remoção (`unprocess`)
-- Build incremental e build completo
-- Auto-categorização por LLM (OpenAI / Gemini)
-- Curator Studio para revisão manual
-- Geração completa de arquivos pedagógicos para Claude Projects
-- `INSTRUCOES_CLAUDE_PROJETO.md` como system prompt do Projeto
-- `STUDENT_STATE.md` para tracking de progresso
-- Lógica de escopo de provas (cumulativo com peso progressivo)
-- Integração GitHub (via Claude Project Settings)
+Obrigatórias no estado atual:
 
-### ✅ Tudo implementado
-- GUI completa com fila persistente por matéria
-- Pipeline de extração com 4 backends (2 base + 2 avançados)
-- Processamento individual (`process_single`) e remoção (`unprocess`)
-- Build completo e incremental
-- Auto-categorização por LLM (OpenAI / Gemini)
-- Curator Studio para revisão manual
-- Todos os arquivos pedagógicos para Claude Projects
-- `INSTRUCOES_CLAUDE_PROJETO.md` como system prompt do Projeto
-- `STUDENT_STATE.md` para tracking de progresso
-- Lógica de escopo de provas (cumulativo com peso progressivo)
-- Extração automática de unidades do `teaching_plan` → `COURSE_MAP.md`
-- Extração automática de referências → `BIBLIOGRAPHY.md`
-- Seeding de termos → `GLOSSARY.md`
-- `EXAM_INDEX.md` gerado condicionalmente (só quando há provas na fila)
-- `EXERCISE_INDEX.md` gerado condicionalmente (só quando há listas na fila)
-- `incremental_build` regenera todos os arquivos pedagógicos
-- 61 testes passando
+- `pymupdf`
+- `pymupdf4llm`
+- `pdfplumber`
+- `Pillow`
 
-### 🔲 Melhorias futuras (não críticas)
-- Extração de datas de prova do `syllabus` para popular `EXAM_INDEX`
-- Campo de escopo de prova configurável por matéria no `SubjectManagerDialog`
-- `today-context.md` gerado automaticamente antes da aula
+Opcionais:
+
+- `docling`
+- `marker-pdf`
+
+OCR:
+
+- `tesseract`
+- `tessdata`
+
+---
+
+## 11. Documentos de Referência Internos
+
+Use estes arquivos em conjunto:
+
+- `README.md` -> visão geral para humanos
+- `CODEX.md` -> guia técnico mais direto para manutenção
+- `CLAUDE.md` -> contexto curto para trabalho operacional
+- `LLM.md` -> contexto expandido
+
+---
+
+## 12. Resumo Executivo
+
+Se um agente tiver pouco tempo, as verdades mais importantes são:
+
+1. o núcleo está em `src/builder/engine.py`
+2. o projeto hoje é multi-plataforma (`Claude`, `GPT`, `Gemini`)
+3. `manifest.json` é central para backlog e curadoria
+4. `Curator Studio` já faz promoção para pastas finais e sincroniza o manifest
+5. `SubjectProfile.queue` não pode ser tratado com `asdict()` puro
+6. a ajuda `F1`, `README.md` e `CLAUDE.md` já foram alinhados com o estado atual

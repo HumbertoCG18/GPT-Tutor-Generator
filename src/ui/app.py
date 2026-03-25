@@ -5,15 +5,20 @@ from typing import List, Optional, Dict
 import traceback
 import logging
 import threading
+import subprocess
 from pathlib import Path
 from dataclasses import asdict
+from datetime import datetime
 import json
 try:
     import pymupdf
 except ImportError:
     pymupdf = None
 
-from src.models.core import FileEntry, SubjectStore, StudentStore, SubjectProfile
+from src.models.core import (
+    FileEntry, SubjectStore, StudentStore, SubjectProfile,
+    PendingOperation, PendingOperationStore,
+)
 from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES
 from src.builder.engine import RepoBuilder
 from src.ui.theme import ThemeManager, AppConfig
@@ -63,15 +68,18 @@ class App(tk.Tk):
         self.theme_mgr = ThemeManager()
         self.subject_store = SubjectStore()
         self.student_store = StudentStore()
+        self.pending_op_store = PendingOperationStore()
         self._theme_name: str = self.config_obj.get("theme")  # type: ignore[assignment]
         self.title(APP_NAME)
         self.geometry("1360x900")
         self.minsize(900, 600)
         self.entries: List[FileEntry] = []
         self._quick_import = tk.BooleanVar(value=False)
+        self._shutdown_after_build = tk.BooleanVar(value=False)
         self._cancel_event = threading.Event()
         self._pause_event = threading.Event()   # clear = paused, set = running
         self._pause_event.set()                 # start in "running" state
+        self._active_operation: Optional[PendingOperation] = None
 
         # Apply theme before building UI
         self.theme_mgr.apply(self, self._theme_name)
@@ -79,8 +87,24 @@ class App(tk.Tk):
         self._build_ui()
         self.bind("<F1>", lambda _: self.open_help())
         self.protocol("WM_DELETE_WINDOW", self._on_close)
+        self.after(200, self._offer_resume_pending_operation)
 
     def _on_close(self):
+        if self._active_operation:
+            answer = messagebox.askyesnocancel(
+                APP_NAME,
+                "Existe um processamento em andamento.\n\n"
+                "Deseja pausar e sair?\n\n"
+                "Sim -> pausa o processamento, salva o estado e fecha o app\n"
+                "Não -> fecha o app sem salvar retomada\n"
+                "Cancelar -> volta para o aplicativo"
+            )
+            if answer is None:
+                return
+            if answer:
+                self._persist_pending_operation()
+            else:
+                self.pending_op_store.clear()
         self.config_obj.save()
         if hasattr(self, "_ui_log_handler"):
             logging.getLogger("src").removeHandler(self._ui_log_handler)
@@ -184,24 +208,39 @@ class App(tk.Tk):
         toolbar = ttk.Frame(top)
         toolbar.pack(fill="x", pady=(0, 10))
 
-        ttk.Button(toolbar, text="➕ PDFs", command=self.add_pdfs).pack(side="left")
-        ttk.Button(toolbar, text="🖼 Imagens/Fotos", command=self.add_images).pack(side="left", padx=(6, 0))
-        ttk.Button(toolbar, text="🔗 Adicionar Link", command=self.add_url).pack(side="left", padx=(6, 0))
-        ttk.Button(toolbar, text="💻 Código / ZIP", command=self.add_code_files).pack(side="left", padx=(6, 0))
-        ttk.Separator(toolbar, orient="vertical").pack(side="left", fill="y", padx=10)
-        self._btn_process = ttk.Button(toolbar, text="⚡ Processar",
-                                       command=self.process_selected_single)
-        self._btn_process.pack(side="left")
-        ttk.Button(toolbar, text="🔁 Todos → Auto", command=self._set_all_modes_auto).pack(side="left", padx=(6, 0))
-        ttk.Separator(toolbar, orient="vertical").pack(side="left", fill="y", padx=10)
-        ttk.Button(toolbar, text="📂 Abrir Repo", command=self.open_existing_repo).pack(side="left")
+        import_actions = ttk.Frame(toolbar)
+        import_actions.pack(side="left")
 
-        ttk.Button(toolbar, text="⚙ Configurações", command=self.open_settings).pack(side="right", padx=(6, 0))
-        ttk.Button(toolbar, text="? Ajuda  F1", command=self.open_help).pack(side="right", padx=(6, 0))
-        ttk.Button(toolbar, text="🖌 Curator Studio", command=self.open_curator_studio).pack(side="right", padx=(6, 0))
-        self._btn_build = ttk.Button(toolbar, text="🚀 Criar Repositório",
+        repo_actions = ttk.Frame(toolbar)
+        repo_actions.pack(side="right")
+
+        ttk.Button(import_actions, text="➕ PDFs", command=self.add_pdfs).pack(side="left")
+        ttk.Button(import_actions, text="🖼 Imagens/Fotos", command=self.add_images).pack(side="left", padx=(6, 0))
+        ttk.Button(import_actions, text="🔗 Link", command=self.add_url).pack(side="left", padx=(6, 0))
+        ttk.Button(import_actions, text="💻 Código / ZIP", command=self.add_code_files).pack(side="left", padx=(6, 0))
+
+        ttk.Button(repo_actions, text="⚙ Configurações", command=self.open_settings).pack(side="right", padx=(6, 0))
+        ttk.Button(repo_actions, text="? Ajuda  F1", command=self.open_help).pack(side="right", padx=(6, 0))
+        ttk.Button(repo_actions, text="🖌 Curator Studio", command=self.open_curator_studio).pack(side="right", padx=(6, 0))
+        cb_shutdown = ttk.Checkbutton(
+            repo_actions,
+            text="⏻ Desligar ao concluir build",
+            variable=self._shutdown_after_build,
+        )
+        cb_shutdown.pack(side="right", padx=(6, 0))
+        add_tooltip(
+            cb_shutdown,
+            "Ative para builds grandes que vão rodar sozinhos.\n"
+            "Ao concluir com sucesso, o Windows será desligado automaticamente.",
+        )
+        ttk.Separator(repo_actions, orient="vertical").pack(side="right", fill="y", padx=10)
+        ttk.Button(repo_actions, text="📂 Abrir Repo", command=self.open_existing_repo).pack(side="right")
+        self._btn_process = ttk.Button(repo_actions, text="⚡ Processar",
+                                       command=self.process_selected_single)
+        self._btn_process.pack(side="right", padx=(6, 0))
+        self._btn_build = ttk.Button(repo_actions, text="🚀 Criar Repositório",
                                       style="Accent.TButton", command=self.build_repo)
-        self._btn_build.pack(side="right", padx=(0, 6))
+        self._btn_build.pack(side="right", padx=(6, 0))
 
         # ── Table Notebook ──────────────────────────────────────────────────
         self.notebook = ttk.Notebook(top)
@@ -360,6 +399,14 @@ class App(tk.Tk):
             self._btn_process.configure(state="disabled")
             self._btn_build.configure(text="⏹ Cancelar Build",
                                       style="TButton", command=self._cancel_build)
+            if not hasattr(self, "_btn_pause_build"):
+                self._btn_pause_build = ttk.Button(
+                    self._btn_build.master,
+                    text="⏸ Pausar Build",
+                    command=self._toggle_pause_build,
+                )
+            self._btn_pause_build.configure(text="⏸ Pausar Build", state="normal")
+            self._btn_pause_build.pack(side="right", padx=(0, 6), before=self._btn_build)
             # Navega para a aba Log automaticamente
             log_idx = self.notebook.index("end") - 1
             self.notebook.select(log_idx)
@@ -367,10 +414,28 @@ class App(tk.Tk):
             self._btn_process.configure(state="normal")
             self._btn_build.configure(text="🚀 Criar Repositório",
                                       style="Accent.TButton", command=self.build_repo)
+            if hasattr(self, "_btn_pause_build"):
+                self._btn_pause_build.pack_forget()
 
     def _cancel_build(self):
+        self._clear_pending_operation()
         self._cancel_event.set()
+        self._pause_event.set()
         self._btn_build.configure(state="disabled", text="⏳ Cancelando...")
+        if hasattr(self, "_btn_pause_build"):
+            self._btn_pause_build.configure(state="disabled")
+
+    def _toggle_pause_build(self):
+        if self._pause_event.is_set():
+            self._pause_event.clear()
+            self._set_status("Build pausado.")
+            if hasattr(self, "_btn_pause_build"):
+                self._btn_pause_build.configure(text="▶ Retomar Build")
+        else:
+            self._pause_event.set()
+            self._set_status("Build retomado...")
+            if hasattr(self, "_btn_pause_build"):
+                self._btn_pause_build.configure(text="⏸ Pausar Build")
 
     # ── Processing-single state (Cancel / Pause / Resume) ─────────────
 
@@ -398,6 +463,7 @@ class App(tk.Tk):
                 self._btn_pause.pack_forget()
 
     def _cancel_single(self):
+        self._clear_pending_operation()
         self._cancel_event.set()
         self._pause_event.set()  # desbloqueia se estiver pausado
         self._btn_process.configure(state="disabled", text="⏳ Cancelando...")
@@ -457,6 +523,100 @@ class App(tk.Tk):
         if sp:
             sp.queue = self.entries
             self.subject_store.add(sp)  # calls save() internally
+
+    def _make_pending_operation(self, operation_type: str, requested_mode: str,
+                                selected_entry_source: str = "") -> PendingOperation:
+        return PendingOperation(
+            operation_type=operation_type,
+            requested_mode=requested_mode,
+            repo_root=str(self._repo_dir() or ""),
+            course_meta=self._course_meta() or {},
+            options=self._build_options(),
+            active_subject=self._var_active_subject.get(),
+            selected_entry_source=selected_entry_source,
+            shutdown_after_build=self._shutdown_after_build.get(),
+            entries=[FileEntry.from_dict(e.to_dict()) for e in self.entries],
+            created_at=datetime.now().isoformat(timespec="seconds"),
+        )
+
+    def _persist_pending_operation(self):
+        if not self._active_operation:
+            return
+        self._save_current_queue()
+        self.pending_op_store.save(self._active_operation)
+
+    def _clear_pending_operation(self):
+        self._active_operation = None
+        self.pending_op_store.clear()
+
+    def _reset_build_finish_options(self):
+        self._shutdown_after_build.set(False)
+
+    def _schedule_shutdown_after_build(self):
+        if not self._shutdown_after_build.get():
+            return
+        try:
+            if sys.platform == "win32":
+                subprocess.Popen(
+                    [
+                        "shutdown", "/s", "/t", "60",
+                        "/c", "Academic Tutor Repo Builder: build concluido com sucesso.",
+                    ],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                logger.info("Shutdown agendado para 60s após conclusão do build.")
+                self._set_status("Build concluído. Desligamento agendado para 60s. Use 'shutdown /a' para abortar.")
+            else:
+                logger.warning("Desligamento automático após build não suportado nesta plataforma.")
+                self._set_status("Build concluído. Desligamento automático não é suportado nesta plataforma.")
+        except Exception as e:
+            logger.warning("Falha ao agendar desligamento após build: %s", e)
+            self._set_status(f"Build concluído, mas falhou ao agendar desligamento: {e}")
+
+    def _restore_pending_operation_context(self, op: PendingOperation):
+        meta = op.course_meta or {}
+        self.var_course_name.set(meta.get("course_name", ""))
+        self.var_course_slug.set(meta.get("course_slug", ""))
+        self.var_semester.set(meta.get("semester", ""))
+        self.var_professor.set(meta.get("professor", ""))
+        self.var_institution.set(meta.get("institution", "PUCRS"))
+        self.var_repo_root.set(op.repo_root or "")
+        self._shutdown_after_build.set(bool(op.shutdown_after_build))
+        active_subject = op.active_subject or "(nenhuma)"
+        self._var_active_subject.set(active_subject)
+        self.entries = [FileEntry.from_dict(e.to_dict()) for e in op.entries]
+        self.refresh_tree()
+        self._save_current_queue()
+
+    def _offer_resume_pending_operation(self):
+        op = self.pending_op_store.load()
+        if not op:
+            return
+        type_label = "Build" if op.operation_type == "build" else "Processamento individual"
+        item_line = ""
+        if op.operation_type == "single" and op.selected_entry_source:
+            item_line = f"Arquivo: {Path(op.selected_entry_source).name}\n"
+        answer = messagebox.askyesno(
+            APP_NAME,
+            "Foi encontrada uma sessão anterior com processamento pausado.\n\n"
+            f"Tipo: {type_label}\n"
+            f"{item_line}"
+            f"Repo: {op.repo_root}\n"
+            f"Salvo em: {op.created_at or '(sem horário)'}\n\n"
+            f"Desligar ao concluir: {'sim' if op.shutdown_after_build else 'não'}\n\n"
+            "Deseja retomar o processamento de onde parou?"
+        )
+        if not answer:
+            self.pending_op_store.clear()
+            return
+        self._restore_pending_operation_context(op)
+        if op.operation_type == "build":
+            self._resume_pending_build(op)
+        elif op.operation_type == "single":
+            self._resume_pending_single(op)
+        else:
+            self.pending_op_store.clear()
 
     # ── Actions ──────────────────────────────────────────────────────────────
 
@@ -820,15 +980,6 @@ class App(tk.Tk):
             if self.tree.exists(iid):
                 self.tree.selection_add(iid)
 
-    def _set_all_modes_auto(self):
-        if not self.entries:
-            return
-        for e in self.entries:
-            e.processing_mode = "auto"
-        self.refresh_tree()
-        self._save_current_queue()
-        self._set_status(f"✓ {len(self.entries)} arquivo(s) definidos como modo Auto.")
-
     def refresh_tree(self):
         for item in self.tree.get_children():
             self.tree.delete(item)
@@ -1000,20 +1151,30 @@ class App(tk.Tk):
             # None = manter ordem
 
         self._cancel_event.clear()
+        self._pause_event.set()
         self._set_building_state(True)
+        self._start_progress(max(len(self.entries), 1))
         total = len(self.entries)
         self._set_status(f"{'Atualizando' if incremental else 'Criando'} repositório em {repo_dir} ...")
+        self._active_operation = self._make_pending_operation(
+            operation_type="build",
+            requested_mode="incremental" if incremental else "full",
+        )
+        self._persist_pending_operation()
 
         student_p = self.student_store.profile if self.student_store.profile.full_name else None
         active_subj_name = self._var_active_subject.get()
         active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
 
         def on_progress(current, t, title):
+            self._pause_event.wait()
             if self._cancel_event.is_set():
                 raise InterruptedError("Build cancelado pelo usuário.")
             if title:
-                self.after(0, lambda c=current, tot=t, ti=title:
-                           self._set_status(f"({c + 1}/{tot}) Processando: {ti}..."))
+                self.after(0, lambda c=current, tot=t, ti=title: (
+                    self._step_progress(c, max(tot, 1)),
+                    self._set_status(f"({c + 1}/{tot}) Processando: {ti}...")
+                ))
 
         def worker():
             try:
@@ -1044,17 +1205,26 @@ class App(tk.Tk):
         threading.Thread(target=worker, daemon=True).start()
 
     def _on_build_cancelled(self):
+        self._end_progress()
         self._set_building_state(False)
+        self._active_operation = None
+        self._reset_build_finish_options()
         self._set_status("Build cancelado.")
 
     def _on_build_complete(self, meta: dict, repo_dir: Path, incremental: bool):
+        self._end_progress()
         self._set_building_state(False)
         n_entries = len(self.entries)
         self.entries = []
         self.refresh_tree()
         self._save_current_queue()
+        self._clear_pending_operation()
+        shutdown_after_build = self._shutdown_after_build.get()
         self._set_status(f"✓ Repositório {'atualizado' if incremental else 'criado'} em: {repo_dir}")
-        if incremental:
+        if shutdown_after_build:
+            logger.info("Build concluído com opção de desligamento ativada.")
+            self._schedule_shutdown_after_build()
+        elif incremental:
             messagebox.showinfo(
                 APP_NAME,
                 f"Repositório atualizado com sucesso em:\n{repo_dir}\n\n"
@@ -1071,10 +1241,13 @@ class App(tk.Tk):
                 f"3. Promover conteúdo curado\n"
                 f"4. Subir no GitHub"
             )
+        self._reset_build_finish_options()
         self._refresh_backlog()
 
     def _on_build_error(self, traceback_str: str):
+        self._end_progress()
         self._set_building_state(False)
+        self._reset_build_finish_options()
         self._set_status("Erro ao criar repositório.")
         messagebox.showerror(APP_NAME, f"Erro ao criar repositório:\n\n{traceback_str}")
 
@@ -1098,6 +1271,12 @@ class App(tk.Tk):
         self._set_processing_state(True)
         self._set_status(f"Processando item: {entry.title}...")
         self._start_progress(0)  # indeterminate para arquivo único
+        self._active_operation = self._make_pending_operation(
+            operation_type="single",
+            requested_mode="single",
+            selected_entry_source=entry.source_path,
+        )
+        self._persist_pending_operation()
 
         def on_progress(current, t, title):
             # Pausa: bloqueia a thread worker até retomar
@@ -1123,9 +1302,7 @@ class App(tk.Tk):
                 else:
                     self.after(0, lambda: self._on_single_processed_success(idx))
             except InterruptedError:
-                self.after(0, self._end_progress)
-                self.after(0, lambda: self._set_processing_state(False))
-                self.after(0, lambda: self._set_status("Processamento cancelado."))
+                self.after(0, lambda: self._on_single_interrupted("Processamento cancelado."))
             except Exception:
                 traceback_str = traceback.format_exc()
                 self.after(0, self._end_progress)
@@ -1173,9 +1350,7 @@ class App(tk.Tk):
                 builder.process_single(entry, force=True)
                 self.after(0, lambda: self._on_single_processed_success(idx))
             except InterruptedError:
-                self.after(0, self._end_progress)
-                self.after(0, lambda: self._set_processing_state(False))
-                self.after(0, lambda: self._set_status("Reprocessamento cancelado."))
+                self.after(0, lambda: self._on_single_interrupted("Reprocessamento cancelado."))
             except Exception:
                 traceback_str = traceback.format_exc()
                 self.after(0, self._end_progress)
@@ -1192,8 +1367,80 @@ class App(tk.Tk):
             del self.entries[idx]
             self.refresh_tree()
             self._save_current_queue()
+        self._clear_pending_operation()
         self._refresh_backlog()
         self._set_status("Item processado com sucesso.")
+
+    def _on_single_interrupted(self, status_msg: str):
+        self._end_progress()
+        self._set_processing_state(False)
+        self._active_operation = None
+        self._set_status(status_msg)
+
+    def _resume_pending_build(self, op: PendingOperation):
+        meta = op.course_meta
+        repo_dir = Path(op.repo_root)
+        self._cancel_event.clear()
+        self._pause_event.set()
+        self._set_building_state(True)
+        self._start_progress(max(len(self.entries), 1))
+        self._active_operation = op
+
+        requested_incremental = op.requested_mode == "incremental"
+        effective_incremental = requested_incremental or (repo_dir / "manifest.json").exists()
+        self._set_status(f"Retomando {'build incremental' if effective_incremental else 'build'} em {repo_dir}...")
+
+        student_p = self.student_store.profile if self.student_store.profile.full_name else None
+        active_subj_name = self._var_active_subject.get()
+        active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
+
+        def on_progress(current, t, title):
+            self._pause_event.wait()
+            if self._cancel_event.is_set():
+                raise InterruptedError("Build cancelado pelo usuário.")
+            if title:
+                self.after(0, lambda c=current, tot=t, ti=title: (
+                    self._step_progress(c, max(tot, 1)),
+                    self._set_status(f"({c + 1}/{tot}) Processando: {ti}...")
+                ))
+
+        def worker():
+            try:
+                builder = RepoBuilder(
+                    root_dir=repo_dir,
+                    course_meta=meta,
+                    entries=list(self.entries),
+                    options=op.options or self._build_options(),
+                    student_profile=student_p,
+                    subject_profile=active_subj,
+                    progress_callback=on_progress,
+                )
+                if effective_incremental:
+                    builder.incremental_build()
+                else:
+                    builder.build()
+                self.after(0, lambda: self._on_build_complete(meta, repo_dir, effective_incremental))
+            except InterruptedError:
+                self.after(0, self._on_build_cancelled)
+            except Exception:
+                tb = traceback.format_exc()
+                self.after(0, lambda: self._on_build_error(tb))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _resume_pending_single(self, op: PendingOperation):
+        if not self.entries:
+            self.pending_op_store.clear()
+            return
+        idx = next((i for i, e in enumerate(self.entries) if e.source_path == op.selected_entry_source), None)
+        if idx is None:
+            self.pending_op_store.clear()
+            messagebox.showinfo(APP_NAME, "O item pausado não está mais disponível na fila.")
+            return
+        self.tree.selection_set(str(idx))
+        self.tree.focus(str(idx))
+        self.tree.see(str(idx))
+        self.process_selected_single()
 
     def remove_processed_single(self):
         selected = self.repo_tree.selection()

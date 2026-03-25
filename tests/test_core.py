@@ -38,6 +38,7 @@ from src.models.core import (
     DocumentProfileReport,
     FileEntry,
     PipelineDecision,
+    PendingOperation,
 )
 from src.utils.helpers import (
     ensure_dir,
@@ -336,6 +337,34 @@ class TestFileEntry:
             title="Test",
         )
         assert entry.processing_mode == "auto"
+
+
+class TestPendingOperation:
+    def test_roundtrip_serialization(self):
+        entry = FileEntry(
+            source_path="/tmp/a.pdf",
+            file_type="pdf",
+            category="provas",
+            title="A",
+        )
+        op = PendingOperation(
+            operation_type="build",
+            requested_mode="full",
+            repo_root="/tmp/repo",
+            course_meta={"course_name": "Calculo I"},
+            active_subject="Calculo I",
+            selected_entry_source="/tmp/a.pdf",
+            entries=[entry],
+            created_at="2026-03-25T10:00:00",
+        )
+
+        restored = PendingOperation.from_dict(op.to_dict())
+
+        assert restored.operation_type == "build"
+        assert restored.repo_root == "/tmp/repo"
+        assert restored.active_subject == "Calculo I"
+        assert len(restored.entries) == 1
+        assert restored.entries[0].title == "A"
         assert entry.document_profile == "auto"
         assert entry.preferred_backend == "auto"
         assert entry.include_in_bundle is True

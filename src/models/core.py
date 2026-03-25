@@ -138,6 +138,35 @@ class StudentProfile:
         return cls(**{k: v for k, v in d.items() if k in valid})
 
 
+@dataclass
+class PendingOperation:
+    """Estado persistido de uma operação pausada/interrompida para retomar depois."""
+
+    operation_type: str = ""          # "build" | "single"
+    requested_mode: str = ""          # "full" | "incremental" | "single"
+    repo_root: str = ""
+    course_meta: Dict[str, Any] = field(default_factory=dict)
+    options: Dict[str, Any] = field(default_factory=dict)
+    active_subject: str = ""
+    selected_entry_source: str = ""
+    shutdown_after_build: bool = False
+    entries: List[FileEntry] = field(default_factory=list)
+    created_at: str = ""
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["entries"] = [e.to_dict() for e in self.entries]
+        return d
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "PendingOperation":
+        valid = {f.name for f in fields(cls)}
+        filtered = {k: v for k, v in d.items() if k in valid and k != "entries"}
+        op = cls(**filtered)
+        op.entries = [FileEntry.from_dict(item) for item in d.get("entries", [])]
+        return op
+
+
 class SubjectStore:
     """Persistência de perfis de matérias em JSON."""
 
@@ -198,3 +227,31 @@ class StudentStore:
     def save(self):
         with open(self._path, "w", encoding="utf-8") as f:
             json.dump(self.profile.to_dict(), f, indent=2, ensure_ascii=False)
+
+
+class PendingOperationStore:
+    """Persistência simples do estado de retomada do app."""
+
+    def __init__(self):
+        self._path = get_app_data_dir() / "pending_operation.json"
+
+    def load(self) -> Optional[PendingOperation]:
+        if not self._path.exists():
+            return None
+        try:
+            with open(self._path, "r", encoding="utf-8") as f:
+                return PendingOperation.from_dict(json.load(f))
+        except Exception as e:
+            logger.warning("Failed to load pending operation from %s: %s", self._path, e)
+            return None
+
+    def save(self, op: PendingOperation) -> None:
+        with open(self._path, "w", encoding="utf-8") as f:
+            json.dump(op.to_dict(), f, indent=2, ensure_ascii=False)
+
+    def clear(self) -> None:
+        try:
+            if self._path.exists():
+                self._path.unlink()
+        except Exception as e:
+            logger.warning("Failed to clear pending operation %s: %s", self._path, e)
