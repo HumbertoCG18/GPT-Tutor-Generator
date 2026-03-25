@@ -241,6 +241,10 @@ class ThemeManager:
                   background=[("selected", p["frame_bg"])],
                   foreground=[("selected", p["accent"])])
 
+        # PanedWindow
+        style.configure("TPanedwindow", background=p["bg"], sashthickness=8)
+        style.configure("Sash", background=p["border"], sashthickness=8)
+
         # Treeview
         style.configure("Treeview", background=p["treeview_odd"], foreground=p["fg"],
                          fieldbackground=p["treeview_odd"], bordercolor=p["border"],

@@ -1,135 +1,354 @@
 <div align="center">
-  <h1>🎓 Academic Tutor Repo Builder V3</h1>
-  <p>Construa a base de conhecimento estruturada para criar seu tutor acadêmico personalizado no <strong>Claude Projects</strong>.</p>
+  <h1>Academic Tutor Repo Builder V3</h1>
+  <p>Aplicação desktop em Python/tkinter para transformar materiais acadêmicos em repositórios estruturados para Claude, GPT e Gemini.</p>
 </div>
 
 ---
 
-O **Academic Tutor Repo Builder V3** é uma aplicação Desktop completa que automatiza a transformação de PDFs acadêmicos, slides de aula, cronogramas HTML e links web em um repositório interligado em Markdown — projetado para servir como base de conhecimento para um tutor acadêmico baseado no **Claude** (claude.ai).
+## Visão Geral
 
-Cada repositório gerado é conectado a um **Projeto no Claude.ai**, onde o Claude atua como tutor com política pedagógica estruturada: ensina conceitos, guia exercícios, prepara para provas e acompanha o progresso do aluno sessão a sessão.
+O **Academic Tutor Repo Builder V3** converte PDFs, imagens, links, repositórios GitHub, arquivos de código e ZIPs em um repositório Markdown curado para estudo assistido por IA.
 
----
+O fluxo principal é:
 
-## ✨ Principais Funcionalidades
+```text
+App -> importar materiais -> processar -> revisar -> gerar instruções -> conectar à IA
+```
 
-### 1. Perfis Inteligentes com Fila Persistente
-- **Matérias:** Salve professor, horário, semestre e cronograma. A fila de arquivos pendentes é salva automaticamente por matéria — ao reabrir o app, o estado anterior é restaurado.
-- **Aluno:** Defina seu estilo de aprendizado. O tutor no Claude usará essas preferências em todas as respostas.
+O projeto foi pensado para disciplinas reais ao longo do semestre:
 
-### 2. Importação e Extração Multicanal
-- **PDFs e Imagens:** Múltiplos backends de OCR (PyMuPDF, Docling, Marker). Extrai texto, tabelas e imagens.
-- **HTML de Cronogramas:** Cole o HTML do portal acadêmico (Moodle, Blackboard) e converta em Markdown limpo automaticamente.
-- **Links Web:** Importe URLs — o app faz scraping e converte para Markdown referenciado.
-
-### 3. Pipeline de Extração em Camadas
-- `quick` — apenas camada base (rápido)
-- `high_fidelity` — base + avançada (fórmulas, tabelas complexas)
-- `manual_assisted` — base + avançada + revisão humana guiada
-- `auto` — detecta o tipo do documento e decide automaticamente
-
-### 4. Processamento Individual
-- Botão **⚡ Processar** — processa um arquivo por vez sem precisar rodar o build completo
-- Botão **🗑 Limpar Processamento** — remove um item processado do repositório e do manifest
-
-### 5. Geração Automática do Tutor Claude
-Ao criar o repositório, o app gera automaticamente:
-
-| Arquivo | Função |
-|---|---|
-| `INSTRUCOES_CLAUDE_PROJETO.md` | System prompt para colar no Claude Project |
-| `system/TUTOR_POLICY.md` | Regras de comportamento do tutor |
-| `system/PEDAGOGY.md` | Estrutura pedagógica de explicação |
-| `system/MODES.md` | Modos: study, assignment, exam_prep, class_companion |
-| `system/OUTPUT_TEMPLATES.md` | Templates de resposta por modo |
-| `course/COURSE_MAP.md` | Mapa pedagógico (preencher manualmente) |
-| `course/GLOSSARY.md` | Terminologia da disciplina (preencher manualmente) |
-| `student/STUDENT_STATE.md` | Estado atual do aluno — atualizar após cada sessão |
-| `content/BIBLIOGRAPHY.md` | Referências bibliográficas |
-
-### 6. Auto-Categorização por IA
-Configure uma chave OpenAI ou Gemini em ⚙ Configurações para categorizar PDFs automaticamente com base no plano de ensino da matéria.
+- salvar perfis de matéria e aluno
+- processar materiais com múltiplos backends
+- revisar manualmente conteúdos críticos no Curator Studio
+- manter backlog e manifest do repositório
+- gerar instruções para `Claude`, `GPT` e `Gemini`
 
 ---
 
-## 🚀 Como Iniciar
+## Principais Funcionalidades
 
-### Pré-requisitos
-Python 3.9+ instalado. Instale as dependências:
+### 1. Perfis persistentes
+
+- **Matérias:** nome, slug, professor, semestre, instituição, horário, cronograma, plano de ensino, pasta do repositório, URL GitHub e LLM principal.
+- **Aluno:** nome, apelido e preferências de aprendizagem.
+- A fila de arquivos é persistida por matéria.
+
+### 2. Importação multicanal
+
+O app aceita:
+
+- PDFs
+- imagens e fotos
+- links web
+- repositórios GitHub
+- arquivos de código
+- arquivos ZIP
+
+Também é possível:
+
+- importar cronograma a partir de HTML
+- extrair plano de ensino a partir de PDF
+
+### 3. Processamento em camadas
+
+Modos disponíveis:
+
+- `auto`
+- `quick`
+- `high_fidelity`
+- `manual_assisted`
+
+Perfis de documento:
+
+- `auto`
+- `general`
+- `math_light`
+- `math_heavy`
+- `layout_heavy`
+- `scanned`
+- `exam_pdf`
+
+### 4. Múltiplos backends
+
+Base:
+
+- `pymupdf4llm`
+- `pymupdf`
+
+Avançados:
+
+- `docling`
+- `marker`
+
+O app também consegue:
+
+- extrair tabelas
+- extrair imagens
+- forçar OCR
+- limitar processamento por intervalo de páginas
+
+### 5. URL Fetcher com Markdown estruturado
+
+Ao importar links, o app:
+
+- busca o conteúdo da página
+- tenta isolar o conteúdo principal
+- converte headings, listas, links, código e tabelas HTML para Markdown
+- gera um `.md` mais limpo, em vez de despejar texto cru
+
+### 6. Backlog e manifest
+
+A aba **Backlog** lê o `manifest.json` do repositório e permite:
+
+- atualizar a lista de itens processados
+- editar metadados
+- limpar processamento de uma entry
+- reprocessar o repositório
+- regenerar instruções LLM
+
+### 7. Curator Studio
+
+O **Curator Studio** revisa os arquivos em `manual-review/`.
+
+Ele permite:
+
+- comparar preview e markdown
+- escolher entre saída base, avançada ou template
+- editar e salvar
+- aprovar e promover conteúdo para a pasta final correta
+- reprovar e devolver o item para a fila
+- restaurar templates ausentes
+- aprovar todos os pendentes
+
+### 8. Geração de instruções para IA
+
+O projeto gera:
+
+- `INSTRUCOES_CLAUDE_PROJETO.md`
+- `INSTRUCOES_GPT_PROJETO.md`
+- `INSTRUCOES_GEMINI_PROJETO.md`
+
+Além disso, gera arquivos pedagógicos e de estado como:
+
+- `system/TUTOR_POLICY.md`
+- `system/PEDAGOGY.md`
+- `system/MODES.md`
+- `system/OUTPUT_TEMPLATES.md`
+- `course/COURSE_MAP.md`
+- `course/GLOSSARY.md`
+- `content/BIBLIOGRAPHY.md`
+- `student/STUDENT_STATE.md`
+- `student/PROGRESS_SCHEMA.md`
+
+---
+
+## Estrutura do Projeto
+
+```text
+src/
+├── builder/
+│   └── engine.py
+├── models/
+│   └── core.py
+├── ui/
+│   ├── app.py
+│   ├── dialogs.py
+│   ├── curator_studio.py
+│   └── theme.py
+└── utils/
+    └── helpers.py
+
+tests/
+└── test_core.py
+```
+
+Arquivos de apoio importantes:
+
+- `app.py` -> bootstrap simples para rodar a aplicação
+- `CODEX.md` -> guia de manutenção do projeto
+- `requirements.txt` -> dependências
+- `pyproject.toml` -> metadados e config de testes
+
+---
+
+## Requisitos
+
+- Python `3.8+`
+- Windows, Linux ou outro ambiente compatível com `tkinter`
+
+Dependências principais:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Backends avançados (opcional, para fórmulas e OCR):
+`requirements.txt` inclui:
+
+- `pymupdf`
+- `pymupdf4llm`
+- `pdfplumber`
+- `Pillow`
+
+Backends opcionais:
+
 ```bash
 pip install docling
 pip install marker-pdf
 ```
 
-### Rodando o App
+Para OCR com Tesseract, o executável e `tessdata` precisam estar disponíveis no ambiente.
 
-**Windows:**
-```
-run.bat
-```
-ou
-```
+---
+
+## Como Rodar
+
+### Windows
+
+```powershell
 run.ps1
 ```
 
-**Qualquer plataforma:**
+ou
+
+```bat
+run.bat
+```
+
+### Qualquer plataforma
+
 ```bash
 python app.py
 ```
 
+ou
+
+```bash
+python -m src
+```
+
 ---
 
-## 🧠 Fluxo Completo — Do PDF ao Tutor
+## Fluxo Recomendado de Uso
 
 ### No app
-1. Clique em **📝 Gerenciar** e crie o perfil da matéria (professor, horário, cronograma HTML, plano de ensino PDF)
-2. Clique em **👤 Aluno** e defina seu estilo de aprendizado
-3. Selecione a matéria no menu suspenso
-4. Adicione PDFs, imagens e links (use **⚡ Importação rápida** para vários arquivos)
-5. Clique em **✨ Auto-Categorizar** (se tiver API key configurada)
-6. Clique em **🚀 Criar Repositório**
-7. Acesse a pasta criada e revise `manual-review/` no **🖌 Curator Studio**
-8. Promova o conteúdo curado para `content/`, `exercises/` e `exams/`
-9. Preencha `course/COURSE_MAP.md` e `course/GLOSSARY.md` com os tópicos da disciplina
 
-### No GitHub
-10. Crie um repositório para a disciplina e faça push
+1. Abra `📝 Gerenciar` e crie a matéria.
+2. Preencha professor, semestre, cronograma, plano de ensino, URL GitHub e LLM principal.
+3. Abra `👤 Aluno` e ajuste o perfil do estudante.
+4. Selecione a matéria ativa.
+5. Defina a pasta do repositório ou use `📂 Abrir Repo`.
+6. Importe PDFs, imagens, links ou código.
+7. Processe um item com `⚡ Processar` ou rode `🚀 Criar Repositório`.
+8. Revise `manual-review/` no `🖌 Curator Studio`.
+9. Use a aba `Backlog` para editar entries, reprocessar o repo e gerar instruções LLM.
 
-### No Claude.ai
-11. Crie um **Projeto** no claude.ai com o nome da disciplina
-12. Em Settings → GitHub, conecte o repositório da disciplina
-13. No campo **Instructions** do Projeto, cole o conteúdo de `INSTRUCOES_CLAUDE_PROJETO.md`
-14. Inicie uma conversa — o tutor está pronto
+### Fora do app
 
-### Durante o semestre
-15. Após cada sessão de estudo, peça ao Claude para gerar o bloco de atualização do `STUDENT_STATE.md`
-16. Faça commit e push — na próxima sessão, o tutor lembra do seu progresso
+1. Faça push do repositório para o GitHub, se for usar sync.
+2. Conecte o repositório à plataforma principal escolhida.
+3. Use o arquivo de instruções correspondente.
+4. Atualize `student/STUDENT_STATE.md` ao longo do semestre.
 
 ---
 
-## 📁 Estrutura Gerada
+## Estrutura do Repositório Gerado
 
+Exemplo:
+
+```text
+{repo-root}/
+├── INSTRUCOES_CLAUDE_PROJETO.md
+├── INSTRUCOES_GPT_PROJETO.md
+├── INSTRUCOES_GEMINI_PROJETO.md
+├── manifest.json
+├── system/
+├── course/
+├── student/
+├── content/
+├── exercises/
+├── exams/
+├── raw/
+├── staging/
+├── manual-review/
+└── build/
 ```
-{slug-da-materia}/
-├── INSTRUCOES_CLAUDE_PROJETO.md   ← colar no Claude Project
-├── system/                         ← política pedagógica do tutor
-├── course/                         ← identidade, mapa, cronograma, glossário
-├── student/                        ← estado e perfil do aluno
-├── content/                        ← material curado
-├── exercises/                      ← listas de exercícios
-├── exams/                          ← provas anteriores
-├── raw/                            ← PDFs e imagens originais
-├── staging/                        ← extração automática (para revisão)
-├── manual-review/                  ← checklists de revisão humana
-└── build/claude-knowledge/         ← bundle para upload manual
-```
+
+Pontos importantes:
+
+- `raw/` guarda os arquivos originais copiados para o repositório
+- `staging/` guarda saídas automáticas intermediárias
+- `manual-review/` concentra revisão humana guiada
+- `content/`, `exercises/` e `exams/` recebem o conteúdo aprovado
+- `build/claude-knowledge/bundle.seed.json` guarda a seleção inicial de materiais prioritários
 
 ---
 
-*O app cuida do trabalho de processar PDFs. O Claude cuida do trabalho de ensinar.*
+## Categorias Atuais
+
+As categorias válidas do projeto são:
+
+```python
+[
+    "material-de-aula",
+    "provas",
+    "listas",
+    "gabaritos",
+    "fotos-de-prova",
+    "referencias",
+    "bibliografia",
+    "cronograma",
+    "trabalhos",
+    "codigo-professor",
+    "codigo-aluno",
+    "quadro-branco",
+    "outros",
+]
+```
+
+Algumas têm efeitos especiais:
+
+- `provas` e `fotos-de-prova` alimentam índices de exames
+- `listas` e `gabaritos` alimentam índices de exercícios
+- `trabalhos`, `codigo-*` e `quadro-branco` entram nas instruções e no contexto pedagógico
+
+---
+
+## Testes
+
+Rodar a suíte:
+
+```bash
+python -m pytest tests/ -v
+```
+
+Saída compacta:
+
+```bash
+python -m pytest tests/ -q
+```
+
+Filtrar por nome:
+
+```bash
+python -m pytest tests/ -k "UrlFetcher"
+```
+
+Os testes são headless; `tkinter` é mockado em `tests/test_core.py`.
+
+---
+
+## Notas de Manutenção
+
+- Não use `asdict()` diretamente em `SubjectProfile`; use `to_dict()` / `from_dict()`.
+- `incremental_build()` pode retornar cedo sem novos arquivos, mas ainda regenerar arquivos pedagógicos.
+- `parse_page_range("1-3")` converte automaticamente para base zero.
+- Novos dialogs `tk.Toplevel` devem aplicar tema com `apply_theme_to_toplevel(...)`.
+- O ponto central do projeto está em `src/builder/engine.py`.
+
+Para contexto mais técnico de manutenção, consulte `CODEX.md`.
+
+---
+
+## Licença
+
+MIT.

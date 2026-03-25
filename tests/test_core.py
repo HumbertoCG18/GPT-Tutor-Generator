@@ -23,6 +23,7 @@ from src.builder.engine import (
     BackendSelector,
     rows_to_markdown_table,
     wrap_frontmatter,
+    _html_to_structured_markdown,
     _parse_units_from_teaching_plan,
     _parse_bibliography_from_teaching_plan,
     _parse_syllabus_timeline,
@@ -235,6 +236,82 @@ class TestRowsToMarkdownTable:
         result = rows_to_markdown_table(rows)
         lines = result.strip().split("\n")
         assert len(lines) == 3  # header, separator, one data row
+
+
+# ---------------------------------------------------------------------------
+# URL fetcher markdown formatting
+# ---------------------------------------------------------------------------
+
+class TestUrlFetcherMarkdownFormatting:
+    def test_html_is_rendered_as_structured_markdown(self):
+        pytest.importorskip("bs4")
+
+        html = """
+        <html>
+          <head>
+            <title>Minha Pagina</title>
+            <meta name="description" content="Resumo curto da pagina." />
+          </head>
+          <body>
+            <article>
+              <h1>Titulo Principal</h1>
+              <p>Primeiro paragrafo com <a href="https://example.com/ref">link</a>.</p>
+              <ul>
+                <li>Item A</li>
+                <li>Item B</li>
+              </ul>
+              <pre>print("oi")</pre>
+              <table>
+                <tr><th>Coluna</th><th>Valor</th></tr>
+                <tr><td>A</td><td>1</td></tr>
+              </table>
+            </article>
+          </body>
+        </html>
+        """
+
+        md = _html_to_structured_markdown(html, "https://example.com/aula", "Titulo Manual")
+
+        assert md.startswith("# Titulo Manual")
+        assert "Resumo curto da pagina." in md
+        assert "- URL: [https://example.com/aula](https://example.com/aula)" in md
+        assert "## Conteúdo Extraído" in md
+        assert "# Titulo Principal" in md
+        assert "Primeiro paragrafo com [link](https://example.com/ref)." in md
+        assert "- Item A" in md
+        assert "```text" in md
+        assert '| Coluna | Valor |' in md
+
+    def test_prefers_main_content_over_sidebar_and_footer(self):
+        pytest.importorskip("bs4")
+
+        html = """
+        <html>
+          <body>
+            <div class="sidebar">
+              <p>Home</p>
+              <p>Produtos</p>
+              <p>Contato</p>
+            </div>
+            <div id="main-content">
+              <h1>Aula 5</h1>
+              <p>Este é o conteúdo principal da página com explicação suficiente para vencer o menu lateral.</p>
+              <p>Segundo parágrafo com mais detalhes, exemplos e contexto pedagógico para a disciplina.</p>
+            </div>
+            <footer>
+              <p>Política de privacidade</p>
+            </footer>
+          </body>
+        </html>
+        """
+
+        md = _html_to_structured_markdown(html, "https://example.com/aula-5", "Aula 5")
+
+        assert "# Aula 5" in md
+        assert "Este é o conteúdo principal da página" in md
+        assert "Segundo parágrafo com mais detalhes" in md
+        assert "Política de privacidade" not in md
+        assert "Home" not in md
 
 
 # ---------------------------------------------------------------------------

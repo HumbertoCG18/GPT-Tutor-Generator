@@ -105,7 +105,7 @@ class App(tk.Tk):
         header.pack(fill="x")
         tk.Label(header, text=f"🎓  {APP_NAME}", bg=p["header_bg"], fg=p["header_fg"],
                  font=("Segoe UI", 14, "bold")).pack(side="left")
-        tk.Label(header, text="v3 — Gerador de repositórios para tutores acadêmicos no Claude Projects",
+        tk.Label(header, text="v3 — Repositórios acadêmicos para Claude, GPT e Gemini",
                  bg=p["header_bg"], fg=p["muted"], font=("Segoe UI", 9)).pack(side="left", padx=(12, 0))
 
         # ─── Main content area ─────────────────────────────────────────

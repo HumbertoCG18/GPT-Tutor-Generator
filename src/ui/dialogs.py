@@ -234,239 +234,321 @@ class SettingsDialog(tk.Toplevel):
 # ---------------------------------------------------------------------------
 
 HELP_SECTIONS: List[Tuple[str, str]] = [
-    ("Visão Geral", """O Academic Tutor Repo Builder converte PDFs e imagens acadêmicas em repositórios estruturados de conhecimento, prontos para uso com tutores no Claude Projects.
+    ("Visão Geral", """O Academic Tutor Repo Builder V3 transforma materiais acadêmicos em um repositório estruturado para estudo assistido por IA.
 
-Fluxo recomendado:
-  1. Gerencie suas matérias no botão "📚 Gerenciar".
-  2. Selecione a matéria para auto-preencher os dados.
-  3. Adicione PDFs e imagens (ou links).
-  4. Configure cada arquivo (categoria, modo, perfil).
-  5. Clique em "🚀 Criar repositório".
-  6. Use o "🖌 Curator Studio" para revisar arquivos em manual-review/.
-  7. Mova o conteúdo aprovado para a estrutura final do repositório.
+PLATAFORMAS
+  O app gera instruções para Claude, GPT e Gemini.
+  A matéria pode ter uma plataforma principal, mas os 3 arquivos de instruções são gerados.
+
+FLUXO RECOMENDADO
+  1. Crie ou selecione uma matéria em "📝 Gerenciar".
+  2. Confira os dados da disciplina e a pasta do repositório.
+  3. Adicione PDFs, imagens, links, código ou ZIP.
+  4. Ajuste categoria, modo, perfil e backend quando necessário.
+  5. Processe itens individualmente ou clique em "🚀 Criar Repositório".
+  6. Revise o que cair em manual-review/ no "🖌 Curator Studio".
+  7. Gere ou regenere as instruções LLM pela aba Backlog.
+
+ESTRUTURA MENTAL DO APP
+  • Fila a Processar: itens ainda não processados.
+  • Backlog: itens já processados, lidos do manifest do repositório.
+  • Log: saída detalhada das operações.
 """),
-    ("Dados da Disciplina", """NOME DA DISCIPLINA
-  Nome completo como aparece no sistema acadêmico. Obrigatório.
-  Exemplo: "Cálculo I", "Estruturas de Dados"
+    ("Tela Principal", """BARRA SUPERIOR
+  📚 Matéria ativa
+    Carrega um SubjectProfile salvo e preenche os dados da disciplina.
 
-SLUG
-  Identificador curto usado para nomear pastas e arquivos. Gerado automaticamente a partir do nome se vazio.
-  Use letras minúsculas, números e hífens.
-  Exemplo: "calculo-i", "estruturas-de-dados"
+  📝 Gerenciar
+    Abre o cadastro de matérias.
 
-SEMESTRE
-  Período letivo. Não há validação de formato; use o que fizer sentido.
-  Exemplos: "2024/1", "2025-2", "1º sem 2025"
+  👤 Aluno
+    Edita o perfil do aluno, usado nos arquivos pedagógicos e instruções.
 
-PROFESSOR
-  Nome do professor principal da disciplina. Usado para contextualizar o tutor.
+  📊 Status
+    Mostra se backends, OCR e perfil do aluno estão configurados.
 
-INSTITUIÇÃO
-  Nome da instituição (padrão: PUCRS). Armazenado nos metadados.
+  ⚡ Importação rápida
+    Adiciona arquivos sem abrir o diálogo detalhado.
+    Usa auto-detecção + defaults da matéria ativa.
+
+TOOLBAR
+  ➕ PDFs / 🖼 Imagens/Fotos / 🔗 Adicionar Link / 💻 Código / ZIP
+    Importa diferentes tipos de material.
+
+  ⚡ Processar
+    Processa apenas o item selecionado na fila.
+
+  🔁 Todos → Auto
+    Reseta o modo de todos os itens da fila para "auto".
+
+  📂 Abrir Repo
+    Carrega um repositório existente pelo manifest.json.
+
+  🖌 Curator Studio
+    Abre a revisão manual dos arquivos em manual-review/.
+
+  🚀 Criar Repositório
+    Faz build novo ou incremental, dependendo do estado do repo selecionado.
+"""),
+    ("Dados da Disciplina", """Os dados exibidos na tela principal vêm da matéria ativa ou do repositório aberto.
+
+NOME DA DISCIPLINA / SLUG
+  Identificam a disciplina no manifest e nos arquivos pedagógicos.
+  O slug é usado em nomes de pasta e arquivos.
+
+SEMESTRE / PROFESSOR / INSTITUIÇÃO
+  Entram nos metadados do repositório e nas instruções para a IA.
 
 PASTA DO REPOSITÓRIO
-  Pasta onde o repositório será criado. Dentro dela, uma subpasta com o slug será gerada.
-  Clicar em "Escolher pasta" abre o seletor de diretórios.
+  Caminho da raiz do repositório gerado.
+  Se já existir manifest.json, o app consegue abrir e reutilizar esse repo.
+
+MODO PADRÃO / OCR PADRÃO
+  Vêm do SubjectProfile e são usados como base para novos itens.
 """),
-    ("Modos de Processamento", """Os modos controlam QUANTO processamento cada arquivo recebe.
+    ("Gerenciador de Matérias", """O Gerenciador de Matérias salva perfis reutilizáveis.
 
-auto
-  Detecta automaticamente o tipo de documento e escolhe o melhor pipeline.
-  Use quando não tiver certeza. É o padrão.
+CAMPOS IMPORTANTES
+  Nome, slug, professor, instituição, semestre e horário.
+  Modo padrão e OCR padrão.
+  Pasta do repositório.
+  URL GitHub do repositório.
+  LLM principal: claude, gpt ou gemini.
 
-quick
-  Só a camada base (pymupdf4llm ou pymupdf). Rápido e leve.
-  Use para materiais simples: cronogramas, ementas, textos corridos.
+CAMPOS LONGOS
+  Cronograma
+    Pode ser digitado manualmente ou importado de HTML.
 
-high_fidelity
-  Camada base + camada avançada (docling ou marker) quando disponível.
-  Use para PDFs com fórmulas, tabelas complexas ou layout diferenciado.
+  Plano de Ensino
+    Pode ser colado manualmente ou extraído de PDF.
+    Esse campo é importante para COURSE_MAP, glossário e bibliografia.
 
-manual_assisted
-  Igual ao high_fidelity + geração de arquivo de revisão manual guiada.
-  Use para provas, gabaritos, materiais críticos onde a precisão é essencial.
-  Exige que você revise o conteúdo gerado antes de publicar.
+OBSERVAÇÃO
+  A fila de arquivos da matéria é persistida junto do perfil.
+  Ao trocar de matéria, a fila da matéria ativa é restaurada.
 """),
-    ("Perfis de Documento", """Os perfis descrevem o TIPO de conteúdo do documento e ajustam modo + backend automaticamente.
+    ("Categorias e Tipos", """TIPOS SUPORTADOS
+  pdf
+  image
+  url
+  github-repo
+  code
+  zip
 
-auto
-  O sistema analisa o PDF (texto, imagens, tabelas, densidade) e decide.
-  Recomendado por padrão.
+CATEGORIAS ATUAIS
+  material-de-aula   → slides, notas, apostilas
+  provas             → provas em PDF
+  listas             → listas de exercícios
+  gabaritos          → resoluções e respostas
+  fotos-de-prova     → prova, caderno ou folha fotografada
+  referencias        → documentos e materiais de apoio
+  bibliografia       → livros, artigos e links
+  cronograma         → calendário da disciplina
+  trabalhos          → enunciados e requisitos de projetos
+  codigo-professor   → código base, exemplos e skeletons
+  codigo-aluno       → seu código para revisão
+  quadro-branco      → foto de quadro ou explicação manuscrita
+  outros             → materiais fora dos grupos acima
 
-general  (modo: auto | backend: pymupdf4llm)
-  Documento de texto comum. Slides simples, ementas, cronogramas.
-  Sem fórmulas — processamento rápido.
-
-math_light  (modo: high_fidelity | backend: docling)
-  Algumas fórmulas LaTeX ou notação matemática.
-  Usa docling para melhor extração, sem enrich-formula.
-
-math_heavy  (modo: high_fidelity | backend: docling + enrich-formula)
-  Muitas fórmulas, LaTeX, teoremas, provas formais.
-  Ativa docling com reconhecimento IA de fórmulas em imagens.
-
-layout_heavy  (modo: high_fidelity | backend: docling)
-  Layout complexo: múltiplas colunas, figuras, tabelas elaboradas.
-
-scanned  (modo: auto | force_ocr)
-  PDF gerado a partir de scanner ou foto, sem texto digital.
-  Ativa OCR obrigatório.
-
-exam_pdf  (modo: auto | backend: auto)
-  Prova ou lista de exercícios. Combina necessidades de layout e fórmulas.
+OBSERVAÇÃO
+  Algumas categorias afetam arquivos derivados:
+  • provas e fotos-de-prova alimentam índices de exames
+  • listas e gabaritos alimentam índices de exercícios
+  • trabalhos, código e quadro-branco também entram nas instruções LLM
 """),
-    ("Backends de Extração", """Os backends são os motores que extraem texto e conteúdo dos PDFs.
+    ("Modos e Perfis", """MODOS DE PROCESSAMENTO
+  auto
+    O sistema decide com base no documento.
 
-CAMADA BASE (rápida)
-  pymupdf4llm — Markdown de alta qualidade para PDFs digitais. Recomendado.
-  pymupdf    — Fallback bruto quando pymupdf4llm não está disponível.
+  quick
+    Só camada base. Mais rápido, menos profundo.
 
-CAMADA AVANÇADA (para documentos difíceis)
-  docling    — OCR, fórmulas, tabelas e imagens referenciadas (CLI externo).
-  marker     — Excelente para equações inline, tabelas e imagens (CLI externo).
+  high_fidelity
+    Usa camada base + camada avançada quando fizer sentido.
+
+  manual_assisted
+    Igual ao high_fidelity, mas já prepara revisão guiada em manual-review/.
+
+PERFIS DE DOCUMENTO
+  auto
+    Heurística automática.
+
+  general
+    Texto comum, sem muita complexidade visual.
+
+  math_light
+    Algumas fórmulas.
+
+  math_heavy
+    Documento muito matemático; prioriza fórmulas.
+
+  layout_heavy
+    Layout complexo, colunas, figuras ou tabelas pesadas.
+
+  scanned
+    Escaneado ou fotografado; força OCR.
+
+  exam_pdf
+    Provas e listas com mistura de layout e matemática.
+"""),
+    ("Backends de Extração", """CAMADA BASE
+  pymupdf4llm
+    Melhor escolha para PDF digital quando disponível.
+
+  pymupdf
+    Fallback bruto e rápido.
+
+CAMADA AVANÇADA
+  docling
+    Melhor para OCR, fórmulas, tabelas e documentos difíceis.
+
+  marker
+    Forte em layout, tabelas e equações inline.
 
 BACKEND PREFERIDO
-  Define qual backend usar por padrão para este arquivo, sobrepondo a seleção automática.
-  Deixe "auto" para que o sistema escolha com base no perfil e modo.
+  O campo "backend preferido" orienta a decisão final.
+  Mesmo assim, docling e marker continuam sendo complementares à camada base.
 
-  Se escolher docling ou marker como preferido, o sistema ainda executa a
-  camada base (pymupdf4llm) como complemento.
+STATUS
+  Use "📊 Status" para verificar se PyMuPDF, PyMuPDF4LLM, pdfplumber, docling,
+  marker e tessdata estão disponíveis no ambiente.
 """),
     ("Opções por Arquivo", """TÍTULO
-  Nome legível do documento. Usado nos metadados e no índice do repositório.
+  Nome legível do item no manifest e nos índices.
 
-CATEGORIA
-  Classifica o arquivo dentro da estrutura do repositório.
-  course-material  → Slides, notas de aula, apostilas
-  exams            → Provas anteriores em PDF
-  exercise-lists   → Listas de exercícios
-  rubrics          → Gabaritos e critérios de correção
-  schedule         → Cronograma da disciplina
-  references       → Livros, artigos, documentos de referência
-  photos-of-exams  → Fotos de provas manuscritas
-  answer-keys      → Gabaritos separados
-  other            → Qualquer outro material
-
-TAGS
-  Palavras-chave separadas por vírgula para facilitar busca futura.
-  Exemplo: "gabarito, integração, 2024-1"
+UNIDADE / TAGS
+  Campo livre para palavras-chave, unidade da disciplina ou branch no caso de GitHub.
 
 NOTAS
-  Observação livre sobre o arquivo. Não afeta o processamento.
+  Observações operacionais do item.
 
 PISTA DO PROFESSOR
-  Registre padrões observados: tipo de cobrança, notação preferida, dificuldade recorrente.
-  Exemplo: "cobra demonstração formal; mistura indução e recursão"
+  Padrões de cobrança, estilo da disciplina, recorrências de prova.
 
 RELEVANTE PARA PROVA
-  Marca o material como importante para preparação de provas. Afeta priorização no bundle.
+  Sinaliza prioridade pedagógica para estudo e bundle.
 
 INCLUIR NO BUNDLE INICIAL
-  Se marcado, o arquivo entra no bundle.seed.json para alimentar o tutor Claude.
+  Inclui o item em build/claude-knowledge/bundle.seed.json.
+  Esse bundle serve como seleção inicial de materiais prioritários.
 
-PRIORIDADE EM FÓRMULAS
-  Força ativação do backend avançado mesmo em modo auto ou quick.
-  Use quando o documento tem muitas equações críticas.
+TIPOS ESPECIAIS
+  Link
+    Pode virar bibliografia ou material externo.
+
+  GitHub repo
+    Detectado automaticamente por URL do GitHub; o campo Tags vira branch.
+
+  Código
+    Usa o campo de linguagem como tag principal.
 """),
     ("Opções de PDF", """PRESERVAR IMAGENS NO MARKDOWN BASE
-  Se marcado, o pymupdf4llm salva as imagens do PDF como arquivos externos
-  referenciados no Markdown. Útil para manter figuras após a extração.
+  Salva imagens externas referenciadas pelo markdown base.
 
 FORÇAR OCR
-  Ignora o texto digital do PDF e passa tudo pelo OCR.
-  Use para PDFs com texto não selecionável ou codificação incorreta.
+  Ignora o texto embutido e passa tudo por OCR.
 
-EXTRAIR IMAGENS DO PDF
-  Extrai todas as imagens embutidas no PDF para staging/assets/images/.
-  Requer PyMuPDF instalado.
+EXTRAIR IMAGENS
+  Salva figuras em staging/assets/images/.
 
 EXTRAIR TABELAS
-  Detecta e exporta tabelas como CSV e Markdown em staging/assets/tables/.
-  Requer pdfplumber e/ou PyMuPDF instalados.
+  Exporta tabelas detectadas em CSV/Markdown.
 
-PAGE RANGE (Intervalo de páginas)
+PAGE RANGE
   Limita o processamento a páginas específicas.
-  Formato: "1-5" (páginas 1 a 5), "1,3,7" (páginas 1, 3 e 7), "2, 5-8" (misto).
-  Deixe em branco para processar todas as páginas.
-  Tratamento: se o intervalo não contiver zero, é interpretado como base-1.
+  Exemplos: 1-5 | 1,3,7 | 0,2,5-7
+  Sem zero explícito, o sistema interpreta como base-1.
 
 OCR LANGUAGE
-  Idiomas para o mecanismo OCR. Separados por vírgula.
-  por,eng → Português + Inglês (padrão recomendado)
-  por     → Somente Português
-  eng     → Somente Inglês
+  Idiomas separados por vírgula.
+  Padrão recomendado: por,eng
 """),
-    ("Curator Studio", """O Curator Studio é o ambiente de revisão manual para garantir a integridade total da informação extraída.
+    ("Curator Studio", """O Curator Studio revisa manualmente saídas de manual-review/.
 
-COMO USAR
-  1. Gere um repositório com arquivos no modo "manual_assisted".
-  2. Abra o Curator Studio pelo botão "🖌" na barra de ferramentas.
-  3. Selecione um arquivo da lista (pasta manual-review/).
-  4. Compare o Markdown (à direita) com a imagem original (ao centro).
-  5. Edite o texto para corrigir fórmulas, tabelas ou OCR.
-  6. Salve as alterações (Ctrl+S).
+COMO FUNCIONA
+  1. Abra um repositório existente.
+  2. Clique em "🖌 Curator Studio".
+  3. Selecione um item da lista.
+  4. Compare preview, metadados e markdown.
+  5. Escolha a melhor fonte disponível: base, avançada ou template.
+  6. Edite e salve com Ctrl+S.
 
-IMPORTANTE
-  Arquivos revisados aqui devem ser movidos manualmente para as pastas finais
-  (content/, exams/, etc.) conforme sua organização.
+APROVAR
+  Ao aprovar, o app copia o markdown final para a pasta adequada:
+  • content/curated/
+  • exercises/lists/
+  • exams/past-exams/
+
+  O manifest também é atualizado com approved_markdown / curated_markdown.
+
+REPROVAR
+  Remove artefatos gerados, tira a entry do manifest e devolve o item para a fila principal.
+
+UTILITÁRIOS
+  Aprovar todos os pendentes.
+  Restaurar templates de revisão ausentes.
 """),
-    ("Gerenciador de Matérias", """Permite salvar perfis recorrentes para não precisar preencher tudo toda vez.
+    ("Backlog e Instruções", """BACKLOG
+  A aba Backlog mostra o que já está no manifest do repositório atual.
 
-RECURSOS
-  • Salva Professor, Instituição, Semestre e Horário.
-  • Permite definir Modos e OCR padrão por matéria.
-  • Define a pasta raiz do repositório para aquela disciplina.
-  • IMPORTAR CRONOGRAMA: No formulário da matéria, você pode colar o HTML
-    de uma tabela (ex: Moodle) para converter em Markdown automaticamente.
+AÇÕES PRINCIPAIS
+  Atualizar Backlog
+    Recarrega o manifest.
 
-USO
-  Selecione a matéria no menu suspenso (Combobox) na tela principal para aplicar.
+  Editar
+    Ajusta metadados e visualiza markdowns relacionados.
+
+  Limpar Processamento
+    Remove os arquivos gerados de uma entry específica.
+
+  Reprocessar Repositório
+    Regenera os arquivos pedagógicos com o código atual.
+
+  Gerar Instruções LLM
+    Gera:
+    • INSTRUCOES_CLAUDE_PROJETO.md
+    • INSTRUCOES_GPT_PROJETO.md
+    • INSTRUCOES_GEMINI_PROJETO.md
+
+OBSERVAÇÃO
+  Quando COURSE_MAP.md e FILE_MAP.md já estão maduros, o app pode omitir
+  o protocolo de primeira sessão ao gerar essas instruções.
 """),
-    ("Handoff e Continuidade", """Garantindo a continuidade do trabalho em chats longos.
+    ("Continuidade", """ARQUIVOS DE ESTADO
+  student/STUDENT_STATE.md
+    Registra progresso e próximos passos do aluno.
 
-STUDENT_STATE.md (O Estado do Aluno)
-  • Registra progresso, tópicos estudados e próximas metas.
-  • Salvo em student/STUDENT_STATE.md no repositório.
-  • QUANDO USAR: Ao final de cada sessão de estudo, peça ao Claude para
-    sugerir uma atualização — então faça commit e push no GitHub.
+  student/PROGRESS_SCHEMA.md
+    Define a estrutura esperada para atualizações de progresso.
 
-HANDOFF (O Pacote de Transferência)
-  • É um resumo rápido e situacional para transição entre chats.
-  • QUANDO USAR: Quando o chat ficar muito grande/lento, peça ao Claude
-    para gerar um "Handoff".
-  • FLUXO:
-    1. O Claude gera o Handoff (contexto, decisões, próximos passos).
-    2. Você copia o Handoff + o STUDENT_STATE.md atualizado.
-    3. Cola tudo em um NOVO chat do Projeto Claude.
-    4. O Claude lê o estado e continua de onde parou, sem repetir trabalho.
+USO PRÁTICO
+  Ao final de uma sessão de estudo, atualize o estado do aluno no repositório.
+  Em um novo chat, entregue esse estado para a IA junto do repositório conectado.
+
+GITHUB
+  Se a matéria tiver URL GitHub configurada, esse dado entra nas instruções geradas.
+  Isso ajuda principalmente fluxos conectados a projetos com sync de repositório.
 
 ATUALIZAÇÃO INCREMENTAL
-  Ao clicar em "🚀 Criar Repositório" com um repositório existente:
-  • O sistema pergunta: "Adicionar novos arquivos ou recriar do zero?"
-  • No modo incremental, apenas os NOVOS arquivos são processados.
-  • O manifest.json é mesclado (não substituído).
-
-BOTÃO "📂 Abrir Repo"
-  Permite selecionar um repositório existente e carregar seus dados
-  (nome da disciplina, professor, semestre, etc.) automaticamente no app.
+  Se o repositório já existir, o build pode adicionar apenas arquivos novos
+  e ainda regenerar os arquivos pedagógicos.
 """),
     ("Atalhos e Dicas", """ATALHOS
-  F1          → Abre esta janela de ajuda
-  Double-click → Edita o item selecionado na tabela
-  Delete      → Remove o item selecionado (via botão na toolbar)
-  Ctrl+S      → Salva edição no Curator Studio
+  F1            → abre esta janela
+  Double-click  → edita item selecionado na fila ou backlog
+  Delete        → remove item selecionado
+  Espaço        → ativa/desativa item na fila
+  Ctrl+S        → salva no Curator Studio
 
-DICAS GERAIS
-  • Duplique um item bem configurado para processar arquivos similares rapidamente.
-  • O slug da disciplina define o nome da pasta raiz do repositório.
-  • O arquivo manifest.json gerado contém o histórico completo de todas as decisões de pipeline.
-  • Use o modo 'high_fidelity' para PDFs digitais com fórmulas.
-  • Use 'scanned' para fotos de provas (ativa OCR avançado).
+DICAS
+  • Use "⚡ Importação rápida" quando estiver adicionando muitos arquivos de uma vez.
+  • Use "📂 Abrir Repo" antes de mexer em backlog ou Curator Studio.
+  • O manifest.json é a fonte de verdade do repositório processado.
+  • O status da barra inferior é um bom diagnóstico rápido do ambiente.
 
-
-AMBIENTE DETECTADO
-  Se PyMuPDF, PyMuPDF4LLM ou pdfplumber aparecem como False na barra inferior,
-  instale-os com: pip install pymupdf pymupdf4llm pdfplumber
+DEPENDÊNCIAS
+  Se faltarem PyMuPDF, PyMuPDF4LLM ou pdfplumber:
+  pip install pymupdf pymupdf4llm pdfplumber
 """),
 ]
 
@@ -717,11 +799,13 @@ class SubjectManagerDialog(tk.Toplevel):
         self.grab_set()
         self._store = subject_store
         self._theme_mgr = theme_mgr
+        self._p = apply_theme_to_toplevel(self, parent)
         self._current_name: Optional[str] = None
         self._build_ui()
         self._refresh_list()
 
     def _build_ui(self):
+        p = self._p
         pw = ttk.PanedWindow(self, orient="horizontal")
         pw.pack(fill="both", expand=True, padx=10, pady=10)
 
@@ -730,7 +814,17 @@ class SubjectManagerDialog(tk.Toplevel):
         pw.add(left, weight=0)
 
         ttk.Label(left, text="Matérias salvas", font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=(0, 6))
-        self._listbox = tk.Listbox(left, width=28, font=("Segoe UI", 10))
+        self._listbox = tk.Listbox(
+            left,
+            width=28,
+            font=("Segoe UI", 10),
+            bg=p["input_bg"],
+            fg=p["fg"],
+            selectbackground=p["select_bg"],
+            selectforeground=p["select_fg"],
+            highlightthickness=0,
+            relief="flat",
+        )
         self._listbox.pack(fill="both", expand=True)
         self._listbox.bind("<<ListboxSelect>>", self._on_select)
 
@@ -796,7 +890,20 @@ class SubjectManagerDialog(tk.Toplevel):
         btn_html.pack(anchor="w", pady=(8, 0))
         add_tooltip(btn_html, "Cole o HTML do cronograma (do Portal/Moodle) para converter automaticamente numa tabela Markdown limpa.")
 
-        self._syllabus_text = tk.Text(form, height=6, width=36, font=("Segoe UI", 9), wrap="word")
+        self._syllabus_text = tk.Text(
+            form,
+            height=6,
+            width=36,
+            font=("Segoe UI", 9),
+            wrap="word",
+            bg=p["input_bg"],
+            fg=p["fg"],
+            insertbackground=p["fg"],
+            selectbackground=p["select_bg"],
+            selectforeground=p["select_fg"],
+            highlightthickness=0,
+            relief="flat",
+        )
         self._syllabus_text.grid(row=row_syl, column=1, sticky="nsew", padx=(8, 0), pady=3)
         form.rowconfigure(row_syl, weight=1)
 
@@ -811,7 +918,20 @@ class SubjectManagerDialog(tk.Toplevel):
         btn_pdf.pack(anchor="w", pady=(8, 0))
         add_tooltip(btn_pdf, "Selecione o arquivo PDF do Plano de Ensino da faculdade. A aplicação extrairá todo o texto estruturado e o converterá para Markdown perfeitamente usando pymupdf4llm.")
 
-        self._teaching_plan_text = tk.Text(form, height=6, width=36, font=("Segoe UI", 9), wrap="word")
+        self._teaching_plan_text = tk.Text(
+            form,
+            height=6,
+            width=36,
+            font=("Segoe UI", 9),
+            wrap="word",
+            bg=p["input_bg"],
+            fg=p["fg"],
+            insertbackground=p["fg"],
+            selectbackground=p["select_bg"],
+            selectforeground=p["select_fg"],
+            highlightthickness=0,
+            relief="flat",
+        )
         self._teaching_plan_text.grid(row=row_tp, column=1, sticky="nsew", padx=(8, 0), pady=3)
         form.rowconfigure(row_tp, weight=1)
 
@@ -944,23 +1064,25 @@ class StudentProfileDialog(tk.Toplevel):
         self.transient(parent)
         self.grab_set()
         self._store = student_store
+        self._p = apply_theme_to_toplevel(self, parent)
         self._build_ui()
 
     def _build_ui(self):
-        p = self._store.profile
+        palette = self._p
+        profile = self._store.profile
         frm = ttk.LabelFrame(self, text="  Seus dados", padding=14)
         frm.pack(fill="x", padx=14, pady=(14, 8))
 
         self._vars: Dict[str, tk.StringVar] = {}
         entries = [
             ("full_name", "Nome completo", "Seu nome completo, como aparece no sistema acadêmico."),
-            ("nickname", "Como prefere ser chamado", "Nome/apelido que o tutor Claude deve usar ao se referir a você.\nEx: Humberto, Beto, Hu"),
+            ("nickname", "Como prefere ser chamado", "Nome/apelido que o tutor deve usar ao se referir a você.\nEx: Humberto, Beto, Hu"),
         ]
         for i, (key, label, tip) in enumerate(entries):
             lbl = ttk.Label(frm, text=label)
             lbl.grid(row=i, column=0, sticky="w", pady=4)
             add_tooltip(lbl, tip)
-            var = tk.StringVar(value=getattr(p, key, ""))
+            var = tk.StringVar(value=getattr(profile, key, ""))
             self._vars[key] = var
             ttk.Entry(frm, textvariable=var, width=40).grid(row=i, column=1, sticky="ew", padx=(8, 0))
         frm.columnconfigure(1, weight=1)
@@ -969,16 +1091,28 @@ class StudentProfileDialog(tk.Toplevel):
         pers_frame = ttk.LabelFrame(self, text="  🧠  Personalidade do Tutor", padding=14)
         pers_frame.pack(fill="both", expand=True, padx=14, pady=(0, 8))
 
-        hint = ttk.Label(pers_frame, text="Como o tutor Claude deve te ajudar? Descreva o estilo que funciona para você:",
+        hint = ttk.Label(pers_frame, text="Como o tutor deve te ajudar? Descreva o estilo que funciona para você:",
                          style="Muted.TLabel")
         hint.pack(anchor="w", pady=(0, 6))
-        add_tooltip(hint, "Este texto será exportado nos repositórios e define como o tutor Claude interage com você.\nDica: seja específico sobre estilo de explicação, nível de detalhe, e preferências.")
+        add_tooltip(hint, "Este texto será exportado nos repositórios e define como a IA principal interage com você.\nDica: seja específico sobre estilo de explicação, nível de detalhe e preferências.")
 
-        self._personality_text = tk.Text(pers_frame, height=10, font=("Segoe UI", 10), wrap="word")
+        self._personality_text = tk.Text(
+            pers_frame,
+            height=10,
+            font=("Segoe UI", 10),
+            wrap="word",
+            bg=palette["input_bg"],
+            fg=palette["fg"],
+            insertbackground=palette["fg"],
+            selectbackground=palette["select_bg"],
+            selectforeground=palette["select_fg"],
+            highlightthickness=0,
+            relief="flat",
+        )
         self._personality_text.pack(fill="both", expand=True)
         self._text_normal_fg = self._personality_text.cget("fg")
-        if p.personality:
-            self._personality_text.insert("1.0", p.personality)
+        if profile.personality:
+            self._personality_text.insert("1.0", profile.personality)
         else:
             # Placeholder text
             placeholder = (
@@ -1492,9 +1626,11 @@ class MarkdownPreviewWindow(tk.Toplevel):
         self.transient(parent)
         self._repo_dir = Path(repo_dir)
         self._theme_mgr = theme_mgr
+        self._p = apply_theme_to_toplevel(self, parent)
         self._build_ui()
 
     def _build_ui(self):
+        p = self._p
         pw = ttk.PanedWindow(self, orient="horizontal")
         pw.pack(fill="both", expand=True, padx=8, pady=8)
 
@@ -1503,7 +1639,17 @@ class MarkdownPreviewWindow(tk.Toplevel):
         pw.add(left, weight=0)
         ttk.Label(left, text="Arquivos Markdown", font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=(0, 6))
 
-        self._file_list = tk.Listbox(left, width=35, font=("Consolas", 9))
+        self._file_list = tk.Listbox(
+            left,
+            width=35,
+            font=("Consolas", 9),
+            bg=p["input_bg"],
+            fg=p["fg"],
+            selectbackground=p["select_bg"],
+            selectforeground=p["select_fg"],
+            highlightthickness=0,
+            relief="flat",
+        )
         self._file_list.pack(fill="both", expand=True)
         self._file_list.bind("<<ListboxSelect>>", self._load_file)
 
@@ -1549,17 +1695,29 @@ class MarkdownPreviewWindow(tk.Toplevel):
         self._stats_var = tk.StringVar(value="Selecione um arquivo à esquerda.")
         ttk.Label(right, textvariable=self._stats_var, style="Muted.TLabel").pack(anchor="w", pady=(0, 6))
 
-        self._text = tk.Text(right, wrap="word", font=("Consolas", 10), state="disabled")
+        self._text = tk.Text(
+            right,
+            wrap="word",
+            font=("Consolas", 10),
+            state="disabled",
+            bg=p["input_bg"],
+            fg=p["fg"],
+            insertbackground=p["fg"],
+            selectbackground=p["select_bg"],
+            selectforeground=p["select_fg"],
+            highlightthickness=0,
+            relief="flat",
+        )
         scroll = ttk.Scrollbar(right, orient="vertical", command=self._text.yview)
         self._text.configure(yscrollcommand=scroll.set)
         self._text.pack(side="left", fill="both", expand=True)
         scroll.pack(side="right", fill="y")
 
         # Tag configs for syntax
-        self._text.tag_configure("heading", font=("Segoe UI", 12, "bold"), foreground="#89b4fa")
-        self._text.tag_configure("latex", foreground="#f9e2af", font=("Consolas", 10, "italic"))
-        self._text.tag_configure("code", background="#313244", font=("Consolas", 10))
-        self._text.tag_configure("table_row", foreground="#a6e3a1")
+        self._text.tag_configure("heading", font=("Segoe UI", 12, "bold"), foreground=p["accent"])
+        self._text.tag_configure("latex", foreground=p["warning"], font=("Consolas", 10, "italic"))
+        self._text.tag_configure("code", background=p["frame_bg"], font=("Consolas", 10))
+        self._text.tag_configure("table_row", foreground=p["success"])
 
     def _load_file(self, _event=None):
         sel = self._file_list.curselection()
@@ -1746,7 +1904,7 @@ class FileEntryDialog(simpledialog.Dialog):
 
         lbl_cat = ttk.Label(outer, text="Categoria")
         lbl_cat.grid(row=row, column=0, sticky="w", pady=4)
-        add_tooltip(lbl_cat, "Classifica o arquivo na estrutura do repositório.\nexams → provas | course-material → slides/notas | exercise-lists → listas | references → livros/artigos | photos-of-exams → fotos manuscritas")
+        add_tooltip(lbl_cat, "Classifica o arquivo na estrutura do repositório.\nExemplos: material-de-aula, provas, listas, gabaritos, referencias, bibliografia, trabalhos, codigo-professor, codigo-aluno, quadro-branco.")
         ttk.Combobox(outer, textvariable=self.var_category, values=DEFAULT_CATEGORIES, state="readonly", width=22).grid(row=row, column=1, sticky="ew")
 
         lbl_mode = ttk.Label(outer, text="Modo")
@@ -1793,11 +1951,11 @@ class FileEntryDialog(simpledialog.Dialog):
 
         cb_exam = ttk.Checkbutton(outer, text="Relevante para prova", variable=self.var_exam)
         cb_exam.grid(row=row, column=0, sticky="w", pady=4)
-        add_tooltip(cb_exam, "Marca este material como importante para preparação de provas. Afeta priorização no bundle do tutor Claude.")
+        add_tooltip(cb_exam, "Marca este material como importante para preparação de provas. Afeta priorização pedagógica e o bundle inicial.")
 
         cb_bundle = ttk.Checkbutton(outer, text="Incluir no bundle inicial", variable=self.var_bundle)
         cb_bundle.grid(row=row, column=1, sticky="w")
-        add_tooltip(cb_bundle, "Se marcado, o arquivo entra no bundle.seed.json para alimentar o tutor Claude como conhecimento base.")
+        add_tooltip(cb_bundle, "Se marcado, o arquivo entra no bundle.seed.json como conhecimento base prioritário do repositório.")
 
         cb_formula = ttk.Checkbutton(outer, text="Prioridade em fórmulas", variable=self.var_formula)
         cb_formula.grid(row=row, column=2, sticky="w")
