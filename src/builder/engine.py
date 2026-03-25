@@ -2838,16 +2838,27 @@ Quando o aluno abrir o **primeiro chat** deste Projeto (ou quando `course/FILE_M
 
 3. **Semear glossário**: Leia `course/GLOSSARY.md`. Para cada termo aguardando preenchimento, escreva uma definição baseada no material disponível
 
-4. **Apresentar resultado**: Mostre o FILE_MAP preenchido ao aluno em formato de tabela e peça confirmação
+4. **Apresentar resultado**: Mostre um resumo curto do mapeamento feito e destaque quais arquivos/unidades foram decididos
 
-5. **Confirmar com o aluno**: Após apresentar o FILE_MAP preenchido, diga ao aluno:
+5. **Confirmar com o aluno**: Após apresentar o resultado, diga ao aluno:
    > "Mapeamento concluído. Você pode sincronizar com o GitHub rodando
    > `git pull` na sua máquina para puxar as edições, e `git push` se
    > quiser versionar o estado atual."
 
 **Pré-requisito de escrita:** Para que o tutor consiga editar os arquivos do Projeto (FILE_MAP, COURSE_MAP, GLOSSARY), o repositório GitHub deve estar conectado ao Projeto Claude com permissão de escrita. Se o aluno não habilitou isso, o tutor deve ditar as alterações e pedir ao aluno que cole manualmente nos arquivos.
 
-**Após a primeira sessão**, nas sessões seguintes, consulte `course/FILE_MAP.md` para saber qual arquivo pertence a qual unidade. Se o FILE_MAP tiver `status: pending_review`, execute o protocolo novamente.
+## Regra Contínua de Manutenção do FILE_MAP
+
+Em **toda sessão futura**, antes de responder ao conteúdo da disciplina:
+
+1. Releia `course/FILE_MAP.md`
+2. Verifique se surgiram **novos commits** ou **novos arquivos `.md`** relevantes no repositório desde a última revisão
+3. Se houver arquivo novo ainda não refletido no `FILE_MAP.md`, ou se o mapeamento estiver desatualizado, **avise explicitamente o aluno antes de continuar**
+4. Nessa situação, pergunte de forma proativa:
+   > "Entraram novos arquivos no repositório e o FILE_MAP/COURSE_MAP podem estar desatualizados. Quer que eu atualize esses dois arquivos agora?"
+5. Só se o aluno concordar, retorne o `FILE_MAP.md` e o `COURSE_MAP.md` atualizados, completos e prontos para colar
+
+**Regra obrigatória:** nunca finja que o `FILE_MAP.md` está atualizado se houver novos materiais no repositório que ainda não foram mapeados.
 """
 
     return f"""# Instruções do Tutor — {course_name}
@@ -3038,13 +3049,19 @@ Na primeira sessão, ANTES de responder qualquer pergunta:
      (substitua o caminho relativo pela URL raw do GitHub)
    - Leia o conteúdo e cruze com {course_map_url}
    - Identifique a unidade correspondente
-3. Apresente ao aluno uma tabela com o mapeamento proposto
-4. Dite as alterações — o aluno atualiza FILE_MAP.md manualmente
+3. Atualize também {course_map_url} se a análise das provas ou do cronograma
+   exigir ajustes no mapa do curso
+4. Apresente um resumo curto das decisões de mapeamento
+5. Dite as alterações — o aluno atualiza os arquivos manualmente
    e faz git push para sincronizar
-5. Confirme com o aluno antes de iniciar o estudo
+6. Confirme com o aluno antes de iniciar o estudo
 
-Após a primeira sessão, sempre busque FILE_MAP.md do GitHub antes
-de responder para ter o estado mais atualizado.
+Em toda sessão futura, sempre busque FILE_MAP.md do GitHub antes
+de responder. Se houver novos commits ou novos arquivos Markdown que
+ainda não estejam refletidos no FILE_MAP, avise explicitamente que o
+arquivo precisa ser atualizado e pergunte se o aluno quer que você
+atualize `FILE_MAP.md` e `COURSE_MAP.md` naquele momento. Só devolva
+os arquivos completos se o aluno concordar.
 """
 
     return f"""# Instruções do Tutor — {course_name}
@@ -3180,13 +3197,18 @@ Quando o aluno iniciar o primeiro chat, antes de qualquer coisa:
 2. Para cada arquivo com coluna "Unidade" vazia:
    - Leia o Markdown correspondente (caminho na coluna "Markdown")
    - Identifique os tópicos e cruze com `course/COURSE_MAP.md`
-3. Apresente ao aluno uma tabela com o mapeamento proposto
-4. Peça confirmação antes de prosseguir
-5. Dite as alterações — o aluno atualiza `course/FILE_MAP.md`
+3. Atualize também `course/COURSE_MAP.md` quando necessário
+4. Apresente um resumo curto do que foi decidido
+5. Peça confirmação antes de prosseguir
+6. Dite as alterações — o aluno atualiza os arquivos
    e faz git push para sincronizar
 
 Após a primeira sessão, sempre releia `course/FILE_MAP.md` antes de
-responder para garantir que está com a versão mais recente.
+responder. Se existirem novos commits ou novos arquivos Markdown no
+repositório que ainda não estejam refletidos no FILE_MAP, avise isso
+explicitamente e pergunte se o aluno quer que você atualize
+`FILE_MAP.md` e `COURSE_MAP.md`. Só retorne os arquivos completos se
+ele concordar.
 """
 
     return f"""# Instruções do Tutor — {course_name}
@@ -4186,6 +4208,8 @@ def file_map_md(course_meta: dict, manifest_entries: list) -> str:
         "> **Status:** ⏳ Aguardando mapeamento de unidades pelo tutor.",
         "> Na primeira sessão, o tutor lerá cada arquivo e preencherá as colunas",
         "> **Unidade** e **Tags** cruzando com `course/COURSE_MAP.md` e `course/SYLLABUS.md`.",
+        "> Sempre que entrarem novos commits ou novos arquivos Markdown no repositório,",
+        "> este arquivo deve ser revisado e atualizado antes de seguir com o estudo.",
         "",
         "## Arquivos do repositório",
         "",
