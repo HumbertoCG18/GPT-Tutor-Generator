@@ -267,3 +267,39 @@ class ThemeManager:
                          font=font_small, padding=(6, 3))
 
 
+def apply_theme_to_toplevel(window: "tk.Toplevel", parent) -> dict:
+    """
+    Aplica a paleta do app a um Toplevel sem acesso direto ao ThemeManager.
+    Retorna a paleta p para uso imediato no __init__.
+
+    Uso padrão em qualquer novo Dialog:
+        p = apply_theme_to_toplevel(self, parent)
+        self.configure(bg=p["bg"])
+    """
+    theme_name = "dark"
+    if hasattr(parent, "_theme_mgr") and parent._theme_mgr:
+        theme_name = parent._theme_mgr.current
+    elif hasattr(parent, "_theme_name"):
+        theme_name = parent._theme_name
+    elif hasattr(parent, "theme_mgr") and parent.theme_mgr:
+        theme_name = parent.theme_mgr.current
+
+    p = THEMES.get(theme_name, THEMES["dark"])
+    window.configure(bg=p["bg"])
+
+    window.option_add("*Background",              p["bg"])
+    window.option_add("*Foreground",              p["fg"])
+    window.option_add("*Text.background",         p["input_bg"])
+    window.option_add("*Text.foreground",         p["fg"])
+    window.option_add("*Text.insertBackground",   p["fg"])
+    window.option_add("*Text.selectBackground",   p["select_bg"])
+    window.option_add("*Text.selectForeground",   p["select_fg"])
+    window.option_add("*Listbox.background",      p["input_bg"])
+    window.option_add("*Listbox.foreground",      p["fg"])
+    window.option_add("*Listbox.selectBackground",p["select_bg"])
+    window.option_add("*Listbox.selectForeground",p["select_fg"])
+    window.option_add("*Canvas.background",       p["frame_bg"])
+    window.option_add("*Canvas.highlightThickness","0")
+
+    return p
+

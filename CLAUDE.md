@@ -211,6 +211,22 @@ grep -n "def " src/builder/engine.py   # funções do engine
 
 ---
 
+## Convenção de tema em novos Dialogs (obrigatório)
+
+Todo `tk.Toplevel` novo DEVE:
+
+1. Chamar `p = apply_theme_to_toplevel(self, parent)` no `__init__`,
+   logo após `self.grab_set()`
+2. Usar `bg=p["bg"]` em todos os widgets `tk.Frame`, `tk.Label`
+3. `tk.Text` sempre precisa de:
+   `bg=p["input_bg"], fg=p["fg"], insertbackground=p["fg"]`
+4. `tk.Canvas` sempre precisa de:
+   `bg=p["frame_bg"], highlightthickness=0`
+5. Widgets `ttk.*` herdam o tema automaticamente — não precisam de bg/fg
+6. Nunca usar `tk.Frame` como container raiz sem `bg=p["bg"]`
+
+---
+
 ## Armadilhas conhecidas
 
 - **Nunca usar `asdict()` diretamente no `SubjectProfile`** — a `queue` tem serialização customizada. Usar `sp.to_dict()`.

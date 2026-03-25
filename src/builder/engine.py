@@ -983,6 +983,22 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         )
         write_text(self.root_dir / "INSTRUCOES_CLAUDE_PROJETO.md", instructions)
 
+        # Instruções para outras plataformas
+        _common_flags = dict(
+            has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in self.entries),
+            has_code=any(e.category in CODE_CATEGORIES for e in self.entries),
+            has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in self.entries),
+            first_session_pending=self._first_session_pending(),
+        )
+        write_text(self.root_dir / "INSTRUCOES_GPT_PROJETO.md",
+                   generate_gpt_instructions(
+                       self.course_meta, self.student_profile, self.subject_profile,
+                       **_common_flags))
+        write_text(self.root_dir / "INSTRUCOES_GEMINI_PROJETO.md",
+                   generate_gemini_instructions(
+                       self.course_meta, self.student_profile, self.subject_profile,
+                       **_common_flags))
+
     # ------------------------------------------------------------------
     # Image resolution — copies referenced images into content/images/
     # ------------------------------------------------------------------
@@ -1191,29 +1207,51 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         )
 
     def _write_build_report(self, manifest: Dict[str, object]) -> None:
+        platform = (
+            getattr(self, "_selected_platform", None)
+            or getattr(self.subject_profile, "preferred_llm", "claude")
+            or "claude"
+        )
+        platform_map = {
+            "claude": ("INSTRUCOES_CLAUDE_PROJETO.md",
+                       "Cole no campo 'Instructions' do Projeto Claude"),
+            "gpt":    ("INSTRUCOES_GPT_PROJETO.md",
+                       "Cole no campo 'Instructions' do GPT / Custom GPT"),
+            "gemini": ("INSTRUCOES_GEMINI_PROJETO.md",
+                       "Cole no campo de instruções do Gem no Google AI Studio"),
+        }
+        filename, instruction = platform_map.get(platform, platform_map["claude"])
+
         report = [
             "# BUILD_REPORT",
             "",
             f"- generated_at: {manifest['generated_at']}",
-            f"- target_platform: Claude Projects",
+            f"- preferred_platform: {platform}",
             f"- pymupdf: {HAS_PYMUPDF}",
             f"- pymupdf4llm: {HAS_PYMUPDF4LLM}",
             f"- pdfplumber: {HAS_PDFPLUMBER}",
             f"- docling_cli: {bool(DOCLING_CLI)}",
             f"- marker_cli: {bool(MARKER_CLI)}",
             "",
-            "## Como usar com Claude Projects",
-            "1. Crie um Projeto no Claude.ai para esta disciplina",
-            "2. Cole o conteúdo de `INSTRUCOES_CLAUDE_PROJETO.md` no system prompt do Projeto",
-            "3. Conecte este repositório GitHub ao Projeto (Settings → GitHub)",
-            "4. Ou faça upload manual dos arquivos de `build/claude-knowledge/`",
+            f"## Plataforma principal: {platform.upper()}",
+            "",
+            f"> Copie o conteúdo de `{filename}`",
+            f"> {instruction}",
+            "",
+            "Os três arquivos de instruções foram gerados:",
+        ]
+        for k, (f, _) in platform_map.items():
+            marker = " **<< atual**" if k == platform else ""
+            report.append(f"- `{f}`{marker}")
+
+        report.extend([
             "",
             "## Regras práticas de curadoria",
             "- PDFs simples: camada base costuma bastar.",
             "- PDFs com fórmulas, scans, layout complexo ou provas: camada avançada + revisão manual.",
             "- O conhecimento final do tutor deve sair de `manual-review/` e depois ser promovido.",
             "- Atualizar `student/STUDENT_STATE.md` após cada sessão de estudo.",
-        ]
+        ])
         write_text(self.root_dir / "BUILD_REPORT.md", "\n".join(report) + "\n")
 
     def _process_entry(self, entry: FileEntry) -> Dict[str, object]:
@@ -2184,14 +2222,24 @@ unit: {entry.tags}
             all_entries = []
 
         # System prompt (with conditional file references)
+        _common_flags = dict(
+            has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in all_entries),
+            has_code=any(e.category in CODE_CATEGORIES for e in all_entries),
+            has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in all_entries),
+            first_session_pending=self._first_session_pending(),
+        )
         write_text(self.root_dir / "INSTRUCOES_CLAUDE_PROJETO.md",
                    generate_claude_project_instructions(
                        self.course_meta, self.student_profile, self.subject_profile,
-                       has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in all_entries),
-                       has_code=any(e.category in CODE_CATEGORIES for e in all_entries),
-                       has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in all_entries),
-                       first_session_pending=self._first_session_pending(),
-                   ))
+                       **_common_flags))
+        write_text(self.root_dir / "INSTRUCOES_GPT_PROJETO.md",
+                   generate_gpt_instructions(
+                       self.course_meta, self.student_profile, self.subject_profile,
+                       **_common_flags))
+        write_text(self.root_dir / "INSTRUCOES_GEMINI_PROJETO.md",
+                   generate_gemini_instructions(
+                       self.course_meta, self.student_profile, self.subject_profile,
+                       **_common_flags))
 
         # Course map (com timeline cronograma × unidades)
         write_text(self.root_dir / "course" / "COURSE_MAP.md",
@@ -2657,6 +2705,293 @@ git push
 ```
 
 Isso transforma anotações efêmeras em conhecimento permanente no repositório.
+{first_session_block}"""
+
+
+def generate_gpt_instructions(
+    course_meta: dict,
+    student_profile=None,
+    subject_profile=None,
+    has_assignments: bool = False,
+    has_code: bool = False,
+    has_whiteboard: bool = False,
+    first_session_pending: bool = True,
+) -> str:
+    """
+    Gera o system prompt para GPT (ChatGPT Projects / Custom GPT).
+    Resultado: INSTRUCOES_GPT_PROJETO.md
+
+    Diferenças em relação ao Claude:
+    - Regras críticas no INÍCIO (GPT tende a ignorar o final de prompts longos)
+    - Linguagem mais imperativa e direta
+    - Acesso a arquivos via GitHub RAW URLs
+    - Protocolo de Primeira Sessão adaptado (sem edição nativa de arquivos)
+    """
+    course_name = course_meta.get("course_name", "Curso")
+    professor = course_meta.get("professor", "")
+    institution = course_meta.get("institution", "")
+    semester = course_meta.get("semester", "")
+    github_url = (getattr(subject_profile, "github_url", "") or "").rstrip("/")
+
+    raw_base = f"{github_url.replace('github.com', 'raw.githubusercontent.com')}/main" if github_url else ""
+    github_block = ""
+    if github_url:
+        github_block = f"""
+## Repositório GitHub
+
+URL base: {github_url}
+Acesso direto aos arquivos: {raw_base}/[caminho do arquivo]
+
+**IMPORTANTE:** Sempre que precisar do conteúdo de um arquivo, acesse
+a URL raw diretamente. O aluno atualiza o repositório via git push —
+então você sempre terá a versão mais recente buscando do GitHub.
+
+Exemplos de acesso:
+- `{raw_base}/course/COURSE_MAP.md`
+- `{raw_base}/student/STUDENT_STATE.md`
+- `{raw_base}/course/FILE_MAP.md`
+"""
+    else:
+        github_block = """
+## Documentos disponíveis
+
+Os documentos desta disciplina foram carregados no Knowledge desta
+conversa. Se o aluno fornecer uma URL do GitHub, acesse os arquivos
+diretamente de lá para ter sempre a versão mais atualizada.
+"""
+
+    nick = "Aluno"
+    personality_block = ""
+    if student_profile and student_profile.full_name:
+        nick = student_profile.nickname or student_profile.full_name
+        if student_profile.personality:
+            personality_block = f"\nEstilo de aprendizado do aluno: {student_profile.personality}\n"
+
+    first_session_block = ""
+    if first_session_pending:
+        file_map_url = f"{raw_base}/course/FILE_MAP.md" if raw_base else "FILE_MAP.md"
+        course_map_url = f"{raw_base}/course/COURSE_MAP.md" if raw_base else "COURSE_MAP.md"
+        first_session_block = f"""
+## Protocolo de Primeira Sessão
+
+Na primeira sessão, ANTES de responder qualquer pergunta:
+
+1. Acesse {file_map_url}
+2. Para cada arquivo com coluna "Unidade" vazia:
+   - Acesse o arquivo Markdown pelo link na coluna "Markdown"
+     (substitua o caminho relativo pela URL raw do GitHub)
+   - Leia o conteúdo e cruze com {course_map_url}
+   - Identifique a unidade correspondente
+3. Apresente ao aluno uma tabela com o mapeamento proposto
+4. Dite as alterações — o aluno atualiza FILE_MAP.md manualmente
+   e faz git push para sincronizar
+5. Confirme com o aluno antes de iniciar o estudo
+
+Após a primeira sessão, sempre busque FILE_MAP.md do GitHub antes
+de responder para ter o estado mais atualizado.
+"""
+
+    return f"""# Instruções do Tutor — {course_name}
+
+## REGRAS CRÍTICAS (leia antes de qualquer coisa)
+
+1. NUNCA invente conteúdo — use apenas os arquivos do repositório
+2. SEMPRE acesse STUDENT_STATE.md antes de responder
+3. NUNCA entregue a resposta de exercícios sem guiar o raciocínio
+4. SEMPRE cite qual arquivo você está usando como fonte
+5. Se o aluno disser "atualize sua base", busque novamente os arquivos
+   do GitHub — o repositório pode ter mudado desde o início da sessão
+
+## Identidade
+
+Você é o tutor acadêmico de **{course_name}**.
+Professor: {professor} | Instituição: {institution} | Semestre: {semester}
+Chame o aluno de **{nick}**.{personality_block}
+{github_block}
+## Arquivos principais
+
+Acesse estes arquivos sempre que relevante:
+- `course/COURSE_MAP.md` — estrutura e ordem dos tópicos
+- `course/FILE_MAP.md` — mapeamento arquivo → unidade
+- `course/SYLLABUS.md` — cronograma e datas
+- `student/STUDENT_STATE.md` — progresso atual do aluno
+- `student/STUDENT_PROFILE.md` — perfil do aluno
+- `system/MODES.md` — modos de operação detalhados
+- `system/PEDAGOGY.md` — como estruturar explicações
+- `content/` — material de aula curado
+- `exercises/` — listas de exercícios
+- `exams/` — provas anteriores
+
+## Modos de operação
+
+Identifique o modo pela frase do aluno:
+
+- **study** — "quero entender X" → ensinar do zero com exemplos
+- **assignment** — "tenho uma lista" → guiar sem entregar a resposta
+- **exam_prep** — "tenho prova" → focar em incidência e padrões
+- **class_companion** — "estou na aula" → respostas curtas e diretas
+- **code_review** — "revisa meu código" → diagnosticar sem reescrever tudo
+
+## Regras de comportamento
+
+- Use LaTeX para fórmulas matemáticas
+- Use blocos de código para código
+- Máximo 3 conceitos novos por resposta
+- Ao final de cada sessão, gere um bloco de atualização do STUDENT_STATE.md
+
+## Atualização de progresso
+
+Ao final de cada sessão, dite este bloco para o aluno salvar em
+`student/STUDENT_STATE.md` e fazer git push:
+
+```
+- Data: [YYYY-MM-DD]
+- Tópico: [tópico estudado]
+- Unidade: [slug da unidade]
+- Status: [compreendido / em progresso / com dúvidas]
+- Dúvidas pendentes: [lista]
+- Próximo passo: [próximo tópico]
+```
+{first_session_block}"""
+
+
+def generate_gemini_instructions(
+    course_meta: dict,
+    student_profile=None,
+    subject_profile=None,
+    has_assignments: bool = False,
+    has_code: bool = False,
+    has_whiteboard: bool = False,
+    first_session_pending: bool = True,
+) -> str:
+    """
+    Gera o system prompt para Gemini (Google AI Studio Gems).
+    Resultado: INSTRUCOES_GEMINI_PROJETO.md
+
+    Diferenças em relação ao Claude:
+    - Gemini Gems tem integração NATIVA com GitHub (aba "Conhecimento")
+    - Caminhos relativos funcionam igual ao Claude
+    - Gems não editam arquivos nativamente — aluno faz as alterações
+    """
+    course_name = course_meta.get("course_name", "Curso")
+    professor = course_meta.get("professor", "")
+    institution = course_meta.get("institution", "")
+    semester = course_meta.get("semester", "")
+    github_url = (getattr(subject_profile, "github_url", "") or "").rstrip("/")
+
+    nick = "Aluno"
+    personality_block = ""
+    if student_profile and student_profile.full_name:
+        nick = student_profile.nickname or student_profile.full_name
+        if student_profile.personality:
+            personality_block = f"\n**Estilo de aprendizado:** {student_profile.personality}\n"
+
+    github_note = ""
+    if github_url:
+        github_note = f"\n> Repositório conectado: {github_url}\n"
+
+    file_rows = [
+        "| `system/TUTOR_POLICY.md` | Regras de comportamento — SEMPRE consulte |",
+        "| `student/STUDENT_STATE.md` | Progresso atual — SEMPRE consulte |",
+        "| `course/COURSE_MAP.md` | Estrutura e ordem dos tópicos |",
+        "| `course/FILE_MAP.md` | Mapeamento arquivo → unidade |",
+        "| `course/SYLLABUS.md` | Cronograma e datas |",
+        "| `course/GLOSSARY.md` | Terminologia da disciplina |",
+        "| `system/PEDAGOGY.md` | Como estruturar explicações |",
+        "| `system/MODES.md` | Modos de operação |",
+        "| `system/OUTPUT_TEMPLATES.md` | Templates de resposta |",
+        "| `content/` | Material de aula curado |",
+        "| `exercises/` | Listas de exercícios |",
+        "| `exams/` | Provas anteriores |",
+    ]
+    if has_assignments:
+        file_rows.append("| `assignments/` | Enunciados de trabalhos |")
+    if has_code:
+        file_rows.append("| `code/` | Código do professor |")
+    if has_whiteboard:
+        file_rows.append("| `whiteboard/` | Registros do quadro |")
+
+    file_table = "\n".join(file_rows)
+
+    first_session_block = ""
+    if first_session_pending:
+        first_session_block = """
+## Protocolo de Primeira Sessão
+
+Quando o aluno iniciar o primeiro chat, antes de qualquer coisa:
+
+1. Leia `course/FILE_MAP.md`
+2. Para cada arquivo com coluna "Unidade" vazia:
+   - Leia o Markdown correspondente (caminho na coluna "Markdown")
+   - Identifique os tópicos e cruze com `course/COURSE_MAP.md`
+3. Apresente ao aluno uma tabela com o mapeamento proposto
+4. Peça confirmação antes de prosseguir
+5. Dite as alterações — o aluno atualiza `course/FILE_MAP.md`
+   e faz git push para sincronizar
+
+Após a primeira sessão, sempre releia `course/FILE_MAP.md` antes de
+responder para garantir que está com a versão mais recente.
+"""
+
+    return f"""# Instruções do Tutor — {course_name}
+
+Você é o tutor acadêmico de **{course_name}**, ministrada pelo professor
+**{professor}** na **{institution}**, semestre **{semester}**.
+
+Chame o aluno de **{nick}**.{personality_block}
+
+## Fonte de verdade
+{github_note}
+Os arquivos desta disciplina estão conectados via repositório GitHub
+(aba "Conhecimento" deste Gem). Eles são sua única fonte de verdade —
+**nunca invente** conteúdo que não esteja nesses arquivos.
+
+## Arquivos de referência
+
+| Arquivo | Quando consultar |
+|---|---|
+{file_table}
+
+## Modos de operação
+
+Identifique o modo pela frase do aluno:
+
+- **`study`** — "quero entender X", "explica Y" → ensinar do zero
+- **`assignment`** — "tenho uma lista", "exercício X" → guiar sem entregar
+- **`exam_prep`** — "tenho prova", "revisão" → foco em incidência e padrões
+- **`class_companion`** — "estou na aula" → respostas curtas e diretas
+- **`code_review`** — "revisa meu código" → diagnosticar e guiar
+
+Consulte `system/MODES.md` e `system/OUTPUT_TEMPLATES.md` para detalhes.
+
+## Sincronização temporal
+
+Antes de responder, identifique onde o aluno está no semestre:
+1. Leia a seção "Timeline" em `course/COURSE_MAP.md`
+2. Cruze a data atual com o período de cada unidade
+3. Use isso para contextualizar explicações e priorizar revisão
+
+## Regras fundamentais
+
+1. **Nunca invente** — use apenas os arquivos do repositório
+2. **Consulte `student/STUDENT_STATE.md`** antes de toda resposta
+3. **Cite a fonte** ao usar conteúdo dos arquivos
+4. **Não entregue respostas de exercícios** — guie o raciocínio
+5. **Ao final da sessão**, gere bloco de atualização do `STUDENT_STATE.md`
+
+## Atualização de progresso
+
+Ao final de cada sessão, gere este bloco e instrua o aluno a salvar
+em `student/STUDENT_STATE.md` e fazer git push:
+
+```markdown
+- Data: [YYYY-MM-DD]
+- Tópico estudado: [tópico]
+- Unidade: [slug da unidade do COURSE_MAP]
+- Status: [compreendido / em progresso / com dúvidas]
+- Dúvidas pendentes: [lista]
+- Próximo passo sugerido: [próximo tópico]
+```
 {first_session_block}"""
 
 
@@ -3613,7 +3948,11 @@ def file_map_md(course_meta: dict, manifest_entries: list) -> str:
         title = entry.get("title", "")
         category = entry.get("category", "")
         tags = entry.get("tags", "")
-        md_path = entry.get("base_markdown") or entry.get("advanced_markdown") or ""
+        md_path = (entry.get("approved_markdown")
+                   or entry.get("curated_markdown")
+                   or entry.get("base_markdown")
+                   or entry.get("advanced_markdown")
+                   or "")
         raw_path = entry.get("raw_target") or ""
 
         # Categories that cover the whole course get auto-tagged

@@ -12,7 +12,7 @@ from src.utils.helpers import (
     fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM
 )
 from src.builder.engine import BackendSelector
-from src.ui.theme import ThemeManager, AppConfig, THEMES
+from src.ui.theme import ThemeManager, AppConfig, THEMES, apply_theme_to_toplevel
 
 class Tooltip:
     """Shows a descriptive tooltip balloon after the mouse hovers for `delay` ms."""
@@ -659,10 +659,22 @@ class HTMLImportDialog(tk.Toplevel):
         self.geometry("640x480")
         self.transient(parent)
         self.grab_set()
+        p = apply_theme_to_toplevel(self, parent)
         self.parent = parent
-        
+
         ttk.Label(self, text="Cole o elemento HTML interiro da tabela de cronograma (ex: Portal/Moodle):").pack(padx=10, pady=(10, 5), anchor="w")
-        self.text = tk.Text(self, font=("Consolas", 10), wrap="word")
+        self.text = tk.Text(
+            self,
+            font=("Consolas", 10),
+            wrap="word",
+            bg=p["input_bg"],
+            fg=p["fg"],
+            insertbackground=p["fg"],
+            selectbackground=p["select_bg"],
+            selectforeground=p["select_fg"],
+            relief="flat",
+            borderwidth=1,
+        )
         self.text.pack(fill="both", expand=True, padx=10, pady=5)
         
         btn_frame = ttk.Frame(self)
@@ -700,7 +712,7 @@ class SubjectManagerDialog(tk.Toplevel):
     def __init__(self, parent, subject_store: SubjectStore, theme_mgr: ThemeManager):
         super().__init__(parent)
         self.title("📚  Gerenciador de Matérias")
-        self.geometry("780x560")
+        self.geometry("780x700")
         self.transient(parent)
         self.grab_set()
         self._store = subject_store
@@ -745,6 +757,8 @@ class SubjectManagerDialog(tk.Toplevel):
             ("default_mode", "Modo padrão", "auto, quick, high_fidelity, manual_assisted"),
             ("default_ocr_lang", "OCR padrão", DEFAULT_OCR_LANGUAGE),
             ("repo_root", "Pasta do repositório", "Caminho completo do repo (ex: C:\\Users\\...\\Metodos-Formais-Tutor)"),
+            ("github_url", "URL GitHub", "Ex: https://github.com/seu-user/metodos-formais-tutor"),
+            ("preferred_llm", "LLM Principal", "Plataforma que você usa principalmente"),
         ]
 
         for i, (key, label, tip) in enumerate(labels):
@@ -762,6 +776,10 @@ class SubjectManagerDialog(tk.Toplevel):
                 ttk.Entry(fr, textvariable=var).pack(side="left", fill="x", expand=True)
                 ttk.Button(fr, text="📁", width=3,
                            command=lambda v=var: v.set(filedialog.askdirectory() or v.get())).pack(side="right", padx=(4, 0))
+            elif key == "preferred_llm":
+                ttk.Combobox(form, textvariable=var,
+                             values=["claude", "gpt", "gemini"],
+                             state="readonly", width=22).grid(row=i, column=1, sticky="ew", padx=(8, 0))
             else:
                 ttk.Entry(form, textvariable=var, width=36).grid(row=i, column=1, sticky="ew", padx=(8, 0))
 
@@ -829,6 +847,7 @@ class SubjectManagerDialog(tk.Toplevel):
         self._vars["institution"].set("PUCRS")
         self._vars["default_mode"].set("auto")
         self._vars["default_ocr_lang"].set(DEFAULT_OCR_LANGUAGE)
+        self._vars["preferred_llm"].set("claude")
         self._syllabus_text.delete("1.0", "end")
         self._teaching_plan_text.delete("1.0", "end")
 
@@ -853,6 +872,8 @@ class SubjectManagerDialog(tk.Toplevel):
             default_mode=self._vars["default_mode"].get(),
             default_ocr_lang=self._vars["default_ocr_lang"].get().strip() or DEFAULT_OCR_LANGUAGE,
             repo_root=self._vars["repo_root"].get().strip(),
+            github_url=self._vars["github_url"].get().strip(),
+            preferred_llm=self._vars["preferred_llm"].get().strip() or "claude",
             queue=existing_queue,
         )
         self._store.add(sp)
@@ -1642,8 +1663,7 @@ class FileEntryDialog(simpledialog.Dialog):
         self._theme_name = getattr(self._parent, "_theme_name", "dark")
 
         src = Path(self.path)
-        src = Path(self.path)
-        
+
         if self.initial:
             self.file_type = self.initial.file_type
         elif self.file_type_hint:
@@ -1657,7 +1677,22 @@ class FileEntryDialog(simpledialog.Dialog):
         else:
             self.file_type = "image"
 
-        ttk.Label(master, text=f"Arquivo: {src.name}", style="Accent.TLabel").grid(
+        # Notebook com duas abas
+        nb = ttk.Notebook(master)
+        nb.pack(fill="both", expand=True)
+
+        tab_config = ttk.Frame(nb, padding=8)
+        nb.add(tab_config, text="  \u2699 Configurar  ")
+
+        tab_preview = tk.Frame(nb, bg=p["bg"])
+        nb.add(tab_preview, text="  \U0001f441 Visualizar  ")
+
+        self._build_preview_tab(tab_preview, p)
+
+        # --- All config fields go into tab_config ---
+        outer = tab_config
+
+        ttk.Label(outer, text=f"Arquivo: {src.name}", style="Accent.TLabel").grid(
             row=0, column=0, columnspan=4, sticky="w", pady=(0, 10))
 
         self.var_title = tk.StringVar(value=self.initial.title if self.initial else auto_detect_title(self.path))
@@ -1683,94 +1718,94 @@ class FileEntryDialog(simpledialog.Dialog):
 
         row = 1
 
-        lbl_title = ttk.Label(master, text="Título")
+        lbl_title = ttk.Label(outer, text="Título")
         lbl_title.grid(row=row, column=0, sticky="w", pady=4)
         add_tooltip(lbl_title, "Nome legível do documento. Aparece nos metadados e no índice do repositório.")
-        ttk.Entry(master, textvariable=self.var_title, width=54).grid(row=row, column=1, columnspan=3, sticky="ew")
+        ttk.Entry(outer, textvariable=self.var_title, width=54).grid(row=row, column=1, columnspan=3, sticky="ew")
         row += 1
 
         # Language field for code files
         self.var_language = tk.StringVar(
             value=self.initial.tags if self.initial and self.file_type == "code"
             else src.suffix.lower().lstrip(".") if self.file_type == "code" else "")
-        self._lang_label = ttk.Label(master, text="Linguagem")
-        self._lang_entry = ttk.Entry(master, textvariable=self.var_language, width=20)
+        self._lang_label = ttk.Label(outer, text="Linguagem")
+        self._lang_entry = ttk.Entry(outer, textvariable=self.var_language, width=20)
         if self.file_type == "code":
             self._lang_label.grid(row=row, column=0, sticky="w", pady=4)
             self._lang_entry.grid(row=row, column=1, sticky="w")
             row += 1
         self._lang_row = row - 1 if self.file_type == "code" else None
 
-        lbl_type = ttk.Label(master, text="Tipo")
+        lbl_type = ttk.Label(outer, text="Tipo")
         lbl_type.grid(row=row, column=0, sticky="w", pady=4)
         add_tooltip(lbl_type, "Tipo do item.\npdf → documento PDF\nimage → imagem (foto de prova, slide, etc.)\nurl → link web (YouTube, artigo, etc.)")
-        cb_type = ttk.Combobox(master, textvariable=self.var_file_type, values=self._FILE_TYPES, state="readonly", width=22)
+        cb_type = ttk.Combobox(outer, textvariable=self.var_file_type, values=self._FILE_TYPES, state="readonly", width=22)
         cb_type.grid(row=row, column=1, sticky="ew")
         cb_type.bind("<<ComboboxSelected>>", self._on_type_changed)
         row += 1
 
-        lbl_cat = ttk.Label(master, text="Categoria")
+        lbl_cat = ttk.Label(outer, text="Categoria")
         lbl_cat.grid(row=row, column=0, sticky="w", pady=4)
         add_tooltip(lbl_cat, "Classifica o arquivo na estrutura do repositório.\nexams → provas | course-material → slides/notas | exercise-lists → listas | references → livros/artigos | photos-of-exams → fotos manuscritas")
-        ttk.Combobox(master, textvariable=self.var_category, values=DEFAULT_CATEGORIES, state="readonly", width=22).grid(row=row, column=1, sticky="ew")
+        ttk.Combobox(outer, textvariable=self.var_category, values=DEFAULT_CATEGORIES, state="readonly", width=22).grid(row=row, column=1, sticky="ew")
 
-        lbl_mode = ttk.Label(master, text="Modo")
+        lbl_mode = ttk.Label(outer, text="Modo")
         lbl_mode.grid(row=row, column=2, sticky="w", padx=(12, 0))
         add_tooltip(lbl_mode, "Controla o pipeline de processamento.\nauto → decide pelo perfil do documento\nquick → só backend base (rápido)\nhigh_fidelity → base + avançado\nmanual_assisted → base + avançado + revisão humana guiada")
-        ttk.Combobox(master, textvariable=self.var_mode, values=PROCESSING_MODES, state="readonly", width=20).grid(row=row, column=3, sticky="ew")
+        ttk.Combobox(outer, textvariable=self.var_mode, values=PROCESSING_MODES, state="readonly", width=20).grid(row=row, column=3, sticky="ew")
         row += 1
 
-        lbl_profile = ttk.Label(master, text="Perfil")
+        lbl_profile = ttk.Label(outer, text="Perfil")
         lbl_profile.grid(row=row, column=0, sticky="w", pady=4)
         add_tooltip(lbl_profile, "Descreve o tipo de conteúdo do PDF. Cada perfil ajusta modo e backend automaticamente.\n\nauto → detecta automaticamente\ngeneral → texto simples, sem fórmulas (pymupdf4llm, rápido)\nmath_light → algumas fórmulas (docling, high_fidelity)\nmath_heavy → muitas fórmulas/LaTeX (docling + enrich-formula)\nlayout_heavy → colunas, figuras, tabelas complexas (docling)\nscanned → PDF de scan/foto (ativa OCR)\nexam_pdf → prova/lista de exercícios")
-        combo_profile = ttk.Combobox(master, textvariable=self.var_profile, values=DOCUMENT_PROFILES, state="readonly", width=22)
+        combo_profile = ttk.Combobox(outer, textvariable=self.var_profile, values=DOCUMENT_PROFILES, state="readonly", width=22)
         combo_profile.grid(row=row, column=1, sticky="ew")
         combo_profile.bind("<<ComboboxSelected>>", self._on_profile_changed)
 
-        lbl_backend = ttk.Label(master, text="Backend preferido")
+        lbl_backend = ttk.Label(outer, text="Backend preferido")
         lbl_backend.grid(row=row, column=2, sticky="w", padx=(12, 0))
         add_tooltip(lbl_backend, "Backend de extração preferido.\nauto → seleção automática\npymupdf4llm → rápido e bom para PDFs digitais\npymupdf → fallback básico\ndocling → avançado: OCR, fórmulas, tabelas (CLI externo)\nmarker → avançado: equações e imagens (CLI externo)")
-        ttk.Combobox(master, textvariable=self.var_backend, values=PREFERRED_BACKENDS, state="readonly", width=20).grid(row=row, column=3, sticky="ew")
+        ttk.Combobox(outer, textvariable=self.var_backend, values=PREFERRED_BACKENDS, state="readonly", width=20).grid(row=row, column=3, sticky="ew")
         row += 1
 
-        lbl_tags = ttk.Label(master, text="Tags")
+        lbl_tags = ttk.Label(outer, text="Tags")
         lbl_tags.grid(row=row, column=0, sticky="w", pady=4)
         add_tooltip(lbl_tags, "Palavras-chave separadas por vírgula para facilitar busca futura.\nExemplo: gabarito, integração, 2024-1")
-        ttk.Entry(master, textvariable=self.var_tags, width=26).grid(row=row, column=1, sticky="ew")
+        ttk.Entry(outer, textvariable=self.var_tags, width=26).grid(row=row, column=1, sticky="ew")
 
-        lbl_ocr = ttk.Label(master, text="OCR lang")
+        lbl_ocr = ttk.Label(outer, text="OCR lang")
         lbl_ocr.grid(row=row, column=2, sticky="w", padx=(12, 0))
         add_tooltip(lbl_ocr, "Idioma(s) para o OCR.\npor,eng → Português + Inglês (padrão recomendado)\npor → só Português | eng → só Inglês")
-        ttk.Combobox(master, textvariable=self.var_ocr_lang, values=OCR_LANGS, width=20).grid(row=row, column=3, sticky="ew")
+        ttk.Combobox(outer, textvariable=self.var_ocr_lang, values=OCR_LANGS, width=20).grid(row=row, column=3, sticky="ew")
         row += 1
 
-        lbl_notes = ttk.Label(master, text="Notas")
+        lbl_notes = ttk.Label(outer, text="Notas")
         lbl_notes.grid(row=row, column=0, sticky="w", pady=4)
         add_tooltip(lbl_notes, "Observação livre sobre o arquivo. Não afeta o processamento, apenas fica registrado nos metadados.")
-        ttk.Entry(master, textvariable=self.var_notes, width=54).grid(row=row, column=1, columnspan=3, sticky="ew")
+        ttk.Entry(outer, textvariable=self.var_notes, width=54).grid(row=row, column=1, columnspan=3, sticky="ew")
         row += 1
 
-        lbl_prof = ttk.Label(master, text="Pista do professor")
+        lbl_prof = ttk.Label(outer, text="Pista do professor")
         lbl_prof.grid(row=row, column=0, sticky="w", pady=4)
         add_tooltip(lbl_prof, "Padrões observados no estilo do professor: tipo de cobrança, notação preferida, nível de detalhe.\nExemplo: cobra demonstração formal; mistura indução e recursão")
-        ttk.Entry(master, textvariable=self.var_prof, width=54).grid(row=row, column=1, columnspan=3, sticky="ew")
+        ttk.Entry(outer, textvariable=self.var_prof, width=54).grid(row=row, column=1, columnspan=3, sticky="ew")
         row += 1
 
-        cb_exam = ttk.Checkbutton(master, text="Relevante para prova", variable=self.var_exam)
+        cb_exam = ttk.Checkbutton(outer, text="Relevante para prova", variable=self.var_exam)
         cb_exam.grid(row=row, column=0, sticky="w", pady=4)
         add_tooltip(cb_exam, "Marca este material como importante para preparação de provas. Afeta priorização no bundle do tutor Claude.")
 
-        cb_bundle = ttk.Checkbutton(master, text="Incluir no bundle inicial", variable=self.var_bundle)
+        cb_bundle = ttk.Checkbutton(outer, text="Incluir no bundle inicial", variable=self.var_bundle)
         cb_bundle.grid(row=row, column=1, sticky="w")
         add_tooltip(cb_bundle, "Se marcado, o arquivo entra no bundle.seed.json para alimentar o tutor Claude como conhecimento base.")
 
-        cb_formula = ttk.Checkbutton(master, text="Prioridade em fórmulas", variable=self.var_formula)
+        cb_formula = ttk.Checkbutton(outer, text="Prioridade em fórmulas", variable=self.var_formula)
         cb_formula.grid(row=row, column=2, sticky="w")
         add_tooltip(cb_formula, "Força ativação do backend avançado (docling/marker) mesmo em modo auto ou quick.\nUse quando o documento tem muitas equações matemáticas críticas.")
         row += 1
 
         # --- PDF-only options frame ---
-        self._pdf_frame = ttk.LabelFrame(master, text="Opções de PDF", padding=4)
+        self._pdf_frame = ttk.LabelFrame(outer, text="Opções de PDF", padding=4)
         self._pdf_row = row  # remember grid row for show/hide
 
         pr = 0
@@ -1803,8 +1838,8 @@ class FileEntryDialog(simpledialog.Dialog):
         # Show/hide based on current type
         self._update_pdf_frame_visibility()
 
-        master.columnconfigure(1, weight=1)
-        master.columnconfigure(3, weight=1)
+        outer.columnconfigure(1, weight=1)
+        outer.columnconfigure(3, weight=1)
         return master
 
     def _on_type_changed(self, _event=None):
@@ -1852,6 +1887,99 @@ class FileEntryDialog(simpledialog.Dialog):
         else:
             self._pdf_frame.grid_remove()
 
+    def _build_preview_tab(self, parent, p):
+        """Preview do arquivo: imagem direta ou primeiras páginas do PDF."""
+        file_type = getattr(self, "file_type",
+                            self.file_type_hint or
+                            (self.initial.file_type if self.initial else ""))
+        path = Path(self.path) if self.path else None
+
+        if file_type == "image" and path and path.exists():
+            try:
+                from PIL import Image as PILImage, ImageTk
+                img = PILImage.open(path)
+                img.thumbnail((560, 460))
+                photo = ImageTk.PhotoImage(img)
+                lbl = tk.Label(parent, image=photo, bg=p["bg"])
+                lbl.image = photo  # prevent GC
+                lbl.pack(expand=True, pady=8)
+            except Exception as e:
+                ttk.Label(parent,
+                          text="Erro ao carregar imagem:\n{}".format(e),
+                          style="Muted.TLabel",
+                          justify="center").pack(expand=True)
+
+        elif file_type == "pdf" and path and path.exists():
+            frame = tk.Frame(parent, bg=p["bg"])
+            frame.pack(fill="both", expand=True)
+
+            v_scroll = ttk.Scrollbar(frame, orient="vertical")
+            v_scroll.pack(side="right", fill="y")
+
+            canvas = tk.Canvas(frame,
+                               bg=p["frame_bg"],
+                               yscrollcommand=v_scroll.set,
+                               highlightthickness=0)
+            canvas.pack(fill="both", expand=True)
+            v_scroll.configure(command=canvas.yview)
+
+            canvas.bind("<MouseWheel>",
+                        lambda e: canvas.yview_scroll(
+                            int(-1 * (e.delta / 120)), "units"))
+
+            self._preview_photos = []
+            loading_lbl = ttk.Label(parent, text="\u23f3 Carregando\u2026",
+                                    style="Muted.TLabel")
+            loading_lbl.pack(pady=4)
+
+            def _render():
+                try:
+                    import fitz
+                    from PIL import Image as PILImage, ImageTk
+                    doc = fitz.open(str(path))
+                    photos = []
+                    for i in range(min(3, len(doc))):
+                        pix = doc[i].get_pixmap(matrix=fitz.Matrix(1.2, 1.2))
+                        img = PILImage.frombytes(
+                            "RGB", [pix.width, pix.height], pix.samples)
+                        photos.append(ImageTk.PhotoImage(img))
+                    doc.close()
+                    canvas.after(0, lambda ph=photos: _display(ph))
+                except Exception as ex:
+                    canvas.after(0, lambda: ttk.Label(
+                        parent,
+                        text="Erro ao renderizar PDF:\n{}".format(ex),
+                        style="Muted.TLabel",
+                        justify="center").pack(expand=True))
+
+            def _display(photos):
+                try:
+                    loading_lbl.destroy()
+                except Exception:
+                    pass
+                self._preview_photos = photos
+                y = 8
+                for photo in photos:
+                    canvas.create_image(4, y, anchor="nw", image=photo)
+                    y += photo.height() + 8
+                if photos:
+                    canvas.configure(
+                        scrollregion=(0, 0, photos[0].width() + 8, y))
+
+            import threading
+            threading.Thread(target=_render, daemon=True).start()
+
+        else:
+            icons = {
+                "url": "\U0001f517", "code": "\U0001f4bb", "zip": "\U0001f4e6",
+                "github-repo": "\U0001f419", "": "\U0001f4c4",
+            }
+            icon = icons.get(file_type, "\U0001f4c4")
+            msg = ("{} Pre-visualização não disponível\n"
+                   "para o tipo '{}'.".format(icon, file_type or 'desconhecido'))
+            ttk.Label(parent, text=msg,
+                      style="Muted.TLabel",
+                      justify="center").pack(expand=True)
 
     def apply(self):
         # For code files, tags come from the language field
@@ -1899,6 +2027,7 @@ class URLEntryDialog(tk.Toplevel):
         self.geometry("560x460")
         self.transient(parent)
         self.grab_set()
+        self._p = apply_theme_to_toplevel(self, parent)
 
         self.result_entry: Optional[FileEntry] = None
         self.var_url = tk.StringVar()

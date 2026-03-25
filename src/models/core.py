@@ -100,6 +100,8 @@ class SubjectProfile:
     default_mode: str = "auto"
     default_ocr_lang: str = DEFAULT_OCR_LANGUAGE
     repo_root: str = ""
+    github_url: str = ""           # URL base do repo no GitHub
+    preferred_llm: str = "claude"  # Plataforma principal: "claude", "gpt", "gemini"
     queue: List[FileEntry] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:

@@ -54,6 +54,8 @@ class CuratorStudio(tk.Toplevel):
 
         ttk.Button(toolbar, text="✅ Aprovar", command=self._approve_current).pack(side="right", padx=5)
         ttk.Button(toolbar, text="⛔ Reprovado", command=self._reject_current).pack(side="right", padx=5)
+        ttk.Button(toolbar, text="✅ Aprovar Todos", command=self._approve_all_pending).pack(side="right", padx=5)
+        ttk.Button(toolbar, text="🔄 Restaurar Pendentes", command=self._restore_orphan_entries).pack(side="right", padx=5)
         self.bind("<Control-s>", lambda e: self.save_current())  # hidden shortcut
 
         # Status bar
@@ -492,6 +494,192 @@ class CuratorStudio(tk.Toplevel):
         except Exception:
             pass
         return None
+
+    # ── Bulk operations ────────────────────────────────────────────────
+
+    def _get_pending_entries(self) -> list:
+        """Retorna entries do manifest que têm markdown mas não foram aprovados."""
+        manifest_path = self.repo_dir / "manifest.json"
+        if not manifest_path.exists():
+            return []
+        try:
+            import json
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            pending = []
+            for e in manifest.get("entries", []):
+                if e.get("approved_markdown") or e.get("curated_markdown"):
+                    continue  # já aprovado
+                md = (e.get("base_markdown") or e.get("advanced_markdown") or "")
+                if not md:
+                    continue  # sem markdown gerado
+                # Verificar se o arquivo de fato existe
+                if not (self.repo_dir / md).exists():
+                    continue
+                pending.append(e)
+            return pending
+        except Exception as ex:
+            logger.warning("Erro ao ler manifest para pendentes: %s", ex)
+            return []
+
+    def _restore_orphan_entries(self):
+        """Regenera templates de manual-review para entries que têm markdown
+        no staging mas não aparecem no Curator Studio."""
+        pending = self._get_pending_entries()
+        if not pending:
+            messagebox.showinfo("Restaurar Pendentes",
+                                "Nenhum entry pendente encontrado.\n"
+                                "Todos os arquivos já foram aprovados ou não têm markdown.")
+            return
+
+        titles = "\n".join(f"  - {e.get('title', '?')}" for e in pending[:15])
+        if len(pending) > 15:
+            titles += f"\n  ... e mais {len(pending) - 15}"
+
+        if not messagebox.askyesno(
+            "Restaurar Pendentes",
+            f"{len(pending)} entries têm markdown mas não aparecem\n"
+            f"no Curator Studio (template de revisão ausente).\n\n"
+            f"{titles}\n\n"
+            f"Deseja recriar os templates de revisão?"
+        ):
+            return
+
+        from src.utils.helpers import write_text
+        count = 0
+        for e in pending:
+            entry_id = e.get("id", "")
+            if not entry_id:
+                continue
+            file_type = e.get("file_type", "pdf")
+            subdir = "pdfs" if file_type == "pdf" else "images"
+            template_path = self.repo_dir / "manual-review" / subdir / f"{entry_id}.md"
+            if template_path.exists():
+                continue  # já tem template
+
+            md_path = (e.get("base_markdown") or e.get("advanced_markdown") or "")
+            adv_md = e.get("advanced_markdown") or ""
+            raw_target = e.get("raw_target") or ""
+
+            content = f"""---
+id: {entry_id}
+title: {e.get('title', '')}
+type: manual_pdf_review
+category: {e.get('category', '')}
+source_pdf: {raw_target}
+processing_mode: {e.get('processing_mode', '')}
+effective_profile: {e.get('effective_profile', '')}
+base_backend: {e.get('base_backend', '')}
+advanced_backend: {e.get('advanced_backend', '')}
+base_markdown: {e.get('base_markdown') or ''}
+advanced_markdown: {adv_md}
+---
+
+# Revisão Manual — {e.get('title', entry_id)}
+
+Template restaurado automaticamente.
+Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
+"""
+            write_text(template_path, content)
+            count += 1
+
+        self._load_files()
+        messagebox.showinfo("Restaurar Pendentes",
+                            f"{count} templates de revisão criados.\n"
+                            f"Os arquivos agora aparecem na lista à esquerda.")
+
+    def _approve_all_pending(self):
+        """Aprova todos os entries pendentes de uma vez, movendo os markdowns
+        para o diretório curado correto pela categoria."""
+        pending = self._get_pending_entries()
+        if not pending:
+            messagebox.showinfo("Aprovar Todos",
+                                "Nenhum entry pendente encontrado.\n"
+                                "Todos os arquivos já foram aprovados ou não têm markdown.")
+            return
+
+        titles = "\n".join(f"  - {e.get('title', '?')}" for e in pending[:15])
+        if len(pending) > 15:
+            titles += f"\n  ... e mais {len(pending) - 15}"
+
+        if not messagebox.askyesno(
+            "Aprovar Todos Pendentes",
+            f"{len(pending)} entries serão aprovados:\n\n"
+            f"{titles}\n\n"
+            f"O markdown de cada um será copiado para o diretório\n"
+            f"curado (content/curated/, exercises/lists/ ou exams/past-exams/)\n"
+            f"e o manifest será atualizado.\n\n"
+            f"Continuar?"
+        ):
+            return
+
+        import json
+        from datetime import datetime
+        from src.utils.helpers import write_text
+
+        manifest_path = self.repo_dir / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        entries_map = {e.get("id"): e for e in manifest.get("entries", [])}
+
+        approved_count = 0
+        for pe in pending:
+            entry_id = pe.get("id", "")
+            category = pe.get("category", "")
+            md_rel = (pe.get("base_markdown") or pe.get("advanced_markdown") or "")
+            if not md_rel or not entry_id:
+                continue
+
+            md_src = self.repo_dir / md_rel
+            if not md_src.exists():
+                continue
+
+            # Determinar destino pela categoria
+            if category in ("provas", "fotos-de-prova"):
+                dest_dir = self.repo_dir / "exams" / "past-exams"
+            elif category in ("listas", "gabaritos"):
+                dest_dir = self.repo_dir / "exercises" / "lists"
+            else:
+                dest_dir = self.repo_dir / "content" / "curated"
+
+            dest_path = dest_dir / f"{entry_id}.md"
+            dest_dir.mkdir(parents=True, exist_ok=True)
+
+            try:
+                shutil.copy2(md_src, dest_path)
+            except Exception as ex:
+                logger.warning("Aprovar Todos: falha ao copiar %s → %s: %s", md_src, dest_path, ex)
+                continue
+
+            # Atualizar manifest
+            target = entries_map.get(entry_id)
+            if target:
+                approved_rel = self._repo_relative(dest_path)
+                target["approved_markdown"] = approved_rel
+                target["curated_markdown"] = approved_rel
+                target["approved_at"] = datetime.now().isoformat(timespec="seconds")
+                target["review_status"] = "approved"
+                approved_count += 1
+
+            # Limpar template de manual-review se existir
+            for subdir in ("pdfs", "images"):
+                template = self.repo_dir / "manual-review" / subdir / f"{entry_id}.md"
+                if template.exists():
+                    try:
+                        template.unlink()
+                    except Exception:
+                        pass
+
+        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+        manifest.setdefault("logs", []).append({
+            "step": "curator_approve_all",
+            "status": "ok",
+            "count": approved_count,
+        })
+        manifest_path.write_text(
+            json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+
+        self._load_files()
+        messagebox.showinfo("Aprovar Todos",
+                            f"{approved_count} entries aprovados e movidos para curadoria.")
 
     # ── Save / Approve / Reject ───────────────────────────────────────
 

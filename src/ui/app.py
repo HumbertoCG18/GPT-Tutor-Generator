@@ -14,7 +14,7 @@ except ImportError:
     pymupdf = None
 
 from src.models.core import FileEntry, SubjectStore, StudentStore, SubjectProfile
-from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS
+from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES
 from src.builder.engine import RepoBuilder
 from src.ui.theme import ThemeManager, AppConfig
 from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, StatusDialog
@@ -255,6 +255,9 @@ class App(tk.Tk):
         ttk.Separator(tab_backlog, orient="vertical").pack(side="left", fill="y", padx=6, pady=(8, 4))
         btn_reprocess = ttk.Button(tab_backlog, text="🔄 Reprocessar Repositório", command=self._reprocess_repo)
         btn_reprocess.pack(side="left", pady=(8, 4), padx=4)
+
+        btn_gen_llm = ttk.Button(tab_backlog, text="📋 Gerar Instruções LLM", command=self._generate_llm_instructions)
+        btn_gen_llm.pack(side="left", pady=(8, 4), padx=4)
 
         columns_bk = ("category", "layer", "tags", "title", "backend", "file")
         self.repo_tree = ttk.Treeview(tab_backlog, columns=columns_bk, show="headings", height=14)
@@ -892,7 +895,68 @@ class App(tk.Tk):
             if not messagebox.askyesno(APP_NAME, "Nenhum arquivo foi adicionado. Criar apenas a estrutura do repositório?"):
                 return
 
+        platform = self._select_llm_platform()
+        if platform is None:
+            return
+        self._selected_platform = platform
         self._continue_build_repo(meta)
+
+    def _select_llm_platform(self):
+        """Mostra dialog para confirmar/alterar a plataforma principal."""
+        active_subj_name = self._var_active_subject.get()
+        sp = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
+        default = (getattr(sp, "preferred_llm", None) if sp else None) or "claude"
+
+        dialog = tk.Toplevel(self)
+        dialog.title("Plataforma principal")
+        dialog.resizable(False, False)
+        dialog.transient(self)
+        dialog.grab_set()
+
+        dialog.update_idletasks()
+        x = self.winfo_rootx() + (self.winfo_width() - 340) // 2
+        y = self.winfo_rooty() + (self.winfo_height() - 240) // 2
+        dialog.geometry(f"340x240+{x}+{y}")
+
+        result = {"value": None}
+
+        ttk.Label(dialog,
+                  text="Qual plataforma você vai usar principalmente?",
+                  wraplength=300, justify="center").pack(pady=(18, 6))
+
+        ttk.Label(dialog,
+                  text="O build gera instruções para as três plataformas.\n"
+                       "Esta escolha destaca a principal no relatório\n"
+                       "e é salva no perfil da matéria.",
+                  wraplength=300, justify="center",
+                  foreground="gray").pack(pady=(0, 14))
+
+        btn_frame = ttk.Frame(dialog)
+        btn_frame.pack()
+
+        PLATFORMS = [
+            ("claude", "Claude"),
+            ("gpt",    "GPT"),
+            ("gemini", "Gemini"),
+        ]
+
+        def pick(val):
+            result["value"] = val
+            if sp:
+                sp.preferred_llm = val
+                self.subject_store.add(sp)
+            dialog.destroy()
+
+        for val, label in PLATFORMS:
+            display = f">> {label} <<" if val == default else label
+            ttk.Button(btn_frame, text=display, width=14,
+                       command=lambda v=val: pick(v)).pack(side="left", padx=4)
+
+        ttk.Button(dialog, text="Cancelar",
+                   command=dialog.destroy).pack(pady=(12, 0))
+
+        dialog.wait_window()
+        return result["value"]
         
     def _continue_build_repo(self, meta: dict):
         repo_dir = self._repo_dir()
@@ -1218,6 +1282,134 @@ class App(tk.Tk):
         else:
             self._refresh_backlog()
             self._set_status("Repositório reprocessado com sucesso.")
+
+    def _generate_llm_instructions(self):
+        """Gera/regenera os arquivos de instruções para as 3 plataformas (Claude, GPT, Gemini)."""
+        repo_dir = self._repo_dir()
+        if not repo_dir:
+            messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório.")
+            return
+        manifest_path = repo_dir / "manifest.json"
+        if not manifest_path.exists():
+            messagebox.showinfo(APP_NAME, "Nenhum repositório encontrado nessa pasta.")
+            return
+        meta = self._course_meta()
+        if meta is None:
+            return
+
+        # Detectar estado do COURSE_MAP e FILE_MAP
+        file_map_path = repo_dir / "course" / "FILE_MAP.md"
+        course_map_path = repo_dir / "course" / "COURSE_MAP.md"
+        file_map_complete = False
+        course_map_exists = course_map_path.exists()
+        first_pending = True
+        if file_map_path.exists():
+            try:
+                fm_content = file_map_path.read_text(encoding="utf-8")
+                file_map_complete = "status: pending_review" not in fm_content
+                first_pending = not file_map_complete
+            except Exception:
+                pass
+
+        repo_ready = file_map_complete and course_map_exists
+
+        if repo_ready:
+            # Repo completo — perguntar se quer trocar plataforma ou só gerar
+            answer = messagebox.askyesnocancel(
+                APP_NAME,
+                "O repositório já está configurado:\n"
+                "  - COURSE_MAP.md existe\n"
+                "  - FILE_MAP.md está completo\n\n"
+                "O Protocolo de Primeira Sessão será OMITIDO.\n\n"
+                "Sim → Gerar instruções (manter LLM atual)\n"
+                "Não → Escolher outra plataforma principal\n"
+                "Cancelar → Abortar"
+            )
+            if answer is None:
+                return
+            if answer:
+                # Manter plataforma atual
+                active_subj_name = self._var_active_subject.get()
+                sp = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
+                platform = getattr(sp, "preferred_llm", "claude") or "claude"
+            else:
+                platform = self._select_llm_platform()
+                if platform is None:
+                    return
+        else:
+            # Repo incompleto — mostrar seletor normalmente
+            status_parts = []
+            if not course_map_exists:
+                status_parts.append("COURSE_MAP.md não encontrado")
+            if not file_map_complete:
+                status_parts.append("FILE_MAP.md pendente")
+            messagebox.showinfo(
+                APP_NAME,
+                f"Estado do repositório:\n"
+                f"  - {chr(10).join(status_parts)}\n\n"
+                f"O Protocolo de Primeira Sessão será INCLUÍDO.\n"
+                f"Escolha a plataforma principal:"
+            )
+            platform = self._select_llm_platform()
+            if platform is None:
+                return
+
+        active_subj_name = self._var_active_subject.get()
+        active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
+        student_p = self.student_store.profile if self.student_store.profile.full_name else None
+
+        try:
+            from src.builder.engine import (
+                generate_claude_project_instructions,
+                generate_gpt_instructions,
+                generate_gemini_instructions,
+            )
+            from src.utils.helpers import write_text
+            from src.models.core import FileEntry
+
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                manifest = json.load(f)
+            all_entries = []
+            try:
+                all_entries = [FileEntry.from_dict(e) for e in manifest.get("entries", [])]
+            except Exception:
+                pass
+
+            common = dict(
+                has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in all_entries),
+                has_code=any(e.category in CODE_CATEGORIES for e in all_entries),
+                has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in all_entries),
+                first_session_pending=first_pending,
+            )
+
+            write_text(repo_dir / "INSTRUCOES_CLAUDE_PROJETO.md",
+                       generate_claude_project_instructions(
+                           meta, student_p, active_subj, **common))
+            write_text(repo_dir / "INSTRUCOES_GPT_PROJETO.md",
+                       generate_gpt_instructions(
+                           meta, student_p, active_subj, **common))
+            write_text(repo_dir / "INSTRUCOES_GEMINI_PROJETO.md",
+                       generate_gemini_instructions(
+                           meta, student_p, active_subj, **common))
+
+            platform_map = {
+                "claude": "INSTRUCOES_CLAUDE_PROJETO.md",
+                "gpt": "INSTRUCOES_GPT_PROJETO.md",
+                "gemini": "INSTRUCOES_GEMINI_PROJETO.md",
+            }
+            primary = platform_map.get(platform, platform_map["claude"])
+            protocol_msg = "Protocolo de Primeira Sessão OMITIDO." if not first_pending else "Protocolo de Primeira Sessão INCLUÍDO."
+            messagebox.showinfo(
+                APP_NAME,
+                f"Instruções geradas para as 3 plataformas.\n\n"
+                f"Plataforma principal: {platform.upper()}\n"
+                f"Arquivo: {primary}\n\n"
+                f"{protocol_msg}"
+            )
+            self._set_status(f"Instruções LLM geradas — principal: {platform.upper()}")
+        except Exception as e:
+            messagebox.showerror(APP_NAME, f"Erro ao gerar instruções:\n{e}")
+            self._set_status("Erro ao gerar instruções LLM.")
 
     def _manifest_path(self) -> Optional[Path]:
         """Retorna o caminho do manifest.json do repositório ativo, ou None."""

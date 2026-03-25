@@ -3,7 +3,9 @@
     "allow": [
       "Bash(python -m pytest tests/ -v)",
       "Bash(python -m pytest tests/ -q)",
-      "Bash(python -X utf8 -c \":*)"
+      "Bash(python -X utf8 -c \":*)",
+      "Bash(python3:*)",
+      "Bash(python:*)"
     ]
   }
 }
