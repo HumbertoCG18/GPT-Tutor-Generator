@@ -21,6 +21,9 @@
 | Modify | `src/builder/engine.py` | Image description injection during build |
 | Modify | `src/ui/app.py:225` | Add "Image Curator" button to toolbar |
 | Modify | `src/builder/engine.py:2916` | Add SVG reproduction instruction to Claude tutor prompt |
+| Modify | `src/ui/dialogs.py:157` | Add Vision model settings to Settings dialog |
+| Modify | `src/ui/dialogs.py:2380` | Add Ollama/Vision status to Status dialog |
+| Modify | `src/ui/theme.py` | Add vision config keys to AppConfig |
 | Create | `tests/test_image_curation.py` | Tests for heuristics, ollama client, description injection |
 
 ---
@@ -1516,7 +1519,182 @@ git commit -m "feat: add SVG reproduction instruction to Claude tutor prompt"
 
 ---
 
-### Task 10: End-to-End Smoke Test
+### Task 10: Vision Model Settings in Settings Dialog
+
+**Files:**
+- Modify: `src/ui/dialogs.py` (SettingsDialog._build, around line 157)
+- Modify: `src/ui/theme.py` (AppConfig — add new config keys)
+
+Add a "Vision / Descrição de Imagens" section to the Processing tab in Settings.
+
+- [ ] **Step 1: Add config keys to AppConfig**
+
+In `src/ui/theme.py`, find the `AppConfig` class and add default values for the new settings:
+
+```python
+"vision_model": "qwen3-vl",
+"vision_model_quantization": "default",
+"ollama_base_url": "http://localhost:11434",
+```
+
+- [ ] **Step 2: Add Vision section to Settings Processing tab**
+
+In `src/ui/dialogs.py`, inside `SettingsDialog._build()`, after the stall timeout spinbox (around line 192), add:
+
+```python
+        # ── Vision / Image Description ────────────────────────────────
+        sep_row = next_row + 2
+        ttk.Separator(tab_proc, orient="horizontal").grid(
+            row=sep_row, column=0, columnspan=2, sticky="ew", pady=(12, 8))
+        ttk.Label(tab_proc, text="Vision — Descrição de Imagens",
+                  style="Accent.TLabel").grid(
+            row=sep_row + 1, column=0, columnspan=2, sticky="w", pady=(0, 8))
+
+        VISION_MODELS = ["qwen3-vl", "qwen2.5vl:7b", "llava:7b"]
+        QUANTIZATIONS = ["default", "q4_K_M", "q5_K_M", "q8_0", "fp16"]
+
+        self._var_vision_model = tk.StringVar(value=self.config.get("vision_model"))
+        self._var_vision_quant = tk.StringVar(value=self.config.get("vision_model_quantization"))
+        self._var_ollama_url = tk.StringVar(value=self.config.get("ollama_base_url"))
+
+        vision_fields = [
+            ("Modelo Vision", self._var_vision_model, VISION_MODELS),
+            ("Quantização", self._var_vision_quant, QUANTIZATIONS),
+        ]
+        for i, (label, var, vals) in enumerate(vision_fields):
+            r = sep_row + 2 + i
+            ttk.Label(tab_proc, text=label).grid(row=r, column=0, sticky="w", pady=6, padx=(0, 16))
+            cb = ttk.Combobox(tab_proc, textvariable=var, values=vals, state="readonly", width=22)
+            cb.grid(row=r, column=1, sticky="ew")
+
+        url_row = sep_row + 2 + len(vision_fields)
+        ttk.Label(tab_proc, text="URL do Ollama").grid(
+            row=url_row, column=0, sticky="w", pady=6, padx=(0, 16))
+        ttk.Entry(tab_proc, textvariable=self._var_ollama_url, width=28).grid(
+            row=url_row, column=1, sticky="ew")
+        add_tooltip(cb, "default: usa a quantização padrão do Ollama para o modelo.\n"
+                        "q4_K_M: menor uso de VRAM, leve perda de qualidade.\n"
+                        "fp16: máxima qualidade, maior uso de VRAM.")
+```
+
+- [ ] **Step 3: Wire save to include new fields**
+
+In the `_save()` method of `SettingsDialog`, add:
+
+```python
+        self.config.set("vision_model", self._var_vision_model.get())
+        self.config.set("vision_model_quantization", self._var_vision_quant.get())
+        self.config.set("ollama_base_url", self._var_ollama_url.get())
+```
+
+- [ ] **Step 4: Update OllamaClient to read from config**
+
+In `src/ui/image_curator.py`, where `OllamaClient()` is instantiated in `_generate_descriptions()`, pass the configured model and URL:
+
+```python
+        from src.builder.ollama_client import OllamaClient
+        config = self._parent.config_obj if hasattr(self._parent, "config_obj") else None
+        model = config.get("vision_model", "qwen3-vl") if config else "qwen3-vl"
+        quant = config.get("vision_model_quantization", "default") if config else "default"
+        base_url = config.get("ollama_base_url", "http://localhost:11434") if config else "http://localhost:11434"
+
+        # Append quantization tag if not default
+        if quant != "default":
+            model = f"{model}-{quant}" if ":" not in model else model.split(":")[0] + f":{quant}"
+
+        client = OllamaClient(base_url=base_url, model=model)
+```
+
+- [ ] **Step 5: Run tests**
+
+```bash
+python -m pytest tests/ -v
+```
+
+Expected: All tests PASS
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add src/ui/dialogs.py src/ui/theme.py src/ui/image_curator.py
+git commit -m "feat: add Vision model settings to Settings dialog"
+```
+
+---
+
+### Task 11: Ollama/Vision Status in Status Dialog
+
+**Files:**
+- Modify: `src/ui/dialogs.py` (StatusDialog.__init__, around line 2380)
+
+Add a "Vision / Ollama" section to the Status dialog showing whether Ollama is running and which models are available.
+
+- [ ] **Step 1: Add Ollama/Vision section to StatusDialog**
+
+In `src/ui/dialogs.py`, inside `StatusDialog.__init__()`, after the "Perfil do Aluno" section (around line 2389), add:
+
+```python
+        # ── Ollama / Vision ───────────────────────────────────────────
+        f_vis = section("Vision — Descrição de Imagens (Ollama)")
+
+        # Check Ollama availability
+        ollama_url = config_obj.get("ollama_base_url", "http://localhost:11434")
+        ollama_running = False
+        available_models = []
+        try:
+            import json
+            from urllib.request import urlopen
+            resp = urlopen(f"{ollama_url}/api/tags", timeout=3)
+            data = json.loads(resp.read())
+            ollama_running = True
+            available_models = [m.get("name", "") for m in data.get("models", [])]
+        except Exception:
+            pass
+
+        row(f_vis, "Ollama rodando", ollama_running,
+            ollama_url if ollama_running else f"não acessível em {ollama_url}")
+
+        # Check configured model
+        configured_model = config_obj.get("vision_model", "qwen3-vl")
+        configured_base = configured_model.split(":")[0]
+        model_found = any(configured_base in name for name in available_models)
+        row(f_vis, f"Modelo: {configured_model}", model_found,
+            "disponível" if model_found else f"ollama pull {configured_model}")
+
+        # Check fallback
+        from src.builder.ollama_client import FALLBACK_MODEL
+        fallback_base = FALLBACK_MODEL.split(":")[0]
+        fallback_found = any(fallback_base in name for name in available_models)
+        row(f_vis, f"Fallback: {FALLBACK_MODEL}", fallback_found,
+            "disponível" if fallback_found else f"ollama pull {FALLBACK_MODEL}")
+
+        # List all vision-capable models found
+        vision_keywords = ["qwen", "llava", "vl", "vision"]
+        vision_models = [m for m in available_models
+                         if any(kw in m.lower() for kw in vision_keywords)]
+        if vision_models and not model_found:
+            warn_row(f_vis, "Modelos Vision disponíveis",
+                     ", ".join(vision_models[:5]))
+```
+
+- [ ] **Step 2: Run tests**
+
+```bash
+python -m pytest tests/ -v
+```
+
+Expected: All tests PASS
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add src/ui/dialogs.py
+git commit -m "feat: add Ollama/Vision status to Status dialog"
+```
+
+---
+
+### Task 12: End-to-End Smoke Test
 
 - [ ] **Step 1: Process a PDF with images**
 
@@ -1552,5 +1730,5 @@ Click "Criar Repositório". Verify:
 
 ```bash
 git add -A
-git commit -m "feat: complete Image Curator with LLaVA integration"
+git commit -m "feat: complete Image Curator with Qwen3-VL integration"
 ```
