@@ -20,6 +20,7 @@
 | Create | `src/builder/ollama_client.py` | Ollama HTTP client — availability check, image description generation |
 | Modify | `src/builder/engine.py` | Image description injection during build |
 | Modify | `src/ui/app.py:225` | Add "Image Curator" button to toolbar |
+| Modify | `src/builder/engine.py:2916` | Add SVG reproduction instruction to Claude tutor prompt |
 | Create | `tests/test_image_curation.py` | Tests for heuristics, ollama client, description injection |
 
 ---
@@ -1385,7 +1386,39 @@ Or test via the app's Image Curator → "Gerar Descrições" button.
 
 ---
 
-### Task 9: End-to-End Smoke Test
+### Task 9: Add SVG Reproduction Instruction to Claude Tutor Prompt
+
+**Files:**
+- Modify: `src/builder/engine.py:2916` (inside `generate_claude_project_instructions`)
+
+When image descriptions are present in the content, the Claude tutor should proactively reproduce diagrams as interactive SVGs. This was validated experimentally — Claude successfully reproduced a Cantor diagonal enumeration diagram from a text description.
+
+- [ ] **Step 1: Add SVG reproduction rule to Claude instructions**
+
+In `src/builder/engine.py`, find the `## Regras fundamentais` section inside `generate_claude_project_instructions()` (around line 2916). Add a new rule after rule 5:
+
+```python
+6. **Reproduza diagramas como SVG** — quando o material contiver descrições de diagramas, tabelas, árvores de prova ou figuras matemáticas (marcadas com `[Descrição de imagem]`), reproduza-os como SVG interativo sempre que possível. Isso permite ao aluno visualizar o conteúdo original que estava nos slides. Se a descrição não for suficiente para reprodução fiel, pergunte ao aluno se ele pode confirmar detalhes antes de gerar o SVG.
+```
+
+- [ ] **Step 2: Run existing tests**
+
+```bash
+python -m pytest tests/ -v
+```
+
+Expected: All tests PASS
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add src/builder/engine.py
+git commit -m "feat: add SVG reproduction instruction to Claude tutor prompt"
+```
+
+---
+
+### Task 10: End-to-End Smoke Test
 
 - [ ] **Step 1: Process a PDF with images**
 
