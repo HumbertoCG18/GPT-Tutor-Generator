@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import base64
 import json
+import struct
 import sys
+import zlib
 from pathlib import Path
 from unittest import mock
 
@@ -98,3 +100,51 @@ class TestOllamaClient:
             assert body["images"][0] == base64.b64encode(img_file.read_bytes()).decode()
             assert "diagrama" in IMAGE_TYPE_PROMPTS
             assert body["prompt"].startswith(IMAGE_TYPE_PROMPTS["diagrama"])
+
+
+def _create_minimal_png(width: int, height: int, color: tuple = (255, 0, 0)) -> bytes:
+    """Create a minimal valid PNG with a single solid color."""
+    def chunk(chunk_type, data):
+        c = chunk_type + data
+        crc = struct.pack(">I", zlib.crc32(c) & 0xFFFFFFFF)
+        return struct.pack(">I", len(data)) + c + crc
+
+    header = b"\x89PNG\r\n\x1a\n"
+    ihdr = struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0)  # 8-bit RGB
+    raw_data = b""
+    for _ in range(height):
+        raw_data += b"\x00"  # filter byte
+        for _ in range(width):
+            raw_data += bytes(color)
+    compressed = zlib.compress(raw_data)
+    return header + chunk(b"IHDR", ihdr) + chunk(b"IDAT", compressed) + chunk(b"IEND", b"")
+
+
+class TestImageClassifier:
+    def test_tiny_image_is_decorative(self, tmp_path):
+        from src.builder.image_classifier import classify_image
+        img = tmp_path / "tiny.png"
+        img.write_bytes(_create_minimal_png(10, 10))
+        result = classify_image(img)
+        assert result == "decorativa"
+
+    def test_banner_aspect_ratio_is_decorative(self, tmp_path):
+        from src.builder.image_classifier import classify_image
+        img = tmp_path / "banner.png"
+        img.write_bytes(_create_minimal_png(800, 20))
+        result = classify_image(img)
+        assert result == "decorativa"
+
+    def test_solid_color_is_decorative(self, tmp_path):
+        from src.builder.image_classifier import classify_image
+        img = tmp_path / "solid.png"
+        img.write_bytes(_create_minimal_png(200, 200, (128, 128, 128)))
+        result = classify_image(img)
+        assert result == "decorativa"
+
+    def test_small_filesize_is_decorative(self, tmp_path):
+        from src.builder.image_classifier import classify_image
+        img = tmp_path / "small.png"
+        img.write_bytes(_create_minimal_png(100, 100))
+        if img.stat().st_size < 5000:
+            assert classify_image(img) == "decorativa"
