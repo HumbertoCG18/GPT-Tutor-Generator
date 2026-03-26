@@ -22,9 +22,9 @@ Durante a extração PDF → markdown via pymupdf4llm, imagens são substituída
 
 ## Solução Escolhida
 
-**Abordagem B — Ollama + LLaVA 7B** com curadoria semi-automática.
+**Abordagem B — Ollama + Qwen3-VL** com curadoria semi-automática.
 
-Modelo LLaVA 7B (~4.5GB VRAM) rodando via Ollama local, com pré-classificação por heurísticas e curadoria manual por página antes da geração de descrições.
+Modelo Qwen3-VL (~5.5GB VRAM) rodando via Ollama local, com pré-classificação por heurísticas e curadoria manual por página antes da geração de descrições. Fallback: Qwen2.5-VL 7B. Qwen3-VL pontua 85.8 no MathVista (vs ~60 do LLaVA), significativamente melhor para conteúdo matemático/formal.
 
 **Independente de backend de extração:** o Image Curator opera sobre `content/images/`, que é o destino final consolidado por `_resolve_content_images()`. Funciona igualmente para PDFs processados via pymupdf4llm, Docling ou Marker — todos geram imagens referenciadas que são consolidadas nesse diretório.
 
@@ -87,7 +87,7 @@ Modelo LLaVA 7B (~4.5GB VRAM) rodando via Ollama local, com pré-classificação
 
 **Sem dependência externa nova** — usa urllib/requests já disponível no projeto.
 
-**Verificação de disponibilidade:** antes de gerar descrições, checa se Ollama está rodando e se `llava:7b` está disponível. Mensagem clara ao usuário com instruções se não estiver.
+**Verificação de disponibilidade:** antes de gerar descrições, checa se Ollama está rodando e se `qwen3-vl` está disponível. Se não, tenta fallback `qwen2.5vl:7b`. Mensagem clara ao usuário com instruções se nenhum estiver disponível.
 
 **Prompts especializados (português):**
 
@@ -199,8 +199,9 @@ O tutor deve consultar o contexto da página para fidelidade. Validado experimen
 
 ## Dependências externas
 
-- **Ollama** — runtime local para modelos, instalação simples (instalador + `ollama pull llava:7b`)
-- **LLaVA 7B** — modelo Vision, ~4.5GB VRAM, cabe na RTX 4050 Mobile
+- **Ollama** — runtime local para modelos, instalação simples (instalador + `ollama pull qwen3-vl`)
+- **Qwen3-VL** — modelo Vision primário, ~5.5GB VRAM, cabe na RTX 4050 Mobile, MathVista 85.8
+- **Qwen2.5-VL 7B** — fallback, ~5GB VRAM, excelente para documentos/diagramas
 
 ## Fluxo completo
 

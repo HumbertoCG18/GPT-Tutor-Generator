@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add semi-automatic image curation and description generation using LLaVA 7B via Ollama, making PDF image content accessible to Claude, GPT and Gemini tutors as indexed text in markdowns.
+**Goal:** Add semi-automatic image curation and description generation using Qwen3-VL via Ollama, making PDF image content accessible to Claude, GPT and Gemini tutors as indexed text in markdowns.
 
-**Architecture:** New `ImageCurator` tkinter dialog reads images from `content/images/`, groups by page, lets user classify and approve. Ollama client in engine.py calls LLaVA with type-specific prompts. Build pipeline injects descriptions as blockquotes before image references. All curation state persists in `manifest.json` under `image_curation` per entry.
+**Architecture:** New `ImageCurator` tkinter dialog reads images from `content/images/`, groups by page, lets user classify and approve. Ollama client in engine.py calls Qwen3-VL with type-specific prompts. Build pipeline injects descriptions as blockquotes before image references. All curation state persists in `manifest.json` under `image_curation` per entry.
 
-**Tech Stack:** Python, tkinter, Pillow (already used), Ollama HTTP API (localhost:11434), LLaVA 7B.
+**Tech Stack:** Python, tkinter, Pillow (already used), Ollama HTTP API (localhost:11434), Qwen3-VL (fallback: Qwen2.5-VL 7B).
 
 **Spec:** `docs/superpowers/specs/2026-03-25-image-curator-design.md`
 
@@ -58,19 +58,35 @@ import pytest
 
 
 class TestOllamaClient:
-    def test_check_availability_success(self):
+    def test_check_availability_success_primary(self):
         from src.builder.ollama_client import OllamaClient
         client = OllamaClient()
         with mock.patch("src.builder.ollama_client.urlopen") as mock_urlopen:
             mock_resp = mock.MagicMock()
             mock_resp.read.return_value = json.dumps({
-                "models": [{"name": "llava:7b"}]
+                "models": [{"name": "qwen3-vl:latest"}]
             }).encode()
             mock_resp.__enter__ = mock.MagicMock(return_value=mock_resp)
             mock_resp.__exit__ = mock.MagicMock(return_value=False)
             mock_urlopen.return_value = mock_resp
             available, msg = client.check_availability()
             assert available is True
+            assert "qwen3-vl" in msg
+
+    def test_check_availability_fallback(self):
+        from src.builder.ollama_client import OllamaClient
+        client = OllamaClient()
+        with mock.patch("src.builder.ollama_client.urlopen") as mock_urlopen:
+            mock_resp = mock.MagicMock()
+            mock_resp.read.return_value = json.dumps({
+                "models": [{"name": "qwen2.5vl:7b"}]
+            }).encode()
+            mock_resp.__enter__ = mock.MagicMock(return_value=mock_resp)
+            mock_resp.__exit__ = mock.MagicMock(return_value=False)
+            mock_urlopen.return_value = mock_resp
+            available, msg = client.check_availability()
+            assert available is True
+            assert "fallback" in msg
 
     def test_check_availability_ollama_not_running(self):
         from src.builder.ollama_client import OllamaClient
@@ -80,7 +96,7 @@ class TestOllamaClient:
             assert available is False
             assert "Ollama" in msg
 
-    def test_check_availability_model_missing(self):
+    def test_check_availability_no_vision_model(self):
         from src.builder.ollama_client import OllamaClient
         client = OllamaClient()
         with mock.patch("src.builder.ollama_client.urlopen") as mock_urlopen:
@@ -93,7 +109,7 @@ class TestOllamaClient:
             mock_urlopen.return_value = mock_resp
             available, msg = client.check_availability()
             assert available is False
-            assert "llava" in msg.lower()
+            assert "qwen3-vl" in msg.lower() or "Vision" in msg
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -121,7 +137,8 @@ from urllib.error import URLError
 logger = logging.getLogger(__name__)
 
 OLLAMA_BASE_URL = "http://localhost:11434"
-DEFAULT_MODEL = "llava:7b"
+DEFAULT_MODEL = "qwen3-vl"
+FALLBACK_MODEL = "qwen2.5vl:7b"
 
 IMAGE_TYPE_PROMPTS = {
     "diagrama": (
@@ -155,7 +172,8 @@ class OllamaClient:
         self.model = model
 
     def check_availability(self) -> Tuple[bool, str]:
-        """Check if Ollama is running and the model is available.
+        """Check if Ollama is running and a vision model is available.
+        Tries DEFAULT_MODEL first, falls back to FALLBACK_MODEL.
         Returns (available, message).
         """
         try:
@@ -168,15 +186,24 @@ class OllamaClient:
             )
 
         model_names = [m.get("name", "") for m in data.get("models", [])]
-        # Match base name (llava:7b matches llava:7b-q4_0 etc.)
-        base = self.model.split(":")[0]
-        if not any(base in name for name in model_names):
-            return False, (
-                f"Modelo '{self.model}' não encontrado no Ollama.\n"
-                f"Rode: ollama pull {self.model}"
-            )
 
-        return True, "Ollama disponível."
+        # Try primary model
+        base = self.model.split(":")[0]
+        if any(base in name for name in model_names):
+            return True, f"Ollama disponível ({self.model})."
+
+        # Try fallback
+        fallback_base = FALLBACK_MODEL.split(":")[0]
+        if any(fallback_base in name for name in model_names):
+            logger.info("Modelo primário '%s' não encontrado, usando fallback '%s'.", self.model, FALLBACK_MODEL)
+            self.model = FALLBACK_MODEL
+            return True, f"Ollama disponível (fallback: {FALLBACK_MODEL})."
+
+        return False, (
+            f"Nenhum modelo Vision encontrado no Ollama.\n"
+            f"Rode: ollama pull {DEFAULT_MODEL}\n"
+            f"Ou: ollama pull {FALLBACK_MODEL}"
+        )
 
     def describe_image(self, image_path: Path, image_type: str, page_context: str) -> str:
         """Send an image to LLaVA and return the text description.
@@ -254,7 +281,7 @@ Add to `tests/test_image_curation.py`:
             call_args = mock_urlopen.call_args
             req = call_args[0][0]
             body = json.loads(req.data)
-            assert body["model"] == "llava:7b"
+            assert body["model"] == "qwen3-vl"
             assert body["images"][0] == base64.b64encode(img_file.read_bytes()).decode()
             assert "diagrama" in IMAGE_TYPE_PROMPTS
             assert body["prompt"] == IMAGE_TYPE_PROMPTS["diagrama"]
@@ -1428,18 +1455,26 @@ ollama --version
 
 Expected: Version number printed.
 
-- [ ] **Step 3: Pull the LLaVA 7B model**
+- [ ] **Step 3: Pull the Qwen3-VL model (primary)**
 
 ```bash
-ollama pull llava:7b
+ollama pull qwen3-vl
 ```
 
-Expected: Model downloads (~4.5GB). Takes a few minutes.
+Expected: Model downloads (~5.5GB). Takes a few minutes.
 
-- [ ] **Step 4: Verify the model works**
+- [ ] **Step 4: (Optional) Pull Qwen2.5-VL as fallback**
 
 ```bash
-ollama run llava:7b "Descreva esta imagem" --verbose
+ollama pull qwen2.5vl:7b
+```
+
+Only needed if qwen3-vl has issues on your setup.
+
+- [ ] **Step 5: Verify the model works**
+
+```bash
+ollama run qwen3-vl "Descreva esta imagem" --verbose
 ```
 
 Or test via the app's Image Curator → "Gerar Descrições" button.
