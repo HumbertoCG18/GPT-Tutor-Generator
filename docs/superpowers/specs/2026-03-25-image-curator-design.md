@@ -100,6 +100,8 @@ Modelo LLaVA 7B (~4.5GB VRAM) rodando via Ollama local, com pré-classificação
 | `genérico` | "Descreva o conteúdo desta imagem de forma detalhada e academicamente útil." |
 | `decorativa` | Não processada |
 
+**Contexto de página:** ao gerar a descrição de uma imagem, o sistema extrai o texto markdown da mesma página do PDF e o passa como contexto adicional no prompt do LLaVA. Isso permite que informações presentes no texto ao redor (definições, rótulos, ordem de enumeração, nomes de variáveis) sejam refletidas na descrição, produzindo descrições mais fiéis e permitindo reprodução como SVG pelo tutor.
+
 **Execução:** em thread com callback via `after()` (padrão existente no projeto).
 
 ### 3. Persistência (`manifest.json`)
@@ -174,6 +176,12 @@ Durante build (completo ou incremental):
 - Mapeia ao entry/página pelo padrão do filename (`page_X_Figure_Y.png`)
 - Não exige reprocessamento do PDF — só curadoria + rebuild
 - Imagens sem número de página no nome vão para grupo "Página desconhecida"
+
+---
+
+### 6. Instrução de reprodução SVG no tutor Claude
+
+O arquivo `INSTRUCOES_CLAUDE_PROJETO.md` ganha uma regra para que o Claude reproduza diagramas como SVG interativo a partir dos blocos `[Descrição de imagem]`, consultando o contexto da página para fidelidade. Validado experimentalmente com diagrama de enumeração diagonal de Cantor — reprodução fiel após descrição textual + contexto de página.
 
 ---
 

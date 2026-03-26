@@ -178,9 +178,27 @@ class OllamaClient:
 
         return True, "Ollama disponível."
 
-    def describe_image(self, image_path: Path, image_type: str) -> str:
-        """Send an image to LLaVA and return the text description."""
+    def describe_image(self, image_path: Path, image_type: str, page_context: str = "") -> str:
+        """Send an image to LLaVA and return the text description.
+
+        Args:
+            image_path: Path to the image file.
+            image_type: One of the IMAGE_TYPE_PROMPTS keys.
+            page_context: Optional markdown text from the same page as the image.
+                          Provides surrounding context for a more faithful description.
+        """
         prompt = IMAGE_TYPE_PROMPTS.get(image_type, IMAGE_TYPE_PROMPTS["genérico"])
+        if page_context:
+            prompt += (
+                "\n\nContexto da página onde esta imagem aparece:\n"
+                "---\n"
+                f"{page_context[:2000]}\n"
+                "---\n"
+                "Use este contexto para enriquecer e corrigir sua descrição. "
+                "Informações como nomes de variáveis, ordem de enumeração, "
+                "rótulos e definições presentes no texto devem ser refletidas "
+                "fielmente na descrição da imagem."
+            )
         image_b64 = base64.b64encode(image_path.read_bytes()).decode("utf-8")
 
         payload = json.dumps({
@@ -1106,6 +1124,45 @@ class ImageCurator(tk.Toplevel):
         page_label = f"Página {page_num}" if page_num is not None else "Página desconhecida"
         self.status_var.set(f"{entry.get('title', '')} — {page_label} — {len(images)} imagens")
 
+    def _extract_page_contexts(self, entry_id: str) -> Dict[str, str]:
+        """Extract markdown text per page from the entry's markdown file.
+
+        Splits the markdown by page separators (pymupdf4llm inserts '---' or
+        page break markers) and returns a dict of page_key -> text_content.
+        This context is passed to LLaVA alongside the image for richer descriptions.
+        """
+        contexts: Dict[str, str] = {}
+
+        # Look for the entry's markdown in content/ and staging/
+        md_candidates = [
+            self.repo_dir / "content" / "curated" / f"{entry_id}.md",
+            self.repo_dir / "staging" / "markdown-auto" / "pymupdf4llm" / f"{entry_id}.md",
+            self.repo_dir / "staging" / "markdown-auto" / "docling" / f"{entry_id}.md",
+            self.repo_dir / "staging" / "markdown-auto" / "marker" / f"{entry_id}.md",
+        ]
+
+        md_path = None
+        for candidate in md_candidates:
+            if candidate.exists():
+                md_path = candidate
+                break
+
+        if not md_path:
+            return contexts
+
+        try:
+            text = md_path.read_text(encoding="utf-8")
+        except Exception:
+            return contexts
+
+        # Split by page separators — pymupdf4llm uses "-----" or similar
+        import re
+        pages = re.split(r"\n-{3,}\n|\n\f\n", text)
+        for i, page_text in enumerate(pages, start=1):
+            contexts[str(i)] = page_text.strip()
+
+        return contexts
+
     def _toggle_page(self, include: bool):
         """Toggle all images on current page."""
         for fname, widgets in self._image_widgets.items():
@@ -1227,6 +1284,9 @@ class ImageCurator(tk.Toplevel):
         entry_id = self._current_entry.get("entry_id", "")
         curation = self._current_entry.get("image_curation", {})
 
+        # Load page context from markdown for richer descriptions
+        page_contexts = self._extract_page_contexts(entry_id)
+
         # Collect all included images across all pages
         to_describe = []
         for page_key, page_data in curation.get("pages", {}).items():
@@ -1236,7 +1296,8 @@ class ImageCurator(tk.Toplevel):
                 if img_data.get("include") and not img_data.get("description"):
                     img_path = self._images_dir / fname
                     if img_path.exists():
-                        to_describe.append((page_key, fname, img_data.get("type", "genérico"), img_path))
+                        ctx = page_contexts.get(page_key, "")
+                        to_describe.append((page_key, fname, img_data.get("type", "genérico"), img_path, ctx))
 
         if not to_describe:
             messagebox.showinfo("Image Curator", "Nenhuma imagem pendente para descrever.")
@@ -1250,9 +1311,9 @@ class ImageCurator(tk.Toplevel):
 
         def _worker():
             from datetime import datetime
-            for idx, (page_key, fname, img_type, img_path) in enumerate(to_describe):
+            for idx, (page_key, fname, img_type, img_path, page_ctx) in enumerate(to_describe):
                 try:
-                    desc = client.describe_image(img_path, img_type)
+                    desc = client.describe_image(img_path, img_type, page_context=page_ctx)
                     curation["pages"][page_key]["images"][fname]["description"] = desc
                     curation["pages"][page_key]["images"][fname]["described_at"] = datetime.now().isoformat(timespec="seconds")
                 except Exception as e:
@@ -1398,7 +1459,7 @@ When image descriptions are present in the content, the Claude tutor should proa
 In `src/builder/engine.py`, find the `## Regras fundamentais` section inside `generate_claude_project_instructions()` (around line 2916). Add a new rule after rule 5:
 
 ```python
-6. **Reproduza diagramas como SVG** — quando o material contiver descrições de diagramas, tabelas, árvores de prova ou figuras matemáticas (marcadas com `[Descrição de imagem]`), reproduza-os como SVG interativo sempre que possível. Isso permite ao aluno visualizar o conteúdo original que estava nos slides. Se a descrição não for suficiente para reprodução fiel, pergunte ao aluno se ele pode confirmar detalhes antes de gerar o SVG.
+6. **Reproduza diagramas como SVG** — quando o material contiver descrições de diagramas, tabelas, árvores de prova ou figuras matemáticas (marcadas com `[Descrição de imagem]`), reproduza-os como SVG interativo sempre que possível. Para uma reprodução fiel, **consulte o texto da mesma página/seção** do markdown onde a imagem aparece — o contexto ao redor (definições, rótulos, ordem de enumeração, etc.) complementa a descrição da imagem e é essencial para reproduzir corretamente. Se a descrição combinada com o contexto da página ainda não for suficiente, pergunte ao aluno antes de gerar o SVG.
 ```
 
 - [ ] **Step 2: Run existing tests**
