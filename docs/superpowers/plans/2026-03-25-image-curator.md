@@ -26,6 +26,14 @@
 | Modify | `src/ui/theme.py` | Add vision config keys to AppConfig |
 | Create | `tests/test_image_curation.py` | Tests for heuristics, ollama client, description injection |
 
+**Tasks 12–14 additions:**
+
+| Action | Path | Responsibility |
+|--------|------|----------------|
+| Modify | `src/ui/image_curator.py` | Delete button per image card |
+| Modify | `src/ui/image_curator.py` | PDF viewer pane with zoom |
+| Modify | `src/ui/image_curator.py` | Manual region crop from PDF page |
+
 ---
 
 ### Task 1: Ollama Client Module
@@ -1694,7 +1702,407 @@ git commit -m "feat: add Ollama/Vision status to Status dialog"
 
 ---
 
-### Task 12: End-to-End Smoke Test
+### Task 12: Delete Button per Image
+
+**Files:**
+- Modify: `src/ui/image_curator.py` (`_show_images` method)
+
+Add a delete button to each image card. Deletes the file from disk and removes the entry from `manifest.json`.
+
+- [ ] **Step 1: Add delete button to each image card**
+
+In `src/ui/image_curator.py`, inside `_show_images()`, after the description preview block, add to each card:
+
+```python
+            ttk.Button(
+                card, text="🗑 Remover",
+                command=lambda fn=fname, ip=img_path: self._delete_image(fn, ip)
+            ).pack(pady=(6, 0))
+```
+
+- [ ] **Step 2: Implement `_delete_image` method**
+
+Add to `ImageCurator` class:
+
+```python
+    def _delete_image(self, fname: str, img_path: Path):
+        """Delete an image from disk and remove from manifest curation data."""
+        from tkinter import messagebox
+        if not messagebox.askyesno(
+            "Remover imagem",
+            f"Remover '{fname}' permanentemente?\n\nIsso remove o arquivo de content/images/ e a entrada no manifest.",
+            parent=self,
+        ):
+            return
+
+        # Delete from disk
+        try:
+            if img_path.exists():
+                img_path.unlink()
+        except Exception as e:
+            messagebox.showerror("Erro", f"Não foi possível remover o arquivo:\n{e}", parent=self)
+            return
+
+        # Remove from manifest curation data
+        if self._current_entry and self._current_page is not None:
+            page_key = str(self._current_page) if self._current_page is not None else "none"
+            curation = self._current_entry.get("image_curation", {})
+            page_data = curation.get("pages", {}).get(page_key, {})
+            page_data.get("images", {}).pop(fname, None)
+
+        # Remove from in-memory image groups
+        groups = self._current_entry.get("_image_groups", {}) if self._current_entry else {}
+        page_imgs = groups.get(self._current_page, [])
+        groups[self._current_page] = [p for p in page_imgs if p.name != fname]
+
+        # Save manifest
+        self._save_curation()
+
+        # Refresh the image panel
+        images = groups.get(self._current_page, [])
+        self._show_images(self._current_entry, self._current_page, images)
+        self.status_var.set(f"'{fname}' removida.")
+```
+
+- [ ] **Step 3: Run tests**
+
+```bash
+python -m pytest tests/ -v
+```
+
+Expected: All tests PASS
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add src/ui/image_curator.py
+git commit -m "feat: add delete button to image cards in Image Curator"
+```
+
+---
+
+### Task 13: PDF Viewer Tab in Image Curator
+
+**Files:**
+- Modify: `src/ui/image_curator.py`
+
+Add a PDF viewer pane to the Image Curator. When a page is selected in the tree, the corresponding PDF page renders alongside the image cards, giving context for curation decisions.
+
+- [ ] **Step 1: Add PDF viewer pane to layout**
+
+In `src/ui/image_curator.py`, refactor `_build_ui()` to add a third pane to the right with a PDF page renderer. Replace the current single right pane with a vertical PanedWindow:
+
+```python
+        # Right side: vertical paned — images top, PDF bottom
+        right_paned = ttk.PanedWindow(paned, orient="vertical")
+        paned.add(right_paned, weight=3)
+
+        # Top: image cards
+        images_frame = ttk.Frame(right_paned)
+        right_paned.add(images_frame, weight=2)
+
+        ttk.Label(images_frame, text="Imagens", font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(0, 5))
+
+        canvas_frame = ttk.Frame(images_frame)
+        canvas_frame.pack(fill="both", expand=True)
+        self._canvas = tk.Canvas(canvas_frame, bg=p["frame_bg"], highlightthickness=0)
+        scrollbar = ttk.Scrollbar(canvas_frame, orient="vertical", command=self._canvas.yview)
+        self._canvas.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side="right", fill="y")
+        self._canvas.pack(side="left", fill="both", expand=True)
+        self._cards_frame = tk.Frame(self._canvas, bg=p["frame_bg"])
+        self._canvas.create_window((0, 0), window=self._cards_frame, anchor="nw")
+        self._cards_frame.bind("<Configure>", lambda e: self._canvas.configure(scrollregion=self._canvas.bbox("all")))
+
+        # Bottom: PDF viewer
+        pdf_frame = ttk.Frame(right_paned)
+        right_paned.add(pdf_frame, weight=1)
+
+        pdf_header = tk.Frame(pdf_frame, bg=p["frame_bg"])
+        pdf_header.pack(fill="x")
+        ttk.Label(pdf_header, text="Página do PDF").pack(side="left", padx=5)
+        self._pdf_zoom_var = tk.DoubleVar(value=1.0)
+        ttk.Label(pdf_header, text="Zoom:").pack(side="left", padx=(10, 2))
+        ttk.Spinbox(pdf_header, from_=0.5, to=3.0, increment=0.25,
+                    textvariable=self._pdf_zoom_var, width=5,
+                    command=self._refresh_pdf_page).pack(side="left")
+
+        pdf_canvas_frame = ttk.Frame(pdf_frame)
+        pdf_canvas_frame.pack(fill="both", expand=True)
+        self._pdf_canvas = tk.Canvas(pdf_canvas_frame, bg=p["frame_bg"], highlightthickness=0)
+        pdf_vscroll = ttk.Scrollbar(pdf_canvas_frame, orient="vertical", command=self._pdf_canvas.yview)
+        pdf_hscroll = ttk.Scrollbar(pdf_canvas_frame, orient="horizontal", command=self._pdf_canvas.xview)
+        self._pdf_canvas.configure(yscrollcommand=pdf_vscroll.set, xscrollcommand=pdf_hscroll.set)
+        pdf_hscroll.pack(side="bottom", fill="x")
+        pdf_vscroll.pack(side="right", fill="y")
+        self._pdf_canvas.pack(side="left", fill="both", expand=True)
+        self._pdf_page_img_ref = None  # prevent GC
+```
+
+- [ ] **Step 2: Implement PDF page rendering**
+
+Add to `ImageCurator` class:
+
+```python
+    def _render_pdf_page(self, page_num: int):
+        """Render a PDF page to the PDF canvas using pymupdf."""
+        if not self._current_entry:
+            return
+
+        entry_id = self._current_entry.get("entry_id", "")
+        source_path = self._current_entry.get("source_path", "")
+
+        # Try to find the PDF file
+        pdf_path = None
+        if source_path and Path(source_path).exists():
+            pdf_path = Path(source_path)
+        else:
+            # Search in repo raw/ directory
+            raw_dir = self.repo_dir / "raw"
+            if raw_dir.exists():
+                candidates = list(raw_dir.rglob(f"*{entry_id}*.pdf")) + list(raw_dir.rglob("*.pdf"))
+                if candidates:
+                    pdf_path = candidates[0]
+
+        if not pdf_path:
+            self._pdf_canvas.delete("all")
+            self._pdf_canvas.create_text(
+                10, 10, text="PDF não encontrado.", anchor="nw", fill="gray"
+            )
+            return
+
+        try:
+            import pymupdf
+            doc = pymupdf.open(str(pdf_path))
+            page_idx = max(0, (page_num or 1) - 1)
+            if page_idx >= len(doc):
+                page_idx = len(doc) - 1
+            page = doc[page_idx]
+            zoom = self._pdf_zoom_var.get()
+            mat = pymupdf.Matrix(zoom, zoom)
+            pix = page.get_pixmap(matrix=mat)
+            img_data = pix.tobytes("ppm")
+
+            from PIL import Image as PILImage, ImageTk
+            import io
+            pil_img = PILImage.open(io.BytesIO(img_data))
+            tk_img = ImageTk.PhotoImage(pil_img)
+            self._pdf_page_img_ref = tk_img
+
+            self._pdf_canvas.delete("all")
+            self._pdf_canvas.create_image(0, 0, anchor="nw", image=tk_img)
+            self._pdf_canvas.configure(scrollregion=(0, 0, pil_img.width, pil_img.height))
+            doc.close()
+        except Exception as e:
+            self._pdf_canvas.delete("all")
+            self._pdf_canvas.create_text(
+                10, 10, text=f"Erro ao renderizar PDF: {e}", anchor="nw", fill="gray"
+            )
+
+    def _refresh_pdf_page(self):
+        """Re-render current PDF page (e.g., after zoom change)."""
+        if self._current_page is not None:
+            self._render_pdf_page(self._current_page)
+```
+
+- [ ] **Step 3: Call `_render_pdf_page` when page is selected**
+
+In `_show_images()`, at the end, add:
+
+```python
+        self._render_pdf_page(page_num if page_num is not None else 1)
+```
+
+- [ ] **Step 4: Run tests**
+
+```bash
+python -m pytest tests/ -v
+```
+
+Expected: All tests PASS
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/ui/image_curator.py
+git commit -m "feat: add PDF viewer pane to Image Curator"
+```
+
+---
+
+### Task 14: Manual Region Crop from PDF
+
+**Files:**
+- Modify: `src/ui/image_curator.py`
+
+Enable click-and-drag on the PDF viewer to select a region, then save it as a new image in `content/images/`. The captured image appears in the image cards for that page and can be classified and described like any extracted image.
+
+- [ ] **Step 1: Add crop mode toggle button**
+
+In `_build_ui()`, in the PDF viewer header section, add:
+
+```python
+        self._crop_mode = tk.BooleanVar(value=False)
+        ttk.Checkbutton(
+            pdf_header, text="✂ Capturar região",
+            variable=self._crop_mode,
+            command=self._toggle_crop_mode,
+        ).pack(side="left", padx=(10, 0))
+
+        self._crop_rect_id = None
+        self._crop_start = None
+```
+
+- [ ] **Step 2: Implement crop mode mouse events**
+
+Add to `ImageCurator` class:
+
+```python
+    def _toggle_crop_mode(self):
+        """Enable or disable crop selection mode on the PDF canvas."""
+        if self._crop_mode.get():
+            self._pdf_canvas.config(cursor="crosshair")
+            self._pdf_canvas.bind("<ButtonPress-1>", self._crop_start_drag)
+            self._pdf_canvas.bind("<B1-Motion>", self._crop_drag)
+            self._pdf_canvas.bind("<ButtonRelease-1>", self._crop_end_drag)
+        else:
+            self._pdf_canvas.config(cursor="")
+            self._pdf_canvas.unbind("<ButtonPress-1>")
+            self._pdf_canvas.unbind("<B1-Motion>")
+            self._pdf_canvas.unbind("<ButtonRelease-1>")
+            if self._crop_rect_id:
+                self._pdf_canvas.delete(self._crop_rect_id)
+                self._crop_rect_id = None
+
+    def _crop_start_drag(self, event):
+        self._crop_start = (self._pdf_canvas.canvasx(event.x),
+                            self._pdf_canvas.canvasy(event.y))
+        if self._crop_rect_id:
+            self._pdf_canvas.delete(self._crop_rect_id)
+
+    def _crop_drag(self, event):
+        if not self._crop_start:
+            return
+        x0, y0 = self._crop_start
+        x1 = self._pdf_canvas.canvasx(event.x)
+        y1 = self._pdf_canvas.canvasy(event.y)
+        if self._crop_rect_id:
+            self._pdf_canvas.delete(self._crop_rect_id)
+        self._crop_rect_id = self._pdf_canvas.create_rectangle(
+            x0, y0, x1, y1, outline="#a6e3a1", width=2, dash=(4, 2)
+        )
+
+    def _crop_end_drag(self, event):
+        if not self._crop_start:
+            return
+        x0, y0 = self._crop_start
+        x1 = self._pdf_canvas.canvasx(event.x)
+        y1 = self._pdf_canvas.canvasy(event.y)
+        self._crop_start = None
+
+        # Normalize coordinates
+        rx0, rx1 = min(x0, x1), max(x0, x1)
+        ry0, ry1 = min(y0, y1), max(y0, y1)
+
+        if (rx1 - rx0) < 10 or (ry1 - ry0) < 10:
+            # Too small — ignore
+            return
+
+        self._save_cropped_region(rx0, ry0, rx1, ry1)
+```
+
+- [ ] **Step 3: Implement `_save_cropped_region`**
+
+Add to `ImageCurator` class:
+
+```python
+    def _save_cropped_region(self, x0: float, y0: float, x1: float, y1: float):
+        """Crop the selected region from the rendered PDF and save as image."""
+        if not self._current_entry or self._current_page is None:
+            return
+
+        entry_id = self._current_entry.get("entry_id", "")
+        source_path = self._current_entry.get("source_path", "")
+
+        pdf_path = None
+        if source_path and Path(source_path).exists():
+            pdf_path = Path(source_path)
+        else:
+            raw_dir = self.repo_dir / "raw"
+            if raw_dir.exists():
+                candidates = list(raw_dir.rglob(f"*{entry_id}*.pdf"))
+                if candidates:
+                    pdf_path = candidates[0]
+
+        if not pdf_path:
+            return
+
+        try:
+            import pymupdf
+            from datetime import datetime
+            doc = pymupdf.open(str(pdf_path))
+            page_idx = max(0, self._current_page - 1)
+            page = doc[page_idx]
+            zoom = self._pdf_zoom_var.get()
+
+            # Convert canvas coords back to PDF coords
+            rect = pymupdf.Rect(x0 / zoom, y0 / zoom, x1 / zoom, y1 / zoom)
+            mat = pymupdf.Matrix(2.0, 2.0)  # 2x for quality
+            pix = page.get_pixmap(matrix=mat, clip=rect)
+
+            # Save to content/images/
+            timestamp = datetime.now().strftime("%H%M%S")
+            fname = f"{entry_id}-page-{self._current_page:03d}-manual-{timestamp}.png"
+            out_path = self._images_dir / fname
+            pix.save(str(out_path))
+            doc.close()
+
+            # Add to in-memory image groups
+            groups = self._current_entry.setdefault("_image_groups", {})
+            groups.setdefault(self._current_page, []).append(out_path)
+
+            # Add to curation manifest as pending
+            curation = self._current_entry.setdefault("image_curation", {"status": "pending", "curated_at": None, "pages": {}})
+            page_key = str(self._current_page)
+            page_data = curation["pages"].setdefault(page_key, {"include_page": True, "images": {}})
+            page_data["images"][fname] = {
+                "type": "genérico",
+                "include": True,
+                "description": None,
+                "described_at": None,
+            }
+
+            # Refresh UI
+            self._show_images(self._current_entry, self._current_page, groups[self._current_page])
+            self.status_var.set(f"Região capturada e salva como '{fname}'.")
+
+            # Disable crop mode
+            self._crop_mode.set(False)
+            self._toggle_crop_mode()
+
+        except Exception as e:
+            from tkinter import messagebox
+            messagebox.showerror("Erro", f"Falha ao capturar região:\n{e}", parent=self)
+```
+
+- [ ] **Step 4: Run tests**
+
+```bash
+python -m pytest tests/ -v
+```
+
+Expected: All tests PASS
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add src/ui/image_curator.py
+git commit -m "feat: add manual region crop from PDF in Image Curator"
+```
+
+---
+
+### Task 15: End-to-End Smoke Test (Full)
 
 - [ ] **Step 1: Process a PDF with images**
 
