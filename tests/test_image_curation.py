@@ -148,3 +148,41 @@ class TestImageClassifier:
         img.write_bytes(_create_minimal_png(100, 100))
         if img.stat().st_size < 5000:
             assert classify_image(img) == "decorativa"
+
+
+class TestImageMapper:
+    def test_maps_page_from_filename(self):
+        from src.builder.image_classifier import extract_page_number
+        assert extract_page_number("page-006-img-01.png") == 6
+        assert extract_page_number("page-001-img-02.jpg") == 1
+
+    def test_maps_page_from_pymupdf4llm_pattern(self):
+        from src.builder.image_classifier import extract_page_number
+        # pymupdf4llm pattern: {entry}-_page_N_Figure_M.png
+        assert extract_page_number("logica-sintaxe-_page_6_Figure_1.png") == 6
+        assert extract_page_number("aula01-_page_12_Figure_3.png") == 12
+
+    def test_unknown_pattern_returns_none(self):
+        from src.builder.image_classifier import extract_page_number
+        assert extract_page_number("random-image.png") is None
+        assert extract_page_number("logo.jpg") is None
+
+    def test_group_images_by_page(self, tmp_path):
+        from src.builder.image_classifier import group_images_by_page
+        images_dir = tmp_path / "content" / "images"
+        images_dir.mkdir(parents=True)
+
+        # Create fake image files with known patterns
+        (images_dir / "entry1-page-003-img-01.png").write_bytes(b"fake")
+        (images_dir / "entry1-page-003-img-02.png").write_bytes(b"fake")
+        (images_dir / "entry1-page-007-img-01.png").write_bytes(b"fake")
+        (images_dir / "entry1-_page_5_Figure_1.png").write_bytes(b"fake")
+        (images_dir / "unknown-image.png").write_bytes(b"fake")
+
+        groups = group_images_by_page(images_dir, "entry1")
+        assert 3 in groups  # page-003
+        assert len(groups[3]) == 2
+        assert 7 in groups
+        assert 5 in groups  # _page_5
+        # unknown doesn't match entry1 prefix, so not included
+        assert None not in groups

@@ -1,9 +1,11 @@
-"""Heuristic pre-classification of images as decorative vs. relevant."""
+"""Heuristic pre-classification and page mapping for extracted images."""
 
 import logging
+import re
 import struct
 import zlib
 from pathlib import Path
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -115,3 +117,52 @@ def classify_image(image_path: Path) -> str:
         return "decorativa"
 
     return "genérico"
+
+
+# ---------------------------------------------------------------------------
+# Page extraction patterns
+# ---------------------------------------------------------------------------
+
+_PAGE_PATTERNS = [
+    re.compile(r"page-(\d{3})-img-\d+", re.IGNORECASE),  # page-006-img-01
+    re.compile(r"_page_(\d+)_", re.IGNORECASE),            # _page_6_Figure_1
+    re.compile(r"page[_-]?(\d+)", re.IGNORECASE),          # page6, page_6, page-6
+]
+
+
+def extract_page_number(filename: str) -> Optional[int]:
+    """Extract page number from an image filename.
+
+    Returns None if no known pattern matches.
+    """
+    for pattern in _PAGE_PATTERNS:
+        m = pattern.search(filename)
+        if m:
+            return int(m.group(1))
+    return None
+
+
+def group_images_by_page(
+    images_dir: Path, entry_prefix: str
+) -> Dict[Optional[int], List[Path]]:
+    """Group images in a directory by page number.
+
+    Only includes images whose filename starts with *entry_prefix*.
+    Images with unrecognized patterns go under key ``None``.
+    """
+    groups: Dict[Optional[int], List[Path]] = {}
+    if not images_dir.exists():
+        return groups
+
+    for img_path in sorted(images_dir.iterdir()):
+        if not img_path.is_file():
+            continue
+        if img_path.suffix.lower() not in (".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"):
+            continue
+        if not img_path.name.lower().startswith(entry_prefix.lower()):
+            continue
+
+        page = extract_page_number(img_path.name)
+        groups.setdefault(page, []).append(img_path)
+
+    return groups
