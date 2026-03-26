@@ -178,27 +178,26 @@ class OllamaClient:
 
         return True, "Ollama disponível."
 
-    def describe_image(self, image_path: Path, image_type: str, page_context: str = "") -> str:
+    def describe_image(self, image_path: Path, image_type: str, page_context: str) -> str:
         """Send an image to LLaVA and return the text description.
 
         Args:
             image_path: Path to the image file.
             image_type: One of the IMAGE_TYPE_PROMPTS keys.
-            page_context: Optional markdown text from the same page as the image.
-                          Provides surrounding context for a more faithful description.
+            page_context: Markdown text from the same page as the image.
+                          Required — provides surrounding context for faithful descriptions.
         """
         prompt = IMAGE_TYPE_PROMPTS.get(image_type, IMAGE_TYPE_PROMPTS["genérico"])
-        if page_context:
-            prompt += (
-                "\n\nContexto da página onde esta imagem aparece:\n"
-                "---\n"
-                f"{page_context[:2000]}\n"
-                "---\n"
-                "Use este contexto para enriquecer e corrigir sua descrição. "
-                "Informações como nomes de variáveis, ordem de enumeração, "
-                "rótulos e definições presentes no texto devem ser refletidas "
-                "fielmente na descrição da imagem."
-            )
+        prompt += (
+            "\n\nContexto da página onde esta imagem aparece:\n"
+            "---\n"
+            f"{page_context[:2000]}\n"
+            "---\n"
+            "Use este contexto para enriquecer e corrigir sua descrição. "
+            "Informações como nomes de variáveis, ordem de enumeração, "
+            "rótulos e definições presentes no texto devem ser refletidas "
+            "fielmente na descrição da imagem."
+        )
         image_b64 = base64.b64encode(image_path.read_bytes()).decode("utf-8")
 
         payload = json.dumps({
@@ -248,7 +247,7 @@ Add to `tests/test_image_curation.py`:
             }).encode()
             mock_urlopen.return_value = mock_resp
 
-            result = client.describe_image(img_file, "diagrama")
+            result = client.describe_image(img_file, "diagrama", page_context="Exemplo de árvore de prova para 4 ∈ ℕ.")
 
             assert result == "Uma árvore de prova com 3 níveis."
             # Verify the request payload
@@ -1459,7 +1458,10 @@ When image descriptions are present in the content, the Claude tutor should proa
 In `src/builder/engine.py`, find the `## Regras fundamentais` section inside `generate_claude_project_instructions()` (around line 2916). Add a new rule after rule 5:
 
 ```python
-6. **Reproduza diagramas como SVG** — quando o material contiver descrições de diagramas, tabelas, árvores de prova ou figuras matemáticas (marcadas com `[Descrição de imagem]`), reproduza-os como SVG interativo sempre que possível. Para uma reprodução fiel, **consulte o texto da mesma página/seção** do markdown onde a imagem aparece — o contexto ao redor (definições, rótulos, ordem de enumeração, etc.) complementa a descrição da imagem e é essencial para reproduzir corretamente. Se a descrição combinada com o contexto da página ainda não for suficiente, pergunte ao aluno antes de gerar o SVG.
+6. **Reproduza conteúdo visual das descrições de imagem** — quando o material contiver blocos `[Descrição de imagem]`, escolha a representação mais adequada:
+   - **LaTeX** para fórmulas, expressões matemáticas, tabelas-verdade e qualquer conteúdo que possa ser fielmente representado em notação textual. LaTeX é mais leve e suficiente na maioria dos casos.
+   - **SVG interativo** apenas para conteúdo que LaTeX não consegue representar: diagramas, árvores de prova, fluxogramas, grafos, autômatos e figuras com relações espaciais.
+   Para reprodução fiel, **consulte o texto da mesma página/seção** do markdown onde a imagem aparece — o contexto ao redor (definições, rótulos, ordem de enumeração, etc.) complementa a descrição e é essencial para reproduzir corretamente. Se a descrição combinada com o contexto da página não for suficiente, pergunte ao aluno antes de gerar.
 ```
 
 - [ ] **Step 2: Run existing tests**

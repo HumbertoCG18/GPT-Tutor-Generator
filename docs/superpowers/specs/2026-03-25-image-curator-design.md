@@ -100,7 +100,7 @@ Modelo LLaVA 7B (~4.5GB VRAM) rodando via Ollama local, com pré-classificação
 | `genérico` | "Descreva o conteúdo desta imagem de forma detalhada e academicamente útil." |
 | `decorativa` | Não processada |
 
-**Contexto de página:** ao gerar a descrição de uma imagem, o sistema extrai o texto markdown da mesma página do PDF e o passa como contexto adicional no prompt do LLaVA. Isso permite que informações presentes no texto ao redor (definições, rótulos, ordem de enumeração, nomes de variáveis) sejam refletidas na descrição, produzindo descrições mais fiéis e permitindo reprodução como SVG pelo tutor.
+**Contexto de página (obrigatório):** ao gerar a descrição de uma imagem, o sistema extrai o texto markdown da mesma página do PDF e o passa como contexto no prompt do LLaVA. Não é opcional — toda descrição deve incluir o contexto da página. Informações presentes no texto ao redor (definições, rótulos, ordem de enumeração, nomes de variáveis) são essenciais para descrições fiéis e para posterior reprodução visual pelo tutor.
 
 **Execução:** em thread com callback via `after()` (padrão existente no projeto).
 
@@ -181,7 +181,12 @@ Durante build (completo ou incremental):
 
 ### 6. Instrução de reprodução SVG no tutor Claude
 
-O arquivo `INSTRUCOES_CLAUDE_PROJETO.md` ganha uma regra para que o Claude reproduza diagramas como SVG interativo a partir dos blocos `[Descrição de imagem]`, consultando o contexto da página para fidelidade. Validado experimentalmente com diagrama de enumeração diagonal de Cantor — reprodução fiel após descrição textual + contexto de página.
+O arquivo `INSTRUCOES_CLAUDE_PROJETO.md` ganha uma regra para reprodução visual a partir dos blocos `[Descrição de imagem]`:
+
+- **LaTeX** para fórmulas, expressões, tabelas — leve e suficiente na maioria dos casos
+- **SVG interativo** apenas para conteúdo que LaTeX não representa: diagramas, árvores de prova, fluxogramas, grafos, autômatos
+
+O tutor deve consultar o contexto da página para fidelidade. Validado experimentalmente com diagrama de enumeração diagonal de Cantor — reprodução fiel após descrição textual + contexto de página. Estratégia LaTeX-first economiza tokens/mensagens no limite por hora das plataformas.
 
 ---
 
