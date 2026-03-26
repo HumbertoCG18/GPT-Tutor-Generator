@@ -26,6 +26,8 @@ Durante a extração PDF → markdown via pymupdf4llm, imagens são substituída
 
 Modelo LLaVA 7B (~4.5GB VRAM) rodando via Ollama local, com pré-classificação por heurísticas e curadoria manual por página antes da geração de descrições.
 
+**Independente de backend de extração:** o Image Curator opera sobre `content/images/`, que é o destino final consolidado por `_resolve_content_images()`. Funciona igualmente para PDFs processados via pymupdf4llm, Docling ou Marker — todos geram imagens referenciadas que são consolidadas nesse diretório.
+
 ---
 
 ## Componentes
