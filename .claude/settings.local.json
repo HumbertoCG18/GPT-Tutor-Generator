@@ -5,7 +5,9 @@
       "Bash(python -m pytest tests/ -q)",
       "Bash(python -X utf8 -c \":*)",
       "Bash(python3:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "WebFetch(domain:community.openai.com)",
+      "WebFetch(domain:support.claude.com)"
     ]
   }
 }

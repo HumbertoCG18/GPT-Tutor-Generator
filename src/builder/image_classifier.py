@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 MIN_FILE_SIZE = 5000      # bytes
 MIN_DIMENSION = 50        # pixels
-MAX_ASPECT_RATIO = 6.0    # width/height or height/width
+MAX_ASPECT_RATIO = 6.0    # largura/altura or altura/largura
 MAX_NOISE_COLORS = 8      # unique colors in sampled pixels
 
 
@@ -83,11 +83,11 @@ def _count_unique_colors_png(path: Path, sample_limit: int = 2000) -> int:
 def classify_image(image_path: Path) -> str:
     """Classify an image as ``decorativa`` or ``genérico`` using heuristics.
 
-    Returns ``"decorativa"`` for images likely to be logos, icons,
-    backgrounds, or other non-content visuals. Returns ``"genérico"``
-    for anything that might contain meaningful academic content.
+    Retorna ``"decorativa"`` para possiveis imagnes que são logos, icones,
+    plano de fundo, ou qualquer conteudo não visual. Retorna ``"genérico"``
+    para qualquer coisa que possa conter conteúdo acadêmico significativo.
     """
-    # 1. File size check
+    # 1. Checa o tamanho do arquivo  
     if image_path.stat().st_size < MIN_FILE_SIZE:
         logger.debug("Decorativa (file size): %s", image_path.name)
         return "decorativa"
