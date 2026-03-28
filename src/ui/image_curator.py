@@ -233,7 +233,7 @@ class ImageCurator(tk.Toplevel):
 
         entries = self._manifest.get("entries", [])
         for entry in entries:
-            entry_id = entry.get("entry_id", "")
+            entry_id = entry.get("id", "")
             if not entry_id:
                 continue
             groups = group_images_by_page(self._images_dir, entry_id)
@@ -290,7 +290,7 @@ class ImageCurator(tk.Toplevel):
 
         # Find entry
         entry = next(
-            (e for e in self._entries_with_images if e.get("entry_id") == entry_id),
+            (e for e in self._entries_with_images if e.get("id") == entry_id),
             None,
         )
         if not entry:
@@ -507,7 +507,7 @@ class ImageCurator(tk.Toplevel):
         if not self._current_entry:
             return
 
-        entry_id = self._current_entry.get("entry_id", "")
+        entry_id = self._current_entry.get("id", "")
         source_path = self._current_entry.get("source_path", "")
 
         # Try to find the PDF file
@@ -631,7 +631,7 @@ class ImageCurator(tk.Toplevel):
         if not self._current_entry or self._current_page is None:
             return
 
-        entry_id = self._current_entry.get("entry_id", "")
+        entry_id = self._current_entry.get("id", "")
         source_path = self._current_entry.get("source_path", "")
 
         pdf_path = None
@@ -778,7 +778,7 @@ class ImageCurator(tk.Toplevel):
         if not self._current_entry or self._current_page is None:
             return
 
-        entry_id = self._current_entry.get("entry_id", "")
+        entry_id = self._current_entry.get("id", "")
         page_key = (
             str(self._current_page) if self._current_page is not None else "none"
         )
@@ -855,7 +855,7 @@ class ImageCurator(tk.Toplevel):
         # Save current curation state first
         self._save_curation()
 
-        entry_id = self._current_entry.get("entry_id", "")
+        entry_id = self._current_entry.get("id", "")
         curation = self._current_entry.get("image_curation", {})
 
         # Load page context from markdown for richer descriptions
@@ -935,7 +935,7 @@ class ImageCurator(tk.Toplevel):
         """Write the current entry back to manifest.json, stripping internal keys."""
         entries = self._manifest.get("entries", [])
         for i, e in enumerate(entries):
-            if e.get("entry_id") == entry_id:
+            if e.get("id") == entry_id:
                 clean_entry = {
                     k: v
                     for k, v in self._current_entry.items()
