@@ -896,6 +896,7 @@ class ImageCurator(tk.Toplevel):
         page_ctx = page_contexts.get(page_key, "")
 
         self.status_var.set(f"Gerando descrição para {fname}...")
+        logger.info("[Ollama] Iniciando descrição: %s (tipo: %s, modelo: %s)", fname, img_type, client.model)
 
         def _worker():
             try:
@@ -909,6 +910,9 @@ class ImageCurator(tk.Toplevel):
                 curation["pages"][page_key]["images"][fname]["type"] = img_type
                 curation["pages"][page_key]["images"][fname]["include"] = True
 
+                desc_preview = desc[:120].replace("\n", " ")
+                logger.info("[Ollama] Descrição gerada para %s: %s...", fname, desc_preview)
+
                 def _on_done():
                     self._write_manifest_entry(entry_id)
                     groups = self._current_entry.get("_image_groups", {})
@@ -918,7 +922,7 @@ class ImageCurator(tk.Toplevel):
 
                 self.after(0, _on_done)
             except Exception as e:
-                logger.error("Erro ao descrever %s: %s", fname, e)
+                logger.error("[Ollama] Erro ao descrever %s: %s", fname, e)
                 self.after(
                     0,
                     lambda: messagebox.showerror(
@@ -984,6 +988,7 @@ class ImageCurator(tk.Toplevel):
             return
 
         total = len(to_describe)
+        logger.info("[Ollama] Iniciando geração em lote: %d imagens (modelo: %s)", total, client.model)
         self.status_var.set(f"Gerando descrições: 0/{total}...")
 
         def _worker():
@@ -991,6 +996,7 @@ class ImageCurator(tk.Toplevel):
             for idx, (page_key, fname, img_type, img_path, page_ctx) in enumerate(
                 to_describe
             ):
+                logger.info("[Ollama] Descrevendo %d/%d: %s (tipo: %s)", idx + 1, total, fname, img_type)
                 self.after(
                     0,
                     lambda i=idx, f=fname: self.status_var.set(
@@ -1005,8 +1011,10 @@ class ImageCurator(tk.Toplevel):
                     curation["pages"][page_key]["images"][fname]["described_at"] = (
                         datetime.now().isoformat(timespec="seconds")
                     )
+                    desc_preview = desc[:120].replace("\n", " ")
+                    logger.info("[Ollama] OK %s: %s...", fname, desc_preview)
                 except Exception as e:
-                    logger.error("Erro ao descrever %s: %s", fname, e)
+                    logger.error("[Ollama] Erro ao descrever %s: %s", fname, e)
                     curation["pages"][page_key]["images"][fname]["description"] = (
                         f"[ERRO: {e}]"
                     )
@@ -1014,6 +1022,11 @@ class ImageCurator(tk.Toplevel):
 
             # Mark as described
             curation["status"] = "described"
+            ok_count = total - len(errors)
+            if errors:
+                logger.warning("[Ollama] Lote concluído: %d/%d OK, %d erros", ok_count, total, len(errors))
+            else:
+                logger.info("[Ollama] Lote concluído: %d/%d descrições geradas com sucesso", ok_count, total)
 
             def _on_done():
                 self._write_manifest_entry(entry_id)
