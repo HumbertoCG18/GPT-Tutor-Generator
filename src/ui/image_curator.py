@@ -933,18 +933,17 @@ class ImageCurator(tk.Toplevel):
 
     def _write_manifest_entry(self, entry_id: str):
         """Write the current entry back to manifest.json, stripping internal keys."""
-        entries = self._manifest.get("entries", [])
-        for i, e in enumerate(entries):
-            if e.get("id") == entry_id:
-                clean_entry = {
-                    k: v
-                    for k, v in self._current_entry.items()
-                    if not k.startswith("_")
-                }
-                entries[i] = clean_entry
-                break
+        # Build a clean copy of the entire manifest, removing internal keys
+        # from ALL entries (not just the current one) to avoid Path objects
+        clean_manifest = dict(self._manifest)
+        clean_entries = []
+        for e in clean_manifest.get("entries", []):
+            clean_entries.append(
+                {k: v for k, v in e.items() if not k.startswith("_")}
+            )
+        clean_manifest["entries"] = clean_entries
 
         self._manifest_path.write_text(
-            json.dumps(self._manifest, ensure_ascii=False, indent=2),
+            json.dumps(clean_manifest, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
