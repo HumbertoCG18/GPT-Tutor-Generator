@@ -1049,6 +1049,7 @@ class RepoBuilder:
 
         # Resolve image references in markdowns → content/images/
         self._resolve_content_images()
+        self._inject_all_image_descriptions()
 
         logger.info("Repository built successfully at %s", self.root_dir)
 
@@ -1485,6 +1486,42 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             result_lines.append(line)
 
         return "\n".join(result_lines)
+
+    def _inject_all_image_descriptions(self) -> None:
+        """Inject image descriptions from manifest into all content markdowns."""
+        manifest_path = self.root_dir / "manifest.json"
+        if not manifest_path.exists():
+            return
+
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except Exception:
+            return
+
+        entries = manifest.get("entries", [])
+        content_dir = self.root_dir / "content"
+        if not content_dir.exists():
+            return
+
+        injected_count = 0
+        for entry_data in entries:
+            curation = entry_data.get("image_curation")
+            if not curation or curation.get("status") != "described":
+                continue
+
+            for md_file in content_dir.rglob("*.md"):
+                try:
+                    text = md_file.read_text(encoding="utf-8")
+                except Exception:
+                    continue
+
+                new_text = self.inject_image_descriptions(text, curation)
+                if new_text != text:
+                    md_file.write_text(new_text, encoding="utf-8")
+                    injected_count += 1
+
+        if injected_count:
+            logger.info("Injected image descriptions into %d markdown files.", injected_count)
 
     def _write_source_registry(self, manifest: Dict[str, object]) -> None:
         lines = [
@@ -2634,6 +2671,7 @@ unit: {entry.tags}
 
         # Resolve image references in markdowns → content/images/
         self._resolve_content_images()
+        self._inject_all_image_descriptions()
 
     def process_single(self, entry: "FileEntry", force: bool = False) -> str:
         """
