@@ -420,11 +420,17 @@ class ImageCurator(tk.Toplevel):
                     lambda e, f=fname, d=desc: self._show_description(f, d),
                 )
 
-            # Delete button
+            # Action buttons
+            btn_frame = tk.Frame(card, bg=p["input_bg"])
+            btn_frame.pack(fill="x", pady=(6, 0))
             ttk.Button(
-                card, text="Remover",
+                btn_frame, text="Descrever",
+                command=lambda fn=fname, ip=img_path: self._describe_single_image(fn, ip),
+            ).pack(side="left", padx=(0, 4))
+            ttk.Button(
+                btn_frame, text="Remover",
                 command=lambda fn=fname, ip=img_path: self._delete_image(fn, ip),
-            ).pack(pady=(6, 0))
+            ).pack(side="left")
 
             self._image_widgets[fname] = {
                 "type_var": type_var,
@@ -856,6 +862,72 @@ class ImageCurator(tk.Toplevel):
         # Write back to manifest (removing internal _image_groups key)
         self._write_manifest_entry(entry_id)
         self.status_var.set(f"Curadoria salva para {entry_id}.")
+
+    def _describe_single_image(self, fname: str, img_path: Path):
+        """Generate (or regenerate) description for a single image."""
+        if not self._current_entry or self._current_page is None:
+            return
+
+        # Save current UI state first
+        self._save_curation()
+
+        from src.builder.ollama_client import OllamaClient
+
+        config = self._parent.config_obj if hasattr(self._parent, "config_obj") else None
+        model = config.get("vision_model", "qwen3-vl") if config else "qwen3-vl"
+        quant = config.get("vision_model_quantization", "default") if config else "default"
+        base_url = config.get("ollama_base_url", "http://localhost:11434") if config else "http://localhost:11434"
+        if quant != "default":
+            model = f"{model}:{quant}" if ":" not in model else model.split(":")[0] + f":{quant}"
+
+        client = OllamaClient(base_url=base_url, model=model)
+        available, msg = client.check_availability()
+        if not available:
+            messagebox.showerror("Ollama indisponível", msg)
+            return
+
+        entry_id = self._current_entry.get("id", "")
+        page_key = str(self._current_page) if self._current_page is not None else "none"
+        curation = self._current_entry.get("image_curation", {})
+        img_type = curation.get("pages", {}).get(page_key, {}).get("images", {}).get(fname, {}).get("type", "genérico")
+
+        # Get page context
+        page_contexts = self._extract_page_contexts(entry_id)
+        page_ctx = page_contexts.get(page_key, "")
+
+        self.status_var.set(f"Gerando descrição para {fname}...")
+
+        def _worker():
+            try:
+                desc = client.describe_image(img_path, img_type, page_context=page_ctx)
+                curation.setdefault("pages", {}).setdefault(page_key, {"include_page": True, "images": {}})
+                curation["pages"][page_key]["images"].setdefault(fname, {})
+                curation["pages"][page_key]["images"][fname]["description"] = desc
+                curation["pages"][page_key]["images"][fname]["described_at"] = (
+                    datetime.now().isoformat(timespec="seconds")
+                )
+                curation["pages"][page_key]["images"][fname]["type"] = img_type
+                curation["pages"][page_key]["images"][fname]["include"] = True
+
+                def _on_done():
+                    self._write_manifest_entry(entry_id)
+                    groups = self._current_entry.get("_image_groups", {})
+                    images = groups.get(self._current_page, [])
+                    self._show_images(self._current_entry, self._current_page, images)
+                    self.status_var.set(f"Descrição gerada para {fname}.")
+
+                self.after(0, _on_done)
+            except Exception as e:
+                logger.error("Erro ao descrever %s: %s", fname, e)
+                self.after(
+                    0,
+                    lambda: messagebox.showerror(
+                        "Erro", f"Falha ao descrever {fname}:\n{e}", parent=self
+                    ),
+                )
+                self.after(0, lambda: self.status_var.set(f"Erro ao descrever {fname}."))
+
+        threading.Thread(target=_worker, daemon=True).start()
 
     def _generate_descriptions(self):
         """Generate descriptions for included images using Ollama Vision model."""
