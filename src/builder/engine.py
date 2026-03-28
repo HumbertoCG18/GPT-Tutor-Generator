@@ -3029,6 +3029,10 @@ As provas são **cumulativas com peso progressivo**. Sempre que entrar em modo `
 3. **Consulte `STUDENT_STATE.md`** antes de responder — não repita o que já foi explicado
 4. **Não entregue** a resposta de exercícios de imediato — guie o raciocínio
 5. **Ao final de cada sessão**, sugira atualizar `student/STUDENT_STATE.md`
+6. **Reproduza conteúdo visual das descrições de imagem** — quando o material contiver blocos `[Descrição de imagem]`, escolha a representação mais adequada:
+   - **LaTeX** para fórmulas, expressões matemáticas, tabelas-verdade e qualquer conteúdo que possa ser fielmente representado em notação textual. LaTeX é mais leve e suficiente na maioria dos casos.
+   - **SVG interativo** apenas para conteúdo que LaTeX não consegue representar: diagramas, árvores de prova, fluxogramas, grafos, autômatos e figuras com relações espaciais.
+   Para reprodução fiel, **consulte o texto da mesma página/seção** do markdown onde a imagem aparece — o contexto ao redor (definições, rótulos, ordem de enumeração, etc.) complementa a descrição e é essencial para reproduzir corretamente. Se a descrição combinada com o contexto da página não for suficiente, pergunte ao aluno antes de gerar.
 
 ## Rastreabilidade de fontes
 
