@@ -2425,6 +2425,43 @@ class StatusDialog(tk.Toplevel):
         row(f_stu, "Personalidade/preferências", has_pers,
             (getattr(profile, "personality", "")[:60] + "...") if has_pers else "não definida")
 
+        # ── Ollama / Vision ───────────────────────────────────────────
+        f_vis = section("Vision — Descrição de Imagens (Ollama)")
+
+        ollama_url = config_obj.get("ollama_base_url", "http://localhost:11434")
+        ollama_running = False
+        available_models = []
+        try:
+            from urllib.request import urlopen
+            resp = urlopen(f"{ollama_url}/api/tags", timeout=3)
+            data = json.loads(resp.read())
+            ollama_running = True
+            available_models = [m.get("name", "") for m in data.get("models", [])]
+        except Exception:
+            pass
+
+        row(f_vis, "Ollama rodando", ollama_running,
+            ollama_url if ollama_running else f"não acessível em {ollama_url}")
+
+        configured_model = config_obj.get("vision_model", "qwen3-vl")
+        configured_base = configured_model.split(":")[0]
+        model_found = any(configured_base in name for name in available_models)
+        row(f_vis, f"Modelo: {configured_model}", model_found,
+            "disponível" if model_found else f"ollama pull {configured_model}")
+
+        from src.builder.ollama_client import FALLBACK_MODEL
+        fallback_base = FALLBACK_MODEL.split(":")[0]
+        fallback_found = any(fallback_base in name for name in available_models)
+        row(f_vis, f"Fallback: {FALLBACK_MODEL}", fallback_found,
+            "disponível" if fallback_found else f"ollama pull {FALLBACK_MODEL}")
+
+        vision_keywords = ["qwen", "llava", "vl", "vision"]
+        vision_models = [m for m in available_models
+                         if any(kw in m.lower() for kw in vision_keywords)]
+        if vision_models and not model_found:
+            warn_row(f_vis, "Modelos Vision disponíveis",
+                     ", ".join(vision_models[:5]))
+
         # ── Botão fechar ─────────────────────────────────────────────────
         ttk.Button(outer, text="Fechar", command=self.destroy).pack(pady=(4, 0))
 
