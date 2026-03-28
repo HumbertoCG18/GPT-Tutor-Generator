@@ -186,3 +186,93 @@ class TestImageMapper:
         assert 5 in groups  # _page_5
         # unknown doesn't match entry1 prefix, so not included
         assert None not in groups
+
+
+class TestDescriptionInjection:
+    def test_inject_description_before_image_ref(self):
+        from src.builder.engine import RepoBuilder
+        markdown = "Some text.\n\n![](content/images/entry1-page-003-img-01.png)\n\nMore text."
+        curation = {
+            "pages": {
+                "3": {
+                    "include_page": True,
+                    "images": {
+                        "entry1-page-003-img-01.png": {
+                            "type": "diagrama",
+                            "include": True,
+                            "description": "Árvore de prova com 3 níveis.",
+                            "described_at": "2026-03-25T14:32:00",
+                        }
+                    }
+                }
+            }
+        }
+        result = RepoBuilder.inject_image_descriptions(markdown, curation)
+        assert "<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->" in result
+        assert "> **[Descrição de imagem]** Árvore de prova com 3 níveis." in result
+        assert "![](content/images/entry1-page-003-img-01.png)" in result
+
+    def test_skip_excluded_images(self):
+        from src.builder.engine import RepoBuilder
+        markdown = "![](content/images/entry1-page-003-img-01.png)"
+        curation = {
+            "pages": {
+                "3": {
+                    "include_page": True,
+                    "images": {
+                        "entry1-page-003-img-01.png": {
+                            "type": "decorativa",
+                            "include": False,
+                            "description": None,
+                            "described_at": None,
+                        }
+                    }
+                }
+            }
+        }
+        result = RepoBuilder.inject_image_descriptions(markdown, curation)
+        assert "IMAGE_DESCRIPTION" not in result
+
+    def test_skip_excluded_page(self):
+        from src.builder.engine import RepoBuilder
+        markdown = "![](content/images/entry1-page-007-img-01.png)"
+        curation = {
+            "pages": {
+                "7": {
+                    "include_page": False,
+                    "images": {}
+                }
+            }
+        }
+        result = RepoBuilder.inject_image_descriptions(markdown, curation)
+        assert "IMAGE_DESCRIPTION" not in result
+
+    def test_replace_existing_description(self):
+        from src.builder.engine import RepoBuilder
+        markdown = (
+            "Some text.\n\n"
+            "<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->\n"
+            "<!-- Tipo: diagrama -->\n"
+            "> **[Descrição de imagem]** Descrição antiga.\n"
+            "<!-- /IMAGE_DESCRIPTION -->\n\n"
+            "![](content/images/entry1-page-003-img-01.png)\n"
+        )
+        curation = {
+            "pages": {
+                "3": {
+                    "include_page": True,
+                    "images": {
+                        "entry1-page-003-img-01.png": {
+                            "type": "tabela",
+                            "include": True,
+                            "description": "Tabela-verdade atualizada.",
+                            "described_at": "2026-03-25T15:00:00",
+                        }
+                    }
+                }
+            }
+        }
+        result = RepoBuilder.inject_image_descriptions(markdown, curation)
+        assert "Descrição antiga" not in result
+        assert "Tabela-verdade atualizada." in result
+        assert "<!-- Tipo: tabela -->" in result

@@ -1415,6 +1415,77 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
 
         return None
 
+    # Regex to match existing IMAGE_DESCRIPTION blocks
+    _IMG_DESC_BLOCK_RE = re.compile(
+        r"<!-- IMAGE_DESCRIPTION: (?P<fname>[^\s]+) -->\n"
+        r"<!-- Tipo: [^\n]+ -->\n"
+        r"(?:>.*\n)+"
+        r"<!-- /IMAGE_DESCRIPTION -->\n\n",
+        re.MULTILINE,
+    )
+
+    @staticmethod
+    def inject_image_descriptions(markdown: str, image_curation: dict) -> str:
+        """Inject image descriptions from curation data into markdown text.
+
+        For each image reference ![](content/images/FILENAME), if the curation
+        data has a description for FILENAME, inject a blockquote description
+        block before the image reference.
+
+        Replaces existing IMAGE_DESCRIPTION blocks if present.
+        """
+        if not image_curation or "pages" not in image_curation:
+            return markdown
+
+        # Build lookup: filename -> (type, description)
+        descriptions = {}
+        for page_num, page_data in image_curation["pages"].items():
+            if not page_data.get("include_page", True):
+                continue
+            for fname, img_data in page_data.get("images", {}).items():
+                if img_data.get("include") and img_data.get("description"):
+                    descriptions[fname] = (
+                        img_data.get("type", "genérico"),
+                        img_data["description"],
+                    )
+
+        if not descriptions:
+            return markdown
+
+        # First: remove existing description blocks (for re-generation)
+        markdown = RepoBuilder._IMG_DESC_BLOCK_RE.sub("", markdown)
+
+        # Then: inject descriptions before image references
+        img_re = re.compile(
+            r'(!\[[^\]]*\]\((?:[^)]*?/)?'
+            r'([^)/]+\.(?:png|jpg|jpeg|gif|bmp|webp))\))'
+        )
+        lines = markdown.split("\n")
+        result_lines = []
+
+        for line in lines:
+            m = img_re.search(line)
+            if m:
+                fname = m.group(2)
+                if fname in descriptions:
+                    img_type, desc = descriptions[fname]
+                    desc_lines = desc.split("\n")
+                    block = (
+                        f"<!-- IMAGE_DESCRIPTION: {fname} -->\n"
+                        f"<!-- Tipo: {img_type} -->"
+                    )
+                    for i, dl in enumerate(desc_lines):
+                        if i == 0:
+                            block += f"\n> **[Descrição de imagem]** {dl}"
+                        else:
+                            block += f"\n> {dl}"
+                    block += "\n<!-- /IMAGE_DESCRIPTION -->"
+                    result_lines.append(block)
+
+            result_lines.append(line)
+
+        return "\n".join(result_lines)
+
     def _write_source_registry(self, manifest: Dict[str, object]) -> None:
         lines = [
             f"generated_at: {manifest['generated_at']}",
