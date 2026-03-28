@@ -99,7 +99,15 @@ class OllamaClient:
             "rótulos e definições presentes no texto devem ser refletidas "
             "fielmente na descrição da imagem."
         )
-        image_b64 = base64.b64encode(image_path.read_bytes()).decode("utf-8")
+        import time
+
+        img_bytes = image_path.read_bytes()
+        img_size_kb = len(img_bytes) / 1024
+        image_b64 = base64.b64encode(img_bytes).decode("utf-8")
+        logger.info(
+            "[Ollama] Preparando request: %s (%.0f KB, tipo: %s, contexto: %d chars)",
+            image_path.name, img_size_kb, image_type, len(page_context),
+        )
 
         payload = json.dumps({
             "model": self.model,
@@ -109,6 +117,12 @@ class OllamaClient:
             "keep_alive": "10m",
         }).encode("utf-8")
 
+        payload_mb = len(payload) / (1024 * 1024)
+        logger.info(
+            "[Ollama] Enviando para %s/api/generate (payload: %.1f MB, modelo: %s)...",
+            self.base_url, payload_mb, self.model,
+        )
+
         req = Request(
             f"{self.base_url}/api/generate",
             data=payload,
@@ -116,6 +130,14 @@ class OllamaClient:
             method="POST",
         )
 
+        t0 = time.time()
         resp = urlopen(req, timeout=300)
-        result = json.loads(resp.read())
-        return result.get("response", "").strip()
+        raw = resp.read()
+        elapsed = time.time() - t0
+        logger.info("[Ollama] Resposta recebida em %.1fs (%d bytes)", elapsed, len(raw))
+
+        result = json.loads(raw)
+        response_text = result.get("response", "").strip()
+        tokens = result.get("eval_count", "?")
+        logger.info("[Ollama] Descrição: %d chars, ~%s tokens", len(response_text), tokens)
+        return response_text
