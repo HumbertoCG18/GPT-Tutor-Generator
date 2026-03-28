@@ -106,6 +106,7 @@ class OllamaClient:
             "prompt": prompt,
             "images": [image_b64],
             "stream": False,
+            "keep_alive": "10m",
         }).encode("utf-8")
 
         req = Request(
@@ -115,6 +116,6 @@ class OllamaClient:
             method="POST",
         )
 
-        resp = urlopen(req, timeout=120)
+        resp = urlopen(req, timeout=300)
         result = json.loads(resp.read())
         return result.get("response", "").strip()

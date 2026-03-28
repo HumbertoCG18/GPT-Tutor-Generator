@@ -915,9 +915,16 @@ class ImageCurator(tk.Toplevel):
         self.status_var.set(f"Gerando descrições: 0/{total}...")
 
         def _worker():
+            errors = []
             for idx, (page_key, fname, img_type, img_path, page_ctx) in enumerate(
                 to_describe
             ):
+                self.after(
+                    0,
+                    lambda i=idx, f=fname: self.status_var.set(
+                        f"Gerando descrição {i + 1}/{total}: {f}..."
+                    ),
+                )
                 try:
                     desc = client.describe_image(
                         img_path, img_type, page_context=page_ctx
@@ -931,13 +938,7 @@ class ImageCurator(tk.Toplevel):
                     curation["pages"][page_key]["images"][fname]["description"] = (
                         f"[ERRO: {e}]"
                     )
-
-                self.after(
-                    0,
-                    lambda i=idx: self.status_var.set(
-                        f"Gerando descrições: {i + 1}/{total}..."
-                    ),
-                )
+                    errors.append(f"{fname}: {e}")
 
             # Mark as described
             curation["status"] = "described"
@@ -949,12 +950,23 @@ class ImageCurator(tk.Toplevel):
                     groups = self._current_entry.get("_image_groups", {})
                     images = groups.get(self._current_page, [])
                     self._show_images(self._current_entry, self._current_page, images)
-                self.status_var.set(
-                    f"Descrições geradas para {total} imagens. Salvo no manifest."
-                )
-                messagebox.showinfo(
-                    "Image Curator", f"{total} descrições geradas com sucesso!"
-                )
+                ok_count = total - len(errors)
+                if errors:
+                    self.status_var.set(
+                        f"{ok_count}/{total} descrições geradas ({len(errors)} erros). Salvo no manifest."
+                    )
+                    error_detail = "\n".join(errors[:10])
+                    messagebox.showwarning(
+                        "Image Curator",
+                        f"{ok_count} descrições geradas, {len(errors)} erros:\n\n{error_detail}",
+                    )
+                else:
+                    self.status_var.set(
+                        f"Descrições geradas para {total} imagens. Salvo no manifest."
+                    )
+                    messagebox.showinfo(
+                        "Image Curator", f"{total} descrições geradas com sucesso!"
+                    )
 
             self.after(0, _on_done)
 
