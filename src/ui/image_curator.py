@@ -169,6 +169,17 @@ class ImageCurator(tk.Toplevel):
             command=self._refresh_pdf_page,
         ).pack(side="left")
 
+        self._crop_mode = tk.BooleanVar(value=False)
+        ttk.Checkbutton(
+            pdf_header,
+            text="Capturar região",
+            variable=self._crop_mode,
+            command=self._toggle_crop_mode,
+        ).pack(side="left", padx=(10, 0))
+
+        self._crop_rect_id = None
+        self._crop_start = None
+
         pdf_canvas_frame = ttk.Frame(pdf_frame)
         pdf_canvas_frame.pack(fill="both", expand=True)
         self._pdf_canvas = tk.Canvas(
@@ -559,6 +570,139 @@ class ImageCurator(tk.Toplevel):
         """Re-render current PDF page (e.g., after zoom change)."""
         if self._current_page is not None:
             self._render_pdf_page(self._current_page)
+
+    # ── Region Crop ────────────────────────────────────────────────────
+
+    def _toggle_crop_mode(self):
+        """Enable or disable crop selection mode on the PDF canvas."""
+        if self._crop_mode.get():
+            self._pdf_canvas.config(cursor="crosshair")
+            self._pdf_canvas.bind("<ButtonPress-1>", self._crop_start_drag)
+            self._pdf_canvas.bind("<B1-Motion>", self._crop_drag)
+            self._pdf_canvas.bind("<ButtonRelease-1>", self._crop_end_drag)
+        else:
+            self._pdf_canvas.config(cursor="")
+            self._pdf_canvas.unbind("<ButtonPress-1>")
+            self._pdf_canvas.unbind("<B1-Motion>")
+            self._pdf_canvas.unbind("<ButtonRelease-1>")
+            if self._crop_rect_id:
+                self._pdf_canvas.delete(self._crop_rect_id)
+                self._crop_rect_id = None
+
+    def _crop_start_drag(self, event):
+        self._crop_start = (
+            self._pdf_canvas.canvasx(event.x),
+            self._pdf_canvas.canvasy(event.y),
+        )
+        if self._crop_rect_id:
+            self._pdf_canvas.delete(self._crop_rect_id)
+
+    def _crop_drag(self, event):
+        if not self._crop_start:
+            return
+        x0, y0 = self._crop_start
+        x1 = self._pdf_canvas.canvasx(event.x)
+        y1 = self._pdf_canvas.canvasy(event.y)
+        if self._crop_rect_id:
+            self._pdf_canvas.delete(self._crop_rect_id)
+        self._crop_rect_id = self._pdf_canvas.create_rectangle(
+            x0, y0, x1, y1, outline="#a6e3a1", width=2, dash=(4, 2)
+        )
+
+    def _crop_end_drag(self, event):
+        if not self._crop_start:
+            return
+        x0, y0 = self._crop_start
+        x1 = self._pdf_canvas.canvasx(event.x)
+        y1 = self._pdf_canvas.canvasy(event.y)
+        self._crop_start = None
+
+        # Normalize coordinates
+        rx0, rx1 = min(x0, x1), max(x0, x1)
+        ry0, ry1 = min(y0, y1), max(y0, y1)
+
+        if (rx1 - rx0) < 10 or (ry1 - ry0) < 10:
+            return  # too small, ignore
+
+        self._save_cropped_region(rx0, ry0, rx1, ry1)
+
+    def _save_cropped_region(self, x0: float, y0: float, x1: float, y1: float):
+        """Crop the selected region from the rendered PDF and save as image."""
+        if not self._current_entry or self._current_page is None:
+            return
+
+        entry_id = self._current_entry.get("entry_id", "")
+        source_path = self._current_entry.get("source_path", "")
+
+        pdf_path = None
+        if source_path and Path(source_path).exists():
+            pdf_path = Path(source_path)
+        else:
+            raw_dir = self.repo_dir / "raw"
+            if raw_dir.exists():
+                candidates = list(raw_dir.rglob(f"*{entry_id}*.pdf"))
+                if candidates:
+                    pdf_path = candidates[0]
+
+        if not pdf_path:
+            return
+
+        try:
+            import pymupdf
+
+            doc = pymupdf.open(str(pdf_path))
+            page_idx = max(0, self._current_page - 1)
+            page = doc[page_idx]
+            zoom = self._pdf_zoom_var.get()
+
+            # Convert canvas coords back to PDF coords
+            rect = pymupdf.Rect(x0 / zoom, y0 / zoom, x1 / zoom, y1 / zoom)
+            mat = pymupdf.Matrix(2.0, 2.0)  # 2x for quality
+            pix = page.get_pixmap(matrix=mat, clip=rect)
+
+            # Save to content/images/
+            timestamp = datetime.now().strftime("%H%M%S")
+            fname = (
+                f"{entry_id}-page-{self._current_page:03d}-manual-{timestamp}.png"
+            )
+            out_path = self._images_dir / fname
+            pix.save(str(out_path))
+            doc.close()
+
+            # Add to in-memory image groups
+            groups = self._current_entry.setdefault("_image_groups", {})
+            groups.setdefault(self._current_page, []).append(out_path)
+
+            # Add to curation manifest as pending
+            curation = self._current_entry.setdefault(
+                "image_curation",
+                {"status": "pending", "curated_at": None, "pages": {}},
+            )
+            page_key = str(self._current_page)
+            page_data = curation["pages"].setdefault(
+                page_key, {"include_page": True, "images": {}}
+            )
+            page_data["images"][fname] = {
+                "type": "genérico",
+                "include": True,
+                "description": None,
+                "described_at": None,
+            }
+
+            # Refresh UI
+            self._show_images(
+                self._current_entry, self._current_page, groups[self._current_page]
+            )
+            self.status_var.set(f"Região capturada e salva como '{fname}'.")
+
+            # Disable crop mode
+            self._crop_mode.set(False)
+            self._toggle_crop_mode()
+
+        except Exception as e:
+            messagebox.showerror(
+                "Erro", f"Falha ao capturar região:\n{e}", parent=self
+            )
 
     def _delete_image(self, fname: str, img_path: Path):
         """Delete an image from disk and remove from manifest curation data."""
