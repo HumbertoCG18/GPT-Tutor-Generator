@@ -93,6 +93,9 @@ class AppConfig:
         "image_format": "png",
         "stall_timeout": 300,
         "font_size": 10,
+        "vision_model": "qwen3-vl",
+        "vision_model_quantization": "default",
+        "ollama_base_url": "http://localhost:11434",
     }
 
     def __init__(self):

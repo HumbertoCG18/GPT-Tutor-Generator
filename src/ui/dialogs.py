@@ -192,6 +192,41 @@ class SettingsDialog(tk.Toplevel):
                     "Se o Marker/Docling parar de produzir output por este tempo,\n"
                     "o processo é encerrado automaticamente para evitar travamento.\n"
                     "Padrão: 300s (5 min). Para PDFs grandes, aumente para 600-900s.")
+
+        # ── Vision / Image Description ────────────────────────────────
+        sep_row = next_row + 2
+        ttk.Separator(tab_proc, orient="horizontal").grid(
+            row=sep_row, column=0, columnspan=2, sticky="ew", pady=(12, 8))
+        ttk.Label(tab_proc, text="Vision — Descrição de Imagens",
+                  style="Accent.TLabel").grid(
+            row=sep_row + 1, column=0, columnspan=2, sticky="w", pady=(0, 8))
+
+        VISION_MODELS = ["qwen3-vl", "qwen2.5vl:7b", "llava:7b"]
+        QUANTIZATIONS = ["default", "q4_K_M", "q5_K_M", "q8_0", "fp16"]
+
+        self._var_vision_model = tk.StringVar(value=self.config.get("vision_model"))
+        self._var_vision_quant = tk.StringVar(value=self.config.get("vision_model_quantization"))
+        self._var_ollama_url = tk.StringVar(value=self.config.get("ollama_base_url"))
+
+        vision_fields = [
+            ("Modelo Vision", self._var_vision_model, VISION_MODELS),
+            ("Quantização", self._var_vision_quant, QUANTIZATIONS),
+        ]
+        for i, (label, var, vals) in enumerate(vision_fields):
+            r = sep_row + 2 + i
+            ttk.Label(tab_proc, text=label).grid(row=r, column=0, sticky="w", pady=6, padx=(0, 16))
+            vcb = ttk.Combobox(tab_proc, textvariable=var, values=vals, state="readonly", width=22)
+            vcb.grid(row=r, column=1, sticky="ew")
+
+        url_row = sep_row + 2 + len(vision_fields)
+        ttk.Label(tab_proc, text="URL do Ollama").grid(
+            row=url_row, column=0, sticky="w", pady=6, padx=(0, 16))
+        ttk.Entry(tab_proc, textvariable=self._var_ollama_url, width=28).grid(
+            row=url_row, column=1, sticky="ew")
+        add_tooltip(vcb, "default: usa a quantização padrão do Ollama para o modelo.\n"
+                         "q4_K_M: menor uso de VRAM, leve perda de qualidade.\n"
+                         "fp16: máxima qualidade, maior uso de VRAM.")
+
         tab_proc.columnconfigure(1, weight=1)
 
         # ── Buttons ─────────────────────────────────────────────────────
@@ -216,6 +251,9 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("default_backend", self._var_backend.get())
         self.config.set("image_format", self._var_image_format.get())
         self.config.set("stall_timeout", self._var_stall_timeout.get())
+        self.config.set("vision_model", self._var_vision_model.get())
+        self.config.set("vision_model_quantization", self._var_vision_quant.get())
+        self.config.set("ollama_base_url", self._var_ollama_url.get())
         self.config.save()
         self.theme_mgr.apply(self.parent, self._var_theme.get())
         self.parent._theme_name = self._var_theme.get()  # type: ignore[attr-defined]

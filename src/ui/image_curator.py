@@ -526,7 +526,16 @@ class ImageCurator(tk.Toplevel):
 
         from src.builder.ollama_client import OllamaClient
 
-        client = OllamaClient()
+        config = self._parent.config_obj if hasattr(self._parent, "config_obj") else None
+        model = config.get("vision_model", "qwen3-vl") if config else "qwen3-vl"
+        quant = config.get("vision_model_quantization", "default") if config else "default"
+        base_url = config.get("ollama_base_url", "http://localhost:11434") if config else "http://localhost:11434"
+
+        # Append quantization tag if not default
+        if quant != "default":
+            model = f"{model}:{quant}" if ":" not in model else model.split(":")[0] + f":{quant}"
+
+        client = OllamaClient(base_url=base_url, model=model)
 
         # Check availability first
         available, msg = client.check_availability()
