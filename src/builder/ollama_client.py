@@ -98,6 +98,7 @@ class OllamaClient:
             "Informações como nomes de variáveis, ordem de enumeração, "
             "rótulos e definições presentes no texto devem ser refletidas "
             "fielmente na descrição da imagem."
+            " /no_think"
         )
         import time
 
@@ -115,6 +116,9 @@ class OllamaClient:
             "images": [image_b64],
             "stream": False,
             "keep_alive": "10m",
+            "options": {
+                "num_predict": 1024,
+            },
         }).encode("utf-8")
 
         payload_mb = len(payload) / (1024 * 1024)
