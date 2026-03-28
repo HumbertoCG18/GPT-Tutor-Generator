@@ -116,16 +116,19 @@ class ImageCurator(tk.Toplevel):
         self._tree.pack(fill="both", expand=True)
         self._tree.bind("<<TreeviewSelect>>", self._on_tree_select)
 
-        # Right panel: image grid
-        right_frame = ttk.Frame(paned)
-        paned.add(right_frame, weight=3)
+        # Right side: vertical paned — images top, PDF bottom
+        right_paned = ttk.PanedWindow(paned, orient="vertical")
+        paned.add(right_paned, weight=3)
+
+        # Top: image cards
+        images_frame = ttk.Frame(right_paned)
+        right_paned.add(images_frame, weight=2)
 
         ttk.Label(
-            right_frame, text="Imagens", font=("Segoe UI", 10, "bold")
+            images_frame, text="Imagens", font=("Segoe UI", 10, "bold")
         ).pack(anchor="w", pady=(0, 5))
 
-        # Scrollable canvas for image cards
-        canvas_frame = ttk.Frame(right_frame)
+        canvas_frame = ttk.Frame(images_frame)
         canvas_frame.pack(fill="both", expand=True)
 
         self._canvas = tk.Canvas(
@@ -146,6 +149,44 @@ class ImageCurator(tk.Toplevel):
                 scrollregion=self._canvas.bbox("all")
             ),
         )
+
+        # Bottom: PDF viewer
+        pdf_frame = ttk.Frame(right_paned)
+        right_paned.add(pdf_frame, weight=1)
+
+        pdf_header = tk.Frame(pdf_frame, bg=p["frame_bg"])
+        pdf_header.pack(fill="x")
+        ttk.Label(pdf_header, text="Página do PDF").pack(side="left", padx=5)
+        self._pdf_zoom_var = tk.DoubleVar(value=1.0)
+        ttk.Label(pdf_header, text="Zoom:").pack(side="left", padx=(10, 2))
+        ttk.Spinbox(
+            pdf_header,
+            from_=0.5,
+            to=3.0,
+            increment=0.25,
+            textvariable=self._pdf_zoom_var,
+            width=5,
+            command=self._refresh_pdf_page,
+        ).pack(side="left")
+
+        pdf_canvas_frame = ttk.Frame(pdf_frame)
+        pdf_canvas_frame.pack(fill="both", expand=True)
+        self._pdf_canvas = tk.Canvas(
+            pdf_canvas_frame, bg=p["frame_bg"], highlightthickness=0
+        )
+        pdf_vscroll = ttk.Scrollbar(
+            pdf_canvas_frame, orient="vertical", command=self._pdf_canvas.yview
+        )
+        pdf_hscroll = ttk.Scrollbar(
+            pdf_canvas_frame, orient="horizontal", command=self._pdf_canvas.xview
+        )
+        self._pdf_canvas.configure(
+            yscrollcommand=pdf_vscroll.set, xscrollcommand=pdf_hscroll.set
+        )
+        pdf_hscroll.pack(side="bottom", fill="x")
+        pdf_vscroll.pack(side="right", fill="y")
+        self._pdf_canvas.pack(side="left", fill="both", expand=True)
+        self._pdf_page_img_ref = None  # prevent GC
 
     # ── Data Loading ───────────────────────────────────────────────────
 
@@ -380,6 +421,9 @@ class ImageCurator(tk.Toplevel):
             f"{entry.get('title', '')} — {page_label} — {len(images)} imagens"
         )
 
+        # Render corresponding PDF page
+        self._render_pdf_page(page_num if page_num is not None else 1)
+
     # ── Page Context Extraction ────────────────────────────────────────
 
     def _extract_page_contexts(self, entry_id: str) -> Dict[str, str]:
@@ -446,6 +490,75 @@ class ImageCurator(tk.Toplevel):
             tk.Label(win, text=f"Erro: {e}", bg=p["bg"], fg=p["error"]).pack(
                 padx=20, pady=20
             )
+
+    def _render_pdf_page(self, page_num: int):
+        """Render a PDF page to the PDF canvas using pymupdf."""
+        if not self._current_entry:
+            return
+
+        entry_id = self._current_entry.get("entry_id", "")
+        source_path = self._current_entry.get("source_path", "")
+
+        # Try to find the PDF file
+        pdf_path = None
+        if source_path and Path(source_path).exists():
+            pdf_path = Path(source_path)
+        else:
+            # Search in repo raw/ directory
+            raw_dir = self.repo_dir / "raw"
+            if raw_dir.exists():
+                candidates = list(raw_dir.rglob(f"*{entry_id}*.pdf"))
+                if not candidates:
+                    candidates = list(raw_dir.rglob("*.pdf"))
+                if candidates:
+                    pdf_path = candidates[0]
+
+        if not pdf_path:
+            self._pdf_canvas.delete("all")
+            self._pdf_canvas.create_text(
+                10, 10, text="PDF não encontrado.", anchor="nw", fill="gray"
+            )
+            return
+
+        try:
+            import pymupdf
+
+            doc = pymupdf.open(str(pdf_path))
+            page_idx = max(0, (page_num or 1) - 1)
+            if page_idx >= len(doc):
+                page_idx = len(doc) - 1
+            page = doc[page_idx]
+            zoom = self._pdf_zoom_var.get()
+            mat = pymupdf.Matrix(zoom, zoom)
+            pix = page.get_pixmap(matrix=mat)
+            img_data = pix.tobytes("ppm")
+
+            import io
+
+            pil_img = Image.open(io.BytesIO(img_data))
+            tk_img = ImageTk.PhotoImage(pil_img)
+            self._pdf_page_img_ref = tk_img
+
+            self._pdf_canvas.delete("all")
+            self._pdf_canvas.create_image(0, 0, anchor="nw", image=tk_img)
+            self._pdf_canvas.configure(
+                scrollregion=(0, 0, pil_img.width, pil_img.height)
+            )
+            doc.close()
+        except Exception as e:
+            self._pdf_canvas.delete("all")
+            self._pdf_canvas.create_text(
+                10,
+                10,
+                text=f"Erro ao renderizar PDF: {e}",
+                anchor="nw",
+                fill="gray",
+            )
+
+    def _refresh_pdf_page(self):
+        """Re-render current PDF page (e.g., after zoom change)."""
+        if self._current_page is not None:
+            self._render_pdf_page(self._current_page)
 
     def _delete_image(self, fname: str, img_path: Path):
         """Delete an image from disk and remove from manifest curation data."""
