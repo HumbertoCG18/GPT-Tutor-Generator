@@ -362,6 +362,12 @@ class ImageCurator(tk.Toplevel):
                     justify="left",
                 ).pack(pady=(4, 0))
 
+            # Delete button
+            ttk.Button(
+                card, text="Remover",
+                command=lambda fn=fname, ip=img_path: self._delete_image(fn, ip),
+            ).pack(pady=(6, 0))
+
             self._image_widgets[fname] = {
                 "type_var": type_var,
                 "include_var": include_var,
@@ -440,6 +446,52 @@ class ImageCurator(tk.Toplevel):
             tk.Label(win, text=f"Erro: {e}", bg=p["bg"], fg=p["error"]).pack(
                 padx=20, pady=20
             )
+
+    def _delete_image(self, fname: str, img_path: Path):
+        """Delete an image from disk and remove from manifest curation data."""
+        if not messagebox.askyesno(
+            "Remover imagem",
+            f"Remover '{fname}' permanentemente?\n\n"
+            "Isso remove o arquivo de content/images/ e a entrada no manifest.",
+            parent=self,
+        ):
+            return
+
+        # Delete from disk
+        try:
+            if img_path.exists():
+                img_path.unlink()
+        except Exception as e:
+            messagebox.showerror(
+                "Erro", f"Não foi possível remover o arquivo:\n{e}", parent=self
+            )
+            return
+
+        # Remove from manifest curation data
+        if self._current_entry and self._current_page is not None:
+            page_key = (
+                str(self._current_page) if self._current_page is not None else "none"
+            )
+            curation = self._current_entry.get("image_curation", {})
+            page_data = curation.get("pages", {}).get(page_key, {})
+            page_data.get("images", {}).pop(fname, None)
+
+        # Remove from in-memory image groups
+        groups = (
+            self._current_entry.get("_image_groups", {})
+            if self._current_entry
+            else {}
+        )
+        page_imgs = groups.get(self._current_page, [])
+        groups[self._current_page] = [p for p in page_imgs if p.name != fname]
+
+        # Save manifest
+        self._save_curation()
+
+        # Refresh the image panel
+        images = groups.get(self._current_page, [])
+        self._show_images(self._current_entry, self._current_page, images)
+        self.status_var.set(f"'{fname}' removida.")
 
     def _preclassify(self):
         """Run heuristic pre-classification on all images for the current entry."""
