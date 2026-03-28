@@ -98,7 +98,6 @@ class OllamaClient:
             "Informações como nomes de variáveis, ordem de enumeração, "
             "rótulos e definições presentes no texto devem ser refletidas "
             "fielmente na descrição da imagem."
-            " /no_think"
         )
         import time
 
@@ -141,7 +140,12 @@ class OllamaClient:
         logger.info("[Ollama] Resposta recebida em %.1fs (%d bytes)", elapsed, len(raw))
 
         result = json.loads(raw)
+        # Qwen3-VL thinking variants put content in "thinking" instead of "response"
         response_text = result.get("response", "").strip()
+        if not response_text:
+            response_text = result.get("thinking", "").strip()
+            if response_text:
+                logger.info("[Ollama] Conteúdo obtido do campo 'thinking' (modelo em modo thinking)")
         tokens = result.get("eval_count", "?")
         logger.info("[Ollama] Descrição: %d chars, ~%s tokens", len(response_text), tokens)
         return response_text
