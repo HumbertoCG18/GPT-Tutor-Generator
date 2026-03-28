@@ -223,6 +223,7 @@ class App(tk.Tk):
         ttk.Button(repo_actions, text="⚙ Configurações", command=self.open_settings).pack(side="right", padx=(6, 0))
         ttk.Button(repo_actions, text="? Ajuda  F1", command=self.open_help).pack(side="right", padx=(6, 0))
         ttk.Button(repo_actions, text="🖌 Curator Studio", command=self.open_curator_studio).pack(side="right", padx=(6, 0))
+        ttk.Button(repo_actions, text="🖼 Image Curator", command=self.open_image_curator).pack(side="right", padx=(6, 0))
         cb_shutdown = ttk.Checkbutton(
             repo_actions,
             text="⏻ Desligar ao concluir build",
@@ -656,6 +657,15 @@ class App(tk.Tk):
         
         from src.ui.curator_studio import CuratorStudio
         CuratorStudio(self, str(repo_dir), self.theme_mgr)
+
+    def open_image_curator(self):
+        repo_dir = self._repo_dir()
+        if not repo_dir:
+            messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório para abrir o Image Curator.")
+            return
+
+        from src.ui.image_curator import ImageCurator
+        ImageCurator(self, str(repo_dir), self.theme_mgr)
 
     def _on_subject_selected(self, _event=None):
         name = self._var_active_subject.get()
