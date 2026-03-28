@@ -400,11 +400,11 @@ class ImageCurator(tk.Toplevel):
                 anchor="w"
             )
 
-            # Description preview (if exists)
+            # Description preview (if exists) — click to view full
             desc = existing.get("description")
             if desc:
                 desc_preview = desc[:80] + "..." if len(desc) > 80 else desc
-                tk.Label(
+                desc_lbl = tk.Label(
                     card,
                     text=desc_preview,
                     bg=p["input_bg"],
@@ -412,7 +412,13 @@ class ImageCurator(tk.Toplevel):
                     font=("Segoe UI", 8),
                     wraplength=200,
                     justify="left",
-                ).pack(pady=(4, 0))
+                    cursor="hand2",
+                )
+                desc_lbl.pack(pady=(4, 0))
+                desc_lbl.bind(
+                    "<Button-1>",
+                    lambda e, f=fname, d=desc: self._show_description(f, d),
+                )
 
             # Delete button
             ttk.Button(
@@ -501,6 +507,30 @@ class ImageCurator(tk.Toplevel):
             tk.Label(win, text=f"Erro: {e}", bg=p["bg"], fg=p["error"]).pack(
                 padx=20, pady=20
             )
+
+    def _show_description(self, fname: str, description: str):
+        """Show full image description in a scrollable window."""
+        p = self.theme_mgr.palette(self._theme_name)
+        win = tk.Toplevel(self)
+        win.title(f"Descrição — {fname}")
+        win.geometry("600x400")
+        win.configure(bg=p["bg"])
+
+        text_widget = tk.Text(
+            win,
+            wrap="word",
+            bg=p["input_bg"],
+            fg=p["fg"],
+            insertbackground=p["fg"],
+            font=("Consolas", 10),
+            padx=12,
+            pady=12,
+        )
+        text_widget.insert("1.0", description)
+        text_widget.config(state="disabled")
+        text_widget.pack(fill="both", expand=True, padx=10, pady=10)
+
+        ttk.Button(win, text="Fechar", command=win.destroy).pack(pady=(0, 10))
 
     def _render_pdf_page(self, page_num: int):
         """Render a PDF page to the PDF canvas using pymupdf."""
@@ -912,20 +942,21 @@ class ImageCurator(tk.Toplevel):
             # Mark as described
             curation["status"] = "described"
 
-            # Save manifest
-            self.after(0, lambda: self._write_manifest_entry(entry_id))
-            self.after(
-                0,
-                lambda: self.status_var.set(
+            def _on_done():
+                self._write_manifest_entry(entry_id)
+                # Refresh cards to show descriptions
+                if self._current_entry and self._current_page is not None:
+                    groups = self._current_entry.get("_image_groups", {})
+                    images = groups.get(self._current_page, [])
+                    self._show_images(self._current_entry, self._current_page, images)
+                self.status_var.set(
                     f"Descrições geradas para {total} imagens. Salvo no manifest."
-                ),
-            )
-            self.after(
-                0,
-                lambda: messagebox.showinfo(
+                )
+                messagebox.showinfo(
                     "Image Curator", f"{total} descrições geradas com sucesso!"
-                ),
-            )
+                )
+
+            self.after(0, _on_done)
 
         threading.Thread(target=_worker, daemon=True).start()
 
