@@ -1,5 +1,9 @@
 # Image Curator Implementation Plan
 
+> Historical implementation plan: the live code has diverged from this plan.
+> The current runtime uses Ollama `/api/chat` with `qwen3-vl:235b-cloud` as the default vision model.
+> Use this file for project history only.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add semi-automatic image curation and description generation using Qwen3-VL via Ollama, making PDF image content accessible to Claude, GPT and Gemini tutors as indexed text in markdowns.

@@ -1,291 +1,134 @@
-<div align="center">
-  <h1>Academic Tutor Repo Builder V3</h1>
-  <p>Aplicação desktop em Python/tkinter para transformar materiais acadêmicos em repositórios estruturados para Claude, GPT e Gemini.</p>
-</div>
+# GPT Tutor Generator
 
----
+[![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white)](#requisitos)
+[![UI](https://img.shields.io/badge/UI-Tkinter-1f6feb)](#arquitetura)
+[![Vision](https://img.shields.io/badge/Vision-Ollama-000000)](#image-curator-e-vision)
+[![Modelo](https://img.shields.io/badge/Modelo%20padr%C3%A3o-qwen3--vl%3A235b--cloud-6f42c1)](#image-curator-e-vision)
+[![License](https://img.shields.io/badge/Licen%C3%A7a-MIT-green)](#licen%C3%A7a)
+
+Aplicação desktop em Python para transformar materiais acadêmicos em um repositório Markdown estruturado, curado e pronto para uso com tutores baseados em LLM.
+
+## Sumário
+
+- [Visão Geral](#visão-geral)
+- [Como o App Funciona](#como-o-app-funciona)
+- [Arquitetura](#arquitetura)
+- [Arquivos e Fontes Suportadas](#arquivos-e-fontes-suportadas)
+- [Processamento de Arquivos](#processamento-de-arquivos)
+- [Image Curator e Vision](#image-curator-e-vision)
+- [Estrutura do Repositório Gerado](#estrutura-do-repositório-gerado)
+- [Requisitos](#requisitos)
+- [Instalação](#instalação)
+- [Configuração](#configuração)
+- [Execução](#execução)
+- [Testes](#testes)
+- [Notas de Manutenção](#notas-de-manutenção)
+- [Licença](#licença)
 
 ## Visão Geral
 
-O **Academic Tutor Repo Builder V3** converte PDFs, imagens, links, repositórios GitHub, arquivos de código e ZIPs em um repositório Markdown curado para estudo assistido por IA.
+O **GPT Tutor Generator** foi projetado para organizar materiais de estudo reais de uma disciplina ao longo do semestre e convertê-los em um repositório navegável por IA.
 
-O fluxo principal é:
+Ele combina:
+
+- importação multiformato
+- processamento automático de PDFs e documentos
+- revisão manual dos casos difíceis
+- curadoria de imagens acadêmicas
+- geração de instruções e artefatos para Claude, GPT e Gemini
+
+O sistema mantém contexto de:
+
+- disciplina
+- professor
+- semestre
+- cronograma
+- perfil do aluno
+- progresso de processamento
+
+## Como o App Funciona
+
+Fluxo de alto nível:
 
 ```text
-App -> importar materiais -> processar -> revisar -> gerar instruções -> conectar à IA
+Importar materiais
+  -> classificar e configurar entries
+  -> processar PDFs / links / código / imagens
+  -> revisar saídas problemáticas
+  -> curar imagens e extrair descrições
+  -> consolidar conteúdo em markdown
+  -> gerar arquivos de instrução e estrutura pedagógica
 ```
 
-O projeto foi pensado para disciplinas reais ao longo do semestre:
+Fluxo típico no app:
 
-- salvar perfis de matéria e aluno
-- processar materiais com múltiplos backends
-- revisar manualmente conteúdos críticos no Curator Studio
-- manter backlog e manifest do repositório
-- gerar instruções para `Claude`, `GPT` e `Gemini`
+1. Criar ou selecionar uma matéria.
+2. Definir pasta do repositório.
+3. Importar arquivos e links.
+4. Processar a fila.
+5. Revisar saídas em `manual-review/` quando necessário.
+6. Abrir o **Image Curator** para imagens extraídas de PDFs ou fotos.
+7. Gerar descrições e extrações em LaTeX.
+8. Construir ou atualizar o repositório final.
 
----
-
-## Principais Funcionalidades
-
-### 1. Perfis persistentes
-
-- **Matérias:** nome, slug, professor, semestre, instituição, horário, cronograma, plano de ensino, pasta do repositório, URL GitHub e LLM principal.
-- **Aluno:** nome, apelido e preferências de aprendizagem.
-- A fila de arquivos é persistida por matéria.
-
-### 2. Importação multicanal
-
-O app aceita:
-
-- PDFs
-- imagens e fotos
-- links web
-- repositórios GitHub
-- arquivos de código
-- arquivos ZIP
-
-Também é possível:
-
-- importar cronograma a partir de HTML
-- extrair plano de ensino a partir de PDF
-
-### 3. Processamento em camadas
-
-Modos disponíveis:
-
-- `auto`
-- `quick`
-- `high_fidelity`
-- `manual_assisted`
-
-Perfis de documento:
-
-- `auto`
-- `general`
-- `math_light`
-- `math_heavy`
-- `layout_heavy`
-- `scanned`
-- `exam_pdf`
-
-### 4. Múltiplos backends
-
-Base:
-
-- `pymupdf4llm`
-- `pymupdf`
-
-Avançados:
-
-- `docling`
-- `marker`
-
-O app também consegue:
-
-- extrair tabelas
-- extrair imagens
-- forçar OCR
-- limitar processamento por intervalo de páginas
-
-### 5. URL Fetcher com Markdown estruturado
-
-Ao importar links, o app:
-
-- busca o conteúdo da página
-- tenta isolar o conteúdo principal
-- converte headings, listas, links, código e tabelas HTML para Markdown
-- gera um `.md` mais limpo, em vez de despejar texto cru
-
-### 6. Backlog e manifest
-
-A aba **Backlog** lê o `manifest.json` do repositório e permite:
-
-- atualizar a lista de itens processados
-- editar metadados
-- limpar processamento de uma entry
-- reprocessar o repositório
-- regenerar instruções LLM
-
-### 7. Curator Studio
-
-O **Curator Studio** revisa os arquivos em `manual-review/`.
-
-Ele permite:
-
-- comparar preview e markdown
-- escolher entre saída base, avançada ou template
-- editar e salvar
-- aprovar e promover conteúdo para a pasta final correta
-- reprovar e devolver o item para a fila
-- restaurar templates ausentes
-- aprovar todos os pendentes
-
-### 8. Geração de instruções para IA
-
-O projeto gera:
-
-- `INSTRUCOES_CLAUDE_PROJETO.md`
-- `INSTRUCOES_GPT_PROJETO.md`
-- `INSTRUCOES_GEMINI_PROJETO.md`
-
-Além disso, gera arquivos pedagógicos e de estado como:
-
-- `system/TUTOR_POLICY.md`
-- `system/PEDAGOGY.md`
-- `system/MODES.md`
-- `system/OUTPUT_TEMPLATES.md`
-- `course/COURSE_MAP.md`
-- `course/GLOSSARY.md`
-- `content/BIBLIOGRAPHY.md`
-- `student/STUDENT_STATE.md`
-- `student/PROGRESS_SCHEMA.md`
-
----
-
-## Estrutura do Projeto
+## Arquitetura
 
 ```text
+app.py
+  -> bootstrap da aplicação
+
 src/
 ├── builder/
-│   └── engine.py
+│   ├── engine.py            # pipeline principal de processamento e build
+│   ├── image_classifier.py  # heurísticas para imagens
+│   ├── ollama_client.py     # integração Vision via Ollama /api/chat
+│   └── vision_client.py     # fábrica do cliente de vision
 ├── models/
-│   └── core.py
+│   └── core.py             # dataclasses e modelos persistidos
 ├── ui/
-│   ├── app.py
-│   ├── dialogs.py
-│   ├── curator_studio.py
-│   └── theme.py
+│   ├── app.py              # janela principal
+│   ├── dialogs.py          # configurações, status, ajuda, dialogs utilitários
+│   ├── image_curator.py    # curadoria de imagens e extração visual
+│   └── theme.py            # tema e configuração persistente
 └── utils/
-    └── helpers.py
-
-tests/
-└── test_core.py
+    └── helpers.py          # helpers, autodetects, OCR/Tesseract e utilidades
 ```
 
-Arquivos de apoio importantes:
+### Decisões Atuais de Arquitetura
 
-- `app.py` -> bootstrap simples para rodar a aplicação
-- `CODEX.md` -> guia de manutenção do projeto
-- `requirements.txt` -> dependências
-- `pyproject.toml` -> metadados e config de testes
+- Backend de vision ativo: `ollama`
+- Endpoint usado para vision: `/api/chat`
+- Modelo padrão: `qwen3-vl:235b-cloud`
+- Mesmo modelo para:
+  - descrição de imagens
+  - extração fiel de texto/matemática com prompt de LaTeX
+- Diferença entre os modos: apenas o prompt
 
----
+## Arquivos e Fontes Suportadas
 
-## Requisitos
-
-- Python `3.8+`
-- Windows, Linux ou outro ambiente compatível com `tkinter`
-
-Dependências principais:
-
-```bash
-pip install -r requirements.txt
-```
-
-`requirements.txt` inclui:
-
-- `pymupdf`
-- `pymupdf4llm`
-- `pdfplumber`
-- `Pillow`
-
-Backends opcionais:
-
-```bash
-pip install docling
-pip install marker-pdf
-```
-
-Para OCR com Tesseract, o executável e `tessdata` precisam estar disponíveis no ambiente.
-
----
-
-## Como Rodar
-
-### Windows
-
-```powershell
-run.ps1
-```
-
-ou
-
-```bat
-run.bat
-```
-
-### Qualquer plataforma
-
-```bash
-python app.py
-```
-
-ou
-
-```bash
-python -m src
-```
-
----
-
-## Fluxo Recomendado de Uso
-
-### No app
-
-1. Abra `📝 Gerenciar` e crie a matéria.
-2. Preencha professor, semestre, cronograma, plano de ensino, URL GitHub e LLM principal.
-3. Abra `👤 Aluno` e ajuste o perfil do estudante.
-4. Selecione a matéria ativa.
-5. Defina a pasta do repositório ou use `📂 Abrir Repo`.
-6. Importe PDFs, imagens, links ou código.
-7. Processe um item com `⚡ Processar` ou rode `🚀 Criar Repositório`.
-8. Revise `manual-review/` no `🖌 Curator Studio`.
-9. Use a aba `Backlog` para editar entries, reprocessar o repo e gerar instruções LLM.
-
-### Fora do app
-
-1. Faça push do repositório para o GitHub, se for usar sync.
-2. Conecte o repositório à plataforma principal escolhida.
-3. Use o arquivo de instruções correspondente.
-4. Atualize `student/STUDENT_STATE.md` ao longo do semestre.
-
----
-
-## Estrutura do Repositório Gerado
-
-Exemplo:
+O app suporta entradas dos seguintes tipos:
 
 ```text
-{repo-root}/
-├── INSTRUCOES_CLAUDE_PROJETO.md
-├── INSTRUCOES_GPT_PROJETO.md
-├── INSTRUCOES_GEMINI_PROJETO.md
-├── manifest.json
-├── system/
-├── course/
-├── student/
-├── content/
-├── exercises/
-├── exams/
-├── raw/
-├── staging/
-├── manual-review/
-└── build/
+pdf
+image
+url
+github-repo
+code
+zip
 ```
 
-Pontos importantes:
+### Exemplos práticos
 
-- `raw/` guarda os arquivos originais copiados para o repositório
-- `staging/` guarda saídas automáticas intermediárias
-- `manual-review/` concentra revisão humana guiada
-- `content/`, `exercises/` e `exams/` recebem o conteúdo aprovado
-- `build/claude-knowledge/bundle.seed.json` guarda a seleção inicial de materiais prioritários
+- PDFs de aula
+- provas e listas escaneadas
+- fotos de quadro
+- screenshots de material
+- páginas web e bibliografias online
+- repositórios GitHub
+- arquivos `.py`, `.js`, `.java`, `.cpp` e outros
+- ZIPs com material compactado
 
----
-
-## Categorias Atuais
-
-As categorias válidas do projeto são:
+### Categorias acadêmicas disponíveis
 
 ```python
 [
@@ -305,50 +148,281 @@ As categorias válidas do projeto são:
 ]
 ```
 
-Algumas têm efeitos especiais:
+## Processamento de Arquivos
 
-- `provas` e `fotos-de-prova` alimentam índices de exames
-- `listas` e `gabaritos` alimentam índices de exercícios
-- `trabalhos`, `codigo-*` e `quadro-branco` entram nas instruções e no contexto pedagógico
+O pipeline usa múltiplas camadas e heurísticas.
 
----
+### Modos de processamento
+
+```text
+auto
+quick
+high_fidelity
+manual_assisted
+```
+
+### Perfis de documento
+
+```text
+auto
+general
+math_light
+math_heavy
+layout_heavy
+scanned
+exam_pdf
+```
+
+### Backends de extração
+
+Base:
+
+- `pymupdf4llm`
+- `pymupdf`
+
+Avançados:
+
+- `docling`
+- `marker`
+
+O sistema também consegue:
+
+- extrair imagens
+- extrair tabelas
+- forçar OCR
+- preservar imagens do PDF no markdown
+- limitar páginas por faixa
+- consolidar saídas intermediárias
+
+## Image Curator e Vision
+
+O **Image Curator** é a camada de curadoria visual do projeto.
+
+Ele opera sobre `content/images/` e faz:
+
+- agrupamento por página
+- preview de imagens
+- preview da página do PDF
+- captura manual de regiões
+- classificação heurística
+- descrição acadêmica de imagens
+- extração de texto + matemática com saída em Markdown/LaTeX
+
+### Tipos visuais usados no curator
+
+```text
+diagrama
+tabela
+fórmula
+código
+genérico
+decorativa
+extração-latex
+```
+
+### Runtime atual de Vision
+
+```text
+Backend:  ollama
+Modelo:   qwen3-vl:235b-cloud
+Fallback: qwen3-vl:8b
+Endpoint: http://localhost:11434/api/chat
+```
+
+### Setup do Ollama
+
+```powershell
+ollama signin
+ollama pull qwen3-vl:235b-cloud
+ollama pull qwen3-vl:8b
+```
+
+Opcionalmente, se quiser apenas testar o fallback local:
+
+```powershell
+ollama pull qwen3-vl:8b
+```
+
+### Validação no App
+
+Na interface:
+
+1. abra `📊 Status`
+2. localize a seção `Vision — Descrição de Imagens`
+3. clique em `Validar Vision`
+
+O app verifica automaticamente:
+
+- Ollama acessível
+- modelo configurado disponível
+- fallback disponível
+- readiness de cloud quando o modelo termina com `-cloud`
+
+### Observações importantes
+
+- `qwen3-vl:235b-cloud` exige `ollama signin`
+- o uso pode ser limitado pelo plano da conta Ollama
+- documentos sensíveis deixam de ser estritamente locais ao usar cloud models
+
+## Estrutura do Repositório Gerado
+
+```text
+{repo-root}/
+├── INSTRUCOES_CLAUDE_PROJETO.md
+├── INSTRUCOES_GPT_PROJETO.md
+├── INSTRUCOES_GEMINI_PROJETO.md
+├── manifest.json
+├── build/
+├── content/
+├── course/
+├── exercises/
+├── exams/
+├── manual-review/
+├── raw/
+├── staging/
+├── student/
+└── system/
+```
+
+### Pastas importantes
+
+- `raw/`: cópias dos arquivos originais
+- `staging/`: saídas intermediárias e automáticas
+- `manual-review/`: revisão manual guiada
+- `content/`: conteúdo textual consolidado
+- `exercises/`: materiais de exercício
+- `exams/`: materiais de prova
+- `build/`: artefatos de build e bundles
+
+## Requisitos
+
+- Python `3.8+`
+- ambiente com `tkinter`
+- Ollama instalado
+- Ollama acessível em `http://localhost:11434`
+
+Dependências Python principais:
+
+- `pymupdf`
+- `pymupdf4llm`
+- `pdfplumber`
+- `Pillow`
+- `pytest` para desenvolvimento
+
+Ferramentas opcionais:
+
+- `docling`
+- `marker-pdf`
+- `tesseract`
+
+## Instalação
+
+### Windows / PowerShell
+
+```powershell
+python -m venv .venv
+& .\.venv\Scripts\Activate.ps1
+pip install -U pip
+pip install -e .[dev]
+```
+
+Backends opcionais:
+
+```powershell
+pip install docling
+pip install marker-pdf
+```
+
+Se for usar OCR:
+
+- instale o Tesseract
+- garanta `tessdata` configurado corretamente
+
+## Configuração
+
+### `.env`
+
+Hoje, **não é necessário adicionar nada novo no `.env` para o pipeline de vision com Ollama**.
+
+Seu `.env` atual pode continuar só com as chaves de LLMs externas já usadas em outros fluxos do projeto:
+
+```env
+OPENAI_API_KEY=''
+GEMINI_API_KEY=''
+```
+
+### Configuração persistida do app
+
+As opções do app ficam em:
+
+```text
+~/.gpt_tutor_config.json
+```
+
+Exemplo:
+
+```json
+{
+  "vision_backend": "ollama",
+  "vision_model": "qwen3-vl:235b-cloud",
+  "vision_model_quantization": "default",
+  "ollama_base_url": "http://localhost:11434"
+}
+```
+
+### O que realmente precisa para Vision funcionar
+
+```powershell
+ollama signin
+ollama pull qwen3-vl:235b-cloud
+ollama pull qwen3-vl:8b
+```
+
+## Execução
+
+### Script PowerShell
+
+```powershell
+.\run.ps1
+```
+
+### Script batch
+
+```bat
+run.bat
+```
+
+### Execução direta
+
+```powershell
+python app.py
+```
 
 ## Testes
 
-Rodar a suíte:
+Rodar a suíte principal:
 
-```bash
-python -m pytest tests/ -v
+```powershell
+pytest tests -q
 ```
 
-Saída compacta:
+Rodar apenas os testes do Image Curator / Vision:
 
-```bash
-python -m pytest tests/ -q
+```powershell
+pytest tests\test_image_curation.py -q
 ```
-
-Filtrar por nome:
-
-```bash
-python -m pytest tests/ -k "UrlFetcher"
-```
-
-Os testes são headless; `tkinter` é mockado em `tests/test_core.py`.
-
----
 
 ## Notas de Manutenção
 
-- Não use `asdict()` diretamente em `SubjectProfile`; use `to_dict()` / `from_dict()`.
-- `incremental_build()` pode retornar cedo sem novos arquivos, mas ainda regenerar arquivos pedagógicos.
-- `parse_page_range("1-3")` converte automaticamente para base zero.
-- Novos dialogs `tk.Toplevel` devem aplicar tema com `apply_theme_to_toplevel(...)`.
-- O ponto central do projeto está em `src/builder/engine.py`.
-
-Para contexto mais técnico de manutenção, consulte `CODEX.md`.
-
----
+- O pipeline de vision ativo é Ollama-only
+- O ponto de verdade do fluxo atual está em:
+  - `src/builder/ollama_client.py`
+  - `src/builder/vision_client.py`
+  - `src/ui/image_curator.py`
+  - `src/ui/dialogs.py`
+- Documentos em `docs/superpowers/` podem descrever versões históricas da implementação
+- O modelo padrão de maior qualidade hoje é `qwen3-vl:235b-cloud`
 
 ## Licença
 
-MIT.
+MIT

@@ -82,7 +82,7 @@ THEMES: Dict[str, Dict[str, str]] = {
 CONFIG_PATH = Path.home() / ".gpt_tutor_config.json"
 
 class AppConfig:
-    """Manages persistent app configuration via ~/.gpt_tutor_config.json and .env for API keys."""
+    """Manages persistent app configuration via ~/.gpt_tutor_config.json."""
 
     DEFAULTS: Dict[str, object] = {
         "theme": "dark",
@@ -108,7 +108,7 @@ class AppConfig:
             if CONFIG_PATH.exists():
                 stored = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
                 self.data.update({k: v for k, v in stored.items() if k in self.DEFAULTS})
-                if self.data.get("vision_backend") == "ollama" and self.data.get("vision_model") in {"qwen3-vl", "qwen3-vl:8b"}:
+                if self.data.get("vision_backend") == "ollama" and self.data.get("vision_model") in {"qwen3-vl", "qwen2.5vl:7b", "qwen3-vl:8b"}:
                     self.data["vision_model"] = "qwen3-vl:235b-cloud"
         except Exception:
             pass

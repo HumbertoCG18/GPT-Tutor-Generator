@@ -12,7 +12,6 @@ from src.utils.helpers import (
     fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM
 )
 from src.builder.engine import BackendSelector
-from src.builder.vision_client import DEFAULT_TRANSFORMERS_MODEL
 from src.ui.theme import ThemeManager, AppConfig, THEMES, apply_theme_to_toplevel
 class Tooltip:
     """Shows a descriptive tooltip balloon after the mouse hovers for `delay` ms."""
@@ -205,7 +204,6 @@ class SettingsDialog(tk.Toplevel):
         VISION_MODELS = [
             "qwen3-vl:235b-cloud",
             "qwen3-vl:8b",
-            "qwen2.5vl:7b",
         ]
         QUANTIZATIONS = ["default", "q4_K_M", "q5_K_M", "q8_0", "fp16"]
 
@@ -231,9 +229,9 @@ class SettingsDialog(tk.Toplevel):
             row=url_row, column=0, sticky="w", pady=6, padx=(0, 16))
         ttk.Entry(tab_proc, textvariable=self._var_ollama_url, width=28).grid(
             row=url_row, column=1, sticky="ew")
-        add_tooltip(vcb, "Para Ollama, use nomes como qwen3-vl:235b-cloud, qwen3-vl:8b ou qwen2.5vl:7b.\n"
+        add_tooltip(vcb, "Para Ollama, use nomes como qwen3-vl:235b-cloud ou qwen3-vl:8b.\n"
                          "qwen3-vl:235b-cloud é o padrão para máxima qualidade visual.\n"
-                         "qwen3-vl:8b e qwen2.5vl:7b servem como opções locais/fallback.")
+                         "qwen3-vl:8b é o fallback local recomendado.")
 
         tab_proc.columnconfigure(1, weight=1)
 
@@ -2442,55 +2440,84 @@ class StatusDialog(tk.Toplevel):
         row(f_vis, "Backend selecionado", True, backend)
 
         configured_model = config_obj.get("vision_model", "qwen3-vl:235b-cloud")
-        if backend == "transformers":
-            import importlib.util
+        ollama_url = config_obj.get("ollama_base_url", "http://localhost:11434")
+        from src.builder.ollama_client import FALLBACK_MODEL, get_vision_setup_status
+        vision_status = get_vision_setup_status(ollama_url, configured_model)
+        available_models = vision_status["available_models"]
+        model_found = bool(vision_status["model_found"])
+        fallback_found = bool(vision_status["fallback_found"])
 
-            has_transformers = importlib.util.find_spec("transformers") is not None
-            has_torch = importlib.util.find_spec("torch") is not None
-            row(f_vis, "transformers", has_transformers, "importável" if has_transformers else "pip install transformers")
-            row(f_vis, "torch", has_torch, "importável" if has_torch else "pip install torch")
-            model_ok = "/" in configured_model
-            row(f_vis, f"Modelo: {configured_model}", model_ok,
-                "model id válido" if model_ok else f"use um id como {DEFAULT_TRANSFORMERS_MODEL}")
-        else:
-            ollama_url = config_obj.get("ollama_base_url", "http://localhost:11434")
-            ollama_running = False
-            available_models = []
-            try:
-                from urllib.request import urlopen
-                resp = urlopen(f"{ollama_url}/api/tags", timeout=3)
-                data = json.loads(resp.read())
-                ollama_running = True
-                available_models = [m.get("name", "") for m in data.get("models", [])]
-            except Exception:
-                pass
+        row(f_vis, "Ollama rodando", bool(vision_status["ollama_running"]),
+            ollama_url if vision_status["ollama_running"] else f"não acessível em {ollama_url}")
 
-            row(f_vis, "Ollama rodando", ollama_running,
-                ollama_url if ollama_running else f"não acessível em {ollama_url}")
-
-            configured_base = configured_model.split(":")[0]
-            model_found = any(configured_base in name for name in available_models)
-            row(f_vis, f"Modelo: {configured_model}", model_found,
-                "disponível" if model_found else f"ollama pull {configured_model}")
-            if configured_model.endswith("-cloud"):
+        row(f_vis, f"Modelo: {configured_model}", model_found,
+            "disponível" if model_found else f"ollama pull {configured_model}")
+        if configured_model.endswith("-cloud"):
+            if vision_status["cloud_ready"]:
+                row(f_vis, "Cloud pronto", True, "modelo cloud exato disponível")
+            elif vision_status["local_family_ready"]:
+                warn_row(
+                    f_vis,
+                    "Modo local detectado",
+                    f"família {configured_model.split(':')[0]} disponível localmente; cloud exato não encontrado",
+                )
+            else:
                 warn_row(
                     f_vis,
                     "Modelo cloud",
                     "requer ollama signin e uso pode ser limitado pelo plano",
                 )
 
-            from src.builder.ollama_client import FALLBACK_MODEL
-            fallback_base = FALLBACK_MODEL.split(":")[0]
-            fallback_found = any(fallback_base in name for name in available_models)
-            row(f_vis, f"Fallback: {FALLBACK_MODEL}", fallback_found,
-                "disponível" if fallback_found else f"ollama pull {FALLBACK_MODEL}")
+        row(f_vis, f"Fallback: {FALLBACK_MODEL}", fallback_found,
+            "disponível" if fallback_found else f"ollama pull {FALLBACK_MODEL}")
 
-            vision_keywords = ["qwen", "llava", "vl", "vision"]
-            vision_models = [m for m in available_models
-                             if any(kw in m.lower() for kw in vision_keywords)]
-            if vision_models and not model_found:
-                warn_row(f_vis, "Modelos Vision disponíveis",
-                         ", ".join(vision_models[:5]))
+        vision_keywords = ["qwen", "llava", "vl", "vision"]
+        vision_models = [m for m in available_models
+                         if any(kw in m.lower() for kw in vision_keywords)]
+        if vision_models and not model_found:
+            warn_row(f_vis, "Modelos Vision disponíveis",
+                     ", ".join(vision_models[:5]))
+
+        def validate_vision_setup():
+            status = get_vision_setup_status(ollama_url, configured_model)
+            checks = [
+                ("Ollama acessível", bool(status["ollama_running"])),
+                ("Modelo configurado disponível", bool(status["model_found"])),
+                ("Fallback disponível", bool(status["fallback_found"])),
+            ]
+            if configured_model.endswith("-cloud"):
+                checks.append(("Cloud pronto (signin + pull)", bool(status["cloud_ready"])))
+                checks.append(("Família local disponível", bool(status["local_family_ready"])))
+
+            lines = []
+            for label, ok in checks:
+                lines.append(f"{'OK' if ok else 'FALHA'} - {label}")
+
+            if not status["ollama_running"]:
+                lines.append("")
+                lines.append(f"Ação sugerida: verificar {ollama_url} e iniciar 'ollama serve'.")
+            elif configured_model.endswith("-cloud") and not status["cloud_ready"]:
+                lines.append("")
+                if status["local_family_ready"]:
+                    lines.append("Operação possível em modo local com a mesma família de modelo.")
+                    lines.append(f"Modelo local detectado: {FALLBACK_MODEL}")
+                    lines.append("Para habilitar o cloud exato:")
+                    lines.append("1. ollama signin")
+                    lines.append(f"2. ollama pull {configured_model}")
+                else:
+                    lines.append("Ações sugeridas:")
+                    lines.append("1. ollama signin")
+                    lines.append(f"2. ollama pull {configured_model}")
+            elif not status["model_found"]:
+                lines.append("")
+                lines.append(f"Ação sugerida: ollama pull {configured_model}")
+            elif not status["fallback_found"]:
+                lines.append("")
+                lines.append(f"Ação sugerida: ollama pull {FALLBACK_MODEL}")
+
+            messagebox.showinfo("Validação Vision", "\n".join(lines), parent=self)
+
+        ttk.Button(f_vis, text="Validar Vision", command=validate_vision_setup).pack(anchor="w", pady=(8, 0))
 
         # ── Botão fechar ─────────────────────────────────────────────────
         ttk.Button(outer, text="Fechar", command=self.destroy).pack(pady=(4, 0))

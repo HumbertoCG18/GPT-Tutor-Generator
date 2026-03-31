@@ -1,5 +1,9 @@
 # Image Curator com LLaVA Local — Design Spec
 
+> Historical design note: the current implementation no longer follows this document exactly.
+> Runtime today is Ollama via `/api/chat`, using `qwen3-vl:235b-cloud` as the primary model.
+> Treat the details below as original design history, not the current source of truth.
+
 **Data:** 2026-03-25
 **Status:** Aprovado
 

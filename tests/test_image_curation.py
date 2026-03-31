@@ -36,16 +36,16 @@ class TestOllamaClient:
             assert available is True
             assert "qwen3-vl:235b-cloud" in msg
 
-    def test_check_availability_fallback(self):
+    def test_check_availability_accepts_local_8b_as_available(self):
         from src.builder.ollama_client import OllamaClient
         with mock.patch(
             "src.builder.ollama_client.urlopen",
-            return_value=_mock_urlopen_json({"models": [{"name": "qwen2.5vl:7b"}]}),
+            return_value=_mock_urlopen_json({"models": [{"name": "qwen3-vl:8b"}]}),
         ):
             client = OllamaClient()
             available, msg = client.check_availability()
             assert available is True
-            assert "fallback" in msg
+            assert "qwen3-vl:235b-cloud" in msg
 
     def test_clean_thinking_artifacts(self):
         from src.builder.ollama_client import _clean_thinking_artifacts
@@ -142,30 +142,6 @@ class TestVisionClientFactory:
         assert isinstance(client, OllamaClient)
         assert client.model == "qwen3-vl:235b-cloud"
 
-    def test_builds_transformers_client(self):
-        from src.builder.vision_client import (
-            DEFAULT_TRANSFORMERS_MODEL,
-            get_vision_client,
-            TransformersVisionClient,
-        )
-
-        client = get_vision_client({
-            "vision_backend": "transformers",
-            "vision_model": DEFAULT_TRANSFORMERS_MODEL,
-        })
-
-        assert isinstance(client, TransformersVisionClient)
-        assert client.model == DEFAULT_TRANSFORMERS_MODEL
-
-    def test_transformers_client_resolves_ollama_alias(self):
-        from src.builder.vision_client import DEFAULT_TRANSFORMERS_MODEL, TransformersVisionClient
-
-        client = TransformersVisionClient("qwen3-vl")
-        available, msg = client.check_availability()
-
-        assert available is True
-        assert DEFAULT_TRANSFORMERS_MODEL in msg
-
 
 def test_image_types_include_latex_extraction():
     from src.ui.image_curator import IMAGE_TYPES
@@ -199,6 +175,25 @@ def test_app_config_migrates_local_8b_to_cloud_235b(tmp_path):
     config_path.write_text(json.dumps({
         "vision_backend": "ollama",
         "vision_model": "qwen3-vl:8b",
+    }), encoding="utf-8")
+
+    original = theme.CONFIG_PATH
+    try:
+        theme.CONFIG_PATH = config_path
+        cfg = theme.AppConfig()
+    finally:
+        theme.CONFIG_PATH = original
+
+    assert cfg.get("vision_model") == "qwen3-vl:235b-cloud"
+
+
+def test_app_config_migrates_qwen25_fallback_to_cloud_235b(tmp_path):
+    from src.ui import theme
+
+    config_path = tmp_path / "config.json"
+    config_path.write_text(json.dumps({
+        "vision_backend": "ollama",
+        "vision_model": "qwen2.5vl:7b",
     }), encoding="utf-8")
 
     original = theme.CONFIG_PATH

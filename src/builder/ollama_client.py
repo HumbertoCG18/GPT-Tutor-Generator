@@ -5,7 +5,7 @@ import json
 import logging
 import re
 from pathlib import Path
-from typing import Tuple
+from typing import Dict, List, Tuple
 from urllib.request import urlopen, Request
 from urllib.error import URLError
 
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 OLLAMA_BASE_URL = "http://localhost:11434"
 DEFAULT_MODEL = "qwen3-vl:235b-cloud"
-FALLBACK_MODEL = "qwen2.5vl:7b"
+FALLBACK_MODEL = "qwen3-vl:8b"
 
 IMAGE_TYPE_PROMPTS = {
     "diagrama": (
@@ -99,6 +99,40 @@ def _clean_thinking_artifacts(text: str) -> str:
             text = text[best_pos:].strip().lstrip("-").strip()
 
     return text
+
+
+def get_vision_setup_status(base_url: str, configured_model: str) -> Dict[str, object]:
+    """Collect Ollama vision setup details for UI diagnostics."""
+    status: Dict[str, object] = {
+        "base_url": base_url.rstrip("/"),
+        "configured_model": configured_model,
+        "ollama_running": False,
+        "available_models": [],
+        "model_found": False,
+        "exact_model_found": False,
+        "fallback_found": False,
+        "cloud_model": configured_model.endswith("-cloud"),
+        "cloud_ready": False,
+        "local_family_ready": False,
+    }
+
+    try:
+        resp = urlopen(f"{status['base_url']}/api/tags", timeout=3)
+        data = json.loads(resp.read())
+        available_models: List[str] = [m.get("name", "") for m in data.get("models", [])]
+        status["ollama_running"] = True
+        status["available_models"] = available_models
+        configured_base = configured_model.split(":")[0]
+        fallback_base = FALLBACK_MODEL.split(":")[0]
+        status["exact_model_found"] = configured_model in available_models
+        status["model_found"] = any(configured_base in name for name in available_models)
+        status["fallback_found"] = any(fallback_base in name for name in available_models)
+        status["cloud_ready"] = bool(status["exact_model_found"]) if status["cloud_model"] else False
+        status["local_family_ready"] = bool(status["model_found"]) and not bool(status["exact_model_found"])
+    except Exception:
+        pass
+
+    return status
 
 
 class OllamaClient:
