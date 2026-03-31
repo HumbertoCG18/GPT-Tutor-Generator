@@ -147,22 +147,38 @@ def group_images_by_page(
 ) -> Dict[Optional[int], List[Path]]:
     """Group images in a directory by page number.
 
-    Only includes images whose filename starts with *entry_prefix*.
+    Searches two locations:
+    1. ``images_dir/`` — images whose filename starts with *entry_prefix*
+       (standard pymupdf4llm extraction pattern).
+    2. ``images_dir/scanned/{entry_prefix}/`` — scanned page images
+       (one image per page, named ``page-NNN.jpg``).
+
     Images with unrecognized patterns go under key ``None``.
     """
     groups: Dict[Optional[int], List[Path]] = {}
-    if not images_dir.exists():
-        return groups
+    _IMG_EXTS = (".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp")
 
-    for img_path in sorted(images_dir.iterdir()):
-        if not img_path.is_file():
-            continue
-        if img_path.suffix.lower() not in (".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"):
-            continue
-        if not img_path.name.lower().startswith(entry_prefix.lower()):
-            continue
+    # 1. Standard images in images_dir/ with entry_prefix
+    if images_dir.exists():
+        for img_path in sorted(images_dir.iterdir()):
+            if not img_path.is_file():
+                continue
+            if img_path.suffix.lower() not in _IMG_EXTS:
+                continue
+            if not img_path.name.lower().startswith(entry_prefix.lower()):
+                continue
+            page = extract_page_number(img_path.name)
+            groups.setdefault(page, []).append(img_path)
 
-        page = extract_page_number(img_path.name)
-        groups.setdefault(page, []).append(img_path)
+    # 2. Scanned pages in images_dir/scanned/{entry_prefix}/
+    scanned_dir = images_dir / "scanned" / entry_prefix
+    if scanned_dir.exists():
+        for img_path in sorted(scanned_dir.iterdir()):
+            if not img_path.is_file():
+                continue
+            if img_path.suffix.lower() not in _IMG_EXTS:
+                continue
+            page = extract_page_number(img_path.name)
+            groups.setdefault(page, []).append(img_path)
 
     return groups

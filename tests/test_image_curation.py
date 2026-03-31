@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-import base64
 import json
 import struct
 import sys
 import zlib
-from pathlib import Path
 from unittest import mock
 
 _tk_mock = mock.MagicMock()
@@ -20,86 +18,207 @@ sys.modules.setdefault("tkinter.ttk", _tk_mock)
 import pytest
 
 
+def _mock_urlopen_json(payload):
+    response = mock.MagicMock()
+    response.read.return_value = json.dumps(payload).encode("utf-8")
+    return response
+
+
 class TestOllamaClient:
     def test_check_availability_success_primary(self):
         from src.builder.ollama_client import OllamaClient
-        client = OllamaClient()
-        with mock.patch("src.builder.ollama_client.urlopen") as mock_urlopen:
-            mock_resp = mock.MagicMock()
-            mock_resp.read.return_value = json.dumps({
-                "models": [{"name": "qwen3-vl:latest"}]
-            }).encode()
-            mock_resp.__enter__ = mock.MagicMock(return_value=mock_resp)
-            mock_resp.__exit__ = mock.MagicMock(return_value=False)
-            mock_urlopen.return_value = mock_resp
+        with mock.patch(
+            "src.builder.ollama_client.urlopen",
+            return_value=_mock_urlopen_json({"models": [{"name": "qwen3-vl:latest"}]}),
+        ):
+            client = OllamaClient()
             available, msg = client.check_availability()
             assert available is True
-            assert "qwen3-vl" in msg
+            assert "qwen3-vl:235b-cloud" in msg
 
     def test_check_availability_fallback(self):
         from src.builder.ollama_client import OllamaClient
-        client = OllamaClient()
-        with mock.patch("src.builder.ollama_client.urlopen") as mock_urlopen:
-            mock_resp = mock.MagicMock()
-            mock_resp.read.return_value = json.dumps({
-                "models": [{"name": "qwen2.5vl:7b"}]
-            }).encode()
-            mock_resp.__enter__ = mock.MagicMock(return_value=mock_resp)
-            mock_resp.__exit__ = mock.MagicMock(return_value=False)
-            mock_urlopen.return_value = mock_resp
+        with mock.patch(
+            "src.builder.ollama_client.urlopen",
+            return_value=_mock_urlopen_json({"models": [{"name": "qwen2.5vl:7b"}]}),
+        ):
+            client = OllamaClient()
             available, msg = client.check_availability()
             assert available is True
             assert "fallback" in msg
 
+    def test_clean_thinking_artifacts(self):
+        from src.builder.ollama_client import _clean_thinking_artifacts
+        dirty = (
+            "Okay, I need to describe this diagram. Let me look at the image.\n"
+            "It shows a hierarchy. The labels are in Portuguese.\n"
+            "I should structure my answer properly.\n\n"
+            "O diagrama apresenta a Hierarquia de Chomsky com 4 níveis."
+        )
+        cleaned = _clean_thinking_artifacts(dirty)
+        assert cleaned.startswith("O diagrama")
+        assert "Okay, I need" not in cleaned
+
+    def test_clean_thinking_tags(self):
+        from src.builder.ollama_client import _clean_thinking_artifacts
+        dirty = "<think>internal reasoning here</think>Descrição limpa da imagem."
+        cleaned = _clean_thinking_artifacts(dirty)
+        assert cleaned == "Descrição limpa da imagem."
+
+    def test_clean_preserves_clean_text(self):
+        from src.builder.ollama_client import _clean_thinking_artifacts
+        clean = "O diagrama apresenta a Hierarquia de Chomsky com 4 níveis."
+        assert _clean_thinking_artifacts(clean) == clean
+
     def test_check_availability_ollama_not_running(self):
         from src.builder.ollama_client import OllamaClient
-        client = OllamaClient()
         with mock.patch("src.builder.ollama_client.urlopen", side_effect=ConnectionError("refused")):
+            client = OllamaClient()
             available, msg = client.check_availability()
             assert available is False
             assert "Ollama" in msg
 
     def test_check_availability_no_vision_model(self):
         from src.builder.ollama_client import OllamaClient
-        client = OllamaClient()
-        with mock.patch("src.builder.ollama_client.urlopen") as mock_urlopen:
-            mock_resp = mock.MagicMock()
-            mock_resp.read.return_value = json.dumps({
-                "models": [{"name": "llama3:8b"}]
-            }).encode()
-            mock_resp.__enter__ = mock.MagicMock(return_value=mock_resp)
-            mock_resp.__exit__ = mock.MagicMock(return_value=False)
-            mock_urlopen.return_value = mock_resp
+        with mock.patch(
+            "src.builder.ollama_client.urlopen",
+            return_value=_mock_urlopen_json({"models": [{"name": "llama3:8b"}]}),
+        ):
+            client = OllamaClient()
             available, msg = client.check_availability()
             assert available is False
-            assert "qwen3-vl" in msg.lower() or "Vision" in msg
+            assert "qwen3-vl:235b-cloud" in msg.lower() or "Vision" in msg
 
     def test_describe_image_sends_correct_payload(self, tmp_path):
         from src.builder.ollama_client import OllamaClient, IMAGE_TYPE_PROMPTS
-        client = OllamaClient()
 
-        # Create a tiny test image file
         img_file = tmp_path / "test.png"
         img_file.write_bytes(b"\x89PNG\r\n\x1a\nfake-image-data")
 
-        with mock.patch("src.builder.ollama_client.urlopen") as mock_urlopen:
-            mock_resp = mock.MagicMock()
-            mock_resp.read.return_value = json.dumps({
-                "response": "Uma árvore de prova com 3 níveis."
-            }).encode()
-            mock_urlopen.return_value = mock_resp
+        mock_response = _mock_urlopen_json({
+            "message": {"content": "Uma árvore de prova com 3 níveis."},
+            "eval_count": 42,
+        })
 
+        with mock.patch("src.builder.ollama_client.urlopen", return_value=mock_response) as mock_urlopen:
+            client = OllamaClient()
             result = client.describe_image(img_file, "diagrama", page_context="Exemplo de árvore de prova para 4 ∈ ℕ.")
 
             assert result == "Uma árvore de prova com 3 níveis."
-            # Verify the request payload
-            call_args = mock_urlopen.call_args
-            req = call_args[0][0]
-            body = json.loads(req.data)
-            assert body["model"] == "qwen3-vl"
-            assert body["images"][0] == base64.b64encode(img_file.read_bytes()).decode()
-            assert "diagrama" in IMAGE_TYPE_PROMPTS
-            assert body["prompt"].startswith(IMAGE_TYPE_PROMPTS["diagrama"])
+            request = mock_urlopen.call_args.args[0]
+            payload = json.loads(request.data.decode("utf-8"))
+            assert payload["model"] == "qwen3-vl:235b-cloud"
+            assert payload["options"]["think"] is False
+            assert payload["messages"][0]["role"] == "system"
+            msg_content = payload["messages"][1]["content"]
+            assert IMAGE_TYPE_PROMPTS["diagrama"] in msg_content
+            assert payload["messages"][1]["images"]
+
+    def test_describe_image_uses_top_level_response_when_message_is_empty(self, tmp_path):
+        from src.builder.ollama_client import OllamaClient
+
+        img_file = tmp_path / "test.png"
+        img_file.write_bytes(b"\x89PNG\r\n\x1a\nfake-image-data")
+
+        mock_response = _mock_urlopen_json({
+            "message": {"content": ""},
+            "response": "Resposta vinda do campo top-level.",
+        })
+
+        with mock.patch("src.builder.ollama_client.urlopen", return_value=mock_response):
+            client = OllamaClient()
+            result = client.describe_image(img_file, "genérico", page_context="")
+
+        assert result == "Resposta vinda do campo top-level."
+
+
+class TestVisionClientFactory:
+    def test_defaults_to_ollama_backend(self):
+        from src.builder.vision_client import get_vision_client
+        from src.builder.ollama_client import OllamaClient
+
+        client = get_vision_client({"vision_model": "qwen3-vl:235b-cloud"})
+
+        assert isinstance(client, OllamaClient)
+        assert client.model == "qwen3-vl:235b-cloud"
+
+    def test_builds_transformers_client(self):
+        from src.builder.vision_client import (
+            DEFAULT_TRANSFORMERS_MODEL,
+            get_vision_client,
+            TransformersVisionClient,
+        )
+
+        client = get_vision_client({
+            "vision_backend": "transformers",
+            "vision_model": DEFAULT_TRANSFORMERS_MODEL,
+        })
+
+        assert isinstance(client, TransformersVisionClient)
+        assert client.model == DEFAULT_TRANSFORMERS_MODEL
+
+    def test_transformers_client_resolves_ollama_alias(self):
+        from src.builder.vision_client import DEFAULT_TRANSFORMERS_MODEL, TransformersVisionClient
+
+        client = TransformersVisionClient("qwen3-vl")
+        available, msg = client.check_availability()
+
+        assert available is True
+        assert DEFAULT_TRANSFORMERS_MODEL in msg
+
+
+def test_image_types_include_latex_extraction():
+    from src.ui.image_curator import IMAGE_TYPES
+
+    assert "extração-latex" in IMAGE_TYPES
+
+
+def test_app_config_migrates_legacy_ollama_model(tmp_path):
+    from src.ui import theme
+
+    config_path = tmp_path / "config.json"
+    config_path.write_text(json.dumps({
+        "vision_backend": "ollama",
+        "vision_model": "qwen3-vl",
+    }), encoding="utf-8")
+
+    original = theme.CONFIG_PATH
+    try:
+        theme.CONFIG_PATH = config_path
+        cfg = theme.AppConfig()
+    finally:
+        theme.CONFIG_PATH = original
+
+    assert cfg.get("vision_model") == "qwen3-vl:235b-cloud"
+
+
+def test_app_config_migrates_local_8b_to_cloud_235b(tmp_path):
+    from src.ui import theme
+
+    config_path = tmp_path / "config.json"
+    config_path.write_text(json.dumps({
+        "vision_backend": "ollama",
+        "vision_model": "qwen3-vl:8b",
+    }), encoding="utf-8")
+
+    original = theme.CONFIG_PATH
+    try:
+        theme.CONFIG_PATH = config_path
+        cfg = theme.AppConfig()
+    finally:
+        theme.CONFIG_PATH = original
+
+    assert cfg.get("vision_model") == "qwen3-vl:235b-cloud"
+
+
+def test_ollama_client_encode_image_validates_input(tmp_path):
+    from src.builder.ollama_client import OllamaClient
+
+    client = OllamaClient()
+    missing = tmp_path / "missing.png"
+
+    with pytest.raises(FileNotFoundError):
+        client._encode_image(missing)
 
 
 def _create_minimal_png(width: int, height: int, color: tuple = (255, 0, 0)) -> bytes:

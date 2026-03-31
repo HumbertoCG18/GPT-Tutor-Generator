@@ -93,7 +93,8 @@ class AppConfig:
         "image_format": "png",
         "stall_timeout": 300,
         "font_size": 10,
-        "vision_model": "qwen3-vl",
+        "vision_backend": "ollama",
+        "vision_model": "qwen3-vl:235b-cloud",
         "vision_model_quantization": "default",
         "ollama_base_url": "http://localhost:11434",
     }
@@ -107,6 +108,8 @@ class AppConfig:
             if CONFIG_PATH.exists():
                 stored = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
                 self.data.update({k: v for k, v in stored.items() if k in self.DEFAULTS})
+                if self.data.get("vision_backend") == "ollama" and self.data.get("vision_model") in {"qwen3-vl", "qwen3-vl:8b"}:
+                    self.data["vision_model"] = "qwen3-vl:235b-cloud"
         except Exception:
             pass
 

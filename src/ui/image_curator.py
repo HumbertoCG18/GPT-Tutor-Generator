@@ -20,7 +20,7 @@ from src.builder.image_classifier import (
 
 logger = logging.getLogger(__name__)
 
-IMAGE_TYPES = ["diagrama", "tabela", "fórmula", "código", "genérico", "decorativa"]
+IMAGE_TYPES = ["diagrama", "tabela", "fórmula", "código", "genérico", "decorativa", "extração-latex"]
 
 
 class ImageCurator(tk.Toplevel):
@@ -48,6 +48,8 @@ class ImageCurator(tk.Toplevel):
         self._current_page: Optional[int] = None
         self._thumbnail_refs: List[ImageTk.PhotoImage] = []  # prevent GC
         self._image_widgets: Dict[str, dict] = {}  # fname -> {type_var, include_var}
+        self._vision_client = None  # persistent client for both prompts
+        self._vision_busy = False   # prevent concurrent requests
 
         self.theme_mgr.apply(self, self._theme_name)
         self._build_ui()
@@ -220,12 +222,12 @@ class ImageCurator(tk.Toplevel):
             self.status_var.set(f"Erro ao ler manifest: {e}")
             return
 
-        # Find entries that have images in content/images/
+        # Find entries that have images in content/images/ (including scanned/)
+        _IMG_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"}
         all_images = [
             f
-            for f in self._images_dir.iterdir()
-            if f.is_file()
-            and f.suffix.lower() in (".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp")
+            for f in self._images_dir.rglob("*")
+            if f.is_file() and f.suffix.lower() in _IMG_EXTS
         ]
         if not all_images:
             self.status_var.set("Nenhuma imagem encontrada em content/images/.")
@@ -428,6 +430,10 @@ class ImageCurator(tk.Toplevel):
                 command=lambda fn=fname, ip=img_path: self._describe_single_image(fn, ip),
             ).pack(side="left", padx=(0, 4))
             ttk.Button(
+                btn_frame, text="Extrair LaTeX",
+                command=lambda fn=fname, ip=img_path: self._extract_latex_single(fn, ip),
+            ).pack(side="left", padx=(0, 4))
+            ttk.Button(
                 btn_frame, text="Remover",
                 command=lambda fn=fname, ip=img_path: self._delete_image(fn, ip),
             ).pack(side="left")
@@ -486,6 +492,33 @@ class ImageCurator(tk.Toplevel):
             contexts[str(i)] = page_text.strip()
 
         return contexts
+
+    # ── Vision Client ─────────────────────────────────────────────────
+
+    def _get_vision_client(self):
+        """Get or create the configured vision client, checking availability."""
+        if self._vision_busy:
+            messagebox.showwarning(
+                "Image Curator",
+                "Já existe uma requisição em andamento. Aguarde.",
+                parent=self,
+            )
+            return None
+
+        if self._vision_client is not None:
+            return self._vision_client
+
+        from src.builder.vision_client import get_vision_client
+
+        config = self._parent.config_obj if hasattr(self._parent, "config_obj") else None
+        client = get_vision_client(config)
+        available, msg = client.check_availability()
+        if not available:
+            messagebox.showerror("Vision indisponível", msg, parent=self)
+            return None
+
+        self._vision_client = client
+        return client
 
     # ── Actions ────────────────────────────────────────────────────────
 
@@ -868,23 +901,12 @@ class ImageCurator(tk.Toplevel):
         if not self._current_entry or self._current_page is None:
             return
 
+        client = self._get_vision_client()
+        if not client:
+            return
+
         # Save current UI state first
         self._save_curation()
-
-        from src.builder.ollama_client import OllamaClient
-
-        config = self._parent.config_obj if hasattr(self._parent, "config_obj") else None
-        model = config.get("vision_model", "qwen3-vl") if config else "qwen3-vl"
-        quant = config.get("vision_model_quantization", "default") if config else "default"
-        base_url = config.get("ollama_base_url", "http://localhost:11434") if config else "http://localhost:11434"
-        if quant != "default":
-            model = f"{model}:{quant}" if ":" not in model else model.split(":")[0] + f":{quant}"
-
-        client = OllamaClient(base_url=base_url, model=model)
-        available, msg = client.check_availability()
-        if not available:
-            messagebox.showerror("Ollama indisponível", msg)
-            return
 
         entry_id = self._current_entry.get("id", "")
         page_key = str(self._current_page) if self._current_page is not None else "none"
@@ -896,7 +918,8 @@ class ImageCurator(tk.Toplevel):
         page_ctx = page_contexts.get(page_key, "")
 
         self.status_var.set(f"Gerando descrição para {fname}...")
-        logger.info("[Ollama] Iniciando descrição: %s (tipo: %s, modelo: %s)", fname, img_type, client.model)
+        self._vision_busy = True
+        logger.info("[Vision] Iniciando descrição: %s (tipo: %s, modelo: %s)", fname, img_type, client.model)
 
         def _worker():
             try:
@@ -911,7 +934,7 @@ class ImageCurator(tk.Toplevel):
                 curation["pages"][page_key]["images"][fname]["include"] = True
 
                 desc_preview = desc[:120].replace("\n", " ")
-                logger.info("[Ollama] Descrição gerada para %s: %s...", fname, desc_preview)
+                logger.info("[Vision] Descrição gerada para %s: %s...", fname, desc_preview)
 
                 def _on_done():
                     self._write_manifest_entry(entry_id)
@@ -922,7 +945,7 @@ class ImageCurator(tk.Toplevel):
 
                 self.after(0, _on_done)
             except Exception as e:
-                logger.error("[Ollama] Erro ao descrever %s: %s", fname, e)
+                logger.error("[Vision] Erro ao descrever %s: %s", fname, e)
                 self.after(
                     0,
                     lambda: messagebox.showerror(
@@ -930,32 +953,83 @@ class ImageCurator(tk.Toplevel):
                     ),
                 )
                 self.after(0, lambda: self.status_var.set(f"Erro ao descrever {fname}."))
+            finally:
+                self._vision_busy = False
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _extract_latex_single(self, fname: str, img_path: Path):
+        """Extract text + LaTeX content from a scanned page image."""
+        if not self._current_entry or self._current_page is None:
+            return
+
+        client = self._get_vision_client()
+        if not client:
+            return
+
+        # Save current UI state first
+        self._save_curation()
+
+        entry_id = self._current_entry.get("id", "")
+        page_key = str(self._current_page) if self._current_page is not None else "none"
+        curation = self._current_entry.get("image_curation", {})
+
+        # Get page context from adjacent pages
+        page_contexts = self._extract_page_contexts(entry_id)
+        page_ctx = page_contexts.get(page_key, "")
+
+        self.status_var.set(f"Extraindo LaTeX de {fname}...")
+        self._vision_busy = True
+        logger.info("[Vision] Iniciando extração LaTeX: %s (modelo: %s)", fname, client.model)
+
+        def _worker():
+            try:
+                extracted = client.extract_to_latex(img_path, page_context=page_ctx)
+                curation.setdefault("pages", {}).setdefault(page_key, {"include_page": True, "images": {}})
+                curation["pages"][page_key]["images"].setdefault(fname, {})
+                curation["pages"][page_key]["images"][fname]["description"] = extracted
+                curation["pages"][page_key]["images"][fname]["described_at"] = (
+                    datetime.now().isoformat(timespec="seconds")
+                )
+                curation["pages"][page_key]["images"][fname]["type"] = "extração-latex"
+                curation["pages"][page_key]["images"][fname]["include"] = True
+                if fname in self._image_widgets:
+                    self._image_widgets[fname]["type_var"].set("extração-latex")
+                    self._image_widgets[fname]["include_var"].set(True)
+
+                preview = extracted[:120].replace("\n", " ")
+                logger.info("[Vision] Extração LaTeX para %s: %s...", fname, preview)
+
+                def _on_done():
+                    self._write_manifest_entry(entry_id)
+                    groups = self._current_entry.get("_image_groups", {})
+                    images = groups.get(self._current_page, [])
+                    self._show_images(self._current_entry, self._current_page, images)
+                    self.status_var.set(f"Extração LaTeX concluída para {fname}.")
+
+                self.after(0, _on_done)
+            except Exception as e:
+                logger.error("[Vision] Erro na extração LaTeX de %s: %s", fname, e)
+                self.after(
+                    0,
+                    lambda: messagebox.showerror(
+                        "Erro", f"Falha na extração LaTeX de {fname}:\n{e}", parent=self
+                    ),
+                )
+                self.after(0, lambda: self.status_var.set(f"Erro na extração de {fname}."))
+            finally:
+                self._vision_busy = False
 
         threading.Thread(target=_worker, daemon=True).start()
 
     def _generate_descriptions(self):
-        """Generate descriptions for included images using Ollama Vision model."""
+        """Generate descriptions for included images using the configured vision backend."""
         if not self._current_entry:
             messagebox.showinfo("Image Curator", "Selecione um entry primeiro.")
             return
 
-        from src.builder.ollama_client import OllamaClient
-
-        config = self._parent.config_obj if hasattr(self._parent, "config_obj") else None
-        model = config.get("vision_model", "qwen3-vl") if config else "qwen3-vl"
-        quant = config.get("vision_model_quantization", "default") if config else "default"
-        base_url = config.get("ollama_base_url", "http://localhost:11434") if config else "http://localhost:11434"
-
-        # Append quantization tag if not default
-        if quant != "default":
-            model = f"{model}:{quant}" if ":" not in model else model.split(":")[0] + f":{quant}"
-
-        client = OllamaClient(base_url=base_url, model=model)
-
-        # Check availability first
-        available, msg = client.check_availability()
-        if not available:
-            messagebox.showerror("Ollama indisponível", msg)
+        client = self._get_vision_client()
+        if not client:
             return
 
         # Save current curation state first
@@ -967,6 +1041,12 @@ class ImageCurator(tk.Toplevel):
         # Load page context from markdown for richer descriptions
         page_contexts = self._extract_page_contexts(entry_id)
 
+        # Build fname -> full Path lookup from _image_groups
+        fname_to_path: Dict[str, Path] = {}
+        for imgs in self._current_entry.get("_image_groups", {}).values():
+            for p in imgs:
+                fname_to_path[p.name] = p
+
         # Collect all included images across all pages
         to_describe: list = []
         for page_key, page_data in curation.get("pages", {}).items():
@@ -974,7 +1054,7 @@ class ImageCurator(tk.Toplevel):
                 continue
             for fname, img_data in page_data.get("images", {}).items():
                 if img_data.get("include") and not img_data.get("description"):
-                    img_path = self._images_dir / fname
+                    img_path = fname_to_path.get(fname, self._images_dir / fname)
                     if img_path.exists():
                         ctx = page_contexts.get(page_key, "")
                         to_describe.append(
@@ -988,72 +1068,75 @@ class ImageCurator(tk.Toplevel):
             return
 
         total = len(to_describe)
-        logger.info("[Ollama] Iniciando geração em lote: %d imagens (modelo: %s)", total, client.model)
+        logger.info("[Vision] Iniciando geração em lote: %d imagens (modelo: %s)", total, client.model)
         self.status_var.set(f"Gerando descrições: 0/{total}...")
+        self._vision_busy = True
 
         def _worker():
-            errors = []
-            for idx, (page_key, fname, img_type, img_path, page_ctx) in enumerate(
-                to_describe
-            ):
-                logger.info("[Ollama] Descrevendo %d/%d: %s (tipo: %s)", idx + 1, total, fname, img_type)
-                self.after(
-                    0,
-                    lambda i=idx, f=fname: self.status_var.set(
-                        f"Gerando descrição {i + 1}/{total}: {f}..."
-                    ),
-                )
-                try:
-                    desc = client.describe_image(
-                        img_path, img_type, page_context=page_ctx
+            try:
+                errors = []
+                for idx, (page_key, fname, img_type, img_path, page_ctx) in enumerate(
+                    to_describe
+                ):
+                    logger.info("[Vision] Descrevendo %d/%d: %s (tipo: %s)", idx + 1, total, fname, img_type)
+                    self.after(
+                        0,
+                        lambda i=idx, f=fname: self.status_var.set(
+                            f"Gerando descrição {i + 1}/{total}: {f}..."
+                        ),
                     )
-                    curation["pages"][page_key]["images"][fname]["description"] = desc
-                    curation["pages"][page_key]["images"][fname]["described_at"] = (
-                        datetime.now().isoformat(timespec="seconds")
-                    )
-                    desc_preview = desc[:120].replace("\n", " ")
-                    logger.info("[Ollama] OK %s: %s...", fname, desc_preview)
-                except Exception as e:
-                    logger.error("[Ollama] Erro ao descrever %s: %s", fname, e)
-                    curation["pages"][page_key]["images"][fname]["description"] = (
-                        f"[ERRO: {e}]"
-                    )
-                    errors.append(f"{fname}: {e}")
+                    try:
+                        desc = client.describe_image(
+                            img_path, img_type, page_context=page_ctx
+                        )
+                        curation["pages"][page_key]["images"][fname]["description"] = desc
+                        curation["pages"][page_key]["images"][fname]["described_at"] = (
+                            datetime.now().isoformat(timespec="seconds")
+                        )
+                        desc_preview = desc[:120].replace("\n", " ")
+                        logger.info("[Vision] OK %s: %s...", fname, desc_preview)
+                    except Exception as e:
+                        logger.error("[Vision] Erro ao descrever %s: %s", fname, e)
+                        curation["pages"][page_key]["images"][fname]["description"] = (
+                            f"[ERRO: {e}]"
+                        )
+                        errors.append(f"{fname}: {e}")
 
-            # Mark as described
-            curation["status"] = "described"
-            ok_count = total - len(errors)
-            if errors:
-                logger.warning("[Ollama] Lote concluído: %d/%d OK, %d erros", ok_count, total, len(errors))
-            else:
-                logger.info("[Ollama] Lote concluído: %d/%d descrições geradas com sucesso", ok_count, total)
-
-            def _on_done():
-                self._write_manifest_entry(entry_id)
-                # Refresh cards to show descriptions
-                if self._current_entry and self._current_page is not None:
-                    groups = self._current_entry.get("_image_groups", {})
-                    images = groups.get(self._current_page, [])
-                    self._show_images(self._current_entry, self._current_page, images)
+                # Mark as described
+                curation["status"] = "described"
                 ok_count = total - len(errors)
                 if errors:
-                    self.status_var.set(
-                        f"{ok_count}/{total} descrições geradas ({len(errors)} erros). Salvo no manifest."
-                    )
-                    error_detail = "\n".join(errors[:10])
-                    messagebox.showwarning(
-                        "Image Curator",
-                        f"{ok_count} descrições geradas, {len(errors)} erros:\n\n{error_detail}",
-                    )
+                    logger.warning("[Vision] Lote concluído: %d/%d OK, %d erros", ok_count, total, len(errors))
                 else:
-                    self.status_var.set(
-                        f"Descrições geradas para {total} imagens. Salvo no manifest."
-                    )
-                    messagebox.showinfo(
-                        "Image Curator", f"{total} descrições geradas com sucesso!"
-                    )
+                    logger.info("[Vision] Lote concluído: %d/%d descrições geradas com sucesso", ok_count, total)
 
-            self.after(0, _on_done)
+                def _on_done():
+                    self._write_manifest_entry(entry_id)
+                    if self._current_entry and self._current_page is not None:
+                        groups = self._current_entry.get("_image_groups", {})
+                        images = groups.get(self._current_page, [])
+                        self._show_images(self._current_entry, self._current_page, images)
+                    ok_count = total - len(errors)
+                    if errors:
+                        self.status_var.set(
+                            f"{ok_count}/{total} descrições geradas ({len(errors)} erros). Salvo no manifest."
+                        )
+                        error_detail = "\n".join(errors[:10])
+                        messagebox.showwarning(
+                            "Image Curator",
+                            f"{ok_count} descrições geradas, {len(errors)} erros:\n\n{error_detail}",
+                        )
+                    else:
+                        self.status_var.set(
+                            f"Descrições geradas para {total} imagens. Salvo no manifest."
+                        )
+                        messagebox.showinfo(
+                            "Image Curator", f"{total} descrições geradas com sucesso!"
+                        )
+
+                self.after(0, _on_done)
+            finally:
+                self._vision_busy = False
 
         threading.Thread(target=_worker, daemon=True).start()
 
