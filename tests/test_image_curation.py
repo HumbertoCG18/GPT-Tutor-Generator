@@ -7,6 +7,7 @@ import struct
 import sys
 import zlib
 from unittest import mock
+from pathlib import Path
 
 _tk_mock = mock.MagicMock()
 sys.modules.setdefault("tkinter", _tk_mock)
@@ -149,6 +150,182 @@ def test_image_types_include_latex_extraction():
     assert "extração-latex" in IMAGE_TYPES
 
 
+def test_remove_images_from_curation_prunes_empty_page():
+    from src.ui.image_curator import _remove_images_from_curation
+
+    curation = {
+        "status": "curated",
+        "curated_at": "2026-03-31T02:00:00",
+        "pages": {
+            "7": {
+                "include_page": True,
+                "images": {
+                    "img-a.png": {"include": True, "description": "A"},
+                    "img-b.png": {"include": True, "description": "B"},
+                },
+            }
+        },
+    }
+
+    result = _remove_images_from_curation(curation, "7", ["img-a.png", "img-b.png"])
+
+    assert result["pages"] == {}
+    assert result["status"] == "pending"
+    assert result["curated_at"] is None
+
+
+def test_remove_images_from_curation_keeps_non_empty_page():
+    from src.ui.image_curator import _remove_images_from_curation
+
+    curation = {
+        "status": "curated",
+        "curated_at": "2026-03-31T02:00:00",
+        "pages": {
+            "7": {
+                "include_page": True,
+                "images": {
+                    "img-a.png": {"include": True, "description": "A"},
+                    "img-b.png": {"include": True, "description": "B"},
+                },
+            }
+        },
+    }
+
+    result = _remove_images_from_curation(curation, "7", ["img-a.png"])
+
+    assert "7" in result["pages"]
+    assert "img-a.png" not in result["pages"]["7"]["images"]
+    assert "img-b.png" in result["pages"]["7"]["images"]
+    assert result["status"] == "curated"
+
+
+def test_selected_image_names_returns_only_checked_items():
+    from src.ui.image_curator import _selected_image_names
+
+    class BoolVarStub:
+        def __init__(self, value):
+            self._value = value
+
+        def get(self):
+            return self._value
+
+    selected = _selected_image_names({
+        "img-a.png": {"selected_var": BoolVarStub(True)},
+        "img-b.png": {"selected_var": BoolVarStub(False)},
+        "img-c.png": {"selected_var": BoolVarStub(True)},
+    })
+
+    assert selected == ["img-a.png", "img-c.png"]
+
+
+def test_resolve_curation_page_key_accepts_legacy_zero_based_page():
+    from src.ui.image_curator import _resolve_curation_page_key
+
+    curation = {"pages": {"24": {"images": {}}}}
+    images = [Path("entry-_page_24_Figure_0.png")]
+
+    assert _resolve_curation_page_key(curation, 25, images) == "24"
+
+
+def test_migrate_curation_page_key_promotes_legacy_zero_based_page():
+    from src.ui.image_curator import _migrate_curation_page_key
+
+    curation = {
+        "pages": {
+            "24": {
+                "include_page": True,
+                "images": {"entry-_page_24_Figure_0.png": {"description": "ok"}},
+            }
+        }
+    }
+    images = [Path("entry-_page_24_Figure_0.png")]
+
+    key = _migrate_curation_page_key(curation, 25, images)
+
+    assert key == "25"
+    assert "25" in curation["pages"]
+    assert "24" not in curation["pages"]
+    assert "entry-_page_24_Figure_0.png" in curation["pages"]["25"]["images"]
+
+
+def test_build_duplicate_index_marks_exact_duplicates(tmp_path):
+    from src.ui.image_curator import _build_duplicate_index
+
+    img_a = tmp_path / "page-023-a.png"
+    img_b = tmp_path / "page-024-a.png"
+    img_c = tmp_path / "page-025-b.png"
+    img_a.write_bytes(b"same-image")
+    img_b.write_bytes(b"same-image")
+    img_c.write_bytes(b"different-image")
+
+    groups = {
+        23: [img_a],
+        24: [img_b],
+        25: [img_c],
+    }
+
+    result = _build_duplicate_index(groups)
+
+    assert "page-023-a.png" in result
+    assert "page-024-a.png" in result
+    assert "page-025-b.png" not in result
+    assert result["page-023-a.png"]["other_pages"] == [24]
+    assert result["page-024-a.png"]["other_pages"] == [23]
+
+
+def test_curator_studio_merges_manifest_fields_when_template_is_stale():
+    from src.ui.curator_studio import _merge_review_frontmatter_with_manifest
+
+    fm = {
+        "id": "entry-1",
+        "title": "Aula 1",
+        "base_markdown": "staging/markdown-auto/base.md",
+        "advanced_markdown": None,
+        "advanced_backend": None,
+    }
+    manifest_entry = {
+        "id": "entry-1",
+        "advanced_markdown": "staging/markdown-auto/docling/advanced.md",
+        "advanced_backend": "docling",
+        "raw_target": "raw/pdfs/aula1.pdf",
+    }
+
+    merged = _merge_review_frontmatter_with_manifest(fm, manifest_entry)
+
+    assert merged["advanced_markdown"] == "staging/markdown-auto/docling/advanced.md"
+    assert merged["advanced_backend"] == "docling"
+    assert merged["source_pdf"] == "raw/pdfs/aula1.pdf"
+
+
+def test_curator_studio_preserves_template_values_when_already_present():
+    from src.ui.curator_studio import _merge_review_frontmatter_with_manifest
+
+    fm = {
+        "id": "entry-1",
+        "advanced_markdown": "manual-review/custom-advanced.md",
+        "advanced_backend": "marker",
+    }
+    manifest_entry = {
+        "id": "entry-1",
+        "advanced_markdown": "staging/markdown-auto/docling/advanced.md",
+        "advanced_backend": "docling",
+    }
+
+    merged = _merge_review_frontmatter_with_manifest(fm, manifest_entry)
+
+    assert merged["advanced_markdown"] == "manual-review/custom-advanced.md"
+    assert merged["advanced_backend"] == "marker"
+
+
+def test_curator_studio_pdf_preview_guard_accepts_only_pdf_paths():
+    from src.ui.curator_studio import _is_pdf_preview_target
+
+    assert _is_pdf_preview_target("raw/pdfs/aula1.pdf") is True
+    assert _is_pdf_preview_target("raw/code/professor/xor-mlp.ipynb") is False
+    assert _is_pdf_preview_target("raw/zip/projeto.zip") is False
+    assert _is_pdf_preview_target(None) is False
+
+
 def test_app_config_migrates_legacy_ollama_model(tmp_path):
     from src.ui import theme
 
@@ -273,13 +450,27 @@ class TestImageMapper:
     def test_maps_page_from_pymupdf4llm_pattern(self):
         from src.builder.image_classifier import extract_page_number
         # pymupdf4llm pattern: {entry}-_page_N_Figure_M.png
-        assert extract_page_number("logica-sintaxe-_page_6_Figure_1.png") == 6
-        assert extract_page_number("aula01-_page_12_Figure_3.png") == 12
+        assert extract_page_number("logica-sintaxe-_page_6_Figure_1.png") == 7
+        assert extract_page_number("aula01-_page_12_Figure_3.png") == 13
+        assert extract_page_number("entry-_page_0_Figure_1.png") == 1
+
+    def test_maps_page_from_resolved_pdf_asset_pattern(self):
+        from src.builder.image_classifier import extract_page_number
+        assert extract_page_number("aula01-introducao-ia-aula01-introducao-ia.pdf-0004-09.png") == 4
+        assert extract_page_number("aprendizadosupervisionado-classificacao-knn.pdf-0023-01.png") == 23
+
+    def test_maps_page_from_additional_asset_variants(self):
+        from src.builder.image_classifier import extract_page_number
+        assert extract_page_number("entry-page-004-table-01.md") == 4
+        assert extract_page_number("entry.pdf-0007.png") == 7
+        assert extract_page_number("entry-p_08-figure.png") == 8
+        assert extract_page_number("entry-page12.webp") == 12
 
     def test_unknown_pattern_returns_none(self):
         from src.builder.image_classifier import extract_page_number
         assert extract_page_number("random-image.png") is None
         assert extract_page_number("logo.jpg") is None
+        assert extract_page_number("banner-2026.png") is None
 
     def test_group_images_by_page(self, tmp_path):
         from src.builder.image_classifier import group_images_by_page
@@ -291,13 +482,19 @@ class TestImageMapper:
         (images_dir / "entry1-page-003-img-02.png").write_bytes(b"fake")
         (images_dir / "entry1-page-007-img-01.png").write_bytes(b"fake")
         (images_dir / "entry1-_page_5_Figure_1.png").write_bytes(b"fake")
+        (images_dir / "entry1-aula.pdf-0009-03.png").write_bytes(b"fake")
+        (images_dir / "entry1-page-011-table-01.png").write_bytes(b"fake")
+        (images_dir / "entry1-p_12-figure.png").write_bytes(b"fake")
         (images_dir / "unknown-image.png").write_bytes(b"fake")
 
         groups = group_images_by_page(images_dir, "entry1")
         assert 3 in groups  # page-003
         assert len(groups[3]) == 2
         assert 7 in groups
-        assert 5 in groups  # _page_5
+        assert 6 in groups  # _page_5 is zero-based -> page 6
+        assert 9 in groups  # .pdf-0009-03
+        assert 11 in groups  # page-011-table-01
+        assert 12 in groups  # p_12
         # unknown doesn't match entry1 prefix, so not included
         assert None not in groups
 
@@ -390,3 +587,62 @@ class TestDescriptionInjection:
         assert "Descrição antiga" not in result
         assert "Tabela-verdade atualizada." in result
         assert "<!-- Tipo: tabela -->" in result
+
+    def test_compact_long_description_to_single_sentence(self):
+        from src.builder.engine import RepoBuilder
+        markdown = "![](content/images/entry1-page-003-img-01.png)"
+        curation = {
+            "pages": {
+                "3": {
+                    "include_page": True,
+                    "images": {
+                        "entry1-page-003-img-01.png": {
+                            "type": "diagrama",
+                            "include": True,
+                            "description": (
+                                "Árvore de derivação com três níveis e dois ramos principais. "
+                                "A imagem também mostra observações laterais e uma legenda extensa que não "
+                                "precisa ser repetida integralmente no contexto do tutor."
+                            ),
+                        }
+                    },
+                }
+            }
+        }
+        result = RepoBuilder.inject_image_descriptions(markdown, curation)
+        assert "Árvore de derivação com três níveis e dois ramos principais." in result
+        assert "legenda extensa" not in result
+
+    def test_duplicate_exact_description_becomes_short_reference(self):
+        from src.builder.engine import RepoBuilder
+        markdown = (
+            "![](content/images/entry1-page-003-img-01.png)\n\n"
+            "![](content/images/entry1-page-004-img-01.png)"
+        )
+        curation = {
+            "pages": {
+                "3": {
+                    "include_page": True,
+                    "images": {
+                        "entry1-page-003-img-01.png": {
+                            "type": "diagrama",
+                            "include": True,
+                            "description": "Diagrama de rede neural com três camadas.",
+                        }
+                    },
+                },
+                "4": {
+                    "include_page": True,
+                    "images": {
+                        "entry1-page-004-img-01.png": {
+                            "type": "diagrama",
+                            "include": True,
+                            "description": "Diagrama de rede neural com três camadas.",
+                        }
+                    },
+                },
+            }
+        }
+        result = RepoBuilder.inject_image_descriptions(markdown, curation)
+        assert "Diagrama de rede neural com três camadas." in result
+        assert "Mesma imagem da página 3; mantendo só referência curta." in result

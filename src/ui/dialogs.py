@@ -550,6 +550,12 @@ AÇÕES PRINCIPAIS
 
   Reprocessar Repositório
     Regenera os arquivos pedagógicos com o código atual.
+    É o caminho certo para aplicar a arquitetura mais nova a um repositório antigo.
+    Hoje isso também reaplica:
+    • COURSE_MAP.md e FILE_MAP.md em modo mais enxuto
+    • GLOSSARY.md com definições curtas e evidência compacta
+    • bundle.seed.json seletivo para Claude Web
+    • reinjeção de descrições de imagem em formato compacto
 
   Gerar Instruções LLM
     Gera:
@@ -561,14 +567,42 @@ OBSERVAÇÃO
   Quando COURSE_MAP.md e FILE_MAP.md já estão maduros, o app pode omitir
   o protocolo de primeira sessão ao gerar essas instruções.
 """),
+    ("Claude e Tokens", """ARQUITETURA MAP-FIRST / LOW-TOKEN
+  O app gera artefatos pensando em baixo custo de contexto no Claude Web.
+
+ORDEM IDEAL DE LEITURA
+  1. course/COURSE_MAP.md
+  2. student/STUDENT_STATE.md
+  3. course/FILE_MAP.md
+  4. Só então abrir markdowns longos em content/, exercises/ ou exams/
+
+ARTEFATOS-CHAVE
+  COURSE_MAP.md
+    Mapa pedagógico curto da disciplina.
+
+  FILE_MAP.md
+    Índice de roteamento com colunas como "Quando abrir" e "Prioridade".
+
+  build/claude-knowledge/bundle.seed.json
+    Lista seletiva de metadados e materiais de alto sinal para bundle manual. Não substitui os mapas.
+
+IMAGENS
+  As descrições de imagem do markdown final agora entram em formato compacto.
+  Em duplicatas exatas entre páginas vizinhas, o sistema pode trocar repetição
+  por uma referência curta à primeira ocorrência.
+
+ROLLOUT
+  Para aplicar isso em repositórios antigos, use:
+  • Reprocessar Repositório
+"""),
     ("Continuidade", """ARQUIVOS DE ESTADO
   student/STUDENT_STATE.md
-    Registra progresso e próximos passos do aluno.
+    Registra progresso e próximos passos do aluno. Consulte antes de repetir ou aprofundar demais.
 
   student/PROGRESS_SCHEMA.md
     Define a estrutura esperada para atualizações de progresso.
 
-USO PRÁTICO
+  USO PRÁTICO
   Ao final de uma sessão de estudo, atualize o estado do aluno no repositório.
   Em um novo chat, entregue esse estado para a IA junto do repositório conectado.
 
@@ -576,7 +610,7 @@ GITHUB
   Se a matéria tiver URL GitHub configurada, esse dado entra nas instruções geradas.
   Isso ajuda principalmente fluxos conectados a projetos com sync de repositório.
 
-ATUALIZAÇÃO INCREMENTAL
+  ATUALIZAÇÃO INCREMENTAL
   Se o repositório já existir, o build pode adicionar apenas arquivos novos
   e ainda regenerar os arquivos pedagógicos.
 """),
@@ -588,10 +622,11 @@ ATUALIZAÇÃO INCREMENTAL
   Ctrl+S        → salva no Curator Studio
 
 DICAS
-  • Use "⚡ Importação rápida" quando estiver adicionando muitos arquivos de uma vez.
   • Use "📂 Abrir Repo" antes de mexer em backlog ou Curator Studio.
   • O manifest.json é a fonte de verdade do repositório processado.
   • O status da barra inferior é um bom diagnóstico rápido do ambiente.
+  • Reprocessar Repositório é a forma mais segura de aplicar mudanças de arquitetura
+    aos repositórios já existentes.
 
 DEPENDÊNCIAS
   Se faltarem PyMuPDF, PyMuPDF4LLM ou pdfplumber:

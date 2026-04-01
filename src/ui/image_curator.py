@@ -1,5 +1,6 @@
 """Image Curator — UI for curating and describing images from PDFs."""
 
+import hashlib
 import json
 import logging
 import re
@@ -21,6 +22,92 @@ from src.builder.image_classifier import (
 logger = logging.getLogger(__name__)
 
 IMAGE_TYPES = ["diagrama", "tabela", "fórmula", "código", "genérico", "decorativa", "extração-latex"]
+
+
+def _page_sort_key(page_num: Optional[int]) -> int:
+    return page_num if page_num is not None else 9999
+
+
+def _remove_images_from_curation(curation: dict, page_key: str, filenames: List[str]) -> dict:
+    """Remove image records from a page and prune empty page state."""
+    page_data = curation.get("pages", {}).get(page_key, {})
+    images_data = page_data.get("images", {})
+    for fname in filenames:
+        images_data.pop(fname, None)
+
+    if not images_data and page_key in curation.get("pages", {}):
+        curation["pages"].pop(page_key, None)
+
+    if not curation.get("pages"):
+        curation["status"] = "pending"
+        curation["curated_at"] = None
+
+    return curation
+
+
+def _selected_image_names(image_widgets: Dict[str, dict]) -> List[str]:
+    """Return filenames currently marked for bulk selection."""
+    return [
+        fname
+        for fname, widgets in image_widgets.items()
+        if widgets.get("selected_var") is not None and widgets["selected_var"].get()
+    ]
+
+
+def _uses_zero_based_page_pattern(images: List[Path]) -> bool:
+    return any("_page_" in img.name.lower() for img in images)
+
+
+def _resolve_curation_page_key(curation: dict, page_num: Optional[int], images: List[Path]) -> str:
+    """Resolve the manifest page key, tolerating legacy zero-based keys."""
+    page_key = str(page_num) if page_num is not None else "none"
+    if page_key in curation.get("pages", {}):
+        return page_key
+    if page_num is not None and _uses_zero_based_page_pattern(images):
+        legacy_key = str(page_num - 1)
+        if legacy_key in curation.get("pages", {}):
+            return legacy_key
+    return page_key
+
+
+def _migrate_curation_page_key(curation: dict, page_num: Optional[int], images: List[Path]) -> str:
+    """Migrate legacy zero-based page keys to the normalized one-based key."""
+    page_key = str(page_num) if page_num is not None else "none"
+    resolved_key = _resolve_curation_page_key(curation, page_num, images)
+    if resolved_key != page_key and resolved_key in curation.get("pages", {}):
+        curation.setdefault("pages", {})[page_key] = curation["pages"].pop(resolved_key)
+    return page_key
+
+
+def _file_sha1(path: Path) -> str:
+    return hashlib.sha1(path.read_bytes()).hexdigest()
+
+
+def _build_duplicate_index(groups: Dict[Optional[int], List[Path]]) -> Dict[str, dict]:
+    """Index exact duplicate images across pages of the same entry."""
+    by_hash: Dict[str, List[tuple[Optional[int], Path]]] = {}
+    for page_num, images in groups.items():
+        for img in images:
+            try:
+                digest = _file_sha1(img)
+            except Exception:
+                continue
+            by_hash.setdefault(digest, []).append((page_num, img))
+
+    duplicate_info: Dict[str, dict] = {}
+    for digest, occurrences in by_hash.items():
+        if len(occurrences) < 2:
+            continue
+        pages = sorted({page for page, _ in occurrences}, key=_page_sort_key)
+        for page_num, img in occurrences:
+            other_pages = [p for p in pages if p != page_num]
+            duplicate_info[img.name] = {
+                "hash": digest,
+                "pages": pages,
+                "other_pages": other_pages,
+                "count": len(occurrences),
+            }
+    return duplicate_info
 
 
 class ImageCurator(tk.Toplevel):
@@ -47,13 +134,14 @@ class ImageCurator(tk.Toplevel):
         self._current_entry: Optional[dict] = None
         self._current_page: Optional[int] = None
         self._thumbnail_refs: List[ImageTk.PhotoImage] = []  # prevent GC
-        self._image_widgets: Dict[str, dict] = {}  # fname -> {type_var, include_var}
+        self._image_widgets: Dict[str, dict] = {}  # fname -> {type_var, include_var, selected_var, path}
         self._vision_client = None  # persistent client for both prompts
         self._vision_busy = False   # prevent concurrent requests
 
         self.theme_mgr.apply(self, self._theme_name)
         self._build_ui()
         self._load_manifest()
+        self.bind("<Delete>", self._on_delete_key)
 
     # ── UI ──────────────────────────────────────────────────────────────
 
@@ -234,6 +322,7 @@ class ImageCurator(tk.Toplevel):
             return
 
         entries = self._manifest.get("entries", [])
+        self._entries_with_images = []
         for entry in entries:
             entry_id = entry.get("id", "")
             if not entry_id:
@@ -241,26 +330,45 @@ class ImageCurator(tk.Toplevel):
             groups = group_images_by_page(self._images_dir, entry_id)
             if not groups:
                 continue
-
             entry["_image_groups"] = groups
+            entry["_duplicate_images"] = _build_duplicate_index(groups)
             self._entries_with_images.append(entry)
 
-            # Add to tree
+        self._rebuild_tree()
+
+        self.status_var.set(
+            f"{len(self._entries_with_images)} entries com imagens encontradas."
+        )
+
+    def _rebuild_tree(
+        self,
+        selected_entry_id: Optional[str] = None,
+        selected_page: Optional[Optional[int]] = None,
+    ):
+        """Rebuild tree from current in-memory entries and optionally restore selection."""
+        self._tree.delete(*self._tree.get_children())
+        selected_item = None
+
+        for entry in self._entries_with_images:
+            entry_id = entry.get("id", "")
             entry_node = self._tree.insert(
                 "",
                 "end",
                 text=entry.get("title", entry_id),
                 values=(entry_id,),
             )
-            for page_num in sorted(
-                groups.keys(), key=lambda x: x if x is not None else 9999
-            ):
+            if selected_entry_id == entry_id and selected_page is None:
+                selected_item = entry_node
+
+            groups = entry.get("_image_groups", {})
+            for page_num in sorted(groups.keys(), key=_page_sort_key):
                 count = len(groups[page_num])
-                if page_num is not None:
-                    label = f"Página {page_num} ({count} imgs)"
-                else:
-                    label = f"Página desconhecida ({count} imgs)"
-                self._tree.insert(
+                label = (
+                    f"Página {page_num} ({count} imgs)"
+                    if page_num is not None
+                    else f"Página desconhecida ({count} imgs)"
+                )
+                page_node = self._tree.insert(
                     entry_node,
                     "end",
                     text=label,
@@ -269,10 +377,48 @@ class ImageCurator(tk.Toplevel):
                         str(page_num) if page_num is not None else "none",
                     ),
                 )
+                if selected_entry_id == entry_id and selected_page == page_num:
+                    selected_item = page_node
 
-        self.status_var.set(
-            f"{len(self._entries_with_images)} entries com imagens encontradas."
+        if selected_item:
+            self._tree.selection_set(selected_item)
+            self._tree.focus(selected_item)
+            self._tree.see(selected_item)
+
+    def _refresh_entry_after_image_change(self, entry_id: str):
+        """Reload groups for an entry after file-level mutations and refresh tree/UI."""
+        entry = next(
+            (e for e in self._entries_with_images if e.get("id") == entry_id),
+            None,
         )
+        if not entry:
+            return
+
+        groups = group_images_by_page(self._images_dir, entry_id)
+        if groups:
+            entry["_image_groups"] = groups
+            entry["_duplicate_images"] = _build_duplicate_index(groups)
+            selected_page = self._current_page if self._current_page in groups else next(
+                iter(sorted(groups.keys(), key=_page_sort_key)),
+                None,
+            )
+            self._rebuild_tree(entry_id, selected_page)
+            self._current_entry = entry
+            self._current_page = selected_page
+            self._show_images(entry, selected_page, groups.get(selected_page, []))
+            return
+
+        self._entries_with_images = [
+            e for e in self._entries_with_images if e.get("id") != entry_id
+        ]
+        if self._current_entry and self._current_entry.get("id") == entry_id:
+            self._current_entry = None
+            self._current_page = None
+            for widget in self._cards_frame.winfo_children():
+                widget.destroy()
+            self._pdf_canvas.delete("all")
+            self.status_var.set("Entry removido do Image Curator: nenhuma imagem restante.")
+        self._rebuild_tree()
 
     # ── Tree Selection ─────────────────────────────────────────────────
 
@@ -324,10 +470,11 @@ class ImageCurator(tk.Toplevel):
 
         # Load existing curation data
         curation = entry.get("image_curation", {})
-        page_key = str(page_num) if page_num is not None else "none"
+        page_key = _resolve_curation_page_key(curation, page_num, images)
         page_data = curation.get("pages", {}).get(page_key, {})
         include_page = page_data.get("include_page", True)
         curated_images = page_data.get("images", {})
+        duplicate_images = entry.get("_duplicate_images", {})
 
         # Page-level include toggle
         page_frame = tk.Frame(self._cards_frame, bg=p["frame_bg"])
@@ -339,6 +486,15 @@ class ImageCurator(tk.Toplevel):
             variable=page_var,
             command=lambda: self._toggle_page(page_var.get()),
         ).pack(side="left")
+        ttk.Button(
+            page_frame, text="Selecionar todas", command=lambda: self._set_all_selected(True)
+        ).pack(side="right", padx=(4, 0))
+        ttk.Button(
+            page_frame, text="Limpar seleção", command=lambda: self._set_all_selected(False)
+        ).pack(side="right", padx=(4, 0))
+        ttk.Button(
+            page_frame, text="Remover selecionadas", command=self._delete_selected_images
+        ).pack(side="right", padx=(4, 0))
 
         # Image cards
         row_frame = None
@@ -381,6 +537,26 @@ class ImageCurator(tk.Toplevel):
                 wraplength=200,
             ).pack()
 
+            duplicate = duplicate_images.get(fname)
+            if duplicate:
+                other_pages = duplicate.get("other_pages", [])
+                if other_pages:
+                    pages_text = ", ".join(
+                        f"{p}" if p is not None else "desconhecida"
+                        for p in other_pages[:4]
+                    )
+                    if len(other_pages) > 4:
+                        pages_text += ", ..."
+                    tk.Label(
+                        card,
+                        text=f"Duplicada exata em: {pages_text}",
+                        bg=p["input_bg"],
+                        fg=p["warning"],
+                        font=("Segoe UI", 8, "bold"),
+                        wraplength=200,
+                        justify="left",
+                    ).pack(pady=(2, 0))
+
             # Type dropdown
             type_var = tk.StringVar(value=existing.get("type", "genérico"))
             type_frame = tk.Frame(card, bg=p["input_bg"])
@@ -399,6 +575,10 @@ class ImageCurator(tk.Toplevel):
             # Include checkbox
             include_var = tk.BooleanVar(value=existing.get("include", True))
             ttk.Checkbutton(card, text="Incluir", variable=include_var).pack(
+                anchor="w"
+            )
+            selected_var = tk.BooleanVar(value=False)
+            ttk.Checkbutton(card, text="Selecionar", variable=selected_var).pack(
                 anchor="w"
             )
 
@@ -441,6 +621,8 @@ class ImageCurator(tk.Toplevel):
             self._image_widgets[fname] = {
                 "type_var": type_var,
                 "include_var": include_var,
+                "selected_var": selected_var,
+                "path": img_path,
             }
 
         page_label = (
@@ -526,6 +708,16 @@ class ImageCurator(tk.Toplevel):
         """Toggle all images on current page."""
         for widgets in self._image_widgets.values():
             widgets["include_var"].set(include)
+
+    def _on_delete_key(self, _event=None):
+        selected = _selected_image_names(self._image_widgets)
+        if not selected:
+            return
+        self._delete_selected_images()
+
+    def _set_all_selected(self, selected: bool):
+        for widgets in self._image_widgets.values():
+            widgets["selected_var"].set(selected)
 
     def _preview_full(self, image_path: Path):
         """Open full-size image preview in a new window."""
@@ -774,50 +966,74 @@ class ImageCurator(tk.Toplevel):
             )
 
     def _delete_image(self, fname: str, img_path: Path):
-        """Delete an image from disk and remove from manifest curation data."""
-        if not messagebox.askyesno(
-            "Remover imagem",
-            f"Remover '{fname}' permanentemente?\n\n"
-            "Isso remove o arquivo de content/images/ e a entrada no manifest.",
-            parent=self,
-        ):
-            return
+        """Delete a single image from disk and update tree/manifest state."""
+        self._delete_images([(fname, img_path)])
 
-        # Delete from disk
-        try:
-            if img_path.exists():
-                img_path.unlink()
-        except Exception as e:
-            messagebox.showerror(
-                "Erro", f"Não foi possível remover o arquivo:\n{e}", parent=self
+    def _delete_selected_images(self):
+        selected_names = _selected_image_names(self._image_widgets)
+        selected = [
+            (fname, self._image_widgets[fname]["path"])
+            for fname in selected_names
+        ]
+        if not selected:
+            messagebox.showinfo(
+                "Image Curator",
+                "Selecione ao menos uma imagem para remover.",
+                parent=self,
             )
             return
+        self._delete_images(selected)
 
-        # Remove from manifest curation data
-        if self._current_entry and self._current_page is not None:
-            page_key = (
-                str(self._current_page) if self._current_page is not None else "none"
-            )
-            curation = self._current_entry.get("image_curation", {})
-            page_data = curation.get("pages", {}).get(page_key, {})
-            page_data.get("images", {}).pop(fname, None)
+    def _delete_images(self, image_items: List[tuple[str, Path]]):
+        """Delete one or more images from disk and remove them from curation data."""
+        if not self._current_entry:
+            return
 
-        # Remove from in-memory image groups
-        groups = (
-            self._current_entry.get("_image_groups", {})
-            if self._current_entry
-            else {}
+        count = len(image_items)
+        entry_id = self._current_entry.get("id", "")
+        curation = self._current_entry.get("image_curation", {})
+        page_images = self._current_entry.get("_image_groups", {}).get(self._current_page, [])
+        page_key = _migrate_curation_page_key(curation, self._current_page, page_images)
+        prompt = (
+            f"Remover {count} imagem(ns) permanentemente?\n\n"
+            "Isso remove os arquivos de content/images/ e atualiza o manifest."
+            if count > 1
+            else f"Remover '{image_items[0][0]}' permanentemente?\n\n"
+            "Isso remove o arquivo de content/images/ e atualiza o manifest."
         )
-        page_imgs = groups.get(self._current_page, [])
-        groups[self._current_page] = [p for p in page_imgs if p.name != fname]
+        if not messagebox.askyesno("Remover imagem", prompt, parent=self):
+            return
 
-        # Save manifest
-        self._save_curation()
+        failed = []
+        for fname, img_path in image_items:
+            try:
+                if img_path.exists():
+                    img_path.unlink()
+            except Exception as e:
+                failed.append(f"{fname}: {e}")
 
-        # Refresh the image panel
-        images = groups.get(self._current_page, [])
-        self._show_images(self._current_entry, self._current_page, images)
-        self.status_var.set(f"'{fname}' removida.")
+        if failed:
+            messagebox.showerror(
+                "Erro",
+                "Não foi possível remover algumas imagens:\n\n" + "\n".join(failed),
+                parent=self,
+            )
+            return
+
+        _remove_images_from_curation(
+            curation,
+            page_key,
+            [fname for fname, _ in image_items],
+        )
+
+        self._write_manifest_entry(entry_id)
+        self._refresh_entry_after_image_change(entry_id)
+
+        removed_count = count - len(failed)
+        if removed_count > 0:
+            self.status_var.set(
+                f"{removed_count} imagem(ns) removida(s) e árvore atualizada."
+            )
 
     def _preclassify(self):
         """Run heuristic pre-classification on all images for the current entry."""
@@ -848,16 +1064,15 @@ class ImageCurator(tk.Toplevel):
             return
 
         entry_id = self._current_entry.get("id", "")
-        page_key = (
-            str(self._current_page) if self._current_page is not None else "none"
-        )
+        page_images = self._current_entry.get("_image_groups", {}).get(self._current_page, [])
+        curation = self._current_entry.get("image_curation", {})
+        page_key = _migrate_curation_page_key(curation, self._current_page, page_images)
 
         # Build page data from UI state
         images_data = {}
         for fname, widgets in self._image_widgets.items():
             existing = (
-                self._current_entry.get("image_curation", {})
-                .get("pages", {})
+                curation.get("pages", {})
                 .get(page_key, {})
                 .get("images", {})
                 .get(fname, {})
@@ -909,8 +1124,9 @@ class ImageCurator(tk.Toplevel):
         self._save_curation()
 
         entry_id = self._current_entry.get("id", "")
-        page_key = str(self._current_page) if self._current_page is not None else "none"
+        page_images = self._current_entry.get("_image_groups", {}).get(self._current_page, [])
         curation = self._current_entry.get("image_curation", {})
+        page_key = _migrate_curation_page_key(curation, self._current_page, page_images)
         img_type = curation.get("pages", {}).get(page_key, {}).get("images", {}).get(fname, {}).get("type", "genérico")
 
         # Get page context
@@ -971,8 +1187,9 @@ class ImageCurator(tk.Toplevel):
         self._save_curation()
 
         entry_id = self._current_entry.get("id", "")
-        page_key = str(self._current_page) if self._current_page is not None else "none"
+        page_images = self._current_entry.get("_image_groups", {}).get(self._current_page, [])
         curation = self._current_entry.get("image_curation", {})
+        page_key = _migrate_curation_page_key(curation, self._current_page, page_images)
 
         # Get page context from adjacent pages
         page_contexts = self._extract_page_contexts(entry_id)

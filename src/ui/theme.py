@@ -308,6 +308,10 @@ def apply_theme_to_toplevel(window: "tk.Toplevel", parent) -> dict:
     window.option_add("*Listbox.foreground",      p["fg"])
     window.option_add("*Listbox.selectBackground",p["select_bg"])
     window.option_add("*Listbox.selectForeground",p["select_fg"])
+    window.option_add("*TCombobox*Listbox.background", p["input_bg"])
+    window.option_add("*TCombobox*Listbox.foreground", p["fg"])
+    window.option_add("*TCombobox*Listbox.selectBackground", p["select_bg"])
+    window.option_add("*TCombobox*Listbox.selectForeground", p["select_fg"])
     window.option_add("*Canvas.background",       p["frame_bg"])
     window.option_add("*Canvas.highlightThickness","0")
 

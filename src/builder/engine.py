@@ -8,11 +8,13 @@ import re
 import shutil
 import subprocess
 import sys
+import unicodedata
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
+from src.builder.image_classifier import extract_page_number
 from src.models.core import (
     BackendRunResult, DocumentProfileReport, FileEntry,
     PipelineDecision, StudentProfile, SubjectProfile
@@ -40,6 +42,39 @@ def _collapse_ws(text: str) -> str:
     return re.sub(r"\s+", " ", (text or "")).strip()
 
 
+def _strip_frontmatter_block(text: str) -> str:
+    return re.sub(r"^---\s*\n.*?\n---\s*\n?", "", text or "", flags=re.DOTALL)
+
+
+def _rewrite_markdown_asset_paths(markdown: str, source_dir: Path, target_dir: Path) -> str:
+    """Rewrite relative markdown asset links from one directory base to another."""
+    pattern = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
+
+    def _replace(match):
+        alt = match.group(1)
+        raw_path = match.group(2)
+        if re.match(r"^[a-z]+://", raw_path, re.IGNORECASE):
+            return match.group(0)
+        if raw_path.startswith("/"):
+            return match.group(0)
+        source_path = (source_dir / raw_path).resolve()
+        try:
+            rel = os.path.relpath(source_path, target_dir)
+        except Exception:
+            rel = raw_path
+        return f"![{alt}]({str(rel).replace(os.sep, '/')})"
+
+    return pattern.sub(_replace, markdown)
+
+
+def _build_marker_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
+    """Split marker work into smaller page chunks to reduce long silent stalls."""
+    selected = sorted(pages if pages is not None else list(range(page_count)))
+    if not selected:
+        return []
+    return [selected[i:i + chunk_size] for i in range(0, len(selected), chunk_size)]
+
+
 def _truncate_markdown_blocks(blocks: List[str], max_chars: int = 15000) -> str:
     if not blocks:
         return ""
@@ -61,6 +96,59 @@ def _truncate_markdown_blocks(blocks: List[str], max_chars: int = 15000) -> str:
             out.append("> Conteúdo truncado.")
         break
     return "\n\n".join(out).strip()
+
+
+def _compact_image_description_text(description: str, max_chars: int = 220) -> str:
+    text = re.sub(r"\s+", " ", (description or "")).strip()
+    if not text:
+        return ""
+    sentence_match = re.match(r"(.+?[.!?])(?:\s|$)", text)
+    if sentence_match and len(sentence_match.group(1)) >= 40:
+        text = sentence_match.group(1).strip()
+    if len(text) <= max_chars:
+        return text
+    truncated = text[:max_chars].rstrip()
+    if " " in truncated:
+        truncated = truncated.rsplit(" ", 1)[0]
+    return truncated.rstrip(" ,;:") + "…"
+
+
+def _build_image_description_lookup(image_curation: dict) -> Dict[str, dict]:
+    descriptions: Dict[str, dict] = {}
+    compact_groups: Dict[str, List[dict]] = {}
+
+    for page_data in image_curation.get("pages", {}).values():
+        if not page_data.get("include_page", True):
+            continue
+        for fname, img_data in page_data.get("images", {}).items():
+            if not img_data.get("include") or not img_data.get("description"):
+                continue
+            compact = _compact_image_description_text(img_data["description"])
+            record = {
+                "type": img_data.get("type", "genérico"),
+                "description": img_data["description"],
+                "compact_description": compact,
+                "page_num": extract_page_number(fname),
+            }
+            descriptions[fname] = record
+            compact_groups.setdefault(compact, []).append({"fname": fname, **record})
+
+    for compact, items in compact_groups.items():
+        if not compact or len(items) < 2:
+            continue
+        items.sort(key=lambda item: (item["page_num"] is None, item["page_num"] or 9999, item["fname"]))
+        lead = items[0]
+        for item in items[1:]:
+            if lead["page_num"] is None or item["page_num"] is None:
+                continue
+            if abs(item["page_num"] - lead["page_num"]) > 1:
+                continue
+            descriptions[item["fname"]]["duplicate_of"] = {
+                "fname": lead["fname"],
+                "page_num": lead["page_num"],
+                "compact_description": compact,
+            }
+    return descriptions
 
 
 def _extract_url_page_metadata(soup) -> Dict[str, str]:
@@ -549,7 +637,7 @@ class PyMuPDFBackend(ExtractionBackend):
         )
 
 
-def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext"):
+def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext", stall_timeout: Optional[int] = None):
     """Run an external CLI process with stall timeout and cancel support.
 
     Returns (returncode, stdout_lines, stderr_lines).
@@ -561,6 +649,7 @@ def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext"):
     stdout_lines: list = []
     stderr_lines: list = []
     last_output_time = _time.monotonic()
+    effective_stall_timeout = stall_timeout if stall_timeout is not None else ctx.stall_timeout
     lock = _th.Lock()
     killed_by_cancel = _th.Event()
     killed_by_stall = _th.Event()
@@ -604,9 +693,9 @@ def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext"):
             # Check stall
             with lock:
                 elapsed = _time.monotonic() - last_output_time
-            if elapsed > ctx.stall_timeout:
+            if elapsed > effective_stall_timeout:
                 logger.error("  [%s] Sem output por %ds — matando PID %d (stall timeout)",
-                             backend_name, ctx.stall_timeout, proc.pid)
+                             backend_name, effective_stall_timeout, proc.pid)
                 killed_by_stall.set()
                 proc.kill()
                 return
@@ -632,7 +721,7 @@ def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext"):
     if killed_by_stall.is_set():
         last_line = (stderr_lines or stdout_lines or ["(nenhum)"])[-1]
         raise TimeoutError(
-            f"{backend_name} travou (sem output por {ctx.stall_timeout}s). "
+            f"{backend_name} travou (sem output por {effective_stall_timeout}s). "
             f"Último output:\n{last_line}"
         )
 
@@ -796,11 +885,25 @@ class MarkerCLIBackend(ExtractionBackend):
     def available(self) -> bool:
         return bool(MARKER_CLI)
 
-    def run(self, ctx: BackendContext) -> BackendRunResult:
-        out_dir = ctx.root_dir / "staging" / "markdown-auto" / "marker" / ctx.entry_id
-        ensure_dir(out_dir)
+    def _marker_stall_timeout(self, ctx: BackendContext) -> int:
+        effective_profile = (
+            ctx.entry.document_profile
+            if ctx.entry.document_profile != "auto"
+            else ctx.report.suggested_profile
+        )
+        if effective_profile in {"math_heavy", "layout_heavy"}:
+            return max(ctx.stall_timeout, 1800)
+        return ctx.stall_timeout
 
-        caps = _detect_marker_capabilities()
+    def _run_single_marker(
+        self,
+        ctx: BackendContext,
+        out_dir: Path,
+        caps: Dict[str, object],
+        pages: Optional[List[int]],
+        stall_timeout: int,
+    ) -> BackendRunResult:
+        ensure_dir(out_dir)
 
         cmd = [
             MARKER_CLI,
@@ -809,7 +912,7 @@ class MarkerCLIBackend(ExtractionBackend):
             "--output_dir", str(out_dir),
         ]
 
-        marker_range = pages_to_marker_range(ctx.pages)
+        marker_range = pages_to_marker_range(pages)
         page_range_flag = caps.get("page_range_flag")
         if marker_range and page_range_flag:
             cmd.extend([page_range_flag, marker_range])
@@ -834,7 +937,9 @@ class MarkerCLIBackend(ExtractionBackend):
         logger.info("  [marker] Iniciando processo...")
 
         try:
-            returncode, stdout_lines, stderr_lines = _run_cli_with_timeout(cmd, "marker", ctx)
+            returncode, stdout_lines, stderr_lines = _run_cli_with_timeout(
+                cmd, "marker", ctx, stall_timeout=stall_timeout
+            )
         except (InterruptedError, TimeoutError) as e:
             return BackendRunResult(
                 name=self.name, layer=self.layer, status="error",
@@ -866,6 +971,8 @@ class MarkerCLIBackend(ExtractionBackend):
             "stdout_tail": stdout_text[-2000:],
             "stderr_tail": stderr_text[-2000:],
             "capabilities": caps,
+            "page_range": marker_range,
+            "stall_timeout": stall_timeout,
         }, indent=2, ensure_ascii=False))
 
         return BackendRunResult(
@@ -878,6 +985,123 @@ class MarkerCLIBackend(ExtractionBackend):
             command=cmd,
             notes=["Saída avançada gerada com Marker CLI."],
         )
+
+    def _run_chunked_marker(
+        self,
+        ctx: BackendContext,
+        out_dir: Path,
+        caps: Dict[str, object],
+        stall_timeout: int,
+    ) -> BackendRunResult:
+        chunks = _build_marker_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=20)
+        if len(chunks) <= 1:
+            return self._run_single_marker(ctx, out_dir, caps, ctx.pages, stall_timeout)
+
+        logger.info("  [marker] Documento grande/pesado; processando em %d chunks.", len(chunks))
+        combined_path = out_dir / f"{ctx.entry_id}.md"
+        combined_parts: List[str] = []
+        chunk_meta = []
+
+        for idx, chunk_pages in enumerate(chunks, start=1):
+            chunk_dir = out_dir / f"chunk-{idx:03d}"
+            logger.info(
+                "  [marker] Chunk %d/%d — páginas %d-%d",
+                idx, len(chunks), chunk_pages[0] + 1, chunk_pages[-1] + 1,
+            )
+            result = self._run_single_marker(ctx, chunk_dir, caps, chunk_pages, stall_timeout)
+            if result.status != "ok" or not result.markdown_path:
+                return BackendRunResult(
+                    name=self.name,
+                    layer=self.layer,
+                    status="error",
+                    command=result.command,
+                    error=f"Chunk {idx}/{len(chunks)} falhou: {result.error or 'sem markdown gerado'}",
+                )
+
+            md_abs = ctx.root_dir / result.markdown_path
+            try:
+                chunk_text = md_abs.read_text(encoding="utf-8")
+            except Exception as e:
+                return BackendRunResult(
+                    name=self.name,
+                    layer=self.layer,
+                    status="error",
+                    error=f"Falha ao ler markdown do chunk {idx}: {e}",
+                )
+
+            chunk_body = _strip_frontmatter_block(chunk_text).strip()
+            chunk_body = _rewrite_markdown_asset_paths(chunk_body, md_abs.parent, combined_path.parent)
+            combined_parts.append(
+                f"<!-- MARKER_CHUNK {idx}: pages {chunk_pages[0] + 1}-{chunk_pages[-1] + 1} -->\n\n{chunk_body}"
+            )
+            chunk_meta.append({
+                "chunk_index": idx,
+                "page_range": pages_to_marker_range(chunk_pages),
+                "markdown_path": result.markdown_path,
+                "metadata_path": result.metadata_path,
+            })
+
+        write_text(combined_path, wrap_frontmatter({
+            "entry_id": ctx.entry_id,
+            "title": ctx.entry.title,
+            "backend": self.name,
+            "source_pdf": safe_rel(ctx.raw_target, ctx.root_dir),
+            "page_range": ctx.entry.page_range,
+        }, "\n\n".join(part for part in combined_parts if part).strip() + "\n"))
+
+        metadata_path = out_dir / "marker-run.json"
+        write_text(metadata_path, json.dumps({
+            "capabilities": caps,
+            "stall_timeout": stall_timeout,
+            "chunked": True,
+            "chunks": chunk_meta,
+        }, indent=2, ensure_ascii=False))
+
+        return BackendRunResult(
+            name=self.name,
+            layer=self.layer,
+            status="ok",
+            markdown_path=safe_rel(combined_path, ctx.root_dir),
+            asset_dir=safe_rel(out_dir, ctx.root_dir),
+            metadata_path=safe_rel(metadata_path, ctx.root_dir),
+            notes=["Saída avançada gerada com Marker CLI em chunks."],
+        )
+
+    def run(self, ctx: BackendContext) -> BackendRunResult:
+        out_dir = ctx.root_dir / "staging" / "markdown-auto" / "marker" / ctx.entry_id
+        ensure_dir(out_dir)
+
+        caps = _detect_marker_capabilities()
+        stall_timeout = self._marker_stall_timeout(ctx)
+        effective_profile = (
+            ctx.entry.document_profile
+            if ctx.entry.document_profile != "auto"
+            else ctx.report.suggested_profile
+        )
+        supports_chunking = bool(caps.get("page_range_flag"))
+        should_chunk = (
+            effective_profile in {"math_heavy", "layout_heavy"}
+            and ctx.report.page_count >= 40
+            and supports_chunking
+        )
+
+        result = (
+            self._run_chunked_marker(ctx, out_dir, caps, stall_timeout)
+            if should_chunk
+            else self._run_single_marker(ctx, out_dir, caps, ctx.pages, stall_timeout)
+        )
+
+        if result.status == "ok":
+            return result
+
+        if DOCLING_CLI:
+            logger.warning("  [marker] Falhou; tentando fallback para docling: %s", result.error)
+            fallback = DoclingCLIBackend().run(ctx)
+            if fallback.status == "ok":
+                fallback.notes.append("Fallback automático após falha do Marker.")
+            return fallback
+
+        return result
 
 
 # ---------------------------------------------------------------------------
@@ -909,6 +1133,11 @@ class BackendSelector:
                     return name
             return None
 
+        def pick_advanced_for_profile(profile: str) -> Optional[str]:
+            if profile in {"math_heavy", "layout_heavy"}:
+                return pick_first(["marker", "docling"])
+            return pick_first(["docling", "marker"])
+
         base_backend: Optional[str] = None
         advanced_backend: Optional[str] = None
 
@@ -929,35 +1158,35 @@ class BackendSelector:
         elif mode == "manual_assisted":
             base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
             if effective_profile in {"math_heavy", "math_light", "layout_heavy", "scanned", "exam_pdf"}:
-                advanced_backend = advanced_backend or pick_first(["docling", "marker"])
+                advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
             reasons.append("Modo manual_assisted gera base automática e exige revisão humana guiada.")
 
         elif mode == "high_fidelity":
             base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
             if effective_profile == "math_heavy":
-                advanced_backend = advanced_backend or pick_first(["docling", "marker"])
+                advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
                 reasons.append("Documento math_heavy pede backend avançado com enrich-formula.")
             elif effective_profile == "math_light":
-                advanced_backend = advanced_backend or pick_first(["docling", "marker"])
+                advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
                 reasons.append("Documento math_light pede backend avançado para fórmulas moderadas.")
             elif effective_profile in {"layout_heavy", "scanned", "exam_pdf"}:
-                advanced_backend = advanced_backend or pick_first(["docling", "marker"])
+                advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
                 reasons.append("Documento com layout/scan/exam pede backend avançado.")
             else:
-                advanced_backend = advanced_backend or pick_first(["docling", "marker"])
+                advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
                 if advanced_backend:
                     reasons.append("Modo high_fidelity tenta saída avançada além da base.")
 
         else:  # auto
             base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
             if effective_profile in {"math_heavy", "math_light", "layout_heavy", "scanned", "exam_pdf"}:
-                advanced_backend = advanced_backend or pick_first(["docling", "marker"])
+                advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
                 reasons.append(f"Modo auto detectou perfil {effective_profile} e ativou camada avançada.")
             else:
                 reasons.append("Modo auto detectou documento geral; saída base é suficiente.")
 
         if entry.formula_priority and not advanced_backend:
-            advanced_backend = pick_first(["docling", "marker"])
+            advanced_backend = pick_advanced_for_profile(effective_profile)
             if advanced_backend:
                 reasons.append("formula_priority ativou backend avançado.")
 
@@ -1050,6 +1279,7 @@ class RepoBuilder:
         # Resolve image references in markdowns → content/images/
         self._resolve_content_images()
         self._inject_all_image_descriptions()
+        self._regenerate_pedagogical_files(manifest)
 
         logger.info("Repository built successfully at %s", self.root_dir)
 
@@ -1154,7 +1384,12 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         write_text(self.root_dir / "course" / "COURSE_MAP.md",
                    course_map_md(self.course_meta, self.subject_profile))
         write_text(self.root_dir / "course" / "GLOSSARY.md",
-                   glossary_md(self.course_meta, self.subject_profile))
+                   glossary_md(
+                       self.course_meta,
+                       self.subject_profile,
+                       root_dir=self.root_dir,
+                       manifest_entries=[e.to_dict() for e in self.entries],
+                   ))
 
         # ── Student files ─────────────────────────────────────────────
         write_text(self.root_dir / "student" / "STUDENT_STATE.md",
@@ -1546,22 +1781,42 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         write_text(self.root_dir / "course" / "SOURCE_REGISTRY.yaml", "\n".join(lines) + "\n")
 
     def _write_bundle_seed(self, manifest: Dict[str, object]) -> None:
-        selected = [e for e in manifest["entries"] if e.get("include_in_bundle")]
+        selected = []
+        for entry in manifest["entries"]:
+            score = _bundle_priority_score(entry)
+            if score < 30:
+                continue
+            chosen_markdown = (
+                entry.get("approved_markdown")
+                or entry.get("curated_markdown")
+                or entry.get("advanced_markdown")
+                or entry.get("base_markdown")
+            )
+            if not chosen_markdown:
+                continue
+            selected.append((score, entry))
+
+        selected.sort(
+            key=lambda item: (
+                -item[0],
+                (item[1].get("category") or ""),
+                (item[1].get("title") or ""),
+            )
+        )
         seed = {
             "generated_at": manifest["generated_at"],
             "course_slug": self.course_meta["course_slug"],
             "target_platform": "claude-projects",
-            "bundle_candidates": [
-                {
-                    "id": e["id"],
-                    "title": e["title"],
-                    "category": e["category"],
-                    "preferred_manual_review": e.get("manual_review"),
-                    "base_markdown": e.get("base_markdown"),
-                    "advanced_markdown": e.get("advanced_markdown"),
-                    "effective_profile": e.get("effective_profile"),
-                }
-                for e in selected
+            "selection_policy": {
+                "min_score": 30,
+                "goal": "baixo-custo-alto-sinal",
+                "routing_first": True,
+                "exclude_full_text": True,
+                "metadata_only": True,
+            },
+                "bundle_candidates": [
+                _bundle_seed_candidate(e, score)
+                for score, e in selected
             ],
         }
         write_text(
@@ -1965,6 +2220,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             self._log_backend_result(entry.id(), result)
 
             if result.status == "ok":
+                item["advanced_backend"] = result.name
                 item["advanced_markdown"] = result.markdown_path
                 item["advanced_asset_dir"] = result.asset_dir
                 item["advanced_metadata_path"] = result.metadata_path
@@ -2611,7 +2867,12 @@ unit: {entry.tags}
 
         # Glossary
         write_text(self.root_dir / "course" / "GLOSSARY.md",
-                   glossary_md(self.course_meta, self.subject_profile))
+                   glossary_md(
+                       self.course_meta,
+                       self.subject_profile,
+                       root_dir=self.root_dir,
+                       manifest_entries=manifest.get("entries", []),
+                   ))
 
         # Syllabus
         if self.subject_profile and self.subject_profile.syllabus:
@@ -2969,6 +3230,8 @@ Em **toda sessão futura**, antes de responder ao conteúdo da disciplina:
 
 **Regra obrigatória:** nunca finja que o `FILE_MAP.md` está atualizado se houver novos materiais no repositório que ainda não foram mapeados.
 """
+
+
 
     return f"""# Instruções do Tutor — {course_name}
 
@@ -3774,6 +4037,14 @@ _TEACHING_PLAN_SECTION_STOP = re.compile(
     re.IGNORECASE,
 )
 
+
+def _normalize_teaching_plan_heading(line: str) -> str:
+    """Normalize markdown-heavy headings before parser checks."""
+    normalized = (line or "").strip()
+    normalized = re.sub(r"^#+\s*", "", normalized)
+    normalized = normalized.replace("*", "").strip()
+    return normalized
+
 def _parse_units_from_teaching_plan(text: str):
     """
     Extrai (título_da_unidade, [tópicos]) do texto livre do plano de ensino.
@@ -3801,10 +4072,14 @@ def _parse_units_from_teaching_plan(text: str):
     current_title: Optional[str] = None
     current_unit_num: Optional[str] = None
     current_topics: list = []
+    current_style: Optional[str] = None
 
     pucrs_unit_re = re.compile(r'N[°º]?\.\s*DA\s+UNIDADE\s*:\s*(\d+)', re.IGNORECASE)
     pucrs_content_re = re.compile(r'CONTE[ÚU]DO\s*:\s*(.+)', re.IGNORECASE)
-    generic_unit_re = re.compile(r'^#{0,4}\s*unidade\s+[\divxlc]+[\s\-–:—]+(.+)', re.IGNORECASE)
+    generic_unit_re = re.compile(
+        r'^(?:#{0,4}\s*)?(unidade(?:\s+de\s+aprendizagem)?\s+(?:\d+|[ivxlcdm]+))\s*[-–:—]\s*(.+)',
+        re.IGNORECASE,
+    )
     numbered_topic_re = re.compile(r'^(\d+\.\d+(?:\.\d+)*)\.\s+(.+)')
     bullet_topic_re = re.compile(r'^[-•*]\s+(.+)')
 
@@ -3813,7 +4088,8 @@ def _parse_units_from_teaching_plan(text: str):
         if not line:
             continue
 
-        if _TEACHING_PLAN_SECTION_STOP.match(line):
+        normalized_line = _normalize_teaching_plan_heading(line)
+        if _TEACHING_PLAN_SECTION_STOP.match(normalized_line):
             break
 
         # PUCRS: "N°. DA UNIDADE: N"
@@ -3824,6 +4100,7 @@ def _parse_units_from_teaching_plan(text: str):
             current_unit_num = m.group(1)
             current_title = None
             current_topics = []
+            current_style = "pucrs"
             continue
 
         # PUCRS: "CONTEÚDO: Título" — título da unidade atual
@@ -3838,9 +4115,10 @@ def _parse_units_from_teaching_plan(text: str):
         if m:
             if current_title is not None:
                 units.append((current_title, current_topics))
-            current_title = line.lstrip("#").strip()
+            current_title = f"{m.group(1).strip()} — {m.group(2).strip()}"
             current_unit_num = None
             current_topics = []
+            current_style = "learning_unit" if "aprendizagem" in m.group(1).lower() else "generic"
             continue
 
         # Tópicos numerados (1.1., 1.2.1.) ou com marcador (-, •)
@@ -3855,6 +4133,9 @@ def _parse_units_from_teaching_plan(text: str):
             m = bullet_topic_re.match(line)
             if m:
                 current_topics.append((m.group(1).strip(), 0))
+                continue
+            if current_style == "learning_unit" and not normalized_line.endswith(":"):
+                current_topics.append((line, 0))
 
     if current_title is not None:
         units.append((current_title, current_topics))
@@ -3896,7 +4177,12 @@ def _format_units_for_prompt(units) -> str:
             indent = "  " * (depth + 1)
             lines.append(f"{indent}- {text}")
         lines.append("")
-    return "\n".join(lines)
+    result = "\n".join(lines)
+    return _clamp_navigation_artifact(
+        result,
+        max_chars=14000,
+        label="course/COURSE_MAP.md",
+    )
 
 
 def _parse_syllabus_timeline(syllabus: str) -> List[Dict[str, str]]:
@@ -3978,71 +4264,106 @@ def _match_timeline_to_units(
     O matching usa heurísticas:
       - Busca "unidade N", "unid N", "un N" no texto do conteúdo
       - Busca o título da unidade (ou parte dele) no conteúdo
-      - Busca "P1", "P2", "P3" para marcar provas
+      - Usa overlap semântico leve do nome da unidade
     """
     if not timeline or not units:
         return []
 
-    # Detect which column has the content
     content_keys = []
     for key in timeline[0].keys():
         if any(k in key for k in ["conteúdo", "conteudo", "assunto", "tema", "descrição",
-                                    "descricao", "atividade", "tópico", "topico", "content"]):
+                                  "descricao", "atividade", "tópico", "topico", "content"]):
             content_keys.append(key)
     if not content_keys:
-        # Fallback: use the column with longest average text
         avg_lens = {}
         for key in timeline[0].keys():
             avg_lens[key] = sum(len(row.get(key, "")) for row in timeline) / max(len(timeline), 1)
         if avg_lens:
             content_keys = [max(avg_lens, key=avg_lens.get)]
 
-    # Detect date/week column
-    date_keys = []
+    preferred_date_keys = []
+    fallback_date_keys = []
     for key in timeline[0].keys():
-        if any(k in key for k in ["data", "date", "semana", "week", "sem", "aula"]):
-            date_keys.append(key)
+        if any(k in key for k in ["data", "date"]):
+            preferred_date_keys.append(key)
+        elif any(k in key for k in ["semana", "week", "sem", "aula"]):
+            fallback_date_keys.append(key)
+    date_keys = preferred_date_keys or fallback_date_keys
     if not date_keys:
-        # First column as fallback
         date_keys = [list(timeline[0].keys())[0]] if timeline[0] else []
 
-    result = []
-    for unit_title, _ in units:
-        # Extract unit number from title: "Unidade 01 — Métodos Formais" → "01", "1"
-        unit_num_match = re.search(r'(\d+)', unit_title)
-        unit_num = unit_num_match.group(1) if unit_num_match else ""
-        unit_num_int = str(int(unit_num)) if unit_num else ""  # "01" → "1"
+    def _normalize_token_text(text: str) -> str:
+        text = unicodedata.normalize("NFKD", text or "")
+        text = "".join(ch for ch in text if not unicodedata.combining(ch))
+        text = re.sub(r"[^a-z0-9\s]", " ", text.lower())
+        return re.sub(r"\s+", " ", text).strip()
 
-        # Extract the descriptive part: "Métodos Formais"
-        desc_match = re.search(r'[—–\-:]\s*(.+)', unit_title)
-        unit_desc = desc_match.group(1).strip().lower() if desc_match else ""
-        # Use first significant words for matching
-        desc_words = [w for w in unit_desc.split() if len(w) > 3][:3]
+    generic_tokens = {
+        "unidade", "introducao", "introdução", "fundamentos", "softwares", "suporte",
+        "formal", "formais", "verificacao", "verificação", "programas", "programa",
+        "modelos", "modelo", "logica", "lógica", "temporal", "sistemas", "sistema",
+    }
+
+    result = []
+    for unit_title, topics in units:
+        unit_num_match = re.search(r"(\d+)", unit_title)
+        unit_num = unit_num_match.group(1) if unit_num_match else ""
+        unit_num_int = str(int(unit_num)) if unit_num else ""
+
+        desc_match = re.search(r"[—–\-:]\s*(.+)", unit_title)
+        unit_desc = desc_match.group(1).strip() if desc_match else ""
+        unit_desc_norm = _normalize_token_text(unit_desc)
+        desc_words = [w for w in unit_desc_norm.split() if len(w) > 3][:4]
+        topic_phrases = []
+        topic_keywords = set()
+        for topic in topics or []:
+            topic_text = _topic_text(topic)
+            topic_norm = _normalize_token_text(topic_text)
+            if not topic_norm:
+                continue
+            topic_phrases.append(topic_norm)
+            for token in topic_norm.split():
+                if len(token) >= 5 and token not in generic_tokens:
+                    topic_keywords.add(token)
 
         matched_dates = []
         for row in timeline:
-            content = " ".join(row.get(k, "") for k in content_keys).lower()
-            if not content.strip():
+            content = " ".join(row.get(k, "") for k in content_keys)
+            content_norm = _normalize_token_text(content)
+            if not content_norm:
                 continue
 
             matched = False
-            # Try: "unidade 01", "unidade 1", "unid 1", "un 1"
             if unit_num:
                 patterns = [
-                    rf'\bunidade\s*{unit_num}\b',
-                    rf'\bunidade\s*{unit_num_int}\b',
-                    rf'\bunid\.?\s*{unit_num_int}\b',
-                    rf'\bun\.?\s*{unit_num_int}\b',
+                    rf"\bunidade\s*{unit_num}\b",
+                    rf"\bunidade\s*{unit_num_int}\b",
+                    rf"\bunid\.?\s*{unit_num_int}\b",
+                    rf"\bun\.?\s*{unit_num_int}\b",
                 ]
                 for pat in patterns:
-                    if re.search(pat, content, re.IGNORECASE):
+                    if re.search(pat, content_norm, re.IGNORECASE):
                         matched = True
                         break
 
-            # Try: descriptive words match
             if not matched and desc_words:
-                matches = sum(1 for w in desc_words if w in content)
-                if matches >= min(2, len(desc_words)):
+                if unit_desc_norm and unit_desc_norm in content_norm:
+                    matched = True
+                else:
+                    matches = sum(1 for w in desc_words if re.search(rf"\b{re.escape(w)}\b", content_norm))
+                    threshold = 1 if len(desc_words) == 1 else 2
+                    if matches >= threshold:
+                        matched = True
+
+            if not matched and topic_phrases:
+                for phrase in topic_phrases:
+                    if phrase in content_norm:
+                        matched = True
+                        break
+
+            if not matched and topic_keywords:
+                keyword_hits = sum(1 for kw in topic_keywords if re.search(rf"\b{re.escape(kw)}\b", content_norm))
+                if keyword_hits >= 1:
                     matched = True
 
             if matched:
@@ -4050,14 +4371,204 @@ def _match_timeline_to_units(
                 if date_str:
                     matched_dates.append(date_str)
 
+        matched_dates = list(dict.fromkeys(matched_dates))
+        if len(matched_dates) > 1:
+            period = f"{matched_dates[0]} a {matched_dates[-1]}"
+        else:
+            period = matched_dates[0] if matched_dates else ""
+
         result.append({
             "unit_title": unit_title,
             "unit_slug": slugify(unit_title),
-            "period": f"{matched_dates[0]} → {matched_dates[-1]}" if len(matched_dates) > 1 else (matched_dates[0] if matched_dates else ""),
+            "period": period,
             "dates": ", ".join(matched_dates),
         })
 
     return result
+
+
+def _match_timeline_to_units_generic(
+    timeline: List[Dict[str, str]],
+    units: list,
+) -> List[Dict[str, str]]:
+    """
+    Versão genérica do matcher de timeline.
+
+    Em vez de depender de nomes hardcoded, aprende sinais do próprio plano:
+    títulos, tópicos e tokens distintivos por frequência. O matching também
+    normaliza acentos para funcionar melhor em português.
+    """
+    if not timeline or not units:
+        return []
+
+    content_keys = []
+    for key in timeline[0].keys():
+        if any(k in key for k in ["conteúdo", "conteudo", "assunto", "tema", "descrição",
+                                  "descricao", "atividade", "tópico", "topico", "content"]):
+            content_keys.append(key)
+    if not content_keys:
+        avg_lens = {}
+        for key in timeline[0].keys():
+            avg_lens[key] = sum(len(row.get(key, "")) for row in timeline) / max(len(timeline), 1)
+        if avg_lens:
+            content_keys = [max(avg_lens, key=avg_lens.get)]
+
+    preferred_date_keys = []
+    fallback_date_keys = []
+    for key in timeline[0].keys():
+        if any(k in key for k in ["data", "date"]):
+            preferred_date_keys.append(key)
+        elif any(k in key for k in ["semana", "week", "sem", "aula"]):
+            fallback_date_keys.append(key)
+    date_keys = preferred_date_keys or fallback_date_keys
+    if not date_keys:
+        date_keys = [list(timeline[0].keys())[0]] if timeline[0] else []
+
+    def _normalize_token_text(text: str) -> str:
+        text = unicodedata.normalize("NFKD", text or "")
+        text = "".join(ch for ch in text if not unicodedata.combining(ch))
+        text = re.sub(r"[^a-z0-9\s]", " ", text.lower())
+        return re.sub(r"\s+", " ", text).strip()
+
+    def _tokenize_signal(text: str) -> List[str]:
+        return [
+            token
+            for token in _normalize_token_text(text).split()
+            if len(token) >= 4 and not token.isdigit()
+        ]
+
+    descriptors = []
+    token_frequency: Dict[str, int] = {}
+    for unit_title, topics in units:
+        unit_num_match = re.search(r"(\d+)", unit_title)
+        unit_num = unit_num_match.group(1) if unit_num_match else ""
+        unit_num_int = str(int(unit_num)) if unit_num else ""
+
+        desc_match = re.search(r"[—–\-:]\s*(.+)", unit_title)
+        unit_desc = desc_match.group(1).strip() if desc_match else unit_title
+        unit_desc_norm = _normalize_token_text(unit_desc)
+        title_tokens = _tokenize_signal(unit_desc_norm)
+        topic_phrases = []
+        topic_tokens = []
+
+        for topic in topics or []:
+            topic_norm = _normalize_token_text(_topic_text(topic))
+            if not topic_norm:
+                continue
+            topic_phrases.append(topic_norm)
+            topic_tokens.extend(_tokenize_signal(topic_norm))
+
+        all_tokens = title_tokens + topic_tokens
+        descriptor = {
+            "unit_title": unit_title,
+            "unit_num": unit_num,
+            "unit_num_int": unit_num_int,
+            "unit_desc_norm": unit_desc_norm,
+            "title_tokens": title_tokens,
+            "topic_phrases": topic_phrases,
+            "all_tokens": all_tokens,
+        }
+        descriptors.append(descriptor)
+        for token in set(all_tokens):
+            token_frequency[token] = token_frequency.get(token, 0) + 1
+
+    for descriptor in descriptors:
+        descriptor["distinctive_tokens"] = sorted({
+            token
+            for token in descriptor["all_tokens"]
+            if token_frequency.get(token, 0) == 1 or (token_frequency.get(token, 0) <= 2 and len(token) >= 6)
+        })
+
+    row_dates = []
+    for row in timeline:
+        row_dates.append(" / ".join(row.get(k, "") for k in date_keys if row.get(k, "")).strip())
+
+    anchor_indexes_by_unit = []
+    for descriptor in descriptors:
+        anchors = []
+        for idx, row in enumerate(timeline):
+            content_norm = _normalize_token_text(" ".join(row.get(k, "") for k in content_keys))
+            if not content_norm:
+                continue
+
+            score = 0
+            unit_num = descriptor["unit_num"]
+            unit_num_int = descriptor["unit_num_int"]
+            if unit_num:
+                patterns = [
+                    rf"\bunidade\s*{unit_num}\b",
+                    rf"\bunidade\s*{unit_num_int}\b",
+                    rf"\bunid\.?\s*{unit_num_int}\b",
+                    rf"\bun\.?\s*{unit_num_int}\b",
+                ]
+                for pat in patterns:
+                    if re.search(pat, content_norm, re.IGNORECASE):
+                        score += 10
+                        break
+
+            unit_desc_norm = descriptor["unit_desc_norm"]
+            if unit_desc_norm and unit_desc_norm in content_norm:
+                score += 8
+
+            title_hits = sum(
+                1 for token in set(descriptor["title_tokens"])
+                if re.search(rf"\b{re.escape(token)}\b", content_norm)
+            )
+            if title_hits >= max(1, min(2, len(set(descriptor["title_tokens"])))):
+                score += 4
+
+            for phrase in descriptor["topic_phrases"]:
+                if phrase in content_norm:
+                    score += 8
+                    break
+
+            distinct_hits = sum(
+                1
+                for token in descriptor["distinctive_tokens"]
+                if re.search(rf"\b{re.escape(token)}\b", content_norm)
+            )
+            if distinct_hits:
+                score += min(6, distinct_hits * 3)
+
+            if score >= 4:
+                anchors.append(idx)
+        anchor_indexes_by_unit.append(anchors)
+
+    result = []
+    next_anchor_starts = [
+        anchors[0] if anchors else None
+        for anchors in anchor_indexes_by_unit
+    ]
+
+    for unit_idx, descriptor in enumerate(descriptors):
+        anchors = anchor_indexes_by_unit[unit_idx]
+        matched_dates = []
+        if anchors:
+            start_idx = anchors[0]
+            next_start_idx = None
+            for later_idx in range(unit_idx + 1, len(descriptors)):
+                later_anchors = anchor_indexes_by_unit[later_idx]
+                if later_anchors:
+                    next_start_idx = later_anchors[0]
+                    break
+            end_idx = (next_start_idx - 1) if next_start_idx is not None else anchors[-1]
+            if end_idx < start_idx:
+                end_idx = anchors[-1]
+            matched_dates = [d for d in row_dates[start_idx:end_idx + 1] if d]
+
+        matched_dates = list(dict.fromkeys(matched_dates))
+        period = f"{matched_dates[0]} a {matched_dates[-1]}" if len(matched_dates) > 1 else (matched_dates[0] if matched_dates else "")
+        result.append({
+            "unit_title": descriptor["unit_title"],
+            "unit_slug": slugify(descriptor["unit_title"]),
+            "period": period,
+            "dates": ", ".join(matched_dates),
+        })
+
+    return result
+
+
+_match_timeline_to_units = _match_timeline_to_units_generic
 
 
 def _parse_bibliography_from_teaching_plan(text: str) -> dict:
@@ -4242,10 +4753,20 @@ def course_map_md(course_meta: dict, subject_profile=None) -> str:
         "",
     ]
 
-    return "\n".join(lines)
+    return _clamp_navigation_artifact(
+        "\n".join(lines),
+        max_chars=14000,
+        label="course/COURSE_MAP.md",
+    )
 
 
-def glossary_md(course_meta: dict, subject_profile=None) -> str:
+def glossary_md(
+    course_meta: dict,
+    subject_profile=None,
+    *,
+    root_dir: Optional[Path] = None,
+    manifest_entries: Optional[List[dict]] = None,
+) -> str:
     course_name = course_meta.get("course_name", "Curso")
 
     lines = [
@@ -4273,6 +4794,7 @@ def glossary_md(course_meta: dict, subject_profile=None) -> str:
 
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     units = _parse_units_from_teaching_plan(teaching_plan) if teaching_plan else []
+    evidence_docs = _collect_glossary_evidence(root_dir, manifest_entries=manifest_entries) if root_dir else []
 
     # Collect all topics as candidate terms, preserving unit association
     candidates = []  # List of (term_text, unit_title)
@@ -4282,14 +4804,16 @@ def glossary_md(course_meta: dict, subject_profile=None) -> str:
 
     if candidates:
         lines.append("> Termos extraídos automaticamente do plano de ensino.")
-        lines.append("> ⏳ **Definições serão preenchidas pelo tutor na primeira sessão.**")
+        lines.append("> Definições iniciais curtas são geradas no build para reduzir custo de contexto no tutor web.")
         lines.append("")
         for term, unit_title in candidates:
+            evidence = _find_glossary_evidence(term, unit_title, evidence_docs)
+            definition, synonyms, not_confuse = _seed_glossary_fields(term, unit_title, evidence=evidence)
             lines += [
                 f"## {term}",
-                "**Definição:** ⏳ aguardando análise do tutor",
-                "**Sinônimos aceitos:** —",
-                "**Não confundir com:** —",
+                f"**Definição:** {definition}",
+                f"**Sinônimos aceitos:** {synonyms}",
+                f"**Não confundir com:** {not_confuse}",
                 f"**Aparece em:** {unit_title}",
                 "",
             ]
@@ -4297,10 +4821,523 @@ def glossary_md(course_meta: dict, subject_profile=None) -> str:
         lines.append("> ⏳ **Termos serão adicionados pelo tutor na primeira sessão.**")
         lines.append("")
 
-    return "\n".join(lines)
+    return _clamp_navigation_artifact(
+        "\n".join(lines),
+        max_chars=14000,
+        label="course/COURSE_MAP.md",
+    )
+
+
+def _clamp_navigation_artifact(text: str, *, max_chars: int, label: str) -> str:
+    compact = (text or "").strip()
+    if len(compact) <= max_chars:
+        return compact
+
+    note = f"> Conteúdo truncado para manter {label} compacto e roteável."
+    cutoff = max(0, max_chars - len(note) - 4)
+    clipped = compact[:cutoff].rstrip()
+    if "\n" in clipped:
+        clipped = clipped.rsplit("\n", 1)[0].rstrip()
+    return f"{clipped}\n\n{note}"
+
+
+def _extract_markdown_headings(raw_markdown: str, limit: int = 8) -> List[str]:
+    headings: List[str] = []
+    for line in (raw_markdown or "").splitlines():
+        match = re.match(r"^#{1,6}\s+(.+?)\s*$", line)
+        if not match:
+            continue
+        heading = _collapse_ws(match.group(1))
+        if not heading:
+            continue
+        headings.append(heading)
+        if len(headings) >= limit:
+            break
+    return headings
+
+
+def _collect_glossary_evidence(
+    root_dir: Optional[Path],
+    manifest_entries: Optional[List[dict]] = None,
+) -> List[Dict[str, str]]:
+    if not root_dir:
+        return []
+    curated_dir = root_dir / "content" / "curated"
+    if not curated_dir.exists():
+        return []
+
+    manifest_by_markdown: Dict[str, str] = {}
+    for entry in manifest_entries or []:
+        markdown_path = (
+            entry.get("approved_markdown")
+            or entry.get("curated_markdown")
+            or entry.get("advanced_markdown")
+            or entry.get("base_markdown")
+            or ""
+        )
+        if markdown_path:
+            manifest_by_markdown[Path(markdown_path).name.lower()] = _collapse_ws(
+                entry.get("title") or entry.get("name") or ""
+            )
+
+    docs: List[Dict[str, str]] = []
+    for md_path in sorted(curated_dir.glob("*.md")):
+        try:
+            raw = md_path.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        body = _collapse_ws(_strip_frontmatter_block(raw))
+        if not body:
+            continue
+        stripped = _strip_frontmatter_block(raw)
+        title_match = re.search(r"^#\s+(.+)$", stripped, flags=re.MULTILINE)
+        title = _collapse_ws(title_match.group(1)) if title_match else md_path.stem.replace("-", " ")
+        docs.append({
+            "title": title,
+            "manifest_title": manifest_by_markdown.get(md_path.name.lower(), ""),
+            "headings": _extract_markdown_headings(stripped),
+            "text": body[:4000],
+        })
+    return docs
+
+
+def _glossary_tokens(text: str) -> List[str]:
+    words = re.findall(r"[a-zà-ÿ0-9]+", (text or "").lower())
+    stopwords = {
+        "de", "da", "do", "das", "dos", "e", "em", "para", "com", "por", "na",
+        "no", "nas", "nos", "um", "uma", "as", "os", "o", "a", "ou", "ao", "à",
+        "ii", "iii", "iv", "v", "unidade", "aprendizagem",
+    }
+    return [word for word in words if len(word) > 2 and word not in stopwords]
+
+
+def _trim_glossary_prefix(text: str, prefixes: List[str]) -> str:
+    cleaned = _collapse_ws(text)
+    if not cleaned:
+        return ""
+    for prefix in prefixes:
+        prefix = _collapse_ws(prefix)
+        if not prefix:
+            continue
+        if cleaned.lower().startswith(prefix.lower()):
+            cleaned = cleaned[len(prefix):].lstrip(" -:|#")
+    return _collapse_ws(cleaned)
+
+
+def _shorten_glossary_sentence(sentence: str, max_chars: int = 180) -> str:
+    sent = _collapse_ws(sentence)
+    if len(sent) <= max_chars:
+        return sent
+    truncated = sent[:max_chars].rstrip()
+    if " " in truncated:
+        truncated = truncated.rsplit(" ", 1)[0]
+    return truncated.rstrip(" ,;:") + "..."
+
+
+def _find_glossary_evidence(term: str, unit_title: str, docs: List[Dict[str, str]]) -> str:
+    if not docs:
+        return ""
+
+    term_lower = (term or "").lower()
+    tokens = _glossary_tokens(term) + _glossary_tokens(unit_title)
+    best_score = 0
+    best_text = ""
+
+    for doc in docs:
+        haystack = " ".join([
+            doc.get("manifest_title", ""),
+            doc.get("title", ""),
+            " ".join(doc.get("headings", [])),
+            doc.get("text", ""),
+        ]).lower()
+        score = 0
+        if term_lower and term_lower in haystack:
+            score += 8
+        score += sum(1 for token in dict.fromkeys(tokens) if token in haystack)
+        if score < 3 or score <= best_score:
+            continue
+        best_score = score
+        best_text = _best_glossary_sentence(term, unit_title, doc)
+
+    return best_text[:600]
+
+
+def _best_glossary_sentence(term: str, unit_title: str, doc: Dict[str, str]) -> str:
+    prefixes = [
+        doc.get("manifest_title", ""),
+        doc.get("title", ""),
+        *doc.get("headings", []),
+    ]
+    sources = [
+        doc.get("manifest_title", ""),
+        doc.get("title", ""),
+        " ".join(doc.get("headings", [])),
+        _trim_glossary_prefix(doc.get("text", ""), prefixes),
+    ]
+    term_tokens = _glossary_tokens(term) + _glossary_tokens(unit_title)
+    candidate_sentences: List[str] = []
+    for source in sources:
+        if not source:
+            continue
+        for sentence in re.split(r"(?<=[.!?])\s+", _collapse_ws(source)):
+            sent = _collapse_ws(sentence)
+            if len(sent) < 40 or len(sent) > 220:
+                continue
+            candidate_sentences.append(sent)
+    best_sentence = ""
+    best_score = 0
+    for sent in candidate_sentences:
+        sent = _normalize_glossary_sentence(term, unit_title, sent)
+        sent_lower = sent.lower()
+        score = 0
+        if term.lower() in sent_lower:
+            score += 6
+        score += sum(1 for token in dict.fromkeys(term_tokens) if token in sent_lower)
+        if score > best_score:
+            best_score = score
+            best_sentence = sent
+    fallback = _trim_glossary_prefix(doc.get("text", ""), prefixes)
+    return best_sentence or _shorten_glossary_sentence(fallback or _collapse_ws(doc.get("text", "")), 180)
+
+
+def _normalize_glossary_sentence(term: str, unit_title: str, sentence: str) -> str:
+    sent = _collapse_ws(sentence)
+    if not sent:
+        return ""
+    sent = re.sub(r"^(?:#+\s*)+", "", sent)
+    for prefix in [term, unit_title]:
+        prefix = _collapse_ws(prefix)
+        if not prefix:
+            continue
+        if sent.lower().startswith(prefix.lower()):
+            sent = sent[len(prefix):].lstrip(" -:|#")
+    sent = _collapse_ws(sent)
+    if not sent:
+        return _shorten_glossary_sentence(term, 120)
+    if len(sent) > 180:
+        sent = _shorten_glossary_sentence(sent, 180)
+    return sent
+
+
+def _seed_glossary_fields(term: str, unit_title: str, evidence: str = "") -> tuple[str, str, str]:
+    text = _collapse_ws(term)
+    lower = text.lower()
+    unit_lower = (unit_title or "").lower()
+
+    def _unit_hint() -> str:
+        if "visão geral" in unit_lower or "visao geral" in unit_lower:
+            return "visão geral"
+        if "aprendizado de máquina" in unit_lower or "machine" in unit_lower:
+            return "aprendizado de máquina"
+        if "incerteza" in unit_lower or "probabilidade" in unit_lower:
+            return "raciocínio sob incerteza"
+        if "planejamento" in unit_lower:
+            return "planejamento e representação de conhecimento"
+        if "problemas" in unit_lower or "busca" in unit_lower:
+            return "solução de problemas"
+        if "verificação de programas" in unit_lower:
+            return "verificação de programas"
+        if "verificação de modelos" in unit_lower:
+            return "verificação de modelos"
+        if "métodos formais" in unit_lower:
+            return "métodos formais"
+        return "esta unidade"
+
+    def _generic_definition() -> str:
+        return _refine_glossary_definition_from_evidence(text, _unit_hint(), evidence)
+
+    if "lógica de hoare" in lower:
+        return (
+            "Formalismo para especificar e verificar programas com pré-condições, pós-condições e invariantes.",
+            "tripla de Hoare",
+            "lógica temporal",
+        )
+    if "model checking" in lower or "verificação de modelos" in lower:
+        return (
+            "Técnica automática que checa se um modelo de sistema satisfaz propriedades formais.",
+            "checagem de modelos",
+            "prova de teoremas",
+        )
+    if "provadores de teoremas" in lower or "prova interativa de teoremas" in lower:
+        return (
+            "Ferramentas e técnicas usadas para construir provas formais com assistência mecânica.",
+            "assistentes de prova",
+            "model checking",
+        )
+    if "métodos formais" in lower:
+        return (
+            "Conjunto de técnicas matemáticas para especificar, modelar e verificar sistemas de software.",
+            "formal methods",
+            "testes informais",
+        )
+    if "máquinas de estado" in lower:
+        return (
+            "Modelo que representa um sistema por estados e transições entre eles.",
+            "state machines",
+            "árvores de derivação",
+        )
+    if "modelos de kripke" in lower:
+        return (
+            "Estruturas de estados rotulados usadas para interpretar propriedades em lógica temporal.",
+            "estruturas de Kripke",
+            "máquina de Turing",
+        )
+    if "lógica temporal linear" in lower:
+        return (
+            "Lógica temporal que descreve propriedades ao longo de sequências lineares de estados.",
+            "LTL",
+            "CTL",
+        )
+    if "lógica temporal ramificada" in lower:
+        return (
+            "Lógica temporal que considera múltiplos futuros possíveis a partir de um estado.",
+            "CTL",
+            "LTL",
+        )
+    if "pré e pós" in lower:
+        return (
+            "Condições que descrevem o que deve valer antes e depois da execução de um programa.",
+            "precondições e pós-condições",
+            "invariantes de laço",
+        )
+    if "invariante e variante de laço" in lower:
+        return (
+            "Propriedades usadas para demonstrar correção parcial e terminação de laços.",
+            "invariante de laço",
+            "pré-condições",
+        )
+    if "planejamento clássico" in lower or lower == "planejamento":
+        return (
+            "Abordagem que busca sequências de ações para atingir objetivos em um modelo explícito de estados.",
+            "planning",
+            "busca adversária",
+        )
+    if "agentes em lógica" in lower or "introdução a agentes" in lower:
+        return (
+            "Modelo de agente que percebe o ambiente e escolhe ações segundo uma representação formal.",
+            "agentes racionais",
+            "classificadores supervisionados",
+        )
+    if "busca informada" in lower:
+        return (
+            "Busca guiada por heurísticas para explorar primeiro estados mais promissores.",
+            "busca heurística",
+            "busca cega",
+        )
+    if "algoritmos de busca" in lower:
+        return (
+            "Procedimentos para explorar espaços de estados e encontrar soluções para problemas modelados.",
+            "search algorithms",
+            "métodos de otimização contínua",
+        )
+    if "busca adversária" in lower:
+        return (
+            "Estratégia de decisão para problemas competitivos em que as ações dependem do oponente.",
+            "jogos adversariais",
+            "busca heurística simples",
+        )
+    if "representação de problemas" in lower:
+        return (
+            "Forma de modelar estados, ações, restrições e objetivos para permitir resolução algorítmica.",
+            "modelagem do problema",
+            "pré-processamento de dados",
+        )
+    if "probabilidade" in lower or "regra de bayes" in lower or "independência e permutabilidade" in lower:
+        return (
+            "Conceito central de raciocínio sob incerteza usado para modelar crenças e atualizar evidências.",
+            "inferência probabilística",
+            "lógica determinística",
+        )
+    if "aprendizado de máquina" in lower:
+        return (
+            "Área da IA que aprende padrões a partir de dados para descrever ou prever comportamentos.",
+            "machine learning",
+            "planejamento clássico",
+        )
+    if "paradigmas de aprendizado" in lower:
+        return (
+            "Categorias de estratégias de aprendizado, como supervisionado, não supervisionado e por reforço.",
+            "tipos de aprendizado",
+            "métricas de avaliação",
+        )
+    if "modelos preditivos" in lower:
+        return (
+            "Modelos voltados a prever saídas, classes ou valores a partir de exemplos observados.",
+            "modelos supervisionados",
+            "modelos descritivos",
+        )
+    if "modelos descritivos" in lower:
+        return (
+            "Modelos usados para revelar estrutura, agrupamentos ou relações presentes nos dados.",
+            "modelos exploratórios",
+            "modelos preditivos",
+        )
+    if "métricas de avaliação" in lower:
+        return (
+            "Critérios quantitativos usados para comparar desempenho e qualidade de modelos.",
+            "medidas de desempenho",
+            "função objetivo do problema",
+        )
+    if "k-means" in lower:
+        return (
+            "Algoritmo de agrupamento que particiona exemplos em grupos definidos por centróides.",
+            "agrupamento k-means",
+            "k-NN",
+        )
+    if "k-nn" in lower:
+        return (
+            "Método que classifica ou estima saídas com base nos vizinhos mais próximos no espaço de atributos.",
+            "k nearest neighbors",
+            "k-means",
+        )
+    if "árvores de decisão" in lower:
+        return (
+            "Modelo que organiza decisões em divisões sucessivas sobre atributos dos dados.",
+            "decision trees",
+            "grafos de busca",
+        )
+    if "mlp" in lower or "rede neural" in lower or "perceptron" in lower:
+        return (
+            "Família de modelos conexionistas que aprende transformações por camadas a partir de exemplos.",
+            "redes neurais artificiais",
+            "árvore de decisão",
+        )
+    if "conceituação" in lower:
+        return (
+            _refine_glossary_definition_from_evidence(text, _unit_hint(), evidence),
+            "visão geral",
+            "detalhamento técnico",
+        )
+    if "histórico" in lower:
+        return (
+            _refine_glossary_definition_from_evidence(text, _unit_hint(), evidence),
+            "contexto histórico",
+            "estado da arte detalhado",
+        )
+
+    return (
+        _generic_definition(),
+        "—",
+        "—",
+    )
+
+
+def _refine_glossary_definition_from_evidence(term: str, unit_hint: str, evidence: str) -> str:
+    compact = _collapse_ws(evidence)
+    if compact:
+        sentences = re.split(r"(?<=[.!?])\s+", compact)
+        term_tokens = _glossary_tokens(term)
+        for sentence in sentences:
+            sent = _normalize_glossary_sentence(term, unit_hint, sentence)
+            sent_lower = sent.lower()
+            if len(sent) < 40:
+                continue
+            if term.lower() in sent_lower or sum(1 for token in term_tokens if token in sent_lower) >= 2:
+                cleaned = re.sub(r"^[^A-Za-zÀ-ÿ0-9]*", "", sent).rstrip(" .")
+                cleaned = _shorten_glossary_sentence(cleaned, 180)
+                if not cleaned.endswith("."):
+                    cleaned += "."
+                return cleaned
+    return f"Conceito central de {unit_hint} que deve ser reconhecido e usado corretamente nas respostas e revisões."
 
 
 _NO_UNIT_CATEGORIES = {"cronograma", "bibliografia", "referencias"}
+
+
+def _entry_priority_label(entry: dict) -> str:
+    category = (entry.get("category") or "").strip().lower()
+    if entry.get("relevant_for_exam") or entry.get("include_in_bundle"):
+        return "alta"
+    if category in EXAM_CATEGORIES or category in EXERCISE_CATEGORIES:
+        return "alta"
+    if category in {"material-de-aula", "codigo-professor", "quadro-branco"}:
+        return "media"
+    return "normal"
+
+
+def _entry_usage_hint(entry: dict) -> str:
+    category = (entry.get("category") or "").strip().lower()
+    if category in {"material-de-aula", "slides", "apostila"}:
+        return "teoria base"
+    if category in EXAM_CATEGORIES:
+        return "provas e revisão"
+    if category in EXERCISE_CATEGORIES:
+        return "exercícios"
+    if category in ASSIGNMENT_CATEGORIES:
+        return "trabalhos"
+    if category in CODE_CATEGORIES:
+        return "exemplos de código"
+    if category in WHITEBOARD_CATEGORIES:
+        return "explicações do professor"
+    if category in {"cronograma", "bibliografia", "referencias"}:
+        return "referência geral"
+    return "consulta pontual"
+
+
+def _bundle_priority_score(entry: dict) -> int:
+    score = 0
+    category = (entry.get("category") or "").strip().lower()
+    title = (entry.get("title") or "").strip().lower()
+    profile = (entry.get("effective_profile") or "").strip().lower()
+
+    if entry.get("include_in_bundle"):
+        score += 30
+    if entry.get("relevant_for_exam"):
+        score += 40
+    if category in EXAM_CATEGORIES:
+        score += 45
+    elif category in EXERCISE_CATEGORIES:
+        score += 35
+    elif category in {"material-de-aula", "codigo-professor", "quadro-branco"}:
+        score += 20
+    elif category in {"bibliografia", "referencias", "cronograma"}:
+        score += 5
+
+    if profile in {"math_heavy", "layout_heavy", "exam_pdf"}:
+        score += 10
+
+    if "resumo" in title or "summary" in title:
+        score += 10
+    if "lista" in title or "exerc" in title:
+        score += 8
+    return score
+
+
+def _bundle_reason_labels(entry: dict) -> List[str]:
+    reasons: List[str] = []
+    category = (entry.get("category") or "").strip().lower()
+    profile = (entry.get("effective_profile") or "").strip().lower()
+    if entry.get("include_in_bundle"):
+        reasons.append("marcado-manualmente")
+    if entry.get("relevant_for_exam"):
+        reasons.append("relevante-para-prova")
+    if category in EXAM_CATEGORIES:
+        reasons.append("categoria-prova")
+    elif category in EXERCISE_CATEGORIES:
+        reasons.append("categoria-exercicio")
+    elif category in {"material-de-aula", "codigo-professor", "quadro-branco"}:
+        reasons.append("material-base")
+    if profile in {"math_heavy", "layout_heavy", "exam_pdf"}:
+        reasons.append(f"perfil-{profile}")
+    return reasons or ["prioridade-geral"]
+
+
+def _bundle_seed_candidate(entry: dict, score: int) -> dict:
+    """Return a strict metadata-only payload for bundle.seed.json."""
+    return {
+        "id": entry["id"],
+        "title": entry["title"],
+        "category": entry["category"],
+        "preferred_manual_review": entry.get("manual_review"),
+        "approved_markdown": entry.get("approved_markdown"),
+        "curated_markdown": entry.get("curated_markdown"),
+        "advanced_markdown": entry.get("advanced_markdown"),
+        "base_markdown": entry.get("base_markdown"),
+        "effective_profile": entry.get("effective_profile"),
+        "relevant_for_exam": bool(entry.get("relevant_for_exam")),
+        "bundle_priority_score": score,
+        "bundle_reasons": _bundle_reason_labels(entry),
+    }
 
 
 def file_map_md(course_meta: dict, manifest_entries: list) -> str:
@@ -4330,12 +5367,11 @@ def file_map_md(course_meta: dict, manifest_entries: list) -> str:
 
     if not manifest_entries:
         lines.append("Nenhum arquivo processado ainda.")
-        return "\n".join(lines)
-
-    lines += [
-        "| # | Título | Categoria | Markdown | Raw | Unidade | Tags |",
-        "|---|---|---|---|---|---|---|",
-    ]
+    else:
+        lines += [
+            "| # | Título | Categoria | Markdown | Raw | Unidade | Tags |",
+            "|---|---|---|---|---|---|---|",
+        ]
 
     for i, entry in enumerate(manifest_entries, 1):
         title = entry.get("title", "")
@@ -4373,7 +5409,12 @@ def file_map_md(course_meta: dict, manifest_entries: list) -> str:
         "",
     ]
 
-    return "\n".join(lines)
+    result = "\n".join(lines)
+    return _clamp_navigation_artifact(
+        result,
+        max_chars=12000,
+        label="course/FILE_MAP.md",
+    )
 
 
 def student_state_md(course_meta: dict, student_profile=None) -> str:
@@ -4560,7 +5601,11 @@ def bibliography_md(course_meta: dict, entries: List[FileEntry] = None, subject_
         "",
     ]
 
-    return "\n".join(lines)
+    return _clamp_navigation_artifact(
+        "\n".join(lines),
+        max_chars=14000,
+        label="course/COURSE_MAP.md",
+    )
 
 
 def exam_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
@@ -4603,7 +5648,11 @@ def exam_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
         "",
     ]
 
-    return "\n".join(lines)
+    return _clamp_navigation_artifact(
+        "\n".join(lines),
+        max_chars=12000,
+        label="course/FILE_MAP.md",
+    )
 
 
 def exercise_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
@@ -4646,7 +5695,12 @@ def exercise_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str
         "",
     ]
 
-    return "\n".join(lines)
+    result = "\n".join(lines)
+    return _clamp_navigation_artifact(
+        result,
+        max_chars=14000,
+        label="course/COURSE_MAP.md",
+    )
 
 
 def assignment_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
@@ -4666,7 +5720,12 @@ def assignment_index_md(course_meta: dict, entries: List[FileEntry] = None) -> s
                   "| [a preencher] | | | |"]
     lines += ["", "## Padrões do professor", "",
               "- [a preencher]", ""]
-    return "\n".join(lines)
+    result = "\n".join(lines)
+    return _clamp_navigation_artifact(
+        result,
+        max_chars=12000,
+        label="course/FILE_MAP.md",
+    )
 
 
 def code_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
@@ -4707,7 +5766,12 @@ def code_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
         "<!-- Preencha conforme analisar o código -->",
         "- [a preencher]", "",
     ]
-    return "\n".join(lines)
+    result = "\n".join(lines)
+    return _clamp_navigation_artifact(
+        result,
+        max_chars=14000,
+        label="course/COURSE_MAP.md",
+    )
 
 
 def whiteboard_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
@@ -4726,7 +5790,12 @@ def whiteboard_index_md(course_meta: dict, entries: List[FileEntry] = None) -> s
                   "|---|---|---|---|", "| [a preencher] | | | |"]
     lines += ["", "## Padrões pedagógicos", "",
               "- [a preencher]", ""]
-    return "\n".join(lines)
+    result = "\n".join(lines)
+    return _clamp_navigation_artifact(
+        result,
+        max_chars=12000,
+        label="course/FILE_MAP.md",
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -4970,3 +6039,378 @@ policy:
     O conhecimento final deve sair de manual-review/ e depois ser promovido
     para content/, exercises/ ou exams/, e então sincronizado com o Claude Project.
 """
+
+
+def _low_token_course_map_md(course_meta: dict, subject_profile=None) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    lines = [
+        f"# COURSE_MAP — {course_name}",
+        "",
+        "> Mapa pedagógico curto da disciplina.",
+        "> Use este arquivo para ordem, dependências e foco atual; os detalhes vivem nos materiais referenciados.",
+        "> Não replique explicações longas aqui.",
+    ]
+
+    if subject_profile and subject_profile.syllabus:
+        lines.append("> Cronograma completo disponível em `course/SYLLABUS.md`.")
+    lines.append("")
+
+    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
+    units = _parse_units_from_teaching_plan(teaching_plan) if teaching_plan else []
+
+    lines += ["## Estrutura do curso", ""]
+    if units:
+        for unit_title, topics in units:
+            lines.append(f"### {unit_title}")
+            if topics:
+                for topic in topics:
+                    indent = "  " * _topic_depth(topic)
+                    lines.append(f"{indent}- [ ] {_topic_text(topic)}")
+            else:
+                lines.append("- [ ] [tópicos a preencher]")
+            lines.append("")
+    else:
+        lines += [
+            "### Unidade 1 — [Nome da unidade]",
+            "- [ ] Tópico 1.1",
+            "- [ ] Tópico 1.2",
+            "",
+            "### Unidade 2 — [Nome da unidade]",
+            "- [ ] Tópico 2.1 -> requer: Tópico 1.2",
+            "- [ ] Tópico 2.2",
+            "",
+        ]
+
+    syllabus = getattr(subject_profile, "syllabus", "") if subject_profile else ""
+    if units and syllabus:
+        try:
+            timeline = _parse_syllabus_timeline(syllabus)
+            mapping = _match_timeline_to_units(timeline, units)
+            identified = [m for m in mapping if m["period"]]
+            if identified:
+                lines += [
+                    "## Timeline — Cronograma x Unidades",
+                    "",
+                    "| Unidade | Período | Slug |",
+                    "|---|---|---|",
+                ]
+                for item in identified:
+                    period = item["period"]
+                    lines.append(f"| {item['unit_title']} | {period} | `{item['unit_slug']}` |")
+                if len(identified) < len(mapping):
+                    lines += [
+                        "",
+                        "> Unidades sem período explícito foram omitidas para manter o mapa enxuto.",
+                    ]
+                lines.append("")
+        except Exception as exc:
+            logger.debug("Could not generate timeline mapping: %s", exc)
+
+    lines += [
+        "## Tópicos de alta incidência em prova",
+        "",
+        "> Preencha só os tópicos realmente recorrentes nas provas.",
+        "",
+        "| Tópico | Unidade | Incidência |",
+        "|---|---|---|",
+        "",
+        "## Notas do professor",
+        "",
+        "> Registre apenas padrões de cobrança, ênfases e avisos operacionais.",
+        "",
+    ]
+    result = "\n".join(lines)
+    return _clamp_navigation_artifact(
+        result,
+        max_chars=14000,
+        label="course/COURSE_MAP.md",
+    )
+
+
+def _low_token_file_map_md(course_meta: dict, manifest_entries: list) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    lines = [
+        "---",
+        f"course: {course_name}",
+        "status: pending_review",
+        "mode: routing_index",
+        "---",
+        "",
+        f"# FILE_MAP — {course_name}",
+        "",
+        "> Índice de roteamento do repositório.",
+        "> Use este arquivo para localizar o material certo antes de abrir arquivos longos.",
+        "",
+        "## Ordem de consulta econômica",
+        "",
+        "1. Leia `course/COURSE_MAP.md` para saber a unidade e o contexto.",
+        "2. Use este `FILE_MAP.md` para escolher o material certo.",
+        "3. Abra o markdown do item escolhido.",
+        "4. Recorra ao PDF bruto apenas se o markdown não bastar.",
+        "",
+        "## Arquivos do repositório",
+        "",
+    ]
+
+    if not manifest_entries:
+        lines.append("Nenhum arquivo processado ainda.")
+        return "\n".join(lines)
+
+    lines += [
+        "| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade |",
+        "|---|---|---|---|---|---|---|",
+    ]
+
+    for i, entry in enumerate(manifest_entries, 1):
+        title = entry.get("title", "")
+        category = entry.get("category", "")
+        tags = entry.get("tags", "")
+        md_path = (
+            entry.get("approved_markdown")
+            or entry.get("curated_markdown")
+            or entry.get("base_markdown")
+            or entry.get("advanced_markdown")
+            or ""
+        )
+        raw_path = entry.get("raw_target") or ""
+        unit = "curso-inteiro" if category in _NO_UNIT_CATEGORIES and not tags else ""
+        md_cell = f"`{md_path}`" if md_path else "—"
+
+        lines.append(
+            f"| {i} | {title} | {category} | {_entry_usage_hint(entry)} | "
+            f"{_entry_priority_label(entry)} | {md_cell} | {unit or ''} |"
+        )
+        if raw_path or tags:
+            details = []
+            if raw_path:
+                details.append(f"raw: `{raw_path}`")
+            if tags:
+                details.append(f"tags: `{tags}`")
+            lines.append(f"|  | ↳ rastreabilidade |  | {'; '.join(details)} |  |  |  |")
+
+    lines += [
+        "",
+        "## Legenda",
+        "",
+        "- **Quando abrir**: atalho semântico para reduzir leitura desnecessária.",
+        "- **Prioridade**: `alta` costuma merecer contexto antes dos demais.",
+        "- **Unidade**: slug da unidade do COURSE_MAP.",
+        "- **Categoria**: tipo do arquivo; não deve ser alterada pelo tutor.",
+        "",
+    ]
+    result = "\n".join(lines)
+    return _clamp_navigation_artifact(
+        result,
+        max_chars=12000,
+        label="course/FILE_MAP.md",
+    )
+
+
+def _low_token_generate_claude_project_instructions(
+    course_meta: dict,
+    student_profile=None,
+    subject_profile=None,
+    has_assignments: bool = False,
+    has_code: bool = False,
+    has_whiteboard: bool = False,
+    first_session_pending: bool = True,
+) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    professor = course_meta.get("professor", "")
+    institution = course_meta.get("institution", "")
+    semester = course_meta.get("semester", "")
+
+    nick = "Aluno"
+    personality_block = ""
+    if student_profile and student_profile.full_name:
+        nick = student_profile.nickname or student_profile.full_name
+        if student_profile.personality:
+            personality_block = f"\n**Estilo de aprendizado do aluno:** {student_profile.personality}\n"
+
+    schedule_block = ""
+    if subject_profile and subject_profile.schedule:
+        schedule_block = f"\n**Horário:** {subject_profile.schedule}"
+
+    file_rows = [
+        "| `course/COURSE_MAP.md` | Ordem, dependências e foco do curso |",
+        "| `student/STUDENT_STATE.md` | Profundidade, repetição e progresso |",
+        "| `course/FILE_MAP.md` | Localizar o material certo sem abrir muitos arquivos |",
+        "| `content/` | Material curado, por demanda |",
+        "| `exercises/` | Exercícios resolvidos |",
+        "| `exams/` | Provas e gabaritos |",
+        "| `course/GLOSSARY.md` | Terminologia oficial da disciplina |",
+        "| `course/SYLLABUS.md` | Cronograma e datas |",
+        "| `system/*` | Regras, modos e templates de resposta |",
+    ]
+    if has_assignments:
+        file_rows.append("| `assignments/` | Trabalhos e enunciados |")
+    if has_code:
+        file_rows.append("| `code/professor/` | Exemplos e implementações do professor |")
+    if has_whiteboard:
+        file_rows.append("| `whiteboard/` | Explicações do professor no quadro |")
+    file_table = "\n".join(file_rows)
+
+    first_session_block = ""
+    if first_session_pending:
+        first_session_block = f"""
+## Protocolo de Primeira Sessão
+
+Quando o aluno abrir o primeiro chat deste Projeto, ou quando `course/FILE_MAP.md` estiver com `status: pending_review`:
+
+1. **Mapear arquivos → unidades**: leia `course/COURSE_MAP.md` e `course/FILE_MAP.md` e preencha a coluna **Unidade** dos itens vazios.
+2. **Calibrar profundidade**: consulte `student/STUDENT_STATE.md` antes de repetir explicações ou abrir material longo.
+3. **Fechar lacunas**: se `COURSE_MAP.md`, `FILE_MAP.md` e `GLOSSARY.md` não bastarem, abra o markdown longo correspondente.
+4. Se existirem provas em `exams/`, preencha a seção de alta incidência em `course/COURSE_MAP.md`.
+5. Mostre um resumo curto do que foi mapeado e confirme com o aluno.
+
+Mensagem de abertura sugerida:
+> "Olá {nick}! Antes de começarmos, vou mapear seus materiais para as unidades do curso e ajustar os arquivos-base do projeto."
+
+Regra contínua:
+- Antes de sessões futuras, releia `student/STUDENT_STATE.md` e `course/FILE_MAP.md`.
+- Se surgirem novos materiais ainda não refletidos nele, avise o aluno antes de continuar e proponha atualizar `FILE_MAP.md` e `COURSE_MAP.md`.
+"""
+
+    return f"""# Instruções do Tutor — {course_name}
+
+## Identidade
+
+Você é o tutor acadêmico da disciplina **{course_name}**, ministrada pelo professor **{professor}** na **{institution}**, semestre **{semester}**.
+
+Chame o aluno de **{nick}**.{personality_block}{schedule_block}
+
+## Arquivos de referência deste Projeto
+
+Fluxo `map-first`: consulte primeiro os artefatos curtos e roteadores. Não abra arquivos longos por padrão.
+
+| Arquivo | Quando consultar |
+|---|---|
+{file_table}
+
+## Ordem de leitura econômica
+
+1. Comece por `course/COURSE_MAP.md` para identificar unidade, ordem e pré-requisitos.
+2. Consulte `student/STUDENT_STATE.md` para calibrar profundidade e evitar repetição.
+3. Use `course/FILE_MAP.md` para localizar o material certo.
+4. Só então abra um markdown em `content/`, `exercises/` ou `exams/`.
+5. Use o PDF bruto apenas quando o markdown não trouxer detalhe suficiente.
+
+## Modos de operação
+
+- **`study`** — ensinar do zero
+- **`assignment`** — guiar sem entregar tudo
+- **`exam_prep`** — priorizar incidência e padrão de cobrança
+- **`class_companion`** — resumir e contextualizar a aula
+- **`code_review`** — analisar código comparando com o material do professor
+
+Se o modo não for claro, pergunte: *"Você quer entender o conceito, resolver um exercício ou revisar para prova?"*
+
+## Sincronização temporal
+
+Antes de responder:
+1. Consulte a seção timeline em `course/COURSE_MAP.md`.
+2. Cruze a data atual com a unidade em curso.
+3. Use isso para calibrar contexto, revisão e antecipação do próximo tópico.
+
+## Regras fundamentais
+
+1. Nunca invente conteúdo fora dos arquivos do Projeto.
+2. Sempre cite a fonte usada, com markdown e PDF original quando houver.
+3. Consulte `student/STUDENT_STATE.md` antes de responder.
+4. Não entregue respostas completas de exercícios de imediato; guie o raciocínio.
+5. Ao final de cada sessão, sugira atualizar `student/STUDENT_STATE.md`.
+6. Para conteúdo visual, prefira LaTeX para fórmulas e SVG só quando a estrutura espacial for indispensável.
+
+## Rastreabilidade de fontes
+
+Ao usar conteúdo do Projeto, finalize o bloco com:
+
+> 📄 **Fonte:** `[título do material]` — arquivo: `[caminho do markdown]` | PDF: `[caminho do PDF original]`
+
+## Atualização de estado
+
+Ao final de cada sessão, gere um bloco curto para atualizar `student/STUDENT_STATE.md` com:
+- data
+- tópico estudado
+- unidade
+- status
+- dúvidas pendentes
+- próximo passo sugerido
+
+## Captura de conteúdo novo
+
+Quando o aluno enviar foto de quadro, caderno ou anotação:
+1. resuma o conteúdo
+2. pergunte se ele quer salvar isso no repositório
+3. se sim, proponha um markdown em `content/curated/` e os comandos de commit correspondentes
+{first_session_block}"""
+
+
+def _budgeted_course_map_md(course_meta: dict, subject_profile=None) -> str:
+    return _clamp_navigation_artifact(
+        _low_token_course_map_md(course_meta, subject_profile),
+        max_chars=14000,
+        label="course/COURSE_MAP.md",
+    )
+
+
+def _budgeted_file_map_md(course_meta: dict, manifest_entries: list) -> str:
+    return _clamp_navigation_artifact(
+        _low_token_file_map_md(course_meta, manifest_entries),
+        max_chars=12000,
+        label="course/FILE_MAP.md",
+    )
+
+
+course_map_md = _budgeted_course_map_md
+file_map_md = _budgeted_file_map_md
+generate_claude_project_instructions = _low_token_generate_claude_project_instructions
+
+
+def _low_token_inject_image_descriptions(markdown: str, image_curation: dict) -> str:
+    if not image_curation or "pages" not in image_curation:
+        return markdown
+
+    descriptions = _build_image_description_lookup(image_curation)
+    if not descriptions:
+        return markdown
+
+    markdown = RepoBuilder._IMG_DESC_BLOCK_RE.sub("", markdown)
+    img_re = re.compile(
+        r'(!\[[^\]]*\]\((?:[^)]*?/)?'
+        r'([^)/]+\.(?:png|jpg|jpeg|gif|bmp|webp))\))'
+    )
+
+    lines = markdown.split("\n")
+    result_lines: List[str] = []
+    for line in lines:
+        match = img_re.search(line)
+        if match:
+            fname = match.group(2)
+            if fname in descriptions:
+                desc_info = descriptions[fname]
+                duplicate_of = desc_info.get("duplicate_of")
+                desc_lines = []
+                if duplicate_of:
+                    desc_lines.append(
+                        f"Mesma imagem da página {duplicate_of['page_num']}; mantendo só referência curta."
+                    )
+                else:
+                    desc_lines.append(desc_info["compact_description"])
+
+                block = (
+                    f"<!-- IMAGE_DESCRIPTION: {fname} -->\n"
+                    f"<!-- Tipo: {desc_info['type']} -->"
+                )
+                for i, dl in enumerate(desc_lines):
+                    if i == 0:
+                        block += f"\n> **[Descrição de imagem]** {dl}"
+                    else:
+                        block += f"\n> {dl}"
+                block += "\n<!-- /IMAGE_DESCRIPTION -->"
+                result_lines.append(block)
+        result_lines.append(line)
+    return "\n".join(result_lines)
+
+
+RepoBuilder.inject_image_descriptions = staticmethod(_low_token_inject_image_descriptions)

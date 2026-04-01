@@ -62,6 +62,50 @@ class _UILogHandler(logging.Handler):
             pass
 
 
+class _FlexToolbar(ttk.Frame):
+    """Responsive toolbar that lays out action sections in a wrapping grid."""
+
+    def __init__(self, parent, min_section_width: int = 300, **kwargs):
+        super().__init__(parent, **kwargs)
+        self._min_section_width = min_section_width
+        self._sections: List[ttk.LabelFrame] = []
+        self.bind("<Configure>", self._on_configure)
+
+    def add_section(self, title: str) -> ttk.Frame:
+        card = ttk.LabelFrame(self, text=f"  {title}", padding=(10, 8))
+        inner = ttk.Frame(card)
+        inner.pack(fill="both", expand=True)
+        self._sections.append(card)
+        self.after_idle(self._relayout)
+        return inner
+
+    def _on_configure(self, _event=None):
+        self.after_idle(self._relayout)
+
+    def _relayout(self):
+        if not self.winfo_exists():
+            return
+        width = max(self.winfo_width(), 1)
+        count = len(self._sections)
+        if count == 0:
+            return
+
+        cols = max(1, min(count, width // self._min_section_width))
+        if cols <= 0:
+            cols = 1
+
+        for i in range(max(count, cols)):
+            self.grid_columnconfigure(i, weight=0)
+
+        for idx, section in enumerate(self._sections):
+            row = idx // cols
+            col = idx % cols
+            section.grid(row=row, column=col, sticky="nsew", padx=6, pady=6)
+
+        for col in range(cols):
+            self.grid_columnconfigure(col, weight=1, uniform="toolbar")
+
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -206,44 +250,55 @@ class App(tk.Tk):
         course.columnconfigure(3, weight=1)
 
         # ── Toolbar ─────────────────────────────────────────────────────
-        toolbar = ttk.Frame(top)
+        toolbar = _FlexToolbar(top, min_section_width=320)
         toolbar.pack(fill="x", pady=(0, 10))
 
-        import_actions = ttk.Frame(toolbar)
-        import_actions.pack(side="left")
+        import_actions = toolbar.add_section("Importação")
+        build_actions = toolbar.add_section("Processamento e Build")
+        tool_actions = toolbar.add_section("Ferramentas")
 
-        repo_actions = ttk.Frame(toolbar)
-        repo_actions.pack(side="right")
+        for col in range(2):
+            import_actions.grid_columnconfigure(col, weight=1, uniform="import")
+            tool_actions.grid_columnconfigure(col, weight=1, uniform="tools")
+        for col in range(2):
+            build_actions.grid_columnconfigure(col, weight=1, uniform="build")
 
-        ttk.Button(import_actions, text="➕ PDFs", command=self.add_pdfs).pack(side="left")
-        ttk.Button(import_actions, text="🖼 Imagens/Fotos", command=self.add_images).pack(side="left", padx=(6, 0))
-        ttk.Button(import_actions, text="🔗 Link", command=self.add_url).pack(side="left", padx=(6, 0))
-        ttk.Button(import_actions, text="💻 Código / ZIP", command=self.add_code_files).pack(side="left", padx=(6, 0))
+        ttk.Button(import_actions, text="➕ PDFs", command=self.add_pdfs).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
+        ttk.Button(import_actions, text="🖼 Imagens/Fotos", command=self.add_images).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
+        ttk.Button(import_actions, text="🔗 Link", command=self.add_url).grid(row=1, column=0, sticky="ew", padx=4, pady=4)
+        ttk.Button(import_actions, text="💻 Código / ZIP", command=self.add_code_files).grid(row=1, column=1, sticky="ew", padx=4, pady=4)
 
-        ttk.Button(repo_actions, text="⚙ Configurações", command=self.open_settings).pack(side="right", padx=(6, 0))
-        ttk.Button(repo_actions, text="? Ajuda  F1", command=self.open_help).pack(side="right", padx=(6, 0))
-        ttk.Button(repo_actions, text="🖌 Curator Studio", command=self.open_curator_studio).pack(side="right", padx=(6, 0))
-        ttk.Button(repo_actions, text="🖼 Image Curator", command=self.open_image_curator).pack(side="right", padx=(6, 0))
+        ttk.Button(build_actions, text="📂 Abrir Repo", command=self.open_repo_folder).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
+        ttk.Button(build_actions, text="🗂 FILE_MAP", command=self.open_file_map).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
+        self._btn_process = ttk.Button(build_actions, text="⚡ Processar",
+                                       command=self.process_selected_single)
+        self._btn_process.grid(row=1, column=0, sticky="ew", padx=4, pady=4)
+        self._btn_pause_build = ttk.Button(
+            build_actions,
+            text="⏸ Pausar Build",
+            command=self._toggle_pause_build,
+        )
+        self._btn_pause_build.grid(row=1, column=1, sticky="ew", padx=4, pady=4)
+        self._btn_pause_build.grid_remove()
+        self._btn_build = ttk.Button(build_actions, text="🚀 Criar Repositório",
+                                      style="Accent.TButton", command=self.build_repo)
+        self._btn_build.grid(row=2, column=0, columnspan=2, sticky="ew", padx=4, pady=(6, 4))
+
+        ttk.Button(tool_actions, text="🖼 Image Curator", command=self.open_image_curator).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
+        ttk.Button(tool_actions, text="🖌 Curator Studio", command=self.open_curator_studio).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
+        ttk.Button(tool_actions, text="⚙ Configurações", command=self.open_settings).grid(row=1, column=0, sticky="ew", padx=4, pady=4)
+        ttk.Button(tool_actions, text="? Ajuda  F1", command=self.open_help).grid(row=1, column=1, sticky="ew", padx=4, pady=4)
         cb_shutdown = ttk.Checkbutton(
-            repo_actions,
+            tool_actions,
             text="⏻ Desligar ao concluir build",
             variable=self._shutdown_after_build,
         )
-        cb_shutdown.pack(side="right", padx=(6, 0))
+        cb_shutdown.grid(row=2, column=0, columnspan=2, sticky="w", padx=4, pady=(6, 2))
         add_tooltip(
             cb_shutdown,
             "Ative para builds grandes que vão rodar sozinhos.\n"
             "Ao concluir com sucesso, o Windows será desligado automaticamente.",
         )
-        ttk.Separator(repo_actions, orient="vertical").pack(side="right", fill="y", padx=10)
-        ttk.Button(repo_actions, text="🗂 FILE_MAP", command=self.open_file_map).pack(side="right")
-        ttk.Button(repo_actions, text="📂 Abrir Repo", command=self.open_repo_folder).pack(side="right", padx=(6, 0))
-        self._btn_process = ttk.Button(repo_actions, text="⚡ Processar",
-                                       command=self.process_selected_single)
-        self._btn_process.pack(side="right", padx=(6, 0))
-        self._btn_build = ttk.Button(repo_actions, text="🚀 Criar Repositório",
-                                      style="Accent.TButton", command=self.build_repo)
-        self._btn_build.pack(side="right", padx=(6, 0))
 
         # ── Table Notebook ──────────────────────────────────────────────────
         self.notebook = ttk.Notebook(top)
@@ -402,14 +457,8 @@ class App(tk.Tk):
             self._btn_process.configure(state="disabled")
             self._btn_build.configure(text="⏹ Cancelar Build",
                                       style="TButton", command=self._cancel_build)
-            if not hasattr(self, "_btn_pause_build"):
-                self._btn_pause_build = ttk.Button(
-                    self._btn_build.master,
-                    text="⏸ Pausar Build",
-                    command=self._toggle_pause_build,
-                )
             self._btn_pause_build.configure(text="⏸ Pausar Build", state="normal")
-            self._btn_pause_build.pack(side="right", padx=(0, 6), before=self._btn_build)
+            self._btn_pause_build.grid()
             # Navega para a aba Log automaticamente
             log_idx = self.notebook.index("end") - 1
             self.notebook.select(log_idx)
@@ -417,8 +466,7 @@ class App(tk.Tk):
             self._btn_process.configure(state="normal")
             self._btn_build.configure(text="🚀 Criar Repositório",
                                       style="Accent.TButton", command=self.build_repo)
-            if hasattr(self, "_btn_pause_build"):
-                self._btn_pause_build.pack_forget()
+            self._btn_pause_build.grid_remove()
 
     def _cancel_build(self):
         self._clear_pending_operation()
@@ -551,6 +599,40 @@ class App(tk.Tk):
     def _clear_pending_operation(self):
         self._active_operation = None
         self.pending_op_store.clear()
+
+    def _find_subject_by_repo_root(self, repo_dir: Optional[Path]) -> Optional[SubjectProfile]:
+        if not repo_dir:
+            return None
+        try:
+            target = repo_dir.resolve()
+        except Exception:
+            target = Path(str(repo_dir))
+        for name in self.subject_store.names():
+            sp = self.subject_store.get(name)
+            if not sp or not getattr(sp, "repo_root", ""):
+                continue
+            try:
+                candidate = Path(sp.repo_root).resolve()
+            except Exception:
+                candidate = Path(sp.repo_root)
+            if str(candidate).lower() == str(target).lower():
+                return sp
+        return None
+
+    def _resolve_subject_profile(self, repo_dir: Optional[Path] = None) -> Optional[SubjectProfile]:
+        active_name = self._var_active_subject.get()
+        active = self.subject_store.get(active_name) if active_name != "(nenhuma)" else None
+        matched = self._find_subject_by_repo_root(repo_dir)
+        if matched:
+            if active and active.name != matched.name:
+                logger.info(
+                    "Active subject '%s' ignored for repo %s; using matched profile '%s'.",
+                    active.name,
+                    repo_dir,
+                    matched.name,
+                )
+            return matched
+        return active
 
     def _reset_build_finish_options(self):
         self._shutdown_after_build.set(False)
@@ -1194,8 +1276,7 @@ class App(tk.Tk):
         self._persist_pending_operation()
 
         student_p = self.student_store.profile if self.student_store.profile.full_name else None
-        active_subj_name = self._var_active_subject.get()
-        active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
+        active_subj = self._resolve_subject_profile(repo_dir)
 
         def on_progress(current, t, title):
             self._pause_event.wait()
@@ -1296,8 +1377,7 @@ class App(tk.Tk):
         if not repo_dir:
             return
 
-        active_subj_name = self._var_active_subject.get()
-        active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
+        active_subj = self._resolve_subject_profile(repo_dir)
 
         self._set_processing_state(True)
         self._set_status(f"Processando item: {entry.title}...")
@@ -1422,8 +1502,7 @@ class App(tk.Tk):
         self._set_status(f"Retomando {'build incremental' if effective_incremental else 'build'} em {repo_dir}...")
 
         student_p = self.student_store.profile if self.student_store.profile.full_name else None
-        active_subj_name = self._var_active_subject.get()
-        active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
+        active_subj = self._resolve_subject_profile(repo_dir)
 
         def on_progress(current, t, title):
             self._pause_event.wait()
@@ -1527,13 +1606,18 @@ class App(tk.Tk):
 
         if not messagebox.askyesno(
             APP_NAME,
-            "Isso vai regenerar todos os arquivos pedagógicos (instruções, course map, glossário, etc.) "
-            "com o código atual.\n\nDeseja continuar?"
+            "Isso vai regenerar os artefatos derivados do repositório com o código atual.\n\n"
+            "Inclui:\n"
+            "• instruções LLM\n"
+            "• COURSE_MAP.md e FILE_MAP.md\n"
+            "• bundle.seed.json\n"
+            "• reinjeção de descrições de imagem no markdown final\n\n"
+            "Esse é o caminho recomendado para aplicar a arquitetura low-token em repositórios antigos.\n\n"
+            "Deseja continuar?"
         ):
             return
 
-        active_subj_name = self._var_active_subject.get()
-        active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
+        active_subj = self._resolve_subject_profile(repo_dir)
 
         def worker():
             try:
@@ -1550,7 +1634,10 @@ class App(tk.Tk):
             except Exception as e:
                 self.after(0, lambda: self._on_reprocess_done(e))
 
-        self._set_status("Reprocessando repositório...")
+        if active_subj:
+            self._set_status(f"Reprocessando repositório com perfil da matéria: {active_subj.name}...")
+        else:
+            self._set_status("Reprocessando repositório sem perfil de matéria associado...")
         threading.Thread(target=worker, daemon=True).start()
 
     def _on_reprocess_done(self, error):
@@ -1559,7 +1646,7 @@ class App(tk.Tk):
             self._set_status("Erro ao reprocessar.")
         else:
             self._refresh_backlog()
-            self._set_status("Repositório reprocessado com sucesso.")
+            self._set_status("Repositório reprocessado com sucesso e arquitetura reaplicada.")
 
     def _generate_llm_instructions(self):
         """Gera/regenera os arquivos de instruções para as 3 plataformas (Claude, GPT, Gemini)."""
@@ -1607,8 +1694,7 @@ class App(tk.Tk):
                 return
             if answer:
                 # Manter plataforma atual
-                active_subj_name = self._var_active_subject.get()
-                sp = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
+                sp = self._resolve_subject_profile(repo_dir)
                 platform = getattr(sp, "preferred_llm", "claude") or "claude"
             else:
                 platform = self._select_llm_platform()
@@ -1632,8 +1718,7 @@ class App(tk.Tk):
             if platform is None:
                 return
 
-        active_subj_name = self._var_active_subject.get()
-        active_subj = self.subject_store.get(active_subj_name) if active_subj_name != "(nenhuma)" else None
+        active_subj = self._resolve_subject_profile(repo_dir)
         student_p = self.student_store.profile if self.student_store.profile.full_name else None
 
         try:

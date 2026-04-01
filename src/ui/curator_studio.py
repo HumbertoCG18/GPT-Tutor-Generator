@@ -17,6 +17,42 @@ if HAS_PYMUPDF:
 logger = logging.getLogger(__name__)
 
 
+def _merge_review_frontmatter_with_manifest(fm: dict, manifest_entry: dict | None) -> dict:
+    """Overlay missing review-template fields with the current manifest entry."""
+    merged = dict(fm or {})
+    if not manifest_entry:
+        return merged
+
+    for key in (
+        "id",
+        "title",
+        "category",
+        "processing_mode",
+        "effective_profile",
+        "base_backend",
+        "advanced_backend",
+        "base_markdown",
+        "advanced_markdown",
+        "manual_review",
+        "raw_target",
+        "source_path",
+    ):
+        if not merged.get(key) and manifest_entry.get(key):
+            merged[key] = manifest_entry.get(key)
+
+    if not merged.get("source_pdf"):
+        merged["source_pdf"] = manifest_entry.get("raw_target") or manifest_entry.get("source_path")
+
+    return merged
+
+
+def _is_pdf_preview_target(path_value: str | None) -> bool:
+    """Return True only for paths that really look like PDFs."""
+    if not path_value:
+        return False
+    return str(path_value).lower().endswith(".pdf")
+
+
 class CuratorStudio(tk.Toplevel):
     def __init__(self, parent, repo_dir: str, theme_mgr):
         super().__init__(parent)
@@ -220,6 +256,10 @@ class CuratorStudio(tk.Toplevel):
             return
 
         fm = self._parse_frontmatter(content)
+        fm = _merge_review_frontmatter_with_manifest(
+            fm,
+            self._lookup_manifest_entry(fm.get("id") or self.current_md_path.stem),
+        )
         self._current_frontmatter = fm
 
         # Update info label
@@ -344,7 +384,7 @@ class CuratorStudio(tk.Toplevel):
         # Fallback: if frontmatter has no source_pdf, try manifest
         if not source_pdf:
             source_pdf = self._lookup_raw_target(fm.get("id"))
-        if source_pdf and HAS_PYMUPDF:
+        if _is_pdf_preview_target(source_pdf) and HAS_PYMUPDF:
             pdf_path = self.repo_dir / source_pdf
             if pdf_path.exists():
                 try:
@@ -480,6 +520,13 @@ class CuratorStudio(tk.Toplevel):
 
     def _lookup_raw_target(self, entry_id: str):
         """Look up raw_target from manifest.json for a given entry id."""
+        entry = self._lookup_manifest_entry(entry_id)
+        if entry:
+            return entry.get("raw_target")
+        return None
+
+    def _lookup_manifest_entry(self, entry_id: str):
+        """Look up the current manifest entry for a given review item id."""
         if not entry_id:
             return None
         manifest_path = self.repo_dir / "manifest.json"
@@ -490,7 +537,7 @@ class CuratorStudio(tk.Toplevel):
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
             for e in manifest.get("entries", []):
                 if e.get("id") == entry_id:
-                    return e.get("raw_target")
+                    return e
         except Exception:
             pass
         return None

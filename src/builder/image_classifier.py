@@ -124,10 +124,14 @@ def classify_image(image_path: Path) -> str:
 # ---------------------------------------------------------------------------
 
 _PAGE_PATTERNS = [
-    re.compile(r"page-(\d{3})-img-\d+", re.IGNORECASE),  # page-006-img-01
-    re.compile(r"_page_(\d+)_", re.IGNORECASE),            # _page_6_Figure_1
-    re.compile(r"page[_-]?(\d+)", re.IGNORECASE),          # page6, page_6, page-6
+    re.compile(r"page-(\d{3,4})-(?:img|table|figure|fig)-\d+", re.IGNORECASE),  # page-006-img-01
+    re.compile(r"\.pdf-(\d{3,4})-\d+", re.IGNORECASE),                           # aula.pdf-0004-09
+    re.compile(r"\.pdf-(\d{3,4})(?:\.|$)", re.IGNORECASE),                       # aula.pdf-0004.png
+    re.compile(r"(?:^|[-_])p(?:age)?[-_]?(\d{1,4})(?:[-_.]|$)", re.IGNORECASE),   # p4, p_04, page_6
+    re.compile(r"page[_-]?(\d{1,4})", re.IGNORECASE),                             # page6, page_6, page-6
 ]
+
+_NUMERIC_TOKEN_RE = re.compile(r"(?<!\d)(\d{3,4})(?!\d)")
 
 
 def extract_page_number(filename: str) -> Optional[int]:
@@ -135,10 +139,24 @@ def extract_page_number(filename: str) -> Optional[int]:
 
     Returns None if no known pattern matches.
     """
+    lowered = filename.lower()
+    zero_based_page = re.search(r"_page_(\d+)_", lowered)
+    if zero_based_page:
+        return int(zero_based_page.group(1)) + 1
+
     for pattern in _PAGE_PATTERNS:
-        m = pattern.search(filename)
+        m = pattern.search(lowered)
         if m:
             return int(m.group(1))
+
+    # Conservative fallback for consolidated assets: if the filename contains
+    # strong page cues plus a 3-4 digit token, use the first token as page.
+    has_page_cue = any(cue in lowered for cue in (".pdf-", "page", "_page_", "-p", "_p"))
+    if has_page_cue:
+        token = _NUMERIC_TOKEN_RE.search(lowered)
+        if token:
+            return int(token.group(1))
+
     return None
 
 

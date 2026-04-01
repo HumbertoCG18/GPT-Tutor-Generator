@@ -15,6 +15,7 @@ Aplicação desktop em Python para transformar materiais acadêmicos em um repos
 - [Arquitetura](#arquitetura)
 - [Arquivos e Fontes Suportadas](#arquivos-e-fontes-suportadas)
 - [Processamento de Arquivos](#processamento-de-arquivos)
+- [Arquitetura Low-Token](#arquitetura-low-token)
 - [Image Curator e Vision](#image-curator-e-vision)
 - [Estrutura do Repositório Gerado](#estrutura-do-repositório-gerado)
 - [Requisitos](#requisitos)
@@ -70,6 +71,7 @@ Fluxo típico no app:
 6. Abrir o **Image Curator** para imagens extraídas de PDFs ou fotos.
 7. Gerar descrições e extrações em LaTeX.
 8. Construir ou atualizar o repositório final.
+9. Usar **Reprocessar Repositório** para reaplicar a arquitetura atual em repositórios já existentes.
 
 ## Arquitetura
 
@@ -103,6 +105,57 @@ src/
   - descrição de imagens
   - extração fiel de texto/matemática com prompt de LaTeX
 - Diferença entre os modos: apenas o prompt
+- A arquitetura de contexto para Claude Web é **map-first**:
+  - comece por `course/COURSE_MAP.md`
+  - consulte `student/STUDENT_STATE.md` para calibrar profundidade e evitar repetição
+  - use `course/FILE_MAP.md` para localizar o material certo
+  - abra markdowns longos só quando os artefatos curtos não bastarem
+
+## Arquitetura Low-Token
+
+O projeto agora gera artefatos pensados para **baixo custo de contexto** em LLMs web, especialmente no Claude.
+
+Princípios:
+
+- começar por arquivos curtos e roteadores
+- usar `STUDENT_STATE.md` antes de repetir conteúdo ou subir demais a profundidade
+- abrir markdowns longos apenas como último recurso, não como padrão
+- promover para o bundle só metadados e materiais de alto sinal
+- compactar descrições de imagem antes de injetar no markdown final
+- reduzir repetição visual de slides/PDFs exportados de PPTX
+
+Arquivos-chave dessa arquitetura:
+
+```text
+course/COURSE_MAP.md
+course/FILE_MAP.md
+build/claude-knowledge/bundle.seed.json
+INSTRUCOES_CLAUDE_PROJETO.md
+```
+
+### O que mudou na prática
+
+- `COURSE_MAP.md` ficou mais curto e funciona como mapa pedagógico
+- `STUDENT_STATE.md` passou a entrar no fluxo de leitura antes dos materiais longos
+- `FILE_MAP.md` virou índice de roteamento com `quando abrir` e `prioridade`
+- `bundle.seed.json` agora é seletivo, focado em metadados e registra o motivo de inclusão de cada item
+- descrições de imagem no markdown final entram em versão compacta
+- duplicatas exatas entre páginas vizinhas podem virar referência curta, em vez de repetir o bloco inteiro
+
+### Como aplicar isso em repositórios antigos
+
+Use a ação **Reprocessar Repositório** no backlog.
+
+Essa ação:
+
+- não reextrai PDFs crus por padrão
+- reutiliza o `manifest.json`
+- regenera os artefatos pedagógicos com o código atual
+- reaplica `COURSE_MAP`, `FILE_MAP`, bundle e instruções atualizados
+- mantém o fluxo `map-first` com `STUDENT_STATE.md` antes de abrir markdowns longos
+- reinjeta descrições de imagem com a lógica mais nova
+
+Isso é o caminho recomendado para atualizar repositórios que já estavam prontos antes dessas mudanças.
 
 ## Arquivos e Fontes Suportadas
 
@@ -193,6 +246,7 @@ O sistema também consegue:
 - preservar imagens do PDF no markdown
 - limitar páginas por faixa
 - consolidar saídas intermediárias
+- regenerar artefatos derivados sem reprocessar tudo do zero
 
 ## Image Curator e Vision
 
@@ -207,6 +261,8 @@ Ele opera sobre `content/images/` e faz:
 - classificação heurística
 - descrição acadêmica de imagens
 - extração de texto + matemática com saída em Markdown/LaTeX
+- sinalização de duplicatas exatas entre páginas
+- injeção compacta de descrições no markdown final
 
 ### Tipos visuais usados no curator
 
@@ -257,6 +313,17 @@ O app verifica automaticamente:
 - modelo configurado disponível
 - fallback disponível
 - readiness de cloud quando o modelo termina com `-cloud`
+
+### Otimização de contexto visual
+
+As descrições de imagem usadas no conteúdo final não são mais injetadas de forma verbosa por padrão.
+
+Regras atuais:
+
+- priorizar uma descrição curta e útil
+- evitar repetir raciocínio do modelo
+- reduzir duplicatas visuais entre páginas consecutivas
+- manter rastreabilidade por comentário `IMAGE_DESCRIPTION`
 
 ### Observações importantes
 
