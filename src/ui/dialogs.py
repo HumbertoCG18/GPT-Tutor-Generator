@@ -583,6 +583,9 @@ ARTEFATOS-CHAVE
   FILE_MAP.md
     Índice de roteamento com colunas como "Quando abrir" e "Prioridade".
 
+  EXERCISE_INDEX.md
+    Índice operacional de prática para localizar listas, provas antigas e exercícios por unidade.
+
   build/claude-knowledge/bundle.seed.json
     Lista seletiva de metadados e materiais de alto sinal para bundle manual. Não substitui os mapas.
 
@@ -594,6 +597,10 @@ IMAGENS
 ROLLOUT
   Para aplicar isso em repositórios antigos, use:
   • Reprocessar Repositório
+
+OBSERVAÇÃO
+  COURSE_MAP.md omite seções vazias até existir sinal real, como incidência em prova
+  ou notas do professor. Isso evita desperdiçar contexto logo no primeiro chat.
 """),
     ("Continuidade", """ARQUIVOS DE ESTADO
   student/STUDENT_STATE.md

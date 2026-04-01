@@ -22,6 +22,7 @@ import pytest
 from src.builder.engine import (
     BackendSelector,
     _build_marker_page_chunks,
+    _compact_notebook_markdown,
     rows_to_markdown_table,
     wrap_frontmatter,
     _html_to_structured_markdown,
@@ -33,7 +34,10 @@ from src.builder.engine import (
     _topic_depth,
     _format_units_for_prompt,
     _seed_glossary_fields,
+    _find_glossary_evidence,
+    _filter_live_manifest_entries,
     course_map_md,
+    exercise_index_md,
     file_map_md,
     glossary_md,
 )
@@ -44,6 +48,9 @@ from src.models.core import (
     PendingOperation,
 )
 from src.utils.helpers import (
+    CODE_EXTENSIONS,
+    LANG_MAP,
+    auto_detect_category,
     ensure_dir,
     file_size_mb,
     pages_to_marker_range,
@@ -63,7 +70,7 @@ class TestSlugify:
         assert slugify("Hello World") == "hello-world"
 
     def test_special_characters(self):
-        assert slugify("Cálculo I - 2024/1") == "cálculo-i-20241"
+        assert slugify("Cálculo I - 2024/1") == "calculo-i-20241"
 
     def test_multiple_spaces(self):
         assert slugify("  foo   bar  ") == "foo-bar"
@@ -82,6 +89,34 @@ class TestSlugify:
 
     def test_leading_trailing_dashes(self):
         assert slugify("-foo-") == "foo"
+
+    def test_removes_accents_for_technical_ids(self):
+        assert slugify("Métodos Formais") == "metodos-formais"
+        assert slugify("Verificação de Programas") == "verificacao-de-programas"
+
+
+class TestCodeExtensions:
+    def test_isabelle_theory_is_supported_as_code(self):
+        assert ".thy" in CODE_EXTENSIONS
+        assert LANG_MAP["thy"] == "isabelle"
+        assert auto_detect_category("Aula01.thy") == "codigo-professor"
+        assert auto_detect_category("Aula01.ipynb") == "codigo-professor"
+
+
+class TestNotebookCompaction:
+    def test_compacts_ipynb_into_jupyter_markdown(self):
+        raw = json.dumps({
+            "cells": [
+                {"cell_type": "markdown", "source": ["# Título\n", "Resumo curto."]},
+                {"cell_type": "code", "source": ["print('oi')"], "outputs": [{"text": ["oi\n"]}]},
+            ]
+        })
+        lang, content = _compact_notebook_markdown(raw)
+        assert lang == "jupyter"
+        assert "## Célula 1 — Markdown" in content
+        assert "## Célula 2 — Código" in content
+        assert "```python" in content
+        assert "**Saída:**" in content
 
 
 # ---------------------------------------------------------------------------
@@ -1024,6 +1059,22 @@ class TestGlossarySeed:
         assert len(block) <= 260
         assert "excesso de detalhe técnico" not in result
 
+    def test_glossary_ignores_noisy_author_like_evidence(self):
+        docs = [{
+            "title": "EspecificaÃ§Ã£o de Conjuntos Indutivos",
+            "manifest_title": "",
+            "headings": [],
+            "text": "JÃºlio Machado Conjuntos Indutivos 1. Conjuntos indutivos definem coleÃ§Ãµes fechadas por regras de construÃ§Ã£o.",
+        }]
+        evidence = _find_glossary_evidence(
+            "EspecificaÃ§Ã£o de Conjuntos Indutivos",
+            "Unidade 01 â€” MÃ©todos Formais",
+            docs,
+        )
+        assert "jÃºlio machado" not in evidence.lower()
+        assert "regras" in evidence.lower()
+        assert "constru" in evidence.lower()
+
     def test_regenerate_pedagogical_files_passes_manifest_entries_to_glossary(self, tmp_path):
         from src.builder.engine import RepoBuilder
         from src.models.core import SubjectProfile
@@ -1191,7 +1242,7 @@ class TestSystemPromptFileReferences:
         from src.builder.engine import generate_claude_project_instructions
         result = generate_claude_project_instructions(self.META)
         assert "Mapear arquivos" in result
-        assert "alta incidência" in result
+        assert "EXERCISE_INDEX.md" in result
         assert "GLOSSARY.md" in result
 
     def test_instructions_prefer_maps_before_long_files(self):
@@ -1201,6 +1252,7 @@ class TestSystemPromptFileReferences:
         assert "Ordem de leitura econômica" in result
         assert "Comece por `course/COURSE_MAP.md`" in result
         assert "student/STUDENT_STATE.md" in result
+        assert "exercises/EXERCISE_INDEX.md" in result
         assert "Use `course/FILE_MAP.md` para localizar o material certo" in result
         assert "Só então abra um markdown em `content/`, `exercises/` ou `exams/`" in result
 
@@ -1267,6 +1319,30 @@ class TestFileMapMd:
         assert "Quando abrir" in result
         assert "Conteúdo truncado" in result
         assert len(result) <= 12000
+
+    def test_filters_orphan_manifest_entries_when_repo_root_is_known(self, tmp_path):
+        repo = tmp_path / "repo"
+        (repo / "content").mkdir(parents=True)
+        (repo / "content" / "live.md").write_text("# live", encoding="utf-8")
+        entries = [
+            {
+                "title": "Ativo",
+                "category": "material-de-aula",
+                "tags": "",
+                "base_markdown": "content/live.md",
+                "raw_target": "",
+            },
+            {
+                "title": "Órfão",
+                "category": "references",
+                "tags": "",
+                "base_markdown": "content/missing.md",
+                "raw_target": "",
+            },
+        ]
+        result = file_map_md({**self.META, "_repo_root": repo}, entries)
+        assert "Ativo" in result
+        assert "Órfão" not in result
 
 
 class TestBundleSeedLowToken:
@@ -1448,6 +1524,42 @@ class TestCourseMapLowToken:
         assert "[não identificado]" not in result
         assert len(result) <= 14000
 
+    def test_course_map_omits_empty_exam_and_professor_sections(self):
+        result = course_map_md({"course_name": "MÃ©todos Formais"}, None)
+        assert "TÃ³picos de alta incidÃªncia em prova" not in result
+        assert "Notas do professor" not in result
+
+
+class TestExerciseIndexLowToken:
+    def test_exercise_index_is_routing_table(self):
+        entries = [
+            FileEntry(
+                title="Lista 1",
+                source_path="raw/lista1.pdf",
+                category="listas",
+                file_type="pdf",
+                tags="unidade-01",
+                notes="Tem gabarito",
+            ),
+            FileEntry(
+                title="P1 2025",
+                source_path="raw/p1-2025.pdf",
+                category="provas",
+                file_type="pdf",
+                tags="unidade-01;unidade-02",
+                notes="Alta incidÃªncia",
+            ),
+        ]
+        result = exercise_index_md({"course_name": "Teste"}, entries)
+        assert "| Recurso | Tipo | Unidade | SoluÃ§Ã£o | Prioridade | Quando usar |" in result
+        assert "Mapeamento de exercÃ­cios por tÃ³pico" not in result
+        assert "revisÃ£o de prova" in result
+
+    def test_exercise_index_empty_state_stays_short(self):
+        result = exercise_index_md({"course_name": "Teste"}, [])
+        assert "| [a preencher] | | | | | |" in result
+        assert "Mapeamento de exercÃ­cios por tÃ³pico" not in result
+
 
 class TestIncrementalBuildLowTokenRollout:
     def test_incremental_build_reapplies_low_token_architecture_without_new_entries(self, tmp_path):
@@ -1547,6 +1659,87 @@ class TestIncrementalBuildLowTokenRollout:
         assert bundle["bundle_candidates"][0]["id"] == "entry1"
         assert "> **[Descrição de imagem]** Diagrama de árvore com três níveis e duas ramificações principais." in lesson
         assert "legenda longa" not in lesson
+
+    def test_incremental_build_prunes_orphan_entries_and_compacts_logs(self, tmp_path):
+        from src.builder.engine import RepoBuilder
+
+        repo = tmp_path / "repo"
+        for rel in [
+            "course",
+            "content",
+            "student",
+            "build/claude-knowledge",
+        ]:
+            (repo / rel).mkdir(parents=True, exist_ok=True)
+
+        (repo / "content" / "live.md").write_text("# live", encoding="utf-8")
+        manifest = {
+            "app": "GPT Tutor Generator",
+            "generated_at": "2026-04-01T10:00:00",
+            "course": {"course_name": "Métodos Formais", "course_slug": "mf"},
+            "options": {},
+            "environment": {},
+            "entries": [
+                {
+                    "id": "live-entry",
+                    "title": "Aula viva",
+                    "category": "material-de-aula",
+                    "file_type": "pdf",
+                    "source_path": "raw/pdfs/material-de-aula/aula-viva.pdf",
+                    "raw_target": None,
+                    "base_markdown": "content/live.md",
+                    "advanced_markdown": None,
+                    "approved_markdown": None,
+                    "curated_markdown": None,
+                    "effective_profile": "math_heavy",
+                    "include_in_bundle": True,
+                    "relevant_for_exam": True,
+                },
+                {
+                    "id": "dead-entry",
+                    "title": "Aula morta",
+                    "category": "references",
+                    "file_type": "url",
+                    "source_path": "https://example.com/dead",
+                    "raw_target": None,
+                    "base_markdown": "content/missing.md",
+                    "advanced_markdown": None,
+                    "approved_markdown": None,
+                    "curated_markdown": None,
+                    "effective_profile": "textbook",
+                    "include_in_bundle": False,
+                    "relevant_for_exam": False,
+                },
+            ],
+            "logs": [{"entry": str(i), "step": "x", "status": "ok"} for i in range(500)],
+        }
+        (repo / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+
+        builder = RepoBuilder.__new__(RepoBuilder)
+        builder.root_dir = repo
+        builder.course_meta = {
+            "course_name": "Métodos Formais",
+            "course_slug": "mf",
+            "professor": "Prof",
+            "institution": "PUCRS",
+            "semester": "2026/1",
+        }
+        builder.entries = []
+        builder.options = {}
+        builder.student_profile = None
+        builder.subject_profile = None
+        builder.logs = []
+        builder.progress_callback = None
+
+        builder.incremental_build()
+
+        updated = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+        file_map = (repo / "course" / "FILE_MAP.md").read_text(encoding="utf-8")
+
+        assert [e["id"] for e in updated["entries"]] == ["live-entry"]
+        assert len(updated["logs"]) == 200
+        assert "Aula viva" in file_map
+        assert "Aula morta" not in file_map
 
 
 # ---------------------------------------------------------------------------

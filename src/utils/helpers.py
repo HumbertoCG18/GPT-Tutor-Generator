@@ -2,6 +2,7 @@ import json
 import logging
 import re
 import shutil
+import unicodedata
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence
 import sys
@@ -142,7 +143,7 @@ CODE_EXTENSIONS: set = {
     ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".c", ".cpp", ".h",
     ".hpp", ".cs", ".go", ".rs", ".rb", ".php", ".swift", ".kt",
     ".scala", ".r", ".m", ".sh", ".bat", ".ps1", ".sql", ".html",
-    ".css", ".scss", ".ipynb",
+    ".css", ".scss", ".ipynb", ".thy",
 }
 
 LANG_MAP: Dict[str, str] = {
@@ -153,7 +154,7 @@ LANG_MAP: Dict[str, str] = {
     "swift": "swift", "kt": "kotlin", "scala": "scala",
     "r": "r", "sh": "bash", "bat": "batch", "ps1": "powershell",
     "sql": "sql", "html": "html", "css": "css", "scss": "scss",
-    "ipynb": "json",
+    "ipynb": "json", "thy": "isabelle",
 }
 
 CODE_CATEGORIES       = ("codigo-professor", "codigo-aluno")
@@ -171,6 +172,8 @@ OCR_LANGS = ["por", "eng", "por,eng", "eng,por"]
 # Utilities
 
 def slugify(value: str) -> str:
+    value = unicodedata.normalize("NFKD", value or "")
+    value = "".join(ch for ch in value if not unicodedata.combining(ch))
     value = value.strip().lower()
     value = re.sub(r"[^\w\s-]", "", value, flags=re.UNICODE)
     value = re.sub(r"[\s_]+", "-", value)
@@ -317,6 +320,10 @@ def auto_detect_category(name: str, is_image: bool = False) -> str:
     
     import re as _re
     name = name.lower()
+    ext = Path(name).suffix.lower()
+    if ext in CODE_EXTENSIONS:
+        return "codigo-professor"
+
     # Use word-boundary regex for short codes to avoid false positives (e.g. "cap1" matching "p1")
     _wb = lambda pattern: bool(_re.search(r'(?:^|[\W_])' + pattern + r'(?:$|[\W_])', name))
     if any(k in name for k in ["prova", "exame"]) or _wb("test") or _wb("p1") or _wb("p2") or _wb("p3") or _wb("av1") or _wb("av2"):
@@ -335,10 +342,6 @@ def auto_detect_category(name: str, is_image: bool = False) -> str:
     if any(k in name for k in ["trabalho", "projeto", "assignment",
                                 "enunciado", "spec", "requisito"]):
         return "trabalhos"
-
-    ext = Path(name).suffix.lower()
-    if ext in CODE_EXTENSIONS:
-        return "codigo-professor"
 
     return "outros"
 

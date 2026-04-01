@@ -129,6 +129,7 @@ Arquivos-chave dessa arquitetura:
 ```text
 course/COURSE_MAP.md
 course/FILE_MAP.md
+exercises/EXERCISE_INDEX.md
 build/claude-knowledge/bundle.seed.json
 INSTRUCOES_CLAUDE_PROJETO.md
 ```
@@ -138,9 +139,11 @@ INSTRUCOES_CLAUDE_PROJETO.md
 - `COURSE_MAP.md` ficou mais curto e funciona como mapa pedagógico
 - `STUDENT_STATE.md` passou a entrar no fluxo de leitura antes dos materiais longos
 - `FILE_MAP.md` virou índice de roteamento com `quando abrir` e `prioridade`
+- `EXERCISE_INDEX.md` virou um roteador de prática por unidade, prioridade e finalidade
 - `bundle.seed.json` agora é seletivo, focado em metadados e registra o motivo de inclusão de cada item
 - descrições de imagem no markdown final entram em versão compacta
 - duplicatas exatas entre páginas vizinhas podem virar referência curta, em vez de repetir o bloco inteiro
+- `COURSE_MAP.md` omite seções vazias como incidência em prova e notas do professor até existir sinal real
 
 ### Como aplicar isso em repositórios antigos
 

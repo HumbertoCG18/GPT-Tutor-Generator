@@ -273,6 +273,272 @@ def test_build_duplicate_index_marks_exact_duplicates(tmp_path):
     assert result["page-024-a.png"]["other_pages"] == [23]
 
 
+def test_inject_image_descriptions_accepts_curated_status(tmp_path):
+    from src.builder.engine import RepoBuilder
+
+    repo = tmp_path / "repo"
+    (repo / "content").mkdir(parents=True)
+    (repo / "content" / "images").mkdir(parents=True)
+    (repo / "content" / "curated.md").write_text(
+        "![](content/images/entry1-page-003-img-01.png)\n",
+        encoding="utf-8",
+    )
+    manifest = {
+        "entries": [
+            {
+                "id": "entry1",
+                "title": "Aula 1",
+                "image_curation": {
+                    "status": "curated",
+                    "pages": {
+                        "3": {
+                            "include_page": True,
+                            "images": {
+                                "entry1-page-003-img-01.png": {
+                                    "type": "diagrama",
+                                    "include": True,
+                                    "description": "Árvore de prova com 3 níveis.",
+                                }
+                            },
+                        }
+                    },
+                },
+            }
+        ]
+    }
+    (repo / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+
+    builder = RepoBuilder.__new__(RepoBuilder)
+    builder.root_dir = repo
+    builder._inject_all_image_descriptions()
+
+    result = (repo / "content" / "curated.md").read_text(encoding="utf-8")
+    assert "<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->" in result
+    assert "> **[Descrição de imagem]** Árvore de prova com 3 níveis." in result
+
+
+def test_inject_all_image_descriptions_prefers_entry_markdown_targets(tmp_path):
+    from src.builder.engine import RepoBuilder
+
+    repo = tmp_path / "repo"
+    (repo / "content").mkdir(parents=True)
+    (repo / "content" / "images").mkdir(parents=True)
+    target = repo / "content" / "target.md"
+    other = repo / "content" / "other.md"
+    image_ref = "![](content/images/entry1-page-003-img-01.png)\n"
+    target.write_text(image_ref, encoding="utf-8")
+    other.write_text(image_ref, encoding="utf-8")
+    manifest = {
+        "entries": [
+            {
+                "id": "entry1",
+                "title": "Aula 1",
+                "base_markdown": "content/target.md",
+                "image_curation": {
+                    "status": "curated",
+                    "pages": {
+                        "3": {
+                            "include_page": True,
+                            "images": {
+                                "entry1-page-003-img-01.png": {
+                                    "type": "diagrama",
+                                    "include": True,
+                                    "description": "Árvore de prova com 3 níveis.",
+                                }
+                            },
+                        }
+                    },
+                },
+            }
+        ]
+    }
+    (repo / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+
+    builder = RepoBuilder.__new__(RepoBuilder)
+    builder.root_dir = repo
+    builder._inject_all_image_descriptions()
+
+    target_text = target.read_text(encoding="utf-8")
+    other_text = other.read_text(encoding="utf-8")
+    assert "<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->" in target_text
+    assert "<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->" not in other_text
+
+
+def test_inject_all_image_descriptions_supports_scanned_staging_markdown(tmp_path):
+    from src.builder.engine import RepoBuilder
+
+    repo = tmp_path / "repo"
+    target = repo / "staging" / "markdown-auto" / "scanned" / "entry1.md"
+    target.parent.mkdir(parents=True)
+    (repo / "content" / "images" / "scanned" / "entry1").mkdir(parents=True)
+    target.write_text(
+        "![](../../../content/images/scanned/entry1/page-001.jpg)\n",
+        encoding="utf-8",
+    )
+    manifest = {
+        "entries": [
+            {
+                "id": "entry1",
+                "title": "PDF Scanned",
+                "base_markdown": "staging/markdown-auto/scanned/entry1.md",
+                "effective_profile": "scanned",
+                "image_curation": {
+                    "status": "curated",
+                    "pages": {
+                        "1": {
+                            "include_page": True,
+                            "images": {
+                                "page-001.jpg": {
+                                    "type": "página escaneada",
+                                    "include": True,
+                                    "description": "Página escaneada com texto manuscrito e fórmulas.",
+                                }
+                            },
+                        }
+                    },
+                },
+            }
+        ]
+    }
+    (repo / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+
+    builder = RepoBuilder.__new__(RepoBuilder)
+    builder.root_dir = repo
+    builder._inject_all_image_descriptions()
+
+    target_text = target.read_text(encoding="utf-8")
+    assert "<!-- IMAGE_DESCRIPTION: page-001.jpg -->" in target_text
+    assert "> **[Descrição de imagem]** Página escaneada com texto manuscrito e fórmulas." in target_text
+
+
+def test_inject_all_image_descriptions_supports_scanned_latex_extraction(tmp_path):
+    from src.builder.engine import RepoBuilder
+
+    repo = tmp_path / "repo"
+    target = repo / "staging" / "markdown-auto" / "scanned" / "entry1.md"
+    target.parent.mkdir(parents=True)
+    (repo / "content" / "images" / "scanned" / "entry1").mkdir(parents=True)
+    target.write_text(
+        "![](../../../content/images/scanned/entry1/page-001.jpg)\n",
+        encoding="utf-8",
+    )
+    manifest = {
+        "entries": [
+            {
+                "id": "entry1",
+                "title": "PDF Scanned",
+                "base_markdown": "staging/markdown-auto/scanned/entry1.md",
+                "effective_profile": "scanned",
+                "image_curation": {
+                    "status": "curated",
+                    "pages": {
+                        "1": {
+                            "include_page": True,
+                            "images": {
+                                "page-001.jpg": {
+                                    "type": "extração-latex",
+                                    "include": True,
+                                    "description": "\\int_0^1 x^2 dx = 1/3",
+                                }
+                            },
+                        }
+                    },
+                },
+            }
+        ]
+    }
+    (repo / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+
+    builder = RepoBuilder.__new__(RepoBuilder)
+    builder.root_dir = repo
+    builder._inject_all_image_descriptions()
+
+    target_text = target.read_text(encoding="utf-8")
+    assert "<!-- IMAGE_DESCRIPTION: page-001.jpg -->" in target_text
+    assert "> **[LaTeX extraído]** \\int_0^1 x^2 dx = 1/3" in target_text
+
+
+def test_inject_all_image_descriptions_falls_back_when_manifest_markdown_is_stale(tmp_path):
+    from src.builder.engine import RepoBuilder
+
+    repo = tmp_path / "repo"
+    real_target = repo / "exercises" / "lists" / "entry1.md"
+    real_target.parent.mkdir(parents=True)
+    real_target.write_text(
+        "---\nentry_id: \"entry1\"\n---\n\n![](../../../content/images/scanned/entry1/page-001.jpg)\n",
+        encoding="utf-8",
+    )
+    (repo / "content" / "images" / "scanned" / "entry1").mkdir(parents=True)
+    manifest = {
+        "entries": [
+            {
+                "id": "entry1",
+                "title": "PDF Scanned",
+                "base_markdown": "staging/markdown-auto/scanned/entry1.md",
+                "effective_profile": "scanned",
+                "image_curation": {
+                    "status": "curated",
+                    "pages": {
+                        "1": {
+                            "include_page": True,
+                            "images": {
+                                "page-001.jpg": {
+                                    "type": "extração-latex",
+                                    "include": True,
+                                    "description": "x_{n+1} = x_n + 1",
+                                }
+                            },
+                        }
+                    },
+                },
+            }
+        ]
+    }
+    (repo / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+
+    builder = RepoBuilder.__new__(RepoBuilder)
+    builder.root_dir = repo
+    builder._inject_all_image_descriptions()
+
+    target_text = real_target.read_text(encoding="utf-8")
+    assert "<!-- IMAGE_DESCRIPTION: page-001.jpg -->" in target_text
+    assert "> **[LaTeX extraído]** x_{n+1} = x_n + 1" in target_text
+
+
+def test_compact_manifest_heals_stale_markdown_path(tmp_path):
+    from src.builder.engine import RepoBuilder
+
+    repo = tmp_path / "repo"
+    real_target = repo / "exercises" / "lists" / "entry1.md"
+    real_target.parent.mkdir(parents=True)
+    real_target.write_text(
+        "---\nentry_id: \"entry1\"\n---\n\nConteúdo\n",
+        encoding="utf-8",
+    )
+    raw_target = repo / "raw" / "pdfs" / "listas" / "entry1.pdf"
+    raw_target.parent.mkdir(parents=True)
+    raw_target.write_bytes(b"%PDF-1.4")
+
+    builder = RepoBuilder.__new__(RepoBuilder)
+    builder.root_dir = repo
+
+    manifest = {
+        "entries": [
+            {
+                "id": "entry1",
+                "title": "PDF Scanned",
+                "raw_target": "raw/pdfs/listas/entry1.pdf",
+                "base_markdown": "staging/markdown-auto/scanned/entry1.md",
+            }
+        ]
+    }
+
+    compacted = builder._compact_manifest(manifest)
+    assert compacted["entries"][0]["base_markdown"] == "exercises/lists/entry1.md"
+    assert compacted["entries"][0]["approved_markdown"] == "exercises/lists/entry1.md"
+    assert compacted["entries"][0]["curated_markdown"] == "exercises/lists/entry1.md"
+
+
 def test_curator_studio_merges_manifest_fields_when_template_is_stale():
     from src.ui.curator_studio import _merge_review_frontmatter_with_manifest
 

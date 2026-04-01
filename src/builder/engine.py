@@ -98,6 +98,49 @@ def _truncate_markdown_blocks(blocks: List[str], max_chars: int = 15000) -> str:
     return "\n\n".join(out).strip()
 
 
+def _compact_notebook_markdown(raw_text: str, max_cells: int = 24, max_output_chars: int = 6000) -> Tuple[str, str]:
+    try:
+        notebook = json.loads(raw_text)
+    except Exception:
+        return "json", raw_text
+
+    cells = notebook.get("cells") or []
+    rendered: List[str] = []
+    output_budget = 0
+
+    for idx, cell in enumerate(cells[:max_cells], start=1):
+        cell_type = (cell.get("cell_type") or "").strip().lower()
+        source = "".join(cell.get("source") or []).strip()
+        if not source and cell_type != "code":
+            continue
+
+        if cell_type == "markdown":
+            rendered.append(f"## Célula {idx} — Markdown\n\n{source}")
+            continue
+
+        if cell_type == "code":
+            rendered.append(f"## Célula {idx} — Código\n\n```python\n{source}\n```")
+            outputs = cell.get("outputs") or []
+            output_lines: List[str] = []
+            for output in outputs[:3]:
+                text = "".join(output.get("text") or output.get("data", {}).get("text/plain", []) or []).strip()
+                if not text:
+                    continue
+                remaining = max_output_chars - output_budget
+                if remaining <= 0:
+                    break
+                text = text[:remaining].rstrip()
+                output_budget += len(text)
+                output_lines.append(text)
+            if output_lines:
+                rendered.append("**Saída:**\n\n```text\n" + "\n\n".join(output_lines) + "\n```")
+
+    if len(cells) > max_cells:
+        rendered.append(f"> Notebook truncado: exibindo {max_cells} de {len(cells)} células.")
+
+    return "jupyter", "\n\n".join(block for block in rendered if block).strip() or raw_text
+
+
 def _compact_image_description_text(description: str, max_chars: int = 220) -> str:
     text = re.sub(r"\s+", " ", (description or "")).strip()
     if not text:
@@ -1261,12 +1304,14 @@ class RepoBuilder:
             manifest["entries"].append(item_result)
             # Salva manifest após cada entry para não perder progresso
             manifest["logs"] = self.logs
+            manifest = self._compact_manifest(manifest)
             write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
             logger.info("[%d/%d] Concluído e salvo: %s", i + 1, total, entry.title)
         if self.progress_callback:
             self.progress_callback(total, total, "")
 
         manifest["logs"] = self.logs
+        manifest = self._compact_manifest(manifest)
         write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
         self._write_source_registry(manifest)
         self._write_bundle_seed(manifest)
@@ -1274,7 +1319,7 @@ class RepoBuilder:
 
         # FILE_MAP — generated after all entries are processed
         write_text(self.root_dir / "course" / "FILE_MAP.md",
-                   file_map_md(self.course_meta, manifest["entries"]))
+                   file_map_md({**self.course_meta, "_repo_root": self.root_dir}, manifest["entries"]))
 
         # Resolve image references in markdowns → content/images/
         self._resolve_content_images()
@@ -1661,6 +1706,12 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
     )
 
     @staticmethod
+    def _image_curation_heading(img_type: str) -> str:
+        if (img_type or "").strip().lower() == "extração-latex":
+            return "[LaTeX extraído]"
+        return "[Descrição de imagem]"
+
+    @staticmethod
     def inject_image_descriptions(markdown: str, image_curation: dict) -> str:
         """Inject image descriptions from curation data into markdown text.
 
@@ -1706,13 +1757,14 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
                 if fname in descriptions:
                     img_type, desc = descriptions[fname]
                     desc_lines = desc.split("\n")
+                    heading = RepoBuilder._image_curation_heading(img_type)
                     block = (
                         f"<!-- IMAGE_DESCRIPTION: {fname} -->\n"
                         f"<!-- Tipo: {img_type} -->"
                     )
                     for i, dl in enumerate(desc_lines):
                         if i == 0:
-                            block += f"\n> **[Descrição de imagem]** {dl}"
+                            block += f"\n> **{heading}** {dl}"
                         else:
                             block += f"\n> {dl}"
                     block += "\n<!-- /IMAGE_DESCRIPTION -->"
@@ -1723,7 +1775,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         return "\n".join(result_lines)
 
     def _inject_all_image_descriptions(self) -> None:
-        """Inject image descriptions from manifest into all content markdowns."""
+        """Inject image descriptions into the most relevant markdowns for each entry."""
         manifest_path = self.root_dir / "manifest.json"
         if not manifest_path.exists():
             return
@@ -1734,17 +1786,26 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             return
 
         entries = manifest.get("entries", [])
-        content_dir = self.root_dir / "content"
-        if not content_dir.exists():
-            return
 
         injected_count = 0
         for entry_data in entries:
             curation = entry_data.get("image_curation")
-            if not curation or curation.get("status") != "described":
+            if not curation:
                 continue
 
-            for md_file in content_dir.rglob("*.md"):
+            status = (curation.get("status") or "").strip().lower()
+            if status not in {"described", "curated"} and not curation.get("pages"):
+                continue
+
+            target_markdowns = self._resolve_entry_markdown_targets(entry_data)
+
+            if not target_markdowns:
+                content_dir = self.root_dir / "content"
+                if not content_dir.exists():
+                    continue
+                target_markdowns = list(content_dir.rglob("*.md"))
+
+            for md_file in target_markdowns:
                 try:
                     text = md_file.read_text(encoding="utf-8")
                 except Exception:
@@ -1754,9 +1815,154 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
                 if new_text != text:
                     md_file.write_text(new_text, encoding="utf-8")
                     injected_count += 1
+                    try:
+                        rel_md = safe_rel(md_file, self.root_dir)
+                    except Exception:
+                        rel_md = str(md_file)
+                    logger.info(
+                        "Injected image descriptions into %s for entry %s.",
+                        rel_md,
+                        entry_data.get("id") or entry_data.get("title") or "<unknown>",
+                    )
 
         if injected_count:
             logger.info("Injected image descriptions into %d markdown files.", injected_count)
+
+    def _resolve_entry_markdown_targets(self, entry_data: dict) -> List[Path]:
+        target_markdowns: List[Path] = []
+        seen_targets = set()
+
+        def _is_allowed_rel_path(rel_path: str) -> bool:
+            rel_posix = str(rel_path).replace("\\", "/").lower()
+            return (
+                rel_posix.startswith("content/")
+                or rel_posix.startswith("exercises/")
+                or rel_posix.startswith("exams/")
+                or rel_posix.startswith("assignments/")
+                or rel_posix.startswith("code/")
+                or rel_posix.startswith("whiteboard/")
+                or rel_posix.startswith("staging/markdown-auto/")
+            )
+
+        for key in ["approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown"]:
+            rel_path = entry_data.get(key)
+            if not rel_path or not str(rel_path).lower().endswith(".md"):
+                continue
+            md_file = self.root_dir / rel_path
+            if not md_file.exists() or not md_file.is_file():
+                continue
+            if not _is_allowed_rel_path(rel_path):
+                continue
+            if md_file in seen_targets:
+                continue
+            seen_targets.add(md_file)
+            target_markdowns.append(md_file)
+
+        if target_markdowns:
+            return target_markdowns
+
+        entry_id = (entry_data.get("id") or "").strip()
+        if not entry_id:
+            return target_markdowns
+
+        # Fallback for stale manifest paths: locate markdowns that declare this entry_id.
+        search_roots = [
+            self.root_dir / "content",
+            self.root_dir / "exercises",
+            self.root_dir / "exams",
+            self.root_dir / "assignments",
+            self.root_dir / "code",
+            self.root_dir / "whiteboard",
+            self.root_dir / "staging" / "markdown-auto",
+        ]
+        frontmatter_mark = f'entry_id: "{entry_id}"'
+        for root in search_roots:
+            if not root.exists():
+                continue
+            for md_file in root.rglob("*.md"):
+                if md_file in seen_targets:
+                    continue
+                try:
+                    text = md_file.read_text(encoding="utf-8")
+                except Exception:
+                    continue
+                if frontmatter_mark not in text:
+                    continue
+                seen_targets.add(md_file)
+                target_markdowns.append(md_file)
+
+        return target_markdowns
+
+    def _heal_manifest_markdown_paths(self, manifest: dict) -> dict:
+        entries = manifest.get("entries", []) or []
+        healed = 0
+        for entry_data in entries:
+            if not isinstance(entry_data, dict):
+                continue
+
+            live_targets: List[Tuple[str, Path]] = []
+            for key in ["approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown"]:
+                rel_path = entry_data.get(key)
+                if not rel_path or not str(rel_path).lower().endswith(".md"):
+                    continue
+                md_file = self.root_dir / rel_path
+                if md_file.exists() and md_file.is_file():
+                    live_targets.append((key, md_file))
+
+            if live_targets:
+                # If a final tutor-facing markdown exists, normalize manifest to use it explicitly.
+                final_targets = []
+                for key, md_file in live_targets:
+                    rel_md = safe_rel(md_file, self.root_dir).replace("\\", "/")
+                    if (
+                        rel_md.startswith("content/curated/")
+                        or rel_md.startswith("exercises/lists/")
+                        or rel_md.startswith("exams/past-exams/")
+                        or rel_md.startswith("assignments/")
+                        or rel_md.startswith("code/")
+                        or rel_md.startswith("whiteboard/")
+                    ):
+                        final_targets.append(rel_md)
+                if final_targets:
+                    preferred = final_targets[0]
+                    if entry_data.get("approved_markdown") != preferred:
+                        entry_data["approved_markdown"] = preferred
+                        healed += 1
+                    if entry_data.get("curated_markdown") != preferred:
+                        entry_data["curated_markdown"] = preferred
+                        healed += 1
+                    if entry_data.get("base_markdown") != preferred:
+                        entry_data["base_markdown"] = preferred
+                        healed += 1
+                continue
+
+            resolved_targets = self._resolve_entry_markdown_targets(entry_data)
+            if not resolved_targets:
+                continue
+
+            preferred = safe_rel(resolved_targets[0], self.root_dir)
+            if entry_data.get("base_markdown") != preferred:
+                entry_data["base_markdown"] = preferred
+                healed += 1
+            if (
+                preferred.startswith("content/curated/")
+                or preferred.startswith("exercises/lists/")
+                or preferred.startswith("exams/past-exams/")
+                or preferred.startswith("assignments/")
+                or preferred.startswith("code/")
+                or preferred.startswith("whiteboard/")
+            ):
+                if entry_data.get("approved_markdown") != preferred:
+                    entry_data["approved_markdown"] = preferred
+                    healed += 1
+                if entry_data.get("curated_markdown") != preferred:
+                    entry_data["curated_markdown"] = preferred
+                    healed += 1
+
+        if healed:
+            logger.info("Healed markdown targets for %d manifest entries.", healed)
+        manifest["entries"] = entries
+        return manifest
 
     def _write_source_registry(self, manifest: Dict[str, object]) -> None:
         lines = [
@@ -2343,6 +2549,10 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             logger.error("Could not read code file %s: %s", raw_target, e)
             code_content = f"[Erro ao ler arquivo: {e}]"
 
+        body_content = code_content
+        if ext == "ipynb":
+            lang, body_content = _compact_notebook_markdown(code_content)
+
         curated_subdir = "student" if entry.category == "codigo-aluno" else "professor"
         curated_dir    = self.root_dir / "code" / curated_subdir
         ensure_dir(curated_dir)
@@ -2354,7 +2564,10 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             body += f"  |  **Unidade:** {entry.tags}"
         if entry.notes:
             body += f"\n> {entry.notes}"
-        body += f"\n\n```{lang}\n{code_content}\n```\n"
+        if ext == "ipynb":
+            body += "\n\n" + body_content.rstrip() + "\n"
+        else:
+            body += f"\n\n```{lang}\n{body_content}\n```\n"
 
         write_text(curated_path, wrap_frontmatter({
             "entry_id": entry.id(), "title": entry.title,
@@ -2744,6 +2957,20 @@ unit: {entry.tags}
         finally:
             doc.close()
 
+    def _compact_manifest(self, manifest: dict) -> dict:
+        entries = manifest.get("entries", []) or []
+        live_entries = _filter_live_manifest_entries(self.root_dir, entries)
+        removed = len(entries) - len(live_entries)
+        if removed > 0:
+            logger.info("Removidas %d entries órfãs do manifest antes de regenerar artefatos.", removed)
+        manifest["entries"] = live_entries
+        manifest = self._heal_manifest_markdown_paths(manifest)
+
+        logs = manifest.get("logs", [])
+        if isinstance(logs, list) and len(logs) > _MANIFEST_LOG_LIMIT:
+            manifest["logs"] = logs[-_MANIFEST_LOG_LIMIT:]
+        return manifest
+
     def incremental_build(self) -> None:
         """Adiciona novos arquivos a um repositório existente sem recriar do zero."""
         manifest_path = self.root_dir / "manifest.json"
@@ -2755,6 +2982,7 @@ unit: {entry.tags}
         logger.info("Incremental build at %s", self.root_dir)
         with open(manifest_path, "r", encoding="utf-8") as f:
             manifest = json.load(f)
+        manifest = self._compact_manifest(manifest)
 
         existing_sources = {e.get("source_path") for e in manifest.get("entries", [])}
         new_entries = [e for e in self.entries
@@ -2779,6 +3007,7 @@ unit: {entry.tags}
                 manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
                 manifest.setdefault("logs", []).extend(self.logs)
                 self.logs = []
+                manifest = self._compact_manifest(manifest)
                 write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
                 logger.info("[%d/%d] Concluído e salvo: %s", i + 1, total, entry.title)
             if self.progress_callback:
@@ -2786,6 +3015,7 @@ unit: {entry.tags}
 
         manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
         manifest.setdefault("logs", []).extend(self.logs)
+        manifest = self._compact_manifest(manifest)
 
         # Regenera todos os arquivos pedagógicos (indexes, course map, glossary, etc.)
         # Nota: _regenerate_pedagogical_files já escreve STUDENT_PROFILE.md
@@ -2836,8 +3066,11 @@ unit: {entry.tags}
                 except Exception as e:
                     logger.warning("Falha ao remover %s: %s", stale, e)
 
+        live_manifest_entries = _filter_live_manifest_entries(self.root_dir, manifest.get("entries", []))
+        manifest["entries"] = live_manifest_entries
+
         try:
-            all_entries = [FileEntry.from_dict(e) for e in manifest.get("entries", [])]
+            all_entries = [FileEntry.from_dict(e) for e in live_manifest_entries]
         except Exception:
             all_entries = []
 
@@ -2871,7 +3104,7 @@ unit: {entry.tags}
                        self.course_meta,
                        self.subject_profile,
                        root_dir=self.root_dir,
-                       manifest_entries=manifest.get("entries", []),
+                       manifest_entries=live_manifest_entries,
                    ))
 
         # Syllabus
@@ -2917,7 +3150,7 @@ unit: {entry.tags}
 
         # FILE_MAP
         write_text(self.root_dir / "course" / "FILE_MAP.md",
-                   file_map_md(self.course_meta, manifest.get("entries", [])))
+                   file_map_md({**self.course_meta, "_repo_root": self.root_dir}, live_manifest_entries))
 
         # Student files
         if self.student_profile:
@@ -2953,6 +3186,7 @@ unit: {entry.tags}
         if manifest_path.exists():
             with open(manifest_path, "r", encoding="utf-8") as f:
                 manifest = json.load(f)
+            manifest = self._compact_manifest(manifest)
         else:
             # Primeiro item — cria manifest + arquivos raiz
             self._write_root_files()
@@ -2997,6 +3231,7 @@ unit: {entry.tags}
         manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
         manifest.setdefault("logs", []).extend(self.logs)
         self.logs = []  # reset para próxima chamada
+        manifest = self._compact_manifest(manifest)
 
         write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
         self._write_source_registry(manifest)
@@ -3051,6 +3286,7 @@ unit: {entry.tags}
 
         manifest["entries"] = [e for e in manifest["entries"] if e.get("id") != entry_id]
         manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+        manifest = self._compact_manifest(manifest)
 
         write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
         self._write_source_registry(manifest)
@@ -3116,6 +3352,7 @@ unit: {entry.tags}
             "step": "curator_reject",
             "status": "ok",
         })
+        manifest = self._compact_manifest(manifest)
 
         write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
         self._write_source_registry(manifest)
@@ -4934,6 +5171,20 @@ def _shorten_glossary_sentence(sentence: str, max_chars: int = 180) -> str:
     return truncated.rstrip(" ,;:") + "..."
 
 
+def _is_bad_glossary_evidence(sentence: str) -> bool:
+    sent = _collapse_ws(sentence)
+    if not sent or len(sent) < 40:
+        return True
+    if sent.count("**") >= 2:
+        return True
+    if sent.lower().startswith("exemplo:"):
+        return True
+    if re.match(r"^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ][\wÁÀÂÃÉÊÍÓÔÕÚÇáàâãéêíóôõúç-]+\s+[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ]", sent):
+        if re.search(r"\d", sent) and len(sent) <= 80:
+            return True
+    return False
+
+
 def _find_glossary_evidence(term: str, unit_title: str, docs: List[Dict[str, str]]) -> str:
     if not docs:
         return ""
@@ -4982,6 +5233,8 @@ def _best_glossary_sentence(term: str, unit_title: str, doc: Dict[str, str]) -> 
         for sentence in re.split(r"(?<=[.!?])\s+", _collapse_ws(source)):
             sent = _collapse_ws(sentence)
             if len(sent) < 40 or len(sent) > 220:
+                continue
+            if _is_bad_glossary_evidence(sent):
                 continue
             candidate_sentences.append(sent)
     best_sentence = ""
@@ -5320,6 +5573,68 @@ def _bundle_reason_labels(entry: dict) -> List[str]:
     if profile in {"math_heavy", "layout_heavy", "exam_pdf"}:
         reasons.append(f"perfil-{profile}")
     return reasons or ["prioridade-geral"]
+
+
+_MANIFEST_LOG_LIMIT = 200
+
+
+def _entry_existing_reference_count(root_dir: Path, entry: dict) -> int:
+    refs: List[Path] = []
+    for key in [
+        "raw_target",
+        "base_markdown",
+        "advanced_markdown",
+        "manual_review",
+        "images_dir",
+        "tables_dir",
+        "table_detection_dir",
+        "advanced_asset_dir",
+        "advanced_metadata_path",
+        "approved_markdown",
+        "curated_markdown",
+        "rendered_pages_dir",
+    ]:
+        value = entry.get(key)
+        if value:
+            refs.append(root_dir / value)
+    return sum(1 for path in refs if path.exists())
+
+
+def _filter_live_manifest_entries(root_dir: Optional[Path], manifest_entries: list) -> list:
+    if not root_dir:
+        return list(manifest_entries or [])
+
+    live_entries = []
+    for entry in manifest_entries or []:
+        if not isinstance(entry, dict):
+            continue
+
+        ref_count = _entry_existing_reference_count(root_dir, entry)
+        if ref_count > 0:
+            live_entries.append(entry)
+            continue
+
+        has_any_reference = any(
+            entry.get(key)
+            for key in [
+                "raw_target",
+                "base_markdown",
+                "advanced_markdown",
+                "manual_review",
+                "images_dir",
+                "tables_dir",
+                "table_detection_dir",
+                "advanced_asset_dir",
+                "advanced_metadata_path",
+                "approved_markdown",
+                "curated_markdown",
+                "rendered_pages_dir",
+            ]
+        )
+        if not has_any_reference:
+            live_entries.append(entry)
+
+    return live_entries
 
 
 def _bundle_seed_candidate(entry: dict, score: int) -> dict:
@@ -6356,15 +6671,113 @@ def _budgeted_course_map_md(course_meta: dict, subject_profile=None) -> str:
 
 def _budgeted_file_map_md(course_meta: dict, manifest_entries: list) -> str:
     return _clamp_navigation_artifact(
-        _low_token_file_map_md(course_meta, manifest_entries),
+        _low_token_file_map_md(
+            course_meta,
+            _filter_live_manifest_entries(course_meta.get("_repo_root"), manifest_entries),
+        ),
         max_chars=12000,
         label="course/FILE_MAP.md",
     )
 
 
-course_map_md = _budgeted_course_map_md
+def _low_token_course_map_md_v2(course_meta: dict, subject_profile=None) -> str:
+    base = _low_token_course_map_md(course_meta, subject_profile)
+    lines = base.splitlines()
+    stop_headers = {
+        "## TÃ³picos de alta incidÃªncia em prova",
+        "## Tópicos de alta incidência em prova",
+        "## Notas do professor",
+    }
+    trimmed: List[str] = []
+    for line in lines:
+        if line.strip() in stop_headers:
+            break
+        trimmed.append(line)
+    return "\n".join(trimmed).rstrip() + "\n"
+
+
+def _exercise_index_md_v2(course_meta: dict, entries: List[FileEntry] = None) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    entries = entries or []
+    lines = [
+        f"# EXERCISE_INDEX â€” {course_name}",
+        "",
+        "> **Como usar:** Ãndice operacional de prÃ¡tica da disciplina.",
+        "> O tutor consulta este arquivo para localizar listas, provas antigas",
+        "> e recursos de exercÃ­cios por unidade, prioridade e finalidade.",
+        "",
+        "| Recurso | Tipo | Unidade | SoluÃ§Ã£o | Prioridade | Quando usar |",
+        "|---|---|---|---|---|---|",
+    ]
+    if entries:
+        for entry in entries:
+            notes = _collapse_ws(entry.notes or "")
+            tags = _collapse_ws(entry.tags or "")
+            category = _collapse_ws(entry.category or "")
+            category_lower = category.lower()
+            kind = "prova" if "prova" in category_lower else "lista" if "lista" in category_lower else "exercÃ­cio"
+            has_solution = "sim" if any(token in notes.lower() for token in ["gabarito", "resolu", "soluÃ§"]) else "nÃ£o"
+            priority = "alta" if "prova" in category_lower or has_solution == "sim" else "mÃ©dia"
+            usage = "revisÃ£o de prova" if "prova" in category_lower else "fixaÃ§Ã£o por unidade"
+            lines.append(
+                f"| {entry.title} | {kind} | {tags or 'nÃ£o mapeado'} | {has_solution} | {priority} | {usage} |"
+            )
+    else:
+        lines.append("| [a preencher] | | | | | |")
+        lines += [
+            "",
+            "> Adicione listas ou provas antigas para o tutor conseguir sugerir prÃ¡tica com baixo custo de contexto.",
+        ]
+    lines.append("")
+    result = "\n".join(lines)
+    return _clamp_navigation_artifact(
+        result,
+        max_chars=14000,
+        label="exercises/EXERCISE_INDEX.md",
+    )
+
+
+course_map_md = lambda course_meta, subject_profile=None: _clamp_navigation_artifact(
+    _low_token_course_map_md_v2(course_meta, subject_profile),
+    max_chars=14000,
+    label="course/COURSE_MAP.md",
+)
 file_map_md = _budgeted_file_map_md
-generate_claude_project_instructions = _low_token_generate_claude_project_instructions
+exercise_index_md = _exercise_index_md_v2
+
+
+def _low_token_generate_claude_project_instructions_v2(
+    course_meta: dict,
+    student_profile=None,
+    subject_profile=None,
+    has_assignments: bool = False,
+    has_code: bool = False,
+    has_whiteboard: bool = False,
+    first_session_pending: bool = True,
+) -> str:
+    text = _low_token_generate_claude_project_instructions(
+        course_meta,
+        student_profile,
+        subject_profile,
+        has_assignments=has_assignments,
+        has_code=has_code,
+        has_whiteboard=has_whiteboard,
+        first_session_pending=first_session_pending,
+    )
+    replacements = {
+        "| `content/` | Material curado, por demanda |": "| `exercises/EXERCISE_INDEX.md` | Localizar listas, provas antigas e prática por unidade |\n| `content/` | Material curado, por demanda |",
+        "3. Use `course/FILE_MAP.md` para localizar o material certo.\n4. Só então abra um markdown em `content/`, `exercises/` ou `exams/`.\n5. Use o PDF bruto apenas quando o markdown não trouxer detalhe suficiente.": "3. Use `course/FILE_MAP.md` para localizar o material certo.\n4. Se a tarefa for prática, consulte `exercises/EXERCISE_INDEX.md` antes de abrir listas ou provas longas.\n5. Só então abra um markdown em `content/`, `exercises/` ou `exams/`.\n6. Use o PDF bruto apenas quando o markdown não trouxer detalhe suficiente.",
+        "- **`assignment`** — guiar sem entregar tudo": "- **`assignment`** — guiar sem entregar tudo, consultando primeiro `EXERCISE_INDEX.md`",
+        "- **`exam_prep`** — priorizar incidência e padrão de cobrança": "- **`exam_prep`** — priorizar prática, provas e padrão de cobrança",
+        "4. Não entregue respostas completas de exercícios de imediato; guie o raciocínio.\n5. Ao final de cada sessão, sugira atualizar `student/STUDENT_STATE.md`.\n6. Para conteúdo visual, prefira LaTeX para fórmulas e SVG só quando a estrutura espacial for indispensável.": "4. Use `course/GLOSSARY.md` como referência terminológica; refine termos só se houver lacuna real.\n5. Não entregue respostas completas de exercícios de imediato; guie o raciocínio.\n6. Se uma seção opcional não existir em um artefato curto, assuma que ela foi omitida por economia de contexto.\n7. Ao final de cada sessão, sugira atualizar `student/STUDENT_STATE.md`.\n8. Para conteúdo visual, prefira LaTeX para fórmulas e SVG só quando a estrutura espacial for indispensável.",
+        "1. **Mapear arquivos → unidades**: leia `course/COURSE_MAP.md` e `course/FILE_MAP.md` e preencha a coluna **Unidade** dos itens vazios.\n2. **Calibrar profundidade**: consulte `student/STUDENT_STATE.md` antes de repetir explicações ou abrir material longo.\n3. **Fechar lacunas**: se `COURSE_MAP.md`, `FILE_MAP.md` e `GLOSSARY.md` não bastarem, abra o markdown longo correspondente.\n4. Se existirem provas em `exams/`, preencha a seção de alta incidência em `course/COURSE_MAP.md`.\n5. Mostre um resumo curto do que foi mapeado e confirme com o aluno.": "1. **Mapear arquivos → unidades**: leia `course/COURSE_MAP.md` e `course/FILE_MAP.md` e preencha a coluna **Unidade** dos itens vazios.\n2. **Calibrar profundidade**: consulte `student/STUDENT_STATE.md` antes de repetir explicações ou abrir material longo.\n3. **Verificar terminologia e prática**: consulte `course/GLOSSARY.md` para termos oficiais e `exercises/EXERCISE_INDEX.md` para roteamento de exercícios.\n4. **Fechar lacunas**: só abra markdown longo quando `COURSE_MAP.md`, `FILE_MAP.md`, `GLOSSARY.md` e `EXERCISE_INDEX.md` não bastarem.\n5. Se alguma seção curta não existir, trate isso como ausência intencional de evidência suficiente, não como erro.\n6. Mostre um resumo curto do que foi mapeado e confirme com o aluno.",
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text
+
+
+generate_claude_project_instructions = _low_token_generate_claude_project_instructions_v2
 
 
 def _low_token_inject_image_descriptions(markdown: str, image_curation: dict) -> str:
@@ -6398,13 +6811,14 @@ def _low_token_inject_image_descriptions(markdown: str, image_curation: dict) ->
                 else:
                     desc_lines.append(desc_info["compact_description"])
 
+                heading = RepoBuilder._image_curation_heading(desc_info["type"])
                 block = (
                     f"<!-- IMAGE_DESCRIPTION: {fname} -->\n"
                     f"<!-- Tipo: {desc_info['type']} -->"
                 )
                 for i, dl in enumerate(desc_lines):
                     if i == 0:
-                        block += f"\n> **[Descrição de imagem]** {dl}"
+                        block += f"\n> **{heading}** {dl}"
                     else:
                         block += f"\n> {dl}"
                 block += "\n<!-- /IMAGE_DESCRIPTION -->"
