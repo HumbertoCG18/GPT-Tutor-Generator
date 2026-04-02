@@ -9,7 +9,7 @@ import shutil
 import subprocess
 import sys
 import unicodedata
-from dataclasses import asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
@@ -1319,7 +1319,11 @@ class RepoBuilder:
 
         # FILE_MAP — generated after all entries are processed
         write_text(self.root_dir / "course" / "FILE_MAP.md",
-                   file_map_md({**self.course_meta, "_repo_root": self.root_dir}, manifest["entries"]))
+                   file_map_md(
+                       {**self.course_meta, "_repo_root": self.root_dir},
+                       manifest["entries"],
+                       self.subject_profile,
+                   ))
 
         # Resolve image references in markdowns → content/images/
         self._resolve_content_images()
@@ -3150,7 +3154,11 @@ unit: {entry.tags}
 
         # FILE_MAP
         write_text(self.root_dir / "course" / "FILE_MAP.md",
-                   file_map_md({**self.course_meta, "_repo_root": self.root_dir}, live_manifest_entries))
+                   file_map_md(
+                       {**self.course_meta, "_repo_root": self.root_dir},
+                       live_manifest_entries,
+                       self.subject_profile,
+                   ))
 
         # Student files
         if self.student_profile:
@@ -4406,7 +4414,7 @@ def _format_units_for_prompt(units) -> str:
     from src.utils.helpers import slugify
     lines = []
     for title, topics in units:
-        slug = slugify(title)
+        slug = _normalize_unit_slug(title)
         lines.append(f"{title} [slug: {slug}]")
         for topic in topics:
             text = _topic_text(topic)
@@ -4616,7 +4624,7 @@ def _match_timeline_to_units(
 
         result.append({
             "unit_title": unit_title,
-            "unit_slug": slugify(unit_title),
+            "unit_slug": _normalize_unit_slug(unit_title),
             "period": period,
             "dates": ", ".join(matched_dates),
         })
@@ -4797,7 +4805,7 @@ def _match_timeline_to_units_generic(
         period = f"{matched_dates[0]} a {matched_dates[-1]}" if len(matched_dates) > 1 else (matched_dates[0] if matched_dates else "")
         result.append({
             "unit_title": descriptor["unit_title"],
-            "unit_slug": slugify(descriptor["unit_title"]),
+            "unit_slug": _normalize_unit_slug(descriptor["unit_title"]),
             "period": period,
             "dates": ", ".join(matched_dates),
         })
@@ -4806,6 +4814,456 @@ def _match_timeline_to_units_generic(
 
 
 _match_timeline_to_units = _match_timeline_to_units_generic
+
+
+def _infer_timeline_keys(timeline: List[Dict[str, str]]) -> tuple[List[str], List[str]]:
+    if not timeline:
+        return [], []
+
+    sample = timeline[0]
+    content_keys = []
+    for key in sample.keys():
+        if any(k in key for k in ["conteúdo", "conteudo", "assunto", "tema", "descrição",
+                                  "descricao", "atividade", "tópico", "topico", "content"]):
+            content_keys.append(key)
+    if not content_keys:
+        avg_lens = {}
+        for key in sample.keys():
+            avg_lens[key] = sum(len(row.get(key, "")) for row in timeline) / max(len(timeline), 1)
+        if avg_lens:
+            content_keys = [max(avg_lens, key=avg_lens.get)]
+
+    preferred_date_keys = []
+    fallback_date_keys = []
+    for key in sample.keys():
+        if any(k in key for k in ["data", "date"]):
+            preferred_date_keys.append(key)
+        elif any(k in key for k in ["semana", "week", "sem", "aula"]):
+            fallback_date_keys.append(key)
+    date_keys = preferred_date_keys or fallback_date_keys
+    if not date_keys:
+        date_keys = [list(sample.keys())[0]] if sample else []
+
+    return content_keys, date_keys
+
+
+def _parse_timeline_date_value(value: str) -> Optional[datetime]:
+    text = _collapse_ws(value)
+    if not text:
+        return None
+    raw = text[:10]
+    for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
+        try:
+            return datetime.strptime(raw, fmt)
+        except ValueError:
+            continue
+    return None
+
+
+def _parse_timeline_period_bounds(period: str) -> tuple[Optional[datetime], Optional[datetime]]:
+    text = _collapse_ws(period)
+    if not text:
+        return None, None
+    candidates = re.findall(r"\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}|\d{2}-\d{2}-\d{4}", text)
+    if not candidates:
+        return None, None
+    start = _parse_timeline_date_value(candidates[0])
+    end = _parse_timeline_date_value(candidates[1]) if len(candidates) > 1 else start
+    if start and end and start > end:
+        start, end = end, start
+    return start, end
+
+
+def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[str, object]]:
+    content_keys, date_keys = _infer_timeline_keys(timeline)
+    candidate_rows: List[Dict[str, object]] = []
+    for index, row in enumerate(timeline or []):
+        content = " ".join(row.get(key, "") for key in content_keys).strip()
+        date_text = " / ".join(row.get(key, "") for key in date_keys if row.get(key, "")).strip()
+        candidate_rows.append({
+            "index": index,
+            "row": row,
+            "content": content,
+            "content_norm": _normalize_match_text(content),
+            "date_text": date_text,
+            "date_dt": _parse_timeline_date_value(date_text),
+        })
+    return candidate_rows
+
+
+def _score_text_against_row(source_text: str, row_tokens: List[str], *, weight: float = 1.0) -> float:
+    if not source_text or not row_tokens:
+        return 0.0
+
+    source_tokens = [tok for tok in source_text.split() if len(tok) >= 4]
+    score = 0.0
+    for source_token in source_tokens:
+        for row_token in row_tokens:
+            if source_token == row_token:
+                score += 1.0 * weight
+            elif source_token in row_token or row_token in source_token:
+                score += 0.45 * weight
+            elif len(source_token) >= 5 and len(row_token) >= 5 and source_token[:5] == row_token[:5]:
+                score += 0.2 * weight
+    return score
+
+
+def _score_entry_against_timeline_row(signals: dict, row_text: str) -> float:
+    row_norm = _normalize_match_text(row_text)
+    if not row_norm:
+        return 0.0
+
+    row_tokens = [tok for tok in row_norm.split() if len(tok) >= 4]
+    title_text = signals.get("title_text", "")
+    markdown_text = signals.get("markdown_text", "")
+    category_text = signals.get("category_text", "")
+    tags_text = signals.get("tags_text", "")
+    raw_text = signals.get("raw_text", "")
+    entry_norm = " ".join(filter(None, [title_text, markdown_text, category_text, tags_text, raw_text]))
+    is_exercise_entry = any(term in entry_norm for term in [
+        "exercicio",
+        "exercicios",
+        "lista",
+        "listas",
+        "gabarito",
+        "respostas",
+    ])
+
+    score = 0.0
+    for source, weight in [
+        (title_text, 1.25),
+        (markdown_text, 1.0),
+        (raw_text, 0.65),
+        (tags_text, 0.35),
+        (category_text, 0.2),
+    ]:
+        score += _score_text_against_row(source, row_tokens, weight=weight)
+        if source and source in row_norm:
+            score += min(1.5, max(0.35, len(source) / 18.0)) * weight
+
+    if any(term in row_norm for term in ["exercicio", "exercicios", "lista", "listas", "gabarito", "respostas"]):
+        score += 0.25
+        if is_exercise_entry:
+            score += 1.25
+    elif is_exercise_entry:
+        score -= 0.2
+    if any(term in row_norm for term in ["atividade assincrona", "atividade assíncrona", "complementar os estudos", "leituras recomendadas"]):
+        score += 0.15
+    if is_exercise_entry and "estudo de caso" in row_norm:
+        score += 0.35
+
+    return score
+
+
+def _score_timeline_row_against_unit(row_text: str, unit: dict) -> float:
+    row_norm = _normalize_match_text(row_text)
+    if not row_norm or not unit:
+        return 0.0
+
+    row_tokens = [tok for tok in row_norm.split() if len(tok) >= 4]
+    unit_title = unit.get("normalized_title", "")
+    topic_phrases = unit.get("topic_phrases", []) or []
+    topic_tokens = unit.get("topic_tokens", []) or []
+    distinctive_tokens = unit.get("distinctive_tokens", []) or []
+    token_weights = unit.get("token_weights", {}) or {}
+
+    score = 0.0
+    if unit_title and unit_title in row_norm:
+        score += 2.4
+    if unit_title:
+        score += _score_text_against_row(unit_title, row_tokens, weight=0.9)
+
+    for topic_phrase in topic_phrases:
+        if topic_phrase and topic_phrase in row_norm:
+            score += 3.2
+        elif topic_phrase:
+            score += _score_text_against_row(topic_phrase, row_tokens, weight=0.85)
+
+    for topic_token in topic_tokens:
+        if topic_token and topic_token in row_norm:
+            score += 0.95 * token_weights.get(topic_token, 1.0)
+        elif topic_token:
+            score += _score_text_against_row(topic_token, row_tokens, weight=token_weights.get(topic_token, 1.0)) * 0.75
+
+    for token in distinctive_tokens:
+        if token in row_norm:
+            score += 0.55
+
+    return score
+
+
+def _row_looks_like_continuation(row_text: str) -> bool:
+    text = _normalize_match_text(row_text)
+    if not text:
+        return False
+    return any(term in text for term in [
+        "atividade assincrona",
+        "atividade assíncrona",
+        "complementar os estudos",
+        "leituras recomendadas",
+        "estudo de caso",
+        "revisao",
+        "revisão",
+        "exercicio",
+        "exercicios",
+        "lista",
+        "listas",
+        "gabarito",
+        "respostas",
+    ])
+
+
+def _build_timeline_blocks(candidate_rows: List[Dict[str, object]], row_scores: List[float]) -> List[Dict[str, object]]:
+    if not candidate_rows or not row_scores:
+        return []
+
+    generic_terms = {
+        "atividade",
+        "assincrona",
+        "assincrono",
+        "complementar",
+        "estudos",
+        "leituras",
+        "recomendadas",
+        "estudo",
+        "caso",
+        "revisao",
+        "exercicio",
+        "exercicios",
+        "lista",
+        "listas",
+        "gabarito",
+        "gabaritos",
+        "resposta",
+        "respostas",
+    }
+
+    def _starts_new_block(row_text: str, row_score: float) -> bool:
+        if not _row_looks_like_continuation(row_text):
+            return True
+        row_norm = _normalize_match_text(row_text)
+        specific_tokens = [
+            token
+            for token in row_norm.split()
+            if len(token) >= 5 and token not in generic_terms
+        ]
+        return row_score >= 1.2 and len(specific_tokens) >= 2
+
+    blocks: List[Dict[str, object]] = []
+    current_rows: List[Dict[str, object]] = []
+    current_indexes: List[int] = []
+    current_scores: List[float] = []
+
+    for index, row in enumerate(candidate_rows):
+        row_text = str(row.get("content", ""))
+        starts_new_block = _starts_new_block(row_text, row_scores[index])
+
+        if current_rows and starts_new_block:
+            blocks.append(
+                {
+                    "rows": current_rows,
+                    "indexes": current_indexes,
+                    "scores": current_scores,
+                    "anchor_index": current_indexes[0],
+                    "anchor_score": current_scores[0],
+                }
+            )
+            current_rows = []
+            current_indexes = []
+            current_scores = []
+
+        current_rows.append(row)
+        current_indexes.append(index)
+        current_scores.append(row_scores[index])
+
+    if current_rows:
+        blocks.append(
+            {
+                "rows": current_rows,
+                "indexes": current_indexes,
+                "scores": current_scores,
+                "anchor_index": current_indexes[0],
+                "anchor_score": current_scores[0],
+            }
+        )
+
+    return blocks
+
+
+def _score_timeline_block(signals: dict, block: Dict[str, object]) -> float:
+    rows = block.get("rows", []) or []
+    scores = block.get("scores", []) or []
+    if not rows or not scores:
+        return 0.0
+
+    anchor_score = float(scores[0]) if scores else 0.0
+    support_scores = [max(0.0, float(score)) for score in scores[1:]]
+    support_bonus = min(2.25, sum(support_scores) * 0.18)
+    generic_exercise_bonus = 0.0
+
+    entry_norm = " ".join(
+        filter(
+            None,
+            [
+                signals.get("title_text", ""),
+                signals.get("markdown_text", ""),
+                signals.get("category_text", ""),
+                signals.get("tags_text", ""),
+                signals.get("raw_text", ""),
+            ],
+        )
+    )
+    is_exercise_entry = any(term in entry_norm for term in ["exercicio", "exercicios", "lista", "listas", "gabarito", "respostas"])
+    if is_exercise_entry:
+        for row in rows[1:]:
+            row_text = _normalize_match_text(str(row.get("content", "")))
+            if any(term in row_text for term in ["exercicio", "exercicios", "lista", "listas", "gabarito", "respostas"]):
+                generic_exercise_bonus += 0.22
+
+    return anchor_score * 1.15 + support_bonus + min(generic_exercise_bonus, 0.66)
+
+
+def _select_probable_period_for_entry(
+    entry: dict,
+    unit: dict,
+    candidate_rows: List[Dict[str, object]],
+    markdown_text: str,
+) -> tuple[str, float, bool, List[str]]:
+    if not candidate_rows:
+        return "", 0.0, True, ["sem-linhas-candidato"]
+
+    signals = _collect_entry_unit_signals(entry, markdown_text)
+    row_scores = [
+        _score_entry_against_timeline_row(signals, str(row.get("content", "")))
+        for row in candidate_rows
+    ]
+    blocks = _build_timeline_blocks(candidate_rows, row_scores)
+    if not blocks:
+        return "", 0.0, True, ["sem-blocos-candidato"]
+
+    scored_blocks = [(block, _score_timeline_block(signals, block)) for block in blocks]
+    scored_blocks.sort(key=lambda item: item[1], reverse=True)
+
+    best_block, best_score = scored_blocks[0]
+    runner_up_score = scored_blocks[1][1] if len(scored_blocks) > 1 else 0.0
+    if best_score < 0.95:
+        return "", best_score, True, [f"best={best_score:.2f}", "score-baixo"]
+    selected_rows = list(best_block.get("rows", []) or [])
+    selected_dates = [
+        str(row.get("date_text", "")).strip()
+        for row in selected_rows
+        if str(row.get("date_text", "")).strip()
+    ]
+    if not selected_dates:
+        return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
+
+    period = selected_dates[0]
+    if len(selected_dates) > 1:
+        period = f"{selected_dates[0]} a {selected_dates[-1]}"
+
+    confidence = min(1.0, max(0.0, (best_score - runner_up_score) + (best_score * 0.18)))
+    ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
+    reasons = [
+        f"best={best_score:.2f}",
+        f"runner_up={runner_up_score:.2f}",
+        f"selected_rows={len(selected_rows)}",
+        f"selected_block_rows={len(selected_rows)}",
+    ]
+    if ambiguous:
+        reasons.append("ambiguous")
+    return period, confidence, ambiguous, reasons
+
+
+def _build_file_map_timeline_context_from_course(course_meta: dict, subject_profile=None) -> dict:
+    test_context = course_meta.get("_timeline_context_for_tests")
+    if test_context:
+        return dict(test_context)
+
+    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
+    syllabus = getattr(subject_profile, "syllabus", "") if subject_profile else ""
+    if not teaching_plan or not syllabus:
+        return {}
+
+    parsed_units = _parse_units_from_teaching_plan(teaching_plan)
+    if not parsed_units:
+        return {}
+
+    timeline = _parse_syllabus_timeline(syllabus)
+    if not timeline:
+        return {}
+
+    unit_specs = [{"title": title, "topics": topics} for title, topics in parsed_units]
+    unit_index = _build_file_map_unit_index(unit_specs)
+    candidate_rows = _build_timeline_candidate_rows(timeline)
+    rows_by_unit = {unit.get("slug", ""): [] for unit in unit_index if unit.get("slug")}
+    last_strong_unit_slug = ""
+    last_strong_row_index = -999
+    last_assigned_unit_slug = ""
+    last_assigned_row_index = -999
+    for row in candidate_rows:
+        row_text = str(row.get("content", ""))
+        if not row_text:
+            continue
+        scored = []
+        for unit in unit_index:
+            slug = unit.get("slug", "")
+            if not slug:
+                continue
+            scored.append((unit, _score_timeline_row_against_unit(row_text, unit)))
+        scored.sort(key=lambda item: item[1], reverse=True)
+        if not scored:
+            continue
+        winner, winner_score = scored[0]
+        runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
+        row_index = int(row.get("index", 0))
+        if winner_score >= 0.9 and (winner_score - runner_up_score) >= 0.35:
+            rows_by_unit.setdefault(winner["slug"], []).append(row)
+            last_strong_unit_slug = winner["slug"]
+            last_strong_row_index = row_index
+            last_assigned_unit_slug = winner["slug"]
+            last_assigned_row_index = row_index
+            continue
+
+        if (
+            last_assigned_unit_slug
+            and row_index - last_assigned_row_index <= 2
+            and _row_looks_like_continuation(row_text)
+        ):
+            rows_by_unit.setdefault(last_assigned_unit_slug, []).append(row)
+            last_assigned_row_index = row_index
+            continue
+
+    mapping = _match_timeline_to_units(timeline, parsed_units)
+    unit_periods = {}
+    unit_period_bounds = {}
+    for item in mapping:
+        slug = item.get("unit_slug") or ""
+        period = item.get("period") or ""
+        if slug and period:
+            unit_periods[slug] = period
+            unit_period_bounds[slug] = _parse_timeline_period_bounds(period)
+
+    if unit_period_bounds and len([slug for slug, bounds in unit_period_bounds.items() if bounds[0] and bounds[1]]) > 1:
+        filtered_rows_by_unit = {}
+        for slug, rows in rows_by_unit.items():
+            start_dt, end_dt = unit_period_bounds.get(slug, (None, None))
+            if not start_dt or not end_dt:
+                filtered_rows_by_unit[slug] = rows
+                continue
+            filtered_rows_by_unit[slug] = [
+                row
+                for row in rows
+                if row.get("date_dt") is None or (start_dt <= row.get("date_dt") <= end_dt)
+            ]
+        rows_by_unit = filtered_rows_by_unit
+
+    return {
+        "timeline": timeline,
+        "unit_periods": unit_periods,
+        "unit_period_bounds": unit_period_bounds,
+        "unit_index": unit_index,
+        "rows_by_unit": rows_by_unit,
+    }
 
 
 def _parse_bibliography_from_teaching_plan(text: str) -> dict:
@@ -5655,6 +6113,326 @@ def _bundle_seed_candidate(entry: dict, score: int) -> dict:
     }
 
 
+@dataclass
+class UnitMatchResult:
+    slug: str
+    confidence: float
+    ambiguous: bool = False
+    reasons: List[str] = field(default_factory=list)
+
+
+def _normalize_match_text(text: str) -> str:
+    text = unicodedata.normalize("NFKD", text or "")
+    text = "".join(ch for ch in text if not unicodedata.combining(ch))
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9\s]", " ", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _strip_outline_prefix(text: str) -> str:
+    text = (text or "").strip()
+    if not text:
+        return ""
+    text = re.sub(
+        r"^\s*unidade(?:\s+de\s+aprendizagem)?\s*\d+\s*[-—:.)]?\s*",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+    text = re.sub(r"^\s*\d+(?:\.\d+)*\s*[-—:.)]?\s*", "", text)
+    return text.strip()
+
+
+_UNIT_GENERIC_TOKENS = {
+    "metodos",
+    "formais",
+    "formal",
+    "logica",
+    "logicas",
+    "especificacao",
+    "especificacoes",
+    "verificacao",
+    "verificacoes",
+    "programas",
+    "programa",
+    "modelos",
+    "modelo",
+    "fundamentos",
+    "sistemas",
+    "software",
+    "softwares",
+    "suporte",
+    "propriedades",
+    "aplicacoes",
+    "sequenciais",
+    "concorrentes",
+    "linguagens",
+}
+
+
+def _normalize_unit_slug(title: str) -> str:
+    slug = slugify((title or "").replace("—", "-"))
+    match = re.match(r"^(unidade(?:-de-aprendizagem)?-)(\d+)(-.+)?$", slug)
+    if not match:
+        return slug
+    prefix, number, suffix = match.groups()
+    suffix = suffix or ""
+    return f"{prefix}{int(number):02d}{suffix}"
+
+
+def _build_file_map_unit_index(units: list) -> list:
+    indexed = []
+    for unit in units or []:
+        if isinstance(unit, dict):
+            title = unit.get("title", "")
+            topics = unit.get("topics", []) or []
+        else:
+            title, topics = unit
+        clean_title = _strip_outline_prefix(title)
+        topic_phrases = []
+        topic_tokens = []
+        seen_topic_tokens = set()
+        for topic in topics:
+            topic_norm = _normalize_match_text(_strip_outline_prefix(_topic_text(topic)))
+            if not topic_norm:
+                continue
+            topic_phrases.append(topic_norm)
+            if topic_norm not in seen_topic_tokens:
+                topic_tokens.append(topic_norm)
+                seen_topic_tokens.add(topic_norm)
+            for token in topic_norm.split():
+                if (
+                    len(token) >= 4
+                    and token not in seen_topic_tokens
+                    and token not in _UNIT_GENERIC_TOKENS
+                ):
+                    topic_tokens.append(token)
+                    seen_topic_tokens.add(token)
+        indexed.append({
+            "title": title,
+            "slug": _normalize_unit_slug(title),
+            "normalized_title": _normalize_match_text(clean_title),
+            "topics": topics,
+            "topic_phrases": topic_phrases,
+            "topic_tokens": topic_tokens,
+            "distinctive_tokens": [],
+        })
+
+    token_frequency = {}
+    for unit in indexed:
+        unit_tokens = set()
+        for text in [unit["normalized_title"]] + unit.get("topic_tokens", []):
+            for token in text.split():
+                if len(token) >= 4 and not token.isdigit() and token not in _UNIT_GENERIC_TOKENS:
+                    unit_tokens.add(token)
+        for token in unit_tokens:
+            token_frequency[token] = token_frequency.get(token, 0) + 1
+
+    for unit in indexed:
+        unit_tokens = set()
+        for text in [unit["normalized_title"]] + unit.get("topic_tokens", []):
+            for token in text.split():
+                if len(token) >= 4 and not token.isdigit() and token not in _UNIT_GENERIC_TOKENS:
+                    unit_tokens.add(token)
+        unit["token_weights"] = {
+            token: 1.0 / token_frequency[token]
+            for token in unit_tokens
+            if token_frequency.get(token)
+        }
+        unit["distinctive_tokens"] = sorted(
+            token for token, freq in token_frequency.items()
+            if freq == 1 and token in unit_tokens and len(token) >= 5
+        )
+    return indexed
+
+
+def _collect_entry_unit_signals(entry: dict, markdown_text: str) -> dict:
+    return {
+        "title_text": _normalize_match_text(entry.get("title", "")),
+        "category_text": _normalize_match_text(entry.get("category", "")),
+        "tags_text": _normalize_match_text(entry.get("tags", "")),
+        "raw_text": _normalize_match_text(entry.get("raw_target", "")),
+        "markdown_text": _normalize_match_text(markdown_text),
+    }
+
+
+def _score_entry_against_unit(signals: dict, unit: dict) -> float:
+    def _token_score(source: str, target_tokens: List[str], weight: float = 1.0) -> float:
+        if not source or not target_tokens:
+            return 0.0
+        source_tokens = [tok for tok in source.split() if len(tok) >= 4]
+        score = 0.0
+        for source_token in source_tokens:
+            for target_token in target_tokens:
+                if source_token == target_token:
+                    score += 1.0 * weight
+                elif source_token in target_token or target_token in source_token:
+                    score += 0.35 * weight
+        return score
+
+    title_text = signals.get("title_text", "")
+    markdown_text = signals.get("markdown_text", "")
+    category_text = signals.get("category_text", "")
+    tags_text = signals.get("tags_text", "")
+    raw_text = signals.get("raw_text", "")
+
+    unit_title = unit.get("normalized_title", "")
+    topic_phrases = unit.get("topic_phrases", []) or []
+    topic_tokens = unit.get("topic_tokens", []) or []
+    distinctive_tokens = unit.get("distinctive_tokens", []) or []
+    token_weights = unit.get("token_weights", {}) or {}
+
+    score = 0.0
+    exact_topic_hits = 0
+    distinctive_hits = 0
+    title_tokens = [tok for tok in unit_title.split() if len(tok) >= 5]
+    if unit_title and len(title_tokens) >= 3:
+        if unit_title in markdown_text:
+            score += 2.0
+        if unit_title in title_text:
+            score += 1.0
+
+    if unit_title:
+        score += _token_score(title_text, [unit_title], weight=0.8)
+        score += _token_score(markdown_text, [unit_title], weight=0.8)
+        score += _token_score(raw_text, [unit_title], weight=0.5)
+
+    for topic_phrase in topic_phrases:
+        if topic_phrase and topic_phrase in markdown_text:
+            score += 3.5
+            exact_topic_hits += 1
+        elif topic_phrase and topic_phrase in title_text:
+            score += 2.5
+            exact_topic_hits += 1
+        elif topic_phrase and topic_phrase in raw_text:
+            score += 1.0
+
+    for topic_token in topic_tokens:
+        if topic_token and topic_token in markdown_text:
+            score += 0.9 * token_weights.get(topic_token, 1.0)
+        elif topic_token:
+            score += _token_score(markdown_text, [topic_token], weight=token_weights.get(topic_token, 1.0)) * 0.8
+            score += _token_score(title_text, [topic_token], weight=token_weights.get(topic_token, 1.0)) * 0.6
+
+    for token in distinctive_tokens:
+        if token in markdown_text:
+            score += 0.7
+            distinctive_hits += 1
+        if token in title_text:
+            score += 0.35
+            distinctive_hits += 1
+        if token in raw_text:
+            score += 0.15
+            distinctive_hits += 1
+
+    if category_text in {"listas", "gabaritos"}:
+        score += 0.15
+    if tags_text:
+        score += 0.05
+
+    if exact_topic_hits == 0 and distinctive_hits == 0 and score > 0.0:
+        score *= 0.55
+
+    return score
+
+
+def _auto_map_entry_unit(entry: dict, units: list, markdown_text: str) -> UnitMatchResult:
+    indexed_units = _build_file_map_unit_index(units)
+    if not indexed_units:
+        return UnitMatchResult(slug="", confidence=0.0, ambiguous=True, reasons=["sem-unidades"])
+
+    signals = _collect_entry_unit_signals(entry, markdown_text)
+    scored = [
+        (unit, _score_entry_against_unit(signals, unit))
+        for unit in indexed_units
+    ]
+    scored.sort(key=lambda item: item[1], reverse=True)
+
+    winner, winner_score = scored[0]
+    runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
+    confidence = min(1.0, max(0.0, (winner_score - runner_up_score) + (winner_score * 0.18)))
+    if len(scored) == 1:
+        ambiguous = winner_score <= 0.0
+        if not ambiguous:
+            confidence = max(confidence, 0.7)
+    else:
+        ambiguous = winner_score <= 0.0 or abs(winner_score - runner_up_score) < 0.6
+    if ambiguous:
+        confidence = min(confidence, 0.4)
+    reasons = [f"winner_score={winner_score:.2f}"]
+    if ambiguous:
+        reasons.append("ambiguous")
+    return UnitMatchResult(
+        slug=winner["slug"],
+        confidence=confidence,
+        ambiguous=ambiguous,
+        reasons=reasons,
+    )
+
+
+def _format_file_map_unit_cell(slug: str, confidence: float, ambiguous: bool) -> str:
+    if not slug:
+        return ""
+    if ambiguous:
+        return f"{slug} _(ambíguo)_"
+    if confidence < 0.45:
+        return f"{slug} _(baixa confiança)_"
+    return slug
+
+
+def _build_file_map_unit_index_from_course(course_meta: dict, subject_profile=None) -> list:
+    test_index = course_meta.get("_unit_index_for_tests")
+    if test_index:
+        return _build_file_map_unit_index(test_index)
+
+    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
+    if not teaching_plan:
+        return []
+
+    parsed_units = _parse_units_from_teaching_plan(teaching_plan)
+    unit_specs = [{"title": title, "topics": topics} for title, topics in parsed_units]
+    return _build_file_map_unit_index(unit_specs)
+
+
+def _build_file_map_period_index_from_course(course_meta: dict, subject_profile=None) -> dict:
+    test_index = course_meta.get("_period_index_for_tests")
+    if test_index:
+        return dict(test_index)
+
+    context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
+    return dict(context.get("unit_periods", {}))
+
+
+def _entry_markdown_text_for_file_map(root_dir: Optional[Path], entry: dict) -> str:
+    if "_markdown_text_for_tests" in entry:
+        return entry.get("_markdown_text_for_tests") or ""
+    if not root_dir:
+        return ""
+
+    for key in ["approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown"]:
+        rel_path = entry.get(key)
+        if not rel_path or not str(rel_path).lower().endswith(".md"):
+            continue
+        md_path = root_dir / rel_path
+        if not md_path.exists() or not md_path.is_file():
+            continue
+        try:
+            return md_path.read_text(encoding="utf-8")
+        except Exception:
+            continue
+    return ""
+
+
+def _file_map_markdown_cell(md_path: str) -> str:
+    rel = (md_path or "").strip()
+    if not rel:
+        return "—"
+    rel_posix = rel.replace("\\", "/")
+    if rel_posix.startswith("staging/"):
+        return "A revisar"
+    return f"`{rel}`"
+
+
 def file_map_md(course_meta: dict, manifest_entries: list) -> str:
     """Gera FILE_MAP.md a partir das entries do manifest.
 
@@ -6442,8 +7220,12 @@ def _low_token_course_map_md(course_meta: dict, subject_profile=None) -> str:
     )
 
 
-def _low_token_file_map_md(course_meta: dict, manifest_entries: list) -> str:
+def _low_token_file_map_md(course_meta: dict, manifest_entries: list, subject_profile=None) -> str:
     course_name = course_meta.get("course_name", "Curso")
+    unit_index = _build_file_map_unit_index_from_course(course_meta, subject_profile)
+    temporal_context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
+    rows_by_unit = temporal_context.get("rows_by_unit", {}) if temporal_context else {}
+    unit_by_slug = {unit.get("slug", ""): unit for unit in unit_index if unit.get("slug")}
     lines = [
         "---",
         f"course: {course_name}",
@@ -6472,8 +7254,8 @@ def _low_token_file_map_md(course_meta: dict, manifest_entries: list) -> str:
         return "\n".join(lines)
 
     lines += [
-        "| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade |",
-        "|---|---|---|---|---|---|---|",
+        "| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |",
+        "|---|---|---|---|---|---|---|---|",
     ]
 
     for i, entry in enumerate(manifest_entries, 1):
@@ -6489,11 +7271,26 @@ def _low_token_file_map_md(course_meta: dict, manifest_entries: list) -> str:
         )
         raw_path = entry.get("raw_target") or ""
         unit = "curso-inteiro" if category in _NO_UNIT_CATEGORIES and not tags else ""
-        md_cell = f"`{md_path}`" if md_path else "—"
+        period = ""
+        if not unit and unit_index:
+            markdown_text = _entry_markdown_text_for_file_map(course_meta.get("_repo_root"), entry)
+            match = _auto_map_entry_unit(entry, unit_index, markdown_text)
+            unit = _format_file_map_unit_cell(match.slug, match.confidence, match.ambiguous)
+            unit_rows = rows_by_unit.get(match.slug, []) if match.slug else []
+            if match.slug and not match.ambiguous and match.confidence >= 0.45 and unit_rows:
+                probable_period, period_confidence, period_ambiguous, _ = _select_probable_period_for_entry(
+                    entry=entry,
+                    unit=unit_by_slug.get(match.slug, {}),
+                    candidate_rows=unit_rows,
+                    markdown_text=markdown_text,
+                )
+                if probable_period and not period_ambiguous and period_confidence >= 0.5:
+                    period = probable_period
+        md_cell = _file_map_markdown_cell(md_path)
 
         lines.append(
             f"| {i} | {title} | {category} | {_entry_usage_hint(entry)} | "
-            f"{_entry_priority_label(entry)} | {md_cell} | {unit or ''} |"
+            f"{_entry_priority_label(entry)} | {md_cell} | {unit or ''} | {period or ''} |"
         )
         if raw_path or tags:
             details = []
@@ -6501,7 +7298,9 @@ def _low_token_file_map_md(course_meta: dict, manifest_entries: list) -> str:
                 details.append(f"raw: `{raw_path}`")
             if tags:
                 details.append(f"tags: `{tags}`")
-            lines.append(f"|  | ↳ rastreabilidade |  | {'; '.join(details)} |  |  |  |")
+            if md_path and md_path.replace("\\", "/").startswith("staging/"):
+                details.append(f"markdown-base: `{md_path}`")
+            lines.append(f"|  | ↳ rastreabilidade |  | {'; '.join(details)} |  |  |  |  |")
 
     lines += [
         "",
@@ -6510,6 +7309,8 @@ def _low_token_file_map_md(course_meta: dict, manifest_entries: list) -> str:
         "- **Quando abrir**: atalho semântico para reduzir leitura desnecessária.",
         "- **Prioridade**: `alta` costuma merecer contexto antes dos demais.",
         "- **Unidade**: slug da unidade do COURSE_MAP.",
+        "- **Período**: janela compacta da timeline associada à unidade.",
+        "- **Markdown**: `A revisar` indica que o item ainda só tem extração de `staging/`, sem promoção final.",
         "- **Categoria**: tipo do arquivo; não deve ser alterada pelo tutor.",
         "",
     ]
@@ -6669,11 +7470,12 @@ def _budgeted_course_map_md(course_meta: dict, subject_profile=None) -> str:
     )
 
 
-def _budgeted_file_map_md(course_meta: dict, manifest_entries: list) -> str:
+def _budgeted_file_map_md(course_meta: dict, manifest_entries: list, subject_profile=None) -> str:
     return _clamp_navigation_artifact(
         _low_token_file_map_md(
             course_meta,
             _filter_live_manifest_entries(course_meta.get("_repo_root"), manifest_entries),
+            subject_profile=subject_profile,
         ),
         max_chars=12000,
         label="course/FILE_MAP.md",
