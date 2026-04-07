@@ -27,3 +27,13 @@ def test_curator_studio_layout_mode_changes_by_width():
     assert _curator_studio_layout_mode(1500) == "wide"
     assert _curator_studio_layout_mode(1100) == "medium"
     assert _curator_studio_layout_mode(820) == "stacked"
+
+
+def test_app_source_no_longer_contains_dead_duplicate_action():
+    text = Path("src/ui/app.py").read_text(encoding="utf-8")
+    assert "def duplicate_selected(" not in text
+
+
+def test_dialogs_source_no_longer_contains_unused_markdown_preview_window():
+    text = Path("src/ui/dialogs.py").read_text(encoding="utf-8")
+    assert "class MarkdownPreviewWindow" not in text

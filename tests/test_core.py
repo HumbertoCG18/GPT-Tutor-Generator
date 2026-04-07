@@ -2009,6 +2009,11 @@ class TestPromptArchitectureAlignment:
         assert "preencha a coluna **Unidade** dos itens vazios" not in source
         assert "retorne o `FILE_MAP.md` e o `COURSE_MAP.md` atualizados" not in source
 
+    def test_engine_source_no_longer_contains_redundant_v2_prompt_wrapper(self):
+        source = Path(engine_module.__file__).read_text(encoding="utf-8")
+
+        assert "def _low_token_generate_claude_project_instructions_v2(" not in source
+
 
 # ---------------------------------------------------------------------------
 # file_map_md

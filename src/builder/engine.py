@@ -4218,7 +4218,7 @@ def generate_claude_project_instructions(
     has_whiteboard: bool = False,
     first_session_pending: bool = True,
 ) -> str:
-    return _low_token_generate_claude_project_instructions_v2(
+    return _low_token_generate_claude_project_instructions(
         course_meta,
         student_profile=student_profile,
         subject_profile=subject_profile,
@@ -9720,26 +9720,6 @@ course_map_md = lambda course_meta, subject_profile=None: _clamp_navigation_arti
 )
 file_map_md = _budgeted_file_map_md
 exercise_index_md = _exercise_index_md_v2
-
-
-def _low_token_generate_claude_project_instructions_v2(
-    course_meta: dict,
-    student_profile=None,
-    subject_profile=None,
-    has_assignments: bool = False,
-    has_code: bool = False,
-    has_whiteboard: bool = False,
-    first_session_pending: bool = True,
-) -> str:
-    return _low_token_generate_claude_project_instructions(
-        course_meta,
-        student_profile,
-        subject_profile,
-        has_assignments=has_assignments,
-        has_code=has_code,
-        has_whiteboard=has_whiteboard,
-        first_session_pending=first_session_pending,
-    )
 
 
 def _low_token_inject_image_descriptions(markdown: str, image_curation: dict) -> str:

@@ -8,7 +8,6 @@ import threading
 import subprocess
 import os
 from pathlib import Path
-from dataclasses import asdict
 from datetime import datetime
 import json
 try:
@@ -1413,19 +1412,6 @@ class App(tk.Tk):
             self.entries[idx] = updated
             self.refresh_tree()
             self._save_current_queue()
-
-    def duplicate_selected(self):
-        idx = self.selected_index()
-        if idx is None:
-            messagebox.showinfo(APP_NAME, "Selecione um item para duplicar.")
-            return
-        entry = self.entries[idx]
-        copied = FileEntry(**asdict(entry))
-        copied.title = f"{entry.title} (cópia)"
-        self.entries.insert(idx + 1, copied)
-        self.refresh_tree()
-        self._save_current_queue()
-        self._set_status(f"Item duplicado: {copied.title}")
 
     def remove_selected(self):
         idx = self.selected_index()
