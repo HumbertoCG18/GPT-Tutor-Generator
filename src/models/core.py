@@ -9,6 +9,33 @@ logger = logging.getLogger(__name__)
 from src.utils.helpers import DEFAULT_OCR_LANGUAGE, get_app_data_dir, slugify
 
 
+def _normalize_tag_list(raw: Any) -> List[str]:
+    if not raw:
+        return []
+    if isinstance(raw, list):
+        values = raw
+    else:
+        values = str(raw).replace(",", ";").split(";")
+    cleaned: List[str] = []
+    seen = set()
+    for value in values:
+        tag = str(value).strip()
+        if not tag or tag in seen:
+            continue
+        cleaned.append(tag)
+        seen.add(tag)
+    return cleaned
+
+
+def _should_migrate_legacy_tags(file_type: str, raw_tags: str) -> bool:
+    text = (raw_tags or "").strip()
+    if not text:
+        return False
+    if file_type in {"code", "github-repo"}:
+        return False
+    return ":" in text or ";" in text or "," in text
+
+
 @dataclass
 class FileEntry:
     source_path: str
@@ -16,6 +43,10 @@ class FileEntry:
     category: str
     title: str
     tags: str = ""
+    manual_tags: List[str] = field(default_factory=list)
+    auto_tags: List[str] = field(default_factory=list)
+    manual_unit_slug: str = ""
+    manual_timeline_block_id: str = ""
     notes: str = ""
     professor_signal: str = ""
     relevant_for_exam: bool = True
@@ -48,7 +79,16 @@ class FileEntry:
     @classmethod
     def from_dict(cls, d: Dict) -> "FileEntry":
         valid = {f.name for f in fields(cls)}
-        return cls(**{k: v for k, v in d.items() if k in valid})
+        payload = {k: v for k, v in d.items() if k in valid}
+        manual_tags = _normalize_tag_list(payload.get("manual_tags"))
+        auto_tags = _normalize_tag_list(payload.get("auto_tags"))
+        legacy_tags = str(payload.get("tags", "") or "").strip()
+        file_type = str(payload.get("file_type", "") or "").strip().lower()
+        if not manual_tags and _should_migrate_legacy_tags(file_type, legacy_tags):
+            manual_tags = _normalize_tag_list(legacy_tags)
+        payload["manual_tags"] = manual_tags
+        payload["auto_tags"] = auto_tags
+        return cls(**payload)
 
 
 @dataclass

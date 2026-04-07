@@ -1,6 +1,14 @@
+import json
+from datetime import datetime
+
 from src.builder.engine import (
     UnitMatchResult,
+    TopicMatchResult,
+    _build_content_taxonomy,
+    _build_timeline_index,
+    _auto_map_entry_subtopic,
     _auto_map_entry_unit,
+    _derive_unit_from_topic_match,
     _file_map_markdown_cell,
     _build_file_map_timeline_context_from_course,
     _build_file_map_unit_index_from_course,
@@ -10,6 +18,7 @@ from src.builder.engine import (
     _format_file_map_unit_cell,
     _select_probable_period_for_entry,
     _score_entry_against_unit,
+    _write_internal_content_taxonomy,
     file_map_md,
 )
 from src.models.core import SubjectProfile
@@ -30,6 +39,240 @@ def test_build_file_map_unit_index_normalizes_unit_slugs():
     assert "hoare" in index[0]["topic_tokens"]
 
 
+def test_build_content_taxonomy_emits_repo_scoped_unit_topic_tree():
+    taxonomy = _build_content_taxonomy(
+        teaching_plan="""
+### Unidade 1 - Metodos Formais
+- 1.1 Sistemas Formais
+- 1.3.3 Provadores de Teoremas
+
+### Unidade 2 - Verificacao de Programas
+- 2.1 Logica de Hoare
+""".strip(),
+        course_map_md="# COURSE_MAP - Metodos Formais",
+        glossary_md="""
+## Provadores de Teoremas
+**Definicao:** Prova interativa.
+**Sinonimos aceitos:** Isabelle, theorem proving
+**Aparece em:** Unidade 1 - Metodos Formais
+
+## Logica de Hoare
+**Definicao:** Correcao de programas.
+**Sinonimos aceitos:** pre e pos condicoes
+**Aparece em:** Unidade 2 - Verificacao de Programas
+""".strip(),
+    )
+
+    assert taxonomy["version"] == 1
+    assert taxonomy["course_slug"] == "metodos-formais"
+    unit_slugs = [unit["slug"] for unit in taxonomy["units"]]
+    assert unit_slugs == [
+        "unidade-01-metodos-formais",
+        "unidade-02-verificacao-de-programas",
+    ]
+
+    unit1 = taxonomy["units"][0]
+    topic_slugs = [topic["slug"] for topic in unit1["topics"]]
+    assert "sistemas-formais" in topic_slugs
+    assert "provadores-de-teoremas" in topic_slugs
+
+    provadores = next(topic for topic in unit1["topics"] if topic["slug"] == "provadores-de-teoremas")
+    assert "Isabelle" in provadores["aliases"]
+    assert "theorem proving" in provadores["aliases"]
+
+
+def test_build_content_taxonomy_enriches_official_topic_aliases_from_supported_headings():
+    taxonomy = _build_content_taxonomy(
+        teaching_plan="""
+### Unidade 1 - Metodos Formais
+- 1.2 Linguagens de Especificacao e Logicas
+- 1.2.3 Especificacao de Funcoes Recursivas
+""".strip(),
+        course_map_md="# COURSE_MAP - Metodos Formais",
+        glossary_md="",
+        strong_headings=[
+            "Lógica Proposicional",
+            "Formalização de algoritmos como equações recursivas",
+        ],
+    )
+
+    unit1 = taxonomy["units"][0]
+    topic_by_slug = {topic["slug"]: topic for topic in unit1["topics"]}
+
+    assert "logica-proposicional" not in topic_by_slug
+    assert "formalizacao-de-algoritmos-como-equacoes-recursivas" not in topic_by_slug
+    assert "Lógica Proposicional" in topic_by_slug["linguagens-de-especificacao-e-logicas"]["aliases"]
+    assert (
+        "Formalização de algoritmos como equações recursivas"
+        in topic_by_slug["especificacao-de-funcoes-recursivas"]["aliases"]
+    )
+
+
+def test_build_timeline_index_annotates_primary_topic_and_derives_unit_from_winner():
+    taxonomy = {
+        "version": 1,
+        "course_slug": "metodos-formais",
+        "units": [
+            {
+                "slug": "unidade-01-metodos-formais",
+                "title": "Unidade 1 - Metodos Formais",
+                "topics": [
+                    {
+                        "slug": "provadores-de-teoremas",
+                        "label": "Provadores de Teoremas",
+                        "aliases": ["Isabelle"],
+                        "kind": "subtopic",
+                        "unit_slug": "unidade-01-metodos-formais",
+                    }
+                ],
+            },
+            {
+                "slug": "unidade-02-verificacao-de-programas",
+                "title": "Unidade 2 - Verificacao de Programas",
+                "topics": [
+                    {
+                        "slug": "logica-de-hoare",
+                        "label": "Logica de Hoare",
+                        "aliases": ["pre e pos condicoes"],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    }
+                ],
+            },
+        ],
+    }
+    candidate_rows = [
+        {
+            "index": 1,
+            "date_dt": datetime(2026, 4, 6),
+            "date_text": "06/04/2026",
+            "content": "Prova interativa de teoremas - Isabelle",
+        },
+        {
+            "index": 2,
+            "date_dt": datetime(2026, 4, 8),
+            "date_text": "08/04/2026",
+            "content": "Prova interativa de teoremas - Isabelle",
+        },
+    ]
+
+    timeline_index = _build_timeline_index(candidate_rows, unit_index=[], content_taxonomy=taxonomy)
+    block = timeline_index["blocks"][0]
+
+    assert block["primary_topic_slug"] == "provadores-de-teoremas"
+    assert block["unit_slug"] == "unidade-01-metodos-formais"
+    assert block["topic_candidates"]
+    assert block["topic_candidates"][0]["topic_slug"] == "provadores-de-teoremas"
+    assert block["topic_candidates"][0]["unit_slug"] == "unidade-01-metodos-formais"
+    assert block["primary_topic_confidence"] > 0
+
+
+def test_build_timeline_index_leaves_administrative_blocks_without_topic():
+    taxonomy = {
+        "version": 1,
+        "course_slug": "metodos-formais",
+        "units": [
+            {
+                "slug": "unidade-01-metodos-formais",
+                "title": "Unidade 1 - Metodos Formais",
+                "topics": [
+                    {
+                        "slug": "sistemas-formais",
+                        "label": "Sistemas Formais",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-01-metodos-formais",
+                    }
+                ],
+            }
+        ],
+    }
+    candidate_rows = [
+        {
+            "index": 1,
+            "date_dt": datetime(2026, 4, 20),
+            "date_text": "20/04/2026",
+            "content": "Suspensao das aulas",
+        }
+    ]
+
+    timeline_index = _build_timeline_index(candidate_rows, unit_index=[], content_taxonomy=taxonomy)
+    block = timeline_index["blocks"][0]
+
+    assert block["primary_topic_slug"] == ""
+    assert block["topic_candidates"] == []
+    assert block["unit_slug"] == ""
+
+
+def test_build_timeline_index_keeps_weak_generic_topic_unassigned():
+    taxonomy = {
+        "version": 1,
+        "course_slug": "metodos-formais",
+        "units": [
+            {
+                "slug": "unidade-01-metodos-formais",
+                "title": "Unidade 1 - Metodos Formais",
+                "topics": [
+                    {
+                        "slug": "termo",
+                        "label": "Termo",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-01-metodos-formais",
+                    }
+                ],
+            },
+            {
+                "slug": "unidade-02-verificacao-de-programas",
+                "title": "Unidade 2 - Verificacao de Programas",
+                "topics": [
+                    {
+                        "slug": "termo",
+                        "label": "Termo",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    }
+                ],
+            },
+        ],
+    }
+    candidate_rows = [
+            {
+                "index": 1,
+                "date_dt": datetime(2026, 4, 27),
+                "date_text": "27/04/2026",
+                "content": "Termos gerais",
+            }
+        ]
+
+    timeline_index = _build_timeline_index(candidate_rows, unit_index=[], content_taxonomy=taxonomy)
+    block = timeline_index["blocks"][0]
+
+    assert block["primary_topic_slug"] == ""
+    assert block["topic_candidates"] == []
+    assert block["unit_slug"] == ""
+
+
+def test_write_internal_content_taxonomy_persists_json(tmp_path):
+    taxonomy = {
+        "version": 1,
+        "course_slug": "metodos-formais",
+        "units": [
+            {
+                "slug": "unidade-01-metodos-formais",
+                "title": "Unidade 1 - Metodos Formais",
+                "topics": [],
+            }
+        ],
+    }
+
+    _write_internal_content_taxonomy(tmp_path, taxonomy)
+    persisted = json.loads((tmp_path / "course" / ".content_taxonomy.json").read_text(encoding="utf-8"))
+
+    assert persisted == taxonomy
+
+
 def test_file_map_markdown_cell_hides_staging_targets():
     assert _file_map_markdown_cell("staging/markdown-auto/pymupdf4llm/item.md") == "A revisar"
     assert _file_map_markdown_cell("content/curated/item.md") == "`content/curated/item.md`"
@@ -40,6 +283,8 @@ def test_collect_entry_unit_signals_uses_title_category_tags_and_markdown():
         "title": "Exerciciosespecificacao",
         "category": "listas",
         "tags": "dafny",
+        "manual_tags": ["topico:logica-de-hoare"],
+        "auto_tags": ["tipo:lista"],
         "raw_target": "raw/pdfs/listas/exerciciosespecificacao.pdf",
     }
     markdown = "# Exercícios\n\n## Lógica de Hoare\n\nPré e Pós Condições."
@@ -48,7 +293,9 @@ def test_collect_entry_unit_signals_uses_title_category_tags_and_markdown():
 
     assert signals["title_text"] == "exerciciosespecificacao"
     assert signals["category_text"] == "listas"
-    assert signals["tags_text"] == "dafny"
+    assert "dafny" in signals["tags_text"]
+    assert "topico logica de hoare" in signals["tags_text"]
+    assert "tipo lista" in signals["tags_text"]
     assert "logica de hoare" in signals["markdown_text"]
 
 
@@ -242,6 +489,271 @@ def test_auto_map_entry_unit_avoids_forcing_temporal_models_for_propositional_se
 
     assert result.slug == "unidade-01-metodos-formais"
     assert result.ambiguous is True or result.confidence >= 0.35
+
+
+def test_auto_map_entry_unit_uses_topic_index_to_break_ties_for_propositional_logic():
+    units = [
+        {
+            "title": "Unidade 01 — Métodos Formais",
+            "slug": "unidade-01-metodos-formais",
+            "topics": [
+                "1.2. Linguagens de Especificação e Lógicas",
+                "1.2.1. Fundamentos de Lógica de Primeira Ordem",
+            ],
+        },
+        {
+            "title": "Unidade 03 — Verificação de Modelos",
+            "slug": "unidade-03-verificacao-de-modelos",
+            "topics": [
+                "3.1. Máquinas de Estado",
+                "3.2. Fundamentos de Lógicas Temporais",
+            ],
+        },
+    ]
+    topic_index = [
+        {
+            "unit_slug": "unidade-01-metodos-formais",
+            "topic_slug": "logica-proposicional",
+            "topic_label": "Lógica Proposicional",
+            "kind": "subtopic",
+        },
+        {
+            "unit_slug": "unidade-03-verificacao-de-modelos",
+            "topic_slug": "logicas-temporais",
+            "topic_label": "Lógicas Temporais",
+            "kind": "subtopic",
+        },
+    ]
+    entry = {
+        "title": "Logicaproposicional Sintaxe",
+        "category": "material-de-aula",
+        "tags": "",
+        "raw_target": "raw/pdfs/material-de-aula/logicaproposicional-sintaxe.pdf",
+    }
+    markdown = "# LÓGICA PROPOCIONAL\n\nComposição de proposições.\n"
+
+    result = _auto_map_entry_unit(entry, units, markdown_text=markdown, topic_index=topic_index)
+
+    assert result.slug == "unidade-01-metodos-formais"
+    assert result.ambiguous is False
+    assert result.confidence >= 0.55
+
+
+def test_auto_map_entry_unit_ignores_generic_state_tokens_when_content_matches_unit_one():
+    units = [
+        {
+            "title": "Unidade 01 - Metodos Formais",
+            "slug": "unidade-01-metodos-formais",
+            "topics": [
+                "1.1. Sistemas Formais",
+                "1.2. Linguagens de EspecificaÃ§Ã£o e LÃ³gicas",
+                "1.2.1. Fundamentos de LÃ³gica de Primeira Ordem",
+            ],
+        },
+        {
+            "title": "Unidade 03 - Verificacao de Modelos",
+            "slug": "unidade-03-verificacao-de-modelos",
+            "topics": [
+                "3.1. MÃ¡quinas de Estado",
+                "3.1.1. Modelos de Kripke",
+                "3.2. Fundamentos de LÃ³gicas Temporais",
+            ],
+        },
+    ]
+    entry = {
+        "title": "Logicaproposicional Sintaxe",
+        "category": "material-de-aula",
+        "tags": "",
+        "raw_target": "raw/pdfs/material-de-aula/logicaproposicional-sintaxe.pdf",
+    }
+    markdown = (
+        "# Sintaxe\n\n"
+        "## Estados da computaÃ§Ã£o\n\n"
+        "A sequÃªncia de estados da computaÃ§Ã£o e variÃ¡veis.\n"
+    )
+
+    result = _auto_map_entry_unit(entry, units, markdown_text=markdown)
+
+    assert result.slug == "unidade-01-metodos-formais"
+
+
+def test_auto_map_entry_subtopic_prefers_specific_topic_and_derives_unit():
+    taxonomy = {
+        "version": 1,
+        "course_slug": "metodos-formais",
+        "units": [
+            {
+                "slug": "unidade-01-metodos-formais",
+                "title": "Unidade 1 - Metodos Formais",
+                "topics": [
+                    {
+                        "slug": "sistemas-formais",
+                        "label": "Sistemas Formais",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-01-metodos-formais",
+                    },
+                    {
+                        "slug": "provadores-de-teoremas",
+                        "label": "Provadores de Teoremas",
+                        "aliases": ["Isabelle"],
+                        "kind": "subtopic",
+                        "unit_slug": "unidade-01-metodos-formais",
+                    },
+                ],
+            },
+            {
+                "slug": "unidade-02-verificacao-de-programas",
+                "title": "Unidade 2 - Verificacao de Programas",
+                "topics": [
+                    {
+                        "slug": "logica-de-hoare",
+                        "label": "Logica de Hoare",
+                        "aliases": ["pre e pos condicoes"],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    },
+                    {
+                        "slug": "pre-e-pos-condicoes",
+                        "label": "Pre e Pos Condicoes",
+                        "aliases": [],
+                        "kind": "subtopic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    },
+                ],
+            },
+        ],
+    }
+    entry = {
+        "title": "Exerciciosespecificacao",
+        "category": "listas",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/pdfs/listas/exerciciosespecificacao.pdf",
+    }
+    markdown = "# Exercicios\n\n## Logica de Hoare\n\n### Pre e Pos Condicoes\n"
+
+    result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
+    derived_unit = _derive_unit_from_topic_match(result, taxonomy)
+
+    assert isinstance(result, TopicMatchResult)
+    assert result.topic_slug in {"logica-de-hoare", "pre-e-pos-condicoes"}
+    assert derived_unit == "unidade-02-verificacao-de-programas"
+    assert result.confidence > 0
+
+
+def test_auto_map_entry_subtopic_prefers_title_and_headings_over_late_body_mentions():
+    taxonomy = {
+        "version": 1,
+        "course_slug": "metodos-formais",
+        "units": [
+            {
+                "slug": "unidade-01-metodos-formais",
+                "title": "Unidade 1 - Metodos Formais",
+                "topics": [
+                    {
+                        "slug": "especificacao-de-funcoes-recursivas",
+                        "label": "Especificacao de Funcoes Recursivas",
+                        "aliases": ["equacoes recursivas"],
+                        "kind": "subtopic",
+                        "unit_slug": "unidade-01-metodos-formais",
+                    },
+                ],
+            },
+            {
+                "slug": "unidade-02-verificacao-de-programas",
+                "title": "Unidade 2 - Verificacao de Programas",
+                "topics": [
+                    {
+                        "slug": "pre-e-pos-condicoes",
+                        "label": "Pre e Pos Condicoes",
+                        "aliases": [],
+                        "kind": "subtopic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    },
+                ],
+            },
+        ],
+    }
+    entry = {
+        "title": "Formalizacaoalgoritmos Recursao",
+        "category": "material-de-aula",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/pdfs/material-de-aula/formalizacaoalgoritmos-recursao.pdf",
+    }
+    markdown = (
+        "# Formalizando a Noção de Algoritmo Via Equações Recursivas\n\n"
+        "## Tipos de recursão\n\n"
+        "Descrição de equações recursivas e recursão na cauda.\n\n"
+        "## Observação final\n\n"
+        "Também podemos explicitar as pré e pós condições quando necessário.\n"
+    )
+
+    result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
+    derived_unit = _derive_unit_from_topic_match(result, taxonomy)
+
+    assert result.topic_slug == "especificacao-de-funcoes-recursivas"
+    assert derived_unit == "unidade-01-metodos-formais"
+
+
+def test_auto_map_entry_subtopic_uses_heading_enriched_alias_for_logic_propositional():
+    taxonomy = _build_content_taxonomy(
+        teaching_plan="""
+### Unidade 1 - Metodos Formais
+- 1.2 Linguagens de Especificacao e Logicas
+""".strip(),
+        course_map_md="# COURSE_MAP - Metodos Formais",
+        glossary_md="",
+        strong_headings=["Lógica Proposicional"],
+    )
+    entry = {
+        "title": "Logicaproposicional Sintaxe",
+        "category": "material-de-aula",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/pdfs/material-de-aula/logicaproposicional-sintaxe.pdf",
+    }
+    markdown = "# Lógica Proposicional\n\n# Sintaxe\n\nFórmulas bem-formadas."
+
+    result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
+    derived_unit = _derive_unit_from_topic_match(result, taxonomy)
+
+    assert result.topic_slug == "linguagens-de-especificacao-e-logicas"
+    assert derived_unit == "unidade-01-metodos-formais"
+
+
+def test_derive_unit_from_topic_match_uses_topic_unit_when_present():
+    taxonomy = {
+        "version": 1,
+        "course_slug": "metodos-formais",
+        "units": [
+            {
+                "slug": "unidade-02-verificacao-de-programas",
+                "title": "Unidade 2 - Verificacao de Programas",
+                "topics": [
+                    {
+                        "slug": "logica-de-hoare",
+                        "label": "Logica de Hoare",
+                        "aliases": ["pre e pos condicoes"],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    },
+                ],
+            },
+        ],
+    }
+    match = TopicMatchResult(
+        topic_slug="logica-de-hoare",
+        topic_label="Logica de Hoare",
+        unit_slug="unidade-02-verificacao-de-programas",
+        confidence=0.93,
+    )
+
+    assert _derive_unit_from_topic_match(match, taxonomy) == "unidade-02-verificacao-de-programas"
 
 
 def test_format_file_map_unit_cell_marks_ambiguous_result():
@@ -439,6 +951,103 @@ def test_file_map_timeline_context_filters_rows_outside_unit_period():
     assert "06/05/2026" not in unit1_dates
 
 
+def test_file_map_timeline_context_exposes_blocks_by_unit():
+    course_meta = {"course_name": "Métodos Formais"}
+    subject_profile = SubjectProfile(
+        teaching_plan="""
+### Unidade 1 — Métodos Formais
+- Especificação de Conjuntos Indutivos
+- Especificação de Funções Recursivas
+""".strip(),
+        syllabus="""
+| # | Dia | Data | Hora | Descrição | Atividade | Recursos |
+|---|---|---|---|---|---|---|
+| 4 | QUA | 11/03/2026 | LM 19:15 - 20:45 | Conjuntos indutivos e equações recursivas | Aula |  |
+| 5 | SEG | 16/03/2026 | LM 19:15 - 20:45 | Exercícios | Aula |  |
+| 6 | QUA | 18/03/2026 | LM 19:15 - 20:45 | Estudo de caso: listas | Aula |  |
+| 7 | SEG | 23/03/2026 | LM 19:15 - 20:45 | Estudo de caso: árvores | Aula |  |
+| 8 | QUA | 25/03/2026 | LM 19:15 - 20:45 | Exercícios | Aula |  |
+""".strip(),
+    )
+
+    context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
+    blocks = context["blocks_by_unit"]["unidade-01-metodos-formais"]
+
+    assert context["timeline_index"]["version"] == 1
+    assert blocks[0]["period_label"] == "11/03/2026 a 25/03/2026"
+
+
+def test_select_probable_period_for_entry_prefers_blocks_matching_subtopic():
+    unit = {
+        "slug": "unidade-01-metodos-formais",
+        "title": "Unidade 1 — Métodos Formais",
+    }
+    blocks = [
+        {
+            "id": "bloco-01",
+            "period_label": "16/03/2026 a 18/03/2026",
+            "unit_slug": "unidade-01-metodos-formais",
+            "unit_confidence": 0.95,
+            "primary_topic_slug": "conjuntos-indutivos",
+            "primary_topic_label": "Conjuntos Indutivos",
+            "primary_topic_confidence": 0.92,
+            "topic_ambiguous": False,
+            "topic_candidates": [
+                {
+                    "topic_slug": "conjuntos-indutivos",
+                    "topic_label": "Conjuntos Indutivos",
+                    "unit_slug": "unidade-01-metodos-formais",
+                }
+            ],
+            "rows": [
+                {"index": 1, "date_text": "16/03/2026", "content": "Exercícios"},
+                {"index": 2, "date_text": "18/03/2026", "content": "Exercícios"},
+            ],
+        },
+        {
+            "id": "bloco-02",
+            "period_label": "23/03/2026 a 25/03/2026",
+            "unit_slug": "unidade-01-metodos-formais",
+            "unit_confidence": 0.95,
+            "primary_topic_slug": "provadores-de-teoremas",
+            "primary_topic_label": "Provadores de Teoremas",
+            "primary_topic_confidence": 0.98,
+            "topic_ambiguous": False,
+            "topic_candidates": [
+                {
+                    "topic_slug": "provadores-de-teoremas",
+                    "topic_label": "Provadores de Teoremas",
+                    "unit_slug": "unidade-01-metodos-formais",
+                }
+            ],
+            "rows": [
+                {"index": 3, "date_text": "23/03/2026", "content": "Exercícios"},
+                {"index": 4, "date_text": "25/03/2026", "content": "Exercícios"},
+            ],
+        },
+    ]
+    entry = {
+        "title": "Isabelle",
+        "category": "listas",
+        "tags": "",
+        "raw_target": "raw/pdfs/listas/isabelle.pdf",
+    }
+
+    period, confidence, ambiguous, reasons = _select_probable_period_for_entry(
+        entry=entry,
+        unit=unit,
+        candidate_rows=blocks,
+        markdown_text="# Provadores de Teoremas\n\nIsabelle",
+        preferred_topic_slug="provadores-de-teoremas",
+    )
+
+    assert period == "23/03/2026 a 25/03/2026"
+    assert ambiguous is False
+    assert confidence > 0
+    assert any(reason == "topic=provadores-de-teoremas" for reason in reasons)
+    assert any(reason == "topic-filtered" for reason in reasons)
+
+
 def test_file_map_md_keeps_period_column_empty_without_subject_profile():
     course_meta = {"course_name": "Métodos Formais"}
     entries = [
@@ -484,3 +1093,90 @@ def test_file_map_md_omits_period_for_ambiguous_match():
 
     assert "unidade-01-metodos-formais _(ambíguo)_" in result
     assert "2026-03-04 a 2026-05-04" not in result
+
+
+def test_file_map_md_respects_manual_unit_override(tmp_path):
+    repo = tmp_path / "repo"
+    md_dir = repo / "exercises" / "lists"
+    md_dir.mkdir(parents=True)
+    (md_dir / "exerciciosespecificacao.md").write_text(
+        "# Exercícios\n\n## Especificação Formal\n\nPré e pós condições.\n",
+        encoding="utf-8",
+    )
+
+    course_meta = {"course_name": "Métodos Formais", "_repo_root": repo}
+    subject_profile = SubjectProfile(
+        teaching_plan="""
+### Unidade 1 — Métodos Formais
+- Linguagens de Especificação e Lógicas
+
+### Unidade 2 — Verificação de Programas
+- Lógica de Hoare
+- Pré e Pós Condições
+""".strip(),
+        syllabus="""
+| Semana | Data | Conteúdo |
+|---|---|---|
+| 1 | 2026-03-04 | Introdução |
+| 2 | 2026-04-27 | Lógica de Hoare |
+| 3 | 2026-05-06 | Pré e Pós Condições |
+""".strip(),
+    )
+    entries = [
+        {
+            "title": "Exerciciosespecificacao",
+            "category": "listas",
+            "tags": "",
+            "manual_unit_slug": "unidade-02-verificacao-de-programas",
+            "base_markdown": "exercises/lists/exerciciosespecificacao.md",
+            "raw_target": "raw/pdfs/listas/exerciciosespecificacao.pdf",
+        }
+    ]
+
+    result = file_map_md(course_meta, entries, subject_profile)
+
+    assert "unidade-02-verificacao-de-programas" in result
+    assert "2026-05-06" in result
+    assert "unidade-manual" in result
+
+
+def test_file_map_md_respects_manual_timeline_block_override(tmp_path):
+    repo = tmp_path / "repo"
+    md_dir = repo / "exercises" / "lists"
+    md_dir.mkdir(parents=True)
+    (md_dir / "exerciciosformalizacaoalgoritmosrecursao.md").write_text(
+        "# Exercícios\n\n## Formalização de Algoritmos — Recursão\n\n### Exercícios\n",
+        encoding="utf-8",
+    )
+
+    course_meta = {"course_name": "Métodos Formais", "_repo_root": repo}
+    subject_profile = SubjectProfile(
+        teaching_plan="""
+### Unidade 1 — Métodos Formais
+- Especificação de Funções Recursivas
+""".strip(),
+        syllabus="""
+| Semana | Data | Conteúdo |
+|---|---|---|
+| 1 | 2026-03-04 | Introdução |
+| 2 | 2026-03-16 | definições indutivas e recursivas, exercícios |
+| 3 | 2026-03-18 | definições indutivas e recursivas sobre listas |
+| 4 | 2026-03-23 | definições indutivas e recursivas sobre árvores |
+| 5 | 2026-03-25 | exercícios |
+""".strip(),
+    )
+    entries = [
+        {
+            "title": "Exerciciosformalizacaoalgoritmosrecursao",
+            "category": "listas",
+            "tags": "",
+            "manual_timeline_block_id": "bloco-02",
+            "base_markdown": "exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md",
+            "raw_target": "raw/pdfs/listas/exerciciosformalizacaoalgoritmosrecursao.pdf",
+        }
+    ]
+
+    result = file_map_md(course_meta, entries, subject_profile)
+
+    assert "2026-03-04 a 2026-03-25" in result
+    assert "bloco-manual" in result

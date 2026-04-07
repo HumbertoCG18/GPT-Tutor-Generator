@@ -1,4 +1,5 @@
 import json
+import re
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, simpledialog
 from typing import Optional, List, Tuple, Dict
@@ -298,7 +299,9 @@ FLUXO RECOMENDADO
 
 ESTRUTURA MENTAL DO APP
   • Fila a Processar: itens ainda não processados.
+  • Tasks de Repositório: fila persistente de builds, reprocessamentos e processamentos individuais.
   • Backlog: itens já processados, lidos do manifest do repositório.
+  • Dashboard: visão operacional dos repositórios, manifest e manual-review.
   • Log: saída detalhada das operações.
 """),
     ("Tela Principal", """BARRA SUPERIOR
@@ -314,19 +317,12 @@ ESTRUTURA MENTAL DO APP
   📊 Status
     Mostra se backends, OCR e perfil do aluno estão configurados.
 
-  ⚡ Importação rápida
-    Adiciona arquivos sem abrir o diálogo detalhado.
-    Usa auto-detecção + defaults da matéria ativa.
-
 TOOLBAR
   ➕ PDFs / 🖼 Imagens/Fotos / 🔗 Adicionar Link / 💻 Código / ZIP
     Importa diferentes tipos de material.
 
   ⚡ Processar
     Processa apenas o item selecionado na fila.
-
-  🔁 Todos → Auto
-    Reseta o modo de todos os itens da fila para "auto".
 
   📂 Abrir Repo
     Carrega um repositório existente pelo manifest.json.
@@ -336,6 +332,14 @@ TOOLBAR
 
   🚀 Criar Repositório
     Faz build novo ou incremental, dependendo do estado do repo selecionado.
+
+ABAS
+  🧱 Tasks de Repositório
+    Mostra a fila persistente de operações por repositório.
+    Permite enfileirar build, reprocessamento e item selecionado.
+
+  🖥 Dashboard
+    Resume status do repositório, manifest, manual-review e tasks pendentes por matéria.
 """),
     ("Dados da Disciplina", """Os dados exibidos na tela principal vêm da matéria ativa ou do repositório aberto.
 
@@ -1291,14 +1295,47 @@ class BacklogEntryEditDialog(tk.Toplevel):
         nb.pack(fill="both", expand=True, padx=10, pady=(5, 10))
 
         # ── Tab 1: Editar ──────────────────────────────────────────────
-        tab_edit = tk.Frame(nb, bg=p["bg"], padx=16, pady=12)
-        nb.add(tab_edit, text="  Editar  ")
+        tab_edit_outer = tk.Frame(nb, bg=p["bg"])
+        nb.add(tab_edit_outer, text="  Editar  ")
+        edit_canvas = tk.Canvas(tab_edit_outer, bg=p["bg"], highlightthickness=0, bd=0)
+        edit_scroll = ttk.Scrollbar(tab_edit_outer, orient="vertical", command=edit_canvas.yview)
+        edit_canvas.configure(yscrollcommand=edit_scroll.set)
+        edit_scroll.pack(side="right", fill="y")
+        edit_canvas.pack(side="left", fill="both", expand=True)
+
+        tab_edit = tk.Frame(edit_canvas, bg=p["bg"], padx=16, pady=12)
+        edit_window = edit_canvas.create_window((0, 0), window=tab_edit, anchor="nw")
+
+        def _sync_edit_scrollregion(_event=None):
+            edit_canvas.configure(scrollregion=edit_canvas.bbox("all"))
+
+        def _resize_edit_width(event):
+            edit_canvas.itemconfigure(edit_window, width=event.width)
+
+        def _on_edit_mousewheel(event):
+            delta = getattr(event, "delta", 0)
+            if delta:
+                edit_canvas.yview_scroll(int(-1 * (delta / 120)), "units")
+                return
+            num = getattr(event, "num", None)
+            if num == 4:
+                edit_canvas.yview_scroll(-1, "units")
+            elif num == 5:
+                edit_canvas.yview_scroll(1, "units")
+
+        tab_edit.bind("<Configure>", _sync_edit_scrollregion)
+        edit_canvas.bind("<Configure>", _resize_edit_width)
+        edit_canvas.bind("<Enter>", lambda _e: edit_canvas.bind_all("<MouseWheel>", _on_edit_mousewheel))
+        edit_canvas.bind("<Leave>", lambda _e: edit_canvas.unbind_all("<MouseWheel>"))
+        edit_canvas.bind("<Enter>", lambda _e: edit_canvas.bind_all("<Button-4>", _on_edit_mousewheel), add="+")
+        edit_canvas.bind("<Enter>", lambda _e: edit_canvas.bind_all("<Button-5>", _on_edit_mousewheel), add="+")
+        edit_canvas.bind("<Leave>", lambda _e: edit_canvas.unbind_all("<Button-4>"), add="+")
+        edit_canvas.bind("<Leave>", lambda _e: edit_canvas.unbind_all("<Button-5>"), add="+")
         tab_edit.columnconfigure(1, weight=1)
 
         fields = [
             ("Título",    "title"),
             ("Categoria", "category"),
-            ("Tags",      "tags"),
             ("Camada",    "effective_profile"),
         ]
 
@@ -1322,7 +1359,308 @@ class BacklogEntryEditDialog(tk.Toplevel):
                          highlightcolor=p["border"], highlightbackground=p["border"],
                          font=("Segoe UI", 10)).grid(row=row, column=1, sticky="ew", pady=6)
 
-        row_notes = len(fields)
+        row_tags = len(fields)
+        tag_catalog = _load_tag_catalog(self._repo_dir)
+        self._manual_tags_initial = list(self._data.get("manual_tags") or [])
+        self._manual_tags_committed = [str(tag).strip() for tag in self._manual_tags_initial if str(tag).strip()]
+        self._auto_tags_initial = list(self._data.get("auto_tags") or [])
+        legacy_tags = str(self._data.get("tags") or "").strip()
+        tag_summary = _format_backlog_tag_summary(
+            self._manual_tags_committed,
+            self._auto_tags_initial,
+            legacy_tags,
+        )
+
+        tags_frame = tk.Frame(
+            tab_edit,
+            bg=p["input_bg"],
+            highlightthickness=1,
+            highlightbackground=p["border"],
+            padx=10,
+            pady=8,
+        )
+        tags_frame.grid(row=row_tags, column=0, columnspan=2, sticky="ew", pady=(10, 6))
+        tags_frame.grid_columnconfigure(1, weight=1)
+
+        self._tag_summary_manual_var = tk.StringVar(value=tag_summary["manual"])
+        self._tag_summary_effective_var = tk.StringVar(value=tag_summary["effective"])
+        self._tag_pending_var = tk.StringVar(value="Nenhuma alteração pendente nas tags manuais.")
+
+        tk.Label(tags_frame, text="Tags manuais", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9, "bold")).grid(row=0, column=0, sticky="nw", padx=(0, 12))
+        tk.Label(tags_frame, textvariable=self._tag_summary_manual_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=0, column=1, sticky="w")
+
+        tk.Label(tags_frame, text="Tags automáticas", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9, "bold")).grid(row=1, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+        tk.Label(tags_frame, text=tag_summary["auto"], bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=1, column=1, sticky="w", pady=(6, 0))
+
+        tk.Label(tags_frame, text="Tags atribuídas", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9, "bold")).grid(row=2, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+        tk.Label(tags_frame, textvariable=self._tag_summary_effective_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(
+            row=2, column=1, sticky="w", pady=(6, 0)
+        )
+
+        if legacy_tags:
+            tk.Label(tags_frame, text="Campo legado", bg=p["input_bg"], fg=p["muted"],
+                     font=("Segoe UI", 9)).grid(row=3, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+            tk.Label(tags_frame, text=legacy_tags, bg=p["input_bg"], fg=p["fg"],
+                     font=("Consolas", 9), wraplength=520, justify="left").grid(
+                row=3, column=1, sticky="w", pady=(6, 0)
+            )
+
+        tk.Label(tags_frame, text="Seleção manual", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9)).grid(row=4, column=0, sticky="nw", padx=(0, 12), pady=(8, 0))
+        if tag_catalog:
+            list_frame = tk.Frame(tags_frame, bg=p["input_bg"])
+            list_frame.grid(row=4, column=1, sticky="ew", pady=(8, 0))
+            self._manual_tag_listbox = tk.Listbox(
+                list_frame,
+                selectmode=tk.MULTIPLE,
+                exportselection=False,
+                height=min(8, max(4, len(tag_catalog))),
+                bg=p["bg"],
+                fg=p["fg"],
+                selectbackground=p["select_bg"],
+                selectforeground=p["select_fg"],
+                relief="flat",
+                highlightthickness=1,
+                highlightbackground=p["border"],
+            )
+            tag_scroll = ttk.Scrollbar(list_frame, orient="vertical", command=self._manual_tag_listbox.yview)
+            self._manual_tag_listbox.configure(yscrollcommand=tag_scroll.set)
+            self._manual_tag_listbox.pack(side="left", fill="both", expand=True)
+            tag_scroll.pack(side="right", fill="y")
+            self._tag_catalog = tag_catalog
+            selected = set(_normalize_selected_manual_tags(self._manual_tags_initial, tag_catalog))
+            for idx, tag in enumerate(tag_catalog):
+                self._manual_tag_listbox.insert("end", tag)
+                if tag in selected:
+                    self._manual_tag_listbox.selection_set(idx)
+            self._manual_tag_listbox.bind("<<ListboxSelect>>", self._on_manual_tag_selection_changed)
+        else:
+            self._manual_tag_listbox = None
+            self._tag_catalog = []
+            tk.Label(
+                tags_frame,
+                text="Nenhuma tag disponível no catálogo da disciplina ainda.",
+                bg=p["input_bg"],
+                fg=p["muted"],
+                font=("Segoe UI", 9, "italic"),
+                wraplength=520,
+                justify="left",
+            ).grid(row=4, column=1, sticky="w", pady=(8, 0))
+
+        tag_actions = tk.Frame(tags_frame, bg=p["input_bg"])
+        tag_actions.grid(row=5, column=1, sticky="w", pady=(8, 0))
+        ttk.Button(tag_actions, text="Aplicar seleção", command=self._apply_manual_tag_selection).pack(side="left")
+        ttk.Button(tag_actions, text="Limpar tags manuais", command=self._clear_manual_tags).pack(side="left", padx=(8, 0))
+
+        tk.Label(
+            tags_frame,
+            textvariable=self._tag_pending_var,
+            bg=p["input_bg"],
+            fg=p["muted"],
+            font=("Segoe UI", 9, "italic"),
+            wraplength=520,
+            justify="left",
+        ).grid(row=6, column=1, sticky="w", pady=(6, 0))
+
+        tk.Label(
+            tags_frame,
+            text="Selecione no catálogo e clique em “Aplicar seleção”. Para remover tags, desmarque-as e aplique novamente, ou use “Limpar tags manuais”.",
+            bg=p["input_bg"],
+            fg=p["muted"],
+            font=("Segoe UI", 9),
+            wraplength=520,
+            justify="left",
+        ).grid(row=7, column=1, sticky="w", pady=(4, 0))
+
+        row_unit = row_tags + 1
+        tk.Label(tab_edit, text="Unidade manual", bg=p["bg"], fg=p["fg"],
+                 font=("Segoe UI", 10)).grid(row=row_unit, column=0, sticky="w", padx=(0, 12), pady=6)
+        self._manual_unit_options = _load_file_map_unit_options(self._repo_dir)
+        self._manual_unit_label_by_slug = {slug: label for label, slug in self._manual_unit_options}
+        current_manual_unit = str(self._data.get("manual_unit_slug") or "").strip()
+        self._manual_unit_committed = current_manual_unit
+        unit_labels = ["Automático (usar matcher)"] + [label for label, _slug in self._manual_unit_options]
+        self._manual_unit_var = tk.StringVar(value="Automático (usar matcher)")
+        if current_manual_unit:
+            for label, slug in self._manual_unit_options:
+                if slug == current_manual_unit:
+                    self._manual_unit_var.set(label)
+                    break
+        if len(unit_labels) > 1:
+            unit_combo = ttk.Combobox(
+                tab_edit,
+                textvariable=self._manual_unit_var,
+                values=unit_labels,
+                state="readonly",
+                width=42,
+            )
+            unit_combo.grid(row=row_unit, column=1, sticky="ew", pady=6)
+            unit_combo.bind("<<ComboboxSelected>>", self._on_manual_unit_selection_changed)
+        else:
+            tk.Label(
+                tab_edit,
+                text="Nenhuma unidade disponível ainda. Gere ou reprocesse o COURSE_MAP para habilitar o override manual.",
+                bg=p["bg"],
+                fg=p["muted"],
+                font=("Segoe UI", 9, "italic"),
+                wraplength=520,
+                justify="left",
+            ).grid(row=row_unit, column=1, sticky="w", pady=6)
+
+        unit_status = _resolve_backlog_unit_status(
+            self._data,
+            self._repo_dir,
+            self._manual_unit_label_by_slug,
+        )
+        row_unit_status = row_unit + 1
+        unit_frame = tk.Frame(
+            tab_edit,
+            bg=p["input_bg"],
+            highlightthickness=1,
+            highlightbackground=p["border"],
+            padx=10,
+            pady=8,
+        )
+        unit_frame.grid(row=row_unit_status, column=0, columnspan=2, sticky="ew", pady=(6, 4))
+        unit_frame.grid_columnconfigure(1, weight=1)
+
+        self._unit_assigned_var = tk.StringVar(value=unit_status["assigned"])
+        self._unit_source_var = tk.StringVar(value=unit_status["source"])
+        self._unit_note_var = tk.StringVar(value=unit_status["note"])
+        self._unit_pending_var = tk.StringVar(value="Nenhuma alteração pendente na unidade manual.")
+
+        tk.Label(unit_frame, text="Unidade atribuída", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9, "bold")).grid(row=0, column=0, sticky="w", padx=(0, 12))
+        tk.Label(unit_frame, textvariable=self._unit_assigned_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=0, column=1, sticky="w")
+
+        tk.Label(unit_frame, text="Origem", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9)).grid(row=1, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+        tk.Label(unit_frame, textvariable=self._unit_source_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=1, column=1, sticky="w", pady=(6, 0))
+
+        tk.Label(unit_frame, text="Observação", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9)).grid(row=2, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+        tk.Label(unit_frame, textvariable=self._unit_note_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=2, column=1, sticky="w", pady=(6, 0))
+
+        unit_actions = tk.Frame(unit_frame, bg=p["input_bg"])
+        unit_actions.grid(row=3, column=1, sticky="w", pady=(8, 0))
+        ttk.Button(unit_actions, text="Aplicar unidade", command=self._apply_manual_unit_selection).pack(side="left")
+        ttk.Button(unit_actions, text="Voltar para automático", command=self._clear_manual_unit).pack(side="left", padx=(8, 0))
+
+        tk.Label(
+            unit_frame,
+            textvariable=self._unit_pending_var,
+            bg=p["input_bg"],
+            fg=p["muted"],
+            font=("Segoe UI", 9, "italic"),
+            wraplength=520,
+            justify="left",
+        ).grid(row=4, column=1, sticky="w", pady=(6, 0))
+
+        timeline_status = _resolve_backlog_timeline_status(self._data, self._repo_dir)
+        row_timeline = row_unit_status + 1
+        timeline_frame = tk.Frame(
+            tab_edit,
+            bg=p["input_bg"],
+            highlightthickness=1,
+            highlightbackground=p["border"],
+            padx=10,
+            pady=8,
+        )
+        timeline_frame.grid(row=row_timeline, column=0, columnspan=2, sticky="ew", pady=(6, 4))
+        timeline_frame.grid_columnconfigure(1, weight=1)
+
+        self._manual_timeline_options = _load_timeline_block_options(self._repo_dir)
+        self._manual_timeline_label_by_id = {block_id: label for label, block_id in self._manual_timeline_options}
+        current_manual_timeline = str(self._data.get("manual_timeline_block_id") or "").strip()
+        self._manual_timeline_committed = current_manual_timeline
+        timeline_labels = ["Automático (usar timeline index)"] + [label for label, _block_id in self._manual_timeline_options]
+        self._manual_timeline_var = tk.StringVar(value="Automático (usar timeline index)")
+        if current_manual_timeline:
+            for label, block_id in self._manual_timeline_options:
+                if block_id == current_manual_timeline:
+                    self._manual_timeline_var.set(label)
+                    break
+
+        tk.Label(timeline_frame, text="Bloco manual", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9, "bold")).grid(row=0, column=0, sticky="w", padx=(0, 12))
+        if len(timeline_labels) > 1:
+            timeline_combo = ttk.Combobox(
+                timeline_frame,
+                textvariable=self._manual_timeline_var,
+                values=timeline_labels,
+                state="readonly",
+                width=52,
+            )
+            timeline_combo.grid(row=0, column=1, sticky="ew")
+            timeline_combo.bind("<<ComboboxSelected>>", self._on_manual_timeline_selection_changed)
+        else:
+            tk.Label(
+                timeline_frame,
+                text="Nenhum bloco temporal disponível ainda. Reprocesse o repositório para gerar o timeline index.",
+                bg=p["input_bg"],
+                fg=p["muted"],
+                font=("Segoe UI", 9, "italic"),
+                wraplength=520,
+                justify="left",
+            ).grid(row=0, column=1, sticky="w")
+
+        timeline_actions = tk.Frame(timeline_frame, bg=p["input_bg"])
+        timeline_actions.grid(row=1, column=1, sticky="w", pady=(8, 0))
+        ttk.Button(timeline_actions, text="Aplicar bloco", command=self._apply_manual_timeline_selection).pack(side="left")
+        ttk.Button(timeline_actions, text="Voltar para automático", command=self._clear_manual_timeline).pack(side="left", padx=(8, 0))
+
+        self._timeline_pending_var = tk.StringVar(value="Nenhuma alteração pendente no bloco temporal.")
+        tk.Label(
+            timeline_frame,
+            textvariable=self._timeline_pending_var,
+            bg=p["input_bg"],
+            fg=p["muted"],
+            font=("Segoe UI", 9, "italic"),
+            wraplength=520,
+            justify="left",
+        ).grid(row=2, column=1, sticky="w", pady=(6, 0))
+
+        self._timeline_period_var = tk.StringVar(value=timeline_status["period"])
+        self._timeline_block_var = tk.StringVar(value=timeline_status["block"])
+        self._timeline_topics_var = tk.StringVar(value=timeline_status["topics"])
+        self._timeline_aliases_var = tk.StringVar(value=timeline_status["aliases"])
+        self._timeline_note_var = tk.StringVar(value=timeline_status["note"])
+
+        tk.Label(timeline_frame, text="Período no FILE_MAP", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9, "bold")).grid(row=3, column=0, sticky="w", padx=(0, 12), pady=(6, 0))
+        tk.Label(timeline_frame, textvariable=self._timeline_period_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=3, column=1, sticky="w", pady=(6, 0))
+
+        tk.Label(timeline_frame, text="Bloco do cronograma", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9)).grid(row=4, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+        tk.Label(timeline_frame, textvariable=self._timeline_block_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=4, column=1, sticky="w", pady=(6, 0))
+
+        tk.Label(timeline_frame, text="Tópicos do bloco", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9)).grid(row=5, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+        tk.Label(timeline_frame, textvariable=self._timeline_topics_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=5, column=1, sticky="w", pady=(6, 0))
+
+        tk.Label(timeline_frame, text="Aliases", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9)).grid(row=6, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+        tk.Label(timeline_frame, textvariable=self._timeline_aliases_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=6, column=1, sticky="w", pady=(6, 0))
+
+        tk.Label(timeline_frame, text="Observação", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9)).grid(row=7, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+        tk.Label(timeline_frame, textvariable=self._timeline_note_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=7, column=1, sticky="w", pady=(6, 0))
+
+        row_notes = row_timeline + 1
         tk.Label(tab_edit, text="Notas", bg=p["bg"], fg=p["fg"],
                  font=("Segoe UI", 10)).grid(row=row_notes, column=0, sticky="nw", padx=(0, 12), pady=6)
         self._notes_text = tk.Text(tab_edit, height=4, width=40, font=("Segoe UI", 10), wrap="word",
@@ -1339,6 +1677,56 @@ class BacklogEntryEditDialog(tk.Toplevel):
             row=row_cb, column=0, columnspan=2, sticky="w", pady=(8, 2))
         ttk.Checkbutton(tab_edit, text="Relevante para prova", variable=self._var_exam).grid(
             row=row_cb + 1, column=0, columnspan=2, sticky="w", pady=2)
+
+        row_status = row_cb + 2
+        status = _resolve_backlog_markdown_status(self._data, self._repo_dir)
+        status_frame = tk.Frame(
+            tab_edit,
+            bg=p["input_bg"],
+            highlightthickness=1,
+            highlightbackground=p["border"],
+            padx=10,
+            pady=8,
+        )
+        status_frame.grid(row=row_status, column=0, columnspan=2, sticky="ew", pady=(12, 4))
+        status_frame.grid_columnconfigure(1, weight=1)
+
+        status_color = {
+            "Curado/final": "#a6e3a1",
+            "Só staging": "#f9e2af",
+            "Caminho quebrado": "#f38ba8",
+            "Sem markdown": "#f38ba8",
+        }.get(status["status"], p["accent"])
+
+        tk.Label(status_frame, text="Estado do markdown", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9, "bold")).grid(row=0, column=0, sticky="w", padx=(0, 12))
+        tk.Label(status_frame, text=status["status"], bg=p["input_bg"], fg=status_color,
+                 font=("Segoe UI", 10, "bold")).grid(row=0, column=1, sticky="w")
+
+        tk.Label(status_frame, text="Caminho ativo", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9)).grid(row=1, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+        tk.Label(status_frame, text=status["path"] or "—", bg=p["input_bg"], fg=p["fg"],
+                 font=("Consolas", 9), wraplength=520, justify="left").grid(
+            row=1, column=1, sticky="w", pady=(6, 0)
+        )
+
+        tk.Label(status_frame, text="Observação", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9)).grid(row=2, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+        tk.Label(status_frame, text=status["note"], bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(
+            row=2, column=1, sticky="w", pady=(6, 0)
+        )
+
+        if status["needs_reprocess"] == "true":
+            tk.Label(
+                status_frame,
+                text="Ação sugerida: reprocessar o repositório para promover esse material a um markdown final.",
+                bg=p["input_bg"],
+                fg="#f9e2af",
+                font=("Segoe UI", 9, "italic"),
+                wraplength=640,
+                justify="left",
+            ).grid(row=3, column=0, columnspan=2, sticky="w", pady=(8, 0))
 
         # ── Tab 2: Visualização MD ─────────────────────────────────────
         tab_md = tk.Frame(nb, bg=p["bg"], padx=8, pady=5)
@@ -1689,16 +2077,312 @@ class BacklogEntryEditDialog(tk.Toplevel):
         os.startfile(str(pdf_path))
 
     def _on_save(self):
+        pending_manual_tags = self._current_manual_tag_selection()
+        committed_manual_tags = list(getattr(self, "_manual_tags_committed", []))
+        if pending_manual_tags != committed_manual_tags:
+            decision = messagebox.askyesnocancel(
+                "Tags manuais",
+                "Há uma seleção de tags manuais ainda não aplicada.\n\n"
+                "Deseja aplicar a seleção atual à entry antes de salvar?",
+                parent=self,
+            )
+            if decision is None:
+                return
+            if decision:
+                self._apply_manual_tag_selection(confirm=False)
+        pending_manual_unit = self._current_manual_unit_selection_slug()
+        committed_manual_unit = str(getattr(self, "_manual_unit_committed", "") or "").strip()
+        if pending_manual_unit != committed_manual_unit:
+            decision = messagebox.askyesnocancel(
+                "Unidade manual",
+                "Há uma seleção de unidade manual ainda não aplicada.\n\n"
+                "Deseja aplicar a seleção atual à entry antes de salvar?",
+                parent=self,
+            )
+            if decision is None:
+                return
+            if decision:
+                self._apply_manual_unit_selection(confirm=False)
+        pending_manual_timeline = self._current_manual_timeline_selection_id()
+        committed_manual_timeline = str(getattr(self, "_manual_timeline_committed", "") or "").strip()
+        if pending_manual_timeline != committed_manual_timeline:
+            decision = messagebox.askyesnocancel(
+                "Bloco temporal manual",
+                "Há uma seleção de bloco temporal ainda não aplicada.\n\n"
+                "Deseja aplicar a seleção atual à entry antes de salvar?",
+                parent=self,
+            )
+            if decision is None:
+                return
+            if decision:
+                self._apply_manual_timeline_selection(confirm=False)
         self.result_data = {
             "title":            self._vars["title"].get().strip(),
             "category":         self._vars["category"].get().strip(),
-            "tags":             self._vars["tags"].get().strip(),
+            "tags":             str(self._data.get("tags") or "").strip(),
+            "manual_tags":      self._selected_manual_tags(),
+            "auto_tags":        list(self._data.get("auto_tags") or []),
+            "manual_unit_slug": self._selected_manual_unit_slug(),
+            "manual_timeline_block_id": self._selected_manual_timeline_block_id(),
             "effective_profile": self._vars["effective_profile"].get().strip(),
             "notes":            self._notes_text.get("1.0", "end-1c").strip(),
             "include_in_bundle": self._var_bundle.get(),
             "relevant_for_exam": self._var_exam.get(),
         }
         self.destroy()
+
+    def _selected_manual_tags(self) -> List[str]:
+        if hasattr(self, "_manual_tags_committed"):
+            return list(getattr(self, "_manual_tags_committed", []))
+        if not getattr(self, "_manual_tag_listbox", None):
+            return _normalize_selected_manual_tags(self._manual_tags_initial, getattr(self, "_tag_catalog", []))
+        return self._current_manual_tag_selection()
+
+    def _selected_manual_unit_slug(self) -> str:
+        if hasattr(self, "_manual_unit_committed"):
+            return str(getattr(self, "_manual_unit_committed", "") or "").strip()
+        return self._current_manual_unit_selection_slug()
+
+    def _selected_manual_timeline_block_id(self) -> str:
+        if hasattr(self, "_manual_timeline_committed"):
+            return str(getattr(self, "_manual_timeline_committed", "") or "").strip()
+        return self._current_manual_timeline_selection_id()
+
+    def _current_manual_tag_selection(self) -> List[str]:
+        if not getattr(self, "_manual_tag_listbox", None):
+            return list(getattr(self, "_manual_tags_committed", []))
+        selected_indices = self._manual_tag_listbox.curselection()
+        selected_tags = [self._manual_tag_listbox.get(i) for i in selected_indices]
+        return _normalize_selected_manual_tags(selected_tags, getattr(self, "_tag_catalog", []))
+
+    def _refresh_tag_summary_display(self) -> None:
+        summary = _format_backlog_tag_summary(
+            list(getattr(self, "_manual_tags_committed", [])),
+            self._auto_tags_initial,
+            str(self._data.get("tags") or "").strip(),
+        )
+        if hasattr(self, "_tag_summary_manual_var"):
+            self._tag_summary_manual_var.set(summary["manual"])
+        if hasattr(self, "_tag_summary_effective_var"):
+            self._tag_summary_effective_var.set(summary["effective"])
+        self._update_manual_tag_pending_state()
+
+    def _update_manual_tag_pending_state(self) -> None:
+        pending = self._current_manual_tag_selection()
+        committed = list(getattr(self, "_manual_tags_committed", []))
+        if pending == committed:
+            self._tag_pending_var.set("Nenhuma alteração pendente nas tags manuais.")
+            return
+        if pending:
+            self._tag_pending_var.set(
+                "Seleção pendente: clique em “Aplicar seleção” para atribuir estas tags à entry."
+            )
+        else:
+            self._tag_pending_var.set(
+                "Remoção pendente: clique em “Aplicar seleção” ou “Limpar tags manuais” para remover as tags manuais."
+            )
+
+    def _on_manual_tag_selection_changed(self, _event=None) -> None:
+        self._update_manual_tag_pending_state()
+
+    def _apply_manual_tag_selection(self, confirm: bool = True) -> None:
+        selected = self._current_manual_tag_selection()
+        committed = list(getattr(self, "_manual_tags_committed", []))
+        if selected == committed:
+            self._update_manual_tag_pending_state()
+            return
+        if confirm:
+            target_text = ", ".join(selected) if selected else "nenhuma tag manual"
+            should_apply = messagebox.askyesno(
+                "Aplicar tags manuais",
+                f"Deseja aplicar esta seleção à entry?\n\n{target_text}",
+                parent=self,
+            )
+            if not should_apply:
+                return
+        self._manual_tags_committed = selected
+        self._data["manual_tags"] = list(selected)
+        self._refresh_tag_summary_display()
+
+    def _clear_manual_tags(self) -> None:
+        committed = list(getattr(self, "_manual_tags_committed", []))
+        if not committed and not self._current_manual_tag_selection():
+            self._update_manual_tag_pending_state()
+            return
+        should_clear = messagebox.askyesno(
+            "Limpar tags manuais",
+            "Deseja remover todas as tags manuais atribuídas a esta entry?",
+            parent=self,
+        )
+        if not should_clear:
+            return
+        if getattr(self, "_manual_tag_listbox", None):
+            self._manual_tag_listbox.selection_clear(0, "end")
+        self._manual_tags_committed = []
+        self._data["manual_tags"] = []
+        self._refresh_tag_summary_display()
+
+    def _current_manual_unit_selection_slug(self) -> str:
+        selected = str(getattr(self, "_manual_unit_var", tk.StringVar(value="")).get() or "").strip()
+        if not selected or selected.startswith("Automático"):
+            return ""
+        for label, slug in getattr(self, "_manual_unit_options", []):
+            if label == selected:
+                return slug
+        return ""
+
+    def _refresh_unit_status_display(self) -> None:
+        entry_view = dict(self._data)
+        entry_view["manual_unit_slug"] = str(getattr(self, "_manual_unit_committed", "") or "").strip()
+        unit_status = _resolve_backlog_unit_status(
+            entry_view,
+            self._repo_dir,
+            getattr(self, "_manual_unit_label_by_slug", {}),
+        )
+        if hasattr(self, "_unit_assigned_var"):
+            self._unit_assigned_var.set(unit_status["assigned"])
+        if hasattr(self, "_unit_source_var"):
+            self._unit_source_var.set(unit_status["source"])
+        if hasattr(self, "_unit_note_var"):
+            self._unit_note_var.set(unit_status["note"])
+        self._update_manual_unit_pending_state()
+
+    def _update_manual_unit_pending_state(self) -> None:
+        pending = self._current_manual_unit_selection_slug()
+        committed = str(getattr(self, "_manual_unit_committed", "") or "").strip()
+        if pending == committed:
+            self._unit_pending_var.set("Nenhuma alteração pendente na unidade manual.")
+            return
+        if pending:
+            label = getattr(self, "_manual_unit_label_by_slug", {}).get(pending, pending)
+            self._unit_pending_var.set(
+                f"Seleção pendente: clique em “Aplicar unidade” para salvar `{label}` como override manual."
+            )
+            return
+        self._unit_pending_var.set(
+            "Remoção pendente: clique em “Aplicar unidade” ou “Voltar para automático” para remover o override manual."
+        )
+
+    def _on_manual_unit_selection_changed(self, _event=None) -> None:
+        self._update_manual_unit_pending_state()
+
+    def _apply_manual_unit_selection(self, confirm: bool = True) -> None:
+        selected = self._current_manual_unit_selection_slug()
+        committed = str(getattr(self, "_manual_unit_committed", "") or "").strip()
+        if selected == committed:
+            self._update_manual_unit_pending_state()
+            return
+        if confirm:
+            selected_label = getattr(self, "_manual_unit_label_by_slug", {}).get(selected, "Automático (usar matcher)")
+            should_apply = messagebox.askyesno(
+                "Aplicar unidade manual",
+                f"Deseja aplicar esta configuração de unidade à entry?\n\n{selected_label}",
+                parent=self,
+            )
+            if not should_apply:
+                return
+        self._manual_unit_committed = selected
+        self._data["manual_unit_slug"] = selected
+        self._refresh_unit_status_display()
+
+    def _clear_manual_unit(self) -> None:
+        committed = str(getattr(self, "_manual_unit_committed", "") or "").strip()
+        if not committed and not self._current_manual_unit_selection_slug():
+            self._update_manual_unit_pending_state()
+            return
+        should_clear = messagebox.askyesno(
+            "Voltar para automático",
+            "Deseja remover o override manual e voltar a usar o matcher automático para a unidade desta entry?",
+            parent=self,
+        )
+        if not should_clear:
+            return
+        if hasattr(self, "_manual_unit_var"):
+            self._manual_unit_var.set("Automático (usar matcher)")
+        self._manual_unit_committed = ""
+        self._data["manual_unit_slug"] = ""
+        self._refresh_unit_status_display()
+
+    def _current_manual_timeline_selection_id(self) -> str:
+        selected = str(getattr(self, "_manual_timeline_var", tk.StringVar(value="")).get() or "").strip()
+        if not selected or selected.startswith("Automático"):
+            return ""
+        for label, block_id in getattr(self, "_manual_timeline_options", []):
+            if label == selected:
+                return block_id
+        return ""
+
+    def _refresh_timeline_status_display(self) -> None:
+        entry_view = dict(self._data)
+        entry_view["manual_timeline_block_id"] = str(getattr(self, "_manual_timeline_committed", "") or "").strip()
+        timeline_status = _resolve_backlog_timeline_status(entry_view, self._repo_dir)
+        if hasattr(self, "_timeline_period_var"):
+            self._timeline_period_var.set(timeline_status["period"])
+        if hasattr(self, "_timeline_block_var"):
+            self._timeline_block_var.set(timeline_status["block"])
+        if hasattr(self, "_timeline_topics_var"):
+            self._timeline_topics_var.set(timeline_status["topics"])
+        if hasattr(self, "_timeline_aliases_var"):
+            self._timeline_aliases_var.set(timeline_status["aliases"])
+        if hasattr(self, "_timeline_note_var"):
+            self._timeline_note_var.set(timeline_status["note"])
+        self._update_manual_timeline_pending_state()
+
+    def _update_manual_timeline_pending_state(self) -> None:
+        pending = self._current_manual_timeline_selection_id()
+        committed = str(getattr(self, "_manual_timeline_committed", "") or "").strip()
+        if pending == committed:
+            self._timeline_pending_var.set("Nenhuma alteração pendente no bloco temporal.")
+            return
+        if pending:
+            label = getattr(self, "_manual_timeline_label_by_id", {}).get(pending, pending)
+            self._timeline_pending_var.set(
+                f"Seleção pendente: clique em “Aplicar bloco” para salvar `{label}` como override temporal."
+            )
+            return
+        self._timeline_pending_var.set(
+            "Remoção pendente: clique em “Aplicar bloco” ou “Voltar para automático” para remover o override temporal."
+        )
+
+    def _on_manual_timeline_selection_changed(self, _event=None) -> None:
+        self._update_manual_timeline_pending_state()
+
+    def _apply_manual_timeline_selection(self, confirm: bool = True) -> None:
+        selected = self._current_manual_timeline_selection_id()
+        committed = str(getattr(self, "_manual_timeline_committed", "") or "").strip()
+        if selected == committed:
+            self._update_manual_timeline_pending_state()
+            return
+        if confirm:
+            selected_label = getattr(self, "_manual_timeline_label_by_id", {}).get(selected, "Automático (usar timeline index)")
+            should_apply = messagebox.askyesno(
+                "Aplicar bloco temporal manual",
+                f"Deseja aplicar esta configuração temporal à entry?\n\n{selected_label}",
+                parent=self,
+            )
+            if not should_apply:
+                return
+        self._manual_timeline_committed = selected
+        self._data["manual_timeline_block_id"] = selected
+        self._refresh_timeline_status_display()
+
+    def _clear_manual_timeline(self) -> None:
+        committed = str(getattr(self, "_manual_timeline_committed", "") or "").strip()
+        if not committed and not self._current_manual_timeline_selection_id():
+            self._update_manual_timeline_pending_state()
+            return
+        should_clear = messagebox.askyesno(
+            "Voltar para automático",
+            "Deseja remover o override temporal e voltar a usar o timeline index automático para esta entry?",
+            parent=self,
+        )
+        if not should_clear:
+            return
+        if hasattr(self, "_manual_timeline_var"):
+            self._manual_timeline_var.set("Automático (usar timeline index)")
+        self._manual_timeline_committed = ""
+        self._data["manual_timeline_block_id"] = ""
+        self._refresh_timeline_status_display()
 
 
 # ---------------------------------------------------------------------------
@@ -2262,6 +2946,415 @@ def _is_github_repo(url: str) -> bool:
     url = url.strip().rstrip("/")
     return bool(re.match(
         r'^https?://github\.com/[\w.-]+/[\w.-]+(\.git)?$', url))
+
+
+def _resolve_backlog_markdown_status(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
+    """Resolve o estado do markdown de uma entry processada para a UI do backlog."""
+    final_prefixes = (
+        "content/",
+        "exercises/",
+        "exams/",
+        "code/",
+        "references/",
+        "bibliography/",
+        "assignments/",
+        "whiteboards/",
+    )
+    entry_id = str(entry_data.get("id") or "").strip()
+    if repo_dir and entry_id:
+        final_candidates = [
+            repo_dir / "content" / "curated" / f"{entry_id}.md",
+            repo_dir / "exercises" / "lists" / f"{entry_id}.md",
+            repo_dir / "exams" / "past-exams" / f"{entry_id}.md",
+        ]
+        for path in final_candidates:
+            if path.exists():
+                return {
+                    "status": "Curado/final",
+                    "path": str(path.relative_to(repo_dir)).replace("\\", "/"),
+                    "source_key": "derived_final_markdown",
+                    "needs_reprocess": "false",
+                    "note": "Markdown final detectado no repositório, mesmo que o manifest ainda esteja desatualizado.",
+                }
+
+    candidates = [
+        ("approved_markdown", entry_data.get("approved_markdown") or ""),
+        ("curated_markdown", entry_data.get("curated_markdown") or ""),
+        ("advanced_markdown", entry_data.get("advanced_markdown") or ""),
+        ("base_markdown", entry_data.get("base_markdown") or ""),
+    ]
+
+    for key, rel in candidates:
+        rel = str(rel or "").strip()
+        if not rel or not rel.lower().endswith(".md"):
+            continue
+        rel_posix = rel.replace("\\", "/")
+        exists = bool(repo_dir and (repo_dir / rel).exists())
+        if rel_posix.startswith(final_prefixes):
+            return {
+                "status": "Curado/final",
+                "path": rel,
+                "source_key": key,
+                "needs_reprocess": "false",
+                "note": "Markdown final pronto para o tutor.",
+            }
+        if rel_posix.startswith("staging/"):
+            return {
+                "status": "Só staging",
+                "path": rel,
+                "source_key": key,
+                "needs_reprocess": "true",
+                "note": "Ainda não foi promovido para um destino final; reprocessar ou revisar.",
+            }
+        if exists:
+            return {
+                "status": "Markdown externo",
+                "path": rel,
+                "source_key": key,
+                "needs_reprocess": "false",
+                "note": "Markdown existe fora dos destinos padrão finais.",
+            }
+        return {
+            "status": "Caminho quebrado",
+            "path": rel,
+            "source_key": key,
+            "needs_reprocess": "true",
+            "note": "O manifest aponta para um markdown que não existe mais.",
+        }
+
+    return {
+        "status": "Sem markdown",
+        "path": "",
+        "source_key": "",
+        "needs_reprocess": "true",
+        "note": "Nenhum markdown associado à entry.",
+    }
+
+
+def _find_backlog_file_map_row(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
+    if not repo_dir:
+        return {}
+    file_map_path = repo_dir / "course" / "FILE_MAP.md"
+    if not file_map_path.exists():
+        return {}
+
+    title = str(entry_data.get("title") or "").strip()
+    category = str(entry_data.get("category") or "").strip()
+    if not title:
+        return {}
+
+    try:
+        for line in file_map_path.read_text(encoding="utf-8").splitlines():
+            if not line.startswith("|"):
+                continue
+            parts = [part.strip() for part in line.split("|")[1:-1]]
+            if len(parts) < 8:
+                continue
+            if parts[0] in {"#", ""}:
+                continue
+            if parts[1] != title:
+                continue
+            if category and parts[2] and parts[2] != category:
+                continue
+            return {
+                "title": parts[1],
+                "category": parts[2],
+                "markdown": parts[5],
+                "unit": parts[6],
+                "period": parts[7],
+            }
+    except Exception:
+        return {}
+    return {}
+
+
+def _resolve_backlog_unit_status(
+    entry_data: dict,
+    repo_dir: Optional[Path],
+    unit_label_by_slug: Optional[Dict[str, str]] = None,
+) -> Dict[str, str]:
+    unit_label_by_slug = unit_label_by_slug or {}
+    manual_slug = str(entry_data.get("manual_unit_slug") or "").strip()
+    title = str(entry_data.get("title") or "").strip()
+    category = str(entry_data.get("category") or "").strip()
+    file_map_row = _find_backlog_file_map_row(
+        {"title": title, "category": category},
+        repo_dir,
+    )
+    current_unit_cell = str(file_map_row.get("unit") or "").strip()
+
+    def _display_unit(slug: str) -> str:
+        return unit_label_by_slug.get(slug, slug) if slug else "—"
+
+    current_slug_match = re.search(r"(unidade-[a-z0-9-]+)", current_unit_cell or "")
+    current_slug = current_slug_match.group(1) if current_slug_match else ""
+
+    if manual_slug:
+        assigned = _display_unit(manual_slug)
+        if current_slug == manual_slug:
+            return {
+                "assigned": assigned,
+                "source": "Override manual aplicado",
+                "note": "O FILE_MAP atual já reflete a unidade manual selecionada.",
+            }
+        if current_unit_cell:
+            return {
+                "assigned": assigned,
+                "source": "Override manual salvo",
+                "note": f"O FILE_MAP atual ainda mostra `{current_unit_cell}`; reprocesse o repositório para aplicar a unidade manual.",
+            }
+        return {
+            "assigned": assigned,
+            "source": "Override manual salvo",
+            "note": "A unidade manual já está salva nesta entry; reprocesse o repositório para refletir isso no FILE_MAP.",
+        }
+
+    if current_unit_cell:
+        return {
+            "assigned": current_unit_cell,
+            "source": "FILE_MAP atual",
+            "note": "Unidade atribuída automaticamente com base no FILE_MAP gerado no último processamento.",
+        }
+
+    return {
+        "assigned": "—",
+        "source": "Sem atribuição",
+        "note": "Nenhuma unidade atribuída ainda para esta entry.",
+    }
+
+
+def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
+    file_map_row = _find_backlog_file_map_row(entry_data, repo_dir)
+    period = str(file_map_row.get("period") or "").strip()
+    unit_cell = str(file_map_row.get("unit") or "").strip()
+    manual_slug = str(entry_data.get("manual_unit_slug") or "").strip()
+    manual_block_id = str(entry_data.get("manual_timeline_block_id") or "").strip()
+
+    if not period:
+        note = "A entry ainda não tem período preenchido no FILE_MAP."
+        if manual_slug:
+            note += " Há override manual de unidade salvo; reprocesse o repositório para recalcular a conexão temporal."
+        return {
+            "period": "—",
+            "block": "—",
+            "topics": "—",
+            "aliases": "—",
+            "note": note,
+        }
+
+    timeline_path = repo_dir / "course" / ".timeline_index.json" if repo_dir else None
+    if not timeline_path or not timeline_path.exists():
+        return {
+            "period": period,
+            "block": "—",
+            "topics": "—",
+            "aliases": "—",
+            "note": "Há período no FILE_MAP, mas o índice temporal interno ainda não foi encontrado.",
+        }
+
+    unit_slug_match = re.search(r"(unidade-[a-z0-9-]+)", unit_cell)
+    unit_slug = unit_slug_match.group(1) if unit_slug_match else ""
+
+    try:
+        payload = json.loads(timeline_path.read_text(encoding="utf-8"))
+    except Exception:
+        return {
+            "period": period,
+            "block": "—",
+            "topics": "—",
+            "aliases": "—",
+            "note": "O índice temporal interno existe, mas não pôde ser lido.",
+        }
+
+    blocks = list(payload.get("blocks") or [])
+    if manual_block_id:
+        manual_matches = [block for block in blocks if str(block.get("id") or "").strip() == manual_block_id]
+        if manual_matches:
+            block = manual_matches[0]
+            topics = ", ".join(str(item).strip() for item in list(block.get("topics") or [])[:4] if str(item).strip()) or "—"
+            aliases = ", ".join(str(item).strip() for item in list(block.get("aliases") or [])[:4] if str(item).strip()) or "—"
+            block_period = str(block.get("period_label") or "—")
+            if period == block_period:
+                note = "Bloco manual já refletido no FILE_MAP atual."
+            else:
+                note = "Bloco manual salvo; reprocesse o repositório para refletir esse período no FILE_MAP."
+            return {
+                "period": block_period,
+                "block": str(block.get("id") or "—"),
+                "topics": topics,
+                "aliases": aliases,
+                "note": note,
+            }
+        return {
+            "period": period or "—",
+            "block": manual_block_id,
+            "topics": "—",
+            "aliases": "—",
+            "note": "Há um bloco manual salvo, mas ele não foi encontrado no timeline index atual.",
+        }
+
+    matches = [block for block in blocks if str(block.get("period_label") or "").strip() == period]
+    if unit_slug:
+        unit_matches = [block for block in matches if str(block.get("unit_slug") or "").strip() == unit_slug]
+        if unit_matches:
+            matches = unit_matches
+    if not matches:
+        return {
+            "period": period,
+            "block": "—",
+            "topics": "—",
+            "aliases": "—",
+            "note": "Há período no FILE_MAP, mas nenhum bloco correspondente foi localizado no timeline index atual.",
+        }
+
+    block = matches[0]
+    topics = ", ".join(str(item).strip() for item in list(block.get("topics") or [])[:4] if str(item).strip()) or "—"
+    aliases = ", ".join(str(item).strip() for item in list(block.get("aliases") or [])[:4] if str(item).strip()) or "—"
+    return {
+        "period": period,
+        "block": str(block.get("id") or "—"),
+        "topics": topics,
+        "aliases": aliases,
+        "note": "Período do FILE_MAP conectado a este bloco do cronograma via `course/.timeline_index.json`.",
+    }
+
+
+def _load_tag_catalog(repo_dir: Optional[Path]) -> List[str]:
+    if not repo_dir:
+        return []
+    catalog_path = repo_dir / "course" / ".tag_catalog.json"
+    if not catalog_path.exists():
+        return []
+    try:
+        payload = json.loads(catalog_path.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    tags = payload.get("tags") or []
+    cleaned: List[str] = []
+    seen = set()
+    for tag in tags:
+        value = str(tag).strip()
+        if not value or value in seen:
+            continue
+        cleaned.append(value)
+        seen.add(value)
+    return cleaned
+
+
+def _load_file_map_unit_options(repo_dir: Optional[Path]) -> List[Tuple[str, str]]:
+    if not repo_dir:
+        return []
+
+    options: List[Tuple[str, str]] = []
+    seen = set()
+
+    course_map_path = repo_dir / "course" / "COURSE_MAP.md"
+    if course_map_path.exists():
+        try:
+            content = course_map_path.read_text(encoding="utf-8")
+            for line in content.splitlines():
+                if not line.startswith("| Unidade "):
+                    continue
+                parts = [part.strip() for part in line.split("|")[1:-1]]
+                if len(parts) < 3:
+                    continue
+                label = parts[0]
+                match = re.search(r"`([^`]+)`", parts[2])
+                slug = match.group(1).strip() if match else ""
+                if not slug or slug in seen:
+                    continue
+                options.append((f"{label} ({slug})", slug))
+                seen.add(slug)
+        except Exception:
+            pass
+
+    if options:
+        return options
+
+    try:
+        subject_store = SubjectStore()
+        repo_resolved = repo_dir.resolve()
+        subject = None
+        for name in subject_store.names():
+            candidate = subject_store.get(name)
+            if not candidate or not getattr(candidate, "repo_root", ""):
+                continue
+            try:
+                if Path(candidate.repo_root).resolve() == repo_resolved:
+                    subject = candidate
+                    break
+            except Exception:
+                continue
+        if subject and getattr(subject, "teaching_plan", ""):
+            from src.builder.engine import _normalize_unit_slug, _parse_units_from_teaching_plan
+
+            for title, _topics in _parse_units_from_teaching_plan(subject.teaching_plan):
+                slug = _normalize_unit_slug(title)
+                if slug and slug not in seen:
+                    options.append((f"{title} ({slug})", slug))
+                    seen.add(slug)
+    except Exception:
+        pass
+
+    return options
+
+
+def _load_timeline_block_options(repo_dir: Optional[Path]) -> List[Tuple[str, str]]:
+    if not repo_dir:
+        return []
+    timeline_path = repo_dir / "course" / ".timeline_index.json"
+    if not timeline_path.exists():
+        return []
+    try:
+        payload = json.loads(timeline_path.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+
+    options: List[Tuple[str, str]] = []
+    seen = set()
+    for block in list(payload.get("blocks") or []):
+        block_id = str(block.get("id") or "").strip()
+        period_label = str(block.get("period_label") or "").strip()
+        if not block_id or not period_label or block_id in seen:
+            continue
+        topics = [str(item).strip() for item in list(block.get("topics") or []) if str(item).strip()]
+        unit_slug = str(block.get("unit_slug") or "").strip()
+        topic_preview = ", ".join(topics[:2]) or "sem tópicos fortes"
+        suffix = f" | {unit_slug}" if unit_slug else ""
+        label = f"{period_label} — {topic_preview}{suffix}"
+        options.append((label, block_id))
+        seen.add(block_id)
+    return options
+
+
+def _normalize_selected_manual_tags(selected_tags: List[str], catalog_tags: List[str]) -> List[str]:
+    selected = {str(tag).strip() for tag in (selected_tags or []) if str(tag).strip()}
+    ordered_catalog = [str(tag).strip() for tag in (catalog_tags or []) if str(tag).strip()]
+    return [tag for tag in ordered_catalog if tag in selected]
+
+
+def _format_backlog_tag_summary(
+    manual_tags: List[str],
+    auto_tags: List[str],
+    legacy_tags: str = "",
+) -> Dict[str, str]:
+    manual_list = [str(tag).strip() for tag in (manual_tags or []) if str(tag).strip()]
+    auto_list = [str(tag).strip() for tag in (auto_tags or []) if str(tag).strip()]
+    legacy_list = [part.strip() for part in re.split(r"[;,]", legacy_tags or "") if part.strip()]
+    effective_list: List[str] = []
+    seen: set[str] = set()
+    for tag in manual_list + auto_list + legacy_list:
+        if tag not in seen:
+            effective_list.append(tag)
+            seen.add(tag)
+    manual = ", ".join(manual_list) or "—"
+    auto = ", ".join(auto_list) or "—"
+    effective = ", ".join(effective_list) or "—"
+    return {
+        "manual": manual,
+        "auto": auto,
+        "effective": effective,
+    }
 
 
 class URLEntryDialog(tk.Toplevel):

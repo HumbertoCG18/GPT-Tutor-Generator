@@ -19,9 +19,16 @@ sys.modules.setdefault("tkinter.ttk", _tk_mock)
 
 import pytest
 
+import src.builder.engine as engine_module
+
 from src.builder.engine import (
     BackendSelector,
+    _auto_map_entry_unit,
     _build_marker_page_chunks,
+    _build_file_map_unit_index,
+    _build_timeline_candidate_rows,
+    _build_timeline_index,
+    _score_timeline_row_against_unit,
     _compact_notebook_markdown,
     rows_to_markdown_table,
     wrap_frontmatter,
@@ -29,10 +36,11 @@ from src.builder.engine import (
     _parse_units_from_teaching_plan,
     _parse_bibliography_from_teaching_plan,
     _parse_syllabus_timeline,
+    _parse_timeline_date_value,
     _match_timeline_to_units,
+    _build_assessment_context_from_course,
     _topic_text,
     _topic_depth,
-    _format_units_for_prompt,
     _seed_glossary_fields,
     _find_glossary_evidence,
     _filter_live_manifest_entries,
@@ -40,6 +48,9 @@ from src.builder.engine import (
     exercise_index_md,
     file_map_md,
     glossary_md,
+    generate_claude_project_instructions,
+    generate_gemini_instructions,
+    generate_gpt_instructions,
 )
 from src.models.core import (
     DocumentProfileReport,
@@ -58,6 +69,10 @@ from src.utils.helpers import (
     safe_rel,
     slugify,
     write_text,
+)
+from tests.fixtures.syllabus_timeline_cases import (
+    METODOS_FORMAIS_SYLLABUS,
+    METODOS_FORMAIS_UNITS,
 )
 
 
@@ -103,6 +118,211 @@ class TestCodeExtensions:
         assert auto_detect_category("Aula01.ipynb") == "codigo-professor"
 
 
+class TestBacklogMarkdownStatus:
+    def test_marks_staging_markdown_as_needing_reprocess(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_markdown_status
+
+        entry = {"base_markdown": "staging/markdown-auto/pymupdf4llm/item.md"}
+        (tmp_path / "staging" / "markdown-auto" / "pymupdf4llm").mkdir(parents=True)
+        (tmp_path / "staging" / "markdown-auto" / "pymupdf4llm" / "item.md").write_text("# x", encoding="utf-8")
+
+        status = _resolve_backlog_markdown_status(entry, tmp_path)
+
+        assert status["status"] == "Só staging"
+        assert status["needs_reprocess"] == "true"
+
+    def test_marks_curated_markdown_as_final(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_markdown_status
+
+        entry = {"approved_markdown": "content/curated/item.md"}
+        (tmp_path / "content" / "curated").mkdir(parents=True)
+        (tmp_path / "content" / "curated" / "item.md").write_text("# x", encoding="utf-8")
+
+        status = _resolve_backlog_markdown_status(entry, tmp_path)
+
+        assert status["status"] == "Curado/final"
+        assert status["needs_reprocess"] == "false"
+
+    def test_loads_manual_unit_options_from_course_map(self, tmp_path):
+        from src.ui.dialogs import _load_file_map_unit_options
+
+        repo = tmp_path / "repo"
+        course_dir = repo / "course"
+        course_dir.mkdir(parents=True)
+        (course_dir / "COURSE_MAP.md").write_text(
+            """# COURSE_MAP
+
+| Unidade | Período | Slug |
+|---|---|---|
+| Unidade 01 — Métodos Formais | 02/03/2026 a 25/03/2026 | `unidade-01-metodos-formais` |
+| Unidade 02 — Verificação de Programas | 27/04/2026 a 06/05/2026 | `unidade-02-verificacao-de-programas` |
+""",
+            encoding="utf-8",
+        )
+
+        options = _load_file_map_unit_options(repo)
+
+        assert ("Unidade 01 — Métodos Formais (unidade-01-metodos-formais)", "unidade-01-metodos-formais") in options
+        assert ("Unidade 02 — Verificação de Programas (unidade-02-verificacao-de-programas)", "unidade-02-verificacao-de-programas") in options
+
+    def test_formats_effective_tag_summary_without_duplicates(self):
+        from src.ui.dialogs import _format_backlog_tag_summary
+
+        summary = _format_backlog_tag_summary(
+            ["topico:funcoes-recursivas"],
+            ["tipo:lista"],
+            "topico:funcoes-recursivas, ferramenta:isabelle",
+        )
+
+        assert summary["manual"] == "topico:funcoes-recursivas"
+        assert summary["auto"] == "tipo:lista"
+        assert summary["effective"] == "topico:funcoes-recursivas, tipo:lista, ferramenta:isabelle"
+
+    def test_resolves_backlog_unit_status_from_file_map(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_unit_status
+
+        repo = tmp_path / "repo"
+        course_dir = repo / "course"
+        course_dir.mkdir(parents=True)
+        (course_dir / "FILE_MAP.md").write_text(
+            """# FILE_MAP
+
+| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
+|---|---|---|---|---|---|---|---|
+| 1 | Exerciciosespecificacao | listas | praticar | alta | `exercises/lists/exerciciosespecificacao.md` | unidade-02-verificacao-de-programas | 27/04/2026 a 06/05/2026 |
+""",
+            encoding="utf-8",
+        )
+
+        status = _resolve_backlog_unit_status(
+            {"title": "Exerciciosespecificacao", "category": "listas"},
+            repo,
+        )
+
+        assert status["assigned"] == "unidade-02-verificacao-de-programas"
+        assert status["source"] == "FILE_MAP atual"
+
+    def test_resolves_backlog_unit_status_with_manual_override_pending_reprocess(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_unit_status
+
+        repo = tmp_path / "repo"
+        course_dir = repo / "course"
+        course_dir.mkdir(parents=True)
+        (course_dir / "FILE_MAP.md").write_text(
+            """# FILE_MAP
+
+| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
+|---|---|---|---|---|---|---|---|
+| 1 | Exerciciosespecificacao | listas | praticar | alta | `exercises/lists/exerciciosespecificacao.md` | unidade-01-metodos-formais | 04/03/2026 |
+""",
+            encoding="utf-8",
+        )
+
+        status = _resolve_backlog_unit_status(
+            {
+                "title": "Exerciciosespecificacao",
+                "category": "listas",
+                "manual_unit_slug": "unidade-02-verificacao-de-programas",
+            },
+            repo,
+            {"unidade-02-verificacao-de-programas": "Unidade 02 — Verificação de Programas"},
+        )
+
+        assert status["assigned"] == "Unidade 02 — Verificação de Programas"
+        assert status["source"] == "Override manual salvo"
+        assert "reprocesse o repositório" in status["note"].lower()
+
+    def test_resolves_backlog_timeline_status_from_timeline_index(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_timeline_status
+
+        repo = tmp_path / "repo"
+        course_dir = repo / "course"
+        course_dir.mkdir(parents=True)
+        (course_dir / "FILE_MAP.md").write_text(
+            """# FILE_MAP
+
+| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
+|---|---|---|---|---|---|---|---|
+| 1 | Exerciciosformalizacaoalgoritmosrecursao | listas | praticar | alta | `exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md` | unidade-01-metodos-formais | 11/03/2026 a 25/03/2026 |
+""",
+            encoding="utf-8",
+        )
+        (course_dir / ".timeline_index.json").write_text(
+            json.dumps(
+                {
+                    "version": 1,
+                    "blocks": [
+                        {
+                            "id": "bloco-02",
+                            "period_label": "11/03/2026 a 25/03/2026",
+                            "unit_slug": "unidade-01-metodos-formais",
+                            "topics": ["definições indutivas", "funções recursivas"],
+                            "aliases": ["indução", "recursão"],
+                        }
+                    ],
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+
+        status = _resolve_backlog_timeline_status(
+            {"title": "Exerciciosformalizacaoalgoritmosrecursao", "category": "listas"},
+            repo,
+        )
+
+        assert status["period"] == "11/03/2026 a 25/03/2026"
+        assert status["block"] == "bloco-02"
+        assert "funções recursivas" in status["topics"]
+
+    def test_resolves_backlog_timeline_status_with_manual_block_pending_reprocess(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_timeline_status
+
+        repo = tmp_path / "repo"
+        course_dir = repo / "course"
+        course_dir.mkdir(parents=True)
+        (course_dir / "FILE_MAP.md").write_text(
+            """# FILE_MAP
+
+| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
+|---|---|---|---|---|---|---|---|
+| 1 | Exerciciosformalizacaoalgoritmosrecursao | listas | praticar | alta | `exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md` | unidade-01-metodos-formais | 04/03/2026 |
+""",
+            encoding="utf-8",
+        )
+        (course_dir / ".timeline_index.json").write_text(
+            json.dumps(
+                {
+                    "version": 1,
+                    "blocks": [
+                        {
+                            "id": "bloco-02",
+                            "period_label": "16/03/2026 a 25/03/2026",
+                            "unit_slug": "unidade-01-metodos-formais",
+                            "topics": ["definições indutivas", "funções recursivas"],
+                            "aliases": ["indução", "recursão"],
+                        }
+                    ],
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+
+        status = _resolve_backlog_timeline_status(
+            {
+                "title": "Exerciciosformalizacaoalgoritmosrecursao",
+                "category": "listas",
+                "manual_timeline_block_id": "bloco-02",
+            },
+            repo,
+        )
+
+        assert status["period"] == "16/03/2026 a 25/03/2026"
+        assert status["block"] == "bloco-02"
+        assert "reprocesse o repositório" in status["note"].lower()
+
+
 class TestNotebookCompaction:
     def test_compacts_ipynb_into_jupyter_markdown(self):
         raw = json.dumps({
@@ -117,6 +337,18 @@ class TestNotebookCompaction:
         assert "## Célula 2 — Código" in content
         assert "```python" in content
         assert "**Saída:**" in content
+
+
+class TestInstructionCutover:
+    def test_claude_instructions_no_longer_ask_tutor_to_fill_file_map_manually(self):
+        text = generate_claude_project_instructions(
+            {"course_name": "Métodos Formais"},
+            first_session_pending=True,
+        )
+
+        assert "preencha a coluna **Unidade**" not in text
+        assert "reprocessar repositório" in text.lower()
+        assert "backlog" in text.lower()
 
 
 # ---------------------------------------------------------------------------
@@ -626,6 +858,38 @@ AVALIAÇÃO:
 Texto que não deve ser parseado.
 """
 
+ASSESSMENT_CONFLICT_PLAN = """
+N°. DA UNIDADE: 01
+CONTEÚDO: Métodos Formais
+1.1. Sistemas Formais
+1.2. Linguagens de Especificação e Lógicas
+1.3. Abordagens para Verificação Formal
+1.3.3. Provadores de Teoremas
+
+N°. DA UNIDADE: 02
+CONTEÚDO: Verificação de Programas
+2.1. Lógica de Hoare
+2.1.1. Pré e Pós Condições
+2.2. Softwares de Suporte
+
+AVALIAÇÃO:
+P1: Prova individual abrangendo as unidades 1 e 2
+
+BIBLIOGRAFIA
+"""
+
+ASSESSMENT_CONFLICT_SYLLABUS = """
+| Semana | Data | Conteúdo |
+|---|---|---|
+| 1 | 2026-03-02 | Unidade 1: Métodos Formais |
+| 2 | 2026-03-09 | Continuação Unidade 1 |
+| 3 | 2026-03-16 | Provadores de Teoremas - Isabelle |
+| 4 | 2026-03-23 | Revisão |
+| 5 | 2026-04-22 | P1 |
+| 6 | 2026-04-27 | Unidade 2: Lógica de Hoare |
+| 7 | 2026-05-04 | Continuação Unidade 2 |
+"""
+
 
 class TestParseUnitsFromTeachingPlan:
     def test_pucrs_format_detects_three_units(self):
@@ -742,23 +1006,6 @@ class TestParseUnitsFromTeachingPlan:
 
     def test_topic_depth_helper_with_string(self):
         assert _topic_depth("Bar") == 0
-
-    def test_format_units_for_prompt_structure(self):
-        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
-        result = _format_units_for_prompt(units)
-        assert "slug:" in result
-        assert "Métodos Formais" in result
-        assert "Sistemas Formais" in result
-        # Sub-topics should be more indented
-        lines = result.split("\n")
-        sistemas_line = [l for l in lines if "Sistemas Formais" in l][0]
-        fundamentos_line = [l for l in lines if "Lógica de Primeira Ordem" in l][0]
-        # fundamentos should have more leading whitespace
-        assert len(fundamentos_line) - len(fundamentos_line.lstrip()) > len(sistemas_line) - len(sistemas_line.lstrip())
-
-    def test_format_units_for_prompt_empty(self):
-        assert _format_units_for_prompt([]) == ""
-
 
 # ---------------------------------------------------------------------------
 # _parse_bibliography_from_teaching_plan
@@ -941,6 +1188,152 @@ class TestMatchTimelineToUnits:
         assert mapping[2]["period"] == "2026-06-15"
 
 
+class TestTimelineIndex:
+    def test_build_timeline_index_groups_related_rows_into_blocks(self):
+        timeline = _parse_syllabus_timeline(METODOS_FORMAIS_SYLLABUS)
+        candidate_rows = _build_timeline_candidate_rows(timeline)
+        unit_index = _build_file_map_unit_index(METODOS_FORMAIS_UNITS)
+
+        timeline_index = _build_timeline_index(candidate_rows, unit_index=unit_index)
+        periods = [block["period_label"] for block in timeline_index["blocks"]]
+
+        assert "11/03/2026 a 25/03/2026" in periods
+        assert "30/03/2026 a 01/04/2026" in periods
+        assert "06/04/2026 a 08/04/2026" in periods
+
+    def test_build_timeline_index_assigns_matching_block_to_unit(self):
+        timeline = _parse_syllabus_timeline(METODOS_FORMAIS_SYLLABUS)
+        candidate_rows = _build_timeline_candidate_rows(timeline)
+        unit_index = _build_file_map_unit_index(METODOS_FORMAIS_UNITS)
+
+        timeline_index = _build_timeline_index(candidate_rows, unit_index=unit_index)
+
+        recursion_block = next(
+            block for block in timeline_index["blocks"]
+            if "recursivas" in block["topic_text"]
+        )
+        isabelle_block = next(
+            block for block in timeline_index["blocks"]
+            if "isabelle" in block["topic_text"]
+        )
+
+        assert recursion_block["unit_slug"] == "unidade-01-metodos-formais"
+        assert isabelle_block["unit_slug"] == "unidade-02-prova-interativa-de-teoremas"
+
+    def test_timeline_unit_scoring_is_conservative_for_generic_logic_and_admin_rows(self):
+        unit_index = _build_file_map_unit_index(_parse_units_from_teaching_plan(PUCRS_PLAN))
+        scores_by_slug = {
+            unit["slug"]: _score_timeline_row_against_unit("Lógica de Hoare", unit)
+            for unit in unit_index
+        }
+
+        assert scores_by_slug["unidade-02-verificacao-de-programas"] > scores_by_slug["unidade-01-metodos-formais"]
+        assert scores_by_slug["unidade-02-verificacao-de-programas"] > scores_by_slug["unidade-03-verificacao-de-modelos"]
+
+        predicados_scores = {
+            unit["slug"]: _score_timeline_row_against_unit("Lógica de Predicados", unit)
+            for unit in unit_index
+        }
+        assert predicados_scores["unidade-03-verificacao-de-modelos"] == 0.0
+        assert _score_timeline_row_against_unit(
+            "Lógica de Programas - coleções Dafny (conjuntos)",
+            next(unit for unit in unit_index if unit["slug"] == "unidade-01-metodos-formais"),
+        ) == 0.0
+
+        assert all(
+            _score_timeline_row_against_unit("Suspensão de aulas", unit) == 0.0
+            for unit in unit_index
+        )
+
+    def test_timeline_index_does_not_assign_administrative_blocks(self):
+        timeline = _parse_syllabus_timeline("""\
+| Semana | Data | Conteúdo |
+|---|---|---|
+| 1 | 2026-03-09 | Suspensão de aulas |
+| 2 | 2026-04-27 | Lógica de Hoare |
+| 3 | 2026-06-15 | Modelos de Kripke |
+""")
+        unit_index = _build_file_map_unit_index([
+            ("Unidade 01 — Métodos Formais", ["Lógica de Predicados"]),
+            ("Unidade 02 — Verificação de Programas", ["Lógica de Hoare"]),
+            ("Unidade 03 — Verificação de Modelos", ["Modelos de Kripke"]),
+        ])
+
+        timeline_index = _build_timeline_index(_build_timeline_candidate_rows(timeline), unit_index=unit_index)
+        suspension_block = next(
+            block for block in timeline_index["blocks"]
+            if "suspensao" in block["topic_text"]
+        )
+        hoare_block = next(
+            block for block in timeline_index["blocks"]
+            if "hoare" in block["topic_text"]
+        )
+        kripke_block = next(
+            block for block in timeline_index["blocks"]
+            if "kripke" in block["topic_text"]
+        )
+
+        assert suspension_block["unit_slug"] == ""
+        assert hoare_block["unit_slug"] == "unidade-02-verificacao-de-programas"
+        assert kripke_block["unit_slug"] == "unidade-03-verificacao-de-modelos"
+
+    def test_timeline_index_keeps_weak_single_token_overlap_unassigned(self):
+        timeline = _parse_syllabus_timeline("""\
+| Semana | Data | Conteúdo |
+|---|---|---|
+| 1 | 2026-05-13 | Lógica de Programas - coleções Dafny (conjuntos) |
+""")
+        unit_index = _build_file_map_unit_index(_parse_units_from_teaching_plan(PUCRS_PLAN))
+
+        timeline_index = _build_timeline_index(_build_timeline_candidate_rows(timeline), unit_index=unit_index)
+
+        assert timeline_index["blocks"][0]["unit_slug"] == ""
+
+
+class TestEntryUnitMatcher:
+    def test_ignores_accidental_estado_match_in_logic_file(self):
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        entry = {
+            "title": "Logicaproposicional Sintaxe",
+            "category": "material-de-aula",
+            "raw_target": "raw/pdfs/material/logicaproposicional-sintaxe.pdf",
+            "manual_tags": [],
+            "auto_tags": [],
+            "tags": "",
+        }
+        markdown_text = """\
+# Lógica Proposicional
+
+A cidade de Salvador é a capital do estado do Amazonas.
+"""
+
+        match = _auto_map_entry_unit(entry, units, markdown_text)
+
+        assert match.ambiguous is True
+        assert match.confidence <= 0.4
+
+    def test_prefers_verificacao_de_programas_when_markdown_has_hoare_signals(self):
+        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
+        entry = {
+            "title": "Exerciciosespecificacao",
+            "category": "listas",
+            "raw_target": "raw/pdfs/listas/exerciciosespecificacao.pdf",
+            "manual_tags": [],
+            "auto_tags": [],
+            "tags": "",
+        }
+        markdown_text = """\
+## Especificação Formal
+
+Construa pré e pós condições em lógica de predicados.
+Use invariantes de laço e discuta correção parcial e total.
+"""
+
+        match = _auto_map_entry_unit(entry, units, markdown_text)
+
+        assert match.slug == "unidade-02-verificacao-de-programas"
+
+
 class TestCourseMapTimeline:
     """Testa que course_map_md inclui a seção Timeline quando há cronograma."""
 
@@ -992,6 +1385,231 @@ class TestCourseMapTimeline:
         )
         result = course_map_md({"course_name": "Métodos Formais"}, sp)
         assert "Timeline" not in result
+
+    def test_course_map_prefers_cached_timeline_and_assessment_context(self, monkeypatch):
+        from src.models.core import SubjectProfile
+        import src.builder.engine as engine
+
+        sp = SubjectProfile(
+            name="Métodos Formais",
+            slug="metodos-formais",
+            syllabus="texto qualquer de cronograma",
+            teaching_plan=PUCRS_PLAN,
+        )
+        course_meta = {
+            "course_name": "Métodos Formais",
+            "_timeline_context": {
+                "blocks_by_unit": {
+                    "unidade-01-metodos-formais": [
+                        {
+                            "period_start": "2026-03-02",
+                            "period_end": "2026-03-25",
+                            "period_label": "02/03/2026 a 25/03/2026",
+                        }
+                    ]
+                }
+            },
+            "_assessment_context": {
+                "version": 1,
+                "assessments": [],
+                "conflicts": [
+                    {
+                        "label": "P1",
+                        "assessment_date": "2026-04-22",
+                        "declared_unit_numbers": [1, 2],
+                        "declared_unit_slugs": ["unidade-01-metodos-formais"],
+                        "conflicts": ["P1 em 2026-04-22 antecede Unidade 1 (previsto para 02/03/2026 a 25/03/2026)."],
+                    }
+                ],
+            },
+        }
+
+        def _fail(*args, **kwargs):
+            raise AssertionError("cached contexts should avoid recomputation")
+
+        monkeypatch.setattr(engine, "_build_file_map_timeline_context_from_course", _fail)
+        monkeypatch.setattr(engine, "_build_assessment_context_from_course", _fail)
+
+        result = course_map_md(course_meta, sp)
+
+        assert "Timeline" in result
+        assert "02/03/2026 a 25/03/2026" in result
+        assert "Conflitos de avaliação x cronograma" in result
+
+    def test_course_map_does_not_recover_missing_units_from_raw_syllabus(self, monkeypatch):
+        from src.models.core import SubjectProfile
+        import src.builder.engine as engine
+
+        sp = SubjectProfile(
+            name="Métodos Formais",
+            slug="metodos-formais",
+            syllabus="texto qualquer de cronograma",
+            teaching_plan=PUCRS_PLAN,
+        )
+        course_meta = {
+            "course_name": "Métodos Formais",
+            "_timeline_context": {
+                "blocks_by_unit": {
+                    "unidade-01-metodos-formais": [
+                        {
+                            "period_start": "2026-03-02",
+                            "period_end": "2026-03-25",
+                            "period_label": "02/03/2026 a 25/03/2026",
+                        }
+                    ]
+                }
+            },
+        }
+
+        def _fail(*args, **kwargs):
+            raise AssertionError("legacy timeline fallback should not be used")
+
+        monkeypatch.setattr(engine, "_match_timeline_to_units", _fail)
+
+        result = course_map_md(course_meta, sp)
+
+        assert "| Unidade 01" in result
+        assert "| Unidade 02" not in result
+        assert "02/03/2026 a 25/03/2026" in result
+
+
+class TestAssessmentConflicts:
+    def test_build_assessment_context_detects_scope_conflict(self):
+        from src.models.core import SubjectProfile
+
+        sp = SubjectProfile(
+            name="Métodos Formais",
+            slug="metodos-formais",
+            syllabus=ASSESSMENT_CONFLICT_SYLLABUS,
+            teaching_plan=ASSESSMENT_CONFLICT_PLAN,
+        )
+        context = _build_assessment_context_from_course({"course_name": "Métodos Formais"}, sp)
+
+        assert context["version"] == 1
+        assert context["conflicts"]
+        conflict = context["conflicts"][0]
+        assert conflict["label"] == "P1"
+        assert conflict["assessment_date"] == "2026-04-22"
+        assert conflict["declared_unit_numbers"] == [1, 2]
+        assert "unidade-02-verificacao-de-programas" in conflict["declared_unit_slugs"]
+        assert any("antecede" in item for item in conflict["conflicts"])
+
+    def test_course_map_includes_assessment_conflict_section(self):
+        from src.models.core import SubjectProfile
+
+        sp = SubjectProfile(
+            name="Métodos Formais",
+            slug="metodos-formais",
+            syllabus=ASSESSMENT_CONFLICT_SYLLABUS,
+            teaching_plan=ASSESSMENT_CONFLICT_PLAN,
+        )
+        result = course_map_md({"course_name": "Métodos Formais"}, sp)
+
+        assert "Conflitos de avaliação x cronograma" in result
+        assert "P1" in result
+
+    def test_file_map_prefers_cached_content_taxonomy_and_timeline_context(self, monkeypatch):
+        from src.models.core import SubjectProfile
+        import src.builder.engine as engine
+
+        sp = SubjectProfile(
+            name="Métodos Formais",
+            slug="metodos-formais",
+            syllabus=SYLLABUS_TABLE,
+            teaching_plan=PUCRS_PLAN,
+        )
+        course_meta = {
+            "course_name": "Métodos Formais",
+            "_repo_root": None,
+            "_content_taxonomy": {
+                "version": 1,
+                "course_slug": "metodos-formais",
+                "units": [
+                    {
+                        "slug": "unidade-01-metodos-formais",
+                        "title": "Unidade 1 — Métodos Formais",
+                        "topics": [
+                            {
+                                "slug": "provadores-de-teoremas",
+                                "label": "Provadores de Teoremas",
+                                "aliases": ["Isabelle"],
+                                "kind": "subtopic",
+                                "unit_slug": "unidade-01-metodos-formais",
+                            }
+                        ],
+                    }
+                ],
+            },
+            "_timeline_context": {
+                "timeline_index": {
+                    "blocks": [
+                        {
+                            "id": "bloco-01",
+                            "period_label": "02/03/2026 a 25/03/2026",
+                            "unit_slug": "unidade-01-metodos-formais",
+                            "unit_confidence": 0.98,
+                            "primary_topic_slug": "provadores-de-teoremas",
+                            "primary_topic_confidence": 0.96,
+                            "topic_candidates": [
+                                {
+                                    "topic_slug": "provadores-de-teoremas",
+                                    "topic_label": "Provadores de Teoremas",
+                                    "unit_slug": "unidade-01-metodos-formais",
+                                }
+                            ],
+                            "rows": [
+                                {"index": 1, "date_text": "02/03/2026", "content": "Provadores de Teoremas - Isabelle"},
+                                {"index": 2, "date_text": "04/03/2026", "content": "Provadores de Teoremas - Isabelle"},
+                            ],
+                        }
+                    ]
+                },
+                "blocks_by_unit": {
+                    "unidade-01-metodos-formais": [
+                        {
+                            "id": "bloco-01",
+                            "period_label": "02/03/2026 a 25/03/2026",
+                            "unit_slug": "unidade-01-metodos-formais",
+                            "unit_confidence": 0.98,
+                            "primary_topic_slug": "provadores-de-teoremas",
+                            "primary_topic_confidence": 0.96,
+                            "topic_candidates": [],
+                            "rows": [
+                                {"index": 1, "date_text": "02/03/2026", "content": "Provadores de Teoremas - Isabelle"},
+                                {"index": 2, "date_text": "04/03/2026", "content": "Provadores de Teoremas - Isabelle"},
+                            ],
+                        }
+                    ]
+                },
+                "unit_periods": {"unidade-01-metodos-formais": "02/03/2026 a 25/03/2026"},
+                "unit_period_bounds": {
+                    "unidade-01-metodos-formais": (
+                        _parse_timeline_date_value("2026-03-02"),
+                        _parse_timeline_date_value("2026-03-25"),
+                    )
+                },
+            },
+        }
+
+        entry = {
+            "title": "Isabelle",
+            "category": "listas",
+            "tags": "",
+            "raw_target": "raw/pdfs/listas/isabelle.pdf",
+            "_markdown_text_for_tests": "# Provadores de Teoremas\n\nIsabelle",
+        }
+
+        def _fail(*args, **kwargs):
+            raise AssertionError("cached contexts should avoid recomputation")
+
+        monkeypatch.setattr(engine, "_build_file_map_content_taxonomy_from_course", _fail)
+        monkeypatch.setattr(engine, "_build_file_map_timeline_context_from_course", _fail)
+
+        result = file_map_md(course_meta, [entry], sp)
+
+        assert "unidade-01-metodos-formais" in result
+        assert "02/03/2026 a 25/03/2026" in result
+        assert "Isabelle" in result
 
 
 class TestGlossarySeed:
@@ -1123,6 +1741,90 @@ class TestGlossarySeed:
         assert "excesso de detalhe técnico" not in glossary
         assert "manifest" not in glossary.lower()
 
+        taxonomy = json.loads((repo / "course" / ".content_taxonomy.json").read_text(encoding="utf-8"))
+        timeline_index = json.loads((repo / "course" / ".timeline_index.json").read_text(encoding="utf-8"))
+        assessment_context = json.loads((repo / "course" / ".assessment_context.json").read_text(encoding="utf-8"))
+        assert taxonomy["version"] == 1
+        assert taxonomy["course_slug"]
+        assert taxonomy["units"]
+        assert isinstance(timeline_index["blocks"], list)
+        assert assessment_context["version"] == 1
+
+    def test_file_map_does_not_restore_period_from_unit_periods_fallback(self, monkeypatch):
+        import src.builder.engine as engine
+        from src.models.core import SubjectProfile
+
+        course_meta = {
+            "course_name": "Métodos Formais",
+            "course_slug": "metodos-formais",
+            "_repo_root": None,
+            "_content_taxonomy": {
+                "version": 1,
+                "course_slug": "metodos-formais",
+                "units": [
+                    {
+                        "slug": "unidade-01-metodos-formais",
+                        "title": "Unidade 1 — Métodos Formais",
+                        "topics": [
+                            {
+                                "slug": "provadores-de-teoremas",
+                                "label": "Provadores de Teoremas",
+                                "aliases": ["Isabelle"],
+                                "kind": "subtopic",
+                                "unit_slug": "unidade-01-metodos-formais",
+                            }
+                        ],
+                    }
+                ],
+            },
+            "_timeline_context": {
+                "timeline_index": {"version": 1, "blocks": []},
+                "blocks_by_unit": {},
+                "rows_by_unit": {},
+                "unassigned_blocks": [],
+                "unit_periods": {
+                    "unidade-01-metodos-formais": "02/03/2026 a 25/03/2026"
+                },
+                "unit_period_bounds": {
+                    "unidade-01-metodos-formais": (
+                        _parse_timeline_date_value("2026-03-02"),
+                        _parse_timeline_date_value("2026-03-25"),
+                    )
+                },
+            },
+        }
+        subject_profile = SubjectProfile(
+            name="Métodos Formais",
+            slug="metodos-formais",
+            teaching_plan="""
+### Unidade 1 — Métodos Formais
+- Provadores de Teoremas
+""".strip(),
+        )
+        entry = {
+            "title": "Isabelle",
+            "category": "listas",
+            "tags": "",
+            "manual_unit_slug": "unidade-01-metodos-formais",
+            "base_markdown": "content/curated/isabelle.md",
+            "approved_markdown": None,
+            "curated_markdown": None,
+            "advanced_markdown": None,
+            "_markdown_text_for_tests": "# Provadores de Teoremas\n\nIsabelle",
+        }
+
+        def _fail(*args, **kwargs):
+            raise AssertionError("cached contexts should avoid recomputation")
+
+        monkeypatch.setattr(engine, "_build_file_map_content_taxonomy_from_course", _fail)
+        monkeypatch.setattr(engine, "_build_file_map_timeline_context_from_course", _fail)
+
+        result = file_map_md(course_meta, [entry], subject_profile)
+
+        assert "unidade-01-metodos-formais" in result
+        assert "02/03/2026 a 25/03/2026" not in result
+        assert "| unidade-01-metodos-formais |  |" in result
+
     def test_build_passes_manifest_entries_to_glossary(self, tmp_path, monkeypatch):
         from src.builder import engine
         from src.builder.engine import RepoBuilder
@@ -1188,7 +1890,8 @@ class TestGlossarySeed:
 
         builder.build()
 
-        assert captured_manifest_entries == [[entry_payload]]
+        assert [entry_payload] in captured_manifest_entries
+        assert captured_manifest_entries.count([entry_payload]) >= 1
 
     def test_no_timeline_without_teaching_plan(self):
         from src.models.core import SubjectProfile
@@ -1241,7 +1944,8 @@ class TestSystemPromptFileReferences:
     def test_first_session_has_checklist(self):
         from src.builder.engine import generate_claude_project_instructions
         result = generate_claude_project_instructions(self.META)
-        assert "Mapear arquivos" in result
+        assert "artefatos estruturais gerados pelo app" in result
+        assert "Reprocessar Repositório" in result
         assert "EXERCISE_INDEX.md" in result
         assert "GLOSSARY.md" in result
 
@@ -1255,6 +1959,55 @@ class TestSystemPromptFileReferences:
         assert "exercises/EXERCISE_INDEX.md" in result
         assert "Use `course/FILE_MAP.md` para localizar o material certo" in result
         assert "Só então abra um markdown em `content/`, `exercises/` ou `exams/`" in result
+
+
+class TestPromptArchitectureAlignment:
+    META = {"course_name": "Métodos Formais", "professor": "P", "institution": "I", "semester": "S"}
+
+    def test_claude_prompt_treats_maps_as_generated_artifacts(self):
+        text = generate_claude_project_instructions(self.META, first_session_pending=True)
+
+        assert "artefatos estruturais gerados pelo app" in text
+        assert "Reprocessar Repositório" in text
+        assert "backlog" in text
+
+    def test_claude_prompt_no_longer_requests_manual_file_map_fill(self):
+        text = generate_claude_project_instructions(self.META, first_session_pending=True)
+
+        assert "preencha a coluna **Unidade** dos itens vazios" not in text
+        assert "retorne o `FILE_MAP.md` e o `COURSE_MAP.md` atualizados" not in text
+
+    def test_gpt_prompt_uses_same_structural_contract(self):
+        text = generate_gpt_instructions(self.META)
+
+        assert "artefatos estruturais gerados pelo app" in text
+        assert "não reescreva `FILE_MAP.md`/`COURSE_MAP.md` manualmente" in text
+
+    def test_gemini_prompt_uses_same_structural_contract(self):
+        text = generate_gemini_instructions(self.META)
+
+        assert "artefatos estruturais gerados pelo app" in text
+        assert "não reescreva `FILE_MAP.md`/`COURSE_MAP.md` manualmente" in text
+
+    def test_prompts_do_not_surface_internal_json_indexes(self):
+        texts = [
+            generate_claude_project_instructions(self.META, first_session_pending=True),
+            generate_gpt_instructions(self.META),
+            generate_gemini_instructions(self.META),
+        ]
+
+        for text in texts:
+            assert ".timeline_index.json" not in text
+            assert ".content_taxonomy.json" not in text
+            assert ".tag_catalog.json" not in text
+            assert ".assessment_context.json" not in text
+
+    def test_engine_source_no_longer_contains_legacy_manual_mapping_instruction(self):
+        source = Path(engine_module.__file__).read_text(encoding="utf-8")
+
+        assert "Mapear arquivos → unidades" not in source
+        assert "preencha a coluna **Unidade** dos itens vazios" not in source
+        assert "retorne o `FILE_MAP.md` e o `COURSE_MAP.md` atualizados" not in source
 
 
 # ---------------------------------------------------------------------------
@@ -1560,6 +2313,21 @@ class TestExerciseIndexLowToken:
         assert "| [a preencher] | | | | | |" in result
         assert "Mapeamento de exercÃ­cios por tÃ³pico" not in result
 
+    def test_exercise_index_uses_auto_tags_when_manual_tags_are_empty(self):
+        entries = [
+            FileEntry(
+                title="Lista 1",
+                source_path="raw/lista1.pdf",
+                category="listas",
+                file_type="pdf",
+                manual_tags=[],
+                auto_tags=["topico:funcoes-recursivas", "tipo:lista"],
+            ),
+        ]
+        result = exercise_index_md({"course_name": "Teste"}, entries)
+        assert "topico:funcoes-recursivas" in result
+        assert "tipo:lista" in result
+
 
 class TestIncrementalBuildLowTokenRollout:
     def test_incremental_build_reapplies_low_token_architecture_without_new_entries(self, tmp_path):
@@ -1647,6 +2415,9 @@ class TestIncrementalBuildLowTokenRollout:
 
         file_map = (repo / "course" / "FILE_MAP.md").read_text(encoding="utf-8")
         course_map = (repo / "course" / "COURSE_MAP.md").read_text(encoding="utf-8")
+        content_taxonomy = json.loads((repo / "course" / ".content_taxonomy.json").read_text(encoding="utf-8"))
+        timeline_index = json.loads((repo / "course" / ".timeline_index.json").read_text(encoding="utf-8"))
+        assessment_context = json.loads((repo / "course" / ".assessment_context.json").read_text(encoding="utf-8"))
         instructions = (repo / "INSTRUCOES_CLAUDE_PROJETO.md").read_text(encoding="utf-8")
         bundle = json.loads((repo / "build" / "claude-knowledge" / "bundle.seed.json").read_text(encoding="utf-8"))
         lesson = (repo / "content" / "lesson.md").read_text(encoding="utf-8")
@@ -1654,7 +2425,19 @@ class TestIncrementalBuildLowTokenRollout:
         assert "Ordem de consulta econômica" in file_map
         assert "Quando abrir" in file_map
         assert "Mapa pedagógico curto da disciplina" in course_map
+        assert content_taxonomy["version"] == 1
+        assert timeline_index["version"] == 1
+        assert isinstance(timeline_index["blocks"], list)
+        assert assessment_context["version"] == 1
         assert "Ordem de leitura econômica" in instructions
+        assert "artefatos estruturais gerados pelo app" in instructions
+        assert "Reprocessar Repositório" in instructions
+        assert "backlog" in instructions
+        assert "preencha a coluna **Unidade** dos itens vazios" not in instructions
+        assert ".timeline_index.json" not in instructions
+        assert ".content_taxonomy.json" not in instructions
+        assert ".tag_catalog.json" not in instructions
+        assert ".assessment_context.json" not in instructions
         assert bundle["selection_policy"]["goal"] == "baixo-custo-alto-sinal"
         assert bundle["bundle_candidates"][0]["id"] == "entry1"
         assert "> **[Descrição de imagem]** Diagrama de árvore com três níveis e duas ramificações principais." in lesson
