@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -15,12 +16,17 @@ class RepoTask:
     subject_name: str
     repo_root: str
     action: RepoTaskAction
+    entry_payloads: List[Dict[str, Any]] = field(default_factory=list)
     status: RepoTaskStatus = "pending"
     created_at: str = field(default_factory=lambda: datetime.now().isoformat(timespec="seconds"))
     started_at: Optional[str] = None
     finished_at: Optional[str] = None
     shutdown_after_completion: bool = False
     notes: str = ""
+
+    def __post_init__(self) -> None:
+        # Take a defensive copy so queued snapshots do not share mutable payloads.
+        self.entry_payloads = [deepcopy(item) for item in self.entry_payloads]
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)

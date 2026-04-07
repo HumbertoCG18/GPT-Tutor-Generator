@@ -150,6 +150,14 @@ def test_image_types_include_latex_extraction():
     assert "extração-latex" in IMAGE_TYPES
 
 
+def test_image_curator_layout_mode_changes_by_width():
+    from src.ui.image_curator import _image_curator_layout_mode
+
+    assert _image_curator_layout_mode(1500) == "wide"
+    assert _image_curator_layout_mode(1100) == "medium"
+    assert _image_curator_layout_mode(820) == "stacked"
+
+
 def test_remove_images_from_curation_prunes_empty_page():
     from src.ui.image_curator import _remove_images_from_curation
 

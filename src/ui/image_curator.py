@@ -24,6 +24,14 @@ logger = logging.getLogger(__name__)
 IMAGE_TYPES = ["diagrama", "tabela", "fórmula", "código", "genérico", "decorativa", "extração-latex"]
 
 
+def _image_curator_layout_mode(width: int) -> str:
+    if width >= 1400:
+        return "wide"
+    if width >= 980:
+        return "medium"
+    return "stacked"
+
+
 def _page_sort_key(page_num: Optional[int]) -> int:
     return page_num if page_num is not None else 9999
 
@@ -137,11 +145,14 @@ class ImageCurator(tk.Toplevel):
         self._image_widgets: Dict[str, dict] = {}  # fname -> {type_var, include_var, selected_var, path}
         self._vision_client = None  # persistent client for both prompts
         self._vision_busy = False   # prevent concurrent requests
+        self._layout_mode = ""
 
         self.theme_mgr.apply(self, self._theme_name)
         self._build_ui()
         self._load_manifest()
         self.bind("<Delete>", self._on_delete_key)
+        self.bind("<Configure>", self._on_layout_change)
+        self.after_idle(self._apply_responsive_layout)
 
     # ── UI ──────────────────────────────────────────────────────────────
 
@@ -186,12 +197,12 @@ class ImageCurator(tk.Toplevel):
         status_bar.pack(fill="x", side="bottom")
 
         # PanedWindow
-        paned = ttk.PanedWindow(self, orient="horizontal")
-        paned.pack(fill="both", expand=True, padx=10, pady=10)
+        self._main_paned = ttk.PanedWindow(self, orient="horizontal")
+        self._main_paned.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Left panel: entry + page tree
-        left_frame = ttk.Frame(paned)
-        paned.add(left_frame, weight=1)
+        left_frame = ttk.Frame(self._main_paned)
+        self._main_paned.add(left_frame, weight=1)
 
         ttk.Label(
             left_frame, text="Entries / Páginas", font=("Segoe UI", 10, "bold")
@@ -207,12 +218,12 @@ class ImageCurator(tk.Toplevel):
         self._tree.bind("<<TreeviewSelect>>", self._on_tree_select)
 
         # Right side: vertical paned — images top, PDF bottom
-        right_paned = ttk.PanedWindow(paned, orient="vertical")
-        paned.add(right_paned, weight=3)
+        self._right_paned = ttk.PanedWindow(self._main_paned, orient="vertical")
+        self._main_paned.add(self._right_paned, weight=3)
 
         # Top: image cards
-        images_frame = ttk.Frame(right_paned)
-        right_paned.add(images_frame, weight=2)
+        images_frame = ttk.Frame(self._right_paned)
+        self._right_paned.add(images_frame, weight=2)
 
         ttk.Label(
             images_frame, text="Imagens", font=("Segoe UI", 10, "bold")
@@ -232,17 +243,13 @@ class ImageCurator(tk.Toplevel):
         self._canvas.pack(side="left", fill="both", expand=True)
 
         self._cards_frame = tk.Frame(self._canvas, bg=p["frame_bg"])
-        self._canvas.create_window((0, 0), window=self._cards_frame, anchor="nw")
-        self._cards_frame.bind(
-            "<Configure>",
-            lambda e: self._canvas.configure(
-                scrollregion=self._canvas.bbox("all")
-            ),
-        )
+        self._cards_window = self._canvas.create_window((0, 0), window=self._cards_frame, anchor="nw")
+        self._cards_frame.bind("<Configure>", self._on_cards_frame_configure)
+        self._canvas.bind("<Configure>", self._on_cards_canvas_configure)
 
         # Bottom: PDF viewer
-        pdf_frame = ttk.Frame(right_paned)
-        right_paned.add(pdf_frame, weight=1)
+        pdf_frame = ttk.Frame(self._right_paned)
+        self._right_paned.add(pdf_frame, weight=1)
 
         pdf_header = tk.Frame(pdf_frame, bg=p["frame_bg"])
         pdf_header.pack(fill="x")
@@ -288,6 +295,45 @@ class ImageCurator(tk.Toplevel):
         pdf_vscroll.pack(side="right", fill="y")
         self._pdf_canvas.pack(side="left", fill="both", expand=True)
         self._pdf_page_img_ref = None  # prevent GC
+
+    def _on_cards_frame_configure(self, _event=None):
+        self._canvas.configure(scrollregion=self._canvas.bbox("all"))
+
+    def _on_cards_canvas_configure(self, event):
+        try:
+            self._canvas.itemconfig(self._cards_window, width=event.width)
+        except tk.TclError:
+            pass
+
+    def _on_layout_change(self, _event=None):
+        self.after_idle(self._apply_responsive_layout)
+
+    def _apply_responsive_layout(self):
+        mode = _image_curator_layout_mode(self.winfo_width())
+        if mode == self._layout_mode:
+            return
+        self._layout_mode = mode
+
+        orient = "vertical" if mode == "stacked" else "horizontal"
+        try:
+            self._main_paned.configure(orient=orient)
+        except tk.TclError:
+            return
+
+        total_width = max(self.winfo_width() - 40, 1)
+        total_height = max(self.winfo_height() - 140, 1)
+        try:
+            if mode == "wide":
+                self._main_paned.sashpos(0, min(340, max(total_width // 4, 260)))
+                self._right_paned.sashpos(0, max(int(total_height * 0.58), 320))
+            elif mode == "medium":
+                self._main_paned.sashpos(0, min(260, max(total_width // 4, 220)))
+                self._right_paned.sashpos(0, max(int(total_height * 0.52), 280))
+            else:
+                self._main_paned.sashpos(0, max(int(total_height * 0.30), 220))
+                self._right_paned.sashpos(0, max(int(total_height * 0.44), 240))
+        except tk.TclError:
+            pass
 
     # ── Data Loading ───────────────────────────────────────────────────
 

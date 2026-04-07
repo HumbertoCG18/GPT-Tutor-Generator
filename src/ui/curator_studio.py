@@ -17,6 +17,14 @@ if HAS_PYMUPDF:
 logger = logging.getLogger(__name__)
 
 
+def _curator_studio_layout_mode(width: int) -> str:
+    if width >= 1400:
+        return "wide"
+    if width >= 980:
+        return "medium"
+    return "stacked"
+
+
 def _merge_review_frontmatter_with_manifest(fm: dict, manifest_entry: dict | None) -> dict:
     """Overlay missing review-template fields with the current manifest entry."""
     merged = dict(fm or {})
@@ -69,10 +77,13 @@ class CuratorStudio(tk.Toplevel):
         self._current_frontmatter = {}
         self._available_sources = {}
         self.preview_images = []
+        self._layout_mode = ""
 
         self.theme_mgr.apply(self, self._theme_name)
         self._build_ui()
         self._load_files()
+        self.bind("<Configure>", self._on_layout_change)
+        self.after_idle(self._apply_responsive_layout)
 
     # ── UI ──────────────────────────────────────────────────────────────
 
@@ -203,6 +214,39 @@ class CuratorStudio(tk.Toplevel):
         ed_scroll = ttk.Scrollbar(editor_container, command=self.editor.yview)
         ed_scroll.pack(side="right", fill="y")
         self.editor.config(yscrollcommand=ed_scroll.set)
+
+    def _on_layout_change(self, _event=None):
+        self.after_idle(self._apply_responsive_layout)
+
+    def _apply_responsive_layout(self):
+        mode = _curator_studio_layout_mode(self.winfo_width())
+        if mode == self._layout_mode:
+            return
+        self._layout_mode = mode
+
+        orient = "vertical" if mode == "stacked" else "horizontal"
+        try:
+            self.paned.configure(orient=orient)
+        except tk.TclError:
+            return
+
+        total_width = max(self.winfo_width() - 40, 1)
+        total_height = max(self.winfo_height() - 140, 1)
+        try:
+            if mode == "wide":
+                self.paned.sashpos(0, min(320, max(total_width // 5, 240)))
+                self.paned.sashpos(1, min(900, max(total_width // 2, 640)))
+                self.info_label.configure(wraplength=700)
+            elif mode == "medium":
+                self.paned.sashpos(0, min(260, max(total_width // 5, 200)))
+                self.paned.sashpos(1, min(620, max(total_width // 2, 480)))
+                self.info_label.configure(wraplength=560)
+            else:
+                self.paned.sashpos(0, max(int(total_height * 0.22), 180))
+                self.paned.sashpos(1, max(int(total_height * 0.56), 420))
+                self.info_label.configure(wraplength=max(self.winfo_width() - 80, 320))
+        except tk.TclError:
+            pass
 
     # ── Events ──────────────────────────────────────────────────────────
 

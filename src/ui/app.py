@@ -20,10 +20,13 @@ from src.models.core import (
     FileEntry, SubjectStore, StudentStore, SubjectProfile,
     PendingOperation, PendingOperationStore,
 )
-from src.utils.helpers import APP_NAME, auto_detect_category, auto_detect_title, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES
+from src.models.task_queue import RepoTask, RepoTaskStore
+from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES, get_app_data_dir
 from src.builder.engine import RepoBuilder
+from src.builder.task_queue_runner import TaskQueueRunner
 from src.ui.theme import ThemeManager, AppConfig
 from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, StatusDialog
+from src.ui.repo_dashboard import RepoDashboard, collect_repo_metrics
 
 logger = logging.getLogger(__name__)
 
@@ -114,17 +117,26 @@ class App(tk.Tk):
         self.subject_store = SubjectStore()
         self.student_store = StudentStore()
         self.pending_op_store = PendingOperationStore()
+        self._repo_task_store = RepoTaskStore(get_app_data_dir() / "repo_tasks.json")
+        self._repo_tasks: List[RepoTask] = self._repo_task_store.load_all()
+        self._repo_task_runner = TaskQueueRunner(
+            self._execute_repo_task,
+            on_event=self._handle_repo_task_event,
+            before_task=self._prepare_repo_task,
+        )
+        self._repo_task_thread: Optional[threading.Thread] = None
+        self._repo_queue_cancel_requested = False
         self._theme_name: str = self.config_obj.get("theme")  # type: ignore[assignment]
         self.title(APP_NAME)
         self.geometry("1360x900")
         self.minsize(900, 600)
         self.entries: List[FileEntry] = []
-        self._quick_import = tk.BooleanVar(value=False)
         self._shutdown_after_build = tk.BooleanVar(value=False)
         self._cancel_event = threading.Event()
         self._pause_event = threading.Event()   # clear = paused, set = running
         self._pause_event.set()                 # start in "running" state
         self._active_operation: Optional[PendingOperation] = None
+        self._normalize_repo_tasks()
 
         # Apply theme before building UI
         self.theme_mgr.apply(self, self._theme_name)
@@ -197,11 +209,6 @@ class App(tk.Tk):
         ttk.Separator(subj_frame, orient="vertical").pack(side="left", fill="y", padx=12)
         ttk.Button(subj_frame, text="👤 Aluno", command=self.open_student_profile).pack(side="left")
         ttk.Button(subj_frame, text="📊 Status", command=self.open_status).pack(side="left", padx=(6, 0))
-
-        # Quick import toggle
-        cb_quick = ttk.Checkbutton(subj_frame, text="⚡ Importação rápida", variable=self._quick_import)
-        cb_quick.pack(side="right")
-        add_tooltip(cb_quick, "Quando ativo, adicionar arquivos NÃO abre o diálogo de edição.\nUsa auto-detecção de categoria e título + defaults da matéria ativa.\nÚtil para importar muitos arquivos de uma vez.")
 
         # ── Course data frame ───────────────────────────────────────────
         course = ttk.LabelFrame(top, text="  📋  Dados da Disciplina", padding=12)
@@ -290,14 +297,14 @@ class App(tk.Tk):
         ttk.Button(tool_actions, text="? Ajuda  F1", command=self.open_help).grid(row=1, column=1, sticky="ew", padx=4, pady=4)
         cb_shutdown = ttk.Checkbutton(
             tool_actions,
-            text="⏻ Desligar ao concluir build",
+            text="⏻ Desligar ao concluir build/fila",
             variable=self._shutdown_after_build,
         )
         cb_shutdown.grid(row=2, column=0, columnspan=2, sticky="w", padx=4, pady=(6, 2))
         add_tooltip(
             cb_shutdown,
-            "Ative para builds grandes que vão rodar sozinhos.\n"
-            "Ao concluir com sucesso, o Windows será desligado automaticamente.",
+            "Ative para builds grandes ou filas noturnas.\n"
+            "Quando a operação ou a fila terminar com sucesso, o Windows será desligado automaticamente.",
         )
 
         # ── Table Notebook ──────────────────────────────────────────────────
@@ -337,27 +344,98 @@ class App(tk.Tk):
         self.tree.configure(yscroll=scroll_q.set)
         scroll_q.pack(side="right", fill="y")
 
+        tab_repo_tasks = ttk.Frame(self.notebook)
+        self.notebook.add(tab_repo_tasks, text="  🧱 Tasks de Repositório  ")
+
+        repo_task_toolbar = ttk.Frame(tab_repo_tasks)
+        repo_task_toolbar.pack(fill="x", padx=8, pady=(6, 4))
+        self._btn_enqueue_repo_build = ttk.Button(repo_task_toolbar, text="➕ Enfileirar Build Atual", command=self.enqueue_current_repo_build)
+        self._btn_enqueue_repo_build.pack(side="left")
+        self._btn_enqueue_repo_refresh = ttk.Button(repo_task_toolbar, text="➕ Enfileirar Reprocessamento", command=self.enqueue_current_repo_refresh)
+        self._btn_enqueue_repo_refresh.pack(side="left", padx=(6, 0))
+        self._btn_enqueue_selected_repo_item = ttk.Button(
+            repo_task_toolbar,
+            text="➕ Enfileirar Item Selecionado",
+            command=self.enqueue_selected_repo_task,
+        )
+        self._btn_enqueue_selected_repo_item.pack(side="left", padx=(6, 0))
+        self._btn_run_repo_queue = ttk.Button(repo_task_toolbar, text="▶ Executar Fila", command=self.run_repo_task_queue)
+        self._btn_run_repo_queue.pack(side="left", padx=(18, 0))
+        self._btn_pause_repo_queue = ttk.Button(repo_task_toolbar, text="⏸ Pausar Fila", command=self._toggle_pause_repo_queue, state="disabled")
+        self._btn_pause_repo_queue.pack(side="left", padx=(6, 0))
+        self._btn_cancel_repo_queue = ttk.Button(repo_task_toolbar, text="⏹ Cancelar Fila", command=self._cancel_repo_task_queue, state="disabled")
+        self._btn_cancel_repo_queue.pack(side="left", padx=(6, 0))
+        self._btn_remove_repo_task = ttk.Button(repo_task_toolbar, text="🗑 Remover Task", command=self.remove_selected_repo_task)
+        self._btn_remove_repo_task.pack(side="left", padx=(6, 0))
+        self._btn_clear_finished_repo_tasks = ttk.Button(repo_task_toolbar, text="🧹 Limpar Finalizadas", command=self.clear_finished_repo_tasks)
+        self._btn_clear_finished_repo_tasks.pack(side="left", padx=(6, 0))
+
+        repo_task_columns = ("status", "subject", "action", "repo", "created_at", "finished_at", "notes")
+        repo_task_body = ttk.Frame(tab_repo_tasks)
+        repo_task_body.pack(fill="both", expand=True)
+        self.repo_task_tree = ttk.Treeview(repo_task_body, columns=repo_task_columns, show="headings", height=14)
+        self.repo_task_tree.heading("status", text="Status")
+        self.repo_task_tree.heading("subject", text="Matéria")
+        self.repo_task_tree.heading("action", text="Ação")
+        self.repo_task_tree.heading("repo", text="Repositório")
+        self.repo_task_tree.heading("created_at", text="Criada")
+        self.repo_task_tree.heading("finished_at", text="Finalizada")
+        self.repo_task_tree.heading("notes", text="Observações")
+        self.repo_task_tree.column("status", width=90, anchor="center")
+        self.repo_task_tree.column("subject", width=180)
+        self.repo_task_tree.column("action", width=130, anchor="center")
+        self.repo_task_tree.column("repo", width=260)
+        self.repo_task_tree.column("created_at", width=130, anchor="center")
+        self.repo_task_tree.column("finished_at", width=130, anchor="center")
+        self.repo_task_tree.column("notes", width=260)
+        self.repo_task_tree.pack(side="left", fill="both", expand=True, padx=(8, 0), pady=(0, 8))
+
+        scroll_tasks = ttk.Scrollbar(repo_task_body, orient="vertical", command=self.repo_task_tree.yview)
+        self.repo_task_tree.configure(yscroll=scroll_tasks.set)
+        scroll_tasks.pack(side="right", fill="y", pady=(0, 8))
+
         tab_backlog = ttk.Frame(self.notebook)
         self.notebook.add(tab_backlog, text="  📁 Backlog (Já Processados)  ")
-        
-        btn_refresh = ttk.Button(tab_backlog, text="🔄 Atualizar Backlog", command=self._refresh_backlog)
-        btn_refresh.pack(side="left", pady=(8, 4), padx=8)
+        backlog_toolbar = _FlexToolbar(tab_backlog, min_section_width=300)
+        backlog_toolbar.pack(fill="x", pady=(4, 6))
+        backlog_item_actions = backlog_toolbar.add_section("Itens Processados")
+        backlog_repo_actions = backlog_toolbar.add_section("Repositório")
 
-        btn_edit_bk = ttk.Button(tab_backlog, text="✏ Editar", command=self.edit_backlog_entry)
-        btn_edit_bk.pack(side="left", pady=(8, 4), padx=4)
+        for col in range(2):
+            backlog_item_actions.grid_columnconfigure(col, weight=1, uniform="backlog-item")
+            backlog_repo_actions.grid_columnconfigure(col, weight=1, uniform="backlog-repo")
 
-        btn_unprocess = ttk.Button(tab_backlog, text="🗑 Limpar Processamento", command=self.remove_processed_single)
-        btn_unprocess.pack(side="left", pady=(8, 4), padx=4)
+        ttk.Button(backlog_item_actions, text="🔄 Atualizar Backlog", command=self._refresh_backlog).grid(
+            row=0, column=0, sticky="ew", padx=4, pady=4
+        )
+        ttk.Button(backlog_item_actions, text="✏ Editar", command=self.edit_backlog_entry).grid(
+            row=0, column=1, sticky="ew", padx=4, pady=4
+        )
+        ttk.Button(backlog_item_actions, text="🗑 Limpar Processamento", command=self.remove_processed_single).grid(
+            row=1, column=0, columnspan=2, sticky="ew", padx=4, pady=4
+        )
 
-        ttk.Separator(tab_backlog, orient="vertical").pack(side="left", fill="y", padx=6, pady=(8, 4))
-        btn_reprocess = ttk.Button(tab_backlog, text="🔄 Reprocessar Repositório", command=self._reprocess_repo)
-        btn_reprocess.pack(side="left", pady=(8, 4), padx=4)
-
-        btn_gen_llm = ttk.Button(tab_backlog, text="📋 Gerar Instruções LLM", command=self._generate_llm_instructions)
-        btn_gen_llm.pack(side="left", pady=(8, 4), padx=4)
+        ttk.Button(backlog_repo_actions, text="🔄 Reprocessar Repositório", command=self._reprocess_repo).grid(
+            row=0, column=0, sticky="ew", padx=4, pady=4
+        )
+        ttk.Button(backlog_repo_actions, text="📋 Gerar Instruções LLM", command=self._generate_llm_instructions).grid(
+            row=0, column=1, sticky="ew", padx=4, pady=4
+        )
+        ttk.Button(backlog_repo_actions, text="➕ Enfileirar Build", command=self.enqueue_current_repo_build).grid(
+            row=1, column=0, sticky="ew", padx=4, pady=4
+        )
+        ttk.Button(backlog_repo_actions, text="➕ Enfileirar Reprocessamento", command=self.enqueue_current_repo_refresh).grid(
+            row=1, column=1, sticky="ew", padx=4, pady=4
+        )
+        ttk.Button(backlog_repo_actions, text="🖥 Dashboard", command=self.open_repo_dashboard_tab).grid(
+            row=2, column=0, columnspan=2, sticky="ew", padx=4, pady=4
+        )
 
         columns_bk = ("category", "layer", "tags", "title", "backend", "file")
-        self.repo_tree = ttk.Treeview(tab_backlog, columns=columns_bk, show="headings", height=14)
+        backlog_body = ttk.Frame(tab_backlog)
+        backlog_body.pack(fill="both", expand=True)
+
+        self.repo_tree = ttk.Treeview(backlog_body, columns=columns_bk, show="headings", height=14)
         self.repo_tree.heading("category", text="Categoria")
         self.repo_tree.heading("layer", text="Camada")
         self.repo_tree.heading("tags", text="Tags")
@@ -374,9 +452,15 @@ class App(tk.Tk):
         self.repo_tree.bind("<Double-1>", lambda _e: self.edit_backlog_entry())
         self.repo_tree.bind("<Delete>", lambda _e: self.remove_processed_single())
 
-        scroll_bk = ttk.Scrollbar(tab_backlog, orient="vertical", command=self.repo_tree.yview)
+        scroll_bk = ttk.Scrollbar(backlog_body, orient="vertical", command=self.repo_tree.yview)
         self.repo_tree.configure(yscroll=scroll_bk.set)
         scroll_bk.pack(side="right", fill="y", pady=(0, 8))
+
+        tab_dashboard = ttk.Frame(self.notebook)
+        self._dashboard_tab = tab_dashboard
+        self.notebook.add(tab_dashboard, text="  🖥 Dashboard  ")
+        self._repo_dashboard = RepoDashboard(tab_dashboard, on_refresh=self._refresh_repo_dashboard)
+        self._repo_dashboard.pack(fill="both", expand=True)
 
         # ── Aba LOG ──────────────────────────────────────────────────────
         tab_log = ttk.Frame(self.notebook)
@@ -441,6 +525,8 @@ class App(tk.Tk):
                  anchor="e", padx=10, pady=4).pack(side="right")
         self._progress_bar = ttk.Progressbar(status_bar, mode="determinate", length=200)
         # oculta por padrão; aparece durante operações longas
+        self._refresh_repo_task_views()
+        self._set_repo_queue_state(False)
 
     def _set_status(self, msg: str):
         self._status_var.set(msg)
@@ -600,6 +686,353 @@ class App(tk.Tk):
         self._active_operation = None
         self.pending_op_store.clear()
 
+    def _normalize_repo_tasks(self):
+        changed = False
+        for task in self._repo_tasks:
+            if task.status == "running":
+                task.status = "pending"
+                task.started_at = None
+                task.finished_at = None
+                changed = True
+        if changed:
+            self._save_repo_tasks()
+
+    def _save_repo_tasks(self):
+        self._repo_task_store.save_all(self._repo_tasks)
+
+    def _refresh_repo_tasks_tree(self):
+        if not hasattr(self, "repo_task_tree"):
+            return
+        self.repo_task_tree.delete(*self.repo_task_tree.get_children())
+        for idx, task in enumerate(self._repo_tasks):
+            notes = (task.notes or "").strip().replace("\n", " | ")
+            self.repo_task_tree.insert(
+                "",
+                "end",
+                iid=f"repo_task_{idx}",
+                values=(
+                    task.status,
+                    task.subject_name,
+                    task.action,
+                    task.repo_root,
+                    task.created_at or "—",
+                    task.finished_at or "—",
+                    notes[:120] if notes else "—",
+                ),
+            )
+
+    def _refresh_repo_dashboard(self):
+        if not hasattr(self, "_repo_dashboard"):
+            return
+        subjects = [
+            self.subject_store.get(name)
+            for name in self.subject_store.names()
+        ]
+        rows = collect_repo_metrics([sp for sp in subjects if sp], self._repo_tasks)
+        self._repo_dashboard.set_rows(rows)
+
+    def _refresh_repo_task_views(self):
+        self._save_repo_tasks()
+        self._refresh_repo_tasks_tree()
+        self._refresh_repo_dashboard()
+
+    @staticmethod
+    def _new_repo_task_id() -> str:
+        return datetime.now().strftime("task-%Y%m%d%H%M%S%f")
+
+    def _is_repo_task_queue_running(self) -> bool:
+        return bool(self._repo_task_thread and self._repo_task_thread.is_alive())
+
+    def _set_repo_queue_state(self, running: bool):
+        if hasattr(self, "_btn_run_repo_queue"):
+            self._btn_run_repo_queue.configure(state="disabled" if running else "normal")
+        if hasattr(self, "_btn_pause_repo_queue"):
+            self._btn_pause_repo_queue.configure(
+                state="normal" if running else "disabled",
+                text="⏸ Pausar Fila" if not running or self._pause_event.is_set() else "▶ Retomar Fila",
+            )
+        if hasattr(self, "_btn_cancel_repo_queue"):
+            self._btn_cancel_repo_queue.configure(state="normal" if running else "disabled")
+        if hasattr(self, "_btn_enqueue_repo_build"):
+            self._btn_enqueue_repo_build.configure(state="disabled" if running else "normal")
+        if hasattr(self, "_btn_enqueue_repo_refresh"):
+            self._btn_enqueue_repo_refresh.configure(state="disabled" if running else "normal")
+        if hasattr(self, "_btn_enqueue_selected_repo_item"):
+            self._btn_enqueue_selected_repo_item.configure(state="disabled" if running else "normal")
+        if hasattr(self, "_btn_remove_repo_task"):
+            self._btn_remove_repo_task.configure(state="disabled" if running else "normal")
+        if hasattr(self, "_btn_clear_finished_repo_tasks"):
+            self._btn_clear_finished_repo_tasks.configure(state="disabled" if running else "normal")
+
+    def _queue_task_note(self, action: str, entry_payloads: List[Dict]) -> str:
+        if action == "refresh_repo":
+            return "Regenerar artefatos estruturais"
+        if action == "process_selected":
+            if entry_payloads:
+                source = Path(entry_payloads[0].get("source_path", "")).name or "item selecionado"
+                return f"Processar item: {source}"
+            return "Processar item selecionado"
+        count = len(entry_payloads)
+        return f"Snapshot de {count} arquivo(s)" if count else "Criar/atualizar repositório sem novos arquivos"
+
+    def _build_course_meta_for_subject(self, subject: Optional[SubjectProfile], repo_dir: Path) -> Dict[str, str]:
+        course_name = subject.name if subject and subject.name else repo_dir.name
+        course_slug = (
+            subject.slug if subject and getattr(subject, "slug", "").strip() else slugify(course_name)
+        )
+        return {
+            "course_name": course_name,
+            "course_slug": course_slug,
+            "semester": getattr(subject, "semester", "") if subject else "",
+            "professor": getattr(subject, "professor", "") if subject else "",
+            "institution": (getattr(subject, "institution", "") if subject else "") or "PUCRS",
+        }
+
+    def _subject_for_task(self, task: RepoTask) -> Optional[SubjectProfile]:
+        subject = self.subject_store.get(task.subject_name) if task.subject_name else None
+        if subject:
+            return subject
+        return self._find_subject_by_repo_root(Path(task.repo_root))
+
+    def enqueue_current_repo_build(self):
+        self._enqueue_repo_task("build_repo")
+
+    def enqueue_current_repo_refresh(self):
+        self._enqueue_repo_task("refresh_repo")
+
+    def enqueue_selected_repo_task(self):
+        self._enqueue_repo_task("process_selected")
+
+    def _enqueue_repo_task(self, action: str):
+        meta = self._course_meta()
+        if meta is None:
+            return
+        repo_dir = self._repo_dir()
+        if not repo_dir:
+            return
+        entry_payloads: List[Dict] = []
+        if action == "build_repo":
+            entry_payloads = [entry.to_dict() for entry in self.entries]
+        elif action == "process_selected":
+            idx = self.selected_index()
+            if idx is None:
+                messagebox.showinfo(APP_NAME, "Selecione um item na fila a processar para enfileirar o processamento individual.")
+                return
+            entry_payloads = [self.entries[idx].to_dict()]
+        if action == "build_repo" and not entry_payloads and not messagebox.askyesno(
+            APP_NAME,
+            "Nenhum arquivo novo está na fila.\n\nDeseja enfileirar apenas a criação/atualização estrutural do repositório?",
+        ):
+            return
+
+        task = RepoTask(
+            task_id=self._new_repo_task_id(),
+            subject_name=meta["course_name"],
+            repo_root=str(repo_dir),
+            action=action,
+            entry_payloads=entry_payloads,
+            shutdown_after_completion=self._shutdown_after_build.get(),
+            notes=self._queue_task_note(action, entry_payloads),
+        )
+        self._repo_tasks.append(task)
+        self._refresh_repo_task_views()
+        self._set_status(f"Task enfileirada para {task.subject_name}: {task.action}")
+
+    def _prepare_repo_task(self, _task: RepoTask):
+        self._pause_event.wait()
+        if self._cancel_event.is_set():
+            raise InterruptedError("Fila cancelada pelo usuário.")
+
+    def run_repo_task_queue(self):
+        if self._is_repo_task_queue_running():
+            messagebox.showinfo(APP_NAME, "A fila de repositórios já está em execução.")
+            return
+        if self._active_operation:
+            messagebox.showinfo(APP_NAME, "Finalize ou cancele a operação atual antes de executar a fila de repositórios.")
+            return
+        if not any(task.status == "pending" for task in self._repo_tasks):
+            messagebox.showinfo(APP_NAME, "Não há tasks pendentes na fila de repositórios.")
+            return
+
+        self._cancel_event.clear()
+        self._pause_event.set()
+        self._repo_queue_cancel_requested = False
+        self._set_repo_queue_state(True)
+        self._start_progress(0)
+        self._set_status("Executando fila de repositórios...")
+
+        def worker():
+            self._repo_task_runner.run_pending(self._repo_tasks)
+            self.after(0, self._on_repo_task_queue_finished)
+
+        self._repo_task_thread = threading.Thread(target=worker, daemon=True)
+        self._repo_task_thread.start()
+
+    def _toggle_pause_repo_queue(self):
+        if not self._is_repo_task_queue_running():
+            return
+        if self._pause_event.is_set():
+            self._pause_event.clear()
+            self._set_status("Fila de repositórios pausada.")
+            self._btn_pause_repo_queue.configure(text="▶ Retomar Fila")
+        else:
+            self._pause_event.set()
+            self._set_status("Fila de repositórios retomada.")
+            self._btn_pause_repo_queue.configure(text="⏸ Pausar Fila")
+
+    def _cancel_repo_task_queue(self):
+        if not self._is_repo_task_queue_running():
+            return
+        self._repo_queue_cancel_requested = True
+        self._cancel_event.set()
+        self._pause_event.set()
+        self._set_status("Cancelando fila de repositórios...")
+        self._btn_cancel_repo_queue.configure(state="disabled")
+
+    def remove_selected_repo_task(self):
+        selected = self.repo_task_tree.selection() if hasattr(self, "repo_task_tree") else ()
+        if not selected:
+            messagebox.showinfo(APP_NAME, "Selecione uma task de repositório para remover.")
+            return
+        idx = int(selected[0].replace("repo_task_", ""))
+        task = self._repo_tasks[idx]
+        if task.status == "running":
+            messagebox.showinfo(APP_NAME, "Não é possível remover uma task em execução.")
+            return
+        del self._repo_tasks[idx]
+        self._refresh_repo_task_views()
+
+    def clear_finished_repo_tasks(self):
+        self._repo_tasks = [task for task in self._repo_tasks if task.status not in {"completed", "failed", "cancelled"}]
+        self._refresh_repo_task_views()
+        self._set_status("Tasks finalizadas removidas da fila.")
+
+    def open_repo_dashboard_tab(self):
+        if hasattr(self, "_dashboard_tab"):
+            self.notebook.select(self._dashboard_tab)
+            self._refresh_repo_dashboard()
+
+    def _handle_repo_task_event(self, event_name: str, task: RepoTask, error: Optional[Exception]):
+        error_text = str(error) if error else ""
+        self.after(0, lambda: self._apply_repo_task_event(event_name, task.task_id, error_text))
+
+    def _apply_repo_task_event(self, event_name: str, task_id: str, error_text: str):
+        task = next((item for item in self._repo_tasks if item.task_id == task_id), None)
+        if not task:
+            return
+        if event_name == "started":
+            self._set_status(f"[Fila] Executando {task.action} em {task.subject_name}...")
+        elif event_name == "completed":
+            self._consume_repo_task_snapshot(task)
+            self._refresh_backlog()
+            self._set_status(f"[Fila] Task concluída: {task.subject_name} ({task.action})")
+        elif event_name == "cancelled":
+            self._set_status(f"[Fila] Task cancelada: {task.subject_name} ({task.action})")
+        elif event_name == "failed":
+            self._set_status(f"[Fila] Falha em {task.subject_name}: {error_text}")
+        self._refresh_repo_task_views()
+
+    def _consume_repo_task_snapshot(self, task: RepoTask):
+        if task.action not in {"build_repo", "process_selected"} or not task.entry_payloads:
+            return
+        processed_sources = {
+            item.get("source_path", "")
+            for item in task.entry_payloads
+            if item.get("source_path")
+        }
+        if not processed_sources:
+            return
+        subject = self._subject_for_task(task)
+        if subject:
+            updated_queue = [entry for entry in subject.queue if entry.source_path not in processed_sources]
+            if len(updated_queue) != len(subject.queue):
+                subject.queue = updated_queue
+                self.subject_store.add(subject)
+            if self._var_active_subject.get() == subject.name:
+                self.entries = [entry for entry in self.entries if entry.source_path not in processed_sources]
+                self.refresh_tree()
+                self._save_current_queue()
+
+    def _execute_repo_task(self, task: RepoTask) -> None:
+        repo_dir = Path(task.repo_root)
+        subject = self._subject_for_task(task)
+        meta = self._build_course_meta_for_subject(subject, repo_dir)
+        entries = [FileEntry.from_dict(payload) for payload in task.entry_payloads]
+        student_profile = self.student_store.profile if self.student_store.profile.full_name else None
+
+        def on_progress(current, total, title):
+            self._pause_event.wait()
+            if self._cancel_event.is_set():
+                raise InterruptedError("Fila cancelada pelo usuário.")
+            if title:
+                self.after(
+                    0,
+                    lambda c=current, t=total, ti=title, task_ref=task: self._set_status(
+                        f"[Fila] {task_ref.subject_name}: ({c + 1}/{max(t, 1)}) {ti}"
+                    ),
+                )
+
+        builder = RepoBuilder(
+            root_dir=repo_dir,
+            course_meta=meta,
+            entries=entries,
+            options=self._build_options(),
+            student_profile=student_profile,
+            subject_profile=subject,
+            progress_callback=on_progress,
+        )
+
+        if task.action == "refresh_repo":
+            builder.incremental_build()
+            return
+        if task.action == "process_selected":
+            if not entries:
+                raise ValueError("Task 'process_selected' sem snapshot do arquivo.")
+            builder.process_single(entries[0], force=False)
+            return
+
+        manifest_path = repo_dir / "manifest.json"
+        if manifest_path.exists():
+            builder.incremental_build()
+        else:
+            builder.build()
+
+    def _on_repo_task_queue_finished(self):
+        self._end_progress()
+        self._set_repo_queue_state(False)
+        self._repo_task_thread = None
+        self._cancel_event.clear()
+        self._pause_event.set()
+        self._refresh_repo_task_views()
+        self._refresh_backlog()
+        if self._repo_queue_cancel_requested:
+            self._set_status("Fila de repositórios interrompida.")
+        elif TaskQueueRunner.should_request_shutdown(self._repo_tasks):
+            self._schedule_shutdown_after_queue()
+        else:
+            self._set_status("Fila de repositórios concluída.")
+        self._repo_queue_cancel_requested = False
+
+    def _schedule_shutdown_after_queue(self):
+        try:
+            if sys.platform == "win32":
+                subprocess.Popen(
+                    [
+                        "shutdown", "/s", "/t", "60",
+                        "/c", "Academic Tutor Repo Builder: fila de repositórios concluída.",
+                    ],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                logger.info("Shutdown agendado para 60s após conclusão da fila de repositórios.")
+                self._set_status("Fila concluída. Desligamento agendado para 60s. Use 'shutdown /a' para abortar.")
+            else:
+                logger.warning("Desligamento automático após fila não suportado nesta plataforma.")
+                self._set_status("Fila concluída. Desligamento automático não é suportado nesta plataforma.")
+        except Exception as e:
+            logger.warning("Falha ao agendar desligamento após fila: %s", e)
+            self._set_status(f"Fila concluída, mas falhou ao agendar desligamento: {e}")
+
     def _find_subject_by_repo_root(self, repo_dir: Optional[Path]) -> Optional[SubjectProfile]:
         if not repo_dir:
             return None
@@ -724,6 +1157,7 @@ class App(tk.Tk):
         SubjectManagerDialog(self, self.subject_store, self.theme_mgr)
         # Refresh combo values
         self._subject_combo["values"] = ["(nenhuma)"] + self.subject_store.names()
+        self._refresh_repo_dashboard()
 
     def open_student_profile(self):
         StudentProfileDialog(self, self.student_store, self.theme_mgr)
@@ -772,6 +1206,7 @@ class App(tk.Tk):
         
         self._set_status(f"Matéria carregada: {sp.name} ({len(self.entries)} itens na fila)")
         self._refresh_backlog()
+        self._refresh_repo_dashboard()
 
     def _refresh_backlog(self):
         for item in self.repo_tree.get_children():
@@ -848,37 +1283,6 @@ class App(tk.Tk):
         except Exception:
             return 0
 
-    def _quick_add_file(self, path: str, is_image: bool = False,
-                        file_type_hint: str = "") -> FileEntry:
-        """Cria FileEntry automaticamente sem abrir diálogo."""
-        src = Path(path)
-        if file_type_hint:
-            ft = file_type_hint
-        elif is_image:
-            ft = "image"
-        elif src.suffix.lower() == ".pdf":
-            ft = "pdf"
-        elif src.suffix.lower() == ".zip":
-            ft = "zip"
-        elif src.suffix.lower() in CODE_EXTENSIONS:
-            ft = "code"
-        else:
-            ft = "image"
-        cat = auto_detect_category(src.name, is_image=(ft == "image"))
-        page_range = self._pdf_page_range(path) if ft == "pdf" else ""
-        return FileEntry(
-            source_path=path,
-            file_type=ft,
-            category=cat,
-            title=auto_detect_title(path),
-            tags=src.suffix.lower().lstrip(".") if ft == "code" else "",
-            processing_mode=self.var_default_mode.get(),
-            document_profile="auto",
-            preferred_backend="auto",
-            ocr_language=self.var_default_ocr_language.get(),
-            page_range=page_range,
-        )
-
     def _get_backlog_sources(self) -> set:
         """Return set of source filenames already in the manifest (backlog)."""
         manifest_path = self._manifest_path()
@@ -915,23 +1319,19 @@ class App(tk.Tk):
         if not paths:
             return
         paths = self._warn_if_in_backlog(paths)
-        if self._quick_import.get():
-            for path in paths:
-                self.entries.append(self._quick_add_file(path))
-        else:
-            for path in paths:
-                initial = FileEntry(
-                    source_path=path,
-                    file_type="pdf",
-                    title=auto_detect_title(path),
-                    category=auto_detect_category(Path(path).name, False),
-                    page_range=self._pdf_page_range(path),
-                    processing_mode=self.var_default_mode.get(),
-                    ocr_language=self.var_default_ocr_language.get(),
-                )
-                entry = self._entry_dialog(path, initial=initial)
-                if entry:
-                    self.entries.append(entry)
+        for path in paths:
+            initial = FileEntry(
+                source_path=path,
+                file_type="pdf",
+                title=Path(path).stem,
+                category="material-de-aula",
+                page_range=self._pdf_page_range(path),
+                processing_mode=self.var_default_mode.get(),
+                ocr_language=self.var_default_ocr_language.get(),
+            )
+            entry = self._entry_dialog(path, initial=initial)
+            if entry:
+                self.entries.append(entry)
         self.refresh_tree()
         self._save_current_queue()
         self._set_status(f"{len(self.entries)} arquivo(s) na lista.")
@@ -944,14 +1344,18 @@ class App(tk.Tk):
         if not paths:
             return
         paths = self._warn_if_in_backlog(paths)
-        if self._quick_import.get():
-            for path in paths:
-                self.entries.append(self._quick_add_file(path, is_image=True))
-        else:
-            for path in paths:
-                entry = self._entry_dialog(path)
-                if entry:
-                    self.entries.append(entry)
+        for path in paths:
+            initial = FileEntry(
+                source_path=path,
+                file_type="image",
+                title=Path(path).stem,
+                category="fotos-de-prova",
+                processing_mode=self.var_default_mode.get(),
+                ocr_language=self.var_default_ocr_language.get(),
+            )
+            entry = self._entry_dialog(path, initial=initial)
+            if entry:
+                self.entries.append(entry)
         self.refresh_tree()
         self._save_current_queue()
         self._set_status(f"{len(self.entries)} arquivo(s) na lista.")
@@ -985,10 +1389,7 @@ class App(tk.Tk):
         for path in paths:
             src = Path(path)
             ft  = "zip" if src.suffix.lower() == ".zip" else "code"
-            if self._quick_import.get():
-                entry = self._quick_add_file(path, file_type_hint=ft)
-            else:
-                entry = self._entry_dialog(path, file_type_hint=ft)
+            entry = self._entry_dialog(path, file_type_hint=ft)
             if entry:
                 self.entries.append(entry)
         self.refresh_tree()
@@ -1152,6 +1553,9 @@ class App(tk.Tk):
             messagebox.showerror(APP_NAME, f"Não foi possível abrir:\n{path}\n\n{e}")
 
     def build_repo(self):
+        if self._is_repo_task_queue_running():
+            messagebox.showinfo(APP_NAME, "A fila de repositórios está em execução. Aguarde terminar antes de iniciar um build manual.")
+            return
         meta = self._course_meta()
         if meta is None:
             return
@@ -1364,6 +1768,9 @@ class App(tk.Tk):
         messagebox.showerror(APP_NAME, f"Erro ao criar repositório:\n\n{traceback_str}")
 
     def process_selected_single(self):
+        if self._is_repo_task_queue_running():
+            messagebox.showinfo(APP_NAME, "A fila de repositórios está em execução. Aguarde terminar antes de processar um item manualmente.")
+            return
         idx = self.selected_index()
         if idx is None:
             messagebox.showinfo(APP_NAME, "Selecione um arquivo na fila para processar.")
@@ -1592,6 +1999,9 @@ class App(tk.Tk):
 
     def _reprocess_repo(self):
         """Regenera todos os arquivos pedagógicos do repositório com o código atual."""
+        if self._is_repo_task_queue_running():
+            messagebox.showinfo(APP_NAME, "A fila de repositórios está em execução. Aguarde terminar antes de reprocessar manualmente.")
+            return
         repo_dir = self._repo_dir()
         if not repo_dir:
             messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório.")

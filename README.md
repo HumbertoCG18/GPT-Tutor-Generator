@@ -72,6 +72,8 @@ Fluxo típico no app:
 7. Gerar descrições e extrações em LaTeX.
 8. Construir ou atualizar o repositório final.
 9. Usar **Reprocessar Repositório** para reaplicar a arquitetura atual em repositórios já existentes.
+10. Usar a aba **Tasks de Repositório** para enfileirar builds, reprocessamentos e processamentos individuais.
+11. Abrir a aba **Dashboard** para acompanhar o estado operacional dos repositórios.
 
 ## Arquitetura
 
@@ -147,7 +149,25 @@ INSTRUCOES_CLAUDE_PROJETO.md
 
 ### Como aplicar isso em repositórios antigos
 
-Use a ação **Reprocessar Repositório** no backlog.
+Use a ação **Reprocessar Repositório** no backlog para reaplicar a arquitetura atual em repositórios antigos.
+
+Se quiser rodar uma sequência de repositórios sem interação manual, use a aba **Tasks de Repositório**. Ela centraliza:
+
+- enfileirar build do repositório atual
+- enfileirar reprocessamento estrutural
+- enfileirar o item selecionado da fila
+- executar, pausar ou cancelar a fila
+- desligamento automático ao fim da fila
+
+Essa fila é persistente, então ela pode ser deixada pronta para pipelines noturnas e retomada depois.
+
+A aba **Dashboard** mostra, por matéria:
+
+- status do repositório
+- quantidade de itens na fila local
+- entries do manifest
+- arquivos em `manual-review/`
+- tasks pendentes e última task executada
 
 Essa ação:
 

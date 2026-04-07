@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from src.builder.task_queue_runner import TaskQueueRunner
 from src.models.task_queue import RepoTask, RepoTaskStore
 
 
@@ -42,3 +43,95 @@ def test_repo_task_status_transition_updates_timestamps(tmp_path: Path):
     assert loaded.status == "completed"
     assert loaded.started_at == "2026-03-31T01:00:00"
     assert loaded.finished_at == "2026-03-31T01:10:00"
+
+
+def test_repo_task_keeps_entry_payload_snapshot():
+    payload = {"source_path": "raw/pdfs/lista1.pdf", "title": "Lista 1", "nested": {"page": 1}}
+    task = RepoTask(
+        task_id="task-snapshot",
+        subject_name="Métodos Formais",
+        repo_root="C:/Repos/metodos-formais",
+        action="process_selected",
+        entry_payloads=[payload],
+    )
+
+    payload["title"] = "Lista alterada"
+    payload["nested"]["page"] = 99
+
+    assert task.entry_payloads[0]["title"] == "Lista 1"
+    assert task.entry_payloads[0]["nested"]["page"] == 1
+
+
+def test_runner_executes_tasks_in_fifo_order():
+    executed = []
+
+    def fake_executor(task):
+        executed.append(task.task_id)
+
+    runner = TaskQueueRunner(fake_executor)
+    tasks = [
+        RepoTask(task_id="task-a", subject_name="A", repo_root="A", action="build_repo"),
+        RepoTask(task_id="task-b", subject_name="B", repo_root="B", action="build_repo"),
+    ]
+
+    runner.run_pending(tasks)
+
+    assert executed == ["task-a", "task-b"]
+    assert tasks[0].status == "completed"
+    assert tasks[1].status == "completed"
+    assert tasks[0].started_at
+    assert tasks[1].finished_at
+
+
+def test_runner_marks_failure_and_continues():
+    executed = []
+
+    def fake_executor(task):
+        executed.append(task.task_id)
+        if task.task_id == "task-a":
+            raise RuntimeError("boom")
+
+    runner = TaskQueueRunner(fake_executor)
+    tasks = [
+        RepoTask(task_id="task-a", subject_name="A", repo_root="A", action="build_repo"),
+        RepoTask(task_id="task-b", subject_name="B", repo_root="B", action="build_repo"),
+    ]
+
+    runner.run_pending(tasks)
+
+    assert executed == ["task-a", "task-b"]
+    assert tasks[0].status == "failed"
+    assert "boom" in tasks[0].notes
+    assert tasks[1].status == "completed"
+
+
+def test_shutdown_is_requested_only_after_last_completed_task():
+    tasks = [
+        RepoTask(task_id="task-a", subject_name="A", repo_root="A", action="build_repo"),
+        RepoTask(task_id="task-b", subject_name="B", repo_root="B", action="build_repo", shutdown_after_completion=True),
+    ]
+
+    runner = TaskQueueRunner(lambda task: None)
+    runner.run_pending(tasks)
+
+    assert TaskQueueRunner.should_request_shutdown(tasks) is True
+
+
+def test_runner_cancels_current_task_and_keeps_remaining_pending():
+    def before_task(task):
+        return None
+
+    def fake_executor(task):
+        raise InterruptedError("cancelado")
+
+    runner = TaskQueueRunner(fake_executor, before_task=before_task)
+    tasks = [
+        RepoTask(task_id="task-a", subject_name="A", repo_root="A", action="build_repo"),
+        RepoTask(task_id="task-b", subject_name="B", repo_root="B", action="build_repo"),
+    ]
+
+    runner.run_pending(tasks)
+
+    assert tasks[0].status == "cancelled"
+    assert "cancelado" in tasks[0].notes
+    assert tasks[1].status == "pending"
