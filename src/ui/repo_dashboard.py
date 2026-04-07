@@ -10,6 +10,19 @@ from src.models.core import SubjectProfile
 from src.models.task_queue import RepoTask
 
 
+def _normalized_source_key(raw_path: str) -> str:
+    value = str(raw_path or "").strip()
+    if not value:
+        return ""
+    if "://" in value:
+        return value.casefold()
+    try:
+        normalized = Path(value).expanduser().resolve()
+    except Exception:
+        normalized = Path(value).expanduser()
+    return str(normalized).replace("\\", "/").casefold()
+
+
 @dataclass
 class RepoDashboardRow:
     subject_name: str
@@ -31,6 +44,7 @@ def collect_repo_metrics(subjects: Iterable[SubjectProfile], tasks: Iterable[Rep
         repo_status = "Sem repositório"
         manifest_entries = 0
         manual_review_items = 0
+        processed_sources: set[str] = set()
         if repo_path and repo_path.exists():
             repo_status = "Estrutura pronta"
             manifest_path = repo_path / "manifest.json"
@@ -39,6 +53,11 @@ def collect_repo_metrics(subjects: Iterable[SubjectProfile], tasks: Iterable[Rep
                 try:
                     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
                     manifest_entries = len(manifest.get("entries", []))
+                    processed_sources = {
+                        _normalized_source_key(entry.get("source_path", ""))
+                        for entry in manifest.get("entries", [])
+                        if entry.get("source_path")
+                    }
                 except Exception:
                     repo_status = "Manifest inválido"
             manual_review_dir = repo_path / "manual-review"
@@ -72,7 +91,11 @@ def collect_repo_metrics(subjects: Iterable[SubjectProfile], tasks: Iterable[Rep
                 subject_name=subject.name,
                 repo_root=repo_root or "—",
                 repo_status=repo_status,
-                queued_files=len(subject.queue),
+                queued_files=sum(
+                    1
+                    for entry in subject.queue
+                    if _normalized_source_key(getattr(entry, "source_path", "")) not in processed_sources
+                ),
                 manifest_entries=manifest_entries,
                 manual_review_items=manual_review_items,
                 pending_repo_tasks=pending_repo_tasks,

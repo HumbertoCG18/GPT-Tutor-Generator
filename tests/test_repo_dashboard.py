@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+from src.models.core import FileEntry
 from src.models.core import SubjectProfile
 from src.models.task_queue import RepoTask
 from src.ui.repo_dashboard import collect_repo_metrics
@@ -56,3 +57,28 @@ def test_collect_repo_metrics_handles_missing_repo():
     assert row.repo_status == "Sem repositório"
     assert row.manifest_entries == 0
     assert row.pending_repo_tasks == 0
+
+
+def test_collect_repo_metrics_excludes_manifest_entries_from_queue_count(tmp_path: Path):
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    processed = repo_root / "raw" / "pdfs" / "done.pdf"
+    queued = repo_root / "raw" / "pdfs" / "todo.pdf"
+    processed.parent.mkdir(parents=True)
+    (repo_root / "manifest.json").write_text(
+        json.dumps({"entries": [{"source_path": str(processed)}]}),
+        encoding="utf-8",
+    )
+
+    subject = SubjectProfile(
+        name="Métodos Formais",
+        repo_root=str(repo_root),
+        queue=[
+            FileEntry(source_path=str(processed), file_type="pdf", category="material-de-aula", title="Done"),
+            FileEntry(source_path=str(queued), file_type="pdf", category="material-de-aula", title="Todo"),
+        ],
+    )
+
+    row = collect_repo_metrics([subject], [])[0]
+
+    assert row.queued_files == 1

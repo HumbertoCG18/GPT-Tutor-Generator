@@ -27,6 +27,7 @@ from src.utils.helpers import (
     ensure_dir, file_size_mb, json_str, pages_to_marker_range,
     parse_page_range, safe_rel, slugify, write_text,
 )
+from src.utils.power import prevent_system_sleep
 
 if HAS_PYMUPDF:
     import pymupdf
@@ -860,6 +861,55 @@ def _build_marker_page_chunks(pages: Optional[List[int]], page_count: int, chunk
     return [selected[i:i + chunk_size] for i in range(0, len(selected), chunk_size)]
 
 
+def _selected_page_count(ctx: "BackendContext") -> int:
+    if ctx.pages is not None:
+        return len(ctx.pages)
+    return max(int(ctx.report.page_count or 0), 0)
+
+
+def _marker_chunk_size_for_workload(ctx: "BackendContext") -> int:
+    effective_profile = (
+        ctx.entry.document_profile
+        if ctx.entry.document_profile != "auto"
+        else ctx.report.suggested_profile
+    )
+    selected_pages = _selected_page_count(ctx)
+    if effective_profile in {"math_heavy", "layout_heavy"} and selected_pages >= 80:
+        return 10
+    return 20
+
+
+def _should_force_ocr_for_marker(ctx: "BackendContext") -> bool:
+    return bool(ctx.entry.force_ocr) or bool(ctx.report.suspected_scan)
+
+
+def _advanced_cli_stall_timeout(backend_name: str, ctx: "BackendContext") -> int:
+    base_timeout = int(ctx.stall_timeout or 300)
+    effective_profile = (
+        ctx.entry.document_profile
+        if ctx.entry.document_profile != "auto"
+        else ctx.report.suggested_profile
+    )
+    selected_pages = _selected_page_count(ctx)
+    heavy_profiles = {"math_heavy", "layout_heavy", "scanned", "exam_pdf"}
+
+    if backend_name == "marker":
+        if effective_profile in {"math_heavy", "layout_heavy"} and selected_pages >= 80:
+            return max(base_timeout, 2700)
+        if effective_profile in {"math_heavy", "layout_heavy"} and selected_pages >= 40:
+            return max(base_timeout, 1800)
+        return base_timeout
+
+    if backend_name == "docling":
+        if effective_profile in heavy_profiles and (selected_pages >= 80 or ctx.report.images_count >= 200):
+            return max(base_timeout, 1800)
+        if effective_profile in heavy_profiles and selected_pages >= 40:
+            return max(base_timeout, 1200)
+        return base_timeout
+
+    return base_timeout
+
+
 def _truncate_markdown_blocks(blocks: List[str], max_chars: int = 15000) -> str:
     if not blocks:
         return ""
@@ -1610,8 +1660,8 @@ def _detect_marker_capabilities() -> Dict[str, object]:
         return dict(_MARKER_CAPABILITIES_CACHE)
 
     caps = {
-        "page_range_flag": "--page_range",
-        "force_ocr_flag": "--force_ocr",
+        "page_range_flag": None,
+        "force_ocr_flag": None,
         "language_flag": None,
     }
 
@@ -1624,11 +1674,15 @@ def _detect_marker_capabilities() -> Dict[str, object]:
             [MARKER_CLI, "--help"],
             capture_output=True,
             text=True,
-            timeout=10,
+            timeout=20,
         )
         help_text = ((proc.stdout or "") + "\n" + (proc.stderr or "")).lower()
     except Exception as e:
-        logger.warning("  [marker] Não foi possível inspecionar --help: %s", e)
+        logger.warning(
+            "  [marker] Não foi possível inspecionar --help: %s. "
+            "Usando modo conservador sem flags opcionais.",
+            e,
+        )
         _MARKER_CAPABILITIES_CACHE = dict(caps)
         return dict(caps)
 
@@ -1668,6 +1722,7 @@ class DoclingCLIBackend(ExtractionBackend):
     def run(self, ctx: BackendContext) -> BackendRunResult:
         out_dir = ctx.root_dir / "staging" / "markdown-auto" / "docling" / ctx.entry_id
         ensure_dir(out_dir)
+        stall_timeout = _advanced_cli_stall_timeout("docling", ctx)
 
         cmd = [
             DOCLING_CLI,
@@ -1690,10 +1745,20 @@ class DoclingCLIBackend(ExtractionBackend):
             cmd.append("--enrich-picture-classes")
 
         logger.info("  [docling] Comando: %s", " ".join(cmd))
+        logger.info(
+            "  [docling] Stall timeout efetivo: %ss para %d páginas selecionadas.",
+            stall_timeout,
+            _selected_page_count(ctx),
+        )
         logger.info("  [docling] Iniciando processo...")
 
         try:
-            returncode, stdout_lines, stderr_lines = _run_cli_with_timeout(cmd, "docling", ctx)
+            returncode, stdout_lines, stderr_lines = _run_cli_with_timeout(
+                cmd,
+                "docling",
+                ctx,
+                stall_timeout=stall_timeout,
+            )
         except (InterruptedError, TimeoutError) as e:
             return BackendRunResult(
                 name=self.name, layer=self.layer, status="error",
@@ -1724,6 +1789,7 @@ class DoclingCLIBackend(ExtractionBackend):
             "command": cmd,
             "stdout_tail": stdout_text[-2000:],
             "stderr_tail": stderr_text[-2000:],
+            "stall_timeout": stall_timeout,
         }, indent=2, ensure_ascii=False))
 
         return BackendRunResult(
@@ -1744,16 +1810,6 @@ class MarkerCLIBackend(ExtractionBackend):
 
     def available(self) -> bool:
         return bool(MARKER_CLI)
-
-    def _marker_stall_timeout(self, ctx: BackendContext) -> int:
-        effective_profile = (
-            ctx.entry.document_profile
-            if ctx.entry.document_profile != "auto"
-            else ctx.report.suggested_profile
-        )
-        if effective_profile in {"math_heavy", "layout_heavy"}:
-            return max(ctx.stall_timeout, 1800)
-        return ctx.stall_timeout
 
     def _run_single_marker(
         self,
@@ -1779,7 +1835,7 @@ class MarkerCLIBackend(ExtractionBackend):
         elif marker_range:
             logger.info("  [marker] Versão atual não suporta page_range; processando o documento inteiro.")
 
-        wants_force_ocr = ctx.entry.force_ocr or ctx.entry.formula_priority or ctx.report.suspected_scan
+        wants_force_ocr = _should_force_ocr_for_marker(ctx)
         force_ocr_flag = caps.get("force_ocr_flag")
         if wants_force_ocr and force_ocr_flag:
             cmd.append(force_ocr_flag)
@@ -1853,11 +1909,21 @@ class MarkerCLIBackend(ExtractionBackend):
         caps: Dict[str, object],
         stall_timeout: int,
     ) -> BackendRunResult:
-        chunks = _build_marker_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=20)
+        chunk_size = _marker_chunk_size_for_workload(ctx)
+        chunks = _build_marker_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=chunk_size)
         if len(chunks) <= 1:
             return self._run_single_marker(ctx, out_dir, caps, ctx.pages, stall_timeout)
 
-        logger.info("  [marker] Documento grande/pesado; processando em %d chunks.", len(chunks))
+        logger.info(
+            "  [marker] Documento grande/pesado; processando em %d chunks de até %d páginas.",
+            len(chunks),
+            chunk_size,
+        )
+        logger.info(
+            "  [marker] Chunk policy: %d páginas por chunk para %d páginas selecionadas.",
+            chunk_size,
+            _selected_page_count(ctx),
+        )
         combined_path = out_dir / f"{ctx.entry_id}.md"
         combined_parts: List[str] = []
         chunk_meta = []
@@ -1932,17 +1998,24 @@ class MarkerCLIBackend(ExtractionBackend):
         ensure_dir(out_dir)
 
         caps = _detect_marker_capabilities()
-        stall_timeout = self._marker_stall_timeout(ctx)
+        stall_timeout = _advanced_cli_stall_timeout("marker", ctx)
         effective_profile = (
             ctx.entry.document_profile
             if ctx.entry.document_profile != "auto"
             else ctx.report.suggested_profile
         )
         supports_chunking = bool(caps.get("page_range_flag"))
+        selected_page_count = _selected_page_count(ctx)
+        chunk_size = _marker_chunk_size_for_workload(ctx)
         should_chunk = (
             effective_profile in {"math_heavy", "layout_heavy"}
-            and ctx.report.page_count >= 40
+            and selected_page_count > chunk_size
             and supports_chunking
+        )
+        logger.info(
+            "  [marker] Stall timeout efetivo: %ss para %d páginas selecionadas.",
+            stall_timeout,
+            selected_page_count,
         )
 
         result = (
@@ -2083,7 +2156,17 @@ class RepoBuilder:
         self.logs: List[Dict[str, object]] = []
         self.selector = BackendSelector()
 
+    def _sleep_guard(self, reason: str):
+        return prevent_system_sleep(
+            enabled=bool(self.options.get("prevent_sleep_during_build", True)),
+            reason=reason,
+        )
+
     def build(self) -> None:
+        with self._sleep_guard("build do repositorio"):
+            self._build_impl()
+
+    def _build_impl(self) -> None:
         logger.info("Building repository at %s", self.root_dir)
         logger.info("Creating directory structure...")
         self._create_structure()
@@ -2503,7 +2586,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         r"<!-- IMAGE_DESCRIPTION: (?P<fname>[^\s]+) -->\n"
         r"<!-- Tipo: [^\n]+ -->\n"
         r"(?:>.*\n)+"
-        r"<!-- /IMAGE_DESCRIPTION -->\n\n",
+        r"<!-- /IMAGE_DESCRIPTION -->\n*",
         re.MULTILINE,
     )
 
@@ -3776,6 +3859,10 @@ unit: {entry.tags}
         return manifest
 
     def incremental_build(self) -> None:
+        with self._sleep_guard("build incremental do repositorio"):
+            self._incremental_build_impl()
+
+    def _incremental_build_impl(self) -> None:
         """Adiciona novos arquivos a um repositório existente sem recriar do zero."""
         manifest_path = self.root_dir / "manifest.json"
         if not manifest_path.exists():
@@ -4015,6 +4102,10 @@ unit: {entry.tags}
         self._inject_all_image_descriptions()
 
     def process_single(self, entry: "FileEntry", force: bool = False) -> str:
+        with self._sleep_guard(f"processamento de {entry.title}"):
+            return self._process_single_impl(entry, force=force)
+
+    def _process_single_impl(self, entry: "FileEntry", force: bool = False) -> str:
         """
         Processa um único FileEntry e adiciona ao repositório existente.
         Chamado pelo botão '⚡ Processar' da UI para processar item a item.

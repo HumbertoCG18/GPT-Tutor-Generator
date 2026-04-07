@@ -194,7 +194,22 @@ class SettingsDialog(tk.Toplevel):
                     "Padrão: 300s (5 min). Para PDFs grandes, aumente para 600-900s.")
 
         # ── Vision / Image Description ────────────────────────────────
-        sep_row = next_row + 2
+        self._var_prevent_sleep = tk.BooleanVar(
+            value=bool(self.config.get("prevent_sleep_during_build", True))
+        )
+        prevent_sleep = ttk.Checkbutton(
+            tab_proc,
+            text="Evitar suspensão do Windows durante builds longos",
+            variable=self._var_prevent_sleep,
+        )
+        prevent_sleep.grid(row=next_row + 1, column=0, columnspan=2, sticky="w", pady=(2, 6))
+        add_tooltip(
+            prevent_sleep,
+            "Mantém o sistema acordado durante builds, OCR e reprocessamentos longos.\n"
+            "Não altera a curadoria nem a aprovação; só reduz risco de pausa por suspensão.",
+        )
+
+        sep_row = next_row + 3
         ttk.Separator(tab_proc, orient="horizontal").grid(
             row=sep_row, column=0, columnspan=2, sticky="ew", pady=(12, 8))
         ttk.Label(tab_proc, text="Vision — Descrição de Imagens",
@@ -258,6 +273,7 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("default_backend", self._var_backend.get())
         self.config.set("image_format", self._var_image_format.get())
         self.config.set("stall_timeout", self._var_stall_timeout.get())
+        self.config.set("prevent_sleep_during_build", bool(self._var_prevent_sleep.get()))
         vision_backend = self._var_vision_backend.get()
         vision_model = self._var_vision_model.get().strip()
         self.config.set("vision_backend", vision_backend)
@@ -1691,10 +1707,16 @@ class BacklogEntryEditDialog(tk.Toplevel):
         status_frame.grid(row=row_status, column=0, columnspan=2, sticky="ew", pady=(12, 4))
         status_frame.grid_columnconfigure(1, weight=1)
 
+        status["status"] = status["status"].replace(
+            "Processado (sÃƒÂ³ staging)",
+            "Processado (s\u00f3 staging)",
+        )
         status_color = {
+            "Aprovado/final": "#a6e3a1",
             "Curado/final": "#a6e3a1",
-            "Só staging": "#f9e2af",
+            "Processado (s\u00f3 staging)": "#f9e2af",
             "Caminho quebrado": "#f38ba8",
+            "Processado (sem markdown)": "#f38ba8",
             "Sem markdown": "#f38ba8",
         }.get(status["status"], p["accent"])
 
@@ -2832,22 +2854,22 @@ def _resolve_backlog_markdown_status(entry_data: dict, repo_dir: Optional[Path])
         if not rel or not rel.lower().endswith(".md"):
             continue
         rel_posix = rel.replace("\\", "/")
-        exists = bool(repo_dir and (repo_dir / rel).exists())
-        if rel_posix.startswith(final_prefixes):
-            return {
-                "status": "Curado/final",
-                "path": rel,
-                "source_key": key,
-                "needs_reprocess": "false",
-                "note": "Markdown final pronto para o tutor.",
-            }
         if rel_posix.startswith("staging/"):
             return {
-                "status": "Só staging",
+                "status": "Processado (s\u00f3 staging)",
                 "path": rel,
                 "source_key": key,
                 "needs_reprocess": "true",
                 "note": "Ainda não foi promovido para um destino final; reprocessar ou revisar.",
+            }
+        exists = bool(repo_dir and (repo_dir / rel).exists())
+        if rel_posix.startswith(final_prefixes):
+            return {
+                "status": "Aprovado/final" if key == "approved_markdown" else "Curado/final",
+                "path": rel,
+                "source_key": key,
+                "needs_reprocess": "false",
+                "note": "Markdown final pronto para o tutor.",
             }
         if exists:
             return {
@@ -2866,7 +2888,7 @@ def _resolve_backlog_markdown_status(entry_data: dict, repo_dir: Optional[Path])
         }
 
     return {
-        "status": "Sem markdown",
+        "status": "Processado (sem markdown)",
         "path": "",
         "source_key": "",
         "needs_reprocess": "true",

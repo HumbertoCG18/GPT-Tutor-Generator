@@ -92,6 +92,7 @@ class AppConfig:
         "default_backend": "auto",
         "image_format": "png",
         "stall_timeout": 300,
+        "prevent_sleep_during_build": True,
         "font_size": 10,
         "vision_backend": "ollama",
         "vision_model": "qwen3-vl:235b-cloud",

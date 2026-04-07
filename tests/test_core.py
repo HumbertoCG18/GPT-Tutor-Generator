@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 import tempfile
 from dataclasses import asdict
@@ -119,8 +120,203 @@ class TestCodeExtensions:
         assert auto_detect_category("Aula01.ipynb") == "codigo-professor"
 
 
+class TestMarkerCapabilities:
+    def teardown_method(self):
+        engine_module._MARKER_CAPABILITIES_CACHE = None
+
+    def test_help_timeout_uses_conservative_defaults(self, monkeypatch):
+        monkeypatch.setattr(engine_module, "MARKER_CLI", "marker_single")
+
+        def _raise_timeout(*args, **kwargs):
+            raise subprocess.TimeoutExpired(cmd=args[0], timeout=kwargs["timeout"])
+
+        monkeypatch.setattr(engine_module.subprocess, "run", _raise_timeout)
+        engine_module._MARKER_CAPABILITIES_CACHE = None
+
+        caps = engine_module._detect_marker_capabilities()
+
+        assert caps == {
+            "page_range_flag": None,
+            "force_ocr_flag": None,
+            "language_flag": None,
+        }
+
+    def test_current_marker_help_does_not_assume_removed_flags(self, monkeypatch):
+        monkeypatch.setattr(engine_module, "MARKER_CLI", "marker_single")
+        help_text = """
+Usage: marker_single [OPTIONS] FPATH
+
+Options:
+  --page_range TEXT
+  --disable_ocr
+  --output_dir PATH
+  --help
+"""
+        monkeypatch.setattr(
+            engine_module.subprocess,
+            "run",
+            lambda *args, **kwargs: mock.Mock(stdout=help_text, stderr=""),
+        )
+        engine_module._MARKER_CAPABILITIES_CACHE = None
+
+        caps = engine_module._detect_marker_capabilities()
+
+        assert caps["page_range_flag"] == "--page_range"
+        assert caps["force_ocr_flag"] is None
+        assert caps["language_flag"] is None
+
+
+class TestAdvancedBackendPolicies:
+    def _ctx(
+        self,
+        *,
+        page_count=116,
+        page_range="",
+        profile="math_heavy",
+        images_count=290,
+        force_ocr=False,
+        formula_priority=False,
+        suspected_scan=False,
+        stall_timeout=300,
+    ):
+        entry = FileEntry(
+            source_path="C:/repo/raw/pdfs/material-de-aula/mlp.pdf",
+            file_type="pdf",
+            category="material-de-aula",
+            title="MLP",
+            document_profile=profile,
+            preferred_backend="marker",
+            page_range=page_range,
+            force_ocr=force_ocr,
+            formula_priority=formula_priority,
+        )
+        report = DocumentProfileReport(
+            page_count=page_count,
+            images_count=images_count,
+            suggested_profile=profile,
+            suspected_scan=suspected_scan,
+        )
+        return engine_module.BackendContext(
+            Path("C:/repo"),
+            Path("C:/repo/raw/pdfs/material-de-aula/mlp.pdf"),
+            entry,
+            report,
+            stall_timeout=stall_timeout,
+        )
+
+    def test_large_heavy_marker_workload_uses_10_page_chunks(self):
+        ctx = self._ctx(page_count=116, profile="math_heavy")
+        assert engine_module._marker_chunk_size_for_workload(ctx) == 10
+
+    def test_medium_heavy_marker_workload_keeps_20_page_chunks(self):
+        ctx = self._ctx(page_count=60, profile="math_heavy")
+        assert engine_module._marker_chunk_size_for_workload(ctx) == 20
+
+    def test_formula_priority_no_longer_forces_marker_ocr(self):
+        ctx = self._ctx(formula_priority=True, suspected_scan=False, force_ocr=False)
+        assert engine_module._should_force_ocr_for_marker(ctx) is False
+
+    def test_manual_force_ocr_still_forces_marker_ocr(self):
+        ctx = self._ctx(force_ocr=True, suspected_scan=False)
+        assert engine_module._should_force_ocr_for_marker(ctx) is True
+
+    def test_scanned_pdf_still_forces_marker_ocr(self):
+        ctx = self._ctx(suspected_scan=True)
+        assert engine_module._should_force_ocr_for_marker(ctx) is True
+
+    def test_large_heavy_marker_timeout_is_raised_to_2700(self):
+        ctx = self._ctx(page_count=116, profile="math_heavy", stall_timeout=300)
+        assert engine_module._advanced_cli_stall_timeout("marker", ctx) == 2700
+
+    def test_large_heavy_docling_timeout_is_raised_to_1800(self):
+        ctx = self._ctx(page_count=116, profile="math_heavy", stall_timeout=300)
+        assert engine_module._advanced_cli_stall_timeout("docling", ctx) == 1800
+
+    def test_page_range_drives_large_workload_decision(self):
+        ctx = self._ctx(page_count=200, page_range="1-10", profile="math_heavy")
+        assert engine_module._marker_chunk_size_for_workload(ctx) == 20
+
+    def test_marker_command_omits_force_ocr_when_only_formula_priority_is_enabled(self, tmp_path, monkeypatch):
+        backend = engine_module.MarkerCLIBackend()
+        ctx = self._ctx(formula_priority=True, force_ocr=False, suspected_scan=False)
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+        out_dir = tmp_path / "staging" / "markdown-auto" / "marker" / "mlp"
+
+        def _fake_run_cli(cmd, backend_name, ctx_obj, stall_timeout):
+            output_dir = Path(cmd[cmd.index("--output_dir") + 1])
+            output_dir.mkdir(parents=True, exist_ok=True)
+            (output_dir / "result.md").write_text("# ok", encoding="utf-8")
+            return 0, [], []
+
+        monkeypatch.setattr(engine_module, "MARKER_CLI", "marker_single")
+        monkeypatch.setattr(engine_module, "_run_cli_with_timeout", _fake_run_cli)
+
+        result = backend._run_single_marker(
+            ctx,
+            out_dir,
+            {
+                "page_range_flag": "--page_range",
+                "force_ocr_flag": "--force_ocr",
+                "language_flag": None,
+            },
+            None,
+            300,
+        )
+
+        assert result.status == "ok"
+        assert "--force_ocr" not in result.command
+
+    def test_marker_run_uses_single_execution_for_small_selected_page_range(self, tmp_path, monkeypatch):
+        backend = engine_module.MarkerCLIBackend()
+        ctx = self._ctx(page_count=200, page_range="1-10", profile="math_heavy")
+        called = {"single": 0, "chunked": 0}
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+
+        monkeypatch.setattr(
+            engine_module,
+            "_detect_marker_capabilities",
+            lambda: {
+                "page_range_flag": "--page_range",
+                "force_ocr_flag": "--force_ocr",
+                "language_flag": None,
+            },
+        )
+
+        def _fake_single(*args, **kwargs):
+            called["single"] += 1
+            return engine_module.BackendRunResult(
+                name="marker",
+                layer="advanced",
+                status="ok",
+                command=["marker_single"],
+            )
+
+        def _fake_chunked(*args, **kwargs):
+            called["chunked"] += 1
+            return engine_module.BackendRunResult(
+                name="marker",
+                layer="advanced",
+                status="ok",
+                command=["marker_single"],
+            )
+
+        monkeypatch.setattr(backend, "_run_single_marker", _fake_single)
+        monkeypatch.setattr(backend, "_run_chunked_marker", _fake_chunked)
+
+        result = backend.run(ctx)
+
+        assert result.status == "ok"
+        assert called == {"single": 1, "chunked": 0}
+
+
 class TestBacklogMarkdownStatus:
-    def test_marks_staging_markdown_as_needing_reprocess(self, tmp_path):
+    def test_marks_staging_markdown_as_processed_only(self, tmp_path):
         from src.ui.dialogs import _resolve_backlog_markdown_status
 
         entry = {"base_markdown": "staging/markdown-auto/pymupdf4llm/item.md"}
@@ -129,10 +325,22 @@ class TestBacklogMarkdownStatus:
 
         status = _resolve_backlog_markdown_status(entry, tmp_path)
 
-        assert status["status"] == "Só staging"
+        assert status["status"] == "Processado (só staging)"
         assert status["needs_reprocess"] == "true"
 
     def test_marks_curated_markdown_as_final(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_markdown_status
+
+        entry = {"curated_markdown": "content/curated/item.md"}
+        (tmp_path / "content" / "curated").mkdir(parents=True)
+        (tmp_path / "content" / "curated" / "item.md").write_text("# x", encoding="utf-8")
+
+        status = _resolve_backlog_markdown_status(entry, tmp_path)
+
+        assert status["status"] == "Curado/final"
+        assert status["needs_reprocess"] == "false"
+
+    def test_marks_approved_markdown_as_approved_final(self, tmp_path):
         from src.ui.dialogs import _resolve_backlog_markdown_status
 
         entry = {"approved_markdown": "content/curated/item.md"}
@@ -141,7 +349,7 @@ class TestBacklogMarkdownStatus:
 
         status = _resolve_backlog_markdown_status(entry, tmp_path)
 
-        assert status["status"] == "Curado/final"
+        assert status["status"] == "Aprovado/final"
         assert status["needs_reprocess"] == "false"
 
     def test_loads_manual_unit_options_from_course_map(self, tmp_path):
@@ -657,6 +865,75 @@ class TestPendingOperation:
         assert entry.preferred_backend == "auto"
         assert entry.include_in_bundle is True
         assert entry.relevant_for_exam is True
+
+
+class TestQueueManifestReconciliation:
+    def test_prune_processed_queue_entries_removes_manifest_sources(self, tmp_path):
+        from src.ui.app import _prune_entries_against_manifest
+
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        (repo / "manifest.json").write_text(
+            json.dumps({
+                "entries": [
+                    {"source_path": str(repo / "raw" / "pdfs" / "a.pdf")},
+                ]
+            }),
+            encoding="utf-8",
+        )
+
+        entries = [
+            FileEntry(source_path=str(repo / "raw" / "pdfs" / "a.pdf"), file_type="pdf", category="material-de-aula", title="A"),
+            FileEntry(source_path=str(repo / "raw" / "pdfs" / "b.pdf"), file_type="pdf", category="material-de-aula", title="B"),
+        ]
+
+        remaining = _prune_entries_against_manifest(entries, repo)
+
+        assert [entry.title for entry in remaining] == ["B"]
+
+    def test_restore_pending_operation_context_drops_processed_entries(self, tmp_path):
+        from src.ui.app import _prune_entries_against_manifest
+
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        (repo / "manifest.json").write_text(
+            json.dumps({
+                "entries": [
+                    {"source_path": str(repo / "raw" / "pdfs" / "done.pdf")},
+                ]
+            }),
+            encoding="utf-8",
+        )
+
+        op = PendingOperation(
+            operation_type="build",
+            requested_mode="incremental",
+            repo_root=str(repo),
+            entries=[
+                FileEntry(source_path=str(repo / "raw" / "pdfs" / "done.pdf"), file_type="pdf", category="material-de-aula", title="Done"),
+                FileEntry(source_path=str(repo / "raw" / "pdfs" / "todo.pdf"), file_type="pdf", category="material-de-aula", title="Todo"),
+            ],
+        )
+
+        remaining = _prune_entries_against_manifest(op.entries, repo)
+
+        assert [entry.title for entry in remaining] == ["Todo"]
+
+
+def test_app_build_options_include_sleep_prevention():
+    from src.ui.app import _build_options_from_config
+
+    config_obj = mock.Mock(
+        get=lambda key, default=None: {
+            "image_format": "png",
+            "stall_timeout": 300,
+            "prevent_sleep_during_build": True,
+        }.get(key, default)
+    )
+
+    options = _build_options_from_config("auto", "por,eng", config_obj)
+
+    assert options["prevent_sleep_during_build"] is True
 
 
 # ---------------------------------------------------------------------------

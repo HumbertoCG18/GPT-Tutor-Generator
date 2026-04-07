@@ -24,10 +24,62 @@ from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLU
 from src.builder.engine import RepoBuilder
 from src.builder.task_queue_runner import TaskQueueRunner
 from src.ui.theme import ThemeManager, AppConfig
-from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, StatusDialog
+from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, StatusDialog, _resolve_backlog_markdown_status
 from src.ui.repo_dashboard import RepoDashboard, collect_repo_metrics
 
 logger = logging.getLogger(__name__)
+
+
+def _normalized_source_key(raw_path: str) -> str:
+    value = str(raw_path or "").strip()
+    if not value:
+        return ""
+    if "://" in value:
+        return value.casefold()
+    try:
+        normalized = Path(value).expanduser().resolve()
+    except Exception:
+        normalized = Path(value).expanduser()
+    return str(normalized).replace("\\", "/").casefold()
+
+
+def _manifest_source_keys_for_repo(repo_dir: Optional[Path]) -> set[str]:
+    if not repo_dir:
+        return set()
+    manifest_path = Path(repo_dir) / "manifest.json"
+    if not manifest_path.exists():
+        return set()
+    try:
+        data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except Exception:
+        logger.warning("Falha ao ler manifest para reconciliar fila: %s", manifest_path)
+        return set()
+    return {
+        _normalized_source_key(entry.get("source_path", ""))
+        for entry in data.get("entries", [])
+        if entry.get("source_path")
+    }
+
+
+def _prune_entries_against_manifest(entries: List[FileEntry], repo_dir: Optional[Path]) -> List[FileEntry]:
+    processed_sources = _manifest_source_keys_for_repo(repo_dir)
+    if not processed_sources:
+        return list(entries)
+    return [
+        entry
+        for entry in entries
+        if _normalized_source_key(entry.source_path) not in processed_sources
+    ]
+
+
+def _build_options_from_config(default_mode: str, default_ocr_language: str, config_obj) -> Dict[str, object]:
+    return {
+        "default_processing_mode": default_mode,
+        "default_ocr_language": default_ocr_language,
+        "image_format": config_obj.get("image_format"),
+        "stall_timeout": config_obj.get("stall_timeout"),
+        "prevent_sleep_during_build": config_obj.get("prevent_sleep_during_build", True),
+    }
 
 
 class _UILogHandler(logging.Handler):
@@ -430,17 +482,19 @@ class App(tk.Tk):
             row=2, column=0, columnspan=2, sticky="ew", padx=4, pady=4
         )
 
-        columns_bk = ("category", "layer", "tags", "title", "backend", "file")
+        columns_bk = ("status", "category", "layer", "tags", "title", "backend", "file")
         backlog_body = ttk.Frame(tab_backlog)
         backlog_body.pack(fill="both", expand=True)
 
         self.repo_tree = ttk.Treeview(backlog_body, columns=columns_bk, show="headings", height=14)
+        self.repo_tree.heading("status", text="Status")
         self.repo_tree.heading("category", text="Categoria")
         self.repo_tree.heading("layer", text="Camada")
         self.repo_tree.heading("tags", text="Tags")
         self.repo_tree.heading("title", text="Título")
         self.repo_tree.heading("backend", text="Backend")
         self.repo_tree.heading("file", text="Arquivo Original")
+        self.repo_tree.column("status", width=150, anchor="center")
         self.repo_tree.column("category", width=130, anchor="center")
         self.repo_tree.column("layer", width=100, anchor="center")
         self.repo_tree.column("tags", width=110, anchor="center")
@@ -943,14 +997,53 @@ class App(tk.Tk):
             return
         subject = self._subject_for_task(task)
         if subject:
-            updated_queue = [entry for entry in subject.queue if entry.source_path not in processed_sources]
+            processed_keys = {_normalized_source_key(path) for path in processed_sources if path}
+            updated_queue = [
+                entry
+                for entry in subject.queue
+                if _normalized_source_key(entry.source_path) not in processed_keys
+            ]
             if len(updated_queue) != len(subject.queue):
                 subject.queue = updated_queue
                 self.subject_store.add(subject)
             if self._var_active_subject.get() == subject.name:
-                self.entries = [entry for entry in self.entries if entry.source_path not in processed_sources]
+                self.entries = [
+                    entry
+                    for entry in self.entries
+                    if _normalized_source_key(entry.source_path) not in processed_keys
+                ]
                 self.refresh_tree()
                 self._save_current_queue()
+
+    def _prune_processed_queue_entries(self, repo_dir: Optional[Path], persist: bool = True) -> List[FileEntry]:
+        remaining_entries = _prune_entries_against_manifest(getattr(self, "entries", []), repo_dir)
+        entries_changed = len(remaining_entries) != len(getattr(self, "entries", []))
+        self.entries = remaining_entries
+
+        subject_store = getattr(self, "subject_store", None)
+        matched_subject = self._find_subject_by_repo_root(repo_dir) if repo_dir and subject_store else None
+        subject_changed = False
+        if matched_subject:
+            pruned_queue = _prune_entries_against_manifest(matched_subject.queue, repo_dir)
+            if len(pruned_queue) != len(matched_subject.queue):
+                matched_subject.queue = pruned_queue
+                subject_store.add(matched_subject)
+                subject_changed = True
+
+        if persist and entries_changed:
+            self.refresh_tree()
+            self._save_current_queue()
+        elif persist and subject_changed:
+            self._refresh_repo_dashboard()
+
+        return remaining_entries
+
+    def _refresh_repo_progress_state(self, repo_dir: Optional[Path]) -> None:
+        remaining_entries = self._prune_processed_queue_entries(repo_dir, persist=True)
+        if remaining_entries != getattr(self, "entries", []):
+            self.entries = remaining_entries
+        self._refresh_backlog()
+        self._refresh_repo_dashboard()
 
     def _execute_repo_task(self, task: RepoTask) -> None:
         repo_dir = Path(task.repo_root)
@@ -964,6 +1057,7 @@ class App(tk.Tk):
             if self._cancel_event.is_set():
                 raise InterruptedError("Fila cancelada pelo usuário.")
             if title:
+                self.after(0, lambda repo_path=repo_dir: self._refresh_repo_progress_state(repo_path))
                 self.after(
                     0,
                     lambda c=current, t=total, ti=title, task_ref=task: self._set_status(
@@ -1103,6 +1197,7 @@ class App(tk.Tk):
         active_subject = op.active_subject or "(nenhuma)"
         self._var_active_subject.set(active_subject)
         self.entries = [FileEntry.from_dict(e.to_dict()) for e in op.entries]
+        self._prune_processed_queue_entries(Path(op.repo_root) if op.repo_root else None, persist=False)
         self.refresh_tree()
         self._save_current_queue()
 
@@ -1226,11 +1321,13 @@ class App(tk.Tk):
                 
             entries = data.get("entries", [])
             for i, f_data in enumerate(entries):
+                status = _resolve_backlog_markdown_status(f_data, repo_dir)
                 self.repo_tree.insert(
                     "",
                     "end",
                     iid=f"backlog_{i}",
                     values=(
+                        status.get("status", ""),
                         f_data.get("category", ""),
                         f_data.get("effective_profile", ""),
                         f_data.get("tags", ""),
@@ -1502,12 +1599,11 @@ class App(tk.Tk):
 
     def _build_options(self) -> Dict[str, object]:
         """Monta o dict de opções para o RepoBuilder."""
-        return {
-            "default_processing_mode": self.var_default_mode.get(),
-            "default_ocr_language": self.var_default_ocr_language.get(),
-            "image_format": self.config_obj.get("image_format"),
-            "stall_timeout": self.config_obj.get("stall_timeout"),
-        }
+        return _build_options_from_config(
+            self.var_default_mode.get(),
+            self.var_default_ocr_language.get(),
+            self.config_obj,
+        )
 
     def _repo_dir(self) -> Optional[Path]:
         """Retorna o caminho completo do repositório a partir de var_repo_root.
@@ -1673,6 +1769,7 @@ class App(tk.Tk):
             if self._cancel_event.is_set():
                 raise InterruptedError("Build cancelado pelo usuário.")
             if title:
+                self.after(0, lambda repo_path=repo_dir: self._refresh_repo_progress_state(repo_path))
                 self.after(0, lambda c=current, tot=t, ti=title: (
                     self._step_progress(c, max(tot, 1)),
                     self._set_status(f"({c + 1}/{tot}) Processando: {ti}...")
@@ -1709,6 +1806,8 @@ class App(tk.Tk):
     def _on_build_cancelled(self):
         self._end_progress()
         self._set_building_state(False)
+        if self._active_operation and self._active_operation.repo_root:
+            self._refresh_repo_progress_state(Path(self._active_operation.repo_root))
         self._active_operation = None
         self._reset_build_finish_options()
         self._set_status("Build cancelado.")
@@ -1745,10 +1844,13 @@ class App(tk.Tk):
             )
         self._reset_build_finish_options()
         self._refresh_backlog()
+        self._refresh_repo_dashboard()
 
     def _on_build_error(self, traceback_str: str):
         self._end_progress()
         self._set_building_state(False)
+        if self._active_operation and self._active_operation.repo_root:
+            self._refresh_repo_progress_state(Path(self._active_operation.repo_root))
         self._reset_build_finish_options()
         self._set_status("Erro ao criar repositório.")
         messagebox.showerror(APP_NAME, f"Erro ao criar repositório:\n\n{traceback_str}")
@@ -1902,6 +2004,7 @@ class App(tk.Tk):
             if self._cancel_event.is_set():
                 raise InterruptedError("Build cancelado pelo usuário.")
             if title:
+                self.after(0, lambda repo_path=repo_dir: self._refresh_repo_progress_state(repo_path))
                 self.after(0, lambda c=current, tot=t, ti=title: (
                     self._step_progress(c, max(tot, 1)),
                     self._set_status(f"({c + 1}/{tot}) Processando: {ti}...")

@@ -862,6 +862,39 @@ class TestDescriptionInjection:
         assert "Tabela-verdade atualizada." in result
         assert "<!-- Tipo: tabela -->" in result
 
+    def test_replace_adjacent_stale_description_blocks(self):
+        from src.builder.engine import RepoBuilder
+        markdown = (
+            "<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->\n"
+            "<!-- Tipo: diagrama -->\n"
+            "> **[Descrição de imagem]** Descrição antiga 1.\n"
+            "<!-- /IMAGE_DESCRIPTION -->\n"
+            "<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->\n"
+            "<!-- Tipo: diagrama -->\n"
+            "> **[Descrição de imagem]** Descrição antiga 2.\n"
+            "<!-- /IMAGE_DESCRIPTION -->\n"
+            "![](content/images/entry1-page-003-img-01.png)\n"
+        )
+        curation = {
+            "pages": {
+                "3": {
+                    "include_page": True,
+                    "images": {
+                        "entry1-page-003-img-01.png": {
+                            "type": "diagrama",
+                            "include": True,
+                            "description": "Diagrama atualizado sem duplicação.",
+                        }
+                    }
+                }
+            }
+        }
+        result = RepoBuilder.inject_image_descriptions(markdown, curation)
+        assert "Descrição antiga 1." not in result
+        assert "Descrição antiga 2." not in result
+        assert result.count("<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->") == 1
+        assert "Diagrama atualizado sem duplicação." in result
+
     def test_compact_long_description_to_single_sentence(self):
         from src.builder.engine import RepoBuilder
         markdown = "![](content/images/entry1-page-003-img-01.png)"
