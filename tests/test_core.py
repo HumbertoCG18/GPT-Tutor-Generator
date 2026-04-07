@@ -30,6 +30,7 @@ from src.builder.engine import (
     _build_timeline_index,
     _score_timeline_row_against_unit,
     _compact_notebook_markdown,
+    _generated_repo_gitignore_text,
     rows_to_markdown_table,
     wrap_frontmatter,
     _html_to_structured_markdown,
@@ -2013,6 +2014,22 @@ class TestPromptArchitectureAlignment:
         source = Path(engine_module.__file__).read_text(encoding="utf-8")
 
         assert "def _low_token_generate_claude_project_instructions_v2(" not in source
+
+
+class TestGeneratedRepoGitignore:
+    def test_ignores_only_regenerable_internal_indexes_and_prompt_exports(self):
+        text = _generated_repo_gitignore_text()
+
+        assert "course/.content_taxonomy.json" in text
+        assert "course/.timeline_index.json" in text
+        assert "course/.assessment_context.json" in text
+        assert "course/.tag_catalog.json" in text
+        assert "INSTRUCOES_CLAUDE_PROJETO.md" in text
+        assert "INSTRUCOES_GPT_PROJETO.md" in text
+        assert "INSTRUCOES_GEMINI_PROJETO.md" in text
+        assert "manifest.json" not in text
+        assert "course/FILE_MAP.md" not in text
+        assert "course/COURSE_MAP.md" not in text
 
 
 # ---------------------------------------------------------------------------
