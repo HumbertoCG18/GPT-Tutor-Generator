@@ -1957,17 +1957,17 @@ class TestGlossarySeed:
 
     def test_glossary_ignores_noisy_author_like_evidence(self):
         docs = [{
-            "title": "EspecificaÃ§Ã£o de Conjuntos Indutivos",
+            "title": "Especificação de Conjuntos Indutivos",
             "manifest_title": "",
             "headings": [],
-            "text": "JÃºlio Machado Conjuntos Indutivos 1. Conjuntos indutivos definem coleÃ§Ãµes fechadas por regras de construÃ§Ã£o.",
+            "text": "Júlio Machado Conjuntos Indutivos 1. Conjuntos indutivos definem coleções fechadas por regras de construção.",
         }]
         evidence = _find_glossary_evidence(
-            "EspecificaÃ§Ã£o de Conjuntos Indutivos",
-            "Unidade 01 â€” MÃ©todos Formais",
+            "Especificação de Conjuntos Indutivos",
+            "Unidade 01 â€” Métodos Formais",
             docs,
         )
-        assert "jÃºlio machado" not in evidence.lower()
+        assert "júlio machado" not in evidence.lower()
         assert "regras" in evidence.lower()
         assert "constru" in evidence.lower()
 
@@ -2577,8 +2577,8 @@ class TestCourseMapLowToken:
         assert len(result) <= 14000
 
     def test_course_map_omits_empty_exam_and_professor_sections(self):
-        result = course_map_md({"course_name": "MÃ©todos Formais"}, None)
-        assert "TÃ³picos de alta incidÃªncia em prova" not in result
+        result = course_map_md({"course_name": "Métodos Formais"}, None)
+        assert "Tópicos de alta incidência em prova" not in result
         assert "Notas do professor" not in result
 
 
@@ -2599,18 +2599,18 @@ class TestExerciseIndexLowToken:
                 category="provas",
                 file_type="pdf",
                 tags="unidade-01;unidade-02",
-                notes="Alta incidÃªncia",
+                notes="Alta incidência",
             ),
         ]
         result = exercise_index_md({"course_name": "Teste"}, entries)
-        assert "| Recurso | Tipo | Unidade | SoluÃ§Ã£o | Prioridade | Quando usar |" in result
-        assert "Mapeamento de exercÃ­cios por tÃ³pico" not in result
-        assert "revisÃ£o de prova" in result
+        assert "| Recurso | Tipo | Unidade | Solução | Prioridade | Quando usar |" in result
+        assert "Mapeamento de exercícios por tópico" not in result
+        assert "revisão de prova" in result
 
     def test_exercise_index_empty_state_stays_short(self):
         result = exercise_index_md({"course_name": "Teste"}, [])
         assert "| [a preencher] | | | | | |" in result
-        assert "Mapeamento de exercÃ­cios por tÃ³pico" not in result
+        assert "Mapeamento de exercícios por tópico" not in result
 
     def test_exercise_index_uses_auto_tags_when_manual_tags_are_empty(self):
         entries = [

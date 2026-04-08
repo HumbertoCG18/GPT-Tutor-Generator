@@ -546,17 +546,17 @@ def test_auto_map_entry_unit_ignores_generic_state_tokens_when_content_matches_u
             "slug": "unidade-01-metodos-formais",
             "topics": [
                 "1.1. Sistemas Formais",
-                "1.2. Linguagens de EspecificaÃ§Ã£o e LÃ³gicas",
-                "1.2.1. Fundamentos de LÃ³gica de Primeira Ordem",
+                "1.2. Linguagens de Especificação e Lógicas",
+                "1.2.1. Fundamentos de Lógica de Primeira Ordem",
             ],
         },
         {
             "title": "Unidade 03 - Verificacao de Modelos",
             "slug": "unidade-03-verificacao-de-modelos",
             "topics": [
-                "3.1. MÃ¡quinas de Estado",
+                "3.1. Máquinas de Estado",
                 "3.1.1. Modelos de Kripke",
-                "3.2. Fundamentos de LÃ³gicas Temporais",
+                "3.2. Fundamentos de Lógicas Temporais",
             ],
         },
     ]
@@ -568,8 +568,8 @@ def test_auto_map_entry_unit_ignores_generic_state_tokens_when_content_matches_u
     }
     markdown = (
         "# Sintaxe\n\n"
-        "## Estados da computaÃ§Ã£o\n\n"
-        "A sequÃªncia de estados da computaÃ§Ã£o e variÃ¡veis.\n"
+        "## Estados da computação\n\n"
+        "A sequência de estados da computação e variáveis.\n"
     )
 
     result = _auto_map_entry_unit(entry, units, markdown_text=markdown)

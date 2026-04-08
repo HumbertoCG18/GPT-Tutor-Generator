@@ -7986,7 +7986,7 @@ def _build_file_map_content_taxonomy_from_course(
                 for topic in topics:
                     course_map_lines.append(f"- [ ] {_topic_text(topic)}")
             else:
-                course_map_lines.append("- [ ] [tÃ³picos a preencher]")
+                course_map_lines.append("- [ ] [tópicos a preencher]")
             course_map_lines.append("")
     else:
         course_map_lines.append(teaching_plan)
@@ -9748,7 +9748,6 @@ def _low_token_course_map_md_v2(course_meta: dict, subject_profile=None) -> str:
     base = _low_token_course_map_md(course_meta, subject_profile)
     lines = base.splitlines()
     stop_headers = {
-        "## TÃ³picos de alta incidÃªncia em prova",
         "## Tópicos de alta incidência em prova",
         "## Notas do professor",
     }
@@ -9766,11 +9765,11 @@ def _exercise_index_md_v2(course_meta: dict, entries: List[FileEntry] = None) ->
     lines = [
         f"# EXERCISE_INDEX â€” {course_name}",
         "",
-        "> **Como usar:** Ãndice operacional de prÃ¡tica da disciplina.",
+        "> **Como usar:** Índice operacional de prática da disciplina.",
         "> O tutor consulta este arquivo para localizar listas, provas antigas",
-        "> e recursos de exercÃ­cios por unidade, prioridade e finalidade.",
+        "> e recursos de exercícios por unidade, prioridade e finalidade.",
         "",
-        "| Recurso | Tipo | Unidade | SoluÃ§Ã£o | Prioridade | Quando usar |",
+        "| Recurso | Tipo | Unidade | Solução | Prioridade | Quando usar |",
         "|---|---|---|---|---|---|",
     ]
     if entries:
@@ -9786,18 +9785,18 @@ def _exercise_index_md_v2(course_meta: dict, entries: List[FileEntry] = None) ->
             )
             category = _collapse_ws(entry.category or "")
             category_lower = category.lower()
-            kind = "prova" if "prova" in category_lower else "lista" if "lista" in category_lower else "exercÃ­cio"
-            has_solution = "sim" if any(token in notes.lower() for token in ["gabarito", "resolu", "soluÃ§"]) else "nÃ£o"
-            priority = "alta" if "prova" in category_lower or has_solution == "sim" else "mÃ©dia"
-            usage = "revisÃ£o de prova" if "prova" in category_lower else "fixaÃ§Ã£o por unidade"
+            kind = "prova" if "prova" in category_lower else "lista" if "lista" in category_lower else "exercício"
+            has_solution = "sim" if any(token in notes.lower() for token in ["gabarito", "resolu", "soluç"]) else "não"
+            priority = "alta" if "prova" in category_lower or has_solution == "sim" else "média"
+            usage = "revisão de prova" if "prova" in category_lower else "fixação por unidade"
             lines.append(
-                f"| {entry.title} | {kind} | {tags or 'nÃ£o mapeado'} | {has_solution} | {priority} | {usage} |"
+                f"| {entry.title} | {kind} | {tags or 'não mapeado'} | {has_solution} | {priority} | {usage} |"
             )
     else:
         lines.append("| [a preencher] | | | | | |")
         lines += [
             "",
-            "> Adicione listas ou provas antigas para o tutor conseguir sugerir prÃ¡tica com baixo custo de contexto.",
+            "> Adicione listas ou provas antigas para o tutor conseguir sugerir prática com baixo custo de contexto.",
         ]
     lines.append("")
     result = "\n".join(lines)
