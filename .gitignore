@@ -217,3 +217,8 @@ __marimo__/
 
 # PDF
 *.pdf
+
+#LLM
+.agents/
+.claude/
+docs/

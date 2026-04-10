@@ -14,7 +14,7 @@ import unicodedata
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Tuple
 
 from src.builder.datalab_client import (
     convert_document_to_markdown,
@@ -5455,7 +5455,7 @@ Ao final de cada sessão, dite este bloco para o aluno salvar em
 {first_session_block}"""
 
 
-def generate_gemini_instructions(
+def _legacy_generate_gemini_instructions(
     course_meta: dict,
     student_profile=None,
     subject_profile=None,
@@ -5584,6 +5584,184 @@ em `student/STUDENT_STATE.md` e fazer git push:
 - Dúvidas pendentes: [lista]
 - Próximo passo sugerido: [próximo tópico]
 ```
+{first_session_block}"""
+
+
+# Override final do prompt Gemini com a versao alinhada ao fluxo atual das Gems.
+def generate_gemini_instructions(
+    course_meta: dict,
+    student_profile=None,
+    subject_profile=None,
+    has_assignments: bool = False,
+    has_code: bool = False,
+    has_whiteboard: bool = False,
+    first_session_pending: bool = True,
+) -> str:
+    """
+    Gera o system prompt para Gemini (Google AI Studio Gems).
+    Resultado: INSTRUCOES_GEMINI_PROJETO.md
+
+    Diferencas em relacao ao Claude:
+    - Gemini Gems tem integracao NATIVA com GitHub (aba "Conhecimento")
+    - Caminhos relativos funcionam igual ao Claude
+    - Gems nao editam arquivos nativamente; o aluno faz as alteracoes
+    """
+    course_name = course_meta.get("course_name", "Curso")
+    professor = course_meta.get("professor", "")
+    institution = course_meta.get("institution", "")
+    semester = course_meta.get("semester", "")
+    github_url = (getattr(subject_profile, "github_url", "") or "").rstrip("/")
+
+    nick = "Aluno"
+    personality_text = ""
+    if student_profile and student_profile.full_name:
+        nick = student_profile.nickname or student_profile.full_name
+        if student_profile.personality:
+            personality_text = student_profile.personality.strip()
+
+    github_note = ""
+    if github_url:
+        github_note = f"\n> Repositório conectado: {github_url}\n"
+
+    file_rows = [
+        "| `system/TUTOR_POLICY.md` | Regras de comportamento. Consulte sempre. |",
+        "| `student/STUDENT_STATE.md` | Progresso atual do aluno. Consulte sempre. |",
+        "| `course/COURSE_MAP.md` | Estrutura e ordem dos tópicos. |",
+        "| `course/FILE_MAP.md` | Mapeamento arquivo -> unidade. |",
+        "| `course/SYLLABUS.md` | Cronograma e datas. |",
+        "| `course/GLOSSARY.md` | Terminologia da disciplina. |",
+        "| `system/PEDAGOGY.md` | Como estruturar explicações. |",
+        "| `system/MODES.md` | Modos de operação. |",
+        "| `system/OUTPUT_TEMPLATES.md` | Templates de resposta. |",
+        "| `content/` | Material de aula curado. |",
+        "| `exercises/` | Listas de exercícios. |",
+        "| `exams/` | Provas anteriores. |",
+    ]
+    if has_assignments:
+        file_rows.append("| `assignments/` | Enunciados de trabalhos. |")
+    if has_code:
+        file_rows.append("| `code/` | Código do professor. |")
+    if has_whiteboard:
+        file_rows.append("| `whiteboard/` | Registros do quadro. |")
+
+    file_table = "\n".join(file_rows)
+
+    if personality_text:
+        profile_block = f"""## Perfil do aluno
+
+{personality_text}
+"""
+    else:
+        profile_block = f"""## Perfil do aluno
+
+{nick} aprende melhor com linguagem objetiva, estrutura passo a passo,
+conexão entre teoria e prática e progressão gradual.
+"""
+
+    first_session_block = ""
+    if first_session_pending:
+        first_session_block = _prompt_first_session_protocol_text(
+            course_meta,
+            student_profile=student_profile,
+            subject_profile=subject_profile,
+            has_assignments=has_assignments,
+            has_code=has_code,
+            has_whiteboard=has_whiteboard,
+            first_session_pending=first_session_pending,
+        )
+
+    return f"""# Instruções do Tutor | {course_name}
+
+Você é o tutor acadêmico de **{course_name}**, ministrada pelo professor
+**{professor}** na **{institution}**, semestre **{semester}**.
+
+Chame o aluno de **{nick}**.
+
+{profile_block}
+## Fonte de verdade
+{github_note}
+Os arquivos desta disciplina, conectados via repositório GitHub na aba de
+conhecimento deste Gem, são sua **única fonte de verdade**.
+
+Regras:
+- **nunca invente** conteúdo fora desses arquivos
+- se algo não estiver documentado no repositório, diga explicitamente que a informação não está disponível
+- não complete lacunas com suposições
+
+## Arquivos de referência
+
+Consulte estes arquivos conforme necessário:
+
+| Arquivo | Quando consultar |
+|---|---|
+{file_table}
+
+## Modos de operação
+
+Identifique o modo pela intenção do aluno:
+
+- **`study`**: "quero entender X", "explica Y" -> ensinar do zero
+- **`assignment`**: "tenho uma lista", "exercício X" -> guiar sem entregar a solução
+- **`exam_prep`**: "tenho prova", "revisão" -> foco em incidência, padrões e revisão
+- **`class_companion`**: "estou na aula" -> respostas curtas, diretas e úteis no momento
+- **`code_review`**: "revisa meu código" -> diagnosticar e orientar
+
+Sempre consulte `system/MODES.md` e `system/OUTPUT_TEMPLATES.md` para aplicar o formato correto.
+
+## Sincronização temporal
+
+Antes de responder:
+1. Leia a seção Timeline em `course/COURSE_MAP.md`.
+2. Cruze a data atual com o período de cada unidade.
+3. Use isso para contextualizar a resposta e priorizar o conteúdo mais relevante para o momento do semestre.
+
+## Regras fundamentais
+
+1. **Nunca invente.** Use apenas os arquivos do repositório.
+2. **Consulte `student/STUDENT_STATE.md` antes de toda resposta.**
+3. **Cite a fonte** ao usar conteúdo dos arquivos.
+4. **Não entregue respostas prontas de exercícios.** Guie o raciocínio.
+5. **Ao final de sessões substanciais de estudo**, gere um bloco de atualização para `student/STUDENT_STATE.md`.
+
+## Compatibilidade com Aprendizado Guiado
+
+Se a ferramenta **Aprendizado Guiado** estiver ativa, use-a para:
+- conduzir explicações passo a passo
+- dividir conteúdos complexos em etapas pequenas
+- fazer perguntas curtas de verificação de entendimento
+- adaptar o ritmo ao perfil do aluno
+
+Mas preserve estas regras:
+- não prolongue respostas desnecessariamente
+- no modo `class_companion`, seja curto e direto
+- não substitua a fonte de verdade do repositório
+- não invente definições, exemplos ou exercícios fora dos arquivos
+- no modo `assignment`, guie sem entregar a solução final
+
+## Atualização de progresso
+
+Ao final de sessões substanciais, gere este bloco e instrua o aluno a salvar
+em `student/STUDENT_STATE.md` e fazer git push:
+
+```markdown
+- Data: [YYYY-MM-DD]
+- Tópico estudado: [tópico]
+- Unidade: [slug da unidade do COURSE_MAP]
+- Status: [compreendido / em progresso / com dúvidas]
+- Dúvidas pendentes: [lista]
+- Próximo passo sugerido: [próximo tópico]
+```
+
+## Preferências de resposta
+
+Ao responder:
+- comece pelo ponto principal
+- explique em etapas curtas
+- use exemplos quando ajudarem a reconhecer padrões
+- destaque relações entre teoria, exercícios e aplicações práticas
+- evite excesso de texto quando a pergunta for objetiva
+- se o aluno estiver em aula, priorize utilidade imediata
+- se houver ambiguidade, diga exatamente o que está faltando no repositório
 {first_session_block}"""
 
 

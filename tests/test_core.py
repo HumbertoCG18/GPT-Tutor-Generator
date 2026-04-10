@@ -3347,6 +3347,13 @@ class TestPromptArchitectureAlignment:
         assert "artefatos estruturais gerados pelo app" in text
         assert "não reescreva `FILE_MAP.md`/`COURSE_MAP.md` manualmente" in text
 
+    def test_gemini_prompt_includes_guided_learning_contract(self):
+        text = generate_gemini_instructions(self.META)
+
+        assert "## Compatibilidade com Aprendizado Guiado" in text
+        assert "no modo `class_companion`, seja curto e direto" in text
+        assert "Ao final de sessões substanciais" in text
+
     def test_prompts_do_not_surface_internal_json_indexes(self):
         texts = [
             generate_claude_project_instructions(self.META, first_session_pending=True),
