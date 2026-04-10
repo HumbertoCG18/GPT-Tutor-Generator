@@ -1,20 +1,30 @@
+import io
+import os
 import re
 import shutil
 import tkinter as tk
 from tkinter import ttk, messagebox
 import logging
+from datetime import datetime
 from pathlib import Path
 from typing import List
 from PIL import Image, ImageTk
 from src.models.core import FileEntry
-from src.builder.engine import RepoBuilder
+from src.builder.engine import RepoBuilder, migrate_legacy_url_manual_reviews
 
-from src.utils.helpers import HAS_PYMUPDF
+from src.utils.helpers import HAS_PYMUPDF, slugify
 
 if HAS_PYMUPDF:
     import pymupdf
 
 logger = logging.getLogger(__name__)
+
+CURATOR_PDF_PREVIEW_MAX_PAGES = 6
+CURATOR_SOURCE_MAX_BYTES = 400_000
+CURATOR_PREVIEW_BASE_WIDTH = 400
+CURATOR_PREVIEW_ZOOM_MIN = 0.5
+CURATOR_PREVIEW_ZOOM_MAX = 2.5
+CURATOR_PREVIEW_ZOOM_STEP = 0.25
 
 
 def _curator_studio_layout_mode(width: int) -> str:
@@ -23,6 +33,96 @@ def _curator_studio_layout_mode(width: int) -> str:
     if width >= 980:
         return "medium"
     return "stacked"
+
+
+def _parse_review_frontmatter(content: str) -> dict:
+    """Parse YAML-like frontmatter from a review markdown file."""
+    match = re.match(r"^---\s*\n(.*?)\n---", content, re.DOTALL)
+    if not match:
+        return {}
+    result = {}
+    for line in match.group(1).strip().split("\n"):
+        if ":" in line:
+            key, _, value = line.partition(":")
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            if value.lower() in ("null", "none", ""):
+                value = None
+            result[key] = value
+    return result
+
+
+def _curator_supports_review_path(path: Path) -> bool:
+    """Ignore review files that do not belong to the Curator Studio flow."""
+    if path.parent.name not in {"pdfs", "images"}:
+        return False
+    if path.parent.name == "images":
+        return True
+
+    try:
+        content = path.read_text(encoding="utf-8", errors="replace")
+    except Exception:
+        return True
+
+    fm = _parse_review_frontmatter(content[:8192])
+    if fm.get("type") == "manual_url_review":
+        return False
+    if fm.get("base_backend") == "url_fetcher":
+        return False
+    return True
+
+
+def _read_curator_source_text(path: Path, max_bytes: int = CURATOR_SOURCE_MAX_BYTES) -> tuple[str, bool]:
+    """Read source text for the editor without loading arbitrarily large files."""
+    with path.open("r", encoding="utf-8", errors="replace") as handle:
+        content = handle.read(max_bytes + 1)
+    truncated = len(content) > max_bytes
+    if truncated:
+        content = content[:max_bytes]
+    return content, truncated
+
+
+def _preview_page_indices(page_count: int, max_pages: int = CURATOR_PDF_PREVIEW_MAX_PAGES) -> list[int]:
+    """Return the subset of PDF pages rendered in Curator Studio previews."""
+    return list(range(min(max(page_count, 0), max_pages)))
+
+
+def _clamp_preview_zoom(value: float) -> float:
+    return max(CURATOR_PREVIEW_ZOOM_MIN, min(CURATOR_PREVIEW_ZOOM_MAX, round(value, 2)))
+
+
+def _preview_target_width(zoom: float) -> int:
+    return max(int(CURATOR_PREVIEW_BASE_WIDTH * _clamp_preview_zoom(zoom)), 120)
+
+
+def _manual_crop_filename(entry_id: str, page_num: int) -> str:
+    timestamp = datetime.now().strftime("%H%M%S")
+    return f"{entry_id}-page-{page_num:03d}-manual-{timestamp}.png"
+
+
+def _markdown_image_reference(markdown_path: Path, image_path: Path, repo_dir: Path) -> str:
+    try:
+        rel = Path(os.path.relpath(image_path, start=markdown_path.parent))
+    except Exception:
+        rel = image_path.relative_to(repo_dir)
+    return f"![]({str(rel).replace(chr(92), '/')})"
+
+
+def _curator_review_paths(repo_dir: Path) -> List[Path]:
+    """Return only manual-review files handled by Curator Studio."""
+    manual_dir = repo_dir / "manual-review"
+    if not manual_dir.exists():
+        return []
+
+    paths: List[Path] = []
+    for subdir in ("pdfs", "images"):
+        review_dir = manual_dir / subdir
+        if not review_dir.exists():
+            continue
+        for path in sorted(review_dir.rglob("*.md")):
+            if _curator_supports_review_path(path):
+                paths.append(path)
+    return paths
 
 
 def _merge_review_frontmatter_with_manifest(fm: dict, manifest_entry: dict | None) -> dict:
@@ -65,6 +165,12 @@ class CuratorStudio(tk.Toplevel):
     def __init__(self, parent, repo_dir: str, theme_mgr):
         super().__init__(parent)
         self.repo_dir = Path(repo_dir)
+        try:
+            migrated = migrate_legacy_url_manual_reviews(self.repo_dir)
+            if migrated:
+                logger.info("Migrated %d legacy URL manual-review files to manual-review/web.", migrated)
+        except Exception as exc:
+            logger.warning("Could not migrate legacy URL manual-review files: %s", exc)
         self.theme_mgr = theme_mgr
         self._theme_name = parent.config_obj.get("theme") if hasattr(parent, "config_obj") else "dark"
 
@@ -74,9 +180,19 @@ class CuratorStudio(tk.Toplevel):
 
         self.current_md_path = None          # review template .md path
         self._current_content_path = None    # actual markdown file being edited
+        self._current_content_truncated = False
         self._current_frontmatter = {}
         self._available_sources = {}
         self.preview_images = []
+        self._preview_zoom = 1.0
+        self._preview_notice_var = tk.StringVar(value="")
+        self._zoom_var = tk.StringVar(value="100%")
+        self._crop_mode = tk.BooleanVar(value=False)
+        self._preview_crop_rect = None
+        self._preview_crop_start = None
+        self._preview_crop_canvas = None
+        self._preview_crop_meta = None
+        self._preview_pdf_path = None
         self._layout_mode = ""
 
         self.theme_mgr.apply(self, self._theme_name)
@@ -84,6 +200,42 @@ class CuratorStudio(tk.Toplevel):
         self._load_files()
         self.bind("<Configure>", self._on_layout_change)
         self.after_idle(self._apply_responsive_layout)
+
+    def _repo_course_meta(self) -> dict:
+        manifest_path = self.repo_dir / "manifest.json"
+        if manifest_path.exists():
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                course = manifest.get("course")
+                if isinstance(course, dict):
+                    course_name = str(course.get("course_name", "") or "").strip() or self.repo_dir.name
+                    course_slug = str(course.get("course_slug", "") or "").strip() or slugify(course_name) or slugify(self.repo_dir.name) or "curso"
+                    return {
+                        "course_name": course_name,
+                        "course_slug": course_slug,
+                        "semester": str(course.get("semester", "") or "").strip(),
+                        "professor": str(course.get("professor", "") or "").strip(),
+                        "institution": str(course.get("institution", "") or "").strip() or "PUCRS",
+                    }
+            except Exception as exc:
+                logger.warning("Falha ao carregar course_meta do manifest para reprovação: %s", exc)
+
+        parent_app = self.master
+        if hasattr(parent_app, "_find_subject_by_repo_root") and hasattr(parent_app, "_build_course_meta_for_subject"):
+            try:
+                subject = parent_app._find_subject_by_repo_root(self.repo_dir)
+                return parent_app._build_course_meta_for_subject(subject, self.repo_dir)
+            except Exception as exc:
+                logger.warning("Falha ao montar course_meta via app principal para reprovação: %s", exc)
+
+        course_name = self.repo_dir.name
+        return {
+            "course_name": course_name,
+            "course_slug": slugify(course_name) or "curso",
+            "semester": "",
+            "professor": "",
+            "institution": "PUCRS",
+        }
 
     # ── UI ──────────────────────────────────────────────────────────────
 
@@ -144,7 +296,18 @@ class CuratorStudio(tk.Toplevel):
         preview_frame = ttk.Frame(self.paned)
         self.paned.add(preview_frame, weight=2)
 
-        ttk.Label(preview_frame, text="Visualização (Preview original)", font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(0, 5))
+        preview_header = ttk.Frame(preview_frame)
+        preview_header.pack(fill="x", pady=(0, 5))
+        ttk.Label(preview_header, text="Visualização (Preview original)", font=("Segoe UI", 10, "bold")).pack(side="left")
+        ttk.Checkbutton(
+            preview_header,
+            text="Recortar região",
+            variable=self._crop_mode,
+            command=self._toggle_preview_crop_mode,
+        ).pack(side="right", padx=(8, 0))
+        ttk.Button(preview_header, text="-", width=3, command=lambda: self._change_preview_zoom(-CURATOR_PREVIEW_ZOOM_STEP)).pack(side="right")
+        ttk.Button(preview_header, text="+", width=3, command=lambda: self._change_preview_zoom(CURATOR_PREVIEW_ZOOM_STEP)).pack(side="right", padx=(4, 0))
+        ttk.Button(preview_header, textvariable=self._zoom_var, width=7, command=self._reset_preview_zoom).pack(side="right", padx=(8, 4))
 
         self.canvas = tk.Canvas(preview_frame, bg=p["frame_bg"], highlightthickness=0)
         self.canvas.pack(side="left", fill="both", expand=True)
@@ -154,6 +317,8 @@ class CuratorStudio(tk.Toplevel):
 
         self.inner_frame = ttk.Frame(self.canvas)
         self.canvas_window = self.canvas.create_window((0, 0), window=self.inner_frame, anchor="nw")
+        self.preview_notice = ttk.Label(preview_frame, textvariable=self._preview_notice_var)
+        self.preview_notice.pack(fill="x", anchor="w", pady=(4, 0))
 
         self.inner_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
         self.canvas.bind("<Configure>", lambda e: self.canvas.itemconfig(self.canvas_window, width=e.width))
@@ -263,17 +428,136 @@ class CuratorStudio(tk.Toplevel):
         except tk.TclError:
             pass
 
+    def _set_preview_zoom(self, zoom: float):
+        zoom = _clamp_preview_zoom(zoom)
+        if abs(zoom - self._preview_zoom) < 1e-6:
+            return
+        self._preview_zoom = zoom
+        self._zoom_var.set(f"{int(round(self._preview_zoom * 100))}%")
+        self._refresh_previews()
+
+    def _change_preview_zoom(self, delta: float):
+        self._set_preview_zoom(self._preview_zoom + delta)
+
+    def _reset_preview_zoom(self):
+        self._set_preview_zoom(1.0)
+
+    def _refresh_previews(self):
+        if self._current_frontmatter:
+            self._load_previews(self._current_frontmatter)
+
+    def _toggle_preview_crop_mode(self):
+        if not self._crop_mode.get():
+            self._clear_preview_crop()
+            self.canvas.config(cursor="")
+        else:
+            self.canvas.config(cursor="crosshair")
+        self._refresh_previews()
+
+    def _clear_preview_crop(self):
+        if self._preview_crop_canvas is not None and self._preview_crop_rect is not None:
+            try:
+                self._preview_crop_canvas.delete(self._preview_crop_rect)
+            except tk.TclError:
+                pass
+        self._preview_crop_rect = None
+        self._preview_crop_start = None
+        self._preview_crop_canvas = None
+        self._preview_crop_meta = None
+
+    def _preview_crop_start_drag(self, event, canvas: tk.Canvas, page_meta: dict):
+        if not self._crop_mode.get():
+            return
+        self._preview_crop_canvas = canvas
+        self._preview_crop_meta = page_meta
+        self._preview_crop_start = (canvas.canvasx(event.x), canvas.canvasy(event.y))
+        if self._preview_crop_rect is not None:
+            canvas.delete(self._preview_crop_rect)
+            self._preview_crop_rect = None
+
+    def _preview_crop_drag(self, event, canvas: tk.Canvas):
+        if not self._crop_mode.get() or not self._preview_crop_start:
+            return
+        x0, y0 = self._preview_crop_start
+        x1 = canvas.canvasx(event.x)
+        y1 = canvas.canvasy(event.y)
+        if self._preview_crop_rect is not None:
+            canvas.delete(self._preview_crop_rect)
+        self._preview_crop_rect = canvas.create_rectangle(
+            x0, y0, x1, y1, outline="#a6e3a1", width=2, dash=(4, 2)
+        )
+
+    def _preview_crop_end_drag(self, event, canvas: tk.Canvas):
+        if not self._crop_mode.get() or not self._preview_crop_start or not self._preview_crop_meta:
+            return
+        x0, y0 = self._preview_crop_start
+        x1 = canvas.canvasx(event.x)
+        y1 = canvas.canvasy(event.y)
+        self._preview_crop_start = None
+
+        rx0, rx1 = min(x0, x1), max(x0, x1)
+        ry0, ry1 = min(y0, y1), max(y0, y1)
+        if (rx1 - rx0) < 10 or (ry1 - ry0) < 10:
+            self._clear_preview_crop()
+            return
+
+        self._save_preview_crop(rx0, ry0, rx1, ry1, self._preview_crop_meta)
+
+    def _bind_preview_crop_events(self, canvas: tk.Canvas, page_meta: dict):
+        canvas.bind("<ButtonPress-1>", lambda event, c=canvas, meta=page_meta: self._preview_crop_start_drag(event, c, meta))
+        canvas.bind("<B1-Motion>", lambda event, c=canvas: self._preview_crop_drag(event, c))
+        canvas.bind("<ButtonRelease-1>", lambda event, c=canvas: self._preview_crop_end_drag(event, c))
+
+    def _save_preview_crop(self, x0: float, y0: float, x1: float, y1: float, page_meta: dict):
+        if not self._current_content_path:
+            messagebox.showerror("Curator Studio", "Nenhum markdown aberto para receber a imagem.", parent=self)
+            return
+        if not self._preview_pdf_path or not HAS_PYMUPDF:
+            messagebox.showerror("Curator Studio", "Preview de PDF indisponível para recorte.", parent=self)
+            return
+
+        page_num = page_meta["page_num"]
+        render_scale = page_meta["render_scale"]
+        display_scale = page_meta["display_scale"]
+        entry_id = (
+            self._current_frontmatter.get("id")
+            or (self.current_md_path.stem if self.current_md_path else "entry")
+        )
+        crop_dir = self.repo_dir / "content" / "images" / "manual-crops"
+        crop_dir.mkdir(parents=True, exist_ok=True)
+        out_path = crop_dir / _manual_crop_filename(entry_id, page_num)
+
+        try:
+            doc = pymupdf.open(str(self._preview_pdf_path))
+            page = doc[max(page_num - 1, 0)]
+            rect = pymupdf.Rect(
+                x0 / display_scale / render_scale,
+                y0 / display_scale / render_scale,
+                x1 / display_scale / render_scale,
+                y1 / display_scale / render_scale,
+            )
+            pix = page.get_pixmap(matrix=pymupdf.Matrix(2.0, 2.0), clip=rect)
+            pix.save(str(out_path))
+            doc.close()
+        except Exception as exc:
+            messagebox.showerror("Curator Studio", f"Falha ao capturar região:\n{exc}", parent=self)
+            return
+
+        image_ref = _markdown_image_reference(self._current_content_path, out_path, self.repo_dir)
+        insert_text = f"\n{image_ref}\n"
+        self.editor.insert(tk.INSERT, insert_text)
+        self.editor.edit_modified(True)
+        self.status_var.set(f"Região capturada e inserida no markdown: {out_path.name}")
+        self._crop_mode.set(False)
+        self._toggle_preview_crop_mode()
+
     # ── File loading ────────────────────────────────────────────────────
 
     def _load_files(self):
         self.file_list.delete(0, tk.END)
         self.file_paths = []
 
-        manual_dir = self.repo_dir / "manual-review"
-        if not manual_dir.exists():
-            return
-
-        for p in sorted(manual_dir.rglob("*.md")):
+        for p in _curator_review_paths(self.repo_dir):
             self.file_paths.append(p)
             self.file_list.insert(tk.END, f"{p.parent.name}/{p.name}")
 
@@ -325,19 +609,7 @@ class CuratorStudio(tk.Toplevel):
 
     def _parse_frontmatter(self, content: str) -> dict:
         """Parse YAML frontmatter from a review markdown file."""
-        match = re.match(r"^---\s*\n(.*?)\n---", content, re.DOTALL)
-        if not match:
-            return {}
-        result = {}
-        for line in match.group(1).strip().split("\n"):
-            if ":" in line:
-                key, _, value = line.partition(":")
-                key = key.strip()
-                value = value.strip().strip('"').strip("'")
-                if value.lower() in ("null", "none", ""):
-                    value = None
-                result[key] = value
-        return result
+        return _parse_review_frontmatter(content)
 
     def _update_info_label(self, fm: dict):
         parts = []
@@ -399,16 +671,24 @@ class CuratorStudio(tk.Toplevel):
             return
         path = self._available_sources[source_name]
         self._current_content_path = path
+        self._current_content_truncated = False
         try:
-            content = path.read_text(encoding="utf-8")
+            content, truncated = _read_curator_source_text(path)
             self.editor.delete("1.0", tk.END)
             self.editor.insert(tk.END, content)
             self.editor.edit_modified(False)
+            self._current_content_truncated = truncated
             try:
                 rel = path.relative_to(self.repo_dir)
             except ValueError:
                 rel = path.name
-            self.status_var.set(f"Editando: {rel}")
+            if truncated:
+                self.status_var.set(
+                    f"Visualização parcial: {rel} "
+                    f"(arquivo grande; abra externamente para editar por completo)"
+                )
+            else:
+                self.status_var.set(f"Editando: {rel}")
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao ler arquivo:\n{e}")
 
@@ -416,12 +696,17 @@ class CuratorStudio(tk.Toplevel):
 
     def _load_previews(self, fm: dict):
         """Render preview from source PDF (via PyMuPDF) or raw images."""
+        self._current_frontmatter = dict(fm or {})
+        self._preview_pdf_path = None
+        self._clear_preview_crop()
         for widget in self.inner_frame.winfo_children():
             widget.destroy()
         self.preview_images.clear()
+        self._preview_notice_var.set("")
 
         bg = self.theme_mgr.palette(self._theme_name)["frame_bg"]
-        target_width = 400
+        target_width = _preview_target_width(self._preview_zoom)
+        self._zoom_var.set(f"{int(round(self._preview_zoom * 100))}%")
 
         # 1) Try rendering directly from the source PDF
         source_pdf = fm.get("source_pdf")
@@ -432,18 +717,45 @@ class CuratorStudio(tk.Toplevel):
             pdf_path = self.repo_dir / source_pdf
             if pdf_path.exists():
                 try:
+                    self._preview_pdf_path = pdf_path
                     doc = pymupdf.open(str(pdf_path))
-                    for page_num in range(doc.page_count):
+                    page_indices = _preview_page_indices(doc.page_count)
+                    for page_num in page_indices:
                         page = doc[page_num]
-                        pix = page.get_pixmap(matrix=pymupdf.Matrix(1.5, 1.5))
+                        render_scale = 1.5 * self._preview_zoom
+                        pix = page.get_pixmap(matrix=pymupdf.Matrix(render_scale, render_scale))
                         pil_img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
                         w, h = pil_img.size
                         new_h = int(target_width * (h / w))
                         pil_img = pil_img.resize((target_width, new_h), Image.Resampling.LANCZOS)
                         tk_img = ImageTk.PhotoImage(pil_img)
                         self.preview_images.append(tk_img)
-                        lbl = tk.Label(self.inner_frame, image=tk_img, bg=bg)
-                        lbl.pack(pady=5, padx=5)
+                        page_frame = ttk.Frame(self.inner_frame)
+                        page_frame.pack(fill="x", pady=5, padx=5)
+                        ttk.Label(page_frame, text=f"Página {page_num + 1}").pack(anchor="w", pady=(0, 4))
+                        page_canvas = tk.Canvas(
+                            page_frame,
+                            width=pil_img.width,
+                            height=pil_img.height,
+                            bg=bg,
+                            highlightthickness=0,
+                        )
+                        page_canvas.pack(anchor="w")
+                        page_canvas.create_image(0, 0, anchor="nw", image=tk_img)
+                        page_canvas.image = tk_img
+                        if self._crop_mode.get():
+                            self._bind_preview_crop_events(
+                                page_canvas,
+                                {
+                                    "page_num": page_num + 1,
+                                    "render_scale": render_scale,
+                                    "display_scale": pil_img.width / max(pix.width, 1),
+                                },
+                            )
+                    if doc.page_count > len(page_indices):
+                        self._preview_notice_var.set(
+                            f"Preview limitado às primeiras {len(page_indices)} páginas de {doc.page_count}."
+                        )
                     doc.close()
                     return
                 except Exception as e:
@@ -459,7 +771,7 @@ class CuratorStudio(tk.Toplevel):
                 )
 
         if not images_found:
-            ttk.Label(self.inner_frame, text="Nenhuma visualização disponível.").pack(pady=20)
+            self._preview_notice_var.set("Nenhuma visualização disponível.")
             return
 
         for img_path in images_found:
@@ -642,7 +954,11 @@ class CuratorStudio(tk.Toplevel):
             if not entry_id:
                 continue
             file_type = e.get("file_type", "pdf")
-            subdir = "pdfs" if file_type == "pdf" else "images"
+            base_backend = e.get("base_backend", "")
+            if base_backend == "url_fetcher":
+                subdir = "web"
+            else:
+                subdir = "pdfs" if file_type == "pdf" else "images"
             template_path = self.repo_dir / "manual-review" / subdir / f"{entry_id}.md"
             if template_path.exists():
                 continue  # já tem template
@@ -650,6 +966,26 @@ class CuratorStudio(tk.Toplevel):
             md_path = (e.get("base_markdown") or e.get("advanced_markdown") or "")
             adv_md = e.get("advanced_markdown") or ""
             raw_target = e.get("raw_target") or ""
+            if subdir == "web":
+                content = f"""---
+id: {entry_id}
+title: {e.get('title', '')}
+type: manual_url_review
+category: {e.get('category', '')}
+source_url: {e.get('source_path', '')}
+processing_mode: {e.get('processing_mode', '')}
+base_backend: {e.get('base_backend', '')}
+base_markdown: {e.get('base_markdown') or ''}
+---
+
+# Revisão Manual — {e.get('title', entry_id)}
+
+Template restaurado automaticamente.
+Revise o markdown extraído da página web fora do Curator Studio, se necessário.
+"""
+                write_text(template_path, content)
+                count += 1
+                continue
 
             content = f"""---
 id: {entry_id}
@@ -751,7 +1087,7 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
                 approved_count += 1
 
             # Limpar template de manual-review se existir
-            for subdir in ("pdfs", "images"):
+            for subdir in ("pdfs", "images", "web"):
                 template = self.repo_dir / "manual-review" / subdir / f"{entry_id}.md"
                 if template.exists():
                     try:
@@ -778,6 +1114,13 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
         if not self._current_content_path:
             messagebox.showwarning("Nada selecionado", "Selecione um arquivo primeiro.")
             return
+        if self._current_content_truncated:
+            messagebox.showwarning(
+                "Arquivo grande",
+                "Esta fonte foi carregada parcialmente para evitar travamento. "
+                "Abra o arquivo externamente para editar e salvar o conteúdo completo.",
+            )
+            return
 
         content = self.editor.get("1.0", tk.END).strip() + "\n"
         try:
@@ -800,6 +1143,7 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
         self.editor.edit_modified(False)
         self.current_md_path = None
         self._current_content_path = None
+        self._current_content_truncated = False
         self._current_frontmatter = {}
         self._available_sources = {}
         self._source_combo["values"] = []
@@ -844,7 +1188,7 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
         try:
             builder = RepoBuilder(
                 root_dir=self.repo_dir,
-                course_meta={},
+                course_meta=self._repo_course_meta(),
                 entries=[],
                 options={},
             )
@@ -854,7 +1198,7 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
             try:
                 builder = RepoBuilder(
                     root_dir=self.repo_dir,
-                    course_meta={},
+                    course_meta=self._repo_course_meta(),
                     entries=[],
                     options={},
                 )
@@ -873,6 +1217,7 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
         try:
             queue_entry = FileEntry.from_dict({
                 **entry_data,
+                "page_range": entry_data.get("page_range") or fm.get("page_range") or "",
                 "enabled": True,
             })
         except Exception as e:
@@ -902,6 +1247,13 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
     def _approve_current(self):
         if not self._current_content_path or not self._current_frontmatter:
             messagebox.showwarning("Nada selecionado", "Selecione um arquivo primeiro.")
+            return
+        if self._current_content_truncated:
+            messagebox.showwarning(
+                "Fonte incompleta",
+                "A fonte selecionada foi carregada parcialmente. "
+                "Selecione o template de revisão ou edite o arquivo completo fora do Curator Studio antes de aprovar.",
+            )
             return
 
         fm = self._current_frontmatter

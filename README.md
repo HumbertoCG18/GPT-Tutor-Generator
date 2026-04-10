@@ -3,37 +3,37 @@
 [![Python](https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white)](#requisitos)
 [![UI](https://img.shields.io/badge/UI-Tkinter-1f6feb)](#arquitetura)
 [![Vision](https://img.shields.io/badge/Vision-Ollama-000000)](#image-curator-e-vision)
-[![Modelo](https://img.shields.io/badge/Modelo%20padr%C3%A3o-qwen3--vl%3A235b--cloud-6f42c1)](#image-curator-e-vision)
-[![License](https://img.shields.io/badge/Licen%C3%A7a-MIT-green)](#licen%C3%A7a)
+[![Backend](https://img.shields.io/badge/PDF-Datalab-0f766e)](#backend-datalab)
+[![License](https://img.shields.io/badge/Licenca-MIT-green)](#licenca)
 
 Aplicação desktop em Python para transformar materiais acadêmicos em um repositório Markdown estruturado, curado e pronto para uso com tutores baseados em LLM.
 
 ## Sumário
 
-- [Visão Geral](#visão-geral)
+- [Visão Geral](#visao-geral)
 - [Como o App Funciona](#como-o-app-funciona)
 - [Arquitetura](#arquitetura)
-- [Arquivos e Fontes Suportadas](#arquivos-e-fontes-suportadas)
 - [Processamento de Arquivos](#processamento-de-arquivos)
+- [Backend Datalab](#backend-datalab)
 - [Arquitetura Low-Token](#arquitetura-low-token)
 - [Image Curator e Vision](#image-curator-e-vision)
-- [Estrutura do Repositório Gerado](#estrutura-do-repositório-gerado)
+- [Estrutura do Repositório Gerado](#estrutura-do-repositorio-gerado)
 - [Requisitos](#requisitos)
-- [Instalação](#instalação)
-- [Configuração](#configuração)
-- [Execução](#execução)
+- [Instalação](#instalacao)
+- [Configuração](#configuracao)
+- [Execução](#execucao)
 - [Testes](#testes)
-- [Notas de Manutenção](#notas-de-manutenção)
-- [Licença](#licença)
+- [Notas de Manutenção](#notas-de-manutencao)
+- [Licença](#licenca)
 
 ## Visão Geral
 
-O **GPT Tutor Generator** foi projetado para organizar materiais de estudo reais de uma disciplina ao longo do semestre e convertê-los em um repositório navegável por IA.
+O **GPT Tutor Generator** organiza materiais reais de uma disciplina ao longo do semestre e os converte em um repositório navegável por IA.
 
-Ele combina:
+O app combina:
 
 - importação multiformato
-- processamento automático de PDFs e documentos
+- processamento automático de PDFs, links, imagens e código
 - revisão manual dos casos difíceis
 - curadoria de imagens acadêmicas
 - geração de instruções e artefatos para Claude, GPT e Gemini
@@ -64,16 +64,15 @@ Importar materiais
 Fluxo típico no app:
 
 1. Criar ou selecionar uma matéria.
-2. Definir pasta do repositório.
+2. Definir a pasta do repositório.
 3. Importar arquivos e links.
 4. Processar a fila.
 5. Revisar saídas em `manual-review/` quando necessário.
 6. Abrir o **Image Curator** para imagens extraídas de PDFs ou fotos.
-7. Gerar descrições e extrações em LaTeX.
-8. Construir ou atualizar o repositório final.
-9. Usar **Reprocessar Repositório** para reaplicar a arquitetura atual em repositórios já existentes.
-10. Usar a aba **Tasks de Repositório** para enfileirar builds, reprocessamentos e processamentos individuais.
-11. Abrir a aba **Dashboard** para acompanhar o estado operacional dos repositórios.
+7. Construir ou atualizar o repositório final.
+8. Usar **Reprocessar Repositório** para reaplicar a arquitetura atual em repositórios já existentes.
+9. Usar a aba **Tasks de Repositório** para enfileirar builds, reprocessamentos e processamentos individuais.
+10. Abrir a aba **Dashboard** para acompanhar o estado operacional dos repositórios.
 
 ## Arquitetura
 
@@ -82,147 +81,37 @@ app.py
   -> bootstrap da aplicação
 
 src/
-├── builder/
-│   ├── engine.py            # pipeline principal de processamento e build
-│   ├── image_classifier.py  # heurísticas para imagens
-│   ├── ollama_client.py     # integração Vision via Ollama /api/chat
-│   └── vision_client.py     # fábrica do cliente de vision
-├── models/
-│   └── core.py             # dataclasses e modelos persistidos
-├── ui/
-│   ├── app.py              # janela principal
-│   ├── dialogs.py          # configurações, status, ajuda, dialogs utilitários
-│   ├── image_curator.py    # curadoria de imagens e extração visual
-│   └── theme.py            # tema e configuração persistente
-└── utils/
-    └── helpers.py          # helpers, autodetects, OCR/Tesseract e utilidades
+|-- builder/
+|   |-- engine.py            # pipeline principal de processamento e build
+|   |-- datalab_client.py    # integração com a API do Datalab
+|   |-- image_classifier.py  # heurísticas para imagens
+|   |-- ollama_client.py     # integração Vision via Ollama /api/chat
+|   `-- vision_client.py     # fábrica do cliente de vision
+|-- models/
+|   `-- core.py              # dataclasses e modelos persistidos
+|-- ui/
+|   |-- app.py               # janela principal
+|   |-- dialogs.py           # configurações, status, ajuda e dialogs
+|   |-- curator_studio.py    # revisão manual e curadoria
+|   |-- image_curator.py     # curadoria de imagens e extração visual
+|   `-- theme.py             # tema e configuração persistente
+`-- utils/
+    |-- helpers.py           # helpers, autodetects, OCR/Tesseract e utilidades
+    `-- power.py             # prevenção de sleep durante builds longos
 ```
 
 ### Decisões Atuais de Arquitetura
 
 - Backend de vision ativo: `ollama`
 - Endpoint usado para vision: `/api/chat`
-- Modelo padrão: `qwen3-vl:235b-cloud`
-- Mesmo modelo para:
-  - descrição de imagens
-  - extração fiel de texto/matemática com prompt de LaTeX
-- Diferença entre os modos: apenas o prompt
+- O pipeline PDF é híbrido e seleciona backends conforme o perfil e a disponibilidade local/cloud
+- Para `math_heavy`, o **Datalab** é hoje a alternativa mais previsível quando a API key está configurada
+- `marker` continua disponível, mas não é o caminho principal recomendado no estado atual do projeto
 - A arquitetura de contexto para Claude Web é **map-first**:
-  - comece por `course/COURSE_MAP.md`
-  - consulte `student/STUDENT_STATE.md` para calibrar profundidade e evitar repetição
-  - use `course/FILE_MAP.md` para localizar o material certo
-  - abra markdowns longos só quando os artefatos curtos não bastarem
-
-## Arquitetura Low-Token
-
-O projeto agora gera artefatos pensados para **baixo custo de contexto** em LLMs web, especialmente no Claude.
-
-Princípios:
-
-- começar por arquivos curtos e roteadores
-- usar `STUDENT_STATE.md` antes de repetir conteúdo ou subir demais a profundidade
-- abrir markdowns longos apenas como último recurso, não como padrão
-- promover para o bundle só metadados e materiais de alto sinal
-- compactar descrições de imagem antes de injetar no markdown final
-- reduzir repetição visual de slides/PDFs exportados de PPTX
-
-Arquivos-chave dessa arquitetura:
-
-```text
-course/COURSE_MAP.md
-course/FILE_MAP.md
-exercises/EXERCISE_INDEX.md
-build/claude-knowledge/bundle.seed.json
-INSTRUCOES_CLAUDE_PROJETO.md
-```
-
-### O que mudou na prática
-
-- `COURSE_MAP.md` ficou mais curto e funciona como mapa pedagógico
-- `STUDENT_STATE.md` passou a entrar no fluxo de leitura antes dos materiais longos
-- `FILE_MAP.md` virou índice de roteamento com `quando abrir` e `prioridade`
-- `EXERCISE_INDEX.md` virou um roteador de prática por unidade, prioridade e finalidade
-- `bundle.seed.json` agora é seletivo, focado em metadados e registra o motivo de inclusão de cada item
-- descrições de imagem no markdown final entram em versão compacta
-- duplicatas exatas entre páginas vizinhas podem virar referência curta, em vez de repetir o bloco inteiro
-- `COURSE_MAP.md` omite seções vazias como incidência em prova e notas do professor até existir sinal real
-
-### Como aplicar isso em repositórios antigos
-
-Use a ação **Reprocessar Repositório** no backlog para reaplicar a arquitetura atual em repositórios antigos.
-
-Se quiser rodar uma sequência de repositórios sem interação manual, use a aba **Tasks de Repositório**. Ela centraliza:
-
-- enfileirar build do repositório atual
-- enfileirar reprocessamento estrutural
-- enfileirar o item selecionado da fila
-- executar, pausar ou cancelar a fila
-- desligamento automático ao fim da fila
-
-Essa fila é persistente, então ela pode ser deixada pronta para pipelines noturnas e retomada depois.
-
-A aba **Dashboard** mostra, por matéria:
-
-- status do repositório
-- quantidade de itens na fila local
-- entries do manifest
-- arquivos em `manual-review/`
-- tasks pendentes e última task executada
-
-Essa ação:
-
-- não reextrai PDFs crus por padrão
-- reutiliza o `manifest.json`
-- regenera os artefatos pedagógicos com o código atual
-- reaplica `COURSE_MAP`, `FILE_MAP`, bundle e instruções atualizados
-- mantém o fluxo `map-first` com `STUDENT_STATE.md` antes de abrir markdowns longos
-- reinjeta descrições de imagem com a lógica mais nova
-
-Isso é o caminho recomendado para atualizar repositórios que já estavam prontos antes dessas mudanças.
-
-## Arquivos e Fontes Suportadas
-
-O app suporta entradas dos seguintes tipos:
-
-```text
-pdf
-image
-url
-github-repo
-code
-zip
-```
-
-### Exemplos práticos
-
-- PDFs de aula
-- provas e listas escaneadas
-- fotos de quadro
-- screenshots de material
-- páginas web e bibliografias online
-- repositórios GitHub
-- arquivos `.py`, `.js`, `.java`, `.cpp` e outros
-- ZIPs com material compactado
-
-### Categorias acadêmicas disponíveis
-
-```python
-[
-    "material-de-aula",
-    "provas",
-    "listas",
-    "gabaritos",
-    "fotos-de-prova",
-    "referencias",
-    "bibliografia",
-    "cronograma",
-    "trabalhos",
-    "codigo-professor",
-    "codigo-aluno",
-    "quadro-branco",
-    "outros",
-]
-```
+  - começar por `course/COURSE_MAP.md`
+  - consultar `student/STUDENT_STATE.md` para calibrar profundidade e evitar repetição
+  - usar `course/FILE_MAP.md` para localizar o material certo
+  - abrir markdowns longos só quando os artefatos curtos não bastarem
 
 ## Processamento de Arquivos
 
@@ -241,12 +130,9 @@ manual_assisted
 
 ```text
 auto
-general
-math_light
 math_heavy
-layout_heavy
+diagram_heavy
 scanned
-exam_pdf
 ```
 
 ### Backends de extração
@@ -258,8 +144,18 @@ Base:
 
 Avançados:
 
+- `datalab`
 - `docling`
+- `docling_python`
 - `marker`
+
+### Observação prática sobre backends
+
+No estado atual do projeto:
+
+- `datalab` é a melhor aposta para PDFs `math_heavy`
+- `docling` e `docling_python` continuam úteis para comparação e processamento local
+- `marker` continua disponível, mas está em fase de investigação/refino e não é a rota principal recomendada agora
 
 O sistema também consegue:
 
@@ -270,6 +166,110 @@ O sistema também consegue:
 - limitar páginas por faixa
 - consolidar saídas intermediárias
 - regenerar artefatos derivados sem reprocessar tudo do zero
+
+## Backend Datalab
+
+O projeto agora suporta **Datalab** como backend avançado de processamento de PDF.
+
+Ele é especialmente útil para:
+
+- materiais `math_heavy`
+- PDFs com fórmulas e layout complexo
+- casos em que o pipeline local não está entregando a qualidade esperada
+
+### Como o backend é usado
+
+- Se `DATALAB_API_KEY` estiver definida, o app pode preferir `datalab` automaticamente em `math_heavy`
+- Também é possível selecionar `Backend preferido = datalab` manualmente por entry
+- Quando `datalab` é escolhido, o item passa a ter um seletor `Modelo` com:
+  - `fast`
+  - `balanced`
+  - `accurate`
+
+### Modos do Datalab
+
+- `fast`: menor custo e maior velocidade
+- `balanced`: equilíbrio entre custo e qualidade
+- `accurate`: maior qualidade, especialmente útil para material matemático
+
+### Saída do Datalab
+
+As saídas são gravadas em:
+
+```text
+staging/markdown-auto/datalab/<entry>/
+```
+
+Com artefatos como:
+
+- markdown retornado pela API
+- imagens extraídas
+- `datalab-run.json` com metadados da execução
+
+### Configuração mínima
+
+No arquivo `.env`:
+
+```env
+DATALAB_API_KEY=
+DATALAB_BASE_URL=https://www.datalab.to
+```
+
+Sem `DATALAB_API_KEY`, o backend continua indisponível.
+
+### Observação de custo
+
+O Datalab é um serviço externo com cobrança por página. Antes de adotar como backend principal, verifique:
+
+- o custo por volume de páginas
+- a necessidade de enviar documentos para serviço externo
+- requisitos de privacidade do seu material
+
+Documentação oficial:
+
+- https://documentation.datalab.to/
+
+## Arquitetura Low-Token
+
+O projeto gera artefatos pensados para **baixo custo de contexto** em LLMs web, especialmente no Claude.
+
+Princípios:
+
+- começar por arquivos curtos e roteadores
+- usar `STUDENT_STATE.md` antes de repetir conteúdo ou subir demais a profundidade
+- abrir markdowns longos apenas como último recurso
+- promover para o bundle só metadados e materiais de alto sinal
+- compactar descrições de imagem antes de injetar no markdown final
+- reduzir repetição visual de slides e PDFs exportados
+
+Arquivos-chave dessa arquitetura:
+
+```text
+course/COURSE_MAP.md
+course/FILE_MAP.md
+exercises/EXERCISE_INDEX.md
+build/claude-knowledge/bundle.seed.json
+INSTRUCOES_CLAUDE_PROJETO.md
+```
+
+### O que muda na prática
+
+- `COURSE_MAP.md` funciona como mapa pedagógico curto
+- `STUDENT_STATE.md` entra no fluxo antes dos materiais longos
+- `FILE_MAP.md` vira índice de roteamento com prioridade e contexto
+- `EXERCISE_INDEX.md` vira roteador de prática por unidade
+- `bundle.seed.json` fica seletivo e focado em metadados
+
+### Como aplicar isso em repositórios antigos
+
+Use a ação **Reprocessar Repositório** no backlog para reaplicar a arquitetura atual.
+
+Essa ação:
+
+- não reextrai PDFs crus por padrão
+- reutiliza o `manifest.json`
+- regenera os artefatos pedagógicos com o código atual
+- reaplica `COURSE_MAP`, `FILE_MAP`, bundle e instruções atualizados
 
 ## Image Curator e Vision
 
@@ -292,23 +292,28 @@ Ele opera sobre `content/images/` e faz:
 ```text
 diagrama
 tabela
-fórmula
-código
-genérico
+formula
+codigo
+generico
 decorativa
-extração-latex
+extracao-latex
 ```
 
 ### Runtime atual de Vision
 
 ```text
 Backend:  ollama
-Modelo:   qwen3-vl:235b-cloud
-Fallback: qwen3-vl:8b
 Endpoint: http://localhost:11434/api/chat
 ```
 
+O pipeline de vision do **Image Curator** é independente do backend PDF principal. Ou seja:
+
+- você pode usar `datalab` para PDFs
+- e continuar usando `ollama` no curator de imagens
+
 ### Setup do Ollama
+
+Exemplo:
 
 ```powershell
 ollama signin
@@ -322,56 +327,38 @@ Opcionalmente, se quiser apenas testar o fallback local:
 ollama pull qwen3-vl:8b
 ```
 
-### Validação no App
+### Validação no app
 
 Na interface:
 
-1. abra `📊 Status`
-2. localize a seção `Vision — Descrição de Imagens`
+1. abra `Status`
+2. localize a seção `Vision`
 3. clique em `Validar Vision`
 
-O app verifica automaticamente:
+O app verifica:
 
 - Ollama acessível
 - modelo configurado disponível
 - fallback disponível
-- readiness de cloud quando o modelo termina com `-cloud`
-
-### Otimização de contexto visual
-
-As descrições de imagem usadas no conteúdo final não são mais injetadas de forma verbosa por padrão.
-
-Regras atuais:
-
-- priorizar uma descrição curta e útil
-- evitar repetir raciocínio do modelo
-- reduzir duplicatas visuais entre páginas consecutivas
-- manter rastreabilidade por comentário `IMAGE_DESCRIPTION`
-
-### Observações importantes
-
-- `qwen3-vl:235b-cloud` exige `ollama signin`
-- o uso pode ser limitado pelo plano da conta Ollama
-- documentos sensíveis deixam de ser estritamente locais ao usar cloud models
 
 ## Estrutura do Repositório Gerado
 
 ```text
 {repo-root}/
-├── INSTRUCOES_CLAUDE_PROJETO.md
-├── INSTRUCOES_GPT_PROJETO.md
-├── INSTRUCOES_GEMINI_PROJETO.md
-├── manifest.json
-├── build/
-├── content/
-├── course/
-├── exercises/
-├── exams/
-├── manual-review/
-├── raw/
-├── staging/
-├── student/
-└── system/
+|-- INSTRUCOES_CLAUDE_PROJETO.md
+|-- INSTRUCOES_GPT_PROJETO.md
+|-- INSTRUCOES_GEMINI_PROJETO.md
+|-- manifest.json
+|-- build/
+|-- content/
+|-- course/
+|-- exercises/
+|-- exams/
+|-- manual-review/
+|-- raw/
+|-- staging/
+|-- student/
+`-- system/
 ```
 
 ### Pastas importantes
@@ -388,7 +375,7 @@ Regras atuais:
 
 - Python `3.8+`
 - ambiente com `tkinter`
-- Ollama instalado
+- Ollama instalado para o fluxo de vision
 - Ollama acessível em `http://localhost:11434`
 
 Dependências Python principais:
@@ -397,6 +384,7 @@ Dependências Python principais:
 - `pymupdf4llm`
 - `pdfplumber`
 - `Pillow`
+- `requests`
 - `pytest` para desenvolvimento
 
 Ferramentas opcionais:
@@ -423,7 +411,7 @@ pip install docling
 pip install marker-pdf
 ```
 
-Se for usar OCR:
+Se for usar OCR local:
 
 - instale o Tesseract
 - garanta `tessdata` configurado corretamente
@@ -432,13 +420,13 @@ Se for usar OCR:
 
 ### `.env`
 
-Hoje, **não é necessário adicionar nada novo no `.env` para o pipeline de vision com Ollama**.
-
-Seu `.env` atual pode continuar só com as chaves de LLMs externas já usadas em outros fluxos do projeto:
+Hoje, o `.env` pode incluir tanto chaves externas quanto a chave do Datalab:
 
 ```env
-OPENAI_API_KEY=''
-GEMINI_API_KEY=''
+DATALAB_API_KEY=
+DATALAB_BASE_URL=https://www.datalab.to
+OPENAI_API_KEY=
+GEMINI_API_KEY=
 ```
 
 ### Configuração persistida do app
@@ -456,17 +444,24 @@ Exemplo:
   "vision_backend": "ollama",
   "vision_model": "qwen3-vl:235b-cloud",
   "vision_model_quantization": "default",
-  "ollama_base_url": "http://localhost:11434"
+  "ollama_base_url": "http://localhost:11434",
+  "prevent_sleep_during_build": true
 }
 ```
 
-### O que realmente precisa para Vision funcionar
+### O que realmente precisa para cada fluxo
+
+Para usar o **Image Curator** com Vision:
 
 ```powershell
 ollama signin
 ollama pull qwen3-vl:235b-cloud
 ollama pull qwen3-vl:8b
 ```
+
+Para usar o **Datalab**:
+
+- preencher `DATALAB_API_KEY` no `.env`
 
 ## Execução
 
@@ -504,14 +499,17 @@ pytest tests\test_image_curation.py -q
 
 ## Notas de Manutenção
 
-- O pipeline de vision ativo é Ollama-only
+- O pipeline de vision do curator continua sendo `Ollama`
+- O pipeline PDF agora pode usar `datalab`, `docling`, `docling_python` e `marker`
+- Para `math_heavy`, o Datalab é a principal alternativa prática no estado atual do projeto
+- `marker` continua no projeto, mas está em investigação e refinamento
 - O ponto de verdade do fluxo atual está em:
-  - `src/builder/ollama_client.py`
-  - `src/builder/vision_client.py`
-  - `src/ui/image_curator.py`
-  - `src/ui/dialogs.py`
+  - [src/builder/engine.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/engine.py)
+  - [src/builder/datalab_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/datalab_client.py)
+  - [src/builder/ollama_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/ollama_client.py)
+  - [src/ui/image_curator.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/image_curator.py)
+  - [src/ui/dialogs.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/dialogs.py)
 - Documentos em `docs/superpowers/` podem descrever versões históricas da implementação
-- O modelo padrão de maior qualidade hoje é `qwen3-vl:235b-cloud`
 
 ## Licença
 

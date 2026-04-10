@@ -1,5 +1,6 @@
 import json
 import re
+import sys
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, simpledialog
 from typing import Optional, List, Tuple, Dict
@@ -10,9 +11,10 @@ from src.utils.helpers import (
     CATEGORY_LABELS, DEFAULT_CATEGORIES, DEFAULT_OCR_LANGUAGE, PROCESSING_MODES,
     DOCUMENT_PROFILES, PREFERRED_BACKENDS, OCR_LANGS, CODE_EXTENSIONS,
     slugify, parse_html_schedule, auto_detect_category, auto_detect_title,
-    fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM
+    fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM, normalize_document_profile
 )
-from src.builder.engine import BackendSelector
+from src.builder.datalab_client import get_datalab_base_url, has_datalab_api_key
+from src.builder.engine import BackendSelector, _entry_image_source_dirs, has_docling_python_api
 from src.ui.theme import ThemeManager, AppConfig, THEMES, apply_theme_to_toplevel
 class Tooltip:
     """Shows a descriptive tooltip balloon after the mouse hovers for `delay` ms."""
@@ -46,7 +48,6 @@ class Tooltip:
         x = self.widget.winfo_rootx() + 20
         y = self.widget.winfo_rooty() + self.widget.winfo_height() + 6
 
-        # Try to get theme colours from the root
         try:
             root = self.widget.winfo_toplevel()
             theme_name = getattr(root, "_theme_name", "dark")
@@ -79,6 +80,15 @@ class Tooltip:
         if self._tip:
             self._tip.destroy()
             self._tip = None
+
+
+PROFILE_TOOLTIP_TEXT = (
+    "Descreve o tipo de conteudo do PDF. Cada perfil ajusta modo e backend automaticamente.\n\n"
+    "auto -> detecta automaticamente\n"
+    "math_heavy -> muitas formulas/LaTeX e figuras matematicas (marker/docling)\n"
+    "diagram_heavy -> muitas imagens, diagramas, tabelas ou muitas paginas (docling/marker)\n"
+    "scanned -> PDF de scan/foto (ativa OCR)"
+)
 
 
 def add_tooltip(widget: tk.Widget, text: str, delay: int = 600) -> Tooltip:
@@ -160,7 +170,7 @@ class SettingsDialog(tk.Toplevel):
 
         self._var_mode = tk.StringVar(value=self.config.get("default_mode"))
         self._var_ocr = tk.StringVar(value=self.config.get("default_ocr_language"))
-        self._var_profile = tk.StringVar(value=self.config.get("default_profile"))
+        self._var_profile = tk.StringVar(value=normalize_document_profile(self.config.get("default_profile")))
         self._var_backend = tk.StringVar(value=self.config.get("default_backend"))
         self._var_image_format = tk.StringVar(value=self.config.get("image_format"))
 
@@ -183,6 +193,18 @@ class SettingsDialog(tk.Toplevel):
         # Stall timeout (spinbox)
         next_row = len(fields)
         self._var_stall_timeout = tk.IntVar(value=int(self.config.get("stall_timeout", 300)))
+        self._var_marker_chunking_mode = tk.StringVar(
+            value=str(self.config.get("marker_chunking_mode", "fallback"))
+        )
+        self._var_marker_use_llm = tk.BooleanVar(
+            value=bool(self.config.get("marker_use_llm", False))
+        )
+        self._var_marker_llm_model = tk.StringVar(
+            value=str(self.config.get("marker_llm_model", ""))
+        )
+        self._var_marker_torch_device = tk.StringVar(
+            value=str(self.config.get("marker_torch_device", "auto"))
+        )
         ttk.Label(tab_proc, text="Timeout de inatividade (seg)").grid(
             row=next_row, column=0, sticky="w", pady=6, padx=(0, 16))
         stall_spin = ttk.Spinbox(tab_proc, from_=60, to=1800, increment=30,
@@ -194,6 +216,65 @@ class SettingsDialog(tk.Toplevel):
                     "Padrão: 300s (5 min). Para PDFs grandes, aumente para 600-900s.")
 
         # ── Vision / Image Description ────────────────────────────────
+        ttk.Label(tab_proc, text="Chunking do Marker").grid(
+            row=next_row + 1, column=0, sticky="w", pady=6, padx=(0, 16))
+        marker_chunk_combo = ttk.Combobox(
+            tab_proc,
+            textvariable=self._var_marker_chunking_mode,
+            values=["off", "fallback", "always"],
+            state="readonly",
+            width=22,
+        )
+        marker_chunk_combo.grid(row=next_row + 1, column=1, sticky="w")
+        add_tooltip(
+            marker_chunk_combo,
+            "off -> nunca divide o Marker em chunks.\n"
+            "fallback -> tenta inteiro primeiro e sÃ³ divide se travar por timeout.\n"
+            "always -> divide preventivamente PDFs grandes em chunks.",
+        )
+
+        marker_llm = ttk.Checkbutton(
+            tab_proc,
+            text="Marker usa LLM via Ollama",
+            variable=self._var_marker_use_llm,
+        )
+        marker_llm.grid(row=next_row + 2, column=0, columnspan=2, sticky="w", pady=(2, 4))
+        add_tooltip(
+            marker_llm,
+            "Ativa --use_llm no Marker e usa marker.services.ollama.OllamaService.\n"
+            "Requer uma versão do Marker com suporte a LLM, um Ollama acessível\n"
+            "e um modelo explícito em 'Modelo Ollama do Marker'.",
+        )
+
+        ttk.Label(tab_proc, text="Modelo Ollama do Marker").grid(
+            row=next_row + 3, column=0, sticky="w", pady=6, padx=(0, 16))
+        marker_llm_model = ttk.Entry(tab_proc, textvariable=self._var_marker_llm_model, width=28)
+        marker_llm_model.grid(row=next_row + 3, column=1, sticky="ew")
+        add_tooltip(
+            marker_llm_model,
+            "Obrigatório quando o LLM do Marker estiver ativado.\n"
+            "Este campo é independente do modelo Vision usado na descrição de imagens.\n"
+            "Recomendação atual para estabilidade: qwen3-vl:8b.",
+        )
+
+        ttk.Label(tab_proc, text="TORCH_DEVICE do Marker").grid(
+            row=next_row + 4, column=0, sticky="w", pady=6, padx=(0, 16)
+        )
+        marker_torch_device = ttk.Combobox(
+            tab_proc,
+            textvariable=self._var_marker_torch_device,
+            values=["auto", "cuda", "mps", "cpu"],
+            state="readonly",
+            width=22,
+        )
+        marker_torch_device.grid(row=next_row + 4, column=1, sticky="w")
+        add_tooltip(
+            marker_torch_device,
+            "Define a variável TORCH_DEVICE só para o processo do Marker.\n"
+            "auto -> usa cuda fora do macOS e mps no macOS.\n"
+            "Use cpu se quiser forçar execução sem GPU no Marker.",
+        )
+
         self._var_prevent_sleep = tk.BooleanVar(
             value=bool(self.config.get("prevent_sleep_during_build", True))
         )
@@ -202,14 +283,14 @@ class SettingsDialog(tk.Toplevel):
             text="Evitar suspensão do Windows durante builds longos",
             variable=self._var_prevent_sleep,
         )
-        prevent_sleep.grid(row=next_row + 1, column=0, columnspan=2, sticky="w", pady=(2, 6))
+        prevent_sleep.grid(row=next_row + 5, column=0, columnspan=2, sticky="w", pady=(2, 6))
         add_tooltip(
             prevent_sleep,
             "Mantém o sistema acordado durante builds, OCR e reprocessamentos longos.\n"
             "Não altera a curadoria nem a aprovação; só reduz risco de pausa por suspensão.",
         )
 
-        sep_row = next_row + 3
+        sep_row = next_row + 7
         ttk.Separator(tab_proc, orient="horizontal").grid(
             row=sep_row, column=0, columnspan=2, sticky="ew", pady=(12, 8))
         ttk.Label(tab_proc, text="Vision — Descrição de Imagens",
@@ -273,6 +354,10 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("default_backend", self._var_backend.get())
         self.config.set("image_format", self._var_image_format.get())
         self.config.set("stall_timeout", self._var_stall_timeout.get())
+        self.config.set("marker_chunking_mode", self._var_marker_chunking_mode.get())
+        self.config.set("marker_use_llm", bool(self._var_marker_use_llm.get()))
+        self.config.set("marker_llm_model", self._var_marker_llm_model.get().strip())
+        self.config.set("marker_torch_device", self._var_marker_torch_device.get().strip() or "auto")
         self.config.set("prevent_sleep_during_build", bool(self._var_prevent_sleep.get()))
         vision_backend = self._var_vision_backend.get()
         vision_model = self._var_vision_model.get().strip()
@@ -440,23 +525,14 @@ PERFIS DE DOCUMENTO
   auto
     Heurística automática.
 
-  general
-    Texto comum, sem muita complexidade visual.
-
-  math_light
-    Algumas fórmulas.
-
   math_heavy
-    Documento muito matemático; prioriza fórmulas.
+    Muito LaTeX, formulas e imagens matematicas.
 
-  layout_heavy
-    Layout complexo, colunas, figuras ou tabelas pesadas.
+  diagram_heavy
+    Muitas imagens, diagramas, tabelas ou muitas paginas sem foco em LaTeX.
 
   scanned
-    Escaneado ou fotografado; força OCR.
-
-  exam_pdf
-    Provas e listas com mistura de layout e matemática.
+    Escaneado ou fotografado; forca OCR.
 """),
     ("Backends de Extração", """CAMADA BASE
   pymupdf4llm
@@ -1352,7 +1428,7 @@ class BacklogEntryEditDialog(tk.Toplevel):
         fields = [
             ("Título",    "title"),
             ("Categoria", "category"),
-            ("Camada",    "effective_profile"),
+            ("Perfil",    "document_profile"),
         ]
 
         self._vars: Dict[str, tk.StringVar] = {}
@@ -1364,7 +1440,7 @@ class BacklogEntryEditDialog(tk.Toplevel):
             if key == "category":
                 ttk.Combobox(tab_edit, textvariable=var, values=DEFAULT_CATEGORIES,
                              state="readonly", width=32).grid(row=row, column=1, sticky="ew", pady=6)
-            elif key == "effective_profile":
+            elif key == "document_profile":
                 from src.utils.helpers import DOCUMENT_PROFILES
                 ttk.Combobox(tab_edit, textvariable=var, values=DOCUMENT_PROFILES,
                              state="readonly", width=32).grid(row=row, column=1, sticky="ew", pady=6)
@@ -1781,14 +1857,8 @@ class BacklogEntryEditDialog(tk.Toplevel):
                         images_found.append(img)
 
         if self._repo_dir:
-            entry_id = self._data.get("id", "")
-            # 1) inline-images from pymupdf4llm (referenced in markdown)
-            if entry_id:
-                _collect_from(self._repo_dir / "staging" / "assets" / "inline-images" / entry_id)
-            # 2) extracted images (extract_images flag) — entry-specific dir
-            images_dir = self._data.get("images_dir")
-            if images_dir:
-                _collect_from(self._repo_dir / images_dir)
+            for directory in _entry_image_source_dirs(self._repo_dir, self._data):
+                _collect_from(directory)
         images_found.sort(key=lambda x: x.name)
 
         # Filter noise images (too small, solid color, extreme aspect ratio)
@@ -2500,8 +2570,11 @@ class FileEntryDialog(simpledialog.Dialog):
         self.var_exam = tk.BooleanVar(value=self.initial.relevant_for_exam if self.initial else True)
 
         self.var_mode = tk.StringVar(value=self.initial.processing_mode if self.initial else self.default_mode)
-        self.var_profile = tk.StringVar(value=self.initial.document_profile if self.initial else "auto")
+        self.var_profile = tk.StringVar(
+            value=normalize_document_profile(self.initial.document_profile if self.initial else "auto")
+        )
         self.var_backend = tk.StringVar(value=self.initial.preferred_backend if self.initial else "auto")
+        self.var_datalab_mode = tk.StringVar(value=getattr(self.initial, "datalab_mode", "accurate") if self.initial else "accurate")
         self.var_formula = tk.BooleanVar(value=self.initial.formula_priority if self.initial else False)
         self.var_keep_images = tk.BooleanVar(value=self.initial.preserve_pdf_images_in_markdown if self.initial else True)
         self.var_force_ocr = tk.BooleanVar(value=self.initial.force_ocr if self.initial else False)
@@ -2553,15 +2626,32 @@ class FileEntryDialog(simpledialog.Dialog):
 
         lbl_profile = ttk.Label(outer, text="Perfil")
         lbl_profile.grid(row=row, column=0, sticky="w", pady=4)
-        add_tooltip(lbl_profile, "Descreve o tipo de conteúdo do PDF. Cada perfil ajusta modo e backend automaticamente.\n\nauto → detecta automaticamente\ngeneral → texto simples, sem fórmulas (pymupdf4llm, rápido)\nmath_light → algumas fórmulas (docling, high_fidelity)\nmath_heavy → muitas fórmulas/LaTeX (docling + enrich-formula)\nlayout_heavy → colunas, figuras, tabelas complexas (docling)\nscanned → PDF de scan/foto (ativa OCR)\nexam_pdf → prova/lista de exercícios")
         combo_profile = ttk.Combobox(outer, textvariable=self.var_profile, values=DOCUMENT_PROFILES, state="readonly", width=22)
         combo_profile.grid(row=row, column=1, sticky="ew")
         combo_profile.bind("<<ComboboxSelected>>", self._on_profile_changed)
 
         lbl_backend = ttk.Label(outer, text="Backend preferido")
         lbl_backend.grid(row=row, column=2, sticky="w", padx=(12, 0))
-        add_tooltip(lbl_backend, "Backend de extração preferido.\nauto → seleção automática\npymupdf4llm → rápido e bom para PDFs digitais\npymupdf → fallback básico\ndocling → avançado: OCR, fórmulas, tabelas (CLI externo)\nmarker → avançado: equações e imagens (CLI externo)")
-        ttk.Combobox(outer, textvariable=self.var_backend, values=PREFERRED_BACKENDS, state="readonly", width=20).grid(row=row, column=3, sticky="ew")
+        add_tooltip(lbl_backend, "Backend de extração preferido.\nauto → seleção automática\npymupdf4llm → rápido e bom para PDFs digitais\npymupdf → fallback básico\ndatalab → API cloud para markdown de alta qualidade em PDFs complexos\ndocling → avançado: OCR, fórmulas, tabelas (CLI externo)\ndocling_python → teste via API Python do Docling com formula enrichment\nmarker → avançado: equações e imagens (CLI externo)")
+        combo_backend = ttk.Combobox(outer, textvariable=self.var_backend, values=PREFERRED_BACKENDS, state="readonly", width=20)
+        combo_backend.grid(row=row, column=3, sticky="ew")
+        combo_backend.bind("<<ComboboxSelected>>", self._on_backend_changed)
+        add_tooltip(lbl_profile, PROFILE_TOOLTIP_TEXT)
+        row += 1
+
+        self._datalab_model_row = row
+        self._datalab_model_label = ttk.Label(outer, text="Modelo")
+        add_tooltip(
+            self._datalab_model_label,
+            "Modo da API do Datalab.\nfast → menor custo/latência\nbalanced → equilíbrio geral\naccurate → maior qualidade para PDFs complexos e math_heavy.",
+        )
+        self._datalab_model_combo = ttk.Combobox(
+            outer,
+            textvariable=self.var_datalab_mode,
+            values=["fast", "balanced", "accurate"],
+            state="readonly",
+            width=20,
+        )
         row += 1
 
         lbl_tags = ttk.Label(outer, text="Tags")
@@ -2633,6 +2723,7 @@ class FileEntryDialog(simpledialog.Dialog):
 
         # Show/hide based on current type
         self._update_pdf_frame_visibility()
+        self._update_datalab_mode_visibility()
 
         outer.columnconfigure(1, weight=1)
         outer.columnconfigure(3, weight=1)
@@ -2641,29 +2732,44 @@ class FileEntryDialog(simpledialog.Dialog):
     def _on_type_changed(self, _event=None):
         self.file_type = self.var_file_type.get()
         self._update_pdf_frame_visibility()
+        self._update_datalab_mode_visibility()
+
+    def _update_datalab_mode_visibility(self):
+        if self.file_type == "pdf" and self.var_backend.get() == "datalab":
+            self._datalab_model_label.grid(row=self._datalab_model_row, column=2, sticky="w", padx=(12, 0), pady=4)
+            self._datalab_model_combo.grid(row=self._datalab_model_row, column=3, sticky="ew")
+        else:
+            self._datalab_model_label.grid_remove()
+            self._datalab_model_combo.grid_remove()
+
+    def _on_backend_changed(self, _event=None):
+        if self.var_backend.get() == "datalab" and not self.var_datalab_mode.get():
+            self.var_datalab_mode.set("accurate")
+        self._update_datalab_mode_visibility()
 
     def _on_profile_changed(self, _event=None):
         """Quando o perfil muda, ajusta backend e modo automaticamente.
         Presets baseados no nível de complexidade do documento."""
-        profile = self.var_profile.get()
+        profile = normalize_document_profile(self.var_profile.get())
+        self.var_profile.set(profile)
         # Reset para defaults antes de aplicar preset
         self.var_formula.set(False)
         self.var_force_ocr.set(False)
 
-        if profile == "general":
+        if profile == "auto":
             # Texto simples, sem fórmulas → rápido
             self.var_mode.set("auto")
             self.var_backend.set("auto")
-        elif profile == "math_light":
+        elif profile == "diagram_heavy":
             # Algumas fórmulas → docling sem enrich-formula
             self.var_mode.set("high_fidelity")
             self.var_backend.set("docling")
         elif profile == "math_heavy":
             # Muitas fórmulas → docling com enrich-formula
             self.var_mode.set("high_fidelity")
-            self.var_backend.set("docling")
+            self.var_backend.set("marker")
             self.var_formula.set(True)
-        elif profile == "layout_heavy":
+        elif profile == "__unused_legacy_visual__":
             # Layout complexo (colunas, muitas figuras/tabelas)
             self.var_mode.set("high_fidelity")
             self.var_backend.set("docling")
@@ -2672,10 +2778,11 @@ class FileEntryDialog(simpledialog.Dialog):
             self.var_mode.set("auto")
             self.var_backend.set("auto")
             self.var_force_ocr.set(True)
-        elif profile == "exam_pdf":
+        elif profile == "__unused_legacy_exam__":
             # Prova/lista → auto com docling se disponível
             self.var_mode.set("auto")
             self.var_backend.set("auto")
+        self._update_datalab_mode_visibility()
 
     def _update_pdf_frame_visibility(self):
         if self.file_type == "pdf":
@@ -2795,6 +2902,7 @@ class FileEntryDialog(simpledialog.Dialog):
             processing_mode=self.var_mode.get(),
             document_profile=self.var_profile.get(),
             preferred_backend=self.var_backend.get(),
+            datalab_mode=self.var_datalab_mode.get().strip() or "accurate",
             formula_priority=self.var_formula.get() if self.file_type == "pdf" else False,
             preserve_pdf_images_in_markdown=self.var_keep_images.get() if self.file_type == "pdf" else False,
             force_ocr=self.var_force_ocr.get() if self.file_type == "pdf" else False,
@@ -3345,7 +3453,7 @@ class URLEntryDialog(tk.Toplevel):
             tags=tags,
             notes=self.var_notes.get().strip(),
             include_in_bundle=self.var_bundle.get(),
-            document_profile="general",
+            document_profile="auto",
             processing_mode="auto",
             preferred_backend="url_fetcher" if not is_gh else "auto",
         )
@@ -3415,8 +3523,18 @@ class StatusDialog(tk.Toplevel):
         row(f_ext, "PyMuPDF",      HAS_PYMUPDF,      "pymupdf" if HAS_PYMUPDF else "pip install pymupdf")
         row(f_ext, "PyMuPDF4LLM", HAS_PYMUPDF4LLM,  "pymupdf4llm" if HAS_PYMUPDF4LLM else "pip install pymupdf4llm")
         row(f_ext, "pdfplumber",   HAS_PDFPLUMBER,   "pdfplumber" if HAS_PDFPLUMBER else "pip install pdfplumber")
+        row(f_ext, "Datalab API", has_datalab_api_key(), get_datalab_base_url() if has_datalab_api_key() else "defina DATALAB_API_KEY no .env")
         row(f_ext, "docling CLI",  bool(DOCLING_CLI), DOCLING_CLI or "não encontrado no PATH")
+        row(f_ext, "docling Python", has_docling_python_api(), "API importável" if has_docling_python_api() else "pip install docling")
         row(f_ext, "marker CLI",   bool(MARKER_CLI),  MARKER_CLI  or "não encontrado no PATH")
+        marker_torch_device = str(config_obj.get("marker_torch_device", "auto") or "auto").strip().lower() or "auto"
+        marker_torch_effective = "mps" if (marker_torch_device == "auto" and sys.platform == "darwin") else ("cuda" if marker_torch_device == "auto" else marker_torch_device)
+        row(
+            f_ext,
+            "TORCH_DEVICE do Marker",
+            bool(MARKER_CLI),
+            f"configurado={marker_torch_device} | efetivo={marker_torch_effective}",
+        )
 
         # ── OCR / Tesseract ──────────────────────────────────────────────
         f_ocr = section("OCR (Tesseract)")
@@ -3524,4 +3642,5 @@ class StatusDialog(tk.Toplevel):
 
         self.update_idletasks()
         self.geometry(f"{self.winfo_reqwidth() + 20}x{self.winfo_reqheight() + 10}")
+
 

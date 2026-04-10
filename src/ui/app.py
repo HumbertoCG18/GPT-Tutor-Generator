@@ -21,6 +21,7 @@ from src.models.core import (
 )
 from src.models.task_queue import RepoTask, RepoTaskStore
 from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES, get_app_data_dir
+from src.builder.datalab_client import has_datalab_api_key
 from src.builder.engine import RepoBuilder
 from src.builder.task_queue_runner import TaskQueueRunner
 from src.ui.theme import ThemeManager, AppConfig
@@ -78,6 +79,11 @@ def _build_options_from_config(default_mode: str, default_ocr_language: str, con
         "default_ocr_language": default_ocr_language,
         "image_format": config_obj.get("image_format"),
         "stall_timeout": config_obj.get("stall_timeout"),
+        "marker_use_llm": config_obj.get("marker_use_llm", False),
+        "marker_llm_model": config_obj.get("marker_llm_model", ""),
+        "marker_torch_device": config_obj.get("marker_torch_device", "auto"),
+        "vision_model": config_obj.get("vision_model"),
+        "ollama_base_url": config_obj.get("ollama_base_url"),
         "prevent_sleep_during_build": config_obj.get("prevent_sleep_during_build", True),
     }
 
@@ -564,8 +570,12 @@ class App(tk.Tk):
         env_parts.append(f"PyMuPDF: {'✓' if HAS_PYMUPDF else '✗'}")
         env_parts.append(f"PyMuPDF4LLM: {'✓' if HAS_PYMUPDF4LLM else '✗'}")
         env_parts.append(f"pdfplumber: {'✓' if HAS_PDFPLUMBER else '✗'}")
+        env_parts.append(f"datalab: {'✓' if has_datalab_api_key() else '✗'}")
         env_parts.append(f"docling: {'✓' if DOCLING_CLI else '✗'}")
         env_parts.append(f"marker: {'✓' if MARKER_CLI else '✗'}")
+        marker_torch_device = str(self.config_obj.get("marker_torch_device", "auto") or "auto").strip().lower() or "auto"
+        marker_torch_effective = "mps" if (marker_torch_device == "auto" and sys.platform == "darwin") else ("cuda" if marker_torch_device == "auto" else marker_torch_device)
+        env_parts.append(f"marker torch: {marker_torch_effective}")
         env_parts.append(f"tessdata: {'✓' if TESSDATA_PATH else '✗'}")
         env_text = "  |  ".join(env_parts)
 
@@ -643,14 +653,13 @@ class App(tk.Tk):
                                              text="⏸ Pausar",
                                              command=self._toggle_pause_single)
             self._btn_pause.configure(text="⏸ Pausar", state="normal")
-            self._btn_pause.pack(side="left", padx=(6, 0),
-                                 after=self._btn_process)
+            self._btn_pause.grid(row=1, column=1, sticky="ew", padx=4, pady=4)
         else:
             self._btn_build.configure(state="normal")
             self._btn_process.configure(text="⚡ Processar",
                                         command=self.process_selected_single)
             if hasattr(self, "_btn_pause"):
-                self._btn_pause.pack_forget()
+                self._btn_pause.grid_remove()
 
     def _cancel_single(self):
         self._clear_pending_operation()

@@ -23,6 +23,20 @@ def _normalized_source_key(raw_path: str) -> str:
     return str(normalized).replace("\\", "/").casefold()
 
 
+def _count_curator_manual_review_items(repo_path: Path) -> int:
+    manual_review_dir = repo_path / "manual-review"
+    if not manual_review_dir.exists():
+        return 0
+
+    total = 0
+    for subdir in ("pdfs", "images"):
+        review_dir = manual_review_dir / subdir
+        if not review_dir.exists():
+            continue
+        total += sum(1 for item in review_dir.rglob("*.md") if item.is_file())
+    return total
+
+
 @dataclass
 class RepoDashboardRow:
     subject_name: str
@@ -60,9 +74,7 @@ def collect_repo_metrics(subjects: Iterable[SubjectProfile], tasks: Iterable[Rep
                     }
                 except Exception:
                     repo_status = "Manifest inválido"
-            manual_review_dir = repo_path / "manual-review"
-            if manual_review_dir.exists():
-                manual_review_items = sum(1 for item in manual_review_dir.rglob("*") if item.is_file())
+            manual_review_items = _count_curator_manual_review_items(repo_path)
 
         subject_tasks = [
             task for task in task_list

@@ -21,6 +21,7 @@ sys.modules.setdefault("tkinter.ttk", _tk_mock)
 import pytest
 
 import src.builder.engine as engine_module
+import src.utils.helpers as helpers_module
 
 from src.builder.engine import (
     BackendSelector,
@@ -44,8 +45,13 @@ from src.builder.engine import (
     _topic_text,
     _topic_depth,
     _seed_glossary_fields,
+    _repair_mojibake_text,
+    _sanitize_external_markdown_text,
+    _normalize_unicode_math,
+    _hybridize_marker_markdown_with_base,
     _find_glossary_evidence,
     _filter_live_manifest_entries,
+    _marker_progress_hints,
     course_map_md,
     exercise_index_md,
     file_map_md,
@@ -120,6 +126,46 @@ class TestCodeExtensions:
         assert auto_detect_category("Aula01.ipynb") == "codigo-professor"
 
 
+class TestMarkerHybridMarkdownRescue:
+    def test_recovers_accented_plain_text_without_touching_math_lines(self):
+        base = (
+            "---\nentry_id: \"x\"\n---\n"
+            "# Título\n\n"
+            "A função não é total e também não é injetiva.\n\n"
+            "<math>x^2 + y^2 = z^2</math>\n"
+        )
+        marker = (
+            "---\nentry_id: \"x\"\n---\n"
+            "# Título\n\n"
+            "A funcao nao e total e tambem nao e injetiva.\n\n"
+            "<math>x^2 + y^2 = z^2</math>\n"
+        )
+
+        merged, stats = _hybridize_marker_markdown_with_base(base, marker)
+
+        assert "A função não é total e também não é injetiva." in merged
+        assert "<math>x^2 + y^2 = z^2</math>" in merged
+        assert stats["replacements"] == 1
+
+
+class TestMathNormalization:
+    def test_normalizes_tex_accents_inside_math_regions(self):
+        original = "$$= \\sum_{k=0}^{x_0+1} 2k \\quad (por \\ definição \\ do \\ somat\\'orio)$$"
+
+        normalized = _normalize_unicode_math(original)
+
+        assert "somatório" in normalized
+        assert "\\sum_{k=0}^{x_0+1}" in normalized
+
+    def test_preserves_regular_math_commands_while_fixing_textual_accents(self):
+        original = "$\\hat{o} + \\text{somat\\'orio}$"
+
+        normalized = _normalize_unicode_math(original)
+
+        assert "\\hat{o}" in normalized
+        assert "somatório" in normalized
+
+
 class TestMarkerCapabilities:
     def teardown_method(self):
         engine_module._MARKER_CAPABILITIES_CACHE = None
@@ -136,12 +182,18 @@ class TestMarkerCapabilities:
         caps = engine_module._detect_marker_capabilities()
 
         assert caps == {
-            "page_range_flag": None,
-            "force_ocr_flag": None,
-            "language_flag": None,
+            "page_range_flag": "--page_range",
+            "force_ocr_flag": "--force_ocr",
+            "use_llm_flag": "--use_llm",
+            "llm_service_flag": "--llm_service",
+            "ollama_base_url_flag": "--OllamaService_ollama_base_url",
+            "ollama_model_flag": "--OllamaService_ollama_model",
+            "ollama_timeout_flag": "--OllamaService_timeout",
+            "redo_inline_math_flag": "--redo_inline_math",
+            "disable_image_extraction_flag": "--disable_image_extraction",
         }
 
-    def test_current_marker_help_does_not_assume_removed_flags(self, monkeypatch):
+    def test_current_marker_help_preserves_optimistic_defaults_for_unknown_flags(self, monkeypatch):
         monkeypatch.setattr(engine_module, "MARKER_CLI", "marker_single")
         help_text = """
 Usage: marker_single [OPTIONS] FPATH
@@ -163,7 +215,108 @@ Options:
 
         assert caps["page_range_flag"] == "--page_range"
         assert caps["force_ocr_flag"] is None
-        assert caps["language_flag"] is None
+        assert caps["use_llm_flag"] == "--use_llm"
+        assert caps["llm_service_flag"] == "--llm_service"
+        assert caps["ollama_base_url_flag"] == "--OllamaService_ollama_base_url"
+        assert caps["ollama_model_flag"] == "--OllamaService_ollama_model"
+        assert caps["redo_inline_math_flag"] == "--redo_inline_math"
+
+    def test_marker_help_detects_ollama_llm_flags(self, monkeypatch):
+        monkeypatch.setattr(engine_module, "MARKER_CLI", "marker_single")
+        help_text = """
+Usage: marker_single [OPTIONS] FPATH
+
+Options:
+  --page_range TEXT
+  --use_llm
+  --llm_service TEXT
+  --ollama_base_url TEXT
+  --ollama_model TEXT
+  --redo_inline_math
+  --output_dir PATH
+  --help
+"""
+        monkeypatch.setattr(
+            engine_module.subprocess,
+            "run",
+            lambda *args, **kwargs: mock.Mock(stdout=help_text, stderr=""),
+        )
+        engine_module._MARKER_CAPABILITIES_CACHE = None
+
+        caps = engine_module._detect_marker_capabilities()
+
+        assert caps["use_llm_flag"] == "--use_llm"
+        assert caps["llm_service_flag"] == "--llm_service"
+        assert caps["ollama_base_url_flag"] == "--ollama_base_url"
+        assert caps["ollama_model_flag"] == "--ollama_model"
+        assert caps["redo_inline_math_flag"] == "--redo_inline_math"
+
+    def test_marker_help_detects_ollama_service_scoped_flags(self, monkeypatch):
+        monkeypatch.setattr(engine_module, "MARKER_CLI", "marker_single")
+        help_text = """
+Usage: marker_single [OPTIONS] FPATH
+
+Options:
+  --use_llm
+  --llm_service TEXT
+  --OllamaService_ollama_base_url TEXT
+  --OllamaService_ollama_model TEXT
+  --redo_inline_math
+  --help
+"""
+        monkeypatch.setattr(
+            engine_module.subprocess,
+            "run",
+            lambda *args, **kwargs: mock.Mock(stdout=help_text, stderr=""),
+        )
+        engine_module._MARKER_CAPABILITIES_CACHE = None
+
+        caps = engine_module._detect_marker_capabilities()
+
+        assert caps["use_llm_flag"] == "--use_llm"
+        assert caps["llm_service_flag"] == "--llm_service"
+        assert caps["ollama_base_url_flag"] == "--OllamaService_ollama_base_url"
+        assert caps["ollama_model_flag"] == "--OllamaService_ollama_model"
+        assert caps["redo_inline_math_flag"] == "--redo_inline_math"
+
+
+class TestMarkerProgressHints:
+    def test_marker_progress_hints_reports_phase_transition(self):
+        phase, hints = _marker_progress_hints(
+            "LLM processors running:  20%|##        | 5/25 [01:58<07:06, 21.31s/it]",
+            None,
+        )
+
+        assert phase == "LLM processors running"
+        assert hints == ["Fase detectada: LLM processors running"]
+
+    def test_marker_progress_hints_reports_zero_item_phase_completion(self):
+        phase, hints = _marker_progress_hints(
+            "Detecting bboxes: 0it [00:00, ?it/s]",
+            None,
+        )
+
+        assert phase == "Detecting bboxes"
+        assert hints == [
+            "Fase detectada: Detecting bboxes",
+            "Fase 'Detecting bboxes' concluída sem itens para processar.",
+        ]
+
+class TestCliResolution:
+    def test_marker_cli_prefers_project_venv(self, monkeypatch, tmp_path):
+        project_root = tmp_path / "repo"
+        scripts_dir = project_root / ".venv" / "Scripts"
+        scripts_dir.mkdir(parents=True)
+        local_marker = scripts_dir / "marker_single.exe"
+        local_marker.write_text("", encoding="utf-8")
+
+        monkeypatch.setattr(helpers_module, "__file__", str(project_root / "src" / "utils" / "helpers.py"))
+        monkeypatch.setattr(helpers_module.os, "name", "nt")
+        monkeypatch.setattr(helpers_module.shutil, "which", lambda _: "C:/Windows/marker_single.exe")
+
+        resolved = helpers_module._resolve_cli_from_project_venv("marker_single")
+
+        assert resolved == str(local_marker)
 
 
 class TestAdvancedBackendPolicies:
@@ -228,6 +381,18 @@ class TestAdvancedBackendPolicies:
         ctx = self._ctx(page_count=116, profile="math_heavy", stall_timeout=300)
         assert engine_module._advanced_cli_stall_timeout("marker", ctx) == 2700
 
+    def test_marker_llm_with_qwen3_vl_8b_uses_higher_small_doc_timeout(self):
+        ctx = self._ctx(page_count=10, profile="math_heavy", stall_timeout=300)
+        ctx.marker_use_llm = True
+        ctx.marker_llm_model = "qwen3-vl:8b"
+        assert engine_module._advanced_cli_stall_timeout("marker", ctx) == 1200
+
+    def test_large_heavy_marker_llm_with_qwen3_vl_8b_is_raised_to_3600(self):
+        ctx = self._ctx(page_count=116, profile="math_heavy", stall_timeout=300)
+        ctx.marker_use_llm = True
+        ctx.marker_llm_model = "qwen3-vl:8b"
+        assert engine_module._advanced_cli_stall_timeout("marker", ctx) == 3600
+
     def test_large_heavy_docling_timeout_is_raised_to_1800(self):
         ctx = self._ctx(page_count=116, profile="math_heavy", stall_timeout=300)
         assert engine_module._advanced_cli_stall_timeout("docling", ctx) == 1800
@@ -235,6 +400,45 @@ class TestAdvancedBackendPolicies:
     def test_page_range_drives_large_workload_decision(self):
         ctx = self._ctx(page_count=200, page_range="1-10", profile="math_heavy")
         assert engine_module._marker_chunk_size_for_workload(ctx) == 20
+
+    def test_datalab_backend_saves_markdown_and_images(self, tmp_path, monkeypatch):
+        backend = engine_module.DatalabCloudBackend()
+        ctx = self._ctx(page_count=12, profile="math_heavy")
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+        ctx.entry.page_range = "1-2"
+        ctx.pages = [0, 1]
+        ctx.entry.datalab_mode = "fast"
+
+        fake_result = mock.Mock(
+            request_id="req-123",
+            request_check_url="https://www.datalab.to/api/v1/convert/req-123",
+            markdown="# Título\n\n![](figure-1.png)\n",
+            images={"figure-1.png": "aGVsbG8="},
+            metadata={"source": "datalab"},
+            page_count=2,
+            parse_quality_score=4.7,
+            cost_breakdown={"total_cents": 2},
+            raw_response={"status": "complete", "success": True, "error": None},
+        )
+
+        monkeypatch.setattr(engine_module, "convert_document_to_markdown", lambda *args, **kwargs: fake_result)
+        monkeypatch.setattr(engine_module, "get_datalab_base_url", lambda: "https://www.datalab.to")
+
+        result = backend.run(ctx)
+
+        assert result.status == "ok"
+        md_path = tmp_path / result.markdown_path
+        assert md_path.exists()
+        md_text = md_path.read_text(encoding="utf-8")
+        assert "![](mlp_images/figure-1.png)" in md_text
+        assert (tmp_path / "staging" / "markdown-auto" / "datalab" / "mlp" / "mlp_images" / "figure-1.png").exists()
+        metadata = json.loads((tmp_path / "staging" / "markdown-auto" / "datalab" / "mlp" / "datalab-run.json").read_text(encoding="utf-8"))
+        assert metadata["mode"] == "fast"
+        assert metadata["page_range"] == "0-1"
+        assert metadata["parse_quality_score"] == 4.7
 
     def test_marker_command_omits_force_ocr_when_only_formula_priority_is_enabled(self, tmp_path, monkeypatch):
         backend = engine_module.MarkerCLIBackend()
@@ -260,7 +464,11 @@ class TestAdvancedBackendPolicies:
             {
                 "page_range_flag": "--page_range",
                 "force_ocr_flag": "--force_ocr",
-                "language_flag": None,
+                "use_llm_flag": None,
+                "llm_service_flag": None,
+                "ollama_base_url_flag": None,
+                "ollama_model_flag": None,
+                "redo_inline_math_flag": None,
             },
             None,
             300,
@@ -268,6 +476,163 @@ class TestAdvancedBackendPolicies:
 
         assert result.status == "ok"
         assert "--force_ocr" not in result.command
+
+    def test_marker_command_uses_ollama_llm_when_enabled(self, tmp_path, monkeypatch):
+        backend = engine_module.MarkerCLIBackend()
+        ctx = self._ctx(formula_priority=False, force_ocr=False, suspected_scan=False, profile="diagram_heavy")
+        ctx.marker_use_llm = True
+        ctx.marker_llm_model = "qwen3-vl:235b-cloud"
+        ctx.marker_torch_device = "cuda"
+        ctx.ollama_base_url = "http://localhost:11434"
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+        out_dir = tmp_path / "staging" / "markdown-auto" / "marker" / "mlp"
+
+        def _fake_run_cli(cmd, backend_name, ctx_obj, stall_timeout):
+            output_dir = Path(cmd[cmd.index("--output_dir") + 1])
+            output_dir.mkdir(parents=True, exist_ok=True)
+            (output_dir / "result.md").write_text("# ok", encoding="utf-8")
+            return 0, [], []
+
+        monkeypatch.setattr(engine_module, "MARKER_CLI", "marker_single")
+        monkeypatch.setattr(engine_module, "_run_cli_with_timeout", _fake_run_cli)
+
+        result = backend._run_single_marker(
+            ctx,
+            out_dir,
+            {
+                "page_range_flag": "--page_range",
+                "force_ocr_flag": "--force_ocr",
+                "use_llm_flag": "--use_llm",
+                "llm_service_flag": "--llm_service",
+                "ollama_base_url_flag": "--ollama_base_url",
+                "ollama_model_flag": "--ollama_model",
+                "redo_inline_math_flag": "--redo_inline_math",
+            },
+            None,
+            300,
+        )
+
+        assert result.status == "ok"
+        assert "--use_llm" in result.command
+        assert "--llm_service" in result.command
+        assert engine_module.MARKER_OLLAMA_SERVICE in result.command
+        assert "--ollama_base_url" in result.command
+        assert "http://localhost:11434" in result.command
+        assert "--ollama_model" in result.command
+        assert "qwen3-vl:235b-cloud" in result.command
+        assert "--redo_inline_math" not in result.command
+        metadata = json.loads((out_dir / "marker-run.json").read_text(encoding="utf-8"))
+        assert metadata["llm"]["recommended_model"] is False
+        assert metadata["llm"]["is_cloud_variant"] is True
+        assert metadata["llm"]["is_probably_vision"] is True
+        assert metadata["torch_device"] == {"configured": "cuda", "effective": "cuda"}
+
+    def test_marker_command_adds_redo_inline_math_for_formula_priority_with_llm(self, tmp_path, monkeypatch):
+        backend = engine_module.MarkerCLIBackend()
+        ctx = self._ctx(formula_priority=True, force_ocr=False, suspected_scan=False)
+        ctx.marker_use_llm = True
+        ctx.marker_llm_model = "qwen3-vl:8b"
+        ctx.ollama_base_url = "http://localhost:11434"
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+        out_dir = tmp_path / "staging" / "markdown-auto" / "marker" / "mlp"
+
+        def _fake_run_cli(cmd, backend_name, ctx_obj, stall_timeout):
+            output_dir = Path(cmd[cmd.index("--output_dir") + 1])
+            output_dir.mkdir(parents=True, exist_ok=True)
+            (output_dir / "result.md").write_text("# ok", encoding="utf-8")
+            return 0, [], []
+
+        monkeypatch.setattr(engine_module, "MARKER_CLI", "marker_single")
+        monkeypatch.setattr(engine_module, "_run_cli_with_timeout", _fake_run_cli)
+
+        result = backend._run_single_marker(
+            ctx,
+            out_dir,
+            {
+                "page_range_flag": "--page_range",
+                "force_ocr_flag": "--force_ocr",
+                "use_llm_flag": "--use_llm",
+                "llm_service_flag": "--llm_service",
+                "ollama_base_url_flag": "--OllamaService_ollama_base_url",
+                "ollama_model_flag": "--OllamaService_ollama_model",
+                "redo_inline_math_flag": "--redo_inline_math",
+            },
+            None,
+            300,
+        )
+
+        assert result.status == "ok"
+        assert "--redo_inline_math" in result.command
+
+        metadata = json.loads((out_dir / "marker-run.json").read_text(encoding="utf-8"))
+        assert metadata["llm"] == {
+            "enabled": True,
+            "service": engine_module.MARKER_OLLAMA_SERVICE,
+            "model": "qwen3-vl:8b",
+            "base_url": "http://localhost:11434",
+            "redo_inline_math": True,
+            "recommended_model": True,
+            "is_cloud_variant": False,
+            "is_probably_vision": True,
+            "visual_processors_disabled": False,
+        }
+
+    def test_marker_llm_model_does_not_fallback_to_vision_model(self):
+        ctx = self._ctx()
+        ctx.marker_llm_model = ""
+        ctx.vision_model = "qwen3-vl:235b-cloud"
+
+        assert engine_module._marker_ollama_model(ctx) == ""
+
+    def test_marker_command_skips_llm_flags_without_explicit_marker_model(self, tmp_path, monkeypatch):
+        backend = engine_module.MarkerCLIBackend()
+        ctx = self._ctx(formula_priority=False, force_ocr=False, suspected_scan=False)
+        ctx.marker_use_llm = True
+        ctx.marker_llm_model = ""
+        ctx.vision_model = "qwen3-vl:235b-cloud"
+        ctx.ollama_base_url = "http://localhost:11434"
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+        out_dir = tmp_path / "staging" / "markdown-auto" / "marker" / "mlp"
+
+        def _fake_run_cli(cmd, backend_name, ctx_obj, stall_timeout):
+            output_dir = Path(cmd[cmd.index("--output_dir") + 1])
+            output_dir.mkdir(parents=True, exist_ok=True)
+            (output_dir / "result.md").write_text("# ok", encoding="utf-8")
+            return 0, [], []
+
+        monkeypatch.setattr(engine_module, "MARKER_CLI", "marker_single")
+        monkeypatch.setattr(engine_module, "_run_cli_with_timeout", _fake_run_cli)
+
+        result = backend._run_single_marker(
+            ctx,
+            out_dir,
+            {
+                "page_range_flag": "--page_range",
+                "force_ocr_flag": "--force_ocr",
+                "use_llm_flag": "--use_llm",
+                "llm_service_flag": "--llm_service",
+                "ollama_base_url_flag": "--OllamaService_ollama_base_url",
+                "ollama_model_flag": "--OllamaService_ollama_model",
+                "redo_inline_math_flag": "--redo_inline_math",
+            },
+            None,
+            300,
+        )
+
+        assert result.status == "ok"
+        assert "--use_llm" not in result.command
+        assert "--llm_service" not in result.command
+        assert "--OllamaService_ollama_base_url" not in result.command
+        assert "--OllamaService_ollama_model" not in result.command
 
     def test_marker_run_uses_single_execution_for_small_selected_page_range(self, tmp_path, monkeypatch):
         backend = engine_module.MarkerCLIBackend()
@@ -284,7 +649,6 @@ class TestAdvancedBackendPolicies:
             lambda: {
                 "page_range_flag": "--page_range",
                 "force_ocr_flag": "--force_ocr",
-                "language_flag": None,
             },
         )
 
@@ -313,6 +677,369 @@ class TestAdvancedBackendPolicies:
 
         assert result.status == "ok"
         assert called == {"single": 1, "chunked": 0}
+
+    def test_marker_default_fallback_mode_tries_single_before_chunking(self, tmp_path, monkeypatch):
+        backend = engine_module.MarkerCLIBackend()
+        ctx = self._ctx(page_count=200, page_range="", profile="math_heavy")
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+        ctx.marker_chunking_mode = "fallback"
+
+        monkeypatch.setattr(
+            engine_module,
+            "_detect_marker_capabilities",
+            lambda: {
+                "page_range_flag": "--page_range",
+                "force_ocr_flag": "--force_ocr",
+            },
+        )
+        calls = {"single": 0, "chunked": 0}
+
+        def _fake_single(*args, **kwargs):
+            calls["single"] += 1
+            return engine_module.BackendRunResult(
+                name="marker",
+                layer="advanced",
+                status="ok",
+                command=["marker_single"],
+            )
+
+        def _fake_chunked(*args, **kwargs):
+            calls["chunked"] += 1
+            return engine_module.BackendRunResult(
+                name="marker",
+                layer="advanced",
+                status="ok",
+                command=["marker_single"],
+            )
+
+        monkeypatch.setattr(backend, "_run_single_marker", _fake_single)
+        monkeypatch.setattr(backend, "_run_chunked_marker", _fake_chunked)
+
+        result = backend.run(ctx)
+
+        assert result.status == "ok"
+        assert calls == {"single": 1, "chunked": 0}
+
+    def test_marker_fallback_mode_retries_in_chunks_after_timeout(self, tmp_path, monkeypatch):
+        backend = engine_module.MarkerCLIBackend()
+        ctx = self._ctx(page_count=200, page_range="", profile="math_heavy")
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+        ctx.marker_chunking_mode = "fallback"
+
+        monkeypatch.setattr(
+            engine_module,
+            "_detect_marker_capabilities",
+            lambda: {
+                "page_range_flag": "--page_range",
+                "force_ocr_flag": "--force_ocr",
+            },
+        )
+        calls = {"single": 0, "chunked": 0}
+
+        def _fake_single(*args, **kwargs):
+            calls["single"] += 1
+            return engine_module.BackendRunResult(
+                name="marker",
+                layer="advanced",
+                status="error",
+                command=["marker_single"],
+                error="marker travou (sem output por 1800s). Último output:\nRecognizing Text",
+            )
+
+        def _fake_chunked(*args, **kwargs):
+            calls["chunked"] += 1
+            return engine_module.BackendRunResult(
+                name="marker",
+                layer="advanced",
+                status="ok",
+                command=["marker_single"],
+            )
+
+        monkeypatch.setattr(backend, "_run_single_marker", _fake_single)
+        monkeypatch.setattr(backend, "_run_chunked_marker", _fake_chunked)
+
+        result = backend.run(ctx)
+
+        assert result.status == "ok"
+        assert calls == {"single": 1, "chunked": 1}
+
+    def test_marker_off_mode_never_chunks_automatically(self, tmp_path, monkeypatch):
+        backend = engine_module.MarkerCLIBackend()
+        ctx = self._ctx(page_count=200, page_range="", profile="math_heavy")
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+        ctx.marker_chunking_mode = "off"
+
+        monkeypatch.setattr(
+            engine_module,
+            "_detect_marker_capabilities",
+            lambda: {
+                "page_range_flag": "--page_range",
+                "force_ocr_flag": "--force_ocr",
+            },
+        )
+        calls = {"single": 0, "chunked": 0}
+
+        def _fake_single(*args, **kwargs):
+            calls["single"] += 1
+            return engine_module.BackendRunResult(
+                name="marker",
+                layer="advanced",
+                status="ok",
+                command=["marker_single"],
+            )
+
+        def _fake_chunked(*args, **kwargs):
+            calls["chunked"] += 1
+            return engine_module.BackendRunResult(
+                name="marker",
+                layer="advanced",
+                status="ok",
+                command=["marker_single"],
+            )
+
+        monkeypatch.setattr(backend, "_run_single_marker", _fake_single)
+        monkeypatch.setattr(backend, "_run_chunked_marker", _fake_chunked)
+
+        result = backend.run(ctx)
+
+        assert result.status == "ok"
+        assert calls == {"single": 1, "chunked": 0}
+
+    def test_marker_always_mode_chunks_large_documents(self, tmp_path, monkeypatch):
+        backend = engine_module.MarkerCLIBackend()
+        ctx = self._ctx(page_count=200, page_range="", profile="math_heavy")
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+        ctx.marker_chunking_mode = "always"
+
+        monkeypatch.setattr(
+            engine_module,
+            "_detect_marker_capabilities",
+            lambda: {
+                "page_range_flag": "--page_range",
+                "force_ocr_flag": "--force_ocr",
+            },
+        )
+        calls = {"single": 0, "chunked": 0}
+
+        def _fake_single(*args, **kwargs):
+            calls["single"] += 1
+            return engine_module.BackendRunResult(
+                name="marker",
+                layer="advanced",
+                status="ok",
+                command=["marker_single"],
+            )
+
+        def _fake_chunked(*args, **kwargs):
+            calls["chunked"] += 1
+            return engine_module.BackendRunResult(
+                name="marker",
+                layer="advanced",
+                status="ok",
+                command=["marker_single"],
+            )
+
+        monkeypatch.setattr(backend, "_run_single_marker", _fake_single)
+        monkeypatch.setattr(backend, "_run_chunked_marker", _fake_chunked)
+
+        result = backend.run(ctx)
+
+        assert result.status == "ok"
+        assert calls == {"single": 0, "chunked": 1}
+
+    def test_docling_python_backend_runs_with_formula_enrichment_for_math_heavy(self, tmp_path, monkeypatch):
+        class _FakePdfPipelineOptions:
+            def __init__(self):
+                self.do_formula_enrichment = False
+
+        class _FakePdfFormatOption:
+            def __init__(self, pipeline_options):
+                self.pipeline_options = pipeline_options
+
+        class _FakeDocument:
+            def export_to_markdown(self):
+                return "# converted"
+
+        class _FakeResult:
+            def __init__(self):
+                self.document = _FakeDocument()
+
+        captured = {}
+
+        class _FakeDocumentConverter:
+            def __init__(self, format_options):
+                captured["format_options"] = format_options
+
+            def convert(self, source):
+                captured["source"] = source
+                return _FakeResult()
+
+        class _FakeInputFormat:
+            PDF = "pdf"
+
+        monkeypatch.setattr(
+            engine_module,
+            "_load_docling_python_api",
+            lambda: {
+                "DocumentConverter": _FakeDocumentConverter,
+                "PdfFormatOption": _FakePdfFormatOption,
+                "PdfPipelineOptions": _FakePdfPipelineOptions,
+                "InputFormat": _FakeInputFormat,
+            },
+        )
+
+        backend = engine_module.DoclingPythonBackend()
+        ctx = self._ctx(profile="math_heavy")
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+
+        result = backend.run(ctx)
+
+        assert result.status == "ok"
+        assert captured["source"] == str(ctx.raw_target)
+        fake_option = captured["format_options"][_FakeInputFormat.PDF]
+        assert fake_option.pipeline_options.do_formula_enrichment is True
+        metadata = json.loads((tmp_path / "staging" / "markdown-auto" / "docling-python" / ctx.entry_id / "docling-python-run.json").read_text(encoding="utf-8"))
+        assert metadata["formula_enrichment"] is True
+        assert metadata["effective_source_pdf"] == str(ctx.raw_target)
+        assert metadata["page_range_applied"] is False
+        assert metadata["gpu_standard"]["enabled"] is False
+
+    def test_docling_python_backend_applies_page_range_via_sliced_pdf(self, tmp_path, monkeypatch):
+        class _FakePdfPipelineOptions:
+            def __init__(self):
+                self.do_formula_enrichment = False
+
+        class _FakePdfFormatOption:
+            def __init__(self, pipeline_options):
+                self.pipeline_options = pipeline_options
+
+        class _FakeDocument:
+            def export_to_markdown(self):
+                return "# converted"
+
+        class _FakeResult:
+            def __init__(self):
+                self.document = _FakeDocument()
+
+        captured = {}
+
+        class _FakeDocumentConverter:
+            def __init__(self, format_options):
+                captured["format_options"] = format_options
+
+            def convert(self, source):
+                captured["source"] = source
+                return _FakeResult()
+
+        class _FakeInputFormat:
+            PDF = "pdf"
+
+        monkeypatch.setattr(
+            engine_module,
+            "_load_docling_python_api",
+            lambda: {
+                "DocumentConverter": _FakeDocumentConverter,
+                "PdfFormatOption": _FakePdfFormatOption,
+                "PdfPipelineOptions": _FakePdfPipelineOptions,
+                "InputFormat": _FakeInputFormat,
+            },
+        )
+
+        backend = engine_module.DoclingPythonBackend()
+        ctx = self._ctx(profile="math_heavy", page_range="1-3")
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+        sliced_pdf = tmp_path / "staging" / "markdown-auto" / "docling-python" / ctx.entry_id / "selected-pages.pdf"
+
+        def _fake_prepare_docling_source(_ctx, _out_dir):
+            return sliced_pdf, True
+
+        monkeypatch.setattr(engine_module, "_prepare_docling_python_source_pdf", _fake_prepare_docling_source)
+
+        result = backend.run(ctx)
+
+        assert result.status == "ok"
+        assert captured["source"] == str(sliced_pdf)
+        metadata = json.loads((tmp_path / "staging" / "markdown-auto" / "docling-python" / ctx.entry_id / "docling-python-run.json").read_text(encoding="utf-8"))
+        assert metadata["effective_source_pdf"] == str(sliced_pdf)
+        assert metadata["page_range_requested"] == "1-3"
+        assert metadata["page_range_applied"] is True
+        assert metadata["selected_pages_count"] == 3
+
+    def test_configure_docling_python_standard_gpu_sets_cuda_and_batches(self):
+        class _FakeAcceleratorDevice:
+            CUDA = type("CudaValue", (), {"value": "cuda"})()
+
+        class _FakeAcceleratorOptions:
+            def __init__(self, device):
+                self.device = device
+
+        class _FakeRapidOcrOptions:
+            def __init__(self, backend):
+                self.backend = backend
+
+        class _FakePerf:
+            page_batch_size = 4
+
+        class _FakeSettings:
+            perf = _FakePerf()
+
+        class _FakePipelineOptions:
+            accelerator_options = None
+            ocr_batch_size = 0
+            layout_batch_size = 0
+            table_batch_size = 0
+            ocr_options = None
+
+        gpu = engine_module._configure_docling_python_standard_gpu(
+            {
+                "AcceleratorOptions": _FakeAcceleratorOptions,
+                "AcceleratorDevice": _FakeAcceleratorDevice,
+                "RapidOcrOptions": _FakeRapidOcrOptions,
+                "settings": _FakeSettings(),
+            },
+            _FakePipelineOptions(),
+        )
+
+        assert gpu["enabled"] is True
+        assert gpu["device"] == "cuda"
+        assert gpu["ocr_batch_size"] == 8
+        assert gpu["layout_batch_size"] == 8
+        assert gpu["table_batch_size"] == 4
+        assert gpu["page_batch_size"] == 8
+        assert gpu["ocr_backend"] == "torch"
+
+
+class TestExternalMarkdownSanitization:
+    def test_repairs_common_utf8_mojibake_sequences(self):
+        text = "IntroduÃ§Ã£o ao conteÃºdo: nÃ£o, revisÃ£o e equaÃ§Ãµes."
+        repaired = _repair_mojibake_text(text)
+        assert repaired == "Introdução ao conteúdo: não, revisão e equações."
+
+    def test_leaves_valid_utf8_text_unchanged(self):
+        text = "Introdução ao conteúdo: não, revisão e equações."
+        assert _repair_mojibake_text(text) == text
+
+    def test_sanitize_external_markdown_normalizes_newlines_after_repair(self):
+        text = "## IntroduÃ§Ã£o\r\n\r\nTexto com revisÃ£o.\r"
+        assert _sanitize_external_markdown_text(text) == "## Introdução\n\nTexto com revisão.\n"
 
 
 class TestBacklogMarkdownStatus:
@@ -386,6 +1113,301 @@ class TestBacklogMarkdownStatus:
         assert summary["manual"] == "topico:funcoes-recursivas"
         assert summary["auto"] == "tipo:lista"
         assert summary["effective"] == "topico:funcoes-recursivas, tipo:lista, ferramenta:isabelle"
+
+
+class TestPdfImageExtractionPolicy:
+    def _ctx(
+        self,
+        *,
+        profile="math_heavy",
+        page_count=116,
+        images_count=290,
+        suspected_scan=False,
+        page_range="",
+        extract_images=True,
+    ):
+        entry = FileEntry(
+            source_path="C:/repo/raw/pdfs/material-de-aula/mlp.pdf",
+            file_type="pdf",
+            category="material-de-aula",
+            title="MLP",
+            document_profile=profile,
+            page_range=page_range,
+            extract_images=extract_images,
+        )
+        report = DocumentProfileReport(
+            page_count=page_count,
+            images_count=images_count,
+            suggested_profile=profile,
+            suspected_scan=suspected_scan,
+        )
+        return engine_module.BackendContext(
+            Path("C:/repo"),
+            Path("C:/repo/raw/pdfs/material-de-aula/mlp.pdf"),
+            entry,
+            report,
+            stall_timeout=300,
+        )
+
+    def test_math_heavy_pdf_uses_permissive_image_policy(self):
+        ctx = self._ctx(profile="math_heavy")
+        policy = engine_module._pdf_image_extraction_policy(ctx)
+        assert policy["mode"] == "permissive"
+        assert policy["keep_low_color"] is True
+
+    def test_diagram_heavy_pdf_uses_balanced_image_policy(self):
+        ctx = self._ctx(profile="diagram_heavy")
+        policy = engine_module._pdf_image_extraction_policy(ctx)
+        assert policy["mode"] == "balanced"
+
+    def test_scanned_pdf_uses_permissive_image_policy(self):
+        ctx = self._ctx(profile="scanned", suspected_scan=True)
+        policy = engine_module._pdf_image_extraction_policy(ctx)
+        assert policy["mode"] == "permissive"
+
+    def test_auto_pdf_keeps_aggressive_noise_filter(self):
+        ctx = self._ctx(profile="auto", page_count=20, images_count=3)
+        policy = engine_module._pdf_image_extraction_policy(ctx)
+        assert policy["mode"] == "standard"
+        assert policy["keep_low_color"] is False
+
+    def test_low_color_math_image_is_kept_by_permissive_policy(self, tmp_path, monkeypatch):
+        ctx = self._ctx(profile="math_heavy")
+        repo = tmp_path / "repo"
+        raw_target = repo / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        out_dir = repo / "staging" / "assets" / "images" / "mlp"
+        raw_target.parent.mkdir(parents=True, exist_ok=True)
+        raw_target.write_text("pdf", encoding="utf-8")
+
+        builder = engine_module.RepoBuilder(repo, {}, [], {})
+
+        class FakePage:
+            @staticmethod
+            def get_images(full=True):
+                return [(17,)]
+
+        class FakeDoc:
+            page_count = 1
+
+            def __getitem__(self, _idx):
+                return FakePage()
+
+            @staticmethod
+            def extract_image(_xref):
+                return {
+                    "image": b"x" * 1500,
+                    "width": 64,
+                    "height": 64,
+                    "ext": "png",
+                }
+
+            @staticmethod
+            def close():
+                return None
+
+        monkeypatch.setattr(engine_module, "pymupdf", mock.Mock(open=lambda *_: FakeDoc()))
+        monkeypatch.setattr(engine_module.RepoBuilder, "_is_noise_image", staticmethod(lambda _data: True))
+
+        count = builder._extract_pdf_images(raw_target, out_dir, pages=[0], ctx=ctx)
+
+        assert count == 1
+        assert (out_dir / "page-001-img-01.png").exists()
+
+
+class TestEntryImageSources:
+    def test_entry_image_source_dirs_include_inline_and_extracted_assets(self, tmp_path):
+        root = tmp_path / "repo"
+        entry = {
+            "id": "abc",
+            "images_dir": "staging/assets/images/abc",
+            "rendered_pages_dir": "content/images/scanned/abc",
+        }
+
+        dirs = engine_module._entry_image_source_dirs(root, entry)
+
+        assert root / "staging" / "assets" / "inline-images" / "abc" in dirs
+        assert root / "staging" / "assets" / "images" / "abc" in dirs
+        assert root / "content" / "images" / "scanned" / "abc" in dirs
+
+    def test_compact_manifest_keeps_images_dir_even_without_markdown_reference(self, tmp_path):
+        repo = tmp_path / "repo"
+        images_dir = repo / "staging" / "assets" / "images" / "entry-1"
+        images_dir.mkdir(parents=True)
+        builder = engine_module.RepoBuilder(repo, {}, [], {})
+
+        manifest = {
+            "entries": [
+                {
+                    "id": "entry-1",
+                    "category": "material-de-aula",
+                    "title": "Entry 1",
+                    "images_dir": "staging/assets/images/entry-1",
+                    "base_markdown": None,
+                    "advanced_markdown": None,
+                    "raw_target": None,
+                }
+            ]
+        }
+
+        result = builder._compact_manifest(manifest)
+
+        assert len(result["entries"]) == 1
+        assert result["entries"][0]["images_dir"] == "staging/assets/images/entry-1"
+
+
+def test_parallel_image_extraction_runs_while_marker_remains_advanced_backend(tmp_path, monkeypatch):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    raw_target = repo / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+    raw_target.parent.mkdir(parents=True, exist_ok=True)
+    raw_target.write_bytes(b"%PDF-1.4")
+
+    builder = engine_module.RepoBuilder(repo, {}, [], {})
+    entry = FileEntry(
+        source_path=str(raw_target),
+        file_type="pdf",
+        category="material-de-aula",
+        title="MLP",
+        document_profile="math_heavy",
+        extract_images=True,
+        preferred_backend="marker",
+    )
+
+    report = DocumentProfileReport(
+        page_count=12,
+        images_count=18,
+        suggested_profile="math_heavy",
+        suspected_scan=False,
+    )
+    decision = PipelineDecision(
+        entry_id=entry.id(),
+        processing_mode="auto",
+        effective_profile="math_heavy",
+        base_backend="pymupdf4llm",
+        advanced_backend="marker",
+        reasons=["profile:math_heavy"],
+    )
+
+    call_order = []
+
+    monkeypatch.setattr(builder, "_profile_pdf", lambda *_args, **_kwargs: report)
+    monkeypatch.setattr(builder.selector, "decide", lambda *_args, **_kwargs: decision)
+    monkeypatch.setattr(
+        builder.selector.backends["pymupdf4llm"],
+        "run",
+        lambda ctx: call_order.append("base") or engine_module.BackendRunResult(
+            name="pymupdf4llm",
+            layer="base",
+            status="ok",
+            markdown_path="staging/markdown-auto/pymupdf4llm/mlp.md",
+        ),
+    )
+    monkeypatch.setattr(
+        builder.selector.backends["marker"],
+        "run",
+        lambda ctx: call_order.append("marker") or engine_module.BackendRunResult(
+            name="marker",
+            layer="advanced",
+            status="ok",
+            markdown_path="staging/markdown-auto/marker/mlp.md",
+            asset_dir="staging/markdown-auto/marker/mlp",
+        ),
+    )
+    monkeypatch.setattr(builder, "_apply_math_normalization", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr(engine_module, "HAS_PYMUPDF", True)
+    monkeypatch.setattr(
+        builder,
+        "_extract_pdf_images",
+        lambda pdf_path, out_dir, pages=None, ctx=None: call_order.append("images") or 3,
+    )
+
+    result = builder._process_pdf(entry, raw_target)
+
+    assert result["base_backend"] == "pymupdf4llm"
+    assert result["advanced_backend"] == "marker"
+    assert result["images_dir"] == safe_rel(repo / "staging" / "assets" / "images" / entry.id(), repo)
+    assert result["image_extraction"]["source"] == "pymupdf-pdf-images"
+    assert result["image_extraction"]["mode"] == "permissive"
+    assert call_order == ["base", "marker", "images"]
+
+
+def test_process_url_writes_manual_review_to_web(tmp_path, monkeypatch):
+    import urllib.request
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+
+    builder = engine_module.RepoBuilder(repo, {}, [], {})
+    entry = FileEntry(
+        source_path="https://example.com/page",
+        file_type="url",
+        category="referencias",
+        title="Example Page",
+    )
+
+    response = mock.MagicMock()
+    response.read.return_value = b"<html><body><h1>Example</h1></body></html>"
+    response.info.return_value.get_content_charset.return_value = "utf-8"
+    response.__enter__.return_value = response
+    response.__exit__.return_value = False
+
+    monkeypatch.setattr(urllib.request, "urlopen", lambda *_args, **_kwargs: response)
+    monkeypatch.setattr(
+        engine_module,
+        "_html_to_structured_markdown",
+        lambda html, url, title: f"# {title}\n\nFonte: {url}\n",
+    )
+
+    result = builder._process_url(entry)
+    manual_review = repo / result["manual_review"]
+
+    assert result["base_backend"] == "url_fetcher"
+    assert manual_review == repo / "manual-review" / "web" / f"{entry.id()}.md"
+    assert manual_review.exists()
+    assert "type: manual_url_review" in manual_review.read_text(encoding="utf-8")
+
+
+def test_migrate_legacy_url_manual_reviews_moves_file_and_updates_manifest(tmp_path):
+    repo = tmp_path / "repo"
+    legacy_dir = repo / "manual-review" / "pdfs"
+    legacy_dir.mkdir(parents=True)
+    legacy_file = legacy_dir / "url-item.md"
+    legacy_file.write_text(
+        """---
+id: url-item
+title: Example
+type: manual_pdf_review
+base_backend: url_fetcher
+---
+legacy
+""",
+        encoding="utf-8",
+    )
+    manifest_path = repo / "manifest.json"
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "entries": [
+                    {
+                        "id": "url-item",
+                        "manual_review": "manual-review/pdfs/url-item.md",
+                    }
+                ]
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    moved = engine_module.migrate_legacy_url_manual_reviews(repo)
+
+    assert moved == 1
+    assert not legacy_file.exists()
+    migrated_file = repo / "manual-review" / "web" / "url-item.md"
+    assert migrated_file.exists()
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert manifest["entries"][0]["manual_review"] == "manual-review/web/url-item.md"
+
 
     def test_resolves_backlog_unit_status_from_file_map(self, tmp_path):
         from src.ui.dialogs import _resolve_backlog_unit_status
@@ -927,6 +1949,7 @@ def test_app_build_options_include_sleep_prevention():
         get=lambda key, default=None: {
             "image_format": "png",
             "stall_timeout": 300,
+            "marker_torch_device": "cuda",
             "prevent_sleep_during_build": True,
         }.get(key, default)
     )
@@ -934,6 +1957,23 @@ def test_app_build_options_include_sleep_prevention():
     options = _build_options_from_config("auto", "por,eng", config_obj)
 
     assert options["prevent_sleep_during_build"] is True
+    assert options["marker_torch_device"] == "cuda"
+
+
+def test_file_entry_preserves_datalab_mode_roundtrip():
+    entry = FileEntry(
+        source_path="/test.pdf",
+        file_type="pdf",
+        category="material-de-aula",
+        title="Test",
+        preferred_backend="datalab",
+        datalab_mode="balanced",
+    )
+
+    restored = FileEntry.from_dict(entry.to_dict())
+
+    assert restored.preferred_backend == "datalab"
+    assert restored.datalab_mode == "balanced"
 
 
 # ---------------------------------------------------------------------------
@@ -941,7 +1981,7 @@ def test_app_build_options_include_sleep_prevention():
 # ---------------------------------------------------------------------------
 
 class TestBackendSelector:
-    def test_auto_mode_math_heavy_prefers_marker_when_available(self):
+    def test_auto_mode_math_heavy_prefers_datalab_when_available(self):
         selector = BackendSelector()
         entry = FileEntry(
             source_path="/test.pdf",
@@ -954,12 +1994,12 @@ class TestBackendSelector:
         with mock.patch.object(
             BackendSelector,
             "available_backends",
-            return_value={"pymupdf4llm": True, "pymupdf": True, "docling": True, "marker": True},
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True},
         ):
             decision = selector.decide(entry, report)
-        assert decision.advanced_backend == "marker"
+        assert decision.advanced_backend == "datalab"
 
-    def test_auto_mode_layout_heavy_prefers_marker_when_available(self):
+    def test_auto_mode_diagram_heavy_prefers_docling_when_available(self):
         selector = BackendSelector()
         entry = FileEntry(
             source_path="/test.pdf",
@@ -968,14 +2008,14 @@ class TestBackendSelector:
             title="Test",
             processing_mode="auto",
         )
-        report = DocumentProfileReport(suggested_profile="layout_heavy")
+        report = DocumentProfileReport(suggested_profile="diagram_heavy")
         with mock.patch.object(
             BackendSelector,
             "available_backends",
             return_value={"pymupdf4llm": True, "pymupdf": True, "docling": True, "marker": True},
         ):
             decision = selector.decide(entry, report)
-        assert decision.advanced_backend == "marker"
+        assert decision.advanced_backend == "docling"
 
     def test_quick_mode_selects_base_only(self):
         selector = BackendSelector()
@@ -986,12 +2026,12 @@ class TestBackendSelector:
             title="Test",
             processing_mode="quick",
         )
-        report = DocumentProfileReport(suggested_profile="general")
+        report = DocumentProfileReport(suggested_profile="auto")
         decision = selector.decide(entry, report)
         assert decision.processing_mode == "quick"
         assert decision.advanced_backend is None
 
-    def test_auto_mode_general_no_advanced(self):
+    def test_auto_mode_auto_no_advanced(self):
         selector = BackendSelector()
         entry = FileEntry(
             source_path="/test.pdf",
@@ -1000,7 +2040,7 @@ class TestBackendSelector:
             title="Test",
             processing_mode="auto",
         )
-        report = DocumentProfileReport(suggested_profile="general")
+        report = DocumentProfileReport(suggested_profile="auto")
         decision = selector.decide(entry, report)
         assert decision.advanced_backend is None
 
@@ -1028,10 +2068,10 @@ class TestBackendSelector:
             processing_mode="quick",
             formula_priority=True,
         )
-        report = DocumentProfileReport(suggested_profile="general")
+        report = DocumentProfileReport(suggested_profile="auto")
         decision = selector.decide(entry, report)
         available = selector.available_backends()
-        has_advanced = available.get("docling") or available.get("marker")
+        has_advanced = available.get("datalab") or available.get("docling") or available.get("marker")
         if has_advanced:
             assert decision.advanced_backend is not None
             assert "formula_priority" in " ".join(decision.reasons)
@@ -1045,8 +2085,48 @@ class TestBackendSelector:
         assert isinstance(available, dict)
         assert "pymupdf4llm" in available
         assert "pymupdf" in available
+        assert "datalab" in available
         assert "docling" in available
+        assert "docling_python" in available
         assert "marker" in available
+
+    def test_manual_preferred_docling_python_is_respected(self):
+        selector = BackendSelector()
+        entry = FileEntry(
+            source_path="/test.pdf",
+            file_type="pdf",
+            category="course-material",
+            title="Test",
+            processing_mode="auto",
+            preferred_backend="docling_python",
+        )
+        report = DocumentProfileReport(suggested_profile="math_heavy")
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "docling": True, "docling_python": True, "marker": True},
+        ):
+            decision = selector.decide(entry, report)
+        assert decision.advanced_backend == "docling_python"
+
+    def test_manual_preferred_datalab_is_respected(self):
+        selector = BackendSelector()
+        entry = FileEntry(
+            source_path="/test.pdf",
+            file_type="pdf",
+            category="course-material",
+            title="Test",
+            processing_mode="auto",
+            preferred_backend="datalab",
+        )
+        report = DocumentProfileReport(suggested_profile="math_heavy")
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "docling_python": True, "marker": True},
+        ):
+            decision = selector.decide(entry, report)
+        assert decision.advanced_backend == "datalab"
 
 
 # ---------------------------------------------------------------------------
@@ -1057,7 +2137,7 @@ class TestDocumentProfileReport:
     def test_defaults(self):
         report = DocumentProfileReport()
         assert report.page_count == 0
-        assert report.suggested_profile == "general"
+        assert report.suggested_profile == "auto"
         assert report.suspected_scan is False
 
     def test_serializable(self):
@@ -2405,7 +3485,7 @@ class TestBundleSeedLowToken:
             "category": "provas",
             "include_in_bundle": False,
             "relevant_for_exam": True,
-            "effective_profile": "exam_pdf",
+            "effective_profile": "diagram_heavy",
             "title": "P1 2025",
         }
         bibliography_entry = {
@@ -2440,7 +3520,7 @@ class TestBundleSeedLowToken:
                     "advanced_markdown": None,
                     "approved_markdown": None,
                     "curated_markdown": None,
-                    "effective_profile": "exam_pdf",
+                    "effective_profile": "diagram_heavy",
                 },
                 {
                     "id": "bib",
@@ -2511,7 +3591,7 @@ class TestBundleSeedLowToken:
                     "advanced_markdown": None,
                     "approved_markdown": None,
                     "curated_markdown": None,
-                    "effective_profile": "layout_heavy",
+                    "effective_profile": "diagram_heavy",
                     "full_markdown": "isso nunca deve ir para o bundle",
                     "raw_markdown": "isso também não",
                 }
@@ -2542,6 +3622,129 @@ class TestBundleSeedLowToken:
             "bundle_priority_score",
             "bundle_reasons",
         }
+
+    def test_reject_uses_manifest_course_meta_when_builder_course_meta_is_empty(self, tmp_path):
+        from src.builder.engine import RepoBuilder
+
+        repo = tmp_path / "repo"
+        (repo / "build" / "claude-knowledge").mkdir(parents=True)
+        (repo / "course").mkdir(parents=True)
+        (repo / "content").mkdir(parents=True)
+        (repo / "content" / "aula1.md").write_text("# Aula 1", encoding="utf-8")
+
+        manifest = {
+            "generated_at": "2026-04-09T15:00:00",
+            "course": {
+                "course_name": "Métodos Formais",
+                "course_slug": "metodos-formais",
+                "semester": "2026/1",
+                "professor": "Prof",
+                "institution": "PUCRS",
+            },
+            "entries": [
+                {
+                    "id": "aula1",
+                    "title": "Aula 1",
+                    "category": "material-de-aula",
+                    "file_type": "pdf",
+                    "source_path": "C:/tmp/aula1.pdf",
+                    "base_markdown": "content/aula1.md",
+                }
+            ],
+            "logs": [],
+        }
+        (repo / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+
+        builder = RepoBuilder(root_dir=repo, course_meta={}, entries=[], options={})
+        builder._resolve_content_images = lambda: None
+
+        entry_data = builder.reject("aula1")
+
+        assert entry_data is not None
+        data = json.loads((repo / "build" / "claude-knowledge" / "bundle.seed.json").read_text(encoding="utf-8"))
+        assert data["course_slug"] == "metodos-formais"
+
+    def test_reject_preserves_page_range_from_manifest_entry(self, tmp_path):
+        from src.builder.engine import RepoBuilder
+        from src.models.core import FileEntry
+
+        repo = tmp_path / "repo"
+        (repo / "build" / "claude-knowledge").mkdir(parents=True)
+        (repo / "course").mkdir(parents=True)
+        (repo / "content").mkdir(parents=True)
+        (repo / "content" / "aula1.md").write_text("# Aula 1", encoding="utf-8")
+
+        manifest = {
+            "generated_at": "2026-04-09T15:00:00",
+            "course": {
+                "course_name": "Métodos Formais",
+                "course_slug": "metodos-formais",
+                "semester": "2026/1",
+                "professor": "Prof",
+                "institution": "PUCRS",
+            },
+            "entries": [
+                {
+                    "id": "aula1",
+                    "title": "Aula 1",
+                    "category": "material-de-aula",
+                    "file_type": "pdf",
+                    "source_path": "C:/tmp/aula1.pdf",
+                    "base_markdown": "content/aula1.md",
+                    "page_range": "3-8",
+                    "processing_mode": "full",
+                    "document_profile": "math_heavy",
+                    "preferred_backend": "marker",
+                }
+            ],
+            "logs": [],
+        }
+        (repo / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+
+        builder = RepoBuilder(root_dir=repo, course_meta={}, entries=[], options={})
+        builder._resolve_content_images = lambda: None
+
+        entry_data = builder.reject("aula1")
+
+        restored = FileEntry.from_dict({**entry_data, "enabled": True})
+        assert restored.page_range == "3-8"
+
+    def test_process_entry_persists_page_range_and_processing_options(self, tmp_path):
+        from src.builder.engine import RepoBuilder
+        from src.models.core import FileEntry
+
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        source = tmp_path / "entrada.pdf"
+        source.write_bytes(b"%PDF-1.4\n%fake\n")
+
+        builder = RepoBuilder(root_dir=repo, course_meta={"course_slug": "mf"}, entries=[], options={})
+        builder._process_pdf = lambda entry, raw_target: {"base_markdown": "staging/example.md"}
+
+        entry = FileEntry(
+            source_path=str(source),
+            file_type="pdf",
+            category="material-de-aula",
+            title="Entrada",
+            processing_mode="full",
+            document_profile="math_heavy",
+            preferred_backend="marker",
+            page_range="2-5",
+            force_ocr=True,
+            extract_images=False,
+            extract_tables=False,
+            formula_priority=True,
+            datalab_mode="accurate",
+        )
+
+        item = builder._process_entry(entry)
+
+        assert item["page_range"] == "2-5"
+        assert item["force_ocr"] is True
+        assert item["extract_images"] is False
+        assert item["extract_tables"] is False
+        assert item["formula_priority"] is True
+        assert item["datalab_mode"] == "accurate"
 
 
 class TestCourseMapLowToken:

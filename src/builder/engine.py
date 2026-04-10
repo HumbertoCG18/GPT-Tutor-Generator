@@ -1,6 +1,8 @@
 from __future__ import annotations
 import csv
+import difflib
 import html as html_lib
+import importlib
 import json
 import logging
 import os
@@ -14,6 +16,12 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
+from src.builder.datalab_client import (
+    convert_document_to_markdown,
+    get_datalab_base_url,
+    has_datalab_api_key,
+    save_datalab_images,
+)
 from src.builder.image_classifier import extract_page_number
 from src.models.core import (
     BackendRunResult, DocumentProfileReport, FileEntry,
@@ -25,7 +33,7 @@ from src.utils.helpers import (
     CODE_EXTENSIONS, LANG_MAP, CODE_CATEGORIES, ASSIGNMENT_CATEGORIES,
     WHITEBOARD_CATEGORIES, STUDENT_BRANCHES,
     ensure_dir, file_size_mb, json_str, pages_to_marker_range,
-    parse_page_range, safe_rel, slugify, write_text,
+    normalize_document_profile, parse_page_range, safe_rel, slugify, write_text,
 )
 from src.utils.power import prevent_system_sleep
 
@@ -37,6 +45,14 @@ if HAS_PDFPLUMBER:
     import pdfplumber
 
 logger = logging.getLogger(__name__)
+
+_DOCLING_PYTHON_API_CACHE = None
+
+
+def _effective_document_profile(entry_profile: str | None, suggested_profile: str | None) -> str:
+    if normalize_document_profile(entry_profile) != "auto":
+        return normalize_document_profile(entry_profile)
+    return normalize_document_profile(suggested_profile)
 
 _KNOWN_TAG_TOOLS = {
     "isabelle",
@@ -867,14 +883,84 @@ def _selected_page_count(ctx: "BackendContext") -> int:
     return max(int(ctx.report.page_count or 0), 0)
 
 
+def _prepare_docling_python_source_pdf(ctx: "BackendContext", out_dir: Path) -> tuple[Path, bool]:
+    if not ctx.pages:
+        return ctx.raw_target, False
+    if not HAS_PYMUPDF:
+        logger.warning(
+            "  [docling_python] page_range solicitado, mas PyMuPDF nao esta disponivel; usando o PDF inteiro."
+        )
+        return ctx.raw_target, False
+
+    sliced_pdf = out_dir / f"{ctx.entry_id}--selected-pages.pdf"
+    src_doc = pymupdf.open(str(ctx.raw_target))
+    dst_doc = pymupdf.open()
+    try:
+        valid_pages = [page for page in ctx.pages if 0 <= page < src_doc.page_count]
+        if not valid_pages:
+            logger.warning(
+                "  [docling_python] page_range=%s nao gerou paginas validas; usando o PDF inteiro.",
+                ctx.entry.page_range or "all",
+            )
+            return ctx.raw_target, False
+        for page in valid_pages:
+            dst_doc.insert_pdf(src_doc, from_page=page, to_page=page)
+        dst_doc.save(str(sliced_pdf))
+    finally:
+        dst_doc.close()
+        src_doc.close()
+
+    return sliced_pdf, True
+
+
+def _configure_docling_python_standard_gpu(api: dict, pipeline_options) -> dict:
+    accelerator_options_cls = api.get("AcceleratorOptions")
+    accelerator_device = api.get("AcceleratorDevice")
+    rapid_ocr_options_cls = api.get("RapidOcrOptions")
+    settings_obj = api.get("settings")
+
+    gpu_config = {
+        "enabled": False,
+        "device": "auto",
+        "ocr_batch_size": None,
+        "layout_batch_size": None,
+        "table_batch_size": None,
+        "page_batch_size": None,
+        "ocr_backend": None,
+        "previous_page_batch_size": None,
+    }
+
+    if accelerator_options_cls and accelerator_device and hasattr(pipeline_options, "accelerator_options"):
+        pipeline_options.accelerator_options = accelerator_options_cls(device=accelerator_device.CUDA)
+        gpu_config["enabled"] = True
+        gpu_config["device"] = str(accelerator_device.CUDA.value)
+
+    if hasattr(pipeline_options, "ocr_batch_size"):
+        pipeline_options.ocr_batch_size = 8
+        gpu_config["ocr_batch_size"] = 8
+    if hasattr(pipeline_options, "layout_batch_size"):
+        pipeline_options.layout_batch_size = 8
+        gpu_config["layout_batch_size"] = 8
+    if hasattr(pipeline_options, "table_batch_size"):
+        pipeline_options.table_batch_size = 4
+        gpu_config["table_batch_size"] = 4
+
+    if rapid_ocr_options_cls and hasattr(pipeline_options, "ocr_options"):
+        pipeline_options.ocr_options = rapid_ocr_options_cls(backend="torch")
+        gpu_config["ocr_backend"] = "torch"
+
+    if settings_obj is not None and hasattr(settings_obj, "perf") and hasattr(settings_obj.perf, "page_batch_size"):
+        gpu_config["previous_page_batch_size"] = int(settings_obj.perf.page_batch_size)
+        settings_obj.perf.page_batch_size = max(int(settings_obj.perf.page_batch_size), 8)
+        gpu_config["page_batch_size"] = int(settings_obj.perf.page_batch_size)
+
+    return gpu_config
+
+
 def _marker_chunk_size_for_workload(ctx: "BackendContext") -> int:
-    effective_profile = (
-        ctx.entry.document_profile
-        if ctx.entry.document_profile != "auto"
-        else ctx.report.suggested_profile
-    )
+    effective_profile = _effective_document_profile(ctx.entry.document_profile, ctx.report.suggested_profile)
     selected_pages = _selected_page_count(ctx)
-    if effective_profile in {"math_heavy", "layout_heavy"} and selected_pages >= 80:
+    if effective_profile in {"math_heavy", "diagram_heavy"} and selected_pages >= 80:
         return 10
     return 20
 
@@ -883,20 +969,123 @@ def _should_force_ocr_for_marker(ctx: "BackendContext") -> bool:
     return bool(ctx.entry.force_ocr) or bool(ctx.report.suspected_scan)
 
 
+def _marker_should_use_llm(ctx: "BackendContext") -> bool:
+    return bool(getattr(ctx, "marker_use_llm", False))
+
+
+def _marker_ollama_model(ctx: "BackendContext") -> str:
+    return str(getattr(ctx, "marker_llm_model", "") or "").strip()
+
+
+def _marker_torch_device(ctx: "BackendContext") -> str:
+    return str(getattr(ctx, "marker_torch_device", "") or "").strip().lower()
+
+
+def _marker_effective_torch_device(ctx: "BackendContext") -> str:
+    configured = _marker_torch_device(ctx)
+    if configured and configured != "auto":
+        return configured
+    return "mps" if sys.platform == "darwin" else "cuda"
+
+
+def _marker_model_slug(model: str) -> str:
+    return str(model or "").strip().lower()
+
+
+def _marker_model_is_qwen3_vl_8b(model: str) -> bool:
+    slug = _marker_model_slug(model)
+    return slug.startswith("qwen3-vl:8b") or slug == "qwen3-vl:8b"
+
+
+def _marker_model_is_cloud_variant(model: str) -> bool:
+    return "cloud" in _marker_model_slug(model)
+
+
+def _marker_model_is_probably_vision(model: str) -> bool:
+    slug = _marker_model_slug(model)
+    return any(token in slug for token in ("-vl", "vision", "gemma3", "gemma4"))
+
+
+def _marker_should_redo_inline_math(ctx: "BackendContext") -> bool:
+    suggested_profile = str(getattr(ctx.report, "suggested_profile", "") or "").strip().lower()
+    return bool(getattr(ctx.entry, "formula_priority", False)) or suggested_profile == "math_heavy"
+
+
+def _marker_progress_hints(line: str, previous_phase: Optional[str]) -> tuple[Optional[str], list[str]]:
+    phase = None
+    hints: list[str] = []
+
+    if ":" in line:
+        phase = line.split(":", 1)[0].strip() or None
+    if not phase:
+        return previous_phase, hints
+
+    if previous_phase != phase:
+        hints.append(f"Fase detectada: {phase}")
+
+    if "0it [00:00" in line.lower():
+        hints.append(f"Fase '{phase}' concluída sem itens para processar.")
+
+    return phase, hints
+
+
+def _load_docling_python_api():
+    global _DOCLING_PYTHON_API_CACHE
+
+    if _DOCLING_PYTHON_API_CACHE is not None:
+        return _DOCLING_PYTHON_API_CACHE
+
+    try:
+        document_converter = importlib.import_module("docling.document_converter")
+        pipeline_options = importlib.import_module("docling.datamodel.pipeline_options")
+        base_models = importlib.import_module("docling.datamodel.base_models")
+        accelerator_options = importlib.import_module("docling.datamodel.accelerator_options")
+        settings_module = importlib.import_module("docling.datamodel.settings")
+        _DOCLING_PYTHON_API_CACHE = {
+            "DocumentConverter": document_converter.DocumentConverter,
+            "PdfFormatOption": document_converter.PdfFormatOption,
+            "PdfPipelineOptions": pipeline_options.PdfPipelineOptions,
+            "ThreadedPdfPipelineOptions": getattr(pipeline_options, "ThreadedPdfPipelineOptions", pipeline_options.PdfPipelineOptions),
+            "RapidOcrOptions": getattr(pipeline_options, "RapidOcrOptions", None),
+            "AcceleratorOptions": accelerator_options.AcceleratorOptions,
+            "AcceleratorDevice": accelerator_options.AcceleratorDevice,
+            "settings": settings_module.settings,
+            "InputFormat": base_models.InputFormat,
+        }
+    except Exception:
+        _DOCLING_PYTHON_API_CACHE = None
+
+    return _DOCLING_PYTHON_API_CACHE
+
+
+def has_docling_python_api() -> bool:
+    return bool(_load_docling_python_api())
+
+
 def _advanced_cli_stall_timeout(backend_name: str, ctx: "BackendContext") -> int:
     base_timeout = int(ctx.stall_timeout or 300)
-    effective_profile = (
-        ctx.entry.document_profile
-        if ctx.entry.document_profile != "auto"
-        else ctx.report.suggested_profile
-    )
+    effective_profile = _effective_document_profile(ctx.entry.document_profile, ctx.report.suggested_profile)
     selected_pages = _selected_page_count(ctx)
-    heavy_profiles = {"math_heavy", "layout_heavy", "scanned", "exam_pdf"}
+    heavy_profiles = {"math_heavy", "diagram_heavy", "scanned"}
 
     if backend_name == "marker":
-        if effective_profile in {"math_heavy", "layout_heavy"} and selected_pages >= 80:
+        marker_model = _marker_ollama_model(ctx)
+        marker_llm_active = _marker_should_use_llm(ctx) and bool(marker_model)
+        if marker_llm_active and _marker_model_is_qwen3_vl_8b(marker_model):
+            if effective_profile in heavy_profiles and selected_pages >= 80:
+                return max(base_timeout, 3600)
+            if effective_profile in heavy_profiles and selected_pages >= 40:
+                return max(base_timeout, 2700)
+            return max(base_timeout, 1200)
+        if marker_llm_active:
+            if effective_profile in heavy_profiles and selected_pages >= 80:
+                return max(base_timeout, 3600)
+            if effective_profile in heavy_profiles and selected_pages >= 40:
+                return max(base_timeout, 2700)
+            return max(base_timeout, 900)
+        if effective_profile in {"math_heavy", "diagram_heavy"} and selected_pages >= 80:
             return max(base_timeout, 2700)
-        if effective_profile in {"math_heavy", "layout_heavy"} and selected_pages >= 40:
+        if effective_profile in {"math_heavy", "diagram_heavy"} and selected_pages >= 40:
             return max(base_timeout, 1800)
         return base_timeout
 
@@ -908,6 +1097,51 @@ def _advanced_cli_stall_timeout(backend_name: str, ctx: "BackendContext") -> int
         return base_timeout
 
     return base_timeout
+
+
+def _pdf_image_extraction_policy(ctx: "BackendContext") -> Dict[str, object]:
+    effective_profile = _effective_document_profile(ctx.entry.document_profile, ctx.report.suggested_profile)
+    if effective_profile in {"math_heavy", "scanned"} or ctx.report.suspected_scan:
+        return {
+            "mode": "permissive",
+            "min_bytes": 512,
+            "min_dimension": 8,
+            "max_aspect_ratio": 20.0,
+            "keep_low_color": True,
+        }
+    if effective_profile == "diagram_heavy":
+        return {
+            "mode": "balanced",
+            "min_bytes": 1200,
+            "min_dimension": 16,
+            "max_aspect_ratio": 12.0,
+            "keep_low_color": True,
+        }
+    return {
+        "mode": "standard",
+        "min_bytes": RepoBuilder._MIN_IMG_BYTES,
+        "min_dimension": RepoBuilder._MIN_IMG_DIMENSION,
+        "max_aspect_ratio": RepoBuilder._MAX_ASPECT_RATIO,
+        "keep_low_color": False,
+    }
+
+
+def _rewrite_datalab_markdown_image_refs(markdown: str, images_subdir: str, saved_images: Dict[str, Path]) -> str:
+    if not markdown or not saved_images:
+        return markdown
+
+    by_basename = {path.name: path for path in saved_images.values()}
+    pattern = re.compile(r"(!\[[^\]]*\]\()([^)]+)(\))")
+
+    def _replace(match: re.Match) -> str:
+        raw_ref = match.group(2).strip()
+        basename = Path(raw_ref.replace("\\", "/")).name
+        if basename not in by_basename:
+            return match.group(0)
+        rewritten = f"{images_subdir}/{basename}".replace("\\", "/")
+        return f"{match.group(1)}{rewritten}{match.group(3)}"
+
+    return pattern.sub(_replace, markdown)
 
 
 def _truncate_markdown_blocks(blocks: List[str], max_chars: int = 15000) -> str:
@@ -1059,6 +1293,44 @@ def _build_image_description_lookup(image_curation: dict) -> Dict[str, dict]:
                 "compact_description": compact,
             }
     return descriptions
+
+
+def _resolve_image_description_record(
+    markdown_fname: str,
+    descriptions: Dict[str, dict],
+) -> Optional[Tuple[str, dict]]:
+    """Resolve a curation record for an image reference found in markdown.
+
+    Non-scanned markdowns often rewrite image references into ``content/images``
+    using a short deterministic prefix like ``<parent-slug>-<original-name>``.
+    The curation payload still stores the original staging filename, so exact
+    matching is insufficient outside the scanned flow.
+    """
+    if markdown_fname in descriptions:
+        return markdown_fname, descriptions[markdown_fname]
+
+    candidates: List[Tuple[str, dict]] = []
+    for original_fname, record in descriptions.items():
+        if markdown_fname.endswith(f"-{original_fname}") or markdown_fname == Path(original_fname).name:
+            candidates.append((original_fname, record))
+
+    if len(candidates) == 1:
+        return candidates[0]
+
+    if candidates:
+        page_num = extract_page_number(markdown_fname)
+        if page_num is not None:
+            page_matches = [
+                (original_fname, record)
+                for original_fname, record in candidates
+                if record.get("page_num") == page_num
+            ]
+            if len(page_matches) == 1:
+                return page_matches[0]
+        candidates.sort(key=lambda item: len(item[0]), reverse=True)
+        return candidates[0]
+
+    return None
 
 
 def _extract_url_page_metadata(soup) -> Dict[str, str]:
@@ -1359,6 +1631,48 @@ _MATH_BRACKET_RE = re.compile(r"\\\[(.+?)\\\]", re.DOTALL)
 _UNICODE_MATH_PATTERN = re.compile(
     "|".join(re.escape(ch) for ch in sorted(_UNICODE_MATH_TO_LATEX.keys(), key=len, reverse=True))
 )
+_MOJIBAKE_MARKERS = ("Ã", "Â", "â", "�")
+_TEX_SIMPLE_ACCENT_RE = re.compile(r"""\\(?P<accent>['`^"~])(?:\{(?P<braced>[A-Za-z])\}|(?P<plain>[A-Za-z]))""")
+_TEX_CEDILLA_RE = re.compile(r"""\\c(?:\{(?P<braced>[A-Za-z])\}|(?P<plain>[A-Za-z]))""")
+
+_TEX_ACCENT_TO_UNICODE = {
+    ("'", "A"): "Á", ("'", "E"): "É", ("'", "I"): "Í", ("'", "O"): "Ó", ("'", "U"): "Ú",
+    ("'", "a"): "á", ("'", "e"): "é", ("'", "i"): "í", ("'", "o"): "ó", ("'", "u"): "ú",
+    ("`", "A"): "À", ("`", "E"): "È", ("`", "I"): "Ì", ("`", "O"): "Ò", ("`", "U"): "Ù",
+    ("`", "a"): "à", ("`", "e"): "è", ("`", "i"): "ì", ("`", "o"): "ò", ("`", "u"): "ù",
+    ("^", "A"): "Â", ("^", "E"): "Ê", ("^", "I"): "Î", ("^", "O"): "Ô", ("^", "U"): "Û",
+    ("^", "a"): "â", ("^", "e"): "ê", ("^", "i"): "î", ("^", "o"): "ô", ("^", "u"): "û",
+    ('"', "A"): "Ä", ('"', "E"): "Ë", ('"', "I"): "Ï", ('"', "O"): "Ö", ('"', "U"): "Ü",
+    ('"', "a"): "ä", ('"', "e"): "ë", ('"', "i"): "ï", ('"', "o"): "ö", ('"', "u"): "ü",
+    ("~", "A"): "Ã", ("~", "N"): "Ñ", ("~", "O"): "Õ",
+    ("~", "a"): "ã", ("~", "n"): "ñ", ("~", "o"): "õ",
+}
+_TEX_CEDILLA_TO_UNICODE = {"C": "Ç", "c": "ç"}
+
+
+def _normalize_tex_accents_in_math(text: str) -> str:
+    """Convert common TeX accent escapes into Unicode inside math regions.
+
+    Marker/OCR sometimes emits natural-language fragments inside display math as
+    TeX accent commands, e.g. ``somat\\'orio``. This pass normalizes those
+    escapes back to plain Unicode text without touching regular math commands
+    such as ``\\hat{o}``.
+    """
+    if not text or "\\" not in text:
+        return text
+
+    def _replace_simple(match: re.Match) -> str:
+        accent = match.group("accent")
+        letter = match.group("braced") or match.group("plain") or ""
+        return _TEX_ACCENT_TO_UNICODE.get((accent, letter), match.group(0))
+
+    def _replace_cedilla(match: re.Match) -> str:
+        letter = match.group("braced") or match.group("plain") or ""
+        return _TEX_CEDILLA_TO_UNICODE.get(letter, match.group(0))
+
+    text = _TEX_SIMPLE_ACCENT_RE.sub(_replace_simple, text)
+    text = _TEX_CEDILLA_RE.sub(_replace_cedilla, text)
+    return text
 
 
 def _normalize_unicode_math(text: str) -> str:
@@ -1375,6 +1689,7 @@ def _normalize_unicode_math(text: str) -> str:
     # Phase 1: Replace inside existing math regions
     def _replace_in_math(m):
         content = m.group(0)
+        content = _normalize_tex_accents_in_math(content)
         return _UNICODE_MATH_PATTERN.sub(
             lambda sym: _UNICODE_MATH_TO_LATEX.get(sym.group(0), sym.group(0)),
             content,
@@ -1413,13 +1728,156 @@ def _normalize_unicode_math(text: str) -> str:
     return text
 
 
+def _mojibake_score(text: str) -> int:
+    if not text:
+        return 0
+    return sum(text.count(marker) for marker in _MOJIBAKE_MARKERS)
+
+
+def _repair_mojibake_text(text: str) -> str:
+    """Repair common UTF-8 mojibake introduced by external CLIs."""
+    if not text:
+        return text
+
+    original_score = _mojibake_score(text)
+    if original_score == 0:
+        return text
+
+    candidates = [text]
+    for source_encoding in ("latin-1", "cp1252"):
+        try:
+            candidates.append(text.encode(source_encoding).decode("utf-8"))
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            continue
+
+    best = min(candidates, key=_mojibake_score)
+    return best if _mojibake_score(best) < original_score else text
+
+
+def _sanitize_external_markdown_text(text: str) -> str:
+    repaired = _repair_mojibake_text(text)
+    return repaired.replace("\r\n", "\n").replace("\r", "\n")
+
+
+_PORTUGUESE_ACCENT_CHARS = set("áàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ")
+
+
+def _split_markdown_frontmatter(text: str) -> tuple[str, str]:
+    if not text.startswith("---\n"):
+        return "", text
+    end = text.find("\n---\n", 4)
+    if end == -1:
+        return "", text
+    end += len("\n---\n")
+    return text[:end], text[end:]
+
+
+def _is_plain_text_recovery_candidate(line: str) -> bool:
+    stripped = line.strip()
+    if len(stripped) < 24:
+        return False
+    if not re.search(r"[A-Za-zÀ-ÿ]", stripped):
+        return False
+    if stripped.startswith(("```", "#", ">", "-", "*", "|", "<!--")):
+        return False
+    if stripped.startswith(tuple(f"{n}." for n in range(1, 10))):
+        return False
+    if any(token in stripped for token in ("![", "](", "<math", "</math>", "$$", "\\(", "\\)", "\\[", "\\]")):
+        return False
+    if stripped.count("|") >= 2:
+        return False
+    if sum(stripped.count(ch) for ch in "=^_{}\\") >= 3:
+        return False
+    return True
+
+
+def _normalize_recovery_line(line: str) -> str:
+    normalized = unicodedata.normalize("NFKD", line)
+    normalized = "".join(ch for ch in normalized if not unicodedata.combining(ch))
+    normalized = re.sub(r"[`*_>#\[\](){}|~]+", " ", normalized)
+    normalized = re.sub(r"[^a-zA-Z0-9\s]", " ", normalized)
+    normalized = re.sub(r"\s+", " ", normalized).strip().lower()
+    return normalized
+
+
+def _accent_quality_score(line: str) -> int:
+    accent_count = sum(1 for ch in line if ch in _PORTUGUESE_ACCENT_CHARS)
+    return accent_count * 2 - _mojibake_score(line)
+
+
+def _hybridize_marker_markdown_with_base(base_markdown: str, marker_markdown: str) -> tuple[str, Dict[str, int]]:
+    base_prefix, base_body = _split_markdown_frontmatter(_sanitize_external_markdown_text(base_markdown))
+    marker_prefix, marker_body = _split_markdown_frontmatter(_sanitize_external_markdown_text(marker_markdown))
+    del base_prefix  # only the Marker frontmatter should be preserved
+
+    base_lines = base_body.split("\n")
+    marker_lines = marker_body.split("\n")
+    replacements = 0
+    matched_candidates = 0
+
+    base_candidates = []
+    for idx, line in enumerate(base_lines):
+        if not _is_plain_text_recovery_candidate(line):
+            continue
+        normalized = _normalize_recovery_line(line)
+        if normalized:
+            base_candidates.append((idx, line, normalized))
+
+    search_cursor = 0
+    repaired_lines: List[str] = []
+    for line in marker_lines:
+        if not _is_plain_text_recovery_candidate(line):
+            repaired_lines.append(line)
+            continue
+
+        normalized_marker = _normalize_recovery_line(line)
+        if not normalized_marker:
+            repaired_lines.append(line)
+            continue
+
+        best_match = None
+        best_ratio = 0.0
+        window_start = max(0, search_cursor - 2)
+        window_end = min(len(base_candidates), search_cursor + 12)
+        for idx in range(window_start, window_end):
+            _, base_line, normalized_base = base_candidates[idx]
+            ratio = difflib.SequenceMatcher(None, normalized_marker, normalized_base).ratio()
+            if ratio > best_ratio:
+                best_ratio = ratio
+                best_match = (idx, base_line)
+
+        if best_match and best_ratio >= 0.88:
+            matched_candidates += 1
+            candidate_idx, candidate_line = best_match
+            if (
+                _accent_quality_score(candidate_line) > _accent_quality_score(line)
+                and _normalize_recovery_line(candidate_line) == normalized_marker
+            ):
+                repaired_lines.append(candidate_line)
+                replacements += 1
+            else:
+                repaired_lines.append(line)
+            search_cursor = candidate_idx + 1
+        else:
+            repaired_lines.append(line)
+
+    merged_body = "\n".join(repaired_lines)
+    return marker_prefix + merged_body, {
+        "candidate_matches": matched_candidates,
+        "replacements": replacements,
+        "base_candidates": len(base_candidates),
+    }
+
+
 # ---------------------------------------------------------------------------
 # Backend architecture
 # ---------------------------------------------------------------------------
 
 class BackendContext:
     def __init__(self, root_dir: Path, raw_target: Path, entry: FileEntry, report: DocumentProfileReport,
-                 cancel_check=None, stall_timeout: int = 300):
+                 cancel_check=None, stall_timeout: int = 300, marker_chunking_mode: str = "fallback",
+                 marker_use_llm: bool = False, marker_llm_model: str = "", marker_torch_device: str = "auto", ollama_base_url: str = "",
+                 vision_model: str = ""):
         self.root_dir = root_dir
         self.raw_target = raw_target
         self.entry = entry
@@ -1428,6 +1886,12 @@ class BackendContext:
         self.pages = parse_page_range(entry.page_range)
         self.cancel_check = cancel_check    # callable que levanta InterruptedError se cancelado
         self.stall_timeout = stall_timeout  # segundos sem output antes de matar o processo
+        self.marker_chunking_mode = str(marker_chunking_mode or "fallback").strip().lower()
+        self.marker_use_llm = bool(marker_use_llm)
+        self.marker_llm_model = str(marker_llm_model or "").strip()
+        self.marker_torch_device = str(marker_torch_device or "auto").strip().lower() or "auto"
+        self.ollama_base_url = str(ollama_base_url or "").strip()
+        self.vision_model = str(vision_model or "").strip()
 
     def page_label(self) -> str:
         return self.entry.page_range.strip() or "all"
@@ -1563,6 +2027,20 @@ def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext", s
     lock = _th.Lock()
     killed_by_cancel = _th.Event()
     killed_by_stall = _th.Event()
+    last_marker_phase = {"name": None}
+    process_env = None
+
+    if backend_name == "marker":
+        process_env = os.environ.copy()
+        process_env["TORCH_DEVICE"] = _marker_effective_torch_device(ctx)
+
+    def _log_marker_progress_hint(line: str):
+        if backend_name != "marker":
+            return
+        phase, hints = _marker_progress_hints(line, last_marker_phase["name"])
+        last_marker_phase["name"] = phase
+        for hint in hints:
+            logger.info("  [marker] %s", hint)
 
     proc = subprocess.Popen(
         cmd,
@@ -1570,6 +2048,7 @@ def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext", s
         stderr=subprocess.PIPE,
         text=True,
         bufsize=1,
+        env=process_env,
     )
     logger.info("  [%s] PID=%d — aguardando saída...", backend_name, proc.pid)
 
@@ -1581,6 +2060,7 @@ def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext", s
                 with lock:
                     stderr_lines.append(line)
                     last_output_time = _time.monotonic()
+                _log_marker_progress_hint(line)
                 logger.info("  [%s stderr] %s", backend_name, line)
 
     stderr_thread = _th.Thread(target=_read_stderr, daemon=True)
@@ -1603,9 +2083,17 @@ def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext", s
             # Check stall
             with lock:
                 elapsed = _time.monotonic() - last_output_time
-            if elapsed > effective_stall_timeout:
+            phase_stall_timeout = effective_stall_timeout
+            if backend_name == "marker" and _marker_should_use_llm(ctx) and _marker_ollama_model(ctx):
+                phase_name = str(last_marker_phase.get("name") or "")
+                if phase_name.startswith("LLM processors running"):
+                    if _marker_model_is_qwen3_vl_8b(_marker_ollama_model(ctx)):
+                        phase_stall_timeout = max(phase_stall_timeout, 1800)
+                    else:
+                        phase_stall_timeout = max(phase_stall_timeout, 1200)
+            if elapsed > phase_stall_timeout:
                 logger.error("  [%s] Sem output por %ds — matando PID %d (stall timeout)",
-                             backend_name, effective_stall_timeout, proc.pid)
+                             backend_name, phase_stall_timeout, proc.pid)
                 killed_by_stall.set()
                 proc.kill()
                 return
@@ -1619,6 +2107,7 @@ def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext", s
             stdout_lines.append(line)
             with lock:
                 last_output_time = _time.monotonic()
+            _log_marker_progress_hint(line)
             logger.info("  [%s stdout] %s", backend_name, line)
 
     proc.wait()
@@ -1630,8 +2119,16 @@ def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext", s
 
     if killed_by_stall.is_set():
         last_line = (stderr_lines or stdout_lines or ["(nenhum)"])[-1]
+        phase_stall_timeout = effective_stall_timeout
+        if backend_name == "marker" and _marker_should_use_llm(ctx) and _marker_ollama_model(ctx):
+            phase_name = str(last_marker_phase.get("name") or "")
+            if phase_name.startswith("LLM processors running"):
+                if _marker_model_is_qwen3_vl_8b(_marker_ollama_model(ctx)):
+                    phase_stall_timeout = max(phase_stall_timeout, 1800)
+                else:
+                    phase_stall_timeout = max(phase_stall_timeout, 1200)
         raise TimeoutError(
-            f"{backend_name} travou (sem output por {effective_stall_timeout}s). "
+            f"{backend_name} travou (sem output por {phase_stall_timeout}s). "
             f"Último output:\n{last_line}"
         )
 
@@ -1641,6 +2138,21 @@ def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext", s
 
 
 _MARKER_CAPABILITIES_CACHE = None
+MARKER_OLLAMA_SERVICE = "marker.services.ollama.OllamaService"
+
+
+def _default_marker_capabilities() -> Dict[str, object]:
+    return {
+        "page_range_flag": "--page_range",
+        "force_ocr_flag": "--force_ocr",
+        "use_llm_flag": "--use_llm",
+        "llm_service_flag": "--llm_service",
+        "ollama_base_url_flag": "--OllamaService_ollama_base_url",
+        "ollama_model_flag": "--OllamaService_ollama_model",
+        "ollama_timeout_flag": "--OllamaService_timeout",
+        "redo_inline_math_flag": "--redo_inline_math",
+        "disable_image_extraction_flag": "--disable_image_extraction",
+    }
 
 
 def _detect_marker_capabilities() -> Dict[str, object]:
@@ -1651,7 +2163,11 @@ def _detect_marker_capabilities() -> Dict[str, object]:
     {
         "page_range_flag": "--page_range" | "--page-range" | None,
         "force_ocr_flag": "--force_ocr" | "--force-ocr" | None,
-        "language_flag": "--languages" | "--language" | "--lang" | "--langs" | None,
+        "use_llm_flag": "--use_llm" | "--use-llm" | None,
+        "llm_service_flag": "--llm_service" | "--llm-service" | None,
+        "ollama_base_url_flag": "--ollama_base_url" | "--ollama-base-url" | "--ollamaservice_ollama_base_url" | "--OllamaService_ollama_base_url" | None,
+        "ollama_model_flag": "--ollama_model" | "--ollama-model" | "--ollamaservice_ollama_model" | "--OllamaService_ollama_model" | None,
+        "redo_inline_math_flag": "--redo_inline_math" | "--redo-inline-math" | None,
     }
     """
     global _MARKER_CAPABILITIES_CACHE
@@ -1659,13 +2175,10 @@ def _detect_marker_capabilities() -> Dict[str, object]:
     if _MARKER_CAPABILITIES_CACHE is not None:
         return dict(_MARKER_CAPABILITIES_CACHE)
 
-    caps = {
-        "page_range_flag": None,
-        "force_ocr_flag": None,
-        "language_flag": None,
-    }
+    caps = _default_marker_capabilities()
 
     if not MARKER_CLI:
+        caps = {k: None for k in caps}
         _MARKER_CAPABILITIES_CACHE = dict(caps)
         return dict(caps)
 
@@ -1674,13 +2187,13 @@ def _detect_marker_capabilities() -> Dict[str, object]:
             [MARKER_CLI, "--help"],
             capture_output=True,
             text=True,
-            timeout=20,
+            timeout=45,
         )
         help_text = ((proc.stdout or "") + "\n" + (proc.stderr or "")).lower()
     except Exception as e:
         logger.warning(
             "  [marker] Não foi possível inspecionar --help: %s. "
-            "Usando modo conservador sem flags opcionais.",
+            "Usando fallback otimista com as flags atuais conhecidas do Marker.",
             e,
         )
         _MARKER_CAPABILITIES_CACHE = dict(caps)
@@ -1702,10 +2215,55 @@ def _detect_marker_capabilities() -> Dict[str, object]:
     else:
         caps["force_ocr_flag"] = None
 
-    # OCR language flag
-    for candidate in ("--languages", "--language", "--langs", "--lang"):
+    for candidate in ("--use-llm", "--use_llm"):
         if candidate in help_text:
-            caps["language_flag"] = candidate
+            caps["use_llm_flag"] = candidate
+            break
+
+    for candidate in ("--llm-service", "--llm_service"):
+        if candidate in help_text:
+            caps["llm_service_flag"] = candidate
+            break
+
+    for candidate in (
+        "--OllamaService_ollama_base_url",
+        "--ollama-base-url",
+        "--ollama_base_url",
+        "--ollamaservice-ollama-base-url",
+        "--ollamaservice_ollama_base_url",
+    ):
+        if candidate.lower() in help_text:
+            caps["ollama_base_url_flag"] = candidate
+            break
+
+    for candidate in (
+        "--OllamaService_ollama_model",
+        "--ollama-model",
+        "--ollama_model",
+        "--ollamaservice-ollama-model",
+        "--ollamaservice_ollama_model",
+    ):
+        if candidate.lower() in help_text:
+            caps["ollama_model_flag"] = candidate
+            break
+
+    for candidate in ("--redo_inline_math", "--redo-inline-math"):
+        if candidate in help_text:
+            caps["redo_inline_math_flag"] = candidate
+            break
+
+    for candidate in (
+        "--OllamaService_timeout",
+        "--ollamaservice-timeout",
+        "--ollamaservice_timeout",
+    ):
+        if candidate.lower() in help_text:
+            caps["ollama_timeout_flag"] = candidate
+            break
+
+    for candidate in ("--disable_image_extraction", "--disable-image-extraction"):
+        if candidate in help_text:
+            caps["disable_image_extraction_flag"] = candidate
             break
 
     _MARKER_CAPABILITIES_CACHE = dict(caps)
@@ -1739,9 +2297,10 @@ class DoclingCLIBackend(ExtractionBackend):
 
         if ctx.entry.force_ocr or ctx.report.suspected_scan:
             cmd.append("--force-ocr")
-        if ctx.entry.formula_priority or ctx.report.suggested_profile in {"math_heavy", "exam_pdf"}:
+        suggested_profile = normalize_document_profile(ctx.report.suggested_profile)
+        if ctx.entry.formula_priority or suggested_profile == "math_heavy":
             cmd.append("--enrich-formula")
-        if ctx.report.suggested_profile in {"layout_heavy", "exam_pdf", "math_light"}:
+        if suggested_profile == "diagram_heavy":
             cmd.append("--enrich-picture-classes")
 
         logger.info("  [docling] Comando: %s", " ".join(cmd))
@@ -1804,6 +2363,197 @@ class DoclingCLIBackend(ExtractionBackend):
         )
 
 
+class DoclingPythonBackend(ExtractionBackend):
+    name = "docling_python"
+    layer = "advanced"
+
+    def available(self) -> bool:
+        return has_docling_python_api()
+
+    def run(self, ctx: BackendContext) -> BackendRunResult:
+        api = _load_docling_python_api()
+        if not api:
+            return BackendRunResult(
+                name=self.name,
+                layer=self.layer,
+                status="error",
+                error="Docling Python API não está disponível no ambiente atual.",
+            )
+
+        out_dir = ctx.root_dir / "staging" / "markdown-auto" / "docling-python" / ctx.entry_id
+        ensure_dir(out_dir)
+        out_path = out_dir / f"{ctx.entry_id}.md"
+
+        DocumentConverter = api["DocumentConverter"]
+        PdfFormatOption = api["PdfFormatOption"]
+        PdfPipelineOptions = api["PdfPipelineOptions"]
+        ThreadedPdfPipelineOptions = api.get("ThreadedPdfPipelineOptions", PdfPipelineOptions)
+        InputFormat = api["InputFormat"]
+        settings_obj = api.get("settings")
+
+        pipeline_options = ThreadedPdfPipelineOptions()
+        suggested_profile = normalize_document_profile(ctx.report.suggested_profile)
+        formula_enrichment = bool(ctx.entry.formula_priority or suggested_profile == "math_heavy")
+        if hasattr(pipeline_options, "do_formula_enrichment"):
+            pipeline_options.do_formula_enrichment = formula_enrichment
+        gpu_config = _configure_docling_python_standard_gpu(api, pipeline_options)
+
+        logger.info(
+            "  [docling_python] Iniciando API Python com do_formula_enrichment=%s para %s (gpu_standard=%s, device=%s).",
+            formula_enrichment,
+            ctx.entry_id,
+            gpu_config["enabled"],
+            gpu_config["device"],
+        )
+        source_pdf, page_range_applied = _prepare_docling_python_source_pdf(ctx, out_dir)
+        if page_range_applied:
+            logger.info(
+                "  [docling_python] Aplicando page_range=%s via PDF temporario com %d paginas selecionadas.",
+                ctx.entry.page_range or "all",
+                len(ctx.pages or []),
+            )
+        if ctx.pages and not page_range_applied:
+            logger.info(
+                "  [docling_python] A API Python será testada sem page_range; processando o documento inteiro."
+            )
+
+        previous_page_batch_size = gpu_config.get("previous_page_batch_size")
+        try:
+            converter = DocumentConverter(
+                format_options={
+                    InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
+                }
+            )
+            result = converter.convert(str(source_pdf))
+            body = result.document.export_to_markdown()
+        except Exception as e:
+            logger.error("  [docling_python] Erro ao executar: %s", e)
+            return BackendRunResult(
+                name=self.name,
+                layer=self.layer,
+                status="error",
+                error=str(e),
+            )
+        finally:
+            if settings_obj is not None and previous_page_batch_size is not None:
+                settings_obj.perf.page_batch_size = previous_page_batch_size
+
+        write_text(out_path, body)
+        metadata_path = out_dir / "docling-python-run.json"
+        write_text(metadata_path, json.dumps({
+            "source_pdf": str(ctx.raw_target),
+            "effective_source_pdf": str(source_pdf),
+            "formula_enrichment": formula_enrichment,
+            "gpu_standard": gpu_config,
+            "page_range_requested": ctx.entry.page_range,
+            "page_range_applied": page_range_applied,
+            "selected_pages_count": len(ctx.pages or []) if page_range_applied else None,
+        }, indent=2, ensure_ascii=False))
+
+        return BackendRunResult(
+            name=self.name,
+            layer=self.layer,
+            status="ok",
+            markdown_path=safe_rel(out_path, ctx.root_dir),
+            asset_dir=safe_rel(out_dir, ctx.root_dir),
+            metadata_path=safe_rel(metadata_path, ctx.root_dir),
+            notes=["Saída avançada gerada com Docling Python API."],
+        )
+
+
+class DatalabCloudBackend(ExtractionBackend):
+    name = "datalab"
+    layer = "advanced"
+
+    def available(self) -> bool:
+        return has_datalab_api_key()
+
+    def run(self, ctx: BackendContext) -> BackendRunResult:
+        out_dir = ctx.root_dir / "staging" / "markdown-auto" / "datalab" / ctx.entry_id
+        ensure_dir(out_dir)
+        out_path = out_dir / f"{ctx.entry_id}.md"
+        images_dir = out_dir / f"{ctx.entry_id}_images"
+
+        effective_profile = _effective_document_profile(ctx.entry.document_profile, ctx.report.suggested_profile)
+        page_range = pages_to_marker_range(ctx.pages)
+        requested_mode = str(getattr(ctx.entry, "datalab_mode", "") or "").strip().lower()
+        mode = requested_mode if requested_mode in {"fast", "balanced", "accurate"} else ("accurate" if effective_profile == "math_heavy" else "balanced")
+        max_wait_seconds = _advanced_cli_stall_timeout("docling", ctx)
+
+        logger.info(
+            "  [datalab] Enviando documento para a API (mode=%s, page_range=%s, max_wait=%ss).",
+            mode,
+            page_range or "all",
+            max_wait_seconds,
+        )
+
+        try:
+            result = convert_document_to_markdown(
+                ctx.raw_target,
+                output_format="markdown",
+                mode=mode,
+                page_range=page_range,
+                disable_image_captions=True,
+                disable_image_extraction=False,
+                paginate=False,
+                token_efficient_markdown=False,
+                request_timeout=60,
+                poll_interval=2.0,
+                max_wait_seconds=max_wait_seconds,
+            )
+        except Exception as e:
+            logger.error("  [datalab] Erro ao executar: %s", e)
+            return BackendRunResult(
+                name=self.name,
+                layer=self.layer,
+                status="error",
+                error=str(e),
+            )
+
+        markdown = _sanitize_external_markdown_text(result.markdown)
+        saved_images = save_datalab_images(result.images, images_dir) if result.images else {}
+        if saved_images:
+            markdown = _rewrite_datalab_markdown_image_refs(markdown, images_dir.name, saved_images)
+        write_text(out_path, markdown)
+
+        metadata_path = out_dir / "datalab-run.json"
+        write_text(metadata_path, json.dumps({
+            "backend": "datalab",
+            "base_url": get_datalab_base_url(),
+            "request_id": result.request_id,
+            "request_check_url": result.request_check_url,
+            "mode": mode,
+            "page_range": page_range,
+            "page_count": result.page_count,
+            "parse_quality_score": result.parse_quality_score,
+            "cost_breakdown": result.cost_breakdown,
+            "images_saved": [safe_rel(path, ctx.root_dir) for path in saved_images.values()],
+            "metadata": result.metadata,
+            "raw_response_tail": {
+                "status": result.raw_response.get("status"),
+                "success": result.raw_response.get("success"),
+                "error": result.raw_response.get("error"),
+            },
+        }, indent=2, ensure_ascii=False))
+
+        notes = [
+            "Saída avançada gerada com Datalab Document Conversion API.",
+            f"Modo: {mode}.",
+        ]
+        if result.parse_quality_score is not None:
+            notes.append(f"parse_quality_score={result.parse_quality_score}.")
+
+        return BackendRunResult(
+            name=self.name,
+            layer=self.layer,
+            status="ok",
+            markdown_path=safe_rel(out_path, ctx.root_dir),
+            asset_dir=safe_rel(out_dir, ctx.root_dir),
+            metadata_path=safe_rel(metadata_path, ctx.root_dir),
+            notes=notes,
+        )
+
+
 class MarkerCLIBackend(ExtractionBackend):
     name = "marker"
     layer = "advanced"
@@ -1842,12 +2592,107 @@ class MarkerCLIBackend(ExtractionBackend):
         elif wants_force_ocr:
             logger.info("  [marker] Versão atual não suporta force_ocr; prosseguindo sem essa flag.")
 
-        ocr_lang = getattr(ctx.entry, "ocr_language", None)
-        language_flag = caps.get("language_flag")
-        if language_flag and ocr_lang and ocr_lang.strip():
-            cmd.extend([language_flag, ocr_lang.strip()])
-        elif ocr_lang and ocr_lang.strip():
-            logger.info("  [marker] Versão atual não suporta flag de idioma OCR; ignorando ocr_language=%s", ocr_lang)
+        marker_llm_active = False
+        marker_model = ""
+        marker_ollama_url = str(getattr(ctx, "ollama_base_url", "") or "").strip()
+        marker_torch_device = _marker_effective_torch_device(ctx)
+
+        if _marker_should_use_llm(ctx):
+            use_llm_flag = caps.get("use_llm_flag")
+            llm_service_flag = caps.get("llm_service_flag")
+            ollama_base_url_flag = caps.get("ollama_base_url_flag")
+            ollama_model_flag = caps.get("ollama_model_flag")
+            redo_inline_math_flag = caps.get("redo_inline_math_flag")
+            marker_model = _marker_ollama_model(ctx)
+
+            if not marker_model:
+                logger.warning(
+                    "  [marker] LLM habilitado, mas nenhum modelo do Marker foi configurado. "
+                    "Defina 'Modelo Ollama do Marker' nas configurações para ativar --use_llm."
+                )
+            elif use_llm_flag:
+                cmd.append(use_llm_flag)
+                marker_llm_active = True
+            else:
+                logger.info("  [marker] Versão atual não suporta use_llm; prosseguindo sem LLM.")
+
+            if marker_model and llm_service_flag:
+                cmd.extend([llm_service_flag, MARKER_OLLAMA_SERVICE])
+            elif marker_model and use_llm_flag:
+                logger.info("  [marker] Versão atual não suporta llm_service; mantendo serviço padrão.")
+
+            if marker_model and ollama_base_url_flag and marker_ollama_url:
+                cmd.extend([ollama_base_url_flag, marker_ollama_url])
+            elif marker_model and marker_ollama_url and use_llm_flag:
+                logger.info("  [marker] Versão atual não suporta ollama_base_url; usando URL padrão do Marker.")
+
+            if marker_model and ollama_model_flag:
+                cmd.extend([ollama_model_flag, marker_model])
+            elif marker_model and use_llm_flag:
+                logger.info("  [marker] Versão atual não suporta ollama_model; usando modelo padrão do Marker.")
+
+            if marker_model and redo_inline_math_flag and _marker_should_redo_inline_math(ctx):
+                cmd.append(redo_inline_math_flag)
+
+            # Desativar LLM em processors visuais quando o modelo não é vision.
+            # Modelos texto-only (gemma3, llama3.1, etc) alucinam ao "descrever"
+            # imagens que não conseguem ver. O Image Curator com qwen3-vl
+            # cuida das descrições separadamente.
+            if marker_model and not _marker_model_is_probably_vision(marker_model):
+                _visual_overrides = {
+                    "LLMImageDescriptionProcessor_use_llm": False,
+                    "LLMComplexRegionProcessor_use_llm": False,
+                    "LLMHandwritingProcessor_use_llm": False,
+                }
+                config_json_path = out_dir / "marker-llm-config.json"
+                write_text(config_json_path, json.dumps(_visual_overrides, indent=2))
+                cmd.extend(["--config_json", str(config_json_path)])
+                logger.info(
+                    "  [marker] Processors visuais desativados via config_json "
+                    "(modelo '%s' não é vision). Imagens serão tratadas pelo Image Curator.",
+                    marker_model,
+                )
+
+            # Aumentar timeout do OllamaService para modelos locais (default=30s
+            # é insuficiente quando GPU é compartilhada com layout models).
+            ollama_timeout_flag = caps.get("ollama_timeout_flag")
+            if marker_model and ollama_timeout_flag:
+                cmd.extend([ollama_timeout_flag, "120"])
+
+        if marker_llm_active:
+            if _marker_model_is_cloud_variant(marker_model):
+                logger.warning(
+                    "  [marker] O modelo '%s' parece ser variante cloud. Para estabilidade no Marker, prefira um modelo local como gemma3:4b.",
+                    marker_model,
+                )
+            elif not _marker_model_is_probably_vision(marker_model):
+                logger.info(
+                    "  [marker] Modelo texto-only '%s' detectado. Extração de imagens desabilitada automaticamente; "
+                    "LLM será usado apenas para math, tabelas e headers.",
+                    marker_model,
+                )
+            logger.info(
+                "  [marker] LLM ativo: service=%s model=%s base_url=%s redo_inline_math=%s torch_device=%s",
+                MARKER_OLLAMA_SERVICE,
+                marker_model,
+                marker_ollama_url or "(padrão do Marker)",
+                "sim" if "--redo_inline_math" in cmd or "--redo-inline-math" in cmd else "não",
+                marker_torch_device,
+            )
+        else:
+            logger.info("  [marker] LLM inativo para esta execução. TORCH_DEVICE=%s", marker_torch_device)
+
+        llm_metadata = {
+            "enabled": marker_llm_active,
+            "service": MARKER_OLLAMA_SERVICE if marker_llm_active else None,
+            "model": marker_model or None,
+            "base_url": marker_ollama_url or None,
+            "redo_inline_math": bool("--redo_inline_math" in cmd or "--redo-inline-math" in cmd),
+            "recommended_model": _marker_model_is_qwen3_vl_8b(marker_model) if marker_model else False,
+            "is_cloud_variant": _marker_model_is_cloud_variant(marker_model) if marker_model else False,
+            "is_probably_vision": _marker_model_is_probably_vision(marker_model) if marker_model else False,
+            "visual_processors_disabled": bool(marker_model and not _marker_model_is_probably_vision(marker_model)),
+        }
 
         logger.info("  [marker] Comando: %s", " ".join(cmd))
         logger.info("  [marker] Iniciando processo...")
@@ -1870,6 +2715,15 @@ class MarkerCLIBackend(ExtractionBackend):
 
         stdout_text = "\n".join(stdout_lines)
         stderr_text = "\n".join(stderr_lines)
+        ollama_failures = [line for line in stderr_lines if "Ollama inference failed:" in line]
+
+        if ollama_failures:
+            logger.warning(
+                "  [marker] O modelo '%s' retornou uma resposta inválida para o Marker. "
+                "O serviço Ollama respondeu, mas o conteúdo não pôde ser interpretado como JSON estruturado. "
+                "Teste outro modelo em 'Modelo Ollama do Marker' ou desative o LLM do Marker.",
+                _marker_ollama_model(ctx) or "(não configurado)",
+            )
 
         if returncode != 0:
             error_msg = (stderr_text or stdout_text or "Marker CLI falhou")[-4000:]
@@ -1881,6 +2735,12 @@ class MarkerCLIBackend(ExtractionBackend):
 
         produced_md = sorted(out_dir.glob("**/*.md"))
         md_path = produced_md[0] if produced_md else None
+        if md_path and md_path.exists():
+            try:
+                marker_text = _sanitize_external_markdown_text(md_path.read_text(encoding="utf-8", errors="replace"))
+                md_path.write_text(marker_text, encoding="utf-8")
+            except Exception as e:
+                logger.warning("  [marker] Falha ao sanitizar markdown gerado: %s", e)
         metadata_path = out_dir / "marker-run.json"
         write_text(metadata_path, json.dumps({
             "command": cmd,
@@ -1889,6 +2749,12 @@ class MarkerCLIBackend(ExtractionBackend):
             "capabilities": caps,
             "page_range": marker_range,
             "stall_timeout": stall_timeout,
+            "torch_device": {
+                "configured": _marker_torch_device(ctx) or "auto",
+                "effective": marker_torch_device,
+            },
+            "llm": llm_metadata,
+            "ollama_failures": ollama_failures[-20:],
         }, indent=2, ensure_ascii=False))
 
         return BackendRunResult(
@@ -1946,7 +2812,9 @@ class MarkerCLIBackend(ExtractionBackend):
 
             md_abs = ctx.root_dir / result.markdown_path
             try:
-                chunk_text = md_abs.read_text(encoding="utf-8")
+                chunk_text = _sanitize_external_markdown_text(
+                    md_abs.read_text(encoding="utf-8", errors="replace")
+                )
             except Exception as e:
                 return BackendRunResult(
                     name=self.name,
@@ -2007,22 +2875,38 @@ class MarkerCLIBackend(ExtractionBackend):
         supports_chunking = bool(caps.get("page_range_flag"))
         selected_page_count = _selected_page_count(ctx)
         chunk_size = _marker_chunk_size_for_workload(ctx)
-        should_chunk = (
-            effective_profile in {"math_heavy", "layout_heavy"}
+        chunking_mode = getattr(ctx, "marker_chunking_mode", "fallback")
+        chunking_would_help = (
+            effective_profile in {"math_heavy", "diagram_heavy"}
             and selected_page_count > chunk_size
             and supports_chunking
         )
+        should_chunk = chunking_mode == "always" and chunking_would_help
         logger.info(
             "  [marker] Stall timeout efetivo: %ss para %d páginas selecionadas.",
             stall_timeout,
             selected_page_count,
         )
 
-        result = (
-            self._run_chunked_marker(ctx, out_dir, caps, stall_timeout)
-            if should_chunk
-            else self._run_single_marker(ctx, out_dir, caps, ctx.pages, stall_timeout)
+        logger.info(
+            "  [marker] Chunking mode=%s (supports_chunking=%s, policy_match=%s).",
+            chunking_mode,
+            supports_chunking,
+            chunking_would_help,
         )
+        if should_chunk:
+            result = self._run_chunked_marker(ctx, out_dir, caps, stall_timeout)
+        else:
+            result = self._run_single_marker(ctx, out_dir, caps, ctx.pages, stall_timeout)
+            if (
+                result.status == "error"
+                and chunking_mode == "fallback"
+                and chunking_would_help
+                and result.error
+                and "travou (sem output por" in result.error
+            ):
+                logger.warning("  [marker] Timeout detectado; repetindo em chunks como fallback.")
+                result = self._run_chunked_marker(ctx, out_dir, caps, stall_timeout)
 
         if result.status == "ok":
             return result
@@ -2046,7 +2930,9 @@ class BackendSelector:
         self.backends: Dict[str, ExtractionBackend] = {
             "pymupdf4llm": PyMuPDF4LLMBackend(),
             "pymupdf": PyMuPDFBackend(),
+            "datalab": DatalabCloudBackend(),
             "docling": DoclingCLIBackend(),
+            "docling_python": DoclingPythonBackend(),
             "marker": MarkerCLIBackend(),
         }
 
@@ -2055,7 +2941,7 @@ class BackendSelector:
 
     def decide(self, entry: FileEntry, report: DocumentProfileReport) -> PipelineDecision:
         mode = entry.processing_mode or "auto"
-        effective_profile = entry.document_profile if entry.document_profile != "auto" else report.suggested_profile
+        effective_profile = _effective_document_profile(entry.document_profile, report.suggested_profile)
         reasons: List[str] = []
 
         available = self.available_backends()
@@ -2067,8 +2953,10 @@ class BackendSelector:
             return None
 
         def pick_advanced_for_profile(profile: str) -> Optional[str]:
-            if profile in {"math_heavy", "layout_heavy"}:
-                return pick_first(["marker", "docling"])
+            if profile == "math_heavy":
+                return pick_first(["datalab", "marker", "docling"])
+            if profile == "diagram_heavy":
+                return pick_first(["docling", "marker"])
             return pick_first(["docling", "marker"])
 
         base_backend: Optional[str] = None
@@ -2076,7 +2964,7 @@ class BackendSelector:
 
         if entry.preferred_backend != "auto" and available.get(entry.preferred_backend):
             preferred = entry.preferred_backend
-            if preferred in {"docling", "marker"}:
+            if preferred in {"datalab", "docling", "docling_python", "marker"}:
                 advanced_backend = preferred
                 base_backend = pick_first(["pymupdf4llm", "pymupdf"])
                 reasons.append(f"Backend preferido manualmente: {preferred}.")
@@ -2090,7 +2978,7 @@ class BackendSelector:
 
         elif mode == "manual_assisted":
             base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
-            if effective_profile in {"math_heavy", "math_light", "layout_heavy", "scanned", "exam_pdf"}:
+            if effective_profile in {"math_heavy", "diagram_heavy", "scanned"}:
                 advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
             reasons.append("Modo manual_assisted gera base automática e exige revisão humana guiada.")
 
@@ -2099,12 +2987,9 @@ class BackendSelector:
             if effective_profile == "math_heavy":
                 advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
                 reasons.append("Documento math_heavy pede backend avançado com enrich-formula.")
-            elif effective_profile == "math_light":
+            elif effective_profile in {"diagram_heavy", "scanned"}:
                 advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
-                reasons.append("Documento math_light pede backend avançado para fórmulas moderadas.")
-            elif effective_profile in {"layout_heavy", "scanned", "exam_pdf"}:
-                advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
-                reasons.append("Documento com layout/scan/exam pede backend avançado.")
+                reasons.append("Documento visual/scanned pede backend avançado.")
             else:
                 advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
                 if advanced_backend:
@@ -2112,11 +2997,11 @@ class BackendSelector:
 
         else:  # auto
             base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
-            if effective_profile in {"math_heavy", "math_light", "layout_heavy", "scanned", "exam_pdf"}:
+            if effective_profile in {"math_heavy", "diagram_heavy", "scanned"}:
                 advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
                 reasons.append(f"Modo auto detectou perfil {effective_profile} e ativou camada avançada.")
             else:
-                reasons.append("Modo auto detectou documento geral; saída base é suficiente.")
+                reasons.append("Modo auto detectou documento comum; saída base é suficiente.")
 
         if entry.formula_priority and not advanced_backend:
             advanced_backend = pick_advanced_for_profile(effective_profile)
@@ -2156,6 +3041,27 @@ class RepoBuilder:
         self.logs: List[Dict[str, object]] = []
         self.selector = BackendSelector()
 
+    def _effective_course_meta(self, manifest: Optional[Dict[str, object]] = None) -> Dict[str, str]:
+        course_meta = dict(self.course_meta or {})
+        manifest_course = {}
+        if manifest:
+            raw_course = manifest.get("course")
+            if isinstance(raw_course, dict):
+                manifest_course = dict(raw_course)
+
+        for key in ("course_name", "course_slug", "semester", "professor", "institution"):
+            if not str(course_meta.get(key, "") or "").strip() and str(manifest_course.get(key, "") or "").strip():
+                course_meta[key] = manifest_course[key]
+
+        course_name = str(course_meta.get("course_name", "") or "").strip() or self.root_dir.name
+        course_slug = str(course_meta.get("course_slug", "") or "").strip() or slugify(course_name) or slugify(self.root_dir.name) or "curso"
+        course_meta["course_name"] = course_name
+        course_meta["course_slug"] = course_slug
+        course_meta["semester"] = str(course_meta.get("semester", "") or "").strip()
+        course_meta["professor"] = str(course_meta.get("professor", "") or "").strip()
+        course_meta["institution"] = str(course_meta.get("institution", "") or "").strip() or "PUCRS"
+        return course_meta
+
     def _sleep_guard(self, reason: str):
         return prevent_system_sleep(
             enabled=bool(self.options.get("prevent_sleep_during_build", True)),
@@ -2184,7 +3090,9 @@ class RepoBuilder:
                 "pymupdf": HAS_PYMUPDF,
                 "pymupdf4llm": HAS_PYMUPDF4LLM,
                 "pdfplumber": HAS_PDFPLUMBER,
+                "datalab_api": has_datalab_api_key(),
                 "docling_cli": bool(DOCLING_CLI),
+                "docling_python": has_docling_python_api(),
                 "marker_cli": bool(MARKER_CLI),
             },
             "entries": [],
@@ -2278,6 +3186,7 @@ class RepoBuilder:
             "staging/markdown-auto/scanned",
             "staging/markdown-auto/code", "staging/zip-extract",
             "manual-review/code",
+            "manual-review/web",
             "staging/assets/images",
             "staging/assets/inline-images",
             "staging/assets/tables",
@@ -2609,17 +3518,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         if not image_curation or "pages" not in image_curation:
             return markdown
 
-        # Build lookup: filename -> (type, description)
-        descriptions = {}
-        for page_num, page_data in image_curation["pages"].items():
-            if not page_data.get("include_page", True):
-                continue
-            for fname, img_data in page_data.get("images", {}).items():
-                if img_data.get("include") and img_data.get("description"):
-                    descriptions[fname] = (
-                        img_data.get("type", "genérico"),
-                        img_data["description"],
-                    )
+        descriptions = _build_image_description_lookup(image_curation)
 
         if not descriptions:
             return markdown
@@ -2639,12 +3538,14 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             m = img_re.search(line)
             if m:
                 fname = m.group(2)
-                if fname in descriptions:
-                    img_type, desc = descriptions[fname]
+                matched = _resolve_image_description_record(fname, descriptions)
+                if matched:
+                    original_fname, record = matched
+                    img_type, desc = record["type"], record["description"]
                     desc_lines = desc.split("\n")
                     heading = RepoBuilder._image_curation_heading(img_type)
                     block = (
-                        f"<!-- IMAGE_DESCRIPTION: {fname} -->\n"
+                        f"<!-- IMAGE_DESCRIPTION: {original_fname} -->\n"
                         f"<!-- Tipo: {img_type} -->"
                     )
                     for i, dl in enumerate(desc_lines):
@@ -2864,7 +3765,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
                     f"    source_path: {json_str(item['source_path'])}",
                     f"    raw_target: {json_str(item.get('raw_target'))}",
                     f"    processing_mode: {item.get('processing_mode', 'auto')}",
-                    f"    effective_profile: {item.get('effective_profile', 'general')}",
+                    f"    effective_profile: {item.get('effective_profile', 'auto')}",
                     f"    include_in_bundle: {str(item.get('include_in_bundle', True)).lower()}",
                     f"    professor_signal: {json_str(item.get('professor_signal', ''))}",
                 ]
@@ -2872,6 +3773,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         write_text(self.root_dir / "course" / "SOURCE_REGISTRY.yaml", "\n".join(lines) + "\n")
 
     def _write_bundle_seed(self, manifest: Dict[str, object]) -> None:
+        course_meta = self._effective_course_meta(manifest)
         selected = []
         for entry in manifest["entries"]:
             score = _bundle_priority_score(entry)
@@ -2896,7 +3798,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         )
         seed = {
             "generated_at": manifest["generated_at"],
-            "course_slug": self.course_meta["course_slug"],
+            "course_slug": course_meta["course_slug"],
             "target_platform": "claude-projects",
             "selection_policy": {
                 "min_score": 30,
@@ -2939,7 +3841,9 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             f"- pymupdf: {HAS_PYMUPDF}",
             f"- pymupdf4llm: {HAS_PYMUPDF4LLM}",
             f"- pdfplumber: {HAS_PDFPLUMBER}",
+            f"- datalab_api: {has_datalab_api_key()}",
             f"- docling_cli: {bool(DOCLING_CLI)}",
+            f"- docling_python: {has_docling_python_api()}",
             f"- marker_cli: {bool(MARKER_CLI)}",
             "",
             f"## Plataforma principal: {platform.upper()}",
@@ -2973,6 +3877,8 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             "tags": entry.tags,
             "manual_tags": list(entry.manual_tags or []),
             "auto_tags": list(entry.auto_tags or []),
+            "manual_unit_slug": entry.manual_unit_slug,
+            "manual_timeline_block_id": entry.manual_timeline_block_id,
             "notes": entry.notes,
             "professor_signal": entry.professor_signal,
             "include_in_bundle": entry.include_in_bundle,
@@ -2980,6 +3886,14 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             "processing_mode": entry.processing_mode,
             "document_profile": entry.document_profile,
             "preferred_backend": entry.preferred_backend,
+            "datalab_mode": entry.datalab_mode,
+            "formula_priority": entry.formula_priority,
+            "preserve_pdf_images_in_markdown": entry.preserve_pdf_images_in_markdown,
+            "force_ocr": entry.force_ocr,
+            "extract_images": entry.extract_images,
+            "extract_tables": entry.extract_tables,
+            "page_range": entry.page_range,
+            "ocr_language": entry.ocr_language,
         }
 
         src = Path(entry.source_path)
@@ -3068,8 +3982,8 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             self.logs.append({"entry": entry.id(), "step": "url_fetch", "status": "error", "error": str(e)})
         write_text(md_file, markdown_content)
         item["base_markdown"] = safe_rel(md_file, self.root_dir)
-        manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
-        write_text(manual, manual_pdf_review_template(entry, item))
+        manual = self.root_dir / "manual-review" / "web" / f"{entry.id()}.md"
+        write_text(manual, manual_url_review_template(entry, item))
         item["manual_review"] = safe_rel(manual, self.root_dir)
         return item
 
@@ -3242,6 +4156,12 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             report,
             cancel_check=self._check_cancel,
             stall_timeout=stall_timeout,
+            marker_chunking_mode=str(self.options.get("marker_chunking_mode", "fallback")),
+            marker_use_llm=bool(self.options.get("marker_use_llm", False)),
+            marker_llm_model=str(self.options.get("marker_llm_model", "") or ""),
+            marker_torch_device=str(self.options.get("marker_torch_device", "auto") or "auto"),
+            ollama_base_url=str(self.options.get("ollama_base_url", "") or ""),
+            vision_model=str(self.options.get("vision_model", "") or ""),
         )
 
         self._check_cancel()
@@ -3318,6 +4238,39 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
                 item["advanced_asset_dir"] = result.asset_dir
                 item["advanced_metadata_path"] = result.metadata_path
                 self._apply_math_normalization(result.markdown_path)
+                if (
+                    result.name == "marker"
+                    and not ctx.marker_use_llm
+                    and item.get("base_markdown")
+                    and item.get("advanced_markdown")
+                    and not ctx.report.suspected_scan
+                ):
+                    try:
+                        base_path = self.root_dir / str(item["base_markdown"])
+                        advanced_path = self.root_dir / str(item["advanced_markdown"])
+                        if base_path.exists() and advanced_path.exists():
+                            fused_text, fusion_stats = _hybridize_marker_markdown_with_base(
+                                base_path.read_text(encoding="utf-8", errors="replace"),
+                                advanced_path.read_text(encoding="utf-8", errors="replace"),
+                            )
+                            if fusion_stats["replacements"] > 0:
+                                hybrid_dir = self.root_dir / "staging" / "markdown-auto" / "marker-hybrid"
+                                ensure_dir(hybrid_dir)
+                                hybrid_path = hybrid_dir / f"{entry.id()}.md"
+                                write_text(hybrid_path, fused_text)
+                                item["advanced_markdown_raw"] = item["advanced_markdown"]
+                                item["advanced_markdown"] = safe_rel(hybrid_path, self.root_dir)
+                                item["advanced_hybrid"] = {
+                                    "source": "marker+base-text-rescue",
+                                    "replacements": fusion_stats["replacements"],
+                                    "candidate_matches": fusion_stats["candidate_matches"],
+                                }
+                                logger.info(
+                                    "  [3/6] Marker híbrido aplicado: %d linhas recuperadas do markdown base.",
+                                    fusion_stats["replacements"],
+                                )
+                    except Exception as e:
+                        logger.warning("  [3/6] Falha ao aplicar híbrido Marker+base: %s", e)
             else:
                 logger.warning("  Advanced backend %s failed: %s", decision.advanced_backend, result.error)
                 item.setdefault("backend_errors", []).append({decision.advanced_backend: result.error})
@@ -3330,12 +4283,19 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             logger.info("  [4/6] Extraindo imagens...")
             try:
                 images_dir = self.root_dir / "staging" / "assets" / "images" / entry.id()
+                image_policy = _pdf_image_extraction_policy(ctx)
                 count = self._extract_pdf_images(
                     raw_target,
                     images_dir,
                     pages=parse_page_range(entry.page_range),
+                    ctx=ctx,
                 )
                 item["images_dir"] = safe_rel(images_dir, self.root_dir)
+                item["image_extraction"] = {
+                    "source": "pymupdf-pdf-images",
+                    "mode": image_policy["mode"],
+                    "count": count,
+                }
                 logger.info("  [4/6] %d imagens extraídas", count)
                 self.logs.append({
                     "entry": entry.id(),
@@ -3618,7 +4578,7 @@ unit: {entry.tags}
     def _profile_pdf(self, pdf_path: Path, entry: FileEntry) -> DocumentProfileReport:
         report = DocumentProfileReport()
         if not HAS_PYMUPDF:
-            report.suggested_profile = entry.document_profile if entry.document_profile != "auto" else "general"
+            report.suggested_profile = normalize_document_profile(entry.document_profile)
             report.notes.append("PyMuPDF não disponível; perfil automático limitado.")
             return report
         doc = pymupdf.open(str(pdf_path))
@@ -3651,7 +4611,7 @@ unit: {entry.tags}
         finally:
             doc.close()
         if entry.document_profile != "auto":
-            report.suggested_profile = entry.document_profile
+            report.suggested_profile = normalize_document_profile(entry.document_profile)
             report.notes.append("Perfil definido manualmente pelo usuário.")
             return report
         name_hint = f"{entry.title} {entry.tags} {entry.notes}".lower()
@@ -3659,16 +4619,16 @@ unit: {entry.tags}
             report.suggested_profile = "scanned"
             report.notes.append("Muitas páginas com pouco texto e imagens presentes: provável scan.")
         elif entry.category == "provas" or "prova" in name_hint or "questão" in name_hint or "questao" in name_hint:
-            report.suggested_profile = "exam_pdf"
+            report.suggested_profile = "diagram_heavy"
             report.notes.append("Detectado como material de prova/exame.")
         elif entry.formula_priority or re.search(r"\b(latex|equação|equation|fórmula|teorema|prova formal|indução)\b", name_hint):
             report.suggested_profile = "math_heavy"
             report.notes.append("Sinais de conteúdo matemático/formal.")
         elif report.table_candidates >= 2 or report.images_count >= max(3, report.page_count):
-            report.suggested_profile = "layout_heavy"
+            report.suggested_profile = "diagram_heavy"
             report.notes.append("Layout com tabelas/imagens relevantes.")
         else:
-            report.suggested_profile = "general"
+            report.suggested_profile = "auto"
             report.notes.append("Documento geral detectado.")
         return report
 
@@ -3715,6 +4675,27 @@ unit: {entry.tags}
         except Exception:
             return False
 
+    @staticmethod
+    def _should_keep_extracted_pdf_image(
+        *,
+        data: bytes,
+        width: int,
+        height: int,
+        policy: Dict[str, object],
+    ) -> bool:
+        if len(data) < int(policy["min_bytes"]):
+            return False
+        if width < int(policy["min_dimension"]) or height < int(policy["min_dimension"]):
+            return False
+
+        ratio = max(width / max(height, 1), height / max(width, 1))
+        if ratio > float(policy["max_aspect_ratio"]):
+            return False
+
+        if policy.get("keep_low_color"):
+            return True
+        return not RepoBuilder._is_noise_image(data)
+
     @property
     def _image_format(self) -> str:
         """Return the configured image format ('png' or 'jpeg')."""
@@ -3740,9 +4721,22 @@ unit: {entry.tags}
         except Exception:
             return src
 
-    def _extract_pdf_images(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
+    def _extract_pdf_images(
+        self,
+        pdf_path: Path,
+        out_dir: Path,
+        pages: Optional[List[int]] = None,
+        ctx: Optional[BackendContext] = None,
+    ) -> int:
         ensure_dir(out_dir)
         doc = pymupdf.open(str(pdf_path))
+        policy = _pdf_image_extraction_policy(ctx) if ctx is not None else {
+            "mode": "standard",
+            "min_bytes": self._MIN_IMG_BYTES,
+            "min_dimension": self._MIN_IMG_DIMENSION,
+            "max_aspect_ratio": self._MAX_ASPECT_RATIO,
+            "keep_low_color": False,
+        }
         seen_xrefs: set = set()  # deduplicate images that appear on multiple pages
         try:
             target_pages = pages or list(range(doc.page_count))
@@ -3765,13 +4759,12 @@ unit: {entry.tags}
                     w = image.get("width", 0)
                     h = image.get("height", 0)
 
-                    # Skip noise: too small or too few bytes
-                    if len(data) < self._MIN_IMG_BYTES:
-                        continue
-                    if w < self._MIN_IMG_DIMENSION or h < self._MIN_IMG_DIMENSION:
-                        continue
-                    # Skip solid-color images (all white, all black, etc.)
-                    if self._is_noise_image(data):
+                    if not self._should_keep_extracted_pdf_image(
+                        data=data,
+                        width=w,
+                        height=h,
+                        policy=policy,
+                    ):
                         continue
 
                     ext = image.get("ext", "png")
@@ -4138,7 +5131,9 @@ unit: {entry.tags}
                     "pymupdf": HAS_PYMUPDF,
                     "pymupdf4llm": HAS_PYMUPDF4LLM,
                     "pdfplumber": HAS_PDFPLUMBER,
+                    "datalab_api": has_datalab_api_key(),
                     "docling_cli": bool(DOCLING_CLI),
+                    "docling_python": has_docling_python_api(),
                     "marker_cli": bool(MARKER_CLI),
                 },
                 "entries": [],
@@ -4196,6 +5191,7 @@ unit: {entry.tags}
 
         with open(manifest_path, "r", encoding="utf-8") as f:
             manifest = json.load(f)
+        self.course_meta = self._effective_course_meta(manifest)
 
         target = next((e for e in manifest["entries"] if e.get("id") == entry_id), None)
         if not target:
@@ -7666,7 +8662,7 @@ def _bundle_priority_score(entry: dict) -> int:
     score = 0
     category = (entry.get("category") or "").strip().lower()
     title = (entry.get("title") or "").strip().lower()
-    profile = (entry.get("effective_profile") or "").strip().lower()
+    profile = normalize_document_profile(entry.get("effective_profile"))
 
     if entry.get("include_in_bundle"):
         score += 30
@@ -7681,7 +8677,7 @@ def _bundle_priority_score(entry: dict) -> int:
     elif category in {"bibliografia", "referencias", "cronograma"}:
         score += 5
 
-    if profile in {"math_heavy", "layout_heavy", "exam_pdf"}:
+    if profile in {"math_heavy", "diagram_heavy"}:
         score += 10
 
     if "resumo" in title or "summary" in title:
@@ -7694,7 +8690,7 @@ def _bundle_priority_score(entry: dict) -> int:
 def _bundle_reason_labels(entry: dict) -> List[str]:
     reasons: List[str] = []
     category = (entry.get("category") or "").strip().lower()
-    profile = (entry.get("effective_profile") or "").strip().lower()
+    profile = normalize_document_profile(entry.get("effective_profile"))
     if entry.get("include_in_bundle"):
         reasons.append("marcado-manualmente")
     if entry.get("relevant_for_exam"):
@@ -7705,12 +8701,26 @@ def _bundle_reason_labels(entry: dict) -> List[str]:
         reasons.append("categoria-exercicio")
     elif category in {"material-de-aula", "codigo-professor", "quadro-branco"}:
         reasons.append("material-base")
-    if profile in {"math_heavy", "layout_heavy", "exam_pdf"}:
+    if profile in {"math_heavy", "diagram_heavy"}:
         reasons.append(f"perfil-{profile}")
     return reasons or ["prioridade-geral"]
 
 
 _MANIFEST_LOG_LIMIT = 200
+
+
+def _entry_image_source_dirs(root_dir: Path, entry: dict) -> List[Path]:
+    dirs: List[Path] = []
+    entry_id = str(entry.get("id") or "").strip()
+    if entry_id:
+        dirs.append(root_dir / "staging" / "assets" / "inline-images" / entry_id)
+    images_dir = entry.get("images_dir")
+    if images_dir:
+        dirs.append(root_dir / images_dir)
+    rendered_pages_dir = entry.get("rendered_pages_dir")
+    if rendered_pages_dir:
+        dirs.append(root_dir / rendered_pages_dir)
+    return dirs
 
 
 def _entry_existing_reference_count(root_dir: Path, entry: dict) -> int:
@@ -7720,18 +8730,17 @@ def _entry_existing_reference_count(root_dir: Path, entry: dict) -> int:
         "base_markdown",
         "advanced_markdown",
         "manual_review",
-        "images_dir",
         "tables_dir",
         "table_detection_dir",
         "advanced_asset_dir",
         "advanced_metadata_path",
         "approved_markdown",
         "curated_markdown",
-        "rendered_pages_dir",
     ]:
         value = entry.get(key)
         if value:
             refs.append(root_dir / value)
+    refs.extend(_entry_image_source_dirs(root_dir, entry))
     return sum(1 for path in refs if path.exists())
 
 
@@ -9051,6 +10060,7 @@ category: {entry.category}
 source_pdf: {json_str(item.get('raw_target'))}
 processing_mode: {json_str(entry.processing_mode)}
 document_profile: {json_str(entry.document_profile)}
+page_range: {json_str(entry.page_range)}
 effective_profile: {json_str(item.get('effective_profile'))}
 base_backend: {json_str(item.get('base_backend'))}
 advanced_backend: {json_str(item.get('advanced_backend'))}
@@ -9115,6 +10125,114 @@ source_image: {json_str(image_path)}
 - [ ] `exams/past-exams/`
 - [ ] `content/curated/`
 """
+
+
+def manual_url_review_template(entry: FileEntry, item: Dict[str, object]) -> str:
+    source_url = entry.source_path
+    return f"""---
+id: {entry.id()}
+title: {json_str(entry.title)}
+type: manual_url_review
+category: {entry.category}
+source_url: {json_str(source_url)}
+processing_mode: {json_str(entry.processing_mode)}
+base_backend: {json_str(item.get('base_backend'))}
+base_markdown: {json_str(item.get('base_markdown'))}
+---
+
+# Revisão Manual — Página Web
+
+## Origem
+- URL: <{source_url}>
+- Backend base: `{item.get('base_backend')}`
+
+## Checklist
+- [ ] Conferir se o conteúdo baixado corresponde à página correta
+- [ ] Remover navegação, rodapé, anúncios e texto irrelevante
+- [ ] Corrigir títulos e hierarquia de seções
+- [ ] Verificar se links importantes foram preservados
+- [ ] Destacar trechos úteis para o tutor
+
+## Markdown corrigido
+<!-- Cole aqui a versão corrigida -->
+
+## Destino curado sugerido
+- [ ] `content/curated/`
+- [ ] `course/references/`
+"""
+
+
+def migrate_legacy_url_manual_reviews(root_dir: Path) -> int:
+    """Move legacy URL review templates from manual-review/pdfs to manual-review/web."""
+    manual_pdfs_dir = root_dir / "manual-review" / "pdfs"
+    manual_web_dir = root_dir / "manual-review" / "web"
+    if not manual_pdfs_dir.exists():
+        return 0
+
+    ensure_dir(manual_web_dir)
+    manifest_path = root_dir / "manifest.json"
+    manifest = None
+    manifest_changed = False
+    moved = 0
+
+    if manifest_path.exists():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            logger.warning("Could not read manifest.json during URL review migration: %s", exc)
+            manifest = None
+
+    for review_path in manual_pdfs_dir.rglob("*.md"):
+        try:
+            content = review_path.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            continue
+
+        fm = {}
+        match = re.match(r"^---\s*\n(.*?)\n---", content, re.DOTALL)
+        if match:
+            for line in match.group(1).strip().split("\n"):
+                if ":" not in line:
+                    continue
+                key, _, value = line.partition(":")
+                fm[key.strip()] = value.strip().strip('"').strip("'")
+
+        if fm.get("type") != "manual_url_review" and fm.get("base_backend") != "url_fetcher":
+            continue
+
+        destination = manual_web_dir / review_path.name
+        if destination.exists():
+            try:
+                review_path.unlink()
+            except Exception as exc:
+                logger.warning("Could not remove duplicate legacy URL review %s: %s", review_path, exc)
+            else:
+                moved += 1
+            continue
+
+        ensure_dir(destination.parent)
+        try:
+            shutil.move(str(review_path), str(destination))
+        except Exception as exc:
+            logger.warning("Could not migrate legacy URL review %s: %s", review_path, exc)
+            continue
+
+        moved += 1
+        entry_id = fm.get("id") or destination.stem
+        if manifest:
+            for entry in manifest.get("entries", []):
+                if entry.get("id") == entry_id and entry.get("manual_review"):
+                    old_rel = safe_rel(review_path, root_dir)
+                    if entry.get("manual_review") == old_rel:
+                        entry["manual_review"] = safe_rel(destination, root_dir)
+                        manifest_changed = True
+                    break
+
+    if manifest and manifest_changed:
+        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+
+    return moved
 
 
 def pdf_curation_guide() -> str:
@@ -9190,8 +10308,7 @@ policy:
   require_manual_review_for:
     - math_heavy
     - scanned
-    - exam_pdf
-    - layout_heavy
+    - diagram_heavy
   base_layer_priority:
     - pymupdf4llm
     - pymupdf
@@ -9836,8 +10953,9 @@ def _low_token_inject_image_descriptions(markdown: str, image_curation: dict) ->
         match = img_re.search(line)
         if match:
             fname = match.group(2)
-            if fname in descriptions:
-                desc_info = descriptions[fname]
+            matched = _resolve_image_description_record(fname, descriptions)
+            if matched:
+                original_fname, desc_info = matched
                 duplicate_of = desc_info.get("duplicate_of")
                 desc_lines = []
                 if duplicate_of:
@@ -9849,7 +10967,7 @@ def _low_token_inject_image_descriptions(markdown: str, image_curation: dict) ->
 
                 heading = RepoBuilder._image_curation_heading(desc_info["type"])
                 block = (
-                    f"<!-- IMAGE_DESCRIPTION: {fname} -->\n"
+                    f"<!-- IMAGE_DESCRIPTION: {original_fname} -->\n"
                     f"<!-- Tipo: {desc_info['type']} -->"
                 )
                 for i, dl in enumerate(desc_lines):

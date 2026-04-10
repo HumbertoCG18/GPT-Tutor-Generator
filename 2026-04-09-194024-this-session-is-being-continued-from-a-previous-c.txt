@@ -1,0 +1,2094 @@
+ ▐▛███▜▌   Claude Code v2.1.98
+▝▜█████▛▘  Sonnet 4.6 · Claude Pro
+  ▘▘ ▝▝    ~\Documents\GitHub\GPT-Tutor-Generator
+
+✻ Conversation compacted (ctrl+o for history)
+
+
+  Read 1 file (ctrl+o to expand)
+
+● Bash(python -c "import marker; print(marker.__version__)")
+  ⎿  Error: Exit code 1
+     Traceback (most recent call last):
+       File "<string>", line 1, in <module>
+     AttributeError: module 'marker' has no attribute '__version__'
+
+● Bash(pip show marker-pdf 2>/dev/null | head -5)
+  ⎿  Name: marker-pdf
+     Version: 1.10.2
+     Summary: Convert documents to markdown with high speed and accuracy.
+     … +2 lines (ctrl+o to expand)
+
+  Read 1 file (ctrl+o to expand)
+
+● Let me test the actual Marker + Ollama integration to see what happens.
+
+● Bash(python -c "import requests; r =
+      requests.get('http://localhost:11434/api/tags'); models = [m['name'] for m
+       in r.json()['models']]; print('\n'.join(sorted(models…)
+  ⎿  gemma3:4b
+     gemma3:latest
+     gemma4:e4b
+     … +4 lines (ctrl+o to expand)
+
+● Bash(python -c "
+      from src.builder.engine import _detect_marker_capabilities…)
+  ⎿  page_range_flag: --page_range
+     force_ocr_flag: --force_ocr
+     use_llm_flag: --use_llm
+     … +4 lines (ctrl+o to expand)
+
+● Good. All flags detected. Now let me find a small test PDF and run Marker with
+   --use_llm directly to see the actual behavior.
+
+  Searched for 2 patterns, listed 1 directory (ctrl+o to expand)
+
+● Good, small PDF. Let me run a direct Marker test with --use_llm and the
+  qwen3-vl:8b model (the local one that should be more stable than the
+  235b-cloud).
+
+● Bash(mkdir -p /tmp/marker_test && marker
+      "/c/Users/Humberto/Desktop/Isabelle2025-2/doc/demo_easychair.pdf"
+      --output_format markdown --output_dir /tmp/marker_test --u…)
+  ⎿  Traceback (most recent call last):
+       File "<frozen runpy>", line 198, in _run_module_as_main
+       File "<frozen runpy>", line 88, in _run_code
+     … +19 lines (ctrl+o to expand)
+
+● Marker 1.10.2 expects a directory input. Let me check the CLI interface.
+
+● Bash(marker --help 2>&1 | head -30)
+  ⎿  Usage: marker [OPTIONS] IN_FOLDER
+
+     Options:
+     … +23 lines (ctrl+o to expand)
+
+● Bash(marker --help 2>&1 | grep -i -E
+      "(ollama|llm|use_llm|force_ocr|output_dir|redo_inline)" )
+  ⎿    --llm_service TEXT              LLM service to use - should be full
+     import
+       --output_dir PATH               Directory to save output.
+     … +145 lines (ctrl+o to expand)
+
+● Key finding: Marker 1.10.2 supports both the short (--ollama_base_url,
+  --ollama_model) and scoped (--OllamaService_ollama_base_url,
+  --OllamaService_ollama_model) forms. Also, the CLI takes a folder as
+  IN_FOLDER, not a single file.
+
+  Let me check how the current engine handles this — it seems to pass a single
+  file.
+
+● Bash(marker --help 2>&1 | head -5)
+  ⎿  Usage: marker [OPTIONS] IN_FOLDER
+
+     Options:
+     … +3 lines (ctrl+o to expand)
+
+● Bash(marker_single --help 2>&1 | head -10)
+  ⎿  Usage: marker_single [OPTIONS] FPATH
+
+       Convert a single PDF to markdown.
+     … +10 lines (ctrl+o to expand)
+
+● There's marker_single for single files. Let me check what the engine currently
+   uses.
+
+  Searched for 3 patterns (ctrl+o to expand)
+
+● Good — it already uses marker_single, not marker. So the engine passes a
+  single file path correctly. Now let me actually test the Marker + Ollama
+  pipeline.
+
+● Bash(mkdir -p /tmp/marker_test2 && marker_single
+      "/c/Users/Humberto/Desktop/Isabelle2025-2/doc/demo_easychair.pdf"
+      --output_format markdown --output_dir /tmp/marker_…)
+  ⎿  Recognizing Layout:   0%|          | 0/1 [00:00<?, ?it/s]Recognizing L
+     ayout: 100%|##########| 1/1 [00:01<00:00,  1.20s/it]Recognizing Layout
+     : 100%|##########| 1/1 [00:01<00:00,  1.20s/it]
+     … +13 lines (ctrl+o to expand)
+
+● It worked. 45 seconds for 1 page with qwen3-vl:8b. No errors. Let me check the
+   output quality.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● Output looks good — clean markdown with math/code blocks. Now let me test with
+   a math-heavy page to see how it handles equations.
+
+● Bash(# Let's also test without LLM for comparison speed
+      mkdir -p /tmp/marker_test3 && marker_single
+      "/c/Users/Humberto/Desktop/Isabelle2025-2/doc/demo_easychair.pdf"…)
+  ⎿  Recognizing Layout:   0%|          | 0/1 [00:00<?, ?it/s]Recognizing L
+     ayout: 100%|##########| 1/1 [00:01<00:00,  1.24s/it]Recognizing Layout
+     : 100%|##########| 1/1 [00:01<00:00,  1.24s/it]
+     … +11 lines (ctrl+o to expand)
+● 3s without LLM vs 45s with LLM. Let me check if the non-LLM version has worse
+  quality.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● For this document the difference is minimal (just heading levels). The real
+  value of LLM would show with math-heavy content. Now let me test with the
+  qwen3-vl:235b-cloud model to reproduce the 500 error.
+
+● Bash(mkdir -p /tmp/marker_test4 && marker_single
+      "/c/Users/Humberto/Desktop/Isabelle2025-2/doc/demo_easychair.pdf"
+      --output_format markdown --output_dir /tmp/marker_…)
+  ⎿  Recognizing Layout:   0%|          | 0/1 [00:00<?, ?it/s]Recognizing L
+     ayout: 100%|##########| 1/1 [00:01<00:00,  1.19s/it]Recognizing Layout
+     : 100%|##########| 1/1 [00:01<00:00,  1.19s/it]
+     … +16 lines (ctrl+o to expand)
+
+● Confirmed: qwen3-vl:235b-cloud fails with JSON parse error ("Extra data"),
+  takes 135s. The qwen3-vl:8b works clean in 45s. Let me test other available
+  models.
+
+● Bash(mkdir -p /tmp/marker_test5 && marker_single
+      "/c/Users/Humberto/Desktop/Isabelle2025-2/doc/demo_easychair.pdf"
+      --output_format markdown --output_dir /tmp/marker_…)
+  ⎿  Recognizing Layout:   0%|          | 0/1 [00:00<?, ?it/s]Recognizing L
+     ayout: 100%|##########| 1/1 [00:01<00:00,  1.21s/it]Recognizing Layout
+     : 100%|##########| 1/1 [00:01<00:00,  1.21s/it]
+     … +13 lines (ctrl+o to expand)
+
+● Bash(mkdir -p /tmp/marker_test6 && marker_single
+      "/c/Users/Humberto/Desktop/Isabelle2025-2/doc/demo_easychair.pdf"
+      --output_format markdown --output_dir /tmp/marker_…)
+  ⎿  Recognizing Layout:   0%|          | 0/1 [00:00<?, ?it/s]Recognizing L
+     ayout: 100%|##########| 1/1 [00:01<00:00,  1.21s/it]Recognizing Layout
+     : 100%|##########| 1/1 [00:01<00:00,  1.21s/it]
+     … +13 lines (ctrl+o to expand)
+
+● Both gemma3:4b (19s) and llama3.1 (25s) work without errors. Here's the
+  summary so far:
+
+  ┌─────────────────────┬───────────────┬──────────────────┐
+  │        Model        │ Time (1 page) │      Status      │
+  ├─────────────────────┼───────────────┼──────────────────┤
+  │ No LLM              │ 3s            │ OK               │
+  ├─────────────────────┼───────────────┼──────────────────┤
+  │ gemma3:4b           │ 19s           │ OK               │
+  ├─────────────────────┼───────────────┼──────────────────┤
+  │ llama3.1            │ 25s           │ OK               │
+  ├─────────────────────┼───────────────┼──────────────────┤
+  │ qwen3-vl:8b         │ 45s           │ OK               │
+  ├─────────────────────┼───────────────┼──────────────────┤
+  │ qwen3-vl:235b-cloud │ 135s          │ JSON parse error │
+  └─────────────────────┴───────────────┴──────────────────┘
+
+  The issue is specifically with qwen3-vl:235b-cloud. But for Marker, a vision
+  model isn't actually needed — Marker sends pre-extracted text blocks + images
+  separately. Text-only models like gemma3:4b or llama3.1 are fine and much
+  faster.
+
+  However, gemma3 and llama3.1 aren't vision models — Marker's image description
+   processor would need a vision model. Let me check if Marker even uses vision
+  for this simple test.
+
+  Listed 1 directory (ctrl+o to expand)
+
+● Bash(# Test with a Isabelle 'classes' PDF which should have more math - just
+      first 2 pages with gemma3:4b and redo_inline_math
+      mkdir -p /tmp/marker_test7 && marker_s…)
+  ⎿  Recognizing Layout:   0%|          | 0/3 [00:00<?, ?it/s]Recognizing L
+     ayout:  33%|###3      | 1/3 [00:14<00:29, 14.86s/it]Recognizing Layout
+     :  67%|######6   | 2/3 [00:15<00:06,  6.22s/it]Recognizing Layout: 100
+     … +28 lines (ctrl+o to expand)
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● Interesting — gemma3:4b hallucinated a fake "Image Text Reproduction" section
+  about JavaScript in the middle of the Isabelle document. This is a critical
+  issue with non-vision text models processing image blocks. Let me test
+  qwen3-vl:8b on the same math document.
+
+● Bash(mkdir -p /tmp/marker_test8 && marker_single
+      "/c/Users/Humberto/Desktop/Isabelle2025-2/doc/classes.pdf" --output_format
+       markdown --output_dir /tmp/marker_test8 -…)
+  ⎿  Running in the background (↓ to manage)
+
+  Read 1 file (ctrl+o to expand)
+
+● qwen3-vl:8b is getting 500 errors too. Let me wait for completion and check
+  the root cause.
+
+  Read 1 file (ctrl+o to expand)
+
+● Still running on the MathBlockProcessor. The 500 error is likely from sending
+  an image to qwen3-vl:8b with the format JSON schema — Ollama's /api/generate
+  with format and images can be problematic for some operations. Let me
+  investigate the root cause while waiting.
+
+● Bash(# Simulate what Marker sends - a /api/generate with format schema +
+      images
+      python -c "…)
+  ⎿  Exception: HTTPConnectionPool(host='localhost', port=11434): Read time
+     d out. (read timeout=60)
+
+  Read 1 file (ctrl+o to expand)
+
+● Still running the LLMMathBlockProcessor. The 500 error was from the image
+  description step. The math block processor might be stuck or very slow. Let me
+   wait a bit more and also investigate the 500 error's root cause.
+
+  Searched for 2 patterns, read 1 file, listed 2 directories (ctrl+o to expand)
+
+● This log is from yesterday. Let me check the current running task status.
+
+  Read 1 file (ctrl+o to expand)
+
+● qwen3-vl:8b took 19 minutes for 3 pages! The MathBlockProcessor alone took 17
+  minutes (vs 36 seconds with gemma3:4b). The issue is that qwen3-vl:8b as a
+  vision model is extremely slow for structured format responses — it processes
+  images it doesn't need to for text-only math blocks.
+
+  The 500 error on the LLM image processor is a separate issue — likely a JSON
+  schema compatibility problem.
+
+  Let me check the output quality and then improve the local patch to handle the
+   500 error.
+
+  Searched for 1 pattern (ctrl+o to expand)
+
+● The qwen3-vl:8b output is terrible — it leaked thinking/reasoning content
+  ("Wait, no. The extracted text is...") directly into the markdown. The vision
+  model tries to analyze the image and produces verbose reasoning garbage.
+
+  Here are my clear findings:
+
+  ┌─────────────────────┬──────────┬─────────┬──────────┬──────────────────┐
+  │        Model        │ 1 page   │ 3 pages │ Quality  │      Issues      │
+  │                     │ (simple) │  (math) │          │                  │
+  ├─────────────────────┼──────────┼─────────┼──────────┼──────────────────┤
+  │ No LLM              │ 3s       │ ~5s     │ OK       │ No improvements  │
+  │                     │          │         │ baseline │                  │
+  ├─────────────────────┼──────────┼─────────┼──────────┼──────────────────┤
+  │ gemma3:4b           │ 19s      │ 103s    │ Good     │ Hallucinated JS  │
+  │                     │          │         │          │ section on image │
+  ├─────────────────────┼──────────┼─────────┼──────────┼──────────────────┤
+  │ llama3.1            │ 25s      │ -       │ Good     │ Not tested on    │
+  │                     │          │         │          │ math             │
+  ├─────────────────────┼──────────┼─────────┼──────────┼──────────────────┤
+  │                     │          │         │          │ Thinking leaks,  │
+  │ qwen3-vl:8b         │ 45s      │ 19min   │ Bad      │ 500 on images,   │
+  │                     │          │         │          │ extremely slow   │
+  ├─────────────────────┼──────────┼─────────┼──────────┼──────────────────┤
+  │ qwen3-vl:235b-cloud │ 135s     │ -       │ N/A      │ JSON parse       │
+  │                     │          │         │          │ errors           │
+  └─────────────────────┴──────────┴─────────┴──────────┴──────────────────┘
+
+  Best candidate for Marker LLM: gemma3:4b — fast, good JSON compliance, but
+  hallucination on image blocks needs handling. The image hallucination can be
+  mitigated by disabling LLMImageDescriptionProcessor (only enable
+  math/equation/table processors).
+
+  Let me improve the local patch and the engine configuration to make this work
+  properly. The key changes needed:
+
+  1. Recommend gemma3:4b (or similar text model) as default Marker LLM model
+  instead of vision models
+  2. Improve the local OllamaService patch to handle edge cases (thinking leaks,
+   extra JSON data)
+  3. Add option to disable image description processor when using non-vision
+  Ollama models
+
+  Read 1 file (ctrl+o to expand)
+
+● Let me check what processors Marker uses and if we can selectively disable the
+   image description one.
+
+● Bash(marker_single --help 2>&1 | grep -i -E
+      "disable_image|image_desc|processors" | head -10)
+  ⎿    --disable_image_extraction      Disable image extraction.
+       --processors TEXT               Comma separated list of processors t
+     o use.
+     … +2 lines (ctrl+o to expand)
+
+● Bash(# Check if we can use LLMImageDescriptionProcessor_use_llm to disable
+      just image description LLM
+      marker_single --help 2>&1 | grep "LLMImageDescriptionProcessor_…)  ⎿    --LLMImageDescriptionProcessor_use_llm
+
+● We can use --LLMImageDescriptionProcessor_use_llm set to false to disable LLM
+  on image descriptions while keeping it for math, equations, tables, etc. This
+  would prevent gemma3:4b from hallucinating on image blocks.
+
+  Now let me also check the 500 error root cause. The issue is that qwen3-vl:8b
+  (and likely other vision models) return 500 when Ollama's /api/generate
+  endpoint is called with format (structured output) + images in certain
+  combinations.
+
+  Read 1 file (ctrl+o to expand)
+
+● Bash(cp /tmp/ollama_service_patch.py "C:\Users\Humberto\Documents\GitHub\GPT-T
+      utor-Generator\.venv\Lib\site-packages\marker\services\ollama.py")
+  ⎿  Done
+
+● Now let me update the engine to add the --LLMImageDescriptionProcessor_use_llm
+   disable flag when using non-vision Ollama models, and also check what flags
+  Marker recognizes for this.
+
+● Bash(# Test with improved patch: gemma3:4b + disabled image LLM +
+      redo_inline_math
+      rm -rf /tmp/marker_test9…)
+  ⎿  Error: Exit code 2
+     Usage: marker_single [OPTIONS] FPATH
+     Try 'marker_single --help' for help.
+
+     Error: Got unexpected extra argument (False)
+
+● Bash(# Check the flag format - it might be a boolean flag, not a value flag
+      marker_single --help 2>&1 | grep -A2
+      "LLMImageDescriptionProcessor_use_llm")
+  ⎿    --LLMImageDescriptionProcessor_use_llm
+                                       Whether to use the LLM model. Defaul
+     t is
+                                       False.
+
+● It's a boolean flag with default False! So when --use_llm is passed, it
+  enables all processors. The --LLMImageDescriptionProcessor_use_llm is
+  standalone — it only activates when passed. But --use_llm overrides all. Let
+  me check how the global --use_llm interacts with per-processor flags.
+
+● Bash(# Check if --no-LLMImageDescriptionProcessor_use_llm works
+      marker_single --help 2>&1 | grep -i "no-" | head -5)
+  ⎿  (No output)
+
+● Bash(# Look at Marker source to understand how use_llm interacts with
+      per-processor flags
+      python -c "…)
+  ⎿   'use_llm']
+
+● Bash(python -c "
+      from marker.processors.llm.llm_image_description import
+      LLMImageDescriptionProcessor…)
+  ⎿  Error: Exit code 1
+     Traceback (most recent call last):
+       File "<string>", line 3, in <module>
+     AttributeError: type object 'LLMImageDescriptionProcessor' has no attribute
+      '__fields__'
+
+● Bash(python -c "
+      from marker.processors.llm.llm_image_description import
+      LLMImageDescriptionProcessor…)
+  ⎿  Error: Exit code 1
+     Traceback (most recent call last):
+       File "<string>", line 3, in <module>
+     AttributeError: type object 'LLMImageDescriptionProcessor' has no attribute
+      'model_fields'
+
+● Bash(python -c "
+      from marker.processors.llm.llm_image_description import
+      LLMImageDescriptionProcessor…)
+  ⎿  class LLMImageDescriptionProcessor(BaseLLMSimpleBlockProcessor):
+         block_types = (
+             BlockTypes.Picture,
+     … +29 lines (ctrl+o to expand)
+  ⎿  You've hit your limit · resets 5pm (America/Sao_Paulo)
+     /upgrade or /extra-usage to finish what you’re working on.
+
+✻ Sautéed for 27m 40s
+
+● Background command "Test Marker with qwen3-vl:8b on math PDF" completed (exit
+code 0)
+  ⎿  You've hit your limit · resets 5pm (America/Sao_Paulo)
+     /upgrade or /extra-usage to finish what you’re working on.
+
+❯ /export                                                                       
+  ⎿  Conversation copied to clipboard
+
+❯ /export                                                                       
+  ⎿  Conversation exported to:
+     C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\2026-04-09-141619-th
+     is-session-is-being-continued-from-a-previous-c.txt
+
+❯ o processo de investigação do erro parou porque atingiu o meu limite, mas, o  
+  que tu descobriu até o momento sobre os bugs que tem ocorrido?                
+  ⎿  UserPromptSubmit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:6136) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not es…
+
+● Resumo da investigação: Marker + Ollama (--use_llm)
+
+  O que funciona
+
+  O pipeline Marker + Ollama funciona com a patch local que já existia em
+  .venv/Lib/site-packages/marker/services/ollama.py. Testei 4 modelos no PDF
+  Isabelle (1-3 páginas):
+
+  ┌─────────────────────┬──────────────┬───────────┬────────────────────────┐
+  │       Modelo        │    1 pág     │  3 págs   │         Status         │
+  │                     │  (simples)   │  (math)   │                        │
+  ├─────────────────────┼──────────────┼───────────┼────────────────────────┤
+  │ Sem LLM             │ 3s           │ ~5s       │ OK — baseline          │
+  ├─────────────────────┼──────────────┼───────────┼────────────────────────┤
+  │ gemma3:4b           │ 19s          │ 103s      │ OK, mas aluciou no     │
+  │                     │              │           │ bloco de imagem        │
+  ├─────────────────────┼──────────────┼───────────┼────────────────────────┤
+  │ llama3.1            │ 25s          │ —         │ OK                     │
+  ├─────────────────────┼──────────────┼───────────┼────────────────────────┤
+  │ qwen3-vl:8b         │ 45s          │ 19 min    │ Vazamento de           │
+  │                     │              │           │ "thinking" no markdown │
+  ├─────────────────────┼──────────────┼───────────┼────────────────────────┤
+  │ qwen3-vl:235b-cloud │ 135s         │ —         │ Erro JSON "Extra data" │
+  └─────────────────────┴──────────────┴───────────┴────────────────────────┘
+
+  Bugs encontrados
+
+  1. qwen3-vl (8b e 235b-cloud) são péssimos para o Marker
+  - O 8b é extremamente lento em blocos de math (17 min no LLMMathBlockProcessor
+   para 2 blocos)
+  - O 8b vaza conteúdo de "thinking" direto no markdown — frases como "Wait, no.
+   The extracted text is..."
+  - O 235b-cloud retorna JSON malformado (Extra data: line 4 column 6) —
+  múltiplos objetos JSON na resposta
+  - O 8b dá 500 Internal Server Error no LLMImageDescriptionProcessor (formato
+  estruturado + imagem é problemático)
+
+  2. gemma3:4b alucina em blocos de imagem
+  - Quando o Marker pede descrição de uma imagem (capa do PDF), o gemma3 inventa
+   um texto inteiro sobre "A Quick Guide to Basic JavaScript" — completamente
+  fabricado
+  - Isto acontece porque gemma3:4b não é um modelo de visão — ele recebe a
+  imagem mas não consegue interpretá-la
+
+  3. Modelos texto-only são rápidos e bons para math/tabelas, mas não para 
+  imagens
+
+  Solução identificada
+
+  O Marker tem flags per-processor. O flag
+  --LLMImageDescriptionProcessor_use_llm (default False) controla se o LLM é
+  usado em imagens separadamente do --use_llm global. A combinação ideal:
+
+  - Modelo: gemma3:4b (rápido, bom JSON compliance)
+  - --use_llm: ativa LLM para math, equações, tabelas, headers
+  - Desativar LLMImageDescriptionProcessor para evitar alucinações em imagens (o
+   default já é False, mas precisa confirmar que --use_llm global não
+  sobrescreve)
+
+  O que eu já fiz
+
+  - Melhorei a patch local do ollama.py — agora trata JSON com "Extra data"
+  (extrai primeiro objeto válido), adiciona think: false nas options, e limpa
+  artefatos de thinking
+  - A patch foi aplicada no .venv
+
+  O que falta
+
+  1. Testar gemma3:4b + --use_llm confirmando que o LLMImageDescriptionProcessor
+   realmente fica desativado por default (eu tentei passar
+  --LLMImageDescriptionProcessor_use_llm False mas o CLI rejeitou — precisa
+  investigar a sintaxe correta)
+  2. Atualizar o engine.py para recomendar/usar gemma3:4b como modelo padrão do
+  Marker (separado do modelo de visão do Image Curator)
+  3. Decidir se vale adicionar uma config na UI para escolher quais processors
+  LLM ativar
+
+  Quer que eu continue a investigação e implemente as mudanças no engine?
+
+● Ran 1 stop hook (ctrl+o to expand)
+  ⎿  Stop hook error: Failed with non-blocking status code: (node:33680)
+   [DEP0190] DeprecationWarning: Passing args to a child process with
+  shell option true can lead to security vulnerabilities, as the
+  arguments are not escaped, only concatenated.
+  (Use `node --trace-deprecation ...` to show where the warning was
+  created)
+  Failed to start Bun: spawn bun ENOENT
+
+❯ vamos tentar usar isso:                                                       
+    - Modelo: gemma3:4b (rápido, bom JSON compliance)                           
+    - --use_llm: ativa LLM para math, equações, tabelas, headers                
+    - Desativar LLMImageDescriptionProcessor para evitar alucinações em imagens 
+   (o default já é False, mas precisa confirmar                                 
+     que --use_llm global não sobrescreve)                                      
+                                                                                
+  eu habilitei também o Enable GPU Acceleration no marker                       
+  ⎿  UserPromptSubmit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:30568) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+● Vou primeiro confirmar se --use_llm global sobrescreve o per-processor, depois
+   testar e implementar.
+
+● Bash(python -c "
+      import inspect…)
+  ⎿  0: class BaseLLMProcessor(BaseProcessor):
+     1:     """
+     2:     A processor for using LLMs to convert blocks.
+     … +38 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:26628) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Linha 13-16 e 27-28 são a chave: use_llm default é False na base class. Na
+  linha 27, se use_llm é False, o __init__ retorna sem configurar o llm_service.
+   Agora preciso ver como o --use_llm global do CLI propaga para os processors.
+
+● Bash(python -c "
+      import inspect…)
+  ⎿      def __init__(
+             self,
+             artifact_dict: Dict[str, Any],
+     … +25 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:13136) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Bash(# Now check how the CLI sets per-processor use_llm
+      python -c "…)
+  ⎿  Error: Exit code 1
+     Traceback (most recent call last):
+       File "<string>", line 4, in <module>
+       File 
+     "C:\Users\Humberto\AppData\Local\Programs\Python\Python311\Lib\inspect.py",
+      line 1258, in getsource
+         lines, lnum = getsourcelines(object)
+                       ^^^^^^^^^^^^^^^^^^^^^^
+       File 
+     "C:\Users\Humberto\AppData\Local\Programs\Python\Python311\Lib\inspect.py",
+      line 1240, in getsourcelines
+         lines, lnum = findsource(object)
+                       ^^^^^^^^^^^^^^^^^^
+       File 
+     "C:\Users\Humberto\AppData\Local\Programs\Python\Python311\Lib\inspect.py",
+      line 1059, in findsource
+
+     … +12 lines (ctrl+o to see all)
+
+  Read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:39740) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Bash(python -c "
+      import inspect…)
+  ⎿      def generate_config_dict(self) -> Dict[str, any]:
+             config = {}
+             output_dir = self.cli_options.get("output_dir", settings.OUTPU
+     … +18 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:21312) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Bash(python -c "
+      import inspect…)
+  ⎿      def initialize_processors(self, processor_cls_lst: List[Type[BaseP
+     rocessor]]) -> List[BaseProcessor]:
+             processors = []
+     … +19 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:2076) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not es…
+
+● Bash(python -c "
+      import inspect…)
+  ⎿      def __init__(self, config: Optional[BaseModel | dict] = None):
+             assign_config(self, config)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:32856) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Bash(python -c "
+      import inspect…)
+  ⎿  Error: Exit code 1
+     Traceback (most recent call last):
+       File "<string>", line 3, in <module>
+     ModuleNotFoundError: No module named 'marker.config.utils'
+     [rerun: b8]
+
+● Bash(python -c "
+      from marker.processors import BaseProcessor…)
+  ⎿  C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.venv\Lib\site-
+     packages\marker\processors\__init__.py
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:34376) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+  Searched for 1 pattern (ctrl+o to expand)
+  ⎿  PostToolUse:Grep hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:23880) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Bash(python -c "
+      import inspect…)
+  ⎿  def assign_config(cls, config: BaseModel | dict | None):
+         cls_name = cls.__class__.__name__
+         if config is None:
+     … +21 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:15320) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Achei. Na linha if hasattr(cls, k): setattr(cls, k, dict_config[k]) — o
+  use_llm=True global é propagado para TODOS os processors que têm use_llm,
+  incluindo LLMImageDescriptionProcessor.
+
+  Mas a segunda parte (linhas com cls_name) permite override per-processor:
+  LLMImageDescriptionProcessor_use_llm=False sobrescreveria depois.
+
+  Então a solução é: passar --use_llm + --LLMImageDescriptionProcessor_use_llm
+  como False no config. O problema é que o CLI não aceitou False como argumento.
+   Vou verificar como o CLI trata flags booleanas.
+
+● Bash(# Check how the CLI generates the boolean flag - is it is_flag=True or
+      takes a value?
+      python -c "…)
+  ⎿  (No output)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:34964) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Bash(python -c "
+      from marker.config.parser import ConfigParser…)
+  ⎿  (No output)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:35312) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Bash(python -c "
+      from marker.config.parser import ConfigParser…)  ⎿      @staticmethod
+         def common_options(fn):
+             fn = click.option(
+     … +29 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:7564) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not es…
+
+● Bash(python -c "
+      from marker.config.parser import ConfigParser…)
+  ⎿  Interrupted · What should Claude do instead?
+
+❯ tente a flag --disable_image_extraction, está dizendo assim no readme do      
+  github do projeto:                                                            
+  --disable_image_extraction: Don't extract images from the PDF. If you also    
+  specify --use_llm, then images will be replaced with a description.           
+  ⎿  UserPromptSubmit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:40348) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Boa dica. Então a lógica é:
+
+  - --use_llm sem --disable_image_extraction → LLM descreve imagens (alucinação
+  com gemma3)
+  - --use_llm com --disable_image_extraction → LLM gera descrições em texto no
+  lugar das imagens
+  - Sem --use_llm com --disable_image_extraction → imagens simplesmente
+  removidas
+
+  Para o nosso caso, queremos o LLM para math/tabelas mas sem alucinação em
+  imagens. Vou testar as duas combinações:
+
+● Bash(rm -rf /tmp/marker_test_a && mkdir -p /tmp/marker_test_a && marker_single
+       "/c/Users/Humberto/Desktop/Isabelle2025-2/doc/classes.pdf"
+      --output_format markdown --…)
+  ⎿  Recognizing Layout:   0%|          | 0/3 [00:00<?, ?it/s]Recognizing L
+     ayout:  33%|###3      | 1/3 [00:04<00:08,  4.47s/it]Recognizing Layout
+     :  67%|######6   | 2/3 [00:04<00:01,  1.95s/it]Recognizing Layout: 100
+     … +34 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:11912) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Timeouts de 30s em alguns LLM processors. O gemma3:4b está demorando mais que
+  30s em algumas chamadas — provavelmente por causa da GPU Acceleration que
+  acabou de ser habilitada (o modelo pode estar competindo por VRAM). Mas
+  completou. Vou checar o output.
+
+  Searched for 1 pattern (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:16944) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Excelente! Sem alucinação, sem a seção fake de JavaScript. A imagem da capa
+  simplesmente não aparece (foi removida, como esperado). O conteúdo math/text
+  ficou limpo e correto.
+
+  Os timeouts de 30s são o único problema. O Marker usa timeout=30 por padrão no
+   OllamaService. Vou aumentar esse timeout na patch e depois atualizar o
+  engine.py para passar --disable_image_extraction quando --use_llm estiver
+  ativo.
+
+  Read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:38004) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● A patch já está mais robusta do que eu esperava (você melhorou ela entre
+  sessões). O timeout vem do self.timeout — que é o OllamaService_timeout do
+  Marker. Vou checar o default.
+
+● Bash(python -c "
+      from marker.services import BaseService…)
+  ⎿  class BaseService:
+         timeout: Annotated[int, "The timeout to use for the service."] = 3
+     0
+     … +24 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:31676) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Timeout padrão de 30s. Para modelos locais com GPU compartilhada, 30s é pouco.
+   Preciso passar --OllamaService_timeout maior. Agora vou implementar tudo no
+  engine.py:
+
+  1. Adicionar --disable_image_extraction quando LLM está ativo
+  2. Passar --OllamaService_timeout adequado
+  3. Detectar essas flags no capability detection
+
+  Read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:15808) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:38636) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Now let me read the default capabilities and the _run_single_marker method to
+  add the new flags.
+
+  Read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:33980) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Now let me update the _default_marker_capabilities and
+  _detect_marker_capabilities to include the new flags, then update
+  _run_single_marker.
+
+● Update(src\builder\engine.py)
+  ⎿  Added 2 lines
+      2125          "llm_service_flag": "--llm_service",
+      2126          "ollama_base_url_flag": "--OllamaService_ollama_base_
+            url",
+      2127          "ollama_model_flag": "--OllamaService_ollama_model",
+      2128 +        "ollama_timeout_flag": "--OllamaService_timeout",    
+      2129          "redo_inline_math_flag": "--redo_inline_math",
+      2130 +        "disable_image_extraction_flag": "--disable_image_ext
+           +raction",                                                    
+      2131      }
+      2132  
+      2133  
+  ⎿  PostToolUse:Edit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:3532) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not es…
+
+● Now update the detection function to detect these two new flags:
+
+  Read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:16228) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:9172) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not es…
+
+● Now add detection for the new flags. Let me find where the existing detection
+  ends:
+
+  Read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:35596) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Let me find the end of _detect_marker_capabilities:
+
+  Read 1 file (ctrl+o to expand)  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:38844) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Let me find it precisely:
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Grep hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:19184) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:38736) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Update(src\builder\engine.py)
+  ⎿  Added 14 lines
+      2228              caps["redo_inline_math_flag"] = candidate
+      2229              break
+      2230  
+      2231 +    for candidate in (                                       
+      2232 +        "--OllamaService_timeout",                           
+      2233 +        "--ollamaservice-timeout",                           
+      2234 +        "--ollamaservice_timeout",                           
+      2235 +    ):                                                       
+      2236 +        if candidate.lower() in help_text:                   
+      2237 +            caps["ollama_timeout_flag"] = candidate          
+      2238 +            break                                            
+      2239 +                                                             
+      2240 +    for candidate in ("--disable_image_extraction", "--disabl
+           +e-image-extraction"):                                        
+      2241 +        if candidate in help_text:                           
+      2242 +            caps["disable_image_extraction_flag"] = candidate
+      2243 +            break                                            
+      2244 +                                                             
+      2245      _MARKER_CAPABILITIES_CACHE = dict(caps)
+      2246      logger.info("  [marker] Capabilities detectadas: %s", cap
+            s)
+      2247      return dict(caps)
+  ⎿  PostToolUse:Edit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:12940) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Now update _run_single_marker to use these new flags:
+
+  Read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:41068) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:30568) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Now I need to add the --disable_image_extraction and --OllamaService_timeout
+  flags after the existing LLM flag setup. Let me add them right after the
+  redo_inline_math block:
+
+● Update(src\builder\engine.py)
+  ⎿  Added 19 lines
+      2517              if marker_model and redo_inline_math_flag and _ma
+            rker_should_redo_inline_math(ctx):
+      2518                  cmd.append(redo_inline_math_flag)
+      2519  
+      2520 +            # Desabilitar extração de imagens quando LLM está
+           + ativo com modelo                                            
+      2521 +            # não-vision para evitar alucinações no LLMImageD
+           +escriptionProcessor.                                         
+      2522 +            # Modelos texto-only (gemma3, llama3.1, etc) aluc
+           +inam ao "descrever"                                          
+      2523 +            # imagens que não conseguem ver.                 
+      2524 +            disable_img_flag = caps.get("disable_image_extrac
+           +tion_flag")                                                  
+      2525 +            if marker_model and disable_img_flag and not _mar
+           +ker_model_is_probably_vision(marker_model):                  
+      2526 +                cmd.append(disable_img_flag)                 
+      2527 +                logger.info(                                 
+      2528 +                    "  [marker] --disable_image_extraction at
+           +ivado automaticamente "                                      
+      2529 +                    "(modelo '%s' não é vision).",           
+      2530 +                    marker_model,                            
+      2531 +                )                                            
+      2532 +                                                             
+      2533 +            # Aumentar timeout do OllamaService para modelos 
+           +locais (default=30s                                          
+      2534 +            # é insuficiente quando GPU é compartilhada com l
+           +ayout models).                                               
+      2535 +            ollama_timeout_flag = caps.get("ollama_timeout_fl
+           +ag")                                                         
+      2536 +            if marker_model and ollama_timeout_flag:         
+      2537 +                cmd.extend([ollama_timeout_flag, "120"])     
+      2538 +                                                             
+      2539          if marker_llm_active:
+      2540              if _marker_model_is_cloud_variant(marker_model):
+      2541                  logger.warning(
+  ⎿  PostToolUse:Edit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:28684) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Agora também preciso atualizar os logs e metadata para refletir as novas
+  flags. Vou atualizar a seção de log:
+
+  Read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:20484) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● O warning na linha 2546-2549 agora é obsoleto — com o
+  --disable_image_extraction automático, modelos não-vision funcionam bem. Vou
+  substituir por uma mensagem informativa:
+
+● Update(src\builder\engine.py)
+  ⎿  Added 4 lines, removed 5 lines
+      2539          if marker_llm_active:
+      2540              if _marker_model_is_cloud_variant(marker_model):
+      2541                  logger.warning(
+      2542 -                    "  [marker] O modelo '%s' parece ser vari
+           -ante cloud. Para estabilidade no Marker, prefira qwen3-vl:8b 
+           -local.",                                                     
+      2542 +                    "  [marker] O modelo '%s' parece ser vari
+           +ante cloud. Para estabilidade no Marker, prefira um modelo lo
+           +cal como gemma3:4b.",                                        
+      2543                      marker_model,
+      2544                  )
+      2545              elif not _marker_model_is_probably_vision(marker_
+            model):
+      2546 -                logger.warning(                              
+      2547 -                    "  [marker] O modelo '%s' nao parece visi
+           -on. Ele pode funcionar em PDFs simples, mas tende a falhar ou
+           - alucinar em blocos visuais.",                               
+      2546 +                logger.info(                                 
+      2547 +                    "  [marker] Modelo texto-only '%s' detect
+           +ado. Extração de imagens desabilitada automaticamente; "     
+      2548 +                    "LLM será usado apenas para math, tabelas
+           + e headers.",                                                
+      2549                      marker_model,
+      2550                  )
+      2550 -            elif _marker_model_is_qwen3_vl_8b(marker_model): 
+      2551 -                logger.info("  [marker] qwen3-vl:8b detectado
+           - como modelo recomendado para estabilidade.")                
+      2551              logger.info(
+      2552                  "  [marker] LLM ativo: service=%s model=%s ba
+            se_url=%s redo_inline_math=%s torch_device=%s",
+      2553                  MARKER_OLLAMA_SERVICE,
+  ⎿  PostToolUse:Edit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:30824) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Agora vou verificar se o cache de capabilities precisa ser invalidado para
+  pegar as novas flags e rodar os testes:
+
+● Bash(python -c "
+      from src.builder.engine import _detect_marker_capabilities…)
+  ⎿  disable_image_extraction_flag: --disable_image_extraction
+     force_ocr_flag: --force_ocr
+     llm_service_flag: --llm_service
+     … +6 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:11516) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Todas as flags detectadas. Agora vou rodar os testes para garantir que não
+  quebrei nada:
+
+● Bash(python -m pytest tests/ -q 2>&1)
+  ⎿  Error: Exit code 1
+     .............F.......................................................... [ 
+     21%]
+     ........................................................................ [ 
+     42%]
+     ........................................................................ [ 
+     63%]
+     ........................................................................ [ 
+     84%]
+     ......................................................                   
+     [100%]
+     ================================== FAILURES 
+     ===================================
+     _____ TestMarkerCapabilities.test_help_timeout_uses_conservative_defaults 
+     _____
+
+     self = <tests.test_core.TestMarkerCapabilities object at 
+     0x0000022A50192B90>
+
+     … +37 lines (ctrl+o to see all)
+
+● Só um teste que verifica os defaults esperados — precisa incluir as novas
+  flags:
+
+  Searched for 1 pattern (ctrl+o to expand)
+  ⎿  PostToolUse:Grep hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:31196) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Update(tests\test_core.py)
+  ⎿  File must be read first
+
+  Read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:32108) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Update(tests\test_core.py)
+  ⎿  Added 2 lines
+      188              "llm_service_flag": "--llm_service",
+      189              "ollama_base_url_flag": "--OllamaService_ollama_ba
+           se_url",
+      190              "ollama_model_flag": "--OllamaService_ollama_model
+           ",
+      191 +            "ollama_timeout_flag": "--OllamaService_timeout", 
+      192              "redo_inline_math_flag": "--redo_inline_math",
+      193 +            "disable_image_extraction_flag": "--disable_image_
+          +extraction",                                                  
+      194          }
+      195  
+      196      def test_current_marker_help_preserves_optimistic_defaults
+           _for_unknown_flags(self, monkeypatch):
+  ⎿  PostToolUse:Edit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:37944) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+● Bash(python -m pytest tests/test_core.py -q -k "marker" 2>&1)
+  ⎿  ....................................
+        [100%]
+     36 passed, 180 deselected in 1.90s
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:3532) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not es…
+
+● Todos passando. Agora vou fazer o teste real com a configuração completa:
+
+● Bash(rm -rf /tmp/marker_test_final && mkdir -p /tmp/marker_test_final &&
+      marker_single "/c/Users/Humberto/Desktop/Isabelle2025-2/doc/classes.pdf"
+      --output_format mar…)
+  ⎿  Recognizing Layout:   0%|          | 0/3 [00:00<?, ?it/s]Recognizing L
+     ayout:  33%|###3      | 1/3 [00:02<00:05,  2.84s/it]Recognizing Layout
+     :  67%|######6   | 2/3 [00:03<00:01,  1.28s/it]Recognizing Layout: 100
+     … +28 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:38684) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Zero erros de timeout! O --OllamaService_timeout 120 resolveu completamente.
+  126s total para 3 páginas com math. Sem warnings de "inference failed". Vou
+  confirmar a qualidade do output:
+
+  Searched for 1 pattern (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:32936) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Hmm — o --disable_image_extraction com --use_llm está gerando descrições 
+  alucinadas para as imagens em vez de removê-las. O README do Marker dizia
+  "images will be replaced with a description" — mas como gemma3 não é vision,
+  as descrições são inventadas (Ice Cream Sales, JavaScript tutorial...).
+
+  Isso é diferente do teste anterior onde o --disable_image_extraction sem
+  descrição funcionou bem. A diferença é que agora o LLM está ativo. Vou
+  verificar: preciso usar --disable_image_extraction sem --use_llm nos
+  processors de imagem, ou simplesmente não usar --disable_image_extraction e
+  deixar as imagens como referências normais.
+
+● Bash(# Test: use_llm WITHOUT disable_image_extraction - images stay as
+      references
+      rm -rf /tmp/marker_test_final2 && mkdir -p /tmp/marker_test_final2 &&
+      marker_single…)
+  ⎿  Recognizing Layout:   0%|          | 0/3 [00:00<?, ?it/s]Recognizing L
+     ayout:  33%|###3      | 1/3 [00:20<00:41, 20.91s/it]Recognizing Layout
+     :  67%|######6   | 2/3 [00:21<00:08,  8.73s/it]Recognizing Layout: 100
+     … +28 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:42568) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+  Searched for 1 pattern (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:42248) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Ainda alucina! O LLMImageDescriptionProcessor roda mesmo sem 
+  --disable_image_extraction quando --use_llm está ativo. Vou verificar isso —
+  parece que o extract_images=True (default) faz o processor retornar [] nos
+  inference_blocks, mas o meta processor ainda roda.
+
+  Espere — vi no código fonte do processor:
+
+  def inference_blocks(self, document: Document) -> List[BlockData]:
+      blocks = super().inference_blocks(document)
+      if self.extract_images:
+          return []
+      return blocks
+
+  Quando extract_images=True (default), inference_blocks retorna [] — não 
+  processa imagens com LLM. Mas o output do teste mostra alucinação. Então a
+  alucinação vem de outro processor. Vou checar qual:
+
+● Bash(# Check which LLM processor produced the hallucination - look at the "LLM
+       processors running" output
+      # In test_final2: "LLM processors running: 1/1" - this is t…)
+  ⎿  OrderProcessor
+     BlockRelabelProcessor
+     LineMergeProcessor
+     … +25 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:2840) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not es…
+
+● Bash(# The LLMComplexRegionProcessor might be generating the hallucination
+      python -c "…)
+  ⎿  Interrupted · What should Claude do instead?
+
+❯ Teria como desabilitar por completo a captura de imagens? Porque, existe o    
+  Image Curator que usa o qwen3-vl:231b-cloud, que eu perecebi que tem uma      
+  performance muito boa para descrever imagens. No caso, ainda usar as LLM      
+  porque melhora a acuracia da extração, mas desabilitar a descrição de imagens 
+  ⎿  UserPromptSubmit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:42172) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Sim. A forma mais limpa é passar via --config_json um JSON que desativa os
+  processors que tocam em imagens. Mas o Marker já tem a mecânica: podemos usar
+  --processors para listar explicitamente quais processors usar, excluindo os de
+   imagem.
+
+  Porém, mais simples: podemos passar a config
+  LLMImageDescriptionProcessor_use_llm=False e
+  LLMComplexRegionProcessor_use_llm=False via --config_json. Vou testar:
+
+● Bash(# Create a config JSON that disables image-related LLM processors
+      cat > /tmp/marker_no_img_llm.json << 'EOF'…)
+  ⎿  Recognizing Layout:   0%|          | 0/3 [00:00<?, ?it/s]Recognizing L
+     ayout:  33%|###3      | 1/3 [00:03<00:06,  3.20s/it]Recognizing Layout
+     :  67%|######6   | 2/3 [00:03<00:01,  1.44s/it]Recognizing Layout: 100
+     … +28 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:33824) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● 97s, zero warnings. Vou checar o output:
+
+  Searched for 1 pattern (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:29652) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Ainda tem alucinação — "Fruit Preference Survey" e "Text from Image". O
+  LLMComplexRegionProcessor_use_llm: false no config_json não está sendo
+  aplicado, ou outro processor está gerando. Vou verificar: o assign_config só
+  aplica se hasattr(cls, k) ou se o key começa com cls_name + "_". Vamos forçar
+  desabilitando o LLMHandwritingProcessor também e usar a abordagem de
+  --processors explícito:
+
+● Bash(# Use explicit processor list, excluding image-related LLM processors
+      # Keep: LLMTableProcessor, LLMTableMergeProcessor, LLMFormProcessor,
+      LLMEquationProcessor,…)
+  ⎿  Error: Exit code 1
+     2026-04-09 18:41:11,608 [ERROR] marker: Error loading processor: 
+     marker.processors.section_header.SectionHeaderProcessor with error: No 
+     module named 'marker.processors.section_header'
+     Traceback (most recent call last):
+       File "<frozen runpy>", line 198, in _run_module_as_main
+       File "<frozen runpy>", line 88, in _run_code
+       File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.venv\Script
+     s\marker_single.exe\__main__.py", line 5, in <module>
+       File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.venv\Lib\si
+     te-packages\click\core.py", line 1485, in __call__
+         return self.main(*args, **kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+       File "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.venv\Lib\si
+     te-packages\click\core.py", line 1406, in main
+
+     … +24 lines (ctrl+o to see all)
+
+● Nomes de módulos incorretos. Muito frágil essa abordagem. Melhor usar
+  --config_json. O problema é que o config_json anterior não funcionou. Vou
+  investigar por quê — possivelmente os nomes das chaves não casam com os
+  atributos dos processors.
+
+● Bash(# Check exactly how assign_config maps keys to processor attributes
+      # The config dict has "LLMImageDescriptionProcessor_use_llm": false…)
+  ⎿  def assign_config(cls, config: BaseModel | dict | None):
+         cls_name = cls.__class__.__name__
+         if config is None:
+     … +21 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:42536) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● A ordem está correta: primeiro aplica globais, depois per-class overrides.
+  Então LLMImageDescriptionProcessor_use_llm: false deveria sobrescrever o
+  use_llm: true global. Mas no BaseLLMProcessor.__init__, a verificação if not 
+  self.use_llm: return acontece depois do assign_config (chamado no
+  super().__init__). Vou verificar a ordem de inicialização:
+
+● Bash(python -c "
+      import inspect…)  ⎿      def __init__(self, llm_service: BaseService, config=None):
+             super().__init__(config)
+     … +5 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:30232) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● OK, a sequência é: super().__init__(config) → assign_config(self, config) que
+  aplica use_llm=True global primeiro, depois
+  LLMImageDescriptionProcessor_use_llm=False. Depois verifica self.use_llm → que
+   deveria ser False.
+
+  Mas espere — o LLMImageDescriptionProcessor é um BaseLLMSimpleBlockProcessor,
+  e esses são agrupados pelo LLMSimpleBlockMetaProcessor. Vou checar se o meta
+  processor respeita o use_llm individual:
+
+● Bash(python -c "
+      import inspect…)
+  ⎿      def __init__(
+             self,
+             processor_lst: List[BaseLLMSimpleBlockProcessor],
+     … +5 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:15864) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Bash(python -c "
+      import inspect…)
+  ⎿  14:     def __call__(self, document: Document):
+     15:         if not self.use_llm or self.llm_service is None:
+     16:             return
+     … +21 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:36684) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Linha 19: processor.inference_blocks(document) — cada sub-processor ainda
+  retorna seus blocos. O LLMImageDescriptionProcessor tem o check if 
+  self.extract_images: return [] que protege quando extract_images=True, mas com
+   extract_images=False (do nosso config_json), ele RETORNA blocos de imagem pro
+   LLM processar.
+
+  O problema é a combinação: quando passamos extract_images: false no
+  config_json, o processor de imagem ativa a inferência LLM em imagens. É
+  contra-intuitivo.
+
+  A solução mais limpa: não passar extract_images: false, e em vez disso só
+  desativar os processors de imagem por nome. Vou testar com um config_json
+  corrigido:
+
+● Bash(cat > /tmp/marker_noimg_v2.json << 'EOF'
+      {…)
+  ⎿  Recognizing Layout:   0%|          | 0/3 [00:00<?, ?it/s]Recognizing L
+     ayout:  33%|###3      | 1/3 [00:05<00:10,  5.45s/it]Recognizing Layout
+     :  67%|######6   | 2/3 [00:05<00:02,  2.46s/it]Recognizing Layout: 100
+     … +28 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:42976) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+  Searched for 1 pattern (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:23572) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Ainda alucinando. O "Image Text" e a tabela de "John Doe" são completamente
+  fabricados. Os overrides per-processor via config_json não estão funcionando
+  como esperado — provavelmente porque o meta-processor agrupa os sub-processors
+   antes de o config individual ser aplicado.
+
+  Vou usar a abordagem que funcionou no primeiro teste:
+  --disable_image_extraction sem --use_llm. O que preciso é separar: usar
+  --disable_image_extraction para remover imagens, e o --config_json para
+  desativar apenas o LLMFormProcessor (que parece ser o culpado dos "Image Text"
+   blocos):
+
+  Na verdade, vou checar o teste que funcionou perfeitamente:
+
+  Searched for 1 pattern (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:40472) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Esse ficou perfeito: sem alucinação, sem imagens. A diferença é que no test_a
+  houve 3 timeouts de 30s (porque não tinha --OllamaService_timeout 120). Vou
+  combinar as duas abordagens:
+
+● Bash(rm -rf /tmp/marker_test_golden && mkdir -p /tmp/marker_test_golden &&
+      marker_single "/c/Users/Humberto/Desktop/Isabelle2025-2/doc/classes.pdf"
+      --output_format m…)
+  ⎿  Recognizing Layout:   0%|          | 0/3 [00:00<?, ?it/s]Recognizing L
+     ayout:  33%|###3      | 1/3 [00:22<00:44, 22.04s/it]Recognizing Layout
+     :  67%|######6   | 2/3 [00:22<00:09,  9.53s/it]Recognizing Layout: 100
+     … +28 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:29956) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Zero errors, mas 244s (mais lento desta vez — GPU ocupada). Vou checar a
+  qualidade:
+
+  Searched for 1 pattern (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:36548) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Ainda alucina! A "Customer Satisfaction Survey" e "Section 1: Complaint
+  Handling Process" são fabricados. O --disable_image_extraction com --use_llm
+  ativa as descrições via LLM em vez de simplesmente remover as imagens.
+
+  O teste anterior (test_a) ficou limpo porque os timeouts de 30s fizeram as
+  chamadas do LLM de imagem falharem silenciosamente — e o fallback era {} (sem
+  descrição). Com timeout de 120s, as chamadas completam e geram alucinações.
+
+  A solução correta é: NÃO usar --disable_image_extraction e em vez disso usar
+  --config_json só para desabilitar os processors de imagem. Vou debugar por que
+   o config_json não funcionou:
+
+● Bash(# Debug: verify that config_json is being parsed and the keys reach the
+      processors
+      python -c "…)
+  ⎿  use_llm after assign_config: False
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:24272) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● A lógica de assign_config funciona. O problema é outro — possivelmente o
+  LLMSimpleBlockMetaProcessor recria seus sub-processors, ou o config_json não é
+   mergeado corretamente. Vou verificar como o config_json é processado:
+
+● Bash(python -c "
+      # Simulate exactly what marker does…)
+  ⎿  Generated config dict:
+       LLMComplexRegionProcessor_use_llm: False
+       LLMHandwritingProcessor_use_llm: False
+     … +8 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:29536) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● O config dict está correto! As chaves chegam. Vou verificar diretamente se o
+  processor é instanciado com use_llm=False:
+
+● Bash(python -c "
+      from marker.processors.llm.llm_image_description import
+      LLMImageDescriptionProcessor…)
+  ⎿  Error: Exit code 1
+     Traceback (most recent call last):
+       File "<string>", line 9, in <module>
+     TypeError: BaseLLMSimpleBlockProcessor.__init__() got an unexpected keyword
+      argument 'llm_service'
+     [rerun: b39]
+
+● Bash(python -c "
+      import inspect…)
+  ⎿  Error: Exit code 1
+     Traceback (most recent call last):
+       File "<string>", line 3, in <module>
+     ModuleNotFoundError: No module named 
+     'marker.processors.llm.llm_simple_block'
+     [rerun: b40]
+
+● Bash(python -c "
+      import inspect…)
+  ⎿  <class 'marker.processors.llm.llm_image_description.LLMImageDescriptio
+     nProcessor'>
+     <class 'marker.processors.llm.BaseLLMSimpleBlockProcessor'>
+     … +3 lines (ctrl+o to expand)  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:36500) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Bash(python -c "
+      import inspect…)
+  ⎿      def __init__(self, config=None):
+             assign_config(self, config)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:42128) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● BaseLLMSimpleBlockProcessor.__init__ não chama super().__init__ — recebe só
+  config, sem llm_service! Isso significa que use_llm é setado por
+  assign_config, mas o llm_service não é verificado aqui. O llm_service vem do
+  LLMSimpleBlockMetaProcessor que chama os processors depois.
+
+  Então o override deveria funcionar — use_llm=False é aplicado e
+  inference_blocks do processor verificaria... espera, vou checar:
+
+● Bash(python -c "
+      import inspect…)
+  ⎿      def inference_blocks(self, document: Document) -> List[BlockData]:
+             blocks = []
+             for page in document.pages:
+     … +4 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:6860) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not es…
+
+● Não tem check de use_llm! O BaseLLMSimpleBlockProcessor.inference_blocks
+  sempre retorna blocos. O LLMImageDescriptionProcessor sobrescreve:
+
+  def inference_blocks(self, document):
+      blocks = super().inference_blocks(document)
+      if self.extract_images:
+          return []
+      return blocks
+
+  Então use_llm=False não é verificado em inference_blocks! O check de use_llm
+  só existe em BaseLLMProcessor.__init__ (que seta self.llm_service = None), mas
+   BaseLLMSimpleBlockProcessor não herda esse __init__ — tem seu próprio que só
+  faz assign_config.
+
+  O meta-processor no __call__ verifica if not self.use_llm or self.llm_service 
+  is None: return — mas isso é do meta-processor, não dos sub-processors
+  individuais.
+
+  A solução real: preciso verificar self.use_llm na inference_blocks. Mas isso
+  seria um patch no Marker. Alternativa: usar --config_json para setar
+  LLMImageDescriptionProcessor_block_types para algo vazio, ou usar a rota de
+  gerar um config_json temporário no engine.
+
+  Vou tomar a abordagem mais pragmática — gerar um config_json temporário no
+  engine que desativa os processors visuais setando extract_images: true (que já
+   é o default e faz inference_blocks retornar []):
+
+  Espere — extract_images: true já é o default e já retorna []. Então o
+  LLMImageDescriptionProcessor não deveria estar gerando nada! A alucinação deve
+   vir do LLMComplexRegionProcessor. Vou confirmar:
+
+● Bash(python -c "
+      import inspect…)
+  ⎿  Error: Exit code 1
+     Traceback (most recent call last):
+       File "<string>", line 3, in <module>
+     ModuleNotFoundError: No module named 
+     'marker.processors.llm.llm_complex_region'
+     [rerun: b44]
+
+● Bash(python -c "
+      from marker.processors.llm import BaseLLMSimpleBlockProcessor…)
+  ⎿  Error: Exit code 1
+     Traceback (most recent call last):
+       File "<string>", line 6, in <module>
+     ModuleNotFoundError: No module named 'marker.processors.llm.llm_math_block'
+     [rerun: b45]
+
+● Bash(ls "C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.venv\Lib\site
+      -packages\marker\processors\llm\*.py" | xargs -I{} basename {})
+  ⎿  ls: cannot access 'C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Genera
+     tor\.venv\Lib\site-packages\marker\processors\llm\*.py': No such file
+     or directory
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:27588) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+  Searched for 1 pattern (ctrl+o to expand)
+  ⎿  PostToolUse:Glob hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:7128) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not es…
+
+● Bash(python -c "
+      from marker.processors.llm.llm_complex import LLMComplexRegionProcessor…)
+  ⎿  Error: Exit code 1
+     Traceback (most recent call last):
+       File "<string>", line 3, in <module>
+     ImportError: cannot import name 'BlockTypes' from 'marker.schema.blocks' 
+     (C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.venv\Lib\site-pack
+     ages\marker\schema\blocks\__init__.py)
+     [rerun: b47]
+
+● Bash(python -c "
+      from marker.processors.llm.llm_complex import LLMComplexRegionProcessor…)
+  ⎿  block_types: (<BlockTypes.ComplexRegion: '26'>,)
+     MRO: ['LLMComplexRegionProcessor', 'BaseLLMSimpleBlockProcessor', 'Bas
+     eLLMProcessor', 'BaseProcessor', 'object']
+     … +8 lines (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:30564) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● LLMComplexRegionProcessor tem block_types = (BlockTypes.ComplexRegion,) e
+  sempre retorna blocos — sem nenhum check de use_llm. Este é o culpado das
+  alucinações — ele pega blocos "ComplexRegion" (que são imagens/figuras
+  complexas) e manda pro gemma3 descrever.
+
+  A solução correta: o LLMSimpleBlockMetaProcessor deveria filtrar
+  sub-processors com use_llm=False, mas não faz isso. Preciso de um patch mínimo
+   no meta-processor. Vou fazer:
+
+  Read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:21604) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Patch mínimo: filtrar sub-processors que têm use_llm=False antes de iterar:
+
+● Update(.venv\Lib\site-packages\marker\processors\llm\llm_meta.py)
+  ⎿  Added 4 lines, removed 1 line
+      29          if not self.use_llm or self.llm_service is None:
+      30              return
+      31  
+      32 +        # Respeitar use_llm=False em sub-processors individuais
+      33 +        active_processors = [p for p in self.processors if geta
+         +ttr(p, "use_llm", True)]                                       
+      34 +                                                               
+      35          total = sum(
+      33 -            [len(processor.inference_blocks(document)) for proc
+         -essor in self.processors]                                      
+      36 +            [len(processor.inference_blocks(document)) for proc
+         +essor in active_processors]                                    
+      37          )
+      38          pbar = tqdm(
+      39              desc="LLM processors running", disable=self.disable
+          _tqdm, total=total
+  ⎿  PostToolUse:Edit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:30912) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Update(.venv\Lib\site-packages\marker\processors\llm\llm_meta.py)
+  ⎿  Added 1 line, removed 1 line
+      40          )
+      41  
+      42          all_prompts = [
+      43 -            processor.block_prompts(document) for processor in 
+         -self.processors                                                
+      43 +            processor.block_prompts(document) for processor in 
+         +active_processors                                              
+      44          ]
+      45          pending = []
+      46          futures_map = {}
+  ⎿  PostToolUse:Edit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:18932) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Also need to update the futures_map to reference active_processors:
+
+● Update(.venv\Lib\site-packages\marker\processors\llm\llm_meta.py)
+  ⎿  Added 1 line, removed 1 line
+      55                  try:
+      56                      result = future.result()
+      57                      future_data = futures_map.pop(future)
+      58 -                    processor: BaseLLMSimpleBlockProcessor = se
+         -lf.processors[                                                 
+      58 +                    processor: BaseLLMSimpleBlockProcessor = ac
+         +tive_processors[                                               
+      59                          future_data["processor_idx"]
+      60                      ]
+      61                      # finalize the result
+  ⎿  PostToolUse:Edit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:4872) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not es…
+
+● Agora vou testar com o config_json que desativa os processors visuais:
+
+● Bash(rm -rf /tmp/marker_test_patched && mkdir -p /tmp/marker_test_patched &&
+      marker_single "/c/Users/Humberto/Desktop/Isabelle2025-2/doc/classes.pdf"
+      --output_format…)
+  ⎿  Recognizing Layout:   0%|          | 0/3 [00:00<?, ?it/s]Recognizing L
+     ayout:  33%|###3      | 1/3 [00:04<00:09,  4.99s/it]Recognizing Layout
+     :  67%|######6   | 2/3 [00:05<00:02,  2.26s/it]Recognizing Layout: 100
+     … +26 lines (ctrl+o to expand)
+  ⎿  (timeout 5m)  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:39128) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Note: LLM processors running: 0it — os processors visuais foram filtrados!
+  Antes eram 1-2 items. Agora só LLMMathBlockProcessor e
+  LLMSectionHeaderProcessor rodaram.
+
+  Searched for 1 pattern (ctrl+o to expand)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:6884) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not es…
+
+● Zero alucinações! Output limpo:
+  - Imagem da capa mantida como referência ![](_page_0_Picture_0.jpeg)
+  - Sem "Customer Satisfaction Survey", sem "JavaScript tutorial"
+  - Math, equações e headers processados pelo LLM corretamente
+  - LLM processors running: 0it confirma que os processors visuais foram
+  filtrados
+
+  Agora vou integrar isso no engine.py — gerar o config_json temporário quando
+  LLM está ativo com modelo não-vision:
+
+  Read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:38656) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Vou substituir o bloco --disable_image_extraction pela abordagem de
+  --config_json:
+
+● Update(src\builder\engine.py)
+  ⎿  Added 14 lines, removed 8 lines
+      2517              if marker_model and redo_inline_math_flag and _ma
+            rker_should_redo_inline_math(ctx):
+      2518                  cmd.append(redo_inline_math_flag)
+      2519  
+      2520 -            # Desabilitar extração de imagens quando LLM está
+           - ativo com modelo                                            
+      2521 -            # não-vision para evitar alucinações no LLMImageD
+           -escriptionProcessor.                                         
+      2520 +            # Desativar LLM em processors visuais quando o mo
+           +delo não é vision.                                           
+      2521              # Modelos texto-only (gemma3, llama3.1, etc) aluc
+            inam ao "descrever"
+      2523 -            # imagens que não conseguem ver.                 
+      2524 -            disable_img_flag = caps.get("disable_image_extrac
+           -tion_flag")                                                  
+      2525 -            if marker_model and disable_img_flag and not _mar
+           -ker_model_is_probably_vision(marker_model):                  
+      2526 -                cmd.append(disable_img_flag)                 
+      2522 +            # imagens que não conseguem ver. O Image Curator 
+           +com qwen3-vl                                                 
+      2523 +            # cuida das descrições separadamente.            
+      2524 +            if marker_model and not _marker_model_is_probably
+           +_vision(marker_model):                                       
+      2525 +                _visual_overrides = {                        
+      2526 +                    "LLMImageDescriptionProcessor_use_llm": F
+           +alse,                                                        
+      2527 +                    "LLMComplexRegionProcessor_use_llm": Fals
+           +e,                                                           
+      2528 +                    "LLMHandwritingProcessor_use_llm": False,
+      2529 +                }                                            
+      2530 +                config_json_path = out_dir / "marker-llm-conf
+           +ig.json"                                                     
+      2531 +                write_text(config_json_path, json.dumps(_visu
+           +al_overrides, indent=2))                                     
+      2532 +                cmd.extend(["--config_json", str(config_json_
+           +path)])                                                      
+      2533                  logger.info(
+      2528 -                    "  [marker] --disable_image_extraction at
+           -ivado automaticamente "                                      
+      2529 -                    "(modelo '%s' não é vision).",           
+      2534 +                    "  [marker] Processors visuais desativado
+           +s via config_json "                                          
+      2535 +                    "(modelo '%s' não é vision). Imagens serã
+           +o tratadas pelo Image Curator.",                             
+      2536                      marker_model,
+      2537                  )
+      2538  
+  ⎿  PostToolUse:Edit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:14396) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Agora vou rodar os testes novamente:
+
+● Bash(python -m pytest tests/ -q 2>&1)
+  ⎿  ......................................................................
+     .. [ 21%]
+     ......................................................................
+     … +8 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:21076) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● 342 passando. Agora vou atualizar o metadata de log para refletir a nova
+  config:
+
+  Read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:21288) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:42212) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Vou adicionar visual_processors_disabled ao metadata:
+
+● Update(src\builder\engine.py)
+  ⎿  Added 1 line
+      2574              "recommended_model": _marker_model_is_qwen3_vl_8b
+            (marker_model) if marker_model else False,
+      2575              "is_cloud_variant": _marker_model_is_cloud_varian
+            t(marker_model) if marker_model else False,
+      2576              "is_probably_vision": _marker_model_is_probably_v
+            ision(marker_model) if marker_model else False,
+      2577 +            "visual_processors_disabled": bool(marker_model a
+           +nd not _marker_model_is_probably_vision(marker_model)),      
+      2578          }
+      2579  
+      2580          logger.info("  [marker] Comando: %s", " ".join(cmd))
+  ⎿  PostToolUse:Edit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:36344) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Vou rodar os testes uma última vez para confirmar:
+
+● Bash(python -m pytest tests/ -q 2>&1)
+  ⎿  Error: Exit code 1
+     ................................F....................................... [ 
+     21%]
+     ........................................................................ [ 
+     42%]
+     ........................................................................ [ 
+     63%]
+     ........................................................................ [ 
+     84%]
+     ......................................................                   
+     [100%]
+     ================================== FAILURES 
+     ===================================
+     _ TestAdvancedBackendPolicies.test_marker_command_adds_redo_inline_math_for
+     _formula_priority_with_llm _
+
+     self = <tests.test_core.TestAdvancedBackendPolicies object at 
+     0x00000242F5177B90>
+
+     … +66 lines (ctrl+o to see all)
+
+● Um teste que verifica o metadata exato. Preciso adicionar o novo campo:
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+  ⎿  PostToolUse:Grep hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:40808) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+  ⎿  PostToolUse:Read hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:27512) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Update(tests\test_core.py)
+  ⎿  Added 1 line
+      541              "recommended_model": True,
+      542              "is_cloud_variant": False,
+      543              "is_probably_vision": True,
+      544 +            "visual_processors_disabled": False,              
+      545          }
+      546  
+      547      def test_marker_llm_model_does_not_fallback_to_vision_mode
+           l(self):
+  ⎿  PostToolUse:Edit hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:32548) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● Bash(python -m pytest tests/ -q 2>&1)
+  ⎿  ......................................................................
+     .. [ 21%]
+     ......................................................................
+     … +8 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+  ⎿  PostToolUse:Bash hook error          ⎿  Failed with non-blocking status 
+                                             code: (node:20208) [DEP0190] 
+                                             DeprecationWarning: Passing args to
+                                              a child process with shell option 
+                                             true can lead to security 
+                                             vulnerabilities, as the arguments 
+                                             are not e…
+
+● 342 testes passando. Resumo do que foi feito:
+
+  Resultado
+
+  Configuração que funciona para Marker + Ollama:
+  - Modelo: gemma3:4b (rápido, bom JSON compliance, ~20-40s por bloco math)
+  - --use_llm ativo para math, equações, tabelas e headers
+  - --OllamaService_timeout 120 (default de 30s era insuficiente)
+  - Processors visuais desativados via --config_json (evita alucinações de
+  modelos não-vision)
+  - Imagens mantidas como referências — o Image Curator com qwen3-vl:235b-cloud
+  cuida das descrições
+
+  Patches locais no .venv (não no repo):
+  1. .venv/.../marker/services/ollama.py — flatten_schema, think: false, JSON
+  extraction robusto, thinking cleanup
+  2. .venv/.../marker/processors/llm/llm_meta.py — filtra sub-processors com
+  use_llm=False (sem isso, o config_json era ignorado)
+
+  Mudanças no repo:
+  - engine.py — detecção de --OllamaService_timeout e
+  --disable_image_extraction, geração automática de config_json para desativar
+  processors visuais com modelos não-vision, timeout de 120s
+  - test_core.py — atualização dos testes para as novas capabilities e metadata
+
+● Ran 1 stop hook (ctrl+o to expand)
+  ⎿  Stop hook error: Failed with non-blocking status code: (node:13152)
+   [DEP0190] DeprecationWarning: Passing args to a child process with
+  shell option true can lead to security vulnerabilities, as the
+  arguments are not escaped, only concatenated.
+  (Use `node --trace-deprecation ...` to show where the warning was
+  created)
+  Failed to start Bun: spawn bun ENOENT
+
+✻ Sautéed for 19m 32s

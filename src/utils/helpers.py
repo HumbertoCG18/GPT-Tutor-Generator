@@ -10,6 +10,31 @@ import os
 
 logger = logging.getLogger(__name__)
 
+
+def _load_project_env_file() -> None:
+    """Load simple KEY=VALUE pairs from the repository .env without overriding OS env."""
+    project_root = Path(__file__).resolve().parents[2]
+    env_path = project_root / ".env"
+    if not env_path.exists():
+        return
+
+    try:
+        for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            key = key.strip()
+            if not key or key in os.environ:
+                continue
+            value = value.strip().strip('"').strip("'")
+            os.environ[key] = value
+    except Exception:
+        logger.debug("Falha ao carregar .env local do projeto.", exc_info=True)
+
+
+_load_project_env_file()
+
 # Environment / Optional Dependencies
 try:
     import pymupdf
@@ -35,8 +60,39 @@ except Exception:
     HAS_PDFPLUMBER = False
     logger.info("pdfplumber not available; table extraction via pdfplumber disabled.")
 
+def _resolve_cli_from_project_venv(command_name: str) -> Optional[str]:
+    """Resolve a CLI preferring the repository-local virtualenv over PATH."""
+    project_root = Path(__file__).resolve().parents[2]
+    candidate_dirs = []
+
+    if os.name == "nt":
+        candidate_dirs.extend(
+            [
+                project_root / ".venv" / "Scripts",
+                project_root / "venv" / "Scripts",
+            ]
+        )
+        candidate_names = [f"{command_name}.exe", f"{command_name}.bat", command_name]
+    else:
+        candidate_dirs.extend(
+            [
+                project_root / ".venv" / "bin",
+                project_root / "venv" / "bin",
+            ]
+        )
+        candidate_names = [command_name]
+
+    for candidate_dir in candidate_dirs:
+        for candidate_name in candidate_names:
+            candidate_path = candidate_dir / candidate_name
+            if candidate_path.is_file():
+                return str(candidate_path)
+
+    return shutil.which(command_name)
+
+
 DOCLING_CLI = shutil.which("docling")
-MARKER_CLI = shutil.which("marker_single")
+MARKER_CLI = _resolve_cli_from_project_venv("marker_single")
 
 
 def _configure_tessdata() -> Optional[str]:
@@ -165,9 +221,25 @@ STUDENT_BRANCHES      = {"main", "master", "minha-solucao", "aluno", "student"}
 DEFAULT_OCR_LANGUAGE = "por,eng"
 
 PROCESSING_MODES = ["auto", "quick", "high_fidelity", "manual_assisted"]
-DOCUMENT_PROFILES = ["auto", "general", "math_light", "math_heavy", "layout_heavy", "scanned", "exam_pdf"]
-PREFERRED_BACKENDS = ["auto", "pymupdf4llm", "pymupdf", "docling", "marker"]
+DOCUMENT_PROFILES = ["auto", "math_heavy", "diagram_heavy", "scanned"]
+LEGACY_DOCUMENT_PROFILE_ALIASES = {
+    "": "auto",
+    "auto": "auto",
+    "general": "auto",
+    "math_light": "math_heavy",
+    "math_heavy": "math_heavy",
+    "layout_heavy": "diagram_heavy",
+    "diagram_heavy": "diagram_heavy",
+    "exam_pdf": "diagram_heavy",
+    "scanned": "scanned",
+}
+PREFERRED_BACKENDS = ["auto", "pymupdf4llm", "pymupdf", "datalab", "docling", "docling_python", "marker"]
 OCR_LANGS = ["por", "eng", "por,eng", "eng,por"]
+
+
+def normalize_document_profile(profile: str | None) -> str:
+    normalized = str(profile or "").strip().lower()
+    return LEGACY_DOCUMENT_PROFILE_ALIASES.get(normalized, "auto")
 
 # Utilities
 

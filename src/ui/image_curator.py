@@ -118,6 +118,23 @@ def _build_duplicate_index(groups: Dict[Optional[int], List[Path]]) -> Dict[str,
     return duplicate_info
 
 
+def _resolve_entry_pdf_path(repo_dir: Path, entry_data: dict) -> Optional[Path]:
+    """Resolve the exact PDF for an entry using manifest-backed paths."""
+    for raw_value in (
+        entry_data.get("raw_target"),
+        entry_data.get("source_path"),
+    ):
+        candidate_text = str(raw_value or "").strip()
+        if not candidate_text:
+            continue
+        candidate = Path(candidate_text)
+        if not candidate.is_absolute():
+            candidate = repo_dir / candidate
+        if candidate.exists() and candidate.suffix.lower() == ".pdf":
+            return candidate
+    return None
+
+
 class ImageCurator(tk.Toplevel):
     def __init__(self, parent, repo_dir: str, theme_mgr):
         super().__init__(parent)
@@ -814,22 +831,7 @@ class ImageCurator(tk.Toplevel):
         if not self._current_entry:
             return
 
-        entry_id = self._current_entry.get("id", "")
-        source_path = self._current_entry.get("source_path", "")
-
-        # Try to find the PDF file
-        pdf_path = None
-        if source_path and Path(source_path).exists():
-            pdf_path = Path(source_path)
-        else:
-            # Search in repo raw/ directory
-            raw_dir = self.repo_dir / "raw"
-            if raw_dir.exists():
-                candidates = list(raw_dir.rglob(f"*{entry_id}*.pdf"))
-                if not candidates:
-                    candidates = list(raw_dir.rglob("*.pdf"))
-                if candidates:
-                    pdf_path = candidates[0]
+        pdf_path = _resolve_entry_pdf_path(self.repo_dir, self._current_entry)
 
         if not pdf_path:
             self._pdf_canvas.delete("all")
@@ -939,17 +941,7 @@ class ImageCurator(tk.Toplevel):
             return
 
         entry_id = self._current_entry.get("id", "")
-        source_path = self._current_entry.get("source_path", "")
-
-        pdf_path = None
-        if source_path and Path(source_path).exists():
-            pdf_path = Path(source_path)
-        else:
-            raw_dir = self.repo_dir / "raw"
-            if raw_dir.exists():
-                candidates = list(raw_dir.rglob(f"*{entry_id}*.pdf"))
-                if candidates:
-                    pdf_path = candidates[0]
+        pdf_path = _resolve_entry_pdf_path(self.repo_dir, self._current_entry)
 
         if not pdf_path:
             return

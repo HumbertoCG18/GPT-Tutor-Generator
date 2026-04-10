@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
-from src.utils.helpers import DEFAULT_OCR_LANGUAGE, get_app_data_dir, slugify
+from src.utils.helpers import DEFAULT_OCR_LANGUAGE, get_app_data_dir, normalize_document_profile, slugify
 
 
 def _normalize_tag_list(raw: Any) -> List[str]:
@@ -56,6 +56,7 @@ class FileEntry:
     processing_mode: str = "auto"
     document_profile: str = "auto"
     preferred_backend: str = "auto"
+    datalab_mode: str = "accurate"
     formula_priority: bool = False
     preserve_pdf_images_in_markdown: bool = True
     force_ocr: bool = False
@@ -84,6 +85,7 @@ class FileEntry:
         auto_tags = _normalize_tag_list(payload.get("auto_tags"))
         legacy_tags = str(payload.get("tags", "") or "").strip()
         file_type = str(payload.get("file_type", "") or "").strip().lower()
+        payload["document_profile"] = normalize_document_profile(payload.get("document_profile"))
         if not manual_tags and _should_migrate_legacy_tags(file_type, legacy_tags):
             manual_tags = _normalize_tag_list(legacy_tags)
         payload["manual_tags"] = manual_tags
@@ -99,7 +101,7 @@ class DocumentProfileReport:
     table_candidates: int = 0
     text_density: float = 0.0
     suspected_scan: bool = False
-    suggested_profile: str = "general"
+    suggested_profile: str = "auto"
     notes: List[str] = field(default_factory=list)
 
 

@@ -14,9 +14,12 @@ def test_collect_repo_metrics_counts_manifest_manual_review_and_tasks(tmp_path: 
         json.dumps({"entries": [{"id": "a"}, {"id": "b"}]}),
         encoding="utf-8",
     )
-    manual_review = repo_root / "manual-review"
-    manual_review.mkdir()
-    (manual_review / "item.md").write_text("x", encoding="utf-8")
+    (repo_root / "manual-review" / "pdfs").mkdir(parents=True)
+    (repo_root / "manual-review" / "images").mkdir(parents=True)
+    (repo_root / "manual-review" / "code").mkdir(parents=True)
+    (repo_root / "manual-review" / "pdfs" / "item-a.md").write_text("x", encoding="utf-8")
+    (repo_root / "manual-review" / "images" / "item-b.md").write_text("x", encoding="utf-8")
+    (repo_root / "manual-review" / "code" / "item-c.md").write_text("x", encoding="utf-8")
 
     subject = SubjectProfile(
         name="Métodos Formais",
@@ -42,7 +45,7 @@ def test_collect_repo_metrics_counts_manifest_manual_review_and_tasks(tmp_path: 
     assert row.subject_name == "Métodos Formais"
     assert row.repo_status == "Manifest pronto"
     assert row.manifest_entries == 2
-    assert row.manual_review_items == 1
+    assert row.manual_review_items == 2
     assert row.pending_repo_tasks == 1
     assert row.last_task_status == "completed @ 2026-04-03T10:00:00"
 
@@ -82,3 +85,22 @@ def test_collect_repo_metrics_excludes_manifest_entries_from_queue_count(tmp_pat
     row = collect_repo_metrics([subject], [])[0]
 
     assert row.queued_files == 1
+
+
+def test_collect_repo_metrics_excludes_code_manual_review_from_count(tmp_path: Path):
+    repo_root = tmp_path / "repo"
+    repo_root.mkdir()
+    (repo_root / "manual-review" / "pdfs").mkdir(parents=True)
+    (repo_root / "manual-review" / "code").mkdir(parents=True)
+    (repo_root / "manual-review" / "pdfs" / "pdf-review.md").write_text("x", encoding="utf-8")
+    (repo_root / "manual-review" / "code" / "code-review.md").write_text("x", encoding="utf-8")
+
+    subject = SubjectProfile(
+        name="Métodos Formais",
+        repo_root=str(repo_root),
+        queue=[],
+    )
+
+    row = collect_repo_metrics([subject], [])[0]
+
+    assert row.manual_review_items == 1

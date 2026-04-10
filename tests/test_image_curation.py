@@ -281,6 +281,49 @@ def test_build_duplicate_index_marks_exact_duplicates(tmp_path):
     assert result["page-024-a.png"]["other_pages"] == [23]
 
 
+def test_resolve_entry_pdf_prefers_manifest_raw_target(tmp_path):
+    from src.ui.image_curator import _resolve_entry_pdf_path
+
+    repo = tmp_path / "repo"
+    pdf_a = repo / "raw" / "pdfs" / "material-de-aula" / "entry-a.pdf"
+    pdf_b = repo / "raw" / "pdfs" / "material-de-aula" / "entry-b.pdf"
+    pdf_a.parent.mkdir(parents=True)
+    pdf_a.write_bytes(b"%PDF-1.4 a")
+    pdf_b.write_bytes(b"%PDF-1.4 b")
+
+    entry = {
+        "id": "entry-a",
+        "source_path": "C:/stale/original.pdf",
+        "raw_target": "raw/pdfs/material-de-aula/entry-a.pdf",
+    }
+
+    result = _resolve_entry_pdf_path(repo, entry)
+
+    assert result == pdf_a
+
+
+def test_resolve_entry_pdf_does_not_fallback_to_unrelated_pdf_when_raw_target_exists(tmp_path):
+    from src.ui.image_curator import _resolve_entry_pdf_path
+
+    repo = tmp_path / "repo"
+    pdf_a = repo / "raw" / "pdfs" / "material-de-aula" / "entry-a.pdf"
+    pdf_b = repo / "raw" / "pdfs" / "material-de-aula" / "other.pdf"
+    pdf_a.parent.mkdir(parents=True)
+    pdf_a.write_bytes(b"%PDF-1.4 a")
+    pdf_b.write_bytes(b"%PDF-1.4 b")
+
+    entry = {
+        "id": "entry-a",
+        "source_path": "",
+        "raw_target": "raw/pdfs/material-de-aula/entry-a.pdf",
+    }
+
+    result = _resolve_entry_pdf_path(repo, entry)
+
+    assert result == pdf_a
+    assert result != pdf_b
+
+
 def test_inject_image_descriptions_accepts_curated_status(tmp_path):
     from src.builder.engine import RepoBuilder
 
@@ -466,6 +509,53 @@ def test_inject_all_image_descriptions_supports_scanned_latex_extraction(tmp_pat
     assert "> **[LaTeX extraído]** \\int_0^1 x^2 dx = 1/3" in target_text
 
 
+def test_inject_all_image_descriptions_matches_non_scanned_rewritten_content_image(tmp_path):
+    from src.builder.engine import RepoBuilder
+
+    repo = tmp_path / "repo"
+    target = repo / "staging" / "markdown-auto" / "marker" / "entry1.md"
+    target.parent.mkdir(parents=True)
+    (repo / "content" / "images").mkdir(parents=True)
+    target.write_text(
+        "![](../../../content/images/entry1-logica-sintaxe-_page_2_Figure_1.png)\n",
+        encoding="utf-8",
+    )
+    manifest = {
+        "entries": [
+            {
+                "id": "entry1",
+                "title": "PDF normal",
+                "base_markdown": "staging/markdown-auto/marker/entry1.md",
+                "effective_profile": "math_heavy",
+                "image_curation": {
+                    "status": "curated",
+                    "pages": {
+                        "3": {
+                            "include_page": True,
+                            "images": {
+                                "logica-sintaxe-_page_2_Figure_1.png": {
+                                    "type": "diagrama",
+                                    "include": True,
+                                    "description": "Diagrama com conectivos lógicos e caixas de derivação.",
+                                }
+                            },
+                        }
+                    },
+                },
+            }
+        ]
+    }
+    (repo / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+
+    builder = RepoBuilder.__new__(RepoBuilder)
+    builder.root_dir = repo
+    builder._inject_all_image_descriptions()
+
+    target_text = target.read_text(encoding="utf-8")
+    assert "<!-- IMAGE_DESCRIPTION: logica-sintaxe-_page_2_Figure_1.png -->" in target_text
+    assert "Diagrama com conectivos lógicos e caixas de derivação." in target_text
+
+
 def test_inject_all_image_descriptions_falls_back_when_manifest_markdown_is_stale(tmp_path):
     from src.builder.engine import RepoBuilder
 
@@ -598,6 +688,29 @@ def test_curator_studio_pdf_preview_guard_accepts_only_pdf_paths():
     assert _is_pdf_preview_target("raw/code/professor/xor-mlp.ipynb") is False
     assert _is_pdf_preview_target("raw/zip/projeto.zip") is False
     assert _is_pdf_preview_target(None) is False
+
+
+def test_curator_studio_preview_zoom_helpers():
+    from src.ui.curator_studio import _clamp_preview_zoom, _preview_target_width
+
+    assert _clamp_preview_zoom(0.1) == 0.5
+    assert _clamp_preview_zoom(1.0) == 1.0
+    assert _clamp_preview_zoom(9.0) == 2.5
+    assert _preview_target_width(1.0) == 400
+    assert _preview_target_width(2.0) == 800
+
+
+def test_curator_studio_markdown_image_reference_uses_relative_path(tmp_path):
+    from src.ui.curator_studio import _markdown_image_reference
+
+    repo = tmp_path / "repo"
+    markdown_path = repo / "staging" / "markdown-auto" / "marker" / "entry1.md"
+    image_path = repo / "content" / "images" / "manual-crops" / "entry1-page-003-manual-101010.png"
+    markdown_path.parent.mkdir(parents=True)
+    image_path.parent.mkdir(parents=True)
+
+    ref = _markdown_image_reference(markdown_path, image_path, repo)
+    assert ref == "![](../../../content/images/manual-crops/entry1-page-003-manual-101010.png)"
 
 
 def test_app_config_migrates_legacy_ollama_model(tmp_path):
