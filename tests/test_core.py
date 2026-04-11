@@ -401,7 +401,95 @@ class TestAdvancedBackendPolicies:
         ctx = self._ctx(page_count=200, page_range="1-10", profile="math_heavy")
         assert engine_module._marker_chunk_size_for_workload(ctx) == 20
 
-    def test_datalab_backend_saves_markdown_and_images(self, tmp_path, monkeypatch):
+    def test_datalab_long_document_policy_uses_20_page_chunks_for_math_heavy(self):
+        ctx = self._ctx(page_count=90, profile="math_heavy")
+        assert engine_module._datalab_chunk_size_for_workload(ctx) == 20
+        assert engine_module._datalab_should_chunk(ctx) is True
+
+    def test_datalab_run_uses_single_execution_for_small_selected_page_range(self, tmp_path, monkeypatch):
+        backend = engine_module.DatalabCloudBackend()
+        ctx = self._ctx(page_count=200, page_range="1-10", profile="math_heavy")
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+        calls = {"single": 0, "chunked": 0}
+
+        def _fake_single(*args, **kwargs):
+            calls["single"] += 1
+            return engine_module.BackendRunResult(
+                name="datalab",
+                layer="advanced",
+                status="ok",
+            )
+
+        def _fake_chunked(*args, **kwargs):
+            calls["chunked"] += 1
+            return engine_module.BackendRunResult(
+                name="datalab",
+                layer="advanced",
+                status="ok",
+            )
+
+        monkeypatch.setattr(backend, "_run_single_datalab", _fake_single)
+        monkeypatch.setattr(backend, "_run_chunked_datalab", _fake_chunked)
+
+        result = backend.run(ctx)
+
+        assert result.status == "ok"
+        assert calls == {"single": 1, "chunked": 0}
+
+    def test_datalab_chunked_backend_merges_markdown_and_metadata(self, tmp_path, monkeypatch):
+        backend = engine_module.DatalabCloudBackend()
+        ctx = self._ctx(page_count=55, profile="math_heavy")
+        ctx.root_dir = tmp_path
+        ctx.raw_target = tmp_path / "raw" / "pdfs" / "material-de-aula" / "mlp.pdf"
+        ctx.raw_target.parent.mkdir(parents=True, exist_ok=True)
+        ctx.raw_target.write_text("pdf", encoding="utf-8")
+        ctx.entry.datalab_mode = "balanced"
+
+        captured_ranges = []
+
+        def _fake_convert(*args, **kwargs):
+            page_range = kwargs.get("page_range")
+            captured_ranges.append(page_range)
+            chunk_start = page_range.split("-", 1)[0] if page_range else "0"
+            return mock.Mock(
+                request_id=f"req-{chunk_start}",
+                request_check_url=f"https://www.datalab.to/api/v1/convert/req-{chunk_start}",
+                markdown=f"# Chunk {chunk_start}\n\n![](figure-{chunk_start}.png)\n\nTexto {chunk_start}\n",
+                images={},
+                metadata={"source": "datalab"},
+                page_count=len(engine_module.parse_page_range(page_range or "") or [0]),
+                parse_quality_score=4.5,
+                cost_breakdown={"total_cents": 2},
+                raw_response={"status": "complete", "success": True, "error": None},
+            )
+
+        monkeypatch.setattr(engine_module, "convert_document_to_markdown", _fake_convert)
+        monkeypatch.setattr(engine_module, "get_datalab_base_url", lambda: "https://www.datalab.to")
+
+        result = backend.run(ctx)
+
+        assert result.status == "ok"
+        assert captured_ranges == ["0-19", "20-39", "40-54"]
+        md_path = tmp_path / result.markdown_path
+        md_text = md_path.read_text(encoding="utf-8")
+        assert "DATALAB_CHUNK 1" in md_text
+        assert "Texto 0" in md_text
+        assert "Texto 20" in md_text
+        assert "Texto 40" in md_text
+        assert "![](figure-0.png)" not in md_text
+
+        metadata = json.loads((tmp_path / "staging" / "markdown-auto" / "datalab" / "mlp" / "datalab-run.json").read_text(encoding="utf-8"))
+        assert metadata["chunked"] is True
+        assert metadata["chunk_size"] == 20
+        assert metadata["page_range"] == "0-54"
+        assert metadata["selected_pages_count"] == 55
+        assert len(metadata["chunks"]) == 3
+        assert metadata["cost_breakdown"]["total_cents"] == 6.0
+
+    def test_datalab_backend_disables_api_side_images_and_captions(self, tmp_path, monkeypatch):
         backend = engine_module.DatalabCloudBackend()
         ctx = self._ctx(page_count=12, profile="math_heavy")
         ctx.root_dir = tmp_path
@@ -411,6 +499,7 @@ class TestAdvancedBackendPolicies:
         ctx.entry.page_range = "1-2"
         ctx.pages = [0, 1]
         ctx.entry.datalab_mode = "fast"
+        captured_kwargs = {}
 
         fake_result = mock.Mock(
             request_id="req-123",
@@ -424,21 +513,31 @@ class TestAdvancedBackendPolicies:
             raw_response={"status": "complete", "success": True, "error": None},
         )
 
-        monkeypatch.setattr(engine_module, "convert_document_to_markdown", lambda *args, **kwargs: fake_result)
+        def _fake_convert(*args, **kwargs):
+            captured_kwargs.update(kwargs)
+            return fake_result
+
+        monkeypatch.setattr(engine_module, "convert_document_to_markdown", _fake_convert)
         monkeypatch.setattr(engine_module, "get_datalab_base_url", lambda: "https://www.datalab.to")
 
         result = backend.run(ctx)
 
         assert result.status == "ok"
+        assert captured_kwargs["disable_image_extraction"] is True
+        assert captured_kwargs["disable_image_captions"] is True
         md_path = tmp_path / result.markdown_path
         assert md_path.exists()
         md_text = md_path.read_text(encoding="utf-8")
-        assert "![](mlp_images/figure-1.png)" in md_text
-        assert (tmp_path / "staging" / "markdown-auto" / "datalab" / "mlp" / "mlp_images" / "figure-1.png").exists()
+        assert "![](figure-1.png)" not in md_text
+        assert "Título" in md_text
+        assert not (tmp_path / "staging" / "markdown-auto" / "datalab" / "mlp" / "mlp_images" / "figure-1.png").exists()
         metadata = json.loads((tmp_path / "staging" / "markdown-auto" / "datalab" / "mlp" / "datalab-run.json").read_text(encoding="utf-8"))
         assert metadata["mode"] == "fast"
         assert metadata["page_range"] == "0-1"
         assert metadata["parse_quality_score"] == 4.7
+        assert metadata["disable_image_extraction"] is True
+        assert metadata["disable_image_captions"] is True
+        assert metadata["images_saved"] == []
 
     def test_marker_command_omits_force_ocr_when_only_formula_priority_is_enabled(self, tmp_path, monkeypatch):
         backend = engine_module.MarkerCLIBackend()
@@ -3715,6 +3814,58 @@ class TestBundleSeedLowToken:
 
         restored = FileEntry.from_dict({**entry_data, "enabled": True})
         assert restored.page_range == "3-8"
+
+    def test_unprocess_removes_final_markdowns_and_consolidated_entry_images(self, tmp_path):
+        from src.builder.engine import RepoBuilder
+
+        repo = tmp_path / "repo"
+        (repo / "build" / "claude-knowledge").mkdir(parents=True)
+        (repo / "course").mkdir(parents=True)
+        (repo / "content" / "curated").mkdir(parents=True)
+        (repo / "content" / "images" / "scanned" / "aula1").mkdir(parents=True)
+
+        approved_md = repo / "content" / "curated" / "aula1.md"
+        approved_md.write_text("# Aula 1\n", encoding="utf-8")
+        consolidated_img = repo / "content" / "images" / "aula1-page-400-img-01.png"
+        consolidated_img.write_bytes(b"old")
+        scanned_img = repo / "content" / "images" / "scanned" / "aula1" / "page-001.jpg"
+        scanned_img.write_bytes(b"old")
+
+        manifest = {
+            "generated_at": "2026-04-10T10:00:00",
+            "course": {
+                "course_name": "MÃ©todos Formais",
+                "course_slug": "metodos-formais",
+                "semester": "2026/1",
+                "professor": "Prof",
+                "institution": "PUCRS",
+            },
+            "entries": [
+                {
+                    "id": "aula1",
+                    "title": "Aula 1",
+                    "category": "material-de-aula",
+                    "file_type": "pdf",
+                    "source_path": "C:/tmp/aula1.pdf",
+                    "approved_markdown": "content/curated/aula1.md",
+                    "curated_markdown": "content/curated/aula1.md",
+                    "rendered_pages_dir": "content/images/scanned/aula1",
+                }
+            ],
+            "logs": [],
+        }
+        (repo / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+
+        builder = RepoBuilder(root_dir=repo, course_meta={}, entries=[], options={})
+        builder._resolve_content_images = lambda: None
+
+        assert builder.unprocess("aula1") is True
+        assert not approved_md.exists()
+        assert not consolidated_img.exists()
+        assert not scanned_img.exists()
+
+        updated = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+        assert updated["entries"] == []
 
     def test_process_entry_persists_page_range_and_processing_options(self, tmp_path):
         from src.builder.engine import RepoBuilder

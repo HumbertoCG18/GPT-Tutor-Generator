@@ -20,7 +20,6 @@ from src.builder.datalab_client import (
     convert_document_to_markdown,
     get_datalab_base_url,
     has_datalab_api_key,
-    save_datalab_images,
 )
 from src.builder.image_classifier import extract_page_number
 from src.models.core import (
@@ -869,12 +868,25 @@ def _rewrite_markdown_asset_paths(markdown: str, source_dir: Path, target_dir: P
     return pattern.sub(_replace, markdown)
 
 
-def _build_marker_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
-    """Split marker work into smaller page chunks to reduce long silent stalls."""
+def _strip_markdown_image_refs(markdown: str) -> str:
+    if not markdown:
+        return markdown
+    stripped = re.sub(r"(?m)^[ \t]*!\[[^\]]*\]\([^)]+\)[ \t]*\n?", "", markdown)
+    stripped = re.sub(r"\n{3,}", "\n\n", stripped)
+    normalized = stripped.strip()
+    return normalized + ("\n" if normalized else "")
+
+
+def _build_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
     selected = sorted(pages if pages is not None else list(range(page_count)))
     if not selected:
         return []
     return [selected[i:i + chunk_size] for i in range(0, len(selected), chunk_size)]
+
+
+def _build_marker_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
+    """Split marker work into smaller page chunks to reduce long silent stalls."""
+    return _build_page_chunks(pages, page_count, chunk_size=chunk_size)
 
 
 def _selected_page_count(ctx: "BackendContext") -> int:
@@ -963,6 +975,34 @@ def _marker_chunk_size_for_workload(ctx: "BackendContext") -> int:
     if effective_profile in {"math_heavy", "diagram_heavy"} and selected_pages >= 80:
         return 10
     return 20
+
+
+def _datalab_chunk_size_for_workload(ctx: "BackendContext") -> int:
+    effective_profile = _effective_document_profile(ctx.entry.document_profile, ctx.report.suggested_profile)
+    selected_pages = _selected_page_count(ctx)
+    if effective_profile == "math_heavy":
+        return 15 if selected_pages >= 120 else 20
+    if effective_profile in {"diagram_heavy", "scanned"}:
+        return 20
+    return 25
+
+
+def _datalab_should_chunk(ctx: "BackendContext") -> bool:
+    selected_pages = _selected_page_count(ctx)
+    if selected_pages < 50:
+        return False
+    return selected_pages > _datalab_chunk_size_for_workload(ctx)
+
+
+def _merge_numeric_dicts(items: List[Dict[str, object]]) -> Dict[str, object]:
+    merged: Dict[str, object] = {}
+    for item in items:
+        for key, value in (item or {}).items():
+            if isinstance(value, bool):
+                continue
+            if isinstance(value, (int, float)):
+                merged[key] = float(merged.get(key, 0) or 0) + value
+    return merged
 
 
 def _should_force_ocr_for_marker(ctx: "BackendContext") -> bool:
@@ -1124,26 +1164,6 @@ def _pdf_image_extraction_policy(ctx: "BackendContext") -> Dict[str, object]:
         "max_aspect_ratio": RepoBuilder._MAX_ASPECT_RATIO,
         "keep_low_color": False,
     }
-
-
-def _rewrite_datalab_markdown_image_refs(markdown: str, images_subdir: str, saved_images: Dict[str, Path]) -> str:
-    if not markdown or not saved_images:
-        return markdown
-
-    by_basename = {path.name: path for path in saved_images.values()}
-    pattern = re.compile(r"(!\[[^\]]*\]\()([^)]+)(\))")
-
-    def _replace(match: re.Match) -> str:
-        raw_ref = match.group(2).strip()
-        basename = Path(raw_ref.replace("\\", "/")).name
-        if basename not in by_basename:
-            return match.group(0)
-        rewritten = f"{images_subdir}/{basename}".replace("\\", "/")
-        return f"{match.group(1)}{rewritten}{match.group(3)}"
-
-    return pattern.sub(_replace, markdown)
-
-
 def _truncate_markdown_blocks(blocks: List[str], max_chars: int = 15000) -> str:
     if not blocks:
         return ""
@@ -2468,17 +2488,276 @@ class DatalabCloudBackend(ExtractionBackend):
     def available(self) -> bool:
         return has_datalab_api_key()
 
+    def _convert_range(
+        self,
+        ctx: BackendContext,
+        *,
+        mode: str,
+        page_range: Optional[str],
+        max_wait_seconds: int,
+    ):
+        result = convert_document_to_markdown(
+            ctx.raw_target,
+            output_format="markdown",
+            mode=mode,
+            page_range=page_range,
+            disable_image_captions=True,
+            disable_image_extraction=True,
+            paginate=False,
+            token_efficient_markdown=False,
+            request_timeout=60,
+            poll_interval=2.0,
+            max_wait_seconds=max_wait_seconds,
+        )
+        markdown = _sanitize_external_markdown_text(result.markdown)
+        markdown = _strip_markdown_image_refs(markdown)
+        return result, markdown
+
+    def _run_single_datalab(
+        self,
+        ctx: BackendContext,
+        out_dir: Path,
+        *,
+        mode: str,
+        page_range: Optional[str],
+        max_wait_seconds: int,
+    ) -> BackendRunResult:
+        out_path = out_dir / f"{ctx.entry_id}.md"
+
+        logger.info(
+            "  [datalab] Enviando documento para a API (mode=%s, page_range=%s, max_wait=%ss).",
+            mode,
+            page_range or "all",
+            max_wait_seconds,
+        )
+
+        try:
+            result, markdown = self._convert_range(
+                ctx,
+                mode=mode,
+                page_range=page_range,
+                max_wait_seconds=max_wait_seconds,
+            )
+        except Exception as e:
+            logger.error("  [datalab] Erro ao executar: %s", e)
+            return BackendRunResult(
+                name=self.name,
+                layer=self.layer,
+                status="error",
+                error=str(e),
+            )
+
+        write_text(out_path, markdown)
+
+        metadata_path = out_dir / "datalab-run.json"
+        write_text(metadata_path, json.dumps({
+            "backend": "datalab",
+            "base_url": get_datalab_base_url(),
+            "chunked": False,
+            "request_id": result.request_id,
+            "request_check_url": result.request_check_url,
+            "mode": mode,
+            "page_range": page_range,
+            "selected_pages_count": _selected_page_count(ctx),
+            "page_count": result.page_count,
+            "parse_quality_score": result.parse_quality_score,
+            "cost_breakdown": result.cost_breakdown,
+            "disable_image_extraction": True,
+            "disable_image_captions": True,
+            "images_saved": [],
+            "metadata": result.metadata,
+            "raw_response_tail": {
+                "status": result.raw_response.get("status"),
+                "success": result.raw_response.get("success"),
+                "error": result.raw_response.get("error"),
+            },
+        }, indent=2, ensure_ascii=False))
+
+        notes = [
+            "SaÃ­da avanÃ§ada gerada com Datalab Document Conversion API.",
+            f"Modo: {mode}.",
+            "Imagens e descricoes sinteticas do Datalab desativadas; a curadoria de imagens permanece app-side.",
+        ]
+        if result.parse_quality_score is not None:
+            notes.append(f"parse_quality_score={result.parse_quality_score}.")
+
+        return BackendRunResult(
+            name=self.name,
+            layer=self.layer,
+            status="ok",
+            markdown_path=safe_rel(out_path, ctx.root_dir),
+            asset_dir=safe_rel(out_dir, ctx.root_dir),
+            metadata_path=safe_rel(metadata_path, ctx.root_dir),
+            notes=notes,
+        )
+
+    def _run_chunked_datalab(
+        self,
+        ctx: BackendContext,
+        out_dir: Path,
+        *,
+        mode: str,
+        max_wait_seconds: int,
+    ) -> BackendRunResult:
+        chunk_size = _datalab_chunk_size_for_workload(ctx)
+        chunks = _build_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=chunk_size)
+        if len(chunks) <= 1:
+            return self._run_single_datalab(
+                ctx,
+                out_dir,
+                mode=mode,
+                page_range=pages_to_marker_range(ctx.pages),
+                max_wait_seconds=max_wait_seconds,
+            )
+
+        logger.info(
+            "  [datalab] Documento longo; processando em %d chunks de atÃ© %d pÃ¡ginas.",
+            len(chunks),
+            chunk_size,
+        )
+
+        out_path = out_dir / f"{ctx.entry_id}.md"
+        chunks_dir = out_dir / "chunks"
+        ensure_dir(chunks_dir)
+        combined_parts: List[str] = []
+        chunk_meta: List[Dict[str, object]] = []
+        parse_scores: List[float] = []
+        cost_breakdowns: List[Dict[str, object]] = []
+        total_pages = 0
+
+        for idx, chunk_pages in enumerate(chunks, start=1):
+            chunk_range = pages_to_marker_range(chunk_pages)
+            logger.info(
+                "  [datalab] Chunk %d/%d â€” pÃ¡ginas %d-%d",
+                idx,
+                len(chunks),
+                chunk_pages[0] + 1,
+                chunk_pages[-1] + 1,
+            )
+            try:
+                result, markdown = self._convert_range(
+                    ctx,
+                    mode=mode,
+                    page_range=chunk_range,
+                    max_wait_seconds=max_wait_seconds,
+                )
+            except Exception as e:
+                logger.error("  [datalab] Erro no chunk %d/%d: %s", idx, len(chunks), e)
+                return BackendRunResult(
+                    name=self.name,
+                    layer=self.layer,
+                    status="error",
+                    error=f"Chunk {idx}/{len(chunks)} falhou: {e}",
+                )
+
+            chunk_path = chunks_dir / f"chunk-{idx:03d}.md"
+            write_text(chunk_path, markdown)
+
+            chunk_body = _strip_frontmatter_block(markdown).strip()
+            if chunk_body:
+                combined_parts.append(
+                    f"<!-- DATALAB_CHUNK {idx}: pages {chunk_pages[0] + 1}-{chunk_pages[-1] + 1} -->\n\n{chunk_body}"
+                )
+
+            if result.parse_quality_score is not None:
+                parse_scores.append(float(result.parse_quality_score))
+            cost_breakdowns.append(dict(result.cost_breakdown or {}))
+            total_pages += int(result.page_count or 0)
+            chunk_meta.append({
+                "chunk_index": idx,
+                "page_range": chunk_range,
+                "page_count": result.page_count,
+                "request_id": result.request_id,
+                "request_check_url": result.request_check_url,
+                "parse_quality_score": result.parse_quality_score,
+                "cost_breakdown": result.cost_breakdown,
+                "markdown_path": safe_rel(chunk_path, ctx.root_dir),
+                "raw_response_tail": {
+                    "status": result.raw_response.get("status"),
+                    "success": result.raw_response.get("success"),
+                    "error": result.raw_response.get("error"),
+                },
+            })
+
+        combined_markdown = "\n\n".join(part for part in combined_parts if part).strip()
+        if combined_markdown:
+            combined_markdown += "\n"
+        write_text(out_path, combined_markdown)
+
+        metadata_path = out_dir / "datalab-run.json"
+        average_score = round(sum(parse_scores) / len(parse_scores), 4) if parse_scores else None
+        effective_page_range = pages_to_marker_range(ctx.pages)
+        if not effective_page_range:
+            flattened_pages = [page for chunk_pages in chunks for page in chunk_pages]
+            effective_page_range = pages_to_marker_range(flattened_pages)
+        write_text(metadata_path, json.dumps({
+            "backend": "datalab",
+            "base_url": get_datalab_base_url(),
+            "chunked": True,
+            "chunk_size": chunk_size,
+            "mode": mode,
+            "page_range": effective_page_range,
+            "selected_pages_count": _selected_page_count(ctx),
+            "page_count": total_pages,
+            "parse_quality_score": average_score,
+            "cost_breakdown": _merge_numeric_dicts(cost_breakdowns),
+            "disable_image_extraction": True,
+            "disable_image_captions": True,
+            "images_saved": [],
+            "chunks": chunk_meta,
+        }, indent=2, ensure_ascii=False))
+
+        notes = [
+            "SaÃ­da avanÃ§ada gerada com Datalab Document Conversion API em chunks.",
+            f"Modo: {mode}.",
+            f"Chunking aplicado para documento longo ({len(chunks)} chunks de atÃ© {chunk_size} pÃ¡ginas).",
+            "Imagens e descricoes sinteticas do Datalab desativadas; a curadoria de imagens permanece app-side.",
+        ]
+        if average_score is not None:
+            notes.append(f"parse_quality_score={average_score}.")
+
+        return BackendRunResult(
+            name=self.name,
+            layer=self.layer,
+            status="ok",
+            markdown_path=safe_rel(out_path, ctx.root_dir),
+            asset_dir=safe_rel(out_dir, ctx.root_dir),
+            metadata_path=safe_rel(metadata_path, ctx.root_dir),
+            notes=notes,
+        )
+
     def run(self, ctx: BackendContext) -> BackendRunResult:
         out_dir = ctx.root_dir / "staging" / "markdown-auto" / "datalab" / ctx.entry_id
         ensure_dir(out_dir)
         out_path = out_dir / f"{ctx.entry_id}.md"
-        images_dir = out_dir / f"{ctx.entry_id}_images"
 
         effective_profile = _effective_document_profile(ctx.entry.document_profile, ctx.report.suggested_profile)
         page_range = pages_to_marker_range(ctx.pages)
         requested_mode = str(getattr(ctx.entry, "datalab_mode", "") or "").strip().lower()
         mode = requested_mode if requested_mode in {"fast", "balanced", "accurate"} else ("accurate" if effective_profile == "math_heavy" else "balanced")
         max_wait_seconds = _advanced_cli_stall_timeout("docling", ctx)
+        should_chunk = _datalab_should_chunk(ctx)
+
+        logger.info(
+            "  [datalab] Long-doc policy: should_chunk=%s (selected_pages=%d, chunk_size=%d).",
+            should_chunk,
+            _selected_page_count(ctx),
+            _datalab_chunk_size_for_workload(ctx),
+        )
+        if should_chunk:
+            return self._run_chunked_datalab(
+                ctx,
+                out_dir,
+                mode=mode,
+                max_wait_seconds=max_wait_seconds,
+            )
+        return self._run_single_datalab(
+            ctx,
+            out_dir,
+            mode=mode,
+            page_range=page_range,
+            max_wait_seconds=max_wait_seconds,
+        )
 
         logger.info(
             "  [datalab] Enviando documento para a API (mode=%s, page_range=%s, max_wait=%ss).",
@@ -2494,7 +2773,7 @@ class DatalabCloudBackend(ExtractionBackend):
                 mode=mode,
                 page_range=page_range,
                 disable_image_captions=True,
-                disable_image_extraction=False,
+                disable_image_extraction=True,
                 paginate=False,
                 token_efficient_markdown=False,
                 request_timeout=60,
@@ -2511,9 +2790,7 @@ class DatalabCloudBackend(ExtractionBackend):
             )
 
         markdown = _sanitize_external_markdown_text(result.markdown)
-        saved_images = save_datalab_images(result.images, images_dir) if result.images else {}
-        if saved_images:
-            markdown = _rewrite_datalab_markdown_image_refs(markdown, images_dir.name, saved_images)
+        markdown = _strip_markdown_image_refs(markdown)
         write_text(out_path, markdown)
 
         metadata_path = out_dir / "datalab-run.json"
@@ -2527,7 +2804,9 @@ class DatalabCloudBackend(ExtractionBackend):
             "page_count": result.page_count,
             "parse_quality_score": result.parse_quality_score,
             "cost_breakdown": result.cost_breakdown,
-            "images_saved": [safe_rel(path, ctx.root_dir) for path in saved_images.values()],
+            "disable_image_extraction": True,
+            "disable_image_captions": True,
+            "images_saved": [],
             "metadata": result.metadata,
             "raw_response_tail": {
                 "status": result.raw_response.get("status"),
@@ -2539,6 +2818,7 @@ class DatalabCloudBackend(ExtractionBackend):
         notes = [
             "Saída avançada gerada com Datalab Document Conversion API.",
             f"Modo: {mode}.",
+            "Imagens e descricoes sinteticas do Datalab desativadas; a curadoria de imagens permanece app-side.",
         ]
         if result.parse_quality_score is not None:
             notes.append(f"parse_quality_score={result.parse_quality_score}.")
@@ -3866,6 +4146,43 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             "- Atualizar `student/STUDENT_STATE.md` após cada sessão de estudo.",
         ])
         write_text(self.root_dir / "BUILD_REPORT.md", "\n".join(report) + "\n")
+
+    def _remove_entry_consolidated_images(self, entry_id: str) -> int:
+        """Remove consolidated content/images assets that belong to one entry."""
+        if not entry_id:
+            return 0
+
+        removed_count = 0
+        images_dir = self.root_dir / "content" / "images"
+        if not images_dir.exists():
+            return 0
+
+        entry_prefix = entry_id.lower()
+        for img_path in images_dir.iterdir():
+            if not img_path.is_file():
+                continue
+            lower_name = img_path.name.lower()
+            if not (
+                lower_name == entry_prefix
+                or lower_name.startswith(entry_prefix + "-")
+                or lower_name.startswith(entry_prefix + "_")
+            ):
+                continue
+            try:
+                img_path.unlink()
+                removed_count += 1
+            except Exception as e:
+                logger.warning("Could not remove consolidated image %s: %s", img_path, e)
+
+        scanned_dir = images_dir / "scanned" / entry_id
+        if scanned_dir.exists():
+            try:
+                shutil.rmtree(scanned_dir)
+                removed_count += 1
+            except Exception as e:
+                logger.warning("Could not remove scanned image dir %s: %s", scanned_dir, e)
+
+        return removed_count
 
     def _process_entry(self, entry: FileEntry) -> Dict[str, object]:
         item: Dict[str, object] = {
@@ -5199,9 +5516,10 @@ unit: {entry.tags}
             return False
 
         paths_to_remove: List[str] = []
-        for key in ["raw_target", "base_markdown", "advanced_markdown", "manual_review",
+        for key in ["raw_target", "base_markdown", "advanced_markdown", "advanced_markdown_raw", "manual_review",
                     "images_dir", "tables_dir", "table_detection_dir",
-                    "advanced_asset_dir", "advanced_metadata_path"]:
+                    "advanced_asset_dir", "advanced_metadata_path",
+                    "approved_markdown", "curated_markdown", "rendered_pages_dir"]:
             val = target.get(key)
             if val:
                 paths_to_remove.append(val)
@@ -5218,6 +5536,8 @@ unit: {entry.tags}
                     removed_count += 1
             except Exception as e:
                 logger.warning("Could not remove %s: %s", full, e)
+
+        removed_count += self._remove_entry_consolidated_images(entry_id)
 
         manifest["entries"] = [e for e in manifest["entries"] if e.get("id") != entry_id]
         manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
@@ -5257,7 +5577,7 @@ unit: {entry.tags}
 
         # Remover apenas arquivos gerados (NÃO raw_target)
         keys_to_clean = [
-            "base_markdown", "advanced_markdown", "manual_review",
+            "base_markdown", "advanced_markdown", "advanced_markdown_raw", "manual_review",
             "images_dir", "tables_dir", "table_detection_dir",
             "advanced_asset_dir", "advanced_metadata_path",
             "approved_markdown", "curated_markdown",
@@ -5278,6 +5598,8 @@ unit: {entry.tags}
                     removed_count += 1
             except Exception as e:
                 logger.warning("reject: não foi possível remover %s: %s", full, e)
+
+        removed_count += self._remove_entry_consolidated_images(entry_id)
 
         # Remover entry do manifest
         manifest["entries"] = [e for e in manifest["entries"] if e.get("id") != entry_id]

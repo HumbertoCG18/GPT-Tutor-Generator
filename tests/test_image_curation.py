@@ -700,7 +700,7 @@ def test_curator_studio_preview_zoom_helpers():
     assert _preview_target_width(2.0) == 800
 
 
-def test_curator_studio_markdown_image_reference_uses_relative_path(tmp_path):
+def test_curator_studio_markdown_image_reference_uses_repo_relative_path(tmp_path):
     from src.ui.curator_studio import _markdown_image_reference
 
     repo = tmp_path / "repo"
@@ -710,7 +710,30 @@ def test_curator_studio_markdown_image_reference_uses_relative_path(tmp_path):
     image_path.parent.mkdir(parents=True)
 
     ref = _markdown_image_reference(markdown_path, image_path, repo)
-    assert ref == "![](../../../content/images/manual-crops/entry1-page-003-manual-101010.png)"
+    assert ref == "![](content/images/manual-crops/entry1-page-003-manual-101010.png)"
+
+
+def test_curator_studio_normalize_repo_image_references_rewrites_relative_paths(tmp_path):
+    from src.ui.curator_studio import _normalize_repo_image_references
+
+    repo = tmp_path / "repo"
+    markdown_path = repo / "staging" / "markdown-auto" / "marker" / "entry1.md"
+    image_path = repo / "content" / "images" / "manual-crops" / "entry1-page-003-manual-101010.png"
+    markdown_path.parent.mkdir(parents=True)
+    image_path.parent.mkdir(parents=True)
+    image_path.write_bytes(b"fake")
+
+    markdown = (
+        "Texto antes.\n\n"
+        "![](../../../content/images/manual-crops/entry1-page-003-manual-101010.png)\n"
+    )
+
+    normalized = _normalize_repo_image_references(markdown, markdown_path, repo)
+
+    assert normalized == (
+        "Texto antes.\n\n"
+        "![](content/images/manual-crops/entry1-page-003-manual-101010.png)\n"
+    )
 
 
 def test_app_config_migrates_legacy_ollama_model(tmp_path):

@@ -1,21 +1,31 @@
 # Claude Code Handoff
 
-Você está assumindo o projeto GPT-Tutor-Generator no seguinte estado local:
+Voce esta assumindo o projeto GPT-Tutor-Generator no seguinte estado local:
 
 Repo:
 - `C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator`
 
+Working tree no momento deste handoff:
+- ha mudancas locais nao commitadas em:
+  - `src/builder/datalab_client.py`
+  - `src/builder/engine.py`
+  - `src/ui/app.py`
+  - `src/ui/curator_studio.py`
+  - `tests/test_core.py`
+  - `tests/test_image_curation.py`
+
 Objetivo geral recente:
 - melhorar robustez do pipeline de processamento
-- separar melhor texto/LaTeX de extração de imagens
+- separar markdown/LaTeX de extracao de imagens
 - consolidar perfis de documento
-- tornar a fila/backlog/curadoria mais consistentes
-- experimentar Docling Python API para PDFs matemáticos
-- integrar Marker com Ollama de forma opcional e rastreável
+- tornar fila/backlog/curadoria mais consistentes
+- integrar o backend cloud do Datalab para PDFs complexos
+- manter Marker como opcao de LaTeX, mas sem depender dele para imagens
 
 ## Resumo arquitetural atual
 
-### 1. Perfis de documento foram consolidados para apenas:
+### 1. Perfis de documento consolidados
+Perfis ativos:
 - `auto`
 - `math_heavy`
 - `diagram_heavy`
@@ -35,40 +45,54 @@ Arquivos principais:
 
 ### 2. Pipeline geral de PDF
 - backend base continua sendo `pymupdf4llm` ou `pymupdf`
-- backend avançado pode ser `docling`, `docling_python` ou `marker`
-- seleção automática depende do perfil efetivo
+- backend avancado pode ser `datalab`, `docling`, `docling_python` ou `marker`
 - `preferred_backend` manual continua respeitado
+- selecao automatica depende do perfil efetivo e dos backends disponiveis
 
-### 3. Regra atual de seleção automática
-- `math_heavy`: prioriza `marker` ou `docling`
-- `diagram_heavy`: prioriza `docling` ou `marker`
-- `scanned`: também ativa backend avançado
-- `auto`/documento comum: tende a ficar só com backend base
+### 3. Regra atual de selecao automatica
+Estado real do codigo hoje:
+- `math_heavy`: prioriza `datalab`, depois `marker`, depois `docling`
+- `diagram_heavy`: prioriza `docling`, depois `marker`
+- `scanned`: prioriza backends avancados locais (`docling`/`marker`)
+- `auto` e perfis comuns: tende a ficar so com backend base
 
-### 4. Marker agora é tratado principalmente como backend de markdown/LaTeX
-- extração de imagens não depende mais só do markdown do Marker
-- existe trilha paralela para imagens baseada em PyMuPDF/manifest/fontes de imagem
+Arquivo principal:
+- `src/builder/engine.py`
 
-## Mudanças grandes já implementadas
+### 4. Estrategia atual para imagens
+- a extracao de imagens nao deve depender exclusivamente do markdown do Marker
+- a curadoria de imagens e feita app-side
+- o objetivo atual e:
+  - backend avancado cuida de markdown/LaTeX
+  - imagens entram por pipeline propria e Image Curator
 
-### A. Resiliência do Marker e timeout
-- marker chunking agora tem modo configurável:
+### 5. Fonte de verdade operacional
+- `manifest.json` e a fonte de verdade para entries processadas
+- fila, backlog, dashboard e retomada de sessao devem ser reconciliados com o manifest
+- "processado" nao significa "curado" nem "aprovado"
+
+## Mudancas grandes ja implementadas
+
+### A. Marker: chunking, timeout e LLM opcional
+- marker chunking tem modo configuravel:
   - `off`
   - `fallback`
   - `always`
 - default atual: `fallback`
 - comportamento:
-  - tenta inteiro primeiro
-  - só entra em chunks se houver stall timeout real
+  - tenta documento inteiro primeiro
+  - so entra em chunks se houver timeout/stall real
 - chunk size:
-  - 10 páginas para workloads pesados
-  - 20 para os demais
-- timeout do Marker escala por workload
-- logs do Marker ficaram mais explícitos sobre:
-  - stall timeout efetivo
-  - chunking mode
-  - fase detectada
-  - fase concluída sem itens, como `Detecting bboxes: 0it`
+  - 10 paginas para workloads pesados
+  - 20 paginas para os demais
+- timeout e logs do Marker ficaram mais explicitos
+
+Configuracao importante:
+- `marker_use_llm`
+- `marker_llm_model`
+- `marker_chunking_mode`
+- `ollama_base_url`
+- `marker_torch_device`
 
 Arquivos:
 - `src/builder/engine.py`
@@ -77,27 +101,20 @@ Arquivos:
 - `tests/test_core.py`
 
 ### B. Marker + Ollama
-- integração opcional via config:
-  - `marker_use_llm`
-  - `marker_llm_model`
-  - `ollama_base_url`
-- Marker não herda mais `vision_model`
-- se `marker_use_llm=true` mas `marker_llm_model` estiver vazio, o LLM do Marker é pulado
-- flags suportadas atualmente:
+- integracao opcional via configuracao
+- Marker nao herda mais `vision_model`
+- se `marker_use_llm=true` mas `marker_llm_model` estiver vazio, o LLM do Marker e pulado
+- flags relevantes suportadas hoje:
   - `--use_llm`
   - `--llm_service`
   - `--OllamaService_ollama_base_url`
   - `--OllamaService_ollama_model`
   - `--redo_inline_math`
-- Marker não usa mais language flag
-- capability detection foi tornada mais tolerante:
-  - ajuda por `--help` ainda existe, mas não deve mais bloquear o uso das flags reais
-- `marker-run.json` agora registra bloco `llm` com:
-  - `enabled`
-  - `service`
-  - `model`
-  - `base_url`
-  - `redo_inline_math`
+- Marker nao usa mais language flag de OCR
+- `marker-run.json` registra metadados de LLM quando aplicavel
+
+Constante importante:
+- `MARKER_OLLAMA_SERVICE = marker.services.ollama.OllamaService`
 
 Arquivos:
 - `src/builder/engine.py`
@@ -107,64 +124,107 @@ Arquivos:
 - `src/ui/app.py`
 - `tests/test_core.py`
 
-Constante importante:
-- `MARKER_OLLAMA_SERVICE = marker.services.ollama.OllamaService`
-
 ### C. Patch local no Marker instalado na `.venv`
 Foi aplicado patch direto em:
 - `.venv/Lib/site-packages/marker/services/ollama.py`
 
-Esse patch local faz 3 coisas:
+Esse patch local faz:
 1. `flatten_schema`
 - resolve `$defs / $ref` antes de enviar `format` para o Ollama
-- corrige casos de `invalid JSON schema in format`
+- corrige `invalid JSON schema in format`
 
 2. fallback `response -> thinking`
-- corrige casos em que modelos como `qwen3-vl` devolvem conteúdo em `thinking`
+- ajuda com modelos que devolvem conteudo em `thinking`
 
-3. extração de JSON embutido em texto
-- tenta recuperar JSON mesmo quando o modelo devolve texto com JSON dentro
+3. tentativa de recuperar JSON embutido em texto
 
 Importante:
-- isso está fora do repo versionado
-- se a `.venv` for recriada ou o pacote Marker for reinstalado, esse patch pode ser perdido
+- isso esta fora do repo versionado
+- se a `.venv` for recriada, esse patch pode ser perdido
 
-### D. Extração de imagens paralela ao Marker
-- houve mudança para pipeline paralela de imagem
-- a ideia é:
-  - Marker cuida de markdown/LaTeX
-  - extração de imagens é trilha separada
-- políticas de extração por perfil foram melhoradas
-- imagens válidas em `math_heavy`/`scanned`/`diagram_heavy` são preservadas com mais recall
-- paths/fontes de imagem foram unificados para a UI
+### D. Backend Datalab integrado
+O Datalab hoje e uma parte central da arquitetura para PDFs complexos, especialmente `math_heavy`.
+
+Estado atual:
+- backend avancado `datalab` implementado
+- `math_heavy` pode preferir `datalab` automaticamente quando a API key existe
+- tambem e possivel escolher `preferred_backend = datalab` manualmente por entry
+- quando `datalab` e selecionado para um PDF, o dialogo da entry mostra seletor `Modelo` com:
+  - `fast`
+  - `balanced`
+  - `accurate`
+
+Comportamento importante:
+- o app envia:
+  - `disable_image_extraction = true`
+  - `disable_image_captions = true`
+- ou seja:
+  - o Datalab hoje cuida da conversao para markdown
+  - imagens e descricoes sinteticas do Datalab foram desativadas intencionalmente
+  - a curadoria de imagens permanece app-side
+
+Artefatos gerados:
+- `staging/markdown-auto/datalab/<entry>/`
+- `datalab-run.json`
+
+Arquivos:
+- `src/builder/datalab_client.py`
+- `src/builder/engine.py`
+- `src/ui/dialogs.py`
+- `src/ui/app.py`
+- `README.md`
+- `tests/test_core.py`
+
+### E. Datalab para documentos longos
+Foi implementada politica especifica para documentos longos no backend Datalab.
+
+Estado atual:
+- existe logica de chunking para documentos longos
+- `math_heavy` usa chunk size de 20 paginas
+- documentos pequenos ou faixas pequenas selecionadas usam execucao unica
+- chunks sao consolidados em markdown final unico
+- `datalab-run.json` grava:
+  - `chunked`
+  - `chunk_size`
+  - lista de `chunks`
+
+Importante:
+- isso foi feito para reduzir risco/custo em PDFs grandes sem quebrar a saida final
+- ainda assim o app trata o Datalab como pipeline de markdown, nao de imagem
 
 Arquivos:
 - `src/builder/engine.py`
-- `src/ui/dialogs.py`
+- `tests/test_core.py`
+
+### F. Extração de imagens paralela ao backend avancado
+- houve mudanca estrutural para pipeline de imagem paralela
+- ideia atual:
+  - Marker/Datalab/Docling cuidam do markdown
+  - imagens entram e sao curadas fora desse markdown
+- isso reduz a dependencia da qualidade de extracao de imagem do Marker
+
+Arquivos:
+- `src/builder/engine.py`
 - `src/ui/image_curator.py`
+- `src/ui/dialogs.py`
 - `tests/test_core.py`
 - `tests/test_image_curation.py`
 
-### E. Injeção de descrição de imagem
-- corrigido problema em que imagens não-`scanned` perdiam descrição porque o nome mudava após rewrite para `content/images`
-- injeção agora resolve aliases do nome da imagem
-- stale description blocks também foram corrigidos
-- arquivos antigos precisam ser reprocessados/reinjetados para refletir isso
+### G. Injeção de descricao de imagem
+- corrigido problema em que imagens nao-`scanned` perdiam descricao porque o nome mudava apos rewrite para `content/images`
+- injecao agora resolve aliases do nome da imagem
+- stale description blocks tambem foram tratados
 
 Arquivos:
 - `src/builder/engine.py`
 - `tests/test_image_curation.py`
 
-### F. Queue/backlog/manifests
-- fila ativa agora é reconciliada com `manifest.json`
-- item processado some da fila mesmo durante processamento
-- backlog distingue:
-  - `Processado (só staging)`
-  - `Processado (sem markdown)`
-  - `Curado/final`
-  - `Aprovado/final`
-- sessão retomada usa manifest como fonte de verdade
-- dashboard mostra fila remanescente real, não snapshot bruto
+### H. Queue / backlog / manifest / dashboard
+- fila ativa agora e reconciliada contra `manifest.json`
+- item processado sai da fila real quando o manifest indica que ele ja entrou como entry
+- backlog diferencia melhor os estados de processamento
+- dashboard usa contagem reconciliada, nao snapshot bruto
+- sessao retomada usa manifest como fonte de verdade
 
 Arquivos:
 - `src/ui/app.py`
@@ -174,10 +234,57 @@ Arquivos:
 - `tests/test_core.py`
 - `tests/test_repo_dashboard.py`
 
-### G. Sleep prevention
-- build/processamento pode impedir suspensão do Windows
+### I. Curator Studio e Image Curator
+
+Curator Studio:
+- ignora `manual-review` que nao pertence ao fluxo de curadoria
+- URL fetcher foi movido para `manual-review/web`
+- reviews legados de URL em `manual-review/pdfs` sao migrados para `manual-review/web`
+- zoom do PDF foi implementado
+- preview de PDF grande foi limitado
+- loading parcial/truncado foi tratado
+- recorte de regiao no preview foi implementado
+- recorte salva em `content/images/manual-crops/`
+
+Mudanca muito importante recente:
+- referencias de imagem de manual crop agora sao normalizadas para caminhos repo-relative estaveis:
+  - `content/images/manual-crops/...`
+- antes o Curator Studio inseria caminhos relativos ao markdown atual, por exemplo:
+  - `../../../content/images/manual-crops/...`
+- isso quebrava quando o markdown mudava de pasta entre `staging/`, `manual-review/` e `content/curated/`
+- agora:
+  - `_markdown_image_reference()` prefere caminho repo-relative
+  - `_normalize_repo_image_references()` reescreve referencias locais antigas ao salvar e ao aprovar
+
+Image Curator:
+- resolucao do PDF da entry ficou deterministica
+- usa `raw_target/source_path`
+- nao depende mais de buscas amplas e ambiguas para achar o PDF da entry
+
+Arquivos:
+- `src/ui/curator_studio.py`
+- `src/ui/image_curator.py`
+- `src/ui/dialogs.py`
+- `src/builder/engine.py`
+- `tests/test_image_curation.py`
+- `tests/test_ui_queue_dashboard.py`
+- `tests/test_repo_dashboard.py`
+
+### J. URL Fetcher
+- manual review de URL agora vai para:
+  - `manual-review/web`
+- nao deve mais poluir `manual-review/pdfs`
+- Curator Studio nao deve mais tratar URL fetcher como PDF normal
+
+Arquivos:
+- `src/builder/engine.py`
+- `src/ui/curator_studio.py`
+- `tests/test_core.py`
+
+### K. Sleep prevention
+- build/processamento pode impedir suspensao do Windows
 - config:
-  - `prevent_sleep_during_build = true` por padrão
+  - `prevent_sleep_during_build = true` por padrao
 
 Arquivos:
 - `src/utils/power.py`
@@ -188,383 +295,215 @@ Arquivos:
 - `tests/test_power_management.py`
 - `tests/test_core.py`
 
-### H. Curator Studio e Image Curator
+### L. UI: backlog e tasks de repositorio ficaram mais limpos
+Mudancas recentes de UI:
 
-Curator Studio:
-- agora ignora `manual-review` que não pertence ao fluxo de curadoria
-- URL fetcher foi movido para `manual-review/web`
-- reviews legados de URL em `manual-review/pdfs` são migrados para `manual-review/web`
-- zoom do PDF foi implementado
-- preview de PDF grande foi limitado para não travar tanto
-- loading parcial/truncado foi tratado
-- recorte de região no preview foi implementado
-- recorte salva em `content/images/manual-crops/`
-- recorte pode ser inserido no markdown atual com caminho relativo correto
+Backlog:
+- toolbar foi compactada
+- a lista ficou mais alta por padrao
+- acoes secundarias de repositorio foram agrupadas em um menu curto `Repo`
+- botoes redundantes removidos do backlog:
+  - `Abrir Dashboard`
+  - `Enfileirar Build`
+  - `Enfileirar Reprocessamento`
 
-Image Curator:
-- resolução do PDF da entry ficou determinística
-- não depende mais de `rglob` amplo
-- usa `raw_target/source_path` corretos
+Tasks de Repositorio:
+- acoes de enfileiramento foram agrupadas em menu:
+  - `➕ Enfileirar`
+- acoes de remocao/limpeza foram agrupadas em menu:
+  - `🧹 Limpeza`
+- acoes de execucao continuam visiveis:
+  - `Executar`
+  - `Pausar`
+  - `Cancelar`
 
-Arquivos:
-- `src/ui/curator_studio.py`
-- `src/ui/image_curator.py`
-- `src/ui/dialogs.py`
-- `src/builder/engine.py`
-- `tests/test_image_curation.py`
-- `tests/test_ui_queue_dashboard.py`
-- `tests/test_repo_dashboard.py`
-
-### I. URL Fetcher
-- manual review de URL agora vai para:
-  - `manual-review/web`
-- não deve mais poluir `manual-review/pdfs` nem Curator Studio
-- migração de legados já existe
-
-Arquivos:
-- `src/builder/engine.py`
-- `src/ui/curator_studio.py`
-- `tests/test_core.py`
-
-### J. Encoding/sanitização
-- houve limpeza de vários textos de UI e conteúdo gerado
-- backend do Marker passou a sanitizar markdown externo para tentar reparar mojibake comum
-- vários testes de encoding/strings foram atualizados
-
-Arquivos:
-- `src/builder/engine.py`
-- `src/ui/dialogs.py`
-- `tests/test_core.py`
-- `tests/test_file_map_unit_mapping.py`
-
-### K. Backend experimental `docling_python`
-- foi implementado backend novo:
-  - `docling_python`
-- usa API Python do Docling
-- instalado na `.venv` com `pip install docling`
-- atualmente:
-  - usa formula enrichment para `math_heavy`/`formula_priority`
-  - respeita `page_range` recortando PDF antes da conversão
-  - grava `docling-python-run.json`
-- standard GPU foi ligado:
-  - `ThreadedPdfPipelineOptions`
-  - `AcceleratorOptions(device=CUDA)`
-  - `RapidOcrOptions(backend="torch")`
-  - `ocr_batch_size=8`
-  - `layout_batch_size=8`
-  - `table_batch_size=4`
-  - `settings.perf.page_batch_size >= 8`
-- o metadata grava `gpu_standard` com a configuração efetiva
-
-Importante:
-- `docling_python` Standard GPU está ativo
-- VLM pipeline com Ollama ainda **não** foi implementado no Docling
-- Ollama no projeto hoje está só no Marker, não no Docling
-
-Arquivos:
-- `src/builder/engine.py`
-- `src/utils/helpers.py`
-- `src/ui/dialogs.py`
-- `tests/test_core.py`
+Arquivo principal:
+- `src/ui/app.py`
 
 ## Problemas atuais / dores em aberto
 
-### 1. Marker + Ollama ainda é instável com alguns modelos
+### 1. Marker + Ollama continua instavel com alguns modelos
 Problemas observados:
 - `qwen3-vl:235b-cloud`
-  - `500 Internal Server Error` no `/api/generate`
-  - pseudo-JSON
-  - response vazia
-  - conteúdo inconsistente
+  - respostas pseudo-JSON
+  - `500 Internal Server Error`
+  - comportamento inconsistente
 - `gemma4:e4b`
   - melhor velocidade
-  - pior precisão
-  - em alguns casos gerou blocos ````html` para matemática
+  - pior precisao matematica
+  - em alguns casos gerou blocos `html` para matematica
 - `llama3.1`
   - inadequado para esse fluxo
-  - não vision / ruim para structured multimodal output
 
-Hipóteses:
-- incompatibilidade do modelo com o contrato rígido do Marker
-- backend cloud do Ollama menos previsível
-- JSON schema/output estruturado ainda frágil mesmo com patch
-- etapas de `LLM processors` podem ficar silenciosas por longos períodos
+Hipoteses:
+- incompatibilidade do modelo com o contrato structured output do Marker
+- backend cloud do Ollama menos previsivel
+- limitacoes upstream do Marker + Ollama
 
-### 2. Stall timeout ainda pode matar processo saudável
-Cenário:
-- Marker ou Docling podem continuar trabalhando internamente sem emitir nova linha por tempo demais
-- watchdog do app mata por silêncio em `stdout/stderr`
-- isso afeta especialmente:
+### 2. Stall timeout ainda pode matar processo saudavel
+Cenario:
+- Marker ou Docling podem continuar trabalhando internamente sem emitir log novo
+- watchdog do app mata por silencio em `stdout/stderr`
+- isso afeta principalmente:
   - Marker com LLM ativo
-  - Docling com VLM/transformers pesado
-
-Hipóteses:
-- processo não está travado de verdade, só silencioso
-- modelo/backend fica muito tempo em uma única inferência
-- cloud/local model responde lentamente ou com gargalo de VRAM
+  - Docling/VLM pesado
 
 ### 3. Force OCR no Marker
-- quando LLM é desligado e `force_ocr` é ativado, o resultado geral de matemática ficou melhor
-- porém acentos pioram
-- causa provável:
-  - Marker atual não expõe mais language flag pública
-  - OCR reinterpreta texto que antes já existia no PDF
+- quando LLM e desligado e `force_ocr` e ativado, o resultado geral de matematica ficou melhor
+- porem acentos pioram
+- causa provavel:
+  - o Marker atual nao expoe mais language flag publica de OCR
 
-### 4. Docling Python ainda precisa observação real
+### 4. Docling Python continua experimental
 Estado atual:
-- `page_range` já foi corrigido
-- Standard GPU já foi ligado
-- profiling recente do `standard_pdf_pipeline` parece bom
-- VLM/Ollama para Docling não foi implementado ainda
+- `page_range` ja foi corrigido
+- Standard GPU ja foi ligado
+- VLM/Ollama para Docling nao foi implementado
 
-### 5. Alguns artefatos antigos podem não refletir o código novo
-- `marker-run.json` antigos podem não ter bloco `llm` novo
-- antigos ainda podem mencionar `language_flag`
-- markdowns antigos não recebem fixes novos até reprocessar
+Risco:
+- mudancas no pacote Docling ou no ambiente Python podem alterar comportamento
+
+### 5. Datalab tem custo e depende de rede/API externa
+Estado atual:
+- Datalab hoje e a opcao mais previsivel para `math_heavy`
+- porem:
+  - e servico pago por pagina
+  - depende de API key
+  - ainda precisa ser monitorado em documentos longos
+
+Observacao importante:
+- imagens/captions do Datalab estao desligadas de proposito
+- se alguem vir isso como "faltando feature", precisa entender que foi uma decisao arquitetural para manter Image Curator app-side
 
 ## Bugs conhecidos do sistema
 
-Esta seção separa:
-- bugs ainda ativos / relevantes
-- sintomas visíveis ao usuário
-- problemas mais internos/não visíveis
-- regressões históricas já corrigidas, porque elas podem reaparecer
-
 ### A. Bugs ativos ou parcialmente ativos
 
-#### 1. Marker + Ollama ainda não é confiável com certos modelos
+#### 1. Marker + Ollama nao e confiavel com certos modelos
 Visibilidade:
-- parcialmente visível
-- aparece em logs e, às vezes, como piora de qualidade no markdown final
+- aparece em logs
+- pode degradar a qualidade do markdown final
 
-Sintomas já observados:
-- `Ollama inference failed: Expecting value: line 1 column 1 (char 0)`
+Sintomas observados:
+- `Expecting value: line 1 column 1 (char 0)`
 - `Expecting property name enclosed in double quotes`
 - `Extra data`
 - `500 Server Error: Internal Server Error for url: http://localhost:11434/api/generate`
-- processamento continua em alguns casos, mas com qualidade degradada
 
-Causas prováveis:
-- resposta do modelo fora do JSON estrito esperado pelo Marker
-- incompatibilidade parcial do modelo com o contrato structured multimodal do Marker
-- instabilidade de variantes cloud, especialmente `qwen3-vl:235b-cloud`
-- limitações upstream do Marker + Ollama
-
-#### 2. Stall timeout ainda pode abortar processos saudáveis
+#### 2. Stall timeout por silencio de log
 Visibilidade:
-- visível no log
-- às vezes percebido pelo usuário como “travou”
+- visivel no log como "Sem output por Xs"
+- as vezes o usuario percebe como travamento
 
-Sintomas já observados:
-- Marker ou Docling são mortos por “Sem output por Xs”
-- isso pode acontecer mesmo quando o processo estava avançando internamente
-
-Causas prováveis:
-- watchdog baseado em silêncio de `stdout/stderr`
-- fases longas e silenciosas em:
-  - `LLM processors`
-  - VLM/transformers do Docling
-- suspensão do Windows ou atraso do modelo/backend
-
-#### 3. `force_ocr` no Marker melhora matemática, mas piora acentuação
+#### 3. `force_ocr` melhora matematica, mas piora acentuacao
 Visibilidade:
-- visível no markdown final
+- visivel no markdown final
 
-Sintomas:
-- fórmulas/estrutura podem ficar melhores
-- acentos em português podem ser perdidos ou degradados
-
-Causa provável:
-- a CLI atual do Marker não expõe mais language flag de OCR
-- OCR substitui texto digital correto por texto refeito via OCR
-
-#### 4. `docling_python` ainda é experimental
+#### 4. `docling_python` ainda e experimental
 Visibilidade:
-- parcialmente visível
-- performance, qualidade e comportamento ainda precisam ser avaliados em PDFs reais
+- performance e qualidade ainda precisam de validacao em PDFs reais
 
-Estado:
-- page_range já foi corrigido
-- Standard GPU já foi ligado
-- VLM remoto via Ollama ainda não foi implementado
+### B. Problemas visiveis ao usuario que ja aconteceram e precisam ficar em memoria
 
-Risco:
-- mudanças no pacote Docling ou no ambiente Python podem alterar comportamento/performance
+Ja aconteceram e foram corrigidos, mas sao regressions importantes:
 
-### B. Problemas visíveis ao usuário que já aconteceram e precisam ficar em memória
-
-Estes problemas já foram relatados pelo usuário e corrigidos, mas são importantes para futuras investigações e para detectar regressão.
-
-#### 1. Descrições de imagem repetidas muitas vezes no markdown
-Sintoma:
-- múltiplos blocos `[Descrição de imagem]` repetidos para a mesma imagem
-
-Raiz identificada:
-- stale blocks não eram removidos corretamente em alguns casos
-- reinjeção acumulava descrições antigas
-
+#### 1. Descricoes de imagem repetidas muitas vezes
 Estado:
 - corrigido
-- risco de regressão existe se a lógica de limpeza/injeção mudar novamente
 
-#### 2. Descrições de imagem só eram injetadas corretamente em `scanned`
-Sintoma:
-- em outros perfis aparecia apenas o caminho da imagem
-
-Raiz identificada:
-- o nome da imagem mudava após rewrite para `content/images`
-- o lookup da curadoria usava nome original
-
+#### 2. Descricoes de imagem so funcionavam corretamente em `scanned`
 Estado:
-- corrigido com resolução por aliases
+- corrigido
 
 #### 3. Curator Studio mostrava itens errados
-Sintomas:
+Sintomas historicos:
 - `manual-review/code` aparecia como se fosse item do Curator Studio
-- URL fetcher aparecia como `pdfs/titulo-da-pagina`
-
-Raiz identificada:
-- filtros de `manual-review` estavam amplos demais
-- URL review legado estava indo para `manual-review/pdfs`
+- URL fetcher aparecia como PDF
 
 Estado:
 - corrigido
-- hoje URL review correto vai para `manual-review/web`
 
 #### 4. Curator Studio travava em markdown/PDF grande
-Sintoma:
-- ao abrir arquivo grande, o Curator Studio congelava ou ficava impraticável
-
-Raiz identificada:
-- carregamento integral do markdown
-- preview de PDF renderizando demais
-
 Estado:
-- mitigado com preview limitado, loading parcial e bloqueio de save/approve quando a fonte foi truncada
-- ainda é um ponto sensível para arquivos grandes
+- mitigado com preview limitado e loading parcial
 
 #### 5. Seletor de perfil da fila sumiu da UI
-Sintoma:
-- a legenda aparecia, mas o combobox não
-
-Raiz identificada:
-- regressão de layout/grid no diálogo de edição de item
-
 Estado:
 - corrigido
 
-#### 6. Zoom do PDF no Curator Studio não funcionava
+#### 6. Zoom do PDF no Curator Studio nao funcionava
 Estado:
 - corrigido
 
-#### 7. Recorte de região no Curator Studio não existia
+#### 7. Recorte de regiao no Curator Studio nao existia
 Estado:
 - implementado
 
-#### 8. Fila/backlog não diminuíam visualmente
-Sintoma:
-- entries já processadas continuavam parecendo “na fila”
+#### 8. Manual crop gerava caminho instavel
+Sintoma historico:
+- recorte ia para o markdown com caminho relativo como `../../../content/images/manual-crops/...`
+- depois quebrava quando o arquivo era salvo/aprovado em outra pasta
 
-Raiz identificada:
-- contagem e snapshot não eram reconciliados com `manifest.json`
+Estado:
+- corrigido com normalizacao para `content/images/manual-crops/...`
 
+#### 9. Fila/backlog nao diminuia visualmente
+Estado:
+- corrigido com reconciliacao via manifest
+
+#### 10. Botao de processar uma unica entry gerava erro de layout Tkinter
 Estado:
 - corrigido
 
-#### 9. Botão de processar uma única entry gerava erro de layout Tkinter
-Sintoma:
-- erro envolvendo `pack`/`grid` do botão de pause
-
-Estado:
-- corrigido
-
-### C. Problemas internos / não visíveis diretamente
+### C. Problemas internos / nao visiveis diretamente
 
 #### 1. Patch local fora do repo
-Existe uma dependência crítica não versionada:
+Dependencia critica nao versionada:
 - `.venv/Lib/site-packages/marker/services/ollama.py`
 
-Isso é perigoso porque:
-- o comportamento pode mudar se a `.venv` for recriada
-- alguém pode olhar o repo e não entender por que localmente “funciona diferente”
-
-#### 2. `marker-run.json` e outros artefatos podem ser antigos
-Impacto:
-- a inspeção de um artefato antigo pode sugerir configuração errada mesmo quando o código atual já mudou
-
-Exemplo:
-- presença de `language_flag`
-- ausência do bloco `llm`
+#### 2. Artefatos antigos podem sugerir configuracao errada
+Exemplos:
+- `marker-run.json` antigo sem bloco `llm`
+- artefatos antigos mencionando `language_flag`
+- markdowns antigos sem normalizacao de image refs do Curator Studio
 
 #### 3. Mistura entre bugs do app e bugs upstream
-O projeto hoje depende de comportamento externo de:
+O projeto depende de:
 - Marker
 - Docling
 - Ollama
+- Datalab
 
-Então alguns erros vistos pelo usuário não são necessariamente bugs do app local, mas o app precisa tratá-los bem:
-- respostas não-JSON
-- schema rejeitado pelo Ollama
-- cloud model instável
-- inferência silenciosa longa
-
-### D. Regressões históricas importantes já corrigidas
-
-Se alguma reaparecer, tratar como regressão confirmada:
-
-- repetição massiva de descrição de imagem
-- injeção de descrição falhando fora de `scanned`
-- Curator Studio carregando `manual-review/code`
-- URL fetcher aparecendo como PDF no manual review
-- Curator Studio abrindo PDF errado da entry
-- Curator Studio sem zoom
-- Curator Studio sem recorte de região
-- selector de perfil desaparecendo na fila
-- contagem de fila/backlog desatualizada
-- `docling_python` ignorando `page_range` e processando o documento inteiro
-- `marker_use_llm` sendo desativado por falso negativo de capability detection
-- backend do Marker ainda tentando usar language flag removida
-
-### E. O que é bug visível vs não visível, na prática
-
-#### Visível para o usuário
-- markdown com acentuação ruim
-- LaTeX ruim ou em formato incorreto
-- descrição de imagem faltando ou duplicada
-- arquivo errado no Curator Studio/Image Curator
-- fila/backlog com números incorretos
-- Curator Studio travando ou ficando impraticável
-- seletor/controles sumindo da UI
-
-#### Não visível diretamente, mas crítico
-- timeout falso por silêncio de log
-- capability detection errada do Marker
-- patch local na `.venv` sendo perdido
-- `manual-review`/`manifest` inconsistentes internamente
-- backend experimental processando documento inteiro sem respeitar `page_range`
-- modelo Ollama respondendo pseudo-JSON e degradando silenciosamente o pipeline
+Nem todo erro visto pelo usuario e bug local do app.
 
 ## Hardware / ambiente conhecido
 - notebook com RTX 4050 6 GB VRAM
-- recomendação anterior para modelos Ollama locais:
-  - melhor aposta: `qwen3-vl:8b` com quantização `q4_K_M`
+- recomendacao anterior para Ollama local:
+  - melhor aposta: `qwen3-vl:8b` com quantizacao `q4_K_M`
   - fallback leve: `qwen3-vl:4b`
-- `qwen3-vl:235b-cloud` foi problemático
+- `qwen3-vl:235b-cloud` foi problematico
 
-## Validações já feitas
-- muitos testes focados foram adicionados e passaram
-- recentemente:
-  - pytest focado em `docling_python` / GPU / `page_range` passou
-  - `compileall` passou
-- houve também uma rodada anterior em que a suíte completa passou, mas desde então o código continuou mudando
-- não assumir que toda a suíte foi rerodada depois das mudanças mais recentes sem checar
+## Validacoes recentes conhecidas
+- `python -m pytest tests\\test_image_curation.py -q`
+  - passou: `54 passed`
+- `python -m py_compile src\\ui\\app.py`
+  - passou
+
+Tambem ha testes focados para:
+- Datalab chunking e configuracao
+- Curator Studio image refs
+- queue/backlog reconciliation
+- repo dashboard
+
+Nao assumir que a suite inteira foi rerodada apos toda mudanca recente sem checar.
 
 ## Planos criados no repo
 - `docs/superpowers/plans/2026-04-07-marker-latex-and-parallel-image-pipeline.md`
 - `docs/superpowers/plans/2026-04-08-document-profile-consolidation.md`
 
-## Arquivos mais importantes para orientar futuras mudanças
+## Arquivos mais importantes para orientar futuras mudancas
 - `src/builder/engine.py`
+- `src/builder/datalab_client.py`
 - `src/utils/helpers.py`
 - `src/ui/dialogs.py`
 - `src/ui/app.py`
@@ -572,82 +511,82 @@ Se alguma reaparecer, tratar como regressão confirmada:
 - `src/ui/image_curator.py`
 - `src/ui/repo_dashboard.py`
 - `src/models/core.py`
+- `README.md`
 - `tests/test_core.py`
 - `tests/test_image_curation.py`
 - `tests/test_repo_dashboard.py`
 - `tests/test_ui_queue_dashboard.py`
 
-## O que eu quero que você faça a partir daqui
-1. Entenda esse estado atual como baseline.
-2. Não reverta mudanças recentes sem confirmar intenção.
+## O que eu quero que voce faca a partir daqui
+1. Entenda este estado como baseline atual do projeto.
+2. Nao reverta mudancas recentes sem confirmar intencao.
 3. Considere que existe patch local fora do repo em:
 - `.venv/Lib/site-packages/marker/services/ollama.py`
 4. Se for investigar Marker + Ollama, trate os problemas como:
 - parcialmente upstream
-- parcialmente específicos do modelo usado
-- não apenas “flag mal configurada”
-5. Se for mexer em Docling:
-- preserve o Standard GPU recém-adicionado
-- não confundir com VLM pipeline via Ollama
-- se implementar VLM do Docling, faça como etapa separada
-6. Se for mexer em fila/backlog/curadoria:
+- parcialmente especificos do modelo usado
+- nao apenas "flag mal configurada"
+5. Se for mexer no Datalab:
+- preserve a decisao atual de deixar imagens/captions desativadas na API
+- mantenha Image Curator como fluxo app-side
+- preserve a politica de chunking para documentos longos, a menos que haja motivo forte para mudar
+6. Se for mexer em Docling:
+- preserve o Standard GPU ja adicionado
+- nao confundir com VLM pipeline via Ollama
+7. Se for mexer em fila/backlog/curadoria:
 - mantenha manifest como fonte de verdade
-- não trate “processado” como “curado/aprovado”
+- nao trate "processado" como "curado/aprovado"
+8. Se for mexer no Curator Studio:
+- preserve a normalizacao repo-relative de imagens locais
+- cuidado para nao reintroduzir caminhos relativos instaveis
 
 ## Estado desejado no curto prazo
-- avaliar se `docling_python` Standard GPU dá resultado melhor para `math_heavy`
-- eventualmente testar um VLM pipeline do Docling separado do Marker
-- continuar melhorando qualidade matemática sem sacrificar tanto acentuação
+- continuar usando Datalab como opcao pratica para `math_heavy`
+- manter Marker como opcao de LaTeX, mas sem depender dele para imagens
+- continuar melhorando qualidade matematica sem sacrificar tanto acentuacao
 - reduzir falsos stall timeouts em fases silenciosas
+- manter backlog/tasks/fila com UI mais limpa e menos redundante
 
-## Prioridade de investigação
+## Prioridade de investigacao
 
-### Prioridade 1: qualidade matemática útil em PDFs reais
+### Prioridade 1: qualidade matematica util em PDFs reais
 Foco:
+- comparar `datalab`
 - comparar `marker` sem LLM + `force_ocr`
-- comparar `marker` com LLM em modelos viáveis
+- comparar `marker` com LLM em modelos viaveis
 - comparar `docling_python` Standard GPU em `math_heavy`
 
 Objetivo:
-- descobrir qual pipeline entrega melhor equilíbrio entre:
+- achar melhor equilibrio entre:
   - LaTeX
-  - acentuação
+  - acentuacao
   - tabelas
   - velocidade
 
 ### Prioridade 2: reduzir falsos travamentos
 Foco:
-- revisar watchdog por silêncio
+- revisar watchdog por silencio
 - considerar timeout adaptativo por fase
 - observar especialmente:
   - `LLM processors` do Marker
   - VLM/transformers do Docling
 
-Objetivo:
-- não matar processo saudável só porque a fase atual ficou silenciosa
-
-### Prioridade 3: decidir estratégia definitiva para LLM no Marker
+### Prioridade 3: decidir estrategia definitiva para LLM no Marker
 Foco:
-- validar se existe algum modelo Ollama realmente estável para o Marker nesse hardware
+- validar se existe algum modelo Ollama realmente estavel para o Marker nesse hardware
 - avaliar se vale insistir em `qwen3-vl`
-- decidir se o patch local do Marker é solução temporária ou se deve virar processo formal
+- decidir se o patch local do Marker e so paliativo ou parte de um processo mais formal
 
-Objetivo:
-- parar de gastar tempo em combinações claramente incompatíveis
-
-### Prioridade 4: avaliar se o Docling deve ganhar VLM pipeline separado
-Foco:
-- só depois de validar o Standard GPU
-- não misturar essa etapa com o pipeline atual do Marker
-
-Objetivo:
-- testar VLM/Ollama no Docling como experimento controlado, não como mudança implícita
-
-### Prioridade 5: monitorar regressões de UI/curadoria
+### Prioridade 4: monitorar regressoes de curadoria e UI
 Foco:
 - Curator Studio
 - Image Curator
 - backlog/fila/manifest
+- layout das toolbars e menus recentes
 
-Objetivo:
-- garantir que bugs já corrigidos não reapareçam durante novas mudanças no pipeline
+### Prioridade 5: avaliar evolucao futura do Datalab
+Foco:
+- custo por pagina
+- chunking de documentos longos
+- qualidade real em materiais `math_heavy`
+- decidir depois se vale reativar alguma feature da API do Datalab ou manter tudo de imagem app-side

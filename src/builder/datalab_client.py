@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import base64
 import json
 import os
 import time
@@ -47,7 +46,7 @@ def convert_document_to_markdown(
     page_range: Optional[str] = None,
     max_pages: Optional[int] = None,
     disable_image_captions: bool = True,
-    disable_image_extraction: bool = False,
+    disable_image_extraction: bool = True,
     paginate: bool = False,
     token_efficient_markdown: bool = False,
     skip_cache: bool = False,
@@ -131,16 +130,3 @@ def convert_document_to_markdown(
         cost_breakdown=dict(last_payload.get("cost_breakdown") or {}),
         raw_response=last_payload,
     )
-
-
-def save_datalab_images(images: Dict[str, str], target_dir: Path) -> Dict[str, Path]:
-    target_dir.mkdir(parents=True, exist_ok=True)
-    saved: Dict[str, Path] = {}
-
-    for filename, encoded in images.items():
-        out_path = target_dir / Path(filename).name
-        raw_bytes = base64.b64decode(encoded)
-        out_path.write_bytes(raw_bytes)
-        saved[filename] = out_path
-
-    return saved

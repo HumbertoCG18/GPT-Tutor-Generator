@@ -406,26 +406,31 @@ class App(tk.Tk):
 
         repo_task_toolbar = ttk.Frame(tab_repo_tasks)
         repo_task_toolbar.pack(fill="x", padx=8, pady=(6, 4))
-        self._btn_enqueue_repo_build = ttk.Button(repo_task_toolbar, text="➕ Enfileirar Build Atual", command=self.enqueue_current_repo_build)
-        self._btn_enqueue_repo_build.pack(side="left")
-        self._btn_enqueue_repo_refresh = ttk.Button(repo_task_toolbar, text="➕ Enfileirar Reprocessamento", command=self.enqueue_current_repo_refresh)
-        self._btn_enqueue_repo_refresh.pack(side="left", padx=(6, 0))
-        self._btn_enqueue_selected_repo_item = ttk.Button(
-            repo_task_toolbar,
-            text="➕ Enfileirar Item Selecionado",
-            command=self.enqueue_selected_repo_task,
-        )
-        self._btn_enqueue_selected_repo_item.pack(side="left", padx=(6, 0))
+        repo_enqueue_menu = tk.Menu(repo_task_toolbar, tearoff=False)
+        repo_enqueue_menu.add_command(label="➕ Enfileirar Build Atual", command=self.enqueue_current_repo_build)
+        repo_enqueue_menu.add_command(label="➕ Enfileirar Reprocessamento", command=self.enqueue_current_repo_refresh)
+        repo_enqueue_menu.add_command(label="➕ Enfileirar Item Selecionado", command=self.enqueue_selected_repo_task)
+        self._btn_repo_task_enqueue_menu = ttk.Menubutton(repo_task_toolbar, text="➕ Enfileirar")
+        self._btn_repo_task_enqueue_menu.pack(side="left")
+        self._btn_repo_task_enqueue_menu["menu"] = repo_enqueue_menu
+        self._repo_task_enqueue_menu = repo_enqueue_menu
+
         self._btn_run_repo_queue = ttk.Button(repo_task_toolbar, text="▶ Executar Fila", command=self.run_repo_task_queue)
-        self._btn_run_repo_queue.pack(side="left", padx=(18, 0))
+        self._btn_run_repo_queue.pack(side="left", padx=(12, 0))
         self._btn_pause_repo_queue = ttk.Button(repo_task_toolbar, text="⏸ Pausar Fila", command=self._toggle_pause_repo_queue, state="disabled")
         self._btn_pause_repo_queue.pack(side="left", padx=(6, 0))
         self._btn_cancel_repo_queue = ttk.Button(repo_task_toolbar, text="⏹ Cancelar Fila", command=self._cancel_repo_task_queue, state="disabled")
         self._btn_cancel_repo_queue.pack(side="left", padx=(6, 0))
-        self._btn_remove_repo_task = ttk.Button(repo_task_toolbar, text="🗑 Remover Task", command=self.remove_selected_repo_task)
-        self._btn_remove_repo_task.pack(side="left", padx=(6, 0))
-        self._btn_clear_finished_repo_tasks = ttk.Button(repo_task_toolbar, text="🧹 Limpar Finalizadas", command=self.clear_finished_repo_tasks)
-        self._btn_clear_finished_repo_tasks.pack(side="left", padx=(6, 0))
+
+        ttk.Separator(repo_task_toolbar, orient="vertical").pack(side="left", fill="y", padx=(10, 10))
+
+        repo_cleanup_menu = tk.Menu(repo_task_toolbar, tearoff=False)
+        repo_cleanup_menu.add_command(label="🗑 Remover Task Selecionada", command=self.remove_selected_repo_task)
+        repo_cleanup_menu.add_command(label="🧹 Limpar Finalizadas", command=self.clear_finished_repo_tasks)
+        self._btn_repo_task_cleanup_menu = ttk.Menubutton(repo_task_toolbar, text="🧹 Limpeza")
+        self._btn_repo_task_cleanup_menu.pack(side="left")
+        self._btn_repo_task_cleanup_menu["menu"] = repo_cleanup_menu
+        self._repo_task_cleanup_menu = repo_cleanup_menu
 
         repo_task_columns = ("status", "subject", "action", "repo", "created_at", "finished_at", "notes")
         repo_task_body = ttk.Frame(tab_repo_tasks)
@@ -453,46 +458,34 @@ class App(tk.Tk):
 
         tab_backlog = ttk.Frame(self.notebook)
         self.notebook.add(tab_backlog, text="  📁 Backlog (Já Processados)  ")
-        backlog_toolbar = _FlexToolbar(tab_backlog, min_section_width=300)
-        backlog_toolbar.pack(fill="x", pady=(4, 6))
-        backlog_item_actions = backlog_toolbar.add_section("Itens Processados")
-        backlog_repo_actions = backlog_toolbar.add_section("Repositório")
-
-        for col in range(2):
-            backlog_item_actions.grid_columnconfigure(col, weight=1, uniform="backlog-item")
-            backlog_repo_actions.grid_columnconfigure(col, weight=1, uniform="backlog-repo")
-
-        ttk.Button(backlog_item_actions, text="🔄 Atualizar Backlog", command=self._refresh_backlog).grid(
-            row=0, column=0, sticky="ew", padx=4, pady=4
+        backlog_toolbar = ttk.Frame(tab_backlog)
+        backlog_toolbar.pack(fill="x", padx=8, pady=(4, 6))
+        ttk.Button(backlog_toolbar, text="🔄 Atualizar Backlog", command=self._refresh_backlog).pack(
+            side="left", padx=(0, 6)
         )
-        ttk.Button(backlog_item_actions, text="✏ Editar", command=self.edit_backlog_entry).grid(
-            row=0, column=1, sticky="ew", padx=4, pady=4
+        ttk.Button(backlog_toolbar, text="✏ Editar", command=self.edit_backlog_entry).pack(
+            side="left", padx=(0, 6)
         )
-        ttk.Button(backlog_item_actions, text="🗑 Limpar Processamento", command=self.remove_processed_single).grid(
-            row=1, column=0, columnspan=2, sticky="ew", padx=4, pady=4
+        ttk.Button(backlog_toolbar, text="🗑 Limpar Processamento", command=self.remove_processed_single).pack(
+            side="left", padx=(0, 10)
         )
 
-        ttk.Button(backlog_repo_actions, text="🔄 Reprocessar Repositório", command=self._reprocess_repo).grid(
-            row=0, column=0, sticky="ew", padx=4, pady=4
-        )
-        ttk.Button(backlog_repo_actions, text="📋 Gerar Instruções LLM", command=self._generate_llm_instructions).grid(
-            row=0, column=1, sticky="ew", padx=4, pady=4
-        )
-        ttk.Button(backlog_repo_actions, text="➕ Enfileirar Build", command=self.enqueue_current_repo_build).grid(
-            row=1, column=0, sticky="ew", padx=4, pady=4
-        )
-        ttk.Button(backlog_repo_actions, text="➕ Enfileirar Reprocessamento", command=self.enqueue_current_repo_refresh).grid(
-            row=1, column=1, sticky="ew", padx=4, pady=4
-        )
-        ttk.Button(backlog_repo_actions, text="🖥 Dashboard", command=self.open_repo_dashboard_tab).grid(
-            row=2, column=0, columnspan=2, sticky="ew", padx=4, pady=4
-        )
+        ttk.Separator(backlog_toolbar, orient="vertical").pack(side="left", fill="y", padx=(0, 10))
+
+        backlog_repo_menu = tk.Menu(backlog_toolbar, tearoff=False)
+        backlog_repo_menu.add_command(label="🔄 Reprocessar Repositório", command=self._reprocess_repo)
+        backlog_repo_menu.add_command(label="📋 Gerar Instruções LLM", command=self._generate_llm_instructions)
+
+        self._backlog_repo_menu_btn = ttk.Menubutton(backlog_toolbar, text="🗂 Repo")
+        self._backlog_repo_menu_btn.pack(side="left")
+        self._backlog_repo_menu_btn["menu"] = backlog_repo_menu
+        self._backlog_repo_menu = backlog_repo_menu
 
         columns_bk = ("status", "category", "layer", "tags", "title", "backend", "file")
         backlog_body = ttk.Frame(tab_backlog)
         backlog_body.pack(fill="both", expand=True)
 
-        self.repo_tree = ttk.Treeview(backlog_body, columns=columns_bk, show="headings", height=14)
+        self.repo_tree = ttk.Treeview(backlog_body, columns=columns_bk, show="headings", height=20)
         self.repo_tree.heading("status", text="Status")
         self.repo_tree.heading("category", text="Categoria")
         self.repo_tree.heading("layer", text="Camada")
@@ -815,16 +808,10 @@ class App(tk.Tk):
             )
         if hasattr(self, "_btn_cancel_repo_queue"):
             self._btn_cancel_repo_queue.configure(state="normal" if running else "disabled")
-        if hasattr(self, "_btn_enqueue_repo_build"):
-            self._btn_enqueue_repo_build.configure(state="disabled" if running else "normal")
-        if hasattr(self, "_btn_enqueue_repo_refresh"):
-            self._btn_enqueue_repo_refresh.configure(state="disabled" if running else "normal")
-        if hasattr(self, "_btn_enqueue_selected_repo_item"):
-            self._btn_enqueue_selected_repo_item.configure(state="disabled" if running else "normal")
-        if hasattr(self, "_btn_remove_repo_task"):
-            self._btn_remove_repo_task.configure(state="disabled" if running else "normal")
-        if hasattr(self, "_btn_clear_finished_repo_tasks"):
-            self._btn_clear_finished_repo_tasks.configure(state="disabled" if running else "normal")
+        if hasattr(self, "_btn_repo_task_enqueue_menu"):
+            self._btn_repo_task_enqueue_menu.configure(state="disabled" if running else "normal")
+        if hasattr(self, "_btn_repo_task_cleanup_menu"):
+            self._btn_repo_task_cleanup_menu.configure(state="disabled" if running else "normal")
 
     def _queue_task_note(self, action: str, entry_payloads: List[Dict]) -> str:
         if action == "refresh_repo":

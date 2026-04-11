@@ -100,12 +100,66 @@ def _manual_crop_filename(entry_id: str, page_num: int) -> str:
     return f"{entry_id}-page-{page_num:03d}-manual-{timestamp}.png"
 
 
+_MARKDOWN_IMAGE_REF_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
+
+
 def _markdown_image_reference(markdown_path: Path, image_path: Path, repo_dir: Path) -> str:
+    try:
+        rel = image_path.resolve().relative_to(repo_dir.resolve())
+        return f"![]({str(rel).replace(chr(92), '/')})"
+    except Exception:
+        pass
+
     try:
         rel = Path(os.path.relpath(image_path, start=markdown_path.parent))
     except Exception:
         rel = image_path.relative_to(repo_dir)
     return f"![]({str(rel).replace(chr(92), '/')})"
+
+
+def _normalize_repo_image_references(content: str, markdown_path: Path, repo_dir: Path) -> str:
+    """Rewrite local markdown image refs to stable repo-relative paths.
+
+    Curator Studio markdown can move between staging/, manual-review/ and
+    content/curated/. Relative refs created from the current file location break
+    after those moves, so repo-local assets are normalized to repo-relative
+    paths such as ``content/images/...``.
+    """
+    repo_root = repo_dir.resolve()
+    markdown_dir = markdown_path.parent.resolve()
+
+    def repl(match: re.Match[str]) -> str:
+        alt = match.group(1)
+        raw_path = match.group(2).strip()
+        normalized = raw_path.replace("\\", "/")
+
+        if re.match(r"^[a-z]+://", normalized, re.IGNORECASE):
+            return match.group(0)
+
+        candidate: Path | None = None
+        raw_candidate = Path(normalized)
+        if raw_candidate.is_absolute() and raw_candidate.exists():
+            candidate = raw_candidate.resolve()
+        else:
+            rel_to_md = (markdown_dir / normalized).resolve()
+            if rel_to_md.exists():
+                candidate = rel_to_md
+            else:
+                rel_to_repo = (repo_root / normalized).resolve()
+                if rel_to_repo.exists():
+                    candidate = rel_to_repo
+
+        if candidate is None:
+            return match.group(0)
+
+        try:
+            repo_rel = candidate.relative_to(repo_root)
+        except ValueError:
+            return match.group(0)
+
+        return f"![{alt}]({str(repo_rel).replace(chr(92), '/')})"
+
+    return _MARKDOWN_IMAGE_REF_RE.sub(repl, content)
 
 
 def _curator_review_paths(repo_dir: Path) -> List[Path]:
@@ -1123,6 +1177,11 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
             return
 
         content = self.editor.get("1.0", tk.END).strip() + "\n"
+        content = _normalize_repo_image_references(
+            content,
+            self._current_content_path,
+            self.repo_dir,
+        )
         try:
             self._current_content_path.write_text(content, encoding="utf-8")
             self.editor.edit_modified(False)
@@ -1293,6 +1352,11 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
                 return
 
         content = self.editor.get("1.0", tk.END).strip() + "\n"
+        content = _normalize_repo_image_references(
+            content,
+            self._current_content_path,
+            self.repo_dir,
+        )
         try:
             self._current_content_path.write_text(content, encoding="utf-8")
             self.editor.edit_modified(False)
