@@ -48,6 +48,7 @@ from src.builder.engine import (
     _repair_mojibake_text,
     _sanitize_external_markdown_text,
     _normalize_unicode_math,
+    _detect_latex_corruption,
     _hybridize_marker_markdown_with_base,
     _find_glossary_evidence,
     _filter_live_manifest_entries,
@@ -164,6 +165,39 @@ class TestMathNormalization:
 
         assert "\\hat{o}" in normalized
         assert "somatório" in normalized
+
+
+class TestLatexCorruptionDetection:
+    def test_detect_no_corruption_clean_markdown(self):
+        md = "## Seção\n\nTexto normal sem matemática.\n"
+        result = _detect_latex_corruption(md)
+        assert result["corrupted"] is False
+        assert result["score"] < 25
+
+    def test_detect_unbalanced_dollars(self):
+        md = "A fórmula $x + y = z é importante mas ficou sem fechamento.\n"
+        result = _detect_latex_corruption(md)
+        assert "delimitadores $" in " ".join(result["signals"])
+
+    def test_detect_unclosed_begin(self):
+        md = "Veja o ambiente:\n\\begin{array}{cc}\na & b \\\\\n"
+        result = _detect_latex_corruption(md)
+        assert any("begin" in signal.lower() for signal in result["signals"])
+
+    def test_detect_ignores_code_blocks(self):
+        md = "```python\n$ echo hello\n{ not latex }\n```\n"
+        result = _detect_latex_corruption(md)
+        assert result["corrupted"] is False
+
+    def test_detect_unicode_without_latex(self):
+        md = ("A proposição x ∈ ℕ e também y ≥ x são válidas.\n" * 3)
+        result = _detect_latex_corruption(md)
+        assert result["score"] > 0
+
+    def test_detect_clean_latex(self):
+        md = "A fórmula $\\forall x \\in \\mathbb{N}, x + 0 = x$ está correta.\n"
+        result = _detect_latex_corruption(md)
+        assert result["corrupted"] is False
 
 
 class TestMarkerCapabilities:

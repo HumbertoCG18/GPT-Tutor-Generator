@@ -73,6 +73,15 @@ def _prune_entries_against_manifest(entries: List[FileEntry], repo_dir: Optional
     ]
 
 
+def _format_backlog_title(entry_data: Dict[str, object]) -> str:
+    title = str(entry_data.get("title", "sem título") or "sem título")
+    latex = entry_data.get("latex_corruption") or {}
+    if isinstance(latex, dict) and latex.get("detected"):
+        score = int(latex.get("score", 0) or 0)
+        return f"⚠ {title} [{score}/100]"
+    return title
+
+
 def _build_options_from_config(default_mode: str, default_ocr_language: str, config_obj) -> Dict[str, object]:
     return {
         "default_processing_mode": default_mode,
@@ -1327,7 +1336,7 @@ class App(tk.Tk):
                         f_data.get("category", ""),
                         f_data.get("effective_profile", ""),
                         f_data.get("tags", ""),
-                        f_data.get("title", ""),
+                        _format_backlog_title(f_data),
                         f_data.get("base_backend", ""),
                         Path(f_data.get("source_path", f_data.get("source_file", ""))).name,
                     )

@@ -1779,6 +1779,113 @@ def _sanitize_external_markdown_text(text: str) -> str:
     return repaired.replace("\r\n", "\n").replace("\r", "\n")
 
 
+def _detect_latex_corruption(content: str) -> dict:
+    """
+    Analisa um markdown e detecta padrões de LaTeX provavelmente corrompido.
+
+    Retorna:
+        {
+            "corrupted": bool,
+            "score": int,
+            "signals": list[str],
+        }
+
+    A função apenas detecta e sinaliza; não tenta corrigir.
+    Blocos de código e inline code são ignorados.
+    """
+    import re
+    from collections import Counter
+
+    if not content:
+        return {"corrupted": False, "score": 0, "signals": []}
+
+    clean = str(content).replace("\r\n", "\n").replace("\r", "\n")
+    clean = re.sub(r"^---\n.*?\n---\n?", "", clean, flags=re.DOTALL)
+    clean = re.sub(r"```.*?```", "", clean, flags=re.DOTALL)
+    clean = re.sub(r"`[^`\n]+`", "", clean)
+
+    signals: List[str] = []
+    score = 0
+
+    def _add_signal(message: str, weight: int) -> None:
+        nonlocal score
+        signals.append(message)
+        score += weight
+
+    single_dollars = re.findall(r"(?<![\\$])\$(?!\$)", clean)
+    if len(single_dollars) % 2 != 0:
+        _add_signal("delimitadores $ desbalanceados", 30)
+
+    begin_counter = Counter(re.findall(r"\\begin\{([^}]+)\}", clean))
+    end_counter = Counter(re.findall(r"\\end\{([^}]+)\}", clean))
+    unmatched_envs = []
+    for env_name, count in begin_counter.items():
+        if count > end_counter.get(env_name, 0):
+            unmatched_envs.append(env_name)
+    if unmatched_envs:
+        sample = ", ".join(sorted(set(unmatched_envs))[:3])
+        _add_signal(f"\\begin sem \\end: {sample}", min(len(unmatched_envs) * 15, 30))
+
+    unicode_math_chars = re.findall(r"[∀∃∈∉∅∧∨¬→↔⇒⇔≤≥≠⊆⊂⊇⊃∪∩ℕℤℚℝℂ⊢⊨⊥⊤]", clean)
+    latex_markers = re.findall(r"\$|\\[a-zA-Z]+", clean)
+    if len(unicode_math_chars) >= 4 and len(latex_markers) < max(2, len(unicode_math_chars) // 2):
+        _add_signal(
+            f"{len(unicode_math_chars)} símbolos unicode sem estrutura LaTeX",
+            min(len(unicode_math_chars) * 2, 20),
+        )
+
+    brace_issue_lines = 0
+    brace_hint_lines = 0
+    raw_command_lines = 0
+    orphan_escapes = 0
+    mathish_line_re = re.compile(r"\\[a-zA-Z]+|[$∀∃∈∉∧∨¬→↔⇒⇔≤≥≠⊆⊂⊇⊃∪∩ℕℤℚℝℂ⊢⊨⊥⊤]|^\s*\{")
+
+    for line in clean.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+
+        if stripped.count("{") != stripped.count("}") and mathish_line_re.search(stripped):
+            brace_issue_lines += 1
+        if stripped.startswith("{") and stripped.count("{") > stripped.count("}"):
+            brace_hint_lines += 1
+
+        command_count = len(re.findall(r"\\[a-zA-Z]+", stripped))
+        has_math_delimiter = bool(re.search(r"\$|\\\(|\\\[|\\begin\{", stripped))
+        if command_count >= 2 and not has_math_delimiter:
+            raw_command_lines += 1
+
+        if re.search(r"(?<!\\)\\\s*$", stripped):
+            orphan_escapes += 1
+
+    if brace_issue_lines:
+        _add_signal(
+            f"{brace_issue_lines} linha(s) com chaves desbalanceadas em contexto matemático",
+            min(brace_issue_lines * 10, 25),
+        )
+    if brace_hint_lines:
+        _add_signal(
+            f"{brace_hint_lines} possível(is) tripla(s) de Hoare incompleta(s)",
+            min(brace_hint_lines * 8, 16),
+        )
+    if raw_command_lines:
+        _add_signal(
+            f"{raw_command_lines} linha(s) com comandos LaTeX fora de delimitadores",
+            min(raw_command_lines * 10, 20),
+        )
+    if orphan_escapes:
+        _add_signal(
+            f"{orphan_escapes} escape(s) órfão(s) no fim de linha",
+            min(orphan_escapes * 6, 12),
+        )
+
+    return {
+        "corrupted": score >= 25,
+        "score": min(score, 100),
+        "signals": signals,
+    }
+
+
 _PORTUGUESE_ACCENT_CHARS = set("áàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ")
 
 
@@ -3509,10 +3616,10 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         )
 
         # ── System files ─────────────────────────────────────────────
-        write_text(self.root_dir / "system" / "TUTOR_POLICY.md", tutor_policy_md())
+        write_text(self.root_dir / "system" / "TUTOR_POLICY.md", tutor_policy_md(self.course_meta, self.subject_profile))
         write_text(self.root_dir / "system" / "PEDAGOGY.md", pedagogy_md())
-        write_text(self.root_dir / "system" / "MODES.md", modes_md())
-        write_text(self.root_dir / "system" / "OUTPUT_TEMPLATES.md", output_templates_md())
+        write_text(self.root_dir / "system" / "MODES.md", modes_md(self.course_meta, self.subject_profile))
+        write_text(self.root_dir / "system" / "OUTPUT_TEMPLATES.md", output_templates_md(self.course_meta, self.subject_profile))
 
         # ── Documentação interna do app — fica em build/, não no repo do tutor
         write_text(self.root_dir / "build" / "PDF_CURATION_GUIDE.md", pdf_curation_guide())
@@ -3570,7 +3677,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         code_entries = [e for e in self.entries if e.category in CODE_CATEGORIES]
         if code_entries:
             write_text(self.root_dir / "code" / "CODE_INDEX.md",
-                       code_index_md(self.course_meta, code_entries))
+                       code_index_md(self.course_meta, code_entries, self.subject_profile))
 
         wb_entries = [e for e in self.entries if e.category in WHITEBOARD_CATEGORIES]
         if wb_entries:
@@ -4688,6 +4795,41 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         else:
             logger.info("  [6/6] Tabelas: pulado")
 
+        active_markdown_rel = str(item.get("advanced_markdown") or item.get("base_markdown") or "").strip()
+        latex_check = {"corrupted": False, "score": 0, "signals": []}
+        if active_markdown_rel:
+            try:
+                active_markdown_path = self.root_dir / active_markdown_rel
+                if active_markdown_path.exists():
+                    latex_check = _detect_latex_corruption(
+                        active_markdown_path.read_text(encoding="utf-8", errors="replace")
+                    )
+            except Exception as e:
+                logger.warning("  [latex-check] Falha ao analisar %s: %s", active_markdown_rel, e)
+
+        item["latex_corruption"] = {
+            "detected": bool(latex_check.get("corrupted")),
+            "score": int(latex_check.get("score", 0) or 0),
+            "signals": list(latex_check.get("signals") or []),
+            "markdown_path": active_markdown_rel or None,
+        }
+        if item["latex_corruption"]["detected"]:
+            logger.warning(
+                "  [latex-check] LaTeX possivelmente corrompido em %s (score: %s/100).",
+                entry.title,
+                item["latex_corruption"]["score"],
+            )
+            self.logs.append({
+                "entry": entry.id(),
+                "step": "latex_check",
+                "status": "warning",
+                "message": (
+                    f"LaTeX possivelmente corrompido "
+                    f"(score: {item['latex_corruption']['score']}/100) — "
+                    f"sinais: {'; '.join(item['latex_corruption']['signals'])}"
+                ),
+            })
+
         logger.info("  ✓ PDF concluído em %.1fs: %s", time.time() - t0, entry.title)
 
         manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
@@ -5315,6 +5457,10 @@ unit: {entry.tags}
                    generate_gemini_instructions(
                        self.course_meta, self.student_profile, self.subject_profile,
                        **_common_flags))
+        write_text(self.root_dir / "system" / "TUTOR_POLICY.md", tutor_policy_md(self.course_meta, self.subject_profile))
+        write_text(self.root_dir / "system" / "PEDAGOGY.md", pedagogy_md())
+        write_text(self.root_dir / "system" / "MODES.md", modes_md(self.course_meta, self.subject_profile))
+        write_text(self.root_dir / "system" / "OUTPUT_TEMPLATES.md", output_templates_md(self.course_meta, self.subject_profile))
         write_text(self.root_dir / "README.md", root_readme(self.course_meta))
         write_text(self.root_dir / ".gitignore", _generated_repo_gitignore_text())
 
@@ -5380,7 +5526,7 @@ unit: {entry.tags}
         code_entries = [e for e in all_entries if e.category in CODE_CATEGORIES]
         if code_entries:
             write_text(self.root_dir / "code" / "CODE_INDEX.md",
-                       code_index_md(self.course_meta, code_entries))
+                       code_index_md(self.course_meta, code_entries, self.subject_profile))
 
         # Whiteboard index
         wb_entries = [e for e in all_entries if e.category in WHITEBOARD_CATEGORIES]
@@ -5695,6 +5841,9 @@ Exemplos de acesso:
 - `{raw_base}/course/COURSE_MAP.md`
 - `{raw_base}/student/STUDENT_STATE.md`
 - `{raw_base}/course/FILE_MAP.md`
+
+Quando o aluno disser "recarregue os arquivos" ou "atualize sua base",
+busque novamente esses arquivos do GitHub antes de continuar.
 """
     else:
         github_block = """
@@ -5712,17 +5861,15 @@ diretamente de lá para ter sempre a versão mais atualizada.
         if student_profile.personality:
             personality_block = f"\nEstilo de aprendizado do aluno: {student_profile.personality}\n"
 
-    first_session_block = ""
-    if first_session_pending:
-        first_session_block = _prompt_first_session_protocol_text(
-            course_meta,
-            student_profile=student_profile,
-            subject_profile=subject_profile,
-            has_assignments=has_assignments,
-            has_code=has_code,
-            has_whiteboard=has_whiteboard,
-            first_session_pending=first_session_pending,
-        )
+    first_session_block = _prompt_first_session_protocol_text(
+        course_meta,
+        student_profile=student_profile,
+        subject_profile=subject_profile,
+        has_assignments=has_assignments,
+        has_code=has_code,
+        has_whiteboard=has_whiteboard,
+        first_session_pending=first_session_pending,
+    )
 
     return f"""# Instruções do Tutor — {course_name}
 
@@ -5732,7 +5879,7 @@ diretamente de lá para ter sempre a versão mais atualizada.
 2. SEMPRE acesse STUDENT_STATE.md antes de responder
 3. NUNCA entregue a resposta de exercícios sem guiar o raciocínio
 4. SEMPRE cite qual arquivo você está usando como fonte
-5. Se o aluno disser "atualize sua base", busque novamente os arquivos
+5. Se o aluno disser "recarregue os arquivos" ou "atualize sua base", busque novamente os arquivos
    do GitHub — o repositório pode ter mudado desde o início da sessão
 
 ## Identidade
@@ -5745,7 +5892,7 @@ Chame o aluno de **{nick}**.{personality_block}
 
 Acesse estes arquivos sempre que relevante:
 - `course/COURSE_MAP.md` — estrutura e ordem dos tópicos
-- `course/FILE_MAP.md` — mapeamento arquivo → unidade
+- `course/FILE_MAP.md` — roteador de arquivos; consulte Seções antes de abrir e trate Confiança `Baixa` como mapeamento incerto
 - `course/SYLLABUS.md` — cronograma e datas
 - `student/STUDENT_STATE.md` — progresso atual do aluno
 - `student/STUDENT_PROFILE.md` — perfil do aluno
@@ -5754,6 +5901,16 @@ Acesse estes arquivos sempre que relevante:
 - `content/` — material de aula curado
 - `exercises/` — listas de exercícios
 - `exams/` — provas anteriores
+
+## Ordem de navegação
+
+1. `course/COURSE_MAP.md`
+2. `student/STUDENT_STATE.md`
+3. `course/GLOSSARY.md`
+4. `course/FILE_MAP.md`
+5. `content/`, `exercises/` e `exams/` apenas quando necessário
+
+{_prompt_map_artifact_contract_text()}
 
 ## Modos de operação
 
@@ -5772,19 +5929,7 @@ Identifique o modo pela frase do aluno:
 - Máximo 3 conceitos novos por resposta
 - Ao final de cada sessão, gere um bloco de atualização do STUDENT_STATE.md
 
-## Atualização de progresso
-
-Ao final de cada sessão, dite este bloco para o aluno salvar em
-`student/STUDENT_STATE.md` e fazer git push:
-
-```
-- Data: [YYYY-MM-DD]
-- Tópico: [tópico estudado]
-- Unidade: [slug da unidade]
-- Status: [compreendido / em progresso / com dúvidas]
-- Dúvidas pendentes: [lista]
-- Próximo passo: [próximo tópico]
-```
+{_prompt_student_state_update_text(remote_editing=True)}
 {first_session_block}"""
 
 
@@ -5827,7 +5972,7 @@ def _legacy_generate_gemini_instructions(
         "| `system/TUTOR_POLICY.md` | Regras de comportamento — SEMPRE consulte |",
         "| `student/STUDENT_STATE.md` | Progresso atual — SEMPRE consulte |",
         "| `course/COURSE_MAP.md` | Estrutura e ordem dos tópicos |",
-        "| `course/FILE_MAP.md` | Mapeamento arquivo → unidade |",
+        "| `course/FILE_MAP.md` | Roteador de arquivos; consulte Seções antes de abrir e trate Confiança `Baixa` como mapeamento incerto |",
         "| `course/SYLLABUS.md` | Cronograma e datas |",
         "| `course/GLOSSARY.md` | Terminologia da disciplina |",
         "| `system/PEDAGOGY.md` | Como estruturar explicações |",
@@ -5846,17 +5991,15 @@ def _legacy_generate_gemini_instructions(
 
     file_table = "\n".join(file_rows)
 
-    first_session_block = ""
-    if first_session_pending:
-        first_session_block = _prompt_first_session_protocol_text(
-            course_meta,
-            student_profile=student_profile,
-            subject_profile=subject_profile,
-            has_assignments=has_assignments,
-            has_code=has_code,
-            has_whiteboard=has_whiteboard,
-            first_session_pending=first_session_pending,
-        )
+    first_session_block = _prompt_first_session_protocol_text(
+        course_meta,
+        student_profile=student_profile,
+        subject_profile=subject_profile,
+        has_assignments=has_assignments,
+        has_code=has_code,
+        has_whiteboard=has_whiteboard,
+        first_session_pending=first_session_pending,
+    )
 
     return f"""# Instruções do Tutor — {course_name}
 
@@ -5876,6 +6019,16 @@ Os arquivos desta disciplina estão conectados via repositório GitHub
 | Arquivo | Quando consultar |
 |---|---|
 {file_table}
+
+## Ordem de navegação
+
+1. `course/COURSE_MAP.md`
+2. `student/STUDENT_STATE.md`
+3. `course/GLOSSARY.md`
+4. `course/FILE_MAP.md`
+5. `content/`, `exercises/` e `exams/` apenas quando necessário
+
+{_prompt_map_artifact_contract_text()}
 
 ## Modos de operação
 
@@ -5904,19 +6057,7 @@ Antes de responder, identifique onde o aluno está no semestre:
 4. **Não entregue respostas de exercícios** — guie o raciocínio
 5. **Ao final da sessão**, gere bloco de atualização do `STUDENT_STATE.md`
 
-## Atualização de progresso
-
-Ao final de cada sessão, gere este bloco e instrua o aluno a salvar
-em `student/STUDENT_STATE.md` e fazer git push:
-
-```markdown
-- Data: [YYYY-MM-DD]
-- Tópico estudado: [tópico]
-- Unidade: [slug da unidade do COURSE_MAP]
-- Status: [compreendido / em progresso / com dúvidas]
-- Dúvidas pendentes: [lista]
-- Próximo passo sugerido: [próximo tópico]
-```
+{_prompt_student_state_update_text(remote_editing=True)}
 {first_session_block}"""
 
 
@@ -5960,7 +6101,7 @@ def generate_gemini_instructions(
         "| `system/TUTOR_POLICY.md` | Regras de comportamento. Consulte sempre. |",
         "| `student/STUDENT_STATE.md` | Progresso atual do aluno. Consulte sempre. |",
         "| `course/COURSE_MAP.md` | Estrutura e ordem dos tópicos. |",
-        "| `course/FILE_MAP.md` | Mapeamento arquivo -> unidade. |",
+        "| `course/FILE_MAP.md` | Roteador de arquivos; use Seções antes de abrir e trate Confiança `Baixa` como mapeamento incerto. |",
         "| `course/SYLLABUS.md` | Cronograma e datas. |",
         "| `course/GLOSSARY.md` | Terminologia da disciplina. |",
         "| `system/PEDAGOGY.md` | Como estruturar explicações. |",
@@ -5991,17 +6132,15 @@ def generate_gemini_instructions(
 conexão entre teoria e prática e progressão gradual.
 """
 
-    first_session_block = ""
-    if first_session_pending:
-        first_session_block = _prompt_first_session_protocol_text(
-            course_meta,
-            student_profile=student_profile,
-            subject_profile=subject_profile,
-            has_assignments=has_assignments,
-            has_code=has_code,
-            has_whiteboard=has_whiteboard,
-            first_session_pending=first_session_pending,
-        )
+    first_session_block = _prompt_first_session_protocol_text(
+        course_meta,
+        student_profile=student_profile,
+        subject_profile=subject_profile,
+        has_assignments=has_assignments,
+        has_code=has_code,
+        has_whiteboard=has_whiteboard,
+        first_session_pending=first_session_pending,
+    )
 
     return f"""# Instruções do Tutor | {course_name}
 
@@ -6020,6 +6159,7 @@ Regras:
 - **nunca invente** conteúdo fora desses arquivos
 - se algo não estiver documentado no repositório, diga explicitamente que a informação não está disponível
 - não complete lacunas com suposições
+- você não edita arquivos diretamente; quando identificar correções necessárias, dite as alterações para o aluno atualizar e fazer git push
 
 ## Arquivos de referência
 
@@ -6028,6 +6168,16 @@ Consulte estes arquivos conforme necessário:
 | Arquivo | Quando consultar |
 |---|---|
 {file_table}
+
+## Ordem de navegação
+
+1. `course/COURSE_MAP.md`
+2. `student/STUDENT_STATE.md`
+3. `course/GLOSSARY.md`
+4. `course/FILE_MAP.md`
+5. `content/`, `exercises/` e `exams/` apenas quando necessário
+
+{_prompt_map_artifact_contract_text()}
 
 ## Modos de operação
 
@@ -6071,19 +6221,7 @@ Mas preserve estas regras:
 - não invente definições, exemplos ou exercícios fora dos arquivos
 - no modo `assignment`, guie sem entregar a solução final
 
-## Atualização de progresso
-
-Ao final de sessões substanciais, gere este bloco e instrua o aluno a salvar
-em `student/STUDENT_STATE.md` e fazer git push:
-
-```markdown
-- Data: [YYYY-MM-DD]
-- Tópico estudado: [tópico]
-- Unidade: [slug da unidade do COURSE_MAP]
-- Status: [compreendido / em progresso / com dúvidas]
-- Dúvidas pendentes: [lista]
-- Próximo passo sugerido: [próximo tópico]
-```
+{_prompt_student_state_update_text(remote_editing=True)}
 
 ## Preferências de resposta
 
@@ -6102,7 +6240,107 @@ Ao responder:
 # Free functions — Pedagogical file generators
 # ---------------------------------------------------------------------------
 
-def tutor_policy_md() -> str:
+_FORMAL_CODE_REVIEW_KEYWORDS = (
+    "metodos formais",
+    "formal methods",
+    "isabelle",
+    "coq",
+    "lean",
+    "dafny",
+    "theorem prover",
+    "provadores de teoremas",
+    "tla",
+    "alloy",
+    "nusmv",
+    "nuxmv",
+)
+
+
+def _code_review_profile(course_meta: Optional[dict] = None, subject_profile=None) -> dict:
+    course_meta = course_meta or {}
+    haystack = " ".join(
+        str(part or "")
+        for part in (
+            course_meta.get("course_name"),
+            course_meta.get("course_slug"),
+            getattr(subject_profile, "name", ""),
+            getattr(subject_profile, "slug", ""),
+            getattr(subject_profile, "teaching_plan", ""),
+            getattr(subject_profile, "syllabus", ""),
+        )
+    )
+    normalized = _normalize_match_text(haystack)
+    formal = any(keyword in normalized for keyword in _FORMAL_CODE_REVIEW_KEYWORDS)
+
+    return {
+        "formal": formal,
+        "review_label": "código / prova formal" if formal else "código",
+        "student_work_label": "código ou prova formal do aluno" if formal else "código do aluno",
+        "professor_material_label": "material do professor" if formal else "código do professor",
+        "activation_tail": (
+            ',\n"verifica minha prova", "não consigo provar este lema",\n"feedback na minha especificação"'
+            if formal
+            else ""
+        ),
+        "objective_target": "problemas no próprio código ou prova formal" if formal else "problemas no próprio código",
+        "analysis_title": "## Analisando seu código / prova" if formal else "## Analisando seu código",
+        "context_hint": (
+            "[qual exercício/trabalho/lema é esse, conforme assignments/\nou EXERCISE_INDEX.md]"
+            if formal
+            else "[qual exercício/trabalho é esse, conforme assignments/ ou\nEXERCISE_INDEX.md]"
+        ),
+        "language_hint": '[linguagem ou "isabelle"]' if formal else "[linguagem]",
+        "comparison_title": "material do professor" if formal else "código do professor",
+        "comparison_reference": (
+            "Use `code/professor/` como referência de estratégia e abordagem"
+            if formal
+            else "Use `code/professor/` como referência de estilo e abordagem"
+        ),
+        "comparison_question": (
+            "  jeito diferente — consegue ver qual é a diferença de estratégia?"
+            if formal
+            else "  jeito diferente — consegue ver qual é a diferença de abordagem?"
+        ),
+        "comparison_preface": (
+            "*Se houver material do professor para comparação:*"
+            if formal
+            else "*Se houver código do professor para comparação:*"
+        ),
+        "comparison_body": (
+            [
+                "**Para referência:** o professor resolveu um problema parecido em",
+                "`code/professor/[arquivo].md` — consegue identificar a diferença de",
+                "estratégia/abordagem?",
+            ]
+            if formal
+            else [
+                "**Para referência:** o professor resolveu um problema parecido em",
+                "`code/professor/[arquivo].md` — consegue identificar a diferença de",
+                "abordagem?",
+            ]
+        ),
+        "code_index_intro": (
+            "> **Como usar:** Mapa do material do professor disponível na disciplina."
+            if formal
+            else "> **Como usar:** Mapa do código do professor disponível na disciplina."
+        ),
+        "code_index_review_line": (
+            "> No modo `code_review`, localize exemplos, teorias e compare com o código ou prova do aluno."
+            if formal
+            else "> No modo `code_review`, localize exemplos e compare com o código do aluno."
+        ),
+        "code_index_section": "## Código / teorias do professor" if formal else "## Código do professor",
+        "code_index_empty": (
+            "Nenhum arquivo de código/teoria do professor importado ainda."
+            if formal
+            else "Nenhum arquivo de código do professor importado ainda."
+        ),
+        "code_index_patterns": "## Padrões de estratégia do professor" if formal else "## Padrões de estilo do professor",
+    }
+
+
+def tutor_policy_md(course_meta: Optional[dict] = None, subject_profile=None) -> str:
+    profile = _code_review_profile(course_meta, subject_profile)
     return """# TUTOR_POLICY
 
 ## Propósito
@@ -6117,7 +6355,7 @@ Este arquivo é lido pelo Claude antes de responder qualquer pergunta.
 - Adapta a profundidade da explicação ao nível atual do aluno
 - Conecta cada conceito novo ao que o aluno já estudou
 - Sinaliza quando um tópico tem alta incidência em provas
-- Ao revisar código do aluno, consulta `code/CODE_INDEX.md` para verificar se há exemplo do professor sobre o mesmo tema
+- Ao revisar """ + profile["student_work_label"] + """, consulta `code/CODE_INDEX.md` para verificar se há """ + profile["professor_material_label"] + """ sobre o mesmo tema
 
 ### O que o tutor NUNCA faz
 - Inventa conteúdo não presente nos arquivos do Projeto
@@ -6125,8 +6363,8 @@ Este arquivo é lido pelo Claude antes de responder qualquer pergunta.
 - Avança para tópico novo sem confirmar entendimento do atual
 - Repete explicação idêntica se o aluno já entendeu
 - Ignora o progresso registrado em `STUDENT_STATE.md`
-- Reescreve o código completo do aluno sem que ele tente corrigir primeiro
-- Diz que o código do professor é "o correto" — usa como referência de estilo
+- Reescreve """ + ("o código ou prova completa do aluno" if profile["formal"] else "o código completo do aluno") + """ sem que ele tente corrigir primeiro
+- Trata """ + profile["professor_material_label"] + """ como "o correto" — usa como referência de abordagem e estratégia
 
 ### Ao receber uma pergunta ambígua
 Identifique o modo antes de responder:
@@ -6222,7 +6460,14 @@ Ao entrar no modo `exam_prep`, identifique qual prova está próxima consultando
 """
 
 
-def modes_md() -> str:
+def modes_md(course_meta: Optional[dict] = None, subject_profile=None) -> str:
+    profile = _code_review_profile(course_meta, subject_profile)
+    extra_posture = ""
+    if profile["formal"]:
+        extra_posture = (
+            "\n- Em provas formais, identifique se o bloqueio está na especificação,"
+            "\n  em lema auxiliar faltando ou na tática escolhida"
+        )
     return """# MODES
 
 ## Modos de operação do tutor
@@ -6310,16 +6555,16 @@ As provas são cumulativas mas com peso progressivo:
 
 ---
 
-## code_review — Revisão de código do aluno
+## code_review — Revisão de """ + profile["review_label"] + """
 
 **Ativado por:** "revisa meu código", "o que está errado aqui",
-"como melhorar", "por que não funciona", "feedback no meu código"
+"como melhorar", "por que não funciona", "feedback no meu código""" + profile["activation_tail"] + """
 
 **Objetivo:** desenvolver autonomia para identificar e corrigir
-problemas no próprio código
+""" + profile["objective_target"] + """
 
 **Primeira ação obrigatória:**
-1. Consulte `code/CODE_INDEX.md` para verificar se há código do professor
+1. Consulte `code/CODE_INDEX.md` para verificar se há """ + profile["professor_material_label"] + """
    sobre o mesmo tema
 2. Se houver, use como referência de comparação — não como gabarito a copiar
 
@@ -6328,12 +6573,12 @@ problemas no próprio código
 - Identifique o problema mais importante primeiro
 - Faça uma pergunta que leve o aluno a perceber o erro sozinho
 - Mostre o trecho problemático, não a solução completa
-- Quando o aluno corrigir, valide e aponte o próximo ponto
+- Quando o aluno corrigir, valide e aponte o próximo ponto""" + extra_posture + """
 
-**Comparação com código do professor:**
-- Use `code/professor/` como referência de estilo e abordagem
+**Comparação com """ + profile["comparison_title"] + """:**
+- """ + profile["comparison_reference"] + """
 - Aponte diferenças de forma pedagógica: "o professor resolveu isso de um
-  jeito diferente — consegue ver qual é a diferença de abordagem?"
+""" + profile["comparison_question"] + """
 - Nunca diga "o correto é o do professor" — diga "essa é uma abordagem
   possível, qual você acha mais clara?"
 
@@ -6343,7 +6588,8 @@ problemas no próprio código
 """
 
 
-def output_templates_md() -> str:
+def output_templates_md(course_meta: Optional[dict] = None, subject_profile=None) -> str:
+    profile = _code_review_profile(course_meta, subject_profile)
     return """# OUTPUT_TEMPLATES
 
 ## Templates de resposta por modo
@@ -6448,13 +6694,12 @@ Para explorar melhor depois: [sugestão rápida]
 
 ---
 
-### code_review — Revisão de código
+### code_review — Revisão de """ + profile["review_label"] + """
 
 `````
-## Analisando seu código
+""" + profile["analysis_title"] + """
 
-**Contexto:** [qual exercício/trabalho é esse, conforme assignments/ ou
-EXERCISE_INDEX.md]
+**Contexto:** """ + profile["context_hint"] + """
 
 **Problema principal identificado:**
 [descreve o problema sem dar a solução]
@@ -6462,7 +6707,7 @@ EXERCISE_INDEX.md]
 **Pergunta:** [pergunta que leva o aluno a perceber o erro]
 
 *Trecho relevante:*
-``` [linguagem]
+``` """ + profile["language_hint"] + """
 [só o trecho problemático, não o arquivo inteiro]
 ```
 
@@ -6470,11 +6715,9 @@ EXERCISE_INDEX.md]
 
 ---
 
-*Se houver código do professor para comparação:*
+""" + profile["comparison_preface"] + """
 
-**Para referência:** o professor resolveu um problema parecido em
-`code/professor/[arquivo].md` — consegue identificar a diferença de
-abordagem?
+""" + "\n".join(profile["comparison_body"]) + """
 
 📄 **Fonte:** `code/professor/[arquivo].md`
 `````
@@ -10619,18 +10862,19 @@ def assignment_index_md(course_meta: dict, entries: List[FileEntry] = None) -> s
     )
 
 
-def code_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
+def code_index_md(course_meta: dict, entries: List[FileEntry] = None, subject_profile=None) -> str:
     course_name = course_meta.get("course_name", "Curso")
     entries = entries or []
     prof_entries = [e for e in entries if e.category == "codigo-professor"]
+    profile = _code_review_profile(course_meta, subject_profile)
     lines = [
         f"# CODE_INDEX — {course_name}", "",
-        "> **Como usar:** Mapa do código do professor disponível na disciplina.",
-        "> No modo `code_review`, localize exemplos e compare com o código do aluno.", "",
+        profile["code_index_intro"],
+        profile["code_index_review_line"], "",
     ]
     if prof_entries:
         lines += [
-            "## Código do professor", "",
+            profile["code_index_section"], "",
             "| Arquivo | Linguagem | Unidade | Conceito demonstrado | Notas |",
             "|---|---|---|---|---|",
         ]
@@ -10651,9 +10895,9 @@ def code_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
             )
         lines.append("")
     else:
-        lines += ["Nenhum arquivo de código do professor importado ainda.", ""]
+        lines += [profile["code_index_empty"], ""]
     lines += [
-        "## Padrões de estilo do professor", "",
+        profile["code_index_patterns"], "",
         "<!-- Preencha conforme analisar o código -->",
         "- [a preencher]", "",
     ]
@@ -11375,7 +11619,7 @@ def _low_token_generate_claude_project_instructions(
     file_rows = [
         "| `course/COURSE_MAP.md` | Ordem, dependências e foco do curso |",
         "| `student/STUDENT_STATE.md` | Profundidade, repetição e progresso |",
-        "| `course/FILE_MAP.md` | Localizar o material certo sem abrir muitos arquivos |",
+        "| `course/FILE_MAP.md` | Roteador de arquivos; use Seções antes de abrir e desconfie de Confiança `Baixa` |",
         "| `exercises/EXERCISE_INDEX.md` | Localizar listas, provas antigas e prática por unidade |",
         "| `content/` | Material curado, por demanda |",
         "| `exercises/` | Exercícios resolvidos |",
@@ -11392,27 +11636,15 @@ def _low_token_generate_claude_project_instructions(
         file_rows.append("| `whiteboard/` | Explicações do professor no quadro |")
     file_table = "\n".join(file_rows)
 
-    first_session_block = ""
-    if first_session_pending:
-        structural_lines = _prompt_structural_artifact_contract_lines()
-        repo_drift_lines = _prompt_repo_drift_lines()
-        first_session_block = f"""
-## Protocolo de Primeira Sessão
-
-Quando o aluno abrir o primeiro chat deste Projeto, ou quando `course/FILE_MAP.md` estiver com `status: pending_review`:
-
-{chr(10).join(structural_lines)}
-5. **Só abrir markdown longo quando necessário**: use os artefatos curtos primeiro e só depois abra `content/`, `exercises/` ou `exams/`.
-6. Mostre um resumo curto do diagnóstico estrutural antes de iniciar o estudo.
-
-Mensagem de abertura sugerida:
-> "Olá {nick}! Antes de começarmos, vou conferir os artefatos-base do projeto para ver se o mapeamento estrutural já está consistente."
-
-Regra contínua:
-- {repo_drift_lines[0]}
-- {repo_drift_lines[1]}
-- {repo_drift_lines[2]}
-"""
+    first_session_block = "\n\n" + _prompt_first_session_protocol_text(
+        course_meta,
+        student_profile=student_profile,
+        subject_profile=subject_profile,
+        has_assignments=has_assignments,
+        has_code=has_code,
+        has_whiteboard=has_whiteboard,
+        first_session_pending=first_session_pending,
+    ) + "\n"
 
     reading_order_lines = _prompt_economic_reading_order_lines()
 
@@ -11435,6 +11667,8 @@ Fluxo `map-first`: consulte primeiro os artefatos curtos e roteadores. Não abra
 ## Ordem de leitura econômica
 
 {chr(10).join(reading_order_lines)}
+
+{_prompt_map_artifact_contract_text()}
 
 ## Modos de operação
 
@@ -11468,32 +11702,76 @@ Ao usar conteúdo do Projeto, finalize o bloco com:
 
 > 📄 **Fonte:** `[título do material]` — arquivo: `[caminho do markdown]` | PDF: `[caminho do PDF original]`
 
-## Atualização de estado
-
-Ao final de cada sessão, gere um bloco curto para atualizar `student/STUDENT_STATE.md` com:
-- data
-- tópico estudado
-- unidade
-- status
-- dúvidas pendentes
-- próximo passo sugerido
+{_prompt_student_state_update_text(remote_editing=False)}
 
 ## Captura de conteúdo novo
 
 Quando o aluno enviar foto de quadro, caderno ou anotação:
 1. resuma o conteúdo
 2. pergunte se ele quer salvar isso no repositório
-3. se sim, proponha um markdown em `content/curated/` e os comandos de commit correspondentes
+3. se sim, proponha um markdown em `content/curated/` e indique onde ele deve ser salvo
 {first_session_block}"""
 
 
 def _prompt_structural_artifact_contract_lines() -> list[str]:
     return [
-        "1. Leia `course/COURSE_MAP.md`, `course/FILE_MAP.md`, `course/GLOSSARY.md` e `student/STUDENT_STATE.md`.",
+        "1. Leia `course/FILE_MAP.md` e `course/COURSE_MAP.md` antes de entrar no conteúdo.",
         "2. Trate `FILE_MAP.md` e `COURSE_MAP.md` como artefatos estruturais gerados pelo app.",
-        "3. Se algo parecer desatualizado, proponha `Reprocessar Repositório` ou ajuste manual no backlog.",
-        "4. não reescreva `FILE_MAP.md`/`COURSE_MAP.md` manualmente como fluxo padrão.",
+        "3. Valide unidades, períodos, seções e confiança; entradas `Baixa` merecem atenção especial.",
+        "4. Se houver erro de mapeamento, use override no backlog + `Reprocessar Repositório`.",
+        "5. não reescreva `FILE_MAP.md`/`COURSE_MAP.md` manualmente como fluxo padrão.",
     ]
+
+
+def _prompt_map_artifact_contract_text() -> str:
+    return """## COURSE_MAP e FILE_MAP
+
+`course/COURSE_MAP.md` e `course/FILE_MAP.md` são artefatos gerados
+deterministicamente pelo app.
+
+- Não reescreva nem edite esses arquivos manualmente.
+- Se um mapeamento estiver errado, oriente o aluno a usar override no
+  backlog do app + `Reprocessar Repositório`.
+- `course/FILE_MAP.md` é um roteador operacional: use a coluna
+  **Seções** antes de abrir markdowns longos.
+- Entradas com **Confiança `Baixa`** indicam mapeamento incerto;
+  questione antes de usar como referência principal.
+""".strip()
+
+
+def _prompt_student_state_update_text(*, remote_editing: bool) -> str:
+    action = (
+        "dite estes dois blocos para o aluno atualizar"
+        if remote_editing
+        else "gere estes dois blocos para atualizar"
+    )
+    suffix = (
+        " e, se ele estiver usando GitHub, fazer git push"
+        if remote_editing
+        else ""
+    )
+    return f"""## Atualização de progresso
+
+Ao final de cada sessão substancial, {action}
+`student/STUDENT_STATE.md`{suffix}:
+
+```markdown
+**Estado atual — atualizar a seção acima:**
+- Última sessão: [YYYY-MM-DD]
+- Tópico: [tópico]
+- Unidade: [slug]
+- Status: [compreendido / em progresso / com dúvidas]
+- Dúvidas pendentes: [lista]
+- Próximo passo: [próximo tópico]
+
+**Adicionar na tabela de histórico:**
+| [YYYY-MM-DD] | [tópico] | [unidade] | [status] | [dúvidas] |
+```
+
+Se o mesmo tópico aparecer mais de uma vez com status `com dúvidas`,
+use uma abordagem diferente: analogia nova, exemplo diferente ou
+decomposição em subtópicos menores.
+""".strip()
 
 
 def _prompt_repo_drift_lines() -> list[str]:
@@ -11529,7 +11807,6 @@ def _prompt_first_session_protocol_lines(
 ) -> list[str]:
     del has_assignments, has_code, has_whiteboard, first_session_pending, raw_base
 
-    course_name = course_meta.get("course_name", "Curso")
     nick = "Aluno"
     if student_profile and student_profile.full_name:
         nick = student_profile.nickname or student_profile.full_name
@@ -11539,19 +11816,17 @@ def _prompt_first_session_protocol_lines(
         schedule_line = f"Horário: {subject_profile.schedule}"
 
     lines = [
-        "Quando o aluno abrir o primeiro chat deste Projeto, ou quando `course/FILE_MAP.md` estiver com `status: pending_review`:",
-        "1. Consulte os artefatos estruturais gerados pelo app.",
-        "2. Assuma que `FILE_MAP.md` e `COURSE_MAP.md` são a base estrutural atual do repositório.",
-        "3. Se detectar lacunas reais, explique isso ao aluno antes de continuar.",
-        "4. Encaminhe a correção pelo fluxo do app: `Reprocessar Repositório` ou override manual no backlog.",
-        "5. Não trate esses arquivos como formulários a preencher manualmente.",
-        "6. Use os artefatos curtos para navegar e só abra markdown longo quando necessário.",
-        "7. Mostre um resumo curto do diagnóstico estrutural antes de iniciar o estudo.",
+        "Na primeira conversa com o aluno, antes de entrar no conteúdo:",
+        "1. Valide se unidades, períodos e seções fazem sentido para a disciplina.",
+        "2. Sinalize ao aluno entradas com `Confiança: Baixa` ou sem unidade atribuída.",
+        "3. Verifique `course/GLOSSARY.md`; termos vazios indicam oportunidade de enriquecimento.",
+        "4. Confirme onde o aluno está no semestre consultando `course/SYLLABUS.md` e `student/STUDENT_STATE.md`.",
+        "5. Use os artefatos curtos primeiro e só abra markdown longo quando necessário.",
+        "6. Mostre um resumo curto do diagnóstico estrutural antes de iniciar o estudo e então inicie a sessão.",
         f"Mensagem de abertura sugerida: \"Olá {nick}! Antes de começarmos, vou conferir os artefatos-base do projeto para ver se o mapeamento estrutural já está consistente.\"",
     ]
     if schedule_line:
         lines.append(schedule_line)
-    lines.append(f"Projeto: {course_name}")
     return lines
 
 
@@ -11569,7 +11844,7 @@ def _prompt_first_session_protocol_text(
     del has_assignments, has_code, has_whiteboard, first_session_pending, raw_base
     return "\n".join(
         [
-            "## Protocolo de Primeira Sessão",
+            "## Primeira Sessão — Auditoria e início",
             "",
             *_prompt_structural_artifact_contract_lines(),
             "",
@@ -11578,6 +11853,9 @@ def _prompt_first_session_protocol_text(
                 student_profile=student_profile,
                 subject_profile=subject_profile,
             ),
+            "",
+            "> COURSE_MAP e FILE_MAP são artefatos do pipeline do app.",
+            "> Corrija mapeamentos pelo app, não editando os arquivos.",
         ]
     ).strip()
 

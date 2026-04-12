@@ -1452,6 +1452,42 @@ class BacklogEntryEditDialog(tk.Toplevel):
                          font=("Segoe UI", 10)).grid(row=row, column=1, sticky="ew", pady=6)
 
         row_tags = len(fields)
+        latex_warning = self._data.get("latex_corruption") or {}
+        if isinstance(latex_warning, dict) and latex_warning.get("detected"):
+            score = int(latex_warning.get("score", 0) or 0)
+            signals = [str(signal).strip() for signal in (latex_warning.get("signals") or []) if str(signal).strip()]
+            warning_frame = tk.Frame(
+                tab_edit,
+                bg=p["input_bg"],
+                highlightthickness=1,
+                highlightbackground=p["border"],
+                padx=10,
+                pady=8,
+            )
+            warning_frame.grid(row=row_tags, column=0, columnspan=2, sticky="ew", pady=(8, 6))
+            tk.Label(
+                warning_frame,
+                text=f"⚠ LaTeX possivelmente corrompido (score: {score}/100)",
+                bg=p["input_bg"],
+                fg=p.get("warning", "#f9e2af"),
+                font=("Segoe UI", 9, "bold"),
+                justify="left",
+            ).pack(anchor="w")
+            signals_text = "\n".join(f"• {signal}" for signal in signals) if signals else "• Sinais heurísticos não detalhados."
+            tk.Label(
+                warning_frame,
+                text=(
+                    f"Sinais detectados:\n{signals_text}\n\n"
+                    f"Recomendação: reprocessar com Marker ou Datalab se a notação formal estiver ilegível."
+                ),
+                bg=p["input_bg"],
+                fg=p["muted"],
+                font=("Segoe UI", 9),
+                justify="left",
+                wraplength=620,
+            ).pack(anchor="w", pady=(6, 0))
+            row_tags += 1
+
         tag_catalog = _load_tag_catalog(self._repo_dir)
         self._manual_tags_initial = list(self._data.get("manual_tags") or [])
         self._manual_tags_committed = [str(tag).strip() for tag in self._manual_tags_initial if str(tag).strip()]
