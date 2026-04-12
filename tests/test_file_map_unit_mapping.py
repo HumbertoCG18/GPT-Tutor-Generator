@@ -1062,7 +1062,7 @@ def test_file_map_md_keeps_period_column_empty_without_subject_profile():
 
     result = file_map_md(course_meta, entries)
 
-    assert "| Unidade | Período |" in result
+    assert "| Unidade | Confiança | Período |" in result
     assert "Aula 1" in result
 
 

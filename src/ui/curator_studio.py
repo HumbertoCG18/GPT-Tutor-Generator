@@ -10,7 +10,12 @@ from pathlib import Path
 from typing import List
 from PIL import Image, ImageTk
 from src.models.core import FileEntry
-from src.builder.engine import RepoBuilder, migrate_legacy_url_manual_reviews
+from src.builder.engine import (
+    RepoBuilder,
+    _clean_extraction_noise,
+    _inject_executive_summary,
+    migrate_legacy_url_manual_reviews,
+)
 
 from src.utils.helpers import HAS_PYMUPDF, slugify
 
@@ -1369,6 +1374,15 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao copiar: {e}")
             return
+
+        try:
+            promoted_content = dest_path.read_text(encoding="utf-8")
+            cleaned_content = _clean_extraction_noise(promoted_content)
+            if cleaned_content != promoted_content:
+                dest_path.write_text(cleaned_content, encoding="utf-8")
+            _inject_executive_summary(dest_path)
+        except Exception as e:
+            logger.warning("Falha no pós-processamento do markdown aprovado %s: %s", dest_path, e)
 
         approved_path = self._current_content_path.resolve()
         files_to_delete = []

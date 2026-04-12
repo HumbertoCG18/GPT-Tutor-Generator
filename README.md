@@ -74,6 +74,8 @@ Fluxo típico no app:
 9. Usar a aba **Tasks de Repositório** para enfileirar builds, reprocessamentos e processamentos individuais.
 10. Abrir a aba **Dashboard** para acompanhar o estado operacional dos repositórios.
 
+Observação operacional: a fila é persistente entre sessões do app, então builds e reprocessamentos podem ser retomados sem recriar toda a fila manualmente.
+
 ## Arquitetura
 
 ```text

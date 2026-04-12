@@ -5410,6 +5410,17 @@ unit: {entry.tags}
         # Resolve image references in markdowns → content/images/
         self._resolve_content_images()
         self._inject_all_image_descriptions()
+        content_dir = self.root_dir / "content"
+        if content_dir.exists():
+            for md in content_dir.rglob("*.md"):
+                if md.name.endswith("_INDEX.md"):
+                    continue
+                if md.name in {"BIBLIOGRAPHY.md", "FILE_MAP.md", "COURSE_MAP.md"}:
+                    continue
+                try:
+                    _inject_executive_summary(md)
+                except Exception as exc:
+                    logger.warning("Falha ao atualizar sumário executivo de %s: %s", md, exc)
 
     def process_single(self, entry: "FileEntry", force: bool = False) -> str:
         with self._sleep_guard(f"processamento de {entry.title}"):
@@ -9981,24 +9992,226 @@ def _build_file_map_unit_index_from_course(course_meta: dict, subject_profile=No
     return _build_file_map_unit_index(unit_specs)
 
 
-def _entry_markdown_text_for_file_map(root_dir: Optional[Path], entry: dict) -> str:
-    if "_markdown_text_for_tests" in entry:
-        return entry.get("_markdown_text_for_tests") or ""
-    if not root_dir:
-        return ""
+def _extract_section_headers(md_content: str) -> list[dict]:
+    """Extrai headers ## e ### ignorando blocos de código e EXEC_SUMMARY."""
+    headers: list[dict] = []
+    in_code = False
+    in_summary = False
 
+    for i, line in enumerate((md_content or "").splitlines()):
+        stripped = line.strip()
+
+        if "<!-- EXEC_SUMMARY_START -->" in stripped:
+            in_summary = True
+            continue
+        if "<!-- EXEC_SUMMARY_END -->" in stripped:
+            in_summary = False
+            continue
+        if in_summary:
+            continue
+
+        if stripped.startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+
+        match = re.match(r"^(#{2,3})\s+(.+)", line)
+        if not match:
+            continue
+
+        level = len(match.group(1))
+        title = re.sub(r"\[([^\]]+)\]\([^\)]+\)", r"\1", match.group(2)).strip()
+        if title:
+            headers.append({"title": title, "level": level, "line": i})
+
+    return headers
+
+
+def _inject_executive_summary(md_path: "Path") -> bool:
+    """Injeta ou atualiza um sumário executivo idempotente no topo do markdown."""
+    if not md_path.exists():
+        return False
+
+    content = md_path.read_text(encoding="utf-8")
+    summary_re = re.compile(
+        r"<!-- EXEC_SUMMARY_START -->.*?<!-- EXEC_SUMMARY_END -->\n?",
+        flags=re.DOTALL,
+    )
+    clean = summary_re.sub("", content)
+    headers = _extract_section_headers(clean)
+
+    if len(headers) < 2:
+        if clean != content:
+            write_text(md_path, clean)
+            return True
+        return False
+
+    lines = [
+        "<!-- EXEC_SUMMARY_START -->",
+        "## Sumário",
+        "> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*",
+        "",
+    ]
+    for header in headers:
+        if header["level"] == 2:
+            lines.append(f"- **{header['title']}**")
+        else:
+            lines.append(f"  - {header['title']}")
+    lines += ["", "<!-- EXEC_SUMMARY_END -->", ""]
+    block = "\n".join(lines)
+
+    frontmatter = re.match(r"^---\n.*?\n---\n", clean, re.DOTALL)
+    if frontmatter:
+        new_content = clean[:frontmatter.end()] + "\n" + block + clean[frontmatter.end():]
+    else:
+        new_content = block + clean
+
+    if new_content == content:
+        return False
+
+    write_text(md_path, new_content)
+    return True
+
+
+def _clean_extraction_noise(content: str) -> str:
+    """Remove ruído típico de extração PDF->markdown sem tocar em conteúdo real."""
+    page_num_re = re.compile(
+        r"^[\s\-\u2013\u2014]*\d{1,4}[\s\-\u2013\u2014]*$"
+        r"|^[Pp][áa]gina\s+\d+$"
+        r"|^[Pp]age\s+\d+\s+of\s+\d+$"
+    )
+    separator_re = re.compile(r"^[-_=]{4,}$")
+    header_re = re.compile(r"^#{1,6}\s+")
+
+    result: list[str] = []
+    in_code = False
+    in_math_block = False
+    prev_header = None
+    blank_run = 0
+
+    for line in (content or "").splitlines():
+        stripped = line.strip()
+
+        if stripped.startswith("```"):
+            in_code = not in_code
+            result.append(line)
+            blank_run = 0
+            prev_header = None
+            continue
+
+        if in_code:
+            result.append(line)
+            blank_run = 0
+            continue
+
+        math_delimiters = line.count("$$")
+        if in_math_block:
+            result.append(line)
+            blank_run = 0
+            if math_delimiters % 2 == 1:
+                in_math_block = False
+            continue
+        if math_delimiters % 2 == 1:
+            in_math_block = True
+            result.append(line)
+            blank_run = 0
+            prev_header = None
+            continue
+
+        if not stripped:
+            blank_run += 1
+            if blank_run <= 2:
+                result.append("")
+            continue
+        blank_run = 0
+
+        if page_num_re.match(stripped):
+            continue
+        if separator_re.match(stripped):
+            continue
+
+        if header_re.match(line):
+            if stripped == prev_header:
+                continue
+            prev_header = stripped
+        else:
+            prev_header = None
+
+        result.append(line)
+
+    return "\n".join(result)
+
+
+def _entry_markdown_path_for_file_map(root_dir: Optional[Path], entry: dict) -> Optional[Path]:
+    if not root_dir:
+        return None
     for key in ["approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown"]:
         rel_path = entry.get(key)
         if not rel_path or not str(rel_path).lower().endswith(".md"):
             continue
         md_path = root_dir / rel_path
-        if not md_path.exists() or not md_path.is_file():
-            continue
-        try:
-            return md_path.read_text(encoding="utf-8")
-        except Exception:
-            continue
-    return ""
+        if md_path.exists() and md_path.is_file():
+            return md_path
+    return None
+
+
+def _entry_markdown_text_for_file_map(root_dir: Optional[Path], entry: dict) -> str:
+    if "_markdown_text_for_tests" in entry:
+        return entry.get("_markdown_text_for_tests") or ""
+    md_path = _entry_markdown_path_for_file_map(root_dir, entry)
+    if not md_path:
+        return ""
+    try:
+        return md_path.read_text(encoding="utf-8")
+    except Exception:
+        return ""
+
+
+def _get_entry_sections(md_path: "Path", max_h2: int = 4) -> str:
+    """Retorna as seções H2 principais para a coluna Seções do FILE_MAP."""
+    if not md_path or not md_path.exists():
+        return ""
+    try:
+        text = md_path.read_text(encoding="utf-8")
+    except Exception:
+        return ""
+    h2 = [header["title"] for header in _extract_section_headers(text) if header["level"] == 2][:max_h2]
+    return "  ".join(h2) if h2 else ""
+
+
+def _infer_unit_confidence(entry: dict) -> str:
+    """Classifica a confiança do mapeamento de unidade exibida no FILE_MAP."""
+    if str(entry.get("manual_unit_slug") or "").strip():
+        return "Alta"
+
+    resolved_unit = (
+        str(entry.get("_resolved_unit_slug") or "").strip()
+        or str(entry.get("unit_slug") or "").strip()
+        or str(entry.get("unit") or "").strip()
+    )
+    if not resolved_unit:
+        return "Baixa"
+    if resolved_unit == "curso-inteiro":
+        return "Alta"
+
+    match_confidence = float(entry.get("_unit_match_confidence") or 0.0)
+    ambiguous = bool(entry.get("_unit_match_ambiguous"))
+    signal_count = sum(
+        1
+        for flag in (
+            entry.get("_resolved_topic_slug"),
+            entry.get("_resolved_period"),
+            entry.get("manual_timeline_block_id"),
+        )
+        if flag
+    )
+
+    if ambiguous or match_confidence < 0.45:
+        return "Baixa"
+    if match_confidence >= 0.85 or signal_count >= 2:
+        return "Alta"
+    return "Média"
 
 
 def _file_map_markdown_cell(md_path: str) -> str:
@@ -10107,49 +10320,51 @@ student: {nick}
 last_updated: {today}
 ---
 
-# STUDENT_STATE — {nick}
+# STUDENT_STATE — {course_name}
 
-> **Como usar:** Este arquivo é a memória do tutor sobre o progresso do aluno.
-> Atualize após cada sessão de estudo. Faça commit no GitHub.
-> O tutor lê este arquivo SEMPRE antes de responder.
+> Consulte este arquivo **antes de qualquer resposta**.
+> Trata COURSE_MAP e FILE_MAP como artefatos do app — não reescreva.
+> Atualize ao final de cada sessão conforme o template abaixo.
 
-## Posição atual no curso
+## Estado atual
 
-- **Último tópico estudado:** [a preencher]
-- **Unidade atual:** [a preencher]
-- **Status geral:** Início do semestre
-
-## Tópicos concluídos
-
-<!-- Marque com ✅ quando o aluno demonstrar compreensão sólida -->
-
-| Tópico | Status | Data |
-|---|---|---|
-| [a preencher] | | |
-
-## Dúvidas pendentes
-
-<!-- Registre dúvidas que ficaram em aberto para retomar -->
-
-- [ ] [a preencher]
-
-## Erros recorrentes
-
-<!-- Padrões de erro observados — ajuda o tutor a antecipar problemas -->
-
-| Tópico | Erro observado | Frequência |
-|---|---|---|
-| [a preencher] | | |
-
-## Próximos passos sugeridos
-
-1. [a preencher após primeira sessão]
+- **Última sessão:** [YYYY-MM-DD]
+- **Tópico:** [tópico estudado]
+- **Unidade:** [slug da unidade do COURSE_MAP]
+- **Status:** [compreendido / em progresso / com dúvidas]
+- **Dúvidas pendentes:** [lista — deixar vazio se nenhuma]
+- **Próximo passo:** [próximo tópico sugerido]
 
 ## Histórico de sessões
 
-| Data | Modo | Tópicos | Observações |
-|---|---|---|---|
-| {today} | — | Início | Repositório criado |
+| Data | Tópico | Unidade | Status | Dúvidas registradas |
+|---|---|---|---|---|
+|  |  |  |  |  |
+
+> **Instrução para o tutor:** se o mesmo tópico aparecer mais de uma vez
+> na tabela com status "com dúvidas", use uma abordagem diferente —
+> analogia nova, exemplo concreto, decomposição em subtópicos menores.
+
+## Progresso por unidade
+
+<!-- O tutor preenche ao final de cada unidade concluída -->
+
+---
+
+## Template de atualização (gerar ao final de cada sessão)
+
+```markdown
+**Estado atual — atualizar a seção acima:**
+- Última sessão: [YYYY-MM-DD]
+- Tópico: [tópico]
+- Unidade: [slug]
+- Status: [compreendido / em progresso / com dúvidas]
+- Dúvidas pendentes: [lista]
+- Próximo passo: [próximo tópico]
+
+**Adicionar na tabela de histórico:**
+| [YYYY-MM-DD] | [tópico] | [unidade] | [status] | [dúvidas] |
+```
 """
 
 
@@ -10976,6 +11191,10 @@ def _low_token_file_map_md(course_meta: dict, manifest_entries: list, subject_pr
         "",
         "## Arquivos do repositório",
         "",
+        "> **Como usar as novas colunas:**",
+        "> - **Seções**: leia antes de abrir o arquivo; vá direto à seção relevante.",
+        "> - **Confiança**: entradas `Baixa` têm mapeamento incerto; use override no backlog se necessário (não edite FILE_MAP manualmente).",
+        "",
     ]
 
     if not manifest_entries:
@@ -10983,8 +11202,8 @@ def _low_token_file_map_md(course_meta: dict, manifest_entries: list, subject_pr
         return "\n".join(lines)
 
     lines += [
-        "| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |",
-        "|---|---|---|---|---|---|---|---|",
+        "| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Confiança | Período |",
+        "|---|---|---|---|---|---|---|---|---|---|",
     ]
 
     for i, entry in enumerate(manifest_entries, 1):
@@ -11007,11 +11226,12 @@ def _low_token_file_map_md(course_meta: dict, manifest_entries: list, subject_pr
         raw_path = entry.get("raw_target") or ""
         unit = "curso-inteiro" if category in _NO_UNIT_CATEGORIES and not tags else ""
         period = ""
+        match = UnitMatchResult(slug="", confidence=0.0, ambiguous=True, reasons=[])
+        preferred_topic_slug = ""
         manual_timeline_block = _resolve_entry_manual_timeline_block(entry, temporal_context)
+        markdown_text = _entry_markdown_text_for_file_map(course_meta.get("_repo_root"), entry)
         if not unit and unit_index:
-            markdown_text = _entry_markdown_text_for_file_map(course_meta.get("_repo_root"), entry)
             topic_match = _auto_map_entry_subtopic(entry, content_taxonomy, markdown_text)
-            preferred_topic_slug = ""
             if topic_match.topic_slug and not topic_match.ambiguous and topic_match.confidence >= 0.45:
                 preferred_topic_slug = topic_match.topic_slug
             manual_unit_slug = _resolve_entry_manual_unit_slug(entry, unit_index)
@@ -11069,10 +11289,21 @@ def _low_token_file_map_md(course_meta: dict, manifest_entries: list, subject_pr
         if not period and manual_timeline_block:
             period = str(manual_timeline_block.get("period_label", "") or "").strip()
         md_cell = _file_map_markdown_cell(md_path)
+        md_abs = _entry_markdown_path_for_file_map(course_meta.get("_repo_root"), entry)
+        sections = _get_entry_sections(md_abs) if md_abs else ""
+        confidence = _infer_unit_confidence({
+            **entry,
+            "_resolved_unit_slug": match.slug or unit,
+            "_unit_match_confidence": match.confidence,
+            "_unit_match_ambiguous": match.ambiguous,
+            "_resolved_topic_slug": preferred_topic_slug,
+            "_resolved_period": period,
+        })
 
         lines.append(
             f"| {i} | {title} | {category} | {_entry_usage_hint(entry)} | "
-            f"{_entry_priority_label(entry)} | {md_cell} | {unit or ''} | {period or ''} |"
+            f"{_entry_priority_label(entry)} | {md_cell} | {sections or ''} | "
+            f"{unit or ''} | {confidence} | {period or ''} |"
         )
         if (
             raw_path
@@ -11092,7 +11323,7 @@ def _low_token_file_map_md(course_meta: dict, manifest_entries: list, subject_pr
                 details.append(f"bloco-manual: `{entry.get('manual_timeline_block_id')}`")
             if md_path and md_path.replace("\\", "/").startswith("staging/"):
                 details.append(f"markdown-base: `{md_path}`")
-            lines.append(f"|  | ↳ rastreabilidade |  | {'; '.join(details)} |  |  |  |  |")
+            lines.append(f"|  | ↳ rastreabilidade |  | {'; '.join(details)} |  |  |  |  |  |  |")
 
     lines += [
         "",
@@ -11100,7 +11331,9 @@ def _low_token_file_map_md(course_meta: dict, manifest_entries: list, subject_pr
         "",
         "- **Quando abrir**: atalho semântico para reduzir leitura desnecessária.",
         "- **Prioridade**: `alta` costuma merecer contexto antes dos demais.",
+        "- **Seções**: principais headers `##` do markdown aprovado/curado.",
         "- **Unidade**: slug da unidade do COURSE_MAP.",
+        "- **Confiança**: quão confiável está o roteamento de unidade atual.",
         "- **Período**: janela compacta da timeline associada à unidade.",
         "- **Markdown**: `A revisar` indica que o item ainda só tem extração de `staging/`, sem promoção final.",
         "- **Categoria**: tipo do arquivo; não deve ser alterada pelo tutor.",
