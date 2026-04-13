@@ -30,6 +30,7 @@ from src.builder.engine import (
     _build_file_map_unit_index,
     _build_timeline_candidate_rows,
     _build_timeline_index,
+    _serialize_timeline_index,
     _score_timeline_row_against_unit,
     _compact_notebook_markdown,
     _generated_repo_gitignore_text,
@@ -165,6 +166,20 @@ class TestMathNormalization:
 
         assert "\\hat{o}" in normalized
         assert "somatório" in normalized
+
+
+class TestTimelineLabelFormatting:
+    def test_normalizes_timeline_dates_to_dd_mm_yyyy(self):
+        from src.ui.dialogs import _format_timeline_label_dates
+
+        assert _format_timeline_label_dates("2026-04-09 - 16/04/2026") == "09/04/2026 a 16/04/2026"
+
+    def test_timeline_block_display_period_always_uses_range_separator(self):
+        from src.ui.dialogs import _timeline_block_display_period
+
+        assert _timeline_block_display_period(
+            {"period_start": "2026-04-06", "period_end": "2026-04-08", "period_label": "06/04/2026 a 08/04/2026"}
+        ) == "06/04/2026 a 08/04/2026"
 
 
 class TestLatexCorruptionDetection:
@@ -1639,6 +1654,50 @@ legacy
         assert status["block"] == "bloco-02"
         assert "funções recursivas" in status["topics"]
 
+    def test_resolves_backlog_timeline_status_from_current_file_map_layout(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_timeline_status
+
+        repo = tmp_path / "repo"
+        course_dir = repo / "course"
+        course_dir.mkdir(parents=True)
+        (course_dir / "FILE_MAP.md").write_text(
+            """# FILE_MAP
+
+| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Confiança | Período |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | Exerciciosformalizacaoalgoritmosrecursao | listas | praticar | alta | `exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md` | Definições indutivas | unidade-01-metodos-formais | Alta | 11/03/2026 a 25/03/2026 |
+|  | ↳ rastreabilidade |  | raw: `raw/aula.pdf` |  |  |  |  |  |  |
+""",
+            encoding="utf-8",
+        )
+        (course_dir / ".timeline_index.json").write_text(
+            json.dumps(
+                {
+                    "version": 1,
+                    "blocks": [
+                        {
+                            "id": "bloco-02",
+                            "period_label": "11/03/2026 a 25/03/2026",
+                            "unit_slug": "unidade-01-metodos-formais",
+                            "topics": ["definições indutivas", "funções recursivas"],
+                            "aliases": ["indução", "recursão"],
+                        }
+                    ],
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+
+        status = _resolve_backlog_timeline_status(
+            {"title": "Exerciciosformalizacaoalgoritmosrecursao", "category": "listas"},
+            repo,
+        )
+
+        assert status["period"] == "11/03/2026 a 25/03/2026"
+        assert status["block"] == "bloco-02"
+        assert "recursão" in status["aliases"]
+
     def test_resolves_backlog_timeline_status_with_manual_block_pending_reprocess(self, tmp_path):
         from src.ui.dialogs import _resolve_backlog_timeline_status
 
@@ -1685,6 +1744,75 @@ legacy
         assert status["period"] == "16/03/2026 a 25/03/2026"
         assert status["block"] == "bloco-02"
         assert "reprocesse o repositório" in status["note"].lower()
+
+    def test_resolves_backlog_timeline_status_prefers_best_matching_block_within_same_unit(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_timeline_status
+
+        repo = tmp_path / "repo"
+        course_dir = repo / "course"
+        exercises_dir = repo / "exercises" / "lists"
+        course_dir.mkdir(parents=True)
+        exercises_dir.mkdir(parents=True)
+
+        (course_dir / "FILE_MAP.md").write_text(
+            """# FILE_MAP
+
+| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Confiança | Período |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | Lista Isabelle | listas | praticar | alta | `exercises/lists/lista-isabelle.md` | Prova de teoremas | unidade-01-metodos-formais | Alta | 01/04/2026 a 10/04/2026 |
+""",
+            encoding="utf-8",
+        )
+        (exercises_dir / "lista-isabelle.md").write_text(
+            "# Lista Isabelle\n\nExercícios de prova de teoremas usando Isabelle.\n",
+            encoding="utf-8",
+        )
+        (course_dir / ".timeline_index.json").write_text(
+            json.dumps(
+                {
+                    "version": 1,
+                    "blocks": [
+                        {
+                            "id": "bloco-recursao",
+                            "period_label": "01/04/2026 a 03/04/2026",
+                            "period_start": "2026-04-01",
+                            "period_end": "2026-04-03",
+                            "unit_slug": "unidade-01-metodos-formais",
+                            "topics": ["funções recursivas", "indução"],
+                            "aliases": ["recursão"],
+                            "primary_topic_label": "Funções Recursivas",
+                            "primary_topic_confidence": 0.95,
+                        },
+                        {
+                            "id": "bloco-isabelle",
+                            "period_label": "06/04/2026 a 08/04/2026",
+                            "period_start": "2026-04-06",
+                            "period_end": "2026-04-08",
+                            "unit_slug": "unidade-01-metodos-formais",
+                            "topics": ["prova de teoremas", "isabelle"],
+                            "aliases": ["theorem proving", "isabelle"],
+                            "primary_topic_label": "Prova de Teoremas - Isabelle",
+                            "primary_topic_confidence": 0.98,
+                        },
+                    ],
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+
+        status = _resolve_backlog_timeline_status(
+            {
+                "title": "Lista Isabelle",
+                "category": "listas",
+                "approved_markdown": "exercises/lists/lista-isabelle.md",
+            },
+            repo,
+        )
+
+        assert status["block"] == "bloco-isabelle"
+        assert status["period"] == "06/04/2026 a 08/04/2026"
+        assert "isabelle" in status["topics"].lower() or "isabelle" in status["aliases"].lower()
 
 
 class TestNotebookCompaction:
@@ -2767,6 +2895,28 @@ class TestTimelineIndex:
         assert suspension_block["unit_slug"] == ""
         assert hoare_block["unit_slug"] == "unidade-02-verificacao-de-programas"
         assert kripke_block["unit_slug"] == "unidade-03-verificacao-de-modelos"
+
+        serialized = _serialize_timeline_index(timeline_index)
+        assert all("suspensao" not in block["topic_text"] for block in serialized["blocks"])
+
+    def test_timeline_index_serialization_keeps_review_sessions_but_drops_admin_events(self):
+        timeline = _parse_syllabus_timeline("""\
+| Semana | Data | Conteúdo |
+|---|---|---|
+| 1 | 2026-04-15 | Exercícios de revisão |
+| 2 | 2026-05-27 | Evento Acadêmico |
+| 3 | 2026-06-03 | Prova de Teoremas - Isabelle |
+""")
+        unit_index = _build_file_map_unit_index(_parse_units_from_teaching_plan(PUCRS_PLAN))
+
+        timeline_index = _build_timeline_index(_build_timeline_candidate_rows(timeline), unit_index=unit_index)
+        serialized = _serialize_timeline_index(timeline_index)
+
+        periods = [str(block.get("period_start", "")) for block in serialized["blocks"]]
+        topics = [str(block.get("topic_text", "")) for block in serialized["blocks"]]
+        assert "2026-04-15" in periods
+        assert any("isabelle" in topic for topic in topics)
+        assert "2026-05-27" not in periods
 
     def test_timeline_index_keeps_weak_single_token_overlap_unassigned(self):
         timeline = _parse_syllabus_timeline("""\

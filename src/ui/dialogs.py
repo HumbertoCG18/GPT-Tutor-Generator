@@ -5,6 +5,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox, filedialog, simpledialog
 from typing import Optional, List, Tuple, Dict
 import os
+from datetime import datetime
 from pathlib import Path
 from src.models.core import FileEntry, SubjectProfile, StudentProfile, SubjectStore, StudentStore
 from src.utils.helpers import (
@@ -14,7 +15,15 @@ from src.utils.helpers import (
     fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM, normalize_document_profile
 )
 from src.builder.datalab_client import get_datalab_base_url, has_datalab_api_key
-from src.builder.engine import BackendSelector, _entry_image_source_dirs, has_docling_python_api
+from src.builder.engine import (
+    BackendSelector,
+    _collect_entry_unit_signals,
+    _entry_image_source_dirs,
+    _entry_markdown_text_for_file_map,
+    _normalize_match_text,
+    _score_text_against_row,
+    has_docling_python_api,
+)
 from src.ui.theme import ThemeManager, AppConfig, THEMES, apply_theme_to_toplevel
 class Tooltip:
     """Shows a descriptive tooltip balloon after the mouse hovers for `delay` ms."""
@@ -1435,7 +1444,13 @@ class BacklogEntryEditDialog(tk.Toplevel):
         for row, (label, key) in enumerate(fields):
             tk.Label(tab_edit, text=label, bg=p["bg"], fg=p["fg"],
                      font=("Segoe UI", 10)).grid(row=row, column=0, sticky="w", padx=(0, 12), pady=6)
-            var = tk.StringVar(value=self._data.get(key, ""))
+            if key == "document_profile":
+                initial_value = normalize_document_profile(
+                    self._data.get("document_profile") or self._data.get("effective_profile") or "auto"
+                )
+            else:
+                initial_value = self._data.get(key, "")
+            var = tk.StringVar(value=initial_value)
             self._vars[key] = var
             if key == "category":
                 ttk.Combobox(tab_edit, textvariable=var, values=DEFAULT_CATEGORIES,
@@ -1763,12 +1778,12 @@ class BacklogEntryEditDialog(tk.Toplevel):
         self._timeline_aliases_var = tk.StringVar(value=timeline_status["aliases"])
         self._timeline_note_var = tk.StringVar(value=timeline_status["note"])
 
-        tk.Label(timeline_frame, text="Período no FILE_MAP", bg=p["input_bg"], fg=p["muted"],
+        tk.Label(timeline_frame, text="Período do bloco", bg=p["input_bg"], fg=p["muted"],
                  font=("Segoe UI", 9, "bold")).grid(row=3, column=0, sticky="w", padx=(0, 12), pady=(6, 0))
         tk.Label(timeline_frame, textvariable=self._timeline_period_var, bg=p["input_bg"], fg=p["fg"],
                  font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=3, column=1, sticky="w", pady=(6, 0))
 
-        tk.Label(timeline_frame, text="Bloco do cronograma", bg=p["input_bg"], fg=p["muted"],
+        tk.Label(timeline_frame, text="ID do bloco", bg=p["input_bg"], fg=p["muted"],
                  font=("Segoe UI", 9)).grid(row=4, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
         tk.Label(timeline_frame, textvariable=self._timeline_block_var, bg=p["input_bg"], fg=p["fg"],
                  font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=4, column=1, sticky="w", pady=(6, 0))
@@ -2244,6 +2259,8 @@ class BacklogEntryEditDialog(tk.Toplevel):
                 return
             if decision:
                 self._apply_manual_timeline_selection(confirm=False)
+        profile_var = self._vars.get("document_profile") or self._vars.get("effective_profile")
+        profile = normalize_document_profile(profile_var.get().strip() if profile_var else "auto")
         self.result_data = {
             "title":            self._vars["title"].get().strip(),
             "category":         self._vars["category"].get().strip(),
@@ -2252,7 +2269,8 @@ class BacklogEntryEditDialog(tk.Toplevel):
             "auto_tags":        list(self._data.get("auto_tags") or []),
             "manual_unit_slug": self._selected_manual_unit_slug(),
             "manual_timeline_block_id": self._selected_manual_timeline_block_id(),
-            "effective_profile": self._vars["effective_profile"].get().strip(),
+            "document_profile": profile,
+            "effective_profile": profile,
             "notes":            self._notes_text.get("1.0", "end-1c").strip(),
             "include_in_bundle": self._var_bundle.get(),
             "relevant_for_exam": self._var_exam.get(),
@@ -3053,13 +3071,39 @@ def _find_backlog_file_map_row(entry_data: dict, repo_dir: Optional[Path]) -> Di
         return {}
 
     try:
+        current_headers: List[str] = []
         for line in file_map_path.read_text(encoding="utf-8").splitlines():
             if not line.startswith("|"):
                 continue
             parts = [part.strip() for part in line.split("|")[1:-1]]
-            if len(parts) < 8:
+            if not parts:
                 continue
-            if parts[0] in {"#", ""}:
+            if "Título" in parts and "Categoria" in parts:
+                current_headers = parts
+                continue
+            if current_headers and len(parts) != len(current_headers):
+                continue
+            if parts[0] in {"#", ""} or parts[0].startswith("---") or "rastreabilidade" in parts:
+                continue
+            if current_headers:
+                row = {current_headers[idx]: parts[idx] for idx in range(len(parts))}
+                row_title = str(row.get("Título") or "").strip()
+                row_category = str(row.get("Categoria") or "").strip()
+                if row_title != title:
+                    continue
+                if category and row_category and row_category != category:
+                    continue
+                return {
+                    "title": row_title,
+                    "category": row_category,
+                    "markdown": str(row.get("Markdown") or "").strip(),
+                    "sections": str(row.get("Seções") or "").strip(),
+                    "unit": str(row.get("Unidade") or "").strip(),
+                    "confidence": str(row.get("Confiança") or "").strip(),
+                    "period": str(row.get("Período") or "").strip(),
+                }
+
+            if len(parts) < 8:
                 continue
             if parts[1] != title:
                 continue
@@ -3154,7 +3198,7 @@ def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path])
     timeline_path = repo_dir / "course" / ".timeline_index.json" if repo_dir else None
     if not timeline_path or not timeline_path.exists():
         return {
-            "period": period,
+            "period": _format_timeline_period_text(period),
             "block": "—",
             "topics": "—",
             "aliases": "—",
@@ -3168,7 +3212,7 @@ def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path])
         payload = json.loads(timeline_path.read_text(encoding="utf-8"))
     except Exception:
         return {
-            "period": period,
+            "period": _format_timeline_period_text(period),
             "block": "—",
             "topics": "—",
             "aliases": "—",
@@ -3182,8 +3226,8 @@ def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path])
             block = manual_matches[0]
             topics = ", ".join(str(item).strip() for item in list(block.get("topics") or [])[:4] if str(item).strip()) or "—"
             aliases = ", ".join(str(item).strip() for item in list(block.get("aliases") or [])[:4] if str(item).strip()) or "—"
-            block_period = str(block.get("period_label") or "—")
-            if period == block_period:
+            block_period = _timeline_block_display_period(block)
+            if _format_timeline_label_dates(period) == block_period:
                 note = "Bloco manual já refletido no FILE_MAP atual."
             else:
                 note = "Bloco manual salvo; reprocesse o repositório para refletir esse período no FILE_MAP."
@@ -3195,36 +3239,69 @@ def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path])
                 "note": note,
             }
         return {
-            "period": period or "—",
+            "period": _format_timeline_period_text(period) or "—",
             "block": manual_block_id,
             "topics": "—",
             "aliases": "—",
             "note": "Há um bloco manual salvo, mas ele não foi encontrado no timeline index atual.",
         }
 
-    matches = [block for block in blocks if str(block.get("period_label") or "").strip() == period]
+    exact_matches = [block for block in blocks if str(block.get("period_label") or "").strip() == period]
+    overlap_matches = [block for block in blocks if _periods_overlap(period, str(block.get("period_label") or "").strip())]
+
+    candidate_blocks = exact_matches or overlap_matches or list(blocks)
     if unit_slug:
-        unit_matches = [block for block in matches if str(block.get("unit_slug") or "").strip() == unit_slug]
-        if unit_matches:
-            matches = unit_matches
-    if not matches:
+        unit_filtered = [block for block in candidate_blocks if str(block.get("unit_slug") or "").strip() == unit_slug]
+        if unit_filtered:
+            candidate_blocks = unit_filtered
+
+    if not candidate_blocks:
         return {
-            "period": period,
+            "period": _format_timeline_period_text(period),
             "block": "—",
             "topics": "—",
             "aliases": "—",
             "note": "Há período no FILE_MAP, mas nenhum bloco correspondente foi localizado no timeline index atual.",
         }
 
-    block = matches[0]
+    markdown_text = _entry_markdown_text_for_file_map(repo_dir, entry_data) if repo_dir else ""
+    scored_blocks = [
+        (
+            block,
+            _score_serialized_timeline_block(
+                entry_data,
+                markdown_text,
+                block,
+                preferred_unit_slug=unit_slug,
+                preferred_period=period,
+            ),
+        )
+        for block in candidate_blocks
+    ]
+    scored_blocks.sort(key=lambda item: item[1], reverse=True)
+    block, best_score = scored_blocks[0]
+    runner_up_score = scored_blocks[1][1] if len(scored_blocks) > 1 else 0.0
+
     topics = ", ".join(str(item).strip() for item in list(block.get("topics") or [])[:4] if str(item).strip()) or "—"
     aliases = ", ".join(str(item).strip() for item in list(block.get("aliases") or [])[:4] if str(item).strip()) or "—"
+    note = "Período do FILE_MAP conectado a este bloco do cronograma via `course/.timeline_index.json`."
+    if overlap_matches and not exact_matches:
+        note = (
+            "Período do FILE_MAP foi reconciliado por sobreposição de datas e sinais do conteúdo da entry "
+            f"(score: {best_score:.2f})."
+        )
+    elif len(scored_blocks) > 1 and abs(best_score - runner_up_score) < 0.20:
+        note = (
+            "Bloco selecionado heurísticamente entre múltiplos candidatos próximos; "
+            f"revise manualmente se o cronograma parecer incorreto (score: {best_score:.2f})."
+        )
+
     return {
-        "period": period,
+        "period": _timeline_block_display_period(block),
         "block": str(block.get("id") or "—"),
         "topics": topics,
         "aliases": aliases,
-        "note": "Período do FILE_MAP conectado a este bloco do cronograma via `course/.timeline_index.json`.",
+        "note": note,
     }
 
 
@@ -3308,6 +3385,125 @@ def _load_file_map_unit_options(repo_dir: Optional[Path]) -> List[Tuple[str, str
     return options
 
 
+def _format_timeline_label_dates(text: str) -> str:
+    value = str(text or "").strip()
+    if not value:
+        return ""
+
+    def _replace_date(match: re.Match) -> str:
+        raw = match.group(0)
+        for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
+            try:
+                return datetime.strptime(raw, fmt).strftime("%d/%m/%Y")
+            except ValueError:
+                continue
+        return raw
+
+    normalized = re.sub(
+        r"\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}|\d{2}-\d{2}-\d{4}",
+        _replace_date,
+        value,
+    )
+    normalized = re.sub(
+        r"(\d{2}/\d{2}/\d{4})\s*[–—-]\s*(\d{2}/\d{2}/\d{4})",
+        r"\1 a \2",
+        normalized,
+    )
+    return normalized
+
+
+def _format_timeline_period_text(text: str) -> str:
+    start, end = _parse_period_bounds(text)
+    if start and end:
+        return f"{start.strftime('%d/%m/%Y')} a {end.strftime('%d/%m/%Y')}"
+    return _format_timeline_label_dates(text)
+
+
+def _parse_period_bounds(text: str) -> Tuple[Optional[datetime], Optional[datetime]]:
+    value = str(text or "").strip()
+    if not value:
+        return None, None
+    found = re.findall(r"\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}|\d{2}-\d{2}-\d{4}", value)
+    if not found:
+        return None, None
+
+    def _parse_one(raw: str) -> Optional[datetime]:
+        for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
+            try:
+                return datetime.strptime(raw, fmt)
+            except ValueError:
+                continue
+        return None
+
+    start = _parse_one(found[0])
+    end = _parse_one(found[1]) if len(found) > 1 else start
+    if start and end and start > end:
+        start, end = end, start
+    return start, end
+
+
+def _periods_overlap(left: str, right: str) -> bool:
+    left_start, left_end = _parse_period_bounds(left)
+    right_start, right_end = _parse_period_bounds(right)
+    if not left_start or not left_end or not right_start or not right_end:
+        return False
+    return left_start <= right_end and right_start <= left_end
+
+
+def _timeline_block_display_period(block: Dict[str, object]) -> str:
+    start_text = str(block.get("period_start") or "").strip()
+    end_text = str(block.get("period_end") or "").strip()
+    if start_text or end_text:
+        return _format_timeline_period_text(f"{start_text} a {end_text}")
+    return _format_timeline_period_text(str(block.get("period_label") or "").strip())
+
+
+def _score_serialized_timeline_block(
+    entry_data: dict,
+    markdown_text: str,
+    block: Dict[str, object],
+    *,
+    preferred_unit_slug: str = "",
+    preferred_period: str = "",
+) -> float:
+    signals = _collect_entry_unit_signals(entry_data, markdown_text)
+    score = 0.0
+
+    block_unit_slug = str(block.get("unit_slug") or "").strip()
+    if preferred_unit_slug:
+        if block_unit_slug == preferred_unit_slug:
+            score += 1.25
+        elif block_unit_slug:
+            score -= 0.35
+
+    block_period = _timeline_block_display_period(block)
+    if preferred_period:
+        preferred_norm = _format_timeline_label_dates(preferred_period)
+        if preferred_norm and block_period == preferred_norm:
+            score += 0.85
+        elif preferred_norm and _periods_overlap(preferred_norm, block_period):
+            score += 0.45
+
+    block_text_parts = [
+        str(block.get("primary_topic_label") or ""),
+        str(block.get("topic_text") or ""),
+        " ".join(str(item) for item in (block.get("topics") or []) if str(item).strip()),
+        " ".join(str(item) for item in (block.get("aliases") or []) if str(item).strip()),
+    ]
+    block_norm = _normalize_match_text(" ".join(part for part in block_text_parts if part))
+    block_tokens = [tok for tok in block_norm.split() if len(tok) >= 4]
+
+    score += _score_text_against_row(signals.get("title_text", ""), block_tokens, weight=1.25)
+    score += _score_text_against_row(signals.get("tags_text", ""), block_tokens, weight=1.05)
+    score += _score_text_against_row(signals.get("markdown_headings_text", ""), block_tokens, weight=0.95)
+    score += _score_text_against_row(signals.get("markdown_lead_text", ""), block_tokens, weight=0.75)
+    score += _score_text_against_row(signals.get("markdown_text", ""), block_tokens, weight=0.18)
+
+    score += float(block.get("primary_topic_confidence", 0.0) or 0.0) * 0.25
+    score += float(block.get("unit_confidence", 0.0) or 0.0) * 0.10
+    return score
+
+
 def _load_timeline_block_options(repo_dir: Optional[Path]) -> List[Tuple[str, str]]:
     if not repo_dir:
         return []
@@ -3330,7 +3526,7 @@ def _load_timeline_block_options(repo_dir: Optional[Path]) -> List[Tuple[str, st
         unit_slug = str(block.get("unit_slug") or "").strip()
         topic_preview = ", ".join(topics[:2]) or "sem tópicos fortes"
         suffix = f" | {unit_slug}" if unit_slug else ""
-        label = f"{period_label} — {topic_preview}{suffix}"
+        label = f"{_timeline_block_display_period(block)} | {topic_preview}{suffix}"
         options.append((label, block_id))
         seen.add(block_id)
     return options

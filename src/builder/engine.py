@@ -7788,6 +7788,22 @@ def _timeline_block_is_noninstructional(block: Dict[str, object]) -> bool:
     return has_content
 
 
+def _timeline_block_is_administrative_only(block: Dict[str, object]) -> bool:
+    rows = block.get("rows", []) or []
+    if not rows:
+        return False
+    has_content = False
+    for row in rows:
+        text = str(row.get("content", "")).strip()
+        if not text:
+            continue
+        has_content = True
+        if _timeline_text_is_administrative(text):
+            continue
+        return False
+    return has_content
+
+
 def _assign_timeline_block_to_unit(block: Dict[str, object], unit_index: list) -> tuple[str, float]:
     if not unit_index:
         return "", 0.0
@@ -7923,6 +7939,8 @@ def _build_timeline_index(
 def _serialize_timeline_index(timeline_index: dict) -> dict:
     blocks = []
     for block in (timeline_index or {}).get("blocks", []) or []:
+        if _timeline_block_is_administrative_only(block):
+            continue
         payload = {
             "id": block.get("id", ""),
             "period_start": block.get("period_start", ""),
