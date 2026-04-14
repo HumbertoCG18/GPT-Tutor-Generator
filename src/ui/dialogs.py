@@ -2823,19 +2823,11 @@ class FileEntryDialog(simpledialog.Dialog):
             self.var_mode.set("high_fidelity")
             self.var_backend.set("marker")
             self.var_formula.set(True)
-        elif profile == "__unused_legacy_visual__":
-            # Layout complexo (colunas, muitas figuras/tabelas)
-            self.var_mode.set("high_fidelity")
-            self.var_backend.set("docling")
         elif profile == "scanned":
             # PDF digitalizado/foto → força OCR
             self.var_mode.set("auto")
             self.var_backend.set("auto")
             self.var_force_ocr.set(True)
-        elif profile == "__unused_legacy_exam__":
-            # Prova/lista → auto com docling se disponível
-            self.var_mode.set("auto")
-            self.var_backend.set("auto")
         self._update_datalab_mode_visibility()
 
     def _update_pdf_frame_visibility(self):

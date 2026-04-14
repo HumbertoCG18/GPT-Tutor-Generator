@@ -3696,7 +3696,6 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in self.entries),
             has_code=any(e.category in CODE_CATEGORIES for e in self.entries),
             has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in self.entries),
-            first_session_pending=self._first_session_pending(),
         )
         write_text(self.root_dir / "INSTRUCOES_CLAUDE_PROJETO.md", instructions)
 
@@ -3705,7 +3704,6 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in self.entries),
             has_code=any(e.category in CODE_CATEGORIES for e in self.entries),
             has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in self.entries),
-            first_session_pending=self._first_session_pending(),
         )
         write_text(self.root_dir / "INSTRUCOES_GPT_PROJETO.md",
                    generate_gpt_instructions(
@@ -4431,17 +4429,6 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             return n
         except Exception:
             return 0
-
-    def _first_session_pending(self) -> bool:
-        """Retorna True se FILE_MAP.md ainda tem status: pending_review."""
-        file_map_path = self.root_dir / "course" / "FILE_MAP.md"
-        if not file_map_path.exists():
-            return True
-        try:
-            content = file_map_path.read_text(encoding="utf-8")
-            return "status: pending_review" in content
-        except Exception:
-            return True
 
     def _apply_math_normalization(self, md_rel_path: Optional[str]) -> None:
         """Read a generated markdown file and normalize Unicode math → LaTeX."""
@@ -5443,7 +5430,6 @@ unit: {entry.tags}
             has_assignments=any((e.get("category") in ASSIGNMENT_CATEGORIES) for e in live_manifest_entries),
             has_code=any((e.get("category") in CODE_CATEGORIES) for e in live_manifest_entries),
             has_whiteboard=any((e.get("category") in WHITEBOARD_CATEGORIES) for e in live_manifest_entries),
-            first_session_pending=self._first_session_pending(),
         )
         write_text(self.root_dir / "INSTRUCOES_CLAUDE_PROJETO.md",
                    generate_claude_project_instructions(
@@ -5788,6 +5774,7 @@ def generate_claude_project_instructions(
     has_whiteboard: bool = False,
     first_session_pending: bool = True,
 ) -> str:
+    del first_session_pending
     return _low_token_generate_claude_project_instructions(
         course_meta,
         student_profile=student_profile,
@@ -5795,7 +5782,6 @@ def generate_claude_project_instructions(
         has_assignments=has_assignments,
         has_code=has_code,
         has_whiteboard=has_whiteboard,
-        first_session_pending=first_session_pending,
     )
 
 
@@ -5818,6 +5804,7 @@ def generate_gpt_instructions(
     - Acesso a arquivos via GitHub RAW URLs
     - Protocolo de Primeira Sessão adaptado (sem edição nativa de arquivos)
     """
+    del first_session_pending
     course_name = course_meta.get("course_name", "Curso")
     professor = course_meta.get("professor", "")
     institution = course_meta.get("institution", "")
@@ -5868,7 +5855,6 @@ diretamente de lá para ter sempre a versão mais atualizada.
         has_assignments=has_assignments,
         has_code=has_code,
         has_whiteboard=has_whiteboard,
-        first_session_pending=first_session_pending,
     )
 
     return f"""# Instruções do Tutor — {course_name}
@@ -5933,135 +5919,6 @@ Identifique o modo pela frase do aluno:
 {first_session_block}"""
 
 
-def _legacy_generate_gemini_instructions(
-    course_meta: dict,
-    student_profile=None,
-    subject_profile=None,
-    has_assignments: bool = False,
-    has_code: bool = False,
-    has_whiteboard: bool = False,
-    first_session_pending: bool = True,
-) -> str:
-    """
-    Gera o system prompt para Gemini (Google AI Studio Gems).
-    Resultado: INSTRUCOES_GEMINI_PROJETO.md
-
-    Diferenças em relação ao Claude:
-    - Gemini Gems tem integração NATIVA com GitHub (aba "Conhecimento")
-    - Caminhos relativos funcionam igual ao Claude
-    - Gems não editam arquivos nativamente — aluno faz as alterações
-    """
-    course_name = course_meta.get("course_name", "Curso")
-    professor = course_meta.get("professor", "")
-    institution = course_meta.get("institution", "")
-    semester = course_meta.get("semester", "")
-    github_url = (getattr(subject_profile, "github_url", "") or "").rstrip("/")
-
-    nick = "Aluno"
-    personality_block = ""
-    if student_profile and student_profile.full_name:
-        nick = student_profile.nickname or student_profile.full_name
-        if student_profile.personality:
-            personality_block = f"\n**Estilo de aprendizado:** {student_profile.personality}\n"
-
-    github_note = ""
-    if github_url:
-        github_note = f"\n> Repositório conectado: {github_url}\n"
-
-    file_rows = [
-        "| `system/TUTOR_POLICY.md` | Regras de comportamento — SEMPRE consulte |",
-        "| `student/STUDENT_STATE.md` | Progresso atual — SEMPRE consulte |",
-        "| `course/COURSE_MAP.md` | Estrutura e ordem dos tópicos |",
-        "| `course/FILE_MAP.md` | Roteador de arquivos; consulte Seções antes de abrir e trate Confiança `Baixa` como mapeamento incerto |",
-        "| `course/SYLLABUS.md` | Cronograma e datas |",
-        "| `course/GLOSSARY.md` | Terminologia da disciplina |",
-        "| `system/PEDAGOGY.md` | Como estruturar explicações |",
-        "| `system/MODES.md` | Modos de operação |",
-        "| `system/OUTPUT_TEMPLATES.md` | Templates de resposta |",
-        "| `content/` | Material de aula curado |",
-        "| `exercises/` | Listas de exercícios |",
-        "| `exams/` | Provas anteriores |",
-    ]
-    if has_assignments:
-        file_rows.append("| `assignments/` | Enunciados de trabalhos |")
-    if has_code:
-        file_rows.append("| `code/` | Código do professor |")
-    if has_whiteboard:
-        file_rows.append("| `whiteboard/` | Registros do quadro |")
-
-    file_table = "\n".join(file_rows)
-
-    first_session_block = _prompt_first_session_protocol_text(
-        course_meta,
-        student_profile=student_profile,
-        subject_profile=subject_profile,
-        has_assignments=has_assignments,
-        has_code=has_code,
-        has_whiteboard=has_whiteboard,
-        first_session_pending=first_session_pending,
-    )
-
-    return f"""# Instruções do Tutor — {course_name}
-
-Você é o tutor acadêmico de **{course_name}**, ministrada pelo professor
-**{professor}** na **{institution}**, semestre **{semester}**.
-
-Chame o aluno de **{nick}**.{personality_block}
-
-## Fonte de verdade
-{github_note}
-Os arquivos desta disciplina estão conectados via repositório GitHub
-(aba "Conhecimento" deste Gem). Eles são sua única fonte de verdade —
-**nunca invente** conteúdo que não esteja nesses arquivos.
-
-## Arquivos de referência
-
-| Arquivo | Quando consultar |
-|---|---|
-{file_table}
-
-## Ordem de navegação
-
-1. `course/COURSE_MAP.md`
-2. `student/STUDENT_STATE.md`
-3. `course/GLOSSARY.md`
-4. `course/FILE_MAP.md`
-5. `content/`, `exercises/` e `exams/` apenas quando necessário
-
-{_prompt_map_artifact_contract_text()}
-
-## Modos de operação
-
-Identifique o modo pela frase do aluno:
-
-- **`study`** — "quero entender X", "explica Y" → ensinar do zero
-- **`assignment`** — "tenho uma lista", "exercício X" → guiar sem entregar
-- **`exam_prep`** — "tenho prova", "revisão" → foco em incidência e padrões
-- **`class_companion`** — "estou na aula" → respostas curtas e diretas
-- **`code_review`** — "revisa meu código" → diagnosticar e guiar
-
-Consulte `system/MODES.md` e `system/OUTPUT_TEMPLATES.md` para detalhes.
-
-## Sincronização temporal
-
-Antes de responder, identifique onde o aluno está no semestre:
-1. Leia a seção "Timeline" em `course/COURSE_MAP.md`
-2. Cruze a data atual com o período de cada unidade
-3. Use isso para contextualizar explicações e priorizar revisão
-
-## Regras fundamentais
-
-1. **Nunca invente** — use apenas os arquivos do repositório
-2. **Consulte `student/STUDENT_STATE.md`** antes de toda resposta
-3. **Cite a fonte** ao usar conteúdo dos arquivos
-4. **Não entregue respostas de exercícios** — guie o raciocínio
-5. **Ao final da sessão**, gere bloco de atualização do `STUDENT_STATE.md`
-
-{_prompt_student_state_update_text(remote_editing=True)}
-{first_session_block}"""
-
-
-# Override final do prompt Gemini com a versao alinhada ao fluxo atual das Gems.
 def generate_gemini_instructions(
     course_meta: dict,
     student_profile=None,
@@ -6080,6 +5937,7 @@ def generate_gemini_instructions(
     - Caminhos relativos funcionam igual ao Claude
     - Gems nao editam arquivos nativamente; o aluno faz as alteracoes
     """
+    del first_session_pending
     course_name = course_meta.get("course_name", "Curso")
     professor = course_meta.get("professor", "")
     institution = course_meta.get("institution", "")
@@ -6139,7 +5997,6 @@ conexão entre teoria e prática e progressão gradual.
         has_assignments=has_assignments,
         has_code=has_code,
         has_whiteboard=has_whiteboard,
-        first_session_pending=first_session_pending,
     )
 
     return f"""# Instruções do Tutor | {course_name}
@@ -11616,7 +11473,6 @@ def _low_token_generate_claude_project_instructions(
     has_assignments: bool = False,
     has_code: bool = False,
     has_whiteboard: bool = False,
-    first_session_pending: bool = True,
 ) -> str:
     course_name = course_meta.get("course_name", "Curso")
     professor = course_meta.get("professor", "")
@@ -11661,7 +11517,6 @@ def _low_token_generate_claude_project_instructions(
         has_assignments=has_assignments,
         has_code=has_code,
         has_whiteboard=has_whiteboard,
-        first_session_pending=first_session_pending,
     ) + "\n"
 
     reading_order_lines = _prompt_economic_reading_order_lines()
@@ -11792,14 +11647,6 @@ decomposição em subtópicos menores.
 """.strip()
 
 
-def _prompt_repo_drift_lines() -> list[str]:
-    return [
-        "Antes de sessões futuras, releia `student/STUDENT_STATE.md` e `course/FILE_MAP.md`.",
-        "Se surgirem novos materiais ainda não refletidos nesses artefatos, avise o aluno antes de continuar.",
-        "Encaminhe a correção pelo app: `Reprocessar Repositório` para recalcular a estrutura ou override no backlog para casos específicos.",
-    ]
-
-
 def _prompt_economic_reading_order_lines() -> list[str]:
     return [
         "1. Comece por `course/COURSE_MAP.md` para identificar unidade, ordem e pré-requisitos.",
@@ -11820,10 +11667,8 @@ def _prompt_first_session_protocol_lines(
     has_assignments: bool = False,
     has_code: bool = False,
     has_whiteboard: bool = False,
-    first_session_pending: bool = True,
-    raw_base: str | None = None,
 ) -> list[str]:
-    del has_assignments, has_code, has_whiteboard, first_session_pending, raw_base
+    del has_assignments, has_code, has_whiteboard
 
     nick = "Aluno"
     if student_profile and student_profile.full_name:
@@ -11856,10 +11701,8 @@ def _prompt_first_session_protocol_text(
     has_assignments: bool = False,
     has_code: bool = False,
     has_whiteboard: bool = False,
-    first_session_pending: bool = True,
-    raw_base: str | None = None,
 ) -> str:
-    del has_assignments, has_code, has_whiteboard, first_session_pending, raw_base
+    del has_assignments, has_code, has_whiteboard
     return "\n".join(
         [
             "## Primeira Sessão — Auditoria e início",

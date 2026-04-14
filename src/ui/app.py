@@ -2171,12 +2171,10 @@ class App(tk.Tk):
         course_map_path = repo_dir / "course" / "COURSE_MAP.md"
         file_map_complete = False
         course_map_exists = course_map_path.exists()
-        first_pending = True
         if file_map_path.exists():
             try:
                 fm_content = file_map_path.read_text(encoding="utf-8")
                 file_map_complete = "status: pending_review" not in fm_content
-                first_pending = not file_map_complete
             except Exception:
                 pass
 
@@ -2189,7 +2187,7 @@ class App(tk.Tk):
                 "O repositório já está configurado:\n"
                 "  - COURSE_MAP.md existe\n"
                 "  - FILE_MAP.md está completo\n\n"
-                "O Protocolo de Primeira Sessão será OMITIDO.\n\n"
+                "O Protocolo de Primeira Sessão continuará INCLUÍDO.\n\n"
                 "Sim → Gerar instruções (manter LLM atual)\n"
                 "Não → Escolher outra plataforma principal\n"
                 "Cancelar → Abortar"
@@ -2246,7 +2244,6 @@ class App(tk.Tk):
                 has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in all_entries),
                 has_code=any(e.category in CODE_CATEGORIES for e in all_entries),
                 has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in all_entries),
-                first_session_pending=first_pending,
             )
 
             write_text(repo_dir / "INSTRUCOES_CLAUDE_PROJETO.md",
@@ -2265,13 +2262,12 @@ class App(tk.Tk):
                 "gemini": "INSTRUCOES_GEMINI_PROJETO.md",
             }
             primary = platform_map.get(platform, platform_map["claude"])
-            protocol_msg = "Protocolo de Primeira Sessão OMITIDO." if not first_pending else "Protocolo de Primeira Sessão INCLUÍDO."
             messagebox.showinfo(
                 APP_NAME,
                 f"Instruções geradas para as 3 plataformas.\n\n"
                 f"Plataforma principal: {platform.upper()}\n"
                 f"Arquivo: {primary}\n\n"
-                f"{protocol_msg}"
+                "Protocolo de Primeira Sessão INCLUÍDO."
             )
             self._set_status(f"Instruções LLM geradas — principal: {platform.upper()}")
         except Exception as e:
