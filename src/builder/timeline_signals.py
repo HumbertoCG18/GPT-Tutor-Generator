@@ -117,7 +117,10 @@ def extract_timeline_session_signals(text: str) -> list[dict[str, object]]:
 
     for match in _PREFIXED_SESSION_RE.finditer(normalized):
         prefix_raw = match.group("prefix").strip()
-        body_raw = match.group("body").strip(" \t-:;.,")
+        raw_body = match.group("body") or ""
+        if "⊘" in raw_body:
+            continue
+        body_raw = raw_body.strip(" \t-:;.,")
         prefix_norm = _normalize_match_text(prefix_raw)
         body_norm = _normalize_match_text(body_raw)
         date = _parse_date(match.group("date"))
@@ -150,7 +153,10 @@ def extract_timeline_session_signals(text: str) -> list[dict[str, object]]:
 
     for match in _SESSION_RE.finditer(normalized):
         label_raw = match.group("label").strip()
-        body_raw = match.group("body").strip(" \t-:;.,")
+        raw_body = match.group("body") or ""
+        if "⊘" in raw_body:
+            continue
+        body_raw = raw_body.strip(" \t-:;.,")
         label_norm = _normalize_match_text(label_raw)
         body_norm = _normalize_match_text(body_raw)
 

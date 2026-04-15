@@ -67,3 +67,13 @@ def test_session_extractor_still_accepts_legacy_colon_format():
     assert len(sessions) == 1
     assert sessions[0]["date"] == "2026-03-30"
     assert "provas por inducao" in sessions[0]["label"]
+
+
+def test_session_extractor_skips_ignored_marker():
+    text = (
+        "- (20/04/2026) SEG — Suspensão de aulas [Aula] ⊘\n"
+        "- (22/04/2026) QUA — Prova P1 [Prova]"
+    )
+    sessions = extract_timeline_session_signals(text)
+    assert len(sessions) == 1
+    assert sessions[0]["date"] == "2026-04-22"
