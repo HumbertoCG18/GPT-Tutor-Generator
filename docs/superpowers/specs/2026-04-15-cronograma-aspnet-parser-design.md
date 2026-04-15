@@ -220,3 +220,101 @@ Intencionalmente adiado (implementar depois se valor justificar):
 | Outras faculdades usam DataGrid com IDs diferentes | Fallback preservado; detecção baseada em presença de `_lblData` é genérica |
 | Reprocessamento regenera FILE_MAP e usuário perde edições manuais | Documentação já deixa claro que FILE_MAP/COURSE_MAP são regenerados (CLAUDE.md linha "Não editar FILE_MAP ou COURSE_MAP manualmente") |
 | Linhas com título vazio ou data inválida | Parser filtra silenciosamente; log warning |
+
+---
+
+## 12. Adendo (2026-04-15) — Classificação por cor + correções de matching
+
+Adicionado após validação da Fase 1. A Fase 1 entregou o parser estruturado mas revelou três problemas remanescentes:
+
+1. `FormalizacaoAlgoritmos_Recursao3` caindo em `13/07 a 15/07` (Devolução + Prova G2) — o filtro `⊘` só afeta o extractor de sessões; o scorer de blocos usa `candidate_rows` crus e não descarta linhas ignoradas.
+2. Entries de categoria `bibliografia` / `references` recebem unidade e período — não deveriam, são material de apoio.
+3. `manual_timeline_block_id` às vezes não resolve (IDs do `_build_timeline_index` não batem com o valor manual).
+
+### 12.1 Mapa de cores → `kind`
+
+Metadata autoritativa do sistema ASP.NET (institucional, não por matéria). Hardcoded em `helpers.py`:
+
+| Cor (normalizada lowercase, sem espaços) | `kind` | Atividade canônica | `ignored` |
+|---|---|---|---|
+| `red`, `#ff0000` | `suspension` | Suspensão de aulas | sim |
+| `lightgrey`, `#d3d3d3` | `g2` | Devolução / Prova G2 | sim |
+| `#ffa500`, `orange` | `exam` | Prova | não |
+| `#ff8c00`, `darkorange` | `ps` | Prova de Substituição | sim |
+| `#8b0000`, `darkred` | `event` | Evento Acadêmico | sim |
+| `#ffff00`, `yellow` | `assignment` | Trabalho (entrega/apresentação) | não |
+| (nenhuma / outra) | `class` | Aula | não |
+
+Normalização: extrair `background-color:` do `style` do `<tr>`, lowercase, strip espaços. Se casar no mapa, adota o `kind`; se `ignored=True`, emite sufixo `⊘`.
+
+### 12.2 Formato de saída enriquecido
+
+A linha do syllabus ganha um token `{kind=X}` antes de `⊘`:
+
+```
+- (22/04/2026) QUA — Prova P1 [Prova] {kind=exam}
+- (20/04/2026) SEG — Suspensão de aulas [Aula] {kind=suspension} ⊘
+- (08/07/2026) QUA — Prova PS [Prova de Substituição] {kind=ps} ⊘
+- (15/07/2026) QUA — Prova G2 [Prova de G2] {kind=g2} ⊘
+- (27/05/2026) QUA — SE Day [Evento Acadêmico] {kind=event} ⊘
+- (30/03/2026) SEG — Provas por indução [Aula]
+```
+
+Linhas `kind=class` omitem o token (ruído desnecessário). Linhas sem cor reconhecida também omitem.
+
+### 12.3 Propagação para `_build_timeline_index`
+
+`timeline_index.py` passa a reconhecer `{kind=X}` no texto das rows e setar `row["kind"]` e `row["ignored"]`. Scorer descarta rows `ignored`:
+
+- `_score_entry_against_timeline_block` — pula rows com `row.get("ignored")` ao calcular score
+- `_score_entry_against_timeline_sessions` — já filtra via extractor; mantém como fallback
+
+Blocos compostos **apenas** por rows `ignored` viram `administrative_only=True` e são descartados do pool de scoring (semelhante a `_timeline_block_is_administrative_only` existente).
+
+### 12.4 Correção de `navigation_artifacts.py:636`
+
+Atual:
+```python
+unit = "curso-inteiro" if category in {"cronograma", "bibliografia", "referencias"} and not tags else ""
+```
+
+Novo:
+```python
+_NO_TIMELINE_CATEGORIES = {"cronograma", "bibliografia", "referencias", "references"}
+if category in _NO_TIMELINE_CATEGORIES:
+    unit = "curso-inteiro"
+    period = ""           # força vazio no output
+    skip_timeline = True  # flag consumida abaixo para evitar auto-map
+else:
+    unit = ""
+    skip_timeline = False
+```
+
+E o bloco de auto-mapeamento de unidade/período abaixo é condicionado a `not skip_timeline`.
+
+### 12.5 Fallback de `manual_timeline_block_id`
+
+`_resolve_entry_manual_timeline_block` (engine.py:8032) atual só casa por `block.id`. Novo comportamento:
+
+1. Tenta match exato por `block.id` (atual)
+2. Se falhou e raw casa `bloco-(\d+)` → retorna o N-ésimo bloco **instrucional** (`administrative_only=False`) da unidade da entry, indexado a partir de 1
+3. Se ainda falhou → retorna `None` (atual)
+
+### 12.6 Escopo de arquivos (atualizado)
+
+| Arquivo | Mudança |
+|---|---|
+| `src/utils/helpers.py` | `_parse_aspnet_schedule` lê cor → emite `{kind=X}` + `⊘` |
+| `src/builder/timeline_signals.py` | Já filtra `⊘` (Fase 1); sem mudanças adicionais |
+| `src/builder/timeline_index.py` | Parseia `{kind=X}` de rows; seta `row["kind"]`, `row["ignored"]`; expande `_TIMELINE_ADMIN_PHRASES` se necessário |
+| `src/builder/engine.py` | `_score_entry_against_timeline_block` pula rows ignoradas; `_resolve_entry_manual_timeline_block` ganha fallback `bloco-N` |
+| `src/builder/navigation_artifacts.py` | Categorias sem timeline; `references` (en) incluído; força `period=""` |
+| `tests/` | Novos casos para cada item acima |
+
+### 12.7 Critérios de aceitação (adendo)
+
+6. Linhas com `background-color:Red` no HTML produzem `{kind=suspension} ⊘` no syllabus
+7. Linhas `#FFFF00` produzem `{kind=assignment}` (sem `⊘`)
+8. Após reprocessar Métodos Formais, `FormalizacaoAlgoritmos_Recursao3` tem Período contido dentro da janela de `unidade-01` (02/03 a 13/04/2026), **não** em julho
+9. FILE_MAP tem coluna Unidade vazia (ou `curso-inteiro`) e Período vazio para todas as entries de categoria `bibliografia` ou `references`
+10. Se backlog tem `manual_timeline_block_id: bloco-04`, o Período do entry bate com o 4º bloco instrucional da unidade
