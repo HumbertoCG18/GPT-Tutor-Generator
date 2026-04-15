@@ -24,6 +24,8 @@ _PREFIXED_SESSION_RE = re.compile(
     rf"(?P<date>{_DATE_RE})(?:\s*(?:[:\-–—]\s*)?(?P<body>[^;\n]*))?",
     re.IGNORECASE,
 )
+_KIND_MARKER_RE = re.compile(r"\{kind=([a-z0-9_]+)\}", re.IGNORECASE)
+_IGNORED_SESSION_KINDS = {"ps", "g2", "event", "suspension"}
 
 
 def _strip_accents(text: str) -> str:
@@ -75,6 +77,18 @@ def _build_signal_terms(text: str) -> list[str]:
     return terms
 
 
+def _strip_kind_marker(text: str) -> tuple[str, str]:
+    """Return text without ``{kind=...}`` markers and the parsed kind if present."""
+
+    match = _KIND_MARKER_RE.search(text or "")
+    if not match:
+        return (text or "", "")
+
+    cleaned = _KIND_MARKER_RE.sub(" ", text or "")
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return (cleaned, match.group(1).lower())
+
+
 def extract_date_range_signal(text: str) -> dict[str, str]:
     """Extract a weekly date range from free text.
 
@@ -104,7 +118,7 @@ def extract_timeline_session_signals(text: str) -> list[dict[str, object]]:
     The extractor recognizes:
     - inline class dates like ``(30/03/2026): Text``
     - plain class dates like ``30/03/2026: Text``
-    - async markers like ``(atividade assíncrona): Text``
+    - async markers like ``(atividade assÃ­ncrona): Text``
     - linearized HTML text like ``Aula 30/03/2026 Text``
     """
 
@@ -118,9 +132,10 @@ def extract_timeline_session_signals(text: str) -> list[dict[str, object]]:
     for match in _PREFIXED_SESSION_RE.finditer(normalized):
         prefix_raw = match.group("prefix").strip()
         raw_body = match.group("body") or ""
-        if "⊘" in raw_body:
+        body_raw, marker_kind = _strip_kind_marker(raw_body)
+        if "⊘" in raw_body or "âŠ˜" in raw_body or marker_kind in _IGNORED_SESSION_KINDS:
             continue
-        body_raw = raw_body.strip(" \t-:;.,")
+        body_raw = body_raw.strip(" \t-:;.,")
         prefix_norm = _normalize_match_text(prefix_raw)
         body_norm = _normalize_match_text(body_raw)
         date = _parse_date(match.group("date"))
@@ -154,9 +169,10 @@ def extract_timeline_session_signals(text: str) -> list[dict[str, object]]:
     for match in _SESSION_RE.finditer(normalized):
         label_raw = match.group("label").strip()
         raw_body = match.group("body") or ""
-        if "⊘" in raw_body:
+        body_raw, marker_kind = _strip_kind_marker(raw_body)
+        if "⊘" in raw_body or "âŠ˜" in raw_body or marker_kind in _IGNORED_SESSION_KINDS:
             continue
-        body_raw = raw_body.strip(" \t-:;.,")
+        body_raw = body_raw.strip(" \t-:;.,")
         label_norm = _normalize_match_text(label_raw)
         body_norm = _normalize_match_text(body_raw)
 
