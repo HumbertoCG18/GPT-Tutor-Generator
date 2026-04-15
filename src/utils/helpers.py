@@ -338,6 +338,56 @@ def safe_rel(path: Optional[Path], root: Path) -> Optional[str]:
 def json_str(value: object) -> str:
     return json.dumps(value, ensure_ascii=False)
 
+def _is_aspnet_schedule(soup) -> bool:
+    if soup.find(id="dgAulas"):
+        return True
+    import re as _re
+    if soup.find("span", id=_re.compile(r"_lblData$")):
+        return True
+    return False
+
+
+def _aspnet_row_cell(row, suffix: str) -> str:
+    import re as _re
+    span = row.find("span", id=_re.compile(rf"_lbl{suffix}$"))
+    if not span:
+        return ""
+    return " ".join(span.get_text(" ", strip=True).split())
+
+
+def _aspnet_row_ignored(row) -> bool:
+    style = (row.get("style") or "").lower().replace(" ", "")
+    return "background-color:red" in style or "background-color:lightgrey" in style
+
+
+def _parse_aspnet_schedule(soup) -> str:
+    table = soup.find(id="dgAulas") or soup.find("table")
+    if not table:
+        return "Erro: Tabela de cronograma ASP.NET nao encontrada."
+
+    lines = ["## Cronograma de Aulas", ""]
+    for row in table.find_all("tr"):
+        data = _aspnet_row_cell(row, "Data")
+        descricao = _aspnet_row_cell(row, "Descricao")
+        if not data or not descricao:
+            continue
+        dia = _aspnet_row_cell(row, "Dia")
+        atividade = _aspnet_row_cell(row, "Atividade") or "Aula"
+        recursos = _aspnet_row_cell(row, "Recursos")
+
+        parts = [f"- ({data})"]
+        if dia:
+            parts.append(dia)
+        parts.append(f"— {descricao} [{atividade}]")
+        if recursos:
+            parts.append(f"@{recursos}")
+        if _aspnet_row_ignored(row):
+            parts.append("⊘")
+        lines.append(" ".join(parts))
+
+    return "\n".join(lines) + "\n"
+
+
 def parse_html_schedule(html_content: str) -> str:
     try:
         from bs4 import BeautifulSoup
@@ -345,6 +395,10 @@ def parse_html_schedule(html_content: str) -> str:
         return "Erro: A biblioteca 'beautifulsoup4' não está instalada.\nUse no terminal: pip install beautifulsoup4"
 
     soup = BeautifulSoup(html_content, "html.parser")
+
+    if _is_aspnet_schedule(soup):
+        return _parse_aspnet_schedule(soup)
+
     table = soup.find("table")
     if not table:
         return "Erro: Nenhuma tabela (<table>) encontrada no HTML fornecido."
@@ -354,24 +408,22 @@ def parse_html_schedule(html_content: str) -> str:
         return "Erro: A tabela não possui linhas (<tr>)."
 
     output = []
-    
-    # Headers
+
     header_cells = rows[0].find_all(["th", "td"])
     headers = [c.get_text(" ", strip=True) for c in header_cells]
     if not headers:
         return "Erro: Tabela sem colunas reconhecíveis."
-        
+
     output.append("| " + " | ".join(headers) + " |")
     output.append("|" + "|".join(["---"] * len(headers)) + "|")
 
-    # Body
     for row in rows[1:]:
         cells = row.find_all(["td", "th"])
         row_data = []
         for cell in cells:
             text = " ".join(cell.get_text(" ", strip=True).replace("\n", " ").replace("\r", " ").split())
             row_data.append(text)
-            
+
         if any(row_data):
             output.append("| " + " | ".join(row_data) + " |")
 
