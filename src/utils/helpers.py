@@ -355,16 +355,37 @@ def _aspnet_row_cell(row, suffix: str) -> str:
     return " ".join(span.get_text(" ", strip=True).split())
 
 
-def _aspnet_row_ignored(row) -> bool:
+_ASPNET_COLOR_KIND_MAP = {
+    "red": ("suspension", True),
+    "#ff0000": ("suspension", True),
+    "lightgrey": ("g2", True),
+    "#d3d3d3": ("g2", True),
+    "#ffa500": ("exam", False),
+    "orange": ("exam", False),
+    "#ff8c00": ("ps", True),
+    "darkorange": ("ps", True),
+    "#8b0000": ("event", True),
+    "darkred": ("event", True),
+    "#ffff00": ("assignment", False),
+    "yellow": ("assignment", False),
+}
+
+
+def _aspnet_row_kind(row) -> tuple[str, bool]:
+    """Return (kind, ignored) derived from row background-color. Default: ('class', False)."""
     style = (row.get("style") or "").lower().replace(" ", "")
-    return "background-color:red" in style or "background-color:lightgrey" in style
+    import re as _re
+    match = _re.search(r"background-color:([^;]+)", style)
+    if not match:
+        return ("class", False)
+    color = match.group(1).strip().rstrip(";")
+    return _ASPNET_COLOR_KIND_MAP.get(color, ("class", False))
 
 
 def _parse_aspnet_schedule(soup) -> str:
     table = soup.find(id="dgAulas") or soup.find("table")
     if not table:
         return "Erro: Tabela de cronograma ASP.NET nao encontrada."
-
     lines = ["## Cronograma de Aulas", ""]
     for row in table.find_all("tr"):
         data = _aspnet_row_cell(row, "Data")
@@ -374,6 +395,7 @@ def _parse_aspnet_schedule(soup) -> str:
         dia = _aspnet_row_cell(row, "Dia")
         atividade = _aspnet_row_cell(row, "Atividade") or "Aula"
         recursos = _aspnet_row_cell(row, "Recursos")
+        kind, ignored = _aspnet_row_kind(row)
 
         parts = [f"- ({data})"]
         if dia:
@@ -381,10 +403,11 @@ def _parse_aspnet_schedule(soup) -> str:
         parts.append(f"— {descricao} [{atividade}]")
         if recursos:
             parts.append(f"@{recursos}")
-        if _aspnet_row_ignored(row):
+        if kind != "class":
+            parts.append(f"{{kind={kind}}}")
+        if ignored:
             parts.append("⊘")
         lines.append(" ".join(parts))
-
     return "\n".join(lines) + "\n"
 
 
