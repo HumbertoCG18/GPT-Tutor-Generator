@@ -741,8 +741,12 @@ def _timeline_block_is_administrative_only(block: Dict[str, object]) -> bool:
     rows = block.get("rows", []) or []
     if not rows:
         return False
+    if all(bool(row.get("ignored")) for row in rows):
+        return True
     has_content = False
     for row in rows:
+        if bool(row.get("ignored")):
+            continue
         text = str(row.get("content", "")).strip()
         if not text:
             continue
