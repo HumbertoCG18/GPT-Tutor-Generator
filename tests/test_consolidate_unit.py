@@ -122,3 +122,27 @@ def test_consolidate_unit_creates_backup(tmp_path: Path):
     assert result.backup_path is not None
     assert (result.backup_path / "limites.md").exists()
     assert (result.backup_path / "continuidade.md").exists()
+
+
+def test_consolidate_unit_appends_revision_section(tmp_path: Path):
+    _seed_repo(tmp_path)
+    consolidate_unit(
+        root_dir=tmp_path, unit_slug="unidade-02",
+        today="2026-04-20",
+        topic_order=["limites", "continuidade"],
+    )
+    unit_dir = tmp_path / "student" / "batteries" / "unidade-02"
+    unit_dir.mkdir(parents=True)
+    (unit_dir / "limites.md").write_text(
+        "---\ntopic_slug: limites\nunit: unidade-02\nstatus: compreendido\n---\n"
+        "## 2026-05-10 (sessão 1)\n- Revisado: def formal\n",
+        encoding="utf-8",
+    )
+    result = consolidate_unit(
+        root_dir=tmp_path, unit_slug="unidade-02",
+        today="2026-05-10",
+        topic_order=["limites"],
+    )
+    summary = result.summary_path.read_text(encoding="utf-8")
+    assert "## Revisão 2026-05-10" in summary
+    assert (result.backup_path / "unidade-02.summary.md").exists()

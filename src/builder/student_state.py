@@ -248,6 +248,7 @@ def consolidate_unit(
         raise UnitNotReadyError(unit_slug, pending)
 
     existing_summary = batteries_root / f"{unit_slug}.summary.md"
+    first_close = not existing_summary.exists()
     revision_section = _read_existing_summary_revisions(existing_summary)
     summary_md = render_unit_summary_md(
         unit_slug=unit_slug,
@@ -255,8 +256,12 @@ def consolidate_unit(
         topic_order=topic_order,
         batteries=battery_files,
     )
-    if revision_section:
-        summary_md = summary_md.rstrip() + "\n\n" + revision_section + "\n"
+    if not first_close:
+        revision_title = f"## Revisão {today}"
+        revision_body = f"**Reestudado:** {', '.join(topic_order)}"
+        summary_md = summary_md.rstrip() + f"\n\n{revision_title}\n{revision_body}\n"
+        if revision_section:
+            summary_md += "\n" + revision_section + "\n"
 
     backup_path = root_dir / "build" / "consolidation-backup" / today / unit_slug
     backup_path.mkdir(parents=True, exist_ok=True)
