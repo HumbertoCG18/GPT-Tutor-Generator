@@ -78,3 +78,47 @@ def test_consolidate_unit_happy_path(tmp_path: Path):
     assert not (tmp_path / "student" / "batteries" / "unidade-02").exists()
     state = (tmp_path / "student" / "STUDENT_STATE.md").read_text(encoding="utf-8")
     assert "closed_units: [unidade-02]" in state
+
+
+def test_consolidate_unit_blocks_when_pending_without_force(tmp_path: Path):
+    _seed_repo(tmp_path)
+    p = tmp_path / "student" / "batteries" / "unidade-02" / "continuidade.md"
+    p.write_text(
+        "---\ntopic_slug: continuidade\nunit: unidade-02\nstatus: em_progresso\n---\n",
+        encoding="utf-8",
+    )
+    with pytest.raises(UnitNotReadyError) as exc:
+        consolidate_unit(
+            root_dir=tmp_path, unit_slug="unidade-02",
+            today="2026-04-20",
+            topic_order=["limites", "continuidade"],
+        )
+    assert "continuidade" in exc.value.pending
+
+
+def test_consolidate_unit_force_allows_partial(tmp_path: Path):
+    _seed_repo(tmp_path)
+    p = tmp_path / "student" / "batteries" / "unidade-02" / "continuidade.md"
+    p.write_text(
+        "---\ntopic_slug: continuidade\nunit: unidade-02\nstatus: em_progresso\n---\n",
+        encoding="utf-8",
+    )
+    result = consolidate_unit(
+        root_dir=tmp_path, unit_slug="unidade-02",
+        today="2026-04-20",
+        topic_order=["limites", "continuidade"],
+        force=True,
+    )
+    assert result.summary_path.exists()
+
+
+def test_consolidate_unit_creates_backup(tmp_path: Path):
+    _seed_repo(tmp_path)
+    result = consolidate_unit(
+        root_dir=tmp_path, unit_slug="unidade-02",
+        today="2026-04-20",
+        topic_order=["limites", "continuidade"],
+    )
+    assert result.backup_path is not None
+    assert (result.backup_path / "limites.md").exists()
+    assert (result.backup_path / "continuidade.md").exists()
