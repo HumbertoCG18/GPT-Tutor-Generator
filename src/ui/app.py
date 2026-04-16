@@ -1307,6 +1307,38 @@ class App(tk.Tk):
         self._set_status(f"Matéria carregada: {sp.name} ({len(self.entries)} itens na fila)")
         self._refresh_backlog()
         self._refresh_repo_dashboard()
+        self._maybe_offer_state_migration(sp)
+
+    def _maybe_offer_state_migration(self, subject) -> None:
+        from src.builder.student_state import detect_state_version, migrate_v1_to_v2
+        repo_dir = self._repo_dir()
+        if not repo_dir or detect_state_version(repo_dir) != "v1":
+            return
+        if not messagebox.askyesno(
+            "Migração do STUDENT_STATE",
+            "Este repositório usa o formato antigo (v1) do STUDENT_STATE.md.\n"
+            "Quer migrar agora para o formato v2 (YAML + baterias)?\n\n"
+            "A operação cria backup automático em build/migration-v1-backup/.",
+        ):
+            return
+        teaching_plan = getattr(subject, "teaching_plan", "") or ""
+        from src.builder.engine import _parse_units_from_teaching_plan, _topic_text
+        parsed = _parse_units_from_teaching_plan(teaching_plan)
+        units = [
+            (slugify(title), [(slugify(_topic_text(t)), _topic_text(t)) for t in topics])
+            for title, topics in parsed
+        ]
+        try:
+            result = migrate_v1_to_v2(root_dir=repo_dir, course_map_units=units)
+        except Exception as exc:
+            messagebox.showerror(APP_NAME, f"Falha na migração: {exc}")
+            return
+        if not result.skipped:
+            messagebox.showinfo(
+                "Migração concluída",
+                f"{len(result.created_batteries)} baterias criadas.\n"
+                f"Backup em: {result.backup_dir.relative_to(repo_dir)}",
+            )
 
     def _refresh_backlog(self):
         for item in self.repo_tree.get_children():
