@@ -59,38 +59,90 @@ e do plano de ensino da disciplina.
 """.strip()
 
 
-def _prompt_student_state_update_text(*, remote_editing: bool) -> str:
-    action = (
-        "dite estes dois blocos para o aluno atualizar"
-        if remote_editing
-        else "gere estes dois blocos para atualizar"
-    )
-    suffix = (
-        " e, se ele estiver usando GitHub, fazer git push"
-        if remote_editing
-        else ""
-    )
-    return f"""## Atualização de progresso
+def _prompt_student_state_v2_contract_text() -> str:
+    return """## STUDENT_STATE — formato YAML v2
 
-Ao final de cada sessão substancial, {action}
-`student/STUDENT_STATE.md`{suffix}:
+`student/STUDENT_STATE.md` é YAML puro. Faça parse dos campos, não busca
+semântica. Campos principais:
+
+- `active` — tópico em estudo agora (unit, topic, status, sessions, file)
+- `active_unit_progress` — lista de tópicos da unidade ativa com status
+- `recent` — últimos tópicos fechados (máx. 3)
+- `closed_units` — unidades já consolidadas
+- `next_topic` — próximo tópico sugerido
+
+Detalhe histórico fica em `student/batteries/<unit>/<topic>.md` (em estudo)
+ou `student/batteries/<unit>.summary.md` (consolidada). Só abra o arquivo
+da bateria ativa quando o aluno continuar o tópico `active`. Só abra o
+summary quando o aluno pedir revisão de unidade fechada.
+""".strip()
+
+
+def _prompt_end_of_session_dictation_text() -> str:
+    return """## Ditado de fim de sessão (dois blocos)
+
+Ao final de uma sessão substancial, dite **dois blocos** para o aluno aplicar:
+
+**1. Append em `student/batteries/<unit>/<topic>.md`:**
 
 ```markdown
-**Estado atual — atualizar a seção acima:**
-- Última sessão: [YYYY-MM-DD]
-- Tópico: [tópico]
-- Unidade: [slug]
-- Status: [compreendido / em progresso / com dúvidas]
-- Dúvidas pendentes: [lista]
-- Próximo passo: [próximo tópico]
-
-**Adicionar na tabela de histórico:**
-| [YYYY-MM-DD] | [tópico] | [unidade] | [status] | [dúvidas] |
+## YYYY-MM-DD (sessão N)
+- Compreendeu: [...]
+- Dúvidas: [... | nenhuma]
+- Ação tutor: [...]
+- Status: [compreendido | em_progresso | revisao]
 ```
 
-Se o mesmo tópico aparecer mais de uma vez com status `com dúvidas`,
-use uma abordagem diferente: analogia nova, exemplo diferente ou
-decomposição em subtópicos menores.
+**2. Alteração em `student/STUDENT_STATE.md` (só as linhas que mudam):**
+
+```yaml
+active:
+  unit: <slug>
+  topic: <novo-slug-ou-mesmo>
+  status: <novo-status>
+  sessions: <incrementado>
+  file: batteries/<unit>/<topic>.md
+
+active_unit_progress:
+  - {topic: <slug-alterado>, status: <novo-status>}   # linha específica
+
+recent:
+  - {topic: <slug-fechado>, unit: <unit>, date: YYYY-MM-DD}   # topo
+```
+
+Nunca reescreva o YAML inteiro — só as linhas alteradas.
+""".strip()
+
+
+def _prompt_consolidation_detection_text() -> str:
+    return """## Detecção de unidade pronta para consolidar
+
+Após atualizar `active_unit_progress`, verifique:
+
+- Se TODOS os itens da lista estão com `status: compreendido`, sugira
+  **uma única vez** ao aluno:
+  *"Fechamos todos os tópicos da <unit>. Quer consolidar? Abra o app →
+  Repo → Consolidar unidade → <unit>."*
+- Não repita a sugestão em sessões subsequentes.
+- Nunca gere o summary você mesmo — o app faz a consolidação determinística.
+""".strip()
+
+
+def _prompt_revision_reopen_text() -> str:
+    return """## Reabertura para revisão
+
+Se o aluno disser "vou reestudar a unidade X", a unidade já está consolidada
+(existe `student/batteries/<unit>.summary.md`) e você deve:
+
+1. Dite criação de `student/batteries/<unit>/<topico>.md` com frontmatter
+   `status: revisao`.
+2. Dite update em `STUDENT_STATE.md` apontando `active.file` para a nova
+   bateria.
+
+O summary antigo **permanece intocado**. Uma nova consolidação, quando a
+revisão fechar, vai anexar uma seção `## Revisão <data>` ao summary
+existente. Não existe botão "Reabrir" no app — a reabertura nasce do seu
+ditado.
 """.strip()
 
 
@@ -250,6 +302,14 @@ Fluxo `map-first`: consulte primeiro os artefatos curtos e roteadores. Não abra
 
 {_prompt_map_artifact_contract_text()}
 
+{_prompt_student_state_v2_contract_text()}
+
+{_prompt_end_of_session_dictation_text()}
+
+{_prompt_consolidation_detection_text()}
+
+{_prompt_revision_reopen_text()}
+
 ## Modos de operação
 
 - **`study`** — ensinar do zero
@@ -281,8 +341,6 @@ Antes de responder:
 Ao usar conteúdo do Projeto, finalize o bloco com:
 
 > 📄 **Fonte:** `[título do material]` — arquivo: `[caminho do markdown]` | PDF: `[caminho do PDF original]`
-
-{_prompt_student_state_update_text(remote_editing=False)}
 
 ## Captura de conteúdo novo
 
@@ -417,6 +475,14 @@ Acesse estes arquivos sempre que relevante:
 
 {_prompt_map_artifact_contract_text()}
 
+{_prompt_student_state_v2_contract_text()}
+
+{_prompt_end_of_session_dictation_text()}
+
+{_prompt_consolidation_detection_text()}
+
+{_prompt_revision_reopen_text()}
+
 ## Modos de operação
 
 Identifique o modo pela frase do aluno:
@@ -434,7 +500,6 @@ Identifique o modo pela frase do aluno:
 - Máximo 3 conceitos novos por resposta
 - Ao final de cada sessão, gere um bloco de atualização do STUDENT_STATE.md
 
-{_prompt_student_state_update_text(remote_editing=True)}
 {first_session_block}"""
 
 
@@ -548,6 +613,14 @@ Consulte estes arquivos conforme necessário:
 
 {_prompt_map_artifact_contract_text()}
 
+{_prompt_student_state_v2_contract_text()}
+
+{_prompt_end_of_session_dictation_text()}
+
+{_prompt_consolidation_detection_text()}
+
+{_prompt_revision_reopen_text()}
+
 ## Modos de operação
 
 Identifique o modo pela intenção do aluno:
@@ -589,8 +662,6 @@ Mas preserve estas regras:
 - não substitua a fonte de verdade do repositório
 - não invente definições, exemplos ou exercícios fora dos arquivos
 - no modo `assignment`, guie sem entregar a solução final
-
-{_prompt_student_state_update_text(remote_editing=True)}
 
 ## Preferências de resposta
 
