@@ -116,9 +116,11 @@ def test_file_map_adds_sections_and_confidence_columns(tmp_path: Path):
     assert "Alta" in result
 
 
-def test_student_state_template_includes_history_table():
+def test_student_state_v2_yaml_format():
     result = student_state_md({"course_name": "Métodos Formais"})
-    assert "## Estado atual" in result
-    assert "## Histórico de sessões" in result
-    assert "| Data | Tópico | Unidade | Status | Dúvidas registradas |" in result
-    assert "## Template de atualização (gerar ao final de cada sessão)" in result
+    assert result.startswith("---\n")
+    assert "course: Métodos Formais" in result
+    assert "updated:" in result
+    assert "## Histórico de sessões" not in result
+    assert "## Progresso por unidade" not in result
+    assert result.rstrip().endswith("---")

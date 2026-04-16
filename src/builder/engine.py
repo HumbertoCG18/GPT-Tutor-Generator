@@ -31,6 +31,7 @@ from src.builder.prompt_generation import (
     generate_gemini_instructions,
     generate_gpt_instructions,
 )
+from src.builder import student_state as student_state_v2
 from src.builder.pedagogical_prompts import (
     _code_review_profile,
     modes_md,
@@ -1059,6 +1060,9 @@ def _generated_repo_gitignore_text() -> str:
         "raw/",
         "# Artefatos de build",
         "build/",
+        "# Backups de consolidação e migração",
+        "build/consolidation-backup/",
+        "build/migration-v1-backup/",
         "# Workspace de revisão manual",
         "manual-review/",
         "# Scripts utilitários locais",
@@ -5025,11 +5029,9 @@ unit: {entry.tags}
         state_path = self.root_dir / "student" / "STUDENT_STATE.md"
         if state_path.exists():
             content = state_path.read_text(encoding="utf-8")
-            content = re.sub(
-                r"last_updated:.*",
-                f"last_updated: {datetime.now().strftime('%Y-%m-%d')}",
-                content
-            )
+            today = datetime.now().strftime('%Y-%m-%d')
+            content = re.sub(r"^updated:.*$", f"updated: {today}",
+                             content, flags=re.MULTILINE)
             state_path.write_text(content, encoding="utf-8")
         else:
             write_text(state_path,
@@ -5043,6 +5045,14 @@ unit: {entry.tags}
         self._write_bundle_seed(manifest)
         self._write_build_report(manifest)
         logger.info("Incremental build completed. %d new entries added.", len(new_entries))
+
+    def _derive_active_unit_slug_from_state(self) -> str:
+        state = self.root_dir / "student" / "STUDENT_STATE.md"
+        if not state.exists():
+            return ""
+        text = state.read_text(encoding="utf-8")
+        m = re.search(r"active:\s*\n(?:.*\n)*?\s*unit:\s*(\S+)", text)
+        return m.group(1).strip() if m else ""
 
     def _regenerate_pedagogical_files(self, manifest: dict) -> None:
         """Regenera todos os arquivos pedagógicos a partir do manifest atual.
@@ -5211,6 +5221,25 @@ unit: {entry.tags}
         progress_path = self.root_dir / "build" / "PROGRESS_SCHEMA.md"
         if not progress_path.exists():
             write_text(progress_path, progress_schema_md())
+
+        active_unit = self._derive_active_unit_slug_from_state()
+        if active_unit:
+            teaching_plan = getattr(self.subject_profile, "teaching_plan", "") or ""
+            parsed_units = _parse_units_from_teaching_plan(teaching_plan)
+            course_topics_by_unit = {
+                slugify(title): [(slugify(_topic_text(t)), _topic_text(t)) for t in topics]
+                for title, topics in parsed_units
+            }
+            topics = course_topics_by_unit.get(active_unit, [])
+            if topics:
+                try:
+                    student_state_v2.refresh_active_unit_progress(
+                        root_dir=self.root_dir,
+                        active_unit_slug=active_unit,
+                        course_map_topics=topics,
+                    )
+                except Exception as exc:
+                    logger.warning("refresh_active_unit_progress falhou: %s", exc)
 
         # Resolve image references in markdowns → content/images/
         self._resolve_content_images()
@@ -8124,58 +8153,16 @@ def student_state_md(course_meta: dict, student_profile=None) -> str:
 
     today = datetime.now().strftime("%Y-%m-%d")
 
-    return f"""---
-course: {course_name}
-student: {nick}
-last_updated: {today}
----
-
-# STUDENT_STATE — {course_name}
-
-> Consulte este arquivo **antes de qualquer resposta**.
-> Trata COURSE_MAP e FILE_MAP como artefatos do app — não reescreva.
-> Atualize ao final de cada sessão conforme o template abaixo.
-
-## Estado atual
-
-- **Última sessão:** [YYYY-MM-DD]
-- **Tópico:** [tópico estudado]
-- **Unidade:** [slug da unidade do COURSE_MAP]
-- **Status:** [compreendido / em progresso / com dúvidas]
-- **Dúvidas pendentes:** [lista — deixar vazio se nenhuma]
-- **Próximo passo:** [próximo tópico sugerido]
-
-## Histórico de sessões
-
-| Data | Tópico | Unidade | Status | Dúvidas registradas |
-|---|---|---|---|---|
-|  |  |  |  |  |
-
-> **Instrução para o tutor:** se o mesmo tópico aparecer mais de uma vez
-> na tabela com status "com dúvidas", use uma abordagem diferente —
-> analogia nova, exemplo concreto, decomposição em subtópicos menores.
-
-## Progresso por unidade
-
-<!-- O tutor preenche ao final de cada unidade concluída -->
-
----
-
-## Template de atualização (gerar ao final de cada sessão)
-
-```markdown
-**Estado atual — atualizar a seção acima:**
-- Última sessão: [YYYY-MM-DD]
-- Tópico: [tópico]
-- Unidade: [slug]
-- Status: [compreendido / em progresso / com dúvidas]
-- Dúvidas pendentes: [lista]
-- Próximo passo: [próximo tópico]
-
-**Adicionar na tabela de histórico:**
-| [YYYY-MM-DD] | [tópico] | [unidade] | [status] | [dúvidas] |
-```
-"""
+    return student_state_v2.render_student_state_md(
+        course_name=course_name,
+        student_nickname=nick,
+        today=today,
+        active=None,
+        active_unit_progress=[],
+        recent=[],
+        closed_units=[],
+        next_topic="",
+    )
 
 
 def progress_schema_md() -> str:
