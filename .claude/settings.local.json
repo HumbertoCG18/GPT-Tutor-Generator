@@ -9,7 +9,10 @@
       "WebFetch(domain:community.openai.com)",
       "WebFetch(domain:support.claude.com)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:ollama.com)"
+      "WebFetch(domain:ollama.com)",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }
