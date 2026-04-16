@@ -7,6 +7,7 @@ suporte a consolidação/migração de unidades fechadas via summaries.
 from __future__ import annotations
 
 import re
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Optional
@@ -205,3 +206,103 @@ def render_unit_summary_md(
         "",
     ]
     return "\n".join(lines)
+
+
+class UnitNotReadyError(Exception):
+    def __init__(self, unit_slug: str, pending: list[str]) -> None:
+        super().__init__(f"Unit {unit_slug} not ready: pending {pending}")
+        self.unit_slug = unit_slug
+        self.pending = pending
+
+
+@dataclass(frozen=True)
+class ConsolidationResult:
+    unit_slug: str
+    summary_path: Path
+    backup_path: Optional[Path]
+    deleted_files: list[str]
+
+
+def consolidate_unit(
+    *,
+    root_dir: Path,
+    unit_slug: str,
+    today: str,
+    topic_order: list[str],
+    force: bool = False,
+) -> ConsolidationResult:
+    batteries_root = root_dir / "student" / "batteries"
+    unit_dir = batteries_root / unit_slug
+    if not unit_dir.is_dir():
+        raise FileNotFoundError(f"Unit directory not found: {unit_dir}")
+
+    battery_files: list[tuple[str, str]] = []
+    pending: list[str] = []
+    for md in sorted(unit_dir.glob("*.md")):
+        content = md.read_text(encoding="utf-8")
+        fm = parse_battery_frontmatter(content)
+        battery_files.append((md.name, content))
+        if fm.get("status") != "compreendido" and not force:
+            pending.append(fm.get("topic_slug") or md.stem)
+    if pending and not force:
+        raise UnitNotReadyError(unit_slug, pending)
+
+    existing_summary = batteries_root / f"{unit_slug}.summary.md"
+    revision_section = _read_existing_summary_revisions(existing_summary)
+    summary_md = render_unit_summary_md(
+        unit_slug=unit_slug,
+        closed_date=today,
+        topic_order=topic_order,
+        batteries=battery_files,
+    )
+    if revision_section:
+        summary_md = summary_md.rstrip() + "\n\n" + revision_section + "\n"
+
+    backup_path = root_dir / "build" / "consolidation-backup" / today / unit_slug
+    backup_path.mkdir(parents=True, exist_ok=True)
+    for md in unit_dir.glob("*.md"):
+        shutil.copy2(md, backup_path / md.name)
+    if existing_summary.exists():
+        shutil.copy2(existing_summary, backup_path / existing_summary.name)
+
+    existing_summary.write_text(summary_md, encoding="utf-8")
+    deleted = [p.name for p in unit_dir.glob("*.md")]
+    shutil.rmtree(unit_dir)
+
+    _update_student_state_after_consolidation(root_dir, unit_slug)
+
+    return ConsolidationResult(
+        unit_slug=unit_slug,
+        summary_path=existing_summary,
+        backup_path=backup_path,
+        deleted_files=deleted,
+    )
+
+
+def _read_existing_summary_revisions(summary_path: Path) -> str:
+    if not summary_path.exists():
+        return ""
+    text = summary_path.read_text(encoding="utf-8")
+    idx = text.find("## Revisão ")
+    return text[idx:].rstrip() if idx >= 0 else ""
+
+
+def _update_student_state_after_consolidation(root_dir: Path, unit_slug: str) -> None:
+    state_path = root_dir / "student" / "STUDENT_STATE.md"
+    if not state_path.exists():
+        return
+    text = state_path.read_text(encoding="utf-8")
+
+    block_re = re.compile(r"active_unit_progress:\s*\n(?:\s*-\s*\{[^}]*\}\s*\n)*")
+    text = block_re.sub("active_unit_progress: []\n", text, count=1)
+
+    closed_re = re.compile(r"closed_units:\s*\[(.*?)\]")
+    m = closed_re.search(text)
+    if m:
+        existing = [s.strip() for s in m.group(1).split(",") if s.strip()]
+        if unit_slug not in existing:
+            existing.append(unit_slug)
+        text = closed_re.sub(f"closed_units: [{', '.join(existing)}]", text, count=1)
+    else:
+        text = text.replace("\n---\n", f"\nclosed_units: [{unit_slug}]\n\n---\n", 1)
+    state_path.write_text(text, encoding="utf-8")
