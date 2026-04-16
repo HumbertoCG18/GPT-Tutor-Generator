@@ -1262,6 +1262,96 @@ class TestBacklogMarkdownStatus:
         assert summary["auto"] == "tipo:lista"
         assert summary["effective"] == "topico:funcoes-recursivas, tipo:lista, ferramenta:isabelle"
 
+    def test_loads_timeline_block_options_with_card_evidence_preview_as_last_resort(self, tmp_path):
+        from src.ui.dialogs import _load_timeline_block_options
+
+        repo = tmp_path / "repo"
+        course_dir = repo / "course"
+        course_dir.mkdir(parents=True)
+        (course_dir / ".timeline_index.json").write_text(
+            json.dumps(
+                {
+                    "version": 3,
+                    "blocks": [
+                        {
+                            "id": "bloco-09",
+                            "period_label": "06/04/2026 a 10/04/2026",
+                            "unit_slug": "unidade-01-metodos-formais",
+                            "topics": [],
+                            "aliases": [],
+                            "sessions": [],
+                            "card_evidence": [
+                                {
+                                    "title": "Revisao P1",
+                                    "normalized_title": "revisao p1",
+                                    "date": "",
+                                    "source_kind": "card-title",
+                                }
+                            ],
+                        }
+                    ],
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+
+        options = _load_timeline_block_options(repo)
+
+        assert options == [("06/04/2026 a 10/04/2026 | Revisao P1 | unidade-01-metodos-formais", "bloco-09")]
+
+    def test_resolves_backlog_timeline_status_uses_card_evidence_only_as_last_resort_preview(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_timeline_status
+
+        repo = tmp_path / "repo"
+        course_dir = repo / "course"
+        course_dir.mkdir(parents=True)
+        (course_dir / "FILE_MAP.md").write_text(
+            """# FILE_MAP
+
+| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
+|---|---|---|---|---|---|---|---|
+| 1 | RevisaoP1 | listas | praticar | alta | `exercises/lists/revisao-p1.md` | unidade-01-metodos-formais | 06/04/2026 a 10/04/2026 |
+""",
+            encoding="utf-8",
+        )
+        (course_dir / ".timeline_index.json").write_text(
+            json.dumps(
+                {
+                    "version": 3,
+                    "blocks": [
+                        {
+                            "id": "bloco-09",
+                            "period_label": "06/04/2026 a 10/04/2026",
+                            "unit_slug": "unidade-01-metodos-formais",
+                            "topics": [],
+                            "aliases": [],
+                            "sessions": [],
+                            "card_evidence": [
+                                {
+                                    "title": "Revisao P1",
+                                    "normalized_title": "revisao p1",
+                                    "date": "",
+                                    "source_kind": "card-title",
+                                }
+                            ],
+                        }
+                    ],
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+
+        status = _resolve_backlog_timeline_status(
+            {"title": "RevisaoP1", "category": "listas"},
+            repo,
+        )
+
+        assert status["block"] == "bloco-09"
+        assert "Revisao P1" in status["topics"]
+        assert "card" in status["note"].lower()
+
 
 class TestPdfImageExtractionPolicy:
     def _ctx(
@@ -1697,6 +1787,77 @@ legacy
         assert status["period"] == "11/03/2026 a 25/03/2026"
         assert status["block"] == "bloco-02"
         assert "recursão" in status["aliases"]
+
+    def test_resolves_backlog_timeline_status_reads_version3_sessions(self, tmp_path):
+        from src.ui.dialogs import _load_timeline_block_options, _resolve_backlog_timeline_status
+
+        repo = tmp_path / "repo"
+        course_dir = repo / "course"
+        course_dir.mkdir(parents=True)
+        (course_dir / "FILE_MAP.md").write_text(
+            """# FILE_MAP
+
+| # | TÃ­tulo | Categoria | Quando abrir | Prioridade | Markdown | Unidade | PerÃ­odo |
+|---|---|---|---|---|---|---|---|
+| 1 | RevisÃ£oP1 | listas | praticar | alta | `exercises/lists/revisao-p1.md` | unidade-01-metodos-formais | 30/03/2026 a 03/04/2026 |
+""",
+            encoding="utf-8",
+        )
+        (course_dir / ".timeline_index.json").write_text(
+            json.dumps(
+                {
+                    "version": 3,
+                    "blocks": [
+                        {
+                            "id": "bloco-08",
+                            "period_label": "30/03/2026 a 03/04/2026",
+                            "unit_slug": "unidade-01-metodos-formais",
+                            "topics": [],
+                            "aliases": [],
+                            "sessions": [
+                                {
+                                    "id": "bloco-08-sessao-2026-03-30",
+                                    "date": "2026-03-30",
+                                    "kind": "class",
+                                    "label": "Especificacoes recursivas e provas por inducao",
+                                    "signals": ["especificacoes recursivas", "provas por inducao"],
+                                },
+                                {
+                                    "id": "bloco-08-sessao-async-01",
+                                    "date": "",
+                                    "kind": "async",
+                                    "label": "Complementar os estudos com as leituras recomendadas",
+                                    "signals": ["atividade assincrona", "leituras recomendadas"],
+                                },
+                            ],
+                            "card_evidence": [
+                                {
+                                    "title": "Especificacoes recursivas e provas por inducao",
+                                    "normalized_title": "especificacoes recursivas e provas por inducao",
+                                    "source_kind": "card-title",
+                                }
+                            ],
+                        }
+                    ],
+                },
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+
+        options = _load_timeline_block_options(repo)
+        assert options and "Especificacoes recursivas" in options[0][0]
+
+        status = _resolve_backlog_timeline_status(
+            {"title": "RevisÃ£oP1", "category": "listas"},
+            repo,
+        )
+
+        assert status["period"] == "30/03/2026 a 03/04/2026"
+        assert status["block"] == "bloco-08"
+        assert "recursivas" in status["topics"].lower()
+        assert "leituras recomendadas" in status["aliases"].lower()
+        assert "normalizadas" in status["note"].lower()
 
     def test_resolves_backlog_timeline_status_with_manual_block_pending_reprocess(self, tmp_path):
         from src.ui.dialogs import _resolve_backlog_timeline_status
@@ -3357,6 +3518,7 @@ class TestGlossarySeed:
             name="Inteligência Artificial",
             slug="inteligencia-artificial",
             teaching_plan=LEARNING_UNIT_PLAN,
+            syllabus=SYLLABUS_TABLE,
         )
         builder.logs = []
         builder.progress_callback = None
@@ -3375,7 +3537,38 @@ class TestGlossarySeed:
             ]
         }
 
-        builder._regenerate_pedagogical_files(manifest)
+        timeline_context = {
+            "timeline_index": {
+                "version": 3,
+                "blocks": [
+                    {
+                        "id": "bloco-01",
+                        "period_label": "01/04/2026 a 03/04/2026",
+                        "unit_slug": "unidade-01-inteligencia-artificial",
+                        "topics": ["Conceituacao"],
+                        "aliases": [],
+                        "topic_candidates": [],
+                        "source_rows": [],
+                        "sessions": [],
+                        "card_evidence": [
+                            {
+                                "title": "Conceituacao",
+                                "normalized_title": "conceituacao",
+                                "source_kind": "card-title",
+                            }
+                        ],
+                    }
+                ],
+            },
+            "blocks_by_unit": {},
+            "rows_by_unit": {},
+            "unassigned_blocks": [],
+            "unit_periods": {},
+            "unit_period_bounds": {},
+        }
+        with mock.patch.object(engine_module, "_build_file_map_timeline_context_from_course", return_value=timeline_context), \
+                mock.patch.object(engine_module, "_build_assessment_context_from_course", return_value={"version": 1}):
+            builder._regenerate_pedagogical_files(manifest)
         glossary = (repo / "course" / "GLOSSARY.md").read_text(encoding="utf-8")
 
         assert "Conceituação estabelece o escopo, a terminologia e a intenção pedagógica do tema." in glossary
@@ -3388,7 +3581,9 @@ class TestGlossarySeed:
         assert taxonomy["version"] == 1
         assert taxonomy["course_slug"]
         assert taxonomy["units"]
+        assert timeline_index["version"] == 3
         assert isinstance(timeline_index["blocks"], list)
+        assert timeline_index["blocks"][0]["card_evidence"]
         assert assessment_context["version"] == 1
 
     def test_file_map_does_not_restore_period_from_unit_periods_fallback(self, monkeypatch):
@@ -3657,6 +3852,38 @@ class TestPromptArchitectureAlignment:
         assert "preencha a coluna **Unidade** dos itens vazios" not in source
         assert "retorne o `FILE_MAP.md` e o `COURSE_MAP.md` atualizados" not in source
 
+
+def test_engine_public_api_smoke_import():
+    from src.builder.engine import (
+        generate_claude_project_instructions as claude_prompt,
+        generate_gemini_instructions as gemini_prompt,
+        generate_gpt_instructions as gpt_prompt,
+    )
+
+    assert callable(claude_prompt)
+    assert callable(gemini_prompt)
+    assert callable(gpt_prompt)
+
+
+def test_engine_timeline_exports_still_work_after_split():
+    from src.builder.engine import (
+        _build_timeline_candidate_rows as build_candidate_rows,
+        _build_timeline_index as build_timeline_index,
+        _parse_syllabus_timeline as parse_syllabus_timeline,
+    )
+
+    assert callable(parse_syllabus_timeline)
+    assert callable(build_candidate_rows)
+    assert callable(build_timeline_index)
+
+
+def test_engine_navigation_exports_still_work_after_split():
+    from src.builder.engine import course_map_md as course_map
+    from src.builder.engine import file_map_md as file_map
+
+    assert callable(course_map)
+    assert callable(file_map)
+
     def test_engine_source_no_longer_contains_redundant_v2_prompt_wrapper(self):
         source = Path(engine_module.__file__).read_text(encoding="utf-8")
 
@@ -3671,9 +3898,7 @@ class TestGeneratedRepoGitignore:
         assert "course/.timeline_index.json" in text
         assert "course/.assessment_context.json" in text
         assert "course/.tag_catalog.json" in text
-        assert "INSTRUCOES_CLAUDE_PROJETO.md" in text
-        assert "INSTRUCOES_GPT_PROJETO.md" in text
-        assert "INSTRUCOES_GEMINI_PROJETO.md" in text
+        assert "setup/" in text
         assert "manifest.json" not in text
         assert "course/FILE_MAP.md" not in text
         assert "course/COURSE_MAP.md" not in text
@@ -4262,7 +4487,7 @@ class TestIncrementalBuildLowTokenRollout:
         content_taxonomy = json.loads((repo / "course" / ".content_taxonomy.json").read_text(encoding="utf-8"))
         timeline_index = json.loads((repo / "course" / ".timeline_index.json").read_text(encoding="utf-8"))
         assessment_context = json.loads((repo / "course" / ".assessment_context.json").read_text(encoding="utf-8"))
-        instructions = (repo / "INSTRUCOES_CLAUDE_PROJETO.md").read_text(encoding="utf-8")
+        instructions = (repo / "setup" / "INSTRUCOES_CLAUDE_PROJETO.md").read_text(encoding="utf-8")
         bundle = json.loads((repo / "build" / "claude-knowledge" / "bundle.seed.json").read_text(encoding="utf-8"))
         lesson = (repo / "content" / "lesson.md").read_text(encoding="utf-8")
 
@@ -4270,7 +4495,7 @@ class TestIncrementalBuildLowTokenRollout:
         assert "Quando abrir" in file_map
         assert "Mapa pedagógico curto da disciplina" in course_map
         assert content_taxonomy["version"] == 1
-        assert timeline_index["version"] == 1
+        assert timeline_index["version"] == 3
         assert isinstance(timeline_index["blocks"], list)
         assert assessment_context["version"] == 1
         assert "Ordem de leitura econômica" in instructions

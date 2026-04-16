@@ -664,9 +664,10 @@ AÇÕES PRINCIPAIS
 
   Gerar Instruções LLM
     Gera:
-    • INSTRUCOES_CLAUDE_PROJETO.md
-    • INSTRUCOES_GPT_PROJETO.md
-    • INSTRUCOES_GEMINI_PROJETO.md
+    • setup/INSTRUCOES_CLAUDE_PROJETO.md
+    • setup/INSTRUCOES_GPT_PROJETO.md
+    • setup/INSTRUCOES_GEMINI_PROJETO.md
+    (pasta `setup/` fica fora do knowledge base indexado pelo tutor)
 
 OBSERVAÇÃO
   Quando COURSE_MAP.md e FILE_MAP.md já estão maduros, o app pode omitir
@@ -3274,19 +3275,50 @@ def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path])
     block, best_score = scored_blocks[0]
     runner_up_score = scored_blocks[1][1] if len(scored_blocks) > 1 else 0.0
 
-    topics = ", ".join(str(item).strip() for item in list(block.get("topics") or [])[:4] if str(item).strip()) or "—"
-    aliases = ", ".join(str(item).strip() for item in list(block.get("aliases") or [])[:4] if str(item).strip()) or "—"
+    sessions = list(block.get("sessions") or [])
+    session_preview = _timeline_block_session_preview(block)
+    card_preview = _timeline_block_card_evidence_preview(block)
+    session_signals = []
+    for session in sessions:
+        if not isinstance(session, dict):
+            continue
+        for signal in list(session.get("signals") or []):
+            value = str(signal).strip()
+            if value:
+                session_signals.append(value)
+
+    topics_list = [str(item).strip() for item in list(block.get("topics") or [])[:4] if str(item).strip()]
+    aliases_list = [str(item).strip() for item in list(block.get("aliases") or [])[:4] if str(item).strip()]
+    if not topics_list and session_preview:
+        topics_list = session_preview[:4]
+    if not topics_list and card_preview:
+        topics_list = card_preview[:4]
+    if not aliases_list and session_signals:
+        aliases_list = session_signals[:4]
+    if not aliases_list and not session_signals and card_preview:
+        aliases_list = card_preview[:4]
+
+    topics = ", ".join(topics_list) or "—"
+    aliases = ", ".join(aliases_list) or "—"
     note = "Período do FILE_MAP conectado a este bloco do cronograma via `course/.timeline_index.json`."
+    if session_preview:
+        note += f" Sessões normalizadas: {len(sessions)}."
+    if card_preview and not session_preview and not block.get("topics"):
+        note += f" Evidências de card: {len(card_preview)}."
     if overlap_matches and not exact_matches:
         note = (
             "Período do FILE_MAP foi reconciliado por sobreposição de datas e sinais do conteúdo da entry "
             f"(score: {best_score:.2f})."
         )
+        if session_preview:
+            note += f" Sessões normalizadas: {len(sessions)}."
     elif len(scored_blocks) > 1 and abs(best_score - runner_up_score) < 0.20:
         note = (
             "Bloco selecionado heurísticamente entre múltiplos candidatos próximos; "
             f"revise manualmente se o cronograma parecer incorreto (score: {best_score:.2f})."
         )
+        if session_preview:
+            note += f" Sessões normalizadas: {len(sessions)}."
 
     return {
         "period": _timeline_block_display_period(block),
@@ -3450,6 +3482,63 @@ def _timeline_block_display_period(block: Dict[str, object]) -> str:
     return _format_timeline_period_text(str(block.get("period_label") or "").strip())
 
 
+def _timeline_block_session_preview(block: Dict[str, object], limit: int = 2) -> List[str]:
+    sessions = list(block.get("sessions") or [])
+    preview: List[str] = []
+    seen: set[str] = set()
+
+    for session in sessions:
+        if not isinstance(session, dict):
+            continue
+        label = str(session.get("label") or "").strip()
+        if not label:
+            continue
+
+        date = str(session.get("date") or "").strip()
+        kind = str(session.get("kind") or "").strip()
+        parts: List[str] = []
+        if date:
+            parts.append(_format_timeline_period_text(date))
+        if kind and kind not in {"class", "lecture"}:
+            parts.append(kind)
+
+        if parts:
+            label = f"{label} ({', '.join(parts)})"
+
+        normalized = _normalize_match_text(label)
+        if normalized in seen:
+            continue
+        seen.add(normalized)
+        preview.append(label)
+        if len(preview) >= max(1, limit):
+            break
+
+    return preview
+
+
+def _timeline_block_card_evidence_preview(block: Dict[str, object], limit: int = 2) -> List[str]:
+    card_items = list(block.get("card_evidence") or [])
+    preview: List[str] = []
+    seen: set[str] = set()
+
+    for item in card_items:
+        if not isinstance(item, dict):
+            continue
+        title = str(item.get("title") or item.get("normalized_title") or "").strip()
+        if not title:
+            continue
+
+        normalized = _normalize_match_text(title)
+        if normalized in seen:
+            continue
+        seen.add(normalized)
+        preview.append(title)
+        if len(preview) >= max(1, limit):
+            break
+
+    return preview
+
+
 def _score_serialized_timeline_block(
     entry_data: dict,
     markdown_text: str,
@@ -3515,8 +3604,14 @@ def _load_timeline_block_options(repo_dir: Optional[Path]) -> List[Tuple[str, st
         if not block_id or not period_label or block_id in seen:
             continue
         topics = [str(item).strip() for item in list(block.get("topics") or []) if str(item).strip()]
+        session_preview = _timeline_block_session_preview(block, limit=1)
+        card_preview = _timeline_block_card_evidence_preview(block, limit=1)
         unit_slug = str(block.get("unit_slug") or "").strip()
-        topic_preview = ", ".join(topics[:2]) or "sem tópicos fortes"
+        topic_preview = (
+            ", ".join(topics[:2])
+            or (session_preview[0] if session_preview else "")
+            or (card_preview[0] if card_preview else "sem tópicos fortes")
+        )
         suffix = f" | {unit_slug}" if unit_slug else ""
         label = f"{_timeline_block_display_period(block)} | {topic_preview}{suffix}"
         options.append((label, block_id))

@@ -18,6 +18,11 @@ from src.builder.image_classifier import (
     extract_page_number,
     group_images_by_page,
 )
+from src.builder.image_markdown import (
+    _IMAGE_DESC_BLOCK_RE,
+    _image_curation_heading as _image_curation_heading_label,
+    _low_token_inject_image_descriptions,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -133,6 +138,58 @@ def _resolve_entry_pdf_path(repo_dir: Path, entry_data: dict) -> Optional[Path]:
         if candidate.exists() and candidate.suffix.lower() == ".pdf":
             return candidate
     return None
+
+
+def _inject_all_image_descriptions_from_manifest(repo_dir: Path, manifest: dict) -> None:
+    """Reinject curated image descriptions into the preferred markdown targets."""
+    entries = manifest.get("entries", []) or []
+    for entry_data in entries:
+        curation = entry_data.get("image_curation")
+        if not curation:
+            continue
+
+        status = (curation.get("status") or "").strip().lower()
+        if status not in {"described", "curated"} and not curation.get("pages"):
+            continue
+
+        candidate_paths = []
+        for key in ("approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown"):
+            rel_path = str(entry_data.get(key) or "").strip()
+            if not rel_path:
+                continue
+            path = repo_dir / rel_path
+            if path.exists():
+                candidate_paths.append(path)
+
+        if not candidate_paths:
+            entry_id = str(entry_data.get("id") or "").strip()
+            if entry_id:
+                for path in repo_dir.rglob("*.md"):
+                    try:
+                        snippet = path.read_text(encoding="utf-8", errors="replace")[:4096]
+                    except Exception:
+                        continue
+                    if f'entry_id: "{entry_id}"' in snippet or f"entry_id: '{entry_id}'" in snippet:
+                        candidate_paths.append(path)
+                        break
+
+        seen_targets = set()
+        for path in candidate_paths:
+            if path in seen_targets or not path.exists():
+                continue
+            seen_targets.add(path)
+            try:
+                text = path.read_text(encoding="utf-8", errors="replace")
+                new_text = _low_token_inject_image_descriptions(
+                    text,
+                    curation,
+                    desc_block_re=_IMAGE_DESC_BLOCK_RE,
+                    image_heading=_image_curation_heading_label,
+                )
+                if new_text != text:
+                    path.write_text(new_text, encoding="utf-8")
+            except Exception as exc:
+                logger.warning("Could not inject image descriptions into %s: %s", path, exc)
 
 
 class ImageCurator(tk.Toplevel):
@@ -1413,3 +1470,4 @@ class ImageCurator(tk.Toplevel):
             json.dumps(clean_manifest, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
+        _inject_all_image_descriptions_from_manifest(self.repo_dir, clean_manifest)

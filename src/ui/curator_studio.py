@@ -16,6 +16,7 @@ from src.builder.engine import (
     _inject_executive_summary,
     migrate_legacy_url_manual_reviews,
 )
+from src.ui.image_curator import _inject_all_image_descriptions_from_manifest
 
 from src.utils.helpers import HAS_PYMUPDF, slugify
 
@@ -928,6 +929,7 @@ class CuratorStudio(tk.Toplevel):
                 json.dumps(manifest, indent=2, ensure_ascii=False),
                 encoding="utf-8",
             )
+            _inject_all_image_descriptions_from_manifest(self.repo_dir, manifest)
             logger.info("Approve manifest sync: entry %s atualizada com approved_markdown=%s", entry_id, approved_rel)
 
         except Exception as e:
@@ -1162,6 +1164,7 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
         })
         manifest_path.write_text(
             json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+        _inject_all_image_descriptions_from_manifest(self.repo_dir, manifest)
 
         self._load_files()
         messagebox.showinfo("Aprovar Todos",
@@ -1189,6 +1192,14 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
         )
         try:
             self._current_content_path.write_text(content, encoding="utf-8")
+            entry_id = self._current_frontmatter.get("id") if self._current_frontmatter else None
+            if entry_id:
+                manifest_entry = self._lookup_manifest_entry(entry_id)
+                if manifest_entry and manifest_entry.get("image_curation"):
+                    _inject_all_image_descriptions_from_manifest(
+                        self.repo_dir,
+                        {"entries": [manifest_entry]},
+                    )
             self.editor.edit_modified(False)
             self.status_var.set(f"💾 Salvo: {self._current_content_path.name}")
         except Exception as e:

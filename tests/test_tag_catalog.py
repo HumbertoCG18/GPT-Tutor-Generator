@@ -242,6 +242,51 @@ def test_infer_entry_auto_tags_ignore_body_only_mentions_without_strong_headings
     assert "tipo:lista" in auto_tags
 
 
+def test_infer_entry_auto_tags_marks_exam_review_lists():
+    from src.builder.engine import _infer_entry_auto_tags
+
+    vocabulary = {
+        "tags": [
+            "topico:funcoes-recursivas",
+            "topico:conjuntos-indutivos",
+        ]
+    }
+    entry = {
+        "title": "Lista de Revisao para P1",
+        "category": "listas",
+        "raw_target": "raw/pdfs/listas/revisao-p1.pdf",
+    }
+    markdown_text = "# Revisao para prova\n\n## Funcoes Recursivas\n\nExercicios selecionados para a P1."
+
+    auto_tags = _infer_entry_auto_tags(entry, markdown_text, vocabulary)
+
+    assert "topico:funcoes-recursivas" in auto_tags
+    assert "tipo:lista" in auto_tags
+    assert "uso:revisao-prova" in auto_tags
+
+
+def test_infer_entry_auto_tags_does_not_mark_regular_lists_as_exam_review():
+    from src.builder.engine import _infer_entry_auto_tags
+
+    vocabulary = {
+        "tags": [
+            "topico:funcoes-recursivas",
+        ]
+    }
+    entry = {
+        "title": "Lista 3 de Funcoes Recursivas",
+        "category": "listas",
+        "raw_target": "raw/pdfs/listas/lista-3.pdf",
+    }
+    markdown_text = "# Exercicios\n\n## Funcoes Recursivas\n\nLista regular da unidade."
+
+    auto_tags = _infer_entry_auto_tags(entry, markdown_text, vocabulary)
+
+    assert "topico:funcoes-recursivas" in auto_tags
+    assert "tipo:lista" in auto_tags
+    assert "uso:revisao-prova" not in auto_tags
+
+
 def test_refresh_manifest_auto_tags_populates_existing_entry(tmp_path):
     from src.builder.engine import _refresh_manifest_auto_tags
 

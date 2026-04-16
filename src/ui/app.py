@@ -2246,20 +2246,20 @@ class App(tk.Tk):
                 has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in all_entries),
             )
 
-            write_text(repo_dir / "INSTRUCOES_CLAUDE_PROJETO.md",
+            write_text(repo_dir / "setup" / "INSTRUCOES_CLAUDE_PROJETO.md",
                        generate_claude_project_instructions(
                            meta, student_p, active_subj, **common))
-            write_text(repo_dir / "INSTRUCOES_GPT_PROJETO.md",
+            write_text(repo_dir / "setup" / "INSTRUCOES_GPT_PROJETO.md",
                        generate_gpt_instructions(
                            meta, student_p, active_subj, **common))
-            write_text(repo_dir / "INSTRUCOES_GEMINI_PROJETO.md",
+            write_text(repo_dir / "setup" / "INSTRUCOES_GEMINI_PROJETO.md",
                        generate_gemini_instructions(
                            meta, student_p, active_subj, **common))
 
             platform_map = {
-                "claude": "INSTRUCOES_CLAUDE_PROJETO.md",
-                "gpt": "INSTRUCOES_GPT_PROJETO.md",
-                "gemini": "INSTRUCOES_GEMINI_PROJETO.md",
+                "claude": "setup/INSTRUCOES_CLAUDE_PROJETO.md",
+                "gpt": "setup/INSTRUCOES_GPT_PROJETO.md",
+                "gemini": "setup/INSTRUCOES_GEMINI_PROJETO.md",
             }
             primary = platform_map.get(platform, platform_map["claude"])
             messagebox.showinfo(

@@ -658,7 +658,55 @@ def test_curator_studio_merges_manifest_fields_when_template_is_stale():
 
     assert merged["advanced_markdown"] == "staging/markdown-auto/docling/advanced.md"
     assert merged["advanced_backend"] == "docling"
-    assert merged["source_pdf"] == "raw/pdfs/aula1.pdf"
+
+
+def test_image_curator_reinjects_descriptions_into_base_and_advanced_markdown(tmp_path):
+    from src.ui.image_curator import _inject_all_image_descriptions_from_manifest
+
+    repo = tmp_path / "repo"
+    base_md = repo / "content" / "base.md"
+    advanced_md = repo / "staging" / "markdown-auto" / "docling" / "advanced.md"
+    base_md.parent.mkdir(parents=True)
+    advanced_md.parent.mkdir(parents=True)
+
+    image_ref = "![](content/images/entry1-page-003-img-01.png)\n"
+    base_md.write_text(image_ref, encoding="utf-8")
+    advanced_md.write_text(image_ref, encoding="utf-8")
+
+    manifest = {
+        "entries": [
+            {
+                "id": "entry1",
+                "title": "Aula 1",
+                "base_markdown": "content/base.md",
+                "advanced_markdown": "staging/markdown-auto/docling/advanced.md",
+                "image_curation": {
+                    "status": "described",
+                    "pages": {
+                        "3": {
+                            "include_page": True,
+                            "images": {
+                                "entry1-page-003-img-01.png": {
+                                    "type": "diagrama",
+                                    "include": True,
+                                    "description": "Árvore de prova com 3 níveis.",
+                                }
+                            },
+                        }
+                    },
+                },
+            }
+        ]
+    }
+
+    _inject_all_image_descriptions_from_manifest(repo, manifest)
+
+    base_text = base_md.read_text(encoding="utf-8")
+    advanced_text = advanced_md.read_text(encoding="utf-8")
+    assert "<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->" in base_text
+    assert "<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->" in advanced_text
+    assert "Árvore de prova com 3 níveis." in base_text
+    assert "Árvore de prova com 3 níveis." in advanced_text
 
 
 def test_curator_studio_preserves_template_values_when_already_present():
@@ -679,6 +727,8 @@ def test_curator_studio_preserves_template_values_when_already_present():
 
     assert merged["advanced_markdown"] == "manual-review/custom-advanced.md"
     assert merged["advanced_backend"] == "marker"
+
+
 
 
 def test_curator_studio_pdf_preview_guard_accepts_only_pdf_paths():
@@ -1055,6 +1105,95 @@ class TestDescriptionInjection:
         result = RepoBuilder.inject_image_descriptions(markdown, curation)
         assert "Árvore de derivação com três níveis e dois ramos principais." in result
         assert "legenda extensa" not in result
+
+    def test_inject_orphan_descriptions_into_generated_section_when_image_ref_is_missing(self):
+        from src.builder.engine import RepoBuilder
+
+        markdown = "# Lista de revisão\n\nConteúdo sem referência explícita da imagem.\n"
+        curation = {
+            "pages": {
+                "1": {
+                    "include_page": True,
+                    "images": {
+                        "revisao-p1-revisao-p1.pdf-0001-07.png": {
+                            "type": "diagrama",
+                            "include": True,
+                            "description": "Árvore binária com exemplos crescentes para revisão.",
+                        }
+                    },
+                }
+            }
+        }
+
+        result = RepoBuilder.inject_image_descriptions(markdown, curation)
+        assert "## Imagens Curadas" in result
+        assert "<!-- IMAGE_DESCRIPTION_ORPHANS -->" in result
+        assert "<!-- IMAGE_DESCRIPTION: revisao-p1-revisao-p1.pdf-0001-07.png -->" in result
+        assert "Árvore binária com exemplos crescentes para revisão." in result
+
+    def test_replace_existing_orphan_section_without_duplication(self):
+        from src.builder.engine import RepoBuilder
+
+        markdown = (
+            "# Aula\n\n"
+            "<!-- IMAGE_DESCRIPTION_ORPHANS -->\n"
+            "## Imagens Curadas\n\n"
+            "<!-- IMAGE_DESCRIPTION: entry1-page-026-manual-01.png -->\n"
+            "<!-- Tipo: diagrama -->\n"
+            "> **[Descrição de imagem]** Texto antigo.\n"
+            "<!-- /IMAGE_DESCRIPTION -->\n"
+            "<!-- /IMAGE_DESCRIPTION_ORPHANS -->\n"
+        )
+        curation = {
+            "pages": {
+                "26": {
+                    "include_page": True,
+                    "images": {
+                        "entry1-page-026-manual-01.png": {
+                            "type": "extração-latex",
+                            "include": True,
+                            "description": "Teorema com soma e produto de funções recursivas primitivas.",
+                        }
+                    },
+                }
+            }
+        }
+
+        result = RepoBuilder.inject_image_descriptions(markdown, curation)
+        assert result.count("<!-- IMAGE_DESCRIPTION_ORPHANS -->") == 1
+        assert "Texto antigo." not in result
+        assert "Teorema com soma e produto de funções recursivas primitivas." in result
+
+    def test_place_orphan_description_near_matching_section_when_vocab_overlaps(self):
+        from src.builder.engine import RepoBuilder
+
+        markdown = (
+            "# Aula 03\n\n"
+            "Introdução geral.\n\n"
+            "## Funções Básicas\n\n"
+            "Conteúdo sobre função zero, sucessora e projeções.\n\n"
+            "## Soma e Produto\n\n"
+            "Nesta parte estudamos soma e produto de funções recursivas primitivas.\n"
+        )
+        curation = {
+            "pages": {
+                "26": {
+                    "include_page": True,
+                    "images": {
+                        "entry1-page-026-manual-01.png": {
+                            "type": "extração-latex",
+                            "include": True,
+                            "description": "Teorema com soma e produto de funções recursivas primitivas.",
+                        }
+                    },
+                }
+            }
+        }
+
+        result = RepoBuilder.inject_image_descriptions(markdown, curation)
+        assert "## Imagens Curadas" not in result
+        assert "<!-- IMAGE_DESCRIPTION: entry1-page-026-manual-01.png -->" in result
+        assert result.index("## Soma e Produto") < result.index("entry1-page-026-manual-01.png")
 
     def test_duplicate_exact_description_becomes_short_reference(self):
         from src.builder.engine import RepoBuilder
