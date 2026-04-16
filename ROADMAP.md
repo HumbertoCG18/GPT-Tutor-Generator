@@ -137,3 +137,16 @@ segundo cérebro pessoal. Hoje a compatibilidade é parcial:
 
 Obsidian vem antes de Notion dentro do item 3: Obsidian usa os mesmos markdowns
 com pouca adaptação; Notion exige pipeline de conversão dedicado.
+
+---
+
+## Concluído
+
+### STUDENT_STATE v2 — 2026-04-16
+
+- YAML puro no `STUDENT_STATE.md` (~150–300 tokens)
+- Histórico em `student/batteries/<unit>/<topic>.md` com summary consolidado
+- Consolidação manual via `Repo → Consolidar unidade` com backup reversível
+- Migração automática de repos v1 na primeira abertura
+- Spec: `docs/superpowers/specs/2026-04-16-student-state-batteries-design.md`
+- Plano: `docs/superpowers/plans/2026-04-16-student-state-batteries.md`
