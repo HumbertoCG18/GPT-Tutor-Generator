@@ -156,3 +156,52 @@ def refresh_active_unit_progress(
     else:
         updated = current.replace("\n---\n", "\n" + new_block + "\n---\n", 1)
     state_path.write_text(updated, encoding="utf-8")
+
+
+_SESSION_HEADER_RE = re.compile(r"^##\s*(.+)$", re.MULTILINE)
+_BULLET_RE = re.compile(r"^-\s*(\*\*)?([^:]+):\*?\*?\s*(.+)$", re.MULTILINE)
+
+
+def _extract_bullet_values(bullets: list[tuple[str, str]], key_prefix: str) -> list[str]:
+    out: list[str] = []
+    for key, value in bullets:
+        if key.strip().lower().startswith(key_prefix):
+            text = value.strip().strip(".")
+            if text and text.lower() not in {"nenhuma", "[nenhuma]"}:
+                out.append(text)
+    return out
+
+
+def render_unit_summary_md(
+    *,
+    unit_slug: str,
+    closed_date: str,
+    topic_order: list[str],
+    batteries: list[tuple[str, str]],
+) -> str:
+    total_sessions = 0
+    all_bullets: list[tuple[str, str]] = []
+    for _name, content in batteries:
+        total_sessions += len(_SESSION_HEADER_RE.findall(content))
+        for m in _BULLET_RE.finditer(content):
+            all_bullets.append((m.group(2), m.group(3)))
+
+    resolvidas = _extract_bullet_values(all_bullets, "resolveu") + \
+                 _extract_bullet_values(all_bullets, "dúvida")
+    abertas = _extract_bullet_values(all_bullets, "em aberto")
+
+    lines = [
+        "---",
+        f"unit: {unit_slug}",
+        "status: consolidado",
+        f"sessions_total: {total_sessions}",
+        f"closed: {closed_date}",
+        f"topics: [{', '.join(topic_order)}]",
+        "---",
+        "",
+        f"**Tópicos cobertos:** {', '.join(topic_order)}",
+        f"**Dúvidas resolvidas:** {', '.join(resolvidas) if resolvidas else 'nenhuma registrada'}",
+        f"**Aberturas ainda em aberto:** {', '.join(abertas) if abertas else 'nenhuma'}",
+        "",
+    ]
+    return "\n".join(lines)
