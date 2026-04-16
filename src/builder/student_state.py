@@ -6,7 +6,9 @@ suporte a consolidação/migração de unidades fechadas via summaries.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Iterable, Optional
 
 
@@ -82,3 +84,42 @@ def render_student_state_md(
     lines.append("---")
     lines.append("")
     return "\n".join(lines)
+
+
+_FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
+
+
+def parse_battery_frontmatter(content: str) -> dict:
+    """Parse YAML frontmatter simples (chave: valor por linha)."""
+    m = _FRONTMATTER_RE.match(content or "")
+    if not m:
+        return {}
+    fm: dict = {}
+    for line in m.group(1).splitlines():
+        if ":" not in line:
+            continue
+        key, _, value = line.partition(":")
+        fm[key.strip()] = value.strip()
+    return fm
+
+
+def derive_active_unit_progress(
+    *,
+    unit_slug: str,
+    course_map_topics: list[tuple[str, str]],
+    batteries_root: Path,
+) -> list[ProgressRow]:
+    """Para a unidade ativa, cruza a ordem do COURSE_MAP com os status
+    das baterias existentes em batteries/<unit_slug>/*.md."""
+    unit_dir = batteries_root / unit_slug
+    by_slug: dict[str, str] = {}
+    if unit_dir.is_dir():
+        for md in sorted(unit_dir.glob("*.md")):
+            fm = parse_battery_frontmatter(md.read_text(encoding="utf-8"))
+            slug = fm.get("topic_slug") or md.stem
+            status = fm.get("status") or "pendente"
+            by_slug[slug] = status
+    rows: list[ProgressRow] = []
+    for slug, _label in course_map_topics:
+        rows.append(ProgressRow(topic=slug, status=by_slug.get(slug, "pendente")))
+    return rows
