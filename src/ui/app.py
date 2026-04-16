@@ -485,6 +485,7 @@ class App(tk.Tk):
         backlog_repo_menu.add_command(label="🔄 Reprocessar Repositório", command=self._reprocess_repo)
         backlog_repo_menu.add_command(label="📋 Gerar Instruções LLM", command=self._generate_llm_instructions)
         backlog_repo_menu.add_command(label="📦 Consolidar Unidade...", command=self._open_consolidate_dialog)
+        backlog_repo_menu.add_command(label="📚 Abrir pasta batteries", command=self._open_batteries_folder)
 
         self._backlog_repo_menu_btn = ttk.Menubutton(backlog_toolbar, text="🗂 Repo")
         self._backlog_repo_menu_btn.pack(side="left")
@@ -2184,6 +2185,15 @@ class App(tk.Tk):
         else:
             self._refresh_backlog()
             self._set_status("Repositório reprocessado com sucesso e arquitetura reaplicada.")
+
+    def _open_batteries_folder(self) -> None:
+        repo_dir = self._repo_dir_from_active_subject()
+        if not repo_dir:
+            messagebox.showinfo(APP_NAME, "Selecione uma matéria com repositório configurado.")
+            return
+        batteries = repo_dir / "student" / "batteries"
+        batteries.mkdir(parents=True, exist_ok=True)
+        self._open_path_in_system(batteries)
 
     def _open_consolidate_dialog(self) -> None:
         repo_dir = self._repo_dir_from_active_subject()

@@ -3373,6 +3373,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         write_text(self.root_dir / "student" / "STUDENT_STATE.md",
                    student_state_md(self.course_meta, self.student_profile))
         write_text(self.root_dir / "build" / "PROGRESS_SCHEMA.md", progress_schema_md())
+        self._ensure_unit_battery_directories()
 
         # ── Student profile ───────────────────────────────────────────
         if self.student_profile:
@@ -5054,6 +5055,16 @@ unit: {entry.tags}
         m = re.search(r"active:\s*\n(?:.*\n)*?\s*unit:\s*(\S+)", text)
         return m.group(1).strip() if m else ""
 
+    def _ensure_unit_battery_directories(self) -> None:
+        teaching_plan = getattr(self.subject_profile, "teaching_plan", "") or ""
+        if not teaching_plan:
+            return
+        batteries_root = self.root_dir / "student" / "batteries"
+        for title, _topics in _parse_units_from_teaching_plan(teaching_plan):
+            slug = slugify(title)
+            if slug:
+                (batteries_root / slug).mkdir(parents=True, exist_ok=True)
+
     def _regenerate_pedagogical_files(self, manifest: dict) -> None:
         """Regenera todos os arquivos pedagógicos a partir do manifest atual.
 
@@ -5221,6 +5232,7 @@ unit: {entry.tags}
         progress_path = self.root_dir / "build" / "PROGRESS_SCHEMA.md"
         if not progress_path.exists():
             write_text(progress_path, progress_schema_md())
+        self._ensure_unit_battery_directories()
 
         active_unit = self._derive_active_unit_slug_from_state()
         if active_unit:

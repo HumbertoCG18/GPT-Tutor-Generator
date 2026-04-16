@@ -54,26 +54,53 @@ class ConsolidateUnitDialog(tk.Toplevel):
             text="Forçar consolidação",
             command=self._force_selected,
         ).pack(side="left", padx=(8, 0))
+        ttk.Button(
+            btn_frm,
+            text="📚 Abrir pasta batteries",
+            command=self._open_batteries_folder,
+        ).pack(side="left", padx=(8, 0))
         ttk.Button(btn_frm, text="Fechar", command=self.destroy).pack(side="right")
+
+    def _open_batteries_folder(self) -> None:
+        import os
+        import sys
+        import subprocess
+        path = self.repo_dir / "student" / "batteries"
+        path.mkdir(parents=True, exist_ok=True)
+        try:
+            if sys.platform == "win32":
+                os.startfile(str(path))
+            elif sys.platform == "darwin":
+                subprocess.Popen(["open", str(path)])
+            else:
+                subprocess.Popen(["xdg-open", str(path)])
+        except Exception as exc:
+            messagebox.showwarning("Erro", f"Não foi possível abrir: {exc}")
 
     def _populate(self) -> None:
         batteries_root = self.repo_dir / "student" / "batteries"
         for unit_slug, topics in self.course_topics_by_unit.items():
             unit_dir = batteries_root / unit_slug
-            if not unit_dir.is_dir():
-                continue
             total = len(topics)
             closed = 0
-            for slug, _label in topics:
-                battery_file = unit_dir / f"{slug}.md"
-                if battery_file.exists():
-                    fm = parse_battery_frontmatter(
-                        battery_file.read_text(encoding="utf-8")
-                    )
-                    if fm.get("status") == "compreendido":
-                        closed += 1
+            present = 0
+            if unit_dir.is_dir():
+                for slug, _label in topics:
+                    battery_file = unit_dir / f"{slug}.md"
+                    if battery_file.exists():
+                        present += 1
+                        fm = parse_battery_frontmatter(
+                            battery_file.read_text(encoding="utf-8")
+                        )
+                        if fm.get("status") == "compreendido":
+                            closed += 1
             progress = f"{closed}/{total} compreendidos"
-            action = "Consolidar" if closed == total and total > 0 else "Forçar"
+            if closed == total and total > 0:
+                action = "Consolidar"
+            elif present == 0:
+                action = "sem baterias"
+            else:
+                action = "Forçar"
             self.tree.insert(
                 "",
                 "end",
