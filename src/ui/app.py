@@ -484,6 +484,7 @@ class App(tk.Tk):
         backlog_repo_menu = tk.Menu(backlog_toolbar, tearoff=False)
         backlog_repo_menu.add_command(label="🔄 Reprocessar Repositório", command=self._reprocess_repo)
         backlog_repo_menu.add_command(label="📋 Gerar Instruções LLM", command=self._generate_llm_instructions)
+        backlog_repo_menu.add_command(label="📦 Consolidar Unidade...", command=self._open_consolidate_dialog)
 
         self._backlog_repo_menu_btn = ttk.Menubutton(backlog_toolbar, text="🗂 Repo")
         self._backlog_repo_menu_btn.pack(side="left")
@@ -1306,6 +1307,38 @@ class App(tk.Tk):
         self._set_status(f"Matéria carregada: {sp.name} ({len(self.entries)} itens na fila)")
         self._refresh_backlog()
         self._refresh_repo_dashboard()
+        self._maybe_offer_state_migration(sp)
+
+    def _maybe_offer_state_migration(self, subject) -> None:
+        from src.builder.student_state import detect_state_version, migrate_v1_to_v2
+        repo_dir = self._repo_dir()
+        if not repo_dir or detect_state_version(repo_dir) != "v1":
+            return
+        if not messagebox.askyesno(
+            "Migração do STUDENT_STATE",
+            "Este repositório usa o formato antigo (v1) do STUDENT_STATE.md.\n"
+            "Quer migrar agora para o formato v2 (YAML + baterias)?\n\n"
+            "A operação cria backup automático em build/migration-v1-backup/.",
+        ):
+            return
+        teaching_plan = getattr(subject, "teaching_plan", "") or ""
+        from src.builder.engine import _parse_units_from_teaching_plan, _topic_text
+        parsed = _parse_units_from_teaching_plan(teaching_plan)
+        units = [
+            (slugify(title), [(slugify(_topic_text(t)), _topic_text(t)) for t in topics])
+            for title, topics in parsed
+        ]
+        try:
+            result = migrate_v1_to_v2(root_dir=repo_dir, course_map_units=units)
+        except Exception as exc:
+            messagebox.showerror(APP_NAME, f"Falha na migração: {exc}")
+            return
+        if not result.skipped:
+            messagebox.showinfo(
+                "Migração concluída",
+                f"{len(result.created_batteries)} baterias criadas.\n"
+                f"Backup em: {result.backup_dir.relative_to(repo_dir)}",
+            )
 
     def _refresh_backlog(self):
         for item in self.repo_tree.get_children():
@@ -2151,6 +2184,32 @@ class App(tk.Tk):
         else:
             self._refresh_backlog()
             self._set_status("Repositório reprocessado com sucesso e arquitetura reaplicada.")
+
+    def _open_consolidate_dialog(self) -> None:
+        repo_dir = self._repo_dir_from_active_subject()
+        if not repo_dir:
+            messagebox.showinfo(APP_NAME, "Selecione uma matéria com repositório configurado.")
+            return
+        active_name = self._var_active_subject.get()
+        subject = self.subject_store.get(active_name) if active_name != "(nenhuma)" else None
+        if not subject:
+            messagebox.showinfo(APP_NAME, "Nenhuma matéria ativa.")
+            return
+        teaching_plan = getattr(subject, "teaching_plan", "") or ""
+        from src.builder.engine import _parse_units_from_teaching_plan, _topic_text
+        from src.ui.consolidate_unit_dialog import ConsolidateUnitDialog
+        parsed = _parse_units_from_teaching_plan(teaching_plan)
+        units = {
+            slugify(title): [(slugify(_topic_text(t)), _topic_text(t)) for t in topics]
+            for title, topics in parsed
+        }
+        if not units:
+            messagebox.showinfo(
+                APP_NAME,
+                "Plano de ensino da matéria não tem unidades detectáveis.",
+            )
+            return
+        ConsolidateUnitDialog(self, repo_dir, units)
 
     def _generate_llm_instructions(self):
         """Gera/regenera os arquivos de instruções para as 3 plataformas (Claude, GPT, Gemini)."""
