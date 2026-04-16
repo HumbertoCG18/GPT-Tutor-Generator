@@ -669,6 +669,11 @@ AÇÕES PRINCIPAIS
     • setup/INSTRUCOES_GEMINI_PROJETO.md
     (pasta `setup/` fica fora do knowledge base indexado pelo tutor)
 
+  Consolidar Unidade
+    Consolida baterias de uma unidade inteira num summary compacto.
+    Gera student/batteries/<unit>.summary.md e remove as baterias individuais.
+    Backup automático em build/consolidation-backup/.
+
 OBSERVAÇÃO
   Quando COURSE_MAP.md e FILE_MAP.md já estão maduros, o app pode omitir
   o protocolo de primeira sessão ao gerar essas instruções.

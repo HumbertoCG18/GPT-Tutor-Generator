@@ -484,6 +484,7 @@ class App(tk.Tk):
         backlog_repo_menu = tk.Menu(backlog_toolbar, tearoff=False)
         backlog_repo_menu.add_command(label="🔄 Reprocessar Repositório", command=self._reprocess_repo)
         backlog_repo_menu.add_command(label="📋 Gerar Instruções LLM", command=self._generate_llm_instructions)
+        backlog_repo_menu.add_command(label="📦 Consolidar Unidade...", command=self._open_consolidate_dialog)
 
         self._backlog_repo_menu_btn = ttk.Menubutton(backlog_toolbar, text="🗂 Repo")
         self._backlog_repo_menu_btn.pack(side="left")
@@ -2151,6 +2152,32 @@ class App(tk.Tk):
         else:
             self._refresh_backlog()
             self._set_status("Repositório reprocessado com sucesso e arquitetura reaplicada.")
+
+    def _open_consolidate_dialog(self) -> None:
+        repo_dir = self._repo_dir_from_active_subject()
+        if not repo_dir:
+            messagebox.showinfo(APP_NAME, "Selecione uma matéria com repositório configurado.")
+            return
+        active_name = self._var_active_subject.get()
+        subject = self.subject_store.get(active_name) if active_name != "(nenhuma)" else None
+        if not subject:
+            messagebox.showinfo(APP_NAME, "Nenhuma matéria ativa.")
+            return
+        teaching_plan = getattr(subject, "teaching_plan", "") or ""
+        from src.builder.engine import _parse_units_from_teaching_plan, _topic_text
+        from src.ui.consolidate_unit_dialog import ConsolidateUnitDialog
+        parsed = _parse_units_from_teaching_plan(teaching_plan)
+        units = {
+            slugify(title): [(slugify(_topic_text(t)), _topic_text(t)) for t in topics]
+            for title, topics in parsed
+        }
+        if not units:
+            messagebox.showinfo(
+                APP_NAME,
+                "Plano de ensino da matéria não tem unidades detectáveis.",
+            )
+            return
+        ConsolidateUnitDialog(self, repo_dir, units)
 
     def _generate_llm_instructions(self):
         """Gera/regenera os arquivos de instruções para as 3 plataformas (Claude, GPT, Gemini)."""
