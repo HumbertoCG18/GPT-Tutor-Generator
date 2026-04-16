@@ -3,6 +3,7 @@ from pathlib import Path
 from src.builder.student_state import (
     derive_active_unit_progress,
     parse_battery_frontmatter,
+    refresh_active_unit_progress,
     render_student_state_md,
 )
 
@@ -88,3 +89,44 @@ def test_derive_active_unit_progress_merges_course_map_with_batteries(tmp_path: 
         "regra-da-cadeia": "pendente",
     }
     assert [r.topic for r in rows] == [slug for slug, _ in course_map_topics]
+
+
+def test_refresh_rewrites_only_progress_block(tmp_path: Path):
+    root = tmp_path
+    (root / "student").mkdir()
+    state = (
+        "---\n"
+        "course: X\n"
+        "student: Y\n"
+        "updated: 2026-04-10\n"
+        "\n"
+        "active:\n"
+        "  unit: unidade-02\n"
+        "  topic: limites\n"
+        "  status: compreendido\n"
+        "  sessions: 1\n"
+        "  file: batteries/unidade-02/limites.md\n"
+        "\n"
+        "active_unit_progress:\n"
+        "  - {topic: limites, status: pendente}\n"
+        "\n"
+        "---\n"
+    )
+    (root / "student" / "STUDENT_STATE.md").write_text(state, encoding="utf-8")
+    (root / "student" / "batteries" / "unidade-02").mkdir(parents=True)
+    (root / "student" / "batteries" / "unidade-02" / "limites.md").write_text(
+        "---\ntopic_slug: limites\nunit: unidade-02\nstatus: compreendido\n---\n",
+        encoding="utf-8",
+    )
+
+    refresh_active_unit_progress(
+        root_dir=root,
+        active_unit_slug="unidade-02",
+        course_map_topics=[("limites", "L"), ("continuidade", "C")],
+    )
+
+    new_state = (root / "student" / "STUDENT_STATE.md").read_text(encoding="utf-8")
+    assert "- {topic: limites, status: compreendido}" in new_state
+    assert "- {topic: continuidade, status: pendente}" in new_state
+    assert "topic: limites" in new_state
+    assert "file: batteries/unidade-02/limites.md" in new_state

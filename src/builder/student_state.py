@@ -123,3 +123,36 @@ def derive_active_unit_progress(
     for slug, _label in course_map_topics:
         rows.append(ProgressRow(topic=slug, status=by_slug.get(slug, "pendente")))
     return rows
+
+
+_ACTIVE_PROGRESS_BLOCK_RE = re.compile(
+    r"(active_unit_progress:\s*\n)(?:\s*-\s*\{[^}]*\}\s*\n)*",
+    re.MULTILINE,
+)
+
+
+def refresh_active_unit_progress(
+    *,
+    root_dir: Path,
+    active_unit_slug: str,
+    course_map_topics: list[tuple[str, str]],
+) -> None:
+    """Reconcilia o bloco active_unit_progress do STUDENT_STATE.md
+    sem tocar nos outros campos."""
+    state_path = root_dir / "student" / "STUDENT_STATE.md"
+    if not state_path.exists():
+        return
+    current = state_path.read_text(encoding="utf-8")
+    rows = derive_active_unit_progress(
+        unit_slug=active_unit_slug,
+        course_map_topics=course_map_topics,
+        batteries_root=root_dir / "student" / "batteries",
+    )
+    new_block = "active_unit_progress:\n" + "".join(
+        f"  - {{topic: {r.topic}, status: {r.status}}}\n" for r in rows
+    )
+    if _ACTIVE_PROGRESS_BLOCK_RE.search(current):
+        updated = _ACTIVE_PROGRESS_BLOCK_RE.sub(new_block, current, count=1)
+    else:
+        updated = current.replace("\n---\n", "\n" + new_block + "\n---\n", 1)
+    state_path.write_text(updated, encoding="utf-8")
