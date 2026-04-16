@@ -9,8 +9,11 @@ from __future__ import annotations
 import re
 import shutil
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Optional
+
+from src.utils.helpers import slugify
 
 
 @dataclass(frozen=True)
@@ -311,3 +314,142 @@ def _update_student_state_after_consolidation(root_dir: Path, unit_slug: str) ->
     else:
         text = text.replace("\n---\n", f"\nclosed_units: [{unit_slug}]\n\n---\n", 1)
     state_path.write_text(text, encoding="utf-8")
+
+
+@dataclass(frozen=True)
+class MigrationResult:
+    skipped: bool
+    backup_dir: Path
+    created_batteries: list[str]
+
+
+_V1_MARKER = "## Histórico de sessões"
+_HISTORY_ROW_RE = re.compile(
+    r"^\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|"
+    r"\s*([^|]+?)\s*\|\s*([^|]*?)\s*\|$",
+    re.MULTILINE,
+)
+
+
+def detect_state_version(root_dir: Path) -> str:
+    state_path = root_dir / "student" / "STUDENT_STATE.md"
+    if not state_path.exists():
+        return "none"
+    text = state_path.read_text(encoding="utf-8")
+    if _V1_MARKER in text:
+        return "v1"
+    if "active_unit_progress:" in text:
+        return "v2"
+    return "unknown"
+
+
+def _normalize_status_v1(raw: str) -> str:
+    s = raw.strip().lower().replace(" ", "_")
+    if s in {"compreendido", "em_progresso", "pendente", "revisao"}:
+        return s
+    if "dúvida" in s or "duvida" in s:
+        return "em_progresso"
+    return "em_progresso"
+
+
+def migrate_v1_to_v2(
+    *,
+    root_dir: Path,
+    course_map_units: list[tuple[str, list[tuple[str, str]]]],
+) -> MigrationResult:
+    state_path = root_dir / "student" / "STUDENT_STATE.md"
+    today = datetime.now().strftime("%Y-%m-%d")
+    backup_dir = root_dir / "build" / "migration-v1-backup" / today
+
+    if detect_state_version(root_dir) != "v1":
+        return MigrationResult(skipped=True, backup_dir=backup_dir, created_batteries=[])
+
+    backup_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(state_path, backup_dir / "STUDENT_STATE.md")
+
+    text = state_path.read_text(encoding="utf-8")
+    rows = _HISTORY_ROW_RE.findall(text)
+
+    sessions_by_topic: dict[tuple[str, str], list[tuple[str, str, str]]] = {}
+    for date, topic_label, unit_label, status, duvidas in rows:
+        unit_slug = slugify(unit_label) or unit_label.strip()
+        topic_slug = slugify(topic_label)
+        key = (unit_slug, topic_slug)
+        sessions_by_topic.setdefault(key, []).append(
+            (date, _normalize_status_v1(status), (duvidas or "").strip())
+        )
+
+    all_topics = [t for _u, topics in course_map_units for t in topics]
+    label_by_slug = {slug: label for slug, label in all_topics}
+
+    created: list[str] = []
+    for (unit_slug, topic_slug), sessions in sessions_by_topic.items():
+        dir_ = root_dir / "student" / "batteries" / unit_slug
+        dir_.mkdir(parents=True, exist_ok=True)
+        final_status = sessions[-1][1]
+        topic_label = label_by_slug.get(
+            topic_slug,
+            topic_slug.replace("-", " ").capitalize(),
+        )
+        lines = [
+            "---",
+            f"topic: {topic_label}",
+            f"topic_slug: {topic_slug}",
+            f"unit: {unit_slug}",
+            f"status: {final_status}",
+            "---",
+            "",
+        ]
+        for i, (date, status, duvidas) in enumerate(sessions, 1):
+            lines.append(f"## {date} (sessão {i})")
+            lines.append(f"- Status: {status}")
+            if duvidas and duvidas.lower() not in {"[nenhuma]", "nenhuma", ""}:
+                lines.append(f"- Dúvidas: {duvidas}")
+            lines.append("")
+        (dir_ / f"{topic_slug}.md").write_text("\n".join(lines), encoding="utf-8")
+        created.append(f"{unit_slug}/{topic_slug}.md")
+
+    course_name = ""
+    student_nickname = ""
+    m_course = re.search(r"^course:\s*(.+)$", text, re.MULTILINE)
+    m_student = re.search(r"^student:\s*(.+)$", text, re.MULTILINE)
+    if m_course:
+        course_name = m_course.group(1).strip()
+    if m_student:
+        student_nickname = m_student.group(1).strip()
+
+    new_state = render_student_state_md(
+        course_name=course_name or "Curso",
+        student_nickname=student_nickname or "Aluno",
+        today=today,
+        active=None,
+        active_unit_progress=[],
+        recent=[],
+        closed_units=[],
+        next_topic="",
+    )
+    state_path.write_text(new_state, encoding="utf-8")
+
+    for unit_slug, topics in course_map_units:
+        unit_dir = root_dir / "student" / "batteries" / unit_slug
+        if not unit_dir.is_dir():
+            continue
+        statuses = [
+            parse_battery_frontmatter(
+                (unit_dir / f"{slug}.md").read_text(encoding="utf-8")
+            ).get("status")
+            for slug, _ in topics
+            if (unit_dir / f"{slug}.md").exists()
+        ]
+        if statuses and all(s == "compreendido" for s in statuses):
+            try:
+                consolidate_unit(
+                    root_dir=root_dir,
+                    unit_slug=unit_slug,
+                    today=today,
+                    topic_order=[slug for slug, _ in topics],
+                )
+            except (UnitNotReadyError, FileNotFoundError):
+                pass
+
+    return MigrationResult(skipped=False, backup_dir=backup_dir, created_batteries=created)
