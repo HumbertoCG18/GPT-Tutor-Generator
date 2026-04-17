@@ -179,9 +179,10 @@ Prioridade, Markdown, Unidade, Período, **Seções principais**, **Confiança**
 - Confiança = `Alta ✓` / `Alta` / `Média` / `Baixa ⚠` — inferências fracas
   devem ser questionadas antes de rotear
 
-**STUDENT_STATE.md** — estado atual + tabela de histórico de sessões por data.
-O tutor deve detectar tópicos que aparecem múltiplas vezes com "com dúvidas"
-e mudar de abordagem.
+**STUDENT_STATE.md (v2)** — YAML puro compacto (`course`, `updated`, `active`,
+`active_unit_progress`, `recent`, `closed_units`, `next`). Histórico detalhado
+mora em `student/batteries/<unit>/<topic>.md`, ditado pela LLM. Unidades
+fechadas viram `student/batteries/<unit>.summary.md` via consolidação no app.
 
 **Correção de mapeamento incorreto:** usar `manual_unit_slug` e
 `manual_timeline_block_id` no backlog entry + Reprocessar Repositório.
@@ -202,7 +203,8 @@ Três arquivos gerados na raiz do repositório:
 Todas refletem o mesmo contrato:
 - COURSE_MAP e FILE_MAP são artefatos do app — não editar manualmente
 - Protocolo de primeira sessão = auditoria/validação (não preenchimento)
-- STUDENT_STATE: dois passos na atualização (Estado atual + linha no Histórico)
+- STUDENT_STATE v2: LLM dita `batteries/<unit>/<topic>.md` ao fim da sessão;
+  app regenera `active_unit_progress` e consolida unidade (determinismo > fluidez)
 - `code_review` especializado automaticamente se disciplina usa ferramentas
   de verificação formal (Isabelle, Coq, Lean, Dafny, TLA, Alloy, NuSMV...)
 
@@ -309,6 +311,10 @@ Nunca usar `tk.Frame` como container raiz sem `bg=p["bg"]`.
 ### Processamento e threads
 
 - `incremental_build()` pode regenerar arquivos pedagógicos sem novos entries
+- Build/reprocess pré-cria `student/batteries/<unit-slug>/` a partir do
+  `teaching_plan` — dialogs listam unidades pelo course map, nunca pelo FS
+- Consolidação de unidade (`consolidate_unit`) é operação do app, não da LLM:
+  move baterias para `<unit>.summary.md` + backup, atualiza `closed_units`
 - `process_single()` e UI pesada rodam em thread com callback via `after(...)`
 - `manifest.json` é a fonte de verdade do backlog
 - "processado" ≠ "curado/aprovado" — Curator Studio controla a promoção
@@ -333,7 +339,7 @@ Nunca usar `tk.Frame` como container raiz sem `bg=p["bg"]`.
 - Não remover blocos `<!-- EXEC_SUMMARY_START/END -->` existentes
 - `_clean_extraction_noise()` preserva código, LaTeX, tabelas, imagens
 - FILE_MAP: não remover colunas Seções e Confiança
-- STUDENT_STATE: não remover tabela de histórico de sessões
+- STUDENT_STATE v2: preservar YAML puro; histórico fica em `batteries/<unit>/<topic>.md`
 
 ### Manifest como fonte de verdade
 
@@ -366,7 +372,7 @@ python -m pytest tests/ -k "code_review"
 python -m pytest tests/ -k "file_map"
 ```
 
-`tkinter` é mockado — testes rodam headless. Suite atual: 369 testes passando.
+`tkinter` é mockado — testes rodam headless.
 
 ---
 
@@ -380,5 +386,5 @@ python -m pytest tests/ -k "file_map"
 - A mudança toca em Datalab? Preservar decisão de imagens app-side.
 - A mudança toca em referências de imagem? Preservar normalização repo-relative.
 - A mudança toca no FILE_MAP? Preservar colunas Seções e Confiança.
-- A mudança toca no STUDENT_STATE? Preservar tabela de histórico.
+- A mudança toca no STUDENT_STATE? É v2 (YAML + batteries/), não v1.
 - A mudança toca nas instruções geradas? Preservar contrato map-first.
