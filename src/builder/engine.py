@@ -545,21 +545,11 @@ def _build_content_taxonomy(
 
 
 def _write_internal_content_taxonomy(root_dir: Path, taxonomy: dict) -> None:
-    write_text(
-        root_dir / "course" / ".content_taxonomy.json",
-        json.dumps(taxonomy, ensure_ascii=False, indent=2),
-    )
+    _content_taxonomy.write_internal_content_taxonomy(root_dir, taxonomy)
 
 
 def _extract_markdown_lead_text(markdown_text: str, max_chars: int = 2600) -> str:
-    stripped = _strip_frontmatter_block(markdown_text or "")
-    compact = _collapse_ws(stripped)
-    if len(compact) <= max_chars:
-        return compact
-    clipped = compact[:max_chars]
-    if " " in clipped:
-        clipped = clipped.rsplit(" ", 1)[0]
-    return clipped.strip()
+    return _content_taxonomy.extract_markdown_lead_text(markdown_text, max_chars=max_chars)
 
 
 def _collect_strong_heading_candidates(root_dir: Optional[Path], manifest_entries: Optional[List[dict]]) -> List[str]:
