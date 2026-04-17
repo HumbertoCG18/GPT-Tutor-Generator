@@ -6055,6 +6055,9 @@ def _score_card_evidence_against_entry(signals: dict, card_items: List[Dict[str,
 
 
 def _timeline_block_rows_for_scoring(block: Dict[str, object]) -> list:
+    # Timeline parsing/core/scoring lives in src.builder.timeline_index.
+    # These helpers remain in engine phase 1 because they still couple block
+    # results to entry routing and manifest-driven orchestration.
     rows = list(block.get("rows", []) or [])
     return [row for row in rows if not bool(row.get("ignored"))]
 
