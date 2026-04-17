@@ -70,10 +70,8 @@ from src.builder.navigation_artifacts import (
 from src.builder import content_taxonomy as _content_taxonomy
 from src.builder import repo_artifacts as _repo_artifacts
 from src.builder.semantic_config import (
-    infer_semantic_profile,
     merge_semantic_profile,
     resolve_semantic_profile,
-    write_internal_semantic_profile,
 )
 from src.builder.timeline_index import (
     TopicMatchResult,
@@ -120,7 +118,7 @@ from src.models.core import (
     PipelineDecision, StudentProfile, SubjectProfile
 )
 from src.utils.helpers import (
-    APP_NAME, DEFAULT_OCR_LANGUAGE, DOCLING_CLI, EXAM_CATEGORIES, EXERCISE_CATEGORIES,
+    APP_NAME, DOCLING_CLI, EXAM_CATEGORIES, EXERCISE_CATEGORIES,
     HAS_PDFPLUMBER, HAS_PYMUPDF, HAS_PYMUPDF4LLM, IMAGE_CATEGORIES, MARKER_CLI,
     CODE_EXTENSIONS, LANG_MAP, CODE_CATEGORIES, ASSIGNMENT_CATEGORIES,
     WHITEBOARD_CATEGORIES, STUDENT_BRANCHES,
