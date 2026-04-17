@@ -10,10 +10,12 @@ from pathlib import Path
 from typing import List
 from PIL import Image, ImageTk
 from src.models.core import FileEntry
-from src.builder.engine import (
-    RepoBuilder,
+from src.builder.navigation_artifacts import (
     _clean_extraction_noise,
     _inject_executive_summary,
+)
+from src.builder.engine import (
+    RepoBuilder,
     migrate_legacy_url_manual_reviews,
 )
 from src.ui.image_curator import _inject_all_image_descriptions_from_manifest

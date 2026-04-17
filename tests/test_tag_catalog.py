@@ -1,5 +1,11 @@
 from src.models.core import FileEntry
 from src.models.core import StudentProfile, SubjectProfile
+from src.builder.content_taxonomy import (
+    build_tag_catalog,
+    infer_entry_auto_tags,
+    refresh_manifest_auto_tags,
+    write_tag_catalog,
+)
 from tests.fixtures.tagging_cases import (
     TAGGING_COURSE_MAP,
     TAGGING_GLOSSARY,
@@ -51,9 +57,7 @@ def test_code_entries_do_not_migrate_language_from_legacy_tags():
 
 
 def test_build_tag_catalog_extracts_topic_and_tool_tags():
-    from src.builder.engine import _build_tag_catalog
-
-    catalog = _build_tag_catalog(
+    catalog = build_tag_catalog(
         teaching_plan=TAGGING_TEACHING_PLAN,
         course_map_md=TAGGING_COURSE_MAP,
         glossary_md=TAGGING_GLOSSARY,
@@ -67,9 +71,7 @@ def test_build_tag_catalog_extracts_topic_and_tool_tags():
 
 
 def test_build_tag_catalog_ignores_structural_and_bibliographic_noise():
-    from src.builder.engine import _build_tag_catalog
-
-    catalog = _build_tag_catalog(
+    catalog = build_tag_catalog(
         teaching_plan="""
         Ementa
         Avaliação
@@ -99,9 +101,7 @@ def test_build_tag_catalog_ignores_structural_and_bibliographic_noise():
 
 
 def test_build_tag_catalog_ignores_weak_heading_phrases():
-    from src.builder.engine import _build_tag_catalog
-
-    catalog = _build_tag_catalog(
+    catalog = build_tag_catalog(
         teaching_plan="",
         course_map_md="",
         glossary_md="",
@@ -121,9 +121,7 @@ def test_build_tag_catalog_ignores_weak_heading_phrases():
 
 
 def test_build_tag_catalog_only_uses_heading_topics_when_supported_by_course_vocab():
-    from src.builder.engine import _build_tag_catalog
-
-    catalog = _build_tag_catalog(
+    catalog = build_tag_catalog(
         teaching_plan="""
         1.2.3. Especificação de Funções Recursivas
         """,
@@ -146,9 +144,7 @@ def test_build_tag_catalog_only_uses_heading_topics_when_supported_by_course_voc
 
 
 def test_build_tag_catalog_intermediate_mode_blocks_loose_heading_rewrites():
-    from src.builder.engine import _build_tag_catalog
-
-    catalog = _build_tag_catalog(
+    catalog = build_tag_catalog(
         teaching_plan="""
         1.2.2. Especificação de Conjuntos Indutivos
         1.2.3. Especificação de Funções Recursivas
@@ -174,8 +170,6 @@ def test_build_tag_catalog_intermediate_mode_blocks_loose_heading_rewrites():
 
 
 def test_infer_entry_auto_tags_uses_controlled_catalog_and_category():
-    from src.builder.engine import _infer_entry_auto_tags
-
     vocabulary = {
         "tags": [
             "topico:funcoes-recursivas",
@@ -190,15 +184,13 @@ def test_infer_entry_auto_tags_uses_controlled_catalog_and_category():
     }
     markdown_text = "# Exercícios\n\n## Funções Recursivas\n\nExercícios sobre listas."
 
-    auto_tags = _infer_entry_auto_tags(entry, markdown_text, vocabulary)
+    auto_tags = infer_entry_auto_tags(entry, markdown_text, vocabulary)
 
     assert "topico:funcoes-recursivas" in auto_tags
     assert "tipo:lista" in auto_tags
 
 
 def test_infer_entry_auto_tags_rejects_weak_single_token_topic_tags():
-    from src.builder.engine import _infer_entry_auto_tags
-
     vocabulary = {
         "tags": [
             "topico:termo",
@@ -212,7 +204,7 @@ def test_infer_entry_auto_tags_rejects_weak_single_token_topic_tags():
     }
     markdown_text = "# Termos\n\n## Isabelle\n\nExemplo de uso de Isabelle."
 
-    auto_tags = _infer_entry_auto_tags(entry, markdown_text, vocabulary)
+    auto_tags = infer_entry_auto_tags(entry, markdown_text, vocabulary)
 
     assert "topico:isabelle" in auto_tags
     assert "topico:termo" not in auto_tags
@@ -220,8 +212,6 @@ def test_infer_entry_auto_tags_rejects_weak_single_token_topic_tags():
 
 
 def test_infer_entry_auto_tags_ignore_body_only_mentions_without_strong_headings():
-    from src.builder.engine import _infer_entry_auto_tags
-
     vocabulary = {
         "tags": [
             "topico:pre-e-pos-condicoes",
@@ -235,7 +225,7 @@ def test_infer_entry_auto_tags_ignore_body_only_mentions_without_strong_headings
     }
     markdown_text = "# Exercícios\n\nTexto com pré e pós condições no corpo, sem heading forte."
 
-    auto_tags = _infer_entry_auto_tags(entry, markdown_text, vocabulary)
+    auto_tags = infer_entry_auto_tags(entry, markdown_text, vocabulary)
 
     assert "topico:pre-e-pos-condicoes" not in auto_tags
     assert "topico:logica-de-hoare" not in auto_tags
@@ -243,8 +233,6 @@ def test_infer_entry_auto_tags_ignore_body_only_mentions_without_strong_headings
 
 
 def test_infer_entry_auto_tags_marks_exam_review_lists():
-    from src.builder.engine import _infer_entry_auto_tags
-
     vocabulary = {
         "tags": [
             "topico:funcoes-recursivas",
@@ -258,7 +246,7 @@ def test_infer_entry_auto_tags_marks_exam_review_lists():
     }
     markdown_text = "# Revisao para prova\n\n## Funcoes Recursivas\n\nExercicios selecionados para a P1."
 
-    auto_tags = _infer_entry_auto_tags(entry, markdown_text, vocabulary)
+    auto_tags = infer_entry_auto_tags(entry, markdown_text, vocabulary)
 
     assert "topico:funcoes-recursivas" in auto_tags
     assert "tipo:lista" in auto_tags
@@ -266,8 +254,6 @@ def test_infer_entry_auto_tags_marks_exam_review_lists():
 
 
 def test_infer_entry_auto_tags_does_not_mark_regular_lists_as_exam_review():
-    from src.builder.engine import _infer_entry_auto_tags
-
     vocabulary = {
         "tags": [
             "topico:funcoes-recursivas",
@@ -280,7 +266,7 @@ def test_infer_entry_auto_tags_does_not_mark_regular_lists_as_exam_review():
     }
     markdown_text = "# Exercicios\n\n## Funcoes Recursivas\n\nLista regular da unidade."
 
-    auto_tags = _infer_entry_auto_tags(entry, markdown_text, vocabulary)
+    auto_tags = infer_entry_auto_tags(entry, markdown_text, vocabulary)
 
     assert "topico:funcoes-recursivas" in auto_tags
     assert "tipo:lista" in auto_tags
@@ -288,8 +274,6 @@ def test_infer_entry_auto_tags_does_not_mark_regular_lists_as_exam_review():
 
 
 def test_refresh_manifest_auto_tags_populates_existing_entry(tmp_path):
-    from src.builder.engine import _refresh_manifest_auto_tags
-
     repo = tmp_path / "repo"
     md_path = repo / "content" / "curated"
     md_path.mkdir(parents=True)
@@ -305,7 +289,12 @@ def test_refresh_manifest_auto_tags_populates_existing_entry(tmp_path):
     ]
     vocabulary = {"tags": ["topico:funcoes-recursivas"]}
 
-    refreshed = _refresh_manifest_auto_tags(repo, entries, vocabulary)
+    refreshed = refresh_manifest_auto_tags(
+        repo,
+        entries,
+        vocabulary,
+        entry_markdown_text_for_file_map=lambda root_dir, entry: (root_dir / entry["base_markdown"]).read_text(encoding="utf-8"),
+    )
 
     assert refreshed[0]["auto_tags"] == ["topico:funcoes-recursivas", "tipo:lista"]
 
@@ -382,8 +371,6 @@ def test_regenerate_pedagogical_files_writes_tag_catalog_and_auto_tags(tmp_path)
 def test_write_tag_catalog_preserves_manual_catalog_tags(tmp_path):
     import json
 
-    from src.builder.engine import _write_tag_catalog
-
     repo = tmp_path / "repo"
     (repo / "course").mkdir(parents=True)
     (repo / "course" / ".tag_catalog.json").write_text(
@@ -401,10 +388,11 @@ def test_write_tag_catalog_preserves_manual_catalog_tags(tmp_path):
         encoding="utf-8",
     )
 
-    payload = _write_tag_catalog(
+    payload = write_tag_catalog(
         repo,
-        SubjectProfile(name="Métodos Formais", slug="metodos-formais", teaching_plan=TAGGING_TEACHING_PLAN),
-        [],
+        course_name="Métodos Formais",
+        teaching_plan=TAGGING_TEACHING_PLAN,
+        manifest_entries=[],
         course_map_text=TAGGING_COURSE_MAP,
         glossary_text=TAGGING_GLOSSARY,
     )

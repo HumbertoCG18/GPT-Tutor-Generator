@@ -1,10 +1,12 @@
 from pathlib import Path
 
-from src.builder.engine import (
+from src.builder.navigation_artifacts import (
     _clean_extraction_noise,
     _extract_section_headers,
     _infer_unit_confidence,
     _inject_executive_summary,
+)
+from src.builder.engine import (
     file_map_md,
     student_state_md,
 )
