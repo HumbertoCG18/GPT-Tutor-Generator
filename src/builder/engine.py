@@ -1,4 +1,6 @@
 from __future__ import annotations
+# Public facade for builder functionality during modularization.
+# Keep stable exports here while implementations move into focused modules.
 import csv
 import difflib
 import html as html_lib
