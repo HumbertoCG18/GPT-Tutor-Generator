@@ -15,15 +15,14 @@ from src.utils.helpers import (
     fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM, normalize_document_profile
 )
 from src.builder.datalab_client import get_datalab_base_url, has_datalab_api_key
-from src.builder.engine import (
-    BackendSelector,
-    _collect_entry_unit_signals,
-    _entry_image_source_dirs,
-    _entry_markdown_text_for_file_map,
-    _normalize_match_text,
-    _score_text_against_row,
-    has_docling_python_api,
+from src.builder.entry_signals import (
+    collect_entry_unit_signals as _collect_entry_unit_signals,
+    entry_image_source_dirs as _entry_image_source_dirs,
+    normalize_match_text as _normalize_match_text,
+    score_text_against_row as _score_text_against_row,
 )
+from src.builder.engine import BackendSelector, has_docling_python_api
+from src.builder.navigation_artifacts import _entry_markdown_text_for_file_map
 from src.ui.theme import ThemeManager, AppConfig, THEMES, apply_theme_to_toplevel
 class Tooltip:
     """Shows a descriptive tooltip balloon after the mouse hovers for `delay` ms."""

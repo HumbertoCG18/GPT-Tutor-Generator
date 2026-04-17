@@ -36,6 +36,12 @@ from src.builder.image_markdown import (
     _image_curation_heading as _image_curation_heading_label,
     _low_token_inject_image_descriptions,
 )
+from src.builder.entry_signals import (
+    collect_entry_unit_signals as _entry_signals_collect_entry_unit_signals,
+    entry_image_source_dirs as _entry_signals_image_source_dirs,
+    normalize_match_text as _entry_signals_normalize_match_text,
+    score_text_against_row as _entry_signals_score_text_against_row,
+)
 from src.builder.prompt_generation import (
     generate_claude_project_instructions,
     generate_gemini_instructions,
@@ -5943,20 +5949,7 @@ _match_timeline_to_units = _match_timeline_to_units_generic
 
 
 def _score_text_against_row(source_text: str, row_tokens: List[str], *, weight: float = 1.0) -> float:
-    if not source_text or not row_tokens:
-        return 0.0
-
-    source_tokens = [tok for tok in source_text.split() if len(tok) >= 4]
-    score = 0.0
-    for source_token in source_tokens:
-        for row_token in row_tokens:
-            if source_token == row_token:
-                score += 1.0 * weight
-            elif source_token in row_token or row_token in source_token:
-                score += 0.45 * weight
-            elif len(source_token) >= 5 and len(row_token) >= 5 and source_token[:5] == row_token[:5]:
-                score += 0.2 * weight
-    return score
+    return _entry_signals_score_text_against_row(source_text, row_tokens, weight=weight)
 
 
 def _score_entry_against_timeline_row(signals: dict, row_text: str) -> float:
@@ -7485,17 +7478,7 @@ _MANIFEST_LOG_LIMIT = 200
 
 
 def _entry_image_source_dirs(root_dir: Path, entry: dict) -> List[Path]:
-    dirs: List[Path] = []
-    entry_id = str(entry.get("id") or "").strip()
-    if entry_id:
-        dirs.append(root_dir / "staging" / "assets" / "inline-images" / entry_id)
-    images_dir = entry.get("images_dir")
-    if images_dir:
-        dirs.append(root_dir / images_dir)
-    rendered_pages_dir = entry.get("rendered_pages_dir")
-    if rendered_pages_dir:
-        dirs.append(root_dir / rendered_pages_dir)
-    return dirs
+    return _entry_signals_image_source_dirs(root_dir, entry)
 
 
 def _entry_existing_reference_count(root_dir: Path, entry: dict) -> int:
@@ -7583,12 +7566,7 @@ class UnitMatchResult:
 
 
 def _normalize_match_text(text: str) -> str:
-    text = unicodedata.normalize("NFKD", text or "")
-    text = "".join(ch for ch in text if not unicodedata.combining(ch))
-    text = text.lower()
-    text = text.replace("propocional", "proposicional")
-    text = re.sub(r"[^a-z0-9\s]", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
+    return _entry_signals_normalize_match_text(text)
 
 
 def _strip_outline_prefix(text: str) -> str:
@@ -7727,31 +7705,7 @@ def _build_file_map_unit_index(units: list) -> list:
 
 
 def _collect_entry_unit_signals(entry: dict, markdown_text: str) -> dict:
-    manual_tags = [str(tag).strip() for tag in (entry.get("manual_tags") or []) if str(tag).strip()]
-    auto_tags = [str(tag).strip() for tag in (entry.get("auto_tags") or []) if str(tag).strip()]
-    legacy_tags = [
-        part.strip()
-        for part in str(entry.get("tags", "") or "").replace(",", ";").split(";")
-        if part.strip()
-    ]
-    merged_tags = _merge_manual_and_auto_tags(
-        manual_tags,
-        auto_tags,
-        fallback_tags="; ".join(legacy_tags),
-        limit=6,
-    )
-    return {
-        "title_text": _normalize_match_text(entry.get("title", "")),
-        "markdown_headings_text": _normalize_match_text(" ".join(_extract_markdown_headings(markdown_text))),
-        "markdown_lead_text": _normalize_match_text(_extract_markdown_lead_text(markdown_text)),
-        "category_text": _normalize_match_text(entry.get("category", "")),
-        "manual_tags_text": _normalize_match_text("; ".join(manual_tags)),
-        "auto_tags_text": _normalize_match_text("; ".join(auto_tags)),
-        "legacy_tags_text": _normalize_match_text("; ".join(legacy_tags)),
-        "tags_text": _normalize_match_text(merged_tags),
-        "raw_text": _normalize_match_text(entry.get("raw_target", "")),
-        "markdown_text": _normalize_match_text(markdown_text),
-    }
+    return _entry_signals_collect_entry_unit_signals(entry, markdown_text)
 
 
 def _build_file_map_content_taxonomy_from_course(
