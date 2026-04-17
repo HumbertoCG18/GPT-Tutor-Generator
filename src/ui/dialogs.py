@@ -23,6 +23,7 @@ from src.builder.entry_signals import (
 )
 from src.builder.engine import BackendSelector, has_docling_python_api
 from src.builder.navigation_artifacts import _entry_markdown_text_for_file_map
+from src.builder.teaching_plan_utils import _normalize_unit_slug, _parse_units_from_teaching_plan
 from src.ui.theme import ThemeManager, AppConfig, THEMES, apply_theme_to_toplevel
 class Tooltip:
     """Shows a descriptive tooltip balloon after the mouse hovers for `delay` ms."""
@@ -3400,8 +3401,6 @@ def _load_file_map_unit_options(repo_dir: Optional[Path]) -> List[Tuple[str, str
             except Exception:
                 continue
         if subject and getattr(subject, "teaching_plan", ""):
-            from src.builder.engine import _normalize_unit_slug, _parse_units_from_teaching_plan
-
             for title, _topics in _parse_units_from_teaching_plan(subject.teaching_plan):
                 slug = _normalize_unit_slug(title)
                 if slug and slug not in seen:

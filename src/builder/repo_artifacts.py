@@ -7,6 +7,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
+from src.utils.helpers import json_str
+
 
 def student_state_md(
     course_meta: dict,
@@ -351,7 +353,8 @@ Plataforma alvo: **Claude Projects** (claude.ai)
 """
 
 
-def wrap_frontmatter(meta: dict, body: str, *, json_str_fn: Callable[[Any], str]) -> str:
+def wrap_frontmatter(meta: dict, body: str, *, json_str_fn: Optional[Callable[[Any], str]] = None) -> str:
+    json_str_fn = json_str_fn or json_str
     header = ["---"]
     for k, v in meta.items():
         header.append(f"{k}: {json_str_fn(v)}")

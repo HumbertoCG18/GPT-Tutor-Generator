@@ -28,23 +28,12 @@ from src.builder.engine import (
     _auto_map_entry_unit,
     _build_marker_page_chunks,
     _build_file_map_unit_index,
-    _build_timeline_candidate_rows,
-    _build_timeline_index,
-    _serialize_timeline_index,
-    _score_timeline_row_against_unit,
     _compact_notebook_markdown,
     _generated_repo_gitignore_text,
-    rows_to_markdown_table,
-    wrap_frontmatter,
     _html_to_structured_markdown,
-    _parse_units_from_teaching_plan,
     _parse_bibliography_from_teaching_plan,
-    _parse_syllabus_timeline,
-    _parse_timeline_date_value,
     _match_timeline_to_units,
     _build_assessment_context_from_course,
-    _topic_text,
-    _topic_depth,
     _seed_glossary_fields,
     _repair_mojibake_text,
     _sanitize_external_markdown_text,
@@ -58,9 +47,25 @@ from src.builder.engine import (
     exercise_index_md,
     file_map_md,
     glossary_md,
+)
+from src.builder.prompt_generation import (
     generate_claude_project_instructions,
     generate_gemini_instructions,
     generate_gpt_instructions,
+)
+from src.builder.repo_artifacts import rows_to_markdown_table, wrap_frontmatter
+from src.builder.teaching_plan_utils import (
+    _parse_units_from_teaching_plan,
+    _topic_depth,
+    _topic_text,
+)
+from src.builder.timeline_index import (
+    _build_timeline_candidate_rows,
+    _build_timeline_index,
+    _parse_syllabus_timeline,
+    _parse_timeline_date_value,
+    _score_timeline_row_against_unit,
+    _serialize_timeline_index,
 )
 from src.models.core import (
     DocumentProfileReport,
@@ -3749,7 +3754,6 @@ class TestSystemPromptFileReferences:
     META = {"course_name": "Test", "professor": "P", "institution": "I", "semester": "S"}
 
     def test_no_conditional_dirs_without_entries(self):
-        from src.builder.engine import generate_claude_project_instructions
         result = generate_claude_project_instructions(self.META)
         # These should NOT appear as rows in the file reference table
         assert "| `assignments/`" not in result
@@ -3757,7 +3761,6 @@ class TestSystemPromptFileReferences:
         assert "| `whiteboard/`" not in result
 
     def test_conditional_dirs_with_flags(self):
-        from src.builder.engine import generate_claude_project_instructions
         result = generate_claude_project_instructions(
             self.META, has_assignments=True, has_code=True, has_whiteboard=True)
         assert "| `assignments/`" in result
@@ -3765,12 +3768,10 @@ class TestSystemPromptFileReferences:
         assert "| `whiteboard/`" in result
 
     def test_file_map_always_referenced(self):
-        from src.builder.engine import generate_claude_project_instructions
         result = generate_claude_project_instructions(self.META)
         assert "FILE_MAP.md" in result
 
     def test_first_session_protocol_present(self):
-        from src.builder.engine import generate_claude_project_instructions
         result = generate_claude_project_instructions(self.META)
         assert "Primeira Sessão" in result
         assert "FILE_MAP" in result
@@ -3778,7 +3779,6 @@ class TestSystemPromptFileReferences:
         assert "GLOSSARY" in result
 
     def test_first_session_has_checklist(self):
-        from src.builder.engine import generate_claude_project_instructions
         result = generate_claude_project_instructions(self.META)
         assert "artefatos estruturais gerados pelo app" in result
         assert "Reprocessar Repositório" in result
@@ -3786,7 +3786,6 @@ class TestSystemPromptFileReferences:
         assert "GLOSSARY.md" in result
 
     def test_instructions_prefer_maps_before_long_files(self):
-        from src.builder.engine import generate_claude_project_instructions
         result = generate_claude_project_instructions(self.META)
         assert "Fluxo `map-first`" in result
         assert "Ordem de leitura econômica" in result

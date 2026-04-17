@@ -119,6 +119,13 @@ from src.builder.timeline_signals import (
     extract_date_range_signal,
     extract_timeline_session_signals,
 )
+from src.builder.teaching_plan_utils import (
+    _normalize_teaching_plan_heading as _teaching_plan_normalize_heading,
+    _normalize_unit_slug as _teaching_plan_normalize_unit_slug,
+    _parse_units_from_teaching_plan as _teaching_plan_parse_units_from_teaching_plan,
+    _topic_depth as _teaching_plan_topic_depth,
+    _topic_text as _teaching_plan_topic_text,
+)
 from src.models.core import (
     BackendRunResult, DocumentProfileReport, FileEntry,
     PipelineDecision, StudentProfile, SubjectProfile
@@ -5509,122 +5516,18 @@ _ASSESSMENT_LINE_RE = re.compile(
 
 
 def _normalize_teaching_plan_heading(line: str) -> str:
-    """Normalize markdown-heavy headings before parser checks."""
-    normalized = (line or "").strip()
-    normalized = re.sub(r"^#+\s*", "", normalized)
-    normalized = normalized.replace("*", "").strip()
-    return normalized
+    return _teaching_plan_normalize_heading(line)
 
 def _parse_units_from_teaching_plan(text: str):
-    """
-    Extrai (título_da_unidade, [tópicos]) do texto livre do plano de ensino.
-
-    Suporta dois formatos:
-      Formato PUCRS:  "N°. DA UNIDADE: N" seguido de "CONTEÚDO: Título"
-                      Tópicos numerados como "1.1.", "1.2.1." etc.
-      Formato genérico: "Unidade N – Título" / "UNIDADE N: Título"
-                        Tópicos com marcadores (-, •, *) ou numerados (1.1)
-
-    Para quando encontra seções pós-conteúdo (PROCEDIMENTOS, AVALIAÇÃO, BIBLIOGRAFIA).
-
-    Cada tópico é uma tupla (texto, depth):
-      - depth 0 → tópico principal (1.1., 1.2.)
-      - depth 1 → sub-tópico (1.2.1., 1.2.2.)
-      - depth 2+ → sub-sub-tópico (1.2.1.1.)
-      - marcadores (-, •) → depth 0
-
-    Retorna lista de (str, List[tuple[str, int]]).
-
-    Para compatibilidade, tópicos como strings simples ainda funcionam
-    nos consumidores que fazem ``for t in topics`` — eles verão tuplas.
-    """
-    units: list = []
-    current_title: Optional[str] = None
-    current_unit_num: Optional[str] = None
-    current_topics: list = []
-    current_style: Optional[str] = None
-
-    pucrs_unit_re = re.compile(r'N[°º]?\.\s*DA\s+UNIDADE\s*:\s*(\d+)', re.IGNORECASE)
-    pucrs_content_re = re.compile(r'CONTE[ÚU]DO\s*:\s*(.+)', re.IGNORECASE)
-    generic_unit_re = re.compile(
-        r'^(?:#{0,4}\s*)?(unidade(?:\s+de\s+aprendizagem)?\s+(?:\d+|[ivxlcdm]+))\s*[-–:—]\s*(.+)',
-        re.IGNORECASE,
-    )
-    numbered_topic_re = re.compile(r'^(\d+\.\d+(?:\.\d+)*)\.\s+(.+)')
-    bullet_topic_re = re.compile(r'^[-•*]\s+(.+)')
-
-    for raw in text.splitlines():
-        line = raw.strip()
-        if not line:
-            continue
-
-        normalized_line = _normalize_teaching_plan_heading(line)
-        if _TEACHING_PLAN_SECTION_STOP.match(normalized_line):
-            break
-
-        # PUCRS: "N°. DA UNIDADE: N"
-        m = pucrs_unit_re.match(line)
-        if m:
-            if current_title is not None:
-                units.append((current_title, current_topics))
-            current_unit_num = m.group(1)
-            current_title = None
-            current_topics = []
-            current_style = "pucrs"
-            continue
-
-        # PUCRS: "CONTEÚDO: Título" — título da unidade atual
-        if current_unit_num is not None and current_title is None:
-            m = pucrs_content_re.match(line)
-            if m:
-                current_title = f"Unidade {current_unit_num} — {m.group(1).strip()}"
-                continue
-
-        # Genérico: "Unidade N – Título" ou "### Unidade N – Título"
-        m = generic_unit_re.match(line)
-        if m:
-            if current_title is not None:
-                units.append((current_title, current_topics))
-            current_title = f"{m.group(1).strip()} — {m.group(2).strip()}"
-            current_unit_num = None
-            current_topics = []
-            current_style = "learning_unit" if "aprendizagem" in m.group(1).lower() else "generic"
-            continue
-
-        # Tópicos numerados (1.1., 1.2.1.) ou com marcador (-, •)
-        if current_title is not None:
-            m = numbered_topic_re.match(line)
-            if m:
-                numbering = m.group(1)  # e.g. "1.2.1"
-                # depth = number of dots minus 1 (1.1 → 0, 1.2.1 → 1, 1.2.1.1 → 2)
-                depth = numbering.count(".") - 1
-                current_topics.append((m.group(2).strip(), max(depth, 0)))
-                continue
-            m = bullet_topic_re.match(line)
-            if m:
-                current_topics.append((m.group(1).strip(), 0))
-                continue
-            if current_style == "learning_unit" and not normalized_line.endswith(":"):
-                current_topics.append((line, 0))
-
-    if current_title is not None:
-        units.append((current_title, current_topics))
-
-    return units
+    return _teaching_plan_parse_units_from_teaching_plan(text)
 
 
 def _topic_text(topic) -> str:
-    """Extrai o texto de um tópico, seja tupla (text, depth) ou string legada."""
-    if isinstance(topic, tuple):
-        return topic[0]
-    return str(topic)
+    return _teaching_plan_topic_text(topic)
 
 
 def _topic_depth(topic) -> int:
-    """Extrai a profundidade de um tópico, seja tupla (text, depth) ou string legada."""
-    if isinstance(topic, tuple):
-        return topic[1]
-    return 0
+    return _teaching_plan_topic_depth(topic)
 
 
 def _match_timeline_to_units(
@@ -7611,13 +7514,7 @@ _UNIT_GENERIC_TOKENS = {
 
 
 def _normalize_unit_slug(title: str) -> str:
-    slug = slugify((title or "").replace("—", "-"))
-    match = re.match(r"^(unidade(?:-de-aprendizagem)?-)(\d+)(-.+)?$", slug)
-    if not match:
-        return slug
-    prefix, number, suffix = match.groups()
-    suffix = suffix or ""
-    return f"{prefix}{int(number):02d}{suffix}"
+    return _teaching_plan_normalize_unit_slug(title)
 
 
 def _build_file_map_unit_index(units: list) -> list:
@@ -8321,5 +8218,4 @@ def file_map_md(course_meta: dict, manifest_entries: list, subject_profile=None)
 
 def exercise_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
     return _exercise_index_md_v2(course_meta, entries)
-
 
