@@ -2,6 +2,29 @@
 
 Voce esta assumindo o projeto GPT-Tutor-Generator no seguinte estado local:
 
+## Builder modules (estado atual)
+
+- `src/builder/engine.py`
+  - facade publica do builder, `RepoBuilder` e orchestration principal
+- `src/builder/content_taxonomy.py`
+  - taxonomia de conteudo, tag catalog, auto-tagging e semantic profile integration
+- `src/builder/timeline_index.py`
+  - parse, normalizacao, scoring e serializacao de timeline
+- `src/builder/navigation_artifacts.py`
+  - `COURSE_MAP`, `FILE_MAP` e helpers de enriquecimento RAG para artefatos
+- `src/builder/prompt_generation.py`
+  - geracao das instrucoes Claude/GPT/Gemini
+- `src/builder/pedagogical_prompts.py`
+  - prompts pedagogicos auxiliares, `code_review` e arquivos system/*
+- `src/builder/student_state.py`
+  - `STUDENT_STATE` v2, batteries, refresh de progresso, consolidacao e migracao
+- `src/builder/image_markdown.py`
+  - injecao de descricoes de imagem e helpers puros de markdown/imagem
+
+Regra pratica:
+- ao modificar taxonomia, timeline, navigation artifacts, prompts, student state ou image markdown, prefira mexer no modulo especializado primeiro
+- preserve `engine.py` como facade estavel durante a modularizacao; nao recoloque implementacoes grandes nele sem necessidade
+
 Repo:
 - `C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator`
 

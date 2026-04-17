@@ -1,6 +1,13 @@
 from __future__ import annotations
 # Public facade for builder functionality during modularization.
 # Keep stable exports here while implementations move into focused modules.
+# Focused builder subsystems already live in:
+# - src.builder.content_taxonomy
+# - src.builder.timeline_index
+# - src.builder.navigation_artifacts
+# - src.builder.prompt_generation / pedagogical_prompts
+# - src.builder.student_state
+# - src.builder.image_markdown
 import csv
 import difflib
 import html as html_lib
