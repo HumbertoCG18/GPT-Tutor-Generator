@@ -1,4 +1,13 @@
 from __future__ import annotations
+# Public facade for builder functionality during modularization.
+# Keep stable exports here while implementations move into focused modules.
+# Focused builder subsystems already live in:
+# - src.builder.content_taxonomy
+# - src.builder.timeline_index
+# - src.builder.navigation_artifacts
+# - src.builder.prompt_generation / pedagogical_prompts
+# - src.builder.student_state
+# - src.builder.image_markdown
 import csv
 import difflib
 import html as html_lib
@@ -50,9 +59,12 @@ from src.builder.navigation_artifacts import (
     _get_entry_sections,
     _inject_executive_summary,
     _infer_unit_confidence,
-    render_low_token_course_map_md,
-    render_low_token_course_map_md_v2,
-    render_low_token_file_map_md,
+    budgeted_file_map_md as _navigation_budgeted_file_map_md,
+    course_map_md as _navigation_course_map_md,
+    file_map_md as _navigation_file_map_md,
+    low_token_course_map_md as _navigation_low_token_course_map_md,
+    low_token_course_map_md_v2 as _navigation_low_token_course_map_md_v2,
+    low_token_file_map_md as _navigation_low_token_file_map_md,
 )
 from src.builder import content_taxonomy as _content_taxonomy
 from src.builder.semantic_config import (
@@ -543,21 +555,11 @@ def _build_content_taxonomy(
 
 
 def _write_internal_content_taxonomy(root_dir: Path, taxonomy: dict) -> None:
-    write_text(
-        root_dir / "course" / ".content_taxonomy.json",
-        json.dumps(taxonomy, ensure_ascii=False, indent=2),
-    )
+    _content_taxonomy.write_internal_content_taxonomy(root_dir, taxonomy)
 
 
 def _extract_markdown_lead_text(markdown_text: str, max_chars: int = 2600) -> str:
-    stripped = _strip_frontmatter_block(markdown_text or "")
-    compact = _collapse_ws(stripped)
-    if len(compact) <= max_chars:
-        return compact
-    clipped = compact[:max_chars]
-    if " " in clipped:
-        clipped = clipped.rsplit(" ", 1)[0]
-    return clipped.strip()
+    return _content_taxonomy.extract_markdown_lead_text(markdown_text, max_chars=max_chars)
 
 
 def _collect_strong_heading_candidates(root_dir: Optional[Path], manifest_entries: Optional[List[dict]]) -> List[str]:
@@ -6063,6 +6065,9 @@ def _score_card_evidence_against_entry(signals: dict, card_items: List[Dict[str,
 
 
 def _timeline_block_rows_for_scoring(block: Dict[str, object]) -> list:
+    # Timeline parsing/core/scoring lives in src.builder.timeline_index.
+    # These helpers remain in engine phase 1 because they still couple block
+    # results to entry routing and manifest-driven orchestration.
     rows = list(block.get("rows", []) or [])
     return [row for row in rows if not bool(row.get("ignored"))]
 
@@ -8803,7 +8808,7 @@ policy:
 
 
 def _low_token_course_map_md(course_meta: dict, subject_profile=None) -> str:
-    return render_low_token_course_map_md(
+    return _navigation_low_token_course_map_md(
         course_meta,
         subject_profile,
         build_file_map_timeline_context_from_course=_build_file_map_timeline_context_from_course,
@@ -8820,7 +8825,7 @@ def _low_token_course_map_md(course_meta: dict, subject_profile=None) -> str:
 
 
 def _low_token_file_map_md(course_meta: dict, manifest_entries: list, subject_profile=None) -> str:
-    return render_low_token_file_map_md(
+    return _navigation_low_token_file_map_md(
         course_meta,
         manifest_entries,
         subject_profile,
@@ -8853,22 +8858,21 @@ def _low_token_file_map_md(course_meta: dict, manifest_entries: list, subject_pr
 
 
 def _budgeted_file_map_md(course_meta: dict, manifest_entries: list, subject_profile=None) -> str:
-    return _clamp_navigation_artifact(
-        _low_token_file_map_md(
-            course_meta,
-            _filter_live_manifest_entries(course_meta.get("_repo_root"), manifest_entries),
-            subject_profile=subject_profile,
-        ),
-        max_chars=12000,
-        label="course/FILE_MAP.md",
+    return _navigation_budgeted_file_map_md(
+        course_meta,
+        manifest_entries,
+        subject_profile,
+        filter_live_manifest_entries=_filter_live_manifest_entries,
+        low_token_file_map_md_fn=_low_token_file_map_md,
+        clamp_navigation_artifact=_clamp_navigation_artifact,
     )
 
 
 def _low_token_course_map_md_v2(course_meta: dict, subject_profile=None) -> str:
-    return render_low_token_course_map_md_v2(
+    return _navigation_low_token_course_map_md_v2(
         course_meta,
         subject_profile,
-        render_low_token_course_map_md_fn=_low_token_course_map_md,
+        low_token_course_map_md_fn=_low_token_course_map_md,
     )
 
 
@@ -8921,15 +8925,21 @@ def _exercise_index_md_v2(course_meta: dict, entries: List[FileEntry] = None) ->
 
 
 def course_map_md(course_meta: dict, subject_profile=None) -> str:
-    return _clamp_navigation_artifact(
-        _low_token_course_map_md_v2(course_meta, subject_profile),
-        max_chars=14000,
-        label="course/COURSE_MAP.md",
+    return _navigation_course_map_md(
+        course_meta,
+        subject_profile,
+        low_token_course_map_md_v2_fn=_low_token_course_map_md_v2,
+        clamp_navigation_artifact=_clamp_navigation_artifact,
     )
 
 
 def file_map_md(course_meta: dict, manifest_entries: list, subject_profile=None) -> str:
-    return _budgeted_file_map_md(course_meta, manifest_entries, subject_profile)
+    return _navigation_file_map_md(
+        course_meta,
+        manifest_entries,
+        subject_profile,
+        budgeted_file_map_md_fn=_budgeted_file_map_md,
+    )
 
 
 def exercise_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
