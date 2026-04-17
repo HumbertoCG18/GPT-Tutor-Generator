@@ -12,6 +12,8 @@ Voce esta assumindo o projeto GPT-Tutor-Generator no seguinte estado local:
   - parse, normalizacao, scoring e serializacao de timeline
 - `src/builder/navigation_artifacts.py`
   - `COURSE_MAP`, `FILE_MAP` e helpers de enriquecimento RAG para artefatos
+- `src/builder/repo_artifacts.py`
+  - indices auxiliares, templates de manual review, README gerado e docs internos de build
 - `src/builder/prompt_generation.py`
   - geracao das instrucoes Claude/GPT/Gemini
 - `src/builder/pedagogical_prompts.py`
