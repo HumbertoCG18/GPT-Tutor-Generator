@@ -52,9 +52,12 @@ from src.builder.navigation_artifacts import (
     _get_entry_sections,
     _inject_executive_summary,
     _infer_unit_confidence,
-    render_low_token_course_map_md,
-    render_low_token_course_map_md_v2,
-    render_low_token_file_map_md,
+    budgeted_file_map_md as _navigation_budgeted_file_map_md,
+    course_map_md as _navigation_course_map_md,
+    file_map_md as _navigation_file_map_md,
+    low_token_course_map_md as _navigation_low_token_course_map_md,
+    low_token_course_map_md_v2 as _navigation_low_token_course_map_md_v2,
+    low_token_file_map_md as _navigation_low_token_file_map_md,
 )
 from src.builder import content_taxonomy as _content_taxonomy
 from src.builder.semantic_config import (
@@ -8798,7 +8801,7 @@ policy:
 
 
 def _low_token_course_map_md(course_meta: dict, subject_profile=None) -> str:
-    return render_low_token_course_map_md(
+    return _navigation_low_token_course_map_md(
         course_meta,
         subject_profile,
         build_file_map_timeline_context_from_course=_build_file_map_timeline_context_from_course,
@@ -8815,7 +8818,7 @@ def _low_token_course_map_md(course_meta: dict, subject_profile=None) -> str:
 
 
 def _low_token_file_map_md(course_meta: dict, manifest_entries: list, subject_profile=None) -> str:
-    return render_low_token_file_map_md(
+    return _navigation_low_token_file_map_md(
         course_meta,
         manifest_entries,
         subject_profile,
@@ -8848,22 +8851,21 @@ def _low_token_file_map_md(course_meta: dict, manifest_entries: list, subject_pr
 
 
 def _budgeted_file_map_md(course_meta: dict, manifest_entries: list, subject_profile=None) -> str:
-    return _clamp_navigation_artifact(
-        _low_token_file_map_md(
-            course_meta,
-            _filter_live_manifest_entries(course_meta.get("_repo_root"), manifest_entries),
-            subject_profile=subject_profile,
-        ),
-        max_chars=12000,
-        label="course/FILE_MAP.md",
+    return _navigation_budgeted_file_map_md(
+        course_meta,
+        manifest_entries,
+        subject_profile,
+        filter_live_manifest_entries=_filter_live_manifest_entries,
+        low_token_file_map_md_fn=_low_token_file_map_md,
+        clamp_navigation_artifact=_clamp_navigation_artifact,
     )
 
 
 def _low_token_course_map_md_v2(course_meta: dict, subject_profile=None) -> str:
-    return render_low_token_course_map_md_v2(
+    return _navigation_low_token_course_map_md_v2(
         course_meta,
         subject_profile,
-        render_low_token_course_map_md_fn=_low_token_course_map_md,
+        low_token_course_map_md_fn=_low_token_course_map_md,
     )
 
 
@@ -8916,15 +8918,21 @@ def _exercise_index_md_v2(course_meta: dict, entries: List[FileEntry] = None) ->
 
 
 def course_map_md(course_meta: dict, subject_profile=None) -> str:
-    return _clamp_navigation_artifact(
-        _low_token_course_map_md_v2(course_meta, subject_profile),
-        max_chars=14000,
-        label="course/COURSE_MAP.md",
+    return _navigation_course_map_md(
+        course_meta,
+        subject_profile,
+        low_token_course_map_md_v2_fn=_low_token_course_map_md_v2,
+        clamp_navigation_artifact=_clamp_navigation_artifact,
     )
 
 
 def file_map_md(course_meta: dict, manifest_entries: list, subject_profile=None) -> str:
-    return _budgeted_file_map_md(course_meta, manifest_entries, subject_profile)
+    return _navigation_file_map_md(
+        course_meta,
+        manifest_entries,
+        subject_profile,
+        budgeted_file_map_md_fn=_budgeted_file_map_md,
+    )
 
 
 def exercise_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:

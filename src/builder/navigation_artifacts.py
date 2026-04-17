@@ -767,3 +767,144 @@ def render_low_token_file_map_md(
         max_chars=12000,
         label="course/FILE_MAP.md",
     )
+
+
+def low_token_course_map_md(
+    course_meta: dict,
+    subject_profile=None,
+    *,
+    build_file_map_timeline_context_from_course: Callable[[dict, object], dict],
+    aggregate_unit_periods_from_blocks: Callable[[dict], dict],
+    normalize_unit_slug: Callable[[str], str],
+    parse_units_from_teaching_plan: Callable[[str], list],
+    topic_text: Callable[[object], str],
+    topic_depth: Callable[[object], int],
+    build_assessment_context_from_course: Callable[[dict, object], dict],
+    assessment_conflict_section_lines: Callable[[Optional[dict], bool], List[str]],
+    clamp_navigation_artifact: Callable[..., str],
+    logger,
+) -> str:
+    return render_low_token_course_map_md(
+        course_meta,
+        subject_profile,
+        build_file_map_timeline_context_from_course=build_file_map_timeline_context_from_course,
+        aggregate_unit_periods_from_blocks=aggregate_unit_periods_from_blocks,
+        normalize_unit_slug=normalize_unit_slug,
+        parse_units_from_teaching_plan=parse_units_from_teaching_plan,
+        topic_text=topic_text,
+        topic_depth=topic_depth,
+        build_assessment_context_from_course=build_assessment_context_from_course,
+        assessment_conflict_section_lines=assessment_conflict_section_lines,
+        clamp_navigation_artifact=clamp_navigation_artifact,
+        logger=logger,
+    )
+
+
+def low_token_course_map_md_v2(
+    course_meta: dict,
+    subject_profile=None,
+    *,
+    low_token_course_map_md_fn: Callable[[dict, object], str],
+) -> str:
+    return render_low_token_course_map_md_v2(
+        course_meta,
+        subject_profile,
+        render_low_token_course_map_md_fn=low_token_course_map_md_fn,
+    )
+
+
+def low_token_file_map_md(
+    course_meta: dict,
+    manifest_entries: list,
+    subject_profile=None,
+    *,
+    build_file_map_content_taxonomy_from_course: Callable[[dict, object, list], dict],
+    build_file_map_unit_index_from_course: Callable[[dict, object], list],
+    build_file_map_timeline_context_from_course: Callable[[dict, object], dict],
+    iter_content_taxonomy_topics: Callable[[dict], list],
+    merge_manual_and_auto_tags: Callable[..., str],
+    resolve_entry_manual_timeline_block: Callable[[dict, dict], object],
+    entry_markdown_text_for_file_map: Callable[[object, dict], str],
+    auto_map_entry_subtopic: Callable[[dict, dict, str], object],
+    resolve_entry_manual_unit_slug: Callable[[dict, list], str],
+    unit_match_result_factory: Callable[..., object],
+    derive_unit_from_topic_match: Callable[[object, dict], str],
+    auto_map_entry_unit: Callable[[dict, list, str, list], object],
+    select_probable_period_for_entry: Callable[..., tuple],
+    file_map_markdown_cell: Callable[[str], str],
+    entry_markdown_path_for_file_map: Callable[[object, dict], object],
+    get_entry_sections: Callable[[object], str],
+    infer_unit_confidence: Callable[[dict], str],
+    entry_usage_hint: Callable[[dict], str],
+    entry_priority_label: Callable[[dict], str],
+    clamp_navigation_artifact: Callable[..., str],
+) -> str:
+    return render_low_token_file_map_md(
+        course_meta,
+        manifest_entries,
+        subject_profile,
+        build_file_map_content_taxonomy_from_course=build_file_map_content_taxonomy_from_course,
+        build_file_map_unit_index_from_course=build_file_map_unit_index_from_course,
+        build_file_map_timeline_context_from_course=build_file_map_timeline_context_from_course,
+        iter_content_taxonomy_topics=iter_content_taxonomy_topics,
+        merge_manual_and_auto_tags=merge_manual_and_auto_tags,
+        resolve_entry_manual_timeline_block=resolve_entry_manual_timeline_block,
+        entry_markdown_text_for_file_map=entry_markdown_text_for_file_map,
+        auto_map_entry_subtopic=auto_map_entry_subtopic,
+        resolve_entry_manual_unit_slug=resolve_entry_manual_unit_slug,
+        unit_match_result_factory=unit_match_result_factory,
+        derive_unit_from_topic_match=derive_unit_from_topic_match,
+        auto_map_entry_unit=auto_map_entry_unit,
+        select_probable_period_for_entry=select_probable_period_for_entry,
+        file_map_markdown_cell=file_map_markdown_cell,
+        entry_markdown_path_for_file_map=entry_markdown_path_for_file_map,
+        get_entry_sections=get_entry_sections,
+        infer_unit_confidence=infer_unit_confidence,
+        entry_usage_hint=entry_usage_hint,
+        entry_priority_label=entry_priority_label,
+        clamp_navigation_artifact=clamp_navigation_artifact,
+    )
+
+
+def budgeted_file_map_md(
+    course_meta: dict,
+    manifest_entries: list,
+    subject_profile=None,
+    *,
+    filter_live_manifest_entries: Callable[[object, list], list],
+    low_token_file_map_md_fn: Callable[[dict, list, object], str],
+    clamp_navigation_artifact: Callable[..., str],
+) -> str:
+    return clamp_navigation_artifact(
+        low_token_file_map_md_fn(
+            course_meta,
+            filter_live_manifest_entries(course_meta.get("_repo_root"), manifest_entries),
+            subject_profile=subject_profile,
+        ),
+        max_chars=12000,
+        label="course/FILE_MAP.md",
+    )
+
+
+def course_map_md(
+    course_meta: dict,
+    subject_profile=None,
+    *,
+    low_token_course_map_md_v2_fn: Callable[[dict, object], str],
+    clamp_navigation_artifact: Callable[..., str],
+) -> str:
+    return clamp_navigation_artifact(
+        low_token_course_map_md_v2_fn(course_meta, subject_profile),
+        max_chars=14000,
+        label="course/COURSE_MAP.md",
+    )
+
+
+def file_map_md(
+    course_meta: dict,
+    manifest_entries: list,
+    subject_profile=None,
+    *,
+    budgeted_file_map_md_fn: Callable[[dict, list, object], str],
+) -> str:
+    return budgeted_file_map_md_fn(course_meta, manifest_entries, subject_profile)
