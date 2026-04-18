@@ -12,7 +12,6 @@ from __future__ import annotations
 import csv
 import difflib
 import html as html_lib
-import importlib
 import json
 import logging
 import os
@@ -21,7 +20,7 @@ import shutil
 import subprocess
 import sys
 import unicodedata
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
@@ -41,6 +40,43 @@ from src.builder.entry_signals import (
     entry_image_source_dirs as _entry_signals_image_source_dirs,
     normalize_match_text as _entry_signals_normalize_match_text,
     score_text_against_row as _entry_signals_score_text_against_row,
+)
+from src.builder.file_map_routing import (
+    UnitMatchResult,
+    auto_map_entry_subtopic as _file_map_auto_map_entry_subtopic,
+    auto_map_entry_unit as _file_map_auto_map_entry_unit,
+    build_file_map_unit_index as _file_map_build_file_map_unit_index,
+    format_file_map_unit_cell as _file_map_format_file_map_unit_cell,
+    resolve_entry_manual_timeline_block as _file_map_resolve_entry_manual_timeline_block,
+    resolve_entry_manual_unit_slug as _file_map_resolve_entry_manual_unit_slug,
+    score_entry_against_unit as _file_map_score_entry_against_unit,
+)
+from src.builder.backend_runtime import (
+    MARKER_OLLAMA_SERVICE,
+    apply_marker_capabilities_help_text as _backend_apply_marker_capabilities_help_text,
+    advanced_cli_stall_timeout as _backend_advanced_cli_stall_timeout,
+    build_marker_page_chunks as _backend_build_marker_page_chunks,
+    build_page_chunks as _backend_build_page_chunks,
+    configure_docling_python_standard_gpu as _backend_configure_docling_python_standard_gpu,
+    datalab_chunk_size_for_workload as _backend_datalab_chunk_size_for_workload,
+    datalab_should_chunk as _backend_datalab_should_chunk,
+    default_marker_capabilities as _backend_default_marker_capabilities,
+    detect_marker_capabilities as _backend_detect_marker_capabilities,
+    load_docling_python_api as _backend_load_docling_python_api,
+    marker_chunk_size_for_workload as _backend_marker_chunk_size_for_workload,
+    marker_effective_torch_device as _backend_marker_effective_torch_device,
+    marker_model_is_cloud_variant as _backend_marker_model_is_cloud_variant,
+    marker_model_is_probably_vision as _backend_marker_model_is_probably_vision,
+    marker_model_is_qwen3_vl_8b as _backend_marker_model_is_qwen3_vl_8b,
+    marker_model_slug as _backend_marker_model_slug,
+    marker_ollama_model as _backend_marker_ollama_model,
+    marker_progress_hints as _backend_marker_progress_hints,
+    marker_should_redo_inline_math as _backend_marker_should_redo_inline_math,
+    marker_should_use_llm as _backend_marker_should_use_llm,
+    marker_torch_device as _backend_marker_torch_device,
+    prepare_docling_python_source_pdf as _backend_prepare_docling_python_source_pdf,
+    selected_page_count as _backend_selected_page_count,
+    should_force_ocr_for_marker as _backend_should_force_ocr_for_marker,
 )
 from src.builder.prompt_generation import (
     generate_claude_project_instructions,
@@ -714,120 +750,52 @@ def _strip_markdown_image_refs(markdown: str) -> str:
 
 
 def _build_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
-    selected = sorted(pages if pages is not None else list(range(page_count)))
-    if not selected:
-        return []
-    return [selected[i:i + chunk_size] for i in range(0, len(selected), chunk_size)]
+    return _backend_build_page_chunks(pages, page_count, chunk_size=chunk_size)
 
 
 def _build_marker_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
-    """Split marker work into smaller page chunks to reduce long silent stalls."""
-    return _build_page_chunks(pages, page_count, chunk_size=chunk_size)
+    return _backend_build_marker_page_chunks(pages, page_count, chunk_size=chunk_size)
 
 
 def _selected_page_count(ctx: "BackendContext") -> int:
-    if ctx.pages is not None:
-        return len(ctx.pages)
-    return max(int(ctx.report.page_count or 0), 0)
+    return _backend_selected_page_count(ctx)
 
 
 def _prepare_docling_python_source_pdf(ctx: "BackendContext", out_dir: Path) -> tuple[Path, bool]:
-    if not ctx.pages:
-        return ctx.raw_target, False
-    if not HAS_PYMUPDF:
-        logger.warning(
-            "  [docling_python] page_range solicitado, mas PyMuPDF nao esta disponivel; usando o PDF inteiro."
-        )
-        return ctx.raw_target, False
-
-    sliced_pdf = out_dir / f"{ctx.entry_id}--selected-pages.pdf"
-    src_doc = pymupdf.open(str(ctx.raw_target))
-    dst_doc = pymupdf.open()
-    try:
-        valid_pages = [page for page in ctx.pages if 0 <= page < src_doc.page_count]
-        if not valid_pages:
-            logger.warning(
-                "  [docling_python] page_range=%s nao gerou paginas validas; usando o PDF inteiro.",
-                ctx.entry.page_range or "all",
-            )
-            return ctx.raw_target, False
-        for page in valid_pages:
-            dst_doc.insert_pdf(src_doc, from_page=page, to_page=page)
-        dst_doc.save(str(sliced_pdf))
-    finally:
-        dst_doc.close()
-        src_doc.close()
-
-    return sliced_pdf, True
+    return _backend_prepare_docling_python_source_pdf(
+        ctx,
+        out_dir,
+        has_pymupdf=HAS_PYMUPDF,
+        pymupdf_module=pymupdf if HAS_PYMUPDF else None,
+    )
 
 
 def _configure_docling_python_standard_gpu(api: dict, pipeline_options) -> dict:
-    accelerator_options_cls = api.get("AcceleratorOptions")
-    accelerator_device = api.get("AcceleratorDevice")
-    rapid_ocr_options_cls = api.get("RapidOcrOptions")
-    settings_obj = api.get("settings")
-
-    gpu_config = {
-        "enabled": False,
-        "device": "auto",
-        "ocr_batch_size": None,
-        "layout_batch_size": None,
-        "table_batch_size": None,
-        "page_batch_size": None,
-        "ocr_backend": None,
-        "previous_page_batch_size": None,
-    }
-
-    if accelerator_options_cls and accelerator_device and hasattr(pipeline_options, "accelerator_options"):
-        pipeline_options.accelerator_options = accelerator_options_cls(device=accelerator_device.CUDA)
-        gpu_config["enabled"] = True
-        gpu_config["device"] = str(accelerator_device.CUDA.value)
-
-    if hasattr(pipeline_options, "ocr_batch_size"):
-        pipeline_options.ocr_batch_size = 8
-        gpu_config["ocr_batch_size"] = 8
-    if hasattr(pipeline_options, "layout_batch_size"):
-        pipeline_options.layout_batch_size = 8
-        gpu_config["layout_batch_size"] = 8
-    if hasattr(pipeline_options, "table_batch_size"):
-        pipeline_options.table_batch_size = 4
-        gpu_config["table_batch_size"] = 4
-
-    if rapid_ocr_options_cls and hasattr(pipeline_options, "ocr_options"):
-        pipeline_options.ocr_options = rapid_ocr_options_cls(backend="torch")
-        gpu_config["ocr_backend"] = "torch"
-
-    if settings_obj is not None and hasattr(settings_obj, "perf") and hasattr(settings_obj.perf, "page_batch_size"):
-        gpu_config["previous_page_batch_size"] = int(settings_obj.perf.page_batch_size)
-        settings_obj.perf.page_batch_size = max(int(settings_obj.perf.page_batch_size), 8)
-        gpu_config["page_batch_size"] = int(settings_obj.perf.page_batch_size)
-
-    return gpu_config
+    return _backend_configure_docling_python_standard_gpu(api, pipeline_options)
 
 
 def _marker_chunk_size_for_workload(ctx: "BackendContext") -> int:
-    effective_profile = _effective_document_profile(ctx.entry.document_profile, ctx.report.suggested_profile)
-    selected_pages = _selected_page_count(ctx)
-    if effective_profile in {"math_heavy", "diagram_heavy"} and selected_pages >= 80:
-        return 10
-    return 20
+    return _backend_marker_chunk_size_for_workload(
+        ctx,
+        effective_document_profile_fn=_effective_document_profile,
+        selected_page_count_fn=_selected_page_count,
+    )
 
 
 def _datalab_chunk_size_for_workload(ctx: "BackendContext") -> int:
-    effective_profile = _effective_document_profile(ctx.entry.document_profile, ctx.report.suggested_profile)
-    selected_pages = _selected_page_count(ctx)
-    if effective_profile == "math_heavy":
-        return 15 if selected_pages >= 120 else 20
-    if effective_profile in {"diagram_heavy", "scanned"}:
-        return 20
-    return 25
+    return _backend_datalab_chunk_size_for_workload(
+        ctx,
+        effective_document_profile_fn=_effective_document_profile,
+        selected_page_count_fn=_selected_page_count,
+    )
 
 
 def _datalab_should_chunk(ctx: "BackendContext") -> bool:
-    selected_pages = _selected_page_count(ctx)
-    if selected_pages < 50:
-        return False
-    return selected_pages > _datalab_chunk_size_for_workload(ctx)
+    return _backend_datalab_should_chunk(
+        ctx,
+        datalab_chunk_size_for_workload_fn=_datalab_chunk_size_for_workload,
+        selected_page_count_fn=_selected_page_count,
+    )
 
 
 def _merge_numeric_dicts(items: List[Dict[str, object]]) -> Dict[str, object]:
@@ -842,96 +810,51 @@ def _merge_numeric_dicts(items: List[Dict[str, object]]) -> Dict[str, object]:
 
 
 def _should_force_ocr_for_marker(ctx: "BackendContext") -> bool:
-    return bool(ctx.entry.force_ocr) or bool(ctx.report.suspected_scan)
+    return _backend_should_force_ocr_for_marker(ctx)
 
 
 def _marker_should_use_llm(ctx: "BackendContext") -> bool:
-    return bool(getattr(ctx, "marker_use_llm", False))
+    return _backend_marker_should_use_llm(ctx)
 
 
 def _marker_ollama_model(ctx: "BackendContext") -> str:
-    return str(getattr(ctx, "marker_llm_model", "") or "").strip()
+    return _backend_marker_ollama_model(ctx)
 
 
 def _marker_torch_device(ctx: "BackendContext") -> str:
-    return str(getattr(ctx, "marker_torch_device", "") or "").strip().lower()
+    return _backend_marker_torch_device(ctx)
 
 
 def _marker_effective_torch_device(ctx: "BackendContext") -> str:
-    configured = _marker_torch_device(ctx)
-    if configured and configured != "auto":
-        return configured
-    return "mps" if sys.platform == "darwin" else "cuda"
+    return _backend_marker_effective_torch_device(ctx)
 
 
 def _marker_model_slug(model: str) -> str:
-    return str(model or "").strip().lower()
+    return _backend_marker_model_slug(model)
 
 
 def _marker_model_is_qwen3_vl_8b(model: str) -> bool:
-    slug = _marker_model_slug(model)
-    return slug.startswith("qwen3-vl:8b") or slug == "qwen3-vl:8b"
+    return _backend_marker_model_is_qwen3_vl_8b(model)
 
 
 def _marker_model_is_cloud_variant(model: str) -> bool:
-    return "cloud" in _marker_model_slug(model)
+    return _backend_marker_model_is_cloud_variant(model)
 
 
 def _marker_model_is_probably_vision(model: str) -> bool:
-    slug = _marker_model_slug(model)
-    return any(token in slug for token in ("-vl", "vision", "gemma3", "gemma4"))
+    return _backend_marker_model_is_probably_vision(model)
 
 
 def _marker_should_redo_inline_math(ctx: "BackendContext") -> bool:
-    suggested_profile = str(getattr(ctx.report, "suggested_profile", "") or "").strip().lower()
-    return bool(getattr(ctx.entry, "formula_priority", False)) or suggested_profile == "math_heavy"
+    return _backend_marker_should_redo_inline_math(ctx)
 
 
 def _marker_progress_hints(line: str, previous_phase: Optional[str]) -> tuple[Optional[str], list[str]]:
-    phase = None
-    hints: list[str] = []
-
-    if ":" in line:
-        phase = line.split(":", 1)[0].strip() or None
-    if not phase:
-        return previous_phase, hints
-
-    if previous_phase != phase:
-        hints.append(f"Fase detectada: {phase}")
-
-    if "0it [00:00" in line.lower():
-        hints.append(f"Fase '{phase}' concluída sem itens para processar.")
-
-    return phase, hints
+    return _backend_marker_progress_hints(line, previous_phase)
 
 
 def _load_docling_python_api():
-    global _DOCLING_PYTHON_API_CACHE
-
-    if _DOCLING_PYTHON_API_CACHE is not None:
-        return _DOCLING_PYTHON_API_CACHE
-
-    try:
-        document_converter = importlib.import_module("docling.document_converter")
-        pipeline_options = importlib.import_module("docling.datamodel.pipeline_options")
-        base_models = importlib.import_module("docling.datamodel.base_models")
-        accelerator_options = importlib.import_module("docling.datamodel.accelerator_options")
-        settings_module = importlib.import_module("docling.datamodel.settings")
-        _DOCLING_PYTHON_API_CACHE = {
-            "DocumentConverter": document_converter.DocumentConverter,
-            "PdfFormatOption": document_converter.PdfFormatOption,
-            "PdfPipelineOptions": pipeline_options.PdfPipelineOptions,
-            "ThreadedPdfPipelineOptions": getattr(pipeline_options, "ThreadedPdfPipelineOptions", pipeline_options.PdfPipelineOptions),
-            "RapidOcrOptions": getattr(pipeline_options, "RapidOcrOptions", None),
-            "AcceleratorOptions": accelerator_options.AcceleratorOptions,
-            "AcceleratorDevice": accelerator_options.AcceleratorDevice,
-            "settings": settings_module.settings,
-            "InputFormat": base_models.InputFormat,
-        }
-    except Exception:
-        _DOCLING_PYTHON_API_CACHE = None
-
-    return _DOCLING_PYTHON_API_CACHE
+    return _backend_load_docling_python_api()
 
 
 def has_docling_python_api() -> bool:
@@ -939,40 +862,12 @@ def has_docling_python_api() -> bool:
 
 
 def _advanced_cli_stall_timeout(backend_name: str, ctx: "BackendContext") -> int:
-    base_timeout = int(ctx.stall_timeout or 300)
-    effective_profile = _effective_document_profile(ctx.entry.document_profile, ctx.report.suggested_profile)
-    selected_pages = _selected_page_count(ctx)
-    heavy_profiles = {"math_heavy", "diagram_heavy", "scanned"}
-
-    if backend_name == "marker":
-        marker_model = _marker_ollama_model(ctx)
-        marker_llm_active = _marker_should_use_llm(ctx) and bool(marker_model)
-        if marker_llm_active and _marker_model_is_qwen3_vl_8b(marker_model):
-            if effective_profile in heavy_profiles and selected_pages >= 80:
-                return max(base_timeout, 3600)
-            if effective_profile in heavy_profiles and selected_pages >= 40:
-                return max(base_timeout, 2700)
-            return max(base_timeout, 1200)
-        if marker_llm_active:
-            if effective_profile in heavy_profiles and selected_pages >= 80:
-                return max(base_timeout, 3600)
-            if effective_profile in heavy_profiles and selected_pages >= 40:
-                return max(base_timeout, 2700)
-            return max(base_timeout, 900)
-        if effective_profile in {"math_heavy", "diagram_heavy"} and selected_pages >= 80:
-            return max(base_timeout, 2700)
-        if effective_profile in {"math_heavy", "diagram_heavy"} and selected_pages >= 40:
-            return max(base_timeout, 1800)
-        return base_timeout
-
-    if backend_name == "docling":
-        if effective_profile in heavy_profiles and (selected_pages >= 80 or ctx.report.images_count >= 200):
-            return max(base_timeout, 1800)
-        if effective_profile in heavy_profiles and selected_pages >= 40:
-            return max(base_timeout, 1200)
-        return base_timeout
-
-    return base_timeout
+    return _backend_advanced_cli_stall_timeout(
+        backend_name,
+        ctx,
+        effective_document_profile_fn=_effective_document_profile,
+        selected_page_count_fn=_selected_page_count,
+    )
 
 
 def _pdf_image_extraction_policy(ctx: "BackendContext") -> Dict[str, object]:
@@ -2011,39 +1906,14 @@ def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext", s
     return returncode, stdout_lines, stderr_lines
 
 
-_MARKER_CAPABILITIES_CACHE = None
-MARKER_OLLAMA_SERVICE = "marker.services.ollama.OllamaService"
-
-
 def _default_marker_capabilities() -> Dict[str, object]:
-    return {
-        "page_range_flag": "--page_range",
-        "force_ocr_flag": "--force_ocr",
-        "use_llm_flag": "--use_llm",
-        "llm_service_flag": "--llm_service",
-        "ollama_base_url_flag": "--OllamaService_ollama_base_url",
-        "ollama_model_flag": "--OllamaService_ollama_model",
-        "ollama_timeout_flag": "--OllamaService_timeout",
-        "redo_inline_math_flag": "--redo_inline_math",
-        "disable_image_extraction_flag": "--disable_image_extraction",
-    }
+    return _backend_default_marker_capabilities()
+
+
+_MARKER_CAPABILITIES_CACHE = None
 
 
 def _detect_marker_capabilities() -> Dict[str, object]:
-    """
-    Detecta quais flags a versão instalada do Marker suporta.
-
-    Resultado esperado:
-    {
-        "page_range_flag": "--page_range" | "--page-range" | None,
-        "force_ocr_flag": "--force_ocr" | "--force-ocr" | None,
-        "use_llm_flag": "--use_llm" | "--use-llm" | None,
-        "llm_service_flag": "--llm_service" | "--llm-service" | None,
-        "ollama_base_url_flag": "--ollama_base_url" | "--ollama-base-url" | "--ollamaservice_ollama_base_url" | "--OllamaService_ollama_base_url" | None,
-        "ollama_model_flag": "--ollama_model" | "--ollama-model" | "--ollamaservice_ollama_model" | "--OllamaService_ollama_model" | None,
-        "redo_inline_math_flag": "--redo_inline_math" | "--redo-inline-math" | None,
-    }
-    """
     global _MARKER_CAPABILITIES_CACHE
 
     if _MARKER_CAPABILITIES_CACHE is not None:
@@ -2063,7 +1933,7 @@ def _detect_marker_capabilities() -> Dict[str, object]:
             text=True,
             timeout=45,
         )
-        help_text = ((proc.stdout or "") + "\n" + (proc.stderr or "")).lower()
+        help_text = (proc.stdout or "") + "\n" + (proc.stderr or "")
     except Exception as e:
         logger.warning(
             "  [marker] Não foi possível inspecionar --help: %s. "
@@ -2073,73 +1943,7 @@ def _detect_marker_capabilities() -> Dict[str, object]:
         _MARKER_CAPABILITIES_CACHE = dict(caps)
         return dict(caps)
 
-    # Page range
-    if "--page-range" in help_text:
-        caps["page_range_flag"] = "--page-range"
-    elif "--page_range" in help_text:
-        caps["page_range_flag"] = "--page_range"
-    else:
-        caps["page_range_flag"] = None
-
-    # Force OCR
-    if "--force-ocr" in help_text:
-        caps["force_ocr_flag"] = "--force-ocr"
-    elif "--force_ocr" in help_text:
-        caps["force_ocr_flag"] = "--force_ocr"
-    else:
-        caps["force_ocr_flag"] = None
-
-    for candidate in ("--use-llm", "--use_llm"):
-        if candidate in help_text:
-            caps["use_llm_flag"] = candidate
-            break
-
-    for candidate in ("--llm-service", "--llm_service"):
-        if candidate in help_text:
-            caps["llm_service_flag"] = candidate
-            break
-
-    for candidate in (
-        "--OllamaService_ollama_base_url",
-        "--ollama-base-url",
-        "--ollama_base_url",
-        "--ollamaservice-ollama-base-url",
-        "--ollamaservice_ollama_base_url",
-    ):
-        if candidate.lower() in help_text:
-            caps["ollama_base_url_flag"] = candidate
-            break
-
-    for candidate in (
-        "--OllamaService_ollama_model",
-        "--ollama-model",
-        "--ollama_model",
-        "--ollamaservice-ollama-model",
-        "--ollamaservice_ollama_model",
-    ):
-        if candidate.lower() in help_text:
-            caps["ollama_model_flag"] = candidate
-            break
-
-    for candidate in ("--redo_inline_math", "--redo-inline-math"):
-        if candidate in help_text:
-            caps["redo_inline_math_flag"] = candidate
-            break
-
-    for candidate in (
-        "--OllamaService_timeout",
-        "--ollamaservice-timeout",
-        "--ollamaservice_timeout",
-    ):
-        if candidate.lower() in help_text:
-            caps["ollama_timeout_flag"] = candidate
-            break
-
-    for candidate in ("--disable_image_extraction", "--disable-image-extraction"):
-        if candidate in help_text:
-            caps["disable_image_extraction_flag"] = candidate
-            break
-
+    caps = _backend_apply_marker_capabilities_help_text(help_text, caps)
     _MARKER_CAPABILITIES_CACHE = dict(caps)
     logger.info("  [marker] Capabilities detectadas: %s", caps)
     return dict(caps)
@@ -7460,14 +7264,6 @@ def _bundle_seed_candidate(entry: dict, score: int) -> dict:
     }
 
 
-@dataclass
-class UnitMatchResult:
-    slug: str
-    confidence: float
-    ambiguous: bool = False
-    reasons: List[str] = field(default_factory=list)
-
-
 def _normalize_match_text(text: str) -> str:
     return _entry_signals_normalize_match_text(text)
 
@@ -7518,87 +7314,14 @@ def _normalize_unit_slug(title: str) -> str:
 
 
 def _build_file_map_unit_index(units: list) -> list:
-    indexed = []
-    for unit in units or []:
-        if isinstance(unit, dict):
-            title = unit.get("title", "")
-            topics = unit.get("topics", []) or []
-            extra_signals = unit.get("extra_signals", []) or []
-        else:
-            title, topics = unit
-            extra_signals = []
-        clean_title = _strip_outline_prefix(title)
-        topic_phrases = []
-        topic_tokens = []
-        seen_topic_tokens = set()
-        topic_signal_sources = list(topics) + list(extra_signals)
-        for topic in topic_signal_sources:
-            topic_norm = _normalize_match_text(_strip_outline_prefix(_topic_text(topic)))
-            if not topic_norm:
-                continue
-            topic_phrases.append(topic_norm)
-            if topic_norm not in seen_topic_tokens:
-                topic_tokens.append(topic_norm)
-                seen_topic_tokens.add(topic_norm)
-            for token in topic_norm.split():
-                if (
-                    len(token) >= 4
-                    and token not in seen_topic_tokens
-                    and token not in _UNIT_GENERIC_TOKENS
-                ):
-                    topic_tokens.append(token)
-                    seen_topic_tokens.add(token)
-        indexed.append({
-            "title": title,
-            "slug": _normalize_unit_slug(title),
-            "normalized_title": _normalize_match_text(clean_title),
-            "topics": topics,
-            "extra_signals": extra_signals,
-            "topic_phrases": topic_phrases,
-            "topic_tokens": topic_tokens,
-            "title_anchor_tokens": [
-                token
-                for token in _normalize_match_text(clean_title).split()
-                if len(token) >= 4 and token not in {"unidade", "aprendizagem", "verificacao"}
-            ],
-            "topic_anchor_tokens": [
-                token
-                for token in {
-                    token
-                    for text in topic_phrases
-                    for token in text.split()
-                }
-                if len(token) >= 4 and token not in {"de", "para", "com", "sem", "sobre", "entre"}
-            ],
-            "distinctive_tokens": [],
-        })
-
-    token_frequency = {}
-    for unit in indexed:
-        unit_tokens = set()
-        for text in [unit["normalized_title"]] + unit.get("topic_tokens", []):
-            for token in text.split():
-                if len(token) >= 4 and not token.isdigit() and token not in _UNIT_GENERIC_TOKENS:
-                    unit_tokens.add(token)
-        for token in unit_tokens:
-            token_frequency[token] = token_frequency.get(token, 0) + 1
-
-    for unit in indexed:
-        unit_tokens = set()
-        for text in [unit["normalized_title"]] + unit.get("topic_tokens", []):
-            for token in text.split():
-                if len(token) >= 4 and not token.isdigit() and token not in _UNIT_GENERIC_TOKENS:
-                    unit_tokens.add(token)
-        unit["token_weights"] = {
-            token: 1.0 / token_frequency[token]
-            for token in unit_tokens
-            if token_frequency.get(token)
-        }
-        unit["distinctive_tokens"] = sorted(
-            token for token, freq in token_frequency.items()
-            if freq == 1 and token in unit_tokens and len(token) >= 5
-        )
-    return indexed
+    return _file_map_build_file_map_unit_index(
+        units,
+        normalize_match_text=_normalize_match_text,
+        normalize_unit_slug=_normalize_unit_slug,
+        strip_outline_prefix=_strip_outline_prefix,
+        topic_text=_topic_text,
+        unit_generic_tokens=_UNIT_GENERIC_TOKENS,
+    )
 
 
 def _collect_entry_unit_signals(entry: dict, markdown_text: str) -> dict:
@@ -7664,199 +7387,24 @@ def _build_file_map_content_taxonomy_from_course(
 
 
 def _auto_map_entry_subtopic(entry: dict, taxonomy: dict, markdown_text: str) -> TopicMatchResult:
-    topic_index = _iter_content_taxonomy_topics(taxonomy)
-    if not topic_index:
-        return TopicMatchResult(
-            topic_slug="",
-            topic_label="",
-            unit_slug="",
-            confidence=0.0,
-            ambiguous=True,
-            reasons=["sem-taxonomia"],
-        )
-
-    signals = _collect_entry_unit_signals(entry, markdown_text)
-    scored = [
-        (topic, _score_entry_against_taxonomy_topic(signals, topic))
-        for topic in topic_index
-    ]
-    scored.sort(key=lambda item: item[1], reverse=True)
-
-    winner, winner_score = scored[0]
-    runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
-    confidence = min(1.0, max(0.0, (winner_score - runner_up_score) + (winner_score * 0.2)))
-    if len(scored) == 1:
-        ambiguous = winner_score <= 0.0
-        if not ambiguous:
-            confidence = max(confidence, 0.72)
-    else:
-        ambiguous = winner_score <= 0.0 or abs(winner_score - runner_up_score) < 0.65
-    if ambiguous:
-        confidence = min(confidence, 0.45)
-
-    reasons = [f"winner_score={winner_score:.2f}"]
-    if ambiguous:
-        reasons.append("ambiguous")
-
-    return TopicMatchResult(
-        topic_slug=str(winner.get("topic_slug", "") or ""),
-        topic_label=str(winner.get("topic_label", "") or ""),
-        unit_slug=str(winner.get("unit_slug", "") or ""),
-        confidence=confidence,
-        ambiguous=ambiguous,
-        reasons=reasons,
+    return _file_map_auto_map_entry_subtopic(
+        entry,
+        taxonomy,
+        markdown_text,
+        collect_entry_unit_signals=_collect_entry_unit_signals,
+        iter_content_taxonomy_topics=_iter_content_taxonomy_topics,
+        score_entry_against_taxonomy_topic=_score_entry_against_taxonomy_topic,
+        topic_match_result_factory=TopicMatchResult,
     )
 
 
 def _score_entry_against_unit(signals: dict, unit: dict) -> float:
-    title_text = signals.get("title_text", "")
-    markdown_headings_text = signals.get("markdown_headings_text", "")
-    markdown_lead_text = signals.get("markdown_lead_text", "")
-    markdown_text = signals.get("markdown_text", "")
-    category_text = signals.get("category_text", "")
-    manual_tags_text = signals.get("manual_tags_text", "")
-    auto_tags_text = signals.get("auto_tags_text", "")
-    legacy_tags_text = signals.get("legacy_tags_text", "")
-    tags_text = signals.get("tags_text", "")
-    raw_text = signals.get("raw_text", "")
-    title_tokens = set(tok for tok in title_text.split() if len(tok) >= 4)
-    markdown_headings_tokens = set(tok for tok in markdown_headings_text.split() if len(tok) >= 4)
-    markdown_lead_tokens = set(tok for tok in markdown_lead_text.split() if len(tok) >= 4)
-    markdown_tokens = set(tok for tok in markdown_text.split() if len(tok) >= 4)
-    manual_tags_tokens = set(tok for tok in manual_tags_text.split() if len(tok) >= 4)
-    auto_tags_tokens = set(tok for tok in auto_tags_text.split() if len(tok) >= 4)
-    legacy_tags_tokens = set(tok for tok in legacy_tags_text.split() if len(tok) >= 4)
-    tags_tokens = set(tok for tok in tags_text.split() if len(tok) >= 4)
-    raw_tokens = set(tok for tok in raw_text.split() if len(tok) >= 4)
-
-    unit_title = unit.get("normalized_title", "")
-    topic_phrases = unit.get("topic_phrases", []) or []
-    topic_tokens = unit.get("topic_tokens", []) or []
-    distinctive_tokens = unit.get("distinctive_tokens", []) or []
-    token_weights = unit.get("token_weights", {}) or {}
-
-    score = 0.0
-    exact_topic_hits = 0
-    matched_specific_tokens = set()
-    title_words = [tok for tok in unit_title.split() if len(tok) >= 5]
-    if unit_title and len(title_words) >= 3:
-        if unit_title in markdown_text:
-            score += 1.1
-        if unit_title in markdown_lead_text:
-            score += 1.6
-        if unit_title in markdown_headings_text:
-            score += 1.8
-        if unit_title in title_text:
-            score += 1.0
-
-    for topic_phrase in topic_phrases:
-        if not topic_phrase:
-            continue
-        if topic_phrase in markdown_headings_text:
-            score += 3.0
-            exact_topic_hits += 1
-            continue
-        if topic_phrase in markdown_lead_text:
-            score += 2.8
-            exact_topic_hits += 1
-            continue
-        if topic_phrase in title_text:
-            score += 2.7
-            exact_topic_hits += 1
-            continue
-        if topic_phrase in markdown_text:
-            score += 1.4
-            exact_topic_hits += 1
-            continue
-        if topic_phrase in manual_tags_text:
-            score += 1.6
-            exact_topic_hits += 1
-            continue
-        if topic_phrase in auto_tags_text:
-            score += 0.18
-            exact_topic_hits += 1
-            continue
-        if topic_phrase in legacy_tags_text:
-            score += 0.24
-            exact_topic_hits += 1
-            continue
-        score += _score_timeline_unit_phrase(markdown_headings_text, markdown_headings_tokens, topic_phrase, token_weights) * 0.55
-        score += _score_timeline_unit_phrase(markdown_lead_text, markdown_lead_tokens, topic_phrase, token_weights) * 0.48
-        score += _score_timeline_unit_phrase(markdown_text, markdown_tokens, topic_phrase, token_weights) * 0.18
-        score += _score_timeline_unit_phrase(title_text, title_tokens, topic_phrase, token_weights) * 0.45
-        score += _score_timeline_unit_phrase(manual_tags_text, manual_tags_tokens, topic_phrase, token_weights) * 0.35
-        score += _score_timeline_unit_phrase(auto_tags_text, auto_tags_tokens, topic_phrase, token_weights) * 0.04
-        score += _score_timeline_unit_phrase(legacy_tags_text, legacy_tags_tokens, topic_phrase, token_weights) * 0.02
-        score += _score_timeline_unit_phrase(raw_text, raw_tokens, topic_phrase, token_weights) * 0.18
-
-    for topic_token in topic_tokens:
-        if not topic_token or " " in topic_token:
-            continue
-        weight = token_weights.get(topic_token, 1.0)
-        if topic_token in _TIMELINE_UNIT_NEUTRAL_TOKENS:
-            weight *= 0.2
-        if topic_token in markdown_tokens:
-            score += 0.32 * weight
-            if topic_token not in _TIMELINE_UNIT_NEUTRAL_TOKENS:
-                matched_specific_tokens.add(topic_token)
-        if topic_token in markdown_lead_tokens:
-            score += 0.7 * weight
-            if topic_token not in _TIMELINE_UNIT_NEUTRAL_TOKENS:
-                matched_specific_tokens.add(topic_token)
-        if topic_token in markdown_headings_tokens:
-            score += 0.8 * weight
-            if topic_token not in _TIMELINE_UNIT_NEUTRAL_TOKENS:
-                matched_specific_tokens.add(topic_token)
-        if topic_token in title_tokens:
-            score += 0.55 * weight
-            if topic_token not in _TIMELINE_UNIT_NEUTRAL_TOKENS:
-                matched_specific_tokens.add(topic_token)
-        if topic_token in manual_tags_tokens:
-            score += 0.45 * weight
-            if topic_token not in _TIMELINE_UNIT_NEUTRAL_TOKENS:
-                matched_specific_tokens.add(topic_token)
-        if topic_token in auto_tags_tokens:
-            score += 0.05 * weight
-            if topic_token not in _TIMELINE_UNIT_NEUTRAL_TOKENS:
-                matched_specific_tokens.add(topic_token)
-        if topic_token in legacy_tags_tokens:
-            score += 0.02 * weight
-            if topic_token not in _TIMELINE_UNIT_NEUTRAL_TOKENS:
-                matched_specific_tokens.add(topic_token)
-        if topic_token in raw_tokens:
-            score += 0.2 * weight
-            if topic_token not in _TIMELINE_UNIT_NEUTRAL_TOKENS:
-                matched_specific_tokens.add(topic_token)
-
-    for token in distinctive_tokens:
-        if token in markdown_tokens:
-            score += 0.25 if token in matched_specific_tokens else 0.7
-            matched_specific_tokens.add(token)
-        if token in title_tokens:
-            score += 0.15 if token in matched_specific_tokens else 0.35
-            matched_specific_tokens.add(token)
-        if token in tags_tokens:
-            score += 0.12 if token in matched_specific_tokens else 0.3
-            matched_specific_tokens.add(token)
-        if token in raw_tokens:
-            score += 0.06 if token in matched_specific_tokens else 0.15
-            matched_specific_tokens.add(token)
-
-    if category_text in {"listas", "gabaritos"}:
-        score += 0.15
-    if manual_tags_text:
-        score += 0.06
-    elif auto_tags_text:
-        score += 0.01
-    elif legacy_tags_text:
-        score += 0.01
-
-    if exact_topic_hits == 0 and not matched_specific_tokens and score > 0.0:
-        score *= 0.55
-    if exact_topic_hits == 0 and len(matched_specific_tokens) == 1:
-        score *= 0.45
-
-    return score
+    return _file_map_score_entry_against_unit(
+        signals,
+        unit,
+        score_timeline_unit_phrase=_score_timeline_unit_phrase,
+        timeline_unit_neutral_tokens=_TIMELINE_UNIT_NEUTRAL_TOKENS,
+    )
 
 
 def _auto_map_entry_unit(
@@ -7865,101 +7413,34 @@ def _auto_map_entry_unit(
     markdown_text: str,
     topic_index: Optional[List[dict]] = None,
 ) -> UnitMatchResult:
-    indexed_units = _build_file_map_unit_index(units)
-    if not indexed_units:
-        return UnitMatchResult(slug="", confidence=0.0, ambiguous=True, reasons=["sem-unidades"])
-
-    signals = _collect_entry_unit_signals(entry, markdown_text)
-    scored = []
-    normalized_topic_index = list(topic_index or [])
-    for unit in indexed_units:
-        score = _score_entry_against_unit(signals, unit)
-        best_topic_score = 0.0
-        if normalized_topic_index:
-            unit_slug = _normalize_unit_slug(str(unit.get("slug", "") or unit.get("title", "") or ""))
-            for topic in normalized_topic_index:
-                if _normalize_unit_slug(str(topic.get("unit_slug", "") or "")) != unit_slug:
-                    continue
-                topic_score = _score_entry_against_taxonomy_topic(signals, topic)
-                if topic_score > best_topic_score:
-                    best_topic_score = topic_score
-            if best_topic_score >= 0.25:
-                score += best_topic_score * 0.85
-        scored.append((unit, score, best_topic_score))
-    scored.sort(key=lambda item: item[1], reverse=True)
-
-    winner, winner_score, winner_topic_score = scored[0]
-    runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
-    runner_up_topic_score = scored[1][2] if len(scored) > 1 else 0.0
-    confidence = min(1.0, max(0.0, (winner_score - runner_up_score) + (winner_score * 0.18)))
-    if len(scored) == 1:
-        ambiguous = winner_score <= 0.0
-        if not ambiguous:
-            confidence = max(confidence, 0.7)
-    else:
-        ambiguous = winner_score <= 0.0 or abs(winner_score - runner_up_score) < 0.8
-        if (
-            normalized_topic_index
-            and winner_topic_score >= 0.55
-            and (winner_topic_score - runner_up_topic_score) >= 0.01
-        ):
-            ambiguous = False
-            confidence = max(confidence, min(0.95, winner_topic_score))
-    if ambiguous:
-        confidence = min(confidence, 0.4)
-    reasons = [f"winner_score={winner_score:.2f}"]
-    if normalized_topic_index:
-        reasons.append(f"topic_score={winner_topic_score:.2f}")
-    if ambiguous:
-        reasons.append("ambiguous")
-    return UnitMatchResult(
-        slug=winner["slug"],
-        confidence=confidence,
-        ambiguous=ambiguous,
-        reasons=reasons,
+    return _file_map_auto_map_entry_unit(
+        entry,
+        units,
+        markdown_text,
+        topic_index=topic_index,
+        build_file_map_unit_index=_build_file_map_unit_index,
+        collect_entry_unit_signals=_collect_entry_unit_signals,
+        score_entry_against_unit=_score_entry_against_unit,
+        normalize_unit_slug=_normalize_unit_slug,
+        score_entry_against_taxonomy_topic=_score_entry_against_taxonomy_topic,
+        unit_match_result_factory=UnitMatchResult,
     )
 
 
 def _format_file_map_unit_cell(slug: str, confidence: float, ambiguous: bool) -> str:
-    if not slug:
-        return ""
-    if ambiguous:
-        return f"{slug} _(ambíguo)_"
-    if confidence < 0.45:
-        return f"{slug} _(baixa confiança)_"
-    return slug
+    return _file_map_format_file_map_unit_cell(slug, confidence, ambiguous)
 
 
 def _resolve_entry_manual_unit_slug(entry: dict, unit_index: list) -> str:
-    raw = str(entry.get("manual_unit_slug") or "").strip()
-    if not raw:
-        return ""
-    normalized = _normalize_unit_slug(raw)
-    valid_slugs = {str(unit.get("slug", "")).strip() for unit in unit_index if str(unit.get("slug", "")).strip()}
-    return normalized if normalized in valid_slugs else ""
+    return _file_map_resolve_entry_manual_unit_slug(
+        entry,
+        unit_index,
+        normalize_unit_slug=_normalize_unit_slug,
+    )
 
 
 def _resolve_entry_manual_timeline_block(entry: dict, timeline_context: dict) -> Optional[Dict[str, object]]:
-    raw = str(entry.get("manual_timeline_block_id") or "").strip()
-    if not raw:
-        return None
-    blocks = list(((timeline_context or {}).get("timeline_index") or {}).get("blocks", []) or [])
-    for block in blocks:
-        if str(block.get("id", "")).strip() == raw:
-            return block
-    match = re.fullmatch(r"bloco-(\d+)", raw, flags=re.IGNORECASE)
-    if match:
-        ordinal = int(match.group(1))
-        entry_unit = str(entry.get("unit_slug") or entry.get("manual_unit_slug") or "").strip()
-        instructional_blocks = [
-            block
-            for block in blocks
-            if not bool(block.get("administrative_only"))
-            and (not entry_unit or str(block.get("unit_slug", "")).strip() == entry_unit)
-        ]
-        if 1 <= ordinal <= len(instructional_blocks):
-            return instructional_blocks[ordinal - 1]
-    return None
+    return _file_map_resolve_entry_manual_timeline_block(entry, timeline_context)
 
 
 def _build_file_map_unit_index_from_course(course_meta: dict, subject_profile=None) -> list:
