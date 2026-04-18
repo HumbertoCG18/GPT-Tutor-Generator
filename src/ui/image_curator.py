@@ -1505,11 +1505,13 @@ class ImageCurator(tk.Toplevel):
                             messagebox.showinfo(
                                 "Image Curator",
                                 f"{total} descricoes geradas com sucesso.\n\nInjetadas em: {targets}",
+                                f"{total} descriÃ§Ãµes geradas com sucesso.\n\nInjetadas em: {targets}",
                             )
                         else:
                             messagebox.showinfo(
                                 "Image Curator",
                                 f"{total} descricoes geradas com sucesso.\n\nNenhum markdown alvo encontrado ainda.",
+                                f"{total} descriÃ§Ãµes geradas com sucesso.\n\nNenhum markdown alvo encontrado ainda.",
                             )
 
                 self.after(0, _on_done)
@@ -1537,4 +1539,5 @@ class ImageCurator(tk.Toplevel):
             encoding="utf-8",
         )
         _inject_all_image_descriptions_from_manifest(self.repo_dir, clean_manifest)
+
 
