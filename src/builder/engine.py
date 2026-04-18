@@ -45,11 +45,24 @@ from src.builder.file_map_routing import (
     UnitMatchResult,
     auto_map_entry_subtopic as _file_map_auto_map_entry_subtopic,
     auto_map_entry_unit as _file_map_auto_map_entry_unit,
+    build_file_map_content_taxonomy_from_course as _file_map_build_file_map_content_taxonomy_from_course,
     build_file_map_unit_index as _file_map_build_file_map_unit_index,
+    build_file_map_unit_index_from_course as _file_map_build_file_map_unit_index_from_course,
+    collect_entry_temporal_signals as _file_map_collect_entry_temporal_signals,
+    entry_temporal_range_contains as _file_map_entry_temporal_range_contains,
     format_file_map_unit_cell as _file_map_format_file_map_unit_cell,
     resolve_entry_manual_timeline_block as _file_map_resolve_entry_manual_timeline_block,
     resolve_entry_manual_unit_slug as _file_map_resolve_entry_manual_unit_slug,
+    score_card_evidence_against_entry as _file_map_score_card_evidence_against_entry,
+    score_entry_against_timeline_block as _file_map_score_entry_against_timeline_block,
+    score_entry_against_timeline_row as _file_map_score_entry_against_timeline_row,
+    score_entry_against_timeline_session as _file_map_score_entry_against_timeline_session,
+    score_entry_against_timeline_sessions as _file_map_score_entry_against_timeline_sessions,
     score_entry_against_unit as _file_map_score_entry_against_unit,
+    score_timeline_block as _file_map_score_timeline_block,
+    select_probable_period_for_entry as _file_map_select_probable_period_for_entry,
+    timeline_block_matches_preferred_topic as _file_map_timeline_block_matches_preferred_topic,
+    timeline_block_rows_for_scoring as _file_map_timeline_block_rows_for_scoring,
 )
 from src.builder.backend_runtime import (
     MARKER_OLLAMA_SERVICE,
@@ -82,6 +95,25 @@ from src.builder.prompt_generation import (
     generate_claude_project_instructions,
     generate_gemini_instructions,
     generate_gpt_instructions,
+)
+from src.builder.text_sanitization import (
+    detect_latex_corruption as _text_detect_latex_corruption,
+    hybridize_marker_markdown_with_base as _text_hybridize_marker_markdown_with_base,
+    is_plain_text_recovery_candidate as _text_is_plain_text_recovery_candidate,
+    mojibake_score as _text_mojibake_score,
+    normalize_unicode_math as _text_normalize_unicode_math,
+    normalize_tex_accents_in_math as _text_normalize_tex_accents_in_math,
+    repair_mojibake_text as _text_repair_mojibake_text,
+    sanitize_external_markdown_text as _text_sanitize_external_markdown_text,
+)
+from src.builder.url_markdown import (
+    content_score as _url_markdown_content_score,
+    extract_url_page_metadata as _url_markdown_extract_url_page_metadata,
+    html_to_structured_markdown as _url_markdown_html_to_structured_markdown,
+    inline_html_to_markdown as _url_markdown_inline_html_to_markdown,
+    is_probably_noise_container as _url_markdown_is_probably_noise_container,
+    pick_best_content_root as _url_markdown_pick_best_content_root,
+    render_html_block_to_markdown as _url_markdown_render_html_block_to_markdown,
 )
 from src.builder import student_state as student_state_v2
 from src.builder.pedagogical_prompts import (
@@ -117,8 +149,11 @@ from src.builder.semantic_config import (
 )
 from src.builder.timeline_index import (
     TopicMatchResult,
+    _aggregate_unit_periods_from_blocks as _timeline_aggregate_unit_periods_from_blocks,
     _assign_timeline_block_to_topic,
     _build_timeline_candidate_rows,
+    _build_assessment_context_from_course as _timeline_build_assessment_context_from_course,
+    _build_file_map_timeline_context_from_course as _timeline_build_file_map_timeline_context_from_course,
     _build_timeline_block_topic_signals,
     _build_timeline_index,
     _derive_unit_from_topic_match,
@@ -149,6 +184,7 @@ from src.builder.timeline_index import (
     _timeline_text_is_administrative,
     _extract_timeline_topics,
     _assign_timeline_block_to_unit,
+    _match_timeline_to_units_generic as _timeline_match_timeline_to_units_generic,
     _write_internal_timeline_index,
 )
 from src.builder.timeline_signals import (
@@ -302,29 +338,7 @@ def _is_valid_topic_candidate(text: str, semantic_profile: Optional[dict] = None
 
 
 def _extract_topic_candidates(*sources: str, semantic_profile: Optional[dict] = None) -> List[str]:
-    candidates: List[str] = []
-    seen = set()
-    for source in sources:
-        for raw_line in (source or "").splitlines():
-            line = _collapse_ws(raw_line)
-            if not line:
-                continue
-            if line.startswith("## "):
-                line = line[3:].strip()
-            elif line.startswith("- [ ] "):
-                line = line[6:].strip()
-            elif line.startswith("- "):
-                line = line[2:].strip()
-            elif not re.match(r"^(?:\d+(?:\.\d+)*\.?|unidade\s+\d+)", line, flags=re.IGNORECASE):
-                continue
-            line = _strip_topic_prefix(line)
-            slug = slugify(line)
-            if not _is_valid_topic_candidate(line, semantic_profile=semantic_profile) or slug in seen:
-                continue
-            seen.add(slug)
-            candidates.append(line)
-    return candidates
-
+    return _content_taxonomy._extract_topic_candidates(*sources, semantic_profile=semantic_profile)
 
 def _extract_tool_candidates(*sources: str, semantic_profile: Optional[dict] = None) -> List[str]:
     found: List[str] = []
@@ -359,84 +373,22 @@ def _select_supported_taxonomy_topic(
     topic_records: List[dict],
     semantic_profile: Optional[dict] = None,
 ) -> Optional[dict]:
-    candidate_norm = _normalize_match_text(candidate)
-    candidate_tokens = _topic_support_tokens(candidate)
-    if not candidate_norm or not candidate_tokens:
-        return None
-
-    best_topic: Optional[dict] = None
-    best_score = 0.0
-    for topic in topic_records or []:
-        base_label = _collapse_ws(str(topic.get("label", "") or ""))
-        base_norm = _normalize_match_text(base_label)
-        base_tokens = _topic_support_tokens(base_label)
-        if not base_norm or not base_tokens:
-            continue
-
-        overlap = candidate_tokens & base_tokens
-        score = 0.0
-        if candidate_norm == base_norm:
-            score = 10.0
-        elif candidate_norm in base_norm or base_norm in candidate_norm:
-            score = 8.0
-        elif len(overlap) >= 2:
-            score = 5.5 + (0.4 * len(overlap))
-        elif len(overlap) == 1 and 2 <= len(candidate_tokens) <= 6:
-            effective_profile = merge_semantic_profile(semantic_profile)
-            overlap_cues = tuple(effective_profile.get("heading_single_overlap_cues") or [])
-            if any(cue in candidate_norm for cue in overlap_cues):
-                score = 3.4
-            elif any(
-                cue in candidate_norm
-                for cue in ("recursiv", "indutiv", "predicad", "isabelle", "kripke", "modelo")
-            ):
-                score = 2.8
-        if str(topic.get("kind", "") or "") == "subtopic":
-            score += 0.08
-        if score > best_score:
-            best_score = score
-            best_topic = topic
-
-    return best_topic if best_score >= 2.8 else None
-
+    return _content_taxonomy._select_supported_taxonomy_topic(
+        candidate,
+        topic_records,
+        semantic_profile=semantic_profile,
+    )
 
 def _heading_topic_has_vocab_support(
     candidate: str,
     base_topics: List[str],
     semantic_profile: Optional[dict] = None,
 ) -> bool:
-    candidate_norm = _normalize_match_text(candidate)
-    candidate_tokens = _topic_support_tokens(candidate)
-    if not candidate_tokens:
-        return False
-    for base_topic in base_topics or []:
-        base_norm = _normalize_match_text(base_topic)
-        base_tokens = _topic_support_tokens(base_topic)
-        if not base_tokens:
-            continue
-        if candidate_norm == base_norm or candidate_norm in base_norm or base_norm in candidate_norm:
-            return True
-        overlap = candidate_tokens & base_tokens
-        if len(overlap) < 2:
-            if len(overlap) == 1 and 2 <= len(candidate_tokens) <= 4:
-                effective_profile = merge_semantic_profile(semantic_profile)
-                overlap_cues = tuple(effective_profile.get("heading_single_overlap_cues") or [])
-                if any(cue in candidate_norm for cue in overlap_cues):
-                    return True
-            continue
-        candidate_extra = candidate_tokens - base_tokens
-        base_extra = base_tokens - candidate_tokens
-        # Intermediate mode: allow only close variants of an official topic.
-        # Either the heading is a short refinement of the official topic
-        # ("funcoes recursivas" -> "funcoes recursivas sobre arvores"),
-        # or it is a short, faithful shortening of the official topic
-        # ("fundamentos de logica de primeira ordem" -> "logica de primeira ordem").
-        if overlap == base_tokens and len(candidate_extra) <= 1:
-            return True
-        if overlap == candidate_tokens and len(base_extra) <= 1:
-            return True
-    return False
-
+    return _content_taxonomy._heading_topic_has_vocab_support(
+        candidate,
+        base_topics,
+        semantic_profile=semantic_profile,
+    )
 
 def _build_tag_catalog(
     teaching_plan: str,
@@ -467,122 +419,16 @@ def _strip_topic_code(text: str) -> str:
 
 
 def _parse_glossary_terms(glossary_md: str) -> List[Dict[str, object]]:
-    terms: List[Dict[str, object]] = []
-    current: Optional[Dict[str, object]] = None
-
-    def _flush() -> None:
-        nonlocal current
-        if current and current.get("term"):
-            current["synonyms"] = sorted(
-                dict.fromkeys(
-                    _collapse_ws(item)
-                    for item in current.get("synonyms", [])
-                    if _collapse_ws(item)
-                )
-            )
-            terms.append(current)
-        current = None
-
-    for raw_line in (glossary_md or "").splitlines():
-        line = _collapse_ws(raw_line)
-        if not line:
-            continue
-        if line.startswith("## "):
-            _flush()
-            current = {
-                "term": _collapse_ws(line[3:]),
-                "unit_hint": "",
-                "synonyms": [],
-                "definition": "",
-            }
-            continue
-        if current is None:
-            continue
-
-        match = re.match(r"^\*\*Sin[ôo]nimos aceitos:\*\*\s*(.+)$", line, flags=re.IGNORECASE)
-        if match:
-            values = [item.strip() for item in re.split(r"[,;/|]", match.group(1)) if item.strip()]
-            current.setdefault("synonyms", []).extend(values)
-            continue
-
-        match = re.match(r"^\*\*Aparece em:\*\*\s*(.+)$", line, flags=re.IGNORECASE)
-        if match:
-            current["unit_hint"] = _collapse_ws(match.group(1))
-            continue
-
-        match = re.match(r"^\*\*Defini[çc][ãa]o:\*\*\s*(.+)$", line, flags=re.IGNORECASE)
-        if match:
-            current["definition"] = _collapse_ws(match.group(1))
-            continue
-
-    _flush()
-    return terms
-
+    return _content_taxonomy._parse_glossary_terms(glossary_md)
 
 def _glossary_aliases_for_topic(topic_label: str, unit_title: str, glossary_terms: List[Dict[str, object]]) -> List[str]:
-    topic_norm = _normalize_match_text(topic_label)
-    unit_norm = _normalize_match_text(unit_title)
-    aliases: List[str] = []
-    seen = set()
-
-    for term in glossary_terms or []:
-        term_text = _collapse_ws(str(term.get("term", "")))
-        if not term_text:
-            continue
-        term_norm = _normalize_match_text(term_text)
-        if not term_norm:
-            continue
-
-        unit_hint = _normalize_match_text(str(term.get("unit_hint", "")))
-        if unit_hint and unit_hint not in unit_norm and unit_norm not in unit_hint:
-            continue
-
-        if term_norm == topic_norm or term_norm in topic_norm or topic_norm in term_norm:
-            for candidate in [term_text, *list(term.get("synonyms", []) or [])]:
-                candidate_text = _collapse_ws(candidate)
-                candidate_slug = slugify(candidate_text)
-                if not candidate_text or not candidate_slug or candidate_slug in seen:
-                    continue
-                seen.add(candidate_slug)
-                aliases.append(candidate_text)
-
-    return aliases
-
+    return _content_taxonomy._glossary_aliases_for_topic(topic_label, unit_title, glossary_terms)
 
 def _dedupe_taxonomy_topics(topics: List[dict]) -> List[dict]:
-    merged: Dict[str, dict] = {}
-    for topic in topics or []:
-        slug = _normalize_match_text(str(topic.get("slug", "") or ""))
-        if not slug:
-            continue
-        current = merged.setdefault(slug, {
-            "code": str(topic.get("code", "") or ""),
-            "slug": str(topic.get("slug", "") or ""),
-            "label": _collapse_ws(str(topic.get("label", "") or "")),
-            "aliases": [],
-            "kind": str(topic.get("kind", "") or "topic"),
-            "unit_slug": str(topic.get("unit_slug", "") or ""),
-        })
-        current["code"] = current["code"] or str(topic.get("code", "") or "")
-        current["label"] = current["label"] or _collapse_ws(str(topic.get("label", "") or ""))
-        current["kind"] = current["kind"] or str(topic.get("kind", "") or "topic")
-        current["unit_slug"] = current["unit_slug"] or str(topic.get("unit_slug", "") or "")
-        for alias in topic.get("aliases", []) or []:
-            alias_text = _collapse_ws(str(alias))
-            alias_slug = slugify(alias_text)
-            if alias_text and alias_slug and alias_slug not in {slugify(item) for item in current["aliases"]}:
-                current["aliases"].append(alias_text)
-    for topic in merged.values():
-        topic["aliases"] = sorted(dict.fromkeys(alias for alias in topic.get("aliases", []) if _collapse_ws(alias)))
-    return list(merged.values())
-
+    return _content_taxonomy._dedupe_taxonomy_topics(topics)
 
 def _infer_course_slug_from_units(units: List[tuple]) -> str:
-    if not units:
-        return ""
-    first_title = _strip_outline_prefix(units[0][0] if isinstance(units[0], tuple) else str(units[0].get("title", "")))
-    return slugify(first_title)
-
+    return _content_taxonomy._infer_course_slug_from_units(units)
 
 def _build_content_taxonomy(
     teaching_plan: str,
@@ -996,646 +842,67 @@ def _generated_repo_gitignore_text() -> str:
 
 
 def _extract_url_page_metadata(soup) -> Dict[str, str]:
-    title = ""
-    description = ""
-
-    og_title = soup.find("meta", attrs={"property": "og:title"})
-    if og_title and og_title.get("content"):
-        title = _collapse_ws(html_lib.unescape(og_title["content"]))
-
-    if not title and soup.title and soup.title.string:
-        title = _collapse_ws(html_lib.unescape(soup.title.string))
-
-    desc_tag = (
-        soup.find("meta", attrs={"name": "description"})
-        or soup.find("meta", attrs={"property": "og:description"})
-    )
-    if desc_tag and desc_tag.get("content"):
-        description = _collapse_ws(html_lib.unescape(desc_tag["content"]))
-
-    return {"title": title, "description": description}
-
+    return _url_markdown_extract_url_page_metadata(soup, collapse_ws=_collapse_ws)
 
 def _is_probably_noise_container(tag) -> bool:
-    attrs = " ".join(
-        str(v) for key, v in tag.attrs.items()
-        if key in {"id", "class", "role", "aria-label"}
-    ).lower()
-    noise_tokens = {
-        "nav", "menu", "sidebar", "aside", "footer", "header", "breadcrumb",
-        "cookie", "consent", "banner", "popup", "modal", "share", "social",
-        "related", "recommend", "newsletter", "comment", "advert", "ads",
-        "pagination", "toolbar",
-    }
-    return any(token in attrs for token in noise_tokens)
-
+    return _url_markdown_is_probably_noise_container(tag)
 
 def _content_score(tag) -> int:
-    text_len = len(tag.get_text(" ", strip=True))
-    p_count = len(tag.find_all("p"))
-    li_count = len(tag.find_all("li"))
-    heading_count = len(tag.find_all(re.compile(r"^h[1-6]$")))
-    table_count = len(tag.find_all("table"))
-    article_bonus = 0
-    attrs = " ".join(
-        str(v) for key, v in tag.attrs.items()
-        if key in {"id", "class", "role"}
-    ).lower()
-    if tag.name in {"article", "main"}:
-        article_bonus += 600
-    if any(token in attrs for token in {"content", "article", "post", "entry", "main", "markdown", "doc"}):
-        article_bonus += 400
-    if _is_probably_noise_container(tag):
-        article_bonus -= 900
-    return text_len + p_count * 180 + li_count * 40 + heading_count * 120 + table_count * 160 + article_bonus
-
+    return _url_markdown_content_score(tag)
 
 def _pick_best_content_root(soup):
-    direct = (
-        soup.find("article")
-        or soup.find("main")
-        or soup.find(attrs={"role": "main"})
-    )
-    if direct and not _is_probably_noise_container(direct):
-        return direct
-
-    candidates = []
-    for tag in soup.find_all(["article", "main", "section", "div"]):
-        text_len = len(tag.get_text(" ", strip=True))
-        attrs = " ".join(
-            str(v) for key, v in tag.attrs.items()
-            if key in {"id", "class", "role"}
-        ).lower()
-        has_content_hint = any(token in attrs for token in {"content", "article", "post", "entry", "main", "markdown", "doc"})
-        if text_len < 80:
-            continue
-        if text_len < 250 and not has_content_hint and tag.name not in {"article", "main"}:
-            continue
-        score = _content_score(tag)
-        candidates.append((score, text_len, tag))
-
-    if candidates:
-        candidates.sort(key=lambda item: (item[0], item[1]), reverse=True)
-        return candidates[0][2]
-
-    return soup.body or soup
-
+    return _url_markdown_pick_best_content_root(soup)
 
 def _inline_html_to_markdown(node) -> str:
-    from bs4 import NavigableString, Tag
-
-    if isinstance(node, NavigableString):
-        return str(node)
-    if not isinstance(node, Tag):
-        return ""
-
-    name = node.name.lower()
-    if name == "br":
-        return "\n"
-
-    content = "".join(_inline_html_to_markdown(child) for child in node.children)
-    content = html_lib.unescape(content)
-
-    if name == "a":
-        text = _collapse_ws(content)
-        href = (node.get("href") or "").strip()
-        if text and href and href != text:
-            return f"[{text}]({href})"
-        return text or href
-    if name in {"strong", "b"}:
-        text = _collapse_ws(content)
-        return f"**{text}**" if text else ""
-    if name in {"em", "i"}:
-        text = _collapse_ws(content)
-        return f"*{text}*" if text else ""
-    if name == "code":
-        text = _collapse_ws(content)
-        return f"`{text}`" if text else ""
-
-    return content
-
+    return _url_markdown_inline_html_to_markdown(node, collapse_ws=_collapse_ws)
 
 def _render_html_block_to_markdown(tag) -> str:
-    name = tag.name.lower()
-
-    if name in {"h1", "h2", "h3", "h4", "h5", "h6"}:
-        level = min(int(name[1]), 6)
-        text = _collapse_ws(_inline_html_to_markdown(tag))
-        return f"{'#' * level} {text}" if text else ""
-
-    if name == "p":
-        return _collapse_ws(_inline_html_to_markdown(tag))
-
-    if name in {"ul", "ol"}:
-        lines: List[str] = []
-        for idx, li in enumerate(tag.find_all("li", recursive=False), start=1):
-            text = _collapse_ws(_inline_html_to_markdown(li))
-            if not text:
-                continue
-            prefix = f"{idx}." if name == "ol" else "-"
-            lines.append(f"{prefix} {text}")
-        return "\n".join(lines)
-
-    if name == "blockquote":
-        text = "\n".join(_collapse_ws(line) for line in tag.get_text("\n").splitlines() if _collapse_ws(line))
-        return "\n".join(f"> {line}" for line in text.splitlines()) if text else ""
-
-    if name == "pre":
-        text = tag.get_text("\n", strip=True)
-        if not text:
-            return ""
-        return f"```text\n{text}\n```"
-
-    if name == "table":
-        rows: List[List[str]] = []
-        for tr in tag.find_all("tr"):
-            cells = tr.find_all(["th", "td"])
-            if not cells:
-                continue
-            row = [_collapse_ws(cell.get_text(" ", strip=True)) for cell in cells]
-            if any(row):
-                rows.append(row)
-        return rows_to_markdown_table(rows)
-
-    return ""
-
+    return _url_markdown_render_html_block_to_markdown(tag, collapse_ws=_collapse_ws)
 
 def _html_to_structured_markdown(html: str, url: str, title: str) -> str:
-    from bs4 import BeautifulSoup
+    return _url_markdown_html_to_structured_markdown(
+        html,
+        url,
+        title,
+        collapse_ws=_collapse_ws,
+        truncate_markdown_blocks=_truncate_markdown_blocks,
+    )
 
-    soup = BeautifulSoup(html, "html.parser")
-    for unwanted in soup(["script", "style", "noscript", "svg"]):
-        unwanted.extract()
-    for selector in ("nav", "header", "footer", "aside", "form"):
-        for node in soup.find_all(selector):
-            node.decompose()
-    for node in soup.find_all(attrs={"hidden": True}):
-        node.decompose()
-    for node in soup.find_all(style=re.compile(r"display\s*:\s*none|visibility\s*:\s*hidden", re.I)):
-        node.decompose()
-
-    meta = _extract_url_page_metadata(soup)
-    page_title = title or meta["title"] or url
-    description = meta["description"]
-    content_root = _pick_best_content_root(soup)
-
-    blocks: List[str] = []
-    seen: set = set()
-    block_tags = ["h1", "h2", "h3", "h4", "h5", "h6", "p", "ul", "ol", "blockquote", "pre", "table"]
-    for tag in content_root.find_all(block_tags):
-        if any(parent.name in block_tags for parent in tag.parents if getattr(parent, "name", None)):
-            continue
-        block = _render_html_block_to_markdown(tag).strip()
-        normalized = _collapse_ws(block.replace("\n", " "))
-        if not block or not normalized or normalized in seen:
-            continue
-        seen.add(normalized)
-        blocks.append(block)
-
-    if not blocks:
-        text = content_root.get_text("\n", strip=True)
-        paragraphs = [_collapse_ws(part) for part in text.splitlines() if _collapse_ws(part)]
-        blocks.extend(paragraphs)
-
-    host = ""
-    try:
-        from urllib.parse import urlparse
-        host = urlparse(url).netloc
-    except Exception:
-        pass
-
-    header_lines = [f"# {page_title}", ""]
-    if description:
-        header_lines.extend([description, ""])
-    header_lines.extend([
-        f"- URL: [{url}]({url})",
-        f"- Domínio: `{host or 'desconhecido'}`",
-        f"- Capturado em: `{datetime.now().isoformat(timespec='seconds')}`",
-        "",
-        "## Conteúdo Extraído",
-        "",
-    ])
-
-    body = _truncate_markdown_blocks(blocks)
-    if not body:
-        body = "> Nenhum conteúdo textual relevante foi extraído."
-    return "\n".join(header_lines) + body + "\n"
 
 # ---------------------------------------------------------------------------
-# Unicode math → LaTeX normalization
+# Unicode math -> LaTeX normalization
 # ---------------------------------------------------------------------------
-
-# Mapa de símbolos Unicode matemáticos → comandos LaTeX.
-# Aplicado pós-extração para normalizar output de OCR/backends.
-_UNICODE_MATH_TO_LATEX = {
-    # Quantificadores e lógica
-    "∃": r"\exists", "∄": r"\nexists", "∀": r"\forall",
-    "∧": r"\land", "∨": r"\lor", "¬": r"\neg", "⊻": r"\oplus",
-    "⊢": r"\vdash", "⊣": r"\dashv", "⊨": r"\models",
-    "⊤": r"\top", "⊥": r"\bot",
-    "⇒": r"\Rightarrow", "⇐": r"\Leftarrow", "⇔": r"\Leftrightarrow",
-    "↔": r"\leftrightarrow", "↦": r"\mapsto",
-    # Teoria dos conjuntos
-    "∈": r"\in", "∉": r"\notin", "∋": r"\ni",
-    "⊂": r"\subset", "⊃": r"\supset",
-    "⊆": r"\subseteq", "⊇": r"\supseteq",
-    "⊄": r"\not\subset", "⊅": r"\not\supset",
-    "∪": r"\cup", "∩": r"\cap",
-    "∅": r"\emptyset", "∖": r"\setminus",
-    # Relações
-    "≤": r"\leq", "≥": r"\geq", "≠": r"\neq",
-    "≈": r"\approx", "≡": r"\equiv", "≅": r"\cong",
-    "∼": r"\sim", "≺": r"\prec", "≻": r"\succ",
-    "≪": r"\ll", "≫": r"\gg",
-    "≜": r"\triangleq", "≐": r"\doteq",
-    # Operadores
-    "×": r"\times", "÷": r"\div", "±": r"\pm", "∓": r"\mp",
-    "∘": r"\circ", "⊕": r"\oplus", "⊗": r"\otimes",
-    "⊙": r"\odot", "†": r"\dagger", "‡": r"\ddagger",
-    # Cálculo e análise
-    "∫": r"\int", "∬": r"\iint", "∭": r"\iiint",
-    "∂": r"\partial", "∇": r"\nabla",
-    "∑": r"\sum", "∏": r"\prod", "∐": r"\coprod",
-    "∞": r"\infty", "√": r"\sqrt",
-    "ℓ": r"\ell", "ℏ": r"\hbar", "ℜ": r"\Re", "ℑ": r"\Im",
-    # Letras gregas minúsculas
-    "α": r"\alpha", "β": r"\beta", "γ": r"\gamma", "δ": r"\delta",
-    "ε": r"\epsilon", "ζ": r"\zeta", "η": r"\eta", "θ": r"\theta",
-    "ι": r"\iota", "κ": r"\kappa", "λ": r"\lambda", "μ": r"\mu",
-    "ν": r"\nu", "ξ": r"\xi", "ρ": r"\rho", "σ": r"\sigma",
-    "τ": r"\tau", "υ": r"\upsilon", "φ": r"\phi", "χ": r"\chi",
-    "ψ": r"\psi", "ω": r"\omega", "ϵ": r"\varepsilon", "ϕ": r"\varphi",
-    "ϑ": r"\vartheta", "ϱ": r"\varrho", "ς": r"\varsigma",
-    # Letras gregas maiúsculas
-    "Γ": r"\Gamma", "Δ": r"\Delta", "Θ": r"\Theta", "Λ": r"\Lambda",
-    "Ξ": r"\Xi", "Π": r"\Pi", "Σ": r"\Sigma", "Υ": r"\Upsilon",
-    "Φ": r"\Phi", "Ψ": r"\Psi", "Ω": r"\Omega",
-    # Setas (apenas as inambíguas)
-    "⟶": r"\longrightarrow", "⟵": r"\longleftarrow",
-    "⟹": r"\Longrightarrow", "⟸": r"\Longleftarrow",
-    "↑": r"\uparrow", "↓": r"\downarrow",
-    "⟨": r"\langle", "⟩": r"\rangle",
-    # Miscelânea
-    "□": r"\square", "◇": r"\diamond", "△": r"\triangle",
-    "▽": r"\triangledown", "★": r"\star", "⋆": r"\star",
-    "⋅": r"\cdot", "…": r"\ldots", "⋯": r"\cdots", "⋮": r"\vdots",
-    "ℕ": r"\mathbb{N}", "ℤ": r"\mathbb{Z}", "ℚ": r"\mathbb{Q}",
-    "ℝ": r"\mathbb{R}", "ℂ": r"\mathbb{C}",
-}
-
-# Regex para encontrar regiões de math (inline e display)
-_MATH_INLINE_RE = re.compile(r"(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)", re.DOTALL)
-_MATH_DISPLAY_RE = re.compile(r"\$\$(.+?)\$\$", re.DOTALL)
-_MATH_PAREN_RE = re.compile(r"\\\((.+?)\\\)", re.DOTALL)
-_MATH_BRACKET_RE = re.compile(r"\\\[(.+?)\\\]", re.DOTALL)
-
-# Build regex para substituição — escapar caracteres regex-special
-_UNICODE_MATH_PATTERN = re.compile(
-    "|".join(re.escape(ch) for ch in sorted(_UNICODE_MATH_TO_LATEX.keys(), key=len, reverse=True))
-)
-_MOJIBAKE_MARKERS = ("Ã", "Â", "â", "�")
-_TEX_SIMPLE_ACCENT_RE = re.compile(r"""\\(?P<accent>['`^"~])(?:\{(?P<braced>[A-Za-z])\}|(?P<plain>[A-Za-z]))""")
-_TEX_CEDILLA_RE = re.compile(r"""\\c(?:\{(?P<braced>[A-Za-z])\}|(?P<plain>[A-Za-z]))""")
-
-_TEX_ACCENT_TO_UNICODE = {
-    ("'", "A"): "Á", ("'", "E"): "É", ("'", "I"): "Í", ("'", "O"): "Ó", ("'", "U"): "Ú",
-    ("'", "a"): "á", ("'", "e"): "é", ("'", "i"): "í", ("'", "o"): "ó", ("'", "u"): "ú",
-    ("`", "A"): "À", ("`", "E"): "È", ("`", "I"): "Ì", ("`", "O"): "Ò", ("`", "U"): "Ù",
-    ("`", "a"): "à", ("`", "e"): "è", ("`", "i"): "ì", ("`", "o"): "ò", ("`", "u"): "ù",
-    ("^", "A"): "Â", ("^", "E"): "Ê", ("^", "I"): "Î", ("^", "O"): "Ô", ("^", "U"): "Û",
-    ("^", "a"): "â", ("^", "e"): "ê", ("^", "i"): "î", ("^", "o"): "ô", ("^", "u"): "û",
-    ('"', "A"): "Ä", ('"', "E"): "Ë", ('"', "I"): "Ï", ('"', "O"): "Ö", ('"', "U"): "Ü",
-    ('"', "a"): "ä", ('"', "e"): "ë", ('"', "i"): "ï", ('"', "o"): "ö", ('"', "u"): "ü",
-    ("~", "A"): "Ã", ("~", "N"): "Ñ", ("~", "O"): "Õ",
-    ("~", "a"): "ã", ("~", "n"): "ñ", ("~", "o"): "õ",
-}
-_TEX_CEDILLA_TO_UNICODE = {"C": "Ç", "c": "ç"}
-
 
 def _normalize_tex_accents_in_math(text: str) -> str:
-    """Convert common TeX accent escapes into Unicode inside math regions.
-
-    Marker/OCR sometimes emits natural-language fragments inside display math as
-    TeX accent commands, e.g. ``somat\\'orio``. This pass normalizes those
-    escapes back to plain Unicode text without touching regular math commands
-    such as ``\\hat{o}``.
-    """
-    if not text or "\\" not in text:
-        return text
-
-    def _replace_simple(match: re.Match) -> str:
-        accent = match.group("accent")
-        letter = match.group("braced") or match.group("plain") or ""
-        return _TEX_ACCENT_TO_UNICODE.get((accent, letter), match.group(0))
-
-    def _replace_cedilla(match: re.Match) -> str:
-        letter = match.group("braced") or match.group("plain") or ""
-        return _TEX_CEDILLA_TO_UNICODE.get(letter, match.group(0))
-
-    text = _TEX_SIMPLE_ACCENT_RE.sub(_replace_simple, text)
-    text = _TEX_CEDILLA_RE.sub(_replace_cedilla, text)
-    return text
+    return _text_normalize_tex_accents_in_math(text)
 
 
 def _normalize_unicode_math(text: str) -> str:
-    """Replace Unicode math symbols with LaTeX commands in a markdown string.
-
-    Strategy:
-    - Inside math delimiters ($...$, $$...$$, \\(...\\), \\[...\\]):
-      replace Unicode symbols with LaTeX commands (e.g., ∀ → \\forall)
-    - Outside math: wrap isolated Unicode math symbols with $...$
-    """
-    if not text:
-        return text
-
-    # Phase 1: Replace inside existing math regions
-    def _replace_in_math(m):
-        content = m.group(0)
-        content = _normalize_tex_accents_in_math(content)
-        return _UNICODE_MATH_PATTERN.sub(
-            lambda sym: _UNICODE_MATH_TO_LATEX.get(sym.group(0), sym.group(0)),
-            content,
-        )
-
-    for pattern in (_MATH_DISPLAY_RE, _MATH_INLINE_RE, _MATH_PAREN_RE, _MATH_BRACKET_RE):
-        text = pattern.sub(_replace_in_math, text)
-
-    # Phase 2: Wrap remaining Unicode math symbols outside of math delimiters.
-    # We split by math regions, process only non-math parts.
-    def _wrap_outside_math(text_str: str) -> str:
-        # Split on all math delimiters to identify non-math segments
-        math_regions = re.compile(
-            r"(\$\$.+?\$\$"          # display $$...$$
-            r"|(?<!\$)\$(?!\$).+?(?<!\$)\$(?!\$)"  # inline $...$
-            r"|\\\(.+?\\\)"          # \(...\)
-            r"|\\\[.+?\\\])",        # \[...\]
-            re.DOTALL,
-        )
-        parts = math_regions.split(text_str)
-        result = []
-        for i, part in enumerate(parts):
-            if i % 2 == 1:
-                # This is a math region — keep as-is
-                result.append(part)
-            else:
-                # Non-math — wrap isolated Unicode math symbols
-                part = _UNICODE_MATH_PATTERN.sub(
-                    lambda sym: f"${_UNICODE_MATH_TO_LATEX[sym.group(0)]}$",
-                    part,
-                )
-                result.append(part)
-        return "".join(result)
-
-    text = _wrap_outside_math(text)
-    return text
+    return _text_normalize_unicode_math(text)
 
 
 def _mojibake_score(text: str) -> int:
-    if not text:
-        return 0
-    return sum(text.count(marker) for marker in _MOJIBAKE_MARKERS)
+    return _text_mojibake_score(text)
 
 
 def _repair_mojibake_text(text: str) -> str:
-    """Repair common UTF-8 mojibake introduced by external CLIs."""
-    if not text:
-        return text
-
-    original_score = _mojibake_score(text)
-    if original_score == 0:
-        return text
-
-    candidates = [text]
-    for source_encoding in ("latin-1", "cp1252"):
-        try:
-            candidates.append(text.encode(source_encoding).decode("utf-8"))
-        except (UnicodeEncodeError, UnicodeDecodeError):
-            continue
-
-    best = min(candidates, key=_mojibake_score)
-    return best if _mojibake_score(best) < original_score else text
+    return _text_repair_mojibake_text(text)
 
 
 def _sanitize_external_markdown_text(text: str) -> str:
-    repaired = _repair_mojibake_text(text)
-    return repaired.replace("\r\n", "\n").replace("\r", "\n")
+    return _text_sanitize_external_markdown_text(text)
 
 
 def _detect_latex_corruption(content: str) -> dict:
-    """
-    Analisa um markdown e detecta padrões de LaTeX provavelmente corrompido.
-
-    Retorna:
-        {
-            "corrupted": bool,
-            "score": int,
-            "signals": list[str],
-        }
-
-    A função apenas detecta e sinaliza; não tenta corrigir.
-    Blocos de código e inline code são ignorados.
-    """
-    import re
-    from collections import Counter
-
-    if not content:
-        return {"corrupted": False, "score": 0, "signals": []}
-
-    clean = str(content).replace("\r\n", "\n").replace("\r", "\n")
-    clean = re.sub(r"^---\n.*?\n---\n?", "", clean, flags=re.DOTALL)
-    clean = re.sub(r"```.*?```", "", clean, flags=re.DOTALL)
-    clean = re.sub(r"`[^`\n]+`", "", clean)
-
-    signals: List[str] = []
-    score = 0
-
-    def _add_signal(message: str, weight: int) -> None:
-        nonlocal score
-        signals.append(message)
-        score += weight
-
-    single_dollars = re.findall(r"(?<![\\$])\$(?!\$)", clean)
-    if len(single_dollars) % 2 != 0:
-        _add_signal("delimitadores $ desbalanceados", 30)
-
-    begin_counter = Counter(re.findall(r"\\begin\{([^}]+)\}", clean))
-    end_counter = Counter(re.findall(r"\\end\{([^}]+)\}", clean))
-    unmatched_envs = []
-    for env_name, count in begin_counter.items():
-        if count > end_counter.get(env_name, 0):
-            unmatched_envs.append(env_name)
-    if unmatched_envs:
-        sample = ", ".join(sorted(set(unmatched_envs))[:3])
-        _add_signal(f"\\begin sem \\end: {sample}", min(len(unmatched_envs) * 15, 30))
-
-    unicode_math_chars = re.findall(r"[∀∃∈∉∅∧∨¬→↔⇒⇔≤≥≠⊆⊂⊇⊃∪∩ℕℤℚℝℂ⊢⊨⊥⊤]", clean)
-    latex_markers = re.findall(r"\$|\\[a-zA-Z]+", clean)
-    if len(unicode_math_chars) >= 4 and len(latex_markers) < max(2, len(unicode_math_chars) // 2):
-        _add_signal(
-            f"{len(unicode_math_chars)} símbolos unicode sem estrutura LaTeX",
-            min(len(unicode_math_chars) * 2, 20),
-        )
-
-    brace_issue_lines = 0
-    brace_hint_lines = 0
-    raw_command_lines = 0
-    orphan_escapes = 0
-    mathish_line_re = re.compile(r"\\[a-zA-Z]+|[$∀∃∈∉∧∨¬→↔⇒⇔≤≥≠⊆⊂⊇⊃∪∩ℕℤℚℝℂ⊢⊨⊥⊤]|^\s*\{")
-
-    for line in clean.splitlines():
-        stripped = line.strip()
-        if not stripped:
-            continue
-
-        if stripped.count("{") != stripped.count("}") and mathish_line_re.search(stripped):
-            brace_issue_lines += 1
-        if stripped.startswith("{") and stripped.count("{") > stripped.count("}"):
-            brace_hint_lines += 1
-
-        command_count = len(re.findall(r"\\[a-zA-Z]+", stripped))
-        has_math_delimiter = bool(re.search(r"\$|\\\(|\\\[|\\begin\{", stripped))
-        if command_count >= 2 and not has_math_delimiter:
-            raw_command_lines += 1
-
-        if re.search(r"(?<!\\)\\\s*$", stripped):
-            orphan_escapes += 1
-
-    if brace_issue_lines:
-        _add_signal(
-            f"{brace_issue_lines} linha(s) com chaves desbalanceadas em contexto matemático",
-            min(brace_issue_lines * 10, 25),
-        )
-    if brace_hint_lines:
-        _add_signal(
-            f"{brace_hint_lines} possível(is) tripla(s) de Hoare incompleta(s)",
-            min(brace_hint_lines * 8, 16),
-        )
-    if raw_command_lines:
-        _add_signal(
-            f"{raw_command_lines} linha(s) com comandos LaTeX fora de delimitadores",
-            min(raw_command_lines * 10, 20),
-        )
-    if orphan_escapes:
-        _add_signal(
-            f"{orphan_escapes} escape(s) órfão(s) no fim de linha",
-            min(orphan_escapes * 6, 12),
-        )
-
-    return {
-        "corrupted": score >= 25,
-        "score": min(score, 100),
-        "signals": signals,
-    }
-
-
-_PORTUGUESE_ACCENT_CHARS = set("áàâãéêíóôõúçÁÀÂÃÉÊÍÓÔÕÚÇ")
-
-
-def _split_markdown_frontmatter(text: str) -> tuple[str, str]:
-    if not text.startswith("---\n"):
-        return "", text
-    end = text.find("\n---\n", 4)
-    if end == -1:
-        return "", text
-    end += len("\n---\n")
-    return text[:end], text[end:]
+    return _text_detect_latex_corruption(content)
 
 
 def _is_plain_text_recovery_candidate(line: str) -> bool:
-    stripped = line.strip()
-    if len(stripped) < 24:
-        return False
-    if not re.search(r"[A-Za-zÀ-ÿ]", stripped):
-        return False
-    if stripped.startswith(("```", "#", ">", "-", "*", "|", "<!--")):
-        return False
-    if stripped.startswith(tuple(f"{n}." for n in range(1, 10))):
-        return False
-    if any(token in stripped for token in ("![", "](", "<math", "</math>", "$$", "\\(", "\\)", "\\[", "\\]")):
-        return False
-    if stripped.count("|") >= 2:
-        return False
-    if sum(stripped.count(ch) for ch in "=^_{}\\") >= 3:
-        return False
-    return True
-
-
-def _normalize_recovery_line(line: str) -> str:
-    normalized = unicodedata.normalize("NFKD", line)
-    normalized = "".join(ch for ch in normalized if not unicodedata.combining(ch))
-    normalized = re.sub(r"[`*_>#\[\](){}|~]+", " ", normalized)
-    normalized = re.sub(r"[^a-zA-Z0-9\s]", " ", normalized)
-    normalized = re.sub(r"\s+", " ", normalized).strip().lower()
-    return normalized
-
-
-def _accent_quality_score(line: str) -> int:
-    accent_count = sum(1 for ch in line if ch in _PORTUGUESE_ACCENT_CHARS)
-    return accent_count * 2 - _mojibake_score(line)
+    return _text_is_plain_text_recovery_candidate(line)
 
 
 def _hybridize_marker_markdown_with_base(base_markdown: str, marker_markdown: str) -> tuple[str, Dict[str, int]]:
-    base_prefix, base_body = _split_markdown_frontmatter(_sanitize_external_markdown_text(base_markdown))
-    marker_prefix, marker_body = _split_markdown_frontmatter(_sanitize_external_markdown_text(marker_markdown))
-    del base_prefix  # only the Marker frontmatter should be preserved
-
-    base_lines = base_body.split("\n")
-    marker_lines = marker_body.split("\n")
-    replacements = 0
-    matched_candidates = 0
-
-    base_candidates = []
-    for idx, line in enumerate(base_lines):
-        if not _is_plain_text_recovery_candidate(line):
-            continue
-        normalized = _normalize_recovery_line(line)
-        if normalized:
-            base_candidates.append((idx, line, normalized))
-
-    search_cursor = 0
-    repaired_lines: List[str] = []
-    for line in marker_lines:
-        if not _is_plain_text_recovery_candidate(line):
-            repaired_lines.append(line)
-            continue
-
-        normalized_marker = _normalize_recovery_line(line)
-        if not normalized_marker:
-            repaired_lines.append(line)
-            continue
-
-        best_match = None
-        best_ratio = 0.0
-        window_start = max(0, search_cursor - 2)
-        window_end = min(len(base_candidates), search_cursor + 12)
-        for idx in range(window_start, window_end):
-            _, base_line, normalized_base = base_candidates[idx]
-            ratio = difflib.SequenceMatcher(None, normalized_marker, normalized_base).ratio()
-            if ratio > best_ratio:
-                best_ratio = ratio
-                best_match = (idx, base_line)
-
-        if best_match and best_ratio >= 0.88:
-            matched_candidates += 1
-            candidate_idx, candidate_line = best_match
-            if (
-                _accent_quality_score(candidate_line) > _accent_quality_score(line)
-                and _normalize_recovery_line(candidate_line) == normalized_marker
-            ):
-                repaired_lines.append(candidate_line)
-                replacements += 1
-            else:
-                repaired_lines.append(line)
-            search_cursor = candidate_idx + 1
-        else:
-            repaired_lines.append(line)
-
-    merged_body = "\n".join(repaired_lines)
-    return marker_prefix + merged_body, {
-        "candidate_matches": matched_candidates,
-        "replacements": replacements,
-        "base_candidates": len(base_candidates),
-    }
+    return _text_hybridize_marker_markdown_with_base(base_markdown, marker_markdown)
 
 
 # ---------------------------------------------------------------------------
@@ -5307,18 +4574,6 @@ _TEACHING_PLAN_SECTION_STOP = re.compile(
     re.IGNORECASE,
 )
 
-_TEACHING_PLAN_ASSESSMENT_START = re.compile(r'^(?:AVALIA[ÇC][AÃ]O|AVALIACAO)\b', re.IGNORECASE)
-_TEACHING_PLAN_ASSESSMENT_STOP = re.compile(
-    r'^(?:PROCEDIMENTOS|BIBLIOGRAFIA|METODOLOGIA)',
-    re.IGNORECASE,
-)
-_ASSESSMENT_LINE_RE = re.compile(
-    r'^(?P<label>(?:p\s*\d+|pf|prova\s+final|exame(?:\s+final)?))\b'
-    r'(?:\s*[:\-–—]\s*|\s+)?(?P<desc>.*)$',
-    re.IGNORECASE,
-)
-
-
 def _normalize_teaching_plan_heading(line: str) -> str:
     return _teaching_plan_normalize_heading(line)
 
@@ -5474,182 +4729,13 @@ def _match_timeline_to_units(
 def _match_timeline_to_units_generic(
     timeline: List[Dict[str, str]],
     units: list,
-) -> List[Dict[str, str]]:
-    """
-    Versão genérica do matcher de timeline.
-
-    Em vez de depender de nomes hardcoded, aprende sinais do próprio plano:
-    títulos, tópicos e tokens distintivos por frequência. O matching também
-    normaliza acentos para funcionar melhor em português.
-    """
-    if not timeline or not units:
-        return []
-
-    content_keys = []
-    for key in timeline[0].keys():
-        if any(k in key for k in ["conteúdo", "conteudo", "assunto", "tema", "descrição",
-                                  "descricao", "atividade", "tópico", "topico", "content"]):
-            content_keys.append(key)
-    if not content_keys:
-        avg_lens = {}
-        for key in timeline[0].keys():
-            avg_lens[key] = sum(len(row.get(key, "")) for row in timeline) / max(len(timeline), 1)
-        if avg_lens:
-            content_keys = [max(avg_lens, key=avg_lens.get)]
-
-    preferred_date_keys = []
-    fallback_date_keys = []
-    for key in timeline[0].keys():
-        if any(k in key for k in ["data", "date"]):
-            preferred_date_keys.append(key)
-        elif any(k in key for k in ["semana", "week", "sem", "aula"]):
-            fallback_date_keys.append(key)
-    date_keys = preferred_date_keys or fallback_date_keys
-    if not date_keys:
-        date_keys = [list(timeline[0].keys())[0]] if timeline[0] else []
-
-    def _normalize_token_text(text: str) -> str:
-        text = unicodedata.normalize("NFKD", text or "")
-        text = "".join(ch for ch in text if not unicodedata.combining(ch))
-        text = re.sub(r"[^a-z0-9\s]", " ", text.lower())
-        return re.sub(r"\s+", " ", text).strip()
-
-    def _tokenize_signal(text: str) -> List[str]:
-        return [
-            token
-            for token in _normalize_token_text(text).split()
-            if len(token) >= 4 and not token.isdigit()
-        ]
-
-    descriptors = []
-    token_frequency: Dict[str, int] = {}
-    for unit_title, topics in units:
-        unit_num_match = re.search(r"(\d+)", unit_title)
-        unit_num = unit_num_match.group(1) if unit_num_match else ""
-        unit_num_int = str(int(unit_num)) if unit_num else ""
-
-        desc_match = re.search(r"[—–\-:]\s*(.+)", unit_title)
-        unit_desc = desc_match.group(1).strip() if desc_match else unit_title
-        unit_desc_norm = _normalize_token_text(unit_desc)
-        title_tokens = _tokenize_signal(unit_desc_norm)
-        topic_phrases = []
-        topic_tokens = []
-
-        for topic in topics or []:
-            topic_norm = _normalize_token_text(_topic_text(topic))
-            if not topic_norm:
-                continue
-            topic_phrases.append(topic_norm)
-            topic_tokens.extend(_tokenize_signal(topic_norm))
-
-        all_tokens = title_tokens + topic_tokens
-        descriptor = {
-            "unit_title": unit_title,
-            "unit_num": unit_num,
-            "unit_num_int": unit_num_int,
-            "unit_desc_norm": unit_desc_norm,
-            "title_tokens": title_tokens,
-            "topic_phrases": topic_phrases,
-            "all_tokens": all_tokens,
-        }
-        descriptors.append(descriptor)
-        for token in set(all_tokens):
-            token_frequency[token] = token_frequency.get(token, 0) + 1
-
-    for descriptor in descriptors:
-        descriptor["distinctive_tokens"] = sorted({
-            token
-            for token in descriptor["all_tokens"]
-            if token_frequency.get(token, 0) == 1 or (token_frequency.get(token, 0) <= 2 and len(token) >= 6)
-        })
-
-    row_dates = []
-    for row in timeline:
-        row_dates.append(" / ".join(row.get(k, "") for k in date_keys if row.get(k, "")).strip())
-
-    anchor_indexes_by_unit = []
-    for descriptor in descriptors:
-        anchors = []
-        for idx, row in enumerate(timeline):
-            content_norm = _normalize_token_text(" ".join(row.get(k, "") for k in content_keys))
-            if not content_norm:
-                continue
-
-            score = 0
-            unit_num = descriptor["unit_num"]
-            unit_num_int = descriptor["unit_num_int"]
-            if unit_num:
-                patterns = [
-                    rf"\bunidade\s*{unit_num}\b",
-                    rf"\bunidade\s*{unit_num_int}\b",
-                    rf"\bunid\.?\s*{unit_num_int}\b",
-                    rf"\bun\.?\s*{unit_num_int}\b",
-                ]
-                for pat in patterns:
-                    if re.search(pat, content_norm, re.IGNORECASE):
-                        score += 10
-                        break
-
-            unit_desc_norm = descriptor["unit_desc_norm"]
-            if unit_desc_norm and unit_desc_norm in content_norm:
-                score += 8
-
-            title_hits = sum(
-                1 for token in set(descriptor["title_tokens"])
-                if re.search(rf"\b{re.escape(token)}\b", content_norm)
-            )
-            if title_hits >= max(1, min(2, len(set(descriptor["title_tokens"])))):
-                score += 4
-
-            for phrase in descriptor["topic_phrases"]:
-                if phrase in content_norm:
-                    score += 8
-                    break
-
-            distinct_hits = sum(
-                1
-                for token in descriptor["distinctive_tokens"]
-                if re.search(rf"\b{re.escape(token)}\b", content_norm)
-            )
-            if distinct_hits:
-                score += min(6, distinct_hits * 3)
-
-            if score >= 4:
-                anchors.append(idx)
-        anchor_indexes_by_unit.append(anchors)
-
-    result = []
-    next_anchor_starts = [
-        anchors[0] if anchors else None
-        for anchors in anchor_indexes_by_unit
-    ]
-
-    for unit_idx, descriptor in enumerate(descriptors):
-        anchors = anchor_indexes_by_unit[unit_idx]
-        matched_dates = []
-        if anchors:
-            start_idx = anchors[0]
-            next_start_idx = None
-            for later_idx in range(unit_idx + 1, len(descriptors)):
-                later_anchors = anchor_indexes_by_unit[later_idx]
-                if later_anchors:
-                    next_start_idx = later_anchors[0]
-                    break
-            end_idx = (next_start_idx - 1) if next_start_idx is not None else anchors[-1]
-            if end_idx < start_idx:
-                end_idx = anchors[-1]
-            matched_dates = [d for d in row_dates[start_idx:end_idx + 1] if d]
-
-        matched_dates = list(dict.fromkeys(matched_dates))
-        period = f"{matched_dates[0]} a {matched_dates[-1]}" if len(matched_dates) > 1 else (matched_dates[0] if matched_dates else "")
-        result.append({
-            "unit_title": descriptor["unit_title"],
-            "unit_slug": _normalize_unit_slug(descriptor["unit_title"]),
-            "period": period,
-            "dates": ", ".join(matched_dates),
-        })
-
-    return result
+) -> list:
+    return _timeline_match_timeline_to_units_generic(
+        timeline,
+        units,
+        normalize_unit_slug=_normalize_unit_slug,
+        topic_text=_topic_text,
+    )
 
 
 _match_timeline_to_units = _match_timeline_to_units_generic
@@ -5660,175 +4746,33 @@ def _score_text_against_row(source_text: str, row_tokens: List[str], *, weight: 
 
 
 def _score_entry_against_timeline_row(signals: dict, row_text: str) -> float:
-    row_norm = _normalize_match_text(row_text)
-    if not row_norm:
-        return 0.0
-
-    row_tokens = [tok for tok in row_norm.split() if len(tok) >= 4]
-    title_text = signals.get("title_text", "")
-    markdown_text = signals.get("markdown_text", "")
-    category_text = signals.get("category_text", "")
-    tags_text = signals.get("tags_text", "")
-    raw_text = signals.get("raw_text", "")
-    entry_norm = " ".join(filter(None, [title_text, markdown_text, category_text, tags_text, raw_text]))
-    is_exercise_entry = any(term in entry_norm for term in [
-        "exercicio",
-        "exercicios",
-        "lista",
-        "listas",
-        "gabarito",
-        "respostas",
-    ])
-
-    score = 0.0
-    for source, weight in [
-        (title_text, 1.25),
-        (markdown_text, 1.0),
-        (raw_text, 0.65),
-        (tags_text, 0.35),
-        (category_text, 0.2),
-    ]:
-        score += _score_text_against_row(source, row_tokens, weight=weight)
-        if source and source in row_norm:
-            score += min(1.5, max(0.35, len(source) / 18.0)) * weight
-
-    if any(term in row_norm for term in ["exercicio", "exercicios", "lista", "listas", "gabarito", "respostas"]):
-        score += 0.25
-        if is_exercise_entry:
-            score += 1.25
-    elif is_exercise_entry:
-        score -= 0.2
-    if any(term in row_norm for term in ["atividade assincrona", "atividade assíncrona", "complementar os estudos", "leituras recomendadas"]):
-        score += 0.15
-    if is_exercise_entry and "estudo de caso" in row_norm:
-        score += 0.35
-
-    return score
-
+    return _file_map_score_entry_against_timeline_row(
+        signals,
+        row_text,
+        normalize_match_text=_normalize_match_text,
+        score_text_against_row=_score_text_against_row,
+    )
 
 def _score_card_evidence_against_entry(signals: dict, card_items: List[Dict[str, str]]) -> float:
-    if not card_items:
-        return 0.0
-
-    entry_text = str(signals.get("combined_text", "") or "").strip()
-    if not entry_text:
-        entry_text = " ".join(
-            filter(
-                None,
-                [
-                    signals.get("title_text", ""),
-                    signals.get("markdown_text", ""),
-                    signals.get("category_text", ""),
-                    signals.get("tags_text", ""),
-                    signals.get("raw_text", ""),
-                ],
-            )
-        )
-    entry_norm = _normalize_match_text(entry_text)
-    if not entry_norm:
-        return 0.0
-
-    entry_tokens = {tok for tok in entry_norm.split() if len(tok) >= 4}
-    if not entry_tokens:
-        return 0.0
-
-    score = 0.0
-    for item in card_items:
-        normalized_title = _normalize_match_text(str(item.get("normalized_title", "") or ""))
-        if not normalized_title:
-            continue
-        title_tokens = [tok for tok in normalized_title.split() if len(tok) >= 4]
-        if not title_tokens:
-            continue
-
-        item_score = 0.0
-        overlap = len(set(title_tokens) & entry_tokens)
-        if normalized_title in entry_norm:
-            item_score = 0.5
-        elif overlap >= 2:
-            item_score = 0.34
-        elif overlap == 1:
-            item_score = 0.16
-
-        if not item_score:
-            continue
-
-        source_kind = str(item.get("source_kind", "") or "")
-        if source_kind == "topic-title":
-            item_score += 0.05
-        elif source_kind == "card-title":
-            item_score += 0.03
-
-        score += item_score
-
-    return min(0.7, score)
-
+    return _file_map_score_card_evidence_against_entry(
+        signals,
+        card_items,
+        normalize_match_text=_normalize_match_text,
+    )
 
 def _timeline_block_rows_for_scoring(block: Dict[str, object]) -> list:
-    # Timeline parsing/core/scoring lives in src.builder.timeline_index.
-    # These helpers remain in engine phase 1 because they still couple block
-    # results to entry routing and manifest-driven orchestration.
-    rows = list(block.get("rows", []) or [])
-    return [row for row in rows if not bool(row.get("ignored"))]
-
+    return _file_map_timeline_block_rows_for_scoring(block)
 
 def _score_timeline_block(signals: dict, block: Dict[str, object]) -> float:
-    rows = list(block.get("rows", []) or [])
-    scores = list(block.get("scores", []) or [])
-    filtered_pairs = [
-        (row, float(scores[idx]) if idx < len(scores) else 0.0)
-        for idx, row in enumerate(rows)
-        if not bool(row.get("ignored"))
-    ]
-    rows = [row for row, _ in filtered_pairs]
-    scores = [score for _, score in filtered_pairs]
-    if not rows or not scores:
-        return 0.0
-
-    anchor_score = float(scores[0]) if scores else 0.0
-    support_scores = [max(0.0, float(score)) for score in scores[1:]]
-    support_bonus = min(2.25, sum(support_scores) * 0.18)
-    generic_exercise_bonus = 0.0
-
-    entry_norm = " ".join(
-        filter(
-            None,
-            [
-                signals.get("title_text", ""),
-                signals.get("markdown_text", ""),
-                signals.get("category_text", ""),
-                signals.get("tags_text", ""),
-                signals.get("raw_text", ""),
-            ],
-        )
+    return _file_map_score_timeline_block(
+        signals,
+        block,
+        normalize_match_text=_normalize_match_text,
+        score_card_evidence_against_entry=_score_card_evidence_against_entry,
     )
-    is_exercise_entry = any(term in entry_norm for term in ["exercicio", "exercicios", "lista", "listas", "gabarito", "respostas"])
-    if is_exercise_entry:
-        for row in rows[1:]:
-            row_text = _normalize_match_text(str(row.get("content", "")))
-            if any(term in row_text for term in ["exercicio", "exercicios", "lista", "listas", "gabarito", "respostas"]):
-                generic_exercise_bonus += 0.22
-
-    card_bonus = _score_card_evidence_against_entry(signals, block.get("card_evidence", []) or [])
-
-    return anchor_score * 1.15 + support_bonus + min(generic_exercise_bonus, 0.66) + min(card_bonus, 0.45)
-
 
 def _timeline_block_matches_preferred_topic(block: Dict[str, object], preferred_topic_slug: str) -> bool:
-    preferred_topic_slug = str(preferred_topic_slug or "").strip()
-    if not preferred_topic_slug:
-        return False
-
-    block_topic_slug = str(block.get("primary_topic_slug", "") or "").strip()
-    if block_topic_slug == preferred_topic_slug:
-        return True
-
-    for candidate in block.get("topic_candidates", []) or []:
-        if str(candidate.get("topic_slug", "") or "").strip() == preferred_topic_slug:
-            return True
-
-    return False
-
+    return _file_map_timeline_block_matches_preferred_topic(block, preferred_topic_slug)
 
 def _score_entry_against_timeline_block(
     signals: dict,
@@ -5836,157 +4780,52 @@ def _score_entry_against_timeline_block(
     preferred_unit_slug: str = "",
     preferred_topic_slug: str = "",
 ) -> float:
-    rows = _timeline_block_rows_for_scoring(block)
-    if not rows:
-        return 0.0
-    row_scores = [
-        _score_entry_against_timeline_row(signals, str(row.get("content", "")))
-        for row in rows
-    ]
-    runtime_block = dict(block)
-    runtime_block["rows"] = rows
-    runtime_block["scores"] = row_scores
-    score = _score_timeline_block(signals, runtime_block)
-
-    block_unit_slug = str(block.get("unit_slug", "") or "")
-    block_unit_confidence = float(block.get("unit_confidence", 0.0) or 0.0)
-    if preferred_unit_slug:
-        if block_unit_slug == preferred_unit_slug:
-            score += 0.35 + (block_unit_confidence * 0.25)
-        elif block_unit_slug:
-            score -= 0.45
-
-    preferred_topic_slug = str(preferred_topic_slug or "").strip()
-    if preferred_topic_slug:
-        block_topic_slug = str(block.get("primary_topic_slug", "") or "").strip()
-        block_topic_confidence = float(block.get("primary_topic_confidence", 0.0) or 0.0)
-        if block_topic_slug == preferred_topic_slug:
-            score += 0.8 + (block_topic_confidence * 0.35)
-        elif _timeline_block_matches_preferred_topic(block, preferred_topic_slug):
-            score += 0.48
-        elif block_topic_slug:
-            score -= 0.18
-
-    topic_text = _normalize_match_text(str(block.get("topic_text", "")))
-    if topic_text:
-        topic_tokens = [tok for tok in topic_text.split() if len(tok) >= 4]
-        score += _score_text_against_row(signals.get("manual_tags_text", ""), topic_tokens, weight=0.35)
-        score += _score_text_against_row(signals.get("auto_tags_text", ""), topic_tokens, weight=0.12)
-        score += _score_text_against_row(signals.get("legacy_tags_text", ""), topic_tokens, weight=0.05)
-
-    score += min(_score_card_evidence_against_entry(signals, block.get("card_evidence", []) or []), 0.45)
-
-    return score
-
+    return _file_map_score_entry_against_timeline_block(
+        signals,
+        block,
+        normalize_match_text=_normalize_match_text,
+        score_text_against_row=_score_text_against_row,
+        score_card_evidence_against_entry_fn=_score_card_evidence_against_entry,
+        preferred_unit_slug=preferred_unit_slug,
+        preferred_topic_slug=preferred_topic_slug,
+    )
 
 def _collect_entry_temporal_signals(entry: dict, markdown_text: str) -> dict:
-    raw_parts = [
-        str(entry.get("title", "") or ""),
-        str(entry.get("raw_target", "") or ""),
-        str(entry.get("category", "") or ""),
-        str(entry.get("tags", "") or ""),
-        markdown_text or "",
-    ]
-    combined_text = "\n".join(part for part in raw_parts if _collapse_ws(part))
-    date_range = extract_date_range_signal(combined_text)
-    session_signals = extract_timeline_session_signals(combined_text)
-    date_values = set()
-    for session in session_signals:
-        session_date = str(session.get("date", "") or "").strip()
-        if session_date:
-            date_values.add(session_date)
-    if date_range.get("start"):
-        date_values.add(str(date_range.get("start", "")).strip())
-    if date_range.get("end"):
-        date_values.add(str(date_range.get("end", "")).strip())
-    return {
-        "combined_text": _normalize_match_text(combined_text),
-        "date_range": date_range,
-        "date_values": sorted(date_values),
-        "session_signals": session_signals,
-    }
-
+    return _file_map_collect_entry_temporal_signals(
+        entry,
+        markdown_text,
+        collapse_ws=_collapse_ws,
+        normalize_match_text=_normalize_match_text,
+        extract_date_range_signal=extract_date_range_signal,
+        extract_timeline_session_signals=extract_timeline_session_signals,
+    )
 
 def _entry_temporal_range_contains(date_text: str, date_range: dict) -> bool:
-    if not date_text or not date_range:
-        return False
-    session_dt = _parse_timeline_date_value(date_text)
-    start_dt = _parse_timeline_date_value(str(date_range.get("start", "") or ""))
-    end_dt = _parse_timeline_date_value(str(date_range.get("end", "") or ""))
-    if not session_dt or not start_dt or not end_dt:
-        return False
-    return start_dt <= session_dt <= end_dt
-
+    return _file_map_entry_temporal_range_contains(
+        date_text,
+        date_range,
+        parse_timeline_date_value=_parse_timeline_date_value,
+    )
 
 def _score_entry_against_timeline_session(entry_temporal_signals: dict, session: Dict[str, object]) -> tuple[float, float]:
-    if not session:
-        return 0.0, 0.0
-
-    entry_text = str(entry_temporal_signals.get("combined_text", "") or "")
-    if not entry_text:
-        return 0.0, 0.0
-
-    session_label = _normalize_match_text(str(session.get("label", "") or ""))
-    session_signals = [
-        _normalize_match_text(str(signal))
-        for signal in (session.get("signals", []) or [])
-        if _normalize_match_text(str(signal))
-    ]
-    session_text = " ".join(filter(None, [session_label, " ".join(session_signals)]))
-    session_tokens = [tok for tok in session_text.split() if len(tok) >= 4]
-    score = _score_text_against_row(entry_text, session_tokens, weight=1.1)
-
-    session_date = str(session.get("date", "") or "").strip()
-    date_values = {
-        str(value).strip()
-        for value in (entry_temporal_signals.get("date_values") or [])
-        if str(value).strip()
-    }
-    if session_date:
-        if session_date in date_values:
-            score += 3.0
-        elif _entry_temporal_range_contains(session_date, entry_temporal_signals.get("date_range") or {}):
-            score += 2.2
-
-    kind = str(session.get("kind", "") or "").strip()
-    if kind == "async":
-        if any(
-            term in entry_text
-            for term in [
-                "atividade assincrona",
-                "atividade assíncrona",
-                "assincrona",
-                "assincrono",
-                "async",
-            ]
-        ):
-            score += 0.9
-    elif kind == "class" and session_date:
-        if any(term in entry_text for term in ["aula", "semana", "dia"]):
-            score += 0.15
-
-    card_bonus = min(
-        0.55,
-        _score_card_evidence_against_entry(entry_temporal_signals, session.get("card_evidence", []) or []),
+    return _file_map_score_entry_against_timeline_session(
+        entry_temporal_signals,
+        session,
+        normalize_match_text=_normalize_match_text,
+        score_text_against_row=_score_text_against_row,
+        score_card_evidence_against_entry_fn=_score_card_evidence_against_entry,
+        entry_temporal_range_contains_fn=_entry_temporal_range_contains,
     )
-    if card_bonus > 0:
-        score += card_bonus
-
-    return score, card_bonus
-
 
 def _score_entry_against_timeline_sessions(entry_temporal_signals: dict, block: Dict[str, object]) -> tuple[float, Optional[Dict[str, object]], float]:
-    best_score = 0.0
-    best_session: Optional[Dict[str, object]] = None
-    best_card_bonus = 0.0
-    for session in block.get("sessions", []) or []:
-        score, card_bonus = _score_entry_against_timeline_session(entry_temporal_signals, session)
-        if score > best_score:
-            best_score = score
-            best_session = session
-            best_card_bonus = card_bonus
-    return best_score, best_session, best_card_bonus
-
+    return _file_map_score_entry_against_timeline_sessions(
+        entry_temporal_signals,
+        block,
+        normalize_match_text=_normalize_match_text,
+        score_text_against_row=_score_text_against_row,
+        score_card_evidence_against_entry_fn=_score_card_evidence_against_entry,
+        entry_temporal_range_contains_fn=_entry_temporal_range_contains,
+    )
 
 def _select_probable_period_for_entry(
     entry: dict,
@@ -5995,174 +4834,25 @@ def _select_probable_period_for_entry(
     markdown_text: str,
     preferred_topic_slug: str = "",
 ) -> tuple[str, float, bool, List[str]]:
-    if not candidate_rows:
-        return "", 0.0, True, ["sem-linhas-candidato"]
-
-    signals = _collect_entry_unit_signals(entry, markdown_text)
-    if candidate_rows and "rows" in candidate_rows[0]:
-        blocks = list(candidate_rows)
-    else:
-        timeline_index = _build_timeline_index(candidate_rows, unit_index=[unit] if unit else [])
-        blocks = list(timeline_index.get("blocks", []) or [])
-    if not blocks:
-        return "", 0.0, True, ["sem-blocos-candidato"]
-
-    preferred_unit_slug = str(unit.get("slug", "") or "")
-    preferred_topic_slug = str(preferred_topic_slug or "").strip()
-    temporal_signals = _collect_entry_temporal_signals(entry, markdown_text)
-    topic_filtered_blocks = [
-        block for block in blocks if _timeline_block_matches_preferred_topic(block, preferred_topic_slug)
-    ]
-    scored_source_blocks = topic_filtered_blocks if topic_filtered_blocks else blocks
-    session_scored_blocks = []
-    for block in scored_source_blocks:
-        block_score = _score_entry_against_timeline_block(
-            signals,
-            block,
-            preferred_unit_slug=preferred_unit_slug,
-            preferred_topic_slug=preferred_topic_slug,
-        )
-        session_score, matched_session, session_card_bonus = _score_entry_against_timeline_sessions(temporal_signals, block)
-        if session_score >= 1.0:
-            session_scored_blocks.append((block, session_score, block_score, matched_session, session_card_bonus))
-
-    if session_scored_blocks:
-        session_scored_blocks.sort(key=lambda item: (item[1], item[2], item[4]), reverse=True)
-        best_block, best_score, best_block_score, best_session, best_session_card_bonus = session_scored_blocks[0]
-        runner_up_score = session_scored_blocks[1][1] if len(session_scored_blocks) > 1 else 0.0
-        if best_score < 1.0:
-            return "", best_score, True, [f"best={best_score:.2f}", "score-baixo"]
-        selected_rows = list(best_block.get("rows", []) or [])
-        period = str(best_block.get("period_label", "")).strip()
-        if not period:
-            selected_dates = [
-                str(row.get("date_text", "")).strip()
-                for row in selected_rows
-                if str(row.get("date_text", "")).strip()
-            ]
-            if selected_dates:
-                period = _timeline_period_label(selected_dates[0], selected_dates[-1])
-        if not period:
-            return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
-
-        confidence = min(1.0, max(0.0, (best_score - runner_up_score) + (best_score * 0.18)))
-        ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
-        if len(session_scored_blocks) == 1 and not ambiguous:
-            confidence = max(confidence, 0.72)
-        reasons = [
-            f"best={best_score:.2f}",
-            f"runner_up={runner_up_score:.2f}",
-            f"session_block={best_block_score:.2f}",
-            f"selected_rows={len(selected_rows)}",
-            f"selected_block_rows={len(selected_rows)}",
-            "session-first",
-        ]
-        if best_session and best_session.get("id"):
-            reasons.append(f"session={best_session.get('id')}")
-        if best_session_card_bonus >= 0.15:
-            reasons.append("card-evidence")
-        if preferred_topic_slug:
-            reasons.append(f"topic={preferred_topic_slug}")
-            if topic_filtered_blocks:
-                reasons.append("topic-filtered")
-        if ambiguous:
-            reasons.append("ambiguous")
-        return period, confidence, ambiguous, reasons
-
-    scored_blocks = [
-        (
-            block,
-            _score_entry_against_timeline_block(
-                signals,
-                block,
-                preferred_unit_slug=preferred_unit_slug,
-                preferred_topic_slug=preferred_topic_slug,
-            ),
-        )
-        for block in scored_source_blocks
-    ]
-    scored_blocks.sort(key=lambda item: item[1], reverse=True)
-
-    best_block, best_score = scored_blocks[0]
-    runner_up_score = scored_blocks[1][1] if len(scored_blocks) > 1 else 0.0
-    if best_score < 0.95:
-        return "", best_score, True, [f"best={best_score:.2f}", "score-baixo"]
-    selected_rows = list(best_block.get("rows", []) or [])
-    period = str(best_block.get("period_label", "")).strip()
-    if not period:
-        selected_dates = [
-            str(row.get("date_text", "")).strip()
-            for row in selected_rows
-            if str(row.get("date_text", "")).strip()
-        ]
-        if selected_dates:
-            period = _timeline_period_label(selected_dates[0], selected_dates[-1])
-    if not period:
-        return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
-
-    confidence = min(1.0, max(0.0, (best_score - runner_up_score) + (best_score * 0.18)))
-    ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
-    best_block_card_bonus = min(
-        0.45,
-        _score_card_evidence_against_entry(signals, best_block.get("card_evidence", []) or []),
+    return _file_map_select_probable_period_for_entry(
+        entry,
+        unit,
+        candidate_rows,
+        markdown_text,
+        preferred_topic_slug=preferred_topic_slug,
+        collect_entry_unit_signals=_collect_entry_unit_signals,
+        build_timeline_index=_build_timeline_index,
+        timeline_period_label=_timeline_period_label,
+        collapse_ws=_collapse_ws,
+        normalize_match_text=_normalize_match_text,
+        score_text_against_row=_score_text_against_row,
+        extract_date_range_signal=extract_date_range_signal,
+        extract_timeline_session_signals=extract_timeline_session_signals,
+        parse_timeline_date_value=_parse_timeline_date_value,
     )
-    reasons = [
-        f"best={best_score:.2f}",
-        f"runner_up={runner_up_score:.2f}",
-        f"selected_rows={len(selected_rows)}",
-        f"selected_block_rows={len(selected_rows)}",
-    ]
-    if best_block_card_bonus >= 0.15:
-        reasons.append("card-evidence")
-    if preferred_topic_slug:
-        reasons.append(f"topic={preferred_topic_slug}")
-        if topic_filtered_blocks:
-            reasons.append("topic-filtered")
-    if ambiguous:
-        reasons.append("ambiguous")
-    return period, confidence, ambiguous, reasons
-
 
 def _aggregate_unit_periods_from_blocks(blocks_by_unit: Dict[str, List[Dict[str, object]]]) -> Dict[str, str]:
-    period_map: Dict[str, str] = {}
-    for slug, blocks in (blocks_by_unit or {}).items():
-        if not slug or not blocks:
-            continue
-        start_dates = []
-        end_dates = []
-        for block in blocks:
-            start = _parse_timeline_date_value(str(block.get("period_start", "") or ""))
-            end = _parse_timeline_date_value(str(block.get("period_end", "") or ""))
-            if start:
-                start_dates.append(start)
-            if end:
-                end_dates.append(end)
-        if start_dates and end_dates:
-            sorted_blocks = sorted(
-                blocks,
-                key=lambda item: (
-                    _parse_timeline_date_value(str(item.get("period_start", "") or "")) or datetime.max
-                ),
-            )
-            edge_dates = []
-            for block in (sorted_blocks[0], sorted_blocks[-1]):
-                edge_dates.extend(
-                    re.findall(r"\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}|\d{2}-\d{2}-\d{4}", str(block.get("period_label", "")))
-                )
-            if edge_dates:
-                start_label = edge_dates[0]
-                end_label = edge_dates[-1] if len(edge_dates) > 1 else edge_dates[0]
-                period_map[slug] = _timeline_period_label(start_label, end_label)
-                continue
-            period_map[slug] = _timeline_period_label(
-                min(start_dates).strftime("%Y-%m-%d"),
-                max(end_dates).strftime("%Y-%m-%d"),
-            )
-            continue
-        labels = [str(block.get("period_label", "")).strip() for block in blocks if str(block.get("period_label", "")).strip()]
-        if labels:
-            period_map[slug] = labels[0] if len(labels) == 1 else _timeline_period_label(labels[0], labels[-1])
-    return period_map
+    return _timeline_aggregate_unit_periods_from_blocks(blocks_by_unit)
 
 
 def _build_file_map_timeline_context_from_course(
@@ -6170,49 +4860,13 @@ def _build_file_map_timeline_context_from_course(
     subject_profile=None,
     content_taxonomy: Optional[dict] = None,
 ) -> dict:
-    test_context = course_meta.get("_timeline_context") or course_meta.get("_timeline_context_for_tests")
-    if test_context:
-        return dict(test_context)
-
-    unit_index = _build_file_map_unit_index_from_course(course_meta, subject_profile)
-    content_taxonomy = content_taxonomy or _build_file_map_content_taxonomy_from_course(course_meta, subject_profile)
-    syllabus = getattr(subject_profile, "syllabus", "") if subject_profile else ""
-    timeline = _parse_syllabus_timeline(syllabus) if syllabus else []
-    candidate_rows = _build_timeline_candidate_rows(timeline)
-    timeline_index = (
-        _build_timeline_index(candidate_rows, unit_index=unit_index, content_taxonomy=content_taxonomy)
-        if candidate_rows
-        else _empty_timeline_index()
+    return _timeline_build_file_map_timeline_context_from_course(
+        course_meta,
+        subject_profile,
+        content_taxonomy,
+        build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
+        build_file_map_content_taxonomy_from_course=_build_file_map_content_taxonomy_from_course,
     )
-
-    blocks_by_unit: Dict[str, List[Dict[str, object]]] = {}
-    rows_by_unit: Dict[str, List[Dict[str, object]]] = {}
-    unassigned_blocks: List[Dict[str, object]] = []
-    for block in timeline_index.get("blocks", []) or []:
-        slug = str(block.get("unit_slug", "") or "")
-        if slug:
-            blocks_by_unit.setdefault(slug, []).append(block)
-            rows_by_unit.setdefault(slug, []).extend(list(block.get("rows", []) or []))
-        else:
-            unassigned_blocks.append(block)
-
-    unit_periods = _aggregate_unit_periods_from_blocks(blocks_by_unit)
-    unit_period_bounds = {
-        slug: _parse_timeline_period_bounds(period)
-        for slug, period in unit_periods.items()
-        if period
-    }
-
-    return {
-        "timeline": timeline,
-        "timeline_index": timeline_index,
-        "unit_periods": unit_periods,
-        "unit_period_bounds": unit_period_bounds,
-        "unit_index": unit_index,
-        "rows_by_unit": rows_by_unit,
-        "blocks_by_unit": blocks_by_unit,
-        "unassigned_blocks": unassigned_blocks,
-    }
 
 
 def _parse_bibliography_from_teaching_plan(text: str) -> dict:
@@ -6270,288 +4924,20 @@ def _parse_bibliography_from_teaching_plan(text: str) -> dict:
     return result
 
 
-def _canonical_assessment_label(raw_label: str) -> str:
-    normalized = _normalize_match_text(raw_label)
-    if not normalized:
-        return ""
-    normalized = normalized.replace("final", "final").strip()
-    match = re.match(r"^p\s*(\d+)$", normalized)
-    if match:
-        return f"P{int(match.group(1))}"
-    if normalized in {"pf", "p final", "prova final", "exame final"}:
-        return "PF"
-    if normalized.startswith("exame"):
-        return "EXAME"
-    if normalized.startswith("prova"):
-        return _collapse_ws(normalized).upper()
-    return _collapse_ws(normalized).upper()
-
-
-def _assessment_label_aliases(label_slug: str) -> List[str]:
-    normalized = _normalize_match_text(label_slug)
-    aliases = set()
-    if not normalized:
-        return []
-    if normalized == "pf":
-        aliases.update({"pf", "prova final", "exame final"})
-    else:
-        p_match = re.match(r"^(?:p|prova)\s*(\d+)$", normalized)
-        if p_match:
-            num = int(p_match.group(1))
-            aliases.add(f"p{num}")
-            aliases.add(f"p {num}")
-            aliases.add(f"prova {num}")
-            aliases.add(f"prova {num:02d}")
-        aliases.add(normalized)
-    return sorted(aliases)
-
-
-def _extract_declared_unit_numbers(text: str, label_slug: str = "") -> List[int]:
-    normalized = _normalize_match_text(text)
-    if not normalized:
-        return []
-    scope_text = normalized
-    scope_match = re.search(
-        r"\b(?:unidade(?:s)?(?: de aprendizagem)?|conteudo(?:s)?|abrangendo|abrange|cobre|cobrindo|inclui|incluindo)\b(.+)",
-        normalized,
-    )
-    if scope_match:
-        scope_text = scope_match.group(1).strip()
-    numbers = []
-    for raw_num in re.findall(r"\b0*(\d+)\b", scope_text):
-        try:
-            value = int(raw_num)
-        except ValueError:
-            continue
-        if 1 <= value <= 20:
-            numbers.append(value)
-    if scope_match:
-        return list(dict.fromkeys(numbers))
-    label_match = re.match(r"^(?:p|prova)\s*(\d+)$", _normalize_match_text(label_slug))
-    if label_match:
-        try:
-            label_number = int(label_match.group(1))
-        except ValueError:
-            label_number = None
-        else:
-            if label_number in numbers:
-                numbers.remove(label_number)
-    return list(dict.fromkeys(numbers))
-
-
-def _parse_assessments_from_teaching_plan(text: str) -> List[dict]:
-    assessments: List[dict] = []
-    if not text:
-        return assessments
-
-    in_section = False
-    current: Optional[dict] = None
-
-    for raw in text.splitlines():
-        line = raw.strip()
-        if not line:
-            continue
-
-        normalized = _normalize_teaching_plan_heading(line)
-        cleaned = re.sub(r"^[\-•*]\s*", "", normalized).strip()
-        if not cleaned:
-            continue
-
-        if not in_section and _TEACHING_PLAN_ASSESSMENT_START.match(cleaned):
-            in_section = True
-            current = None
-            continue
-
-        if in_section and _TEACHING_PLAN_ASSESSMENT_STOP.match(cleaned):
-            break
-
-        if not in_section:
-            continue
-
-        match = _ASSESSMENT_LINE_RE.match(cleaned)
-        if match:
-            if current:
-                assessments.append(current)
-            label_slug = _canonical_assessment_label(match.group("label"))
-            if not label_slug:
-                continue
-            desc = _collapse_ws(match.group("desc"))
-            current = {
-                "label": label_slug,
-                "label_slug": _normalize_match_text(label_slug),
-                "description": desc,
-                "raw_lines": [cleaned],
-            }
-            continue
-
-        if current:
-            current["description"] = _collapse_ws(f"{current.get('description', '')} {cleaned}")
-            current.setdefault("raw_lines", []).append(cleaned)
-
-    if current:
-        assessments.append(current)
-
-    for item in assessments:
-        description = str(item.get("description", "") or "").strip()
-        label_slug = str(item.get("label_slug", "") or "").strip()
-        item["label"] = _canonical_assessment_label(item.get("label", label_slug))
-        item["label_slug"] = _normalize_match_text(label_slug or item["label"])
-        item["declared_unit_numbers"] = _extract_declared_unit_numbers(description, item["label_slug"])
-        item["raw_lines"] = list(dict.fromkeys(item.get("raw_lines", []) or []))
-
-    return assessments
-
-
-def _assessment_match_row_text(row: dict) -> str:
-    return _normalize_match_text(" ".join(str(value) for value in row.values() if str(value).strip()))
-
-
-def _assessment_date_from_timeline_rows(rows: List[Dict[str, str]]) -> str:
-    if not rows:
-        return ""
-    for row in rows:
-        for key in row.keys():
-            if any(token in key for token in ["data", "date"]):
-                value = str(row.get(key, "") or "").strip()
-                if value:
-                    return value
-    for row in rows:
-        for value in row.values():
-            value = str(value or "").strip()
-            if _parse_timeline_date_value(value):
-                return value
-    return ""
-
-
-def _assessment_scope_unit_slugs(declared_unit_numbers: List[int], unit_index: list) -> List[str]:
-    if not declared_unit_numbers or not unit_index:
-        return []
-    slugs = []
-    for unit in unit_index:
-        slug = str(unit.get("slug", "") or "").strip()
-        if not slug:
-            continue
-        unit_number = _timeline_unit_number_from_unit(unit)
-        if unit_number is None:
-            unit_number = _timeline_unit_number_from_text(str(unit.get("title", "") or ""))
-        if unit_number and unit_number in declared_unit_numbers:
-            slugs.append(slug)
-    return slugs
-
-
-def _assessment_conflict_observation(
-    assessment_label: str,
-    assessment_date: str,
-    unit_slug: str,
-    unit_title: str,
-    unit_period: str,
-) -> str:
-    if not assessment_date or not unit_period:
-        return ""
-    if unit_title:
-        return (
-            f"{assessment_label} em {assessment_date} antecede {unit_title} "
-            f"(previsto para {unit_period})."
-        )
-    return f"{assessment_label} em {assessment_date} antecede {unit_slug} (previsto para {unit_period})."
-
-
 def _build_assessment_context_from_course(
     course_meta: dict,
     subject_profile=None,
     timeline_context: Optional[dict] = None,
 ) -> dict:
-    test_context = course_meta.get("_assessment_context") or course_meta.get("_assessment_context_for_tests")
-    if test_context:
-        return dict(test_context)
-
-    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
-    syllabus = getattr(subject_profile, "syllabus", "") if subject_profile else ""
-    if not teaching_plan and not syllabus:
-        return {"version": 1, "assessments": [], "conflicts": []}
-
-    timeline_rows = _parse_syllabus_timeline(syllabus) if syllabus else []
-    unit_index = _build_file_map_unit_index_from_course(course_meta, subject_profile)
-    if timeline_context is None:
-        timeline_context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
-    unit_period_bounds = (timeline_context or {}).get("unit_period_bounds", {}) or {}
-    unit_periods = (timeline_context or {}).get("unit_periods", {}) or {}
-    unit_by_slug = {str(unit.get("slug", "") or ""): unit for unit in unit_index if str(unit.get("slug", "") or "").strip()}
-
-    assessments = _parse_assessments_from_teaching_plan(teaching_plan)
-    if not assessments:
-        return {
-            "version": 1,
-            "assessments": [],
-            "conflicts": [],
-            "unit_periods": unit_periods,
-        }
-
-    enriched_assessments = []
-    conflicts = []
-    for assessment in assessments:
-        label = str(assessment.get("label", "") or "").strip()
-        label_slug = str(assessment.get("label_slug", "") or "").strip()
-        aliases = _assessment_label_aliases(label_slug)
-        matched_rows = [
-            row
-            for row in timeline_rows
-            if any(alias and re.search(rf"\b{re.escape(alias)}\b", _assessment_match_row_text(row)) for alias in aliases)
-        ]
-        assessment_date = _assessment_date_from_timeline_rows(matched_rows)
-        declared_unit_numbers = list(assessment.get("declared_unit_numbers") or [])
-        declared_unit_slugs = _assessment_scope_unit_slugs(declared_unit_numbers, unit_index)
-        observation_lines = []
-        conflict_lines = []
-        if assessment_date and declared_unit_slugs:
-            assessment_dt = _parse_timeline_date_value(assessment_date)
-            if assessment_dt:
-                for unit_slug in declared_unit_slugs:
-                    start_dt, end_dt = unit_period_bounds.get(unit_slug, (None, None))
-                    unit = unit_by_slug.get(unit_slug, {})
-                    unit_title = str(unit.get("title", "") or "").strip()
-                    unit_period = str(unit_periods.get(unit_slug, "") or "").strip()
-                    if start_dt and assessment_dt < start_dt:
-                        conflict_text = _assessment_conflict_observation(
-                            label,
-                            assessment_date,
-                            unit_slug,
-                            unit_title,
-                            unit_period,
-                        )
-                        if conflict_text:
-                            conflict_lines.append(conflict_text)
-        if declared_unit_numbers and not assessment_date:
-            observation_lines.append(f"{label}: escopo por unidade encontrado, mas a data não foi localizada no cronograma.")
-        if assessment_date and not declared_unit_numbers:
-            observation_lines.append(f"{label}: data encontrada ({assessment_date}), mas sem escopo de unidade explícito.")
-
-        enriched = {
-            **assessment,
-            "aliases": aliases,
-            "assessment_date": assessment_date,
-            "matched_row_count": len(matched_rows),
-            "declared_unit_slugs": declared_unit_slugs,
-            "observations": observation_lines,
-            "conflicts": conflict_lines,
-        }
-        enriched_assessments.append(enriched)
-        if conflict_lines:
-            conflicts.append({
-                "label": label,
-                "label_slug": label_slug,
-                "assessment_date": assessment_date,
-                "declared_unit_numbers": declared_unit_numbers,
-                "declared_unit_slugs": declared_unit_slugs,
-                "conflicts": conflict_lines,
-            })
-
-    return {
-        "version": 1,
-        "assessments": enriched_assessments,
-        "conflicts": conflicts,
-        "unit_periods": unit_periods,
-    }
+    return _timeline_build_assessment_context_from_course(
+        course_meta,
+        subject_profile,
+        timeline_context,
+        build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
+        build_file_map_timeline_context_from_course=_build_file_map_timeline_context_from_course,
+        normalize_match_text=_normalize_match_text,
+        normalize_teaching_plan_heading=_normalize_teaching_plan_heading,
+    )
 
 
 def _write_internal_assessment_context(root_dir: Path, assessment_context: dict) -> None:
@@ -6640,545 +5026,131 @@ def glossary_md(
     root_dir: Optional[Path] = None,
     manifest_entries: Optional[List[dict]] = None,
 ) -> str:
-    course_name = course_meta.get("course_name", "Curso")
-
-    lines = [
-        f"# GLOSSARY — {course_name}",
-        "",
-        "> **Como usar:** Terminologia oficial da disciplina.",
-        "> O tutor consulta este arquivo para usar os mesmos termos que o professor.",
-        "> Inconsistência terminológica é fonte de confusão em provas.",
-        "",
-        "## Formato de entrada",
-        "",
-        "```",
-        "## [Termo]",
-        "**Definição:** [definição precisa usada nesta disciplina]",
-        "**Sinônimos aceitos:** [outros nomes para o mesmo conceito]",
-        "**Não confundir com:** [termo similar mas diferente]",
-        "**Aparece em:** [unidades / tópicos onde é usado]",
-        "```",
-        "",
-        "---",
-        "",
-        "## Termos",
-        "",
-    ]
-
-    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
-    units = _parse_units_from_teaching_plan(teaching_plan) if teaching_plan else []
-    evidence_docs = _collect_glossary_evidence(root_dir, manifest_entries=manifest_entries) if root_dir else []
-
-    # Collect all topics as candidate terms, preserving unit association
-    candidates = []  # List of (term_text, unit_title)
-    for unit_title, topics in units:
-        for topic in topics:
-            candidates.append((_topic_text(topic), unit_title))
-
-    if candidates:
-        lines.append("> Termos extraídos automaticamente do plano de ensino.")
-        lines.append("> Definições iniciais curtas são geradas no build para reduzir custo de contexto no tutor web.")
-        lines.append("")
-        for term, unit_title in candidates:
-            evidence = _find_glossary_evidence(term, unit_title, evidence_docs)
-            definition, synonyms, not_confuse = _seed_glossary_fields(term, unit_title, evidence=evidence)
-            lines += [
-                f"## {term}",
-                f"**Definição:** {definition}",
-                f"**Sinônimos aceitos:** {synonyms}",
-                f"**Não confundir com:** {not_confuse}",
-                f"**Aparece em:** {unit_title}",
-                "",
-            ]
-    else:
-        lines.append("> ⏳ **Termos serão adicionados pelo tutor na primeira sessão.**")
-        lines.append("")
-
-    return _clamp_navigation_artifact(
-        "\n".join(lines),
-        max_chars=14000,
-        label="course/COURSE_MAP.md",
+    return _repo_artifacts.glossary_md(
+        course_meta,
+        subject_profile,
+        root_dir=root_dir,
+        manifest_entries=manifest_entries,
+        parse_units_from_teaching_plan_fn=_parse_units_from_teaching_plan,
+        topic_text_fn=_topic_text,
+        collect_glossary_evidence_fn=_collect_glossary_evidence,
+        find_glossary_evidence_fn=_find_glossary_evidence,
+        seed_glossary_fields_fn=lambda term, unit_title, evidence="": _seed_glossary_fields(
+            term,
+            unit_title,
+            evidence=evidence,
+        ),
+        clamp_navigation_artifact_fn=_clamp_navigation_artifact,
     )
 
-
 def _clamp_navigation_artifact(text: str, *, max_chars: int, label: str) -> str:
-    compact = (text or "").strip()
-    if len(compact) <= max_chars:
-        return compact
-
-    note = f"> Conteúdo truncado para manter {label} compacto e roteável."
-    cutoff = max(0, max_chars - len(note) - 4)
-    clipped = compact[:cutoff].rstrip()
-    if "\n" in clipped:
-        clipped = clipped.rsplit("\n", 1)[0].rstrip()
-    return f"{clipped}\n\n{note}"
-
+    return _repo_artifacts.clamp_navigation_artifact(text, max_chars=max_chars, label=label)
 
 def _extract_markdown_headings(raw_markdown: str, limit: int = 8) -> List[str]:
-    headings: List[str] = []
-    for line in (raw_markdown or "").splitlines():
-        match = re.match(r"^#{1,6}\s+(.+?)\s*$", line)
-        if not match:
-            continue
-        heading = _collapse_ws(match.group(1))
-        if not heading:
-            continue
-        headings.append(heading)
-        if len(headings) >= limit:
-            break
-    return headings
-
+    return _repo_artifacts.extract_markdown_headings(
+        raw_markdown,
+        collapse_ws=_collapse_ws,
+        limit=limit,
+    )
 
 def _collect_glossary_evidence(
     root_dir: Optional[Path],
     manifest_entries: Optional[List[dict]] = None,
 ) -> List[Dict[str, str]]:
-    if not root_dir:
-        return []
-    curated_dir = root_dir / "content" / "curated"
-    if not curated_dir.exists():
-        return []
-
-    manifest_by_markdown: Dict[str, str] = {}
-    for entry in manifest_entries or []:
-        markdown_path = (
-            entry.get("approved_markdown")
-            or entry.get("curated_markdown")
-            or entry.get("advanced_markdown")
-            or entry.get("base_markdown")
-            or ""
-        )
-        if markdown_path:
-            manifest_by_markdown[Path(markdown_path).name.lower()] = _collapse_ws(
-                entry.get("title") or entry.get("name") or ""
-            )
-
-    docs: List[Dict[str, str]] = []
-    for md_path in sorted(curated_dir.glob("*.md")):
-        try:
-            raw = md_path.read_text(encoding="utf-8")
-        except Exception:
-            continue
-        body = _collapse_ws(_strip_frontmatter_block(raw))
-        if not body:
-            continue
-        stripped = _strip_frontmatter_block(raw)
-        title_match = re.search(r"^#\s+(.+)$", stripped, flags=re.MULTILINE)
-        title = _collapse_ws(title_match.group(1)) if title_match else md_path.stem.replace("-", " ")
-        docs.append({
-            "title": title,
-            "manifest_title": manifest_by_markdown.get(md_path.name.lower(), ""),
-            "headings": _extract_markdown_headings(stripped),
-            "text": body[:4000],
-        })
-    return docs
-
-
-def _glossary_tokens(text: str) -> List[str]:
-    words = re.findall(r"[a-zà-ÿ0-9]+", (text or "").lower())
-    stopwords = {
-        "de", "da", "do", "das", "dos", "e", "em", "para", "com", "por", "na",
-        "no", "nas", "nos", "um", "uma", "as", "os", "o", "a", "ou", "ao", "à",
-        "ii", "iii", "iv", "v", "unidade", "aprendizagem",
-    }
-    return [word for word in words if len(word) > 2 and word not in stopwords]
-
-
-def _trim_glossary_prefix(text: str, prefixes: List[str]) -> str:
-    cleaned = _collapse_ws(text)
-    if not cleaned:
-        return ""
-    for prefix in prefixes:
-        prefix = _collapse_ws(prefix)
-        if not prefix:
-            continue
-        if cleaned.lower().startswith(prefix.lower()):
-            cleaned = cleaned[len(prefix):].lstrip(" -:|#")
-    return _collapse_ws(cleaned)
-
-
-def _shorten_glossary_sentence(sentence: str, max_chars: int = 180) -> str:
-    sent = _collapse_ws(sentence)
-    if len(sent) <= max_chars:
-        return sent
-    truncated = sent[:max_chars].rstrip()
-    if " " in truncated:
-        truncated = truncated.rsplit(" ", 1)[0]
-    return truncated.rstrip(" ,;:") + "..."
-
-
-def _is_bad_glossary_evidence(sentence: str) -> bool:
-    sent = _collapse_ws(sentence)
-    if not sent or len(sent) < 40:
-        return True
-    if sent.count("**") >= 2:
-        return True
-    if sent.lower().startswith("exemplo:"):
-        return True
-    if re.match(r"^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ][\wÁÀÂÃÉÊÍÓÔÕÚÇáàâãéêíóôõúç-]+\s+[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ]", sent):
-        if re.search(r"\d", sent) and len(sent) <= 80:
-            return True
-    return False
-
-
-def _find_glossary_evidence(term: str, unit_title: str, docs: List[Dict[str, str]]) -> str:
-    if not docs:
-        return ""
-
-    term_lower = (term or "").lower()
-    tokens = _glossary_tokens(term) + _glossary_tokens(unit_title)
-    best_score = 0
-    best_text = ""
-
-    for doc in docs:
-        haystack = " ".join([
-            doc.get("manifest_title", ""),
-            doc.get("title", ""),
-            " ".join(doc.get("headings", [])),
-            doc.get("text", ""),
-        ]).lower()
-        score = 0
-        if term_lower and term_lower in haystack:
-            score += 8
-        score += sum(1 for token in dict.fromkeys(tokens) if token in haystack)
-        if score < 3 or score <= best_score:
-            continue
-        best_score = score
-        best_text = _best_glossary_sentence(term, unit_title, doc)
-
-    return best_text[:600]
-
-
-def _best_glossary_sentence(term: str, unit_title: str, doc: Dict[str, str]) -> str:
-    prefixes = [
-        doc.get("manifest_title", ""),
-        doc.get("title", ""),
-        *doc.get("headings", []),
-    ]
-    sources = [
-        doc.get("manifest_title", ""),
-        doc.get("title", ""),
-        " ".join(doc.get("headings", [])),
-        _trim_glossary_prefix(doc.get("text", ""), prefixes),
-    ]
-    term_tokens = _glossary_tokens(term) + _glossary_tokens(unit_title)
-    candidate_sentences: List[str] = []
-    for source in sources:
-        if not source:
-            continue
-        for sentence in re.split(r"(?<=[.!?])\s+", _collapse_ws(source)):
-            sent = _collapse_ws(sentence)
-            if len(sent) < 40 or len(sent) > 220:
-                continue
-            if _is_bad_glossary_evidence(sent):
-                continue
-            candidate_sentences.append(sent)
-    best_sentence = ""
-    best_score = 0
-    for sent in candidate_sentences:
-        sent = _normalize_glossary_sentence(term, unit_title, sent)
-        sent_lower = sent.lower()
-        score = 0
-        if term.lower() in sent_lower:
-            score += 6
-        score += sum(1 for token in dict.fromkeys(term_tokens) if token in sent_lower)
-        if score > best_score:
-            best_score = score
-            best_sentence = sent
-    fallback = _trim_glossary_prefix(doc.get("text", ""), prefixes)
-    return best_sentence or _shorten_glossary_sentence(fallback or _collapse_ws(doc.get("text", "")), 180)
-
-
-def _normalize_glossary_sentence(term: str, unit_title: str, sentence: str) -> str:
-    sent = _collapse_ws(sentence)
-    if not sent:
-        return ""
-    sent = re.sub(r"^(?:#+\s*)+", "", sent)
-    for prefix in [term, unit_title]:
-        prefix = _collapse_ws(prefix)
-        if not prefix:
-            continue
-        if sent.lower().startswith(prefix.lower()):
-            sent = sent[len(prefix):].lstrip(" -:|#")
-    sent = _collapse_ws(sent)
-    if not sent:
-        return _shorten_glossary_sentence(term, 120)
-    if len(sent) > 180:
-        sent = _shorten_glossary_sentence(sent, 180)
-    return sent
-
-
-def _seed_glossary_fields(term: str, unit_title: str, evidence: str = "") -> tuple[str, str, str]:
-    text = _collapse_ws(term)
-    lower = text.lower()
-    unit_lower = (unit_title or "").lower()
-
-    def _unit_hint() -> str:
-        if "visão geral" in unit_lower or "visao geral" in unit_lower:
-            return "visão geral"
-        if "aprendizado de máquina" in unit_lower or "machine" in unit_lower:
-            return "aprendizado de máquina"
-        if "incerteza" in unit_lower or "probabilidade" in unit_lower:
-            return "raciocínio sob incerteza"
-        if "planejamento" in unit_lower:
-            return "planejamento e representação de conhecimento"
-        if "problemas" in unit_lower or "busca" in unit_lower:
-            return "solução de problemas"
-        if "verificação de programas" in unit_lower:
-            return "verificação de programas"
-        if "verificação de modelos" in unit_lower:
-            return "verificação de modelos"
-        if "métodos formais" in unit_lower:
-            return "métodos formais"
-        return "esta unidade"
-
-    def _generic_definition() -> str:
-        return _refine_glossary_definition_from_evidence(text, _unit_hint(), evidence)
-
-    if "lógica de hoare" in lower:
-        return (
-            "Formalismo para especificar e verificar programas com pré-condições, pós-condições e invariantes.",
-            "tripla de Hoare",
-            "lógica temporal",
-        )
-    if "model checking" in lower or "verificação de modelos" in lower:
-        return (
-            "Técnica automática que checa se um modelo de sistema satisfaz propriedades formais.",
-            "checagem de modelos",
-            "prova de teoremas",
-        )
-    if "provadores de teoremas" in lower or "prova interativa de teoremas" in lower:
-        return (
-            "Ferramentas e técnicas usadas para construir provas formais com assistência mecânica.",
-            "assistentes de prova",
-            "model checking",
-        )
-    if "métodos formais" in lower:
-        return (
-            "Conjunto de técnicas matemáticas para especificar, modelar e verificar sistemas de software.",
-            "formal methods",
-            "testes informais",
-        )
-    if "máquinas de estado" in lower:
-        return (
-            "Modelo que representa um sistema por estados e transições entre eles.",
-            "state machines",
-            "árvores de derivação",
-        )
-    if "modelos de kripke" in lower:
-        return (
-            "Estruturas de estados rotulados usadas para interpretar propriedades em lógica temporal.",
-            "estruturas de Kripke",
-            "máquina de Turing",
-        )
-    if "lógica temporal linear" in lower:
-        return (
-            "Lógica temporal que descreve propriedades ao longo de sequências lineares de estados.",
-            "LTL",
-            "CTL",
-        )
-    if "lógica temporal ramificada" in lower:
-        return (
-            "Lógica temporal que considera múltiplos futuros possíveis a partir de um estado.",
-            "CTL",
-            "LTL",
-        )
-    if "pré e pós" in lower:
-        return (
-            "Condições que descrevem o que deve valer antes e depois da execução de um programa.",
-            "precondições e pós-condições",
-            "invariantes de laço",
-        )
-    if "invariante e variante de laço" in lower:
-        return (
-            "Propriedades usadas para demonstrar correção parcial e terminação de laços.",
-            "invariante de laço",
-            "pré-condições",
-        )
-    if "planejamento clássico" in lower or lower == "planejamento":
-        return (
-            "Abordagem que busca sequências de ações para atingir objetivos em um modelo explícito de estados.",
-            "planning",
-            "busca adversária",
-        )
-    if "agentes em lógica" in lower or "introdução a agentes" in lower:
-        return (
-            "Modelo de agente que percebe o ambiente e escolhe ações segundo uma representação formal.",
-            "agentes racionais",
-            "classificadores supervisionados",
-        )
-    if "busca informada" in lower:
-        return (
-            "Busca guiada por heurísticas para explorar primeiro estados mais promissores.",
-            "busca heurística",
-            "busca cega",
-        )
-    if "algoritmos de busca" in lower:
-        return (
-            "Procedimentos para explorar espaços de estados e encontrar soluções para problemas modelados.",
-            "search algorithms",
-            "métodos de otimização contínua",
-        )
-    if "busca adversária" in lower:
-        return (
-            "Estratégia de decisão para problemas competitivos em que as ações dependem do oponente.",
-            "jogos adversariais",
-            "busca heurística simples",
-        )
-    if "representação de problemas" in lower:
-        return (
-            "Forma de modelar estados, ações, restrições e objetivos para permitir resolução algorítmica.",
-            "modelagem do problema",
-            "pré-processamento de dados",
-        )
-    if "probabilidade" in lower or "regra de bayes" in lower or "independência e permutabilidade" in lower:
-        return (
-            "Conceito central de raciocínio sob incerteza usado para modelar crenças e atualizar evidências.",
-            "inferência probabilística",
-            "lógica determinística",
-        )
-    if "aprendizado de máquina" in lower:
-        return (
-            "Área da IA que aprende padrões a partir de dados para descrever ou prever comportamentos.",
-            "machine learning",
-            "planejamento clássico",
-        )
-    if "paradigmas de aprendizado" in lower:
-        return (
-            "Categorias de estratégias de aprendizado, como supervisionado, não supervisionado e por reforço.",
-            "tipos de aprendizado",
-            "métricas de avaliação",
-        )
-    if "modelos preditivos" in lower:
-        return (
-            "Modelos voltados a prever saídas, classes ou valores a partir de exemplos observados.",
-            "modelos supervisionados",
-            "modelos descritivos",
-        )
-    if "modelos descritivos" in lower:
-        return (
-            "Modelos usados para revelar estrutura, agrupamentos ou relações presentes nos dados.",
-            "modelos exploratórios",
-            "modelos preditivos",
-        )
-    if "métricas de avaliação" in lower:
-        return (
-            "Critérios quantitativos usados para comparar desempenho e qualidade de modelos.",
-            "medidas de desempenho",
-            "função objetivo do problema",
-        )
-    if "k-means" in lower:
-        return (
-            "Algoritmo de agrupamento que particiona exemplos em grupos definidos por centróides.",
-            "agrupamento k-means",
-            "k-NN",
-        )
-    if "k-nn" in lower:
-        return (
-            "Método que classifica ou estima saídas com base nos vizinhos mais próximos no espaço de atributos.",
-            "k nearest neighbors",
-            "k-means",
-        )
-    if "árvores de decisão" in lower:
-        return (
-            "Modelo que organiza decisões em divisões sucessivas sobre atributos dos dados.",
-            "decision trees",
-            "grafos de busca",
-        )
-    if "mlp" in lower or "rede neural" in lower or "perceptron" in lower:
-        return (
-            "Família de modelos conexionistas que aprende transformações por camadas a partir de exemplos.",
-            "redes neurais artificiais",
-            "árvore de decisão",
-        )
-    if "conceituação" in lower:
-        return (
-            _refine_glossary_definition_from_evidence(text, _unit_hint(), evidence),
-            "visão geral",
-            "detalhamento técnico",
-        )
-    if "histórico" in lower:
-        return (
-            _refine_glossary_definition_from_evidence(text, _unit_hint(), evidence),
-            "contexto histórico",
-            "estado da arte detalhado",
-        )
-
-    return (
-        _generic_definition(),
-        "—",
-        "—",
+    return _repo_artifacts.collect_glossary_evidence(
+        root_dir,
+        manifest_entries=manifest_entries,
+        collapse_ws=_collapse_ws,
+        strip_frontmatter_block=_strip_frontmatter_block,
+        extract_markdown_headings_fn=_extract_markdown_headings,
     )
 
+def _glossary_tokens(text: str) -> List[str]:
+    return _repo_artifacts.glossary_tokens(text)
+
+def _trim_glossary_prefix(text: str, prefixes: List[str]) -> str:
+    return _repo_artifacts.trim_glossary_prefix(text, prefixes, collapse_ws=_collapse_ws)
+
+def _shorten_glossary_sentence(sentence: str, max_chars: int = 180) -> str:
+    return _repo_artifacts.shorten_glossary_sentence(
+        sentence,
+        collapse_ws=_collapse_ws,
+        max_chars=max_chars,
+    )
+
+def _is_bad_glossary_evidence(sentence: str) -> bool:
+    return _repo_artifacts.is_bad_glossary_evidence(sentence, collapse_ws=_collapse_ws)
+
+def _find_glossary_evidence(term: str, unit_title: str, docs: List[Dict[str, str]]) -> str:
+    return _repo_artifacts.find_glossary_evidence(
+        term,
+        unit_title,
+        docs,
+        glossary_tokens_fn=_glossary_tokens,
+        best_glossary_sentence_fn=_best_glossary_sentence,
+    )
+
+def _best_glossary_sentence(term: str, unit_title: str, doc: Dict[str, str]) -> str:
+    return _repo_artifacts.best_glossary_sentence(
+        term,
+        unit_title,
+        doc,
+        collapse_ws=_collapse_ws,
+        glossary_tokens_fn=_glossary_tokens,
+        trim_glossary_prefix_fn=_trim_glossary_prefix,
+        is_bad_glossary_evidence_fn=_is_bad_glossary_evidence,
+        normalize_glossary_sentence_fn=_normalize_glossary_sentence,
+        shorten_glossary_sentence_fn=_shorten_glossary_sentence,
+    )
+
+def _normalize_glossary_sentence(term: str, unit_title: str, sentence: str) -> str:
+    return _repo_artifacts.normalize_glossary_sentence(
+        term,
+        unit_title,
+        sentence,
+        collapse_ws=_collapse_ws,
+        shorten_glossary_sentence_fn=_shorten_glossary_sentence,
+    )
+
+def _seed_glossary_fields(term: str, unit_title: str, evidence: str = "") -> tuple[str, str, str]:
+    return _repo_artifacts.seed_glossary_fields(
+        term,
+        unit_title,
+        evidence=evidence,
+        collapse_ws=_collapse_ws,
+        refine_glossary_definition_from_evidence_fn=_refine_glossary_definition_from_evidence,
+    )
 
 def _refine_glossary_definition_from_evidence(term: str, unit_hint: str, evidence: str) -> str:
-    compact = _collapse_ws(evidence)
-    if compact:
-        sentences = re.split(r"(?<=[.!?])\s+", compact)
-        term_tokens = _glossary_tokens(term)
-        for sentence in sentences:
-            sent = _normalize_glossary_sentence(term, unit_hint, sentence)
-            sent_lower = sent.lower()
-            if len(sent) < 40:
-                continue
-            if term.lower() in sent_lower or sum(1 for token in term_tokens if token in sent_lower) >= 2:
-                cleaned = re.sub(r"^[^A-Za-zÀ-ÿ0-9]*", "", sent).rstrip(" .")
-                cleaned = _shorten_glossary_sentence(cleaned, 180)
-                if not cleaned.endswith("."):
-                    cleaned += "."
-                return cleaned
-    return f"Conceito central de {unit_hint} que deve ser reconhecido e usado corretamente nas respostas e revisões."
-
+    return _repo_artifacts.refine_glossary_definition_from_evidence(
+        term,
+        unit_hint,
+        evidence,
+        collapse_ws=_collapse_ws,
+        glossary_tokens_fn=_glossary_tokens,
+        normalize_glossary_sentence_fn=_normalize_glossary_sentence,
+        shorten_glossary_sentence_fn=_shorten_glossary_sentence,
+    )
 
 _NO_UNIT_CATEGORIES = {"cronograma", "bibliografia", "referencias"}
 
 
 def _bundle_priority_score(entry: dict) -> int:
-    score = 0
-    category = (entry.get("category") or "").strip().lower()
-    title = (entry.get("title") or "").strip().lower()
-    profile = normalize_document_profile(entry.get("effective_profile"))
-
-    if entry.get("include_in_bundle"):
-        score += 30
-    if entry.get("relevant_for_exam"):
-        score += 40
-    if category in EXAM_CATEGORIES:
-        score += 45
-    elif category in EXERCISE_CATEGORIES:
-        score += 35
-    elif category in {"material-de-aula", "codigo-professor", "quadro-branco"}:
-        score += 20
-    elif category in {"bibliografia", "referencias", "cronograma"}:
-        score += 5
-
-    if profile in {"math_heavy", "diagram_heavy"}:
-        score += 10
-
-    if "resumo" in title or "summary" in title:
-        score += 10
-    if "lista" in title or "exerc" in title:
-        score += 8
-    return score
+    return _repo_artifacts.bundle_priority_score(
+        entry,
+        normalize_document_profile_fn=normalize_document_profile,
+        exam_categories=EXAM_CATEGORIES,
+        exercise_categories=EXERCISE_CATEGORIES,
+    )
 
 
 def _bundle_reason_labels(entry: dict) -> List[str]:
-    reasons: List[str] = []
-    category = (entry.get("category") or "").strip().lower()
-    profile = normalize_document_profile(entry.get("effective_profile"))
-    if entry.get("include_in_bundle"):
-        reasons.append("marcado-manualmente")
-    if entry.get("relevant_for_exam"):
-        reasons.append("relevante-para-prova")
-    if category in EXAM_CATEGORIES:
-        reasons.append("categoria-prova")
-    elif category in EXERCISE_CATEGORIES:
-        reasons.append("categoria-exercicio")
-    elif category in {"material-de-aula", "codigo-professor", "quadro-branco"}:
-        reasons.append("material-base")
-    if profile in {"math_heavy", "diagram_heavy"}:
-        reasons.append(f"perfil-{profile}")
-    return reasons or ["prioridade-geral"]
+    return _repo_artifacts.bundle_reason_labels(
+        entry,
+        normalize_document_profile_fn=normalize_document_profile,
+        exam_categories=EXAM_CATEGORIES,
+        exercise_categories=EXERCISE_CATEGORIES,
+    )
 
 
 _MANIFEST_LOG_LIMIT = 200
@@ -7189,79 +5161,27 @@ def _entry_image_source_dirs(root_dir: Path, entry: dict) -> List[Path]:
 
 
 def _entry_existing_reference_count(root_dir: Path, entry: dict) -> int:
-    refs: List[Path] = []
-    for key in [
-        "raw_target",
-        "base_markdown",
-        "advanced_markdown",
-        "manual_review",
-        "tables_dir",
-        "table_detection_dir",
-        "advanced_asset_dir",
-        "advanced_metadata_path",
-        "approved_markdown",
-        "curated_markdown",
-    ]:
-        value = entry.get(key)
-        if value:
-            refs.append(root_dir / value)
-    refs.extend(_entry_image_source_dirs(root_dir, entry))
-    return sum(1 for path in refs if path.exists())
+    return _repo_artifacts.entry_existing_reference_count(
+        root_dir,
+        entry,
+        entry_image_source_dirs_fn=_entry_image_source_dirs,
+    )
 
 
 def _filter_live_manifest_entries(root_dir: Optional[Path], manifest_entries: list) -> list:
-    if not root_dir:
-        return list(manifest_entries or [])
-
-    live_entries = []
-    for entry in manifest_entries or []:
-        if not isinstance(entry, dict):
-            continue
-
-        ref_count = _entry_existing_reference_count(root_dir, entry)
-        if ref_count > 0:
-            live_entries.append(entry)
-            continue
-
-        has_any_reference = any(
-            entry.get(key)
-            for key in [
-                "raw_target",
-                "base_markdown",
-                "advanced_markdown",
-                "manual_review",
-                "images_dir",
-                "tables_dir",
-                "table_detection_dir",
-                "advanced_asset_dir",
-                "advanced_metadata_path",
-                "approved_markdown",
-                "curated_markdown",
-                "rendered_pages_dir",
-            ]
-        )
-        if not has_any_reference:
-            live_entries.append(entry)
-
-    return live_entries
+    return _repo_artifacts.filter_live_manifest_entries(
+        root_dir,
+        manifest_entries,
+        entry_existing_reference_count_fn=_entry_existing_reference_count,
+    )
 
 
 def _bundle_seed_candidate(entry: dict, score: int) -> dict:
-    """Return a strict metadata-only payload for bundle.seed.json."""
-    return {
-        "id": entry["id"],
-        "title": entry["title"],
-        "category": entry["category"],
-        "preferred_manual_review": entry.get("manual_review"),
-        "approved_markdown": entry.get("approved_markdown"),
-        "curated_markdown": entry.get("curated_markdown"),
-        "advanced_markdown": entry.get("advanced_markdown"),
-        "base_markdown": entry.get("base_markdown"),
-        "effective_profile": entry.get("effective_profile"),
-        "relevant_for_exam": bool(entry.get("relevant_for_exam")),
-        "bundle_priority_score": score,
-        "bundle_reasons": _bundle_reason_labels(entry),
-    }
+    return _repo_artifacts.bundle_seed_candidate(
+        entry,
+        score,
+        bundle_reason_labels_fn=_bundle_reason_labels,
+    )
 
 
 def _normalize_match_text(text: str) -> str:
@@ -7333,58 +5253,17 @@ def _build_file_map_content_taxonomy_from_course(
     subject_profile=None,
     manifest_entries: Optional[List[dict]] = None,
 ) -> dict:
-    test_taxonomy = course_meta.get("_content_taxonomy") or course_meta.get("_content_taxonomy_for_tests")
-    if test_taxonomy:
-        return dict(test_taxonomy)
-
-    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
-    if not teaching_plan:
-        return {"version": 1, "course_slug": "", "units": []}
-
-    root_dir = course_meta.get("_repo_root")
-    course_name = course_meta.get("course_name", "Curso")
-    parsed_units = _parse_units_from_teaching_plan(teaching_plan)
-    course_map_lines = [f"# COURSE_MAP â€” {course_name}", ""]
-    if parsed_units:
-        for unit_title, topics in parsed_units:
-            course_map_lines.append(f"### {unit_title}")
-            if topics:
-                for topic in topics:
-                    course_map_lines.append(f"- [ ] {_topic_text(topic)}")
-            else:
-                course_map_lines.append("- [ ] [tópicos a preencher]")
-            course_map_lines.append("")
-    else:
-        course_map_lines.append(teaching_plan)
-    course_map_text = "\n".join(course_map_lines)
-    glossary_text = ""
-    if subject_profile:
-        try:
-            glossary_text = glossary_md(
-                course_meta,
-                subject_profile,
-                root_dir=root_dir,
-                manifest_entries=manifest_entries,
-            )
-        except Exception:
-            glossary_text = ""
-    strong_headings = _collect_strong_heading_candidates(root_dir, manifest_entries)
-    semantic_profile = resolve_semantic_profile(
-        root_dir=root_dir,
-        course_name=course_name,
-        teaching_plan=teaching_plan,
-        course_map_md=course_map_text,
-        glossary_md=glossary_text,
-        strong_headings=strong_headings,
+    return _file_map_build_file_map_content_taxonomy_from_course(
+        course_meta,
+        subject_profile,
+        manifest_entries=manifest_entries,
+        parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
+        topic_text=_topic_text,
+        glossary_md_fn=glossary_md,
+        collect_strong_heading_candidates=_collect_strong_heading_candidates,
+        resolve_semantic_profile_fn=resolve_semantic_profile,
+        build_content_taxonomy_fn=_build_content_taxonomy,
     )
-    return _build_content_taxonomy(
-        teaching_plan=teaching_plan,
-        course_map_md=course_map_text,
-        glossary_md=glossary_text,
-        strong_headings=strong_headings,
-        semantic_profile=semantic_profile,
-    )
-
 
 def _auto_map_entry_subtopic(entry: dict, taxonomy: dict, markdown_text: str) -> TopicMatchResult:
     return _file_map_auto_map_entry_subtopic(
@@ -7444,55 +5323,18 @@ def _resolve_entry_manual_timeline_block(entry: dict, timeline_context: dict) ->
 
 
 def _build_file_map_unit_index_from_course(course_meta: dict, subject_profile=None) -> list:
-    test_index = course_meta.get("_unit_index_for_tests")
-    if test_index:
-        return _build_file_map_unit_index(test_index)
-
-    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
-    if not teaching_plan:
-        return []
-
-    parsed_units = _parse_units_from_teaching_plan(teaching_plan)
-    root_dir = course_meta.get("_repo_root")
-    glossary_text = ""
-    try:
-        glossary_text = glossary_md(course_meta, subject_profile, root_dir=root_dir, manifest_entries=None)
-    except Exception:
-        glossary_text = ""
-
-    glossary_terms = _parse_glossary_terms(glossary_text)
-    unit_specs = []
-    for title, topics in parsed_units:
-        normalized_unit = _normalize_match_text(title)
-        extra_signals = []
-        seen_signals = set()
-        for term in glossary_terms:
-            unit_hint = _normalize_match_text(str(term.get("unit_hint", "") or ""))
-            if unit_hint and unit_hint not in normalized_unit and normalized_unit not in unit_hint:
-                continue
-            for candidate in [
-                str(term.get("term", "") or ""),
-                *list(term.get("synonyms", []) or []),
-            ]:
-                cleaned = _collapse_ws(str(candidate))
-                normalized = _normalize_match_text(cleaned)
-                if not normalized or normalized in seen_signals:
-                    continue
-                seen_signals.add(normalized)
-                extra_signals.append(cleaned)
-
-            definition = _normalize_match_text(str(term.get("definition", "") or ""))
-            for token in definition.split():
-                if len(token) < 5 or token in _UNIT_GENERIC_TOKENS or token in _TIMELINE_UNIT_NEUTRAL_TOKENS:
-                    continue
-                if token in seen_signals:
-                    continue
-                seen_signals.add(token)
-                extra_signals.append(token)
-
-        unit_specs.append({"title": title, "topics": topics, "extra_signals": extra_signals})
-    return _build_file_map_unit_index(unit_specs)
-
+    return _file_map_build_file_map_unit_index_from_course(
+        course_meta,
+        subject_profile,
+        build_file_map_unit_index_fn=_build_file_map_unit_index,
+        parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
+        glossary_md_fn=glossary_md,
+        parse_glossary_terms_fn=_parse_glossary_terms,
+        normalize_match_text_fn=_normalize_match_text,
+        collapse_ws_fn=_collapse_ws,
+        unit_generic_tokens=_UNIT_GENERIC_TOKENS,
+        timeline_unit_neutral_tokens=_TIMELINE_UNIT_NEUTRAL_TOKENS,
+    )
 
 def student_state_md(course_meta: dict, student_profile=None) -> str:
     return _repo_artifacts.student_state_md(

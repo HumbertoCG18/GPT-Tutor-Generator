@@ -409,3 +409,710 @@ def resolve_entry_manual_timeline_block(entry: dict, timeline_context: dict) -> 
         if 1 <= ordinal <= len(instructional_blocks):
             return instructional_blocks[ordinal - 1]
     return None
+
+
+def score_entry_against_timeline_row(
+    signals: dict,
+    row_text: str,
+    *,
+    normalize_match_text: Callable[[str], str],
+    score_text_against_row: Callable[[str, List[str]], float],
+) -> float:
+    row_norm = normalize_match_text(row_text)
+    if not row_norm:
+        return 0.0
+
+    row_tokens = [tok for tok in row_norm.split() if len(tok) >= 4]
+    title_text = signals.get("title_text", "")
+    markdown_text = signals.get("markdown_text", "")
+    category_text = signals.get("category_text", "")
+    tags_text = signals.get("tags_text", "")
+    raw_text = signals.get("raw_text", "")
+    entry_norm = " ".join(filter(None, [title_text, markdown_text, category_text, tags_text, raw_text]))
+    is_exercise_entry = any(term in entry_norm for term in [
+        "exercicio",
+        "exercicios",
+        "lista",
+        "listas",
+        "gabarito",
+        "respostas",
+    ])
+
+    score = 0.0
+    for source, weight in [
+        (title_text, 1.25),
+        (markdown_text, 1.0),
+        (raw_text, 0.65),
+        (tags_text, 0.35),
+        (category_text, 0.2),
+    ]:
+        score += score_text_against_row(source, row_tokens, weight=weight)
+        if source and source in row_norm:
+            score += min(1.5, max(0.35, len(source) / 18.0)) * weight
+
+    if any(term in row_norm for term in ["exercicio", "exercicios", "lista", "listas", "gabarito", "respostas"]):
+        score += 0.25
+        if is_exercise_entry:
+            score += 1.25
+    elif is_exercise_entry:
+        score -= 0.2
+    if any(term in row_norm for term in ["atividade assincrona", "atividade assíncrona", "complementar os estudos", "leituras recomendadas"]):
+        score += 0.15
+    if is_exercise_entry and "estudo de caso" in row_norm:
+        score += 0.35
+
+    return score
+
+
+def score_card_evidence_against_entry(
+    signals: dict,
+    card_items: List[Dict[str, str]],
+    *,
+    normalize_match_text: Callable[[str], str],
+) -> float:
+    if not card_items:
+        return 0.0
+
+    entry_text = str(signals.get("combined_text", "") or "").strip()
+    if not entry_text:
+        entry_text = " ".join(
+            filter(
+                None,
+                [
+                    signals.get("title_text", ""),
+                    signals.get("markdown_text", ""),
+                    signals.get("category_text", ""),
+                    signals.get("tags_text", ""),
+                    signals.get("raw_text", ""),
+                ],
+            )
+        )
+    entry_norm = normalize_match_text(entry_text)
+    if not entry_norm:
+        return 0.0
+
+    entry_tokens = {tok for tok in entry_norm.split() if len(tok) >= 4}
+    if not entry_tokens:
+        return 0.0
+
+    score = 0.0
+    for item in card_items:
+        normalized_title = normalize_match_text(str(item.get("normalized_title", "") or ""))
+        if not normalized_title:
+            continue
+        title_tokens = [tok for tok in normalized_title.split() if len(tok) >= 4]
+        if not title_tokens:
+            continue
+
+        item_score = 0.0
+        overlap = len(set(title_tokens) & entry_tokens)
+        if normalized_title in entry_norm:
+            item_score = 0.5
+        elif overlap >= 2:
+            item_score = 0.34
+        elif overlap == 1:
+            item_score = 0.16
+
+        if not item_score:
+            continue
+
+        source_kind = str(item.get("source_kind", "") or "")
+        if source_kind == "topic-title":
+            item_score += 0.05
+        elif source_kind == "card-title":
+            item_score += 0.03
+
+        score += item_score
+
+    return min(0.7, score)
+
+
+def timeline_block_rows_for_scoring(block: Dict[str, object]) -> list:
+    rows = list(block.get("rows", []) or [])
+    return [row for row in rows if not bool(row.get("ignored"))]
+
+
+def score_timeline_block(
+    signals: dict,
+    block: Dict[str, object],
+    *,
+    normalize_match_text: Callable[[str], str],
+    score_card_evidence_against_entry: Callable[[dict, List[Dict[str, str]]], float],
+) -> float:
+    rows = list(block.get("rows", []) or [])
+    scores = list(block.get("scores", []) or [])
+    filtered_pairs = [
+        (row, float(scores[idx]) if idx < len(scores) else 0.0)
+        for idx, row in enumerate(rows)
+        if not bool(row.get("ignored"))
+    ]
+    rows = [row for row, _ in filtered_pairs]
+    scores = [score for _, score in filtered_pairs]
+    if not rows or not scores:
+        return 0.0
+
+    anchor_score = float(scores[0]) if scores else 0.0
+    support_scores = [max(0.0, float(score)) for score in scores[1:]]
+    support_bonus = min(2.25, sum(support_scores) * 0.18)
+    generic_exercise_bonus = 0.0
+
+    entry_norm = " ".join(
+        filter(
+            None,
+            [
+                signals.get("title_text", ""),
+                signals.get("markdown_text", ""),
+                signals.get("category_text", ""),
+                signals.get("tags_text", ""),
+                signals.get("raw_text", ""),
+            ],
+        )
+    )
+    is_exercise_entry = any(term in entry_norm for term in ["exercicio", "exercicios", "lista", "listas", "gabarito", "respostas"])
+    if is_exercise_entry:
+        for row in rows[1:]:
+            row_text = normalize_match_text(str(row.get("content", "")))
+            if any(term in row_text for term in ["exercicio", "exercicios", "lista", "listas", "gabarito", "respostas"]):
+                generic_exercise_bonus += 0.22
+
+    card_bonus = score_card_evidence_against_entry(signals, block.get("card_evidence", []) or [])
+
+    return anchor_score * 1.15 + support_bonus + min(generic_exercise_bonus, 0.66) + min(card_bonus, 0.45)
+
+
+def timeline_block_matches_preferred_topic(block: Dict[str, object], preferred_topic_slug: str) -> bool:
+    preferred_topic_slug = str(preferred_topic_slug or "").strip()
+    if not preferred_topic_slug:
+        return False
+
+    block_topic_slug = str(block.get("primary_topic_slug", "") or "").strip()
+    if block_topic_slug == preferred_topic_slug:
+        return True
+
+    for candidate in block.get("topic_candidates", []) or []:
+        if str(candidate.get("topic_slug", "") or "").strip() == preferred_topic_slug:
+            return True
+
+    return False
+
+
+def score_entry_against_timeline_block(
+    signals: dict,
+    block: Dict[str, object],
+    *,
+    normalize_match_text: Callable[[str], str],
+    score_text_against_row: Callable[[str, List[str]], float],
+    score_card_evidence_against_entry_fn: Callable[[dict, List[Dict[str, str]]], float],
+    preferred_unit_slug: str = "",
+    preferred_topic_slug: str = "",
+) -> float:
+    rows = timeline_block_rows_for_scoring(block)
+    if not rows:
+        return 0.0
+    row_scores = [
+        score_entry_against_timeline_row(
+            signals,
+            str(row.get("content", "")),
+            normalize_match_text=normalize_match_text,
+            score_text_against_row=score_text_against_row,
+        )
+        for row in rows
+    ]
+    runtime_block = dict(block)
+    runtime_block["rows"] = rows
+    runtime_block["scores"] = row_scores
+    score = score_timeline_block(
+        signals,
+        runtime_block,
+        normalize_match_text=normalize_match_text,
+        score_card_evidence_against_entry=score_card_evidence_against_entry_fn,
+    )
+
+    block_unit_slug = str(block.get("unit_slug", "") or "")
+    block_unit_confidence = float(block.get("unit_confidence", 0.0) or 0.0)
+    if preferred_unit_slug:
+        if block_unit_slug == preferred_unit_slug:
+            score += 0.35 + (block_unit_confidence * 0.25)
+        elif block_unit_slug:
+            score -= 0.45
+
+    preferred_topic_slug = str(preferred_topic_slug or "").strip()
+    if preferred_topic_slug:
+        block_topic_slug = str(block.get("primary_topic_slug", "") or "").strip()
+        block_topic_confidence = float(block.get("primary_topic_confidence", 0.0) or 0.0)
+        if block_topic_slug == preferred_topic_slug:
+            score += 0.8 + (block_topic_confidence * 0.35)
+        elif timeline_block_matches_preferred_topic(block, preferred_topic_slug):
+            score += 0.48
+        elif block_topic_slug:
+            score -= 0.18
+
+    topic_text = normalize_match_text(str(block.get("topic_text", "")))
+    if topic_text:
+        topic_tokens = [tok for tok in topic_text.split() if len(tok) >= 4]
+        score += score_text_against_row(signals.get("manual_tags_text", ""), topic_tokens, weight=0.35)
+        score += score_text_against_row(signals.get("auto_tags_text", ""), topic_tokens, weight=0.12)
+        score += score_text_against_row(signals.get("legacy_tags_text", ""), topic_tokens, weight=0.05)
+
+    score += min(score_card_evidence_against_entry_fn(signals, block.get("card_evidence", []) or []), 0.45)
+    return score
+
+
+def collect_entry_temporal_signals(
+    entry: dict,
+    markdown_text: str,
+    *,
+    collapse_ws: Callable[[str], str],
+    normalize_match_text: Callable[[str], str],
+    extract_date_range_signal: Callable[[str], dict],
+    extract_timeline_session_signals: Callable[[str], List[dict]],
+) -> dict:
+    raw_parts = [
+        str(entry.get("title", "") or ""),
+        str(entry.get("raw_target", "") or ""),
+        str(entry.get("category", "") or ""),
+        str(entry.get("tags", "") or ""),
+        markdown_text or "",
+    ]
+    combined_text = "\n".join(part for part in raw_parts if collapse_ws(part))
+    date_range = extract_date_range_signal(combined_text)
+    session_signals = extract_timeline_session_signals(combined_text)
+    date_values = set()
+    for session in session_signals:
+        session_date = str(session.get("date", "") or "").strip()
+        if session_date:
+            date_values.add(session_date)
+    if date_range.get("start"):
+        date_values.add(str(date_range.get("start", "")).strip())
+    if date_range.get("end"):
+        date_values.add(str(date_range.get("end", "")).strip())
+    return {
+        "combined_text": normalize_match_text(combined_text),
+        "date_range": date_range,
+        "date_values": sorted(date_values),
+        "session_signals": session_signals,
+    }
+
+
+def entry_temporal_range_contains(
+    date_text: str,
+    date_range: dict,
+    *,
+    parse_timeline_date_value: Callable[[str], object],
+) -> bool:
+    if not date_text or not date_range:
+        return False
+    session_dt = parse_timeline_date_value(date_text)
+    start_dt = parse_timeline_date_value(str(date_range.get("start", "") or ""))
+    end_dt = parse_timeline_date_value(str(date_range.get("end", "") or ""))
+    if not session_dt or not start_dt or not end_dt:
+        return False
+    return start_dt <= session_dt <= end_dt
+
+
+def score_entry_against_timeline_session(
+    entry_temporal_signals: dict,
+    session: Dict[str, object],
+    *,
+    normalize_match_text: Callable[[str], str],
+    score_text_against_row: Callable[[str, List[str]], float],
+    score_card_evidence_against_entry_fn: Callable[[dict, List[Dict[str, str]]], float],
+    entry_temporal_range_contains_fn: Callable[[str, dict], bool],
+) -> tuple[float, float]:
+    if not session:
+        return 0.0, 0.0
+
+    entry_text = str(entry_temporal_signals.get("combined_text", "") or "")
+    if not entry_text:
+        return 0.0, 0.0
+
+    session_label = normalize_match_text(str(session.get("label", "") or ""))
+    session_signals = [
+        normalize_match_text(str(signal))
+        for signal in (session.get("signals", []) or [])
+        if normalize_match_text(str(signal))
+    ]
+    session_text = " ".join(filter(None, [session_label, " ".join(session_signals)]))
+    session_tokens = [tok for tok in session_text.split() if len(tok) >= 4]
+    score = score_text_against_row(entry_text, session_tokens, weight=1.1)
+
+    session_date = str(session.get("date", "") or "").strip()
+    date_values = {
+        str(value).strip()
+        for value in (entry_temporal_signals.get("date_values") or [])
+        if str(value).strip()
+    }
+    if session_date:
+        if session_date in date_values:
+            score += 3.0
+        elif entry_temporal_range_contains_fn(session_date, entry_temporal_signals.get("date_range") or {}):
+            score += 2.2
+
+    kind = str(session.get("kind", "") or "").strip()
+    if kind == "async":
+        if any(
+            term in entry_text
+            for term in [
+                "atividade assincrona",
+                "atividade assíncrona",
+                "assincrona",
+                "assincrono",
+                "async",
+            ]
+        ):
+            score += 0.9
+    elif kind == "class" and session_date:
+        if any(term in entry_text for term in ["aula", "semana", "dia"]):
+            score += 0.15
+
+    card_bonus = min(
+        0.55,
+        score_card_evidence_against_entry_fn(entry_temporal_signals, session.get("card_evidence", []) or []),
+    )
+    if card_bonus > 0:
+        score += card_bonus
+
+    return score, card_bonus
+
+
+def score_entry_against_timeline_sessions(
+    entry_temporal_signals: dict,
+    block: Dict[str, object],
+    *,
+    normalize_match_text: Callable[[str], str],
+    score_text_against_row: Callable[[str, List[str]], float],
+    score_card_evidence_against_entry_fn: Callable[[dict, List[Dict[str, str]]], float],
+    entry_temporal_range_contains_fn: Callable[[str, dict], bool],
+) -> tuple[float, Optional[Dict[str, object]], float]:
+    best_score = 0.0
+    best_session: Optional[Dict[str, object]] = None
+    best_card_bonus = 0.0
+    for session in block.get("sessions", []) or []:
+        score, card_bonus = score_entry_against_timeline_session(
+            entry_temporal_signals,
+            session,
+            normalize_match_text=normalize_match_text,
+            score_text_against_row=score_text_against_row,
+            score_card_evidence_against_entry_fn=score_card_evidence_against_entry_fn,
+            entry_temporal_range_contains_fn=entry_temporal_range_contains_fn,
+        )
+        if score > best_score:
+            best_score = score
+            best_session = session
+            best_card_bonus = card_bonus
+    return best_score, best_session, best_card_bonus
+
+
+def select_probable_period_for_entry(
+    entry: dict,
+    unit: dict,
+    candidate_rows: List[Dict[str, object]],
+    markdown_text: str,
+    *,
+    preferred_topic_slug: str = "",
+    collect_entry_unit_signals: Callable[[dict, str], dict],
+    build_timeline_index: Callable[[List[Dict[str, object]], Optional[list]], dict],
+    timeline_period_label: Callable[[str, str], str],
+    collapse_ws: Callable[[str], str],
+    normalize_match_text: Callable[[str], str],
+    score_text_against_row: Callable[[str, List[str]], float],
+    extract_date_range_signal: Callable[[str], dict],
+    extract_timeline_session_signals: Callable[[str], List[dict]],
+    parse_timeline_date_value: Callable[[str], object],
+) -> tuple[str, float, bool, List[str]]:
+    if not candidate_rows:
+        return "", 0.0, True, ["sem-linhas-candidato"]
+
+    signals = collect_entry_unit_signals(entry, markdown_text)
+    if candidate_rows and "rows" in candidate_rows[0]:
+        blocks = list(candidate_rows)
+    else:
+        timeline_index = build_timeline_index(candidate_rows, unit_index=[unit] if unit else [])
+        blocks = list(timeline_index.get("blocks", []) or [])
+    if not blocks:
+        return "", 0.0, True, ["sem-blocos-candidato"]
+
+    preferred_unit_slug = str(unit.get("slug", "") or "")
+    preferred_topic_slug = str(preferred_topic_slug or "").strip()
+    temporal_signals = collect_entry_temporal_signals(
+        entry,
+        markdown_text,
+        collapse_ws=collapse_ws,
+        normalize_match_text=normalize_match_text,
+        extract_date_range_signal=extract_date_range_signal,
+        extract_timeline_session_signals=extract_timeline_session_signals,
+    )
+    topic_filtered_blocks = [
+        block for block in blocks if timeline_block_matches_preferred_topic(block, preferred_topic_slug)
+    ]
+    scored_source_blocks = topic_filtered_blocks if topic_filtered_blocks else blocks
+    session_scored_blocks = []
+    for block in scored_source_blocks:
+        block_score = score_entry_against_timeline_block(
+            signals,
+            block,
+            normalize_match_text=normalize_match_text,
+            score_text_against_row=score_text_against_row,
+            score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
+                s,
+                items,
+                normalize_match_text=normalize_match_text,
+            ),
+            preferred_unit_slug=preferred_unit_slug,
+            preferred_topic_slug=preferred_topic_slug,
+        )
+        session_score, matched_session, session_card_bonus = score_entry_against_timeline_sessions(
+            temporal_signals,
+            block,
+            normalize_match_text=normalize_match_text,
+            score_text_against_row=score_text_against_row,
+            score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
+                s,
+                items,
+                normalize_match_text=normalize_match_text,
+            ),
+            entry_temporal_range_contains_fn=lambda date_text, date_range: entry_temporal_range_contains(
+                date_text,
+                date_range,
+                parse_timeline_date_value=parse_timeline_date_value,
+            ),
+        )
+        if session_score >= 1.0:
+            session_scored_blocks.append((block, session_score, block_score, matched_session, session_card_bonus))
+
+    if session_scored_blocks:
+        session_scored_blocks.sort(key=lambda item: (item[1], item[2], item[4]), reverse=True)
+        best_block, best_score, best_block_score, best_session, best_session_card_bonus = session_scored_blocks[0]
+        runner_up_score = session_scored_blocks[1][1] if len(session_scored_blocks) > 1 else 0.0
+        if best_score < 1.0:
+            return "", best_score, True, [f"best={best_score:.2f}", "score-baixo"]
+        selected_rows = list(best_block.get("rows", []) or [])
+        period = str(best_block.get("period_label", "")).strip()
+        if not period:
+            selected_dates = [
+                str(row.get("date_text", "")).strip()
+                for row in selected_rows
+                if str(row.get("date_text", "")).strip()
+            ]
+            if selected_dates:
+                period = timeline_period_label(selected_dates[0], selected_dates[-1])
+        if not period:
+            return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
+
+        confidence = min(1.0, max(0.0, (best_score - runner_up_score) + (best_score * 0.18)))
+        ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
+        if len(session_scored_blocks) == 1 and not ambiguous:
+            confidence = max(confidence, 0.72)
+        reasons = [
+            f"best={best_score:.2f}",
+            f"runner_up={runner_up_score:.2f}",
+            f"session_block={best_block_score:.2f}",
+            f"selected_rows={len(selected_rows)}",
+            f"selected_block_rows={len(selected_rows)}",
+            "session-first",
+        ]
+        if best_session and best_session.get("id"):
+            reasons.append(f"session={best_session.get('id')}")
+        if best_session_card_bonus >= 0.15:
+            reasons.append("card-evidence")
+        if preferred_topic_slug:
+            reasons.append(f"topic={preferred_topic_slug}")
+            if topic_filtered_blocks:
+                reasons.append("topic-filtered")
+        if ambiguous:
+            reasons.append("ambiguous")
+        return period, confidence, ambiguous, reasons
+
+    scored_blocks = [
+        (
+            block,
+            score_entry_against_timeline_block(
+                signals,
+                block,
+                normalize_match_text=normalize_match_text,
+                score_text_against_row=score_text_against_row,
+                score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
+                    s,
+                    items,
+                    normalize_match_text=normalize_match_text,
+                ),
+                preferred_unit_slug=preferred_unit_slug,
+                preferred_topic_slug=preferred_topic_slug,
+            ),
+        )
+        for block in scored_source_blocks
+    ]
+    scored_blocks.sort(key=lambda item: item[1], reverse=True)
+
+    best_block, best_score = scored_blocks[0]
+    runner_up_score = scored_blocks[1][1] if len(scored_blocks) > 1 else 0.0
+    if best_score < 0.95:
+        return "", best_score, True, [f"best={best_score:.2f}", "score-baixo"]
+    selected_rows = list(best_block.get("rows", []) or [])
+    period = str(best_block.get("period_label", "")).strip()
+    if not period:
+        selected_dates = [
+            str(row.get("date_text", "")).strip()
+            for row in selected_rows
+            if str(row.get("date_text", "")).strip()
+        ]
+        if selected_dates:
+            period = timeline_period_label(selected_dates[0], selected_dates[-1])
+    if not period:
+        return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
+
+    confidence = min(1.0, max(0.0, (best_score - runner_up_score) + (best_score * 0.18)))
+    ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
+    best_block_card_bonus = min(
+        0.45,
+        score_card_evidence_against_entry(
+            signals,
+            best_block.get("card_evidence", []) or [],
+            normalize_match_text=normalize_match_text,
+        ),
+    )
+    reasons = [
+        f"best={best_score:.2f}",
+        f"runner_up={runner_up_score:.2f}",
+        f"selected_rows={len(selected_rows)}",
+        f"selected_block_rows={len(selected_rows)}",
+    ]
+    if best_block_card_bonus >= 0.15:
+        reasons.append("card-evidence")
+    if preferred_topic_slug:
+        reasons.append(f"topic={preferred_topic_slug}")
+        if topic_filtered_blocks:
+            reasons.append("topic-filtered")
+    if ambiguous:
+        reasons.append("ambiguous")
+    return period, confidence, ambiguous, reasons
+
+
+def build_file_map_content_taxonomy_from_course(
+    course_meta: dict,
+    subject_profile=None,
+    manifest_entries: Optional[List[dict]] = None,
+    *,
+    parse_units_from_teaching_plan: Callable[[str], list],
+    topic_text: Callable[[object], str],
+    glossary_md_fn: Callable[..., str],
+    collect_strong_heading_candidates: Callable[[Optional[object], Optional[List[dict]]], List[str]],
+    resolve_semantic_profile_fn: Callable[..., dict],
+    build_content_taxonomy_fn: Callable[..., dict],
+) -> dict:
+    test_taxonomy = course_meta.get("_content_taxonomy") or course_meta.get("_content_taxonomy_for_tests")
+    if test_taxonomy:
+        return dict(test_taxonomy)
+
+    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
+    if not teaching_plan:
+        return {"version": 1, "course_slug": "", "units": []}
+
+    root_dir = course_meta.get("_repo_root")
+    course_name = course_meta.get("course_name", "Curso")
+    parsed_units = parse_units_from_teaching_plan(teaching_plan)
+    course_map_lines = [f"# COURSE_MAP --- {course_name}", ""]
+    if parsed_units:
+        for unit_title, topics in parsed_units:
+            course_map_lines.append(f"### {unit_title}")
+            if topics:
+                for topic in topics:
+                    course_map_lines.append(f"- [ ] {topic_text(topic)}")
+            else:
+                course_map_lines.append("- [ ] [topicos a preencher]")
+            course_map_lines.append("")
+    else:
+        course_map_lines.append(teaching_plan)
+    course_map_text = "\n".join(course_map_lines)
+
+    glossary_text = ""
+    if subject_profile:
+        try:
+            glossary_text = glossary_md_fn(
+                course_meta,
+                subject_profile,
+                root_dir=root_dir,
+                manifest_entries=manifest_entries,
+            )
+        except Exception:
+            glossary_text = ""
+
+    strong_headings = collect_strong_heading_candidates(root_dir, manifest_entries)
+    semantic_profile = resolve_semantic_profile_fn(
+        root_dir=root_dir,
+        course_name=course_name,
+        teaching_plan=teaching_plan,
+        course_map_md=course_map_text,
+        glossary_md=glossary_text,
+        strong_headings=strong_headings,
+    )
+    return build_content_taxonomy_fn(
+        teaching_plan=teaching_plan,
+        course_map_md=course_map_text,
+        glossary_md=glossary_text,
+        strong_headings=strong_headings,
+        semantic_profile=semantic_profile,
+    )
+
+
+def build_file_map_unit_index_from_course(
+    course_meta: dict,
+    subject_profile=None,
+    *,
+    build_file_map_unit_index_fn: Callable[[list], list],
+    parse_units_from_teaching_plan: Callable[[str], list],
+    glossary_md_fn: Callable[..., str],
+    parse_glossary_terms_fn: Callable[[str], List[Dict[str, object]]],
+    normalize_match_text_fn: Callable[[str], str],
+    collapse_ws_fn: Callable[[str], str],
+    unit_generic_tokens: set[str],
+    timeline_unit_neutral_tokens: set[str],
+) -> list:
+    test_index = course_meta.get("_unit_index_for_tests")
+    if test_index:
+        return build_file_map_unit_index_fn(test_index)
+
+    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
+    if not teaching_plan:
+        return []
+
+    parsed_units = parse_units_from_teaching_plan(teaching_plan)
+    root_dir = course_meta.get("_repo_root")
+    glossary_text = ""
+    try:
+        glossary_text = glossary_md_fn(course_meta, subject_profile, root_dir=root_dir, manifest_entries=None)
+    except Exception:
+        glossary_text = ""
+
+    glossary_terms = parse_glossary_terms_fn(glossary_text)
+    unit_specs = []
+    for title, topics in parsed_units:
+        normalized_unit = normalize_match_text_fn(title)
+        extra_signals = []
+        seen_signals = set()
+        for term in glossary_terms:
+            unit_hint = normalize_match_text_fn(str(term.get("unit_hint", "") or ""))
+            if unit_hint and unit_hint not in normalized_unit and normalized_unit not in unit_hint:
+                continue
+            for candidate in [
+                str(term.get("term", "") or ""),
+                *list(term.get("synonyms", []) or []),
+            ]:
+                cleaned = collapse_ws_fn(str(candidate))
+                normalized = normalize_match_text_fn(cleaned)
+                if not normalized or normalized in seen_signals:
+                    continue
+                seen_signals.add(normalized)
+                extra_signals.append(cleaned)
+
+            definition = normalize_match_text_fn(str(term.get("definition", "") or ""))
+            for token in definition.split():
+                if len(token) < 5 or token in unit_generic_tokens or token in timeline_unit_neutral_tokens:
+                    continue
+                if token in seen_signals:
+                    continue
+                seen_signals.add(token)
+                extra_signals.append(token)
+
+        unit_specs.append({"title": title, "topics": topics, "extra_signals": extra_signals})
+    return build_file_map_unit_index_fn(unit_specs)
