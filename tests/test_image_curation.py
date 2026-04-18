@@ -709,6 +709,77 @@ def test_image_curator_reinjects_descriptions_into_base_and_advanced_markdown(tm
     assert "Árvore de prova com 3 níveis." in advanced_text
 
 
+def test_strip_described_image_refs_removes_only_described_images():
+    from src.ui.image_curator import _strip_described_image_refs
+
+    curation = {
+        "pages": {
+            "1": {
+                "images": {
+                    "fig1.png": {"description": "Diagrama de blocos"},
+                    "fig2.png": {"description": None},
+                }
+            }
+        }
+    }
+    text = (
+        "## Secao\n\n"
+        "Texto antes.\n\n"
+        "![Figura 1](content/images/fig1.png)\n\n"
+        "Texto entre.\n\n"
+        "![](content/images/fig2.png)\n\n"
+        "Texto depois.\n"
+    )
+
+    result = _strip_described_image_refs(text, curation)
+
+    assert "fig1.png" not in result
+    assert "fig2.png" in result
+    assert "Texto antes." in result
+    assert "Texto depois." in result
+    assert "\n\n\n" not in result
+
+
+def test_inject_for_current_entry_updates_known_markdown_targets(tmp_path):
+    from src.ui.image_curator import _inject_for_current_entry
+
+    repo = tmp_path / "repo"
+    target = repo / "staging" / "markdown-auto" / "docling" / "advanced.md"
+    target.parent.mkdir(parents=True)
+    target.write_text(
+        "Texto.\n\n![](content/images/entry1-page-003-img-01.png)\n",
+        encoding="utf-8",
+    )
+
+    entry = {
+        "id": "entry1",
+        "advanced_markdown": "staging/markdown-auto/docling/advanced.md",
+        "image_curation": {
+            "status": "described",
+            "pages": {
+                "3": {
+                    "include_page": True,
+                    "images": {
+                        "entry1-page-003-img-01.png": {
+                            "type": "diagrama",
+                            "include": True,
+                            "description": "Arvore de prova com 3 niveis.",
+                        }
+                    },
+                }
+            },
+        },
+    }
+
+    modified = _inject_for_current_entry(repo, entry)
+    result = target.read_text(encoding="utf-8")
+
+    assert modified == [target]
+    assert "<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->" in result
+    assert "Arvore de prova com 3 niveis." in result
+    assert "![](content/images/entry1-page-003-img-01.png)" not in result
+
+
 def test_curator_studio_preserves_template_values_when_already_present():
     from src.ui.curator_studio import _merge_review_frontmatter_with_manifest
 
