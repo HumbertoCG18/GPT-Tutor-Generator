@@ -147,7 +147,7 @@ class TestVisionClientFactory:
 def test_image_types_include_latex_extraction():
     from src.ui.image_curator import IMAGE_TYPES
 
-    assert "extração-latex" in IMAGE_TYPES
+    assert "extracao-latex" in IMAGE_TYPES
 
 
 def test_image_curator_layout_mode_changes_by_width():
