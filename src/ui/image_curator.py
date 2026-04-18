@@ -310,7 +310,7 @@ class ImageCurator(tk.Toplevel):
 
         # Status bar
         self.status_var = tk.StringVar(
-            value="Selecione um entry para curar imagens"
+            value="Selecione uma entry para curar imagens"
         )
         status_bar = tk.Label(
             self,
@@ -1185,7 +1185,7 @@ class ImageCurator(tk.Toplevel):
     def _preclassify(self):
         """Run heuristic pre-classification on all images for the current entry."""
         if not self._current_entry:
-            messagebox.showinfo("Image Curator", "Selecione um entry primeiro.")
+            messagebox.showinfo("Image Curator", "Selecione uma entry primeiro.")
             return
 
         groups = self._current_entry.get("_image_groups", {})
@@ -1389,7 +1389,7 @@ class ImageCurator(tk.Toplevel):
     def _generate_descriptions(self):
         """Generate descriptions for included images using the configured vision backend."""
         if not self._current_entry:
-            messagebox.showinfo("Image Curator", "Selecione um entry primeiro.")
+            messagebox.showinfo("Image Curator", "Selecione uma entry primeiro.")
             return
 
         client = self._get_vision_client()
@@ -1504,11 +1504,13 @@ class ImageCurator(tk.Toplevel):
                             targets = ", ".join(path.name for path in injected_paths)
                             messagebox.showinfo(
                                 "Image Curator",
+                                f"{total} descricoes geradas com sucesso.\n\nInjetadas em: {targets}",
                                 f"{total} descriÃ§Ãµes geradas com sucesso.\n\nInjetadas em: {targets}",
                             )
                         else:
                             messagebox.showinfo(
                                 "Image Curator",
+                                f"{total} descricoes geradas com sucesso.\n\nNenhum markdown alvo encontrado ainda.",
                                 f"{total} descriÃ§Ãµes geradas com sucesso.\n\nNenhum markdown alvo encontrado ainda.",
                             )
 
@@ -1537,3 +1539,5 @@ class ImageCurator(tk.Toplevel):
             encoding="utf-8",
         )
         _inject_all_image_descriptions_from_manifest(self.repo_dir, clean_manifest)
+
+
