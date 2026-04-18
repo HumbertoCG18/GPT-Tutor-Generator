@@ -1536,10 +1536,12 @@ class ImageCurator(tk.Toplevel):
                             f"{ok_count} descricoes geradas, {len(errors)} erros.\n"
                             f"{skipped_count} imagem(ns) ja tinham descricao e foram mantidas.\n\n"
                             f"{error_detail}",
+                            parent=self,
                         )
                     else:
                         self.status_var.set(
-                            f"Descricoes geradas para {total} imagens. Salvo no manifest."
+                            f"Lote concluido: {ok_count}/{total} novas descricoes geradas; "
+                            f"{skipped_count} mantidas."
                         )
                         messagebox.showinfo(
                             "Image Curator",
