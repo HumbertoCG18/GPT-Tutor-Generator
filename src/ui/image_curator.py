@@ -140,6 +140,62 @@ def _resolve_entry_pdf_path(repo_dir: Path, entry_data: dict) -> Optional[Path]:
     return None
 
 
+_IMAGE_REF_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
+
+
+def _strip_described_image_refs(text: str, curation: dict) -> str:
+    """Remove image refs whose content is already injected into markdown."""
+    described_fnames: set[str] = set()
+    for page_data in (curation.get("pages") or {}).values():
+        for fname, img_data in (page_data.get("images") or {}).items():
+            if img_data.get("description"):
+                described_fnames.add(fname)
+
+    if not described_fnames:
+        return text
+
+    def _sub(match: re.Match) -> str:
+        fname = Path(match.group(2)).name
+        return "" if fname in described_fnames else match.group(0)
+
+    stripped = _IMAGE_REF_RE.sub(_sub, text)
+    return re.sub(r"\n{3,}", "\n\n", stripped)
+
+
+def _inject_for_current_entry(repo_dir: Path, entry: dict) -> List[Path]:
+    """Inject descriptions into the current entry markdown targets."""
+    if not entry:
+        return []
+
+    curation = entry.get("image_curation") or {}
+    modified: List[Path] = []
+    seen_targets = set()
+    for key in ("approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown"):
+        rel_path = str(entry.get(key) or "").strip()
+        if not rel_path:
+            continue
+        path = repo_dir / rel_path
+        if path in seen_targets or not path.exists():
+            continue
+        seen_targets.add(path)
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")
+            new_text = _low_token_inject_image_descriptions(
+                text,
+                curation,
+                desc_block_re=_IMAGE_DESC_BLOCK_RE,
+                image_heading=_image_curation_heading_label,
+            )
+            new_text = _strip_described_image_refs(new_text, curation)
+            if new_text != text:
+                path.write_text(new_text, encoding="utf-8")
+                modified.append(path)
+        except Exception as exc:
+            logger.warning("Could not inject image descriptions into %s: %s", path, exc)
+
+    return modified
+
+
 def _inject_all_image_descriptions_from_manifest(repo_dir: Path, manifest: dict) -> None:
     """Reinject curated image descriptions into the preferred markdown targets."""
     entries = manifest.get("entries", []) or []
@@ -186,6 +242,7 @@ def _inject_all_image_descriptions_from_manifest(repo_dir: Path, manifest: dict)
                     desc_block_re=_IMAGE_DESC_BLOCK_RE,
                     image_heading=_image_curation_heading_label,
                 )
+                new_text = _strip_described_image_refs(new_text, curation)
                 if new_text != text:
                     path.write_text(new_text, encoding="utf-8")
             except Exception as exc:
@@ -246,9 +303,6 @@ class ImageCurator(tk.Toplevel):
 
         ttk.Button(
             toolbar, text="Gerar Descrições", command=self._generate_descriptions
-        ).pack(side="right", padx=5)
-        ttk.Button(
-            toolbar, text="Pré-classificar", command=self._preclassify
         ).pack(side="right", padx=5)
         ttk.Button(toolbar, text="Salvar", command=self._save_curation).pack(
             side="right", padx=5
@@ -544,6 +598,8 @@ class ImageCurator(tk.Toplevel):
 
     def _on_tree_select(self, event):
         """Handle tree selection — show images for selected page."""
+        self._save_curation()
+
         selection = self._tree.selection()
         if not selection:
             return
@@ -728,10 +784,6 @@ class ImageCurator(tk.Toplevel):
             ttk.Button(
                 btn_frame, text="Descrever",
                 command=lambda fn=fname, ip=img_path: self._describe_single_image(fn, ip),
-            ).pack(side="left", padx=(0, 4))
-            ttk.Button(
-                btn_frame, text="Extrair LaTeX",
-                command=lambda fn=fname, ip=img_path: self._extract_latex_single(fn, ip),
             ).pack(side="left", padx=(0, 4))
             ttk.Button(
                 btn_frame, text="Remover",
@@ -1398,9 +1450,14 @@ class ImageCurator(tk.Toplevel):
                         ),
                     )
                     try:
-                        desc = client.describe_image(
-                            img_path, img_type, page_context=page_ctx
-                        )
+                        if img_type == IMAGE_TYPES[-1]:
+                            desc = client.extract_to_latex(
+                                img_path, page_context=page_ctx
+                            )
+                        else:
+                            desc = client.describe_image(
+                                img_path, img_type, page_context=page_ctx
+                            )
                         curation["pages"][page_key]["images"][fname]["description"] = desc
                         curation["pages"][page_key]["images"][fname]["described_at"] = (
                             datetime.now().isoformat(timespec="seconds")
@@ -1424,6 +1481,7 @@ class ImageCurator(tk.Toplevel):
 
                 def _on_done():
                     self._write_manifest_entry(entry_id)
+                    injected_paths = _inject_for_current_entry(self.repo_dir, self._current_entry)
                     if self._current_entry and self._current_page is not None:
                         groups = self._current_entry.get("_image_groups", {})
                         images = groups.get(self._current_page, [])
@@ -1442,9 +1500,17 @@ class ImageCurator(tk.Toplevel):
                         self.status_var.set(
                             f"Descrições geradas para {total} imagens. Salvo no manifest."
                         )
-                        messagebox.showinfo(
-                            "Image Curator", f"{total} descrições geradas com sucesso!"
-                        )
+                        if injected_paths:
+                            targets = ", ".join(path.name for path in injected_paths)
+                            messagebox.showinfo(
+                                "Image Curator",
+                                f"{total} descriÃ§Ãµes geradas com sucesso.\n\nInjetadas em: {targets}",
+                            )
+                        else:
+                            messagebox.showinfo(
+                                "Image Curator",
+                                f"{total} descriÃ§Ãµes geradas com sucesso.\n\nNenhum markdown alvo encontrado ainda.",
+                            )
 
                 self.after(0, _on_done)
             finally:
