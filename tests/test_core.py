@@ -48,18 +48,18 @@ from src.builder.engine import (
     file_map_md,
     glossary_md,
 )
-from src.builder.prompt_generation import (
+from src.builder.artifacts.prompts import (
     generate_claude_project_instructions,
     generate_gemini_instructions,
     generate_gpt_instructions,
 )
-from src.builder.repo_artifacts import rows_to_markdown_table, wrap_frontmatter
-from src.builder.teaching_plan_utils import (
+from src.builder.artifacts.repo import rows_to_markdown_table, wrap_frontmatter
+from src.builder.extraction.teaching_plan import (
     _parse_units_from_teaching_plan,
     _topic_depth,
     _topic_text,
 )
-from src.builder.timeline_index import (
+from src.builder.timeline.index import (
     _build_timeline_candidate_rows,
     _build_timeline_index,
     _parse_syllabus_timeline,

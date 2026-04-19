@@ -5,7 +5,30 @@ import html as html_lib
 import re
 from typing import Callable, Dict, List
 
-from src.builder.repo_artifacts import rows_to_markdown_table
+from src.builder.artifacts.repo import rows_to_markdown_table
+
+
+def truncate_markdown_blocks(blocks: List[str], max_chars: int = 15000) -> str:
+    if not blocks:
+        return ""
+    out: List[str] = []
+    size = 0
+    for block in blocks:
+        if not block:
+            continue
+        next_size = size + len(block) + 2
+        if next_size <= max_chars:
+            out.append(block)
+            size = next_size
+            continue
+        remaining = max_chars - size
+        if remaining > 160:
+            clipped = block[:remaining].rstrip()
+            out.append(clipped + "\n\n> Conteúdo truncado.")
+        else:
+            out.append("> Conteúdo truncado.")
+        break
+    return "\n\n".join(out).strip()
 
 
 def extract_url_page_metadata(soup, *, collapse_ws: Callable[[str], str]) -> Dict[str, str]:

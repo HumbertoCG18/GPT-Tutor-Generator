@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.builder.student_state import detect_state_version, migrate_v1_to_v2
+from src.builder.artifacts.student_state import detect_state_version, migrate_v1_to_v2
 
 
 V1_SAMPLE = """---

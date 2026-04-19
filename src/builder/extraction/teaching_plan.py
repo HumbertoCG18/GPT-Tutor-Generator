@@ -125,6 +125,61 @@ def _topic_depth(topic) -> int:
     return 0
 
 
+def _parse_bibliography_from_teaching_plan(text: str) -> dict:
+    """
+    Extrai referências bibliográficas do texto do plano de ensino.
+    Detecta seção BIBLIOGRAFIA com sub-seções BÁSICA e COMPLEMENTAR.
+    Retorna {"basica": [str, ...], "complementar": [str, ...]}.
+    """
+    result: dict = {"basica": [], "complementar": []}
+
+    bib_match = re.search(r"^BIBLIOGRAFIA", text, re.MULTILINE | re.IGNORECASE)
+    if not bib_match:
+        return result
+
+    bib_text = text[bib_match.start():]
+    current_section = None
+    current_ref = None
+    ref_start_re = re.compile(r"^\d+\.\s+(.+)")
+
+    def _flush():
+        if current_ref and current_section:
+            result[current_section].append(current_ref.strip())
+
+    for raw in bib_text.splitlines():
+        line = raw.strip()
+
+        if re.match(r"^B[ÁA]SICA\s*:", line, re.IGNORECASE):
+            _flush()
+            current_ref = None
+            current_section = "basica"
+            continue
+
+        if re.match(r"^COMPLEMENTAR\s*:", line, re.IGNORECASE):
+            _flush()
+            current_ref = None
+            current_section = "complementar"
+            continue
+
+        if not current_section:
+            continue
+
+        if not line:
+            _flush()
+            current_ref = None
+            continue
+
+        m = ref_start_re.match(line)
+        if m:
+            _flush()
+            current_ref = m.group(1).strip()
+        elif current_ref is not None:
+            current_ref += " " + line
+
+    _flush()
+    return result
+
+
 def _normalize_unit_slug(title: str) -> str:
     slug = slugify((title or "").replace(_EM_DASH, "-"))
     match = re.match(r"^(unidade(?:-de-aprendizagem)?-)(\d+)(-.+)?$", slug)

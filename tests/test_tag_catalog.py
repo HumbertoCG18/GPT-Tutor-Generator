@@ -1,6 +1,6 @@
 from src.models.core import FileEntry
 from src.models.core import StudentProfile, SubjectProfile
-from src.builder.content_taxonomy import (
+from src.builder.extraction.content_taxonomy import (
     build_tag_catalog,
     infer_entry_auto_tags,
     refresh_manifest_auto_tags,

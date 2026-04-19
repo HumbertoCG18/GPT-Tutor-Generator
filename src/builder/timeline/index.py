@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
 from src.builder.card_evidence import extract_card_evidence
-from src.builder.timeline_signals import extract_timeline_session_signals
+from src.builder.timeline.signals import extract_timeline_session_signals
 from src.utils.helpers import slugify, write_text
 
 

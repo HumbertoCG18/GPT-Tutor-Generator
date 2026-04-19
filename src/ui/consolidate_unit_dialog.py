@@ -5,7 +5,7 @@ from tkinter import ttk, messagebox
 from pathlib import Path
 
 from src.ui.theme import apply_theme_to_toplevel
-from src.builder.student_state import (
+from src.builder.artifacts.student_state import (
     consolidate_unit,
     UnitNotReadyError,
     parse_battery_frontmatter,

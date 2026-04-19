@@ -18,7 +18,7 @@ from src.builder.image_classifier import (
     extract_page_number,
     group_images_by_page,
 )
-from src.builder.image_markdown import (
+from src.builder.extraction.image_markdown import (
     _IMAGE_DESC_BLOCK_RE,
     _image_curation_heading as _image_curation_heading_label,
     _low_token_inject_image_descriptions,

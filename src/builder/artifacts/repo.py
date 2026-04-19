@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
-from src.utils.helpers import json_str
+from src.utils.helpers import json_str, safe_rel, slugify
 
 
 def student_state_md(
@@ -86,6 +86,84 @@ Sessão de estudo
 **Próximo passo:** [próximo tópico sugerido]
 ```
 """
+
+
+def syllabus_md(subject_profile) -> str:
+    """Gera o conteúdo de course/SYLLABUS.md a partir do SubjectProfile."""
+    subj = subject_profile
+    return f"""---
+course: {subj.name}
+professor: {subj.professor}
+schedule: {subj.schedule}
+---
+
+# Cronograma — {subj.name}
+
+**Horário:** {subj.schedule}
+
+{subj.syllabus}
+"""
+
+
+def student_profile_md(student_profile) -> str:
+    """Gera o conteúdo de student/STUDENT_PROFILE.md a partir do StudentProfile."""
+    sp = student_profile
+    return f"""---
+nickname: {sp.nickname or sp.full_name}
+---
+
+# Perfil do Aluno
+
+- **Nome:** {sp.full_name}
+- **Apelido:** {sp.nickname or sp.full_name}
+
+## Estilo de aprendizado preferido
+
+{sp.personality}
+"""
+
+
+def effective_course_meta(
+    course_meta: Optional[Dict[str, object]],
+    root_dir: Path,
+    *,
+    manifest: Optional[Dict[str, object]] = None,
+) -> Dict[str, str]:
+    merged = dict(course_meta or {})
+    manifest_course = {}
+    if manifest:
+        raw_course = manifest.get("course")
+        if isinstance(raw_course, dict):
+            manifest_course = dict(raw_course)
+
+    for key in ("course_name", "course_slug", "semester", "professor", "institution"):
+        if not str(merged.get(key, "") or "").strip() and str(manifest_course.get(key, "") or "").strip():
+            merged[key] = manifest_course[key]
+
+    course_name = str(merged.get("course_name", "") or "").strip() or root_dir.name
+    course_slug = str(merged.get("course_slug", "") or "").strip() or slugify(course_name) or slugify(root_dir.name) or "curso"
+    merged["course_name"] = course_name
+    merged["course_slug"] = course_slug
+    merged["semester"] = str(merged.get("semester", "") or "").strip()
+    merged["professor"] = str(merged.get("professor", "") or "").strip()
+    merged["institution"] = str(merged.get("institution", "") or "").strip() or "PUCRS"
+    return {key: str(value or "").strip() for key, value in merged.items()}
+
+
+def write_internal_assessment_context(
+    root_dir: Path,
+    assessment_context: dict,
+    *,
+    write_text_fn: Callable[[Path, str], None],
+) -> None:
+    write_text_fn(
+        root_dir / "course" / ".assessment_context.json",
+        json.dumps(
+            assessment_context or {"version": 1, "assessments": [], "conflicts": []},
+            ensure_ascii=False,
+            indent=2,
+        ),
+    )
 
 
 def bundle_priority_score(
@@ -236,6 +314,341 @@ def bundle_seed_candidate(
         "bundle_priority_score": score,
         "bundle_reasons": bundle_reason_labels_fn(entry),
     }
+
+
+def assessment_conflict_section_lines(
+    assessment_context: Optional[dict],
+    *,
+    compact: bool = False,
+) -> List[str]:
+    conflicts = list((assessment_context or {}).get("conflicts", []) or [])
+    if not conflicts:
+        return []
+
+    lines = [
+        "## Conflitos de avaliação x cronograma",
+        "",
+    ]
+    if compact:
+        lines += [
+            "| Avaliação | Data | Escopo | Observação |",
+            "|---|---|---|---|",
+        ]
+        for item in conflicts:
+            declared_units = item.get("declared_unit_numbers", []) or []
+            scope = ", ".join(f"U{num}" for num in declared_units) if declared_units else "—"
+            note = " ".join(item.get("conflicts", []) or [])
+            lines.append(
+                f"| {item.get('label', '')} | {item.get('assessment_date', '') or '—'} | {scope} | {note or '—'} |"
+            )
+    else:
+        lines.append("**Resumo das inconsistências detectadas**")
+        lines.append("")
+        for item in conflicts:
+            declared_units = item.get("declared_unit_numbers", []) or []
+            scope = ", ".join(f"U{num}" for num in declared_units) if declared_units else "escopo não explicitado"
+            note = " ".join(item.get("conflicts", []) or [])
+            lines.append(
+                f"- {item.get('label', '')}"
+                f" ({item.get('assessment_date', '') or 'data não localizada'})"
+                f" -> {scope}: {note or 'observação estrutural'}"
+            )
+    lines.append("")
+    return lines
+
+
+def write_source_registry(
+    root_dir: Path,
+    manifest: Dict[str, object],
+    *,
+    write_text_fn: Callable[[Path, str], None],
+) -> None:
+    lines = [
+        f"generated_at: {manifest['generated_at']}",
+        "sources:",
+    ]
+    for item in manifest["entries"]:
+        lines.extend(
+            [
+                f"  - id: {item['id']}",
+                f"    title: {json_str(item['title'])}",
+                f"    category: {item['category']}",
+                f"    file_type: {item['file_type']}",
+                f"    source_path: {json_str(item['source_path'])}",
+                f"    raw_target: {json_str(item.get('raw_target'))}",
+                f"    processing_mode: {item.get('processing_mode', 'auto')}",
+                f"    effective_profile: {item.get('effective_profile', 'auto')}",
+                f"    include_in_bundle: {str(item.get('include_in_bundle', True)).lower()}",
+                f"    professor_signal: {json_str(item.get('professor_signal', ''))}",
+            ]
+        )
+    write_text_fn(root_dir / "course" / "SOURCE_REGISTRY.yaml", "\n".join(lines) + "\n")
+
+
+def write_bundle_seed(
+    root_dir: Path,
+    manifest: Dict[str, object],
+    *,
+    course_meta: Dict[str, str],
+    bundle_priority_score_fn: Callable[[dict], int],
+    bundle_seed_candidate_fn: Callable[[dict, int], dict],
+    write_text_fn: Callable[[Path, str], None],
+) -> None:
+    selected = []
+    for entry in manifest["entries"]:
+        score = bundle_priority_score_fn(entry)
+        if score < 30:
+            continue
+        chosen_markdown = (
+            entry.get("approved_markdown")
+            or entry.get("curated_markdown")
+            or entry.get("advanced_markdown")
+            or entry.get("base_markdown")
+        )
+        if not chosen_markdown:
+            continue
+        selected.append((score, entry))
+
+    selected.sort(
+        key=lambda item: (
+            -item[0],
+            (item[1].get("category") or ""),
+            (item[1].get("title") or ""),
+        )
+    )
+    seed = {
+        "generated_at": manifest["generated_at"],
+        "course_slug": course_meta["course_slug"],
+        "target_platform": "claude-projects",
+        "selection_policy": {
+            "min_score": 30,
+            "goal": "baixo-custo-alto-sinal",
+            "routing_first": True,
+            "exclude_full_text": True,
+            "metadata_only": True,
+        },
+        "bundle_candidates": [
+            bundle_seed_candidate_fn(e, score)
+            for score, e in selected
+        ],
+    }
+    write_text_fn(
+        root_dir / "build" / "claude-knowledge" / "bundle.seed.json",
+        json.dumps(seed, indent=2, ensure_ascii=False),
+    )
+
+
+def write_build_report(
+    root_dir: Path,
+    manifest: Dict[str, object],
+    *,
+    preferred_platform: str,
+    has_pymupdf: bool,
+    has_pymupdf4llm: bool,
+    has_pdfplumber: bool,
+    has_datalab_api_key_fn: Callable[[], bool],
+    docling_cli: object,
+    has_docling_python_api_fn: Callable[[], bool],
+    marker_cli: object,
+    write_text_fn: Callable[[Path, str], None],
+) -> None:
+    platform_map = {
+        "claude": ("setup/INSTRUCOES_CLAUDE_PROJETO.md",
+                   "Cole no campo 'Instructions' do Projeto Claude"),
+        "gpt":    ("setup/INSTRUCOES_GPT_PROJETO.md",
+                   "Cole no campo 'Instructions' do GPT / Custom GPT"),
+        "gemini": ("setup/INSTRUCOES_GEMINI_PROJETO.md",
+                   "Cole no campo de instruções do Gem no Google AI Studio"),
+    }
+    filename, instruction = platform_map.get(preferred_platform, platform_map["claude"])
+
+    report = [
+        "# BUILD_REPORT",
+        "",
+        f"- generated_at: {manifest['generated_at']}",
+        f"- preferred_platform: {preferred_platform}",
+        f"- pymupdf: {has_pymupdf}",
+        f"- pymupdf4llm: {has_pymupdf4llm}",
+        f"- pdfplumber: {has_pdfplumber}",
+        f"- datalab_api: {has_datalab_api_key_fn()}",
+        f"- docling_cli: {bool(docling_cli)}",
+        f"- docling_python: {has_docling_python_api_fn()}",
+        f"- marker_cli: {bool(marker_cli)}",
+        "",
+        f"## Plataforma principal: {preferred_platform.upper()}",
+        "",
+        f"> Copie o conteúdo de `{filename}`",
+        f"> {instruction}",
+        "",
+        "Os três arquivos de instruções foram gerados:",
+    ]
+    for key, (artifact, _) in platform_map.items():
+        marker = " **<< atual**" if key == preferred_platform else ""
+        report.append(f"- `{artifact}`{marker}")
+
+    report.extend([
+        "",
+        "## Regras práticas de curadoria",
+        "- PDFs simples: camada base costuma bastar.",
+        "- PDFs com fórmulas, scans, layout complexo ou provas: camada avançada + revisão manual.",
+        "- O conhecimento final do tutor deve sair de `manual-review/` e depois ser promovido.",
+        "- Atualizar `student/STUDENT_STATE.md` após cada sessão de estudo.",
+    ])
+    write_text_fn(root_dir / "BUILD_REPORT.md", "\n".join(report) + "\n")
+
+
+def resolve_entry_markdown_targets(root_dir: Path, entry_data: dict) -> List[Path]:
+    target_markdowns: List[Path] = []
+    seen_targets = set()
+
+    def _is_allowed_rel_path(rel_path: str) -> bool:
+        rel_posix = str(rel_path).replace("\\", "/").lower()
+        return (
+            rel_posix.startswith("content/")
+            or rel_posix.startswith("exercises/")
+            or rel_posix.startswith("exams/")
+            or rel_posix.startswith("assignments/")
+            or rel_posix.startswith("code/")
+            or rel_posix.startswith("whiteboard/")
+            or rel_posix.startswith("staging/markdown-auto/")
+        )
+
+    for key in ["approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown"]:
+        rel_path = entry_data.get(key)
+        if not rel_path or not str(rel_path).lower().endswith(".md"):
+            continue
+        md_file = root_dir / rel_path
+        if not md_file.exists() or not md_file.is_file():
+            continue
+        if not _is_allowed_rel_path(rel_path):
+            continue
+        if md_file in seen_targets:
+            continue
+        seen_targets.add(md_file)
+        target_markdowns.append(md_file)
+
+    if target_markdowns:
+        return target_markdowns
+
+    entry_id = (entry_data.get("id") or "").strip()
+    if not entry_id:
+        return target_markdowns
+
+    search_roots = [
+        root_dir / "content",
+        root_dir / "exercises",
+        root_dir / "exams",
+        root_dir / "assignments",
+        root_dir / "code",
+        root_dir / "whiteboard",
+        root_dir / "staging" / "markdown-auto",
+    ]
+    frontmatter_mark = f'entry_id: "{entry_id}"'
+    for root in search_roots:
+        if not root.exists():
+            continue
+        for md_file in root.rglob("*.md"):
+            if md_file in seen_targets:
+                continue
+            try:
+                text = md_file.read_text(encoding="utf-8")
+            except Exception:
+                continue
+            if frontmatter_mark not in text:
+                continue
+            seen_targets.add(md_file)
+            target_markdowns.append(md_file)
+
+    return target_markdowns
+
+
+def heal_manifest_markdown_paths(root_dir: Path, manifest: dict) -> tuple[dict, int]:
+    entries = manifest.get("entries", []) or []
+    healed = 0
+    for entry_data in entries:
+        if not isinstance(entry_data, dict):
+            continue
+
+        live_targets: List[tuple[str, Path]] = []
+        for key in ["approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown"]:
+            rel_path = entry_data.get(key)
+            if not rel_path or not str(rel_path).lower().endswith(".md"):
+                continue
+            md_file = root_dir / rel_path
+            if md_file.exists() and md_file.is_file():
+                live_targets.append((key, md_file))
+
+        if live_targets:
+            final_targets = []
+            for key, md_file in live_targets:
+                rel_md = safe_rel(md_file, root_dir).replace("\\", "/")
+                if (
+                    rel_md.startswith("content/curated/")
+                    or rel_md.startswith("exercises/lists/")
+                    or rel_md.startswith("exams/past-exams/")
+                    or rel_md.startswith("assignments/")
+                    or rel_md.startswith("code/")
+                    or rel_md.startswith("whiteboard/")
+                ):
+                    final_targets.append(rel_md)
+            if final_targets:
+                preferred = final_targets[0]
+                if entry_data.get("approved_markdown") != preferred:
+                    entry_data["approved_markdown"] = preferred
+                    healed += 1
+                if entry_data.get("curated_markdown") != preferred:
+                    entry_data["curated_markdown"] = preferred
+                    healed += 1
+                if entry_data.get("base_markdown") != preferred:
+                    entry_data["base_markdown"] = preferred
+                    healed += 1
+            continue
+
+        resolved_targets = resolve_entry_markdown_targets(root_dir, entry_data)
+        if not resolved_targets:
+            continue
+
+        preferred = safe_rel(resolved_targets[0], root_dir)
+        if entry_data.get("base_markdown") != preferred:
+            entry_data["base_markdown"] = preferred
+            healed += 1
+        if (
+            preferred.startswith("content/curated/")
+            or preferred.startswith("exercises/lists/")
+            or preferred.startswith("exams/past-exams/")
+            or preferred.startswith("assignments/")
+            or preferred.startswith("code/")
+            or preferred.startswith("whiteboard/")
+        ):
+            if entry_data.get("approved_markdown") != preferred:
+                entry_data["approved_markdown"] = preferred
+                healed += 1
+            if entry_data.get("curated_markdown") != preferred:
+                entry_data["curated_markdown"] = preferred
+                healed += 1
+
+    manifest["entries"] = entries
+    return manifest, healed
+
+
+def compact_manifest(
+    root_dir: Path,
+    manifest: dict,
+    *,
+    filter_live_manifest_entries_fn: Callable[[Optional[Path], list], list],
+    heal_manifest_markdown_paths_fn: Callable[[Path, dict], tuple[dict, int]],
+    manifest_log_limit: int,
+) -> tuple[dict, int, int]:
+    entries = manifest.get("entries", []) or []
+    live_entries = filter_live_manifest_entries_fn(root_dir, entries)
+    removed = len(entries) - len(live_entries)
+    manifest["entries"] = live_entries
+    manifest, healed = heal_manifest_markdown_paths_fn(root_dir, manifest)
+
+    logs = manifest.get("logs", [])
+    if isinstance(logs, list) and len(logs) > manifest_log_limit:
+        manifest["logs"] = logs[-manifest_log_limit:]
+    return manifest, removed, healed
 
 
 def bibliography_md(

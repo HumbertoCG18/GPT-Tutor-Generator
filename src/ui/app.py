@@ -23,13 +23,13 @@ from src.models.task_queue import RepoTask, RepoTaskStore
 from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES, get_app_data_dir
 from src.builder.datalab_client import has_datalab_api_key
 from src.builder.engine import RepoBuilder
-from src.builder.prompt_generation import (
+from src.builder.artifacts.prompts import (
     generate_claude_project_instructions,
     generate_gemini_instructions,
     generate_gpt_instructions,
 )
 from src.builder.task_queue_runner import TaskQueueRunner
-from src.builder.teaching_plan_utils import _parse_units_from_teaching_plan, _topic_text
+from src.builder.extraction.teaching_plan import _parse_units_from_teaching_plan, _topic_text
 from src.ui.theme import ThemeManager, AppConfig
 from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, StatusDialog, _resolve_backlog_markdown_status
 from src.ui.repo_dashboard import RepoDashboard, collect_repo_metrics
@@ -1317,7 +1317,7 @@ class App(tk.Tk):
         self._maybe_offer_state_migration(sp)
 
     def _maybe_offer_state_migration(self, subject) -> None:
-        from src.builder.student_state import detect_state_version, migrate_v1_to_v2
+        from src.builder.artifacts.student_state import detect_state_version, migrate_v1_to_v2
         repo_dir = self._repo_dir()
         if not repo_dir or detect_state_version(repo_dir) != "v1":
             return

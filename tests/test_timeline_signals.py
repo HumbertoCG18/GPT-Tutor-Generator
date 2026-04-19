@@ -1,5 +1,5 @@
-from src.builder.timeline_signals import extract_date_range_signal
-from src.builder.timeline_signals import extract_timeline_session_signals
+from src.builder.timeline.signals import extract_date_range_signal
+from src.builder.timeline.signals import extract_timeline_session_signals
 
 
 def test_extract_timeline_session_signals_reads_inline_class_dates():

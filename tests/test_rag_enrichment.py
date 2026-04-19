@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.builder.navigation_artifacts import (
+from src.builder.artifacts.navigation import (
     _clean_extraction_noise,
     _extract_section_headers,
     _infer_unit_confidence,

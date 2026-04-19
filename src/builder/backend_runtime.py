@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import importlib
 import logging
+import os
 import subprocess
 import sys
+import threading as _th
+import time as _time
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -403,3 +406,135 @@ def advanced_cli_stall_timeout(
         return base_timeout
 
     return base_timeout
+
+
+def run_cli_with_timeout(
+    cmd: list,
+    backend_name: str,
+    ctx: "BackendContext",
+    *,
+    logger_obj,
+    marker_effective_torch_device_fn,
+    marker_progress_hints_fn,
+    marker_should_use_llm_fn,
+    marker_ollama_model_fn,
+    marker_model_is_qwen3_vl_8b_fn,
+    stall_timeout: Optional[int] = None,
+):
+    """Run an external CLI process with stall timeout and cancel support."""
+    stdout_lines: list = []
+    stderr_lines: list = []
+    last_output_time = _time.monotonic()
+    effective_stall_timeout = stall_timeout if stall_timeout is not None else ctx.stall_timeout
+    lock = _th.Lock()
+    killed_by_cancel = _th.Event()
+    killed_by_stall = _th.Event()
+    last_marker_phase = {"name": None}
+    process_env = None
+
+    if backend_name == "marker":
+        process_env = os.environ.copy()
+        process_env["TORCH_DEVICE"] = marker_effective_torch_device_fn(ctx)
+
+    def _log_marker_progress_hint(line: str):
+        if backend_name != "marker":
+            return
+        phase, hints = marker_progress_hints_fn(line, last_marker_phase["name"])
+        last_marker_phase["name"] = phase
+        for hint in hints:
+            logger_obj.info("  [marker] %s", hint)
+
+    proc = subprocess.Popen(
+        cmd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        bufsize=1,
+        env=process_env,
+    )
+    logger_obj.info("  [%s] PID=%d - aguardando saida...", backend_name, proc.pid)
+
+    def _phase_stall_timeout() -> int:
+        phase_stall_timeout = effective_stall_timeout
+        if backend_name == "marker" and marker_should_use_llm_fn(ctx) and marker_ollama_model_fn(ctx):
+            phase_name = str(last_marker_phase.get("name") or "")
+            if phase_name.startswith("LLM processors running"):
+                if marker_model_is_qwen3_vl_8b_fn(marker_ollama_model_fn(ctx)):
+                    phase_stall_timeout = max(phase_stall_timeout, 1800)
+                else:
+                    phase_stall_timeout = max(phase_stall_timeout, 1200)
+        return phase_stall_timeout
+
+    def _read_stderr():
+        nonlocal last_output_time
+        for line in proc.stderr:
+            line = line.rstrip()
+            if line:
+                with lock:
+                    stderr_lines.append(line)
+                    last_output_time = _time.monotonic()
+                _log_marker_progress_hint(line)
+                logger_obj.info("  [%s stderr] %s", backend_name, line)
+
+    stderr_thread = _th.Thread(target=_read_stderr, daemon=True)
+    stderr_thread.start()
+
+    def _watchdog():
+        while proc.poll() is None:
+            _time.sleep(2)
+            if ctx.cancel_check:
+                try:
+                    ctx.cancel_check()
+                except InterruptedError:
+                    logger_obj.warning(
+                        "  [%s] Cancelado pelo usuario - matando PID %d",
+                        backend_name,
+                        proc.pid,
+                    )
+                    killed_by_cancel.set()
+                    proc.kill()
+                    return
+            with lock:
+                elapsed = _time.monotonic() - last_output_time
+            phase_stall_timeout = _phase_stall_timeout()
+            if elapsed > phase_stall_timeout:
+                logger_obj.error(
+                    "  [%s] Sem output por %ds - matando PID %d (stall timeout)",
+                    backend_name,
+                    phase_stall_timeout,
+                    proc.pid,
+                )
+                killed_by_stall.set()
+                proc.kill()
+                return
+
+    watchdog_thread = _th.Thread(target=_watchdog, daemon=True)
+    watchdog_thread.start()
+
+    for line in proc.stdout:
+        line = line.rstrip()
+        if line:
+            stdout_lines.append(line)
+            with lock:
+                last_output_time = _time.monotonic()
+            _log_marker_progress_hint(line)
+            logger_obj.info("  [%s stdout] %s", backend_name, line)
+
+    proc.wait()
+    stderr_thread.join(timeout=5)
+    watchdog_thread.join(timeout=2)
+
+    if killed_by_cancel.is_set():
+        raise InterruptedError(f"{backend_name} cancelado pelo usuario.")
+
+    if killed_by_stall.is_set():
+        last_line = (stderr_lines or stdout_lines or ["(nenhum)"])[-1]
+        phase_stall_timeout = _phase_stall_timeout()
+        raise TimeoutError(
+            f"{backend_name} travou (sem output por {phase_stall_timeout}s). "
+            f"Ultimo output:\n{last_line}"
+        )
+
+    returncode = proc.returncode
+    logger_obj.info("  [%s] Processo finalizado com codigo %d", backend_name, returncode)
+    return returncode, stdout_lines, stderr_lines

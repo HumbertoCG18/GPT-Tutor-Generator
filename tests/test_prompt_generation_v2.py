@@ -1,4 +1,4 @@
-from src.builder.prompt_generation import (
+from src.builder.artifacts.prompts import (
     generate_claude_project_instructions,
     generate_gpt_instructions,
     generate_gemini_instructions,

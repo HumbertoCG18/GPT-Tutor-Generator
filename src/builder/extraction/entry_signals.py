@@ -5,7 +5,7 @@ import unicodedata
 from pathlib import Path
 from typing import Dict, List
 
-from src.builder.content_taxonomy import extract_markdown_lead_text
+from src.builder.extraction.content_taxonomy import extract_markdown_lead_text
 
 
 def normalize_match_text(text: str) -> str:

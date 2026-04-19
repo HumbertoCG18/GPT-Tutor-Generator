@@ -13,6 +13,47 @@ class UnitMatchResult:
     reasons: List[str] = field(default_factory=list)
 
 
+UNIT_GENERIC_TOKENS = {
+    "metodos",
+    "formais",
+    "formal",
+    "logica",
+    "logicas",
+    "especificacao",
+    "especificacoes",
+    "verificacao",
+    "verificacoes",
+    "programas",
+    "programa",
+    "modelos",
+    "modelo",
+    "fundamentos",
+    "sistemas",
+    "software",
+    "softwares",
+    "suporte",
+    "propriedades",
+    "aplicacoes",
+    "sequenciais",
+    "concorrentes",
+    "linguagens",
+}
+
+
+def strip_outline_prefix(text: str) -> str:
+    text = (text or "").strip()
+    if not text:
+        return ""
+    text = re.sub(
+        r"^\s*unidade(?:\s+de\s+aprendizagem)?\s*\d+\s*[-—:.)]?\s*",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+    text = re.sub(r"^\s*\d+(?:\.\d+)*\s*[-—:.)]?\s*", "", text)
+    return text.strip()
+
+
 def build_file_map_unit_index(
     units: list,
     *,

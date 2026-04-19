@@ -2,13 +2,13 @@ from __future__ import annotations
 # Public facade for builder functionality during modularization.
 # Keep stable exports here while implementations move into focused modules.
 # Focused builder subsystems already live in:
-# - src.builder.content_taxonomy
-# - src.builder.timeline_index
-# - src.builder.navigation_artifacts
-# - src.builder.prompt_generation / pedagogical_prompts
-# - src.builder.repo_artifacts
-# - src.builder.student_state
-# - src.builder.image_markdown
+# - src.builder.extraction.content_taxonomy
+# - src.builder.timeline.index
+# - src.builder.artifacts.navigation
+# - src.builder.artifacts.prompts / pedagogy
+# - src.builder.artifacts.repo
+# - src.builder.artifacts.student_state
+# - src.builder.extraction.image_markdown
 import csv
 import difflib
 import html as html_lib
@@ -22,6 +22,7 @@ import sys
 import unicodedata
 from dataclasses import asdict
 from datetime import datetime
+from functools import partial
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
 
@@ -30,37 +31,33 @@ from src.builder.datalab_client import (
     get_datalab_base_url,
     has_datalab_api_key,
 )
-from src.builder.image_markdown import (
+from src.builder.extraction.image_markdown import (
     _IMAGE_DESC_BLOCK_RE,
     _image_curation_heading as _image_curation_heading_label,
     _low_token_inject_image_descriptions,
 )
-from src.builder.entry_signals import (
+from src.builder.extraction.entry_signals import (
     collect_entry_unit_signals as _entry_signals_collect_entry_unit_signals,
     entry_image_source_dirs as _entry_signals_image_source_dirs,
     normalize_match_text as _entry_signals_normalize_match_text,
     score_text_against_row as _entry_signals_score_text_against_row,
 )
 from src.builder.file_map_routing import (
+    UNIT_GENERIC_TOKENS as _FILE_MAP_UNIT_GENERIC_TOKENS,
     UnitMatchResult,
     auto_map_entry_subtopic as _file_map_auto_map_entry_subtopic,
     auto_map_entry_unit as _file_map_auto_map_entry_unit,
     build_file_map_content_taxonomy_from_course as _file_map_build_file_map_content_taxonomy_from_course,
     build_file_map_unit_index as _file_map_build_file_map_unit_index,
     build_file_map_unit_index_from_course as _file_map_build_file_map_unit_index_from_course,
-    collect_entry_temporal_signals as _file_map_collect_entry_temporal_signals,
-    entry_temporal_range_contains as _file_map_entry_temporal_range_contains,
     format_file_map_unit_cell as _file_map_format_file_map_unit_cell,
     resolve_entry_manual_timeline_block as _file_map_resolve_entry_manual_timeline_block,
     resolve_entry_manual_unit_slug as _file_map_resolve_entry_manual_unit_slug,
     score_card_evidence_against_entry as _file_map_score_card_evidence_against_entry,
     score_entry_against_timeline_block as _file_map_score_entry_against_timeline_block,
-    score_entry_against_timeline_row as _file_map_score_entry_against_timeline_row,
-    score_entry_against_timeline_session as _file_map_score_entry_against_timeline_session,
-    score_entry_against_timeline_sessions as _file_map_score_entry_against_timeline_sessions,
     score_entry_against_unit as _file_map_score_entry_against_unit,
-    score_timeline_block as _file_map_score_timeline_block,
     select_probable_period_for_entry as _file_map_select_probable_period_for_entry,
+    strip_outline_prefix as _file_map_strip_outline_prefix,
     timeline_block_matches_preferred_topic as _file_map_timeline_block_matches_preferred_topic,
     timeline_block_rows_for_scoring as _file_map_timeline_block_rows_for_scoring,
 )
@@ -88,10 +85,11 @@ from src.builder.backend_runtime import (
     marker_should_use_llm as _backend_marker_should_use_llm,
     marker_torch_device as _backend_marker_torch_device,
     prepare_docling_python_source_pdf as _backend_prepare_docling_python_source_pdf,
+    run_cli_with_timeout as _backend_run_cli_with_timeout,
     selected_page_count as _backend_selected_page_count,
     should_force_ocr_for_marker as _backend_should_force_ocr_for_marker,
 )
-from src.builder.prompt_generation import (
+from src.builder.artifacts.prompts import (
     generate_claude_project_instructions,
     generate_gemini_instructions,
     generate_gpt_instructions,
@@ -114,16 +112,17 @@ from src.builder.url_markdown import (
     is_probably_noise_container as _url_markdown_is_probably_noise_container,
     pick_best_content_root as _url_markdown_pick_best_content_root,
     render_html_block_to_markdown as _url_markdown_render_html_block_to_markdown,
+    truncate_markdown_blocks as _url_markdown_truncate_markdown_blocks,
 )
-from src.builder import student_state as student_state_v2
-from src.builder.pedagogical_prompts import (
+from src.builder.artifacts import student_state as student_state_v2
+from src.builder.artifacts.pedagogy import (
     _code_review_profile,
     modes_md,
     output_templates_md,
     pedagogy_md,
     tutor_policy_md,
 )
-from src.builder.navigation_artifacts import (
+from src.builder.artifacts.navigation import (
     _clean_extraction_noise,
     _entry_markdown_path_for_file_map,
     _entry_markdown_text_for_file_map,
@@ -141,13 +140,12 @@ from src.builder.navigation_artifacts import (
     low_token_course_map_md_v2 as _navigation_low_token_course_map_md_v2,
     low_token_file_map_md as _navigation_low_token_file_map_md,
 )
-from src.builder import content_taxonomy as _content_taxonomy
-from src.builder import repo_artifacts as _repo_artifacts
+from src.builder.extraction import content_taxonomy as _content_taxonomy
+from src.builder.artifacts import repo as _repo_artifacts
 from src.builder.semantic_config import (
-    merge_semantic_profile,
     resolve_semantic_profile,
 )
-from src.builder.timeline_index import (
+from src.builder.timeline.index import (
     TopicMatchResult,
     _aggregate_unit_periods_from_blocks as _timeline_aggregate_unit_periods_from_blocks,
     _assign_timeline_block_to_topic,
@@ -187,11 +185,12 @@ from src.builder.timeline_index import (
     _match_timeline_to_units_generic as _timeline_match_timeline_to_units_generic,
     _write_internal_timeline_index,
 )
-from src.builder.timeline_signals import (
+from src.builder.timeline.signals import (
     extract_date_range_signal,
     extract_timeline_session_signals,
 )
-from src.builder.teaching_plan_utils import (
+from src.builder.extraction.teaching_plan import (
+    _parse_bibliography_from_teaching_plan as _teaching_plan_parse_bibliography_from_teaching_plan,
     _normalize_teaching_plan_heading as _teaching_plan_normalize_heading,
     _normalize_unit_slug as _teaching_plan_normalize_unit_slug,
     _parse_units_from_teaching_plan as _teaching_plan_parse_units_from_teaching_plan,
@@ -268,95 +267,15 @@ def _strip_topic_prefix(text: str) -> str:
     return cleaned.strip(" -:\t")
 
 
-def _looks_like_tool_candidate(text: str, semantic_profile: Optional[dict] = None) -> bool:
-    normalized = _normalize_match_text(text)
-    effective_profile = merge_semantic_profile(semantic_profile)
-    known_tools = list(effective_profile.get("known_tools") or [])
-    return any(tool in normalized for tool in known_tools)
+_looks_like_tool_candidate = _content_taxonomy._looks_like_tool_candidate
+_looks_like_bibliography_candidate = _content_taxonomy._looks_like_bibliography_candidate
+_looks_like_goal_or_section_candidate = _content_taxonomy._looks_like_goal_or_section_candidate
+_looks_like_weak_heading_candidate = _content_taxonomy._looks_like_weak_heading_candidate
+_is_valid_topic_candidate = _content_taxonomy._is_valid_topic_candidate
 
 
-def _looks_like_bibliography_candidate(text: str, semantic_profile: Optional[dict] = None) -> bool:
-    normalized = _normalize_match_text(text)
-    effective_profile = merge_semantic_profile(semantic_profile)
-    markers = list(effective_profile.get("bibliography_markers") or [])
-    if any(marker in normalized for marker in markers):
-        return True
-    if re.search(r"\b(19|20)\d{2}\b", normalized):
-        return True
-    if normalized.count(" ") >= 9:
-        return True
-    if normalized.count("-") >= 2:
-        return True
-    if len(re.findall(r"\b[a-z]\b", normalized)) >= 3:
-        return True
-    return False
-
-
-def _looks_like_goal_or_section_candidate(text: str, semantic_profile: Optional[dict] = None) -> bool:
-    normalized = _normalize_match_text(text)
-    effective_profile = merge_semantic_profile(semantic_profile)
-    structural_headings = set(effective_profile.get("tag_structural_headings") or [])
-    if normalized in structural_headings:
-        return True
-    if normalized.startswith(("entender ", "aprender ", "adquirir ", "julgar ", "compreender ")):
-        return True
-    if normalized.endswith((" software", " sistemas", " programas")) and normalized.count(" ") >= 5:
-        return True
-    return False
-
-
-def _looks_like_weak_heading_candidate(text: str, semantic_profile: Optional[dict] = None) -> bool:
-    normalized = _normalize_match_text(text)
-    if normalized in {"revisao", "exercicios", "atividade assincrona"}:
-        return True
-    effective_profile = merge_semantic_profile(semantic_profile)
-    weak_heading_starters = tuple(effective_profile.get("weak_heading_starters") or [])
-    if normalized.startswith(weak_heading_starters):
-        return True
-    if len(normalized.split()) > 6:
-        return True
-    return False
-
-
-def _is_valid_topic_candidate(text: str, semantic_profile: Optional[dict] = None) -> bool:
-    slug = slugify(text)
-    effective_profile = merge_semantic_profile(semantic_profile)
-    generic_slugs = set(effective_profile.get("tag_generic_slugs") or [])
-    if not slug or slug in generic_slugs:
-        return False
-    if len(slug) < 4:
-        return False
-    if _looks_like_weak_heading_candidate(text, semantic_profile=semantic_profile):
-        return False
-    if _looks_like_tool_candidate(text, semantic_profile=semantic_profile):
-        return False
-    if _looks_like_bibliography_candidate(text, semantic_profile=semantic_profile):
-        return False
-    if _looks_like_goal_or_section_candidate(text, semantic_profile=semantic_profile):
-        return False
-    return True
-
-
-def _extract_topic_candidates(*sources: str, semantic_profile: Optional[dict] = None) -> List[str]:
-    return _content_taxonomy._extract_topic_candidates(*sources, semantic_profile=semantic_profile)
-
-def _extract_tool_candidates(*sources: str, semantic_profile: Optional[dict] = None) -> List[str]:
-    found: List[str] = []
-    seen = set()
-    effective_profile = merge_semantic_profile(semantic_profile)
-    known_tools = sorted(
-        list(effective_profile.get("known_tools") or []),
-        key=len,
-        reverse=True,
-    )
-    for source in sources:
-        normalized = _normalize_match_text(source or "")
-        for tool in known_tools:
-            tool_norm = _normalize_match_text(tool)
-            if tool_norm and tool_norm in normalized and tool_norm not in seen:
-                seen.add(tool_norm)
-                found.append(tool)
-    return found
+_extract_topic_candidates = _content_taxonomy._extract_topic_candidates
+_extract_tool_candidates = _content_taxonomy._extract_tool_candidates
 
 
 def _topic_support_tokens(text: str) -> set:
@@ -368,67 +287,14 @@ def _topic_support_tokens(text: str) -> set:
     }
 
 
-def _select_supported_taxonomy_topic(
-    candidate: str,
-    topic_records: List[dict],
-    semantic_profile: Optional[dict] = None,
-) -> Optional[dict]:
-    return _content_taxonomy._select_supported_taxonomy_topic(
-        candidate,
-        topic_records,
-        semantic_profile=semantic_profile,
-    )
-
-def _heading_topic_has_vocab_support(
-    candidate: str,
-    base_topics: List[str],
-    semantic_profile: Optional[dict] = None,
-) -> bool:
-    return _content_taxonomy._heading_topic_has_vocab_support(
-        candidate,
-        base_topics,
-        semantic_profile=semantic_profile,
-    )
-
-def _build_tag_catalog(
-    teaching_plan: str,
-    course_map_md: str,
-    glossary_md: str,
-    strong_headings: Optional[List[str]] = None,
-    semantic_profile: Optional[dict] = None,
-) -> dict:
-    return _content_taxonomy.build_tag_catalog(
-        teaching_plan=teaching_plan,
-        course_map_md=course_map_md,
-        glossary_md=glossary_md,
-        strong_headings=strong_headings,
-        semantic_profile=semantic_profile,
-    )
-
-
-def _extract_topic_code(text: str) -> str:
-    match = re.match(r"^\s*(\d+(?:\.\d+)*)(?:\.)?\s+", _collapse_ws(text))
-    return match.group(1) if match else ""
-
-
-def _strip_topic_code(text: str) -> str:
-    cleaned = _collapse_ws(text)
-    if not cleaned:
-        return ""
-    return re.sub(r"^\s*\d+(?:\.\d+)*\.?\s*", "", cleaned).strip()
-
-
-def _parse_glossary_terms(glossary_md: str) -> List[Dict[str, object]]:
-    return _content_taxonomy._parse_glossary_terms(glossary_md)
-
-def _glossary_aliases_for_topic(topic_label: str, unit_title: str, glossary_terms: List[Dict[str, object]]) -> List[str]:
-    return _content_taxonomy._glossary_aliases_for_topic(topic_label, unit_title, glossary_terms)
-
-def _dedupe_taxonomy_topics(topics: List[dict]) -> List[dict]:
-    return _content_taxonomy._dedupe_taxonomy_topics(topics)
-
-def _infer_course_slug_from_units(units: List[tuple]) -> str:
-    return _content_taxonomy._infer_course_slug_from_units(units)
+_select_supported_taxonomy_topic = _content_taxonomy._select_supported_taxonomy_topic
+_heading_topic_has_vocab_support = _content_taxonomy._heading_topic_has_vocab_support
+_extract_topic_code = _content_taxonomy._extract_topic_code
+_strip_topic_code = _content_taxonomy._strip_topic_code
+_parse_glossary_terms = _content_taxonomy._parse_glossary_terms
+_glossary_aliases_for_topic = _content_taxonomy._glossary_aliases_for_topic
+_dedupe_taxonomy_topics = _content_taxonomy._dedupe_taxonomy_topics
+_infer_course_slug_from_units = _content_taxonomy._infer_course_slug_from_units
 
 def _build_content_taxonomy(
     teaching_plan: str,
@@ -449,62 +315,11 @@ def _build_content_taxonomy(
     )
 
 
-def _write_internal_content_taxonomy(root_dir: Path, taxonomy: dict) -> None:
-    _content_taxonomy.write_internal_content_taxonomy(root_dir, taxonomy)
-
-
-def _extract_markdown_lead_text(markdown_text: str, max_chars: int = 2600) -> str:
-    return _content_taxonomy.extract_markdown_lead_text(markdown_text, max_chars=max_chars)
-
-
-def _collect_strong_heading_candidates(root_dir: Optional[Path], manifest_entries: Optional[List[dict]]) -> List[str]:
-    return _content_taxonomy.collect_strong_heading_candidates(root_dir, manifest_entries)
-
-
-def _entry_tag_signal_text(entry: dict, markdown_text: str) -> str:
-    parts = [
-        entry.get("title", ""),
-        entry.get("category", ""),
-        entry.get("notes", ""),
-        entry.get("professor_signal", ""),
-        entry.get("raw_target", ""),
-        markdown_text,
-    ]
-    return _normalize_match_text(" ".join(part for part in parts if part))
-
-
-def _signal_token_set(signal_text: str) -> set:
-    return {
-        token
-        for token in _normalize_match_text(signal_text).split()
-        if len(token) >= 4
-    }
-
-
-def _matches_tag_slug(signal_text: str, tag_slug: str) -> bool:
-    normalized_signal = _normalize_match_text(signal_text)
-    normalized_slug = _normalize_match_text(tag_slug.replace("-", " "))
-    if not normalized_slug or not normalized_signal:
-        return False
-    if normalized_slug in normalized_signal:
-        return True
-    tokens = [tok for tok in normalized_slug.split() if len(tok) >= 4]
-    if not tokens:
-        return False
-    signal_tokens = _signal_token_set(normalized_signal)
-    direct_hits = sum(1 for token in tokens if token in signal_tokens)
-    if len(tokens) == 1:
-        token = tokens[0]
-        if len(token) < 5:
-            return False
-        return direct_hits == 1
-    if direct_hits == len(tokens):
-        return True
-    return False
-
-
-def _infer_entry_auto_tags(entry: dict, markdown_text: str, vocabulary: dict) -> List[str]:
-    return _content_taxonomy.infer_entry_auto_tags(entry, markdown_text, vocabulary)
+_write_internal_content_taxonomy = _content_taxonomy.write_internal_content_taxonomy
+_collect_strong_heading_candidates = _content_taxonomy.collect_strong_heading_candidates
+_entry_tag_signal_text = _content_taxonomy._entry_tag_signal_text
+_signal_token_set = _content_taxonomy._signal_token_set
+_matches_tag_slug = _content_taxonomy._matches_tag_slug
 
 
 def _write_tag_catalog(
@@ -595,16 +410,9 @@ def _strip_markdown_image_refs(markdown: str) -> str:
     return normalized + ("\n" if normalized else "")
 
 
-def _build_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
-    return _backend_build_page_chunks(pages, page_count, chunk_size=chunk_size)
-
-
-def _build_marker_page_chunks(pages: Optional[List[int]], page_count: int, chunk_size: int = 20) -> List[List[int]]:
-    return _backend_build_marker_page_chunks(pages, page_count, chunk_size=chunk_size)
-
-
-def _selected_page_count(ctx: "BackendContext") -> int:
-    return _backend_selected_page_count(ctx)
+_build_page_chunks = _backend_build_page_chunks
+_build_marker_page_chunks = _backend_build_marker_page_chunks
+_selected_page_count = _backend_selected_page_count
 
 
 def _prepare_docling_python_source_pdf(ctx: "BackendContext", out_dir: Path) -> tuple[Path, bool]:
@@ -616,8 +424,7 @@ def _prepare_docling_python_source_pdf(ctx: "BackendContext", out_dir: Path) -> 
     )
 
 
-def _configure_docling_python_standard_gpu(api: dict, pipeline_options) -> dict:
-    return _backend_configure_docling_python_standard_gpu(api, pipeline_options)
+_configure_docling_python_standard_gpu = _backend_configure_docling_python_standard_gpu
 
 
 def _marker_chunk_size_for_workload(ctx: "BackendContext") -> int:
@@ -655,56 +462,19 @@ def _merge_numeric_dicts(items: List[Dict[str, object]]) -> Dict[str, object]:
     return merged
 
 
-def _should_force_ocr_for_marker(ctx: "BackendContext") -> bool:
-    return _backend_should_force_ocr_for_marker(ctx)
-
-
-def _marker_should_use_llm(ctx: "BackendContext") -> bool:
-    return _backend_marker_should_use_llm(ctx)
-
-
-def _marker_ollama_model(ctx: "BackendContext") -> str:
-    return _backend_marker_ollama_model(ctx)
-
-
-def _marker_torch_device(ctx: "BackendContext") -> str:
-    return _backend_marker_torch_device(ctx)
-
-
-def _marker_effective_torch_device(ctx: "BackendContext") -> str:
-    return _backend_marker_effective_torch_device(ctx)
-
-
-def _marker_model_slug(model: str) -> str:
-    return _backend_marker_model_slug(model)
-
-
-def _marker_model_is_qwen3_vl_8b(model: str) -> bool:
-    return _backend_marker_model_is_qwen3_vl_8b(model)
-
-
-def _marker_model_is_cloud_variant(model: str) -> bool:
-    return _backend_marker_model_is_cloud_variant(model)
-
-
-def _marker_model_is_probably_vision(model: str) -> bool:
-    return _backend_marker_model_is_probably_vision(model)
-
-
-def _marker_should_redo_inline_math(ctx: "BackendContext") -> bool:
-    return _backend_marker_should_redo_inline_math(ctx)
-
-
-def _marker_progress_hints(line: str, previous_phase: Optional[str]) -> tuple[Optional[str], list[str]]:
-    return _backend_marker_progress_hints(line, previous_phase)
-
-
-def _load_docling_python_api():
-    return _backend_load_docling_python_api()
-
-
-def has_docling_python_api() -> bool:
-    return bool(_load_docling_python_api())
+_should_force_ocr_for_marker = _backend_should_force_ocr_for_marker
+_marker_should_use_llm = _backend_marker_should_use_llm
+_marker_ollama_model = _backend_marker_ollama_model
+_marker_torch_device = _backend_marker_torch_device
+_marker_effective_torch_device = _backend_marker_effective_torch_device
+_marker_model_slug = _backend_marker_model_slug
+_marker_model_is_qwen3_vl_8b = _backend_marker_model_is_qwen3_vl_8b
+_marker_model_is_cloud_variant = _backend_marker_model_is_cloud_variant
+_marker_model_is_probably_vision = _backend_marker_model_is_probably_vision
+_marker_should_redo_inline_math = _backend_marker_should_redo_inline_math
+_marker_progress_hints = _backend_marker_progress_hints
+_load_docling_python_api = _backend_load_docling_python_api
+has_docling_python_api = lambda: bool(_load_docling_python_api())
 
 
 def _advanced_cli_stall_timeout(backend_name: str, ctx: "BackendContext") -> int:
@@ -741,27 +511,7 @@ def _pdf_image_extraction_policy(ctx: "BackendContext") -> Dict[str, object]:
         "max_aspect_ratio": RepoBuilder._MAX_ASPECT_RATIO,
         "keep_low_color": False,
     }
-def _truncate_markdown_blocks(blocks: List[str], max_chars: int = 15000) -> str:
-    if not blocks:
-        return ""
-    out: List[str] = []
-    size = 0
-    for block in blocks:
-        if not block:
-            continue
-        next_size = size + len(block) + 2
-        if next_size <= max_chars:
-            out.append(block)
-            size = next_size
-            continue
-        remaining = max_chars - size
-        if remaining > 160:
-            clipped = block[:remaining].rstrip()
-            out.append(clipped + "\n\n> Conteúdo truncado.")
-        else:
-            out.append("> Conteúdo truncado.")
-        break
-    return "\n\n".join(out).strip()
+_truncate_markdown_blocks = _url_markdown_truncate_markdown_blocks
 
 
 def _compact_notebook_markdown(raw_text: str, max_cells: int = 24, max_output_chars: int = 6000) -> Tuple[str, str]:
@@ -841,68 +591,40 @@ def _generated_repo_gitignore_text() -> str:
     ])
 
 
-def _extract_url_page_metadata(soup) -> Dict[str, str]:
-    return _url_markdown_extract_url_page_metadata(soup, collapse_ws=_collapse_ws)
-
-def _is_probably_noise_container(tag) -> bool:
-    return _url_markdown_is_probably_noise_container(tag)
-
-def _content_score(tag) -> int:
-    return _url_markdown_content_score(tag)
-
-def _pick_best_content_root(soup):
-    return _url_markdown_pick_best_content_root(soup)
-
-def _inline_html_to_markdown(node) -> str:
-    return _url_markdown_inline_html_to_markdown(node, collapse_ws=_collapse_ws)
-
-def _render_html_block_to_markdown(tag) -> str:
-    return _url_markdown_render_html_block_to_markdown(tag, collapse_ws=_collapse_ws)
-
-def _html_to_structured_markdown(html: str, url: str, title: str) -> str:
-    return _url_markdown_html_to_structured_markdown(
-        html,
-        url,
-        title,
-        collapse_ws=_collapse_ws,
-        truncate_markdown_blocks=_truncate_markdown_blocks,
-    )
+_extract_url_page_metadata = partial(
+    _url_markdown_extract_url_page_metadata,
+    collapse_ws=_collapse_ws,
+)
+_is_probably_noise_container = _url_markdown_is_probably_noise_container
+_content_score = _url_markdown_content_score
+_pick_best_content_root = _url_markdown_pick_best_content_root
+_inline_html_to_markdown = partial(
+    _url_markdown_inline_html_to_markdown,
+    collapse_ws=_collapse_ws,
+)
+_render_html_block_to_markdown = partial(
+    _url_markdown_render_html_block_to_markdown,
+    collapse_ws=_collapse_ws,
+)
+_html_to_structured_markdown = partial(
+    _url_markdown_html_to_structured_markdown,
+    collapse_ws=_collapse_ws,
+    truncate_markdown_blocks=_truncate_markdown_blocks,
+)
 
 
 # ---------------------------------------------------------------------------
 # Unicode math -> LaTeX normalization
 # ---------------------------------------------------------------------------
 
-def _normalize_tex_accents_in_math(text: str) -> str:
-    return _text_normalize_tex_accents_in_math(text)
-
-
-def _normalize_unicode_math(text: str) -> str:
-    return _text_normalize_unicode_math(text)
-
-
-def _mojibake_score(text: str) -> int:
-    return _text_mojibake_score(text)
-
-
-def _repair_mojibake_text(text: str) -> str:
-    return _text_repair_mojibake_text(text)
-
-
-def _sanitize_external_markdown_text(text: str) -> str:
-    return _text_sanitize_external_markdown_text(text)
-
-
-def _detect_latex_corruption(content: str) -> dict:
-    return _text_detect_latex_corruption(content)
-
-
-def _is_plain_text_recovery_candidate(line: str) -> bool:
-    return _text_is_plain_text_recovery_candidate(line)
-
-
-def _hybridize_marker_markdown_with_base(base_markdown: str, marker_markdown: str) -> tuple[str, Dict[str, int]]:
-    return _text_hybridize_marker_markdown_with_base(base_markdown, marker_markdown)
+_normalize_tex_accents_in_math = _text_normalize_tex_accents_in_math
+_normalize_unicode_math = _text_normalize_unicode_math
+_mojibake_score = _text_mojibake_score
+_repair_mojibake_text = _text_repair_mojibake_text
+_sanitize_external_markdown_text = _text_sanitize_external_markdown_text
+_detect_latex_corruption = _text_detect_latex_corruption
+_is_plain_text_recovery_candidate = _text_is_plain_text_recovery_candidate
+_hybridize_marker_markdown_with_base = _text_hybridize_marker_markdown_with_base
 
 
 # ---------------------------------------------------------------------------
@@ -1048,130 +770,18 @@ class PyMuPDFBackend(ExtractionBackend):
 
 
 def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext", stall_timeout: Optional[int] = None):
-    """Run an external CLI process with stall timeout and cancel support.
-
-    Returns (returncode, stdout_lines, stderr_lines).
-    Raises InterruptedError if cancelled, TimeoutError if stalled.
-    """
-    import threading as _th
-    import time as _time
-
-    stdout_lines: list = []
-    stderr_lines: list = []
-    last_output_time = _time.monotonic()
-    effective_stall_timeout = stall_timeout if stall_timeout is not None else ctx.stall_timeout
-    lock = _th.Lock()
-    killed_by_cancel = _th.Event()
-    killed_by_stall = _th.Event()
-    last_marker_phase = {"name": None}
-    process_env = None
-
-    if backend_name == "marker":
-        process_env = os.environ.copy()
-        process_env["TORCH_DEVICE"] = _marker_effective_torch_device(ctx)
-
-    def _log_marker_progress_hint(line: str):
-        if backend_name != "marker":
-            return
-        phase, hints = _marker_progress_hints(line, last_marker_phase["name"])
-        last_marker_phase["name"] = phase
-        for hint in hints:
-            logger.info("  [marker] %s", hint)
-
-    proc = subprocess.Popen(
+    return _backend_run_cli_with_timeout(
         cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        bufsize=1,
-        env=process_env,
+        backend_name,
+        ctx,
+        logger_obj=logger,
+        marker_effective_torch_device_fn=_marker_effective_torch_device,
+        marker_progress_hints_fn=_marker_progress_hints,
+        marker_should_use_llm_fn=_marker_should_use_llm,
+        marker_ollama_model_fn=_marker_ollama_model,
+        marker_model_is_qwen3_vl_8b_fn=_marker_model_is_qwen3_vl_8b,
+        stall_timeout=stall_timeout,
     )
-    logger.info("  [%s] PID=%d — aguardando saída...", backend_name, proc.pid)
-
-    def _read_stderr():
-        nonlocal last_output_time
-        for line in proc.stderr:
-            line = line.rstrip()
-            if line:
-                with lock:
-                    stderr_lines.append(line)
-                    last_output_time = _time.monotonic()
-                _log_marker_progress_hint(line)
-                logger.info("  [%s stderr] %s", backend_name, line)
-
-    stderr_thread = _th.Thread(target=_read_stderr, daemon=True)
-    stderr_thread.start()
-
-    def _watchdog():
-        """Mata o processo se parar de produzir output ou se cancelado."""
-        while proc.poll() is None:
-            _time.sleep(2)
-            # Check cancel
-            if ctx.cancel_check:
-                try:
-                    ctx.cancel_check()
-                except InterruptedError:
-                    logger.warning("  [%s] Cancelado pelo usuário — matando PID %d",
-                                   backend_name, proc.pid)
-                    killed_by_cancel.set()
-                    proc.kill()
-                    return
-            # Check stall
-            with lock:
-                elapsed = _time.monotonic() - last_output_time
-            phase_stall_timeout = effective_stall_timeout
-            if backend_name == "marker" and _marker_should_use_llm(ctx) and _marker_ollama_model(ctx):
-                phase_name = str(last_marker_phase.get("name") or "")
-                if phase_name.startswith("LLM processors running"):
-                    if _marker_model_is_qwen3_vl_8b(_marker_ollama_model(ctx)):
-                        phase_stall_timeout = max(phase_stall_timeout, 1800)
-                    else:
-                        phase_stall_timeout = max(phase_stall_timeout, 1200)
-            if elapsed > phase_stall_timeout:
-                logger.error("  [%s] Sem output por %ds — matando PID %d (stall timeout)",
-                             backend_name, phase_stall_timeout, proc.pid)
-                killed_by_stall.set()
-                proc.kill()
-                return
-
-    watchdog_thread = _th.Thread(target=_watchdog, daemon=True)
-    watchdog_thread.start()
-
-    for line in proc.stdout:
-        line = line.rstrip()
-        if line:
-            stdout_lines.append(line)
-            with lock:
-                last_output_time = _time.monotonic()
-            _log_marker_progress_hint(line)
-            logger.info("  [%s stdout] %s", backend_name, line)
-
-    proc.wait()
-    stderr_thread.join(timeout=5)
-    watchdog_thread.join(timeout=2)
-
-    if killed_by_cancel.is_set():
-        raise InterruptedError(f"{backend_name} cancelado pelo usuário.")
-
-    if killed_by_stall.is_set():
-        last_line = (stderr_lines or stdout_lines or ["(nenhum)"])[-1]
-        phase_stall_timeout = effective_stall_timeout
-        if backend_name == "marker" and _marker_should_use_llm(ctx) and _marker_ollama_model(ctx):
-            phase_name = str(last_marker_phase.get("name") or "")
-            if phase_name.startswith("LLM processors running"):
-                if _marker_model_is_qwen3_vl_8b(_marker_ollama_model(ctx)):
-                    phase_stall_timeout = max(phase_stall_timeout, 1800)
-                else:
-                    phase_stall_timeout = max(phase_stall_timeout, 1200)
-        raise TimeoutError(
-            f"{backend_name} travou (sem output por {phase_stall_timeout}s). "
-            f"Último output:\n{last_line}"
-        )
-
-    returncode = proc.returncode
-    logger.info("  [%s] Processo finalizado com código %d", backend_name, returncode)
-    return returncode, stdout_lines, stderr_lines
-
 
 def _default_marker_capabilities() -> Dict[str, object]:
     return _backend_default_marker_capabilities()
@@ -2247,25 +1857,11 @@ class RepoBuilder:
         self.selector = BackendSelector()
 
     def _effective_course_meta(self, manifest: Optional[Dict[str, object]] = None) -> Dict[str, str]:
-        course_meta = dict(self.course_meta or {})
-        manifest_course = {}
-        if manifest:
-            raw_course = manifest.get("course")
-            if isinstance(raw_course, dict):
-                manifest_course = dict(raw_course)
-
-        for key in ("course_name", "course_slug", "semester", "professor", "institution"):
-            if not str(course_meta.get(key, "") or "").strip() and str(manifest_course.get(key, "") or "").strip():
-                course_meta[key] = manifest_course[key]
-
-        course_name = str(course_meta.get("course_name", "") or "").strip() or self.root_dir.name
-        course_slug = str(course_meta.get("course_slug", "") or "").strip() or slugify(course_name) or slugify(self.root_dir.name) or "curso"
-        course_meta["course_name"] = course_name
-        course_meta["course_slug"] = course_slug
-        course_meta["semester"] = str(course_meta.get("semester", "") or "").strip()
-        course_meta["professor"] = str(course_meta.get("professor", "") or "").strip()
-        course_meta["institution"] = str(course_meta.get("institution", "") or "").strip() or "PUCRS"
-        return course_meta
+        return _repo_artifacts.effective_course_meta(
+            self.course_meta,
+            self.root_dir,
+            manifest=manifest,
+        )
 
     def _sleep_guard(self, reason: str):
         return prevent_system_sleep(
@@ -2761,206 +2357,32 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             logger.info("Injected image descriptions into %d markdown files.", injected_count)
 
     def _resolve_entry_markdown_targets(self, entry_data: dict) -> List[Path]:
-        target_markdowns: List[Path] = []
-        seen_targets = set()
-
-        def _is_allowed_rel_path(rel_path: str) -> bool:
-            rel_posix = str(rel_path).replace("\\", "/").lower()
-            return (
-                rel_posix.startswith("content/")
-                or rel_posix.startswith("exercises/")
-                or rel_posix.startswith("exams/")
-                or rel_posix.startswith("assignments/")
-                or rel_posix.startswith("code/")
-                or rel_posix.startswith("whiteboard/")
-                or rel_posix.startswith("staging/markdown-auto/")
-            )
-
-        for key in ["approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown"]:
-            rel_path = entry_data.get(key)
-            if not rel_path or not str(rel_path).lower().endswith(".md"):
-                continue
-            md_file = self.root_dir / rel_path
-            if not md_file.exists() or not md_file.is_file():
-                continue
-            if not _is_allowed_rel_path(rel_path):
-                continue
-            if md_file in seen_targets:
-                continue
-            seen_targets.add(md_file)
-            target_markdowns.append(md_file)
-
-        if target_markdowns:
-            return target_markdowns
-
-        entry_id = (entry_data.get("id") or "").strip()
-        if not entry_id:
-            return target_markdowns
-
-        # Fallback for stale manifest paths: locate markdowns that declare this entry_id.
-        search_roots = [
-            self.root_dir / "content",
-            self.root_dir / "exercises",
-            self.root_dir / "exams",
-            self.root_dir / "assignments",
-            self.root_dir / "code",
-            self.root_dir / "whiteboard",
-            self.root_dir / "staging" / "markdown-auto",
-        ]
-        frontmatter_mark = f'entry_id: "{entry_id}"'
-        for root in search_roots:
-            if not root.exists():
-                continue
-            for md_file in root.rglob("*.md"):
-                if md_file in seen_targets:
-                    continue
-                try:
-                    text = md_file.read_text(encoding="utf-8")
-                except Exception:
-                    continue
-                if frontmatter_mark not in text:
-                    continue
-                seen_targets.add(md_file)
-                target_markdowns.append(md_file)
-
-        return target_markdowns
+        return _repo_artifacts.resolve_entry_markdown_targets(self.root_dir, entry_data)
 
     def _heal_manifest_markdown_paths(self, manifest: dict) -> dict:
-        entries = manifest.get("entries", []) or []
-        healed = 0
-        for entry_data in entries:
-            if not isinstance(entry_data, dict):
-                continue
-
-            live_targets: List[Tuple[str, Path]] = []
-            for key in ["approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown"]:
-                rel_path = entry_data.get(key)
-                if not rel_path or not str(rel_path).lower().endswith(".md"):
-                    continue
-                md_file = self.root_dir / rel_path
-                if md_file.exists() and md_file.is_file():
-                    live_targets.append((key, md_file))
-
-            if live_targets:
-                # If a final tutor-facing markdown exists, normalize manifest to use it explicitly.
-                final_targets = []
-                for key, md_file in live_targets:
-                    rel_md = safe_rel(md_file, self.root_dir).replace("\\", "/")
-                    if (
-                        rel_md.startswith("content/curated/")
-                        or rel_md.startswith("exercises/lists/")
-                        or rel_md.startswith("exams/past-exams/")
-                        or rel_md.startswith("assignments/")
-                        or rel_md.startswith("code/")
-                        or rel_md.startswith("whiteboard/")
-                    ):
-                        final_targets.append(rel_md)
-                if final_targets:
-                    preferred = final_targets[0]
-                    if entry_data.get("approved_markdown") != preferred:
-                        entry_data["approved_markdown"] = preferred
-                        healed += 1
-                    if entry_data.get("curated_markdown") != preferred:
-                        entry_data["curated_markdown"] = preferred
-                        healed += 1
-                    if entry_data.get("base_markdown") != preferred:
-                        entry_data["base_markdown"] = preferred
-                        healed += 1
-                continue
-
-            resolved_targets = self._resolve_entry_markdown_targets(entry_data)
-            if not resolved_targets:
-                continue
-
-            preferred = safe_rel(resolved_targets[0], self.root_dir)
-            if entry_data.get("base_markdown") != preferred:
-                entry_data["base_markdown"] = preferred
-                healed += 1
-            if (
-                preferred.startswith("content/curated/")
-                or preferred.startswith("exercises/lists/")
-                or preferred.startswith("exams/past-exams/")
-                or preferred.startswith("assignments/")
-                or preferred.startswith("code/")
-                or preferred.startswith("whiteboard/")
-            ):
-                if entry_data.get("approved_markdown") != preferred:
-                    entry_data["approved_markdown"] = preferred
-                    healed += 1
-                if entry_data.get("curated_markdown") != preferred:
-                    entry_data["curated_markdown"] = preferred
-                    healed += 1
-
+        manifest, healed = _repo_artifacts.heal_manifest_markdown_paths(
+            self.root_dir,
+            manifest,
+        )
         if healed:
             logger.info("Healed markdown targets for %d manifest entries.", healed)
-        manifest["entries"] = entries
         return manifest
 
     def _write_source_registry(self, manifest: Dict[str, object]) -> None:
-        lines = [
-            f"generated_at: {manifest['generated_at']}",
-            "sources:",
-        ]
-        for item in manifest["entries"]:
-            lines.extend(
-                [
-                    f"  - id: {item['id']}",
-                    f"    title: {json_str(item['title'])}",
-                    f"    category: {item['category']}",
-                    f"    file_type: {item['file_type']}",
-                    f"    source_path: {json_str(item['source_path'])}",
-                    f"    raw_target: {json_str(item.get('raw_target'))}",
-                    f"    processing_mode: {item.get('processing_mode', 'auto')}",
-                    f"    effective_profile: {item.get('effective_profile', 'auto')}",
-                    f"    include_in_bundle: {str(item.get('include_in_bundle', True)).lower()}",
-                    f"    professor_signal: {json_str(item.get('professor_signal', ''))}",
-                ]
-            )
-        write_text(self.root_dir / "course" / "SOURCE_REGISTRY.yaml", "\n".join(lines) + "\n")
+        _repo_artifacts.write_source_registry(
+            self.root_dir,
+            manifest,
+            write_text_fn=write_text,
+        )
 
     def _write_bundle_seed(self, manifest: Dict[str, object]) -> None:
-        course_meta = self._effective_course_meta(manifest)
-        selected = []
-        for entry in manifest["entries"]:
-            score = _bundle_priority_score(entry)
-            if score < 30:
-                continue
-            chosen_markdown = (
-                entry.get("approved_markdown")
-                or entry.get("curated_markdown")
-                or entry.get("advanced_markdown")
-                or entry.get("base_markdown")
-            )
-            if not chosen_markdown:
-                continue
-            selected.append((score, entry))
-
-        selected.sort(
-            key=lambda item: (
-                -item[0],
-                (item[1].get("category") or ""),
-                (item[1].get("title") or ""),
-            )
-        )
-        seed = {
-            "generated_at": manifest["generated_at"],
-            "course_slug": course_meta["course_slug"],
-            "target_platform": "claude-projects",
-            "selection_policy": {
-                "min_score": 30,
-                "goal": "baixo-custo-alto-sinal",
-                "routing_first": True,
-                "exclude_full_text": True,
-                "metadata_only": True,
-            },
-                "bundle_candidates": [
-                _bundle_seed_candidate(e, score)
-                for score, e in selected
-            ],
-        }
-        write_text(
-            self.root_dir / "build" / "claude-knowledge" / "bundle.seed.json",
-            json.dumps(seed, indent=2, ensure_ascii=False)
+        _repo_artifacts.write_bundle_seed(
+            self.root_dir,
+            manifest,
+            course_meta=self._effective_course_meta(manifest),
+            bundle_priority_score_fn=_bundle_priority_score,
+            bundle_seed_candidate_fn=_bundle_seed_candidate,
+            write_text_fn=write_text,
         )
 
     def _write_build_report(self, manifest: Dict[str, object]) -> None:
@@ -2969,49 +2391,19 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             or getattr(self.subject_profile, "preferred_llm", "claude")
             or "claude"
         )
-        platform_map = {
-            "claude": ("setup/INSTRUCOES_CLAUDE_PROJETO.md",
-                       "Cole no campo 'Instructions' do Projeto Claude"),
-            "gpt":    ("setup/INSTRUCOES_GPT_PROJETO.md",
-                       "Cole no campo 'Instructions' do GPT / Custom GPT"),
-            "gemini": ("setup/INSTRUCOES_GEMINI_PROJETO.md",
-                       "Cole no campo de instruções do Gem no Google AI Studio"),
-        }
-        filename, instruction = platform_map.get(platform, platform_map["claude"])
-
-        report = [
-            "# BUILD_REPORT",
-            "",
-            f"- generated_at: {manifest['generated_at']}",
-            f"- preferred_platform: {platform}",
-            f"- pymupdf: {HAS_PYMUPDF}",
-            f"- pymupdf4llm: {HAS_PYMUPDF4LLM}",
-            f"- pdfplumber: {HAS_PDFPLUMBER}",
-            f"- datalab_api: {has_datalab_api_key()}",
-            f"- docling_cli: {bool(DOCLING_CLI)}",
-            f"- docling_python: {has_docling_python_api()}",
-            f"- marker_cli: {bool(MARKER_CLI)}",
-            "",
-            f"## Plataforma principal: {platform.upper()}",
-            "",
-            f"> Copie o conteúdo de `{filename}`",
-            f"> {instruction}",
-            "",
-            "Os três arquivos de instruções foram gerados:",
-        ]
-        for k, (f, _) in platform_map.items():
-            marker = " **<< atual**" if k == platform else ""
-            report.append(f"- `{f}`{marker}")
-
-        report.extend([
-            "",
-            "## Regras práticas de curadoria",
-            "- PDFs simples: camada base costuma bastar.",
-            "- PDFs com fórmulas, scans, layout complexo ou provas: camada avançada + revisão manual.",
-            "- O conhecimento final do tutor deve sair de `manual-review/` e depois ser promovido.",
-            "- Atualizar `student/STUDENT_STATE.md` após cada sessão de estudo.",
-        ])
-        write_text(self.root_dir / "BUILD_REPORT.md", "\n".join(report) + "\n")
+        _repo_artifacts.write_build_report(
+            self.root_dir,
+            manifest,
+            preferred_platform=platform,
+            has_pymupdf=HAS_PYMUPDF,
+            has_pymupdf4llm=HAS_PYMUPDF4LLM,
+            has_pdfplumber=HAS_PDFPLUMBER,
+            has_datalab_api_key_fn=has_datalab_api_key,
+            docling_cli=DOCLING_CLI,
+            has_docling_python_api_fn=has_docling_python_api,
+            marker_cli=MARKER_CLI,
+            write_text_fn=write_text,
+        )
 
     def _remove_entry_consolidated_images(self, entry_id: str) -> int:
         """Remove consolidated content/images assets that belong to one entry."""
@@ -4045,17 +3437,17 @@ unit: {entry.tags}
             doc.close()
 
     def _compact_manifest(self, manifest: dict) -> dict:
-        entries = manifest.get("entries", []) or []
-        live_entries = _filter_live_manifest_entries(self.root_dir, entries)
-        removed = len(entries) - len(live_entries)
+        manifest, removed, healed = _repo_artifacts.compact_manifest(
+            self.root_dir,
+            manifest,
+            filter_live_manifest_entries_fn=_filter_live_manifest_entries,
+            heal_manifest_markdown_paths_fn=_repo_artifacts.heal_manifest_markdown_paths,
+            manifest_log_limit=_MANIFEST_LOG_LIMIT,
+        )
         if removed > 0:
             logger.info("Removidas %d entries órfãs do manifest antes de regenerar artefatos.", removed)
-        manifest["entries"] = live_entries
-        manifest = self._heal_manifest_markdown_paths(manifest)
-
-        logs = manifest.get("logs", [])
-        if isinstance(logs, list) and len(logs) > _MANIFEST_LOG_LIMIT:
-            manifest["logs"] = logs[-_MANIFEST_LOG_LIMIT:]
+        if healed > 0:
+            logger.info("Healed markdown targets for %d manifest entries.", healed)
         return manifest
 
     def incremental_build(self) -> None:
@@ -4574,156 +3966,10 @@ _TEACHING_PLAN_SECTION_STOP = re.compile(
     re.IGNORECASE,
 )
 
-def _normalize_teaching_plan_heading(line: str) -> str:
-    return _teaching_plan_normalize_heading(line)
-
-def _parse_units_from_teaching_plan(text: str):
-    return _teaching_plan_parse_units_from_teaching_plan(text)
-
-
-def _topic_text(topic) -> str:
-    return _teaching_plan_topic_text(topic)
-
-
-def _topic_depth(topic) -> int:
-    return _teaching_plan_topic_depth(topic)
-
-
-def _match_timeline_to_units(
-    timeline: List[Dict[str, str]],
-    units: list,
-) -> List[Dict[str, str]]:
-    """
-    Cruza linhas do cronograma com unidades do plano de ensino.
-
-    Para cada unidade, tenta encontrar a(s) linha(s) do cronograma que
-    mencionam o título ou número da unidade. Retorna lista de dicts:
-        [{"unit_title": str, "unit_slug": str, "period": str, "dates": str}, ...]
-
-    O matching usa heurísticas:
-      - Busca "unidade N", "unid N", "un N" no texto do conteúdo
-      - Busca o título da unidade (ou parte dele) no conteúdo
-      - Usa overlap semântico leve do nome da unidade
-    """
-    if not timeline or not units:
-        return []
-
-    content_keys = []
-    for key in timeline[0].keys():
-        if any(k in key for k in ["conteúdo", "conteudo", "assunto", "tema", "descrição",
-                                  "descricao", "atividade", "tópico", "topico", "content"]):
-            content_keys.append(key)
-    if not content_keys:
-        avg_lens = {}
-        for key in timeline[0].keys():
-            avg_lens[key] = sum(len(row.get(key, "")) for row in timeline) / max(len(timeline), 1)
-        if avg_lens:
-            content_keys = [max(avg_lens, key=avg_lens.get)]
-
-    preferred_date_keys = []
-    fallback_date_keys = []
-    for key in timeline[0].keys():
-        if any(k in key for k in ["data", "date"]):
-            preferred_date_keys.append(key)
-        elif any(k in key for k in ["semana", "week", "sem", "aula"]):
-            fallback_date_keys.append(key)
-    date_keys = preferred_date_keys or fallback_date_keys
-    if not date_keys:
-        date_keys = [list(timeline[0].keys())[0]] if timeline[0] else []
-
-    def _normalize_token_text(text: str) -> str:
-        text = unicodedata.normalize("NFKD", text or "")
-        text = "".join(ch for ch in text if not unicodedata.combining(ch))
-        text = re.sub(r"[^a-z0-9\s]", " ", text.lower())
-        return re.sub(r"\s+", " ", text).strip()
-
-    generic_tokens = {
-        "unidade", "introducao", "introdução", "fundamentos", "softwares", "suporte",
-        "formal", "formais", "verificacao", "verificação", "programas", "programa",
-        "modelos", "modelo", "logica", "lógica", "temporal", "sistemas", "sistema",
-    }
-
-    result = []
-    for unit_title, topics in units:
-        unit_num_match = re.search(r"(\d+)", unit_title)
-        unit_num = unit_num_match.group(1) if unit_num_match else ""
-        unit_num_int = str(int(unit_num)) if unit_num else ""
-
-        desc_match = re.search(r"[—–\-:]\s*(.+)", unit_title)
-        unit_desc = desc_match.group(1).strip() if desc_match else ""
-        unit_desc_norm = _normalize_token_text(unit_desc)
-        desc_words = [w for w in unit_desc_norm.split() if len(w) > 3][:4]
-        topic_phrases = []
-        topic_keywords = set()
-        for topic in topics or []:
-            topic_text = _topic_text(topic)
-            topic_norm = _normalize_token_text(topic_text)
-            if not topic_norm:
-                continue
-            topic_phrases.append(topic_norm)
-            for token in topic_norm.split():
-                if len(token) >= 5 and token not in generic_tokens:
-                    topic_keywords.add(token)
-
-        matched_dates = []
-        for row in timeline:
-            content = " ".join(row.get(k, "") for k in content_keys)
-            content_norm = _normalize_token_text(content)
-            if not content_norm:
-                continue
-
-            matched = False
-            if unit_num:
-                patterns = [
-                    rf"\bunidade\s*{unit_num}\b",
-                    rf"\bunidade\s*{unit_num_int}\b",
-                    rf"\bunid\.?\s*{unit_num_int}\b",
-                    rf"\bun\.?\s*{unit_num_int}\b",
-                ]
-                for pat in patterns:
-                    if re.search(pat, content_norm, re.IGNORECASE):
-                        matched = True
-                        break
-
-            if not matched and desc_words:
-                if unit_desc_norm and unit_desc_norm in content_norm:
-                    matched = True
-                else:
-                    matches = sum(1 for w in desc_words if re.search(rf"\b{re.escape(w)}\b", content_norm))
-                    threshold = 1 if len(desc_words) == 1 else 2
-                    if matches >= threshold:
-                        matched = True
-
-            if not matched and topic_phrases:
-                for phrase in topic_phrases:
-                    if phrase in content_norm:
-                        matched = True
-                        break
-
-            if not matched and topic_keywords:
-                keyword_hits = sum(1 for kw in topic_keywords if re.search(rf"\b{re.escape(kw)}\b", content_norm))
-                if keyword_hits >= 1:
-                    matched = True
-
-            if matched:
-                date_str = " / ".join(row.get(k, "") for k in date_keys if row.get(k, "")).strip()
-                if date_str:
-                    matched_dates.append(date_str)
-
-        matched_dates = list(dict.fromkeys(matched_dates))
-        if len(matched_dates) > 1:
-            period = f"{matched_dates[0]} a {matched_dates[-1]}"
-        else:
-            period = matched_dates[0] if matched_dates else ""
-
-        result.append({
-            "unit_title": unit_title,
-            "unit_slug": _normalize_unit_slug(unit_title),
-            "period": period,
-            "dates": ", ".join(matched_dates),
-        })
-
-    return result
+_normalize_teaching_plan_heading = _teaching_plan_normalize_heading
+_parse_units_from_teaching_plan = _teaching_plan_parse_units_from_teaching_plan
+_topic_text = _teaching_plan_topic_text
+_topic_depth = _teaching_plan_topic_depth
 
 
 def _match_timeline_to_units_generic(
@@ -4741,804 +3987,416 @@ def _match_timeline_to_units_generic(
 _match_timeline_to_units = _match_timeline_to_units_generic
 
 
-def _score_text_against_row(source_text: str, row_tokens: List[str], *, weight: float = 1.0) -> float:
-    return _entry_signals_score_text_against_row(source_text, row_tokens, weight=weight)
+_score_text_against_row = _entry_signals_score_text_against_row
+_timeline_block_rows_for_scoring = _file_map_timeline_block_rows_for_scoring
+_timeline_block_matches_preferred_topic = _file_map_timeline_block_matches_preferred_topic
 
 
-def _score_entry_against_timeline_row(signals: dict, row_text: str) -> float:
-    return _file_map_score_entry_against_timeline_row(
-        signals,
-        row_text,
-        normalize_match_text=_normalize_match_text,
-        score_text_against_row=_score_text_against_row,
-    )
-
-def _score_card_evidence_against_entry(signals: dict, card_items: List[Dict[str, str]]) -> float:
-    return _file_map_score_card_evidence_against_entry(
-        signals,
-        card_items,
-        normalize_match_text=_normalize_match_text,
-    )
-
-def _timeline_block_rows_for_scoring(block: Dict[str, object]) -> list:
-    return _file_map_timeline_block_rows_for_scoring(block)
-
-def _score_timeline_block(signals: dict, block: Dict[str, object]) -> float:
-    return _file_map_score_timeline_block(
-        signals,
-        block,
-        normalize_match_text=_normalize_match_text,
-        score_card_evidence_against_entry=_score_card_evidence_against_entry,
-    )
-
-def _timeline_block_matches_preferred_topic(block: Dict[str, object], preferred_topic_slug: str) -> bool:
-    return _file_map_timeline_block_matches_preferred_topic(block, preferred_topic_slug)
-
-def _score_entry_against_timeline_block(
-    signals: dict,
-    block: Dict[str, object],
-    preferred_unit_slug: str = "",
-    preferred_topic_slug: str = "",
-) -> float:
-    return _file_map_score_entry_against_timeline_block(
-        signals,
-        block,
-        normalize_match_text=_normalize_match_text,
-        score_text_against_row=_score_text_against_row,
-        score_card_evidence_against_entry_fn=_score_card_evidence_against_entry,
-        preferred_unit_slug=preferred_unit_slug,
-        preferred_topic_slug=preferred_topic_slug,
-    )
-
-def _collect_entry_temporal_signals(entry: dict, markdown_text: str) -> dict:
-    return _file_map_collect_entry_temporal_signals(
-        entry,
-        markdown_text,
-        collapse_ws=_collapse_ws,
-        normalize_match_text=_normalize_match_text,
-        extract_date_range_signal=extract_date_range_signal,
-        extract_timeline_session_signals=extract_timeline_session_signals,
-    )
-
-def _entry_temporal_range_contains(date_text: str, date_range: dict) -> bool:
-    return _file_map_entry_temporal_range_contains(
-        date_text,
-        date_range,
-        parse_timeline_date_value=_parse_timeline_date_value,
-    )
-
-def _score_entry_against_timeline_session(entry_temporal_signals: dict, session: Dict[str, object]) -> tuple[float, float]:
-    return _file_map_score_entry_against_timeline_session(
-        entry_temporal_signals,
-        session,
-        normalize_match_text=_normalize_match_text,
-        score_text_against_row=_score_text_against_row,
-        score_card_evidence_against_entry_fn=_score_card_evidence_against_entry,
-        entry_temporal_range_contains_fn=_entry_temporal_range_contains,
-    )
-
-def _score_entry_against_timeline_sessions(entry_temporal_signals: dict, block: Dict[str, object]) -> tuple[float, Optional[Dict[str, object]], float]:
-    return _file_map_score_entry_against_timeline_sessions(
-        entry_temporal_signals,
-        block,
-        normalize_match_text=_normalize_match_text,
-        score_text_against_row=_score_text_against_row,
-        score_card_evidence_against_entry_fn=_score_card_evidence_against_entry,
-        entry_temporal_range_contains_fn=_entry_temporal_range_contains,
-    )
-
-def _select_probable_period_for_entry(
-    entry: dict,
-    unit: dict,
-    candidate_rows: List[Dict[str, object]],
-    markdown_text: str,
-    preferred_topic_slug: str = "",
-) -> tuple[str, float, bool, List[str]]:
-    return _file_map_select_probable_period_for_entry(
-        entry,
-        unit,
-        candidate_rows,
-        markdown_text,
-        preferred_topic_slug=preferred_topic_slug,
-        collect_entry_unit_signals=_collect_entry_unit_signals,
-        build_timeline_index=_build_timeline_index,
-        timeline_period_label=_timeline_period_label,
-        collapse_ws=_collapse_ws,
-        normalize_match_text=_normalize_match_text,
-        score_text_against_row=_score_text_against_row,
-        extract_date_range_signal=extract_date_range_signal,
-        extract_timeline_session_signals=extract_timeline_session_signals,
-        parse_timeline_date_value=_parse_timeline_date_value,
-    )
-
-def _aggregate_unit_periods_from_blocks(blocks_by_unit: Dict[str, List[Dict[str, object]]]) -> Dict[str, str]:
-    return _timeline_aggregate_unit_periods_from_blocks(blocks_by_unit)
+_score_card_evidence_against_entry = lambda signals, card_items: _file_map_score_card_evidence_against_entry(
+    signals,
+    card_items,
+    normalize_match_text=_normalize_match_text,
+)
 
 
-def _build_file_map_timeline_context_from_course(
-    course_meta: dict,
-    subject_profile=None,
-    content_taxonomy: Optional[dict] = None,
-) -> dict:
-    return _timeline_build_file_map_timeline_context_from_course(
-        course_meta,
-        subject_profile,
-        content_taxonomy,
-        build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
-        build_file_map_content_taxonomy_from_course=_build_file_map_content_taxonomy_from_course,
-    )
+_score_entry_against_timeline_block = lambda signals, block, preferred_unit_slug="", preferred_topic_slug="": _file_map_score_entry_against_timeline_block(
+    signals,
+    block,
+    normalize_match_text=_normalize_match_text,
+    score_text_against_row=_score_text_against_row,
+    score_card_evidence_against_entry_fn=_score_card_evidence_against_entry,
+    preferred_unit_slug=preferred_unit_slug,
+    preferred_topic_slug=preferred_topic_slug,
+)
 
 
-def _parse_bibliography_from_teaching_plan(text: str) -> dict:
-    """
-    Extrai referências bibliográficas do texto do plano de ensino.
-    Detecta seção BIBLIOGRAFIA com sub-seções BÁSICA e COMPLEMENTAR.
-    Retorna {"basica": [str, ...], "complementar": [str, ...]}.
-    """
-    result: dict = {"basica": [], "complementar": []}
+_select_probable_period_for_entry = lambda entry, unit, candidate_rows, markdown_text, preferred_topic_slug="": _file_map_select_probable_period_for_entry(
+    entry,
+    unit,
+    candidate_rows,
+    markdown_text,
+    preferred_topic_slug=preferred_topic_slug,
+    collect_entry_unit_signals=_collect_entry_unit_signals,
+    build_timeline_index=_build_timeline_index,
+    timeline_period_label=_timeline_period_label,
+    collapse_ws=_collapse_ws,
+    normalize_match_text=_normalize_match_text,
+    score_text_against_row=_score_text_against_row,
+    extract_date_range_signal=extract_date_range_signal,
+    extract_timeline_session_signals=extract_timeline_session_signals,
+    parse_timeline_date_value=_parse_timeline_date_value,
+)
 
-    bib_match = re.search(r'^BIBLIOGRAFIA', text, re.MULTILINE | re.IGNORECASE)
-    if not bib_match:
-        return result
-
-    bib_text = text[bib_match.start():]
-    current_section: Optional[str] = None
-    current_ref: Optional[str] = None
-    ref_start_re = re.compile(r'^\d+\.\s+(.+)')
-
-    def _flush():
-        if current_ref and current_section:
-            result[current_section].append(current_ref.strip())
-
-    for raw in bib_text.splitlines():
-        line = raw.strip()
-
-        if re.match(r'^B[ÁA]SICA\s*:', line, re.IGNORECASE):
-            _flush()
-            current_ref = None
-            current_section = "basica"
-            continue
-
-        if re.match(r'^COMPLEMENTAR\s*:', line, re.IGNORECASE):
-            _flush()
-            current_ref = None
-            current_section = "complementar"
-            continue
-
-        if not current_section:
-            continue
-
-        if not line:
-            _flush()
-            current_ref = None
-            continue
-
-        m = ref_start_re.match(line)
-        if m:
-            _flush()
-            current_ref = m.group(1).strip()
-        elif current_ref is not None:
-            current_ref += " " + line
-
-    _flush()
-    return result
+_aggregate_unit_periods_from_blocks = _timeline_aggregate_unit_periods_from_blocks
 
 
-def _build_assessment_context_from_course(
-    course_meta: dict,
-    subject_profile=None,
-    timeline_context: Optional[dict] = None,
-) -> dict:
-    return _timeline_build_assessment_context_from_course(
-        course_meta,
-        subject_profile,
-        timeline_context,
-        build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
-        build_file_map_timeline_context_from_course=_build_file_map_timeline_context_from_course,
-        normalize_match_text=_normalize_match_text,
-        normalize_teaching_plan_heading=_normalize_teaching_plan_heading,
-    )
+_build_file_map_timeline_context_from_course = lambda course_meta, subject_profile=None, content_taxonomy=None: _timeline_build_file_map_timeline_context_from_course(
+    course_meta,
+    subject_profile,
+    content_taxonomy,
+    build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
+    build_file_map_content_taxonomy_from_course=_build_file_map_content_taxonomy_from_course,
+)
 
 
-def _write_internal_assessment_context(root_dir: Path, assessment_context: dict) -> None:
-    write_text(
-        root_dir / "course" / ".assessment_context.json",
-        json.dumps(assessment_context or {"version": 1, "assessments": [], "conflicts": []}, ensure_ascii=False, indent=2),
-    )
+_parse_bibliography_from_teaching_plan = _teaching_plan_parse_bibliography_from_teaching_plan
 
 
-def _assessment_conflict_section_lines(assessment_context: Optional[dict], compact: bool = False) -> List[str]:
-    conflicts = list((assessment_context or {}).get("conflicts", []) or [])
-    if not conflicts:
-        return []
-
-    lines = [
-        "## Conflitos de avaliação x cronograma",
-        "",
-    ]
-    if compact:
-        lines += [
-            "| Avaliação | Data | Escopo | Observação |",
-            "|---|---|---|---|",
-        ]
-        for item in conflicts:
-            declared_units = item.get("declared_unit_numbers", []) or []
-            scope = ", ".join(f"U{num}" for num in declared_units) if declared_units else "—"
-            note = " ".join(item.get("conflicts", []) or [])
-            lines.append(
-                f"| {item.get('label', '')} | {item.get('assessment_date', '') or '—'} | {scope} | {note or '—'} |"
-            )
-    else:
-        lines.append("**Resumo das inconsistências detectadas**")
-        lines.append("")
-        for item in conflicts:
-            declared_units = item.get("declared_unit_numbers", []) or []
-            scope = ", ".join(f"U{num}" for num in declared_units) if declared_units else "escopo não explicitado"
-            note = " ".join(item.get("conflicts", []) or [])
-            lines.append(
-                f"- {item.get('label', '')}"
-                f" ({item.get('assessment_date', '') or 'data não localizada'})"
-                f" -> {scope}: {note or 'observação estrutural'}"
-            )
-    lines.append("")
-    return lines
+_build_assessment_context_from_course = lambda course_meta, subject_profile=None, timeline_context=None: _timeline_build_assessment_context_from_course(
+    course_meta,
+    subject_profile,
+    timeline_context,
+    build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
+    build_file_map_timeline_context_from_course=_build_file_map_timeline_context_from_course,
+    normalize_match_text=_normalize_match_text,
+    normalize_teaching_plan_heading=_normalize_teaching_plan_heading,
+)
 
 
-def syllabus_md(subject_profile) -> str:
-    """Gera o conteúdo de course/SYLLABUS.md a partir do SubjectProfile."""
-    subj = subject_profile
-    return f"""---
-course: {subj.name}
-professor: {subj.professor}
-schedule: {subj.schedule}
----
-
-# Cronograma — {subj.name}
-
-**Horário:** {subj.schedule}
-
-{subj.syllabus}
-"""
+_write_internal_assessment_context = partial(
+    _repo_artifacts.write_internal_assessment_context,
+    write_text_fn=write_text,
+)
 
 
-def student_profile_md(student_profile) -> str:
-    """Gera o conteúdo de student/STUDENT_PROFILE.md a partir do StudentProfile."""
-    sp = student_profile
-    return f"""---
-nickname: {sp.nickname or sp.full_name}
----
-
-# Perfil do Aluno
-
-- **Nome:** {sp.full_name}
-- **Apelido:** {sp.nickname or sp.full_name}
-
-## Estilo de aprendizado preferido
-
-{sp.personality}
-"""
+_assessment_conflict_section_lines = _repo_artifacts.assessment_conflict_section_lines
 
 
-def glossary_md(
-    course_meta: dict,
-    subject_profile=None,
-    *,
-    root_dir: Optional[Path] = None,
-    manifest_entries: Optional[List[dict]] = None,
-) -> str:
-    return _repo_artifacts.glossary_md(
-        course_meta,
-        subject_profile,
-        root_dir=root_dir,
-        manifest_entries=manifest_entries,
-        parse_units_from_teaching_plan_fn=_parse_units_from_teaching_plan,
-        topic_text_fn=_topic_text,
-        collect_glossary_evidence_fn=_collect_glossary_evidence,
-        find_glossary_evidence_fn=_find_glossary_evidence,
-        seed_glossary_fields_fn=lambda term, unit_title, evidence="": _seed_glossary_fields(
-            term,
-            unit_title,
-            evidence=evidence,
-        ),
-        clamp_navigation_artifact_fn=_clamp_navigation_artifact,
-    )
+syllabus_md = _repo_artifacts.syllabus_md
+student_profile_md = _repo_artifacts.student_profile_md
 
-def _clamp_navigation_artifact(text: str, *, max_chars: int, label: str) -> str:
-    return _repo_artifacts.clamp_navigation_artifact(text, max_chars=max_chars, label=label)
 
-def _extract_markdown_headings(raw_markdown: str, limit: int = 8) -> List[str]:
-    return _repo_artifacts.extract_markdown_headings(
-        raw_markdown,
-        collapse_ws=_collapse_ws,
-        limit=limit,
-    )
-
-def _collect_glossary_evidence(
-    root_dir: Optional[Path],
-    manifest_entries: Optional[List[dict]] = None,
-) -> List[Dict[str, str]]:
-    return _repo_artifacts.collect_glossary_evidence(
-        root_dir,
-        manifest_entries=manifest_entries,
-        collapse_ws=_collapse_ws,
-        strip_frontmatter_block=_strip_frontmatter_block,
-        extract_markdown_headings_fn=_extract_markdown_headings,
-    )
-
-def _glossary_tokens(text: str) -> List[str]:
-    return _repo_artifacts.glossary_tokens(text)
-
-def _trim_glossary_prefix(text: str, prefixes: List[str]) -> str:
-    return _repo_artifacts.trim_glossary_prefix(text, prefixes, collapse_ws=_collapse_ws)
-
-def _shorten_glossary_sentence(sentence: str, max_chars: int = 180) -> str:
-    return _repo_artifacts.shorten_glossary_sentence(
-        sentence,
-        collapse_ws=_collapse_ws,
-        max_chars=max_chars,
-    )
-
-def _is_bad_glossary_evidence(sentence: str) -> bool:
-    return _repo_artifacts.is_bad_glossary_evidence(sentence, collapse_ws=_collapse_ws)
-
-def _find_glossary_evidence(term: str, unit_title: str, docs: List[Dict[str, str]]) -> str:
-    return _repo_artifacts.find_glossary_evidence(
-        term,
-        unit_title,
-        docs,
-        glossary_tokens_fn=_glossary_tokens,
-        best_glossary_sentence_fn=_best_glossary_sentence,
-    )
-
-def _best_glossary_sentence(term: str, unit_title: str, doc: Dict[str, str]) -> str:
-    return _repo_artifacts.best_glossary_sentence(
-        term,
-        unit_title,
-        doc,
-        collapse_ws=_collapse_ws,
-        glossary_tokens_fn=_glossary_tokens,
-        trim_glossary_prefix_fn=_trim_glossary_prefix,
-        is_bad_glossary_evidence_fn=_is_bad_glossary_evidence,
-        normalize_glossary_sentence_fn=_normalize_glossary_sentence,
-        shorten_glossary_sentence_fn=_shorten_glossary_sentence,
-    )
-
-def _normalize_glossary_sentence(term: str, unit_title: str, sentence: str) -> str:
-    return _repo_artifacts.normalize_glossary_sentence(
-        term,
-        unit_title,
-        sentence,
-        collapse_ws=_collapse_ws,
-        shorten_glossary_sentence_fn=_shorten_glossary_sentence,
-    )
-
-def _seed_glossary_fields(term: str, unit_title: str, evidence: str = "") -> tuple[str, str, str]:
-    return _repo_artifacts.seed_glossary_fields(
+glossary_md = lambda course_meta, subject_profile=None, *, root_dir=None, manifest_entries=None: _repo_artifacts.glossary_md(
+    course_meta,
+    subject_profile,
+    root_dir=root_dir,
+    manifest_entries=manifest_entries,
+    parse_units_from_teaching_plan_fn=_parse_units_from_teaching_plan,
+    topic_text_fn=_topic_text,
+    collect_glossary_evidence_fn=_collect_glossary_evidence,
+    find_glossary_evidence_fn=_find_glossary_evidence,
+    seed_glossary_fields_fn=lambda term, unit_title, evidence="": _seed_glossary_fields(
         term,
         unit_title,
         evidence=evidence,
-        collapse_ws=_collapse_ws,
-        refine_glossary_definition_from_evidence_fn=_refine_glossary_definition_from_evidence,
-    )
+    ),
+    clamp_navigation_artifact_fn=_clamp_navigation_artifact,
+)
 
-def _refine_glossary_definition_from_evidence(term: str, unit_hint: str, evidence: str) -> str:
-    return _repo_artifacts.refine_glossary_definition_from_evidence(
-        term,
-        unit_hint,
-        evidence,
-        collapse_ws=_collapse_ws,
-        glossary_tokens_fn=_glossary_tokens,
-        normalize_glossary_sentence_fn=_normalize_glossary_sentence,
-        shorten_glossary_sentence_fn=_shorten_glossary_sentence,
-    )
+_clamp_navigation_artifact = _repo_artifacts.clamp_navigation_artifact
+_glossary_tokens = _repo_artifacts.glossary_tokens
+
+
+_extract_markdown_headings = partial(
+    _repo_artifacts.extract_markdown_headings,
+    collapse_ws=_collapse_ws,
+)
+_trim_glossary_prefix = partial(
+    _repo_artifacts.trim_glossary_prefix,
+    collapse_ws=_collapse_ws,
+)
+
+
+_shorten_glossary_sentence = lambda sentence, max_chars=180: _repo_artifacts.shorten_glossary_sentence(
+    sentence,
+    collapse_ws=_collapse_ws,
+    max_chars=max_chars,
+)
+
+
+_is_bad_glossary_evidence = partial(
+    _repo_artifacts.is_bad_glossary_evidence,
+    collapse_ws=_collapse_ws,
+)
+
+_collect_glossary_evidence = lambda root_dir, manifest_entries=None: _repo_artifacts.collect_glossary_evidence(
+    root_dir,
+    manifest_entries=manifest_entries,
+    collapse_ws=_collapse_ws,
+    strip_frontmatter_block=_strip_frontmatter_block,
+    extract_markdown_headings_fn=_extract_markdown_headings,
+)
+
+_find_glossary_evidence = partial(
+    _repo_artifacts.find_glossary_evidence,
+    glossary_tokens_fn=_glossary_tokens,
+    best_glossary_sentence_fn=lambda term, unit_title, doc: _best_glossary_sentence(term, unit_title, doc),
+)
+_best_glossary_sentence = partial(
+    _repo_artifacts.best_glossary_sentence,
+    collapse_ws=_collapse_ws,
+    glossary_tokens_fn=_glossary_tokens,
+    trim_glossary_prefix_fn=_trim_glossary_prefix,
+    is_bad_glossary_evidence_fn=_is_bad_glossary_evidence,
+    normalize_glossary_sentence_fn=lambda term, unit_title, sentence: _normalize_glossary_sentence(term, unit_title, sentence),
+    shorten_glossary_sentence_fn=_shorten_glossary_sentence,
+)
+_normalize_glossary_sentence = partial(
+    _repo_artifacts.normalize_glossary_sentence,
+    collapse_ws=_collapse_ws,
+    shorten_glossary_sentence_fn=_shorten_glossary_sentence,
+)
+_seed_glossary_fields = partial(
+    _repo_artifacts.seed_glossary_fields,
+    collapse_ws=_collapse_ws,
+    refine_glossary_definition_from_evidence_fn=lambda term, unit_hint, evidence: _refine_glossary_definition_from_evidence(term, unit_hint, evidence),
+)
+_refine_glossary_definition_from_evidence = partial(
+    _repo_artifacts.refine_glossary_definition_from_evidence,
+    collapse_ws=_collapse_ws,
+    glossary_tokens_fn=_glossary_tokens,
+    normalize_glossary_sentence_fn=lambda term, unit_title, sentence: _normalize_glossary_sentence(term, unit_title, sentence),
+    shorten_glossary_sentence_fn=_shorten_glossary_sentence,
+)
 
 _NO_UNIT_CATEGORIES = {"cronograma", "bibliografia", "referencias"}
-
-
-def _bundle_priority_score(entry: dict) -> int:
-    return _repo_artifacts.bundle_priority_score(
-        entry,
-        normalize_document_profile_fn=normalize_document_profile,
-        exam_categories=EXAM_CATEGORIES,
-        exercise_categories=EXERCISE_CATEGORIES,
-    )
-
-
-def _bundle_reason_labels(entry: dict) -> List[str]:
-    return _repo_artifacts.bundle_reason_labels(
-        entry,
-        normalize_document_profile_fn=normalize_document_profile,
-        exam_categories=EXAM_CATEGORIES,
-        exercise_categories=EXERCISE_CATEGORIES,
-    )
+_bundle_priority_score = partial(
+    _repo_artifacts.bundle_priority_score,
+    normalize_document_profile_fn=normalize_document_profile,
+    exam_categories=EXAM_CATEGORIES,
+    exercise_categories=EXERCISE_CATEGORIES,
+)
+_bundle_reason_labels = partial(
+    _repo_artifacts.bundle_reason_labels,
+    normalize_document_profile_fn=normalize_document_profile,
+    exam_categories=EXAM_CATEGORIES,
+    exercise_categories=EXERCISE_CATEGORIES,
+)
 
 
 _MANIFEST_LOG_LIMIT = 200
+_entry_image_source_dirs = _entry_signals_image_source_dirs
+_entry_existing_reference_count = partial(
+    _repo_artifacts.entry_existing_reference_count,
+    entry_image_source_dirs_fn=_entry_image_source_dirs,
+)
+_filter_live_manifest_entries = partial(
+    _repo_artifacts.filter_live_manifest_entries,
+    entry_existing_reference_count_fn=_entry_existing_reference_count,
+)
+_bundle_seed_candidate = partial(
+    _repo_artifacts.bundle_seed_candidate,
+    bundle_reason_labels_fn=_bundle_reason_labels,
+)
 
 
-def _entry_image_source_dirs(root_dir: Path, entry: dict) -> List[Path]:
-    return _entry_signals_image_source_dirs(root_dir, entry)
+_normalize_match_text = _entry_signals_normalize_match_text
 
 
-def _entry_existing_reference_count(root_dir: Path, entry: dict) -> int:
-    return _repo_artifacts.entry_existing_reference_count(
-        root_dir,
-        entry,
-        entry_image_source_dirs_fn=_entry_image_source_dirs,
-    )
+_strip_outline_prefix = _file_map_strip_outline_prefix
+_UNIT_GENERIC_TOKENS = _FILE_MAP_UNIT_GENERIC_TOKENS
 
 
-def _filter_live_manifest_entries(root_dir: Optional[Path], manifest_entries: list) -> list:
-    return _repo_artifacts.filter_live_manifest_entries(
-        root_dir,
-        manifest_entries,
-        entry_existing_reference_count_fn=_entry_existing_reference_count,
-    )
+_normalize_unit_slug = _teaching_plan_normalize_unit_slug
 
 
-def _bundle_seed_candidate(entry: dict, score: int) -> dict:
-    return _repo_artifacts.bundle_seed_candidate(
-        entry,
-        score,
-        bundle_reason_labels_fn=_bundle_reason_labels,
-    )
+_build_file_map_unit_index = partial(
+    _file_map_build_file_map_unit_index,
+    normalize_match_text=_normalize_match_text,
+    normalize_unit_slug=_normalize_unit_slug,
+    strip_outline_prefix=_strip_outline_prefix,
+    topic_text=_topic_text,
+    unit_generic_tokens=_UNIT_GENERIC_TOKENS,
+)
 
 
-def _normalize_match_text(text: str) -> str:
-    return _entry_signals_normalize_match_text(text)
+_collect_entry_unit_signals = _entry_signals_collect_entry_unit_signals
 
 
-def _strip_outline_prefix(text: str) -> str:
-    text = (text or "").strip()
-    if not text:
-        return ""
-    text = re.sub(
-        r"^\s*unidade(?:\s+de\s+aprendizagem)?\s*\d+\s*[-—:.)]?\s*",
-        "",
-        text,
-        flags=re.IGNORECASE,
-    )
-    text = re.sub(r"^\s*\d+(?:\.\d+)*\s*[-—:.)]?\s*", "", text)
-    return text.strip()
+_build_file_map_content_taxonomy_from_course = partial(
+    _file_map_build_file_map_content_taxonomy_from_course,
+    parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
+    topic_text=_topic_text,
+    glossary_md_fn=glossary_md,
+    collect_strong_heading_candidates=_collect_strong_heading_candidates,
+    resolve_semantic_profile_fn=resolve_semantic_profile,
+    build_content_taxonomy_fn=_build_content_taxonomy,
+)
+
+_auto_map_entry_subtopic = partial(
+    _file_map_auto_map_entry_subtopic,
+    collect_entry_unit_signals=_collect_entry_unit_signals,
+    iter_content_taxonomy_topics=_iter_content_taxonomy_topics,
+    score_entry_against_taxonomy_topic=_score_entry_against_taxonomy_topic,
+    topic_match_result_factory=TopicMatchResult,
+)
 
 
-_UNIT_GENERIC_TOKENS = {
-    "metodos",
-    "formais",
-    "formal",
-    "logica",
-    "logicas",
-    "especificacao",
-    "especificacoes",
-    "verificacao",
-    "verificacoes",
-    "programas",
-    "programa",
-    "modelos",
-    "modelo",
-    "fundamentos",
-    "sistemas",
-    "software",
-    "softwares",
-    "suporte",
-    "propriedades",
-    "aplicacoes",
-    "sequenciais",
-    "concorrentes",
-    "linguagens",
-}
+_score_entry_against_unit = partial(
+    _file_map_score_entry_against_unit,
+    score_timeline_unit_phrase=_score_timeline_unit_phrase,
+    timeline_unit_neutral_tokens=_TIMELINE_UNIT_NEUTRAL_TOKENS,
+)
 
 
-def _normalize_unit_slug(title: str) -> str:
-    return _teaching_plan_normalize_unit_slug(title)
+_auto_map_entry_unit = lambda entry, units, markdown_text, topic_index=None: _file_map_auto_map_entry_unit(
+    entry,
+    units,
+    markdown_text,
+    topic_index=topic_index,
+    build_file_map_unit_index=_build_file_map_unit_index,
+    collect_entry_unit_signals=_collect_entry_unit_signals,
+    score_entry_against_unit=_score_entry_against_unit,
+    normalize_unit_slug=_normalize_unit_slug,
+    score_entry_against_taxonomy_topic=_score_entry_against_taxonomy_topic,
+    unit_match_result_factory=UnitMatchResult,
+)
 
 
-def _build_file_map_unit_index(units: list) -> list:
-    return _file_map_build_file_map_unit_index(
-        units,
-        normalize_match_text=_normalize_match_text,
-        normalize_unit_slug=_normalize_unit_slug,
-        strip_outline_prefix=_strip_outline_prefix,
-        topic_text=_topic_text,
-        unit_generic_tokens=_UNIT_GENERIC_TOKENS,
-    )
+_format_file_map_unit_cell = _file_map_format_file_map_unit_cell
 
 
-def _collect_entry_unit_signals(entry: dict, markdown_text: str) -> dict:
-    return _entry_signals_collect_entry_unit_signals(entry, markdown_text)
+_resolve_entry_manual_unit_slug = partial(
+    _file_map_resolve_entry_manual_unit_slug,
+    normalize_unit_slug=_normalize_unit_slug,
+)
 
 
-def _build_file_map_content_taxonomy_from_course(
-    course_meta: dict,
-    subject_profile=None,
-    manifest_entries: Optional[List[dict]] = None,
-) -> dict:
-    return _file_map_build_file_map_content_taxonomy_from_course(
-        course_meta,
-        subject_profile,
-        manifest_entries=manifest_entries,
-        parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
-        topic_text=_topic_text,
-        glossary_md_fn=glossary_md,
-        collect_strong_heading_candidates=_collect_strong_heading_candidates,
-        resolve_semantic_profile_fn=resolve_semantic_profile,
-        build_content_taxonomy_fn=_build_content_taxonomy,
-    )
-
-def _auto_map_entry_subtopic(entry: dict, taxonomy: dict, markdown_text: str) -> TopicMatchResult:
-    return _file_map_auto_map_entry_subtopic(
-        entry,
-        taxonomy,
-        markdown_text,
-        collect_entry_unit_signals=_collect_entry_unit_signals,
-        iter_content_taxonomy_topics=_iter_content_taxonomy_topics,
-        score_entry_against_taxonomy_topic=_score_entry_against_taxonomy_topic,
-        topic_match_result_factory=TopicMatchResult,
-    )
+_resolve_entry_manual_timeline_block = _file_map_resolve_entry_manual_timeline_block
 
 
-def _score_entry_against_unit(signals: dict, unit: dict) -> float:
-    return _file_map_score_entry_against_unit(
-        signals,
-        unit,
-        score_timeline_unit_phrase=_score_timeline_unit_phrase,
-        timeline_unit_neutral_tokens=_TIMELINE_UNIT_NEUTRAL_TOKENS,
-    )
+_build_file_map_unit_index_from_course = partial(
+    _file_map_build_file_map_unit_index_from_course,
+    build_file_map_unit_index_fn=_build_file_map_unit_index,
+    parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
+    glossary_md_fn=glossary_md,
+    parse_glossary_terms_fn=_parse_glossary_terms,
+    normalize_match_text_fn=_normalize_match_text,
+    collapse_ws_fn=_collapse_ws,
+    unit_generic_tokens=_UNIT_GENERIC_TOKENS,
+    timeline_unit_neutral_tokens=_TIMELINE_UNIT_NEUTRAL_TOKENS,
+)
+
+student_state_md = partial(
+    _repo_artifacts.student_state_md,
+    render_student_state_md_fn=student_state_v2.render_student_state_md,
+)
 
 
-def _auto_map_entry_unit(
-    entry: dict,
-    units: list,
-    markdown_text: str,
-    topic_index: Optional[List[dict]] = None,
-) -> UnitMatchResult:
-    return _file_map_auto_map_entry_unit(
-        entry,
-        units,
-        markdown_text,
-        topic_index=topic_index,
-        build_file_map_unit_index=_build_file_map_unit_index,
-        collect_entry_unit_signals=_collect_entry_unit_signals,
-        score_entry_against_unit=_score_entry_against_unit,
-        normalize_unit_slug=_normalize_unit_slug,
-        score_entry_against_taxonomy_topic=_score_entry_against_taxonomy_topic,
-        unit_match_result_factory=UnitMatchResult,
-    )
+progress_schema_md = _repo_artifacts.progress_schema_md
 
 
-def _format_file_map_unit_cell(slug: str, confidence: float, ambiguous: bool) -> str:
-    return _file_map_format_file_map_unit_cell(slug, confidence, ambiguous)
-
-
-def _resolve_entry_manual_unit_slug(entry: dict, unit_index: list) -> str:
-    return _file_map_resolve_entry_manual_unit_slug(
-        entry,
-        unit_index,
-        normalize_unit_slug=_normalize_unit_slug,
-    )
-
-
-def _resolve_entry_manual_timeline_block(entry: dict, timeline_context: dict) -> Optional[Dict[str, object]]:
-    return _file_map_resolve_entry_manual_timeline_block(entry, timeline_context)
-
-
-def _build_file_map_unit_index_from_course(course_meta: dict, subject_profile=None) -> list:
-    return _file_map_build_file_map_unit_index_from_course(
-        course_meta,
-        subject_profile,
-        build_file_map_unit_index_fn=_build_file_map_unit_index,
-        parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
-        glossary_md_fn=glossary_md,
-        parse_glossary_terms_fn=_parse_glossary_terms,
-        normalize_match_text_fn=_normalize_match_text,
-        collapse_ws_fn=_collapse_ws,
-        unit_generic_tokens=_UNIT_GENERIC_TOKENS,
-        timeline_unit_neutral_tokens=_TIMELINE_UNIT_NEUTRAL_TOKENS,
-    )
-
-def student_state_md(course_meta: dict, student_profile=None) -> str:
-    return _repo_artifacts.student_state_md(
-        course_meta,
-        student_profile,
-        render_student_state_md_fn=student_state_v2.render_student_state_md,
-    )
-
-
-def progress_schema_md() -> str:
-    return _repo_artifacts.progress_schema_md()
-
-
-def bibliography_md(course_meta: dict, entries: List[FileEntry] = None, subject_profile=None) -> str:
-    return _repo_artifacts.bibliography_md(
-        course_meta,
-        entries,
-        subject_profile,
-        parse_bibliography_from_teaching_plan_fn=_parse_bibliography_from_teaching_plan,
-        clamp_navigation_artifact=_clamp_navigation_artifact,
-    )
-
-
-def exam_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
-    return _repo_artifacts.exam_index_md(
-        course_meta,
-        entries,
-        clamp_navigation_artifact=_clamp_navigation_artifact,
-    )
-
-
-def assignment_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
-    return _repo_artifacts.assignment_index_md(
-        course_meta,
-        entries,
-        clamp_navigation_artifact=_clamp_navigation_artifact,
-    )
-
-
-def code_index_md(course_meta: dict, entries: List[FileEntry] = None, subject_profile=None) -> str:
-    return _repo_artifacts.code_index_md(
-        course_meta,
-        entries,
-        subject_profile,
-        code_review_profile_fn=_code_review_profile,
-        clamp_navigation_artifact=_clamp_navigation_artifact,
-    )
-
-
-def whiteboard_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
-    return _repo_artifacts.whiteboard_index_md(
-        course_meta,
-        entries,
-        clamp_navigation_artifact=_clamp_navigation_artifact,
-    )
+bibliography_md = partial(
+    _repo_artifacts.bibliography_md,
+    parse_bibliography_from_teaching_plan_fn=_parse_bibliography_from_teaching_plan,
+    clamp_navigation_artifact=_clamp_navigation_artifact,
+)
+exam_index_md = partial(
+    _repo_artifacts.exam_index_md,
+    clamp_navigation_artifact=_clamp_navigation_artifact,
+)
+assignment_index_md = partial(
+    _repo_artifacts.assignment_index_md,
+    clamp_navigation_artifact=_clamp_navigation_artifact,
+)
+code_index_md = partial(
+    _repo_artifacts.code_index_md,
+    code_review_profile_fn=_code_review_profile,
+    clamp_navigation_artifact=_clamp_navigation_artifact,
+)
+whiteboard_index_md = partial(
+    _repo_artifacts.whiteboard_index_md,
+    clamp_navigation_artifact=_clamp_navigation_artifact,
+)
 
 
 # ---------------------------------------------------------------------------
 # Free functions — existing templates (unchanged)
 # ---------------------------------------------------------------------------
 
-def root_readme(course_meta: dict) -> str:
-    return _repo_artifacts.root_readme(course_meta)
+root_readme = _repo_artifacts.root_readme
+wrap_frontmatter = partial(_repo_artifacts.wrap_frontmatter, json_str_fn=json_str)
+rows_to_markdown_table = _repo_artifacts.rows_to_markdown_table
+
+manual_pdf_review_template = partial(_repo_artifacts.manual_pdf_review_template, json_str_fn=json_str)
+manual_image_review_template = partial(_repo_artifacts.manual_image_review_template, safe_rel_fn=safe_rel)
+manual_url_review_template = partial(_repo_artifacts.manual_url_review_template, json_str_fn=json_str)
+migrate_legacy_url_manual_reviews = partial(
+    _repo_artifacts.migrate_legacy_url_manual_reviews,
+    ensure_dir_fn=ensure_dir,
+    safe_rel_fn=safe_rel,
+    write_text_fn=write_text,
+    logger=logger,
+)
+pdf_curation_guide = _repo_artifacts.pdf_curation_guide
+backend_architecture_md = _repo_artifacts.backend_architecture_md
+backend_policy_yaml = partial(_repo_artifacts.backend_policy_yaml, json_str_fn=json_str)
 
 
-def wrap_frontmatter(meta: dict, body: str) -> str:
-    return _repo_artifacts.wrap_frontmatter(meta, body, json_str_fn=json_str)
+_low_token_course_map_md = partial(
+    _navigation_low_token_course_map_md,
+    build_file_map_timeline_context_from_course=_build_file_map_timeline_context_from_course,
+    aggregate_unit_periods_from_blocks=_aggregate_unit_periods_from_blocks,
+    normalize_unit_slug=_normalize_unit_slug,
+    parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
+    topic_text=_topic_text,
+    topic_depth=_topic_depth,
+    build_assessment_context_from_course=_build_assessment_context_from_course,
+    assessment_conflict_section_lines=_assessment_conflict_section_lines,
+    clamp_navigation_artifact=_clamp_navigation_artifact,
+    logger=logger,
+)
 
 
-def rows_to_markdown_table(rows: list) -> str:
-    return _repo_artifacts.rows_to_markdown_table(rows)
+_low_token_file_map_md = partial(
+    _navigation_low_token_file_map_md,
+    build_file_map_content_taxonomy_from_course=_build_file_map_content_taxonomy_from_course,
+    build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
+    build_file_map_timeline_context_from_course=_build_file_map_timeline_context_from_course,
+    iter_content_taxonomy_topics=_iter_content_taxonomy_topics,
+    merge_manual_and_auto_tags=_merge_manual_and_auto_tags,
+    resolve_entry_manual_timeline_block=_resolve_entry_manual_timeline_block,
+    entry_markdown_text_for_file_map=_entry_markdown_text_for_file_map,
+    auto_map_entry_subtopic=_auto_map_entry_subtopic,
+    resolve_entry_manual_unit_slug=_resolve_entry_manual_unit_slug,
+    unit_match_result_factory=UnitMatchResult,
+    derive_unit_from_topic_match=_derive_unit_from_topic_match,
+    auto_map_entry_unit=_auto_map_entry_unit,
+    select_probable_period_for_entry=_select_probable_period_for_entry,
+    file_map_markdown_cell=_file_map_markdown_cell,
+    entry_markdown_path_for_file_map=_entry_markdown_path_for_file_map,
+    get_entry_sections=_get_entry_sections,
+    infer_unit_confidence=_infer_unit_confidence,
+    entry_usage_hint=_entry_usage_hint,
+    entry_priority_label=_entry_priority_label,
+    clamp_navigation_artifact=_clamp_navigation_artifact,
+)
 
 
-def manual_pdf_review_template(entry: FileEntry, item: Dict[str, object]) -> str:
-    return _repo_artifacts.manual_pdf_review_template(entry, item, json_str_fn=json_str)
+_budgeted_file_map_md = partial(
+    _navigation_budgeted_file_map_md,
+    filter_live_manifest_entries=_filter_live_manifest_entries,
+    low_token_file_map_md_fn=_low_token_file_map_md,
+    clamp_navigation_artifact=_clamp_navigation_artifact,
+)
 
 
-def manual_image_review_template(entry: FileEntry, raw_target: Path, root_dir: Path) -> str:
-    return _repo_artifacts.manual_image_review_template(entry, raw_target, root_dir, safe_rel_fn=safe_rel)
+_low_token_course_map_md_v2 = partial(
+    _navigation_low_token_course_map_md_v2,
+    low_token_course_map_md_fn=_low_token_course_map_md,
+)
 
 
-def manual_url_review_template(entry: FileEntry, item: Dict[str, object]) -> str:
-    return _repo_artifacts.manual_url_review_template(entry, item, json_str_fn=json_str)
+_exercise_index_md_v2 = partial(
+    _repo_artifacts.exercise_index_md,
+    collapse_ws_fn=_collapse_ws,
+    merge_manual_and_auto_tags_fn=_merge_manual_and_auto_tags,
+    clamp_navigation_artifact=_clamp_navigation_artifact,
+)
 
 
-def migrate_legacy_url_manual_reviews(root_dir: Path) -> int:
-    return _repo_artifacts.migrate_legacy_url_manual_reviews(
-        root_dir,
-        ensure_dir_fn=ensure_dir,
-        safe_rel_fn=safe_rel,
-        write_text_fn=write_text,
-        logger=logger,
-    )
+course_map_md = partial(
+    _navigation_course_map_md,
+    low_token_course_map_md_v2_fn=_low_token_course_map_md_v2,
+    clamp_navigation_artifact=_clamp_navigation_artifact,
+)
 
 
-def pdf_curation_guide() -> str:
-    return _repo_artifacts.pdf_curation_guide()
+file_map_md = partial(
+    _navigation_file_map_md,
+    budgeted_file_map_md_fn=_budgeted_file_map_md,
+)
 
 
-def backend_architecture_md() -> str:
-    return _repo_artifacts.backend_architecture_md()
-
-
-def backend_policy_yaml(options: Dict[str, object]) -> str:
-    return _repo_artifacts.backend_policy_yaml(options, json_str_fn=json_str)
-
-
-def _low_token_course_map_md(course_meta: dict, subject_profile=None) -> str:
-    return _navigation_low_token_course_map_md(
-        course_meta,
-        subject_profile,
-        build_file_map_timeline_context_from_course=_build_file_map_timeline_context_from_course,
-        aggregate_unit_periods_from_blocks=_aggregate_unit_periods_from_blocks,
-        normalize_unit_slug=_normalize_unit_slug,
-        parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
-        topic_text=_topic_text,
-        topic_depth=_topic_depth,
-        build_assessment_context_from_course=_build_assessment_context_from_course,
-        assessment_conflict_section_lines=_assessment_conflict_section_lines,
-        clamp_navigation_artifact=_clamp_navigation_artifact,
-        logger=logger,
-    )
-
-
-def _low_token_file_map_md(course_meta: dict, manifest_entries: list, subject_profile=None) -> str:
-    return _navigation_low_token_file_map_md(
-        course_meta,
-        manifest_entries,
-        subject_profile,
-        build_file_map_content_taxonomy_from_course=_build_file_map_content_taxonomy_from_course,
-        build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
-        build_file_map_timeline_context_from_course=_build_file_map_timeline_context_from_course,
-        iter_content_taxonomy_topics=_iter_content_taxonomy_topics,
-        merge_manual_and_auto_tags=_merge_manual_and_auto_tags,
-        resolve_entry_manual_timeline_block=_resolve_entry_manual_timeline_block,
-        entry_markdown_text_for_file_map=_entry_markdown_text_for_file_map,
-        auto_map_entry_subtopic=_auto_map_entry_subtopic,
-        resolve_entry_manual_unit_slug=_resolve_entry_manual_unit_slug,
-        unit_match_result_factory=UnitMatchResult,
-        derive_unit_from_topic_match=_derive_unit_from_topic_match,
-        auto_map_entry_unit=lambda entry, unit_index, markdown_text, topic_index: _auto_map_entry_unit(
-            entry,
-            unit_index,
-            markdown_text,
-            topic_index=topic_index,
-        ),
-        select_probable_period_for_entry=_select_probable_period_for_entry,
-        file_map_markdown_cell=_file_map_markdown_cell,
-        entry_markdown_path_for_file_map=_entry_markdown_path_for_file_map,
-        get_entry_sections=_get_entry_sections,
-        infer_unit_confidence=_infer_unit_confidence,
-        entry_usage_hint=_entry_usage_hint,
-        entry_priority_label=_entry_priority_label,
-        clamp_navigation_artifact=_clamp_navigation_artifact,
-    )
-
-
-def _budgeted_file_map_md(course_meta: dict, manifest_entries: list, subject_profile=None) -> str:
-    return _navigation_budgeted_file_map_md(
-        course_meta,
-        manifest_entries,
-        subject_profile,
-        filter_live_manifest_entries=_filter_live_manifest_entries,
-        low_token_file_map_md_fn=_low_token_file_map_md,
-        clamp_navigation_artifact=_clamp_navigation_artifact,
-    )
-
-
-def _low_token_course_map_md_v2(course_meta: dict, subject_profile=None) -> str:
-    return _navigation_low_token_course_map_md_v2(
-        course_meta,
-        subject_profile,
-        low_token_course_map_md_fn=_low_token_course_map_md,
-    )
-
-
-def _exercise_index_md_v2(course_meta: dict, entries: List[FileEntry] = None) -> str:
-    return _repo_artifacts.exercise_index_md(
-        course_meta,
-        entries,
-        collapse_ws_fn=_collapse_ws,
-        merge_manual_and_auto_tags_fn=_merge_manual_and_auto_tags,
-        clamp_navigation_artifact=_clamp_navigation_artifact,
-    )
-
-
-def course_map_md(course_meta: dict, subject_profile=None) -> str:
-    return _navigation_course_map_md(
-        course_meta,
-        subject_profile,
-        low_token_course_map_md_v2_fn=_low_token_course_map_md_v2,
-        clamp_navigation_artifact=_clamp_navigation_artifact,
-    )
-
-
-def file_map_md(course_meta: dict, manifest_entries: list, subject_profile=None) -> str:
-    return _navigation_file_map_md(
-        course_meta,
-        manifest_entries,
-        subject_profile,
-        budgeted_file_map_md_fn=_budgeted_file_map_md,
-    )
-
-
-def exercise_index_md(course_meta: dict, entries: List[FileEntry] = None) -> str:
-    return _exercise_index_md_v2(course_meta, entries)
+exercise_index_md = _exercise_index_md_v2
 

@@ -1,7 +1,7 @@
 from pathlib import Path
 from datetime import datetime
 
-from src.builder.student_state import (
+from src.builder.artifacts.student_state import (
     ActiveTopic,
     ProgressRow,
     consolidate_unit,

@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import List
 from PIL import Image, ImageTk
 from src.models.core import FileEntry
-from src.builder.navigation_artifacts import (
+from src.builder.artifacts.navigation import (
     _clean_extraction_noise,
     _inject_executive_summary,
 )
