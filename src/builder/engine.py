@@ -977,7 +977,7 @@ class DatalabCloudBackend(ExtractionBackend):
             )
 
         logger.info(
-            "  [datalab] Documento longo; processando em %d chunks de atÃ© %d pÃ¡ginas.",
+            "  [datalab] Documento longo; processando em %d chunks de até %d páginas.",
             len(chunks),
             chunk_size,
         )
@@ -995,7 +995,7 @@ class DatalabCloudBackend(ExtractionBackend):
         for idx, chunk_pages in enumerate(chunks, start=1):
             chunk_range = pages_to_marker_range(chunk_pages)
             logger.info(
-                "  [datalab] Chunk %d/%d â€” pÃ¡ginas %d-%d",
+                "  [datalab] Chunk %d/%d — páginas %d-%d",
                 idx,
                 len(chunks),
                 chunk_pages[0] + 1,
