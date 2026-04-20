@@ -115,7 +115,7 @@ from src.builder.url_markdown import (
     render_html_block_to_markdown as _url_markdown_render_html_block_to_markdown,
     truncate_markdown_blocks as _url_markdown_truncate_markdown_blocks,
 )
-from src.builder.markdown_utils import (
+from src.builder.core.markdown_utils import (
     compact_notebook_markdown as _markdown_utils_compact_notebook_markdown,
     generated_repo_gitignore_text as _markdown_utils_generated_repo_gitignore_text,
     merge_numeric_dicts as _markdown_utils_merge_numeric_dicts,
@@ -123,7 +123,7 @@ from src.builder.markdown_utils import (
     strip_frontmatter_block as _markdown_utils_strip_frontmatter_block,
     strip_markdown_image_refs as _markdown_utils_strip_markdown_image_refs,
 )
-from src.builder.core_utils import (
+from src.builder.core.core_utils import (
     collapse_ws as _core_utils_collapse_ws,
     effective_document_profile as _core_utils_effective_document_profile,
     merge_manual_and_auto_tags as _core_utils_merge_manual_and_auto_tags,
@@ -132,12 +132,12 @@ from src.builder.core_utils import (
     strip_topic_prefix as _core_utils_strip_topic_prefix,
     topic_support_tokens as _core_utils_topic_support_tokens,
 )
-from src.builder.pdf_analysis import (
+from src.builder.pdf.pdf_analysis import (
     apply_math_normalization as _pdf_analysis_apply_math_normalization,
     profile_pdf as _pdf_analysis_profile_pdf,
     quick_page_count as _pdf_analysis_quick_page_count,
 )
-from src.builder.pdf_assets import (
+from src.builder.pdf.pdf_assets import (
     convert_image_format as _pdf_assets_convert_image_format,
     detect_tables_pymupdf as _pdf_assets_detect_tables_pymupdf,
     extract_pdf_images as _pdf_assets_extract_pdf_images,
@@ -146,35 +146,35 @@ from src.builder.pdf_assets import (
     is_noise_image as _pdf_assets_is_noise_image,
     should_keep_extracted_pdf_image as _pdf_assets_should_keep_extracted_pdf_image,
 )
-from src.builder.pdf_pipeline import (
+from src.builder.pdf.pdf_pipeline import (
     log_backend_result as _pdf_pipeline_log_backend_result,
     process_pdf as _pdf_pipeline_process_pdf,
 )
-from src.builder.pdf_scanned import (
+from src.builder.pdf.pdf_scanned import (
     render_scanned_pdf_as_images as _pdf_scanned_render_scanned_pdf_as_images,
 )
-from src.builder.pedagogical_regeneration import (
+from src.builder.ops.pedagogical_regeneration import (
     regenerate_pedagogical_files as _pedagogical_regeneration_regenerate_pedagogical_files,
 )
-from src.builder.operational_artifacts import (
+from src.builder.ops.operational_artifacts import (
     compact_manifest as _operational_artifacts_compact_manifest,
     write_build_report as _operational_artifacts_write_build_report,
     write_bundle_seed as _operational_artifacts_write_bundle_seed,
     write_source_registry as _operational_artifacts_write_source_registry,
 )
-from src.builder.incremental_build import (
+from src.builder.ops.incremental_build import (
     incremental_build_impl as _incremental_build_incremental_build_impl,
 )
-from src.builder.lifecycle_ops import (
+from src.builder.ops.lifecycle_ops import (
     process_single_impl as _lifecycle_ops_process_single_impl,
     reject as _lifecycle_ops_reject,
     unprocess as _lifecycle_ops_unprocess,
 )
-from src.builder.bootstrap_ops import (
+from src.builder.ops.bootstrap_ops import (
     create_structure as _bootstrap_ops_create_structure,
     write_root_files as _bootstrap_ops_write_root_files,
 )
-from src.builder.source_importers import (
+from src.builder.core.source_importers import (
     process_code as _source_importers_process_code,
     process_github_repo as _source_importers_process_github_repo,
     process_image as _source_importers_process_image,

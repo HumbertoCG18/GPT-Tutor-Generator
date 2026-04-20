@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Dict
 
 from src.builder.artifacts import repo as _repo_artifacts
-from src.builder.markdown_utils import compact_notebook_markdown
+from src.builder.core.markdown_utils import compact_notebook_markdown
 from src.models.core import FileEntry
 from src.utils.helpers import (
     CODE_EXTENSIONS,
