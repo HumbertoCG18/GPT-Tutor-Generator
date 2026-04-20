@@ -174,11 +174,27 @@ from src.builder.ops.bootstrap_ops import (
     create_structure as _bootstrap_ops_create_structure,
     write_root_files as _bootstrap_ops_write_root_files,
 )
+from src.builder.ops.build_workflow import (
+    build_impl as _build_workflow_build_impl,
+)
+from src.builder.ops.entry_processing import (
+    process_entry as _entry_processing_process_entry,
+)
+from src.builder.ops.url_and_cleanup import (
+    process_url as _ops_process_url,
+    remove_entry_consolidated_images as _ops_remove_entry_consolidated_images,
+)
 from src.builder.core.source_importers import (
     process_code as _source_importers_process_code,
     process_github_repo as _source_importers_process_github_repo,
     process_image as _source_importers_process_image,
     process_zip as _source_importers_process_zip,
+)
+from src.builder.core.image_resolution import (
+    IMG_RE as _core_image_resolution_img_re,
+    find_image as _core_image_resolution_find_image,
+    inject_all_image_descriptions as _core_image_resolution_inject_all_image_descriptions,
+    resolve_content_images as _core_image_resolution_resolve_content_images,
 )
 from src.builder.artifacts import student_state as student_state_v2
 from src.builder.artifacts.pedagogy import (
@@ -1727,73 +1743,18 @@ class RepoBuilder:
             self._build_impl()
 
     def _build_impl(self) -> None:
-        logger.info("Building repository at %s", self.root_dir)
-        logger.info("Creating directory structure...")
-        self._create_structure()
-        logger.info("Writing root/pedagogical files...")
-        self._write_root_files()
-        logger.info("Root files written. Starting entry processing...")
-
-        manifest = {
-            "app": APP_NAME,
-            "generated_at": datetime.now().isoformat(timespec="seconds"),
-            "course": self.course_meta,
-            "options": self.options,
-            "environment": {
-                "python": sys.version.split()[0],
-                "pymupdf": HAS_PYMUPDF,
-                "pymupdf4llm": HAS_PYMUPDF4LLM,
-                "pdfplumber": HAS_PDFPLUMBER,
-                "datalab_api": has_datalab_api_key(),
-                "docling_cli": bool(DOCLING_CLI),
-                "docling_python": has_docling_python_api(),
-                "marker_cli": bool(MARKER_CLI),
-            },
-            "entries": [],
-        }
-
-        manifest_path = self.root_dir / "manifest.json"
-        active_entries = [e for e in self.entries if getattr(e, "enabled", True)]
-        skipped = len(self.entries) - len(active_entries)
-        if skipped:
-            logger.info("Pulando %d entries desabilitados.", skipped)
-        total = len(active_entries)
-        for i, entry in enumerate(active_entries):
-            logger.info("[%d/%d] Processing: %s (%s)", i + 1, total, entry.title, entry.file_type)
-            if self.progress_callback:
-                self.progress_callback(i, total, entry.title)
-            item_result = self._process_entry(entry)
-            manifest["entries"].append(item_result)
-            # Salva manifest após cada entry para não perder progresso
-            manifest["logs"] = self.logs
-            manifest = self._compact_manifest(manifest)
-            write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
-            logger.info("[%d/%d] Concluído e salvo: %s", i + 1, total, entry.title)
-        if self.progress_callback:
-            self.progress_callback(total, total, "")
-
-        manifest["logs"] = self.logs
-        manifest = self._compact_manifest(manifest)
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
-        self._write_source_registry(manifest)
-        self._write_bundle_seed(manifest)
-        self._write_build_report(manifest)
-
-        # FILE_MAP — generated after all entries are processed
-        write_text(self.root_dir / "course" / "FILE_MAP.md",
-                   file_map_md(
-                       {**self.course_meta, "_repo_root": self.root_dir},
-                       manifest["entries"],
-                       self.subject_profile,
-                   ))
-
-        # Resolve image references in markdowns → content/images/
-        self._resolve_content_images()
-        self._inject_all_image_descriptions()
-        self._regenerate_pedagogical_files(manifest)
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
-
-        logger.info("Repository built successfully at %s", self.root_dir)
+        _build_workflow_build_impl(
+            self,
+            app_name=APP_NAME,
+            has_pymupdf=HAS_PYMUPDF,
+            has_pymupdf4llm=HAS_PYMUPDF4LLM,
+            has_pdfplumber=HAS_PDFPLUMBER,
+            has_datalab_api_key_fn=has_datalab_api_key,
+            docling_cli=DOCLING_CLI,
+            has_docling_python_api_fn=has_docling_python_api,
+            marker_cli=MARKER_CLI,
+            file_map_md_fn=file_map_md,
+        )
 
     def _create_structure(self) -> None:
         _bootstrap_ops_create_structure(self.root_dir)
@@ -1836,162 +1797,13 @@ class RepoBuilder:
     # Image resolution — copies referenced images into content/images/
     # ------------------------------------------------------------------
 
-    _IMG_RE = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
+    _IMG_RE = _core_image_resolution_img_re
 
     def _resolve_content_images(self) -> None:
-        """Scan markdowns under content/ and staging/markdown-auto/ for image
-        references.  Copy each referenced image into ``content/images/`` with a
-        short, deterministic name and rewrite the markdown link to a relative
-        path.  This keeps the repo uploadable to Claude Projects without
-        thousands of staging assets.
-
-        Incremental: keeps existing images and only copies new ones.
-        Stale images (from removed entries) are cleaned up at the end.
-        """
-        images_dir = self.root_dir / "content" / "images"
-        ensure_dir(images_dir)
-
-        # Track existing files for stale cleanup later
-        existing_files = {f for f in images_dir.iterdir() if f.is_file()} if images_dir.exists() else set()
-        referenced_files: set = set()
-
-        # Directories to scan for markdowns that the tutor will read
-        scan_dirs = [
-            self.root_dir / "content",
-            self.root_dir / "staging" / "markdown-auto",
-        ]
-
-        target_ext = f".{self._image_format}" if self._image_format != "jpeg" else ".jpg"
-        seen: Dict[str, Path] = {}  # original_path -> new_path (dedup)
-        copied = 0
-
-        for scan_dir in scan_dirs:
-            if not scan_dir.exists():
-                continue
-            for md_file in scan_dir.rglob("*.md"):
-                # Skip markdowns inside content/images/ itself
-                if images_dir in md_file.parents:
-                    continue
-                try:
-                    text = md_file.read_text(encoding="utf-8")
-                except Exception:
-                    continue
-
-                replacements: List[tuple] = []
-                for match in self._IMG_RE.finditer(text):
-                    alt = match.group(1)
-                    raw_path = match.group(2)
-
-                    # Skip references already pointing to content/images/
-                    if "content/images/" in raw_path.replace("\\", "/"):
-                        # Track the file as referenced so it doesn't get cleaned up
-                        ref_path = self._find_image(raw_path, md_file)
-                        if ref_path and ref_path.exists():
-                            referenced_files.add(ref_path)
-                        continue
-
-                    # Resolve the image file
-                    img_path = self._find_image(raw_path, md_file)
-                    if img_path is None or not img_path.exists():
-                        continue
-
-                    # Skip noise images (too small or solid color)
-                    if img_path.stat().st_size < self._MIN_IMG_BYTES:
-                        continue
-                    if self._is_noise_image(img_path.read_bytes()):
-                        continue
-
-                    img_key = str(img_path)
-                    if img_key in seen:
-                        new_path = seen[img_key]
-                    else:
-                        # Build a short name: <parent-slug>-<filename>
-                        parent_slug = slugify(img_path.parent.name) if img_path.parent.name else ""
-                        short_name = f"{parent_slug}-{img_path.name}" if parent_slug else img_path.name
-                        new_path = images_dir / short_name
-
-                        # Handle collisions
-                        if new_path.exists() and new_path.stat().st_size != img_path.stat().st_size:
-                            stem = new_path.stem
-                            suffix = new_path.suffix
-                            counter = 2
-                            while new_path.exists():
-                                new_path = images_dir / f"{stem}-{counter}{suffix}"
-                                counter += 1
-
-                        if not new_path.exists():
-                            shutil.copy2(str(img_path), str(new_path))
-                            new_path = self._convert_image_format(new_path)
-                            copied += 1
-                        elif new_path.suffix.lower() not in (target_ext, ".jpeg" if target_ext == ".jpg" else ""):
-                            # Existing file in wrong format — convert
-                            new_path = self._convert_image_format(new_path)
-                        seen[img_key] = new_path
-
-                    referenced_files.add(new_path)
-
-                    # Build relative path from this markdown to the image
-                    try:
-                        rel = Path(new_path).relative_to(md_file.parent)
-                    except ValueError:
-                        # Different directory trees — use repo-relative path
-                        rel = Path(new_path).relative_to(self.root_dir)
-
-                    rel_str = str(rel).replace("\\", "/")
-                    old_ref = match.group(0)
-                    new_ref = f"![{alt}]({rel_str})"
-                    if old_ref != new_ref:
-                        replacements.append((old_ref, new_ref))
-
-                if replacements:
-                    for old, new in replacements:
-                        text = text.replace(old, new)
-                    md_file.write_text(text, encoding="utf-8")
-
-        # Clean up stale images (from removed entries)
-        stale = existing_files - referenced_files
-        for f in stale:
-            try:
-                f.unlink(missing_ok=True)
-            except Exception:
-                pass
-        if stale:
-            logger.info("Cleaned up %d stale images from content/images/", len(stale))
-
-        if copied:
-            logger.info("Resolved %d new images into content/images/", copied)
+        _core_image_resolution_resolve_content_images(self)
 
     def _find_image(self, raw_path: str, md_file: Path) -> Optional[Path]:
-        """Try to locate an image file from a markdown reference path."""
-        # Normalize separators
-        normalized = raw_path.replace("\\", "/")
-
-        # 1) Absolute path — use directly
-        p = Path(normalized)
-        if p.is_absolute() and p.exists():
-            return p
-
-        # 2) Try relative to the markdown file's directory
-        rel_to_md = md_file.parent / normalized
-        if rel_to_md.exists():
-            return rel_to_md
-
-        # 3) Try relative to repo root
-        rel_to_root = self.root_dir / normalized
-        if rel_to_root.exists():
-            return rel_to_root
-
-        # 4) Extract the staging-relative portion from absolute paths
-        # Pattern: .../staging/assets/... or .../staging/markdown-auto/...
-        for marker in ("staging/assets/", "staging/markdown-auto/"):
-            idx = normalized.find(marker)
-            if idx >= 0:
-                staging_rel = normalized[idx:]
-                candidate = self.root_dir / staging_rel
-                if candidate.exists():
-                    return candidate
-
-        return None
+        return _core_image_resolution_find_image(self.root_dir, raw_path, md_file)
 
     _IMG_DESC_BLOCK_RE = _IMAGE_DESC_BLOCK_RE
     _image_curation_heading = staticmethod(_image_curation_heading_label)
@@ -2006,58 +1818,10 @@ class RepoBuilder:
         )
 
     def _inject_all_image_descriptions(self) -> None:
-        """Inject image descriptions into the most relevant markdowns for each entry."""
-        manifest_path = self.root_dir / "manifest.json"
-        if not manifest_path.exists():
-            return
-
-        try:
-            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        except Exception:
-            return
-
-        entries = manifest.get("entries", [])
-
-        injected_count = 0
-        for entry_data in entries:
-            curation = entry_data.get("image_curation")
-            if not curation:
-                continue
-
-            status = (curation.get("status") or "").strip().lower()
-            if status not in {"described", "curated"} and not curation.get("pages"):
-                continue
-
-            target_markdowns = self._resolve_entry_markdown_targets(entry_data)
-
-            if not target_markdowns:
-                content_dir = self.root_dir / "content"
-                if not content_dir.exists():
-                    continue
-                target_markdowns = list(content_dir.rglob("*.md"))
-
-            for md_file in target_markdowns:
-                try:
-                    text = md_file.read_text(encoding="utf-8")
-                except Exception:
-                    continue
-
-                new_text = self.inject_image_descriptions(text, curation)
-                if new_text != text:
-                    md_file.write_text(new_text, encoding="utf-8")
-                    injected_count += 1
-                    try:
-                        rel_md = safe_rel(md_file, self.root_dir)
-                    except Exception:
-                        rel_md = str(md_file)
-                    logger.info(
-                        "Injected image descriptions into %s for entry %s.",
-                        rel_md,
-                        entry_data.get("id") or entry_data.get("title") or "<unknown>",
-                    )
-
-        if injected_count:
-            logger.info("Injected image descriptions into %d markdown files.", injected_count)
+        _core_image_resolution_inject_all_image_descriptions(
+            self,
+            resolve_entry_markdown_targets_fn=self._resolve_entry_markdown_targets,
+        )
 
     def _resolve_entry_markdown_targets(self, entry_data: dict) -> List[Path]:
         return _repo_artifacts.resolve_entry_markdown_targets(self.root_dir, entry_data)
@@ -2112,161 +1876,22 @@ class RepoBuilder:
         )
 
     def _remove_entry_consolidated_images(self, entry_id: str) -> int:
-        """Remove consolidated content/images assets that belong to one entry."""
-        if not entry_id:
-            return 0
-
-        removed_count = 0
-        images_dir = self.root_dir / "content" / "images"
-        if not images_dir.exists():
-            return 0
-
-        entry_prefix = entry_id.lower()
-        for img_path in images_dir.iterdir():
-            if not img_path.is_file():
-                continue
-            lower_name = img_path.name.lower()
-            if not (
-                lower_name == entry_prefix
-                or lower_name.startswith(entry_prefix + "-")
-                or lower_name.startswith(entry_prefix + "_")
-            ):
-                continue
-            try:
-                img_path.unlink()
-                removed_count += 1
-            except Exception as e:
-                logger.warning("Could not remove consolidated image %s: %s", img_path, e)
-
-        scanned_dir = images_dir / "scanned" / entry_id
-        if scanned_dir.exists():
-            try:
-                shutil.rmtree(scanned_dir)
-                removed_count += 1
-            except Exception as e:
-                logger.warning("Could not remove scanned image dir %s: %s", scanned_dir, e)
-
-        return removed_count
+        return _ops_remove_entry_consolidated_images(self.root_dir, entry_id)
 
     def _process_entry(self, entry: FileEntry) -> Dict[str, object]:
-        item: Dict[str, object] = {
-            "id": entry.id(),
-            "title": entry.title,
-            "category": entry.category,
-            "file_type": entry.file_type,
-            "source_path": entry.source_path,
-            "tags": entry.tags,
-            "manual_tags": list(entry.manual_tags or []),
-            "auto_tags": list(entry.auto_tags or []),
-            "manual_unit_slug": entry.manual_unit_slug,
-            "manual_timeline_block_id": entry.manual_timeline_block_id,
-            "notes": entry.notes,
-            "professor_signal": entry.professor_signal,
-            "include_in_bundle": entry.include_in_bundle,
-            "relevant_for_exam": entry.relevant_for_exam,
-            "processing_mode": entry.processing_mode,
-            "document_profile": entry.document_profile,
-            "preferred_backend": entry.preferred_backend,
-            "datalab_mode": entry.datalab_mode,
-            "formula_priority": entry.formula_priority,
-            "preserve_pdf_images_in_markdown": entry.preserve_pdf_images_in_markdown,
-            "force_ocr": entry.force_ocr,
-            "extract_images": entry.extract_images,
-            "extract_tables": entry.extract_tables,
-            "page_range": entry.page_range,
-            "ocr_language": entry.ocr_language,
-        }
-
-        src = Path(entry.source_path)
-        if entry.file_type not in ("url", "github-repo") and not src.exists():
-            raise FileNotFoundError(f"Source file not found: {src}")
-
-        if entry.file_type == "url":
-            item.update(self._process_url(entry))
-            return item
-
-        if entry.file_type == "github-repo":
-            item.update(self._process_github_repo(entry))
-            return item
-
-        safe_name = f"{entry.id()}{src.suffix.lower()}"
-
-        if entry.file_type == "code":
-            code_subdir = "student" if entry.category == "codigo-aluno" else "professor"
-            raw_target  = self.root_dir / "raw" / "code" / code_subdir / safe_name
-            ensure_dir(raw_target.parent)
-            shutil.copy2(src, raw_target)
-            item["raw_target"] = safe_rel(raw_target, self.root_dir)
-            item.update(self._process_code(entry, raw_target))
-            return item
-
-        if entry.file_type == "zip":
-            raw_target = self.root_dir / "raw" / "zip" / safe_name
-            ensure_dir(raw_target.parent)
-            shutil.copy2(src, raw_target)
-            item["raw_target"] = safe_rel(raw_target, self.root_dir)
-            item.update(self._process_zip(entry, raw_target))
-            return item
-
-        if entry.file_type == "pdf":
-            raw_target = self.root_dir / "raw" / "pdfs" / entry.category / safe_name
-            ensure_dir(raw_target.parent)
-            shutil.copy2(src, raw_target)
-            item["raw_target"] = safe_rel(raw_target, self.root_dir)
-            item.update(self._process_pdf(entry, raw_target))
-        else:
-            image_category = entry.category if entry.category in IMAGE_CATEGORIES else "outros"
-            raw_target = self.root_dir / "raw" / "images" / image_category / safe_name
-            ensure_dir(raw_target.parent)
-            shutil.copy2(src, raw_target)
-            item["raw_target"] = safe_rel(raw_target, self.root_dir)
-            item.update(self._process_image(entry, raw_target))
-
-        return item
+        return _entry_processing_process_entry(
+            self,
+            entry,
+            image_categories=IMAGE_CATEGORIES,
+        )
 
     def _process_url(self, entry: FileEntry) -> Dict[str, object]:
-        item: Dict[str, object] = {
-            "document_report": None, "pipeline_decision": None,
-            "base_markdown": None, "advanced_markdown": None,
-            "advanced_backend": None, "base_backend": "url_fetcher",
-            "manual_review": None,
-        }
-        url_dest = self.root_dir / "staging" / "markdown-auto" / "url_fetcher"
-        ensure_dir(url_dest)
-        md_file = url_dest / f"{entry.id()}.md"
-        url = entry.source_path
-        try:
-            import urllib.request
-            req = urllib.request.Request(url, headers={
-                'User-Agent': 'Mozilla/5.0',
-                'Accept-Language': 'pt-BR,pt;q=0.9,en;q=0.8',
-            })
-            with urllib.request.urlopen(req, timeout=10) as response:
-                charset = response.info().get_content_charset('utf-8')
-                html = response.read().decode(charset, errors='replace')
-            try:
-                markdown_content = _html_to_structured_markdown(html, url, entry.title)
-            except ImportError:
-                markdown_content = (
-                    f"# {entry.title}\n\n"
-                    f"- URL: [{url}]({url})\n\n"
-                    "> BeautifulSoup não instalado. Conteúdo HTML não foi convertido para Markdown estruturado.\n"
-                )
-            self.logs.append({"entry": entry.id(), "step": "url_fetch", "status": "ok"})
-        except Exception as e:
-            logger.warning(f"Failed to fetch content from URL {url}: {e}")
-            markdown_content = (
-                f"# {entry.title}\n\n"
-                f"- URL: [{url}]({url})\n\n"
-                f"> Não foi possível carregar o conteúdo: {e}\n"
-            )
-            self.logs.append({"entry": entry.id(), "step": "url_fetch", "status": "error", "error": str(e)})
-        write_text(md_file, markdown_content)
-        item["base_markdown"] = safe_rel(md_file, self.root_dir)
-        manual = self.root_dir / "manual-review" / "web" / f"{entry.id()}.md"
-        write_text(manual, manual_url_review_template(entry, item))
-        item["manual_review"] = safe_rel(manual, self.root_dir)
-        return item
+        return _ops_process_url(
+            self,
+            entry,
+            html_to_structured_markdown_fn=_html_to_structured_markdown,
+            manual_url_review_template_fn=manual_url_review_template,
+        )
 
     def _check_cancel(self):
         """Levanta InterruptedError se o build foi cancelado."""
