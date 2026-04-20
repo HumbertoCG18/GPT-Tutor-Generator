@@ -902,6 +902,14 @@ class DatalabCloudBackend(ExtractionBackend):
                 error=str(e),
             )
 
+        saved_images: list = []
+        images_dir_path: Optional[Path] = None
+        if result.images:
+            images_dir_path, saved_images = self._save_datalab_images(
+                result.images, ctx.entry_id, ctx.root_dir
+            )
+            logger.info("  [datalab] %d imagens salvas em %s.", len(saved_images), images_dir_path)
+
         write_text(out_path, markdown)
 
         metadata_path = out_dir / "datalab-run.json"
@@ -917,9 +925,9 @@ class DatalabCloudBackend(ExtractionBackend):
             "page_count": result.page_count,
             "parse_quality_score": result.parse_quality_score,
             "cost_breakdown": result.cost_breakdown,
-            "disable_image_extraction": True,
+            "disable_image_extraction": False,
             "disable_image_captions": True,
-            "images_saved": [],
+            "images_saved": saved_images,
             "metadata": result.metadata,
             "raw_response_tail": {
                 "status": result.raw_response.get("status"),
@@ -929,10 +937,12 @@ class DatalabCloudBackend(ExtractionBackend):
         }, indent=2, ensure_ascii=False))
 
         notes = [
-            "SaÃ­da avanÃ§ada gerada com Datalab Document Conversion API.",
+            "Saída avançada gerada com Datalab Document Conversion API.",
             f"Modo: {mode}.",
-            "Imagens e descricoes sinteticas do Datalab desativadas; a curadoria de imagens permanece app-side.",
+            "Descrições sintéticas do Datalab desativadas; a curadoria de imagens permanece app-side.",
         ]
+        if saved_images:
+            notes.append(f"{len(saved_images)} imagens extraídas pelo Datalab e salvas em staging/assets/images/.")
         if result.parse_quality_score is not None:
             notes.append(f"parse_quality_score={result.parse_quality_score}.")
 
@@ -944,6 +954,7 @@ class DatalabCloudBackend(ExtractionBackend):
             asset_dir=safe_rel(out_dir, ctx.root_dir),
             metadata_path=safe_rel(metadata_path, ctx.root_dir),
             notes=notes,
+            images_dir=safe_rel(images_dir_path, ctx.root_dir) if images_dir_path and saved_images else None,
         )
 
     def _run_chunked_datalab(

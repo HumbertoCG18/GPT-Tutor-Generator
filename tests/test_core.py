@@ -589,9 +589,9 @@ class TestAdvancedBackendPolicies:
         assert metadata["mode"] == "fast"
         assert metadata["page_range"] == "0-1"
         assert metadata["parse_quality_score"] == 4.7
-        assert metadata["disable_image_extraction"] is True
+        assert metadata["disable_image_extraction"] is False
         assert metadata["disable_image_captions"] is True
-        assert metadata["images_saved"] == []
+        assert len(metadata["images_saved"]) == 1
 
     def test_marker_command_omits_force_ocr_when_only_formula_priority_is_enabled(self, tmp_path, monkeypatch):
         backend = engine_module.MarkerCLIBackend()
