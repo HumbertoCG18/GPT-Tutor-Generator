@@ -3881,7 +3881,7 @@ class StatusDialog(tk.Toplevel):
 
         configured_model = config_obj.get("vision_model", "qwen3-vl:235b-cloud")
         ollama_url = config_obj.get("ollama_base_url", "http://localhost:11434")
-        from src.builder.ollama_client import FALLBACK_MODEL, get_vision_setup_status
+        from src.builder.vision.ollama_client import FALLBACK_MODEL, get_vision_setup_status
         vision_status = get_vision_setup_status(ollama_url, configured_model)
         available_models = vision_status["available_models"]
         model_found = bool(vision_status["model_found"])

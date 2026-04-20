@@ -13,7 +13,7 @@ from typing import Dict, List, Optional
 
 from PIL import Image, ImageTk
 
-from src.builder.image_classifier import (
+from src.builder.vision.image_classifier import (
     classify_image,
     extract_page_number,
     group_images_by_page,
@@ -874,7 +874,7 @@ class ImageCurator(tk.Toplevel):
         if self._vision_client is not None:
             return self._vision_client
 
-        from src.builder.vision_client import get_vision_client
+        from src.builder.vision.vision_client import get_vision_client
 
         config = self._parent.config_obj if hasattr(self._parent, "config_obj") else None
         client = get_vision_client(config)

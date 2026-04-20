@@ -492,6 +492,7 @@ class App(tk.Tk):
         backlog_repo_menu.add_command(label="📋 Gerar Instruções LLM", command=self._generate_llm_instructions)
         backlog_repo_menu.add_command(label="📦 Consolidar Unidade...", command=self._open_consolidate_dialog)
         backlog_repo_menu.add_command(label="📚 Abrir pasta batteries", command=self._open_batteries_folder)
+        backlog_repo_menu.add_command(label="📎 Copiar Instruções LLM", command=self._copy_llm_instructions_to_clipboard)
 
         self._backlog_repo_menu_btn = ttk.Menubutton(backlog_toolbar, text="🗂 Repo")
         self._backlog_repo_menu_btn.pack(side="left")
@@ -2199,6 +2200,65 @@ class App(tk.Tk):
         batteries = repo_dir / "student" / "batteries"
         batteries.mkdir(parents=True, exist_ok=True)
         self._open_path_in_system(batteries)
+
+    def _copy_llm_instructions_to_clipboard(self) -> None:
+        repo_dir = self._repo_dir()
+        if not repo_dir:
+            messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório.")
+            return
+
+        PLATFORMS = [
+            ("claude", "Claude", "INSTRUCOES_CLAUDE_PROJETO.md"),
+            ("gpt",    "GPT",    "INSTRUCOES_GPT_PROJETO.md"),
+            ("gemini", "Gemini", "INSTRUCOES_GEMINI_PROJETO.md"),
+        ]
+
+        dialog = tk.Toplevel(self)
+        dialog.title("Copiar Instruções LLM")
+        dialog.resizable(False, False)
+        dialog.transient(self)
+        dialog.grab_set()
+        dialog.update_idletasks()
+        x = self.winfo_rootx() + (self.winfo_width() - 340) // 2
+        y = self.winfo_rooty() + (self.winfo_height() - 180) // 2
+        dialog.geometry(f"340x180+{x}+{y}")
+
+        ttk.Label(dialog, text="Qual plataforma você quer copiar?",
+                  wraplength=300, justify="center").pack(pady=(18, 6))
+        ttk.Label(dialog,
+                  text="O conteúdo do arquivo de instruções será copiado\npara a área de transferência.",
+                  wraplength=300, justify="center", foreground="gray").pack(pady=(0, 14))
+
+        btn_frame = ttk.Frame(dialog)
+        btn_frame.pack()
+
+        def pick(filename):
+            dialog.destroy()
+            path = repo_dir / "setup" / filename
+            if not path.exists():
+                messagebox.showwarning(
+                    APP_NAME,
+                    f"Arquivo não encontrado:\n{path}\n\n"
+                    "Use 'Gerar Instruções LLM' primeiro."
+                )
+                return
+            try:
+                content = path.read_text(encoding="utf-8")
+                self.clipboard_clear()
+                self.clipboard_append(content)
+                self._set_status(f"Instruções copiadas para a área de transferência: {filename}")
+                messagebox.showinfo(
+                    APP_NAME,
+                    f"Instruções copiadas!\n\nArquivo: setup/{filename}\n"
+                    f"Caracteres: {len(content):,}\n\n"
+                    "Cole no campo de instruções do projeto na plataforma escolhida."
+                )
+            except Exception as e:
+                messagebox.showerror(APP_NAME, f"Erro ao ler instruções:\n{e}")
+
+        for _val, label, fname in PLATFORMS:
+            ttk.Button(btn_frame, text=label, width=10,
+                       command=lambda f=fname: pick(f)).pack(side="left", padx=4)
 
     def _open_consolidate_dialog(self) -> None:
         repo_dir = self._repo_dir_from_active_subject()

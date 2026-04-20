@@ -330,10 +330,15 @@ def apply_marker_capabilities_help_text(help_text: str, caps: Dict[str, object])
     return caps
 
 
-def detect_marker_capabilities(marker_cli: str | None) -> Dict[str, object]:
+def detect_marker_capabilities(
+    marker_cli: str | None,
+    *,
+    use_cache: bool = True,
+    run_cmd=subprocess.run,
+) -> Dict[str, object]:
     global _MARKER_CAPABILITIES_CACHE
 
-    if _MARKER_CAPABILITIES_CACHE is not None:
+    if use_cache and _MARKER_CAPABILITIES_CACHE is not None:
         return dict(_MARKER_CAPABILITIES_CACHE)
 
     caps = default_marker_capabilities()
@@ -343,7 +348,7 @@ def detect_marker_capabilities(marker_cli: str | None) -> Dict[str, object]:
         return dict(caps)
 
     try:
-        proc = subprocess.run(
+        proc = run_cmd(
             [marker_cli, "--help"],
             capture_output=True,
             text=True,
@@ -355,12 +360,14 @@ def detect_marker_capabilities(marker_cli: str | None) -> Dict[str, object]:
             "  [marker] Não foi possível inspecionar --help: %s. Usando fallback otimista com as flags atuais conhecidas do Marker.",
             exc,
         )
-        _MARKER_CAPABILITIES_CACHE = dict(caps)
+        if use_cache:
+            _MARKER_CAPABILITIES_CACHE = dict(caps)
         return dict(caps)
 
     caps = apply_marker_capabilities_help_text(help_text, caps)
 
-    _MARKER_CAPABILITIES_CACHE = dict(caps)
+    if use_cache:
+        _MARKER_CAPABILITIES_CACHE = dict(caps)
     logger.info("  [marker] Capabilities detectadas: %s", caps)
     return dict(caps)
 

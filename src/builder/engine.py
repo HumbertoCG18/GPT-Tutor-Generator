@@ -1,20 +1,23 @@
 from __future__ import annotations
-# Public facade for builder functionality during modularization.
-# Keep stable exports here while implementations move into focused modules.
+# Stable facade for builder functionality during modularization.
+# Policy:
+# - RepoBuilder, backend selection, and compatibility helpers remain importable here.
+# - Implementations should keep moving into focused subpackages.
+# - New direct consumers should prefer the focused modules instead of adding more
+#   engine-level helper imports.
 # Focused builder subsystems already live in:
 # - src.builder.extraction.content_taxonomy
-# - src.builder.timeline.index
-# - src.builder.artifacts.navigation
-# - src.builder.artifacts.prompts / pedagogy
-# - src.builder.artifacts.repo
-# - src.builder.artifacts.student_state
 # - src.builder.extraction.image_markdown
+# - src.builder.timeline.index
+# - src.builder.timeline.signals
+# - src.builder.artifacts.navigation
+# - src.builder.artifacts.prompts / pedagogy / repo / student_state
+# - src.builder.vision.*
 import csv
 import difflib
 import html as html_lib
 import json
 import logging
-import os
 import re
 import shutil
 import subprocess
@@ -63,14 +66,12 @@ from src.builder.file_map_routing import (
 )
 from src.builder.backend_runtime import (
     MARKER_OLLAMA_SERVICE,
-    apply_marker_capabilities_help_text as _backend_apply_marker_capabilities_help_text,
     advanced_cli_stall_timeout as _backend_advanced_cli_stall_timeout,
     build_marker_page_chunks as _backend_build_marker_page_chunks,
     build_page_chunks as _backend_build_page_chunks,
     configure_docling_python_standard_gpu as _backend_configure_docling_python_standard_gpu,
     datalab_chunk_size_for_workload as _backend_datalab_chunk_size_for_workload,
     datalab_should_chunk as _backend_datalab_should_chunk,
-    default_marker_capabilities as _backend_default_marker_capabilities,
     detect_marker_capabilities as _backend_detect_marker_capabilities,
     load_docling_python_api as _backend_load_docling_python_api,
     marker_chunk_size_for_workload as _backend_marker_chunk_size_for_workload,
@@ -113,6 +114,62 @@ from src.builder.url_markdown import (
     pick_best_content_root as _url_markdown_pick_best_content_root,
     render_html_block_to_markdown as _url_markdown_render_html_block_to_markdown,
     truncate_markdown_blocks as _url_markdown_truncate_markdown_blocks,
+)
+from src.builder.markdown_utils import (
+    compact_notebook_markdown as _markdown_utils_compact_notebook_markdown,
+    generated_repo_gitignore_text as _markdown_utils_generated_repo_gitignore_text,
+    merge_numeric_dicts as _markdown_utils_merge_numeric_dicts,
+    rewrite_markdown_asset_paths as _markdown_utils_rewrite_markdown_asset_paths,
+    strip_frontmatter_block as _markdown_utils_strip_frontmatter_block,
+    strip_markdown_image_refs as _markdown_utils_strip_markdown_image_refs,
+)
+from src.builder.core_utils import (
+    collapse_ws as _core_utils_collapse_ws,
+    effective_document_profile as _core_utils_effective_document_profile,
+    merge_manual_and_auto_tags as _core_utils_merge_manual_and_auto_tags,
+    pdf_image_extraction_policy as _core_utils_pdf_image_extraction_policy,
+    persist_enriched_timeline_index as _core_utils_persist_enriched_timeline_index,
+    strip_topic_prefix as _core_utils_strip_topic_prefix,
+    topic_support_tokens as _core_utils_topic_support_tokens,
+)
+from src.builder.pdf_analysis import (
+    apply_math_normalization as _pdf_analysis_apply_math_normalization,
+    profile_pdf as _pdf_analysis_profile_pdf,
+    quick_page_count as _pdf_analysis_quick_page_count,
+)
+from src.builder.pdf_assets import (
+    convert_image_format as _pdf_assets_convert_image_format,
+    detect_tables_pymupdf as _pdf_assets_detect_tables_pymupdf,
+    extract_pdf_images as _pdf_assets_extract_pdf_images,
+    extract_tables_pdfplumber as _pdf_assets_extract_tables_pdfplumber,
+    image_format as _pdf_assets_image_format,
+    is_noise_image as _pdf_assets_is_noise_image,
+    should_keep_extracted_pdf_image as _pdf_assets_should_keep_extracted_pdf_image,
+)
+from src.builder.pdf_pipeline import (
+    log_backend_result as _pdf_pipeline_log_backend_result,
+    process_pdf as _pdf_pipeline_process_pdf,
+)
+from src.builder.pdf_scanned import (
+    render_scanned_pdf_as_images as _pdf_scanned_render_scanned_pdf_as_images,
+)
+from src.builder.pedagogical_regeneration import (
+    regenerate_pedagogical_files as _pedagogical_regeneration_regenerate_pedagogical_files,
+)
+from src.builder.operational_artifacts import (
+    compact_manifest as _operational_artifacts_compact_manifest,
+    write_build_report as _operational_artifacts_write_build_report,
+    write_bundle_seed as _operational_artifacts_write_bundle_seed,
+    write_source_registry as _operational_artifacts_write_source_registry,
+)
+from src.builder.incremental_build import (
+    incremental_build_impl as _incremental_build_incremental_build_impl,
+)
+from src.builder.source_importers import (
+    process_code as _source_importers_process_code,
+    process_github_repo as _source_importers_process_github_repo,
+    process_image as _source_importers_process_image,
+    process_zip as _source_importers_process_zip,
 )
 from src.builder.artifacts import student_state as student_state_v2
 from src.builder.artifacts.pedagogy import (
@@ -223,48 +280,16 @@ logger = logging.getLogger(__name__)
 _DOCLING_PYTHON_API_CACHE = None
 
 
-def _effective_document_profile(entry_profile: str | None, suggested_profile: str | None) -> str:
-    if normalize_document_profile(entry_profile) != "auto":
-        return normalize_document_profile(entry_profile)
-    return normalize_document_profile(suggested_profile)
+_effective_document_profile = _core_utils_effective_document_profile
 
 
-def _persist_enriched_timeline_index(timeline_index: dict) -> dict:
-    payload = {
-        key: value
-        for key, value in dict(timeline_index or {}).items()
-        if key not in {"version", "blocks"}
-    }
-    blocks = []
-    for block in (timeline_index or {}).get("blocks", []) or []:
-        if not isinstance(block, dict):
-            continue
-        block_payload = dict(block)
-        block_payload.pop("rows", None)
-        for key in ("topics", "aliases", "topic_candidates", "source_rows", "sessions", "card_evidence"):
-            value = block_payload.get(key, [])
-            if value is None:
-                block_payload[key] = []
-            elif isinstance(value, list):
-                block_payload[key] = list(value)
-            else:
-                block_payload[key] = [value]
-        blocks.append(block_payload)
-    payload["version"] = 3
-    payload["blocks"] = blocks
-    return payload
+_persist_enriched_timeline_index = _core_utils_persist_enriched_timeline_index
 
 
-def _collapse_ws(text: str) -> str:
-    return re.sub(r"\s+", " ", (text or "")).strip()
+_collapse_ws = _core_utils_collapse_ws
 
 
-def _strip_topic_prefix(text: str) -> str:
-    cleaned = _collapse_ws(text)
-    cleaned = re.sub(r"^\d+(?:\.\d+)*\.?\s*", "", cleaned)
-    cleaned = re.sub(r"^(unidade|tema|topico)\s+\d+\s*[-—:]?\s*", "", cleaned, flags=re.IGNORECASE)
-    cleaned = re.sub(r"^(especificacao|especificação)\s+de\s+", "", cleaned, flags=re.IGNORECASE)
-    return cleaned.strip(" -:\t")
+_strip_topic_prefix = _core_utils_strip_topic_prefix
 
 
 _looks_like_tool_candidate = _content_taxonomy._looks_like_tool_candidate
@@ -278,13 +303,10 @@ _extract_topic_candidates = _content_taxonomy._extract_topic_candidates
 _extract_tool_candidates = _content_taxonomy._extract_tool_candidates
 
 
-def _topic_support_tokens(text: str) -> set:
-    normalized = _normalize_match_text(_strip_topic_prefix(text))
-    return {
-        token[:5] if len(token) >= 5 else token
-        for token in normalized.split()
-        if len(token) >= 4 and token not in {"sobre", "para", "com", "sem", "entre"}
-    }
+_topic_support_tokens = lambda text: _core_utils_topic_support_tokens(
+    text,
+    normalize_match_text_fn=_normalize_match_text,
+)
 
 
 _select_supported_taxonomy_topic = _content_taxonomy._select_supported_taxonomy_topic
@@ -349,65 +371,12 @@ def _refresh_manifest_auto_tags(root_dir: Path, manifest_entries: List[dict], vo
     )
 
 
-def _merge_manual_and_auto_tags(
-    manual_tags: List[str],
-    auto_tags: List[str],
-    *,
-    fallback_tags: str = "",
-    limit: int = 3,
-) -> str:
-    fallback_parts = [part.strip() for part in str(fallback_tags or "").replace(",", ";").split(";") if part.strip()]
-    merged: List[str] = []
-    seen = set()
-    for tag in list(manual_tags or []) + list(auto_tags or []):
-        cleaned = str(tag).strip()
-        if not cleaned or cleaned in seen:
-            continue
-        merged.append(cleaned)
-        seen.add(cleaned)
-        if len(merged) >= limit:
-            return "; ".join(merged)
-    for tag in fallback_parts:
-        if tag not in seen:
-            merged.append(tag)
-            seen.add(tag)
-            if len(merged) >= limit:
-                break
-    return "; ".join(merged)
+_merge_manual_and_auto_tags = _core_utils_merge_manual_and_auto_tags
 
 
-def _strip_frontmatter_block(text: str) -> str:
-    return re.sub(r"^---\s*\n.*?\n---\s*\n?", "", text or "", flags=re.DOTALL)
-
-
-def _rewrite_markdown_asset_paths(markdown: str, source_dir: Path, target_dir: Path) -> str:
-    """Rewrite relative markdown asset links from one directory base to another."""
-    pattern = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
-
-    def _replace(match):
-        alt = match.group(1)
-        raw_path = match.group(2)
-        if re.match(r"^[a-z]+://", raw_path, re.IGNORECASE):
-            return match.group(0)
-        if raw_path.startswith("/"):
-            return match.group(0)
-        source_path = (source_dir / raw_path).resolve()
-        try:
-            rel = os.path.relpath(source_path, target_dir)
-        except Exception:
-            rel = raw_path
-        return f"![{alt}]({str(rel).replace(os.sep, '/')})"
-
-    return pattern.sub(_replace, markdown)
-
-
-def _strip_markdown_image_refs(markdown: str) -> str:
-    if not markdown:
-        return markdown
-    stripped = re.sub(r"(?m)^[ \t]*!\[[^\]]*\]\([^)]+\)[ \t]*\n?", "", markdown)
-    stripped = re.sub(r"\n{3,}", "\n\n", stripped)
-    normalized = stripped.strip()
-    return normalized + ("\n" if normalized else "")
+_strip_frontmatter_block = _markdown_utils_strip_frontmatter_block
+_rewrite_markdown_asset_paths = _markdown_utils_rewrite_markdown_asset_paths
+_strip_markdown_image_refs = _markdown_utils_strip_markdown_image_refs
 
 
 _build_page_chunks = _backend_build_page_chunks
@@ -415,51 +384,39 @@ _build_marker_page_chunks = _backend_build_marker_page_chunks
 _selected_page_count = _backend_selected_page_count
 
 
-def _prepare_docling_python_source_pdf(ctx: "BackendContext", out_dir: Path) -> tuple[Path, bool]:
-    return _backend_prepare_docling_python_source_pdf(
-        ctx,
-        out_dir,
-        has_pymupdf=HAS_PYMUPDF,
-        pymupdf_module=pymupdf if HAS_PYMUPDF else None,
-    )
+_prepare_docling_python_source_pdf = lambda ctx, out_dir: _backend_prepare_docling_python_source_pdf(
+    ctx,
+    out_dir,
+    has_pymupdf=HAS_PYMUPDF,
+    pymupdf_module=pymupdf if HAS_PYMUPDF else None,
+)
 
 
 _configure_docling_python_standard_gpu = _backend_configure_docling_python_standard_gpu
 
 
-def _marker_chunk_size_for_workload(ctx: "BackendContext") -> int:
-    return _backend_marker_chunk_size_for_workload(
-        ctx,
-        effective_document_profile_fn=_effective_document_profile,
-        selected_page_count_fn=_selected_page_count,
-    )
+_marker_chunk_size_for_workload = lambda ctx: _backend_marker_chunk_size_for_workload(
+    ctx,
+    effective_document_profile_fn=_effective_document_profile,
+    selected_page_count_fn=_selected_page_count,
+)
 
 
-def _datalab_chunk_size_for_workload(ctx: "BackendContext") -> int:
-    return _backend_datalab_chunk_size_for_workload(
-        ctx,
-        effective_document_profile_fn=_effective_document_profile,
-        selected_page_count_fn=_selected_page_count,
-    )
+_datalab_chunk_size_for_workload = lambda ctx: _backend_datalab_chunk_size_for_workload(
+    ctx,
+    effective_document_profile_fn=_effective_document_profile,
+    selected_page_count_fn=_selected_page_count,
+)
 
 
-def _datalab_should_chunk(ctx: "BackendContext") -> bool:
-    return _backend_datalab_should_chunk(
-        ctx,
-        datalab_chunk_size_for_workload_fn=_datalab_chunk_size_for_workload,
-        selected_page_count_fn=_selected_page_count,
-    )
+_datalab_should_chunk = lambda ctx: _backend_datalab_should_chunk(
+    ctx,
+    datalab_chunk_size_for_workload_fn=_datalab_chunk_size_for_workload,
+    selected_page_count_fn=_selected_page_count,
+)
 
 
-def _merge_numeric_dicts(items: List[Dict[str, object]]) -> Dict[str, object]:
-    merged: Dict[str, object] = {}
-    for item in items:
-        for key, value in (item or {}).items():
-            if isinstance(value, bool):
-                continue
-            if isinstance(value, (int, float)):
-                merged[key] = float(merged.get(key, 0) or 0) + value
-    return merged
+_merge_numeric_dicts = _markdown_utils_merge_numeric_dicts
 
 
 _should_force_ocr_for_marker = _backend_should_force_ocr_for_marker
@@ -477,118 +434,28 @@ _load_docling_python_api = _backend_load_docling_python_api
 has_docling_python_api = lambda: bool(_load_docling_python_api())
 
 
-def _advanced_cli_stall_timeout(backend_name: str, ctx: "BackendContext") -> int:
-    return _backend_advanced_cli_stall_timeout(
-        backend_name,
-        ctx,
-        effective_document_profile_fn=_effective_document_profile,
-        selected_page_count_fn=_selected_page_count,
-    )
+_advanced_cli_stall_timeout = lambda backend_name, ctx: _backend_advanced_cli_stall_timeout(
+    backend_name,
+    ctx,
+    effective_document_profile_fn=_effective_document_profile,
+    selected_page_count_fn=_selected_page_count,
+)
 
 
 def _pdf_image_extraction_policy(ctx: "BackendContext") -> Dict[str, object]:
-    effective_profile = _effective_document_profile(ctx.entry.document_profile, ctx.report.suggested_profile)
-    if effective_profile in {"math_heavy", "scanned"} or ctx.report.suspected_scan:
-        return {
-            "mode": "permissive",
-            "min_bytes": 512,
-            "min_dimension": 8,
-            "max_aspect_ratio": 20.0,
-            "keep_low_color": True,
-        }
-    if effective_profile == "diagram_heavy":
-        return {
-            "mode": "balanced",
-            "min_bytes": 1200,
-            "min_dimension": 16,
-            "max_aspect_ratio": 12.0,
-            "keep_low_color": True,
-        }
-    return {
-        "mode": "standard",
-        "min_bytes": RepoBuilder._MIN_IMG_BYTES,
-        "min_dimension": RepoBuilder._MIN_IMG_DIMENSION,
-        "max_aspect_ratio": RepoBuilder._MAX_ASPECT_RATIO,
-        "keep_low_color": False,
-    }
+    return _core_utils_pdf_image_extraction_policy(
+        entry_profile=ctx.entry.document_profile,
+        suggested_profile=ctx.report.suggested_profile,
+        suspected_scan=ctx.report.suspected_scan,
+        default_min_bytes=RepoBuilder._MIN_IMG_BYTES,
+        default_min_dimension=RepoBuilder._MIN_IMG_DIMENSION,
+        default_max_aspect_ratio=RepoBuilder._MAX_ASPECT_RATIO,
+    )
 _truncate_markdown_blocks = _url_markdown_truncate_markdown_blocks
 
 
-def _compact_notebook_markdown(raw_text: str, max_cells: int = 24, max_output_chars: int = 6000) -> Tuple[str, str]:
-    try:
-        notebook = json.loads(raw_text)
-    except Exception:
-        return "json", raw_text
-
-    cells = notebook.get("cells") or []
-    rendered: List[str] = []
-    output_budget = 0
-
-    for idx, cell in enumerate(cells[:max_cells], start=1):
-        cell_type = (cell.get("cell_type") or "").strip().lower()
-        source = "".join(cell.get("source") or []).strip()
-        if not source and cell_type != "code":
-            continue
-
-        if cell_type == "markdown":
-            rendered.append(f"## Célula {idx} — Markdown\n\n{source}")
-            continue
-
-        if cell_type == "code":
-            rendered.append(f"## Célula {idx} — Código\n\n```python\n{source}\n```")
-            outputs = cell.get("outputs") or []
-            output_lines: List[str] = []
-            for output in outputs[:3]:
-                text = "".join(output.get("text") or output.get("data", {}).get("text/plain", []) or []).strip()
-                if not text:
-                    continue
-                remaining = max_output_chars - output_budget
-                if remaining <= 0:
-                    break
-                text = text[:remaining].rstrip()
-                output_budget += len(text)
-                output_lines.append(text)
-            if output_lines:
-                rendered.append("**Saída:**\n\n```text\n" + "\n\n".join(output_lines) + "\n```")
-
-    if len(cells) > max_cells:
-        rendered.append(f"> Notebook truncado: exibindo {max_cells} de {len(cells)} células.")
-
-    return "jupyter", "\n\n".join(block for block in rendered if block).strip() or raw_text
-
-
-def _generated_repo_gitignore_text() -> str:
-    return "\n".join([
-        "# === Não essencial para o Tutor ===",
-        "# Cache de build (assets, markdowns intermediários)",
-        "staging/",
-        "# Fontes originais (tutor lê os markdowns convertidos)",
-        "raw/",
-        "# Artefatos de build",
-        "build/",
-        "# Backups de consolidação e migração",
-        "build/consolidation-backup/",
-        "build/migration-v1-backup/",
-        "# Workspace de revisão manual",
-        "manual-review/",
-        "# Scripts utilitários locais",
-        "scripts/",
-        "# Índices internos derivados do app (regeneráveis)",
-        "course/.content_taxonomy.json",
-        "course/.timeline_index.json",
-        "course/.assessment_context.json",
-        "course/.tag_catalog.json",
-        "course/.semantic_profile.generated.json",
-        "# Exportações operacionais de prompt (copiadas para a plataforma, não lidas pelo tutor)",
-        "setup/",
-        "",
-        "# === Sistema ===",
-        "__pycache__/",
-        "*.pyc",
-        ".DS_Store",
-        "Thumbs.db",
-        "",
-    ])
+_compact_notebook_markdown = _markdown_utils_compact_notebook_markdown
+_generated_repo_gitignore_text = _markdown_utils_generated_repo_gitignore_text
 
 
 _extract_url_page_metadata = partial(
@@ -769,23 +636,18 @@ class PyMuPDFBackend(ExtractionBackend):
         )
 
 
-def _run_cli_with_timeout(cmd: list, backend_name: str, ctx: "BackendContext", stall_timeout: Optional[int] = None):
-    return _backend_run_cli_with_timeout(
-        cmd,
-        backend_name,
-        ctx,
-        logger_obj=logger,
-        marker_effective_torch_device_fn=_marker_effective_torch_device,
-        marker_progress_hints_fn=_marker_progress_hints,
-        marker_should_use_llm_fn=_marker_should_use_llm,
-        marker_ollama_model_fn=_marker_ollama_model,
-        marker_model_is_qwen3_vl_8b_fn=_marker_model_is_qwen3_vl_8b,
-        stall_timeout=stall_timeout,
-    )
-
-def _default_marker_capabilities() -> Dict[str, object]:
-    return _backend_default_marker_capabilities()
-
+_run_cli_with_timeout = lambda cmd, backend_name, ctx, stall_timeout=None: _backend_run_cli_with_timeout(
+    cmd,
+    backend_name,
+    ctx,
+    logger_obj=logger,
+    marker_effective_torch_device_fn=_marker_effective_torch_device,
+    marker_progress_hints_fn=_marker_progress_hints,
+    marker_should_use_llm_fn=_marker_should_use_llm,
+    marker_ollama_model_fn=_marker_ollama_model,
+    marker_model_is_qwen3_vl_8b_fn=_marker_model_is_qwen3_vl_8b,
+    stall_timeout=stall_timeout,
+)
 
 _MARKER_CAPABILITIES_CACHE = None
 
@@ -796,33 +658,12 @@ def _detect_marker_capabilities() -> Dict[str, object]:
     if _MARKER_CAPABILITIES_CACHE is not None:
         return dict(_MARKER_CAPABILITIES_CACHE)
 
-    caps = _default_marker_capabilities()
-
-    if not MARKER_CLI:
-        caps = {k: None for k in caps}
-        _MARKER_CAPABILITIES_CACHE = dict(caps)
-        return dict(caps)
-
-    try:
-        proc = subprocess.run(
-            [MARKER_CLI, "--help"],
-            capture_output=True,
-            text=True,
-            timeout=45,
-        )
-        help_text = (proc.stdout or "") + "\n" + (proc.stderr or "")
-    except Exception as e:
-        logger.warning(
-            "  [marker] Não foi possível inspecionar --help: %s. "
-            "Usando fallback otimista com as flags atuais conhecidas do Marker.",
-            e,
-        )
-        _MARKER_CAPABILITIES_CACHE = dict(caps)
-        return dict(caps)
-
-    caps = _backend_apply_marker_capabilities_help_text(help_text, caps)
+    caps = _backend_detect_marker_capabilities(
+        MARKER_CLI,
+        use_cache=False,
+        run_cmd=subprocess.run,
+    )
     _MARKER_CAPABILITIES_CACHE = dict(caps)
-    logger.info("  [marker] Capabilities detectadas: %s", caps)
     return dict(caps)
 
 class DoclingCLIBackend(ExtractionBackend):
@@ -1841,6 +1682,9 @@ class BackendSelector:
 # ---------------------------------------------------------------------------
 
 class RepoBuilder:
+    HAS_PYMUPDF = HAS_PYMUPDF
+    HAS_PDFPLUMBER = HAS_PDFPLUMBER
+
     def __init__(self, root_dir: Path, course_meta: Dict[str, str], entries: List[FileEntry],
                  options: Dict[str, object], *,
                  student_profile: Optional[StudentProfile] = None,
@@ -2369,20 +2213,22 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         return manifest
 
     def _write_source_registry(self, manifest: Dict[str, object]) -> None:
-        _repo_artifacts.write_source_registry(
+        _operational_artifacts_write_source_registry(
             self.root_dir,
             manifest,
             write_text_fn=write_text,
+            repo_artifacts_module=_repo_artifacts,
         )
 
     def _write_bundle_seed(self, manifest: Dict[str, object]) -> None:
-        _repo_artifacts.write_bundle_seed(
+        _operational_artifacts_write_bundle_seed(
             self.root_dir,
             manifest,
             course_meta=self._effective_course_meta(manifest),
             bundle_priority_score_fn=_bundle_priority_score,
             bundle_seed_candidate_fn=_bundle_seed_candidate,
             write_text_fn=write_text,
+            repo_artifacts_module=_repo_artifacts,
         )
 
     def _write_build_report(self, manifest: Dict[str, object]) -> None:
@@ -2391,7 +2237,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             or getattr(self.subject_profile, "preferred_llm", "claude")
             or "claude"
         )
-        _repo_artifacts.write_build_report(
+        _operational_artifacts_write_build_report(
             self.root_dir,
             manifest,
             preferred_platform=platform,
@@ -2403,6 +2249,7 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             has_docling_python_api_fn=has_docling_python_api,
             marker_cli=MARKER_CLI,
             write_text_fn=write_text,
+            repo_artifacts_module=_repo_artifacts,
         )
 
     def _remove_entry_consolidated_images(self, entry_id: str) -> int:
@@ -2573,676 +2420,66 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
 
     @staticmethod
     def _quick_page_count(pdf_path: Path) -> int:
-        if not HAS_PYMUPDF:
-            return 0
-        try:
-            doc = pymupdf.open(str(pdf_path))
-            n = doc.page_count
-            doc.close()
-            return n
-        except Exception:
-            return 0
+        return _pdf_analysis_quick_page_count(
+            pdf_path,
+            has_pymupdf=HAS_PYMUPDF,
+            pymupdf_module=pymupdf if HAS_PYMUPDF else None,
+        )
 
     def _apply_math_normalization(self, md_rel_path: Optional[str]) -> None:
-        """Read a generated markdown file and normalize Unicode math → LaTeX."""
-        if not md_rel_path:
-            return
-        try:
-            md_path = self.root_dir / md_rel_path
-            if not md_path.exists():
-                return
-            original = md_path.read_text(encoding="utf-8")
-            normalized = _normalize_unicode_math(original)
-            if normalized != original:
-                write_text(md_path, normalized)
-                logger.info("  [math-norm] Normalizado símbolos Unicode → LaTeX em %s", md_rel_path)
-        except Exception as e:
-            logger.warning("  [math-norm] Falha ao normalizar %s: %s", md_rel_path, e)
+        _pdf_analysis_apply_math_normalization(
+            self.root_dir,
+            md_rel_path,
+            normalize_unicode_math_fn=_normalize_unicode_math,
+        )
 
     
     def _render_scanned_pdf_as_images(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
-        """
-        Para PDFs escaneados:
-        - renderiza cada página como imagem
-        - cria um markdown base que referencia essas imagens
-        - usa JPG / JPEG para reduzir peso
-        """
-        if not HAS_PYMUPDF:
-            raise RuntimeError("PyMuPDF é obrigatório para tratar PDFs scanned como imagens.")
-
-        from PIL import Image as PILImage
-
-        entry_id = entry.id()
-        images_dir = self.root_dir / "content" / "images" / "scanned" / entry_id
-        md_dir = self.root_dir / "staging" / "markdown-auto" / "scanned"
-
-        ensure_dir(md_dir)
-        if images_dir.exists():
-            shutil.rmtree(images_dir)
-        ensure_dir(images_dir)
-
-        md_path = md_dir / f"{entry_id}.md"
-
-        doc = pymupdf.open(str(raw_target))
-        refs = []
-        try:
-            pages = parse_page_range(entry.page_range) or list(range(doc.page_count))
-            pages = [p for p in pages if 0 <= p < doc.page_count]
-
-            for page_num in pages:
-                page = doc[page_num]
-                pix = page.get_pixmap(matrix=pymupdf.Matrix(1.35, 1.35), alpha=False)
-
-                pil_img = PILImage.frombytes("RGB", (pix.width, pix.height), pix.samples)
-                img_path = images_dir / f"page-{page_num + 1:03d}.jpg"
-                pil_img.save(img_path, format="JPEG", quality=82, optimize=True)
-
-                rel = os.path.relpath(str(img_path), str(md_path.parent)).replace("\\", "/")
-                refs.append(
-                    f"## Página {page_num + 1}\n\n"
-                    f"![Página {page_num + 1}]({rel})\n"
-                )
-        finally:
-            doc.close()
-
-        body = (
-            f"# {entry.title}\n\n"
-            "> Documento tratado como **imagem** porque o perfil efetivo foi `scanned`.\n"
-            "> Cada página foi convertida em imagem para leitura visual.\n\n"
-            + "\n".join(refs)
+        return _pdf_scanned_render_scanned_pdf_as_images(
+            self.root_dir,
+            entry,
+            raw_target,
+            has_pymupdf=HAS_PYMUPDF,
+            pymupdf_module=pymupdf if HAS_PYMUPDF else None,
+            wrap_frontmatter_fn=wrap_frontmatter,
         )
-
-        write_text(md_path, wrap_frontmatter({
-            "entry_id": entry_id,
-            "title": entry.title,
-            "backend": "scanned-pages",
-            "source_pdf": safe_rel(raw_target, self.root_dir),
-            "page_range": entry.page_range,
-            "effective_profile": "scanned",
-        }, body))
-
-        return {
-            "base_markdown": safe_rel(md_path, self.root_dir),
-            "base_backend": "scanned-pages",
-            "advanced_markdown": None,
-            "advanced_backend": None,
-            "rendered_pages_dir": safe_rel(images_dir, self.root_dir),
-        }
         
 
 
 
     def _process_pdf(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
-        import time
-        item: Dict[str, object] = {
-            "document_report": None,
-            "pipeline_decision": None,
-            "base_markdown": None,
-            "advanced_markdown": None,
-            "advanced_backend": None,
-            "base_backend": None,
-            "images_dir": None,
-            "tables_dir": None,
-            "table_detection_dir": None,
-            "manual_review": None,
-            "raw_target": safe_rel(raw_target, self.root_dir),
-        }
-        t0 = time.time()
-
-        logger.info(
-            "  [1/6] Profiling PDF: %s (%d págs, %.1f MB)",
-            entry.title,
-            self._quick_page_count(raw_target),
-            raw_target.stat().st_size / 1048576,
-        )
-        report = self._profile_pdf(raw_target, entry)
-        decision = self.selector.decide(entry, report)
-        logger.info(
-            "  [1/6] Profile=%s, Paginas=%d, Texto=%d chars, Imagens=%d, Scan=%s",
-            decision.effective_profile,
-            report.page_count,
-            report.text_chars,
-            report.images_count,
-            report.suspected_scan,
-        )
-
-        item["document_report"] = asdict(report)
-        item["pipeline_decision"] = asdict(decision)
-        item["effective_profile"] = decision.effective_profile
-        item["base_backend"] = decision.base_backend
-        item["advanced_backend"] = decision.advanced_backend
-
-        stall_timeout = int(self.options.get("stall_timeout", 300))
-        ctx = BackendContext(
-            self.root_dir,
-            raw_target,
+        return _pdf_pipeline_process_pdf(
+            self,
             entry,
-            report,
-            cancel_check=self._check_cancel,
-            stall_timeout=stall_timeout,
-            marker_chunking_mode=str(self.options.get("marker_chunking_mode", "fallback")),
-            marker_use_llm=bool(self.options.get("marker_use_llm", False)),
-            marker_llm_model=str(self.options.get("marker_llm_model", "") or ""),
-            marker_torch_device=str(self.options.get("marker_torch_device", "auto") or "auto"),
-            ollama_base_url=str(self.options.get("ollama_base_url", "") or ""),
-            vision_model=str(self.options.get("vision_model", "") or ""),
+            raw_target,
+            backend_context_factory=BackendContext,
+            manual_pdf_review_template_fn=manual_pdf_review_template,
+            detect_latex_corruption_fn=_detect_latex_corruption,
+            hybridize_marker_markdown_with_base_fn=_hybridize_marker_markdown_with_base,
         )
-
-        self._check_cancel()
-
-        # PDFs scanned: 1 página = 1 imagem
-        if decision.effective_profile == "scanned":
-            logger.info("  [2/6] Perfil scanned detectado → convertendo páginas em imagens.")
-            try:
-                scanned_result = self._render_scanned_pdf_as_images(entry, raw_target)
-                item.update(scanned_result)
-                self.logs.append({
-                    "entry": entry.id(),
-                    "step": "scanned_pages",
-                    "status": "ok",
-                    "rendered_pages_dir": scanned_result.get("rendered_pages_dir"),
-                })
-            except Exception as e:
-                logger.error("  [2/6] Falha ao tratar scanned como imagens: %s", e)
-                self.logs.append({
-                    "entry": entry.id(),
-                    "step": "scanned_pages",
-                    "status": "error",
-                    "error": str(e),
-                })
-                raise
-
-            manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
-            write_text(manual, manual_pdf_review_template(entry, item))
-            item["manual_review"] = safe_rel(manual, self.root_dir)
-
-            logger.info("  ✓ PDF scanned concluído como páginas-imagem: %s", entry.title)
-            return item
-
-        if decision.base_backend:
-            logger.info("  [2/6] Backend base: %s → iniciando...", decision.base_backend)
-            t1 = time.time()
-            backend = self.selector.backends[decision.base_backend]
-            result = backend.run(ctx)
-            logger.info(
-                "  [2/6] Backend base: %s → %s (%.1fs)",
-                decision.base_backend,
-                result.status,
-                time.time() - t1,
-            )
-            self._log_backend_result(entry.id(), result)
-
-            if result.status == "ok":
-                item["base_markdown"] = result.markdown_path
-                self._apply_math_normalization(result.markdown_path)
-            else:
-                logger.warning("  Base backend %s failed: %s", decision.base_backend, result.error)
-                item.setdefault("backend_errors", []).append({decision.base_backend: result.error})
-        else:
-            logger.info("  [2/6] Backend base: nenhum selecionado")
-
-        self._check_cancel()
-
-        if decision.advanced_backend:
-            logger.info("  [3/6] Backend avançado: %s → iniciando...", decision.advanced_backend)
-            t1 = time.time()
-            backend = self.selector.backends[decision.advanced_backend]
-            result = backend.run(ctx)
-            logger.info(
-                "  [3/6] Backend avançado: %s → %s (%.1fs)",
-                decision.advanced_backend,
-                result.status,
-                time.time() - t1,
-            )
-            self._log_backend_result(entry.id(), result)
-
-            if result.status == "ok":
-                item["advanced_backend"] = result.name
-                item["advanced_markdown"] = result.markdown_path
-                item["advanced_asset_dir"] = result.asset_dir
-                item["advanced_metadata_path"] = result.metadata_path
-                self._apply_math_normalization(result.markdown_path)
-                if (
-                    result.name == "marker"
-                    and not ctx.marker_use_llm
-                    and item.get("base_markdown")
-                    and item.get("advanced_markdown")
-                    and not ctx.report.suspected_scan
-                ):
-                    try:
-                        base_path = self.root_dir / str(item["base_markdown"])
-                        advanced_path = self.root_dir / str(item["advanced_markdown"])
-                        if base_path.exists() and advanced_path.exists():
-                            fused_text, fusion_stats = _hybridize_marker_markdown_with_base(
-                                base_path.read_text(encoding="utf-8", errors="replace"),
-                                advanced_path.read_text(encoding="utf-8", errors="replace"),
-                            )
-                            if fusion_stats["replacements"] > 0:
-                                hybrid_dir = self.root_dir / "staging" / "markdown-auto" / "marker-hybrid"
-                                ensure_dir(hybrid_dir)
-                                hybrid_path = hybrid_dir / f"{entry.id()}.md"
-                                write_text(hybrid_path, fused_text)
-                                item["advanced_markdown_raw"] = item["advanced_markdown"]
-                                item["advanced_markdown"] = safe_rel(hybrid_path, self.root_dir)
-                                item["advanced_hybrid"] = {
-                                    "source": "marker+base-text-rescue",
-                                    "replacements": fusion_stats["replacements"],
-                                    "candidate_matches": fusion_stats["candidate_matches"],
-                                }
-                                logger.info(
-                                    "  [3/6] Marker híbrido aplicado: %d linhas recuperadas do markdown base.",
-                                    fusion_stats["replacements"],
-                                )
-                    except Exception as e:
-                        logger.warning("  [3/6] Falha ao aplicar híbrido Marker+base: %s", e)
-            else:
-                logger.warning("  Advanced backend %s failed: %s", decision.advanced_backend, result.error)
-                item.setdefault("backend_errors", []).append({decision.advanced_backend: result.error})
-        else:
-            logger.info("  [3/6] Backend avançado: nenhum selecionado")
-
-        self._check_cancel()
-
-        if HAS_PYMUPDF and entry.extract_images:
-            logger.info("  [4/6] Extraindo imagens...")
-            try:
-                images_dir = self.root_dir / "staging" / "assets" / "images" / entry.id()
-                image_policy = _pdf_image_extraction_policy(ctx)
-                count = self._extract_pdf_images(
-                    raw_target,
-                    images_dir,
-                    pages=parse_page_range(entry.page_range),
-                    ctx=ctx,
-                )
-                item["images_dir"] = safe_rel(images_dir, self.root_dir)
-                item["image_extraction"] = {
-                    "source": "pymupdf-pdf-images",
-                    "mode": image_policy["mode"],
-                    "count": count,
-                }
-                logger.info("  [4/6] %d imagens extraídas", count)
-                self.logs.append({
-                    "entry": entry.id(),
-                    "step": "extract_images",
-                    "status": "ok",
-                    "count": count,
-                })
-            except Exception as e:
-                logger.error("  [4/6] Falha na extração de imagens: %s", e)
-                self.logs.append({
-                    "entry": entry.id(),
-                    "step": "extract_images",
-                    "status": "error",
-                    "error": str(e),
-                })
-        else:
-            logger.info("  [4/6] Extração de imagens: pulado")
-
-        self._check_cancel()
-
-        if entry.extract_tables:
-            logger.info("  [6/6] Extraindo tabelas...")
-
-            if HAS_PDFPLUMBER:
-                try:
-                    tables_dir = self.root_dir / "staging" / "assets" / "tables" / entry.id()
-                    count = self._extract_tables_pdfplumber(
-                        raw_target,
-                        tables_dir,
-                        pages=parse_page_range(entry.page_range),
-                    )
-                    item["tables_dir"] = safe_rel(tables_dir, self.root_dir)
-                    logger.info("  [6/6] pdfplumber: %d tabelas extraídas", count)
-                    self.logs.append({
-                        "entry": entry.id(),
-                        "step": "extract_tables_pdfplumber",
-                        "status": "ok",
-                        "count": count,
-                    })
-                except Exception as e:
-                    logger.error("  [6/6] pdfplumber falhou: %s", e)
-                    self.logs.append({
-                        "entry": entry.id(),
-                        "step": "extract_tables_pdfplumber",
-                        "status": "error",
-                        "error": str(e),
-                    })
-
-            if HAS_PYMUPDF:
-                try:
-                    det_dir = self.root_dir / "staging" / "assets" / "table-detections" / entry.id()
-                    count = self._detect_tables_pymupdf(
-                        raw_target,
-                        det_dir,
-                        pages=parse_page_range(entry.page_range),
-                    )
-                    item["table_detection_dir"] = safe_rel(det_dir, self.root_dir)
-                    logger.info("  [6/6] pymupdf: %d detecções de tabela", count)
-                    self.logs.append({
-                        "entry": entry.id(),
-                        "step": "detect_tables_pymupdf",
-                        "status": "ok",
-                        "count": count,
-                    })
-                except Exception as e:
-                    logger.error("  [6/6] pymupdf table detection falhou: %s", e)
-                    self.logs.append({
-                        "entry": entry.id(),
-                        "step": "detect_tables_pymupdf",
-                        "status": "error",
-                        "error": str(e),
-                    })
-        else:
-            logger.info("  [6/6] Tabelas: pulado")
-
-        active_markdown_rel = str(item.get("advanced_markdown") or item.get("base_markdown") or "").strip()
-        latex_check = {"corrupted": False, "score": 0, "signals": []}
-        if active_markdown_rel:
-            try:
-                active_markdown_path = self.root_dir / active_markdown_rel
-                if active_markdown_path.exists():
-                    latex_check = _detect_latex_corruption(
-                        active_markdown_path.read_text(encoding="utf-8", errors="replace")
-                    )
-            except Exception as e:
-                logger.warning("  [latex-check] Falha ao analisar %s: %s", active_markdown_rel, e)
-
-        item["latex_corruption"] = {
-            "detected": bool(latex_check.get("corrupted")),
-            "score": int(latex_check.get("score", 0) or 0),
-            "signals": list(latex_check.get("signals") or []),
-            "markdown_path": active_markdown_rel or None,
-        }
-        if item["latex_corruption"]["detected"]:
-            logger.warning(
-                "  [latex-check] LaTeX possivelmente corrompido em %s (score: %s/100).",
-                entry.title,
-                item["latex_corruption"]["score"],
-            )
-            self.logs.append({
-                "entry": entry.id(),
-                "step": "latex_check",
-                "status": "warning",
-                "message": (
-                    f"LaTeX possivelmente corrompido "
-                    f"(score: {item['latex_corruption']['score']}/100) — "
-                    f"sinais: {'; '.join(item['latex_corruption']['signals'])}"
-                ),
-            })
-
-        logger.info("  ✓ PDF concluído em %.1fs: %s", time.time() - t0, entry.title)
-
-        manual = self.root_dir / "manual-review" / "pdfs" / f"{entry.id()}.md"
-        write_text(manual, manual_pdf_review_template(entry, item))
-        item["manual_review"] = safe_rel(manual, self.root_dir)
-        return item
 
     def _process_image(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
-        item: Dict[str, object] = {"manual_review": None}
-        manual = self.root_dir / "manual-review" / "images" / f"{entry.id()}.md"
-        write_text(manual, manual_image_review_template(entry, raw_target, self.root_dir))
-        item["manual_review"] = safe_rel(manual, self.root_dir)
-        self.logs.append({"entry": entry.id(), "step": "image_import", "status": "ok"})
-        return item
+        return _source_importers_process_image(self, entry, raw_target)
 
     def _process_code(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
-        item: Dict[str, object] = {"manual_review": None, "base_markdown": None}
-        ext  = raw_target.suffix.lower().lstrip(".")
-        lang = LANG_MAP.get(ext, ext)
-        try:
-            code_content = raw_target.read_text(encoding="utf-8", errors="replace")
-        except Exception as e:
-            logger.error("Could not read code file %s: %s", raw_target, e)
-            code_content = f"[Erro ao ler arquivo: {e}]"
-
-        body_content = code_content
-        if ext == "ipynb":
-            lang, body_content = _compact_notebook_markdown(code_content)
-
-        curated_subdir = "student" if entry.category == "codigo-aluno" else "professor"
-        curated_dir    = self.root_dir / "code" / curated_subdir
-        ensure_dir(curated_dir)
-        curated_path   = curated_dir / f"{entry.id()}.md"
-
-        body  = f"# {entry.title}\n\n"
-        body += f"> **Linguagem:** {lang}"
-        if entry.tags:
-            body += f"  |  **Unidade:** {entry.tags}"
-        if entry.notes:
-            body += f"\n> {entry.notes}"
-        if ext == "ipynb":
-            body += "\n\n" + body_content.rstrip() + "\n"
-        else:
-            body += f"\n\n```{lang}\n{body_content}\n```\n"
-
-        write_text(curated_path, wrap_frontmatter({
-            "entry_id": entry.id(), "title": entry.title,
-            "language": lang, "category": entry.category,
-            "unit": entry.tags, "source": safe_rel(raw_target, self.root_dir),
-        }, body))
-
-        item["base_markdown"] = safe_rel(curated_path, self.root_dir)
-        item["language"]      = lang
-
-        manual = self.root_dir / "manual-review" / "code" / f"{entry.id()}.md"
-        write_text(manual, f"""---
-id: {entry.id()}
-title: {json_str(entry.title)}
-type: manual_code_review
-category: {entry.category}
-language: {lang}
-unit: {entry.tags}
----
-
-# Revisão — {entry.title}
-
-## Checklist
-- [ ] Código compila/executa sem erros
-- [ ] Anotar padrões de estilo do professor
-- [ ] Identificar conceitos demonstrados
-
-## Destino
-`{safe_rel(curated_path, self.root_dir)}`
-""")
-        item["manual_review"] = safe_rel(manual, self.root_dir)
-        self.logs.append({"entry": entry.id(), "step": "code_import",
-                          "status": "ok", "language": lang})
-        return item
+        return _source_importers_process_code(self, entry, raw_target)
 
     def _process_zip(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
-        import zipfile
-        item: Dict[str, object] = {"extracted_files": [], "base_markdown": None,
-                                    "extraction_error": None}
-        extract_dir = self.root_dir / "staging" / "zip-extract" / entry.id()
-        ensure_dir(extract_dir)
-        try:
-            with zipfile.ZipFile(raw_target, "r") as zf:
-                zf.extractall(extract_dir)
-        except Exception as e:
-            item["extraction_error"] = str(e)
-            self.logs.append({"entry": entry.id(), "step": "zip_extract",
-                              "status": "error", "error": str(e)})
-            return item
-
-        processed = []
-        for code_path in sorted(extract_dir.rglob("*")):
-            if not code_path.is_file():
-                continue
-            parts = code_path.relative_to(extract_dir).parts
-            if any(p.startswith(".") or p in {
-                "__pycache__", "node_modules", "dist", "build", ".git"
-            } for p in parts):
-                continue
-            if code_path.suffix.lower() not in CODE_EXTENSIONS:
-                continue
-            if code_path.stat().st_size > 500_000:
-                continue
-
-            relative_name = str(code_path.relative_to(extract_dir))
-            sub_entry = FileEntry(
-                source_path=str(code_path), file_type="code",
-                category=entry.category, title=relative_name,
-                tags=entry.tags, notes=f"Extraído de: {entry.title}",
-                professor_signal=entry.professor_signal,
-                include_in_bundle=entry.include_in_bundle,
-            )
-            code_subdir  = "student" if entry.category == "codigo-aluno" else "professor"
-            safe_name_c  = f"{sub_entry.id()}{code_path.suffix.lower()}"
-            raw_target_c = self.root_dir / "raw" / "code" / code_subdir / safe_name_c
-            ensure_dir(raw_target_c.parent)
-            shutil.copy2(code_path, raw_target_c)
-
-            sub_result = self._process_code(sub_entry, raw_target_c)
-            sub_result["title"] = relative_name
-            processed.append(sub_result)
-
-        item["extracted_files"] = processed
-        item["file_count"]      = len(processed)
-        self.logs.append({"entry": entry.id(), "step": "zip_extract",
-                          "status": "ok", "file_count": len(processed)})
-        return item
+        return _source_importers_process_zip(self, entry, raw_target)
 
     def _process_github_repo(self, entry: FileEntry) -> Dict[str, object]:
-        item: Dict[str, object] = {"extracted_files": [], "base_markdown": None,
-                                    "clone_error": None}
-        url    = entry.source_path
-        branch = entry.tags.strip() or "main"
-        slug   = entry.id()
-        clone_dir = self.root_dir / "raw" / "repos" / slug / branch
-        if clone_dir.exists():
-            shutil.rmtree(clone_dir)
-        ensure_dir(clone_dir.parent)
-
-        cmd = ["git", "clone", "--depth", "1", "--branch", branch,
-               "--single-branch", url, str(clone_dir)]
-        try:
-            proc = subprocess.run(cmd, check=False, capture_output=True,
-                                  text=True, timeout=120)
-        except FileNotFoundError:
-            err = "git não encontrado no PATH."
-            item["clone_error"] = err
-            self.logs.append({"entry": slug, "step": "github_clone",
-                              "status": "error", "error": err})
-            return item
-
-        if proc.returncode != 0:
-            err = (proc.stderr or proc.stdout or "git clone falhou")[-2000:]
-            item["clone_error"] = err
-            self.logs.append({"entry": slug, "step": "github_clone",
-                              "status": "error", "error": err})
-            return item
-
-        category  = "codigo-aluno" if branch.lower() in STUDENT_BRANCHES \
-                    else "codigo-professor"
-        processed = []
-        for code_path in sorted(clone_dir.rglob("*")):
-            if not code_path.is_file():
-                continue
-            parts = code_path.relative_to(clone_dir).parts
-            if any(p.startswith(".") or p in {
-                "__pycache__", "node_modules", "dist", "build", ".git"
-            } for p in parts):
-                continue
-            if code_path.suffix.lower() not in CODE_EXTENSIONS:
-                continue
-            if code_path.stat().st_size > 500_000:
-                continue
-
-            relative_name = str(code_path.relative_to(clone_dir))
-            sub_entry = FileEntry(
-                source_path=str(code_path), file_type="code",
-                category=category, title=relative_name,
-                tags=entry.tags, notes=f"Branch: {branch} — {url}",
-                professor_signal=entry.professor_signal,
-                include_in_bundle=entry.include_in_bundle,
-            )
-            code_subdir  = "student" if category == "codigo-aluno" else "professor"
-            safe_name_c  = f"{sub_entry.id()}{code_path.suffix.lower()}"
-            raw_target_c = self.root_dir / "raw" / "code" / code_subdir / safe_name_c
-            ensure_dir(raw_target_c.parent)
-            shutil.copy2(code_path, raw_target_c)
-
-            sub_result = self._process_code(sub_entry, raw_target_c)
-            sub_result["title"]  = relative_name
-            sub_result["branch"] = branch
-            processed.append(sub_result)
-
-        item["extracted_files"] = processed
-        item["file_count"]      = len(processed)
-        item["category"]        = category
-        self.logs.append({"entry": slug, "step": "github_clone",
-                          "status": "ok", "file_count": len(processed)})
-        return item
+        return _source_importers_process_github_repo(self, entry)
 
     def _profile_pdf(self, pdf_path: Path, entry: FileEntry) -> DocumentProfileReport:
-        report = DocumentProfileReport()
-        if not HAS_PYMUPDF:
-            report.suggested_profile = normalize_document_profile(entry.document_profile)
-            report.notes.append("PyMuPDF não disponível; perfil automático limitado.")
-            return report
-        doc = pymupdf.open(str(pdf_path))
-        try:
-            pages = parse_page_range(entry.page_range) or list(range(doc.page_count))
-            pages = [p for p in pages if 0 <= p < doc.page_count]
-            report.page_count = len(pages)
-            total_text = 0
-            total_images = 0
-            table_candidates = 0
-            low_text_pages = 0
-            for page_num in pages:
-                page = doc[page_num]
-                text = page.get_text("text") or ""
-                total_text += len(text.strip())
-                images = page.get_images(full=True) or []
-                total_images += len(images)
-                try:
-                    tables = page.find_tables()
-                    table_candidates += len(getattr(tables, "tables", []) or [])
-                except Exception:
-                    pass
-                if len(text.strip()) < 60 and len(images) > 0:
-                    low_text_pages += 1
-            report.text_chars = total_text
-            report.images_count = total_images
-            report.table_candidates = table_candidates
-            report.text_density = round(total_text / max(report.page_count, 1), 2)
-            report.suspected_scan = (low_text_pages / max(report.page_count, 1)) >= 0.5 and total_images > 0
-        finally:
-            doc.close()
-        if entry.document_profile != "auto":
-            report.suggested_profile = normalize_document_profile(entry.document_profile)
-            report.notes.append("Perfil definido manualmente pelo usuário.")
-            return report
-        name_hint = f"{entry.title} {entry.tags} {entry.notes}".lower()
-        if report.suspected_scan:
-            report.suggested_profile = "scanned"
-            report.notes.append("Muitas páginas com pouco texto e imagens presentes: provável scan.")
-        elif entry.category == "provas" or "prova" in name_hint or "questão" in name_hint or "questao" in name_hint:
-            report.suggested_profile = "diagram_heavy"
-            report.notes.append("Detectado como material de prova/exame.")
-        elif entry.formula_priority or re.search(r"\b(latex|equação|equation|fórmula|teorema|prova formal|indução)\b", name_hint):
-            report.suggested_profile = "math_heavy"
-            report.notes.append("Sinais de conteúdo matemático/formal.")
-        elif report.table_candidates >= 2 or report.images_count >= max(3, report.page_count):
-            report.suggested_profile = "diagram_heavy"
-            report.notes.append("Layout com tabelas/imagens relevantes.")
-        else:
-            report.suggested_profile = "auto"
-            report.notes.append("Documento geral detectado.")
-        return report
+        return _pdf_analysis_profile_pdf(
+            pdf_path,
+            entry,
+            has_pymupdf=HAS_PYMUPDF,
+            pymupdf_module=pymupdf if HAS_PYMUPDF else None,
+        )
 
     def _log_backend_result(self, entry_id: str, result: BackendRunResult) -> None:
-        payload = {
-            "entry": entry_id, "step": result.name, "layer": result.layer,
-            "status": result.status, "markdown_path": result.markdown_path,
-            "asset_dir": result.asset_dir, "metadata_path": result.metadata_path,
-            "notes": result.notes,
-        }
-        if result.command:
-            payload["command"] = result.command
-        if result.error:
-            payload["error"] = result.error
-        self.logs.append(payload)
+        _pdf_pipeline_log_backend_result(self.logs, entry_id, result)
 
     # Minimum thresholds to skip noise images (tiny icons, solid-color rects, etc.)
     _MIN_IMG_BYTES = 2000     # < 2 KB is almost always an artifact
@@ -3252,27 +2489,11 @@ unit: {entry.tags}
 
     @staticmethod
     def _is_noise_image(data: bytes) -> bool:
-        """Return True if image is noise: solid color, near-solid, or extreme aspect ratio."""
-        try:
-            from PIL import Image as PILImage
-            import io
-            img = PILImage.open(io.BytesIO(data))
-            w, h = img.size
-
-            # Extreme aspect ratio — banners, header/footer bars
-            if w > 0 and h > 0:
-                ratio = max(w / h, h / w)
-                if ratio > RepoBuilder._MAX_ASPECT_RATIO:
-                    return True
-
-            # Very few unique colors — solid or near-solid (decorative elements)
-            colors = img.getcolors(maxcolors=RepoBuilder._MAX_NOISE_COLORS + 1)
-            if colors is not None and len(colors) <= RepoBuilder._MAX_NOISE_COLORS:
-                return True
-
-            return False
-        except Exception:
-            return False
+        return _pdf_assets_is_noise_image(
+            data,
+            max_aspect_ratio=RepoBuilder._MAX_ASPECT_RATIO,
+            max_noise_colors=RepoBuilder._MAX_NOISE_COLORS,
+        )
 
     @staticmethod
     def _should_keep_extracted_pdf_image(
@@ -3282,43 +2503,20 @@ unit: {entry.tags}
         height: int,
         policy: Dict[str, object],
     ) -> bool:
-        if len(data) < int(policy["min_bytes"]):
-            return False
-        if width < int(policy["min_dimension"]) or height < int(policy["min_dimension"]):
-            return False
-
-        ratio = max(width / max(height, 1), height / max(width, 1))
-        if ratio > float(policy["max_aspect_ratio"]):
-            return False
-
-        if policy.get("keep_low_color"):
-            return True
-        return not RepoBuilder._is_noise_image(data)
+        return _pdf_assets_should_keep_extracted_pdf_image(
+            data=data,
+            width=width,
+            height=height,
+            policy=policy,
+            is_noise_image_fn=RepoBuilder._is_noise_image,
+        )
 
     @property
     def _image_format(self) -> str:
-        """Return the configured image format ('png' or 'jpeg')."""
-        fmt = self.options.get("image_format", "png")
-        return fmt if fmt in ("png", "jpeg") else "png"
+        return _pdf_assets_image_format(self.options)
 
     def _convert_image_format(self, src: Path) -> Path:
-        """Convert image at *src* to the configured format. Returns new path (or src if already correct)."""
-        target_ext = f".{self._image_format}" if self._image_format != "jpeg" else ".jpg"
-        if src.suffix.lower() in (target_ext, ".jpeg" if target_ext == ".jpg" else ""):
-            return src
-        try:
-            from PIL import Image as PILImage
-            img = PILImage.open(src)
-            if self._image_format == "jpeg" and img.mode in ("RGBA", "P", "LA"):
-                img = img.convert("RGB")
-            new_path = src.with_suffix(target_ext)
-            save_kwargs = {"quality": 90} if self._image_format == "jpeg" else {}
-            img.save(new_path, **save_kwargs)
-            if new_path != src:
-                src.unlink(missing_ok=True)
-            return new_path
-        except Exception:
-            return src
+        return _pdf_assets_convert_image_format(src, options=self.options)
 
     def _extract_pdf_images(
         self,
@@ -3327,8 +2525,6 @@ unit: {entry.tags}
         pages: Optional[List[int]] = None,
         ctx: Optional[BackendContext] = None,
     ) -> int:
-        ensure_dir(out_dir)
-        doc = pymupdf.open(str(pdf_path))
         policy = _pdf_image_extraction_policy(ctx) if ctx is not None else {
             "mode": "standard",
             "min_bytes": self._MIN_IMG_BYTES,
@@ -3336,194 +2532,54 @@ unit: {entry.tags}
             "max_aspect_ratio": self._MAX_ASPECT_RATIO,
             "keep_low_color": False,
         }
-        seen_xrefs: set = set()  # deduplicate images that appear on multiple pages
-        try:
-            target_pages = pages or list(range(doc.page_count))
-            count = 0
-            for page_num in target_pages:
-                if not (0 <= page_num < doc.page_count):
-                    continue
-                page = doc[page_num]
-                for img_idx, img in enumerate(page.get_images(full=True), start=1):
-                    xref = img[0]
-                    if xref in seen_xrefs:
-                        continue
-                    seen_xrefs.add(xref)
-
-                    image = doc.extract_image(xref)
-                    if not image or "image" not in image:
-                        continue
-
-                    data = image["image"]
-                    w = image.get("width", 0)
-                    h = image.get("height", 0)
-
-                    if not self._should_keep_extracted_pdf_image(
-                        data=data,
-                        width=w,
-                        height=h,
-                        policy=policy,
-                    ):
-                        continue
-
-                    ext = image.get("ext", "png")
-                    fname = out_dir / f"page-{page_num + 1:03d}-img-{img_idx:02d}.{ext}"
-                    fname.write_bytes(data)
-                    # Conversão de formato acontece na consolidação final
-                    count += 1
-            return count
-        finally:
-            doc.close()
+        return _pdf_assets_extract_pdf_images(
+            pdf_path,
+            out_dir,
+            pymupdf_module=pymupdf,
+            pages=pages,
+            policy=policy,
+            should_keep_image_fn=self._should_keep_extracted_pdf_image,
+        )
 
     def _extract_tables_pdfplumber(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
-        ensure_dir(out_dir)
-        count = 0
-        with pdfplumber.open(str(pdf_path)) as pdf:
-            selected = pages or list(range(len(pdf.pages)))
-            for page_num in selected:
-                if not (0 <= page_num < len(pdf.pages)):
-                    continue
-                page = pdf.pages[page_num]
-                tables = page.extract_tables() or []
-                for table_idx, table in enumerate(tables, start=1):
-                    normalized = [
-                        [("" if cell is None else str(cell).strip()) for cell in row]
-                        for row in table if row and any(cell not in (None, "", " ") for cell in row)
-                    ]
-                    if not normalized:
-                        continue
-                    csv_path = out_dir / f"page-{page_num + 1:03d}-table-{table_idx:02d}.csv"
-                    ensure_dir(csv_path.parent)
-                    with csv_path.open("w", newline="", encoding="utf-8") as f:
-                        writer = csv.writer(f)
-                        writer.writerows(normalized)
-                    md_path = out_dir / f"page-{page_num + 1:03d}-table-{table_idx:02d}.md"
-                    write_text(md_path, rows_to_markdown_table(normalized))
-                    count += 1
-        return count
+        return _pdf_assets_extract_tables_pdfplumber(
+            pdf_path,
+            out_dir,
+            pdfplumber_module=pdfplumber,
+            pages=pages,
+        )
 
     def _detect_tables_pymupdf(self, pdf_path: Path, out_dir: Path, pages: Optional[List[int]] = None) -> int:
-        ensure_dir(out_dir)
-        doc = pymupdf.open(str(pdf_path))
-        try:
-            selected = pages or list(range(doc.page_count))
-            count = 0
-            for page_num in selected:
-                if not (0 <= page_num < doc.page_count):
-                    continue
-                page = doc[page_num]
-                try:
-                    tables = page.find_tables()
-                    found = getattr(tables, "tables", []) or []
-                    if not found:
-                        continue
-                    serializable = []
-                    for idx, tbl in enumerate(found, start=1):
-                        bbox = getattr(tbl, "bbox", None)
-                        rows = []
-                        try:
-                            extracted = tbl.extract() or []
-                            rows = [["" if cell is None else str(cell) for cell in row] for row in extracted]
-                        except Exception:
-                            pass
-                        serializable.append({"table_index": idx, "bbox": list(bbox) if bbox else None, "rows": rows})
-                    meta_path = out_dir / f"page-{page_num + 1:03d}.json"
-                    write_text(meta_path, json.dumps(serializable, indent=2, ensure_ascii=False))
-                    count += len(serializable)
-                except Exception:
-                    continue
-            return count
-        finally:
-            doc.close()
+        return _pdf_assets_detect_tables_pymupdf(
+            pdf_path,
+            out_dir,
+            pymupdf_module=pymupdf,
+            pages=pages,
+        )
+
+    def _pdf_image_extraction_policy(self, ctx: BackendContext) -> Dict[str, object]:
+        return _pdf_image_extraction_policy(ctx)
 
     def _compact_manifest(self, manifest: dict) -> dict:
-        manifest, removed, healed = _repo_artifacts.compact_manifest(
+        return _operational_artifacts_compact_manifest(
             self.root_dir,
             manifest,
             filter_live_manifest_entries_fn=_filter_live_manifest_entries,
             heal_manifest_markdown_paths_fn=_repo_artifacts.heal_manifest_markdown_paths,
             manifest_log_limit=_MANIFEST_LOG_LIMIT,
+            repo_artifacts_module=_repo_artifacts,
         )
-        if removed > 0:
-            logger.info("Removidas %d entries órfãs do manifest antes de regenerar artefatos.", removed)
-        if healed > 0:
-            logger.info("Healed markdown targets for %d manifest entries.", healed)
-        return manifest
 
     def incremental_build(self) -> None:
         with self._sleep_guard("build incremental do repositorio"):
             self._incremental_build_impl()
 
     def _incremental_build_impl(self) -> None:
-        """Adiciona novos arquivos a um repositório existente sem recriar do zero."""
-        manifest_path = self.root_dir / "manifest.json"
-        if not manifest_path.exists():
-            logger.info("No existing manifest found, falling back to full build.")
-            self.build()
-            return
-
-        logger.info("Incremental build at %s", self.root_dir)
-        with open(manifest_path, "r", encoding="utf-8") as f:
-            manifest = json.load(f)
-        manifest = self._compact_manifest(manifest)
-
-        existing_sources = {e.get("source_path") for e in manifest.get("entries", [])}
-        new_entries = [e for e in self.entries
-                       if e.source_path not in existing_sources and getattr(e, "enabled", True)]
-
-        if not new_entries:
-            logger.info("No new entries to process — regenerating pedagogical files only.")
-        else:
-            logger.info("Processing %d new entries (skipping %d existing).",
-                         len(new_entries), len(self.entries) - len(new_entries))
-
-            self._create_structure()
-
-            total = len(new_entries)
-            for i, entry in enumerate(new_entries):
-                logger.info("[%d/%d] Processing: %s (%s)", i + 1, total, entry.title, entry.file_type)
-                if self.progress_callback:
-                    self.progress_callback(i, total, entry.title)
-                item_result = self._process_entry(entry)
-                manifest["entries"].append(item_result)
-                # Salva manifest após cada entry para não perder progresso
-                manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
-                manifest.setdefault("logs", []).extend(self.logs)
-                self.logs = []
-                manifest = self._compact_manifest(manifest)
-                write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
-                logger.info("[%d/%d] Concluído e salvo: %s", i + 1, total, entry.title)
-            if self.progress_callback:
-                self.progress_callback(total, total, "")
-
-        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
-        manifest.setdefault("logs", []).extend(self.logs)
-        manifest = self._compact_manifest(manifest)
-
-        # Regenera todos os arquivos pedagógicos (indexes, course map, glossary, etc.)
-        # Nota: _regenerate_pedagogical_files já escreve STUDENT_PROFILE.md
-        self._regenerate_pedagogical_files(manifest)
-
-        # Atualiza ou cria student state / progress schema
-        state_path = self.root_dir / "student" / "STUDENT_STATE.md"
-        if state_path.exists():
-            content = state_path.read_text(encoding="utf-8")
-            today = datetime.now().strftime('%Y-%m-%d')
-            content = re.sub(r"^updated:.*$", f"updated: {today}",
-                             content, flags=re.MULTILINE)
-            state_path.write_text(content, encoding="utf-8")
-        else:
-            write_text(state_path,
-                       student_state_md(self.course_meta, self.student_profile))
-        progress_path = self.root_dir / "build" / "PROGRESS_SCHEMA.md"
-        if not progress_path.exists():
-            write_text(progress_path, progress_schema_md())
-
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
-        self._write_source_registry(manifest)
-        self._write_bundle_seed(manifest)
-        self._write_build_report(manifest)
-        logger.info("Incremental build completed. %d new entries added.", len(new_entries))
+        _incremental_build_incremental_build_impl(
+            self,
+            student_state_md_fn=student_state_md,
+            progress_schema_md_fn=progress_schema_md,
+        )
 
     def _derive_active_unit_slug_from_state(self) -> str:
         state = self.root_dir / "student" / "STUDENT_STATE.md"
@@ -3544,207 +2600,50 @@ unit: {entry.tags}
                 (batteries_root / slug).mkdir(parents=True, exist_ok=True)
 
     def _regenerate_pedagogical_files(self, manifest: dict) -> None:
-        """Regenera todos os arquivos pedagógicos a partir do manifest atual.
-
-        Chamado por process_single() e pode ser reutilizado em outros contextos.
-        Garante que COURSE_MAP, GLOSSARY, indexes e system prompt estejam
-        sincronizados com o conjunto atual de entries.
-        """
-        # Limpa arquivos internos que foram movidos para build/ em versões anteriores
-        _stale_files = [
-            self.root_dir / "system" / "PDF_CURATION_GUIDE.md",
-            self.root_dir / "system" / "BACKEND_ARCHITECTURE.md",
-            self.root_dir / "system" / "BACKEND_POLICY.yaml",
-            self.root_dir / "student" / "PROGRESS_SCHEMA.md",
-        ]
-        for stale in _stale_files:
-            if stale.exists():
-                try:
-                    stale.unlink()
-                    logger.info("Removido arquivo obsoleto: %s", stale)
-                except Exception as e:
-                    logger.warning("Falha ao remover %s: %s", stale, e)
-
-        live_manifest_entries = _filter_live_manifest_entries(self.root_dir, manifest.get("entries", []))
-        manifest["entries"] = live_manifest_entries
-        runtime_course_meta = {**self.course_meta, "_repo_root": self.root_dir}
-        content_taxonomy = _build_file_map_content_taxonomy_from_course(
-            runtime_course_meta,
-            self.subject_profile,
-            live_manifest_entries,
+        _pedagogical_regeneration_regenerate_pedagogical_files(
+            self,
+            manifest,
+            filter_live_manifest_entries_fn=_filter_live_manifest_entries,
+            build_file_map_content_taxonomy_from_course_fn=_build_file_map_content_taxonomy_from_course,
+            write_internal_content_taxonomy_fn=_write_internal_content_taxonomy,
+            build_file_map_timeline_context_from_course_fn=_build_file_map_timeline_context_from_course,
+            persist_enriched_timeline_index_fn=_persist_enriched_timeline_index,
+            empty_timeline_index_fn=_empty_timeline_index,
+            build_assessment_context_from_course_fn=_build_assessment_context_from_course,
+            write_internal_assessment_context_fn=_write_internal_assessment_context,
+            generate_claude_project_instructions_fn=generate_claude_project_instructions,
+            generate_gpt_instructions_fn=generate_gpt_instructions,
+            generate_gemini_instructions_fn=generate_gemini_instructions,
+            tutor_policy_md_fn=tutor_policy_md,
+            pedagogy_md_fn=pedagogy_md,
+            modes_md_fn=modes_md,
+            output_templates_md_fn=output_templates_md,
+            root_readme_fn=root_readme,
+            generated_repo_gitignore_text_fn=_generated_repo_gitignore_text,
+            course_map_md_fn=course_map_md,
+            glossary_md_fn=glossary_md,
+            write_tag_catalog_fn=_write_tag_catalog,
+            refresh_manifest_auto_tags_fn=_refresh_manifest_auto_tags,
+            syllabus_md_fn=syllabus_md,
+            exam_index_md_fn=exam_index_md,
+            exercise_index_md_fn=exercise_index_md,
+            bibliography_md_fn=bibliography_md,
+            assignment_index_md_fn=assignment_index_md,
+            code_index_md_fn=code_index_md,
+            whiteboard_index_md_fn=whiteboard_index_md,
+            file_map_md_fn=file_map_md,
+            student_profile_md_fn=student_profile_md,
+            student_state_md_fn=student_state_md,
+            progress_schema_md_fn=progress_schema_md,
+            parse_units_from_teaching_plan_fn=_parse_units_from_teaching_plan,
+            topic_text_fn=_topic_text,
+            inject_executive_summary_fn=_inject_executive_summary,
+            exam_categories=EXAM_CATEGORIES,
+            exercise_categories=EXERCISE_CATEGORIES,
+            assignment_categories=ASSIGNMENT_CATEGORIES,
+            code_categories=CODE_CATEGORIES,
+            whiteboard_categories=WHITEBOARD_CATEGORIES,
         )
-        runtime_course_meta["_content_taxonomy"] = content_taxonomy
-        _write_internal_content_taxonomy(self.root_dir, content_taxonomy)
-
-        timeline_context = _build_file_map_timeline_context_from_course(
-            runtime_course_meta,
-            self.subject_profile,
-            content_taxonomy=content_taxonomy,
-        )
-        runtime_course_meta["_timeline_context"] = timeline_context
-        enriched_timeline_index = _persist_enriched_timeline_index(
-            timeline_context.get("timeline_index", _empty_timeline_index()),
-        )
-        write_text(
-            self.root_dir / "course" / ".timeline_index.json",
-            json.dumps(enriched_timeline_index, indent=2, ensure_ascii=False),
-        )
-        assessment_context = _build_assessment_context_from_course(
-            runtime_course_meta,
-            self.subject_profile,
-            timeline_context=timeline_context,
-        )
-        runtime_course_meta["_assessment_context"] = assessment_context
-        _write_internal_assessment_context(self.root_dir, assessment_context)
-
-        # System prompt (with conditional file references)
-        _common_flags = dict(
-            has_assignments=any((e.get("category") in ASSIGNMENT_CATEGORIES) for e in live_manifest_entries),
-            has_code=any((e.get("category") in CODE_CATEGORIES) for e in live_manifest_entries),
-            has_whiteboard=any((e.get("category") in WHITEBOARD_CATEGORIES) for e in live_manifest_entries),
-        )
-        write_text(self.root_dir / "setup" / "INSTRUCOES_CLAUDE_PROJETO.md",
-                   generate_claude_project_instructions(
-                       self.course_meta, self.student_profile, self.subject_profile,
-                       **_common_flags))
-        write_text(self.root_dir / "setup" / "INSTRUCOES_GPT_PROJETO.md",
-                   generate_gpt_instructions(
-                       self.course_meta, self.student_profile, self.subject_profile,
-                       **_common_flags))
-        write_text(self.root_dir / "setup" / "INSTRUCOES_GEMINI_PROJETO.md",
-                   generate_gemini_instructions(
-                       self.course_meta, self.student_profile, self.subject_profile,
-                       **_common_flags))
-        write_text(self.root_dir / "system" / "TUTOR_POLICY.md", tutor_policy_md(self.course_meta, self.subject_profile))
-        write_text(self.root_dir / "system" / "PEDAGOGY.md", pedagogy_md())
-        write_text(self.root_dir / "system" / "MODES.md", modes_md(self.course_meta, self.subject_profile))
-        write_text(self.root_dir / "system" / "OUTPUT_TEMPLATES.md", output_templates_md(self.course_meta, self.subject_profile))
-        write_text(self.root_dir / "README.md", root_readme(self.course_meta))
-        write_text(self.root_dir / ".gitignore", _generated_repo_gitignore_text())
-
-        # Course map (com timeline cronograma × unidades)
-        course_map_text = course_map_md(runtime_course_meta, self.subject_profile)
-        write_text(self.root_dir / "course" / "COURSE_MAP.md", course_map_text)
-
-        # Glossary
-        glossary_text = glossary_md(
-            self.course_meta,
-            self.subject_profile,
-            root_dir=self.root_dir,
-            manifest_entries=live_manifest_entries,
-        )
-        write_text(self.root_dir / "course" / "GLOSSARY.md", glossary_text)
-
-        # Controlled auto-tagging infrastructure
-        tag_catalog = _write_tag_catalog(
-            self.root_dir,
-            self.subject_profile,
-            live_manifest_entries,
-            course_map_text=course_map_text,
-            glossary_text=glossary_text,
-        )
-        live_manifest_entries = _refresh_manifest_auto_tags(self.root_dir, live_manifest_entries, tag_catalog)
-        manifest["entries"] = live_manifest_entries
-
-        try:
-            all_entries = [FileEntry.from_dict(e) for e in live_manifest_entries]
-        except Exception:
-            all_entries = []
-
-        # Syllabus
-        if self.subject_profile and self.subject_profile.syllabus:
-            write_text(self.root_dir / "course" / "SYLLABUS.md",
-                       syllabus_md(self.subject_profile))
-
-        # Exam index
-        exam_entries = [e for e in all_entries if e.category in EXAM_CATEGORIES]
-        if exam_entries:
-            write_text(self.root_dir / "exams" / "EXAM_INDEX.md",
-                       exam_index_md(self.course_meta, exam_entries))
-
-        # Exercise index
-        exercise_entries = [e for e in all_entries if e.category in EXERCISE_CATEGORIES]
-        if exercise_entries:
-            write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
-                       exercise_index_md(self.course_meta, exercise_entries))
-
-        # Bibliography
-        bib_entries = [e for e in all_entries if e.category == "bibliografia"]
-        if bib_entries or getattr(self.subject_profile, "teaching_plan", ""):
-            write_text(self.root_dir / "content" / "BIBLIOGRAPHY.md",
-                       bibliography_md(self.course_meta, bib_entries, self.subject_profile))
-
-        # Assignment index
-        assignment_entries = [e for e in all_entries if e.category in ASSIGNMENT_CATEGORIES]
-        if assignment_entries:
-            write_text(self.root_dir / "assignments" / "ASSIGNMENT_INDEX.md",
-                       assignment_index_md(self.course_meta, assignment_entries))
-
-        # Code index
-        code_entries = [e for e in all_entries if e.category in CODE_CATEGORIES]
-        if code_entries:
-            write_text(self.root_dir / "code" / "CODE_INDEX.md",
-                       code_index_md(self.course_meta, code_entries, self.subject_profile))
-
-        # Whiteboard index
-        wb_entries = [e for e in all_entries if e.category in WHITEBOARD_CATEGORIES]
-        if wb_entries:
-            write_text(self.root_dir / "whiteboard" / "WHITEBOARD_INDEX.md",
-                       whiteboard_index_md(self.course_meta, wb_entries))
-
-        # FILE_MAP
-        write_text(self.root_dir / "course" / "FILE_MAP.md",
-                   file_map_md(
-                       runtime_course_meta,
-                       live_manifest_entries,
-                       self.subject_profile,
-                   ))
-
-        # Student files
-        if self.student_profile:
-            write_text(self.root_dir / "student" / "STUDENT_PROFILE.md",
-                       student_profile_md(self.student_profile))
-        state_path = self.root_dir / "student" / "STUDENT_STATE.md"
-        if not state_path.exists():
-            write_text(state_path, student_state_md(self.course_meta, self.student_profile))
-        progress_path = self.root_dir / "build" / "PROGRESS_SCHEMA.md"
-        if not progress_path.exists():
-            write_text(progress_path, progress_schema_md())
-        self._ensure_unit_battery_directories()
-
-        active_unit = self._derive_active_unit_slug_from_state()
-        if active_unit:
-            teaching_plan = getattr(self.subject_profile, "teaching_plan", "") or ""
-            parsed_units = _parse_units_from_teaching_plan(teaching_plan)
-            course_topics_by_unit = {
-                slugify(title): [(slugify(_topic_text(t)), _topic_text(t)) for t in topics]
-                for title, topics in parsed_units
-            }
-            topics = course_topics_by_unit.get(active_unit, [])
-            if topics:
-                try:
-                    student_state_v2.refresh_active_unit_progress(
-                        root_dir=self.root_dir,
-                        active_unit_slug=active_unit,
-                        course_map_topics=topics,
-                    )
-                except Exception as exc:
-                    logger.warning("refresh_active_unit_progress falhou: %s", exc)
-
-        # Resolve image references in markdowns → content/images/
-        self._resolve_content_images()
-        self._inject_all_image_descriptions()
-        content_dir = self.root_dir / "content"
-        if content_dir.exists():
-            for md in content_dir.rglob("*.md"):
-                if md.name.endswith("_INDEX.md"):
-                    continue
-                if md.name in {"BIBLIOGRAPHY.md", "FILE_MAP.md", "COURSE_MAP.md"}:
-                    continue
-                try:
-                    _inject_executive_summary(md)
-                except Exception as exc:
-                    logger.warning("Falha ao atualizar sumário executivo de %s: %s", md, exc)
 
     def process_single(self, entry: "FileEntry", force: bool = False) -> str:
         with self._sleep_guard(f"processamento de {entry.title}"):
@@ -4399,4 +3298,87 @@ file_map_md = partial(
 
 
 exercise_index_md = _exercise_index_md_v2
+
+
+__all__ = [
+    "BackendContext",
+    "ExtractionBackend",
+    "PyMuPDF4LLMBackend",
+    "PyMuPDFBackend",
+    "DoclingCLIBackend",
+    "DoclingPythonBackend",
+    "DatalabCloudBackend",
+    "MarkerCLIBackend",
+    "BackendSelector",
+    "RepoBuilder",
+    "has_docling_python_api",
+    "generate_claude_project_instructions",
+    "generate_gemini_instructions",
+    "generate_gpt_instructions",
+    "modes_md",
+    "output_templates_md",
+    "syllabus_md",
+    "student_profile_md",
+    "glossary_md",
+    "student_state_md",
+    "progress_schema_md",
+    "bibliography_md",
+    "exam_index_md",
+    "assignment_index_md",
+    "code_index_md",
+    "whiteboard_index_md",
+    "course_map_md",
+    "file_map_md",
+    "exercise_index_md",
+    "root_readme",
+    "wrap_frontmatter",
+    "rows_to_markdown_table",
+    "manual_pdf_review_template",
+    "manual_image_review_template",
+    "manual_url_review_template",
+    "migrate_legacy_url_manual_reviews",
+    "pdf_curation_guide",
+    "backend_architecture_md",
+    "backend_policy_yaml",
+    "UnitMatchResult",
+    "TopicMatchResult",
+    "_auto_map_entry_subtopic",
+    "_auto_map_entry_unit",
+    "_build_assessment_context_from_course",
+    "_build_content_taxonomy",
+    "_build_file_map_timeline_context_from_course",
+    "_build_file_map_unit_index",
+    "_build_file_map_unit_index_from_course",
+    "_build_marker_page_chunks",
+    "_build_timeline_candidate_rows",
+    "_build_timeline_index",
+    "_bundle_priority_score",
+    "_collect_entry_unit_signals",
+    "_compact_notebook_markdown",
+    "_detect_latex_corruption",
+    "_derive_unit_from_topic_match",
+    "_entry_markdown_text_for_file_map",
+    "_file_map_markdown_cell",
+    "_filter_live_manifest_entries",
+    "_find_glossary_evidence",
+    "_format_file_map_unit_cell",
+    "_generated_repo_gitignore_text",
+    "_html_to_structured_markdown",
+    "_hybridize_marker_markdown_with_base",
+    "_marker_progress_hints",
+    "_match_timeline_to_units",
+    "_normalize_unicode_math",
+    "_parse_bibliography_from_teaching_plan",
+    "_parse_syllabus_timeline",
+    "_parse_timeline_date_value",
+    "_repair_mojibake_text",
+    "_resolve_entry_manual_timeline_block",
+    "_sanitize_external_markdown_text",
+    "_score_entry_against_timeline_block",
+    "_score_entry_against_unit",
+    "_seed_glossary_fields",
+    "_select_probable_period_for_entry",
+    "_serialize_timeline_index",
+    "_write_internal_content_taxonomy",
+]
 

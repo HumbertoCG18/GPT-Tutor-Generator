@@ -5,7 +5,7 @@ import unicodedata
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Tuple
 
-from src.builder.image_classifier import extract_page_number
+from src.builder.vision.image_classifier import extract_page_number
 
 _IMAGE_DESC_BLOCK_RE = re.compile(
     r"<!-- IMAGE_DESCRIPTION: (?P<fname>[^\s]+) -->\n"
