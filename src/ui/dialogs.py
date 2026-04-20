@@ -14,7 +14,7 @@ from src.utils.helpers import (
     slugify, parse_html_schedule, auto_detect_category, auto_detect_title,
     fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM, normalize_document_profile
 )
-from src.builder.datalab_client import get_datalab_base_url, has_datalab_api_key
+from src.builder.runtime.datalab_client import get_datalab_base_url, has_datalab_api_key
 from src.builder.extraction.entry_signals import (
     collect_entry_unit_signals as _collect_entry_unit_signals,
     entry_image_source_dirs as _entry_image_source_dirs,

@@ -84,11 +84,18 @@ app.py
 
 src/
 |-- builder/
-|   |-- engine.py            # pipeline principal de processamento e build
-|   |-- datalab_client.py    # integração com a API do Datalab
-|   |-- image_classifier.py  # heurísticas para imagens
-|   |-- ollama_client.py     # integração Vision via Ollama /api/chat
-|   `-- vision_client.py     # fábrica do cliente de vision
+|   |-- engine.py            # facade principal e orquestração do build
+|   |-- artifacts/           # COURSE_MAP, FILE_MAP, prompts e índices
+|   |-- core/                # config semântica e utilidades centrais
+|   |-- extraction/          # taxonomy, sinais e helpers de extração
+|   |-- facade/              # wiring configurado usado pela facade
+|   |-- ops/                 # operações de build, regen e fila
+|   |-- pdf/                 # pipeline PDF e assets
+|   |-- routing/             # matching e roteamento do FILE_MAP
+|   |-- runtime/             # integrações com backends externos
+|   |-- text/                # sanitização textual e URL -> markdown
+|   |-- timeline/            # índice e sinais do cronograma
+|   `-- vision/              # clientes de vision e classificação visual
 |-- models/
 |   `-- core.py              # dataclasses e modelos persistidos
 |-- ui/
@@ -251,7 +258,7 @@ course/COURSE_MAP.md
 course/FILE_MAP.md
 exercises/EXERCISE_INDEX.md
 build/claude-knowledge/bundle.seed.json
-INSTRUCOES_CLAUDE_PROJETO.md
+setup/INSTRUCOES_CLAUDE_PROJETO.md
 ```
 
 ### O que muda na prática
@@ -347,9 +354,6 @@ O app verifica:
 
 ```text
 {repo-root}/
-|-- INSTRUCOES_CLAUDE_PROJETO.md
-|-- INSTRUCOES_GPT_PROJETO.md
-|-- INSTRUCOES_GEMINI_PROJETO.md
 |-- manifest.json
 |-- build/
 |-- content/
@@ -358,6 +362,7 @@ O app verifica:
 |-- exams/
 |-- manual-review/
 |-- raw/
+|-- setup/
 |-- staging/
 |-- student/
 `-- system/
@@ -566,7 +571,7 @@ python app.py
 ### Script PowerShell
 
 ```powershell
-.un.ps1
+.\run.ps1
 ```
 
 ### Script batch
@@ -579,7 +584,7 @@ run.bat
 
 ```powershell
 python -m pytest tests -q
-python -m pytest tests	est_image_curation.py -q
+python -m pytest tests\test_image_curation.py -q
 ```
 
 ### Execucao direta
@@ -610,8 +615,8 @@ pytest tests\test_image_curation.py -q
 - `marker` continua no projeto, mas está em investigação e refinamento
 - O ponto de verdade do fluxo atual está em:
   - [src/builder/engine.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/engine.py)
-  - [src/builder/datalab_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/datalab_client.py)
-  - [src/builder/ollama_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/ollama_client.py)
+  - [src/builder/runtime/datalab_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/runtime/datalab_client.py)
+  - [src/builder/vision/ollama_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/vision/ollama_client.py)
   - [src/ui/image_curator.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/image_curator.py)
   - [src/ui/dialogs.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/dialogs.py)
 - Documentos em `docs/superpowers/` podem descrever versões históricas da implementação

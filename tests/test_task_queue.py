@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.builder.task_queue_runner import TaskQueueRunner
+from src.builder.ops.task_queue_runner import TaskQueueRunner
 from src.models.task_queue import RepoTask, RepoTaskStore
 
 

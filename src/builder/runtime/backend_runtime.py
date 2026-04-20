@@ -545,3 +545,4 @@ def run_cli_with_timeout(
     returncode = proc.returncode
     logger_obj.info("  [%s] Processo finalizado com codigo %d", backend_name, returncode)
     return returncode, stdout_lines, stderr_lines
+

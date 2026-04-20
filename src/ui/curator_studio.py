@@ -14,10 +14,8 @@ from src.builder.artifacts.navigation import (
     _clean_extraction_noise,
     _inject_executive_summary,
 )
-from src.builder.engine import (
-    RepoBuilder,
-    migrate_legacy_url_manual_reviews,
-)
+from src.builder.artifacts.repo import migrate_legacy_url_manual_reviews
+from src.builder.engine import RepoBuilder
 from src.ui.image_curator import _inject_all_image_descriptions_from_manifest
 
 from src.utils.helpers import HAS_PYMUPDF, slugify

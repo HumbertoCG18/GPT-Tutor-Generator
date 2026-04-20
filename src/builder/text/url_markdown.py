@@ -57,28 +57,9 @@ def is_probably_noise_container(tag) -> bool:
         str(v) for key, v in tag.attrs.items() if key in {"id", "class", "role", "aria-label"}
     ).lower()
     noise_tokens = {
-        "nav",
-        "menu",
-        "sidebar",
-        "aside",
-        "footer",
-        "header",
-        "breadcrumb",
-        "cookie",
-        "consent",
-        "banner",
-        "popup",
-        "modal",
-        "share",
-        "social",
-        "related",
-        "recommend",
-        "newsletter",
-        "comment",
-        "advert",
-        "ads",
-        "pagination",
-        "toolbar",
+        "nav", "menu", "sidebar", "aside", "footer", "header", "breadcrumb", "cookie",
+        "consent", "banner", "popup", "modal", "share", "social", "related", "recommend",
+        "newsletter", "comment", "advert", "ads", "pagination", "toolbar",
     }
     return any(token in attrs for token in noise_tokens)
 
@@ -275,3 +256,4 @@ def html_to_structured_markdown(
     if not body:
         body = "> Nenhum conteúdo textual relevante foi extraído."
     return "\n".join(header_lines) + body + "\n"
+

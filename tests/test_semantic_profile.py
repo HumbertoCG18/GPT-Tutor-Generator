@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.builder.semantic_config import (
+from src.builder.core.semantic_config import (
     infer_semantic_profile,
     merge_semantic_profile,
     resolve_semantic_profile,

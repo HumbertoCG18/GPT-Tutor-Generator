@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from src.utils.helpers import ensure_dir, write_text
+from src.builder.ops.state_ops import ensure_unit_battery_directories
+from src.utils.helpers import ensure_dir, slugify, write_text
 
 
 def create_structure(root_dir) -> None:
@@ -96,6 +97,7 @@ def write_root_files(
     generate_claude_project_instructions_fn,
     generate_gpt_instructions_fn,
     generate_gemini_instructions_fn,
+    parse_units_from_teaching_plan_fn,
     exam_categories,
     exercise_categories,
     assignment_categories,
@@ -152,7 +154,12 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
 
     write_text(builder.root_dir / "student" / "STUDENT_STATE.md", student_state_md_fn(builder.course_meta, builder.student_profile))
     write_text(builder.root_dir / "build" / "PROGRESS_SCHEMA.md", progress_schema_md_fn())
-    builder._ensure_unit_battery_directories()
+    ensure_unit_battery_directories(
+        builder.root_dir,
+        builder.subject_profile,
+        parse_units_from_teaching_plan_fn=parse_units_from_teaching_plan_fn,
+        slugify_fn=slugify,
+    )
 
     if builder.student_profile:
         write_text(builder.root_dir / "student" / "STUDENT_PROFILE.md", student_profile_md_fn(builder.student_profile))

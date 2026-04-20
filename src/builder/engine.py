@@ -13,23 +13,15 @@ from __future__ import annotations
 # - src.builder.artifacts.navigation
 # - src.builder.artifacts.prompts / pedagogy / repo / student_state
 # - src.builder.vision.*
-import csv
-import difflib
-import html as html_lib
 import json
 import logging
 import re
-import shutil
 import subprocess
-import sys
-import unicodedata
-from dataclasses import asdict
-from datetime import datetime
 from functools import partial
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional
 
-from src.builder.datalab_client import (
+from src.builder.runtime.datalab_client import (
     convert_document_to_markdown,
     get_datalab_base_url,
     has_datalab_api_key,
@@ -45,7 +37,7 @@ from src.builder.extraction.entry_signals import (
     normalize_match_text as _entry_signals_normalize_match_text,
     score_text_against_row as _entry_signals_score_text_against_row,
 )
-from src.builder.file_map_routing import (
+from src.builder.routing.file_map import (
     UNIT_GENERIC_TOKENS as _FILE_MAP_UNIT_GENERIC_TOKENS,
     UnitMatchResult,
     auto_map_entry_subtopic as _file_map_auto_map_entry_subtopic,
@@ -64,7 +56,7 @@ from src.builder.file_map_routing import (
     timeline_block_matches_preferred_topic as _file_map_timeline_block_matches_preferred_topic,
     timeline_block_rows_for_scoring as _file_map_timeline_block_rows_for_scoring,
 )
-from src.builder.backend_runtime import (
+from src.builder.runtime.backend_runtime import (
     MARKER_OLLAMA_SERVICE,
     advanced_cli_stall_timeout as _backend_advanced_cli_stall_timeout,
     build_marker_page_chunks as _backend_build_marker_page_chunks,
@@ -79,7 +71,6 @@ from src.builder.backend_runtime import (
     marker_model_is_cloud_variant as _backend_marker_model_is_cloud_variant,
     marker_model_is_probably_vision as _backend_marker_model_is_probably_vision,
     marker_model_is_qwen3_vl_8b as _backend_marker_model_is_qwen3_vl_8b,
-    marker_model_slug as _backend_marker_model_slug,
     marker_ollama_model as _backend_marker_ollama_model,
     marker_progress_hints as _backend_marker_progress_hints,
     marker_should_redo_inline_math as _backend_marker_should_redo_inline_math,
@@ -95,7 +86,7 @@ from src.builder.artifacts.prompts import (
     generate_gemini_instructions,
     generate_gpt_instructions,
 )
-from src.builder.text_sanitization import (
+from src.builder.text.sanitization import (
     detect_latex_corruption as _text_detect_latex_corruption,
     hybridize_marker_markdown_with_base as _text_hybridize_marker_markdown_with_base,
     is_plain_text_recovery_candidate as _text_is_plain_text_recovery_candidate,
@@ -105,14 +96,8 @@ from src.builder.text_sanitization import (
     repair_mojibake_text as _text_repair_mojibake_text,
     sanitize_external_markdown_text as _text_sanitize_external_markdown_text,
 )
-from src.builder.url_markdown import (
-    content_score as _url_markdown_content_score,
-    extract_url_page_metadata as _url_markdown_extract_url_page_metadata,
+from src.builder.text.url_markdown import (
     html_to_structured_markdown as _url_markdown_html_to_structured_markdown,
-    inline_html_to_markdown as _url_markdown_inline_html_to_markdown,
-    is_probably_noise_container as _url_markdown_is_probably_noise_container,
-    pick_best_content_root as _url_markdown_pick_best_content_root,
-    render_html_block_to_markdown as _url_markdown_render_html_block_to_markdown,
     truncate_markdown_blocks as _url_markdown_truncate_markdown_blocks,
 )
 from src.builder.core.markdown_utils import (
@@ -129,8 +114,6 @@ from src.builder.core.core_utils import (
     merge_manual_and_auto_tags as _core_utils_merge_manual_and_auto_tags,
     pdf_image_extraction_policy as _core_utils_pdf_image_extraction_policy,
     persist_enriched_timeline_index as _core_utils_persist_enriched_timeline_index,
-    strip_topic_prefix as _core_utils_strip_topic_prefix,
-    topic_support_tokens as _core_utils_topic_support_tokens,
 )
 from src.builder.pdf.pdf_analysis import (
     apply_math_normalization as _pdf_analysis_apply_math_normalization,
@@ -180,6 +163,10 @@ from src.builder.ops.build_workflow import (
 from src.builder.ops.entry_processing import (
     process_entry as _entry_processing_process_entry,
 )
+from src.builder.ops.state_ops import (
+    derive_active_unit_slug_from_state as _ops_derive_active_unit_slug_from_state,
+    ensure_unit_battery_directories as _ops_ensure_unit_battery_directories,
+)
 from src.builder.ops.url_and_cleanup import (
     process_url as _ops_process_url,
     remove_entry_consolidated_images as _ops_remove_entry_consolidated_images,
@@ -205,12 +192,10 @@ from src.builder.artifacts.pedagogy import (
     tutor_policy_md,
 )
 from src.builder.artifacts.navigation import (
-    _clean_extraction_noise,
     _entry_markdown_path_for_file_map,
     _entry_markdown_text_for_file_map,
     _entry_priority_label,
     _entry_usage_hint,
-    _extract_section_headers,
     _file_map_markdown_cell,
     _get_entry_sections,
     _inject_executive_summary,
@@ -224,48 +209,42 @@ from src.builder.artifacts.navigation import (
 )
 from src.builder.extraction import content_taxonomy as _content_taxonomy
 from src.builder.artifacts import repo as _repo_artifacts
-from src.builder.semantic_config import (
+from src.builder.core.semantic_config import (
     resolve_semantic_profile,
+)
+from src.builder.facade.teaching_timeline import (
+    build_teaching_timeline_aliases as _build_teaching_timeline_aliases,
+)
+from src.builder.facade.glossary import (
+    build_glossary_aliases as _build_glossary_aliases,
+)
+from src.builder.facade.file_map import (
+    build_file_map_aliases as _build_file_map_aliases,
+)
+from src.builder.facade.repo_docs import (
+    build_repo_doc_aliases as _build_repo_doc_aliases,
+)
+from src.builder.facade.navigation_templates import (
+    build_navigation_template_aliases as _build_navigation_template_aliases,
 )
 from src.builder.timeline.index import (
     TopicMatchResult,
     _aggregate_unit_periods_from_blocks as _timeline_aggregate_unit_periods_from_blocks,
-    _assign_timeline_block_to_topic,
-    _build_timeline_candidate_rows,
     _build_assessment_context_from_course as _timeline_build_assessment_context_from_course,
+    _build_timeline_candidate_rows as _timeline_build_timeline_candidate_rows,
     _build_file_map_timeline_context_from_course as _timeline_build_file_map_timeline_context_from_course,
-    _build_timeline_block_topic_signals,
     _build_timeline_index,
     _derive_unit_from_topic_match,
     _empty_timeline_index,
     _iter_content_taxonomy_topics,
-    _infer_timeline_keys,
-    _parse_syllabus_timeline,
+    _parse_syllabus_timeline as _timeline_parse_syllabus_timeline,
     _parse_timeline_date_value,
-    _parse_timeline_period_bounds,
-    _row_looks_like_continuation,
-    _rows_belong_to_same_thematic_block,
     _score_entry_against_taxonomy_topic,
-    _score_timeline_block_against_taxonomy_topic,
-    _score_timeline_row_against_unit,
     _score_timeline_unit_phrase,
-    _serialize_timeline_index,
-    _timeline_block_is_administrative_only,
-    _timeline_block_is_noninstructional,
-    _timeline_block_is_soft_continuation,
-    _timeline_core_text,
+    _serialize_timeline_index as _timeline_serialize_timeline_index,
     _timeline_period_label,
-    _timeline_row_is_review_or_assessment,
-    _timeline_unit_number_from_text,
-    _timeline_unit_number_from_unit,
     _TIMELINE_UNIT_NEUTRAL_TOKENS,
-    _timeline_row_is_unit_anchor_only,
-    _timeline_specific_tokens,
-    _timeline_text_is_administrative,
-    _extract_timeline_topics,
-    _assign_timeline_block_to_unit,
     _match_timeline_to_units_generic as _timeline_match_timeline_to_units_generic,
-    _write_internal_timeline_index,
 )
 from src.builder.timeline.signals import (
     extract_date_range_signal,
@@ -286,8 +265,7 @@ from src.models.core import (
 from src.utils.helpers import (
     APP_NAME, DOCLING_CLI, EXAM_CATEGORIES, EXERCISE_CATEGORIES,
     HAS_PDFPLUMBER, HAS_PYMUPDF, HAS_PYMUPDF4LLM, IMAGE_CATEGORIES, MARKER_CLI,
-    CODE_EXTENSIONS, LANG_MAP, CODE_CATEGORIES, ASSIGNMENT_CATEGORIES,
-    WHITEBOARD_CATEGORIES, STUDENT_BRANCHES,
+    CODE_CATEGORIES, ASSIGNMENT_CATEGORIES, WHITEBOARD_CATEGORIES,
     ensure_dir, json_str, pages_to_marker_range,
     normalize_document_profile, parse_page_range, safe_rel, slugify, write_text,
 )
@@ -302,8 +280,6 @@ if HAS_PDFPLUMBER:
 
 logger = logging.getLogger(__name__)
 
-_DOCLING_PYTHON_API_CACHE = None
-
 
 _effective_document_profile = _core_utils_effective_document_profile
 
@@ -314,34 +290,16 @@ _persist_enriched_timeline_index = _core_utils_persist_enriched_timeline_index
 _collapse_ws = _core_utils_collapse_ws
 
 
-_strip_topic_prefix = _core_utils_strip_topic_prefix
+_build_timeline_candidate_rows = _timeline_build_timeline_candidate_rows
 
 
-_looks_like_tool_candidate = _content_taxonomy._looks_like_tool_candidate
-_looks_like_bibliography_candidate = _content_taxonomy._looks_like_bibliography_candidate
-_looks_like_goal_or_section_candidate = _content_taxonomy._looks_like_goal_or_section_candidate
-_looks_like_weak_heading_candidate = _content_taxonomy._looks_like_weak_heading_candidate
-_is_valid_topic_candidate = _content_taxonomy._is_valid_topic_candidate
+_parse_syllabus_timeline = _timeline_parse_syllabus_timeline
 
 
-_extract_topic_candidates = _content_taxonomy._extract_topic_candidates
-_extract_tool_candidates = _content_taxonomy._extract_tool_candidates
+_serialize_timeline_index = _timeline_serialize_timeline_index
 
 
-_topic_support_tokens = lambda text: _core_utils_topic_support_tokens(
-    text,
-    normalize_match_text_fn=_normalize_match_text,
-)
-
-
-_select_supported_taxonomy_topic = _content_taxonomy._select_supported_taxonomy_topic
-_heading_topic_has_vocab_support = _content_taxonomy._heading_topic_has_vocab_support
-_extract_topic_code = _content_taxonomy._extract_topic_code
-_strip_topic_code = _content_taxonomy._strip_topic_code
 _parse_glossary_terms = _content_taxonomy._parse_glossary_terms
-_glossary_aliases_for_topic = _content_taxonomy._glossary_aliases_for_topic
-_dedupe_taxonomy_topics = _content_taxonomy._dedupe_taxonomy_topics
-_infer_course_slug_from_units = _content_taxonomy._infer_course_slug_from_units
 
 def _build_content_taxonomy(
     teaching_plan: str,
@@ -364,9 +322,6 @@ def _build_content_taxonomy(
 
 _write_internal_content_taxonomy = _content_taxonomy.write_internal_content_taxonomy
 _collect_strong_heading_candidates = _content_taxonomy.collect_strong_heading_candidates
-_entry_tag_signal_text = _content_taxonomy._entry_tag_signal_text
-_signal_token_set = _content_taxonomy._signal_token_set
-_matches_tag_slug = _content_taxonomy._matches_tag_slug
 
 
 def _write_tag_catalog(
@@ -449,7 +404,6 @@ _marker_should_use_llm = _backend_marker_should_use_llm
 _marker_ollama_model = _backend_marker_ollama_model
 _marker_torch_device = _backend_marker_torch_device
 _marker_effective_torch_device = _backend_marker_effective_torch_device
-_marker_model_slug = _backend_marker_model_slug
 _marker_model_is_qwen3_vl_8b = _backend_marker_model_is_qwen3_vl_8b
 _marker_model_is_cloud_variant = _backend_marker_model_is_cloud_variant
 _marker_model_is_probably_vision = _backend_marker_model_is_probably_vision
@@ -483,21 +437,6 @@ _compact_notebook_markdown = _markdown_utils_compact_notebook_markdown
 _generated_repo_gitignore_text = _markdown_utils_generated_repo_gitignore_text
 
 
-_extract_url_page_metadata = partial(
-    _url_markdown_extract_url_page_metadata,
-    collapse_ws=_collapse_ws,
-)
-_is_probably_noise_container = _url_markdown_is_probably_noise_container
-_content_score = _url_markdown_content_score
-_pick_best_content_root = _url_markdown_pick_best_content_root
-_inline_html_to_markdown = partial(
-    _url_markdown_inline_html_to_markdown,
-    collapse_ws=_collapse_ws,
-)
-_render_html_block_to_markdown = partial(
-    _url_markdown_render_html_block_to_markdown,
-    collapse_ws=_collapse_ws,
-)
 _html_to_structured_markdown = partial(
     _url_markdown_html_to_structured_markdown,
     collapse_ws=_collapse_ws,
@@ -1786,6 +1725,7 @@ class RepoBuilder:
             generate_claude_project_instructions_fn=generate_claude_project_instructions,
             generate_gpt_instructions_fn=generate_gpt_instructions,
             generate_gemini_instructions_fn=generate_gemini_instructions,
+            parse_units_from_teaching_plan_fn=_parse_units_from_teaching_plan,
             exam_categories=EXAM_CATEGORIES,
             exercise_categories=EXERCISE_CATEGORIES,
             assignment_categories=ASSIGNMENT_CATEGORIES,
@@ -2066,22 +2006,15 @@ class RepoBuilder:
         )
 
     def _derive_active_unit_slug_from_state(self) -> str:
-        state = self.root_dir / "student" / "STUDENT_STATE.md"
-        if not state.exists():
-            return ""
-        text = state.read_text(encoding="utf-8")
-        m = re.search(r"active:\s*\n(?:.*\n)*?\s*unit:\s*(\S+)", text)
-        return m.group(1).strip() if m else ""
+        return _ops_derive_active_unit_slug_from_state(self.root_dir)
 
     def _ensure_unit_battery_directories(self) -> None:
-        teaching_plan = getattr(self.subject_profile, "teaching_plan", "") or ""
-        if not teaching_plan:
-            return
-        batteries_root = self.root_dir / "student" / "batteries"
-        for title, _topics in _parse_units_from_teaching_plan(teaching_plan):
-            slug = slugify(title)
-            if slug:
-                (batteries_root / slug).mkdir(parents=True, exist_ok=True)
+        _ops_ensure_unit_battery_directories(
+            self.root_dir,
+            self.subject_profile,
+            parse_units_from_teaching_plan_fn=_parse_units_from_teaching_plan,
+            slugify_fn=slugify,
+        )
 
     def _regenerate_pedagogical_files(self, manifest: dict) -> None:
         _pedagogical_regeneration_regenerate_pedagogical_files(
@@ -2169,360 +2102,167 @@ _parse_units_from_teaching_plan = _teaching_plan_parse_units_from_teaching_plan
 _topic_text = _teaching_plan_topic_text
 _topic_depth = _teaching_plan_topic_depth
 
+syllabus_md = _repo_artifacts.syllabus_md
+student_profile_md = _repo_artifacts.student_profile_md
 
-def _match_timeline_to_units_generic(
-    timeline: List[Dict[str, str]],
-    units: list,
-) -> list:
-    return _timeline_match_timeline_to_units_generic(
-        timeline,
-        units,
-        normalize_unit_slug=_normalize_unit_slug,
-        topic_text=_topic_text,
-    )
-
-
-_match_timeline_to_units = _match_timeline_to_units_generic
-
-
-_score_text_against_row = _entry_signals_score_text_against_row
-_timeline_block_rows_for_scoring = _file_map_timeline_block_rows_for_scoring
-_timeline_block_matches_preferred_topic = _file_map_timeline_block_matches_preferred_topic
-
-
-_score_card_evidence_against_entry = lambda signals, card_items: _file_map_score_card_evidence_against_entry(
-    signals,
-    card_items,
-    normalize_match_text=_normalize_match_text,
+_glossary_aliases = _build_glossary_aliases(
+    repo_artifacts_module=_repo_artifacts,
+    course_meta_clamp_navigation_artifact=_repo_artifacts.clamp_navigation_artifact,
+    collapse_ws=_collapse_ws,
+    strip_frontmatter_block=_strip_frontmatter_block,
+    parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
+    topic_text=_topic_text,
 )
+glossary_md = _glossary_aliases["glossary_md"]
+_clamp_navigation_artifact = _glossary_aliases["_clamp_navigation_artifact"]
+_glossary_tokens = _glossary_aliases["_glossary_tokens"]
+_extract_markdown_headings = _glossary_aliases["_extract_markdown_headings"]
+_trim_glossary_prefix = _glossary_aliases["_trim_glossary_prefix"]
+_shorten_glossary_sentence = _glossary_aliases["_shorten_glossary_sentence"]
+_is_bad_glossary_evidence = _glossary_aliases["_is_bad_glossary_evidence"]
+_collect_glossary_evidence = _glossary_aliases["_collect_glossary_evidence"]
+_find_glossary_evidence = _glossary_aliases["_find_glossary_evidence"]
+_best_glossary_sentence = _glossary_aliases["_best_glossary_sentence"]
+_normalize_glossary_sentence = _glossary_aliases["_normalize_glossary_sentence"]
+_seed_glossary_fields = _glossary_aliases["_seed_glossary_fields"]
+_refine_glossary_definition_from_evidence = _glossary_aliases["_refine_glossary_definition_from_evidence"]
 
-
-_score_entry_against_timeline_block = lambda signals, block, preferred_unit_slug="", preferred_topic_slug="": _file_map_score_entry_against_timeline_block(
-    signals,
-    block,
-    normalize_match_text=_normalize_match_text,
-    score_text_against_row=_score_text_against_row,
-    score_card_evidence_against_entry_fn=_score_card_evidence_against_entry,
-    preferred_unit_slug=preferred_unit_slug,
-    preferred_topic_slug=preferred_topic_slug,
+_file_map_aliases = _build_file_map_aliases(
+    repo_artifacts_module=_repo_artifacts,
+    file_map_auto_map_entry_subtopic=_file_map_auto_map_entry_subtopic,
+    file_map_auto_map_entry_unit=_file_map_auto_map_entry_unit,
+    file_map_build_file_map_content_taxonomy_from_course=_file_map_build_file_map_content_taxonomy_from_course,
+    file_map_build_file_map_unit_index=_file_map_build_file_map_unit_index,
+    file_map_build_file_map_unit_index_from_course=_file_map_build_file_map_unit_index_from_course,
+    file_map_format_file_map_unit_cell=_file_map_format_file_map_unit_cell,
+    file_map_resolve_entry_manual_timeline_block=_file_map_resolve_entry_manual_timeline_block,
+    file_map_resolve_entry_manual_unit_slug=_file_map_resolve_entry_manual_unit_slug,
+    file_map_score_entry_against_unit=_file_map_score_entry_against_unit,
+    entry_signals_image_source_dirs=_entry_signals_image_source_dirs,
+    entry_signals_collect_entry_unit_signals=_entry_signals_collect_entry_unit_signals,
+    entry_signals_normalize_match_text=_entry_signals_normalize_match_text,
+    file_map_strip_outline_prefix=_file_map_strip_outline_prefix,
+    file_map_unit_generic_tokens=_FILE_MAP_UNIT_GENERIC_TOKENS,
+    teaching_plan_normalize_unit_slug=_teaching_plan_normalize_unit_slug,
+    collapse_ws=_collapse_ws,
+    parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
+    topic_text=_topic_text,
+    parse_glossary_terms=_parse_glossary_terms,
+    timeline_unit_neutral_tokens=_TIMELINE_UNIT_NEUTRAL_TOKENS,
+    score_timeline_unit_phrase=_score_timeline_unit_phrase,
+    glossary_md=glossary_md,
+    collect_strong_heading_candidates=_collect_strong_heading_candidates,
+    resolve_semantic_profile_fn=resolve_semantic_profile,
+    build_content_taxonomy_fn=_build_content_taxonomy,
+    iter_content_taxonomy_topics=_iter_content_taxonomy_topics,
+    score_entry_against_taxonomy_topic=_score_entry_against_taxonomy_topic,
+    topic_match_result_factory=TopicMatchResult,
+    unit_match_result_factory=UnitMatchResult,
+    normalize_document_profile_fn=normalize_document_profile,
+    exam_categories=EXAM_CATEGORIES,
+    exercise_categories=EXERCISE_CATEGORIES,
 )
+_bundle_priority_score = _file_map_aliases["_bundle_priority_score"]
+_bundle_reason_labels = _file_map_aliases["_bundle_reason_labels"]
+_MANIFEST_LOG_LIMIT = _file_map_aliases["_MANIFEST_LOG_LIMIT"]
+_entry_image_source_dirs = _file_map_aliases["_entry_image_source_dirs"]
+_entry_existing_reference_count = _file_map_aliases["_entry_existing_reference_count"]
+_filter_live_manifest_entries = _file_map_aliases["_filter_live_manifest_entries"]
+_bundle_seed_candidate = _file_map_aliases["_bundle_seed_candidate"]
+_normalize_match_text = _file_map_aliases["_normalize_match_text"]
+_strip_outline_prefix = _file_map_aliases["_strip_outline_prefix"]
+_UNIT_GENERIC_TOKENS = _file_map_aliases["_UNIT_GENERIC_TOKENS"]
+_normalize_unit_slug = _file_map_aliases["_normalize_unit_slug"]
+_build_file_map_unit_index = _file_map_aliases["_build_file_map_unit_index"]
+_collect_entry_unit_signals = _file_map_aliases["_collect_entry_unit_signals"]
+_build_file_map_content_taxonomy_from_course = _file_map_aliases["_build_file_map_content_taxonomy_from_course"]
+_auto_map_entry_subtopic = _file_map_aliases["_auto_map_entry_subtopic"]
+_score_entry_against_unit = _file_map_aliases["_score_entry_against_unit"]
+_auto_map_entry_unit = _file_map_aliases["_auto_map_entry_unit"]
+_format_file_map_unit_cell = _file_map_aliases["_format_file_map_unit_cell"]
+_resolve_entry_manual_unit_slug = _file_map_aliases["_resolve_entry_manual_unit_slug"]
+_resolve_entry_manual_timeline_block = _file_map_aliases["_resolve_entry_manual_timeline_block"]
+_build_file_map_unit_index_from_course = _file_map_aliases["_build_file_map_unit_index_from_course"]
 
-
-_select_probable_period_for_entry = lambda entry, unit, candidate_rows, markdown_text, preferred_topic_slug="": _file_map_select_probable_period_for_entry(
-    entry,
-    unit,
-    candidate_rows,
-    markdown_text,
-    preferred_topic_slug=preferred_topic_slug,
+_teaching_timeline_aliases = _build_teaching_timeline_aliases(
+    teaching_plan_normalize_heading=_teaching_plan_normalize_heading,
+    teaching_plan_parse_units=_teaching_plan_parse_units_from_teaching_plan,
+    teaching_plan_topic_text=_teaching_plan_topic_text,
+    teaching_plan_topic_depth=_teaching_plan_topic_depth,
+    timeline_match_timeline_to_units_generic=_timeline_match_timeline_to_units_generic,
+    normalize_unit_slug=_normalize_unit_slug,
+    entry_signals_score_text_against_row=_entry_signals_score_text_against_row,
+    file_map_timeline_block_rows_for_scoring=_file_map_timeline_block_rows_for_scoring,
+    file_map_timeline_block_matches_preferred_topic=_file_map_timeline_block_matches_preferred_topic,
+    file_map_score_card_evidence_against_entry=_file_map_score_card_evidence_against_entry,
+    file_map_score_entry_against_timeline_block=_file_map_score_entry_against_timeline_block,
+    file_map_select_probable_period_for_entry=_file_map_select_probable_period_for_entry,
     collect_entry_unit_signals=_collect_entry_unit_signals,
     build_timeline_index=_build_timeline_index,
     timeline_period_label=_timeline_period_label,
     collapse_ws=_collapse_ws,
     normalize_match_text=_normalize_match_text,
-    score_text_against_row=_score_text_against_row,
     extract_date_range_signal=extract_date_range_signal,
     extract_timeline_session_signals=extract_timeline_session_signals,
     parse_timeline_date_value=_parse_timeline_date_value,
-)
-
-_aggregate_unit_periods_from_blocks = _timeline_aggregate_unit_periods_from_blocks
-
-
-_build_file_map_timeline_context_from_course = lambda course_meta, subject_profile=None, content_taxonomy=None: _timeline_build_file_map_timeline_context_from_course(
-    course_meta,
-    subject_profile,
-    content_taxonomy,
+    timeline_aggregate_unit_periods_from_blocks=_timeline_aggregate_unit_periods_from_blocks,
+    timeline_build_file_map_timeline_context_from_course=_timeline_build_file_map_timeline_context_from_course,
     build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
     build_file_map_content_taxonomy_from_course=_build_file_map_content_taxonomy_from_course,
-)
-
-
-_parse_bibliography_from_teaching_plan = _teaching_plan_parse_bibliography_from_teaching_plan
-
-
-_build_assessment_context_from_course = lambda course_meta, subject_profile=None, timeline_context=None: _timeline_build_assessment_context_from_course(
-    course_meta,
-    subject_profile,
-    timeline_context,
-    build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
-    build_file_map_timeline_context_from_course=_build_file_map_timeline_context_from_course,
-    normalize_match_text=_normalize_match_text,
-    normalize_teaching_plan_heading=_normalize_teaching_plan_heading,
-)
-
-
-_write_internal_assessment_context = partial(
-    _repo_artifacts.write_internal_assessment_context,
+    teaching_plan_parse_bibliography=_teaching_plan_parse_bibliography_from_teaching_plan,
+    timeline_build_assessment_context_from_course=_timeline_build_assessment_context_from_course,
+    repo_artifacts_module=_repo_artifacts,
     write_text_fn=write_text,
 )
+_match_timeline_to_units_generic = _teaching_timeline_aliases["_match_timeline_to_units_generic"]
+_match_timeline_to_units = _teaching_timeline_aliases["_match_timeline_to_units"]
+_score_text_against_row = _teaching_timeline_aliases["_score_text_against_row"]
+_timeline_block_rows_for_scoring = _teaching_timeline_aliases["_timeline_block_rows_for_scoring"]
+_timeline_block_matches_preferred_topic = _teaching_timeline_aliases["_timeline_block_matches_preferred_topic"]
+_score_card_evidence_against_entry = _teaching_timeline_aliases["_score_card_evidence_against_entry"]
+_score_entry_against_timeline_block = _teaching_timeline_aliases["_score_entry_against_timeline_block"]
+_select_probable_period_for_entry = _teaching_timeline_aliases["_select_probable_period_for_entry"]
+_aggregate_unit_periods_from_blocks = _teaching_timeline_aliases["_aggregate_unit_periods_from_blocks"]
+_build_file_map_timeline_context_from_course = _teaching_timeline_aliases["_build_file_map_timeline_context_from_course"]
+_parse_bibliography_from_teaching_plan = _teaching_timeline_aliases["_parse_bibliography_from_teaching_plan"]
+_build_assessment_context_from_course = _teaching_timeline_aliases["_build_assessment_context_from_course"]
+_write_internal_assessment_context = _teaching_timeline_aliases["_write_internal_assessment_context"]
+_assessment_conflict_section_lines = _teaching_timeline_aliases["_assessment_conflict_section_lines"]
 
-
-_assessment_conflict_section_lines = _repo_artifacts.assessment_conflict_section_lines
-
-
-syllabus_md = _repo_artifacts.syllabus_md
-student_profile_md = _repo_artifacts.student_profile_md
-
-
-glossary_md = lambda course_meta, subject_profile=None, *, root_dir=None, manifest_entries=None: _repo_artifacts.glossary_md(
-    course_meta,
-    subject_profile,
-    root_dir=root_dir,
-    manifest_entries=manifest_entries,
-    parse_units_from_teaching_plan_fn=_parse_units_from_teaching_plan,
-    topic_text_fn=_topic_text,
-    collect_glossary_evidence_fn=_collect_glossary_evidence,
-    find_glossary_evidence_fn=_find_glossary_evidence,
-    seed_glossary_fields_fn=lambda term, unit_title, evidence="": _seed_glossary_fields(
-        term,
-        unit_title,
-        evidence=evidence,
-    ),
-    clamp_navigation_artifact_fn=_clamp_navigation_artifact,
-)
-
-_clamp_navigation_artifact = _repo_artifacts.clamp_navigation_artifact
-_glossary_tokens = _repo_artifacts.glossary_tokens
-
-
-_extract_markdown_headings = partial(
-    _repo_artifacts.extract_markdown_headings,
-    collapse_ws=_collapse_ws,
-)
-_trim_glossary_prefix = partial(
-    _repo_artifacts.trim_glossary_prefix,
-    collapse_ws=_collapse_ws,
-)
-
-
-_shorten_glossary_sentence = lambda sentence, max_chars=180: _repo_artifacts.shorten_glossary_sentence(
-    sentence,
-    collapse_ws=_collapse_ws,
-    max_chars=max_chars,
-)
-
-
-_is_bad_glossary_evidence = partial(
-    _repo_artifacts.is_bad_glossary_evidence,
-    collapse_ws=_collapse_ws,
-)
-
-_collect_glossary_evidence = lambda root_dir, manifest_entries=None: _repo_artifacts.collect_glossary_evidence(
-    root_dir,
-    manifest_entries=manifest_entries,
-    collapse_ws=_collapse_ws,
-    strip_frontmatter_block=_strip_frontmatter_block,
-    extract_markdown_headings_fn=_extract_markdown_headings,
-)
-
-_find_glossary_evidence = partial(
-    _repo_artifacts.find_glossary_evidence,
-    glossary_tokens_fn=_glossary_tokens,
-    best_glossary_sentence_fn=lambda term, unit_title, doc: _best_glossary_sentence(term, unit_title, doc),
-)
-_best_glossary_sentence = partial(
-    _repo_artifacts.best_glossary_sentence,
-    collapse_ws=_collapse_ws,
-    glossary_tokens_fn=_glossary_tokens,
-    trim_glossary_prefix_fn=_trim_glossary_prefix,
-    is_bad_glossary_evidence_fn=_is_bad_glossary_evidence,
-    normalize_glossary_sentence_fn=lambda term, unit_title, sentence: _normalize_glossary_sentence(term, unit_title, sentence),
-    shorten_glossary_sentence_fn=_shorten_glossary_sentence,
-)
-_normalize_glossary_sentence = partial(
-    _repo_artifacts.normalize_glossary_sentence,
-    collapse_ws=_collapse_ws,
-    shorten_glossary_sentence_fn=_shorten_glossary_sentence,
-)
-_seed_glossary_fields = partial(
-    _repo_artifacts.seed_glossary_fields,
-    collapse_ws=_collapse_ws,
-    refine_glossary_definition_from_evidence_fn=lambda term, unit_hint, evidence: _refine_glossary_definition_from_evidence(term, unit_hint, evidence),
-)
-_refine_glossary_definition_from_evidence = partial(
-    _repo_artifacts.refine_glossary_definition_from_evidence,
-    collapse_ws=_collapse_ws,
-    glossary_tokens_fn=_glossary_tokens,
-    normalize_glossary_sentence_fn=lambda term, unit_title, sentence: _normalize_glossary_sentence(term, unit_title, sentence),
-    shorten_glossary_sentence_fn=_shorten_glossary_sentence,
-)
-
-_NO_UNIT_CATEGORIES = {"cronograma", "bibliografia", "referencias"}
-_bundle_priority_score = partial(
-    _repo_artifacts.bundle_priority_score,
-    normalize_document_profile_fn=normalize_document_profile,
-    exam_categories=EXAM_CATEGORIES,
-    exercise_categories=EXERCISE_CATEGORIES,
-)
-_bundle_reason_labels = partial(
-    _repo_artifacts.bundle_reason_labels,
-    normalize_document_profile_fn=normalize_document_profile,
-    exam_categories=EXAM_CATEGORIES,
-    exercise_categories=EXERCISE_CATEGORIES,
-)
-
-
-_MANIFEST_LOG_LIMIT = 200
-_entry_image_source_dirs = _entry_signals_image_source_dirs
-_entry_existing_reference_count = partial(
-    _repo_artifacts.entry_existing_reference_count,
-    entry_image_source_dirs_fn=_entry_image_source_dirs,
-)
-_filter_live_manifest_entries = partial(
-    _repo_artifacts.filter_live_manifest_entries,
-    entry_existing_reference_count_fn=_entry_existing_reference_count,
-)
-_bundle_seed_candidate = partial(
-    _repo_artifacts.bundle_seed_candidate,
-    bundle_reason_labels_fn=_bundle_reason_labels,
-)
-
-
-_normalize_match_text = _entry_signals_normalize_match_text
-
-
-_strip_outline_prefix = _file_map_strip_outline_prefix
-_UNIT_GENERIC_TOKENS = _FILE_MAP_UNIT_GENERIC_TOKENS
-
-
-_normalize_unit_slug = _teaching_plan_normalize_unit_slug
-
-
-_build_file_map_unit_index = partial(
-    _file_map_build_file_map_unit_index,
-    normalize_match_text=_normalize_match_text,
-    normalize_unit_slug=_normalize_unit_slug,
-    strip_outline_prefix=_strip_outline_prefix,
-    topic_text=_topic_text,
-    unit_generic_tokens=_UNIT_GENERIC_TOKENS,
-)
-
-
-_collect_entry_unit_signals = _entry_signals_collect_entry_unit_signals
-
-
-_build_file_map_content_taxonomy_from_course = partial(
-    _file_map_build_file_map_content_taxonomy_from_course,
-    parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
-    topic_text=_topic_text,
-    glossary_md_fn=glossary_md,
-    collect_strong_heading_candidates=_collect_strong_heading_candidates,
-    resolve_semantic_profile_fn=resolve_semantic_profile,
-    build_content_taxonomy_fn=_build_content_taxonomy,
-)
-
-_auto_map_entry_subtopic = partial(
-    _file_map_auto_map_entry_subtopic,
-    collect_entry_unit_signals=_collect_entry_unit_signals,
-    iter_content_taxonomy_topics=_iter_content_taxonomy_topics,
-    score_entry_against_taxonomy_topic=_score_entry_against_taxonomy_topic,
-    topic_match_result_factory=TopicMatchResult,
-)
-
-
-_score_entry_against_unit = partial(
-    _file_map_score_entry_against_unit,
-    score_timeline_unit_phrase=_score_timeline_unit_phrase,
-    timeline_unit_neutral_tokens=_TIMELINE_UNIT_NEUTRAL_TOKENS,
-)
-
-
-_auto_map_entry_unit = lambda entry, units, markdown_text, topic_index=None: _file_map_auto_map_entry_unit(
-    entry,
-    units,
-    markdown_text,
-    topic_index=topic_index,
-    build_file_map_unit_index=_build_file_map_unit_index,
-    collect_entry_unit_signals=_collect_entry_unit_signals,
-    score_entry_against_unit=_score_entry_against_unit,
-    normalize_unit_slug=_normalize_unit_slug,
-    score_entry_against_taxonomy_topic=_score_entry_against_taxonomy_topic,
-    unit_match_result_factory=UnitMatchResult,
-)
-
-
-_format_file_map_unit_cell = _file_map_format_file_map_unit_cell
-
-
-_resolve_entry_manual_unit_slug = partial(
-    _file_map_resolve_entry_manual_unit_slug,
-    normalize_unit_slug=_normalize_unit_slug,
-)
-
-
-_resolve_entry_manual_timeline_block = _file_map_resolve_entry_manual_timeline_block
-
-
-_build_file_map_unit_index_from_course = partial(
-    _file_map_build_file_map_unit_index_from_course,
-    build_file_map_unit_index_fn=_build_file_map_unit_index,
-    parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
-    glossary_md_fn=glossary_md,
-    parse_glossary_terms_fn=_parse_glossary_terms,
-    normalize_match_text_fn=_normalize_match_text,
-    collapse_ws_fn=_collapse_ws,
-    unit_generic_tokens=_UNIT_GENERIC_TOKENS,
-    timeline_unit_neutral_tokens=_TIMELINE_UNIT_NEUTRAL_TOKENS,
-)
-
-student_state_md = partial(
-    _repo_artifacts.student_state_md,
-    render_student_state_md_fn=student_state_v2.render_student_state_md,
-)
-
-
-progress_schema_md = _repo_artifacts.progress_schema_md
-
-
-bibliography_md = partial(
-    _repo_artifacts.bibliography_md,
-    parse_bibliography_from_teaching_plan_fn=_parse_bibliography_from_teaching_plan,
+_repo_doc_aliases = _build_repo_doc_aliases(
+    repo_artifacts_module=_repo_artifacts,
+    student_state_render_fn=student_state_v2.render_student_state_md,
+    parse_bibliography_from_teaching_plan=_parse_bibliography_from_teaching_plan,
     clamp_navigation_artifact=_clamp_navigation_artifact,
-)
-exam_index_md = partial(
-    _repo_artifacts.exam_index_md,
-    clamp_navigation_artifact=_clamp_navigation_artifact,
-)
-assignment_index_md = partial(
-    _repo_artifacts.assignment_index_md,
-    clamp_navigation_artifact=_clamp_navigation_artifact,
-)
-code_index_md = partial(
-    _repo_artifacts.code_index_md,
     code_review_profile_fn=_code_review_profile,
-    clamp_navigation_artifact=_clamp_navigation_artifact,
 )
-whiteboard_index_md = partial(
-    _repo_artifacts.whiteboard_index_md,
-    clamp_navigation_artifact=_clamp_navigation_artifact,
-)
+student_state_md = _repo_doc_aliases["student_state_md"]
+progress_schema_md = _repo_doc_aliases["progress_schema_md"]
+bibliography_md = _repo_doc_aliases["bibliography_md"]
+exam_index_md = _repo_doc_aliases["exam_index_md"]
+assignment_index_md = _repo_doc_aliases["assignment_index_md"]
+code_index_md = _repo_doc_aliases["code_index_md"]
+whiteboard_index_md = _repo_doc_aliases["whiteboard_index_md"]
 
 
 # ---------------------------------------------------------------------------
 # Free functions — existing templates (unchanged)
 # ---------------------------------------------------------------------------
 
-root_readme = _repo_artifacts.root_readme
-wrap_frontmatter = partial(_repo_artifacts.wrap_frontmatter, json_str_fn=json_str)
-rows_to_markdown_table = _repo_artifacts.rows_to_markdown_table
-
-manual_pdf_review_template = partial(_repo_artifacts.manual_pdf_review_template, json_str_fn=json_str)
-manual_image_review_template = partial(_repo_artifacts.manual_image_review_template, safe_rel_fn=safe_rel)
-manual_url_review_template = partial(_repo_artifacts.manual_url_review_template, json_str_fn=json_str)
-migrate_legacy_url_manual_reviews = partial(
-    _repo_artifacts.migrate_legacy_url_manual_reviews,
-    ensure_dir_fn=ensure_dir,
+_navigation_template_aliases = _build_navigation_template_aliases(
+    repo_artifacts_module=_repo_artifacts,
+    navigation_low_token_course_map_md=_navigation_low_token_course_map_md,
+    navigation_low_token_file_map_md=_navigation_low_token_file_map_md,
+    navigation_budgeted_file_map_md=_navigation_budgeted_file_map_md,
+    navigation_low_token_course_map_md_v2=_navigation_low_token_course_map_md_v2,
+    navigation_course_map_md=_navigation_course_map_md,
+    navigation_file_map_md=_navigation_file_map_md,
+    json_str_fn=json_str,
     safe_rel_fn=safe_rel,
+    ensure_dir_fn=ensure_dir,
     write_text_fn=write_text,
     logger=logger,
-)
-pdf_curation_guide = _repo_artifacts.pdf_curation_guide
-backend_architecture_md = _repo_artifacts.backend_architecture_md
-backend_policy_yaml = partial(_repo_artifacts.backend_policy_yaml, json_str_fn=json_str)
-
-
-_low_token_course_map_md = partial(
-    _navigation_low_token_course_map_md,
+    clamp_navigation_artifact=_clamp_navigation_artifact,
     build_file_map_timeline_context_from_course=_build_file_map_timeline_context_from_course,
     aggregate_unit_periods_from_blocks=_aggregate_unit_periods_from_blocks,
     normalize_unit_slug=_normalize_unit_slug,
@@ -2531,16 +2271,9 @@ _low_token_course_map_md = partial(
     topic_depth=_topic_depth,
     build_assessment_context_from_course=_build_assessment_context_from_course,
     assessment_conflict_section_lines=_assessment_conflict_section_lines,
-    clamp_navigation_artifact=_clamp_navigation_artifact,
-    logger=logger,
-)
-
-
-_low_token_file_map_md = partial(
-    _navigation_low_token_file_map_md,
+    filter_live_manifest_entries=_filter_live_manifest_entries,
     build_file_map_content_taxonomy_from_course=_build_file_map_content_taxonomy_from_course,
     build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
-    build_file_map_timeline_context_from_course=_build_file_map_timeline_context_from_course,
     iter_content_taxonomy_topics=_iter_content_taxonomy_topics,
     merge_manual_and_auto_tags=_merge_manual_and_auto_tags,
     resolve_entry_manual_timeline_block=_resolve_entry_manual_timeline_block,
@@ -2557,46 +2290,25 @@ _low_token_file_map_md = partial(
     infer_unit_confidence=_infer_unit_confidence,
     entry_usage_hint=_entry_usage_hint,
     entry_priority_label=_entry_priority_label,
-    clamp_navigation_artifact=_clamp_navigation_artifact,
+    collapse_ws=_collapse_ws,
 )
-
-
-_budgeted_file_map_md = partial(
-    _navigation_budgeted_file_map_md,
-    filter_live_manifest_entries=_filter_live_manifest_entries,
-    low_token_file_map_md_fn=_low_token_file_map_md,
-    clamp_navigation_artifact=_clamp_navigation_artifact,
-)
-
-
-_low_token_course_map_md_v2 = partial(
-    _navigation_low_token_course_map_md_v2,
-    low_token_course_map_md_fn=_low_token_course_map_md,
-)
-
-
-_exercise_index_md_v2 = partial(
-    _repo_artifacts.exercise_index_md,
-    collapse_ws_fn=_collapse_ws,
-    merge_manual_and_auto_tags_fn=_merge_manual_and_auto_tags,
-    clamp_navigation_artifact=_clamp_navigation_artifact,
-)
-
-
-course_map_md = partial(
-    _navigation_course_map_md,
-    low_token_course_map_md_v2_fn=_low_token_course_map_md_v2,
-    clamp_navigation_artifact=_clamp_navigation_artifact,
-)
-
-
-file_map_md = partial(
-    _navigation_file_map_md,
-    budgeted_file_map_md_fn=_budgeted_file_map_md,
-)
-
-
-exercise_index_md = _exercise_index_md_v2
+root_readme = _navigation_template_aliases["root_readme"]
+wrap_frontmatter = _navigation_template_aliases["wrap_frontmatter"]
+rows_to_markdown_table = _navigation_template_aliases["rows_to_markdown_table"]
+manual_pdf_review_template = _navigation_template_aliases["manual_pdf_review_template"]
+manual_image_review_template = _navigation_template_aliases["manual_image_review_template"]
+manual_url_review_template = _navigation_template_aliases["manual_url_review_template"]
+migrate_legacy_url_manual_reviews = _navigation_template_aliases["migrate_legacy_url_manual_reviews"]
+pdf_curation_guide = _navigation_template_aliases["pdf_curation_guide"]
+backend_architecture_md = _navigation_template_aliases["backend_architecture_md"]
+backend_policy_yaml = _navigation_template_aliases["backend_policy_yaml"]
+_low_token_course_map_md = _navigation_template_aliases["_low_token_course_map_md"]
+_low_token_file_map_md = _navigation_template_aliases["_low_token_file_map_md"]
+_budgeted_file_map_md = _navigation_template_aliases["_budgeted_file_map_md"]
+_low_token_course_map_md_v2 = _navigation_template_aliases["_low_token_course_map_md_v2"]
+course_map_md = _navigation_template_aliases["course_map_md"]
+file_map_md = _navigation_template_aliases["file_map_md"]
+exercise_index_md = _navigation_template_aliases["exercise_index_md"]
 
 
 __all__ = [

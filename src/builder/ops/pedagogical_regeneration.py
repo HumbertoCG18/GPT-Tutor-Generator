@@ -4,6 +4,10 @@ import json
 import logging
 
 from src.builder.artifacts import student_state as student_state_v2
+from src.builder.ops.state_ops import (
+    derive_active_unit_slug_from_state,
+    ensure_unit_battery_directories,
+)
 from src.models.core import FileEntry
 from src.utils.helpers import slugify, write_text
 
@@ -217,9 +221,14 @@ def regenerate_pedagogical_files(
     progress_path = builder.root_dir / "build" / "PROGRESS_SCHEMA.md"
     if not progress_path.exists():
         write_text(progress_path, progress_schema_md_fn())
-    builder._ensure_unit_battery_directories()
+    ensure_unit_battery_directories(
+        builder.root_dir,
+        builder.subject_profile,
+        parse_units_from_teaching_plan_fn=parse_units_from_teaching_plan_fn,
+        slugify_fn=slugify,
+    )
 
-    active_unit = builder._derive_active_unit_slug_from_state()
+    active_unit = derive_active_unit_slug_from_state(builder.root_dir)
     if active_unit:
         teaching_plan = getattr(builder.subject_profile, "teaching_plan", "") or ""
         parsed_units = parse_units_from_teaching_plan_fn(teaching_plan)
