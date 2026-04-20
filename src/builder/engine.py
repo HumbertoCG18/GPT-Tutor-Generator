@@ -89,10 +89,7 @@ from src.builder.artifacts.prompts import (
 from src.builder.text.sanitization import (
     detect_latex_corruption as _text_detect_latex_corruption,
     hybridize_marker_markdown_with_base as _text_hybridize_marker_markdown_with_base,
-    is_plain_text_recovery_candidate as _text_is_plain_text_recovery_candidate,
-    mojibake_score as _text_mojibake_score,
     normalize_unicode_math as _text_normalize_unicode_math,
-    normalize_tex_accents_in_math as _text_normalize_tex_accents_in_math,
     repair_mojibake_text as _text_repair_mojibake_text,
     sanitize_external_markdown_text as _text_sanitize_external_markdown_text,
 )
@@ -448,13 +445,10 @@ _html_to_structured_markdown = partial(
 # Unicode math -> LaTeX normalization
 # ---------------------------------------------------------------------------
 
-_normalize_tex_accents_in_math = _text_normalize_tex_accents_in_math
 _normalize_unicode_math = _text_normalize_unicode_math
-_mojibake_score = _text_mojibake_score
 _repair_mojibake_text = _text_repair_mojibake_text
 _sanitize_external_markdown_text = _text_sanitize_external_markdown_text
 _detect_latex_corruption = _text_detect_latex_corruption
-_is_plain_text_recovery_candidate = _text_is_plain_text_recovery_candidate
 _hybridize_marker_markdown_with_base = _text_hybridize_marker_markdown_with_base
 
 
@@ -1097,80 +1091,6 @@ class DatalabCloudBackend(ExtractionBackend):
             mode=mode,
             page_range=page_range,
             max_wait_seconds=max_wait_seconds,
-        )
-
-        logger.info(
-            "  [datalab] Enviando documento para a API (mode=%s, page_range=%s, max_wait=%ss).",
-            mode,
-            page_range or "all",
-            max_wait_seconds,
-        )
-
-        try:
-            result = convert_document_to_markdown(
-                ctx.raw_target,
-                output_format="markdown",
-                mode=mode,
-                page_range=page_range,
-                disable_image_captions=True,
-                disable_image_extraction=True,
-                paginate=False,
-                token_efficient_markdown=False,
-                request_timeout=60,
-                poll_interval=2.0,
-                max_wait_seconds=max_wait_seconds,
-            )
-        except Exception as e:
-            logger.error("  [datalab] Erro ao executar: %s", e)
-            return BackendRunResult(
-                name=self.name,
-                layer=self.layer,
-                status="error",
-                error=str(e),
-            )
-
-        markdown = _sanitize_external_markdown_text(result.markdown)
-        markdown = _strip_markdown_image_refs(markdown)
-        write_text(out_path, markdown)
-
-        metadata_path = out_dir / "datalab-run.json"
-        write_text(metadata_path, json.dumps({
-            "backend": "datalab",
-            "base_url": get_datalab_base_url(),
-            "request_id": result.request_id,
-            "request_check_url": result.request_check_url,
-            "mode": mode,
-            "page_range": page_range,
-            "page_count": result.page_count,
-            "parse_quality_score": result.parse_quality_score,
-            "cost_breakdown": result.cost_breakdown,
-            "disable_image_extraction": True,
-            "disable_image_captions": True,
-            "images_saved": [],
-            "metadata": result.metadata,
-            "raw_response_tail": {
-                "status": result.raw_response.get("status"),
-                "success": result.raw_response.get("success"),
-                "error": result.raw_response.get("error"),
-            },
-        }, indent=2, ensure_ascii=False))
-
-        notes = [
-            "Saída avançada gerada com Datalab Document Conversion API.",
-            f"Modo: {mode}.",
-            "Imagens e descricoes sinteticas do Datalab desativadas; a curadoria de imagens permanece app-side.",
-        ]
-        if result.parse_quality_score is not None:
-            notes.append(f"parse_quality_score={result.parse_quality_score}.")
-
-        return BackendRunResult(
-            name=self.name,
-            layer=self.layer,
-            status="ok",
-            markdown_path=safe_rel(out_path, ctx.root_dir),
-            asset_dir=safe_rel(out_dir, ctx.root_dir),
-            metadata_path=safe_rel(metadata_path, ctx.root_dir),
-            notes=notes,
         )
 
 
@@ -2115,17 +2035,8 @@ _glossary_aliases = _build_glossary_aliases(
 )
 glossary_md = _glossary_aliases["glossary_md"]
 _clamp_navigation_artifact = _glossary_aliases["_clamp_navigation_artifact"]
-_glossary_tokens = _glossary_aliases["_glossary_tokens"]
-_extract_markdown_headings = _glossary_aliases["_extract_markdown_headings"]
-_trim_glossary_prefix = _glossary_aliases["_trim_glossary_prefix"]
-_shorten_glossary_sentence = _glossary_aliases["_shorten_glossary_sentence"]
-_is_bad_glossary_evidence = _glossary_aliases["_is_bad_glossary_evidence"]
-_collect_glossary_evidence = _glossary_aliases["_collect_glossary_evidence"]
 _find_glossary_evidence = _glossary_aliases["_find_glossary_evidence"]
-_best_glossary_sentence = _glossary_aliases["_best_glossary_sentence"]
-_normalize_glossary_sentence = _glossary_aliases["_normalize_glossary_sentence"]
 _seed_glossary_fields = _glossary_aliases["_seed_glossary_fields"]
-_refine_glossary_definition_from_evidence = _glossary_aliases["_refine_glossary_definition_from_evidence"]
 
 _file_map_aliases = _build_file_map_aliases(
     repo_artifacts_module=_repo_artifacts,
@@ -2163,15 +2074,10 @@ _file_map_aliases = _build_file_map_aliases(
     exercise_categories=EXERCISE_CATEGORIES,
 )
 _bundle_priority_score = _file_map_aliases["_bundle_priority_score"]
-_bundle_reason_labels = _file_map_aliases["_bundle_reason_labels"]
 _MANIFEST_LOG_LIMIT = _file_map_aliases["_MANIFEST_LOG_LIMIT"]
-_entry_image_source_dirs = _file_map_aliases["_entry_image_source_dirs"]
-_entry_existing_reference_count = _file_map_aliases["_entry_existing_reference_count"]
 _filter_live_manifest_entries = _file_map_aliases["_filter_live_manifest_entries"]
 _bundle_seed_candidate = _file_map_aliases["_bundle_seed_candidate"]
 _normalize_match_text = _file_map_aliases["_normalize_match_text"]
-_strip_outline_prefix = _file_map_aliases["_strip_outline_prefix"]
-_UNIT_GENERIC_TOKENS = _file_map_aliases["_UNIT_GENERIC_TOKENS"]
 _normalize_unit_slug = _file_map_aliases["_normalize_unit_slug"]
 _build_file_map_unit_index = _file_map_aliases["_build_file_map_unit_index"]
 _collect_entry_unit_signals = _file_map_aliases["_collect_entry_unit_signals"]
@@ -2216,10 +2122,6 @@ _teaching_timeline_aliases = _build_teaching_timeline_aliases(
 )
 _match_timeline_to_units_generic = _teaching_timeline_aliases["_match_timeline_to_units_generic"]
 _match_timeline_to_units = _teaching_timeline_aliases["_match_timeline_to_units"]
-_score_text_against_row = _teaching_timeline_aliases["_score_text_against_row"]
-_timeline_block_rows_for_scoring = _teaching_timeline_aliases["_timeline_block_rows_for_scoring"]
-_timeline_block_matches_preferred_topic = _teaching_timeline_aliases["_timeline_block_matches_preferred_topic"]
-_score_card_evidence_against_entry = _teaching_timeline_aliases["_score_card_evidence_against_entry"]
 _score_entry_against_timeline_block = _teaching_timeline_aliases["_score_entry_against_timeline_block"]
 _select_probable_period_for_entry = _teaching_timeline_aliases["_select_probable_period_for_entry"]
 _aggregate_unit_periods_from_blocks = _teaching_timeline_aliases["_aggregate_unit_periods_from_blocks"]
@@ -2302,10 +2204,6 @@ migrate_legacy_url_manual_reviews = _navigation_template_aliases["migrate_legacy
 pdf_curation_guide = _navigation_template_aliases["pdf_curation_guide"]
 backend_architecture_md = _navigation_template_aliases["backend_architecture_md"]
 backend_policy_yaml = _navigation_template_aliases["backend_policy_yaml"]
-_low_token_course_map_md = _navigation_template_aliases["_low_token_course_map_md"]
-_low_token_file_map_md = _navigation_template_aliases["_low_token_file_map_md"]
-_budgeted_file_map_md = _navigation_template_aliases["_budgeted_file_map_md"]
-_low_token_course_map_md_v2 = _navigation_template_aliases["_low_token_course_map_md_v2"]
 course_map_md = _navigation_template_aliases["course_map_md"]
 file_map_md = _navigation_template_aliases["file_map_md"]
 exercise_index_md = _navigation_template_aliases["exercise_index_md"]
