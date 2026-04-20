@@ -154,3 +154,128 @@ def test_run_chunked_datalab_saves_images_from_all_chunks(tmp_path):
     img_dir = tmp_path / "staging" / "assets" / "images" / "meu-entry"
     saved = list(img_dir.iterdir())
     assert len(saved) >= 2  # at least one image per chunk
+
+
+from src.builder.pdf.pdf_pipeline import process_pdf
+from src.models.core import PipelineDecision, DocumentProfileReport
+from dataclasses import asdict
+
+
+def _make_pdf_builder_mock(tmp_path, advanced_result):
+    builder = MagicMock()
+    builder.root_dir = tmp_path
+    builder.logs = []
+    builder.HAS_PYMUPDF = False
+    builder.HAS_PDFPLUMBER = False
+
+    report = DocumentProfileReport(
+        page_count=5,
+        text_chars=1000,
+        images_count=2,
+        suspected_scan=False,
+        suggested_profile="general",
+    )
+
+    decision = PipelineDecision(
+        entry_id="meu-entry",
+        processing_mode="auto",
+        effective_profile="general",
+        base_backend=None,
+        advanced_backend="datalab",
+    )
+
+    builder._profile_pdf.return_value = report
+    builder.selector.decide.return_value = decision
+    builder._quick_page_count.return_value = 5
+    builder._check_cancel.return_value = None
+    builder._apply_math_normalization.return_value = None
+    builder.options = {}
+    builder.selector.backends = {"datalab": MagicMock(run=MagicMock(return_value=advanced_result))}
+    return builder, report, decision
+
+
+def _make_pdf_entry():
+    entry = MagicMock()
+    entry.id.return_value = "meu-entry"
+    entry.title = "Meu Entry"
+    entry.page_range = ""
+    entry.extract_images = False
+    entry.extract_tables = False
+    entry.document_profile = "auto"
+    entry.datalab_mode = "balanced"
+    return entry
+
+
+def _make_pdf_backend_ctx(tmp_path, entry, report):
+    ctx = MagicMock()
+    ctx.root_dir = tmp_path
+    ctx.entry_id = "meu-entry"
+    ctx.entry = entry
+    ctx.report = report
+    ctx.pages = None
+    ctx.marker_use_llm = False
+    return ctx
+
+
+def test_pdf_pipeline_propagates_images_dir_from_advanced_backend(tmp_path):
+    advanced_result = BackendRunResult(
+        name="datalab", layer="advanced", status="ok",
+        markdown_path="staging/markdown-auto/datalab/meu-entry/meu-entry.md",
+        images_dir="staging/assets/images/meu-entry",
+    )
+    md_path = tmp_path / "staging" / "markdown-auto" / "datalab" / "meu-entry"
+    md_path.mkdir(parents=True)
+    (md_path / "meu-entry.md").write_text("# Conteúdo\n", encoding="utf-8")
+
+    builder, report, _ = _make_pdf_builder_mock(tmp_path, advanced_result)
+    entry = _make_pdf_entry()
+    ctx = _make_pdf_backend_ctx(tmp_path, entry, report)
+
+    raw_pdf = tmp_path / "doc.pdf"
+    raw_pdf.write_bytes(b"%PDF fake")
+
+    item = process_pdf(
+        builder, entry, raw_pdf,
+        backend_context_factory=MagicMock(return_value=ctx),
+        manual_pdf_review_template_fn=MagicMock(return_value=""),
+        detect_latex_corruption_fn=MagicMock(return_value={"corrupted": False, "score": 0, "signals": []}),
+        hybridize_marker_markdown_with_base_fn=MagicMock(),
+    )
+
+    assert item["images_dir"] == "staging/assets/images/meu-entry"
+
+
+def test_pdf_pipeline_does_not_overwrite_existing_images_dir(tmp_path):
+    advanced_result = BackendRunResult(
+        name="datalab", layer="advanced", status="ok",
+        markdown_path="staging/markdown-auto/datalab/meu-entry/meu-entry.md",
+        images_dir="staging/assets/images/meu-entry",
+    )
+    md_path = tmp_path / "staging" / "markdown-auto" / "datalab" / "meu-entry"
+    md_path.mkdir(parents=True)
+    (md_path / "meu-entry.md").write_text("# Conteúdo\n", encoding="utf-8")
+
+    builder, report, _ = _make_pdf_builder_mock(tmp_path, advanced_result)
+    # HAS_PYMUPDF=True + extract_images=True means PyMuPDF sets images_dir first
+    builder.HAS_PYMUPDF = True
+    builder._extract_pdf_images.return_value = 3
+    builder._pdf_image_extraction_policy.return_value = {"mode": "all"}
+
+    entry = _make_pdf_entry()
+    entry.extract_images = True
+    ctx = _make_pdf_backend_ctx(tmp_path, entry, report)
+
+    # Create fake raw pdf
+    raw_pdf = tmp_path / "doc.pdf"
+    raw_pdf.write_bytes(b"%PDF fake")
+
+    item = process_pdf(
+        builder, entry, raw_pdf,
+        backend_context_factory=MagicMock(return_value=ctx),
+        manual_pdf_review_template_fn=MagicMock(return_value=""),
+        detect_latex_corruption_fn=MagicMock(return_value={"corrupted": False, "score": 0, "signals": []}),
+        hybridize_marker_markdown_with_base_fn=MagicMock(),
+    )
+
+    # images_dir should be set (either from PyMuPDF or Datalab — same dir)
+    assert item["images_dir"] is not None

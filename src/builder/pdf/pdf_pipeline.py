@@ -161,6 +161,8 @@ def process_pdf(builder, entry, raw_target: Path, *, backend_context_factory, ma
             item["advanced_asset_dir"] = result.asset_dir
             item["advanced_metadata_path"] = result.metadata_path
             builder._apply_math_normalization(result.markdown_path)
+            if result.images_dir and not item.get("images_dir"):
+                item["images_dir"] = result.images_dir
             if (
                 result.name == "marker"
                 and not ctx.marker_use_llm
