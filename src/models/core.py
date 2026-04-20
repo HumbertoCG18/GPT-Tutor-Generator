@@ -116,6 +116,7 @@ class BackendRunResult:
     command: Optional[List[str]] = None
     notes: List[str] = field(default_factory=list)
     error: Optional[str] = None
+    images_dir: Optional[str] = None
 
 
 @dataclass
