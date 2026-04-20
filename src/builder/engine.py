@@ -30,6 +30,7 @@ from src.builder.extraction.image_markdown import (
     _IMAGE_DESC_BLOCK_RE,
     _image_curation_heading as _image_curation_heading_label,
     _low_token_inject_image_descriptions,
+    _strip_described_image_refs,
 )
 from src.builder.extraction.entry_signals import (
     collect_entry_unit_signals as _entry_signals_collect_entry_unit_signals,
@@ -131,11 +132,11 @@ from src.builder.pdf.pdf_pipeline import (
     process_pdf as _pdf_pipeline_process_pdf,
 )
 from src.builder.pdf.pdf_scanned import (
-    render_scanned_pdf_as_images as _pdf_scanned_render_scanned_pdf_as_images,
-)
+    render_scanned_pdf_as_images as _pdf_scanned_render_scanned_pdf_as_images,)
+
 from src.builder.ops.pedagogical_regeneration import (
-    regenerate_pedagogical_files as _pedagogical_regeneration_regenerate_pedagogical_files,
-)
+    regenerate_pedagogical_files as _pedagogical_regeneration_regenerate_pedagogical_files,)
+
 from src.builder.ops.operational_artifacts import (
     compact_manifest as _operational_artifacts_compact_manifest,
     write_build_report as _operational_artifacts_write_build_report,
@@ -354,6 +355,9 @@ _merge_manual_and_auto_tags = _core_utils_merge_manual_and_auto_tags
 _strip_frontmatter_block = _markdown_utils_strip_frontmatter_block
 _rewrite_markdown_asset_paths = _markdown_utils_rewrite_markdown_asset_paths
 _strip_markdown_image_refs = _markdown_utils_strip_markdown_image_refs
+
+
+_entry_image_source_dirs = _entry_signals_image_source_dirs
 
 
 _build_page_chunks = _backend_build_page_chunks
@@ -846,6 +850,23 @@ class DatalabCloudBackend(ExtractionBackend):
         markdown = _sanitize_external_markdown_text(result.markdown)
         markdown = _strip_markdown_image_refs(markdown)
         return result, markdown
+
+    def _save_datalab_images(
+        self, images: dict, entry_id: str, root_dir: Path
+    ) -> tuple[Path, list[str]]:
+        import base64
+        images_dir = root_dir / "staging" / "assets" / "images" / entry_id
+        ensure_dir(images_dir)
+        saved = []
+        for filename, b64_data in images.items():
+            try:
+                img_data = base64.b64decode(b64_data)
+                out_path = images_dir / f"datalab-{filename}"
+                out_path.write_bytes(img_data)
+                saved.append(out_path.name)
+            except Exception as exc:
+                logger.warning("  [datalab] Não foi possível salvar imagem %s: %s", filename, exc)
+        return images_dir, saved
 
     def _run_single_datalab(
         self,
@@ -1582,6 +1603,7 @@ class RepoBuilder:
         self.subject_profile = subject_profile
         self.progress_callback = progress_callback  # Callable[[int, int, str], None] | None
         self.logs: List[Dict[str, object]] = []
+        self.failed_entries: List[Dict[str, object]] = []
         self.selector = BackendSelector()
 
     def _effective_course_meta(self, manifest: Optional[Dict[str, object]] = None) -> Dict[str, str]:
@@ -1670,12 +1692,13 @@ class RepoBuilder:
 
     @staticmethod
     def inject_image_descriptions(markdown: str, image_curation: dict) -> str:
-        return _low_token_inject_image_descriptions(
+        injected = _low_token_inject_image_descriptions(
             markdown,
             image_curation,
             desc_block_re=RepoBuilder._IMG_DESC_BLOCK_RE,
             image_heading=RepoBuilder._image_curation_heading,
         )
+        return _strip_described_image_refs(injected, image_curation)
 
     def _inject_all_image_descriptions(self) -> None:
         _core_image_resolution_inject_all_image_descriptions(
