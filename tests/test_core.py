@@ -577,7 +577,7 @@ class TestAdvancedBackendPolicies:
         result = backend.run(ctx)
 
         assert result.status == "ok"
-        assert captured_kwargs["disable_image_extraction"] is True
+        assert captured_kwargs["disable_image_extraction"] is False
         assert captured_kwargs["disable_image_captions"] is True
         md_path = tmp_path / result.markdown_path
         assert md_path.exists()
@@ -3897,10 +3897,105 @@ class TestGeneratedRepoGitignore:
         assert "course/.timeline_index.json" in text
         assert "course/.assessment_context.json" in text
         assert "course/.tag_catalog.json" in text
+        assert "content/images/" in text
         assert "setup/" in text
         assert "manifest.json" not in text
         assert "course/FILE_MAP.md" not in text
         assert "course/COURSE_MAP.md" not in text
+
+
+class TestBuildWorkflowMissingSources:
+    def test_build_continues_when_entry_source_is_missing(self, tmp_path):
+        from src.builder.ops.build_workflow import build_impl
+        from src.models.core import FileEntry
+
+        repo = tmp_path / "repo"
+        repo.mkdir()
+
+        missing_entry = FileEntry(
+            source_path=str(tmp_path / "missing.zip"),
+            file_type="zip",
+            category="material-de-aula",
+            title="Missing ZIP",
+        )
+        ok_entry = FileEntry(
+            source_path="https://example.com/aula",
+            file_type="url",
+            category="material-de-aula",
+            title="URL OK",
+        )
+
+        class DummyBuilder:
+            def __init__(self):
+                self.root_dir = repo
+                self.course_meta = {"course_name": "Teste", "course_slug": "teste"}
+                self.options = {}
+                self.entries = [missing_entry, ok_entry]
+                self.subject_profile = None
+                self.logs = []
+                self.failed_entries = []
+                self.progress_callback = None
+                self.processed = []
+
+            def _create_structure(self):
+                for rel in ("course", "content", "student", "build"):
+                    (self.root_dir / rel).mkdir(parents=True, exist_ok=True)
+
+            def _write_root_files(self):
+                pass
+
+            def _process_entry(self, entry):
+                if entry.title == "Missing ZIP":
+                    raise FileNotFoundError(f"Source file not found: {entry.source_path}")
+                self.processed.append(entry.title)
+                return {"id": entry.id(), "title": entry.title, "source_path": entry.source_path}
+
+            def _compact_manifest(self, manifest):
+                return manifest
+
+            def _write_source_registry(self, manifest):
+                pass
+
+            def _write_bundle_seed(self, manifest):
+                pass
+
+            def _write_build_report(self, manifest):
+                pass
+
+            def _resolve_content_images(self):
+                pass
+
+            def _inject_all_image_descriptions(self):
+                pass
+
+            def _regenerate_pedagogical_files(self, manifest):
+                pass
+
+        builder = DummyBuilder()
+        build_impl(
+            builder,
+            app_name="GPT Tutor Generator",
+            has_pymupdf=False,
+            has_pymupdf4llm=False,
+            has_pdfplumber=False,
+            has_datalab_api_key_fn=lambda: False,
+            docling_cli=None,
+            has_docling_python_api_fn=lambda: False,
+            marker_cli=None,
+            file_map_md_fn=lambda *args, **kwargs: "# FILE_MAP\n",
+        )
+
+        assert builder.processed == ["URL OK"]
+        assert len(builder.failed_entries) == 1
+        failure = builder.failed_entries[0]
+        assert failure["title"] == "Missing ZIP"
+        assert failure["error_type"] == "missing_source"
+
+        manifest = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+        assert len(manifest["entries"]) == 1
+        assert manifest["entries"][0]["title"] == "URL OK"
+        assert len(manifest["failed_entries"]) == 1
+        assert manifest["failed_entries"][0]["title"] == "Missing ZIP"
 
 
 # ---------------------------------------------------------------------------

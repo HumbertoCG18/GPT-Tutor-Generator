@@ -840,7 +840,7 @@ class DatalabCloudBackend(ExtractionBackend):
             mode=mode,
             page_range=page_range,
             disable_image_captions=True,
-            disable_image_extraction=True,
+            disable_image_extraction=False,
             paginate=False,
             token_efficient_markdown=False,
             request_timeout=60,
