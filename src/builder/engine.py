@@ -1021,8 +1021,8 @@ class DatalabCloudBackend(ExtractionBackend):
             write_text(chunk_path, markdown)
 
             if result.images:
-                self._save_datalab_images(result.images, ctx.entry_id, ctx.root_dir)
-                all_saved_images.extend(result.images.keys())
+                _, saved_chunk = self._save_datalab_images(result.images, ctx.entry_id, ctx.root_dir)
+                all_saved_images.extend(saved_chunk)
 
             chunk_body = _strip_frontmatter_block(markdown).strip()
             if chunk_body:
@@ -1074,7 +1074,7 @@ class DatalabCloudBackend(ExtractionBackend):
             "cost_breakdown": _merge_numeric_dicts(cost_breakdowns),
             "disable_image_extraction": False,
             "disable_image_captions": True,
-            "images_saved": [f"datalab-{f}" for f in all_saved_images],
+            "images_saved": all_saved_images,
             "chunks": chunk_meta,
         }, indent=2, ensure_ascii=False))
 
