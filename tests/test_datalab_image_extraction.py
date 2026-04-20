@@ -124,3 +124,33 @@ def test_run_single_datalab_no_images_dir_when_no_images(tmp_path):
 
     assert result.status == "ok"
     assert result.images_dir is None
+
+
+def test_run_chunked_datalab_saves_images_from_all_chunks(tmp_path):
+    backend = DatalabCloudBackend()
+    raw_png = b"\x89PNG\r\n\x1a\n" + b"\x00" * 100
+
+    call_count = {"n": 0}
+
+    def fake_convert_range(ctx, *, mode, page_range, max_wait_seconds):
+        call_count["n"] += 1
+        n = call_count["n"]
+        images = {f"chunk{n}_Fig_1.png": base64.b64encode(raw_png).decode()}
+        return _make_datalab_result(images), f"# Chunk {n}\n"
+
+    ctx = _make_ctx(tmp_path)
+    ctx.pages = list(range(60))       # 60 pages → forces chunking
+    ctx.report.page_count = 60
+
+    out_dir = tmp_path / "staging" / "markdown-auto" / "datalab" / "meu-entry"
+    out_dir.mkdir(parents=True)
+
+    with patch.object(backend, "_convert_range", side_effect=fake_convert_range):
+        result = backend._run_chunked_datalab(ctx, out_dir, mode="balanced", max_wait_seconds=300)
+
+    assert result.status == "ok"
+    assert result.images_dir is not None
+    assert "staging/assets/images/meu-entry" in result.images_dir.replace("\\", "/")
+    img_dir = tmp_path / "staging" / "assets" / "images" / "meu-entry"
+    saved = list(img_dir.iterdir())
+    assert len(saved) >= 2  # at least one image per chunk

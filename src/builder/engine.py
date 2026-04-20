@@ -990,6 +990,7 @@ class DatalabCloudBackend(ExtractionBackend):
         parse_scores: List[float] = []
         cost_breakdowns: List[Dict[str, object]] = []
         total_pages = 0
+        all_saved_images: list = []
 
         for idx, chunk_pages in enumerate(chunks, start=1):
             chunk_range = pages_to_marker_range(chunk_pages)
@@ -1018,6 +1019,10 @@ class DatalabCloudBackend(ExtractionBackend):
 
             chunk_path = chunks_dir / f"chunk-{idx:03d}.md"
             write_text(chunk_path, markdown)
+
+            if result.images:
+                self._save_datalab_images(result.images, ctx.entry_id, ctx.root_dir)
+                all_saved_images.extend(result.images.keys())
 
             chunk_body = _strip_frontmatter_block(markdown).strip()
             if chunk_body:
@@ -1067,21 +1072,27 @@ class DatalabCloudBackend(ExtractionBackend):
             "page_count": total_pages,
             "parse_quality_score": average_score,
             "cost_breakdown": _merge_numeric_dicts(cost_breakdowns),
-            "disable_image_extraction": True,
+            "disable_image_extraction": False,
             "disable_image_captions": True,
-            "images_saved": [],
+            "images_saved": [f"datalab-{f}" for f in all_saved_images],
             "chunks": chunk_meta,
         }, indent=2, ensure_ascii=False))
 
         notes = [
-            "SaÃ­da avanÃ§ada gerada com Datalab Document Conversion API em chunks.",
+            "Saída avançada gerada com Datalab Document Conversion API em chunks.",
             f"Modo: {mode}.",
-            f"Chunking aplicado para documento longo ({len(chunks)} chunks de atÃ© {chunk_size} pÃ¡ginas).",
-            "Imagens e descricoes sinteticas do Datalab desativadas; a curadoria de imagens permanece app-side.",
+            f"Chunking aplicado para documento longo ({len(chunks)} chunks de até {chunk_size} páginas).",
+            "Descrições sintéticas do Datalab desativadas; a curadoria de imagens permanece app-side.",
         ]
+        if all_saved_images:
+            notes.append(f"{len(all_saved_images)} imagens extraídas pelo Datalab e salvas em staging/assets/images/.")
         if average_score is not None:
             notes.append(f"parse_quality_score={average_score}.")
 
+        images_dir_path = (
+            ctx.root_dir / "staging" / "assets" / "images" / ctx.entry_id
+            if all_saved_images else None
+        )
         return BackendRunResult(
             name=self.name,
             layer=self.layer,
@@ -1090,6 +1101,7 @@ class DatalabCloudBackend(ExtractionBackend):
             asset_dir=safe_rel(out_dir, ctx.root_dir),
             metadata_path=safe_rel(metadata_path, ctx.root_dir),
             notes=notes,
+            images_dir=safe_rel(images_dir_path, ctx.root_dir) if images_dir_path else None,
         )
 
     def run(self, ctx: BackendContext) -> BackendRunResult:
