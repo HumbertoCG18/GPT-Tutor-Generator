@@ -165,6 +165,15 @@ from src.builder.operational_artifacts import (
 from src.builder.incremental_build import (
     incremental_build_impl as _incremental_build_incremental_build_impl,
 )
+from src.builder.lifecycle_ops import (
+    process_single_impl as _lifecycle_ops_process_single_impl,
+    reject as _lifecycle_ops_reject,
+    unprocess as _lifecycle_ops_unprocess,
+)
+from src.builder.bootstrap_ops import (
+    create_structure as _bootstrap_ops_create_structure,
+    write_root_files as _bootstrap_ops_write_root_files,
+)
 from src.builder.source_importers import (
     process_code as _source_importers_process_code,
     process_github_repo as _source_importers_process_github_repo,
@@ -1787,191 +1796,41 @@ class RepoBuilder:
         logger.info("Repository built successfully at %s", self.root_dir)
 
     def _create_structure(self) -> None:
-        dirs = [
-            "system",
-            "course",
-            "content/units",
-            "content/concepts",
-            "content/summaries",
-            "content/references",
-            "content/curated",
-            "content/images",
-            "exercises/lists",
-            "exercises/solved",
-            "exercises/index",
-            "exams/past-exams",
-            "exams/answer-keys",
-            "exams/exam-index",
-            "student",
-            "scripts",
-            "raw/pdfs/material-de-aula",
-            "raw/pdfs/provas",
-            "raw/pdfs/listas",
-            "raw/pdfs/gabaritos",
-            "raw/pdfs/cronograma",
-            "raw/pdfs/referencias",
-            "raw/pdfs/bibliografia",
-            "raw/pdfs/fotos-de-prova",
-            "raw/pdfs/outros",
-            "raw/images/fotos-de-prova",
-            "raw/images/provas",
-            "raw/images/material-de-aula",
-            "raw/images/outros",
-            "code/professor", "code/student",
-            "raw/code/professor", "raw/code/student",
-            "raw/zip", "raw/repos",
-            "assignments/enunciados", "assignments/entregas",
-            "raw/pdfs/trabalhos",
-            "whiteboard/raw", "whiteboard/transcriptions",
-            "raw/images/quadro-branco",
-            "staging/markdown-auto/pymupdf4llm",
-            "staging/markdown-auto/pymupdf",
-            "staging/markdown-auto/docling",
-            "staging/markdown-auto/marker",
-            "staging/markdown-auto/scanned",
-            "staging/markdown-auto/code", "staging/zip-extract",
-            "manual-review/code",
-            "manual-review/web",
-            "staging/assets/images",
-            "staging/assets/inline-images",
-            "staging/assets/tables",
-            "staging/assets/table-detections",
-            "manual-review/pdfs",
-            "manual-review/images",
-            "build/claude-knowledge",
-        ]
-        for d in dirs:
-            ensure_dir(self.root_dir / d)
+        _bootstrap_ops_create_structure(self.root_dir)
 
     def _write_root_files(self) -> None:
-        course_slug = self.course_meta["course_slug"]
-
-        # ── COURSE_IDENTITY ──────────────────────────────────────────
-        write_text(
-            self.root_dir / "course" / "COURSE_IDENTITY.md",
-            f"""---
-course_slug: {course_slug}
-course_name: {self.course_meta['course_name']}
-semester: {self.course_meta['semester']}
-professor: {self.course_meta['professor']}
-institution: {self.course_meta['institution']}
-created_at: {datetime.now().isoformat(timespec='seconds')}
----
-
-# COURSE_IDENTITY
-
-## Disciplina
-- Nome: {self.course_meta['course_name']}
-- Slug: {course_slug}
-- Semestre: {self.course_meta['semester']}
-- Professor: {self.course_meta['professor']}
-- Instituição: {self.course_meta['institution']}
-
-## Objetivo
-Este repositório organiza o conhecimento da disciplina em formato rastreável,
-curado e reutilizável para um tutor acadêmico baseado no Claude.
-""",
+        _bootstrap_ops_write_root_files(
+            self,
+            tutor_policy_md_fn=tutor_policy_md,
+            pedagogy_md_fn=pedagogy_md,
+            modes_md_fn=modes_md,
+            output_templates_md_fn=output_templates_md,
+            pdf_curation_guide_fn=pdf_curation_guide,
+            backend_architecture_md_fn=backend_architecture_md,
+            backend_policy_yaml_fn=backend_policy_yaml,
+            course_map_md_fn=course_map_md,
+            glossary_md_fn=glossary_md,
+            student_state_md_fn=student_state_md,
+            progress_schema_md_fn=progress_schema_md,
+            student_profile_md_fn=student_profile_md,
+            syllabus_md_fn=syllabus_md,
+            bibliography_md_fn=bibliography_md,
+            exam_index_md_fn=exam_index_md,
+            exercise_index_md_fn=exercise_index_md,
+            assignment_index_md_fn=assignment_index_md,
+            code_index_md_fn=code_index_md,
+            whiteboard_index_md_fn=whiteboard_index_md,
+            root_readme_fn=root_readme,
+            generated_repo_gitignore_text_fn=_generated_repo_gitignore_text,
+            generate_claude_project_instructions_fn=generate_claude_project_instructions,
+            generate_gpt_instructions_fn=generate_gpt_instructions,
+            generate_gemini_instructions_fn=generate_gemini_instructions,
+            exam_categories=EXAM_CATEGORIES,
+            exercise_categories=EXERCISE_CATEGORIES,
+            assignment_categories=ASSIGNMENT_CATEGORIES,
+            code_categories=CODE_CATEGORIES,
+            whiteboard_categories=WHITEBOARD_CATEGORIES,
         )
-
-        # ── System files ─────────────────────────────────────────────
-        write_text(self.root_dir / "system" / "TUTOR_POLICY.md", tutor_policy_md(self.course_meta, self.subject_profile))
-        write_text(self.root_dir / "system" / "PEDAGOGY.md", pedagogy_md())
-        write_text(self.root_dir / "system" / "MODES.md", modes_md(self.course_meta, self.subject_profile))
-        write_text(self.root_dir / "system" / "OUTPUT_TEMPLATES.md", output_templates_md(self.course_meta, self.subject_profile))
-
-        # ── Documentação interna do app — fica em build/, não no repo do tutor
-        write_text(self.root_dir / "build" / "PDF_CURATION_GUIDE.md", pdf_curation_guide())
-        write_text(self.root_dir / "build" / "BACKEND_ARCHITECTURE.md", backend_architecture_md())
-        write_text(self.root_dir / "build" / "BACKEND_POLICY.yaml", backend_policy_yaml(self.options))
-
-        # ── Course files ─────────────────────────────────────────────
-        write_text(self.root_dir / "course" / "COURSE_MAP.md",
-                   course_map_md(self.course_meta, self.subject_profile))
-        write_text(self.root_dir / "course" / "GLOSSARY.md",
-                   glossary_md(
-                       self.course_meta,
-                       self.subject_profile,
-                       root_dir=self.root_dir,
-                       manifest_entries=[e.to_dict() for e in self.entries],
-                   ))
-
-        # ── Student files ─────────────────────────────────────────────
-        write_text(self.root_dir / "student" / "STUDENT_STATE.md",
-                   student_state_md(self.course_meta, self.student_profile))
-        write_text(self.root_dir / "build" / "PROGRESS_SCHEMA.md", progress_schema_md())
-        self._ensure_unit_battery_directories()
-
-        # ── Student profile ───────────────────────────────────────────
-        if self.student_profile:
-            write_text(self.root_dir / "student" / "STUDENT_PROFILE.md",
-                       student_profile_md(self.student_profile))
-
-        # ── Syllabus ──────────────────────────────────────────────────
-        if self.subject_profile and self.subject_profile.syllabus:
-            write_text(self.root_dir / "course" / "SYLLABUS.md",
-                       syllabus_md(self.subject_profile))
-
-        # ── Bibliography ──────────────────────────────────────────────
-        bib_entries = [e for e in self.entries if e.category == "bibliografia"]
-        write_text(self.root_dir / "content" / "BIBLIOGRAPHY.md",
-                   bibliography_md(self.course_meta, bib_entries, self.subject_profile))
-
-        # ── Exam & Exercise indexes ───────────────────────────────────
-        exam_entries = [e for e in self.entries if e.category in EXAM_CATEGORIES]
-        if exam_entries:
-            write_text(self.root_dir / "exams" / "EXAM_INDEX.md",
-                       exam_index_md(self.course_meta, exam_entries))
-
-        exercise_entries = [e for e in self.entries if e.category in EXERCISE_CATEGORIES]
-        if exercise_entries:
-            write_text(self.root_dir / "exercises" / "EXERCISE_INDEX.md",
-                       exercise_index_md(self.course_meta, exercise_entries))
-
-        # ── Assignment, Code & Whiteboard indexes ─────────────────────
-        assignment_entries = [e for e in self.entries if e.category in ASSIGNMENT_CATEGORIES]
-        if assignment_entries:
-            write_text(self.root_dir / "assignments" / "ASSIGNMENT_INDEX.md",
-                       assignment_index_md(self.course_meta, assignment_entries))
-
-        code_entries = [e for e in self.entries if e.category in CODE_CATEGORIES]
-        if code_entries:
-            write_text(self.root_dir / "code" / "CODE_INDEX.md",
-                       code_index_md(self.course_meta, code_entries, self.subject_profile))
-
-        wb_entries = [e for e in self.entries if e.category in WHITEBOARD_CATEGORIES]
-        if wb_entries:
-            write_text(self.root_dir / "whiteboard" / "WHITEBOARD_INDEX.md",
-                       whiteboard_index_md(self.course_meta, wb_entries))
-
-        # ── Root files ────────────────────────────────────────────────
-        write_text(self.root_dir / "README.md", root_readme(self.course_meta))
-        write_text(self.root_dir / ".gitignore", _generated_repo_gitignore_text())
-
-        # ── Claude Project instructions (replaces INSTRUCOES_DO_GPT.txt)
-        # Note: flags are False here because entries haven't been processed yet.
-        # _regenerate_pedagogical_files() re-generates this with real flags.
-        instructions = generate_claude_project_instructions(
-            self.course_meta, self.student_profile, self.subject_profile,
-            has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in self.entries),
-            has_code=any(e.category in CODE_CATEGORIES for e in self.entries),
-            has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in self.entries),
-        )
-        write_text(self.root_dir / "setup" / "INSTRUCOES_CLAUDE_PROJETO.md", instructions)
-
-        # Instruções para outras plataformas
-        _common_flags = dict(
-            has_assignments=any(e.category in ASSIGNMENT_CATEGORIES for e in self.entries),
-            has_code=any(e.category in CODE_CATEGORIES for e in self.entries),
-            has_whiteboard=any(e.category in WHITEBOARD_CATEGORIES for e in self.entries),
-        )
-        write_text(self.root_dir / "setup" / "INSTRUCOES_GPT_PROJETO.md",
-                   generate_gpt_instructions(
-                       self.course_meta, self.student_profile, self.subject_profile,
-                       **_common_flags))
-        write_text(self.root_dir / "setup" / "INSTRUCOES_GEMINI_PROJETO.md",
-                   generate_gemini_instructions(
-                       self.course_meta, self.student_profile, self.subject_profile,
-                       **_common_flags))
 
     # ------------------------------------------------------------------
     # Image resolution — copies referenced images into content/images/
@@ -2650,210 +2509,25 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
             return self._process_single_impl(entry, force=force)
 
     def _process_single_impl(self, entry: "FileEntry", force: bool = False) -> str:
-        """
-        Processa um único FileEntry e adiciona ao repositório existente.
-        Chamado pelo botão '⚡ Processar' da UI para processar item a item.
-        Se o repositório ainda não existir, cria a estrutura primeiro.
-
-        Returns:
-            "ok" — processado com sucesso
-            "already_exists" — já existia no manifest (quando force=False)
-        """
-        manifest_path = self.root_dir / "manifest.json"
-
-        # Garante estrutura mínima existente
-        self._create_structure()
-
-        # Carrega ou inicializa manifest
-        if manifest_path.exists():
-            with open(manifest_path, "r", encoding="utf-8") as f:
-                manifest = json.load(f)
-            manifest = self._compact_manifest(manifest)
-        else:
-            # Primeiro item — cria manifest + arquivos raiz
-            self._write_root_files()
-            manifest = {
-                "app": APP_NAME,
-                "generated_at": datetime.now().isoformat(timespec="seconds"),
-                "course": self.course_meta,
-                "options": self.options,
-                "environment": {
-                    "python": sys.version.split()[0],
-                    "pymupdf": HAS_PYMUPDF,
-                    "pymupdf4llm": HAS_PYMUPDF4LLM,
-                    "pdfplumber": HAS_PDFPLUMBER,
-                    "datalab_api": has_datalab_api_key(),
-                    "docling_cli": bool(DOCLING_CLI),
-                    "docling_python": has_docling_python_api(),
-                    "marker_cli": bool(MARKER_CLI),
-                },
-                "entries": [],
-                "logs": [],
-            }
-
-        # Verifica duplicata por source_path
-        existing_sources = {e.get("source_path") for e in manifest.get("entries", [])}
-        if entry.source_path in existing_sources:
-            if not force:
-                logger.info("Entry already processed: %s", entry.source_path)
-                return "already_exists"
-            # force=True: remove a entrada antiga antes de reprocessar
-            old_id = entry.id()
-            logger.info("Reprocessing (force): removing old entry %s", old_id)
-            self.unprocess(old_id)
-            # Reload manifest after unprocess
-            with open(manifest_path, "r", encoding="utf-8") as f:
-                manifest = json.load(f)
-
-        logger.info("Processing single entry: %s (%s)", entry.title, entry.file_type)
-        item_result = self._process_entry(entry)
-        # TODO(token-optimization): adicionar etapa de limpeza pós-extração
-        # para remover ruído do pymupdf4llm (cabeçalhos repetidos, rodapés,
-        # numeração de página, linhas em branco excessivas).
-        # Estimativa: redução de ~25% no tamanho dos arquivos de content/.
-        manifest["entries"].append(item_result)
-        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
-        manifest.setdefault("logs", []).extend(self.logs)
-        self.logs = []  # reset para próxima chamada
-        manifest = self._compact_manifest(manifest)
-
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
-        self._write_source_registry(manifest)
-        self._write_bundle_seed(manifest)
-        self._write_build_report(manifest)
-
-        # Regenera arquivos pedagógicos que dependem do conjunto completo de entries
-        self._regenerate_pedagogical_files(manifest)
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
-
-        logger.info("Single entry processed: %s", entry.id())
-        return "ok"
+        return _lifecycle_ops_process_single_impl(
+            self,
+            entry,
+            force=force,
+            app_name=APP_NAME,
+            has_pymupdf=HAS_PYMUPDF,
+            has_pymupdf4llm=HAS_PYMUPDF4LLM,
+            has_pdfplumber=HAS_PDFPLUMBER,
+            has_datalab_api_key_fn=has_datalab_api_key,
+            docling_cli=DOCLING_CLI,
+            has_docling_python_api_fn=has_docling_python_api,
+            marker_cli=MARKER_CLI,
+        )
 
     def unprocess(self, entry_id: str) -> bool:
-        """
-        Remove todos os arquivos gerados para um entry_id e o retira do manifest.
-        Chamado pelo botão '🗑 Limpar Processamento' da UI.
-        Retorna True se removeu com sucesso, False caso contrário.
-        """
-        manifest_path = self.root_dir / "manifest.json"
-        if not manifest_path.exists():
-            logger.warning("No manifest found at %s", manifest_path)
-            return False
-
-        with open(manifest_path, "r", encoding="utf-8") as f:
-            manifest = json.load(f)
-        self.course_meta = self._effective_course_meta(manifest)
-
-        target = next((e for e in manifest["entries"] if e.get("id") == entry_id), None)
-        if not target:
-            logger.warning("Entry not found in manifest: %s", entry_id)
-            return False
-
-        paths_to_remove: List[str] = []
-        for key in ["raw_target", "base_markdown", "advanced_markdown", "advanced_markdown_raw", "manual_review",
-                    "images_dir", "tables_dir", "table_detection_dir",
-                    "advanced_asset_dir", "advanced_metadata_path",
-                    "approved_markdown", "curated_markdown", "rendered_pages_dir"]:
-            val = target.get(key)
-            if val:
-                paths_to_remove.append(val)
-
-        removed_count = 0
-        for rel_path in paths_to_remove:
-            full = self.root_dir / rel_path
-            try:
-                if full.is_dir():
-                    shutil.rmtree(full)
-                    removed_count += 1
-                elif full.is_file():
-                    full.unlink()
-                    removed_count += 1
-            except Exception as e:
-                logger.warning("Could not remove %s: %s", full, e)
-
-        removed_count += self._remove_entry_consolidated_images(entry_id)
-
-        manifest["entries"] = [e for e in manifest["entries"] if e.get("id") != entry_id]
-        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
-        manifest = self._compact_manifest(manifest)
-
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
-        self._write_source_registry(manifest)
-        self._write_bundle_seed(manifest)
-
-        # Re-resolve content/images/ — clears stale images from removed entry
-        self._resolve_content_images()
-
-        logger.info("Unprocessed entry %s (%d files removed)", entry_id, removed_count)
-        return True
+        return _lifecycle_ops_unprocess(self, entry_id)
 
     def reject(self, entry_id: str) -> Optional[Dict[str, object]]:
-        """
-        Reprova um entry: remove arquivos gerados mas preserva o raw PDF.
-        Retorna os dados do manifest entry (para reconstruir FileEntry na fila)
-        ou None se não encontrou.
-        """
-        manifest_path = self.root_dir / "manifest.json"
-        if not manifest_path.exists():
-            logger.warning("reject: manifest não encontrado em %s", manifest_path)
-            return None
-
-        with open(manifest_path, "r", encoding="utf-8") as f:
-            manifest = json.load(f)
-
-        target = next((e for e in manifest["entries"] if e.get("id") == entry_id), None)
-        if not target:
-            logger.warning("reject: entry %s não encontrada no manifest", entry_id)
-            return None
-
-        # Preservar dados para reconstruir FileEntry
-        entry_data = dict(target)
-
-        # Remover apenas arquivos gerados (NÃO raw_target)
-        keys_to_clean = [
-            "base_markdown", "advanced_markdown", "advanced_markdown_raw", "manual_review",
-            "images_dir", "tables_dir", "table_detection_dir",
-            "advanced_asset_dir", "advanced_metadata_path",
-            "approved_markdown", "curated_markdown",
-            "rendered_pages_dir",
-        ]
-        removed_count = 0
-        for key in keys_to_clean:
-            val = target.get(key)
-            if not val:
-                continue
-            full = self.root_dir / val
-            try:
-                if full.is_dir():
-                    shutil.rmtree(full)
-                    removed_count += 1
-                elif full.is_file():
-                    full.unlink()
-                    removed_count += 1
-            except Exception as e:
-                logger.warning("reject: não foi possível remover %s: %s", full, e)
-
-        removed_count += self._remove_entry_consolidated_images(entry_id)
-
-        # Remover entry do manifest
-        manifest["entries"] = [e for e in manifest["entries"] if e.get("id") != entry_id]
-        manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
-        manifest.setdefault("logs", []).append({
-            "entry": entry_id,
-            "step": "curator_reject",
-            "status": "ok",
-        })
-        manifest = self._compact_manifest(manifest)
-
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
-        self._write_source_registry(manifest)
-        self._write_bundle_seed(manifest)
-
-        # Re-resolve content/images/ — limpa imagens órfãs
-        self._resolve_content_images()
-
-        logger.info("Rejected entry %s (%d files removed, raw preserved)", entry_id, removed_count)
-        return entry_data
+        return _lifecycle_ops_reject(self, entry_id)
 
 
 # ---------------------------------------------------------------------------
