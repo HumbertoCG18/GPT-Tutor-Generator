@@ -97,13 +97,16 @@ src/
 |   |-- timeline/            # índice e sinais do cronograma
 |   `-- vision/              # clientes de vision e classificação visual
 |-- models/
-|   `-- core.py              # dataclasses e modelos persistidos
+|   |-- core.py              # dataclasses e modelos persistidos
+|   `-- task_queue.py        # RepoTask e RepoTaskStore (fila persistida)
 |-- ui/
-|   |-- app.py               # janela principal
-|   |-- dialogs.py           # configurações, status, ajuda e dialogs
-|   |-- curator_studio.py    # revisão manual e curadoria
-|   |-- image_curator.py     # curadoria de imagens e extração visual
-|   `-- theme.py             # tema e configuração persistente
+|   |-- app.py                       # janela principal
+|   |-- consolidate_unit_dialog.py   # diálogo de consolidação de unidade
+|   |-- curator_studio.py            # revisão manual e curadoria
+|   |-- dialogs.py                   # configurações, status, ajuda e dialogs
+|   |-- image_curator.py             # curadoria de imagens e extração visual
+|   |-- repo_dashboard.py            # dashboard operacional de repositórios
+|   `-- theme.py                     # tema e configuração persistente
 `-- utils/
     |-- helpers.py           # helpers, autodetects, OCR/Tesseract e utilidades
     `-- power.py             # prevenção de sleep durante builds longos
@@ -214,6 +217,16 @@ Com artefatos como:
 - markdown retornado pela API
 - imagens extraídas
 - `datalab-run.json` com metadados da execução
+
+### Extração de imagens pelo Datalab
+
+Quando o Datalab processa um PDF, as imagens são salvas automaticamente em:
+
+```text
+staging/markdown-auto/datalab/<entry>/images/
+```
+
+O caminho é propagado via `BackendRunResult.images_dir` até o manifest do item e fica disponível para o **Image Curator** sem processamento adicional.
 
 ### Configuração mínima
 
