@@ -147,7 +147,48 @@ class TestVisionClientFactory:
 def test_image_types_include_latex_extraction():
     from src.ui.image_curator import IMAGE_TYPES
 
-    assert "extração-latex" in IMAGE_TYPES
+    assert "extracao-latex" in IMAGE_TYPES
+
+
+def test_generate_image_text_routes_latex_type(tmp_path):
+    from src.ui.image_curator import _generate_image_text
+
+    img = tmp_path / "formula.png"
+    img.write_bytes(b"fake")
+
+    client = mock.MagicMock()
+    client.extract_to_latex.return_value = "x^2 + y^2"
+    client.describe_image.return_value = "descricao comum"
+
+    result = _generate_image_text(
+        client, "extracao-latex", img, page_context="formula destacada"
+    )
+
+    assert result == "x^2 + y^2"
+    client.extract_to_latex.assert_called_once_with(
+        img, page_context="formula destacada"
+    )
+    client.describe_image.assert_not_called()
+
+
+def test_generate_image_text_routes_non_latex_types_to_description(tmp_path):
+    from src.ui.image_curator import _generate_image_text
+
+    img = tmp_path / "diagram.png"
+    img.write_bytes(b"fake")
+
+    client = mock.MagicMock()
+    client.describe_image.return_value = "diagrama com tres blocos"
+
+    result = _generate_image_text(
+        client, "diagrama", img, page_context="contexto da pagina"
+    )
+
+    assert result == "diagrama com tres blocos"
+    client.describe_image.assert_called_once_with(
+        img, "diagrama", page_context="contexto da pagina"
+    )
+    client.extract_to_latex.assert_not_called()
 
 
 def test_image_curator_layout_mode_changes_by_width():
