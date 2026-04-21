@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.builder.student_state import (
+from src.builder.artifacts.student_state import (
     derive_active_unit_progress,
     parse_battery_frontmatter,
     refresh_active_unit_progress,

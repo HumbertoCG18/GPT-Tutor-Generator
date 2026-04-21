@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from src.builder.student_state import (
+from src.builder.artifacts.student_state import (
     UnitNotReadyError,
     consolidate_unit,
     render_unit_summary_md,

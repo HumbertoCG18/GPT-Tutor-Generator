@@ -6,10 +6,10 @@ import unicodedata
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Callable, Dict, List, Optional
 
-from src.builder.card_evidence import extract_card_evidence
-from src.builder.timeline_signals import extract_timeline_session_signals
+from src.builder.vision.card_evidence import extract_card_evidence
+from src.builder.timeline.signals import extract_timeline_session_signals
 from src.utils.helpers import slugify, write_text
 
 
@@ -179,6 +179,186 @@ def _parse_timeline_period_bounds(period: str) -> tuple[Optional[datetime], Opti
     if start and end and start > end:
         start, end = end, start
     return start, end
+
+
+def _match_timeline_to_units_generic(
+    timeline: List[Dict[str, str]],
+    units: list,
+    *,
+    normalize_unit_slug: Callable[[str], str],
+    topic_text: Callable[[object], str],
+) -> list:
+    if not timeline or not units:
+        return []
+
+    content_keys, date_keys = _infer_timeline_keys(timeline)
+    if not content_keys:
+        return []
+
+    preferred_date_keys = []
+    fallback_date_keys = []
+    for key in timeline[0].keys():
+        if any(k in key for k in ["data", "date"]):
+            preferred_date_keys.append(key)
+        elif any(k in key for k in ["semana", "week", "sem", "aula"]):
+            fallback_date_keys.append(key)
+    date_keys = preferred_date_keys or fallback_date_keys
+    if not date_keys:
+        date_keys = [list(timeline[0].keys())[0]] if timeline[0] else []
+
+    def _normalize_token_text(text: str) -> str:
+        text = unicodedata.normalize("NFKD", text or "")
+        text = "".join(ch for ch in text if not unicodedata.combining(ch))
+        text = re.sub(r"[^a-z0-9\s]", " ", text.lower())
+        return re.sub(r"\s+", " ", text).strip()
+
+    def _tokenize_signal(text: str) -> List[str]:
+        return [
+            token
+            for token in _normalize_token_text(text).split()
+            if len(token) >= 4 and not token.isdigit()
+        ]
+
+    descriptors = []
+    token_frequency: Dict[str, int] = {}
+    for unit_title, topics in units:
+        unit_num_match = re.search(r"(\d+)", unit_title)
+        unit_num = unit_num_match.group(1) if unit_num_match else ""
+        unit_num_int = str(int(unit_num)) if unit_num else ""
+
+        desc_match = re.search(r"[â€”â€“:\-]\s*(.+)", unit_title)
+        unit_desc = desc_match.group(1).strip() if desc_match else unit_title
+        unit_desc_norm = _normalize_token_text(unit_desc)
+        title_tokens = _tokenize_signal(unit_desc_norm)
+        topic_phrases = []
+        topic_tokens = []
+
+        for topic in topics or []:
+            topic_norm = _normalize_token_text(topic_text(topic))
+            if not topic_norm:
+                continue
+            topic_phrases.append(topic_norm)
+            topic_tokens.extend(_tokenize_signal(topic_norm))
+
+        all_tokens = title_tokens + topic_tokens
+        descriptor = {
+            "unit_title": unit_title,
+            "unit_num": unit_num,
+            "unit_num_int": unit_num_int,
+            "unit_desc_norm": unit_desc_norm,
+            "title_tokens": title_tokens,
+            "topic_phrases": topic_phrases,
+            "all_tokens": all_tokens,
+        }
+        descriptors.append(descriptor)
+        for token in set(all_tokens):
+            token_frequency[token] = token_frequency.get(token, 0) + 1
+
+    for descriptor in descriptors:
+        descriptor["distinctive_tokens"] = sorted({
+            token
+            for token in descriptor["all_tokens"]
+            if token_frequency.get(token, 0) == 1 or (token_frequency.get(token, 0) <= 2 and len(token) >= 6)
+        })
+
+    row_dates = []
+    for row in timeline:
+        row_dates.append(" / ".join(row.get(k, "") for k in date_keys if row.get(k, "")).strip())
+
+    anchor_indexes_by_unit = []
+    for descriptor in descriptors:
+        anchors = []
+        for idx, row in enumerate(timeline):
+            content_norm = _normalize_token_text(" ".join(row.get(k, "") for k in content_keys))
+            if not content_norm:
+                continue
+
+            score = 0
+            unit_num = descriptor["unit_num"]
+            unit_num_int = descriptor["unit_num_int"]
+            if unit_num:
+                patterns = [
+                    rf"\bunidade\s*{unit_num}\b",
+                    rf"\bunidade\s*{unit_num_int}\b",
+                    rf"\bunid\.?\s*{unit_num_int}\b",
+                    rf"\bun\.?\s*{unit_num_int}\b",
+                ]
+                for pat in patterns:
+                    if re.search(pat, content_norm, re.IGNORECASE):
+                        score += 10
+                        break
+
+            unit_desc_norm = descriptor["unit_desc_norm"]
+            if unit_desc_norm and unit_desc_norm in content_norm:
+                score += 8
+
+            title_hits = sum(
+                1 for token in set(descriptor["title_tokens"])
+                if re.search(rf"\b{re.escape(token)}\b", content_norm)
+            )
+            if title_hits >= max(1, min(2, len(set(descriptor["title_tokens"])))):
+                score += 4
+
+            for phrase in descriptor["topic_phrases"]:
+                if phrase in content_norm:
+                    score += 8
+                    break
+
+            distinct_hits = sum(
+                1
+                for token in descriptor["distinctive_tokens"]
+                if re.search(rf"\b{re.escape(token)}\b", content_norm)
+            )
+            if distinct_hits:
+                score += min(6, distinct_hits * 3)
+
+            if score >= 4:
+                anchors.append(idx)
+        anchor_indexes_by_unit.append(anchors)
+
+    resolved_anchor_starts: List[Optional[int]] = []
+    previous_start = -1
+    for anchors in anchor_indexes_by_unit:
+        chosen_start = None
+        for anchor_idx in anchors:
+            if anchor_idx > previous_start:
+                chosen_start = anchor_idx
+                break
+        if chosen_start is None and anchors:
+            chosen_start = anchors[0]
+        resolved_anchor_starts.append(chosen_start)
+        if chosen_start is not None:
+            previous_start = chosen_start
+
+    result = []
+    for unit_idx, descriptor in enumerate(descriptors):
+        anchors = anchor_indexes_by_unit[unit_idx]
+        matched_dates = []
+        if anchors:
+            start_idx = resolved_anchor_starts[unit_idx]
+            if start_idx is None:
+                start_idx = anchors[0]
+            next_start_idx = None
+            for later_idx in range(unit_idx + 1, len(descriptors)):
+                later_start = resolved_anchor_starts[later_idx]
+                if later_start is not None:
+                    next_start_idx = later_start
+                    break
+            end_idx = (next_start_idx - 1) if next_start_idx is not None else anchors[-1]
+            if end_idx < start_idx:
+                end_idx = anchors[-1]
+            matched_dates = [d for d in row_dates[start_idx:end_idx + 1] if d]
+
+        matched_dates = list(dict.fromkeys(matched_dates))
+        period = f"{matched_dates[0]} a {matched_dates[-1]}" if len(matched_dates) > 1 else (matched_dates[0] if matched_dates else "")
+        result.append({
+            "unit_title": descriptor["unit_title"],
+            "unit_slug": normalize_unit_slug(descriptor["unit_title"]),
+            "period": period,
+            "dates": ", ".join(matched_dates),
+        })
+
+    return result
 
 
 _KIND_TOKEN_RE = re.compile(r"\{kind=(\w+)\}")
@@ -834,6 +1014,428 @@ def _write_internal_timeline_index(root_dir: Path, timeline_index: dict) -> None
         root_dir / "course" / ".timeline_index.json",
         json.dumps(_serialize_timeline_index(timeline_index), ensure_ascii=False, indent=2),
     )
+
+
+_TEACHING_PLAN_ASSESSMENT_START = re.compile(r"^(?:AVALIA[ÇC][AÃ]O|AVALIACAO)\b", re.IGNORECASE)
+_TEACHING_PLAN_ASSESSMENT_STOP = re.compile(
+    r"^(?:BIBLIOGRAFIA|METODOLOGIA|CRONOGRAMA|CONTEUDO PROGRAMATICO|CONTEUDO)\b",
+    re.IGNORECASE,
+)
+_ASSESSMENT_LINE_RE = re.compile(
+    r"^(?P<label>(?:P\s*\d+|PROVA\s*\d+|PF|PROVA\s+FINAL|EXAME\s+FINAL))\s*(?:[-:]\s*|\s+)(?P<desc>.+)$",
+    re.IGNORECASE,
+)
+
+
+def _aggregate_unit_periods_from_blocks(blocks_by_unit: Dict[str, List[Dict[str, object]]]) -> Dict[str, str]:
+    period_map: Dict[str, str] = {}
+    for slug, blocks in (blocks_by_unit or {}).items():
+        if not slug or not blocks:
+            continue
+        start_dates = []
+        end_dates = []
+        for block in blocks:
+            start = _parse_timeline_date_value(str(block.get("period_start", "") or ""))
+            end = _parse_timeline_date_value(str(block.get("period_end", "") or ""))
+            if start:
+                start_dates.append(start)
+            if end:
+                end_dates.append(end)
+        if start_dates and end_dates:
+            sorted_blocks = sorted(
+                blocks,
+                key=lambda item: (
+                    _parse_timeline_date_value(str(item.get("period_start", "") or "")) or datetime.max
+                ),
+            )
+            edge_dates = []
+            for block in (sorted_blocks[0], sorted_blocks[-1]):
+                edge_dates.extend(
+                    re.findall(r"\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}|\d{2}-\d{2}-\d{4}", str(block.get("period_label", "")))
+                )
+            if edge_dates:
+                start_label = edge_dates[0]
+                end_label = edge_dates[-1] if len(edge_dates) > 1 else edge_dates[0]
+                period_map[slug] = _timeline_period_label(start_label, end_label)
+                continue
+            period_map[slug] = _timeline_period_label(
+                min(start_dates).strftime("%Y-%m-%d"),
+                max(end_dates).strftime("%Y-%m-%d"),
+            )
+            continue
+        labels = [str(block.get("period_label", "")).strip() for block in blocks if str(block.get("period_label", "")).strip()]
+        if labels:
+            period_map[slug] = labels[0] if len(labels) == 1 else _timeline_period_label(labels[0], labels[-1])
+    return period_map
+
+
+def _canonical_assessment_label(raw_label: str, *, normalize_match_text: Callable[[str], str]) -> str:
+    normalized = normalize_match_text(raw_label)
+    if not normalized:
+        return ""
+    normalized = normalized.replace("final", "final").strip()
+    match = re.match(r"^p\s*(\d+)$", normalized)
+    if match:
+        return f"P{int(match.group(1))}"
+    if normalized in {"pf", "p final", "prova final", "exame final"}:
+        return "PF"
+    if normalized.startswith("exame"):
+        return "EXAME"
+    if normalized.startswith("prova"):
+        return _collapse_ws(normalized).upper()
+    return _collapse_ws(normalized).upper()
+
+
+def _assessment_label_aliases(label_slug: str, *, normalize_match_text: Callable[[str], str]) -> List[str]:
+    normalized = normalize_match_text(label_slug)
+    aliases = set()
+    if not normalized:
+        return []
+    if normalized == "pf":
+        aliases.update({"pf", "prova final", "exame final"})
+    else:
+        p_match = re.match(r"^(?:p|prova)\s*(\d+)$", normalized)
+        if p_match:
+            num = int(p_match.group(1))
+            aliases.add(f"p{num}")
+            aliases.add(f"p {num}")
+            aliases.add(f"prova {num}")
+            aliases.add(f"prova {num:02d}")
+        aliases.add(normalized)
+    return sorted(aliases)
+
+
+def _extract_declared_unit_numbers(
+    text: str,
+    *,
+    normalize_match_text: Callable[[str], str],
+    label_slug: str = "",
+) -> List[int]:
+    normalized = normalize_match_text(text)
+    if not normalized:
+        return []
+    scope_text = normalized
+    scope_match = re.search(
+        r"\b(?:unidade(?:s)?(?: de aprendizagem)?|conteudo(?:s)?|abrangendo|abrange|cobre|cobrindo|inclui|incluindo)\b(.+)",
+        normalized,
+    )
+    if scope_match:
+        scope_text = scope_match.group(1).strip()
+    numbers = []
+    for raw_num in re.findall(r"\b0*(\d+)\b", scope_text):
+        try:
+            value = int(raw_num)
+        except ValueError:
+            continue
+        if 1 <= value <= 20:
+            numbers.append(value)
+    if scope_match:
+        return list(dict.fromkeys(numbers))
+    label_match = re.match(r"^(?:p|prova)\s*(\d+)$", normalize_match_text(label_slug))
+    if label_match:
+        try:
+            label_number = int(label_match.group(1))
+        except ValueError:
+            label_number = None
+        else:
+            if label_number in numbers:
+                numbers.remove(label_number)
+    return list(dict.fromkeys(numbers))
+
+
+def _parse_assessments_from_teaching_plan(
+    text: str,
+    *,
+    normalize_match_text: Callable[[str], str],
+    normalize_teaching_plan_heading: Callable[[str], str],
+) -> List[dict]:
+    assessments: List[dict] = []
+    if not text:
+        return assessments
+
+    in_section = False
+    current: Optional[dict] = None
+
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+
+        normalized = normalize_teaching_plan_heading(line)
+        cleaned = re.sub(r"^[\-•*]\s*", "", normalized).strip()
+        if not cleaned:
+            continue
+
+        if not in_section and _TEACHING_PLAN_ASSESSMENT_START.match(cleaned):
+            in_section = True
+            current = None
+            continue
+
+        if in_section and _TEACHING_PLAN_ASSESSMENT_STOP.match(cleaned):
+            break
+
+        if not in_section:
+            continue
+
+        match = _ASSESSMENT_LINE_RE.match(cleaned)
+        if match:
+            if current:
+                assessments.append(current)
+            label_slug = _canonical_assessment_label(
+                match.group("label"),
+                normalize_match_text=normalize_match_text,
+            )
+            if not label_slug:
+                continue
+            desc = _collapse_ws(match.group("desc"))
+            current = {
+                "label": label_slug,
+                "label_slug": normalize_match_text(label_slug),
+                "description": desc,
+                "raw_lines": [cleaned],
+            }
+            continue
+
+        if current:
+            current["description"] = _collapse_ws(f"{current.get('description', '')} {cleaned}")
+            current.setdefault("raw_lines", []).append(cleaned)
+
+    if current:
+        assessments.append(current)
+
+    for item in assessments:
+        description = str(item.get("description", "") or "").strip()
+        label_slug = str(item.get("label_slug", "") or "").strip()
+        item["label"] = _canonical_assessment_label(
+            item.get("label", label_slug),
+            normalize_match_text=normalize_match_text,
+        )
+        item["label_slug"] = normalize_match_text(label_slug or item["label"])
+        item["declared_unit_numbers"] = _extract_declared_unit_numbers(
+            description,
+            normalize_match_text=normalize_match_text,
+            label_slug=item["label_slug"],
+        )
+        item["raw_lines"] = list(dict.fromkeys(item.get("raw_lines", []) or []))
+
+    return assessments
+
+
+def _assessment_match_row_text(row: dict, *, normalize_match_text: Callable[[str], str]) -> str:
+    return normalize_match_text(" ".join(str(value) for value in row.values() if str(value).strip()))
+
+
+def _assessment_date_from_timeline_rows(rows: List[Dict[str, str]]) -> str:
+    if not rows:
+        return ""
+    for row in rows:
+        for key in row.keys():
+            if any(token in key for token in ["data", "date"]):
+                value = str(row.get(key, "") or "").strip()
+                if value:
+                    return value
+    for row in rows:
+        for value in row.values():
+            value = str(value or "").strip()
+            if _parse_timeline_date_value(value):
+                return value
+    return ""
+
+
+def _assessment_scope_unit_slugs(declared_unit_numbers: List[int], unit_index: list) -> List[str]:
+    if not declared_unit_numbers or not unit_index:
+        return []
+    slugs = []
+    for unit in unit_index:
+        slug = str(unit.get("slug", "") or "").strip()
+        if not slug:
+            continue
+        unit_number = _timeline_unit_number_from_unit(unit)
+        if unit_number is None:
+            unit_number = _timeline_unit_number_from_text(str(unit.get("title", "") or ""))
+        if unit_number and unit_number in declared_unit_numbers:
+            slugs.append(slug)
+    return slugs
+
+
+def _assessment_conflict_observation(
+    assessment_label: str,
+    assessment_date: str,
+    unit_slug: str,
+    unit_title: str,
+    unit_period: str,
+) -> str:
+    if not assessment_date or not unit_period:
+        return ""
+    if unit_title:
+        return (
+            f"{assessment_label} em {assessment_date} antecede {unit_title} "
+            f"(previsto para {unit_period})."
+        )
+    return f"{assessment_label} em {assessment_date} antecede {unit_slug} (previsto para {unit_period})."
+
+
+def _build_file_map_timeline_context_from_course(
+    course_meta: dict,
+    subject_profile=None,
+    content_taxonomy: Optional[dict] = None,
+    *,
+    build_file_map_unit_index_from_course: Callable[[dict, object], list],
+    build_file_map_content_taxonomy_from_course: Callable[[dict, object], dict],
+) -> dict:
+    test_context = course_meta.get("_timeline_context") or course_meta.get("_timeline_context_for_tests")
+    if test_context:
+        return dict(test_context)
+
+    unit_index = build_file_map_unit_index_from_course(course_meta, subject_profile)
+    content_taxonomy = content_taxonomy or build_file_map_content_taxonomy_from_course(course_meta, subject_profile)
+    syllabus = getattr(subject_profile, "syllabus", "") if subject_profile else ""
+    timeline = _parse_syllabus_timeline(syllabus) if syllabus else []
+    candidate_rows = _build_timeline_candidate_rows(timeline)
+    timeline_index = (
+        _build_timeline_index(candidate_rows, unit_index=unit_index, content_taxonomy=content_taxonomy)
+        if candidate_rows
+        else _empty_timeline_index()
+    )
+
+    blocks_by_unit: Dict[str, List[Dict[str, object]]] = {}
+    rows_by_unit: Dict[str, List[Dict[str, object]]] = {}
+    unassigned_blocks: List[Dict[str, object]] = []
+    for block in timeline_index.get("blocks", []) or []:
+        slug = str(block.get("unit_slug", "") or "")
+        if slug:
+            blocks_by_unit.setdefault(slug, []).append(block)
+            rows_by_unit.setdefault(slug, []).extend(list(block.get("rows", []) or []))
+        else:
+            unassigned_blocks.append(block)
+
+    unit_periods = _aggregate_unit_periods_from_blocks(blocks_by_unit)
+    unit_period_bounds = {
+        slug: _parse_timeline_period_bounds(period)
+        for slug, period in unit_periods.items()
+        if period
+    }
+
+    return {
+        "timeline": timeline,
+        "timeline_index": timeline_index,
+        "unit_periods": unit_periods,
+        "unit_period_bounds": unit_period_bounds,
+        "unit_index": unit_index,
+        "rows_by_unit": rows_by_unit,
+        "blocks_by_unit": blocks_by_unit,
+        "unassigned_blocks": unassigned_blocks,
+    }
+
+
+def _build_assessment_context_from_course(
+    course_meta: dict,
+    subject_profile=None,
+    timeline_context: Optional[dict] = None,
+    *,
+    build_file_map_unit_index_from_course: Callable[[dict, object], list],
+    build_file_map_timeline_context_from_course: Callable[..., dict],
+    normalize_match_text: Callable[[str], str],
+    normalize_teaching_plan_heading: Callable[[str], str],
+) -> dict:
+    test_context = course_meta.get("_assessment_context") or course_meta.get("_assessment_context_for_tests")
+    if test_context:
+        return dict(test_context)
+
+    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
+    syllabus = getattr(subject_profile, "syllabus", "") if subject_profile else ""
+    if not teaching_plan and not syllabus:
+        return {"version": 1, "assessments": [], "conflicts": []}
+
+    timeline_rows = _parse_syllabus_timeline(syllabus) if syllabus else []
+    unit_index = build_file_map_unit_index_from_course(course_meta, subject_profile)
+    if timeline_context is None:
+        timeline_context = build_file_map_timeline_context_from_course(course_meta, subject_profile)
+    unit_period_bounds = (timeline_context or {}).get("unit_period_bounds", {}) or {}
+    unit_periods = (timeline_context or {}).get("unit_periods", {}) or {}
+    unit_by_slug = {str(unit.get("slug", "") or ""): unit for unit in unit_index if str(unit.get("slug", "") or "").strip()}
+
+    assessments = _parse_assessments_from_teaching_plan(
+        teaching_plan,
+        normalize_match_text=normalize_match_text,
+        normalize_teaching_plan_heading=normalize_teaching_plan_heading,
+    )
+    if not assessments:
+        return {
+            "version": 1,
+            "assessments": [],
+            "conflicts": [],
+            "unit_periods": unit_periods,
+        }
+
+    enriched_assessments = []
+    conflicts = []
+    for assessment in assessments:
+        label = str(assessment.get("label", "") or "").strip()
+        label_slug = str(assessment.get("label_slug", "") or "").strip()
+        aliases = _assessment_label_aliases(label_slug, normalize_match_text=normalize_match_text)
+        matched_rows = [
+            row
+            for row in timeline_rows
+            if any(
+                alias and re.search(rf"\b{re.escape(alias)}\b", _assessment_match_row_text(row, normalize_match_text=normalize_match_text))
+                for alias in aliases
+            )
+        ]
+        assessment_date = _assessment_date_from_timeline_rows(matched_rows)
+        declared_unit_numbers = list(assessment.get("declared_unit_numbers") or [])
+        declared_unit_slugs = _assessment_scope_unit_slugs(declared_unit_numbers, unit_index)
+        observation_lines = []
+        conflict_lines = []
+        if assessment_date and declared_unit_slugs:
+            assessment_dt = _parse_timeline_date_value(assessment_date)
+            if assessment_dt:
+                for unit_slug in declared_unit_slugs:
+                    start_dt, _end_dt = unit_period_bounds.get(unit_slug, (None, None))
+                    unit = unit_by_slug.get(unit_slug, {})
+                    unit_title = str(unit.get("title", "") or "").strip()
+                    unit_period = str(unit_periods.get(unit_slug, "") or "").strip()
+                    if start_dt and assessment_dt < start_dt:
+                        conflict_text = _assessment_conflict_observation(
+                            label,
+                            assessment_date,
+                            unit_slug,
+                            unit_title,
+                            unit_period,
+                        )
+                        if conflict_text:
+                            conflict_lines.append(conflict_text)
+        if declared_unit_numbers and not assessment_date:
+            observation_lines.append(f"{label}: escopo por unidade encontrado, mas a data não foi localizada no cronograma.")
+        if assessment_date and not declared_unit_numbers:
+            observation_lines.append(f"{label}: data encontrada ({assessment_date}), mas sem escopo de unidade explícito.")
+
+        enriched = {
+            **assessment,
+            "aliases": aliases,
+            "assessment_date": assessment_date,
+            "matched_row_count": len(matched_rows),
+            "declared_unit_slugs": declared_unit_slugs,
+            "observations": observation_lines,
+            "conflicts": conflict_lines,
+        }
+        enriched_assessments.append(enriched)
+        if conflict_lines:
+            conflicts.append({
+                "label": label,
+                "label_slug": label_slug,
+                "assessment_date": assessment_date,
+                "declared_unit_numbers": declared_unit_numbers,
+                "declared_unit_slugs": declared_unit_slugs,
+                "conflicts": conflict_lines,
+            })
+
+    return {
+        "version": 1,
+        "assessments": enriched_assessments,
+        "conflicts": conflicts,
+        "unit_periods": unit_periods,
+    }
 
 
 def _score_timeline_row_against_unit(row_text: str, unit: dict) -> float:

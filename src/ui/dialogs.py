@@ -14,16 +14,16 @@ from src.utils.helpers import (
     slugify, parse_html_schedule, auto_detect_category, auto_detect_title,
     fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM, normalize_document_profile
 )
-from src.builder.datalab_client import get_datalab_base_url, has_datalab_api_key
-from src.builder.entry_signals import (
+from src.builder.runtime.datalab_client import get_datalab_base_url, has_datalab_api_key
+from src.builder.extraction.entry_signals import (
     collect_entry_unit_signals as _collect_entry_unit_signals,
     entry_image_source_dirs as _entry_image_source_dirs,
     normalize_match_text as _normalize_match_text,
     score_text_against_row as _score_text_against_row,
 )
 from src.builder.engine import BackendSelector, has_docling_python_api
-from src.builder.navigation_artifacts import _entry_markdown_text_for_file_map
-from src.builder.teaching_plan_utils import _normalize_unit_slug, _parse_units_from_teaching_plan
+from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
+from src.builder.extraction.teaching_plan import _normalize_unit_slug, _parse_units_from_teaching_plan
 from src.ui.theme import ThemeManager, AppConfig, THEMES, apply_theme_to_toplevel
 class Tooltip:
     """Shows a descriptive tooltip balloon after the mouse hovers for `delay` ms."""
@@ -659,7 +659,7 @@ AÇÕES PRINCIPAIS
     Hoje isso também reaplica:
     • COURSE_MAP.md e FILE_MAP.md em modo mais enxuto
     • GLOSSARY.md com definições curtas e evidência compacta
-    • bundle.seed.json seletivo para Claude Web
+    • bundle.seed.json seletivo para bundles manuais de alto sinal
     • reinjeção de descrições de imagem em formato compacto
 
   Gerar Instruções LLM
@@ -675,11 +675,12 @@ AÇÕES PRINCIPAIS
     Backup automático em build/consolidation-backup/.
 
 OBSERVAÇÃO
-  Quando COURSE_MAP.md e FILE_MAP.md já estão maduros, o app pode omitir
-  o protocolo de primeira sessão ao gerar essas instruções.
+  As instruções geradas sempre refletem o contrato atual do app:
+  auditoria inicial, navegação map-first e FILE_MAP/COURSE_MAP como
+  artefatos gerados deterministicamente.
 """),
-    ("Claude e Tokens", """ARQUITETURA MAP-FIRST / LOW-TOKEN
-  O app gera artefatos pensando em baixo custo de contexto no Claude Web.
+    ("Map-First e Tokens", """ARQUITETURA MAP-FIRST / LOW-TOKEN
+  O app gera artefatos compactos para reduzir custo de contexto nas plataformas LLM suportadas.
 
 ORDEM IDEAL DE LEITURA
   1. course/COURSE_MAP.md
@@ -709,7 +710,7 @@ ROLLOUT
   Para aplicar isso em repositórios antigos, use:
   • Reprocessar Repositório
 
-OBSERVAÇÃO
+  OBSERVAÇÃO
   COURSE_MAP.md omite seções vazias até existir sinal real, como incidência em prova
   ou notas do professor. Isso evita desperdiçar contexto logo no primeiro chat.
 """),
@@ -717,8 +718,8 @@ OBSERVAÇÃO
   student/STUDENT_STATE.md
     Registra progresso e próximos passos do aluno. Consulte antes de repetir ou aprofundar demais.
 
-  student/PROGRESS_SCHEMA.md
-    Define a estrutura esperada para atualizações de progresso.
+  student/batteries/
+    Guarda baterias por unidade/tópico e summaries consolidados quando a unidade é fechada.
 
   USO PRÁTICO
   Ao final de uma sessão de estudo, atualize o estado do aluno no repositório.
@@ -3881,7 +3882,7 @@ class StatusDialog(tk.Toplevel):
 
         configured_model = config_obj.get("vision_model", "qwen3-vl:235b-cloud")
         ollama_url = config_obj.get("ollama_base_url", "http://localhost:11434")
-        from src.builder.ollama_client import FALLBACK_MODEL, get_vision_setup_status
+        from src.builder.vision.ollama_client import FALLBACK_MODEL, get_vision_setup_status
         vision_status = get_vision_setup_status(ollama_url, configured_model)
         available_models = vision_status["available_models"]
         model_found = bool(vision_status["model_found"])

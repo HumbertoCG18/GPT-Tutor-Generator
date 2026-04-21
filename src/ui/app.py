@@ -21,15 +21,15 @@ from src.models.core import (
 )
 from src.models.task_queue import RepoTask, RepoTaskStore
 from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES, get_app_data_dir
-from src.builder.datalab_client import has_datalab_api_key
+from src.builder.runtime.datalab_client import has_datalab_api_key
 from src.builder.engine import RepoBuilder
-from src.builder.prompt_generation import (
+from src.builder.artifacts.prompts import (
     generate_claude_project_instructions,
     generate_gemini_instructions,
     generate_gpt_instructions,
 )
-from src.builder.task_queue_runner import TaskQueueRunner
-from src.builder.teaching_plan_utils import _parse_units_from_teaching_plan, _topic_text
+from src.builder.ops.task_queue_runner import TaskQueueRunner
+from src.builder.extraction.teaching_plan import _parse_units_from_teaching_plan, _topic_text
 from src.ui.theme import ThemeManager, AppConfig
 from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, StatusDialog, _resolve_backlog_markdown_status
 from src.ui.repo_dashboard import RepoDashboard, collect_repo_metrics
@@ -492,6 +492,7 @@ class App(tk.Tk):
         backlog_repo_menu.add_command(label="📋 Gerar Instruções LLM", command=self._generate_llm_instructions)
         backlog_repo_menu.add_command(label="📦 Consolidar Unidade...", command=self._open_consolidate_dialog)
         backlog_repo_menu.add_command(label="📚 Abrir pasta batteries", command=self._open_batteries_folder)
+        backlog_repo_menu.add_command(label="📎 Copiar Instruções LLM", command=self._copy_llm_instructions_to_clipboard)
 
         self._backlog_repo_menu_btn = ttk.Menubutton(backlog_toolbar, text="🗂 Repo")
         self._backlog_repo_menu_btn.pack(side="left")
@@ -1317,7 +1318,7 @@ class App(tk.Tk):
         self._maybe_offer_state_migration(sp)
 
     def _maybe_offer_state_migration(self, subject) -> None:
-        from src.builder.student_state import detect_state_version, migrate_v1_to_v2
+        from src.builder.artifacts.student_state import detect_state_version, migrate_v1_to_v2
         repo_dir = self._repo_dir()
         if not repo_dir or detect_state_version(repo_dir) != "v1":
             return
@@ -1836,8 +1837,9 @@ class App(tk.Tk):
                     builder.incremental_build()
                 else:
                     builder.build()
+                failed_count = len(getattr(builder, "failed_entries", []) or [])
                 logger.info("Worker concluído com sucesso.")
-                self.after(0, lambda: self._on_build_complete(meta, repo_dir, incremental))
+                self.after(0, lambda fc=failed_count: self._on_build_complete(meta, repo_dir, incremental, fc))
             except InterruptedError:
                 self.after(0, self._on_build_cancelled)
             except Exception:
@@ -1856,7 +1858,7 @@ class App(tk.Tk):
         self._reset_build_finish_options()
         self._set_status("Build cancelado.")
 
-    def _on_build_complete(self, meta: dict, repo_dir: Path, incremental: bool):
+    def _on_build_complete(self, meta: dict, repo_dir: Path, incremental: bool, failed_count: int = 0):
         self._end_progress()
         self._set_building_state(False)
         n_entries = len(self.entries)
@@ -1865,21 +1867,24 @@ class App(tk.Tk):
         self._save_current_queue()
         self._clear_pending_operation()
         shutdown_after_build = self._shutdown_after_build.get()
-        self._set_status(f"✓ Repositório {'atualizado' if incremental else 'criado'} em: {repo_dir}")
+        status_prefix = "concluído com falhas" if failed_count else ("atualizado" if incremental else "criado")
+        self._set_status(f"✓ Repositório {status_prefix} em: {repo_dir}")
         if shutdown_after_build:
             logger.info("Build concluído com opção de desligamento ativada.")
             self._schedule_shutdown_after_build()
         elif incremental:
             messagebox.showinfo(
                 APP_NAME,
-                f"Repositório atualizado com sucesso em:\n{repo_dir}\n\n"
-                f"{n_entries} arquivo(s) processado(s).\n\n"
+                f"Repositório atualizado em:\n{repo_dir}\n\n"
+                f"{n_entries} arquivo(s) na fila desta execução.\n"
+                f"Falhas por arquivo ausente: {failed_count}\n\n"
                 f"Próximo passo: dar push no GitHub."
             )
         else:
             messagebox.showinfo(
                 APP_NAME,
-                f"Repositório criado com sucesso em:\n{repo_dir}\n\n"
+                f"Repositório criado em:\n{repo_dir}\n\n"
+                f"Falhas por arquivo ausente: {failed_count}\n\n"
                 f"Próximo passo recomendado:\n"
                 f"1. Revisar manual-review/\n"
                 f"2. Escolher a melhor saída entre base e avançada\n"
@@ -1957,7 +1962,7 @@ class App(tk.Tk):
                 traceback_str = traceback.format_exc()
                 self.after(0, self._end_progress)
                 self.after(0, lambda: self._set_processing_state(False))
-                self.after(0, lambda: messagebox.showerror(APP_NAME, f"Erro ao processar item:\n\n{traceback_str}"))
+                self.after(0, lambda ts=traceback_str: self._show_error_detail(APP_NAME, f"Erro ao processar item:\n\n{ts}"))
                 self.after(0, lambda: self._set_status("Erro no processamento."))
 
         threading.Thread(target=worker, daemon=True).start()
@@ -2026,6 +2031,35 @@ class App(tk.Tk):
         self._set_processing_state(False)
         self._active_operation = None
         self._set_status(status_msg)
+
+    def _show_error_detail(self, title: str, message: str):
+        """Diálogo de erro com texto selecionável e botão de copiar."""
+        dlg = tk.Toplevel(self)
+        dlg.title(title)
+        dlg.resizable(True, True)
+        dlg.geometry("700x400")
+        dlg.grab_set()
+
+        frame = ttk.Frame(dlg, padding=10)
+        frame.pack(fill="both", expand=True)
+
+        txt = tk.Text(frame, wrap="word", font=("Courier", 9))
+        sb = ttk.Scrollbar(frame, command=txt.yview)
+        txt.configure(yscrollcommand=sb.set)
+        sb.pack(side="right", fill="y")
+        txt.pack(side="left", fill="both", expand=True)
+        txt.insert("1.0", message)
+        txt.configure(state="normal")  # keep selectable
+
+        btn_frame = ttk.Frame(dlg, padding=(10, 0, 10, 10))
+        btn_frame.pack(fill="x")
+
+        def _copy():
+            dlg.clipboard_clear()
+            dlg.clipboard_append(message)
+
+        ttk.Button(btn_frame, text="Copiar", command=_copy).pack(side="left")
+        ttk.Button(btn_frame, text="Fechar", command=dlg.destroy).pack(side="right")
 
     def _resume_pending_build(self, op: PendingOperation):
         meta = op.course_meta
@@ -2200,6 +2234,65 @@ class App(tk.Tk):
         batteries.mkdir(parents=True, exist_ok=True)
         self._open_path_in_system(batteries)
 
+    def _copy_llm_instructions_to_clipboard(self) -> None:
+        repo_dir = self._repo_dir()
+        if not repo_dir:
+            messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório.")
+            return
+
+        PLATFORMS = [
+            ("claude", "Claude", "INSTRUCOES_CLAUDE_PROJETO.md"),
+            ("gpt",    "GPT",    "INSTRUCOES_GPT_PROJETO.md"),
+            ("gemini", "Gemini", "INSTRUCOES_GEMINI_PROJETO.md"),
+        ]
+
+        dialog = tk.Toplevel(self)
+        dialog.title("Copiar Instruções LLM")
+        dialog.resizable(False, False)
+        dialog.transient(self)
+        dialog.grab_set()
+        dialog.update_idletasks()
+        x = self.winfo_rootx() + (self.winfo_width() - 340) // 2
+        y = self.winfo_rooty() + (self.winfo_height() - 180) // 2
+        dialog.geometry(f"340x180+{x}+{y}")
+
+        ttk.Label(dialog, text="Qual plataforma você quer copiar?",
+                  wraplength=300, justify="center").pack(pady=(18, 6))
+        ttk.Label(dialog,
+                  text="O conteúdo do arquivo de instruções será copiado\npara a área de transferência.",
+                  wraplength=300, justify="center", foreground="gray").pack(pady=(0, 14))
+
+        btn_frame = ttk.Frame(dialog)
+        btn_frame.pack()
+
+        def pick(filename):
+            dialog.destroy()
+            path = repo_dir / "setup" / filename
+            if not path.exists():
+                messagebox.showwarning(
+                    APP_NAME,
+                    f"Arquivo não encontrado:\n{path}\n\n"
+                    "Use 'Gerar Instruções LLM' primeiro."
+                )
+                return
+            try:
+                content = path.read_text(encoding="utf-8")
+                self.clipboard_clear()
+                self.clipboard_append(content)
+                self._set_status(f"Instruções copiadas para a área de transferência: {filename}")
+                messagebox.showinfo(
+                    APP_NAME,
+                    f"Instruções copiadas!\n\nArquivo: setup/{filename}\n"
+                    f"Caracteres: {len(content):,}\n\n"
+                    "Cole no campo de instruções do projeto na plataforma escolhida."
+                )
+            except Exception as e:
+                messagebox.showerror(APP_NAME, f"Erro ao ler instruções:\n{e}")
+
+        for _val, label, fname in PLATFORMS:
+            ttk.Button(btn_frame, text=label, width=10,
+                       command=lambda f=fname: pick(f)).pack(side="left", padx=4)
+
     def _open_consolidate_dialog(self) -> None:
         repo_dir = self._repo_dir_from_active_subject()
         if not repo_dir:
@@ -2239,7 +2332,7 @@ class App(tk.Tk):
         if meta is None:
             return
 
-        # Detectar estado do COURSE_MAP e FILE_MAP
+        # Detectar estado básico dos mapas para orientar a mensagem ao usuário
         file_map_path = repo_dir / "course" / "FILE_MAP.md"
         course_map_path = repo_dir / "course" / "COURSE_MAP.md"
         file_map_complete = False
@@ -2254,13 +2347,14 @@ class App(tk.Tk):
         repo_ready = file_map_complete and course_map_exists
 
         if repo_ready:
-            # Repo completo — perguntar se quer trocar plataforma ou só gerar
+            # Repo pronto — permitir manter ou trocar a plataforma principal
             answer = messagebox.askyesnocancel(
                 APP_NAME,
-                "O repositório já está configurado:\n"
+                "O repositório já tem os artefatos principais gerados:\n"
                 "  - COURSE_MAP.md existe\n"
-                "  - FILE_MAP.md está completo\n\n"
-                "O Protocolo de Primeira Sessão continuará INCLUÍDO.\n\n"
+                "  - FILE_MAP.md existe e não está pendente\n\n"
+                "As instruções serão regeneradas para Claude, GPT e Gemini\n"
+                "usando o protocolo atual de auditoria/map-first.\n\n"
                 "Sim → Gerar instruções (manter LLM atual)\n"
                 "Não → Escolher outra plataforma principal\n"
                 "Cancelar → Abortar"
@@ -2276,17 +2370,17 @@ class App(tk.Tk):
                 if platform is None:
                     return
         else:
-            # Repo incompleto — mostrar seletor normalmente
+            # Repo em formação — mostrar seletor normalmente
             status_parts = []
             if not course_map_exists:
                 status_parts.append("COURSE_MAP.md não encontrado")
             if not file_map_complete:
-                status_parts.append("FILE_MAP.md pendente")
+                status_parts.append("FILE_MAP.md ausente ou ainda pendente")
             messagebox.showinfo(
                 APP_NAME,
                 f"Estado do repositório:\n"
                 f"  - {chr(10).join(status_parts)}\n\n"
-                f"O Protocolo de Primeira Sessão será INCLUÍDO.\n"
+                f"As instruções serão geradas com o protocolo atual de auditoria/map-first.\n"
                 f"Escolha a plataforma principal:"
             )
             platform = self._select_llm_platform()
@@ -2335,7 +2429,7 @@ class App(tk.Tk):
                 f"Instruções geradas para as 3 plataformas.\n\n"
                 f"Plataforma principal: {platform.upper()}\n"
                 f"Arquivo: {primary}\n\n"
-                "Protocolo de Primeira Sessão INCLUÍDO."
+                "Os arquivos já refletem a arquitetura atual do app."
             )
             self._set_status(f"Instruções LLM geradas — principal: {platform.upper()}")
         except Exception as e:

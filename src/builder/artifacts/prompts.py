@@ -146,6 +146,53 @@ ditado.
 """.strip()
 
 
+def _prompt_latex_rendering_text() -> str:
+    return """\
+## Renderização de LaTeX
+
+Ao escrever qualquer expressão matemática ou lógica:
+- Use `$expressão$` para fórmulas **inline** (dentro de texto)
+- Use `$$expressão$$` para fórmulas em **display** (linha própria, centralizada)
+
+Nunca retorne código LaTeX bruto sem os delimitadores acima.
+Nunca escreva a fórmula como texto literal (ex: "alpha + beta") quando existe
+notação LaTeX equivalente.
+
+"""
+
+
+def _prompt_accessibility_symbols_text() -> str:
+    return """\
+## Acessibilidade — Leitura de símbolos e fórmulas
+
+O estudante tem **dislexia e discalculia**. Para qualquer símbolo, operador,
+regra ou fórmula que apareça na explicação, faça sempre as três etapas abaixo —
+mesmo que o símbolo pareça simples ou já tenha sido mencionado antes.
+A repetição é intencional e reforça a memorização.
+
+**Etapa 1 — Como se lê**
+Verbalize o símbolo em português.
+Exemplos:
+- `∈` → "pertence a"
+- `⊢` → "prova" ou "é derivável de"
+- a linha horizontal de uma regra de inferência → "portanto" ou "então"
+- `⟨·⟩` → "árvore vazia"
+
+**Etapa 2 — Parte por parte**
+Decomponha a regra ou fórmula em partes e explique cada componente separadamente.
+Diga o que está acima/abaixo da linha, o que cada letra representa, o que cada
+operador faz.
+
+**Etapa 3 — Analogia prática**
+Dê uma analogia concreta do mundo real, de jogos, objetos físicos ou situações
+cotidianas. A analogia não precisa ser perfeita — precisa ser memorável.
+Exemplo: "pensa como um construtor de cena em um jogo: empty é o objeto nulo —
+o ponto de partida. Antes de colocar qualquer nó na árvore, você começa com
+esse 'nada' que já é válido por definição."
+
+"""
+
+
 def _prompt_economic_reading_order_lines() -> list[str]:
     return [
         "1. Comece por `course/COURSE_MAP.md` para identificar unidade, ordem e pré-requisitos.",
@@ -309,6 +356,10 @@ Fluxo `map-first`: consulte primeiro os artefatos curtos e roteadores. Não abra
 {_prompt_consolidation_detection_text()}
 
 {_prompt_revision_reopen_text()}
+
+{_prompt_latex_rendering_text()}
+
+{_prompt_accessibility_symbols_text()}
 
 ## Modos de operação
 
@@ -483,6 +534,10 @@ Acesse estes arquivos sempre que relevante:
 
 {_prompt_revision_reopen_text()}
 
+{_prompt_latex_rendering_text()}
+
+{_prompt_accessibility_symbols_text()}
+
 ## Modos de operação
 
 Identifique o modo pela frase do aluno:
@@ -620,6 +675,10 @@ Consulte estes arquivos conforme necessário:
 {_prompt_consolidation_detection_text()}
 
 {_prompt_revision_reopen_text()}
+
+{_prompt_latex_rendering_text()}
+
+{_prompt_accessibility_symbols_text()}
 
 ## Modos de operação
 

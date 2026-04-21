@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from src.builder.ollama_client import (
+from src.builder.vision.ollama_client import (
     OLLAMA_BASE_URL,
     DEFAULT_MODEL,
     OllamaClient,

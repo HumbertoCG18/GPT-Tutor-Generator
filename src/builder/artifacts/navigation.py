@@ -369,8 +369,8 @@ def render_course_map_md(
     lines += [
         "## Tópicos de alta incidência em prova",
         "",
-        "> ⏳ **Aguardando análise do tutor** — na primeira sessão, o tutor cruzará as provas",
-        "> em `exams/` com as unidades acima e preencherá esta tabela.",
+        "> ⏳ **Aguardando análise do tutor** — esta tabela pode ser refinada quando o tutor",
+        "> cruzar as provas em `exams/` com as unidades acima.",
         "",
         "| Tópico | Unidade | Incidência |",
         "|---|---|---|",

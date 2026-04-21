@@ -1,4 +1,4 @@
-from src.builder.timeline_index import _build_timeline_index
+from src.builder.timeline.index import _build_timeline_index
 
 
 def test_build_timeline_index_marks_ignored_rows_from_kind():

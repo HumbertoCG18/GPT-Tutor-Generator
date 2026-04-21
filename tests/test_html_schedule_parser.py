@@ -80,7 +80,7 @@ def test_aspnet_row_with_resource_appends_at_marker():
     assert "— Prova Interativa de Teoremas - Isabelle [Aula]" in result
 
 
-from src.builder.timeline_signals import extract_timeline_session_signals
+from src.builder.timeline.signals import extract_timeline_session_signals
 
 
 FULL_FIXTURE = """

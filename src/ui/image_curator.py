@@ -13,21 +13,21 @@ from typing import Dict, List, Optional
 
 from PIL import Image, ImageTk
 
-from src.builder.image_classifier import (
+from src.builder.vision.image_classifier import (
     classify_image,
     extract_page_number,
     group_images_by_page,
 )
-from src.builder.image_markdown import (
+from src.builder.extraction.image_markdown import (
     _IMAGE_DESC_BLOCK_RE,
     _image_curation_heading as _image_curation_heading_label,
     _low_token_inject_image_descriptions,
+    _strip_described_image_refs,
 )
 
 logger = logging.getLogger(__name__)
 
-IMAGE_TYPES = ["diagrama", "tabela", "fórmula", "código", "genérico", "decorativa", "extração-latex"]
-
+IMAGE_TYPES = ["diagrama", "tabela", "formula", "codigo", "generico", "decorativa", "extracao-latex"]
 
 def _image_curator_layout_mode(width: int) -> str:
     if width >= 1400:
@@ -139,29 +139,6 @@ def _resolve_entry_pdf_path(repo_dir: Path, entry_data: dict) -> Optional[Path]:
             return candidate
     return None
 
-
-_IMAGE_REF_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
-
-
-def _strip_described_image_refs(text: str, curation: dict) -> str:
-    """Remove image refs whose content is already injected into markdown."""
-    described_fnames: set[str] = set()
-    for page_data in (curation.get("pages") or {}).values():
-        for fname, img_data in (page_data.get("images") or {}).items():
-            if img_data.get("description"):
-                described_fnames.add(fname)
-
-    if not described_fnames:
-        return text
-
-    def _sub(match: re.Match) -> str:
-        fname = Path(match.group(2)).name
-        return "" if fname in described_fnames else match.group(0)
-
-    stripped = _IMAGE_REF_RE.sub(_sub, text)
-    return re.sub(r"\n{3,}", "\n\n", stripped)
-
-
 def _inject_for_current_entry(repo_dir: Path, entry: dict) -> List[Path]:
     """Inject descriptions into the current entry markdown targets."""
     if not entry:
@@ -194,6 +171,13 @@ def _inject_for_current_entry(repo_dir: Path, entry: dict) -> List[Path]:
             logger.warning("Could not inject image descriptions into %s: %s", path, exc)
 
     return modified
+
+
+def _generate_image_text(client, img_type: str, img_path: Path, page_context: str) -> str:
+    """Route generation to the proper client method for the selected image type."""
+    if img_type == "extracao-latex":
+        return client.extract_to_latex(img_path, page_context=page_context)
+    return client.describe_image(img_path, img_type, page_context=page_context)
 
 
 def _inject_all_image_descriptions_from_manifest(repo_dir: Path, manifest: dict) -> None:
@@ -304,7 +288,13 @@ class ImageCurator(tk.Toplevel):
         ttk.Button(
             toolbar, text="Gerar Descrições", command=self._generate_descriptions
         ).pack(side="right", padx=5)
-        ttk.Button(toolbar, text="Salvar", command=self._save_curation).pack(
+        ttk.Button(
+            toolbar,
+            text="Salvar",
+            command=lambda: self._save_curation(
+                inject_markdown=True, show_feedback=True
+            ),
+        ).pack(
             side="right", padx=5
         )
 
@@ -397,7 +387,7 @@ class ImageCurator(tk.Toplevel):
         self._crop_mode = tk.BooleanVar(value=False)
         ttk.Checkbutton(
             pdf_header,
-            text="Capturar região",
+            text="Capturar regiao",
             variable=self._crop_mode,
             command=self._toggle_crop_mode,
         ).pack(side="left", padx=(10, 0))
@@ -469,11 +459,11 @@ class ImageCurator(tk.Toplevel):
         """Load manifest.json and populate the tree with entries that have images."""
         if not self._manifest_path.exists():
             self.status_var.set(
-                "manifest.json não encontrado. Processe os PDFs primeiro."
+                "manifest.json nao encontrado. Processe os PDFs primeiro."
             )
             return
         if not self._images_dir.exists():
-            self.status_var.set("Pasta content/images/ não encontrada.")
+            self.status_var.set("Pasta content/images/ nao encontrada.")
             return
 
         try:
@@ -666,7 +656,7 @@ class ImageCurator(tk.Toplevel):
             page_frame, text="Selecionar todas", command=lambda: self._set_all_selected(True)
         ).pack(side="right", padx=(4, 0))
         ttk.Button(
-            page_frame, text="Limpar seleção", command=lambda: self._set_all_selected(False)
+            page_frame, text="Limpar selecao", command=lambda: self._set_all_selected(False)
         ).pack(side="right", padx=(4, 0))
         ttk.Button(
             page_frame, text="Remover selecionadas", command=self._delete_selected_images
@@ -854,7 +844,7 @@ class ImageCurator(tk.Toplevel):
         if self._vision_busy:
             messagebox.showwarning(
                 "Image Curator",
-                "Já existe uma requisição em andamento. Aguarde.",
+                "Ja existe uma requisicao em andamento. Aguarde.",
                 parent=self,
             )
             return None
@@ -862,7 +852,7 @@ class ImageCurator(tk.Toplevel):
         if self._vision_client is not None:
             return self._vision_client
 
-        from src.builder.vision_client import get_vision_client
+        from src.builder.vision.vision_client import get_vision_client
 
         config = self._parent.config_obj if hasattr(self._parent, "config_obj") else None
         client = get_vision_client(config)
@@ -915,7 +905,7 @@ class ImageCurator(tk.Toplevel):
         """Show full image description in a scrollable window."""
         p = self.theme_mgr.palette(self._theme_name)
         win = tk.Toplevel(self)
-        win.title(f"Descrição — {fname}")
+        win.title(f"Descricao - {fname}")
         win.geometry("600x400")
         win.configure(bg=p["bg"])
 
@@ -945,7 +935,7 @@ class ImageCurator(tk.Toplevel):
         if not pdf_path:
             self._pdf_canvas.delete("all")
             self._pdf_canvas.create_text(
-                10, 10, text="PDF não encontrado.", anchor="nw", fill="gray"
+                10, 10, text="PDF nao encontrado.", anchor="nw", fill="gray"
             )
             return
 
@@ -1091,7 +1081,7 @@ class ImageCurator(tk.Toplevel):
                 page_key, {"include_page": True, "images": {}}
             )
             page_data["images"][fname] = {
-                "type": "genérico",
+                "type": "generico",
                 "include": True,
                 "description": None,
                 "described_at": None,
@@ -1101,7 +1091,7 @@ class ImageCurator(tk.Toplevel):
             self._show_images(
                 self._current_entry, self._current_page, groups[self._current_page]
             )
-            self.status_var.set(f"Região capturada e salva como '{fname}'.")
+            self.status_var.set(f"Regiao capturada e salva como '{fname}'.")
 
             # Disable crop mode
             self._crop_mode.set(False)
@@ -1109,7 +1099,7 @@ class ImageCurator(tk.Toplevel):
 
         except Exception as e:
             messagebox.showerror(
-                "Erro", f"Falha ao capturar região:\n{e}", parent=self
+                "Erro", f"Falha ao capturar regiao:\n{e}", parent=self
             )
 
     def _delete_image(self, fname: str, img_path: Path):
@@ -1162,7 +1152,7 @@ class ImageCurator(tk.Toplevel):
         if failed:
             messagebox.showerror(
                 "Erro",
-                "Não foi possível remover algumas imagens:\n\n" + "\n".join(failed),
+                "Nao foi possivel remover algumas imagens:\n\n" + "\n".join(failed),
                 parent=self,
             )
             return
@@ -1179,7 +1169,7 @@ class ImageCurator(tk.Toplevel):
         removed_count = count - len(failed)
         if removed_count > 0:
             self.status_var.set(
-                f"{removed_count} imagem(ns) removida(s) e árvore atualizada."
+                f"{removed_count} imagem(ns) removida(s) e arvore atualizada."
             )
 
     def _preclassify(self):
@@ -1202,11 +1192,13 @@ class ImageCurator(tk.Toplevel):
                 classified += 1
 
         self.status_var.set(
-            f"Pré-classificação concluída: {classified} imagens analisadas."
+            f"Pre-classificacao concluida: {classified} imagens analisadas."
         )
 
-    def _save_curation(self):
-        """Save curation decisions to manifest.json."""
+    def _save_curation(
+        self, inject_markdown: bool = False, show_feedback: bool = False
+    ):
+        """Save curation decisions to manifest.json, optionally injecting markdown."""
         if not self._current_entry or self._current_page is None:
             return
 
@@ -1256,7 +1248,28 @@ class ImageCurator(tk.Toplevel):
 
         # Write back to manifest (removing internal _image_groups key)
         self._write_manifest_entry(entry_id)
+
+        injected_paths: List[Path] = []
+        if inject_markdown:
+            injected_paths = _inject_for_current_entry(self.repo_dir, self._current_entry)
+
         self.status_var.set(f"Curadoria salva para {entry_id}.")
+        if show_feedback:
+            if injected_paths:
+                targets = ", ".join(path.name for path in injected_paths)
+                messagebox.showinfo(
+                    "Image Curator",
+                    "Curadoria salva com sucesso.\n\n"
+                    f"Injecao confirmada em: {targets}",
+                    parent=self,
+                )
+            else:
+                messagebox.showinfo(
+                    "Image Curator",
+                    "Curadoria salva com sucesso.\n\n"
+                    "Nenhum markdown alvo encontrado para injecao neste momento.",
+                    parent=self,
+                )
 
     def _describe_single_image(self, fname: str, img_path: Path):
         """Generate (or regenerate) description for a single image."""
@@ -1280,13 +1293,15 @@ class ImageCurator(tk.Toplevel):
         page_contexts = self._extract_page_contexts(entry_id)
         page_ctx = page_contexts.get(page_key, "")
 
-        self.status_var.set(f"Gerando descrição para {fname}...")
+        self.status_var.set(f"Gerando descricao para {fname}...")
         self._vision_busy = True
-        logger.info("[Vision] Iniciando descrição: %s (tipo: %s, modelo: %s)", fname, img_type, client.model)
+        logger.info("[Vision] Iniciando descricao: %s (tipo: %s, modelo: %s)", fname, img_type, client.model)
 
         def _worker():
             try:
-                desc = client.describe_image(img_path, img_type, page_context=page_ctx)
+                desc = _generate_image_text(
+                    client, img_type, img_path, page_context=page_ctx
+                )
                 curation.setdefault("pages", {}).setdefault(page_key, {"include_page": True, "images": {}})
                 curation["pages"][page_key]["images"].setdefault(fname, {})
                 curation["pages"][page_key]["images"][fname]["description"] = desc
@@ -1297,14 +1312,14 @@ class ImageCurator(tk.Toplevel):
                 curation["pages"][page_key]["images"][fname]["include"] = True
 
                 desc_preview = desc[:120].replace("\n", " ")
-                logger.info("[Vision] Descrição gerada para %s: %s...", fname, desc_preview)
+                logger.info("[Vision] Descricao gerada para %s: %s...", fname, desc_preview)
 
                 def _on_done():
                     self._write_manifest_entry(entry_id)
                     groups = self._current_entry.get("_image_groups", {})
                     images = groups.get(self._current_page, [])
                     self._show_images(self._current_entry, self._current_page, images)
-                    self.status_var.set(f"Descrição gerada para {fname}.")
+                    self.status_var.set(f"Descricao gerada para {fname}.")
 
                 self.after(0, _on_done)
             except Exception as e:
@@ -1344,7 +1359,7 @@ class ImageCurator(tk.Toplevel):
 
         self.status_var.set(f"Extraindo LaTeX de {fname}...")
         self._vision_busy = True
-        logger.info("[Vision] Iniciando extração LaTeX: %s (modelo: %s)", fname, client.model)
+        logger.info("[Vision] Iniciando extracao LaTeX: %s (modelo: %s)", fname, client.model)
 
         def _worker():
             try:
@@ -1355,32 +1370,32 @@ class ImageCurator(tk.Toplevel):
                 curation["pages"][page_key]["images"][fname]["described_at"] = (
                     datetime.now().isoformat(timespec="seconds")
                 )
-                curation["pages"][page_key]["images"][fname]["type"] = "extração-latex"
+                curation["pages"][page_key]["images"][fname]["type"] = "extracao-latex"
                 curation["pages"][page_key]["images"][fname]["include"] = True
                 if fname in self._image_widgets:
-                    self._image_widgets[fname]["type_var"].set("extração-latex")
+                    self._image_widgets[fname]["type_var"].set("extracao-latex")
                     self._image_widgets[fname]["include_var"].set(True)
 
                 preview = extracted[:120].replace("\n", " ")
-                logger.info("[Vision] Extração LaTeX para %s: %s...", fname, preview)
+                logger.info("[Vision] Extracao LaTeX para %s: %s...", fname, preview)
 
                 def _on_done():
                     self._write_manifest_entry(entry_id)
                     groups = self._current_entry.get("_image_groups", {})
                     images = groups.get(self._current_page, [])
                     self._show_images(self._current_entry, self._current_page, images)
-                    self.status_var.set(f"Extração LaTeX concluída para {fname}.")
+                    self.status_var.set(f"Extracao LaTeX concluida para {fname}.")
 
                 self.after(0, _on_done)
             except Exception as e:
-                logger.error("[Vision] Erro na extração LaTeX de %s: %s", fname, e)
+                logger.error("[Vision] Erro na extracao LaTeX de %s: %s", fname, e)
                 self.after(
                     0,
                     lambda: messagebox.showerror(
-                        "Erro", f"Falha na extração LaTeX de {fname}:\n{e}", parent=self
+                        "Erro", f"Falha na extracao LaTeX de {fname}:\n{e}", parent=self
                     ),
                 )
-                self.after(0, lambda: self.status_var.set(f"Erro na extração de {fname}."))
+                self.after(0, lambda: self.status_var.set(f"Erro na extracao de {fname}."))
             finally:
                 self._vision_busy = False
 
@@ -1422,7 +1437,7 @@ class ImageCurator(tk.Toplevel):
                     if img_path.exists():
                         ctx = page_contexts.get(page_key, "")
                         to_describe.append(
-                            (page_key, fname, img_data.get("type", "genérico"), img_path, ctx)
+                            (page_key, fname, img_data.get("type", "generico"), img_path, ctx)
                         )
 
         if not to_describe:
@@ -1432,8 +1447,8 @@ class ImageCurator(tk.Toplevel):
             return
 
         total = len(to_describe)
-        logger.info("[Vision] Iniciando geração em lote: %d imagens (modelo: %s)", total, client.model)
-        self.status_var.set(f"Gerando descrições: 0/{total}...")
+        logger.info("[Vision] Iniciando geracao em lote: %d imagens (modelo: %s)", total, client.model)
+        self.status_var.set(f"Gerando descricoes: 0/{total}...")
         self._vision_busy = True
 
         def _worker():
@@ -1446,18 +1461,13 @@ class ImageCurator(tk.Toplevel):
                     self.after(
                         0,
                         lambda i=idx, f=fname: self.status_var.set(
-                            f"Gerando descrição {i + 1}/{total}: {f}..."
+                            f"Gerando descricao {i + 1}/{total}: {f}..."
                         ),
                     )
                     try:
-                        if img_type == IMAGE_TYPES[-1]:
-                            desc = client.extract_to_latex(
-                                img_path, page_context=page_ctx
-                            )
-                        else:
-                            desc = client.describe_image(
-                                img_path, img_type, page_context=page_ctx
-                            )
+                        desc = _generate_image_text(
+                            client, img_type, img_path, page_context=page_ctx
+                        )
                         curation["pages"][page_key]["images"][fname]["description"] = desc
                         curation["pages"][page_key]["images"][fname]["described_at"] = (
                             datetime.now().isoformat(timespec="seconds")
@@ -1475,44 +1485,49 @@ class ImageCurator(tk.Toplevel):
                 curation["status"] = "described"
                 ok_count = total - len(errors)
                 if errors:
-                    logger.warning("[Vision] Lote concluído: %d/%d OK, %d erros", ok_count, total, len(errors))
+                    logger.warning("[Vision] Lote concluido: %d/%d OK, %d erros", ok_count, total, len(errors))
                 else:
-                    logger.info("[Vision] Lote concluído: %d/%d descrições geradas com sucesso", ok_count, total)
+                    logger.info("[Vision] Lote concluido: %d/%d descricoes geradas com sucesso", ok_count, total)
 
                 def _on_done():
                     self._write_manifest_entry(entry_id)
-                    injected_paths = _inject_for_current_entry(self.repo_dir, self._current_entry)
                     if self._current_entry and self._current_page is not None:
                         groups = self._current_entry.get("_image_groups", {})
                         images = groups.get(self._current_page, [])
                         self._show_images(self._current_entry, self._current_page, images)
+                    skipped_count = 0
+                    for page_key, page_data in curation.get("pages", {}).items():
+                        if not page_data.get("include_page", True):
+                            continue
+                        for img_data in page_data.get("images", {}).values():
+                            if img_data.get("include") and img_data.get("description"):
+                                skipped_count += 1
+                    skipped_count = max(skipped_count - total, 0)
                     ok_count = total - len(errors)
                     if errors:
                         self.status_var.set(
-                            f"{ok_count}/{total} descrições geradas ({len(errors)} erros). Salvo no manifest."
+                            f"{ok_count}/{total} descricoes geradas ({len(errors)} erros). Salvo no manifest."
                         )
                         error_detail = "\n".join(errors[:10])
                         messagebox.showwarning(
                             "Image Curator",
-                            f"{ok_count} descrições geradas, {len(errors)} erros:\n\n{error_detail}",
+                            f"{ok_count} descricoes geradas, {len(errors)} erros.\n"
+                            f"{skipped_count} imagem(ns) ja tinham descricao e foram mantidas.\n\n"
+                            f"{error_detail}",
+                            parent=self,
                         )
                     else:
                         self.status_var.set(
-                            f"Descrições geradas para {total} imagens. Salvo no manifest."
+                            f"Lote concluido: {ok_count}/{total} novas descricoes geradas; "
+                            f"{skipped_count} mantidas."
                         )
-                        if injected_paths:
-                            targets = ", ".join(path.name for path in injected_paths)
-                            messagebox.showinfo(
-                                "Image Curator",
-                                f"{total} descricoes geradas com sucesso.\n\nInjetadas em: {targets}",
-                                f"{total} descriÃ§Ãµes geradas com sucesso.\n\nInjetadas em: {targets}",
-                            )
-                        else:
-                            messagebox.showinfo(
-                                "Image Curator",
-                                f"{total} descricoes geradas com sucesso.\n\nNenhum markdown alvo encontrado ainda.",
-                                f"{total} descriÃ§Ãµes geradas com sucesso.\n\nNenhum markdown alvo encontrado ainda.",
-                            )
+                        messagebox.showinfo(
+                            "Image Curator",
+                            f"{total} descricoes geradas com sucesso.\n"
+                            f"{skipped_count} imagem(ns) ja tinham descricao e foram mantidas.\n\n"
+                            "Revise o resultado e use Salvar para confirmar a injecao no markdown.",
+                            parent=self,
+                        )
 
                 self.after(0, _on_done)
             finally:
@@ -1538,6 +1553,6 @@ class ImageCurator(tk.Toplevel):
             json.dumps(clean_manifest, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
-        _inject_all_image_descriptions_from_manifest(self.repo_dir, clean_manifest)
+
 
 

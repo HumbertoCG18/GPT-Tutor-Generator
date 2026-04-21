@@ -9,7 +9,7 @@ from typing import Iterable, Optional
 
 from src.utils.helpers import slugify, write_text
 
-_DEFAULTS_PATH = Path(__file__).with_name("semantic_defaults.json")
+_DEFAULTS_PATH = Path(__file__).resolve().parent.parent / "semantic_defaults.json"
 _PROFILE_LIST_KEYS = (
     "known_tools",
     "generic_slug_blacklist",

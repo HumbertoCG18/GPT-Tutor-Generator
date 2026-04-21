@@ -48,18 +48,18 @@ from src.builder.engine import (
     file_map_md,
     glossary_md,
 )
-from src.builder.prompt_generation import (
+from src.builder.artifacts.prompts import (
     generate_claude_project_instructions,
     generate_gemini_instructions,
     generate_gpt_instructions,
 )
-from src.builder.repo_artifacts import rows_to_markdown_table, wrap_frontmatter
-from src.builder.teaching_plan_utils import (
+from src.builder.artifacts.repo import rows_to_markdown_table, wrap_frontmatter
+from src.builder.extraction.teaching_plan import (
     _parse_units_from_teaching_plan,
     _topic_depth,
     _topic_text,
 )
-from src.builder.timeline_index import (
+from src.builder.timeline.index import (
     _build_timeline_candidate_rows,
     _build_timeline_index,
     _parse_syllabus_timeline,
@@ -577,7 +577,7 @@ class TestAdvancedBackendPolicies:
         result = backend.run(ctx)
 
         assert result.status == "ok"
-        assert captured_kwargs["disable_image_extraction"] is True
+        assert captured_kwargs["disable_image_extraction"] is False
         assert captured_kwargs["disable_image_captions"] is True
         md_path = tmp_path / result.markdown_path
         assert md_path.exists()
@@ -589,9 +589,9 @@ class TestAdvancedBackendPolicies:
         assert metadata["mode"] == "fast"
         assert metadata["page_range"] == "0-1"
         assert metadata["parse_quality_score"] == 4.7
-        assert metadata["disable_image_extraction"] is True
+        assert metadata["disable_image_extraction"] is False
         assert metadata["disable_image_captions"] is True
-        assert metadata["images_saved"] == []
+        assert len(metadata["images_saved"]) == 1
 
     def test_marker_command_omits_force_ocr_when_only_formula_priority_is_enabled(self, tmp_path, monkeypatch):
         backend = engine_module.MarkerCLIBackend()

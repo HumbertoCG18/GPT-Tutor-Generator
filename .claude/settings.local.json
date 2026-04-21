@@ -12,7 +12,8 @@
       "WebFetch(domain:ollama.com)",
       "Bash(git checkout *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(pytest *)"
     ]
   }
 }

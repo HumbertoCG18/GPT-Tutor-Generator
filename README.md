@@ -84,19 +84,29 @@ app.py
 
 src/
 |-- builder/
-|   |-- engine.py            # pipeline principal de processamento e build
-|   |-- datalab_client.py    # integração com a API do Datalab
-|   |-- image_classifier.py  # heurísticas para imagens
-|   |-- ollama_client.py     # integração Vision via Ollama /api/chat
-|   `-- vision_client.py     # fábrica do cliente de vision
+|   |-- engine.py            # facade principal e orquestração do build
+|   |-- artifacts/           # COURSE_MAP, FILE_MAP, prompts e índices
+|   |-- core/                # config semântica e utilidades centrais
+|   |-- extraction/          # taxonomy, sinais e helpers de extração
+|   |-- facade/              # wiring configurado usado pela facade
+|   |-- ops/                 # operações de build, regen e fila
+|   |-- pdf/                 # pipeline PDF e assets
+|   |-- routing/             # matching e roteamento do FILE_MAP
+|   |-- runtime/             # integrações com backends externos
+|   |-- text/                # sanitização textual e URL -> markdown
+|   |-- timeline/            # índice e sinais do cronograma
+|   `-- vision/              # clientes de vision e classificação visual
 |-- models/
-|   `-- core.py              # dataclasses e modelos persistidos
+|   |-- core.py              # dataclasses e modelos persistidos
+|   `-- task_queue.py        # RepoTask e RepoTaskStore (fila persistida)
 |-- ui/
-|   |-- app.py               # janela principal
-|   |-- dialogs.py           # configurações, status, ajuda e dialogs
-|   |-- curator_studio.py    # revisão manual e curadoria
-|   |-- image_curator.py     # curadoria de imagens e extração visual
-|   `-- theme.py             # tema e configuração persistente
+|   |-- app.py                       # janela principal
+|   |-- consolidate_unit_dialog.py   # diálogo de consolidação de unidade
+|   |-- curator_studio.py            # revisão manual e curadoria
+|   |-- dialogs.py                   # configurações, status, ajuda e dialogs
+|   |-- image_curator.py             # curadoria de imagens e extração visual
+|   |-- repo_dashboard.py            # dashboard operacional de repositórios
+|   `-- theme.py                     # tema e configuração persistente
 `-- utils/
     |-- helpers.py           # helpers, autodetects, OCR/Tesseract e utilidades
     `-- power.py             # prevenção de sleep durante builds longos
@@ -208,6 +218,16 @@ Com artefatos como:
 - imagens extraídas
 - `datalab-run.json` com metadados da execução
 
+### Extração de imagens pelo Datalab
+
+Quando o Datalab processa um PDF, as imagens são salvas automaticamente em:
+
+```text
+staging/markdown-auto/datalab/<entry>/images/
+```
+
+O caminho é propagado via `BackendRunResult.images_dir` até o manifest do item e fica disponível para o **Image Curator** sem processamento adicional.
+
 ### Configuração mínima
 
 No arquivo `.env`:
@@ -251,7 +271,7 @@ course/COURSE_MAP.md
 course/FILE_MAP.md
 exercises/EXERCISE_INDEX.md
 build/claude-knowledge/bundle.seed.json
-INSTRUCOES_CLAUDE_PROJETO.md
+setup/INSTRUCOES_CLAUDE_PROJETO.md
 ```
 
 ### O que muda na prática
@@ -347,9 +367,6 @@ O app verifica:
 
 ```text
 {repo-root}/
-|-- INSTRUCOES_CLAUDE_PROJETO.md
-|-- INSTRUCOES_GPT_PROJETO.md
-|-- INSTRUCOES_GEMINI_PROJETO.md
 |-- manifest.json
 |-- build/
 |-- content/
@@ -358,6 +375,7 @@ O app verifica:
 |-- exams/
 |-- manual-review/
 |-- raw/
+|-- setup/
 |-- staging/
 |-- student/
 `-- system/
@@ -375,54 +393,142 @@ O app verifica:
 
 ## Requisitos
 
-- Python `3.8+`
-- ambiente com `tkinter`
-- Ollama instalado para o fluxo de vision
-- Ollama acessível em `http://localhost:11434`
+- Windows 10/11
+- Python `3.11` recomendado
+- `tkinter` habilitado na instalacao do Python
+- Git
+- Ollama local para o fluxo de Vision
 
-Dependências Python principais:
+Dependencias Python usadas de fato pelo app:
 
 - `pymupdf`
 - `pymupdf4llm`
 - `pdfplumber`
 - `Pillow`
 - `requests`
+- `beautifulsoup4`
 - `pytest` para desenvolvimento
 
-Ferramentas opcionais:
+Ferramentas externas opcionais, mas importantes:
 
-- `docling`
-- `marker-pdf`
-- `tesseract`
+- `tesseract` para OCR local
+- `docling` CLI
+- `marker_single` via `marker-pdf`
 
-## Instalação
+Servicos externos opcionais:
+
+- Datalab para PDFs `math_heavy`
+- Ollama para Vision no Image Curator
+- OpenAI / Gemini so se voce usar essas integracoes fora do fluxo local principal
+
+### Stack operacional
+
+Hoje, o stack pratico do projeto e:
+
+- UI desktop: `Tkinter`
+- processamento PDF base: `PyMuPDF`, `PyMuPDF4LLM`, `pdfplumber`
+- HTTP / integracoes cloud: `requests`
+- parsing HTML de URLs: `beautifulsoup4`
+- imagens na UI: `Pillow`
+- vision local: `Ollama`
+- OCR local opcional: `Tesseract`
+- PDF cloud opcional: `Datalab`
+
+## Instalacao
 
 ### Windows / PowerShell
 
 ```powershell
 python -m venv .venv
 & .\.venv\Scripts\Activate.ps1
-pip install -U pip
+python -m pip install -U pip setuptools wheel
 pip install -e .[dev]
 ```
 
-Backends opcionais:
+### Bootstrap completo em maquina nova
+
+```powershell
+git clone <URL_DO_REPOSITORIO>
+cd GPT-Tutor-Generator
+python -m venv .venv
+& .\.venv\Scripts\Activate.ps1
+python -m pip install -U pip setuptools wheel
+pip install -e .[dev]
+pip install docling marker-pdf
+```
+
+### CLIs opcionais
 
 ```powershell
 pip install docling
 pip install marker-pdf
 ```
 
-Se for usar OCR local:
+### Tesseract OCR
 
-- instale o Tesseract
-- garanta `tessdata` configurado corretamente
+Se voce usar OCR local, instale o Tesseract e deixe o executavel no `PATH`.
 
-## Configuração
+O app tenta resolver `TESSDATA_PREFIX` automaticamente, mas no outro computador pode ser necessario definir manualmente.
+
+Exemplo temporario em PowerShell:
+
+```powershell
+$env:TESSDATA_PREFIX = "C:\Program Files\Tesseract-OCR\tessdata"
+```
+
+Exemplo persistente no Windows:
+
+```powershell
+[Environment]::SetEnvironmentVariable(
+  "TESSDATA_PREFIX",
+  "C:\Program Files\Tesseract-OCR\tessdata",
+  "User"
+)
+```
+
+### Ollama
+
+O Image Curator usa Ollama. O minimo e ter o servidor local ativo:
+
+```powershell
+ollama serve
+```
+
+Modelos uteis:
+
+```powershell
+ollama pull qwen3-vl:8b
+ollama pull qwen3-vl:235b-cloud
+```
+
+Se o servidor nao estiver em `http://localhost:11434`, ajuste isso nas configuracoes do app.
+
+### Validacao rapida do ambiente
+
+No app, abra `Status` e confira:
+
+- `Datalab API`
+- `docling CLI`
+- `marker CLI`
+- `TESSDATA`
+- `Vision`
+
+Essa e a forma mais rapida de validar o outro computador.
+
+## Configuracao
 
 ### `.env`
 
-Hoje, o `.env` pode incluir tanto chaves externas quanto a chave do Datalab:
+O projeto carrega automaticamente o arquivo `.env` na raiz, sem sobrescrever variaveis ja existentes no sistema.
+
+Variaveis atualmente usadas/esperadas:
+
+- `DATALAB_API_KEY`
+- `DATALAB_BASE_URL`
+- `OPENAI_API_KEY`
+- `GEMINI_API_KEY`
+
+Exemplo minimo:
 
 ```env
 DATALAB_API_KEY=
@@ -431,41 +537,49 @@ OPENAI_API_KEY=
 GEMINI_API_KEY=
 ```
 
-### Configuração persistida do app
+Observacoes:
 
-As opções do app ficam em:
+- `DATALAB_API_KEY` so e necessaria se voce for usar o backend `datalab`
+- `DATALAB_BASE_URL` pode ficar no padrao
+- `OPENAI_API_KEY` e `GEMINI_API_KEY` nao sao obrigatorias para subir o app
+
+### Variaveis de sistema que podem faltar no outro computador
+
+As mais importantes para desenvolvimento local sao:
+
+- `PATH` contendo `python`
+- `PATH` contendo `ollama`
+- `PATH` contendo `tesseract` se OCR local for usado
+- `TESSDATA_PREFIX` se a autodeteccao do `tessdata` falhar
+
+### Configuracao persistida do app
+
+As opcoes da UI ficam fora do repositorio, no diretorio de dados do usuario.
+
+No Windows, o app usa:
 
 ```text
-~/.gpt_tutor_config.json
+%APPDATA%\GPTTutorGenerator
 ```
 
-Exemplo:
+Em geral, vale copiar isso apenas se voce quiser reaproveitar preferencias de interface e modelos configurados.
 
-```json
-{
-  "vision_backend": "ollama",
-  "vision_model": "qwen3-vl:235b-cloud",
-  "vision_model_quantization": "default",
-  "ollama_base_url": "http://localhost:11434",
-  "prevent_sleep_during_build": true
-}
-```
+Campos relevantes:
 
-### O que realmente precisa para cada fluxo
+- `vision_backend`
+- `vision_model`
+- `vision_model_quantization`
+- `ollama_base_url`
+- `prevent_sleep_during_build`
 
-Para usar o **Image Curator** com Vision:
+## Execucao
+
+### Rodar com o venv ativado
 
 ```powershell
-ollama signin
-ollama pull qwen3-vl:235b-cloud
-ollama pull qwen3-vl:8b
+& .\.venv\Scripts\Activate.ps1
+python app.py
 ```
-
-Para usar o **Datalab**:
-
-- preencher `DATALAB_API_KEY` no `.env`
-
-## Execução
 
 ### Script PowerShell
 
@@ -479,7 +593,14 @@ Para usar o **Datalab**:
 run.bat
 ```
 
-### Execução direta
+### Comandos uteis de desenvolvimento
+
+```powershell
+python -m pytest tests -q
+python -m pytest tests\test_image_curation.py -q
+```
+
+### Execucao direta
 
 ```powershell
 python app.py
@@ -507,8 +628,8 @@ pytest tests\test_image_curation.py -q
 - `marker` continua no projeto, mas está em investigação e refinamento
 - O ponto de verdade do fluxo atual está em:
   - [src/builder/engine.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/engine.py)
-  - [src/builder/datalab_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/datalab_client.py)
-  - [src/builder/ollama_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/ollama_client.py)
+  - [src/builder/runtime/datalab_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/runtime/datalab_client.py)
+  - [src/builder/vision/ollama_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/vision/ollama_client.py)
   - [src/ui/image_curator.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/image_curator.py)
   - [src/ui/dialogs.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/dialogs.py)
 - Documentos em `docs/superpowers/` podem descrever versões históricas da implementação

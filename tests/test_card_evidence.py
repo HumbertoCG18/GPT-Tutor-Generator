@@ -1,4 +1,4 @@
-from src.builder.card_evidence import extract_card_evidence
+from src.builder.vision.card_evidence import extract_card_evidence
 
 
 def test_extract_card_evidence_reads_card_title_as_topic_signal():

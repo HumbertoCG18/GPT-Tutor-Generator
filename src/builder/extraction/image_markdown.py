@@ -5,7 +5,7 @@ import unicodedata
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Tuple
 
-from src.builder.image_classifier import extract_page_number
+from src.builder.vision.image_classifier import extract_page_number
 
 _IMAGE_DESC_BLOCK_RE = re.compile(
     r"<!-- IMAGE_DESCRIPTION: (?P<fname>[^\s]+) -->\n"
@@ -18,6 +18,7 @@ _IMAGE_DESC_ORPHANS_RE = re.compile(
     r"\n*<!-- IMAGE_DESCRIPTION_ORPHANS -->\n.*?<!-- /IMAGE_DESCRIPTION_ORPHANS -->\n*",
     re.DOTALL,
 )
+_IMAGE_REF_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
 
 
 def _image_curation_heading(img_type: str) -> str:
@@ -270,6 +271,25 @@ def _inject_orphans_near_sections(
 
     rebuilt = "\n".join(part for part in rebuilt_sections if part).rstrip()
     return rebuilt, remaining
+
+
+def _strip_described_image_refs(text: str, image_curation: dict) -> str:
+    """Remove image refs whose description is already injected into markdown."""
+    described_fnames: set[str] = set()
+    for page_data in (image_curation.get("pages") or {}).values():
+        for fname, img_data in (page_data.get("images") or {}).items():
+            if img_data.get("description"):
+                described_fnames.add(fname)
+
+    if not described_fnames:
+        return text
+
+    def _sub(match: re.Match) -> str:
+        fname = Path(match.group(2)).name
+        return "" if fname in described_fnames else match.group(0)
+
+    stripped = _IMAGE_REF_RE.sub(_sub, text)
+    return re.sub(r"\n{3,}", "\n\n", stripped)
 
 
 def _low_token_inject_image_descriptions(

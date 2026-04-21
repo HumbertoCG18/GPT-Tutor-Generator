@@ -1,7 +1,7 @@
 """Tests for Task 4: scorer descarta rows ignoradas."""
 
 from src.builder.engine import _score_entry_against_timeline_block
-from src.builder.timeline_index import _timeline_block_is_administrative_only
+from src.builder.timeline.index import _timeline_block_is_administrative_only
 
 
 def _make_signals(text: str) -> dict:
