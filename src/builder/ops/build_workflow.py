@@ -46,6 +46,7 @@ def build_impl(
             "marker_cli": bool(marker_cli),
         },
         "entries": [],
+        "failed_entries": [],
     }
 
     manifest_path = builder.root_dir / "manifest.json"
@@ -58,8 +59,33 @@ def build_impl(
         logger.info("[%d/%d] Processing: %s (%s)", i + 1, total, entry.title, entry.file_type)
         if builder.progress_callback:
             builder.progress_callback(i, total, entry.title)
-        item_result = builder._process_entry(entry)
-        manifest["entries"].append(item_result)
+        try:
+            item_result = builder._process_entry(entry)
+            manifest["entries"].append(item_result)
+        except FileNotFoundError as exc:
+            failure = {
+                "id": entry.id(),
+                "title": entry.title,
+                "file_type": entry.file_type,
+                "source_path": entry.source_path,
+                "error_type": "missing_source",
+                "error_message": str(exc),
+            }
+            builder.failed_entries.append(failure)
+            manifest["failed_entries"].append(failure)
+            builder.logs.append(
+                {
+                    "entry": entry.title,
+                    "step": "source_check",
+                    "status": "error",
+                    "message": str(exc),
+                }
+            )
+            logger.warning("[%d/%d] Pulando entry com arquivo ausente: %s", i + 1, total, exc)
+            manifest["logs"] = builder.logs
+            manifest = builder._compact_manifest(manifest)
+            write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+            continue
         manifest["logs"] = builder.logs
         manifest = builder._compact_manifest(manifest)
         write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))

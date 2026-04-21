@@ -454,7 +454,7 @@ def write_build_report(
 ) -> None:
     platform_map = {
         "claude": ("setup/INSTRUCOES_CLAUDE_PROJETO.md",
-                   "Cole no campo 'Instructions' do Projeto Claude"),
+                   "Cole no campo 'Instructions' do Claude Project"),
         "gpt":    ("setup/INSTRUCOES_GPT_PROJETO.md",
                    "Cole no campo 'Instructions' do GPT / Custom GPT"),
         "gemini": ("setup/INSTRUCOES_GEMINI_PROJETO.md",
@@ -1412,7 +1412,8 @@ def glossary_md(
                 "",
             ]
     else:
-        lines.append("> ⏳ **Termos serão adicionados pelo tutor na primeira sessão.**")
+        lines.append("> ⏳ **Nenhum termo foi detectado automaticamente ainda.**")
+        lines.append("> Reprocesse o repositório após enriquecer o conteúdo curado ou ajustar o material de origem.")
         lines.append("")
 
     return clamp_navigation_artifact_fn(
@@ -1426,35 +1427,40 @@ def root_readme(course_meta: dict) -> str:
     return f"""# {course_meta.get('course_name', 'Curso')}
 
 Repositório gerado pelo **Academic Tutor Repo Builder V3**.
-Plataforma alvo: **Claude Projects** (claude.ai)
+Compatível com **Claude Projects**, **ChatGPT Projects** e **Gemini Gems**.
 
-## Como usar com Claude
+## Como usar com uma LLM
 
-1. Crie um **Projeto** no Claude.ai com o nome desta disciplina
-2. Cole o conteúdo de `setup/INSTRUCOES_CLAUDE_PROJETO.md` no campo **Instructions** do Projeto
-3. Conecte este repositório GitHub ao Projeto (aba Settings → GitHub)
-4. Inicie uma conversa — o Claude lerá os arquivos automaticamente
+1. Gere ou regenere os arquivos em `setup/`
+2. Escolha a plataforma alvo:
+   - `setup/INSTRUCOES_CLAUDE_PROJETO.md`
+   - `setup/INSTRUCOES_GPT_PROJETO.md`
+   - `setup/INSTRUCOES_GEMINI_PROJETO.md`
+3. Cole o arquivo correspondente no campo de instruções da plataforma
+4. Conecte este repositório GitHub ou carregue os arquivos conforme a plataforma escolhida
+5. Inicie a conversa usando os artefatos gerados do app
 
 ## Estrutura
 - `system/` — política do tutor, pedagogia, modos, templates
 - `course/` — identidade, mapa, cronograma, glossário, bibliografia
-- `student/` — estado atual, perfil, schema de progresso
+- `student/` — estado atual, perfil e baterias de progresso
 - `content/` — material de aula curado
 - `exercises/` — listas de exercícios
 - `exams/` — provas anteriores e gabaritos
 - `raw/` — materiais originais (PDFs, imagens)
 - `staging/` — extração automática (para revisão)
 - `manual-review/` — revisão humana guiada
-- `build/claude-knowledge/` — bundle para upload manual se necessário
+- `build/` — artefatos internos do app e bundles auxiliares
 
 ## Arquivos-chave para o tutor
 
 | Arquivo | Função |
 |---|---|
-| `setup/INSTRUCOES_CLAUDE_PROJETO.md` | System prompt do Projeto (não indexado pelo tutor) |
+| `setup/INSTRUCOES_*.md` | Instruções por plataforma (fora do knowledge base indexado) |
 | `student/STUDENT_STATE.md` | Estado atual do aluno — atualizar após cada sessão |
-| `course/COURSE_MAP.md` | Preencher com os tópicos em ordem |
-| `course/GLOSSARY.md` | Preencher com terminologia da disciplina |
+| `course/COURSE_MAP.md` | Mapa pedagógico curto gerado pelo app |
+| `course/FILE_MAP.md` | Roteador operacional com seções e confiança |
+| `course/GLOSSARY.md` | Glossário semeado e refinado a partir do conteúdo |
 | `content/BIBLIOGRAPHY.md` | Referências bibliográficas |
 
 ## Fluxo recomendado
@@ -1462,8 +1468,8 @@ Plataforma alvo: **Claude Projects** (claude.ai)
 1. Rodar extração automática no app
 2. Revisar `manual-review/`
 3. Promover conteúdo curado para `content/`, `exercises/`, `exams/`
-4. Preencher `COURSE_MAP.md` e `GLOSSARY.md`
-5. Conectar ao Projeto no Claude.ai
+4. Reprocessar o repositório quando quiser reaplicar a arquitetura atual do app
+5. Conectar o repositório à plataforma LLM escolhida
 6. Após cada sessão de estudo: atualizar `student/STUDENT_STATE.md` e fazer push
 """
 
@@ -1707,9 +1713,9 @@ Ele é insumo para:
 - `manual-review/`: revisão humana guiada
 - `content/` e `exams/`: conhecimento curado
 
-## Destino final no Claude Project
+## Destino final no repositório pedagógico
 Todo arquivo curado deve estar em formato Markdown limpo
-para ser lido eficientemente pelo Claude via integração GitHub.
+para ser lido eficientemente pela plataforma LLM conectada ao repositório.
 """
 
 
@@ -1726,7 +1732,7 @@ PDF bruto
  -> extração de artefatos
  -> revisão manual guiada
  -> conteúdo curado
- -> Claude Project (via GitHub sync)
+ -> plataforma LLM conectada (via GitHub sync ou upload)
 ```
 
 ## Camada base
@@ -1746,7 +1752,7 @@ PDF bruto
 ## Regra de ouro
 O tutor não deve consumir o PDF bruto como fonte final.
 A fonte final deve ser o Markdown curado derivado da revisão manual,
-sincronizado com o Claude Project via GitHub.
+sincronizado com a plataforma LLM escolhida.
 """
 
 
@@ -1772,7 +1778,7 @@ policy:
   promotion_rule: |
     Nenhum arquivo de staging é conhecimento final.
     O conhecimento final deve sair de manual-review/ e depois ser promovido
-    para content/, exercises/ ou exams/, e então sincronizado com o Claude Project.
+    para content/, exercises/ ou exams/, e então sincronizado com a plataforma LLM escolhida.
 """
 
 

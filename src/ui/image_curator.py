@@ -22,6 +22,7 @@ from src.builder.extraction.image_markdown import (
     _IMAGE_DESC_BLOCK_RE,
     _image_curation_heading as _image_curation_heading_label,
     _low_token_inject_image_descriptions,
+    _strip_described_image_refs,
 )
 
 logger = logging.getLogger(__name__)
@@ -137,29 +138,6 @@ def _resolve_entry_pdf_path(repo_dir: Path, entry_data: dict) -> Optional[Path]:
         if candidate.exists() and candidate.suffix.lower() == ".pdf":
             return candidate
     return None
-
-
-_IMAGE_REF_RE = re.compile(r"!\[([^\]]*)\]\(([^)]+)\)")
-
-
-def _strip_described_image_refs(text: str, curation: dict) -> str:
-    """Remove image refs whose content is already injected into markdown."""
-    described_fnames: set[str] = set()
-    for page_data in (curation.get("pages") or {}).values():
-        for fname, img_data in (page_data.get("images") or {}).items():
-            if img_data.get("description"):
-                described_fnames.add(fname)
-
-    if not described_fnames:
-        return text
-
-    def _sub(match: re.Match) -> str:
-        fname = Path(match.group(2)).name
-        return "" if fname in described_fnames else match.group(0)
-
-    stripped = _IMAGE_REF_RE.sub(_sub, text)
-    return re.sub(r"\n{3,}", "\n\n", stripped)
-
 
 def _inject_for_current_entry(repo_dir: Path, entry: dict) -> List[Path]:
     """Inject descriptions into the current entry markdown targets."""

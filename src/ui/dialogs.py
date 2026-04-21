@@ -659,7 +659,7 @@ AÇÕES PRINCIPAIS
     Hoje isso também reaplica:
     • COURSE_MAP.md e FILE_MAP.md em modo mais enxuto
     • GLOSSARY.md com definições curtas e evidência compacta
-    • bundle.seed.json seletivo para Claude Web
+    • bundle.seed.json seletivo para bundles manuais de alto sinal
     • reinjeção de descrições de imagem em formato compacto
 
   Gerar Instruções LLM
@@ -675,11 +675,12 @@ AÇÕES PRINCIPAIS
     Backup automático em build/consolidation-backup/.
 
 OBSERVAÇÃO
-  Quando COURSE_MAP.md e FILE_MAP.md já estão maduros, o app pode omitir
-  o protocolo de primeira sessão ao gerar essas instruções.
+  As instruções geradas sempre refletem o contrato atual do app:
+  auditoria inicial, navegação map-first e FILE_MAP/COURSE_MAP como
+  artefatos gerados deterministicamente.
 """),
-    ("Claude e Tokens", """ARQUITETURA MAP-FIRST / LOW-TOKEN
-  O app gera artefatos pensando em baixo custo de contexto no Claude Web.
+    ("Map-First e Tokens", """ARQUITETURA MAP-FIRST / LOW-TOKEN
+  O app gera artefatos compactos para reduzir custo de contexto nas plataformas LLM suportadas.
 
 ORDEM IDEAL DE LEITURA
   1. course/COURSE_MAP.md
@@ -709,7 +710,7 @@ ROLLOUT
   Para aplicar isso em repositórios antigos, use:
   • Reprocessar Repositório
 
-OBSERVAÇÃO
+  OBSERVAÇÃO
   COURSE_MAP.md omite seções vazias até existir sinal real, como incidência em prova
   ou notas do professor. Isso evita desperdiçar contexto logo no primeiro chat.
 """),
@@ -717,8 +718,8 @@ OBSERVAÇÃO
   student/STUDENT_STATE.md
     Registra progresso e próximos passos do aluno. Consulte antes de repetir ou aprofundar demais.
 
-  student/PROGRESS_SCHEMA.md
-    Define a estrutura esperada para atualizações de progresso.
+  student/batteries/
+    Guarda baterias por unidade/tópico e summaries consolidados quando a unidade é fechada.
 
   USO PRÁTICO
   Ao final de uma sessão de estudo, atualize o estado do aluno no repositório.

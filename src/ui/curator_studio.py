@@ -1,4 +1,5 @@
 import io
+import json
 import os
 import re
 import shutil
@@ -14,7 +15,7 @@ from src.builder.artifacts.navigation import (
     _clean_extraction_noise,
     _inject_executive_summary,
 )
-from src.builder.artifacts.repo import migrate_legacy_url_manual_reviews
+from src.builder.engine import migrate_legacy_url_manual_reviews
 from src.builder.engine import RepoBuilder
 from src.ui.image_curator import _inject_all_image_descriptions_from_manifest
 
@@ -253,6 +254,7 @@ class CuratorStudio(tk.Toplevel):
         self._preview_crop_canvas = None
         self._preview_crop_meta = None
         self._preview_pdf_path = None
+        self._preview_max_pages = CURATOR_PDF_PREVIEW_MAX_PAGES
         self._layout_mode = ""
 
         self.theme_mgr.apply(self, self._theme_name)
@@ -379,6 +381,11 @@ class CuratorStudio(tk.Toplevel):
         self.canvas_window = self.canvas.create_window((0, 0), window=self.inner_frame, anchor="nw")
         self.preview_notice = ttk.Label(preview_frame, textvariable=self._preview_notice_var)
         self.preview_notice.pack(fill="x", anchor="w", pady=(4, 0))
+        self._load_more_btn = ttk.Button(
+            preview_frame, text="Carregar mais ▼", command=self._load_more_preview_pages
+        )
+        self._load_more_btn.pack(anchor="w", pady=(2, 4))
+        self._load_more_btn.pack_forget()
 
         self.inner_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
         self.canvas.bind("<Configure>", lambda e: self.canvas.itemconfig(self.canvas_window, width=e.width))
@@ -501,6 +508,10 @@ class CuratorStudio(tk.Toplevel):
 
     def _reset_preview_zoom(self):
         self._set_preview_zoom(1.0)
+
+    def _load_more_preview_pages(self):
+        self._preview_max_pages += CURATOR_PDF_PREVIEW_MAX_PAGES
+        self._refresh_previews()
 
     def _refresh_previews(self):
         if self._current_frontmatter:
@@ -665,6 +676,7 @@ class CuratorStudio(tk.Toplevel):
             self._load_selected_source()
 
         # Load previews — prefer rendering from source PDF directly
+        self._preview_max_pages = CURATOR_PDF_PREVIEW_MAX_PAGES
         self._load_previews(fm)
 
     def _parse_frontmatter(self, content: str) -> dict:
@@ -779,7 +791,7 @@ class CuratorStudio(tk.Toplevel):
                 try:
                     self._preview_pdf_path = pdf_path
                     doc = pymupdf.open(str(pdf_path))
-                    page_indices = _preview_page_indices(doc.page_count)
+                    page_indices = _preview_page_indices(doc.page_count, self._preview_max_pages)
                     for page_num in page_indices:
                         page = doc[page_num]
                         render_scale = 1.5 * self._preview_zoom
@@ -814,8 +826,12 @@ class CuratorStudio(tk.Toplevel):
                             )
                     if doc.page_count > len(page_indices):
                         self._preview_notice_var.set(
-                            f"Preview limitado às primeiras {len(page_indices)} páginas de {doc.page_count}."
+                            f"Mostrando {len(page_indices)} de {doc.page_count} páginas."
                         )
+                        self._load_more_btn.pack(anchor="w", pady=(2, 4))
+                    else:
+                        self._preview_notice_var.set("")
+                        self._load_more_btn.pack_forget()
                     doc.close()
                     return
                 except Exception as e:

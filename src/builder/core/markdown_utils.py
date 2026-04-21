@@ -121,6 +121,8 @@ def generated_repo_gitignore_text() -> str:
         "course/.assessment_context.json",
         "course/.tag_catalog.json",
         "course/.semantic_profile.generated.json",
+        "# Assets de imagem usados localmente pelo app (o tutor consome as descrições injetadas)",
+        "content/images/",
         "# Exportações operacionais de prompt (copiadas para a plataforma, não lidas pelo tutor)",
         "setup/",
         "",

@@ -199,4 +199,17 @@ def group_images_by_page(
             page = extract_page_number(img_path.name)
             groups.setdefault(page, []).append(img_path)
 
+    # 3. Manual crops saved by Curator Studio in images_dir/manual-crops/
+    manual_crops_dir = images_dir / "manual-crops"
+    if manual_crops_dir.exists():
+        for img_path in sorted(manual_crops_dir.iterdir()):
+            if not img_path.is_file():
+                continue
+            if img_path.suffix.lower() not in _IMG_EXTS:
+                continue
+            if not img_path.name.lower().startswith(entry_prefix.lower()):
+                continue
+            page = extract_page_number(img_path.name)
+            groups.setdefault(page, []).append(img_path)
+
     return groups

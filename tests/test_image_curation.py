@@ -1093,7 +1093,7 @@ class TestDescriptionInjection:
         result = RepoBuilder.inject_image_descriptions(markdown, curation)
         assert "<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->" in result
         assert "> **[Descrição de imagem]** Árvore de prova com 3 níveis." in result
-        assert "![](content/images/entry1-page-003-img-01.png)" in result
+        assert "![](content/images/entry1-page-003-img-01.png)" not in result
 
     def test_skip_excluded_images(self):
         from src.builder.engine import RepoBuilder
@@ -1159,6 +1159,7 @@ class TestDescriptionInjection:
         assert "Descrição antiga" not in result
         assert "Tabela-verdade atualizada." in result
         assert "<!-- Tipo: tabela -->" in result
+        assert "![](content/images/entry1-page-003-img-01.png)" not in result
 
     def test_replace_adjacent_stale_description_blocks(self):
         from src.builder.engine import RepoBuilder
@@ -1192,6 +1193,7 @@ class TestDescriptionInjection:
         assert "Descrição antiga 2." not in result
         assert result.count("<!-- IMAGE_DESCRIPTION: entry1-page-003-img-01.png -->") == 1
         assert "Diagrama atualizado sem duplicação." in result
+        assert "![](content/images/entry1-page-003-img-01.png)" not in result
 
     def test_compact_long_description_to_single_sentence(self):
         from src.builder.engine import RepoBuilder
@@ -1340,3 +1342,5 @@ class TestDescriptionInjection:
         result = RepoBuilder.inject_image_descriptions(markdown, curation)
         assert "Diagrama de rede neural com três camadas." in result
         assert "Mesma imagem da página 3; mantendo só referência curta." in result
+        assert "![](content/images/entry1-page-003-img-01.png)" not in result
+        assert "![](content/images/entry1-page-004-img-01.png)" not in result

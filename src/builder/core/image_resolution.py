@@ -7,7 +7,7 @@ import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from src.utils.helpers import ensure_dir, safe_rel
+from src.utils.helpers import ensure_dir, safe_rel, slugify
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +91,7 @@ def resolve_content_images(builder) -> None:
                 if img_key in seen:
                     new_path = seen[img_key]
                 else:
-                    parent_slug = builder.slugify(img_path.parent.name) if img_path.parent.name else ""
+                    parent_slug = slugify(img_path.parent.name) if img_path.parent.name else ""
                     short_name = f"{parent_slug}-{img_path.name}" if parent_slug else img_path.name
                     new_path = images_dir / short_name
 
@@ -128,6 +128,42 @@ def resolve_content_images(builder) -> None:
                 for old, new in replacements:
                     text = text.replace(old, new)
                 md_file.write_text(text, encoding="utf-8")
+
+    # Copy extracted images (images_dir in manifest) that are never referenced
+    # in markdown but must be visible to the Image Curator.
+    manifest_path = builder.root_dir / "manifest.json"
+    if manifest_path.exists():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            _IMG_EXTS_SET = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"}
+            for entry in manifest.get("entries", []):
+                entry_id = entry.get("id", "")
+                img_dir_rel = entry.get("images_dir")
+                if not entry_id or not img_dir_rel:
+                    continue
+                img_dir = builder.root_dir / img_dir_rel
+                if not img_dir.exists():
+                    continue
+                for img_path in sorted(img_dir.iterdir()):
+                    if not img_path.is_file():
+                        continue
+                    if img_path.suffix.lower() not in _IMG_EXTS_SET:
+                        continue
+                    if img_path.stat().st_size < builder._MIN_IMG_BYTES:
+                        continue
+                    img_key = str(img_path)
+                    if img_key in seen:
+                        new_path = seen[img_key]
+                    else:
+                        new_path = images_dir / f"{entry_id}-{img_path.name}"
+                        if not new_path.exists():
+                            shutil.copy2(str(img_path), str(new_path))
+                            new_path = builder._convert_image_format(new_path)
+                            copied += 1
+                        seen[img_key] = new_path
+                    referenced_files.add(new_path)
+        except Exception as exc:
+            logger.warning("Could not copy extracted images_dir entries: %s", exc)
 
     stale = existing_files - referenced_files
     for f in stale:
