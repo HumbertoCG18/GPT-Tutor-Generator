@@ -619,6 +619,7 @@ Itens planejados em ordem de prioridade:
 | 5 | **MinerU** — backend PDF open-source com foco em equações | alto | alto |
 | 6 | **Marker-API** — versão cloud do Marker sem dependência de GPU local | médio | médio |
 | 7 | **Obsidian / Notion** — compatibilidade de saída com segundos cérebros | alto | médio |
+| 8 | **Instalador Windows** — Setup.exe com wizard, publicado nas Releases do GitHub | alto | alto |
 
 ## Notas de Manutenção
 

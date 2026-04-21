@@ -323,6 +323,81 @@ A Marker-API resolve os problemas do Marker local:
 
 ---
 
+## 8. Instalador Windows (Setup.exe)
+
+Distribuir o app como um instalador nativo para Windows, publicado na seção
+**Releases** do GitHub, que configura tudo do zero sem exigir conhecimento de
+terminal, Python ou virtualenvs.
+
+### Motivação
+
+O fluxo de instalação atual exige:
+
+- instalar Python manualmente com a opção `Add to PATH`
+- criar e ativar um virtualenv
+- rodar `pip install -e .[dev]`
+- instalar Ollama, Tesseract e CLIs opcionais separadamente
+- configurar variáveis de sistema manualmente
+
+Para um aluno que só quer usar o app — não desenvolver nele — esse processo é
+uma barreira alta. Um `Setup.exe` elimina esse atrito e abre o projeto para
+usuários sem background técnico.
+
+### Escopo
+
+**Wizard de instalação**
+
+- Tela de boas-vindas com versão e licença
+- Seleção de pasta de instalação (padrão: `%LOCALAPPDATA%\GPTTutorGenerator`)
+- Detecção automática do que já está instalado (Python, Ollama, Tesseract, Git)
+- Checkbox por componente opcional (Tesseract OCR, docling, marker-pdf)
+- Configuração do `.env` pelo wizard (campo para `DATALAB_API_KEY`)
+- Seletor de modelos Ollama para baixar durante a instalação:
+  - `qwen3-vl:8b` — leve, roda em GPU com 8 GB de VRAM
+  - `qwen3-vl:235b-cloud` — qualidade máxima via Ollama Cloud
+  - `(nenhum por enquanto)` — instalar depois pelo app
+- Opção de criar atalho na Área de Trabalho e no Menu Iniciar
+- Opção de associar extensão `.env` ao Bloco de Notas para edição rápida
+
+**O que o instalador configura automaticamente**
+
+- Copia os arquivos do app para a pasta de instalação
+- Cria e popula o virtualenv interno (`<install_dir>\.venv`)
+- Define `TESSDATA_PREFIX` no perfil do usuário se Tesseract for instalado
+- Adiciona Ollama ao `PATH` se não estiver
+- Cria `run.bat` e atalhos apontando para `python app.py` dentro do venv
+
+**Releases no GitHub**
+
+- Artefato publicado em `github.com/HumbertoCG18/GPT-Tutor-Generator/releases`
+- Nome canônico: `GPTTutorGenerator-Setup-v<versao>.exe`
+- Changelog resumido no corpo da release (gerado do `git log`)
+- Asset adicional: `GPTTutorGenerator-portable-v<versao>.zip` (extração direta, sem wizard)
+
+### Toolchain sugerida
+
+| Opção | Prós | Contras |
+|---|---|---|
+| **NSIS** (Nullsoft) | maduro, scriptável, output leve | sintaxe de script datada |
+| **Inno Setup** | UI moderna, Pascal script, gratuito | menos usado em projetos Python |
+| **PyInstaller + NSIS** | empacota o Python junto, sem dependência de instalação do Python | executável maior (~50–80 MB) |
+| **uv + NSIS** | usa `uv` para resolver deps rapidamente, venv leve | exige `uv` instalado ou embarcado |
+
+Recomendação inicial: **Inno Setup** para o wizard + **PyInstaller** para empacotar
+o Python e o app num único executável, evitando dependência de Python instalado no
+sistema do usuário.
+
+### Considerações
+
+- O app usa Tkinter — PyInstaller lida bem com isso no Windows
+- Ollama precisa ser baixado separadamente (instalador próprio); o wizard pode
+  abrir o instalador do Ollama automaticamente ou redirecionar para o site
+- `git` também pode não estar presente — o wizard deve verificar e orientar
+- O fluxo de atualização (reinstalar sobre versão anterior) deve ser testado
+- CI/CD: criar GitHub Action que gera o `Setup.exe` automaticamente em cada tag `v*`
+
+---
+
 ## Priorização sugerida
 
 | Ordem | Item | Esforço | Ganho |
@@ -334,11 +409,14 @@ A Marker-API resolve os problemas do Marker local:
 | 5 | MinerU | alto | alto — alternativa local de qualidade ao Datalab |
 | 6 | Marker-API | médio | médio — destravar Marker sem dependência de GPU local |
 | 7 | Obsidian/Notion | alto | médio — nicho, mas abre uso fora do tutor LLM |
+| 8 | Instalador Windows (Setup.exe) | alto | alto — remove barreira de entrada para usuários finais |
 
 Student State e DD.MM vêm primeiro por custo-benefício: menor esforço, resolvem
 problemas que afetam todo ciclo de uso. Cronograma visual e NotebookLM vêm em
 seguida porque já têm o contexto arquitetural claro. MinerU e Marker-API dependem
-de investigação de ambiente antes de comprometer escopo.
+de investigação de ambiente antes de comprometer escopo. O instalador vem por
+último no esforço técnico, mas é o que abre o projeto para usuários sem background
+de desenvolvimento.
 
 ---
 
