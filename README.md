@@ -23,6 +23,7 @@ Aplicação desktop em Python para transformar materiais acadêmicos em um repos
 - [Configuração](#configuracao)
 - [Execução](#execucao)
 - [Testes](#testes)
+- [Roadmap](#roadmap)
 - [Notas de Manutenção](#notas-de-manutencao)
 - [Licença](#licenca)
 
@@ -466,25 +467,7 @@ pip install marker-pdf
 
 ### Tesseract OCR
 
-Se voce usar OCR local, instale o Tesseract e deixe o executavel no `PATH`.
-
-O app tenta resolver `TESSDATA_PREFIX` automaticamente, mas no outro computador pode ser necessario definir manualmente.
-
-Exemplo temporario em PowerShell:
-
-```powershell
-$env:TESSDATA_PREFIX = "C:\Program Files\Tesseract-OCR\tessdata"
-```
-
-Exemplo persistente no Windows:
-
-```powershell
-[Environment]::SetEnvironmentVariable(
-  "TESSDATA_PREFIX",
-  "C:\Program Files\Tesseract-OCR\tessdata",
-  "User"
-)
-```
+Se voce usar OCR local, instale o Tesseract e deixe o executavel no `PATH`. Veja detalhes de configuração de `TESSDATA_PREFIX` na seção [Configuração](#configuracao).
 
 ### Ollama
 
@@ -517,40 +500,41 @@ Essa e a forma mais rapida de validar o outro computador.
 
 ## Configuracao
 
-### `.env`
+### Variáveis de sistema (PATH)
 
-O projeto carrega automaticamente o arquivo `.env` na raiz, sem sobrescrever variaveis ja existentes no sistema.
+O app depende que os executáveis abaixo estejam disponíveis no `PATH` do sistema:
 
-Variaveis atualmente usadas/esperadas:
+| Executável | Obrigatório | Função |
+|---|---|---|
+| `python` | sim | rodar o app |
+| `ollama` | sim, para Vision | servidor de vision local |
+| `tesseract` | não | OCR local (fallback) |
+| `docling` | não | backend PDF alternativo |
+| `marker_single` | não | backend PDF alternativo (em investigação) |
 
-- `DATALAB_API_KEY`
-- `DATALAB_BASE_URL`
-- `OPENAI_API_KEY`
-- `GEMINI_API_KEY`
+Se a autodetecção do `TESSDATA_PREFIX` falhar, defina manualmente:
 
-Exemplo minimo:
+```powershell
+# Temporário (sessão atual)
+$env:TESSDATA_PREFIX = "C:\Program Files\Tesseract-OCR\tessdata"
 
-```env
-DATALAB_API_KEY=
-DATALAB_BASE_URL=https://www.datalab.to
-OPENAI_API_KEY=
-GEMINI_API_KEY=
+# Permanente
+[Environment]::SetEnvironmentVariable("TESSDATA_PREFIX", "C:\Program Files\Tesseract-OCR\tessdata", "User")
 ```
 
-Observacoes:
+### `.env`
 
-- `DATALAB_API_KEY` so e necessaria se voce for usar o backend `datalab`
-- `DATALAB_BASE_URL` pode ficar no padrao
-- `OPENAI_API_KEY` e `GEMINI_API_KEY` nao sao obrigatorias para subir o app
+O projeto carrega automaticamente o arquivo `.env` na raiz, sem sobrescrever variáveis já existentes no sistema.
 
-### Variaveis de sistema que podem faltar no outro computador
+Variáveis atualmente em uso:
 
-As mais importantes para desenvolvimento local sao:
+```env
+DATALAB_API_KEY=          # necessária para o backend datalab
+DATALAB_BASE_URL=https://www.datalab.to
+```
 
-- `PATH` contendo `python`
-- `PATH` contendo `ollama`
-- `PATH` contendo `tesseract` se OCR local for usado
-- `TESSDATA_PREFIX` se a autodeteccao do `tessdata` falhar
+- `DATALAB_API_KEY` é a única chave necessária no fluxo principal atual
+- `DATALAB_BASE_URL` pode ficar no padrão
 
 ### Configuracao persistida do app
 
@@ -619,6 +603,22 @@ Rodar apenas os testes do Image Curator / Vision:
 ```powershell
 pytest tests\test_image_curation.py -q
 ```
+
+## Roadmap
+
+O roadmap completo está em [`ROADMAP.md`](ROADMAP.md).
+
+Itens planejados em ordem de prioridade:
+
+| # | Feature | Esforço | Ganho |
+|---|---|---|---|
+| 1 | **Student State** — painel de captura de sessão para eliminar cold start | médio | alto |
+| 2 | **Sinalizador DD.MM** — data no nome do arquivo como boost de mapeamento | baixo | médio |
+| 3 | **Cronograma visual** — timeline bloco × arquivo no app | médio | alto |
+| 4 | **NotebookLM** — export como destino adicional além de Claude/GPT/Gemini | médio | alto |
+| 5 | **MinerU** — backend PDF open-source com foco em equações | alto | alto |
+| 6 | **Marker-API** — versão cloud do Marker sem dependência de GPU local | médio | médio |
+| 7 | **Obsidian / Notion** — compatibilidade de saída com segundos cérebros | alto | médio |
 
 ## Notas de Manutenção
 

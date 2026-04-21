@@ -127,16 +127,218 @@ segundo cérebro pessoal. Hoje a compatibilidade é parcial:
 
 ---
 
+## 4. Painel Student State — captura de sessão de estudo
+
+Substituir o botão **File Map** (atualmente inutilizável) por um botão **Student State**
+que abre um painel de captura de sessão, similar ao Curator Studio, onde o aluno
+registra o que aprendeu durante uma aula ou sessão de estudo.
+
+### Motivação
+
+Dois problemas estruturais das LLMs no fluxo atual:
+
+**Cold start** — cada sessão começa do zero. O tutor não sabe o que foi discutido ontem,
+quais convenções foram acordadas, o que travou ou o que já foi bem dominado.
+
+**Context flooding** — a compensação instintiva é empurrar tudo para o `STUDENT_STATE.md`,
+inflando o contexto com informação histórica de baixa relevância atual, queimando tokens
+e degradando atenção do modelo para o que realmente importa.
+
+A solução é um arquivo de estado compacto e datado por sessão, que o tutor lê no
+início de cada conversa como um "diário de bordo": sabe exatamente de onde parar,
+sem reconstruir o estado a partir do zero e sem receber um dump histórico completo.
+
+### Convenção de nomeação
+
+```text
+student/batteries/<unidade>/bloco<N>_<tema>_<DD-MM-YY>_<HH-MM>.md
+```
+
+Exemplo:
+
+```text
+student/batteries/unidade-2/bloco3_derivadas-implicitas_15-04-26_19-30.md
+```
+
+- `bloco<N>`: número sequencial dentro da unidade (incrementado automaticamente)
+- `<tema>`: slug derivado do tema preenchido pelo aluno (normalizado: lowercase, hífens)
+- `<DD-MM-YY>`: data da sessão (não usa `/` porque não é válido em nome de arquivo)
+- `<HH-MM>`: hora de início da sessão (não usa `:` pelo mesmo motivo)
+
+### Estrutura do arquivo gerado
+
+```markdown
+---
+unidade: "2 — Derivadas"
+bloco: 3
+tema: "Derivadas implícitas"
+data: 2026-04-15
+hora: 19:30
+duracao_min: 90
+---
+
+## O que eu entendi
+
+...
+
+## O que ainda está confuso
+
+...
+
+## Perguntas em aberto
+
+...
+
+## Próximo passo combinado com o tutor
+
+...
+```
+
+### Fluxo de uso
+
+1. Aluno clica em **Student State** na barra de ferramentas do app.
+2. App abre painel lateral, similar ao Curator Studio, com:
+   - Seletor de unidade (deriva do `COURSE_MAP`)
+   - Campo de tema (texto livre → normalizado para slug)
+   - Data/hora pré-preenchida com `datetime.now()`
+   - Duração estimada da sessão
+   - Quatro campos de texto livre (entendeu / confuso / perguntas / próximo passo)
+3. Ao salvar, o app:
+   - Cria o arquivo com o nome canônico em `student/batteries/<unidade>/`
+   - **Não passa pelo pipeline**: nenhum processamento, nenhuma extração, nenhuma fila
+   - Abre o explorador de arquivos no arquivo criado (opcional)
+4. O aluno faz o commit manualmente (ou via botão "Commitar sessão" que chama `git add` + `git commit`)
+5. Na próxima sessão, o tutor lê o arquivo mais recente de `student/batteries/` e retoma sem cold start
+
+### Integração com a arquitetura atual
+
+- **`src/ui/`**: novo `student_state_panel.py` (padrão do projeto — um arquivo por widget complexo)
+- **`src/builder/artifacts/student_state.py`**: adicionar `next_bloco_number(repo_path, unit)` para resolver o incremento
+- **`src/models/core.py`**: sem mudança — o arquivo de sessão é texto puro, não passa por `BackendRunResult`
+- **`student/STUDENT_STATE.md`**: não é alterado pelo painel; continua sendo o estado consolidado de longo prazo
+- **`RepoTaskStore`**: não envolve fila — criação síncrona e direta
+
+### O que NÃO muda
+
+- O `STUDENT_STATE.md` existente continua sendo o estado de longo prazo (perfil, progresso, metas)
+- O fluxo de consolidação via `Repo → Consolidar unidade` continua como está
+- O pipeline de build não é afetado
+
+---
+
+## 5. Sinalizador de data em nome de arquivo (`DD.MM nome.pdf`)
+
+Adicionar reconhecimento do padrão `DD.MM` no início do nome do arquivo como
+sinal auxiliar de mapeamento para blocos do cronograma.
+
+### Motivação
+
+Muitos alunos nomeiam materiais com a data da aula no início:
+
+```text
+12.03 Processos.pdf
+05.05 Gerência de Memória — slides.pdf
+```
+
+O ponto (`.`) é usado como separador porque `/` não é válido em nome de arquivo no Windows.
+Esse padrão já carrega a data exata da aula — informação preciosa para confirmar a qual
+bloco temporal o arquivo pertence.
+
+### Comportamento esperado
+
+- O sinal **não substitui** o scoring por conteúdo — é um **boost** adicional
+- Se a data `DD.MM` extraída do nome bate com a data de um bloco do `timeline_index`,
+  o score daquele bloco sobe (ex.: +0.25 sobre o score base)
+- Se não bate com nenhum bloco, o sinal é ignorado silenciosamente
+- O campo `manual_timeline_block_id` continua tendo precedência absoluta
+
+### Integração com a arquitetura atual
+
+- **`src/builder/extraction/entry_signals.py`**: nova função `extract_date_prefix_signal(filename) -> Optional[date]`
+- **`src/builder/routing/file_map.py`**: `score_entry_against_timeline_block()` recebe o sinal de data e aplica o boost
+- Regex proposta: `^(\d{1,2})\.(\d{2})\s+` (captura `DD.MM` seguido de espaço no início do nome)
+- Ano inferido como o ano letivo corrente da disciplina (já disponível no `SubjectProfile`)
+
+---
+
+## 6. Backend MinerU
+
+Adicionar **MinerU** como backend avançado de extração de PDF, com foco em documentos
+acadêmicos com fórmulas, tabelas e layouts complexos.
+
+### Motivação
+
+MinerU é um extrator open-source com suporte a:
+- Fórmulas LaTeX via modelo de visão
+- Detecção de layout (colunas, cabeçalhos, rodapés)
+- Tabelas como markdown
+- Execução local sem API key
+
+Abre uma alternativa ao Datalab para quem quer qualidade `math_heavy` sem custo por
+página e sem enviar documentos para serviço externo.
+
+### Escopo
+
+- Novo `src/builder/runtime/mineru_client.py` — wraper de chamada ao CLI/API local do MinerU
+- Novo valor `"mineru"` no enum de backends em `src/builder/runtime/backend_runtime.py`
+- Seletor no app para `math_heavy` com MinerU como opção ao lado de Datalab e docling
+- Saída gravada em `staging/markdown-auto/mineru/<entry>/` (padrão dos backends avançados)
+- Suporte a `images_dir` via `BackendRunResult.images_dir` (já existe o campo)
+
+### Considerações
+
+- MinerU exige GPU ou é lento em CPU — documentar requisitos mínimos
+- Investigar compatibilidade com Windows (projeto principal usa Win 11)
+- Avaliar se o output LaTeX do MinerU é compatível com a injeção atual de descrições de imagem
+
+---
+
+## 7. Marker-API (backend cloud do Marker)
+
+Adicionar suporte ao **Marker-API** — versão cloud do Marker com API key — como
+alternativa ao uso local do `marker_single` CLI.
+
+### Motivação
+
+O Marker local está em investigação e não é o caminho principal recomendado atualmente.
+A Marker-API resolve os problemas do Marker local:
+- Sem dependência de GPU local
+- Sem problemas de instalação de dependências pesadas
+- Qualidade consistente entre máquinas
+- Cobrança por uso, sem setup
+
+### Escopo
+
+- Novo `src/builder/runtime/marker_api_client.py`
+- Novo valor `"marker_api"` separado de `"marker"` (local CLI)
+- Campo `MARKER_API_KEY` nas variáveis de ambiente e no `.env`
+- Seletor no app exibido apenas quando `MARKER_API_KEY` estiver configurada
+- Saída em `staging/markdown-auto/marker-api/<entry>/`
+- Reaproveitamento da lógica de `_save_datalab_images` adaptada para o formato de resposta da Marker-API
+
+### Considerações
+
+- Verificar limites de tamanho de arquivo e custo por página da Marker-API
+- Manter `"marker"` (CLI local) e `"marker_api"` como opções independentes — não fundir
+
+---
+
 ## Priorização sugerida
 
 | Ordem | Item | Esforço | Ganho |
 |---|---|---|---|
-| 1 | Cronograma visual | médio | alto — resolve dor atual de diagnóstico de mapeamento |
-| 2 | NotebookLM | médio | alto — destrava caso de uso de revisão pré-prova |
-| 3 | Obsidian/Notion | alto | médio — nicho, mas abre uso fora do tutor LLM |
+| 1 | Student State (painel de sessão) | médio | alto — resolve cold start e context flooding |
+| 2 | Sinalizador DD.MM em nomes de arquivo | baixo | médio — melhora mapeamento automático |
+| 3 | Cronograma visual | médio | alto — resolve dor atual de diagnóstico de mapeamento |
+| 4 | NotebookLM | médio | alto — destrava caso de uso de revisão pré-prova |
+| 5 | MinerU | alto | alto — alternativa local de qualidade ao Datalab |
+| 6 | Marker-API | médio | médio — destravar Marker sem dependência de GPU local |
+| 7 | Obsidian/Notion | alto | médio — nicho, mas abre uso fora do tutor LLM |
 
-Obsidian vem antes de Notion dentro do item 3: Obsidian usa os mesmos markdowns
-com pouca adaptação; Notion exige pipeline de conversão dedicado.
+Student State e DD.MM vêm primeiro por custo-benefício: menor esforço, resolvem
+problemas que afetam todo ciclo de uso. Cronograma visual e NotebookLM vêm em
+seguida porque já têm o contexto arquitetural claro. MinerU e Marker-API dependem
+de investigação de ambiente antes de comprometer escopo.
 
 ---
 
