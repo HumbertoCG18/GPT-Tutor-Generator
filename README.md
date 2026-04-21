@@ -12,6 +12,8 @@ Aplicação desktop em Python para transformar materiais acadêmicos em um repos
 
 - [Visão Geral](#visao-geral)
 - [Como o App Funciona](#como-o-app-funciona)
+- [Suporte Institucional](#suporte-institucional)
+- [Cronograma PUCRS — Importação do Portal ASPNET](#cronograma-pucrs--importacao-do-portal-aspnet)
 - [Arquitetura](#arquitetura)
 - [Processamento de Arquivos](#processamento-de-arquivos)
 - [Backend Datalab](#backend-datalab)
@@ -76,6 +78,60 @@ Fluxo típico no app:
 10. Abrir a aba **Dashboard** para acompanhar o estado operacional dos repositórios.
 
 Observação operacional: a fila é persistente entre sessões do app, então builds e reprocessamentos podem ser retomados sem recriar toda a fila manualmente.
+
+## Suporte Institucional
+
+O sistema foi desenvolvido e validado na **PUCRS**. É a única instituição com suporte completo nativo, incluindo:
+
+- parse automático do cronograma de aulas via portal acadêmico (tabela `dgAulas` do sistema ASPNET)
+- detecção de suspensões, provas e feriados por cor de linha
+- mapeamento automático de arquivos para blocos do cronograma usando datas e tópicos
+
+Outras instituições podem usar o app normalmente para processar PDFs, links e imagens, e construir o repositório — mas o preenchimento do cronograma precisará ser feito manualmente no campo **Cronograma** da matéria, sem o botão de importação automática.
+
+> Se você estudar em outra instituição e quiser adaptar o parser, o ponto de entrada é `src/utils/helpers.py` → `parse_html_schedule()` e `_is_aspnet_schedule()`.
+
+## Cronograma PUCRS — Importação do Portal ASPNET
+
+O app consegue converter a tabela de aulas do portal da PUCRS diretamente em markdown estruturado, sem digitar nada manualmente.
+
+### O que copiar
+
+1. Acesse **Minha PUCRS** → sua matéria → aba **Cronograma de Aulas**
+2. Abra o DevTools do navegador (`F12`)
+3. Inspecione a tabela de aulas — ela tem o atributo `id="dgAulas"`
+4. Clique com o botão direito no elemento `<table id="dgAulas">` na aba **Elements**
+5. Selecione **Copy → Copy outerHTML**
+
+### Como importar no app
+
+1. Na tela da matéria, clique em **Importar Cronograma (HTML)**
+2. Cole o HTML copiado no campo de texto
+3. Clique em **Importar para Markdown**
+
+O app converte cada linha da tabela para o formato:
+
+```text
+- (30/03/2026) SEG — Provas por indução [Aula]
+- (20/04/2026) SEG — Suspensão de aulas [Aula] {kind=suspension} ⊘
+- (08/04/2026) QUA — Prova Interativa de Teoremas - Isabelle [Aula] @Laboratório 409/412
+```
+
+### O que o parser reconhece automaticamente
+
+| Situação | Como aparece na tabela | O que o app faz |
+|---|---|---|
+| Aula normal | linha branca ou sem cor | importa normalmente |
+| Suspensão de aulas | linha vermelha (`background-color: Red`) | adiciona `{kind=suspension} ⊘` |
+| Feriado | linha amarela | adiciona `{kind=holiday} ⊘` |
+| Prova / avaliação | linha azul | adiciona `{kind=exam}` |
+| Recurso (sala/lab) | campo `Recursos` preenchido | adiciona `@NomeDoRecurso` ao final |
+
+Os itens marcados com `⊘` são automaticamente ignorados no mapeamento de arquivos — o app não tenta alocar material para dias sem aula.
+
+### Por que isso importa
+
+O cronograma importado vira o esqueleto do `FILE_MAP.md` e do `COURSE_MAP.md`. Quanto mais preciso o cronograma, melhor o mapeamento automático entre arquivos e blocos de conteúdo — o que reduz a necessidade de configuração manual no backlog.
 
 ## Arquitetura
 
