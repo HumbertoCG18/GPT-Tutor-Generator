@@ -227,3 +227,9 @@ docs/
 /.kiro
 /.claude
 .mcp.json
+.opencode.json
+CLAUDE.md
+GEMENI.md
+skills-lock.json
+.cursorrules
+AGENTS.md
