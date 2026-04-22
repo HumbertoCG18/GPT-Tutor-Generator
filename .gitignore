@@ -222,3 +222,8 @@ __marimo__/
 .agents/
 .claude/
 docs/
+# Added by code-review-graph
+.code-review-graph/
+/.kiro
+/.claude
+.mcp.json
