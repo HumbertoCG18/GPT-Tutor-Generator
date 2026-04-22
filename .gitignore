@@ -219,9 +219,10 @@ __marimo__/
 *.pdf
 
 #LLM
+.LLM_Context/
 .agents/
 .claude/
-docs/
+.docs/
 # Added by code-review-graph
 .code-review-graph/
 /.kiro
