@@ -13,6 +13,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Optional
 
+from src.builder.extraction.teaching_plan import (
+    _normalize_unit_slug,
+    _parse_units_from_teaching_plan,
+    _topic_text,
+)
 from src.utils.helpers import slugify
 
 
@@ -91,6 +96,39 @@ def render_student_state_md(
 
 
 _FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
+_ACTIVE_BLOCK_RE = re.compile(r"active:\s*\n(?:  .*\n)+", re.MULTILINE)
+_RECENT_BLOCK_RE = re.compile(r"(recent:\s*\n)(?:\s*-\s*\{[^}]*\}\s*\n)*", re.MULTILINE)
+_NEXT_TOPIC_RE = re.compile(r"next_topic:\s*.*", re.MULTILINE)
+VALID_MANUAL_IMPORT_STATUSES = {"pendente", "em_progresso", "compreendido", "revisao"}
+
+
+def _unit_number_from_title(unit_title: str) -> int:
+    match = re.search(r"unidade(?:\s+de\s+aprendizagem)?\s+(\d+)", unit_title or "", re.IGNORECASE)
+    if match:
+        return int(match.group(1))
+    return 1
+
+
+def _topic_outline_label(unit_title: str, topics: list) -> list[str]:
+    unit_number = _unit_number_from_title(unit_title)
+    counters: list[int] = []
+    labels: list[str] = []
+    for topic in topics:
+        depth = 0
+        if isinstance(topic, tuple) and len(topic) >= 2:
+            try:
+                depth = max(int(topic[1]), 0)
+            except Exception:
+                depth = 0
+        while len(counters) <= depth:
+            counters.append(0)
+        counters = counters[:depth + 1]
+        counters[depth] += 1
+        for idx in range(depth + 1, len(counters)):
+            counters[idx] = 0
+        parts = [str(unit_number), *[str(value) for value in counters if value > 0]]
+        labels.append(".".join(parts))
+    return labels
 
 
 def parse_battery_frontmatter(content: str) -> dict:
@@ -105,6 +143,215 @@ def parse_battery_frontmatter(content: str) -> dict:
         key, _, value = line.partition(":")
         fm[key.strip()] = value.strip()
     return fm
+
+
+def build_course_unit_topic_index(subject_profile) -> list[dict]:
+    teaching_plan = getattr(subject_profile, "teaching_plan", "") or ""
+    if not teaching_plan.strip():
+        return []
+
+    units: list[dict] = []
+    for unit_title, topics in _parse_units_from_teaching_plan(teaching_plan):
+        unit_slug = _normalize_unit_slug(unit_title)
+        outline_labels = _topic_outline_label(unit_title, topics)
+        topic_rows = []
+        for idx, topic in enumerate(topics):
+            topic_title = _topic_text(topic).strip()
+            if not topic_title:
+                continue
+            topic_label = f"{outline_labels[idx]} - {topic_title}" if idx < len(outline_labels) else topic_title
+            topic_rows.append(
+                {
+                    "topic_slug": slugify(topic_title),
+                    "topic_title": topic_title,
+                    "topic_label": topic_label,
+                }
+            )
+        units.append(
+            {
+                "unit_slug": unit_slug,
+                "unit_title": unit_title,
+                "topics": topic_rows,
+            }
+        )
+    return units
+
+
+def parse_student_state_manual_import(raw: str, now_text: Optional[tuple[str, str]] = None) -> dict:
+    frontmatter = parse_battery_frontmatter(raw)
+    body = _FRONTMATTER_RE.sub("", raw or "", count=1).strip()
+    if now_text is None:
+        now_date = datetime.now().strftime("%d-%m-%y")
+        now_time = datetime.now().strftime("%H-%M")
+    else:
+        now_date, now_time = now_text
+
+    status = str(frontmatter.get("status") or "em_progresso").strip()
+    if status not in VALID_MANUAL_IMPORT_STATUSES:
+        status = "em_progresso"
+
+    return {
+        "unit_slug": str(frontmatter.get("unit") or "").strip(),
+        "unit_title": str(frontmatter.get("unit_title") or "").strip(),
+        "topic_slug": str(frontmatter.get("topic") or "").strip(),
+        "topic_title": str(frontmatter.get("topic_title") or "").strip(),
+        "status": status,
+        "date": str(frontmatter.get("date") or now_date).strip(),
+        "time": str(frontmatter.get("time") or now_time).strip(),
+        "next_topic": str(frontmatter.get("next_topic") or "").strip(),
+        "body": body,
+    }
+
+
+def validate_manual_import_selection(*, unit_slug: str, topic_slug: str, course_index: list[dict]) -> list[str]:
+    unit = next((item for item in course_index if item.get("unit_slug") == unit_slug), None)
+    if unit is None:
+        return ["unit_slug"]
+    if not any(topic.get("topic_slug") == topic_slug for topic in unit.get("topics", [])):
+        return ["topic_slug"]
+    return []
+
+
+def course_topics_for_unit(course_index: list[dict], unit_slug: str) -> list[tuple[str, str]]:
+    unit = next((item for item in course_index if item.get("unit_slug") == unit_slug), None)
+    if not unit:
+        return []
+    return [
+        (str(topic.get("topic_slug") or "").strip(), str(topic.get("topic_title") or "").strip())
+        for topic in unit.get("topics", [])
+        if str(topic.get("topic_slug") or "").strip()
+    ]
+
+
+def _battery_frontmatter_text(*, topic_title: str, topic_slug: str, unit_slug: str, status: str) -> str:
+    return "\n".join(
+        [
+            "---",
+            f"topic: {topic_title}",
+            f"topic_slug: {topic_slug}",
+            f"unit: {unit_slug}",
+            f"status: {status}",
+            "---",
+            "",
+        ]
+    )
+
+
+def _render_manual_session_block(*, date: str, time: str, session_number: int, status: str, body: str) -> str:
+    lines = [
+        f"## {date} {time} (sessao {session_number})",
+        f"- Status: {status}",
+    ]
+    cleaned = (body or "").strip()
+    if cleaned:
+        lines.append(cleaned)
+    lines.append("")
+    return "\n".join(lines)
+
+
+def save_manual_import_battery(root_dir: Path, payload: dict) -> Path:
+    unit_slug = str(payload.get("unit_slug") or "").strip()
+    topic_slug = str(payload.get("topic_slug") or "").strip()
+    topic_title = str(payload.get("topic_title") or "").strip() or topic_slug.replace("-", " ").title()
+    status = str(payload.get("status") or "em_progresso").strip() or "em_progresso"
+    target = root_dir / "student" / "batteries" / unit_slug / f"{topic_slug}.md"
+    target.parent.mkdir(parents=True, exist_ok=True)
+
+    if target.exists():
+        current = target.read_text(encoding="utf-8")
+        frontmatter = parse_battery_frontmatter(current)
+        session_number = len(_SESSION_HEADER_RE.findall(current)) + 1
+        frontmatter_block = _FRONTMATTER_RE.match(current)
+        prefix = frontmatter_block.group(0) if frontmatter_block else _battery_frontmatter_text(
+            topic_title=topic_title,
+            topic_slug=topic_slug,
+            unit_slug=unit_slug,
+            status=status,
+        )
+        existing_body = _FRONTMATTER_RE.sub("", current, count=1).rstrip()
+        stored_status = str(frontmatter.get("status") or "").strip()
+        if stored_status and stored_status != status:
+            prefix = _battery_frontmatter_text(
+                topic_title=str(frontmatter.get("topic") or topic_title).strip() or topic_title,
+                topic_slug=str(frontmatter.get("topic_slug") or topic_slug).strip() or topic_slug,
+                unit_slug=str(frontmatter.get("unit") or unit_slug).strip() or unit_slug,
+                status=status,
+            )
+        content = prefix
+        if existing_body:
+            content += existing_body + "\n\n"
+    else:
+        session_number = 1
+        content = _battery_frontmatter_text(
+            topic_title=topic_title,
+            topic_slug=topic_slug,
+            unit_slug=unit_slug,
+            status=status,
+        )
+
+    content += _render_manual_session_block(
+        date=str(payload.get("date") or "").strip(),
+        time=str(payload.get("time") or "").strip(),
+        session_number=session_number,
+        status=status,
+        body=str(payload.get("body") or "").strip(),
+    )
+    target.write_text(content, encoding="utf-8")
+    return target
+
+
+def apply_manual_import_to_student_state(
+    root_dir: Path,
+    *,
+    payload: dict,
+    battery_rel_path: str,
+    course_map_topics: list[tuple[str, str]],
+) -> None:
+    state_path = root_dir / "student" / "STUDENT_STATE.md"
+    if not state_path.exists():
+        raise FileNotFoundError(f"Student state not found: {state_path}")
+
+    state_text = state_path.read_text(encoding="utf-8")
+    battery_path = root_dir / battery_rel_path
+    battery_text = battery_path.read_text(encoding="utf-8")
+    sessions = len(_SESSION_HEADER_RE.findall(battery_text))
+    updated = str(payload.get("date") or "").strip()
+    next_topic = str(payload.get("next_topic") or "").strip()
+    active_block = "\n".join(
+        [
+            "active:",
+            f"  unit: {payload['unit_slug']}",
+            f"  topic: {payload['topic_slug']}",
+            f"  status: {payload['status']}",
+            f"  sessions: {sessions}",
+            f"  file: {battery_rel_path}",
+            "",
+        ]
+    )
+    state_text = re.sub(r"updated:\s*.+", f"updated: {updated}", state_text, count=1)
+    if _ACTIVE_BLOCK_RE.search(state_text):
+        state_text = _ACTIVE_BLOCK_RE.sub(active_block, state_text, count=1)
+    else:
+        state_text = state_text.replace("\n---\n", "\n" + active_block + "---\n", 1)
+
+    recent_line = f"  - {{topic: {payload['topic_slug']}, unit: {payload['unit_slug']}, date: {updated}}}\n"
+    if _RECENT_BLOCK_RE.search(state_text):
+        state_text = _RECENT_BLOCK_RE.sub(r"\1" + recent_line, state_text, count=1)
+    else:
+        state_text = state_text.replace("\n---\n", "\nrecent:\n" + recent_line + "\n---\n", 1)
+
+    if next_topic:
+        if _NEXT_TOPIC_RE.search(state_text):
+            state_text = _NEXT_TOPIC_RE.sub(f"next_topic: {next_topic}", state_text, count=1)
+        else:
+            state_text = state_text.replace("\n---\n", f"\nnext_topic: {next_topic}\n\n---\n", 1)
+
+    state_path.write_text(state_text, encoding="utf-8")
+    refresh_active_unit_progress(
+        root_dir=root_dir,
+        active_unit_slug=str(payload.get("unit_slug") or "").strip(),
+        course_map_topics=course_map_topics,
+    )
 
 
 def derive_active_unit_progress(

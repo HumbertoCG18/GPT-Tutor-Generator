@@ -130,4 +130,6 @@ def generated_repo_gitignore_text() -> str:
         "__pycache__/",
         "*.pyc",
         ".DS_Store",
+        "# Exportação local para DeepTutor (não commitada)",
+        ".deeptutor/",
     ])

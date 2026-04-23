@@ -5,6 +5,7 @@ import logging
 import sys
 from datetime import datetime
 
+from src.builder.artifacts.deeptutor import write_deeptutor_export
 from src.utils.helpers import write_text
 
 logger = logging.getLogger(__name__)
@@ -113,5 +114,13 @@ def build_impl(
     builder._inject_all_image_descriptions()
     builder._regenerate_pedagogical_files(manifest)
     write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+
+    write_deeptutor_export(
+        builder.root_dir,
+        builder.course_meta,
+        student_profile=getattr(builder, "student_profile", None),
+        subject_profile=getattr(builder, "subject_profile", None),
+    )
+    logger.info("DeepTutor export written to .deeptutor/")
 
     logger.info("Repository built successfully at %s", builder.root_dir)

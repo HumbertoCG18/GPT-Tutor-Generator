@@ -21,6 +21,7 @@ Read this file before starting any task.
 - Image extraction and curation via Datalab + `BackendRunResult.images_dir`
 - 109-test suite covering Increment 1 features
 - tkinter UI with theme, curator studio, repo dashboard, image curator
+- `Student State` import window for tutor-generated study updates, with validation against course units/topics and direct patching of `student/batteries/` plus `student/STUDENT_STATE.md`
 
 ### Not Yet Built
 - Post-extraction noise cleanup

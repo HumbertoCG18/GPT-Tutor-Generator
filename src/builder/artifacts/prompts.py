@@ -114,6 +114,47 @@ Nunca reescreva o YAML inteiro — só as linhas alteradas.
 """.strip()
 
 
+def _prompt_end_of_session_importable_block_text() -> str:
+    return """## Fim de sessão — bloco importável para o app (padrão)
+
+Ao final de uma sessão substancial, **prefira este formato** para o aluno colar
+no botão `Student State` do app. Esse é o fluxo padrão recomendado.
+
+Retorne **um único bloco markdown** com frontmatter:
+
+```markdown
+---
+unit: <unit-slug-do-course-map>
+unit_title: <titulo-da-unidade>
+topic: <topic-slug-da-unidade>
+topic_title: <titulo-do-topico>
+status: <pendente | em_progresso | compreendido | revisao>
+date: DD-MM-YY
+time: HH-MM
+next_topic: <topic-slug-opcional>
+---
+
+## Resumo da sessão
+- [o que foi visto]
+
+## O que foi compreendido
+- [conceitos assimilados]
+
+## Dúvidas em aberto
+- [duvidas restantes ou "nenhuma"]
+
+## Próximo passo
+- [como continuar]
+```
+
+Regras:
+- `unit` e `topic` devem corresponder ao `COURSE_MAP`
+- use slugs canônicos, não nomes inventados
+- se não tiver certeza do slug exato, diga isso em texto fora do bloco e peça conferência no app
+- não gere JSON, só markdown
+""".strip()
+
+
 def _prompt_consolidation_detection_text() -> str:
     return """## Detecção de unidade pronta para consolidar
 
@@ -351,6 +392,8 @@ Fluxo `map-first`: consulte primeiro os artefatos curtos e roteadores. Não abra
 
 {_prompt_student_state_v2_contract_text()}
 
+{_prompt_end_of_session_importable_block_text()}
+
 {_prompt_end_of_session_dictation_text()}
 
 {_prompt_consolidation_detection_text()}
@@ -528,6 +571,8 @@ Acesse estes arquivos sempre que relevante:
 
 {_prompt_student_state_v2_contract_text()}
 
+{_prompt_end_of_session_importable_block_text()}
+
 {_prompt_end_of_session_dictation_text()}
 
 {_prompt_consolidation_detection_text()}
@@ -669,6 +714,8 @@ Consulte estes arquivos conforme necessário:
 {_prompt_map_artifact_contract_text()}
 
 {_prompt_student_state_v2_contract_text()}
+
+{_prompt_end_of_session_importable_block_text()}
 
 {_prompt_end_of_session_dictation_text()}
 
