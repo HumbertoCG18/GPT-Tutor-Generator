@@ -437,16 +437,35 @@ def render_low_token_course_map_md(
                 lines.append("- [ ] [tópicos a preencher]")
             lines.append("")
     else:
-        lines += [
-            "### Unidade 1 — [Nome da unidade]",
-            "- [ ] Tópico 1.1",
-            "- [ ] Tópico 1.2",
-            "",
-            "### Unidade 2 — [Nome da unidade]",
-            "- [ ] Tópico 2.1 -> requer: Tópico 1.2",
-            "- [ ] Tópico 2.2",
-            "",
-        ]
+        # Tenta renderizar unidades reais do timeline_index quando não há teaching_plan
+        blocks_by_unit_map = timeline_context.get("blocks_by_unit", {}) if timeline_context else {}
+        if blocks_by_unit_map:
+            for unit_slug, unit_blocks in blocks_by_unit_map.items():
+                human_title = unit_slug.replace("-", " ").title()
+                lines.append(f"### {human_title}")
+                seen_topics: set = set()
+                topic_bullets = []
+                for block in unit_blocks:
+                    label = str(block.get("primary_topic_label") or "").strip()
+                    if label and label not in seen_topics:
+                        topic_bullets.append(f"- [ ] {label}")
+                        seen_topics.add(label)
+                if topic_bullets:
+                    lines.extend(topic_bullets[:6])
+                else:
+                    lines.append("- [ ] [tópicos a preencher]")
+                lines.append("")
+        else:
+            lines += [
+                "### Unidade 1 — [Nome da unidade]",
+                "- [ ] Tópico 1.1",
+                "- [ ] Tópico 1.2",
+                "",
+                "### Unidade 2 — [Nome da unidade]",
+                "- [ ] Tópico 2.1 -> requer: Tópico 1.2",
+                "- [ ] Tópico 2.2",
+                "",
+            ]
 
     syllabus = getattr(subject_profile, "syllabus", "") if subject_profile else ""
     if units and syllabus:
