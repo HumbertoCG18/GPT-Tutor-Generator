@@ -1290,13 +1290,35 @@ def _build_file_map_timeline_context_from_course(
     unit_index = build_file_map_unit_index_from_course(course_meta, subject_profile)
     content_taxonomy = content_taxonomy or build_file_map_content_taxonomy_from_course(course_meta, subject_profile)
     syllabus = getattr(subject_profile, "syllabus", "") if subject_profile else ""
+    if not syllabus:
+        repo_root = course_meta.get("_repo_root")
+        if repo_root:
+            syllabus_file = Path(repo_root) / "course" / "SYLLABUS.md"
+            if syllabus_file.exists():
+                raw = syllabus_file.read_text(encoding="utf-8")
+                # Remove YAML frontmatter (--- ... ---) antes de parsear
+                if raw.startswith("---"):
+                    end = raw.find("\n---", 3)
+                    syllabus = raw[end + 4:].strip() if end != -1 else raw
+                else:
+                    syllabus = raw
     timeline = _parse_syllabus_timeline(syllabus) if syllabus else []
     candidate_rows = _build_timeline_candidate_rows(timeline)
-    timeline_index = (
-        _build_timeline_index(candidate_rows, unit_index=unit_index, content_taxonomy=content_taxonomy)
-        if candidate_rows
-        else _empty_timeline_index()
-    )
+    if candidate_rows:
+        timeline_index = _build_timeline_index(
+            candidate_rows, unit_index=unit_index, content_taxonomy=content_taxonomy
+        )
+    else:
+        # Último fallback: usa o índice já salvo em disco para preservar atribuições anteriores
+        repo_root = course_meta.get("_repo_root")
+        cached_path = Path(repo_root) / "course" / ".timeline_index.json" if repo_root else None
+        if cached_path and cached_path.exists():
+            try:
+                timeline_index = json.loads(cached_path.read_text(encoding="utf-8"))
+            except Exception:
+                timeline_index = _empty_timeline_index()
+        else:
+            timeline_index = _empty_timeline_index()
 
     blocks_by_unit: Dict[str, List[Dict[str, object]]] = {}
     rows_by_unit: Dict[str, List[Dict[str, object]]] = {}
