@@ -129,6 +129,8 @@ _PAGE_PATTERNS = [
     re.compile(r"\.pdf-(\d{3,4})(?:\.|$)", re.IGNORECASE),                       # aula.pdf-0004.png
     re.compile(r"(?:^|[-_])p(?:age)?[-_]?(\d{1,4})(?:[-_.]|$)", re.IGNORECASE),   # p4, p_04, page_6
     re.compile(r"page[_-]?(\d{1,4})", re.IGNORECASE),                             # page6, page_6, page-6
+    # Docling/marker fallback: picture-001.png, figure-3.png (1-3 digits only — avoids banner-2026.png)
+    re.compile(r"[-_](\d{1,3})(?:\.\w+)?$", re.IGNORECASE),
 ]
 
 _NUMERIC_TOKEN_RE = re.compile(r"(?<!\d)(\d{3,4})(?!\d)")

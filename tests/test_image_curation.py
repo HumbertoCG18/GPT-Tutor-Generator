@@ -1038,6 +1038,23 @@ class TestImageMapper:
         assert extract_page_number("entry-p_08-figure.png") == 8
         assert extract_page_number("entry-page12.webp") == 12
 
+    def test_maps_page_from_docling_picture_pattern(self):
+        from src.builder.vision.image_classifier import extract_page_number
+        assert extract_page_number("picture-001.png") == 1
+        assert extract_page_number("picture-042.png") == 42
+        assert extract_page_number("picture-003.jpeg") == 3
+
+    def test_maps_page_from_docling_figure_pattern(self):
+        from src.builder.vision.image_classifier import extract_page_number
+        assert extract_page_number("figure-3.png") == 3
+        assert extract_page_number("figure-12.jpg") == 12
+
+    def test_does_not_match_year_as_page(self):
+        from src.builder.vision.image_classifier import extract_page_number
+        # 4+ dígitos não devem ser tratados como página
+        assert extract_page_number("banner-2026.png") is None
+        assert extract_page_number("slide-1999.jpg") is None
+
     def test_unknown_pattern_returns_none(self):
         from src.builder.vision.image_classifier import extract_page_number
         assert extract_page_number("random-image.png") is None
