@@ -14,7 +14,7 @@ _A_TILDE_UPPER = "\u00c3"
 _U_ACUTE_UPPER = "\u00da"
 
 _TEACHING_PLAN_SECTION_STOP = re.compile(
-    rf"^(?:PROCEDIMENTOS|AVALIA[{_C_CEDILLA_UPPER}C][A{_A_TILDE_UPPER}]O|BIBLIOGRAFIA|METODOLOGIA)",
+    rf"^(?:AVALIA[{_C_CEDILLA_UPPER}C][A{_A_TILDE_UPPER}]O|BIBLIOGRAFIA)",
     re.IGNORECASE,
 )
 
@@ -42,11 +42,11 @@ def _parse_units_from_teaching_plan(text: str):
     current_style = None
 
     pucrs_unit_re = re.compile(
-        rf"N[{_DEGREE}{_MASC_ORD}]?\.\s*DA\s+UNIDADE\s*:\s*(\d+)",
+        rf"N\s*[{_DEGREE}{_MASC_ORD}]?\s*\.?\s*DA\s+UNIDADE\s*:\s*(\d+)",
         re.IGNORECASE,
     )
     pucrs_content_re = re.compile(
-        rf"CONTE[{_U_ACUTE_UPPER}U]DO\s*:\s*(.+)",
+        rf"CONTE[{_U_ACUTE_UPPER}{_DEGREE}U]DO\s*:\s*(.+)",
         re.IGNORECASE,
     )
     generic_unit_re = re.compile(
@@ -63,25 +63,33 @@ def _parse_units_from_teaching_plan(text: str):
 
         normalized_line = _normalize_teaching_plan_heading(line)
         if _TEACHING_PLAN_SECTION_STOP.match(normalized_line):
-            break
+            # Parar só se já encontramos unidades ou estamos dentro de uma unidade;
+            # caso contrário, alguns documentos têm "PROCEDIMENTOS" antes das unidades.
+            if units or current_title is not None:
+                break
+            continue
 
-        m = pucrs_unit_re.match(line)
+        m = pucrs_unit_re.match(normalized_line)
         if m:
             if current_title is not None:
                 units.append((current_title, current_topics))
             current_unit_num = m.group(1)
-            current_title = None
             current_topics = []
             current_style = "pucrs"
+            # Conteúdo pode estar na mesma linha — inclusive depois de "N°. DE HORAS":
+            # "N°. DA UNIDADE: 07 N°. DE HORAS: 10% CONTEÚDO: Gerência de E/S"
+            rest = normalized_line[m.end():].strip()
+            mc = pucrs_content_re.search(rest)
+            current_title = f"Unidade {current_unit_num} {_EM_DASH} {mc.group(1).strip()}" if mc else None
             continue
 
         if current_unit_num is not None and current_title is None:
-            m = pucrs_content_re.match(line)
+            m = pucrs_content_re.match(normalized_line)
             if m:
                 current_title = f"Unidade {current_unit_num} {_EM_DASH} {m.group(1).strip()}"
                 continue
 
-        m = generic_unit_re.match(line)
+        m = generic_unit_re.match(normalized_line)
         if m:
             if current_title is not None:
                 units.append((current_title, current_topics))
