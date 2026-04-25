@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
 
@@ -1096,6 +1098,65 @@ def build_file_map_content_taxonomy_from_course(
     )
 
 
+def _derive_unit_specs_from_repo(course_meta: dict) -> list:
+    """Fallback: deriva unit_specs do COURSE_MAP.md + .timeline_index.json do repo."""
+    from src.builder.extraction.teaching_plan import _normalize_unit_slug as _slug_fn
+
+    repo_root = course_meta.get("_repo_root")
+    if not repo_root:
+        return []
+    repo_root = Path(repo_root)
+
+    # 1. Carrega blocos do timeline_index para extrair sinais por unidade
+    blocks_by_unit: Dict[str, list] = {}
+    timeline_path = repo_root / "course" / ".timeline_index.json"
+    if timeline_path.exists():
+        try:
+            payload = json.loads(timeline_path.read_text(encoding="utf-8"))
+            for block in payload.get("blocks") or []:
+                slug = str(block.get("unit_slug") or "").strip()
+                if slug:
+                    blocks_by_unit.setdefault(slug, []).append(block)
+        except Exception:
+            pass
+
+    # 2. Lê COURSE_MAP.md para títulos humanos das unidades
+    unit_titles: List[tuple] = []  # (title, slug)
+    course_map_path = repo_root / "course" / "COURSE_MAP.md"
+    if course_map_path.exists():
+        try:
+            for line in course_map_path.read_text(encoding="utf-8").splitlines():
+                if not line.startswith("### "):
+                    continue
+                title = line[4:].strip()
+                if not title or "[" in title:  # pula placeholders como "[Nome da unidade]"
+                    continue
+                slug = _slug_fn(title)
+                if slug:
+                    unit_titles.append((title, slug))
+        except Exception:
+            pass
+
+    # 3. Se COURSE_MAP não ajudou, usa slugs do timeline_index como títulos
+    if not unit_titles and blocks_by_unit:
+        for slug in blocks_by_unit:
+            title = slug.replace("-", " ").title()
+            unit_titles.append((title, slug))
+
+    if not unit_titles:
+        return []
+
+    # 4. Monta unit_specs combinando título do COURSE_MAP + sinais dos blocos
+    unit_specs = []
+    for title, slug in unit_titles:
+        extra_signals: List[str] = []
+        for block in blocks_by_unit.get(slug, []):
+            extra_signals.extend(str(block.get("topic_text") or "").split())
+            extra_signals.extend(str(t) for t in (block.get("topics") or []))
+        unit_specs.append({"title": title, "topics": [], "extra_signals": extra_signals})
+    return unit_specs
+
+
 def build_file_map_unit_index_from_course(
     course_meta: dict,
     subject_profile=None,
@@ -1115,6 +1176,9 @@ def build_file_map_unit_index_from_course(
 
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     if not teaching_plan:
+        unit_specs = _derive_unit_specs_from_repo(course_meta)
+        if unit_specs:
+            return build_file_map_unit_index_fn(unit_specs)
         return []
 
     parsed_units = parse_units_from_teaching_plan(teaching_plan)
