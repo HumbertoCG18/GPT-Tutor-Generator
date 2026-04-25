@@ -129,6 +129,7 @@ def unprocess(builder, entry_id: str) -> bool:
         "tables_dir",
         "table_detection_dir",
         "advanced_asset_dir",
+        "asset_dir",
         "advanced_metadata_path",
         "approved_markdown",
         "curated_markdown",
