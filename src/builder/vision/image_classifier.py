@@ -163,7 +163,9 @@ def extract_page_number(filename: str) -> Optional[int]:
 
 
 def group_images_by_page(
-    images_dir: Path, entry_prefix: str
+    images_dir: Path,
+    entry_prefix: str,
+    page_overrides: Optional[Dict[str, int]] = None,
 ) -> Dict[Optional[int], List[Path]]:
     """Group images in a directory by page number.
 
@@ -174,9 +176,21 @@ def group_images_by_page(
        (one image per page, named ``page-NNN.jpg``).
 
     Images with unrecognized patterns go under key ``None``.
+
+    ``page_overrides`` maps the base filename (without the ``{entry_prefix}-``
+    prefix) to a page number; used to resolve Datalab hash-based images that
+    carry no page information in their filename.
     """
     groups: Dict[Optional[int], List[Path]] = {}
     _IMG_EXTS = (".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp")
+    _prefix_len = len(entry_prefix) + 1  # strip "{entry_prefix}-" prefix
+
+    def _resolve_page(img_path: Path) -> Optional[int]:
+        page = extract_page_number(img_path.name)
+        if page is None and page_overrides:
+            base = img_path.name[_prefix_len:]
+            page = page_overrides.get(base)
+        return page
 
     # 1. Standard images in images_dir/ with entry_prefix
     if images_dir.exists():
@@ -187,8 +201,7 @@ def group_images_by_page(
                 continue
             if not img_path.name.lower().startswith(entry_prefix.lower()):
                 continue
-            page = extract_page_number(img_path.name)
-            groups.setdefault(page, []).append(img_path)
+            groups.setdefault(_resolve_page(img_path), []).append(img_path)
 
     # 2. Scanned pages in images_dir/scanned/{entry_prefix}/
     scanned_dir = images_dir / "scanned" / entry_prefix
@@ -211,7 +224,6 @@ def group_images_by_page(
                 continue
             if not img_path.name.lower().startswith(entry_prefix.lower()):
                 continue
-            page = extract_page_number(img_path.name)
-            groups.setdefault(page, []).append(img_path)
+            groups.setdefault(_resolve_page(img_path), []).append(img_path)
 
     return groups

@@ -819,6 +819,45 @@ class DoclingPythonBackend(ExtractionBackend):
         )
 
 
+_PAGINATION_MARKER_RE = re.compile(r"^\d+\n-{40,}\s*$", re.MULTILINE)
+_IMAGE_REF_RE = re.compile(r"!\[.*?\]\((.+?)\)")
+
+
+def _extract_datalab_image_page_map(markdown: str, page_offset: int = 0) -> dict:
+    """Parse a paginated Datalab markdown response into {filename: page_number}.
+
+    When ``paginate=True``, Datalab inserts ``{N}\\n{48 hyphens}`` between pages.
+    ``page_offset`` is added to each marker number; for chunked processing this
+    should be the 0-based index of the first page in the chunk so that all
+    chunks produce absolute 1-based page numbers.
+
+    Returns an empty dict if no pagination markers are found.
+    """
+    markers = list(_PAGINATION_MARKER_RE.finditer(markdown))
+    if not markers:
+        return {}
+
+    result: dict = {}
+    for i, marker in enumerate(markers):
+        page_num = int(marker.group().splitlines()[0].strip()) + page_offset
+        section_start = marker.end()
+        section_end = markers[i + 1].start() if i + 1 < len(markers) else len(markdown)
+        section = markdown[section_start:section_end]
+        for img_match in _IMAGE_REF_RE.finditer(section):
+            filename = img_match.group(1).strip()
+            if filename and filename not in result:
+                result[filename] = page_num
+    return result
+
+
+def _strip_pagination_markers(text: str) -> str:
+    """Remove Datalab page markers (``{N}\\n---...``) from markdown text."""
+    cleaned = _PAGINATION_MARKER_RE.sub("", text)
+    # Also remove bare digit lines left after the hyphens are gone.
+    cleaned = re.sub(r"^\d+\s*$", "", cleaned, flags=re.MULTILINE)
+    return cleaned
+
+
 class DatalabCloudBackend(ExtractionBackend):
     name = "datalab"
     layer = "advanced"
@@ -833,6 +872,7 @@ class DatalabCloudBackend(ExtractionBackend):
         mode: str,
         page_range: Optional[str],
         max_wait_seconds: int,
+        page_offset: int = 0,
     ):
         result = convert_document_to_markdown(
             ctx.raw_target,
@@ -841,15 +881,18 @@ class DatalabCloudBackend(ExtractionBackend):
             page_range=page_range,
             disable_image_captions=True,
             disable_image_extraction=False,
-            paginate=False,
+            paginate=True,
             token_efficient_markdown=False,
             request_timeout=60,
             poll_interval=2.0,
             max_wait_seconds=max_wait_seconds,
         )
-        markdown = _sanitize_external_markdown_text(result.markdown)
+        raw_markdown = result.markdown
+        image_page_map = _extract_datalab_image_page_map(raw_markdown, page_offset)
+        markdown = _sanitize_external_markdown_text(raw_markdown)
+        markdown = _strip_pagination_markers(markdown)
         markdown = _strip_markdown_image_refs(markdown)
-        return result, markdown
+        return result, markdown, image_page_map
 
     def _save_datalab_images(
         self, images: dict, entry_id: str, root_dir: Path
@@ -867,6 +910,18 @@ class DatalabCloudBackend(ExtractionBackend):
             except Exception as exc:
                 logger.warning("  [datalab] Não foi possível salvar imagem %s: %s", filename, exc)
         return images_dir, saved
+
+    def _save_datalab_image_pages(
+        self, image_page_map: dict, out_dir: Path
+    ) -> None:
+        """Persist {filename: page_number} map alongside datalab-run.json."""
+        if not image_page_map:
+            return
+        pages_path = out_dir / "datalab-image-pages.json"
+        try:
+            write_text(pages_path, json.dumps(image_page_map, indent=2, ensure_ascii=False))
+        except Exception as exc:
+            logger.warning("  [datalab] Não foi possível salvar datalab-image-pages.json: %s", exc)
 
     def _run_single_datalab(
         self,
@@ -887,7 +942,7 @@ class DatalabCloudBackend(ExtractionBackend):
         )
 
         try:
-            result, markdown = self._convert_range(
+            result, markdown, image_page_map = self._convert_range(
                 ctx,
                 mode=mode,
                 page_range=page_range,
@@ -909,6 +964,8 @@ class DatalabCloudBackend(ExtractionBackend):
                 result.images, ctx.entry_id, ctx.root_dir
             )
             logger.info("  [datalab] %d imagens salvas em %s.", len(saved_images), images_dir_path)
+
+        self._save_datalab_image_pages(image_page_map, out_dir)
 
         write_text(out_path, markdown)
 
@@ -991,6 +1048,7 @@ class DatalabCloudBackend(ExtractionBackend):
         cost_breakdowns: List[Dict[str, object]] = []
         total_pages = 0
         all_saved_images: list = []
+        merged_image_page_map: dict = {}
 
         for idx, chunk_pages in enumerate(chunks, start=1):
             chunk_range = pages_to_marker_range(chunk_pages)
@@ -1002,11 +1060,12 @@ class DatalabCloudBackend(ExtractionBackend):
                 chunk_pages[-1] + 1,
             )
             try:
-                result, markdown = self._convert_range(
+                result, markdown, chunk_image_page_map = self._convert_range(
                     ctx,
                     mode=mode,
                     page_range=chunk_range,
                     max_wait_seconds=max_wait_seconds,
+                    page_offset=chunk_pages[0],
                 )
             except Exception as e:
                 logger.error("  [datalab] Erro no chunk %d/%d: %s", idx, len(chunks), e)
@@ -1016,6 +1075,7 @@ class DatalabCloudBackend(ExtractionBackend):
                     status="error",
                     error=f"Chunk {idx}/{len(chunks)} falhou: {e}",
                 )
+            merged_image_page_map.update(chunk_image_page_map)
 
             chunk_path = chunks_dir / f"chunk-{idx:03d}.md"
             write_text(chunk_path, markdown)
@@ -1054,6 +1114,8 @@ class DatalabCloudBackend(ExtractionBackend):
         if combined_markdown:
             combined_markdown += "\n"
         write_text(out_path, combined_markdown)
+
+        self._save_datalab_image_pages(merged_image_page_map, out_dir)
 
         metadata_path = out_dir / "datalab-run.json"
         average_score = round(sum(parse_scores) / len(parse_scores), 4) if parse_scores else None
