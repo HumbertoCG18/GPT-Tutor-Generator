@@ -153,7 +153,7 @@ def extract_page_number(filename: str) -> Optional[int]:
 
     # Conservative fallback for consolidated assets: if the filename contains
     # strong page cues plus a 3-4 digit token, use the first token as page.
-    has_page_cue = any(cue in lowered for cue in (".pdf-", "page", "_page_", "-p", "_p"))
+    has_page_cue = any(cue in lowered for cue in (".pdf-", "page", "_page_"))
     if has_page_cue:
         token = _NUMERIC_TOKEN_RE.search(lowered)
         if token:
