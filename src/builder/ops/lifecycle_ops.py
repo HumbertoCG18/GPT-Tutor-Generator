@@ -149,7 +149,6 @@ def unprocess(builder, entry_id: str) -> bool:
     write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
-    builder._resolve_content_images()
 
     logger.info("Unprocessed entry %s (%d files removed)", entry_id, removed_count)
     return True
