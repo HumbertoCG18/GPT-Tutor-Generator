@@ -239,3 +239,4 @@ skills-lock.json
 # staging do build (artefatos temporários do Datalab/PDF pipeline)
 staging/
 .vscode/
+/.vscode
