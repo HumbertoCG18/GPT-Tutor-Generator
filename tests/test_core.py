@@ -2675,6 +2675,35 @@ ASSESSMENT_CONFLICT_SYLLABUS = """
 | 7 | 2026-05-04 | Continuação Unidade 2 |
 """
 
+# Plano de ensino no formato PUCRS antigo com **bold** headings e N° separado por espaços
+PUCRS_BOLD_HEADING_PLAN = """\
+## **N** º **. DA UNIDADE** : 01
+**CONTE°DO** : Conjuntos Enumeráveis
+1.1. Funções recursivas
+
+## **Nº. DA UNIDADE** : 02
+**CONTE°DO** : Turing-Computabilidade
+2.1. Máquinas de Turing
+
+## **N°. DA UNIDADE:** 03 **CONTE°DO:** Problemas Indecidíveis
+
+PROCEDIMENTOS METODOLÓGICOS
+"""
+
+# Plano de ensino com headings ## **UNIDADE 01: Título** (sem N°)
+TCC_HEADING_PLAN = """\
+## **UNIDADE 01: Conjuntos Enumeráveis e Funções Recursivas**
+Funções recursivas primitivas
+
+## **UNIDADE 02: Turing-Computabilidade**
+Máquinas de Turing
+
+## **UNIDADE 03: Problemas Indecidíveis**
+Problema da parada
+
+PROCEDIMENTOS METODOLÓGICOS
+"""
+
 
 class TestParseUnitsFromTeachingPlan:
     def test_pucrs_format_detects_three_units(self):
@@ -2782,6 +2811,30 @@ class TestParseUnitsFromTeachingPlan:
 
     def test_topic_text_helper_with_tuple(self):
         assert _topic_text(("Foo", 2)) == "Foo"
+
+    def test_pucrs_bold_heading_detects_units(self):
+        """Formato PUCRS com ** e N separado de º por espaço: ## **N** º **. DA UNIDADE** : 01"""
+        units = _parse_units_from_teaching_plan(PUCRS_BOLD_HEADING_PLAN)
+        assert len(units) == 3
+        titles = [u[0] for u in units]
+        assert any("Conjuntos" in t for t in titles)
+        assert any("Turing" in t for t in titles)
+        assert any("Indecid" in t for t in titles)
+
+    def test_pucrs_bold_combined_line_detects_unit(self):
+        """Unidade e conteúdo na mesma linha: N°. DA UNIDADE: 03 CONTE°DO: Título"""
+        units = _parse_units_from_teaching_plan(PUCRS_BOLD_HEADING_PLAN)
+        titles = [u[0] for u in units]
+        assert any("Indecid" in t for t in titles), f"Got: {titles}"
+
+    def test_tcc_heading_format_detects_units(self):
+        """Formato ## **UNIDADE 01: Título** sem N°"""
+        units = _parse_units_from_teaching_plan(TCC_HEADING_PLAN)
+        assert len(units) == 3
+        titles = [u[0] for u in units]
+        assert any("Conjuntos" in t for t in titles)
+        assert any("Turing" in t for t in titles)
+        assert any("Indecid" in t for t in titles)
 
     def test_topic_text_helper_with_string(self):
         assert _topic_text("Bar") == "Bar"

@@ -348,7 +348,7 @@ class App(tk.Tk):
         ttk.Button(import_actions, text="💻 Código / ZIP", command=self.add_code_files).grid(row=1, column=1, sticky="ew", padx=4, pady=4)
 
         ttk.Button(build_actions, text="📂 Abrir Repo", command=self.open_repo_folder).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
-        ttk.Button(build_actions, text="🗂 FILE_MAP", command=self.open_file_map).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
+        ttk.Button(build_actions, text="🧠 Student State", command=self.open_student_state_curator).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
         self._btn_process = ttk.Button(build_actions, text="⚡ Processar",
                                        command=self.process_selected_single)
         self._btn_process.grid(row=1, column=0, sticky="ew", padx=4, pady=4)
@@ -2507,5 +2507,30 @@ class App(tk.Tk):
             return
         self._open_path_in_system(file_map_path)
         self._set_status(f"FILE_MAP aberto: {file_map_path}")
+
+    def open_student_state_curator(self):
+        repo_dir = self._repo_dir_from_active_subject()
+        if not repo_dir:
+            messagebox.showinfo(APP_NAME, "Nenhum repositório configurado para a matéria ativa.")
+            return
+        if not repo_dir.exists():
+            messagebox.showerror(APP_NAME, f"A pasta do repositório não existe:\n{repo_dir}")
+            return
+
+        active_name = self._var_active_subject.get()
+        subject = self.subject_store.get(active_name) if active_name and active_name != "(nenhuma)" else None
+        if subject is None:
+            messagebox.showinfo(APP_NAME, "Selecione uma matéria ativa para abrir o Student State.")
+            return
+
+        from src.ui.student_state_curator import StudentStateCurator
+
+        StudentStateCurator(
+            self,
+            repo_dir=repo_dir,
+            subject_profile=subject,
+            theme_mgr=self.theme_mgr,
+            on_saved=self._set_status,
+        )
 
 

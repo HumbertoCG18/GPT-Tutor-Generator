@@ -27,6 +27,8 @@ This documents the structure of the GitHub repository that the tool generates �
 ```
 course/COURSE_MAP.md          # pedagogical map — primary entry point for the Claude tutor
 course/FILE_MAP.md            # routing index with priority — used by the tutor to navigate files
+course/SYLLABUS.md            # syllabus generated from SubjectProfile
+course/GLOSSARY.md            # glossary seeded and refined from course content
 student/STUDENT_STATE.md      # student profile and progress
 exercises/EXERCISE_INDEX.md   # exercise index
 build/claude-knowledge/bundle.seed.json   # internal seed — not loaded eagerly

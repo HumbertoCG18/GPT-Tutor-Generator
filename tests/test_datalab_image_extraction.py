@@ -98,7 +98,7 @@ def test_run_single_datalab_returns_images_dir_when_images_present(tmp_path):
     out_dir = tmp_path / "staging" / "markdown-auto" / "datalab" / "meu-entry"
     out_dir.mkdir(parents=True)
 
-    with patch.object(backend, "_convert_range", return_value=(fake_result, "# Título\n")):
+    with patch.object(backend, "_convert_range", return_value=(fake_result, "# Título\n", {})):
         result = backend._run_single_datalab(
             ctx, out_dir, mode="balanced", page_range=None, max_wait_seconds=300
         )
@@ -117,7 +117,7 @@ def test_run_single_datalab_no_images_dir_when_no_images(tmp_path):
     out_dir = tmp_path / "staging" / "markdown-auto" / "datalab" / "meu-entry"
     out_dir.mkdir(parents=True)
 
-    with patch.object(backend, "_convert_range", return_value=(fake_result, "# Título\n")):
+    with patch.object(backend, "_convert_range", return_value=(fake_result, "# Título\n", {})):
         result = backend._run_single_datalab(
             ctx, out_dir, mode="balanced", page_range=None, max_wait_seconds=300
         )
@@ -132,11 +132,11 @@ def test_run_chunked_datalab_saves_images_from_all_chunks(tmp_path):
 
     call_count = {"n": 0}
 
-    def fake_convert_range(ctx, *, mode, page_range, max_wait_seconds):
+    def fake_convert_range(ctx, *, mode, page_range, max_wait_seconds, page_offset=0):
         call_count["n"] += 1
         n = call_count["n"]
         images = {f"chunk{n}_Fig_1.png": base64.b64encode(raw_png).decode()}
-        return _make_datalab_result(images), f"# Chunk {n}\n"
+        return _make_datalab_result(images), f"# Chunk {n}\n", {}
 
     ctx = _make_ctx(tmp_path)
     ctx.pages = list(range(60))       # 60 pages → forces chunking

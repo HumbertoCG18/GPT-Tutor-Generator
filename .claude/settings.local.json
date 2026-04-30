@@ -13,11 +13,13 @@
       "Bash(git checkout *)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(pytest *)"
+      "Bash(pytest *)",
+      "mcp__token-savior__search_codebase",
+      "Bash(gh api *)"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "code-review-graph"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }

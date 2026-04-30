@@ -129,6 +129,8 @@ _PAGE_PATTERNS = [
     re.compile(r"\.pdf-(\d{3,4})(?:\.|$)", re.IGNORECASE),                       # aula.pdf-0004.png
     re.compile(r"(?:^|[-_])p(?:age)?[-_]?(\d{1,4})(?:[-_.]|$)", re.IGNORECASE),   # p4, p_04, page_6
     re.compile(r"page[_-]?(\d{1,4})", re.IGNORECASE),                             # page6, page_6, page-6
+    # Docling/marker fallback: picture-001.png, figure-3.png (1-3 digits only — avoids banner-2026.png)
+    re.compile(r"[-_](\d{1,3})(?:\.\w+)?$", re.IGNORECASE),
 ]
 
 _NUMERIC_TOKEN_RE = re.compile(r"(?<!\d)(\d{3,4})(?!\d)")
@@ -151,7 +153,7 @@ def extract_page_number(filename: str) -> Optional[int]:
 
     # Conservative fallback for consolidated assets: if the filename contains
     # strong page cues plus a 3-4 digit token, use the first token as page.
-    has_page_cue = any(cue in lowered for cue in (".pdf-", "page", "_page_", "-p", "_p"))
+    has_page_cue = any(cue in lowered for cue in (".pdf-", "page", "_page_"))
     if has_page_cue:
         token = _NUMERIC_TOKEN_RE.search(lowered)
         if token:
@@ -161,7 +163,9 @@ def extract_page_number(filename: str) -> Optional[int]:
 
 
 def group_images_by_page(
-    images_dir: Path, entry_prefix: str
+    images_dir: Path,
+    entry_prefix: str,
+    page_overrides: Optional[Dict[str, int]] = None,
 ) -> Dict[Optional[int], List[Path]]:
     """Group images in a directory by page number.
 
@@ -172,9 +176,21 @@ def group_images_by_page(
        (one image per page, named ``page-NNN.jpg``).
 
     Images with unrecognized patterns go under key ``None``.
+
+    ``page_overrides`` maps the base filename (without the ``{entry_prefix}-``
+    prefix) to a page number; used to resolve Datalab hash-based images that
+    carry no page information in their filename.
     """
     groups: Dict[Optional[int], List[Path]] = {}
     _IMG_EXTS = (".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp")
+    _prefix_len = len(entry_prefix) + 1  # strip "{entry_prefix}-" prefix
+
+    def _resolve_page(img_path: Path) -> Optional[int]:
+        page = extract_page_number(img_path.name)
+        if page is None and page_overrides:
+            base = img_path.name[_prefix_len:]
+            page = page_overrides.get(base)
+        return page
 
     # 1. Standard images in images_dir/ with entry_prefix
     if images_dir.exists():
@@ -185,8 +201,7 @@ def group_images_by_page(
                 continue
             if not img_path.name.lower().startswith(entry_prefix.lower()):
                 continue
-            page = extract_page_number(img_path.name)
-            groups.setdefault(page, []).append(img_path)
+            groups.setdefault(_resolve_page(img_path), []).append(img_path)
 
     # 2. Scanned pages in images_dir/scanned/{entry_prefix}/
     scanned_dir = images_dir / "scanned" / entry_prefix
@@ -209,7 +224,6 @@ def group_images_by_page(
                 continue
             if not img_path.name.lower().startswith(entry_prefix.lower()):
                 continue
-            page = extract_page_number(img_path.name)
-            groups.setdefault(page, []).append(img_path)
+            groups.setdefault(_resolve_page(img_path), []).append(img_path)
 
     return groups

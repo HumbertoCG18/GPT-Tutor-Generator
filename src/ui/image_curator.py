@@ -29,6 +29,17 @@ logger = logging.getLogger(__name__)
 
 IMAGE_TYPES = ["diagrama", "tabela", "formula", "codigo", "generico", "decorativa", "extracao-latex"]
 
+
+def _load_datalab_page_overrides(repo_dir: Path, entry_id: str) -> Dict[str, int]:
+    """Load the {filename: page} map saved by the Datalab backend, if present."""
+    map_path = repo_dir / "staging" / "markdown-auto" / "datalab" / entry_id / "datalab-image-pages.json"
+    if not map_path.exists():
+        return {}
+    try:
+        return json.loads(map_path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
 def _image_curator_layout_mode(width: int) -> str:
     if width >= 1400:
         return "wide"
@@ -491,7 +502,8 @@ class ImageCurator(tk.Toplevel):
             entry_id = entry.get("id", "")
             if not entry_id:
                 continue
-            groups = group_images_by_page(self._images_dir, entry_id)
+            overrides = _load_datalab_page_overrides(self.repo_dir, entry_id)
+            groups = group_images_by_page(self._images_dir, entry_id, page_overrides=overrides)
             if not groups:
                 continue
             entry["_image_groups"] = groups
@@ -558,7 +570,8 @@ class ImageCurator(tk.Toplevel):
         if not entry:
             return
 
-        groups = group_images_by_page(self._images_dir, entry_id)
+        overrides = _load_datalab_page_overrides(self.repo_dir, entry_id)
+        groups = group_images_by_page(self._images_dir, entry_id, page_overrides=overrides)
         if groups:
             entry["_image_groups"] = groups
             entry["_duplicate_images"] = _build_duplicate_index(groups)

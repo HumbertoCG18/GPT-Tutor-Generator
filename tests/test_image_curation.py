@@ -1038,6 +1038,23 @@ class TestImageMapper:
         assert extract_page_number("entry-p_08-figure.png") == 8
         assert extract_page_number("entry-page12.webp") == 12
 
+    def test_maps_page_from_docling_picture_pattern(self):
+        from src.builder.vision.image_classifier import extract_page_number
+        assert extract_page_number("picture-001.png") == 1
+        assert extract_page_number("picture-042.png") == 42
+        assert extract_page_number("picture-003.jpeg") == 3
+
+    def test_maps_page_from_docling_figure_pattern(self):
+        from src.builder.vision.image_classifier import extract_page_number
+        assert extract_page_number("figure-3.png") == 3
+        assert extract_page_number("figure-12.jpg") == 12
+
+    def test_does_not_match_year_as_page(self):
+        from src.builder.vision.image_classifier import extract_page_number
+        # 4+ dígitos não devem ser tratados como página
+        assert extract_page_number("banner-2026.png") is None
+        assert extract_page_number("slide-1999.jpg") is None
+
     def test_unknown_pattern_returns_none(self):
         from src.builder.vision.image_classifier import extract_page_number
         assert extract_page_number("random-image.png") is None
@@ -1069,6 +1086,95 @@ class TestImageMapper:
         assert 12 in groups  # p_12
         # unknown doesn't match entry1 prefix, so not included
         assert None not in groups
+
+    def test_group_images_by_page_with_overrides(self, tmp_path):
+        from src.builder.vision.image_classifier import group_images_by_page
+        images_dir = tmp_path / "content" / "images"
+        images_dir.mkdir(parents=True)
+
+        (images_dir / "entry1-datalab-abc123_img.jpg").write_bytes(b"fake")
+        (images_dir / "entry1-datalab-def456_img.jpg").write_bytes(b"fake")
+        (images_dir / "entry1-page-003-img-01.png").write_bytes(b"fake")
+
+        overrides = {
+            "datalab-abc123_img.jpg": 5,
+            "datalab-def456_img.jpg": 12,
+        }
+        groups = group_images_by_page(images_dir, "entry1", page_overrides=overrides)
+
+        assert 5 in groups
+        assert 12 in groups
+        assert 3 in groups
+        assert None not in groups
+
+    def test_group_images_by_page_overrides_do_not_affect_known_patterns(self, tmp_path):
+        from src.builder.vision.image_classifier import group_images_by_page
+        images_dir = tmp_path / "content" / "images"
+        images_dir.mkdir(parents=True)
+
+        (images_dir / "entry1-page-007-img-01.png").write_bytes(b"fake")
+        overrides = {"page-007-img-01.png": 99}
+
+        groups = group_images_by_page(images_dir, "entry1", page_overrides=overrides)
+        # extract_page_number returns 7, override should not apply
+        assert 7 in groups
+        assert 99 not in groups
+
+
+class TestDatalabImagePageMap:
+    def test_extracts_page_map_from_paginated_markdown(self):
+        from src.builder.engine import _extract_datalab_image_page_map
+        md = (
+            "1\n" + "-" * 48 + "\n\n"
+            "Some text on page 1.\n\n"
+            "![](abc123_img.jpg)\n\n"
+            "2\n" + "-" * 48 + "\n\n"
+            "Page 2 content.\n\n"
+            "![](def456_img.jpg)\n"
+            "![](ghi789_img.jpg)\n\n"
+            "3\n" + "-" * 48 + "\n\n"
+            "No images here.\n"
+        )
+        result = _extract_datalab_image_page_map(md)
+        assert result["abc123_img.jpg"] == 1
+        assert result["def456_img.jpg"] == 2
+        assert result["ghi789_img.jpg"] == 2
+
+    def test_page_offset_added_to_marker_numbers(self):
+        from src.builder.engine import _extract_datalab_image_page_map
+        md = (
+            "1\n" + "-" * 48 + "\n\n"
+            "![](img1.jpg)\n\n"
+            "2\n" + "-" * 48 + "\n\n"
+            "![](img2.jpg)\n"
+        )
+        result = _extract_datalab_image_page_map(md, page_offset=20)
+        assert result["img1.jpg"] == 21
+        assert result["img2.jpg"] == 22
+
+    def test_returns_empty_for_no_images(self):
+        from src.builder.engine import _extract_datalab_image_page_map
+        md = "1\n" + "-" * 48 + "\n\nNo images here.\n"
+        assert _extract_datalab_image_page_map(md) == {}
+
+    def test_returns_empty_for_no_markers(self):
+        from src.builder.engine import _extract_datalab_image_page_map
+        md = "Just plain markdown with ![](img.jpg) and no page markers.\n"
+        assert _extract_datalab_image_page_map(md) == {}
+
+    def test_strip_pagination_markers_removes_markers(self):
+        from src.builder.engine import _strip_pagination_markers
+        md = (
+            "1\n" + "-" * 48 + "\n\n"
+            "Hello world.\n\n"
+            "2\n" + "-" * 48 + "\n\n"
+            "Page two.\n"
+        )
+        result = _strip_pagination_markers(md)
+        assert "Hello world." in result
+        assert "Page two." in result
+        assert "-" * 48 not in result
+        assert not any(line.strip().isdigit() for line in result.splitlines() if line.strip())
 
 
 class TestDescriptionInjection:
