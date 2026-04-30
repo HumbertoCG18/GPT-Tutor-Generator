@@ -163,6 +163,7 @@ src/
 |   |-- dialogs.py                   # configurações, status, ajuda e dialogs
 |   |-- image_curator.py             # curadoria de imagens e extração visual
 |   |-- repo_dashboard.py            # dashboard operacional de repositórios
+|   |-- student_state_curator.py     # captura e edição do estado do aluno
 |   `-- theme.py                     # tema e configuração persistente
 `-- utils/
     |-- helpers.py           # helpers, autodetects, OCR/Tesseract e utilidades
@@ -621,18 +622,6 @@ Campos relevantes:
 python app.py
 ```
 
-### Script PowerShell
-
-```powershell
-.\run.ps1
-```
-
-### Script batch
-
-```bat
-run.bat
-```
-
 ### Comandos uteis de desenvolvimento
 
 ```powershell
@@ -674,8 +663,7 @@ Itens planejados em ordem de prioridade:
 | 4 | **NotebookLM** — export como destino adicional além de Claude/GPT/Gemini | médio | alto |
 | 5 | **MinerU** — backend PDF open-source com foco em equações | alto | alto |
 | 6 | **Marker-API** — versão cloud do Marker sem dependência de GPU local | médio | médio |
-| 7 | **Obsidian / Notion** — compatibilidade de saída com segundos cérebros | alto | médio |
-| 8 | **Instalador Windows** — Setup.exe com wizard, publicado nas Releases do GitHub | alto | alto |
+| 7 | **Instalador Windows** — Setup.exe com wizard, publicado nas Releases do GitHub | alto | alto |
 
 ## Notas de Manutenção
 
