@@ -1,147 +1,125 @@
 ---
 name: architecture
-description: How the major pieces of GPT-Tutor-Generator connect and flow
+description: System components, data flow, and integrations for GPT-Tutor-Generator
 triggers:
   - architecture
   - system design
-  - how does X connect to Y
+  - data flow
+  - integration
   - module structure
-  - folder structure
 edges:
   - target: context/stack.md
-    condition: when specific technology or backend details are needed
+    condition: when technology, version, or tooling details are needed
   - target: context/decisions.md
-    condition: when understanding why the architecture is structured this way
+    condition: when understanding why an architectural choice exists
   - target: context/repo-output.md
     condition: when the task involves the generated repository format
-last_updated: 2025-04-22
+last_updated: 2026-05-04
 ---
 
 # Architecture
 
-## System Overview
+## Product Shape
 
-```
-app.py
-  └── src/ui/app.py          # main window, tab routing
-        └── builder/engine.py  # facade — orchestrates subsystems
-              ├── builder/ops/         # build lifecycle operations
-              ├── builder/pdf/         # PDF pipeline and assets
-              ├── builder/artifacts/   # COURSE_MAP, FILE_MAP, prompts, student_state
-              ├── builder/extraction/  # taxonomy, entry signals, image markdown
-              ├── builder/facade/      # configured wrappers exposed by engine
-              ├── builder/routing/     # FILE_MAP matching and routing
-              ├── builder/runtime/     # external backend clients (Datalab, Ollama)
-              ├── builder/text/        # sanitization, URL→markdown
-              ├── builder/timeline/    # schedule index and signals
-              ├── builder/vision/      # visual classification
-              └── builder/core/       # central utilities (config, markdown, images)
-```
+GPT-Tutor-Generator is a local Python desktop application that transforms academic materials into a structured Markdown repository for LLM-based tutoring.
 
-## Key Components
+The project manifest is `pyproject.toml`:
 
-| Module | What it does | Depends on |
-|---|---|---|
-| `engine.py` | Stable facade — orchestrates calls between subsystems. No new logic here. | All builder subpackages |
-| `builder/ops/` | Build lifecycle: bootstrap, workflow, entry processing, incremental build, state | engine, models, pdf, artifacts |
-| `builder/pdf/` | PDF pipeline, asset extraction, scanned PDF handling | runtime, core |
-| `builder/artifacts/` | Generates COURSE_MAP, FILE_MAP, prompts, navigation, student_state | models, extraction |
-| `builder/runtime/` | External clients: Datalab API, Ollama Vision | network, env vars |
-| `builder/extraction/` | Content taxonomy, entry signals, image markdown, teaching plan | core, pdf |
-| `models/core.py` | Central dataclasses: SubjectProfile, BackendRunResult, etc. | — |
-| `models/task_queue.py` | RepoTask and RepoTaskStore — persistent JSON task queue | — |
-| `src/ui/` | tkinter UI: main window, curator studio, repo dashboard, image curator, dialogs | engine, models |
+| Field | Value |
+|---|---|
+| Package name | `academic-tutor-repo-builder` |
+| Version | `3.0.0` |
+| Main entry point | `app.py` |
+| Test runner | `pytest` |
 
-## Full Directory Map
+## High-Level Flow
 
-```
-app.py                          # bootstrap: starts TK, calls src/ui/app.py
+The application workflow from the brief is:
 
-src/
-├── builder/
-│   ├── engine.py               # facade — orchestrates calls between subsystems
-│   ├── artifacts/              # COURSE_MAP, FILE_MAP, prompts, navigation, student_state
-│   │   ├── navigation.py
-│   │   ├── pedagogy.py
-│   │   ├── prompts.py
-│   │   ├── repo.py
-│   │   └── student_state.py
-│   ├── core/                   # central utilities (semantic config, markdown, images)
-│   │   ├── core_utils.py
-│   │   ├── image_resolution.py
-│   │   ├── markdown_utils.py
-│   │   ├── semantic_config.py
-│   │   └── source_importers.py
-│   ├── extraction/             # taxonomy, entry signals, image markdown
-│   │   ├── content_taxonomy.py
-│   │   ├── entry_signals.py
-│   │   ├── image_markdown.py
-│   │   └── teaching_plan.py
-│   ├── facade/                 # configured wrappers exposed by engine
-│   │   ├── file_map.py
-│   │   ├── glossary.py
-│   │   ├── navigation_templates.py
-│   │   ├── repo_docs.py
-│   │   └── teaching_timeline.py
-│   ├── ops/                    # build lifecycle operations
-│   │   ├── bootstrap_ops.py
-│   │   ├── build_workflow.py
-│   │   ├── entry_processing.py
-│   │   ├── incremental_build.py
-│   │   ├── lifecycle_ops.py
-│   │   ├── operational_artifacts.py
-│   │   ├── pedagogical_regeneration.py
-│   │   ├── state_ops.py
-│   │   ├── task_queue_runner.py
-│   │   └── url_and_cleanup.py
-│   ├── pdf/                    # PDF pipeline and assets
-│   │   ├── pdf_analysis.py
-│   │   ├── pdf_assets.py
-│   │   ├── pdf_pipeline.py
-│   │   └── pdf_scanned.py
-│   ├── routing/                # FILE_MAP matching and routing
-│   │   └── file_map.py
-│   ├── runtime/                # external backend clients
-│   │   ├── backend_runtime.py
-│   │   └── datalab_client.py
-│   ├── text/                   # sanitization, URL→markdown conversion
-│   │   ├── sanitization.py
-│   │   └── url_markdown.py
-│   ├── timeline/               # schedule index and signals
-│   │   ├── index.py
-│   │   └── signals.py
-│   └── vision/                 # vision and visual classification
-│       ├── card_evidence.py
-│       ├── image_classifier.py
-│       ├── ollama_client.py
-│       └── vision_client.py
-├── models/
-│   ├── core.py                 # central dataclasses (SubjectProfile, BackendRunResult, …)
-│   └── task_queue.py           # RepoTask and RepoTaskStore (persistent JSON queue)
-├── ui/
-│   ├── app.py                  # main window and tab routing
-│   ├── consolidate_unit_dialog.py
-│   ├── curator_studio.py       # manual entry review
-│   ├── dialogs.py              # settings, status, help, and other dialogs
-│   ├── image_curator.py        # image curation and visual extraction
-│   ├── repo_dashboard.py       # operational repository dashboard
-│   └── theme.py                # theme and persisted preferences
-└── utils/
-    ├── helpers.py              # general helpers, autodetects, OCR/Tesseract
-    └── power.py                # prevents sleep during long builds
+```text
+Import academic materials
+  -> classify and configure entries
+  -> process PDFs, links, code, and images
+  -> send difficult outputs to manual review
+  -> curate images and extract descriptions
+  -> consolidate content into Markdown
+  -> generate instruction files and pedagogical repository structure
 ```
 
-## External Dependencies
+Typical UI flow:
 
-| Dependency | What it is | Constraint |
-|---|---|---|
-| Datalab API | Primary PDF backend for `math_heavy` content | Requires `DATALAB_API_KEY` |
-| Ollama | Local vision backend | Default endpoint `http://localhost:11434/api/chat`; independent of PDF backend |
-| GitHub | Output destination for generated repos | Configured per SubjectProfile |
-| Tesseract | OCR fallback | Must be installed locally |
+```text
+Create or select subject
+  -> define generated repository folder
+  -> import files and links
+  -> process queue
+  -> review manual-review/ outputs when needed
+  -> use Image Curator for extracted images or photos
+  -> build or update final repository
+  -> optionally reprocess existing repository
+  -> monitor repository tasks in dashboard
+```
 
-## What Does NOT Exist Here
+## Components
 
-- No web server, no HTTP API — this is a local desktop app only.
-- No LLM calls during the build pipeline itself — LLM is used only in the generated repo (by the Claude tutor at runtime).
-- No centralized logic in `engine.py` — it is a facade only.
+| Component | Responsibility |
+|---|---|
+| `app.py` | Application entry point. |
+| Desktop UI | Tkinter interface for subject setup, imports, queue processing, image curation, repository tasks, and dashboard monitoring. |
+| Import pipeline | Accepts academic files and links, including PDFs, images, code, and URLs. |
+| Processing queue | Persistent queue for builds, reprocessing, and individual material processing across app sessions. |
+| Manual review area | Holds problematic outputs under `manual-review/` for user correction. |
+| Image Curator | Curates images extracted from PDFs or imported photos and extracts descriptions. |
+| Repository builder | Consolidates processed content into structured Markdown and tutor instruction artifacts. |
+| Reprocess Repository action | Reapplies the current architecture to previously generated repositories. |
+| Dashboard | Shows operational state for generated repositories and queued repository tasks. |
+
+## Data Model Context
+
+The generated tutor repository is built with context for:
+
+| Context | Purpose |
+|---|---|
+| Subject | Identifies the course or discipline. |
+| Professor | Preserves teaching context. |
+| Semester | Anchors materials to the academic period. |
+| Schedule | Supports timeline-aware organization. |
+| Student profile | Supports personalized tutor behavior. |
+| Processing progress | Tracks build and material processing state. |
+
+## Integrations
+
+| Integration | Role |
+|---|---|
+| Ollama Vision | Vision support for image understanding and curation. |
+| Datalab PDF backend | PDF processing backend referenced by the README. |
+| Claude | Generated instruction target for Claude Projects knowledge bases. |
+| GPT | Generated instruction target. |
+| Gemini | Generated instruction target. |
+
+The brief does not declare network APIs, cloud LLM calls during build, or exact backend client modules. Do not assert those details without reading source or official docs.
+
+## Repository Layout From Brief
+
+| Path | Category | File count |
+|---|---:|---:|
+| `src` | application source | 71 |
+| `tests` | tests | 28 |
+| `docs` | documentation | 3 |
+| `.github` | GitHub metadata | 1 |
+
+## Entry Points
+
+| Path | Type |
+|---|---|
+| `app.py` | main |
+| `tests/__init__.py` | test package |
+| `tests/test_unit_fallback.py` | test |
+| `tests/test_ui_queue_dashboard.py` | test |
+| `tests/test_timeline_signals.py` | test |
+| `tests/test_timeline_scoring_ignored.py` | test |
+| `tests/test_timeline_index_kind.py` | test |
+| `tests/test_task_queue.py` | test |
+| `tests/test_tag_catalog.py` | test |
+| `tests/test_student_state_v2.py` | test |
+| `tests/test_student_state_manual_import.py` | test |

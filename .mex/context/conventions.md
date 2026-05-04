@@ -1,51 +1,75 @@
 ---
 name: conventions
-description: Code conventions, naming rules, structure patterns, and the verify checklist
+description: Code patterns, naming, file organization, and verification rules
 triggers:
   - convention
   - naming
   - code style
   - verify
   - review
-  - how to write
-  - pattern
+  - file organization
 edges:
   - target: context/architecture.md
-    condition: when understanding where new code should live
+    condition: when deciding where new logic should live
   - target: context/decisions.md
-    condition: when a convention traces back to an architectural decision
-last_updated: 2025-04-22
+    condition: when a convention comes from an architectural decision
+last_updated: 2026-05-04
 ---
 
 # Conventions
 
+## Source Organization
+
+From the brief:
+
+| Path | Role |
+|---|---|
+| `app.py` | Main application entry point. |
+| `src/` | Application source, 71 files. |
+| `tests/` | Test suite, 28 files. |
+| `docs/` | Project documentation, 3 files. |
+| `.github/` | GitHub metadata, 1 file. |
+
 ## Naming
 
-- Test files: `tests/test_<module>.py`
-- Test fixtures: `tests/fixtures/`
-- No other naming constraints documented — follow existing module names in each subpackage.
+Observed from the brief:
 
-## Structure
+| Kind | Pattern |
+|---|---|
+| Tests | `tests/test_<topic>.py` |
+| Unit fallback tests | `tests/test_unit_fallback.py` |
+| Timeline tests | `tests/test_timeline_*.py` |
+| Student state tests | `tests/test_student_state_*.py` |
+| Tag catalog tests | `tests/test_tag_catalog.py` |
 
-- `engine.py` is a facade. No new logic goes there. New consumers import from focused submodules directly.
-- New logic goes into the correct subpackage under `src/builder/`.
-- `Optional[X]` with default `None` for optional fields in dataclasses.
-- Imports must come from focused submodules, never from `engine.py`.
+Use existing topic names when adding tests. Do not introduce a new naming scheme without a specific reason.
 
-## Comments and Docstrings
+## Behavioral Patterns
 
-- No obvious comments — only non-obvious WHY comments.
-- No multi-paragraph docstrings.
+The README flow establishes these project patterns:
+
+- Imports are configured as entries before processing.
+- Processing is queue-based.
+- Difficult outputs are routed through `manual-review/`.
+- Image processing has a dedicated Image Curator flow.
+- Repository builds and reprocesses are available as repository tasks.
+- Dashboard state reflects repository task progress.
+- Generated output is Markdown plus LLM instruction artifacts.
+
+## Documentation Discipline
+
+- Use manifest data exactly: `pyproject.toml`, project name `academic-tutor-repo-builder`, version `3.0.0`.
+- If dependencies, scripts, linter, formatter, or package manager are not declared, document them as not declared instead of guessing.
+- Prefer precise paths from the brief.
+- Do not assert source module internals unless they were read for the task.
 
 ## Verify Checklist
 
-Run these checks item by item after writing any code:
+Run this checklist after code or scaffold changes:
 
-- [ ] New logic is in the correct subpackage, not in `engine.py`.
-- [ ] Imports come from focused submodules, not from `engine.py`.
-- [ ] Optional dataclass fields use `Optional[X]` with default `None`.
-- [ ] No obvious comments added — only non-obvious WHY.
-- [ ] No multi-paragraph docstrings added.
-- [ ] Any new MCP tool call is preceded by `ToolSearch select:<n>` to load the schema.
-- [ ] If using `pymupdf4llm` for a `math_heavy` file — this is wrong. Switch to Datalab or Marker.
-- [ ] If touching `RepoTaskStore` — verify the queue is not being manually recreated.
+- [ ] Manifest facts match the brief or the actual manifest that was read.
+- [ ] No undeclared dependency, script, linter, formatter, or package manager was invented.
+- [ ] Entry points and paths match repository spelling and separators.
+- [ ] New tests follow the `tests/test_<topic>.py` convention.
+- [ ] Generated-repository behavior remains compatible with the README flow.
+- [ ] If changing tag behavior, update or add coverage near `tests/test_tag_catalog.py` and relevant unit/timeline scoring tests.
