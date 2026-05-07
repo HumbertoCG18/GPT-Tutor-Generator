@@ -63,3 +63,42 @@ def test_resolve_semantic_profile_applies_optional_override(tmp_path: Path):
     assert "antlr4" in profile["known_tools"]
     assert "visao geral" in profile["structural_stop_headings"]
     assert "compiladores-2026" in profile["generic_slug_blacklist"]
+
+
+def test_infer_semantic_profile_excludes_course_abbreviations_from_known_tools():
+    profile = infer_semantic_profile(
+        course_name="Sistemas Operacionais",
+        teaching_plan="""
+### Unidade 01 — Introdução
+- SO (Sistemas Operacionais) é um software
+- Horário: LM 19:15 - 20:45
+
+### Unidade 02 — Processos
+- P1 em 07/05/2026
+- TP1 entrega 30/04/2026
+""",
+        course_map_md="",
+        glossary_md="",
+        strong_headings=[],
+    )
+
+    known = profile.get("known_tools", [])
+    # Siglas curtas do curso não devem ser ferramentas
+    assert "so" not in known, f"'so' should not be a known tool, got: {known}"
+    assert "p1" not in known, f"'p1' should not be a known tool"
+    assert "lm" not in known, f"'lm' (sala de aula) should not be a known tool"
+    assert "tp1" not in known, f"'tp1' should not be a known tool"
+
+
+def test_infer_semantic_profile_short_default_tools_still_accepted():
+    # Z3 está nos defaults (base), não precisa ser inferido do corpus
+    from src.builder.core.semantic_config import load_semantic_defaults
+    profile = infer_semantic_profile(
+        course_name="Verificação Formal",
+        teaching_plan="Usar Z3 para satisfatibilidade\n",
+        course_map_md="",
+        glossary_md="",
+        strong_headings=["Z3"],
+    )
+    known = profile.get("known_tools", [])
+    assert "z3" in known, f"Z3 (default tool) should be in known_tools, got: {known}"
