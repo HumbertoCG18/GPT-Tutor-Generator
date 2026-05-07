@@ -399,3 +399,29 @@ def test_write_tag_catalog_preserves_manual_catalog_tags(tmp_path):
 
     assert "ferramenta:isabelle" in payload["manual_tags"]
     assert "ferramenta:isabelle" in payload["tags"]
+
+
+def test_looks_like_tool_candidate_does_not_match_short_tool_as_substring():
+    from src.builder.extraction.content_taxonomy import _looks_like_tool_candidate
+
+    # "so" como known_tool NÃO deve casar com "processos" (substring)
+    profile = {"known_tools": ["so"]}
+    assert not _looks_like_tool_candidate(
+        "Comunicação e sincronização de processos", semantic_profile=profile
+    )
+
+
+def test_looks_like_tool_candidate_matches_short_tool_as_whole_word():
+    from src.builder.extraction.content_taxonomy import _looks_like_tool_candidate
+
+    # "so" como known_tool DEVE casar quando aparece como palavra isolada
+    profile = {"known_tools": ["so"]}
+    assert _looks_like_tool_candidate("Introdução ao SO e seus serviços", semantic_profile=profile)
+
+
+def test_looks_like_tool_candidate_long_tool_still_uses_substring():
+    from src.builder.extraction.content_taxonomy import _looks_like_tool_candidate
+
+    # Ferramenta com 4+ chars continua usando substring (ex: "lean" em "leanpub")
+    profile = {"known_tools": ["isabelle"]}
+    assert _looks_like_tool_candidate("Prova com Isabelle/HOL", semantic_profile=profile)

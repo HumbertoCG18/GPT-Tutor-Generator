@@ -62,7 +62,18 @@ def _looks_like_tool_candidate(text: str, semantic_profile: Optional[dict] = Non
     normalized = _normalize_match_text(text)
     effective_profile = merge_semantic_profile(semantic_profile)
     known_tools = list(effective_profile.get("known_tools") or [])
-    return any(tool in normalized for tool in known_tools)
+    normalized_tokens = set(normalized.split())
+    for tool in known_tools:
+        tool_norm = _normalize_match_text(tool)
+        if not tool_norm:
+            continue
+        if len(tool_norm) < 4:
+            if tool_norm in normalized_tokens:
+                return True
+        else:
+            if tool_norm in normalized:
+                return True
+    return False
 
 
 def _looks_like_bibliography_candidate(text: str, semantic_profile: Optional[dict] = None) -> bool:
