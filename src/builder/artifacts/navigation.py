@@ -568,7 +568,7 @@ def render_low_token_file_map_md(
     resolve_entry_manual_unit_slug: Callable[[dict, list], str],
     unit_match_result_factory: Callable[..., object],
     derive_unit_from_topic_match: Callable[[object, dict], str],
-    auto_map_entry_unit: Callable[[dict, list, str, list], object],
+    auto_map_entry_unit: Callable[..., object],
     select_probable_period_for_entry: Callable[..., tuple],
     file_map_markdown_cell: Callable[[str], str],
     entry_markdown_path_for_file_map: Callable[[object, dict], object],
@@ -577,6 +577,7 @@ def render_low_token_file_map_md(
     entry_usage_hint: Callable[[dict], str],
     entry_priority_label: Callable[[dict], str],
     clamp_navigation_artifact: Callable[..., str],
+    build_unit_tag_index: Callable[[dict], dict], 
 ) -> str:
     course_name = course_meta.get("course_name", "Curso")
     content_taxonomy = dict(
@@ -595,6 +596,7 @@ def render_low_token_file_map_md(
         or build_file_map_timeline_context_from_course(course_meta, subject_profile)
     )
     topic_index = iter_content_taxonomy_topics(content_taxonomy)
+    unit_tag_index = build_unit_tag_index(content_taxonomy)  
     blocks_by_unit = temporal_context.get("blocks_by_unit", {}) if temporal_context else {}
     unassigned_blocks = temporal_context.get("unassigned_blocks", []) if temporal_context else []
     unit_by_slug = {unit.get("slug", ""): unit for unit in unit_index if unit.get("slug")}
@@ -686,7 +688,11 @@ def render_low_token_file_map_md(
                         reasons=[f"topic={topic_match.topic_slug}", *topic_match.reasons],
                     )
                 else:
-                    match = auto_map_entry_unit(entry, unit_index, markdown_text, topic_index)
+                    match = auto_map_entry_unit(entry, unit_index, markdown_text, topic_index, unit_tag_index=unit_tag_index)
+                    if not preferred_topic_slug and match.slug and not match.ambiguous and match.confidence >= 0.45:
+                        refined = auto_map_entry_subtopic(entry, content_taxonomy, markdown_text, winning_unit_slug=match.slug)
+                        if refined.topic_slug and not refined.ambiguous and refined.confidence >= 0.35:
+                            preferred_topic_slug = refined.topic_slug
             unit = (
                 f"{match.slug} _(ambíguo)_"
                 if match.slug and match.ambiguous
@@ -848,7 +854,7 @@ def low_token_file_map_md(
     resolve_entry_manual_unit_slug: Callable[[dict, list], str],
     unit_match_result_factory: Callable[..., object],
     derive_unit_from_topic_match: Callable[[object, dict], str],
-    auto_map_entry_unit: Callable[[dict, list, str, list], object],
+    auto_map_entry_unit: Callable[..., object],    
     select_probable_period_for_entry: Callable[..., tuple],
     file_map_markdown_cell: Callable[[str], str],
     entry_markdown_path_for_file_map: Callable[[object, dict], object],
@@ -857,6 +863,7 @@ def low_token_file_map_md(
     entry_usage_hint: Callable[[dict], str],
     entry_priority_label: Callable[[dict], str],
     clamp_navigation_artifact: Callable[..., str],
+    build_unit_tag_index: Callable[[dict], dict], 
 ) -> str:
     return render_low_token_file_map_md(
         course_meta,
@@ -882,6 +889,7 @@ def low_token_file_map_md(
         entry_usage_hint=entry_usage_hint,
         entry_priority_label=entry_priority_label,
         clamp_navigation_artifact=clamp_navigation_artifact,
+        build_unit_tag_index=build_unit_tag_index,
     )
 
 

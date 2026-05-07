@@ -145,12 +145,15 @@ def auto_map_entry_subtopic(
     taxonomy: dict,
     markdown_text: str,
     *,
+    winning_unit_slug: str = "",
     collect_entry_unit_signals: Callable[[dict, str], dict],
     iter_content_taxonomy_topics: Callable[[dict], List[dict]],
     score_entry_against_taxonomy_topic: Callable[[dict, dict], float],
     topic_match_result_factory,
 ):
     topic_index = iter_content_taxonomy_topics(taxonomy)
+    if winning_unit_slug:
+        topic_index = [t for t in topic_index if str(t.get("unit_slug", "") or "") == winning_unit_slug]
     if not topic_index:
         return topic_match_result_factory(
             topic_slug="",
@@ -190,7 +193,7 @@ def score_entry_against_unit(
     unit: dict,
     *,
     score_timeline_unit_phrase: Callable[[str, set[str], str, dict], float],
-    timeline_unit_neutral_tokens: set[str],
+    timeline_unit_neutral_tokens: set[str], unit_tag_boost = 0.0,
 ) -> float:
     title_text = signals.get("title_text", "")
     markdown_headings_text = signals.get("markdown_headings_text", "")
@@ -338,6 +341,8 @@ def score_entry_against_unit(
         score *= 0.55
     if exact_topic_hits == 0 and len(matched_specific_tokens) == 1:
         score *= 0.45
+    if unit_tag_boost > 0.0:
+        score += unit_tag_boost * 0.85
     return score
 
 
@@ -347,6 +352,7 @@ def auto_map_entry_unit(
     markdown_text: str,
     *,
     topic_index: Optional[List[dict]] = None,
+    unit_tag_index: Optional[Dict[str, float]] = None,
     build_file_map_unit_index: Callable[[list], list],
     collect_entry_unit_signals: Callable[[dict, str], dict],
     score_entry_against_unit: Callable[[dict, dict], float],
@@ -359,10 +365,21 @@ def auto_map_entry_unit(
         return unit_match_result_factory(slug="", confidence=0.0, ambiguous=True, reasons=["sem-unidades"])
 
     signals = collect_entry_unit_signals(entry, markdown_text)
+    unit_tag_boosts: Dict[str, float] = {}
+    if unit_tag_index:
+        for tag in [str(t) for t in (entry.get("auto_tags") or []) if t]:
+            mapping = unit_tag_index.get(tag)
+            if not mapping:
+                continue
+            u_slug = str(mapping.get("unit_slug", "") or "").strip()
+            w = float(mapping.get("weight", 1.0))
+            if u_slug:
+                unit_tag_boosts[u_slug] = unit_tag_boosts.get(u_slug, 0.0) + w
     scored = []
     normalized_topic_index = list(topic_index or [])
     for unit in indexed_units:
-        score = score_entry_against_unit(signals, unit)
+        tag_boost = unit_tag_boosts.get(str(unit.get("slug", "") or ""), 0.0)
+        score = score_entry_against_unit(signals, unit, unit_tag_boost=tag_boost)
         best_topic_score = 0.0
         if normalized_topic_index:
             unit_slug = normalize_unit_slug(str(unit.get("slug", "") or unit.get("title", "") or ""))
@@ -397,6 +414,9 @@ def auto_map_entry_unit(
     reasons = [f"winner_score={winner_score:.2f}"]
     if normalized_topic_index:
         reasons.append(f"topic_score={winner_topic_score:.2f}")
+    winner_tag_boost = unit_tag_boosts.get(str(winner.get("slug", "") or ""), 0.0)
+    if winner_tag_boost > 0.0:
+        reasons.append(f"tag_boost={winner_tag_boost:.2f}")
     if ambiguous:
         reasons.append("ambiguous")
     return unit_match_result_factory(

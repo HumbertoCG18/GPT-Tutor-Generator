@@ -505,6 +505,22 @@ def build_content_taxonomy(
 def write_internal_content_taxonomy(root_dir: Path, taxonomy: dict) -> None:
     write_text(root_dir / "course" / ".content_taxonomy.json", json.dumps(taxonomy, ensure_ascii=False, indent=2))
 
+def build_unit_tag_index(taxonomy: dict) -> dict:
+    """Map topico:slug tags to unit slugs from the content taxonomy.
+    Returns {tag_str: {"unit_slug": str, "weight": float}} where weight reflects
+    how specific the match is (3.0 = direct topic slug, 2.0 = alias)."""
+    index: Dict[str, dict] = {}
+    for unit in taxonomy.get("units", []) or []:
+        unit_slug = str(unit.get("slug", "") or "")
+        for topic in unit.get("topics", []) or []:
+            topic_slug = str(topic.get("slug", "") or "")
+            if topic_slug:
+                index[f"topico:{topic_slug}"] = {"unit_slug": unit_slug, "weight": 3.0}
+            for alias in topic.get("aliases", []) or []:
+                alias_slug = slugify(str(alias))
+                if alias_slug and alias_slug != topic_slug:
+                    index[f"topico:{alias_slug}"] = {"unit_slug": unit_slug, "weight": 2.0}
+    return index
 
 def extract_markdown_lead_text(markdown_text: str, max_chars: int = 2600) -> str:
     stripped = re.sub(r"^---\s*\n.*?\n---\s*\n?", "", markdown_text or "", flags=re.DOTALL)

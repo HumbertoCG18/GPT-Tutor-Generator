@@ -107,12 +107,13 @@ def build_file_map_aliases(
         timeline_unit_neutral_tokens=timeline_unit_neutral_tokens,
     )
 
-    def auto_map_entry_unit(entry, units, markdown_text, topic_index=None):
+    def auto_map_entry_unit(entry, units, markdown_text, topic_index=None, unit_tag_index=None):
         return file_map_auto_map_entry_unit(
             entry,
             units,
             markdown_text,
             topic_index=topic_index,
+            unit_tag_index=unit_tag_index,
             build_file_map_unit_index=build_file_map_unit_index,
             collect_entry_unit_signals=collect_entry_unit_signals,
             score_entry_against_unit=score_entry_against_unit,

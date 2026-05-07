@@ -320,6 +320,7 @@ def _build_content_taxonomy(
 
 _write_internal_content_taxonomy = _content_taxonomy.write_internal_content_taxonomy
 _collect_strong_heading_candidates = _content_taxonomy.collect_strong_heading_candidates
+_build_unit_tag_index = _content_taxonomy.build_unit_tag_index
 
 
 def _write_tag_catalog(
@@ -2301,6 +2302,7 @@ _navigation_template_aliases = _build_navigation_template_aliases(
     entry_usage_hint=_entry_usage_hint,
     entry_priority_label=_entry_priority_label,
     collapse_ws=_collapse_ws,
+    build_unit_tag_index_fn=_build_unit_tag_index,
 )
 root_readme = _navigation_template_aliases["root_readme"]
 wrap_frontmatter = _navigation_template_aliases["wrap_frontmatter"]
