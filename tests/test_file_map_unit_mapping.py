@@ -1624,3 +1624,57 @@ def test_resolve_entry_manual_timeline_block_falls_back_to_nth_instructional_blo
 
     assert resolved is not None
     assert resolved["id"] == "bloco-auto-005"
+
+
+def test_build_content_taxonomy_filters_noise_topics_without_code():
+    taxonomy = _build_content_taxonomy(
+        teaching_plan="""
+### Unidade 01 — Introdução ao estudo de sistemas operacionais
+- [ ] **1.1** Evolução histórica
+- [ ] **1.2** Chamadas de sistema
+- [ ] Aulas expositivas nas quais se buscará a participação dos alunos em um processo de discussão.
+- [ ] Uso de projetor multimídia.
+- [ ] Uso de laboratório para elaboração de trabalhos práticos.
+- [ ] Nesta unidade deve-se abordar a evolução histórica dos sistemas operacionais.
+""".strip(),
+        course_map_md="",
+        glossary_md="",
+    )
+
+    unit = taxonomy["units"][0]
+    slugs = [t["slug"] for t in unit["topics"]]
+
+    # Tópicos com código devem estar presentes
+    assert "11-evolucao-historica" in slugs
+    assert "12-chamadas-de-sistema" in slugs
+
+    # Noise topics sem código devem ter sido filtrados
+    noise_slugs = [
+        "uso-de-projetor-multimidia",
+        "uso-de-laboratorio-para-elaboracao-de-trabalhos-praticos",
+    ]
+    for noise in noise_slugs:
+        assert noise not in slugs, f"Noise topic '{noise}' should have been filtered"
+
+    # Descrição longa (7+ palavras) sem código deve ser filtrada
+    long_noise = [s for s in slugs if len(s) > 60]
+    assert not long_noise, f"Long noise slug found: {long_noise}"
+
+
+def test_build_content_taxonomy_includes_topic_42_comunicacao():
+    taxonomy = _build_content_taxonomy(
+        teaching_plan="""
+### Unidade 03 — Programação concorrente
+- [ ] **4.1** Programas multithreads
+- [ ] **4.2** Comunicação e sincronização de processos
+- [ ] **4.3** Primitivas de sincronização
+""".strip(),
+        course_map_md="",
+        glossary_md="",
+    )
+
+    unit = taxonomy["units"][0]
+    slugs = [t["slug"] for t in unit["topics"]]
+    assert "41-programas-multithreads" in slugs
+    assert "42-comunicacao-e-sincronizacao-de-processos" in slugs
+    assert "43-primitivas-de-sincronizacao" in slugs

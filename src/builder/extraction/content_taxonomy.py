@@ -457,6 +457,11 @@ def build_content_taxonomy(
             if not current_topic_text:
                 continue
             topic_code = _extract_topic_code(topic_text(topic))
+            # Filtrar noise topics: sem código numérico e que não passam na validação
+            if not topic_code and not _is_valid_topic_candidate(
+                current_topic_text, semantic_profile=semantic_profile
+            ):
+                continue
             topic_slug = slugify(current_topic_text)
             aliases = _glossary_aliases_for_topic(current_topic_text, unit_title, glossary_terms)
             topic_kind = "subtopic" if topic_code.count(".") >= 2 else "topic"
