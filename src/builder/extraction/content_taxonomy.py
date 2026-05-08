@@ -852,15 +852,19 @@ def resolve_unit_block_tags(
 
         markdown_text = entry_markdown_text_for_file_map_fn(repo_root, entry)
 
-        # --- Topic/subunit match ---
-        topic_match = auto_map_entry_subtopic_fn(entry, content_taxonomy, markdown_text)
-        preferred_topic_slug = ""
-        if (
-            topic_match.topic_slug
-            and not topic_match.ambiguous
-            and topic_match.confidence >= 0.60
-        ):
-            preferred_topic_slug = topic_match.topic_slug
+        # --- Topic/subunit match (manual tem precedencia) ---
+        manual_subunit = _collapse_ws(str(entry.get("manual_subunit_slug") or ""))
+        if manual_subunit:
+            preferred_topic_slug = manual_subunit
+        else:
+            topic_match = auto_map_entry_subtopic_fn(entry, content_taxonomy, markdown_text)
+            preferred_topic_slug = ""
+            if (
+                topic_match.topic_slug
+                and not topic_match.ambiguous
+                and topic_match.confidence >= 0.60
+            ):
+                preferred_topic_slug = topic_match.topic_slug
 
         # --- Unit match (manual tem precedencia) ---
         manual_unit = _collapse_ws(str(entry.get("manual_unit_slug") or ""))
