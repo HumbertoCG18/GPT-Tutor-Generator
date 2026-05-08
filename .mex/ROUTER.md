@@ -27,6 +27,11 @@ Read this file before starting any task.
 - Dashboard monitors operational repository state.
 - Reprocess Repository reapplies the current architecture to existing generated repositories.
 - Test runner is `pytest`; brief lists 28 files under `tests/`.
+- Auto-tags de unidade/subunidade/bloco geradas em `resolve_unit_block_tags()`:
+  tags `unit:`, `subunit:`, `bloco:` persistidas em `auto_tags` do manifest após
+  cada regeneração pedagógica.
+- Sinal DD.MM: arquivo `12.03 Processos.pdf` recebe boost +0.30 no bloco do
+  cronograma correspondente em `score_entry_against_timeline_block()`.
 
 ### Not Declared In Brief
 
