@@ -718,6 +718,22 @@ def score_entry_against_timeline_block(
         score += score_text_against_row(signals.get("legacy_tags_text", ""), topic_tokens, weight=0.05)
 
     score += min(score_card_evidence_against_entry_fn(signals, block.get("card_evidence", []) or []), 0.45)
+
+    # Boost DD.MM: se raw_text começa com DD.MM e a data casa com alguma
+    # row do bloco, aplica boost pequeno e determinístico (+0.30).
+    raw_target_text = signals.get("raw_text", "")
+    if raw_target_text:
+        _dd_mm = re.match(r"^(\d{1,2})[.\s](\d{2})\s+", raw_target_text)
+        if _dd_mm:
+            _day = int(_dd_mm.group(1))
+            _month = int(_dd_mm.group(2))
+            _file_date_str = f"{_day:02d}/{_month:02d}"
+            for _row in (block.get("rows") or []):
+                _row_date = str(_row.get("date_text", "") or "")
+                if _row_date.startswith(_file_date_str):
+                    score += 0.30
+                    break
+
     return score
 
 
