@@ -39,6 +39,7 @@ def regenerate_pedagogical_files(
     glossary_md_fn,
     write_tag_catalog_fn,
     refresh_manifest_auto_tags_fn,
+    resolve_unit_block_tags_fn,
     syllabus_md_fn,
     exam_index_md_fn,
     exercise_index_md_fn,
@@ -165,6 +166,13 @@ def regenerate_pedagogical_files(
         glossary_text=glossary_text,
     )
     live_manifest_entries = refresh_manifest_auto_tags_fn(builder.root_dir, live_manifest_entries, tag_catalog)
+
+    live_manifest_entries = resolve_unit_block_tags_fn(
+        live_manifest_entries,
+        runtime_course_meta,
+        builder.subject_profile,
+    )
+
     manifest["entries"] = live_manifest_entries
 
     try:

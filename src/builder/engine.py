@@ -321,6 +321,7 @@ def _build_content_taxonomy(
 _write_internal_content_taxonomy = _content_taxonomy.write_internal_content_taxonomy
 _collect_strong_heading_candidates = _content_taxonomy.collect_strong_heading_candidates
 _build_unit_tag_index = _content_taxonomy.build_unit_tag_index
+_resolve_unit_block_tags = _content_taxonomy.resolve_unit_block_tags
 
 
 def _write_tag_catalog(
@@ -2070,6 +2071,17 @@ class RepoBuilder:
             glossary_md_fn=glossary_md,
             write_tag_catalog_fn=_write_tag_catalog,
             refresh_manifest_auto_tags_fn=_refresh_manifest_auto_tags,
+            resolve_unit_block_tags_fn=partial(
+                _resolve_unit_block_tags,
+                build_file_map_unit_index_from_course_fn=_build_file_map_unit_index_from_course,
+                build_file_map_timeline_context_from_course_fn=_build_file_map_timeline_context_from_course,
+                iter_content_taxonomy_topics_fn=_iter_content_taxonomy_topics,
+                auto_map_entry_subtopic_fn=_auto_map_entry_subtopic,
+                auto_map_entry_unit_fn=_auto_map_entry_unit,
+                select_probable_period_for_entry_fn=_select_probable_period_for_entry,
+                resolve_entry_manual_timeline_block_fn=_resolve_entry_manual_timeline_block,
+                entry_markdown_text_for_file_map_fn=_entry_markdown_text_for_file_map,
+            ),
             syllabus_md_fn=syllabus_md,
             exam_index_md_fn=exam_index_md,
             exercise_index_md_fn=exercise_index_md,
@@ -2392,6 +2404,7 @@ __all__ = [
     "_parse_timeline_date_value",
     "_repair_mojibake_text",
     "_resolve_entry_manual_timeline_block",
+    "_resolve_unit_block_tags",
     "_sanitize_external_markdown_text",
     "_score_entry_against_timeline_block",
     "_score_entry_against_unit",

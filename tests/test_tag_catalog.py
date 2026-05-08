@@ -365,7 +365,9 @@ def test_regenerate_pedagogical_files_writes_tag_catalog_and_auto_tags(tmp_path)
     assert payload["version"] == 2
     assert payload["scope"]["course_slug"] == "metodos-formais"
     assert "topico:funcoes-recursivas" in payload["tags"]
-    assert manifest["entries"][0]["auto_tags"] == ["topico:funcoes-recursivas", "tipo:lista"]
+    auto_tags = manifest["entries"][0]["auto_tags"]
+    assert "topico:funcoes-recursivas" in auto_tags
+    assert "tipo:lista" in auto_tags
 
 
 def test_write_tag_catalog_preserves_manual_catalog_tags(tmp_path):
