@@ -1419,7 +1419,7 @@ def test_file_map_md_keeps_period_column_empty_without_subject_profile():
 
     result = file_map_md(course_meta, entries)
 
-    assert "| Unidade | Confiança | Período |" in result
+    assert "| Unidade | Subtópico | Confiança | Período |" in result
     assert "Aula 1" in result
 
 
@@ -1580,9 +1580,9 @@ def test_file_map_skips_timeline_for_reference_categories():
     for title in ("Ref X", "Bib Y", "Refs PT"):
         row = next(line for line in result.splitlines() if f"| {title} |" in line)
         cells = [c.strip() for c in row.strip().strip("|").split("|")]
-        # Columns: #, Título, Categoria, Quando abrir, Prioridade, Markdown, Seções, Unidade, Confiança, Período
+        # Columns: #, Título, Categoria, Quando abrir, Prioridade, Markdown, Seções, Unidade, Subtópico, Confiança, Período
         unit_cell = cells[7]
-        period_cell = cells[9]
+        period_cell = cells[10]
         assert unit_cell in ("", "curso-inteiro")
         assert "unidade-" not in unit_cell
         assert period_cell == ""
@@ -1678,3 +1678,54 @@ def test_build_content_taxonomy_includes_topic_42_comunicacao():
     assert "41-programas-multithreads" in slugs
     assert "42-comunicacao-e-sincronizacao-de-processos" in slugs
     assert "43-primitivas-de-sincronizacao" in slugs
+
+
+def test_file_map_md_includes_subtopic_column_in_header():
+    profile = SubjectProfile(
+        name="Sistemas Operacionais",
+        teaching_plan="""
+### Unidade 02 — Gerência do Processador
+- [ ] **3.2** Escalonamento
+- [ ] **3.3** Algoritmos de escalonamento
+""".strip(),
+    )
+    entries = [
+        {
+            "id": "2604-escalonamento",
+            "title": "26.04 Algoritimos de Escalonamento",
+            "category": "material-de-aula",
+            "auto_tags": ["topico:32-escalonamento"],
+        }
+    ]
+    course_meta = {
+        "course_name": "Sistemas Operacionais",
+        "_timeline_context_for_tests": {},
+    }
+    result = file_map_md(course_meta, entries, subject_profile=profile)
+
+    assert "Subtópico" in result, "FILE_MAP header should contain 'Subtópico' column"
+
+
+def test_file_map_md_shows_subtopic_label_for_matched_entry():
+    profile = SubjectProfile(
+        name="Sistemas Operacionais",
+        teaching_plan="""
+### Unidade 02 — Gerência do Processador
+- [ ] **3.2** Escalonamento
+""".strip(),
+    )
+    entries = [
+        {
+            "id": "2604-escalonamento",
+            "title": "Algoritimos de Escalonamento",
+            "category": "material-de-aula",
+            "auto_tags": ["topico:32-escalonamento"],
+        }
+    ]
+    course_meta = {
+        "course_name": "Sistemas Operacionais",
+        "_timeline_context_for_tests": {},
+    }
+    result = file_map_md(course_meta, entries, subject_profile=profile)
+
+    assert "3.2" in result and "Escalonamento" in result

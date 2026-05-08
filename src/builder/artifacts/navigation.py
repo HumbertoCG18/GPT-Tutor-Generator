@@ -596,7 +596,15 @@ def render_low_token_file_map_md(
         or build_file_map_timeline_context_from_course(course_meta, subject_profile)
     )
     topic_index = iter_content_taxonomy_topics(content_taxonomy)
-    unit_tag_index = build_unit_tag_index(content_taxonomy)  
+    unit_tag_index = build_unit_tag_index(content_taxonomy)
+    _bold_re = re.compile(r"\*\*([^*]+)\*\*")
+    topic_labels: dict = {}
+    for _u in content_taxonomy.get("units", []) or []:
+        for _t in (_u.get("topics", []) or []):
+            _slug = str(_t.get("slug", "") or "")
+            _label = str(_t.get("label", "") or "")
+            if _slug and _label:
+                topic_labels[_slug] = _bold_re.sub(r"\1", _label).strip()
     blocks_by_unit = temporal_context.get("blocks_by_unit", {}) if temporal_context else {}
     unassigned_blocks = temporal_context.get("unassigned_blocks", []) if temporal_context else []
     unit_by_slug = {unit.get("slug", ""): unit for unit in unit_index if unit.get("slug")}
@@ -632,8 +640,8 @@ def render_low_token_file_map_md(
         return "\n".join(lines)
 
     lines += [
-        "| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Confiança | Período |",
-        "|---|---|---|---|---|---|---|---|---|---|",
+        "| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Subtópico | Confiança | Período |",
+        "|---|---|---|---|---|---|---|---|---|---|---|",
     ]
 
     for i, entry in enumerate(manifest_entries, 1):
@@ -747,10 +755,11 @@ def render_low_token_file_map_md(
             }
         )
 
+        subtopic_label = topic_labels.get(preferred_topic_slug, "")
         lines.append(
             f"| {i} | {title} | {category} | {entry_usage_hint(entry)} | "
             f"{entry_priority_label(entry)} | {md_cell} | {sections or ''} | "
-            f"{unit or ''} | {confidence} | {period or ''} |"
+            f"{unit or ''} | {subtopic_label or ''} | {confidence} | {period or ''} |"
         )
         if (
             raw_path
@@ -770,7 +779,7 @@ def render_low_token_file_map_md(
                 details.append(f"bloco-manual: `{entry.get('manual_timeline_block_id')}`")
             if md_path and md_path.replace('\\', '/').startswith("staging/"):
                 details.append(f"markdown-base: `{md_path}`")
-            lines.append(f"|  | ↳ rastreabilidade |  | {'; '.join(details)} |  |  |  |  |  |  |")
+            lines.append(f"|  | ↳ rastreabilidade |  | {'; '.join(details)} |  |  |  |  |  |  |  |")
 
     lines += [
         "",
@@ -780,6 +789,7 @@ def render_low_token_file_map_md(
         "- **Prioridade**: `alta` costuma merecer contexto antes dos demais.",
         "- **Seções**: principais headers `##` do markdown aprovado/curado.",
         "- **Unidade**: slug da unidade do COURSE_MAP.",
+        "- **Subtópico**: label do tópico específico dentro da unidade (ex: `3.2 Escalonamento`).",
         "- **Confiança**: quão confiável está o roteamento de unidade atual.",
         "- **Período**: janela compacta da timeline associada à unidade.",
         "- **Markdown**: `A revisar` indica que o item ainda só tem extração de `staging/`, sem promoção final.",
