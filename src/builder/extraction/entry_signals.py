@@ -3,7 +3,8 @@ from __future__ import annotations
 import re
 import unicodedata
 from pathlib import Path
-from typing import Dict, List
+from datetime import date
+from typing import Dict, List, Optional
 
 from src.builder.extraction.content_taxonomy import extract_markdown_lead_text
 
@@ -110,3 +111,24 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         "raw_text": normalize_match_text(entry.get("raw_target", "")),
         "markdown_text": normalize_match_text(markdown_text),
     }
+
+
+_DATE_PREFIX_RE = re.compile(r"^(\d{1,2})\.(\d{2})\s+")
+
+
+def extract_date_prefix_signal(filename: str, year: int) -> Optional[date]:
+    """Extrai sinal de data DD.MM do início do nome do arquivo.
+
+    Padrão esperado: '12.03 Processos.pdf' → date(year, 3, 12)
+    O ponto é usado como separador porque '/' não é válido em nomes de
+    arquivo no Windows. Retorna None se o padrão não casar ou a data
+    for inválida.
+    """
+    stem = Path(filename).stem
+    m = _DATE_PREFIX_RE.match(stem)
+    if not m:
+        return None
+    try:
+        return date(year, int(m.group(2)), int(m.group(1)))
+    except ValueError:
+        return None
