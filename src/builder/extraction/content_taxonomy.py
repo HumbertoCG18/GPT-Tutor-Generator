@@ -795,3 +795,128 @@ def refresh_manifest_auto_tags(
         item["auto_tags"] = infer_entry_auto_tags(item, markdown_text, vocabulary)
         refreshed.append(item)
     return refreshed
+
+
+def resolve_unit_block_tags(
+    manifest_entries,
+    course_meta,
+    subject_profile=None,
+    *,
+    build_file_map_unit_index_from_course_fn,
+    build_file_map_timeline_context_from_course_fn,
+    iter_content_taxonomy_topics_fn,
+    auto_map_entry_subtopic_fn,
+    auto_map_entry_unit_fn,
+    select_probable_period_for_entry_fn,
+    resolve_entry_manual_timeline_block_fn,
+    entry_markdown_text_for_file_map_fn,
+):
+    """Adiciona tags gerenciadas unit:, subunit: e bloco: ao auto_tags de cada
+    entry no manifest.
+
+    Thresholds:
+    - unit:    confidence >= 0.65 AND nao ambiguo
+    - subunit: confidence >= 0.60 AND nao ambiguo
+    - bloco:   confidence >= 0.50 AND nao ambiguo (ou manual_timeline_block_id)
+
+    manual_tags nunca sao tocadas. Tags com outros prefixos em auto_tags sao
+    preservadas. manual_unit_slug e manual_timeline_block_id tem precedencia
+    absoluta (confidence = 1.0).
+    """
+    _NO_TIMELINE_CATEGORIES = {"cronograma", "bibliografia", "referencias"}
+    _UNIT_PREFIX = "unit:"
+    _SUBUNIT_PREFIX = "subunit:"
+    _BLOCO_PREFIX = "bloco:"
+    _MANAGED = (_UNIT_PREFIX, _SUBUNIT_PREFIX, _BLOCO_PREFIX)
+
+    unit_index = build_file_map_unit_index_from_course_fn(course_meta, subject_profile)
+    timeline_context = build_file_map_timeline_context_from_course_fn(
+        course_meta, subject_profile
+    )
+    content_taxonomy = (
+        course_meta.get("_content_taxonomy")
+        or course_meta.get("_content_taxonomy_for_tests")
+        or {}
+    )
+    topic_index = iter_content_taxonomy_topics_fn(content_taxonomy)
+    blocks_by_unit = dict(timeline_context.get("blocks_by_unit") or {})
+    unassigned_blocks = list(timeline_context.get("unassigned_blocks") or [])
+    repo_root = course_meta.get("_repo_root")
+
+    updated = []
+    for entry in manifest_entries or []:
+        category = _collapse_ws(str(entry.get("category") or "")).lower()
+        if category in _NO_TIMELINE_CATEGORIES:
+            updated.append(entry)
+            continue
+
+        markdown_text = entry_markdown_text_for_file_map_fn(repo_root, entry)
+
+        # --- Topic/subunit match ---
+        topic_match = auto_map_entry_subtopic_fn(entry, content_taxonomy, markdown_text)
+        preferred_topic_slug = ""
+        if (
+            topic_match.topic_slug
+            and not topic_match.ambiguous
+            and topic_match.confidence >= 0.60
+        ):
+            preferred_topic_slug = topic_match.topic_slug
+
+        # --- Unit match (manual tem precedencia) ---
+        manual_unit = _collapse_ws(str(entry.get("manual_unit_slug") or ""))
+        if manual_unit:
+            resolved_unit_slug = manual_unit
+            unit_confidence = 1.0
+            unit_ambiguous = False
+        else:
+            unit_match = auto_map_entry_unit_fn(
+                entry, unit_index, markdown_text, topic_index
+            )
+            resolved_unit_slug = unit_match.slug
+            unit_confidence = unit_match.confidence
+            unit_ambiguous = unit_match.ambiguous
+
+        # --- Block match (manual tem precedencia) ---
+        period_block_id = ""
+        manual_block = resolve_entry_manual_timeline_block_fn(entry, timeline_context)
+        if manual_block:
+            period_block_id = _collapse_ws(str(manual_block.get("id") or ""))
+        elif resolved_unit_slug and not unit_ambiguous and unit_confidence >= 0.55:
+            candidate_rows = list(blocks_by_unit.get(resolved_unit_slug) or [])
+            if not candidate_rows:
+                candidate_rows = unassigned_blocks
+            if candidate_rows:
+                unit_obj = next(
+                    (u for u in unit_index if u.get("slug") == resolved_unit_slug), {}
+                )
+                _period, p_conf, p_ambig, _ = select_probable_period_for_entry_fn(
+                    entry=entry,
+                    unit=unit_obj,
+                    candidate_rows=candidate_rows,
+                    markdown_text=markdown_text,
+                    preferred_topic_slug=preferred_topic_slug,
+                )
+                if _period and not p_ambig and p_conf >= 0.50:
+                    for block in candidate_rows:
+                        if str(block.get("period_label") or "") == _period:
+                            period_block_id = _collapse_ws(str(block.get("id") or ""))
+                            break
+
+        # --- Monta novo auto_tags ---
+        existing_auto = list(entry.get("auto_tags") or [])
+        kept = [t for t in existing_auto if not any(t.startswith(p) for p in _MANAGED)]
+
+        if resolved_unit_slug and not unit_ambiguous and unit_confidence >= 0.65:
+            kept.append(f"{_UNIT_PREFIX}{resolved_unit_slug}")
+
+        if preferred_topic_slug:
+            kept.append(f"{_SUBUNIT_PREFIX}{preferred_topic_slug}")
+
+        if period_block_id:
+            kept.append(f"{_BLOCO_PREFIX}{period_block_id}")
+
+        new_entry = dict(entry)
+        new_entry["auto_tags"] = kept
+        updated.append(new_entry)
+
+    return updated
