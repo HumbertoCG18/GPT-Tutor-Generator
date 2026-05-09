@@ -1704,6 +1704,7 @@ class BacklogEntryEditDialog(tk.Toplevel):
         unit_actions.grid(row=3, column=1, sticky="w", pady=(8, 0))
         ttk.Button(unit_actions, text="Aplicar unidade", command=self._apply_manual_unit_selection).pack(side="left")
         ttk.Button(unit_actions, text="Voltar para automático", command=self._clear_manual_unit).pack(side="left", padx=(8, 0))
+        ttk.Button(unit_actions, text="?", width=3, command=self._show_unit_explanation).pack(side="left", padx=(12, 0))
 
         tk.Label(
             unit_frame,
@@ -1791,6 +1792,7 @@ class BacklogEntryEditDialog(tk.Toplevel):
         subunit_actions.grid(row=3, column=1, sticky="w", pady=(8, 0))
         ttk.Button(subunit_actions, text="Aplicar subunidade", command=self._apply_manual_subunit_selection).pack(side="left")
         ttk.Button(subunit_actions, text="Voltar para automático", command=self._clear_manual_subunit).pack(side="left", padx=(8, 0))
+        ttk.Button(subunit_actions, text="?", width=3, command=self._show_subunit_explanation).pack(side="left", padx=(12, 0))
 
         tk.Label(
             subunit_frame,
@@ -2608,6 +2610,34 @@ class BacklogEntryEditDialog(tk.Toplevel):
         if hasattr(self, "_subunit_note_var"):
             self._subunit_note_var.set(subunit_status["note"])
         self._update_manual_subunit_pending_state()
+
+    def _show_unit_explanation(self) -> None:
+        from src.models.tag_profile import format_unit_explanation_text
+        reasons = list(self._data.get("unit_match_reasons") or [])
+        confidence = float(self._data.get("unit_match_confidence") or 0.0)
+        unit_slug = ""
+        for tag in list(self._data.get("auto_tags") or []):
+            if str(tag).startswith("unit:"):
+                unit_slug = str(tag).replace("unit:", "", 1)
+                break
+        text = format_unit_explanation_text(reasons, confidence, unit_slug=unit_slug)
+        messagebox.showinfo("Explicação — Unidade sugerida", text, parent=self)
+
+    def _show_subunit_explanation(self) -> None:
+        from src.models.tag_profile import format_subunit_explanation_text
+        reasons = list(self._data.get("subunit_match_reasons") or [])
+        confidence = float(self._data.get("subunit_match_confidence") or 0.0)
+        unit_slug = ""
+        subunit_slug = ""
+        for tag in list(self._data.get("auto_tags") or []):
+            if str(tag).startswith("unit:"):
+                unit_slug = str(tag).replace("unit:", "", 1)
+            elif str(tag).startswith("subunit:"):
+                subunit_slug = str(tag).replace("subunit:", "", 1)
+        text = format_subunit_explanation_text(
+            reasons, confidence, unit_slug=unit_slug, subunit_slug=subunit_slug
+        )
+        messagebox.showinfo("Explicação — Subunidade sugerida", text, parent=self)
 
     def _update_manual_subunit_pending_state(self) -> None:
         pending = self._current_manual_subunit_selection_slug()
