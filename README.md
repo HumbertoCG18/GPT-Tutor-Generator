@@ -705,12 +705,11 @@ Itens planejados em ordem de prioridade:
 | # | Feature | Esforço | Ganho |
 |---|---|---|---|
 | 1 | **Student State** — painel de captura de sessão para eliminar cold start | médio | alto |
-| 2 | **Sinalizador DD.MM** — data no nome do arquivo como boost de mapeamento | baixo | médio |
-| 3 | **Cronograma visual** — timeline bloco × arquivo no app | médio | alto |
-| 4 | **NotebookLM** — export como destino adicional além de Claude/GPT/Gemini | médio | alto |
-| 5 | **MinerU** — backend PDF open-source com foco em equações | alto | alto |
-| 6 | **Marker-API** — versão cloud do Marker sem dependência de GPU local | médio | médio |
-| 7 | **Instalador Windows** — Setup.exe com wizard, publicado nas Releases do GitHub | alto | alto |
+| 2 | **Cronograma visual** — timeline bloco × arquivo no app | médio | alto |
+| 3 | **NotebookLM** — export como destino adicional além de Claude/GPT/Gemini | médio | alto |
+| 4 | **MinerU** — backend PDF open-source com foco em equações | alto | alto |
+| 5 | **Marker-API** — versão cloud do Marker sem dependência de GPU local | médio | médio |
+| 6 | **Instalador Windows** — Setup.exe com wizard, publicado nas Releases do GitHub | alto | alto |
 
 ## Notas de Manutenção
 
