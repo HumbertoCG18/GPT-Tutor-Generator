@@ -863,7 +863,6 @@ def _strip_pagination_markers(text: str) -> str:
 
 def _extract_datalab_captions(raw_markdown: str, image_page_map: Dict[str, int]) -> dict:
     """Parse DataLab raw markdown for image captions; return image_curation dict."""
-    import re
     from datetime import datetime
 
     pattern = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
@@ -1010,7 +1009,7 @@ class DatalabCloudBackend(ExtractionBackend):
 
         image_curation = None
         if ctx.image_description_source == "datalab" and raw_markdown:
-            image_curation = _extract_datalab_captions(raw_markdown, image_page_map)
+            image_curation = _extract_datalab_captions(raw_markdown, image_page_map) or None
 
         self._save_datalab_image_pages(image_page_map, out_dir)
 
