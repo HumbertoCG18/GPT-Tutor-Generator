@@ -171,3 +171,34 @@ def test_format_unit_explanation_manual_assignment():
     text = format_unit_explanation_text(reasons, confidence=1.0, unit_slug="unidade-01")
 
     assert "manual" in text
+
+
+from src.builder.engine import (
+    _build_file_map_unit_index,
+    _auto_map_entry_unit,
+)
+
+
+def test_auto_map_entry_unit_applies_learned_unit_boosts():
+    units = [
+        {"title": "Unidade 01 — Lógica de Hoare", "topics": ["1.1 Pré e pós condições"], "extra_signals": []},
+        {"title": "Unidade 02 — Redes Neurais", "topics": ["2.1 Backpropagation"], "extra_signals": []},
+    ]
+    entry = {
+        "id": "doc-xyz",
+        "title": "Documento genérico",
+        "category": "material-de-aula",
+        "auto_tags": [],
+        "manual_tags": [],
+        "tags": "",
+        "raw_target": "",
+        "notes": "",
+        "professor_signal": "",
+    }
+    markdown_text = ""
+
+    result_with_boost = _auto_map_entry_unit(
+        entry, units, markdown_text, learned_unit_boosts={"unidade-02-redes-neurais": 6.0}
+    )
+
+    assert result_with_boost.slug == "unidade-02-redes-neurais"

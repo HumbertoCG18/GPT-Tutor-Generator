@@ -353,6 +353,7 @@ def auto_map_entry_unit(
     *,
     topic_index: Optional[List[dict]] = None,
     unit_tag_index: Optional[Dict[str, float]] = None,
+    learned_unit_boosts: Optional[Dict[str, float]] = None,
     build_file_map_unit_index: Callable[[list], list],
     collect_entry_unit_signals: Callable[[dict, str], dict],
     score_entry_against_unit: Callable[[dict, dict], float],
@@ -375,6 +376,10 @@ def auto_map_entry_unit(
             w = float(mapping.get("weight", 1.0))
             if u_slug:
                 unit_tag_boosts[u_slug] = unit_tag_boosts.get(u_slug, 0.0) + w
+    if learned_unit_boosts:
+        for slug, w in learned_unit_boosts.items():
+            if slug and w:
+                unit_tag_boosts[str(slug)] = unit_tag_boosts.get(str(slug), 0.0) + float(w)
     scored = []
     normalized_topic_index = list(topic_index or [])
     for unit in indexed_units:
