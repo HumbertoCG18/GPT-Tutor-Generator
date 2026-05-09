@@ -202,3 +202,87 @@ def test_auto_map_entry_unit_applies_learned_unit_boosts():
     )
 
     assert result_with_boost.slug == "unidade-02-redes-neurais"
+
+
+from src.builder.extraction.content_taxonomy import resolve_unit_block_tags
+from src.builder.routing.file_map import UnitMatchResult
+
+
+def _make_resolve_kwargs(unit_slug="unidade-01", unit_confidence=0.80, unit_ambiguous=False):
+    """Minimal stubs for resolve_unit_block_tags injected callables."""
+
+    class FakeTopicMatch:
+        topic_slug = ""
+        topic_label = ""
+        unit_slug = ""
+        confidence = 0.0
+        ambiguous = True
+        reasons = ["sem-taxonomia"]
+
+    return dict(
+        build_file_map_unit_index_from_course_fn=lambda meta, profile: [],
+        build_file_map_timeline_context_from_course_fn=lambda meta, profile: {
+            "blocks_by_unit": {}, "unassigned_blocks": [], "timeline_index": {"blocks": []}
+        },
+        iter_content_taxonomy_topics_fn=lambda taxonomy: [],
+        auto_map_entry_subtopic_fn=lambda entry, taxonomy, md: FakeTopicMatch(),
+        auto_map_entry_unit_fn=lambda entry, units, md, topics, learned_unit_boosts=None: UnitMatchResult(
+            slug=unit_slug, confidence=unit_confidence, ambiguous=unit_ambiguous, reasons=["winner_score=3.50"]
+        ),
+        select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, ""),
+        resolve_entry_manual_timeline_block_fn=lambda entry, ctx: None,
+        entry_markdown_text_for_file_map_fn=lambda root, entry: "",
+    )
+
+
+def test_resolve_unit_block_tags_stores_match_reasons_in_entry():
+    entries = [{"id": "item-1", "category": "listas", "auto_tags": [], "manual_tags": []}]
+    course_meta = {"_repo_root": None}
+
+    result = resolve_unit_block_tags(entries, course_meta, **_make_resolve_kwargs())
+
+    item = result[0]
+    assert "unit_match_reasons" in item
+    assert "unit_match_confidence" in item
+    assert item["unit_match_confidence"] == 0.80
+    assert "winner_score=3.50" in item["unit_match_reasons"]
+
+
+def test_resolve_unit_block_tags_loads_tag_profile_and_passes_learned_boosts(tmp_path):
+    course_dir = tmp_path / "course"
+    course_dir.mkdir()
+
+    profile = SubjectTagProfile(subject_slug="test", generated_at="2026-05-09T00:00:00")
+    profile.learned_corrections.append(
+        LearnedCorrection(
+            entry_id="old-entry",
+            corrected_unit_slug="unidade-02",
+            corrected_subunit_slug="",
+            learned_terms=["logica", "hoare", "verificacao"],
+            created_at="2026-05-09T00:00:00",
+        )
+    )
+    save_tag_profile(course_dir, profile)
+
+    received_boosts = {}
+
+    def capturing_unit_fn(entry, units, md, topics, learned_unit_boosts=None):
+        received_boosts.update(learned_unit_boosts or {})
+        return UnitMatchResult(slug="unidade-01", confidence=0.75, ambiguous=False, reasons=["winner_score=2.00"])
+
+    kwargs = _make_resolve_kwargs()
+    kwargs["auto_map_entry_unit_fn"] = capturing_unit_fn
+
+    entries = [{
+        "id": "lista-nova",
+        "title": "Lista de Lógica de Hoare verificacao",
+        "category": "listas",
+        "auto_tags": [],
+        "manual_tags": [],
+    }]
+    course_meta = {"_repo_root": tmp_path}
+
+    resolve_unit_block_tags(entries, course_meta, **kwargs)
+
+    assert "unidade-02" in received_boosts
+    assert received_boosts["unidade-02"] > 0.0

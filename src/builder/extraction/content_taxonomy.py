@@ -843,6 +843,14 @@ def resolve_unit_block_tags(
     unassigned_blocks = list(timeline_context.get("unassigned_blocks") or [])
     repo_root = course_meta.get("_repo_root")
 
+    from src.models.tag_profile import load_tag_profile, build_learned_unit_boosts
+    _tag_profile = None
+    if repo_root:
+        try:
+            _tag_profile = load_tag_profile(Path(repo_root) / "course")
+        except Exception:
+            _tag_profile = None
+
     updated = []
     for entry in manifest_entries or []:
         category = _collapse_ws(str(entry.get("category") or "")).lower()
@@ -856,9 +864,13 @@ def resolve_unit_block_tags(
         manual_subunit = _collapse_ws(str(entry.get("manual_subunit_slug") or ""))
         if manual_subunit:
             preferred_topic_slug = manual_subunit
+            subunit_reasons = ["manual"]
+            subunit_confidence = 1.0
         else:
             topic_match = auto_map_entry_subtopic_fn(entry, content_taxonomy, markdown_text)
             preferred_topic_slug = ""
+            subunit_reasons = list(getattr(topic_match, "reasons", []))
+            subunit_confidence = float(getattr(topic_match, "confidence", 0.0))
             if (
                 topic_match.topic_slug
                 and not topic_match.ambiguous
@@ -872,13 +884,17 @@ def resolve_unit_block_tags(
             resolved_unit_slug = manual_unit
             unit_confidence = 1.0
             unit_ambiguous = False
+            unit_reasons = ["manual"]
         else:
+            _learned_boosts = build_learned_unit_boosts(_tag_profile, entry) if _tag_profile else {}
             unit_match = auto_map_entry_unit_fn(
-                entry, unit_index, markdown_text, topic_index
+                entry, unit_index, markdown_text, topic_index,
+                learned_unit_boosts=_learned_boosts,
             )
             resolved_unit_slug = unit_match.slug
             unit_confidence = unit_match.confidence
             unit_ambiguous = unit_match.ambiguous
+            unit_reasons = list(unit_match.reasons)
 
         # --- Block match (manual tem precedencia) ---
         period_block_id = ""
@@ -921,6 +937,10 @@ def resolve_unit_block_tags(
 
         new_entry = dict(entry)
         new_entry["auto_tags"] = kept
+        new_entry["unit_match_reasons"] = unit_reasons
+        new_entry["unit_match_confidence"] = unit_confidence
+        new_entry["subunit_match_reasons"] = subunit_reasons
+        new_entry["subunit_match_confidence"] = subunit_confidence
         updated.append(new_entry)
 
     return updated

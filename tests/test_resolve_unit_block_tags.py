@@ -54,7 +54,7 @@ def test_resolve_unit_block_tags_adds_unit_tag_when_high_confidence():
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
         auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
-        auto_map_entry_unit_fn=lambda e, u, m, ti: _stub_unit_match(
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-02", confidence=0.80, ambiguous=False
         ),
         select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
@@ -80,7 +80,7 @@ def test_resolve_unit_block_tags_skips_unit_tag_when_low_confidence():
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
         auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
-        auto_map_entry_unit_fn=lambda e, u, m, ti: _stub_unit_match(
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-02", confidence=0.40, ambiguous=False
         ),
         select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
@@ -106,7 +106,7 @@ def test_resolve_unit_block_tags_skips_unit_tag_when_ambiguous():
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
         auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
-        auto_map_entry_unit_fn=lambda e, u, m, ti: _stub_unit_match(
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-02", confidence=0.80, ambiguous=True
         ),
         select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
@@ -134,7 +134,7 @@ def test_resolve_unit_block_tags_adds_subunit_tag():
         auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(
             slug="regra-da-cadeia", confidence=0.75, ambiguous=False
         ),
-        auto_map_entry_unit_fn=lambda e, u, m, ti: _stub_unit_match(
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-02", confidence=0.80, ambiguous=False
         ),
         select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
@@ -163,7 +163,7 @@ def test_resolve_unit_block_tags_adds_bloco_tag_via_manual_override():
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
         auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
-        auto_map_entry_unit_fn=lambda e, u, m, ti: _stub_unit_match("", 0.0, True),
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match("", 0.0, True),
         select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
         resolve_entry_manual_timeline_block_fn=lambda e, tc: fake_block,
         entry_markdown_text_for_file_map_fn=lambda root, e: "",
@@ -182,7 +182,7 @@ def test_resolve_unit_block_tags_skips_special_categories():
 
     call_count = {"n": 0}
 
-    def counting_unit_fn(e, u, m, ti):
+    def counting_unit_fn(e, u, m, ti, learned_unit_boosts=None):
         call_count["n"] += 1
         return _stub_unit_match("unidade-01", 0.90, False)
 
@@ -221,7 +221,7 @@ def test_resolve_unit_block_tags_preserves_existing_non_managed_auto_tags():
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
         auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
-        auto_map_entry_unit_fn=lambda e, u, m, ti: _stub_unit_match("", 0.0, True),
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match("", 0.0, True),
         select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
         resolve_entry_manual_timeline_block_fn=lambda e, tc: None,
         entry_markdown_text_for_file_map_fn=lambda root, e: "",
@@ -247,7 +247,7 @@ def test_resolve_unit_block_tags_manual_unit_slug_takes_precedence():
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
         auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
-        auto_map_entry_unit_fn=lambda e, u, m, ti: _stub_unit_match(
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-01", 0.90, False
         ),
         select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
