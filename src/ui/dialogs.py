@@ -2537,6 +2537,28 @@ class BacklogEntryEditDialog(tk.Toplevel):
                 return
         self._manual_unit_committed = selected
         self._data["manual_unit_slug"] = selected
+        # Record correction for subject-local learning
+        if selected and self._repo_dir:
+            try:
+                from src.models.tag_profile import (
+                    load_tag_profile, save_tag_profile, record_correction, SubjectTagProfile,
+                )
+                from datetime import datetime
+                course_dir = self._repo_dir / "course"
+                if course_dir.exists():
+                    profile = load_tag_profile(course_dir) or SubjectTagProfile(
+                        subject_slug=self._repo_dir.name,
+                        generated_at=datetime.utcnow().isoformat(),
+                    )
+                    record_correction(
+                        profile,
+                        self._data,
+                        corrected_unit_slug=selected,
+                        corrected_subunit_slug=str(self._data.get("manual_subunit_slug") or ""),
+                    )
+                    save_tag_profile(course_dir, profile)
+            except Exception:
+                pass
         self._refresh_unit_status_display()
 
     def _clear_manual_unit(self) -> None:
@@ -2623,6 +2645,28 @@ class BacklogEntryEditDialog(tk.Toplevel):
                 return
         self._manual_subunit_committed = selected
         self._data["manual_subunit_slug"] = selected
+        # Record correction for subject-local learning
+        if selected and self._repo_dir:
+            try:
+                from src.models.tag_profile import (
+                    load_tag_profile, save_tag_profile, record_correction, SubjectTagProfile,
+                )
+                from datetime import datetime
+                course_dir = self._repo_dir / "course"
+                if course_dir.exists():
+                    profile = load_tag_profile(course_dir) or SubjectTagProfile(
+                        subject_slug=self._repo_dir.name,
+                        generated_at=datetime.utcnow().isoformat(),
+                    )
+                    record_correction(
+                        profile,
+                        self._data,
+                        corrected_unit_slug=str(self._data.get("manual_unit_slug") or ""),
+                        corrected_subunit_slug=selected,
+                    )
+                    save_tag_profile(course_dir, profile)
+            except Exception:
+                pass
         self._refresh_subunit_status_display()
 
     def _clear_manual_subunit(self) -> None:
