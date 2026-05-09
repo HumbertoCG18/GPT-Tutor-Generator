@@ -39,3 +39,23 @@ def test_build_options_defaults_to_ollama_when_missing():
 
     opts = _build_options_from_config("auto", "pt", FakeConfig())
     assert opts.get("image_description_source") == "ollama"
+
+
+def test_backend_run_result_accepts_image_curation():
+    from src.models.core import BackendRunResult
+
+    r = BackendRunResult(
+        name="datalab",
+        layer="advanced",
+        status="ok",
+        image_curation={"pages": {"page_1": {"include_page": True, "images": {}}}},
+    )
+    assert r.image_curation is not None
+    assert "page_1" in r.image_curation["pages"]
+
+
+def test_backend_run_result_image_curation_defaults_to_none():
+    from src.models.core import BackendRunResult
+
+    r = BackendRunResult(name="base", layer="base", status="ok")
+    assert r.image_curation is None
