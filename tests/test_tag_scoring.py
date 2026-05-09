@@ -286,3 +286,83 @@ def test_resolve_unit_block_tags_loads_tag_profile_and_passes_learned_boosts(tmp
 
     assert "unidade-02" in received_boosts
     assert received_boosts["unidade-02"] > 0.0
+
+
+def test_fallback_no_tags_uses_existing_signals():
+    """When no tag profile exists, unit assignment still runs normally (no crash)."""
+
+    def unit_fn(entry, units, md, topics, learned_unit_boosts=None):
+        return UnitMatchResult(slug="unidade-01", confidence=0.70, ambiguous=False, reasons=["winner_score=2.50"])
+
+    kwargs = _make_resolve_kwargs()
+    kwargs["auto_map_entry_unit_fn"] = unit_fn
+
+    entries = [{"id": "x", "category": "listas", "auto_tags": [], "manual_tags": []}]
+    course_meta = {"_repo_root": None}  # no repo root → no tag profile
+
+    result = resolve_unit_block_tags(entries, course_meta, **kwargs)
+
+    assert result[0].get("unit_match_confidence") == 0.70
+
+
+def test_low_confidence_unit_does_not_add_unit_tag():
+    """Unit confidence < 0.65 → unit: tag NOT added to auto_tags."""
+
+    def unit_fn(entry, units, md, topics, learned_unit_boosts=None):
+        return UnitMatchResult(slug="unidade-01", confidence=0.50, ambiguous=False, reasons=["winner_score=1.00"])
+
+    kwargs = _make_resolve_kwargs()
+    kwargs["auto_map_entry_unit_fn"] = unit_fn
+
+    entries = [{"id": "x", "category": "listas", "auto_tags": [], "manual_tags": []}]
+    result = resolve_unit_block_tags(entries, {"_repo_root": None}, **kwargs)
+
+    unit_tags = [t for t in result[0].get("auto_tags", []) if t.startswith("unit:")]
+    assert unit_tags == []
+
+
+def test_ambiguous_unit_does_not_add_unit_tag():
+    """Ambiguous unit match → unit: tag NOT added regardless of confidence."""
+
+    def unit_fn(entry, units, md, topics, learned_unit_boosts=None):
+        return UnitMatchResult(slug="unidade-01", confidence=0.80, ambiguous=True, reasons=["winner_score=2.00", "ambiguous"])
+
+    kwargs = _make_resolve_kwargs()
+    kwargs["auto_map_entry_unit_fn"] = unit_fn
+
+    entries = [{"id": "x", "category": "listas", "auto_tags": [], "manual_tags": []}]
+    result = resolve_unit_block_tags(entries, {"_repo_root": None}, **kwargs)
+
+    unit_tags = [t for t in result[0].get("auto_tags", []) if t.startswith("unit:")]
+    assert unit_tags == []
+
+
+def test_subunit_not_attempted_when_unit_confidence_below_threshold():
+    """When unit confidence < 0.55, period/block is not assigned (proxy for low-confidence subunit path)."""
+
+    def unit_fn(entry, units, md, topics, learned_unit_boosts=None):
+        return UnitMatchResult(slug="unidade-01", confidence=0.40, ambiguous=False, reasons=["winner_score=0.80"])
+
+    kwargs = _make_resolve_kwargs()
+    kwargs["auto_map_entry_unit_fn"] = unit_fn
+
+    entries = [{"id": "x", "category": "listas", "auto_tags": [], "manual_tags": []}]
+    result = resolve_unit_block_tags(entries, {"_repo_root": None}, **kwargs)
+
+    bloco_tags = [t for t in result[0].get("auto_tags", []) if t.startswith("bloco:")]
+    assert bloco_tags == []
+
+
+def test_correction_is_subject_local(tmp_path):
+    """save_tag_profile writes to course_dir/.tag_profile.json, not globally."""
+
+    course_a = tmp_path / "repo-a" / "course"
+    course_b = tmp_path / "repo-b" / "course"
+    course_a.mkdir(parents=True)
+    course_b.mkdir(parents=True)
+
+    profile_a = SubjectTagProfile(subject_slug="materia-a", generated_at="2026-05-09T00:00:00")
+    save_tag_profile(course_a, profile_a)
+
+    assert load_tag_profile(course_a) is not None
+    assert load_tag_profile(course_b) is None  # repo-b untouched
