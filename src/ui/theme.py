@@ -102,6 +102,7 @@ class AppConfig:
         "vision_model": "qwen3-vl:235b-cloud",
         "vision_model_quantization": "default",
         "ollama_base_url": "http://localhost:11434",
+        "image_description_source": "ollama",
     }
 
     def __init__(self):

@@ -100,6 +100,7 @@ def _build_options_from_config(default_mode: str, default_ocr_language: str, con
         "vision_model": config_obj.get("vision_model"),
         "ollama_base_url": config_obj.get("ollama_base_url"),
         "prevent_sleep_during_build": config_obj.get("prevent_sleep_during_build", True),
+        "image_description_source": config_obj.get("image_description_source", "ollama"),
     }
 
 
