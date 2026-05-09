@@ -317,6 +317,9 @@ class SettingsDialog(tk.Toplevel):
         self._var_vision_model = tk.StringVar(value=self.config.get("vision_model"))
         self._var_vision_quant = tk.StringVar(value=self.config.get("vision_model_quantization"))
         self._var_ollama_url = tk.StringVar(value=self.config.get("ollama_base_url"))
+        self._var_image_desc_source = tk.StringVar(
+            value=self.config.get("image_description_source", "ollama")
+        )
 
         vision_fields = [
             ("Backend Vision", self._var_vision_backend, VISION_BACKENDS),
@@ -338,6 +341,25 @@ class SettingsDialog(tk.Toplevel):
         add_tooltip(vcb, "Para Ollama, use nomes como qwen3-vl:235b-cloud ou qwen3-vl:8b.\n"
                          "qwen3-vl:235b-cloud é o padrão para máxima qualidade visual.\n"
                          "qwen3-vl:8b é o fallback local recomendado.")
+
+        # Image description source row
+        _img_desc_row = url_row + 1
+        ttk.Label(
+            tab_proc, text="Fonte de descrições de imagem",
+        ).grid(row=_img_desc_row, column=0, sticky="w", padx=(0, 16), pady=4)
+        ttk.Combobox(
+            tab_proc,
+            textvariable=self._var_image_desc_source,
+            values=["ollama", "datalab"],
+            state="readonly",
+            width=20,
+        ).grid(row=_img_desc_row, column=1, sticky="w")
+        ttk.Label(
+            tab_proc,
+            text="DataLab gera descrições durante a conversão do PDF. Reprocesse os documentos após mudar esta opção.",
+            font=("Segoe UI", 8),
+            wraplength=320,
+        ).grid(row=_img_desc_row + 1, column=1, sticky="w", pady=(0, 8))
 
         tab_proc.columnconfigure(1, weight=1)
 
@@ -374,6 +396,7 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("vision_model", vision_model)
         self.config.set("vision_model_quantization", self._var_vision_quant.get())
         self.config.set("ollama_base_url", self._var_ollama_url.get())
+        self.config.set("image_description_source", self._var_image_desc_source.get())
         self.config.save()
         self.theme_mgr.apply(self.parent, self._var_theme.get())
         self.parent._theme_name = self._var_theme.get()  # type: ignore[attr-defined]
