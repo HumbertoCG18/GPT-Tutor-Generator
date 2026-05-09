@@ -16,6 +16,7 @@ Aplicação desktop em Python para transformar materiais acadêmicos em um repos
 - [Cronograma PUCRS — Importação do Portal ASPNET](#cronograma-pucrs--importacao-do-portal-aspnet)
 - [Arquitetura](#arquitetura)
 - [Processamento de Arquivos](#processamento-de-arquivos)
+- [Tag Scoring e Aprendizado por Matéria](#tag-scoring-e-aprendizado-por-materia)
 - [Backend Datalab](#backend-datalab)
 - [Arquitetura Low-Token](#arquitetura-low-token)
 - [Image Curator e Vision](#image-curator-e-vision)
@@ -237,6 +238,32 @@ O sistema também consegue:
 - consolidar saídas intermediárias
 - regenerar artefatos derivados sem reprocessar tudo do zero
 
+## Tag Scoring e Aprendizado por Matéria
+
+O sistema de mapeamento automático de arquivos para unidades/blocos do cronograma inclui um mecanismo de aprendizado por matéria.
+
+### Como funciona
+
+Quando você corrige manualmente a unidade ou subunidade de um entry pelo app, o app registra essa correção em um perfil de tags local da matéria (`course/.tag_profile.json`).
+
+Em mapeamentos futuros, os termos extraídos dos entries corrigidos geram **boosts** nas unidades que foram confirmadas manualmente — aumentando a pontuação dessas unidades e reduzindo erros de mapeamento recorrentes.
+
+### Isolamento por matéria
+
+O perfil de tags é **isolado por matéria**. Correções feitas em Cálculo não afetam o mapeamento de Algoritmos, por exemplo.
+
+### Transparência
+
+Na interface, ao sugerir unidade e subunidade, o app exibe um tooltip com as razões do mapeamento — incluindo quais boosts aprendidos influenciaram a pontuação.
+
+### Arquivo gerado
+
+```text
+{repo-root}/course/.tag_profile.json
+```
+
+Esse arquivo cresce com o uso e não precisa de intervenção manual.
+
 ## Backend Datalab
 
 O projeto agora suporta **Datalab** como backend avançado de processamento de PDF.
@@ -379,6 +406,25 @@ decorativa
 extracao-latex
 ```
 
+### Modos do Image Curator
+
+O curator opera em dois modos dependendo da configuração `image_description_source`:
+
+**Modo Ollama (padrão)**
+
+- botão "Gerar Descrições" e "Descrever" disponíveis
+- vision local via Ollama processa cada imagem
+- modo de recorte manual disponível
+
+**Modo DataLab**
+
+- controles de geração via Ollama ficam ocultos
+- um banner informa que as descrições são fornecidas pelo DataLab
+- as descrições vêm das captions extraídas automaticamente durante o processamento do PDF — sem custo adicional de vision
+- imagens sem caption do DataLab exibem aviso na interface
+
+Para alternar entre os modos, ajuste `Fonte de descrição de imagens` em **Configurações**.
+
 ### Runtime atual de Vision
 
 ```text
@@ -388,8 +434,8 @@ Endpoint: http://localhost:11434/api/chat
 
 O pipeline de vision do **Image Curator** é independente do backend PDF principal. Ou seja:
 
-- você pode usar `datalab` para PDFs
-- e continuar usando `ollama` no curator de imagens
+- você pode usar `datalab` para PDFs e `ollama` no curator de imagens
+- ou usar `datalab` em ambos — nesse caso as descrições vêm das captions do DataLab e o Ollama não é necessário no curator
 
 ### Setup do Ollama
 
@@ -611,6 +657,7 @@ Campos relevantes:
 - `vision_model`
 - `vision_model_quantization`
 - `ollama_base_url`
+- `image_description_source` — `"ollama"` (padrão) ou `"datalab"`
 - `prevent_sleep_during_build`
 
 ## Execucao
@@ -677,6 +724,7 @@ Itens planejados em ordem de prioridade:
   - [src/builder/vision/ollama_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/vision/ollama_client.py)
   - [src/ui/image_curator.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/image_curator.py)
   - [src/ui/dialogs.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/dialogs.py)
+  - [src/models/tag_profile.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/models/tag_profile.py)
 - Documentos em `docs/superpowers/` podem descrever versões históricas da implementação
 
 ## Licença
