@@ -171,3 +171,55 @@ def test_merge_image_curations_empty_input():
     from src.builder.engine import _merge_image_curations
 
     assert _merge_image_curations([]) == {"pages": {}}
+
+
+def test_disable_image_captions_is_false_when_datalab_source(monkeypatch):
+    """When image_description_source == 'datalab', captions must be enabled in the API call."""
+    from unittest.mock import MagicMock, patch
+    from src.builder.engine import DatalabCloudBackend, BackendContext
+
+    captured_args = {}
+
+    def fake_convert(file_path, *, output_format, mode, page_range, disable_image_captions,
+                     disable_image_extraction, paginate, token_efficient_markdown,
+                     request_timeout, poll_interval, max_wait_seconds):
+        captured_args["disable_image_captions"] = disable_image_captions
+        result = MagicMock()
+        result.markdown = ""
+        result.images = {}
+        result.request_id = "r1"
+        result.request_check_url = ""
+        result.page_count = 0
+        result.parse_quality_score = None
+        result.cost_breakdown = {}
+        result.metadata = {}
+        result.raw_response = {"status": "ok", "success": True, "error": None}
+        return result
+
+    entry = MagicMock()
+    entry.page_range = ""
+    entry.id.return_value = "doc-1"
+    entry.force_ocr = False
+    entry.document_profile = ""
+    entry.datalab_mode = "balanced"
+    report = MagicMock()
+    report.suggested_profile = ""
+
+    ctx = BackendContext(
+        root_dir=__import__("pathlib").Path("/tmp/repo"),
+        raw_target=__import__("pathlib").Path("/tmp/doc.pdf"),
+        entry=entry,
+        report=report,
+        image_description_source="datalab",
+    )
+
+    backend = DatalabCloudBackend()
+    with patch("src.builder.engine.convert_document_to_markdown", side_effect=fake_convert):
+        with patch("src.builder.engine.ensure_dir"):
+            with patch("src.builder.engine.write_text"):
+                try:
+                    backend._convert_range(ctx, mode="balanced", page_range=None, max_wait_seconds=60)
+                except Exception:
+                    pass
+
+    assert captured_args.get("disable_image_captions") is False

@@ -916,12 +916,13 @@ class DatalabCloudBackend(ExtractionBackend):
         max_wait_seconds: int,
         page_offset: int = 0,
     ):
+        use_captions = (ctx.image_description_source == "datalab")
         result = convert_document_to_markdown(
             ctx.raw_target,
             output_format="markdown",
             mode=mode,
             page_range=page_range,
-            disable_image_captions=True,
+            disable_image_captions=not use_captions,
             disable_image_extraction=False,
             paginate=True,
             token_efficient_markdown=False,
@@ -934,7 +935,7 @@ class DatalabCloudBackend(ExtractionBackend):
         markdown = _sanitize_external_markdown_text(raw_markdown)
         markdown = _strip_pagination_markers(markdown)
         markdown = _strip_markdown_image_refs(markdown)
-        return result, markdown, image_page_map
+        return result, markdown, image_page_map, raw_markdown
 
     def _save_datalab_images(
         self, images: dict, entry_id: str, root_dir: Path
@@ -984,7 +985,7 @@ class DatalabCloudBackend(ExtractionBackend):
         )
 
         try:
-            result, markdown, image_page_map = self._convert_range(
+            result, markdown, image_page_map, raw_markdown = self._convert_range(
                 ctx,
                 mode=mode,
                 page_range=page_range,
@@ -1007,6 +1008,10 @@ class DatalabCloudBackend(ExtractionBackend):
             )
             logger.info("  [datalab] %d imagens salvas em %s.", len(saved_images), images_dir_path)
 
+        image_curation = None
+        if ctx.image_description_source == "datalab" and raw_markdown:
+            image_curation = _extract_datalab_captions(raw_markdown, image_page_map)
+
         self._save_datalab_image_pages(image_page_map, out_dir)
 
         write_text(out_path, markdown)
@@ -1025,7 +1030,7 @@ class DatalabCloudBackend(ExtractionBackend):
             "parse_quality_score": result.parse_quality_score,
             "cost_breakdown": result.cost_breakdown,
             "disable_image_extraction": False,
-            "disable_image_captions": True,
+            "disable_image_captions": (ctx.image_description_source != "datalab"),
             "images_saved": saved_images,
             "metadata": result.metadata,
             "raw_response_tail": {
@@ -1038,8 +1043,11 @@ class DatalabCloudBackend(ExtractionBackend):
         notes = [
             "Saída avançada gerada com Datalab Document Conversion API.",
             f"Modo: {mode}.",
-            "Descrições sintéticas do Datalab desativadas; a curadoria de imagens permanece app-side.",
         ]
+        if ctx.image_description_source == "datalab":
+            notes.append("Descrições de imagem extraídas das captions do DataLab e salvas no manifest.")
+        else:
+            notes.append("Descrições sintéticas do Datalab desativadas; a curadoria de imagens permanece app-side.")
         if saved_images:
             notes.append(f"{len(saved_images)} imagens extraídas pelo Datalab e salvas em staging/assets/images/.")
         if result.parse_quality_score is not None:
@@ -1054,6 +1062,7 @@ class DatalabCloudBackend(ExtractionBackend):
             metadata_path=safe_rel(metadata_path, ctx.root_dir),
             notes=notes,
             images_dir=safe_rel(images_dir_path, ctx.root_dir) if images_dir_path and saved_images else None,
+            image_curation=image_curation,
         )
 
     def _run_chunked_datalab(
@@ -1091,6 +1100,7 @@ class DatalabCloudBackend(ExtractionBackend):
         total_pages = 0
         all_saved_images: list = []
         merged_image_page_map: dict = {}
+        _chunk_curations: list = []
 
         for idx, chunk_pages in enumerate(chunks, start=1):
             chunk_range = pages_to_marker_range(chunk_pages)
@@ -1102,7 +1112,7 @@ class DatalabCloudBackend(ExtractionBackend):
                 chunk_pages[-1] + 1,
             )
             try:
-                result, markdown, chunk_image_page_map = self._convert_range(
+                result, markdown, chunk_image_page_map, raw_markdown = self._convert_range(
                     ctx,
                     mode=mode,
                     page_range=chunk_range,
@@ -1125,6 +1135,11 @@ class DatalabCloudBackend(ExtractionBackend):
             if result.images:
                 _, saved_chunk = self._save_datalab_images(result.images, ctx.entry_id, ctx.root_dir)
                 all_saved_images.extend(saved_chunk)
+
+            if ctx.image_description_source == "datalab" and raw_markdown:
+                chunk_curation = _extract_datalab_captions(raw_markdown, chunk_image_page_map)
+                if chunk_curation:
+                    _chunk_curations.append(chunk_curation)
 
             chunk_body = _strip_frontmatter_block(markdown).strip()
             if chunk_body:
@@ -1177,17 +1192,22 @@ class DatalabCloudBackend(ExtractionBackend):
             "parse_quality_score": average_score,
             "cost_breakdown": _merge_numeric_dicts(cost_breakdowns),
             "disable_image_extraction": False,
-            "disable_image_captions": True,
+            "disable_image_captions": (ctx.image_description_source != "datalab"),
             "images_saved": all_saved_images,
             "chunks": chunk_meta,
         }, indent=2, ensure_ascii=False))
+
+        image_curation = _merge_image_curations(_chunk_curations) if _chunk_curations else None
 
         notes = [
             "Saída avançada gerada com Datalab Document Conversion API em chunks.",
             f"Modo: {mode}.",
             f"Chunking aplicado para documento longo ({len(chunks)} chunks de até {chunk_size} páginas).",
-            "Descrições sintéticas do Datalab desativadas; a curadoria de imagens permanece app-side.",
         ]
+        if ctx.image_description_source == "datalab":
+            notes.append("Descrições de imagem extraídas das captions do DataLab e salvas no manifest.")
+        else:
+            notes.append("Descrições sintéticas do Datalab desativadas; a curadoria de imagens permanece app-side.")
         if all_saved_images:
             notes.append(f"{len(all_saved_images)} imagens extraídas pelo Datalab e salvas em staging/assets/images/.")
         if average_score is not None:
@@ -1206,6 +1226,7 @@ class DatalabCloudBackend(ExtractionBackend):
             metadata_path=safe_rel(metadata_path, ctx.root_dir),
             notes=notes,
             images_dir=safe_rel(images_dir_path, ctx.root_dir) if images_dir_path else None,
+            image_curation=image_curation,
         )
 
     def run(self, ctx: BackendContext) -> BackendRunResult:
