@@ -80,3 +80,60 @@ def save_tag_profile(course_dir: Path, profile: SubjectTagProfile) -> None:
         json.dumps(profile.to_dict(), ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+
+
+def extract_entry_learned_terms(entry: dict) -> List[str]:
+    """Extract significant tokens from entry dict for subject-local learning."""
+    terms: set = set()
+
+    title = str(entry.get("title", "") or "").lower()
+    for tok in re.split(r"[^a-z0-9]", title):
+        if len(tok) >= 5:
+            terms.add(tok)
+
+    for tag in list(entry.get("auto_tags") or []):
+        tag_str = str(tag)
+        if ":" in tag_str:
+            slug = tag_str.split(":", 1)[1]
+            if len(slug) >= 4:
+                terms.add(slug)
+
+    raw = str(entry.get("raw_target", "") or "").lower()
+    stem = Path(raw).stem if raw else ""
+    for tok in re.split(r"[^a-z0-9]", stem):
+        if len(tok) >= 5:
+            terms.add(tok)
+
+    return sorted(terms)[:12]
+
+
+def record_correction(
+    profile: SubjectTagProfile,
+    entry: dict,
+    *,
+    corrected_unit_slug: str,
+    corrected_subunit_slug: str = "",
+) -> None:
+    """Record a user correction into the profile (subject-local only)."""
+    if not corrected_unit_slug and not corrected_subunit_slug:
+        return
+
+    from datetime import datetime
+
+    entry_id = str(entry.get("id", "") or "")
+    learned_terms = extract_entry_learned_terms(entry)
+
+    # Remove previous correction for same entry
+    profile.learned_corrections = [
+        c for c in profile.learned_corrections if c.entry_id != entry_id
+    ]
+
+    profile.learned_corrections.append(
+        LearnedCorrection(
+            entry_id=entry_id,
+            corrected_unit_slug=corrected_unit_slug,
+            corrected_subunit_slug=corrected_subunit_slug,
+            learned_terms=learned_terms,
+            created_at=datetime.utcnow().isoformat(),
+        )
+    )
