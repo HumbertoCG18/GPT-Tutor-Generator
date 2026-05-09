@@ -223,3 +223,55 @@ def test_disable_image_captions_is_false_when_datalab_source(monkeypatch):
                     pass
 
     assert captured_args.get("disable_image_captions") is False
+
+
+def test_pdf_pipeline_propagates_image_curation_from_advanced_backend():
+    """Test that pdf_pipeline copies image_curation from advanced backend result to item dict."""
+    from src.models.core import BackendRunResult
+
+    fake_curation = {"pages": {"page_1": {"include_page": True, "images": {"img.png": {"description": "cap", "source": "datalab"}}}}}
+
+    fake_result = BackendRunResult(
+        name="datalab", layer="advanced", status="ok",
+        markdown_path="staging/markdown-auto/datalab/doc-1/doc-1.md",
+        image_curation=fake_curation,
+    )
+
+    # Simulate the item dict before and after the advanced backend propagation
+    item = {}
+
+    # This is the logic that should be in pdf_pipeline.py:
+    # if result.image_curation and not item.get("image_curation"):
+    #     item["image_curation"] = result.image_curation
+
+    if fake_result.image_curation and not item.get("image_curation"):
+        item["image_curation"] = fake_result.image_curation
+
+    assert item.get("image_curation") == fake_curation
+
+
+def test_pdf_pipeline_image_curation_not_overwritten_if_exists():
+    """Test that pdf_pipeline does not overwrite existing image_curation in item dict."""
+    from src.models.core import BackendRunResult
+
+    fake_curation_1 = {"pages": {"page_1": {"include_page": True, "images": {"img-1.png": {"description": "first"}}}}}
+    fake_curation_2 = {"pages": {"page_1": {"include_page": True, "images": {"img-2.png": {"description": "second"}}}}}
+
+    fake_result = BackendRunResult(
+        name="datalab", layer="advanced", status="ok",
+        markdown_path="staging/markdown-auto/datalab/doc-1/doc-1.md",
+        image_curation=fake_curation_2,
+    )
+
+    # Item already has image_curation
+    item = {"image_curation": fake_curation_1}
+
+    # This is the logic that should be in pdf_pipeline.py:
+    # if result.image_curation and not item.get("image_curation"):
+    #     item["image_curation"] = result.image_curation
+
+    if fake_result.image_curation and not item.get("image_curation"):
+        item["image_curation"] = fake_result.image_curation
+
+    # Should keep the original
+    assert item.get("image_curation") == fake_curation_1

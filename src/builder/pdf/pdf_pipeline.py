@@ -164,6 +164,8 @@ def process_pdf(builder, entry, raw_target: Path, *, backend_context_factory, ma
             builder._apply_math_normalization(result.markdown_path)
             if result.images_dir and not item.get("images_dir"):
                 item["images_dir"] = result.images_dir
+            if result.image_curation and not item.get("image_curation"):
+                item["image_curation"] = result.image_curation
             if (
                 result.name == "marker"
                 and not ctx.marker_use_llm
