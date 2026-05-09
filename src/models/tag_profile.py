@@ -137,3 +137,29 @@ def record_correction(
             created_at=datetime.utcnow().isoformat(),
         )
     )
+
+
+def build_learned_unit_boosts(
+    profile: Optional[SubjectTagProfile],
+    entry: dict,
+) -> Dict[str, float]:
+    """Return {unit_slug: boost_weight} based on subject-local learned corrections."""
+    if not profile or not profile.learned_corrections:
+        return {}
+
+    entry_terms = set(extract_entry_learned_terms(entry))
+    if not entry_terms:
+        return {}
+
+    boosts: Dict[str, float] = {}
+    for correction in profile.learned_corrections:
+        if not correction.corrected_unit_slug:
+            continue
+        learned = set(correction.learned_terms or [])
+        overlap = entry_terms & learned
+        if len(overlap) >= 2 or (len(overlap) == 1 and len(entry_terms) <= 4):
+            weight = 1.5 * min(len(overlap), 3)
+            slug = correction.corrected_unit_slug
+            boosts[slug] = boosts.get(slug, 0.0) + weight
+
+    return boosts

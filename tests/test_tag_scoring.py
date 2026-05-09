@@ -77,3 +77,59 @@ def test_record_correction_skipped_when_no_unit_or_subunit():
     entry = {"id": "x", "title": "Algo", "auto_tags": []}
     record_correction(profile, entry, corrected_unit_slug="", corrected_subunit_slug="")
     assert len(profile.learned_corrections) == 0
+
+
+from src.models.tag_profile import build_learned_unit_boosts, SubjectTagProfile, LearnedCorrection
+
+
+def test_learned_unit_boosts_returns_boost_when_terms_overlap():
+    profile = SubjectTagProfile(subject_slug="test", generated_at="2026-05-09T00:00:00")
+    profile.learned_corrections.append(
+        LearnedCorrection(
+            entry_id="lista-1",
+            corrected_unit_slug="unidade-02",
+            corrected_subunit_slug="",
+            learned_terms=["hoare", "logica", "verificacao"],
+            created_at="2026-05-09T00:00:00",
+        )
+    )
+
+    entry = {
+        "id": "lista-2",
+        "title": "Exercícios Verificação Lógica de Hoare",
+        "auto_tags": [],
+        "raw_target": "raw/lista-2.pdf",
+    }
+    boosts = build_learned_unit_boosts(profile, entry)
+
+    assert "unidade-02" in boosts
+    assert boosts["unidade-02"] > 0.0
+
+
+def test_learned_unit_boosts_returns_empty_when_no_overlap():
+    profile = SubjectTagProfile(subject_slug="test", generated_at="2026-05-09T00:00:00")
+    profile.learned_corrections.append(
+        LearnedCorrection(
+            entry_id="lista-1",
+            corrected_unit_slug="unidade-02",
+            corrected_subunit_slug="",
+            learned_terms=["hoare", "logica", "verificacao"],
+            created_at="2026-05-09T00:00:00",
+        )
+    )
+
+    entry = {
+        "id": "lista-2",
+        "title": "Ponteiros e Alocação de Memória",
+        "auto_tags": [],
+        "raw_target": "raw/lista-2.pdf",
+    }
+    boosts = build_learned_unit_boosts(profile, entry)
+
+    assert boosts.get("unidade-02", 0.0) == 0.0
+
+
+def test_learned_unit_boosts_returns_empty_for_none_profile():
+    entry = {"id": "x", "title": "Algo", "auto_tags": []}
+    boosts = build_learned_unit_boosts(None, entry)
+    assert boosts == {}
