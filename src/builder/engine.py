@@ -466,7 +466,7 @@ class BackendContext:
     def __init__(self, root_dir: Path, raw_target: Path, entry: FileEntry, report: DocumentProfileReport,
                  cancel_check=None, stall_timeout: int = 300, marker_chunking_mode: str = "fallback",
                  marker_use_llm: bool = False, marker_llm_model: str = "", marker_torch_device: str = "auto", ollama_base_url: str = "",
-                 vision_model: str = ""):
+                 vision_model: str = "", image_description_source: str = "ollama"):
         self.root_dir = root_dir
         self.raw_target = raw_target
         self.entry = entry
@@ -481,6 +481,7 @@ class BackendContext:
         self.marker_torch_device = str(marker_torch_device or "auto").strip().lower() or "auto"
         self.ollama_base_url = str(ollama_base_url or "").strip()
         self.vision_model = str(vision_model or "").strip()
+        self.image_description_source = str(image_description_source or "ollama").strip().lower()
 
     def page_label(self) -> str:
         return self.entry.page_range.strip() or "all"

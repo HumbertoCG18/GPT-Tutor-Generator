@@ -59,3 +59,40 @@ def test_backend_run_result_image_curation_defaults_to_none():
 
     r = BackendRunResult(name="base", layer="base", status="ok")
     assert r.image_curation is None
+
+
+def test_backend_context_has_image_description_source_default():
+    from unittest.mock import MagicMock
+    from src.builder.engine import BackendContext
+
+    entry = MagicMock()
+    entry.page_range = ""
+    entry.id.return_value = "test-entry"
+    report = MagicMock()
+
+    ctx = BackendContext(
+        root_dir=__import__("pathlib").Path("/tmp"),
+        raw_target=__import__("pathlib").Path("/tmp/doc.pdf"),
+        entry=entry,
+        report=report,
+    )
+    assert ctx.image_description_source == "ollama"
+
+
+def test_backend_context_accepts_datalab_image_description_source():
+    from unittest.mock import MagicMock
+    from src.builder.engine import BackendContext
+
+    entry = MagicMock()
+    entry.page_range = ""
+    entry.id.return_value = "test-entry"
+    report = MagicMock()
+
+    ctx = BackendContext(
+        root_dir=__import__("pathlib").Path("/tmp"),
+        raw_target=__import__("pathlib").Path("/tmp/doc.pdf"),
+        entry=entry,
+        report=report,
+        image_description_source="datalab",
+    )
+    assert ctx.image_description_source == "datalab"

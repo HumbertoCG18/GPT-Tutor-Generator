@@ -82,6 +82,7 @@ def process_pdf(builder, entry, raw_target: Path, *, backend_context_factory, ma
         marker_torch_device=str(builder.options.get("marker_torch_device", "auto") or "auto"),
         ollama_base_url=str(builder.options.get("ollama_base_url", "") or ""),
         vision_model=str(builder.options.get("vision_model", "") or ""),
+        image_description_source=str(builder.options.get("image_description_source", "ollama") or "ollama"),
     )
 
     builder._check_cancel()
