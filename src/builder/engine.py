@@ -861,6 +861,45 @@ def _strip_pagination_markers(text: str) -> str:
     return cleaned
 
 
+def _extract_datalab_captions(raw_markdown: str, image_page_map: Dict[str, int]) -> dict:
+    """Parse DataLab raw markdown for image captions; return image_curation dict."""
+    import re
+    from datetime import datetime
+
+    pattern = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
+    pages: Dict[str, dict] = {}
+    now = datetime.utcnow().isoformat(timespec="seconds")
+
+    for m in pattern.finditer(raw_markdown):
+        caption = m.group(1).strip()
+        filename = m.group(2).strip()
+        saved_name = filename if filename.startswith("datalab-") else f"datalab-{filename}"
+        page_num = image_page_map.get(saved_name) or image_page_map.get(filename) or 1
+        page_key = f"page_{page_num}"
+        pages.setdefault(page_key, {"include_page": True, "images": {}})
+        pages[page_key]["images"][saved_name] = {
+            "description": caption,
+            "source": "datalab",
+            "described_at": now,
+            "type": "generico",
+            "include": True,
+        }
+
+    if not pages:
+        return {}
+    return {"pages": pages}
+
+
+def _merge_image_curations(curations: list) -> dict:
+    """Merge multiple image_curation dicts (from chunked DataLab runs) into one."""
+    merged: Dict[str, dict] = {}
+    for c in curations:
+        for page_key, page_data in (c.get("pages") or {}).items():
+            merged.setdefault(page_key, {"include_page": True, "images": {}})
+            merged[page_key]["images"].update(page_data.get("images") or {})
+    return {"pages": merged}
+
+
 class DatalabCloudBackend(ExtractionBackend):
     name = "datalab"
     layer = "advanced"

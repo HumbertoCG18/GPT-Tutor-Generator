@@ -96,3 +96,78 @@ def test_backend_context_accepts_datalab_image_description_source():
         image_description_source="datalab",
     )
     assert ctx.image_description_source == "datalab"
+
+
+def test_extract_datalab_captions_parses_captions():
+    from src.builder.engine import _extract_datalab_captions
+
+    raw_md = (
+        "## Página 1\n\n"
+        "Texto antes.\n\n"
+        "![Diagrama de estados do protocolo TCP](img-001.png)\n\n"
+        "Texto depois.\n"
+    )
+    image_page_map = {"datalab-img-001.png": 1}
+
+    result = _extract_datalab_captions(raw_md, image_page_map)
+
+    assert "pages" in result
+    assert "page_1" in result["pages"]
+    images = result["pages"]["page_1"]["images"]
+    assert "datalab-img-001.png" in images
+    entry = images["datalab-img-001.png"]
+    assert entry["description"] == "Diagrama de estados do protocolo TCP"
+    assert entry["source"] == "datalab"
+    assert entry["include"] is True
+    assert "described_at" in entry
+
+
+def test_extract_datalab_captions_empty_caption_stores_empty_description():
+    from src.builder.engine import _extract_datalab_captions
+
+    raw_md = "![](img-002.png)\n"
+    image_page_map = {"datalab-img-002.png": 2}
+
+    result = _extract_datalab_captions(raw_md, image_page_map)
+
+    images = result["pages"]["page_2"]["images"]
+    assert images["datalab-img-002.png"]["description"] == ""
+    assert images["datalab-img-002.png"]["source"] == "datalab"
+
+
+def test_extract_datalab_captions_returns_empty_when_no_images():
+    from src.builder.engine import _extract_datalab_captions
+
+    raw_md = "# Título\n\nSó texto, sem imagens.\n"
+    result = _extract_datalab_captions(raw_md, {})
+
+    assert result == {}
+
+
+def test_extract_datalab_captions_falls_back_to_page_1_when_not_in_map():
+    from src.builder.engine import _extract_datalab_captions
+
+    raw_md = "![Legenda](unknown.png)\n"
+    result = _extract_datalab_captions(raw_md, {})
+
+    assert "page_1" in result["pages"]
+
+
+def test_merge_image_curations_merges_pages():
+    from src.builder.engine import _merge_image_curations
+
+    a = {"pages": {"page_1": {"include_page": True, "images": {"img-a.png": {"description": "A"}}}}}
+    b = {"pages": {"page_2": {"include_page": True, "images": {"img-b.png": {"description": "B"}}}}}
+
+    merged = _merge_image_curations([a, b])
+
+    assert "page_1" in merged["pages"]
+    assert "page_2" in merged["pages"]
+    assert "img-a.png" in merged["pages"]["page_1"]["images"]
+    assert "img-b.png" in merged["pages"]["page_2"]["images"]
+
+
+def test_merge_image_curations_empty_input():
+    from src.builder.engine import _merge_image_curations
+
+    assert _merge_image_curations([]) == {"pages": {}}
