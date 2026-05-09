@@ -133,3 +133,41 @@ def test_learned_unit_boosts_returns_empty_for_none_profile():
     entry = {"id": "x", "title": "Algo", "auto_tags": []}
     boosts = build_learned_unit_boosts(None, entry)
     assert boosts == {}
+
+
+from src.models.tag_profile import format_unit_explanation_text, format_subunit_explanation_text
+
+
+def test_format_unit_explanation_high_confidence():
+    reasons = ["winner_score=4.20", "topic_score=0.85", "tag_boost=2.00"]
+    text = format_unit_explanation_text(reasons, confidence=0.90, unit_slug="unidade-02")
+
+    assert "unidade-02" in text
+    assert "alta" in text
+    assert "4.20" in text
+
+
+def test_format_unit_explanation_shows_ambiguous():
+    reasons = ["winner_score=0.50", "ambiguous"]
+    text = format_unit_explanation_text(reasons, confidence=0.30)
+
+    assert "ambíguo" in text or "ambiguo" in text or "ambiguous" in text.lower() or "similar" in text
+    assert "muito baixa" in text
+
+
+def test_format_subunit_explanation_includes_unit():
+    reasons = ["winner_score=2.10"]
+    text = format_subunit_explanation_text(
+        reasons, confidence=0.70, unit_slug="unidade-02", subunit_slug="logica-de-hoare"
+    )
+
+    assert "logica-de-hoare" in text
+    assert "unidade-02" in text
+    assert "média" in text or "media" in text
+
+
+def test_format_unit_explanation_manual_assignment():
+    reasons = ["manual"]
+    text = format_unit_explanation_text(reasons, confidence=1.0, unit_slug="unidade-01")
+
+    assert "manual" in text

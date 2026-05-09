@@ -163,3 +163,69 @@ def build_learned_unit_boosts(
             boosts[slug] = boosts.get(slug, 0.0) + weight
 
     return boosts
+
+
+def _confidence_label(confidence: float) -> str:
+    if confidence >= 0.85:
+        return "alta"
+    if confidence >= 0.65:
+        return "média"
+    if confidence >= 0.45:
+        return "baixa"
+    return "muito baixa"
+
+
+def format_unit_explanation_text(
+    reasons: List[str],
+    confidence: float,
+    unit_slug: str = "",
+) -> str:
+    """Format unit match reasons for a human-readable tooltip."""
+    lines: List[str] = []
+    for reason in (reasons or []):
+        if reason.startswith("winner_score="):
+            lines.append(f"pontuação geral: {reason.split('=', 1)[1]}")
+        elif reason.startswith("topic_score="):
+            lines.append(f"correspondência de tópicos: {reason.split('=', 1)[1]}")
+        elif reason.startswith("tag_boost="):
+            lines.append(f"boost de tags automáticas: +{reason.split('=', 1)[1]}")
+        elif reason == "manual":
+            lines.append("atribuição manual pelo usuário")
+        elif reason == "ambiguous":
+            lines.append("⚠ ambíguo: mais de uma unidade com pontuação similar")
+
+    body = "\n".join(f"- {line}" for line in lines) if lines else "- (sem detalhes disponíveis)"
+    header = f"Unidade: {unit_slug}\n" if unit_slug else ""
+    return (
+        f"{header}Sugerido por:\n{body}\n\n"
+        f"Confiança: {_confidence_label(confidence)} ({confidence:.0%})"
+    )
+
+
+def format_subunit_explanation_text(
+    reasons: List[str],
+    confidence: float,
+    unit_slug: str = "",
+    subunit_slug: str = "",
+) -> str:
+    """Format subunit match reasons for a human-readable tooltip."""
+    lines: List[str] = []
+    for reason in (reasons or []):
+        if reason.startswith("winner_score="):
+            lines.append(f"pontuação de tópico: {reason.split('=', 1)[1]}")
+        elif reason == "manual":
+            lines.append("atribuição manual pelo usuário")
+        elif reason == "ambiguous":
+            lines.append("⚠ ambíguo: mais de um tópico com pontuação similar")
+        elif reason.startswith("sem-"):
+            lines.append(f"⚠ {reason}")
+
+    if unit_slug:
+        lines.append(f"restrito à unidade: {unit_slug}")
+
+    body = "\n".join(f"- {line}" for line in lines) if lines else "- (sem detalhes disponíveis)"
+    header = f"Subunidade: {subunit_slug or '(nenhuma)'}\n"
+    return (
+        f"{header}Sugerido por:\n{body}\n\n"
+        f"Confiança: {_confidence_label(confidence)} ({confidence:.0%})"
+    )
