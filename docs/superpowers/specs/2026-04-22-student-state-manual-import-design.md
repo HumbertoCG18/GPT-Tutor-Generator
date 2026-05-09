@@ -1,6 +1,7 @@
 # Student State Manual Import Design
 
 **Date:** 2026-04-22
+**Status:** Não implementado
 
 **Goal**
 

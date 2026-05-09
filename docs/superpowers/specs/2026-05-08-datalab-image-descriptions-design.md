@@ -3,6 +3,7 @@
 **Data:** 2026-05-08
 **Branch:** new-features
 **Escopo:** `src/ui/theme.py`, `src/ui/app.py`, `src/builder/engine.py`, `src/builder/runtime/datalab_client.py`, `src/ui/image_curator.py`
+**Status:** Não implementado
 
 ---
 

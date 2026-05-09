@@ -3,6 +3,7 @@
 **Data:** 2026-05-08  
 **Branch:** new-features  
 **Escopo:** `src/builder/extraction/content_taxonomy.py`, `src/ui/dialogs.py`
+**Status:** Implementado
 
 ---
 

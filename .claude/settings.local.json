@@ -22,7 +22,9 @@
       "Bash(findstr -i \"tutor\")",
       "Bash(findstr -i test)",
       "mcp__claude-mem__search",
-      "Bash(Get-Content *)"
+      "Bash(Get-Content *)",
+      "Bash(not exist *)",
+      "mcp__code-review-graph__semantic_search_nodes_tool"
     ]
   },
   "enableAllProjectMcpServers": true,
