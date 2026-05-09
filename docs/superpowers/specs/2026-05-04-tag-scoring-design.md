@@ -1,5 +1,7 @@
 # Tag Scoring Redesign
 
+**Status:** Implementado
+
 ## Goal
 
 Refactor the tag system so tags become a complementary evidence layer for automatic unit assignment and enable subunit assignment with the same scoring philosophy.
