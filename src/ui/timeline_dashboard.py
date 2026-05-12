@@ -137,7 +137,7 @@ class TimelineDashboard(tk.Toplevel):
 
         self._scroll_frame.bind("<Configure>", self._on_frame_configure)
         self._canvas.bind("<Configure>", self._on_canvas_configure)
-        self._canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+        self._canvas.bind("<MouseWheel>", self._on_mousewheel)
 
     def _on_frame_configure(self, _event=None) -> None:
         self._canvas.configure(scrollregion=self._canvas.bbox("all"))
