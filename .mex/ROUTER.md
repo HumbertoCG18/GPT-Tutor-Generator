@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Contains project state, routing table, and behavioural contract.
-last_updated: 2026-05-04
+last_updated: 2026-05-12
 ---
 
 # ROUTER.md - Session Bootstrap
@@ -18,7 +18,7 @@ Read this file before starting any task.
 - Manifest is `pyproject.toml` with package name `academic-tutor-repo-builder` and version `3.0.0`.
 - Academic-material import flow supports files and links.
 - Processing flow handles PDFs, links, images, and code.
-- Problematic processing outputs are reviewed through `manual-review/`.
+- Problematic processing outputs are reviewed through the generated repository's manual review area.
 - Image Curator supports images extracted from PDFs and imported photos.
 - Repository builder consolidates content into Markdown.
 - Generated tutor artifacts target Claude, GPT, and Gemini.

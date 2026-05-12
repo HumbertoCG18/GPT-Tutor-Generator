@@ -18,10 +18,12 @@ edges:
     condition: when checking library/CLI availability detection
   - target: patterns/debug-build-failure.md
     condition: when backend changes cause build failures or unexpected conversion errors
-last_updated: 2026-04-22
+last_updated: 2026-05-12
 ---
 
 # PDF Backend Integration
+
+Reviewed against the current PDF pipeline and backend runtime modules on 2026-05-12.
 
 ## Context
 
@@ -70,7 +72,7 @@ Key files:
 1. Load `context/pdf-pipeline.md` — understand which stage the change affects
 2. Find the relevant capability function in `backend_runtime.py` and check if caching needs to be invalidated
 3. Edit only the targeted helper — do not touch `pdf_pipeline.py` main flow unless adding a new stage
-4. If modifying Marker behavior: check the manual Ollama patch status first (see setup.md Known Issues)
+4. If modifying Marker behavior: check Marker/Ollama configuration in `src/builder/runtime/backend_runtime.py` and keep it aligned with `context/pdf-pipeline.md`.
 
 ### Gotchas
 

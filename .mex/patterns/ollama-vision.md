@@ -18,13 +18,15 @@ edges:
   - target: context/decisions.md
     condition: when understanding why Ollama is the only vision backend
   - target: context/pdf-pipeline.md
-    condition: when vision is used after PDF image extraction (images_dir → Ollama classification)
+    condition: when vision is used after PDF image extraction and before Ollama classification
   - target: patterns/debug-build-failure.md
     condition: when a vision failure causes a build entry to fail
-last_updated: 2026-04-22
+last_updated: 2026-05-12
 ---
 
 # Ollama Vision
+
+Reviewed against the current vision modules and Image Curator integration on 2026-05-12.
 
 ## Context
 
@@ -53,7 +55,7 @@ Ollama runs as an **independent service** — the app never starts it. It must b
 - **`check_availability()` mutates `self.model`** — if the primary model is not found, it silently falls back to `FALLBACK_MODEL` (`qwen3-vl:8b`) and modifies the instance. This means the client object is stateful after the first availability check.
 - **Thinking artifacts leak** — Qwen3-VL sometimes ignores `"think": False` and emits reasoning in English before the Portuguese answer. `_clean_thinking_artifacts` handles this; if responses look garbled, check if this function stripped too aggressively.
 - **`classify_image` uses pure PNG parsing** — it does NOT use Pillow; it reads PNG IHDR directly. Only PNG files are classified by dimension/color; other formats default to `"genérico"`. Don't add Pillow imports — the design is intentional.
-- **`group_images_by_page` searches 3 directories**: `images_dir/` (standard), `images_dir/scanned/{entry_prefix}/` (scanned pages), `images_dir/manual-crops/` (curator crops). New image sources must be added to this function or they won't appear in the curator.
+- **`group_images_by_page` searches 3 image locations**: the Image Curator image root, scanned-page images below the scanned child directory for the entry, and curator crops below the manual-crops child directory. New image sources must be added to this function or they won't appear in the curator.
 - **`image_type` keys are Portuguese strings** — passing an unknown key returns the `"genérico"` prompt silently. Test with `IMAGE_TYPE_PROMPTS.get("yourkey")` before wiring.
 
 ### Verify
@@ -68,13 +70,13 @@ Ollama runs as an **independent service** — the app never starts it. It must b
 
 ### Steps
 
-1. Check if Ollama is running: `curl http://localhost:11434/api/tags` — should return JSON with `models` list
+1. Check if Ollama is running by querying the local Ollama tags endpoint; it should return JSON with a `models` list.
 2. Check which model is available: confirm `qwen3-vl:8b` or `qwen3-vl:235b-cloud` appears in the list
 3. Check app logs for `[Ollama]` prefix lines — `ollama_client.py` logs every request with payload size and response time
 4. If response is empty: check for `"Ollama retornou uma resposta vazia"` in logs — means the model returned no content; verify the model supports multimodal input
 5. If response is garbled English: `_clean_thinking_artifacts` may have missed the transition point — inspect `response_text` before cleaning in the logs
 6. If 500 error: check if Marker and Ollama cloud model are running concurrently — switch to local model
-7. If `FileNotFoundError` in `_encode_image`: `images_dir` is wrong or `BackendRunResult.images_dir` was not propagated from the PDF pipeline
+7. If `FileNotFoundError` in `_encode_image`: the image directory value is wrong or `BackendRunResult.images_dir` was not propagated from the PDF pipeline
 
 ### Failure Reference
 
@@ -84,7 +86,7 @@ Ollama runs as an **independent service** — the app never starts it. It must b
 | `RuntimeError: resposta vazia` | Model doesn't support vision | Pull `qwen3-vl:8b`: `ollama pull qwen3-vl:8b` |
 | Response in English only | Thinking artifact leak not cleaned | Check `_clean_thinking_artifacts` patterns |
 | 500 error from Ollama | `qwen3-vl:235b-cloud` + concurrency | Use `qwen3-vl:8b q4_K_M` |
-| No images in Image Curator | `images_dir` is None or wrong prefix | Check `BackendRunResult.images_dir` in manifest |
+| No images in Image Curator | Image directory is missing or has the wrong prefix | Check `BackendRunResult.images_dir` in manifest |
 | Image classified as `decorativa` incorrectly | Heuristic too aggressive | Adjust `MAX_ASPECT_RATIO` or `MIN_FILE_SIZE` constants |
 
 ## Update Scaffold

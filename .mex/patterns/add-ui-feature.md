@@ -17,10 +17,12 @@ edges:
     condition: when the UI feature triggers builder logic (understand the flow first)
   - target: patterns/add-builder-submodule.md
     condition: when the UI feature requires new processing logic in a builder subpackage
-last_updated: 2026-04-22
+last_updated: 2026-05-12
 ---
 
 # Add UI Feature
+
+Reviewed against the current Tkinter UI modules and repository dashboard flow on 2026-05-12.
 
 ## Context
 
@@ -48,7 +50,7 @@ The app is single-threaded on the UI side. All builder work runs via `TaskQueueR
 - **AppConfig** is loaded once on startup from JSON. Changes made at runtime must call `ThemeManager.save_config()` to persist — otherwise they are lost on restart.
 - **Entry list state:** `FileEntry` objects are stored in `SubjectStore` (JSON persistence). After editing an entry, call the appropriate `SubjectStore.save()` — UI list refresh does not persist.
 - **Dialog sizing:** Tkinter dialogs do not auto-resize on Windows with high-DPI screens. Use `dialog.geometry("NNNxNNN")` for new dialogs; check at 125% and 150% DPI.
-- **`collect_repo_metrics`** in `repo_dashboard.py` reads from `manifest.json` — it is I/O heavy. Do not call it on every UI refresh tick; cache the result.
+- **`collect_repo_metrics`** in `repo_dashboard.py` reads generated repository manifest data and is I/O heavy. Do not call it on every UI refresh tick; cache the result.
 
 ## Verify
 

@@ -19,21 +19,23 @@ edges:
     condition: when the failure is in a specific PDF backend
   - target: patterns/ollama-vision.md
     condition: when the build failure occurs during image classification or vision processing
-last_updated: 2026-04-22
+last_updated: 2026-05-12
 ---
 
 # Debug Build Failure
 
+Reviewed against the current repository task and backend diagnostic paths on 2026-05-12.
+
 ## Context
 
 Builds run in a background thread via `TaskQueueRunner`. Failures are recorded in two places:
-1. `manifest.json` → `failed_entries` array (each entry has `error_type` and `error_message`)
-2. `manifest.json` → `logs` array (step-by-step log for each entry)
+1. The generated repository manifest has a `failed_entries` array (each entry has `error_type` and `error_message`)
+2. The generated repository manifest has a `logs` array (step-by-step log for each entry)
 3. Python `logging` output (visible in terminal or log file)
 
 ## Steps
 
-1. **Check manifest first** — open `<repo_root>/manifest.json` and read `failed_entries`; note `error_type` (`missing_source`, `conversion_error`, etc.)
+1. **Check manifest first** — open the generated repository manifest and read `failed_entries`; note `error_type` (`missing_source`, `conversion_error`, etc.)
 2. **Check logs array** — find entries with `status: "error"` for the failing entry; `step` field tells you which stage failed
 3. **Check Python log output** — if the app was run from terminal, look for `ERROR` lines from `src.builder.*` loggers
 4. **Identify the stage** from `context/pdf-pipeline.md` stages 1-6 — the `step` field in logs maps to stage names
@@ -47,15 +49,15 @@ Builds run in a background thread via `TaskQueueRunner`. Failures are recorded i
 |---|---|
 | `missing_source` | Check `source_path` in the entry — file was moved or deleted |
 | `conversion_error` (Datalab) | Check `DATALAB_API_KEY`; check Datalab status page; check `parse_quality_score` in logs |
-| `conversion_error` (Marker) | Check Ollama patch is applied; check `qwen3-vl:8b` model is pulled; try with `qwen3-vl:8b q4_K_M` |
+| `conversion_error` (Marker) | Check Marker/Ollama configuration; check `qwen3-vl:8b` model is pulled; try with `qwen3-vl:8b q4_K_M` |
 | `conversion_error` (LaTeX) | `pymupdf4llm` used on math-heavy PDF — switch `document_profile` to `math_heavy` and re-process |
 | Timeout / stall | Check which phase stalled in logs; only `LLM processors running` has phase override; increase general timeout or reduce PDF size |
-| `FileNotFoundError` in incremental build | `manifest.json` references a path that no longer exists; remove the entry from the manifest or re-add the source file |
+| `FileNotFoundError` in incremental build | The generated repository manifest references a path that no longer exists; remove the entry from the manifest or re-add the source file |
 
 ## Gotchas
 
 - `RepoTaskStore` persists tasks that previously failed — they will retry on next app start unless removed. Use the UI task dashboard to cancel stuck tasks.
-- Incremental build (`incremental_build_impl`) skips entries already in `manifest.json` by `source_path`. If you change a file and want it reprocessed, either remove it from the manifest or use "Full Rebuild".
+- Incremental build (`incremental_build_impl`) skips entries already present in the generated repository manifest by `source_path`. If you change a file and want it reprocessed, either remove it from the manifest or use "Full Rebuild".
 - Marker capabilities are cached for the process lifetime (`_MARKER_CAPABILITIES_CACHE`). If you install Marker mid-session, restart the app.
 - Datalab polling has a 1800-second ceiling. If a job is stuck on Datalab's side, the build thread hangs silently. Kill and retry.
 

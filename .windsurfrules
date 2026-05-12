@@ -1,4 +1,7 @@
-<!-- code-review-graph MCP tools -->
+<!--
+code-review-graph MCP tools
+last_updated: 2026-05-12
+-->
 ## MCP Tools: code-review-graph
 
 **IMPORTANT: This project has a knowledge graph. ALWAYS use the
@@ -16,6 +19,9 @@ scanning cannot.
 - **Architecture questions**: `get_architecture_overview` + `list_communities`
 
 Fall back to Grep/Glob/Read **only** when the graph doesn't cover what you need.
+
+Before calling a `mcp__code-review-graph__*` tool, load its schema with
+`ToolSearch select:<tool-name>`.
 
 ### Key Tools
 

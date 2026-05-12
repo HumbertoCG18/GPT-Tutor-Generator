@@ -1,5 +1,7 @@
 # Setup — Populate This Scaffold
 
+last_updated: 2026-05-12
+
 This file contains the prompts to populate the scaffold. It is NOT the dev environment setup — for that, see `context/setup.md` after population.
 
 This scaffold is currently empty. Follow the steps below to populate it for your project.
@@ -224,5 +226,5 @@ A well-populated scaffold should give the agent enough to:
 Once the scaffold is populated, use these to keep it aligned with your codebase:
 
 - **`mex check`** — detect drift (zero tokens, zero AI)
-- **`.mex/sync.sh`** — interactive drift check + targeted or full resync
+- **`mex sync --dry-run`** — preview targeted resync prompts
 - **`mex watch`** — auto drift score after every commit

@@ -13,7 +13,7 @@ edges:
     condition: when deciding where new logic should live
   - target: context/decisions.md
     condition: when a convention comes from an architectural decision
-last_updated: 2026-05-04
+last_updated: 2026-05-12
 ---
 
 # Conventions
@@ -38,8 +38,8 @@ Observed from the brief:
 |---|---|
 | Tests | `tests/test_<topic>.py` |
 | Unit fallback tests | `tests/test_unit_fallback.py` |
-| Timeline tests | `tests/test_timeline_*.py` |
-| Student state tests | `tests/test_student_state_*.py` |
+| Timeline tests | Examples include `tests/test_timeline_signals.py`, `tests/test_timeline_index_kind.py`, and `tests/test_timeline_scoring_ignored.py` |
+| Student state tests | Examples include `tests/test_student_state_v2.py`, `tests/test_student_state_manual_import.py`, and `tests/test_student_state_integration.py` |
 | Tag catalog tests | `tests/test_tag_catalog.py` |
 
 Use existing topic names when adding tests. Do not introduce a new naming scheme without a specific reason.
@@ -50,7 +50,7 @@ The README flow establishes these project patterns:
 
 - Imports are configured as entries before processing.
 - Processing is queue-based.
-- Difficult outputs are routed through `manual-review/`.
+- Difficult outputs are routed through the generated repository's manual review area.
 - Image processing has a dedicated Image Curator flow.
 - Repository builds and reprocesses are available as repository tasks.
 - Dashboard state reflects repository task progress.

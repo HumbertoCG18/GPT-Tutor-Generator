@@ -11,7 +11,7 @@ edges:
     condition: when a decision affects system structure
   - target: context/stack.md
     condition: when a decision affects technology choice
-last_updated: 2026-05-04
+last_updated: 2026-05-12
 ---
 
 # Decisions
@@ -54,7 +54,7 @@ Append-only log. When a decision changes, mark the old entry as superseded and a
 
 **Date:** 2026-05-04
 **Status:** Active
-**Decision:** Problematic processing outputs are routed to `manual-review/` instead of being silently accepted.
+**Decision:** Problematic processing outputs are routed to the generated repository's manual review area instead of being silently accepted.
 **Reasoning:** Academic materials can contain difficult PDFs, images, links, and code. A manual correction point prevents low-quality generated repositories from being treated as complete.
 **Consequences:** Processing changes should preserve a failure or uncertainty path into manual review.
 

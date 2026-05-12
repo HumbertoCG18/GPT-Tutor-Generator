@@ -14,28 +14,32 @@ edges:
     condition: when deciding which subpackage owns the new logic
   - target: patterns/add-ui-feature.md
     condition: when the new builder logic also needs a UI entry point or dialog
-last_updated: 2026-04-22
+last_updated: 2026-05-12
 ---
 
 # Add Builder Submodule
 
+Reviewed against the current `src/builder` subpackage layout on 2026-05-12.
+
 ## Context
 
 All new processing logic goes into a focused subpackage under `src/builder/`. Choose the right subpackage:
-- `extraction/` — content analysis, taxonomy, image markdown, entry signals
-- `ops/` — build lifecycle operations (build, incremental, cleanup, state)
-- `pdf/` — PDF conversion and profiling
-- `artifacts/` — generating markdown artifacts (COURSE_MAP, FILE_MAP, prompts)
-- `runtime/` — external service clients (Datalab, backend capabilities)
-- `vision/` — Ollama image classification
-- `routing/` — FILE_MAP matching and scoring
-- `facade/` — engine-level wrappers that expose configured submodule functionality
-- `core/` — utilities shared within `builder/` (semantic config, markdown utils)
+- `src/builder/extraction/` — content analysis, taxonomy, image markdown, entry signals
+- `src/builder/ops/` — build lifecycle operations (build, incremental, cleanup, state)
+- `src/builder/pdf/` — PDF conversion and profiling
+- `src/builder/artifacts/` — generating markdown artifacts (COURSE_MAP, FILE_MAP, prompts)
+- `src/builder/runtime/` — external service clients (Datalab, backend capabilities)
+- `src/builder/vision/` — Ollama image classification
+- `src/builder/routing/` — FILE_MAP matching and scoring
+- `src/builder/facade/` — engine-level wrappers that expose configured submodule functionality
+- `src/builder/core/` — utilities shared within the builder package (semantic config, markdown utils)
+- `src/builder/text/` — text sanitization, markdown cleanup, and merge helpers
+- `src/builder/timeline/` — teaching-plan timeline parsing and scoring support
 
 ## Steps
 
 1. Identify which existing subpackage owns this concern — read `context/architecture.md` if unclear
-2. Create or edit the `.py` file in the correct subpackage
+2. Create or edit a Python module in the correct subpackage
 3. Write the function with `from __future__ import annotations` at top and `logger = logging.getLogger(__name__)` if logging is needed
 4. For optional dataclass fields: always use `Optional[X] = None` or `field(default_factory=...)`
 5. Use `write_text` from `src.utils.helpers` for any file writes; use `ensure_dir` before creating directories
@@ -55,10 +59,10 @@ All new processing logic goes into a focused subpackage under `src/builder/`. Ch
 - [ ] `logger = logging.getLogger(__name__)` at module level (no `print`)
 - [ ] Optional fields have `= None` default
 - [ ] File writes use `write_text` from `src.utils.helpers`
-- [ ] Test file created at `tests/test_<module>.py`
+- [ ] Test file created using the `tests/test_<topic>.py` naming pattern
 - [ ] No comments explaining WHAT the code does
 
 ## Update Scaffold
 - [ ] Update `.mex/ROUTER.md` "Current Project State" if a significant new capability was added
 - [ ] Update `context/architecture.md` Key Components if a new major component was introduced
-- [ ] If this is a new task type without a pattern, create one in `.mex/patterns/` and add to `INDEX.md`
+- [ ] If this is a new task type without a pattern, create one in `.mex/patterns/` and add it to the pattern index

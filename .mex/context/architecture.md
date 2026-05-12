@@ -14,7 +14,7 @@ edges:
     condition: when understanding why an architectural choice exists
   - target: context/repo-output.md
     condition: when the task involves the generated repository format
-last_updated: 2026-05-04
+last_updated: 2026-05-12
 ---
 
 # Architecture
@@ -53,7 +53,7 @@ Create or select subject
   -> define generated repository folder
   -> import files and links
   -> process queue
-  -> review manual-review/ outputs when needed
+  -> review generated manual review outputs when needed
   -> use Image Curator for extracted images or photos
   -> build or update final repository
   -> optionally reprocess existing repository
@@ -68,7 +68,7 @@ Create or select subject
 | Desktop UI | Tkinter interface for subject setup, imports, queue processing, image curation, repository tasks, and dashboard monitoring. |
 | Import pipeline | Accepts academic files and links, including PDFs, images, code, and URLs. |
 | Processing queue | Persistent queue for builds, reprocessing, and individual material processing across app sessions. |
-| Manual review area | Holds problematic outputs under `manual-review/` for user correction. |
+| Manual review area | Holds problematic generated outputs for user correction. |
 | Image Curator | Curates images extracted from PDFs or imported photos and extracts descriptions. |
 | Repository builder | Consolidates processed content into structured Markdown and tutor instruction artifacts. |
 | Reprocess Repository action | Reapplies the current architecture to previously generated repositories. |

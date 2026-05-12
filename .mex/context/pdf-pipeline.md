@@ -25,10 +25,12 @@ edges:
     condition: when adding or modifying a PDF backend
   - target: patterns/debug-build-failure.md
     condition: when a pipeline stage fails and you need to trace the error through manifest logs
-last_updated: 2026-04-22
+last_updated: 2026-05-12
 ---
 
 # PDF Pipeline
+
+Reviewed against the current PDF pipeline and backend runtime modules on 2026-05-12.
 
 ## Pipeline Stages
 
@@ -68,7 +70,7 @@ Datalab and Marker both support chunked processing for large PDFs:
 
 - **LaTeX corruption (silent):** `pymupdf4llm` can corrupt inline math without any error. Always use Datalab or Marker for `math_heavy` documents.
 - **Marker stall detection:** Only `"LLM processors running"` phase has a per-phase timeout override; other phases use the general calculated timeout. Long Marker runs may stall without triggering the right timeout.
-- **Marker Ollama patch:** `.venv/.../marker/services/ollama.py` has a manual patch. Recreating `.venv` loses it. The `qwen3-vl:235b-cloud` model causes 500 errors — use `qwen3-vl:8b q4_K_M`.
+- **Marker Ollama configuration:** Marker LLM behavior is controlled by builder options plus runtime helpers in `src/builder/runtime/backend_runtime.py`. Avoid depending on manual edits inside the local virtual environment. The `qwen3-vl:235b-cloud` model causes 500 errors; use `qwen3-vl:8b q4_K_M`.
 - **Datalab polling:** `convert_document_to_markdown` polls in a loop up to `max_wait_seconds=1800`. If Datalab returns a job that never completes, the build thread hangs. Check `DatalabConvertResult.parse_quality_score` post-conversion.
 - **`images_dir` is None:** Means either `extract_images=False`, the backend doesn't support image extraction, or the entry was not processed by Datalab. Image curation UI reads from manifest `images_dir` field.
 

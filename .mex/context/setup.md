@@ -13,7 +13,7 @@ edges:
     condition: when exact technology or manifest details are needed
   - target: context/architecture.md
     condition: when understanding runtime behavior after startup
-last_updated: 2026-05-04
+last_updated: 2026-05-12
 ---
 
 # Setup
@@ -79,7 +79,7 @@ After launching the app:
 2. Define the generated repository folder.
 3. Import files and links.
 4. Process the queue.
-5. Review outputs in `manual-review/` when needed.
+5. Review outputs in the generated repository's manual review area when needed.
 6. Use Image Curator for extracted images or photos.
 7. Build or update the final repository.
 8. Use Reprocess Repository to reapply the current architecture to existing repositories.
