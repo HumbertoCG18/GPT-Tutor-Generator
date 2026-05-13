@@ -1838,9 +1838,10 @@ class App(tk.Tk):
                     builder.incremental_build()
                 else:
                     builder.build()
-                failed_count = len(getattr(builder, "failed_entries", []) or [])
+                failed_list = list(getattr(builder, "failed_entries", []) or [])
+                failed_count = len(failed_list)
                 logger.info("Worker concluído com sucesso.")
-                self.after(0, lambda fc=failed_count: self._on_build_complete(meta, repo_dir, incremental, fc))
+                self.after(0, lambda fc=failed_count, fl=failed_list: self._on_build_complete(meta, repo_dir, incremental, fc, fl))
             except InterruptedError:
                 self.after(0, self._on_build_cancelled)
             except Exception:
@@ -1859,7 +1860,7 @@ class App(tk.Tk):
         self._reset_build_finish_options()
         self._set_status("Build cancelado.")
 
-    def _on_build_complete(self, meta: dict, repo_dir: Path, incremental: bool, failed_count: int = 0):
+    def _on_build_complete(self, meta: dict, repo_dir: Path, incremental: bool, failed_count: int = 0, failed_list: list | None = None):
         self._end_progress()
         self._set_building_state(False)
         n_entries = len(self.entries)
@@ -1870,6 +1871,14 @@ class App(tk.Tk):
         shutdown_after_build = self._shutdown_after_build.get()
         status_prefix = "concluído com falhas" if failed_count else ("atualizado" if incremental else "criado")
         self._set_status(f"✓ Repositório {status_prefix} em: {repo_dir}")
+        failed_lines = ""
+        if failed_count and failed_list:
+            items = "\n".join(
+                f"  • {f.get('title', '?')} — {f.get('source_path', '?')}"
+                for f in failed_list[:20]
+            )
+            extra = f"\n  … (+{failed_count - 20} outro(s))" if failed_count > 20 else ""
+            failed_lines = f"\n\nArquivos ausentes ({failed_count}):\n{items}{extra}"
         if shutdown_after_build:
             logger.info("Build concluído com opção de desligamento ativada.")
             self._schedule_shutdown_after_build()
@@ -1878,14 +1887,16 @@ class App(tk.Tk):
                 APP_NAME,
                 f"Repositório atualizado em:\n{repo_dir}\n\n"
                 f"{n_entries} arquivo(s) na fila desta execução.\n"
-                f"Falhas por arquivo ausente: {failed_count}\n\n"
+                f"Falhas por arquivo ausente: {failed_count}"
+                f"{failed_lines}\n\n"
                 f"Próximo passo: dar push no GitHub."
             )
         else:
             messagebox.showinfo(
                 APP_NAME,
                 f"Repositório criado em:\n{repo_dir}\n\n"
-                f"Falhas por arquivo ausente: {failed_count}\n\n"
+                f"Falhas por arquivo ausente: {failed_count}"
+                f"{failed_lines}\n\n"
                 f"Próximo passo recomendado:\n"
                 f"1. Revisar manual-review/\n"
                 f"2. Escolher a melhor saída entre base e avançada\n"

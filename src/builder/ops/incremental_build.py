@@ -34,13 +34,41 @@ def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_f
 
         builder._create_structure()
 
+        manifest.setdefault("failed_entries", [])
         total = len(new_entries)
         for i, entry in enumerate(new_entries):
             logger.info("[%d/%d] Processing: %s (%s)", i + 1, total, entry.title, entry.file_type)
             if builder.progress_callback:
                 builder.progress_callback(i, total, entry.title)
-            item_result = builder._process_entry(entry)
-            manifest["entries"].append(item_result)
+            try:
+                item_result = builder._process_entry(entry)
+                manifest["entries"].append(item_result)
+            except FileNotFoundError as exc:
+                failure = {
+                    "id": entry.id(),
+                    "title": entry.title,
+                    "file_type": entry.file_type,
+                    "source_path": entry.source_path,
+                    "error_type": "missing_source",
+                    "error_message": str(exc),
+                }
+                builder.failed_entries.append(failure)
+                manifest["failed_entries"].append(failure)
+                builder.logs.append(
+                    {
+                        "entry": entry.title,
+                        "step": "source_check",
+                        "status": "error",
+                        "message": str(exc),
+                    }
+                )
+                logger.warning("[%d/%d] Pulando entry com arquivo ausente: %s", i + 1, total, exc)
+                manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
+                manifest.setdefault("logs", []).extend(builder.logs)
+                builder.logs = []
+                manifest = builder._compact_manifest(manifest)
+                write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+                continue
             manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
             manifest.setdefault("logs", []).extend(builder.logs)
             builder.logs = []
