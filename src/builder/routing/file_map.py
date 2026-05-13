@@ -170,10 +170,17 @@ def auto_map_entry_subtopic(
 
     winner, winner_score = scored[0]
     runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
-    confidence = min(1.0, max(0.0, (winner_score - runner_up_score) + (winner_score * 0.2)))
-    ambiguous = winner_score <= 0.0 if len(scored) == 1 else winner_score <= 0.0 or abs(winner_score - runner_up_score) < 0.65
-    if len(scored) == 1 and not ambiguous:
-        confidence = max(confidence, 0.72)
+    margin = winner_score - runner_up_score
+    rel_margin = margin / max(winner_score, 1e-6)
+    if winner_score <= 0.0:
+        confidence = 0.0
+        ambiguous = True
+    elif len(scored) == 1:
+        confidence = 0.72
+        ambiguous = False
+    else:
+        confidence = max(0.0, min(1.0, rel_margin))
+        ambiguous = rel_margin < 0.15
     if ambiguous:
         confidence = min(confidence, 0.45)
 
@@ -402,18 +409,27 @@ def auto_map_entry_unit(
     winner, winner_score, winner_topic_score = scored[0]
     runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
     runner_up_topic_score = scored[1][2] if len(scored) > 1 else 0.0
-    confidence = min(1.0, max(0.0, (winner_score - runner_up_score) + (winner_score * 0.18)))
-    ambiguous = winner_score <= 0.0 if len(scored) == 1 else winner_score <= 0.0 or abs(winner_score - runner_up_score) < 0.8
-    if len(scored) == 1 and not ambiguous:
-        confidence = max(confidence, 0.7)
+    margin = winner_score - runner_up_score
+    rel_margin = margin / max(winner_score, 1e-6)
+    if winner_score <= 0.0:
+        confidence = 0.0
+        ambiguous = True
+    elif len(scored) == 1:
+        confidence = 0.7
+        ambiguous = False
+    else:
+        confidence = max(0.0, min(1.0, rel_margin))
+        ambiguous = rel_margin < 0.15
     if (
         len(scored) > 1
         and normalized_topic_index
         and winner_topic_score >= 0.55
         and (winner_topic_score - runner_up_topic_score) >= 0.01
     ):
-        ambiguous = False
-        confidence = max(confidence, min(0.95, winner_topic_score))
+        topic_rel_margin = (winner_topic_score - runner_up_topic_score) / max(winner_topic_score, 1e-6)
+        if topic_rel_margin >= 0.15:
+            ambiguous = False
+            confidence = max(confidence, min(0.95, topic_rel_margin))
     if ambiguous:
         confidence = min(confidence, 0.4)
     reasons = [f"winner_score={winner_score:.2f}"]
