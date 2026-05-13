@@ -1,0 +1,103 @@
+<h2>TimelineDashboard — Mockup completo</h2>
+<p class="subtitle">Accordion · dropdown de atribuição · seção "sem bloco" no rodapé</p>
+
+<div class="mockup">
+  <div class="mockup-header" style="display:flex;justify-content:space-between;align-items:center">
+    <span>📅 Cronograma — Sistemas Operacionais 2026</span>
+    <span style="font-size:11px;color:#aaa">🔄 Reprocessar &nbsp;✕</span>
+  </div>
+  <div class="mockup-body" style="padding:0;font-size:12px;max-height:520px;overflow-y:auto">
+
+    <!-- Toolbar -->
+    <div style="padding:6px 12px;border-bottom:1px solid #333;display:flex;gap:8px;align-items:center;background:#1a1a1a">
+      <span style="color:#aaa;font-size:11px">Repositório: <strong style="color:#eee">~/repos/so-2026</strong></span>
+      <span style="flex:1"></span>
+      <button style="background:#1a3a1a;color:#7aff7a;border:1px solid #3a6a3a;border-radius:3px;padding:2px 10px;font-size:11px;cursor:pointer">🔄 Reprocessar</button>
+    </div>
+
+    <!-- Bloco expandido -->
+    <div style="border-bottom:1px solid #2a2a2a">
+      <div style="padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;background:#1e2e1e">
+        <span style="color:#7aff7a">▼</span>
+        <span style="font-weight:bold;color:#eee">12/03/2026 — Processos</span>
+        <span style="font-size:10px;color:#888;margin-left:4px">Unidade 1 · aula</span>
+        <span style="margin-left:auto;font-size:10px;background:#1a3a1a;color:#7aff7a;padding:1px 6px;border-radius:10px">2 arquivos</span>
+      </div>
+      <div style="padding:6px 12px 10px 28px;background:#141e14">
+        <!-- Arquivo 1 -->
+        <div style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:#1a2a1a;border-radius:4px;margin-bottom:4px">
+          <span>📄</span>
+          <span style="flex:1;color:#ddd">12.03 Processos.pdf</span>
+          <span style="font-size:10px;color:#7aff7a;background:#0a1a0a;padding:1px 5px;border-radius:3px">conf 0.92</span>
+          <span style="font-size:10px;color:#5aafff;background:#0a0a2a;padding:1px 5px;border-radius:3px">🗓 DD.MM</span>
+          <select style="background:#111;color:#aaa;border:1px solid #333;border-radius:3px;font-size:10px;padding:1px 4px">
+            <option selected>✓ 12/03 Processos (auto)</option>
+            <option>05/05 Memória</option>
+            <option>26/05 Escalonamento</option>
+            <option>— remover atribuição</option>
+          </select>
+        </div>
+        <!-- Arquivo 2 -->
+        <div style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:#1a2a1a;border-radius:4px;margin-bottom:4px">
+          <span>🔗</span>
+          <span style="flex:1;color:#ddd">Slides Aula 3 — Drive</span>
+          <span style="font-size:10px;color:#5aafff;background:#0a0a2a;padding:1px 5px;border-radius:3px">conf 0.74</span>
+          <select style="background:#111;color:#aaa;border:1px solid #333;border-radius:3px;font-size:10px;padding:1px 4px">
+            <option selected>✓ 12/03 Processos (auto)</option>
+            <option>05/05 Memória</option>
+            <option>— remover atribuição</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bloco com gap -->
+    <div style="border-bottom:1px solid #2a2a2a">
+      <div style="padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:8px">
+        <span style="color:#aaa">▶</span>
+        <span style="font-weight:bold;color:#ffaa44">05/05/2026 — Gerência de Memória</span>
+        <span style="font-size:10px;color:#888;margin-left:4px">Unidade 2 · aula</span>
+        <span style="margin-left:auto;font-size:10px;background:#2a1a00;color:#ffaa44;padding:1px 6px;border-radius:10px">⚠ 0 arquivos</span>
+      </div>
+    </div>
+
+    <!-- Bloco ignorado (prova) -->
+    <div style="border-bottom:1px solid #222">
+      <div style="padding:8px 12px;cursor:default;display:flex;align-items:center;gap:8px;opacity:0.4">
+        <span style="color:#555">▶</span>
+        <span style="font-style:italic;color:#666">19/05/2026 — Prova 1</span>
+        <span style="font-size:10px;color:#555;margin-left:4px">prova · ignorado</span>
+        <span style="margin-left:auto;font-size:10px;color:#444">⊘</span>
+      </div>
+    </div>
+
+    <!-- Bloco normal fechado -->
+    <div style="border-bottom:1px solid #2a2a2a">
+      <div style="padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:8px">
+        <span style="color:#aaa">▶</span>
+        <span style="font-weight:bold;color:#ddd">26/05/2026 — Escalonamento</span>
+        <span style="font-size:10px;color:#888;margin-left:4px">Unidade 2 · aula</span>
+        <span style="margin-left:auto;font-size:10px;background:#1a1a2a;color:#aaa;padding:1px 6px;border-radius:10px">1 arquivo</span>
+      </div>
+    </div>
+
+    <!-- Seção sem bloco (rodapé, colapsada) -->
+    <div style="margin-top:8px;border-top:2px solid #333">
+      <div style="padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;background:#1e1a0a">
+        <span style="color:#ffaa44">▶</span>
+        <span style="color:#ffaa44;font-weight:bold">⚠ Sem bloco atribuído</span>
+        <span style="margin-left:auto;font-size:10px;background:#2a1a00;color:#ffaa44;padding:1px 6px;border-radius:10px">3 arquivos</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="margin-top:16px;font-size:12px;color:#888">
+  <strong style="color:#ccc">Legenda:</strong>
+  &nbsp;
+  <span style="background:#1a3a1a;color:#7aff7a;padding:1px 6px;border-radius:3px;font-size:10px">conf 0.92</span> score de mapeamento &nbsp;
+  <span style="background:#0a0a2a;color:#5aafff;padding:1px 6px;border-radius:3px;font-size:10px">🗓 DD.MM</span> sinal de data no nome &nbsp;
+  <span style="background:#2a1a00;color:#ffaa44;padding:1px 6px;border-radius:3px;font-size:10px">⚠ gap</span> bloco sem material &nbsp;
+  <span style="color:#555;font-size:10px">⊘ ignorado</span> feriado/prova/revisão
+</div>
