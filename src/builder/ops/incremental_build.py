@@ -82,6 +82,11 @@ def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_f
     manifest.setdefault("logs", []).extend(builder.logs)
     manifest = builder._compact_manifest(manifest)
 
+    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    removed = builder._prune_stale_image_curation()
+    if removed:
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            manifest = json.load(f)
     builder._regenerate_pedagogical_files(manifest)
 
     state_path = builder.root_dir / "student" / "STUDENT_STATE.md"

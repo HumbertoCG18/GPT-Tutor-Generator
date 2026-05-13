@@ -179,6 +179,7 @@ from src.builder.core.image_resolution import (
     IMG_RE as _core_image_resolution_img_re,
     find_image as _core_image_resolution_find_image,
     inject_all_image_descriptions as _core_image_resolution_inject_all_image_descriptions,
+    prune_stale_image_curation as _core_image_resolution_prune_stale_image_curation,
     resolve_content_images as _core_image_resolution_resolve_content_images,
 )
 from src.builder.artifacts import student_state as student_state_v2
@@ -1830,6 +1831,9 @@ class RepoBuilder:
 
     def _resolve_content_images(self) -> None:
         _core_image_resolution_resolve_content_images(self)
+
+    def _prune_stale_image_curation(self) -> int:
+        return _core_image_resolution_prune_stale_image_curation(self)
 
     def _find_image(self, raw_path: str, md_file: Path) -> Optional[Path]:
         return _core_image_resolution_find_image(self.root_dir, raw_path, md_file)

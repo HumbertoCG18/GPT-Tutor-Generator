@@ -83,14 +83,22 @@ def _uses_zero_based_page_pattern(images: List[Path]) -> bool:
 
 
 def _resolve_curation_page_key(curation: dict, page_num: Optional[int], images: List[Path]) -> str:
-    """Resolve the manifest page key, tolerating legacy zero-based keys."""
+    """Resolve the manifest page key, tolerating legacy zero-based and datalab `page_N` keys."""
     page_key = str(page_num) if page_num is not None else "none"
-    if page_key in curation.get("pages", {}):
+    pages = curation.get("pages", {})
+    if page_key in pages:
         return page_key
-    if page_num is not None and _uses_zero_based_page_pattern(images):
-        legacy_key = str(page_num - 1)
-        if legacy_key in curation.get("pages", {}):
-            return legacy_key
+    if page_num is not None:
+        datalab_key = f"page_{page_num}"
+        if datalab_key in pages:
+            return datalab_key
+        if _uses_zero_based_page_pattern(images):
+            legacy_key = str(page_num - 1)
+            if legacy_key in pages:
+                return legacy_key
+            datalab_legacy = f"page_{page_num - 1}"
+            if datalab_legacy in pages:
+                return datalab_legacy
     return page_key
 
 
@@ -1490,19 +1498,27 @@ class ImageCurator(tk.Toplevel):
             for p in imgs:
                 fname_to_path[p.name] = p
 
-        # Collect all included images across all pages
+        # Collect all included images across all pages.
+        # Only consider files present on disk (via fname_to_path built from _image_groups);
+        # ignore stale curation entries from deleted images or duplicated page-key formats.
         to_describe: list = []
+        seen_fnames: set[str] = set()
         for page_key, page_data in curation.get("pages", {}).items():
             if not page_data.get("include_page", True):
                 continue
             for fname, img_data in page_data.get("images", {}).items():
-                if img_data.get("include") and not img_data.get("description"):
-                    img_path = fname_to_path.get(fname, self._images_dir / fname)
-                    if img_path.exists():
-                        ctx = page_contexts.get(page_key, "")
-                        to_describe.append(
-                            (page_key, fname, img_data.get("type", "generico"), img_path, ctx)
-                        )
+                if not img_data.get("include") or img_data.get("description"):
+                    continue
+                if fname in seen_fnames:
+                    continue
+                img_path = fname_to_path.get(fname)
+                if img_path is None or not img_path.exists():
+                    continue
+                seen_fnames.add(fname)
+                ctx = page_contexts.get(page_key, "")
+                to_describe.append(
+                    (page_key, fname, img_data.get("type", "generico"), img_path, ctx)
+                )
 
         if not to_describe:
             messagebox.showinfo(

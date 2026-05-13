@@ -178,6 +178,81 @@ def resolve_content_images(builder) -> None:
         logger.info("Resolved %d new images into content/images/", copied)
 
 
+def prune_stale_image_curation(builder) -> int:
+    """Remove curation entries whose image files no longer exist on disk.
+
+    Returns total number of stale entries removed across all manifest entries.
+    Persists changes back to manifest.json.
+    """
+    manifest_path = builder.root_dir / "manifest.json"
+    if not manifest_path.exists():
+        return 0
+
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except Exception:
+        return 0
+
+    entries = manifest.get("entries", [])
+    total_removed = 0
+    _IMG_EXTS = (".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp")
+
+    for entry_data in entries:
+        curation = entry_data.get("image_curation")
+        if not curation:
+            continue
+        pages = curation.get("pages") or {}
+        if not pages:
+            continue
+
+        images_dir_raw = str(entry_data.get("images_dir") or "").strip()
+        if images_dir_raw:
+            images_dir = Path(images_dir_raw)
+            if not images_dir.is_absolute():
+                images_dir = builder.root_dir / images_dir
+        else:
+            images_dir = builder.root_dir / "content" / "images"
+
+        on_disk: set[str] = set()
+        if images_dir.exists():
+            for p in images_dir.rglob("*"):
+                if p.is_file() and p.suffix.lower() in _IMG_EXTS:
+                    on_disk.add(p.name)
+
+        removed_this_entry = 0
+        empty_pages: list[str] = []
+        for page_key, page_data in list(pages.items()):
+            images = page_data.get("images") or {}
+            stale = [fname for fname in list(images.keys()) if fname not in on_disk]
+            for fname in stale:
+                images.pop(fname, None)
+                removed_this_entry += 1
+            if not images:
+                empty_pages.append(page_key)
+
+        for page_key in empty_pages:
+            pages.pop(page_key, None)
+
+        if removed_this_entry:
+            total_removed += removed_this_entry
+            logger.info(
+                "Pruned %d stale image_curation entries for %s",
+                removed_this_entry,
+                entry_data.get("id") or entry_data.get("title") or "<unknown>",
+            )
+            if not pages:
+                curation["status"] = "pending"
+                curation["curated_at"] = None
+
+    if total_removed:
+        manifest_path.write_text(
+            json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+        logger.info("Total stale curation entries removed: %d", total_removed)
+
+    return total_removed
+
+
 def inject_all_image_descriptions(builder, *, resolve_entry_markdown_targets_fn) -> None:
     manifest_path = builder.root_dir / "manifest.json"
     if not manifest_path.exists():
