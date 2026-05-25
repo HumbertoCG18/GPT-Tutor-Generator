@@ -33,6 +33,7 @@ from src.builder.extraction.teaching_plan import _parse_units_from_teaching_plan
 from src.ui.theme import ThemeManager, AppConfig
 from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, StatusDialog, _resolve_backlog_markdown_status
 from src.ui.repo_dashboard import RepoDashboard, collect_repo_metrics
+from src.ui.timeline_dashboard import TimelineDashboardView
 
 logger = logging.getLogger(__name__)
 
@@ -533,6 +534,18 @@ class App(tk.Tk):
         self._repo_dashboard = RepoDashboard(tab_dashboard, on_refresh=self._refresh_repo_dashboard)
         self._repo_dashboard.pack(fill="both", expand=True)
 
+        # ── Aba Cronograma ──────────────────────────────────────────────
+        tab_timeline = ttk.Frame(self.notebook)
+        self._timeline_tab = tab_timeline
+        self.notebook.add(tab_timeline, text="  📅 Cronograma  ")
+        self._timeline_dashboard = TimelineDashboardView(
+            tab_timeline,
+            get_subject_fn=lambda: self._resolve_subject_profile(),
+            enqueue_reprocess_fn=self._reprocess_repo,
+        )
+        self._timeline_dashboard.pack(fill="both", expand=True)
+        self.notebook.bind("<<NotebookTabChanged>>", self._on_notebook_tab_changed, add="+")
+
         # ── Aba LOG ──────────────────────────────────────────────────────
         tab_log = ttk.Frame(self.notebook)
         self.notebook.add(tab_log, text="  📋 Log  ")
@@ -809,6 +822,16 @@ class App(tk.Tk):
         self._save_repo_tasks()
         self._refresh_repo_tasks_tree()
         self._refresh_repo_dashboard()
+
+    def _on_notebook_tab_changed(self, _event=None):
+        if not hasattr(self, "_timeline_dashboard"):
+            return
+        try:
+            current = self.notebook.nametowidget(self.notebook.select())
+        except Exception:
+            return
+        if current is getattr(self, "_timeline_tab", None):
+            self._timeline_dashboard.refresh()
 
     @staticmethod
     def _new_repo_task_id() -> str:

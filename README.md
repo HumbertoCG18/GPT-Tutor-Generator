@@ -20,6 +20,8 @@ Aplicação desktop em Python para transformar materiais acadêmicos em um repos
 - [Backend Datalab](#backend-datalab)
 - [Arquitetura Low-Token](#arquitetura-low-token)
 - [Image Curator e Vision](#image-curator-e-vision)
+- [Timeline Dashboard](#timeline-dashboard)
+- [Resiliência de Build](#resiliencia-de-build)
 - [Estrutura do Repositório Gerado](#estrutura-do-repositorio-gerado)
 - [Requisitos](#requisitos)
 - [Instalação](#instalacao)
@@ -77,6 +79,7 @@ Fluxo típico no app:
 8. Usar **Reprocessar Repositório** para reaplicar a arquitetura atual em repositórios já existentes.
 9. Usar a aba **Tasks de Repositório** para enfileirar builds, reprocessamentos e processamentos individuais.
 10. Abrir a aba **Dashboard** para acompanhar o estado operacional dos repositórios.
+11. Abrir a aba **Cronograma** para inspecionar a alocação de arquivos por bloco do cronograma e mover entries entre blocos manualmente.
 
 Observação operacional: a fila é persistente entre sessões do app, então builds e reprocessamentos podem ser retomados sem recriar toda a fila manualmente.
 
@@ -165,6 +168,7 @@ src/
 |   |-- image_curator.py             # curadoria de imagens e extração visual
 |   |-- repo_dashboard.py            # dashboard operacional de repositórios
 |   |-- student_state_curator.py     # captura e edição do estado do aluno
+|   |-- timeline_dashboard.py        # dashboard de alocação por bloco do cronograma
 |   `-- theme.py                     # tema e configuração persistente
 `-- utils/
     |-- helpers.py           # helpers, autodetects, OCR/Tesseract e utilidades
@@ -247,6 +251,63 @@ O sistema de mapeamento automático de arquivos para unidades/blocos do cronogra
 Quando você corrige manualmente a unidade ou subunidade de um entry pelo app, o app registra essa correção em um perfil de tags local da matéria (`course/.tag_profile.json`).
 
 Em mapeamentos futuros, os termos extraídos dos entries corrigidos geram **boosts** nas unidades que foram confirmadas manualmente — aumentando a pontuação dessas unidades e reduzindo erros de mapeamento recorrentes.
+
+### Cálculo de confiança
+
+A confiança de mapeamento é **relativa**, não absoluta. Implementação em `src/builder/routing/file_map.py` (`auto_map_entry_unit`, `auto_map_entry_subtopic`).
+
+Definições:
+
+```text
+winner_score    = maior score bruto entre as unidades candidatas
+runner_up_score = segundo maior score (0 se só houver 1 candidata)
+margin          = winner_score - runner_up_score
+rel_margin      = margin / max(winner_score, 1e-6)
+```
+
+Lógica de atribuição:
+
+```text
+se winner_score <= 0:
+    confidence = 0.0
+    ambiguous  = True
+
+senão se houver apenas 1 candidata:
+    confidence = 0.70   (unidade)  | 0.72 (tópico)
+    ambiguous  = False
+
+senão:
+    confidence = clamp(rel_margin, 0, 1)
+    ambiguous  = rel_margin < 0.15
+```
+
+Pós-processamento:
+
+```text
+se ambíguo:
+    confidence = min(confidence, 0.40)   (unidade)
+    confidence = min(confidence, 0.45)   (tópico)
+```
+
+Boost de tópico no matching de unidade (`auto_map_entry_unit`) — quando há um tópico vencedor forte dentro da unidade vencedora, sobrescreve o veredicto de ambíguo:
+
+```text
+topic_margin     = winner_topic_score - runner_up_topic_score
+topic_rel_margin = topic_margin / max(winner_topic_score, 1e-6)
+
+se winner_topic_score >= 0.55 e topic_rel_margin >= 0.15:
+    ambiguous  = False
+    confidence = max(confidence, min(0.95, topic_rel_margin))
+```
+
+Threshold de aceite (em `src/builder/extraction/content_taxonomy.py`):
+
+```text
+auto_tags recebe unit:<slug> apenas se
+    not ambiguous AND confidence >= 0.65
+```
+
+Em prosa: uma unidade só ganha alta confiança quando vence as concorrentes por uma margem proporcionalmente grande (≥ 15%) **e** seu tópico mais bem ranqueado dentro dela é coerente. Caso contrário o entry é marcado ambíguo, recebe teto de confiança baixo e não é auto-atribuído.
 
 ### Isolamento por matéria
 
@@ -466,6 +527,56 @@ O app verifica:
 - Ollama acessível
 - modelo configurado disponível
 - fallback disponível
+
+## Timeline Dashboard
+
+A aba **📅 Cronograma** (`src/ui/timeline_dashboard.py`, classe `TimelineDashboardView`) mostra a alocação de arquivos por bloco do cronograma da matéria ativa.
+
+Funcionalidades:
+
+- accordion por bloco com cabeçalho de data + título
+- linhas de entries dentro de cada bloco, com badges de confiança e marcador `✎` para override manual
+- seção dedicada para entries **não-mapeados** (sem `manual_timeline_block_id` e sem `bloco:` em `auto_tags`)
+- reatribuição manual de um entry para outro bloco via dropdown
+- persistência imediata da decisão no `manifest.json` via `save_block_assignment`
+- botão **🔄 Reprocessar** aparece após a primeira alteração, ligado à ação de reprocessamento do repositório
+
+Fonte de dados:
+
+- `manifest.json` → lista de entries e atribuições atuais
+- `course/.timeline_index.json` → blocos do cronograma
+
+A aba é independente do build principal — atribuir um bloco apenas grava `manual_timeline_block_id` no manifest. O reprocessamento (que aplica essas decisões nos artefatos derivados) só roda quando o usuário clica em **🔄 Reprocessar**.
+
+A aba se recarrega automaticamente ao ser selecionada, refletindo a matéria ativa no momento.
+
+## Resiliência de Build
+
+O pipeline de build foi endurecido contra dois cenários frequentes na operação:
+
+### Arquivos-fonte ausentes
+
+Se um entry da fila aponta para um caminho que não existe mais no disco (arquivo movido/deletado da pasta de origem), o build **não aborta**. O entry é registrado em `failed_entries` no manifest com `error_type=missing_source` e o processamento continua para os demais entries.
+
+Ao final do build, a UI exibe um messagebox listando título e caminho de cada arquivo ausente (até 20 itens, restante agregado em contador), permitindo decidir entre restaurar arquivos ou remover entries da fila.
+
+Vale tanto para **build completo** (`build_workflow.py`) quanto para **build incremental** (`incremental_build.py`).
+
+### Curadoria de imagens órfã
+
+Quando uma imagem é deletada pelo Image Curator (ou removida fora do app), o build de reprocessamento agora roda uma rotina de limpeza (`prune_stale_image_curation`) antes de regenerar os artefatos pedagógicos.
+
+A rotina:
+
+- escaneia recursivamente o `images_dir` de cada entry
+- compara com as entradas em `image_curation.pages[*].images`
+- remove curadorias de arquivos que não existem mais
+- poda páginas vazias
+- reseta `status` para `pending` se a entry ficar sem nenhuma página
+
+Imagens vivas e suas descrições não são tocadas. Garante que o lote de "Gerar Descrições" e a contagem na UI reflitam exatamente o que está no disco.
+
+A limpeza também é tolerante a chaves de página em formatos coexistentes (`"1"`, `"page_1"`, índice zero-based legado) — todas são consolidadas para o formato canônico no próximo save da página.
 
 ## Estrutura do Repositório Gerado
 
@@ -721,7 +832,12 @@ Itens planejados em ordem de prioridade:
   - [src/builder/engine.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/engine.py)
   - [src/builder/runtime/datalab_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/runtime/datalab_client.py)
   - [src/builder/vision/ollama_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/vision/ollama_client.py)
+  - [src/builder/routing/file_map.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/routing/file_map.py)
+  - [src/builder/core/image_resolution.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/core/image_resolution.py)
+  - [src/builder/ops/build_workflow.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/ops/build_workflow.py)
+  - [src/builder/ops/incremental_build.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/ops/incremental_build.py)
   - [src/ui/image_curator.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/image_curator.py)
+  - [src/ui/timeline_dashboard.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/timeline_dashboard.py)
   - [src/ui/dialogs.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/dialogs.py)
   - [src/models/tag_profile.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/models/tag_profile.py)
 - Documentos em `docs/superpowers/` podem descrever versões históricas da implementação

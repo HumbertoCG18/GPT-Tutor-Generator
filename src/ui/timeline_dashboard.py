@@ -67,21 +67,20 @@ def save_block_assignment(
     )
 
 
-class TimelineDashboard(tk.Toplevel):
+class TimelineDashboardView(tk.Frame):
+    """Embeddable timeline dashboard. Pass a callable that returns the active subject."""
+
     def __init__(
         self,
         parent: tk.Widget,
-        subject: SubjectProfile,
+        get_subject_fn: Callable[[], Optional[SubjectProfile]],
         enqueue_reprocess_fn: Callable[[], None],
     ):
         super().__init__(parent)
-        self.title(f"📅 Cronograma — {subject.name or 'Repositório'}")
-        self.geometry("900x620")
-        self.minsize(700, 480)
-
-        self._subject = subject
+        self._get_subject_fn = get_subject_fn
         self._enqueue_reprocess_fn = enqueue_reprocess_fn
-        self._repo_root = Path(subject.repo_root) if getattr(subject, "repo_root", "") else None
+        self._subject: Optional[SubjectProfile] = None
+        self._repo_root: Optional[Path] = None
         self._dirty = False
 
         p = apply_theme_to_toplevel(self, parent)
@@ -90,6 +89,19 @@ class TimelineDashboard(tk.Toplevel):
 
         self._build_toolbar(p)
         self._build_scroll_area(p)
+        self.refresh()
+
+    def refresh(self) -> None:
+        """Re-read active subject and reload UI. Safe to call after subject change."""
+        self._subject = self._get_subject_fn()
+        self._repo_root = (
+            Path(self._subject.repo_root)
+            if self._subject and getattr(self._subject, "repo_root", "")
+            else None
+        )
+        self._dirty = False
+        if hasattr(self, "_btn_reprocess"):
+            self._btn_reprocess.pack_forget()
         self._reload()
 
     # ------------------------------------------------------------------ toolbar
@@ -98,10 +110,10 @@ class TimelineDashboard(tk.Toplevel):
         bar = tk.Frame(self, bg=p["header_bg"], pady=4)
         bar.pack(fill="x", side="top")
 
-        repo_label = str(self._repo_root or "—")
+        self._repo_label_var = tk.StringVar(value="Repositório: —")
         tk.Label(
             bar,
-            text=f"Repositório: {repo_label}",
+            textvariable=self._repo_label_var,
             bg=p["header_bg"],
             fg=p["muted"],
             font=("", 10),
@@ -115,7 +127,7 @@ class TimelineDashboard(tk.Toplevel):
         self._btn_reprocess.pack(side="right", padx=6)
         self._btn_reprocess.pack_forget()  # oculto até primeira atribuição
 
-        ttk.Button(bar, text="↺ Recarregar", command=self._reload).pack(side="right", padx=4)
+        ttk.Button(bar, text="↺ Recarregar", command=self.refresh).pack(side="right", padx=4)
 
     # ---------------------------------------------------------------- scroll area
 
@@ -154,8 +166,10 @@ class TimelineDashboard(tk.Toplevel):
         for widget in self._scroll_frame.winfo_children():
             widget.destroy()
 
+        self._repo_label_var.set(f"Repositório: {self._repo_root or '—'}")
+
         if not self._repo_root:
-            self._show_error("Selecione um repositório com build gerado.")
+            self._show_error("Selecione uma matéria com repositório gerado.")
             return
 
         manifest_path = self._repo_root / "manifest.json"
