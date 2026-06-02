@@ -553,7 +553,7 @@ class App(tk.Tk):
         self._codes_panel = CodesPanel(
             tab_codes,
             get_subject_fn=lambda: self._resolve_subject_profile(),
-            get_config_fn=lambda: self.config,
+            get_config_fn=lambda: self.config_obj,
             get_repo_dir_fn=lambda: self._repo_dir(),
         )
         self._codes_panel.pack(fill="both", expand=True)
