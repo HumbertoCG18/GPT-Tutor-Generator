@@ -1873,6 +1873,58 @@ def _assign_timeline_block_to_topic(
     return topic_candidates, primary
 
 
+def _vote_unit_from_topic_candidates(
+    block: Dict[str, object],
+    unit_index: list,
+    *,
+    top_k: int = 5,
+    min_score: float = 0.10,
+    dominance_ratio: float = 0.6,
+) -> tuple[str, float]:
+    """Fallback de unit assignment: voto majoritario por topic_candidates.
+
+    Quando _assign_timeline_block_to_unit retorna "" (score baixo, topic
+    ambiguo), inspeciona topic_candidates do bloco. Se >=dominance_ratio dos
+    top-K candidatos apontam pra mesma unit_slug, atribui essa unit com
+    confidence reduzida.
+
+    Resolve casos tipo ES2 bloco-06 ("microservicos spring circuit breaker"),
+    onde todos topic_candidates apontam pra unidade-01-arquitetura mas o
+    primary_topic e ambiguo.
+    """
+    candidates = block.get("topic_candidates") or []
+    if not candidates or not unit_index:
+        return "", 0.0
+    valid_slugs = {
+        _normalize_unit_slug(str(u.get("slug", "") or u.get("title", "") or ""))
+        for u in unit_index
+    }
+    valid_slugs.discard("")
+
+    votes: Dict[str, float] = {}
+    counted = 0
+    for cand in candidates[:top_k]:
+        if not isinstance(cand, dict):
+            continue
+        score = float(cand.get("score") or 0.0)
+        if score < min_score:
+            continue
+        slug = _normalize_unit_slug(str(cand.get("unit_slug") or ""))
+        if not slug or slug not in valid_slugs:
+            continue
+        votes[slug] = votes.get(slug, 0.0) + score
+        counted += 1
+    if counted == 0 or not votes:
+        return "", 0.0
+
+    winner_slug, winner_weight = max(votes.items(), key=lambda kv: kv[1])
+    total = sum(votes.values()) or 1.0
+    if winner_weight / total < dominance_ratio:
+        return "", 0.0
+    confidence = min(0.55, max(0.30, winner_weight / total * 0.6))
+    return winner_slug, confidence
+
+
 def _derive_unit_from_topic_match(match: TopicMatchResult, taxonomy: dict) -> str:
     if not match or not match.topic_slug:
         return ""
@@ -1978,6 +2030,10 @@ def _build_timeline_index(
             runtime_block["unit_confidence"] = primary_topic.confidence
         else:
             unit_slug, unit_confidence = _assign_timeline_block_to_unit(runtime_block, unit_index)
+            if not unit_slug:
+                unit_slug, unit_confidence = _vote_unit_from_topic_candidates(
+                    runtime_block, unit_index
+                )
             runtime_block["unit_slug"] = unit_slug
             runtime_block["unit_confidence"] = unit_confidence
         runtime_blocks.append(runtime_block)
