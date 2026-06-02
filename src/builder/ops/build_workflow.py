@@ -113,6 +113,9 @@ def build_impl(
     removed = builder._prune_stale_image_curation()
     if removed:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    removed_code = builder._prune_stale_code_curation()
+    if removed_code:
+        logger.info("Pruned %d stale code_curation entries", removed_code)
     builder._resolve_content_images()
     builder._inject_all_image_descriptions()
     builder._regenerate_pedagogical_files(manifest)

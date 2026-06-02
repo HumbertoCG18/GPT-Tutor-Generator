@@ -87,6 +87,9 @@ def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_f
     if removed:
         with open(manifest_path, "r", encoding="utf-8") as f:
             manifest = json.load(f)
+    removed_code = builder._prune_stale_code_curation()
+    if removed_code:
+        logger.info("Pruned %d stale code_curation entries", removed_code)
     builder._regenerate_pedagogical_files(manifest)
 
     state_path = builder.root_dir / "student" / "STUDENT_STATE.md"
