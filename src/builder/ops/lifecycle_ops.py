@@ -169,6 +169,56 @@ def unprocess(builder, entry_id: str) -> bool:
     return True
 
 
+def sweep_orphans(builder) -> Dict[str, object]:
+    """Retroativo: pruna curations + regenera sidecars derivativos.
+
+    Não reprocessa entries (zero custo de extractor/AI). Útil para limpar
+    resíduos deixados por unprocess/reject anteriores à correção.
+
+    Returns dict com counts e status de cada etapa.
+    """
+    report: Dict[str, object] = {
+        "code_curation_removed": 0,
+        "image_curation_removed": 0,
+        "regenerated": False,
+        "errors": [],
+    }
+
+    manifest_path = builder.root_dir / "manifest.json"
+    if not manifest_path.exists():
+        report["errors"].append("manifest.json não encontrado")
+        return report
+
+    try:
+        report["code_curation_removed"] = builder._prune_stale_code_curation()
+    except Exception as exc:
+        report["errors"].append(f"prune code_curation: {exc}")
+
+    try:
+        report["image_curation_removed"] = builder._prune_stale_image_curation()
+    except Exception as exc:
+        report["errors"].append(f"prune image_curation: {exc}")
+
+    try:
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            manifest = json.load(f)
+        builder.course_meta = builder._effective_course_meta(manifest)
+        builder._regenerate_pedagogical_files(manifest)
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        report["regenerated"] = True
+    except Exception as exc:
+        report["errors"].append(f"regen pedagogical: {exc}")
+
+    logger.info(
+        "[sweep_orphans] code=%s img=%s regen=%s errors=%s",
+        report["code_curation_removed"],
+        report["image_curation_removed"],
+        report["regenerated"],
+        len(report["errors"]),
+    )
+    return report
+
+
 def reject(builder, entry_id: str) -> Optional[Dict[str, object]]:
     manifest_path = builder.root_dir / "manifest.json"
     if not manifest_path.exists():

@@ -35,6 +35,7 @@ from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog
 from src.ui.repo_dashboard import RepoDashboard, collect_repo_metrics
 from src.ui.timeline_dashboard import TimelineDashboardView
 from src.ui.codes_panel import CodesPanel
+from src.ui.maintenance_panel import MaintenancePanel
 
 logger = logging.getLogger(__name__)
 
@@ -558,6 +559,17 @@ class App(tk.Tk):
         )
         self._codes_panel.pack(fill="both", expand=True)
 
+        # ── Aba Manutenção ──────────────────────────────────────────────
+        tab_maint = ttk.Frame(self.notebook)
+        self._maint_tab = tab_maint
+        self.notebook.add(tab_maint, text="  🧹 Manutenção  ")
+        self._maint_panel = MaintenancePanel(
+            tab_maint,
+            get_repo_dir_fn=lambda: self._repo_dir(),
+            make_builder_fn=lambda: self._make_maintenance_builder(),
+        )
+        self._maint_panel.pack(fill="both", expand=True)
+
         self.notebook.bind("<<NotebookTabChanged>>", self._on_notebook_tab_changed, add="+")
 
         # ── Aba LOG ──────────────────────────────────────────────────────
@@ -848,6 +860,26 @@ class App(tk.Tk):
             self._timeline_dashboard.refresh()
         if current is getattr(self, "_codes_tab", None) and hasattr(self, "_codes_panel"):
             self._codes_panel.refresh()
+        if current is getattr(self, "_maint_tab", None) and hasattr(self, "_maint_panel"):
+            self._maint_panel.refresh()
+
+    def _make_maintenance_builder(self):
+        """Builder real para sweep — mesmo padrão do reprocessamento."""
+        repo_dir = self._repo_dir()
+        if not repo_dir:
+            return None
+        meta = self._course_meta()
+        if meta is None:
+            return None
+        active_subj = self._resolve_subject_profile(repo_dir)
+        return RepoBuilder(
+            root_dir=repo_dir,
+            course_meta=meta,
+            entries=[],
+            options=self._build_options(),
+            student_profile=self.student_store.profile,
+            subject_profile=active_subj,
+        )
 
     @staticmethod
     def _new_repo_task_id() -> str:

@@ -149,6 +149,7 @@ from src.builder.ops.incremental_build import (
 from src.builder.ops.lifecycle_ops import (
     process_single_impl as _lifecycle_ops_process_single_impl,
     reject as _lifecycle_ops_reject,
+    sweep_orphans as _lifecycle_ops_sweep_orphans,
     unprocess as _lifecycle_ops_unprocess,
 )
 from src.builder.ops.bootstrap_ops import (
@@ -2216,6 +2217,9 @@ class RepoBuilder:
 
     def reject(self, entry_id: str) -> Optional[Dict[str, object]]:
         return _lifecycle_ops_reject(self, entry_id)
+
+    def sweep_orphans(self) -> Dict[str, object]:
+        return _lifecycle_ops_sweep_orphans(self)
 
 
 # ---------------------------------------------------------------------------

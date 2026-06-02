@@ -447,6 +447,21 @@ def _collect_code_entries(manifest: dict) -> list[dict]:
     return result
 
 
+def detect_stale_code_curation(builder) -> list[str]:
+    """Read-only: lista entry_ids em code_curation.json sem entry no manifest."""
+    curation_path = builder.root_dir / "code_curation.json"
+    manifest_path = builder.root_dir / "manifest.json"
+    if not curation_path.exists() or not manifest_path.exists():
+        return []
+    try:
+        curation = json.loads(curation_path.read_text(encoding="utf-8"))
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    valid_ids = {e.get("id") for e in manifest.get("entries", []) if e.get("id")}
+    return [eid for eid in (curation.get("entries") or {}) if eid not in valid_ids]
+
+
 def prune_stale_code_curation(builder) -> int:
     curation_path = builder.root_dir / "code_curation.json"
     if not curation_path.exists():
