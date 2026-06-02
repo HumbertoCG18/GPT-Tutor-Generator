@@ -182,6 +182,11 @@ from src.builder.core.image_resolution import (
     prune_stale_image_curation as _core_image_resolution_prune_stale_image_curation,
     resolve_content_images as _core_image_resolution_resolve_content_images,
 )
+from src.builder.core.code_summarization import (
+    prune_stale_code_curation as _core_code_summarization_prune_stale,
+    load_code_curation as _core_code_summarization_load,
+    summarize_all_code_entries as _core_code_summarization_summarize_all,
+)
 from src.builder.artifacts import student_state as student_state_v2
 from src.builder.artifacts.pedagogy import (
     _code_review_profile,
@@ -1834,6 +1839,15 @@ class RepoBuilder:
 
     def _prune_stale_image_curation(self) -> int:
         return _core_image_resolution_prune_stale_image_curation(self)
+
+    def _prune_stale_code_curation(self) -> int:
+        return _core_code_summarization_prune_stale(self)
+
+    def _load_code_curation(self) -> dict:
+        return _core_code_summarization_load(self.root_dir)
+
+    def _summarize_code_entries(self, client, progress_cb=None) -> dict:
+        return _core_code_summarization_summarize_all(self, client, progress_cb)
 
     def _find_image(self, raw_path: str, md_file: Path) -> Optional[Path]:
         return _core_image_resolution_find_image(self.root_dir, raw_path, md_file)

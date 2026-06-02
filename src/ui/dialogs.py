@@ -361,6 +361,27 @@ class SettingsDialog(tk.Toplevel):
             wraplength=320,
         ).grid(row=_img_desc_row + 1, column=1, sticky="w", pady=(0, 8))
 
+        ttk.Separator(tab_proc, orient="horizontal").grid(
+            row=sep_row + 9, column=0, columnspan=2, sticky="ew", pady=(12, 8))
+        ttk.Label(tab_proc, text="Gemini — Resumos de Código",
+                  style="Accent.TLabel").grid(
+            row=sep_row + 10, column=0, columnspan=2, sticky="w", pady=(0, 8))
+
+        self._var_gemini_api_key = tk.StringVar(value=self.config.get("gemini_api_key", ""))
+        self._var_gemini_model = tk.StringVar(value=self.config.get("gemini_model", "gemini-2.5-flash"))
+
+        ttk.Label(tab_proc, text="Chave da API do Gemini").grid(
+            row=sep_row + 11, column=0, sticky="w", pady=6, padx=(0, 16))
+        ttk.Entry(tab_proc, textvariable=self._var_gemini_api_key, width=28, show="*").grid(
+            row=sep_row + 11, column=1, sticky="ew")
+
+        ttk.Label(tab_proc, text="Modelo Gemini").grid(
+            row=sep_row + 12, column=0, sticky="w", pady=6, padx=(0, 16))
+        ttk.Combobox(tab_proc, textvariable=self._var_gemini_model,
+                     values=["gemini-2.5-flash", "gemini-2.5-pro"],
+                     state="readonly", width=25).grid(
+            row=sep_row + 12, column=1, sticky="ew")
+
         tab_proc.columnconfigure(1, weight=1)
 
         # ── Buttons ─────────────────────────────────────────────────────
@@ -397,6 +418,8 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("vision_model_quantization", self._var_vision_quant.get())
         self.config.set("ollama_base_url", self._var_ollama_url.get())
         self.config.set("image_description_source", self._var_image_desc_source.get())
+        self.config.set("gemini_api_key", self._var_gemini_api_key.get().strip())
+        self.config.set("gemini_model", self._var_gemini_model.get())
         self.config.save()
         self.theme_mgr.apply(self.parent, self._var_theme.get())
         self.parent._theme_name = self._var_theme.get()  # type: ignore[attr-defined]
