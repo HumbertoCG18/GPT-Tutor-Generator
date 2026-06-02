@@ -24,7 +24,7 @@ A desktop tool (Python/tkinter) that converts academic PDFs into structured GitH
 - Skip files over 100KB unless strictly required.
 - Before calling any `mcp__code-review-graph__*` or `mcp__token-savior__*` tool, use `ToolSearch select:<name>` to load the schema first. Calling without loading fails with `InputValidationError`.
 - Gemini integration uses `google-genai` (NOT `google-generativeai`). Imports via `from google import genai` and must stay lazy inside method bodies — never at module top level. Anti-patterns to grep: `google.generativeai`, `genai.GenerativeModel`.
-- `code_curation.json` is a generated artifact (not source). Treat it like manifest cache: prune stale entries before reads, write atomically.
+- The generated repo's code_curation.json is a generated artifact (not source). Treat it like manifest cache: prune stale entries before reads, write atomically.
 
 ## Commands
 

@@ -32,8 +32,8 @@ Read this file before starting any task.
   cada regeneração pedagógica.
 - Sinal DD.MM: arquivo `12.03 Processos.pdf` recebe boost +0.30 no bloco do
   cronograma correspondente em `score_entry_against_timeline_block()`.
-- Code summarization via Gemini API (`gemini-2.5-flash`): bundle each code entry, persist summary + concept-based timeline block assignment in `course/code_curation.json`. Lazy: without `gemini_api_key` in config the pipeline is a no-op.
-- Generated artifacts add `course/CODE_HEALTH.md` (coverage report) and `course/CRONOGRAMA_DETALHADO.md` (block-by-block render).
+- Code summarization via Gemini API (`gemini-2.5-flash`): bundle each code entry, persist summary + concept-based timeline block assignment in the generated repo's course/code_curation.json. Lazy: without `gemini_api_key` in config the pipeline is a no-op.
+- Generated artifacts add course/CODE_HEALTH.md (coverage report) and course/CRONOGRAMA_DETALHADO.md (block-by-block render) to the generated repo.
 
 ### Not Declared In Brief
 

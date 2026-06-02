@@ -7,9 +7,9 @@ triggers:
   - batch llm
   - structured output
 edges:
-  - target: ../context/decisions.md
+  - target: context/decisions.md
     condition: when revisiting why Gemini is optional
-  - target: ../context/architecture.md
+  - target: context/architecture.md
     condition: when wiring a new summarization layer
 last_updated: 2026-06-02
 ---
@@ -35,7 +35,7 @@ Use when adding a build-time Gemini layer that enriches a class of entries (code
 2. Write a `_build_bundle_text(builder, entry_data)` that flattens base + extracted children into <200k chars (clip + marker if larger).
 3. Reuse `compute_entry_hash` semantics: hash the bundle text, not the entry dict.
 4. Persist in `<class>_curation.json` with shape `{version, entries: {id: {content_hash, model, generated_at, summary}}}`. Atomic write only.
-5. Add a `prune_stale_<class>_curation(builder)` that removes ids not in `manifest.json`. Call it from `build_workflow.py` and `incremental_build.py` after manifest reload.
+5. Add a `prune_stale_<class>_curation(builder)` that removes ids not in the generated repo's manifest.json. Call it from `build_workflow.py` and `incremental_build.py` after manifest reload.
 6. Block matching: reuse `assign_code_to_block` if concepts shape is identical; otherwise duplicate the matcher with the same thresholds (`primary=0.4`, `secondary=0.25`, `margin=0.15`) and calibrate later.
 7. Lazy import: never `import google.genai` at module top. Always inside method bodies. Anti-pattern grep: `google.generativeai`, `genai.GenerativeModel`.
 

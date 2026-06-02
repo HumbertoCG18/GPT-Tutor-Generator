@@ -29,7 +29,16 @@
       "Bash(bash *)",
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Humberto\\\\Documents\\\\GitHub\\\\GPT-Tutor-Generator\" -Recurse -Directory)",
       "Bash(Select-Object -First 30 FullName)",
-      "Bash(xargs grep -l \"datalab\\\\|process_pdf\")"
+      "Bash(xargs grep -l \"datalab\\\\|process_pdf\")",
+      "WebSearch",
+      "WebFetch(domain:ai.google.dev)",
+      "PowerShell(python -m py_compile src/builder/runtime/gemini_client.py src/builder/core/code_summarization.py src/builder/engine.py src/ui/theme.py src/ui/dialogs.py; echo \"EXIT=$LASTEXITCODE\")",
+      "Bash(git -C \"C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator\" show HEAD~2:src/builder/artifacts/repo.py)",
+      "Bash(echo \"EXIT=$?\")",
+      "PowerShell(Get-Item *)",
+      "Bash(git *)",
+      "Bash(where mex *)",
+      "Bash(pip show *)"
     ]
   },
   "enableAllProjectMcpServers": true,
