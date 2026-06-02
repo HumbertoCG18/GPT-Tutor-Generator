@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://gpt-tutor-generator/schemas/timeline_index.v4.json",
+  "title": "Timeline Index v4",
+  "description": "Schema do .timeline_index.json (v4). Diferenca v3->v4: campo `kind` obrigatorio em cada bloco (enum fechado BlockKind). Status NAO eh persistido (derivado em read-time).",
+  "type": "object",
+  "required": ["version", "blocks"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 4
+    },
+    "blocks": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/Block" }
+    }
+  },
+  "definitions": {
+    "BlockKind": {
+      "type": "string",
+      "enum": [
+        "class",
+        "assessment",
+        "review",
+        "holiday",
+        "suspended",
+        "makeup",
+        "academic_event",
+        "office_hours",
+        "workshop",
+        "deliverable",
+        "planning",
+        "reserved",
+        "results",
+        "unknown"
+      ]
+    },
+    "TopicSource": {
+      "type": "string",
+      "enum": ["", "taxonomy", "alias", "topic_text_fallback", "manual"]
+    },
+    "TopicCandidate": {
+      "type": "object",
+      "required": ["topic_slug", "topic_label", "score"],
+      "properties": {
+        "topic_slug": { "type": "string" },
+        "topic_label": { "type": "string" },
+        "unit_slug": { "type": "string" },
+        "kind": { "type": "string" },
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "score": { "type": "number" },
+        "confidence": { "type": "number" }
+      }
+    },
+    "Block": {
+      "type": "object",
+      "required": [
+        "id",
+        "period_start",
+        "period_end",
+        "period_label",
+        "kind",
+        "sessions"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^bloco-\\d+$"
+        },
+        "period_start": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "period_end": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "period_label": { "type": "string" },
+        "kind": { "$ref": "#/definitions/BlockKind" },
+        "sessions": { "type": "integer", "minimum": 0 },
+
+        "unit_slug": { "type": "string" },
+        "unit_confidence": { "type": "number" },
+
+        "primary_topic_slug": { "type": "string" },
+        "primary_topic_label": { "type": "string" },
+        "primary_topic_confidence": { "type": "number" },
+        "topic_ambiguous": { "type": "boolean" },
+        "topic_candidates": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/TopicCandidate" }
+        },
+        "topic_text": { "type": "string" },
+        "topic_source": { "$ref": "#/definitions/TopicSource" },
+        "topics": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "card_evidence": {},
+        "source_rows": {
+          "type": "array",
+          "items": {}
+        },
+
+        "manual_topic_label": { "type": "string" },
+        "manual_kind_override": { "$ref": "#/definitions/BlockKind" }
+      },
+      "additionalProperties": true
+    }
+  }
+}
