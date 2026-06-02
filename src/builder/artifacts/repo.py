@@ -1028,6 +1028,82 @@ def cronograma_detalhado_md(
     return "\n".join(lines)
 
 
+def code_health_md(
+    course_meta: dict,
+    entries: list,
+    code_curation: dict,
+    timeline_blocks: list[dict],
+    glossary_terms: Optional[set[str]] = None,
+) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    curation_entries = (code_curation or {}).get("entries", {})
+    code_entries = [e for e in entries if e.file_type in ("code", "zip")
+                    and e.category and e.category.startswith("codigo")]
+
+    total = len(code_entries)
+    with_summary = sum(1 for e in code_entries if e.id() in curation_entries)
+    pct = (with_summary / total * 100) if total else 0
+
+    # Cobertura timeline
+    with_block = 0
+    orphans_list = []
+    for e in code_entries:
+        s = (curation_entries.get(e.id()) or {}).get("summary") or {}
+        if s.get("primary_block_id"):
+            with_block += 1
+        elif s:  # tem summary mas sem block
+            orphans_list.append((e, s))
+
+    # Cobertura por unidade
+    by_unit: dict[str, int] = {}
+    for e in code_entries:
+        key = e.tags or "(sem unidade)"
+        by_unit[key] = by_unit.get(key, 0) + 1
+
+    # Conceitos
+    all_concepts: set[str] = set()
+    for eid in curation_entries:
+        all_concepts.update(
+            (curation_entries[eid].get("summary") or {}).get("concepts") or []
+        )
+
+    lines = [
+        f"# CODE_HEALTH — {course_name}",
+        "",
+        "> Relatório auto-gerado da saúde da base de código.",
+        "",
+        "## Cobertura de resumos",
+        f"- Códigos totais: **{total}**",
+        f"- Com resumo Gemini: **{with_summary} / {total} ({pct:.0f}%)**",
+        f"- Sem resumo: **{total - with_summary}**",
+        "",
+        "## Cobertura timeline",
+        f"- Vinculados a aula: **{with_block} / {with_summary}**",
+        f"- Órfãos (resumo sem aula): **{len(orphans_list)}**",
+    ]
+    if orphans_list:
+        lines += ["", "### Órfãos (requer atribuição manual)"]
+        for e, s in orphans_list[:30]:
+            title = s.get("inferred_title") or e.title
+            lines.append(f"- `{Path(e.source_path).name}` — {title}")
+
+    lines += ["", "## Cobertura por unidade"]
+    for unit, n in sorted(by_unit.items()):
+        lines.append(f"- {unit}: {n} código(s)")
+
+    if glossary_terms is not None:
+        intersect = all_concepts & glossary_terms
+        orphan_concepts = sorted(all_concepts - glossary_terms)
+        lines += ["", "## Conceitos vs Glossário",
+                  f"- Conceitos extraídos: **{len(all_concepts)}**",
+                  f"- Match com glossário: **{len(intersect)}**"]
+        if orphan_concepts:
+            lines.append(f"- ⚠ Órfãos (no resumo mas não no glossário): {len(orphan_concepts)}")
+            lines += [f"  - {c}" for c in orphan_concepts[:20]]
+
+    return "\n".join(lines)
+
+
 def whiteboard_index_md(course_meta: dict, entries=None, *, clamp_navigation_artifact: Callable[..., str]) -> str:
     course_name = course_meta.get("course_name", "Curso")
     entries = entries or []
