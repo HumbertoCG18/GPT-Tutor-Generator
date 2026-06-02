@@ -14,6 +14,9 @@ from pydantic import BaseModel, Field
 
 logger = logging.getLogger(__name__)
 
+# Bump quando lógica de matching/schema muda — invalida cache
+MATCHER_VERSION = 2
+
 
 PedagogicalRole = Literal[
     "exemplo_demonstrativo",
@@ -37,6 +40,18 @@ class CodeSummary(BaseModel):
     concepts: list[str] = Field(..., description="3-8 termos técnicos do domínio")
     summary: str = Field(..., description="2-3 linhas: o que faz, por que importa")
     files: list[CodeFileSummary] = Field(default_factory=list)
+    suggested_block_id: str = Field(
+        default="",
+        description="ID do bloco do cronograma mais alinhado (ex: 'bloco-09'). Vazio se nenhum.",
+    )
+    suggested_secondary_ids: list[str] = Field(
+        default_factory=list,
+        description="Até 2 ids de blocos secundários relevantes.",
+    )
+    match_rationale: str = Field(
+        default="",
+        description="1 frase justificando a escolha de bloco (ou vazio se nenhum).",
+    )
 
 
 SYSTEM_INSTRUCTION = """Você analisa bundles de código acadêmico (Python, Jupyter,
@@ -48,6 +63,7 @@ Sua saída alimenta um tutor LLM. Tutor precisa entender:
 - O que código DEMONSTRA conceitualmente
 - Qual papel pedagógico cumpre
 - Que conceitos vincular ao glossário/unidades
+- A QUAL aula/bloco do cronograma o material pertence
 
 Regras:
 - inferred_title: descritivo e específico. NUNCA repita filename
@@ -56,8 +72,34 @@ Regras:
   (ex: "tripla de Hoare", "invariante de laço", "ghost predicate")
 - summary: 2-3 frases. Foque no QUE ensina, não na sintaxe
 - files: liste cada arquivo do bundle com role curto
+- suggested_block_id: escolha 1 id da lista "Blocos do cronograma" abaixo
+  que melhor representa o tema do código. Use string vazia "" se NENHUM
+  bloco se aplica. NUNCA invente ids.
+- suggested_secondary_ids: até 2 ids adicionais (lista vazia se nenhum).
+- match_rationale: 1 frase curta justificando a escolha. Vazio se orphan.
 - Responda em português brasileiro
 - Saída APENAS JSON válido conforme schema"""
+
+
+def _format_blocks_for_prompt(blocks: list[dict]) -> str:
+    """Compact block list for injection into bundle prompt."""
+    if not blocks:
+        return ""
+    lines = ["", "## Blocos do cronograma (escolha suggested_block_id desta lista)"]
+    for b in blocks:
+        bid = b.get("id", "")
+        if not bid:
+            continue
+        label = b.get("primary_topic_label", "") or "(sem rótulo)"
+        topics = ", ".join((b.get("topics") or [])[:4])
+        aliases = ", ".join((b.get("aliases") or [])[:6])
+        line = f"- {bid} | {label}"
+        if topics:
+            line += f" | topics: {topics}"
+        if aliases:
+            line += f" | aliases: {aliases}"
+        lines.append(line)
+    return "\n".join(lines)
 
 
 def _build_bundle_text(builder, entry_data: dict) -> str:
@@ -101,6 +143,24 @@ def _normalize(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", " ", ascii_text.lower()).strip()
 
 
+def _stem(token: str) -> str:
+    """Stem leve: corta plural 's' final em tokens >=5. 'invariantes'→'invariante'."""
+    if len(token) >= 5 and token.endswith("s"):
+        return token[:-1]
+    return token
+
+
+def _expand_concept_tokens(concept_norm: str) -> set[str]:
+    """Para um concept normalizado, devolve {concept, palavras>=4, stems}."""
+    out: set[str] = {concept_norm, _stem(concept_norm)}
+    for tok in concept_norm.split():
+        if len(tok) >= 4:
+            out.add(tok)
+            out.add(_stem(tok))
+    out.discard("")
+    return out
+
+
 def assign_code_to_block(
     concepts: list[str],
     timeline_blocks: list[dict],
@@ -108,47 +168,58 @@ def assign_code_to_block(
     primary_threshold: float = 0.4,
     secondary_threshold: float = 0.25,
     margin_threshold: float = 0.15,
-) -> tuple[str, list[str], float, str]:
+) -> dict:
     """Concept-match código → block.
 
-    Compara concepts do Gemini contra block.topics + primary_topic_label +
-    aliases + topic_text. Retorna (primary_id, secondary_ids, confidence, method).
-
+    Returns dict: primary, secondaries, confidence, method, top_candidate, top_score.
     method ∈ {"auto_concept", "orphan"}.
+    top_candidate = melhor bloco mesmo abaixo do threshold (pra detectar
+    consenso fraco com Gemini sem perder a info).
     """
     if not concepts or not timeline_blocks:
-        return ("", [], 0.0, "orphan")
+        return {"primary": "", "secondaries": [], "confidence": 0.0,
+                "method": "orphan", "top_candidate": "", "top_score": 0.0}
 
-    concepts_norm = {_normalize(c) for c in concepts if c}
-    concepts_norm.discard("")
+    concepts_norm = [_normalize(c) for c in concepts if c]
+    concepts_norm = [c for c in concepts_norm if c]
     if not concepts_norm:
-        return ("", [], 0.0, "orphan")
+        return {"primary": "", "secondaries": [], "confidence": 0.0,
+                "method": "orphan", "top_candidate": "", "top_score": 0.0}
+
+    concept_token_sets = [_expand_concept_tokens(c) for c in concepts_norm]
 
     scores: list[tuple[str, float]] = []
     for blk in timeline_blocks:
         bag: set[str] = set()
         for t in blk.get("topics") or []:
-            bag.add(_normalize(t))
-        bag.add(_normalize(blk.get("primary_topic_label", "")))
+            for tok in _normalize(t).split():
+                if len(tok) >= 4:
+                    bag.add(tok)
+                    bag.add(_stem(tok))
+        for tok in _normalize(blk.get("primary_topic_label", "")).split():
+            if len(tok) >= 4:
+                bag.add(tok)
+                bag.add(_stem(tok))
         for a in blk.get("aliases") or []:
-            bag.add(_normalize(a))
+            n = _normalize(a)
+            if len(n) >= 4:
+                bag.add(n)
+                bag.add(_stem(n))
         for token in (blk.get("topic_text") or "").split():
             n = _normalize(token)
             if len(n) >= 4:
                 bag.add(n)
+                bag.add(_stem(n))
         bag.discard("")
         if not bag:
             scores.append((blk["id"], 0.0))
             continue
 
-        # Score = overlap parcial (substring match) / N concepts
         overlap = 0
-        for c in concepts_norm:
-            for b in bag:
-                if c == b or (len(c) >= 5 and c in b) or (len(b) >= 5 and b in c):
-                    overlap += 1
-                    break
-        score = overlap / len(concepts_norm)
+        for ctoks in concept_token_sets:
+            if ctoks & bag:
+                overlap += 1
+        score = overlap / len(concept_token_sets)
         scores.append((blk["id"], score))
 
     scores.sort(key=lambda x: x[1], reverse=True)
@@ -161,9 +232,61 @@ def assign_code_to_block(
             bid for bid, s in scores[1:]
             if s >= secondary_threshold and s >= top_score * 0.6
         ]
-        return (top_id, secondaries[:2], top_score, "auto_concept")
+        return {"primary": top_id, "secondaries": secondaries[:2],
+                "confidence": top_score, "method": "auto_concept",
+                "top_candidate": top_id, "top_score": top_score}
 
-    return ("", [], top_score, "orphan")
+    return {"primary": "", "secondaries": [], "confidence": top_score,
+            "method": "orphan", "top_candidate": top_id, "top_score": top_score}
+
+
+def _consolidate_assignment(
+    local: dict,
+    gemini_pick: str,
+    gemini_secondaries: list[str],
+    valid_ids: set[str],
+) -> tuple[str, list[str], float, str]:
+    """Funde decisão local (matcher) + sugestão Gemini.
+
+    Returns (primary_id, secondary_ids, confidence, method).
+    method ∈ {"consensus", "auto_concept", "llm_only", "orphan"}.
+    """
+    local_primary = local.get("primary", "")
+    local_secs = local.get("secondaries", []) or []
+    local_conf = float(local.get("confidence", 0.0))
+    local_method = local.get("method", "orphan")
+    local_top = local.get("top_candidate", "")
+    local_top_score = float(local.get("top_score", 0.0))
+
+    g_primary = gemini_pick if gemini_pick in valid_ids else ""
+    g_secs = [s for s in (gemini_secondaries or []) if s in valid_ids and s != g_primary][:2]
+
+    # A: local forte + Gemini concorda → consensus alto
+    if local_primary and g_primary and local_primary == g_primary:
+        merged_secs = list(dict.fromkeys(local_secs + g_secs))[:2]
+        return (local_primary, merged_secs, max(local_conf, 0.85), "consensus")
+
+    # B: local fraco (orphan) MAS top_candidate == Gemini → consensus médio
+    # (cobre caso onde matcher achou mesmo bloco mas threshold/margem reprovou)
+    if not local_primary and g_primary and local_top == g_primary and local_top_score > 0:
+        return (g_primary, g_secs, max(local_top_score, 0.75), "consensus")
+
+    # C: local forte, Gemini diverge → respeita local; Gemini vira secondary
+    if local_primary and local_method == "auto_concept":
+        merged_secs = list(local_secs)
+        if g_primary and g_primary not in merged_secs:
+            merged_secs.append(g_primary)
+        for s in g_secs:
+            if s not in merged_secs and s != local_primary:
+                merged_secs.append(s)
+        return (local_primary, merged_secs[:2], local_conf, "auto_concept")
+
+    # D: local orphan, Gemini válido (diverge de top_candidate) → llm_only
+    if not local_primary and g_primary:
+        return (g_primary, g_secs, 0.6, "llm_only")
+
+    # E: ambos vazios → orphan
+    return ("", [], local_conf, "orphan")
 
 
 def load_code_curation(repo_dir: Path) -> dict:
@@ -233,17 +356,26 @@ def summarize_code_entry(builder, entry_data: dict, client) -> Optional[dict]:
     bundle_text = _build_bundle_text(builder, entry_data)
     if not bundle_text.strip():
         return None
+    blocks = _load_timeline_blocks(builder)
+    # Injeta lista de blocos no prompt — permite Gemini sugerir block_id
+    blocks_prompt = _format_blocks_for_prompt(blocks)
+    bundle_with_blocks = bundle_text + ("\n" + blocks_prompt if blocks_prompt else "")
     try:
         result: CodeSummary = client.summarize_bundle(
-            bundle_text=bundle_text,
+            bundle_text=bundle_with_blocks,
             schema=CodeSummary,
             system_instruction=SYSTEM_INSTRUCTION,
         )
         summary_dict = result.model_dump()
-        # Block matching pós-summary
-        blocks = _load_timeline_blocks(builder)
-        primary, secondaries, conf, method = assign_code_to_block(
-            summary_dict["concepts"], blocks
+        # Matcher local determinístico
+        local = assign_code_to_block(summary_dict["concepts"], blocks)
+        # Consolida com sugestão Gemini (validada contra whitelist)
+        valid_ids = {b.get("id", "") for b in blocks if b.get("id")}
+        primary, secondaries, conf, method = _consolidate_assignment(
+            local,
+            summary_dict.get("suggested_block_id", "") or "",
+            summary_dict.get("suggested_secondary_ids", []) or [],
+            valid_ids,
         )
         summary_dict["primary_block_id"] = primary
         summary_dict["secondary_block_ids"] = secondaries
@@ -271,7 +403,11 @@ def summarize_all_code_entries(builder, client, progress_cb=None) -> dict:
             continue
         new_hash = compute_entry_hash(entry_data, builder)
         existing = entries_map.get(eid, {})
-        if existing.get("content_hash") == new_hash and existing.get("summary"):
+        if (
+            existing.get("content_hash") == new_hash
+            and existing.get("summary")
+            and existing.get("matcher_version") == MATCHER_VERSION
+        ):
             if progress_cb:
                 progress_cb(idx, total, entry_data.get("title", ""), "cached")
             continue
@@ -284,6 +420,7 @@ def summarize_all_code_entries(builder, client, progress_cb=None) -> dict:
             continue
         entries_map[eid] = {
             "content_hash": new_hash,
+            "matcher_version": MATCHER_VERSION,
             "model": client.model,
             "generated_at": datetime.now().isoformat(timespec="seconds"),
             "summary": summary,
