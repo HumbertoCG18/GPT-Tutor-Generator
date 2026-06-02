@@ -150,6 +150,21 @@ def unprocess(builder, entry_id: str) -> bool:
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
 
+    # Purga sidecars derivativos para evitar resíduo de entry removido
+    try:
+        builder._prune_stale_code_curation()
+    except Exception as exc:
+        logger.warning("unprocess: prune code_curation falhou: %s", exc)
+    try:
+        builder._prune_stale_image_curation()
+    except Exception as exc:
+        logger.warning("unprocess: prune image_curation falhou: %s", exc)
+    try:
+        builder._regenerate_pedagogical_files(manifest)
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    except Exception as exc:
+        logger.warning("unprocess: regeneração pedagógica falhou: %s", exc)
+
     logger.info("Unprocessed entry %s (%d files removed)", entry_id, removed_count)
     return True
 
@@ -203,6 +218,21 @@ def reject(builder, entry_id: str) -> Optional[Dict[str, object]]:
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
     builder._resolve_content_images()
+
+    # Purga sidecars derivativos (mesma simetria de unprocess)
+    try:
+        builder._prune_stale_code_curation()
+    except Exception as exc:
+        logger.warning("reject: prune code_curation falhou: %s", exc)
+    try:
+        builder._prune_stale_image_curation()
+    except Exception as exc:
+        logger.warning("reject: prune image_curation falhou: %s", exc)
+    try:
+        builder._regenerate_pedagogical_files(manifest)
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    except Exception as exc:
+        logger.warning("reject: regeneração pedagógica falhou: %s", exc)
 
     logger.info("Rejected entry %s (%d files removed, raw preserved)", entry_id, removed_count)
     return entry_data
