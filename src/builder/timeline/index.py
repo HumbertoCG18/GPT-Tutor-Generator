@@ -1774,6 +1774,64 @@ def _score_timeline_block_against_taxonomy_topic(block: Dict[str, object], topic
     return score
 
 
+# Stopwords PT-BR pra limpar fallback de topic_text. Conservador — só
+# conectivos comuns que poluem o label, mantem termos tecnicos.
+_TOPIC_FALLBACK_STOPWORDS = {
+    "a", "o", "as", "os", "um", "uma", "de", "do", "da", "dos", "das",
+    "e", "ou", "em", "no", "na", "nos", "nas", "para", "por", "com",
+    "sobre", "ao", "aos", "que", "se", "ate", "como",
+}
+
+_TOPIC_FALLBACK_MAX_LEN = 60
+
+
+def _humanize_topic_text(text: str) -> str:
+    """topic_text cru -> label apresentavel. Remove stopwords de borda,
+    capitaliza, trunca em 60 chars. Determinista."""
+    raw = _collapse_ws(text)
+    if not raw:
+        return ""
+    tokens = raw.split()
+    # remove stopwords só nas bordas (preserva ordem/sentido interno)
+    while tokens and tokens[0].lower() in _TOPIC_FALLBACK_STOPWORDS:
+        tokens.pop(0)
+    while tokens and tokens[-1].lower() in _TOPIC_FALLBACK_STOPWORDS:
+        tokens.pop()
+    if not tokens:
+        tokens = raw.split()
+    label = " ".join(tokens)
+    if len(label) > _TOPIC_FALLBACK_MAX_LEN:
+        label = label[:_TOPIC_FALLBACK_MAX_LEN].rstrip() + "…"
+    # capitaliza primeira letra; mantem resto (siglas tipo API, DevOps)
+    return label[:1].upper() + label[1:]
+
+
+def _resolve_block_topic_label(block: Dict[str, object]) -> tuple[str, str, str]:
+    """Resolve label do topico em camadas. Retorna (label, slug, source).
+
+    Ordem (primeira que casar vence):
+      1. manual    — manual_topic_label em curation
+      2. taxonomy  — primary_topic_label ja setado pelo matcher (inclui alias,
+                     pois o scorer considera aliases internamente)
+      3. topic_text_fallback — topic_text rico humanizado
+      4. ""        — nada utilizavel
+    """
+    manual = block.get("manual_topic_label")
+    if isinstance(manual, str) and manual.strip():
+        return _collapse_ws(manual), slugify(manual), "manual"
+
+    existing = block.get("primary_topic_label")
+    if isinstance(existing, str) and existing.strip():
+        return existing, str(block.get("primary_topic_slug", "") or ""), "taxonomy"
+
+    topic_text = str(block.get("topic_text", "") or "")
+    label = _humanize_topic_text(topic_text)
+    if label:
+        return label, slugify(topic_text), "topic_text_fallback"
+
+    return "", "", ""
+
+
 def _assign_timeline_block_to_topic(
     block: Dict[str, object],
     topic_index: List[dict],
@@ -2022,6 +2080,14 @@ def _build_timeline_index(
         runtime_block["primary_topic_label"] = primary_topic.topic_label
         runtime_block["primary_topic_confidence"] = primary_topic.confidence
         runtime_block["topic_ambiguous"] = primary_topic.ambiguous
+        # Fallback em camadas: garante label quando matcher reprova mas
+        # topic_text tem substancia. Marca topic_source pra UI badge.
+        resolved_label, resolved_slug, topic_source = _resolve_block_topic_label(runtime_block)
+        if resolved_label and not runtime_block["primary_topic_label"]:
+            runtime_block["primary_topic_label"] = resolved_label
+            if resolved_slug and not runtime_block["primary_topic_slug"]:
+                runtime_block["primary_topic_slug"] = resolved_slug
+        runtime_block["topic_source"] = topic_source
         topic_unit_slug = ""
         if primary_topic.topic_slug and not primary_topic.ambiguous and primary_topic.confidence >= 0.65:
             topic_unit_slug = _derive_unit_from_topic_match(primary_topic, content_taxonomy or {})

@@ -171,7 +171,11 @@ def test_real_corpus_unknown_rate(course):
 # Vote unit from topic_candidates (Phase 3 fix)
 # ---------------------------------------------------------------------------
 
-from src.builder.timeline.index import _vote_unit_from_topic_candidates  # noqa: E402
+from src.builder.timeline.index import (  # noqa: E402
+    _humanize_topic_text,
+    _resolve_block_topic_label,
+    _vote_unit_from_topic_candidates,
+)
 
 
 def _idx(*slugs):
