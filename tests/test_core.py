@@ -3035,9 +3035,9 @@ class TestTimelineIndex:
         timeline_index = _build_timeline_index(candidate_rows, unit_index=unit_index)
         periods = [block["period_label"] for block in timeline_index["blocks"]]
 
-        assert "11/03/2026 a 25/03/2026" in periods
-        assert "30/03/2026 a 01/04/2026" in periods
-        assert "06/04/2026 a 08/04/2026" in periods
+        assert "5 dias · 11/03/2026 a 25/03/2026" in periods
+        assert "2 dias · 30/03/2026 a 01/04/2026" in periods
+        assert "2 dias · 06/04/2026 a 08/04/2026" in periods
 
     def test_build_timeline_index_assigns_matching_block_to_unit(self):
         timeline = _parse_syllabus_timeline(METODOS_FORMAIS_SYLLABUS)

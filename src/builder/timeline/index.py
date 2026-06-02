@@ -10,7 +10,30 @@ from typing import Callable, Dict, List, Optional
 
 from src.builder.vision.card_evidence import extract_card_evidence
 from src.builder.timeline.signals import extract_timeline_session_signals
+from src.builder.timeline.classifier import classify_block
 from src.utils.helpers import slugify, write_text
+
+
+TIMELINE_INDEX_VERSION = 4
+
+
+def ensure_block_kind(block: dict) -> dict:
+    """Lazy backfill: garante `kind` no bloco. Idempotente."""
+    if not isinstance(block, dict):
+        return block
+    if not block.get("kind"):
+        block["kind"] = classify_block(block).value
+    return block
+
+
+def _backfill_timeline_index(timeline_index: dict) -> dict:
+    """Lazy upgrade v3->v4: bump version, popula `kind` em cada bloco. In-place."""
+    if not isinstance(timeline_index, dict):
+        return timeline_index
+    for block in timeline_index.get("blocks") or []:
+        ensure_block_kind(block)
+    timeline_index["version"] = TIMELINE_INDEX_VERSION
+    return timeline_index
 
 
 def _collapse_ws(text: str) -> str:
@@ -528,7 +551,7 @@ _UNIT_GENERIC_TOKENS = {
 
 
 def _empty_timeline_index() -> dict:
-    return {"version": 3, "blocks": []}
+    return {"version": TIMELINE_INDEX_VERSION, "blocks": []}
 
 
 def _timeline_specific_tokens(text: str) -> List[str]:
@@ -552,14 +575,25 @@ def _timeline_core_text(text: str) -> str:
     return _normalize_match_text(raw)
 
 
-def _timeline_period_label(start_text: str, end_text: str) -> str:
+def _timeline_period_label(
+    start_text: str,
+    end_text: str,
+    count: Optional[int] = None,
+    unit_singular: str = "dia",
+    unit_plural: str = "dias",
+) -> str:
     start = _collapse_ws(start_text)
     end = _collapse_ws(end_text)
     if not start:
-        return end
-    if not end or end == start:
-        return start
-    return f"{start} a {end}"
+        base = end
+    elif not end or end == start:
+        base = start
+    else:
+        base = f"{start} a {end}"
+    if count is None or count <= 0 or not base:
+        return base
+    unit = unit_singular if count == 1 else unit_plural
+    return f"{count} {unit} · {base}"
 
 
 def _timeline_row_is_review_or_assessment(text: str) -> bool:
@@ -991,6 +1025,7 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
             "period_start": block.get("period_start", ""),
             "period_end": block.get("period_end", ""),
             "period_label": block.get("period_label", ""),
+            "kind": classify_block(block).value,
             "unit_slug": block.get("unit_slug", ""),
             "unit_confidence": float(block.get("unit_confidence", 0.0) or 0.0),
             "primary_topic_slug": block.get("primary_topic_slug", ""),
@@ -1005,8 +1040,17 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
             "sessions": list(block.get("sessions", []) or []),
             "source_rows": list(block.get("source_rows", []) or []),
         }
+        manual_override = block.get("manual_kind_override")
+        if manual_override:
+            payload["manual_kind_override"] = manual_override
+        topic_source = block.get("topic_source")
+        if topic_source:
+            payload["topic_source"] = topic_source
+        manual_topic_label = block.get("manual_topic_label")
+        if manual_topic_label:
+            payload["manual_topic_label"] = manual_topic_label
         blocks.append(payload)
-    return {"version": 3, "blocks": blocks}
+    return {"version": TIMELINE_INDEX_VERSION, "blocks": blocks}
 
 
 def _write_internal_timeline_index(root_dir: Path, timeline_index: dict) -> None:
@@ -1053,19 +1097,37 @@ def _aggregate_unit_periods_from_blocks(blocks_by_unit: Dict[str, List[Dict[str,
                 edge_dates.extend(
                     re.findall(r"\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}|\d{2}-\d{2}-\d{4}", str(block.get("period_label", "")))
                 )
+            block_count = len(blocks)
             if edge_dates:
                 start_label = edge_dates[0]
                 end_label = edge_dates[-1] if len(edge_dates) > 1 else edge_dates[0]
-                period_map[slug] = _timeline_period_label(start_label, end_label)
+                period_map[slug] = _timeline_period_label(
+                    start_label,
+                    end_label,
+                    count=block_count,
+                    unit_singular="bloco",
+                    unit_plural="blocos",
+                )
                 continue
             period_map[slug] = _timeline_period_label(
                 min(start_dates).strftime("%Y-%m-%d"),
                 max(end_dates).strftime("%Y-%m-%d"),
+                count=block_count,
+                unit_singular="bloco",
+                unit_plural="blocos",
             )
             continue
-        labels = [str(block.get("period_label", "")).strip() for block in blocks if str(block.get("period_label", "")).strip()]
+        def _strip_count_prefix(label: str) -> str:
+            return label.split(" · ", 1)[1] if " · " in label else label
+        labels = [_strip_count_prefix(str(block.get("period_label", "")).strip()) for block in blocks if str(block.get("period_label", "")).strip()]
         if labels:
-            period_map[slug] = labels[0] if len(labels) == 1 else _timeline_period_label(labels[0], labels[-1])
+            period_map[slug] = _timeline_period_label(
+                labels[0],
+                labels[-1],
+                count=len(blocks),
+                unit_singular="bloco",
+                unit_plural="blocos",
+            )
     return period_map
 
 
@@ -1315,6 +1377,7 @@ def _build_file_map_timeline_context_from_course(
         if cached_path and cached_path.exists():
             try:
                 timeline_index = json.loads(cached_path.read_text(encoding="utf-8"))
+                _backfill_timeline_index(timeline_index)
             except Exception:
                 timeline_index = _empty_timeline_index()
         else:
@@ -1881,7 +1944,7 @@ def _build_timeline_index(
             "id": f"bloco-{position:02d}",
             "period_start": rows[0].get("date_dt").strftime("%Y-%m-%d") if rows[0].get("date_dt") else "",
             "period_end": rows[-1].get("date_dt").strftime("%Y-%m-%d") if rows[-1].get("date_dt") else "",
-            "period_label": _timeline_period_label(start_text, end_text),
+            "period_label": _timeline_period_label(start_text, end_text, count=len(rows)),
             "unit_slug": "",
             "unit_confidence": 0.0,
             "primary_topic_slug": "",
@@ -1929,4 +1992,6 @@ def _build_timeline_index(
             block["unit_slug"] = inherited_slug
             block["unit_confidence"] = max(float(block.get("unit_confidence", 0.0) or 0.0), 0.51)
 
-    return {"version": 3, "blocks": runtime_blocks}
+    for block in runtime_blocks:
+        ensure_block_kind(block)
+    return {"version": TIMELINE_INDEX_VERSION, "blocks": runtime_blocks}

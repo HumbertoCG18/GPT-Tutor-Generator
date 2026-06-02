@@ -1,8 +1,11 @@
 import json
 import re
 import glob
+import sys
 import unicodedata
 from collections import Counter, defaultdict
+
+USE_STORED_KIND = "--use-stored-kind" in sys.argv
 
 
 def norm(s):
@@ -40,7 +43,9 @@ for p in paths:
         toks = set(tt.split()) if tt else set()
         unit = bool(b.get("unit_slug"))
         topic = bool(b.get("primary_topic_label"))
-        if toks & ASSESSMENT:
+        if USE_STORED_KIND and b.get("kind"):
+            k = b["kind"]
+        elif toks & ASSESSMENT:
             k = "assessment"
         elif toks & REVIEW:
             k = "review"

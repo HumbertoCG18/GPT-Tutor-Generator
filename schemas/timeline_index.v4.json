@@ -80,7 +80,10 @@
         },
         "period_label": { "type": "string" },
         "kind": { "$ref": "#/definitions/BlockKind" },
-        "sessions": { "type": "integer", "minimum": 0 },
+        "sessions": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
 
         "unit_slug": { "type": "string" },
         "unit_confidence": { "type": "number" },

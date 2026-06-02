@@ -920,7 +920,7 @@ def test_file_map_md_prefers_exercise_block_over_intro_row_in_realistic_schedule
 
     assert unit_match.slug == "unidade-01-metodos-formais"
     assert period_ambiguous is False
-    assert probable_period == "11/03/2026 a 25/03/2026"
+    assert probable_period == "5 dias · 11/03/2026 a 25/03/2026"
 
 
 def test_file_map_timeline_context_filters_rows_outside_unit_period():
@@ -976,8 +976,8 @@ def test_file_map_timeline_context_exposes_blocks_by_unit():
     context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
     blocks = context["blocks_by_unit"]["unidade-01-metodos-formais"]
 
-    assert context["timeline_index"]["version"] == 3
-    assert blocks[0]["period_label"] == "11/03/2026 a 25/03/2026"
+    assert context["timeline_index"]["version"] == 4
+    assert blocks[0]["period_label"] == "5 dias · 11/03/2026 a 25/03/2026"
 
 
 def test_build_timeline_index_serializes_sessions_inside_block():
@@ -1005,8 +1005,8 @@ def test_build_timeline_index_serializes_sessions_inside_block():
     timeline_index = _build_timeline_index(candidate_rows, unit_index=[], content_taxonomy={})
     serialized = _serialize_timeline_index(timeline_index)
 
-    assert timeline_index["version"] == 3
-    assert serialized["version"] == 3
+    assert timeline_index["version"] == 4
+    assert serialized["version"] == 4
     assert timeline_index["blocks"][0]["card_evidence"]
     assert timeline_index["blocks"][0]["card_evidence"][0]["normalized_title"] == "especificacoes recursivas e provas por inducao"
     assert timeline_index["blocks"][0]["sessions"]
@@ -1046,7 +1046,7 @@ def test_file_map_timeline_context_extends_program_verification_unit_with_glossa
 
     context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
 
-    assert context["unit_periods"]["unidade-02-verificacao-de-programas"] == "27/04/2026 a 08/06/2026"
+    assert context["unit_periods"]["unidade-02-verificacao-de-programas"] == "4 blocos · 27/04/2026 a 08/06/2026"
 
 
 def test_select_probable_period_for_entry_prefers_blocks_matching_subtopic():

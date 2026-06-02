@@ -52,11 +52,14 @@ def derive_block_status(block: Mapping[str, object]) -> str:
 
     need_files = requires(kind, "files")
     if need_files is True:
-        sessions = block.get("sessions", 0)
-        try:
-            n = int(sessions)
-        except (TypeError, ValueError):
-            n = 0
+        sessions = block.get("sessions")
+        if isinstance(sessions, list):
+            n = len(sessions)
+        else:
+            try:
+                n = int(sessions or 0)
+            except (TypeError, ValueError):
+                n = 0
         if n <= 0:
             return "needs_files"
 
