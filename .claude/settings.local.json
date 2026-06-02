@@ -26,7 +26,10 @@
       "Bash(not exist *)",
       "mcp__code-review-graph__semantic_search_nodes_tool",
       "Bash(scripts/start-server.sh *)",
-      "Bash(bash *)"
+      "Bash(bash *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\Humberto\\\\Documents\\\\GitHub\\\\GPT-Tutor-Generator\" -Recurse -Directory)",
+      "Bash(Select-Object -First 30 FullName)",
+      "Bash(xargs grep -l \"datalab\\\\|process_pdf\")"
     ]
   },
   "enableAllProjectMcpServers": true,
