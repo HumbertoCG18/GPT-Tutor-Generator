@@ -1,6 +1,6 @@
 # Pattern Index
 
-last_updated: 2026-05-12
+last_updated: 2026-06-02
 
 Lookup table for all pattern files in this directory. Check here before starting any task — if a pattern exists, follow it.
 
@@ -14,3 +14,4 @@ Lookup table for all pattern files in this directory. Check here before starting
 | [pdf-backend-integration.md#task-modify-existing-backend-behavior](pdf-backend-integration.md#task-modify-existing-backend-behavior) | Modifying Marker, Docling, Datalab, or PyMuPDF behavior |
 | [ollama-vision.md#task-add-or-modify-vision-behavior](ollama-vision.md#task-add-or-modify-vision-behavior) | Adding image types, prompt changes, or heuristic classifier tweaks |
 | [ollama-vision.md#task-debug-vision-failures](ollama-vision.md#task-debug-vision-failures) | Diagnosing Ollama connection failures, empty responses, or missing images in the curator |
+| [gemini-code-summarization.md](gemini-code-summarization.md) | Adding a Gemini-backed batch job with hash cache (follow this for future material types: PDFs, exercises) |

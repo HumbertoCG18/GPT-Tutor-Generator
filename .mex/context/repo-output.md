@@ -15,7 +15,7 @@ edges:
     condition: when understanding which build module generates each file
   - target: context/decisions.md
     condition: when understanding why the repo is structured this way
-last_updated: 2026-05-12
+last_updated: 2026-06-02
 ---
 
 # Repo Output Format
@@ -27,6 +27,9 @@ Reviewed against the current generator modules on 2026-05-12.
 ## Critical Generated Files
 
 ```text
+course/CRONOGRAMA_DETALHADO.md               # block-by-block render with linked code; only when timeline blocks exist
+course/CODE_HEALTH.md                        # auto-generated coverage report for code summaries + block linkage
+course/code_curation.json                    # content-hash cache for Gemini summaries; safe to delete
 course/COURSE_MAP.md                         # pedagogical map and primary tutor entry point
 course/FILE_MAP.md                           # routing index with priority, unit, subtopic, and timeline hints
 course/SYLLABUS.md                           # syllabus generated from SubjectProfile when available
@@ -63,6 +66,8 @@ README.md                                    # generated repository readme
 | `src/builder/artifacts/repo.py` | Writes operational artifacts such as source registry, bundle seed, and build report. |
 | `src/builder/routing/file_map.py` | Builds routing indexes, unit matching, subtopic matching, and timeline scoring used by the generated routing index. |
 | `src/builder/artifacts/deeptutor.py` | Exports selected generated artifacts into the DeepTutor knowledge directory. |
+| `src/builder/core/code_summarization.py` | Generates Gemini summaries, assigns timeline blocks via concept overlap, prunes stale curation. |
+| `src/builder/runtime/gemini_client.py` | Lazy Gemini API client with exponential backoff on 429/5xx. |
 
 ## How the Tutor Uses These Files
 
@@ -97,5 +102,5 @@ profile, and repository feature flags in `src/builder/ops/pedagogical_regenerati
 
 ## What Does Not Exist in the Generated Repo
 
-- No LLM API calls happen at build time; the LLM is used only at runtime inside the generated tutor repository.
+- LLM API calls at build time are confined to the optional code-summarization layer (Gemini). With no API key configured, the build remains fully local.
 - No manual tutor-side rewrite of the generated course map or routing index; regeneration owns these files.

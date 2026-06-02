@@ -15,7 +15,7 @@ edges:
     condition: when understanding how technologies fit into the system
   - target: context/setup.md
     condition: when setup or run commands are needed
-last_updated: 2026-05-04
+last_updated: 2026-06-02
 ---
 
 # Stack
@@ -43,6 +43,7 @@ Do not invent dependency names, package versions, extras, or scripts. If a task 
 | Markdown | Generated repository output format. |
 | Ollama | README identifies Ollama as the Vision backend. Exact model/version not declared in the brief. |
 | Datalab | README identifies Datalab as the PDF backend. Exact package/API version not declared in the brief. |
+| `google-genai` | Optional runtime dependency for the code-summarization pipeline. SDK used: `from google import genai` (NOT `google.generativeai`). |
 
 ## Tooling
 

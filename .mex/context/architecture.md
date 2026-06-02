@@ -14,7 +14,7 @@ edges:
     condition: when understanding why an architectural choice exists
   - target: context/repo-output.md
     condition: when the task involves the generated repository format
-last_updated: 2026-05-12
+last_updated: 2026-06-02
 ---
 
 # Architecture
@@ -73,6 +73,7 @@ Create or select subject
 | Repository builder | Consolidates processed content into structured Markdown and tutor instruction artifacts. |
 | Reprocess Repository action | Reapplies the current architecture to previously generated repositories. |
 | Dashboard | Shows operational state for generated repositories and queued repository tasks. |
+| Code Summarization (Gemini) | Lazy `google-genai` client + concept-based timeline block matcher. Backbone in `src/builder/core/code_summarization.py` and `src/builder/runtime/gemini_client.py`. |
 
 ## Data Model Context
 
@@ -96,6 +97,7 @@ The generated tutor repository is built with context for:
 | Claude | Generated instruction target for Claude Projects knowledge bases. |
 | GPT | Generated instruction target. |
 | Gemini | Generated instruction target. |
+| Google Gemini (`gemini-2.5-flash`) | Optional. Generates structured JSON summaries of code bundles consumed by CODE_INDEX, header MD, CRONOGRAMA_DETALHADO, and CODE_HEALTH. |
 
 The brief does not declare network APIs, cloud LLM calls during build, or exact backend client modules. Do not assert those details without reading source or official docs.
 

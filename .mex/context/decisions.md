@@ -11,12 +11,22 @@ edges:
     condition: when a decision affects system structure
   - target: context/stack.md
     condition: when a decision affects technology choice
-last_updated: 2026-05-12
+last_updated: 2026-06-02
 ---
 
 # Decisions
 
 Append-only log. When a decision changes, mark the old entry as superseded and add the new decision above it.
+
+---
+
+### Code Summarization Uses Gemini at Build Time (Optional Layer)
+
+**Date:** 2026-06-02
+**Status:** Active
+**Decision:** Code entries can be summarized at build time through `google-genai`'s structured-output mode (`response_schema=CodeSummary`) with a content-hash cache in `course/code_curation.json`. Timeline block assignment is done locally via concept overlap, not via a second LLM call.
+**Reasoning:** Code bundles benefit from semantic enrichment (inferred title, role, concepts) for richer downstream artifacts (CODE_INDEX, CRONOGRAMA_DETALHADO, CODE_HEALTH) and tutor grounding. Structured output prevents JSON parsing failures; the local matcher keeps the per-build cost bounded to one LLM call per changed entry. Without an API key the entire layer is bypassed via lazy import.
+**Consequences:** Build pipeline must keep the no-key path identical to current behavior. New artifacts must be tolerant of empty `code_curation.json`. Future material types (PDF, exercises) follow the same hash-cache + local-link pattern.
 
 ---
 
