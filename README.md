@@ -22,6 +22,7 @@ Aplicação desktop em Python para transformar materiais acadêmicos em um repos
 - [Image Curator e Vision](#image-curator-e-vision)
 - [Timeline Dashboard](#timeline-dashboard)
 - [Resiliência de Build](#resiliencia-de-build)
+- [Resumos de código (opcional — via Gemini)](#resumos-de-codigo-opcional--via-gemini)
 - [Estrutura do Repositório Gerado](#estrutura-do-repositorio-gerado)
 - [Requisitos](#requisitos)
 - [Instalação](#instalacao)
@@ -577,6 +578,50 @@ A rotina:
 Imagens vivas e suas descrições não são tocadas. Garante que o lote de "Gerar Descrições" e a contagem na UI reflitam exatamente o que está no disco.
 
 A limpeza também é tolerante a chaves de página em formatos coexistentes (`"1"`, `"page_1"`, índice zero-based legado) — todas são consolidadas para o formato canônico no próximo save da página.
+
+## Resumos de código (opcional — via Gemini)
+
+Para enriquecer a indexação do código (títulos descritivos, conceitos extraídos,
+papel pedagógico, e vinculação automática ao bloco do cronograma), o app pode
+usar a API do Gemini.
+
+### Pré-requisitos
+
+```bash
+pip install google-genai
+```
+
+E uma chave da API do Gemini configurada via `Configurações → Processamento →
+Gemini — Resumos de Código`.
+
+### Como funciona
+
+1. Cada arquivo de código (`.py`, `.ipynb`, `.dfy`, etc) vira um *bundle* de texto.
+2. O Gemini retorna um JSON estruturado (`inferred_title`, `pedagogical_role`,
+   `concepts`, `summary`).
+3. Os `concepts` são casados localmente contra os blocos do cronograma
+   (`.timeline_index.json`) — sem custo extra de LLM — definindo a aula primária
+   e aulas secundárias.
+4. O resultado é persistido em `course/code_curation.json` (cache por hash de
+   conteúdo: re-executar não custa tokens se nada mudou).
+
+### Onde isso aparece
+
+- Cabeçalho de cada código gerado (`code/...`).
+- `course/CODE_INDEX.md` agrupado por aula.
+- `course/CRONOGRAMA_DETALHADO.md` (novo: bloco-a-bloco com códigos vinculados).
+- `course/CODE_HEALTH.md` (novo: cobertura, órfãos, distribuição por unidade).
+
+### Custo aproximado
+
+`gemini-2.5-flash` a $0.30 / 1M tokens entrada + $2.50 / 1M tokens saída.
+Uma matéria com ~20 códigos custa em torno de $0.03. Reprocessamento sem
+mudanças = 0 chamadas.
+
+### Sem chave configurada
+
+Tudo continua funcionando sem a chave: `code_curation.json` simplesmente não
+existe e os artefatos voltam ao formato original (fallback byte-equal).
 
 ## Estrutura do Repositório Gerado
 

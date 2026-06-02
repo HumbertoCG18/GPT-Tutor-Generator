@@ -18,6 +18,11 @@ dependencies = [
 dev = [
     "pytest>=7.0",
 ]
+# Optional: enable Gemini-based code summarization (course/code_curation.json).
+# Without this extra, the build still works — code summaries are simply skipped.
+code-summarization = [
+    "google-genai>=0.3.0",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
