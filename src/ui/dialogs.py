@@ -124,11 +124,17 @@ class SettingsDialog(tk.Toplevel):
         self._saved = False
         self._build()
         self.update_idletasks()
+        # Cap height to screen so tall tabs never get clipped; allow vertical resize.
+        w, h = self.winfo_width(), self.winfo_height()
+        max_h = self.winfo_screenheight() - 80
+        if h > max_h:
+            h = max_h
+        self.resizable(False, True)
+        self.minsize(w, min(h, 480))
         # Centre over parent
         px, py = parent.winfo_x(), parent.winfo_y()
         pw, ph = parent.winfo_width(), parent.winfo_height()
-        w, h = self.winfo_width(), self.winfo_height()
-        self.geometry(f"+{px + (pw - w)//2}+{py + (ph - h)//2}")
+        self.geometry(f"{w}x{h}+{px + (pw - w)//2}+{max(0, py + (ph - h)//2)}")
 
     def _build(self):
         p = self.theme_mgr.palette(self.theme_mgr.current)
@@ -173,9 +179,31 @@ class SettingsDialog(tk.Toplevel):
             swatch.create_rectangle(27, 1, 52, 17, fill=sw_p["accent2"], outline="")
             swatch.create_rectangle(53, 1, 79, 17, fill=sw_p["input_bg"], outline="")
 
-        # ── Processing tab ──────────────────────────────────────────────
-        tab_proc = ttk.Frame(nb, padding=16)
-        nb.add(tab_proc, text="  ⚙  Processamento  ")
+        # ── Processing tab (scrollable: content can exceed screen height) ──
+        tab_proc_outer = ttk.Frame(nb)
+        nb.add(tab_proc_outer, text="  ⚙  Processamento  ")
+        proc_canvas = tk.Canvas(tab_proc_outer, bg=p["bg"], highlightthickness=0)
+        proc_scroll = ttk.Scrollbar(tab_proc_outer, orient="vertical",
+                                    command=proc_canvas.yview)
+        proc_canvas.configure(yscrollcommand=proc_scroll.set)
+        proc_scroll.pack(side="right", fill="y")
+        proc_canvas.pack(side="left", fill="both", expand=True)
+        tab_proc = ttk.Frame(proc_canvas, padding=16)
+        _proc_win = proc_canvas.create_window((0, 0), window=tab_proc, anchor="nw")
+        tab_proc.bind(
+            "<Configure>",
+            lambda e: proc_canvas.configure(scrollregion=proc_canvas.bbox("all")),
+        )
+        proc_canvas.bind(
+            "<Configure>",
+            lambda e: proc_canvas.itemconfigure(_proc_win, width=e.width),
+        )
+
+        def _proc_wheel(e):
+            proc_canvas.yview_scroll(int(-e.delta / 120), "units")
+
+        proc_canvas.bind("<Enter>", lambda e: proc_canvas.bind_all("<MouseWheel>", _proc_wheel))
+        proc_canvas.bind("<Leave>", lambda e: proc_canvas.unbind_all("<MouseWheel>"))
 
         self._var_mode = tk.StringVar(value=self.config.get("default_mode"))
         self._var_ocr = tk.StringVar(value=self.config.get("default_ocr_language"))
@@ -369,6 +397,7 @@ class SettingsDialog(tk.Toplevel):
 
         self._var_gemini_api_key = tk.StringVar(value=self.config.get("gemini_api_key", ""))
         self._var_gemini_model = tk.StringVar(value=self.config.get("gemini_model", "gemini-2.5-flash"))
+        self._var_gemini_auto = tk.BooleanVar(value=bool(self.config.get("gemini_auto_summarize", False)))
 
         ttk.Label(tab_proc, text="Chave da API do Gemini").grid(
             row=sep_row + 11, column=0, sticky="w", pady=6, padx=(0, 16))
@@ -381,6 +410,12 @@ class SettingsDialog(tk.Toplevel):
                      values=["gemini-2.5-flash", "gemini-2.5-pro"],
                      state="readonly", width=25).grid(
             row=sep_row + 12, column=1, sticky="ew")
+
+        ttk.Checkbutton(
+            tab_proc,
+            text="Gerar resumos automaticamente durante o build",
+            variable=self._var_gemini_auto,
+        ).grid(row=sep_row + 13, column=0, columnspan=2, sticky="w", pady=(8, 0))
 
         tab_proc.columnconfigure(1, weight=1)
 
@@ -420,6 +455,7 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("image_description_source", self._var_image_desc_source.get())
         self.config.set("gemini_api_key", self._var_gemini_api_key.get().strip())
         self.config.set("gemini_model", self._var_gemini_model.get())
+        self.config.set("gemini_auto_summarize", bool(self._var_gemini_auto.get()))
         self.config.save()
         self.theme_mgr.apply(self.parent, self._var_theme.get())
         self.parent._theme_name = self._var_theme.get()  # type: ignore[attr-defined]

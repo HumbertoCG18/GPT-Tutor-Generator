@@ -6,6 +6,7 @@ import re
 from datetime import datetime
 
 from src.builder.artifacts.deeptutor import write_deeptutor_export
+from src.builder.ops.build_workflow import _run_auto_code_summarization
 from src.utils.helpers import write_text
 
 logger = logging.getLogger(__name__)
@@ -90,6 +91,7 @@ def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_f
     removed_code = builder._prune_stale_code_curation()
     if removed_code:
         logger.info("Pruned %d stale code_curation entries", removed_code)
+    _run_auto_code_summarization(builder, logger)
     builder._regenerate_pedagogical_files(manifest)
 
     state_path = builder.root_dir / "student" / "STUDENT_STATE.md"

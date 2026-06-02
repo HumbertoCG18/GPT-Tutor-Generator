@@ -116,6 +116,7 @@ def build_impl(
     removed_code = builder._prune_stale_code_curation()
     if removed_code:
         logger.info("Pruned %d stale code_curation entries", removed_code)
+    _run_auto_code_summarization(builder, logger)
     builder._resolve_content_images()
     builder._inject_all_image_descriptions()
     builder._regenerate_pedagogical_files(manifest)
@@ -130,3 +131,26 @@ def build_impl(
     logger.info("DeepTutor export written to .deeptutor/")
 
     logger.info("Repository built successfully at %s", builder.root_dir)
+
+
+def _run_auto_code_summarization(builder, logger) -> None:
+    """Auto-run Gemini summarization if opted-in via config."""
+    try:
+        from src.ui.theme import AppConfig
+        config = AppConfig()
+        if not config.get("gemini_auto_summarize"):
+            return
+        from src.builder.runtime.gemini_client import has_gemini_api_key, get_gemini_client
+        if not has_gemini_api_key(config):
+            return
+        client = get_gemini_client(config)
+        if client is None:
+            return
+
+        def _progress(idx, total, title, status):
+            if status in ("calling_api", "done"):
+                logger.info("[Gemini] [%d/%d] %s: %s", idx, total, status, title)
+
+        builder._summarize_code_entries(client, progress_cb=_progress)
+    except Exception as exc:
+        logger.warning("[Gemini] Auto summarization skipped: %s", exc)

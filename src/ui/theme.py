@@ -105,6 +105,7 @@ class AppConfig:
         "image_description_source": "ollama",
         "gemini_api_key": "",
         "gemini_model": "gemini-2.5-flash",
+        "gemini_auto_summarize": False,
     }
 
     def __init__(self):
