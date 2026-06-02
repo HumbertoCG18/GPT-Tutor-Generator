@@ -38,7 +38,10 @@
       "PowerShell(Get-Item *)",
       "Bash(git *)",
       "Bash(where mex *)",
-      "Bash(pip show *)"
+      "Bash(pip show *)",
+      "Bash(powershell *)",
+      "PowerShell($j = Get-Content 'C:\\\\Users\\\\Humberto\\\\Documents\\\\GitHub\\\\Metodos-Formais-Tutor\\\\course\\\\.timeline_index.json' -Raw | ConvertFrom-Json; foreach \\($b in $j.blocks\\) { \"{0} | {1} | t={2} | a={3}\" -f $b.id, $b.primary_topic_label, \\($b.topics -join ';'\\), \\($b.aliases -join ';'\\) })",
+      "PowerShell(python -c \"from src.builder.core.code_summarization import assign_code_to_block, _consolidate_assignment, _format_blocks_for_prompt, MATCHER_VERSION, CodeSummary; print\\('ok', MATCHER_VERSION\\); s = CodeSummary\\(inferred_title='t', language='py', pedagogical_role='outro', concepts=['a'], summary='s'\\); print\\('schema ok', s.suggested_block_id == ''\\)\")"
     ]
   },
   "enableAllProjectMcpServers": true,
