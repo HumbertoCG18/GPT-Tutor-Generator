@@ -6,6 +6,47 @@
 
 ---
 
+## Contexto estratégico (IMPORTANTE — ler antes de planejar)
+
+> **O modo "Exercícios / Practice" NÃO existe hoje no projeto. Nada do
+> que está descrito abaixo foi implementado. Este documento é puramente
+> um registro de escopo futuro.**
+
+Prioridade atual do projeto:
+
+1. **Compreensão de materiais** — fazer o tutor entender CADA material
+   (PDF, código, link, imagem) individualmente. *(Em andamento — Gemini
+   code summarization fechado em Phase 1-8; falta cobertura semântica
+   equivalente pra PDFs / imagens / exercícios — ver
+   `plans/material-agnostic-refactor.md`.)*
+2. **Processamento de materiais** — pipeline confiável de extração,
+   curadoria e build incremental. *(Maduro; refinos pontuais.)*
+3. **Conexão entre materiais** — vincular código ↔ aula, PDF ↔ unidade,
+   exercício ↔ conceito, glossário ↔ tudo. *(Parcial: Phase 3 ligou
+   código a blocos do cronograma. PDFs/imagens/exercícios pendentes.)*
+
+Modo Exercícios fica **depois** das 3 prioridades acima. Razão:
+diagnóstico de código de aluno depende de já ter material processado +
+mapa de conceitos esperados por aula. Sem isso, o feedback do tutor
+fica genérico e desconectado da matéria.
+
+**Refatoração esperada quando o modo for ativado**: provavelmente
+significativa. Hipóteses atuais (a serem revistas no Phase 0 do plano):
+
+- `FileEntry` pode precisar de subtipo `ExerciseEntry` com campos
+  `expected_concepts`, `solution_reference`, `acceptance_criteria`.
+- `code_curation.json` pode evoluir pra `material_curation.json`
+  cobrindo todos os tipos (alinhado com material-agnostic refactor).
+- UI ganha um novo modo de entrada (não só import de arquivo, mas
+  "submeter solução pra exercício X").
+- Build pipeline pode precisar de uma passada extra "extract expected
+  concepts from exercise statement" antes de qualquer review de aluno.
+
+Não tomar essas decisões agora — apenas registrar como sinais pra
+quando o plano for retomado.
+
+---
+
 ## Objetivo
 
 Quando o aluno submete código de exercício/trabalho, o tutor produz feedback estruturado que mistura:
@@ -102,11 +143,17 @@ Aluno cola código
 ## Pré-requisitos antes de iniciar
 
 1. Phase 1-8 do code-summarization estáveis (✅ — commitados)
-2. Material-agnostic refactor decidido (afeta como exercícios são modelados — ver `plans/material-agnostic-refactor.md`)
-3. Decisão UX: aluno cola código no app, ou tutor runtime (Claude Project) recebe via instrução?
+2. **Compreensão semântica de TODOS os tipos de material** (não só código). Sem isso, exercício do aluno não tem mapa de conceitos pra comparar contra. Hoje:
+   - ✅ Código: Gemini summary + concept matching
+   - ⏳ PDF: só extração textual; sem inferência de conceitos
+   - ⏳ Imagem: vision describer (Ollama) só descreve, não conceitualiza
+   - ❌ Exercício como entidade: não modelado
+3. Material-agnostic refactor decidido (afeta como exercícios são modelados — ver `plans/material-agnostic-refactor.md`)
+4. Conexões cruzadas funcionando: código ↔ aula (✅), PDF ↔ unidade (parcial), exercício ↔ aula que cobre o conceito (não)
+5. Decisão UX: aluno cola código no app, ou tutor runtime (Claude Project) recebe via instrução?
    - Se Claude Project: feature vira **prompt template** + arquivos auxiliares no repo, não Python code
    - Se app local: pipeline acima
-4. Categoria de licenças linters: pylint GPL contagia se importado? Ruff é MIT — preferir ruff
+6. Categoria de licenças linters: pylint GPL contagia se importado? Ruff é MIT — preferir ruff
 
 ---
 
