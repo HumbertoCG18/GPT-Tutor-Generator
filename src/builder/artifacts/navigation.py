@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import re
 from typing import Callable, List, Optional
@@ -639,6 +640,17 @@ def render_low_token_file_map_md(
         lines.append("Nenhum arquivo processado ainda.")
         return "\n".join(lines)
 
+    # Load code curation once for inferred_title overrides on code entries.
+    _code_curation_entries: dict = {}
+    try:
+        _repo_root_for_curation = course_meta.get("_repo_root")
+        if _repo_root_for_curation:
+            _curation_path = Path(_repo_root_for_curation) / "code_curation.json"
+            if _curation_path.exists():
+                _code_curation_entries = (json.loads(_curation_path.read_text(encoding="utf-8")) or {}).get("entries", {}) or {}
+    except Exception:
+        _code_curation_entries = {}
+
     lines += [
         "| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Subtópico | Confiança | Período |",
         "|---|---|---|---|---|---|---|---|---|---|---|",
@@ -647,6 +659,12 @@ def render_low_token_file_map_md(
     for i, entry in enumerate(manifest_entries, 1):
         title = entry.get("title", "")
         category = entry.get("category", "")
+        # Override with inferred_title from code curation when available.
+        if category in ("codigo-professor", "codigo-aluno", "codigo-trabalho-aluno"):
+            _eid = entry.get("id") or ""
+            _inferred = (((_code_curation_entries.get(_eid) or {}).get("summary") or {}).get("inferred_title") or "")
+            if _inferred:
+                title = _inferred
         tags = entry.get("tags", "")
         effective_tags = merge_manual_and_auto_tags(
             list(entry.get("manual_tags") or []),

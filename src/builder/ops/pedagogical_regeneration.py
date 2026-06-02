@@ -210,7 +210,30 @@ def regenerate_pedagogical_files(
 
     code_entries = [e for e in all_entries if e.category in code_categories]
     if code_entries:
-        write_text(builder.root_dir / "code" / "CODE_INDEX.md", code_index_md_fn(builder.course_meta, code_entries, builder.subject_profile))
+        _code_curation = builder._load_code_curation()
+        _timeline_blocks = builder._load_timeline_blocks()
+        write_text(
+            builder.root_dir / "code" / "CODE_INDEX.md",
+            code_index_md_fn(
+                builder.course_meta,
+                code_entries,
+                builder.subject_profile,
+                code_curation=_code_curation,
+                timeline_blocks=_timeline_blocks,
+            ),
+        )
+        if _timeline_blocks:
+            from src.builder.artifacts.repo import cronograma_detalhado_md as _cronograma_detalhado_md
+            write_text(
+                builder.root_dir / "course" / "CRONOGRAMA_DETALHADO.md",
+                _cronograma_detalhado_md(
+                    builder.course_meta,
+                    code_entries,
+                    _code_curation,
+                    _timeline_blocks,
+                    builder.subject_profile,
+                ),
+            )
 
     wb_entries = [e for e in all_entries if e.category in whiteboard_categories]
     if wb_entries:

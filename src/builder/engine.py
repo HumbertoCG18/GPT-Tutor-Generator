@@ -1846,6 +1846,17 @@ class RepoBuilder:
     def _load_code_curation(self) -> dict:
         return _core_code_summarization_load(self.root_dir)
 
+    def _load_timeline_blocks(self) -> list[dict]:
+        import json as _json
+        path = self.root_dir / "course" / ".timeline_index.json"
+        if not path.exists():
+            return []
+        try:
+            data = _json.loads(path.read_text(encoding="utf-8"))
+            return data.get("blocks", []) or []
+        except Exception:
+            return []
+
     def _summarize_code_entries(self, client, progress_cb=None) -> dict:
         return _core_code_summarization_summarize_all(self, client, progress_cb)
 

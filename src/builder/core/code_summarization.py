@@ -182,14 +182,51 @@ def write_code_curation(repo_dir: Path, data: dict) -> None:
 
 
 def _load_timeline_blocks(builder) -> list[dict]:
-    path = builder.root_dir / ".timeline_index.json"
-    if not path.exists():
-        return []
+    # Try canonical location (course/.timeline_index.json) first; fall back to root for older repos.
+    for rel in ("course/.timeline_index.json", ".timeline_index.json"):
+        path = builder.root_dir / rel
+        if not path.exists():
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            return data.get("blocks", []) or []
+        except Exception:
+            return []
+    return []
+
+
+def _get_or_load_code_curation(builder) -> dict:
+    """Cache curation on builder for one-build read amortization."""
+    cached = getattr(builder, "_code_curation", None)
+    if cached is not None:
+        return cached
+    data = load_code_curation(builder.root_dir)
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-        return data.get("blocks", []) or []
+        builder._code_curation = data
     except Exception:
-        return []
+        pass
+    return data
+
+
+def _resolve_block_info(builder, block_id: str) -> Optional[dict]:
+    """Return {period_label, primary_topic_label} for a timeline block id, or None."""
+    if not block_id:
+        return None
+    cache = getattr(builder, "_timeline_blocks_by_id", None)
+    if cache is None:
+        blocks = _load_timeline_blocks(builder)
+        cache = {b.get("id"): b for b in blocks if b.get("id")}
+        try:
+            builder._timeline_blocks_by_id = cache
+        except Exception:
+            pass
+    blk = cache.get(block_id)
+    if not blk:
+        return None
+    return {
+        "period_label": blk.get("period_label", block_id),
+        "primary_topic_label": blk.get("primary_topic_label", ""),
+    }
 
 
 def summarize_code_entry(builder, entry_data: dict, client) -> Optional[dict]:
