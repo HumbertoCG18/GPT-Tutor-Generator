@@ -34,6 +34,7 @@ from src.ui.theme import ThemeManager, AppConfig
 from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, StatusDialog, _resolve_backlog_markdown_status
 from src.ui.repo_dashboard import RepoDashboard, collect_repo_metrics
 from src.ui.timeline_dashboard import TimelineDashboardView
+from src.ui.codes_panel import CodesPanel
 
 logger = logging.getLogger(__name__)
 
@@ -544,6 +545,19 @@ class App(tk.Tk):
             enqueue_reprocess_fn=self._reprocess_repo,
         )
         self._timeline_dashboard.pack(fill="both", expand=True)
+
+        # ── Aba Códigos ─────────────────────────────────────────────────
+        tab_codes = ttk.Frame(self.notebook)
+        self._codes_tab = tab_codes
+        self.notebook.add(tab_codes, text="  💻 Códigos  ")
+        self._codes_panel = CodesPanel(
+            tab_codes,
+            get_subject_fn=lambda: self._resolve_subject_profile(),
+            get_config_fn=lambda: self.config,
+            get_repo_dir_fn=lambda: self._repo_dir(),
+        )
+        self._codes_panel.pack(fill="both", expand=True)
+
         self.notebook.bind("<<NotebookTabChanged>>", self._on_notebook_tab_changed, add="+")
 
         # ── Aba LOG ──────────────────────────────────────────────────────
@@ -832,6 +846,8 @@ class App(tk.Tk):
             return
         if current is getattr(self, "_timeline_tab", None):
             self._timeline_dashboard.refresh()
+        if current is getattr(self, "_codes_tab", None) and hasattr(self, "_codes_panel"):
+            self._codes_panel.refresh()
 
     @staticmethod
     def _new_repo_task_id() -> str:
