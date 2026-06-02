@@ -3028,19 +3028,21 @@ class FileEntryDialog(simpledialog.Dialog):
         ttk.Combobox(outer, textvariable=self.var_mode, values=PROCESSING_MODES, state="readonly", width=20).grid(row=row, column=3, sticky="ew")
         row += 1
 
-        lbl_profile = ttk.Label(outer, text="Perfil")
-        lbl_profile.grid(row=row, column=0, sticky="w", pady=4)
-        combo_profile = ttk.Combobox(outer, textvariable=self.var_profile, values=DOCUMENT_PROFILES, state="readonly", width=22)
-        combo_profile.grid(row=row, column=1, sticky="ew")
-        combo_profile.bind("<<ComboboxSelected>>", self._on_profile_changed)
+        self._lbl_profile = ttk.Label(outer, text="Perfil")
+        self._lbl_profile.grid(row=row, column=0, sticky="w", pady=4)
+        self._combo_profile = ttk.Combobox(outer, textvariable=self.var_profile, values=DOCUMENT_PROFILES, state="readonly", width=22)
+        self._combo_profile.grid(row=row, column=1, sticky="ew")
+        self._combo_profile.bind("<<ComboboxSelected>>", self._on_profile_changed)
+        _profile_row = row
 
-        lbl_backend = ttk.Label(outer, text="Backend preferido")
-        lbl_backend.grid(row=row, column=2, sticky="w", padx=(12, 0))
-        add_tooltip(lbl_backend, "Backend de extração preferido.\nauto → seleção automática\npymupdf4llm → rápido e bom para PDFs digitais\npymupdf → fallback básico\ndatalab → API cloud para markdown de alta qualidade em PDFs complexos\ndocling → avançado: OCR, fórmulas, tabelas (CLI externo)\ndocling_python → teste via API Python do Docling com formula enrichment\nmarker → avançado: equações e imagens (CLI externo)")
-        combo_backend = ttk.Combobox(outer, textvariable=self.var_backend, values=PREFERRED_BACKENDS, state="readonly", width=20)
-        combo_backend.grid(row=row, column=3, sticky="ew")
-        combo_backend.bind("<<ComboboxSelected>>", self._on_backend_changed)
-        add_tooltip(lbl_profile, PROFILE_TOOLTIP_TEXT)
+        self._lbl_backend = ttk.Label(outer, text="Backend preferido")
+        self._lbl_backend.grid(row=row, column=2, sticky="w", padx=(12, 0))
+        add_tooltip(self._lbl_backend, "Backend de extração preferido.\nauto → seleção automática\npymupdf4llm → rápido e bom para PDFs digitais\npymupdf → fallback básico\ndatalab → API cloud para markdown de alta qualidade em PDFs complexos\ndocling → avançado: OCR, fórmulas, tabelas (CLI externo)\ndocling_python → teste via API Python do Docling com formula enrichment\nmarker → avançado: equações e imagens (CLI externo)")
+        self._combo_backend = ttk.Combobox(outer, textvariable=self.var_backend, values=PREFERRED_BACKENDS, state="readonly", width=20)
+        self._combo_backend.grid(row=row, column=3, sticky="ew")
+        self._combo_backend.bind("<<ComboboxSelected>>", self._on_backend_changed)
+        add_tooltip(self._lbl_profile, PROFILE_TOOLTIP_TEXT)
+        _backend_row = row
         row += 1
 
         self._datalab_model_row = row
@@ -3063,10 +3065,12 @@ class FileEntryDialog(simpledialog.Dialog):
         add_tooltip(lbl_tags, "Palavras-chave separadas por vírgula para facilitar busca futura.\nExemplo: gabarito, integração, 2024-1")
         ttk.Entry(outer, textvariable=self.var_tags, width=26).grid(row=row, column=1, sticky="ew")
 
-        lbl_ocr = ttk.Label(outer, text="OCR lang")
-        lbl_ocr.grid(row=row, column=2, sticky="w", padx=(12, 0))
-        add_tooltip(lbl_ocr, "Idioma(s) para o OCR.\npor,eng → Português + Inglês (padrão recomendado)\npor → só Português | eng → só Inglês")
-        ttk.Combobox(outer, textvariable=self.var_ocr_lang, values=OCR_LANGS, width=20).grid(row=row, column=3, sticky="ew")
+        self._lbl_ocr_lang = ttk.Label(outer, text="OCR lang")
+        self._lbl_ocr_lang.grid(row=row, column=2, sticky="w", padx=(12, 0))
+        add_tooltip(self._lbl_ocr_lang, "Idioma(s) para o OCR.\npor,eng → Português + Inglês (padrão recomendado)\npor → só Português | eng → só Inglês")
+        self._combo_ocr_lang = ttk.Combobox(outer, textvariable=self.var_ocr_lang, values=OCR_LANGS, width=20)
+        self._combo_ocr_lang.grid(row=row, column=3, sticky="ew")
+        _ocr_row = row
         row += 1
 
         lbl_notes = ttk.Label(outer, text="Notas")
@@ -3089,10 +3093,22 @@ class FileEntryDialog(simpledialog.Dialog):
         cb_bundle.grid(row=row, column=1, sticky="w")
         add_tooltip(cb_bundle, "Se marcado, o arquivo entra no bundle.seed.json como conhecimento base prioritário do repositório.")
 
-        cb_formula = ttk.Checkbutton(outer, text="Prioridade em fórmulas", variable=self.var_formula)
-        cb_formula.grid(row=row, column=2, sticky="w")
-        add_tooltip(cb_formula, "Força ativação do backend avançado (docling/marker) mesmo em modo auto ou quick.\nUse quando o documento tem muitas equações matemáticas críticas.")
+        self._cb_formula = ttk.Checkbutton(outer, text="Prioridade em fórmulas", variable=self.var_formula)
+        self._cb_formula.grid(row=row, column=2, sticky="w")
+        add_tooltip(self._cb_formula, "Força ativação do backend avançado (docling/marker) mesmo em modo auto ou quick.\nUse quando o documento tem muitas equações matemáticas críticas.")
+        _formula_row = row
         row += 1
+
+        # Track PDF-only widgets to hide for code/zip file types
+        self._pdf_only_widgets = [
+            (self._lbl_profile, dict(row=_profile_row, column=0, sticky="w", pady=4)),
+            (self._combo_profile, dict(row=_profile_row, column=1, sticky="ew")),
+            (self._lbl_backend, dict(row=_backend_row, column=2, sticky="w", padx=(12, 0))),
+            (self._combo_backend, dict(row=_backend_row, column=3, sticky="ew")),
+            (self._lbl_ocr_lang, dict(row=_ocr_row, column=2, sticky="w", padx=(12, 0))),
+            (self._combo_ocr_lang, dict(row=_ocr_row, column=3, sticky="ew")),
+            (self._cb_formula, dict(row=_formula_row, column=2, sticky="w")),
+        ]
 
         # --- PDF-only options frame ---
         self._pdf_frame = ttk.LabelFrame(outer, text="Opções de PDF", padding=4)
@@ -3127,6 +3143,7 @@ class FileEntryDialog(simpledialog.Dialog):
 
         # Show/hide based on current type
         self._update_pdf_frame_visibility()
+        self._update_pdf_only_fields_visibility()
         self._update_datalab_mode_visibility()
 
         outer.columnconfigure(1, weight=1)
@@ -3136,7 +3153,16 @@ class FileEntryDialog(simpledialog.Dialog):
     def _on_type_changed(self, _event=None):
         self.file_type = self.var_file_type.get()
         self._update_pdf_frame_visibility()
+        self._update_pdf_only_fields_visibility()
         self._update_datalab_mode_visibility()
+
+    def _update_pdf_only_fields_visibility(self):
+        hide = self.file_type in ("code", "zip")
+        for widget, grid_kwargs in self._pdf_only_widgets:
+            if hide:
+                widget.grid_remove()
+            else:
+                widget.grid(**grid_kwargs)
 
     def _update_datalab_mode_visibility(self):
         if self.file_type == "pdf" and self.var_backend.get() == "datalab":
