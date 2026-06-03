@@ -1,7 +1,7 @@
 # Melhorar atribuição de arquivos a blocos do cronograma — Design
 
 date: 2026-06-03
-status: aprovado (aguardando review do spec)
+status: implementado (Fases 0-4 em new-features: 92cc757, 4b6e06a, 3d04703, 693ef23, 232ac2a)
 
 ## Problema
 
