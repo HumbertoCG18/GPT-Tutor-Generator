@@ -69,6 +69,16 @@ class _Thresholds:
     # K da formula de margem (padrao). Topico usa 0.20 historicamente.
     MARGIN_K: float = 0.18
     MARGIN_K_TOPIC: float = 0.20
+    # roteamento entry->unidade (file_map.auto_map_entry_unit)
+    # UNIT_MATCH_REL_MARGIN: gate de margem RELATIVA — winner deve superar o
+    #   runner_up em >=15% para nao ser ambiguo (valor historico ja em uso).
+    # UNIT_MATCH_MIN_WINNER: piso ABSOLUTO de score do vencedor. Sem ele, um
+    #   winner fraco (ex.: 0.41 de um unico token "estado" acidental) com
+    #   runner_up ~0 produz rel_margin~1.0 e passa por confiante. Um match
+    #   genuino fica >=4.x (multiplos topicos/tokens), entao 0.5 separa ruido
+    #   de sinal sem rebaixar matches reais.
+    UNIT_MATCH_REL_MARGIN: float = 0.15
+    UNIT_MATCH_MIN_WINNER: float = 0.5
     # cobertura de material (Fase 4, gate opcional)
     MATERIAL_COVERAGE_MIN: float = 0.70
 

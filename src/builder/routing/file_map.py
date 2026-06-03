@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Callable, Dict, List, NamedTuple, Optional
 
 from src.builder.routing.dates import extract_dates
+from src.builder.routing.thresholds import T, margin_confidence
 
 
 @dataclass
@@ -422,8 +423,17 @@ def auto_map_entry_unit(
         confidence = 0.7
         ambiguous = False
     else:
-        confidence = max(0.0, min(1.0, rel_margin))
-        ambiguous = rel_margin < 0.15
+        # margin_confidence reintroduz o termo winner*k: um vencedor positivo
+        # rende confianca > 0 mesmo com margem nula (ex.: titulo concatenado que
+        # empata as unidades), restaurando o comportamento pre-refator.
+        confidence = margin_confidence(winner_score, runner_up_score, k=T.MARGIN_K)
+        # Ambiguo por margem RELATIVA fraca OU por score ABSOLUTO baixo: sem o
+        # piso absoluto, um winner fraco com runner_up ~0 (rel_margin ~1.0)
+        # passaria por confiante (caso do token "estado" acidental).
+        ambiguous = (
+            rel_margin < T.UNIT_MATCH_REL_MARGIN
+            or winner_score < T.UNIT_MATCH_MIN_WINNER
+        )
     if (
         len(scored) > 1
         and normalized_topic_index
