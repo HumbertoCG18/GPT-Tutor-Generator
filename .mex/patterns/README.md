@@ -1,6 +1,6 @@
 # Patterns
 
-last_updated: 2026-05-12
+last_updated: 2026-06-03
 
 This folder contains task-specific guidance — the things you would tell your agent if you were sitting next to it. Not generic instructions. Project-specific accumulated wisdom.
 

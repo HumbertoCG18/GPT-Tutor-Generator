@@ -2,17 +2,17 @@
   "enabledPlugins": {
     "superpowers@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
-    "github@claude-plugins-official": true,
+    "github@claude-plugins-official": false,
     "code-review@claude-plugins-official": true
   },
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "Edit|Write|Bash",
+        "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "code-review-graph update --skip-flows",
+            "command": "[ -x \"$HOME/.local/bin/code-review-graph.exe\" ] && \"$HOME/.local/bin/code-review-graph.exe\" update --skip-flows >/dev/null 2>&1 || true",
             "timeout": 30
           }
         ]
@@ -24,7 +24,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "code-review-graph status",
+            "command": "[ -x \"$HOME/.local/bin/code-review-graph.exe\" ] && \"$HOME/.local/bin/code-review-graph.exe\" status 2>/dev/null || true",
             "timeout": 10
           }
         ]

@@ -13,7 +13,7 @@ edges:
     condition: when deciding where new logic should live
   - target: context/decisions.md
     condition: when a convention comes from an architectural decision
-last_updated: 2026-05-12
+last_updated: 2026-06-03
 ---
 
 # Conventions

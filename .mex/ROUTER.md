@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Contains project state, routing table, and behavioural contract.
-last_updated: 2026-06-02
+last_updated: 2026-06-03
 ---
 
 # ROUTER.md - Session Bootstrap

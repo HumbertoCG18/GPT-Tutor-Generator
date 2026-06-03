@@ -17,12 +17,12 @@ edges:
     condition: when the UI feature triggers builder logic (understand the flow first)
   - target: patterns/add-builder-submodule.md
     condition: when the UI feature requires new processing logic in a builder subpackage
-last_updated: 2026-05-12
+last_updated: 2026-06-03
 ---
 
 # Add UI Feature
 
-Reviewed against the current Tkinter UI modules and repository dashboard flow on 2026-05-12.
+Reviewed against the current Tkinter UI modules and repository dashboard flow on 2026-06-03.
 
 ## Context
 

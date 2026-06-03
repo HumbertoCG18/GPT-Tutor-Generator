@@ -25,12 +25,12 @@ edges:
     condition: when adding or modifying a PDF backend
   - target: patterns/debug-build-failure.md
     condition: when a pipeline stage fails and you need to trace the error through manifest logs
-last_updated: 2026-05-12
+last_updated: 2026-06-03
 ---
 
 # PDF Pipeline
 
-Reviewed against the current PDF pipeline and backend runtime modules on 2026-05-12.
+Reviewed against the current PDF pipeline and backend runtime modules on 2026-06-03.
 
 ## Pipeline Stages
 
