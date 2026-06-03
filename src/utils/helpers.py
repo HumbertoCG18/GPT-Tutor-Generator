@@ -5,8 +5,11 @@ import shutil
 import unicodedata
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence
+from urllib.parse import urlparse
 import sys
 import os
+
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -409,6 +412,44 @@ def _parse_aspnet_schedule(soup) -> str:
             parts.append("⊘")
         lines.append(" ".join(parts))
     return "\n".join(lines) + "\n"
+
+
+SARC_HOST = "sarc.pucrs.br"
+
+
+def is_sarc_url(url: Optional[str]) -> bool:
+    """Return True if `url` points to the SARC host (sarc.pucrs.br).
+
+    Pure/testable domain check (UI responsibility, not the fetcher's).
+    Accepts http/https and any subpath/query; compares the hostname
+    exactly and case-insensitively (ignoring port) so suffix spoofs like
+    `sarc.pucrs.br.evil.com` are rejected.
+    """
+    if not url:
+        return False
+    try:
+        parsed = urlparse(url)
+    except (ValueError, AttributeError):
+        return False
+    if parsed.scheme not in ("http", "https"):
+        return False
+    host = (parsed.hostname or "").lower()
+    return host == SARC_HOST
+
+
+def fetch_schedule_html(url: str) -> str:
+    """GET `url` and return the raw HTML body.
+
+    Single purpose: fetch only. Domain validation (see `is_sarc_url`) and
+    parsing happen elsewhere. Raises on network/HTTP failure so the UI can
+    translate it into a friendly message.
+
+    Timeout uses the (connect, read) tuple pattern reused from
+    datalab_client (timeout=(connect_to, ...)).
+    """
+    response = requests.get(url, timeout=(10, 30))
+    response.raise_for_status()
+    return response.text
 
 
 def parse_html_schedule(html_content: str) -> str:
