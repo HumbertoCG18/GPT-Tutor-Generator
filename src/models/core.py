@@ -75,6 +75,15 @@ class FileEntry:
     subunit_match_confidence: float = 0.0
     subunit_match_reasons: List[str] = field(default_factory=list)
 
+    # Atribuicao first-class (Fase 1). Resolve "tudo e parse de tag": o slug/id
+    # resolvido vive direto no entry, e auto_tags[unit:|bloco:] sao espelho
+    # destes campos (escritos por resolve_unit_block_tags).
+    computed_unit_slug: str = ""
+    computed_block_id: str = ""
+    computed_block_confidence: float = 0.0
+    # computed_block_band fica no default ate a Fase 3 (BAND_HIGH/BAND_LOW).
+    computed_block_band: str = ""
+
     def id(self) -> str:
         if self.file_type == "url":
             import hashlib

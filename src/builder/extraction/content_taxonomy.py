@@ -896,47 +896,83 @@ def resolve_unit_block_tags(
             unit_ambiguous = unit_match.ambiguous
             unit_reasons = list(unit_match.reasons)
 
-        # --- Block match (manual tem precedencia) ---
+        # --- Block match: DESACOPLADO da unidade (Fase 1) ---
+        # O bloco e SEMPRE computado direto, rodando o scorer sobre TODOS os
+        # blocos instrucionais (nao-administrative_only). A unidade deixou de
+        # ser portao (gate unit_confidence>=0.55 removido) e entra apenas como
+        # BOOST aplicado DENTRO de score_entry_against_timeline_block: quando o
+        # unit_slug do BLOCO casa com preferred_unit, soma +0.35 + (unit_confidence
+        # DO BLOCO * 0.25) (file_map.py:716-719); caso contrario aplica -0.45.
+        # Nao usa a confianca da unidade da ENTRY — so o preferred_unit_slug.
         period_block_id = ""
+        block_confidence = 0.0
         manual_block = resolve_entry_manual_timeline_block_fn(entry, timeline_context)
         if manual_block:
             period_block_id = _collapse_ws(str(manual_block.get("id") or ""))
-        elif resolved_unit_slug and not unit_ambiguous and unit_confidence >= 0.55:
-            candidate_rows = list(blocks_by_unit.get(resolved_unit_slug) or [])
-            if not candidate_rows:
-                candidate_rows = unassigned_blocks
-            if candidate_rows:
+            block_confidence = 1.0
+        else:
+            instructional_blocks = [
+                block
+                for block in (timeline_context.get("timeline_index") or {}).get("blocks", [])
+                or []
+                if not bool(block.get("administrative_only"))
+            ]
+            if instructional_blocks:
+                # Passa a unidade resolvida (mesmo fraca) so para o boost; o
+                # scorer ranqueia TODOS os blocos instrucionais.
                 unit_obj = next(
-                    (u for u in unit_index if u.get("slug") == resolved_unit_slug), {}
+                    (u for u in unit_index if u.get("slug") == resolved_unit_slug),
+                    {"slug": resolved_unit_slug} if resolved_unit_slug else {},
                 )
-                _period, p_conf, p_ambig, _ = select_probable_period_for_entry_fn(
+                _period, p_conf, _p_ambig, _ = select_probable_period_for_entry_fn(
                     entry=entry,
                     unit=unit_obj,
-                    candidate_rows=candidate_rows,
+                    candidate_rows=instructional_blocks,
                     markdown_text=markdown_text,
                     preferred_topic_slug=preferred_topic_slug,
                 )
-                if _period and not p_ambig and p_conf >= 0.50:
-                    for block in candidate_rows:
+                # Gate unico e coerente: o proprio scorer ja descarta scores
+                # fracos retornando period vazio (best<0.95). Acima disso,
+                # sempre atribui o melhor candidato (zero orfao quando ha bloco;
+                # ver spec). p_conf ja e margin_confidence (thresholds.MARGIN_K
+                # k=0.18) computado dentro do scorer — reusado, nao recomputado.
+                if _period:
+                    for block in instructional_blocks:
                         if str(block.get("period_label") or "") == _period:
                             period_block_id = _collapse_ws(str(block.get("id") or ""))
+                            block_confidence = float(p_conf)
                             break
 
-        # --- Monta novo auto_tags ---
+        # --- computed_* sao a FONTE UNICA (Fase 1) ---
+        # O slug/id resolvido vive direto no entry; as tags unit:/bloco: abaixo
+        # sao ESPELHO destes campos, nao um caminho de scoring paralelo.
+        # block_confidence ja e margin_confidence(best, runner_up, k=MARGIN_K)
+        # computada DENTRO de select_probable_period_for_entry_fn (ver comentario
+        # do gate acima) — reusada, nao recomputada aqui (evita duplicar scoring;
+        # cf. thresholds.margin_confidence). computed_block_band fica no default
+        # ate a Fase 3 (BAND_HIGH/BAND_LOW ainda nao existem em thresholds.py).
+        computed_unit_slug = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= 0.65) else ""
+        computed_block_id = period_block_id
+        computed_block_confidence = float(block_confidence)
+
+        # --- Monta novo auto_tags ESPELHANDO os computed_* ---
         existing_auto = list(entry.get("auto_tags") or [])
         kept = [t for t in existing_auto if not any(t.startswith(p) for p in _MANAGED)]
 
-        if resolved_unit_slug and not unit_ambiguous and unit_confidence >= 0.65:
-            kept.append(f"{_UNIT_PREFIX}{resolved_unit_slug}")
+        if computed_unit_slug:
+            kept.append(f"{_UNIT_PREFIX}{computed_unit_slug}")
 
         if preferred_topic_slug:
             kept.append(f"{_SUBUNIT_PREFIX}{preferred_topic_slug}")
 
-        if period_block_id:
-            kept.append(f"{_BLOCO_PREFIX}{period_block_id}")
+        if computed_block_id:
+            kept.append(f"{_BLOCO_PREFIX}{computed_block_id}")
 
         new_entry = dict(entry)
         new_entry["auto_tags"] = kept
+        new_entry["computed_unit_slug"] = computed_unit_slug
+        new_entry["computed_block_id"] = computed_block_id
+        new_entry["computed_block_confidence"] = computed_block_confidence
         new_entry["unit_match_reasons"] = unit_reasons
         new_entry["unit_match_confidence"] = unit_confidence
         new_entry["subunit_match_reasons"] = subunit_reasons
