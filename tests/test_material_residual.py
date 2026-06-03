@@ -22,3 +22,44 @@ def test_assign_concepts_picks_best_block():
     bid, conf = assign_concepts_to_block(["maquina", "turing"], blocks)
     assert bid == "bloco-02"
     assert conf > 0
+
+
+from src.builder.core.summary_core import summarize_residual_materials
+
+
+class _Counter:
+    """extract_concepts callable com contador de chamadas."""
+    def __init__(self, concepts):
+        self.concepts = concepts
+        self.calls = 0
+    def __call__(self, text):
+        self.calls += 1
+        return list(self.concepts)
+
+
+def test_residual_assigns_block_and_caches(tmp_path):
+    blocks = [{"id": "bloco-02", "topic_text": "maquina de turing", "primary_topic_label": "Turing"}]
+    orphans = [{"id": "e1", "_text": "slides sobre turing machine"}]
+    extract = _Counter(["maquina", "turing"])
+    result = summarize_residual_materials(tmp_path, orphans, blocks, extract, cap=5)
+    assert result["e1"]["primary_block_id"] == "bloco-02"
+    from src.builder.core.summary_core import load_summary_cache
+    cached = load_summary_cache(tmp_path, "material_curation.json")
+    assert "e1" in cached["entries"]
+
+
+def test_residual_respects_cap(tmp_path):
+    orphans = [{"id": f"e{i}", "_text": "turing"} for i in range(10)]
+    blocks = [{"id": "bloco-02", "topic_text": "turing"}]
+    extract = _Counter(["turing"])
+    summarize_residual_materials(tmp_path, orphans, blocks, extract, cap=3)
+    assert extract.calls == 3
+
+
+def test_residual_cache_hit_skips_client(tmp_path):
+    from src.builder.core.summary_core import write_summary_cache
+    write_summary_cache(tmp_path, "material_curation.json",
+                        {"version": 1, "entries": {"e1": {"primary_block_id": "bloco-02", "concepts": ["x"]}}})
+    extract = _Counter(["t"])
+    summarize_residual_materials(tmp_path, [{"id": "e1", "_text": "t"}], [{"id": "bloco-02"}], extract, cap=5)
+    assert extract.calls == 0  # cache hit

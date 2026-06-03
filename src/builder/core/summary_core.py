@@ -53,3 +53,43 @@ def assign_concepts_to_block(concepts: List[str], blocks: list) -> Tuple[str, fl
     total = sum(n for _, n in scored)
     conf = min(0.6, max(0.0, (winner_n - runner_n + 1) / (total + 1)))
     return winner_id, round(conf, 3)
+
+
+from typing import Callable
+
+
+def summarize_residual_materials(repo_dir, orphans, blocks,
+                                 extract_concepts: Callable[[str], list], *,
+                                 cap: int = 20,
+                                 cache_filename: str = "material_curation.json") -> dict:
+    """Resume materiais orfaos (cada um com chave '_text'), casa em bloco e cacheia.
+
+    `extract_concepts(text) -> list[str]`: callable que extrai conceitos/keywords.
+    Em producao e um adapter sobre o client Gemini (Task 3.2). Cap limita chamadas;
+    cache evita re-chamada. Retorna {entry_id: {concepts, primary_block_id, confidence, method}}.
+    """
+    cache = load_summary_cache(repo_dir, cache_filename)
+    entries_map = cache.setdefault("entries", {})
+    out: dict = {}
+    calls = 0
+    for entry in orphans or []:
+        eid = str(entry.get("id") or "")
+        if not eid:
+            continue
+        if eid in entries_map and entries_map[eid].get("primary_block_id"):
+            out[eid] = entries_map[eid]
+            continue
+        if calls >= cap:
+            break
+        text = str(entry.get("_text", "") or "")
+        if not text.strip():
+            continue
+        concepts = extract_concepts(text) or []
+        calls += 1
+        bid, conf = assign_concepts_to_block(concepts, blocks)
+        rec = {"concepts": concepts, "primary_block_id": bid,
+               "confidence": conf, "method": "gemini_residual"}
+        entries_map[eid] = rec
+        out[eid] = rec
+    write_summary_cache(repo_dir, cache_filename, cache)
+    return out
