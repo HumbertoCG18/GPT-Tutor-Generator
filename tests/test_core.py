@@ -1557,7 +1557,9 @@ def test_parallel_image_extraction_runs_while_marker_remains_advanced_backend(tm
         ),
     )
     monkeypatch.setattr(builder, "_apply_math_normalization", lambda *_args, **_kwargs: None)
-    monkeypatch.setattr(engine_module, "HAS_PYMUPDF", True)
+    # O gate de extracao le builder.HAS_PYMUPDF (atributo de instancia, settavel),
+    # nao o global do modulo; ver test_datalab_image_extraction.
+    builder.HAS_PYMUPDF = True
     monkeypatch.setattr(
         builder,
         "_extract_pdf_images",

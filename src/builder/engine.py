@@ -276,10 +276,16 @@ from src.utils.helpers import (
 )
 from src.utils.power import prevent_system_sleep
 
-if HAS_PYMUPDF:
+# Bind sempre o nome (None se indisponivel) p/ o atributo do modulo existir mesmo
+# sem o pacote instalado: testes fazem monkeypatch e codigo le `pymupdf if HAS_PYMUPDF`.
+try:
     import pymupdf
-if HAS_PYMUPDF4LLM:
+except ImportError:
+    pymupdf = None
+try:
     import pymupdf4llm
+except ImportError:
+    pymupdf4llm = None
 if HAS_PDFPLUMBER:
     import pdfplumber
 
