@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sistema de Atribuição — Cronograma · Unidades · Blocos · Materiais</title>
+<script src="./vendor/mermaid.min.js"></script>
+<style>
+  :root { --bg:#0f1117; --panel:#171a23; --border:#2a2f3c; --fg:#d7dce5; --muted:#8a93a6; --accent:#89b4fa; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+    font-family:"Inter","Segoe UI",system-ui,sans-serif; padding:26px clamp(12px,3vw,40px) 90px; }
+  h1 { font-size:23px; margin:0 0 4px; letter-spacing:-0.5px; }
+  .sub { color:var(--muted); font-size:13px; margin:0 0 16px; }
+  .tabs { display:flex; gap:7px; margin:0 0 16px; flex-wrap:wrap; }
+  .tab { background:var(--panel); border:1px solid var(--border); color:var(--fg);
+    padding:7px 14px; border-radius:8px; cursor:pointer; font-size:13px; }
+  .tab.active { border-color:var(--accent); color:var(--accent); }
+  .view { display:none; }
+  .view.active { display:block; }
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px; overflow:auto; }
+  .render { display:flex; justify-content:center; min-height:120px; }
+  .render svg { max-width:100%; height:auto; }
+  .err { color:#f38ba8; font-family:Consolas,monospace; font-size:12px; white-space:pre-wrap; }
+  .desc { color:var(--muted); font-size:13px; margin:0 0 12px; max-width:1000px; }
+  .desc b { color:var(--fg); }
+  .legend { display:flex; flex-wrap:wrap; gap:8px 16px; margin:14px 0 0; font-size:12px; color:var(--muted); }
+  .legend span { display:inline-flex; align-items:center; gap:6px; }
+  .sw { width:13px; height:13px; border-radius:4px; display:inline-block; border:1px solid #0006; }
+  code { font-family:"JetBrains Mono",Consolas,monospace; font-size:12px; color:var(--accent); }
+  .note { background:#10131c; border:1px solid var(--border); border-left:3px solid var(--accent);
+    border-radius:8px; padding:10px 13px; font-size:12.5px; color:var(--muted); margin-top:12px; max-width:1000px; }
+</style>
+</head>
+<body>
+<h1>Sistema de Atribuição — como tudo se conecta</h1>
+<p class="sub">Plano de ensino · Cronograma (SYLLABUS) · Taxonomy (unidades/subunidades) · Blocos · Materiais · timeline_index.json · Curadoria</p>
+
+<div class="tabs">
+  <button class="tab active" data-v="overview">1 · Visão geral (pipeline)</button>
+  <button class="tab" data-v="score">2 · Score &amp; atribuição</button>
+  <button class="tab" data-v="real">3 · Caso real (TCC)</button>
+  <button class="tab" data-v="nova">4 · Cadeira nova</button>
+  <button class="tab" data-v="files">5 · Materiais → bloco</button>
+</div>
+
+<div class="view active" id="overview">
+  <div class="card">
+    <p class="desc"><b>Duas fontes, um artefato.</b> O <b>Plano de Ensino</b> (ementa + conteúdo programático) vira a <b>taxonomy</b> (unidades, subunidades, aliases). O <b>SYLLABUS</b> (tabela do cronograma) vira <b>blocos</b> (semanas agrupadas por tema). O matcher cruza os dois e grava tudo no <code>.timeline_index.json</code> v4, que alimenta a UI e o anexo de materiais.</p>
+    <div class="render" id="r-overview"></div>
+    <div class="legend">
+      <span><span class="sw" style="background:#1e2433;border-color:#89b4fa"></span> fonte/artefato</span>
+      <span><span class="sw" style="background:#1a1f2b;border-color:#585b70"></span> processo</span>
+      <span><span class="sw" style="background:#2a221a;border-color:#fab387"></span> dado derivado</span>
+      <span><span class="sw" style="background:#16241a;border-color:#a6e3a1"></span> curadoria (dado, não código)</span>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="score">
+  <div class="card">
+    <p class="desc"><b>Como o número decide.</b> Cada bloco é pontuado contra os tópicos da taxonomy; a unidade vem em <b>cascata de 4 camadas</b> (primeira que passa o limiar ganha). Tudo determinístico — keywords + overlap de tokens, zero LLM.</p>
+    <div class="render" id="r-score"></div>
+    <div class="note">Limiares reais: tópico weak se <code>score &lt; 1.85/1.75/1.35</code> (por faixa) ou <code>conf &lt; 0.8/0.9/0.72</code>. Unidade via tópico exige <code>conf ≥ 0.65</code>; matcher direto exige <code>winner ≥ 1.0</code> e <code>gap ≥ 0.35</code>; voto exige <code>dominância ≥ 0.60</code>. unit: tag ≥ 0.65 · subunit: ≥ 0.60 · bloco: ≥ 0.50.</div>
+  </div>
+</div>
+
+<div class="view" id="real">
+  <div class="card">
+    <p class="desc"><b>Caso real — TCC, "Halting Problem".</b> O cronograma diz <code>Halting Problem</code> (inglês); a ementa diz <code>Problema da Parada</code> (português). Zero token em comum → o matcher acha <b>0 candidatos</b>. O fallback humaniza o label pra UI, mas a unidade fica vazia. A curadoria fecha (1 clique, persistido).</p>
+    <div class="render" id="r-real"></div>
+    <div class="note">Mesmo padrão: <code>Theorema de Rice</code> (typo) e <code>Entscheidungsproblem</code> (granularidade da taxonomy). Todos resolvidos por <code>manual_unit_slug → unidade-03-problemas-indecidiveis</code> no <code>.timeline_curation.json</code>, que sobrevive ao rebuild.</div>
+  </div>
+</div>
+
+<div class="view" id="nova">
+  <div class="card">
+    <p class="desc"><b>Cadeira nova = zero refactor.</b> O sistema se molda por <b>dado</b>, não por código. Solta plano + syllabus, o automático resolve ~90%, o gate sinaliza o resíduo, o professor cura os poucos blocos duros 1x na UI. Nunca se mexe no código.</p>
+    <div class="render" id="r-nova"></div>
+    <div class="note">Garante 100% em qualquer disciplina/idioma porque a curadoria é o último elo — auditável, determinístico, sem dependência de modelo. Adicionar cadeira nunca dispara refatoração.</div>
+  </div>
+</div>
+
+<div class="view" id="files">
+  <div class="card">
+    <p class="desc"><b>Material → bloco.</b> Cada arquivo no <code>manifest.json</code> recebe tags gerenciadas (<code>unit:</code>, <code>subunit:</code>, <code>bloco:</code>) por confiança, ou uma atribuição manual absoluta. A UI agrupa os materiais sob cada bloco do cronograma.</p>
+    <div class="render" id="r-files"></div>
+    <div class="note">Critério (<code>content_taxonomy.py</code>): <code>unit:</code> conf ≥ 0.65 · <code>subunit:</code> ≥ 0.60 · <code>bloco:</code> ≥ 0.50 (e não-ambíguo). <code>manual_timeline_block_id</code> e <code>manual_unit_slug</code> têm precedência absoluta (conf = 1.0).</div>
+  </div>
+</div>
+
+<script>
+const DEFS = {
+overview: `flowchart LR
+  PE["📘 PLANO DE ENSINO<br/>ementa + conteudo programatico"]:::src
+  SY["📄 SYLLABUS.md<br/>tabela do cronograma"]:::src
+  TX["build_content_taxonomy<br/>unidades + subunidades + aliases"]:::proc
+  RW["parse_syllabus_timeline<br/>linhas (data, descricao)"]:::proc
+  TAX[("🗂 TAXONOMY<br/>unit / subunit / topics")]:::data
+  BL["agrupa em blocos tematicos<br/>bloco-01 .. bloco-NN"]:::proc
+  CLS["classify_block -> kind<br/>15 kinds (aula, prova, feriado, intro...)"]:::proc
+  MT["match + score<br/>topico -> unidade (cascata)"]:::proc
+  CUR["✍ .timeline_curation.json<br/>overrides manuais (kind/topic/unit)"]:::cur
+  IDX[("💾 .timeline_index.json v4<br/>blocos + kind + unit + topic + status")]:::data
+  ST["derive_block_status<br/>ok / needs_unit / non_applicable..."]:::proc
+  UI["🖥 Dashboard + anexo de materiais"]:::src
+
+  PE --> TX --> TAX
+  SY --> RW --> BL --> CLS --> MT
+  TAX --> MT
+  MT --> CUR --> IDX --> ST --> UI
+
+  classDef src fill:#1e2433,stroke:#89b4fa,color:#cdd6f4;
+  classDef proc fill:#1a1f2b,stroke:#585b70,color:#d7dce5;
+  classDef data fill:#2a221a,stroke:#fab387,color:#fab387;
+  classDef cur fill:#16241a,stroke:#a6e3a1,color:#a6e3a1;`,
+
+score: `flowchart LR
+  B["bloco<br/>topic_text + linhas"]:::data
+  SC["score vs cada topico<br/>+0.18 se subtopico"]:::proc
+  Q1{"topico forte?<br/>nao weak"}:::dec
+  TOP["primary_topic + candidatos"]:::data
+  subgraph UNIT ["cascata de unidade (1a que passa ganha)"]
+    direction LR
+    C1{"via topico<br/>conf maior-igual 0.65?"}:::dec
+    C2{"texto x unidade<br/>winner maior-igual 1.0<br/>gap maior-igual 0.35?"}:::dec
+    C3{"voto candidatos<br/>dominancia maior-igual 0.60?"}:::dec
+    C4{"herda vizinho?"}:::dec
+  end
+  OKU["unit_slug + confianca"]:::ok
+  CUR["✍ curadoria manual<br/>manual_unit_slug (conf 1.0)"]:::cur
+
+  B --> SC --> Q1
+  Q1 -- sim --> TOP
+  Q1 -- nao --> CUR
+  TOP --> C1
+  C1 -- sim --> OKU
+  C1 -- nao --> C2
+  C2 -- sim --> OKU
+  C2 -- nao --> C3
+  C3 -- sim --> OKU
+  C3 -- nao --> C4
+  C4 -- sim --> OKU
+  C4 -- nao --> CUR
+  CUR --> OKU
+
+  classDef data fill:#2a221a,stroke:#fab387,color:#fab387;
+  classDef proc fill:#1a1f2b,stroke:#585b70,color:#d7dce5;
+  classDef dec fill:#2a221a,stroke:#fab387,color:#fab387;
+  classDef ok fill:#16241a,stroke:#a6e3a1,color:#a6e3a1;
+  classDef cur fill:#16241a,stroke:#a6e3a1,color:#a6e3a1;`,
+
+real: `flowchart LR
+  R["SYLLABUS linha 12<br/>15/04 · Halting Problem"]:::src
+  EM["EMENTA<br/>Problema da Parada (PT)"]:::src
+  B["bloco-10<br/>topic_text = halting problem"]:::data
+  M{"match vs taxonomy<br/>token EN x PT"}:::dec
+  Z["ncands = 0<br/>0 candidatos"]:::bad
+  FB["fallback humaniza label<br/>topic_source = topic_text_fallback"]:::proc
+  NU["unit_slug vazio<br/>status = needs_unit"]:::bad
+  CU["✍ manual_unit_slug<br/>unidade-03-problemas-indecidiveis"]:::cur
+  OK["status = ok<br/>(sobrevive rebuild)"]:::ok
+
+  R --> B
+  EM -. vocabulario diferente .-> M
+  B --> M --> Z --> FB --> NU
+  NU --> CU --> OK
+
+  classDef src fill:#1e2433,stroke:#89b4fa,color:#cdd6f4;
+  classDef data fill:#2a221a,stroke:#fab387,color:#fab387;
+  classDef proc fill:#1a1f2b,stroke:#585b70,color:#d7dce5;
+  classDef dec fill:#2a221a,stroke:#fab387,color:#fab387;
+  classDef bad fill:#2a1a1f,stroke:#f38ba8,color:#f38ba8;
+  classDef cur fill:#16241a,stroke:#a6e3a1,color:#a6e3a1;
+  classDef ok fill:#16241a,stroke:#a6e3a1,color:#a6e3a1;`,
+
+nova: `flowchart LR
+  D["nova cadeira<br/>solta plano + syllabus"]:::src
+  AU["pipeline automatico<br/>taxonomy + blocos + match"]:::proc
+  R90["~90% resolvido auto"]:::ok
+  G{"gate de saude<br/>unknown <= 5%<br/>class needs_unit <= 10%"}:::dec
+  PASS["100% verde"]:::ok
+  RES["residuo sinalizado<br/>(EN/PT, typo, vocabulario)"]:::bad
+  UIc["professor cura na UI<br/>dropdown unidade/kind"]:::cur
+  PERS["💾 .timeline_curation.json<br/>dado, nao codigo · sobrevive rebuild"]:::cur
+
+  D --> AU --> R90 --> G
+  G -- ok --> PASS
+  G -- residuo --> RES --> UIc --> PERS --> PASS
+
+  classDef src fill:#1e2433,stroke:#89b4fa,color:#cdd6f4;
+  classDef proc fill:#1a1f2b,stroke:#585b70,color:#d7dce5;
+  classDef dec fill:#2a221a,stroke:#fab387,color:#fab387;
+  classDef ok fill:#16241a,stroke:#a6e3a1,color:#a6e3a1;
+  classDef bad fill:#2a1a1f,stroke:#f38ba8,color:#f38ba8;
+  classDef cur fill:#16241a,stroke:#a6e3a1,color:#a6e3a1;`,
+
+files: `flowchart LR
+  MAN[("📦 manifest.json<br/>entries (PDF/URL/codigo)")]:::data
+  SIG["sinais do arquivo<br/>nome + conteudo + tags"]:::proc
+  SCU["score vs unidade/subunidade/bloco"]:::proc
+  TU{"unit: conf maior-igual 0.65?"}:::dec
+  TS{"subunit: conf maior-igual 0.60?"}:::dec
+  TB{"bloco: conf maior-igual 0.50<br/>e nao-ambiguo?"}:::dec
+  TAGS["auto_tags<br/>unit: / subunit: / bloco:bloco-NN"]:::data
+  MANU["✍ manual_timeline_block_id<br/>manual_unit_slug (conf 1.0)"]:::cur
+  GRP["agrupa por bloco<br/>entries_by_block_id"]:::proc
+  UI["🖥 materiais sob cada bloco"]:::src
+
+  MAN --> SIG --> SCU
+  SCU --> TU --> TAGS
+  SCU --> TS --> TAGS
+  SCU --> TB --> TAGS
+  MANU -. precedencia absoluta .-> TAGS
+  TAGS --> GRP --> UI
+
+  classDef data fill:#2a221a,stroke:#fab387,color:#fab387;
+  classDef proc fill:#1a1f2b,stroke:#585b70,color:#d7dce5;
+  classDef dec fill:#2a221a,stroke:#fab387,color:#fab387;
+  classDef cur fill:#16241a,stroke:#a6e3a1,color:#a6e3a1;
+  classDef src fill:#1e2433,stroke:#89b4fa,color:#cdd6f4;`
+};
+
+mermaid.initialize({
+  startOnLoad: false, theme: "dark", securityLevel: "loose",
+  themeVariables: { fontFamily: "Inter, Segoe UI, sans-serif", fontSize: "13px" },
+  flowchart: { curve: "basis", nodeSpacing: 40, rankSpacing: 60, htmlLabels: true }
+});
+
+const done = {};
+async function show(key) {
+  if (done[key]) return;
+  const el = document.getElementById("r-" + key);
+  try {
+    const { svg } = await mermaid.render("svg-" + key, DEFS[key]);
+    el.innerHTML = svg; done[key] = true;
+  } catch (e) {
+    el.innerHTML = '<div class="err">Erro: ' + (e && e.message ? e.message : e) + '</div>';
+  }
+}
+document.querySelectorAll(".tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".view").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    document.getElementById(t.dataset.v).classList.add("active");
+    show(t.dataset.v);
+  });
+});
+show("overview");
+</script>
+</body>
+</html>
