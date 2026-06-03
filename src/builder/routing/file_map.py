@@ -3,8 +3,11 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
+
+from src.builder.routing.dates import extract_dates
 
 
 @dataclass
@@ -740,22 +743,68 @@ def score_entry_against_timeline_block(
 
     score += min(score_card_evidence_against_entry_fn(signals, block.get("card_evidence", []) or []), 0.45)
 
-    # Boost DD.MM: se raw_text começa com DD.MM e a data casa com alguma
-    # row do bloco, aplica boost pequeno e determinístico (+0.30).
-    raw_target_text = signals.get("raw_text", "")
-    if raw_target_text:
-        _dd_mm = re.match(r"^(\d{1,2})[.\s](\d{2})\s+", raw_target_text)
-        if _dd_mm:
-            _day = int(_dd_mm.group(1))
-            _month = int(_dd_mm.group(2))
-            _file_date_str = f"{_day:02d}/{_month:02d}"
-            for _row in (block.get("rows") or []):
-                _row_date = str(_row.get("date_text", "") or "")
-                if _row_date.startswith(_file_date_str):
-                    score += 0.30
-                    break
+    # Boost de data (substitui o antigo regex DD.MM-no-início): extrai datas de
+    # QUALQUER posição do material (título/markdown/raw via extract_dates) e
+    # compara com o período do bloco. Data exata dentro de
+    # period_start..period_end (ou que casa um date_text de row) → boost FORTE
+    # (DATE_STRONG_BOOST=+0.30, peso calibrável herdado do +0.30 original); mês
+    # compatível mas fora do range → boost FRACO (DATE_WEAK_BOOST). O ano do
+    # bloco resolve datas year-less do material (default_year), já que não há
+    # campo course_year no modelo — o ano vive no próprio período do bloco.
+    score += _score_block_date_match(signals, block)
 
     return score
+
+
+# Pesos do boost de data. DATE_STRONG_BOOST mantém o +0.30 original como base
+# calibrável (spec Fase 2). DATE_WEAK_BOOST é deliberadamente menor: mês
+# compatível é sinal mais fraco que data exata-no-range, então ~1/3 do forte —
+# o suficiente para desempatar sem competir com um match exato.
+DATE_STRONG_BOOST = 0.30
+DATE_WEAK_BOOST = 0.10
+
+
+def _block_period_bounds(block: Dict[str, object]) -> tuple[Optional[date], Optional[date]]:
+    """Range do bloco como (date, date). Usa period_start/period_end (ISO) e
+    cai para os date_text das rows quando os campos de período faltam."""
+    candidates: List[date] = []
+    for key in ("period_start", "period_end"):
+        for dt in extract_dates(str(block.get(key, "") or "")):
+            candidates.append(dt)
+    if not candidates:
+        for row in block.get("rows") or []:
+            for dt in extract_dates(str(row.get("date_text", "") or "")):
+                candidates.append(dt)
+    if not candidates:
+        return None, None
+    return min(candidates), max(candidates)
+
+
+def _score_block_date_match(signals: dict, block: Dict[str, object]) -> float:
+    start, end = _block_period_bounds(block)
+    if not start or not end:
+        return 0.0
+
+    # Datas year-less do material assumem o ano do período do bloco. Extraímos
+    # POR fonte (não num join): os signals chegam JÁ normalizados, então uma data
+    # year-less separada por espaço ("12 03 ...") só é aceita ANCORADA no início
+    # do texto (cf. dates.py). Juntar os campos jogaria a data real para o meio
+    # da string e mataria o match — por isso rodamos extract_dates em cada fonte.
+    material_dates: list[date] = []
+    for key in ("raw_text", "title_text", "markdown_text"):
+        material_dates.extend(
+            extract_dates(str(signals.get(key, "") or ""), default_year=start.year)
+        )
+    if not material_dates:
+        return 0.0
+
+    for dt in material_dates:
+        if start <= dt <= end:
+            return DATE_STRONG_BOOST
+    for dt in material_dates:
+        if start.month <= dt.month <= end.month and dt.year == start.year:
+            return DATE_WEAK_BOOST
+    return 0.0
 
 
 def collect_entry_temporal_signals(
