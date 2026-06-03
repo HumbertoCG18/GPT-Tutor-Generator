@@ -28,6 +28,7 @@ class BlockKind(str, Enum):
     PLANNING = "planning"
     RESERVED = "reserved"
     RESULTS = "results"
+    OVERVIEW = "overview"
     UNKNOWN = "unknown"
 
 
@@ -38,8 +39,13 @@ KIND_REQUIREMENTS: Dict[BlockKind, Dict[str, object]] = {
     BlockKind.ASSESSMENT:    {"unit": False,     "topic": True,  "files": False},
     BlockKind.REVIEW:        {"unit": "inherit", "topic": False, "files": False},
     BlockKind.MAKEUP:        {"unit": "inherit", "topic": True,  "files": True},
-    BlockKind.DELIVERABLE:   {"unit": True,      "topic": True,  "files": True},
+    # DELIVERABLE/trabalho atravessa conteudo de varias unidades — unit nao
+    # obrigatorio (semana de trabalho/entrega nao mapeia 1 unidade unica).
+    BlockKind.DELIVERABLE:   {"unit": False,     "topic": True,  "files": True},
     BlockKind.WORKSHOP:      {"unit": False,     "topic": True,  "files": False},
+    # OVERVIEW: aula de apresentacao/introducao/plano de ensino. Academica
+    # (visivel ao aluno) mas pre-unidade — nao exige unit/topic/files.
+    BlockKind.OVERVIEW:      {"unit": False,     "topic": False, "files": False},
     BlockKind.HOLIDAY:        {"unit": False, "topic": False, "files": False},
     BlockKind.SUSPENDED:      {"unit": False, "topic": False, "files": False},
     BlockKind.ACADEMIC_EVENT: {"unit": False, "topic": False, "files": False},
@@ -66,6 +72,7 @@ KIND_DISPLAY: Dict[BlockKind, Dict[str, str]] = {
     BlockKind.PLANNING:       {"icon": "🗓", "label": "Planejamento",      "color": "gray"},
     BlockKind.RESERVED:       {"icon": "⏳", "label": "Reserva",           "color": "gray"},
     BlockKind.RESULTS:        {"icon": "📊", "label": "Resultados",        "color": "green"},
+    BlockKind.OVERVIEW:       {"icon": "📋", "label": "Introdução",        "color": "blue"},
     BlockKind.UNKNOWN:        {"icon": "❓", "label": "Não classificado",  "color": "yellow"},
 }
 

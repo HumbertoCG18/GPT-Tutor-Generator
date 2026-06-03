@@ -24,8 +24,8 @@ from src.builder.timeline.status import derive_block_status
 # kinds.py — invariants
 # ---------------------------------------------------------------------------
 
-def test_enum_has_14_values():
-    assert len(list(BlockKind)) == 14
+def test_enum_has_15_values():
+    assert len(list(BlockKind)) == 15
 
 
 def test_requirements_covers_every_kind():
@@ -58,8 +58,14 @@ CLASSIFIER_CASES = [
     ({"topic_text": "Recuperação"}, BlockKind.ASSESSMENT),
     ({"topic_text": "Revisão para P2"}, BlockKind.ASSESSMENT),
     ({"topic_text": "Revisão geral"}, BlockKind.REVIEW),
-    ({"topic_text": "Apresentação do plano de ensino e avaliação"}, BlockKind.CLASS),
-    ({"topic_text": "Ementa da disciplina"}, BlockKind.CLASS),
+    ({"topic_text": "Apresentação do plano de ensino e avaliação"}, BlockKind.OVERVIEW),
+    ({"topic_text": "Ementa da disciplina"}, BlockKind.OVERVIEW),
+    ({"topic_text": "Introdução"}, BlockKind.OVERVIEW),
+    ({"topic_text": "Disciplina introdução"}, BlockKind.OVERVIEW),
+    ({"topic_text": "Introdução à lógica de predicados", "unit_slug": "u1"}, BlockKind.CLASS),
+    ({"topic_text": "Trabalho gerais"}, BlockKind.DELIVERABLE),
+    ({"topic_text": "Parte trabalho"}, BlockKind.DELIVERABLE),
+    ({"period_label": "5 dias · 11/03/2026 a 25/03/2026"}, BlockKind.RESERVED),
     ({"topic_text": "Lógica de predicados", "unit_slug": "u1"}, BlockKind.CLASS),
     ({"topic_text": "Atendimento aos alunos"}, BlockKind.OFFICE_HOURS),
     ({"topic_text": "Plantão de dúvidas"}, BlockKind.OFFICE_HOURS),

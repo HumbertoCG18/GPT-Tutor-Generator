@@ -77,6 +77,8 @@ KIND_KEYWORDS: List[Tuple[BlockKind, List[KeywordSpec]]] = [
     (BlockKind.DELIVERABLE, [
         "entrega trabalho", "entrega final", "entrega do trabalho",
         "submissao final",
+        # semana de trabalho/projeto generica (sem unidade unica)
+        "trabalho", "parte trabalho",
     ]),
     (BlockKind.WORKSHOP, [
         "oficina", "lancamento", "kick off", "kickoff",
@@ -102,10 +104,10 @@ KIND_KEYWORDS: List[Tuple[BlockKind, List[KeywordSpec]]] = [
 ]
 
 
-def _text_of(block: Mapping[str, object]) -> str:
-    """Campos a inspecionar para classificacao."""
+def _content_text(block: Mapping[str, object]) -> str:
+    """Campos de CONTEUDO pedagogico (sem period_label, que e so calendario)."""
     parts: List[str] = []
-    for key in ("topic_text", "primary_topic_label", "period_label"):
+    for key in ("topic_text", "primary_topic_label"):
         val = block.get(key)
         if isinstance(val, str) and val:
             parts.append(val)
@@ -113,6 +115,14 @@ def _text_of(block: Mapping[str, object]) -> str:
     if isinstance(topics, list):
         parts.extend(str(t) for t in topics if t)
     return " ".join(parts)
+
+
+def _text_of(block: Mapping[str, object]) -> str:
+    """Conteudo + period_label. Usado no matching de keywords (feriado etc.
+    podem vir no rotulo do periodo)."""
+    label = block.get("period_label")
+    label_str = label if isinstance(label, str) else ""
+    return f"{_content_text(block)} {label_str}".strip()
 
 
 def classify_block(block: Mapping[str, object]) -> BlockKind:
@@ -124,35 +134,45 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
         except ValueError:
             pass
 
-    raw_text = _text_of(block)
-    hay = _norm(raw_text)
+    hay_content = _norm(_content_text(block))
+    hay_all = _norm(_text_of(block))
     has_unit = bool(block.get("unit_slug"))
     has_topic = bool(block.get("primary_topic_label"))
 
-    if not hay:
+    # 1. Apresentacao/introducao/plano de ensino -> OVERVIEW (academica, sem
+    #    unidade). Vence keyword (ex.: "plano de ensino e avaliacao" nao vira
+    #    assessment). So dispara em conteudo intro generico/curto.
+    if hay_content:
+        if any(term in hay_content for term in CLASS_INTRO_TERMS):
+            return BlockKind.OVERVIEW
+        content_tokens = set(hay_content.split())
+        if "introducao" in content_tokens and len(content_tokens) <= 2:
+            return BlockKind.OVERVIEW
+
+    # 2. Sem conteudo real: com unit ainda e aula; com period_label e slot de
+    #    calendario reservado; totalmente vazio fica UNKNOWN (curadoria).
+    if not hay_content:
         if has_unit:
             return BlockKind.CLASS
-        return BlockKind.UNKNOWN
+        return BlockKind.RESERVED if hay_all else BlockKind.UNKNOWN
 
-    if any(term in hay for term in CLASS_INTRO_TERMS):
-        return BlockKind.CLASS
-
-    hay_tokens = set(hay.split())
-
+    # 3. Keywords (sobre conteudo + period_label).
+    hay_tokens = set(hay_all.split())
     for kind, specs in KIND_KEYWORDS:
         for spec in specs:
             if isinstance(spec, re.Pattern):
-                if spec.search(hay):
+                if spec.search(hay_all):
                     return kind
             else:
-                if _phrase_match(spec, hay, hay_tokens):
+                if _phrase_match(spec, hay_all, hay_tokens):
                     return kind
 
     if has_unit or has_topic:
         return BlockKind.CLASS
-    # Topic_text com substancia (>=8 chars OU >=2 tokens) sugere aula real
-    # sem unit/topic mapeados ainda. Phase 3/4 resolve unit/topic depois.
-    # UNKNOWN reservado pra fragmento (1 token curto) ou vazio.
-    if len(hay) >= 8 or len(hay_tokens) >= 2:
+    # 4. Substancia em CONTEUDO (>=8 chars OU >=2 tokens) sugere aula real sem
+    #    unit/topic mapeados ainda (Phase 3/4 resolve depois). period_label NAO
+    #    conta — datas nao sao conteudo. Fragmento curto -> UNKNOWN.
+    content_tokens = set(hay_content.split())
+    if len(hay_content) >= 8 or len(content_tokens) >= 2:
         return BlockKind.CLASS
     return BlockKind.UNKNOWN
