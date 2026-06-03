@@ -932,7 +932,6 @@ class DatalabCloudBackend(ExtractionBackend):
             disable_image_extraction=False,
             paginate=True,
             token_efficient_markdown=False,
-            request_timeout=60,
             poll_interval=2.0,
             max_wait_seconds=max_wait_seconds,
         )

@@ -182,7 +182,7 @@ def test_disable_image_captions_is_false_when_datalab_source(monkeypatch):
 
     def fake_convert(file_path, *, output_format, mode, page_range, disable_image_captions,
                      disable_image_extraction, paginate, token_efficient_markdown,
-                     request_timeout, poll_interval, max_wait_seconds):
+                     poll_interval, max_wait_seconds, **kwargs):
         captured_args["disable_image_captions"] = disable_image_captions
         result = MagicMock()
         result.markdown = ""
