@@ -41,3 +41,47 @@ def material_coverage(entries: Iterable[dict]) -> dict:
         "coverage": (with_block / total) if total else 0.0,
         "by_type": {k: dict(v) for k, v in by_type.items()},
     }
+
+
+def _blocks_by_material_count(entries, blocks) -> dict:
+    counts = {b.get("id"): 0 for b in (blocks or []) if b.get("id")}
+    for e in entries or []:
+        bid = _entry_block_id(e)
+        if bid in counts:
+            counts[bid] += 1
+    return counts
+
+
+def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:
+    rep = material_coverage(entries)
+    name = str((course_meta or {}).get("name") or "Curso")
+    lines = [
+        f"# CRONOGRAMA_HEALTH — {name}",
+        "",
+        f"- **Cobertura de material**: {rep['coverage']:.0%} "
+        f"({rep['with_block']}/{rep['total']} com bloco)",
+        f"- **Órfãos** (sem bloco): {rep['orphans']}",
+        "",
+        "## Por tipo",
+        "",
+        "| Tipo | Com bloco | Total |",
+        "|---|---|---|",
+    ]
+    for ftype, v in sorted(rep["by_type"].items()):
+        lines.append(f"| {ftype} | {v['with_block']} | {v['total']} |")
+
+    counts = _blocks_by_material_count(entries, blocks)
+    poor = [bid for bid, n in counts.items() if n == 0]
+    rich = sorted(((n, bid) for bid, n in counts.items()), reverse=True)[:5]
+    lines += [
+        "",
+        "## Blocos pobres (0 materiais)",
+        "",
+        (", ".join(poor) if poor else "_nenhum_"),
+        "",
+        "## Blocos mais ricos",
+        "",
+    ]
+    for n, bid in rich:
+        lines.append(f"- {bid}: {n} material(is)")
+    return "\n".join(lines) + "\n"

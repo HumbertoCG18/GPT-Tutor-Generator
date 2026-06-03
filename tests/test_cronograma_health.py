@@ -25,3 +25,18 @@ def test_coverage_manual_block_counts():
     entries = [{"id": "m", "manual_timeline_block_id": "bloco-03", "auto_tags": [], "file_type": "pdf"}]
     rep = material_coverage(entries)
     assert rep["with_block"] == 1
+
+
+from src.builder.artifacts.cronograma_health import cronograma_health_md
+
+
+def test_health_md_renders_metrics():
+    entries = [
+        {"id": "a", "auto_tags": ["bloco:bloco-01"], "file_type": "pdf", "category": "material-de-aula"},
+        {"id": "b", "auto_tags": [], "file_type": "image", "category": "material-de-aula"},
+    ]
+    blocks = [{"id": "bloco-01"}, {"id": "bloco-02"}]
+    md = cronograma_health_md({"name": "X"}, entries, blocks)
+    assert "Cobertura" in md
+    assert "50%" in md
+    assert "bloco-02" in md  # bloco pobre (0 materiais) listado
