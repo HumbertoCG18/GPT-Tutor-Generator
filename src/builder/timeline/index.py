@@ -12,6 +12,7 @@ from src.builder.vision.card_evidence import extract_card_evidence
 from src.builder.timeline.signals import extract_timeline_session_signals
 from src.builder.timeline.classifier import classify_block
 from src.builder.timeline.curation import apply_block_curation
+from src.builder.text.normalize import normalize_match_text as _normalize_match_text
 from src.utils.helpers import slugify, write_text
 
 
@@ -69,15 +70,6 @@ def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
 
 def _collapse_ws(text: str) -> str:
     return re.sub(r"\s+", " ", (text or "")).strip()
-
-
-def _normalize_match_text(text: str) -> str:
-    text = unicodedata.normalize("NFKD", text or "")
-    text = "".join(ch for ch in text if not unicodedata.combining(ch))
-    text = text.lower()
-    text = text.replace("propocional", "proposicional")
-    text = re.sub(r"[^a-z0-9\s]", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
 
 
 def _signal_token_set(signal_text: str) -> set:
