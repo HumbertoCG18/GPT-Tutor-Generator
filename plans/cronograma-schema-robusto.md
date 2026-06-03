@@ -1,6 +1,21 @@
 # Plano — Schema Robusto de Blocos do Cronograma (100% precisão)
 
-**Status**: Backlog priorizado. **Pré-requisito** de `material-agnostic-refactor.md` — sem schema confiável, o renderer agnóstico mostra lixo (53% dos blocos hoje têm defeito).
+**Status**: ✅ **Fases 0–7 implementadas** (commits na branch `new-features`). Pré-requisito de `material-agnostic-refactor.md` — handshake feito na Fase 7. Falta apenas **rebuild dos 5 cursos** pra materializar os ganhos nos `.timeline_index.json` em disco (hoje ainda v3 stale: `class_defect` 21–57% até rodar o build com vote/fallback/curation). A **Fase 8 (diagrama do pipeline)** fica como último passo, pós-refactor 100%.
+
+Progresso por fase:
+- [x] Fase 0 — Lock + schema v4 (`schemas/timeline_index.v4.json`)
+- [x] Fase 1 — `kinds.py` + `classifier.py` + `status.py`
+- [x] Fase 2 — Integração write-side + backfill lazy v3→v4
+- [x] Fase 3 — Fix `missing_unit` via voto (`_vote_unit_from_topic_candidates`)
+- [x] Fase 4 — Fix `missing_topic` via fallback humanizado (`_resolve_block_topic_label`)
+- [x] Fase 5 — UI por kind + curation durável (`.timeline_curation.json`)
+- [x] Fase 6 — Schema validation em CI (`validate-timeline.yml` + `validate_timeline.py`)
+- [x] Fase 7 — Handshake com `material-agnostic-refactor.md`
+- [ ] Fase 8 — Diagrama do pipeline (adiada pra o fim) · [ ] Rebuild dos 5 cursos
+
+---
+
+**Origem do plano (mantido pra histórico):** Backlog priorizado. **Pré-requisito** de `material-agnostic-refactor.md` — sem schema confiável, o renderer agnóstico mostra lixo (53% dos blocos hoje têm defeito).
 
 **Origem**: Auditoria de 5 cursos (`scripts/audit_timeline.py`, 92 blocos analisados) revelou:
 
@@ -178,12 +193,12 @@ Novo campo no bloco: `topic_source ∈ {"taxonomy","alias","topic_text_fallback"
   - `unknown` kind > 5% dos blocos em qualquer curso
   - `needs_unit` ou `needs_files` em bloco `class` > 10%
 
-### Fase 7 — Handshake com `material-agnostic-refactor.md`
+### Fase 7 — Handshake com `material-agnostic-refactor.md` ✅
 
-Atualizar pré-reqs daquele plano:
+Pré-reqs daquele plano atualizados (ver `plans/material-agnostic-refactor.md` → seção Pré-requisitos e ponto de investigação #2):
 - [x] (esta fase) Cada bloco tem `kind` confiável → renderer escolhe template por kind (aulas vs feriado vs prova).
-- [x] (esta fase) `auto_tags=bloco:bloco-NN` injetado consistentemente → material attachment funciona.
-- [ ] (continua naquele plano) Estender concept-match pra PDFs/imagens/exercícios.
+- [x] (esta fase) `auto_tags=bloco:bloco-NN` injetado consistentemente (`content_taxonomy.py`: `confidence ≥ 0.50 AND não-ambíguo`, ou `manual_timeline_block_id`) → material attachment funciona pra entries que resolvem bloco.
+- [ ] (continua naquele plano) Estender o block-match pra PDFs/imagens/exercícios que hoje não pontuam bloco acima do threshold (Fase 3 da ordem de execução daquele plano).
 
 ---
 

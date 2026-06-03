@@ -51,14 +51,19 @@ A resposta fica incompleta ou requer múltiplas leituras cross-doc. LLM Projects
 ## Pré-requisitos
 
 - [x] `code-summarization-gemini.md` Fase 1-6 concluídas
-- [x] Cada `FileEntry` tem `manual_timeline_block_id` ou auto-tag `bloco:bloco-NN` confiável (hoje só código vai ganhar isso via Gemini concept-match; precisa estender pra PDFs/imagens/exercícios)
-- [ ] PDFs/imagens/exercícios precisam de mecanismo análogo ao concept-match — talvez summary leve via Gemini? Ou heurística de unit-match? Discutir antes.
+- [x] **`cronograma-schema-robusto.md` Fases 0–6 concluídas** (handshake na Fase 7 daquele plano):
+  - Cada bloco tem `kind` confiável — enum fechado de 14 valores, `classifier.py` como fonte única determinística. O renderer escolhe template por kind (aula vs feriado vs prova) sem reinventar heurística.
+  - `block_status` derivado em read-time (`derive_block_status`) distingue defeito real de não-aplicável — o render agnóstico não mostra "feriado sem material" como erro.
+  - Tópico/unidade resolvidos em camadas (matcher → voto → fallback humanizado) + curation durável (`.timeline_curation.json`) → `missing_unit`/`missing_topic` ≈ 0.
+  - Schema v4 (`schemas/timeline_index.v4.json`) validado em CI (`validate-timeline.yml`).
+- [x] Cada `FileEntry` tem `manual_timeline_block_id` ou auto-tag `bloco:bloco-NN` confiável. Regra de injeção (`content_taxonomy.py`): `bloco:` entra com `confidence ≥ 0.50 AND não-ambíguo`, ou precedência absoluta de `manual_timeline_block_id`. **Vale pro material que já resolve bloco** (código via concept-match + qualquer entry com unit/topic forte).
+- [ ] PDFs/imagens/exercícios que **ainda não resolvem bloco** precisam de mecanismo análogo ao concept-match — summary leve via Gemini? Heurística de unit-match estendida? Discutir antes. (Único pré-req remanescente; é a Fase 3 da ordem de execução abaixo.)
 - [ ] Decidir se SYLLABUS.md sobrevive em paralelo (tabela crua) ou se vira só CRONOGRAMA_DETALHADO (pode quebrar workflow existente).
 
 ## Pontos a investigar quando iniciar este plano
 
 1. **FILE_MAP atual** — `src/builder/routing/file_map.py` agrupa por que critério? Refactor pra dual grouping (por categoria + por block)?
-2. **Atribuição de block pra PDFs/imagens** — hoje `auto_tags=bloco:XX` existe; em que critério ele é injetado? Vale pra PDFs? Confiável?
+2. **Atribuição de block pra PDFs/imagens** — ~~hoje `auto_tags=bloco:XX` existe; em que critério ele é injetado? Vale pra PDFs? Confiável?~~ **RESPONDIDO (handshake Fase 7 do schema-robusto):** injetado em `content_taxonomy.py` (`add_managed_*_tags`) com `confidence ≥ 0.50 AND não-ambíguo`, ou precedência de `manual_timeline_block_id`. Vale pra qualquer entry (inclui PDF/imagem) **que pontue bloco acima do threshold** — material fraco/genérico fica sem tag (correto). O gap restante é elevar a taxa de match desses materiais (Fase 3 da ordem de execução).
 3. **EXERCISE_INDEX** — quem renderiza? Linkagem com block existe?
 4. **Glossário per-block** — termos do glossário têm linkagem com block? Ou só com unit?
 5. **Performance de geração** — se rolar Gemini summary pra TODO material, custo escala. Cap? Filtros?
