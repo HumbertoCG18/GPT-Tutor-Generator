@@ -81,7 +81,8 @@ class FileEntry:
     computed_unit_slug: str = ""
     computed_block_id: str = ""
     computed_block_confidence: float = 0.0
-    # computed_block_band fica no default ate a Fase 3 (BAND_HIGH/BAND_LOW).
+    # Faixa ("alta"/"media"/"baixa") derivada de computed_block_confidence via
+    # thresholds.confidence_band; "" quando nao ha bloco atribuido.
     computed_block_band: str = ""
 
     def id(self) -> str:

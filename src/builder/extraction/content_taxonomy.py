@@ -6,6 +6,7 @@ import unicodedata
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
+from src.builder.routing.thresholds import confidence_band, margin_confidence, T
 from src.builder.core.semantic_config import (
     infer_semantic_profile,
     merge_semantic_profile,
@@ -797,6 +798,60 @@ def refresh_manifest_auto_tags(
     return refreshed
 
 
+def _best_instructional_block_fallback(
+    entry,
+    markdown_text,
+    instructional_blocks,
+    preferred_unit_slug,
+    preferred_topic_slug,
+):
+    """Spec "pega o melhor" (linhas 92-94/127-130): quando o scorer primario,
+    com seu portao best>=0.95 (legitimo para o roteamento do FILE_MAP em
+    navigation.py, mas inadequado aqui), recusa atribuir, ranqueia TODOS os
+    blocos instrucionais pelo MESMO scorer real (score_entry_against_timeline_block)
+    e atribui o melhor. Nada de scoring reimplementado nem numero magico: a
+    confianca vem de margin_confidence(best, runner_up, k=MARGIN_K), identica a
+    formula que o scorer primario usa internamente.
+
+    Retorna (block, confidence) do vencedor, ou (None, 0.0) se nao ha bloco.
+    """
+    if not instructional_blocks:
+        return None, 0.0
+    # Import tardio: entry_signals importa content_taxonomy no topo, entao um
+    # import de topo aqui criaria ciclo. So precisamos destes na hora do fallback.
+    from src.builder.routing.file_map import (
+        score_entry_against_timeline_block,
+        score_card_evidence_against_entry,
+    )
+    from src.builder.extraction.entry_signals import (
+        collect_entry_unit_signals,
+        score_text_against_row,
+    )
+    signals = collect_entry_unit_signals(entry, markdown_text)
+    scored = [
+        (
+            block,
+            score_entry_against_timeline_block(
+                signals,
+                block,
+                normalize_match_text=_normalize_match_text,
+                score_text_against_row=score_text_against_row,
+                score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
+                    s, items, normalize_match_text=_normalize_match_text
+                ),
+                preferred_unit_slug=preferred_unit_slug,
+                preferred_topic_slug=preferred_topic_slug,
+            ),
+        )
+        for block in instructional_blocks
+    ]
+    scored.sort(key=lambda item: item[1], reverse=True)
+    best_block, best_score = scored[0]
+    runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
+    confidence = margin_confidence(best_score, runner_up_score, k=T.MARGIN_K)
+    return best_block, confidence
+
+
 def resolve_unit_block_tags(
     manifest_entries,
     course_meta,
@@ -931,29 +986,50 @@ def resolve_unit_block_tags(
                     markdown_text=markdown_text,
                     preferred_topic_slug=preferred_topic_slug,
                 )
-                # Gate unico e coerente: o proprio scorer ja descarta scores
-                # fracos retornando period vazio (best<0.95). Acima disso,
-                # sempre atribui o melhor candidato (zero orfao quando ha bloco;
-                # ver spec). p_conf ja e margin_confidence (thresholds.MARGIN_K
-                # k=0.18) computado dentro do scorer — reusado, nao recomputado.
+                # O scorer primario aplica um portao best>=0.95 (file_map.py:1098;
+                # sessao-first em :1036) que e legitimo para o roteamento do
+                # FILE_MAP (navigation.py exige match forte para nao rotear lixo),
+                # mas viola a spec aqui: para atribuicao de bloco, SEMPRE se
+                # atribui o melhor candidato e a baixa confianca vira flag de
+                # revisao (band media/baixa), nunca orfao quando ha bloco
+                # (spec linhas 92-94/127-130). Quando o portao recusa (_period
+                # vazio), cai no "pega o melhor": ranqueia TODOS os blocos
+                # instrucionais pelo MESMO scorer real e atribui o top.
                 if _period:
                     for block in instructional_blocks:
                         if str(block.get("period_label") or "") == _period:
                             period_block_id = _collapse_ws(str(block.get("id") or ""))
+                            # p_conf ja e margin_confidence(best, runner_up,
+                            # k=MARGIN_K) computada dentro do scorer — reusada.
                             block_confidence = float(p_conf)
                             break
+                else:
+                    fallback_block, fallback_conf = _best_instructional_block_fallback(
+                        entry,
+                        markdown_text,
+                        instructional_blocks,
+                        resolved_unit_slug,
+                        preferred_topic_slug,
+                    )
+                    if fallback_block is not None:
+                        period_block_id = _collapse_ws(str(fallback_block.get("id") or ""))
+                        block_confidence = float(fallback_conf)
 
         # --- computed_* sao a FONTE UNICA (Fase 1) ---
         # O slug/id resolvido vive direto no entry; as tags unit:/bloco: abaixo
         # sao ESPELHO destes campos, nao um caminho de scoring paralelo.
-        # block_confidence ja e margin_confidence(best, runner_up, k=MARGIN_K)
-        # computada DENTRO de select_probable_period_for_entry_fn (ver comentario
-        # do gate acima) — reusada, nao recomputada aqui (evita duplicar scoring;
-        # cf. thresholds.margin_confidence). computed_block_band fica no default
-        # ate a Fase 3 (BAND_HIGH/BAND_LOW ainda nao existem em thresholds.py).
+        # block_confidence sempre vem de margin_confidence(best, runner_up,
+        # k=MARGIN_K) — seja a computada DENTRO de select_probable_period_for_entry_fn
+        # (caminho do scorer aprovado), seja a do fallback "pega o melhor", que
+        # chama a MESMA thresholds.margin_confidence sobre os scores do MESMO
+        # scorer real. Nunca recomputado/duplicado aqui.
         computed_unit_slug = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= 0.65) else ""
         computed_block_id = period_block_id
         computed_block_confidence = float(block_confidence)
+        # Faixa (Fase 3): so faz sentido quando ha bloco atribuido. Cutoffs
+        # centralizados em thresholds.confidence_band (nada hardcoded aqui).
+        # media/baixa ficam flagados pra revisao via o proprio valor da faixa.
+        computed_block_band = confidence_band(computed_block_confidence) if computed_block_id else ""
 
         # --- Monta novo auto_tags ESPELHANDO os computed_* ---
         existing_auto = list(entry.get("auto_tags") or [])
@@ -973,6 +1049,7 @@ def resolve_unit_block_tags(
         new_entry["computed_unit_slug"] = computed_unit_slug
         new_entry["computed_block_id"] = computed_block_id
         new_entry["computed_block_confidence"] = computed_block_confidence
+        new_entry["computed_block_band"] = computed_block_band
         new_entry["unit_match_reasons"] = unit_reasons
         new_entry["unit_match_confidence"] = unit_confidence
         new_entry["subunit_match_reasons"] = subunit_reasons
