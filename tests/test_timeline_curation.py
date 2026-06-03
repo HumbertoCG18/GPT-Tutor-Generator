@@ -132,6 +132,28 @@ def test_save_block_kind_override_wrapper(tmp_path):
     assert load_block_curation(tmp_path) == {}
 
 
+def test_save_block_unit_override_wrapper(tmp_path):
+    from src.ui.timeline_dashboard import save_block_unit_override
+    save_block_unit_override(tmp_path, "bloco-12", "unidade-03-indecidibilidade")
+    assert load_block_curation(tmp_path)["bloco-12"]["manual_unit_slug"] == "unidade-03-indecidibilidade"
+    save_block_unit_override(tmp_path, "bloco-12", None)
+    assert load_block_curation(tmp_path) == {}
+
+
+def test_apply_curation_overrides_sets_unit(tmp_path):
+    from src.builder.timeline.index import _apply_curation_overrides
+    set_block_override(tmp_path, "bloco-12", "manual_unit_slug", "unidade-03")
+    ti = {"version": 4, "blocks": [
+        {"id": "bloco-12", "kind": "class", "unit_slug": "", "unit_confidence": 0.0,
+         "topic_text": "halting problem", "sessions": [{"d": 1}]}
+    ]}
+    touched = _apply_curation_overrides(ti, tmp_path)
+    assert touched == 1
+    blk = ti["blocks"][0]
+    assert blk["unit_slug"] == "unidade-03"
+    assert blk["unit_confidence"] == 1.0
+
+
 def test_kind_display_safe_lookup():
     from src.ui.timeline_dashboard import _kind_display
     assert _kind_display("class")["label"] == "Aula"

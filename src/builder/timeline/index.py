@@ -60,6 +60,10 @@ def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
                 block["topic_source"] = source
                 if slug:
                     block["primary_topic_slug"] = slug
+        manual_unit = block.get("manual_unit_slug")
+        if isinstance(manual_unit, str) and manual_unit.strip():
+            block["unit_slug"] = manual_unit.strip()
+            block["unit_confidence"] = 1.0
     return touched
 
 
@@ -1076,6 +1080,9 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
         manual_topic_label = block.get("manual_topic_label")
         if manual_topic_label:
             payload["manual_topic_label"] = manual_topic_label
+        manual_unit_slug = block.get("manual_unit_slug")
+        if manual_unit_slug:
+            payload["manual_unit_slug"] = manual_unit_slug
         blocks.append(payload)
     return {"version": TIMELINE_INDEX_VERSION, "blocks": blocks}
 

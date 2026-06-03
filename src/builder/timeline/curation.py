@@ -9,7 +9,8 @@ Formato:
       "version": 1,
       "blocks": {
         "bloco-03": {"manual_kind_override": "holiday"},
-        "bloco-07": {"manual_topic_label": "Indução estrutural"}
+        "bloco-07": {"manual_topic_label": "Indução estrutural"},
+        "bloco-12": {"manual_unit_slug": "unidade-03-indecidibilidade"}
       }
     }
 
@@ -25,7 +26,7 @@ from typing import Dict, Iterable, Optional
 
 CURATION_FILENAME = ".timeline_curation.json"
 _CURATION_VERSION = 1
-_OVERRIDE_FIELDS = ("manual_kind_override", "manual_topic_label")
+_OVERRIDE_FIELDS = ("manual_kind_override", "manual_topic_label", "manual_unit_slug")
 
 
 def _curation_path(course_dir: Path) -> Path:

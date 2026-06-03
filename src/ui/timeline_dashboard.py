@@ -67,6 +67,9 @@ def load_timeline_data(
         manual_topic = str(block.get("manual_topic_label") or "").strip()
         if manual_topic:
             block["primary_topic_label"] = manual_topic
+        manual_unit = str(block.get("manual_unit_slug") or "").strip()
+        if manual_unit:
+            block["unit_slug"] = manual_unit
 
     block_ids = {b["id"] for b in blocks if b.get("id")}
     entries_by_block_id: dict[str, list[dict]] = {b["id"]: [] for b in blocks if b.get("id")}
@@ -116,6 +119,16 @@ def save_block_kind_override(
     """Persiste reclassificação manual de kind em curation.
     kind_value vazio/None remove o override (volta pro classifier automático)."""
     set_block_override(course_dir, block_id, "manual_kind_override", kind_value or None)
+
+
+def save_block_unit_override(
+    course_dir: Path,
+    block_id: str,
+    unit_slug: Optional[str],
+) -> None:
+    """Persiste atribuição manual de unidade em curation.
+    unit_slug vazio/None remove o override (volta pro matcher automático)."""
+    set_block_override(course_dir, block_id, "manual_unit_slug", unit_slug or None)
 
 
 def block_kind(block: dict) -> str:
@@ -253,6 +266,12 @@ class TimelineDashboardView(tk.Frame):
         self._manifest_path = manifest_path
         self._course_dir = timeline_path.parent
         self._kind_filter = {block_kind(b) for b in blocks}
+        # unidades disponíveis pra atribuição manual (as que algum bloco já tem)
+        self._unit_slugs = sorted({
+            str(b.get("unit_slug") or "").strip()
+            for b in blocks
+            if str(b.get("unit_slug") or "").strip()
+        })
         self._render()
 
     # ------------------------------------------------------------------ render
@@ -395,13 +414,18 @@ class TimelineDashboardView(tk.Frame):
             header, text=disp["label"], bg=p["frame_bg"], fg=p["muted"], font=("", 8),
         ).pack(side="left", padx=(6, 0), pady=6)
 
+        # unidade efetiva (display); edição via dropdown à direita
         if unit_slug:
+            is_manual = bool(str(block.get("manual_unit_slug") or "").strip())
             tk.Label(
-                header, text=f"  {unit_slug}", bg=p["frame_bg"], fg=p["muted"], font=("", 9),
-            ).pack(side="left", padx=(4, 0), pady=6)
+                header, text=("✎ " if is_manual else "") + unit_slug,
+                bg=p["frame_bg"], fg=p["accent2"] if is_manual else p["muted"], font=("", 8),
+            ).pack(side="left", padx=(6, 0), pady=6)
 
-        # dropdown de reclassificação manual (não propaga o toggle do acordeão)
-        combo = self._build_kind_combo(header, block_id, str(block.get("manual_kind_override") or ""))
+        # dropdowns de curadoria (não propagam o toggle do acordeão)
+        kind_combo = self._build_kind_combo(header, block_id, str(block.get("manual_kind_override") or ""))
+        unit_combo = self._build_unit_combo(header, block_id, unit_slug, str(block.get("manual_unit_slug") or ""))
+        no_toggle = (kind_combo, unit_combo)
 
         # badge de status (cor derivada do block_status)
         tk.Label(
@@ -427,13 +451,41 @@ class TimelineDashboardView(tk.Frame):
 
         header.bind("<Button-1>", toggle)
         for child in header.winfo_children():
-            if child is combo:
+            if child in no_toggle:
                 continue
             child.bind("<Button-1>", toggle)
 
         if entries:
             for entry in entries:
                 self._build_entry_row(content, entry, block_id, all_block_ids)
+
+    def _build_unit_combo(
+        self, header: tk.Widget, block_id: str, current_unit: str, current_override: str
+    ) -> ttk.Combobox:
+        slugs = list(getattr(self, "_unit_slugs", []) or [])
+        labels = ["⟳ auto"] + slugs
+        values = [""] + slugs
+
+        idx = values.index(current_override) if current_override in slugs else 0
+        var = tk.StringVar(value=labels[idx] if idx < len(labels) else "⟳ auto")
+        combo = ttk.Combobox(
+            header, textvariable=var, values=labels, state="readonly", width=20, font=("", 8),
+        )
+        combo.pack(side="right", padx=(4, 4), pady=4)
+
+        def on_select(_event=None):
+            selected = var.get()
+            i = labels.index(selected) if selected in labels else 0
+            chosen = values[i] if i < len(values) else ""
+            try:
+                save_block_unit_override(self._course_dir, block_id, chosen or None)
+                self._reveal_reprocess_btn()
+                self._reload()
+            except Exception:
+                logger.exception("Erro ao salvar unidade do bloco %s", block_id)
+
+        combo.bind("<<ComboboxSelected>>", on_select)
+        return combo
 
     def _build_kind_combo(self, header: tk.Widget, block_id: str, current_override: str) -> ttk.Combobox:
         labels = ["⟳ auto"] + [
