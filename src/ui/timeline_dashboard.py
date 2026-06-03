@@ -75,14 +75,12 @@ def load_timeline_data(
     entries_by_block_id: dict[str, list[dict]] = {b["id"]: [] for b in blocks if b.get("id")}
     unmapped: list[dict] = []
 
+    # FONTE ÚNICA da precedência manual>auto (spec Fase 4): a mesma função que
+    # cronograma_health usa, eliminando o leitor divergente que vivia aqui.
+    from src.builder.routing.file_map import resolve_effective_block
+
     for entry in entries:
-        manual_id = str(entry.get("manual_timeline_block_id") or "").strip()
-        auto_tags = list(entry.get("auto_tags") or [])
-        auto_block_id = next(
-            (t[len("bloco:"):] for t in auto_tags if t.startswith("bloco:")),
-            "",
-        )
-        assigned_id = manual_id or auto_block_id
+        assigned_id = resolve_effective_block(entry, blocks).block_id
         if assigned_id and assigned_id in block_ids:
             entries_by_block_id[assigned_id].append(entry)
         else:
@@ -526,7 +524,12 @@ class TimelineDashboardView(tk.Frame):
         title = str(entry.get("title") or entry.get("source_path") or "—")
         source_path = str(entry.get("source_path") or "")
         confidence = float(entry.get("unit_match_confidence") or 0.0)
-        is_manual = bool(str(entry.get("manual_timeline_block_id") or "").strip())
+        band = str(entry.get("computed_block_band") or "").strip()
+        # Marcador manual/auto via a FONTE ÚNICA (spec Fase 4), nunca relendo o
+        # campo cru aqui — concorda com health e com o roteamento do dashboard.
+        from src.builder.routing.file_map import resolve_effective_block
+        source = resolve_effective_block(entry, self._blocks).source
+        is_manual = source == "manual"
 
         row = tk.Frame(parent, bg=p["input_bg"])
         row.pack(fill="x", padx=24, pady=2)
@@ -559,6 +562,17 @@ class TimelineDashboardView(tk.Frame):
             fg=conf_color,
             font=("", 8),
         ).pack(side="left", padx=4, pady=4)
+
+        # badge de faixa de confiança de bloco (Fase 3/4): lê computed_block_band.
+        if band:
+            band_color = {
+                "alta": p["success"],
+                "media": p["accent"],
+                "baixa": p["warning"],
+            }.get(band, p["muted"])
+            tk.Label(
+                row, text=band, bg=p["input_bg"], fg=band_color, font=("", 8),
+            ).pack(side="left", padx=4, pady=4)
 
         # badge DD.MM
         stem = Path(source_path).stem

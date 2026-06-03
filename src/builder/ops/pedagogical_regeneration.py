@@ -91,7 +91,8 @@ def run_material_residual(builder, live_manifest_entries):
     _blocks = builder._load_timeline_blocks()
     orphans = []
     for e in live_manifest_entries:
-        if _entry_block_id(e):
+        # passa _blocks p/ validar id manual stale igual a health/dashboard (fonte unica)
+        if _entry_block_id(e, _blocks):
             continue
         txt = _entry_markdown_text_for_file_map(builder.root_dir, e) or str(e.get("title") or "")
         orphans.append({"id": e.get("id"), "_text": txt})

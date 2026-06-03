@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, List, NamedTuple, Optional
 
 from src.builder.routing.dates import extract_dates
 
@@ -496,6 +497,79 @@ def resolve_entry_manual_timeline_block(entry: dict, timeline_context: dict) -> 
         if 1 <= ordinal <= len(instructional_blocks):
             return instructional_blocks[ordinal - 1]
     return None
+
+
+class EffectiveBlock(NamedTuple):
+    """Resultado de resolve_effective_block: id do bloco vencedor + de onde veio.
+
+    source ∈ {"manual", "auto", ""}: "manual" quando o override do entry venceu,
+    "auto" quando caiu no computed_block_id (espelhado em auto_tags["bloco:"]),
+    "" quando nada resolveu (curso sem bloco / entry sem atribuição).
+    """
+
+    block_id: str
+    source: str
+
+
+_logger = logging.getLogger(__name__)
+
+
+def _entry_computed_block_id(entry: dict) -> str:
+    """computed_block_id (Fase 1) com fallback para o espelho auto_tags["bloco:"].
+
+    O campo computed_block_id e a fonte; auto_tags["bloco:"] e o espelho. Dicts
+    crus vindos de manifest antigo podem ter so a tag — por isso lemos ambos.
+    """
+    cid = str(entry.get("computed_block_id") or "").strip()
+    if cid:
+        return cid
+    for tag in entry.get("auto_tags") or []:
+        t = str(tag)
+        if t.startswith("bloco:"):
+            return t[len("bloco:"):].strip()
+    return ""
+
+
+def resolve_effective_block(
+    entry: dict,
+    blocks: Optional[List[Dict[str, object]]] = None,
+) -> EffectiveBlock:
+    """FONTE ÚNICA da precedência material→bloco (spec Fase 4, linhas 138-146).
+
+    Precedência, definida AQUI e em lugar nenhum mais:
+        manual_timeline_block_id (entry)  >  computed_block_id (auto).
+    auto_tags["bloco:"] e apenas espelho do computed (Fase 1), nunca contradiz.
+
+    Resolução do manual reusa resolve_entry_manual_timeline_block (id exato +
+    fallback ordinal "bloco-N"). Manual apontando para id inexistente que nem o
+    ordinal resolve → trata como sem-override e cai no computed (logado), per
+    spec linhas 195-197.
+
+    `blocks` (lista do timeline_index) é opcional: quando ausente não há como
+    validar o manual id, então confiamos no valor cru (caminho UI que já tem a
+    lista usa-a; caminhos sem ela degradam graciosamente).
+    """
+    manual_raw = str(entry.get("manual_timeline_block_id") or "").strip()
+    computed = _entry_computed_block_id(entry)
+
+    if manual_raw:
+        if blocks is None:
+            # Sem timeline para validar: confia no id cru do override.
+            return EffectiveBlock(manual_raw, "manual")
+        resolved = resolve_entry_manual_timeline_block(
+            entry, {"timeline_index": {"blocks": blocks}}
+        )
+        if resolved is not None:
+            return EffectiveBlock(str(resolved.get("id", "")).strip(), "manual")
+        _logger.info(
+            "manual_timeline_block_id %r não resolve (nem ordinal); usando computed %r",
+            manual_raw,
+            computed,
+        )
+
+    if computed:
+        return EffectiveBlock(computed, "auto")
+    return EffectiveBlock("", "")
 
 
 def score_entry_against_timeline_row(
