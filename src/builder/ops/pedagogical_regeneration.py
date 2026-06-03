@@ -38,6 +38,77 @@ def _resolve_gemini_client(builder):
         return None
 
 
+def run_material_residual(builder, live_manifest_entries):
+    """Camada 2: residuo Gemini p/ materiais sem bloco. OPT-IN EXPLICITO.
+
+    So roda quando `builder.options['enable_material_residual']` for True E houver
+    client Gemini. DEFAULT OFF: operacoes leves (unprocess/reject) chamam
+    regenerate_pedagogical_files na UI thread; resolver/chamar o client aqui
+    faria ate 20 chamadas de rede sincronas (summarize_bundle, max_retries=5),
+    travando o app. A opcao deve ser habilitada apenas em contexto com background
+    thread (mesmo padrao do code summarization em ui/codes_panel.py).
+
+    Retorna `live_manifest_entries` (mutado in-place quando roda).
+    """
+    options = getattr(builder, "options", {}) or {}
+    if not bool(options.get("enable_material_residual", False)):
+        return live_manifest_entries
+
+    gemini_client = _resolve_gemini_client(builder)
+    if gemini_client is None:
+        return live_manifest_entries
+
+    from src.builder.artifacts.cronograma_health import _entry_block_id
+    from src.builder.core.summary_core import summarize_residual_materials
+    from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
+
+    from pydantic import BaseModel as _BaseModel, Field as _Field
+
+    class _KeywordsSchema(_BaseModel):
+        keywords: list[str] = _Field(
+            default_factory=list,
+            description="3-8 palavras-chave tecnicas do material.",
+        )
+
+    def _extract_concepts(text: str) -> list:
+        # Adapter sobre GeminiClient.summarize_bundle. summarize_bundle exige
+        # um schema pydantic e retorna a instancia parseada (resp.parsed),
+        # NAO um objeto com .text. Em caso de erro, retorna [] (degrada).
+        try:
+            res = gemini_client.summarize_bundle(
+                bundle_text=text[:6000],
+                schema=_KeywordsSchema,
+                system_instruction=(
+                    "Liste 3-8 palavras-chave tecnicas do material academico. "
+                    "Responda apenas o JSON conforme schema."
+                ),
+            )
+            kws = getattr(res, "keywords", None) or []
+            return [str(w).strip() for w in kws if str(w).strip()]
+        except Exception:
+            return []
+
+    _blocks = builder._load_timeline_blocks()
+    orphans = []
+    for e in live_manifest_entries:
+        if _entry_block_id(e):
+            continue
+        txt = _entry_markdown_text_for_file_map(builder.root_dir, e) or str(e.get("title") or "")
+        orphans.append({"id": e.get("id"), "_text": txt})
+    if orphans and _blocks:
+        resolved = summarize_residual_materials(
+            builder.root_dir, orphans, _blocks, _extract_concepts, cap=20,
+        )
+        by_id = {e.get("id"): e for e in live_manifest_entries}
+        for eid, rec in resolved.items():
+            bid = rec.get("primary_block_id")
+            if bid and by_id.get(eid) is not None:
+                tags = [t for t in (by_id[eid].get("auto_tags") or []) if not str(t).startswith("bloco:")]
+                tags.append(f"bloco:{bid}")
+                by_id[eid]["auto_tags"] = tags
+    return live_manifest_entries
+
+
 def regenerate_pedagogical_files(
     builder,
     manifest: dict,
@@ -197,59 +268,8 @@ def regenerate_pedagogical_files(
         builder.subject_profile,
     )
 
-    # Camada 2: residuo via Gemini (opt-in). So materiais ainda sem bloco.
-    # Usa o MESMO client/metodo de summarize_all_code_entries
-    # (GeminiClient.summarize_bundle, confirmado em code_summarization.py).
-    gemini_client = _resolve_gemini_client(builder)
-    if gemini_client is not None:
-        from src.builder.artifacts.cronograma_health import _entry_block_id
-        from src.builder.core.summary_core import summarize_residual_materials
-        from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
-
-        from pydantic import BaseModel as _BaseModel, Field as _Field
-
-        class _KeywordsSchema(_BaseModel):
-            keywords: list[str] = _Field(
-                default_factory=list,
-                description="3-8 palavras-chave tecnicas do material.",
-            )
-
-        def _extract_concepts(text: str) -> list:
-            # Adapter sobre GeminiClient.summarize_bundle. summarize_bundle exige
-            # um schema pydantic e retorna a instancia parseada (resp.parsed),
-            # NAO um objeto com .text. Em caso de erro, retorna [] (degrada).
-            try:
-                res = gemini_client.summarize_bundle(
-                    bundle_text=text[:6000],
-                    schema=_KeywordsSchema,
-                    system_instruction=(
-                        "Liste 3-8 palavras-chave tecnicas do material academico. "
-                        "Responda apenas o JSON conforme schema."
-                    ),
-                )
-                kws = getattr(res, "keywords", None) or []
-                return [str(w).strip() for w in kws if str(w).strip()]
-            except Exception:
-                return []
-
-        _blocks = builder._load_timeline_blocks()
-        orphans = []
-        for e in live_manifest_entries:
-            if _entry_block_id(e):
-                continue
-            txt = _entry_markdown_text_for_file_map(builder.root_dir, e) or str(e.get("title") or "")
-            orphans.append({"id": e.get("id"), "_text": txt})
-        if orphans and _blocks:
-            resolved = summarize_residual_materials(
-                builder.root_dir, orphans, _blocks, _extract_concepts, cap=20,
-            )
-            by_id = {e.get("id"): e for e in live_manifest_entries}
-            for eid, rec in resolved.items():
-                bid = rec.get("primary_block_id")
-                if bid and by_id.get(eid) is not None:
-                    tags = [t for t in (by_id[eid].get("auto_tags") or []) if not str(t).startswith("bloco:")]
-                    tags.append(f"bloco:{bid}")
-                    by_id[eid]["auto_tags"] = tags
+    # Camada 2: residuo via Gemini (opt-in EXPLICITO). Ver run_material_residual.
+    live_manifest_entries = run_material_residual(builder, live_manifest_entries)
 
     manifest["entries"] = live_manifest_entries
 

@@ -1,7 +1,57 @@
 import json
+import types
 from src.builder.core.summary_core import (
     load_summary_cache, write_summary_cache, assign_concepts_to_block,
 )
+
+
+def _fake_builder(tmp_path, options, blocks):
+    b = types.SimpleNamespace()
+    b.root_dir = tmp_path
+    b.options = options
+    b._load_timeline_blocks = lambda: blocks
+    return b
+
+
+def test_residual_skipped_when_option_disabled(tmp_path, monkeypatch):
+    """Regressao: sem opt-in, o residual NAO resolve client (zero rede).
+
+    Operacoes leves (unprocess/reject) chamam regenerate na UI thread com
+    options={}; se o client fosse resolvido e chamado aqui, o app travaria.
+    """
+    import src.builder.ops.pedagogical_regeneration as pr
+
+    called = {"resolve": False}
+
+    def _boom(builder):
+        called["resolve"] = True
+        raise AssertionError("client NAO deve ser resolvido com a opcao OFF")
+
+    monkeypatch.setattr(pr, "_resolve_gemini_client", _boom)
+    b = _fake_builder(tmp_path, {}, [{"id": "bloco-01", "topic_text": "x"}])
+    entries = [{"id": "e1", "auto_tags": [], "title": "orfao"}]
+    out = pr.run_material_residual(b, entries)
+    assert called["resolve"] is False
+    assert out == entries  # inalterado
+
+
+def test_residual_runs_when_option_enabled(tmp_path, monkeypatch):
+    import src.builder.ops.pedagogical_regeneration as pr
+
+    class _FakeRes:
+        keywords = ["maquina", "turing"]
+
+    class _FakeClient:
+        def summarize_bundle(self, **kw):
+            return _FakeRes()
+
+    monkeypatch.setattr(pr, "_resolve_gemini_client", lambda builder: _FakeClient())
+    blocks = [{"id": "bloco-02", "topic_text": "maquina de turing",
+               "primary_topic_label": "Turing"}]
+    b = _fake_builder(tmp_path, {"enable_material_residual": True}, blocks)
+    entries = [{"id": "e1", "auto_tags": [], "title": "slides turing machine"}]
+    out = pr.run_material_residual(b, entries)
+    assert "bloco:bloco-02" in out[0]["auto_tags"]
 
 
 def test_cache_roundtrip(tmp_path):
