@@ -11,6 +11,7 @@ from typing import Callable, Dict, List, Optional
 from src.builder.vision.card_evidence import extract_card_evidence
 from src.builder.timeline.signals import extract_timeline_session_signals
 from src.builder.timeline.classifier import classify_block
+from src.builder.timeline.curation import apply_block_curation
 from src.utils.helpers import slugify, write_text
 
 
@@ -34,6 +35,32 @@ def _backfill_timeline_index(timeline_index: dict) -> dict:
         ensure_block_kind(block)
     timeline_index["version"] = TIMELINE_INDEX_VERSION
     return timeline_index
+
+
+def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
+    """Merge da curation manual + re-derivacao de kind/topic. In-place.
+
+    `apply_block_curation` so injeta os campos crus `manual_*`; aqui re-derivamos
+    o que depende deles: `kind` (classifier honra `manual_kind_override`) e o
+    label/source de topico (camada `manual` vence em `_resolve_block_topic_label`).
+    """
+    if not isinstance(timeline_index, dict):
+        return 0
+    blocks = timeline_index.get("blocks") or []
+    touched = apply_block_curation(blocks, course_dir)
+    if not touched:
+        return 0
+    for block in blocks:
+        if block.get("manual_kind_override"):
+            block["kind"] = classify_block(block).value
+        if block.get("manual_topic_label"):
+            label, slug, source = _resolve_block_topic_label(block)
+            if label:
+                block["primary_topic_label"] = label
+                block["topic_source"] = source
+                if slug:
+                    block["primary_topic_slug"] = slug
+    return touched
 
 
 def _collapse_ws(text: str) -> str:
@@ -1382,6 +1409,12 @@ def _build_file_map_timeline_context_from_course(
                 timeline_index = _empty_timeline_index()
         else:
             timeline_index = _empty_timeline_index()
+
+    # Merge de overrides manuais (curation) por block_id. Sobrevive ao rebuild
+    # from-syllabus porque mora num arquivo separado. Re-deriva kind/topic.
+    _repo_root = course_meta.get("_repo_root")
+    if _repo_root:
+        _apply_curation_overrides(timeline_index, Path(_repo_root) / "course")
 
     blocks_by_unit: Dict[str, List[Dict[str, object]]] = {}
     rows_by_unit: Dict[str, List[Dict[str, object]]] = {}

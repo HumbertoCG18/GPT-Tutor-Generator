@@ -8,10 +8,42 @@ from pathlib import Path
 from tkinter import messagebox, ttk
 from typing import Callable, Optional
 
+from src.builder.timeline.classifier import classify_block
+from src.builder.timeline.curation import apply_block_curation, set_block_override
+from src.builder.timeline.kinds import KIND_DISPLAY, BlockKind
+from src.builder.timeline.status import derive_block_status
 from src.models.core import SubjectProfile
 from src.ui.theme import apply_theme_to_toplevel
 
 logger = logging.getLogger(__name__)
+
+# status derivado -> chave da paleta do tema (cor do badge).
+_STATUS_COLOR = {
+    "ok": "success",
+    "needs_topic": "warning",
+    "needs_unit": "error",
+    "needs_files": "error",
+    "needs_review": "warning",
+    "non_applicable": "muted",
+}
+
+# rotulo PT-BR curto por status (tooltip/badge).
+_STATUS_LABEL = {
+    "ok": "OK",
+    "needs_topic": "sem tópico",
+    "needs_unit": "sem unidade",
+    "needs_files": "sem material",
+    "needs_review": "revisar",
+    "non_applicable": "—",
+}
+
+
+def _kind_display(kind_value: str) -> dict:
+    """Lookup seguro em KIND_DISPLAY a partir do valor string do kind."""
+    try:
+        return KIND_DISPLAY[BlockKind(kind_value)]
+    except (ValueError, KeyError):
+        return {"icon": "❓", "label": str(kind_value or "—"), "color": "yellow"}
 
 _DATE_PREFIX_RE = re.compile(r"^(\d{1,2})\.(\d{2})\s+")
 
@@ -26,6 +58,15 @@ def load_timeline_data(
 
     blocks: list[dict] = list(timeline.get("blocks") or [])
     entries: list[dict] = list(manifest.get("entries") or [])
+
+    # Merge dos overrides manuais (curation) pra refletir reclassificacao antes
+    # do reprocesso. kind e re-derivado live via classify_block; topic manual
+    # promove o label diretamente.
+    apply_block_curation(blocks, timeline_index_path.parent)
+    for block in blocks:
+        manual_topic = str(block.get("manual_topic_label") or "").strip()
+        if manual_topic:
+            block["primary_topic_label"] = manual_topic
 
     block_ids = {b["id"] for b in blocks if b.get("id")}
     entries_by_block_id: dict[str, list[dict]] = {b["id"]: [] for b in blocks if b.get("id")}
@@ -65,6 +106,21 @@ def save_block_assignment(
         json.dumps(data, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+
+
+def save_block_kind_override(
+    course_dir: Path,
+    block_id: str,
+    kind_value: Optional[str],
+) -> None:
+    """Persiste reclassificação manual de kind em curation.
+    kind_value vazio/None remove o override (volta pro classifier automático)."""
+    set_block_override(course_dir, block_id, "manual_kind_override", kind_value or None)
+
+
+def block_kind(block: dict) -> str:
+    """kind efetivo do bloco (honra manual_kind_override via classifier)."""
+    return classify_block(block).value
 
 
 class TimelineDashboardView(tk.Frame):
@@ -195,6 +251,17 @@ class TimelineDashboardView(tk.Frame):
         self._entries_by_block_id = entries_by_block_id
         self._unmapped = unmapped
         self._manifest_path = manifest_path
+        self._course_dir = timeline_path.parent
+        self._kind_filter = {block_kind(b) for b in blocks}
+        self._render()
+
+    # ------------------------------------------------------------------ render
+
+    def _render(self) -> None:
+        """Re-desenha filtro + acordeão a partir dos dados em cache (sem ler disco)."""
+        for widget in self._scroll_frame.winfo_children():
+            widget.destroy()
+        self._build_filter_bar()
         self._build_accordion()
 
     def _show_error(self, msg: str) -> None:
@@ -219,15 +286,71 @@ class TimelineDashboardView(tk.Frame):
             self._dirty = True
             self._btn_reprocess.pack(side="right", padx=6)
 
-    # ------------------------------------------------------------------ accordion placeholder
+    # ------------------------------------------------------------------ filtros por kind
+
+    def _build_filter_bar(self) -> None:
+        p = self._p
+        present = sorted({block_kind(b) for b in (self._blocks or [])})
+        if len(present) <= 1:
+            return  # nada pra filtrar
+
+        bar = tk.Frame(self._scroll_frame, bg=p["frame_bg"])
+        bar.pack(fill="x", pady=(0, 4))
+        tk.Label(bar, text="Filtrar:", bg=p["frame_bg"], fg=p["muted"], font=("", 9)).pack(
+            side="left", padx=(8, 4), pady=4
+        )
+
+        def _make_toggle(kind_value: str, var: tk.IntVar):
+            def _toggle():
+                if var.get():
+                    self._kind_filter.add(kind_value)
+                else:
+                    self._kind_filter.discard(kind_value)
+                self._render()
+            return _toggle
+
+        for kind_value in present:
+            disp = _kind_display(kind_value)
+            var = tk.IntVar(value=1 if kind_value in self._kind_filter else 0)
+            cb = tk.Checkbutton(
+                bar,
+                text=f"{disp['icon']} {disp['label']}",
+                variable=var,
+                command=_make_toggle(kind_value, var),
+                bg=p["frame_bg"],
+                fg=p["fg"],
+                selectcolor=p["input_bg"],
+                activebackground=p["frame_bg"],
+                activeforeground=p["accent"],
+                font=("", 8),
+                bd=0,
+                highlightthickness=0,
+            )
+            cb.pack(side="left", padx=2, pady=2)
+
+    # ------------------------------------------------------------------ accordion
 
     def _build_accordion(self) -> None:
         p = self._p
         blocks = self._blocks or []
         block_ids = [b["id"] for b in blocks if b.get("id")]
+        visible = self._kind_filter
 
+        shown = 0
         for block in blocks:
+            if block_kind(block) not in visible:
+                continue
             self._build_block_row(block, block_ids)
+            shown += 1
+
+        if shown == 0:
+            tk.Label(
+                self._scroll_frame,
+                text="Nenhum bloco no filtro atual.",
+                bg=p["bg"],
+                fg=p["muted"],
+                font=("", 10),
+            ).pack(pady=20)
 
         # seção sem bloco no rodapé
         tk.Frame(self._scroll_frame, bg=p["border"], height=2).pack(fill="x", pady=(8, 0))
@@ -240,40 +363,56 @@ class TimelineDashboardView(tk.Frame):
         unit_slug = str(block.get("unit_slug") or "")
         topic_label = str(block.get("primary_topic_label") or "")
 
+        kind = block_kind(block)
+        disp = _kind_display(kind)
+        status = derive_block_status(dict(block, kind=kind))
+        status_color = p.get(_STATUS_COLOR.get(status, "muted"), p["muted"])
+
         entries = list(self._entries_by_block_id.get(block_id) or [])
         n_entries = len(entries)
-        has_gap = n_entries == 0
 
         # header frame
         header = tk.Frame(self._scroll_frame, bg=p["frame_bg"], cursor="hand2")
         header.pack(fill="x", padx=0, pady=(0, 1))
 
         arrow_var = tk.StringVar(value="▶")
-        arrow_lbl = tk.Label(header, textvariable=arrow_var, bg=p["frame_bg"], fg=p["muted"], width=2)
-        arrow_lbl.pack(side="left", padx=(8, 2), pady=6)
+        tk.Label(header, textvariable=arrow_var, bg=p["frame_bg"], fg=p["muted"], width=2).pack(
+            side="left", padx=(8, 2), pady=6
+        )
 
-        title_color = p["warning"] if has_gap else p["fg"]
-        title_text = period_label
+        # ícone do kind + período + tópico
+        title_text = f"{disp['icon']} {period_label}"
         if topic_label:
             title_text += f" — {topic_label}"
-        tk.Label(header, text=title_text, bg=p["frame_bg"], fg=title_color, font=("", 10, "bold"), anchor="w").pack(
-            side="left", pady=6
-        )
+        title_color = status_color if status not in ("ok", "non_applicable") else p["fg"]
+        tk.Label(
+            header, text=title_text, bg=p["frame_bg"], fg=title_color,
+            font=("", 10, "bold"), anchor="w",
+        ).pack(side="left", pady=6)
+
+        # chip PT-BR do kind
+        tk.Label(
+            header, text=disp["label"], bg=p["frame_bg"], fg=p["muted"], font=("", 8),
+        ).pack(side="left", padx=(6, 0), pady=6)
 
         if unit_slug:
             tk.Label(
-                header,
-                text=f"  {unit_slug}",
-                bg=p["frame_bg"],
-                fg=p["muted"],
-                font=("", 9),
+                header, text=f"  {unit_slug}", bg=p["frame_bg"], fg=p["muted"], font=("", 9),
             ).pack(side="left", padx=(4, 0), pady=6)
 
-        badge_text = f"⚠ {n_entries} arquivo(s)" if has_gap else f"{n_entries} arquivo(s)"
-        badge_color = p["warning"] if has_gap else p["success"]
-        tk.Label(header, text=badge_text, bg=p["frame_bg"], fg=badge_color, font=("", 9)).pack(
-            side="right", padx=12, pady=6
-        )
+        # dropdown de reclassificação manual (não propaga o toggle do acordeão)
+        combo = self._build_kind_combo(header, block_id, str(block.get("manual_kind_override") or ""))
+
+        # badge de status (cor derivada do block_status)
+        tk.Label(
+            header, text=_STATUS_LABEL.get(status, status), bg=p["frame_bg"],
+            fg=status_color, font=("", 9, "bold"),
+        ).pack(side="right", padx=(4, 10), pady=6)
+
+        # contagem de material
+        tk.Label(
+            header, text=f"{n_entries} arq.", bg=p["frame_bg"], fg=p["muted"], font=("", 8),
+        ).pack(side="right", padx=4, pady=6)
 
         # content frame (colapsável)
         content = tk.Frame(self._scroll_frame, bg=p["bg"])
@@ -288,11 +427,40 @@ class TimelineDashboardView(tk.Frame):
 
         header.bind("<Button-1>", toggle)
         for child in header.winfo_children():
+            if child is combo:
+                continue
             child.bind("<Button-1>", toggle)
 
         if entries:
             for entry in entries:
                 self._build_entry_row(content, entry, block_id, all_block_ids)
+
+    def _build_kind_combo(self, header: tk.Widget, block_id: str, current_override: str) -> ttk.Combobox:
+        labels = ["⟳ auto"] + [
+            f"{KIND_DISPLAY[k]['icon']} {KIND_DISPLAY[k]['label']}" for k in BlockKind
+        ]
+        values = [""] + [k.value for k in BlockKind]
+        idx = values.index(current_override) if current_override in values and current_override else 0
+
+        var = tk.StringVar(value=labels[idx])
+        combo = ttk.Combobox(
+            header, textvariable=var, values=labels, state="readonly", width=16, font=("", 8),
+        )
+        combo.pack(side="right", padx=(4, 8), pady=4)
+
+        def on_select(_event=None):
+            selected = var.get()
+            i = labels.index(selected) if selected in labels else 0
+            new_kind = values[i] if i < len(values) else ""
+            try:
+                save_block_kind_override(self._course_dir, block_id, new_kind or None)
+                self._reveal_reprocess_btn()
+                self._reload()
+            except Exception:
+                logger.exception("Erro ao salvar reclassificação do bloco %s", block_id)
+
+        combo.bind("<<ComboboxSelected>>", on_select)
+        return combo
 
     def _build_entry_row(
         self,
@@ -386,9 +554,11 @@ class TimelineDashboardView(tk.Frame):
         combo.bind("<<ComboboxSelected>>", on_select)
 
     def _block_label(self, block: dict) -> str:
+        icon = _kind_display(block_kind(block))["icon"]
         period = str(block.get("period_label") or block.get("id") or "")
         topic = str(block.get("primary_topic_label") or "")
-        return f"{period} — {topic}" if topic else period
+        base = f"{period} — {topic}" if topic else period
+        return f"{icon} {base}"
 
     def _build_unmapped_section(self) -> None:
         p = self._p

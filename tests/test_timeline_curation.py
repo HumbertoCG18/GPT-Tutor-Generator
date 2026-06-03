@@ -1,0 +1,147 @@
+"""Tests para curation store (overrides manuais de bloco) + helpers de UI."""
+
+from __future__ import annotations
+
+import json
+
+import pytest
+
+from src.builder.timeline.curation import (
+    CURATION_FILENAME,
+    apply_block_curation,
+    load_block_curation,
+    set_block_override,
+)
+
+
+# ---------------------------------------------------------------------------
+# set / load round-trip
+# ---------------------------------------------------------------------------
+
+def test_set_then_load_roundtrip(tmp_path):
+    set_block_override(tmp_path, "bloco-03", "manual_kind_override", "holiday")
+    cur = load_block_curation(tmp_path)
+    assert cur == {"bloco-03": {"manual_kind_override": "holiday"}}
+    assert (tmp_path / CURATION_FILENAME).exists()
+
+
+def test_set_multiple_fields_accumulates(tmp_path):
+    set_block_override(tmp_path, "bloco-03", "manual_kind_override", "holiday")
+    set_block_override(tmp_path, "bloco-03", "manual_topic_label", "Indução")
+    cur = load_block_curation(tmp_path)
+    assert cur["bloco-03"] == {
+        "manual_kind_override": "holiday",
+        "manual_topic_label": "Indução",
+    }
+
+
+def test_remove_field_with_empty_value(tmp_path):
+    set_block_override(tmp_path, "bloco-03", "manual_kind_override", "holiday")
+    set_block_override(tmp_path, "bloco-03", "manual_topic_label", "X")
+    set_block_override(tmp_path, "bloco-03", "manual_kind_override", None)
+    cur = load_block_curation(tmp_path)
+    assert cur["bloco-03"] == {"manual_topic_label": "X"}
+
+
+def test_remove_last_field_drops_block(tmp_path):
+    set_block_override(tmp_path, "bloco-03", "manual_kind_override", "holiday")
+    set_block_override(tmp_path, "bloco-03", "manual_kind_override", "")
+    assert load_block_curation(tmp_path) == {}
+
+
+def test_invalid_field_raises(tmp_path):
+    with pytest.raises(ValueError):
+        set_block_override(tmp_path, "bloco-03", "campo_invalido", "x")
+
+
+def test_empty_block_id_noop(tmp_path):
+    set_block_override(tmp_path, "", "manual_kind_override", "holiday")
+    assert load_block_curation(tmp_path) == {}
+
+
+# ---------------------------------------------------------------------------
+# load: ausente / corrompido
+# ---------------------------------------------------------------------------
+
+def test_load_missing_returns_empty(tmp_path):
+    assert load_block_curation(tmp_path) == {}
+
+
+def test_load_corrupt_returns_empty(tmp_path):
+    (tmp_path / CURATION_FILENAME).write_text("{ not json", encoding="utf-8")
+    assert load_block_curation(tmp_path) == {}
+
+
+def test_load_wrong_shape_returns_empty(tmp_path):
+    (tmp_path / CURATION_FILENAME).write_text(
+        json.dumps({"version": 1, "blocks": "nope"}), encoding="utf-8"
+    )
+    assert load_block_curation(tmp_path) == {}
+
+
+# ---------------------------------------------------------------------------
+# apply_block_curation — merge in-place
+# ---------------------------------------------------------------------------
+
+def test_apply_merges_matching_ids(tmp_path):
+    set_block_override(tmp_path, "bloco-02", "manual_kind_override", "holiday")
+    blocks = [{"id": "bloco-01"}, {"id": "bloco-02"}, {"id": "bloco-03"}]
+    touched = apply_block_curation(blocks, tmp_path)
+    assert touched == 1
+    assert blocks[1]["manual_kind_override"] == "holiday"
+    assert "manual_kind_override" not in blocks[0]
+
+
+def test_apply_no_curation_returns_zero(tmp_path):
+    blocks = [{"id": "bloco-01"}]
+    assert apply_block_curation(blocks, tmp_path) == 0
+    assert "manual_kind_override" not in blocks[0]
+
+
+def test_apply_idempotent(tmp_path):
+    set_block_override(tmp_path, "bloco-01", "manual_topic_label", "T")
+    blocks = [{"id": "bloco-01"}]
+    apply_block_curation(blocks, tmp_path)
+    apply_block_curation(blocks, tmp_path)
+    assert blocks[0]["manual_topic_label"] == "T"
+
+
+def test_apply_skips_non_dict_blocks(tmp_path):
+    set_block_override(tmp_path, "bloco-01", "manual_kind_override", "holiday")
+    blocks = [None, "x", {"id": "bloco-01"}]
+    touched = apply_block_curation(blocks, tmp_path)
+    assert touched == 1
+
+
+# ---------------------------------------------------------------------------
+# UI helpers (timeline_dashboard)
+# ---------------------------------------------------------------------------
+
+def test_block_kind_honors_override():
+    from src.ui.timeline_dashboard import block_kind
+    block = {"topic_text": "Aula normal", "unit_slug": "u1",
+             "manual_kind_override": "holiday"}
+    assert block_kind(block) == "holiday"
+
+
+def test_save_block_kind_override_wrapper(tmp_path):
+    from src.ui.timeline_dashboard import save_block_kind_override
+    save_block_kind_override(tmp_path, "bloco-05", "assessment")
+    assert load_block_curation(tmp_path)["bloco-05"]["manual_kind_override"] == "assessment"
+    save_block_kind_override(tmp_path, "bloco-05", None)
+    assert load_block_curation(tmp_path) == {}
+
+
+def test_kind_display_safe_lookup():
+    from src.ui.timeline_dashboard import _kind_display
+    assert _kind_display("class")["label"] == "Aula"
+    fallback = _kind_display("garbage")
+    assert fallback["icon"] == "❓"
+
+
+def test_status_color_map_covers_all_statuses():
+    from src.ui.timeline_dashboard import _STATUS_COLOR, _STATUS_LABEL
+    statuses = {"ok", "needs_unit", "needs_topic", "needs_files",
+                "non_applicable", "needs_review"}
+    assert statuses <= set(_STATUS_COLOR)
+    assert statuses <= set(_STATUS_LABEL)
