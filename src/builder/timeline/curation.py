@@ -16,6 +16,10 @@ Formato:
 
 Modulo puro: so le/grava/merge campos crus. A re-derivacao de `kind`/topic
 (que depende do classifier) acontece em quem chama, evitando ciclo de import.
+
+NOTA: `manual_unit_slug` aqui e BLOCK-level (bloco -> unidade). Nao confundir
+com `FileEntry.manual_unit_slug` (arquivo -> unidade, em manifest.json). Mesmo
+nome, escopos diferentes; aplicados em contextos distintos (bloco vs entry).
 """
 
 from __future__ import annotations
