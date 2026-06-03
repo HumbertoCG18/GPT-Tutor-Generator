@@ -12,6 +12,7 @@ dependencies = [
     "pymupdf>=1.24.0",
     "pymupdf4llm>=0.0.10",
     "pdfplumber>=0.10.0",
+    "jsonschema>=4.0.0",
 ]
 
 [project.optional-dependencies]

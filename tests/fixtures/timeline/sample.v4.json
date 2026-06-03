@@ -1,0 +1,97 @@
+{
+  "version": 4,
+  "blocks": [
+    {
+      "id": "bloco-01",
+      "period_start": "2026-03-11",
+      "period_end": "2026-03-13",
+      "period_label": "2 dias · 11/03/2026 a 13/03/2026",
+      "kind": "class",
+      "unit_slug": "unidade-01-logica",
+      "unit_confidence": 0.82,
+      "primary_topic_slug": "logica-de-predicados",
+      "primary_topic_label": "Lógica de predicados",
+      "primary_topic_confidence": 0.74,
+      "topic_ambiguous": false,
+      "topic_candidates": [
+        {
+          "topic_slug": "logica-de-predicados",
+          "topic_label": "Lógica de predicados",
+          "unit_slug": "unidade-01-logica",
+          "score": 2.1,
+          "confidence": 1.0
+        }
+      ],
+      "topic_text": "Lógica de predicados",
+      "topic_source": "taxonomy",
+      "sessions": [{ "date": "2026-03-11" }, { "date": "2026-03-13" }],
+      "source_rows": [1, 2]
+    },
+    {
+      "id": "bloco-02",
+      "period_start": "2026-03-18",
+      "period_end": "2026-03-18",
+      "period_label": "1 dia · 18/03/2026",
+      "kind": "class",
+      "unit_slug": "unidade-01-logica",
+      "unit_confidence": 0.51,
+      "primary_topic_slug": "",
+      "primary_topic_label": "Indução estrutural",
+      "primary_topic_confidence": 0.0,
+      "topic_ambiguous": true,
+      "topic_candidates": [],
+      "topic_text": "indução estrutural sobre termos",
+      "topic_source": "topic_text_fallback",
+      "sessions": [{ "date": "2026-03-18" }],
+      "source_rows": [3]
+    },
+    {
+      "id": "bloco-03",
+      "period_start": "2026-03-25",
+      "period_end": "2026-03-25",
+      "period_label": "1 dia · 25/03/2026",
+      "kind": "holiday",
+      "unit_slug": "",
+      "unit_confidence": 0.0,
+      "primary_topic_slug": "",
+      "primary_topic_label": "",
+      "topic_ambiguous": true,
+      "topic_candidates": [],
+      "topic_text": "Feriado de Carnaval",
+      "topic_source": "",
+      "sessions": [{ "date": "2026-03-25" }],
+      "source_rows": [4]
+    },
+    {
+      "id": "bloco-04",
+      "period_start": "2026-04-01",
+      "period_end": "2026-04-01",
+      "period_label": "1 dia · 01/04/2026",
+      "kind": "review",
+      "unit_slug": "",
+      "primary_topic_label": "",
+      "topic_candidates": [],
+      "topic_text": "Revisão geral da unidade 1",
+      "topic_source": "",
+      "sessions": [{ "date": "2026-04-01" }],
+      "source_rows": [5]
+    },
+    {
+      "id": "bloco-05",
+      "period_start": "2026-04-08",
+      "period_end": "2026-04-08",
+      "period_label": "1 dia · 08/04/2026",
+      "kind": "assessment",
+      "unit_slug": "",
+      "primary_topic_slug": "",
+      "primary_topic_label": "P1",
+      "primary_topic_confidence": 0.0,
+      "topic_ambiguous": true,
+      "topic_candidates": [],
+      "topic_text": "P1 - Prova da Unidade 1",
+      "topic_source": "taxonomy",
+      "sessions": [{ "date": "2026-04-08" }],
+      "source_rows": [6]
+    }
+  ]
+}

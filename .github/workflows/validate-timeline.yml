@@ -1,0 +1,51 @@
+name: Validate Timeline Schema
+
+# Fase 6 — barreira de contrato do .timeline_index.json (schema v4 + gates).
+# Falha o PR se:
+#   - fixture versionado não bate no schema v4 (drift estrutural);
+#   - unknown > 5% dos blocos;
+#   - bloco class com needs_unit/needs_files > 10%.
+# Os cursos reais não vivem neste repo, então o gate roda sobre os fixtures
+# determinísticos em tests/fixtures/timeline/ (espelham o contrato).
+
+on:
+  pull_request:
+    paths:
+      - "schemas/timeline_index.v4.json"
+      - "src/builder/timeline/**"
+      - "tests/test_timeline_*.py"
+      - "tests/fixtures/timeline/**"
+      - "scripts/validate_timeline.py"
+      - ".github/workflows/validate-timeline.yml"
+  push:
+    branches: [main, new-features]
+    paths:
+      - "schemas/timeline_index.v4.json"
+      - "src/builder/timeline/**"
+      - "tests/fixtures/timeline/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Schema + gates nos fixtures
+        run: python scripts/validate_timeline.py
+
+      - name: Testes de timeline (schema, kinds, curation)
+        run: |
+          python -m pytest -q \
+            tests/test_timeline_schema.py \
+            tests/test_timeline_kinds.py \
+            tests/test_timeline_curation.py
