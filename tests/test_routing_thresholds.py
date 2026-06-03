@@ -17,3 +17,11 @@ def test_thresholds_present():
     assert T.BLOCK_UNIT_MIN_GAP == 0.35
     assert T.VOTE_DOMINANCE == 0.60
     assert T.MATERIAL_COVERAGE_MIN == 0.70  # gate de cobertura (Fase 4)
+
+
+def test_margin_matches_old_inline_018():
+    # reproduz a formula inline antiga p/ K=0.18
+    winner, runner = 1.5, 0.9
+    old = min(1.0, max(0.0, (winner - runner) + (winner * 0.18)))
+    from src.builder.routing.thresholds import margin_confidence
+    assert margin_confidence(winner, runner, k=0.18) == old

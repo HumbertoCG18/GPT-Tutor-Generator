@@ -13,6 +13,7 @@ from src.builder.timeline.signals import extract_timeline_session_signals
 from src.builder.timeline.classifier import classify_block
 from src.builder.timeline.curation import apply_block_curation
 from src.builder.text.normalize import normalize_match_text as _normalize_match_text
+from src.builder.routing.thresholds import margin_confidence, T
 from src.utils.helpers import slugify, write_text
 
 
@@ -1031,10 +1032,10 @@ def _assign_timeline_block_to_unit(block: Dict[str, object], unit_index: list) -
     scored.sort(key=lambda item: item[1], reverse=True)
     winner, winner_score = scored[0]
     runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
-    if winner_score < 1.0 or abs(winner_score - runner_up_score) < 0.35:
+    if winner_score < T.BLOCK_UNIT_MIN_WINNER or abs(winner_score - runner_up_score) < T.BLOCK_UNIT_MIN_GAP:
         return "", 0.0
 
-    confidence = min(1.0, max(0.0, (winner_score - runner_up_score) + (winner_score * 0.18)))
+    confidence = margin_confidence(winner_score, runner_up_score, k=T.MARGIN_K)
     return winner.get("slug", ""), confidence
 
 
