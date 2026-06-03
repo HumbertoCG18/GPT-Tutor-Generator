@@ -40,3 +40,18 @@ def test_health_md_renders_metrics():
     assert "Cobertura" in md
     assert "50%" in md
     assert "bloco-02" in md  # bloco pobre (0 materiais) listado
+
+
+import json
+from scripts.validate_materials import coverage_gate_failures
+
+
+def test_gate_flags_low_coverage():
+    entries = [{"id": "a", "auto_tags": [], "file_type": "pdf", "category": "material-de-aula"}]
+    fails = coverage_gate_failures(entries)
+    assert any("cobertura" in f for f in fails)
+
+
+def test_gate_passes_high_coverage():
+    entries = [{"id": "a", "auto_tags": ["bloco:bloco-01"], "file_type": "pdf", "category": "material-de-aula"}]
+    assert coverage_gate_failures(entries) == []
