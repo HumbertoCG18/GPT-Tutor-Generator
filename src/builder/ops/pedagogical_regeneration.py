@@ -247,6 +247,16 @@ def regenerate_pedagogical_files(
         ),
     )
 
+    from src.builder.artifacts.cronograma_health import cronograma_health_md as _cronograma_health_md
+    write_text(
+        builder.root_dir / "course" / "CRONOGRAMA_HEALTH.md",
+        _cronograma_health_md(
+            builder.course_meta,
+            live_manifest_entries,
+            builder._load_timeline_blocks(),
+        ),
+    )
+
     wb_entries = [e for e in all_entries if e.category in whiteboard_categories]
     if wb_entries:
         write_text(builder.root_dir / "whiteboard" / "WHITEBOARD_INDEX.md", whiteboard_index_md_fn(builder.course_meta, wb_entries))
