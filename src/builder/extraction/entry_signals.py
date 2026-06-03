@@ -1,21 +1,12 @@
 from __future__ import annotations
 
 import re
-import unicodedata
 from pathlib import Path
 from datetime import date
 from typing import Dict, List, Optional
 
 from src.builder.extraction.content_taxonomy import extract_markdown_lead_text
-
-
-def normalize_match_text(text: str) -> str:
-    text = unicodedata.normalize("NFKD", text or "")
-    text = "".join(ch for ch in text if not unicodedata.combining(ch))
-    text = text.lower()
-    text = text.replace("propocional", "proposicional")
-    text = re.sub(r"[^a-z0-9\s]", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
+from src.builder.text.normalize import normalize_match_text  # noqa: F401  (re-export)
 
 
 def score_text_against_row(source_text: str, row_tokens: List[str], *, weight: float = 1.0) -> float:

@@ -16,3 +16,10 @@ def test_typo_fix_propocional():
 def test_empty_and_none():
     assert normalize_match_text("") == ""
     assert normalize_match_text(None) == ""
+
+
+def test_entry_signals_reexports_same_normalize():
+    from src.builder.extraction.entry_signals import normalize_match_text as es_norm
+    from src.builder.text.normalize import normalize_match_text as canon
+    for s in ["Lógica", "P1 - Prova", "Máquina de Turing", "propocional", ""]:
+        assert es_norm(s) == canon(s)
