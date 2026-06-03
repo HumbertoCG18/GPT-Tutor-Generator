@@ -12,7 +12,8 @@ from src.utils.helpers import (
     CATEGORY_LABELS, DEFAULT_CATEGORIES, DEFAULT_OCR_LANGUAGE, PROCESSING_MODES,
     DOCUMENT_PROFILES, PREFERRED_BACKENDS, OCR_LANGS, CODE_EXTENSIONS,
     slugify, parse_html_schedule, auto_detect_category, auto_detect_title,
-    fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM, normalize_document_profile
+    fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM, normalize_document_profile,
+    is_sarc_url, fetch_schedule_html, decide_schedule_source
 )
 from src.builder.runtime.datalab_client import get_datalab_base_url, has_datalab_api_key
 from src.builder.extraction.entry_signals import (
@@ -1027,7 +1028,14 @@ class HTMLImportDialog(tk.Toplevel):
         p = apply_theme_to_toplevel(self, parent)
         self.parent = parent
 
-        ttk.Label(self, text="Cole o elemento HTML interiro da tabela de cronograma (ex: Portal/Moodle):").pack(padx=10, pady=(10, 5), anchor="w")
+        ttk.Label(self, text="Cole a URL do SARC OU o HTML da tabela do cronograma.").pack(padx=10, pady=(10, 5), anchor="w")
+
+        url_frame = ttk.Frame(self)
+        url_frame.pack(fill="x", padx=10, pady=(0, 5))
+        ttk.Label(url_frame, text="URL do SARC (opcional):").pack(side="left")
+        self.url_entry = ttk.Entry(url_frame)
+        self.url_entry.pack(side="left", fill="x", expand=True, padx=(6, 0))
+
         self.text = tk.Text(
             self,
             font=("Consolas", 10),
@@ -1045,20 +1053,63 @@ class HTMLImportDialog(tk.Toplevel):
         btn_frame = ttk.Frame(self)
         btn_frame.pack(fill="x", padx=10, pady=10)
         ttk.Button(btn_frame, text="Cancelar", command=self.destroy).pack(side="right", padx=(5, 0))
-        btn_import = ttk.Button(btn_frame, text="Importar para Markdown", style="Accent.TButton", command=self._process)
-        btn_import.pack(side="right")
-        
+        self._btn_import = ttk.Button(btn_frame, text="Importar para Markdown", style="Accent.TButton", command=self._process)
+        self._btn_import.pack(side="right")
+        self._status = ttk.Label(btn_frame, text="")
+        self._status.pack(side="left")
+
     def _process(self):
-        html_str = self.text.get("1.0", "end").strip()
-        if not html_str:
+        url = self.url_entry.get().strip()
+        pasted_html = self.text.get("1.0", "end").strip()
+        decision = decide_schedule_source(url, pasted_html)
+
+        action = decision["action"]
+        if action == "cancel":
             self.destroy()
             return
-        
+        if action == "error":
+            messagebox.showerror(APP_NAME, decision["message"], parent=self)
+            return
+        if action == "parse":
+            self._finish_with_html(decision["html"])
+            return
+
+        # action == "fetch": run the network call off the UI thread.
+        self._fetch_and_process(decision["url"])
+
+    def _fetch_and_process(self, url: str):
+        """Fetch the SARC HTML on a background thread, then parse on the UI thread."""
+        import threading
+
+        self._btn_import.configure(state="disabled")
+        self._status.configure(text="Buscando cronograma...")
+
+        def _worker():
+            try:
+                html = fetch_schedule_html(url)
+                self.after(0, lambda h=html: self._on_fetch_success(h))
+            except Exception as exc:
+                err = str(exc)
+                self.after(0, lambda e=err: self._on_fetch_error(e))
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _on_fetch_success(self, html: str):
+        self._status.configure(text="")
+        self._btn_import.configure(state="normal")
+        self._finish_with_html(html)
+
+    def _on_fetch_error(self, message: str):
+        self._status.configure(text="")
+        self._btn_import.configure(state="normal")
+        messagebox.showerror(APP_NAME, f"Falha ao buscar o cronograma:\n\n{message}", parent=self)
+
+    def _finish_with_html(self, html_str: str):
         res = parse_html_schedule(html_str)
         if res.startswith("Erro:"):
             messagebox.showerror(APP_NAME, res, parent=self)
             return
-            
+
         current = self.parent._syllabus_text.get("1.0", "end").strip()
         if current:
             current += "\n\n"

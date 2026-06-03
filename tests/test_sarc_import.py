@@ -11,6 +11,7 @@ import pytest
 import requests
 
 from src.utils.helpers import (
+    decide_schedule_source,
     fetch_schedule_html,
     is_sarc_url,
     parse_html_schedule,
@@ -154,3 +155,41 @@ def test_is_sarc_url_rejects_malformed():
 
 def test_is_sarc_url_rejects_non_http_scheme():
     assert not is_sarc_url("ftp://sarc.pucrs.br/x")
+
+
+# --- decide_schedule_source (Phase 2 pure decision helper) -----------------
+
+
+def test_decide_source_valid_url_takes_precedence_over_html():
+    decision = decide_schedule_source(
+        "https://sarc.pucrs.br/Default/Export.aspx?id=1",
+        "<table>pasted</table>",
+    )
+    assert decision == {
+        "action": "fetch",
+        "url": "https://sarc.pucrs.br/Default/Export.aspx?id=1",
+    }
+
+
+def test_decide_source_invalid_url_returns_error():
+    decision = decide_schedule_source("https://evil.com/x", "<table></table>")
+    assert decision["action"] == "error"
+    assert "sarc.pucrs.br" in decision["message"]
+
+
+def test_decide_source_empty_url_uses_pasted_html():
+    decision = decide_schedule_source("", "<table>x</table>")
+    assert decision == {"action": "parse", "html": "<table>x</table>"}
+
+
+def test_decide_source_whitespace_url_uses_pasted_html():
+    decision = decide_schedule_source("   ", "  <table>x</table>  ")
+    assert decision == {"action": "parse", "html": "<table>x</table>"}
+
+
+def test_decide_source_both_empty_cancels():
+    assert decide_schedule_source("", "") == {"action": "cancel"}
+
+
+def test_decide_source_handles_none_inputs():
+    assert decide_schedule_source(None, None) == {"action": "cancel"}

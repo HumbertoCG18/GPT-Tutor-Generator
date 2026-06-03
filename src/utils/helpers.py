@@ -437,6 +437,32 @@ def is_sarc_url(url: Optional[str]) -> bool:
     return host == SARC_HOST
 
 
+def decide_schedule_source(url: Optional[str], pasted_html: Optional[str]) -> dict:
+    """Decide where the cronograma HTML comes from, given the dialog fields.
+
+    Pure/testable: no network, no UI. Given the (possibly empty) SARC URL and
+    the pasted HTML, returns a small dict describing the next action so the UI
+    only has to obey it:
+      {"action": "fetch", "url": <str>}      → fetch this URL on a thread
+      {"action": "parse", "html": <str>}     → parse this HTML directly
+      {"action": "cancel"}                   → both empty; nothing to do
+      {"action": "error", "message": <str>}  → invalid URL; show message
+    URL (when present) takes precedence over pasted HTML.
+    """
+    url = (url or "").strip()
+    pasted_html = (pasted_html or "").strip()
+    if url:
+        if not is_sarc_url(url):
+            return {
+                "action": "error",
+                "message": "URL inválida. Use uma URL do SARC (sarc.pucrs.br).",
+            }
+        return {"action": "fetch", "url": url}
+    if pasted_html:
+        return {"action": "parse", "html": pasted_html}
+    return {"action": "cancel"}
+
+
 def fetch_schedule_html(url: str) -> str:
     """GET `url` and return the raw HTML body.
 
