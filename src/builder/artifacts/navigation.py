@@ -63,7 +63,9 @@ def _entry_markdown_text_for_file_map(root_dir: Optional[Path], entry: dict) -> 
         return entry.get("_markdown_text_for_tests") or ""
     md_path = _entry_markdown_path_for_file_map(root_dir, entry)
     if not md_path:
-        return ""
+        # Fallback: material sem .md convertido (imagem/PDF) usa descricao injetada
+        desc = str(entry.get("image_description", "") or "").strip()
+        return desc
     try:
         return md_path.read_text(encoding="utf-8")
     except Exception:
