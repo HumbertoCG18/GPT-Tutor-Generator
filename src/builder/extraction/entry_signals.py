@@ -91,9 +91,13 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         limit=6,
     )
     image_description = str(entry.get("image_description", "") or "")
-    effective_markdown = markdown_text or ""
-    if image_description and image_description not in effective_markdown:
-        effective_markdown = f"{effective_markdown}\n{image_description}".strip()
+    extra_parts = [markdown_text or ""]
+    notes = str(entry.get("notes", "") or "")
+    if notes:
+        extra_parts.append(notes)
+    if image_description and image_description not in " ".join(extra_parts):
+        extra_parts.append(image_description)
+    effective_markdown = "\n".join(p for p in extra_parts if p).strip()
     return {
         "title_text": normalize_match_text(entry.get("title", "")),
         "markdown_headings_text": normalize_match_text(" ".join(_extract_markdown_headings(markdown_text))),

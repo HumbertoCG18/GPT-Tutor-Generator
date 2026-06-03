@@ -36,3 +36,11 @@ def test_markdown_real_md_takes_precedence(tmp_path):
     entry = {"id": "e", "base_markdown": "x.md", "image_description": "ignorar"}
     txt = _entry_markdown_text_for_file_map(tmp_path, entry)
     assert "conteudo real" in txt
+
+
+def test_exercise_notes_feed_signal():
+    entry = {"title": "Lista 3.pdf", "category": "lista-de-exercicios",
+             "notes": "exercicios sobre maquina de turing e decidibilidade",
+             "auto_tags": []}
+    sig = collect_entry_unit_signals(entry, markdown_text="")
+    assert "decidibilidade" in sig["markdown_text"]
