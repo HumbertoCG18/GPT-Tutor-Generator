@@ -57,7 +57,7 @@ A resposta fica incompleta ou requer múltiplas leituras cross-doc. LLM Projects
   - Tópico/unidade resolvidos em camadas (matcher → voto → fallback humanizado) + curation durável (`.timeline_curation.json`) → `missing_unit`/`missing_topic` ≈ 0.
   - Schema v4 (`schemas/timeline_index.v4.json`) validado em CI (`validate-timeline.yml`).
 - [x] Cada `FileEntry` tem `manual_timeline_block_id` ou auto-tag `bloco:bloco-NN` confiável. Regra de injeção (`content_taxonomy.py`): `bloco:` entra com `confidence ≥ 0.50 AND não-ambíguo`, ou precedência absoluta de `manual_timeline_block_id`. **Vale pro material que já resolve bloco** (código via concept-match + qualquer entry com unit/topic forte).
-- [ ] PDFs/imagens/exercícios que **ainda não resolvem bloco** precisam de mecanismo análogo ao concept-match — summary leve via Gemini? Heurística de unit-match estendida? Discutir antes. (Único pré-req remanescente; é a Fase 3 da ordem de execução abaixo.)
+- [x] PDFs/imagens/exercícios ganham bloco via reforço de sinal (descrição de imagem, notes de exercício, fallback de markdown) + resíduo Gemini opt-in + curadoria. Cobertura medida em `CRONOGRAMA_HEALTH.md` / `scripts/validate_materials.py`. Ver `plans/2026-06-03-block-match-materiais.md`.
 - [ ] Decidir se SYLLABUS.md sobrevive em paralelo (tabela crua) ou se vira só CRONOGRAMA_DETALHADO (pode quebrar workflow existente).
 
 ## Pontos a investigar quando iniciar este plano
