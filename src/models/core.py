@@ -46,6 +46,7 @@ class FileEntry:
     manual_tags: List[str] = field(default_factory=list)
     auto_tags: List[str] = field(default_factory=list)
     manual_unit_slug: str = ""
+    manual_subunit_slug: str = ""
     manual_timeline_block_id: str = ""
     notes: str = ""
     professor_signal: str = ""
@@ -65,6 +66,14 @@ class FileEntry:
     page_range: str = ""
     ocr_language: str = DEFAULT_OCR_LANGUAGE
     enabled: bool = True
+
+    # Sinais de match persistidos no manifest.json (gravados por
+    # resolve_unit_block_tags). Declarados aqui para o round-trip from_dict ->
+    # to_dict parar de descarta-los silenciosamente.
+    unit_match_confidence: float = 0.0
+    unit_match_reasons: List[str] = field(default_factory=list)
+    subunit_match_confidence: float = 0.0
+    subunit_match_reasons: List[str] = field(default_factory=list)
 
     def id(self) -> str:
         if self.file_type == "url":

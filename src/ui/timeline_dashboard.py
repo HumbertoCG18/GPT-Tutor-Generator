@@ -67,7 +67,7 @@ def load_timeline_data(
         manual_topic = str(block.get("manual_topic_label") or "").strip()
         if manual_topic:
             block["primary_topic_label"] = manual_topic
-        manual_unit = str(block.get("manual_unit_slug") or "").strip()
+        manual_unit = str(block.get("block_manual_unit_slug") or "").strip()
         if manual_unit:
             block["unit_slug"] = manual_unit
 
@@ -416,7 +416,7 @@ class TimelineDashboardView(tk.Frame):
 
         # unidade efetiva (display); edição via dropdown à direita
         if unit_slug:
-            is_manual = bool(str(block.get("manual_unit_slug") or "").strip())
+            is_manual = bool(str(block.get("block_manual_unit_slug") or "").strip())
             tk.Label(
                 header, text=("✎ " if is_manual else "") + unit_slug,
                 bg=p["frame_bg"], fg=p["accent2"] if is_manual else p["muted"], font=("", 8),
@@ -424,7 +424,7 @@ class TimelineDashboardView(tk.Frame):
 
         # dropdowns de curadoria (não propagam o toggle do acordeão)
         kind_combo = self._build_kind_combo(header, block_id, str(block.get("manual_kind_override") or ""))
-        unit_combo = self._build_unit_combo(header, block_id, unit_slug, str(block.get("manual_unit_slug") or ""))
+        unit_combo = self._build_unit_combo(header, block_id, unit_slug, str(block.get("block_manual_unit_slug") or ""))
         no_toggle = (kind_combo, unit_combo)
 
         # badge de status (cor derivada do block_status)

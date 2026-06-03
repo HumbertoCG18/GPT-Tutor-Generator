@@ -86,7 +86,13 @@ def _infer_unit_confidence(entry: dict) -> str:
     if resolved_unit == "curso-inteiro":
         return "Alta"
 
-    match_confidence = float(entry.get("_unit_match_confidence") or 0.0)
+    # Prioriza o transiente do build (file_map injeta o match recem-computado);
+    # fora do build, le o `unit_match_confidence` persistido no manifest.
+    match_confidence = float(
+        entry.get("_unit_match_confidence")
+        or entry.get("unit_match_confidence")
+        or 0.0
+    )
     ambiguous = bool(entry.get("_unit_match_ambiguous"))
     signal_count = sum(
         1

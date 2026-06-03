@@ -17,9 +17,12 @@ Formato:
 Modulo puro: so le/grava/merge campos crus. A re-derivacao de `kind`/topic
 (que depende do classifier) acontece em quem chama, evitando ciclo de import.
 
-NOTA: `manual_unit_slug` aqui e BLOCK-level (bloco -> unidade). Nao confundir
-com `FileEntry.manual_unit_slug` (arquivo -> unidade, em manifest.json). Mesmo
-nome, escopos diferentes; aplicados em contextos distintos (bloco vs entry).
+NOTA: o override de unidade em escopo BLOCO (bloco -> unidade) e persistido em
+disco como `manual_unit_slug` (formato historico do .timeline_curation.json,
+mantido por compat). Ao fazer merge no bloco em memoria, ele e injetado sob a
+chave renomeada `block_manual_unit_slug` para nao colidir com
+`FileEntry.manual_unit_slug` (arquivo -> unidade, em manifest.json). Mesmo
+conceito, escopos diferentes; o rename desfaz a colisao de nome no bloco.
 """
 
 from __future__ import annotations
@@ -31,6 +34,11 @@ from typing import Dict, Iterable, Optional
 CURATION_FILENAME = ".timeline_curation.json"
 _CURATION_VERSION = 1
 _OVERRIDE_FIELDS = ("manual_kind_override", "manual_topic_label", "manual_unit_slug")
+
+# Override em escopo de bloco persistido como `manual_unit_slug`, mas injetado no
+# bloco em memoria sob esta chave renomeada (desfaz a colisao com o campo
+# entry-scoped `FileEntry.manual_unit_slug`).
+_BLOCK_FIELD_RENAMES = {"manual_unit_slug": "block_manual_unit_slug"}
 
 
 def _curation_path(course_dir: Path) -> Path:
@@ -113,7 +121,7 @@ def apply_block_curation(blocks: Iterable[dict], course_dir: Path) -> int:
         for field in _OVERRIDE_FIELDS:
             val = override.get(field)
             if val:
-                block[field] = val
+                block[_BLOCK_FIELD_RENAMES.get(field, field)] = val
                 hit = True
         touched += int(hit)
     return touched

@@ -114,7 +114,7 @@
         },
 
         "manual_topic_label": { "type": "string" },
-        "manual_unit_slug": { "type": "string" },
+        "block_manual_unit_slug": { "type": "string" },
         "manual_kind_override": { "$ref": "#/definitions/BlockKind" }
       },
       "additionalProperties": true

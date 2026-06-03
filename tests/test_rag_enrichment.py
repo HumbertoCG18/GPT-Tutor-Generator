@@ -85,6 +85,27 @@ def test_infer_confidence_no_unit():
     assert _infer_unit_confidence({}) == "Baixa"
 
 
+def test_infer_confidence_reads_persisted_unit_match_confidence():
+    """Le o campo persistido `unit_match_confidence` (declarado no FileEntry),
+    sem depender do transiente `_unit_match_confidence`."""
+    entry = {"unit_slug": "unidade-01", "unit_match_confidence": 0.90}
+    assert _infer_unit_confidence(entry) == "Alta"
+
+    weak = {"unit_slug": "unidade-01", "unit_match_confidence": 0.30}
+    assert _infer_unit_confidence(weak) == "Baixa"
+
+
+def test_infer_confidence_transient_overrides_when_present():
+    """Compat: quando o transiente esta presente (fluxo de build do file_map),
+    ele ainda vale — comportamento equivalente ao anterior."""
+    entry = {
+        "unit_slug": "unidade-01",
+        "unit_match_confidence": 0.0,
+        "_unit_match_confidence": 0.90,
+    }
+    assert _infer_unit_confidence(entry) == "Alta"
+
+
 def test_file_map_adds_sections_and_confidence_columns(tmp_path: Path):
     repo = tmp_path / "repo"
     (repo / "content").mkdir(parents=True)
