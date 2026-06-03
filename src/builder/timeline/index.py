@@ -2085,7 +2085,10 @@ def _build_timeline_index(
         resolved_label, resolved_slug, topic_source = _resolve_block_topic_label(runtime_block)
         if resolved_label and not runtime_block["primary_topic_label"]:
             runtime_block["primary_topic_label"] = resolved_label
-            if resolved_slug and not runtime_block["primary_topic_slug"]:
+            # primary_topic_slug so vem de manual/taxonomy (vinculo real).
+            # fallback humanizado e display-only: nunca popula slug.
+            if topic_source != "topic_text_fallback" and resolved_slug \
+                    and not runtime_block["primary_topic_slug"]:
                 runtime_block["primary_topic_slug"] = resolved_slug
         runtime_block["topic_source"] = topic_source
         topic_unit_slug = ""

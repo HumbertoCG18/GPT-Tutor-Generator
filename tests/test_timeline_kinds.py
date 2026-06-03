@@ -172,6 +172,7 @@ def test_real_corpus_unknown_rate(course):
 # ---------------------------------------------------------------------------
 
 from src.builder.timeline.index import (  # noqa: E402
+    _TOPIC_FALLBACK_MAX_LEN,
     _humanize_topic_text,
     _resolve_block_topic_label,
     _vote_unit_from_topic_candidates,
@@ -227,6 +228,77 @@ def test_vote_unit_below_min_score_filtered():
     ]}
     slug, _ = _vote_unit_from_topic_candidates(block, _idx("u1"))
     assert slug == ""
+
+
+# ---------------------------------------------------------------------------
+# Topic fallback (Phase 4 fix)
+# ---------------------------------------------------------------------------
+
+def test_humanize_strips_border_stopwords():
+    assert _humanize_topic_text("de lógica de predicados") == "Lógica de predicados"
+
+
+def test_humanize_keeps_internal_stopwords():
+    assert _humanize_topic_text("teoria da computação") == "Teoria da computação"
+
+
+def test_humanize_capitalizes_first_char():
+    assert _humanize_topic_text("máquinas de turing")[0] == "M"
+
+
+def test_humanize_preserves_acronym_case():
+    assert _humanize_topic_text("API REST e DevOps") == "API REST e DevOps"
+
+
+def test_humanize_empty_returns_empty():
+    assert _humanize_topic_text("") == ""
+    assert _humanize_topic_text("   ") == ""
+
+
+def test_humanize_all_stopwords_keeps_original():
+    # se sobrar nada apos stripping, restaura tokens originais
+    assert _humanize_topic_text("de da do") == "De da do"
+
+
+def test_humanize_truncates_at_60():
+    out = _humanize_topic_text("a " + "x" * 80)
+    assert out.endswith("…")
+    assert len(out) <= _TOPIC_FALLBACK_MAX_LEN + 1
+
+
+def test_resolve_topic_manual_wins():
+    block = {"manual_topic_label": "Tópico Curado",
+             "primary_topic_label": "outro", "topic_text": "qualquer"}
+    label, slug, source = _resolve_block_topic_label(block)
+    assert label == "Tópico Curado"
+    assert source == "manual"
+    assert slug
+
+
+def test_resolve_topic_taxonomy_layer():
+    block = {"primary_topic_label": "Lógica Proposicional",
+             "primary_topic_slug": "logica-proposicional",
+             "topic_text": "ignorado"}
+    label, slug, source = _resolve_block_topic_label(block)
+    assert label == "Lógica Proposicional"
+    assert slug == "logica-proposicional"
+    assert source == "taxonomy"
+
+
+def test_resolve_topic_text_fallback():
+    block = {"primary_topic_label": "", "topic_text": "de problema da parada"}
+    label, slug, source = _resolve_block_topic_label(block)
+    assert label == "Problema da parada"
+    assert source == "topic_text_fallback"
+    assert slug
+
+
+def test_resolve_topic_empty_when_nothing():
+    block = {"primary_topic_label": "", "topic_text": ""}
+    label, slug, source = _resolve_block_topic_label(block)
+    assert label == ""
+    assert slug == ""
+    assert source == ""
 
 
 @pytest.mark.parametrize("course", _REAL_COURSES)
