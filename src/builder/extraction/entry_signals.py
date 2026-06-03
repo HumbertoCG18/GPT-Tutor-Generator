@@ -90,6 +90,10 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         fallback_tags="; ".join(legacy_tags),
         limit=6,
     )
+    image_description = str(entry.get("image_description", "") or "")
+    effective_markdown = markdown_text or ""
+    if image_description and image_description not in effective_markdown:
+        effective_markdown = f"{effective_markdown}\n{image_description}".strip()
     return {
         "title_text": normalize_match_text(entry.get("title", "")),
         "markdown_headings_text": normalize_match_text(" ".join(_extract_markdown_headings(markdown_text))),
@@ -100,7 +104,8 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         "legacy_tags_text": normalize_match_text("; ".join(legacy_tags)),
         "tags_text": normalize_match_text(merged_tags),
         "raw_text": normalize_match_text(entry.get("raw_target", "")),
-        "markdown_text": normalize_match_text(markdown_text),
+        "image_description_text": normalize_match_text(image_description),
+        "markdown_text": normalize_match_text(effective_markdown),
     }
 
 
