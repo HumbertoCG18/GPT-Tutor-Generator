@@ -11,7 +11,9 @@ Progresso por fase:
 - [x] Fase 5 — UI por kind + curation durável (`.timeline_curation.json`)
 - [x] Fase 6 — Schema validation em CI (`validate-timeline.yml` + `validate_timeline.py`)
 - [x] Fase 7 — Handshake com `material-agnostic-refactor.md`
-- [ ] Fase 8 — Diagrama do pipeline (adiada pra o fim) · [ ] Rebuild dos 5 cursos
+- [x] Fase 8 — Diagramas do pipeline (`docs/sistema-atribuicao.html` + 2)
+- [x] Rebuild dos 5 cursos (v4) + curadoria de unidade → **gates 100% verdes**
+- [x] População B fechada — curadoria genérica `manual_unit_slug` (zero refactor por cadeira)
 
 ---
 
