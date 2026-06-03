@@ -115,11 +115,21 @@ def test_real_course_structure_validates(course):
     if not path.exists():
         pytest.skip(f"corpus indisponível: {path}")
     index = json.loads(path.read_text(encoding="utf-8"))
-    # serializa (injeta kind, bump v4) e valida estrutura — não aplica gates,
-    # pois o disco pode estar pré-rebuild (vote/fallback rodam no _build).
     out = _serialize_timeline_index(index)
     errs = schema_errors(out)
     assert errs == [], f"{course} drift de schema:\n  " + "\n  ".join(errs)
+
+
+@pytest.mark.parametrize("course", _REAL_COURSES)
+def test_real_course_passes_health_gates(course):
+    """Trava os 100%: cursos reais (pós rebuild+curadoria) passam os gates.
+    Skip se o corpus não existir nesta máquina."""
+    path = _BASE / course / "course" / ".timeline_index.json"
+    if not path.exists():
+        pytest.skip(f"corpus indisponível: {path}")
+    index = json.loads(path.read_text(encoding="utf-8"))
+    fails = gate_failures(health_report(index.get("blocks", [])))
+    assert fails == [], f"{course} falha gate:\n  " + "\n  ".join(fails)
 
 
 # ---------------------------------------------------------------------------
