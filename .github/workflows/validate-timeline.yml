@@ -49,3 +49,6 @@ jobs:
             tests/test_timeline_schema.py \
             tests/test_timeline_kinds.py \
             tests/test_timeline_curation.py
+
+      - name: Cobertura de material (informativo)
+        run: python scripts/validate_materials.py tests/fixtures/timeline/*.json || true
