@@ -13,6 +13,11 @@ from src.utils.helpers import (
     WHITEBOARD_CATEGORIES,
     write_text,
 )
+from src.builder.core.reference_navigation import (
+    _norm_topic as _ref_norm_topic,
+    _ref_support_line,
+    _REF_CAP_PER_ANCHOR,
+)
 
 
 def _entry_priority_label(entry: dict) -> str:
@@ -398,6 +403,23 @@ def render_course_map_md(
     )
 
 
+def _emit_support_lines(lines, refs, shown_ids, indent):
+    """Emite até _REF_CAP_PER_ANCHOR linhas 📖 Apoio (refs ainda não mostradas)
+    + 1 linha de overflow se sobrar. Atualiza shown_ids."""
+    fresh = [r for r in refs if r["entry_id"] not in shown_ids]
+    head = fresh[:_REF_CAP_PER_ANCHOR]
+    for ref in head:
+        lines.append(f"{indent}- {_ref_support_line(ref)}")
+        shown_ids.add(ref["entry_id"])
+    tail = fresh[_REF_CAP_PER_ANCHOR:]
+    if tail:
+        # As refs em overflow já foram contabilizadas nesta âncora; marca como
+        # mostradas para não ressurgirem no cabeçalho da unidade (dedup).
+        for ref in tail:
+            shown_ids.add(ref["entry_id"])
+        lines.append(f"{indent}- (+{len(tail)} referência(s) em content/BIBLIOGRAPHY.md)")
+
+
 def render_low_token_course_map_md(
     course_meta: dict,
     subject_profile=None,
@@ -434,16 +456,26 @@ def render_low_token_course_map_md(
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     units = parse_units_from_teaching_plan(teaching_plan) if teaching_plan else []
 
+    ref_index = course_meta.get("_reference_nav_index") or {}
+    ref_by_unit = ref_index.get("by_unit", {}) or {}
+    ref_by_topic = ref_index.get("by_topic", {}) or {}
+
     lines += ["## Estrutura do curso", ""]
     if units:
         for unit_title, topics in units:
+            unit_slug = normalize_unit_slug(unit_title)
             lines.append(f"### {unit_title}")
+            shown_ids = set()
             if topics:
                 for topic in topics:
                     indent = "  " * topic_depth(topic)
                     lines.append(f"{indent}- [ ] {topic_text(topic)}")
+                    tkey = (unit_slug, _ref_norm_topic(topic_text(topic)))
+                    _emit_support_lines(lines, ref_by_topic.get(tkey, []), shown_ids, indent + "  ")
             else:
                 lines.append("- [ ] [tópicos a preencher]")
+            leftovers = [r for r in ref_by_unit.get(unit_slug, []) if r["entry_id"] not in shown_ids]
+            _emit_support_lines(lines, leftovers, shown_ids, "")
             lines.append("")
     else:
         # Tenta renderizar unidades reais do timeline_index quando não há teaching_plan
