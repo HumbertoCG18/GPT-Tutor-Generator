@@ -734,26 +734,19 @@ def bibliography_md(
             "",
         ]
 
-    mapped = [(e, _rec(e)) for e in entries]
-    mapped = [(e, r) for (e, r) in mapped if (r.get("computed_ref_unit") or r.get("computed_ref_topics"))]
-    lines += ["## Mapa de relevância por tópico", ""]
-    if mapped:
-        lines += ["| Tópico/Unidade | Referência | Acessível | Incidência em prova |", "|---|---|---|---|"]
-        for e, r in mapped:
-            unit = r.get("computed_ref_unit") or ""
-            topics = ", ".join(r.get("computed_ref_topics") or [])
-            alvo = " / ".join([p for p in (unit, topics) if p]) or "—"
-            lines.append(f"| {alvo} | {e.title} | sim | — |")
-        lines.append("")
-    else:
-        lines += ["<!-- Preencha após organizar as referências -->", "",
-                  "| Tópico | Referência principal | Acessível | Incidência em prova |",
-                  "|---|---|---|---|", "| [a preencher] | | | |", ""]
+    lines += [
+        "## Relevância por tópico",
+        "",
+        "> A relevância por tópico agora vive no `course/COURSE_MAP.md` "
+        "(linhas `📖 Apoio:` sob cada tópico/unidade). Esta página traz o resumo "
+        "completo de cada referência.",
+        "",
+    ]
 
     return clamp_navigation_artifact(
         "\n".join(lines),
         max_chars=14000,
-        label="course/COURSE_MAP.md",
+        label="course/BIBLIOGRAPHY.md",
     )
 
 
