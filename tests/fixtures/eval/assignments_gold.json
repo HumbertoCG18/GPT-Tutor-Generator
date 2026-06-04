@@ -52,11 +52,11 @@
   "cases": [
     {
       "id": "case-date",
-      "title": "Processos",
+      "title": "12.03 Processos",
       "raw_target": "raw/pdfs/12.03 processos.pdf",
       "category": "material-de-aula",
       "tags": "",
-      "markdown": "# Processos\n\nslides da aula sobre processos",
+      "markdown": "# Processos\n\nslides da aula de processos",
       "unit_guess": {"slug": "unidade-01-logica", "confidence": 0.40, "ambiguous": true},
       "expected_block_id": "bloco-01",
       "note": "data 12.03 cai no periodo 11-13/03 do bloco-01"
