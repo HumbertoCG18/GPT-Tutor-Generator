@@ -94,7 +94,21 @@ class FileEntry:
         return slugify(Path(self.source_path).stem)
 
     def to_dict(self) -> Dict:
-        return asdict(self)
+        from dataclasses import fields as _fields, MISSING
+        full = asdict(self)
+        out: Dict = {}
+        for f in _fields(self):
+            val = full[f.name]
+            if f.default is not MISSING:
+                default = f.default
+            elif f.default_factory is not MISSING:  # type: ignore[misc]
+                default = f.default_factory()       # type: ignore[misc]
+            else:
+                out[f.name] = val  # required: sempre presente
+                continue
+            if val != default:
+                out[f.name] = val
+        return out
 
     @classmethod
     def from_dict(cls, d: Dict) -> "FileEntry":
