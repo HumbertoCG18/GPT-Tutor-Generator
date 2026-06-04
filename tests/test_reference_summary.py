@@ -66,14 +66,15 @@ def test_process_degrades_without_client():
     assert out["computed_ref_unit"] == "unidade-01" # mas mapeia por texto
 
 
-def test_batch_caches_by_hash(tmp_path):
+def test_batch_writes_only_curation(tmp_path):
     import json as _json
     from src.builder.core import reference_summary as rs
     root = tmp_path
     (root / "course").mkdir()
-    (root / "manifest.json").write_text(_json.dumps({"entries": [
+    manifest_blob = _json.dumps({"entries": [
         {"id": "r1", "category": "referencias", "file_type": "github-repo",
-         "source_path": "https://github.com/a/b"}]}), encoding="utf-8")
+         "source_path": "https://github.com/a/b"}]})
+    (root / "manifest.json").write_text(manifest_blob, encoding="utf-8")
     builder = type("B", (), {"root_dir": root})()
     units = [{"slug": "u1", "normalized_title": "x", "topic_phrases": [], "topic_tokens": [], "distinctive_tokens": []}]
     client = MagicMock()
@@ -85,4 +86,7 @@ def test_batch_caches_by_hash(tmp_path):
         rs.summarize_all_reference_entries(builder, units, client)  # 2a vez: cache
     finally:
         rs.fetch_reference_text = orig
-    assert client.summarize_bundle.call_count == 1  # resumiu só 1x
+    assert client.summarize_bundle.call_count == 1
+    assert (root / "manifest.json").read_text(encoding="utf-8") == manifest_blob
+    cur = _json.loads((root / "course" / "references_curation.json").read_text(encoding="utf-8"))
+    assert cur["entries"]["r1"]["ref_summary"] == "s"
