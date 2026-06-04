@@ -153,31 +153,39 @@ Linha de apoio (exemplo renderizado):
 - [ ] Templates
 ```
 
-### Componente 3 — Wiring (passar curation + manifest até o renderer)
+### Componente 3 — Wiring (injeção via `course_meta`, NÃO kwargs)
 
-Cadeia de chamada atual:
-`pedagogical_regeneration` → `course_map_md` (`navigation.py:952`) →
-`low_token_course_map_md_v2` (`navigation.py:864`) → `render_low_token_course_map_md_v2`
-(`navigation.py:544`) → `render_low_token_course_map_md` (`navigation.py:401`).
+**Revisão pós-grounding:** a cadeia de wiring (`course_map_md` → `low_token_course_map_md_v2`
+→ `render_low_token_course_map_md_v2` → `render_low_token_course_map_md`) passa só
+`(course_meta, subject_profile)` em cada nível. Mas o renderer **já lê contexto de
+`course_meta` via chaves `_`-prefixadas** (`course_meta["_timeline_context"]`,
+`course_meta["_assessment_context"]` — `navigation.py:418,516`), setadas em
+`pedagogical_regeneration.py:190,204`. Seguimos esse padrão: injetamos
+`course_meta["_reference_nav_index"]`. **Nenhum wrapper muda de assinatura.**
 
-Cada nível ganha kwargs opcionais (`reference_curation`, `manifest_entries`) e os repassa.
-No topo (`pedagogical_regeneration`, onde a BIBLIOGRAPHY já carrega a curation —
-linhas ~296-305), construir o índice e passar adiante:
+Em `pedagogical_regeneration`, antes de `course_map_md_fn(...)` (`:246`):
 
 ```python
 from src.builder.core.reference_summary import load_reference_curation
 from src.builder.core.reference_navigation import build_unit_topic_reference_index
+import json
 
-reference_curation = load_reference_curation(builder.root_dir)
-reference_nav_index = build_unit_topic_reference_index(
-    live_manifest_entries, reference_curation,
-    normalize_unit_slug=normalize_unit_slug, slugify=slugify,
+_manifest_entries = json.loads(
+    (builder.root_dir / "manifest.json").read_text(encoding="utf-8")
+).get("entries", [])
+runtime_course_meta["_reference_nav_index"] = build_unit_topic_reference_index(
+    _manifest_entries, load_reference_curation(builder.root_dir)
 )
-# course_map_md(..., reference_nav_index=reference_nav_index, reference_slugify=slugify)
 ```
 
-Defaults: se `reference_nav_index` chega `None`/vazio, o renderer pula toda a lógica de
-apoio (modo degradado idêntico ao atual).
+Defaults: `course_meta.get("_reference_nav_index") or {}` no renderer → sem índice/vazio,
+toda a lógica de apoio é pulada (modo degradado idêntico ao atual).
+
+**Nota sobre o helper:** `build_unit_topic_reference_index` **não** recebe
+`normalize_unit_slug`/`slugify` (revisão): `computed_ref_unit` já é o slug correto
+(alinhado — `routing/file_map.py:101` usa o mesmo `normalize_unit_slug` que o renderer),
+e o tópico usa `_norm_topic` (normalizador trivial compartilhado renderer↔helper). Lê
+entries do manifest como **dicts** (`entry.get("id")`), alinhados com as chaves da curation.
 
 ### Componente 5 — Limpeza da redundância de relevância na BIBLIOGRAPHY
 
