@@ -38,6 +38,10 @@ Read this file before starting any task.
   roda o gold set `tests/fixtures/eval/assignments_gold.json` pelo scorer real
   (resolve_unit_block_tags) e reporta acuracia/confusao/calibracao de band.
   Gate de regressao em `tests/test_eval_assignments.py` (baseline no fixture).
+- Sinal de sequencia (ordinal de aula) em `src/builder/routing/sequence.py`:
+  "Aula 03" recebe boost de desempate `SEQUENCE_BOOST=0.20` no 3o bloco
+  `kind=class` (numerado por `annotate_class_ordinals`), somado em
+  `score_entry_against_timeline_block`. So marcadores `aula`/`encontro`.
 
 ### Not Declared In Brief
 
@@ -50,10 +54,21 @@ Read this file before starting any task.
 
 ### Current Design Focus
 
-- Tag system needs redesign before implementation.
-- Desired tag role: improve confidence and precision for automatic block and unit assignment.
-- Desired extension: infer subunits from tags using a scoring system compatible with existing assignment logic.
-- Refactor should be planned to avoid repeated large rewrites.
+- EM IMPLEMENTACAO: Referencias como contexto base do tutor. Spec em
+  `docs/superpowers/specs/2026-06-04-referencias-contexto-tutor-design.md`.
+  Busca README (API GitHub, sem clone) + texto de doc/URL (`url_markdown`),
+  resume via Gemini (lazy), mapeia a unidade/topico (nao bloco), surfacea na
+  `BIBLIOGRAPHY.md`. Resolve "tutor so tem link/titulo da referencia".
+- Itens propostos mas PARADOS (retomar apos esta spec): ver
+  `docs/superpowers/BACKLOG.md` — #3 decay de data, #4 piso de band, Horario,
+  conserto do clone github, token github, referencias Approach C, medicao de
+  correcao com ground-truth.
+
+> Historico: o redesign do sistema de tags (unit/subunit/bloco) e a precisao de
+> atribuicao bloco/unidade ja foram implementados (auto_tags, bandas de
+> confianca Fase 1-4, harness de avaliacao, sinal de sequencia). Foco migrou de
+> "precisao de bloco" (resolvida, ~98% band alta nos repos reais) para
+> "referencias usaveis pelo tutor".
 
 ---
 
