@@ -20,11 +20,12 @@ Dar ao tutor **contexto base real** de cada referência: buscar conteúdo leve (
 ## Escopo
 
 Dentro do v1:
-- Aquisição leve de conteúdo de referência **sem clone**: README via API do GitHub; texto de página para URL/doc.
+- Aquisição leve de conteúdo de referência **sem clone**: README via API do GitHub; **texto de página de doc/URL via o extrator HTML existente** (`url_markdown.html_to_structured_markdown`).
 - Resumo via a camada Gemini já existente (lazy: sem `gemini_api_key`, pula o resumo).
 - Mapeamento concept→unidade/tópico reusando o scorer existente (determinístico).
 - Surfacing na `BIBLIOGRAPHY.md`: resumo por referência + tabela de relevância preenchida.
 - Cache por content-hash em `references_curation.json`.
+- **Sem token GitHub** (API anônima, 60 req/h por IP; o cache por hash protege o re-run e o volume normal por matéria é baixo).
 
 Fora do v1 (YAGNI / issues separadas):
 - Consertar o clone completo (branch default + long-path) — o README-fetch contorna; o clone completo só importa se quiser análise de código de verdade, vira issue própria.
@@ -55,8 +56,8 @@ referência
 
 **`fetch_reference_text(entry, *, max_chars: int = 16000) -> str`**
 - `file_type == "github-repo"` ou `source_path` é URL GitHub → `parse_github_repo` + `fetch_github_readme`.
-- Outra URL/doc → reusa `fetch_url_title`/fetch de página existente em `helpers.py` para extrair texto (ou retorna `""` se não houver extrator simples — v1 foca GitHub; doc/URL genérico degrada para vazio).
-- Trunca em `max_chars`. Determinístico dado o conteúdo remoto; o cache (content-hash) evita re-fetch.
+- Outra URL/doc (página de documentação, artigo) → `requests.get` do HTML + `BeautifulSoup` + **reusa `url_markdown.pick_best_content_root` + `url_markdown.html_to_structured_markdown`** (já filtra menu/rodapé via `is_probably_noise_container`, escolhe o nó de conteúdo principal). Devolve markdown do corpo útil.
+- Trunca em `max_chars` (reusa `url_markdown.truncate_markdown_blocks`). Erro de rede/HTML inválido → `""` (degrada). Determinístico dado o conteúdo remoto; o cache (content-hash) evita re-fetch.
 
 ### Componente 2 — Resumo: `src/builder/core/reference_summary.py` (novo, reusa Gemini)
 
@@ -94,7 +95,7 @@ referência
 | Com `gemini_api_key` + rede | fetch README → resumo + concepts → mapa de tópico + surfacing completo |
 | Sem `gemini_api_key` | fetch README → **sem resumo**; mapa de unidade via título+texto fetchado (determinístico) + surfacing |
 | Sem rede / fetch falha | título + URL (comportamento de hoje); nada quebra |
-| Não-GitHub sem extrator | título + URL; degrada |
+| Doc/URL com HTML vazio ou só-ruído | `fetch` devolve ""; degrada para título + URL |
 
 ## Guardrail — repo do tutor ≠ repo de referência
 
@@ -118,6 +119,7 @@ O fetch/resumo/tema processa **somente FileEntry com `category ∈ {referencias,
 ### Unitários
 - `parse_github_repo`: formas de URL (`github.com/o/r`, `.git`, path extra, não-github → None).
 - `fetch_github_readme`: mock de `requests.get` (200 com corpo, 404 → "", timeout → "").
+- `fetch_reference_text` doc/URL: HTML de página com menu+rodapé+conteúdo → extrai só o corpo (via `pick_best_content_root`/`html_to_structured_markdown`); HTML vazio/só-ruído → "".
 - `summarize_reference`: `client=None` → None; texto vazio → None; com client mockado → dict com summary+concepts.
 - `assign_concepts_to_unit`: overlap concept→unidade (caso certo/errado); sem concepts → fallback por texto; nada casa → vazio.
 
@@ -135,7 +137,7 @@ O fetch/resumo/tema processa **somente FileEntry com `category ∈ {referencias,
 
 | Arquivo | Mudança |
 |---|---|
-| `src/builder/core/reference_content.py` | NOVO: `parse_github_repo`, `fetch_github_readme`, `fetch_reference_text` |
+| `src/builder/core/reference_content.py` | NOVO: `parse_github_repo`, `fetch_github_readme`, `fetch_reference_text` (doc/URL reusa `text/url_markdown.py`) |
 | `src/builder/core/reference_summary.py` | NOVO: `summarize_reference` (reusa padrão Gemini) |
 | `src/builder/core/reference_topic.py` | NOVO: `assign_concepts_to_unit` |
 | `src/builder/artifacts/repo.py` | `bibliography_md`: render resumo + relevância; preenche mapa de tópico |
