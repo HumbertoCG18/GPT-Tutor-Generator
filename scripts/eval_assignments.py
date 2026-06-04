@@ -98,3 +98,54 @@ def predict_block(case: dict, blocks: list) -> tuple[str, str]:
         entry_markdown_text_for_file_map_fn=lambda root, e: markdown,
     )[0]
     return str(out.get("computed_block_id", "")), str(out.get("computed_block_band", ""))
+
+
+def evaluate(gold: dict) -> dict:
+    blocks = gold["timeline"]["blocks"]
+    cases = gold["cases"]
+
+    case_rows = []
+    confusion: dict = {}
+    bands = {
+        "alta": {"correct": 0, "wrong": 0},
+        "media": {"correct": 0, "wrong": 0},
+        "baixa": {"correct": 0, "wrong": 0},
+        "": {"correct": 0, "wrong": 0},  # orfao (sem band)
+    }
+    correct = 0
+    orphans = 0
+
+    for case in cases:
+        expected = str(case.get("expected_block_id", ""))
+        predicted, band = predict_block(case, blocks)
+        is_correct = predicted == expected
+        if is_correct:
+            correct += 1
+        if predicted == "":
+            orphans += 1
+        bands.setdefault(band, {"correct": 0, "wrong": 0})
+        bands[band]["correct" if is_correct else "wrong"] += 1
+        key = f"{expected}->{predicted or '(orfao)'}"
+        confusion[key] = confusion.get(key, 0) + 1
+        case_rows.append({
+            "id": str(case.get("id", "")),
+            "expected": expected,
+            "predicted": predicted,
+            "band": band,
+            "correct": is_correct,
+            "note": str(case.get("note", "")),
+        })
+
+    total = len(cases)
+    return {
+        "total": total,
+        "correct": correct,
+        "wrong": total - correct,
+        "orphans": orphans,
+        "block_accuracy": (correct / total) if total else 0.0,
+        # confiante e ERRADO = pior falha (band alta mas bloco errado)
+        "confident_wrong": bands["alta"]["wrong"],
+        "bands": bands,
+        "confusion": confusion,
+        "cases": case_rows,
+    }
