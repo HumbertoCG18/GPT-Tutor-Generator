@@ -232,6 +232,31 @@ def process_zip(builder, entry: FileEntry, raw_target: Path) -> Dict[str, object
     return item
 
 
+def _detect_default_branch(url: str, *, timeout: int = 30) -> str:
+    """Branch default de um repo remoto via `git ls-remote --symref HEAD`.
+
+    Contorna o bug de assumir `main`: repos com default `master`/outro
+    quebravam o clone (`Remote branch main not found`). "main" como fallback
+    seguro se git ausente, rede falha, ou saída inesperada.
+    """
+    try:
+        proc = subprocess.run(
+            ["git", "ls-remote", "--symref", url, "HEAD"],
+            check=False, capture_output=True, text=True, timeout=timeout,
+        )
+    except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
+        return "main"
+    if proc.returncode != 0:
+        return "main"
+    for line in (proc.stdout or "").splitlines():
+        # "ref: refs/heads/<name>\tHEAD"
+        if line.startswith("ref:"):
+            parts = line.split()
+            if len(parts) >= 2 and parts[1].startswith("refs/heads/"):
+                return parts[1][len("refs/heads/"):]
+    return "main"
+
+
 def process_github_repo(builder, entry: FileEntry) -> Dict[str, object]:
     item: Dict[str, object] = {
         "extracted_files": [],
@@ -239,14 +264,17 @@ def process_github_repo(builder, entry: FileEntry) -> Dict[str, object]:
         "clone_error": None,
     }
     url = entry.source_path
-    branch = entry.tags.strip() or "main"
+    # tags pinam o branch explicitamente; vazio -> detecta o default do remoto.
+    branch = entry.tags.strip() or _detect_default_branch(url)
     slug = entry.id()
     clone_dir = builder.root_dir / "raw" / "repos" / slug / branch
     if clone_dir.exists():
         shutil.rmtree(clone_dir)
     ensure_dir(clone_dir.parent)
 
-    cmd = ["git", "clone", "--depth", "1", "--branch", branch, "--single-branch", url, str(clone_dir)]
+    # core.longpaths=true evita "Filename too long" no checkout em Windows.
+    cmd = ["git", "-c", "core.longpaths=true", "clone", "--depth", "1",
+           "--branch", branch, "--single-branch", url, str(clone_dir)]
     try:
         proc = subprocess.run(cmd, check=False, capture_output=True, text=True, timeout=120)
     except FileNotFoundError:
