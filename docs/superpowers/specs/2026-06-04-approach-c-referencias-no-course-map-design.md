@@ -179,6 +179,35 @@ reference_nav_index = build_unit_topic_reference_index(
 Defaults: se `reference_nav_index` chega `None`/vazio, o renderer pula toda a lógica de
 apoio (modo degradado idêntico ao atual).
 
+### Componente 5 — Limpeza da redundância de relevância na BIBLIOGRAPHY
+
+Motivo: o Approach C move o mapa ref→unidade/tópico pro COURSE_MAP. A tabela
+"## Mapa de relevância por tópico" em `bibliography_md` (`repo.py:739-746`) passa a
+ser **redundante** — ela já duplica internamente a linha "Relevante para" de cada entry
+(`repo.py:720-724`) **e** agora a mesma info vive no COURSE_MAP. Além disso a tabela
+carrega duas colunas mortas (`Acessível` sempre "sim", `Incidência em prova` sempre "—").
+
+Mudança em `bibliography_md` (`src/builder/artifacts/repo.py:654`):
+- **Remover** a seção "## Mapa de relevância por tópico" (a tabela inteira, incluindo o
+  fallback `[a preencher]` e as duas colunas mortas).
+- **Substituir** por um ponteiro de uma linha:
+  `> O mapa de relevância por tópico agora vive no \`course/COURSE_MAP.md\` (linhas \`📖 Apoio:\`). Esta página traz o resumo completo de cada referência.`
+- **Manter** a seção "## Referências importadas" com `Resumo` + `Relevante para` por entry
+  (é o registro detalhado, não redundante com a linha curta do COURSE_MAP).
+- **Corrigir, de passagem** (estamos editando a função), o label errado do clamp
+  (`repo.py:756`): `label="course/COURSE_MAP.md"` → `label="course/BIBLIOGRAPHY.md"`.
+
+Invariante: nenhuma referência mapeada ⇒ o ponteiro ainda é emitido (texto fixo), mas
+não há perda — o COURSE_MAP simplesmente não terá linhas de apoio. A seção de entries
+permanece igual ao atual.
+
+Teste (em `tests/test_course_map_references.py` ou um `tests/test_bibliography_cleanup.py`):
+- BIBLIOGRAPHY gerada **não** contém mais o cabeçalho "Mapa de relevância por tópico" nem
+  as colunas "Acessível"/"Incidência em prova".
+- BIBLIOGRAPHY contém o ponteiro para `course/COURSE_MAP.md`.
+- A seção "Referências importadas" com `Relevante para` continua presente.
+- clamp chamado com `label="course/BIBLIOGRAPHY.md"`.
+
 ### Componente 4 — Instrução no prompt do tutor
 
 Adicionar bloco curto em `src/builder/artifacts/prompts.py`, junto da descrição do
@@ -250,9 +279,11 @@ runtime (tutor):
 | `src/builder/artifacts/navigation.py` | modificar renderer + 3 wrappers (kwargs repassados) |
 | `src/builder/ops/pedagogical_regeneration.py` | construir índice e passar ao course_map_md |
 | `src/builder/artifacts/prompts.py` | bloco de instrução de apoio |
+| `src/builder/artifacts/repo.py` | bibliography_md: remover tabela de relevância → ponteiro; corrigir label do clamp |
 | `tests/test_reference_navigation.py` | criar (helper) |
 | `tests/test_course_map_references.py` | criar (renderer + degradado + wiring) |
 | `tests/test_prompts_reference_support.py` | criar (instrução no prompt) |
+| `tests/test_bibliography_cleanup.py` | criar (remoção da tabela + ponteiro + label) |
 
 ## Dependências de código existente (reuso)
 
