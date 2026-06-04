@@ -47,3 +47,43 @@ def fetch_github_readme(owner: str, repo: str, *, timeout: float = 10.0) -> str:
     if resp.status_code != 200:
         return ""
     return resp.text or ""
+
+
+def _collapse_ws(s: str) -> str:
+    return " ".join((s or "").split())
+
+
+def _fetch_doc_text(url: str, *, timeout: float = 10.0) -> str:
+    """Texto do corpo de uma página (doc/artigo) via o extrator HTML existente."""
+    try:
+        resp = requests.get(url, headers={"User-Agent": "gpt-tutor-generator"}, timeout=timeout)
+    except Exception:
+        return ""
+    if resp.status_code != 200 or not resp.text:
+        return ""
+    from src.builder.text.url_markdown import html_to_structured_markdown, truncate_markdown_blocks
+    try:
+        return html_to_structured_markdown(
+            resp.text, url, "",
+            collapse_ws=_collapse_ws,
+            truncate_markdown_blocks=truncate_markdown_blocks,
+        )
+    except Exception:
+        return ""
+
+
+def fetch_reference_text(entry: dict, *, max_chars: int = 16000) -> str:
+    """Conteúdo leve de uma referência. GitHub -> README; doc/URL -> texto de
+    página. "" se sem fonte ou em qualquer falha. Trunca em max_chars."""
+    source = str(entry.get("source_path") or "").strip()
+    if not source:
+        return ""
+    gh = parse_github_repo(source) if (
+        str(entry.get("file_type") or "") == "github-repo" or "github.com" in source
+    ) else None
+    if gh:
+        text = fetch_github_readme(*gh)
+    else:
+        text = _fetch_doc_text(source)
+    text = text or ""
+    return text[:max_chars]
