@@ -11,6 +11,7 @@
         "topic_ambiguous": false,
         "topic_candidates": [],
         "topic_text": "Lógica de predicados",
+        "kind": "class",
         "administrative_only": false,
         "rows": [
           {"index": 1, "date_text": "11/03/2026", "content": "Lógica de predicados"},
@@ -27,6 +28,7 @@
         "topic_ambiguous": true,
         "topic_candidates": [],
         "topic_text": "indução estrutural sobre termos",
+        "kind": "class",
         "administrative_only": false,
         "rows": [
           {"index": 3, "date_text": "18/03/2026", "content": "indução estrutural sobre termos"}
@@ -42,9 +44,42 @@
         "topic_ambiguous": true,
         "topic_candidates": [],
         "topic_text": "Revisão geral da unidade 1",
+        "kind": "review",
         "administrative_only": false,
         "rows": [
           {"index": 5, "date_text": "01/04/2026", "content": "Revisão geral da unidade 1"}
+        ]
+      },
+      {
+        "id": "bloco-03",
+        "period_label": "25/03/2026 a 25/03/2026",
+        "unit_slug": "",
+        "unit_confidence": 0.0,
+        "primary_topic_slug": "",
+        "primary_topic_confidence": 0.0,
+        "topic_ambiguous": true,
+        "topic_candidates": [],
+        "topic_text": "Feriado",
+        "kind": "holiday",
+        "administrative_only": false,
+        "rows": [
+          {"index": 4, "date_text": "25/03/2026", "content": "Feriado"}
+        ]
+      },
+      {
+        "id": "bloco-05",
+        "period_label": "08/04/2026 a 08/04/2026",
+        "unit_slug": "unidade-01-logica",
+        "unit_confidence": 0.50,
+        "primary_topic_slug": "",
+        "primary_topic_confidence": 0.0,
+        "topic_ambiguous": true,
+        "topic_candidates": [],
+        "topic_text": "recursao e relacoes de recorrencia",
+        "kind": "class",
+        "administrative_only": false,
+        "rows": [
+          {"index": 6, "date_text": "08/04/2026", "content": "recursao e relacoes de recorrencia"}
         ]
       }
     ]
@@ -93,6 +128,17 @@
       "unit_guess": {"slug": "unidade-01-logica", "confidence": 0.40, "ambiguous": true},
       "expected_block_id": "bloco-01",
       "note": "material fraco: deve atribuir o melhor (nunca orfao) com band media/baixa"
+    },
+    {
+      "id": "case-ordinal",
+      "title": "Aula 03 - slides",
+      "raw_target": "raw/pdfs/aula 03 slides.pdf",
+      "category": "material-de-aula",
+      "tags": "",
+      "markdown": "# Aula 03\n\nslides da aula",
+      "unit_guess": {"slug": "unidade-01-logica", "confidence": 0.40, "ambiguous": true},
+      "expected_block_id": "bloco-05",
+      "note": "ordinal 3 -> 3a aula (bloco-05), pulando feriado/revisao; sem data/topico forte"
     }
   ],
   "baseline": {"block_accuracy": 1.0}
