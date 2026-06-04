@@ -42,6 +42,14 @@ Read this file before starting any task.
   "Aula 03" recebe boost de desempate `SEQUENCE_BOOST=0.20` no 3o bloco
   `kind=class` (numerado por `annotate_class_ordinals`), somado em
   `score_entry_against_timeline_block`. So marcadores `aula`/`encontro`.
+- Referencias como contexto do tutor (`src/builder/core/reference_*.py`):
+  entries `category in {referencias, bibliografia}` buscam conteudo leve sem
+  clone (README via API GitHub / texto de pagina via `url_markdown`), resumo
+  Gemini lazy (`ReferenceSummary`), e mapeamento determinístico a
+  unidade/topico (`assign_concepts_to_unit`). Surfaceado na BIBLIOGRAPHY.md
+  (resumo + mapa de relevancia). Cache por hash em `references_curation.json`.
+  Wiring em `build_workflow._run_auto_code_summarization` (referencias mapeiam
+  mesmo sem chave Gemini; reload do manifest pos-enriquecimento).
 
 ### Not Declared In Brief
 
@@ -54,15 +62,14 @@ Read this file before starting any task.
 
 ### Current Design Focus
 
-- EM IMPLEMENTACAO: Referencias como contexto base do tutor. Spec em
-  `docs/superpowers/specs/2026-06-04-referencias-contexto-tutor-design.md`.
-  Busca README (API GitHub, sem clone) + texto de doc/URL (`url_markdown`),
-  resume via Gemini (lazy), mapeia a unidade/topico (nao bloco), surfacea na
-  `BIBLIOGRAPHY.md`. Resolve "tutor so tem link/titulo da referencia".
-- Itens propostos mas PARADOS (retomar apos esta spec): ver
-  `docs/superpowers/BACKLOG.md` — #3 decay de data, #4 piso de band, Horario,
-  conserto do clone github, token github, referencias Approach C, medicao de
-  correcao com ground-truth.
+- ENTREGUE: Referencias como contexto base do tutor (8 tasks TDD + 2 fixes de
+  wiring). Spec `docs/.../2026-06-04-referencias-contexto-tutor-design.md`,
+  plano `docs/.../plans/2026-06-04-referencias-contexto-tutor.md`. Resolve
+  "tutor so tem link/titulo da referencia". 841 testes verdes.
+- Itens PARADOS (retomar): ver `docs/superpowers/BACKLOG.md` — verbosidade do
+  manifest (`to_dict` serializa todos os defaults), #3 decay de data, #4 piso
+  de band, Horario, conserto do clone github, token github, referencias
+  Approach C, harness de referencias, medicao de correcao com ground-truth.
 
 > Historico: o redesign do sistema de tags (unit/subunit/bloco) e a precisao de
 > atribuicao bloco/unidade ja foram implementados (auto_tags, bandas de

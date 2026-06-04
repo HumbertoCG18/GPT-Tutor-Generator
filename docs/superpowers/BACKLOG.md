@@ -11,12 +11,22 @@ contexto suficiente pra retomar sem reabrir a discussão. Ordem = prioridade sug
 - **#1 Harness de avaliação** — `scripts/eval_assignments.py` + gate `tests/test_eval_assignments.py`. Mede acurácia arquivo→bloco pelo scorer real contra gold set.
 - **#2 Sinal de sequência** — `src/builder/routing/sequence.py`. "Aula 03" → boost +0.20 no 3º bloco `kind=class`. Só marcadores `aula`/`encontro`.
 
-**Em implementação:**
-- **Referências como contexto do tutor** — spec aprovado em `docs/superpowers/specs/2026-06-04-referencias-contexto-tutor-design.md`. (Próximo: plano + execução.)
+- **Referências como contexto do tutor** — ENTREGUE. 8 tasks TDD (`src/builder/core/reference_content.py`, `reference_topic.py`, `reference_summary.py`; campos `ref_*` em `FileEntry`; surfacing em `bibliography_md`; wiring em `build_workflow`). Busca conteúdo leve sem clone (README via API GitHub / texto via `url_markdown`), resumo Gemini lazy, mapeamento determinístico a unidade/tópico, cache `references_curation.json`.
+  **2 defeitos reais achados na revisão final do wiring (Task 8), corrigidos:**
+  1. `27f5d80` — batch de referência estava **após** `if client is None: return` em `_run_auto_code_summarization`. Sem `gemini_api_key`, as referências não eram mapeadas — contrariava o modo degradado do spec ("sem Gemini → mapeia por texto"). Fix: resumo de código fica Gemini-gated; enriquecimento de referência roda com `client` possivelmente `None`.
+  2. `0b1683f` — `summarize_all_reference_entries` grava os campos `ref_*` no `manifest.json` em disco, mas o build segurava um `manifest` em memória stale; a regeneração pedagógica renderizava dele e a escrita final o sobrescrevia, perdendo os campos. Fix: reload do manifest pós-enriquecimento (espelha o reload pós-prune).
 
 ---
 
-## Parados — retomar após a spec de referências
+## Parados
+
+### Verbosidade do manifest.json — `to_dict` serializa todos os defaults
+**Status:** observado durante a feature de referências. Não é regressão dela.
+**Resumo:** `FileEntry.to_dict()` é `dataclasses.asdict(self)` — serializa os ~35 campos em **toda** entry, inclusive os iguais ao default. Cada PDF/código carrega `ref_summary:"", ref_concepts:[], computed_ref_unit:"", computed_ref_topics:[]` (~95 bytes mortos/entry) + dezenas de knobs de processamento (`datalab_mode`, `ocr_language`, `force_ocr`, `extract_tables`, `unit_match_reasons`, …) repetidos. Os 4 campos `ref_*` são adição marginal; a raiz é o dump flat de todos os defaults.
+**Duas saídas (ortogonais à feature, não implementar sem decisão):**
+1. **Omit-defaults global:** `to_dict` omite campos iguais ao default. Encolhe **toda** entry. `from_dict` já tolera chaves ausentes (filtra para campos válidos, default preenche) e leitores usam `.get` — round-trip seguro, mas auditar consumidores diretos do JSON (dashboard/JS).
+2. **Mover `ref_*` para `references_curation.json` apenas** (como os resumos de **código**, que vivem só em `code_curation.json`, não no manifest). Remove 4 campos de toda entry **e** elimina o hack de reload do manifest. Exige `bibliography_md` ler da curation em vez dos objetos entry. Mais consistente com o padrão de código, porém refatora Task 6/7/8.
+**Recomendação:** opção 2 para `ref_*` (consistência + remove o reload), opção 1 como item separado de higiene geral do manifest.
 
 ### #3 — Decay de distância de data + fix de virada de ano
 **Status:** desenhado, NÃO implementado. Valor medido ≈ 0 nos dados reais.
