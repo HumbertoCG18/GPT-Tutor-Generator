@@ -88,3 +88,40 @@ def test_cap_two_lines_plus_overflow():
 
     assert out.count("📖 Apoio:") == 2
     assert "(+1 referência(s) em content/BIBLIOGRAPHY.md)" in out
+
+
+def test_overflow_ref_still_surfaces_under_other_topic():
+    """Regressão: uma ref em overflow sob o tópico A não pode ser suprimida sob
+    o tópico B onde ela é a única referência legítima. shown_ids deve deduplicar
+    apenas EMISSÕES (head); overflow não marca a ref como mostrada globalmente."""
+    e1 = _ref("e1", "Ref1", "repo", [], ["Rotas HTTP"])
+    e2 = _ref("e2", "Ref2", "repo", [], ["Rotas HTTP"])
+    e3 = _ref("e3", "Ref3", "repo", [], ["Rotas HTTP", "Templates"])
+
+    tkey_rotas = (UNIT_SLUG, _norm_topic("Rotas HTTP"))
+    tkey_templates = (UNIT_SLUG, _norm_topic("Templates"))
+    out = _render(
+        by_unit={UNIT_SLUG: [e1, e2, e3]},
+        by_topic={
+            tkey_rotas: [e1, e2, e3],   # e3 faz overflow aqui (cap = 2)
+            tkey_templates: [e3],       # e3 é legítima e única aqui
+        },
+    )
+
+    lines = out.splitlines()
+
+    # Sob "Rotas HTTP": 2 linhas de apoio (Ref1, Ref2) + overflow de +1.
+    rotas_idx = next(i for i, ln in enumerate(lines) if "Rotas HTTP" in ln and "[ ]" in ln)
+    templates_idx = next(i for i, ln in enumerate(lines) if "Templates" in ln and "[ ]" in ln)
+    rotas_block = "\n".join(lines[rotas_idx + 1:templates_idx])
+    assert "📖 Apoio: Ref1 (repo)" in rotas_block
+    assert "📖 Apoio: Ref2 (repo)" in rotas_block
+    assert "(+1 referência(s) em content/BIBLIOGRAPHY.md)" in rotas_block
+
+    # "Templates" DEVE ter uma linha de apoio com Ref3 (e3 é legítima e única aqui).
+    templates_block = "\n".join(lines[templates_idx + 1:])
+    assert "📖 Apoio: Ref3 (repo)" in templates_block
+
+    # e3 emitida como linha 📖 Apoio exatamente 1 vez (sob Templates), e não
+    # reaparece no nível da unidade (topic_anchored a exclui do leftover).
+    assert out.count("📖 Apoio: Ref3 (repo)") == 1
