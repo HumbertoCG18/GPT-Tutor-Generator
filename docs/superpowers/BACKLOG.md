@@ -21,7 +21,12 @@ contexto suficiente pra retomar sem reabrir a discussão. Ordem = prioridade sug
 ## Parados
 
 ### Verbosidade do manifest.json — `to_dict` serializa todos os defaults
-**Status:** observado durante a feature de referências. Não é regressão dela.
+**Status:** RESOLVIDO nesta branch (rodada de refatoração). Plano `docs/superpowers/plans/2026-06-04-refator-manifest-referencias.md`.
+- **Opção 2 (ref_* → curation-only):** campos `ref_*` removidos do `FileEntry`; `bibliography_md` lê de `references_curation.json` por `entry.id()` (espelha `code_health_md`); batch grava só a curation; hack de reload do manifest removido. (`088f7f3`, `4ada78a`, `98155b4`)
+- **Opção 1 (omit-defaults global):** `FileEntry.to_dict` omite campos iguais ao default; required sempre presentes; `from_dict` tolera ausentes (round-trip seguro). (`2a9436a`)
+- Follow-up aberto: auditar consumidores diretos do manifest.json (dashboard/JS) que assumam todas as chaves presentes. Suíte (846) verde não acusou nenhum em Python.
+
+_Histórico do problema (resolvido):_
 **Resumo:** `FileEntry.to_dict()` é `dataclasses.asdict(self)` — serializa os ~35 campos em **toda** entry, inclusive os iguais ao default. Cada PDF/código carrega `ref_summary:"", ref_concepts:[], computed_ref_unit:"", computed_ref_topics:[]` (~95 bytes mortos/entry) + dezenas de knobs de processamento (`datalab_mode`, `ocr_language`, `force_ocr`, `extract_tables`, `unit_match_reasons`, …) repetidos. Os 4 campos `ref_*` são adição marginal; a raiz é o dump flat de todos os defaults.
 **Duas saídas (ortogonais à feature, não implementar sem decisão):**
 1. **Omit-defaults global:** `to_dict` omite campos iguais ao default. Encolhe **toda** entry. `from_dict` já tolera chaves ausentes (filtra para campos válidos, default preenche) e leitores usam `.get` — round-trip seguro, mas auditar consumidores diretos do JSON (dashboard/JS).
