@@ -704,6 +704,14 @@ def bibliography_md(
                 lines.append(f"- **Nota:** {entry.notes}")
             if entry.professor_signal:
                 lines.append(f"- **Indicação do professor:** {entry.professor_signal}")
+            ref_summary = getattr(entry, "ref_summary", "") or ""
+            if ref_summary:
+                lines.append(f"- **Resumo:** {ref_summary}")
+            ref_unit = getattr(entry, "computed_ref_unit", "") or ""
+            ref_topics = getattr(entry, "computed_ref_topics", []) or []
+            if ref_unit or ref_topics:
+                rel = ref_unit + (f" / {', '.join(ref_topics)}" if ref_topics else "")
+                lines.append(f"- **Relevante para:** {rel}")
             lines.append(f"- **Incluir no bundle:** {'sim' if entry.include_in_bundle else 'não'}")
             lines.append("")
 
@@ -716,16 +724,20 @@ def bibliography_md(
             "",
         ]
 
-    lines += [
-        "## Mapa de relevância por tópico",
-        "",
-        "<!-- Preencha após organizar as referências -->",
-        "",
-        "| Tópico | Referência principal | Acessível | Incidência em prova |",
-        "|---|---|---|---|",
-        "| [a preencher] | | | |",
-        "",
-    ]
+    mapped = [e for e in entries if (getattr(e, "computed_ref_unit", "") or getattr(e, "computed_ref_topics", []))]
+    lines += ["## Mapa de relevância por tópico", ""]
+    if mapped:
+        lines += ["| Tópico/Unidade | Referência | Acessível | Incidência em prova |", "|---|---|---|---|"]
+        for e in mapped:
+            unit = getattr(e, "computed_ref_unit", "") or ""
+            topics = ", ".join(getattr(e, "computed_ref_topics", []) or [])
+            alvo = " / ".join([p for p in (unit, topics) if p]) or "—"
+            lines.append(f"| {alvo} | {e.title} | sim | — |")
+        lines.append("")
+    else:
+        lines += ["<!-- Preencha após organizar as referências -->", "",
+                  "| Tópico | Referência principal | Acessível | Incidência em prova |",
+                  "|---|---|---|---|", "| [a preencher] | | | |", ""]
 
     return clamp_navigation_artifact(
         "\n".join(lines),
