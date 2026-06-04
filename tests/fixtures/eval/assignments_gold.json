@@ -59,8 +59,41 @@
       "markdown": "# Processos\n\nslides da aula de processos",
       "unit_guess": {"slug": "unidade-01-logica", "confidence": 0.40, "ambiguous": true},
       "expected_block_id": "bloco-01",
-      "note": "data 12.03 cai no periodo 11-13/03 do bloco-01"
+      "note": "data 12.03 ancorada no titulo cai no periodo 11-13/03 do bloco-01"
+    },
+    {
+      "id": "case-topic",
+      "title": "Lista 02 - Inducao Estrutural",
+      "raw_target": "raw/pdfs/listas/lista 02 inducao estrutural.pdf",
+      "category": "listas",
+      "tags": "",
+      "markdown": "# Inducao Estrutural\n\ninducao estrutural sobre termos e conjuntos indutivos",
+      "unit_guess": {"slug": "unidade-01-logica", "confidence": 0.40, "ambiguous": true},
+      "expected_block_id": "bloco-02",
+      "note": "texto casa o topic_text do bloco-02; sem data"
+    },
+    {
+      "id": "case-offunit-date",
+      "title": "18.03 Inducao Estrutural sobre conjuntos indutivos",
+      "raw_target": "raw/pdfs/listas/18.03 inducao estrutural.pdf",
+      "category": "listas",
+      "tags": "",
+      "markdown": "# Inducao Estrutural\n\ninducao estrutural sobre termos",
+      "unit_guess": {"slug": "unidade-99-outra", "confidence": 0.40, "ambiguous": true},
+      "expected_block_id": "bloco-02",
+      "note": "palpite de unidade ERRADO (off-unit -0.45); data 18.03 + titulo devem vencer"
+    },
+    {
+      "id": "case-weak",
+      "title": "Material",
+      "raw_target": "raw/pdfs/material.pdf",
+      "category": "material-de-aula",
+      "tags": "",
+      "markdown": "conteudo generico sem pistas distintivas",
+      "unit_guess": {"slug": "unidade-01-logica", "confidence": 0.40, "ambiguous": true},
+      "expected_block_id": "bloco-01",
+      "note": "material fraco: deve atribuir o melhor (nunca orfao) com band media/baixa"
     }
   ],
-  "baseline": {"block_accuracy": 0.0}
+  "baseline": {"block_accuracy": 1.0}
 }
