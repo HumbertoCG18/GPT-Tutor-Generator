@@ -59,6 +59,19 @@ e do plano de ensino da disciplina.
 """.strip()
 
 
+def _prompt_reference_support_text() -> str:
+    return (
+        "## Referências de apoio (linhas `📖 Apoio:` no COURSE_MAP)\n\n"
+        "Linhas `📖 Apoio:` sob um tópico/unidade no `course/COURSE_MAP.md` são "
+        "material complementar (repo/doc) mapeado àquele tópico. Trate como apoio e "
+        "reflexão, NÃO como fonte principal. Ao explicar o tópico, relacione a "
+        "referência ao material principal — por exemplo: \"além de X estar em "
+        "`<arquivo principal do FILE_MAP>`, este repo mostra X aplicado\". Só "
+        "aprofunde a referência se o aluno demonstrar interesse ou o tópico pedir. "
+        "O resumo completo de cada referência está em `content/BIBLIOGRAPHY.md`.\n"
+    )
+
+
 def _prompt_student_state_v2_contract_text() -> str:
     return """## STUDENT_STATE — formato YAML v2
 
@@ -390,6 +403,8 @@ Fluxo `map-first`: consulte primeiro os artefatos curtos e roteadores. Não abra
 
 {_prompt_map_artifact_contract_text()}
 
+{_prompt_reference_support_text()}
+
 {_prompt_student_state_v2_contract_text()}
 
 {_prompt_end_of_session_importable_block_text()}
@@ -569,6 +584,8 @@ Acesse estes arquivos sempre que relevante:
 
 {_prompt_map_artifact_contract_text()}
 
+{_prompt_reference_support_text()}
+
 {_prompt_student_state_v2_contract_text()}
 
 {_prompt_end_of_session_importable_block_text()}
@@ -712,6 +729,8 @@ Consulte estes arquivos conforme necessário:
 5. `content/`, `exercises/` e `exams/` apenas quando necessário
 
 {_prompt_map_artifact_contract_text()}
+
+{_prompt_reference_support_text()}
 
 {_prompt_student_state_v2_contract_text()}
 
