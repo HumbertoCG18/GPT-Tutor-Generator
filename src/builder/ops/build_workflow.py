@@ -134,29 +134,32 @@ def build_impl(
 
 
 def _run_auto_code_summarization(builder, logger) -> None:
-    """Auto-run Gemini summarization if opted-in via config."""
+    """Auto-run enrichment if opted-in via config.
+
+    Resumo de codigo exige Gemini (pula sem client). Enriquecimento de
+    referencias roda mesmo sem client: mapeia unidade/topico por texto
+    (deterministico) e so pula o resumo Gemini — modo degradado do spec.
+    """
     try:
         from src.ui.theme import AppConfig
         config = AppConfig()
         if not config.get("gemini_auto_summarize"):
             return
         from src.builder.runtime.gemini_client import has_gemini_api_key, get_gemini_client
-        if not has_gemini_api_key(config):
-            return
-        client = get_gemini_client(config)
-        if client is None:
-            return
+        client = get_gemini_client(config) if has_gemini_api_key(config) else None
 
         def _progress(idx, total, title, status):
             if status in ("calling_api", "done"):
                 logger.info("[Gemini] [%d/%d] %s: %s", idx, total, status, title)
 
-        builder._summarize_code_entries(client, progress_cb=_progress)
+        if client is not None:
+            builder._summarize_code_entries(client, progress_cb=_progress)
 
+        # Referencias mapeiam por texto mesmo sem Gemini (client pode ser None).
         from src.builder.core.reference_summary import summarize_all_reference_entries
         from src.builder.engine import _build_file_map_unit_index_from_course
         course_meta = {**builder.course_meta, "_repo_root": builder.root_dir}
         units = _build_file_map_unit_index_from_course(course_meta, builder.subject_profile)
         summarize_all_reference_entries(builder, units, client, progress_cb=_progress)
     except Exception as exc:
-        logger.warning("[Gemini] Auto summarization skipped: %s", exc)
+        logger.warning("[Gemini] Auto enrichment skipped: %s", exc)
