@@ -24,3 +24,31 @@ def test_non_github_returns_none():
 def test_garbage_returns_none():
     assert parse_github_repo("") is None
     assert parse_github_repo("https://github.com/onlyowner") is None
+
+
+from unittest.mock import patch, MagicMock
+from src.builder.core.reference_content import fetch_github_readme
+
+
+def _resp(status, text=""):
+    r = MagicMock()
+    r.status_code = status
+    r.text = text
+    return r
+
+
+def test_fetch_readme_returns_body_on_200():
+    with patch("src.builder.core.reference_content.requests.get", return_value=_resp(200, "# Eureka\nservice registry")) as g:
+        out = fetch_github_readme("Netflix", "eureka")
+    assert "service registry" in out
+    assert "api.github.com/repos/Netflix/eureka/readme" in g.call_args[0][0]
+
+
+def test_fetch_readme_empty_on_404():
+    with patch("src.builder.core.reference_content.requests.get", return_value=_resp(404)):
+        assert fetch_github_readme("x", "y") == ""
+
+
+def test_fetch_readme_empty_on_exception():
+    with patch("src.builder.core.reference_content.requests.get", side_effect=Exception("network")):
+        assert fetch_github_readme("x", "y") == ""
