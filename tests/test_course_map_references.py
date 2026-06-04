@@ -125,3 +125,30 @@ def test_overflow_ref_still_surfaces_under_other_topic():
     # e3 emitida como linha 📖 Apoio exatamente 1 vez (sob Templates), e não
     # reaparece no nível da unidade (topic_anchored a exclui do leftover).
     assert out.count("📖 Apoio: Ref3 (repo)") == 1
+
+
+import json
+
+
+def test_wiring_builds_index_and_injects(tmp_path):
+    """O índice construído de manifest.json + references_curation.json em disco
+    deve mapear refs corretamente (contrato usado pelo wiring de pedagogical_regeneration)."""
+    from src.builder.core.reference_navigation import build_unit_topic_reference_index
+    from src.builder.core.reference_summary import load_reference_curation, write_reference_curation
+
+    root = tmp_path
+    (root / "course").mkdir(parents=True, exist_ok=True)
+    manifest = {"entries": [
+        {"id": "e1", "title": "Flask", "source_path": "https://github.com/pallets/flask",
+         "file_type": "github-repo", "category": "referencias"},
+    ]}
+    (root / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    write_reference_curation(root, {"entries": {
+        "e1": {"computed_ref_unit": "web", "computed_ref_topics": ["Rotas HTTP"],
+               "ref_concepts": ["Flask"], "ref_summary": "x", "content_hash": "h", "matcher_version": 1},
+    }})
+
+    entries = json.loads((root / "manifest.json").read_text(encoding="utf-8"))["entries"]
+    idx = build_unit_topic_reference_index(entries, load_reference_curation(root))
+    assert idx["by_unit"]["web"][0]["entry_id"] == "e1"
+    assert ("web", "rotas http") in idx["by_topic"]
