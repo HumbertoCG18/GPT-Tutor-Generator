@@ -109,8 +109,9 @@ de relevância da BIBLIOGRAPHY **não** entra aqui — vai junto do Approach C.
 **Resumo:** API anônima do GitHub = 60 req/h por IP. v1 vai sem token (cache por hash protege, volume normal por matéria é baixo). Adicionar token opcional (config) sobe pra 5.000/h — necessário só se processar muitas matérias em lote.
 
 ### Referências — Approach C (injeção no contexto do tutor)
-**Status:** extensão futura da spec atual.
-**Resumo:** além da `BIBLIOGRAPHY.md`, fiar as referências no contexto de unidade/tópico que o tutor carrega, pra a referência aparecer sozinha quando o aluno está naquele tópico. Mais ambicioso, mais arquivos. Depois do v1 (que só surfacea + mapeia).
+**Status:** ENTREGUE nesta branch. Spec `docs/superpowers/specs/2026-06-04-approach-c-referencias-no-course-map-design.md`, plano `docs/superpowers/plans/2026-06-04-approach-c-referencias-no-course-map.md`.
+**Entregue:** referências mapeadas (`computed_ref_unit`/`computed_ref_topics`) viram linhas `📖 Apoio:` sob unidade/tópico no `COURSE_MAP.md` (carregado 1º pelo tutor), como material complementar. Helper puro `reference_navigation.build_unit_topic_reference_index` (commit `680727d`); injeção no renderer via `course_meta["_reference_nav_index"]` (`4ec98ef`, dedup `6514abb`); wiring em `pedagogical_regeneration` (`13c7047`); instrução no prompt das 3 variantes (`e75b135`); limpeza da tabela de relevância redundante da BIBLIOGRAPHY + ponteiro + fix de label (`0af0800`); fix crítico da chave canônica de tópico — prefixo/acento agora casam (`36be071`). Modo degradado byte-idêntico. 878 testes verdes.
+**Follow-up aberto:** match de tópico depende de `computed_ref_topics` == `topic_phrases`; se a pipeline de unidades mudar a normalização, atualizar `_topic_key`. Render final em BIBLIOGRAPHY num build real não inspecionado (cobertura unitária só).
 
 ### Medição de correção com ground-truth
 **Status:** proposto como forma de validar se mais precisão vale a pena.

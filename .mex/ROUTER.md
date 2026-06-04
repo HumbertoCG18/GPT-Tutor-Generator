@@ -63,6 +63,14 @@ Read this file before starting any task.
   resumo+conceitos Gemini, mapeamento determinístico, persistencia em
   `references_curation.json`. Requer `google-genai` instalado (declarado em
   pyproject; degrada silencioso para resumo vazio se ausente).
+- Approach C: referencias mapeadas viram linhas `📖 Apoio:` sob unidade/topico no
+  `COURSE_MAP.md` (material complementar). Helper `core/reference_navigation.py`
+  (`build_unit_topic_reference_index`, chave de topico canonica `_topic_key` =
+  `normalize_match_text(strip_outline_prefix(...))`), injetado via
+  `course_meta["_reference_nav_index"]` em `pedagogical_regeneration`, emitido em
+  `render_low_token_course_map_md` (cap 2/ancora + overflow, dedup topico vs
+  unidade). Tabela de relevancia redundante da BIBLIOGRAPHY virou ponteiro.
+  Modo degradado byte-identico sem curation.
 
 ### Not Declared In Brief
 
