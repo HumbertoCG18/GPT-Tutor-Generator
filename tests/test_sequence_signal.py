@@ -87,3 +87,12 @@ def test_is_idempotent():
 def test_no_class_blocks_all_none():
     blocks = annotate_class_ordinals([{"id": "h", "kind": "holiday"}])
     assert blocks[0]["class_ordinal"] is None
+
+
+from src.builder.routing.thresholds import T
+
+
+def test_sequence_boost_is_moderate_tiebreaker():
+    # Menor que data (0.30) e topico-compativel (0.48): desempata sem sobrepor.
+    assert T.SEQUENCE_BOOST == 0.20
+    assert T.SEQUENCE_BOOST < 0.30
