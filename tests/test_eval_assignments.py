@@ -31,3 +31,22 @@ def test_evaluate_reports_accuracy_and_band_calibration():
     by_id = {r["id"]: r for r in report["cases"]}
     assert by_id["case-date"]["predicted"] == "bloco-01"
     assert by_id["case-date"]["correct"] is True
+
+
+def test_block_accuracy_not_below_baseline():
+    gold = load_gold(GOLD)
+    report = evaluate(gold)
+    baseline = float(gold["baseline"]["block_accuracy"])
+    assert report["block_accuracy"] + 1e-9 >= baseline, (
+        f"REGRESSAO: {report['block_accuracy']:.3f} < baseline {baseline:.3f}. "
+        f"Erros: {[c['id'] for c in report['cases'] if not c['correct']]}"
+    )
+
+
+def test_no_orphan_when_instructional_blocks_exist():
+    # Spec: com blocos instrucionais presentes, nenhum material vira orfao.
+    gold = load_gold(GOLD)
+    report = evaluate(gold)
+    assert report["orphans"] == 0, (
+        f"orfaos inesperados: {[c['id'] for c in report['cases'] if c['predicted'] == '']}"
+    )
