@@ -1,20 +1,12 @@
 from __future__ import annotations
 
 import re
-import unicodedata
 from pathlib import Path
-from typing import Dict, List
+from datetime import date
+from typing import Dict, List, Optional
 
 from src.builder.extraction.content_taxonomy import extract_markdown_lead_text
-
-
-def normalize_match_text(text: str) -> str:
-    text = unicodedata.normalize("NFKD", text or "")
-    text = "".join(ch for ch in text if not unicodedata.combining(ch))
-    text = text.lower()
-    text = text.replace("propocional", "proposicional")
-    text = re.sub(r"[^a-z0-9\s]", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
+from src.builder.text.normalize import normalize_match_text  # noqa: F401  (re-export)
 
 
 def score_text_against_row(source_text: str, row_tokens: List[str], *, weight: float = 1.0) -> float:
@@ -98,6 +90,14 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         fallback_tags="; ".join(legacy_tags),
         limit=6,
     )
+    image_description = str(entry.get("image_description", "") or "")
+    extra_parts = [markdown_text or ""]
+    notes = str(entry.get("notes", "") or "")
+    if notes:
+        extra_parts.append(notes)
+    if image_description and image_description not in " ".join(extra_parts):
+        extra_parts.append(image_description)
+    effective_markdown = "\n".join(p for p in extra_parts if p).strip()
     return {
         "title_text": normalize_match_text(entry.get("title", "")),
         "markdown_headings_text": normalize_match_text(" ".join(_extract_markdown_headings(markdown_text))),
@@ -108,5 +108,27 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         "legacy_tags_text": normalize_match_text("; ".join(legacy_tags)),
         "tags_text": normalize_match_text(merged_tags),
         "raw_text": normalize_match_text(entry.get("raw_target", "")),
-        "markdown_text": normalize_match_text(markdown_text),
+        "image_description_text": normalize_match_text(image_description),
+        "markdown_text": normalize_match_text(effective_markdown),
     }
+
+
+_DATE_PREFIX_RE = re.compile(r"^(\d{1,2})\.(\d{2})\s+")
+
+
+def extract_date_prefix_signal(filename: str, year: int) -> Optional[date]:
+    """Extrai sinal de data DD.MM do início do nome do arquivo.
+
+    Padrão esperado: '12.03 Processos.pdf' → date(year, 3, 12)
+    O ponto é usado como separador porque '/' não é válido em nomes de
+    arquivo no Windows. Retorna None se o padrão não casar ou a data
+    for inválida.
+    """
+    stem = Path(filename).stem
+    m = _DATE_PREFIX_RE.match(stem)
+    if not m:
+        return None
+    try:
+        return date(year, int(m.group(2)), int(m.group(1)))
+    except ValueError:
+        return None

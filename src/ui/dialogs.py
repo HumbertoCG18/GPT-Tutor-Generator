@@ -12,7 +12,8 @@ from src.utils.helpers import (
     CATEGORY_LABELS, DEFAULT_CATEGORIES, DEFAULT_OCR_LANGUAGE, PROCESSING_MODES,
     DOCUMENT_PROFILES, PREFERRED_BACKENDS, OCR_LANGS, CODE_EXTENSIONS,
     slugify, parse_html_schedule, auto_detect_category, auto_detect_title,
-    fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM, normalize_document_profile
+    fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM, normalize_document_profile,
+    is_sarc_url, fetch_schedule_html, decide_schedule_source
 )
 from src.builder.runtime.datalab_client import get_datalab_base_url, has_datalab_api_key
 from src.builder.extraction.entry_signals import (
@@ -124,11 +125,17 @@ class SettingsDialog(tk.Toplevel):
         self._saved = False
         self._build()
         self.update_idletasks()
+        # Cap height to screen so tall tabs never get clipped; allow vertical resize.
+        w, h = self.winfo_width(), self.winfo_height()
+        max_h = self.winfo_screenheight() - 80
+        if h > max_h:
+            h = max_h
+        self.resizable(False, True)
+        self.minsize(w, min(h, 480))
         # Centre over parent
         px, py = parent.winfo_x(), parent.winfo_y()
         pw, ph = parent.winfo_width(), parent.winfo_height()
-        w, h = self.winfo_width(), self.winfo_height()
-        self.geometry(f"+{px + (pw - w)//2}+{py + (ph - h)//2}")
+        self.geometry(f"{w}x{h}+{px + (pw - w)//2}+{max(0, py + (ph - h)//2)}")
 
     def _build(self):
         p = self.theme_mgr.palette(self.theme_mgr.current)
@@ -173,9 +180,31 @@ class SettingsDialog(tk.Toplevel):
             swatch.create_rectangle(27, 1, 52, 17, fill=sw_p["accent2"], outline="")
             swatch.create_rectangle(53, 1, 79, 17, fill=sw_p["input_bg"], outline="")
 
-        # ── Processing tab ──────────────────────────────────────────────
-        tab_proc = ttk.Frame(nb, padding=16)
-        nb.add(tab_proc, text="  ⚙  Processamento  ")
+        # ── Processing tab (scrollable: content can exceed screen height) ──
+        tab_proc_outer = ttk.Frame(nb)
+        nb.add(tab_proc_outer, text="  ⚙  Processamento  ")
+        proc_canvas = tk.Canvas(tab_proc_outer, bg=p["bg"], highlightthickness=0)
+        proc_scroll = ttk.Scrollbar(tab_proc_outer, orient="vertical",
+                                    command=proc_canvas.yview)
+        proc_canvas.configure(yscrollcommand=proc_scroll.set)
+        proc_scroll.pack(side="right", fill="y")
+        proc_canvas.pack(side="left", fill="both", expand=True)
+        tab_proc = ttk.Frame(proc_canvas, padding=16)
+        _proc_win = proc_canvas.create_window((0, 0), window=tab_proc, anchor="nw")
+        tab_proc.bind(
+            "<Configure>",
+            lambda e: proc_canvas.configure(scrollregion=proc_canvas.bbox("all")),
+        )
+        proc_canvas.bind(
+            "<Configure>",
+            lambda e: proc_canvas.itemconfigure(_proc_win, width=e.width),
+        )
+
+        def _proc_wheel(e):
+            proc_canvas.yview_scroll(int(-e.delta / 120), "units")
+
+        proc_canvas.bind("<Enter>", lambda e: proc_canvas.bind_all("<MouseWheel>", _proc_wheel))
+        proc_canvas.bind("<Leave>", lambda e: proc_canvas.unbind_all("<MouseWheel>"))
 
         self._var_mode = tk.StringVar(value=self.config.get("default_mode"))
         self._var_ocr = tk.StringVar(value=self.config.get("default_ocr_language"))
@@ -317,6 +346,9 @@ class SettingsDialog(tk.Toplevel):
         self._var_vision_model = tk.StringVar(value=self.config.get("vision_model"))
         self._var_vision_quant = tk.StringVar(value=self.config.get("vision_model_quantization"))
         self._var_ollama_url = tk.StringVar(value=self.config.get("ollama_base_url"))
+        self._var_image_desc_source = tk.StringVar(
+            value=self.config.get("image_description_source", "ollama")
+        )
 
         vision_fields = [
             ("Backend Vision", self._var_vision_backend, VISION_BACKENDS),
@@ -338,6 +370,53 @@ class SettingsDialog(tk.Toplevel):
         add_tooltip(vcb, "Para Ollama, use nomes como qwen3-vl:235b-cloud ou qwen3-vl:8b.\n"
                          "qwen3-vl:235b-cloud é o padrão para máxima qualidade visual.\n"
                          "qwen3-vl:8b é o fallback local recomendado.")
+
+        # Image description source row
+        _img_desc_row = url_row + 1
+        ttk.Label(
+            tab_proc, text="Fonte de descrições de imagem",
+        ).grid(row=_img_desc_row, column=0, sticky="w", padx=(0, 16), pady=4)
+        ttk.Combobox(
+            tab_proc,
+            textvariable=self._var_image_desc_source,
+            values=["ollama", "datalab"],
+            state="readonly",
+            width=20,
+        ).grid(row=_img_desc_row, column=1, sticky="w")
+        ttk.Label(
+            tab_proc,
+            text="DataLab gera descrições durante a conversão do PDF. Reprocesse os documentos após mudar esta opção.",
+            font=("Segoe UI", 8),
+            wraplength=320,
+        ).grid(row=_img_desc_row + 1, column=1, sticky="w", pady=(0, 8))
+
+        ttk.Separator(tab_proc, orient="horizontal").grid(
+            row=sep_row + 9, column=0, columnspan=2, sticky="ew", pady=(12, 8))
+        ttk.Label(tab_proc, text="Gemini — Resumos de Código",
+                  style="Accent.TLabel").grid(
+            row=sep_row + 10, column=0, columnspan=2, sticky="w", pady=(0, 8))
+
+        self._var_gemini_api_key = tk.StringVar(value=self.config.get("gemini_api_key", ""))
+        self._var_gemini_model = tk.StringVar(value=self.config.get("gemini_model", "gemini-2.5-flash"))
+        self._var_gemini_auto = tk.BooleanVar(value=bool(self.config.get("gemini_auto_summarize", False)))
+
+        ttk.Label(tab_proc, text="Chave da API do Gemini").grid(
+            row=sep_row + 11, column=0, sticky="w", pady=6, padx=(0, 16))
+        ttk.Entry(tab_proc, textvariable=self._var_gemini_api_key, width=28, show="*").grid(
+            row=sep_row + 11, column=1, sticky="ew")
+
+        ttk.Label(tab_proc, text="Modelo Gemini").grid(
+            row=sep_row + 12, column=0, sticky="w", pady=6, padx=(0, 16))
+        ttk.Combobox(tab_proc, textvariable=self._var_gemini_model,
+                     values=["gemini-2.5-flash", "gemini-2.5-pro"],
+                     state="readonly", width=25).grid(
+            row=sep_row + 12, column=1, sticky="ew")
+
+        ttk.Checkbutton(
+            tab_proc,
+            text="Gerar resumos automaticamente durante o build",
+            variable=self._var_gemini_auto,
+        ).grid(row=sep_row + 13, column=0, columnspan=2, sticky="w", pady=(8, 0))
 
         tab_proc.columnconfigure(1, weight=1)
 
@@ -374,6 +453,10 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("vision_model", vision_model)
         self.config.set("vision_model_quantization", self._var_vision_quant.get())
         self.config.set("ollama_base_url", self._var_ollama_url.get())
+        self.config.set("image_description_source", self._var_image_desc_source.get())
+        self.config.set("gemini_api_key", self._var_gemini_api_key.get().strip())
+        self.config.set("gemini_model", self._var_gemini_model.get())
+        self.config.set("gemini_auto_summarize", bool(self._var_gemini_auto.get()))
         self.config.save()
         self.theme_mgr.apply(self.parent, self._var_theme.get())
         self.parent._theme_name = self._var_theme.get()  # type: ignore[attr-defined]
@@ -945,7 +1028,14 @@ class HTMLImportDialog(tk.Toplevel):
         p = apply_theme_to_toplevel(self, parent)
         self.parent = parent
 
-        ttk.Label(self, text="Cole o elemento HTML interiro da tabela de cronograma (ex: Portal/Moodle):").pack(padx=10, pady=(10, 5), anchor="w")
+        ttk.Label(self, text="Cole a URL do SARC OU o HTML da tabela do cronograma.").pack(padx=10, pady=(10, 5), anchor="w")
+
+        url_frame = ttk.Frame(self)
+        url_frame.pack(fill="x", padx=10, pady=(0, 5))
+        ttk.Label(url_frame, text="URL do SARC (opcional):").pack(side="left")
+        self.url_entry = ttk.Entry(url_frame)
+        self.url_entry.pack(side="left", fill="x", expand=True, padx=(6, 0))
+
         self.text = tk.Text(
             self,
             font=("Consolas", 10),
@@ -963,20 +1053,63 @@ class HTMLImportDialog(tk.Toplevel):
         btn_frame = ttk.Frame(self)
         btn_frame.pack(fill="x", padx=10, pady=10)
         ttk.Button(btn_frame, text="Cancelar", command=self.destroy).pack(side="right", padx=(5, 0))
-        btn_import = ttk.Button(btn_frame, text="Importar para Markdown", style="Accent.TButton", command=self._process)
-        btn_import.pack(side="right")
-        
+        self._btn_import = ttk.Button(btn_frame, text="Importar para Markdown", style="Accent.TButton", command=self._process)
+        self._btn_import.pack(side="right")
+        self._status = ttk.Label(btn_frame, text="")
+        self._status.pack(side="left")
+
     def _process(self):
-        html_str = self.text.get("1.0", "end").strip()
-        if not html_str:
+        url = self.url_entry.get().strip()
+        pasted_html = self.text.get("1.0", "end").strip()
+        decision = decide_schedule_source(url, pasted_html)
+
+        action = decision["action"]
+        if action == "cancel":
             self.destroy()
             return
-        
+        if action == "error":
+            messagebox.showerror(APP_NAME, decision["message"], parent=self)
+            return
+        if action == "parse":
+            self._finish_with_html(decision["html"])
+            return
+
+        # action == "fetch": run the network call off the UI thread.
+        self._fetch_and_process(decision["url"])
+
+    def _fetch_and_process(self, url: str):
+        """Fetch the SARC HTML on a background thread, then parse on the UI thread."""
+        import threading
+
+        self._btn_import.configure(state="disabled")
+        self._status.configure(text="Buscando cronograma...")
+
+        def _worker():
+            try:
+                html = fetch_schedule_html(url)
+                self.after(0, lambda h=html: self._on_fetch_success(h))
+            except Exception as exc:
+                err = str(exc)
+                self.after(0, lambda e=err: self._on_fetch_error(e))
+
+        threading.Thread(target=_worker, daemon=True).start()
+
+    def _on_fetch_success(self, html: str):
+        self._status.configure(text="")
+        self._btn_import.configure(state="normal")
+        self._finish_with_html(html)
+
+    def _on_fetch_error(self, message: str):
+        self._status.configure(text="")
+        self._btn_import.configure(state="normal")
+        messagebox.showerror(APP_NAME, f"Falha ao buscar o cronograma:\n\n{message}", parent=self)
+
+    def _finish_with_html(self, html_str: str):
         res = parse_html_schedule(html_str)
         if res.startswith("Erro:"):
             messagebox.showerror(APP_NAME, res, parent=self)
             return
-            
+
         current = self.parent._syllabus_text.get("1.0", "end").strip()
         if current:
             current += "\n\n"
@@ -1704,6 +1837,7 @@ class BacklogEntryEditDialog(tk.Toplevel):
         unit_actions.grid(row=3, column=1, sticky="w", pady=(8, 0))
         ttk.Button(unit_actions, text="Aplicar unidade", command=self._apply_manual_unit_selection).pack(side="left")
         ttk.Button(unit_actions, text="Voltar para automático", command=self._clear_manual_unit).pack(side="left", padx=(8, 0))
+        ttk.Button(unit_actions, text="?", width=3, command=self._show_unit_explanation).pack(side="left", padx=(12, 0))
 
         tk.Label(
             unit_frame,
@@ -1715,8 +1849,96 @@ class BacklogEntryEditDialog(tk.Toplevel):
             justify="left",
         ).grid(row=4, column=1, sticky="w", pady=(6, 0))
 
+        row_subunit = row_unit_status + 1
+        tk.Label(tab_edit, text="Subunidade manual", bg=p["bg"], fg=p["fg"],
+                 font=("Segoe UI", 10)).grid(row=row_subunit, column=0, sticky="w", padx=(0, 12), pady=6)
+        self._manual_subunit_options = _load_subunit_options(self._repo_dir)
+        self._manual_subunit_label_by_slug = {slug: label for label, slug in self._manual_subunit_options}
+        current_manual_subunit = str(self._data.get("manual_subunit_slug") or "").strip()
+        self._manual_subunit_committed = current_manual_subunit
+        subunit_labels = ["Automático (usar matcher)"] + [label for label, _slug in self._manual_subunit_options]
+        self._manual_subunit_var = tk.StringVar(value="Automático (usar matcher)")
+        if current_manual_subunit:
+            for label, slug in self._manual_subunit_options:
+                if slug == current_manual_subunit:
+                    self._manual_subunit_var.set(label)
+                    break
+        if len(subunit_labels) > 1:
+            subunit_combo = ttk.Combobox(
+                tab_edit,
+                textvariable=self._manual_subunit_var,
+                values=subunit_labels,
+                state="readonly",
+                width=42,
+            )
+            subunit_combo.grid(row=row_subunit, column=1, sticky="ew", pady=6)
+            subunit_combo.bind("<<ComboboxSelected>>", self._on_manual_subunit_selection_changed)
+        else:
+            tk.Label(
+                tab_edit,
+                text="Nenhum tópico disponível ainda. Gere ou reprocesse o plano de ensino para habilitar o override manual.",
+                bg=p["bg"],
+                fg=p["muted"],
+                font=("Segoe UI", 9, "italic"),
+                wraplength=520,
+                justify="left",
+            ).grid(row=row_subunit, column=1, sticky="w", pady=6)
+
+        subunit_status = _resolve_backlog_subunit_status(
+            self._data,
+            self._repo_dir,
+            self._manual_subunit_label_by_slug,
+        )
+        row_subunit_status = row_subunit + 1
+        subunit_frame = tk.Frame(
+            tab_edit,
+            bg=p["input_bg"],
+            highlightthickness=1,
+            highlightbackground=p["border"],
+            padx=10,
+            pady=8,
+        )
+        subunit_frame.grid(row=row_subunit_status, column=0, columnspan=2, sticky="ew", pady=(6, 4))
+        subunit_frame.grid_columnconfigure(1, weight=1)
+
+        self._subunit_assigned_var = tk.StringVar(value=subunit_status["assigned"])
+        self._subunit_source_var = tk.StringVar(value=subunit_status["source"])
+        self._subunit_note_var = tk.StringVar(value=subunit_status["note"])
+        self._subunit_pending_var = tk.StringVar(value="Nenhuma alteração pendente na subunidade manual.")
+
+        tk.Label(subunit_frame, text="Subunidade atribuída", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9, "bold")).grid(row=0, column=0, sticky="w", padx=(0, 12))
+        tk.Label(subunit_frame, textvariable=self._subunit_assigned_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=0, column=1, sticky="w")
+
+        tk.Label(subunit_frame, text="Origem", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9)).grid(row=1, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+        tk.Label(subunit_frame, textvariable=self._subunit_source_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=1, column=1, sticky="w", pady=(6, 0))
+
+        tk.Label(subunit_frame, text="Observação", bg=p["input_bg"], fg=p["muted"],
+                 font=("Segoe UI", 9)).grid(row=2, column=0, sticky="nw", padx=(0, 12), pady=(6, 0))
+        tk.Label(subunit_frame, textvariable=self._subunit_note_var, bg=p["input_bg"], fg=p["fg"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(row=2, column=1, sticky="w", pady=(6, 0))
+
+        subunit_actions = tk.Frame(subunit_frame, bg=p["input_bg"])
+        subunit_actions.grid(row=3, column=1, sticky="w", pady=(8, 0))
+        ttk.Button(subunit_actions, text="Aplicar subunidade", command=self._apply_manual_subunit_selection).pack(side="left")
+        ttk.Button(subunit_actions, text="Voltar para automático", command=self._clear_manual_subunit).pack(side="left", padx=(8, 0))
+        ttk.Button(subunit_actions, text="?", width=3, command=self._show_subunit_explanation).pack(side="left", padx=(12, 0))
+
+        tk.Label(
+            subunit_frame,
+            textvariable=self._subunit_pending_var,
+            bg=p["input_bg"],
+            fg=p["muted"],
+            font=("Segoe UI", 9, "italic"),
+            wraplength=520,
+            justify="left",
+        ).grid(row=4, column=1, sticky="w", pady=(6, 0))
+
         timeline_status = _resolve_backlog_timeline_status(self._data, self._repo_dir)
-        row_timeline = row_unit_status + 1
+        row_timeline = row_subunit_status + 1
         timeline_frame = tk.Frame(
             tab_edit,
             bg=p["input_bg"],
@@ -2253,6 +2475,19 @@ class BacklogEntryEditDialog(tk.Toplevel):
                 return
             if decision:
                 self._apply_manual_unit_selection(confirm=False)
+        pending_manual_subunit = self._current_manual_subunit_selection_slug()
+        committed_manual_subunit = str(getattr(self, "_manual_subunit_committed", "") or "").strip()
+        if pending_manual_subunit != committed_manual_subunit:
+            decision = messagebox.askyesnocancel(
+                "Subunidade manual",
+                "Há uma seleção de subunidade manual ainda não aplicada.\n\n"
+                "Deseja aplicar a seleção atual à entry antes de salvar?",
+                parent=self,
+            )
+            if decision is None:
+                return
+            if decision:
+                self._apply_manual_subunit_selection(confirm=False)
         pending_manual_timeline = self._current_manual_timeline_selection_id()
         committed_manual_timeline = str(getattr(self, "_manual_timeline_committed", "") or "").strip()
         if pending_manual_timeline != committed_manual_timeline:
@@ -2275,6 +2510,7 @@ class BacklogEntryEditDialog(tk.Toplevel):
             "manual_tags":      self._selected_manual_tags(),
             "auto_tags":        list(self._data.get("auto_tags") or []),
             "manual_unit_slug": self._selected_manual_unit_slug(),
+            "manual_subunit_slug": self._selected_manual_subunit_slug(),
             "manual_timeline_block_id": self._selected_manual_timeline_block_id(),
             "document_profile": profile,
             "effective_profile": profile,
@@ -2436,6 +2672,28 @@ class BacklogEntryEditDialog(tk.Toplevel):
                 return
         self._manual_unit_committed = selected
         self._data["manual_unit_slug"] = selected
+        # Record correction for subject-local learning
+        if selected and self._repo_dir:
+            try:
+                from src.models.tag_profile import (
+                    load_tag_profile, save_tag_profile, record_correction, SubjectTagProfile,
+                )
+                from datetime import datetime
+                course_dir = self._repo_dir / "course"
+                if course_dir.exists():
+                    profile = load_tag_profile(course_dir) or SubjectTagProfile(
+                        subject_slug=self._repo_dir.name,
+                        generated_at=datetime.utcnow().isoformat(),
+                    )
+                    record_correction(
+                        profile,
+                        self._data,
+                        corrected_unit_slug=selected,
+                        corrected_subunit_slug=str(self._data.get("manual_subunit_slug") or ""),
+                    )
+                    save_tag_profile(course_dir, profile)
+            except Exception:
+                pass
         self._refresh_unit_status_display()
 
     def _clear_manual_unit(self) -> None:
@@ -2455,6 +2713,142 @@ class BacklogEntryEditDialog(tk.Toplevel):
         self._manual_unit_committed = ""
         self._data["manual_unit_slug"] = ""
         self._refresh_unit_status_display()
+
+    def _current_manual_subunit_selection_slug(self) -> str:
+        selected = str(getattr(self, "_manual_subunit_var", tk.StringVar(value="")).get() or "").strip()
+        if not selected or selected.startswith("Automático"):
+            return ""
+        for label, slug in getattr(self, "_manual_subunit_options", []):
+            if label == selected:
+                return slug
+        return ""
+
+    def _selected_manual_subunit_slug(self) -> str:
+        if hasattr(self, "_manual_subunit_committed"):
+            return str(getattr(self, "_manual_subunit_committed", "") or "").strip()
+        return self._current_manual_subunit_selection_slug()
+
+    def _refresh_subunit_status_display(self) -> None:
+        entry_view = dict(self._data)
+        entry_view["manual_subunit_slug"] = str(getattr(self, "_manual_subunit_committed", "") or "").strip()
+        subunit_status = _resolve_backlog_subunit_status(
+            entry_view,
+            self._repo_dir,
+            getattr(self, "_manual_subunit_label_by_slug", {}),
+        )
+        if hasattr(self, "_subunit_assigned_var"):
+            self._subunit_assigned_var.set(subunit_status["assigned"])
+        if hasattr(self, "_subunit_source_var"):
+            self._subunit_source_var.set(subunit_status["source"])
+        if hasattr(self, "_subunit_note_var"):
+            self._subunit_note_var.set(subunit_status["note"])
+        self._update_manual_subunit_pending_state()
+
+    def _show_unit_explanation(self) -> None:
+        from src.models.tag_profile import format_unit_explanation_text
+        reasons = list(self._data.get("unit_match_reasons") or [])
+        confidence = float(self._data.get("unit_match_confidence") or 0.0)
+        unit_slug = ""
+        for tag in list(self._data.get("auto_tags") or []):
+            if str(tag).startswith("unit:"):
+                unit_slug = str(tag).replace("unit:", "", 1)
+                break
+        text = format_unit_explanation_text(reasons, confidence, unit_slug=unit_slug)
+        messagebox.showinfo("Explicação — Unidade sugerida", text, parent=self)
+
+    def _show_subunit_explanation(self) -> None:
+        from src.models.tag_profile import format_subunit_explanation_text
+        reasons = list(self._data.get("subunit_match_reasons") or [])
+        confidence = float(self._data.get("subunit_match_confidence") or 0.0)
+        unit_slug = ""
+        subunit_slug = ""
+        for tag in list(self._data.get("auto_tags") or []):
+            if str(tag).startswith("unit:"):
+                unit_slug = str(tag).replace("unit:", "", 1)
+            elif str(tag).startswith("subunit:"):
+                subunit_slug = str(tag).replace("subunit:", "", 1)
+        text = format_subunit_explanation_text(
+            reasons, confidence, unit_slug=unit_slug, subunit_slug=subunit_slug
+        )
+        messagebox.showinfo("Explicação — Subunidade sugerida", text, parent=self)
+
+    def _update_manual_subunit_pending_state(self) -> None:
+        pending = self._current_manual_subunit_selection_slug()
+        committed = str(getattr(self, "_manual_subunit_committed", "") or "").strip()
+        if pending == committed:
+            self._subunit_pending_var.set("Nenhuma alteração pendente na subunidade manual.")
+            return
+        if pending:
+            label = getattr(self, "_manual_subunit_label_by_slug", {}).get(pending, pending)
+            self._subunit_pending_var.set(
+                f"Seleção pendente: clique em “Aplicar subunidade” para salvar `{label}` como override manual."
+            )
+            return
+        self._subunit_pending_var.set(
+            "Remoção pendente: clique em “Aplicar subunidade” ou “Voltar para automático” para remover o override manual."
+        )
+
+    def _on_manual_subunit_selection_changed(self, _event=None) -> None:
+        self._update_manual_subunit_pending_state()
+
+    def _apply_manual_subunit_selection(self, confirm: bool = True) -> None:
+        selected = self._current_manual_subunit_selection_slug()
+        committed = str(getattr(self, "_manual_subunit_committed", "") or "").strip()
+        if selected == committed:
+            self._update_manual_subunit_pending_state()
+            return
+        if confirm:
+            selected_label = getattr(self, "_manual_subunit_label_by_slug", {}).get(selected, "Automático (usar matcher)")
+            should_apply = messagebox.askyesno(
+                "Aplicar subunidade manual",
+                f"Deseja aplicar esta configuração de subunidade à entry?\n\n{selected_label}",
+                parent=self,
+            )
+            if not should_apply:
+                return
+        self._manual_subunit_committed = selected
+        self._data["manual_subunit_slug"] = selected
+        # Record correction for subject-local learning
+        if selected and self._repo_dir:
+            try:
+                from src.models.tag_profile import (
+                    load_tag_profile, save_tag_profile, record_correction, SubjectTagProfile,
+                )
+                from datetime import datetime
+                course_dir = self._repo_dir / "course"
+                if course_dir.exists():
+                    profile = load_tag_profile(course_dir) or SubjectTagProfile(
+                        subject_slug=self._repo_dir.name,
+                        generated_at=datetime.utcnow().isoformat(),
+                    )
+                    record_correction(
+                        profile,
+                        self._data,
+                        corrected_unit_slug=str(self._data.get("manual_unit_slug") or ""),
+                        corrected_subunit_slug=selected,
+                    )
+                    save_tag_profile(course_dir, profile)
+            except Exception:
+                pass
+        self._refresh_subunit_status_display()
+
+    def _clear_manual_subunit(self) -> None:
+        committed = str(getattr(self, "_manual_subunit_committed", "") or "").strip()
+        if not committed and not self._current_manual_subunit_selection_slug():
+            self._update_manual_subunit_pending_state()
+            return
+        should_clear = messagebox.askyesno(
+            "Voltar para automático",
+            "Deseja remover o override manual e voltar a usar o matcher automático para a subunidade desta entry?",
+            parent=self,
+        )
+        if not should_clear:
+            return
+        if hasattr(self, "_manual_subunit_var"):
+            self._manual_subunit_var.set("Automático (usar matcher)")
+        self._manual_subunit_committed = ""
+        self._data["manual_subunit_slug"] = ""
+        self._refresh_subunit_status_display()
 
     def _current_manual_timeline_selection_id(self) -> str:
         selected = str(getattr(self, "_manual_timeline_var", tk.StringVar(value="")).get() or "").strip()
@@ -2685,19 +3079,21 @@ class FileEntryDialog(simpledialog.Dialog):
         ttk.Combobox(outer, textvariable=self.var_mode, values=PROCESSING_MODES, state="readonly", width=20).grid(row=row, column=3, sticky="ew")
         row += 1
 
-        lbl_profile = ttk.Label(outer, text="Perfil")
-        lbl_profile.grid(row=row, column=0, sticky="w", pady=4)
-        combo_profile = ttk.Combobox(outer, textvariable=self.var_profile, values=DOCUMENT_PROFILES, state="readonly", width=22)
-        combo_profile.grid(row=row, column=1, sticky="ew")
-        combo_profile.bind("<<ComboboxSelected>>", self._on_profile_changed)
+        self._lbl_profile = ttk.Label(outer, text="Perfil")
+        self._lbl_profile.grid(row=row, column=0, sticky="w", pady=4)
+        self._combo_profile = ttk.Combobox(outer, textvariable=self.var_profile, values=DOCUMENT_PROFILES, state="readonly", width=22)
+        self._combo_profile.grid(row=row, column=1, sticky="ew")
+        self._combo_profile.bind("<<ComboboxSelected>>", self._on_profile_changed)
+        _profile_row = row
 
-        lbl_backend = ttk.Label(outer, text="Backend preferido")
-        lbl_backend.grid(row=row, column=2, sticky="w", padx=(12, 0))
-        add_tooltip(lbl_backend, "Backend de extração preferido.\nauto → seleção automática\npymupdf4llm → rápido e bom para PDFs digitais\npymupdf → fallback básico\ndatalab → API cloud para markdown de alta qualidade em PDFs complexos\ndocling → avançado: OCR, fórmulas, tabelas (CLI externo)\ndocling_python → teste via API Python do Docling com formula enrichment\nmarker → avançado: equações e imagens (CLI externo)")
-        combo_backend = ttk.Combobox(outer, textvariable=self.var_backend, values=PREFERRED_BACKENDS, state="readonly", width=20)
-        combo_backend.grid(row=row, column=3, sticky="ew")
-        combo_backend.bind("<<ComboboxSelected>>", self._on_backend_changed)
-        add_tooltip(lbl_profile, PROFILE_TOOLTIP_TEXT)
+        self._lbl_backend = ttk.Label(outer, text="Backend preferido")
+        self._lbl_backend.grid(row=row, column=2, sticky="w", padx=(12, 0))
+        add_tooltip(self._lbl_backend, "Backend de extração preferido.\nauto → seleção automática\npymupdf4llm → rápido e bom para PDFs digitais\npymupdf → fallback básico\ndatalab → API cloud para markdown de alta qualidade em PDFs complexos\ndocling → avançado: OCR, fórmulas, tabelas (CLI externo)\ndocling_python → teste via API Python do Docling com formula enrichment\nmarker → avançado: equações e imagens (CLI externo)")
+        self._combo_backend = ttk.Combobox(outer, textvariable=self.var_backend, values=PREFERRED_BACKENDS, state="readonly", width=20)
+        self._combo_backend.grid(row=row, column=3, sticky="ew")
+        self._combo_backend.bind("<<ComboboxSelected>>", self._on_backend_changed)
+        add_tooltip(self._lbl_profile, PROFILE_TOOLTIP_TEXT)
+        _backend_row = row
         row += 1
 
         self._datalab_model_row = row
@@ -2720,10 +3116,12 @@ class FileEntryDialog(simpledialog.Dialog):
         add_tooltip(lbl_tags, "Palavras-chave separadas por vírgula para facilitar busca futura.\nExemplo: gabarito, integração, 2024-1")
         ttk.Entry(outer, textvariable=self.var_tags, width=26).grid(row=row, column=1, sticky="ew")
 
-        lbl_ocr = ttk.Label(outer, text="OCR lang")
-        lbl_ocr.grid(row=row, column=2, sticky="w", padx=(12, 0))
-        add_tooltip(lbl_ocr, "Idioma(s) para o OCR.\npor,eng → Português + Inglês (padrão recomendado)\npor → só Português | eng → só Inglês")
-        ttk.Combobox(outer, textvariable=self.var_ocr_lang, values=OCR_LANGS, width=20).grid(row=row, column=3, sticky="ew")
+        self._lbl_ocr_lang = ttk.Label(outer, text="OCR lang")
+        self._lbl_ocr_lang.grid(row=row, column=2, sticky="w", padx=(12, 0))
+        add_tooltip(self._lbl_ocr_lang, "Idioma(s) para o OCR.\npor,eng → Português + Inglês (padrão recomendado)\npor → só Português | eng → só Inglês")
+        self._combo_ocr_lang = ttk.Combobox(outer, textvariable=self.var_ocr_lang, values=OCR_LANGS, width=20)
+        self._combo_ocr_lang.grid(row=row, column=3, sticky="ew")
+        _ocr_row = row
         row += 1
 
         lbl_notes = ttk.Label(outer, text="Notas")
@@ -2746,10 +3144,22 @@ class FileEntryDialog(simpledialog.Dialog):
         cb_bundle.grid(row=row, column=1, sticky="w")
         add_tooltip(cb_bundle, "Se marcado, o arquivo entra no bundle.seed.json como conhecimento base prioritário do repositório.")
 
-        cb_formula = ttk.Checkbutton(outer, text="Prioridade em fórmulas", variable=self.var_formula)
-        cb_formula.grid(row=row, column=2, sticky="w")
-        add_tooltip(cb_formula, "Força ativação do backend avançado (docling/marker) mesmo em modo auto ou quick.\nUse quando o documento tem muitas equações matemáticas críticas.")
+        self._cb_formula = ttk.Checkbutton(outer, text="Prioridade em fórmulas", variable=self.var_formula)
+        self._cb_formula.grid(row=row, column=2, sticky="w")
+        add_tooltip(self._cb_formula, "Força ativação do backend avançado (docling/marker) mesmo em modo auto ou quick.\nUse quando o documento tem muitas equações matemáticas críticas.")
+        _formula_row = row
         row += 1
+
+        # Track PDF-only widgets to hide for code/zip file types
+        self._pdf_only_widgets = [
+            (self._lbl_profile, dict(row=_profile_row, column=0, sticky="w", pady=4)),
+            (self._combo_profile, dict(row=_profile_row, column=1, sticky="ew")),
+            (self._lbl_backend, dict(row=_backend_row, column=2, sticky="w", padx=(12, 0))),
+            (self._combo_backend, dict(row=_backend_row, column=3, sticky="ew")),
+            (self._lbl_ocr_lang, dict(row=_ocr_row, column=2, sticky="w", padx=(12, 0))),
+            (self._combo_ocr_lang, dict(row=_ocr_row, column=3, sticky="ew")),
+            (self._cb_formula, dict(row=_formula_row, column=2, sticky="w")),
+        ]
 
         # --- PDF-only options frame ---
         self._pdf_frame = ttk.LabelFrame(outer, text="Opções de PDF", padding=4)
@@ -2784,6 +3194,7 @@ class FileEntryDialog(simpledialog.Dialog):
 
         # Show/hide based on current type
         self._update_pdf_frame_visibility()
+        self._update_pdf_only_fields_visibility()
         self._update_datalab_mode_visibility()
 
         outer.columnconfigure(1, weight=1)
@@ -2793,7 +3204,16 @@ class FileEntryDialog(simpledialog.Dialog):
     def _on_type_changed(self, _event=None):
         self.file_type = self.var_file_type.get()
         self._update_pdf_frame_visibility()
+        self._update_pdf_only_fields_visibility()
         self._update_datalab_mode_visibility()
+
+    def _update_pdf_only_fields_visibility(self):
+        hide = self.file_type in ("code", "zip")
+        for widget, grid_kwargs in self._pdf_only_widgets:
+            if hide:
+                widget.grid_remove()
+            else:
+                widget.grid(**grid_kwargs)
 
     def _update_datalab_mode_visibility(self):
         if self.file_type == "pdf" and self.var_backend.get() == "datalab":
@@ -3175,6 +3595,46 @@ def _resolve_backlog_unit_status(
     }
 
 
+def _resolve_backlog_subunit_status(
+    entry_data: dict,
+    repo_dir: Optional[Path],
+    label_by_slug: Optional[Dict[str, str]] = None,
+) -> Dict[str, str]:
+    label_by_slug = label_by_slug or {}
+    manual_slug = str(entry_data.get("manual_subunit_slug") or "").strip()
+
+    def _display(slug: str) -> str:
+        return label_by_slug.get(slug, slug) if slug else "—"
+
+    if manual_slug:
+        in_catalog = manual_slug in label_by_slug
+        note = (
+            "Subunidade manual salva. Reprocesse o repositório para aplicar."
+            if in_catalog
+            else f"Slug `{manual_slug}` não encontrado no catálogo atual. Reprocesse após atualizar o plano de ensino."
+        )
+        return {
+            "assigned": _display(manual_slug),
+            "source": "Override manual salvo",
+            "note": note,
+        }
+
+    auto_tags = list(entry_data.get("auto_tags") or [])
+    auto_subunit = next((t[len("subunit:"):] for t in auto_tags if t.startswith("subunit:")), "")
+    if auto_subunit:
+        return {
+            "assigned": _display(auto_subunit),
+            "source": "Automático",
+            "note": "Subunidade atribuída automaticamente no último processamento.",
+        }
+
+    return {
+        "assigned": "Não atribuída",
+        "source": "Sem atribuição",
+        "note": "Nenhuma subunidade atribuída ainda para esta entry.",
+    }
+
+
 def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
     file_map_row = _find_backlog_file_map_row(entry_data, repo_dir)
     period = str(file_map_row.get("period") or "").strip()
@@ -3407,6 +3867,55 @@ def _load_file_map_unit_options(repo_dir: Optional[Path]) -> List[Tuple[str, str
                 if slug and slug not in seen:
                     options.append((f"{title} ({slug})", slug))
                     seen.add(slug)
+    except Exception:
+        pass
+
+    return options
+
+
+def _load_subunit_options(repo_dir: Optional[Path]) -> List[Tuple[str, str]]:
+    if not repo_dir:
+        return []
+
+    options: List[Tuple[str, str]] = []
+    seen: set = set()
+
+    def _collect_from_plan(teaching_plan_text: str) -> None:
+        for _unit_title, topics in _parse_units_from_teaching_plan(teaching_plan_text):
+            for topic_item in topics or []:
+                raw = topic_item[0] if isinstance(topic_item, (list, tuple)) else str(topic_item)
+                label = re.sub(r"^\d+(?:\.\d+)*\.?\s*", "", (raw or "").strip()).strip()
+                if not label:
+                    continue
+                slug = slugify(label)
+                if slug and slug not in seen:
+                    options.append((label, slug))
+                    seen.add(slug)
+
+    course_map_path = repo_dir / "course" / "COURSE_MAP.md"
+    if course_map_path.exists():
+        try:
+            _collect_from_plan(course_map_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+
+    if options:
+        return options
+
+    try:
+        subject_store = SubjectStore()
+        repo_resolved = repo_dir.resolve()
+        for name in subject_store.names():
+            candidate = subject_store.get(name)
+            if not candidate or not getattr(candidate, "repo_root", ""):
+                continue
+            try:
+                if Path(candidate.repo_root).resolve() == repo_resolved:
+                    if getattr(candidate, "teaching_plan", ""):
+                        _collect_from_plan(candidate.teaching_plan)
+                    break
+            except Exception:
+                continue
     except Exception:
         pass
 

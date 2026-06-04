@@ -254,7 +254,9 @@ def _infer_tool_candidates(
         if normalized in default_tools:
             accepted.append(normalized)
             continue
-        if has_special_shape and count >= 1:
+        if len(normalized) < 3:
+            continue
+        if has_special_shape and count >= 1 and len(normalized) >= 4:
             accepted.append(normalized)
             continue
         if context_hits.get(normalized, 0) >= 1 and count >= 2 and len(normalized) >= 3:

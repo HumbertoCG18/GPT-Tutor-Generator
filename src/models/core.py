@@ -46,6 +46,7 @@ class FileEntry:
     manual_tags: List[str] = field(default_factory=list)
     auto_tags: List[str] = field(default_factory=list)
     manual_unit_slug: str = ""
+    manual_subunit_slug: str = ""
     manual_timeline_block_id: str = ""
     notes: str = ""
     professor_signal: str = ""
@@ -66,6 +67,24 @@ class FileEntry:
     ocr_language: str = DEFAULT_OCR_LANGUAGE
     enabled: bool = True
 
+    # Sinais de match persistidos no manifest.json (gravados por
+    # resolve_unit_block_tags). Declarados aqui para o round-trip from_dict ->
+    # to_dict parar de descarta-los silenciosamente.
+    unit_match_confidence: float = 0.0
+    unit_match_reasons: List[str] = field(default_factory=list)
+    subunit_match_confidence: float = 0.0
+    subunit_match_reasons: List[str] = field(default_factory=list)
+
+    # Atribuicao first-class (Fase 1). Resolve "tudo e parse de tag": o slug/id
+    # resolvido vive direto no entry, e auto_tags[unit:|bloco:] sao espelho
+    # destes campos (escritos por resolve_unit_block_tags).
+    computed_unit_slug: str = ""
+    computed_block_id: str = ""
+    computed_block_confidence: float = 0.0
+    # Faixa ("alta"/"media"/"baixa") derivada de computed_block_confidence via
+    # thresholds.confidence_band; "" quando nao ha bloco atribuido.
+    computed_block_band: str = ""
+
     def id(self) -> str:
         if self.file_type == "url":
             import hashlib
@@ -75,7 +94,21 @@ class FileEntry:
         return slugify(Path(self.source_path).stem)
 
     def to_dict(self) -> Dict:
-        return asdict(self)
+        from dataclasses import fields as _fields, MISSING
+        full = asdict(self)
+        out: Dict = {}
+        for f in _fields(self):
+            val = full[f.name]
+            if f.default is not MISSING:
+                default = f.default
+            elif f.default_factory is not MISSING:  # type: ignore[misc]
+                default = f.default_factory()       # type: ignore[misc]
+            else:
+                out[f.name] = val  # required: sempre presente
+                continue
+            if val != default:
+                out[f.name] = val
+        return out
 
     @classmethod
     def from_dict(cls, d: Dict) -> "FileEntry":
@@ -117,6 +150,7 @@ class BackendRunResult:
     notes: List[str] = field(default_factory=list)
     error: Optional[str] = None
     images_dir: Optional[str] = None
+    image_curation: Optional[dict] = None
 
 
 @dataclass

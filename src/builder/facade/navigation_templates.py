@@ -46,6 +46,7 @@ def build_navigation_template_aliases(
     entry_usage_hint,
     entry_priority_label,
     collapse_ws,
+    build_unit_tag_index_fn,
 ):
     root_readme = repo_artifacts_module.root_readme
     wrap_frontmatter = partial(repo_artifacts_module.wrap_frontmatter, json_str_fn=json_str_fn)
@@ -99,6 +100,7 @@ def build_navigation_template_aliases(
         entry_usage_hint=entry_usage_hint,
         entry_priority_label=entry_priority_label,
         clamp_navigation_artifact=clamp_navigation_artifact,
+        build_unit_tag_index=build_unit_tag_index_fn,
     )
     budgeted_file_map_md = partial(
         navigation_budgeted_file_map_md,

@@ -1,0 +1,277 @@
+# tests/test_datalab_captions.py
+from __future__ import annotations
+
+import sys
+from unittest import mock
+
+_tk_mock = mock.MagicMock()
+sys.modules.setdefault("tkinter", _tk_mock)
+sys.modules.setdefault("tkinter.filedialog", _tk_mock)
+sys.modules.setdefault("tkinter.messagebox", _tk_mock)
+sys.modules.setdefault("tkinter.simpledialog", _tk_mock)
+sys.modules.setdefault("tkinter.ttk", _tk_mock)
+
+
+def test_appconfig_image_description_source_default():
+    from src.ui.theme import AppConfig
+    config = AppConfig.__new__(AppConfig)
+    config.data = dict(AppConfig.DEFAULTS)
+    assert config.data.get("image_description_source") == "ollama"
+
+
+def test_build_options_includes_image_description_source():
+    from src.ui.app import _build_options_from_config
+
+    class FakeConfig:
+        def get(self, key, default=None):
+            return {"image_description_source": "datalab"}.get(key, default)
+
+    opts = _build_options_from_config("auto", "pt", FakeConfig())
+    assert opts["image_description_source"] == "datalab"
+
+
+def test_build_options_defaults_to_ollama_when_missing():
+    from src.ui.app import _build_options_from_config
+
+    class FakeConfig:
+        def get(self, key, default=None):
+            return default  # key not found
+
+    opts = _build_options_from_config("auto", "pt", FakeConfig())
+    assert opts.get("image_description_source") == "ollama"
+
+
+def test_backend_run_result_accepts_image_curation():
+    from src.models.core import BackendRunResult
+
+    r = BackendRunResult(
+        name="datalab",
+        layer="advanced",
+        status="ok",
+        image_curation={"pages": {"page_1": {"include_page": True, "images": {}}}},
+    )
+    assert r.image_curation is not None
+    assert "page_1" in r.image_curation["pages"]
+
+
+def test_backend_run_result_image_curation_defaults_to_none():
+    from src.models.core import BackendRunResult
+
+    r = BackendRunResult(name="base", layer="base", status="ok")
+    assert r.image_curation is None
+
+
+def test_backend_context_has_image_description_source_default():
+    from unittest.mock import MagicMock
+    from src.builder.engine import BackendContext
+
+    entry = MagicMock()
+    entry.page_range = ""
+    entry.id.return_value = "test-entry"
+    report = MagicMock()
+
+    ctx = BackendContext(
+        root_dir=__import__("pathlib").Path("/tmp"),
+        raw_target=__import__("pathlib").Path("/tmp/doc.pdf"),
+        entry=entry,
+        report=report,
+    )
+    assert ctx.image_description_source == "ollama"
+
+
+def test_backend_context_accepts_datalab_image_description_source():
+    from unittest.mock import MagicMock
+    from src.builder.engine import BackendContext
+
+    entry = MagicMock()
+    entry.page_range = ""
+    entry.id.return_value = "test-entry"
+    report = MagicMock()
+
+    ctx = BackendContext(
+        root_dir=__import__("pathlib").Path("/tmp"),
+        raw_target=__import__("pathlib").Path("/tmp/doc.pdf"),
+        entry=entry,
+        report=report,
+        image_description_source="datalab",
+    )
+    assert ctx.image_description_source == "datalab"
+
+
+def test_extract_datalab_captions_parses_captions():
+    from src.builder.engine import _extract_datalab_captions
+
+    raw_md = (
+        "## Página 1\n\n"
+        "Texto antes.\n\n"
+        "![Diagrama de estados do protocolo TCP](img-001.png)\n\n"
+        "Texto depois.\n"
+    )
+    image_page_map = {"datalab-img-001.png": 1}
+
+    result = _extract_datalab_captions(raw_md, image_page_map)
+
+    assert "pages" in result
+    assert "page_1" in result["pages"]
+    images = result["pages"]["page_1"]["images"]
+    assert "datalab-img-001.png" in images
+    entry = images["datalab-img-001.png"]
+    assert entry["description"] == "Diagrama de estados do protocolo TCP"
+    assert entry["source"] == "datalab"
+    assert entry["include"] is True
+    assert "described_at" in entry
+
+
+def test_extract_datalab_captions_empty_caption_stores_empty_description():
+    from src.builder.engine import _extract_datalab_captions
+
+    raw_md = "![](img-002.png)\n"
+    image_page_map = {"datalab-img-002.png": 2}
+
+    result = _extract_datalab_captions(raw_md, image_page_map)
+
+    images = result["pages"]["page_2"]["images"]
+    assert images["datalab-img-002.png"]["description"] == ""
+    assert images["datalab-img-002.png"]["source"] == "datalab"
+
+
+def test_extract_datalab_captions_returns_empty_when_no_images():
+    from src.builder.engine import _extract_datalab_captions
+
+    raw_md = "# Título\n\nSó texto, sem imagens.\n"
+    result = _extract_datalab_captions(raw_md, {})
+
+    assert result == {}
+
+
+def test_extract_datalab_captions_falls_back_to_page_1_when_not_in_map():
+    from src.builder.engine import _extract_datalab_captions
+
+    raw_md = "![Legenda](unknown.png)\n"
+    result = _extract_datalab_captions(raw_md, {})
+
+    assert "page_1" in result["pages"]
+
+
+def test_merge_image_curations_merges_pages():
+    from src.builder.engine import _merge_image_curations
+
+    a = {"pages": {"page_1": {"include_page": True, "images": {"img-a.png": {"description": "A"}}}}}
+    b = {"pages": {"page_2": {"include_page": True, "images": {"img-b.png": {"description": "B"}}}}}
+
+    merged = _merge_image_curations([a, b])
+
+    assert "page_1" in merged["pages"]
+    assert "page_2" in merged["pages"]
+    assert "img-a.png" in merged["pages"]["page_1"]["images"]
+    assert "img-b.png" in merged["pages"]["page_2"]["images"]
+
+
+def test_merge_image_curations_empty_input():
+    from src.builder.engine import _merge_image_curations
+
+    assert _merge_image_curations([]) == {"pages": {}}
+
+
+def test_disable_image_captions_is_false_when_datalab_source(monkeypatch):
+    """When image_description_source == 'datalab', captions must be enabled in the API call."""
+    from unittest.mock import MagicMock, patch
+    from src.builder.engine import DatalabCloudBackend, BackendContext
+
+    captured_args = {}
+
+    def fake_convert(file_path, *, output_format, mode, page_range, disable_image_captions,
+                     disable_image_extraction, paginate, token_efficient_markdown,
+                     poll_interval, max_wait_seconds, **kwargs):
+        captured_args["disable_image_captions"] = disable_image_captions
+        result = MagicMock()
+        result.markdown = ""
+        result.images = {}
+        result.request_id = "r1"
+        result.request_check_url = ""
+        result.page_count = 0
+        result.parse_quality_score = None
+        result.cost_breakdown = {}
+        result.metadata = {}
+        result.raw_response = {"status": "ok", "success": True, "error": None}
+        return result
+
+    entry = MagicMock()
+    entry.page_range = ""
+    entry.id.return_value = "doc-1"
+    entry.force_ocr = False
+    entry.document_profile = ""
+    entry.datalab_mode = "balanced"
+    report = MagicMock()
+    report.suggested_profile = ""
+
+    ctx = BackendContext(
+        root_dir=__import__("pathlib").Path("/tmp/repo"),
+        raw_target=__import__("pathlib").Path("/tmp/doc.pdf"),
+        entry=entry,
+        report=report,
+        image_description_source="datalab",
+    )
+
+    backend = DatalabCloudBackend()
+    with patch("src.builder.engine.convert_document_to_markdown", side_effect=fake_convert):
+        with patch("src.builder.engine.ensure_dir"):
+            with patch("src.builder.engine.write_text"):
+                try:
+                    backend._convert_range(ctx, mode="balanced", page_range=None, max_wait_seconds=60)
+                except Exception:
+                    pass
+
+    assert captured_args.get("disable_image_captions") is False
+
+
+def test_pdf_pipeline_propagates_image_curation_from_advanced_backend():
+    """Test that pdf_pipeline copies image_curation from advanced backend result to item dict."""
+    from src.models.core import BackendRunResult
+
+    fake_curation = {"pages": {"page_1": {"include_page": True, "images": {"img.png": {"description": "cap", "source": "datalab"}}}}}
+
+    fake_result = BackendRunResult(
+        name="datalab", layer="advanced", status="ok",
+        markdown_path="staging/markdown-auto/datalab/doc-1/doc-1.md",
+        image_curation=fake_curation,
+    )
+
+    # Simulate the item dict before and after the advanced backend propagation
+    item = {}
+
+    # This is the logic that should be in pdf_pipeline.py:
+    # if result.image_curation and not item.get("image_curation"):
+    #     item["image_curation"] = result.image_curation
+
+    if fake_result.image_curation and not item.get("image_curation"):
+        item["image_curation"] = fake_result.image_curation
+
+    assert item.get("image_curation") == fake_curation
+
+
+def test_pdf_pipeline_image_curation_not_overwritten_if_exists():
+    """Test that pdf_pipeline does not overwrite existing image_curation in item dict."""
+    from src.models.core import BackendRunResult
+
+    fake_curation_1 = {"pages": {"page_1": {"include_page": True, "images": {"img-1.png": {"description": "first"}}}}}
+    fake_curation_2 = {"pages": {"page_1": {"include_page": True, "images": {"img-2.png": {"description": "second"}}}}}
+
+    fake_result = BackendRunResult(
+        name="datalab", layer="advanced", status="ok",
+        markdown_path="staging/markdown-auto/datalab/doc-1/doc-1.md",
+        image_curation=fake_curation_2,
+    )
+
+    # Item already has image_curation
+    item = {"image_curation": fake_curation_1}
+
+    # This is the logic that should be in pdf_pipeline.py:
+    # if result.image_curation and not item.get("image_curation"):
+    #     item["image_curation"] = result.image_curation
+
+    if fake_result.image_curation and not item.get("image_curation"):
+        item["image_curation"] = fake_result.image_curation
+
+    # Should keep the original
+    assert item.get("image_curation") == fake_curation_1

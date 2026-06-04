@@ -16,9 +16,13 @@ Aplicação desktop em Python para transformar materiais acadêmicos em um repos
 - [Cronograma PUCRS — Importação do Portal ASPNET](#cronograma-pucrs--importacao-do-portal-aspnet)
 - [Arquitetura](#arquitetura)
 - [Processamento de Arquivos](#processamento-de-arquivos)
+- [Tag Scoring e Aprendizado por Matéria](#tag-scoring-e-aprendizado-por-materia)
 - [Backend Datalab](#backend-datalab)
 - [Arquitetura Low-Token](#arquitetura-low-token)
 - [Image Curator e Vision](#image-curator-e-vision)
+- [Timeline Dashboard](#timeline-dashboard)
+- [Resiliência de Build](#resiliencia-de-build)
+- [Resumos de código (opcional — via Gemini)](#resumos-de-codigo-opcional--via-gemini)
 - [Estrutura do Repositório Gerado](#estrutura-do-repositorio-gerado)
 - [Requisitos](#requisitos)
 - [Instalação](#instalacao)
@@ -76,6 +80,7 @@ Fluxo típico no app:
 8. Usar **Reprocessar Repositório** para reaplicar a arquitetura atual em repositórios já existentes.
 9. Usar a aba **Tasks de Repositório** para enfileirar builds, reprocessamentos e processamentos individuais.
 10. Abrir a aba **Dashboard** para acompanhar o estado operacional dos repositórios.
+11. Abrir a aba **Cronograma** para inspecionar a alocação de arquivos por bloco do cronograma e mover entries entre blocos manualmente.
 
 Observação operacional: a fila é persistente entre sessões do app, então builds e reprocessamentos podem ser retomados sem recriar toda a fila manualmente.
 
@@ -164,6 +169,7 @@ src/
 |   |-- image_curator.py             # curadoria de imagens e extração visual
 |   |-- repo_dashboard.py            # dashboard operacional de repositórios
 |   |-- student_state_curator.py     # captura e edição do estado do aluno
+|   |-- timeline_dashboard.py        # dashboard de alocação por bloco do cronograma
 |   `-- theme.py                     # tema e configuração persistente
 `-- utils/
     |-- helpers.py           # helpers, autodetects, OCR/Tesseract e utilidades
@@ -236,6 +242,89 @@ O sistema também consegue:
 - limitar páginas por faixa
 - consolidar saídas intermediárias
 - regenerar artefatos derivados sem reprocessar tudo do zero
+
+## Tag Scoring e Aprendizado por Matéria
+
+O sistema de mapeamento automático de arquivos para unidades/blocos do cronograma inclui um mecanismo de aprendizado por matéria.
+
+### Como funciona
+
+Quando você corrige manualmente a unidade ou subunidade de um entry pelo app, o app registra essa correção em um perfil de tags local da matéria (`course/.tag_profile.json`).
+
+Em mapeamentos futuros, os termos extraídos dos entries corrigidos geram **boosts** nas unidades que foram confirmadas manualmente — aumentando a pontuação dessas unidades e reduzindo erros de mapeamento recorrentes.
+
+### Cálculo de confiança
+
+A confiança de mapeamento é **relativa**, não absoluta. Implementação em `src/builder/routing/file_map.py` (`auto_map_entry_unit`, `auto_map_entry_subtopic`).
+
+Definições:
+
+```text
+winner_score    = maior score bruto entre as unidades candidatas
+runner_up_score = segundo maior score (0 se só houver 1 candidata)
+margin          = winner_score - runner_up_score
+rel_margin      = margin / max(winner_score, 1e-6)
+```
+
+Lógica de atribuição:
+
+```text
+se winner_score <= 0:
+    confidence = 0.0
+    ambiguous  = True
+
+senão se houver apenas 1 candidata:
+    confidence = 0.70   (unidade)  | 0.72 (tópico)
+    ambiguous  = False
+
+senão:
+    confidence = clamp(rel_margin, 0, 1)
+    ambiguous  = rel_margin < 0.15
+```
+
+Pós-processamento:
+
+```text
+se ambíguo:
+    confidence = min(confidence, 0.40)   (unidade)
+    confidence = min(confidence, 0.45)   (tópico)
+```
+
+Boost de tópico no matching de unidade (`auto_map_entry_unit`) — quando há um tópico vencedor forte dentro da unidade vencedora, sobrescreve o veredicto de ambíguo:
+
+```text
+topic_margin     = winner_topic_score - runner_up_topic_score
+topic_rel_margin = topic_margin / max(winner_topic_score, 1e-6)
+
+se winner_topic_score >= 0.55 e topic_rel_margin >= 0.15:
+    ambiguous  = False
+    confidence = max(confidence, min(0.95, topic_rel_margin))
+```
+
+Threshold de aceite (em `src/builder/extraction/content_taxonomy.py`):
+
+```text
+auto_tags recebe unit:<slug> apenas se
+    not ambiguous AND confidence >= 0.65
+```
+
+Em prosa: uma unidade só ganha alta confiança quando vence as concorrentes por uma margem proporcionalmente grande (≥ 15%) **e** seu tópico mais bem ranqueado dentro dela é coerente. Caso contrário o entry é marcado ambíguo, recebe teto de confiança baixo e não é auto-atribuído.
+
+### Isolamento por matéria
+
+O perfil de tags é **isolado por matéria**. Correções feitas em Cálculo não afetam o mapeamento de Algoritmos, por exemplo.
+
+### Transparência
+
+Na interface, ao sugerir unidade e subunidade, o app exibe um tooltip com as razões do mapeamento — incluindo quais boosts aprendidos influenciaram a pontuação.
+
+### Arquivo gerado
+
+```text
+{repo-root}/course/.tag_profile.json
+```
+
+Esse arquivo cresce com o uso e não precisa de intervenção manual.
 
 ## Backend Datalab
 
@@ -379,6 +468,25 @@ decorativa
 extracao-latex
 ```
 
+### Modos do Image Curator
+
+O curator opera em dois modos dependendo da configuração `image_description_source`:
+
+**Modo Ollama (padrão)**
+
+- botão "Gerar Descrições" e "Descrever" disponíveis
+- vision local via Ollama processa cada imagem
+- modo de recorte manual disponível
+
+**Modo DataLab**
+
+- controles de geração via Ollama ficam ocultos
+- um banner informa que as descrições são fornecidas pelo DataLab
+- as descrições vêm das captions extraídas automaticamente durante o processamento do PDF — sem custo adicional de vision
+- imagens sem caption do DataLab exibem aviso na interface
+
+Para alternar entre os modos, ajuste `Fonte de descrição de imagens` em **Configurações**.
+
 ### Runtime atual de Vision
 
 ```text
@@ -388,8 +496,8 @@ Endpoint: http://localhost:11434/api/chat
 
 O pipeline de vision do **Image Curator** é independente do backend PDF principal. Ou seja:
 
-- você pode usar `datalab` para PDFs
-- e continuar usando `ollama` no curator de imagens
+- você pode usar `datalab` para PDFs e `ollama` no curator de imagens
+- ou usar `datalab` em ambos — nesse caso as descrições vêm das captions do DataLab e o Ollama não é necessário no curator
 
 ### Setup do Ollama
 
@@ -420,6 +528,100 @@ O app verifica:
 - Ollama acessível
 - modelo configurado disponível
 - fallback disponível
+
+## Timeline Dashboard
+
+A aba **📅 Cronograma** (`src/ui/timeline_dashboard.py`, classe `TimelineDashboardView`) mostra a alocação de arquivos por bloco do cronograma da matéria ativa.
+
+Funcionalidades:
+
+- accordion por bloco com cabeçalho de data + título
+- linhas de entries dentro de cada bloco, com badges de confiança e marcador `✎` para override manual
+- seção dedicada para entries **não-mapeados** (sem `manual_timeline_block_id` e sem `bloco:` em `auto_tags`)
+- reatribuição manual de um entry para outro bloco via dropdown
+- persistência imediata da decisão no `manifest.json` via `save_block_assignment`
+- botão **🔄 Reprocessar** aparece após a primeira alteração, ligado à ação de reprocessamento do repositório
+
+Fonte de dados:
+
+- `manifest.json` → lista de entries e atribuições atuais
+- `course/.timeline_index.json` → blocos do cronograma
+
+A aba é independente do build principal — atribuir um bloco apenas grava `manual_timeline_block_id` no manifest. O reprocessamento (que aplica essas decisões nos artefatos derivados) só roda quando o usuário clica em **🔄 Reprocessar**.
+
+A aba se recarrega automaticamente ao ser selecionada, refletindo a matéria ativa no momento.
+
+## Resiliência de Build
+
+O pipeline de build foi endurecido contra dois cenários frequentes na operação:
+
+### Arquivos-fonte ausentes
+
+Se um entry da fila aponta para um caminho que não existe mais no disco (arquivo movido/deletado da pasta de origem), o build **não aborta**. O entry é registrado em `failed_entries` no manifest com `error_type=missing_source` e o processamento continua para os demais entries.
+
+Ao final do build, a UI exibe um messagebox listando título e caminho de cada arquivo ausente (até 20 itens, restante agregado em contador), permitindo decidir entre restaurar arquivos ou remover entries da fila.
+
+Vale tanto para **build completo** (`build_workflow.py`) quanto para **build incremental** (`incremental_build.py`).
+
+### Curadoria de imagens órfã
+
+Quando uma imagem é deletada pelo Image Curator (ou removida fora do app), o build de reprocessamento agora roda uma rotina de limpeza (`prune_stale_image_curation`) antes de regenerar os artefatos pedagógicos.
+
+A rotina:
+
+- escaneia recursivamente o `images_dir` de cada entry
+- compara com as entradas em `image_curation.pages[*].images`
+- remove curadorias de arquivos que não existem mais
+- poda páginas vazias
+- reseta `status` para `pending` se a entry ficar sem nenhuma página
+
+Imagens vivas e suas descrições não são tocadas. Garante que o lote de "Gerar Descrições" e a contagem na UI reflitam exatamente o que está no disco.
+
+A limpeza também é tolerante a chaves de página em formatos coexistentes (`"1"`, `"page_1"`, índice zero-based legado) — todas são consolidadas para o formato canônico no próximo save da página.
+
+## Resumos de código (opcional — via Gemini)
+
+Para enriquecer a indexação do código (títulos descritivos, conceitos extraídos,
+papel pedagógico, e vinculação automática ao bloco do cronograma), o app pode
+usar a API do Gemini.
+
+### Pré-requisitos
+
+```bash
+pip install google-genai
+```
+
+E uma chave da API do Gemini configurada via `Configurações → Processamento →
+Gemini — Resumos de Código`.
+
+### Como funciona
+
+1. Cada arquivo de código (`.py`, `.ipynb`, `.dfy`, etc) vira um *bundle* de texto.
+2. O Gemini retorna um JSON estruturado (`inferred_title`, `pedagogical_role`,
+   `concepts`, `summary`).
+3. Os `concepts` são casados localmente contra os blocos do cronograma
+   (`.timeline_index.json`) — sem custo extra de LLM — definindo a aula primária
+   e aulas secundárias.
+4. O resultado é persistido em `course/code_curation.json` (cache por hash de
+   conteúdo: re-executar não custa tokens se nada mudou).
+
+### Onde isso aparece
+
+- Cabeçalho de cada código gerado (`code/...`).
+- `course/CODE_INDEX.md` agrupado por aula.
+- `course/CRONOGRAMA_DETALHADO.md` (novo: bloco-a-bloco com códigos vinculados).
+- `course/CODE_HEALTH.md` (novo: cobertura, órfãos, distribuição por unidade).
+
+### Custo aproximado
+
+`gemini-2.5-flash` a $0.30 / 1M tokens entrada + $2.50 / 1M tokens saída.
+Uma matéria com ~20 códigos custa em torno de $0.03. Reprocessamento sem
+mudanças = 0 chamadas.
+
+### Sem chave configurada
+
+Tudo continua funcionando sem a chave: `code_curation.json` simplesmente não
+existe e os artefatos voltam ao formato original (fallback byte-equal).
 
 ## Estrutura do Repositório Gerado
 
@@ -611,6 +813,7 @@ Campos relevantes:
 - `vision_model`
 - `vision_model_quantization`
 - `ollama_base_url`
+- `image_description_source` — `"ollama"` (padrão) ou `"datalab"`
 - `prevent_sleep_during_build`
 
 ## Execucao
@@ -674,8 +877,14 @@ Itens planejados em ordem de prioridade:
   - [src/builder/engine.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/engine.py)
   - [src/builder/runtime/datalab_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/runtime/datalab_client.py)
   - [src/builder/vision/ollama_client.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/vision/ollama_client.py)
+  - [src/builder/routing/file_map.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/routing/file_map.py)
+  - [src/builder/core/image_resolution.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/core/image_resolution.py)
+  - [src/builder/ops/build_workflow.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/ops/build_workflow.py)
+  - [src/builder/ops/incremental_build.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/builder/ops/incremental_build.py)
   - [src/ui/image_curator.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/image_curator.py)
+  - [src/ui/timeline_dashboard.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/timeline_dashboard.py)
   - [src/ui/dialogs.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/ui/dialogs.py)
+  - [src/models/tag_profile.py](/C:/Users/Humberto/Documents/GitHub/GPT-Tutor-Generator/src/models/tag_profile.py)
 - Documentos em `docs/superpowers/` podem descrever versões históricas da implementação
 
 ## Licença

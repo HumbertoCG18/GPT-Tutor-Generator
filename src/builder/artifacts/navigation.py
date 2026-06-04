@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import re
 from typing import Callable, List, Optional
@@ -62,7 +63,9 @@ def _entry_markdown_text_for_file_map(root_dir: Optional[Path], entry: dict) -> 
         return entry.get("_markdown_text_for_tests") or ""
     md_path = _entry_markdown_path_for_file_map(root_dir, entry)
     if not md_path:
-        return ""
+        # Fallback: material sem .md convertido (imagem/PDF) usa descricao injetada
+        desc = str(entry.get("image_description", "") or "").strip()
+        return desc
     try:
         return md_path.read_text(encoding="utf-8")
     except Exception:
@@ -83,7 +86,13 @@ def _infer_unit_confidence(entry: dict) -> str:
     if resolved_unit == "curso-inteiro":
         return "Alta"
 
-    match_confidence = float(entry.get("_unit_match_confidence") or 0.0)
+    # Prioriza o transiente do build (file_map injeta o match recem-computado);
+    # fora do build, le o `unit_match_confidence` persistido no manifest.
+    match_confidence = float(
+        entry.get("_unit_match_confidence")
+        or entry.get("unit_match_confidence")
+        or 0.0
+    )
     ambiguous = bool(entry.get("_unit_match_ambiguous"))
     signal_count = sum(
         1
@@ -568,7 +577,7 @@ def render_low_token_file_map_md(
     resolve_entry_manual_unit_slug: Callable[[dict, list], str],
     unit_match_result_factory: Callable[..., object],
     derive_unit_from_topic_match: Callable[[object, dict], str],
-    auto_map_entry_unit: Callable[[dict, list, str, list], object],
+    auto_map_entry_unit: Callable[..., object],
     select_probable_period_for_entry: Callable[..., tuple],
     file_map_markdown_cell: Callable[[str], str],
     entry_markdown_path_for_file_map: Callable[[object, dict], object],
@@ -577,6 +586,7 @@ def render_low_token_file_map_md(
     entry_usage_hint: Callable[[dict], str],
     entry_priority_label: Callable[[dict], str],
     clamp_navigation_artifact: Callable[..., str],
+    build_unit_tag_index: Callable[[dict], dict], 
 ) -> str:
     course_name = course_meta.get("course_name", "Curso")
     content_taxonomy = dict(
@@ -595,6 +605,15 @@ def render_low_token_file_map_md(
         or build_file_map_timeline_context_from_course(course_meta, subject_profile)
     )
     topic_index = iter_content_taxonomy_topics(content_taxonomy)
+    unit_tag_index = build_unit_tag_index(content_taxonomy)
+    _bold_re = re.compile(r"\*\*([^*]+)\*\*")
+    topic_labels: dict = {}
+    for _u in content_taxonomy.get("units", []) or []:
+        for _t in (_u.get("topics", []) or []):
+            _slug = str(_t.get("slug", "") or "")
+            _label = str(_t.get("label", "") or "")
+            if _slug and _label:
+                topic_labels[_slug] = _bold_re.sub(r"\1", _label).strip()
     blocks_by_unit = temporal_context.get("blocks_by_unit", {}) if temporal_context else {}
     unassigned_blocks = temporal_context.get("unassigned_blocks", []) if temporal_context else []
     unit_by_slug = {unit.get("slug", ""): unit for unit in unit_index if unit.get("slug")}
@@ -629,14 +648,31 @@ def render_low_token_file_map_md(
         lines.append("Nenhum arquivo processado ainda.")
         return "\n".join(lines)
 
+    # Load code curation once for inferred_title overrides on code entries.
+    _code_curation_entries: dict = {}
+    try:
+        _repo_root_for_curation = course_meta.get("_repo_root")
+        if _repo_root_for_curation:
+            _curation_path = Path(_repo_root_for_curation) / "code_curation.json"
+            if _curation_path.exists():
+                _code_curation_entries = (json.loads(_curation_path.read_text(encoding="utf-8")) or {}).get("entries", {}) or {}
+    except Exception:
+        _code_curation_entries = {}
+
     lines += [
-        "| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Confiança | Período |",
-        "|---|---|---|---|---|---|---|---|---|---|",
+        "| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Subtópico | Confiança | Período |",
+        "|---|---|---|---|---|---|---|---|---|---|---|",
     ]
 
     for i, entry in enumerate(manifest_entries, 1):
         title = entry.get("title", "")
         category = entry.get("category", "")
+        # Override with inferred_title from code curation when available.
+        if category in ("codigo-professor", "codigo-aluno", "codigo-trabalho-aluno"):
+            _eid = entry.get("id") or ""
+            _inferred = (((_code_curation_entries.get(_eid) or {}).get("summary") or {}).get("inferred_title") or "")
+            if _inferred:
+                title = _inferred
         tags = entry.get("tags", "")
         effective_tags = merge_manual_and_auto_tags(
             list(entry.get("manual_tags") or []),
@@ -686,7 +722,11 @@ def render_low_token_file_map_md(
                         reasons=[f"topic={topic_match.topic_slug}", *topic_match.reasons],
                     )
                 else:
-                    match = auto_map_entry_unit(entry, unit_index, markdown_text, topic_index)
+                    match = auto_map_entry_unit(entry, unit_index, markdown_text, topic_index, unit_tag_index=unit_tag_index)
+                    if not preferred_topic_slug and match.slug and not match.ambiguous and match.confidence >= 0.45:
+                        refined = auto_map_entry_subtopic(entry, content_taxonomy, markdown_text, winning_unit_slug=match.slug)
+                        if refined.topic_slug and not refined.ambiguous and refined.confidence >= 0.35:
+                            preferred_topic_slug = refined.topic_slug
             unit = (
                 f"{match.slug} _(ambíguo)_"
                 if match.slug and match.ambiguous
@@ -741,10 +781,11 @@ def render_low_token_file_map_md(
             }
         )
 
+        subtopic_label = topic_labels.get(preferred_topic_slug, "")
         lines.append(
             f"| {i} | {title} | {category} | {entry_usage_hint(entry)} | "
             f"{entry_priority_label(entry)} | {md_cell} | {sections or ''} | "
-            f"{unit or ''} | {confidence} | {period or ''} |"
+            f"{unit or ''} | {subtopic_label or ''} | {confidence} | {period or ''} |"
         )
         if (
             raw_path
@@ -764,7 +805,7 @@ def render_low_token_file_map_md(
                 details.append(f"bloco-manual: `{entry.get('manual_timeline_block_id')}`")
             if md_path and md_path.replace('\\', '/').startswith("staging/"):
                 details.append(f"markdown-base: `{md_path}`")
-            lines.append(f"|  | ↳ rastreabilidade |  | {'; '.join(details)} |  |  |  |  |  |  |")
+            lines.append(f"|  | ↳ rastreabilidade |  | {'; '.join(details)} |  |  |  |  |  |  |  |")
 
     lines += [
         "",
@@ -774,6 +815,7 @@ def render_low_token_file_map_md(
         "- **Prioridade**: `alta` costuma merecer contexto antes dos demais.",
         "- **Seções**: principais headers `##` do markdown aprovado/curado.",
         "- **Unidade**: slug da unidade do COURSE_MAP.",
+        "- **Subtópico**: label do tópico específico dentro da unidade (ex: `3.2 Escalonamento`).",
         "- **Confiança**: quão confiável está o roteamento de unidade atual.",
         "- **Período**: janela compacta da timeline associada à unidade.",
         "- **Markdown**: `A revisar` indica que o item ainda só tem extração de `staging/`, sem promoção final.",
@@ -848,7 +890,7 @@ def low_token_file_map_md(
     resolve_entry_manual_unit_slug: Callable[[dict, list], str],
     unit_match_result_factory: Callable[..., object],
     derive_unit_from_topic_match: Callable[[object, dict], str],
-    auto_map_entry_unit: Callable[[dict, list, str, list], object],
+    auto_map_entry_unit: Callable[..., object],    
     select_probable_period_for_entry: Callable[..., tuple],
     file_map_markdown_cell: Callable[[str], str],
     entry_markdown_path_for_file_map: Callable[[object, dict], object],
@@ -857,6 +899,7 @@ def low_token_file_map_md(
     entry_usage_hint: Callable[[dict], str],
     entry_priority_label: Callable[[dict], str],
     clamp_navigation_artifact: Callable[..., str],
+    build_unit_tag_index: Callable[[dict], dict], 
 ) -> str:
     return render_low_token_file_map_md(
         course_meta,
@@ -882,6 +925,7 @@ def low_token_file_map_md(
         entry_usage_hint=entry_usage_hint,
         entry_priority_label=entry_priority_label,
         clamp_navigation_artifact=clamp_navigation_artifact,
+        build_unit_tag_index=build_unit_tag_index,
     )
 
 

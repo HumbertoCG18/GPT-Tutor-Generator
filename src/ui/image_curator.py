@@ -83,14 +83,22 @@ def _uses_zero_based_page_pattern(images: List[Path]) -> bool:
 
 
 def _resolve_curation_page_key(curation: dict, page_num: Optional[int], images: List[Path]) -> str:
-    """Resolve the manifest page key, tolerating legacy zero-based keys."""
+    """Resolve the manifest page key, tolerating legacy zero-based and datalab `page_N` keys."""
     page_key = str(page_num) if page_num is not None else "none"
-    if page_key in curation.get("pages", {}):
+    pages = curation.get("pages", {})
+    if page_key in pages:
         return page_key
-    if page_num is not None and _uses_zero_based_page_pattern(images):
-        legacy_key = str(page_num - 1)
-        if legacy_key in curation.get("pages", {}):
-            return legacy_key
+    if page_num is not None:
+        datalab_key = f"page_{page_num}"
+        if datalab_key in pages:
+            return datalab_key
+        if _uses_zero_based_page_pattern(images):
+            legacy_key = str(page_num - 1)
+            if legacy_key in pages:
+                return legacy_key
+            datalab_legacy = f"page_{page_num - 1}"
+            if datalab_legacy in pages:
+                return datalab_legacy
     return page_key
 
 
@@ -255,6 +263,11 @@ class ImageCurator(tk.Toplevel):
             else "dark"
         )
         self._parent = parent
+        self._image_description_source = (
+            parent.config_obj.get("image_description_source", "ollama")
+            if hasattr(parent, "config_obj")
+            else "ollama"
+        )
 
         self.title("Image Curator")
         self.geometry("1400x800")
@@ -296,9 +309,10 @@ class ImageCurator(tk.Toplevel):
             font=("Segoe UI", 14, "bold"),
         ).pack(side="left")
 
-        ttk.Button(
-            toolbar, text="Gerar Descrições", command=self._generate_descriptions
-        ).pack(side="right", padx=5)
+        if self._image_description_source != "datalab":
+            ttk.Button(
+                toolbar, text="Gerar Descrições", command=self._generate_descriptions
+            ).pack(side="right", padx=5)
         ttk.Button(
             toolbar,
             text="Salvar",
@@ -324,6 +338,20 @@ class ImageCurator(tk.Toplevel):
             font=("Segoe UI", 9),
         )
         status_bar.pack(fill="x", side="bottom")
+
+        # DataLab mode banner
+        if self._image_description_source == "datalab":
+            banner = tk.Label(
+                self,
+                text="Modo DataLab — descrições geradas na conversão. Reprocesse para atualizar.",
+                bg="#1e4620",
+                fg="#a6e3a1",
+                anchor="w",
+                padx=12,
+                pady=5,
+                font=("Segoe UI", 9),
+            )
+            banner.pack(fill="x", side="top")
 
         # PanedWindow
         self._main_paned = ttk.PanedWindow(self, orient="horizontal")
@@ -396,12 +424,13 @@ class ImageCurator(tk.Toplevel):
         ).pack(side="left")
 
         self._crop_mode = tk.BooleanVar(value=False)
-        ttk.Checkbutton(
-            pdf_header,
-            text="Capturar regiao",
-            variable=self._crop_mode,
-            command=self._toggle_crop_mode,
-        ).pack(side="left", padx=(10, 0))
+        if self._image_description_source != "datalab":
+            ttk.Checkbutton(
+                pdf_header,
+                text="Capturar regiao",
+                variable=self._crop_mode,
+                command=self._toggle_crop_mode,
+            ).pack(side="left", padx=(10, 0))
 
         self._crop_rect_id = None
         self._crop_start = None
@@ -655,6 +684,26 @@ class ImageCurator(tk.Toplevel):
         curated_images = page_data.get("images", {})
         duplicate_images = entry.get("_duplicate_images", {})
 
+        if self._image_description_source == "datalab":
+            has_datalab_desc = any(
+                img.get("source") == "datalab"
+                for page_data in (curation.get("pages") or {}).values()
+                for img in page_data.get("images", {}).values()
+            )
+            if not has_datalab_desc and curation:
+                warn = tk.Label(
+                    self._cards_frame,
+                    text="Este documento foi processado sem captions do DataLab. Reprocesse para obter as descrições.",
+                    bg="#3d2f00",
+                    fg="#f9e2af",
+                    anchor="w",
+                    padx=10,
+                    pady=6,
+                    font=("Segoe UI", 9),
+                    wraplength=600,
+                )
+                warn.pack(fill="x", pady=(0, 6))
+
         # Page-level include toggle
         page_frame = tk.Frame(self._cards_frame, bg=p["frame_bg"])
         page_frame.pack(fill="x", padx=5, pady=5)
@@ -781,13 +830,23 @@ class ImageCurator(tk.Toplevel):
                     lambda e, f=fname, d=desc: self._show_description(f, d),
                 )
 
+            if self._image_description_source == "datalab" and not existing.get("description"):
+                tk.Label(
+                    card,
+                    text="Sem descrição do DataLab",
+                    bg=p["input_bg"],
+                    fg=p["label_fg"],
+                    font=("Segoe UI", 9, "italic"),
+                ).pack(anchor="w", pady=(2, 0))
+
             # Action buttons
             btn_frame = tk.Frame(card, bg=p["input_bg"])
             btn_frame.pack(fill="x", pady=(6, 0))
-            ttk.Button(
-                btn_frame, text="Descrever",
-                command=lambda fn=fname, ip=img_path: self._describe_single_image(fn, ip),
-            ).pack(side="left", padx=(0, 4))
+            if self._image_description_source != "datalab":
+                ttk.Button(
+                    btn_frame, text="Descrever",
+                    command=lambda fn=fname, ip=img_path: self._describe_single_image(fn, ip),
+                ).pack(side="left", padx=(0, 4))
             ttk.Button(
                 btn_frame, text="Remover",
                 command=lambda fn=fname, ip=img_path: self._delete_image(fn, ip),
@@ -1439,19 +1498,27 @@ class ImageCurator(tk.Toplevel):
             for p in imgs:
                 fname_to_path[p.name] = p
 
-        # Collect all included images across all pages
+        # Collect all included images across all pages.
+        # Only consider files present on disk (via fname_to_path built from _image_groups);
+        # ignore stale curation entries from deleted images or duplicated page-key formats.
         to_describe: list = []
+        seen_fnames: set[str] = set()
         for page_key, page_data in curation.get("pages", {}).items():
             if not page_data.get("include_page", True):
                 continue
             for fname, img_data in page_data.get("images", {}).items():
-                if img_data.get("include") and not img_data.get("description"):
-                    img_path = fname_to_path.get(fname, self._images_dir / fname)
-                    if img_path.exists():
-                        ctx = page_contexts.get(page_key, "")
-                        to_describe.append(
-                            (page_key, fname, img_data.get("type", "generico"), img_path, ctx)
-                        )
+                if not img_data.get("include") or img_data.get("description"):
+                    continue
+                if fname in seen_fnames:
+                    continue
+                img_path = fname_to_path.get(fname)
+                if img_path is None or not img_path.exists():
+                    continue
+                seen_fnames.add(fname)
+                ctx = page_contexts.get(page_key, "")
+                to_describe.append(
+                    (page_key, fname, img_data.get("type", "generico"), img_path, ctx)
+                )
 
         if not to_describe:
             messagebox.showinfo(

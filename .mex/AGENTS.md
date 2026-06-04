@@ -1,10 +1,12 @@
 ---
 name: agents
 description: Project identity, non-negotiables, commands, and scaffold growth instructions
-last_updated: 2025-04-22
+last_updated: 2026-06-03
 ---
 
 # GPT-Tutor-Generator
+
+Reviewed against `.mex/ROUTER.md` and current scaffold commands on 2026-06-03.
 
 ## What This Is
 
@@ -21,6 +23,8 @@ A desktop tool (Python/tkinter) that converts academic PDFs into structured GitH
 - No multi-paragraph docstrings.
 - Skip files over 100KB unless strictly required.
 - Before calling any `mcp__code-review-graph__*` or `mcp__token-savior__*` tool, use `ToolSearch select:<name>` to load the schema first. Calling without loading fails with `InputValidationError`.
+- Gemini integration uses `google-genai` (NOT `google-generativeai`). Imports via `from google import genai` and must stay lazy inside method bodies — never at module top level. Anti-patterns to grep: `google.generativeai`, `genai.GenerativeModel`.
+- The generated repo's code_curation.json is a generated artifact (not source). Treat it like manifest cache: prune stale entries before reads, write atomically.
 
 ## Commands
 

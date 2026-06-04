@@ -14,6 +14,102 @@ from src.utils.helpers import slugify, write_text
 logger = logging.getLogger(__name__)
 
 
+def _resolve_gemini_client(builder):
+    """Resolve o client Gemini real (mesmo factory de summarize_all_code_entries).
+
+    Le a config persistida (~/.gpt_tutor_config.json, igual ao AppConfig) e usa
+    `get_gemini_client(config)`, que retorna None se nao houver gemini_api_key.
+    Qualquer falha (sem extra google-genai, sem chave, IO) -> None: o caminho
+    residual degrada para no-op e a build segue normal.
+    """
+    try:
+        import json as _json
+        from pathlib import Path as _Path
+        from src.builder.runtime.gemini_client import get_gemini_client
+
+        cfg_path = _Path.home() / ".gpt_tutor_config.json"
+        if not cfg_path.exists():
+            return None
+        config = _json.loads(cfg_path.read_text(encoding="utf-8"))
+        if not isinstance(config, dict):
+            return None
+        return get_gemini_client(config)
+    except Exception:
+        return None
+
+
+def run_material_residual(builder, live_manifest_entries):
+    """Camada 2: residuo Gemini p/ materiais sem bloco. OPT-IN EXPLICITO.
+
+    So roda quando `builder.options['enable_material_residual']` for True E houver
+    client Gemini. DEFAULT OFF: operacoes leves (unprocess/reject) chamam
+    regenerate_pedagogical_files na UI thread; resolver/chamar o client aqui
+    faria ate 20 chamadas de rede sincronas (summarize_bundle, max_retries=5),
+    travando o app. A opcao deve ser habilitada apenas em contexto com background
+    thread (mesmo padrao do code summarization em ui/codes_panel.py).
+
+    Retorna `live_manifest_entries` (mutado in-place quando roda).
+    """
+    options = getattr(builder, "options", {}) or {}
+    if not bool(options.get("enable_material_residual", False)):
+        return live_manifest_entries
+
+    gemini_client = _resolve_gemini_client(builder)
+    if gemini_client is None:
+        return live_manifest_entries
+
+    from src.builder.artifacts.cronograma_health import _entry_block_id
+    from src.builder.core.summary_core import summarize_residual_materials
+    from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
+
+    from pydantic import BaseModel as _BaseModel, Field as _Field
+
+    class _KeywordsSchema(_BaseModel):
+        keywords: list[str] = _Field(
+            default_factory=list,
+            description="3-8 palavras-chave tecnicas do material.",
+        )
+
+    def _extract_concepts(text: str) -> list:
+        # Adapter sobre GeminiClient.summarize_bundle. summarize_bundle exige
+        # um schema pydantic e retorna a instancia parseada (resp.parsed),
+        # NAO um objeto com .text. Em caso de erro, retorna [] (degrada).
+        try:
+            res = gemini_client.summarize_bundle(
+                bundle_text=text[:6000],
+                schema=_KeywordsSchema,
+                system_instruction=(
+                    "Liste 3-8 palavras-chave tecnicas do material academico. "
+                    "Responda apenas o JSON conforme schema."
+                ),
+            )
+            kws = getattr(res, "keywords", None) or []
+            return [str(w).strip() for w in kws if str(w).strip()]
+        except Exception:
+            return []
+
+    _blocks = builder._load_timeline_blocks()
+    orphans = []
+    for e in live_manifest_entries:
+        # passa _blocks p/ validar id manual stale igual a health/dashboard (fonte unica)
+        if _entry_block_id(e, _blocks):
+            continue
+        txt = _entry_markdown_text_for_file_map(builder.root_dir, e) or str(e.get("title") or "")
+        orphans.append({"id": e.get("id"), "_text": txt})
+    if orphans and _blocks:
+        resolved = summarize_residual_materials(
+            builder.root_dir, orphans, _blocks, _extract_concepts, cap=20,
+        )
+        by_id = {e.get("id"): e for e in live_manifest_entries}
+        for eid, rec in resolved.items():
+            bid = rec.get("primary_block_id")
+            if bid and by_id.get(eid) is not None:
+                tags = [t for t in (by_id[eid].get("auto_tags") or []) if not str(t).startswith("bloco:")]
+                tags.append(f"bloco:{bid}")
+                by_id[eid]["auto_tags"] = tags
+    return live_manifest_entries
+
+
 def regenerate_pedagogical_files(
     builder,
     manifest: dict,
@@ -39,6 +135,7 @@ def regenerate_pedagogical_files(
     glossary_md_fn,
     write_tag_catalog_fn,
     refresh_manifest_auto_tags_fn,
+    resolve_unit_block_tags_fn,
     syllabus_md_fn,
     exam_index_md_fn,
     exercise_index_md_fn,
@@ -165,6 +262,16 @@ def regenerate_pedagogical_files(
         glossary_text=glossary_text,
     )
     live_manifest_entries = refresh_manifest_auto_tags_fn(builder.root_dir, live_manifest_entries, tag_catalog)
+
+    live_manifest_entries = resolve_unit_block_tags_fn(
+        live_manifest_entries,
+        runtime_course_meta,
+        builder.subject_profile,
+    )
+
+    # Camada 2: residuo via Gemini (opt-in EXPLICITO). Ver run_material_residual.
+    live_manifest_entries = run_material_residual(builder, live_manifest_entries)
+
     manifest["entries"] = live_manifest_entries
 
     try:
@@ -188,9 +295,13 @@ def regenerate_pedagogical_files(
 
     bib_entries = [e for e in all_entries if e.category == "bibliografia"]
     if bib_entries or getattr(builder.subject_profile, "teaching_plan", ""):
+        from src.builder.core.reference_summary import load_reference_curation
         write_text(
             builder.root_dir / "content" / "BIBLIOGRAPHY.md",
-            bibliography_md_fn(builder.course_meta, bib_entries, builder.subject_profile),
+            bibliography_md_fn(
+                builder.course_meta, bib_entries, builder.subject_profile,
+                reference_curation=load_reference_curation(builder.root_dir),
+            ),
         )
 
     assignment_entries = [e for e in all_entries if e.category in assignment_categories]
@@ -202,7 +313,52 @@ def regenerate_pedagogical_files(
 
     code_entries = [e for e in all_entries if e.category in code_categories]
     if code_entries:
-        write_text(builder.root_dir / "code" / "CODE_INDEX.md", code_index_md_fn(builder.course_meta, code_entries, builder.subject_profile))
+        _code_curation = builder._load_code_curation()
+        _timeline_blocks = builder._load_timeline_blocks()
+        write_text(
+            builder.root_dir / "code" / "CODE_INDEX.md",
+            code_index_md_fn(
+                builder.course_meta,
+                code_entries,
+                builder.subject_profile,
+                code_curation=_code_curation,
+                timeline_blocks=_timeline_blocks,
+            ),
+        )
+        if _timeline_blocks:
+            from src.builder.artifacts.repo import cronograma_detalhado_md as _cronograma_detalhado_md
+            write_text(
+                builder.root_dir / "course" / "CRONOGRAMA_DETALHADO.md",
+                _cronograma_detalhado_md(
+                    builder.course_meta,
+                    code_entries,
+                    _code_curation,
+                    _timeline_blocks,
+                    builder.subject_profile,
+                ),
+            )
+
+    from src.builder.artifacts.repo import code_health_md as _code_health_md
+    write_text(
+        builder.root_dir / "course" / "CODE_HEALTH.md",
+        _code_health_md(
+            builder.course_meta,
+            all_entries,
+            code_curation=builder._load_code_curation(),
+            timeline_blocks=builder._load_timeline_blocks(),
+            glossary_terms=builder._load_glossary_terms() if hasattr(builder, "_load_glossary_terms") else None,
+        ),
+    )
+
+    from src.builder.artifacts.cronograma_health import cronograma_health_md as _cronograma_health_md
+    write_text(
+        builder.root_dir / "course" / "CRONOGRAMA_HEALTH.md",
+        _cronograma_health_md(
+            builder.course_meta,
+            live_manifest_entries,
+            builder._load_timeline_blocks(),
+        ),
+    )
 
     wb_entries = [e for e in all_entries if e.category in whiteboard_categories]
     if wb_entries:

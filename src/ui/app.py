@@ -33,6 +33,9 @@ from src.builder.extraction.teaching_plan import _parse_units_from_teaching_plan
 from src.ui.theme import ThemeManager, AppConfig
 from src.ui.dialogs import FileEntryDialog, URLEntryDialog, SubjectManagerDialog, StudentProfileDialog, HelpWindow, add_tooltip, SettingsDialog, BacklogEntryEditDialog, StatusDialog, _resolve_backlog_markdown_status
 from src.ui.repo_dashboard import RepoDashboard, collect_repo_metrics
+from src.ui.timeline_dashboard import TimelineDashboardView
+from src.ui.codes_panel import CodesPanel
+from src.ui.maintenance_panel import MaintenancePanel
 
 logger = logging.getLogger(__name__)
 
@@ -100,6 +103,7 @@ def _build_options_from_config(default_mode: str, default_ocr_language: str, con
         "vision_model": config_obj.get("vision_model"),
         "ollama_base_url": config_obj.get("ollama_base_url"),
         "prevent_sleep_during_build": config_obj.get("prevent_sleep_during_build", True),
+        "image_description_source": config_obj.get("image_description_source", "ollama"),
     }
 
 
@@ -532,6 +536,42 @@ class App(tk.Tk):
         self._repo_dashboard = RepoDashboard(tab_dashboard, on_refresh=self._refresh_repo_dashboard)
         self._repo_dashboard.pack(fill="both", expand=True)
 
+        # ── Aba Cronograma ──────────────────────────────────────────────
+        tab_timeline = ttk.Frame(self.notebook)
+        self._timeline_tab = tab_timeline
+        self.notebook.add(tab_timeline, text="  📅 Cronograma  ")
+        self._timeline_dashboard = TimelineDashboardView(
+            tab_timeline,
+            get_subject_fn=lambda: self._resolve_subject_profile(),
+            enqueue_reprocess_fn=self._reprocess_repo,
+        )
+        self._timeline_dashboard.pack(fill="both", expand=True)
+
+        # ── Aba Códigos ─────────────────────────────────────────────────
+        tab_codes = ttk.Frame(self.notebook)
+        self._codes_tab = tab_codes
+        self.notebook.add(tab_codes, text="  💻 Códigos  ")
+        self._codes_panel = CodesPanel(
+            tab_codes,
+            get_subject_fn=lambda: self._resolve_subject_profile(),
+            get_config_fn=lambda: self.config_obj,
+            get_repo_dir_fn=lambda: self._repo_dir(),
+        )
+        self._codes_panel.pack(fill="both", expand=True)
+
+        # ── Aba Manutenção ──────────────────────────────────────────────
+        tab_maint = ttk.Frame(self.notebook)
+        self._maint_tab = tab_maint
+        self.notebook.add(tab_maint, text="  🧹 Manutenção  ")
+        self._maint_panel = MaintenancePanel(
+            tab_maint,
+            get_repo_dir_fn=lambda: self._repo_dir(),
+            make_builder_fn=lambda: self._make_maintenance_builder(),
+        )
+        self._maint_panel.pack(fill="both", expand=True)
+
+        self.notebook.bind("<<NotebookTabChanged>>", self._on_notebook_tab_changed, add="+")
+
         # ── Aba LOG ──────────────────────────────────────────────────────
         tab_log = ttk.Frame(self.notebook)
         self.notebook.add(tab_log, text="  📋 Log  ")
@@ -808,6 +848,38 @@ class App(tk.Tk):
         self._save_repo_tasks()
         self._refresh_repo_tasks_tree()
         self._refresh_repo_dashboard()
+
+    def _on_notebook_tab_changed(self, _event=None):
+        if not hasattr(self, "_timeline_dashboard"):
+            return
+        try:
+            current = self.notebook.nametowidget(self.notebook.select())
+        except Exception:
+            return
+        if current is getattr(self, "_timeline_tab", None):
+            self._timeline_dashboard.refresh()
+        if current is getattr(self, "_codes_tab", None) and hasattr(self, "_codes_panel"):
+            self._codes_panel.refresh()
+        if current is getattr(self, "_maint_tab", None) and hasattr(self, "_maint_panel"):
+            self._maint_panel.refresh()
+
+    def _make_maintenance_builder(self):
+        """Builder real para sweep — mesmo padrão do reprocessamento."""
+        repo_dir = self._repo_dir()
+        if not repo_dir:
+            return None
+        meta = self._course_meta()
+        if meta is None:
+            return None
+        active_subj = self._resolve_subject_profile(repo_dir)
+        return RepoBuilder(
+            root_dir=repo_dir,
+            course_meta=meta,
+            entries=[],
+            options=self._build_options(),
+            student_profile=self.student_store.profile,
+            subject_profile=active_subj,
+        )
 
     @staticmethod
     def _new_repo_task_id() -> str:
@@ -1837,9 +1909,10 @@ class App(tk.Tk):
                     builder.incremental_build()
                 else:
                     builder.build()
-                failed_count = len(getattr(builder, "failed_entries", []) or [])
+                failed_list = list(getattr(builder, "failed_entries", []) or [])
+                failed_count = len(failed_list)
                 logger.info("Worker concluído com sucesso.")
-                self.after(0, lambda fc=failed_count: self._on_build_complete(meta, repo_dir, incremental, fc))
+                self.after(0, lambda fc=failed_count, fl=failed_list: self._on_build_complete(meta, repo_dir, incremental, fc, fl))
             except InterruptedError:
                 self.after(0, self._on_build_cancelled)
             except Exception:
@@ -1858,7 +1931,7 @@ class App(tk.Tk):
         self._reset_build_finish_options()
         self._set_status("Build cancelado.")
 
-    def _on_build_complete(self, meta: dict, repo_dir: Path, incremental: bool, failed_count: int = 0):
+    def _on_build_complete(self, meta: dict, repo_dir: Path, incremental: bool, failed_count: int = 0, failed_list: list | None = None):
         self._end_progress()
         self._set_building_state(False)
         n_entries = len(self.entries)
@@ -1869,6 +1942,14 @@ class App(tk.Tk):
         shutdown_after_build = self._shutdown_after_build.get()
         status_prefix = "concluído com falhas" if failed_count else ("atualizado" if incremental else "criado")
         self._set_status(f"✓ Repositório {status_prefix} em: {repo_dir}")
+        failed_lines = ""
+        if failed_count and failed_list:
+            items = "\n".join(
+                f"  • {f.get('title', '?')} — {f.get('source_path', '?')}"
+                for f in failed_list[:20]
+            )
+            extra = f"\n  … (+{failed_count - 20} outro(s))" if failed_count > 20 else ""
+            failed_lines = f"\n\nArquivos ausentes ({failed_count}):\n{items}{extra}"
         if shutdown_after_build:
             logger.info("Build concluído com opção de desligamento ativada.")
             self._schedule_shutdown_after_build()
@@ -1877,14 +1958,16 @@ class App(tk.Tk):
                 APP_NAME,
                 f"Repositório atualizado em:\n{repo_dir}\n\n"
                 f"{n_entries} arquivo(s) na fila desta execução.\n"
-                f"Falhas por arquivo ausente: {failed_count}\n\n"
+                f"Falhas por arquivo ausente: {failed_count}"
+                f"{failed_lines}\n\n"
                 f"Próximo passo: dar push no GitHub."
             )
         else:
             messagebox.showinfo(
                 APP_NAME,
                 f"Repositório criado em:\n{repo_dir}\n\n"
-                f"Falhas por arquivo ausente: {failed_count}\n\n"
+                f"Falhas por arquivo ausente: {failed_count}"
+                f"{failed_lines}\n\n"
                 f"Próximo passo recomendado:\n"
                 f"1. Revisar manual-review/\n"
                 f"2. Escolher a melhor saída entre base e avançada\n"

@@ -1,10 +1,16 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, List, NamedTuple, Optional
+
+from src.builder.routing.dates import extract_dates
+from src.builder.routing.sequence import annotate_class_ordinals, score_sequence_match
+from src.builder.routing.thresholds import T, margin_confidence
 
 
 @dataclass
@@ -145,12 +151,15 @@ def auto_map_entry_subtopic(
     taxonomy: dict,
     markdown_text: str,
     *,
+    winning_unit_slug: str = "",
     collect_entry_unit_signals: Callable[[dict, str], dict],
     iter_content_taxonomy_topics: Callable[[dict], List[dict]],
     score_entry_against_taxonomy_topic: Callable[[dict, dict], float],
     topic_match_result_factory,
 ):
     topic_index = iter_content_taxonomy_topics(taxonomy)
+    if winning_unit_slug:
+        topic_index = [t for t in topic_index if str(t.get("unit_slug", "") or "") == winning_unit_slug]
     if not topic_index:
         return topic_match_result_factory(
             topic_slug="",
@@ -167,10 +176,17 @@ def auto_map_entry_subtopic(
 
     winner, winner_score = scored[0]
     runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
-    confidence = min(1.0, max(0.0, (winner_score - runner_up_score) + (winner_score * 0.2)))
-    ambiguous = winner_score <= 0.0 if len(scored) == 1 else winner_score <= 0.0 or abs(winner_score - runner_up_score) < 0.65
-    if len(scored) == 1 and not ambiguous:
-        confidence = max(confidence, 0.72)
+    margin = winner_score - runner_up_score
+    rel_margin = margin / max(winner_score, 1e-6)
+    if winner_score <= 0.0:
+        confidence = 0.0
+        ambiguous = True
+    elif len(scored) == 1:
+        confidence = 0.72
+        ambiguous = False
+    else:
+        confidence = max(0.0, min(1.0, rel_margin))
+        ambiguous = rel_margin < 0.15
     if ambiguous:
         confidence = min(confidence, 0.45)
 
@@ -190,7 +206,7 @@ def score_entry_against_unit(
     unit: dict,
     *,
     score_timeline_unit_phrase: Callable[[str, set[str], str, dict], float],
-    timeline_unit_neutral_tokens: set[str],
+    timeline_unit_neutral_tokens: set[str], unit_tag_boost = 0.0,
 ) -> float:
     title_text = signals.get("title_text", "")
     markdown_headings_text = signals.get("markdown_headings_text", "")
@@ -338,6 +354,8 @@ def score_entry_against_unit(
         score *= 0.55
     if exact_topic_hits == 0 and len(matched_specific_tokens) == 1:
         score *= 0.45
+    if unit_tag_boost > 0.0:
+        score += unit_tag_boost * 0.85
     return score
 
 
@@ -347,6 +365,8 @@ def auto_map_entry_unit(
     markdown_text: str,
     *,
     topic_index: Optional[List[dict]] = None,
+    unit_tag_index: Optional[Dict[str, float]] = None,
+    learned_unit_boosts: Optional[Dict[str, float]] = None,
     build_file_map_unit_index: Callable[[list], list],
     collect_entry_unit_signals: Callable[[dict, str], dict],
     score_entry_against_unit: Callable[[dict, dict], float],
@@ -359,10 +379,25 @@ def auto_map_entry_unit(
         return unit_match_result_factory(slug="", confidence=0.0, ambiguous=True, reasons=["sem-unidades"])
 
     signals = collect_entry_unit_signals(entry, markdown_text)
+    unit_tag_boosts: Dict[str, float] = {}
+    if unit_tag_index:
+        for tag in [str(t) for t in (entry.get("auto_tags") or []) if t]:
+            mapping = unit_tag_index.get(tag)
+            if not mapping:
+                continue
+            u_slug = str(mapping.get("unit_slug", "") or "").strip()
+            w = float(mapping.get("weight", 1.0))
+            if u_slug:
+                unit_tag_boosts[u_slug] = unit_tag_boosts.get(u_slug, 0.0) + w
+    if learned_unit_boosts:
+        for slug, w in learned_unit_boosts.items():
+            if slug and w:
+                unit_tag_boosts[str(slug)] = unit_tag_boosts.get(str(slug), 0.0) + float(w)
     scored = []
     normalized_topic_index = list(topic_index or [])
     for unit in indexed_units:
-        score = score_entry_against_unit(signals, unit)
+        tag_boost = unit_tag_boosts.get(str(unit.get("slug", "") or ""), 0.0)
+        score = score_entry_against_unit(signals, unit, unit_tag_boost=tag_boost)
         best_topic_score = 0.0
         if normalized_topic_index:
             unit_slug = normalize_unit_slug(str(unit.get("slug", "") or unit.get("title", "") or ""))
@@ -380,23 +415,44 @@ def auto_map_entry_unit(
     winner, winner_score, winner_topic_score = scored[0]
     runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
     runner_up_topic_score = scored[1][2] if len(scored) > 1 else 0.0
-    confidence = min(1.0, max(0.0, (winner_score - runner_up_score) + (winner_score * 0.18)))
-    ambiguous = winner_score <= 0.0 if len(scored) == 1 else winner_score <= 0.0 or abs(winner_score - runner_up_score) < 0.8
-    if len(scored) == 1 and not ambiguous:
-        confidence = max(confidence, 0.7)
+    margin = winner_score - runner_up_score
+    rel_margin = margin / max(winner_score, 1e-6)
+    if winner_score <= 0.0:
+        confidence = 0.0
+        ambiguous = True
+    elif len(scored) == 1:
+        confidence = 0.7
+        ambiguous = False
+    else:
+        # margin_confidence reintroduz o termo winner*k: um vencedor positivo
+        # rende confianca > 0 mesmo com margem nula (ex.: titulo concatenado que
+        # empata as unidades), restaurando o comportamento pre-refator.
+        confidence = margin_confidence(winner_score, runner_up_score, k=T.MARGIN_K)
+        # Ambiguo por margem RELATIVA fraca OU por score ABSOLUTO baixo: sem o
+        # piso absoluto, um winner fraco com runner_up ~0 (rel_margin ~1.0)
+        # passaria por confiante (caso do token "estado" acidental).
+        ambiguous = (
+            rel_margin < T.UNIT_MATCH_REL_MARGIN
+            or winner_score < T.UNIT_MATCH_MIN_WINNER
+        )
     if (
         len(scored) > 1
         and normalized_topic_index
         and winner_topic_score >= 0.55
         and (winner_topic_score - runner_up_topic_score) >= 0.01
     ):
-        ambiguous = False
-        confidence = max(confidence, min(0.95, winner_topic_score))
+        topic_rel_margin = (winner_topic_score - runner_up_topic_score) / max(winner_topic_score, 1e-6)
+        if topic_rel_margin >= 0.15:
+            ambiguous = False
+            confidence = max(confidence, min(0.95, topic_rel_margin))
     if ambiguous:
         confidence = min(confidence, 0.4)
     reasons = [f"winner_score={winner_score:.2f}"]
     if normalized_topic_index:
         reasons.append(f"topic_score={winner_topic_score:.2f}")
+    winner_tag_boost = unit_tag_boosts.get(str(winner.get("slug", "") or ""), 0.0)
+    if winner_tag_boost > 0.0:
+        reasons.append(f"tag_boost={winner_tag_boost:.2f}")
     if ambiguous:
         reasons.append("ambiguous")
     return unit_match_result_factory(
@@ -452,6 +508,79 @@ def resolve_entry_manual_timeline_block(entry: dict, timeline_context: dict) -> 
         if 1 <= ordinal <= len(instructional_blocks):
             return instructional_blocks[ordinal - 1]
     return None
+
+
+class EffectiveBlock(NamedTuple):
+    """Resultado de resolve_effective_block: id do bloco vencedor + de onde veio.
+
+    source ∈ {"manual", "auto", ""}: "manual" quando o override do entry venceu,
+    "auto" quando caiu no computed_block_id (espelhado em auto_tags["bloco:"]),
+    "" quando nada resolveu (curso sem bloco / entry sem atribuição).
+    """
+
+    block_id: str
+    source: str
+
+
+_logger = logging.getLogger(__name__)
+
+
+def _entry_computed_block_id(entry: dict) -> str:
+    """computed_block_id (Fase 1) com fallback para o espelho auto_tags["bloco:"].
+
+    O campo computed_block_id e a fonte; auto_tags["bloco:"] e o espelho. Dicts
+    crus vindos de manifest antigo podem ter so a tag — por isso lemos ambos.
+    """
+    cid = str(entry.get("computed_block_id") or "").strip()
+    if cid:
+        return cid
+    for tag in entry.get("auto_tags") or []:
+        t = str(tag)
+        if t.startswith("bloco:"):
+            return t[len("bloco:"):].strip()
+    return ""
+
+
+def resolve_effective_block(
+    entry: dict,
+    blocks: Optional[List[Dict[str, object]]] = None,
+) -> EffectiveBlock:
+    """FONTE ÚNICA da precedência material→bloco (spec Fase 4, linhas 138-146).
+
+    Precedência, definida AQUI e em lugar nenhum mais:
+        manual_timeline_block_id (entry)  >  computed_block_id (auto).
+    auto_tags["bloco:"] e apenas espelho do computed (Fase 1), nunca contradiz.
+
+    Resolução do manual reusa resolve_entry_manual_timeline_block (id exato +
+    fallback ordinal "bloco-N"). Manual apontando para id inexistente que nem o
+    ordinal resolve → trata como sem-override e cai no computed (logado), per
+    spec linhas 195-197.
+
+    `blocks` (lista do timeline_index) é opcional: quando ausente não há como
+    validar o manual id, então confiamos no valor cru (caminho UI que já tem a
+    lista usa-a; caminhos sem ela degradam graciosamente).
+    """
+    manual_raw = str(entry.get("manual_timeline_block_id") or "").strip()
+    computed = _entry_computed_block_id(entry)
+
+    if manual_raw:
+        if blocks is None:
+            # Sem timeline para validar: confia no id cru do override.
+            return EffectiveBlock(manual_raw, "manual")
+        resolved = resolve_entry_manual_timeline_block(
+            entry, {"timeline_index": {"blocks": blocks}}
+        )
+        if resolved is not None:
+            return EffectiveBlock(str(resolved.get("id", "")).strip(), "manual")
+        _logger.info(
+            "manual_timeline_block_id %r não resolve (nem ordinal); usando computed %r",
+            manual_raw,
+            computed,
+        )
+
+    if computed:
+        return EffectiveBlock(computed, "auto")
+    return EffectiveBlock("", "")
 
 
 def score_entry_against_timeline_row(
@@ -698,7 +827,71 @@ def score_entry_against_timeline_block(
         score += score_text_against_row(signals.get("legacy_tags_text", ""), topic_tokens, weight=0.05)
 
     score += min(score_card_evidence_against_entry_fn(signals, block.get("card_evidence", []) or []), 0.45)
+
+    # Boost de data (substitui o antigo regex DD.MM-no-início): extrai datas de
+    # QUALQUER posição do material (título/markdown/raw via extract_dates) e
+    # compara com o período do bloco. Data exata dentro de
+    # period_start..period_end (ou que casa um date_text de row) → boost FORTE
+    # (DATE_STRONG_BOOST=+0.30, peso calibrável herdado do +0.30 original); mês
+    # compatível mas fora do range → boost FRACO (DATE_WEAK_BOOST). O ano do
+    # bloco resolve datas year-less do material (default_year), já que não há
+    # campo course_year no modelo — o ano vive no próprio período do bloco.
+    score += _score_block_date_match(signals, block)
+
+    score += score_sequence_match(signals, block)
+
     return score
+
+
+# Pesos do boost de data. DATE_STRONG_BOOST mantém o +0.30 original como base
+# calibrável (spec Fase 2). DATE_WEAK_BOOST é deliberadamente menor: mês
+# compatível é sinal mais fraco que data exata-no-range, então ~1/3 do forte —
+# o suficiente para desempatar sem competir com um match exato.
+DATE_STRONG_BOOST = 0.30
+DATE_WEAK_BOOST = 0.10
+
+
+def _block_period_bounds(block: Dict[str, object]) -> tuple[Optional[date], Optional[date]]:
+    """Range do bloco como (date, date). Usa period_start/period_end (ISO) e
+    cai para os date_text das rows quando os campos de período faltam."""
+    candidates: List[date] = []
+    for key in ("period_start", "period_end"):
+        for dt in extract_dates(str(block.get(key, "") or "")):
+            candidates.append(dt)
+    if not candidates:
+        for row in block.get("rows") or []:
+            for dt in extract_dates(str(row.get("date_text", "") or "")):
+                candidates.append(dt)
+    if not candidates:
+        return None, None
+    return min(candidates), max(candidates)
+
+
+def _score_block_date_match(signals: dict, block: Dict[str, object]) -> float:
+    start, end = _block_period_bounds(block)
+    if not start or not end:
+        return 0.0
+
+    # Datas year-less do material assumem o ano do período do bloco. Extraímos
+    # POR fonte (não num join): os signals chegam JÁ normalizados, então uma data
+    # year-less separada por espaço ("12 03 ...") só é aceita ANCORADA no início
+    # do texto (cf. dates.py). Juntar os campos jogaria a data real para o meio
+    # da string e mataria o match — por isso rodamos extract_dates em cada fonte.
+    material_dates: list[date] = []
+    for key in ("raw_text", "title_text", "markdown_text"):
+        material_dates.extend(
+            extract_dates(str(signals.get(key, "") or ""), default_year=start.year)
+        )
+    if not material_dates:
+        return 0.0
+
+    for dt in material_dates:
+        if start <= dt <= end:
+            return DATE_STRONG_BOOST
+    for dt in material_dates:
+        if start.month <= dt.month <= end.month and dt.year == start.year:
+            return DATE_WEAK_BOOST
+    return 0.0
 
 
 def collect_entry_temporal_signals(
@@ -874,6 +1067,8 @@ def select_probable_period_for_entry(
         blocks = list(timeline_index.get("blocks", []) or [])
     if not blocks:
         return "", 0.0, True, ["sem-blocos-candidato"]
+
+    annotate_class_ordinals(blocks)
 
     preferred_unit_slug = str(unit.get("slug", "") or "")
     preferred_topic_slug = str(preferred_topic_slug or "").strip()

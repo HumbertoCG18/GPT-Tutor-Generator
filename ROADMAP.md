@@ -323,7 +323,48 @@ A Marker-API resolve os problemas do Marker local:
 
 ---
 
-## 8. Instalador Windows (Setup.exe)
+## 8. Modo Exercícios / Practice — feedback de código do aluno
+
+Adicionar modo dedicado em que o aluno submete uma solução (código) para um
+exercício específico e recebe **feedback estruturado** combinando sinais
+determinísticos (AST, linter) com diagnóstico semântico (Gemini/Claude).
+
+### Motivação
+
+Os modos atuais do tutor (Claude/GPT/Gemini Project) explicam matéria e
+respondem dúvidas, mas não oferecem um ciclo formal de "praticar exercício →
+receber crítica → revisar". O resultado é que o aluno só sabe se errou quando
+roda manualmente ou compara com gabarito.
+
+Um modo de prática produz feedback rápido e ancorado: aponta bug, sugere
+revisão, e linka para a aula do `CRONOGRAMA_DETALHADO.md` onde o conceito foi
+ensinado.
+
+### Status
+
+**Greenfield — nada implementado.** Backlog atrás das prioridades de
+compreensão/processamento/conexão de materiais. Sem trigger explícito do
+usuário, não iniciar.
+
+### Plano completo
+
+Documento dedicado em `plans/exercises-mode-code-correction.md` — escopo,
+sinais, pipeline, surfaces afetadas, pré-requisitos, custo estimado e
+hipóteses de refactor já registrados ali.
+
+### Pré-requisitos antes de retomar
+
+1. Cobertura semântica para todos os tipos de material (não só código): PDF,
+   imagem, exercício como entidade — depende de `plans/material-agnostic-refactor.md`
+2. Conexões cruzadas funcionando (código ↔ aula ✅, PDF ↔ unidade ⏳, exercício
+   ↔ conceito ❌)
+3. Decisão UX: aluno cola código no app local OU tutor runtime no
+   Claude/GPT Project recebe via instrução — define se vira código Python
+   ou apenas prompt template
+
+---
+
+## 9. Instalador Windows (Setup.exe)
 
 Distribuir o app como um instalador nativo para Windows, publicado na seção
 **Releases** do GitHub, que configura tudo do zero sem exigir conhecimento de
@@ -409,7 +450,8 @@ sistema do usuário.
 | 5 | MinerU | alto | alto — alternativa local de qualidade ao Datalab |
 | 6 | Marker-API | médio | médio — destravar Marker sem dependência de GPU local |
 | 7 | Obsidian/Notion | alto | médio — nicho, mas abre uso fora do tutor LLM |
-| 8 | Instalador Windows (Setup.exe) | alto | alto — remove barreira de entrada para usuários finais |
+| 8 | Modo Exercícios / Practice | muito alto | alto — fecha ciclo praticar/criticar, depende de material-agnostic |
+| 9 | Instalador Windows (Setup.exe) | alto | alto — remove barreira de entrada para usuários finais |
 
 Student State e DD.MM vêm primeiro por custo-benefício: menor esforço, resolvem
 problemas que afetam todo ciclo de uso. Cronograma visual e NotebookLM vêm em
@@ -421,6 +463,42 @@ de desenvolvimento.
 ---
 
 ## Concluído
+
+### Code Summarization via Gemini (Phase 1-8) — 2026-06-02
+
+Camada opcional de enriquecimento semântico para entries de código
+(`.py`, `.ipynb`, `.dfy`, ZIP de código etc) via Gemini API
+(`gemini-2.5-flash`), com mapeamento concept-based para blocos do
+cronograma.
+
+- Cliente lazy `src/builder/runtime/gemini_client.py` com retry
+  exponencial em 429/5xx
+- Engine `src/builder/core/code_summarization.py`: bundle builder,
+  schemas Pydantic (`CodeSummary`), hash cache em
+  `course/code_curation.json`, concept-overlap matcher contra
+  `.timeline_index.json` blocks
+- Renderização rica nas surfaces existentes:
+  - Cabeçalho de cada arquivo de código com título inferido, aula
+    vinculada, conceitos e papel pedagógico
+  - `course/CODE_INDEX.md` agrupado por aula (fallback byte-equal sem
+    curation)
+  - `course/CRONOGRAMA_DETALHADO.md` (novo) — bloco-a-bloco com códigos
+  - `course/CODE_HEALTH.md` (novo) — cobertura, órfãos, distribuição
+    por unidade
+- UI: nova aba **💻 Códigos** com geração em background, edição manual
+  por entry, atribuição de aula via dialog
+- Build pipeline: prune automático de entries removidos +
+  auto-summarization opt-in via flag `gemini_auto_summarize`
+- Settings em **Configurações → Processamento → Gemini — Resumos de
+  Código** (API key + modelo + auto-summarize checkbox)
+- Dependência opcional `google-genai` declarada em
+  `pyproject.toml::[project.optional-dependencies].code-summarization`
+- Fallback garantido: sem chave configurada, todos os artifacts voltam
+  ao formato pré-feature byte-equal
+- Plano: `plans/code-summarization-gemini.md`
+- Pattern reutilizável: `.mex/patterns/gemini-code-summarization.md`
+- Custo aproximado: ~$0.03 por matéria com 20 códigos; rerun com hash
+  cache hit = $0
 
 ### STUDENT_STATE v2 — 2026-04-16
 

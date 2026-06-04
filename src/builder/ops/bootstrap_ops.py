@@ -184,7 +184,42 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
 
     code_entries = [e for e in builder.entries if e.category in code_categories]
     if code_entries:
-        write_text(builder.root_dir / "code" / "CODE_INDEX.md", code_index_md_fn(builder.course_meta, code_entries, builder.subject_profile))
+        _code_curation = builder._load_code_curation()
+        _timeline_blocks = builder._load_timeline_blocks()
+        write_text(
+            builder.root_dir / "code" / "CODE_INDEX.md",
+            code_index_md_fn(
+                builder.course_meta,
+                code_entries,
+                builder.subject_profile,
+                code_curation=_code_curation,
+                timeline_blocks=_timeline_blocks,
+            ),
+        )
+        if _timeline_blocks:
+            from src.builder.artifacts.repo import cronograma_detalhado_md as _cronograma_detalhado_md
+            write_text(
+                builder.root_dir / "course" / "CRONOGRAMA_DETALHADO.md",
+                _cronograma_detalhado_md(
+                    builder.course_meta,
+                    code_entries,
+                    _code_curation,
+                    _timeline_blocks,
+                    builder.subject_profile,
+                ),
+            )
+
+    from src.builder.artifacts.repo import code_health_md as _code_health_md
+    write_text(
+        builder.root_dir / "course" / "CODE_HEALTH.md",
+        _code_health_md(
+            builder.course_meta,
+            builder.entries,
+            code_curation=builder._load_code_curation(),
+            timeline_blocks=builder._load_timeline_blocks(),
+            glossary_terms=builder._load_glossary_terms() if hasattr(builder, "_load_glossary_terms") else None,
+        ),
+    )
 
     wb_entries = [e for e in builder.entries if e.category in whiteboard_categories]
     if wb_entries:

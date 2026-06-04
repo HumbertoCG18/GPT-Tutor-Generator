@@ -12,6 +12,37 @@ import requests
 
 DEFAULT_DATALAB_BASE_URL = "https://www.datalab.to"
 
+# O submit faz upload do PDF e o servidor pode segurar a conexao enquanto
+# ingere o arquivo; precisa de read timeout bem maior que o poll de status.
+DEFAULT_SUBMIT_TIMEOUT = 180
+DEFAULT_POLL_TIMEOUT = 60
+DEFAULT_CONNECT_TIMEOUT = 15
+
+# Excecoes transientes de rede que valem retry (submit) / continuar (poll).
+_TRANSIENT_ERRORS = (
+    requests.exceptions.ReadTimeout,
+    requests.exceptions.ConnectTimeout,
+    requests.exceptions.ConnectionError,
+)
+
+
+def _env_int(name: str, default: int) -> int:
+    raw = os.environ.get(name)
+    if not raw:
+        return default
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return default
+
+
+def get_datalab_submit_timeout() -> int:
+    return _env_int("DATALAB_SUBMIT_TIMEOUT", DEFAULT_SUBMIT_TIMEOUT)
+
+
+def get_datalab_poll_timeout() -> int:
+    return _env_int("DATALAB_REQUEST_TIMEOUT", DEFAULT_POLL_TIMEOUT)
+
 
 @dataclass
 class DatalabConvertResult:
@@ -51,9 +82,11 @@ def convert_document_to_markdown(
     token_efficient_markdown: bool = False,
     skip_cache: bool = False,
     additional_config: Optional[Dict[str, object]] = None,
-    request_timeout: int = 60,
+    request_timeout: Optional[int] = None,
+    submit_timeout: Optional[int] = None,
     poll_interval: float = 2.0,
     max_wait_seconds: int = 1800,
+    max_retries: int = 2,
 ) -> DatalabConvertResult:
     api_key = get_datalab_api_key()
     if not api_key:
@@ -79,16 +112,34 @@ def convert_document_to_markdown(
     if additional_config:
         data["additional_config"] = json.dumps(additional_config, ensure_ascii=False)
 
-    with source_path.open("rb") as fh:
-        response = requests.post(
-            submit_url,
-            headers=headers,
-            files={"file": (source_path.name, fh, "application/pdf")},
-            data=data,
-            timeout=request_timeout,
-        )
-    response.raise_for_status()
-    submit_payload = response.json()
+    submit_to = submit_timeout if submit_timeout is not None else get_datalab_submit_timeout()
+    poll_to = request_timeout if request_timeout is not None else get_datalab_poll_timeout()
+    connect_to = DEFAULT_CONNECT_TIMEOUT
+
+    # Submit (upload): read timeout generoso + retry em falha transiente. O
+    # handle do arquivo e reaberto a cada tentativa (o stream e consumido).
+    submit_payload: Dict[str, object] = {}
+    last_exc: Optional[BaseException] = None
+    for attempt in range(max_retries + 1):
+        try:
+            with source_path.open("rb") as fh:
+                response = requests.post(
+                    submit_url,
+                    headers=headers,
+                    files={"file": (source_path.name, fh, "application/pdf")},
+                    data=data,
+                    timeout=(connect_to, submit_to),
+                )
+            response.raise_for_status()
+            submit_payload = response.json()
+            break
+        except _TRANSIENT_ERRORS as exc:
+            last_exc = exc
+            if attempt >= max_retries:
+                raise
+            time.sleep(poll_interval * (attempt + 1))
+    if not submit_payload:
+        raise RuntimeError(f"Datalab submit falhou sem payload: {last_exc}")
 
     request_id = str(submit_payload.get("request_id") or "").strip()
     check_url = str(submit_payload.get("request_check_url") or "").strip()
@@ -99,9 +150,17 @@ def convert_document_to_markdown(
     last_payload: Dict[str, object] = {}
 
     while True:
-        poll_response = requests.get(check_url, headers=headers, timeout=request_timeout)
-        poll_response.raise_for_status()
-        last_payload = poll_response.json()
+        try:
+            poll_response = requests.get(check_url, headers=headers, timeout=(connect_to, poll_to))
+            poll_response.raise_for_status()
+            last_payload = poll_response.json()
+        except _TRANSIENT_ERRORS:
+            # Timeout transiente no poll nao deve abortar o job: tenta de novo
+            # ate o deadline geral (max_wait_seconds).
+            if time.monotonic() >= deadline:
+                raise
+            time.sleep(poll_interval)
+            continue
         status = str(last_payload.get("status") or "").strip().lower()
 
         if status == "complete":

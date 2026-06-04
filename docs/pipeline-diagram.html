@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pipeline do Cronograma — Schema Robusto v4 (antes × depois)</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #171a23;
+    --panel2: #1d212c;
+    --border: #2a2f3c;
+    --fg: #d7dce5;
+    --muted: #8a93a6;
+    --accent: #89b4fa;
+    --green: #a6e3a1;
+    --yellow: #f9e2af;
+    --red: #f38ba8;
+    --purple: #cba6f7;
+    --teal: #94e2d5;
+    --orange: #fab387;
+    --pink: #f5c2e7;
+    --mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: radial-gradient(1200px 600px at 20% -10%, #1a1f2e 0%, var(--bg) 60%);
+    color: var(--fg);
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    line-height: 1.5;
+    padding: 32px clamp(16px, 4vw, 64px) 120px;
+  }
+  h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: -0.5px; }
+  h2 {
+    font-size: 20px; margin: 48px 0 16px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border); letter-spacing: -0.3px;
+  }
+  h3 { font-size: 15px; margin: 0 0 8px; }
+  .sub { color: var(--muted); font-size: 14px; margin: 0 0 4px; }
+  code, .mono { font-family: var(--mono); font-size: 12.5px; }
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 18px 0 8px;
+    font-size: 12.5px; color: var(--muted);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+
+  /* fluxo vertical */
+  .flow { display: flex; flex-direction: column; align-items: stretch; gap: 0; max-width: 1080px; }
+  .stage {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 18px;
+    position: relative;
+  }
+  .stage + .arrow { align-self: center; }
+  .arrow {
+    width: 2px; height: 26px; background: linear-gradient(var(--border), var(--accent));
+    position: relative; margin: 0 auto;
+  }
+  .arrow::after {
+    content: "▼"; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+    color: var(--accent); font-size: 11px;
+  }
+  .arrow.label::before {
+    content: attr(data-label); position: absolute; left: 14px; top: 4px; white-space: nowrap;
+    color: var(--muted); font-size: 11px; font-family: var(--mono);
+  }
+  .stage .tag {
+    position: absolute; top: -10px; right: 14px; font-size: 10.5px; font-family: var(--mono);
+    background: var(--panel2); border: 1px solid var(--border); border-radius: 20px;
+    padding: 2px 10px; color: var(--muted);
+  }
+  .stage h3 .fn { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .stage ul { margin: 8px 0 0; padding-left: 18px; }
+  .stage li { margin: 3px 0; font-size: 13.5px; }
+  .stage li b { color: var(--fg); }
+  .kv { color: var(--teal); font-family: var(--mono); font-size: 12px; }
+  .out { color: var(--green); font-family: var(--mono); font-size: 12px; }
+  .thr { color: var(--yellow); font-family: var(--mono); font-size: 12px; }
+  .badge {
+    display: inline-block; font-size: 10.5px; font-family: var(--mono);
+    border-radius: 4px; padding: 1px 6px; margin-left: 4px;
+  }
+  .new { border-left-color: var(--green) !important; }
+  .new .tag { color: var(--green); border-color: var(--green); }
+  .changed { border-left-color: var(--purple) !important; }
+  .changed .tag { color: var(--purple); border-color: var(--purple); }
+
+  /* grids de cartões */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; max-width: 1200px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+  }
+  .card h3 { color: var(--accent); font-family: var(--mono); font-size: 13.5px; }
+  .card p { margin: 6px 0; font-size: 13px; color: var(--fg); }
+  .card .formula {
+    background: #0c0e14; border: 1px solid var(--border); border-radius: 7px;
+    padding: 9px 11px; font-family: var(--mono); font-size: 12px; color: var(--teal);
+    margin: 8px 0; white-space: pre-wrap; line-height: 1.55;
+  }
+  .card .why { color: var(--muted); font-size: 12.5px; }
+
+  /* antes x depois */
+  .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 1200px; }
+  .ba .col { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .ba .before { border-top: 3px solid var(--red); }
+  .ba .after { border-top: 3px solid var(--green); }
+  .ba h3 { font-size: 15px; }
+  .ba ul { padding-left: 18px; margin: 8px 0 0; }
+  .ba li { margin: 5px 0; font-size: 13px; }
+
+  table { border-collapse: collapse; width: 100%; max-width: 1200px; font-size: 13px; margin-top: 10px; }
+  th, td { border: 1px solid var(--border); padding: 8px 11px; text-align: left; vertical-align: top; }
+  th { background: var(--panel2); color: var(--accent); font-weight: 600; }
+  td.b { color: var(--red); } td.a { color: var(--green); }
+
+  .note {
+    background: linear-gradient(180deg, #1a2030, #161a24); border: 1px solid var(--border);
+    border-left: 4px solid var(--orange); border-radius: 10px; padding: 14px 18px; max-width: 1100px;
+    margin: 10px 0;
+  }
+  .note h3 { color: var(--orange); }
+  .note ol { margin: 8px 0 0; padding-left: 20px; }
+  .note li { margin: 6px 0; font-size: 13.5px; }
+  .q { color: var(--yellow); font-weight: 600; }
+  .pill { font-family: var(--mono); font-size: 11px; background: var(--panel2); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; }
+  .mini { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .mini .box {
+    flex: 1; min-width: 120px; background: #0c0e14; border: 1px solid var(--border);
+    border-radius: 7px; padding: 8px 10px; font-size: 12px;
+  }
+  .mini .box b { display: block; color: var(--accent); font-family: var(--mono); font-size: 11.5px; margin-bottom: 3px; }
+  footer { color: var(--muted); font-size: 12px; margin-top: 60px; max-width: 1100px; }
+</style>
+</head>
+<body>
+
+<h1>Pipeline do Cronograma — Schema Robusto v4</h1>
+<p class="sub">Como o <code>.timeline_index.json</code> é construído, classificado e renderizado · Fases 0–5 · antes (v3) × depois (v4)</p>
+<p class="sub">Fonte: <code>src/builder/timeline/{index,classifier,kinds,status,curation}.py</code> · <code>src/ui/timeline_dashboard.py</code></p>
+
+<div class="legend">
+  <span><span class="dot" style="background:var(--accent)"></span> estágio existente</span>
+  <span><span class="dot" style="background:var(--green)"></span> novo (Fase 1–5)</span>
+  <span><span class="dot" style="background:var(--purple)"></span> alterado</span>
+  <span><span class="kv">campo_lido</span></span>
+  <span><span class="out">saída</span></span>
+  <span><span class="thr">threshold</span></span>
+</div>
+
+<!-- ============================================================= -->
+<h2>1 · Fluxo completo (depois — v4)</h2>
+
+<div class="flow">
+
+  <div class="stage">
+    <span class="tag">entrada</span>
+    <h3>📄 SYLLABUS.md → linhas candidatas</h3>
+    <h3 style="font-weight:400"><span class="fn">_parse_syllabus_timeline → _build_timeline_candidate_rows</span></h3>
+    <ul>
+      <li>Parseia tabela de cronograma do syllabus (data + conteúdo por linha).</li>
+      <li>Cada linha vira <span class="kv">{index, date_dt, date_text, content}</span>.</li>
+      <li><b>Gatilho:</b> só roda se há <code>syllabus</code>; senão usa <code>.timeline_index.json</code> em disco (preserva atribuições).</li>
+    </ul>
+  </div>
+
+  <div class="arrow label" data-label="candidate_rows[]"></div>
+
+  <div class="stage">
+    <span class="tag">agrupamento</span>
+    <h3>🧩 Linhas → blocos temáticos</h3>
+    <h3 style="font-weight:400"><span class="fn">_rows_belong_to_same_thematic_block</span></h3>
+    <ul>
+      <li>Acumula linhas consecutivas no mesmo bloco enquanto forem do mesmo tema.</li>
+      <li><b>Quebra o bloco</b> se a linha é revisão/prova (<span class="fn">_timeline_row_is_review_or_assessment</span>).</li>
+      <li>Linha de continuação junta se compartilha tokens e não é só âncora de unidade.</li>
+      <li>Senão: junta se <span class="thr">core text é substring</span> OU <span class="thr">overlap de tokens ≥ 2</span>.</li>
+      <li><span class="out">id = bloco-NN</span> (ordem cronológica, determinístico).</li>
+    </ul>
+  </div>
+
+  <div class="arrow label" data-label="blocks[] (rows agrupadas)"></div>
+
+  <div class="stage">
+    <span class="tag">período</span>
+    <h3>🗓 period_label + sessions</h3>
+    <h3 style="font-weight:400"><span class="fn">_timeline_period_label · _extract_block_sessions</span></h3>
+    <ul>
+      <li>Prefixo de duração resolve ambiguidade de data: <span class="out">"5 dias · 11/03 a 25/03"</span>.</li>
+      <li><span class="kv">sessions[]</span> = ocorrências individuais (1 por data), com card_evidence anexado.</li>
+    </ul>
+  </div>
+
+  <div class="arrow label" data-label="runtime_block (campos vazios)"></div>
+
+  <div class="stage changed">
+    <span class="tag">tópico — matcher</span>
+    <h3>🎯 Atribuição de tópico (taxonomy)</h3>
+    <h3 style="font-weight:400"><span class="fn">_assign_timeline_block_to_topic → _score_timeline_block_against_taxonomy_topic</span></h3>
+    <ul>
+      <li>Score do bloco contra cada tópico da taxonomy via <b>sinais</b> (topic_text, conteúdo das linhas).</li>
+      <li>Subtópico ganha bônus <span class="thr">+0.18</span>.</li>
+      <li>Vencedor reprovado (weak) por faixa: <span class="thr">min_score 1.85 / 1.75 / 1.35</span> e <span class="thr">min_conf 0.8 / 0.9 / 0.72</span>.</li>
+      <li><span class="out">topic_candidates[]</span> guardado com <span class="kv">relative_confidence = score / winner_score</span> — alimenta o voto adiante.</li>
+    </ul>
+    <div class="formula">confidence = clamp( (winner_score − runner_up_score) + winner_score·0.20 , 0, 1 )</div>
+  </div>
+
+  <div class="arrow label" data-label="primary_topic + topic_candidates[]"></div>
+
+  <div class="stage changed">
+    <span class="tag">unidade — 3 camadas</span>
+    <h3>🏷 Atribuição de unidade (cascata)</h3>
+    <ul>
+      <li><b>1. Via tópico:</b> se <span class="thr">topic não-ambíguo &amp; confidence ≥ 0.65</span> → <span class="fn">_derive_unit_from_topic_match</span>.</li>
+      <li><b>2. Texto×unidade:</b> <span class="fn">_assign_timeline_block_to_unit</span> — score do conteúdo; topic_text pesa <span class="thr">×0.7</span>; exige <span class="thr">winner ≥ 1.0 e gap ≥ 0.35</span>.</li>
+      <li><b>3. Voto (Fase 3):</b> <span class="fn">_vote_unit_from_topic_candidates</span> — quando 1+2 falham.</li>
+      <li><b>4. Herança:</b> bloco "soft continuation" herda unidade do vizinho (<span class="thr">conf ≥ 0.51</span>).</li>
+    </ul>
+    <div class="formula">VOTO (Fase 3): top_k=5 candidatos, descarta score &lt; 0.10
+peso = Σ score por unit_slug · vence se winner_weight / total ≥ 0.60 (dominance)
+confidence = clamp( winner_weight/total · 0.6 , 0.30, 0.55 )</div>
+  </div>
+
+  <div class="arrow label" data-label="unit_slug + unit_confidence"></div>
+
+  <div class="stage new">
+    <span class="tag">Fase 4 — fallback</span>
+    <h3>🔤 Resolução de label do tópico (camadas)</h3>
+    <h3 style="font-weight:400"><span class="fn">_resolve_block_topic_label → _humanize_topic_text</span></h3>
+    <ul>
+      <li><b>1. manual</b> → <span class="kv">manual_topic_label</span> (curation) · <b>2. taxonomy</b> → primary_topic_label do matcher.</li>
+      <li><b>3. topic_text_fallback</b> → humaniza topic_text cru (tira stopword de borda, capitaliza, trunca 60).</li>
+      <li><span class="out">topic_source</span> vira badge na UI. <b>Fallback nunca preenche slug</b> (display-only).</li>
+    </ul>
+  </div>
+
+  <div class="arrow label" data-label="primary_topic_label + topic_source"></div>
+
+  <div class="stage new">
+    <span class="tag">Fase 1 — classifier</span>
+    <h3>🏛 Classificação de kind</h3>
+    <h3 style="font-weight:400"><span class="fn">classify_block</span> — fonte única, determinística, sem LLM</h3>
+    <ul>
+      <li><b>Prioridade:</b> manual_kind_override → exceção CLASS_INTRO (plano de ensino/ementa) → KIND_KEYWORDS em ordem.</li>
+      <li>Ordem: <span class="mono">holiday → suspended → makeup → academic_event → results → deliverable → workshop → office_hours → planning → reserved → assessment (regex p1-4/pf) → review</span>.</li>
+      <li><b>Fallback:</b> tem unit/topic → CLASS · texto com substância (≥8 chars ou ≥2 tokens) → CLASS · senão → UNKNOWN.</li>
+      <li><span class="out">14 kinds fechados</span> (enum BlockKind).</li>
+    </ul>
+  </div>
+
+  <div class="arrow label" data-label="block.kind ∈ BlockKind"></div>
+
+  <div class="stage changed">
+    <span class="tag">Fase 5 — curation</span>
+    <h3>✍ Merge de overrides manuais</h3>
+    <h3 style="font-weight:400"><span class="fn">_apply_curation_overrides ← apply_block_curation</span></h3>
+    <ul>
+      <li>Lê <code>course/.timeline_curation.json</code> (keyed por <span class="kv">block_id</span>) — store separado, <b>sobrevive ao rebuild</b>.</li>
+      <li>Injeta <span class="kv">manual_kind_override</span> / <span class="kv">manual_topic_label</span> e <b>re-deriva</b> kind + topic.</li>
+    </ul>
+  </div>
+
+  <div class="arrow label" data-label="blocks[] enriquecidos"></div>
+
+  <div class="stage changed">
+    <span class="tag">serialização</span>
+    <h3>💾 _serialize_timeline_index → .timeline_index.json</h3>
+    <ul>
+      <li>Injeta <span class="out">kind = classify_block(block)</span> no momento de gravar (sempre re-derivado).</li>
+      <li><code>version: 4</code> · emite manual_*/topic_source só quando presentes.</li>
+      <li><b>block_status NUNCA é gravado</b> — derivado em read-time.</li>
+    </ul>
+  </div>
+
+  <div class="arrow label" data-label="artefato canônico v4"></div>
+
+  <div class="stage new">
+    <span class="tag">Fase 5 — UI</span>
+    <h3>🖥 Dashboard (Tkinter) — 100% schema-driven</h3>
+    <h3 style="font-weight:400"><span class="fn">derive_block_status · KIND_DISPLAY · _build_filter_bar</span></h3>
+    <ul>
+      <li><b>status</b> (read-time) decide cor do badge · <b>KIND_DISPLAY</b> dá ícone + label PT-BR.</li>
+      <li>Filtros por kind (checkboxes) · dropdown de reclassificação → grava em curation → reload.</li>
+      <li>Zero heurística local: tudo vem do schema.</li>
+    </ul>
+    <div class="mini">
+      <div class="box"><b>ok</b> verde</div>
+      <div class="box"><b>needs_topic</b> amarelo</div>
+      <div class="box"><b>needs_unit / files</b> vermelho</div>
+      <div class="box"><b>non_applicable</b> neutro</div>
+      <div class="box"><b>needs_review</b> amarelo</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================= -->
+<h2>2 · Como cada cálculo decide (detalhe)</h2>
+<div class="grid">
+
+  <div class="card">
+    <h3>classify_block()</h3>
+    <p><b>Entrada:</b> <span class="kv">topic_text, primary_topic_label, period_label, topics[], unit_slug, manual_kind_override</span></p>
+    <p>Normaliza (NFKD + lower + [a-z0-9 ]). Matching: frase = substring; 1 palavra = token exato (≥4 chars).</p>
+    <p class="why">Mais específico bate primeiro → feriado/prova nunca viram "aula" por acidente. CLASS_INTRO protege o bloco de apresentação que contém a palavra "avaliação".</p>
+  </div>
+
+  <div class="card">
+    <h3>_score_timeline_block_against_taxonomy_topic()</h3>
+    <p>Constrói sinais do bloco e pontua contra cada tópico/subtópico da taxonomy (aliases considerados internamente).</p>
+    <div class="formula">score = score_base(signals, topic)
+        + (0.18 se kind == "subtopic")</div>
+    <p class="why">Faixas de min_score/min_conf evitam casar tópico genérico fraco — bloco fica sem tópico em vez de receber um errado.</p>
+  </div>
+
+  <div class="card">
+    <h3>_assign_timeline_block_to_unit()</h3>
+    <p><b>Entrada:</b> conteúdo das linhas + topic_text contra unit_index.</p>
+    <div class="formula">score = txt_unit(full_text)
+      + txt_unit(topic_text)·0.7
+guarda: winner ≥ 1.0  AND  |winner−runner| ≥ 0.35
+conf = clamp((winner−runner) + winner·0.18, 0,1)</div>
+    <p class="why">Gap mínimo impede atribuição quando duas unidades empatam (ambíguo).</p>
+  </div>
+
+  <div class="card">
+    <h3>_vote_unit_from_topic_candidates() <span class="badge" style="background:#1e2b1e;color:var(--green)">Fase 3</span></h3>
+    <p>Quando matcher direto falha mas há <span class="kv">topic_candidates[]</span> apontando consistentemente pra uma unidade.</p>
+    <div class="formula">top_k=5 · descarta score &lt; 0.10
+peso[unit] = Σ score · vence se peso/total ≥ 0.60
+conf = clamp(peso/total · 0.6, 0.30, 0.55)</div>
+    <p class="why">Confidence capada baixa (0.30–0.55): é inferência indireta, não match direto. Resolveu 27 blocos missing_unit.</p>
+  </div>
+
+  <div class="card">
+    <h3>_resolve_block_topic_label() <span class="badge" style="background:#1e2b1e;color:var(--green)">Fase 4</span></h3>
+    <div class="formula">manual_topic_label   → source=manual   (+slug)
+primary_topic_label  → source=taxonomy (+slug)
+humanize(topic_text) → source=topic_text_fallback
+""                   → source=""</div>
+    <p class="why">Fallback é só apresentação: preenche label pra UI mas <b>não inventa slug</b> (slug = vínculo real com taxonomy). Resolveu missing_topic 24→0.</p>
+  </div>
+
+  <div class="card">
+    <h3>derive_block_status() <span class="badge" style="background:#1e2b1e;color:var(--green)">Fase 1</span></h3>
+    <div class="formula">unknown            → needs_review
+non-academic kind  → non_applicable
+requires(unit)  &amp; vazio → needs_unit
+requires(topic) &amp; vazio → needs_topic
+requires(files) &amp; 0 ses → needs_files
+senão              → ok</div>
+    <p class="why">KIND_REQUIREMENTS é a tabela-verdade. Puro, read-only, nunca persistido.</p>
+  </div>
+
+</div>
+
+<!-- ============================================================= -->
+<h2>3 · Antes (v3) × Depois (v4)</h2>
+<div class="ba">
+  <div class="col before">
+    <h3>🔴 Antes — v3</h3>
+    <ul>
+      <li>Sem campo <code>kind</code>. Semântica do bloco era invisível.</li>
+      <li>Classificação <b>espalhada</b>: audit script + <code>_timeline_row_is_review_or_assessment</code> + UI, cada um com regra própria.</li>
+      <li>Unidade só via 1 matcher direto → <span class="pill">missing_unit 29%</span>.</li>
+      <li>Tópico só via matcher → <span class="pill">missing_topic 24%</span>.</li>
+      <li>UI: cor única por <code>has_gap = n_entries == 0</code> (conta arquivo, ignora semântica). Feriado sem material aparecia como "erro".</li>
+      <li>Override manual não existia / não sobrevivia rebuild.</li>
+      <li><span class="pill" style="color:var(--red)">53% dos blocos com defeito</span> (5 cursos, 92 blocos).</li>
+    </ul>
+  </div>
+  <div class="col after">
+    <h3>🟢 Depois — v4</h3>
+    <ul>
+      <li><code>kind ∈ 14 valores</code> fechados, fonte única <code>classifier.py</code>.</li>
+      <li><code>block_status</code> derivado read-time de kind + campos (nunca gravado).</li>
+      <li>Unidade em cascata 3+1 camadas (match → texto → voto → herança) → <span class="pill" style="color:var(--green)">missing_unit ≈ 0</span>.</li>
+      <li>Tópico em camadas (manual → taxonomy → fallback) → <span class="pill" style="color:var(--green)">missing_topic 0</span>.</li>
+      <li>UI dirigida por <code>KIND_DISPLAY</code> + status: ícone, label PT-BR, cor por significado. Filtros + reclassificação.</li>
+      <li>Curation durável (<code>.timeline_curation.json</code>) merge no build, sobrevive rebuild.</li>
+      <li>Schema v4 validado nos 5 cursos.</li>
+    </ul>
+  </div>
+</div>
+
+<table>
+  <tr><th>Dimensão</th><th>Antes (v3)</th><th>Depois (v4)</th></tr>
+  <tr><td>Semântica do bloco</td><td class="b">implícita (heurística de UI)</td><td class="a">explícita (<code>kind</code> + <code>status</code>)</td></tr>
+  <tr><td>Fonte da classificação</td><td class="b">3 lugares divergentes</td><td class="a">1 (<code>classify_block</code>)</td></tr>
+  <tr><td>Atribuição de unidade</td><td class="b">1 matcher (falha → vazio)</td><td class="a">cascata 4 camadas + voto</td></tr>
+  <tr><td>Atribuição de tópico</td><td class="b">1 matcher (falha → vazio)</td><td class="a">3 camadas + humanize</td></tr>
+  <tr><td>Override manual</td><td class="b">inexistente / efêmero</td><td class="a">curation durável + merge</td></tr>
+  <tr><td>Cor na UI</td><td class="b">contagem de arquivos</td><td class="a">block_status (significado)</td></tr>
+  <tr><td>Defeitos</td><td class="b">53% dos blocos</td><td class="a">missing_unit/topic ≈ 0</td></tr>
+</table>
+
+<!-- ============================================================= -->
+<h2>4 · Pontos pra você revisar / possíveis otimizações</h2>
+
+<div class="note">
+  <h3>Perguntas abertas — o fluxo faz sentido?</h3>
+  <ol>
+    <li><span class="q">Ordem unidade vs tópico:</span> hoje tópico é resolvido <b>antes</b> da unidade, e a unidade pode vir do tópico (camada 1). Mas o <b>voto</b> (camada 3) também usa <code>topic_candidates</code>. Há acoplamento circular leve: tópico fraco → não vira unidade direta → cai no voto. Faz sentido, mas vale confirmar se a ordem está como você imaginou.</li>
+    <li><span class="q">Confidence do voto capada em 0.55:</span> intencional (inferência indireta). Se downstream filtra por <code>confidence ≥ 0.65</code> em algum lugar, blocos resolvidos por voto seriam descartados. Verificar consumidores de <code>unit_confidence</code>.</li>
+    <li><span class="q">Thresholds mágicos:</span> <code>0.10 / 0.60 / 0.65 / 1.0 / 0.35 / 1.85·1.75·1.35</code> estão espalhados como literais. Otimização: centralizar num bloco de constantes nomeadas no topo (auditável, ajustável sem caçar).</li>
+    <li><span class="q">Fallback de tópico humanizado:</span> pode produzir label "bonito" pra bloco que na verdade deveria casar taxonomy. O <code>topic_source</code> badge expõe isso na UI — mas vale um audit periódico de quantos blocos vivem em <code>topic_text_fallback</code> (sinal de taxonomy incompleta).</li>
+    <li><span class="q">Re-derivação dupla:</span> <code>_apply_curation_overrides</code> re-deriva kind/topic, e <code>_serialize</code> re-classifica de novo. Idempotente, mas é trabalho repetido. Otimização menor: serialize poderia confiar no kind já no bloco.</li>
+    <li><span class="q">Voto ignora ordem temporal:</span> herança (camada 4) usa vizinho, mas o voto não considera proximidade temporal dos candidatos. Possível melhoria: ponderar candidatos por adjacência de período.</li>
+  </ol>
+</div>
+
+<div class="note" style="border-left-color:var(--teal)">
+  <h3>Onde dá pra otimizar (custo/risco baixo)</h3>
+  <ol>
+    <li>Extrair <code>TimelineThresholds</code> (dataclass de constantes) → testável e ajustável.</li>
+    <li>Cache do <code>topic_index</code>/<code>unit_index</code> por curso (hoje recalcula sinais por bloco).</li>
+    <li>Métrica contínua: % de blocos por <code>topic_source</code> e por <code>status</code> no audit → dashboard de saúde da taxonomy (já é quase a Fase 6/CI).</li>
+    <li>UI: badge de <code>topic_source</code> e <code>unit_confidence</code> visível no header (hoje só status) pra curadoria mais informada.</li>
+  </ol>
+</div>
+
+<footer>
+  Gerado para revisão do desenho — Fase 8. Pipeline real em <code>src/builder/timeline/</code>.
+  Abra no navegador; nenhum build necessário. Se algo aqui divergir do que você imaginou, é exatamente o ponto a discutir.
+</footer>
+
+</body>
+</html>

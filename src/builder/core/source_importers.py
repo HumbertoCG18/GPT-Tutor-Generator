@@ -7,6 +7,10 @@ from pathlib import Path
 from typing import Dict
 
 from src.builder.artifacts import repo as _repo_artifacts
+from src.builder.core.code_summarization import (
+    _get_or_load_code_curation,
+    _resolve_block_info,
+)
 from src.builder.core.markdown_utils import compact_notebook_markdown
 from src.models.core import FileEntry
 from src.utils.helpers import (
@@ -58,16 +62,56 @@ def process_code(builder, entry: FileEntry, raw_target: Path) -> Dict[str, objec
     ensure_dir(curated_dir)
     curated_path = curated_dir / f"{entry.id()}.md"
 
-    body = f"# {entry.title}\n\n"
-    body += f"> **Linguagem:** {lang}"
-    if entry.tags:
-        body += f"  |  **Unidade:** {entry.tags}"
-    if entry.notes:
-        body += f"\n> {entry.notes}"
-    if ext == "ipynb":
-        body += "\n\n" + body_content.rstrip() + "\n"
+    curation = _get_or_load_code_curation(builder)
+    entry_data = curation.get("entries", {}).get(entry.id(), {})
+    entry_summary = entry_data.get("summary") or {}
+
+    if entry_summary:
+        title = entry_summary.get("inferred_title") or entry.title
+        body = f"# {title}\n\n"
+        body += f"> **Arquivo original:** `{entry.title}`\n"
+
+        # Linkagem timeline
+        primary_block_id = entry_summary.get("primary_block_id", "")
+        if primary_block_id:
+            block_info = _resolve_block_info(builder, primary_block_id)
+            if block_info:
+                body += f"> **Aula:** {block_info['period_label']} — {block_info['primary_topic_label']}\n"
+
+        secondary = entry_summary.get("secondary_block_ids") or []
+        if secondary:
+            labels = []
+            for bid in secondary:
+                bi = _resolve_block_info(builder, bid)
+                if bi:
+                    labels.append(f"{bi['period_label']} ({bi['primary_topic_label']})")
+            if labels:
+                body += f"> **Também relevante para:** {'; '.join(labels)}\n"
+
+        body += f"> **Linguagem:** {entry_summary.get('language', lang)}"
+        if entry.tags:
+            body += f"  |  **Unidade:** {entry.tags}"
+        body += f"  |  **Papel:** {entry_summary.get('pedagogical_role', '?')}\n"
+
+        concepts = entry_summary.get("concepts") or []
+        if concepts:
+            body += f"> **Conceitos:** {', '.join(concepts)}\n"
+
+        body += f"\n**Resumo:** {entry_summary.get('summary', '')}\n\n---\n\n"
     else:
-        body += f"\n\n```{lang}\n{body_content}\n```\n"
+        # Fallback (header atual original)
+        body = f"# {entry.title}\n\n"
+        body += f"> **Linguagem:** {lang}"
+        if entry.tags:
+            body += f"  |  **Unidade:** {entry.tags}"
+        if entry.notes:
+            body += f"\n> {entry.notes}"
+        body += "\n\n"
+
+    if ext == "ipynb":
+        body += body_content.rstrip() + "\n"
+    else:
+        body += f"```{lang}\n{body_content}\n```\n"
 
     write_text(
         curated_path,

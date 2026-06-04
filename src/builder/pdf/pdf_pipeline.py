@@ -82,6 +82,7 @@ def process_pdf(builder, entry, raw_target: Path, *, backend_context_factory, ma
         marker_torch_device=str(builder.options.get("marker_torch_device", "auto") or "auto"),
         ollama_base_url=str(builder.options.get("ollama_base_url", "") or ""),
         vision_model=str(builder.options.get("vision_model", "") or ""),
+        image_description_source=str(builder.options.get("image_description_source", "ollama") or "ollama"),
     )
 
     builder._check_cancel()
@@ -163,6 +164,8 @@ def process_pdf(builder, entry, raw_target: Path, *, backend_context_factory, ma
             builder._apply_math_normalization(result.markdown_path)
             if result.images_dir and not item.get("images_dir"):
                 item["images_dir"] = result.images_dir
+            if result.image_curation and not item.get("image_curation"):
+                item["image_curation"] = result.image_curation
             if (
                 result.name == "marker"
                 and not ctx.marker_use_llm

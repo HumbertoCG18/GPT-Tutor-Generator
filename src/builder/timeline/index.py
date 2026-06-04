@@ -10,20 +10,67 @@ from typing import Callable, Dict, List, Optional
 
 from src.builder.vision.card_evidence import extract_card_evidence
 from src.builder.timeline.signals import extract_timeline_session_signals
+from src.builder.timeline.classifier import classify_block
+from src.builder.timeline.curation import apply_block_curation
+from src.builder.text.normalize import normalize_match_text as _normalize_match_text
+from src.builder.routing.thresholds import margin_confidence, T
 from src.utils.helpers import slugify, write_text
+
+
+TIMELINE_INDEX_VERSION = 4
+
+
+def ensure_block_kind(block: dict) -> dict:
+    """Lazy backfill: garante `kind` no bloco. Idempotente."""
+    if not isinstance(block, dict):
+        return block
+    if not block.get("kind"):
+        block["kind"] = classify_block(block).value
+    return block
+
+
+def _backfill_timeline_index(timeline_index: dict) -> dict:
+    """Lazy upgrade v3->v4: bump version, popula `kind` em cada bloco. In-place."""
+    if not isinstance(timeline_index, dict):
+        return timeline_index
+    for block in timeline_index.get("blocks") or []:
+        ensure_block_kind(block)
+    timeline_index["version"] = TIMELINE_INDEX_VERSION
+    return timeline_index
+
+
+def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
+    """Merge da curation manual + re-derivacao de kind/topic. In-place.
+
+    `apply_block_curation` so injeta os campos crus `manual_*`; aqui re-derivamos
+    o que depende deles: `kind` (classifier honra `manual_kind_override`) e o
+    label/source de topico (camada `manual` vence em `_resolve_block_topic_label`).
+    """
+    if not isinstance(timeline_index, dict):
+        return 0
+    blocks = timeline_index.get("blocks") or []
+    touched = apply_block_curation(blocks, course_dir)
+    if not touched:
+        return 0
+    for block in blocks:
+        if block.get("manual_kind_override"):
+            block["kind"] = classify_block(block).value
+        if block.get("manual_topic_label"):
+            label, slug, source = _resolve_block_topic_label(block)
+            if label:
+                block["primary_topic_label"] = label
+                block["topic_source"] = source
+                if slug:
+                    block["primary_topic_slug"] = slug
+        manual_unit = block.get("block_manual_unit_slug")
+        if isinstance(manual_unit, str) and manual_unit.strip():
+            block["unit_slug"] = manual_unit.strip()
+            block["unit_confidence"] = 1.0
+    return touched
 
 
 def _collapse_ws(text: str) -> str:
     return re.sub(r"\s+", " ", (text or "")).strip()
-
-
-def _normalize_match_text(text: str) -> str:
-    text = unicodedata.normalize("NFKD", text or "")
-    text = "".join(ch for ch in text if not unicodedata.combining(ch))
-    text = text.lower()
-    text = text.replace("propocional", "proposicional")
-    text = re.sub(r"[^a-z0-9\s]", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
 
 
 def _signal_token_set(signal_text: str) -> set:
@@ -528,7 +575,7 @@ _UNIT_GENERIC_TOKENS = {
 
 
 def _empty_timeline_index() -> dict:
-    return {"version": 3, "blocks": []}
+    return {"version": TIMELINE_INDEX_VERSION, "blocks": []}
 
 
 def _timeline_specific_tokens(text: str) -> List[str]:
@@ -552,14 +599,25 @@ def _timeline_core_text(text: str) -> str:
     return _normalize_match_text(raw)
 
 
-def _timeline_period_label(start_text: str, end_text: str) -> str:
+def _timeline_period_label(
+    start_text: str,
+    end_text: str,
+    count: Optional[int] = None,
+    unit_singular: str = "dia",
+    unit_plural: str = "dias",
+) -> str:
     start = _collapse_ws(start_text)
     end = _collapse_ws(end_text)
     if not start:
-        return end
-    if not end or end == start:
-        return start
-    return f"{start} a {end}"
+        base = end
+    elif not end or end == start:
+        base = start
+    else:
+        base = f"{start} a {end}"
+    if count is None or count <= 0 or not base:
+        return base
+    unit = unit_singular if count == 1 else unit_plural
+    return f"{count} {unit} · {base}"
 
 
 def _timeline_row_is_review_or_assessment(text: str) -> bool:
@@ -974,10 +1032,10 @@ def _assign_timeline_block_to_unit(block: Dict[str, object], unit_index: list) -
     scored.sort(key=lambda item: item[1], reverse=True)
     winner, winner_score = scored[0]
     runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
-    if winner_score < 1.0 or abs(winner_score - runner_up_score) < 0.35:
+    if winner_score < T.BLOCK_UNIT_MIN_WINNER or abs(winner_score - runner_up_score) < T.BLOCK_UNIT_MIN_GAP:
         return "", 0.0
 
-    confidence = min(1.0, max(0.0, (winner_score - runner_up_score) + (winner_score * 0.18)))
+    confidence = margin_confidence(winner_score, runner_up_score, k=T.MARGIN_K)
     return winner.get("slug", ""), confidence
 
 
@@ -991,6 +1049,7 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
             "period_start": block.get("period_start", ""),
             "period_end": block.get("period_end", ""),
             "period_label": block.get("period_label", ""),
+            "kind": classify_block(block).value,
             "unit_slug": block.get("unit_slug", ""),
             "unit_confidence": float(block.get("unit_confidence", 0.0) or 0.0),
             "primary_topic_slug": block.get("primary_topic_slug", ""),
@@ -1005,8 +1064,20 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
             "sessions": list(block.get("sessions", []) or []),
             "source_rows": list(block.get("source_rows", []) or []),
         }
+        manual_override = block.get("manual_kind_override")
+        if manual_override:
+            payload["manual_kind_override"] = manual_override
+        topic_source = block.get("topic_source")
+        if topic_source:
+            payload["topic_source"] = topic_source
+        manual_topic_label = block.get("manual_topic_label")
+        if manual_topic_label:
+            payload["manual_topic_label"] = manual_topic_label
+        block_manual_unit_slug = block.get("block_manual_unit_slug")
+        if block_manual_unit_slug:
+            payload["block_manual_unit_slug"] = block_manual_unit_slug
         blocks.append(payload)
-    return {"version": 3, "blocks": blocks}
+    return {"version": TIMELINE_INDEX_VERSION, "blocks": blocks}
 
 
 def _write_internal_timeline_index(root_dir: Path, timeline_index: dict) -> None:
@@ -1053,19 +1124,37 @@ def _aggregate_unit_periods_from_blocks(blocks_by_unit: Dict[str, List[Dict[str,
                 edge_dates.extend(
                     re.findall(r"\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}|\d{2}-\d{2}-\d{4}", str(block.get("period_label", "")))
                 )
+            block_count = len(blocks)
             if edge_dates:
                 start_label = edge_dates[0]
                 end_label = edge_dates[-1] if len(edge_dates) > 1 else edge_dates[0]
-                period_map[slug] = _timeline_period_label(start_label, end_label)
+                period_map[slug] = _timeline_period_label(
+                    start_label,
+                    end_label,
+                    count=block_count,
+                    unit_singular="bloco",
+                    unit_plural="blocos",
+                )
                 continue
             period_map[slug] = _timeline_period_label(
                 min(start_dates).strftime("%Y-%m-%d"),
                 max(end_dates).strftime("%Y-%m-%d"),
+                count=block_count,
+                unit_singular="bloco",
+                unit_plural="blocos",
             )
             continue
-        labels = [str(block.get("period_label", "")).strip() for block in blocks if str(block.get("period_label", "")).strip()]
+        def _strip_count_prefix(label: str) -> str:
+            return label.split(" · ", 1)[1] if " · " in label else label
+        labels = [_strip_count_prefix(str(block.get("period_label", "")).strip()) for block in blocks if str(block.get("period_label", "")).strip()]
         if labels:
-            period_map[slug] = labels[0] if len(labels) == 1 else _timeline_period_label(labels[0], labels[-1])
+            period_map[slug] = _timeline_period_label(
+                labels[0],
+                labels[-1],
+                count=len(blocks),
+                unit_singular="bloco",
+                unit_plural="blocos",
+            )
     return period_map
 
 
@@ -1315,10 +1404,17 @@ def _build_file_map_timeline_context_from_course(
         if cached_path and cached_path.exists():
             try:
                 timeline_index = json.loads(cached_path.read_text(encoding="utf-8"))
+                _backfill_timeline_index(timeline_index)
             except Exception:
                 timeline_index = _empty_timeline_index()
         else:
             timeline_index = _empty_timeline_index()
+
+    # Merge de overrides manuais (curation) por block_id. Sobrevive ao rebuild
+    # from-syllabus porque mora num arquivo separado. Re-deriva kind/topic.
+    _repo_root = course_meta.get("_repo_root")
+    if _repo_root:
+        _apply_curation_overrides(timeline_index, Path(_repo_root) / "course")
 
     blocks_by_unit: Dict[str, List[Dict[str, object]]] = {}
     rows_by_unit: Dict[str, List[Dict[str, object]]] = {}
@@ -1711,6 +1807,64 @@ def _score_timeline_block_against_taxonomy_topic(block: Dict[str, object], topic
     return score
 
 
+# Stopwords PT-BR pra limpar fallback de topic_text. Conservador — só
+# conectivos comuns que poluem o label, mantem termos tecnicos.
+_TOPIC_FALLBACK_STOPWORDS = {
+    "a", "o", "as", "os", "um", "uma", "de", "do", "da", "dos", "das",
+    "e", "ou", "em", "no", "na", "nos", "nas", "para", "por", "com",
+    "sobre", "ao", "aos", "que", "se", "ate", "como",
+}
+
+_TOPIC_FALLBACK_MAX_LEN = 60
+
+
+def _humanize_topic_text(text: str) -> str:
+    """topic_text cru -> label apresentavel. Remove stopwords de borda,
+    capitaliza, trunca em 60 chars. Determinista."""
+    raw = _collapse_ws(text)
+    if not raw:
+        return ""
+    tokens = raw.split()
+    # remove stopwords só nas bordas (preserva ordem/sentido interno)
+    while tokens and tokens[0].lower() in _TOPIC_FALLBACK_STOPWORDS:
+        tokens.pop(0)
+    while tokens and tokens[-1].lower() in _TOPIC_FALLBACK_STOPWORDS:
+        tokens.pop()
+    if not tokens:
+        tokens = raw.split()
+    label = " ".join(tokens)
+    if len(label) > _TOPIC_FALLBACK_MAX_LEN:
+        label = label[:_TOPIC_FALLBACK_MAX_LEN].rstrip() + "…"
+    # capitaliza primeira letra; mantem resto (siglas tipo API, DevOps)
+    return label[:1].upper() + label[1:]
+
+
+def _resolve_block_topic_label(block: Dict[str, object]) -> tuple[str, str, str]:
+    """Resolve label do topico em camadas. Retorna (label, slug, source).
+
+    Ordem (primeira que casar vence):
+      1. manual    — manual_topic_label em curation
+      2. taxonomy  — primary_topic_label ja setado pelo matcher (inclui alias,
+                     pois o scorer considera aliases internamente)
+      3. topic_text_fallback — topic_text rico humanizado
+      4. ""        — nada utilizavel
+    """
+    manual = block.get("manual_topic_label")
+    if isinstance(manual, str) and manual.strip():
+        return _collapse_ws(manual), slugify(manual), "manual"
+
+    existing = block.get("primary_topic_label")
+    if isinstance(existing, str) and existing.strip():
+        return existing, str(block.get("primary_topic_slug", "") or ""), "taxonomy"
+
+    topic_text = str(block.get("topic_text", "") or "")
+    label = _humanize_topic_text(topic_text)
+    if label:
+        return label, slugify(topic_text), "topic_text_fallback"
+
+    return "", "", ""
+
+
 def _assign_timeline_block_to_topic(
     block: Dict[str, object],
     topic_index: List[dict],
@@ -1810,6 +1964,58 @@ def _assign_timeline_block_to_topic(
     return topic_candidates, primary
 
 
+def _vote_unit_from_topic_candidates(
+    block: Dict[str, object],
+    unit_index: list,
+    *,
+    top_k: int = 5,
+    min_score: float = 0.10,
+    dominance_ratio: float = 0.6,
+) -> tuple[str, float]:
+    """Fallback de unit assignment: voto majoritario por topic_candidates.
+
+    Quando _assign_timeline_block_to_unit retorna "" (score baixo, topic
+    ambiguo), inspeciona topic_candidates do bloco. Se >=dominance_ratio dos
+    top-K candidatos apontam pra mesma unit_slug, atribui essa unit com
+    confidence reduzida.
+
+    Resolve casos tipo ES2 bloco-06 ("microservicos spring circuit breaker"),
+    onde todos topic_candidates apontam pra unidade-01-arquitetura mas o
+    primary_topic e ambiguo.
+    """
+    candidates = block.get("topic_candidates") or []
+    if not candidates or not unit_index:
+        return "", 0.0
+    valid_slugs = {
+        _normalize_unit_slug(str(u.get("slug", "") or u.get("title", "") or ""))
+        for u in unit_index
+    }
+    valid_slugs.discard("")
+
+    votes: Dict[str, float] = {}
+    counted = 0
+    for cand in candidates[:top_k]:
+        if not isinstance(cand, dict):
+            continue
+        score = float(cand.get("score") or 0.0)
+        if score < min_score:
+            continue
+        slug = _normalize_unit_slug(str(cand.get("unit_slug") or ""))
+        if not slug or slug not in valid_slugs:
+            continue
+        votes[slug] = votes.get(slug, 0.0) + score
+        counted += 1
+    if counted == 0 or not votes:
+        return "", 0.0
+
+    winner_slug, winner_weight = max(votes.items(), key=lambda kv: kv[1])
+    total = sum(votes.values()) or 1.0
+    if winner_weight / total < dominance_ratio:
+        return "", 0.0
+    confidence = min(0.55, max(0.30, winner_weight / total * 0.6))
+    return winner_slug, confidence
+
+
 def _derive_unit_from_topic_match(match: TopicMatchResult, taxonomy: dict) -> str:
     if not match or not match.topic_slug:
         return ""
@@ -1881,7 +2087,7 @@ def _build_timeline_index(
             "id": f"bloco-{position:02d}",
             "period_start": rows[0].get("date_dt").strftime("%Y-%m-%d") if rows[0].get("date_dt") else "",
             "period_end": rows[-1].get("date_dt").strftime("%Y-%m-%d") if rows[-1].get("date_dt") else "",
-            "period_label": _timeline_period_label(start_text, end_text),
+            "period_label": _timeline_period_label(start_text, end_text, count=len(rows)),
             "unit_slug": "",
             "unit_confidence": 0.0,
             "primary_topic_slug": "",
@@ -1907,6 +2113,17 @@ def _build_timeline_index(
         runtime_block["primary_topic_label"] = primary_topic.topic_label
         runtime_block["primary_topic_confidence"] = primary_topic.confidence
         runtime_block["topic_ambiguous"] = primary_topic.ambiguous
+        # Fallback em camadas: garante label quando matcher reprova mas
+        # topic_text tem substancia. Marca topic_source pra UI badge.
+        resolved_label, resolved_slug, topic_source = _resolve_block_topic_label(runtime_block)
+        if resolved_label and not runtime_block["primary_topic_label"]:
+            runtime_block["primary_topic_label"] = resolved_label
+            # primary_topic_slug so vem de manual/taxonomy (vinculo real).
+            # fallback humanizado e display-only: nunca popula slug.
+            if topic_source != "topic_text_fallback" and resolved_slug \
+                    and not runtime_block["primary_topic_slug"]:
+                runtime_block["primary_topic_slug"] = resolved_slug
+        runtime_block["topic_source"] = topic_source
         topic_unit_slug = ""
         if primary_topic.topic_slug and not primary_topic.ambiguous and primary_topic.confidence >= 0.65:
             topic_unit_slug = _derive_unit_from_topic_match(primary_topic, content_taxonomy or {})
@@ -1915,6 +2132,10 @@ def _build_timeline_index(
             runtime_block["unit_confidence"] = primary_topic.confidence
         else:
             unit_slug, unit_confidence = _assign_timeline_block_to_unit(runtime_block, unit_index)
+            if not unit_slug:
+                unit_slug, unit_confidence = _vote_unit_from_topic_candidates(
+                    runtime_block, unit_index
+                )
             runtime_block["unit_slug"] = unit_slug
             runtime_block["unit_confidence"] = unit_confidence
         runtime_blocks.append(runtime_block)
@@ -1929,4 +2150,6 @@ def _build_timeline_index(
             block["unit_slug"] = inherited_slug
             block["unit_confidence"] = max(float(block.get("unit_confidence", 0.0) or 0.0), 0.51)
 
-    return {"version": 3, "blocks": runtime_blocks}
+    for block in runtime_blocks:
+        ensure_block_kind(block)
+    return {"version": TIMELINE_INDEX_VERSION, "blocks": runtime_blocks}

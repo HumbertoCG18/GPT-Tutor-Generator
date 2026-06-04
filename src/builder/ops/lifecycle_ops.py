@@ -150,8 +150,73 @@ def unprocess(builder, entry_id: str) -> bool:
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
 
+    # Purga sidecars derivativos para evitar resíduo de entry removido
+    try:
+        builder._prune_stale_code_curation()
+    except Exception as exc:
+        logger.warning("unprocess: prune code_curation falhou: %s", exc)
+    try:
+        builder._prune_stale_image_curation()
+    except Exception as exc:
+        logger.warning("unprocess: prune image_curation falhou: %s", exc)
+    try:
+        builder._regenerate_pedagogical_files(manifest)
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    except Exception as exc:
+        logger.warning("unprocess: regeneração pedagógica falhou: %s", exc)
+
     logger.info("Unprocessed entry %s (%d files removed)", entry_id, removed_count)
     return True
+
+
+def sweep_orphans(builder) -> Dict[str, object]:
+    """Retroativo: pruna curations + regenera sidecars derivativos.
+
+    Não reprocessa entries (zero custo de extractor/AI). Útil para limpar
+    resíduos deixados por unprocess/reject anteriores à correção.
+
+    Returns dict com counts e status de cada etapa.
+    """
+    report: Dict[str, object] = {
+        "code_curation_removed": 0,
+        "image_curation_removed": 0,
+        "regenerated": False,
+        "errors": [],
+    }
+
+    manifest_path = builder.root_dir / "manifest.json"
+    if not manifest_path.exists():
+        report["errors"].append("manifest.json não encontrado")
+        return report
+
+    try:
+        report["code_curation_removed"] = builder._prune_stale_code_curation()
+    except Exception as exc:
+        report["errors"].append(f"prune code_curation: {exc}")
+
+    try:
+        report["image_curation_removed"] = builder._prune_stale_image_curation()
+    except Exception as exc:
+        report["errors"].append(f"prune image_curation: {exc}")
+
+    try:
+        with open(manifest_path, "r", encoding="utf-8") as f:
+            manifest = json.load(f)
+        builder.course_meta = builder._effective_course_meta(manifest)
+        builder._regenerate_pedagogical_files(manifest)
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        report["regenerated"] = True
+    except Exception as exc:
+        report["errors"].append(f"regen pedagogical: {exc}")
+
+    logger.info(
+        "[sweep_orphans] code=%s img=%s regen=%s errors=%s",
+        report["code_curation_removed"],
+        report["image_curation_removed"],
+        report["regenerated"],
+        len(report["errors"]),
+    )
+    return report
 
 
 def reject(builder, entry_id: str) -> Optional[Dict[str, object]]:
@@ -203,6 +268,21 @@ def reject(builder, entry_id: str) -> Optional[Dict[str, object]]:
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
     builder._resolve_content_images()
+
+    # Purga sidecars derivativos (mesma simetria de unprocess)
+    try:
+        builder._prune_stale_code_curation()
+    except Exception as exc:
+        logger.warning("reject: prune code_curation falhou: %s", exc)
+    try:
+        builder._prune_stale_image_curation()
+    except Exception as exc:
+        logger.warning("reject: prune image_curation falhou: %s", exc)
+    try:
+        builder._regenerate_pedagogical_files(manifest)
+        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    except Exception as exc:
+        logger.warning("reject: regeneração pedagógica falhou: %s", exc)
 
     logger.info("Rejected entry %s (%d files removed, raw preserved)", entry_id, removed_count)
     return entry_data

@@ -1,0 +1,83 @@
+<h2>Layout da janela — Cronograma Visual</h2>
+<p class="subtitle">Como organizar blocos do cronograma × arquivos mapeados?</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Master-Detail (lista + painel lateral)</h3>
+      <p>Esquerda: lista vertical de todos os blocos. Clica num bloco → direita mostra arquivos daquele bloco. Só um bloco visível por vez. Foco, sem sobrecarga.</p>
+      <div class="mockup" style="margin-top:10px">
+        <div class="mockup-header">TimelineDashboard</div>
+        <div class="mockup-body" style="display:flex;gap:0;padding:0">
+          <div style="width:38%;border-right:1px solid #333;padding:10px;font-size:12px">
+            <div style="background:#2a4a2a;padding:4px 6px;border-radius:4px;margin-bottom:4px;cursor:pointer">▶ 12/03 — Processos <span style="color:#aaa;font-size:10px">U1 • 2 arq</span></div>
+            <div style="padding:4px 6px;margin-bottom:4px;cursor:pointer;color:#aaa">05/05 — Memória <span style="color:#aaa;font-size:10px">U2 • 0 arq ⚠</span></div>
+            <div style="padding:4px 6px;margin-bottom:4px;cursor:pointer;color:#555">19/05 — Prova 1 <span style="color:#555;font-size:10px">⊘</span></div>
+            <div style="padding:4px 6px;margin-bottom:4px;cursor:pointer;color:#aaa">26/05 — Escalonamento <span style="color:#aaa;font-size:10px">U2 • 1 arq</span></div>
+          </div>
+          <div style="flex:1;padding:10px;font-size:12px">
+            <div style="color:#7aff7a;margin-bottom:8px;font-weight:bold">12/03 — Processos</div>
+            <div style="background:#1e2e1e;padding:6px 8px;border-radius:4px;margin-bottom:4px">📄 12.03 Processos.pdf <span style="color:#7aff7a;font-size:10px">conf: 0.92 • 🗓 DD.MM</span></div>
+            <div style="background:#1e2e1e;padding:6px 8px;border-radius:4px;margin-bottom:4px">🔗 Slides Aula 3 <span style="color:#5aafff;font-size:10px">conf: 0.74</span></div>
+            <div style="margin-top:10px;color:#aaa;font-size:10px">manual_timeline_block_id: — (auto)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Accordion — blocos expansíveis em coluna única</h3>
+      <p>Todos os blocos numa lista. Clica → expande inline mostrando arquivos daquele bloco. Outros blocos ficam colapsados. Visão sequencial do semestre inteiro.</p>
+      <div class="mockup" style="margin-top:10px">
+        <div class="mockup-header">TimelineDashboard</div>
+        <div class="mockup-body" style="font-size:12px">
+          <div style="background:#2a4a2a;padding:6px 10px;border-radius:4px;margin-bottom:4px">
+            <div style="cursor:pointer">▼ <strong>12/03 — Processos</strong> <span style="color:#aaa;font-size:10px">U1 • 2 arq</span></div>
+            <div style="margin-top:6px;padding-left:16px">
+              <div style="background:#1a2e1a;padding:4px 8px;border-radius:3px;margin-bottom:3px">📄 12.03 Processos.pdf <span style="color:#7aff7a;font-size:10px">0.92</span></div>
+              <div style="background:#1a2e1a;padding:4px 8px;border-radius:3px">🔗 Slides Aula 3 <span style="color:#5aafff;font-size:10px">0.74</span></div>
+            </div>
+          </div>
+          <div style="padding:6px 10px;margin-bottom:4px;color:#aaa;border:1px solid #333;border-radius:4px;cursor:pointer">▶ <strong>05/05 — Memória</strong> <span style="color:#ffaa44;font-size:10px">U2 • 0 arq ⚠ gap</span></div>
+          <div style="padding:6px 10px;margin-bottom:4px;color:#555;border:1px solid #222;border-radius:4px;cursor:pointer">▶ <em>19/05 — Prova 1</em> <span style="color:#555;font-size:10px">⊘ ignorado</span></div>
+          <div style="padding:6px 10px;margin-bottom:4px;color:#aaa;border:1px solid #333;border-radius:4px;cursor:pointer">▶ <strong>26/05 — Escalonamento</strong> <span style="color:#aaa;font-size:10px">U2 • 1 arq</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Split view — dois painéis sempre visíveis</h3>
+      <p>Esquerda: blocos (sempre visíveis). Direita: arquivos do bloco selecionado + seção separada "Arquivos sem bloco" na parte inferior direita. Mais informação simultânea.</p>
+      <div class="mockup" style="margin-top:10px">
+        <div class="mockup-header">TimelineDashboard</div>
+        <div class="mockup-body" style="display:flex;gap:0;padding:0">
+          <div style="width:40%;border-right:1px solid #333;padding:8px;font-size:11px;display:flex;flex-direction:column;gap:3px">
+            <div style="background:#2a4a2a;padding:4px 6px;border-radius:3px">▶ 12/03 Processos <span style="color:#7aff7a">2</span></div>
+            <div style="padding:4px 6px;color:#ffaa44;border-left:2px solid #ffaa44">05/05 Memória <span style="color:#ffaa44">0 ⚠</span></div>
+            <div style="padding:4px 6px;color:#444">19/05 Prova 1 ⊘</div>
+            <div style="padding:4px 6px;color:#aaa">26/05 Escalonamento <span>1</span></div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;font-size:11px">
+            <div style="flex:1;padding:8px;border-bottom:1px solid #333">
+              <div style="color:#7aff7a;font-weight:bold;margin-bottom:6px">12/03 — Processos</div>
+              <div style="background:#1e2e1e;padding:4px 6px;border-radius:3px;margin-bottom:3px">📄 12.03 Processos.pdf <span style="color:#7aff7a">0.92</span></div>
+              <div style="background:#1e2e1e;padding:4px 6px;border-radius:3px">🔗 Slides Aula 3 <span style="color:#5aafff">0.74</span></div>
+            </div>
+            <div style="padding:8px;font-size:10px;color:#888">
+              <div style="color:#ffaa44;margin-bottom:4px">⚠ Arquivos sem bloco (2)</div>
+              <div>📄 resumo-extra.pdf</div>
+              <div>📄 exercicios.pdf</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Cronograma — Schema Robusto · Revisão</title>
+<style>
+  :root {
+    --bg:#0e0e10; --panel:#16161a; --border:#2a2a30; --muted:#888;
+    --text:#e5e5e5; --accent:#7aff7a; --warn:#ffaa44; --bad:#ff6a6a;
+    --info:#5aafff; --neutral:#aaa; --highlight:#1e2e1e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;padding:24px;max-width:1200px;margin:0 auto}
+  h1{font-size:26px;margin:0 0 4px;color:#fff}
+  .subtitle{color:var(--muted);margin:0 0 24px}
+  h2{font-size:18px;margin:32px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border);color:#fff}
+  h3{font-size:14px;margin:14px 0 8px;color:var(--accent)}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:16px;margin-bottom:12px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0}
+  th,td{padding:6px 10px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+  th{color:var(--muted);font-weight:normal;font-size:11px;text-transform:uppercase}
+  code{background:#1f1f24;padding:1px 5px;border-radius:3px;font-size:12px;color:#d4d4d4}
+  .badge{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px}
+  .b-ok{background:#1a3a1a;color:var(--accent)}
+  .b-warn{background:#3a2a0a;color:var(--warn)}
+  .b-bad{background:#3a1a1a;color:var(--bad)}
+  .b-neutral{background:#1a1a2a;color:var(--info)}
+  .b-mute{background:#222;color:var(--muted)}
+  .arrow{color:var(--accent);font-weight:bold}
+  .mockup{background:#0a0a0c;border:1px solid var(--border);border-radius:5px;padding:10px;font-size:12px;font-family:Menlo,monospace}
+  .mockup-row{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:4px;margin-bottom:3px;background:#15151a}
+  .pill{font-size:10px;padding:1px 6px;border-radius:8px}
+  .flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+  .flow-box{background:#1a1a20;border:1px solid var(--border);padding:8px 12px;border-radius:5px;font-size:12px}
+  .flow-box.green{border-color:var(--accent);background:#0f1f0f}
+  .flow-box.warn{border-color:var(--warn);background:#1f1a0a}
+  .flow-arrow{color:var(--muted)}
+  .num{font-size:22px;font-weight:bold;color:var(--accent)}
+  .num.bad{color:var(--bad)}
+  .num.warn{color:var(--warn)}
+  .small{font-size:11px;color:var(--muted)}
+  .tag{display:inline-block;background:#1f1f24;border:1px solid var(--border);padding:1px 6px;border-radius:3px;font-size:11px;margin:1px}
+  .strike{text-decoration:line-through;color:var(--muted)}
+  details{background:#13131a;border:1px solid var(--border);border-radius:4px;padding:8px 12px;margin-bottom:6px}
+  summary{cursor:pointer;font-weight:bold;color:var(--info);font-size:13px}
+  ul{padding-left:18px;margin:6px 0}
+  .legend{display:flex;gap:14px;font-size:11px;color:var(--muted);margin:6px 0}
+  .step{display:flex;gap:14px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--border)}
+  .step:last-child{border-bottom:none}
+  .step-n{background:var(--accent);color:#000;width:24px;height:24px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:12px;flex-shrink:0}
+  .step-n.warn{background:var(--warn)}
+  .step-n.bad{background:var(--bad)}
+</style>
+</head>
+<body>
+
+<h1>Cronograma — Schema Robusto · Revisão do Plano</h1>
+<p class="subtitle">Documento de revisão para <code>plans/cronograma-schema-robusto.md</code> · 5 cursos · 92 blocos auditados</p>
+
+<!-- ====== TL;DR ====== -->
+<div class="panel">
+  <h3>TL;DR</h3>
+  <p>Bloco do cronograma hoje mistura <strong>entrada de calendário</strong> (que dia) com <strong>conteúdo pedagógico</strong> (unidade/tópico/material). Cada consumidor reinventa heurística de "está incompleto?". <strong>53% dos blocos falham</strong> no modelo atual.</p>
+  <p>Proposta: enum fechado <code>BlockKind</code> (14 valores derivados dos dados reais) + classificador único + status sempre derivado. Schema versionado (v4) + validação em CI. <strong>Pré-requisito</strong> do <code>material-agnostic-refactor.md</code>.</p>
+</div>
+
+<!-- ====== METRICS ====== -->
+<h2>O problema, em números</h2>
+<div class="grid3">
+  <div class="panel" style="text-align:center"><div class="num">19</div><div class="small">blocos OK (21%)</div></div>
+  <div class="panel" style="text-align:center"><div class="num bad">52</div><div class="small">blocos com defeito real (57%) — <code>missing_unit</code> + <code>missing_topic</code> + <code>unknown_gap</code></div></div>
+  <div class="panel" style="text-align:center"><div class="num warn">26</div><div class="small">blocos non-academic mal classificados (28%) — viram ⚠ falso</div></div>
+</div>
+<table>
+  <tr><th>Curso</th><th>Total</th><th>ok</th><th>missing_unit</th><th>missing_topic</th><th>non_academic</th><th>unknown_gap</th><th>assessment</th></tr>
+  <tr><td>Engenharia-Software-2</td><td>12</td><td>0</td><td><span class="badge b-bad">5</span></td><td><span class="badge b-warn">4</span></td><td><span class="badge b-neutral">3</span></td><td>0</td><td>0</td></tr>
+  <tr><td>Inteligencia-Artificial</td><td>18</td><td><span class="badge b-ok">1</span></td><td><span class="badge b-bad">3</span></td><td><span class="badge b-warn">5</span></td><td><span class="badge b-neutral">7</span></td><td><span class="badge b-mute">1</span></td><td><span class="badge b-mute">1†</span></td></tr>
+  <tr><td>Metodos-Formais</td><td>18</td><td><span class="badge b-ok">4</span></td><td><span class="badge b-bad">1</span></td><td><span class="badge b-warn">7</span></td><td><span class="badge b-neutral">4</span></td><td><span class="badge b-mute">2</span></td><td>0</td></tr>
+  <tr><td>Sistemas-Operacionais</td><td>17</td><td><span class="badge b-ok">2</span></td><td><span class="badge b-bad">6</span></td><td><span class="badge b-warn">3</span></td><td><span class="badge b-neutral">6</span></td><td>0</td><td>0</td></tr>
+  <tr><td>TCC (Comp.)</td><td>27</td><td><span class="badge b-ok">6</span></td><td><span class="badge b-bad">12</span></td><td><span class="badge b-warn">3</span></td><td><span class="badge b-neutral">6</span></td><td>0</td><td>0</td></tr>
+</table>
+<p class="small">† falso positivo: bloco-01 IA pegou "avaliacao" do plano de ensino e virou <code>assessment</code> erradamente.</p>
+
+<!-- ====== HOW IT WORKS ====== -->
+<h2>Como o modelo proposto funciona</h2>
+
+<h3>Pipeline de classificação (por bloco)</h3>
+<div class="flow">
+  <div class="flow-box">Linhas brutas do<br>cronograma (CSV/MD)</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">Agrupamento<br>em blocos<br><span class="small">(já existe)</span></div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box green"><strong>classifier.py</strong><br>aplica KEYWORDS<br>em ordem prioridade</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">Bloco recebe<br><code>kind</code> + metadata</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">Persistido em<br><code>.timeline_index.json v4</code></div>
+</div>
+
+<h3>Pipeline de leitura (UI / renderers)</h3>
+<div class="flow">
+  <div class="flow-box">Lê bloco</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box green"><strong>status.py</strong><br>derive(kind, fields)<br>→ block_status</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">UI consulta<br><code>KIND_DISPLAY[kind]</code><br>+ status</div>
+  <span class="flow-arrow">→</span>
+  <div class="flow-box">Renderiza ícone,<br>cor, badge, ação</div>
+</div>
+<p class="small">⚠ <code>block_status</code> NUNCA é persistido. Sempre re-derivado. Não há "esqueci de atualizar status".</p>
+
+<!-- ====== KINDS ====== -->
+<h2>Os 14 kinds — enum fechado</h2>
+<p>Cada kind tem (a) keywords pra detecção, (b) requirements declarando campos obrigatórios, (c) display pra UI.</p>
+
+<table>
+  <tr><th>Kind</th><th>Quando</th><th>Detecção</th><th>Exige unit?</th><th>Exige topic?</th><th>Exige files?</th><th>Ícone</th></tr>
+  <tr><td><code>class</code></td><td>Aula regular</td><td>default</td><td>✓</td><td>✓</td><td>✓</td><td>📚</td></tr>
+  <tr><td><code>assessment</code></td><td>P1, P2, PF, prova</td><td>regex <code>\bp[1-4]\b</code>, "prova", "avaliacao"</td><td>opc</td><td>label</td><td>prova/gabarito</td><td>📝</td></tr>
+  <tr><td><code>review</code></td><td>Revisão p/ prova</td><td>"revisao"</td><td>herda</td><td>opc</td><td>opc</td><td>🔁</td></tr>
+  <tr><td><code>holiday</code></td><td>Feriado</td><td>"feriado","carnaval","corpus",...</td><td>—</td><td>—</td><td>—</td><td>🏖</td></tr>
+  <tr><td><code>suspended</code></td><td>Aula suspensa, greve</td><td>"suspensao","greve","paralisacao"</td><td>—</td><td>—</td><td>—</td><td>⏸</td></tr>
+  <tr><td><code>makeup</code></td><td>Reposição</td><td>"substituicao","reposicao"</td><td>herda</td><td>✓</td><td>✓</td><td>🔄</td></tr>
+  <tr><td><code>academic_event</code></td><td>Semana, simpósio, congresso</td><td>"evento academico","simposio","semana"</td><td>—</td><td>—</td><td>—</td><td>📅</td></tr>
+  <tr><td><code>office_hours</code></td><td>Atendimento, dúvidas</td><td>"atendimento","duvidas","plantao"</td><td>—</td><td>—</td><td>—</td><td>💬</td></tr>
+  <tr><td><code>workshop</code></td><td>Oficina, lançamento enunciado</td><td>"oficina","lancamento","kick-off"</td><td>opc</td><td>✓</td><td>opc</td><td>🛠</td></tr>
+  <tr><td><code>deliverable</code></td><td>Entrega de trabalho</td><td>"entrega trabalho","entrega final"</td><td>✓</td><td>✓</td><td>submissão</td><td>📤</td></tr>
+  <tr><td><code>planning</code></td><td>Planejamento, reunião</td><td>"planejamento","reuniao","conselho"</td><td>—</td><td>—</td><td>—</td><td>🗓</td></tr>
+  <tr><td><code>reserved</code></td><td>Reserva técnica</td><td>"reserva tecnica","reserva"</td><td>—</td><td>—</td><td>—</td><td>⏳</td></tr>
+  <tr><td><code>results</code></td><td>Divulgação resultados</td><td>"divulgacao","devolucao","devolutiva"</td><td>—</td><td>—</td><td>—</td><td>📊</td></tr>
+  <tr><td><code>unknown</code></td><td>Escape hatch</td><td>nenhuma keyword bateu</td><td>flag</td><td>—</td><td>—</td><td>❓</td></tr>
+</table>
+
+<p class="small"><strong>Regra de prioridade:</strong> ordem da lista. Mais específico primeiro. <code>holiday</code> vence <code>academic_event</code>, <code>makeup</code> vence <code>assessment</code>. <strong>Exceção crítica:</strong> "disciplina/apresentacao/plano ensino" → força <code>class</code> antes do match de <code>assessment</code> (resolve falso positivo IA bloco-01).</p>
+
+<!-- ====== STATUS DERIVATION ====== -->
+<h2>Como block_status é derivado (read-time)</h2>
+
+<div class="grid2">
+  <div class="panel">
+    <h3 style="color:var(--accent)">Pseudo-código</h3>
+    <pre style="font-size:12px;color:#cfcfcf;background:#0a0a0c;padding:10px;border-radius:4px;overflow:auto">def derive_status(block):
+    req = KIND_REQUIREMENTS[block.kind]
+    if not req:                       # holiday, suspended, ...
+        return "non_applicable"
+    if block.kind == "unknown":
+        return "needs_review"
+    if req.unit and not block.unit_slug:
+        return "needs_unit"
+    if req.topic and not block.primary_topic_label:
+        return "needs_topic"
+    if req.files and block.n_entries == 0:
+        return "needs_files"
+    return "ok"</pre>
+  </div>
+  <div class="panel">
+    <h3 style="color:var(--accent)">Tabela de estados possíveis</h3>
+    <table>
+      <tr><th>Status</th><th>Significado</th><th>UI</th></tr>
+      <tr><td><span class="badge b-ok">ok</span></td><td>Tudo presente</td><td>verde</td></tr>
+      <tr><td><span class="badge b-bad">needs_unit</span></td><td>kind=class sem unit</td><td>vermelho</td></tr>
+      <tr><td><span class="badge b-warn">needs_topic</span></td><td>kind=class sem topic</td><td>amarelo</td></tr>
+      <tr><td><span class="badge b-bad">needs_files</span></td><td>kind=class/assessment sem arquivos</td><td>vermelho</td></tr>
+      <tr><td><span class="badge b-neutral">non_applicable</span></td><td>kind=holiday/suspended/...</td><td>neutro, sem warning</td></tr>
+      <tr><td><span class="badge b-mute">needs_review</span></td><td>kind=unknown</td><td>cinza + ❓</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ====== UI BEFORE/AFTER ====== -->
+<h2>UI — Antes vs Depois (Métodos Formais)</h2>
+
+<div class="grid2">
+  <div class="panel">
+    <h3 style="color:var(--bad)">Antes (hoje)</h3>
+    <div class="mockup">
+      <div class="mockup-row" style="background:#1e2e1e"><span>▶</span> <span>bloco-02 · 04/03</span> <span style="margin-left:auto" class="pill" style="background:#1a3a1a;color:#7aff7a">2 arquivos</span></div>
+      <div class="mockup-row"><span>▶</span> <span>bloco-03 · 09/03</span> <span style="margin-left:auto" class="badge b-bad">⚠ 0 arquivos</span></div>
+      <div class="mockup-row"><span>▶</span> <span>bloco-08 · 20/04 a 22/04</span> <span style="margin-left:auto" class="badge b-bad">⚠ 0 arquivos</span></div>
+      <div class="mockup-row"><span>▶</span> <span>bloco-13 · 27/05</span> <span style="margin-left:auto" class="badge b-bad">⚠ 0 arquivos</span></div>
+      <div class="mockup-row"><span>▶</span> <span>bloco-17 · 08/07</span> <span style="margin-left:auto" class="badge b-bad">⚠ 0 arquivos</span></div>
+      <div class="mockup-row"><span>▶</span> <span>bloco-18 · 13/07 a 15/07</span> <span style="margin-left:auto" class="badge b-bad">⚠ 0 arquivos</span></div>
+    </div>
+    <p class="small">Todos viram ⚠ vermelho. Usuário não sabe distinguir defeito real (bloco-03 = aula sem unit) de não-aplicável (bloco-08 = suspensão).</p>
+  </div>
+  <div class="panel">
+    <h3 style="color:var(--accent)">Depois (schema robusto)</h3>
+    <div class="mockup">
+      <div class="mockup-row" style="background:#1e2e1e"><span>▶</span> <span>📚 bloco-02 · 1 dia · 04/03</span> <span class="small">U1 · Sistemas Formais</span> <span style="margin-left:auto" class="badge b-ok">ok</span></div>
+      <div class="mockup-row"><span>▶</span> <span>📚 bloco-03 · 1 dia · 09/03</span> <span class="small">Lógica de predicados</span> <span style="margin-left:auto" class="badge b-bad">needs_unit</span></div>
+      <div class="mockup-row"><span>▶</span> <span>⏸ bloco-08 · 3 dias · 20/04 a 22/04</span> <span class="small">Suspensão</span> <span style="margin-left:auto" class="badge b-neutral">non_applicable</span></div>
+      <div class="mockup-row"><span>▶</span> <span>📅 bloco-13 · 1 dia · 27/05</span> <span class="small">Evento acadêmico</span> <span style="margin-left:auto" class="badge b-neutral">non_applicable</span></div>
+      <div class="mockup-row"><span>▶</span> <span>🔄 bloco-17 · 1 dia · 08/07</span> <span class="small">Substituição</span> <span style="margin-left:auto" class="badge b-warn">needs_topic</span></div>
+      <div class="mockup-row"><span>▶</span> <span>📊 bloco-18 · 3 dias · 13/07 a 15/07</span> <span class="small">Devolução de notas</span> <span style="margin-left:auto" class="badge b-neutral">non_applicable</span></div>
+    </div>
+    <p class="small">1 defeito real visível (bloco-03). 4 não-aplicáveis claros. 1 makeup pendente de tópico.</p>
+  </div>
+</div>
+
+<!-- ====== ROOT CAUSE FIXES ====== -->
+<h2>Os dois bugs estruturais que o plano resolve</h2>
+
+<div class="grid2">
+  <div class="panel">
+    <h3>1. <code>missing_unit</code> — 27 blocos (29%)</h3>
+    <p>Conteúdo real (<code>microservicos spring</code>, <code>halting problem</code>, <code>logica predicados</code>) sem unit. Matcher de unidade falha.</p>
+    <strong>3 hipóteses a investigar na Fase 3:</strong>
+    <ul>
+      <li><strong>A.</strong> Keyword index da unit só contém literal do título (não termos derivados). Fix: bootstrapping intra-curso usando <code>topic_text</code> de blocos já casados.</li>
+      <li><strong>B.</strong> Threshold de score alto demais. Fix: baixar + fallback fuzzy.</li>
+      <li><strong>C.</strong> Matcher só lê <code>topic_text</code>, ignora <code>date_text</code>. Fix: incluir ambos no input.</li>
+    </ul>
+    <p class="small">Meta: <code>missing_unit</code> ≤5% por curso.</p>
+  </div>
+  <div class="panel">
+    <h3>2. <code>missing_topic</code> — 22 blocos (24%)</h3>
+    <p>Bloco tem unit + topic_text rico mas taxonomy do curso não tem entrada que bate (<code>dafny</code>, <code>isabelle</code>, <code>cook levin</code>, <code>devops</code>).</p>
+    <strong>4 camadas de fallback (Fase 4):</strong>
+    <ul>
+      <li>1. Match exato no taxonomy (atual)</li>
+      <li>2. Match por alias</li>
+      <li>3. Fallback: <code>topic_text</code> normalizado vira label provisório</li>
+      <li>4. Override manual via curation</li>
+    </ul>
+    <p class="small">Novo campo <code>topic_source ∈ {"taxonomy","alias","fallback","manual"}</code> driva cor do badge. Meta: <code>missing_topic</code> = 0%.</p>
+  </div>
+</div>
+
+<!-- ====== PHASES ====== -->
+<h2>Roteiro de execução — 7 fases</h2>
+
+<div class="panel" style="padding:0">
+  <div class="step" style="padding:14px 16px">
+    <div class="step-n">0</div>
+    <div>
+      <strong>Lock &amp; infraestrutura</strong> <span class="badge b-ok">70% pronto</span>
+      <div class="small">Audit script já existe. Falta: commitar, criar <code>schemas/timeline_index.v4.json</code>, comando <code>make audit</code>.</div>
+    </div>
+  </div>
+  <div class="step" style="padding:14px 16px">
+    <div class="step-n">1</div>
+    <div>
+      <strong>Módulos isolados</strong> <span class="badge b-mute">sem mexer pipeline</span>
+      <div class="small">3 arquivos: <code>kinds.py</code> (enum+REQUIREMENTS+DISPLAY), <code>classifier.py</code> (kind detection), <code>status.py</code> (derive). Testes com fixtures dos 5 cursos. <strong>Reversível.</strong></div>
+    </div>
+  </div>
+  <div class="step" style="padding:14px 16px">
+    <div class="step-n">2</div>
+    <div>
+      <strong>Integrar no index builder</strong>
+      <div class="small">Hook no <code>_finalize_timeline_blocks</code> em <code>src/builder/timeline/index.py</code>. Bump <code>version: 4</code>. Backfill lazy ao ler v3.</div>
+    </div>
+  </div>
+  <div class="step" style="padding:14px 16px">
+    <div class="step-n bad">3</div>
+    <div>
+      <strong>Fix <code>missing_unit</code> root cause</strong> <span class="badge b-bad">crítico</span>
+      <div class="small">Investigar <code>taxonomy_match_unit</code> / <code>content_taxonomy.py</code>. Testar 3 hipóteses. Audit pós-fix deve mostrar <code>missing_unit</code> ≤5%.</div>
+    </div>
+  </div>
+  <div class="step" style="padding:14px 16px">
+    <div class="step-n warn">4</div>
+    <div>
+      <strong>Fix <code>missing_topic</code> com fallback em camadas</strong> <span class="badge b-warn">essencial</span>
+      <div class="small">Adicionar <code>topic_source</code> + 4 camadas. <code>missing_topic</code> = 0% (sempre haverá label, mesmo derivado).</div>
+    </div>
+  </div>
+  <div class="step" style="padding:14px 16px">
+    <div class="step-n">5</div>
+    <div>
+      <strong>UI por kind</strong>
+      <div class="small">Substituir heurística <code>has_gap = n_entries == 0</code> (timeline_dashboard.py:245) por leitura de <code>block_status</code>. Lookup table <code>KIND_DISPLAY</code>. Filtros por kind.</div>
+    </div>
+  </div>
+  <div class="step" style="padding:14px 16px">
+    <div class="step-n">6</div>
+    <div>
+      <strong>Schema validation em CI</strong>
+      <div class="small">GitHub Action: schema drift + audit thresholds (<code>unknown</code> &gt;5%, <code>needs_unit/needs_files</code> em <code>class</code> &gt;10%) quebram build.</div>
+    </div>
+  </div>
+  <div class="step" style="padding:14px 16px">
+    <div class="step-n">7</div>
+    <div>
+      <strong>Handshake com material-agnostic</strong>
+      <div class="small">Pré-reqs do plano existente (<code>plans/material-agnostic-refactor.md</code>) ficam atendidos. Desbloqueia renderer agnóstico.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== DECISIONS ====== -->
+<h2>Pontos onde você pode redirecionar</h2>
+
+<details>
+  <summary>D1 — Tamanho do enum (14 kinds é o certo?)</summary>
+  <div style="margin-top:8px">
+    <p>Opções:</p>
+    <ul>
+      <li><strong>Menor (6 kinds):</strong> <code>class, assessment, review, non_academic, makeup, unknown</code>. Simples, mas perde distinção entre feriado/suspensão/evento/atendimento (todos viram <code>non_academic</code>). UI mostra ícone genérico. <span class="badge b-mute">menos código, menos info</span></li>
+      <li><strong>Médio (14 kinds — proposto):</strong> Cada categoria observada vira kind. Cobertura 100% dos casos auditados. <span class="badge b-ok">recomendado</span></li>
+      <li><strong>Maior (20+ kinds):</strong> Sub-divide assessment (P1, P2, sub, recuperação), holiday (feriado nacional vs municipal), etc. Granularidade extra raramente útil. <span class="badge b-mute">over-engineering</span></li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>D2 — Strategy de fallback de topic (Fase 4)</summary>
+  <div style="margin-top:8px">
+    <ul>
+      <li><strong>A.</strong> Só taxonomy + alias. Blocos não cobertos ficam vazios. Aluno vê "—" no tutor. <span class="badge b-mute">conservador</span></li>
+      <li><strong>B.</strong> Adicionar fallback determinístico (topic_text normalizado). Sempre tem label. Risco: label cru, sem capitalização certa. <span class="badge b-ok">recomendado</span></li>
+      <li><strong>C.</strong> Usar Gemini/LLM pra gerar label quando taxonomy não bate. Mais bonito, mas custo escala + não-determinístico. <span class="badge b-warn">caro</span></li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>D3 — Quando re-rodar pipeline nos cursos existentes</summary>
+  <div style="margin-top:8px">
+    <ul>
+      <li><strong>A.</strong> Pós-Fase 2 (kind preenchido, sem fix de unit/topic ainda). Rápido mas dados ainda incompletos. <span class="badge b-mute">prematuro</span></li>
+      <li><strong>B.</strong> Pós-Fase 4 (kind + unit + topic todos OK). Re-roda uma vez, fica redondo. <span class="badge b-ok">recomendado</span></li>
+      <li><strong>C.</strong> Nunca — só novos cursos usam schema v4. v3 vira read-only legacy. <span class="badge b-mute">divide ecosystem</span></li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>D4 — UI: editor manual de kind?</summary>
+  <div style="margin-top:8px">
+    <ul>
+      <li><strong>A.</strong> Sem editor — classifier sempre vence. Se classifica errado, usuário ajusta keyword. <span class="badge b-mute">puro</span></li>
+      <li><strong>B.</strong> Dropdown de override no bloco. Salva em <code>curation.json</code>. Rebuild preserva. <span class="badge b-ok">recomendado</span></li>
+      <li><strong>C.</strong> Edição inline de keywords do classifier via UI. <span class="badge b-warn">complexo</span></li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>D5 — Ordem de execução das fases</summary>
+  <div style="margin-top:8px">
+    <ul>
+      <li><strong>A. Sequencial (0→7):</strong> Cada fase entrega valor isolado. Pode parar em qualquer ponto. <span class="badge b-ok">recomendado</span></li>
+      <li><strong>B. Fix-first (3→4 antes de classificar):</strong> Resolver missing_unit/topic primeiro. Mas sem kind, UI continua confusa. <span class="badge b-mute">prematuro</span></li>
+      <li><strong>C. UI-first (5 antes do resto):</strong> Mostrar mock com dados fake. Vê resultado antes. Mas mock pode esconder problema de dado. <span class="badge b-mute">cosmético</span></li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>D6 — Lidar com cursos que ainda não foram processados</summary>
+  <div style="margin-top:8px">
+    <p>Hoje só temos 5 cursos auditados. Outros cursos (futuros) podem ter kinds que não cobrimos.</p>
+    <ul>
+      <li><strong>A.</strong> Audit CI bloqueia: se um curso novo gerar <code>unknown</code> &gt;5%, build quebra → força adicionar keyword/kind. <span class="badge b-ok">recomendado</span></li>
+      <li><strong>B.</strong> Permitir <code>unknown</code> silenciosamente. Sem ruído, mas defeitos acumulam. <span class="badge b-bad">drift</span></li>
+      <li><strong>C.</strong> Auto-aprender keywords novas via LLM. Complexo + não-determinístico. <span class="badge b-warn">over-engineering</span></li>
+    </ul>
+  </div>
+</details>
+
+<!-- ====== ANTI-OBJ ====== -->
+<h2>Anti-objetivos (o que NÃO faremos)</h2>
+<ul>
+  <li>Não persistir <code>block_status</code>. Sempre derivado em read-time.</li>
+  <li>Não ramificar lógica de kind. Toda heurística vive em <code>classifier.py</code>.</li>
+  <li>Não quebrar leitura de v3. Backfill lazy ao abrir índice antigo.</li>
+  <li>Não atrasar <code>code-summarization-gemini.md</code>. Planos rodam em paralelo.</li>
+  <li>Não criar novo formato de output. <code>.timeline_index.json</code> continua canônico.</li>
+  <li>Não inferir kind via LLM. Só keywords + regex. Determinístico, barato, auditável.</li>
+</ul>
+
+<!-- ====== METRICS ====== -->
+<h2>Como vamos saber que funcionou</h2>
+<div class="grid2">
+  <div class="panel">
+    <h3 style="color:var(--muted)">Hoje</h3>
+    <ul>
+      <li>21% blocos OK</li>
+      <li>53% defeito real (missing_unit + missing_topic + unknown_gap)</li>
+      <li>28% non_academic genérico (sem distinção)</li>
+      <li>Zero validação de schema</li>
+      <li>Heurísticas espalhadas em 3+ módulos</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <h3 style="color:var(--accent)">Pós-Fase 6 (alvo)</h3>
+    <ul>
+      <li>≥90% blocos <code>class</code> com status <code>ok</code></li>
+      <li>0% <code>missing_topic</code> (fallback garante label)</li>
+      <li>≤5% <code>missing_unit</code> em blocos <code>class</code></li>
+      <li>100% blocos têm <code>kind</code> preenchido</li>
+      <li>Schema validado em CI; drift quebra build</li>
+      <li>Classifier em 1 lugar; <code>KIND_DISPLAY</code> drive UI</li>
+    </ul>
+  </div>
+</div>
+
+<p class="small" style="margin-top:30px;color:var(--muted);text-align:center">Documento de revisão · Plano completo em <code>plans/cronograma-schema-robusto.md</code> · Audit em <code>scripts/audit_timeline.py</code></p>
+
+</body>
+</html>

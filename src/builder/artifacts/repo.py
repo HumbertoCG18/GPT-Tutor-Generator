@@ -656,11 +656,20 @@ def bibliography_md(
     entries=None,
     subject_profile=None,
     *,
+    reference_curation: dict | None = None,
     parse_bibliography_from_teaching_plan_fn: Callable[[str], dict],
     clamp_navigation_artifact: Callable[..., str],
 ) -> str:
     course_name = course_meta.get("course_name", "Curso")
     entries = entries or []
+
+    _ref_entries = (reference_curation or {}).get("entries", {})
+
+    def _rec(entry):
+        try:
+            return _ref_entries.get(entry.id()) or {}
+        except Exception:
+            return {}
 
     lines = [
         f"# BIBLIOGRAPHY — {course_name}",
@@ -704,6 +713,15 @@ def bibliography_md(
                 lines.append(f"- **Nota:** {entry.notes}")
             if entry.professor_signal:
                 lines.append(f"- **Indicação do professor:** {entry.professor_signal}")
+            rec = _rec(entry)
+            ref_summary = rec.get("ref_summary") or ""
+            if ref_summary:
+                lines.append(f"- **Resumo:** {ref_summary}")
+            ref_unit = rec.get("computed_ref_unit") or ""
+            ref_topics = rec.get("computed_ref_topics") or []
+            if ref_unit or ref_topics:
+                rel = ref_unit + (f" / {', '.join(ref_topics)}" if ref_topics else "")
+                lines.append(f"- **Relevante para:** {rel}")
             lines.append(f"- **Incluir no bundle:** {'sim' if entry.include_in_bundle else 'não'}")
             lines.append("")
 
@@ -716,16 +734,21 @@ def bibliography_md(
             "",
         ]
 
-    lines += [
-        "## Mapa de relevância por tópico",
-        "",
-        "<!-- Preencha após organizar as referências -->",
-        "",
-        "| Tópico | Referência principal | Acessível | Incidência em prova |",
-        "|---|---|---|---|",
-        "| [a preencher] | | | |",
-        "",
-    ]
+    mapped = [(e, _rec(e)) for e in entries]
+    mapped = [(e, r) for (e, r) in mapped if (r.get("computed_ref_unit") or r.get("computed_ref_topics"))]
+    lines += ["## Mapa de relevância por tópico", ""]
+    if mapped:
+        lines += ["| Tópico/Unidade | Referência | Acessível | Incidência em prova |", "|---|---|---|---|"]
+        for e, r in mapped:
+            unit = r.get("computed_ref_unit") or ""
+            topics = ", ".join(r.get("computed_ref_topics") or [])
+            alvo = " / ".join([p for p in (unit, topics) if p]) or "—"
+            lines.append(f"| {alvo} | {e.title} | sim | — |")
+        lines.append("")
+    else:
+        lines += ["<!-- Preencha após organizar as referências -->", "",
+                  "| Tópico | Referência principal | Acessível | Incidência em prova |",
+                  "|---|---|---|---|", "| [a preencher] | | | |", ""]
 
     return clamp_navigation_artifact(
         "\n".join(lines),
@@ -809,50 +832,299 @@ def code_index_md(
     entries=None,
     subject_profile=None,
     *,
+    code_curation: Optional[dict] = None,
+    timeline_blocks: Optional[list[dict]] = None,
     code_review_profile_fn: Callable[[Optional[dict], object], dict],
     clamp_navigation_artifact: Callable[..., str],
 ) -> str:
     course_name = course_meta.get("course_name", "Curso")
     entries = entries or []
-    prof_entries = [e for e in entries if e.category == "codigo-professor"]
     profile = code_review_profile_fn(course_meta, subject_profile)
-    lines = [
-        f"# CODE_INDEX — {course_name}",
-        "",
-        profile["code_index_intro"],
-        profile["code_index_review_line"],
-        "",
-    ]
-    if prof_entries:
-        lines += [
-            profile["code_index_section"],
+
+    code_only = [e for e in entries
+                 if e.file_type in ("code", "zip")
+                 and e.category in ("codigo-professor", "codigo-aluno", "codigo-trabalho-aluno")]
+
+    # (a) No code entries → empty template (byte-equal to old)
+    if not code_only:
+        prof_entries = [e for e in entries if e.category == "codigo-professor"]
+        lines = [
+            f"# CODE_INDEX — {course_name}",
             "",
-            "| Arquivo | Linguagem | Unidade | Conceito demonstrado | Notas |",
-            "|---|---|---|---|---|",
+            profile["code_index_intro"],
+            profile["code_index_review_line"],
+            "",
         ]
-        for e in prof_entries:
-            conceito = e.professor_signal or "[a preencher]"
-            unit_str = ""
-            if e.notes and "Unidade:" in e.notes:
-                try:
-                    unit_str = e.notes.split("Unidade:")[1].strip()
-                except (IndexError, AttributeError):
-                    pass
-            lines.append(
-                f"| {Path(e.source_path).name} | {e.tags or ''} | {unit_str} | {conceito} | |"
-            )
+        if not prof_entries:
+            lines += [profile["code_index_empty"], ""]
+        lines += [
+            profile["code_index_patterns"],
+            "",
+            "<!-- Preencha conforme analisar o código -->",
+            "- [a preencher]",
+            "",
+        ]
+        result = "\n".join(lines)
+        return clamp_navigation_artifact(result, max_chars=14000, label="course/COURSE_MAP.md")
+
+    # (b) Code entries but no curation/blocks → flat table (byte-equal to old)
+    curation_entries = (code_curation or {}).get("entries", {})
+    if not curation_entries or not timeline_blocks:
+        prof_entries = [e for e in entries if e.category == "codigo-professor"]
+        lines = [
+            f"# CODE_INDEX — {course_name}",
+            "",
+            profile["code_index_intro"],
+            profile["code_index_review_line"],
+            "",
+        ]
+        if prof_entries:
+            lines += [
+                profile["code_index_section"],
+                "",
+                "| Arquivo | Linguagem | Unidade | Conceito demonstrado | Notas |",
+                "|---|---|---|---|---|",
+            ]
+            for e in prof_entries:
+                conceito = e.professor_signal or "[a preencher]"
+                unit_str = ""
+                if e.notes and "Unidade:" in e.notes:
+                    try:
+                        unit_str = e.notes.split("Unidade:")[1].strip()
+                    except (IndexError, AttributeError):
+                        pass
+                lines.append(
+                    f"| {Path(e.source_path).name} | {e.tags or ''} | {unit_str} | {conceito} | |"
+                )
+            lines.append("")
+        else:
+            lines += [profile["code_index_empty"], ""]
+        lines += [
+            profile["code_index_patterns"],
+            "",
+            "<!-- Preencha conforme analisar o código -->",
+            "- [a preencher]",
+            "",
+        ]
+        result = "\n".join(lines)
+        return clamp_navigation_artifact(result, max_chars=14000, label="course/COURSE_MAP.md")
+
+    # (c) Code entries + curation + blocks → grouped Phase-3 format
+    blocks_by_id = {b["id"]: b for b in (timeline_blocks or []) if b.get("id")}
+    by_block: dict[str, list] = {}
+    orphans: list = []
+    for e in code_only:
+        summary = (curation_entries.get(e.id()) or {}).get("summary") or {}
+        primary = summary.get("primary_block_id", "")
+        if primary and primary in blocks_by_id:
+            by_block.setdefault(primary, []).append((e, summary))
+        else:
+            orphans.append((e, summary))
+
+    lines = [f"# CODE_INDEX — {course_name}", "",
+             profile["code_index_intro"],
+             profile["code_index_review_line"], ""]
+
+    # Render por bloco (em ordem cronológica)
+    for bid in sorted(blocks_by_id.keys()):
+        entries_in = by_block.get(bid, [])
+        if not entries_in:
+            continue
+        blk = blocks_by_id[bid]
+        period = blk.get("period_label", bid)
+        topic = blk.get("primary_topic_label", "")
+        header = f"## {period} — {topic}" if topic else f"## {period}"
+        lines += [header, ""]
+        lines += ["| Título | Linguagem | Categoria | Conceitos | Papel | Arquivo |",
+                  "|---|---|---|---|---|---|"]
+        for e, s in entries_in:
+            title = s.get("inferred_title") or e.title
+            lang = s.get("language", "")
+            cat_short = {"codigo-professor": "prof",
+                         "codigo-aluno": "aluno",
+                         "codigo-trabalho-aluno": "trabalho"}.get(e.category, e.category)
+            concepts = ", ".join((s.get("concepts") or [])[:4])
+            role = s.get("pedagogical_role", "")
+            fname = Path(e.source_path).name
+            lines.append(f"| {title} | {lang} | {cat_short} | {concepts} | {role} | `{fname}` |")
         lines.append("")
-    else:
-        lines += [profile["code_index_empty"], ""]
-    lines += [
-        profile["code_index_patterns"],
+
+    # Órfãos
+    if orphans:
+        lines += ["## ⚠ Sem aula atribuída (requer atribuição manual)", ""]
+        lines += ["| Título | Linguagem | Conceitos | Arquivo |",
+                  "|---|---|---|---|"]
+        for e, s in orphans:
+            title = s.get("inferred_title") or e.title
+            lang = s.get("language", "")
+            concepts = ", ".join((s.get("concepts") or [])[:4])
+            fname = Path(e.source_path).name
+            lines.append(f"| {title} | {lang} | {concepts} | `{fname}` |")
+        lines.append("")
+
+    result = "\n".join(lines)
+    return clamp_navigation_artifact(result, max_chars=14000, label="course/CODE_INDEX.md")
+
+
+def cronograma_detalhado_md(
+    course_meta: dict,
+    entries: list,
+    code_curation: dict,
+    timeline_blocks: list[dict],
+    subject_profile=None,
+) -> str:
+    """Render bloco-por-bloco com tópicos + códigos vinculados.
+
+    Estrutura code-only nesta iteração. Seções placeholder ("Materiais",
+    "Exercícios") ficam comentadas/vazias até material-agnostic refactor.
+    """
+    course_name = course_meta.get("course_name", "Curso")
+    curation_entries = (code_curation or {}).get("entries", {})
+
+    # Index: code entries primários e secundários por block
+    primary_idx: dict[str, list] = {}
+    secondary_idx: dict[str, list] = {}
+    for e in entries:
+        if e.file_type not in ("code", "zip"):
+            continue
+        if e.category not in ("codigo-professor", "codigo-aluno", "codigo-trabalho-aluno"):
+            continue
+        s = (curation_entries.get(e.id()) or {}).get("summary") or {}
+        if s.get("primary_block_id"):
+            primary_idx.setdefault(s["primary_block_id"], []).append((e, s))
+        for sb in (s.get("secondary_block_ids") or []):
+            secondary_idx.setdefault(sb, []).append((e, s))
+
+    lines = [
+        f"# CRONOGRAMA DETALHADO — {course_name}",
         "",
-        "<!-- Preencha conforme analisar o código -->",
-        "- [a preencher]",
+        "> Visão aula-por-aula com tópicos cobertos e materiais vinculados.",
+        "> **Nesta versão**: apenas códigos. Expansão futura: PDFs, exercícios, imagens.",
         "",
     ]
-    result = "\n".join(lines)
-    return clamp_navigation_artifact(result, max_chars=14000, label="course/COURSE_MAP.md")
+
+    for blk in timeline_blocks:
+        bid = blk["id"]
+        period = blk.get("period_label", bid)
+        topic = blk.get("primary_topic_label", "")
+        topics = blk.get("topics") or []
+        unit_slug = blk.get("unit_slug", "")
+
+        header = f"## {period}"
+        if topic:
+            header += f" — {topic}"
+        lines += [header, ""]
+
+        if unit_slug:
+            lines.append(f"**Unidade**: {unit_slug}")
+        if topics:
+            lines.append(f"**Tópicos cobertos**: {', '.join(topics)}")
+        lines.append("")
+
+        # Materiais (code-only por enquanto)
+        primaries = primary_idx.get(bid, [])
+        secondaries = secondary_idx.get(bid, [])
+
+        if primaries or secondaries:
+            lines += ["### Códigos desta aula", ""]
+            for e, s in primaries:
+                title = s.get("inferred_title") or e.title
+                fname = Path(e.source_path).name
+                concepts = ", ".join((s.get("concepts") or [])[:4])
+                role = s.get("pedagogical_role", "")
+                lines.append(f"- **{title}** (`{fname}`)")
+                if concepts:
+                    lines.append(f"  - Conceitos: {concepts}")
+                if role:
+                    lines.append(f"  - Papel: {role}")
+            if secondaries:
+                lines += ["", "**Também relevante** (outras aulas como contexto):", ""]
+                for e, s in secondaries:
+                    title = s.get("inferred_title") or e.title
+                    fname = Path(e.source_path).name
+                    lines.append(f"- {title} (`{fname}`)")
+        else:
+            lines.append("_Sem códigos vinculados a esta aula._")
+
+        lines += ["", "<!-- TODO (material-agnostic refactor): PDFs, exercícios, imagens -->", "", "---", ""]
+
+    return "\n".join(lines)
+
+
+def code_health_md(
+    course_meta: dict,
+    entries: list,
+    code_curation: dict,
+    timeline_blocks: list[dict],
+    glossary_terms: Optional[set[str]] = None,
+) -> str:
+    course_name = course_meta.get("course_name", "Curso")
+    curation_entries = (code_curation or {}).get("entries", {})
+    code_entries = [e for e in entries if e.file_type in ("code", "zip")
+                    and e.category and e.category.startswith("codigo")]
+
+    total = len(code_entries)
+    with_summary = sum(1 for e in code_entries if e.id() in curation_entries)
+    pct = (with_summary / total * 100) if total else 0
+
+    # Cobertura timeline
+    with_block = 0
+    orphans_list = []
+    for e in code_entries:
+        s = (curation_entries.get(e.id()) or {}).get("summary") or {}
+        if s.get("primary_block_id"):
+            with_block += 1
+        elif s:  # tem summary mas sem block
+            orphans_list.append((e, s))
+
+    # Cobertura por unidade
+    by_unit: dict[str, int] = {}
+    for e in code_entries:
+        key = e.tags or "(sem unidade)"
+        by_unit[key] = by_unit.get(key, 0) + 1
+
+    # Conceitos
+    all_concepts: set[str] = set()
+    for eid in curation_entries:
+        all_concepts.update(
+            (curation_entries[eid].get("summary") or {}).get("concepts") or []
+        )
+
+    lines = [
+        f"# CODE_HEALTH — {course_name}",
+        "",
+        "> Relatório auto-gerado da saúde da base de código.",
+        "",
+        "## Cobertura de resumos",
+        f"- Códigos totais: **{total}**",
+        f"- Com resumo Gemini: **{with_summary} / {total} ({pct:.0f}%)**",
+        f"- Sem resumo: **{total - with_summary}**",
+        "",
+        "## Cobertura timeline",
+        f"- Vinculados a aula: **{with_block} / {with_summary}**",
+        f"- Órfãos (resumo sem aula): **{len(orphans_list)}**",
+    ]
+    if orphans_list:
+        lines += ["", "### Órfãos (requer atribuição manual)"]
+        for e, s in orphans_list[:30]:
+            title = s.get("inferred_title") or e.title
+            lines.append(f"- `{Path(e.source_path).name}` — {title}")
+
+    lines += ["", "## Cobertura por unidade"]
+    for unit, n in sorted(by_unit.items()):
+        lines.append(f"- {unit}: {n} código(s)")
+
+    if glossary_terms is not None:
+        intersect = all_concepts & glossary_terms
+        orphan_concepts = sorted(all_concepts - glossary_terms)
+        lines += ["", "## Conceitos vs Glossário",
+                  f"- Conceitos extraídos: **{len(all_concepts)}**",
+                  f"- Match com glossário: **{len(intersect)}**"]
+        if orphan_concepts:
+            lines.append(f"- ⚠ Órfãos (no resumo mas não no glossário): {len(orphan_concepts)}")
+            lines += [f"  - {c}" for c in orphan_concepts[:20]]
+
+    return "\n".join(lines)
 
 
 def whiteboard_index_md(course_meta: dict, entries=None, *, clamp_navigation_artifact: Callable[..., str]) -> str:

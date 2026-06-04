@@ -149,6 +149,7 @@ from src.builder.ops.incremental_build import (
 from src.builder.ops.lifecycle_ops import (
     process_single_impl as _lifecycle_ops_process_single_impl,
     reject as _lifecycle_ops_reject,
+    sweep_orphans as _lifecycle_ops_sweep_orphans,
     unprocess as _lifecycle_ops_unprocess,
 )
 from src.builder.ops.bootstrap_ops import (
@@ -179,7 +180,13 @@ from src.builder.core.image_resolution import (
     IMG_RE as _core_image_resolution_img_re,
     find_image as _core_image_resolution_find_image,
     inject_all_image_descriptions as _core_image_resolution_inject_all_image_descriptions,
+    prune_stale_image_curation as _core_image_resolution_prune_stale_image_curation,
     resolve_content_images as _core_image_resolution_resolve_content_images,
+)
+from src.builder.core.code_summarization import (
+    prune_stale_code_curation as _core_code_summarization_prune_stale,
+    load_code_curation as _core_code_summarization_load,
+    summarize_all_code_entries as _core_code_summarization_summarize_all,
 )
 from src.builder.artifacts import student_state as student_state_v2
 from src.builder.artifacts.pedagogy import (
@@ -269,10 +276,16 @@ from src.utils.helpers import (
 )
 from src.utils.power import prevent_system_sleep
 
-if HAS_PYMUPDF:
+# Bind sempre o nome (None se indisponivel) p/ o atributo do modulo existir mesmo
+# sem o pacote instalado: testes fazem monkeypatch e codigo le `pymupdf if HAS_PYMUPDF`.
+try:
     import pymupdf
-if HAS_PYMUPDF4LLM:
+except ImportError:
+    pymupdf = None
+try:
     import pymupdf4llm
+except ImportError:
+    pymupdf4llm = None
 if HAS_PDFPLUMBER:
     import pdfplumber
 
@@ -320,6 +333,8 @@ def _build_content_taxonomy(
 
 _write_internal_content_taxonomy = _content_taxonomy.write_internal_content_taxonomy
 _collect_strong_heading_candidates = _content_taxonomy.collect_strong_heading_candidates
+_build_unit_tag_index = _content_taxonomy.build_unit_tag_index
+_resolve_unit_block_tags = _content_taxonomy.resolve_unit_block_tags
 
 
 def _write_tag_catalog(
@@ -464,7 +479,7 @@ class BackendContext:
     def __init__(self, root_dir: Path, raw_target: Path, entry: FileEntry, report: DocumentProfileReport,
                  cancel_check=None, stall_timeout: int = 300, marker_chunking_mode: str = "fallback",
                  marker_use_llm: bool = False, marker_llm_model: str = "", marker_torch_device: str = "auto", ollama_base_url: str = "",
-                 vision_model: str = ""):
+                 vision_model: str = "", image_description_source: str = "ollama"):
         self.root_dir = root_dir
         self.raw_target = raw_target
         self.entry = entry
@@ -479,6 +494,7 @@ class BackendContext:
         self.marker_torch_device = str(marker_torch_device or "auto").strip().lower() or "auto"
         self.ollama_base_url = str(ollama_base_url or "").strip()
         self.vision_model = str(vision_model or "").strip()
+        self.image_description_source = str(image_description_source or "ollama").strip().lower()
 
     def page_label(self) -> str:
         return self.entry.page_range.strip() or "all"
@@ -858,6 +874,44 @@ def _strip_pagination_markers(text: str) -> str:
     return cleaned
 
 
+def _extract_datalab_captions(raw_markdown: str, image_page_map: Dict[str, int]) -> dict:
+    """Parse DataLab raw markdown for image captions; return image_curation dict."""
+    from datetime import datetime
+
+    pattern = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
+    pages: Dict[str, dict] = {}
+    now = datetime.utcnow().isoformat(timespec="seconds")
+
+    for m in pattern.finditer(raw_markdown):
+        caption = m.group(1).strip()
+        filename = m.group(2).strip()
+        saved_name = filename if filename.startswith("datalab-") else f"datalab-{filename}"
+        page_num = image_page_map.get(saved_name) or image_page_map.get(filename) or 1
+        page_key = f"page_{page_num}"
+        pages.setdefault(page_key, {"include_page": True, "images": {}})
+        pages[page_key]["images"][saved_name] = {
+            "description": caption,
+            "source": "datalab",
+            "described_at": now,
+            "type": "generico",
+            "include": True,
+        }
+
+    if not pages:
+        return {}
+    return {"pages": pages}
+
+
+def _merge_image_curations(curations: list) -> dict:
+    """Merge multiple image_curation dicts (from chunked DataLab runs) into one."""
+    merged: Dict[str, dict] = {}
+    for c in curations:
+        for page_key, page_data in (c.get("pages") or {}).items():
+            merged.setdefault(page_key, {"include_page": True, "images": {}})
+            merged[page_key]["images"].update(page_data.get("images") or {})
+    return {"pages": merged}
+
+
 class DatalabCloudBackend(ExtractionBackend):
     name = "datalab"
     layer = "advanced"
@@ -874,16 +928,16 @@ class DatalabCloudBackend(ExtractionBackend):
         max_wait_seconds: int,
         page_offset: int = 0,
     ):
+        use_captions = (ctx.image_description_source == "datalab")
         result = convert_document_to_markdown(
             ctx.raw_target,
             output_format="markdown",
             mode=mode,
             page_range=page_range,
-            disable_image_captions=True,
+            disable_image_captions=not use_captions,
             disable_image_extraction=False,
             paginate=True,
             token_efficient_markdown=False,
-            request_timeout=60,
             poll_interval=2.0,
             max_wait_seconds=max_wait_seconds,
         )
@@ -892,7 +946,7 @@ class DatalabCloudBackend(ExtractionBackend):
         markdown = _sanitize_external_markdown_text(raw_markdown)
         markdown = _strip_pagination_markers(markdown)
         markdown = _strip_markdown_image_refs(markdown)
-        return result, markdown, image_page_map
+        return result, markdown, image_page_map, raw_markdown
 
     def _save_datalab_images(
         self, images: dict, entry_id: str, root_dir: Path
@@ -942,7 +996,7 @@ class DatalabCloudBackend(ExtractionBackend):
         )
 
         try:
-            result, markdown, image_page_map = self._convert_range(
+            result, markdown, image_page_map, raw_markdown = self._convert_range(
                 ctx,
                 mode=mode,
                 page_range=page_range,
@@ -965,6 +1019,10 @@ class DatalabCloudBackend(ExtractionBackend):
             )
             logger.info("  [datalab] %d imagens salvas em %s.", len(saved_images), images_dir_path)
 
+        image_curation = None
+        if ctx.image_description_source == "datalab" and raw_markdown:
+            image_curation = _extract_datalab_captions(raw_markdown, image_page_map) or None
+
         self._save_datalab_image_pages(image_page_map, out_dir)
 
         write_text(out_path, markdown)
@@ -983,7 +1041,7 @@ class DatalabCloudBackend(ExtractionBackend):
             "parse_quality_score": result.parse_quality_score,
             "cost_breakdown": result.cost_breakdown,
             "disable_image_extraction": False,
-            "disable_image_captions": True,
+            "disable_image_captions": (ctx.image_description_source != "datalab"),
             "images_saved": saved_images,
             "metadata": result.metadata,
             "raw_response_tail": {
@@ -996,8 +1054,11 @@ class DatalabCloudBackend(ExtractionBackend):
         notes = [
             "Saída avançada gerada com Datalab Document Conversion API.",
             f"Modo: {mode}.",
-            "Descrições sintéticas do Datalab desativadas; a curadoria de imagens permanece app-side.",
         ]
+        if ctx.image_description_source == "datalab":
+            notes.append("Descrições de imagem extraídas das captions do DataLab e salvas no manifest.")
+        else:
+            notes.append("Descrições sintéticas do Datalab desativadas; a curadoria de imagens permanece app-side.")
         if saved_images:
             notes.append(f"{len(saved_images)} imagens extraídas pelo Datalab e salvas em staging/assets/images/.")
         if result.parse_quality_score is not None:
@@ -1012,6 +1073,7 @@ class DatalabCloudBackend(ExtractionBackend):
             metadata_path=safe_rel(metadata_path, ctx.root_dir),
             notes=notes,
             images_dir=safe_rel(images_dir_path, ctx.root_dir) if images_dir_path and saved_images else None,
+            image_curation=image_curation,
         )
 
     def _run_chunked_datalab(
@@ -1049,6 +1111,7 @@ class DatalabCloudBackend(ExtractionBackend):
         total_pages = 0
         all_saved_images: list = []
         merged_image_page_map: dict = {}
+        _chunk_curations: list = []
 
         for idx, chunk_pages in enumerate(chunks, start=1):
             chunk_range = pages_to_marker_range(chunk_pages)
@@ -1060,7 +1123,7 @@ class DatalabCloudBackend(ExtractionBackend):
                 chunk_pages[-1] + 1,
             )
             try:
-                result, markdown, chunk_image_page_map = self._convert_range(
+                result, markdown, chunk_image_page_map, raw_markdown = self._convert_range(
                     ctx,
                     mode=mode,
                     page_range=chunk_range,
@@ -1083,6 +1146,11 @@ class DatalabCloudBackend(ExtractionBackend):
             if result.images:
                 _, saved_chunk = self._save_datalab_images(result.images, ctx.entry_id, ctx.root_dir)
                 all_saved_images.extend(saved_chunk)
+
+            if ctx.image_description_source == "datalab" and raw_markdown:
+                chunk_curation = _extract_datalab_captions(raw_markdown, chunk_image_page_map)
+                if chunk_curation:
+                    _chunk_curations.append(chunk_curation)
 
             chunk_body = _strip_frontmatter_block(markdown).strip()
             if chunk_body:
@@ -1135,17 +1203,22 @@ class DatalabCloudBackend(ExtractionBackend):
             "parse_quality_score": average_score,
             "cost_breakdown": _merge_numeric_dicts(cost_breakdowns),
             "disable_image_extraction": False,
-            "disable_image_captions": True,
+            "disable_image_captions": (ctx.image_description_source != "datalab"),
             "images_saved": all_saved_images,
             "chunks": chunk_meta,
         }, indent=2, ensure_ascii=False))
+
+        image_curation = _merge_image_curations(_chunk_curations) if _chunk_curations else None
 
         notes = [
             "Saída avançada gerada com Datalab Document Conversion API em chunks.",
             f"Modo: {mode}.",
             f"Chunking aplicado para documento longo ({len(chunks)} chunks de até {chunk_size} páginas).",
-            "Descrições sintéticas do Datalab desativadas; a curadoria de imagens permanece app-side.",
         ]
+        if ctx.image_description_source == "datalab":
+            notes.append("Descrições de imagem extraídas das captions do DataLab e salvas no manifest.")
+        else:
+            notes.append("Descrições sintéticas do Datalab desativadas; a curadoria de imagens permanece app-side.")
         if all_saved_images:
             notes.append(f"{len(all_saved_images)} imagens extraídas pelo Datalab e salvas em staging/assets/images/.")
         if average_score is not None:
@@ -1164,6 +1237,7 @@ class DatalabCloudBackend(ExtractionBackend):
             metadata_path=safe_rel(metadata_path, ctx.root_dir),
             notes=notes,
             images_dir=safe_rel(images_dir_path, ctx.root_dir) if images_dir_path else None,
+            image_curation=image_curation,
         )
 
     def run(self, ctx: BackendContext) -> BackendRunResult:
@@ -1769,6 +1843,29 @@ class RepoBuilder:
     def _resolve_content_images(self) -> None:
         _core_image_resolution_resolve_content_images(self)
 
+    def _prune_stale_image_curation(self) -> int:
+        return _core_image_resolution_prune_stale_image_curation(self)
+
+    def _prune_stale_code_curation(self) -> int:
+        return _core_code_summarization_prune_stale(self)
+
+    def _load_code_curation(self) -> dict:
+        return _core_code_summarization_load(self.root_dir)
+
+    def _load_timeline_blocks(self) -> list[dict]:
+        import json as _json
+        path = self.root_dir / "course" / ".timeline_index.json"
+        if not path.exists():
+            return []
+        try:
+            data = _json.loads(path.read_text(encoding="utf-8"))
+            return data.get("blocks", []) or []
+        except Exception:
+            return []
+
+    def _summarize_code_entries(self, client, progress_cb=None) -> dict:
+        return _core_code_summarization_summarize_all(self, client, progress_cb)
+
     def _find_image(self, raw_path: str, md_file: Path) -> Optional[Path]:
         return _core_image_resolution_find_image(self.root_dir, raw_path, md_file)
 
@@ -2069,6 +2166,17 @@ class RepoBuilder:
             glossary_md_fn=glossary_md,
             write_tag_catalog_fn=_write_tag_catalog,
             refresh_manifest_auto_tags_fn=_refresh_manifest_auto_tags,
+            resolve_unit_block_tags_fn=partial(
+                _resolve_unit_block_tags,
+                build_file_map_unit_index_from_course_fn=_build_file_map_unit_index_from_course,
+                build_file_map_timeline_context_from_course_fn=_build_file_map_timeline_context_from_course,
+                iter_content_taxonomy_topics_fn=_iter_content_taxonomy_topics,
+                auto_map_entry_subtopic_fn=_auto_map_entry_subtopic,
+                auto_map_entry_unit_fn=_auto_map_entry_unit,
+                select_probable_period_for_entry_fn=_select_probable_period_for_entry,
+                resolve_entry_manual_timeline_block_fn=_resolve_entry_manual_timeline_block,
+                entry_markdown_text_for_file_map_fn=_entry_markdown_text_for_file_map,
+            ),
             syllabus_md_fn=syllabus_md,
             exam_index_md_fn=exam_index_md,
             exercise_index_md_fn=exercise_index_md,
@@ -2114,6 +2222,9 @@ class RepoBuilder:
 
     def reject(self, entry_id: str) -> Optional[Dict[str, object]]:
         return _lifecycle_ops_reject(self, entry_id)
+
+    def sweep_orphans(self) -> Dict[str, object]:
+        return _lifecycle_ops_sweep_orphans(self)
 
 
 # ---------------------------------------------------------------------------
@@ -2301,6 +2412,7 @@ _navigation_template_aliases = _build_navigation_template_aliases(
     entry_usage_hint=_entry_usage_hint,
     entry_priority_label=_entry_priority_label,
     collapse_ws=_collapse_ws,
+    build_unit_tag_index_fn=_build_unit_tag_index,
 )
 root_readme = _navigation_template_aliases["root_readme"]
 wrap_frontmatter = _navigation_template_aliases["wrap_frontmatter"]
@@ -2390,6 +2502,7 @@ __all__ = [
     "_parse_timeline_date_value",
     "_repair_mojibake_text",
     "_resolve_entry_manual_timeline_block",
+    "_resolve_unit_block_tags",
     "_sanitize_external_markdown_text",
     "_score_entry_against_timeline_block",
     "_score_entry_against_unit",

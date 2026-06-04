@@ -920,7 +920,7 @@ def test_file_map_md_prefers_exercise_block_over_intro_row_in_realistic_schedule
 
     assert unit_match.slug == "unidade-01-metodos-formais"
     assert period_ambiguous is False
-    assert probable_period == "11/03/2026 a 25/03/2026"
+    assert probable_period == "5 dias · 11/03/2026 a 25/03/2026"
 
 
 def test_file_map_timeline_context_filters_rows_outside_unit_period():
@@ -976,8 +976,8 @@ def test_file_map_timeline_context_exposes_blocks_by_unit():
     context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
     blocks = context["blocks_by_unit"]["unidade-01-metodos-formais"]
 
-    assert context["timeline_index"]["version"] == 3
-    assert blocks[0]["period_label"] == "11/03/2026 a 25/03/2026"
+    assert context["timeline_index"]["version"] == 4
+    assert blocks[0]["period_label"] == "5 dias · 11/03/2026 a 25/03/2026"
 
 
 def test_build_timeline_index_serializes_sessions_inside_block():
@@ -1005,8 +1005,8 @@ def test_build_timeline_index_serializes_sessions_inside_block():
     timeline_index = _build_timeline_index(candidate_rows, unit_index=[], content_taxonomy={})
     serialized = _serialize_timeline_index(timeline_index)
 
-    assert timeline_index["version"] == 3
-    assert serialized["version"] == 3
+    assert timeline_index["version"] == 4
+    assert serialized["version"] == 4
     assert timeline_index["blocks"][0]["card_evidence"]
     assert timeline_index["blocks"][0]["card_evidence"][0]["normalized_title"] == "especificacoes recursivas e provas por inducao"
     assert timeline_index["blocks"][0]["sessions"]
@@ -1046,7 +1046,7 @@ def test_file_map_timeline_context_extends_program_verification_unit_with_glossa
 
     context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
 
-    assert context["unit_periods"]["unidade-02-verificacao-de-programas"] == "27/04/2026 a 08/06/2026"
+    assert context["unit_periods"]["unidade-02-verificacao-de-programas"] == "4 blocos · 27/04/2026 a 08/06/2026"
 
 
 def test_select_probable_period_for_entry_prefers_blocks_matching_subtopic():
@@ -1419,7 +1419,7 @@ def test_file_map_md_keeps_period_column_empty_without_subject_profile():
 
     result = file_map_md(course_meta, entries)
 
-    assert "| Unidade | Confiança | Período |" in result
+    assert "| Unidade | Subtópico | Confiança | Período |" in result
     assert "Aula 1" in result
 
 
@@ -1580,9 +1580,9 @@ def test_file_map_skips_timeline_for_reference_categories():
     for title in ("Ref X", "Bib Y", "Refs PT"):
         row = next(line for line in result.splitlines() if f"| {title} |" in line)
         cells = [c.strip() for c in row.strip().strip("|").split("|")]
-        # Columns: #, Título, Categoria, Quando abrir, Prioridade, Markdown, Seções, Unidade, Confiança, Período
+        # Columns: #, Título, Categoria, Quando abrir, Prioridade, Markdown, Seções, Unidade, Subtópico, Confiança, Período
         unit_cell = cells[7]
-        period_cell = cells[9]
+        period_cell = cells[10]
         assert unit_cell in ("", "curso-inteiro")
         assert "unidade-" not in unit_cell
         assert period_cell == ""
@@ -1624,3 +1624,108 @@ def test_resolve_entry_manual_timeline_block_falls_back_to_nth_instructional_blo
 
     assert resolved is not None
     assert resolved["id"] == "bloco-auto-005"
+
+
+def test_build_content_taxonomy_filters_noise_topics_without_code():
+    taxonomy = _build_content_taxonomy(
+        teaching_plan="""
+### Unidade 01 — Introdução ao estudo de sistemas operacionais
+- [ ] **1.1** Evolução histórica
+- [ ] **1.2** Chamadas de sistema
+- [ ] Aulas expositivas nas quais se buscará a participação dos alunos em um processo de discussão.
+- [ ] Uso de projetor multimídia.
+- [ ] Uso de laboratório para elaboração de trabalhos práticos.
+- [ ] Nesta unidade deve-se abordar a evolução histórica dos sistemas operacionais.
+""".strip(),
+        course_map_md="",
+        glossary_md="",
+    )
+
+    unit = taxonomy["units"][0]
+    slugs = [t["slug"] for t in unit["topics"]]
+
+    # Tópicos com código devem estar presentes
+    assert "11-evolucao-historica" in slugs
+    assert "12-chamadas-de-sistema" in slugs
+
+    # Noise topics sem código devem ter sido filtrados
+    noise_slugs = [
+        "uso-de-projetor-multimidia",
+        "uso-de-laboratorio-para-elaboracao-de-trabalhos-praticos",
+    ]
+    for noise in noise_slugs:
+        assert noise not in slugs, f"Noise topic '{noise}' should have been filtered"
+
+    # Descrição longa (7+ palavras) sem código deve ser filtrada
+    long_noise = [s for s in slugs if len(s) > 60]
+    assert not long_noise, f"Long noise slug found: {long_noise}"
+
+
+def test_build_content_taxonomy_includes_topic_42_comunicacao():
+    taxonomy = _build_content_taxonomy(
+        teaching_plan="""
+### Unidade 03 — Programação concorrente
+- [ ] **4.1** Programas multithreads
+- [ ] **4.2** Comunicação e sincronização de processos
+- [ ] **4.3** Primitivas de sincronização
+""".strip(),
+        course_map_md="",
+        glossary_md="",
+    )
+
+    unit = taxonomy["units"][0]
+    slugs = [t["slug"] for t in unit["topics"]]
+    assert "41-programas-multithreads" in slugs
+    assert "42-comunicacao-e-sincronizacao-de-processos" in slugs
+    assert "43-primitivas-de-sincronizacao" in slugs
+
+
+def test_file_map_md_includes_subtopic_column_in_header():
+    profile = SubjectProfile(
+        name="Sistemas Operacionais",
+        teaching_plan="""
+### Unidade 02 — Gerência do Processador
+- [ ] **3.2** Escalonamento
+- [ ] **3.3** Algoritmos de escalonamento
+""".strip(),
+    )
+    entries = [
+        {
+            "id": "2604-escalonamento",
+            "title": "26.04 Algoritimos de Escalonamento",
+            "category": "material-de-aula",
+            "auto_tags": ["topico:32-escalonamento"],
+        }
+    ]
+    course_meta = {
+        "course_name": "Sistemas Operacionais",
+        "_timeline_context_for_tests": {},
+    }
+    result = file_map_md(course_meta, entries, subject_profile=profile)
+
+    assert "Subtópico" in result, "FILE_MAP header should contain 'Subtópico' column"
+
+
+def test_file_map_md_shows_subtopic_label_for_matched_entry():
+    profile = SubjectProfile(
+        name="Sistemas Operacionais",
+        teaching_plan="""
+### Unidade 02 — Gerência do Processador
+- [ ] **3.2** Escalonamento
+""".strip(),
+    )
+    entries = [
+        {
+            "id": "2604-escalonamento",
+            "title": "Algoritimos de Escalonamento",
+            "category": "material-de-aula",
+            "auto_tags": ["topico:32-escalonamento"],
+        }
+    ]
+    course_meta = {
+        "course_name": "Sistemas Operacionais",
+        "_timeline_context_for_tests": {},
+    }
+    result = file_map_md(course_meta, entries, subject_profile=profile)
+
+    assert "3.2" in result and "Escalonamento" in result
