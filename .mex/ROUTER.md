@@ -50,6 +50,11 @@ Read this file before starting any task.
   (resumo + mapa de relevancia). Cache por hash em `references_curation.json`.
   Wiring em `build_workflow._run_auto_code_summarization` (referencias mapeiam
   mesmo sem chave Gemini; reload do manifest pos-enriquecimento).
+- Clone de repo GitHub (`process_github_repo`, `source_importers.py`) detecta o
+  branch default via `git ls-remote --symref HEAD` (`_detect_default_branch`;
+  tags pinam branch explicito, fallback `main`) e clona com
+  `git -c core.longpaths=true`. Conserta repos com default `master`/outro
+  (`Remote branch main not found`) e long-path no Windows (`Filename too long`).
 
 ### Not Declared In Brief
 

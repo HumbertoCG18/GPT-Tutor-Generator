@@ -50,10 +50,10 @@ _Histórico do problema (resolvido):_
 **Por que parou:** a killer-app (gerar a sequência canônica de datas) está **bloqueada por dados** — não há calendário acadêmico estruturado (feriados só vêm do texto do cronograma; `semester` é string livre) — **e é redundante**: o cronograma já carrega as datas reais das aulas. Ganho restante é modesto. Campo `schedule` está vazio em todos os 5 repos reais.
 
 ### Conserto do clone completo de repo GitHub
-**Status:** bug confirmado nos dados reais. Contornado pela spec de referências.
-**Resumo:** `process_github_repo` (`source_importers.py:235`) força branch `main` → repos com default `master`/outro falham (`Remote branch main not found`). Repos grandes falham no checkout por long-path do Windows (`Filename too long`). Resultado: 8/8 referências com `extracted_files=0`. (Mesmo `main` hardcoded em `prompts.py:484`.)
-**Por que parou:** a spec de referências usa README-fetch (API GitHub, sem clone), que contorna. Clone completo só importa pra **análise de código de verdade** (não contexto de referência). Vira issue quando precisar disso.
-**Fix esperado:** detectar branch default (não hardcode); `git config core.longpaths true` ou clone shallow/sparse.
+**Status:** RESOLVIDO nesta branch (`2d3081b`).
+**Resumo do bug:** `process_github_repo` (`source_importers.py`) forçava branch `main` → repos com default `master`/outro falhavam (`Remote branch main not found`). Repos grandes falhavam no checkout por long-path do Windows (`Filename too long`). Resultado: 8/8 referências com `extracted_files=0`.
+**Fix entregue:** `_detect_default_branch` via `git ls-remote --symref HEAD` (tags ainda pinam branch explícito; vazio → default detectado; fallback `main` seguro) + clone roda com `git -c core.longpaths=true`. TDD: `tests/test_github_clone_branch.py` (6 casos). Destrava análise de código de repo GitHub e fetch profundo de referência.
+**Follow-up aberto:** `prompts.py:484` ainda monta o raw URL do **repo de saída do próprio tutor** com `/main` fixo (`raw.githubusercontent.com/.../main`). Mecanismo distinto (sem clone; é o repo que o tutor gera) e sem fonte de branch disponível no `subject_profile` — repo de saída quase sempre é `main`. Tratar só quando houver um campo de branch no perfil.
 
 ### Token GitHub (rate limit)
 **Status:** follow-up da spec de referências.
