@@ -18,7 +18,7 @@ def test_ref_with_topic_goes_to_by_topic():
     entries = [{"id": "e1", "title": "Flask", "source_path": "https://github.com/pallets/flask", "file_type": "github-repo"}]
     cur = _curation({"e1": {"computed_ref_unit": "web", "computed_ref_topics": ["Rotas HTTP"], "ref_concepts": ["Flask", "WSGI"]}})
     idx = rn.build_unit_topic_reference_index(entries, cur)
-    key = ("web", rn._norm_topic("Rotas HTTP"))
+    key = ("web", rn._topic_key("Rotas HTTP"))
     assert key in idx["by_topic"]
     assert idx["by_topic"][key][0]["entry_id"] == "e1"
     assert idx["by_topic"][key][0]["type"] == "repo"

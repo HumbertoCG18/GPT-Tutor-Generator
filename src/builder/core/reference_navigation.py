@@ -6,12 +6,17 @@ apoio do COURSE_MAP. Puro: sem I/O, sem rede, saída determinística.
 """
 from __future__ import annotations
 
+from src.builder.text.normalize import normalize_match_text
+from src.builder.routing.file_map import strip_outline_prefix
+
 _REF_CAP_PER_ANCHOR = 2
 
 
-def _norm_topic(s: str) -> str:
-    """Normalizador trivial de label de tópico, idêntico nos dois lados do match."""
-    return " ".join((s or "").lower().split())
+def _topic_key(label: str) -> str:
+    """Chave canônica de tópico: mesma normalização que produz computed_ref_topics
+    (topic_phrases via normalize_match_text(strip_outline_prefix(...)) em
+    routing/file_map.py:88). Idempotente sobre valores já normalizados."""
+    return normalize_match_text(strip_outline_prefix(label or ""))
 
 
 def _ref_type(source_path: str, file_type: str) -> str:
@@ -63,6 +68,6 @@ def build_unit_topic_reference_index(manifest_entries: list, reference_curation:
     for ref in refs:
         by_unit.setdefault(ref["unit_slug"], []).append(ref)
         for topic_label in ref["topics"]:
-            key = (ref["unit_slug"], _norm_topic(topic_label))
+            key = (ref["unit_slug"], _topic_key(topic_label))
             by_topic.setdefault(key, []).append(ref)
     return {"by_unit": by_unit, "by_topic": by_topic}

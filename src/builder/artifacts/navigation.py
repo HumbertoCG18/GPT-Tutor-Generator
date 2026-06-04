@@ -14,7 +14,7 @@ from src.utils.helpers import (
     write_text,
 )
 from src.builder.core.reference_navigation import (
-    _norm_topic as _ref_norm_topic,
+    _topic_key as _ref_topic_key,
     _ref_support_line,
     _REF_CAP_PER_ANCHOR,
 )
@@ -467,7 +467,7 @@ def render_low_token_course_map_md(
                 for topic in topics:
                     indent = "  " * topic_depth(topic)
                     lines.append(f"{indent}- [ ] {topic_text(topic)}")
-                    tkey = (unit_slug, _ref_norm_topic(topic_text(topic)))
+                    tkey = (unit_slug, _ref_topic_key(topic_text(topic)))
                     bucket = ref_by_topic.get(tkey, [])
                     for r in bucket:
                         topic_anchored.add(r["entry_id"])
