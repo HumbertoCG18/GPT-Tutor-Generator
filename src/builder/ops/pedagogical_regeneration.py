@@ -295,9 +295,13 @@ def regenerate_pedagogical_files(
 
     bib_entries = [e for e in all_entries if e.category == "bibliografia"]
     if bib_entries or getattr(builder.subject_profile, "teaching_plan", ""):
+        from src.builder.core.reference_summary import load_reference_curation
         write_text(
             builder.root_dir / "content" / "BIBLIOGRAPHY.md",
-            bibliography_md_fn(builder.course_meta, bib_entries, builder.subject_profile),
+            bibliography_md_fn(
+                builder.course_meta, bib_entries, builder.subject_profile,
+                reference_curation=load_reference_curation(builder.root_dir),
+            ),
         )
 
     assignment_entries = [e for e in all_entries if e.category in assignment_categories]

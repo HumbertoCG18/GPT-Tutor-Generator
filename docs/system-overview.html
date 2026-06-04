@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GPT-Tutor-Generator — Visão Geral do Sistema</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2330; --line:#30363d;
+    --txt:#e6edf3; --muted:#8b949e; --accent:#58a6ff; --accent2:#a371f7;
+    --green:#3fb950; --amber:#d29922; --red:#f85149; --cyan:#39c5cf;
+    --pink:#db61a2; --shadow:0 6px 24px rgba(0,0,0,.45);
+    --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--sans);line-height:1.55;
+    background-image:radial-gradient(circle at 15% -10%,rgba(88,166,255,.08),transparent 40%),
+                     radial-gradient(circle at 90% 0%,rgba(163,113,247,.08),transparent 40%);}
+  .wrap{max-width:1240px;margin:0 auto;padding:40px 28px 80px}
+  header.hero{margin-bottom:34px}
+  .hero h1{font-size:2.1rem;margin:0 0 6px;letter-spacing:-.5px}
+  .hero .sub{color:var(--muted);font-size:1.02rem}
+  .hero .meta{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+  .chip{font-family:var(--mono);font-size:.74rem;background:var(--panel2);border:1px solid var(--line);
+    padding:4px 10px;border-radius:20px;color:var(--muted)}
+  .chip b{color:var(--accent)}
+  h2.section{font-size:1.35rem;margin:54px 0 8px;display:flex;align-items:center;gap:10px}
+  h2.section .n{font-family:var(--mono);font-size:.85rem;color:var(--bg);background:var(--accent);
+    width:26px;height:26px;display:grid;place-items:center;border-radius:7px;font-weight:700}
+  .lead{color:var(--muted);margin:0 0 22px;max-width:860px}
+
+  /* ---- pipeline horizontal ---- */
+  .pipe{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:6px 2px 16px}
+  .stage{flex:1 0 150px;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:14px 14px 16px;position:relative;box-shadow:var(--shadow)}
+  .stage + .stage{margin-left:30px}
+  .stage::after{content:"›";position:absolute;right:-24px;top:50%;transform:translateY(-50%);
+    font-size:1.7rem;color:var(--accent);font-weight:700}
+  .stage:last-child::after{display:none}
+  .stage .ico{font-size:1.3rem}
+  .stage h4{margin:8px 0 4px;font-size:.96rem}
+  .stage p{margin:0;font-size:.78rem;color:var(--muted)}
+  .stage .mod{margin-top:9px;font-family:var(--mono);font-size:.68rem;color:var(--cyan);word-break:break-all}
+
+  /* ---- generic grid of cards ---- */
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+  .card h3{margin:0 0 10px;font-size:1.02rem;display:flex;align-items:center;gap:8px}
+  .card h3 .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+  .card p{margin:0 0 8px;font-size:.86rem;color:var(--muted)}
+  .card .file{font-family:var(--mono);font-size:.72rem;color:var(--cyan);display:block;margin-top:6px}
+
+  /* ---- flow box (vertical assignment diagram) ---- */
+  .flow{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:var(--shadow)}
+  .node{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:0 auto;max-width:640px;text-align:center}
+  .node.in{border-color:var(--accent);box-shadow:0 0 0 1px rgba(88,166,255,.25) inset}
+  .node.proc{border-color:var(--accent2)}
+  .node.gate{border-color:var(--amber);background:#241f10}
+  .node.out{border-color:var(--green);background:#0f2417}
+  .node.orphan{border-color:var(--red);background:#2a1414}
+  .node h4{margin:0 0 3px;font-size:.92rem}
+  .node small{color:var(--muted);font-size:.74rem;font-family:var(--mono)}
+  .arrow{width:2px;height:26px;background:linear-gradient(var(--accent),var(--accent2));margin:6px auto;position:relative}
+  .arrow::after{content:"▼";position:absolute;bottom:-8px;left:-5px;color:var(--accent2);font-size:.7rem}
+  .branch{display:flex;gap:18px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+  .branch .node{margin:0;flex:1 1 220px;max-width:300px}
+  .lbl{font-family:var(--mono);font-size:.7rem;color:var(--amber);text-align:center;margin:4px 0}
+
+  /* ---- signals list ---- */
+  .signals{list-style:none;padding:0;margin:0}
+  .signals li{display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding:9px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:var(--panel2)}
+  .signals li .s-name{font-size:.85rem}
+  .signals li .s-name small{display:block;color:var(--muted);font-size:.72rem;font-family:var(--mono)}
+  .w{font-family:var(--mono);font-size:.8rem;padding:3px 9px;border-radius:6px;white-space:nowrap;font-weight:600}
+  .w.pos{background:#0f2417;color:var(--green);border:1px solid #1c4a2e}
+  .w.neg{background:#2a1414;color:var(--red);border:1px solid #5a2222}
+  .w.mix{background:#241f10;color:var(--amber);border:1px solid #5a4720}
+
+  /* ---- bands ---- */
+  .bands{display:flex;gap:0;border-radius:10px;overflow:hidden;border:1px solid var(--line);margin:8px 0 4px}
+  .band{flex:1;padding:16px 14px;text-align:center}
+  .band.low{background:#2a1414}
+  .band.mid{background:#241f10}
+  .band.high{background:#0f2417}
+  .band .big{font-family:var(--mono);font-size:1.3rem;font-weight:700}
+  .band.low .big{color:var(--red)} .band.mid .big{color:var(--amber)} .band.high .big{color:var(--green)}
+  .band small{display:block;color:var(--muted);font-size:.74rem;margin-top:4px}
+  .scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+
+  /* ---- table ---- */
+  table{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:6px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em}
+  td code{font-family:var(--mono);color:var(--cyan);font-size:.82rem}
+  tr:hover td{background:var(--panel2)}
+  .val{font-family:var(--mono);color:var(--accent);font-weight:600}
+
+  /* ---- output tree ---- */
+  .tree{font-family:var(--mono);font-size:.8rem;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;padding:20px 22px;box-shadow:var(--shadow);overflow-x:auto}
+  .tree .dir{color:var(--accent)}
+  .tree .key{color:var(--green)}
+  .tree .cm{color:var(--muted)}
+
+  /* ---- worked example ---- */
+  .ex-file{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.85rem;
+    background:var(--panel2);border:1px solid var(--accent);border-radius:8px;padding:7px 12px;color:var(--accent)}
+  .scoreboard{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:10px}
+  .scoreboard th,.scoreboard td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
+  .scoreboard th{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+  .scoreboard td.num{font-family:var(--mono);text-align:right}
+  .scoreboard tr.win{background:#0f2417}
+  .scoreboard tr.win td{color:var(--green);font-weight:600}
+  .scoreboard tr.win td:first-child::before{content:"★ ";color:var(--green)}
+  .scoreboard .bar{display:inline-block;height:8px;border-radius:4px;background:var(--accent);vertical-align:middle;margin-left:6px}
+  .scoreboard tr.win .bar{background:var(--green)}
+  .scoreboard .barneg{background:var(--red)}
+  .calc{font-family:var(--mono);font-size:.78rem;background:var(--panel2);border:1px solid var(--line);
+    border-radius:8px;padding:12px 14px;margin:10px 0;color:var(--txt);line-height:1.7}
+  .calc .op{color:var(--muted)} .calc .res{color:var(--green);font-weight:700}
+  .convo{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin:14px 0}
+  .convo .side{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .convo .side h5{margin:0 0 8px;font-size:.86rem;color:var(--accent)}
+  .convo .side.r h5{color:var(--green)}
+  .convo .side code,.convo .side .m{font-family:var(--mono);font-size:.74rem;color:var(--muted);display:block}
+  .convo .mid{font-size:1.6rem;color:var(--accent2);text-align:center}
+  .badge{font-family:var(--mono);font-size:.7rem;padding:2px 8px;border-radius:20px;border:1px solid var(--line)}
+  .badge.alta{color:var(--green);border-color:#1c4a2e;background:#0f2417}
+  .badge.media{color:var(--amber);border-color:#5a4720;background:#241f10}
+  .badge.baixa{color:var(--red);border-color:#5a2222;background:#2a1414}
+  .note{font-size:.82rem;color:var(--muted);border-left:3px solid var(--accent);padding:8px 0 8px 14px;margin:18px 0 0}
+  footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.78rem;text-align:center}
+  @media(max-width:820px){.g3,.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1>GPT-Tutor-Generator — Visão Geral do Sistema</h1>
+    <div class="sub">Desktop Python/Tkinter que converte PDFs acadêmicos em repositório-conhecimento estruturado para tutores LLM (Claude · GPT · Gemini)</div>
+    <div class="meta">
+      <span class="chip">pacote <b>academic-tutor-repo-builder</b></span>
+      <span class="chip">v<b>3.0.0</b></span>
+      <span class="chip">entry <b>app.py</b></span>
+      <span class="chip">branch <b>new-features</b></span>
+      <span class="chip">src <b>71 arquivos</b></span>
+      <span class="chip">tests <b>28</b></span>
+    </div>
+  </header>
+
+  <!-- 1. PIPELINE -->
+  <h2 class="section"><span class="n">1</span> Pipeline de Processamento</h2>
+  <p class="lead">Fluxo da importação até o repositório gerado. Cada estágio alimenta um manifest de entries que é re-anotado a cada regeneração pedagógica.</p>
+  <div class="pipe">
+    <div class="stage">
+      <div class="ico">📥</div><h4>Import</h4>
+      <p>Arquivos + links: PDF, imagem, código, URL</p>
+      <div class="mod">import pipeline</div>
+    </div>
+    <div class="stage">
+      <div class="ico">🏷️</div><h4>Classificar</h4>
+      <p>Categoria por entry; configura processamento</p>
+      <div class="mod">entry classification</div>
+    </div>
+    <div class="stage">
+      <div class="ico">⚙️</div><h4>Processar</h4>
+      <p>Fila persistente: Datalab/Marker p/ PDF, Ollama Vision p/ imagem</p>
+      <div class="mod">processing queue</div>
+    </div>
+    <div class="stage">
+      <div class="ico">🔍</div><h4>Revisar</h4>
+      <p>Saídas problemáticas → área de revisão manual</p>
+      <div class="mod">manual review</div>
+    </div>
+    <div class="stage">
+      <div class="ico">🖼️</div><h4>Curar</h4>
+      <p>Image Curator: descrições de imagens extraídas/fotos</p>
+      <div class="mod">image curator</div>
+    </div>
+    <div class="stage">
+      <div class="ico">🧩</div><h4>Anotar</h4>
+      <p>Tags unit/subunit/bloco + roteamento timeline</p>
+      <div class="mod">resolve_unit_block_tags</div>
+    </div>
+    <div class="stage">
+      <div class="ico">📦</div><h4>Gerar</h4>
+      <p>Consolida Markdown + instruções dos 3 LLMs</p>
+      <div class="mod">pedagogical_regeneration</div>
+    </div>
+  </div>
+  <p class="note">A ação <b>Reprocess Repository</b> reaplica a arquitetura atual a repositórios já gerados — reprocessamento recente elevou cobertura de bloco de <b>43.6% → 84.6%</b> (e 100% em run dirigido, 32/33 alta confiança).</p>
+
+  <!-- 2. ATRIBUIÇÃO -->
+  <h2 class="section"><span class="n">2</span> Atribuição de Arquivo → Cronograma</h2>
+  <p class="lead">O coração do roteamento. Cada material é pontuado contra unidades e contra blocos temporais do cronograma. Duas decisões independentes (desacopladas na Fase 1): <b>unidade</b> e <b>bloco temporal</b>.</p>
+
+  <div class="flow">
+    <div class="node in"><h4>📄 Entry do manifest</h4><small>título · markdown · raw · tags · cards · datas</small></div>
+    <div class="arrow"></div>
+    <div class="node proc"><h4>collect_entry_temporal_signals()</h4><small>extrai sinais: texto normalizado, tags, evidência de cards, datas (extract_dates)</small></div>
+    <div class="arrow"></div>
+
+    <div class="branch">
+      <div>
+        <div class="node proc"><h4>auto_map_entry_unit()</h4><small>score_entry_against_unit() por unidade</small></div>
+        <div class="lbl">gate: winner ≥ 0.5 ABS · margem rel ≥ 15%</div>
+        <div class="branch">
+          <div class="node out"><h4>unit: slug</h4><small>conf ≥ 0.65 · não-ambíguo</small></div>
+          <div class="node gate"><h4>ambíguo</h4><small>sem tag de unidade</small></div>
+        </div>
+      </div>
+      <div>
+        <div class="node proc"><h4>select_probable_period_for_entry()</h4><small>score_entry_against_timeline_block() por bloco</small></div>
+        <div class="lbl">"pega o melhor" — sem portão no resolver</div>
+        <div class="branch">
+          <div class="node out"><h4>bloco: id</h4><small>melhor candidato instrucional</small></div>
+          <div class="node orphan"><h4>órfão</h4><small>só quando NÃO existe bloco</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="arrow"></div>
+    <div class="node out"><h4>auto_tags do entry persistidas no manifest</h4><small>unit: · subunit: · bloco: + computed_block_band</small></div>
+  </div>
+
+  <p class="note">Precedência absoluta: <code>manual_unit_slug</code> e <code>manual_timeline_block_id</code> sobrescrevem o automático com confiança = 1.0. <code>manual_tags</code> nunca são tocadas. O portão <code>best ≥ 0.95</code> do scorer vive só no roteamento do <b>FILE_MAP</b> (navigation.py); quando recusa, o resolver cai no fallback "pega o melhor".</p>
+
+  <!-- 3. SINAIS DE SCORE DO BLOCO -->
+  <h2 class="section"><span class="n">3</span> Sinais de Pontuação Bloco-Temporal</h2>
+  <p class="lead">Como <code>score_entry_against_timeline_block()</code> soma evidências. Boosts positivos atraem o material para o bloco; penalidades empurram para fora quando a unidade do bloco contradiz a unidade preferida.</p>
+  <div class="grid g2">
+    <ul class="signals">
+      <li><span class="s-name">Unidade preferida casa o bloco<small>+ unit_confidence × 0.25</small></span><span class="w pos">+0.35</span></li>
+      <li><span class="s-name">Unidade preferida ≠ unidade do bloco<small>penalidade off-unit</small></span><span class="w neg">−0.45</span></li>
+      <li><span class="s-name">Tópico primário casa<small>+ topic_confidence × 0.35</small></span><span class="w pos">+0.80</span></li>
+      <li><span class="s-name">Tópico compatível (não primário)<small>timeline_block_matches_preferred_topic</small></span><span class="w pos">+0.48</span></li>
+      <li><span class="s-name">Tópico do bloco diverge<small>block_topic_slug presente</small></span><span class="w neg">−0.18</span></li>
+    </ul>
+    <ul class="signals">
+      <li><span class="s-name">manual_tags casam tokens do tópico<small>weight 0.35</small></span><span class="w pos">+w</span></li>
+      <li><span class="s-name">auto_tags / legacy_tags<small>weight 0.12 / 0.05</small></span><span class="w pos">+w</span></li>
+      <li><span class="s-name">Evidência de cards<small>clamp em 0.45</small></span><span class="w pos">≤+0.45</span></li>
+      <li><span class="s-name">Data exata dentro do período<small>DATE_STRONG_BOOST · ex: "12.03 Processos.pdf"</small></span><span class="w pos">+0.30</span></li>
+      <li><span class="s-name">Mês compatível, fora do range<small>DATE_WEAK_BOOST</small></span><span class="w mix">+0.10</span></li>
+    </ul>
+  </div>
+  <p class="note">Boost de data (Fase 2) substituiu o regex DD.MM-no-início: agora <code>extract_dates()</code> lê datas de qualquer posição (título/markdown/raw) e o ano do próprio bloco resolve datas year-less do material. Regex ancorada distingue número de versão de data DD.MM.</p>
+
+  <!-- 4. CONFIDENCE BANDS -->
+  <h2 class="section"><span class="n">4</span> Faixas de Confiança (Fase 3)</h2>
+  <p class="lead">A confiança de bloco vem de <code>margin_confidence(best, runner_up, k=0.18)</code>, clampada em [0,1]. Como o resolver sempre "pega o melhor", a band sinaliza ao revisor <i>quão</i> marginal foi a escolha.</p>
+  <div class="card">
+    <div class="bands">
+      <div class="band low"><div class="big">baixa</div><small>&lt; 0.20<br>mal supera o runner-up (~0.17 piso estrutural)</small></div>
+      <div class="band mid"><div class="big">média</div><small>0.20 – 0.50<br>marginal, merece revisão</small></div>
+      <div class="band high"><div class="big">alta</div><small>≥ 0.50<br>gap claro, best ~1.0</small></div>
+    </div>
+    <div class="scale"><span>0.0</span><span>BAND_LOW = 0.20</span><span>BAND_HIGH = 0.50</span><span>1.0</span></div>
+    <p style="margin-top:14px">Persistida em <code>computed_block_band</code> no manifest e exposta na saúde/dashboard. Calibração reusa o piso de tag de bloco (<code>BLOCO_TAG=0.50</code>) sem rebalancear nada.</p>
+  </div>
+
+  <!-- 5. THRESHOLDS -->
+  <h2 class="section"><span class="n">5</span> Thresholds de Decisão</h2>
+  <p class="lead">Fonte única em <code>src/builder/routing/thresholds.py</code> — consolidou a fórmula de margem antes duplicada 4×.</p>
+  <div class="card">
+    <table>
+      <thead><tr><th>Constante</th><th>Valor</th><th>Onde</th><th>Papel</th></tr></thead>
+      <tbody>
+        <tr><td><code>UNIT_TAG</code></td><td class="val">0.65</td><td>resolve_unit_block_tags</td><td>piso p/ tag unit:</td></tr>
+        <tr><td><code>SUBUNIT_TAG</code></td><td class="val">0.60</td><td>resolve_unit_block_tags</td><td>piso p/ tag subunit:</td></tr>
+        <tr><td><code>BLOCO_TAG</code></td><td class="val">0.50</td><td>resolve_unit_block_tags</td><td>piso p/ tag bloco:</td></tr>
+        <tr><td><code>BLOCK_UNIT_MIN_WINNER</code></td><td class="val">1.0</td><td>timeline → unidade</td><td>winner mínimo bloco→unit</td></tr>
+        <tr><td><code>BLOCK_UNIT_MIN_GAP</code></td><td class="val">0.35</td><td>timeline → unidade</td><td>gap "não-ambíguo"</td></tr>
+        <tr><td><code>VOTE_DOMINANCE</code></td><td class="val">0.60</td><td>voto de unidade</td><td>dominância no voto por tópicos</td></tr>
+        <tr><td><code>VOTE_MIN_SCORE</code></td><td class="val">0.10</td><td>voto de unidade</td><td>score mínimo p/ votar</td></tr>
+        <tr><td><code>MARGIN_K</code></td><td class="val">0.18</td><td>margin_confidence</td><td>k padrão da margem</td></tr>
+        <tr><td><code>MARGIN_K_TOPIC</code></td><td class="val">0.20</td><td>margem de tópico</td><td>k histórico de tópico</td></tr>
+        <tr><td><code>UNIT_MATCH_REL_MARGIN</code></td><td class="val">0.15</td><td>auto_map_entry_unit</td><td>winner &gt; runner em ≥15%</td></tr>
+        <tr><td><code>UNIT_MATCH_MIN_WINNER</code></td><td class="val">0.5</td><td>auto_map_entry_unit</td><td>piso absoluto anti-ruído</td></tr>
+        <tr><td><code>MATERIAL_COVERAGE_MIN</code></td><td class="val">0.70</td><td>Fase 4 (gate opcional)</td><td>cobertura de material</td></tr>
+        <tr><td><code>DATE_STRONG / WEAK_BOOST</code></td><td class="val">0.30 / 0.10</td><td>score block date</td><td>boost data exata / mês</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6. COMPONENTES -->
+  <h2 class="section"><span class="n">6</span> Componentes-Chave</h2>
+  <div class="grid g3">
+    <div class="card"><h3><span class="dot" style="background:var(--accent)"></span>Routing / FILE_MAP</h3>
+      <p>Índices de roteamento, match de unidade/subtópico, scoring de timeline.</p>
+      <span class="file">src/builder/routing/file_map.py</span>
+      <span class="file">routing/thresholds.py · dates.py</span></div>
+    <div class="card"><h3><span class="dot" style="background:var(--accent2)"></span>Taxonomia de Conteúdo</h3>
+      <p>Gera tags geridas unit:/subunit:/bloco: e a band de bloco.</p>
+      <span class="file">src/builder/extraction/content_taxonomy.py</span></div>
+    <div class="card"><h3><span class="dot" style="background:var(--green)"></span>Regeneração Pedagógica</h3>
+      <p>Escreve artefatos pedagógicos, setup, system, student e índices.</p>
+      <span class="file">src/builder/ops/pedagogical_regeneration.py</span></div>
+    <div class="card"><h3><span class="dot" style="background:var(--cyan)"></span>Artefatos do Repo</h3>
+      <p>Source registry, bundle seed, build report.</p>
+      <span class="file">src/builder/artifacts/repo.py · deeptutor.py</span></div>
+    <div class="card"><h3><span class="dot" style="background:var(--pink)"></span>Code Summarization (Gemini)</h3>
+      <p>Cliente lazy google-genai (gemini-2.5-flash) + matcher de bloco por overlap de conceitos. No-op sem API key.</p>
+      <span class="file">core/code_summarization.py · runtime/gemini_client.py</span></div>
+    <div class="card"><h3><span class="dot" style="background:var(--amber)"></span>Fila / Dashboard</h3>
+      <p>Fila persistente entre sessões: builds, reprocess, material individual. Dashboard monitora estado operacional.</p>
+      <span class="file">UI Tkinter · task queue</span></div>
+  </div>
+
+  <!-- 7. OUTPUT -->
+  <h2 class="section"><span class="n">7</span> Repositório Gerado</h2>
+  <p class="lead">Saída consumida pelo tutor: começa no COURSE_MAP, navega via FILE_MAP, respeita STUDENT_STATE. O cronograma vira render bloco-a-bloco.</p>
+  <div class="tree">
+<span class="dir">course/</span>
+  CRONOGRAMA_DETALHADO.md   <span class="cm"># render bloco-a-bloco c/ código linkado (só se há blocos)</span>
+  COURSE_MAP.md             <span class="cm"># mapa pedagógico — entrada primária do tutor</span>
+  FILE_MAP.md               <span class="cm"># índice de roteamento: prioridade, unidade, subtópico, hint temporal</span>
+  CODE_HEALTH.md            <span class="cm"># cobertura de summaries + linkagem de bloco</span>
+  SYLLABUS.md · GLOSSARY.md · SOURCE_REGISTRY.yaml
+  <span class="key">.timeline_index.json</span>      <span class="cm"># índice interno de timeline p/ regeneração</span>
+  <span class="key">code_curation.json</span>        <span class="cm"># cache content-hash dos summaries Gemini (safe to delete)</span>
+<span class="dir">student/</span>
+  STUDENT_STATE.md · STUDENT_PROFILE.md · batteries/
+<span class="dir">exercises/ exams/ assignments/ code/ whiteboard/ content/</span>
+  *_INDEX.md                <span class="cm"># índices condicionais por tipo de entry</span>
+<span class="dir">setup/</span>
+  INSTRUCOES_CLAUDE_PROJETO.md · INSTRUCOES_GPT_PROJETO.md · INSTRUCOES_GEMINI_PROJETO.md
+<span class="dir">system/</span>
+  TUTOR_POLICY.md · PEDAGOGY.md · MODES.md · OUTPUT_TEMPLATES.md
+  </div>
+  <p class="note">3 arquivos de instrução (Claude/GPT/Gemini) saem de uma única run, a partir de course metadata + student profile + subject profile + feature flags.</p>
+
+  <!-- 8. EXEMPLO REAL -->
+  <h2 class="section"><span class="n">8</span> Exemplo Real: arquivo conversando com o cronograma</h2>
+  <p class="lead">Dados reais da fixture <code>tests/fixtures/timeline/sample.v4.json</code> e do teste <code>tests/test_ddmm_timeline_boost.py</code>. Cronograma de Lógica Matemática, 5 blocos. Vamos rotear 3 materiais importados.</p>
+
+  <h3 style="margin:8px 0 6px;font-size:1.05rem">8.1 — O cronograma carregado (timeline_context)</h3>
+  <div class="card">
+    <table>
+      <thead><tr><th>Bloco</th><th>Período</th><th>Unidade</th><th>Tópico primário</th><th>Tipo</th></tr></thead>
+      <tbody>
+        <tr><td><code>bloco-01</code></td><td>11–13/03/2026</td><td>unidade-01-logica <span class="val">0.82</span></td><td>Lógica de predicados <span class="val">0.74</span></td><td>class</td></tr>
+        <tr><td><code>bloco-02</code></td><td>18/03/2026</td><td>unidade-01-logica <span class="val">0.51</span></td><td><span style="color:var(--muted)">— indução estrutural (ambíguo)</span></td><td>class</td></tr>
+        <tr><td><code>bloco-03</code></td><td>25/03/2026</td><td><span style="color:var(--muted)">—</span></td><td>Feriado de Carnaval</td><td>holiday</td></tr>
+        <tr><td><code>bloco-04</code></td><td>01/04/2026</td><td><span style="color:var(--muted)">—</span></td><td>Revisão geral da unidade 1</td><td>review</td></tr>
+        <tr><td><code>bloco-05</code></td><td>08/04/2026</td><td><span style="color:var(--muted)">—</span></td><td>P1 - Prova da Unidade 1</td><td>assessment</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 style="margin:26px 0 6px;font-size:1.05rem">8.2 — Material A: <span style="color:var(--accent)">a data manda</span></h3>
+  <div class="card">
+    <div class="ex-file">📄 12.03 Processos.pdf</div>
+    <p style="margin-top:12px">Entrada nos signals: <code>raw_text = "12 03 processos"</code> · <code>title = "Processos"</code>. Sem tags manuais. <code>auto_map_entry_unit</code> não confia (winner &lt; 0.5 → unidade ambígua, sem boost/penalidade de unidade). Resta o texto fraco + a <b>data</b>. <code>score_entry_against_timeline_block</code> roda contra os 5 blocos:</p>
+    <table class="scoreboard">
+      <thead><tr><th>Bloco</th><th>Sinal dominante</th><th class="num">Data</th><th class="num">Texto</th><th class="num">Score</th><th>Visual</th></tr></thead>
+      <tbody>
+        <tr class="win"><td>bloco-01</td><td>12/03 ∈ [11/03, 13/03] → boost FORTE</td><td class="num">+0.30</td><td class="num">+0.05</td><td class="num">0.35</td><td><span class="bar" style="width:88px"></span></td></tr>
+        <tr><td>bloco-02</td><td>mesmo mês (março), fora do range → boost FRACO</td><td class="num">+0.10</td><td class="num">+0.02</td><td class="num">0.12</td><td><span class="bar" style="width:30px"></span></td></tr>
+        <tr><td>bloco-03</td><td>feriado, abril≠março, sem texto</td><td class="num">0.00</td><td class="num">0.00</td><td class="num">0.00</td><td></td></tr>
+        <tr><td>bloco-04</td><td>abril, sem data casando</td><td class="num">0.00</td><td class="num">+0.01</td><td class="num">0.01</td><td><span class="bar" style="width:4px"></span></td></tr>
+        <tr><td>bloco-05</td><td>prova, abril</td><td class="num">0.00</td><td class="num">0.00</td><td class="num">0.00</td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="calc">
+      winner = bloco-01 (0.35) <span class="op">·</span> runner_up = bloco-02 (0.12)<br>
+      <span class="op">margin_confidence(0.35, 0.12, k=0.18) =</span> (0.35 − 0.12) + 0.35×0.18 <span class="op">=</span> 0.23 + 0.063 <span class="op">=</span> <span class="res">0.293</span><br>
+      <span class="op">confidence_band(0.293) →</span> <span class="badge media">média</span> <span class="op">(0.20 ≤ 0.293 &lt; 0.50)</span>
+    </div>
+    <p style="margin:6px 0 0">Resultado gravado em <code>auto_tags</code>: <code>["bloco:bloco-01", "unit:unidade-01-logica"]</code> + <code>computed_block_band: "media"</code>. A band média sinaliza ao revisor: "casou pela data, texto fraco — confira". O delta de data <span class="val">+0.30</span> é <b>determinístico</b> (assert no teste, linha 159).</p>
+  </div>
+
+  <h3 style="margin:26px 0 6px;font-size:1.05rem">8.3 — Material B: <span style="color:var(--accent)">o tópico manda</span></h3>
+  <div class="card">
+    <div class="ex-file">📄 Lista 02 - Inducao Estrutural.pdf</div>
+    <p style="margin-top:12px">Sem data no nome. Mas o texto casa <code>topic_text = "indução estrutural sobre termos"</code> do bloco-02. O boost de tópico-compatível (<span class="val">+0.48</span>) domina, mesmo o bloco-02 tendo <code>topic_ambiguous: true</code> e <code>primary_topic_slug</code> vazio.</p>
+    <table class="scoreboard">
+      <thead><tr><th>Bloco</th><th>Sinal dominante</th><th class="num">Score</th><th>Visual</th></tr></thead>
+      <tbody>
+        <tr class="win"><td>bloco-02</td><td>tokens "indução/estrutural" casam topic_text</td><td class="num">0.51</td><td><span class="bar" style="width:64px"></span></td></tr>
+        <tr><td>bloco-01</td><td>"predicados" ≠ indução; texto fraco</td><td class="num">0.08</td><td><span class="bar" style="width:14px"></span></td></tr>
+        <tr><td>bloco-04</td><td>"revisão" genérico</td><td class="num">0.05</td><td><span class="bar" style="width:8px"></span></td></tr>
+      </tbody>
+    </table>
+    <div class="calc">
+      <span class="op">margin_confidence(0.51, 0.08, k=0.18) =</span> 0.43 + 0.092 <span class="op">=</span> <span class="res">0.522</span> → <span class="badge alta">alta</span>
+    </div>
+    <p style="margin:6px 0 0">Mesmo bloco com tópico ambíguo recebe material: o resolver <b>"pega o melhor"</b>, não há portão. A band alta confirma gap claro.</p>
+  </div>
+
+  <h3 style="margin:26px 0 6px;font-size:1.05rem">8.4 — Material C: <span style="color:var(--red)">órfão</span></h3>
+  <div class="card">
+    <div class="ex-file">📄 Artigo - Teoria das Categorias.pdf</div>
+    <p style="margin-top:12px">Nenhuma data, nenhum tópico casa, texto fora do vocabulário do cronograma. Todos os blocos pontuam ~0. Como blocos <i>existem</i>, ainda assim "pega o melhor" — mas o melhor é fraco: <code>computed_block_band: "baixa"</code> <span class="badge baixa">baixa</span>. Órfão de verdade (sem <code>bloco:</code>) só ocorreria se o cronograma não tivesse nenhum bloco instrucional.</p>
+  </div>
+
+  <h3 style="margin:26px 0 6px;font-size:1.05rem">8.5 — Como o arquivo aparece no repo gerado</h3>
+  <div class="convo">
+    <div class="side">
+      <h5>📄 12.03 Processos.pdf</h5>
+      <span class="m">auto_tags: bloco:bloco-01</span>
+      <span class="m">unit:unidade-01-logica</span>
+      <span class="m">band: media</span>
+    </div>
+    <div class="mid">→</div>
+    <div class="side r">
+      <h5>course/CRONOGRAMA_DETALHADO.md</h5>
+      <span class="m">## 11–13/03 · Lógica de predicados</span>
+      <span class="m">- 📄 Processos.pdf · conf média</span>
+    </div>
+  </div>
+  <div class="tree">
+<span class="cm"># course/FILE_MAP.md — linha do material roteado</span>
+| arquivo            | prioridade | unidade            | subtópico | timeline      | conf  |
+| Processos.pdf      | normal     | unidade-01-logica  | —         | <span class="key">bloco-01 (11–13/03)</span> | média |
+
+<span class="cm"># course/CRONOGRAMA_DETALHADO.md — render bloco-a-bloco</span>
+<span class="dir">## bloco-01 — 11/03 a 13/03/2026 · Lógica de predicados</span> <span class="cm">(unidade 1)</span>
+  Materiais deste bloco:
+    - <span class="key">Processos.pdf</span>            <span class="cm"># entrou pela data 12.03 ∈ período</span>
+<span class="dir">## bloco-02 — 18/03/2026 · Indução estrutural</span>
+    - <span class="key">Lista 02 - Inducao Estrutural.pdf</span>   <span class="cm"># entrou pelo tópico</span>
+  </div>
+  <p class="note">O ciclo é idempotente: <code>scripts/reprocess_assignments.py</code> relê o markdown já gerado, roda <code>refresh_manifest_auto_tags → resolve_unit_block_tags</code> e regrava índices — sem reprocessar PDF. Foi assim que a cobertura subiu de <b>43.6% → 84.6%</b> sem tocar no Datalab.</p>
+
+  <footer>
+    GPT-Tutor-Generator · gerado para visão geral de arquitetura · branch new-features · 2026-06-04
+  </footer>
+
+</div>
+</body>
+</html>
