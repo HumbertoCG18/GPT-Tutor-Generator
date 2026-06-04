@@ -64,3 +64,25 @@ def test_process_degrades_without_client():
         rs.fetch_reference_text = rs_fetch
     assert out["ref_summary"] == ""                 # sem resumo
     assert out["computed_ref_unit"] == "unidade-01" # mas mapeia por texto
+
+
+def test_batch_caches_by_hash(tmp_path):
+    import json as _json
+    from src.builder.core import reference_summary as rs
+    root = tmp_path
+    (root / "course").mkdir()
+    (root / "manifest.json").write_text(_json.dumps({"entries": [
+        {"id": "r1", "category": "referencias", "file_type": "github-repo",
+         "source_path": "https://github.com/a/b"}]}), encoding="utf-8")
+    builder = type("B", (), {"root_dir": root})()
+    units = [{"slug": "u1", "normalized_title": "x", "topic_phrases": [], "topic_tokens": [], "distinctive_tokens": []}]
+    client = MagicMock()
+    client.summarize_bundle.return_value = ReferenceSummary(inferred_title="t", summary="s", concepts=["c"])
+    orig = rs.fetch_reference_text
+    try:
+        rs.fetch_reference_text = lambda e, **k: "texto fixo"
+        rs.summarize_all_reference_entries(builder, units, client)
+        rs.summarize_all_reference_entries(builder, units, client)  # 2a vez: cache
+    finally:
+        rs.fetch_reference_text = orig
+    assert client.summarize_bundle.call_count == 1  # resumiu só 1x

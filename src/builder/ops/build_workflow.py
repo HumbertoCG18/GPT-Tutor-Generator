@@ -152,5 +152,11 @@ def _run_auto_code_summarization(builder, logger) -> None:
                 logger.info("[Gemini] [%d/%d] %s: %s", idx, total, status, title)
 
         builder._summarize_code_entries(client, progress_cb=_progress)
+
+        from src.builder.core.reference_summary import summarize_all_reference_entries
+        from src.builder.engine import _build_file_map_unit_index_from_course
+        course_meta = {**builder.course_meta, "_repo_root": builder.root_dir}
+        units = _build_file_map_unit_index_from_course(course_meta, builder.subject_profile)
+        summarize_all_reference_entries(builder, units, client, progress_cb=_progress)
     except Exception as exc:
         logger.warning("[Gemini] Auto summarization skipped: %s", exc)

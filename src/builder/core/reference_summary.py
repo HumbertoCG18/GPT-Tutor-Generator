@@ -70,3 +70,82 @@ def process_reference_entry(entry: dict, units: list, client) -> dict:
         "computed_ref_unit": topic["unit_slug"],
         "computed_ref_topics": topic["topics"],
     }
+
+
+import json
+import hashlib
+from pathlib import Path
+
+REFERENCE_MATCHER_VERSION = 1
+_REFERENCE_CATEGORIES = {"referencias", "bibliografia"}
+
+
+def load_reference_curation(repo_dir: Path) -> dict:
+    p = Path(repo_dir) / "course" / "references_curation.json"
+    if p.exists():
+        try:
+            return json.loads(p.read_text(encoding="utf-8"))
+        except Exception:
+            return {"entries": {}}
+    return {"entries": {}}
+
+
+def write_reference_curation(repo_dir: Path, data: dict) -> None:
+    p = Path(repo_dir) / "course" / "references_curation.json"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    tmp = p.with_suffix(".json.tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    tmp.replace(p)
+
+
+def _ref_hash(entry: dict, text: str) -> str:
+    key = (str(entry.get("source_path") or "") + "\n" + (text or "")).encode("utf-8", "replace")
+    return hashlib.sha1(key).hexdigest()
+
+
+def summarize_all_reference_entries(builder, units: list, client, progress_cb=None) -> dict:
+    """Processa todas as entries de referência do manifest, com cache por hash.
+    Grava computed_ref_* / ref_summary nas entries do manifest e em
+    references_curation.json. Sem client -> mapeia por texto, sem resumo."""
+    manifest_path = builder.root_dir / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    curation = load_reference_curation(builder.root_dir)
+    cache = curation.setdefault("entries", {})
+
+    refs = [e for e in manifest.get("entries", [])
+            if str(e.get("category") or "").lower() in _REFERENCE_CATEGORIES]
+    for idx, entry in enumerate(refs):
+        eid = entry.get("id")
+        if not eid:
+            continue
+        text = fetch_reference_text(entry)
+        h = _ref_hash(entry, text)
+        existing = cache.get(eid, {})
+        if (existing.get("content_hash") == h
+                and existing.get("matcher_version") == REFERENCE_MATCHER_VERSION
+                and (existing.get("ref_summary") or client is None)):
+            fields = existing
+        else:
+            summary_dict = summarize_reference(text, client)
+            concepts = (summary_dict or {}).get("concepts", []) or []
+            fallback = " ".join([str(entry.get("title", "") or ""), text])
+            topic = assign_concepts_to_unit(concepts, fallback, units)
+            fields = {
+                "ref_summary": (summary_dict or {}).get("summary", "") or "",
+                "ref_concepts": concepts,
+                "computed_ref_unit": topic["unit_slug"],
+                "computed_ref_topics": topic["topics"],
+                "content_hash": h,
+                "matcher_version": REFERENCE_MATCHER_VERSION,
+            }
+            cache[eid] = fields
+        for e in manifest["entries"]:
+            if e.get("id") == eid:
+                e.update({k: fields[k] for k in
+                          ("ref_summary", "ref_concepts", "computed_ref_unit", "computed_ref_topics")})
+        if progress_cb:
+            progress_cb(idx, len(refs), entry.get("title", ""), "ok")
+
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    write_reference_curation(builder.root_dir, curation)
+    return curation
