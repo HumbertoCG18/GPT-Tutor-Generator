@@ -96,6 +96,17 @@ referência
 | Sem rede / fetch falha | título + URL (comportamento de hoje); nada quebra |
 | Não-GitHub sem extrator | título + URL; degrada |
 
+## Guardrail — repo do tutor ≠ repo de referência
+
+Há DUAS URLs de GitHub no sistema, e o pipeline só pode tocar uma:
+
+| | Onde vive | O que é | Este pipeline |
+|---|---|---|---|
+| Repo-destino do tutor | `SubjectProfile.github_url` / `repo_root` (gerenciador de matérias) | a **saída** — onde o conhecimento gerado é publicado | **NUNCA fetch/resume** |
+| Repo de referência | `FileEntry.source_path`, `category ∈ {referencias, bibliografia}` | uma **entrada** bibliográfica externa | alvo do fetch+resumo |
+
+O fetch/resumo/tema processa **somente FileEntry com `category ∈ {referencias, bibliografia}`**. `SubjectProfile.github_url` e `repo_root` são o repositório-destino do próprio tutor (não são entries, não são fonte) e jamais entram no `fetch_reference_text`. `parse_github_repo` só é chamado sobre `entry.source_path` de referências — nunca sobre `github_url` do perfil.
+
 ## O que NÃO muda
 
 - `_NO_TIMELINE_CATEGORIES` continua excluindo referência de **bloco** (correto — referência não é presa a data).
