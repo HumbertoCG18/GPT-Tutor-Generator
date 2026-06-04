@@ -96,3 +96,44 @@ def test_sequence_boost_is_moderate_tiebreaker():
     # Menor que data (0.30) e topico-compativel (0.48): desempata sem sobrepor.
     assert T.SEQUENCE_BOOST == 0.20
     assert T.SEQUENCE_BOOST < 0.30
+
+
+from src.builder.routing.sequence import score_sequence_match
+
+
+def _signals(title="", raw=""):
+    return {"title_text": title, "raw_text": raw}
+
+
+def test_boost_when_title_ordinal_matches_class_ordinal():
+    block = {"class_ordinal": 3}
+    assert score_sequence_match(_signals(title="aula 03"), block) == 0.20
+
+
+def test_boost_uses_raw_when_title_has_no_ordinal():
+    block = {"class_ordinal": 2}
+    assert score_sequence_match(_signals(title="slides", raw="aula 2"), block) == 0.20
+
+
+def test_no_boost_when_ordinal_mismatches():
+    block = {"class_ordinal": 1}
+    assert score_sequence_match(_signals(title="aula 03"), block) == 0.0
+
+
+def test_no_boost_when_material_has_no_ordinal():
+    block = {"class_ordinal": 3}
+    assert score_sequence_match(_signals(title="slides de logica"), block) == 0.0
+
+
+def test_no_boost_when_block_is_not_class():
+    block = {"class_ordinal": None}
+    assert score_sequence_match(_signals(title="aula 03"), block) == 0.0
+
+
+def test_no_boost_when_block_missing_ordinal_key():
+    assert score_sequence_match(_signals(title="aula 03"), {}) == 0.0
+
+
+def test_explicit_boost_value_overrides_default():
+    block = {"class_ordinal": 3}
+    assert score_sequence_match(_signals(title="aula 03"), block, boost=0.5) == 0.5

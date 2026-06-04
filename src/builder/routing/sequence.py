@@ -9,6 +9,8 @@ from __future__ import annotations
 import re
 from typing import List, Optional
 
+from src.builder.routing.thresholds import T
+
 # Marcador de aula seguido (espaco opcional, p/ casar "aula03" colado) de um
 # inteiro de ate 3 digitos com fronteira de palavra apos. A fronteira (\b)
 # impede casar ano colado ("aula2024" -> 4 digitos, sem fronteira em 3) e exige
@@ -42,3 +44,20 @@ def annotate_class_ordinals(blocks: List[dict]) -> List[dict]:
         else:
             block["class_ordinal"] = None
     return blocks
+
+
+def score_sequence_match(signals: dict, block: dict, *, boost: float = T.SEQUENCE_BOOST) -> float:
+    """Boost de desempate quando o ordinal de aula do material casa o
+    class_ordinal do bloco. Extrai do title_text; cai para raw_text. Retorna
+    `boost` no match, senao 0.0. Inerte quando o material nao tem ordinal ou o
+    bloco nao e de aula (class_ordinal None/ausente).
+    """
+    ordinal = extract_lecture_ordinal(signals.get("title_text", ""))
+    if ordinal is None:
+        ordinal = extract_lecture_ordinal(signals.get("raw_text", ""))
+    if ordinal is None:
+        return 0.0
+    class_ordinal = block.get("class_ordinal")
+    if class_ordinal is not None and class_ordinal == ordinal:
+        return float(boost)
+    return 0.0
