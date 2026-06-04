@@ -819,6 +819,8 @@ def _best_instructional_block_fallback(
         return None, 0.0
     # Import tardio: entry_signals importa content_taxonomy no topo, entao um
     # import de topo aqui criaria ciclo. So precisamos destes na hora do fallback.
+    from src.builder.routing.sequence import annotate_class_ordinals
+    annotate_class_ordinals(instructional_blocks)
     from src.builder.routing.file_map import (
         score_entry_against_timeline_block,
         score_card_evidence_against_entry,

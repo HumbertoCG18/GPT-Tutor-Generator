@@ -137,3 +137,75 @@ def test_no_boost_when_block_missing_ordinal_key():
 def test_explicit_boost_value_overrides_default():
     block = {"class_ordinal": 3}
     assert score_sequence_match(_signals(title="aula 03"), block, boost=0.5) == 0.5
+
+
+from src.builder.routing.file_map import score_entry_against_timeline_block
+from src.builder.routing.sequence import annotate_class_ordinals
+from src.builder.extraction.entry_signals import (
+    normalize_match_text,
+    score_text_against_row,
+)
+from src.builder.routing.file_map import score_card_evidence_against_entry
+
+
+def _full_signals(title):
+    # Mesmo formato dos signals reais; campos vazios exceto o titulo.
+    return {
+        "title_text": normalize_match_text(title),
+        "markdown_headings_text": "",
+        "markdown_lead_text": "",
+        "markdown_text": "",
+        "category_text": "",
+        "manual_tags_text": "",
+        "auto_tags_text": "",
+        "legacy_tags_text": "",
+        "tags_text": "",
+        "raw_text": "",
+    }
+
+
+def _class_block(block_id):
+    return {
+        "id": block_id,
+        "kind": "class",
+        "rows": [{"content": "aula expositiva geral", "date_text": "", "ignored": False}],
+        "unit_slug": "",
+        "unit_confidence": 0.0,
+        "primary_topic_slug": "",
+        "primary_topic_confidence": 0.0,
+        "topic_ambiguous": True,
+        "topic_candidates": [],
+        "topic_text": "",
+        "card_evidence": [],
+        "sessions": [],
+        "period_label": block_id,
+        "scores": [0.0],
+    }
+
+
+def _score(signals, block):
+    return score_entry_against_timeline_block(
+        signals,
+        block,
+        normalize_match_text=normalize_match_text,
+        score_text_against_row=score_text_against_row,
+        score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
+            s, items, normalize_match_text=normalize_match_text
+        ),
+    )
+
+
+def test_scorer_boosts_matching_class_ordinal_block():
+    blocks = annotate_class_ordinals([_class_block("b1"), _class_block("b2"), _class_block("b3")])
+    signals = _full_signals("Aula 03")
+    score_third = _score(signals, blocks[2])   # class_ordinal == 3, matches
+    score_first = _score(signals, blocks[0])   # class_ordinal == 1, no match
+    assert round(score_third - score_first, 2) == 0.20
+
+
+def test_scorer_no_sequence_delta_without_ordinal():
+    blocks = annotate_class_ordinals([_class_block("b1"), _class_block("b2"), _class_block("b3")])
+    signals = _full_signals("Slides de logica")
+    score_third = _score(signals, blocks[2])
+    score_first = _score(signals, blocks[0])
+    assert score_third == score_first

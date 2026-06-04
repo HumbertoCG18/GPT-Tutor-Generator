@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Callable, Dict, List, NamedTuple, Optional
 
 from src.builder.routing.dates import extract_dates
+from src.builder.routing.sequence import annotate_class_ordinals, score_sequence_match
 from src.builder.routing.thresholds import T, margin_confidence
 
 
@@ -837,6 +838,8 @@ def score_entry_against_timeline_block(
     # campo course_year no modelo — o ano vive no próprio período do bloco.
     score += _score_block_date_match(signals, block)
 
+    score += score_sequence_match(signals, block)
+
     return score
 
 
@@ -1064,6 +1067,8 @@ def select_probable_period_for_entry(
         blocks = list(timeline_index.get("blocks", []) or [])
     if not blocks:
         return "", 0.0, True, ["sem-blocos-candidato"]
+
+    annotate_class_ordinals(blocks)
 
     preferred_unit_slug = str(unit.get("slug", "") or "")
     preferred_topic_slug = str(preferred_topic_slug or "").strip()
