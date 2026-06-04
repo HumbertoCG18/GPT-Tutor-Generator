@@ -1,0 +1,66 @@
+{
+  "timeline": {
+    "blocks": [
+      {
+        "id": "bloco-01",
+        "period_label": "11/03/2026 a 13/03/2026",
+        "unit_slug": "unidade-01-logica",
+        "unit_confidence": 0.82,
+        "primary_topic_slug": "logica-de-predicados",
+        "primary_topic_confidence": 0.74,
+        "topic_ambiguous": false,
+        "topic_candidates": [],
+        "topic_text": "Lógica de predicados",
+        "administrative_only": false,
+        "rows": [
+          {"index": 1, "date_text": "11/03/2026", "content": "Lógica de predicados"},
+          {"index": 2, "date_text": "13/03/2026", "content": "Lógica de predicados"}
+        ]
+      },
+      {
+        "id": "bloco-02",
+        "period_label": "18/03/2026 a 18/03/2026",
+        "unit_slug": "unidade-01-logica",
+        "unit_confidence": 0.51,
+        "primary_topic_slug": "",
+        "primary_topic_confidence": 0.0,
+        "topic_ambiguous": true,
+        "topic_candidates": [],
+        "topic_text": "indução estrutural sobre termos",
+        "administrative_only": false,
+        "rows": [
+          {"index": 3, "date_text": "18/03/2026", "content": "indução estrutural sobre termos"}
+        ]
+      },
+      {
+        "id": "bloco-04",
+        "period_label": "01/04/2026 a 01/04/2026",
+        "unit_slug": "",
+        "unit_confidence": 0.0,
+        "primary_topic_slug": "",
+        "primary_topic_confidence": 0.0,
+        "topic_ambiguous": true,
+        "topic_candidates": [],
+        "topic_text": "Revisão geral da unidade 1",
+        "administrative_only": false,
+        "rows": [
+          {"index": 5, "date_text": "01/04/2026", "content": "Revisão geral da unidade 1"}
+        ]
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "case-date",
+      "title": "Processos",
+      "raw_target": "raw/pdfs/12.03 processos.pdf",
+      "category": "material-de-aula",
+      "tags": "",
+      "markdown": "# Processos\n\nslides da aula sobre processos",
+      "unit_guess": {"slug": "unidade-01-logica", "confidence": 0.40, "ambiguous": true},
+      "expected_block_id": "bloco-01",
+      "note": "data 12.03 cai no periodo 11-13/03 do bloco-01"
+    }
+  ],
+  "baseline": {"block_accuracy": 0.0}
+}
