@@ -149,3 +149,62 @@ def evaluate(gold: dict) -> dict:
         "confusion": confusion,
         "cases": case_rows,
     }
+
+
+def format_report(report: dict, gold: dict) -> str:
+    lines = []
+    acc = report["block_accuracy"]
+    lines.append("=== Eval: atribuicao arquivo -> bloco ===")
+    lines.append(
+        f"Acuracia de bloco: {report['correct']}/{report['total']} "
+        f"({acc * 100:.1f}%)   orfaos: {report['orphans']}"
+    )
+    lines.append(f"Confiante e ERRADO (band alta, bloco errado): {report['confident_wrong']}")
+    lines.append("")
+    lines.append("Calibracao por band (correto / errado):")
+    for band in ("alta", "media", "baixa", ""):
+        b = report["bands"].get(band, {"correct": 0, "wrong": 0})
+        label = band or "(orfao)"
+        lines.append(f"  {label:<8} {b['correct']:>3} ok / {b['wrong']:>3} erro")
+    lines.append("")
+    wrong = [c for c in report["cases"] if not c["correct"]]
+    if wrong:
+        lines.append("Erros:")
+        for c in wrong:
+            lines.append(
+                f"  - {c['id']:<16} esperado={c['expected'] or '(orfao)'} "
+                f"previu={c['predicted'] or '(orfao)'} band={c['band'] or '-'}"
+                + (f"  [{c['note']}]" if c["note"] else "")
+            )
+    else:
+        lines.append("Sem erros.")
+    baseline = float((gold.get("baseline") or {}).get("block_accuracy", 0.0))
+    lines.append("")
+    lines.append(f"Baseline registrado: {baseline * 100:.1f}%")
+    if acc + 1e-9 < baseline:
+        lines.append(f"REGRESSAO: {acc * 100:.1f}% < baseline {baseline * 100:.1f}%")
+    return "\n".join(lines)
+
+
+def main(argv: list) -> int:
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+    as_json = "--json" in argv
+    paths = [a for a in argv if not a.startswith("-")]
+    gold_path = Path(paths[0]) if paths else Path(
+        "tests/fixtures/eval/assignments_gold.json"
+    )
+    gold = load_gold(gold_path)
+    report = evaluate(gold)
+    if as_json:
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+    else:
+        print(format_report(report, gold))
+    baseline = float((gold.get("baseline") or {}).get("block_accuracy", 0.0))
+    return 1 if report["block_accuracy"] + 1e-9 < baseline else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))
