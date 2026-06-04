@@ -117,6 +117,10 @@ def build_impl(
     if removed_code:
         logger.info("Pruned %d stale code_curation entries", removed_code)
     _run_auto_code_summarization(builder, logger)
+    # Recarrega: o enriquecimento de referencias grava ref_summary/computed_ref_*
+    # direto no manifest.json em disco. Sem reload, a regeneracao pedagogica e a
+    # escrita final (abaixo) usariam o manifest em memoria sem esses campos.
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     builder._resolve_content_images()
     builder._inject_all_image_descriptions()
     builder._regenerate_pedagogical_files(manifest)
