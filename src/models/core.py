@@ -85,6 +85,13 @@ class FileEntry:
     # thresholds.confidence_band; "" quando nao ha bloco atribuido.
     computed_block_band: str = ""
 
+    # Campos de referência bibliográfica (Task 6). Resumo lazy via Gemini e
+    # mapeamento determinístico unidade/tópico persistidos no manifest.json.
+    ref_summary: str = ""
+    ref_concepts: List[str] = field(default_factory=list)
+    computed_ref_unit: str = ""
+    computed_ref_topics: List[str] = field(default_factory=list)
+
     def id(self) -> str:
         if self.file_type == "url":
             import hashlib

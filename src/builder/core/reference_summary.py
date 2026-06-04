@@ -10,6 +10,9 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from src.builder.core.reference_content import fetch_reference_text
+from src.builder.core.reference_topic import assign_concepts_to_unit
+
 logger = logging.getLogger(__name__)
 
 
@@ -48,3 +51,22 @@ def summarize_reference(text: str, client) -> Optional[dict]:
     except Exception as exc:
         logger.error("[ReferenceSummary] falha: %s", exc)
         return None
+
+
+def process_reference_entry(entry: dict, units: list, client) -> dict:
+    """Enriquece UMA entry de referência: busca texto, resume (lazy), mapeia
+    unidade/tópico. Retorna um dict de campos a mesclar na entry.
+
+    Sem client -> sem resumo, mas ainda mapeia por texto fetchado (determinístico).
+    """
+    text = fetch_reference_text(entry)
+    summary_dict = summarize_reference(text, client)  # None sem client/texto
+    concepts = (summary_dict or {}).get("concepts", []) or []
+    fallback = " ".join([str(entry.get("title", "") or ""), text])
+    topic = assign_concepts_to_unit(concepts, fallback, units)
+    return {
+        "ref_summary": (summary_dict or {}).get("summary", "") or "",
+        "ref_concepts": concepts,
+        "computed_ref_unit": topic["unit_slug"],
+        "computed_ref_topics": topic["topics"],
+    }
