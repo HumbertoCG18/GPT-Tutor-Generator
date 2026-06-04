@@ -50,3 +50,40 @@ def test_returns_none_when_no_ordinal():
 def test_returns_none_for_year_glued_to_marker():
     # "aula2024" nao deve casar (mais de 3 digitos colados, sem fronteira)
     assert extract_lecture_ordinal("aula2024 revisao") is None
+
+
+from src.builder.routing.sequence import annotate_class_ordinals
+
+
+def _blocks():
+    return [
+        {"id": "b1", "kind": "class"},
+        {"id": "b2", "kind": "class"},
+        {"id": "b3", "kind": "holiday"},
+        {"id": "b4", "kind": "review"},
+        {"id": "b5", "kind": "class"},
+    ]
+
+
+def test_numbers_only_class_blocks_in_order():
+    blocks = annotate_class_ordinals(_blocks())
+    by_id = {b["id"]: b["class_ordinal"] for b in blocks}
+    assert by_id == {"b1": 1, "b2": 2, "b3": None, "b4": None, "b5": 3}
+
+
+def test_block_without_kind_gets_none():
+    blocks = annotate_class_ordinals([{"id": "x"}])
+    assert blocks[0]["class_ordinal"] is None
+
+
+def test_is_idempotent():
+    blocks = _blocks()
+    annotate_class_ordinals(blocks)
+    annotate_class_ordinals(blocks)
+    by_id = {b["id"]: b["class_ordinal"] for b in blocks}
+    assert by_id == {"b1": 1, "b2": 2, "b3": None, "b4": None, "b5": 3}
+
+
+def test_no_class_blocks_all_none():
+    blocks = annotate_class_ordinals([{"id": "h", "kind": "holiday"}])
+    assert blocks[0]["class_ordinal"] is None

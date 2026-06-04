@@ -26,3 +26,19 @@ def extract_lecture_ordinal(text: str) -> Optional[int]:
     if not match:
         return None
     return int(match.group(1))
+
+
+def annotate_class_ordinals(blocks: List[dict]) -> List[dict]:
+    """Carimba block["class_ordinal"] = 1,2,3... nos blocos kind=class, na ordem
+    em que aparecem em `blocks` (o caller ja entrega ordenado cronologicamente).
+    Blocos de outro kind (ou sem kind) recebem class_ordinal=None. Idempotente.
+    Muta os dicts in-place (consistente com rows/scores) e retorna a lista.
+    """
+    counter = 0
+    for block in blocks:
+        if str(block.get("kind") or "") == "class":
+            counter += 1
+            block["class_ordinal"] = counter
+        else:
+            block["class_ordinal"] = None
+    return blocks
