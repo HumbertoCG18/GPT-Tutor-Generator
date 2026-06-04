@@ -1,6 +1,7 @@
 """Gemini API client for code summarization."""
 from __future__ import annotations
 import logging
+import os
 import time
 from typing import Optional, Type
 from pydantic import BaseModel
@@ -10,11 +11,22 @@ logger = logging.getLogger(__name__)
 DEFAULT_MODEL = "gemini-2.5-flash"
 
 
+def _resolve_gemini_key(config) -> str:
+    """Chave Gemini com precedência config (UI) > GEMINI_API_KEY do .env/ambiente.
+
+    `.env` é carregado em os.environ no import (helpers._load_project_env_file),
+    espelhando o princípio do DATALAB sem quebrar o campo da UI.
+    """
+    key = ""
+    if config is not None:
+        key = (config.get("gemini_api_key", "") or "").strip()
+    if not key:
+        key = (os.environ.get("GEMINI_API_KEY", "") or "").strip()
+    return key
+
+
 def has_gemini_api_key(config) -> bool:
-    if config is None:
-        return False
-    key = (config.get("gemini_api_key", "") or "").strip()
-    return bool(key)
+    return bool(_resolve_gemini_key(config))
 
 
 class GeminiClient:
@@ -83,8 +95,8 @@ class GeminiClient:
 
 
 def get_gemini_client(config) -> Optional[GeminiClient]:
-    if not has_gemini_api_key(config):
+    key = _resolve_gemini_key(config)
+    if not key:
         return None
-    key = config.get("gemini_api_key", "").strip()
-    model = config.get("gemini_model", DEFAULT_MODEL)
+    model = config.get("gemini_model", DEFAULT_MODEL) if config is not None else DEFAULT_MODEL
     return GeminiClient(api_key=key, model=model)
