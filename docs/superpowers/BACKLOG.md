@@ -18,6 +18,14 @@ contexto suficiente pra retomar sem reabrir a discussão. Ordem = prioridade sug
 
 ---
 
+### Chave Gemini via `.env` (`GEMINI_API_KEY`)
+**Status:** RESOLVIDO nesta branch (`7e0d1a9`).
+**Resumo do gap:** o client Gemini lia a chave só de `config.get("gemini_api_key")` (`~/.gpt_tutor_config.json`, via UI) — `GEMINI_API_KEY` no `.env` era ignorado, ao contrário do `DATALAB_API_KEY`. Code summary **e** enriquecimento de referência ficavam mudos sem mexer na UI.
+**Fix entregue:** `_resolve_gemini_key` (`gemini_client.py`) com precedência **config (UI) > `GEMINI_API_KEY` do `.env`/ambiente**; `has_gemini_api_key`/`get_gemini_client` reescritos sobre ele. `.env` já carrega em `os.environ` no import (`helpers._load_project_env_file`). TDD: `tests/test_gemini_key_source.py` (6 casos). 858 testes verdes.
+**Follow-up aberto:** dialog de settings (`dialogs.py`) podia exibir dica "ou defina `GEMINI_API_KEY` no `.env`" igual ao DATALAB. Cosmético, UI — fora do escopo do fix.
+
+---
+
 ## Parados
 
 ### Verbosidade do manifest.json — `to_dict` serializa todos os defaults
@@ -54,6 +62,12 @@ _Histórico do problema (resolvido):_
 **Resumo do bug:** `process_github_repo` (`source_importers.py`) forçava branch `main` → repos com default `master`/outro falhavam (`Remote branch main not found`). Repos grandes falhavam no checkout por long-path do Windows (`Filename too long`). Resultado: 8/8 referências com `extracted_files=0`.
 **Fix entregue:** `_detect_default_branch` via `git ls-remote --symref HEAD` (tags ainda pinam branch explícito; vazio → default detectado; fallback `main` seguro) + clone roda com `git -c core.longpaths=true`. TDD: `tests/test_github_clone_branch.py` (6 casos). Destrava análise de código de repo GitHub e fetch profundo de referência.
 **Follow-up aberto:** `prompts.py:484` ainda monta o raw URL do **repo de saída do próprio tutor** com `/main` fixo (`raw.githubusercontent.com/.../main`). Mecanismo distinto (sem clone; é o repo que o tutor gera) e sem fonte de branch disponível no `subject_profile` — repo de saída quase sempre é `main`. Tratar só quando houver um campo de branch no perfil.
+
+### Validação end-to-end da pipeline de referências
+**Status:** RESOLVIDO nesta branch. Harness `scripts/validate_references_e2e.py`.
+**O que rodou:** pipeline real (`summarize_all_reference_entries`) contra repo temporário com 2 refs reais — `github.com/pallets/flask` (github-repo) + `docs.python.org/3/library/json.html` (doc URL) — `GEMINI_API_KEY` do `.env`, Gemini `gemini-2.5-flash` de verdade. Resultado: fetch real OK (README via API GitHub + HTML via `html_to_structured_markdown`), resumo + conceitos Gemini preenchidos (PT-BR), mapeamento determinístico **correto e distinto** (flask→`web`, json→`serializacao`), persistência em `references_curation.json` OK.
+**Achado real:** `google-genai` (declarado em `pyproject.toml:25`) **não estava instalado** no venv ativo. A degradação era silenciosa — `summarize_reference` engole o `ImportError`, loga `[ReferenceSummary] falha: google-genai não instalado` e segue com resumo vazio. Build não falha, ninguém percebe sem ler log. Resolvido instalando (`google-genai 2.8.0`); revalidado caminho feliz.
+**Follow-up aberto:** não validado o render final em `BIBLIOGRAPHY.md` num build completo (harness para no curation). Modo degradado (sem chave/SDK) já coberto por teste unitário. Considerar um warning mais visível quando o SDK falta mas a chave está presente (hoje é só log de erro por entry).
 
 ### Token GitHub (rate limit)
 **Status:** follow-up da spec de referências.

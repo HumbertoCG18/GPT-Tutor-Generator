@@ -55,6 +55,14 @@ Read this file before starting any task.
   tags pinam branch explicito, fallback `main`) e clona com
   `git -c core.longpaths=true`. Conserta repos com default `master`/outro
   (`Remote branch main not found`) e long-path no Windows (`Filename too long`).
+- Chave Gemini (`gemini_client._resolve_gemini_key`) com precedencia config (UI)
+  > `GEMINI_API_KEY` do `.env`/ambiente. Vale para code summary E referencias
+  (client compartilhado). `.env` carrega em os.environ no import de helpers.
+- Pipeline de referencias validada end-to-end com Gemini real
+  (`scripts/validate_references_e2e.py`): fetch real (README GitHub + doc HTML),
+  resumo+conceitos Gemini, mapeamento determinístico, persistencia em
+  `references_curation.json`. Requer `google-genai` instalado (declarado em
+  pyproject; degrada silencioso para resumo vazio se ausente).
 
 ### Not Declared In Brief
 
