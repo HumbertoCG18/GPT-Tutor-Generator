@@ -34,6 +34,10 @@ Read this file before starting any task.
   cronograma correspondente em `score_entry_against_timeline_block()`.
 - Code summarization via Gemini API (`gemini-2.5-flash`): bundle each code entry, persist summary + concept-based timeline block assignment in the generated repo's course/code_curation.json. Lazy: without `gemini_api_key` in config the pipeline is a no-op.
 - Generated artifacts add course/CODE_HEALTH.md (coverage report) and course/CRONOGRAMA_DETALHADO.md (block-by-block render) to the generated repo.
+- Harness de avaliacao de atribuicao bloco em `scripts/eval_assignments.py`:
+  roda o gold set `tests/fixtures/eval/assignments_gold.json` pelo scorer real
+  (resolve_unit_block_tags) e reporta acuracia/confusao/calibracao de band.
+  Gate de regressao em `tests/test_eval_assignments.py` (baseline no fixture).
 
 ### Not Declared In Brief
 
