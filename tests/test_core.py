@@ -4903,3 +4903,17 @@ class TestModesMdCanonical:
         for line in _exam_scope_rule_lines():
             if line:
                 assert line in t
+
+
+class TestOutputTemplatesCanonical:
+    def test_study_template_uses_canonical_labels(self):
+        from src.builder.artifacts.pedagogy import output_templates_md
+        t = output_templates_md({"course_name": "Teste"})
+        assert "Por que existe:" not in t
+        assert "Definição formal:" not in t
+        assert "Cuidado com:" not in t
+        assert "Agora você:" not in t
+        assert "**Contexto:**" in t
+        assert "**Intuição:**" in t
+        assert "**Definição:**" in t
+        assert t.index("**Intuição:**") < t.index("**Definição:**")

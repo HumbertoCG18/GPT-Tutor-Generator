@@ -375,23 +375,7 @@ def output_templates_md(course_meta: Optional[dict] = None, subject_profile=None
 ```
 ## [Nome do conceito]
 
-**Por que existe:** [contexto em 1-2 frases]
-
-**Intuição:** [analogia ou imagem mental]
-
-**Definição formal:**
-[definição precisa, com LaTeX se necessário]
-
-**Exemplo mínimo:**
-[exemplo mais simples possível]
-
-**Como aparece na disciplina:**
-[conexão com o conteúdo do curso]
-
-**Cuidado com:**
-[erro mais comum]
-
-**Agora você:** [pergunta para o aluno aplicar o conceito]
+""" + "\n\n".join(_pedagogical_sequence_template_lines()) + """
 
 *Fonte: [arquivo de origem]*
 ```
