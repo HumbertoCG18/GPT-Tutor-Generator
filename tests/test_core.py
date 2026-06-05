@@ -4874,3 +4874,18 @@ class TestPedagogicalSequenceHelpers:
         assert lines[0] == "As provas são cumulativas mas com peso progressivo:"
         assert any("(~70%)" in l and "(~30%)" in l for l in lines)
         assert any("(~20%)" in l and "(~10%)" in l for l in lines)
+
+
+class TestPedagogyMdCanonical:
+    def test_intuicao_before_definicao(self):
+        from src.builder.artifacts.pedagogy import pedagogy_md
+        t = pedagogy_md()
+        assert t.index("**Intuição**") < t.index("**Definição**")
+
+    def test_exam_scope_uses_canonical_rule(self):
+        from src.builder.artifacts.pedagogy import pedagogy_md, _exam_scope_rule_lines
+        t = pedagogy_md()
+        for line in _exam_scope_rule_lines():
+            if line:
+                assert line in t
+        assert "→ foco primário:" not in t

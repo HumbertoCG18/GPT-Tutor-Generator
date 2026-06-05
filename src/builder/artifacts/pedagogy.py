@@ -192,14 +192,7 @@ def pedagogy_md() -> str:
 
 Para cada conceito novo, siga esta sequência:
 
-1. **Contexto** — Por que este conceito existe? Que problema resolve?
-2. **Definição** — O que é, em termos precisos
-3. **Intuição** — Como pensar sobre isso sem formalismo
-4. **Exemplo mínimo** — O caso mais simples possível
-5. **Aplicação** — Como aparece na disciplina / em computação
-6. **Erros comuns** — O que os alunos costumam confundir
-7. **Exercício guiado** — Uma pergunta para o aluno aplicar
-8. **Resumo** — Uma frase que captura a essência
+""" + "\n".join(_pedagogical_sequence_full_lines()) + """
 
 ## Adaptação de profundidade
 
@@ -227,21 +220,7 @@ Ao explicar um tópico, verifique `exams/EXAM_INDEX.md`:
 
 ## Lógica de escopo das provas
 
-As provas seguem um modelo cumulativo com foco progressivo:
-
-```
-P1: cobre TODO o conteúdo do início até a P1
-        → foco: 100% no conteúdo pré-P1
-
-P2: cobre TODO o conteúdo do início até a P2
-        → foco primário:   conteúdo entre P1 e P2  (~70%)
-        → foco secundário: conteúdo pré-P1          (~30%)
-
-P3: cobre TODO o conteúdo do início até a P3
-        → foco primário:   conteúdo entre P2 e P3  (~70%)
-        → foco secundário: conteúdo entre P1 e P2  (~20%)
-        → foco terciário:  conteúdo pré-P1          (~10%)
-```
+""" + "\n".join(_exam_scope_rule_lines()) + """
 
 **Regra prática para o tutor:**
 
