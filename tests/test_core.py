@@ -4917,3 +4917,23 @@ class TestOutputTemplatesCanonical:
         assert "**Intuição:**" in t
         assert "**Definição:**" in t
         assert t.index("**Intuição:**") < t.index("**Definição:**")
+
+
+class TestPedagogySingleSource:
+    def test_exam_scope_identical_in_pedagogy_and_modes(self):
+        from src.builder.artifacts.pedagogy import pedagogy_md, modes_md, _exam_scope_rule_lines
+        ped = pedagogy_md()
+        mod = modes_md({"course_name": "Teste"})
+        for line in _exam_scope_rule_lines():
+            if line:
+                assert line in ped and line in mod
+
+    def test_sequence_labels_drive_all_three(self):
+        from src.builder.artifacts.pedagogy import (
+            pedagogy_md, modes_md, output_templates_md, PEDAGOGICAL_SEQUENCE,
+        )
+        ped = pedagogy_md()
+        tpl = output_templates_md({"course_name": "Teste"})
+        for s in PEDAGOGICAL_SEQUENCE:
+            assert s["label"] in ped
+            assert s["label"] in tpl

@@ -86,6 +86,13 @@ Read this file before starting any task.
   (mantem `_(ambiguo)_`); `render_course_map_md` legado (0 callers) removido.
   893 testes verdes. Spec/plano `2026-06-05-ambiguidade-barata-mds-tutor*`.
   Fim de sessao (2 protocolos divergentes) adiado pro student_state.
+- Higiene dos MDs do tutor (grupo duplicacoes): fonte unica em `pedagogy.py` -
+  constante `PEDAGOGICAL_SEQUENCE` (ordem canonica Intuicao antes de Definicao,
+  rotulos padronizados) + helpers `_pedagogical_sequence_*`/`_exam_scope_rule_lines`.
+  `pedagogy_md`/`modes_md`/`output_templates_md` derivam dela; acaba a
+  contradicao das 3 ordens e o hardcode 2x dos pesos de prova. Guard DRY
+  `TestPedagogySingleSource`. 906 testes verdes. Spec/plano
+  `2026-06-05-duplicacoes-mds-tutor*`. Aberto: 5 modos inline (rodada propria).
 
 ### Not Declared In Brief
 
