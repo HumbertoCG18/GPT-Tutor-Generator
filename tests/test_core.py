@@ -4733,6 +4733,21 @@ class TestNewGenerators:
         from src.builder.engine import whiteboard_index_md
         assert "WHITEBOARD_INDEX" in whiteboard_index_md(self.COURSE_META, [])
 
+    def test_whiteboard_empty_phrase_no_placeholder(self):
+        from src.builder.engine import whiteboard_index_md
+        r = whiteboard_index_md(self.COURSE_META, [])
+        assert "Nenhum registro de quadro ainda" in r
+        assert "[a preencher]" not in r
+        assert "Padrões pedagógicos" not in r
+
+    def test_whiteboard_entries_no_patterns_section(self):
+        from src.builder.engine import whiteboard_index_md
+        e = self._e("quadro-branco", "AulaHash", ".png")
+        e.professor_signal = "usa colisão linear"
+        r = whiteboard_index_md(self.COURSE_META, [e])
+        assert "colisão linear" in r
+        assert "Padrões pedagógicos" not in r
+
 
 class TestGitHubDetection:
     def test_detects_repo(self):

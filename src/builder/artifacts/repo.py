@@ -1103,10 +1103,10 @@ def whiteboard_index_md(course_meta: dict, entries=None, *, clamp_navigation_art
         for e in entries:
             lines.append(f"| {Path(e.source_path).name} | {e.title} | {e.tags or ''} | {e.professor_signal or ''} |")
     else:
-        lines += ["| Arquivo | Título | Unidade | Padrão identificado |", "|---|---|---|---|", "| [a preencher] | | | |"]
-    lines += ["", "## Padrões pedagógicos", "", "- [a preencher]", ""]
+        lines.append("_Nenhum registro de quadro ainda._")
+    lines.append("")
     result = "\n".join(lines)
-    return clamp_navigation_artifact(result, max_chars=12000, label="course/FILE_MAP.md")
+    return clamp_navigation_artifact(result, max_chars=12000, label="course/WHITEBOARD_INDEX.md")
 
 
 def clamp_navigation_artifact(text: str, *, max_chars: int, label: str) -> str:
