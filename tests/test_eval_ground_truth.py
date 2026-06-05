@@ -103,3 +103,20 @@ def test_format_report_mentions_key_metrics(tmp_path):
     text = format_report(r, block_map)
     assert "Acuracia" in text or "Acurácia" in text
     assert "Confiante e ERRADO" in text or "confiante" in text.lower()
+
+
+from scripts.make_ground_truth_template import build_template_rows
+
+
+def test_build_template_rows_prefills_true_with_predicted(tmp_path):
+    repo = _make_repo(tmp_path)
+    rows = build_template_rows(repo)
+    by_id = {r["id"]: r for r in rows}
+    assert len(rows) == 3
+    assert by_id["m-ok"]["true_block_id"] == "bloco-01"
+    assert by_id["m-ok"]["predicted_period"] == "Semana 1"
+    assert by_id["m-orfao"]["predicted_block_id"] == ""
+    assert by_id["m-orfao"]["true_block_id"] == ""
+    for col in ("id", "title", "category", "markdown_path",
+                "predicted_block_id", "predicted_period", "predicted_band", "true_block_id"):
+        assert col in rows[0]
