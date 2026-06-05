@@ -4796,3 +4796,23 @@ class TestModesMdClarity:
         text = modes_md({"course_name": "Teste"})
         assert "exercises/EXERCISE_INDEX.md" in text
         assert "assignments/ASSIGNMENT_INDEX.md" in text
+
+
+class TestGlossaryClampLabel:
+    def test_glossary_clamp_label_is_glossary(self):
+        from src.builder.artifacts import repo
+        captured = {}
+        def spy_clamp(text, *, max_chars, label):
+            captured["label"] = label
+            return text
+        repo.glossary_md(
+            {"course_name": "Teste"},
+            None,
+            parse_units_from_teaching_plan_fn=lambda plan: [],
+            topic_text_fn=lambda topic: "",
+            collect_glossary_evidence_fn=lambda root_dir: [],
+            find_glossary_evidence_fn=lambda term, unit, evidence: "",
+            seed_glossary_fields_fn=lambda term, unit, ev: ("", "", ""),
+            clamp_navigation_artifact_fn=spy_clamp,
+        )
+        assert captured["label"] == "course/GLOSSARY.md"

@@ -1658,7 +1658,7 @@ def glossary_md(
     return clamp_navigation_artifact_fn(
         "\n".join(lines),
         max_chars=14000,
-        label="course/COURSE_MAP.md",
+        label="course/GLOSSARY.md",
     )
 
 
