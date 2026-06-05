@@ -93,6 +93,14 @@ Read this file before starting any task.
   contradicao das 3 ordens e o hardcode 2x dos pesos de prova. Guard DRY
   `TestPedagogySingleSource`. 906 testes verdes. Spec/plano
   `2026-06-05-duplicacoes-mds-tutor*`. Aberto: 5 modos inline (rodada propria).
+- Harness ground-truth (`scripts/eval_ground_truth.py` +
+  `scripts/make_ground_truth_template.py`): mede correcao REAL file->bloco contra
+  um repo gerado real + CSV de rotulos, sem re-rodar o scorer (le `manifest.json`
+  + `course/.timeline_index.json`). Metrica-chave `confident_wrong` (band alta +
+  bloco errado), alem de acuracia/confusao/orphans/missed/calibracao por band.
+  Gerador de esqueleto pre-preenche `true_block_id` com a predicao. Falta o passo
+  de dados: usuario aponta repo real + rotula (assistido). 913 testes verdes.
+  Spec/plano `2026-06-05-medicao-ground-truth*`.
 
 ### Not Declared In Brief
 

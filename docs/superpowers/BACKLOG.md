@@ -116,5 +116,9 @@ de relevância da BIBLIOGRAPHY **não** entra aqui — vai junto do Approach C.
 **Follow-up aberto:** match de tópico depende de `computed_ref_topics` == `topic_phrases`; se a pipeline de unidades mudar a normalização, atualizar `_topic_key`. Render final em BIBLIOGRAPHY num build real não inspecionado (cobertura unitária só).
 
 ### Medição de correção com ground-truth
-**Status:** proposto como forma de validar se mais precisão vale a pena.
-**Resumo:** band = confiança, não correção verificada. "alta" pode estar confiante e errado. Rotular ground-truth de 1 repo real (ex.: IA) e rodar o harness contra ele mediria correção de fato, não só confiança. Diz se há trabalho de precisão que ainda valha.
+**Status:** TOOLING ENTREGUE (spec/plano `2026-06-05-medicao-ground-truth*`; commits `977b923`..`60b225c`; 913 testes verdes). Falta o passo de DADOS (rótulos reais), que depende do usuário apontar um repo + preencher (assistido pelo agente).
+**Resumo:** band = confiança, não correção verificada. "alta" pode estar confiante e errado.
+**Entregue:** 2 scripts em `scripts/` que medem correção real file→bloco sem re-rodar o scorer (leem `manifest.json` + `course/.timeline_index.json`):
+- `make_ground_truth_template.py <repo> <out.csv>` — gera CSV esqueleto (id, title, category, markdown_path, predicted_*, true_block_id pré-preenchido com a predição); imprime referência de blocos válidos.
+- `eval_ground_truth.py <repo> <labels.csv> [--json]` — acurácia real, matriz de confusão, **`confident_wrong`** (band alta + bloco errado), `orphans`/`missed`, calibração por band.
+**Fluxo:** gerar esqueleto → rotulação assistida (agente lê `markdown_path` + blocos da timeline, propõe `true_block_id`; usuário confirma) → eval → veredito (se confident_wrong/acurácia ruins, reabrir #3 decay / #4 band; se bons, encerrar a frente de precisão).
