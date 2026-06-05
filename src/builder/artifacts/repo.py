@@ -1013,7 +1013,7 @@ def cronograma_detalhado_md(
         else:
             lines.append("_Sem códigos vinculados a esta aula._")
 
-        lines += ["", "<!-- TODO (material-agnostic refactor): PDFs, exercícios, imagens -->", "", "---", ""]
+        lines += ["", "---", ""]
 
     return "\n".join(lines)
 

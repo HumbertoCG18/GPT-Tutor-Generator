@@ -4753,3 +4753,16 @@ class TestGitHubDetection:
     def test_main_is_student(self):
         from src.utils.helpers import STUDENT_BRANCHES
         assert "main" in STUDENT_BRANCHES
+
+
+class TestCronogramaDetalhado:
+    def test_no_todo_comment_leaks(self):
+        from src.builder.artifacts.repo import cronograma_detalhado_md
+        from src.models.core import FileEntry
+        entry = FileEntry(source_path="/fake/ll.py", file_type="code",
+                          category="codigo-professor", title="linked_list")
+        curation = {"entries": {entry.id(): {"summary": {"primary_block_id": "b1"}}}}
+        blocks = [{"id": "b1", "period_label": "Aula 1", "topics": ["Listas"]}]
+        r = cronograma_detalhado_md({"course_name": "ED"}, [entry], curation, blocks)
+        assert "TODO (material-agnostic refactor)" not in r
+        assert "linked_list" in r
