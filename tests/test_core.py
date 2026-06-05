@@ -4710,6 +4710,19 @@ class TestNewGenerators:
         from src.builder.engine import code_index_md
         assert "Nenhum arquivo" in code_index_md(self.COURSE_META, [])
 
+    def test_code_index_no_patterns_placeholder_empty(self):
+        from src.builder.engine import code_index_md
+        r = code_index_md(self.COURSE_META, [])
+        assert "[a preencher]" not in r
+        assert "Preencha conforme analisar" not in r
+
+    def test_code_index_no_patterns_placeholder_flat(self):
+        from src.builder.engine import code_index_md
+        r = code_index_md(self.COURSE_META, [self._e("codigo-professor", "linked_list")])
+        assert "linked_list" in r
+        assert "[a preencher]" not in r
+        assert "Preencha conforme analisar" not in r
+
     def test_whiteboard_professor_signal(self):
         from src.builder.engine import whiteboard_index_md
         e = self._e("quadro-branco", "AulaHash", ".png")

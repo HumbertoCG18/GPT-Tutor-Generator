@@ -838,15 +838,8 @@ def code_index_md(
         ]
         if not prof_entries:
             lines += [profile["code_index_empty"], ""]
-        lines += [
-            profile["code_index_patterns"],
-            "",
-            "<!-- Preencha conforme analisar o código -->",
-            "- [a preencher]",
-            "",
-        ]
         result = "\n".join(lines)
-        return clamp_navigation_artifact(result, max_chars=14000, label="course/COURSE_MAP.md")
+        return clamp_navigation_artifact(result, max_chars=14000, label="course/CODE_INDEX.md")
 
     # (b) Code entries but no curation/blocks → flat table (byte-equal to old)
     curation_entries = (code_curation or {}).get("entries", {})
@@ -867,7 +860,7 @@ def code_index_md(
                 "|---|---|---|---|---|",
             ]
             for e in prof_entries:
-                conceito = e.professor_signal or "[a preencher]"
+                conceito = e.professor_signal or ""
                 unit_str = ""
                 if e.notes and "Unidade:" in e.notes:
                     try:
@@ -880,15 +873,8 @@ def code_index_md(
             lines.append("")
         else:
             lines += [profile["code_index_empty"], ""]
-        lines += [
-            profile["code_index_patterns"],
-            "",
-            "<!-- Preencha conforme analisar o código -->",
-            "- [a preencher]",
-            "",
-        ]
         result = "\n".join(lines)
-        return clamp_navigation_artifact(result, max_chars=14000, label="course/COURSE_MAP.md")
+        return clamp_navigation_artifact(result, max_chars=14000, label="course/CODE_INDEX.md")
 
     # (c) Code entries + curation + blocks → grouped Phase-3 format
     blocks_by_id = {b["id"]: b for b in (timeline_blocks or []) if b.get("id")}
