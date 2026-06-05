@@ -4686,6 +4686,20 @@ class TestNewGenerators:
                                 [self._e("trabalhos", "T1", ".pdf")])
         assert "T1" in r
 
+    def test_assignment_index_drops_status_column(self):
+        from src.builder.engine import assignment_index_md
+        r = assignment_index_md(self.COURSE_META, [self._e("trabalhos", "T1", ".pdf")])
+        assert "T1" in r
+        assert "Status" not in r
+        assert "pendente" not in r
+
+    def test_assignment_index_empty_phrase_no_placeholder(self):
+        from src.builder.engine import assignment_index_md
+        r = assignment_index_md(self.COURSE_META, [])
+        assert "Nenhum trabalho mapeado ainda" in r
+        assert "[a preencher]" not in r
+        assert "Padrões do professor" not in r
+
     def test_code_index_professor(self):
         from src.builder.engine import code_index_md
         r = code_index_md(self.COURSE_META,

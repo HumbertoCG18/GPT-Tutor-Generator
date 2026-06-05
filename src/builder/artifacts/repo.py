@@ -798,14 +798,14 @@ def assignment_index_md(course_meta: dict, entries=None, *, clamp_navigation_art
         "",
     ]
     if entries:
-        lines += ["| Arquivo | Título | Unidade | Status |", "|---|---|---|---|"]
+        lines += ["| Arquivo | Título | Unidade |", "|---|---|---|"]
         for e in entries:
-            lines.append(f"| {Path(e.source_path).name} | {e.title} | {e.tags or ''} | pendente |")
+            lines.append(f"| {Path(e.source_path).name} | {e.title} | {e.tags or ''} |")
     else:
-        lines += ["| Arquivo | Título | Unidade | Status |", "|---|---|---|---|", "| [a preencher] | | | |"]
-    lines += ["", "## Padrões do professor", "", "- [a preencher]", ""]
+        lines.append("_Nenhum trabalho mapeado ainda._")
+    lines.append("")
     result = "\n".join(lines)
-    return clamp_navigation_artifact(result, max_chars=12000, label="course/FILE_MAP.md")
+    return clamp_navigation_artifact(result, max_chars=12000, label="course/ASSIGNMENT_INDEX.md")
 
 
 def code_index_md(
