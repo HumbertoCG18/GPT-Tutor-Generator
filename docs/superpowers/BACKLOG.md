@@ -96,14 +96,14 @@ de relevância da BIBLIOGRAPHY **não** entra aqui — vai junto do Approach C.
 - `pedagogy.py:323-353 vs 462-489` postura code_review em modes_md e output_templates_md.
 - `repo.py:1019` CRONOGRAMA_DETALHADO vs CODE_INDEX (por bloco); `cronograma_health` vs CODE_HEALTH (cobertura/órfãos) sobrepõem.
 
-**🟢 Ambiguidade / labels:**
-- `pedagogy.py:240` "opera em **quatro** modos" mas lista **cinco**.
-- `pedagogy.py:260` modo `assignment` opera sobre `exercises/` — funde lista vs trabalho (`assignments/`).
-- `repo.py:1142,1694` labels de clamp errados restantes (GLOSSARY rotulado como COURSE_MAP/FILE_MAP). [BIBLIOGRAPHY/756 no Approach C; EXAM/ASSIGNMENT/CODE_INDEX/WHITEBOARD corrigidos na limpeza de tabelas mortas]
-- `prompts.py:564` ordem de navegação contraditória entre variantes + contrato map-first (FILE_MAP vs COURSE_MAP qual 1º).
-- `navigation.py:731` FILE_MAP: sufixo `(ambíguo)`/`(baixa confiança)` na célula Unidade duplica a coluna Confiança.
-- `prompts.py:84` "sessão substancial" indefinido; 2 protocolos de fim de sessão concorrentes (bloco importável vs ditado), formatos de data divergentes (`DD-MM-YY` vs `YYYY-MM-DD`).
-- `navigation.py:283` `render_course_map_md` é gerador COURSE_MAP **legado paralelo** (fora do caminho ativo, que é `render_low_token_course_map_md`); candidato a remoção.
+**🟢 Ambiguidade / labels — MAJORITARIAMENTE ENTREGUE** (spec `2026-06-05-ambiguidade-barata-mds-tutor-design.md`, plano homônimo; commits `3d77bf3`..`e022837`; 893 testes verdes):
+- ✅ `pedagogy.py:240` "quatro modos" → **cinco** (`3d77bf3`).
+- ✅ `pedagogy.py:270` modo `assignment` agora referencia **os dois índices** (`exercises/EXERCISE_INDEX.md` + `assignments/ASSIGNMENT_INDEX.md`) (`261aefd`).
+- ✅ label de clamp do `glossary_md` (`course/COURSE_MAP.md` → `course/GLOSSARY.md`) (`dfd8abc`). Único restante; demais já caíram em rodadas anteriores.
+- ✅ `prompts.py:26` contrato estrutural alinhado: ordem `COURSE_MAP→FILE_MAP` (bate com as 3 variantes) (`e022837`).
+- ✅ `navigation.py` FILE_MAP: removido só o sufixo redundante `_(baixa confiança)_` da célula Unidade; `_(ambíguo)_` mantido (agrega motivo distinto) (`fd4ce8d`).
+- ✅ `render_course_map_md` (gerador COURSE_MAP legado paralelo) removido — 0 callers (`6bf4f8c`).
+- ABERTO: `prompts.py:84` "sessão substancial" indefinido + 2 protocolos de fim de sessão concorrentes (bloco importável `DD-MM-YY` vs ditado `YYYY-MM-DD`) — **adiado pro refactor do student_state** (acoplado ao formato de import do STUDENT_STATE).
 
 **Recomendação de ataque:** 🔴 PROGRESS_SCHEMA primeiro (sincronizar com v2). Depois 🟠 tabelas mortas (remoção barata, ganho de token). 🟡 duplicação exige decidir fonte canônica por tópico (mais trabalho). Cada grupo é um plano TDD curto.
 

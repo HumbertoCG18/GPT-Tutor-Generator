@@ -78,6 +78,14 @@ Read this file before starting any task.
   dropada; labels de clamp corrigidos (EXAM/ASSIGNMENT/CODE_INDEX/WHITEBOARD
   usam o proprio nome). Branches vazios viram frase curta de estado. 887 testes
   verdes. Spec/plano `2026-06-05-tabelas-mortas-mds-tutor*`.
+- Higiene dos MDs do tutor (grupo ambiguidade barata): `modes_md` "quatro
+  modos" -> cinco; modo `assignment` referencia os dois indices (exercises +
+  assignments); label de clamp do `glossary_md` corrigido p/ GLOSSARY; contrato
+  estrutural de navegacao alinhado a COURSE_MAP->FILE_MAP (bate com as 3
+  variantes); FILE_MAP perdeu o sufixo redundante `_(baixa confianca)_`
+  (mantem `_(ambiguo)_`); `render_course_map_md` legado (0 callers) removido.
+  893 testes verdes. Spec/plano `2026-06-05-ambiguidade-barata-mds-tutor*`.
+  Fim de sessao (2 protocolos divergentes) adiado pro student_state.
 
 ### Not Declared In Brief
 
