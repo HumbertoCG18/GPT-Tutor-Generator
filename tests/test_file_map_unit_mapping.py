@@ -1729,3 +1729,37 @@ def test_file_map_md_shows_subtopic_label_for_matched_entry():
     result = file_map_md(course_meta, entries, subject_profile=profile)
 
     assert "3.2" in result and "Escalonamento" in result
+
+
+def test_file_map_md_drops_low_confidence_suffix_keeps_confidence_column():
+    # Empirically constructed low-confidence NON-ambiguous match: two units sharing
+    # the "Programação" token, an entry whose text hits one distinctive token of the
+    # winner ("denotacional" -> 0.572) plus the shared/discounted token of the runner
+    # ("proposicional"), yielding winner != runner, not ambiguous, confidence < 0.45.
+    # Empty taxonomy keeps the topic-index boost out so the unit-margin path decides.
+    course_meta = {
+        "course_name": "Semântica Formal",
+        "_unit_index_for_tests": [
+            {"title": "Unidade 01 — Programação Denotacional", "topics": ["Programação Denotacional"]},
+            {"title": "Unidade 02 — Programação Proposicional", "topics": ["Programação Proposicional"]},
+        ],
+        "_content_taxonomy_for_tests": {"units": []},
+        "_period_index_for_tests": {},
+    }
+    entries = [
+        {
+            "title": "Revisao",
+            "category": "material-de-aula",
+            "tags": "",
+            "base_markdown": "content/curated/revisao.md",
+            "raw_target": "raw/pdfs/material-de-aula/revisao.pdf",
+            "_markdown_text_for_tests": "denotacional proposicional",
+        }
+    ]
+
+    result = file_map_md(course_meta, entries)
+
+    assert "_(baixa confiança)_" not in result  # redundant suffix removed
+    assert "Baixa" in result  # Confiança column still flags low confidence
+    # sanity: the matched slug itself is still present
+    assert "unidade-01-programacao-denotacional" in result

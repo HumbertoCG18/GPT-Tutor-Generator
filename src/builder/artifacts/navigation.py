@@ -643,11 +643,11 @@ def render_low_token_file_map_md(
                         refined = auto_map_entry_subtopic(entry, content_taxonomy, markdown_text, winning_unit_slug=match.slug)
                         if refined.topic_slug and not refined.ambiguous and refined.confidence >= 0.35:
                             preferred_topic_slug = refined.topic_slug
+            # Low-confidence suffix dropped: redundant with the Confiança column
+            # (which renders "Baixa"). Only the distinct "ambíguo" reason is kept.
             unit = (
                 f"{match.slug} _(ambíguo)_"
                 if match.slug and match.ambiguous
-                else f"{match.slug} _(baixa confiança)_"
-                if match.slug and match.confidence < 0.45
                 else match.slug
             )
             unit_blocks = list(blocks_by_unit.get(match.slug, [])) if match.slug else []
