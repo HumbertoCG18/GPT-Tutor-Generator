@@ -4833,3 +4833,44 @@ class TestNavOrderContract:
         assert "COURSE_MAP.md" in first
         assert "FILE_MAP.md" in first
         assert first.index("COURSE_MAP.md") < first.index("FILE_MAP.md")
+
+
+class TestPedagogicalSequenceHelpers:
+    def test_sequence_order_intuicao_before_definicao(self):
+        from src.builder.artifacts.pedagogy import PEDAGOGICAL_SEQUENCE
+        labels = [s["label"] for s in PEDAGOGICAL_SEQUENCE]
+        assert labels.index("Intuição") < labels.index("Definição")
+
+    def test_sequence_has_standardized_labels(self):
+        from src.builder.artifacts.pedagogy import PEDAGOGICAL_SEQUENCE
+        labels = [s["label"] for s in PEDAGOGICAL_SEQUENCE]
+        assert labels == [
+            "Contexto", "Intuição", "Definição", "Exemplo mínimo",
+            "Aplicação", "Erros comuns", "Exercício guiado", "Resumo",
+        ]
+
+    def test_full_lines_numbered(self):
+        from src.builder.artifacts.pedagogy import _pedagogical_sequence_full_lines
+        lines = _pedagogical_sequence_full_lines()
+        assert lines[0] == "1. **Contexto** — Por que este conceito existe? Que problema resolve?"
+        assert lines[1].startswith("2. **Intuição** — ")
+        assert len(lines) == 8
+
+    def test_compact_arrow(self):
+        from src.builder.artifacts.pedagogy import _pedagogical_sequence_compact
+        c = _pedagogical_sequence_compact()
+        assert c == "Contexto → Intuição → Definição → Exemplo mínimo → Aplicação → Erros comuns → Exercício guiado → Resumo"
+
+    def test_template_lines(self):
+        from src.builder.artifacts.pedagogy import _pedagogical_sequence_template_lines
+        lines = _pedagogical_sequence_template_lines()
+        assert lines[0] == "**Contexto:** [contexto em 1-2 frases]"
+        assert lines[2] == "**Definição:** [definição precisa, com LaTeX se necessário]"
+        assert len(lines) == 8
+
+    def test_exam_scope_rule_lines(self):
+        from src.builder.artifacts.pedagogy import _exam_scope_rule_lines
+        lines = _exam_scope_rule_lines()
+        assert lines[0] == "As provas são cumulativas mas com peso progressivo:"
+        assert any("(~70%)" in l and "(~30%)" in l for l in lines)
+        assert any("(~20%)" in l and "(~10%)" in l for l in lines)

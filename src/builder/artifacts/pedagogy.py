@@ -149,6 +149,42 @@ Identifique o modo antes de responder:
 """
 
 
+# Fonte única da sequência pedagógica (ordem canônica: Intuição antes de
+# Definição, decidido 2026-06-05). PEDAGOGY/MODES/OUTPUT_TEMPLATES derivam daqui.
+PEDAGOGICAL_SEQUENCE = [
+    {"label": "Contexto",         "full": "Por que este conceito existe? Que problema resolve?", "template": "[contexto em 1-2 frases]"},
+    {"label": "Intuição",         "full": "Como pensar sobre isso sem formalismo",              "template": "[analogia ou imagem mental]"},
+    {"label": "Definição",        "full": "O que é, em termos precisos",                        "template": "[definição precisa, com LaTeX se necessário]"},
+    {"label": "Exemplo mínimo",   "full": "O caso mais simples possível",                       "template": "[exemplo mais simples possível]"},
+    {"label": "Aplicação",        "full": "Como aparece na disciplina / em computação",         "template": "[conexão com o conteúdo do curso]"},
+    {"label": "Erros comuns",     "full": "O que os alunos costumam confundir",                 "template": "[erro mais comum]"},
+    {"label": "Exercício guiado", "full": "Uma pergunta para o aluno aplicar",                  "template": "[pergunta para o aluno aplicar]"},
+    {"label": "Resumo",           "full": "Uma frase que captura a essência",                   "template": "[uma frase que captura a essência]"},
+]
+
+
+def _pedagogical_sequence_full_lines() -> list[str]:
+    return [f"{i}. **{s['label']}** — {s['full']}" for i, s in enumerate(PEDAGOGICAL_SEQUENCE, 1)]
+
+
+def _pedagogical_sequence_compact() -> str:
+    return " → ".join(s["label"] for s in PEDAGOGICAL_SEQUENCE)
+
+
+def _pedagogical_sequence_template_lines() -> list[str]:
+    return [f"**{s['label']}:** {s['template']}" for s in PEDAGOGICAL_SEQUENCE]
+
+
+def _exam_scope_rule_lines() -> list[str]:
+    return [
+        "As provas são cumulativas mas com peso progressivo:",
+        "",
+        "- **P1** → cobre tudo do início até a P1. Foco total no conteúdo pré-P1.",
+        "- **P2** → cobre tudo até a P2. Foco principal no conteúdo entre P1 e P2 (~70%). Conteúdo da P1 ainda cai, mas com menos peso (~30%).",
+        "- **P3** → cobre tudo até a P3. Foco principal no conteúdo entre P2 e P3 (~70%). Conteúdo entre P1-P2 cai menos (~20%). Conteúdo pré-P1 cai pouco (~10%).",
+    ]
+
+
 def pedagogy_md() -> str:
     return """# PEDAGOGY
 
