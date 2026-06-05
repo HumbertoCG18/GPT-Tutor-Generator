@@ -71,6 +71,13 @@ Read this file before starting any task.
   `render_low_token_course_map_md` (cap 2/ancora + overflow, dedup topico vs
   unidade). Tabela de relevancia redundante da BIBLIOGRAPHY virou ponteiro.
   Modo degradado byte-identico sem curation.
+- Higiene dos MDs do tutor (grupo tabelas mortas, `repo.py`): placeholders
+  permanentes `[a preencher]` e secoes nunca preenchidas removidas de
+  exam/assignment/code_index/whiteboard/exercise; comentario TODO que vazava
+  por block no CRONOGRAMA removido; coluna `Status` morta do assignment
+  dropada; labels de clamp corrigidos (EXAM/ASSIGNMENT/CODE_INDEX/WHITEBOARD
+  usam o proprio nome). Branches vazios viram frase curta de estado. 887 testes
+  verdes. Spec/plano `2026-06-05-tabelas-mortas-mds-tutor*`.
 
 ### Not Declared In Brief
 

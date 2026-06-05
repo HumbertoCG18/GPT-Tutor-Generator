@@ -79,12 +79,15 @@ de relevância da BIBLIOGRAPHY **não** entra aqui — vai junto do Approach C.
 - `repo.py:50-65` PROGRESS_SCHEMA dessincronizado do student_state v2: status `não iniciado/com dúvidas/concluído` vs real `pendente/em_progresso/compreendido/revisao`; campo `last_updated` vs real `updated`; path `student/PROGRESS_SCHEMA.md` (deletado como obsoleto) vs gravado em `build/`. Schema descreve vocabulário que o gerador nunca emite. Template "Atualização sugerida" (markdown) não bate com o YAML+baterias do v2.
 - `prompts.py:484` `/main` hardcoded no raw URL do repo de saída (já listado em "Conserto do clone").
 
-**🟠 Tabelas mortas / ruído lido pelo tutor (gasta token + confunde):**
-- `repo.py:746` bibliography: colunas `Acessível` (sempre "sim") + `Incidência em prova` (sempre "—"). [coberto pela limpeza do Approach C]
-- `repo.py:790,794` exam_index: `Incidência P1/P2/P3` + `Padrões de questão` sempre `[a preencher]`.
-- `repo.py:822,825` assignment: `Status` sempre "pendente"; `Padrões` `[a preencher]`.
-- `repo.py:1049` comentário `<!-- TODO (material-agnostic refactor) -->` vazando no output do CRONOGRAMA lido pelo tutor.
-- whiteboard/exercise: `Padrões pedagógicos` / linhas `[a preencher]` permanentes.
+**🟠 Tabelas mortas / ruído lido pelo tutor — ENTREGUE** (spec `2026-06-05-tabelas-mortas-mds-tutor-design.md`, plano `2026-06-05-tabelas-mortas-mds-tutor.md`; commits `9338c2c`..`984a080`):
+- `repo.py:746` bibliography: colunas mortas. [coberto pela limpeza do Approach C]
+- exam_index: seções "Incidência de tópicos" + "Padrões de questão" removidas; branch vazio vira frase; label `EXAM_INDEX` (`9338c2c`).
+- assignment: coluna `Status` (sempre "pendente") dropada; "Padrões do professor" removido; frase vazia; label `ASSIGNMENT_INDEX` (`f0ac3d9`).
+- code_index: bloco `code_index_patterns` + `[a preencher]` removido dos templates (a)/(b); fallback de conceito vazio; labels `CODE_INDEX` (`6d5c0e1`).
+- cronograma: comentário `<!-- TODO (material-agnostic refactor) -->` (vazava por block) removido (`efba19e`).
+- whiteboard: "Padrões pedagógicos" removido; frase vazia; label `WHITEBOARD_INDEX` (`b50c444`).
+- exercise: linha `[a preencher]` do estado vazio removida (`984a080`).
+- 887 testes verdes.
 
 **🟡 Duplicação (risco de divergência ao editar):**
 - `pedagogy.py:192-224 vs 286-302` lógica de escopo de prova (P1/P2/P3, pesos) escrita 2x (pedagogy_md + modes_md).
@@ -96,7 +99,7 @@ de relevância da BIBLIOGRAPHY **não** entra aqui — vai junto do Approach C.
 **🟢 Ambiguidade / labels:**
 - `pedagogy.py:240` "opera em **quatro** modos" mas lista **cinco**.
 - `pedagogy.py:260` modo `assignment` opera sobre `exercises/` — funde lista vs trabalho (`assignments/`).
-- `repo.py:756,803,827,1142,1694` labels de clamp errados (BIBLIOGRAPHY/EXAM/ASSIGNMENT/WHITEBOARD/GLOSSARY rotulados como COURSE_MAP/FILE_MAP). [756 corrigido no Approach C]
+- `repo.py:1142,1694` labels de clamp errados restantes (GLOSSARY rotulado como COURSE_MAP/FILE_MAP). [BIBLIOGRAPHY/756 no Approach C; EXAM/ASSIGNMENT/CODE_INDEX/WHITEBOARD corrigidos na limpeza de tabelas mortas]
 - `prompts.py:564` ordem de navegação contraditória entre variantes + contrato map-first (FILE_MAP vs COURSE_MAP qual 1º).
 - `navigation.py:731` FILE_MAP: sufixo `(ambíguo)`/`(baixa confiança)` na célula Unidade duplica a coluna Confiança.
 - `prompts.py:84` "sessão substancial" indefinido; 2 protocolos de fim de sessão concorrentes (bloco importável vs ditado), formatos de data divergentes (`DD-MM-YY` vs `YYYY-MM-DD`).
