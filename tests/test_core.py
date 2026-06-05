@@ -4434,7 +4434,8 @@ class TestExerciseIndexLowToken:
 
     def test_exercise_index_empty_state_stays_short(self):
         result = exercise_index_md({"course_name": "Teste"}, [])
-        assert "| [a preencher] | | | | | |" in result
+        assert "[a preencher]" not in result
+        assert "Adicione listas ou provas antigas" in result
         assert "Mapeamento de exercícios por tópico" not in result
 
     def test_exercise_index_uses_auto_tags_when_manual_tags_are_empty(self):

@@ -2062,9 +2062,7 @@ def exercise_index_md(
                 f"| {entry.title} | {kind} | {tags or 'não mapeado'} | {has_solution} | {priority} | {usage} |"
             )
     else:
-        lines.append("| [a preencher] | | | | | |")
         lines += [
-            "",
             "> Adicione listas ou provas antigas para o tutor conseguir sugerir prática com baixo custo de contexto.",
         ]
     lines.append("")
