@@ -89,3 +89,17 @@ def test_evaluate_only_labeled_entries(tmp_path):
     r = evaluate_ground_truth(preds, labels, block_map)
     assert r["total"] == 1
     assert r["correct"] == 1
+
+
+from scripts.eval_ground_truth import format_report
+
+
+def test_format_report_mentions_key_metrics(tmp_path):
+    repo = _make_repo(tmp_path)
+    preds = load_predictions(repo)
+    block_map = load_block_period_map(repo)
+    labels = {"m-ok": "bloco-01", "m-confwrong": "bloco-03"}
+    r = evaluate_ground_truth(preds, labels, block_map)
+    text = format_report(r, block_map)
+    assert "Acuracia" in text or "Acurácia" in text
+    assert "Confiante e ERRADO" in text or "confiante" in text.lower()

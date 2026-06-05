@@ -86,3 +86,54 @@ def evaluate_ground_truth(predictions: dict, labels: dict, block_map: dict) -> d
         "orphans": orphans, "missed": missed, "confident_wrong": confident_wrong,
         "bands": bands, "confusion": confusion, "cases": rows,
     }
+
+
+def format_report(report: dict, block_map: dict) -> str:
+    lines = ["=== Eval ground-truth: atribuicao file -> bloco ==="]
+    acc = report["block_accuracy"]
+    lines.append(f"Acuracia: {report['correct']}/{report['total']} ({acc * 100:.1f}%)")
+    lines.append(f"Orfaos (previu vazio): {report['orphans']}   Missed (verdade tinha bloco): {report['missed']}")
+    lines.append(f"Confiante e ERRADO (band alta, bloco errado): {report['confident_wrong']}")
+    lines.append("")
+    lines.append("Calibracao por band (correto / errado):")
+    for band in ("alta", "media", "baixa", ""):
+        b = report["bands"].get(band, {"correct": 0, "wrong": 0})
+        lines.append(f"  {(band or '(vazio)'):<8} {b['correct']:>3} ok / {b['wrong']:>3} erro")
+    wrong = [c for c in report["cases"] if not c["correct"]]
+    lines.append("")
+    if wrong:
+        lines.append("Erros:")
+        for c in wrong:
+            tp = block_map.get(c["true"], c["true"])
+            pp = block_map.get(c["predicted"], c["predicted"] or "(orfao)")
+            lines.append(f"  - {c['id']:<24} verdade={c['true'] or '-'} ({tp}) "
+                         f"previu={c['predicted'] or '(orfao)'} ({pp}) band={c['band'] or '-'}")
+    else:
+        lines.append("Sem erros.")
+    return "\n".join(lines)
+
+
+def main(argv: list) -> int:
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
+    as_json = "--json" in argv
+    pos = [a for a in argv if not a.startswith("-")]
+    if len(pos) < 2:
+        print("uso: python scripts/eval_ground_truth.py <repo_root> <labels.csv> [--json]")
+        return 2
+    repo_root, labels_path = Path(pos[0]), Path(pos[1])
+    preds = load_predictions(repo_root)
+    block_map = load_block_period_map(repo_root)
+    labels = load_labels_csv(labels_path)
+    report = evaluate_ground_truth(preds, labels, block_map)
+    if as_json:
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+    else:
+        print(format_report(report, block_map))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))
