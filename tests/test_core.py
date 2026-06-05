@@ -4889,3 +4889,17 @@ class TestPedagogyMdCanonical:
             if line:
                 assert line in t
         assert "→ foco primário:" not in t
+
+
+class TestModesMdCanonical:
+    def test_study_format_uses_compact_sequence(self):
+        from src.builder.artifacts.pedagogy import modes_md, _pedagogical_sequence_compact
+        t = modes_md({"course_name": "Teste"})
+        assert _pedagogical_sequence_compact() in t
+
+    def test_exam_scope_uses_canonical_rule(self):
+        from src.builder.artifacts.pedagogy import modes_md, _exam_scope_rule_lines
+        t = modes_md({"course_name": "Teste"})
+        for line in _exam_scope_rule_lines():
+            if line:
+                assert line in t

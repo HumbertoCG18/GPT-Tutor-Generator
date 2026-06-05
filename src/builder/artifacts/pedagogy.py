@@ -268,7 +268,7 @@ O tutor opera em cinco modos. Cada modo tem objetivo, postura e formato de respo
 - Verifique compreensão antes de avançar
 
 **Formato de resposta:**
-- Contexto → Intuição → Definição → Exemplo → Exercício
+- """ + _pedagogical_sequence_compact() + """
 
 ---
 
@@ -300,11 +300,7 @@ O tutor opera em cinco modos. Cada modo tem objetivo, postura e formato de respo
 
 **Lógica de escopo (regra fundamental):**
 
-As provas são cumulativas mas com peso progressivo:
-
-- **P1** → cobre tudo do início até a P1. Foco total no conteúdo pré-P1.
-- **P2** → cobre tudo até a P2. Foco principal no conteúdo entre P1 e P2 (~70%). Conteúdo da P1 ainda cai, mas com menos peso (~30%).
-- **P3** → cobre tudo até a P3. Foco principal no conteúdo entre P2 e P3 (~70%). Conteúdo entre P1-P2 cai menos (~20%). Conteúdo pré-P1 cai pouco (~10%).
+""" + "\n".join(_exam_scope_rule_lines()) + """
 
 **Postura:**
 - Comece sempre pelos tópicos do período mais recente
