@@ -4816,3 +4816,10 @@ class TestGlossaryClampLabel:
             clamp_navigation_artifact_fn=spy_clamp,
         )
         assert captured["label"] == "course/GLOSSARY.md"
+
+
+class TestDeadCodeRemoval:
+    def test_render_course_map_md_is_gone(self):
+        import src.builder.artifacts.navigation as nav
+
+        assert not hasattr(nav, "render_course_map_md")
