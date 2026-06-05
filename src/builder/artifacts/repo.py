@@ -765,35 +765,23 @@ def exam_index_md(course_meta: dict, entries=None, *, clamp_navigation_artifact:
         "",
     ]
 
-    lines.append("| Arquivo | Tipo | Prova | Observação | Padrão do professor |")
-    lines.append("|---|---|---|---|---|")
-    for entry in entries:
-        tipo = "foto" if entry.category == "fotos-de-prova" else "original"
-        lines.append(
-            f"| {Path(entry.source_path).name} | {tipo} | {entry.title} "
-            f"| {entry.notes or ''} | {entry.professor_signal or ''} |"
-        )
-
-    lines += [
-        "",
-        "## Incidência de tópicos por prova",
-        "",
-        "> Preencha após revisar cada prova. O tutor usa esta tabela no modo `exam_prep`.",
-        "",
-        "| Tópico | P1 | P2 | P3 | Total | Peso estimado |",
-        "|---|---|---|---|---|---|",
-        "| [a preencher] | | | | | |",
-        "",
-        "## Padrões de questão observados",
-        "",
-        "<!-- Liste padrões recorrentes: tipos de enunciado, estrutura, pegadinhas comuns -->",
-        "",
-    ]
+    if entries:
+        lines.append("| Arquivo | Tipo | Prova | Observação | Padrão do professor |")
+        lines.append("|---|---|---|---|---|")
+        for entry in entries:
+            tipo = "foto" if entry.category == "fotos-de-prova" else "original"
+            lines.append(
+                f"| {Path(entry.source_path).name} | {tipo} | {entry.title} "
+                f"| {entry.notes or ''} | {entry.professor_signal or ''} |"
+            )
+    else:
+        lines.append("_Nenhuma prova mapeada ainda._")
+    lines.append("")
 
     return clamp_navigation_artifact(
         "\n".join(lines),
         max_chars=12000,
-        label="course/FILE_MAP.md",
+        label="course/EXAM_INDEX.md",
     )
 
 

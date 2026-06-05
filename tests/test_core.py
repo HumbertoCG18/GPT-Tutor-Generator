@@ -4662,6 +4662,20 @@ class TestNewGenerators:
         return FileEntry(source_path=f"/fake/{title}{ext}",
                          file_type="code", category=cat, title=title)
 
+    def test_exam_index_empty_has_phrase_no_placeholder(self):
+        from src.builder.engine import exam_index_md
+        r = exam_index_md(self.COURSE_META, [])
+        assert "Nenhuma prova mapeada ainda" in r
+        assert "[a preencher]" not in r
+        assert "Incidência de tópicos por prova" not in r
+        assert "Padrões de questão observados" not in r
+
+    def test_exam_index_entries_and_label(self):
+        from src.builder.engine import exam_index_md
+        r = exam_index_md(self.COURSE_META, [self._e("provas", "P1", ".pdf")])
+        assert "P1" in r
+        assert "Provas disponíveis" in r
+
     def test_assignment_index_empty(self):
         from src.builder.engine import assignment_index_md
         assert "ASSIGNMENT_INDEX" in assignment_index_md(self.COURSE_META, [])
