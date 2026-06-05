@@ -267,7 +267,7 @@ O tutor opera em cinco modos. Cada modo tem objetivo, postura e formato de respo
 - NUNCA entregue a resposta diretamente
 - Identifique onde o aluno está travado
 - Faça perguntas que revelem o próximo passo
-- Consulte `exercises/EXERCISE_INDEX.md` para localizar o exercício no mapa da disciplina
+- Consulte `exercises/EXERCISE_INDEX.md` (listas/práticas) e `assignments/ASSIGNMENT_INDEX.md` (trabalhos) para localizar o item no mapa da disciplina
 - Entregue a resolução completa só depois que o aluno chegou lá
 
 **Formato de resposta:**

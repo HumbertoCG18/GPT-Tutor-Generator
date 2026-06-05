@@ -4790,3 +4790,9 @@ class TestModesMdClarity:
         text = modes_md({"course_name": "Teste"})
         assert "opera em cinco modos" in text
         assert "opera em quatro modos" not in text
+
+    def test_assignment_mode_points_to_both_indices(self):
+        from src.builder.artifacts.pedagogy import modes_md
+        text = modes_md({"course_name": "Teste"})
+        assert "exercises/EXERCISE_INDEX.md" in text
+        assert "assignments/ASSIGNMENT_INDEX.md" in text
