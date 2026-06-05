@@ -2210,6 +2210,17 @@ class App(tk.Tk):
         self.process_selected_single()
 
     def remove_processed_single(self):
+        # unprocess() faz IO pesado (rmtree de assets + reescrita do manifest +
+        # regeneração pedagógica completa). Rodar na thread da UI congela o Tk;
+        # por isso o trabalho pesado vai pra uma thread de fundo (mesmo padrão
+        # de _reprocess_repo), com refresh/status via self.after.
+        if getattr(self, "_unprocess_busy", False):
+            messagebox.showinfo(APP_NAME, "Já há uma remoção em andamento. Aguarde terminar.")
+            return
+        if self._is_repo_task_queue_running():
+            messagebox.showinfo(APP_NAME, "A fila de repositórios está em execução. Aguarde terminar antes de remover processamento.")
+            return
+
         selected = self.repo_tree.selection()
         if not selected:
             messagebox.showinfo(APP_NAME, "Selecione um item no backlog para remover o processamento.")
@@ -2223,29 +2234,49 @@ class App(tk.Tk):
         manifest_path = repo_dir / "manifest.json"
 
         if not manifest_path.exists(): return
-        
+
         try:
             with open(manifest_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            
+
             idx_str = selected[0]
             if not idx_str.startswith("backlog_"): return
             idx = int(idx_str.replace("backlog_", ""))
-            
+
             entry_data = data["entries"][idx]
             entry_id = entry_data["id"]
-
-            if not messagebox.askyesno(APP_NAME, f"Deseja remover o processamento de '{entry_data['title']}'?\n\nOs arquivos gerados no repositório serão deletados."):
-                return
-
-            builder = RepoBuilder(repo_dir, meta, [], {})
-            if builder.unprocess(entry_id):
-                self._refresh_backlog()
-                self._set_status(f"Processamento de '{entry_id}' removido.")
-            else:
-                self._set_status("Falha ao remover processamento.")
+            entry_title = entry_data.get("title", entry_id)
         except Exception as e:
             messagebox.showerror(APP_NAME, f"Erro ao remover processamento: {e}")
+            return
+
+        if not messagebox.askyesno(APP_NAME, f"Deseja remover o processamento de '{entry_title}'?\n\nOs arquivos gerados no repositório serão deletados."):
+            return
+
+        self._unprocess_busy = True
+        self._set_status(f"Removendo processamento de '{entry_title}'...")
+
+        def worker():
+            try:
+                builder = RepoBuilder(repo_dir, meta, [], {})
+                ok = builder.unprocess(entry_id)
+                self.after(0, lambda: self._on_unprocess_done(entry_id, ok, None))
+            except Exception as exc:
+                self.after(0, lambda exc=exc: self._on_unprocess_done(entry_id, False, exc))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _on_unprocess_done(self, entry_id, ok, error):
+        self._unprocess_busy = False
+        if error is not None:
+            messagebox.showerror(APP_NAME, f"Erro ao remover processamento: {error}")
+            self._set_status("Erro ao remover processamento.")
+            return
+        if ok:
+            self._refresh_backlog()
+            self._set_status(f"Processamento de '{entry_id}' removido.")
+        else:
+            self._set_status("Falha ao remover processamento.")
 
     def _reprocess_repo(self):
         """Regenera todos os arquivos pedagógicos do repositório com o código atual."""
