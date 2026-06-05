@@ -4823,3 +4823,13 @@ class TestDeadCodeRemoval:
         import src.builder.artifacts.navigation as nav
 
         assert not hasattr(nav, "render_course_map_md")
+
+
+class TestNavOrderContract:
+    def test_structural_contract_lists_course_map_first(self):
+        from src.builder.artifacts.prompts import _prompt_structural_artifact_contract_lines
+        lines = _prompt_structural_artifact_contract_lines()
+        first = lines[0]
+        assert "COURSE_MAP.md" in first
+        assert "FILE_MAP.md" in first
+        assert first.index("COURSE_MAP.md") < first.index("FILE_MAP.md")

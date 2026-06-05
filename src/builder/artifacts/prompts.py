@@ -23,7 +23,7 @@ buscas: são metadados do app, não material didático.
 
 def _prompt_structural_artifact_contract_lines() -> list[str]:
     return [
-        "1. Leia `course/FILE_MAP.md` e `course/COURSE_MAP.md` antes de entrar no conteúdo.",
+        "1. Leia `course/COURSE_MAP.md` e `course/FILE_MAP.md` antes de entrar no conteúdo.",
         "2. Trate `FILE_MAP.md` e `COURSE_MAP.md` como artefatos estruturais gerados pelo app.",
         "3. Valide unidades, períodos, seções e confiança; entradas `Baixa` merecem atenção especial.",
         "4. Para erros de mapeamento, use override no backlog — `manual_unit_slug` (unidade) ou `manual_timeline_block_id` (bloco da timeline; aceita o índice `N` do bloco como fallback) — seguido de `Reprocessar Repositório`.",
