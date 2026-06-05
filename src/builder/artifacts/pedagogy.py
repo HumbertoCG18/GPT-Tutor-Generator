@@ -237,7 +237,7 @@ def modes_md(course_meta: Optional[dict] = None, subject_profile=None) -> str:
 
 ## Modos de operação do tutor
 
-O tutor opera em quatro modos. Cada modo tem objetivo, postura e formato de resposta diferentes.
+O tutor opera em cinco modos. Cada modo tem objetivo, postura e formato de resposta diferentes.
 
 ---
 

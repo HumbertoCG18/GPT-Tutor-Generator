@@ -4782,3 +4782,11 @@ class TestCronogramaDetalhado:
         r = cronograma_detalhado_md({"course_name": "ED"}, [entry], curation, blocks)
         assert "TODO (material-agnostic refactor)" not in r
         assert "linked_list" in r
+
+
+class TestModesMdClarity:
+    def test_mode_count_says_five(self):
+        from src.builder.artifacts.pedagogy import modes_md
+        text = modes_md({"course_name": "Teste"})
+        assert "opera em cinco modos" in text
+        assert "opera em quatro modos" not in text
