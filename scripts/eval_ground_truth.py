@@ -49,3 +49,40 @@ def load_labels_csv(path: Path) -> dict:
             if eid and true_block:
                 labels[eid] = true_block
     return labels
+
+
+def evaluate_ground_truth(predictions: dict, labels: dict, block_map: dict) -> dict:
+    bands = {"alta": {"correct": 0, "wrong": 0}, "media": {"correct": 0, "wrong": 0},
+             "baixa": {"correct": 0, "wrong": 0}, "": {"correct": 0, "wrong": 0}}
+    confusion: dict = {}
+    rows = []
+    correct = orphans = missed = confident_wrong = 0
+
+    for eid, true_block in labels.items():
+        pred = predictions.get(eid, {})
+        predicted = str(pred.get("block_id", ""))
+        band = str(pred.get("band", ""))
+        is_correct = predicted == true_block
+        if is_correct:
+            correct += 1
+        if predicted == "":
+            orphans += 1
+            if true_block:
+                missed += 1
+        if band == "alta" and not is_correct:
+            confident_wrong += 1
+        bands.setdefault(band, {"correct": 0, "wrong": 0})
+        bands[band]["correct" if is_correct else "wrong"] += 1
+        key = f"{true_block}->{predicted or '(orfao)'}"
+        confusion[key] = confusion.get(key, 0) + 1
+        rows.append({"id": eid, "true": true_block, "predicted": predicted,
+                     "band": band, "correct": is_correct,
+                     "title": str(pred.get("title", ""))})
+
+    total = len(labels)
+    return {
+        "total": total, "correct": correct, "wrong": total - correct,
+        "block_accuracy": (correct / total) if total else 0.0,
+        "orphans": orphans, "missed": missed, "confident_wrong": confident_wrong,
+        "bands": bands, "confusion": confusion, "cases": rows,
+    }
