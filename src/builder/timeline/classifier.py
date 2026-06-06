@@ -168,6 +168,15 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
         except ValueError:
             pass
 
+    # Hint autoritativo do SARC (Atividade/cor). Vence texto/sessao/unidade,
+    # perde so para o override manual acima.
+    source = block.get("source_kind")
+    if isinstance(source, str) and source:
+        try:
+            return BlockKind(source)
+        except ValueError:
+            pass
+
     hay_content = _norm(_content_text(block))
     hay_all = _norm(_text_of(block))
     has_unit = bool(block.get("unit_slug"))

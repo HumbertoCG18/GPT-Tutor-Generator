@@ -114,6 +114,22 @@ def test_invalid_override_falls_back():
     assert classify_block(block) == BlockKind.HOLIDAY
 
 
+def test_source_kind_wins_over_text_and_unit():
+    block = {"source_kind": "assessment", "topic_text": "Lógica",
+             "unit_slug": "u1"}
+    assert classify_block(block) == BlockKind.ASSESSMENT
+
+
+def test_manual_override_wins_over_source_kind():
+    block = {"source_kind": "assessment", "manual_kind_override": "holiday"}
+    assert classify_block(block) == BlockKind.HOLIDAY
+
+
+def test_invalid_source_kind_falls_back_to_text():
+    block = {"source_kind": "garbage", "topic_text": "Feriado de Carnaval"}
+    assert classify_block(block) == BlockKind.HOLIDAY
+
+
 # ---------------------------------------------------------------------------
 # status — fixed cases
 # ---------------------------------------------------------------------------
