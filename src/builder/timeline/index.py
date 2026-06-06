@@ -50,7 +50,7 @@ def _backfill_timeline_index(timeline_index: dict) -> dict:
     if not isinstance(timeline_index, dict):
         return timeline_index
     for block in timeline_index.get("blocks") or []:
-        ensure_block_kind(block)
+        finalize_block(block)
     timeline_index["version"] = TIMELINE_INDEX_VERSION
     return timeline_index
 
@@ -1083,15 +1083,21 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
     for block in (timeline_index or {}).get("blocks", []) or []:
         if _timeline_block_is_administrative_only(block):
             continue
-        finalize_block(block)
+        kind_value = classify_block(block).value
+        unit_slug = block.get("unit_slug", "")
+        unit_confidence = float(block.get("unit_confidence", 0.0) or 0.0)
+        # Non-aula nao carrega unidade pedagogica (override manual preservado).
+        if kind_value != BlockKind.CLASS.value and not block.get("block_manual_unit_slug"):
+            unit_slug = ""
+            unit_confidence = 0.0
         payload = {
             "id": block.get("id", ""),
             "period_start": block.get("period_start", ""),
             "period_end": block.get("period_end", ""),
             "period_label": block.get("period_label", ""),
-            "kind": classify_block(block).value,
-            "unit_slug": block.get("unit_slug", ""),
-            "unit_confidence": float(block.get("unit_confidence", 0.0) or 0.0),
+            "kind": kind_value,
+            "unit_slug": unit_slug,
+            "unit_confidence": unit_confidence,
             "primary_topic_slug": block.get("primary_topic_slug", ""),
             "primary_topic_label": block.get("primary_topic_label", ""),
             "primary_topic_confidence": float(block.get("primary_topic_confidence", 0.0) or 0.0),

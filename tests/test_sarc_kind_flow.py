@@ -118,3 +118,4 @@ def test_finalize_preserves_manual_unit_on_non_class():
     finalize_block(block)
     assert block["kind"] == "assessment"
     assert block["unit_slug"] == "u1"
+    assert block["unit_confidence"] == 0.9
