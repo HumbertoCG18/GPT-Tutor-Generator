@@ -86,6 +86,15 @@ CLASSIFIER_CASES = [
     ({"topic_text": "", "unit_slug": ""}, BlockKind.UNKNOWN),
     ({"topic_text": "", "unit_slug": "u1"}, BlockKind.CLASS),
     ({"topic_text": "tema livre", "unit_slug": "u1"}, BlockKind.CLASS),
+    # Sinal de prova/revisão só no label da sessão (topic reduzido a stopword).
+    # Caso real TCC bloco-24: 01/07 revisão P2 + 03/07 P2 fundidos, topic="para".
+    ({"topic_text": "para",
+      "sessions": [{"label": "prova p2 prova"}]}, BlockKind.ASSESSMENT),
+    ({"topic_text": "para",
+      "sessions": [{"label": "revisao para prova p2 aula"},
+                   {"label": "prova p2 prova"}]}, BlockKind.ASSESSMENT),
+    ({"topic_text": "",
+      "sessions": [{"label": "revisao geral"}]}, BlockKind.REVIEW),
 ]
 
 
