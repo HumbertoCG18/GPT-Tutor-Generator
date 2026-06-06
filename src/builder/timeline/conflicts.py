@@ -32,6 +32,10 @@ def auto_suggested_unit(block: Mapping) -> tuple[str, float]:
     candidates = block.get("topic_candidates") or []
     if not candidates:
         return ("", 0.0)
+    # NOTA: usa o unit_slug do candidato de maior score (== topico vencedor).
+    # O build resolve via _derive_unit_from_topic_match (normaliza vs taxonomia);
+    # divergem so quando o slug do vencedor nao e unidade valida — caso raro que
+    # no maximo gera um aviso extra/faltante, nunca erro.
     unit = str((candidates[0] or {}).get("unit_slug") or "")
     return (unit, conf) if unit else ("", 0.0)
 
