@@ -385,7 +385,7 @@ def _aspnet_row_kind(row) -> tuple[str, bool]:
     return _ASPNET_COLOR_KIND_MAP.get(color, ("class", False))
 
 
-ATIVIDADE_KIND_MAP = {
+_ATIVIDADE_KIND_MAP = {
     "prova": "assessment",
     "avaliacao": "assessment",
     "exame": "assessment",
@@ -412,7 +412,7 @@ def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:
     quando a Atividade nao decide. Retorna (kind, ignored).
     """
     atividade = _norm_ascii_lower(_aspnet_row_cell(row, "Atividade"))
-    for needle, kind in ATIVIDADE_KIND_MAP.items():
+    for needle, kind in _ATIVIDADE_KIND_MAP.items():
         if needle in atividade:
             return (kind, False)
     # Atividade explicita (mesmo que nao casada no mapa) vence a cor da linha.

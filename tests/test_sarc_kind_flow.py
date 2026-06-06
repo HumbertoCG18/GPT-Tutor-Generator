@@ -47,3 +47,13 @@ def test_empty_atividade_with_orange_row_falls_back_to_assessment():
 def test_orange_row_no_longer_emits_legacy_exam_token():
     md = parse_html_schedule(_sarc_html("", style="background-color:#ffa500"))
     assert "{kind=exam}" not in md
+
+
+def test_atividade_feriado_emits_holiday():
+    md = parse_html_schedule(_sarc_html("Feriado"))
+    assert "{kind=holiday}" in md
+
+
+def test_atividade_revisao_emits_review():
+    md = parse_html_schedule(_sarc_html("Revisão"))
+    assert "{kind=review}" in md
