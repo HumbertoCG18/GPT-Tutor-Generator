@@ -566,3 +566,15 @@ git commit -m "test(timeline): verify SARC kind flow end-to-end, no corpus regre
 - O hook de git (`code-review-graph.exe`) imprime um `UnicodeEncodeError` cosmético (cp1252) ao commitar; o commit **passa** mesmo assim. Ignorar.
 - Trailer de co-autoria nos commits: `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
 - A Parte B (UI: tabela + legenda) é um plano separado, escrito depois deste.
+
+## Divergência implementada (vs. plano original da Task 1)
+
+`_aspnet_row_canonical_kind` ficou com precedência **exclusão-primeiro**, não
+"Atividade-primeiro" como o Step 3 da Task 1 descrevia. Motivo: testes reais
+(`test_html_schedule_parser.py`) mostraram que o SARC marca linhas de exclusão
+por COR (suspensão=red, ps=darkorange, g2=lightgrey, evento=darkred) enquanto a
+coluna Atividade ainda diz "Aula"/"Prova de Substituição"/"Prova de G2". A regra
+"Atividade vence" apagava o `⊘` dessas linhas, violando o spec ("ps/g2/event/
+suspension permanecem ignorados"). Ordem final: **cor de exclusão > Atividade >
+cor positiva > class**. Atividade segue primária para o caso positivo
+(assessment/deliverable) e para cronogramas sem cor (ex.: TCC). Commit `7d050e9`.

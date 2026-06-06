@@ -101,6 +101,23 @@ Read this file before starting any task.
   Gerador de esqueleto pre-preenche `true_block_id` com a predicao. Falta o passo
   de dados: usuario aponta repo real + rotula (assistido). 913 testes verdes.
   Spec/plano `2026-06-05-medicao-ground-truth*`.
+- Fix classificacao de prova no cronograma (`classifier.py`): bloco sem unidade
+  era `class` mesmo com prova/revisao so no label da sessao (topico reduzido a
+  stopword "para"). Passo extra le `sessions[].label`, gated em `not has_unit`,
+  tokens fortes (P1-4/PF/"prova N") -> assessment, "revisao" -> review; guarda
+  `correcao` (aula de correcao != prova) e "prova" isolado (= demonstracao). 5
+  blocos corrigidos no corpus, 0 regressao; resolveu o gate TCC-Tutor.
+- Tipo autoritativo do SARC -> kind do bloco (Parte A, backend). O cronograma
+  SARC (ASP.NET `dgAulas`) marca tipo por coluna `Atividade` + cor da linha.
+  Fluxo: `_aspnet_row_canonical_kind` (helpers) emite `{kind=<canonico>}` (cor de
+  EXCLUSAO suspension/ps/g2/event vence; senao Atividade; senao cor positiva) ->
+  validado contra BlockKind em `_build_timeline_candidate_rows` -> agregado em
+  `block["source_kind"]` (`_aggregate_source_kind`) -> `classify_block` honra
+  source_kind (abaixo do override manual) -> `finalize_block` limpa unidade de
+  blocos nao-aula (preserva `block_manual_unit_slug`). Provas viram assessment e
+  nao recebem unidade. 938 testes verdes. Spec `2026-06-06-cronograma-sarc-tipo-
+  e-tab-design` (Parte A); plano `2026-06-06-cronograma-sarc-tipo-backend`.
+  Aberto: Parte B (UI: tab do cronograma em tabela + legenda).
 
 ### Not Declared In Brief
 
