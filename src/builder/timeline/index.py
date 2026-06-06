@@ -413,6 +413,23 @@ _KIND_TOKEN_RE = re.compile(r"\{kind=(\w+)\}")
 _IGNORED_KINDS = {"suspension", "g2", "ps", "event"}
 _VALID_KIND_VALUES = {k.value for k in BlockKind}
 
+# Prioridade ao agregar kinds das linhas num hint de bloco (mais forte vence).
+# class/overview/unknown nunca viram hint (sao o fallback de texto).
+_SOURCE_KIND_PRIORITY = [
+    "assessment", "deliverable", "review", "holiday", "makeup",
+    "suspended", "academic_event", "results", "workshop",
+    "office_hours", "planning", "reserved",
+]
+
+
+def _aggregate_source_kind(rows) -> str:
+    """Maior-prioridade kind nao-class entre as linhas do bloco; '' se nenhum."""
+    present = {str(r.get("kind", "")) for r in (rows or [])}
+    for kind in _SOURCE_KIND_PRIORITY:
+        if kind in present:
+            return kind
+    return ""
+
 
 def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[str, object]]:
     content_keys, date_keys = _infer_timeline_keys(timeline)
@@ -1081,6 +1098,9 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
         block_manual_unit_slug = block.get("block_manual_unit_slug")
         if block_manual_unit_slug:
             payload["block_manual_unit_slug"] = block_manual_unit_slug
+        source_kind = block.get("source_kind")
+        if source_kind:
+            payload["source_kind"] = source_kind
         blocks.append(payload)
     return {"version": TIMELINE_INDEX_VERSION, "blocks": blocks}
 
@@ -2108,6 +2128,9 @@ def _build_timeline_index(
             "source_rows": [int(row.get("index", 0)) for row in rows],
             "rows": rows,
         }
+        source_kind = _aggregate_source_kind(rows)
+        if source_kind:
+            runtime_block["source_kind"] = source_kind
         runtime_block["sessions"] = _attach_card_evidence_to_sessions(
             _extract_block_sessions(rows, f"bloco-{position:02d}"),
             runtime_block["card_evidence"],

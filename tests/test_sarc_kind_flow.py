@@ -1,5 +1,6 @@
 """SARC type (Atividade column + row color) -> canonical BlockKind flow."""
 
+from src.builder.timeline.index import _aggregate_source_kind, _build_timeline_candidate_rows
 from src.utils.helpers import parse_html_schedule
 
 
@@ -59,9 +60,6 @@ def test_atividade_revisao_emits_review():
     assert "{kind=review}" in md
 
 
-from src.builder.timeline.index import _build_timeline_candidate_rows
-
-
 def test_candidate_row_keeps_valid_kind():
     rows = [{"content": "Prova final {kind=assessment}", "date": "03/07/2026"}]
     out = _build_timeline_candidate_rows(rows)
@@ -80,3 +78,18 @@ def test_candidate_row_ignored_token_preserved():
     out = _build_timeline_candidate_rows(rows)
     assert out[0]["kind"] == "suspension"
     assert out[0]["ignored"] is True
+
+
+def test_aggregate_source_kind_picks_strongest():
+    rows = [{"kind": "class"}, {"kind": "review"}, {"kind": "assessment"}]
+    assert _aggregate_source_kind(rows) == "assessment"
+
+
+def test_aggregate_source_kind_none_when_all_class():
+    rows = [{"kind": "class"}, {"kind": "class"}]
+    assert _aggregate_source_kind(rows) == ""
+
+
+def test_aggregate_source_kind_single_non_class():
+    rows = [{"kind": "class"}, {"kind": "deliverable"}]
+    assert _aggregate_source_kind(rows) == "deliverable"
