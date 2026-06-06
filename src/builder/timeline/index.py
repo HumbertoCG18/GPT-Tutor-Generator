@@ -56,6 +56,8 @@ def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
     for block in blocks:
         if block.get("manual_kind_override"):
             block["kind"] = classify_block(block).value
+            # source_kind (hint de linha do SARC) NAO e re-derivado aqui: e
+            # row-level; o override manual ja vence o source_kind em classify_block.
         if block.get("manual_topic_label"):
             label, slug, source = _resolve_block_topic_label(block)
             if label:
@@ -422,7 +424,7 @@ _SOURCE_KIND_PRIORITY = [
 ]
 
 
-def _aggregate_source_kind(rows) -> str:
+def _aggregate_source_kind(rows: List[Dict[str, object]]) -> str:
     """Maior-prioridade kind nao-class entre as linhas do bloco; '' se nenhum."""
     present = {str(r.get("kind", "")) for r in (rows or [])}
     for kind in _SOURCE_KIND_PRIORITY:
