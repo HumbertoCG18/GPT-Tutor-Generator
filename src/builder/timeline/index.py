@@ -70,7 +70,8 @@ def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
         return 0
     for block in blocks:
         if block.get("manual_kind_override"):
-            block["kind"] = classify_block(block).value
+            block["kind"] = ""  # forca re-derivacao limpa
+            finalize_block(block)
             # source_kind (hint de linha do SARC) NAO e re-derivado aqui: e
             # row-level; o override manual ja vence o source_kind em classify_block.
         if block.get("manual_topic_label"):

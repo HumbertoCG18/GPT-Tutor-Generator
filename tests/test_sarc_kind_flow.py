@@ -1,6 +1,6 @@
 """SARC type (Atividade column + row color) -> canonical BlockKind flow."""
 
-from src.builder.timeline.index import _aggregate_source_kind, _build_timeline_candidate_rows, finalize_block
+from src.builder.timeline.index import _aggregate_source_kind, _build_timeline_candidate_rows, _SOURCE_KIND_PRIORITY, finalize_block
 from src.utils.helpers import parse_html_schedule
 
 
@@ -119,3 +119,9 @@ def test_finalize_preserves_manual_unit_on_non_class():
     assert block["kind"] == "assessment"
     assert block["unit_slug"] == "u1"
     assert block["unit_confidence"] == 0.9
+
+
+def test_source_kind_priority_covers_all_non_class_kinds():
+    from src.builder.timeline.kinds import BlockKind
+    expected = {k.value for k in BlockKind} - {"class", "overview", "unknown"}
+    assert set(_SOURCE_KIND_PRIORITY) == expected
