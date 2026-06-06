@@ -363,14 +363,14 @@ _ASPNET_COLOR_KIND_MAP = {
     "#ff0000": ("suspension", True),
     "lightgrey": ("g2", True),
     "#d3d3d3": ("g2", True),
-    "#ffa500": ("exam", False),
-    "orange": ("exam", False),
+    "#ffa500": ("assessment", False),
+    "orange": ("assessment", False),
     "#ff8c00": ("ps", True),
     "darkorange": ("ps", True),
     "#8b0000": ("event", True),
     "darkred": ("event", True),
-    "#ffff00": ("assignment", False),
-    "yellow": ("assignment", False),
+    "#ffff00": ("deliverable", False),
+    "yellow": ("deliverable", False),
 }
 
 
@@ -383,6 +383,45 @@ def _aspnet_row_kind(row) -> tuple[str, bool]:
         return ("class", False)
     color = match.group(1).strip().rstrip(";")
     return _ASPNET_COLOR_KIND_MAP.get(color, ("class", False))
+
+
+ATIVIDADE_KIND_MAP = {
+    "prova": "assessment",
+    "avaliacao": "assessment",
+    "exame": "assessment",
+    "teste": "assessment",
+    "trabalho": "deliverable",
+    "entrega": "deliverable",
+    "feriado": "holiday",
+    "revisao": "review",
+}
+
+
+def _norm_ascii_lower(text: str) -> str:
+    """NFKD + remove acentos + lower + strip. Para casar Atividade do SARC."""
+    import unicodedata as _ud
+    text = _ud.normalize("NFKD", text or "")
+    text = "".join(ch for ch in text if not _ud.combining(ch))
+    return text.lower().strip()
+
+
+def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:
+    """Tipo canonico (valor de BlockKind) da linha SARC.
+
+    Atividade primario (coluna explicita do professor); cor confirma apenas
+    quando a Atividade nao decide. Retorna (kind, ignored).
+    """
+    atividade = _norm_ascii_lower(_aspnet_row_cell(row, "Atividade"))
+    for needle, kind in ATIVIDADE_KIND_MAP.items():
+        if needle in atividade:
+            return (kind, False)
+    # Atividade explicita (mesmo que nao casada no mapa) vence a cor da linha.
+    if atividade:
+        return ("class", False)
+    color_kind, ignored = _aspnet_row_kind(row)
+    if color_kind != "class":
+        return (color_kind, ignored)
+    return ("class", False)
 
 
 def _parse_aspnet_schedule(soup) -> str:
@@ -398,7 +437,7 @@ def _parse_aspnet_schedule(soup) -> str:
         dia = _aspnet_row_cell(row, "Dia")
         atividade = _aspnet_row_cell(row, "Atividade") or "Aula"
         recursos = _aspnet_row_cell(row, "Recursos")
-        kind, ignored = _aspnet_row_kind(row)
+        kind, ignored = _aspnet_row_canonical_kind(row)
 
         parts = [f"- ({data})"]
         if dia:
