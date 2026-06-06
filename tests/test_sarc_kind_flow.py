@@ -57,3 +57,26 @@ def test_atividade_feriado_emits_holiday():
 def test_atividade_revisao_emits_review():
     md = parse_html_schedule(_sarc_html("Revisão"))
     assert "{kind=review}" in md
+
+
+from src.builder.timeline.index import _build_timeline_candidate_rows
+
+
+def test_candidate_row_keeps_valid_kind():
+    rows = [{"content": "Prova final {kind=assessment}", "date": "03/07/2026"}]
+    out = _build_timeline_candidate_rows(rows)
+    assert out[0]["kind"] == "assessment"
+    assert out[0]["ignored"] is False
+
+
+def test_candidate_row_invalid_kind_becomes_class():
+    rows = [{"content": "Algo {kind=foobar}", "date": "03/07/2026"}]
+    out = _build_timeline_candidate_rows(rows)
+    assert out[0]["kind"] == "class"
+
+
+def test_candidate_row_ignored_token_preserved():
+    rows = [{"content": "Greve {kind=suspension}", "date": "03/07/2026"}]
+    out = _build_timeline_candidate_rows(rows)
+    assert out[0]["kind"] == "suspension"
+    assert out[0]["ignored"] is True

@@ -11,6 +11,7 @@ from typing import Callable, Dict, List, Optional
 from src.builder.vision.card_evidence import extract_card_evidence
 from src.builder.timeline.signals import extract_timeline_session_signals
 from src.builder.timeline.classifier import classify_block
+from src.builder.timeline.kinds import BlockKind
 from src.builder.timeline.curation import apply_block_curation
 from src.builder.text.normalize import normalize_match_text as _normalize_match_text
 from src.builder.routing.thresholds import margin_confidence, T
@@ -410,6 +411,7 @@ def _match_timeline_to_units_generic(
 
 _KIND_TOKEN_RE = re.compile(r"\{kind=(\w+)\}")
 _IGNORED_KINDS = {"suspension", "g2", "ps", "event"}
+_VALID_KIND_VALUES = {k.value for k in BlockKind}
 
 
 def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[str, object]]:
@@ -421,7 +423,10 @@ def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[
         kind = "class"
         match = _KIND_TOKEN_RE.search(content)
         if match:
-            kind = match.group(1).strip().lower() or "class"
+            raw = match.group(1).strip().lower() or "class"
+            # token deve ser um BlockKind valido OU um token ignorado conhecido;
+            # qualquer outra coisa cai em class (defensivo).
+            kind = raw if (raw in _VALID_KIND_VALUES or raw in _IGNORED_KINDS) else "class"
             content = _collapse_ws(_KIND_TOKEN_RE.sub("", content))
         ignored = kind in _IGNORED_KINDS
         candidate_rows.append({
