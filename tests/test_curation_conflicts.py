@@ -1,5 +1,6 @@
 """Guard de conflito: override manual de bloco vs auto-atribuicao forte."""
 
+from scripts.validate_timeline import health_report
 from src.builder.timeline.conflicts import (
     auto_suggested_unit,
     detect_block_conflicts,
@@ -133,3 +134,23 @@ def test_detect_timeline_conflicts_flattens():
     ]
     out = detect_timeline_conflicts(blocks)
     assert [c["block_id"] for c in out] == ["bad"]
+
+
+def test_health_report_includes_override_conflicts():
+    blocks = [
+        {"id": "bloco-02", "kind": "class",
+         "block_manual_unit_slug": "unidade-02-turing",
+         "topic_ambiguous": False, "primary_topic_confidence": 1.0,
+         "topic_candidates": [{"unit_slug": "unidade-01-conjuntos"}]},
+    ]
+    rep = health_report(blocks)
+    assert "override_conflicts" in rep
+    assert len(rep["override_conflicts"]) == 1
+    assert rep["override_conflicts"][0]["block_id"] == "bloco-02"
+
+
+def test_health_report_no_conflicts_empty_list():
+    blocks = [{"id": "b", "kind": "class", "unit_slug": "u1",
+               "primary_topic_label": "t"}]
+    rep = health_report(blocks)
+    assert rep["override_conflicts"] == []
