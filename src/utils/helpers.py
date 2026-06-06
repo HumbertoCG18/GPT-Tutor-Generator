@@ -408,17 +408,23 @@ def _norm_ascii_lower(text: str) -> str:
 def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:
     """Tipo canonico (valor de BlockKind) da linha SARC.
 
-    Atividade primario (coluna explicita do professor); cor confirma apenas
-    quando a Atividade nao decide. Retorna (kind, ignored).
+    Precedencia:
+    1. Cor de EXCLUSAO (suspensao/ps/g2/evento) vence tudo: e a marcacao
+       explicita do professor que a coluna Atividade nao expressa.
+    2. Coluna Atividade (mapa de keywords) — sinal primario do tipo positivo.
+    3. Atividade explicita nao-mapeada (ex.: "Aula") -> class, ignora cor.
+    4. Atividade vazia -> cai para a cor positiva (assessment/deliverable).
+    Retorna (kind, ignored).
     """
+    color_kind, ignored = _aspnet_row_kind(row)
+    if ignored:
+        return (color_kind, True)
     atividade = _norm_ascii_lower(_aspnet_row_cell(row, "Atividade"))
     for needle, kind in _ATIVIDADE_KIND_MAP.items():
         if needle in atividade:
             return (kind, False)
-    # Atividade explicita (mesmo que nao casada no mapa) vence a cor da linha.
     if atividade:
         return ("class", False)
-    color_kind, ignored = _aspnet_row_kind(row)
     if color_kind != "class":
         return (color_kind, ignored)
     return ("class", False)
