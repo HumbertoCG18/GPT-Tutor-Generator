@@ -205,3 +205,16 @@ def test_wiring_builds_index_and_injects(tmp_path):
     idx = build_unit_topic_reference_index(entries, load_reference_curation(root))
     assert idx["by_unit"]["web"][0]["entry_id"] == "e1"
     assert ("web", "rotas http") in idx["by_topic"]
+
+
+def test_regenerate_does_not_shadow_load_reference_curation():
+    """Regressão: um import local de load_reference_curation dentro de
+    regenerate_pedagogical_files torna o nome uma variável local em todo o
+    escopo, disparando UnboundLocalError no uso anterior (Approach C) e
+    silenciando o índice de referências. O nome deve vir só do módulo."""
+    from src.builder.ops.pedagogical_regeneration import regenerate_pedagogical_files
+
+    assert (
+        "load_reference_curation"
+        not in regenerate_pedagogical_files.__code__.co_varnames
+    ), "import local re-introduzido: load_reference_curation virou variável local"
