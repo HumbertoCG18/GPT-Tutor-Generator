@@ -21,6 +21,18 @@ def test_auto_unit_abstains_below_threshold():
     assert auto_suggested_unit(block) == ("", 0.0)
 
 
+def test_auto_unit_returns_at_exact_threshold():
+    block = {"topic_ambiguous": False, "primary_topic_confidence": 0.65,
+             "topic_candidates": [{"unit_slug": "unidade-01-x"}]}
+    assert auto_suggested_unit(block) == ("unidade-01-x", 0.65)
+
+
+def test_auto_unit_abstains_just_below_threshold():
+    block = {"topic_ambiguous": False, "primary_topic_confidence": 0.64,
+             "topic_candidates": [{"unit_slug": "unidade-01-x"}]}
+    assert auto_suggested_unit(block) == ("", 0.0)
+
+
 def test_auto_unit_returns_top_candidate_when_confident():
     block = {"topic_ambiguous": False, "primary_topic_confidence": 1.0,
              "topic_candidates": [{"unit_slug": "unidade-01-conjuntos"}]}

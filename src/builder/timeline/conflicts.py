@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from typing import Iterable, List, Mapping
 
+# _normalize_unit_slug: reusa o helper de teaching_plan (modulo leve, sem ciclo);
+# evita 4a copia da normalizacao. Mesma fn existe em index.py (modulo pesado).
 from src.builder.extraction.teaching_plan import _normalize_unit_slug
 
 # Espelha o gate de topic-derive do build (index.py): o auto so "teria decidido"
