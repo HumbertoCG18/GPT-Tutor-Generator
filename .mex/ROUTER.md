@@ -118,6 +118,18 @@ Read this file before starting any task.
   nao recebem unidade. 938 testes verdes. Spec `2026-06-06-cronograma-sarc-tipo-
   e-tab-design` (Parte A); plano `2026-06-06-cronograma-sarc-tipo-backend`.
   Aberto: Parte B (UI: tab do cronograma em tabela + legenda).
+- Guard de conflito override-vs-auto (Parte A, backend). `timeline/conflicts.py`
+  (puro): `auto_suggested_unit` (espelha gate de topic-derive: conf>=0.65,
+  nao-ambiguo) + `detect_block_conflicts`/`detect_timeline_conflicts`. Sinaliza
+  quando `block_manual_unit_slug` contradiz a unidade auto-confiante, ou
+  `manual_kind_override` contradiz `source_kind` (SARC). Surfaceado no health
+  report (`override_conflicts`, warning nao-bloqueante) e em CRONOGRAMA_HEALTH.md
+  (secao "Conflitos de curadoria"). Override manual segue vencendo; o guard so
+  torna visivel/reversivel. Achou e corrigiu o caso real TCC bloco-02 (override
+  manual unidade-02 vs auto unidade-01 conf 1.0; removido de .timeline_curation).
+  956 testes verdes. Spec `2026-06-06-guard-conflito-override-curadoria-design`;
+  plano `2026-06-06-guard-conflito-override-backend`. Aberto: Parte B (UI: aviso
+  no tab + botao reverter p/ auto).
 
 ### Not Declared In Brief
 
