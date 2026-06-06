@@ -1,6 +1,7 @@
 """Guard de conflito: override manual de bloco vs auto-atribuicao forte."""
 
 from scripts.validate_timeline import health_report
+from src.builder.artifacts.cronograma_health import cronograma_health_md
 from src.builder.timeline.conflicts import (
     auto_suggested_unit,
     detect_block_conflicts,
@@ -154,3 +155,29 @@ def test_health_report_no_conflicts_empty_list():
                "primary_topic_label": "t"}]
     rep = health_report(blocks)
     assert rep["override_conflicts"] == []
+
+
+def _conflict_blocks():
+    return [
+        {"id": "bloco-02", "period_label": "1 dia 04/03/2026",
+         "kind": "class",
+         "block_manual_unit_slug": "unidade-02-turing",
+         "topic_ambiguous": False, "primary_topic_confidence": 1.0,
+         "topic_candidates": [{"unit_slug": "unidade-01-conjuntos"}]},
+    ]
+
+
+def test_cronograma_health_lists_conflict():
+    md = cronograma_health_md({"name": "TCC"}, [], _conflict_blocks())
+    assert "Conflitos de curadoria" in md
+    assert "bloco-02" in md
+    assert "unidade-02-turing" in md
+    assert "unidade-01-conjuntos" in md
+
+
+def test_cronograma_health_empty_conflicts_phrase():
+    blocks = [{"id": "b", "period_label": "x", "kind": "class",
+               "unit_slug": "u1"}]
+    md = cronograma_health_md({"name": "TCC"}, [], blocks)
+    assert "Conflitos de curadoria" in md
+    assert "_Nenhum conflito de curadoria._" in md
