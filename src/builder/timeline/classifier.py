@@ -160,7 +160,7 @@ def _text_of(block: Mapping[str, object]) -> str:
 
 
 def classify_block(block: Mapping[str, object]) -> BlockKind:
-    """Retorna BlockKind. Manual override sempre vence."""
+    """Retorna BlockKind. Manual override vence; depois source_kind (SARC); senao texto/sessao."""
     override = block.get("manual_kind_override")
     if isinstance(override, str):
         try:

@@ -1,6 +1,6 @@
 """SARC type (Atividade column + row color) -> canonical BlockKind flow."""
 
-from src.builder.timeline.index import _aggregate_source_kind, _build_timeline_candidate_rows
+from src.builder.timeline.index import _aggregate_source_kind, _build_timeline_candidate_rows, finalize_block
 from src.utils.helpers import parse_html_schedule
 
 
@@ -93,3 +93,28 @@ def test_aggregate_source_kind_none_when_all_class():
 def test_aggregate_source_kind_single_non_class():
     rows = [{"kind": "class"}, {"kind": "deliverable"}]
     assert _aggregate_source_kind(rows) == "deliverable"
+
+
+def test_finalize_strips_unit_for_assessment():
+    block = {"source_kind": "assessment", "unit_slug": "u1",
+             "unit_confidence": 0.9}
+    finalize_block(block)
+    assert block["kind"] == "assessment"
+    assert block["unit_slug"] == ""
+    assert block["unit_confidence"] == 0.0
+
+
+def test_finalize_keeps_unit_for_class():
+    block = {"topic_text": "Lógica de predicados", "unit_slug": "u1",
+             "unit_confidence": 0.8}
+    finalize_block(block)
+    assert block["kind"] == "class"
+    assert block["unit_slug"] == "u1"
+
+
+def test_finalize_preserves_manual_unit_on_non_class():
+    block = {"source_kind": "assessment", "unit_slug": "u1",
+             "unit_confidence": 0.9, "block_manual_unit_slug": "u1"}
+    finalize_block(block)
+    assert block["kind"] == "assessment"
+    assert block["unit_slug"] == "u1"

@@ -30,6 +30,21 @@ def ensure_block_kind(block: dict) -> dict:
     return block
 
 
+def finalize_block(block: dict) -> dict:
+    """Garante `kind` e limpa unidade de blocos nao-aula.
+
+    Provas/feriados/revisoes/etc nao tem unidade pedagogica. Override manual de
+    unidade (`block_manual_unit_slug`) sempre preservado. Idempotente.
+    """
+    if not isinstance(block, dict):
+        return block
+    ensure_block_kind(block)
+    if block.get("kind") != BlockKind.CLASS.value and not block.get("block_manual_unit_slug"):
+        block["unit_slug"] = ""
+        block["unit_confidence"] = 0.0
+    return block
+
+
 def _backfill_timeline_index(timeline_index: dict) -> dict:
     """Lazy upgrade v3->v4: bump version, popula `kind` em cada bloco. In-place."""
     if not isinstance(timeline_index, dict):
@@ -1068,6 +1083,7 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
     for block in (timeline_index or {}).get("blocks", []) or []:
         if _timeline_block_is_administrative_only(block):
             continue
+        finalize_block(block)
         payload = {
             "id": block.get("id", ""),
             "period_start": block.get("period_start", ""),
@@ -2181,5 +2197,5 @@ def _build_timeline_index(
             block["unit_confidence"] = max(float(block.get("unit_confidence", 0.0) or 0.0), 0.51)
 
     for block in runtime_blocks:
-        ensure_block_kind(block)
+        finalize_block(block)
     return {"version": TIMELINE_INDEX_VERSION, "blocks": runtime_blocks}
