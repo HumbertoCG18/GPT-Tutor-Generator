@@ -76,3 +76,19 @@ def test_positional_empty_when_no_anchor():
 
 def test_positional_empty_when_single_unit():
     assert assign_units_positional([_block("alfa")], [UNITS3[0]]) == []
+
+
+def test_positional_pre_first_anchor_blocks_get_first_unit():
+    # ancora so no ultimo bloco -> blocos anteriores herdam a 1a unidade, nao a do anchor
+    blocks = [_block("xyz sem sinal"), _block("gama quinto")]
+    out = assign_units_positional(blocks, UNITS3)
+    assert out[0][0] == "u1"   # primeira unidade (curso comeca no inicio)
+    assert out[1][0] == "u3"   # ancora
+
+
+def test_positional_strong_out_of_order_is_demoted_strict_monotonic():
+    # mesmo com margem alta, ancora fora de ordem nao recua a sequencia
+    blocks = [_block("gama quinto tema"), _block("alfa primeiro tema segundo")]
+    out = assign_units_positional(blocks, UNITS3)
+    assert out[0][0] == "u3"
+    assert out[1][0] == "u3"   # nao recua pra u1

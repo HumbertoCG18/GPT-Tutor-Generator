@@ -27,7 +27,11 @@ _STOPWORDS = {
 _UNIT_GENERIC = {"unidade", "aprendizagem", "visao", "geral"}
 
 ANCHOR_MIN_MARGIN = 1.0   # margem minima (winner - runnerup) p/ virar ancora
-STRONG_MARGIN = 3.0       # margem p/ ancora forte quebrar a ordem (fora de ordem)
+STRONG_MARGIN = 3.0       # margem p/ ancora forte
+
+CONF_STRONG = 0.8   # ancora com margem forte
+CONF_ANCHOR = 0.6   # ancora normal
+CONF_FILL = 0.4     # preenchido por posicao (sem sinal proprio)
 
 
 def _tokens(text: str) -> set:
@@ -68,12 +72,10 @@ def assign_units_positional(
     uslugs = [str(u.get("slug", "") or "") for u in units]
     utoks = [_unit_tokens(u) for u in units]
 
-    aff_rows: List[List[float]] = []
     anchors: List[Tuple[int, int, float]] = []  # (block_idx, unit_idx, margin)
     for i, b in enumerate(class_blocks):
         bt = _block_tokens(b)
         aff = [float(len(bt & ut)) for ut in utoks]
-        aff_rows.append(aff)
         order = sorted(range(len(units)), key=lambda j: aff[j], reverse=True)
         win = order[0]
         ws = aff[win]
@@ -92,9 +94,7 @@ def assign_units_positional(
             kept.append((i, u)); cur = u
             if m >= STRONG_MARGIN:
                 strong.add(i)
-        elif m >= STRONG_MARGIN:
-            kept.append((i, u)); cur = u; strong.add(i)
-        # senao: rebaixa (ignora)
+        # fora de ordem -> rebaixa (segue a sequencia; correcao via override manual)
     if not kept:
         return []
 
@@ -102,7 +102,7 @@ def assign_units_positional(
     assign: List[int] = [-1] * len(class_blocks)
     for (i, u) in kept:
         assign[i] = u
-    cur_u = kept[0][1]
+    cur_u = 0
     for i in range(len(class_blocks)):
         if assign[i] >= 0:
             cur_u = assign[i]
@@ -112,10 +112,10 @@ def assign_units_positional(
     out: List[Tuple[str, float]] = []
     for i in range(len(class_blocks)):
         if i in strong:
-            conf = 0.8
+            conf = CONF_STRONG
         elif i in anchor_idx:
-            conf = 0.6
+            conf = CONF_ANCHOR
         else:
-            conf = 0.4
+            conf = CONF_FILL
         out.append((uslugs[assign[i]], conf))
     return out
