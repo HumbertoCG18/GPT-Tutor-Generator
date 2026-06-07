@@ -130,6 +130,20 @@ Read this file before starting any task.
   956 testes verdes. Spec `2026-06-06-guard-conflito-override-curadoria-design`;
   plano `2026-06-06-guard-conflito-override-backend`. Aberto: Parte B (UI: aviso
   no tab + botao reverter p/ auto).
+- Precisao bloco->unidade (investigacao + Plano 1). Gargalo medido: arquivo->bloco
+  e FORTE (bands quase todas "alta"), mas bloco->topico->unidade FALHA (~100% dos
+  blocos ambiguo/topic_text_fallback, ~0 via taxonomia) -> unidade vem de
+  scorer-keyword fragil que erra (ex.: recursivas->turing por "computavel"~
+  "computabilidade"). Arquivo cai no bloco certo mas herda a unidade errada.
+  Plano 1 entregue: `_build_timeline_candidate_rows` deriva kind da coluna
+  Atividade do syllabus (sem `{kind=}`) via `ATIVIDADE_KIND_MAP` (promovido a
+  publico em helpers) -> provas/trabalhos/feriados viram nao-aula e saem da
+  atribuicao de unidade (TCC: P1/P2/PS/G2 agora source_kind=assessment). 965
+  testes. Spec `2026-06-06-precisao-bloco-unidade-design`; plano
+  `2026-06-06-atividade-kind-backend`. ABERTO: Plano 2 (matcher posicional:
+  afinidade token-overlap bloco x titulo+topicos da unidade + anchor-fill
+  monotonico, substitui o caminho fragil; rebuild-diff guard 5 cursos; guard de
+  conflito usando a sugestao do posicional).
 
 ### Not Declared In Brief
 
