@@ -144,6 +144,24 @@ Read this file before starting any task.
   afinidade token-overlap bloco x titulo+topicos da unidade + anchor-fill
   monotonico, substitui o caminho fragil; rebuild-diff guard 5 cursos; guard de
   conflito usando a sugestao do posicional).
+- Matcher posicional bloco->unidade (Plano 2 de C) ENTREGUE. Modulo novo
+  `src/builder/timeline/unit_matcher.py`: `score_block_unit_affinity` (overlap de
+  tokens bloco x titulo+topicos+aliases da unidade, stopwords PT) +
+  `assign_units_positional` (DP monotonico global: maximiza afinidade total sob
+  unidade nao-decrescente; robusto a ancora espuria). Wiring two-phase em
+  `_build_timeline_index`: atribui unidade aos candidatos (sem source_kind
+  nao-aula) ANTES da classificacao final de kind (preserva o gate do classificador
+  de sessao); fallback estreito (curso sem unidades/ancora). `auto_unit_slug`
+  persistido (serializer+schema); guard de conflito le ele. Substitui o caminho
+  fragil (Bug A subsumido). Corpus real: turing->u2, conjuntos/recursivas->u1,
+  hoare->verificacao-programas, modelos->verificacao-modelos, microservicos->
+  integracao, gerencia->u2. 982 testes. Guard `scripts/rebuild_diff.py` (dry-run,
+  diff unit/kind nos 5 cursos). NADA gravado nos repos reais (reprocess e decisao
+  do usuario apos revisar deltas). Spec `2026-06-06-precisao-bloco-unidade-design`;
+  plano `2026-06-06-matcher-posicional-unidade`. Aberto p/ futuro: separar blocos
+  merged (feriado+prova etc.); plano de limpeza/dead-code (auditoria pronta:
+  `_match_timeline_to_units_generic` morto ~180 linhas, contrato `administrative_only`
+  quebrado, 3 scorers de unidade duplicados, vocab/normalizadores ×4).
 
 ### Not Declared In Brief
 
