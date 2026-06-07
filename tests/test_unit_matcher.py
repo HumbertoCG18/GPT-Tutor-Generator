@@ -135,3 +135,23 @@ def test_real_metodos_hoare_unit_sane():
     hoare = next((b for b in blocks if "hoare" in (b.get("primary_topic_label") or "").lower()), None)
     if hoare:
         assert "verificacao-de-programas" in (hoare.get("unit_slug") or "")
+
+
+def test_positional_confidence_is_fill_when_assigned_not_argmax():
+    # bloco0: argmax=u3 (aff=3), mas tambem toca u1 (aff=2) e u2 (aff=1).
+    # bloco1: argmax=u1 (aff=4). DP prefere u1/u1 (soma 6) sobre u3/u3 (soma 4).
+    # -> bloco0 atribuido a u1 com afinidade 2 (positiva, nao eh o argmax u3).
+    # BUG atual: usa margem global (top1-top2=2) e row[u1]=2>0 -> CONF_ANCHOR (0.6).
+    # FIX correto: assigned != argmax -> CONF_FILL (0.4).
+    from src.builder.timeline.unit_matcher import CONF_FILL, CONF_ANCHOR, CONF_STRONG
+    blocks = [_block("gama quinto tema alfa"), _block("alfa primeiro segundo tema")]
+    out = assign_units_positional(blocks, UNITS3)
+    slugs = [s for s, _ in out]
+    confs = [c for _, c in out]
+    # bloco0 deve ser atribuido a u1 (nao ao seu argmax u3)
+    assert slugs[0] == "u1", f"esperado u1, obtido {slugs[0]}"
+    # bloco0 tem argmax em u3, nao u1 -> deve receber CONF_FILL
+    assert confs[0] == CONF_FILL, (
+        f"bloco0 atribuido a nao-argmax deveria ter CONF_FILL={CONF_FILL}, "
+        f"obtido {confs[0]} (CONF_ANCHOR={CONF_ANCHOR}, CONF_STRONG={CONF_STRONG})"
+    )

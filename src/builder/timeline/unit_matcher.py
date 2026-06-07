@@ -26,7 +26,7 @@ _STOPWORDS = {
 }
 _UNIT_GENERIC = {"unidade", "aprendizagem", "visao", "geral"}
 
-ANCHOR_MIN_MARGIN = 1.0   # margem minima (winner - runnerup) p/ virar ancora
+ANCHOR_MIN_MARGIN = 1.0   # margem minima (winner - runnerup) p/ confianca ANCHOR no bloco
 STRONG_MARGIN = 3.0       # margem p/ ancora forte
 
 CONF_STRONG = 0.8   # ancora com margem forte
@@ -118,9 +118,10 @@ def assign_units_positional(
         row = aff[i]
         srt = sorted(row, reverse=True)
         margin = (srt[0] - srt[1]) if len(srt) > 1 else srt[0]
-        if row[u] > 0 and margin >= STRONG_MARGIN:
+        is_argmax = row[u] > 0 and row[u] >= max(row)
+        if is_argmax and margin >= STRONG_MARGIN:
             conf = CONF_STRONG
-        elif row[u] > 0 and margin >= ANCHOR_MIN_MARGIN:
+        elif is_argmax and margin >= ANCHOR_MIN_MARGIN:
             conf = CONF_ANCHOR
         else:
             conf = CONF_FILL
