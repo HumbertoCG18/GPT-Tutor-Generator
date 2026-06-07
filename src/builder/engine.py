@@ -249,7 +249,6 @@ from src.builder.timeline.index import (
     _serialize_timeline_index as _timeline_serialize_timeline_index,
     _timeline_period_label,
     _TIMELINE_UNIT_NEUTRAL_TOKENS,
-    _match_timeline_to_units_generic as _timeline_match_timeline_to_units_generic,
 )
 from src.builder.timeline.signals import (
     extract_date_range_signal,
@@ -2314,8 +2313,6 @@ _teaching_timeline_aliases = _build_teaching_timeline_aliases(
     teaching_plan_parse_units=_teaching_plan_parse_units_from_teaching_plan,
     teaching_plan_topic_text=_teaching_plan_topic_text,
     teaching_plan_topic_depth=_teaching_plan_topic_depth,
-    timeline_match_timeline_to_units_generic=_timeline_match_timeline_to_units_generic,
-    normalize_unit_slug=_normalize_unit_slug,
     entry_signals_score_text_against_row=_entry_signals_score_text_against_row,
     file_map_timeline_block_rows_for_scoring=_file_map_timeline_block_rows_for_scoring,
     file_map_timeline_block_matches_preferred_topic=_file_map_timeline_block_matches_preferred_topic,
@@ -2339,8 +2336,6 @@ _teaching_timeline_aliases = _build_teaching_timeline_aliases(
     repo_artifacts_module=_repo_artifacts,
     write_text_fn=write_text,
 )
-_match_timeline_to_units_generic = _teaching_timeline_aliases["_match_timeline_to_units_generic"]
-_match_timeline_to_units = _teaching_timeline_aliases["_match_timeline_to_units"]
 _score_entry_against_timeline_block = _teaching_timeline_aliases["_score_entry_against_timeline_block"]
 _select_probable_period_for_entry = _teaching_timeline_aliases["_select_probable_period_for_entry"]
 _aggregate_unit_periods_from_blocks = _teaching_timeline_aliases["_aggregate_unit_periods_from_blocks"]
@@ -2495,7 +2490,6 @@ __all__ = [
     "_html_to_structured_markdown",
     "_hybridize_marker_markdown_with_base",
     "_marker_progress_hints",
-    "_match_timeline_to_units",
     "_normalize_unicode_math",
     "_parse_bibliography_from_teaching_plan",
     "_parse_syllabus_timeline",

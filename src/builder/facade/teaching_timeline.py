@@ -9,8 +9,6 @@ def build_teaching_timeline_aliases(
     teaching_plan_parse_units,
     teaching_plan_topic_text,
     teaching_plan_topic_depth,
-    timeline_match_timeline_to_units_generic,
-    normalize_unit_slug,
     entry_signals_score_text_against_row,
     file_map_timeline_block_rows_for_scoring,
     file_map_timeline_block_matches_preferred_topic,
@@ -39,15 +37,6 @@ def build_teaching_timeline_aliases(
     topic_text = teaching_plan_topic_text
     topic_depth = teaching_plan_topic_depth
 
-    def match_timeline_to_units_generic(timeline, units):
-        return timeline_match_timeline_to_units_generic(
-            timeline,
-            units,
-            normalize_unit_slug=normalize_unit_slug,
-            topic_text=topic_text,
-        )
-
-    match_timeline_to_units = match_timeline_to_units_generic
     score_text_against_row = entry_signals_score_text_against_row
     timeline_block_rows_for_scoring = file_map_timeline_block_rows_for_scoring
     timeline_block_matches_preferred_topic = file_map_timeline_block_matches_preferred_topic
@@ -134,8 +123,6 @@ def build_teaching_timeline_aliases(
         "_parse_units_from_teaching_plan": parse_units_from_teaching_plan,
         "_topic_text": topic_text,
         "_topic_depth": topic_depth,
-        "_match_timeline_to_units_generic": match_timeline_to_units_generic,
-        "_match_timeline_to_units": match_timeline_to_units,
         "_score_text_against_row": score_text_against_row,
         "_timeline_block_rows_for_scoring": timeline_block_rows_for_scoring,
         "_timeline_block_matches_preferred_topic": timeline_block_matches_preferred_topic,

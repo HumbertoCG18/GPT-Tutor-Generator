@@ -244,3 +244,4 @@ staging/
 /_mmtmp
 /.vscode
 .vscode/settings.json
+/.vscode

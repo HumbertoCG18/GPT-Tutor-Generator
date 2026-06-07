@@ -32,7 +32,6 @@ from src.builder.engine import (
     _generated_repo_gitignore_text,
     _html_to_structured_markdown,
     _parse_bibliography_from_teaching_plan,
-    _match_timeline_to_units,
     _build_assessment_context_from_course,
     _seed_glossary_fields,
     _repair_mojibake_text,
@@ -2897,7 +2896,7 @@ class TestParseBibliographyFromTeachingPlan:
 
 
 # ---------------------------------------------------------------------------
-# _parse_syllabus_timeline / _match_timeline_to_units
+# _parse_syllabus_timeline
 # ---------------------------------------------------------------------------
 
 SYLLABUS_TABLE = """\
@@ -2933,99 +2932,6 @@ class TestParseSyllabusTimeline:
         for row in rows:
             for key in row:
                 assert key == key.lower()
-
-
-class TestMatchTimelineToUnits:
-    def test_matches_units_to_timeline(self):
-        timeline = _parse_syllabus_timeline(SYLLABUS_TABLE)
-        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
-        mapping = _match_timeline_to_units(timeline, units)
-
-        assert len(mapping) == 3  # 3 units
-        # Unit 1 should match weeks 1-3
-        u1 = mapping[0]
-        assert "Métodos Formais" in u1["unit_title"]
-        assert u1["period"]  # should have date range
-        assert "2026-03-02" in u1["dates"]
-
-    def test_unit_2_matched(self):
-        timeline = _parse_syllabus_timeline(SYLLABUS_TABLE)
-        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
-        mapping = _match_timeline_to_units(timeline, units)
-        u2 = mapping[1]
-        assert "Verificação de Programas" in u2["unit_title"]
-        assert "2026-03-23" in u2["dates"]
-
-    def test_period_uses_readable_interval(self):
-        timeline = _parse_syllabus_timeline(SYLLABUS_TABLE)
-        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
-        mapping = _match_timeline_to_units(timeline, units)
-        u2 = mapping[1]
-        assert u2["period"] == "2026-03-23 a 2026-03-30"
-
-    def test_slug_generated(self):
-        timeline = _parse_syllabus_timeline(SYLLABUS_TABLE)
-        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
-        mapping = _match_timeline_to_units(timeline, units)
-        for m in mapping:
-            assert m["unit_slug"]
-            assert " " not in m["unit_slug"]
-
-    def test_empty_inputs(self):
-        assert _match_timeline_to_units([], []) == []
-        assert _match_timeline_to_units([], [("Unit 1", [])]) == []
-
-    def test_matches_by_distinctive_topics_with_accent_normalization(self):
-        timeline = _parse_syllabus_timeline("""\
-| Semana | Data | Conteúdo |
-|---|---|---|
-| 1 | 2026-03-02 | Introdução e visão geral |
-| 2 | 2026-03-09 | Pré e pós condições; invariantes de laço |
-| 3 | 2026-03-16 | Modelos de Kripke e lógica temporal |
-""")
-        units = [
-            ("Unidade 01 — Verificação de Programas", [
-                "Lógica de Hoare",
-                "Pré e Pós Condições",
-                "Invariante e Variante de Laço",
-            ]),
-            ("Unidade 02 — Verificação de Modelos", [
-                "Modelos de Kripke",
-                "Lógica Temporal Linear",
-            ]),
-        ]
-
-        mapping = _match_timeline_to_units(timeline, units)
-
-        assert mapping[0]["period"] == "2026-03-09"
-        assert "2026-03-16" not in mapping[0]["dates"]
-        assert mapping[1]["period"] == "2026-03-16"
-
-    def test_segmented_periods_do_not_overlap_between_units(self):
-        timeline = _parse_syllabus_timeline("""\
-| Semana | Data | Conteúdo |
-|---|---|---|
-| 1 | 2026-04-27 | Lógica de Hoare |
-| 2 | 2026-04-29 | Lógica de Hoare |
-| 3 | 2026-05-04 | Exercícios |
-| 4 | 2026-05-06 | Correção parcial e total |
-| 5 | 2026-05-11 | Dafny |
-| 6 | 2026-06-15 | Modelos de Kripke |
-""")
-        units = [
-            ("Unidade 01 — Métodos Formais", ["Sistemas Formais"]),
-            ("Unidade 02 — Verificação de Programas", [
-                "Lógica de Hoare",
-                "Correção Parcial e Total",
-                "Softwares de Suporte à Verificação Formal de Programas",
-            ]),
-            ("Unidade 03 — Verificação de Modelos", ["Modelos de Kripke"]),
-        ]
-
-        mapping = _match_timeline_to_units(timeline, units)
-
-        assert mapping[1]["period"] == "2026-04-27 a 2026-05-11"
-        assert mapping[2]["period"] == "2026-06-15"
 
 
 class TestTimelineIndex:
@@ -3298,9 +3204,8 @@ class TestCourseMapTimeline:
         assert "02/03/2026 a 25/03/2026" in result
         assert "Conflitos de avaliação x cronograma" in result
 
-    def test_course_map_does_not_recover_missing_units_from_raw_syllabus(self, monkeypatch):
+    def test_course_map_does_not_recover_missing_units_from_raw_syllabus(self):
         from src.models.core import SubjectProfile
-        import src.builder.engine as engine
 
         sp = SubjectProfile(
             name="Métodos Formais",
@@ -3322,11 +3227,6 @@ class TestCourseMapTimeline:
                 }
             },
         }
-
-        def _fail(*args, **kwargs):
-            raise AssertionError("legacy timeline fallback should not be used")
-
-        monkeypatch.setattr(engine, "_match_timeline_to_units", _fail)
 
         result = course_map_md(course_meta, sp)
 
