@@ -49,3 +49,20 @@ def test_no_atividade_column_defaults_class():
 def test_atividade_header_variant_capitalized():
     rows = _build_timeline_candidate_rows([{"Data": "03/07/2026", "Descricao": "Prova P2", "Atividade": "Prova"}])
     assert rows[0]["kind"] == "assessment"
+
+
+from src.builder.timeline.index import _aggregate_source_kind
+from src.builder.timeline.classifier import classify_block
+from src.builder.timeline.kinds import BlockKind
+
+
+def test_prova_rows_aggregate_to_assessment_source_kind():
+    rows = _build_timeline_candidate_rows([
+        {"data": "01/07/2026", "descricao": "Revisao para Prova P2", "atividade": "Aula"},
+        {"data": "03/07/2026", "descricao": "Prova P2", "atividade": "Prova"},
+    ])
+    assert [r["kind"] for r in rows] == ["class", "assessment"]
+    # bloco que agrupa as duas linhas herda source_kind assessment (mais forte)
+    assert _aggregate_source_kind(rows) == "assessment"
+    block = {"source_kind": _aggregate_source_kind(rows), "unit_slug": "u1"}
+    assert classify_block(block) == BlockKind.ASSESSMENT
