@@ -4854,3 +4854,25 @@ class TestSubjectProfileStashFolder:
         from src.models.core import SubjectProfile
         sp = SubjectProfile.from_dict({"name": "X", "slug": "x"})
         assert sp.stash_folder == ""
+
+
+def test_file_entry_source_section_roundtrip():
+    from src.models.core import FileEntry
+    e = FileEntry(
+        source_path="/x/Verificacao de Programas/hoare.zip",
+        file_type="zip",
+        category="codigo-professor",
+        title="hoare",
+        source_section="Verificacao de Programas",
+    )
+    d = e.to_dict()
+    assert d["source_section"] == "Verificacao de Programas"
+    back = FileEntry.from_dict(d)
+    assert back.source_section == "Verificacao de Programas"
+
+
+def test_file_entry_source_section_defaults_empty():
+    from src.models.core import FileEntry
+    e = FileEntry(source_path="/x/a.pdf", file_type="pdf", category="material-de-aula", title="a")
+    assert "source_section" not in e.to_dict()
+    assert FileEntry.from_dict(e.to_dict()).source_section == ""
