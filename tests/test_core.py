@@ -4837,3 +4837,20 @@ class TestPedagogySingleSource:
         for s in PEDAGOGICAL_SEQUENCE:
             assert s["label"] in ped
             assert s["label"] in tpl
+
+
+class TestSubjectProfileStashFolder:
+
+    def test_subject_profile_stash_folder_roundtrip(self):
+        from src.models.core import SubjectProfile
+        sp = SubjectProfile(name="Metodos", slug="metodos", stash_folder=r"C:\Users\x\Downloads\Metodos")
+        d = sp.to_dict()
+        assert d["stash_folder"] == r"C:\Users\x\Downloads\Metodos"
+        sp2 = SubjectProfile.from_dict(d)
+        assert sp2.stash_folder == r"C:\Users\x\Downloads\Metodos"
+
+    def test_subject_profile_stash_folder_defaults_empty_when_missing(self):
+        # subjects.json antigo sem o campo -> default "" (retrocompat)
+        from src.models.core import SubjectProfile
+        sp = SubjectProfile.from_dict({"name": "X", "slug": "x"})
+        assert sp.stash_folder == ""

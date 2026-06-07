@@ -1185,6 +1185,7 @@ class SubjectManagerDialog(tk.Toplevel):
             ("default_mode", "Modo padrão", "auto, quick, high_fidelity, manual_assisted"),
             ("default_ocr_lang", "OCR padrão", DEFAULT_OCR_LANGUAGE),
             ("repo_root", "Pasta do repositório", "Caminho completo do repo (ex: C:\\Users\\...\\Metodos-Formais-Tutor)"),
+            ("stash_folder", "Pasta de arquivos (stash)", "Pasta com os PDFs/cards da matéria (fonte dos arquivos)"),
             ("github_url", "URL GitHub", "Ex: https://github.com/seu-user/metodos-formais-tutor"),
             ("preferred_llm", "LLM Principal", "Plataforma que você usa principalmente"),
         ]
@@ -1199,6 +1200,12 @@ class SubjectManagerDialog(tk.Toplevel):
                 ttk.Combobox(form, textvariable=var, values=PROCESSING_MODES,
                              state="readonly", width=22).grid(row=i, column=1, sticky="ew", padx=(8, 0))
             elif key == "repo_root":
+                fr = ttk.Frame(form)
+                fr.grid(row=i, column=1, sticky="ew", padx=(8, 0))
+                ttk.Entry(fr, textvariable=var).pack(side="left", fill="x", expand=True)
+                ttk.Button(fr, text="📁", width=3,
+                           command=lambda v=var: v.set(filedialog.askdirectory() or v.get())).pack(side="right", padx=(4, 0))
+            elif key == "stash_folder":
                 fr = ttk.Frame(form)
                 fr.grid(row=i, column=1, sticky="ew", padx=(8, 0))
                 ttk.Entry(fr, textvariable=var).pack(side="left", fill="x", expand=True)
@@ -1326,6 +1333,7 @@ class SubjectManagerDialog(tk.Toplevel):
             default_mode=self._vars["default_mode"].get(),
             default_ocr_lang=self._vars["default_ocr_lang"].get().strip() or DEFAULT_OCR_LANGUAGE,
             repo_root=self._vars["repo_root"].get().strip(),
+            stash_folder=self._vars["stash_folder"].get().strip(),
             github_url=self._vars["github_url"].get().strip(),
             preferred_llm=self._vars["preferred_llm"].get().strip() or "claude",
             queue=existing_queue,

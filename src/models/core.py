@@ -177,6 +177,7 @@ class SubjectProfile:
     default_mode: str = "auto"
     default_ocr_lang: str = DEFAULT_OCR_LANGUAGE
     repo_root: str = ""
+    stash_folder: str = ""        # pasta com os arquivos-fonte (PDFs/cards) da materia
     github_url: str = ""           # URL base do repo no GitHub
     preferred_llm: str = "claude"  # Plataforma principal: "claude", "gpt", "gemini"
     queue: List[FileEntry] = field(default_factory=list)
