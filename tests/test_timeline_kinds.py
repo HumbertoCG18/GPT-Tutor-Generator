@@ -343,3 +343,33 @@ def test_real_corpus_every_block_classifies(course):
         status = derive_block_status(blk_with_kind)
         assert status in {"ok", "needs_unit", "needs_topic",
                           "needs_files", "non_applicable", "needs_review"}
+
+
+# ---------------------------------------------------------------------------
+# Block grouping splits by authoritative row kind (prova nao funde no vizinho)
+# ---------------------------------------------------------------------------
+
+from src.builder.timeline.index import _rows_belong_to_same_thematic_block  # noqa: E402
+
+
+def _r(content, kind="class", date="01/01/2026"):
+    return {"content": content, "kind": kind, "date_text": date}
+
+
+def test_grouping_splits_when_current_row_is_assessment_kind():
+    prev = _r("Feriado Aula", kind="class")
+    cur = _r("Prova P1 Prova", kind="assessment")
+    assert _rows_belong_to_same_thematic_block(prev, cur, [prev]) is False
+
+
+def test_grouping_splits_when_previous_row_is_assessment_kind():
+    prev = _r("Prova P1 Prova", kind="assessment")
+    cur = _r("Arquitetura de software camadas", kind="class")
+    assert _rows_belong_to_same_thematic_block(prev, cur, [prev]) is False
+
+
+def test_grouping_keeps_two_class_rows_with_shared_tokens_together():
+    # regressao: duas aulas do mesmo tema continuam no mesmo bloco
+    prev = _r("Arquitetura de software em camadas", kind="class")
+    cur = _r("Arquitetura de software microservicos", kind="class")
+    assert _rows_belong_to_same_thematic_block(prev, cur, [prev]) is True

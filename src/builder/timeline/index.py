@@ -953,11 +953,21 @@ def _row_looks_like_continuation(row_text: str) -> bool:
     ])
 
 
+def _row_is_standalone_kind(row: Dict[str, object]) -> bool:
+    """Linha com kind nao-aula (prova/trabalho/feriado/... via Atividade) e um
+    bloco proprio: nao funde com vizinhos. '' e 'class' agrupam normalmente."""
+    kind = str(row.get("kind") or "")
+    return bool(kind) and kind != "class"
+
+
 def _rows_belong_to_same_thematic_block(
     previous_row: Dict[str, object],
     current_row: Dict[str, object],
     current_rows: Optional[List[Dict[str, object]]] = None,
 ) -> bool:
+    if _row_is_standalone_kind(current_row) or _row_is_standalone_kind(previous_row):
+        return False
+
     previous_text = str(previous_row.get("content", ""))
     current_text = str(current_row.get("content", ""))
     if not previous_text or not current_text:
