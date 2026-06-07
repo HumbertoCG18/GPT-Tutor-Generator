@@ -72,3 +72,12 @@ def test_build_entries_is_idempotent_by_source_path(tmp_path):
     names = {Path(e.source_path).name for e in entries}
     assert "hoare.pdf" not in names      # já existia -> pulado
     assert "hoare.zip" in names          # novo -> incluído
+
+
+def test_scan_nested_file_uses_top_level_card(tmp_path):
+    deep = tmp_path / "Provas por Inducao" / "resolucoes"
+    deep.mkdir(parents=True)
+    (deep / "q1.pdf").write_text("x", encoding="utf-8")
+    res = scan_stash_cards(tmp_path)
+    by_name = {Path(i.source_path).name: i for i in res.items}
+    assert by_name["q1.pdf"].card_name == "Provas por Inducao"

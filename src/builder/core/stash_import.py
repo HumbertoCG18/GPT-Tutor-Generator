@@ -13,7 +13,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List
 
-from src.utils.helpers import CODE_EXTENSIONS, auto_detect_category
+from src.utils.helpers import CODE_EXTENSIONS, DEFAULT_OCR_LANGUAGE, auto_detect_category
 from src.models.core import FileEntry
 
 # Extensões de imagem suportadas pela importação (espelha os filtros da UI).
@@ -95,6 +95,6 @@ def build_stash_entries(scan: StashScanResult, existing_source_paths, defaults=N
             title=Path(item.source_path).stem,
             source_section=item.card_name,
             processing_mode=defaults.get("processing_mode", "auto"),
-            ocr_language=defaults.get("ocr_language", "por"),
+            ocr_language=defaults.get("ocr_language", DEFAULT_OCR_LANGUAGE),
         ))
     return entries
