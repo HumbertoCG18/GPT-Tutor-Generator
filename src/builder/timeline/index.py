@@ -2200,23 +2200,22 @@ def _build_timeline_index(
         runtime_block["topic_source"] = topic_source
         runtime_blocks.append(runtime_block)
 
-    # Kind precisa estar resolvido antes de separar blocos-aula.
-    for block in runtime_blocks:
-        ensure_block_kind(block)
-
+    # Atribuicao de unidade ANTES da classificacao final de kind. Blocos com
+    # source_kind nao-aula (provas/trabalhos/feriados via Atividade) ficam de fora;
+    # o resto sao candidatos a aula. Assim, quando finalize_block classificar, o
+    # has_unit ja reflete o posicional e o gate do classificador de sessao volta
+    # a valer (aula de conteudo que cita "revisao" nao vira review).
     units_ordered = list((content_taxonomy or {}).get("units", []) or [])
-    class_blocks = [b for b in runtime_blocks if b.get("kind") == BlockKind.CLASS.value]
-    positional = assign_units_positional(class_blocks, units_ordered)
+    class_candidates = [b for b in runtime_blocks if not b.get("source_kind")]
+    positional = assign_units_positional(class_candidates, units_ordered)
     if positional:
-        for b, (slug, conf) in zip(class_blocks, positional):
+        for b, (slug, conf) in zip(class_candidates, positional):
             b["unit_slug"] = slug
             b["unit_confidence"] = conf
             if slug:
-                b["auto_unit_slug"] = slug  # sugestao auto (pre-override) p/ o guard de conflito
+                b["auto_unit_slug"] = slug
     else:
-        # Fallback estreito: caminho antigo por bloco-aula (curso sem unidades
-        # ordenadas / sem ancora). finalize_block ainda zera unidade de nao-aula.
-        for b in class_blocks:
+        for b in class_candidates:
             us, uc = _assign_timeline_block_to_unit(b, unit_index)
             if not us:
                 us, uc = _vote_unit_from_topic_candidates(b, unit_index)
