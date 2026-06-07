@@ -181,3 +181,22 @@ def test_cronograma_health_empty_conflicts_phrase():
     md = cronograma_health_md({"name": "TCC"}, [], blocks)
     assert "Conflitos de curadoria" in md
     assert "_Nenhum conflito de curadoria._" in md
+
+
+def test_auto_suggested_unit_prefers_auto_unit_slug():
+    from src.builder.timeline.conflicts import auto_suggested_unit
+    block = {"auto_unit_slug": "unidade-01-conjuntos", "unit_confidence": 0.8,
+             "topic_ambiguous": True, "primary_topic_confidence": 0.2,
+             "topic_candidates": [{"unit_slug": "unidade-02-turing"}]}
+    slug, conf = auto_suggested_unit(block)
+    assert slug == "unidade-01-conjuntos"
+    assert conf == 0.8
+
+
+def test_auto_suggested_unit_falls_back_to_candidates_without_auto_unit():
+    from src.builder.timeline.conflicts import auto_suggested_unit
+    # sem auto_unit_slug, mantem o caminho antigo (topico confiante)
+    block = {"topic_ambiguous": False, "primary_topic_confidence": 1.0,
+             "topic_candidates": [{"unit_slug": "unidade-01-conjuntos"}]}
+    slug, conf = auto_suggested_unit(block)
+    assert slug == "unidade-01-conjuntos"

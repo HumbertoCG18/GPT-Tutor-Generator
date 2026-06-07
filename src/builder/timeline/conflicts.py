@@ -24,6 +24,10 @@ def auto_suggested_unit(block: Mapping) -> tuple[str, float]:
     Abstem ("", 0.0) quando o topico e ambiguo, pouco confiante, ou sem
     candidatos — espelhando exatamente quando o build NAO topic-derivaria.
     """
+    auto = str(block.get("auto_unit_slug") or "").strip()
+    if auto:
+        return (auto, float(block.get("unit_confidence") or 0.0))
+
     if block.get("topic_ambiguous"):
         return ("", 0.0)
     conf = float(block.get("primary_topic_confidence") or 0.0)
