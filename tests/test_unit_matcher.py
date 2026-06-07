@@ -92,3 +92,25 @@ def test_positional_strong_out_of_order_is_demoted_strict_monotonic():
     out = assign_units_positional(blocks, UNITS3)
     assert out[0][0] == "u3"
     assert out[1][0] == "u3"   # nao recua pra u1
+
+
+import json as _json
+from pathlib import Path as _Path
+
+
+def test_real_metodos_hoare_unit_sane():
+    import os
+    from src.models.core import SubjectStore
+    import src.builder.engine as engine
+    base = os.environ.get("TUTOR_COURSES_DIR", r"C:\Users\Humberto\Documents\GitHub")
+    repo = _Path(base) / "Metodos-Formais-Tutor"
+    if not repo.exists():
+        import pytest
+        pytest.skip("corpus indisponivel")
+    sp = SubjectStore().get("Metodos-Formais")
+    cm = _json.loads((repo / "manifest.json").read_text(encoding="utf-8")).get("course", {})
+    ctx = engine._build_file_map_timeline_context_from_course({**cm, "_repo_root": repo}, sp, content_taxonomy=None)
+    blocks = ctx["timeline_index"]["blocks"]
+    hoare = next((b for b in blocks if "hoare" in (b.get("primary_topic_label") or "").lower()), None)
+    if hoare:
+        assert "verificacao-de-programas" in (hoare.get("unit_slug") or "")

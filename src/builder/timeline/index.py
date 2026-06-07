@@ -13,6 +13,7 @@ from src.builder.timeline.signals import extract_timeline_session_signals
 from src.builder.timeline.classifier import classify_block
 from src.builder.timeline.kinds import BlockKind
 from src.builder.timeline.curation import apply_block_curation
+from src.builder.timeline.unit_matcher import assign_units_positional
 from src.builder.text.normalize import normalize_match_text as _normalize_match_text
 from src.builder.routing.thresholds import margin_confidence, T
 from src.utils.helpers import slugify, write_text, ATIVIDADE_KIND_MAP, norm_ascii_lower
@@ -2194,21 +2195,31 @@ def _build_timeline_index(
                     and not runtime_block["primary_topic_slug"]:
                 runtime_block["primary_topic_slug"] = resolved_slug
         runtime_block["topic_source"] = topic_source
-        topic_unit_slug = ""
-        if primary_topic.topic_slug and not primary_topic.ambiguous and primary_topic.confidence >= 0.65:
-            topic_unit_slug = _derive_unit_from_topic_match(primary_topic, content_taxonomy or {})
-        if topic_unit_slug:
-            runtime_block["unit_slug"] = topic_unit_slug
-            runtime_block["unit_confidence"] = primary_topic.confidence
-        else:
-            unit_slug, unit_confidence = _assign_timeline_block_to_unit(runtime_block, unit_index)
-            if not unit_slug:
-                unit_slug, unit_confidence = _vote_unit_from_topic_candidates(
-                    runtime_block, unit_index
-                )
-            runtime_block["unit_slug"] = unit_slug
-            runtime_block["unit_confidence"] = unit_confidence
         runtime_blocks.append(runtime_block)
+
+    # Kind precisa estar resolvido antes de separar blocos-aula.
+    for block in runtime_blocks:
+        ensure_block_kind(block)
+
+    units_ordered = list((content_taxonomy or {}).get("units", []) or [])
+    class_blocks = [b for b in runtime_blocks if b.get("kind") == BlockKind.CLASS.value]
+    positional = assign_units_positional(class_blocks, units_ordered)
+    if positional:
+        for b, (slug, conf) in zip(class_blocks, positional):
+            b["unit_slug"] = slug
+            b["unit_confidence"] = conf
+            b["auto_unit_slug"] = slug  # sugestao auto (pre-override) p/ o guard de conflito
+    else:
+        # Fallback estreito: caminho antigo por bloco-aula (curso sem unidades
+        # ordenadas / sem ancora). finalize_block ainda zera unidade de nao-aula.
+        for b in class_blocks:
+            us, uc = _assign_timeline_block_to_unit(b, unit_index)
+            if not us:
+                us, uc = _vote_unit_from_topic_candidates(b, unit_index)
+            b["unit_slug"] = us
+            b["unit_confidence"] = uc
+            if us:
+                b["auto_unit_slug"] = us
 
     for index, block in enumerate(runtime_blocks):
         if block.get("unit_slug") or not _timeline_block_is_soft_continuation(block):

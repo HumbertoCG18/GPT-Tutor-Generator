@@ -1046,7 +1046,10 @@ def test_file_map_timeline_context_extends_program_verification_unit_with_glossa
 
     context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
 
-    assert context["unit_periods"]["unidade-02-verificacao-de-programas"] == "4 blocos · 27/04/2026 a 08/06/2026"
+    # Positional matcher: todos os blocos-aula sao da unica unidade ancorada
+    # (verificacao de programas), incluindo "Verificacao de modelos/logica
+    # temporal" em 15/06 que o scorer-keyword antigo descartava por threshold.
+    assert context["unit_periods"]["unidade-02-verificacao-de-programas"] == "5 blocos · 27/04/2026 a 15/06/2026"
 
 
 def test_select_probable_period_for_entry_prefers_blocks_matching_subtopic():
