@@ -15,7 +15,7 @@ from src.builder.timeline.kinds import BlockKind
 from src.builder.timeline.curation import apply_block_curation
 from src.builder.text.normalize import normalize_match_text as _normalize_match_text
 from src.builder.routing.thresholds import margin_confidence, T
-from src.utils.helpers import slugify, write_text
+from src.utils.helpers import slugify, write_text, _ATIVIDADE_KIND_MAP, _norm_ascii_lower
 
 
 TIMELINE_INDEX_VERSION = 4
@@ -449,6 +449,14 @@ def _aggregate_source_kind(rows: List[Dict[str, object]]) -> str:
     return ""
 
 
+def _row_atividade(row: Dict[str, str]) -> str:
+    """Valor da coluna 'Atividade' da row do cronograma (qualquer header que a contenha)."""
+    for key in row or {}:
+        if "atividade" in str(key).lower():
+            return str(row.get(key) or "")
+    return ""
+
+
 def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[str, object]]:
     content_keys, date_keys = _infer_timeline_keys(timeline)
     candidate_rows: List[Dict[str, object]] = []
@@ -463,6 +471,13 @@ def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[
             # qualquer outra coisa cai em class (defensivo).
             kind = raw if (raw in _VALID_KIND_VALUES or raw in _IGNORED_KINDS) else "class"
             content = _collapse_ws(_KIND_TOKEN_RE.sub("", content))
+        else:
+            # Sem marcador {kind=}: a coluna Atividade do SARC e o sinal autoritativo.
+            atividade = _norm_ascii_lower(_row_atividade(row))
+            for needle, mapped in _ATIVIDADE_KIND_MAP.items():
+                if needle in atividade:
+                    kind = mapped
+                    break
         ignored = kind in _IGNORED_KINDS
         candidate_rows.append({
             "index": index,
