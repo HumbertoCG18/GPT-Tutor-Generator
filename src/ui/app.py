@@ -350,6 +350,7 @@ class App(tk.Tk):
         ttk.Button(import_actions, text="🖼 Imagens/Fotos", command=self.add_images).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
         ttk.Button(import_actions, text="🔗 Link", command=self.add_url).grid(row=1, column=0, sticky="ew", padx=4, pady=4)
         ttk.Button(import_actions, text="💻 Código / ZIP", command=self.add_code_files).grid(row=1, column=1, sticky="ew", padx=4, pady=4)
+        ttk.Button(import_actions, text="📥 Importar do stash", command=self.import_from_stash).grid(row=2, column=0, columnspan=2, sticky="ew", padx=4, pady=4)
 
         ttk.Button(build_actions, text="📂 Abrir Repo", command=self.open_repo_folder).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
         ttk.Button(build_actions, text="🧠 Student State", command=self.open_student_state_curator).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
@@ -1572,6 +1573,47 @@ class App(tk.Tk):
         self.refresh_tree()
         self._save_current_queue()
         self._set_status(f"{len(self.entries)} arquivo(s) na lista.")
+
+    def _stash_dir_from_active_subject(self) -> Optional[Path]:
+        name = self._var_active_subject.get()
+        if not name or name == "(nenhuma)":
+            return None
+        sp = self.subject_store.get(name)
+        if not sp or not getattr(sp, "stash_folder", ""):
+            return None
+        p = Path(sp.stash_folder)
+        return p if p.is_dir() else None
+
+    def import_from_stash(self):
+        from src.builder.core.stash_import import scan_stash_cards, build_stash_entries
+        stash = self._stash_dir_from_active_subject()
+        if stash is None:
+            messagebox.showinfo(
+                APP_NAME,
+                "Defina a 'Pasta de arquivos (stash)' da matéria ativa no "
+                "Gerenciador de Matérias (e selecione a matéria no topo)."
+            )
+            return
+        scan = scan_stash_cards(stash)
+        if not scan.items:
+            messagebox.showinfo(APP_NAME, f"Nenhum arquivo importável em:\n{stash}")
+            return
+        existing = {e.source_path for e in self.entries}
+        new_entries = build_stash_entries(
+            scan, existing_source_paths=existing,
+            defaults={
+                "processing_mode": self.var_default_mode.get(),
+                "ocr_language": self.var_default_ocr_language.get(),
+            },
+        )
+        if not new_entries:
+            messagebox.showinfo(APP_NAME, "Todos os arquivos do stash já estão na lista.")
+            return
+        self.entries.extend(new_entries)
+        self.refresh_tree()
+        self._save_current_queue()
+        skipped_note = f" ({len(scan.skipped)} ignorado(s) por extensão)" if scan.skipped else ""
+        self._set_status(f"{len(new_entries)} arquivo(s) importado(s) do stash{skipped_note}. {len(self.entries)} na lista.")
 
     def add_url(self):
         dialog = URLEntryDialog(self)
