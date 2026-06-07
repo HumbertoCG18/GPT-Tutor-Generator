@@ -162,6 +162,17 @@ Read this file before starting any task.
   merged (feriado+prova etc.); plano de limpeza/dead-code (auditoria pronta:
   `_match_timeline_to_units_generic` morto ~180 linhas, contrato `administrative_only`
   quebrado, 3 scorers de unidade duplicados, vocab/normalizadores ×4).
+- Blocos merged resolvidos: `_rows_belong_to_same_thematic_block` separa por
+  `kind` autoritativo da linha (helper `_row_is_standalone_kind`) — prova/feriado/
+  etc. viram bloco proprio (nao escondem prova em bloco de feriado/atendimento).
+  985->978 testes (apos limpeza). 
+- Limpeza matcher/timeline (plano `2026-06-07-limpeza-matcher-timeline`) PARCIAL:
+  Task A feita (deletado `_match_timeline_to_units_generic` + helpers + wiring +
+  testes do caminho morto, ~178 linhas); Task C feita (dedup `_normalize_unit_slug`
+  index->teaching_plan, `UNIT_GENERIC_TOKENS` unificado, `_collapse_ws`->
+  `helpers.collapse_ws`). ADIADO: Task B (`administrative_only` precisa decisao de
+  produto: persistir vs deletar filtros mortos), Tasks D/E (unificar scorers/
+  predicados, eval-gated). 978 testes.
 
 ### Not Declared In Brief
 
