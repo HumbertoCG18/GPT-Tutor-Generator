@@ -6,9 +6,9 @@ e tokens curtos filtrados. Mais forte/especifico que o scorer-keyword antigo, qu
 casava contra o NOME da unidade (confundia "computavel"~"computabilidade").
 
 `assign_units_positional` alinha blocos-aula (ordem cronologica) a unidades
-(ordem do plano) por anchor-fill monotonico: ancoras (vencedor com margem)
-progridem nao-decrescente; ancora fraca fora de ordem e rebaixada; blocos sem
-sinal herdam a unidade da ancora anterior.
+(ordem do plano) por DP monotonico GLOBAL: maximiza a soma de afinidade sob a
+restricao de indice de unidade nao-decrescente. Robusto a ancora espuria
+isolada (o otimo global mantem blocos fortes na unidade certa).
 """
 
 from __future__ import annotations
@@ -65,57 +65,64 @@ def assign_units_positional(
 ) -> List[Tuple[str, float]]:
     """(unit_slug, confidence) por bloco-aula, em ordem. [] se inaplicavel.
 
-    Inaplicavel: <2 unidades, sem blocos, ou nenhuma ancora (sinaliza fallback).
+    Alinhamento monotonico GLOBAL (DP): atribui cada bloco-aula (ordem
+    cronologica) a uma unidade (ordem do plano) de indice nao-decrescente,
+    maximizando a soma de afinidade token-overlap. Robusto a ancora espuria
+    isolada (o otimo global mantem blocos fortes na unidade certa). Retorna []
+    se <2 unidades, sem blocos, ou nenhum sinal de afinidade em lugar nenhum
+    (sinaliza fallback).
     """
-    if len(units) < 2 or not class_blocks:
+    n = len(class_blocks)
+    m = len(units)
+    if m < 2 or n == 0:
         return []
     uslugs = [str(u.get("slug", "") or "") for u in units]
     utoks = [_unit_tokens(u) for u in units]
+    aff = [[float(len(_block_tokens(b) & utoks[j])) for j in range(m)] for b in class_blocks]
 
-    anchors: List[Tuple[int, int, float]] = []  # (block_idx, unit_idx, margin)
-    for i, b in enumerate(class_blocks):
-        bt = _block_tokens(b)
-        aff = [float(len(bt & ut)) for ut in utoks]
-        order = sorted(range(len(units)), key=lambda j: aff[j], reverse=True)
-        win = order[0]
-        ws = aff[win]
-        rs = aff[order[1]] if len(order) > 1 else 0.0
-        if ws > 0 and (ws - rs) >= ANCHOR_MIN_MARGIN:
-            anchors.append((i, win, ws - rs))
+    if not any(aff[i][j] > 0 for i in range(n) for j in range(m)):
+        return []  # nenhum sinal -> fallback
 
-    if not anchors:
-        return []
+    NEG = float("-inf")
+    dp = [[NEG] * m for _ in range(n)]
+    par = [[-1] * m for _ in range(n)]
+    for u in range(m):
+        dp[0][u] = aff[0][u]
+    for i in range(1, n):
+        for u in range(m):
+            best = NEG
+            bu = -1
+            # melhor unidade anterior pu <= u; empate -> menor pu (nao avancar atoa)
+            for pu in range(u + 1):
+                if dp[i - 1][pu] > best:
+                    best = dp[i - 1][pu]
+                    bu = pu
+            dp[i][u] = aff[i][u] + best
+            par[i][u] = bu
 
-    kept: List[Tuple[int, int]] = []
-    strong: set = set()
-    cur = -1
-    for (i, u, m) in anchors:
-        if u >= cur:
-            kept.append((i, u)); cur = u
-            if m >= STRONG_MARGIN:
-                strong.add(i)
-        # fora de ordem -> rebaixa (segue a sequencia; correcao via override manual)
-    if not kept:
-        return []
-
-    anchor_idx = {i for (i, _) in kept}
-    assign: List[int] = [-1] * len(class_blocks)
-    for (i, u) in kept:
-        assign[i] = u
-    cur_u = 0
-    for i in range(len(class_blocks)):
-        if assign[i] >= 0:
-            cur_u = assign[i]
-        else:
-            assign[i] = cur_u
+    # unidade final: maior dp; empate -> menor indice (nao super-avancar)
+    last = 0
+    best = NEG
+    for u in range(m):
+        if dp[n - 1][u] > best:
+            best = dp[n - 1][u]
+            last = u
+    assign = [0] * n
+    assign[n - 1] = last
+    for i in range(n - 1, 0, -1):
+        assign[i - 1] = par[i][assign[i]]
 
     out: List[Tuple[str, float]] = []
-    for i in range(len(class_blocks)):
-        if i in strong:
+    for i in range(n):
+        u = assign[i]
+        row = aff[i]
+        srt = sorted(row, reverse=True)
+        margin = (srt[0] - srt[1]) if len(srt) > 1 else srt[0]
+        if row[u] > 0 and margin >= STRONG_MARGIN:
             conf = CONF_STRONG
-        elif i in anchor_idx:
+        elif row[u] > 0 and margin >= ANCHOR_MIN_MARGIN:
             conf = CONF_ANCHOR
         else:
             conf = CONF_FILL
-        out.append((uslugs[assign[i]], conf))
+        out.append((uslugs[u], conf))
     return out

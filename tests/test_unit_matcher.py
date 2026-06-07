@@ -97,12 +97,26 @@ def test_positional_pre_first_anchor_blocks_get_first_unit():
     assert out[1][0] == "u3"   # ancora
 
 
-def test_positional_strong_out_of_order_is_demoted_strict_monotonic():
-    # mesmo com margem alta, ancora fora de ordem nao recua a sequencia
+def test_positional_strong_out_of_order_dp_prefers_global_optimum():
+    # DP global (substitui o anchor-fill guloso): bloco0 tem leve sinal de u3
+    # (aff [1,1,3]) e bloco1 tem sinal FORTE de u1 (aff [4,1,1]). Sob a restricao
+    # monotonica, o otimo global e u1/u1 (soma 5) -- o bloco forte domina e puxa o
+    # fraco anterior pra baixo, em vez de travar o cursor em u3 como o guloso fazia.
+    # Esta e exatamente a robustez a ancora espuria que o DP introduz.
     blocks = [_block("gama quinto tema"), _block("alfa primeiro tema segundo")]
     out = assign_units_positional(blocks, UNITS3)
-    assert out[0][0] == "u3"
-    assert out[1][0] == "u3"   # nao recua pra u1
+    assert out[0][0] == "u1"
+    assert out[1][0] == "u1"
+
+
+def test_positional_dp_resists_spurious_early_high_unit():
+    # bloco0 fraco numa unidade tardia; blocos seguintes fortes na unidade do meio
+    # -> DP mantem os fortes na unidade certa (nao trava na tardia). Caso real TCC:
+    # turing (aff forte u2) nao deve virar u4 por uma ancora espuria anterior.
+    blocks = [_block("gama"), _block("beta terceiro quarto"), _block("beta terceiro quarto")]
+    out = assign_units_positional(blocks, UNITS3)
+    assert out[1][0] == "u2"
+    assert out[2][0] == "u2"
 
 
 def test_real_metodos_hoare_unit_sane():
