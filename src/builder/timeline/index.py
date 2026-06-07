@@ -473,6 +473,8 @@ def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[
             content = _collapse_ws(_KIND_TOKEN_RE.sub("", content))
         else:
             # Sem marcador {kind=}: a coluna Atividade do SARC é o sinal autoritativo.
+            # Nota: ps/g2 so se distinguem pela COR (caminho SARC-HTML). Aqui, sem
+            # cor, "prova de substituicao/g2" colapsa em assessment (direcao segura).
             atividade = norm_ascii_lower(_row_atividade(row))
             for needle, mapped in ATIVIDADE_KIND_MAP.items():
                 if needle in atividade:
