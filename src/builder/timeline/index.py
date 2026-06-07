@@ -15,6 +15,7 @@ from src.builder.timeline.curation import apply_block_curation
 from src.builder.timeline.unit_matcher import assign_units_positional
 from src.builder.text.normalize import normalize_match_text as _normalize_match_text
 from src.builder.routing.thresholds import margin_confidence, T
+from src.builder.routing.file_map import UNIT_GENERIC_TOKENS
 from src.builder.extraction.teaching_plan import _normalize_unit_slug
 from src.utils.helpers import slugify, write_text, ATIVIDADE_KIND_MAP, norm_ascii_lower
 
@@ -412,33 +413,6 @@ _TIMELINE_UNIT_NEUTRAL_TOKENS = {
     "variaveis",
     "verificacao",
     "verificacoes",
-}
-
-
-_UNIT_GENERIC_TOKENS = {
-    "metodos",
-    "formais",
-    "formal",
-    "logica",
-    "logicas",
-    "especificacao",
-    "especificacoes",
-    "verificacao",
-    "verificacoes",
-    "programas",
-    "programa",
-    "modelos",
-    "modelo",
-    "fundamentos",
-    "sistemas",
-    "software",
-    "softwares",
-    "suporte",
-    "propriedades",
-    "aplicacoes",
-    "sequenciais",
-    "concorrentes",
-    "linguagens",
 }
 
 
@@ -1607,19 +1581,19 @@ def _score_entry_against_taxonomy_topic(signals: dict, topic: dict) -> float:
     topic_tokens = {
         token
         for token in _normalize_match_text(label).split()
-        if len(token) >= 4 and token not in _UNIT_GENERIC_TOKENS
+        if len(token) >= 4 and token not in UNIT_GENERIC_TOKENS
     }
     if topic_slug:
         topic_tokens.update(
             token
             for token in _normalize_match_text(topic_slug.replace("-", " ")).split()
-            if len(token) >= 4 and token not in _UNIT_GENERIC_TOKENS
+            if len(token) >= 4 and token not in UNIT_GENERIC_TOKENS
         )
     for alias in aliases:
         topic_tokens.update(
             token
             for token in _normalize_match_text(alias).split()
-            if len(token) >= 4 and token not in _UNIT_GENERIC_TOKENS
+            if len(token) >= 4 and token not in UNIT_GENERIC_TOKENS
         )
 
     signal_tokens = {
