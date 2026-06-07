@@ -2208,7 +2208,8 @@ def _build_timeline_index(
         for b, (slug, conf) in zip(class_blocks, positional):
             b["unit_slug"] = slug
             b["unit_confidence"] = conf
-            b["auto_unit_slug"] = slug  # sugestao auto (pre-override) p/ o guard de conflito
+            if slug:
+                b["auto_unit_slug"] = slug  # sugestao auto (pre-override) p/ o guard de conflito
     else:
         # Fallback estreito: caminho antigo por bloco-aula (curso sem unidades
         # ordenadas / sem ancora). finalize_block ainda zera unidade de nao-aula.

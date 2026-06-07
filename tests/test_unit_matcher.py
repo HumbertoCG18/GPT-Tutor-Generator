@@ -1,5 +1,8 @@
 """Matcher posicional bloco->unidade: afinidade token-overlap + anchor-fill."""
 
+import json as _json
+from pathlib import Path as _Path
+
 from src.builder.timeline.unit_matcher import score_block_unit_affinity
 
 
@@ -92,10 +95,6 @@ def test_positional_strong_out_of_order_is_demoted_strict_monotonic():
     out = assign_units_positional(blocks, UNITS3)
     assert out[0][0] == "u3"
     assert out[1][0] == "u3"   # nao recua pra u1
-
-
-import json as _json
-from pathlib import Path as _Path
 
 
 def test_real_metodos_hoare_unit_sane():
