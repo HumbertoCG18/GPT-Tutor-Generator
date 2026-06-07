@@ -1,5 +1,6 @@
 from pathlib import Path
-from src.builder.core.stash_import import scan_stash_cards, StashItem
+from src.builder.core.stash_import import scan_stash_cards, StashItem, build_stash_entries
+from src.models.core import FileEntry
 
 
 def _make_tree(root: Path):
@@ -46,3 +47,28 @@ def test_scan_missing_root_returns_empty(tmp_path):
     res = scan_stash_cards(tmp_path / "nao-existe")
     assert res.items == []
     assert res.skipped == []
+
+
+def test_build_entries_stamps_source_section_and_category(tmp_path):
+    _make_tree(tmp_path)
+    scan = scan_stash_cards(tmp_path)
+    entries = build_stash_entries(scan, existing_source_paths=set(),
+                                  defaults={"processing_mode": "auto", "ocr_language": "por"})
+    by_name = {Path(e.source_path).name: e for e in entries}
+    assert by_name["hoare.zip"].source_section == "Verificacao de Programas"
+    assert by_name["hoare.zip"].category == "codigo-professor"
+    assert by_name["hoare.zip"].file_type == "zip"
+    assert by_name["hoare.zip"].title == "hoare"
+    assert by_name["hoare.zip"].processing_mode == "auto"
+    assert by_name["hoare.zip"].ocr_language == "por"
+    assert all(isinstance(e, FileEntry) for e in entries)
+
+
+def test_build_entries_is_idempotent_by_source_path(tmp_path):
+    _make_tree(tmp_path)
+    scan = scan_stash_cards(tmp_path)
+    already = {i.source_path for i in scan.items if Path(i.source_path).name == "hoare.pdf"}
+    entries = build_stash_entries(scan, existing_source_paths=already, defaults={})
+    names = {Path(e.source_path).name for e in entries}
+    assert "hoare.pdf" not in names      # já existia -> pulado
+    assert "hoare.zip" in names          # novo -> incluído

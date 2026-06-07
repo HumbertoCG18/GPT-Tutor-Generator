@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import List
 
 from src.utils.helpers import CODE_EXTENSIONS, auto_detect_category
+from src.models.core import FileEntry
 
 # Extensões de imagem suportadas pela importação (espelha os filtros da UI).
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff", ".gif"}
@@ -77,3 +78,23 @@ def scan_stash_cards(stash_root) -> StashScanResult:
             category=category,
         ))
     return result
+
+
+def build_stash_entries(scan: StashScanResult, existing_source_paths, defaults=None) -> List[FileEntry]:
+    """Converte itens varridos em FileEntry, pulando paths já presentes."""
+    existing = set(existing_source_paths or set())
+    defaults = defaults or {}
+    entries: List[FileEntry] = []
+    for item in scan.items:
+        if item.source_path in existing:
+            continue
+        entries.append(FileEntry(
+            source_path=item.source_path,
+            file_type=item.file_type,
+            category=item.category,
+            title=Path(item.source_path).stem,
+            source_section=item.card_name,
+            processing_mode=defaults.get("processing_mode", "auto"),
+            ocr_language=defaults.get("ocr_language", "por"),
+        ))
+    return entries
