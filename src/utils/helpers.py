@@ -255,6 +255,9 @@ def slugify(value: str) -> str:
     value = re.sub(r"-+", "-", value)
     return value.strip("-") or "untitled"
 
+def collapse_ws(text: str) -> str:
+    return re.sub(r"\s+", " ", (text or "")).strip()
+
 def ensure_dir(path: Path) -> Path:
     path.mkdir(parents=True, exist_ok=True)
     return path

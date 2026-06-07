@@ -7,7 +7,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Iterable, Optional
 
-from src.utils.helpers import slugify, write_text
+from src.utils.helpers import slugify, write_text, collapse_ws as _collapse_ws
 
 _DEFAULTS_PATH = Path(__file__).resolve().parent.parent / "semantic_defaults.json"
 _PROFILE_LIST_KEYS = (
@@ -69,10 +69,6 @@ _TOOL_CONTEXT_CUES = (
     "parsers",
     "linguagem",
 )
-
-
-def _collapse_ws(text: str) -> str:
-    return re.sub(r"\s+", " ", (text or "")).strip()
 
 
 def _normalize_text(text: str) -> str:

@@ -17,7 +17,7 @@ from src.builder.text.normalize import normalize_match_text as _normalize_match_
 from src.builder.routing.thresholds import margin_confidence, T
 from src.builder.routing.file_map import UNIT_GENERIC_TOKENS
 from src.builder.extraction.teaching_plan import _normalize_unit_slug
-from src.utils.helpers import slugify, write_text, ATIVIDADE_KIND_MAP, norm_ascii_lower
+from src.utils.helpers import slugify, write_text, ATIVIDADE_KIND_MAP, norm_ascii_lower, collapse_ws as _collapse_ws
 
 
 TIMELINE_INDEX_VERSION = 4
@@ -88,10 +88,6 @@ def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
             block["unit_slug"] = manual_unit.strip()
             block["unit_confidence"] = 1.0
     return touched
-
-
-def _collapse_ws(text: str) -> str:
-    return re.sub(r"\s+", " ", (text or "")).strip()
 
 
 def _signal_token_set(signal_text: str) -> set:

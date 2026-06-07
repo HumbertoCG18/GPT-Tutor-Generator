@@ -13,11 +13,7 @@ from src.builder.core.semantic_config import (
     resolve_semantic_profile,
     write_internal_semantic_profile,
 )
-from src.utils.helpers import slugify, write_text
-
-
-def _collapse_ws(text: str) -> str:
-    return re.sub(r"\s+", " ", (text or "")).strip()
+from src.utils.helpers import slugify, write_text, collapse_ws as _collapse_ws
 
 
 def _normalize_match_text(text: str) -> str:
