@@ -44,3 +44,8 @@ def test_explicit_kind_marker_wins_over_atividade():
 def test_no_atividade_column_defaults_class():
     rows = _build_timeline_candidate_rows([{"data": "03/07/2026", "conteudo": "Aula normal"}])
     assert rows[0]["kind"] == "class"
+
+
+def test_atividade_header_variant_capitalized():
+    rows = _build_timeline_candidate_rows([{"Data": "03/07/2026", "Descricao": "Prova P2", "Atividade": "Prova"}])
+    assert rows[0]["kind"] == "assessment"

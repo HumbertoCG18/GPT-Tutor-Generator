@@ -385,7 +385,7 @@ def _aspnet_row_kind(row) -> tuple[str, bool]:
     return _ASPNET_COLOR_KIND_MAP.get(color, ("class", False))
 
 
-_ATIVIDADE_KIND_MAP = {
+ATIVIDADE_KIND_MAP = {
     "prova": "assessment",
     "avaliacao": "assessment",
     "exame": "assessment",
@@ -397,7 +397,7 @@ _ATIVIDADE_KIND_MAP = {
 }
 
 
-def _norm_ascii_lower(text: str) -> str:
+def norm_ascii_lower(text: str) -> str:
     """NFKD + remove acentos + lower + strip. Para casar Atividade do SARC."""
     import unicodedata as _ud
     text = _ud.normalize("NFKD", text or "")
@@ -419,8 +419,8 @@ def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:
     color_kind, ignored = _aspnet_row_kind(row)
     if ignored:
         return (color_kind, True)
-    atividade = _norm_ascii_lower(_aspnet_row_cell(row, "Atividade"))
-    for needle, kind in _ATIVIDADE_KIND_MAP.items():
+    atividade = norm_ascii_lower(_aspnet_row_cell(row, "Atividade"))
+    for needle, kind in ATIVIDADE_KIND_MAP.items():
         if needle in atividade:
             return (kind, False)
     if atividade:

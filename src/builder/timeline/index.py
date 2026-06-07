@@ -15,7 +15,7 @@ from src.builder.timeline.kinds import BlockKind
 from src.builder.timeline.curation import apply_block_curation
 from src.builder.text.normalize import normalize_match_text as _normalize_match_text
 from src.builder.routing.thresholds import margin_confidence, T
-from src.utils.helpers import slugify, write_text, _ATIVIDADE_KIND_MAP, _norm_ascii_lower
+from src.utils.helpers import slugify, write_text, ATIVIDADE_KIND_MAP, norm_ascii_lower
 
 
 TIMELINE_INDEX_VERSION = 4
@@ -472,9 +472,9 @@ def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[
             kind = raw if (raw in _VALID_KIND_VALUES or raw in _IGNORED_KINDS) else "class"
             content = _collapse_ws(_KIND_TOKEN_RE.sub("", content))
         else:
-            # Sem marcador {kind=}: a coluna Atividade do SARC e o sinal autoritativo.
-            atividade = _norm_ascii_lower(_row_atividade(row))
-            for needle, mapped in _ATIVIDADE_KIND_MAP.items():
+            # Sem marcador {kind=}: a coluna Atividade do SARC é o sinal autoritativo.
+            atividade = norm_ascii_lower(_row_atividade(row))
+            for needle, mapped in ATIVIDADE_KIND_MAP.items():
                 if needle in atividade:
                     kind = mapped
                     break
