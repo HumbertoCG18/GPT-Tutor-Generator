@@ -1144,6 +1144,9 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
         source_kind = block.get("source_kind")
         if source_kind:
             payload["source_kind"] = source_kind
+        auto_unit_slug = block.get("auto_unit_slug")
+        if auto_unit_slug:
+            payload["auto_unit_slug"] = auto_unit_slug
         blocks.append(payload)
     return {"version": TIMELINE_INDEX_VERSION, "blocks": blocks}
 

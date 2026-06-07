@@ -42,6 +42,14 @@ def test_affinity_ignores_stopwords_and_short_tokens():
     assert score_block_unit_affinity(b, U_REC) == 0.0
 
 
+def test_serializer_keeps_auto_unit_slug():
+    from src.builder.timeline.index import _serialize_timeline_index
+    blk = {"id": "b", "kind": "class", "unit_slug": "u1", "auto_unit_slug": "u1",
+           "period_start": "2026-03-01", "period_end": "2026-03-01"}
+    out = _serialize_timeline_index({"version": 4, "blocks": [blk]})
+    assert out["blocks"][0].get("auto_unit_slug") == "u1"
+
+
 from src.builder.timeline.unit_matcher import assign_units_positional
 
 UNITS3 = [
