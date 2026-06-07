@@ -15,6 +15,7 @@ from src.builder.timeline.curation import apply_block_curation
 from src.builder.timeline.unit_matcher import assign_units_positional
 from src.builder.text.normalize import normalize_match_text as _normalize_match_text
 from src.builder.routing.thresholds import margin_confidence, T
+from src.builder.extraction.teaching_plan import _normalize_unit_slug
 from src.utils.helpers import slugify, write_text, ATIVIDADE_KIND_MAP, norm_ascii_lower
 
 
@@ -108,16 +109,6 @@ def _matches_normalized_phrase(signal_text: str, phrase: str) -> bool:
     if " " not in normalized_phrase:
         return normalized_phrase in _signal_token_set(normalized_signal)
     return normalized_phrase in normalized_signal
-
-
-def _normalize_unit_slug(title: str) -> str:
-    slug = slugify((title or "").replace("—", "-"))
-    match = re.match(r"^(unidade(?:-de-aprendizagem)?-)(\d+)(-.+)?$", slug)
-    if not match:
-        return slug
-    prefix, number, suffix = match.groups()
-    suffix = suffix or ""
-    return f"{prefix}{int(number):02d}{suffix}"
 
 
 @dataclass
