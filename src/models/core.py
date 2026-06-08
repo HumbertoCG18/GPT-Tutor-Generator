@@ -183,6 +183,7 @@ class SubjectProfile:
     repo_root: str = ""
     stash_folder: str = ""        # pasta com os arquivos-fonte (PDFs/cards) da materia
     moodle_course_id: str = ""   # liga a matéria ao curso Moodle (re-sync, upsert)
+    m365_filter: str = ""        # substring do path OneDrive p/ filtrar insights (M365)
     github_url: str = ""           # URL base do repo no GitHub
     preferred_llm: str = "claude"  # Plataforma principal: "claude", "gpt", "gemini"
     queue: List[FileEntry] = field(default_factory=list)

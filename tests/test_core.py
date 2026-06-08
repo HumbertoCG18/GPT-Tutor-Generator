@@ -4889,3 +4889,17 @@ def test_student_profile_moodle_base_folder_roundtrip():
     from src.models.core import StudentProfile
     s = StudentProfile(full_name="X", moodle_base_folder="C:/Moodle")
     assert StudentProfile.from_dict(s.to_dict()).moodle_base_folder == "C:/Moodle"
+
+
+def test_subject_profile_m365_filter_roundtrip():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile(name="Métodos Formais", slug="metodos-formais", m365_filter="metodosformais")
+    d = sp.to_dict()
+    assert d["m365_filter"] == "metodosformais"
+    sp2 = SubjectProfile.from_dict(d)
+    assert sp2.m365_filter == "metodosformais"
+
+def test_subject_profile_m365_filter_defaults_empty_for_old_profiles():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile.from_dict({"name": "x", "slug": "x"})   # sem o campo
+    assert sp.m365_filter == ""
