@@ -1621,6 +1621,10 @@ class MoodleCourseSelectDialog(tk.Toplevel):
         self._m365_filter_var = tk.StringVar(value="")
         ttk.Entry(m365row, textvariable=self._m365_filter_var).pack(side="left", fill="x", expand=True)
         ttk.Button(self, text="📥  Importar marcados", command=self._import).pack(fill="x", padx=10, pady=10)
+        self._status_var = tk.StringVar(value="")
+        ttk.Label(self, textvariable=self._status_var).pack(anchor="w", padx=10)
+        self._progress = ttk.Progressbar(self, mode="determinate")
+        self._progress.pack(fill="x", padx=10, pady=(0, 8))
         self._render_list()
 
     def _render_list(self):
@@ -1649,12 +1653,44 @@ class MoodleCourseSelectDialog(tk.Toplevel):
         except (tk.TclError, RuntimeError):
             pass  # diálogo já destruído — ignora
 
+    def _busy(self, text):
+        def go():
+            self._status_var.set(text)
+            self._progress.configure(mode="indeterminate")
+            self._progress.start(12)
+        self._post(go)
+
+    def _progress_to(self, done, total, text):
+        def go():
+            self._progress.stop()
+            self._progress.configure(mode="determinate", maximum=max(total, 1), value=done)
+            self._status_var.set(text)
+        self._post(go)
+
+    def _idle(self, text):
+        def go():
+            self._progress.stop()
+            self._progress.configure(mode="determinate", value=0)
+            self._status_var.set(text)
+        self._post(go)
+
     def _m365_prompt(self, info):
-        # Chamado da thread worker; agenda o dialog de login na main thread.
+        # Chamado da thread worker; agenda na main thread (clipboard/UI exigem main).
         def show():
+            try:
+                self.clipboard_clear()
+                self.clipboard_append(info["user_code"])
+            except Exception:
+                pass
+            try:
+                import webbrowser
+                webbrowser.open(info["verification_uri"])
+            except Exception:
+                pass
             messagebox.showinfo(
                 "Login M365",
-                f"Abra:\n{info['verification_uri']}\n\nDigite o código:\n{info['user_code']}\n\n"
+                f"Código (já copiado, cole com Ctrl+V): {info['user_code']}\n\n"
+                f"Abri o navegador em:\n{info['verification_uri']}\n\n"
                 "Autentique com a conta PUCRS. O import continua após o login.")
         self._post(show)
 
@@ -1668,14 +1704,32 @@ class MoodleCourseSelectDialog(tk.Toplevel):
             return
 
         do_download = self._download_var.get()
+        m365_on = self._m365_var.get()
+        m365_filter = self._m365_filter_var.get().strip()
 
         def worker():
             store = SubjectStore()
+            # --- Login M365 PRIMEIRO (antes do import Moodle), p/ autenticar logo ---
+            m365_client = None
+            m365_login_err = ""
+            if m365_on and m365_filter:
+                try:
+                    from src.builder.sources import m365
+                    self._busy("Aguardando login M365...")
+                    m365_client = m365.get_client(prompt_callback=self._m365_prompt)
+                except Exception as exc:
+                    import logging
+                    logging.getLogger("m365").exception("Falha no login M365")
+                    m365_login_err = str(exc)
+
+            # --- Import Moodle ---
+            self._busy("Importando do Moodle...")
             try:
                 rep = import_moodle_courses(
                     selected, self._base, store, self._client, download=do_download)
             except Exception as exc:
                 msg = str(exc)
+                self._idle("Falha no import.")
                 self._post(lambda m=msg: messagebox.showerror("Moodle", f"Falha no import: {m}"))
                 return
             base_msg = (
@@ -1693,42 +1747,51 @@ class MoodleCourseSelectDialog(tk.Toplevel):
             else:
                 tail = ("Bytes não baixados (opção desmarcada) — baixe os PDFs no navegador "
                         "e coloque nas pastas dos cards (veja _ARQUIVOS_DO_CARD.txt em cada uma).")
+
+            # --- Download M365 ---
             m365_tail = ""
-            if self._m365_var.get():
-                flt = self._m365_filter_var.get().strip()
-                if not flt:
-                    m365_tail = "\n\nM365: filtro vazio — pulado."
-                else:
-                    try:
-                        from src.builder.sources import m365
-                        from src.builder.sources.moodle import parse_moodle_course
-                        client = m365.get_client(prompt_callback=self._m365_prompt)
-                        sections = []
-                        for course in selected:
-                            cid = str(course.get("id") or "")
-                            for sec in (self._client.get_course_contents(cid) or []):
-                                if sec.get("name"):
-                                    sections.append(sec["name"])
-                        info0 = parse_moodle_course(selected[0])
-                        mdest = Path(self._base) / info0["slug"]
-                        mrep = m365.download_subject_m365(client, flt, sections, mdest)
-                        sp0 = store.get(info0["name"]) if hasattr(store, "get") else None
-                        if sp0 and getattr(sp0, "m365_filter", "") != flt:
-                            sp0.m365_filter = flt
-                            store.add(sp0)
-                        repo_root = getattr(sp0, "repo_root", "") if sp0 else ""
-                        backf = m365.apply_source_section(repo_root, mrep["name_to_section"]) if repo_root else 0
-                        mapped = "; ".join(f"{s}->{c}{'' if m else ' (novo)'}"
-                                           for s, c, m in mrep["mapping"])
-                        multi = ("  (M365 aplicado só à 1ª matéria — o filtro é por matéria; "
-                                 "reimporte cada uma separadamente)" if len(selected) > 1 else "")
-                        m365_tail = (f"\n\nM365 [{info0['name']}] — baixados: {mrep['downloaded']}  "
-                                     f"falhas: {len(mrep['failed'])}  source_section: {backf}{multi}\n"
-                                     f"Cards: {mapped}")
-                    except Exception as exc:
-                        import logging
-                        logging.getLogger("m365").exception("Falha no import M365")
-                        m365_tail = f"\n\nM365 indisponível: {str(exc)[:160]}\n(detalhes/traceback no terminal)"
+            if m365_on and not m365_filter:
+                m365_tail = "\n\nM365: filtro vazio — pulado."
+            elif m365_on and m365_login_err:
+                m365_tail = f"\n\nM365 indisponível (login): {m365_login_err[:160]}\n(traceback no terminal)"
+            elif m365_client:
+                try:
+                    from src.builder.sources import m365
+                    from src.builder.sources.moodle import parse_moodle_course
+                    self._busy("Listando arquivos do OneDrive...")
+                    sections = []
+                    for course in selected:
+                        cid = str(course.get("id") or "")
+                        for sec in (self._client.get_course_contents(cid) or []):
+                            if sec.get("name"):
+                                sections.append(sec["name"])
+                    info0 = parse_moodle_course(selected[0])
+                    mdest = Path(self._base) / info0["slug"]
+
+                    def _pcb(done, total, name, card):
+                        self._progress_to(done, total, f"M365 {done}/{total}: {name} → {card}")
+
+                    mrep = m365.download_subject_m365(
+                        m365_client, m365_filter, sections, mdest, progress_cb=_pcb)
+                    sp0 = store.get(info0["name"]) if hasattr(store, "get") else None
+                    if sp0 and getattr(sp0, "m365_filter", "") != m365_filter:
+                        sp0.m365_filter = m365_filter
+                        store.add(sp0)
+                    repo_root = getattr(sp0, "repo_root", "") if sp0 else ""
+                    backf = m365.apply_source_section(repo_root, mrep["name_to_section"]) if repo_root else 0
+                    mapped = "; ".join(f"{s}->{c}{'' if m else ' (novo)'}"
+                                       for s, c, m in mrep["mapping"])
+                    multi = ("  (M365 aplicado só à 1ª matéria — o filtro é por matéria; "
+                             "reimporte cada uma separadamente)" if len(selected) > 1 else "")
+                    m365_tail = (f"\n\nM365 [{info0['name']}] — baixados: {mrep['downloaded']}  "
+                                 f"falhas: {len(mrep['failed'])}  source_section: {backf}{multi}\n"
+                                 f"Cards: {mapped}")
+                except Exception as exc:
+                    import logging
+                    logging.getLogger("m365").exception("Falha no import M365")
+                    m365_tail = f"\n\nM365 indisponível: {str(exc)[:160]}\n(detalhes/traceback no terminal)"
+
+            self._idle("Concluído.")
             self._post(lambda: messagebox.showinfo("Moodle", base_msg + tail + m365_tail))
             self._post(self.destroy)
 

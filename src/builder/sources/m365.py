@@ -204,26 +204,33 @@ def get_client(prompt_callback=None) -> "M365Client":
 
 
 def download_subject_m365(client, m365_filter, moodle_sections, dest,
-                          skip_existing: bool = True) -> dict:
+                          skip_existing: bool = True, progress_cb=None) -> dict:
     """Baixa os arquivos M365 da matéria pros cards (merge com seções Moodle).
 
+    progress_cb(done, total, name, card) é chamado por item (opcional).
     Retorna {total, downloaded, failed, mapping:[(subfolder,card,matched)], name_to_section}.
     """
     dest = Path(dest)
     items = select_for_subject(client.list_shared(), m365_filter)
-    log.info("filtro '%s': %d item(ns) -> %s", m365_filter, len(items), dest)
+    total = len(items)
+    log.info("filtro '%s': %d item(ns) -> %s", m365_filter, total, dest)
     downloaded, failed = 0, []
     name_to_section: dict = {}
-    card_cache: dict = {}      # subfolder -> (card, matched)
+    card_cache: dict = {}      # subfolder -> (card_raw, matched)
     seen: set = set()
-    for it in items:
+    for idx, it in enumerate(items):
         sub = subfolder_for(it["web_url"], m365_filter)
         if sub not in card_cache:
             card_cache[sub] = match_card(sub, moodle_sections)
-        card = card_cache[sub][0]
+        # Sanitiza p/ nome de pasta válido no Windows E p/ casar com a pasta
+        # que o import Moodle cria (build_card_structure usa sanitize_folder_name).
+        card = sanitize_folder_name(card_cache[sub][0])
+        if progress_cb:
+            progress_cb(idx + 1, total, it.get("title") or "", card)
         try:
             res = client.resolve(it["id"])
-            name = res.get("name") or it.get("title") or "arquivo"
+            raw_name = res.get("name") or it.get("title") or "arquivo"
+            name = sanitize_folder_name(raw_name)      # tira chars inválidos do nome do arquivo
             data = client.download(res)
         except Exception:
             log.exception("falha ao baixar item %r (subpasta %s)", it.get("title") or it.get("id"), sub)

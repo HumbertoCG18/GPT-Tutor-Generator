@@ -208,3 +208,31 @@ def test_load_cached_token_returns_none_on_corrupt_file(monkeypatch, tmp_path):
     p.write_text("not json{", encoding="utf-8")
     monkeypatch.setattr(m365mod, "_token_path", lambda: p)
     assert m365mod.load_cached_token() is None
+
+
+def test_download_subject_m365_sanitizes_invalid_card_and_filename(tmp_path):
+    """Regressão WinError 123: card (seção Moodle casada) ou nome de arquivo com
+    chars inválidos no Windows não podem quebrar o mkdir/write."""
+    from src.builder.sources.m365 import download_subject_m365
+    base = "https://x/Documents/Documentos/metodosformais/logica_programas"
+
+    class FakeClient:
+        def list_shared(self, top=200):
+            return [{"id": "1", "title": "Hoare", "type": "Pdf",
+                     "web_url": f"{base}/Hoare.pdf"}]
+        def resolve(self, iid):
+            # nome com char inválido (':') que precisa ser sanitizado
+            return {"name": "Logica: Hoare.pdf", "id": iid, "parentReference": {"driveId": "D"}}
+        def download(self, item):
+            return b"%PDF-1.7 ok"
+
+    # seção Moodle com chars inválidos de path ('/', ':') que casa com logica_programas
+    sections = ["Lógica: Programas/Hoare"]
+    rep = download_subject_m365(FakeClient(), "metodosformais", sections, tmp_path)
+    assert rep["downloaded"] == 1
+    # pasta sanitizada existe e o arquivo foi gravado (sem WinError)
+    written = list(tmp_path.rglob("*.pdf"))
+    assert len(written) == 1
+    rel = written[0].relative_to(tmp_path)
+    assert ":" not in str(rel)                 # nenhum char inválido no caminho relativo
+    assert all(part not in ("", ".", "..") for part in rel.parts)
