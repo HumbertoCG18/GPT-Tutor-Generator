@@ -90,6 +90,12 @@ class AppConfig:
         "default_ocr_language": DEFAULT_OCR_LANGUAGE,
         "default_profile": "auto",
         "default_backend": "auto",
+        "profile_backends": {
+            "auto": "auto",
+            "math_heavy": "datalab",
+            "diagram_heavy": "docling",
+            "scanned": "auto",
+        },
         "image_format": "png",
         "stall_timeout": 300,
         "marker_chunking_mode": "fallback",

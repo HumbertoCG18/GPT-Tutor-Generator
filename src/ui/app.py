@@ -104,6 +104,7 @@ def _build_options_from_config(default_mode: str, default_ocr_language: str, con
         "ollama_base_url": config_obj.get("ollama_base_url"),
         "prevent_sleep_during_build": config_obj.get("prevent_sleep_during_build", True),
         "image_description_source": config_obj.get("image_description_source", "ollama"),
+        "profile_backends": config_obj.get("profile_backends") or {},
     }
 
 
@@ -1744,7 +1745,14 @@ class App(tk.Tk):
             # Mostra isso na lista em vez do preferred_backend (irrelevante p/ código).
             is_code = entry.file_type in ("code", "zip")
             profile_disp = "código" if is_code else entry.document_profile
-            backend_disp = "gemini" if is_code else entry.preferred_backend
+            if is_code:
+                backend_disp = "gemini"
+            elif entry.preferred_backend and entry.preferred_backend != "auto":
+                backend_disp = entry.preferred_backend            # override manual
+            else:
+                # backend efetivo pelo mapa perfil->backend (preview leve)
+                pb = self.config_obj.get("profile_backends") or {}
+                backend_disp = pb.get(entry.document_profile, "auto")
             self.tree.insert(
                 "",
                 "end",

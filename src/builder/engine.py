@@ -1644,8 +1644,19 @@ class MarkerCLIBackend(ExtractionBackend):
 # Selection / profiling
 # ---------------------------------------------------------------------------
 
+def resolve_profile_backend(profile, profile_backends, available) -> Optional[str]:
+    """Backend configurado pro perfil, se concreto (≠ "auto") e disponível; senão None.
+
+    None sinaliza ao chamador pra cair na ordem built-in (fallback)."""
+    b = (profile_backends or {}).get(profile)
+    if b and b != "auto" and available.get(b):
+        return b
+    return None
+
+
 class BackendSelector:
-    def __init__(self):
+    def __init__(self, profile_backends=None):
+        self.profile_backends: Dict[str, str] = dict(profile_backends or {})
         self.backends: Dict[str, ExtractionBackend] = {
             "pymupdf4llm": PyMuPDF4LLMBackend(),
             "pymupdf": PyMuPDFBackend(),
@@ -1672,6 +1683,10 @@ class BackendSelector:
             return None
 
         def pick_advanced_for_profile(profile: str) -> Optional[str]:
+            mapped = resolve_profile_backend(profile, self.profile_backends, available)
+            if mapped:
+                reasons.append(f"Perfil {profile} mapeado p/ backend {mapped} (config).")
+                return mapped
             if profile == "math_heavy":
                 return pick_first(["datalab", "marker", "docling"])
             if profile == "diagram_heavy":
@@ -1762,7 +1777,7 @@ class RepoBuilder:
         self.progress_callback = progress_callback  # Callable[[int, int, str], None] | None
         self.logs: List[Dict[str, object]] = []
         self.failed_entries: List[Dict[str, object]] = []
-        self.selector = BackendSelector()
+        self.selector = BackendSelector(profile_backends=self.options.get("profile_backends") or {})
 
     def _effective_course_meta(self, manifest: Optional[Dict[str, object]] = None) -> Dict[str, str]:
         return _repo_artifacts.effective_course_meta(

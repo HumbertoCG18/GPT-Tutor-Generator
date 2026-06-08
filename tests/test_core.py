@@ -4918,3 +4918,50 @@ def test_subject_profile_processing_defaults_fallback_for_old_profiles():
     from src.models.core import SubjectProfile
     sp = SubjectProfile.from_dict({"name": "x", "slug": "x"})
     assert sp.default_backend == "auto" and sp.default_datalab_mode == "accurate"
+
+
+def test_resolve_profile_backend_picks_configured_when_available():
+    from src.builder.engine import resolve_profile_backend
+    avail = {"datalab": True, "docling": False}
+    assert resolve_profile_backend("math_heavy", {"math_heavy": "datalab"}, avail) == "datalab"
+
+
+def test_resolve_profile_backend_none_when_unavailable_or_auto():
+    from src.builder.engine import resolve_profile_backend
+    assert resolve_profile_backend("math_heavy", {"math_heavy": "docling"}, {"docling": False}) is None
+    assert resolve_profile_backend("math_heavy", {"math_heavy": "auto"}, {"datalab": True}) is None
+    assert resolve_profile_backend("scanned", {}, {"datalab": True}) is None
+
+
+def test_decide_uses_profile_backend_map():
+    from unittest import mock
+    from src.builder.engine import BackendSelector
+    from src.models.core import FileEntry, DocumentProfileReport
+    selector = BackendSelector(profile_backends={"math_heavy": "docling"})
+    entry = FileEntry(source_path="/t.pdf", file_type="pdf", category="c", title="T", processing_mode="auto")
+    report = DocumentProfileReport(suggested_profile="math_heavy")
+    with mock.patch.object(BackendSelector, "available_backends",
+        return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True}):
+        decision = selector.decide(entry, report)
+    assert decision.advanced_backend == "docling"   # mapa vence o built-in [datalab, marker, docling]
+
+
+def test_decide_falls_back_to_builtin_when_mapped_unavailable():
+    from unittest import mock
+    from src.builder.engine import BackendSelector
+    from src.models.core import FileEntry, DocumentProfileReport
+    selector = BackendSelector(profile_backends={"math_heavy": "docling"})
+    entry = FileEntry(source_path="/t.pdf", file_type="pdf", category="c", title="T", processing_mode="auto")
+    report = DocumentProfileReport(suggested_profile="math_heavy")
+    with mock.patch.object(BackendSelector, "available_backends",
+        return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": False, "marker": True}):
+        decision = selector.decide(entry, report)
+    assert decision.advanced_backend == "datalab"   # docling indisponível -> ordem built-in
+
+
+def test_appconfig_has_profile_backends_default():
+    from src.ui.theme import AppConfig
+    pb = AppConfig.DEFAULTS["profile_backends"]
+    assert pb["math_heavy"] == "datalab"
+    assert pb["diagram_heavy"] == "docling"
+    assert pb["auto"] == "auto"
