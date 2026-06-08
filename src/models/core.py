@@ -182,6 +182,7 @@ class SubjectProfile:
     default_ocr_lang: str = DEFAULT_OCR_LANGUAGE
     default_backend: str = "auto"          # backend de extração padrão da matéria
     default_datalab_mode: str = "accurate"  # modo da API Datalab (fast/balanced/accurate)
+    processing_profile: str = ""   # nome do preset ProcessingProfile (referência)
     repo_root: str = ""
     stash_folder: str = ""        # pasta com os arquivos-fonte (PDFs/cards) da materia
     moodle_course_id: str = ""   # liga a matéria ao curso Moodle (re-sync, upsert)

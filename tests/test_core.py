@@ -4981,3 +4981,14 @@ def test_processing_profile_from_dict_ignores_unknown_keys():
     from src.models.core import ProcessingProfile
     p = ProcessingProfile.from_dict({"name": "X", "bogus": 1})
     assert p.name == "X" and p.preferred_backend == "auto"
+
+def test_subject_profile_processing_profile_roundtrip():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile(name="MF", slug="mf", processing_profile="Math")
+    d = sp.to_dict()
+    assert d["processing_profile"] == "Math"
+    assert SubjectProfile.from_dict(d).processing_profile == "Math"
+
+def test_subject_profile_processing_profile_defaults_empty():
+    from src.models.core import SubjectProfile
+    assert SubjectProfile.from_dict({"name": "x", "slug": "x"}).processing_profile == ""
