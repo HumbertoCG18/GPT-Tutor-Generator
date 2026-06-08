@@ -99,3 +99,23 @@ def test_date_day_differs_from_month():
 def test_lookup_manual_empty_blocklist_wins():
     card_map = {"X": {"block_ids": [], "source": "manual"}}
     assert lookup_card_blocks("X", card_map, UNITS, BLOCKS) == []
+
+
+def test_card_matches_block_topic_when_no_unit_match():
+    units = [{"slug": "u1", "title": "Unidade 01 Métodos Formais", "topics": [], "distinctive_tokens": []}]
+    blocks = [
+        {"id": "bloco-05", "unit_slug": "u1", "primary_topic_label": "Provas por Indução",
+         "topics": ["provas", "indução"], "aliases": [], "period_start": "2026-03-30", "period_end": "2026-04-01"},
+        {"id": "bloco-04", "unit_slug": "u1", "primary_topic_label": "Conjuntos Indutivos",
+         "topics": ["conjuntos"], "aliases": [], "period_start": "2026-03-11", "period_end": "2026-03-25"},
+    ]
+    r = resolve_card_to_block("Provas por Indução", units, blocks)
+    assert r.block_ids == ["bloco-05"]
+    assert r.reason.startswith("topic")
+
+
+def test_unit_match_still_takes_priority_over_topic():
+    # card casa o título da unidade -> retorna blocos da unidade (comportamento atual)
+    r = resolve_card_to_block("Verificação de Programas", UNITS, BLOCKS)
+    assert set(r.block_ids) == {"bloco-10", "bloco-11"}
+    assert r.reason.startswith("unit:")

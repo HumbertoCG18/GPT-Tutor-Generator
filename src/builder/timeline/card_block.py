@@ -30,6 +30,17 @@ def _tokens(text: str) -> set:
     return {t for t in norm_ascii_lower(text).split() if t and t not in _STOP and len(t) > 2}
 
 
+def _block_topic_tokens(block: dict) -> set:
+    parts = [str(block.get("primary_topic_label") or "")]
+    for t in (block.get("topics") or []):
+        if isinstance(t, dict):
+            parts.append(str(t.get("label") or t.get("slug") or ""))
+        else:
+            parts.append(str(t))
+    parts += [str(a) for a in (block.get("aliases") or [])]
+    return _tokens(" ".join(parts))
+
+
 def _unit_tokens(unit: dict) -> set:
     parts = [str(unit.get("title") or "")]
     parts += [str(x) for x in (unit.get("topics") or [])]
@@ -75,6 +86,20 @@ def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
             if ids:
                 conf = min(0.95, 0.5 + 0.15 * best_overlap)
                 return CardBlockResolution(ids, conf, f"unit:{slug}")
+
+    # (3) nome -> bloco por tópico/label/alias (mais fino que unidade).
+    best_blocks, best_ov = [], 0
+    for b in blocks:
+        ov = len(card_tokens & _block_topic_tokens(b))
+        if ov > best_ov:
+            best_blocks, best_ov = [b], ov
+        elif ov == best_ov and ov > 0:
+            best_blocks.append(b)
+    need_b = min(2, len(card_tokens)) if card_tokens else 99
+    if best_ov >= need_b and best_blocks:
+        ids = [str(b.get("id")) for b in best_blocks]
+        conf = min(0.9, 0.45 + 0.15 * best_ov)
+        return CardBlockResolution(ids, conf, "topic")
 
     return CardBlockResolution([], 0.0, "needs-confirmation")
 
