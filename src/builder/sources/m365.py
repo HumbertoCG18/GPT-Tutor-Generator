@@ -29,6 +29,14 @@ _SCOPE = "Files.Read.All Sites.Read.All offline_access"
 _GRAPH = "https://graph.microsoft.com/v1.0"
 _ROOT_CARD = "_geral"
 
+# Aliases subpasta->palavras-chave: subpastas com nome de ferramenta (não-tópico)
+# não casam o cronograma sozinhas; as keywords extras puxam o card pra seção certa.
+# Heurística do currículo (Dafny/Isabelle = verificação/provas); sobrescrevível.
+_DEFAULT_ALIASES = {
+    "dafny": "verificacao programas",
+    "isabelle": "provas inducao verificacao",
+}
+
 
 def parse_onedrive_path(web_url: str) -> list:
     p = urllib.parse.urlparse(str(web_url or ""))
@@ -54,9 +62,12 @@ def select_for_subject(items, m365_filter: str) -> list:
     return [it for it in items if fl in str(it.get("web_url", "")).lower()]
 
 
+def _ascii_lower(s: str) -> str:
+    return unicodedata.normalize("NFKD", str(s or "")).encode("ascii", "ignore").decode("ascii").lower()
+
+
 def _norm_tokens(s: str) -> set:
-    s = unicodedata.normalize("NFKD", str(s or "")).encode("ascii", "ignore").decode("ascii").lower()
-    return {t for t in re.split(r"[\s_\-./]+", s) if len(t) > 2}
+    return {t for t in re.split(r"[\s_\-./]+", _ascii_lower(s)) if len(t) > 2}
 
 
 def _token_affinity(a: set, b: set) -> float:
@@ -70,8 +81,13 @@ def _token_affinity(a: set, b: set) -> float:
     return hits / min(len(a), len(b))
 
 
-def match_card(subfolder: str, moodle_sections, threshold: float = 0.34):
+def match_card(subfolder: str, moodle_sections, threshold: float = 0.34, aliases=None):
     sf = _norm_tokens(subfolder)
+    if aliases:
+        norm = {_ascii_lower(k): v for k, v in aliases.items()}
+        extra = norm.get(_ascii_lower(subfolder))
+        if extra:
+            sf = sf | _norm_tokens(extra)
     best, best_score = None, 0.0
     for sec in moodle_sections or []:
         score = _token_affinity(sf, _norm_tokens(sec))
@@ -204,13 +220,15 @@ def get_client(prompt_callback=None) -> "M365Client":
 
 
 def download_subject_m365(client, m365_filter, moodle_sections, dest,
-                          skip_existing: bool = True, progress_cb=None) -> dict:
+                          skip_existing: bool = True, progress_cb=None, aliases=None) -> dict:
     """Baixa os arquivos M365 da matéria pros cards (merge com seções Moodle).
 
     progress_cb(done, total, name, card) é chamado por item (opcional).
+    aliases: {subpasta: keywords} extras pro merge (mesclado sobre _DEFAULT_ALIASES).
     Retorna {total, downloaded, failed, mapping:[(subfolder,card,matched)], name_to_section}.
     """
     dest = Path(dest)
+    eff_aliases = {**_DEFAULT_ALIASES, **(aliases or {})}
     items = select_for_subject(client.list_shared(), m365_filter)
     total = len(items)
     log.info("filtro '%s': %d item(ns) -> %s", m365_filter, total, dest)
@@ -221,7 +239,7 @@ def download_subject_m365(client, m365_filter, moodle_sections, dest,
     for idx, it in enumerate(items):
         sub = subfolder_for(it["web_url"], m365_filter)
         if sub not in card_cache:
-            card_cache[sub] = match_card(sub, moodle_sections)
+            card_cache[sub] = match_card(sub, moodle_sections, aliases=eff_aliases)
         # Sanitiza p/ nome de pasta válido no Windows E p/ casar com a pasta
         # que o import Moodle cria (build_card_structure usa sanitize_folder_name).
         card = sanitize_folder_name(card_cache[sub][0])
