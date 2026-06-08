@@ -131,3 +131,52 @@ def test_apply_source_section_writes_manifest(tmp_path):
 def test_apply_source_section_noop_without_manifest(tmp_path):
     from src.builder.sources.m365 import apply_source_section
     assert apply_source_section(str(tmp_path / "nada"), {"a.pdf": "X"}) == 0
+
+def test_download_subject_m365_merges_cards_and_validates(tmp_path):
+    from src.builder.sources.m365 import download_subject_m365
+    base = "https://brpucrs-my.sharepoint.com/personal/p/Documents/Documentos/metodosformais"
+
+    class FakeClient:
+        def list_shared(self, top=200):
+            return [
+                {"id": "1", "title": "Hoare.pdf", "type": "Pdf", "web_url": f"{base}/logica_programas/Hoare.pdf"},
+                {"id": "2", "title": "hoare.zip", "type": "Archive", "web_url": f"{base}/dafny/hoare.zip"},
+                {"id": "3", "title": "ruim.pdf", "type": "Pdf", "web_url": f"{base}/dafny/ruim.pdf"},
+                {"id": "9", "title": "outro.pdf", "type": "Pdf", "web_url": "https://x/engsoft/outro.pdf"},
+            ]
+        def resolve(self, iid):
+            return {"name": {"1": "Hoare.pdf", "2": "hoare.zip", "3": "ruim.pdf"}[iid],
+                    "id": iid, "parentReference": {"driveId": "D"}}
+        def download(self, item):
+            return {"Hoare.pdf": b"%PDF-1.7 ok", "hoare.zip": b"PK\x03\x04zip",
+                    "ruim.pdf": b'{"error":"x"}'}[item["name"]]
+
+    sections = ["Verificação de Programas", "Provas por Indução"]
+    rep = download_subject_m365(FakeClient(), "metodosformais", sections, tmp_path)
+
+    assert rep["downloaded"] == 2
+    assert "ruim.pdf" in rep["failed"]                          # magic byte errado
+    # logica_programas casa com "Verificação de Programas" (token 'programas')
+    assert (tmp_path / "Verificação de Programas" / "Hoare.pdf").exists()
+    # dafny não casa -> card novo
+    assert (tmp_path / "dafny" / "hoare.zip").exists()
+    # item de outro curso ignorado pelo filtro
+    assert not any("outro" in str(p) for p in tmp_path.rglob("*"))
+    assert rep["name_to_section"]["hoare.pdf"] == "Verificação de Programas"
+
+def test_download_subject_m365_no_collision_loss(tmp_path):
+    from src.builder.sources.m365 import download_subject_m365
+    base = "https://x/Documents/Documentos/metodosformais/dafny"
+
+    class FakeClient:
+        def list_shared(self, top=200):
+            return [{"id": "1", "title": "main.pdf", "type": "Pdf", "web_url": f"{base}/main.pdf"},
+                    {"id": "2", "title": "main.pdf", "type": "Pdf", "web_url": f"{base}/sub/main.pdf"}]
+        def resolve(self, iid):
+            return {"name": "main.pdf", "id": iid, "parentReference": {"driveId": "D"}}
+        def download(self, item):
+            return b"%PDF-1.7 x"
+    rep = download_subject_m365(FakeClient(), "metodosformais", [], tmp_path)
+    assert rep["downloaded"] == 2                              # nenhum perdido
+    assert (tmp_path / "dafny" / "main.pdf").exists()
+    assert (tmp_path / "dafny" / "main (2).pdf").exists()

@@ -188,6 +188,53 @@ def get_client(prompt_callback=None) -> "M365Client":
     return M365Client(tok)
 
 
+def download_subject_m365(client, m365_filter, moodle_sections, dest,
+                          skip_existing: bool = True) -> dict:
+    """Baixa os arquivos M365 da matéria pros cards (merge com seções Moodle).
+
+    Retorna {total, downloaded, failed, mapping:[(subfolder,card,matched)], name_to_section}.
+    """
+    dest = Path(dest)
+    items = select_for_subject(client.list_shared(), m365_filter)
+    downloaded, failed = 0, []
+    name_to_section: dict = {}
+    card_cache: dict = {}      # subfolder -> (card, matched)
+    seen: set = set()
+    for it in items:
+        sub = subfolder_for(it["web_url"], m365_filter)
+        if sub not in card_cache:
+            card_cache[sub] = match_card(sub, moodle_sections)
+        card = card_cache[sub][0]
+        try:
+            res = client.resolve(it["id"])
+            name = res.get("name") or it.get("title") or "arquivo"
+            data = client.download(res)
+        except Exception:
+            failed.append(it.get("title") or it.get("id"))
+            continue
+        if not looks_like_expected(name, data):
+            failed.append(name)
+            continue
+        folder = dest / card
+        folder.mkdir(parents=True, exist_ok=True)
+        target = folder / name
+        if target in seen:                       # colisão intra-execução
+            stem, suf = target.stem, target.suffix
+            i = 2
+            while (folder / f"{stem} ({i}){suf}") in seen:
+                i += 1
+            target = folder / f"{stem} ({i}){suf}"
+        seen.add(target)
+        name_to_section[name.casefold()] = card
+        if skip_existing and target.exists():
+            continue
+        target.write_bytes(data)
+        downloaded += 1
+    return {"total": len(items), "downloaded": downloaded, "failed": failed,
+            "mapping": [(s, c, m) for s, (c, m) in card_cache.items()],
+            "name_to_section": name_to_section}
+
+
 def apply_source_section(repo_root: str, name_to_section: dict) -> int:
     """Preenche source_section no manifest casando por basename (case-insensitive).
 
