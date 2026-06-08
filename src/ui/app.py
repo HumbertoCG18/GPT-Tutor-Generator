@@ -190,6 +190,8 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.config_obj = AppConfig()
+        from src.utils.helpers import ensure_builtin_profiles
+        ensure_builtin_profiles(self.config_obj)   # migra perfis embutidos p/ configs antigas
         self.theme_mgr = ThemeManager()
         self.subject_store = SubjectStore()
         self.student_store = StudentStore()

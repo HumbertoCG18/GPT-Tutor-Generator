@@ -649,6 +649,33 @@ def fetch_url_title(url: str, timeout: float = 5.0) -> str:
     return ""
 
 
+# Presets embutidos: um por perfil de documento hardcoded (alinhados ao
+# profile_backends default). Aparecem no gerenciador de perfis pra edição.
+BUILTIN_PROCESSING_PROFILES = [
+    {"name": "auto", "processing_mode": "auto", "preferred_backend": "auto",
+     "datalab_mode": "accurate", "document_profile": "auto"},
+    {"name": "math_heavy", "processing_mode": "high_fidelity", "preferred_backend": "datalab",
+     "datalab_mode": "accurate", "document_profile": "math_heavy"},
+    {"name": "diagram_heavy", "processing_mode": "auto", "preferred_backend": "docling",
+     "datalab_mode": "accurate", "document_profile": "diagram_heavy"},
+    {"name": "scanned", "processing_mode": "auto", "preferred_backend": "auto",
+     "datalab_mode": "accurate", "document_profile": "scanned"},
+]
+
+
+def ensure_builtin_profiles(config_obj):
+    """Migração one-time: injeta os presets embutidos que faltam, sem duplicar
+    nem reverter exclusões do usuário (guardada por flag persistida)."""
+    if config_obj is None or config_obj.get("processing_profiles_seeded_v2"):
+        return
+    existing = list(config_obj.get("processing_profiles") or [])
+    names = {p.get("name") for p in existing}
+    existing += [dict(b) for b in BUILTIN_PROCESSING_PROFILES if b["name"] not in names]
+    config_obj.set("processing_profiles", existing)
+    config_obj.set("processing_profiles_seeded_v2", True)
+    config_obj.save()
+
+
 def load_processing_profiles(config_obj):
     """Lista de ProcessingProfile salva no config (vazia se ausente ou sem config)."""
     if config_obj is None:

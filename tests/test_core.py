@@ -4997,7 +4997,7 @@ def test_subject_profile_processing_profile_defaults_empty():
 def test_appconfig_seeds_processing_profiles():
     from src.ui.theme import AppConfig
     names = [p["name"] for p in AppConfig.DEFAULTS["processing_profiles"]]
-    assert "Math" in names and "Padrão" in names
+    assert {"auto", "math_heavy", "diagram_heavy", "scanned"} <= set(names)
 
 def test_processing_profile_helpers_load_get_save():
     from src.utils.helpers import (load_processing_profiles, get_processing_profile,
@@ -5015,3 +5015,31 @@ def test_processing_profile_helpers_load_get_save():
     assert get_processing_profile(cfg, "missing") is None
     save_processing_profiles(cfg, profs + [type(profs[0])(name="Fast")])
     assert "Fast" in [p["name"] for p in cfg.get("processing_profiles")]
+
+
+def test_ensure_builtin_profiles_adds_missing_and_sets_flag():
+    from src.utils.helpers import ensure_builtin_profiles
+    class _Cfg:
+        def __init__(self): self.d = {"processing_profiles": [{"name": "Padrão"}]}
+        def get(self, k, default=None): return self.d.get(k, default)
+        def set(self, k, v): self.d[k] = v
+        def save(self): self.d["_saved"] = True
+    cfg = _Cfg()
+    ensure_builtin_profiles(cfg)
+    names = {p["name"] for p in cfg.get("processing_profiles")}
+    assert {"auto", "math_heavy", "diagram_heavy", "scanned"} <= names
+    assert "Padrão" in names                       # preserva os do usuário
+    assert cfg.get("processing_profiles_seeded_v2") is True
+    assert cfg.d.get("_saved") is True
+
+
+def test_ensure_builtin_profiles_idempotent_respects_delete():
+    from src.utils.helpers import ensure_builtin_profiles
+    class _Cfg:
+        def __init__(self): self.d = {"processing_profiles": [], "processing_profiles_seeded_v2": True}
+        def get(self, k, default=None): return self.d.get(k, default)
+        def set(self, k, v): self.d[k] = v
+        def save(self): pass
+    cfg = _Cfg()
+    ensure_builtin_profiles(cfg)
+    assert cfg.get("processing_profiles") == []     # já seedado -> não re-adiciona (delete sobrevive)

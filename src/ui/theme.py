@@ -4,7 +4,7 @@ from pathlib import Path
 from tkinter import ttk
 from typing import Dict, Optional
 
-from src.utils.helpers import DEFAULT_OCR_LANGUAGE
+from src.utils.helpers import DEFAULT_OCR_LANGUAGE, BUILTIN_PROCESSING_PROFILES
 
 THEMES: Dict[str, Dict[str, str]] = {
     "dark": {
@@ -96,12 +96,8 @@ class AppConfig:
             "diagram_heavy": "docling",
             "scanned": "auto",
         },
-        "processing_profiles": [
-            {"name": "Padrão", "processing_mode": "auto", "preferred_backend": "auto",
-             "datalab_mode": "accurate", "document_profile": "auto"},
-            {"name": "Math", "processing_mode": "high_fidelity", "preferred_backend": "datalab",
-             "datalab_mode": "accurate", "document_profile": "math_heavy"},
-        ],
+        "processing_profiles": [dict(b) for b in BUILTIN_PROCESSING_PROFILES],
+        "processing_profiles_seeded_v2": False,
         "image_format": "png",
         "stall_timeout": 300,
         "marker_chunking_mode": "fallback",
