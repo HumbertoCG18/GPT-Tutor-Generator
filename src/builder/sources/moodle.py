@@ -273,12 +273,17 @@ def _read_dotenv(path) -> dict:
 
 def _moodle_env(key, dotenv_path=None):
     """Precedência: os.environ (carregado do .env raiz por helpers no import) >
-    moddle/.env (ou dotenv_path). Consolida com os demais segredos do projeto."""
+    moddle/.env. Consolida com os demais segredos do projeto.
+
+    Quando `dotenv_path` é passado EXPLICITAMENTE (testes), lê só esse arquivo —
+    os.environ não interfere."""
+    if dotenv_path is not None:
+        return _read_dotenv(dotenv_path).get(key, "").strip()
     import os
     val = (os.environ.get(key) or "").strip()
     if val:
         return val
-    return _read_dotenv(dotenv_path or default_token_path()).get(key, "").strip()
+    return _read_dotenv(default_token_path()).get(key, "").strip()
 
 
 def load_moodle_token(dotenv_path=None):
