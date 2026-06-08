@@ -1469,8 +1469,68 @@ class StudentProfileDialog(tk.Toplevel):
             self._personality_text.config(fg="#888888")
             self._personality_text.bind("<FocusIn>", self._clear_placeholder)
 
+        moodle_frame = ttk.LabelFrame(self, text="  🎓  Conta Moodle (PUCRS)", padding=14)
+        moodle_frame.pack(fill="x", padx=14, pady=(0, 8))
+
+        from src.builder.sources.moodle import load_moodle_token
+        _url, _tok = load_moodle_token()
+        status = "conectado (token salvo)" if _tok else "não conectado"
+        ttk.Label(moodle_frame, text=f"Status: {status}", style="Muted.TLabel").grid(row=0, column=0, columnspan=2, sticky="w")
+
+        ttk.Label(moodle_frame, text="Matrícula").grid(row=1, column=0, sticky="w", pady=4)
+        self._moodle_user = tk.StringVar()
+        ttk.Entry(moodle_frame, textvariable=self._moodle_user, width=30).grid(row=1, column=1, sticky="ew", padx=(8, 0))
+        ttk.Label(moodle_frame, text="Senha").grid(row=2, column=0, sticky="w", pady=4)
+        self._moodle_pass = tk.StringVar()
+        ttk.Entry(moodle_frame, textvariable=self._moodle_pass, width=30, show="*").grid(row=2, column=1, sticky="ew", padx=(8, 0))
+
+        ttk.Label(moodle_frame, text="Pasta-base dos stashes").grid(row=3, column=0, sticky="w", pady=4)
+        self._moodle_base = tk.StringVar(value=getattr(self._store.profile, "moodle_base_folder", ""))
+        base_row = ttk.Frame(moodle_frame)
+        base_row.grid(row=3, column=1, sticky="ew", padx=(8, 0))
+        ttk.Entry(base_row, textvariable=self._moodle_base).pack(side="left", fill="x", expand=True)
+        ttk.Button(base_row, text="📁", width=3, command=self._pick_moodle_base).pack(side="left", padx=(4, 0))
+
+        ttk.Button(moodle_frame, text="🔗  Conectar e escolher cursos", command=self._moodle_connect).grid(
+            row=4, column=0, columnspan=2, sticky="ew", pady=(8, 0))
+        moodle_frame.columnconfigure(1, weight=1)
+        ttk.Label(moodle_frame, text="A senha não é salva — só o token (revogável).",
+                  style="Muted.TLabel").grid(row=5, column=0, columnspan=2, sticky="w", pady=(4, 0))
+
         ttk.Button(self, text="💾  Salvar Perfil", style="Accent.TButton",
                    command=self._save).pack(fill="x", padx=14, pady=(0, 14))
+
+    def _pick_moodle_base(self):
+        d = filedialog.askdirectory(title="Pasta-base dos stashes do Moodle")
+        if d:
+            self._moodle_base.set(d)
+
+    def _moodle_connect(self):
+        from src.builder.sources.moodle import MoodleClient, save_moodle_token, load_moodle_token
+        user = self._moodle_user.get().strip()
+        password = self._moodle_pass.get()
+        base = self._moodle_base.get().strip()
+        if not base:
+            messagebox.showwarning("Moodle", "Escolha a pasta-base dos stashes primeiro.")
+            return
+        url, token = load_moodle_token()
+        try:
+            if user and password:
+                token = MoodleClient.login(url, user, password)
+                save_moodle_token(token, url=url)
+            if not token:
+                messagebox.showwarning("Moodle", "Informe matrícula e senha para conectar.")
+                return
+            self._moodle_pass.set("")
+            client = MoodleClient(url, token)
+            info = client.site_info()
+            courses = client.get_users_courses(info.get("userid"))
+        except Exception as exc:
+            messagebox.showerror("Moodle", f"Falha ao conectar: {exc}")
+            return
+        self._store.profile.moodle_base_folder = base
+        self._store.save()
+        MoodleCourseSelectDialog(self, courses, base, client, self._p)
 
     def _clear_placeholder(self, _event=None):
         if self._personality_text.get("1.0", "2.0").startswith("Exemplo:"):
@@ -1482,11 +1542,71 @@ class StudentProfileDialog(tk.Toplevel):
             full_name=self._vars["full_name"].get().strip(),
             nickname=self._vars["nickname"].get().strip(),
             personality=self._personality_text.get("1.0", "end-1c").strip(),
+            moodle_base_folder=getattr(self, "_moodle_base", tk.StringVar()).get().strip(),
         )
         self._store.profile = sp
         self._store.save()
         messagebox.showinfo("Perfil", "Perfil salvo com sucesso!")
         self.destroy()
+
+
+class MoodleCourseSelectDialog(tk.Toplevel):
+    """Lista cursos Moodle com checkbox; importa os marcados (upsert + download)."""
+
+    def __init__(self, parent, courses, base_folder, client, palette):
+        super().__init__(parent)
+        self.title("🎓  Escolher cursos do Moodle")
+        self.geometry("680x520")
+        self.transient(parent)
+        self.grab_set()
+        self._courses = list(courses or [])
+        self._base = base_folder
+        self._client = client
+        self._vars = []
+        self._build_ui()
+
+    def _build_ui(self):
+        from src.builder.sources.moodle import parse_moodle_course
+        ttk.Label(self, text="Marque os cursos que viram matéria:", padding=10).pack(anchor="w")
+        canvas = tk.Canvas(self, highlightthickness=0)
+        scroll = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
+        inner = ttk.Frame(canvas)
+        inner.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.create_window((0, 0), window=inner, anchor="nw")
+        canvas.configure(yscrollcommand=scroll.set)
+        canvas.pack(side="left", fill="both", expand=True, padx=(10, 0))
+        scroll.pack(side="right", fill="y")
+        for course in self._courses:
+            info = parse_moodle_course(course)
+            var = tk.BooleanVar(value=False)
+            self._vars.append((var, course))
+            label = f"{info['name']}   ·   {info['professor'] or '—'}   ·   {info['semester'] or '—'}"
+            ttk.Checkbutton(inner, text=label, variable=var).pack(anchor="w", pady=2)
+        ttk.Button(self, text="📥  Importar marcados", command=self._import).pack(fill="x", padx=10, pady=10)
+
+    def _import(self):
+        import threading
+        from src.builder.sources.moodle import import_moodle_courses
+        from src.models.core import SubjectStore
+        selected = [c for v, c in self._vars if v.get()]
+        if not selected:
+            messagebox.showinfo("Moodle", "Marque ao menos um curso.")
+            return
+
+        def worker():
+            store = SubjectStore()
+            try:
+                rep = import_moodle_courses(selected, self._base, store, self._client)
+            except Exception as exc:
+                self.after(0, lambda: messagebox.showerror("Moodle", f"Falha no import: {exc}"))
+                return
+            self.after(0, lambda: messagebox.showinfo(
+                "Moodle",
+                f"Criadas: {rep['created']}  Atualizadas: {rep['updated']}  "
+                f"Arquivos baixados: {rep['downloaded_files']}"))
+            self.after(0, self.destroy)
+
+        threading.Thread(target=worker, daemon=True).start()
 
 
 # ---------------------------------------------------------------------------
