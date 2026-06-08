@@ -119,3 +119,19 @@ def test_unit_match_still_takes_priority_over_topic():
     r = resolve_card_to_block("Verificação de Programas", UNITS, BLOCKS)
     assert set(r.block_ids) == {"bloco-10", "bloco-11"}
     assert r.reason.startswith("unit:")
+
+
+def test_unit_title_overlap_breaks_topic_tie():
+    units = [
+        # unidade macro cujo TOPICS menciona verificação (ruído de glossário), título sem overlap
+        {"slug": "u1", "title": "Unidade 01 Fundamentos", "topics": ["verificação", "programas"], "distinctive_tokens": []},
+        # unidade cujo TÍTULO casa o card
+        {"slug": "u2", "title": "Verificação de Programas", "topics": [], "distinctive_tokens": []},
+    ]
+    blocks = [
+        {"id": "b1", "unit_slug": "u1", "topics": [], "aliases": [], "period_start": "2026-03-02", "period_end": "2026-03-02"},
+        {"id": "b2", "unit_slug": "u2", "topics": [], "aliases": [], "period_start": "2026-04-27", "period_end": "2026-05-04"},
+    ]
+    r = resolve_card_to_block("Verificação de Programas", units, blocks)
+    assert r.block_ids == ["b2"]            # título vence o empate de topics
+    assert r.reason == "unit:u2"

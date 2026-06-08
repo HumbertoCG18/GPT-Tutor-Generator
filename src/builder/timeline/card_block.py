@@ -71,20 +71,23 @@ def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
             if _date_in_range(month, day, start, end):
                 return CardBlockResolution([str(b.get("id"))], 0.9, f"date:{day:02d}/{month:02d}")
 
-    # (1) nome -> unidade por overlap de tokens (empate -> needs-confirmation).
-    scored = sorted(
-        ((len(card_tokens & _unit_tokens(u)), u) for u in (unit_index or [])),
-        key=lambda x: x[0], reverse=True,
-    )
+    # (1) nome -> unidade. Ranqueia por (overlap de TÍTULO, overlap total) — o
+    # título tem prioridade sobre topics/glossário (que geram ruído de empate).
+    def _unit_rank(u):
+        title_ov = len(card_tokens & _tokens(str(u.get("title") or "")))
+        total_ov = len(card_tokens & _unit_tokens(u))
+        return (title_ov, total_ov)
+    scored = sorted(((_unit_rank(u), u) for u in (unit_index or [])),
+                    key=lambda x: x[0], reverse=True)
     if scored:
-        best_overlap, best_unit = scored[0]
-        tie = len(scored) > 1 and scored[1][0] == best_overlap and best_overlap > 0
+        (best_title_ov, best_total_ov), best_unit = scored[0]
+        tie = len(scored) > 1 and scored[1][0] == (best_title_ov, best_total_ov) and best_total_ov > 0
         need = min(2, len(card_tokens)) if card_tokens else 99
-        if best_overlap >= need and not tie:
+        if best_total_ov >= need and not tie:
             slug = str(best_unit.get("slug"))
             ids = [str(b.get("id")) for b in blocks if str(b.get("unit_slug") or "") == slug]
             if ids:
-                conf = min(0.95, 0.5 + 0.15 * best_overlap)
+                conf = min(0.95, 0.5 + 0.15 * best_total_ov)
                 return CardBlockResolution(ids, conf, f"unit:{slug}")
 
     # (3) nome -> bloco por tópico/label/alias (mais fino que unidade).
