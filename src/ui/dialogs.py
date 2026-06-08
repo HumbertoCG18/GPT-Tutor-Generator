@@ -1720,8 +1720,10 @@ class MoodleCourseSelectDialog(tk.Toplevel):
                         backf = m365.apply_source_section(repo_root, mrep["name_to_section"]) if repo_root else 0
                         mapped = "; ".join(f"{s}->{c}{'' if m else ' (novo)'}"
                                            for s, c, m in mrep["mapping"])
-                        m365_tail = (f"\n\nM365 — baixados: {mrep['downloaded']}  "
-                                     f"falhas: {len(mrep['failed'])}  source_section: {backf}\n"
+                        multi = ("  (M365 aplicado só à 1ª matéria — o filtro é por matéria; "
+                                 "reimporte cada uma separadamente)" if len(selected) > 1 else "")
+                        m365_tail = (f"\n\nM365 [{info0['name']}] — baixados: {mrep['downloaded']}  "
+                                     f"falhas: {len(mrep['failed'])}  source_section: {backf}{multi}\n"
                                      f"Cards: {mapped}")
                     except Exception as exc:
                         m365_tail = f"\n\nM365 indisponível: {str(exc)[:160]}"
