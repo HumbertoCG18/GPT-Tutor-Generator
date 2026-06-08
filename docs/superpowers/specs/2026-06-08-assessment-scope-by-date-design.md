@@ -32,8 +32,13 @@ semestre inteiro**. E a **cor da linha SARC é o guia autoritativo** do tipo.
 3. **PS e G2 = SEMPRE o semestre inteiro** (todas as unidades da matéria).
 4. **Escopo por data é FALLBACK**: unidades declaradas no plano de ensino vencem;
    senão deriva por data/cor.
-5. **Revisão** (assunção, confirmar): `kind=REVIEW`, escopo = janela em que está
-   (conteúdo desde a última prova).
+5. **Revisão**: `kind=REVIEW`. Exercício de revisão é **sempre a linha imediatamente
+   anterior a uma prova** pela sequência (coluna `#` do SARC: se P2 é #36, a revisão
+   é #35). A revisão **herda o escopo da prova que ela precede** (a P2, no exemplo).
+   Implementação: liga a revisão à **próxima prova (bloco ASSESSMENT) em ordem
+   cronológica/sequência de blocos** — o parser processa as linhas em ordem e
+   provas/revisão são blocos standalone, então a ordem dos blocos preserva o `#`.
+   (Não threadar o `#` cru pelo round-trip do markdown; usar a ordem dos blocos.)
 
 ## Estado atual (relevante)
 
@@ -88,7 +93,8 @@ para cada bloco ASSESSMENT:
 - Senão → `assessment_scope_by_date`.
 - Grava no bloco: `scope_unit_slugs: [...]` + `primary_topic_label` legível
   (ex.: "Conteúdo até a P1: …" / "Semestre inteiro") satisfazendo `topic=True`.
-- Revisão (`REVIEW`): escopo da janela (= desde a última prova). Confirmar.
+- Revisão (`REVIEW`): herda `scope_unit_slugs` da **próxima prova** (bloco
+  ASSESSMENT seguinte em ordem cronológica/sequência). Sem prova seguinte → vazio + log.
 
 ### 5. Consumo
 
@@ -114,7 +120,8 @@ detalhado no plano.
   P1 e P2; PS e G2 = todas as unidades.
 - Fallback: declared_unit_slugs presentes → usa declaradas.
 - Bordas: prova sem data → vazio; sem CLASS na janela → vazio.
-- Revisão: REVIEW recebe escopo da janela.
+- Revisão: REVIEW herda o escopo da próxima prova (bloco ASSESSMENT seguinte);
+  ex.: revisão antes da P2 → escopo da P2. Sem prova seguinte → vazio.
 
 ## Fora de escopo (YAGNI)
 
