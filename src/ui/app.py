@@ -256,6 +256,8 @@ class App(tk.Tk):
         self.var_institution = tk.StringVar(value="PUCRS")
         self.var_default_mode = tk.StringVar(value=self.config_obj.get("default_mode"))
         self.var_default_ocr_language = tk.StringVar(value=self.config_obj.get("default_ocr_language"))
+        self.var_default_backend = tk.StringVar(value="auto")
+        self.var_default_datalab_mode = tk.StringVar(value="accurate")
 
         # ─── Header bar ────────────────────────────────────────────────
         header = tk.Frame(self, bg=p["header_bg"], pady=8, padx=16)
@@ -1378,6 +1380,8 @@ class App(tk.Tk):
         self.var_semester.set(sp.semester)
         self.var_default_mode.set(sp.default_mode)
         self.var_default_ocr_language.set(sp.default_ocr_lang)
+        self.var_default_backend.set(getattr(sp, "default_backend", "auto") or "auto")
+        self.var_default_datalab_mode.set(getattr(sp, "default_datalab_mode", "accurate") or "accurate")
         if sp.repo_root:
             self.var_repo_root.set(sp.repo_root)
         
@@ -1464,6 +1468,8 @@ class App(tk.Tk):
             default_mode=self.var_default_mode.get(),
             default_ocr_language=self.var_default_ocr_language.get(),
             file_type_hint=file_type_hint,
+            default_backend=self.var_default_backend.get(),
+            default_datalab_mode=self.var_default_datalab_mode.get(),
         )
         return dialog.result_entry
 
@@ -1542,6 +1548,8 @@ class App(tk.Tk):
                 page_range=self._pdf_page_range(path),
                 processing_mode=self.var_default_mode.get(),
                 ocr_language=self.var_default_ocr_language.get(),
+                preferred_backend=self.var_default_backend.get(),
+                datalab_mode=self.var_default_datalab_mode.get(),
             )
             entry = self._entry_dialog(path, initial=initial)
             if entry:
@@ -1566,6 +1574,8 @@ class App(tk.Tk):
                 category="fotos-de-prova",
                 processing_mode=self.var_default_mode.get(),
                 ocr_language=self.var_default_ocr_language.get(),
+                preferred_backend=self.var_default_backend.get(),
+                datalab_mode=self.var_default_datalab_mode.get(),
             )
             entry = self._entry_dialog(path, initial=initial)
             if entry:
@@ -1609,6 +1619,8 @@ class App(tk.Tk):
             defaults={
                 "processing_mode": self.var_default_mode.get(),
                 "ocr_language": self.var_default_ocr_language.get(),
+                "preferred_backend": self.var_default_backend.get(),
+                "datalab_mode": self.var_default_datalab_mode.get(),
             },
         )
         if not new_entries:

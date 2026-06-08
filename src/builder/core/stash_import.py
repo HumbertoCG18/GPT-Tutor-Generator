@@ -106,5 +106,7 @@ def build_stash_entries(scan: StashScanResult, existing_source_paths, defaults=N
             source_section=item.card_name,
             processing_mode=defaults.get("processing_mode", "auto"),
             ocr_language=defaults.get("ocr_language", DEFAULT_OCR_LANGUAGE),
+            preferred_backend=defaults.get("preferred_backend", "auto"),
+            datalab_mode=defaults.get("datalab_mode", "accurate"),
         ))
     return entries

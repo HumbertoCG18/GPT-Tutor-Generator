@@ -1184,6 +1184,8 @@ class SubjectManagerDialog(tk.Toplevel):
             ("schedule", "Horário", "Ex: Seg/Qua 10:15-11:55"),
             ("default_mode", "Modo padrão", "auto, quick, high_fidelity, manual_assisted"),
             ("default_ocr_lang", "OCR padrão", DEFAULT_OCR_LANGUAGE),
+            ("default_backend", "Backend padrão", "Extrator padrão (auto, datalab, pymupdf4llm...)"),
+            ("default_datalab_mode", "Datalab mode", "fast / balanced / accurate (usado quando backend = datalab)"),
             ("repo_root", "Pasta do repositório", "Caminho completo do repo (ex: C:\\Users\\...\\Metodos-Formais-Tutor)"),
             ("stash_folder", "Pasta de arquivos (stash)", "Pasta com os PDFs/cards da matéria (fonte dos arquivos)"),
             ("github_url", "URL GitHub", "Ex: https://github.com/seu-user/metodos-formais-tutor"),
@@ -1198,6 +1200,12 @@ class SubjectManagerDialog(tk.Toplevel):
             self._vars[key] = var
             if key == "default_mode":
                 ttk.Combobox(form, textvariable=var, values=PROCESSING_MODES,
+                             state="readonly", width=22).grid(row=i, column=1, sticky="ew", padx=(8, 0))
+            elif key == "default_backend":
+                ttk.Combobox(form, textvariable=var, values=PREFERRED_BACKENDS,
+                             state="readonly", width=22).grid(row=i, column=1, sticky="ew", padx=(8, 0))
+            elif key == "default_datalab_mode":
+                ttk.Combobox(form, textvariable=var, values=["fast", "balanced", "accurate"],
                              state="readonly", width=22).grid(row=i, column=1, sticky="ew", padx=(8, 0))
             elif key == "repo_root":
                 fr = ttk.Frame(form)
@@ -1308,6 +1316,8 @@ class SubjectManagerDialog(tk.Toplevel):
         self._vars["institution"].set("PUCRS")
         self._vars["default_mode"].set("auto")
         self._vars["default_ocr_lang"].set(DEFAULT_OCR_LANGUAGE)
+        self._vars["default_backend"].set("auto")
+        self._vars["default_datalab_mode"].set("accurate")
         self._vars["preferred_llm"].set("claude")
         self._syllabus_text.delete("1.0", "end")
         self._teaching_plan_text.delete("1.0", "end")
@@ -1332,6 +1342,8 @@ class SubjectManagerDialog(tk.Toplevel):
             teaching_plan=self._teaching_plan_text.get("1.0", "end-1c").strip(),
             default_mode=self._vars["default_mode"].get(),
             default_ocr_lang=self._vars["default_ocr_lang"].get().strip() or DEFAULT_OCR_LANGUAGE,
+            default_backend=self._vars["default_backend"].get() or "auto",
+            default_datalab_mode=self._vars["default_datalab_mode"].get() or "accurate",
             repo_root=self._vars["repo_root"].get().strip(),
             stash_folder=self._vars["stash_folder"].get().strip(),
             github_url=self._vars["github_url"].get().strip(),
@@ -3259,12 +3271,15 @@ class BacklogEntryEditDialog(tk.Toplevel):
 class FileEntryDialog(simpledialog.Dialog):
     def __init__(self, parent, path: str, initial: Optional[FileEntry] = None,
                  default_mode: str = "auto", default_ocr_language: str = DEFAULT_OCR_LANGUAGE,
-                 file_type_hint: str = ""):
+                 file_type_hint: str = "", default_backend: str = "auto",
+                 default_datalab_mode: str = "accurate"):
         self._parent = parent
         self.path = path
         self.initial = initial
         self.default_mode = default_mode
         self.default_ocr_language = default_ocr_language
+        self.default_backend = default_backend
+        self.default_datalab_mode = default_datalab_mode
         self.file_type_hint = file_type_hint
         self.result_entry: Optional[FileEntry] = None
         super().__init__(parent, title="Editar item")
@@ -3349,8 +3364,9 @@ class FileEntryDialog(simpledialog.Dialog):
         self.var_profile = tk.StringVar(
             value=normalize_document_profile(self.initial.document_profile if self.initial else "auto")
         )
-        self.var_backend = tk.StringVar(value=self.initial.preferred_backend if self.initial else "auto")
-        self.var_datalab_mode = tk.StringVar(value=getattr(self.initial, "datalab_mode", "accurate") if self.initial else "accurate")
+        self.var_backend = tk.StringVar(value=self.initial.preferred_backend if self.initial else self.default_backend)
+        self.var_datalab_mode = tk.StringVar(
+            value=getattr(self.initial, "datalab_mode", "accurate") if self.initial else self.default_datalab_mode)
         self.var_formula = tk.BooleanVar(value=self.initial.formula_priority if self.initial else False)
         self.var_keep_images = tk.BooleanVar(value=self.initial.preserve_pdf_images_in_markdown if self.initial else True)
         self.var_force_ocr = tk.BooleanVar(value=self.initial.force_ocr if self.initial else False)

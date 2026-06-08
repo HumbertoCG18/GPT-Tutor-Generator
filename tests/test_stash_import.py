@@ -99,3 +99,31 @@ def test_scan_nested_file_uses_top_level_card(tmp_path):
     res = scan_stash_cards(tmp_path)
     by_name = {Path(i.source_path).name: i for i in res.items}
     assert by_name["q1.pdf"].card_name == "Provas por Inducao"
+
+
+def test_build_stash_entries_propagates_backend_and_datalab_defaults(tmp_path):
+    # cria 1 arquivo num card
+    card = tmp_path / "Verificacao de Programas"
+    card.mkdir()
+    (card / "hoare.pdf").write_bytes(b"%PDF-1.7 x")
+    res = scan_stash_cards(tmp_path)
+    entries = build_stash_entries(res, existing_source_paths=set(), defaults={
+        "processing_mode": "high_fidelity",
+        "preferred_backend": "datalab",
+        "datalab_mode": "fast",
+    })
+    assert entries
+    e = entries[0]
+    assert e.preferred_backend == "datalab"
+    assert e.datalab_mode == "fast"
+    assert e.processing_mode == "high_fidelity"
+
+
+def test_build_stash_entries_backend_defaults_when_absent(tmp_path):
+    card = tmp_path / "Introducao"
+    card.mkdir()
+    (card / "x.pdf").write_bytes(b"%PDF-1.7 x")
+    res = scan_stash_cards(tmp_path)
+    entries = build_stash_entries(res, existing_source_paths=set(), defaults={})
+    assert entries[0].preferred_backend == "auto"
+    assert entries[0].datalab_mode == "accurate"

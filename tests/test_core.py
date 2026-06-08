@@ -4903,3 +4903,18 @@ def test_subject_profile_m365_filter_defaults_empty_for_old_profiles():
     from src.models.core import SubjectProfile
     sp = SubjectProfile.from_dict({"name": "x", "slug": "x"})   # sem o campo
     assert sp.m365_filter == ""
+
+
+def test_subject_profile_processing_defaults_roundtrip():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile(name="MF", slug="mf", default_backend="datalab", default_datalab_mode="fast")
+    d = sp.to_dict()
+    assert d["default_backend"] == "datalab" and d["default_datalab_mode"] == "fast"
+    sp2 = SubjectProfile.from_dict(d)
+    assert sp2.default_backend == "datalab" and sp2.default_datalab_mode == "fast"
+
+
+def test_subject_profile_processing_defaults_fallback_for_old_profiles():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile.from_dict({"name": "x", "slug": "x"})
+    assert sp.default_backend == "auto" and sp.default_datalab_mode == "accurate"
