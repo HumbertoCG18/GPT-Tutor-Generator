@@ -1375,7 +1375,8 @@ class SubjectManagerDialog(tk.Toplevel):
                         pass  # widget destroyed while extracting
                 self.after(0, _apply)
             except Exception as e:
-                self.after(0, lambda: messagebox.showerror(APP_NAME, f"Erro ao extrair PDF:\n{e}", parent=self))
+                msg = str(e)
+                self.after(0, lambda m=msg: messagebox.showerror(APP_NAME, f"Erro ao extrair PDF:\n{m}", parent=self))
 
         threading.Thread(target=worker, daemon=True).start()
 
@@ -1647,7 +1648,8 @@ class MoodleCourseSelectDialog(tk.Toplevel):
             try:
                 rep = import_moodle_courses(selected, self._base, store, self._client)
             except Exception as exc:
-                self._post(lambda: messagebox.showerror("Moodle", f"Falha no import: {exc}"))
+                msg = str(exc)
+                self._post(lambda m=msg: messagebox.showerror("Moodle", f"Falha no import: {m}"))
                 return
             self._post(lambda: messagebox.showinfo(
                 "Moodle",
