@@ -81,3 +81,32 @@ def test_resolve_and_download_via_downloadurl(monkeypatch):
     res = c.resolve("INS")
     data = c.download(res)
     assert res["name"] == "x.pdf" and data[:4] == b"%PDF" and calls["dl"]
+
+def test_device_login_polls_until_token(monkeypatch, tmp_path):
+    monkeypatch.setattr(m365mod, "_token_path", lambda: tmp_path / ".m365_token.json")
+    monkeypatch.setattr(m365mod.time, "sleep", lambda s: None)
+    seq = [
+        _Resp(payload={"verification_uri": "https://aka.ms/dev", "user_code": "ABC",
+                       "device_code": "DC", "interval": 1, "expires_in": 900}),
+    ]
+    posts = [
+        _Resp(payload={"error": "authorization_pending"}),
+        _Resp(payload={"access_token": "AT", "refresh_token": "RT"}),
+    ]
+    monkeypatch.setattr(m365mod.requests, "post",
+                        lambda url, data=None, timeout=0: seq.pop(0) if "devicecode" in url else posts.pop(0))
+    shown = {}
+    tok = m365mod.device_login(prompt_callback=lambda m: shown.update(m))
+    assert tok == "AT"
+    assert shown["user_code"] == "ABC"
+    saved = (tmp_path / ".m365_token.json").read_text(encoding="utf-8")
+    assert "RT" in saved
+
+def test_load_cached_token_refreshes(monkeypatch, tmp_path):
+    p = tmp_path / ".m365_token.json"
+    p.write_text('{"refresh_token": "RT"}', encoding="utf-8")
+    monkeypatch.setattr(m365mod, "_token_path", lambda: p)
+    monkeypatch.setattr(m365mod.requests, "post",
+                        lambda url, data=None, timeout=0: _Resp(payload={"access_token": "NEW", "refresh_token": "RT2"}))
+    assert m365mod.load_cached_token() == "NEW"
+    assert "RT2" in p.read_text(encoding="utf-8")

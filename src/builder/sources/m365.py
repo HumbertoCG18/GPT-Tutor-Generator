@@ -117,3 +117,72 @@ class M365Client:
                          headers={"Authorization": f"Bearer {self._token}"}, timeout=180)
         r.raise_for_status()
         return r.content
+
+
+def _token_path() -> Path:
+    return default_token_path().parent / ".m365_token.json"
+
+
+def _save_token(tok: dict) -> None:
+    rt = tok.get("refresh_token")
+    if not rt:
+        return
+    p = _token_path()
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps({"refresh_token": rt}), encoding="utf-8")
+
+
+def load_cached_token():
+    """Access token via refresh token salvo, ou None se ausente/expirado."""
+    p = _token_path()
+    if not p.is_file():
+        return None
+    rt = (json.loads(p.read_text(encoding="utf-8")) or {}).get("refresh_token")
+    if not rt:
+        return None
+    j = requests.post(f"{_AUTHORITY}/token", timeout=30, data={
+        "grant_type": "refresh_token", "client_id": _CLIENT_ID,
+        "refresh_token": rt, "scope": _SCOPE}).json()
+    if "access_token" in j:
+        _save_token(j)
+        return j["access_token"]
+    return None
+
+
+def device_login(prompt_callback=None) -> str:
+    """Device-code flow. prompt_callback({verification_uri, user_code}) p/ a UI."""
+    r = requests.post(f"{_AUTHORITY}/devicecode", timeout=30,
+                      data={"client_id": _CLIENT_ID, "scope": _SCOPE})
+    r.raise_for_status()
+    d = r.json()
+    info = {"verification_uri": d["verification_uri"], "user_code": d["user_code"]}
+    if prompt_callback:
+        prompt_callback(info)
+    else:
+        print(f"Abra {info['verification_uri']} e digite {info['user_code']}")
+    interval = int(d.get("interval", 5))
+    deadline = time.time() + int(d.get("expires_in", 900))
+    while time.time() < deadline:
+        time.sleep(interval)
+        j = requests.post(f"{_AUTHORITY}/token", timeout=30, data={
+            "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
+            "client_id": _CLIENT_ID, "device_code": d["device_code"]}).json()
+        if "access_token" in j:
+            _save_token(j)
+            return j["access_token"]
+        err = j.get("error")
+        if err == "slow_down":
+            interval += 5
+            continue
+        if err == "authorization_pending":
+            continue
+        raise RuntimeError(f"device-code falhou: {err}")
+    raise RuntimeError("Tempo de login M365 esgotado.")
+
+
+def get_client(prompt_callback=None) -> "M365Client":
+    """Cliente pronto: usa refresh token salvo ou faz device-login."""
+    tok = load_cached_token()
+    if not tok:
+        tok = device_login(prompt_callback)
+    return M365Client(tok)
