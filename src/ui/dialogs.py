@@ -1563,26 +1563,69 @@ class MoodleCourseSelectDialog(tk.Toplevel):
         self._base = base_folder
         self._client = client
         self._vars = []
+        from src.builder.sources.moodle import latest_semester
+        self._current_sem = latest_semester(self._courses)
+        self._show_all = None  # BooleanVar criado no _build_ui
+        self._existing = self._load_existing_subjects()
         self._build_ui()
 
+    def _load_existing_subjects(self):
+        """Mapa pra detectar curso que já tem repo: por slug e por moodle_course_id."""
+        from src.models.core import SubjectStore
+        by_slug, by_cid = {}, {}
+        try:
+            store = SubjectStore()
+            for n in store.names():
+                sp = store.get(n)
+                if not sp or not getattr(sp, "repo_root", ""):
+                    continue
+                if getattr(sp, "slug", ""):
+                    by_slug[sp.slug] = sp.name
+                if getattr(sp, "moodle_course_id", ""):
+                    by_cid[sp.moodle_course_id] = sp.name
+        except Exception:
+            pass
+        return {"by_slug": by_slug, "by_cid": by_cid}
+
     def _build_ui(self):
-        from src.builder.sources.moodle import parse_moodle_course
-        ttk.Label(self, text="Marque os cursos que viram matéria:", padding=10).pack(anchor="w")
-        canvas = tk.Canvas(self, highlightthickness=0)
-        scroll = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
-        inner = ttk.Frame(canvas)
-        inner.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-        canvas.create_window((0, 0), window=inner, anchor="nw")
+        top = ttk.Frame(self); top.pack(fill="x", padx=10, pady=(10, 4))
+        ttk.Label(top, text="Marque os cursos que viram matéria:").pack(side="left")
+        self._show_all = tk.BooleanVar(value=False)
+        ttk.Checkbutton(top, text="Mostrar todos os semestres",
+                        variable=self._show_all, command=self._render_list).pack(side="right")
+
+        body = ttk.Frame(self); body.pack(fill="both", expand=True)
+        canvas = tk.Canvas(body, highlightthickness=0)
+        scroll = ttk.Scrollbar(body, orient="vertical", command=canvas.yview)
+        self._inner = ttk.Frame(canvas)
+        self._inner.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.create_window((0, 0), window=self._inner, anchor="nw")
         canvas.configure(yscrollcommand=scroll.set)
         canvas.pack(side="left", fill="both", expand=True, padx=(10, 0))
         scroll.pack(side="right", fill="y")
-        for course in self._courses:
+
+        ttk.Button(self, text="📥  Importar marcados", command=self._import).pack(fill="x", padx=10, pady=10)
+        self._render_list()
+
+    def _render_list(self):
+        from src.builder.sources.moodle import parse_moodle_course, filter_courses_by_semester
+        for w in list(self._inner.children.values()):
+            w.destroy()
+        self._vars = []
+        if self._show_all.get() or not self._current_sem:
+            courses = list(self._courses)
+        else:
+            courses = filter_courses_by_semester(self._courses, self._current_sem)
+        for course in courses:
             info = parse_moodle_course(course)
+            has_repo = (info["slug"] in self._existing["by_slug"]
+                        or info["moodle_course_id"] in self._existing["by_cid"])
             var = tk.BooleanVar(value=False)
             self._vars.append((var, course))
             label = f"{info['name']}   ·   {info['professor'] or '—'}   ·   {info['semester'] or '—'}"
-            ttk.Checkbutton(inner, text=label, variable=var).pack(anchor="w", pady=2)
-        ttk.Button(self, text="📥  Importar marcados", command=self._import).pack(fill="x", padx=10, pady=10)
+            if has_repo:
+                label += "   🔗 já tem repo"
+            ttk.Checkbutton(self._inner, text=label, variable=var).pack(anchor="w", pady=2)
 
     def _post(self, fn):
         try:
