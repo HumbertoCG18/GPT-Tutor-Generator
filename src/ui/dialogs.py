@@ -1653,8 +1653,11 @@ class MoodleCourseSelectDialog(tk.Toplevel):
                 return
             self._post(lambda: messagebox.showinfo(
                 "Moodle",
-                f"Criadas: {rep['created']}  Atualizadas: {rep['updated']}  "
-                f"Arquivos baixados: {rep['downloaded_files']}"))
+                f"Matérias — criadas: {rep['created']}  atualizadas: {rep['updated']}  ligadas: {rep['linked']}\n"
+                f"Cards criados: {rep['folders']}  ({rep['expected_files']} arquivos esperados)\n"
+                f"source_section preenchidos (gabarito): {rep['backfilled']}\n\n"
+                f"Os bytes ficam no M365 — baixe os PDFs no navegador e coloque nas "
+                f"pastas dos cards (veja _ARQUIVOS_DO_CARD.txt em cada uma)."))
             self._post(self.destroy)
 
         threading.Thread(target=worker, daemon=True).start()
