@@ -127,3 +127,16 @@ def test_build_stash_entries_backend_defaults_when_absent(tmp_path):
     entries = build_stash_entries(res, existing_source_paths=set(), defaults={})
     assert entries[0].preferred_backend == "auto"
     assert entries[0].datalab_mode == "accurate"
+
+
+def test_dfy_and_thy_classify_as_code_for_gemini(tmp_path):
+    # Código (Dafny .dfy / Isabelle .thy) deve virar file_type "code" -> caminho
+    # Gemini, NUNCA extração PDF/datalab.
+    card = tmp_path / "Verificacao de Programas"
+    card.mkdir()
+    (card / "hoare.dfy").write_text("method M() {}", encoding="utf-8")
+    (card / "arvores.thy").write_text("theory T begin end", encoding="utf-8")
+    res = scan_stash_cards(tmp_path)
+    by_name = {Path(i.source_path).name: i for i in res.items}
+    assert by_name["hoare.dfy"].file_type == "code"
+    assert by_name["arvores.thy"].file_type == "code"

@@ -202,7 +202,7 @@ CODE_EXTENSIONS: set = {
     ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".c", ".cpp", ".h",
     ".hpp", ".cs", ".go", ".rs", ".rb", ".php", ".swift", ".kt",
     ".scala", ".r", ".m", ".sh", ".bat", ".ps1", ".sql", ".html",
-    ".css", ".scss", ".ipynb", ".thy",
+    ".css", ".scss", ".ipynb", ".thy", ".dfy",
 }
 
 LANG_MAP: Dict[str, str] = {
@@ -213,7 +213,7 @@ LANG_MAP: Dict[str, str] = {
     "swift": "swift", "kt": "kotlin", "scala": "scala",
     "r": "r", "sh": "bash", "bat": "batch", "ps1": "powershell",
     "sql": "sql", "html": "html", "css": "css", "scss": "scss",
-    "ipynb": "json", "thy": "isabelle",
+    "ipynb": "json", "thy": "isabelle", "dfy": "dafny",
 }
 
 CODE_CATEGORIES       = ("codigo-professor", "codigo-aluno")
