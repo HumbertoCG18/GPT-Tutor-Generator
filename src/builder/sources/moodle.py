@@ -140,6 +140,45 @@ class MoodleClient:
         return {"total": len(files), "downloaded": downloaded, "skipped": skipped}
 
 
+def import_moodle_courses(selected_courses, base_folder, store, client) -> dict:
+    """Upsert de SubjectProfile + download do stash por curso selecionado.
+
+    store: objeto com .names()/.get(name)/.add(profile).
+    client: objeto com .download_course(courseid, dest).
+    """
+    from src.models.core import SubjectProfile
+    base = Path(base_folder)
+    created = updated = downloaded_files = 0
+    for course in selected_courses or []:
+        info = parse_moodle_course(course)
+        cid = info["moodle_course_id"]
+        existing_name = None
+        for n in store.names():
+            sp = store.get(n)
+            if sp and getattr(sp, "moodle_course_id", "") == cid and cid:
+                existing_name = n
+                break
+        stash = str(base / info["slug"])
+        if existing_name:
+            sp = store.get(existing_name)
+            sp.stash_folder = stash
+            sp.moodle_course_id = cid
+            if not sp.professor:
+                sp.professor = info["professor"]
+            store.add(sp)
+            updated += 1
+        else:
+            sp = SubjectProfile(
+                name=info["name"], slug=info["slug"], professor=info["professor"],
+                semester=info["semester"], moodle_course_id=cid, stash_folder=stash,
+            )
+            store.add(sp)
+            created += 1
+        summary = client.download_course(cid, stash)
+        downloaded_files += int(summary.get("downloaded", 0))
+    return {"created": created, "updated": updated, "downloaded_files": downloaded_files}
+
+
 _DEFAULT_MOODLE_URL = "https://moodle.pucrs.br"
 
 

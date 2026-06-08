@@ -105,3 +105,35 @@ def test_parse_moodle_course_degraded_no_prof():
     assert r["name"] == "Curso de Ciência da Computação"
     assert r["professor"] == ""
     assert r["semester"] == ""
+
+
+def test_import_moodle_courses_upserts_and_downloads(tmp_path):
+    from src.builder.sources.moodle import import_moodle_courses
+
+    class FakeStore:
+        def __init__(self): self.data = {}
+        def names(self): return list(self.data.keys())
+        def get(self, n): return self.data.get(n)
+        def add(self, p): self.data[p.name] = p
+
+    class FakeClient:
+        def __init__(self): self.calls = []
+        def download_course(self, cid, dest, skip_existing=True):
+            self.calls.append((str(cid), str(dest)))
+            return {"total": 3, "downloaded": 3, "skipped": 0}
+
+    store, client = FakeStore(), FakeClient()
+    courses = [{"id": 92717, "fullname": "X - Métodos Formais - Turma 031 - 2026/1 - Prof. Julio"}]
+    base = tmp_path / "Moodle"
+
+    rep = import_moodle_courses(courses, base, store, client)
+    assert len(store.names()) == 1
+    sp = store.data["Métodos Formais"]
+    assert sp.moodle_course_id == "92717"
+    assert sp.stash_folder == str(base / sp.slug)
+    assert client.calls == [("92717", str(base / sp.slug))]
+    assert rep["created"] == 1 and rep["downloaded_files"] == 3
+
+    rep2 = import_moodle_courses(courses, base, store, client)
+    assert len(store.names()) == 1
+    assert rep2["updated"] == 1 and rep2["created"] == 0
