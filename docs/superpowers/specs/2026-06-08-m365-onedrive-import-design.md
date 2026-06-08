@@ -1,7 +1,7 @@
 # Design: Import de arquivos M365/OneDrive do professor
 
 last_updated: 2026-06-08
-status: aprovado para planejamento
+status: implementado (verificação manual da UI pendente — requer login M365 interativo)
 
 ## Problema
 
