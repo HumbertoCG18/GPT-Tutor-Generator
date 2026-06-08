@@ -186,3 +186,31 @@ def get_client(prompt_callback=None) -> "M365Client":
     if not tok:
         tok = device_login(prompt_callback)
     return M365Client(tok)
+
+
+def apply_source_section(repo_root: str, name_to_section: dict) -> int:
+    """Preenche source_section no manifest casando por basename (case-insensitive).
+
+    name_to_section: {basename.casefold(): card}. Retorna nº de entries atualizadas.
+    Faz backup .apibak e escreve atômico. No-op se não houver manifest."""
+    if not repo_root:
+        return 0
+    mpath = Path(repo_root) / "manifest.json"
+    if not mpath.is_file():
+        return 0
+    manifest = json.loads(mpath.read_text(encoding="utf-8"))
+    entries = manifest.get("entries", [])
+    updated = 0
+    for e in entries:
+        base = Path(str(e.get("source_path") or "")).name.casefold()
+        sec = name_to_section.get(base)
+        if sec and e.get("source_section") != sec:
+            e["source_section"] = sec
+            updated += 1
+    if updated:
+        mpath.with_suffix(".json.apibak").write_text(
+            mpath.read_text(encoding="utf-8"), encoding="utf-8")
+        tmp = mpath.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+        tmp.replace(mpath)
+    return updated

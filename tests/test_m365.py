@@ -110,3 +110,24 @@ def test_load_cached_token_refreshes(monkeypatch, tmp_path):
                         lambda url, data=None, timeout=0: _Resp(payload={"access_token": "NEW", "refresh_token": "RT2"}))
     assert m365mod.load_cached_token() == "NEW"
     assert "RT2" in p.read_text(encoding="utf-8")
+
+import json as _json
+
+def test_apply_source_section_writes_manifest(tmp_path):
+    from src.builder.sources.m365 import apply_source_section
+    repo = tmp_path / "repo"; repo.mkdir()
+    (repo / "manifest.json").write_text(_json.dumps({"entries": [
+        {"id": "1", "source_path": "C:/x/Hoare.pdf"},
+        {"id": "2", "source_path": "C:/x/outro.pdf"},
+    ]}), encoding="utf-8")
+    n = apply_source_section(str(repo), {"hoare.pdf": "Verificação de Programas"})
+    assert n == 1
+    m = _json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+    by_id = {e["id"]: e for e in m["entries"]}
+    assert by_id["1"]["source_section"] == "Verificação de Programas"
+    assert "source_section" not in by_id["2"]
+    assert (repo / "manifest.json.apibak").is_file()
+
+def test_apply_source_section_noop_without_manifest(tmp_path):
+    from src.builder.sources.m365 import apply_source_section
+    assert apply_source_section(str(tmp_path / "nada"), {"a.pdf": "X"}) == 0
