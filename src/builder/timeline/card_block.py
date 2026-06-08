@@ -61,36 +61,31 @@ def _date_in_range(month: int, day: int, start_iso: str, end_iso: str) -> bool:
 
 def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
     card_tokens = _tokens(str(card_name or ""))
+    need = min(2, len(card_tokens)) if card_tokens else 99
 
-    # (2) data explícita no nome -> bloco que cobre a data (mês/dia).
+    # (1) data explícita no nome -> bloco que cobre a data (mês/dia).
     m = _DATE_RE.search(str(card_name or ""))
     if m:
         day, month = int(m.group(1)), int(m.group(2))
         for b in blocks:
-            start, end = str(b.get("period_start") or ""), str(b.get("period_end") or "")
-            if _date_in_range(month, day, start, end):
+            if _date_in_range(month, day, str(b.get("period_start") or ""), str(b.get("period_end") or "")):
                 return CardBlockResolution([str(b.get("id"))], 0.9, f"date:{day:02d}/{month:02d}")
 
-    # (1) nome -> unidade. Ranqueia por (overlap de TÍTULO, overlap total) — o
-    # título tem prioridade sobre topics/glossário (que geram ruído de empate).
-    def _unit_rank(u):
-        title_ov = len(card_tokens & _tokens(str(u.get("title") or "")))
-        total_ov = len(card_tokens & _unit_tokens(u))
-        return (title_ov, total_ov)
-    scored = sorted(((_unit_rank(u), u) for u in (unit_index or [])),
-                    key=lambda x: x[0], reverse=True)
-    if scored:
-        (best_title_ov, best_total_ov), best_unit = scored[0]
-        tie = len(scored) > 1 and scored[1][0] == (best_title_ov, best_total_ov) and best_total_ov > 0
-        need = min(2, len(card_tokens)) if card_tokens else 99
-        if best_total_ov >= need and not tie:
-            slug = str(best_unit.get("slug"))
+    # (2) nome casa o TÍTULO de uma unidade -> unidade inteira (card largo intencional).
+    title_scored = sorted(
+        ((len(card_tokens & _tokens(str(u.get("title") or ""))), u) for u in (unit_index or [])),
+        key=lambda x: x[0], reverse=True,
+    )
+    if title_scored:
+        best_t, best_u = title_scored[0]
+        tie = len(title_scored) > 1 and title_scored[1][0] == best_t and best_t > 0
+        if best_t >= need and not tie:
+            slug = str(best_u.get("slug"))
             ids = [str(b.get("id")) for b in blocks if str(b.get("unit_slug") or "") == slug]
             if ids:
-                conf = min(0.95, 0.5 + 0.15 * best_total_ov)
-                return CardBlockResolution(ids, conf, f"unit:{slug}")
+                return CardBlockResolution(ids, min(0.95, 0.5 + 0.15 * best_t), f"unit:{slug}")
 
-    # (3) nome -> bloco por tópico/label/alias (mais fino que unidade).
+    # (3) nome casa o TÓPICO de um bloco -> bloco específico (mais fino).
     best_blocks, best_ov = [], 0
     for b in blocks:
         ov = len(card_tokens & _block_topic_tokens(b))
@@ -98,11 +93,23 @@ def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
             best_blocks, best_ov = [b], ov
         elif ov == best_ov and ov > 0:
             best_blocks.append(b)
-    need_b = min(2, len(card_tokens)) if card_tokens else 99
-    if best_ov >= need_b and best_blocks:
+    if best_ov >= need and best_blocks:
         ids = [str(b.get("id")) for b in best_blocks]
-        conf = min(0.9, 0.45 + 0.15 * best_ov)
-        return CardBlockResolution(ids, conf, "topic")
+        return CardBlockResolution(ids, min(0.9, 0.45 + 0.15 * best_ov), "topic")
+
+    # (4) overlap de TÓPICOS da unidade (coarse) -> unidade inteira (fallback).
+    total_scored = sorted(
+        ((len(card_tokens & _unit_tokens(u)), u) for u in (unit_index or [])),
+        key=lambda x: x[0], reverse=True,
+    )
+    if total_scored:
+        best_tot, best_u = total_scored[0]
+        tie = len(total_scored) > 1 and total_scored[1][0] == best_tot and best_tot > 0
+        if best_tot >= need and not tie:
+            slug = str(best_u.get("slug"))
+            ids = [str(b.get("id")) for b in blocks if str(b.get("unit_slug") or "") == slug]
+            if ids:
+                return CardBlockResolution(ids, min(0.9, 0.5 + 0.12 * best_tot), f"unit:{slug}")
 
     return CardBlockResolution([], 0.0, "needs-confirmation")
 

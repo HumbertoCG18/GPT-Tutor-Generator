@@ -135,3 +135,27 @@ def test_unit_title_overlap_breaks_topic_tie():
     r = resolve_card_to_block("Verificação de Programas", units, blocks)
     assert r.block_ids == ["b2"]            # título vence o empate de topics
     assert r.reason == "unit:u2"
+
+
+def test_topic_specific_beats_coarse_unit_topic_overlap():
+    # TCC: card "Semana N - <tópico>" NÃO casa título da unidade, mas casa o bloco específico.
+    units = [{"slug": "u3", "title": "Problemas Indecidíveis", "topics": ["godel", "rice", "parada"], "distinctive_tokens": []}]
+    blocks = [
+        {"id": "bloco-10", "unit_slug": "u3", "primary_topic_label": "Halting problem", "topics": ["parada"], "aliases": [], "period_start": "2026-04-15", "period_end": "2026-04-15"},
+        {"id": "bloco-14", "unit_slug": "u3", "primary_topic_label": "Teoremas de Gödel", "topics": ["godel", "incompletude"], "aliases": [], "period_start": "2026-04-29", "period_end": "2026-04-29"},
+    ]
+    r = resolve_card_to_block("Semana 9 - Teoremas de Gödel", units, blocks)
+    assert r.block_ids == ["bloco-14"]
+    assert r.reason == "topic"
+
+
+def test_unit_title_match_still_wins_over_block_topic():
+    # Métodos: card = nome da unidade -> unidade inteira (card largo intencional), via TÍTULO.
+    units = [{"slug": "u-verif", "title": "Verificação de Programas", "topics": [], "distinctive_tokens": []}]
+    blocks = [
+        {"id": "bloco-10", "unit_slug": "u-verif", "primary_topic_label": "Lógica de Hoare", "topics": ["hoare"], "aliases": [], "period_start": "2026-04-27", "period_end": "2026-04-27"},
+        {"id": "bloco-11", "unit_slug": "u-verif", "primary_topic_label": "Dafny", "topics": ["dafny"], "aliases": [], "period_start": "2026-05-06", "period_end": "2026-05-06"},
+    ]
+    r = resolve_card_to_block("Verificação de Programas", units, blocks)
+    assert set(r.block_ids) == {"bloco-10", "bloco-11"}
+    assert r.reason.startswith("unit:")
