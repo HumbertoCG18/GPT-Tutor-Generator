@@ -16,7 +16,43 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
+from src.utils.helpers import slugify
+
 _INVALID = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
+
+import re as _re
+
+_COURSE_PROF_RE = _re.compile(r"\bProf\.?\s*(.+)$", _re.IGNORECASE)
+_COURSE_SEM_RE = _re.compile(r"\b(20\d{2}/[12])\b")
+
+
+def parse_moodle_course(course: dict) -> dict:
+    """Extrai campos de SubjectProfile do fullname Moodle.
+
+    Padrão: "CODE - Nome - Turma NNN - YYYY/S - Prof. Fulano". Robusto a faltas.
+    """
+    full = str(course.get("fullname") or "").strip()
+    cid = str(course.get("id") or "")
+    professor = ""
+    m = _COURSE_PROF_RE.search(full)
+    if m:
+        professor = m.group(1).strip()
+    semester = ""
+    m = _COURSE_SEM_RE.search(full)
+    if m:
+        semester = m.group(1)
+    name = full
+    parts = [p.strip() for p in full.split(" - ")]
+    if len(parts) >= 2:
+        name = parts[1]
+    return {
+        "moodle_course_id": cid,
+        "name": name,
+        "professor": professor,
+        "semester": semester,
+        "slug": slugify(name) if name else (slugify(str(course.get("shortname") or "")) or cid),
+        "shortname": str(course.get("shortname") or ""),
+    }
 
 
 def sanitize_folder_name(name: str) -> str:

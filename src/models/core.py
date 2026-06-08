@@ -182,6 +182,7 @@ class SubjectProfile:
     default_ocr_lang: str = DEFAULT_OCR_LANGUAGE
     repo_root: str = ""
     stash_folder: str = ""        # pasta com os arquivos-fonte (PDFs/cards) da materia
+    moodle_course_id: str = ""   # liga a matéria ao curso Moodle (re-sync, upsert)
     github_url: str = ""           # URL base do repo no GitHub
     preferred_llm: str = "claude"  # Plataforma principal: "claude", "gpt", "gemini"
     queue: List[FileEntry] = field(default_factory=list)
@@ -210,6 +211,7 @@ class StudentProfile:
     full_name: str = ""
     nickname: str = ""           # Como o GPT chama o aluno
     personality: str = ""        # Como o GPT deve ajudar (texto livre)
+    moodle_base_folder: str = ""  # pasta-base dos stashes baixados do Moodle
 
     def to_dict(self) -> Dict[str, str]:
         return asdict(self)

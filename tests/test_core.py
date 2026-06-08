@@ -4876,3 +4876,16 @@ def test_file_entry_source_section_defaults_empty():
     e = FileEntry(source_path="/x/a.pdf", file_type="pdf", category="material-de-aula", title="a")
     assert "source_section" not in e.to_dict()
     assert FileEntry.from_dict(e.to_dict()).source_section == ""
+
+
+def test_subject_profile_moodle_course_id_roundtrip():
+    from src.models.core import SubjectProfile
+    p = SubjectProfile(name="Métodos", moodle_course_id="92717")
+    assert p.to_dict()["moodle_course_id"] == "92717"
+    assert SubjectProfile.from_dict(p.to_dict()).moodle_course_id == "92717"
+
+
+def test_student_profile_moodle_base_folder_roundtrip():
+    from src.models.core import StudentProfile
+    s = StudentProfile(full_name="X", moodle_base_folder="C:/Moodle")
+    assert StudentProfile.from_dict(s.to_dict()).moodle_base_folder == "C:/Moodle"

@@ -84,3 +84,24 @@ def test_login_raises_on_error(monkeypatch):
     import pytest
     with pytest.raises(RuntimeError):
         moodle.MoodleClient.login("https://moodle.pucrs.br", "x", "y")
+
+
+def test_parse_moodle_course_full_pattern():
+    from src.builder.sources.moodle import parse_moodle_course
+    c = {"id": 92717, "shortname": "4646M-04031261",
+         "fullname": "4646M-04 - Métodos Formais para Computação - Turma 031 - 2026/1 - Prof. Julio Henrique A P Machado"}
+    r = parse_moodle_course(c)
+    assert r["moodle_course_id"] == "92717"
+    assert r["name"] == "Métodos Formais para Computação"
+    assert r["professor"] == "Julio Henrique A P Machado"
+    assert r["semester"] == "2026/1"
+    assert r["slug"]
+
+
+def test_parse_moodle_course_degraded_no_prof():
+    from src.builder.sources.moodle import parse_moodle_course
+    r = parse_moodle_course({"id": 1, "fullname": "Curso de Ciência da Computação"})
+    assert r["moodle_course_id"] == "1"
+    assert r["name"] == "Curso de Ciência da Computação"
+    assert r["professor"] == ""
+    assert r["semester"] == ""
