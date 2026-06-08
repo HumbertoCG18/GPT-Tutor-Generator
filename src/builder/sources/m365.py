@@ -77,3 +77,43 @@ def match_card(subfolder: str, moodle_sections, threshold: float = 0.34):
     if best and best_score >= threshold:
         return best, True
     return sanitize_folder_name(subfolder), False
+
+
+class M365Client:
+    def __init__(self, access_token: str):
+        self._token = access_token
+
+    def _get(self, path: str) -> dict:
+        r = requests.get(f"{_GRAPH}{path}",
+                         headers={"Authorization": f"Bearer {self._token}"}, timeout=60)
+        if r.status_code >= 400:
+            raise RuntimeError(f"Graph {r.status_code}: {r.text[:200]}")
+        return r.json()
+
+    def list_shared(self, top: int = 200) -> list:
+        out, url = [], f"{_GRAPH}/me/insights/shared?$top={top}"
+        while url:
+            r = requests.get(url, headers={"Authorization": f"Bearer {self._token}"}, timeout=60)
+            if r.status_code >= 400:
+                raise RuntimeError(f"Graph {r.status_code}: {r.text[:200]}")
+            data = r.json()
+            for it in data.get("value", []):
+                rv = it.get("resourceVisualization") or {}
+                rr = it.get("resourceReference") or {}
+                out.append({"id": it.get("id"), "title": rv.get("title"),
+                            "type": rv.get("type"), "web_url": rr.get("webUrl", "")})
+            url = data.get("@odata.nextLink")
+        return out
+
+    def resolve(self, insight_id: str) -> dict:
+        return self._get(f"/me/insights/shared/{urllib.parse.quote(insight_id, safe='')}/resource")
+
+    def download(self, item: dict) -> bytes:
+        dl = item.get("@microsoft.graph.downloadUrl")
+        if dl:
+            return requests.get(dl, timeout=180).content
+        pref = item["parentReference"]
+        r = requests.get(f"{_GRAPH}/drives/{pref['driveId']}/items/{item['id']}/content",
+                         headers={"Authorization": f"Bearer {self._token}"}, timeout=180)
+        r.raise_for_status()
+        return r.content

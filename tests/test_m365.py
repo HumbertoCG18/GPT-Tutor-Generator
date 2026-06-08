@@ -40,3 +40,44 @@ def test_match_card_matches_by_normalized_tokens():
 def test_match_card_falls_back_to_new_card_when_no_match():
     card, matched = match_card("dafny", _SECTIONS)
     assert matched is False and card == "dafny"
+
+from src.builder.sources import m365 as m365mod
+
+class _Resp:
+    def __init__(self, status=200, payload=None, content=b""):
+        self.status_code = status; self._p = payload or {}; self.content = content; self.text = str(payload)
+    def json(self): return self._p
+    def raise_for_status(self):
+        if self.status_code >= 400: raise RuntimeError(f"http {self.status_code}")
+
+def test_list_shared_follows_pagination(monkeypatch):
+    pages = {
+        "https://graph.microsoft.com/v1.0/me/insights/shared?$top=200": _Resp(payload={
+            "value": [{"id": "1", "resourceVisualization": {"title": "a.pdf", "type": "Pdf"},
+                       "resourceReference": {"webUrl": "u/a"}}],
+            "@odata.nextLink": "https://graph.microsoft.com/v1.0/me/insights/shared?$skip=1"}),
+        "https://graph.microsoft.com/v1.0/me/insights/shared?$skip=1": _Resp(payload={
+            "value": [{"id": "2", "resourceVisualization": {"title": "b.pdf", "type": "Pdf"},
+                       "resourceReference": {"webUrl": "u/b"}}]}),
+    }
+    monkeypatch.setattr(m365mod.requests, "get", lambda url, headers=None, timeout=0: pages[url])
+    c = m365mod.M365Client("tok")
+    items = c.list_shared(top=200)
+    assert [it["id"] for it in items] == ["1", "2"]
+    assert items[0]["title"] == "a.pdf" and items[0]["web_url"] == "u/a"
+
+def test_resolve_and_download_via_downloadurl(monkeypatch):
+    calls = {}
+    def fake_get(url, headers=None, timeout=0):
+        if "/resource" in url:
+            return _Resp(payload={"name": "x.pdf", "id": "I", "file": {},
+                                  "@microsoft.graph.downloadUrl": "https://dl/x"})
+        if url == "https://dl/x":
+            calls["dl"] = True
+            return _Resp(content=b"%PDF-1.7 ok")
+        raise AssertionError(url)
+    monkeypatch.setattr(m365mod.requests, "get", fake_get)
+    c = m365mod.M365Client("tok")
+    res = c.resolve("INS")
+    data = c.download(res)
+    assert res["name"] == "x.pdf" and data[:4] == b"%PDF" and calls["dl"]
