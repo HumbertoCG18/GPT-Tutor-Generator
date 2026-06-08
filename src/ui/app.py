@@ -1338,7 +1338,7 @@ class App(tk.Tk):
         HelpWindow(self, self.theme_mgr)
 
     def open_subject_manager(self):
-        SubjectManagerDialog(self, self.subject_store, self.theme_mgr)
+        SubjectManagerDialog(self, self.subject_store, self.theme_mgr, self.config_obj)
         # Refresh combo values
         self._subject_combo["values"] = ["(nenhuma)"] + self.subject_store.names()
         self._refresh_repo_dashboard()

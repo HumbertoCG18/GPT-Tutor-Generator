@@ -1269,7 +1269,7 @@ class HTMLImportDialog(tk.Toplevel):
 class SubjectManagerDialog(tk.Toplevel):
     """Gerenciador de matérias — criar, editar, excluir perfis."""
 
-    def __init__(self, parent, subject_store: SubjectStore, theme_mgr: ThemeManager):
+    def __init__(self, parent, subject_store: SubjectStore, theme_mgr: ThemeManager, config_obj=None):
         super().__init__(parent)
         self.title("📚  Gerenciador de Matérias")
         self.geometry("780x700")
@@ -1277,6 +1277,7 @@ class SubjectManagerDialog(tk.Toplevel):
         self.grab_set()
         self._store = subject_store
         self._theme_mgr = theme_mgr
+        self._config = config_obj
         self._p = apply_theme_to_toplevel(self, parent)
         self._current_name: Optional[str] = None
         self._build_ui()
@@ -1334,6 +1335,7 @@ class SubjectManagerDialog(tk.Toplevel):
             ("stash_folder", "Pasta de arquivos (stash)", "Pasta com os PDFs/cards da matéria (fonte dos arquivos)"),
             ("github_url", "URL GitHub", "Ex: https://github.com/seu-user/metodos-formais-tutor"),
             ("preferred_llm", "LLM Principal", "Plataforma que você usa principalmente"),
+            ("processing_profile", "Perfil de processamento", "Preset que preenche modo/backend/datalab"),
         ]
 
         for i, (key, label, tip) in enumerate(labels):
@@ -1367,6 +1369,26 @@ class SubjectManagerDialog(tk.Toplevel):
                 ttk.Combobox(form, textvariable=var,
                              values=["claude", "gpt", "gemini"],
                              state="readonly", width=22).grid(row=i, column=1, sticky="ew", padx=(8, 0))
+            elif key == "processing_profile":
+                from src.utils.helpers import load_processing_profiles, get_processing_profile
+                names = [""] + [p.name for p in load_processing_profiles(self._config)]
+                fr = ttk.Frame(form)
+                fr.grid(row=i, column=1, sticky="ew", padx=(8, 0))
+                cb = ttk.Combobox(fr, textvariable=var, values=names, state="readonly", width=18)
+                cb.pack(side="left", fill="x", expand=True)
+
+                def _apply_preset(_e=None):
+                    p = get_processing_profile(self._config, var.get())
+                    if p:
+                        self._vars["default_mode"].set(p.processing_mode)
+                        self._vars["default_backend"].set(p.preferred_backend)
+                        self._vars["default_datalab_mode"].set(p.datalab_mode)
+                cb.bind("<<ComboboxSelected>>", _apply_preset)
+
+                def _manage():
+                    ProcessingProfileManagerDialog(self, self._config)
+                    cb["values"] = [""] + [pp.name for pp in load_processing_profiles(self._config)]
+                ttk.Button(fr, text="⚙", width=3, command=_manage).pack(side="right", padx=(4, 0))
             else:
                 ttk.Entry(form, textvariable=var, width=36).grid(row=i, column=1, sticky="ew", padx=(8, 0))
 
@@ -1463,6 +1485,7 @@ class SubjectManagerDialog(tk.Toplevel):
         self._vars["default_backend"].set("auto")
         self._vars["default_datalab_mode"].set("accurate")
         self._vars["preferred_llm"].set("claude")
+        self._vars["processing_profile"].set("")
         self._syllabus_text.delete("1.0", "end")
         self._teaching_plan_text.delete("1.0", "end")
 
@@ -1492,6 +1515,7 @@ class SubjectManagerDialog(tk.Toplevel):
             stash_folder=self._vars["stash_folder"].get().strip(),
             github_url=self._vars["github_url"].get().strip(),
             preferred_llm=self._vars["preferred_llm"].get().strip() or "claude",
+            processing_profile=self._vars["processing_profile"].get(),
             queue=existing_queue,
         )
         self._store.add(sp)
