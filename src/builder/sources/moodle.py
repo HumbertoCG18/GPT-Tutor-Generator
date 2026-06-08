@@ -200,19 +200,42 @@ def filter_courses_by_semester(courses, semester) -> list:
     return [c for c in (courses or []) if parse_moodle_course(c)["semester"] == semester]
 
 
-def import_moodle_courses(selected_courses, base_folder, store, client) -> dict:
-    """Upsert de SubjectProfile + download do stash por curso selecionado.
+def build_card_structure(stash_dir, contents) -> dict:
+    """Cria <stash_dir>/<seção>/ + _ARQUIVOS_DO_CARD.txt (lista esperada). Sem bytes."""
+    stash_dir = Path(stash_dir)
+    by_section: dict = {}
+    for sf in iter_section_files(contents):
+        by_section.setdefault(sf.section, []).append(sf.filename)
+    folders = 0
+    expected = 0
+    for section, names in by_section.items():
+        folder = stash_dir / section
+        folder.mkdir(parents=True, exist_ok=True)
+        folders += 1
+        expected += len(names)
+        listing = "Arquivos esperados neste card (baixe do Moodle e coloque aqui):\n\n" + "\n".join(names) + "\n"
+        (folder / "_ARQUIVOS_DO_CARD.txt").write_text(listing, encoding="utf-8")
+    return {"folders": folders, "expected_files": expected}
+
+
+def import_moodle_courses(selected_courses, base_folder, store, client, download: bool = False) -> dict:
+    """Upsert de SubjectProfile + estrutura de cards + backfill do manifest.
 
     store: objeto com .names()/.get(name)/.add(profile).
-    client: objeto com .download_course(courseid, dest).
+    client: objeto com .get_course_contents(courseid) e .download_course(courseid, dest).
+    download: se True, baixa os bytes via client.download_course (default False).
     """
+    import json as _json
     from src.models.core import SubjectProfile
     base = Path(base_folder)
-    created = updated = linked = downloaded_files = 0
+    created = updated = linked = 0
+    folders = expected_files = backfilled = downloaded = 0
+    failed: list = []
     for course in selected_courses or []:
         info = parse_moodle_course(course)
         cid = info["moodle_course_id"]
         stash = str(base / info["slug"])
+        # --- upsert (id -> slug -> create) ---
         match_by_id = None
         match_by_slug = None
         for n in store.names():
@@ -246,9 +269,36 @@ def import_moodle_courses(selected_courses, base_folder, store, client) -> dict:
             )
             store.add(sp)
             created += 1
-        summary = client.download_course(cid, stash)
-        downloaded_files += int(summary.get("downloaded", 0))
-    return {"created": created, "updated": updated, "linked": linked, "downloaded_files": downloaded_files}
+        # --- metadados: estrutura de cards + backfill ---
+        contents = client.get_course_contents(cid)
+        st = build_card_structure(base / info["slug"], contents)
+        folders += st["folders"]
+        expected_files += st["expected_files"]
+        repo = getattr(sp, "repo_root", "") or ""
+        if repo and (Path(repo) / "manifest.json").is_file():
+            mpath = Path(repo) / "manifest.json"
+            manifest = _json.loads(mpath.read_text(encoding="utf-8"))
+            entries = manifest.get("entries", [])
+            assignments, _u, _a = backfill_source_section_from_api(entries, contents)
+            if assignments:
+                for e in entries:
+                    eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+                    if eid in assignments:
+                        e["source_section"] = assignments[eid]
+                        backfilled += 1
+                mpath.with_suffix(".json.apibak").write_text(
+                    mpath.read_text(encoding="utf-8"), encoding="utf-8"
+                )
+                mpath.write_text(_json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+        if download:
+            dl = client.download_course(cid, stash)
+            downloaded += int(dl.get("downloaded", 0))
+            failed += list(dl.get("failed", []))
+    return {
+        "created": created, "updated": updated, "linked": linked,
+        "folders": folders, "expected_files": expected_files,
+        "backfilled": backfilled, "downloaded": downloaded, "failed": failed,
+    }
 
 
 _DEFAULT_MOODLE_URL = "https://moodle.pucrs.br"

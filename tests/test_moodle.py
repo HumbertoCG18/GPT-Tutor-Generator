@@ -127,6 +127,7 @@ def test_import_moodle_courses_upserts_and_downloads(tmp_path):
 
     class FakeClient:
         def __init__(self): self.calls = []
+        def get_course_contents(self, cid): return []
         def download_course(self, cid, dest, skip_existing=True):
             self.calls.append((str(cid), str(dest)))
             return {"total": 3, "downloaded": 3, "skipped": 0}
@@ -135,13 +136,14 @@ def test_import_moodle_courses_upserts_and_downloads(tmp_path):
     courses = [{"id": 92717, "fullname": "X - Métodos Formais - Turma 031 - 2026/1 - Prof. Julio"}]
     base = tmp_path / "Moodle"
 
+    # download=False por default — não chama download_course
     rep = import_moodle_courses(courses, base, store, client)
     assert len(store.names()) == 1
     sp = store.data["Métodos Formais"]
     assert sp.moodle_course_id == "92717"
     assert sp.stash_folder == str(base / sp.slug)
-    assert client.calls == [("92717", str(base / sp.slug))]
-    assert rep["created"] == 1 and rep["downloaded_files"] == 3
+    assert client.calls == []          # sem download por default
+    assert rep["created"] == 1 and rep["downloaded"] == 0
 
     rep2 = import_moodle_courses(courses, base, store, client)
     assert len(store.names()) == 1
@@ -230,6 +232,66 @@ def test_download_course_skips_html_and_json_error_responses(tmp_path, monkeypat
     assert not (tmp_path / "S" / "bad.pdf").exists()   # NÃO salvou o HTML
 
 
+def test_build_card_structure_creates_folders_and_listing(tmp_path):
+    from src.builder.sources.moodle import build_card_structure
+    contents = [
+        {"name": "Plano de Ensino", "modules": [
+            {"contents": [{"type": "file", "filename": "plano.pdf", "fileurl": "https://m/a/plano.pdf"}]}]},
+        {"name": "Verificação de Programas", "modules": [
+            {"contents": [
+                {"type": "file", "filename": "Hoare.pdf", "fileurl": "https://m/b/Hoare.pdf"},
+                {"type": "file", "filename": "Dafny.pdf", "fileurl": "https://m/b/Dafny.pdf"}]}]},
+        {"name": "Vazia", "modules": []},
+    ]
+    rep = build_card_structure(tmp_path, contents)
+    assert (tmp_path / "Plano de Ensino").is_dir()
+    assert (tmp_path / "Verificação de Programas").is_dir()
+    assert not (tmp_path / "Vazia").exists()          # seção sem arquivo: não cria
+    listing = (tmp_path / "Verificação de Programas" / "_ARQUIVOS_DO_CARD.txt").read_text(encoding="utf-8")
+    assert "Hoare.pdf" in listing and "Dafny.pdf" in listing
+    assert rep["folders"] == 2
+    assert rep["expected_files"] == 3
+
+
+def test_import_moodle_courses_builds_structure_and_backfills(tmp_path):
+    from src.builder.sources.moodle import import_moodle_courses
+    from src.models.core import SubjectProfile
+    import json
+
+    # repo da matéria existente com manifest (pra backfill)
+    repo = tmp_path / "repo"
+    (repo).mkdir()
+    (repo / "manifest.json").write_text(json.dumps({"entries": [
+        {"id": "plano", "source_path": "C:/x/plano.pdf"}]}), encoding="utf-8")
+
+    class FakeStore:
+        def __init__(self): self.data = {}
+        def names(self): return list(self.data.keys())
+        def get(self, n): return self.data.get(n)
+        def add(self, p): self.data[p.name] = p
+    store = FakeStore()
+    store.add(SubjectProfile(name="Métodos Formais", slug="metodos-formais", repo_root=str(repo)))
+
+    contents = [{"name": "Plano de Ensino", "modules": [
+        {"contents": [{"type": "file", "filename": "plano.pdf", "fileurl": "https://m/a/plano.pdf"}]}]}]
+
+    class FakeClient:
+        def get_course_contents(self, cid): return contents
+        def download_course(self, cid, dest, skip_existing=True):
+            return {"total": 1, "downloaded": 0, "skipped": 0, "failed": ["plano.pdf"]}
+
+    base = tmp_path / "Moodle"
+    courses = [{"id": 92717, "fullname": "X - Métodos Formais - Turma 031 - 2026/1 - Prof. J"}]
+    rep = import_moodle_courses(courses, base, store, FakeClient(), download=False)
+
+    assert rep["linked"] == 1
+    assert (base / "metodos-formais" / "Plano de Ensino").is_dir()   # estrutura criada
+    # backfill aplicado no manifest do repo
+    man = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+    assert man["entries"][0]["source_section"] == "Plano de Ensino"
+    assert rep["backfilled"] == 1
+
+
 def test_import_links_existing_subject_by_slug_keeping_repo(tmp_path):
     from src.builder.sources.moodle import import_moodle_courses
     from src.models.core import SubjectProfile
@@ -241,6 +303,7 @@ def test_import_links_existing_subject_by_slug_keeping_repo(tmp_path):
         def add(self, p): self.data[p.name] = p
 
     class FakeClient:
+        def get_course_contents(self, cid): return []
         def download_course(self, cid, dest, skip_existing=True):
             return {"total": 1, "downloaded": 1, "skipped": 0}
 
