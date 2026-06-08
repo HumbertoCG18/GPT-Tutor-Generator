@@ -146,3 +146,60 @@ def test_import_moodle_courses_upserts_and_downloads(tmp_path):
     rep2 = import_moodle_courses(courses, base, store, client)
     assert len(store.names()) == 1
     assert rep2["updated"] == 1 and rep2["created"] == 0
+
+
+def test_latest_semester_picks_most_recent():
+    from src.builder.sources.moodle import latest_semester
+    courses = [
+        {"id": 1, "fullname": "A - X - Turma 1 - 2025/2 - Prof. P"},
+        {"id": 2, "fullname": "B - Y - Turma 1 - 2026/1 - Prof. Q"},
+        {"id": 3, "fullname": "C - Z - 2024/1"},
+        {"id": 4, "fullname": "Curso sem semestre"},
+    ]
+    assert latest_semester(courses) == "2026/1"
+
+
+def test_latest_semester_empty_when_none():
+    from src.builder.sources.moodle import latest_semester
+    assert latest_semester([{"id": 9, "fullname": "Sem data"}]) == ""
+
+
+def test_filter_courses_by_semester():
+    from src.builder.sources.moodle import filter_courses_by_semester
+    courses = [
+        {"id": 1, "fullname": "A - X - Turma 1 - 2025/2 - Prof. P"},
+        {"id": 2, "fullname": "B - Y - Turma 1 - 2026/1 - Prof. Q"},
+    ]
+    out = filter_courses_by_semester(courses, "2026/1")
+    assert [c["id"] for c in out] == [2]
+
+
+def test_import_links_existing_subject_by_slug_keeping_repo(tmp_path):
+    from src.builder.sources.moodle import import_moodle_courses
+    from src.models.core import SubjectProfile
+
+    class FakeStore:
+        def __init__(self): self.data = {}
+        def names(self): return list(self.data.keys())
+        def get(self, n): return self.data.get(n)
+        def add(self, p): self.data[p.name] = p
+
+    class FakeClient:
+        def download_course(self, cid, dest, skip_existing=True):
+            return {"total": 1, "downloaded": 1, "skipped": 0}
+
+    store = FakeStore()
+    # matéria pré-existente, criada manualmente: tem repo_root, SEM moodle_course_id
+    existing = SubjectProfile(name="Métodos Formais", slug="metodos-formais",
+                              repo_root="C:/repos/Metodos-Formais-Tutor")
+    store.add(existing)
+
+    courses = [{"id": 92717, "fullname": "X - Métodos Formais - Turma 031 - 2026/1 - Prof. Julio"}]
+    rep = import_moodle_courses(courses, tmp_path / "Moodle", store, FakeClient())
+
+    assert rep["created"] == 0
+    assert rep["linked"] == 1
+    sp = store.data["Métodos Formais"]
+    assert sp.moodle_course_id == "92717"                       # ligou
+    assert sp.repo_root == "C:/repos/Metodos-Formais-Tutor"     # PRESERVOU o repo
+    assert sp.stash_folder == str((tmp_path / "Moodle") / sp.slug)

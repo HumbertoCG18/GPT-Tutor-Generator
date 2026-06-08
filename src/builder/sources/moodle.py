@@ -141,6 +141,20 @@ class MoodleClient:
         return {"total": len(files), "downloaded": downloaded, "skipped": skipped}
 
 
+def latest_semester(courses) -> str:
+    """Retorna o semestre mais recente encontrado nos cursos (ex: '2026/1')."""
+    sems = [parse_moodle_course(c)["semester"] for c in (courses or [])]
+    sems = [s for s in sems if s]
+    return max(sems) if sems else ""
+
+
+def filter_courses_by_semester(courses, semester) -> list:
+    """Filtra cursos pelo semestre informado. Se semester vazio, retorna todos."""
+    if not semester:
+        return list(courses or [])
+    return [c for c in (courses or []) if parse_moodle_course(c)["semester"] == semester]
+
+
 def import_moodle_courses(selected_courses, base_folder, store, client) -> dict:
     """Upsert de SubjectProfile + download do stash por curso selecionado.
 
@@ -149,25 +163,37 @@ def import_moodle_courses(selected_courses, base_folder, store, client) -> dict:
     """
     from src.models.core import SubjectProfile
     base = Path(base_folder)
-    created = updated = downloaded_files = 0
+    created = updated = linked = downloaded_files = 0
     for course in selected_courses or []:
         info = parse_moodle_course(course)
         cid = info["moodle_course_id"]
-        existing_name = None
+        stash = str(base / info["slug"])
+        match_by_id = None
+        match_by_slug = None
         for n in store.names():
             sp = store.get(n)
-            if sp and getattr(sp, "moodle_course_id", "") == cid and cid:
-                existing_name = n
+            if not sp:
+                continue
+            if cid and getattr(sp, "moodle_course_id", "") == cid:
+                match_by_id = sp
                 break
-        stash = str(base / info["slug"])
-        if existing_name:
-            sp = store.get(existing_name)
+            if not match_by_slug and getattr(sp, "slug", "") and sp.slug == info["slug"]:
+                match_by_slug = sp
+        if match_by_id is not None:
+            sp = match_by_id
             sp.stash_folder = stash
-            sp.moodle_course_id = cid
             if not sp.professor:
                 sp.professor = info["professor"]
             store.add(sp)
             updated += 1
+        elif match_by_slug is not None:
+            sp = match_by_slug
+            sp.moodle_course_id = cid
+            sp.stash_folder = stash                # NÃO toca repo_root (preserva)
+            if not sp.professor:
+                sp.professor = info["professor"]
+            store.add(sp)
+            linked += 1
         else:
             sp = SubjectProfile(
                 name=info["name"], slug=info["slug"], professor=info["professor"],
@@ -177,7 +203,7 @@ def import_moodle_courses(selected_courses, base_folder, store, client) -> dict:
             created += 1
         summary = client.download_course(cid, stash)
         downloaded_files += int(summary.get("downloaded", 0))
-    return {"created": created, "updated": updated, "downloaded_files": downloaded_files}
+    return {"created": created, "updated": updated, "linked": linked, "downloaded_files": downloaded_files}
 
 
 _DEFAULT_MOODLE_URL = "https://moodle.pucrs.br"
