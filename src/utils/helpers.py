@@ -647,3 +647,23 @@ def fetch_url_title(url: str, timeout: float = 5.0) -> str:
     except Exception:
         pass
     return ""
+
+
+def load_processing_profiles(config_obj):
+    """Lista de ProcessingProfile salva no config (vazia se ausente)."""
+    from src.models.core import ProcessingProfile
+    raw = config_obj.get("processing_profiles") or []
+    return [ProcessingProfile.from_dict(d) for d in raw]
+
+
+def get_processing_profile(config_obj, name):
+    """ProcessingProfile pelo nome, ou None."""
+    for p in load_processing_profiles(config_obj):
+        if p.name == name:
+            return p
+    return None
+
+
+def save_processing_profiles(config_obj, profiles):
+    """Grava a lista de ProcessingProfile no config."""
+    config_obj.set("processing_profiles", [p.to_dict() for p in profiles])

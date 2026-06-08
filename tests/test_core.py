@@ -4992,3 +4992,26 @@ def test_subject_profile_processing_profile_roundtrip():
 def test_subject_profile_processing_profile_defaults_empty():
     from src.models.core import SubjectProfile
     assert SubjectProfile.from_dict({"name": "x", "slug": "x"}).processing_profile == ""
+
+
+def test_appconfig_seeds_processing_profiles():
+    from src.ui.theme import AppConfig
+    names = [p["name"] for p in AppConfig.DEFAULTS["processing_profiles"]]
+    assert "Math" in names and "Padrão" in names
+
+def test_processing_profile_helpers_load_get_save():
+    from src.utils.helpers import (load_processing_profiles, get_processing_profile,
+                                    save_processing_profiles)
+    class _Cfg:
+        def __init__(self): self.d = {"processing_profiles": [
+            {"name": "Math", "processing_mode": "high_fidelity", "preferred_backend": "datalab",
+             "datalab_mode": "accurate", "document_profile": "math_heavy"}]}
+        def get(self, k, default=None): return self.d.get(k, default)
+        def set(self, k, v): self.d[k] = v
+    cfg = _Cfg()
+    profs = load_processing_profiles(cfg)
+    assert profs[0].name == "Math" and profs[0].preferred_backend == "datalab"
+    assert get_processing_profile(cfg, "Math").document_profile == "math_heavy"
+    assert get_processing_profile(cfg, "missing") is None
+    save_processing_profiles(cfg, profs + [type(profs[0])(name="Fast")])
+    assert "Fast" in [p["name"] for p in cfg.get("processing_profiles")]

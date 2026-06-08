@@ -96,6 +96,12 @@ class AppConfig:
             "diagram_heavy": "docling",
             "scanned": "auto",
         },
+        "processing_profiles": [
+            {"name": "Padrão", "processing_mode": "auto", "preferred_backend": "auto",
+             "datalab_mode": "accurate", "document_profile": "auto"},
+            {"name": "Math", "processing_mode": "high_fidelity", "preferred_backend": "datalab",
+             "datalab_mode": "accurate", "document_profile": "math_heavy"},
+        ],
         "image_format": "png",
         "stall_timeout": 300,
         "marker_chunking_mode": "fallback",
