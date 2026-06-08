@@ -22,7 +22,8 @@ def test_iter_section_files_extracts_files_by_section():
         ]},
     ]
     files = iter_section_files(contents)
-    assert SectionFile("Plano de Ensino", "plano.pdf", "https://m/pluginfile.php/1/plano.pdf") in files
+    assert any(f.section == "Plano de Ensino" and f.filename == "plano.pdf"
+               and f.fileurl == "https://m/pluginfile.php/1/plano.pdf" for f in files)
     assert any(f.section == "Verificação de Programas" and f.filename == "hoare.pdf" for f in files)
     assert all(f.filename != "link" for f in files)   # url ignorado
     assert len(files) == 2
@@ -206,6 +207,45 @@ def test_backfill_source_section_from_api_matches_by_basename():
     assert "ghost" in unmatched
 
 
+def test_iter_section_files_disambiguates_by_module_name():
+    # professor nomeia todo PDF "main.pdf"; o nome do módulo distingue as aulas.
+    contents = [{"name": "Semana 2", "modules": [
+        {"name": "Aula 03 - Funções Recursivas", "contents": [
+            {"type": "file", "filename": "main.pdf", "fileurl": "https://m/pluginfile.php/1/main.pdf"}]},
+        {"name": "Aula 04 - Composição", "contents": [
+            {"type": "file", "filename": "main.pdf", "fileurl": "https://m/pluginfile.php/2/main.pdf"}]},
+    ]}]
+    files = iter_section_files(contents)
+    disk = sorted(f.disk_name for f in files)
+    assert disk == ["Aula 03 - Funções Recursivas.pdf", "Aula 04 - Composição.pdf"]
+    # filename ORIGINAL preservado (backfill casa por basename da API)
+    assert all(f.filename == "main.pdf" for f in files)
+
+
+def test_download_course_no_silent_collision_loss(tmp_path, monkeypatch):
+    from src.builder.sources import moodle
+    def fake_contents(self, courseid):
+        return [{"name": "Semana 2", "modules": [
+            {"name": "Aula 03", "contents": [
+                {"type": "file", "filename": "main.pdf", "fileurl": "https://m/pluginfile.php/1/main.pdf"}]},
+            {"name": "Aula 04", "contents": [
+                {"type": "file", "filename": "main.pdf", "fileurl": "https://m/pluginfile.php/2/main.pdf"}]},
+        ]}]
+    monkeypatch.setattr(moodle.MoodleClient, "get_course_contents", fake_contents)
+    class _Resp:
+        def __init__(self, ct, data): self.headers={"content-type":ct}; self._d=data
+        def __enter__(self): return self
+        def __exit__(self,*a): return False
+        def read(self): return self._d
+    monkeypatch.setattr(moodle.urllib.request, "urlopen",
+                        lambda u, timeout=0: _Resp("application/pdf", b"%PDF-1.7 x"))
+    c = moodle.MoodleClient("https://m", "tok")
+    rep = c.download_course("1", tmp_path)
+    assert rep["downloaded"] == 2 and rep["skipped"] == 0     # nada perdido
+    assert (tmp_path / "Semana 2" / "Aula 03.pdf").exists()
+    assert (tmp_path / "Semana 2" / "Aula 04.pdf").exists()
+
+
 def test_download_course_skips_html_and_json_error_responses(tmp_path, monkeypatch):
     from src.builder.sources import moodle
     # contents: 2 arquivos
@@ -230,6 +270,39 @@ def test_download_course_skips_html_and_json_error_responses(tmp_path, monkeypat
     assert "bad.pdf" in rep["failed"]
     assert (tmp_path / "S" / "good.pdf").exists()
     assert not (tmp_path / "S" / "bad.pdf").exists()   # NÃO salvou o HTML
+
+
+def test_download_course_rejects_wrong_magic_bytes_despite_content_type(tmp_path, monkeypatch):
+    """Servidor mente o content-type (application/pdf) mas o corpo não é PDF.
+
+    Defesa em profundidade: valida a assinatura do arquivo antes de gravar.
+    Causa-raiz histórica: token inválido -> página de erro salva como .pdf.
+    """
+    from src.builder.sources import moodle
+    def fake_contents(self, courseid):
+        return [{"name": "S", "modules": [{"contents": [
+            {"type": "file", "filename": "good.pdf", "fileurl": "https://m/pluginfile.php/1/good.pdf"},
+            {"type": "file", "filename": "fake.pdf", "fileurl": "https://m/pluginfile.php/2/fake.pdf"},
+            {"type": "file", "filename": "slides.pptx", "fileurl": "https://m/pluginfile.php/3/slides.pptx"},
+        ]}]}]
+    monkeypatch.setattr(moodle.MoodleClient, "get_course_contents", fake_contents)
+    class _Resp:
+        def __init__(self, ct, data): self.headers={"content-type":ct}; self._d=data
+        def __enter__(self): return self
+        def __exit__(self,*a): return False
+        def read(self): return self._d
+    def fake_urlopen(u, timeout=0):
+        if "good.pdf" in u:   return _Resp("application/pdf", b"%PDF-1.7 ok")
+        if "fake.pdf" in u:   return _Resp("application/pdf", b'{"error":"invalidtoken"}')  # mente ct
+        return _Resp("application/octet-stream", b"PK\x03\x04zipdata")                       # pptx = zip
+    monkeypatch.setattr(moodle.urllib.request, "urlopen", fake_urlopen)
+    c = moodle.MoodleClient("https://m", "tok")
+    rep = c.download_course("1", tmp_path)
+    assert (tmp_path / "S" / "good.pdf").exists()
+    assert (tmp_path / "S" / "slides.pptx").exists()         # PK = assinatura zip válida p/ pptx
+    assert not (tmp_path / "S" / "fake.pdf").exists()        # magic byte errado -> NÃO grava
+    assert "fake.pdf" in rep["failed"]
+    assert rep["downloaded"] == 2
 
 
 def test_build_card_structure_creates_folders_and_listing(tmp_path):

@@ -62,11 +62,57 @@ def sanitize_folder_name(name: str) -> str:
     return name or "sem-secao"
 
 
+# Assinatura (magic bytes) por extensão. Defesa em profundidade: mesmo que o
+# servidor minta o content-type, um corpo que não casa com a extensão (ex.: JSON
+# de "token inválido" salvo como .pdf) é rejeitado em vez de gravar corrompido.
+_FILE_SIGNATURES = {
+    ".pdf": (b"%PDF",),
+    ".zip": (b"PK\x03\x04", b"PK\x05\x06", b"PK\x07\x08"),
+    ".docx": (b"PK\x03\x04",), ".pptx": (b"PK\x03\x04",), ".xlsx": (b"PK\x03\x04",),
+    ".odt": (b"PK\x03\x04",), ".odp": (b"PK\x03\x04",), ".ods": (b"PK\x03\x04",),
+    ".doc": (b"\xd0\xcf\x11\xe0",), ".ppt": (b"\xd0\xcf\x11\xe0",), ".xls": (b"\xd0\xcf\x11\xe0",),
+    ".png": (b"\x89PNG\r\n\x1a\n",),
+    ".jpg": (b"\xff\xd8\xff",), ".jpeg": (b"\xff\xd8\xff",),
+    ".gif": (b"GIF87a", b"GIF89a"),
+    ".rtf": (b"{\\rtf",),
+    ".gz": (b"\x1f\x8b",), ".rar": (b"Rar!",), ".7z": (b"7z\xbc\xaf\x27\x1c"),
+}
+
+
+def looks_like_expected(filename: str, data: bytes) -> bool:
+    """True se os primeiros bytes casam com a extensão (ou extensão desconhecida).
+
+    Extensão sem assinatura conhecida -> True (não dá pra validar; confia no
+    guard de content-type). Conhecida e divergente -> False (não grava)."""
+    ext = Path(filename).suffix.lower()
+    sigs = _FILE_SIGNATURES.get(ext)
+    if not sigs:
+        return True
+    return any(data.startswith(s) for s in sigs)
+
+
 @dataclass(frozen=True)
 class SectionFile:
     section: str
-    filename: str
+    filename: str          # nome ORIGINAL do conteúdo Moodle (ex.: "main.pdf") — usado no backfill
     fileurl: str
+    savename: str = ""     # nome p/ disco, derivado do título do módulo (resolve colisão de "main.pdf")
+
+    @property
+    def disk_name(self) -> str:
+        return self.savename or self.filename
+
+
+def _savename_from_module(modname: str, original: str, n_in_module: int) -> str:
+    """Nome de disco a partir do título do módulo, preservando a extensão.
+
+    Módulo com 1 arquivo -> '<título>.<ext>'. Com vários -> '<título> - <original>'
+    (evita colisão interna). Título vazio -> nome original."""
+    base = sanitize_folder_name(modname) if str(modname or "").strip() else ""
+    if not base:
+        return original
+    ext = Path(original).suffix
+    return f"{base}{ext}" if n_in_module == 1 else f"{base} - {original}"
 
 
 def iter_section_files(contents) -> List[SectionFile]:
@@ -74,9 +120,12 @@ def iter_section_files(contents) -> List[SectionFile]:
     for sec in contents or []:
         section = sanitize_folder_name(str(sec.get("name") or ""))
         for mod in sec.get("modules", []) or []:
-            for f in mod.get("contents", []) or []:
-                if f.get("type") == "file" and f.get("filename") and f.get("fileurl"):
-                    out.append(SectionFile(section, str(f["filename"]), str(f["fileurl"])))
+            file_contents = [f for f in (mod.get("contents", []) or [])
+                             if f.get("type") == "file" and f.get("filename") and f.get("fileurl")]
+            for f in file_contents:
+                original = str(f["filename"])
+                savename = _savename_from_module(mod.get("name"), original, len(file_contents))
+                out.append(SectionFile(section, original, str(f["fileurl"]), savename))
     return out
 
 
@@ -164,10 +213,19 @@ class MoodleClient:
         files = iter_section_files(self.get_course_contents(courseid))
         downloaded = skipped = 0
         failed = []
+        seen: set = set()   # targets gravados nesta execução — evita perda silenciosa por colisão
         for sf in files:
             folder = dest / sf.section
             folder.mkdir(parents=True, exist_ok=True)
-            target = folder / sf.filename
+            target = folder / sf.disk_name
+            # Colisão dentro desta execução (dois módulos -> mesmo nome): desambigua.
+            if target in seen:
+                stem, suf = target.stem, target.suffix
+                i = 2
+                while (folder / f"{stem} ({i}){suf}") in seen:
+                    i += 1
+                target = folder / f"{stem} ({i}){suf}"
+            seen.add(target)
             if skip_existing and target.exists():
                 skipped += 1
                 continue
@@ -177,6 +235,10 @@ class MoodleClient:
                     data = r.read()
                 # Moodle erros e redirects M365 vêm como JSON/HTML — não são o arquivo.
                 if ctype.startswith("text/html") or ctype.startswith("application/json"):
+                    failed.append(sf.filename)
+                    continue
+                # Defesa em profundidade: content-type pode mentir. Valida magic bytes.
+                if not looks_like_expected(sf.filename, data):
                     failed.append(sf.filename)
                     continue
                 target.write_bytes(data)
@@ -205,7 +267,7 @@ def build_card_structure(stash_dir, contents) -> dict:
     stash_dir = Path(stash_dir)
     by_section: dict = {}
     for sf in iter_section_files(contents):
-        by_section.setdefault(sf.section, []).append(sf.filename)
+        by_section.setdefault(sf.section, []).append(sf.disk_name)
     folders = 0
     expected = 0
     for section, names in by_section.items():

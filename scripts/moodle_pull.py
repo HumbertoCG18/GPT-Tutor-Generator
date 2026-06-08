@@ -56,7 +56,7 @@ def main(argv: list) -> int:
         files = iter_section_files(client.get_course_contents(course_id))
         print(f"[dry-run] {len(files)} arquivos em {len({f.section for f in files})} seções -> {dest}")
         for f in files:
-            print(f"  {f.section}/{f.filename}")
+            print(f"  {f.section}/{f.disk_name}")
         return 0
     summary = client.download_course(course_id, dest)
     print(f"OK -> {dest}")

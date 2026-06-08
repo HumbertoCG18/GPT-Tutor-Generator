@@ -70,6 +70,18 @@ def main(argv: list) -> int:
         if i + 1 < len(argv):
             course_id = argv[i + 1]
 
+    # --dump <id>: despeja o JSON cru de core_course_get_contents (diagnóstico
+    # M365). Não imprime token. Útil pra ver mod_url/externalurl e redirects.
+    if "--dump" in argv:
+        i = argv.index("--dump")
+        dump_id = argv[i + 1] if i + 1 < len(argv) else course_id
+        if not dump_id:
+            print("Uso: python -m scripts.moodle_probe --dump <course_id>")
+            return 2
+        contents = _call(base, token, "core_course_get_contents", courseid=dump_id)
+        print(json.dumps(contents, ensure_ascii=False, indent=2))
+        return 0
+
     # 1) Confirma o token (sem imprimi-lo).
     info = _call(base, token, "core_webservice_get_site_info")
     userid = info.get("userid")

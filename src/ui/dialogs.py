@@ -1605,6 +1605,11 @@ class MoodleCourseSelectDialog(tk.Toplevel):
         canvas.pack(side="left", fill="both", expand=True, padx=(10, 0))
         scroll.pack(side="right", fill="y")
 
+        self._download_var = tk.BooleanVar(value=True)
+        ttk.Checkbutton(
+            self, text="Baixar arquivos PDF (desmarque para só montar a estrutura dos cards)",
+            variable=self._download_var,
+        ).pack(anchor="w", padx=10, pady=(6, 0))
         ttk.Button(self, text="📥  Importar marcados", command=self._import).pack(fill="x", padx=10, pady=10)
         self._render_list()
 
@@ -1643,21 +1648,33 @@ class MoodleCourseSelectDialog(tk.Toplevel):
             messagebox.showinfo("Moodle", "Marque ao menos um curso.")
             return
 
+        do_download = self._download_var.get()
+
         def worker():
             store = SubjectStore()
             try:
-                rep = import_moodle_courses(selected, self._base, store, self._client)
+                rep = import_moodle_courses(
+                    selected, self._base, store, self._client, download=do_download)
             except Exception as exc:
                 msg = str(exc)
                 self._post(lambda m=msg: messagebox.showerror("Moodle", f"Falha no import: {m}"))
                 return
-            self._post(lambda: messagebox.showinfo(
-                "Moodle",
+            base_msg = (
                 f"Matérias — criadas: {rep['created']}  atualizadas: {rep['updated']}  ligadas: {rep['linked']}\n"
                 f"Cards criados: {rep['folders']}  ({rep['expected_files']} arquivos esperados)\n"
-                f"source_section preenchidos (gabarito): {rep['backfilled']}\n\n"
-                f"Os bytes ficam no M365 — baixe os PDFs no navegador e coloque nas "
-                f"pastas dos cards (veja _ARQUIVOS_DO_CARD.txt em cada uma)."))
+                f"source_section preenchidos (gabarito): {rep['backfilled']}\n\n")
+            if do_download:
+                failed = rep.get("failed") or []
+                tail = f"Arquivos baixados: {rep['downloaded']}"
+                if failed:
+                    tail += (f"\nNão baixados ({len(failed)}): {', '.join(failed[:8])}"
+                             f"{' …' if len(failed) > 8 else ''}\n"
+                             "Possível token expirado/arquivo externo (M365). "
+                             "Reimporte ou baixe esses no navegador.")
+            else:
+                tail = ("Bytes não baixados (opção desmarcada) — baixe os PDFs no navegador "
+                        "e coloque nas pastas dos cards (veja _ARQUIVOS_DO_CARD.txt em cada uma).")
+            self._post(lambda: messagebox.showinfo("Moodle", base_msg + tail))
             self._post(self.destroy)
 
         threading.Thread(target=worker, daemon=True).start()
