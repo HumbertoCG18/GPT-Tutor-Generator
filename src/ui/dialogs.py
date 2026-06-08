@@ -1726,7 +1726,9 @@ class MoodleCourseSelectDialog(tk.Toplevel):
                                      f"falhas: {len(mrep['failed'])}  source_section: {backf}{multi}\n"
                                      f"Cards: {mapped}")
                     except Exception as exc:
-                        m365_tail = f"\n\nM365 indisponível: {str(exc)[:160]}"
+                        import logging
+                        logging.getLogger("m365").exception("Falha no import M365")
+                        m365_tail = f"\n\nM365 indisponível: {str(exc)[:160]}\n(detalhes/traceback no terminal)"
             self._post(lambda: messagebox.showinfo("Moodle", base_msg + tail + m365_tail))
             self._post(self.destroy)
 

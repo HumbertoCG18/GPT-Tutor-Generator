@@ -8,6 +8,7 @@ download via /me/insights/shared/{id}/resource. Auth device-code (client públic
 from __future__ import annotations
 
 import json
+import logging
 import re
 import time
 import unicodedata
@@ -19,6 +20,8 @@ import requests
 from src.builder.sources.moodle import (
     looks_like_expected, sanitize_folder_name, default_token_path,
 )
+
+log = logging.getLogger("m365")
 
 _CLIENT_ID = "14d82eec-204b-4c2f-b7e8-296a70dab67e"  # Microsoft Graph Command Line Tools
 _AUTHORITY = "https://login.microsoftonline.com/organizations/oauth2/v2.0"
@@ -103,6 +106,7 @@ class M365Client:
                 out.append({"id": it.get("id"), "title": rv.get("title"),
                             "type": rv.get("type"), "web_url": rr.get("webUrl", "")})
             url = data.get("@odata.nextLink")
+        log.info("insights/shared: %d itens", len(out))
         return out
 
     def resolve(self, insight_id: str) -> dict:
@@ -161,6 +165,7 @@ def device_login(prompt_callback=None) -> str:
     r.raise_for_status()
     d = r.json()
     info = {"verification_uri": d["verification_uri"], "user_code": d["user_code"]}
+    log.info("device-code: abra %s e digite %s", info["verification_uri"], info["user_code"])
     if prompt_callback:
         prompt_callback(info)
     else:
@@ -174,6 +179,7 @@ def device_login(prompt_callback=None) -> str:
             "client_id": _CLIENT_ID, "device_code": d["device_code"]}).json()
         if "access_token" in j:
             _save_token(j)
+            log.info("autenticado com sucesso")
             return j["access_token"]
         err = j.get("error")
         if err == "slow_down":
@@ -181,6 +187,7 @@ def device_login(prompt_callback=None) -> str:
             continue
         if err == "authorization_pending":
             continue
+        log.error("device-code falhou: %s — %s", err, j.get("error_description", "")[:200])
         raise RuntimeError(f"device-code falhou: {err}")
     raise RuntimeError("Tempo de login M365 esgotado.")
 
@@ -188,7 +195,10 @@ def device_login(prompt_callback=None) -> str:
 def get_client(prompt_callback=None) -> "M365Client":
     """Cliente pronto: usa refresh token salvo ou faz device-login."""
     tok = load_cached_token()
-    if not tok:
+    if tok:
+        log.info("usando refresh token salvo")
+    else:
+        log.info("sem token salvo — iniciando device-login")
         tok = device_login(prompt_callback)
     return M365Client(tok)
 
@@ -201,6 +211,7 @@ def download_subject_m365(client, m365_filter, moodle_sections, dest,
     """
     dest = Path(dest)
     items = select_for_subject(client.list_shared(), m365_filter)
+    log.info("filtro '%s': %d item(ns) -> %s", m365_filter, len(items), dest)
     downloaded, failed = 0, []
     name_to_section: dict = {}
     card_cache: dict = {}      # subfolder -> (card, matched)
@@ -215,9 +226,11 @@ def download_subject_m365(client, m365_filter, moodle_sections, dest,
             name = res.get("name") or it.get("title") or "arquivo"
             data = client.download(res)
         except Exception:
+            log.exception("falha ao baixar item %r (subpasta %s)", it.get("title") or it.get("id"), sub)
             failed.append(it.get("title") or it.get("id"))
             continue
         if not looks_like_expected(name, data):
+            log.warning("magic-byte inválido, pulando: %s (%d bytes)", name, len(data))
             failed.append(name)
             continue
         folder = dest / card
@@ -232,9 +245,12 @@ def download_subject_m365(client, m365_filter, moodle_sections, dest,
         seen.add(target)
         name_to_section[target.name.casefold()] = card
         if skip_existing and target.exists():
+            log.info("já existe, pulando: %s/%s", card, target.name)
             continue
         target.write_bytes(data)
         downloaded += 1
+        log.info("baixado: %s/%s (%d bytes)", card, target.name, len(data))
+    log.info("concluído: %d baixados, %d falhas", downloaded, len(failed))
     return {"total": len(items), "downloaded": downloaded, "failed": failed,
             "mapping": [(s, c, m) for s, (c, m) in card_cache.items()],
             "name_to_section": name_to_section}
