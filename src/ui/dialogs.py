@@ -497,6 +497,123 @@ class SettingsDialog(tk.Toplevel):
         self.destroy()
 
 
+class ProcessingProfileManagerDialog(tk.Toplevel):
+    """CRUD de perfis de processamento nomeados (settings.json)."""
+
+    def __init__(self, parent, config_obj, theme_mgr=None):
+        super().__init__(parent)
+        self.config_obj = config_obj
+        self.title("Perfis de processamento")
+        self.geometry("620x420")
+        self.transient(parent)
+        self.grab_set()
+
+        from src.utils.helpers import load_processing_profiles, save_processing_profiles
+        self._load_all = load_processing_profiles
+        self._save_all = save_processing_profiles
+        self._current = None
+
+        pw = ttk.Panedwindow(self, orient="horizontal")
+        pw.pack(fill="both", expand=True, padx=10, pady=10)
+
+        left = ttk.Frame(pw)
+        pw.add(left, weight=1)
+        self._listbox = tk.Listbox(left, exportselection=False)
+        self._listbox.pack(fill="both", expand=True)
+        self._listbox.bind("<<ListboxSelect>>", self._on_select)
+        bf = ttk.Frame(left)
+        bf.pack(fill="x", pady=(8, 0))
+        ttk.Button(bf, text="➕ Novo", command=self._new).pack(side="left")
+        ttk.Button(bf, text="✖ Excluir", command=self._delete).pack(side="right")
+
+        right = ttk.Frame(pw)
+        pw.add(right, weight=2)
+        form = ttk.LabelFrame(right, text="  Perfil", padding=12)
+        form.pack(fill="both", expand=True)
+        self._vars = {
+            "name": tk.StringVar(),
+            "processing_mode": tk.StringVar(value="auto"),
+            "preferred_backend": tk.StringVar(value="auto"),
+            "datalab_mode": tk.StringVar(value="accurate"),
+            "document_profile": tk.StringVar(value="auto"),
+        }
+        rows = [
+            ("name", "Nome", None),
+            ("processing_mode", "Modo", PROCESSING_MODES),
+            ("preferred_backend", "Backend preferido", PREFERRED_BACKENDS),
+            ("datalab_mode", "Datalab mode", ["fast", "balanced", "accurate"]),
+            ("document_profile", "Perfil de documento", DOCUMENT_PROFILES),
+        ]
+        for i, (key, label, vals) in enumerate(rows):
+            ttk.Label(form, text=label).grid(row=i, column=0, sticky="w", pady=4)
+            if vals is None:
+                ttk.Entry(form, textvariable=self._vars[key], width=28).grid(row=i, column=1, sticky="ew", padx=(8, 0))
+            else:
+                ttk.Combobox(form, textvariable=self._vars[key], values=vals,
+                             state="readonly", width=24).grid(row=i, column=1, sticky="ew", padx=(8, 0))
+        form.columnconfigure(1, weight=1)
+        ttk.Button(right, text="💾 Salvar perfil", command=self._save).pack(fill="x", pady=(8, 0))
+
+        self._refresh_list()
+
+    def _profiles(self):
+        return self._load_all(self.config_obj)
+
+    def _refresh_list(self):
+        self._listbox.delete(0, "end")
+        for p in self._profiles():
+            self._listbox.insert("end", p.name)
+
+    def _on_select(self, _e=None):
+        sel = self._listbox.curselection()
+        if not sel:
+            return
+        name = self._listbox.get(sel[0])
+        for p in self._profiles():
+            if p.name == name:
+                self._current = name
+                for k, var in self._vars.items():
+                    var.set(getattr(p, k, ""))
+                break
+
+    def _new(self):
+        self._current = None
+        self._vars["name"].set("")
+        self._vars["processing_mode"].set("auto")
+        self._vars["preferred_backend"].set("auto")
+        self._vars["datalab_mode"].set("accurate")
+        self._vars["document_profile"].set("auto")
+
+    def _save(self):
+        from src.models.core import ProcessingProfile
+        name = self._vars["name"].get().strip()
+        if not name:
+            messagebox.showwarning("Perfil", "Preencha o nome.", parent=self)
+            return
+        prof = ProcessingProfile(
+            name=name,
+            processing_mode=self._vars["processing_mode"].get(),
+            preferred_backend=self._vars["preferred_backend"].get(),
+            datalab_mode=self._vars["datalab_mode"].get(),
+            document_profile=self._vars["document_profile"].get(),
+        )
+        profiles = [p for p in self._profiles() if p.name != name]   # upsert por nome
+        profiles.append(prof)
+        self._save_all(self.config_obj, profiles)
+        self._current = name
+        self._refresh_list()
+        messagebox.showinfo("Perfil", f"Perfil '{name}' salvo.", parent=self)
+
+    def _delete(self):
+        if not self._current:
+            return
+        profiles = [p for p in self._profiles() if p.name != self._current]
+        self._save_all(self.config_obj, profiles)
+        self._current = None
+        self._new()
+        self._refresh_list()
+
+
 # ---------------------------------------------------------------------------
 # GUI — Help Window
 # ---------------------------------------------------------------------------
