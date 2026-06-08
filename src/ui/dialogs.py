@@ -1684,7 +1684,11 @@ class MoodleCourseSelectDialog(tk.Toplevel):
                 pass
             try:
                 import webbrowser
-                webbrowser.open(info["verification_uri"])
+                url = info["verification_uri"]
+                try:
+                    webbrowser.get("chrome").open(url)      # tenta Chrome explicitamente
+                except Exception:
+                    webbrowser.open(url)                     # fallback: navegador padrão
             except Exception:
                 pass
             messagebox.showinfo(
