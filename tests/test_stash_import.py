@@ -1,5 +1,5 @@
 from pathlib import Path
-from src.builder.core.stash_import import scan_stash_cards, StashItem, build_stash_entries
+from src.builder.core.stash_import import scan_stash_cards, StashItem, build_stash_entries, filter_already_processed
 from src.models.core import FileEntry
 
 
@@ -72,6 +72,24 @@ def test_build_entries_is_idempotent_by_source_path(tmp_path):
     names = {Path(e.source_path).name for e in entries}
     assert "hoare.pdf" not in names      # já existia -> pulado
     assert "hoare.zip" in names          # novo -> incluído
+
+
+def test_filter_already_processed_drops_known_basenames(tmp_path):
+    _make_tree(tmp_path)
+    scan = scan_stash_cards(tmp_path)
+    filtered = filter_already_processed(scan, {"hoare.pdf", "slides.pdf"})
+    names = {Path(i.source_path).name for i in filtered.items}
+    assert "hoare.pdf" not in names
+    assert "slides.pdf" not in names
+    assert "hoare.zip" in names
+    assert filtered.skipped == scan.skipped
+
+
+def test_filter_already_processed_empty_backlog_is_noop(tmp_path):
+    _make_tree(tmp_path)
+    scan = scan_stash_cards(tmp_path)
+    filtered = filter_already_processed(scan, set())
+    assert len(filtered.items) == len(scan.items)
 
 
 def test_scan_nested_file_uses_top_level_card(tmp_path):

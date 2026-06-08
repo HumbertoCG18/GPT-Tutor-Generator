@@ -1598,6 +1598,11 @@ class App(tk.Tk):
         if not scan.items:
             messagebox.showinfo(APP_NAME, f"Nenhum arquivo importável em:\n{stash}")
             return
+        from src.builder.core.stash_import import filter_already_processed
+        scan = filter_already_processed(scan, self._get_backlog_sources())
+        if not scan.items:
+            messagebox.showinfo(APP_NAME, "Todos os arquivos do stash já foram processados (backlog).")
+            return
         existing = {e.source_path for e in self.entries}
         new_entries = build_stash_entries(
             scan, existing_source_paths=existing,

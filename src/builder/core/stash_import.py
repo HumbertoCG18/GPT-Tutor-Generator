@@ -80,6 +80,16 @@ def scan_stash_cards(stash_root) -> StashScanResult:
     return result
 
 
+def filter_already_processed(scan: StashScanResult, backlog_basenames) -> StashScanResult:
+    """Remove do scan os itens cujo basename já está no backlog (já processados).
+    Casamento por nome de arquivo — o source_path do stash difere do source_path
+    original no manifest, então dedup por path não pega. Preserva `skipped`.
+    """
+    known = {str(n).strip() for n in (backlog_basenames or set())}
+    kept = [i for i in scan.items if Path(i.source_path).name not in known]
+    return StashScanResult(items=kept, skipped=list(scan.skipped))
+
+
 def build_stash_entries(scan: StashScanResult, existing_source_paths, defaults=None) -> List[FileEntry]:
     """Converte itens varridos em FileEntry, pulando paths já presentes."""
     existing = set(existing_source_paths or set())
