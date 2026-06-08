@@ -140,3 +140,19 @@ def test_dfy_and_thy_classify_as_code_for_gemini(tmp_path):
     by_name = {Path(i.source_path).name: i for i in res.items}
     assert by_name["hoare.dfy"].file_type == "code"
     assert by_name["arvores.thy"].file_type == "code"
+
+
+def test_build_stash_entries_code_and_zip_never_inherit_backend(tmp_path):
+    # Mesmo com default datalab, código/zip ficam "auto" (vão pro Gemini, não datalab).
+    card = tmp_path / "Verificacao de Programas"
+    card.mkdir()
+    (card / "hoare.dfy").write_text("method M(){}", encoding="utf-8")
+    (card / "exs.zip").write_bytes(b"PK\x03\x04zip")
+    (card / "aula.pdf").write_bytes(b"%PDF-1.7 x")
+    res = scan_stash_cards(tmp_path)
+    entries = {Path(e.source_path).name: e for e in build_stash_entries(
+        res, existing_source_paths=set(),
+        defaults={"preferred_backend": "datalab", "datalab_mode": "fast"})}
+    assert entries["hoare.dfy"].preferred_backend == "auto"
+    assert entries["exs.zip"].preferred_backend == "auto"
+    assert entries["aula.pdf"].preferred_backend == "datalab"   # PDF herda

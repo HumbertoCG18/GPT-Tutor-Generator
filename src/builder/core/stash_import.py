@@ -106,7 +106,12 @@ def build_stash_entries(scan: StashScanResult, existing_source_paths, defaults=N
             source_section=item.card_name,
             processing_mode=defaults.get("processing_mode", "auto"),
             ocr_language=defaults.get("ocr_language", DEFAULT_OCR_LANGUAGE),
-            preferred_backend=defaults.get("preferred_backend", "auto"),
-            datalab_mode=defaults.get("datalab_mode", "accurate"),
+            # Backend de extração só faz sentido p/ PDF/imagem. Código e ZIP vão
+            # pro caminho Gemini (code_curation), nunca datalab — não herdam o
+            # backend do perfil (senão a lista mostraria datalab pra código).
+            preferred_backend=(defaults.get("preferred_backend", "auto")
+                               if item.file_type in ("pdf", "image") else "auto"),
+            datalab_mode=(defaults.get("datalab_mode", "accurate")
+                          if item.file_type == "pdf" else "accurate"),
         ))
     return entries

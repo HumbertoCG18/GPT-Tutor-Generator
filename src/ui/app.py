@@ -1740,6 +1740,11 @@ class App(tk.Tk):
         self.tree.tag_configure("disabled", foreground="#888888")
         for i, entry in enumerate(self.entries):
             enabled = getattr(entry, "enabled", True)
+            # Código/ZIP vão pro caminho Gemini (code_curation), nunca datalab/PDF.
+            # Mostra isso na lista em vez do preferred_backend (irrelevante p/ código).
+            is_code = entry.file_type in ("code", "zip")
+            profile_disp = "código" if is_code else entry.document_profile
+            backend_disp = "gemini" if is_code else entry.preferred_backend
             self.tree.insert(
                 "",
                 "end",
@@ -1750,8 +1755,8 @@ class App(tk.Tk):
                     entry.category,
                     entry.tags,
                     entry.processing_mode,
-                    entry.document_profile,
-                    entry.preferred_backend,
+                    profile_disp,
+                    backend_disp,
                     entry.title,
                     Path(entry.source_path).name,
                 ),
