@@ -49,3 +49,31 @@ def select_for_subject(items, m365_filter: str) -> list:
     if not fl:
         return []
     return [it for it in items if fl in str(it.get("web_url", "")).lower()]
+
+
+def _norm_tokens(s: str) -> set:
+    s = unicodedata.normalize("NFKD", str(s or "")).encode("ascii", "ignore").decode("ascii").lower()
+    return {t for t in re.split(r"[\s_\-./]+", s) if len(t) > 2}
+
+
+def _token_affinity(a: set, b: set) -> float:
+    """Sobreposição tolerante: conta tokens iguais OU um contido no outro."""
+    if not a or not b:
+        return 0.0
+    hits = 0
+    for ta in a:
+        if any(ta == tb or ta in tb or tb in ta for tb in b):
+            hits += 1
+    return hits / min(len(a), len(b))
+
+
+def match_card(subfolder: str, moodle_sections, threshold: float = 0.34):
+    sf = _norm_tokens(subfolder)
+    best, best_score = None, 0.0
+    for sec in moodle_sections or []:
+        score = _token_affinity(sf, _norm_tokens(sec))
+        if score > best_score:
+            best, best_score = sec, score
+    if best and best_score >= threshold:
+        return best, True
+    return sanitize_folder_name(subfolder), False

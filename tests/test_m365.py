@@ -26,3 +26,17 @@ def test_select_for_subject_filters_by_substring():
 
 def test_select_for_subject_empty_filter_returns_nothing():
     assert select_for_subject([{"web_url": "x"}], "") == []
+
+from src.builder.sources.m365 import match_card
+
+_SECTIONS = ["Introdução a Métodos Formais", "Provas por Indução",
+             "Verificação de Programas", "Plano de Ensino"]
+
+def test_match_card_matches_by_normalized_tokens():
+    assert match_card("introducao", _SECTIONS) == ("Introdução a Métodos Formais", True)
+    assert match_card("correcao_provasinducao", _SECTIONS)[1] is True
+    assert match_card("logica_programas", _SECTIONS) == ("Verificação de Programas", True)
+
+def test_match_card_falls_back_to_new_card_when_no_match():
+    card, matched = match_card("dafny", _SECTIONS)
+    assert matched is False and card == "dafny"
