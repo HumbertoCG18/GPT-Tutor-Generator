@@ -62,3 +62,40 @@ def test_lookup_prefers_manual_map_over_auto():
 def test_lookup_falls_back_to_auto_resolution():
     ids = lookup_card_blocks("Verificação de Programas", {}, UNITS, BLOCKS)
     assert set(ids) == {"bloco-10", "bloco-11"}
+
+
+def test_single_token_card_matches_when_unambiguous():
+    units = [
+        {"slug": "u-verif", "title": "Verificação de Programas", "topics": ["dafny"], "distinctive_tokens": []},
+        {"slug": "u-intro", "title": "Introdução", "topics": ["motivação"], "distinctive_tokens": []},
+    ]
+    blocks = [{"id": "bloco-10", "unit_slug": "u-verif", "period_start": "2026-04-27", "period_end": "2026-05-04"}]
+    r = resolve_card_to_block("Dafny", units, blocks)
+    assert r.block_ids == ["bloco-10"]
+
+
+def test_tie_between_units_needs_confirmation():
+    units = [
+        {"slug": "u1", "title": "Lógica Proposicional", "topics": [], "distinctive_tokens": []},
+        {"slug": "u2", "title": "Lógica Predicados", "topics": [], "distinctive_tokens": []},
+    ]
+    blocks = [
+        {"id": "b1", "unit_slug": "u1", "period_start": "2026-03-02", "period_end": "2026-03-02"},
+        {"id": "b2", "unit_slug": "u2", "period_start": "2026-03-09", "period_end": "2026-03-09"},
+    ]
+    # card "Lógica" casa 1 token com AMBAS -> empate -> needs-confirmation
+    r = resolve_card_to_block("Lógica", units, blocks)
+    assert r.block_ids == []
+    assert r.reason == "needs-confirmation"
+
+
+def test_date_day_differs_from_month():
+    units = []
+    blocks = [{"id": "bloco-01", "unit_slug": "u", "period_start": "2026-03-02", "period_end": "2026-03-02"}]
+    r = resolve_card_to_block("Aula 02/03", units, blocks)  # DD/MM = 2 de março
+    assert r.block_ids == ["bloco-01"]
+
+
+def test_lookup_manual_empty_blocklist_wins():
+    card_map = {"X": {"block_ids": [], "source": "manual"}}
+    assert lookup_card_blocks("X", card_map, UNITS, BLOCKS) == []

@@ -16,7 +16,7 @@ from src.builder.core.stash_import import StashScanResult
 def match_entries_to_cards(manifest_entries, scan: StashScanResult) -> Tuple[Dict[str, str], List[str], List[str]]:
     by_basename: Dict[str, set] = {}
     for item in scan.items:
-        by_basename.setdefault(Path(item.source_path).name, set()).add(item.card_name)
+        by_basename.setdefault(Path(item.source_path).name.casefold(), set()).add(item.card_name)
     counts = Counter({name: len(cards) for name, cards in by_basename.items()})
 
     assignments: Dict[str, str] = {}
@@ -24,7 +24,7 @@ def match_entries_to_cards(manifest_entries, scan: StashScanResult) -> Tuple[Dic
     ambiguous: List[str] = []
     for entry in manifest_entries or []:
         eid = str(entry.get("id") or "")
-        base = Path(str(entry.get("source_path") or "")).name
+        base = Path(str(entry.get("source_path") or "")).name.casefold()
         if base not in by_basename:
             unmatched.append(eid or base)
             continue

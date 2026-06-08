@@ -25,3 +25,12 @@ def test_match_assigns_unique_basenames(tmp_path):
     assert "hoare" in ambiguous
     assert "hoare" not in assignments
     assert "ghost" in unmatched
+
+
+def test_match_is_case_insensitive(tmp_path):
+    (tmp_path / "Card").mkdir()
+    (tmp_path / "Card" / "Slides.pdf").write_text("x", encoding="utf-8")
+    scan = scan_stash_cards(tmp_path)
+    entries = [{"id": "s", "source_path": "C:/old/slides.pdf"}]
+    assignments, unmatched, ambiguous = match_entries_to_cards(entries, scan)
+    assert assignments.get("s") == "Card"

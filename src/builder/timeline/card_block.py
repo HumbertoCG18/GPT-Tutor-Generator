@@ -60,18 +60,21 @@ def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
             if _date_in_range(month, day, start, end):
                 return CardBlockResolution([str(b.get("id"))], 0.9, f"date:{day:02d}/{month:02d}")
 
-    # (1) nome -> unidade por overlap de tokens.
-    best_unit, best_overlap = None, 0
-    for unit in unit_index or []:
-        overlap = len(card_tokens & _unit_tokens(unit))
-        if overlap > best_overlap:
-            best_unit, best_overlap = unit, overlap
-    if best_unit is not None and best_overlap >= 2:
-        slug = str(best_unit.get("slug"))
-        ids = [str(b.get("id")) for b in blocks if str(b.get("unit_slug") or "") == slug]
-        if ids:
-            conf = min(0.95, 0.5 + 0.15 * best_overlap)
-            return CardBlockResolution(ids, conf, f"unit:{slug}")
+    # (1) nome -> unidade por overlap de tokens (empate -> needs-confirmation).
+    scored = sorted(
+        ((len(card_tokens & _unit_tokens(u)), u) for u in (unit_index or [])),
+        key=lambda x: x[0], reverse=True,
+    )
+    if scored:
+        best_overlap, best_unit = scored[0]
+        tie = len(scored) > 1 and scored[1][0] == best_overlap and best_overlap > 0
+        need = min(2, len(card_tokens)) if card_tokens else 99
+        if best_overlap >= need and not tie:
+            slug = str(best_unit.get("slug"))
+            ids = [str(b.get("id")) for b in blocks if str(b.get("unit_slug") or "") == slug]
+            if ids:
+                conf = min(0.95, 0.5 + 0.15 * best_overlap)
+                return CardBlockResolution(ids, conf, f"unit:{slug}")
 
     return CardBlockResolution([], 0.0, "needs-confirmation")
 
@@ -99,6 +102,6 @@ def save_card_block_map(course_dir, mapping) -> None:
 
 def lookup_card_blocks(card_name, card_map, unit_index, blocks) -> List[str]:
     entry = (card_map or {}).get(str(card_name or ""))
-    if entry and entry.get("block_ids"):
-        return [str(b) for b in entry["block_ids"]]
+    if entry and "block_ids" in entry:
+        return [str(b) for b in (entry.get("block_ids") or [])]
     return list(resolve_card_to_block(card_name, unit_index, blocks).block_ids)
