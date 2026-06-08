@@ -174,6 +174,62 @@ def test_filter_courses_by_semester():
     assert [c["id"] for c in out] == [2]
 
 
+def test_section_file_index_maps_filename_to_section():
+    from src.builder.sources.moodle import section_file_index
+    contents = [
+        {"name": "Plano de Ensino", "modules": [
+            {"contents": [{"type": "file", "filename": "plano.pdf", "fileurl": "https://m/pluginfile.php/1/plano.pdf"}]}]},
+        {"name": "Verificação de Programas", "modules": [
+            {"contents": [{"type": "file", "filename": "Hoare.pdf", "fileurl": "https://m/x/Hoare.pdf"}]}]},
+    ]
+    idx = section_file_index(contents)
+    assert idx["plano.pdf"] == "Plano de Ensino"
+    assert idx["hoare.pdf"] == "Verificação de Programas"   # casefold
+
+
+def test_backfill_source_section_from_api_matches_by_basename():
+    from src.builder.sources.moodle import backfill_source_section_from_api
+    contents = [
+        {"name": "Introdução", "modules": [
+            {"contents": [{"type": "file", "filename": "intro.pdf", "fileurl": "https://m/a/intro.pdf"}]}]},
+        {"name": "Provas", "modules": [
+            {"contents": [{"type": "file", "filename": "p.pdf", "fileurl": "https://m/b/p.pdf"}]}]},
+    ]
+    entries = [
+        {"id": "intro", "source_path": "C:/old/INTRO.pdf"},  # case-insensitive
+        {"id": "ghost", "source_path": "X:/none/ghost.pdf"},
+    ]
+    assignments, unmatched, ambiguous = backfill_source_section_from_api(entries, contents)
+    assert assignments["intro"] == "Introdução"
+    assert "ghost" in unmatched
+
+
+def test_download_course_skips_html_and_json_error_responses(tmp_path, monkeypatch):
+    from src.builder.sources import moodle
+    # contents: 2 arquivos
+    def fake_contents(self, courseid):
+        return [{"name": "S", "modules": [{"contents": [
+            {"type": "file", "filename": "good.pdf", "fileurl": "https://m/pluginfile.php/1/good.pdf"},
+            {"type": "file", "filename": "bad.pdf", "fileurl": "https://m/pluginfile.php/2/bad.pdf"},
+        ]}]}]
+    monkeypatch.setattr(moodle.MoodleClient, "get_course_contents", fake_contents)
+    class _Resp:
+        def __init__(self, ct, data): self._ct=ct; self._d=data; self.headers={"content-type":ct}
+        def __enter__(self): return self
+        def __exit__(self,*a): return False
+        def read(self): return self._d
+    def fake_urlopen(u, timeout=0):
+        if "good.pdf" in u: return _Resp("application/pdf", b"%PDF-1.7 ok")
+        return _Resp("text/html; charset=utf-8", b"<!DOCTYPE html> redirect")
+    monkeypatch.setattr(moodle.urllib.request, "urlopen", fake_urlopen)
+    c = moodle.MoodleClient("https://m", "tok")
+    rep = c.download_course("1", tmp_path)
+    assert rep["downloaded"] == 1
+    assert "bad.pdf" in rep["failed"]
+    assert (tmp_path / "S" / "good.pdf").exists()
+    assert not (tmp_path / "S" / "bad.pdf").exists()   # NÃO salvou o HTML
+
+
 def test_import_links_existing_subject_by_slug_keeping_repo(tmp_path):
     from src.builder.sources.moodle import import_moodle_courses
     from src.models.core import SubjectProfile

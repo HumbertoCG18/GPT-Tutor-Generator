@@ -80,6 +80,41 @@ def iter_section_files(contents) -> List[SectionFile]:
     return out
 
 
+def section_file_index(contents) -> dict:
+    """{casefold(filename): section} a partir de core_course_get_contents (metadados)."""
+    idx = {}
+    for sf in iter_section_files(contents):
+        idx.setdefault(sf.filename.casefold(), sf.section)
+    return idx
+
+
+def backfill_source_section_from_api(manifest_entries, contents):
+    """Casa entries do manifest com as seções da API por basename (case-insensitive).
+
+    Retorna (assignments {id->section}, unmatched [ids], ambiguous [ids]).
+    Basename presente em >1 seção -> ambiguous.
+    """
+    from collections import Counter
+    counts = Counter()
+    sec_by_name = {}
+    for sf in iter_section_files(contents):
+        key = sf.filename.casefold()
+        counts[key] += 1
+        sec_by_name.setdefault(key, sf.section)
+    assignments, unmatched, ambiguous = {}, [], []
+    for e in manifest_entries or []:
+        eid = str(e.get("id") or "")
+        base = Path(str(e.get("source_path") or "")).name.casefold()
+        if base not in sec_by_name:
+            unmatched.append(eid or base)
+            continue
+        if counts[base] > 1:
+            ambiguous.append(eid or base)
+            continue
+        assignments[eid or base] = sec_by_name[base]
+    return assignments, unmatched, ambiguous
+
+
 class MoodleClient:
     def __init__(self, base_url: str, token: str):
         self.base = str(base_url).rstrip("/")
@@ -128,6 +163,7 @@ class MoodleClient:
         dest = Path(dest)
         files = iter_section_files(self.get_course_contents(courseid))
         downloaded = skipped = 0
+        failed = []
         for sf in files:
             folder = dest / sf.section
             folder.mkdir(parents=True, exist_ok=True)
@@ -135,10 +171,19 @@ class MoodleClient:
             if skip_existing and target.exists():
                 skipped += 1
                 continue
-            with urllib.request.urlopen(self._download_url(sf.fileurl), timeout=120) as r:
-                target.write_bytes(r.read())
-            downloaded += 1
-        return {"total": len(files), "downloaded": downloaded, "skipped": skipped}
+            try:
+                with urllib.request.urlopen(self._download_url(sf.fileurl), timeout=120) as r:
+                    ctype = (r.headers.get("content-type") or "").lower()
+                    data = r.read()
+                # Moodle erros e redirects M365 vêm como JSON/HTML — não são o arquivo.
+                if ctype.startswith("text/html") or ctype.startswith("application/json"):
+                    failed.append(sf.filename)
+                    continue
+                target.write_bytes(data)
+                downloaded += 1
+            except Exception:
+                failed.append(sf.filename)
+        return {"total": len(files), "downloaded": downloaded, "skipped": skipped, "failed": failed}
 
 
 def latest_semester(courses) -> str:
@@ -213,21 +258,37 @@ def default_token_path() -> Path:
     return Path(__file__).resolve().parents[3] / "moddle" / ".env"
 
 
-def load_moodle_token(dotenv_path=None):
-    path = Path(dotenv_path) if dotenv_path else default_token_path()
-    url, token = _DEFAULT_MOODLE_URL, ""
-    if path.is_file():
-        for line in path.read_text(encoding="utf-8").splitlines():
+def _read_dotenv(path) -> dict:
+    out = {}
+    p = Path(path)
+    if p.is_file():
+        for line in p.read_text(encoding="utf-8").splitlines():
             line = line.strip()
             if not line or line.startswith("#") or "=" not in line:
                 continue
             k, v = line.split("=", 1)
-            k, v = k.strip(), v.strip()
-            if k == "MOODLE_URL" and v:
-                url = v
-            elif k == "MOODLE_TOKEN":
-                token = v
+            out[k.strip()] = v.strip()
+    return out
+
+
+def _moodle_env(key, dotenv_path=None):
+    """Precedência: os.environ (carregado do .env raiz por helpers no import) >
+    moddle/.env (ou dotenv_path). Consolida com os demais segredos do projeto."""
+    import os
+    val = (os.environ.get(key) or "").strip()
+    if val:
+        return val
+    return _read_dotenv(dotenv_path or default_token_path()).get(key, "").strip()
+
+
+def load_moodle_token(dotenv_path=None):
+    url = _moodle_env("MOODLE_URL", dotenv_path) or _DEFAULT_MOODLE_URL
+    token = _moodle_env("MOODLE_TOKEN", dotenv_path)
     return url, token
+
+
+def load_moodle_private_token(dotenv_path=None) -> str:
+    return _moodle_env("MOODLE_PRIVATE_TOKEN", dotenv_path)
 
 
 def save_moodle_token(token: str, url: str = "", dotenv_path=None) -> None:
