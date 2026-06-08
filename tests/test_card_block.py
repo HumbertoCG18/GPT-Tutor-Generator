@@ -34,3 +34,31 @@ def test_unmatched_card_needs_confirmation():
     assert r.block_ids == []
     assert r.confidence == 0.0
     assert r.reason == "needs-confirmation"
+
+
+from src.builder.timeline.card_block import (
+    load_card_block_map, save_card_block_map, lookup_card_blocks,
+)
+
+
+def test_card_map_roundtrip(tmp_path):
+    course = tmp_path / "course"
+    course.mkdir()
+    mapping = {"Meu Card": {"block_ids": ["bloco-07"], "source": "manual"}}
+    save_card_block_map(course, mapping)
+    assert load_card_block_map(course) == mapping
+
+
+def test_load_missing_map_returns_empty(tmp_path):
+    assert load_card_block_map(tmp_path / "course") == {}
+
+
+def test_lookup_prefers_manual_map_over_auto():
+    card_map = {"Verificação de Programas": {"block_ids": ["bloco-99"], "source": "manual"}}
+    ids = lookup_card_blocks("Verificação de Programas", card_map, UNITS, BLOCKS)
+    assert ids == ["bloco-99"]
+
+
+def test_lookup_falls_back_to_auto_resolution():
+    ids = lookup_card_blocks("Verificação de Programas", {}, UNITS, BLOCKS)
+    assert set(ids) == {"bloco-10", "bloco-11"}

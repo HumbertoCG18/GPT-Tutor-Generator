@@ -6,8 +6,10 @@ Puro: sem I/O além do load/save do mapa persistido.
 """
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Dict, List
 
 from src.utils.helpers import norm_ascii_lower
@@ -72,3 +74,31 @@ def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
             return CardBlockResolution(ids, conf, f"unit:{slug}")
 
     return CardBlockResolution([], 0.0, "needs-confirmation")
+
+
+_CARD_MAP_NAME = ".card_block_map.json"
+
+
+def load_card_block_map(course_dir) -> Dict[str, dict]:
+    path = Path(course_dir) / _CARD_MAP_NAME
+    if not path.is_file():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def save_card_block_map(course_dir, mapping) -> None:
+    course = Path(course_dir)
+    course.mkdir(parents=True, exist_ok=True)
+    (course / _CARD_MAP_NAME).write_text(
+        json.dumps(mapping, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+def lookup_card_blocks(card_name, card_map, unit_index, blocks) -> List[str]:
+    entry = (card_map or {}).get(str(card_name or ""))
+    if entry and entry.get("block_ids"):
+        return [str(b) for b in entry["block_ids"]]
+    return list(resolve_card_to_block(card_name, unit_index, blocks).block_ids)
