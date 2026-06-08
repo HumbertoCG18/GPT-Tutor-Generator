@@ -4965,3 +4965,19 @@ def test_appconfig_has_profile_backends_default():
     assert pb["math_heavy"] == "datalab"
     assert pb["diagram_heavy"] == "docling"
     assert pb["auto"] == "auto"
+
+
+def test_processing_profile_roundtrip():
+    from src.models.core import ProcessingProfile
+    p = ProcessingProfile(name="Math", processing_mode="high_fidelity",
+                          preferred_backend="datalab", datalab_mode="accurate",
+                          document_profile="math_heavy")
+    d = p.to_dict()
+    assert d["name"] == "Math" and d["preferred_backend"] == "datalab"
+    p2 = ProcessingProfile.from_dict(d)
+    assert p2.document_profile == "math_heavy" and p2.processing_mode == "high_fidelity"
+
+def test_processing_profile_from_dict_ignores_unknown_keys():
+    from src.models.core import ProcessingProfile
+    p = ProcessingProfile.from_dict({"name": "X", "bogus": 1})
+    assert p.name == "X" and p.preferred_backend == "auto"

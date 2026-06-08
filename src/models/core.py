@@ -209,6 +209,24 @@ class SubjectProfile:
 
 
 @dataclass
+class ProcessingProfile:
+    """Preset reutilizável de processamento (referenciado por nome pela matéria)."""
+    name: str = ""
+    processing_mode: str = "auto"
+    preferred_backend: str = "auto"
+    datalab_mode: str = "accurate"
+    document_profile: str = "auto"
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "ProcessingProfile":
+        valid = {f.name for f in fields(cls)}
+        return cls(**{k: v for k, v in (d or {}).items() if k in valid})
+
+
+@dataclass
 class StudentProfile:
     """Perfil do aluno — exportado nos repositórios gerados."""
     full_name: str = ""
