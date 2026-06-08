@@ -74,6 +74,19 @@ class MoodleClient:
         q["token"] = self._token
         return urllib.parse.urlunparse(parts._replace(query=urllib.parse.urlencode(q)))
 
+    @staticmethod
+    def login(base_url: str, username: str, password: str) -> str:
+        """Troca matrícula+senha pelo wstoken (mobile). Senha só transita aqui."""
+        url = str(base_url).rstrip("/") + "/login/token.php?service=moodle_mobile_app"
+        body = urllib.parse.urlencode({"username": username, "password": password}).encode("utf-8")
+        req = urllib.request.Request(url, data=body, method="POST")
+        with urllib.request.urlopen(req, timeout=30) as r:
+            payload = json.loads(r.read().decode("utf-8"))
+        if not isinstance(payload, dict) or not payload.get("token"):
+            msg = payload.get("error") if isinstance(payload, dict) else "resposta inválida"
+            raise RuntimeError(f"Falha no login Moodle: {msg}")
+        return str(payload["token"])
+
     def download_course(self, courseid, dest, skip_existing: bool = True) -> dict:
         dest = Path(dest)
         files = iter_section_files(self.get_course_contents(courseid))
@@ -89,3 +102,35 @@ class MoodleClient:
                 target.write_bytes(r.read())
             downloaded += 1
         return {"total": len(files), "downloaded": downloaded, "skipped": skipped}
+
+
+_DEFAULT_MOODLE_URL = "https://moodle.pucrs.br"
+
+
+def default_token_path() -> Path:
+    return Path(__file__).resolve().parents[3] / "moddle" / ".env"
+
+
+def load_moodle_token(dotenv_path=None):
+    path = Path(dotenv_path) if dotenv_path else default_token_path()
+    url, token = _DEFAULT_MOODLE_URL, ""
+    if path.is_file():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            k, v = k.strip(), v.strip()
+            if k == "MOODLE_URL" and v:
+                url = v
+            elif k == "MOODLE_TOKEN":
+                token = v
+    return url, token
+
+
+def save_moodle_token(token: str, url: str = "", dotenv_path=None) -> None:
+    path = Path(dotenv_path) if dotenv_path else default_token_path()
+    existing_url, _ = load_moodle_token(dotenv_path=path)
+    final_url = url or existing_url or _DEFAULT_MOODLE_URL
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(f"MOODLE_URL={final_url}\nMOODLE_TOKEN={token}\n", encoding="utf-8")
