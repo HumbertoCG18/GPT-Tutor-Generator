@@ -156,3 +156,15 @@ def test_build_stash_entries_code_and_zip_never_inherit_backend(tmp_path):
     assert entries["hoare.dfy"].preferred_backend == "auto"
     assert entries["exs.zip"].preferred_backend == "auto"
     assert entries["aula.pdf"].preferred_backend == "datalab"   # PDF herda
+
+
+def test_build_stash_entries_propagates_document_profile_pdf_only(tmp_path):
+    card = tmp_path / "Aulas"
+    card.mkdir()
+    (card / "a.pdf").write_bytes(b"%PDF-1.7 x")
+    (card / "x.dfy").write_text("method M(){}", encoding="utf-8")
+    res = scan_stash_cards(tmp_path)
+    entries = {Path(e.source_path).name: e for e in build_stash_entries(
+        res, existing_source_paths=set(), defaults={"document_profile": "math_heavy"})}
+    assert entries["a.pdf"].document_profile == "math_heavy"   # pdf herda
+    assert entries["x.dfy"].document_profile == "auto"          # código não

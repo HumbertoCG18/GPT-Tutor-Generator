@@ -113,5 +113,7 @@ def build_stash_entries(scan: StashScanResult, existing_source_paths, defaults=N
                                if item.file_type in ("pdf", "image") else "auto"),
             datalab_mode=(defaults.get("datalab_mode", "accurate")
                           if item.file_type == "pdf" else "accurate"),
+            document_profile=(defaults.get("document_profile", "auto")
+                              if item.file_type in ("pdf", "image") else "auto"),
         ))
     return entries
