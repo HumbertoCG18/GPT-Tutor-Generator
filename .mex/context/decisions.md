@@ -11,7 +11,7 @@ edges:
     condition: when a decision affects system structure
   - target: context/stack.md
     condition: when a decision affects technology choice
-last_updated: 2026-06-03
+last_updated: 2026-06-08
 ---
 
 # Decisions

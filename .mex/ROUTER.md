@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Contains project state, routing table, and behavioural contract.
-last_updated: 2026-06-03
+last_updated: 2026-06-08
 ---
 
 # ROUTER.md - Session Bootstrap
@@ -42,12 +42,13 @@ Read this file before starting any task.
   "Aula 03" recebe boost de desempate `SEQUENCE_BOOST=0.20` no 3o bloco
   `kind=class` (numerado por `annotate_class_ordinals`), somado em
   `score_entry_against_timeline_block`. So marcadores `aula`/`encontro`.
-- Referencias como contexto do tutor (`src/builder/core/reference_*.py`):
+- Referencias como contexto do tutor (`src/builder/core/reference_content.py`,
+  `src/builder/core/reference_summary.py`, `src/builder/core/reference_topic.py`):
   entries `category in {referencias, bibliografia}` buscam conteudo leve sem
   clone (README via API GitHub / texto de pagina via `url_markdown`), resumo
   Gemini lazy (`ReferenceSummary`), e mapeamento determinístico a
   unidade/topico (`assign_concepts_to_unit`). Surfaceado na BIBLIOGRAPHY.md
-  (resumo + mapa de relevancia). Cache por hash em `references_curation.json`.
+  (resumo + mapa de relevancia). Cache por hash no arquivo de curation gerado.
   Wiring em `build_workflow._run_auto_code_summarization` (referencias mapeiam
   mesmo sem chave Gemini; reload do manifest pos-enriquecimento).
 - Clone de repo GitHub (`process_github_repo`, `source_importers.py`) detecta o
@@ -60,11 +61,11 @@ Read this file before starting any task.
   (client compartilhado). `.env` carrega em os.environ no import de helpers.
 - Pipeline de referencias validada end-to-end com Gemini real
   (`scripts/validate_references_e2e.py`): fetch real (README GitHub + doc HTML),
-  resumo+conceitos Gemini, mapeamento determinístico, persistencia em
-  `references_curation.json`. Requer `google-genai` instalado (declarado em
+  resumo+conceitos Gemini, mapeamento determinístico, persistencia no cache de
+  referencias gerado. Requer `google-genai` instalado (declarado em
   pyproject; degrada silencioso para resumo vazio se ausente).
 - Approach C: referencias mapeadas viram linhas `📖 Apoio:` sob unidade/topico no
-  `COURSE_MAP.md` (material complementar). Helper `core/reference_navigation.py`
+  course map gerado (material complementar). Helper `src/builder/core/reference_navigation.py`
   (`build_unit_topic_reference_index`, chave de topico canonica `_topic_key` =
   `normalize_match_text(strip_outline_prefix(...))`), injetado via
   `course_meta["_reference_nav_index"]` em `pedagogical_regeneration`, emitido em
@@ -95,8 +96,8 @@ Read this file before starting any task.
   `2026-06-05-duplicacoes-mds-tutor*`. Aberto: 5 modos inline (rodada propria).
 - Harness ground-truth (`scripts/eval_ground_truth.py` +
   `scripts/make_ground_truth_template.py`): mede correcao REAL file->bloco contra
-  um repo gerado real + CSV de rotulos, sem re-rodar o scorer (le `manifest.json`
-  + `course/.timeline_index.json`). Metrica-chave `confident_wrong` (band alta +
+  um repo gerado real + CSV de rotulos, sem re-rodar o scorer (le o manifest
+  gerado + o timeline index gerado). Metrica-chave `confident_wrong` (band alta +
   bloco errado), alem de acuracia/confusao/orphans/missed/calibracao por band.
   Gerador de esqueleto pre-preenche `true_block_id` com a predicao. Falta o passo
   de dados: usuario aponta repo real + rotula (assistido). 913 testes verdes.
@@ -118,7 +119,7 @@ Read this file before starting any task.
   nao recebem unidade. 938 testes verdes. Spec `2026-06-06-cronograma-sarc-tipo-
   e-tab-design` (Parte A); plano `2026-06-06-cronograma-sarc-tipo-backend`.
   Aberto: Parte B (UI: tab do cronograma em tabela + legenda).
-- Guard de conflito override-vs-auto (Parte A, backend). `timeline/conflicts.py`
+- Guard de conflito override-vs-auto (Parte A, backend). `src/builder/timeline/conflicts.py`
   (puro): `auto_suggested_unit` (espelha gate de topic-derive: conf>=0.65,
   nao-ambiguo) + `detect_block_conflicts`/`detect_timeline_conflicts`. Sinaliza
   quando `block_manual_unit_slug` contradiz a unidade auto-confiante, ou
@@ -186,8 +187,8 @@ Read this file before starting any task.
 ### Current Design Focus
 
 - ENTREGUE: Referencias como contexto base do tutor (8 tasks TDD + 2 fixes de
-  wiring). Spec `docs/.../2026-06-04-referencias-contexto-tutor-design.md`,
-  plano `docs/.../plans/2026-06-04-referencias-contexto-tutor.md`. Resolve
+  wiring). Spec `docs/superpowers/specs/2026-06-04-referencias-contexto-tutor-design.md`,
+  plano `docs/superpowers/plans/2026-06-04-referencias-contexto-tutor.md`. Resolve
   "tutor so tem link/titulo da referencia". 841 testes verdes.
 - Itens PARADOS (retomar): ver `docs/superpowers/BACKLOG.md` — verbosidade do
   manifest (`to_dict` serializa todos os defaults), #3 decay de data, #4 piso

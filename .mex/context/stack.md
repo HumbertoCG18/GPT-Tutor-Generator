@@ -15,7 +15,7 @@ edges:
     condition: when understanding how technologies fit into the system
   - target: context/setup.md
     condition: when setup or run commands are needed
-last_updated: 2026-06-03
+last_updated: 2026-06-08
 ---
 
 # Stack

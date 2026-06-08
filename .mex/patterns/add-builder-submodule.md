@@ -14,7 +14,7 @@ edges:
     condition: when deciding which subpackage owns the new logic
   - target: patterns/add-ui-feature.md
     condition: when the new builder logic also needs a UI entry point or dialog
-last_updated: 2026-06-03
+last_updated: 2026-06-08
 ---
 
 # Add Builder Submodule
