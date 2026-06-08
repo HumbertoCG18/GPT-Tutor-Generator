@@ -932,6 +932,14 @@ def resolve_unit_block_tags(
         except Exception:
             _tag_profile = None
 
+    _card_block_map = {}
+    if repo_root:
+        try:
+            from src.builder.timeline.card_block import load_card_block_map
+            _card_block_map = load_card_block_map(Path(repo_root) / "course")
+        except Exception:
+            _card_block_map = {}
+
     updated = []
     for entry in manifest_entries or []:
         category = _collapse_ws(str(entry.get("category") or "")).lower()
@@ -998,15 +1006,8 @@ def resolve_unit_block_tags(
                 or []
                 if not bool(block.get("administrative_only"))
             ]
-            _card_map = {}
-            if repo_root:
-                try:
-                    from src.builder.timeline.card_block import load_card_block_map
-                    _card_map = load_card_block_map(Path(repo_root) / "course")
-                except Exception:
-                    _card_map = {}
             _card_bid, _card_conf = _card_scoped_block(
-                entry, markdown_text, unit_index, instructional_blocks, _card_map,
+                entry, markdown_text, unit_index, instructional_blocks, _card_block_map,
                 lambda e, md, scoped, us, ts: _best_instructional_block_fallback(e, md, scoped, us, ts),
             )
             if _card_bid:
