@@ -1351,6 +1351,9 @@ class App(tk.Tk):
         SubjectManagerDialog(self, self.subject_store, self.theme_mgr, self.config_obj)
         # Refresh combo values
         self._subject_combo["values"] = ["(nenhuma)"] + self.subject_store.names()
+        # Perfis podem ter sido criados/editados no manager — atualiza o seletor.
+        from src.utils.helpers import load_processing_profiles
+        self._profile_combo["values"] = [""] + [p.name for p in load_processing_profiles(self.config_obj)]
         self._refresh_repo_dashboard()
 
     def open_student_profile(self):

@@ -650,7 +650,9 @@ def fetch_url_title(url: str, timeout: float = 5.0) -> str:
 
 
 def load_processing_profiles(config_obj):
-    """Lista de ProcessingProfile salva no config (vazia se ausente)."""
+    """Lista de ProcessingProfile salva no config (vazia se ausente ou sem config)."""
+    if config_obj is None:
+        return []
     from src.models.core import ProcessingProfile
     raw = config_obj.get("processing_profiles") or []
     return [ProcessingProfile.from_dict(d) for d in raw]
