@@ -56,14 +56,28 @@ def main(argv: list) -> int:
     blocks = tl.get("blocks", [])
 
     from src.builder.timeline.card_block import load_card_block_map, lookup_card_blocks
+    from src.builder.engine import _build_file_map_unit_index_from_course
+    from src.models.core import SubjectStore
 
+    # Carrega o SubjectProfile cujo repo_root casa com este repo (tem o teaching_plan).
+    subject_profile = None
     try:
-        from src.builder.facade.teaching_timeline import build_file_map_unit_index_from_course
-        units = build_file_map_unit_index_from_course({"_repo_root": str(repo_root)}, None)
+        store = SubjectStore()
+        target = str(repo_root).replace("\\", "/").rstrip("/").casefold()
+        for name in store.names():
+            sp = store.get(name)
+            rr = str(getattr(sp, "repo_root", "") or "").replace("\\", "/").rstrip("/").casefold()
+            if rr and rr == target:
+                subject_profile = sp
+                break
     except Exception:
-        units = []
+        subject_profile = None
 
     card_map = load_card_block_map(repo_root / "course")
+    try:
+        units = _build_file_map_unit_index_from_course({"_repo_root": str(repo_root)}, subject_profile)
+    except Exception:
+        units = []
 
     cards = {str(e.get("source_section") or "").strip() for e in entries if e.get("source_section")}
     expected_by_card = {c: lookup_card_blocks(c, card_map, units, blocks) for c in cards if c}
