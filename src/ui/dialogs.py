@@ -1610,6 +1610,16 @@ class MoodleCourseSelectDialog(tk.Toplevel):
             self, text="Baixar arquivos PDF (desmarque para só montar a estrutura dos cards)",
             variable=self._download_var,
         ).pack(anchor="w", padx=10, pady=(6, 0))
+        self._m365_var = tk.BooleanVar(value=False)
+        ttk.Checkbutton(
+            self, text="Incluir material do OneDrive (M365) por matéria",
+            variable=self._m365_var,
+        ).pack(anchor="w", padx=10, pady=(2, 0))
+        m365row = ttk.Frame(self)
+        m365row.pack(fill="x", padx=10)
+        ttk.Label(m365row, text="Filtro M365 (trecho do caminho, ex.: metodosformais):").pack(side="left")
+        self._m365_filter_var = tk.StringVar(value="")
+        ttk.Entry(m365row, textvariable=self._m365_filter_var).pack(side="left", fill="x", expand=True)
         ttk.Button(self, text="📥  Importar marcados", command=self._import).pack(fill="x", padx=10, pady=10)
         self._render_list()
 
@@ -1638,6 +1648,15 @@ class MoodleCourseSelectDialog(tk.Toplevel):
             self.after(0, fn)
         except (tk.TclError, RuntimeError):
             pass  # diálogo já destruído — ignora
+
+    def _m365_prompt(self, info):
+        # Chamado da thread worker; agenda o dialog de login na main thread.
+        def show():
+            messagebox.showinfo(
+                "Login M365",
+                f"Abra:\n{info['verification_uri']}\n\nDigite o código:\n{info['user_code']}\n\n"
+                "Autentique com a conta PUCRS. O import continua após o login.")
+        self._post(show)
 
     def _import(self):
         import threading
@@ -1674,7 +1693,39 @@ class MoodleCourseSelectDialog(tk.Toplevel):
             else:
                 tail = ("Bytes não baixados (opção desmarcada) — baixe os PDFs no navegador "
                         "e coloque nas pastas dos cards (veja _ARQUIVOS_DO_CARD.txt em cada uma).")
-            self._post(lambda: messagebox.showinfo("Moodle", base_msg + tail))
+            m365_tail = ""
+            if self._m365_var.get():
+                flt = self._m365_filter_var.get().strip()
+                if not flt:
+                    m365_tail = "\n\nM365: filtro vazio — pulado."
+                else:
+                    try:
+                        from src.builder.sources import m365
+                        from src.builder.sources.moodle import parse_moodle_course
+                        client = m365.get_client(prompt_callback=self._m365_prompt)
+                        sections = []
+                        for course in selected:
+                            cid = str(course.get("id") or "")
+                            for sec in (self._client.get_course_contents(cid) or []):
+                                if sec.get("name"):
+                                    sections.append(sec["name"])
+                        info0 = parse_moodle_course(selected[0])
+                        mdest = Path(self._base) / info0["slug"]
+                        mrep = m365.download_subject_m365(client, flt, sections, mdest)
+                        sp0 = store.get(info0["name"]) if hasattr(store, "get") else None
+                        if sp0 and getattr(sp0, "m365_filter", "") != flt:
+                            sp0.m365_filter = flt
+                            store.add(sp0)
+                        repo_root = getattr(sp0, "repo_root", "") if sp0 else ""
+                        backf = m365.apply_source_section(repo_root, mrep["name_to_section"]) if repo_root else 0
+                        mapped = "; ".join(f"{s}->{c}{'' if m else ' (novo)'}"
+                                           for s, c, m in mrep["mapping"])
+                        m365_tail = (f"\n\nM365 — baixados: {mrep['downloaded']}  "
+                                     f"falhas: {len(mrep['failed'])}  source_section: {backf}\n"
+                                     f"Cards: {mapped}")
+                    except Exception as exc:
+                        m365_tail = f"\n\nM365 indisponível: {str(exc)[:160]}"
+            self._post(lambda: messagebox.showinfo("Moodle", base_msg + tail + m365_tail))
             self._post(self.destroy)
 
         threading.Thread(target=worker, daemon=True).start()
