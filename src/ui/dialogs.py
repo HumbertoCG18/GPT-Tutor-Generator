@@ -1388,7 +1388,7 @@ class SubjectManagerDialog(tk.Toplevel):
                 def _manage():
                     ProcessingProfileManagerDialog(self, self._config)
                     cb["values"] = [""] + [pp.name for pp in load_processing_profiles(self._config)]
-                ttk.Button(fr, text="⚙", width=3, command=_manage).pack(side="right", padx=(4, 0))
+                ttk.Button(fr, text="Gerenciar perfis…", command=_manage).pack(side="right", padx=(4, 0))
             else:
                 ttk.Entry(form, textvariable=var, width=36).grid(row=i, column=1, sticky="ew", padx=(8, 0))
 
