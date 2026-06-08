@@ -3440,7 +3440,7 @@ class FileEntryDialog(simpledialog.Dialog):
     def __init__(self, parent, path: str, initial: Optional[FileEntry] = None,
                  default_mode: str = "auto", default_ocr_language: str = DEFAULT_OCR_LANGUAGE,
                  file_type_hint: str = "", default_backend: str = "auto",
-                 default_datalab_mode: str = "accurate"):
+                 default_datalab_mode: str = "accurate", default_profile: str = "auto"):
         self._parent = parent
         self.path = path
         self.initial = initial
@@ -3448,6 +3448,7 @@ class FileEntryDialog(simpledialog.Dialog):
         self.default_ocr_language = default_ocr_language
         self.default_backend = default_backend
         self.default_datalab_mode = default_datalab_mode
+        self.default_profile = default_profile
         self.file_type_hint = file_type_hint
         self.result_entry: Optional[FileEntry] = None
         super().__init__(parent, title="Editar item")
@@ -3530,7 +3531,7 @@ class FileEntryDialog(simpledialog.Dialog):
 
         self.var_mode = tk.StringVar(value=self.initial.processing_mode if self.initial else self.default_mode)
         self.var_profile = tk.StringVar(
-            value=normalize_document_profile(self.initial.document_profile if self.initial else "auto")
+            value=normalize_document_profile(self.initial.document_profile if self.initial else self.default_profile)
         )
         self.var_backend = tk.StringVar(value=self.initial.preferred_backend if self.initial else self.default_backend)
         self.var_datalab_mode = tk.StringVar(

@@ -259,6 +259,8 @@ class App(tk.Tk):
         self.var_default_ocr_language = tk.StringVar(value=self.config_obj.get("default_ocr_language"))
         self.var_default_backend = tk.StringVar(value="auto")
         self.var_default_datalab_mode = tk.StringVar(value="accurate")
+        self.var_default_profile = tk.StringVar(value="auto")
+        self.var_active_profile = tk.StringVar(value="")
 
         # ─── Header bar ────────────────────────────────────────────────
         header = tk.Frame(self, bg=p["header_bg"], pady=8, padx=16)
@@ -354,6 +356,14 @@ class App(tk.Tk):
         ttk.Button(import_actions, text="🔗 Link", command=self.add_url).grid(row=1, column=0, sticky="ew", padx=4, pady=4)
         ttk.Button(import_actions, text="💻 Código / ZIP", command=self.add_code_files).grid(row=1, column=1, sticky="ew", padx=4, pady=4)
         ttk.Button(import_actions, text="📥 Importar do stash", command=self.import_from_stash).grid(row=2, column=0, columnspan=2, sticky="ew", padx=4, pady=4)
+
+        ttk.Label(import_actions, text="Perfil:").grid(row=3, column=0, sticky="w", padx=4, pady=(6, 0))
+        from src.utils.helpers import load_processing_profiles
+        self._profile_combo = ttk.Combobox(
+            import_actions, textvariable=self.var_active_profile, state="readonly",
+            values=[""] + [p.name for p in load_processing_profiles(self.config_obj)], width=18)
+        self._profile_combo.grid(row=3, column=1, sticky="ew", padx=4, pady=(6, 0))
+        self._profile_combo.bind("<<ComboboxSelected>>", lambda _e: self._apply_active_profile())
 
         ttk.Button(build_actions, text="📂 Abrir Repo", command=self.open_repo_folder).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
         ttk.Button(build_actions, text="🧠 Student State", command=self.open_student_state_curator).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
@@ -1367,6 +1377,23 @@ class App(tk.Tk):
         from src.ui.image_curator import ImageCurator
         ImageCurator(self, str(repo_dir), self.theme_mgr)
 
+    def _apply_active_profile(self):
+        from src.utils.helpers import get_processing_profile
+        p = get_processing_profile(self.config_obj, self.var_active_profile.get())
+        if not p:
+            return
+        self.var_default_mode.set(p.processing_mode)
+        self.var_default_backend.set(p.preferred_backend)
+        self.var_default_datalab_mode.set(p.datalab_mode)
+        self.var_default_profile.set(p.document_profile)
+        # Matéria ativa "lembra" o perfil
+        name = self._var_active_subject.get()
+        if name and name != "(nenhuma)":
+            sp = self.subject_store.get(name)
+            if sp is not None:
+                sp.processing_profile = p.name
+                self.subject_store.add(sp)
+
     def _on_subject_selected(self, _event=None):
         name = self._var_active_subject.get()
         if name == "(nenhuma)":
@@ -1383,6 +1410,10 @@ class App(tk.Tk):
         self.var_default_ocr_language.set(sp.default_ocr_lang)
         self.var_default_backend.set(getattr(sp, "default_backend", "auto") or "auto")
         self.var_default_datalab_mode.set(getattr(sp, "default_datalab_mode", "accurate") or "accurate")
+        prof_name = getattr(sp, "processing_profile", "") or ""
+        self.var_active_profile.set(prof_name)
+        if prof_name:
+            self._apply_active_profile()
         if sp.repo_root:
             self.var_repo_root.set(sp.repo_root)
         
@@ -1471,6 +1502,7 @@ class App(tk.Tk):
             file_type_hint=file_type_hint,
             default_backend=self.var_default_backend.get(),
             default_datalab_mode=self.var_default_datalab_mode.get(),
+            default_profile=self.var_default_profile.get(),
         )
         return dialog.result_entry
 
@@ -1551,6 +1583,7 @@ class App(tk.Tk):
                 ocr_language=self.var_default_ocr_language.get(),
                 preferred_backend=self.var_default_backend.get(),
                 datalab_mode=self.var_default_datalab_mode.get(),
+                document_profile=self.var_default_profile.get(),
             )
             entry = self._entry_dialog(path, initial=initial)
             if entry:
@@ -1577,6 +1610,7 @@ class App(tk.Tk):
                 ocr_language=self.var_default_ocr_language.get(),
                 preferred_backend=self.var_default_backend.get(),
                 datalab_mode=self.var_default_datalab_mode.get(),
+                document_profile=self.var_default_profile.get(),
             )
             entry = self._entry_dialog(path, initial=initial)
             if entry:
@@ -1622,6 +1656,7 @@ class App(tk.Tk):
                 "ocr_language": self.var_default_ocr_language.get(),
                 "preferred_backend": self.var_default_backend.get(),
                 "datalab_mode": self.var_default_datalab_mode.get(),
+                "document_profile": self.var_default_profile.get(),
             },
         )
         if not new_entries:
