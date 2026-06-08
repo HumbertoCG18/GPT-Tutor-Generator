@@ -850,6 +850,34 @@ def _best_instructional_block_fallback(
     return best_block, confidence
 
 
+CARD_SINGLE_CONF = 0.85
+
+
+def _card_scoped_block(entry, markdown_text, unit_index, instructional_blocks,
+                       card_map, score_fallback_fn):
+    """Degrau card->bloco. Retorna (block_id, confidence) ou ("", 0.0).
+
+    score_fallback_fn(entry, markdown_text, scoped_blocks, unit_slug, topic_slug)
+    -> (block, conf): o scorer real restrito aos blocos do card (sub-bloco).
+    """
+    from src.builder.timeline.card_block import lookup_card_blocks
+    card = str(entry.get("source_section") or "").strip()
+    if not card:
+        return "", 0.0
+    ids = set(lookup_card_blocks(card, card_map, unit_index, instructional_blocks))
+    if not ids:
+        return "", 0.0
+    scoped = [b for b in instructional_blocks if str(b.get("id") or "") in ids]
+    if not scoped:
+        return "", 0.0
+    if len(scoped) == 1:
+        return str(scoped[0].get("id") or ""), CARD_SINGLE_CONF
+    block, conf = score_fallback_fn(entry, markdown_text, scoped, "", "")
+    if block is None:
+        return "", 0.0
+    return str(block.get("id") or ""), float(conf)
+
+
 def resolve_unit_block_tags(
     manifest_entries,
     course_meta,
@@ -970,7 +998,21 @@ def resolve_unit_block_tags(
                 or []
                 if not bool(block.get("administrative_only"))
             ]
-            if instructional_blocks:
+            _card_map = {}
+            if repo_root:
+                try:
+                    from src.builder.timeline.card_block import load_card_block_map
+                    _card_map = load_card_block_map(Path(repo_root) / "course")
+                except Exception:
+                    _card_map = {}
+            _card_bid, _card_conf = _card_scoped_block(
+                entry, markdown_text, unit_index, instructional_blocks, _card_map,
+                lambda e, md, scoped, us, ts: _best_instructional_block_fallback(e, md, scoped, us, ts),
+            )
+            if _card_bid:
+                period_block_id = _card_bid
+                block_confidence = _card_conf
+            elif instructional_blocks:
                 # Passa a unidade resolvida (mesmo fraca) so para o boost; o
                 # scorer ranqueia TODOS os blocos instrucionais.
                 unit_obj = next(
