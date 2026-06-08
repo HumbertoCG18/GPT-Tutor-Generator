@@ -41,10 +41,11 @@ def parse_moodle_course(course: dict) -> dict:
     m = _COURSE_SEM_RE.search(full)
     if m:
         semester = m.group(1)
-    name = full
-    parts = [p.strip() for p in full.split(" - ")]
-    if len(parts) >= 2:
-        name = parts[1]
+    # corta o tail estrutural (Turma/semestre/Prof) e remove o código inicial.
+    m_turma = _re.search(r"\s*-\s*Turma\b", full, _re.IGNORECASE)
+    head = full[:m_turma.start()] if m_turma else full
+    hp = head.split(" - ", 1)
+    name = hp[1].strip() if len(hp) >= 2 else head.strip()
     return {
         "moodle_course_id": cid,
         "name": name,
@@ -119,8 +120,8 @@ class MoodleClient:
         with urllib.request.urlopen(req, timeout=30) as r:
             payload = json.loads(r.read().decode("utf-8"))
         if not isinstance(payload, dict) or not payload.get("token"):
-            msg = payload.get("error") if isinstance(payload, dict) else "resposta inválida"
-            raise RuntimeError(f"Falha no login Moodle: {msg}")
+            # NÃO repassar payload["error"] bruto — pode conter eco de credencial.
+            raise RuntimeError("Falha no login Moodle (verifique matrícula/senha ou se o serviço mobile está habilitado).")
         return str(payload["token"])
 
     def download_course(self, courseid, dest, skip_existing: bool = True) -> dict:

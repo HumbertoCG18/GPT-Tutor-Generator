@@ -98,6 +98,15 @@ def test_parse_moodle_course_full_pattern():
     assert r["slug"]
 
 
+def test_parse_moodle_course_name_with_dashes():
+    from src.builder.sources.moodle import parse_moodle_course
+    c = {"id": 5, "fullname": "98H00-04 - Lógica - Fundamentos - Aplicações - Turma 031 - 2026/1 - Prof. X"}
+    r = parse_moodle_course(c)
+    assert r["name"] == "Lógica - Fundamentos - Aplicações"
+    assert r["professor"] == "X"
+    assert r["semester"] == "2026/1"
+
+
 def test_parse_moodle_course_degraded_no_prof():
     from src.builder.sources.moodle import parse_moodle_course
     r = parse_moodle_course({"id": 1, "fullname": "Curso de Ciência da Computação"})
