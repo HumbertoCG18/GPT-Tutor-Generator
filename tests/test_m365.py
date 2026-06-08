@@ -180,3 +180,31 @@ def test_download_subject_m365_no_collision_loss(tmp_path):
     assert rep["downloaded"] == 2                              # nenhum perdido
     assert (tmp_path / "dafny" / "main.pdf").exists()
     assert (tmp_path / "dafny" / "main (2).pdf").exists()
+    # FIX 3: both the original and renamed file must be tracked in name_to_section
+    assert "main.pdf" in rep["name_to_section"]
+    assert "main (2).pdf" in rep["name_to_section"]
+    assert rep["name_to_section"]["main.pdf"] == rep["name_to_section"]["main (2).pdf"]
+
+
+def test_download_via_downloadurl_raises_on_http_error(monkeypatch):
+    """FIX 1: download() must call raise_for_status() on the direct-download branch."""
+    def fake_get(url, headers=None, timeout=0):
+        if url == "https://dl/bad":
+            return _Resp(status=403, content=b"")
+        raise AssertionError(url)
+    monkeypatch.setattr(m365mod.requests, "get", fake_get)
+    c = m365mod.M365Client("tok")
+    item = {"@microsoft.graph.downloadUrl": "https://dl/bad"}
+    try:
+        c.download(item)
+        assert False, "should have raised"
+    except RuntimeError:
+        pass
+
+
+def test_load_cached_token_returns_none_on_corrupt_file(monkeypatch, tmp_path):
+    """FIX 2: corrupt token file must return None instead of crashing."""
+    p = tmp_path / ".m365_token.json"
+    p.write_text("not json{", encoding="utf-8")
+    monkeypatch.setattr(m365mod, "_token_path", lambda: p)
+    assert m365mod.load_cached_token() is None

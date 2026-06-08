@@ -111,7 +111,9 @@ class M365Client:
     def download(self, item: dict) -> bytes:
         dl = item.get("@microsoft.graph.downloadUrl")
         if dl:
-            return requests.get(dl, timeout=180).content
+            r = requests.get(dl, timeout=180)
+            r.raise_for_status()
+            return r.content
         pref = item["parentReference"]
         r = requests.get(f"{_GRAPH}/drives/{pref['driveId']}/items/{item['id']}/content",
                          headers={"Authorization": f"Bearer {self._token}"}, timeout=180)
@@ -137,7 +139,10 @@ def load_cached_token():
     p = _token_path()
     if not p.is_file():
         return None
-    rt = (json.loads(p.read_text(encoding="utf-8")) or {}).get("refresh_token")
+    try:
+        rt = (json.loads(p.read_text(encoding="utf-8")) or {}).get("refresh_token")
+    except (ValueError, OSError):
+        return None
     if not rt:
         return None
     j = requests.post(f"{_AUTHORITY}/token", timeout=30, data={
@@ -225,7 +230,7 @@ def download_subject_m365(client, m365_filter, moodle_sections, dest,
                 i += 1
             target = folder / f"{stem} ({i}){suf}"
         seen.add(target)
-        name_to_section[name.casefold()] = card
+        name_to_section[target.name.casefold()] = card
         if skip_existing and target.exists():
             continue
         target.write_bytes(data)
