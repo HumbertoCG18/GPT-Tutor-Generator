@@ -1,7 +1,7 @@
 # Design: Perfis de processamento nomeados (presets reutilizáveis)
 
 last_updated: 2026-06-08
-status: aprovado para planejamento
+status: implementado (verificação manual da UI pendente)
 
 ## Problema
 
