@@ -1509,6 +1509,7 @@ class StudentProfileDialog(tk.Toplevel):
         from src.builder.sources.moodle import MoodleClient, save_moodle_token, load_moodle_token
         user = self._moodle_user.get().strip()
         password = self._moodle_pass.get()
+        self._moodle_pass.set("")  # nunca mantém a senha na UI, mesmo se o login falhar
         base = self._moodle_base.get().strip()
         if not base:
             messagebox.showwarning("Moodle", "Escolha a pasta-base dos stashes primeiro.")
@@ -1521,7 +1522,6 @@ class StudentProfileDialog(tk.Toplevel):
             if not token:
                 messagebox.showwarning("Moodle", "Informe matrícula e senha para conectar.")
                 return
-            self._moodle_pass.set("")
             client = MoodleClient(url, token)
             info = client.site_info()
             courses = client.get_users_courses(info.get("userid"))
@@ -1584,6 +1584,12 @@ class MoodleCourseSelectDialog(tk.Toplevel):
             ttk.Checkbutton(inner, text=label, variable=var).pack(anchor="w", pady=2)
         ttk.Button(self, text="📥  Importar marcados", command=self._import).pack(fill="x", padx=10, pady=10)
 
+    def _post(self, fn):
+        try:
+            self.after(0, fn)
+        except (tk.TclError, RuntimeError):
+            pass  # diálogo já destruído — ignora
+
     def _import(self):
         import threading
         from src.builder.sources.moodle import import_moodle_courses
@@ -1598,13 +1604,13 @@ class MoodleCourseSelectDialog(tk.Toplevel):
             try:
                 rep = import_moodle_courses(selected, self._base, store, self._client)
             except Exception as exc:
-                self.after(0, lambda: messagebox.showerror("Moodle", f"Falha no import: {exc}"))
+                self._post(lambda: messagebox.showerror("Moodle", f"Falha no import: {exc}"))
                 return
-            self.after(0, lambda: messagebox.showinfo(
+            self._post(lambda: messagebox.showinfo(
                 "Moodle",
                 f"Criadas: {rep['created']}  Atualizadas: {rep['updated']}  "
                 f"Arquivos baixados: {rep['downloaded_files']}"))
-            self.after(0, self.destroy)
+            self._post(self.destroy)
 
         threading.Thread(target=worker, daemon=True).start()
 
