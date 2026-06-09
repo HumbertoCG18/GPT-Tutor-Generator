@@ -1,7 +1,7 @@
 # Design: Escopo de prova por data + cores SARC (timeline)
 
 last_updated: 2026-06-08
-status: aprovado para planejamento
+status: implementado
 
 ## Problema
 
