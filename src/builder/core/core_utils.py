@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import Dict, List
 
-from src.utils.helpers import normalize_document_profile
+from src.utils.helpers import normalize_document_profile, collapse_ws
 
 
 def effective_document_profile(entry_profile: str | None, suggested_profile: str | None) -> str:
@@ -36,10 +36,6 @@ def persist_enriched_timeline_index(timeline_index: dict) -> dict:
     payload["version"] = 3
     payload["blocks"] = blocks
     return payload
-
-
-def collapse_ws(text: str) -> str:
-    return re.sub(r"\s+", " ", (text or "")).strip()
 
 
 def strip_topic_prefix(text: str) -> str:
