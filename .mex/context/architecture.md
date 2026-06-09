@@ -14,7 +14,7 @@ edges:
     condition: when understanding why an architectural choice exists
   - target: context/repo-output.md
     condition: when the task involves the generated repository format
-last_updated: 2026-06-08
+last_updated: 2026-06-09
 ---
 
 # Architecture

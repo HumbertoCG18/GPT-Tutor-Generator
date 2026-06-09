@@ -11,7 +11,7 @@ edges:
     condition: when revisiting why Gemini is optional
   - target: context/architecture.md
     condition: when wiring a new summarization layer
-last_updated: 2026-06-08
+last_updated: 2026-06-09
 ---
 
 # Gemini Batch Summarization Pattern

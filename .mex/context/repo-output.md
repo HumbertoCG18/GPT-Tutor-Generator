@@ -15,7 +15,7 @@ edges:
     condition: when understanding which build module generates each file
   - target: context/decisions.md
     condition: when understanding why the repo is structured this way
-last_updated: 2026-06-08
+last_updated: 2026-06-09
 ---
 
 # Repo Output Format
