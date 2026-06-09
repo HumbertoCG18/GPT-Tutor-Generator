@@ -5043,3 +5043,32 @@ def test_ensure_builtin_profiles_idempotent_respects_delete():
     cfg = _Cfg()
     ensure_builtin_profiles(cfg)
     assert cfg.get("processing_profiles") == []     # já seedado -> não re-adiciona (delete sobrevive)
+
+
+def _sarc_row(html):
+    from bs4 import BeautifulSoup
+    return BeautifulSoup(html, "html.parser").find("tr")
+
+def test_sarc_ps_is_assessment_not_ignored():
+    from src.utils.helpers import _aspnet_row_canonical_kind
+    row = _sarc_row('<tr style="background-color:#ff8c00"><td><span id="x_lblAtividade">Prova PS</span></td></tr>')
+    kind, ignored = _aspnet_row_canonical_kind(row)
+    assert kind == "assessment" and ignored is False
+
+def test_sarc_g2_lightgrey_is_assessment():
+    from src.utils.helpers import _aspnet_row_canonical_kind
+    row = _sarc_row('<tr style="background-color:lightgrey"><td><span id="x_lblAtividade">Prova G2</span></td></tr>')
+    kind, ignored = _aspnet_row_canonical_kind(row)
+    assert kind == "assessment" and ignored is False
+
+def test_sarc_lightgrey_devolucao_is_results():
+    from src.utils.helpers import _aspnet_row_canonical_kind
+    row = _sarc_row('<tr style="background-color:lightgrey"><td><span id="x_lblAtividade">Devolução de provas</span></td></tr>')
+    kind, ignored = _aspnet_row_canonical_kind(row)
+    assert kind == "results" and ignored is True
+
+def test_sarc_regular_exam_orange_assessment():
+    from src.utils.helpers import _aspnet_row_canonical_kind
+    row = _sarc_row('<tr style="background-color:#ffa500"><td><span id="x_lblAtividade">Prova P1</span></td></tr>')
+    kind, ignored = _aspnet_row_canonical_kind(row)
+    assert kind == "assessment" and ignored is False

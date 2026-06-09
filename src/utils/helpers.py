@@ -364,12 +364,12 @@ def _aspnet_row_cell(row, suffix: str) -> str:
 _ASPNET_COLOR_KIND_MAP = {
     "red": ("suspension", True),
     "#ff0000": ("suspension", True),
-    "lightgrey": ("g2", True),
-    "#d3d3d3": ("g2", True),
+    "lightgrey": ("g2_or_results", False),
+    "#d3d3d3": ("g2_or_results", False),
     "#ffa500": ("assessment", False),
     "orange": ("assessment", False),
-    "#ff8c00": ("ps", True),
-    "darkorange": ("ps", True),
+    "#ff8c00": ("assessment", False),
+    "darkorange": ("assessment", False),
     "#8b0000": ("event", True),
     "darkred": ("event", True),
     "#ffff00": ("deliverable", False),
@@ -420,6 +420,10 @@ def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:
     Retorna (kind, ignored).
     """
     color_kind, ignored = _aspnet_row_kind(row)
+    atividade = norm_ascii_lower(_aspnet_row_cell(row, "Atividade"))
+    if color_kind == "g2_or_results":
+        # LightGrey = G2 (avaliação) OU devolução de provas. Atividade decide.
+        return ("results", True) if "devolu" in atividade else ("assessment", False)
     if ignored:
         return (color_kind, True)
     atividade = norm_ascii_lower(_aspnet_row_cell(row, "Atividade"))

@@ -190,7 +190,9 @@ def test_aspnet_color_exam_emits_kind_exam_no_ignore():
 
 def test_aspnet_color_ps_emits_kind_ps_ignored():
     result = parse_html_schedule(ASPNET_COLOR_SAMPLES)
-    assert "{kind=ps} ⊘" in result
+    assert "Prova PS" in result
+    assert "{kind=assessment}" in result
+    assert "{kind=ps}" not in result
 
 
 def test_aspnet_color_event_emits_kind_event_ignored():
@@ -206,7 +208,9 @@ def test_aspnet_color_assignment_emits_kind_assignment_no_ignore():
 
 def test_aspnet_color_g2_emits_kind_g2_ignored():
     result = parse_html_schedule(ASPNET_COLOR_SAMPLES)
-    assert "— Prova G2 [Prova de G2] {kind=g2} ⊘" in result
+    assert "Prova G2" in result
+    assert "{kind=assessment}" in result
+    assert "{kind=g2}" not in result
 
 
 def test_aspnet_class_row_omits_kind_token():
