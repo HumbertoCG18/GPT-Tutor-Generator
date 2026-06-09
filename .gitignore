@@ -248,3 +248,4 @@ staging/
 /moddle/*
 !moddle/.env.example
 moddle/.m365_token.json
+.superpowers/
