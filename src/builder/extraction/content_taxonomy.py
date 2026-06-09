@@ -572,18 +572,6 @@ def collect_strong_heading_candidates(root_dir: Optional[Path], manifest_entries
     return headings
 
 
-def _entry_tag_signal_text(entry: dict, markdown_text: str) -> str:
-    parts = [
-        entry.get("title", ""),
-        entry.get("category", ""),
-        entry.get("notes", ""),
-        entry.get("professor_signal", ""),
-        entry.get("raw_target", ""),
-        markdown_text,
-    ]
-    return _normalize_match_text(" ".join(part for part in parts if part))
-
-
 def _signal_token_set(signal_text: str) -> set:
     return {token for token in _normalize_match_text(signal_text).split() if len(token) >= 4}
 

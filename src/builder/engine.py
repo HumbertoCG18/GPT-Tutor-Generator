@@ -107,7 +107,6 @@ from src.builder.core.markdown_utils import (
     strip_markdown_image_refs as _markdown_utils_strip_markdown_image_refs,
 )
 from src.builder.core.core_utils import (
-    collapse_ws as _core_utils_collapse_ws,
     effective_document_profile as _core_utils_effective_document_profile,
     merge_manual_and_auto_tags as _core_utils_merge_manual_and_auto_tags,
     pdf_image_extraction_policy as _core_utils_pdf_image_extraction_policy,
@@ -272,6 +271,7 @@ from src.utils.helpers import (
     CODE_CATEGORIES, ASSIGNMENT_CATEGORIES, WHITEBOARD_CATEGORIES,
     ensure_dir, json_str, pages_to_marker_range,
     normalize_document_profile, parse_page_range, safe_rel, slugify, write_text,
+    collapse_ws as _core_utils_collapse_ws,
 )
 from src.utils.power import prevent_system_sleep
 

@@ -404,10 +404,6 @@ def load_moodle_token(dotenv_path=None):
     return url, token
 
 
-def load_moodle_private_token(dotenv_path=None) -> str:
-    return _moodle_env("MOODLE_PRIVATE_TOKEN", dotenv_path)
-
-
 def save_moodle_token(token: str, url: str = "", dotenv_path=None) -> None:
     path = Path(dotenv_path) if dotenv_path else default_token_path()
     existing_url, _ = load_moodle_token(dotenv_path=path)
