@@ -5100,3 +5100,21 @@ def test_assessment_scope_by_date_windows_and_full():
     assert scope["p2"] == ["unidade-3"]                       # entre P1 e P2
     assert scope["ps"] == ["unidade-1", "unidade-2", "unidade-3"]   # semestre inteiro
     assert scope["g2"] == ["unidade-1", "unidade-2", "unidade-3"]   # semestre inteiro
+
+
+def test_link_review_scope_inherits_next_exam():
+    from src.builder.timeline.index import link_review_scope
+    blocks = [
+        {"id": "rev", "kind": "review", "period_start": "2026-07-01"},
+        {"id": "p2", "kind": "assessment", "period_start": "2026-07-06", "topic_text": "Prova P2"},
+    ]
+    scope = {"p2": ["unidade-3"]}
+    out = link_review_scope(blocks, scope)
+    assert out["rev"] == ["unidade-3"]       # revisao herda a proxima prova (P2)
+
+def test_link_review_scope_no_next_exam_empty():
+    from src.builder.timeline.index import link_review_scope
+    blocks = [{"id": "rev", "kind": "review", "period_start": "2026-07-20"},
+              {"id": "p2", "kind": "assessment", "period_start": "2026-07-06"}]
+    out = link_review_scope(blocks, {"p2": ["u3"]})
+    assert out.get("rev", []) == []          # nenhuma prova depois -> vazio

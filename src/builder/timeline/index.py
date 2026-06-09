@@ -1278,6 +1278,28 @@ def assessment_scope_by_date(blocks: List[Dict[str, object]]) -> Dict[str, List[
     return out
 
 
+def link_review_scope(blocks: List[Dict[str, object]], exam_scope: Dict[str, List[str]]) -> Dict[str, List[str]]:
+    """Cada bloco REVIEW herda o escopo da PRÓXIMA prova (ASSESSMENT) por data.
+
+    Retorna {review_block_id: [unit_slug]} (vazio se não houver prova depois)."""
+    dated = []
+    for b in blocks:
+        dt = _parse_timeline_date_value(str(b.get("period_start") or ""))
+        dated.append((dt, b))
+    out: Dict[str, List[str]] = {}
+    for dt, b in dated:
+        if str(b.get("kind") or "") != BlockKind.REVIEW.value or not dt:
+            continue
+        nxt = None
+        for odt, ob in dated:
+            if (str(ob.get("kind") or "") == BlockKind.ASSESSMENT.value
+                    and odt and odt >= dt):
+                if nxt is None or odt < nxt[0]:
+                    nxt = (odt, ob)
+        out[str(b.get("id") or "")] = list(exam_scope.get(str(nxt[1].get("id")), [])) if nxt else []
+    return out
+
+
 def _assessment_conflict_observation(
     assessment_label: str,
     assessment_date: str,
