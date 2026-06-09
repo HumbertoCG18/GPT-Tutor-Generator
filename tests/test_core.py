@@ -4946,6 +4946,46 @@ def test_decide_uses_profile_backend_map():
     assert decision.advanced_backend == "docling"   # mapa vence o built-in [datalab, marker, docling]
 
 
+def test_skip_base_backends_forces_advanced_on_common_doc():
+    from unittest import mock
+    from src.builder.engine import BackendSelector
+    from src.models.core import FileEntry, DocumentProfileReport
+    selector = BackendSelector(skip_base_backends=True)
+    entry = FileEntry(source_path="/t.pdf", file_type="pdf", category="c", title="T", processing_mode="auto")
+    report = DocumentProfileReport(suggested_profile="auto")   # documento comum
+    with mock.patch.object(BackendSelector, "available_backends",
+        return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": False, "docling": True, "marker": True}):
+        decision = selector.decide(entry, report)
+    assert decision.base_backend is None                       # base pulada
+    assert decision.advanced_backend in {"docling", "marker"}  # avançado forçado
+
+
+def test_skip_base_backends_fallback_when_no_advanced():
+    from unittest import mock
+    from src.builder.engine import BackendSelector
+    from src.models.core import FileEntry, DocumentProfileReport
+    selector = BackendSelector(skip_base_backends=True)
+    entry = FileEntry(source_path="/t.pdf", file_type="pdf", category="c", title="T", processing_mode="auto")
+    report = DocumentProfileReport(suggested_profile="auto")
+    with mock.patch.object(BackendSelector, "available_backends",
+        return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": False, "docling": False, "marker": False}):
+        decision = selector.decide(entry, report)
+    assert decision.base_backend in {"pymupdf4llm", "pymupdf"}  # safety: sem avançado, usa base
+
+
+def test_skip_base_backends_off_keeps_base():
+    from unittest import mock
+    from src.builder.engine import BackendSelector
+    from src.models.core import FileEntry, DocumentProfileReport
+    selector = BackendSelector()                               # padrão: desligado
+    entry = FileEntry(source_path="/t.pdf", file_type="pdf", category="c", title="T", processing_mode="auto")
+    report = DocumentProfileReport(suggested_profile="auto")
+    with mock.patch.object(BackendSelector, "available_backends",
+        return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True}):
+        decision = selector.decide(entry, report)
+    assert decision.base_backend == "pymupdf4llm"              # comportamento atual preservado
+
+
 def test_decide_falls_back_to_builtin_when_mapped_unavailable():
     from unittest import mock
     from src.builder.engine import BackendSelector

@@ -1655,8 +1655,9 @@ def resolve_profile_backend(profile, profile_backends, available) -> Optional[st
 
 
 class BackendSelector:
-    def __init__(self, profile_backends=None):
+    def __init__(self, profile_backends=None, skip_base_backends: bool = False):
         self.profile_backends: Dict[str, str] = dict(profile_backends or {})
+        self.skip_base_backends = bool(skip_base_backends)
         self.backends: Dict[str, ExtractionBackend] = {
             "pymupdf4llm": PyMuPDF4LLMBackend(),
             "pymupdf": PyMuPDFBackend(),
@@ -1682,6 +1683,13 @@ class BackendSelector:
                     return name
             return None
 
+        def pick_base() -> Optional[str]:
+            # Pula os backends base (pymupdf4llm/pymupdf) quando a opção global
+            # está ativa; força a extração a usar um backend avançado.
+            if self.skip_base_backends:
+                return None
+            return pick_first(["pymupdf4llm", "pymupdf"])
+
         def pick_advanced_for_profile(profile: str) -> Optional[str]:
             mapped = resolve_profile_backend(profile, self.profile_backends, available)
             if mapped:
@@ -1700,24 +1708,24 @@ class BackendSelector:
             preferred = entry.preferred_backend
             if preferred in {"datalab", "docling", "docling_python", "marker"}:
                 advanced_backend = preferred
-                base_backend = pick_first(["pymupdf4llm", "pymupdf"])
+                base_backend = pick_base()
                 reasons.append(f"Backend preferido manualmente: {preferred}.")
             else:
                 base_backend = preferred
                 reasons.append(f"Backend base preferido manualmente: {preferred}.")
 
         if mode == "quick":
-            base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
+            base_backend = base_backend or pick_base()
             reasons.append("Modo quick prioriza velocidade e baixo custo.")
 
         elif mode == "manual_assisted":
-            base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
+            base_backend = base_backend or pick_base()
             if effective_profile in {"math_heavy", "diagram_heavy", "scanned"}:
                 advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
             reasons.append("Modo manual_assisted gera base automática e exige revisão humana guiada.")
 
         elif mode == "high_fidelity":
-            base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
+            base_backend = base_backend or pick_base()
             if effective_profile == "math_heavy":
                 advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
                 reasons.append("Documento math_heavy pede backend avançado com enrich-formula.")
@@ -1730,7 +1738,7 @@ class BackendSelector:
                     reasons.append("Modo high_fidelity tenta saída avançada além da base.")
 
         else:  # auto
-            base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
+            base_backend = base_backend or pick_base()
             if effective_profile in {"math_heavy", "diagram_heavy", "scanned"}:
                 advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
                 reasons.append(f"Modo auto detectou perfil {effective_profile} e ativou camada avançada.")
@@ -1741,6 +1749,16 @@ class BackendSelector:
             advanced_backend = pick_advanced_for_profile(effective_profile)
             if advanced_backend:
                 reasons.append("formula_priority ativou backend avançado.")
+
+        # Pular base: documento comum (sem base nem avançado) força avançado.
+        # Override explícito de backend base do usuário é respeitado (não cai aqui).
+        if self.skip_base_backends and not base_backend and not advanced_backend:
+            advanced_backend = pick_advanced_for_profile(effective_profile)
+            if advanced_backend:
+                reasons.append("Pular base: backend avançado forçado para documento comum.")
+            else:
+                base_backend = pick_first(["pymupdf4llm", "pymupdf"])
+                reasons.append("Pular base pedido, mas nenhum avançado disponível; base como fallback.")
 
         if not base_backend and advanced_backend:
             reasons.append("Sem backend base disponível; usando apenas backend avançado.")
@@ -1777,7 +1795,10 @@ class RepoBuilder:
         self.progress_callback = progress_callback  # Callable[[int, int, str], None] | None
         self.logs: List[Dict[str, object]] = []
         self.failed_entries: List[Dict[str, object]] = []
-        self.selector = BackendSelector(profile_backends=self.options.get("profile_backends") or {})
+        self.selector = BackendSelector(
+            profile_backends=self.options.get("profile_backends") or {},
+            skip_base_backends=bool(self.options.get("skip_base_backends")),
+        )
 
     def _effective_course_meta(self, manifest: Optional[Dict[str, object]] = None) -> Dict[str, str]:
         return _repo_artifacts.effective_course_meta(

@@ -89,6 +89,7 @@ class AppConfig:
         "default_mode": "auto",
         "default_ocr_language": DEFAULT_OCR_LANGUAGE,
         "default_backend": "auto",
+        "skip_base_backends": False,
         "processing_profiles": [dict(b) for b in BUILTIN_PROCESSING_PROFILES],
         "processing_profiles_seeded_v2": False,
         "image_format": "png",

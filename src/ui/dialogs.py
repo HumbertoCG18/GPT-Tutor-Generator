@@ -327,6 +327,23 @@ class SettingsDialog(tk.Toplevel):
             "Não altera a curadoria nem a aprovação; só reduz risco de pausa por suspensão.",
         )
 
+        self._var_skip_base_backends = tk.BooleanVar(
+            value=bool(self.config.get("skip_base_backends", False))
+        )
+        skip_base = ttk.Checkbutton(
+            tab_proc,
+            text="Pular backends base (pymupdf4llm / pymupdf) — força backend avançado",
+            variable=self._var_skip_base_backends,
+        )
+        skip_base.grid(row=next_row + 6, column=0, columnspan=2, sticky="w", pady=(2, 6))
+        add_tooltip(
+            skip_base,
+            "Quando ligado, a extração nunca usa os backends base (pymupdf4llm/pymupdf):\n"
+            "todo documento — inclusive os comuns — passa por um backend avançado\n"
+            "(datalab/docling/marker). Se nenhum avançado estiver disponível, cai na base\n"
+            "como fallback pra não ficar sem extração.",
+        )
+
         sep_row = next_row + 7
         ttk.Separator(tab_proc, orient="horizontal").grid(
             row=sep_row, column=0, columnspan=2, sticky="ew", pady=(12, 8))
@@ -438,6 +455,7 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("default_mode", self._var_mode.get())
         self.config.set("default_ocr_language", self._var_ocr.get())
         self.config.set("default_backend", self._var_backend.get())
+        self.config.set("skip_base_backends", bool(self._var_skip_base_backends.get()))
         self.config.set("image_format", self._var_image_format.get())
         self.config.set("stall_timeout", self._var_stall_timeout.get())
         self.config.set("marker_chunking_mode", self._var_marker_chunking_mode.get())

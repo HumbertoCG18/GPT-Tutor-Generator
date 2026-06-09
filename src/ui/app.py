@@ -105,6 +105,7 @@ def _build_options_from_config(default_mode: str, default_ocr_language: str, con
         "prevent_sleep_during_build": config_obj.get("prevent_sleep_during_build", True),
         "image_description_source": config_obj.get("image_description_source", "ollama"),
         "profile_backends": derive_profile_backends(config_obj),
+        "skip_base_backends": config_obj.get("skip_base_backends", False),
     }
 
 
