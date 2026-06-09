@@ -2251,7 +2251,21 @@ class BacklogEntryEditDialog(tk.Toplevel):
             justify="left",
         ).grid(row=7, column=1, sticky="w", pady=(4, 0))
 
-        row_unit = row_tags + 1
+        row_origem = row_tags + 1
+        _src_section = str(self._data.get("source_section") or "").strip() or "—"
+        lbl_origem = tk.Label(tab_edit, text="Seção de origem", bg=p["bg"], fg=p["fg"],
+                              font=("Segoe UI", 10))
+        lbl_origem.grid(row=row_origem, column=0, sticky="w", padx=(0, 12), pady=6)
+        tk.Label(tab_edit, text=_src_section, bg=p["bg"], fg=p["muted"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(
+            row=row_origem, column=1, sticky="w", pady=6)
+        add_tooltip(
+            lbl_origem,
+            "Seção/pasta de onde o arquivo veio (card do Moodle ou pasta do OneDrive/M365).\n"
+            "Preenchido na importação; '—' quando a origem não foi registrada.",
+        )
+
+        row_unit = row_origem + 1
         tk.Label(tab_edit, text="Unidade manual", bg=p["bg"], fg=p["fg"],
                  font=("Segoe UI", 10)).grid(row=row_unit, column=0, sticky="w", padx=(0, 12), pady=6)
         self._manual_unit_options = _load_file_map_unit_options(self._repo_dir)
@@ -4108,6 +4122,20 @@ def _resolve_backlog_subunit_status(
             "assigned": _display(auto_subunit),
             "source": "Automático",
             "note": "Subunidade atribuída automaticamente no último processamento.",
+        }
+
+    # Melhor candidato best-effort (não passou no gate de confiança/ambiguidade
+    # do roteamento, mas é útil mostrar como sugestão a revisar).
+    computed = str(entry_data.get("computed_subunit_slug") or "").strip()
+    if computed:
+        conf = float(entry_data.get("subunit_match_confidence", 0.0) or 0.0)
+        return {
+            "assigned": _display(computed),
+            "source": "Sugestão (baixa confiança)",
+            "note": (
+                f"Melhor candidato do matcher (confiança {conf:.0%}), abaixo do limiar "
+                "para atribuição automática. Revise e aplique manualmente se estiver correto."
+            ),
         }
 
     return {

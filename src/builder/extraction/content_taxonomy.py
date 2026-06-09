@@ -943,11 +943,16 @@ def resolve_unit_block_tags(
             preferred_topic_slug = manual_subunit
             subunit_reasons = ["manual"]
             subunit_confidence = 1.0
+            best_subunit_slug = manual_subunit
         else:
             topic_match = auto_map_entry_subtopic_fn(entry, content_taxonomy, markdown_text)
             preferred_topic_slug = ""
             subunit_reasons = list(getattr(topic_match, "reasons", []))
             subunit_confidence = float(getattr(topic_match, "confidence", 0.0))
+            # Melhor candidato de subunidade (best-effort), independente do gate:
+            # surfaçado no editor com a confiança, mesmo ambíguo/baixo. A tag
+            # `subunit:` (roteamento) continua gated abaixo via preferred_topic_slug.
+            best_subunit_slug = str(getattr(topic_match, "topic_slug", "") or "")
             if (
                 topic_match.topic_slug
                 and not topic_match.ambiguous
@@ -1055,6 +1060,18 @@ def resolve_unit_block_tags(
         computed_unit_slug = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= 0.65) else ""
         computed_block_id = period_block_id
         computed_block_confidence = float(block_confidence)
+
+        # Herança de unidade pelo bloco: um arquivo atribuído a um bloco pertence
+        # à unidade daquele bloco. Quando o matcher de unidade não decidiu (vazio)
+        # mas há bloco com unidade (caso comum de code/zip, cujo nome é sinal
+        # fraco), herda a unidade do bloco em vez de ficar órfão.
+        if not computed_unit_slug and computed_block_id and not manual_unit:
+            _blocks = (timeline_context.get("timeline_index") or {}).get("blocks", []) or []
+            _blk = next((b for b in _blocks if str(b.get("id") or "") == computed_block_id), None)
+            _blk_unit = str((_blk or {}).get("unit_slug") or "").strip()
+            if _blk_unit:
+                computed_unit_slug = _blk_unit
+                unit_reasons = list(unit_reasons) + [f"herdada_do_bloco={computed_block_id}"]
         # Faixa (Fase 3): so faz sentido quando ha bloco atribuido. Cutoffs
         # centralizados em thresholds.confidence_band (nada hardcoded aqui).
         # media/baixa ficam flagados pra revisao via o proprio valor da faixa.
@@ -1081,6 +1098,7 @@ def resolve_unit_block_tags(
         new_entry["computed_block_band"] = computed_block_band
         new_entry["unit_match_reasons"] = unit_reasons
         new_entry["unit_match_confidence"] = unit_confidence
+        new_entry["computed_subunit_slug"] = best_subunit_slug
         new_entry["subunit_match_reasons"] = subunit_reasons
         new_entry["subunit_match_confidence"] = subunit_confidence
         updated.append(new_entry)

@@ -5347,6 +5347,35 @@ def test_apply_document_profile_preset_unknown_falls_back_auto():
     assert out["formula_priority"] is True            # heurística independe do perfil nomeado
 
 
+def test_backlog_subunit_status_surfaces_low_conf_computed():
+    from src.ui.dialogs import _resolve_backlog_subunit_status
+    entry = {"computed_subunit_slug": "conjuntos-indutivos",
+             "subunit_match_confidence": 0.4, "auto_tags": []}
+    st = _resolve_backlog_subunit_status(entry, None, {"conjuntos-indutivos": "Conjuntos Indutivos"})
+    assert st["assigned"] == "Conjuntos Indutivos"     # surfaçada mesmo abaixo do gate
+    assert "confiança" in st["source"].lower()
+
+
+def test_backlog_subunit_status_manual_wins_over_computed():
+    from src.ui.dialogs import _resolve_backlog_subunit_status
+    entry = {"manual_subunit_slug": "x", "computed_subunit_slug": "y", "auto_tags": ["subunit:z"]}
+    st = _resolve_backlog_subunit_status(entry, None, {"x": "X", "y": "Y", "z": "Z"})
+    assert st["assigned"] == "X"                       # manual > auto-tag > computed
+
+
+def test_backlog_subunit_status_auto_tag_over_computed():
+    from src.ui.dialogs import _resolve_backlog_subunit_status
+    entry = {"auto_tags": ["subunit:z"], "computed_subunit_slug": "y"}
+    st = _resolve_backlog_subunit_status(entry, None, {"y": "Y", "z": "Z"})
+    assert st["assigned"] == "Z"                       # tag confiável vence o best-effort
+
+
+def test_backlog_subunit_status_none_when_empty():
+    from src.ui.dialogs import _resolve_backlog_subunit_status
+    st = _resolve_backlog_subunit_status({"auto_tags": []}, None, {})
+    assert st["assigned"] == "Não atribuída"
+
+
 def test_appconfig_drops_removed_legacy_keys(tmp_path, monkeypatch):
     """Config legado com profile_backends/default_profile carrega sem erro e as
     chaves removidas não entram em config.data (filtradas por DEFAULTS)."""
