@@ -945,14 +945,16 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
         bid = b.get("id")
         scope = None
         if b.get("kind") == BlockKind.ASSESSMENT.value:
-            # Precedência: unidades declaradas no plano (se já vieram do matcher) vencem.
-            declared = b.get("scope_unit_slugs")
-            scope = declared if declared else exam_scope.get(bid, [])
+            scope = exam_scope.get(bid, [])
         elif b.get("kind") == BlockKind.REVIEW.value:
             scope = review_scope.get(bid, [])
         if scope is not None:
             b["scope_unit_slugs"] = list(scope)
-            if scope and not b.get("primary_topic_label"):
+            # Label de conteúdo: define quando vazio OU quando é o nosso próprio
+            # marcador (mantém idempotente e atualiza se as datas mudarem). Label
+            # manual nunca é tocado.
+            existing = str(b.get("primary_topic_label") or "")
+            if scope and (not existing or existing.startswith("Conteúdo: ")):
                 b["primary_topic_label"] = "Conteúdo: " + ", ".join(scope)
     return {"version": TIMELINE_INDEX_VERSION, "blocks": blocks}
 
@@ -1230,9 +1232,11 @@ def _assessment_scope_unit_slugs(declared_unit_numbers: List[int], unit_index: l
 
 def _assessment_block_label(block: Dict[str, object]) -> str:
     """Rótulo canônico (P1/P2/PS/G2/PF/EXAME) a partir do texto do bloco, ou ""."""
+    # Só campos CRUS — NÃO incluir primary_topic_label: o serialize sobrescreve ele
+    # com "Conteúdo: …" e isso corromperia o rótulo na re-serialização (idempotência).
     text = " ".join(
         str(block.get(k, "") or "")
-        for k in ("topic_text", "primary_topic_label", "period_label")
+        for k in ("topic_text", "period_label")
     )
     for sess in block.get("sessions", []) or []:
         if isinstance(sess, dict):

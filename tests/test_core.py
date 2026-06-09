@@ -5132,3 +5132,25 @@ def test_serialize_attaches_scope_unit_slugs():
     assert by_id["p1"]["scope_unit_slugs"] == ["unidade-1"]
     assert by_id["rev"]["scope_unit_slugs"] == ["unidade-1"]   # herda P1
     assert "scope_unit_slugs" not in by_id["b1"] or by_id["b1"]["scope_unit_slugs"] == []
+
+
+def test_serialize_timeline_idempotent_scope():
+    """Regressão: re-serializar o output não muda scope nem rótulo (idempotente)."""
+    from src.builder.timeline.index import _serialize_timeline_index
+    ti = {"blocks": [
+        {"id": "b1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1", "topic_text": "Logica", "rows": []},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-02", "topic_text": "Prova P1", "rows": []},
+        {"id": "ps", "kind": "assessment", "period_start": "2026-07-08", "topic_text": "Prova PS", "rows": []},
+        {"id": "rev", "kind": "review", "period_start": "2026-04-01", "topic_text": "Exercicios de revisao", "rows": []},
+    ]}
+    out1 = _serialize_timeline_index(ti)
+    out2 = _serialize_timeline_index(out1)
+    s1 = {b["id"]: b.get("scope_unit_slugs") for b in out1["blocks"]}
+    s2 = {b["id"]: b.get("scope_unit_slugs") for b in out2["blocks"]}
+    assert s1 == s2
+    assert s2["p1"] == ["unidade-1"]
+    assert s2["ps"] == ["unidade-1"]
+    assert s2["rev"] == ["unidade-1"]
+    l1 = {b["id"]: b.get("primary_topic_label") for b in out1["blocks"]}
+    l2 = {b["id"]: b.get("primary_topic_label") for b in out2["blocks"]}
+    assert l1 == l2

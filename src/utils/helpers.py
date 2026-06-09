@@ -426,7 +426,6 @@ def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:
         return ("results", True) if "devolu" in atividade else ("assessment", False)
     if ignored:
         return (color_kind, True)
-    atividade = norm_ascii_lower(_aspnet_row_cell(row, "Atividade"))
     for needle, kind in ATIVIDADE_KIND_MAP.items():
         if needle in atividade:
             return (kind, False)
