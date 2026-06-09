@@ -4959,9 +4959,15 @@ def test_decide_falls_back_to_builtin_when_mapped_unavailable():
     assert decision.advanced_backend == "datalab"   # docling indisponível -> ordem built-in
 
 
-def test_appconfig_has_profile_backends_default():
+def test_default_profiles_derive_expected_backends():
+    """Auto-roteamento deriva dos perfis nomeados default do AppConfig (fonte única;
+    profile_backends como config separada foi removido)."""
     from src.ui.theme import AppConfig
-    pb = AppConfig.DEFAULTS["profile_backends"]
+    from src.utils.helpers import derive_profile_backends
+    assert "profile_backends" not in AppConfig.DEFAULTS
+    assert "default_profile" not in AppConfig.DEFAULTS
+    cfg = _ProfCfg(AppConfig.DEFAULTS["processing_profiles"])
+    pb = derive_profile_backends(cfg)
     assert pb["math_heavy"] == "datalab"
     assert pb["diagram_heavy"] == "docling"
     assert pb["auto"] == "auto"
@@ -5220,3 +5226,63 @@ def test_serialize_timeline_idempotent_scope():
     l1 = {b["id"]: b.get("primary_topic_label") for b in out1["blocks"]}
     l2 = {b["id"]: b.get("primary_topic_label") for b in out2["blocks"]}
     assert l1 == l2
+
+
+class _ProfCfg:
+    """Config stub: só expõe processing_profiles para load_processing_profiles."""
+    def __init__(self, profiles):
+        self._p = profiles
+    def get(self, key, default=None):
+        return self._p if key == "processing_profiles" else default
+
+
+def test_derive_profile_backends_builtins():
+    from src.utils.helpers import derive_profile_backends, BUILTIN_PROCESSING_PROFILES
+    cfg = _ProfCfg([dict(b) for b in BUILTIN_PROCESSING_PROFILES])
+    assert derive_profile_backends(cfg) == {
+        "auto": "auto",
+        "math_heavy": "datalab",
+        "diagram_heavy": "docling",
+        "scanned": "auto",
+    }
+
+
+def test_derive_profile_backends_first_wins_on_conflict():
+    from src.utils.helpers import derive_profile_backends
+    cfg = _ProfCfg([
+        {"name": "a", "document_profile": "math_heavy", "preferred_backend": "datalab"},
+        {"name": "b", "document_profile": "math_heavy", "preferred_backend": "marker"},
+    ])
+    assert derive_profile_backends(cfg)["math_heavy"] == "datalab"
+
+
+def test_derive_profile_backends_skips_empty_document_profile():
+    from src.utils.helpers import derive_profile_backends
+    cfg = _ProfCfg([
+        {"name": "x", "document_profile": "", "preferred_backend": "datalab"},
+    ])
+    assert derive_profile_backends(cfg) == {}
+
+
+def test_derive_profile_backends_empty_and_none():
+    from src.utils.helpers import derive_profile_backends
+    assert derive_profile_backends(_ProfCfg([])) == {}
+    assert derive_profile_backends(None) == {}
+
+
+def test_appconfig_drops_removed_legacy_keys(tmp_path, monkeypatch):
+    """Config legado com profile_backends/default_profile carrega sem erro e as
+    chaves removidas não entram em config.data (filtradas por DEFAULTS)."""
+    import json as _json
+    import src.ui.theme as theme_mod
+    legacy = tmp_path / ".gpt_tutor_config.json"
+    legacy.write_text(_json.dumps({
+        "theme": "light",
+        "default_profile": "math_heavy",
+        "profile_backends": {"math_heavy": "marker"},
+    }), encoding="utf-8")
+    monkeypatch.setattr(theme_mod, "CONFIG_PATH", legacy)
+    cfg = theme_mod.AppConfig()
+    assert cfg.get("theme") == "light"          # chave válida preservada
+    assert "default_profile" not in cfg.data    # chave removida ignorada
+    assert "profile_backends" not in cfg.data

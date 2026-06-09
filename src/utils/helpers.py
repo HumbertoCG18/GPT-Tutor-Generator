@@ -699,3 +699,29 @@ def get_processing_profile(config_obj, name):
 def save_processing_profiles(config_obj, profiles):
     """Grava a lista de ProcessingProfile no config."""
     config_obj.set("processing_profiles", [p.to_dict() for p in profiles])
+
+
+def derive_profile_backends(config_obj) -> dict:
+    """Mapa {document_profile: preferred_backend} derivado dos perfis nomeados.
+
+    Fonte única do auto-roteamento (substitui o antigo config `profile_backends`).
+    Primeiro perfil por ordem da lista vence; conflito (mesmo document_profile com
+    backend diferente) -> log.warning e ignora. `config_obj` None -> {}.
+    """
+    if config_obj is None:
+        return {}
+    mapping: dict = {}
+    for prof in load_processing_profiles(config_obj):
+        dp = (prof.document_profile or "").strip()
+        if not dp:
+            continue
+        backend = (prof.preferred_backend or "").strip() or "auto"
+        if dp in mapping:
+            if mapping[dp] != backend:
+                logger.warning(
+                    "perfil '%s' redefine document_profile '%s' (%s -> %s); mantendo o primeiro",
+                    prof.name, dp, mapping[dp], backend,
+                )
+            continue
+        mapping[dp] = backend
+    return mapping

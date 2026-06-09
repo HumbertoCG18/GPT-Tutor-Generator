@@ -20,7 +20,7 @@ from src.models.core import (
     PendingOperation, PendingOperationStore,
 )
 from src.models.task_queue import RepoTask, RepoTaskStore
-from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES, get_app_data_dir
+from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES, get_app_data_dir, derive_profile_backends
 from src.builder.runtime.datalab_client import has_datalab_api_key
 from src.builder.engine import RepoBuilder
 from src.builder.artifacts.prompts import (
@@ -104,7 +104,7 @@ def _build_options_from_config(default_mode: str, default_ocr_language: str, con
         "ollama_base_url": config_obj.get("ollama_base_url"),
         "prevent_sleep_during_build": config_obj.get("prevent_sleep_during_build", True),
         "image_description_source": config_obj.get("image_description_source", "ollama"),
-        "profile_backends": config_obj.get("profile_backends") or {},
+        "profile_backends": derive_profile_backends(config_obj),
     }
 
 
@@ -1791,7 +1791,7 @@ class App(tk.Tk):
                 backend_disp = entry.preferred_backend            # override manual
             else:
                 # backend efetivo pelo mapa perfil->backend (preview leve)
-                pb = self.config_obj.get("profile_backends") or {}
+                pb = derive_profile_backends(self.config_obj)
                 backend_disp = pb.get(entry.document_profile, "auto")
             self.tree.insert(
                 "",

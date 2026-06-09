@@ -208,7 +208,6 @@ class SettingsDialog(tk.Toplevel):
 
         self._var_mode = tk.StringVar(value=self.config.get("default_mode"))
         self._var_ocr = tk.StringVar(value=self.config.get("default_ocr_language"))
-        self._var_profile = tk.StringVar(value=normalize_document_profile(self.config.get("default_profile")))
         self._var_backend = tk.StringVar(value=self.config.get("default_backend"))
         self._var_image_format = tk.StringVar(value=self.config.get("image_format"))
 
@@ -216,7 +215,6 @@ class SettingsDialog(tk.Toplevel):
         fields = [
             ("Modo de processamento padrão", self._var_mode, PROCESSING_MODES),
             ("Idioma OCR padrão", self._var_ocr, OCR_LANGS),
-            ("Perfil de documento padrão", self._var_profile, DOCUMENT_PROFILES),
             ("Backend preferido padrão", self._var_backend, PREFERRED_BACKENDS),
             ("Formato de imagem no Markdown", self._var_image_format, IMAGE_FORMATS),
         ]
@@ -418,31 +416,6 @@ class SettingsDialog(tk.Toplevel):
             variable=self._var_gemini_auto,
         ).grid(row=sep_row + 13, column=0, columnspan=2, sticky="w", pady=(8, 0))
 
-        # ── Perfis de documento → Backend ────────────────────────────
-        pb_sep = sep_row + 14
-        ttk.Separator(tab_proc, orient="horizontal").grid(
-            row=pb_sep, column=0, columnspan=2, sticky="ew", pady=(12, 8))
-        ttk.Label(tab_proc, text="Perfis de documento → Backend",
-                  style="Accent.TLabel").grid(
-            row=pb_sep + 1, column=0, columnspan=2, sticky="w", pady=(0, 8))
-        _pb_cfg = self.config.get("profile_backends") or {}
-        _PB_CHOICES = ["auto", "datalab", "marker", "docling", "docling_python", "pymupdf4llm", "pymupdf"]
-        self._var_profile_backends = {}
-        for _j, _prof in enumerate(["auto", "math_heavy", "diagram_heavy", "scanned"]):
-            _r = pb_sep + 2 + _j
-            ttk.Label(tab_proc, text=_prof).grid(row=_r, column=0, sticky="w", pady=4, padx=(0, 16))
-            _v = tk.StringVar(value=str(_pb_cfg.get(_prof, "auto")))
-            self._var_profile_backends[_prof] = _v
-            _cb = ttk.Combobox(tab_proc, textvariable=_v, values=_PB_CHOICES,
-                               state="readonly", width=22)
-            _cb.grid(row=_r, column=1, sticky="w")
-            add_tooltip(_cb, "Backend p/ este perfil. 'auto' = ordem automática.\n"
-                             "Se o backend escolhido estiver indisponível, cai no automático.")
-        _code_row = pb_sep + 6
-        ttk.Label(tab_proc, text="código / zip").grid(row=_code_row, column=0, sticky="w", pady=4, padx=(0, 16))
-        ttk.Label(tab_proc, text="gemini (fixo — código não passa por datalab)",
-                  font=("Segoe UI", 9, "italic")).grid(row=_code_row, column=1, sticky="w")
-
         tab_proc.columnconfigure(1, weight=1)
 
         # ── Buttons ─────────────────────────────────────────────────────
@@ -463,10 +436,7 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("theme", self._var_theme.get())
         self.config.set("default_mode", self._var_mode.get())
         self.config.set("default_ocr_language", self._var_ocr.get())
-        self.config.set("default_profile", self._var_profile.get())
         self.config.set("default_backend", self._var_backend.get())
-        self.config.set("profile_backends",
-                        {p: v.get() for p, v in self._var_profile_backends.items()})
         self.config.set("image_format", self._var_image_format.get())
         self.config.set("stall_timeout", self._var_stall_timeout.get())
         self.config.set("marker_chunking_mode", self._var_marker_chunking_mode.get())
