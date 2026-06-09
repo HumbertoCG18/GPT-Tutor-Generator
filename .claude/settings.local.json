@@ -50,7 +50,9 @@
       "Bash(start \"\" \"docs/sistema-atribuicao.html\")",
       "Bash(Get-ChildItem -Filter \"manifest.json\" -Recurse -ErrorAction SilentlyContinue)",
       "Bash(Select-Object -ExpandProperty FullName)",
-      "Bash(grep -n \"\\\\d{1,2}/\\\\d{1,2}\\\\|\\\\d{2}/\\\\d{2}\\\\|DD/MM\\\\|date.*regex\\\\|\\\\\\\\\\\\\\\\d.*date\" src/builder/timeline/index.py)"
+      "Bash(grep -n \"\\\\d{1,2}/\\\\d{1,2}\\\\|\\\\d{2}/\\\\d{2}\\\\|DD/MM\\\\|date.*regex\\\\|\\\\\\\\\\\\\\\\d.*date\" src/builder/timeline/index.py)",
+      "mcp__claude-mem__timeline",
+      "mcp__claude-mem__memory_search"
     ]
   },
   "enableAllProjectMcpServers": true,

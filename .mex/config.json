@@ -1,6 +1,6 @@
 {
   "aiTools": [
-    "claude",
-    "codex"
+    "codex",
+    "claude"
   ]
 }

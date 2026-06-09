@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Sistema — GPT-Tutor-Generator</title>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#181f29; --panel2:#1f2937; --border:#2d3a4d;
+    --txt:#e2e8f0; --muted:#8aa0b8; --accent:#4fc3f7; --good:#4ade80;
+    --warn:#fbbf24; --bad:#f87171; --purple:#c084fc;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.6 "Segoe UI",system-ui,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:32px 24px 80px}
+  h1{font-size:30px;margin:0 0 4px}
+  h2{font-size:22px;margin:48px 0 16px;color:var(--accent);border-bottom:1px solid var(--border);padding-bottom:8px}
+  h3{font-size:17px;margin:28px 0 10px;color:var(--purple)}
+  .sub{color:var(--muted);margin-bottom:28px}
+  .grid{display:grid;gap:14px}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px}
+  .metric .v{font-size:30px;font-weight:700;color:var(--accent)}
+  .metric .l{color:var(--muted);font-size:13px}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th{text-align:left;color:var(--muted);font-weight:600;border-bottom:2px solid var(--border);padding:8px 10px}
+  td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+  code{background:var(--panel2);padding:1px 6px;border-radius:4px;font-size:13px;color:#a5d6ff;font-family:Consolas,monospace}
+  .tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600}
+  .t-bad{background:#3b1d1d;color:var(--bad)} .t-warn{background:#3b321d;color:var(--warn)}
+  .t-good{background:#1d3b27;color:var(--good)} .t-info{background:#1d2e3b;color:var(--accent)}
+  /* bar chart */
+  .bar-row{display:grid;grid-template-columns:220px 1fr 70px;align-items:center;gap:10px;margin:6px 0}
+  .bar-track{background:var(--panel2);border-radius:5px;height:20px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#0ea5e9,#4fc3f7)}
+  .bar-fill.warn{background:linear-gradient(90deg,#d97706,#fbbf24)}
+  .bar-lbl{font-size:13px;color:var(--muted);text-align:right}
+  .bar-val{font-size:13px;color:var(--txt)}
+  /* pipeline */
+  .pipe{display:flex;flex-direction:column;gap:0;margin:20px 0}
+  .stage{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;padding:14px 18px;margin:0}
+  .stage h4{margin:0 0 6px;font-size:15px;color:var(--accent)}
+  .stage .io{font-size:13px;color:var(--muted)}
+  .stage .io b{color:var(--txt);font-weight:600}
+  .arrow{text-align:center;color:var(--muted);font-size:18px;line-height:1.4;margin:2px 0}
+  .branch{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .stage.s-warn{border-left-color:var(--warn)}
+  .stage.s-purple{border-left-color:var(--purple)}
+  .stage.s-good{border-left-color:var(--good)}
+  /* finding cards */
+  .find{border-left:4px solid var(--warn);margin:10px 0}
+  .find.bad{border-left-color:var(--bad)} .find.info{border-left-color:var(--accent)} .find.good{border-left-color:var(--good)}
+  .find h4{margin:0 0 6px;font-size:15px}
+  .find p{margin:4px 0;font-size:14px;color:var(--muted)}
+  .find p b{color:var(--txt)}
+  svg text{font-family:"Segoe UI",sans-serif}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:8px 0}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+  .toc{columns:2;font-size:14px} .toc a{color:var(--accent);text-decoration:none} .toc a:hover{text-decoration:underline}
+  .small{font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>📊 Relatório de Sistema — GPT-Tutor-Generator</h1>
+<div class="sub">Análise completa de arquitetura, pipelines, código morto, propagação de dados e roadmap · branch <code>new-features</code> · 09/06/2026</div>
+
+<div class="card toc">
+  <b>Índice</b><br>
+  <a href="#metricas">1. Métricas gerais</a><br>
+  <a href="#pipeline">2. Pipeline de processamento</a><br>
+  <a href="#grafo">3. Grafo de módulos</a><br>
+  <a href="#morto">4. Código morto e duplicatas</a><br>
+  <a href="#propagacao">5. Informação que não se propaga</a><br>
+  <a href="#gargalos">6. Gargalos e riscos</a><br>
+  <a href="#config">7. Saúde da configuração</a><br>
+  <a href="#ui">8. Camada de UI</a><br>
+  <a href="#roadmap">9. Roadmap: autonomia e tutor proativo</a><br>
+</div>
+
+<!-- ============ 1. MÉTRICAS ============ -->
+<h2 id="metricas">1. Métricas Gerais</h2>
+<div class="grid g4">
+  <div class="card metric"><div class="v">116</div><div class="l">arquivos .py (src + scripts)</div></div>
+  <div class="card metric"><div class="v">39.700</div><div class="l">linhas de código</div></div>
+  <div class="card metric"><div class="v">1.360</div><div class="l">funções</div></div>
+  <div class="card metric"><div class="v">80</div><div class="l">classes</div></div>
+  <div class="card metric"><div class="v">1.116</div><div class="l">testes (74 arquivos, 14.357 linhas)</div></div>
+  <div class="card metric"><div class="v">588</div><div class="l">commits totais</div></div>
+  <div class="card metric"><div class="v">201</div><div class="l">commits à frente de <code>main</code></div></div>
+  <div class="card metric"><div class="v">0,36</div><div class="l">razão linhas-teste / linhas-código</div></div>
+</div>
+
+<h3>Linhas por pacote</h3>
+<div class="card">
+  <div class="bar-row"><div class="bar-lbl">src/ui</div><div class="bar-track"><div class="bar-fill warn" style="width:100%"></div></div><div class="bar-val">11.488</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/artifacts</div><div class="bar-track"><div class="bar-fill" style="width:40%"></div></div><div class="bar-val">4.650</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/timeline</div><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><div class="bar-val">2.840</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/engine.py</div><div class="bar-track"><div class="bar-fill" style="width:22%"></div></div><div class="bar-val">2.544</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/core</div><div class="bar-track"><div class="bar-fill" style="width:17%"></div></div><div class="bar-val">1.996</div></div>
+  <div class="bar-row"><div class="bar-lbl">scripts</div><div class="bar-track"><div class="bar-fill" style="width:14%"></div></div><div class="bar-val">1.626</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/extraction</div><div class="bar-track"><div class="bar-fill" style="width:14%"></div></div><div class="bar-val">1.563</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/routing</div><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><div class="bar-val">1.496</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/ops</div><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><div class="bar-val">1.457</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/runtime</div><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><div class="bar-val">695</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/utils</div><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><div class="bar-val">673</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/pdf</div><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><div class="bar-val">651</div></div>
+  <div class="bar-row"><div class="bar-lbl">demais (facade, sources, text, vision, models, fac.)</div><div class="bar-track"><div class="bar-fill" style="width:30%"></div></div><div class="bar-val">~3.600</div></div>
+</div>
+
+<h3>Maiores arquivos (candidatos a decomposição)</h3>
+<div class="card">
+  <table>
+    <tr><th>Arquivo</th><th>Linhas</th><th>Funções</th><th>Avaliação</th></tr>
+    <tr><td><code>src/ui/dialogs.py</code></td><td>4.988</td><td>167 fn / 12 classes</td><td><span class="tag t-bad">crítico</span> 12 dialogs num arquivo só — dividir em <code>ui/dialogs/</code> por dialog</td></tr>
+    <tr><td><code>src/ui/app.py</code></td><td>2.763</td><td>144 fn / 3 classes</td><td><span class="tag t-warn">atenção</span> App monolítica; extrair handlers de fila/backlog</td></tr>
+    <tr><td><code>src/builder/engine.py</code></td><td>2.544</td><td>93 fn / 10 classes</td><td><span class="tag t-info">aceitável</span> façade intencional + backends; backends podiam ir pra <code>runtime/</code></td></tr>
+    <tr><td><code>src/builder/timeline/index.py</code></td><td>2.219</td><td>65 fn</td><td><span class="tag t-warn">atenção</span> parsing + classificação + scope + serialização juntos</td></tr>
+    <tr><td><code>src/builder/artifacts/repo.py</code></td><td>2.070</td><td>53 fn</td><td><span class="tag t-info">aceitável</span> geradores de markdown coesos</td></tr>
+  </table>
+</div>
+
+<!-- ============ 2. PIPELINE ============ -->
+<h2 id="pipeline">2. Pipeline de Processamento (Build)</h2>
+<div class="legend">
+  <span><span class="dot" style="background:var(--accent)"></span>processamento local</span>
+  <span><span class="dot" style="background:var(--warn)"></span>chamada de rede / LLM</span>
+  <span><span class="dot" style="background:var(--purple)"></span>enriquecimento</span>
+  <span><span class="dot" style="background:var(--good)"></span>persistência / artefato</span>
+</div>
+
+<div class="pipe">
+  <div class="stage">
+    <h4>① ENTRADA — fontes</h4>
+    <div class="io">PDFs locais · imagens · código/.ipynb · ZIPs · repositórios GitHub · URLs · import Moodle/M365 (stash)<br>
+    <b>Roteador:</b> <code>ops/entry_processing.py — process_entry()</code> despacha por <code>FileEntry.file_type</code> e copia bruto para <code>raw/</code></div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="stage">
+    <h4>② PERFIL DO PDF + SELEÇÃO DE BACKEND</h4>
+    <div class="io"><code>pdf/pdf_analysis.py — _profile_pdf()</code> → <code>DocumentProfileReport</code> (densidade de texto, scan suspeito, tabelas)<br>
+    <code>engine.py — BackendSelector.decide()</code> → escolhe base + avançado, honra <code>profile_backends</code> derivado dos perfis e <code>skip_base_backends</code></div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="branch">
+    <div class="stage">
+      <h4>③a EXTRAÇÃO BASE</h4>
+      <div class="io">PyMuPDF4LLM · PyMuPDF → <code>staging/markdown-auto/</code><br>(puláveis via <code>skip_base_backends</code>)</div>
+    </div>
+    <div class="stage s-warn">
+      <h4>③b EXTRAÇÃO AVANÇADA <span class="tag t-warn">rede</span></h4>
+      <div class="io">Datalab Cloud (chunked, síncrono) · Marker CLI (chunked + fallback por timeout) · Docling CLI/API<br>Metadados: <code>datalab-run.json</code> / <code>marker-run.json</code></div>
+    </div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="stage">
+    <h4>④ SANITIZAÇÃO + ASSETS</h4>
+    <div class="io"><code>text/sanitization.py</code> (corrupção LaTeX, híbrido marker+base) · normalização matemática · <code>pdf/pdf_assets.py</code> (imagens com filtro de ruído, tabelas)</div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="stage s-purple">
+    <h4>⑤ ROTEAMENTO PEDAGÓGICO (unit / bloco)</h4>
+    <div class="io">Precedência: <b>manual</b> (<code>manual_unit_slug</code>, <code>manual_timeline_block_id</code>) → <b>card Moodle</b> (<code>source_section</code>) → <b>léxico</b> (filename/tags) → <b>conteúdo</b> (<code>routing/file_map.py</code> scoring O(E×B))<br>
+    Resultado no <code>manifest.json</code>: <code>computed_unit_slug</code>, <code>computed_block_id</code>, confiança, banda, razões</div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="stage s-warn">
+    <h4>⑥ ENRIQUECIMENTO LLM (opcional) <span class="tag t-warn">rede</span></h4>
+    <div class="io">Gemini: resumo de código (<code>code_summarization.py</code>, cache por hash SHA1 em <code>.code_curation.json</code>) + resumo de referências (<code>.reference_curation.json</code>)<br>
+    Descrições de imagem: captions do Datalab durante build; Ollama/vision só via Image Curator (UI)</div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="stage s-purple">
+    <h4>⑦ TIMELINE + TAXONOMIA</h4>
+    <div class="io"><code>timeline/index.py</code>: parse do cronograma + plano de ensino → blocos classificados (<code>classifier.py</code>) → demote de revisões não pré-prova → escopo de avaliações (<code>apply_assessment_review_scope</code>) → <code>.timeline_index.json</code> v4<br>
+    <code>extraction/content_taxonomy.py</code>: vocabulário, <code>.tag_catalog.json</code>, <code>.unit_tag_index.json</code>, refresh de auto-tags</div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="stage s-good">
+    <h4>⑧ ARTEFATOS FINAIS</h4>
+    <div class="io"><b>87+ arquivos:</b> FILE_MAP.md · COURSE_MAP.md · GLOSSARY.md · CRONOGRAMA_DETALHADO.md · índices (EXAM/EXERCISE/CODE/ASSIGNMENT/WHITEBOARD) · instruções por plataforma (Claude/GPT/Gemini) · STUDENT_STATE · BUILD_REPORT.json · export DeepTutor · registros operacionais (<code>.source_registry.json</code>, <code>.bundle_seed.json</code>, <code>.assessment_context.json</code>)</div>
+  </div>
+</div>
+
+<div class="card find info">
+  <h4>Observação estrutural</h4>
+  <p>O pipeline é <b>100% serial</b>: loop de entries, chunks Datalab/Marker e loops Gemini rodam um por vez, sem <code>threading</code>/<code>asyncio</code> no builder. A UI roda o build em thread própria (correto), mas dentro do build nada é paralelo.</p>
+</div>
+
+<!-- ============ 3. GRAFO ============ -->
+<h2 id="grafo">3. Grafo de Módulos (dependências internas)</h2>
+<div class="card">
+<svg viewBox="0 0 1080 600" width="100%" style="max-width:1080px">
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7" fill="#8aa0b8"/></marker>
+    <marker id="arBig" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#4fc3f7"/></marker>
+    <marker id="arDash" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7" fill="#fbbf24"/></marker>
+  </defs>
+
+  <!-- ===== Banda 1: UI ===== -->
+  <rect x="40" y="20" width="1000" height="90" rx="12" fill="#131a23" stroke="#2d3a4d"/>
+  <text x="58" y="44" fill="#8aa0b8" font-size="12" font-weight="600">CAMADA 1 — UI (tkinter)</text>
+  <g font-size="13">
+    <g><rect x="70" y="52" width="150" height="44" rx="8" fill="#1d2e3b" stroke="#4fc3f7"/><text x="145" y="71" text-anchor="middle" fill="#e2e8f0">ui/timeline</text><text x="145" y="87" text-anchor="middle" fill="#8aa0b8" font-size="11">+ painéis (dash, códigos…)</text></g>
+    <g><rect x="330" y="52" width="140" height="44" rx="8" fill="#1d2e3b" stroke="#4fc3f7"/><text x="400" y="79" text-anchor="middle" fill="#e2e8f0">ui/app</text></g>
+    <g><rect x="590" y="52" width="140" height="44" rx="8" fill="#1d2e3b" stroke="#4fc3f7"/><text x="660" y="79" text-anchor="middle" fill="#e2e8f0">ui/dialogs</text></g>
+    <g><rect x="820" y="52" width="190" height="44" rx="8" fill="#1d2e3b" stroke="#4fc3f7"/><text x="915" y="71" text-anchor="middle" fill="#e2e8f0">curadores</text><text x="915" y="87" text-anchor="middle" fill="#8aa0b8" font-size="11">image_curator · curator_studio</text></g>
+  </g>
+
+  <!-- ===== Banda 2: engine (façade) ===== -->
+  <g font-size="14">
+    <rect x="340" y="170" width="400" height="56" rx="10" fill="#3b321d" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="540" y="193" text-anchor="middle" fill="#e2e8f0" font-weight="600">builder/engine.py — FAÇADE</text>
+    <text x="540" y="212" text-anchor="middle" fill="#8aa0b8" font-size="11">ponto único de entrada da UI · backends de extração · BackendSelector</text>
+  </g>
+
+  <!-- ===== Banda 3: orquestração e domínio ===== -->
+  <rect x="40" y="290" width="1000" height="100" rx="12" fill="#131a23" stroke="#2d3a4d"/>
+  <text x="58" y="314" fill="#8aa0b8" font-size="12" font-weight="600">CAMADA 3 — ORQUESTRAÇÃO E DOMÍNIO</text>
+  <g font-size="13">
+    <g><rect x="70" y="326" width="120" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="130" y="347" text-anchor="middle" fill="#e2e8f0">timeline</text><text x="130" y="363" text-anchor="middle" fill="#8aa0b8" font-size="11">cronograma</text></g>
+    <g><rect x="225" y="326" width="110" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="280" y="347" text-anchor="middle" fill="#e2e8f0">ops</text><text x="280" y="363" text-anchor="middle" fill="#8aa0b8" font-size="11">build workflow</text></g>
+    <g><rect x="370" y="326" width="110" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="425" y="347" text-anchor="middle" fill="#e2e8f0">core</text><text x="425" y="363" text-anchor="middle" fill="#8aa0b8" font-size="11">importers, LLM</text></g>
+    <g><rect x="515" y="326" width="130" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="580" y="347" text-anchor="middle" fill="#e2e8f0">pdf · runtime</text><text x="580" y="363" text-anchor="middle" fill="#8aa0b8" font-size="11">perfil, clientes</text></g>
+    <g><rect x="680" y="326" width="120" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="740" y="347" text-anchor="middle" fill="#e2e8f0">artifacts</text><text x="740" y="363" text-anchor="middle" fill="#8aa0b8" font-size="11">md finais</text></g>
+    <g><rect x="835" y="326" width="130" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="900" y="347" text-anchor="middle" fill="#e2e8f0">extraction</text><text x="900" y="363" text-anchor="middle" fill="#8aa0b8" font-size="11">taxonomia, sinais</text></g>
+  </g>
+
+  <!-- ===== Banda 4: base ===== -->
+  <rect x="40" y="455" width="1000" height="100" rx="12" fill="#131a23" stroke="#2d3a4d"/>
+  <text x="58" y="479" fill="#8aa0b8" font-size="12" font-weight="600">CAMADA 4 — BASE (sem dependências para cima)</text>
+  <g font-size="13">
+    <g><rect x="70" y="491" width="110" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="125" y="512" text-anchor="middle" fill="#e2e8f0">routing</text><text x="125" y="528" text-anchor="middle" fill="#8aa0b8" font-size="11">scoring E×B</text></g>
+    <g><rect x="210" y="491" width="120" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="270" y="512" text-anchor="middle" fill="#e2e8f0">text · vision</text><text x="270" y="528" text-anchor="middle" fill="#8aa0b8" font-size="11">normalização, Ollama</text></g>
+    <g><rect x="360" y="491" width="100" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="410" y="512" text-anchor="middle" fill="#e2e8f0">models</text><text x="410" y="528" text-anchor="middle" fill="#8aa0b8" font-size="11">FileEntry…</text></g>
+    <g><rect x="490" y="491" width="110" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="545" y="512" text-anchor="middle" fill="#e2e8f0">facade</text><text x="545" y="528" text-anchor="middle" fill="#8aa0b8" font-size="11">aliases</text></g>
+    <g><rect x="630" y="491" width="170" height="48" rx="8" fill="#1d3b27" stroke="#4ade80"/><text x="715" y="512" text-anchor="middle" fill="#e2e8f0">utils/helpers</text><text x="715" y="528" text-anchor="middle" fill="#8aa0b8" font-size="11">hub — usado por todos</text></g>
+    <g><rect x="860" y="491" width="150" height="48" rx="8" fill="#3b1d1d" stroke="#f87171"/><text x="935" y="512" text-anchor="middle" fill="#e2e8f0">sources</text><text x="935" y="528" text-anchor="middle" fill="#8aa0b8" font-size="11">Moodle · M365</text></g>
+  </g>
+
+  <!-- ===== Setas principais (sem cruzamentos) ===== -->
+  <g stroke="#4fc3f7" stroke-width="2" fill="none" marker-end="url(#arBig)">
+    <path d="M400,96 L400,166"/>   <!-- app -> engine -->
+    <path d="M660,96 L660,166"/>   <!-- dialogs -> engine -->
+    <path d="M540,226 L540,286"/>  <!-- engine -> camada 3 -->
+    <path d="M540,390 L540,451"/>  <!-- camada 3 -> camada 4 -->
+  </g>
+  <g fill="#8aa0b8" font-size="11">
+    <text x="412" y="138">chama build/process</text>
+    <text x="552" y="262">orquestra (ops 9×, core 6×, artifacts 5×)</text>
+    <text x="552" y="427">usa (helpers é o hub de todos os pacotes)</text>
+  </g>
+
+  <!-- ===== Exceções (tracejadas): UI fura a façade ===== -->
+  <g stroke="#fbbf24" stroke-width="1.6" fill="none" stroke-dasharray="6 4" marker-end="url(#arDash)">
+    <path d="M145,96 L145,322"/>                      <!-- painéis -> timeline (direto) -->
+    <path d="M730,74 L1060,74 L1060,515 L1014,515"/>  <!-- dialogs -> sources (direto) -->
+  </g>
+  <g fill="#fbbf24" font-size="11">
+    <text x="153" y="240">direto (lê .timeline_index)</text>
+    <text x="1052" y="300" text-anchor="middle" transform="rotate(-90 1052 300)">dialogs → sources (8 imports diretos)</text>
+  </g>
+</svg>
+<p class="small">Visão em camadas (arestas reais extraídas via AST; grafo completo: 2.904 símbolos, 25.916 referências). <b>Setas azuis</b> = fluxo normal: UI fala só com <code>engine</code> (façade), que orquestra a camada de domínio, que se apoia na base. <b>Tracejadas amarelas</b> = exceções que furam a façade: <code>ui/dialogs → sources</code> (8 imports diretos de Moodle/M365 — maior acoplamento a observar) e painéis lendo <code>builder/timeline</code> direto (aceitável: leitura de índice). Dependências internas mais fortes: <code>ops → artifacts</code> (10×), <code>engine → ops</code> (9×), <code>ops/core/ui → utils/helpers</code> (hub saudável).</p>
+</div>
+
+<!-- ============ 4. CÓDIGO MORTO ============ -->
+<h2 id="morto">4. Código Morto e Duplicatas <span class="small">(cada item verificado por busca de referências)</span></h2>
+
+<h3>Código morto confirmado</h3>
+<div class="card find bad">
+  <h4>Funções usadas apenas por testes (API morta de fato)</h4>
+  <p><b><code>src/utils/helpers.py:331 — file_size_mb()</code></b> — única referência fora da definição: <code>tests/test_core.py:80</code>.</p>
+  <p><b><code>src/builder/timeline/card_block.py:130 — save_card_block_map()</code></b> — só <code>tests/test_card_block.py</code>; o <code>load_card_block_map</code> é usado, a escrita nunca foi integrada (UI/scripts nunca gravam o mapa).</p>
+  <p><b><code>src/builder/timeline/unit_matcher.py:58 — score_block_unit_affinity()</code></b> — só <code>tests/test_unit_matcher.py</code>; scorer implementado mas nunca ligado ao pipeline de matching.</p>
+</div>
+<div class="card find">
+  <h4>Config morta</h4>
+  <p><b><code>font_size</code></b> (<code>ui/theme.py:102</code>) — existe em <code>DEFAULTS</code>, nunca é lida por UI nem builder. Vestígio de feature não implementada.</p>
+  <p><b><code>processing_profiles_seeded_v2</code></b> — flag de migração já consumida; pode ser removida com migração de limpeza.</p>
+</div>
+<div class="card find info">
+  <h4>Falsos positivos descartados durante a verificação</h4>
+  <p><code>band_distribution()</code> — vivo: chamado por <code>cronograma_health_md()</code> que roda em <code>ops/pedagogical_regeneration.py:367</code>. <code>text/normalize.py — normalize_match_text()</code> — vivo: usado por <code>pedagogy</code>, <code>summary_core</code>, <code>reference_navigation</code>, <code>ui/dialogs</code>. Scripts (18) compilam todos sem erro.</p>
+</div>
+
+<h3>Duplicatas remanescentes</h3>
+<div class="card">
+<table>
+  <tr><th>Função</th><th>Cópias</th><th>Canônica existe?</th><th>Ação sugerida</th></tr>
+  <tr>
+    <td><code>_normalize_match_text</code></td>
+    <td><code>extraction/content_taxonomy.py:19</code> · <code>extraction/image_markdown.py:45</code> · <code>timeline/signals.py:36</code> · <code>vision/card_evidence.py:12</code></td>
+    <td>✔ <code>text/normalize.py</code> (migração já feita em 4 outros módulos)</td>
+    <td>Concluir migração — atenção: as 4 cópias têm variações sutis de caracteres permitidos (<code>/</code>, <code>+</code>); validar com testes antes</td>
+  </tr>
+  <tr>
+    <td><code>_extract_markdown_headings</code></td>
+    <td><code>extraction/content_taxonomy.py:35</code> · <code>extraction/entry_signals.py:43</code></td>
+    <td>✘ (facade só re-exporta uma)</td>
+    <td>Mover para <code>extraction/</code> compartilhado ou <code>text/</code></td>
+  </tr>
+  <tr>
+    <td><code>_tokens</code> + stopwords PT</td>
+    <td><code>timeline/card_block.py:29</code> (<code>_STOP</code>) · <code>timeline/unit_matcher.py:37</code> (<code>_STOPWORDS</code>)</td>
+    <td>✘</td>
+    <td>Consolidar tokenizador + lista única de stopwords em <code>text/</code></td>
+  </tr>
+  <tr>
+    <td><code>_normalized_source_key</code></td>
+    <td><code>ui/app.py:43</code> · <code>ui/repo_dashboard.py:13</code> — <b>idênticas caractere a caractere</b></td>
+    <td>✘</td>
+    <td>Extrair para módulo comum da UI (quick win)</td>
+  </tr>
+</table>
+</div>
+
+<!-- ============ 5. PROPAGAÇÃO ============ -->
+<h2 id="propagacao">5. Informação Gerada mas Não Propagada</h2>
+
+<div class="card find bad">
+  <h4>1. <code>match_rationale</code> do Gemini morre no cache</h4>
+  <p>Gerado em <code>core/code_summarization.py</code> (campo do schema <code>CodeSummary</code>: "1 frase justificando a escolha de bloco"). Fica preso em <code>.code_curation.json</code> — nunca chega ao <code>manifest.json</code>, ao <code>CODE_INDEX.md</code> nem ao editor de backlog. <b>Usuário não tem como saber POR QUE um código foi atribuído a um bloco</b> — exatamente o tipo de dúvida que motivou a investigação dos arquivos zip/código nesta semana.</p>
+</div>
+<div class="card find bad">
+  <h4>2. Custos do Datalab sem agregação</h4>
+  <p><code>cost_breakdown</code> e <code>parse_quality_score</code> são gravados por entry em <code>staging/markdown-auto/datalab/*/datalab-run.json</code> (<code>engine.py:~1030</code>), mas não existe soma no <code>BUILD_REPORT.json</code>. Impossível saber o custo total de um build sem parsear dezenas de JSONs.</p>
+</div>
+<div class="card find">
+  <h4>3. <code>vision_model_quantization</code> só vale no Image Curator</h4>
+  <p>Editável no SettingsDialog (<code>dialogs.py:363/470</code>) e lido por <code>vision/vision_client.py:22</code> — mas <code>get_vision_client()</code> só é chamado pelo Image Curator (UI). O build em si usa captions do Datalab. Não é bug, mas a UI não comunica que a opção não afeta o build.</p>
+</div>
+<div class="card find">
+  <h4>4. Perfis de documento sem agregação</h4>
+  <p><code>DocumentProfileReport</code> (<code>suspected_scan</code>, <code>text_density</code>) fica por entry no manifest; não há resumo "X% dos PDFs são scaneados" no BUILD_REPORT. Mesmo padrão: contagem de imagens rejeitadas por ruído (<code>is_noise_image</code>) é descartada após o filtro.</p>
+</div>
+<div class="card find">
+  <h4>5. Sem delta-tracking nos índices</h4>
+  <p><code>.unit_tag_index.json</code> e <code>.timeline_index.json</code> são sobrescritos integralmente a cada build. Não há registro de "o que mudou" (entries reatribuídas, blocos que trocaram de tipo) — dificulta auditar regressões de matching entre builds.</p>
+</div>
+<div class="card find">
+  <h4>6. Cache de capabilities do Marker só em memória</h4>
+  <p><code>_MARKER_CAPABILITIES_CACHE</code> (<code>engine.py:~632</code>) é global de processo, nunca persiste nem invalida por versão do Marker.</p>
+</div>
+
+<!-- ============ 6. GARGALOS ============ -->
+<h2 id="gargalos">6. Gargalos e Riscos</h2>
+<div class="card">
+<table>
+  <tr><th>Item</th><th>Onde</th><th>Severidade</th><th>Detalhe</th></tr>
+  <tr><td>Pipeline serial</td><td><code>ops/build_workflow.py</code> loop de entries; chunks Datalab (<code>engine.py:1115-1179</code>) e Marker sequenciais; loops Gemini</td><td><span class="tag t-warn">desempenho</span></td><td>Sem threads/async no builder. Build de curso grande escala linearmente. Chunks Datalab são candidatos óbvios a paralelismo (API cloud aguenta concorrência).</td></tr>
+  <tr><td><code>manifest.json</code> sem escrita atômica</td><td><code>ops/build_workflow.py</code> — overwrite após cada entry</td><td><span class="tag t-bad">integridade</span></td><td>Queda de energia/kill durante o write ⇒ manifest corrompido, backlog inteiro "some". Corrigir com tmp+<code>os.replace()</code> é barato.</td></tr>
+  <tr><td>Sem retry em rede</td><td>Gemini (<code>code_summarization.py</code>), Ollama, clone GitHub</td><td><span class="tag t-warn">resiliência</span></td><td>Falha pontual ⇒ entry sem resumo (cache por hash mitiga re-custo, não a falha). Datalab/Marker têm fallback de backend, o resto não tem nada.</td></tr>
+  <tr><td>Matching O(E×B)</td><td><code>routing/file_map.py</code> — cada entry pontuada contra cada bloco/unidade</td><td><span class="tag t-info">ok por ora</span></td><td>Com ~50 entries × ~30 blocos é irrelevante; vira custo se cursos crescerem muito.</td></tr>
+  <tr><td>Imagens duplicadas cross-entry</td><td><code>core/image_resolution.py</code> — cache <code>seen{}</code> só por caminho</td><td><span class="tag t-info">menor</span></td><td>Mesma figura referenciada por 2 PDFs ⇒ 2 cópias em <code>content/images/</code>. Dedup por hash resolveria.</td></tr>
+  <tr><td>Sem lock no manifest</td><td>UI + build em thread + scripts CLI podem escrever simultaneamente</td><td><span class="tag t-warn">integridade</span></td><td>Cenário raro mas possível (ex.: editar backlog durante build).</td></tr>
+  <tr><td>Refresh de backlog/dashboard na main thread</td><td><code>ui/app.py — _refresh_backlog()</code>, <code>_refresh_repo_dashboard()</code></td><td><span class="tag t-info">menor</span></td><td>Lê manifest + percorre entries sem thread; trava a UI só com manifests muito grandes. Builds/imports longos já rodam corretamente em thread + <code>after()</code>.</td></tr>
+  <tr><td>Fila volátil</td><td><code>ui/app.py — _save_current_queue()</code> só roda antes de build/process</td><td><span class="tag t-warn">UX</span></td><td>Adicionar arquivos à fila e fechar o app sem buildar ⇒ itens perdidos. Salvar a fila em toda mutação resolveria.</td></tr>
+</table>
+</div>
+
+<!-- ============ 7. CONFIG ============ -->
+<h2 id="config">7. Saúde da Configuração</h2>
+<div class="card">
+<p>Fluxo: <code>AppConfig.DEFAULTS</code> (theme.py) → <code>~/.gpt_tutor_config.json</code> → SettingsDialog → <code>_build_options_from_config()</code> (app.py) → <code>RepoBuilder.options</code>. Pós-refatoração desta semana, <code>profile_backends</code> é <b>derivado</b> dos perfis nomeados (<code>derive_profile_backends</code>) — fonte única, sem editor manual redundante. ✔</p>
+<table>
+  <tr><th>Chave</th><th>Status</th><th>Nota</th></tr>
+  <tr><td><code>font_size</code></td><td><span class="tag t-bad">morta</span></td><td>Nunca lida. Remover ou implementar.</td></tr>
+  <tr><td><code>vision_model_quantization</code></td><td><span class="tag t-warn">parcial</span></td><td>Só afeta Image Curator; não passa por <code>_build_options_from_config()</code>. Documentar no tooltip ou propagar.</td></tr>
+  <tr><td><code>vision_backend</code></td><td><span class="tag t-warn">parcial</span></td><td>Hoje só "ollama" é honrado de fato.</td></tr>
+  <tr><td><code>gemini_api_key</code></td><td><span class="tag t-warn">atenção</span></td><td>Plaintext em <code>~/.gpt_tutor_config.json</code>. Considerar keyring do Windows (Moodle já evita persistir senha — padrão inconsistente entre as duas credenciais).</td></tr>
+  <tr><td><code>default_mode</code> / <code>default_backend</code> / <code>default_ocr_language</code></td><td><span class="tag t-info">duplo escopo</span></td><td>Global (config) + por matéria (SubjectProfile). Precedência funciona, mas a UI não mostra qual fonte está valendo no momento.</td></tr>
+  <tr><td><code>skip_base_backends</code>, <code>stall_timeout</code>, <code>marker_*</code>, <code>image_format</code>, <code>prevent_sleep</code>, <code>ollama_base_url</code>, <code>image_description_source</code>, <code>gemini_model</code>, <code>gemini_auto_summarize</code></td><td><span class="tag t-good">ok</span></td><td>Editáveis, persistem e chegam ao builder.</td></tr>
+</table>
+</div>
+
+<!-- ============ 8. UI ============ -->
+<h2 id="ui">8. Camada de UI</h2>
+<div class="card">
+<p><b>8 abas</b> (Fila, Tasks, Backlog, Dashboard, Cronograma, Códigos, Manutenção, Log) + <b>~14 dialogs/painéis</b>. Threading correto nas operações longas (build, import Moodle, Gemini) com padrão <code>worker thread + after()</code>. Pontos:</p>
+<table>
+  <tr><th>Achado</th><th>Tipo</th><th>Detalhe</th></tr>
+  <tr><td><code>dialogs.py</code> com 4.988 linhas</td><td><span class="tag t-warn">estrutura</span></td><td>12 dialogs num arquivo. Dividir em pacote <code>ui/dialogs/</code> (1 arquivo por dialog) reduziria conflitos e tempo de leitura.</td></tr>
+  <tr><td>Cronograma read-only</td><td><span class="tag t-info">pendente</span></td><td>Qualquer ajuste exige reprocessar. Spec da tabela editável já aprovada em <code>docs/superpowers/specs/2026-06-09-cronograma-table-ui-design.md</code> — maior alavanca de usabilidade da fila atual.</td></tr>
+  <tr><td>Curator Studio × Image Curator</td><td><span class="tag t-info">sobreposição</span></td><td>Dois fluxos de curadoria com preview/aprovação similares; candidatos a base comum quando houver refator.</td></tr>
+  <tr><td>Estado de sessão não persistido</td><td><span class="tag t-info">menor</span></td><td>Aba ativa, seleção, zoom de preview e scroll voltam ao padrão a cada reinício — aceitável, mas a <b>fila volátil</b> (seção 6) é o caso que vale corrigir.</td></tr>
+  <tr><td>Backlog = espelho do manifest</td><td><span class="tag t-info">design</span></td><td>Arquivo removido manualmente do disco continua aparecendo (fantasma) até reprocessar. Painel Manutenção cobre parte disso para code_curation; não para entries gerais.</td></tr>
+</table>
+</div>
+
+<!-- ============ 9. ROADMAP ============ -->
+<h2 id="roadmap">9. Roadmap — Autonomia, Usabilidade e Tutor Proativo</h2>
+
+<h3>Curto prazo (dias) — integridade e quick wins</h3>
+<div class="card find good">
+  <p><b>1. Escrita atômica do manifest</b> — tmp + <code>os.replace()</code> em <code>_compact_manifest</code>. Elimina o risco nº 1 de corrupção. ~10 linhas.</p>
+  <p><b>2. Salvar fila a cada mutação</b> — chamar <code>_save_current_queue()</code> em add/remove/toggle. Acaba com perda de itens ao fechar.</p>
+  <p><b>3. Remover mortos</b> — <code>file_size_mb</code>, <code>save_card_block_map</code>, <code>score_block_unit_affinity</code> (ou integrá-lo ao matcher, se o scorer for melhor que o atual), <code>font_size</code>.</p>
+  <p><b>4. Propagar <code>match_rationale</code></b> — manifest + coluna no CODE_INDEX + campo read-only no BacklogEntryEditDialog (mesmo padrão do <code>source_section</code> já implementado).</p>
+  <p><b>5. Agregar custos no BUILD_REPORT</b> — somar <code>cost_breakdown</code> dos sidecars do Datalab + % de PDFs scaneados + imagens rejeitadas por ruído. Visibilidade de custo por build.</p>
+</div>
+
+<h3>Médio prazo (semanas) — desempenho e consolidação</h3>
+<div class="card find info">
+  <p><b>6. Paralelizar chunks Datalab</b> — <code>ThreadPoolExecutor</code> com 3-4 workers no loop de chunks (<code>engine.py:1115-1179</code>); maior ganho de wall-clock por menor risco. Depois, avaliar paralelismo por entry (exige cuidado com o manifest compartilhado — pré-requisito: item 1).</p>
+  <p><b>7. Retry com backoff</b> — wrapper único para Gemini/Ollama/Datalab (3 tentativas, exponencial). Hoje uma falha de rede pontual deixa buracos silenciosos.</p>
+  <p><b>8. Concluir consolidação de normalização</b> — migrar as 4 cópias de <code>_normalize_match_text</code>, 2 de <code>_extract_markdown_headings</code>, 2 tokenizadores+stopwords para <code>text/</code>. Os 1.116 testes existentes dão rede de segurança.</p>
+  <p><b>9. Dividir <code>ui/dialogs.py</code></b> em pacote por dialog; extrair <code>_normalized_source_key</code> para módulo comum.</p>
+  <p><b>10. Tabela editável do cronograma</b> — executar a spec já aprovada (edição inline de tipo/unidade, escopo manual de provas, ordenação). Fecha o ciclo "ver problema → corrigir na hora" sem reprocessar.</p>
+  <p><b>11. Delta report entre builds</b> — diff do <code>.timeline_index.json</code> e do matching (entries que mudaram de bloco/unidade) gravado em <code>build/CHANGES.md</code>. Auditoria de regressão de matching de graça.</p>
+</div>
+
+<h3>Longo prazo — tutor proativo e contexto do aluno</h3>
+<div class="card find good">
+  <p><b>12. Contexto temporal automático ("semana atual")</b> — o <code>.timeline_index.json</code> já tem datas e blocos classificados. Gerar seção <code>CURRENT_WEEK.md</code> nas instruções do tutor: bloco vigente por data, tópico da semana, próxima avaliação e seu escopo (<code>scope_unit_slugs</code> já computado). O tutor passa a abrir a conversa sabendo onde o aluno está no semestre.</p>
+  <p><b>13. Prontidão pré-prova</b> — cruzar escopo da avaliação × baterias do aluno (<code>student/batteries/</code>) × STUDENT_STATE: "P2 em 9 dias cobre unidades 3-4; bateria da unidade 4 sem registro". Vira tabela no STUDENT_STATE e alerta nas instruções do tutor.</p>
+  <p><b>14. Modelo de estado do aluno mais rico</b> — STUDENT_STATE hoje é registro manual de tópicos. Evoluir para: nível de confiança por tópico com decaimento temporal (spaced repetition), histórico de erros recorrentes importado das sessões do tutor, e sugestão de "próximo tópico" derivada de (timeline ∩ lacunas). O StudentStateCurator já tem o esqueleto de import.</p>
+  <p><b>15. Sincronização Moodle agendada</b> — import manual hoje. Um task agendado (a infra de <code>RepoTaskStore</code> + fila persistente já existe) que detecta material novo no Moodle e enfileira reprocesso incremental tornaria o repositório auto-atualizável.</p>
+  <p><b>16. Instruções de tutor adaptativas por plataforma</b> — os geradores (<code>artifacts/prompts.py</code>) são estáticos por build. Injetar: perfil/personalidade do aluno (já coletado no StudentProfileDialog e subutilizado), preferências de estudo, e o contexto temporal do item 12 — regenerados num passo leve (sem rebuild completo) via "Gerar Instruções LLM" que já existe no menu do backlog.</p>
+  <p><b>17. Health-check de build com gate</b> — <code>cronograma_health_md</code> já calcula distribuição de bandas de confiança; promover a um resumo pós-build na UI ("3 entries com matching de baixa confiança — revisar?") com link direto pro editor. Transforma diagnóstico passivo em fluxo de correção guiado.</p>
+</div>
+
+<h3>Priorização sugerida</h3>
+<div class="card">
+<table>
+  <tr><th>#</th><th>Item</th><th>Esforço</th><th>Impacto</th></tr>
+  <tr><td>1</td><td>Manifest atômico</td><td>baixo</td><td><span class="tag t-bad">crítico (integridade)</span></td></tr>
+  <tr><td>10</td><td>Cronograma editável (spec pronta)</td><td>médio</td><td><span class="tag t-good">alto (usabilidade)</span></td></tr>
+  <tr><td>12+13</td><td>Semana atual + prontidão pré-prova</td><td>médio</td><td><span class="tag t-good">alto (tutor proativo)</span></td></tr>
+  <tr><td>2,3,4,5</td><td>Quick wins (fila, mortos, rationale, custos)</td><td>baixo</td><td><span class="tag t-info">médio</span></td></tr>
+  <tr><td>6,7</td><td>Paralelismo + retry</td><td>médio</td><td><span class="tag t-info">médio (desempenho)</span></td></tr>
+  <tr><td>8,9,11</td><td>Consolidações + delta report</td><td>médio</td><td><span class="tag t-info">médio (manutenibilidade)</span></td></tr>
+  <tr><td>14-17</td><td>Estado do aluno rico, Moodle agendado, instruções adaptativas, health gate</td><td>alto</td><td><span class="tag t-good">alto (visão de produto)</span></td></tr>
+</table>
+</div>
+
+<p class="small" style="margin-top:40px">Metodologia: 3 varreduras paralelas (pipeline do builder, UI/config, código morto) + verificação manual de cada achado por busca de referências (falsos positivos descartados estão na seção 4) + métricas via AST sobre 116 arquivos. Grafo de código: 2.904 nós / 25.916 arestas. Gerado em 09/06/2026, branch <code>new-features</code>, commit base <code>8f10819</code>.</p>
+
+</div>
+</body>
+</html>
