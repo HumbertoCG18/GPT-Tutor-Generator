@@ -5118,3 +5118,17 @@ def test_link_review_scope_no_next_exam_empty():
               {"id": "p2", "kind": "assessment", "period_start": "2026-07-06"}]
     out = link_review_scope(blocks, {"p2": ["u3"]})
     assert out.get("rev", []) == []          # nenhuma prova depois -> vazio
+
+
+def test_serialize_attaches_scope_unit_slugs():
+    from src.builder.timeline.index import _serialize_timeline_index
+    ti = {"blocks": [
+        {"id": "b1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1", "topic_text": "Logica", "rows": []},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-02", "topic_text": "Prova P1", "rows": []},
+        {"id": "rev", "kind": "review", "period_start": "2026-04-01", "topic_text": "Exercicios de revisao", "rows": []},
+    ]}
+    out = _serialize_timeline_index(ti)
+    by_id = {b["id"]: b for b in out["blocks"]}
+    assert by_id["p1"]["scope_unit_slugs"] == ["unidade-1"]
+    assert by_id["rev"]["scope_unit_slugs"] == ["unidade-1"]   # herda P1
+    assert "scope_unit_slugs" not in by_id["b1"] or by_id["b1"]["scope_unit_slugs"] == []

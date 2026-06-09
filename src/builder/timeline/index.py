@@ -938,6 +938,22 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
         if auto_unit_slug:
             payload["auto_unit_slug"] = auto_unit_slug
         blocks.append(payload)
+    # Escopo de prova por data (fallback) + revisão herda a próxima prova.
+    exam_scope = assessment_scope_by_date(blocks)
+    review_scope = link_review_scope(blocks, exam_scope)
+    for b in blocks:
+        bid = b.get("id")
+        scope = None
+        if b.get("kind") == BlockKind.ASSESSMENT.value:
+            # Precedência: unidades declaradas no plano (se já vieram do matcher) vencem.
+            declared = b.get("scope_unit_slugs")
+            scope = declared if declared else exam_scope.get(bid, [])
+        elif b.get("kind") == BlockKind.REVIEW.value:
+            scope = review_scope.get(bid, [])
+        if scope is not None:
+            b["scope_unit_slugs"] = list(scope)
+            if scope and not b.get("primary_topic_label"):
+                b["primary_topic_label"] = "Conteúdo: " + ", ".join(scope)
     return {"version": TIMELINE_INDEX_VERSION, "blocks": blocks}
 
 
