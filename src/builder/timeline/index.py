@@ -1212,6 +1212,72 @@ def _assessment_scope_unit_slugs(declared_unit_numbers: List[int], unit_index: l
     return slugs
 
 
+def _assessment_block_label(block: Dict[str, object]) -> str:
+    """Rótulo canônico (P1/P2/PS/G2/PF/EXAME) a partir do texto do bloco, ou ""."""
+    text = " ".join(
+        str(block.get(k, "") or "")
+        for k in ("topic_text", "primary_topic_label", "period_label")
+    )
+    for sess in block.get("sessions", []) or []:
+        if isinstance(sess, dict):
+            text += " " + str(sess.get("label", "") or "")
+    if not _normalize_match_text(text):
+        return ""
+    return _canonical_assessment_label(text, normalize_match_text=_normalize_match_text)
+
+
+_FULL_SCOPE_LABELS = {"PS", "G2", "PF", "EXAME"}
+
+
+def assessment_scope_by_date(blocks: List[Dict[str, object]]) -> Dict[str, List[str]]:
+    """Escopo de unidades por prova, derivado das datas dos blocos.
+
+    Prova regular (Pk): unidades das aulas (CLASS) na janela (data P(k-1), data Pk].
+    PS/G2/PF/EXAME: semestre inteiro (todas as unidades vistas em aulas).
+    Retorna {block_id: [unit_slug]} (ordem de aparição). Provas sem data: ignoradas.
+    """
+    class_units_dated = []
+    all_units: List[str] = []
+    for b in blocks:
+        if str(b.get("kind") or "") != BlockKind.CLASS.value:
+            continue
+        slug = str(b.get("unit_slug") or "").strip()
+        dt = _parse_timeline_date_value(str(b.get("period_start") or ""))
+        if slug and slug not in all_units:
+            all_units.append(slug)
+        if slug and dt:
+            class_units_dated.append((dt, slug))
+
+    exams = []
+    for b in blocks:
+        if str(b.get("kind") or "") != BlockKind.ASSESSMENT.value:
+            continue
+        dt = _parse_timeline_date_value(str(b.get("period_start") or ""))
+        if not dt:
+            continue
+        exams.append({"id": str(b.get("id") or ""), "dt": dt, "label": _assessment_block_label(b)})
+
+    regular = sorted(
+        [e for e in exams if e["label"] not in _FULL_SCOPE_LABELS],
+        key=lambda e: e["dt"],
+    )
+    out: Dict[str, List[str]] = {}
+    prev_dt = None
+    for e in regular:
+        units = []
+        for dt, slug in class_units_dated:
+            if (prev_dt is None or dt > prev_dt) and dt <= e["dt"]:
+                if slug not in units:
+                    units.append(slug)
+        out[e["id"]] = units
+        prev_dt = e["dt"]
+
+    for e in exams:
+        if e["label"] in _FULL_SCOPE_LABELS:
+            out[e["id"]] = list(all_units)
+    return out
+
+
 def _assessment_conflict_observation(
     assessment_label: str,
     assessment_date: str,

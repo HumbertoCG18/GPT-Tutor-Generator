@@ -5082,3 +5082,21 @@ def test_canonical_assessment_label_ps_g2():
     assert f("Prova G2") == "G2"
     assert f("P2") == "P2"
     assert f("Prova final") == "PF"
+
+
+def test_assessment_scope_by_date_windows_and_full():
+    from src.builder.timeline.index import assessment_scope_by_date
+    blocks = [
+        {"id": "b1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1", "topic_text": "Logica"},
+        {"id": "b2", "kind": "class", "period_start": "2026-03-30", "unit_slug": "unidade-2", "topic_text": "Inducao"},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-02", "topic_text": "Prova P1"},
+        {"id": "b3", "kind": "class", "period_start": "2026-05-04", "unit_slug": "unidade-3", "topic_text": "Hoare"},
+        {"id": "p2", "kind": "assessment", "period_start": "2026-07-06", "topic_text": "Prova P2"},
+        {"id": "ps", "kind": "assessment", "period_start": "2026-07-08", "topic_text": "Prova PS"},
+        {"id": "g2", "kind": "assessment", "period_start": "2026-07-15", "topic_text": "Prova G2"},
+    ]
+    scope = assessment_scope_by_date(blocks)
+    assert scope["p1"] == ["unidade-1", "unidade-2"]          # antes da P1
+    assert scope["p2"] == ["unidade-3"]                       # entre P1 e P2
+    assert scope["ps"] == ["unidade-1", "unidade-2", "unidade-3"]   # semestre inteiro
+    assert scope["g2"] == ["unidade-1", "unidade-2", "unidade-3"]   # semestre inteiro
