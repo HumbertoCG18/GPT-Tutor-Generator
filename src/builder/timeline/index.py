@@ -17,7 +17,7 @@ from src.builder.text.normalize import normalize_match_text as _normalize_match_
 from src.builder.routing.thresholds import margin_confidence, T
 from src.builder.routing.file_map import UNIT_GENERIC_TOKENS
 from src.builder.extraction.teaching_plan import _normalize_unit_slug
-from src.utils.helpers import slugify, write_text, ATIVIDADE_KIND_MAP, norm_ascii_lower, collapse_ws as _collapse_ws
+from src.utils.helpers import slugify, ATIVIDADE_KIND_MAP, norm_ascii_lower, collapse_ws as _collapse_ws
 
 
 TIMELINE_INDEX_VERSION = 4
@@ -938,16 +938,8 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
         if auto_unit_slug:
             payload["auto_unit_slug"] = auto_unit_slug
         blocks.append(payload)
-    # Escopo de prova por data (fallback) + revisão herda a próxima prova.
-    apply_assessment_review_scope(blocks)
+    _apply_timeline_post_transforms(blocks)
     return {"version": TIMELINE_INDEX_VERSION, "blocks": blocks}
-
-
-def _write_internal_timeline_index(root_dir: Path, timeline_index: dict) -> None:
-    write_text(
-        root_dir / "course" / ".timeline_index.json",
-        json.dumps(_serialize_timeline_index(timeline_index), ensure_ascii=False, indent=2),
-    )
 
 
 _TEACHING_PLAN_ASSESSMENT_START = re.compile(r"^(?:AVALIA[ÇC][AÃ]O|AVALIACAO)\b", re.IGNORECASE)
@@ -1310,19 +1302,33 @@ def _demote_non_preexam_reviews(blocks: List[Dict[str, object]]) -> None:
     Spec: "exercício de revisão é sempre a linha imediatamente anterior a uma
     prova". Um bloco "Revisão de [conteúdo]" no meio do semestre (ex.: "Revisão
     de lógica de predicados" longe de qualquer prova) é aula de conteúdo, não
-    revisão pré-prova — vira CLASS e herda a unidade do vizinho. O elo usa a
-    ordem dos blocos, pulando blocos de calendário (suspensão/feriado/evento/
-    devolução) entre a revisão e a prova. Override manual de kind é respeitado.
+    revisão pré-prova — vira CLASS e herda a unidade do vizinho. O elo segue a
+    ordem CRONOLÓGICA (data; sem data preserva ordem da lista), pulando blocos de
+    calendário (suspensão/feriado/evento/devolução) — igual ao link_review_scope.
+    Override manual de kind é respeitado.
     """
     decisive = {BlockKind.CLASS.value, BlockKind.ASSESSMENT.value}
-    for i, b in enumerate(blocks):
+    n = len(blocks)
+    # Ordem cronológica estável: data quando presente; sem data vai pro fim
+    # mantendo a ordem original (datetime.max + índice como desempate).
+    order = sorted(
+        range(n),
+        key=lambda i: (
+            _parse_timeline_date_value(str(blocks[i].get("period_start") or "")) or datetime.max,
+            i,
+        ),
+    )
+    pos = {idx: p for p, idx in enumerate(order)}
+    for idx in range(n):
+        b = blocks[idx]
         if str(b.get("kind") or "") != BlockKind.REVIEW.value:
             continue
         if b.get("manual_kind_override"):
             continue
+        p = pos[idx]
         preexam = False
-        for nb in blocks[i + 1:]:
-            k = str(nb.get("kind") or "")
+        for q in range(p + 1, n):
+            k = str(blocks[order[q]].get("kind") or "")
             if k in decisive:
                 preexam = k == BlockKind.ASSESSMENT.value
                 break
@@ -1331,14 +1337,16 @@ def _demote_non_preexam_reviews(blocks: List[Dict[str, object]]) -> None:
         b["kind"] = BlockKind.CLASS.value
         if not b.get("unit_slug") and not b.get("block_manual_unit_slug"):
             prev_slug = ""
-            for pb in reversed(blocks[:i]):
-                if pb.get("unit_slug"):
-                    prev_slug = str(pb.get("unit_slug"))
+            for q in range(p - 1, -1, -1):
+                slug = blocks[order[q]].get("unit_slug")
+                if slug:
+                    prev_slug = str(slug)
                     break
             next_slug = ""
-            for nb in blocks[i + 1:]:
-                if nb.get("unit_slug"):
-                    next_slug = str(nb.get("unit_slug"))
+            for q in range(p + 1, n):
+                slug = blocks[order[q]].get("unit_slug")
+                if slug:
+                    next_slug = str(slug)
                     break
             inherited = prev_slug or next_slug
             if inherited:
@@ -1370,6 +1378,18 @@ def apply_assessment_review_scope(blocks: List[Dict[str, object]]) -> None:
             existing = str(b.get("primary_topic_label") or "")
             if scope and (not existing or existing.startswith("Conteúdo: ")):
                 b["primary_topic_label"] = "Conteúdo: " + ", ".join(scope)
+
+
+def _apply_timeline_post_transforms(blocks: List[Dict[str, object]]) -> None:
+    """Transforms pós-classificação compartilhados por TODOS os caminhos de
+    gravação do índice (GUI via build_file_map+persist; scripts/testes via
+    _serialize_timeline_index). Fonte única para evitar divergência:
+      1. revisão que não precede prova vira aula de conteúdo (herda unidade);
+      2. escopo de prova por data + revisão herda a próxima prova.
+    Idempotente.
+    """
+    _demote_non_preexam_reviews(blocks)
+    apply_assessment_review_scope(blocks)
 
 
 def _assessment_conflict_observation(
@@ -1441,13 +1461,11 @@ def _build_file_map_timeline_context_from_course(
     if _repo_root:
         _apply_curation_overrides(timeline_index, Path(_repo_root) / "course")
 
-    # Revisão que não precede prova vira aula de conteúdo (herda unidade).
-    # Depois: escopo de prova por data + revisão herda a próxima prova. Aplicado
-    # aqui (após kinds/units finais via finalize_block + curation) porque o
-    # caminho real de gravação (persist_enriched_timeline_index) não passa por
-    # _serialize_timeline_index. Idempotente.
-    _demote_non_preexam_reviews(timeline_index.get("blocks", []) or [])
-    apply_assessment_review_scope(timeline_index.get("blocks", []) or [])
+    # Transforms pós-classificação (demote revisão + escopo). Aplicado aqui (após
+    # kinds/units finais via finalize_block + curation) porque o caminho real de
+    # gravação (persist_enriched_timeline_index) não passa por
+    # _serialize_timeline_index. Mesma função usada pelo _serialize → sem divergência.
+    _apply_timeline_post_transforms(timeline_index.get("blocks", []) or [])
 
     blocks_by_unit: Dict[str, List[Dict[str, object]]] = {}
     rows_by_unit: Dict[str, List[Dict[str, object]]] = {}

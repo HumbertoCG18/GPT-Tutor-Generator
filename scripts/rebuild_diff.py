@@ -15,7 +15,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.models.core import SubjectStore  # noqa: E402
 import src.builder.engine as engine  # noqa: E402
-from src.builder.timeline.index import _serialize_timeline_index  # noqa: E402
 
 BASE = Path(os.environ.get("TUTOR_COURSES_DIR", r"C:\Users\Humberto\Documents\GitHub"))
 
@@ -34,7 +33,7 @@ def diff_course(name: str, sp) -> None:
     old = {b.get("id"): b for b in json.loads(idx_path.read_text(encoding="utf-8")).get("blocks", [])}
     cm = json.loads((repo / "manifest.json").read_text(encoding="utf-8")).get("course", {}) if (repo / "manifest.json").exists() else {}
     ctx = engine._build_file_map_timeline_context_from_course({**cm, "_repo_root": repo}, sp, content_taxonomy=None)
-    new = _serialize_timeline_index(ctx.get("timeline_index") or {"version": 4, "blocks": []})
+    new = engine._persist_enriched_timeline_index(ctx.get("timeline_index") or {"version": 4, "blocks": []})
     print(f"=== {name} ({len(new['blocks'])} blocos) ===")
     changed = 0
     for b in new["blocks"]:
