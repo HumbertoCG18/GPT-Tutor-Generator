@@ -149,6 +149,42 @@ Identifique o modo antes de responder:
 """
 
 
+# Fonte única da sequência pedagógica (ordem canônica: Intuição antes de
+# Definição, decidido 2026-06-05). PEDAGOGY/MODES/OUTPUT_TEMPLATES derivam daqui.
+PEDAGOGICAL_SEQUENCE = [
+    {"label": "Contexto",         "full": "Por que este conceito existe? Que problema resolve?", "template": "[contexto em 1-2 frases]"},
+    {"label": "Intuição",         "full": "Como pensar sobre isso sem formalismo",              "template": "[analogia ou imagem mental]"},
+    {"label": "Definição",        "full": "O que é, em termos precisos",                        "template": "[definição precisa, com LaTeX se necessário]"},
+    {"label": "Exemplo mínimo",   "full": "O caso mais simples possível",                       "template": "[exemplo mais simples possível]"},
+    {"label": "Aplicação",        "full": "Como aparece na disciplina / em computação",         "template": "[conexão com o conteúdo do curso]"},
+    {"label": "Erros comuns",     "full": "O que os alunos costumam confundir",                 "template": "[erro mais comum]"},
+    {"label": "Exercício guiado", "full": "Uma pergunta para o aluno aplicar",                  "template": "[pergunta para o aluno aplicar]"},
+    {"label": "Resumo",           "full": "Uma frase que captura a essência",                   "template": "[uma frase que captura a essência]"},
+]
+
+
+def _pedagogical_sequence_full_lines() -> list[str]:
+    return [f"{i}. **{s['label']}** — {s['full']}" for i, s in enumerate(PEDAGOGICAL_SEQUENCE, 1)]
+
+
+def _pedagogical_sequence_compact() -> str:
+    return " → ".join(s["label"] for s in PEDAGOGICAL_SEQUENCE)
+
+
+def _pedagogical_sequence_template_lines() -> list[str]:
+    return [f"**{s['label']}:** {s['template']}" for s in PEDAGOGICAL_SEQUENCE]
+
+
+def _exam_scope_rule_lines() -> list[str]:
+    return [
+        "As provas são cumulativas mas com peso progressivo:",
+        "",
+        "- **P1** → cobre tudo do início até a P1. Foco total no conteúdo pré-P1.",
+        "- **P2** → cobre tudo até a P2. Foco principal no conteúdo entre P1 e P2 (~70%). Conteúdo da P1 ainda cai, mas com menos peso (~30%).",
+        "- **P3** → cobre tudo até a P3. Foco principal no conteúdo entre P2 e P3 (~70%). Conteúdo entre P1-P2 cai menos (~20%). Conteúdo pré-P1 cai pouco (~10%).",
+    ]
+
+
 def pedagogy_md() -> str:
     return """# PEDAGOGY
 
@@ -156,14 +192,7 @@ def pedagogy_md() -> str:
 
 Para cada conceito novo, siga esta sequência:
 
-1. **Contexto** — Por que este conceito existe? Que problema resolve?
-2. **Definição** — O que é, em termos precisos
-3. **Intuição** — Como pensar sobre isso sem formalismo
-4. **Exemplo mínimo** — O caso mais simples possível
-5. **Aplicação** — Como aparece na disciplina / em computação
-6. **Erros comuns** — O que os alunos costumam confundir
-7. **Exercício guiado** — Uma pergunta para o aluno aplicar
-8. **Resumo** — Uma frase que captura a essência
+""" + "\n".join(_pedagogical_sequence_full_lines()) + """
 
 ## Adaptação de profundidade
 
@@ -191,21 +220,7 @@ Ao explicar um tópico, verifique `exams/EXAM_INDEX.md`:
 
 ## Lógica de escopo das provas
 
-As provas seguem um modelo cumulativo com foco progressivo:
-
-```
-P1: cobre TODO o conteúdo do início até a P1
-        → foco: 100% no conteúdo pré-P1
-
-P2: cobre TODO o conteúdo do início até a P2
-        → foco primário:   conteúdo entre P1 e P2  (~70%)
-        → foco secundário: conteúdo pré-P1          (~30%)
-
-P3: cobre TODO o conteúdo do início até a P3
-        → foco primário:   conteúdo entre P2 e P3  (~70%)
-        → foco secundário: conteúdo entre P1 e P2  (~20%)
-        → foco terciário:  conteúdo pré-P1          (~10%)
-```
+""" + "\n".join(_exam_scope_rule_lines()) + """
 
 **Regra prática para o tutor:**
 
@@ -237,7 +252,7 @@ def modes_md(course_meta: Optional[dict] = None, subject_profile=None) -> str:
 
 ## Modos de operação do tutor
 
-O tutor opera em quatro modos. Cada modo tem objetivo, postura e formato de resposta diferentes.
+O tutor opera em cinco modos. Cada modo tem objetivo, postura e formato de resposta diferentes.
 
 ---
 
@@ -253,7 +268,7 @@ O tutor opera em quatro modos. Cada modo tem objetivo, postura e formato de resp
 - Verifique compreensão antes de avançar
 
 **Formato de resposta:**
-- Contexto → Intuição → Definição → Exemplo → Exercício
+- """ + _pedagogical_sequence_compact() + """
 
 ---
 
@@ -267,7 +282,7 @@ O tutor opera em quatro modos. Cada modo tem objetivo, postura e formato de resp
 - NUNCA entregue a resposta diretamente
 - Identifique onde o aluno está travado
 - Faça perguntas que revelem o próximo passo
-- Consulte `exercises/EXERCISE_INDEX.md` para localizar o exercício no mapa da disciplina
+- Consulte `exercises/EXERCISE_INDEX.md` (listas/práticas) e `assignments/ASSIGNMENT_INDEX.md` (trabalhos) para localizar o item no mapa da disciplina
 - Entregue a resolução completa só depois que o aluno chegou lá
 
 **Formato de resposta:**
@@ -285,11 +300,7 @@ O tutor opera em quatro modos. Cada modo tem objetivo, postura e formato de resp
 
 **Lógica de escopo (regra fundamental):**
 
-As provas são cumulativas mas com peso progressivo:
-
-- **P1** → cobre tudo do início até a P1. Foco total no conteúdo pré-P1.
-- **P2** → cobre tudo até a P2. Foco principal no conteúdo entre P1 e P2 (~70%). Conteúdo da P1 ainda cai, mas com menos peso (~30%).
-- **P3** → cobre tudo até a P3. Foco principal no conteúdo entre P2 e P3 (~70%). Conteúdo entre P1-P2 cai menos (~20%). Conteúdo pré-P1 cai pouco (~10%).
+""" + "\n".join(_exam_scope_rule_lines()) + """
 
 **Postura:**
 - Comece sempre pelos tópicos do período mais recente
@@ -364,23 +375,7 @@ def output_templates_md(course_meta: Optional[dict] = None, subject_profile=None
 ```
 ## [Nome do conceito]
 
-**Por que existe:** [contexto em 1-2 frases]
-
-**Intuição:** [analogia ou imagem mental]
-
-**Definição formal:**
-[definição precisa, com LaTeX se necessário]
-
-**Exemplo mínimo:**
-[exemplo mais simples possível]
-
-**Como aparece na disciplina:**
-[conexão com o conteúdo do curso]
-
-**Cuidado com:**
-[erro mais comum]
-
-**Agora você:** [pergunta para o aluno aplicar o conceito]
+""" + "\n\n".join(_pedagogical_sequence_template_lines()) + """
 
 *Fonte: [arquivo de origem]*
 ```

@@ -734,26 +734,19 @@ def bibliography_md(
             "",
         ]
 
-    mapped = [(e, _rec(e)) for e in entries]
-    mapped = [(e, r) for (e, r) in mapped if (r.get("computed_ref_unit") or r.get("computed_ref_topics"))]
-    lines += ["## Mapa de relevância por tópico", ""]
-    if mapped:
-        lines += ["| Tópico/Unidade | Referência | Acessível | Incidência em prova |", "|---|---|---|---|"]
-        for e, r in mapped:
-            unit = r.get("computed_ref_unit") or ""
-            topics = ", ".join(r.get("computed_ref_topics") or [])
-            alvo = " / ".join([p for p in (unit, topics) if p]) or "—"
-            lines.append(f"| {alvo} | {e.title} | sim | — |")
-        lines.append("")
-    else:
-        lines += ["<!-- Preencha após organizar as referências -->", "",
-                  "| Tópico | Referência principal | Acessível | Incidência em prova |",
-                  "|---|---|---|---|", "| [a preencher] | | | |", ""]
+    lines += [
+        "## Relevância por tópico",
+        "",
+        "> A relevância por tópico agora vive no `course/COURSE_MAP.md` "
+        "(linhas `📖 Apoio:` sob cada tópico/unidade). Esta página traz o resumo "
+        "completo de cada referência.",
+        "",
+    ]
 
     return clamp_navigation_artifact(
         "\n".join(lines),
         max_chars=14000,
-        label="course/COURSE_MAP.md",
+        label="course/BIBLIOGRAPHY.md",
     )
 
 
@@ -772,35 +765,23 @@ def exam_index_md(course_meta: dict, entries=None, *, clamp_navigation_artifact:
         "",
     ]
 
-    lines.append("| Arquivo | Tipo | Prova | Observação | Padrão do professor |")
-    lines.append("|---|---|---|---|---|")
-    for entry in entries:
-        tipo = "foto" if entry.category == "fotos-de-prova" else "original"
-        lines.append(
-            f"| {Path(entry.source_path).name} | {tipo} | {entry.title} "
-            f"| {entry.notes or ''} | {entry.professor_signal or ''} |"
-        )
-
-    lines += [
-        "",
-        "## Incidência de tópicos por prova",
-        "",
-        "> Preencha após revisar cada prova. O tutor usa esta tabela no modo `exam_prep`.",
-        "",
-        "| Tópico | P1 | P2 | P3 | Total | Peso estimado |",
-        "|---|---|---|---|---|---|",
-        "| [a preencher] | | | | | |",
-        "",
-        "## Padrões de questão observados",
-        "",
-        "<!-- Liste padrões recorrentes: tipos de enunciado, estrutura, pegadinhas comuns -->",
-        "",
-    ]
+    if entries:
+        lines.append("| Arquivo | Tipo | Prova | Observação | Padrão do professor |")
+        lines.append("|---|---|---|---|---|")
+        for entry in entries:
+            tipo = "foto" if entry.category == "fotos-de-prova" else "original"
+            lines.append(
+                f"| {Path(entry.source_path).name} | {tipo} | {entry.title} "
+                f"| {entry.notes or ''} | {entry.professor_signal or ''} |"
+            )
+    else:
+        lines.append("_Nenhuma prova mapeada ainda._")
+    lines.append("")
 
     return clamp_navigation_artifact(
         "\n".join(lines),
         max_chars=12000,
-        label="course/FILE_MAP.md",
+        label="course/EXAM_INDEX.md",
     )
 
 
@@ -817,14 +798,14 @@ def assignment_index_md(course_meta: dict, entries=None, *, clamp_navigation_art
         "",
     ]
     if entries:
-        lines += ["| Arquivo | Título | Unidade | Status |", "|---|---|---|---|"]
+        lines += ["| Arquivo | Título | Unidade |", "|---|---|---|"]
         for e in entries:
-            lines.append(f"| {Path(e.source_path).name} | {e.title} | {e.tags or ''} | pendente |")
+            lines.append(f"| {Path(e.source_path).name} | {e.title} | {e.tags or ''} |")
     else:
-        lines += ["| Arquivo | Título | Unidade | Status |", "|---|---|---|---|", "| [a preencher] | | | |"]
-    lines += ["", "## Padrões do professor", "", "- [a preencher]", ""]
+        lines.append("_Nenhum trabalho mapeado ainda._")
+    lines.append("")
     result = "\n".join(lines)
-    return clamp_navigation_artifact(result, max_chars=12000, label="course/FILE_MAP.md")
+    return clamp_navigation_artifact(result, max_chars=12000, label="course/ASSIGNMENT_INDEX.md")
 
 
 def code_index_md(
@@ -857,15 +838,8 @@ def code_index_md(
         ]
         if not prof_entries:
             lines += [profile["code_index_empty"], ""]
-        lines += [
-            profile["code_index_patterns"],
-            "",
-            "<!-- Preencha conforme analisar o código -->",
-            "- [a preencher]",
-            "",
-        ]
         result = "\n".join(lines)
-        return clamp_navigation_artifact(result, max_chars=14000, label="course/COURSE_MAP.md")
+        return clamp_navigation_artifact(result, max_chars=14000, label="course/CODE_INDEX.md")
 
     # (b) Code entries but no curation/blocks → flat table (byte-equal to old)
     curation_entries = (code_curation or {}).get("entries", {})
@@ -886,7 +860,7 @@ def code_index_md(
                 "|---|---|---|---|---|",
             ]
             for e in prof_entries:
-                conceito = e.professor_signal or "[a preencher]"
+                conceito = e.professor_signal or ""
                 unit_str = ""
                 if e.notes and "Unidade:" in e.notes:
                     try:
@@ -899,15 +873,8 @@ def code_index_md(
             lines.append("")
         else:
             lines += [profile["code_index_empty"], ""]
-        lines += [
-            profile["code_index_patterns"],
-            "",
-            "<!-- Preencha conforme analisar o código -->",
-            "- [a preencher]",
-            "",
-        ]
         result = "\n".join(lines)
-        return clamp_navigation_artifact(result, max_chars=14000, label="course/COURSE_MAP.md")
+        return clamp_navigation_artifact(result, max_chars=14000, label="course/CODE_INDEX.md")
 
     # (c) Code entries + curation + blocks → grouped Phase-3 format
     blocks_by_id = {b["id"]: b for b in (timeline_blocks or []) if b.get("id")}
@@ -1046,7 +1013,7 @@ def cronograma_detalhado_md(
         else:
             lines.append("_Sem códigos vinculados a esta aula._")
 
-        lines += ["", "<!-- TODO (material-agnostic refactor): PDFs, exercícios, imagens -->", "", "---", ""]
+        lines += ["", "---", ""]
 
     return "\n".join(lines)
 
@@ -1136,10 +1103,10 @@ def whiteboard_index_md(course_meta: dict, entries=None, *, clamp_navigation_art
         for e in entries:
             lines.append(f"| {Path(e.source_path).name} | {e.title} | {e.tags or ''} | {e.professor_signal or ''} |")
     else:
-        lines += ["| Arquivo | Título | Unidade | Padrão identificado |", "|---|---|---|---|", "| [a preencher] | | | |"]
-    lines += ["", "## Padrões pedagógicos", "", "- [a preencher]", ""]
+        lines.append("_Nenhum registro de quadro ainda._")
+    lines.append("")
     result = "\n".join(lines)
-    return clamp_navigation_artifact(result, max_chars=12000, label="course/FILE_MAP.md")
+    return clamp_navigation_artifact(result, max_chars=12000, label="course/WHITEBOARD_INDEX.md")
 
 
 def clamp_navigation_artifact(text: str, *, max_chars: int, label: str) -> str:
@@ -1691,7 +1658,7 @@ def glossary_md(
     return clamp_navigation_artifact_fn(
         "\n".join(lines),
         max_chars=14000,
-        label="course/COURSE_MAP.md",
+        label="course/GLOSSARY.md",
     )
 
 
@@ -2095,9 +2062,7 @@ def exercise_index_md(
                 f"| {entry.title} | {kind} | {tags or 'não mapeado'} | {has_solution} | {priority} | {usage} |"
             )
     else:
-        lines.append("| [a preencher] | | | | | |")
         lines += [
-            "",
             "> Adicione listas ou provas antigas para o tutor conseguir sugerir prática com baixo custo de contexto.",
         ]
     lines.append("")

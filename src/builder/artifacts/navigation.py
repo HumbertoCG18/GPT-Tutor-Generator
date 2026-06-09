@@ -13,6 +13,11 @@ from src.utils.helpers import (
     WHITEBOARD_CATEGORIES,
     write_text,
 )
+from src.builder.core.reference_navigation import (
+    _topic_key as _ref_topic_key,
+    _ref_support_line,
+    _REF_CAP_PER_ANCHOR,
+)
 
 
 def _entry_priority_label(entry: dict) -> str:
@@ -280,122 +285,17 @@ def _get_entry_sections(md_path: Path, max_h2: int = 4) -> str:
     return "  ".join(h2) if h2 else ""
 
 
-def render_course_map_md(
-    course_meta: dict,
-    subject_profile=None,
-    *,
-    parse_units_from_teaching_plan: Callable[[str], list],
-    topic_text: Callable[[object], str],
-    topic_depth: Callable[[object], int],
-    parse_syllabus_timeline: Callable[[str], list],
-    match_timeline_to_units: Callable[[list, list], list],
-    build_assessment_context_from_course: Callable[[dict, object], dict],
-    assessment_conflict_section_lines: Callable[[Optional[dict], bool], List[str]],
-    clamp_navigation_artifact: Callable[..., str],
-    logger,
-) -> str:
-    course_name = course_meta.get("course_name", "Curso")
-
-    lines = [
-        f"# COURSE_MAP — {course_name}",
-        "",
-        "> **Como usar:** Este arquivo define a ordem pedagógica dos tópicos.",
-        "> O tutor consulta este mapa para saber o que o aluno já deveria ter visto",
-        "> e o que ainda não foi apresentado formalmente.",
-    ]
-
-    if subject_profile and subject_profile.syllabus:
-        lines.append("> Cronograma completo disponível em `course/SYLLABUS.md`")
-    lines.append("")
-
-    teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
-    units = parse_units_from_teaching_plan(teaching_plan) if teaching_plan else []
-
-    lines.append("## Estrutura do curso")
-    lines.append("")
-
-    if units:
-        for unit_title, topics in units:
-            lines.append(f"### {unit_title}")
-            if topics:
-                for topic in topics:
-                    text = topic_text(topic)
-                    depth = topic_depth(topic)
-                    indent = "  " * depth
-                    lines.append(f"{indent}- [ ] {text}")
-            else:
-                lines.append("- [ ] [tópicos a preencher]")
-            lines.append("")
-    else:
-        lines += [
-            "<!--",
-            "INSTRUÇÃO PARA O MANTENEDOR:",
-            "Preencha os tópicos abaixo em ordem pedagógica.",
-            "Use indentação para indicar subtópicos.",
-            "Marque dependências com '→ requer: [tópico]'",
-            "-->",
-            "",
-            "### Unidade 1 — [Nome da unidade]",
-            "- [ ] Tópico 1.1",
-            "- [ ] Tópico 1.2",
-            "",
-            "### Unidade 2 — [Nome da unidade]",
-            "- [ ] Tópico 2.1 → requer: Tópico 1.2",
-            "- [ ] Tópico 2.2",
-            "",
-        ]
-
-    syllabus = getattr(subject_profile, "syllabus", "") if subject_profile else ""
-    if units and syllabus:
-        try:
-            timeline = parse_syllabus_timeline(syllabus)
-            mapping = match_timeline_to_units(timeline, units)
-            has_dates = any(m["period"] for m in mapping)
-            if has_dates:
-                lines += [
-                    "## Timeline — Cronograma × Unidades",
-                    "",
-                    "> Mapeamento automático entre o cronograma e as unidades do plano de ensino.",
-                    "> O tutor usa esta tabela para saber em qual unidade o aluno está baseado na data atual.",
-                    "",
-                    "| Unidade | Período | Slug (referência) |",
-                    "|---|---|---|",
-                ]
-                for item in mapping:
-                    period = item["period"] or "[não identificado]"
-                    lines.append(f"| {item['unit_title']} | {period} | `{item['unit_slug']}` |")
-                lines.append("")
-        except Exception as exc:
-            logger.debug("Could not generate timeline mapping: %s", exc)
-
-    assessment_context = course_meta.get("_assessment_context") or (
-        build_assessment_context_from_course(course_meta, subject_profile)
-        if subject_profile and getattr(subject_profile, "teaching_plan", "") and getattr(subject_profile, "syllabus", "")
-        else {"version": 1, "assessments": [], "conflicts": []}
-    )
-    lines += assessment_conflict_section_lines(assessment_context, compact=False)
-
-    lines += [
-        "## Tópicos de alta incidência em prova",
-        "",
-        "> ⏳ **Aguardando análise do tutor** — esta tabela pode ser refinada quando o tutor",
-        "> cruzar as provas em `exams/` com as unidades acima.",
-        "",
-        "| Tópico | Unidade | Incidência |",
-        "|---|---|---|",
-        "",
-        "## Notas do professor",
-        "",
-        "> ⏳ **Aguardando análise do tutor** — padrões de cobrança serão identificados",
-        "> a partir das provas e gabaritos disponíveis.",
-        "",
-    ]
-
-    return clamp_navigation_artifact(
-        "\n".join(lines),
-        max_chars=14000,
-        label="course/COURSE_MAP.md",
-    )
+def _emit_support_lines(lines, refs, shown_ids, indent):
+    """Emite até _REF_CAP_PER_ANCHOR linhas 📖 Apoio (refs ainda não mostradas)
+    + 1 linha de overflow se sobrar. Atualiza shown_ids só com as emitidas (head)."""
+    fresh = [r for r in refs if r["entry_id"] not in shown_ids]
+    head = fresh[:_REF_CAP_PER_ANCHOR]
+    for ref in head:
+        lines.append(f"{indent}- {_ref_support_line(ref)}")
+        shown_ids.add(ref["entry_id"])
+    overflow = len(fresh) - len(head)
+    if overflow > 0:
+        lines.append(f"{indent}- (+{overflow} referência(s) em content/BIBLIOGRAPHY.md)")
 
 
 def render_low_token_course_map_md(
@@ -434,16 +334,32 @@ def render_low_token_course_map_md(
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     units = parse_units_from_teaching_plan(teaching_plan) if teaching_plan else []
 
+    ref_index = course_meta.get("_reference_nav_index") or {}
+    ref_by_unit = ref_index.get("by_unit", {}) or {}
+    ref_by_topic = ref_index.get("by_topic", {}) or {}
+
     lines += ["## Estrutura do curso", ""]
     if units:
         for unit_title, topics in units:
+            unit_slug = normalize_unit_slug(unit_title)
             lines.append(f"### {unit_title}")
+            shown_ids = set()       # refs já emitidas como linha (dedup entre âncoras)
+            topic_anchored = set()  # refs ancoradas a um tópico RENDERIZADO (head+overflow)
             if topics:
                 for topic in topics:
                     indent = "  " * topic_depth(topic)
                     lines.append(f"{indent}- [ ] {topic_text(topic)}")
+                    tkey = (unit_slug, _ref_topic_key(topic_text(topic)))
+                    bucket = ref_by_topic.get(tkey, [])
+                    for r in bucket:
+                        topic_anchored.add(r["entry_id"])
+                    _emit_support_lines(lines, bucket, shown_ids, indent + "  ")
             else:
                 lines.append("- [ ] [tópicos a preencher]")
+            # unidade: só refs NÃO ancoradas a um tópico renderizado e ainda não exibidas
+            leftovers = [r for r in ref_by_unit.get(unit_slug, [])
+                         if r["entry_id"] not in shown_ids and r["entry_id"] not in topic_anchored]
+            _emit_support_lines(lines, leftovers, shown_ids, "")
             lines.append("")
     else:
         # Tenta renderizar unidades reais do timeline_index quando não há teaching_plan
@@ -727,11 +643,11 @@ def render_low_token_file_map_md(
                         refined = auto_map_entry_subtopic(entry, content_taxonomy, markdown_text, winning_unit_slug=match.slug)
                         if refined.topic_slug and not refined.ambiguous and refined.confidence >= 0.35:
                             preferred_topic_slug = refined.topic_slug
+            # Low-confidence suffix dropped: redundant with the Confiança column
+            # (which renders "Baixa"). Only the distinct "ambíguo" reason is kept.
             unit = (
                 f"{match.slug} _(ambíguo)_"
                 if match.slug and match.ambiguous
-                else f"{match.slug} _(baixa confiança)_"
-                if match.slug and match.confidence < 0.45
                 else match.slug
             )
             unit_blocks = list(blocks_by_unit.get(match.slug, [])) if match.slug else []

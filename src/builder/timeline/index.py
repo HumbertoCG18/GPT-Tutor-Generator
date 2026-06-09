@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import re
-import unicodedata
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -11,10 +10,14 @@ from typing import Callable, Dict, List, Optional
 from src.builder.vision.card_evidence import extract_card_evidence
 from src.builder.timeline.signals import extract_timeline_session_signals
 from src.builder.timeline.classifier import classify_block
+from src.builder.timeline.kinds import BlockKind
 from src.builder.timeline.curation import apply_block_curation
+from src.builder.timeline.unit_matcher import assign_units_positional
 from src.builder.text.normalize import normalize_match_text as _normalize_match_text
 from src.builder.routing.thresholds import margin_confidence, T
-from src.utils.helpers import slugify, write_text
+from src.builder.routing.file_map import UNIT_GENERIC_TOKENS
+from src.builder.extraction.teaching_plan import _normalize_unit_slug
+from src.utils.helpers import slugify, ATIVIDADE_KIND_MAP, norm_ascii_lower, collapse_ws as _collapse_ws
 
 
 TIMELINE_INDEX_VERSION = 4
@@ -29,12 +32,27 @@ def ensure_block_kind(block: dict) -> dict:
     return block
 
 
+def finalize_block(block: dict) -> dict:
+    """Garante `kind` e limpa unidade de blocos nao-aula.
+
+    Provas/feriados/revisoes/etc nao tem unidade pedagogica. Override manual de
+    unidade (`block_manual_unit_slug`) sempre preservado. Idempotente.
+    """
+    if not isinstance(block, dict):
+        return block
+    ensure_block_kind(block)
+    if block.get("kind") != BlockKind.CLASS.value and not block.get("block_manual_unit_slug"):
+        block["unit_slug"] = ""
+        block["unit_confidence"] = 0.0
+    return block
+
+
 def _backfill_timeline_index(timeline_index: dict) -> dict:
     """Lazy upgrade v3->v4: bump version, popula `kind` em cada bloco. In-place."""
     if not isinstance(timeline_index, dict):
         return timeline_index
     for block in timeline_index.get("blocks") or []:
-        ensure_block_kind(block)
+        finalize_block(block)
     timeline_index["version"] = TIMELINE_INDEX_VERSION
     return timeline_index
 
@@ -54,7 +72,10 @@ def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
         return 0
     for block in blocks:
         if block.get("manual_kind_override"):
-            block["kind"] = classify_block(block).value
+            block["kind"] = ""  # forca re-derivacao limpa
+            finalize_block(block)
+            # source_kind (hint de linha do SARC) NAO e re-derivado aqui: e
+            # row-level; o override manual ja vence o source_kind em classify_block.
         if block.get("manual_topic_label"):
             label, slug, source = _resolve_block_topic_label(block)
             if label:
@@ -67,10 +88,6 @@ def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
             block["unit_slug"] = manual_unit.strip()
             block["unit_confidence"] = 1.0
     return touched
-
-
-def _collapse_ws(text: str) -> str:
-    return re.sub(r"\s+", " ", (text or "")).strip()
 
 
 def _signal_token_set(signal_text: str) -> set:
@@ -89,16 +106,6 @@ def _matches_normalized_phrase(signal_text: str, phrase: str) -> bool:
     if " " not in normalized_phrase:
         return normalized_phrase in _signal_token_set(normalized_signal)
     return normalized_phrase in normalized_signal
-
-
-def _normalize_unit_slug(title: str) -> str:
-    slug = slugify((title or "").replace("—", "-"))
-    match = re.match(r"^(unidade(?:-de-aprendizagem)?-)(\d+)(-.+)?$", slug)
-    if not match:
-        return slug
-    prefix, number, suffix = match.groups()
-    suffix = suffix or ""
-    return f"{prefix}{int(number):02d}{suffix}"
 
 
 @dataclass
@@ -228,188 +235,34 @@ def _parse_timeline_period_bounds(period: str) -> tuple[Optional[datetime], Opti
     return start, end
 
 
-def _match_timeline_to_units_generic(
-    timeline: List[Dict[str, str]],
-    units: list,
-    *,
-    normalize_unit_slug: Callable[[str], str],
-    topic_text: Callable[[object], str],
-) -> list:
-    if not timeline or not units:
-        return []
-
-    content_keys, date_keys = _infer_timeline_keys(timeline)
-    if not content_keys:
-        return []
-
-    preferred_date_keys = []
-    fallback_date_keys = []
-    for key in timeline[0].keys():
-        if any(k in key for k in ["data", "date"]):
-            preferred_date_keys.append(key)
-        elif any(k in key for k in ["semana", "week", "sem", "aula"]):
-            fallback_date_keys.append(key)
-    date_keys = preferred_date_keys or fallback_date_keys
-    if not date_keys:
-        date_keys = [list(timeline[0].keys())[0]] if timeline[0] else []
-
-    def _normalize_token_text(text: str) -> str:
-        text = unicodedata.normalize("NFKD", text or "")
-        text = "".join(ch for ch in text if not unicodedata.combining(ch))
-        text = re.sub(r"[^a-z0-9\s]", " ", text.lower())
-        return re.sub(r"\s+", " ", text).strip()
-
-    def _tokenize_signal(text: str) -> List[str]:
-        return [
-            token
-            for token in _normalize_token_text(text).split()
-            if len(token) >= 4 and not token.isdigit()
-        ]
-
-    descriptors = []
-    token_frequency: Dict[str, int] = {}
-    for unit_title, topics in units:
-        unit_num_match = re.search(r"(\d+)", unit_title)
-        unit_num = unit_num_match.group(1) if unit_num_match else ""
-        unit_num_int = str(int(unit_num)) if unit_num else ""
-
-        desc_match = re.search(r"[â€”â€“:\-]\s*(.+)", unit_title)
-        unit_desc = desc_match.group(1).strip() if desc_match else unit_title
-        unit_desc_norm = _normalize_token_text(unit_desc)
-        title_tokens = _tokenize_signal(unit_desc_norm)
-        topic_phrases = []
-        topic_tokens = []
-
-        for topic in topics or []:
-            topic_norm = _normalize_token_text(topic_text(topic))
-            if not topic_norm:
-                continue
-            topic_phrases.append(topic_norm)
-            topic_tokens.extend(_tokenize_signal(topic_norm))
-
-        all_tokens = title_tokens + topic_tokens
-        descriptor = {
-            "unit_title": unit_title,
-            "unit_num": unit_num,
-            "unit_num_int": unit_num_int,
-            "unit_desc_norm": unit_desc_norm,
-            "title_tokens": title_tokens,
-            "topic_phrases": topic_phrases,
-            "all_tokens": all_tokens,
-        }
-        descriptors.append(descriptor)
-        for token in set(all_tokens):
-            token_frequency[token] = token_frequency.get(token, 0) + 1
-
-    for descriptor in descriptors:
-        descriptor["distinctive_tokens"] = sorted({
-            token
-            for token in descriptor["all_tokens"]
-            if token_frequency.get(token, 0) == 1 or (token_frequency.get(token, 0) <= 2 and len(token) >= 6)
-        })
-
-    row_dates = []
-    for row in timeline:
-        row_dates.append(" / ".join(row.get(k, "") for k in date_keys if row.get(k, "")).strip())
-
-    anchor_indexes_by_unit = []
-    for descriptor in descriptors:
-        anchors = []
-        for idx, row in enumerate(timeline):
-            content_norm = _normalize_token_text(" ".join(row.get(k, "") for k in content_keys))
-            if not content_norm:
-                continue
-
-            score = 0
-            unit_num = descriptor["unit_num"]
-            unit_num_int = descriptor["unit_num_int"]
-            if unit_num:
-                patterns = [
-                    rf"\bunidade\s*{unit_num}\b",
-                    rf"\bunidade\s*{unit_num_int}\b",
-                    rf"\bunid\.?\s*{unit_num_int}\b",
-                    rf"\bun\.?\s*{unit_num_int}\b",
-                ]
-                for pat in patterns:
-                    if re.search(pat, content_norm, re.IGNORECASE):
-                        score += 10
-                        break
-
-            unit_desc_norm = descriptor["unit_desc_norm"]
-            if unit_desc_norm and unit_desc_norm in content_norm:
-                score += 8
-
-            title_hits = sum(
-                1 for token in set(descriptor["title_tokens"])
-                if re.search(rf"\b{re.escape(token)}\b", content_norm)
-            )
-            if title_hits >= max(1, min(2, len(set(descriptor["title_tokens"])))):
-                score += 4
-
-            for phrase in descriptor["topic_phrases"]:
-                if phrase in content_norm:
-                    score += 8
-                    break
-
-            distinct_hits = sum(
-                1
-                for token in descriptor["distinctive_tokens"]
-                if re.search(rf"\b{re.escape(token)}\b", content_norm)
-            )
-            if distinct_hits:
-                score += min(6, distinct_hits * 3)
-
-            if score >= 4:
-                anchors.append(idx)
-        anchor_indexes_by_unit.append(anchors)
-
-    resolved_anchor_starts: List[Optional[int]] = []
-    previous_start = -1
-    for anchors in anchor_indexes_by_unit:
-        chosen_start = None
-        for anchor_idx in anchors:
-            if anchor_idx > previous_start:
-                chosen_start = anchor_idx
-                break
-        if chosen_start is None and anchors:
-            chosen_start = anchors[0]
-        resolved_anchor_starts.append(chosen_start)
-        if chosen_start is not None:
-            previous_start = chosen_start
-
-    result = []
-    for unit_idx, descriptor in enumerate(descriptors):
-        anchors = anchor_indexes_by_unit[unit_idx]
-        matched_dates = []
-        if anchors:
-            start_idx = resolved_anchor_starts[unit_idx]
-            if start_idx is None:
-                start_idx = anchors[0]
-            next_start_idx = None
-            for later_idx in range(unit_idx + 1, len(descriptors)):
-                later_start = resolved_anchor_starts[later_idx]
-                if later_start is not None:
-                    next_start_idx = later_start
-                    break
-            end_idx = (next_start_idx - 1) if next_start_idx is not None else anchors[-1]
-            if end_idx < start_idx:
-                end_idx = anchors[-1]
-            matched_dates = [d for d in row_dates[start_idx:end_idx + 1] if d]
-
-        matched_dates = list(dict.fromkeys(matched_dates))
-        period = f"{matched_dates[0]} a {matched_dates[-1]}" if len(matched_dates) > 1 else (matched_dates[0] if matched_dates else "")
-        result.append({
-            "unit_title": descriptor["unit_title"],
-            "unit_slug": normalize_unit_slug(descriptor["unit_title"]),
-            "period": period,
-            "dates": ", ".join(matched_dates),
-        })
-
-    return result
-
-
 _KIND_TOKEN_RE = re.compile(r"\{kind=(\w+)\}")
 _IGNORED_KINDS = {"suspension", "g2", "ps", "event"}
+_VALID_KIND_VALUES = {k.value for k in BlockKind}
+
+# Prioridade ao agregar kinds das linhas num hint de bloco (mais forte vence).
+# class/overview/unknown nunca viram hint (sao o fallback de texto).
+_SOURCE_KIND_PRIORITY = [
+    "assessment", "deliverable", "review", "holiday", "makeup",
+    "suspended", "academic_event", "results", "workshop",
+    "office_hours", "planning", "reserved",
+]
+
+
+def _aggregate_source_kind(rows: List[Dict[str, object]]) -> str:
+    """Maior-prioridade kind nao-class entre as linhas do bloco; '' se nenhum."""
+    present = {str(r.get("kind", "")) for r in (rows or [])}
+    for kind in _SOURCE_KIND_PRIORITY:
+        if kind in present:
+            return kind
+    return ""
+
+
+def _row_atividade(row: Dict[str, str]) -> str:
+    """Valor da coluna 'Atividade' da row do cronograma (qualquer header que a contenha)."""
+    for key in row or {}:
+        if "atividade" in str(key).lower():
+            return str(row.get(key) or "")
+    return ""
 
 
 def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[str, object]]:
@@ -421,8 +274,20 @@ def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[
         kind = "class"
         match = _KIND_TOKEN_RE.search(content)
         if match:
-            kind = match.group(1).strip().lower() or "class"
+            raw = match.group(1).strip().lower() or "class"
+            # token deve ser um BlockKind valido OU um token ignorado conhecido;
+            # qualquer outra coisa cai em class (defensivo).
+            kind = raw if (raw in _VALID_KIND_VALUES or raw in _IGNORED_KINDS) else "class"
             content = _collapse_ws(_KIND_TOKEN_RE.sub("", content))
+        else:
+            # Sem marcador {kind=}: a coluna Atividade do SARC é o sinal autoritativo.
+            # Nota: ps/g2 so se distinguem pela COR (caminho SARC-HTML). Aqui, sem
+            # cor, "prova de substituicao/g2" colapsa em assessment (direcao segura).
+            atividade = norm_ascii_lower(_row_atividade(row))
+            for needle, mapped in ATIVIDADE_KIND_MAP.items():
+                if needle in atividade:
+                    kind = mapped
+                    break
         ignored = kind in _IGNORED_KINDS
         candidate_rows.append({
             "index": index,
@@ -544,33 +409,6 @@ _TIMELINE_UNIT_NEUTRAL_TOKENS = {
     "variaveis",
     "verificacao",
     "verificacoes",
-}
-
-
-_UNIT_GENERIC_TOKENS = {
-    "metodos",
-    "formais",
-    "formal",
-    "logica",
-    "logicas",
-    "especificacao",
-    "especificacoes",
-    "verificacao",
-    "verificacoes",
-    "programas",
-    "programa",
-    "modelos",
-    "modelo",
-    "fundamentos",
-    "sistemas",
-    "software",
-    "softwares",
-    "suporte",
-    "propriedades",
-    "aplicacoes",
-    "sequenciais",
-    "concorrentes",
-    "linguagens",
 }
 
 
@@ -895,11 +733,21 @@ def _row_looks_like_continuation(row_text: str) -> bool:
     ])
 
 
+def _row_is_standalone_kind(row: Dict[str, object]) -> bool:
+    """Linha com kind nao-aula (prova/trabalho/feriado/... via Atividade) e um
+    bloco proprio: nao funde com vizinhos. '' e 'class' agrupam normalmente."""
+    kind = str(row.get("kind") or "")
+    return bool(kind) and kind != "class"
+
+
 def _rows_belong_to_same_thematic_block(
     previous_row: Dict[str, object],
     current_row: Dict[str, object],
     current_rows: Optional[List[Dict[str, object]]] = None,
 ) -> bool:
+    if _row_is_standalone_kind(current_row) or _row_is_standalone_kind(previous_row):
+        return False
+
     previous_text = str(previous_row.get("content", ""))
     current_text = str(current_row.get("content", ""))
     if not previous_text or not current_text:
@@ -1044,14 +892,21 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
     for block in (timeline_index or {}).get("blocks", []) or []:
         if _timeline_block_is_administrative_only(block):
             continue
+        kind_value = classify_block(block).value
+        unit_slug = block.get("unit_slug", "")
+        unit_confidence = float(block.get("unit_confidence", 0.0) or 0.0)
+        # Non-aula nao carrega unidade pedagogica (override manual preservado).
+        if kind_value != BlockKind.CLASS.value and not block.get("block_manual_unit_slug"):
+            unit_slug = ""
+            unit_confidence = 0.0
         payload = {
             "id": block.get("id", ""),
             "period_start": block.get("period_start", ""),
             "period_end": block.get("period_end", ""),
             "period_label": block.get("period_label", ""),
-            "kind": classify_block(block).value,
-            "unit_slug": block.get("unit_slug", ""),
-            "unit_confidence": float(block.get("unit_confidence", 0.0) or 0.0),
+            "kind": kind_value,
+            "unit_slug": unit_slug,
+            "unit_confidence": unit_confidence,
             "primary_topic_slug": block.get("primary_topic_slug", ""),
             "primary_topic_label": block.get("primary_topic_label", ""),
             "primary_topic_confidence": float(block.get("primary_topic_confidence", 0.0) or 0.0),
@@ -1076,15 +931,15 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
         block_manual_unit_slug = block.get("block_manual_unit_slug")
         if block_manual_unit_slug:
             payload["block_manual_unit_slug"] = block_manual_unit_slug
+        source_kind = block.get("source_kind")
+        if source_kind:
+            payload["source_kind"] = source_kind
+        auto_unit_slug = block.get("auto_unit_slug")
+        if auto_unit_slug:
+            payload["auto_unit_slug"] = auto_unit_slug
         blocks.append(payload)
+    _apply_timeline_post_transforms(blocks)
     return {"version": TIMELINE_INDEX_VERSION, "blocks": blocks}
-
-
-def _write_internal_timeline_index(root_dir: Path, timeline_index: dict) -> None:
-    write_text(
-        root_dir / "course" / ".timeline_index.json",
-        json.dumps(_serialize_timeline_index(timeline_index), ensure_ascii=False, indent=2),
-    )
 
 
 _TEACHING_PLAN_ASSESSMENT_START = re.compile(r"^(?:AVALIA[ÇC][AÃ]O|AVALIACAO)\b", re.IGNORECASE)
@@ -1168,6 +1023,10 @@ def _canonical_assessment_label(raw_label: str, *, normalize_match_text: Callabl
         return f"P{int(match.group(1))}"
     if normalized in {"pf", "p final", "prova final", "exame final"}:
         return "PF"
+    if re.search(r"\bps\b", normalized):
+        return "PS"
+    if re.search(r"\bg2\b", normalized):
+        return "G2"
     if normalized.startswith("exame"):
         return "EXAME"
     if normalized.startswith("prova"):
@@ -1347,6 +1206,192 @@ def _assessment_scope_unit_slugs(declared_unit_numbers: List[int], unit_index: l
     return slugs
 
 
+def _assessment_block_label(block: Dict[str, object]) -> str:
+    """Rótulo canônico (P1/P2/PS/G2/PF/EXAME) a partir do texto do bloco, ou ""."""
+    # Só campos CRUS — NÃO incluir primary_topic_label: o serialize sobrescreve ele
+    # com "Conteúdo: …" e isso corromperia o rótulo na re-serialização (idempotência).
+    text = " ".join(
+        str(block.get(k, "") or "")
+        for k in ("topic_text", "period_label")
+    )
+    for sess in block.get("sessions", []) or []:
+        if isinstance(sess, dict):
+            text += " " + str(sess.get("label", "") or "")
+    if not _normalize_match_text(text):
+        return ""
+    return _canonical_assessment_label(text, normalize_match_text=_normalize_match_text)
+
+
+_FULL_SCOPE_LABELS = {"PS", "G2", "PF", "EXAME"}
+
+
+def assessment_scope_by_date(blocks: List[Dict[str, object]]) -> Dict[str, List[str]]:
+    """Escopo de unidades por prova, derivado das datas dos blocos.
+
+    Prova regular (Pk): unidades das aulas (CLASS) na janela (data P(k-1), data Pk].
+    PS/G2/PF/EXAME: semestre inteiro (todas as unidades vistas em aulas).
+    Retorna {block_id: [unit_slug]} (ordem de aparição). Provas sem data: ignoradas.
+    """
+    class_units_dated = []
+    all_units: List[str] = []
+    for b in blocks:
+        if str(b.get("kind") or "") != BlockKind.CLASS.value:
+            continue
+        slug = str(b.get("unit_slug") or "").strip()
+        dt = _parse_timeline_date_value(str(b.get("period_start") or ""))
+        if slug and slug not in all_units:
+            all_units.append(slug)
+        if slug and dt:
+            class_units_dated.append((dt, slug))
+
+    exams = []
+    for b in blocks:
+        if str(b.get("kind") or "") != BlockKind.ASSESSMENT.value:
+            continue
+        dt = _parse_timeline_date_value(str(b.get("period_start") or ""))
+        if not dt:
+            continue
+        exams.append({"id": str(b.get("id") or ""), "dt": dt, "label": _assessment_block_label(b)})
+
+    regular = sorted(
+        [e for e in exams if e["label"] not in _FULL_SCOPE_LABELS],
+        key=lambda e: e["dt"],
+    )
+    out: Dict[str, List[str]] = {}
+    prev_dt = None
+    for e in regular:
+        units = []
+        for dt, slug in class_units_dated:
+            if (prev_dt is None or dt > prev_dt) and dt <= e["dt"]:
+                if slug not in units:
+                    units.append(slug)
+        out[e["id"]] = units
+        prev_dt = e["dt"]
+
+    for e in exams:
+        if e["label"] in _FULL_SCOPE_LABELS:
+            out[e["id"]] = list(all_units)
+    return out
+
+
+def link_review_scope(blocks: List[Dict[str, object]], exam_scope: Dict[str, List[str]]) -> Dict[str, List[str]]:
+    """Cada bloco REVIEW herda o escopo da PRÓXIMA prova (ASSESSMENT) por data.
+
+    Retorna {review_block_id: [unit_slug]} (vazio se não houver prova depois)."""
+    dated = []
+    for b in blocks:
+        dt = _parse_timeline_date_value(str(b.get("period_start") or ""))
+        dated.append((dt, b))
+    out: Dict[str, List[str]] = {}
+    for dt, b in dated:
+        if str(b.get("kind") or "") != BlockKind.REVIEW.value or not dt:
+            continue
+        nxt = None
+        for odt, ob in dated:
+            if (str(ob.get("kind") or "") == BlockKind.ASSESSMENT.value
+                    and odt and odt >= dt):
+                if nxt is None or odt < nxt[0]:
+                    nxt = (odt, ob)
+        out[str(b.get("id") or "")] = list(exam_scope.get(str(nxt[1].get("id")), [])) if nxt else []
+    return out
+
+
+def _demote_non_preexam_reviews(blocks: List[Dict[str, object]]) -> None:
+    """REVIEW que NÃO precede uma prova vira CLASS. In-place.
+
+    Spec: "exercício de revisão é sempre a linha imediatamente anterior a uma
+    prova". Um bloco "Revisão de [conteúdo]" no meio do semestre (ex.: "Revisão
+    de lógica de predicados" longe de qualquer prova) é aula de conteúdo, não
+    revisão pré-prova — vira CLASS e herda a unidade do vizinho. O elo segue a
+    ordem CRONOLÓGICA (data; sem data preserva ordem da lista), pulando blocos de
+    calendário (suspensão/feriado/evento/devolução) — igual ao link_review_scope.
+    Override manual de kind é respeitado.
+    """
+    decisive = {BlockKind.CLASS.value, BlockKind.ASSESSMENT.value}
+    n = len(blocks)
+    # Ordem cronológica estável: data quando presente; sem data vai pro fim
+    # mantendo a ordem original (datetime.max + índice como desempate).
+    order = sorted(
+        range(n),
+        key=lambda i: (
+            _parse_timeline_date_value(str(blocks[i].get("period_start") or "")) or datetime.max,
+            i,
+        ),
+    )
+    pos = {idx: p for p, idx in enumerate(order)}
+    for idx in range(n):
+        b = blocks[idx]
+        if str(b.get("kind") or "") != BlockKind.REVIEW.value:
+            continue
+        if b.get("manual_kind_override"):
+            continue
+        p = pos[idx]
+        preexam = False
+        for q in range(p + 1, n):
+            k = str(blocks[order[q]].get("kind") or "")
+            if k in decisive:
+                preexam = k == BlockKind.ASSESSMENT.value
+                break
+        if preexam:
+            continue
+        b["kind"] = BlockKind.CLASS.value
+        if not b.get("unit_slug") and not b.get("block_manual_unit_slug"):
+            prev_slug = ""
+            for q in range(p - 1, -1, -1):
+                slug = blocks[order[q]].get("unit_slug")
+                if slug:
+                    prev_slug = str(slug)
+                    break
+            next_slug = ""
+            for q in range(p + 1, n):
+                slug = blocks[order[q]].get("unit_slug")
+                if slug:
+                    next_slug = str(slug)
+                    break
+            inherited = prev_slug or next_slug
+            if inherited:
+                b["unit_slug"] = inherited
+                b["unit_confidence"] = max(float(b.get("unit_confidence", 0.0) or 0.0), 0.51)
+                b["auto_unit_slug"] = inherited
+
+
+def apply_assessment_review_scope(blocks: List[Dict[str, object]]) -> None:
+    """Aplica escopo de prova por data + revisão herda a próxima prova. In-place.
+
+    Prova (ASSESSMENT): unidades por janela de data; PS/G2/PF = semestre inteiro.
+    Revisão (REVIEW): herda o escopo da próxima prova. Grava `scope_unit_slugs` e,
+    quando o label de tópico está vazio OU é o nosso próprio marcador, define um
+    `primary_topic_label = "Conteúdo: …"` legível. Idempotente; label manual nunca
+    é tocado. Provas/revisões sem data ficam sem escopo.
+    """
+    exam_scope = assessment_scope_by_date(blocks)
+    review_scope = link_review_scope(blocks, exam_scope)
+    for b in blocks:
+        bid = b.get("id")
+        scope = None
+        if b.get("kind") == BlockKind.ASSESSMENT.value:
+            scope = exam_scope.get(bid, [])
+        elif b.get("kind") == BlockKind.REVIEW.value:
+            scope = review_scope.get(bid, [])
+        if scope is not None:
+            b["scope_unit_slugs"] = list(scope)
+            existing = str(b.get("primary_topic_label") or "")
+            if scope and (not existing or existing.startswith("Conteúdo: ")):
+                b["primary_topic_label"] = "Conteúdo: " + ", ".join(scope)
+
+
+def _apply_timeline_post_transforms(blocks: List[Dict[str, object]]) -> None:
+    """Transforms pós-classificação compartilhados por TODOS os caminhos de
+    gravação do índice (GUI via build_file_map+persist; scripts/testes via
+    _serialize_timeline_index). Fonte única para evitar divergência:
+      1. revisão que não precede prova vira aula de conteúdo (herda unidade);
+      2. escopo de prova por data + revisão herda a próxima prova.
+    Idempotente.
+    """
+    _demote_non_preexam_reviews(blocks)
+    apply_assessment_review_scope(blocks)
+
+
 def _assessment_conflict_observation(
     assessment_label: str,
     assessment_date: str,
@@ -1415,6 +1460,12 @@ def _build_file_map_timeline_context_from_course(
     _repo_root = course_meta.get("_repo_root")
     if _repo_root:
         _apply_curation_overrides(timeline_index, Path(_repo_root) / "course")
+
+    # Transforms pós-classificação (demote revisão + escopo). Aplicado aqui (após
+    # kinds/units finais via finalize_block + curation) porque o caminho real de
+    # gravação (persist_enriched_timeline_index) não passa por
+    # _serialize_timeline_index. Mesma função usada pelo _serialize → sem divergência.
+    _apply_timeline_post_transforms(timeline_index.get("blocks", []) or [])
 
     blocks_by_unit: Dict[str, List[Dict[str, object]]] = {}
     rows_by_unit: Dict[str, List[Dict[str, object]]] = {}
@@ -1716,19 +1767,19 @@ def _score_entry_against_taxonomy_topic(signals: dict, topic: dict) -> float:
     topic_tokens = {
         token
         for token in _normalize_match_text(label).split()
-        if len(token) >= 4 and token not in _UNIT_GENERIC_TOKENS
+        if len(token) >= 4 and token not in UNIT_GENERIC_TOKENS
     }
     if topic_slug:
         topic_tokens.update(
             token
             for token in _normalize_match_text(topic_slug.replace("-", " ")).split()
-            if len(token) >= 4 and token not in _UNIT_GENERIC_TOKENS
+            if len(token) >= 4 and token not in UNIT_GENERIC_TOKENS
         )
     for alias in aliases:
         topic_tokens.update(
             token
             for token in _normalize_match_text(alias).split()
-            if len(token) >= 4 and token not in _UNIT_GENERIC_TOKENS
+            if len(token) >= 4 and token not in UNIT_GENERIC_TOKENS
         )
 
     signal_tokens = {
@@ -2103,6 +2154,9 @@ def _build_timeline_index(
             "source_rows": [int(row.get("index", 0)) for row in rows],
             "rows": rows,
         }
+        source_kind = _aggregate_source_kind(rows)
+        if source_kind:
+            runtime_block["source_kind"] = source_kind
         runtime_block["sessions"] = _attach_card_evidence_to_sessions(
             _extract_block_sessions(rows, f"bloco-{position:02d}"),
             runtime_block["card_evidence"],
@@ -2124,21 +2178,31 @@ def _build_timeline_index(
                     and not runtime_block["primary_topic_slug"]:
                 runtime_block["primary_topic_slug"] = resolved_slug
         runtime_block["topic_source"] = topic_source
-        topic_unit_slug = ""
-        if primary_topic.topic_slug and not primary_topic.ambiguous and primary_topic.confidence >= 0.65:
-            topic_unit_slug = _derive_unit_from_topic_match(primary_topic, content_taxonomy or {})
-        if topic_unit_slug:
-            runtime_block["unit_slug"] = topic_unit_slug
-            runtime_block["unit_confidence"] = primary_topic.confidence
-        else:
-            unit_slug, unit_confidence = _assign_timeline_block_to_unit(runtime_block, unit_index)
-            if not unit_slug:
-                unit_slug, unit_confidence = _vote_unit_from_topic_candidates(
-                    runtime_block, unit_index
-                )
-            runtime_block["unit_slug"] = unit_slug
-            runtime_block["unit_confidence"] = unit_confidence
         runtime_blocks.append(runtime_block)
+
+    # Atribuicao de unidade ANTES da classificacao final de kind. Blocos com
+    # source_kind nao-aula (provas/trabalhos/feriados via Atividade) ficam de fora;
+    # o resto sao candidatos a aula. Assim, quando finalize_block classificar, o
+    # has_unit ja reflete o posicional e o gate do classificador de sessao volta
+    # a valer (aula de conteudo que cita "revisao" nao vira review).
+    units_ordered = list((content_taxonomy or {}).get("units", []) or [])
+    class_candidates = [b for b in runtime_blocks if not b.get("source_kind")]
+    positional = assign_units_positional(class_candidates, units_ordered)
+    if positional:
+        for b, (slug, conf) in zip(class_candidates, positional):
+            b["unit_slug"] = slug
+            b["unit_confidence"] = conf
+            if slug:
+                b["auto_unit_slug"] = slug
+    else:
+        for b in class_candidates:
+            us, uc = _assign_timeline_block_to_unit(b, unit_index)
+            if not us:
+                us, uc = _vote_unit_from_topic_candidates(b, unit_index)
+            b["unit_slug"] = us
+            b["unit_confidence"] = uc
+            if us:
+                b["auto_unit_slug"] = us
 
     for index, block in enumerate(runtime_blocks):
         if block.get("unit_slug") or not _timeline_block_is_soft_continuation(block):
@@ -2151,5 +2215,5 @@ def _build_timeline_index(
             block["unit_confidence"] = max(float(block.get("unit_confidence", 0.0) or 0.0), 0.51)
 
     for block in runtime_blocks:
-        ensure_block_kind(block)
+        finalize_block(block)
     return {"version": TIMELINE_INDEX_VERSION, "blocks": runtime_blocks}

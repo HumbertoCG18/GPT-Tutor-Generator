@@ -18,6 +18,14 @@ contexto suficiente pra retomar sem reabrir a discussão. Ordem = prioridade sug
 
 ---
 
+### Chave Gemini via `.env` (`GEMINI_API_KEY`)
+**Status:** RESOLVIDO nesta branch (`7e0d1a9`).
+**Resumo do gap:** o client Gemini lia a chave só de `config.get("gemini_api_key")` (`~/.gpt_tutor_config.json`, via UI) — `GEMINI_API_KEY` no `.env` era ignorado, ao contrário do `DATALAB_API_KEY`. Code summary **e** enriquecimento de referência ficavam mudos sem mexer na UI.
+**Fix entregue:** `_resolve_gemini_key` (`gemini_client.py`) com precedência **config (UI) > `GEMINI_API_KEY` do `.env`/ambiente**; `has_gemini_api_key`/`get_gemini_client` reescritos sobre ele. `.env` já carrega em `os.environ` no import (`helpers._load_project_env_file`). TDD: `tests/test_gemini_key_source.py` (6 casos). 858 testes verdes.
+**Follow-up aberto:** dialog de settings (`dialogs.py`) podia exibir dica "ou defina `GEMINI_API_KEY` no `.env`" igual ao DATALAB. Cosmético, UI — fora do escopo do fix.
+
+---
+
 ## Parados
 
 ### Verbosidade do manifest.json — `to_dict` serializa todos os defaults
@@ -50,19 +58,67 @@ _Histórico do problema (resolvido):_
 **Por que parou:** a killer-app (gerar a sequência canônica de datas) está **bloqueada por dados** — não há calendário acadêmico estruturado (feriados só vêm do texto do cronograma; `semester` é string livre) — **e é redundante**: o cronograma já carrega as datas reais das aulas. Ganho restante é modesto. Campo `schedule` está vazio em todos os 5 repos reais.
 
 ### Conserto do clone completo de repo GitHub
-**Status:** bug confirmado nos dados reais. Contornado pela spec de referências.
-**Resumo:** `process_github_repo` (`source_importers.py:235`) força branch `main` → repos com default `master`/outro falham (`Remote branch main not found`). Repos grandes falham no checkout por long-path do Windows (`Filename too long`). Resultado: 8/8 referências com `extracted_files=0`. (Mesmo `main` hardcoded em `prompts.py:484`.)
-**Por que parou:** a spec de referências usa README-fetch (API GitHub, sem clone), que contorna. Clone completo só importa pra **análise de código de verdade** (não contexto de referência). Vira issue quando precisar disso.
-**Fix esperado:** detectar branch default (não hardcode); `git config core.longpaths true` ou clone shallow/sparse.
+**Status:** RESOLVIDO nesta branch (`2d3081b`).
+**Resumo do bug:** `process_github_repo` (`source_importers.py`) forçava branch `main` → repos com default `master`/outro falhavam (`Remote branch main not found`). Repos grandes falhavam no checkout por long-path do Windows (`Filename too long`). Resultado: 8/8 referências com `extracted_files=0`.
+**Fix entregue:** `_detect_default_branch` via `git ls-remote --symref HEAD` (tags ainda pinam branch explícito; vazio → default detectado; fallback `main` seguro) + clone roda com `git -c core.longpaths=true`. TDD: `tests/test_github_clone_branch.py` (6 casos). Destrava análise de código de repo GitHub e fetch profundo de referência.
+**Follow-up aberto:** `prompts.py:484` ainda monta o raw URL do **repo de saída do próprio tutor** com `/main` fixo (`raw.githubusercontent.com/.../main`). Mecanismo distinto (sem clone; é o repo que o tutor gera) e sem fonte de branch disponível no `subject_profile` — repo de saída quase sempre é `main`. Tratar só quando houver um campo de branch no perfil.
+
+### Validação end-to-end da pipeline de referências
+**Status:** RESOLVIDO nesta branch. Harness `scripts/validate_references_e2e.py`.
+**O que rodou:** pipeline real (`summarize_all_reference_entries`) contra repo temporário com 2 refs reais — `github.com/pallets/flask` (github-repo) + `docs.python.org/3/library/json.html` (doc URL) — `GEMINI_API_KEY` do `.env`, Gemini `gemini-2.5-flash` de verdade. Resultado: fetch real OK (README via API GitHub + HTML via `html_to_structured_markdown`), resumo + conceitos Gemini preenchidos (PT-BR), mapeamento determinístico **correto e distinto** (flask→`web`, json→`serializacao`), persistência em `references_curation.json` OK.
+**Achado real:** `google-genai` (declarado em `pyproject.toml:25`) **não estava instalado** no venv ativo. A degradação era silenciosa — `summarize_reference` engole o `ImportError`, loga `[ReferenceSummary] falha: google-genai não instalado` e segue com resumo vazio. Build não falha, ninguém percebe sem ler log. Resolvido instalando (`google-genai 2.8.0`); revalidado caminho feliz.
+**Follow-up aberto:** não validado o render final em `BIBLIOGRAPHY.md` num build completo (harness para no curation). Modo degradado (sem chave/SDK) já coberto por teste unitário. Considerar um warning mais visível quando o SDK falta mas a chave está presente (hoje é só log de erro por entry).
+
+### Higiene dos MDs do tutor (audit 2026-06-04)
+**Status:** auditado, NÃO corrigido. Achados de 4 auditores paralelos sobre os geradores
+de MD que o tutor lê. **Nenhuma mecânica de tags antiga sobrou** — mas há dessincronização,
+tabelas mortas, duplicação e ambiguidade. Ordenado por gravidade. A redundância da tabela
+de relevância da BIBLIOGRAPHY **não** entra aqui — vai junto do Approach C.
+
+**🔴 Grave (engana o tutor):**
+- `repo.py:50-65` PROGRESS_SCHEMA dessincronizado do student_state v2: status `não iniciado/com dúvidas/concluído` vs real `pendente/em_progresso/compreendido/revisao`; campo `last_updated` vs real `updated`; path `student/PROGRESS_SCHEMA.md` (deletado como obsoleto) vs gravado em `build/`. Schema descreve vocabulário que o gerador nunca emite. Template "Atualização sugerida" (markdown) não bate com o YAML+baterias do v2.
+- `prompts.py:484` `/main` hardcoded no raw URL do repo de saída (já listado em "Conserto do clone").
+
+**🟠 Tabelas mortas / ruído lido pelo tutor — ENTREGUE** (spec `2026-06-05-tabelas-mortas-mds-tutor-design.md`, plano `2026-06-05-tabelas-mortas-mds-tutor.md`; commits `9338c2c`..`984a080`):
+- `repo.py:746` bibliography: colunas mortas. [coberto pela limpeza do Approach C]
+- exam_index: seções "Incidência de tópicos" + "Padrões de questão" removidas; branch vazio vira frase; label `EXAM_INDEX` (`9338c2c`).
+- assignment: coluna `Status` (sempre "pendente") dropada; "Padrões do professor" removido; frase vazia; label `ASSIGNMENT_INDEX` (`f0ac3d9`).
+- code_index: bloco `code_index_patterns` + `[a preencher]` removido dos templates (a)/(b); fallback de conceito vazio; labels `CODE_INDEX` (`6d5c0e1`).
+- cronograma: comentário `<!-- TODO (material-agnostic refactor) -->` (vazava por block) removido (`efba19e`).
+- whiteboard: "Padrões pedagógicos" removido; frase vazia; label `WHITEBOARD_INDEX` (`b50c444`).
+- exercise: linha `[a preencher]` do estado vazio removida (`984a080`).
+- 887 testes verdes.
+
+**🟡 Duplicação — PARCIALMENTE ENTREGUE** (spec/plano `2026-06-05-duplicacoes-mds-tutor*`; commits `ba15aec`..`83d15bc`; 906 testes verdes):
+- ✅ escopo de prova P1/P2/P3 (pesos 70/30/20/10): fonte única `_exam_scope_rule_lines()`; `pedagogy_md` + `modes_md` derivam dela (some o hardcode 2x).
+- ✅ sequência pedagógica (3 ordens divergentes): fonte única `PEDAGOGICAL_SEQUENCE` (ordem canônica **Intuição antes de Definição**, rótulos padronizados); `pedagogy_md` (full), `modes_md` (compact), `output_templates_md` (template) derivam dela. Guard DRY `TestPedagogySingleSource`.
+- ABERTO: `prompts.py` 5 modos redefinidos inline nas 3 variantes (Claude/GPT/Gemini) + `deeptutor.py` _soul_md + MODES.md — extrair lista canônica de modos (rodada própria).
+- NÃO-REDUNDÂNCIA (decidido, não mexer): `pedagogy.py` postura code_review (modes_md=postura vs output_templates_md=template, propósitos distintos, já usam `_code_review_profile`); CRONOGRAMA_DETALHADO vs CODE_INDEX (tabela densa vs narrativa aula-a-aula) e cronograma_health vs CODE_HEALTH (todos-materiais+bandas vs code-only+glossário) — views complementares, 4 geradores ativos.
+
+**🟢 Ambiguidade / labels — MAJORITARIAMENTE ENTREGUE** (spec `2026-06-05-ambiguidade-barata-mds-tutor-design.md`, plano homônimo; commits `3d77bf3`..`e022837`; 893 testes verdes):
+- ✅ `pedagogy.py:240` "quatro modos" → **cinco** (`3d77bf3`).
+- ✅ `pedagogy.py:270` modo `assignment` agora referencia **os dois índices** (`exercises/EXERCISE_INDEX.md` + `assignments/ASSIGNMENT_INDEX.md`) (`261aefd`).
+- ✅ label de clamp do `glossary_md` (`course/COURSE_MAP.md` → `course/GLOSSARY.md`) (`dfd8abc`). Único restante; demais já caíram em rodadas anteriores.
+- ✅ `prompts.py:26` contrato estrutural alinhado: ordem `COURSE_MAP→FILE_MAP` (bate com as 3 variantes) (`e022837`).
+- ✅ `navigation.py` FILE_MAP: removido só o sufixo redundante `_(baixa confiança)_` da célula Unidade; `_(ambíguo)_` mantido (agrega motivo distinto) (`fd4ce8d`).
+- ✅ `render_course_map_md` (gerador COURSE_MAP legado paralelo) removido — 0 callers (`6bf4f8c`).
+- ABERTO: `prompts.py:84` "sessão substancial" indefinido + 2 protocolos de fim de sessão concorrentes (bloco importável `DD-MM-YY` vs ditado `YYYY-MM-DD`) — **adiado pro refactor do student_state** (acoplado ao formato de import do STUDENT_STATE).
+
+**Recomendação de ataque:** 🔴 PROGRESS_SCHEMA primeiro (sincronizar com v2). Depois 🟠 tabelas mortas (remoção barata, ganho de token). 🟡 duplicação exige decidir fonte canônica por tópico (mais trabalho). Cada grupo é um plano TDD curto.
 
 ### Token GitHub (rate limit)
 **Status:** follow-up da spec de referências.
 **Resumo:** API anônima do GitHub = 60 req/h por IP. v1 vai sem token (cache por hash protege, volume normal por matéria é baixo). Adicionar token opcional (config) sobe pra 5.000/h — necessário só se processar muitas matérias em lote.
 
 ### Referências — Approach C (injeção no contexto do tutor)
-**Status:** extensão futura da spec atual.
-**Resumo:** além da `BIBLIOGRAPHY.md`, fiar as referências no contexto de unidade/tópico que o tutor carrega, pra a referência aparecer sozinha quando o aluno está naquele tópico. Mais ambicioso, mais arquivos. Depois do v1 (que só surfacea + mapeia).
+**Status:** ENTREGUE nesta branch. Spec `docs/superpowers/specs/2026-06-04-approach-c-referencias-no-course-map-design.md`, plano `docs/superpowers/plans/2026-06-04-approach-c-referencias-no-course-map.md`.
+**Entregue:** referências mapeadas (`computed_ref_unit`/`computed_ref_topics`) viram linhas `📖 Apoio:` sob unidade/tópico no `COURSE_MAP.md` (carregado 1º pelo tutor), como material complementar. Helper puro `reference_navigation.build_unit_topic_reference_index` (commit `680727d`); injeção no renderer via `course_meta["_reference_nav_index"]` (`4ec98ef`, dedup `6514abb`); wiring em `pedagogical_regeneration` (`13c7047`); instrução no prompt das 3 variantes (`e75b135`); limpeza da tabela de relevância redundante da BIBLIOGRAPHY + ponteiro + fix de label (`0af0800`); fix crítico da chave canônica de tópico — prefixo/acento agora casam (`36be071`). Modo degradado byte-idêntico. 878 testes verdes.
+**Follow-up aberto:** match de tópico depende de `computed_ref_topics` == `topic_phrases`; se a pipeline de unidades mudar a normalização, atualizar `_topic_key`. Render final em BIBLIOGRAPHY num build real não inspecionado (cobertura unitária só).
 
 ### Medição de correção com ground-truth
-**Status:** proposto como forma de validar se mais precisão vale a pena.
-**Resumo:** band = confiança, não correção verificada. "alta" pode estar confiante e errado. Rotular ground-truth de 1 repo real (ex.: IA) e rodar o harness contra ele mediria correção de fato, não só confiança. Diz se há trabalho de precisão que ainda valha.
+**Status:** TOOLING ENTREGUE (spec/plano `2026-06-05-medicao-ground-truth*`; commits `977b923`..`60b225c`; 913 testes verdes). Falta o passo de DADOS (rótulos reais), que depende do usuário apontar um repo + preencher (assistido pelo agente).
+**Resumo:** band = confiança, não correção verificada. "alta" pode estar confiante e errado.
+**Entregue:** 2 scripts em `scripts/` que medem correção real file→bloco sem re-rodar o scorer (leem `manifest.json` + `course/.timeline_index.json`):
+- `make_ground_truth_template.py <repo> <out.csv>` — gera CSV esqueleto (id, title, category, markdown_path, predicted_*, true_block_id pré-preenchido com a predição); imprime referência de blocos válidos.
+- `eval_ground_truth.py <repo> <labels.csv> [--json]` — acurácia real, matriz de confusão, **`confident_wrong`** (band alta + bloco errado), `orphans`/`missed`, calibração por band.
+**Fluxo:** gerar esqueleto → rotulação assistida (agente lê `markdown_path` + blocos da timeline, propõe `true_block_id`; usuário confirma) → eval → veredito (se confident_wrong/acurácia ruins, reabrir #3 decay / #4 band; se bons, encerrar a frente de precisão).

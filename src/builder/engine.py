@@ -107,7 +107,6 @@ from src.builder.core.markdown_utils import (
     strip_markdown_image_refs as _markdown_utils_strip_markdown_image_refs,
 )
 from src.builder.core.core_utils import (
-    collapse_ws as _core_utils_collapse_ws,
     effective_document_profile as _core_utils_effective_document_profile,
     merge_manual_and_auto_tags as _core_utils_merge_manual_and_auto_tags,
     pdf_image_extraction_policy as _core_utils_pdf_image_extraction_policy,
@@ -249,7 +248,6 @@ from src.builder.timeline.index import (
     _serialize_timeline_index as _timeline_serialize_timeline_index,
     _timeline_period_label,
     _TIMELINE_UNIT_NEUTRAL_TOKENS,
-    _match_timeline_to_units_generic as _timeline_match_timeline_to_units_generic,
 )
 from src.builder.timeline.signals import (
     extract_date_range_signal,
@@ -273,6 +271,7 @@ from src.utils.helpers import (
     CODE_CATEGORIES, ASSIGNMENT_CATEGORIES, WHITEBOARD_CATEGORIES,
     ensure_dir, json_str, pages_to_marker_range,
     normalize_document_profile, parse_page_range, safe_rel, slugify, write_text,
+    collapse_ws as _core_utils_collapse_ws,
 )
 from src.utils.power import prevent_system_sleep
 
@@ -1645,8 +1644,20 @@ class MarkerCLIBackend(ExtractionBackend):
 # Selection / profiling
 # ---------------------------------------------------------------------------
 
+def resolve_profile_backend(profile, profile_backends, available) -> Optional[str]:
+    """Backend configurado pro perfil, se concreto (≠ "auto") e disponível; senão None.
+
+    None sinaliza ao chamador pra cair na ordem built-in (fallback)."""
+    b = (profile_backends or {}).get(profile)
+    if b and b != "auto" and available.get(b):
+        return b
+    return None
+
+
 class BackendSelector:
-    def __init__(self):
+    def __init__(self, profile_backends=None, skip_base_backends: bool = False):
+        self.profile_backends: Dict[str, str] = dict(profile_backends or {})
+        self.skip_base_backends = bool(skip_base_backends)
         self.backends: Dict[str, ExtractionBackend] = {
             "pymupdf4llm": PyMuPDF4LLMBackend(),
             "pymupdf": PyMuPDFBackend(),
@@ -1672,7 +1683,18 @@ class BackendSelector:
                     return name
             return None
 
+        def pick_base() -> Optional[str]:
+            # Pula os backends base (pymupdf4llm/pymupdf) quando a opção global
+            # está ativa; força a extração a usar um backend avançado.
+            if self.skip_base_backends:
+                return None
+            return pick_first(["pymupdf4llm", "pymupdf"])
+
         def pick_advanced_for_profile(profile: str) -> Optional[str]:
+            mapped = resolve_profile_backend(profile, self.profile_backends, available)
+            if mapped:
+                reasons.append(f"Perfil {profile} mapeado p/ backend {mapped} (config).")
+                return mapped
             if profile == "math_heavy":
                 return pick_first(["datalab", "marker", "docling"])
             if profile == "diagram_heavy":
@@ -1686,24 +1708,24 @@ class BackendSelector:
             preferred = entry.preferred_backend
             if preferred in {"datalab", "docling", "docling_python", "marker"}:
                 advanced_backend = preferred
-                base_backend = pick_first(["pymupdf4llm", "pymupdf"])
+                base_backend = pick_base()
                 reasons.append(f"Backend preferido manualmente: {preferred}.")
             else:
                 base_backend = preferred
                 reasons.append(f"Backend base preferido manualmente: {preferred}.")
 
         if mode == "quick":
-            base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
+            base_backend = base_backend or pick_base()
             reasons.append("Modo quick prioriza velocidade e baixo custo.")
 
         elif mode == "manual_assisted":
-            base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
+            base_backend = base_backend or pick_base()
             if effective_profile in {"math_heavy", "diagram_heavy", "scanned"}:
                 advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
             reasons.append("Modo manual_assisted gera base automática e exige revisão humana guiada.")
 
         elif mode == "high_fidelity":
-            base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
+            base_backend = base_backend or pick_base()
             if effective_profile == "math_heavy":
                 advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
                 reasons.append("Documento math_heavy pede backend avançado com enrich-formula.")
@@ -1716,7 +1738,7 @@ class BackendSelector:
                     reasons.append("Modo high_fidelity tenta saída avançada além da base.")
 
         else:  # auto
-            base_backend = base_backend or pick_first(["pymupdf4llm", "pymupdf"])
+            base_backend = base_backend or pick_base()
             if effective_profile in {"math_heavy", "diagram_heavy", "scanned"}:
                 advanced_backend = advanced_backend or pick_advanced_for_profile(effective_profile)
                 reasons.append(f"Modo auto detectou perfil {effective_profile} e ativou camada avançada.")
@@ -1727,6 +1749,16 @@ class BackendSelector:
             advanced_backend = pick_advanced_for_profile(effective_profile)
             if advanced_backend:
                 reasons.append("formula_priority ativou backend avançado.")
+
+        # Pular base: documento comum (sem base nem avançado) força avançado.
+        # Override explícito de backend base do usuário é respeitado (não cai aqui).
+        if self.skip_base_backends and not base_backend and not advanced_backend:
+            advanced_backend = pick_advanced_for_profile(effective_profile)
+            if advanced_backend:
+                reasons.append("Pular base: backend avançado forçado para documento comum.")
+            else:
+                base_backend = pick_first(["pymupdf4llm", "pymupdf"])
+                reasons.append("Pular base pedido, mas nenhum avançado disponível; base como fallback.")
 
         if not base_backend and advanced_backend:
             reasons.append("Sem backend base disponível; usando apenas backend avançado.")
@@ -1763,7 +1795,10 @@ class RepoBuilder:
         self.progress_callback = progress_callback  # Callable[[int, int, str], None] | None
         self.logs: List[Dict[str, object]] = []
         self.failed_entries: List[Dict[str, object]] = []
-        self.selector = BackendSelector()
+        self.selector = BackendSelector(
+            profile_backends=self.options.get("profile_backends") or {},
+            skip_base_backends=bool(self.options.get("skip_base_backends")),
+        )
 
     def _effective_course_meta(self, manifest: Optional[Dict[str, object]] = None) -> Dict[str, str]:
         return _repo_artifacts.effective_course_meta(
@@ -2314,8 +2349,6 @@ _teaching_timeline_aliases = _build_teaching_timeline_aliases(
     teaching_plan_parse_units=_teaching_plan_parse_units_from_teaching_plan,
     teaching_plan_topic_text=_teaching_plan_topic_text,
     teaching_plan_topic_depth=_teaching_plan_topic_depth,
-    timeline_match_timeline_to_units_generic=_timeline_match_timeline_to_units_generic,
-    normalize_unit_slug=_normalize_unit_slug,
     entry_signals_score_text_against_row=_entry_signals_score_text_against_row,
     file_map_timeline_block_rows_for_scoring=_file_map_timeline_block_rows_for_scoring,
     file_map_timeline_block_matches_preferred_topic=_file_map_timeline_block_matches_preferred_topic,
@@ -2339,8 +2372,6 @@ _teaching_timeline_aliases = _build_teaching_timeline_aliases(
     repo_artifacts_module=_repo_artifacts,
     write_text_fn=write_text,
 )
-_match_timeline_to_units_generic = _teaching_timeline_aliases["_match_timeline_to_units_generic"]
-_match_timeline_to_units = _teaching_timeline_aliases["_match_timeline_to_units"]
 _score_entry_against_timeline_block = _teaching_timeline_aliases["_score_entry_against_timeline_block"]
 _select_probable_period_for_entry = _teaching_timeline_aliases["_select_probable_period_for_entry"]
 _aggregate_unit_periods_from_blocks = _teaching_timeline_aliases["_aggregate_unit_periods_from_blocks"]
@@ -2495,7 +2526,6 @@ __all__ = [
     "_html_to_structured_markdown",
     "_hybridize_marker_markdown_with_base",
     "_marker_progress_hints",
-    "_match_timeline_to_units",
     "_normalize_unicode_math",
     "_parse_bibliography_from_teaching_plan",
     "_parse_syllabus_timeline",

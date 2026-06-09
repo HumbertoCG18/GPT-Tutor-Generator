@@ -20,7 +20,7 @@ from src.models.core import (
     PendingOperation, PendingOperationStore,
 )
 from src.models.task_queue import RepoTask, RepoTaskStore
-from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES, get_app_data_dir
+from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES, get_app_data_dir, derive_profile_backends
 from src.builder.runtime.datalab_client import has_datalab_api_key
 from src.builder.engine import RepoBuilder
 from src.builder.artifacts.prompts import (
@@ -104,6 +104,8 @@ def _build_options_from_config(default_mode: str, default_ocr_language: str, con
         "ollama_base_url": config_obj.get("ollama_base_url"),
         "prevent_sleep_during_build": config_obj.get("prevent_sleep_during_build", True),
         "image_description_source": config_obj.get("image_description_source", "ollama"),
+        "profile_backends": derive_profile_backends(config_obj),
+        "skip_base_backends": config_obj.get("skip_base_backends", False),
     }
 
 
@@ -189,6 +191,8 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.config_obj = AppConfig()
+        from src.utils.helpers import ensure_builtin_profiles
+        ensure_builtin_profiles(self.config_obj)   # migra perfis embutidos p/ configs antigas
         self.theme_mgr = ThemeManager()
         self.subject_store = SubjectStore()
         self.student_store = StudentStore()
@@ -256,6 +260,10 @@ class App(tk.Tk):
         self.var_institution = tk.StringVar(value="PUCRS")
         self.var_default_mode = tk.StringVar(value=self.config_obj.get("default_mode"))
         self.var_default_ocr_language = tk.StringVar(value=self.config_obj.get("default_ocr_language"))
+        self.var_default_backend = tk.StringVar(value="auto")
+        self.var_default_datalab_mode = tk.StringVar(value="accurate")
+        self.var_default_profile = tk.StringVar(value="auto")
+        self.var_active_profile = tk.StringVar(value="")
 
         # ─── Header bar ────────────────────────────────────────────────
         header = tk.Frame(self, bg=p["header_bg"], pady=8, padx=16)
@@ -350,6 +358,15 @@ class App(tk.Tk):
         ttk.Button(import_actions, text="🖼 Imagens/Fotos", command=self.add_images).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
         ttk.Button(import_actions, text="🔗 Link", command=self.add_url).grid(row=1, column=0, sticky="ew", padx=4, pady=4)
         ttk.Button(import_actions, text="💻 Código / ZIP", command=self.add_code_files).grid(row=1, column=1, sticky="ew", padx=4, pady=4)
+        ttk.Button(import_actions, text="📥 Importar do stash", command=self.import_from_stash).grid(row=2, column=0, columnspan=2, sticky="ew", padx=4, pady=4)
+
+        ttk.Label(import_actions, text="Perfil:").grid(row=3, column=0, sticky="w", padx=4, pady=(6, 0))
+        from src.utils.helpers import load_processing_profiles
+        self._profile_combo = ttk.Combobox(
+            import_actions, textvariable=self.var_active_profile, state="readonly",
+            values=[""] + [p.name for p in load_processing_profiles(self.config_obj)], width=18)
+        self._profile_combo.grid(row=3, column=1, sticky="ew", padx=4, pady=(6, 0))
+        self._profile_combo.bind("<<ComboboxSelected>>", lambda _e: self._apply_active_profile())
 
         ttk.Button(build_actions, text="📂 Abrir Repo", command=self.open_repo_folder).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
         ttk.Button(build_actions, text="🧠 Student State", command=self.open_student_state_curator).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
@@ -1334,9 +1351,12 @@ class App(tk.Tk):
         HelpWindow(self, self.theme_mgr)
 
     def open_subject_manager(self):
-        SubjectManagerDialog(self, self.subject_store, self.theme_mgr)
+        SubjectManagerDialog(self, self.subject_store, self.theme_mgr, self.config_obj)
         # Refresh combo values
         self._subject_combo["values"] = ["(nenhuma)"] + self.subject_store.names()
+        # Perfis podem ter sido criados/editados no manager — atualiza o seletor.
+        from src.utils.helpers import load_processing_profiles
+        self._profile_combo["values"] = [""] + [p.name for p in load_processing_profiles(self.config_obj)]
         self._refresh_repo_dashboard()
 
     def open_student_profile(self):
@@ -1363,6 +1383,23 @@ class App(tk.Tk):
         from src.ui.image_curator import ImageCurator
         ImageCurator(self, str(repo_dir), self.theme_mgr)
 
+    def _apply_active_profile(self):
+        from src.utils.helpers import get_processing_profile
+        p = get_processing_profile(self.config_obj, self.var_active_profile.get())
+        if not p:
+            return
+        self.var_default_mode.set(p.processing_mode)
+        self.var_default_backend.set(p.preferred_backend)
+        self.var_default_datalab_mode.set(p.datalab_mode)
+        self.var_default_profile.set(p.document_profile)
+        # Matéria ativa "lembra" o perfil
+        name = self._var_active_subject.get()
+        if name and name != "(nenhuma)":
+            sp = self.subject_store.get(name)
+            if sp is not None:
+                sp.processing_profile = p.name
+                self.subject_store.add(sp)
+
     def _on_subject_selected(self, _event=None):
         name = self._var_active_subject.get()
         if name == "(nenhuma)":
@@ -1377,6 +1414,12 @@ class App(tk.Tk):
         self.var_semester.set(sp.semester)
         self.var_default_mode.set(sp.default_mode)
         self.var_default_ocr_language.set(sp.default_ocr_lang)
+        self.var_default_backend.set(getattr(sp, "default_backend", "auto") or "auto")
+        self.var_default_datalab_mode.set(getattr(sp, "default_datalab_mode", "accurate") or "accurate")
+        prof_name = getattr(sp, "processing_profile", "") or ""
+        self.var_active_profile.set(prof_name)
+        if prof_name:
+            self._apply_active_profile()
         if sp.repo_root:
             self.var_repo_root.set(sp.repo_root)
         
@@ -1463,6 +1506,9 @@ class App(tk.Tk):
             default_mode=self.var_default_mode.get(),
             default_ocr_language=self.var_default_ocr_language.get(),
             file_type_hint=file_type_hint,
+            default_backend=self.var_default_backend.get(),
+            default_datalab_mode=self.var_default_datalab_mode.get(),
+            default_profile=self.var_default_profile.get(),
         )
         return dialog.result_entry
 
@@ -1541,6 +1587,9 @@ class App(tk.Tk):
                 page_range=self._pdf_page_range(path),
                 processing_mode=self.var_default_mode.get(),
                 ocr_language=self.var_default_ocr_language.get(),
+                preferred_backend=self.var_default_backend.get(),
+                datalab_mode=self.var_default_datalab_mode.get(),
+                document_profile=self.var_default_profile.get(),
             )
             entry = self._entry_dialog(path, initial=initial)
             if entry:
@@ -1565,6 +1614,9 @@ class App(tk.Tk):
                 category="fotos-de-prova",
                 processing_mode=self.var_default_mode.get(),
                 ocr_language=self.var_default_ocr_language.get(),
+                preferred_backend=self.var_default_backend.get(),
+                datalab_mode=self.var_default_datalab_mode.get(),
+                document_profile=self.var_default_profile.get(),
             )
             entry = self._entry_dialog(path, initial=initial)
             if entry:
@@ -1572,6 +1624,55 @@ class App(tk.Tk):
         self.refresh_tree()
         self._save_current_queue()
         self._set_status(f"{len(self.entries)} arquivo(s) na lista.")
+
+    def _stash_dir_from_active_subject(self) -> Optional[Path]:
+        name = self._var_active_subject.get()
+        if not name or name == "(nenhuma)":
+            return None
+        sp = self.subject_store.get(name)
+        if not sp or not getattr(sp, "stash_folder", ""):
+            return None
+        p = Path(sp.stash_folder)
+        return p if p.is_dir() else None
+
+    def import_from_stash(self):
+        from src.builder.core.stash_import import scan_stash_cards, build_stash_entries
+        stash = self._stash_dir_from_active_subject()
+        if stash is None:
+            messagebox.showinfo(
+                APP_NAME,
+                "Defina a 'Pasta de arquivos (stash)' da matéria ativa no "
+                "Gerenciador de Matérias (e selecione a matéria no topo)."
+            )
+            return
+        scan = scan_stash_cards(stash)
+        if not scan.items:
+            messagebox.showinfo(APP_NAME, f"Nenhum arquivo importável em:\n{stash}")
+            return
+        from src.builder.core.stash_import import filter_already_processed
+        scan = filter_already_processed(scan, self._get_backlog_sources())
+        if not scan.items:
+            messagebox.showinfo(APP_NAME, "Todos os arquivos do stash já foram processados (backlog).")
+            return
+        existing = {e.source_path for e in self.entries}
+        new_entries = build_stash_entries(
+            scan, existing_source_paths=existing,
+            defaults={
+                "processing_mode": self.var_default_mode.get(),
+                "ocr_language": self.var_default_ocr_language.get(),
+                "preferred_backend": self.var_default_backend.get(),
+                "datalab_mode": self.var_default_datalab_mode.get(),
+                "document_profile": self.var_default_profile.get(),
+            },
+        )
+        if not new_entries:
+            messagebox.showinfo(APP_NAME, "Todos os arquivos do stash já estão na lista.")
+            return
+        self.entries.extend(new_entries)
+        self.refresh_tree()
+        self._save_current_queue()
+        skipped_note = f" ({len(scan.skipped)} ignorado(s) por extensão)" if scan.skipped else ""
+        self._set_status(f"{len(new_entries)} arquivo(s) importado(s) do stash{skipped_note}. {len(self.entries)} na lista.")
 
     def add_url(self):
         dialog = URLEntryDialog(self)
@@ -1681,6 +1782,18 @@ class App(tk.Tk):
         self.tree.tag_configure("disabled", foreground="#888888")
         for i, entry in enumerate(self.entries):
             enabled = getattr(entry, "enabled", True)
+            # Código/ZIP vão pro caminho Gemini (code_curation), nunca datalab/PDF.
+            # Mostra isso na lista em vez do preferred_backend (irrelevante p/ código).
+            is_code = entry.file_type in ("code", "zip")
+            profile_disp = "código" if is_code else entry.document_profile
+            if is_code:
+                backend_disp = "gemini"
+            elif entry.preferred_backend and entry.preferred_backend != "auto":
+                backend_disp = entry.preferred_backend            # override manual
+            else:
+                # backend efetivo pelo mapa perfil->backend (preview leve)
+                pb = derive_profile_backends(self.config_obj)
+                backend_disp = pb.get(entry.document_profile, "auto")
             self.tree.insert(
                 "",
                 "end",
@@ -1691,8 +1804,8 @@ class App(tk.Tk):
                     entry.category,
                     entry.tags,
                     entry.processing_mode,
-                    entry.document_profile,
-                    entry.preferred_backend,
+                    profile_disp,
+                    backend_disp,
                     entry.title,
                     Path(entry.source_path).name,
                 ),
@@ -2210,6 +2323,17 @@ class App(tk.Tk):
         self.process_selected_single()
 
     def remove_processed_single(self):
+        # unprocess() faz IO pesado (rmtree de assets + reescrita do manifest +
+        # regeneração pedagógica completa). Rodar na thread da UI congela o Tk;
+        # por isso o trabalho pesado vai pra uma thread de fundo (mesmo padrão
+        # de _reprocess_repo), com refresh/status via self.after.
+        if getattr(self, "_unprocess_busy", False):
+            messagebox.showinfo(APP_NAME, "Já há uma remoção em andamento. Aguarde terminar.")
+            return
+        if self._is_repo_task_queue_running():
+            messagebox.showinfo(APP_NAME, "A fila de repositórios está em execução. Aguarde terminar antes de remover processamento.")
+            return
+
         selected = self.repo_tree.selection()
         if not selected:
             messagebox.showinfo(APP_NAME, "Selecione um item no backlog para remover o processamento.")
@@ -2223,29 +2347,49 @@ class App(tk.Tk):
         manifest_path = repo_dir / "manifest.json"
 
         if not manifest_path.exists(): return
-        
+
         try:
             with open(manifest_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            
+
             idx_str = selected[0]
             if not idx_str.startswith("backlog_"): return
             idx = int(idx_str.replace("backlog_", ""))
-            
+
             entry_data = data["entries"][idx]
             entry_id = entry_data["id"]
-
-            if not messagebox.askyesno(APP_NAME, f"Deseja remover o processamento de '{entry_data['title']}'?\n\nOs arquivos gerados no repositório serão deletados."):
-                return
-
-            builder = RepoBuilder(repo_dir, meta, [], {})
-            if builder.unprocess(entry_id):
-                self._refresh_backlog()
-                self._set_status(f"Processamento de '{entry_id}' removido.")
-            else:
-                self._set_status("Falha ao remover processamento.")
+            entry_title = entry_data.get("title", entry_id)
         except Exception as e:
             messagebox.showerror(APP_NAME, f"Erro ao remover processamento: {e}")
+            return
+
+        if not messagebox.askyesno(APP_NAME, f"Deseja remover o processamento de '{entry_title}'?\n\nOs arquivos gerados no repositório serão deletados."):
+            return
+
+        self._unprocess_busy = True
+        self._set_status(f"Removendo processamento de '{entry_title}'...")
+
+        def worker():
+            try:
+                builder = RepoBuilder(repo_dir, meta, [], {})
+                ok = builder.unprocess(entry_id)
+                self.after(0, lambda: self._on_unprocess_done(entry_id, ok, None))
+            except Exception as exc:
+                self.after(0, lambda exc=exc: self._on_unprocess_done(entry_id, False, exc))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _on_unprocess_done(self, entry_id, ok, error):
+        self._unprocess_busy = False
+        if error is not None:
+            messagebox.showerror(APP_NAME, f"Erro ao remover processamento: {error}")
+            self._set_status("Erro ao remover processamento.")
+            return
+        if ok:
+            self._refresh_backlog()
+            self._set_status(f"Processamento de '{entry_id}' removido.")
+        else:
+            self._set_status("Falha ao remover processamento.")
 
     def _reprocess_repo(self):
         """Regenera todos os arquivos pedagógicos do repositório com o código atual."""

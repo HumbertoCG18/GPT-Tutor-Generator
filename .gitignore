@@ -244,3 +244,8 @@ staging/
 /_mmtmp
 /.vscode
 .vscode/settings.json
+/.vscode
+/moddle/*
+!moddle/.env.example
+moddle/.m365_token.json
+.superpowers/

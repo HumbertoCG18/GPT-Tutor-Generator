@@ -51,5 +51,6 @@ def test_relevance_map_lists_mapped_reference():
 def test_no_curation_renders_url_only():
     md = _bib([_Entry()], None)
     assert "**Resumo:**" not in md
-    assert "[a preencher]" in md
+    # A tabela "[a preencher]" foi removida (Approach C); agora há ponteiro p/ COURSE_MAP.
+    assert "course/COURSE_MAP.md" in md
     assert "https://github.com/a/b" in md

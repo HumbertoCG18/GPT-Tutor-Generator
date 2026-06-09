@@ -202,7 +202,7 @@ CODE_EXTENSIONS: set = {
     ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".c", ".cpp", ".h",
     ".hpp", ".cs", ".go", ".rs", ".rb", ".php", ".swift", ".kt",
     ".scala", ".r", ".m", ".sh", ".bat", ".ps1", ".sql", ".html",
-    ".css", ".scss", ".ipynb", ".thy",
+    ".css", ".scss", ".ipynb", ".thy", ".dfy",
 }
 
 LANG_MAP: Dict[str, str] = {
@@ -213,7 +213,7 @@ LANG_MAP: Dict[str, str] = {
     "swift": "swift", "kt": "kotlin", "scala": "scala",
     "r": "r", "sh": "bash", "bat": "batch", "ps1": "powershell",
     "sql": "sql", "html": "html", "css": "css", "scss": "scss",
-    "ipynb": "json", "thy": "isabelle",
+    "ipynb": "json", "thy": "isabelle", "dfy": "dafny",
 }
 
 CODE_CATEGORIES       = ("codigo-professor", "codigo-aluno")
@@ -237,6 +237,7 @@ LEGACY_DOCUMENT_PROFILE_ALIASES = {
     "scanned": "scanned",
 }
 PREFERRED_BACKENDS = ["auto", "pymupdf4llm", "pymupdf", "datalab", "docling", "docling_python", "marker"]
+DATALAB_MODES = ["fast", "balanced", "accurate"]
 OCR_LANGS = ["por", "eng", "por,eng", "eng,por"]
 
 
@@ -254,6 +255,9 @@ def slugify(value: str) -> str:
     value = re.sub(r"[\s_]+", "-", value)
     value = re.sub(r"-+", "-", value)
     return value.strip("-") or "untitled"
+
+def collapse_ws(text: str) -> str:
+    return re.sub(r"\s+", " ", (text or "")).strip()
 
 def ensure_dir(path: Path) -> Path:
     path.mkdir(parents=True, exist_ok=True)
@@ -361,16 +365,16 @@ def _aspnet_row_cell(row, suffix: str) -> str:
 _ASPNET_COLOR_KIND_MAP = {
     "red": ("suspension", True),
     "#ff0000": ("suspension", True),
-    "lightgrey": ("g2", True),
-    "#d3d3d3": ("g2", True),
-    "#ffa500": ("exam", False),
-    "orange": ("exam", False),
-    "#ff8c00": ("ps", True),
-    "darkorange": ("ps", True),
+    "lightgrey": ("g2_or_results", False),
+    "#d3d3d3": ("g2_or_results", False),
+    "#ffa500": ("assessment", False),
+    "orange": ("assessment", False),
+    "#ff8c00": ("assessment", False),
+    "darkorange": ("assessment", False),
     "#8b0000": ("event", True),
     "darkred": ("event", True),
-    "#ffff00": ("assignment", False),
-    "yellow": ("assignment", False),
+    "#ffff00": ("deliverable", False),
+    "yellow": ("deliverable", False),
 }
 
 
@@ -383,6 +387,54 @@ def _aspnet_row_kind(row) -> tuple[str, bool]:
         return ("class", False)
     color = match.group(1).strip().rstrip(";")
     return _ASPNET_COLOR_KIND_MAP.get(color, ("class", False))
+
+
+ATIVIDADE_KIND_MAP = {
+    "prova": "assessment",
+    "avaliacao": "assessment",
+    "exame": "assessment",
+    "teste": "assessment",
+    "trabalho": "deliverable",
+    "entrega": "deliverable",
+    "feriado": "holiday",
+    "revisao": "review",
+}
+
+
+def norm_ascii_lower(text: str) -> str:
+    """NFKD + remove acentos + lower + strip. Para casar Atividade do SARC."""
+    import unicodedata as _ud
+    text = _ud.normalize("NFKD", text or "")
+    text = "".join(ch for ch in text if not _ud.combining(ch))
+    return text.lower().strip()
+
+
+def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:
+    """Tipo canonico (valor de BlockKind) da linha SARC.
+
+    Precedencia:
+    1. Cor de EXCLUSAO (suspensao/ps/g2/evento) vence tudo: e a marcacao
+       explicita do professor que a coluna Atividade nao expressa.
+    2. Coluna Atividade (mapa de keywords) — sinal primario do tipo positivo.
+    3. Atividade explicita nao-mapeada (ex.: "Aula") -> class, ignora cor.
+    4. Atividade vazia -> cai para a cor positiva (assessment/deliverable).
+    Retorna (kind, ignored).
+    """
+    color_kind, ignored = _aspnet_row_kind(row)
+    atividade = norm_ascii_lower(_aspnet_row_cell(row, "Atividade"))
+    if color_kind == "g2_or_results":
+        # LightGrey = G2 (avaliação) OU devolução de provas. Atividade decide.
+        return ("results", True) if "devolu" in atividade else ("assessment", False)
+    if ignored:
+        return (color_kind, True)
+    for needle, kind in ATIVIDADE_KIND_MAP.items():
+        if needle in atividade:
+            return (kind, False)
+    if atividade:
+        return ("class", False)
+    if color_kind != "class":
+        return (color_kind, ignored)
+    return ("class", False)
 
 
 def _parse_aspnet_schedule(soup) -> str:
@@ -398,7 +450,7 @@ def _parse_aspnet_schedule(soup) -> str:
         dia = _aspnet_row_cell(row, "Dia")
         atividade = _aspnet_row_cell(row, "Atividade") or "Aula"
         recursos = _aspnet_row_cell(row, "Recursos")
-        kind, ignored = _aspnet_row_kind(row)
+        kind, ignored = _aspnet_row_canonical_kind(row)
 
         parts = [f"- ({data})"]
         if dia:
@@ -599,3 +651,109 @@ def fetch_url_title(url: str, timeout: float = 5.0) -> str:
     except Exception:
         pass
     return ""
+
+
+# Presets embutidos: um por perfil de documento hardcoded (alinhados ao
+# profile_backends default). Aparecem no gerenciador de perfis pra edição.
+BUILTIN_PROCESSING_PROFILES = [
+    {"name": "auto", "processing_mode": "auto", "preferred_backend": "auto",
+     "datalab_mode": "accurate", "document_profile": "auto"},
+    {"name": "math_heavy", "processing_mode": "high_fidelity", "preferred_backend": "datalab",
+     "datalab_mode": "accurate", "document_profile": "math_heavy"},
+    {"name": "diagram_heavy", "processing_mode": "auto", "preferred_backend": "docling",
+     "datalab_mode": "accurate", "document_profile": "diagram_heavy"},
+    {"name": "scanned", "processing_mode": "auto", "preferred_backend": "auto",
+     "datalab_mode": "accurate", "document_profile": "scanned"},
+]
+
+
+def ensure_builtin_profiles(config_obj):
+    """Migração one-time: injeta os presets embutidos que faltam, sem duplicar
+    nem reverter exclusões do usuário (guardada por flag persistida)."""
+    if config_obj is None or config_obj.get("processing_profiles_seeded_v2"):
+        return
+    existing = list(config_obj.get("processing_profiles") or [])
+    names = {p.get("name") for p in existing}
+    existing += [dict(b) for b in BUILTIN_PROCESSING_PROFILES if b["name"] not in names]
+    config_obj.set("processing_profiles", existing)
+    config_obj.set("processing_profiles_seeded_v2", True)
+    config_obj.save()
+
+
+def load_processing_profiles(config_obj):
+    """Lista de ProcessingProfile salva no config (vazia se ausente ou sem config)."""
+    if config_obj is None:
+        return []
+    from src.models.core import ProcessingProfile
+    raw = config_obj.get("processing_profiles") or []
+    return [ProcessingProfile.from_dict(d) for d in raw]
+
+
+def get_processing_profile(config_obj, name):
+    """ProcessingProfile pelo nome, ou None."""
+    for p in load_processing_profiles(config_obj):
+        if p.name == name:
+            return p
+    return None
+
+
+def save_processing_profiles(config_obj, profiles):
+    """Grava a lista de ProcessingProfile no config."""
+    config_obj.set("processing_profiles", [p.to_dict() for p in profiles])
+
+
+def derive_profile_backends(config_obj) -> dict:
+    """Mapa {document_profile: preferred_backend} derivado dos perfis nomeados.
+
+    Fonte única do auto-roteamento (substitui o antigo config `profile_backends`).
+    Primeiro perfil por ordem da lista vence; conflito (mesmo document_profile com
+    backend diferente) -> log.warning e ignora. `config_obj` None -> {}.
+    """
+    if config_obj is None:
+        return {}
+    mapping: dict = {}
+    for prof in load_processing_profiles(config_obj):
+        dp = (prof.document_profile or "").strip()
+        if not dp:
+            continue
+        backend = (prof.preferred_backend or "").strip() or "auto"
+        if dp in mapping:
+            if mapping[dp] != backend:
+                logger.warning(
+                    "perfil '%s' redefine document_profile '%s' (%s -> %s); mantendo o primeiro",
+                    prof.name, dp, mapping[dp], backend,
+                )
+            continue
+        mapping[dp] = backend
+    return mapping
+
+
+def resolve_profile_for_document_profile(config_obj, document_profile):
+    """Primeiro ProcessingProfile cujo `document_profile` casa, ou None."""
+    dp = (document_profile or "").strip()
+    if not dp or config_obj is None:
+        return None
+    for prof in load_processing_profiles(config_obj):
+        if (prof.document_profile or "").strip() == dp:
+            return prof
+    return None
+
+
+def apply_document_profile_preset(config_obj, document_profile) -> dict:
+    """Deriva os ajustes ao escolher um `document_profile`, a partir do perfil
+    nomeado correspondente (fonte única) + heurísticas de flag por tipo de
+    documento. Retorna dict com `processing_mode`, `preferred_backend`,
+    `datalab_mode` (None = manter o atual), `formula_priority`, `force_ocr`.
+    """
+    profile = normalize_document_profile(document_profile)
+    named = resolve_profile_for_document_profile(config_obj, profile)
+    mode = ((named.processing_mode if named else "") or "auto")
+    backend = ((named.preferred_backend if named else "") or "auto")
+    datalab = (named.datalab_mode or "").strip() if named else ""
+    return {
+        "processing_mode": mode,
+        "preferred_backend": backend,
+        "datalab_mode": datalab or None,
+        "formula_priority": profile == "math_heavy",
+        "force_ocr": profile == "scanned",
+    }

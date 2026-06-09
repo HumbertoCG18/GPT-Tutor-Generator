@@ -18,7 +18,7 @@ edges:
     condition: when checking library/CLI availability detection
   - target: patterns/debug-build-failure.md
     condition: when backend changes cause build failures or unexpected conversion errors
-last_updated: 2026-06-03
+last_updated: 2026-06-08
 ---
 
 # PDF Backend Integration

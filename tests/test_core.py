@@ -32,7 +32,6 @@ from src.builder.engine import (
     _generated_repo_gitignore_text,
     _html_to_structured_markdown,
     _parse_bibliography_from_teaching_plan,
-    _match_timeline_to_units,
     _build_assessment_context_from_course,
     _seed_glossary_fields,
     _repair_mojibake_text,
@@ -2897,7 +2896,7 @@ class TestParseBibliographyFromTeachingPlan:
 
 
 # ---------------------------------------------------------------------------
-# _parse_syllabus_timeline / _match_timeline_to_units
+# _parse_syllabus_timeline
 # ---------------------------------------------------------------------------
 
 SYLLABUS_TABLE = """\
@@ -2933,99 +2932,6 @@ class TestParseSyllabusTimeline:
         for row in rows:
             for key in row:
                 assert key == key.lower()
-
-
-class TestMatchTimelineToUnits:
-    def test_matches_units_to_timeline(self):
-        timeline = _parse_syllabus_timeline(SYLLABUS_TABLE)
-        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
-        mapping = _match_timeline_to_units(timeline, units)
-
-        assert len(mapping) == 3  # 3 units
-        # Unit 1 should match weeks 1-3
-        u1 = mapping[0]
-        assert "Métodos Formais" in u1["unit_title"]
-        assert u1["period"]  # should have date range
-        assert "2026-03-02" in u1["dates"]
-
-    def test_unit_2_matched(self):
-        timeline = _parse_syllabus_timeline(SYLLABUS_TABLE)
-        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
-        mapping = _match_timeline_to_units(timeline, units)
-        u2 = mapping[1]
-        assert "Verificação de Programas" in u2["unit_title"]
-        assert "2026-03-23" in u2["dates"]
-
-    def test_period_uses_readable_interval(self):
-        timeline = _parse_syllabus_timeline(SYLLABUS_TABLE)
-        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
-        mapping = _match_timeline_to_units(timeline, units)
-        u2 = mapping[1]
-        assert u2["period"] == "2026-03-23 a 2026-03-30"
-
-    def test_slug_generated(self):
-        timeline = _parse_syllabus_timeline(SYLLABUS_TABLE)
-        units = _parse_units_from_teaching_plan(PUCRS_PLAN)
-        mapping = _match_timeline_to_units(timeline, units)
-        for m in mapping:
-            assert m["unit_slug"]
-            assert " " not in m["unit_slug"]
-
-    def test_empty_inputs(self):
-        assert _match_timeline_to_units([], []) == []
-        assert _match_timeline_to_units([], [("Unit 1", [])]) == []
-
-    def test_matches_by_distinctive_topics_with_accent_normalization(self):
-        timeline = _parse_syllabus_timeline("""\
-| Semana | Data | Conteúdo |
-|---|---|---|
-| 1 | 2026-03-02 | Introdução e visão geral |
-| 2 | 2026-03-09 | Pré e pós condições; invariantes de laço |
-| 3 | 2026-03-16 | Modelos de Kripke e lógica temporal |
-""")
-        units = [
-            ("Unidade 01 — Verificação de Programas", [
-                "Lógica de Hoare",
-                "Pré e Pós Condições",
-                "Invariante e Variante de Laço",
-            ]),
-            ("Unidade 02 — Verificação de Modelos", [
-                "Modelos de Kripke",
-                "Lógica Temporal Linear",
-            ]),
-        ]
-
-        mapping = _match_timeline_to_units(timeline, units)
-
-        assert mapping[0]["period"] == "2026-03-09"
-        assert "2026-03-16" not in mapping[0]["dates"]
-        assert mapping[1]["period"] == "2026-03-16"
-
-    def test_segmented_periods_do_not_overlap_between_units(self):
-        timeline = _parse_syllabus_timeline("""\
-| Semana | Data | Conteúdo |
-|---|---|---|
-| 1 | 2026-04-27 | Lógica de Hoare |
-| 2 | 2026-04-29 | Lógica de Hoare |
-| 3 | 2026-05-04 | Exercícios |
-| 4 | 2026-05-06 | Correção parcial e total |
-| 5 | 2026-05-11 | Dafny |
-| 6 | 2026-06-15 | Modelos de Kripke |
-""")
-        units = [
-            ("Unidade 01 — Métodos Formais", ["Sistemas Formais"]),
-            ("Unidade 02 — Verificação de Programas", [
-                "Lógica de Hoare",
-                "Correção Parcial e Total",
-                "Softwares de Suporte à Verificação Formal de Programas",
-            ]),
-            ("Unidade 03 — Verificação de Modelos", ["Modelos de Kripke"]),
-        ]
-
-        mapping = _match_timeline_to_units(timeline, units)
-
-        assert mapping[1]["period"] == "2026-04-27 a 2026-05-11"
-        assert mapping[2]["period"] == "2026-06-15"
 
 
 class TestTimelineIndex:
@@ -3298,9 +3204,8 @@ class TestCourseMapTimeline:
         assert "02/03/2026 a 25/03/2026" in result
         assert "Conflitos de avaliação x cronograma" in result
 
-    def test_course_map_does_not_recover_missing_units_from_raw_syllabus(self, monkeypatch):
+    def test_course_map_does_not_recover_missing_units_from_raw_syllabus(self):
         from src.models.core import SubjectProfile
-        import src.builder.engine as engine
 
         sp = SubjectProfile(
             name="Métodos Formais",
@@ -3322,11 +3227,6 @@ class TestCourseMapTimeline:
                 }
             },
         }
-
-        def _fail(*args, **kwargs):
-            raise AssertionError("legacy timeline fallback should not be used")
-
-        monkeypatch.setattr(engine, "_match_timeline_to_units", _fail)
 
         result = course_map_md(course_meta, sp)
 
@@ -4434,7 +4334,8 @@ class TestExerciseIndexLowToken:
 
     def test_exercise_index_empty_state_stays_short(self):
         result = exercise_index_md({"course_name": "Teste"}, [])
-        assert "| [a preencher] | | | | | |" in result
+        assert "[a preencher]" not in result
+        assert "Adicione listas ou provas antigas" in result
         assert "Mapeamento de exercícios por tópico" not in result
 
     def test_exercise_index_uses_auto_tags_when_manual_tags_are_empty(self):
@@ -4662,6 +4563,20 @@ class TestNewGenerators:
         return FileEntry(source_path=f"/fake/{title}{ext}",
                          file_type="code", category=cat, title=title)
 
+    def test_exam_index_empty_has_phrase_no_placeholder(self):
+        from src.builder.engine import exam_index_md
+        r = exam_index_md(self.COURSE_META, [])
+        assert "Nenhuma prova mapeada ainda" in r
+        assert "[a preencher]" not in r
+        assert "Incidência de tópicos por prova" not in r
+        assert "Padrões de questão observados" not in r
+
+    def test_exam_index_entries_and_label(self):
+        from src.builder.engine import exam_index_md
+        r = exam_index_md(self.COURSE_META, [self._e("provas", "P1", ".pdf")])
+        assert "P1" in r
+        assert "Provas disponíveis" in r
+
     def test_assignment_index_empty(self):
         from src.builder.engine import assignment_index_md
         assert "ASSIGNMENT_INDEX" in assignment_index_md(self.COURSE_META, [])
@@ -4671,6 +4586,20 @@ class TestNewGenerators:
         r = assignment_index_md(self.COURSE_META,
                                 [self._e("trabalhos", "T1", ".pdf")])
         assert "T1" in r
+
+    def test_assignment_index_drops_status_column(self):
+        from src.builder.engine import assignment_index_md
+        r = assignment_index_md(self.COURSE_META, [self._e("trabalhos", "T1", ".pdf")])
+        assert "T1" in r
+        assert "Status" not in r
+        assert "pendente" not in r
+
+    def test_assignment_index_empty_phrase_no_placeholder(self):
+        from src.builder.engine import assignment_index_md
+        r = assignment_index_md(self.COURSE_META, [])
+        assert "Nenhum trabalho mapeado ainda" in r
+        assert "[a preencher]" not in r
+        assert "Padrões do professor" not in r
 
     def test_code_index_professor(self):
         from src.builder.engine import code_index_md
@@ -4682,6 +4611,19 @@ class TestNewGenerators:
         from src.builder.engine import code_index_md
         assert "Nenhum arquivo" in code_index_md(self.COURSE_META, [])
 
+    def test_code_index_no_patterns_placeholder_empty(self):
+        from src.builder.engine import code_index_md
+        r = code_index_md(self.COURSE_META, [])
+        assert "[a preencher]" not in r
+        assert "Preencha conforme analisar" not in r
+
+    def test_code_index_no_patterns_placeholder_flat(self):
+        from src.builder.engine import code_index_md
+        r = code_index_md(self.COURSE_META, [self._e("codigo-professor", "linked_list")])
+        assert "linked_list" in r
+        assert "[a preencher]" not in r
+        assert "Preencha conforme analisar" not in r
+
     def test_whiteboard_professor_signal(self):
         from src.builder.engine import whiteboard_index_md
         e = self._e("quadro-branco", "AulaHash", ".png")
@@ -4691,6 +4633,21 @@ class TestNewGenerators:
     def test_whiteboard_empty(self):
         from src.builder.engine import whiteboard_index_md
         assert "WHITEBOARD_INDEX" in whiteboard_index_md(self.COURSE_META, [])
+
+    def test_whiteboard_empty_phrase_no_placeholder(self):
+        from src.builder.engine import whiteboard_index_md
+        r = whiteboard_index_md(self.COURSE_META, [])
+        assert "Nenhum registro de quadro ainda" in r
+        assert "[a preencher]" not in r
+        assert "Padrões pedagógicos" not in r
+
+    def test_whiteboard_entries_no_patterns_section(self):
+        from src.builder.engine import whiteboard_index_md
+        e = self._e("quadro-branco", "AulaHash", ".png")
+        e.professor_signal = "usa colisão linear"
+        r = whiteboard_index_md(self.COURSE_META, [e])
+        assert "colisão linear" in r
+        assert "Padrões pedagógicos" not in r
 
 
 class TestGitHubDetection:
@@ -4712,3 +4669,726 @@ class TestGitHubDetection:
     def test_main_is_student(self):
         from src.utils.helpers import STUDENT_BRANCHES
         assert "main" in STUDENT_BRANCHES
+
+
+class TestCronogramaDetalhado:
+    def test_no_todo_comment_leaks(self):
+        from src.builder.artifacts.repo import cronograma_detalhado_md
+        from src.models.core import FileEntry
+        entry = FileEntry(source_path="/fake/ll.py", file_type="code",
+                          category="codigo-professor", title="linked_list")
+        curation = {"entries": {entry.id(): {"summary": {"primary_block_id": "b1"}}}}
+        blocks = [{"id": "b1", "period_label": "Aula 1", "topics": ["Listas"]}]
+        r = cronograma_detalhado_md({"course_name": "ED"}, [entry], curation, blocks)
+        assert "TODO (material-agnostic refactor)" not in r
+        assert "linked_list" in r
+
+
+class TestModesMdClarity:
+    def test_mode_count_says_five(self):
+        from src.builder.artifacts.pedagogy import modes_md
+        text = modes_md({"course_name": "Teste"})
+        assert "opera em cinco modos" in text
+        assert "opera em quatro modos" not in text
+
+    def test_assignment_mode_points_to_both_indices(self):
+        from src.builder.artifacts.pedagogy import modes_md
+        text = modes_md({"course_name": "Teste"})
+        assert "exercises/EXERCISE_INDEX.md" in text
+        assert "assignments/ASSIGNMENT_INDEX.md" in text
+
+
+class TestGlossaryClampLabel:
+    def test_glossary_clamp_label_is_glossary(self):
+        from src.builder.artifacts import repo
+        captured = {}
+        def spy_clamp(text, *, max_chars, label):
+            captured["label"] = label
+            return text
+        repo.glossary_md(
+            {"course_name": "Teste"},
+            None,
+            parse_units_from_teaching_plan_fn=lambda plan: [],
+            topic_text_fn=lambda topic: "",
+            collect_glossary_evidence_fn=lambda root_dir: [],
+            find_glossary_evidence_fn=lambda term, unit, evidence: "",
+            seed_glossary_fields_fn=lambda term, unit, ev: ("", "", ""),
+            clamp_navigation_artifact_fn=spy_clamp,
+        )
+        assert captured["label"] == "course/GLOSSARY.md"
+
+
+class TestDeadCodeRemoval:
+    def test_render_course_map_md_is_gone(self):
+        import src.builder.artifacts.navigation as nav
+
+        assert not hasattr(nav, "render_course_map_md")
+
+
+class TestNavOrderContract:
+    def test_structural_contract_lists_course_map_first(self):
+        from src.builder.artifacts.prompts import _prompt_structural_artifact_contract_lines
+        lines = _prompt_structural_artifact_contract_lines()
+        first = lines[0]
+        assert "COURSE_MAP.md" in first
+        assert "FILE_MAP.md" in first
+        assert first.index("COURSE_MAP.md") < first.index("FILE_MAP.md")
+
+
+class TestPedagogicalSequenceHelpers:
+    def test_sequence_order_intuicao_before_definicao(self):
+        from src.builder.artifacts.pedagogy import PEDAGOGICAL_SEQUENCE
+        labels = [s["label"] for s in PEDAGOGICAL_SEQUENCE]
+        assert labels.index("Intuição") < labels.index("Definição")
+
+    def test_sequence_has_standardized_labels(self):
+        from src.builder.artifacts.pedagogy import PEDAGOGICAL_SEQUENCE
+        labels = [s["label"] for s in PEDAGOGICAL_SEQUENCE]
+        assert labels == [
+            "Contexto", "Intuição", "Definição", "Exemplo mínimo",
+            "Aplicação", "Erros comuns", "Exercício guiado", "Resumo",
+        ]
+
+    def test_full_lines_numbered(self):
+        from src.builder.artifacts.pedagogy import _pedagogical_sequence_full_lines
+        lines = _pedagogical_sequence_full_lines()
+        assert lines[0] == "1. **Contexto** — Por que este conceito existe? Que problema resolve?"
+        assert lines[1].startswith("2. **Intuição** — ")
+        assert len(lines) == 8
+
+    def test_compact_arrow(self):
+        from src.builder.artifacts.pedagogy import _pedagogical_sequence_compact
+        c = _pedagogical_sequence_compact()
+        assert c == "Contexto → Intuição → Definição → Exemplo mínimo → Aplicação → Erros comuns → Exercício guiado → Resumo"
+
+    def test_template_lines(self):
+        from src.builder.artifacts.pedagogy import _pedagogical_sequence_template_lines
+        lines = _pedagogical_sequence_template_lines()
+        assert lines[0] == "**Contexto:** [contexto em 1-2 frases]"
+        assert lines[2] == "**Definição:** [definição precisa, com LaTeX se necessário]"
+        assert len(lines) == 8
+
+    def test_exam_scope_rule_lines(self):
+        from src.builder.artifacts.pedagogy import _exam_scope_rule_lines
+        lines = _exam_scope_rule_lines()
+        assert lines[0] == "As provas são cumulativas mas com peso progressivo:"
+        assert any("(~70%)" in l and "(~30%)" in l for l in lines)
+        assert any("(~20%)" in l and "(~10%)" in l for l in lines)
+
+
+class TestPedagogyMdCanonical:
+    def test_intuicao_before_definicao(self):
+        from src.builder.artifacts.pedagogy import pedagogy_md
+        t = pedagogy_md()
+        assert t.index("**Intuição**") < t.index("**Definição**")
+
+    def test_exam_scope_uses_canonical_rule(self):
+        from src.builder.artifacts.pedagogy import pedagogy_md, _exam_scope_rule_lines
+        t = pedagogy_md()
+        for line in _exam_scope_rule_lines():
+            if line:
+                assert line in t
+        assert "→ foco primário:" not in t
+
+
+class TestModesMdCanonical:
+    def test_study_format_uses_compact_sequence(self):
+        from src.builder.artifacts.pedagogy import modes_md, _pedagogical_sequence_compact
+        t = modes_md({"course_name": "Teste"})
+        assert _pedagogical_sequence_compact() in t
+
+    def test_exam_scope_uses_canonical_rule(self):
+        from src.builder.artifacts.pedagogy import modes_md, _exam_scope_rule_lines
+        t = modes_md({"course_name": "Teste"})
+        for line in _exam_scope_rule_lines():
+            if line:
+                assert line in t
+
+
+class TestOutputTemplatesCanonical:
+    def test_study_template_uses_canonical_labels(self):
+        from src.builder.artifacts.pedagogy import output_templates_md
+        t = output_templates_md({"course_name": "Teste"})
+        assert "Por que existe:" not in t
+        assert "Definição formal:" not in t
+        assert "Cuidado com:" not in t
+        assert "Agora você:" not in t
+        assert "**Contexto:**" in t
+        assert "**Intuição:**" in t
+        assert "**Definição:**" in t
+        assert t.index("**Intuição:**") < t.index("**Definição:**")
+
+
+class TestPedagogySingleSource:
+    def test_exam_scope_identical_in_pedagogy_and_modes(self):
+        from src.builder.artifacts.pedagogy import pedagogy_md, modes_md, _exam_scope_rule_lines
+        ped = pedagogy_md()
+        mod = modes_md({"course_name": "Teste"})
+        for line in _exam_scope_rule_lines():
+            if line:
+                assert line in ped and line in mod
+
+    def test_sequence_labels_drive_all_three(self):
+        from src.builder.artifacts.pedagogy import (
+            pedagogy_md, modes_md, output_templates_md, PEDAGOGICAL_SEQUENCE,
+        )
+        ped = pedagogy_md()
+        tpl = output_templates_md({"course_name": "Teste"})
+        for s in PEDAGOGICAL_SEQUENCE:
+            assert s["label"] in ped
+            assert s["label"] in tpl
+
+
+class TestSubjectProfileStashFolder:
+
+    def test_subject_profile_stash_folder_roundtrip(self):
+        from src.models.core import SubjectProfile
+        sp = SubjectProfile(name="Metodos", slug="metodos", stash_folder=r"C:\Users\x\Downloads\Metodos")
+        d = sp.to_dict()
+        assert d["stash_folder"] == r"C:\Users\x\Downloads\Metodos"
+        sp2 = SubjectProfile.from_dict(d)
+        assert sp2.stash_folder == r"C:\Users\x\Downloads\Metodos"
+
+    def test_subject_profile_stash_folder_defaults_empty_when_missing(self):
+        # subjects.json antigo sem o campo -> default "" (retrocompat)
+        from src.models.core import SubjectProfile
+        sp = SubjectProfile.from_dict({"name": "X", "slug": "x"})
+        assert sp.stash_folder == ""
+
+
+def test_file_entry_source_section_roundtrip():
+    from src.models.core import FileEntry
+    e = FileEntry(
+        source_path="/x/Verificacao de Programas/hoare.zip",
+        file_type="zip",
+        category="codigo-professor",
+        title="hoare",
+        source_section="Verificacao de Programas",
+    )
+    d = e.to_dict()
+    assert d["source_section"] == "Verificacao de Programas"
+    back = FileEntry.from_dict(d)
+    assert back.source_section == "Verificacao de Programas"
+
+
+def test_file_entry_source_section_defaults_empty():
+    from src.models.core import FileEntry
+    e = FileEntry(source_path="/x/a.pdf", file_type="pdf", category="material-de-aula", title="a")
+    assert "source_section" not in e.to_dict()
+    assert FileEntry.from_dict(e.to_dict()).source_section == ""
+
+
+def test_subject_profile_moodle_course_id_roundtrip():
+    from src.models.core import SubjectProfile
+    p = SubjectProfile(name="Métodos", moodle_course_id="92717")
+    assert p.to_dict()["moodle_course_id"] == "92717"
+    assert SubjectProfile.from_dict(p.to_dict()).moodle_course_id == "92717"
+
+
+def test_student_profile_moodle_base_folder_roundtrip():
+    from src.models.core import StudentProfile
+    s = StudentProfile(full_name="X", moodle_base_folder="C:/Moodle")
+    assert StudentProfile.from_dict(s.to_dict()).moodle_base_folder == "C:/Moodle"
+
+
+def test_subject_profile_m365_filter_roundtrip():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile(name="Métodos Formais", slug="metodos-formais", m365_filter="metodosformais")
+    d = sp.to_dict()
+    assert d["m365_filter"] == "metodosformais"
+    sp2 = SubjectProfile.from_dict(d)
+    assert sp2.m365_filter == "metodosformais"
+
+def test_subject_profile_m365_filter_defaults_empty_for_old_profiles():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile.from_dict({"name": "x", "slug": "x"})   # sem o campo
+    assert sp.m365_filter == ""
+
+
+def test_subject_profile_processing_defaults_roundtrip():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile(name="MF", slug="mf", default_backend="datalab", default_datalab_mode="fast")
+    d = sp.to_dict()
+    assert d["default_backend"] == "datalab" and d["default_datalab_mode"] == "fast"
+    sp2 = SubjectProfile.from_dict(d)
+    assert sp2.default_backend == "datalab" and sp2.default_datalab_mode == "fast"
+
+
+def test_subject_profile_processing_defaults_fallback_for_old_profiles():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile.from_dict({"name": "x", "slug": "x"})
+    assert sp.default_backend == "auto" and sp.default_datalab_mode == "accurate"
+
+
+def test_resolve_profile_backend_picks_configured_when_available():
+    from src.builder.engine import resolve_profile_backend
+    avail = {"datalab": True, "docling": False}
+    assert resolve_profile_backend("math_heavy", {"math_heavy": "datalab"}, avail) == "datalab"
+
+
+def test_resolve_profile_backend_none_when_unavailable_or_auto():
+    from src.builder.engine import resolve_profile_backend
+    assert resolve_profile_backend("math_heavy", {"math_heavy": "docling"}, {"docling": False}) is None
+    assert resolve_profile_backend("math_heavy", {"math_heavy": "auto"}, {"datalab": True}) is None
+    assert resolve_profile_backend("scanned", {}, {"datalab": True}) is None
+
+
+def test_decide_uses_profile_backend_map():
+    from unittest import mock
+    from src.builder.engine import BackendSelector
+    from src.models.core import FileEntry, DocumentProfileReport
+    selector = BackendSelector(profile_backends={"math_heavy": "docling"})
+    entry = FileEntry(source_path="/t.pdf", file_type="pdf", category="c", title="T", processing_mode="auto")
+    report = DocumentProfileReport(suggested_profile="math_heavy")
+    with mock.patch.object(BackendSelector, "available_backends",
+        return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True}):
+        decision = selector.decide(entry, report)
+    assert decision.advanced_backend == "docling"   # mapa vence o built-in [datalab, marker, docling]
+
+
+def test_skip_base_backends_forces_advanced_on_common_doc():
+    from unittest import mock
+    from src.builder.engine import BackendSelector
+    from src.models.core import FileEntry, DocumentProfileReport
+    selector = BackendSelector(skip_base_backends=True)
+    entry = FileEntry(source_path="/t.pdf", file_type="pdf", category="c", title="T", processing_mode="auto")
+    report = DocumentProfileReport(suggested_profile="auto")   # documento comum
+    with mock.patch.object(BackendSelector, "available_backends",
+        return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": False, "docling": True, "marker": True}):
+        decision = selector.decide(entry, report)
+    assert decision.base_backend is None                       # base pulada
+    assert decision.advanced_backend in {"docling", "marker"}  # avançado forçado
+
+
+def test_skip_base_backends_fallback_when_no_advanced():
+    from unittest import mock
+    from src.builder.engine import BackendSelector
+    from src.models.core import FileEntry, DocumentProfileReport
+    selector = BackendSelector(skip_base_backends=True)
+    entry = FileEntry(source_path="/t.pdf", file_type="pdf", category="c", title="T", processing_mode="auto")
+    report = DocumentProfileReport(suggested_profile="auto")
+    with mock.patch.object(BackendSelector, "available_backends",
+        return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": False, "docling": False, "marker": False}):
+        decision = selector.decide(entry, report)
+    assert decision.base_backend in {"pymupdf4llm", "pymupdf"}  # safety: sem avançado, usa base
+
+
+def test_skip_base_backends_off_keeps_base():
+    from unittest import mock
+    from src.builder.engine import BackendSelector
+    from src.models.core import FileEntry, DocumentProfileReport
+    selector = BackendSelector()                               # padrão: desligado
+    entry = FileEntry(source_path="/t.pdf", file_type="pdf", category="c", title="T", processing_mode="auto")
+    report = DocumentProfileReport(suggested_profile="auto")
+    with mock.patch.object(BackendSelector, "available_backends",
+        return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True}):
+        decision = selector.decide(entry, report)
+    assert decision.base_backend == "pymupdf4llm"              # comportamento atual preservado
+
+
+def test_decide_falls_back_to_builtin_when_mapped_unavailable():
+    from unittest import mock
+    from src.builder.engine import BackendSelector
+    from src.models.core import FileEntry, DocumentProfileReport
+    selector = BackendSelector(profile_backends={"math_heavy": "docling"})
+    entry = FileEntry(source_path="/t.pdf", file_type="pdf", category="c", title="T", processing_mode="auto")
+    report = DocumentProfileReport(suggested_profile="math_heavy")
+    with mock.patch.object(BackendSelector, "available_backends",
+        return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": False, "marker": True}):
+        decision = selector.decide(entry, report)
+    assert decision.advanced_backend == "datalab"   # docling indisponível -> ordem built-in
+
+
+def test_default_profiles_derive_expected_backends():
+    """Auto-roteamento deriva dos perfis nomeados default do AppConfig (fonte única;
+    profile_backends como config separada foi removido)."""
+    from src.ui.theme import AppConfig
+    from src.utils.helpers import derive_profile_backends
+    assert "profile_backends" not in AppConfig.DEFAULTS
+    assert "default_profile" not in AppConfig.DEFAULTS
+    cfg = _ProfCfg(AppConfig.DEFAULTS["processing_profiles"])
+    pb = derive_profile_backends(cfg)
+    assert pb["math_heavy"] == "datalab"
+    assert pb["diagram_heavy"] == "docling"
+    assert pb["auto"] == "auto"
+
+
+def test_processing_profile_roundtrip():
+    from src.models.core import ProcessingProfile
+    p = ProcessingProfile(name="Math", processing_mode="high_fidelity",
+                          preferred_backend="datalab", datalab_mode="accurate",
+                          document_profile="math_heavy")
+    d = p.to_dict()
+    assert d["name"] == "Math" and d["preferred_backend"] == "datalab"
+    p2 = ProcessingProfile.from_dict(d)
+    assert p2.document_profile == "math_heavy" and p2.processing_mode == "high_fidelity"
+
+def test_processing_profile_from_dict_ignores_unknown_keys():
+    from src.models.core import ProcessingProfile
+    p = ProcessingProfile.from_dict({"name": "X", "bogus": 1})
+    assert p.name == "X" and p.preferred_backend == "auto"
+
+def test_subject_profile_processing_profile_roundtrip():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile(name="MF", slug="mf", processing_profile="Math")
+    d = sp.to_dict()
+    assert d["processing_profile"] == "Math"
+    assert SubjectProfile.from_dict(d).processing_profile == "Math"
+
+def test_subject_profile_processing_profile_defaults_empty():
+    from src.models.core import SubjectProfile
+    assert SubjectProfile.from_dict({"name": "x", "slug": "x"}).processing_profile == ""
+
+
+def test_appconfig_seeds_processing_profiles():
+    from src.ui.theme import AppConfig
+    names = [p["name"] for p in AppConfig.DEFAULTS["processing_profiles"]]
+    assert {"auto", "math_heavy", "diagram_heavy", "scanned"} <= set(names)
+
+def test_processing_profile_helpers_load_get_save():
+    from src.utils.helpers import (load_processing_profiles, get_processing_profile,
+                                    save_processing_profiles)
+    class _Cfg:
+        def __init__(self): self.d = {"processing_profiles": [
+            {"name": "Math", "processing_mode": "high_fidelity", "preferred_backend": "datalab",
+             "datalab_mode": "accurate", "document_profile": "math_heavy"}]}
+        def get(self, k, default=None): return self.d.get(k, default)
+        def set(self, k, v): self.d[k] = v
+    cfg = _Cfg()
+    profs = load_processing_profiles(cfg)
+    assert profs[0].name == "Math" and profs[0].preferred_backend == "datalab"
+    assert get_processing_profile(cfg, "Math").document_profile == "math_heavy"
+    assert get_processing_profile(cfg, "missing") is None
+    save_processing_profiles(cfg, profs + [type(profs[0])(name="Fast")])
+    assert "Fast" in [p["name"] for p in cfg.get("processing_profiles")]
+
+
+def test_ensure_builtin_profiles_adds_missing_and_sets_flag():
+    from src.utils.helpers import ensure_builtin_profiles
+    class _Cfg:
+        def __init__(self): self.d = {"processing_profiles": [{"name": "Padrão"}]}
+        def get(self, k, default=None): return self.d.get(k, default)
+        def set(self, k, v): self.d[k] = v
+        def save(self): self.d["_saved"] = True
+    cfg = _Cfg()
+    ensure_builtin_profiles(cfg)
+    names = {p["name"] for p in cfg.get("processing_profiles")}
+    assert {"auto", "math_heavy", "diagram_heavy", "scanned"} <= names
+    assert "Padrão" in names                       # preserva os do usuário
+    assert cfg.get("processing_profiles_seeded_v2") is True
+    assert cfg.d.get("_saved") is True
+
+
+def test_ensure_builtin_profiles_idempotent_respects_delete():
+    from src.utils.helpers import ensure_builtin_profiles
+    class _Cfg:
+        def __init__(self): self.d = {"processing_profiles": [], "processing_profiles_seeded_v2": True}
+        def get(self, k, default=None): return self.d.get(k, default)
+        def set(self, k, v): self.d[k] = v
+        def save(self): pass
+    cfg = _Cfg()
+    ensure_builtin_profiles(cfg)
+    assert cfg.get("processing_profiles") == []     # já seedado -> não re-adiciona (delete sobrevive)
+
+
+def _sarc_row(html):
+    from bs4 import BeautifulSoup
+    return BeautifulSoup(html, "html.parser").find("tr")
+
+def test_sarc_ps_is_assessment_not_ignored():
+    from src.utils.helpers import _aspnet_row_canonical_kind
+    row = _sarc_row('<tr style="background-color:#ff8c00"><td><span id="x_lblAtividade">Prova PS</span></td></tr>')
+    kind, ignored = _aspnet_row_canonical_kind(row)
+    assert kind == "assessment" and ignored is False
+
+def test_sarc_g2_lightgrey_is_assessment():
+    from src.utils.helpers import _aspnet_row_canonical_kind
+    row = _sarc_row('<tr style="background-color:lightgrey"><td><span id="x_lblAtividade">Prova G2</span></td></tr>')
+    kind, ignored = _aspnet_row_canonical_kind(row)
+    assert kind == "assessment" and ignored is False
+
+def test_sarc_lightgrey_devolucao_is_results():
+    from src.utils.helpers import _aspnet_row_canonical_kind
+    row = _sarc_row('<tr style="background-color:lightgrey"><td><span id="x_lblAtividade">Devolução de provas</span></td></tr>')
+    kind, ignored = _aspnet_row_canonical_kind(row)
+    assert kind == "results" and ignored is True
+
+def test_sarc_regular_exam_orange_assessment():
+    from src.utils.helpers import _aspnet_row_canonical_kind
+    row = _sarc_row('<tr style="background-color:#ffa500"><td><span id="x_lblAtividade">Prova P1</span></td></tr>')
+    kind, ignored = _aspnet_row_canonical_kind(row)
+    assert kind == "assessment" and ignored is False
+
+
+def test_canonical_assessment_label_ps_g2():
+    from src.builder.timeline.index import _canonical_assessment_label
+    from src.builder.text.normalize import normalize_match_text
+    f = lambda s: _canonical_assessment_label(s, normalize_match_text=normalize_match_text)
+    assert f("Prova PS") == "PS"
+    assert f("Prova G2") == "G2"
+    assert f("P2") == "P2"
+    assert f("Prova final") == "PF"
+
+
+def test_assessment_scope_by_date_windows_and_full():
+    from src.builder.timeline.index import assessment_scope_by_date
+    blocks = [
+        {"id": "b1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1", "topic_text": "Logica"},
+        {"id": "b2", "kind": "class", "period_start": "2026-03-30", "unit_slug": "unidade-2", "topic_text": "Inducao"},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-02", "topic_text": "Prova P1"},
+        {"id": "b3", "kind": "class", "period_start": "2026-05-04", "unit_slug": "unidade-3", "topic_text": "Hoare"},
+        {"id": "p2", "kind": "assessment", "period_start": "2026-07-06", "topic_text": "Prova P2"},
+        {"id": "ps", "kind": "assessment", "period_start": "2026-07-08", "topic_text": "Prova PS"},
+        {"id": "g2", "kind": "assessment", "period_start": "2026-07-15", "topic_text": "Prova G2"},
+    ]
+    scope = assessment_scope_by_date(blocks)
+    assert scope["p1"] == ["unidade-1", "unidade-2"]          # antes da P1
+    assert scope["p2"] == ["unidade-3"]                       # entre P1 e P2
+    assert scope["ps"] == ["unidade-1", "unidade-2", "unidade-3"]   # semestre inteiro
+    assert scope["g2"] == ["unidade-1", "unidade-2", "unidade-3"]   # semestre inteiro
+
+
+def test_link_review_scope_inherits_next_exam():
+    from src.builder.timeline.index import link_review_scope
+    blocks = [
+        {"id": "rev", "kind": "review", "period_start": "2026-07-01"},
+        {"id": "p2", "kind": "assessment", "period_start": "2026-07-06", "topic_text": "Prova P2"},
+    ]
+    scope = {"p2": ["unidade-3"]}
+    out = link_review_scope(blocks, scope)
+    assert out["rev"] == ["unidade-3"]       # revisao herda a proxima prova (P2)
+
+def test_link_review_scope_no_next_exam_empty():
+    from src.builder.timeline.index import link_review_scope
+    blocks = [{"id": "rev", "kind": "review", "period_start": "2026-07-20"},
+              {"id": "p2", "kind": "assessment", "period_start": "2026-07-06"}]
+    out = link_review_scope(blocks, {"p2": ["u3"]})
+    assert out.get("rev", []) == []          # nenhuma prova depois -> vazio
+
+
+def test_apply_assessment_review_scope_in_place():
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "c1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1"},
+        {"id": "rev", "kind": "review", "period_start": "2026-04-15",
+         "primary_topic_label": "", "sessions": [{"label": "exercicios de revisao aula"}]},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-22",
+         "primary_topic_label": "", "sessions": [{"label": "prova p1 prova"}]},
+    ]
+    apply_assessment_review_scope(blocks)
+    p1 = next(b for b in blocks if b["id"] == "p1")
+    rev = next(b for b in blocks if b["id"] == "rev")
+    assert p1["scope_unit_slugs"] == ["unidade-1"]
+    assert p1["primary_topic_label"] == "Conteúdo: unidade-1"
+    assert rev["scope_unit_slugs"] == ["unidade-1"]      # revisao herda a P1
+    assert rev["primary_topic_label"] == "Conteúdo: unidade-1"
+
+
+def test_demote_non_preexam_review_to_class():
+    from src.builder.timeline.index import _demote_non_preexam_reviews
+    blocks = [
+        {"id": "c1", "kind": "class", "unit_slug": "unidade-1"},
+        {"id": "rev", "kind": "review", "unit_slug": ""},     # revisao de conteudo
+        {"id": "c2", "kind": "class", "unit_slug": "unidade-1"},
+    ]
+    _demote_non_preexam_reviews(blocks)
+    rev = next(b for b in blocks if b["id"] == "rev")
+    assert rev["kind"] == "class"                              # nao precede prova
+    assert rev["unit_slug"] == "unidade-1"                     # herda do vizinho
+
+
+def test_preexam_review_stays_review_skipping_suspension():
+    from src.builder.timeline.index import _demote_non_preexam_reviews
+    blocks = [
+        {"id": "rev", "kind": "review", "unit_slug": ""},
+        {"id": "susp", "kind": "suspended", "unit_slug": ""},  # entre revisao e prova
+        {"id": "p1", "kind": "assessment", "unit_slug": ""},
+    ]
+    _demote_non_preexam_reviews(blocks)
+    assert next(b for b in blocks if b["id"] == "rev")["kind"] == "review"
+
+
+def test_demote_respects_manual_review_override():
+    from src.builder.timeline.index import _demote_non_preexam_reviews
+    blocks = [
+        {"id": "rev", "kind": "review", "manual_kind_override": "review", "unit_slug": ""},
+        {"id": "c2", "kind": "class", "unit_slug": "u1"},
+    ]
+    _demote_non_preexam_reviews(blocks)
+    assert next(b for b in blocks if b["id"] == "rev")["kind"] == "review"
+
+
+def test_apply_assessment_review_scope_idempotent_and_manual_label():
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "c1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "u1"},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-22",
+         "primary_topic_label": "Minha prova", "sessions": [{"label": "prova p1 prova"}]},
+    ]
+    apply_assessment_review_scope(blocks)
+    apply_assessment_review_scope(blocks)                  # 2x -> idempotente
+    p1 = next(b for b in blocks if b["id"] == "p1")
+    assert p1["scope_unit_slugs"] == ["u1"]
+    assert p1["primary_topic_label"] == "Minha prova"     # label manual nunca tocado
+
+
+def test_serialize_attaches_scope_unit_slugs():
+    from src.builder.timeline.index import _serialize_timeline_index
+    ti = {"blocks": [
+        {"id": "b1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1", "topic_text": "Logica", "rows": []},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-02", "topic_text": "Prova P1", "rows": []},
+        {"id": "rev", "kind": "review", "period_start": "2026-04-01", "topic_text": "Exercicios de revisao", "rows": []},
+    ]}
+    out = _serialize_timeline_index(ti)
+    by_id = {b["id"]: b for b in out["blocks"]}
+    assert by_id["p1"]["scope_unit_slugs"] == ["unidade-1"]
+    assert by_id["rev"]["scope_unit_slugs"] == ["unidade-1"]   # herda P1
+    assert "scope_unit_slugs" not in by_id["b1"] or by_id["b1"]["scope_unit_slugs"] == []
+
+
+def test_serialize_timeline_idempotent_scope():
+    """Regressão: re-serializar o output não muda scope nem rótulo (idempotente)."""
+    from src.builder.timeline.index import _serialize_timeline_index
+    ti = {"blocks": [
+        {"id": "b1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1", "topic_text": "Logica", "rows": []},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-02", "topic_text": "Prova P1", "rows": []},
+        {"id": "ps", "kind": "assessment", "period_start": "2026-07-08", "topic_text": "Prova PS", "rows": []},
+        {"id": "rev", "kind": "review", "period_start": "2026-04-01", "topic_text": "Exercicios de revisao", "rows": []},
+    ]}
+    out1 = _serialize_timeline_index(ti)
+    out2 = _serialize_timeline_index(out1)
+    s1 = {b["id"]: b.get("scope_unit_slugs") for b in out1["blocks"]}
+    s2 = {b["id"]: b.get("scope_unit_slugs") for b in out2["blocks"]}
+    assert s1 == s2
+    assert s2["p1"] == ["unidade-1"]
+    assert s2["ps"] == ["unidade-1"]
+    assert s2["rev"] == ["unidade-1"]
+    l1 = {b["id"]: b.get("primary_topic_label") for b in out1["blocks"]}
+    l2 = {b["id"]: b.get("primary_topic_label") for b in out2["blocks"]}
+    assert l1 == l2
+
+
+class _ProfCfg:
+    """Config stub: só expõe processing_profiles para load_processing_profiles."""
+    def __init__(self, profiles):
+        self._p = profiles
+    def get(self, key, default=None):
+        return self._p if key == "processing_profiles" else default
+
+
+def test_derive_profile_backends_builtins():
+    from src.utils.helpers import derive_profile_backends, BUILTIN_PROCESSING_PROFILES
+    cfg = _ProfCfg([dict(b) for b in BUILTIN_PROCESSING_PROFILES])
+    assert derive_profile_backends(cfg) == {
+        "auto": "auto",
+        "math_heavy": "datalab",
+        "diagram_heavy": "docling",
+        "scanned": "auto",
+    }
+
+
+def test_derive_profile_backends_first_wins_on_conflict():
+    from src.utils.helpers import derive_profile_backends
+    cfg = _ProfCfg([
+        {"name": "a", "document_profile": "math_heavy", "preferred_backend": "datalab"},
+        {"name": "b", "document_profile": "math_heavy", "preferred_backend": "marker"},
+    ])
+    assert derive_profile_backends(cfg)["math_heavy"] == "datalab"
+
+
+def test_derive_profile_backends_skips_empty_document_profile():
+    from src.utils.helpers import derive_profile_backends
+    cfg = _ProfCfg([
+        {"name": "x", "document_profile": "", "preferred_backend": "datalab"},
+    ])
+    assert derive_profile_backends(cfg) == {}
+
+
+def test_derive_profile_backends_empty_and_none():
+    from src.utils.helpers import derive_profile_backends
+    assert derive_profile_backends(_ProfCfg([])) == {}
+    assert derive_profile_backends(None) == {}
+
+
+def test_resolve_profile_for_document_profile():
+    from src.utils.helpers import resolve_profile_for_document_profile
+    cfg = _ProfCfg([
+        {"name": "m", "document_profile": "math_heavy", "preferred_backend": "datalab"},
+    ])
+    assert resolve_profile_for_document_profile(cfg, "math_heavy").preferred_backend == "datalab"
+    assert resolve_profile_for_document_profile(cfg, "nope") is None
+    assert resolve_profile_for_document_profile(None, "math_heavy") is None
+
+
+def test_apply_document_profile_preset_math_heavy_uses_named_profile():
+    from src.utils.helpers import apply_document_profile_preset, BUILTIN_PROCESSING_PROFILES
+    cfg = _ProfCfg([dict(b) for b in BUILTIN_PROCESSING_PROFILES])
+    out = apply_document_profile_preset(cfg, "math_heavy")
+    assert out["preferred_backend"] == "datalab"      # não 'marker' (era a contradição)
+    assert out["processing_mode"] == "high_fidelity"
+    assert out["formula_priority"] is True
+    assert out["force_ocr"] is False
+
+
+def test_apply_document_profile_preset_scanned_forces_ocr():
+    from src.utils.helpers import apply_document_profile_preset, BUILTIN_PROCESSING_PROFILES
+    cfg = _ProfCfg([dict(b) for b in BUILTIN_PROCESSING_PROFILES])
+    out = apply_document_profile_preset(cfg, "scanned")
+    assert out["force_ocr"] is True
+    assert out["preferred_backend"] == "auto"
+
+
+def test_apply_document_profile_preset_unknown_falls_back_auto():
+    from src.utils.helpers import apply_document_profile_preset
+    out = apply_document_profile_preset(_ProfCfg([]), "math_heavy")
+    assert out["preferred_backend"] == "auto"
+    assert out["processing_mode"] == "auto"
+    assert out["datalab_mode"] is None
+    assert out["formula_priority"] is True            # heurística independe do perfil nomeado
+
+
+def test_backlog_subunit_status_surfaces_low_conf_computed():
+    from src.ui.dialogs import _resolve_backlog_subunit_status
+    entry = {"computed_subunit_slug": "conjuntos-indutivos",
+             "subunit_match_confidence": 0.4, "auto_tags": []}
+    st = _resolve_backlog_subunit_status(entry, None, {"conjuntos-indutivos": "Conjuntos Indutivos"})
+    assert st["assigned"] == "Conjuntos Indutivos"     # surfaçada mesmo abaixo do gate
+    assert "confiança" in st["source"].lower()
+
+
+def test_backlog_subunit_status_manual_wins_over_computed():
+    from src.ui.dialogs import _resolve_backlog_subunit_status
+    entry = {"manual_subunit_slug": "x", "computed_subunit_slug": "y", "auto_tags": ["subunit:z"]}
+    st = _resolve_backlog_subunit_status(entry, None, {"x": "X", "y": "Y", "z": "Z"})
+    assert st["assigned"] == "X"                       # manual > auto-tag > computed
+
+
+def test_backlog_subunit_status_auto_tag_over_computed():
+    from src.ui.dialogs import _resolve_backlog_subunit_status
+    entry = {"auto_tags": ["subunit:z"], "computed_subunit_slug": "y"}
+    st = _resolve_backlog_subunit_status(entry, None, {"y": "Y", "z": "Z"})
+    assert st["assigned"] == "Z"                       # tag confiável vence o best-effort
+
+
+def test_backlog_subunit_status_none_when_empty():
+    from src.ui.dialogs import _resolve_backlog_subunit_status
+    st = _resolve_backlog_subunit_status({"auto_tags": []}, None, {})
+    assert st["assigned"] == "Não atribuída"
+
+
+def test_appconfig_drops_removed_legacy_keys(tmp_path, monkeypatch):
+    """Config legado com profile_backends/default_profile carrega sem erro e as
+    chaves removidas não entram em config.data (filtradas por DEFAULTS)."""
+    import json as _json
+    import src.ui.theme as theme_mod
+    legacy = tmp_path / ".gpt_tutor_config.json"
+    legacy.write_text(_json.dumps({
+        "theme": "light",
+        "default_profile": "math_heavy",
+        "profile_backends": {"math_heavy": "marker"},
+    }), encoding="utf-8")
+    monkeypatch.setattr(theme_mod, "CONFIG_PATH", legacy)
+    cfg = theme_mod.AppConfig()
+    assert cfg.get("theme") == "light"          # chave válida preservada
+    assert "default_profile" not in cfg.data    # chave removida ignorada
+    assert "profile_backends" not in cfg.data

@@ -117,6 +117,40 @@ def _content_text(block: Mapping[str, object]) -> str:
     return " ".join(parts)
 
 
+def _session_text(block: Mapping[str, object]) -> str:
+    """Labels crus das sessoes (texto original das linhas do cronograma)."""
+    sessions = block.get("sessions")
+    if not isinstance(sessions, list):
+        return ""
+    parts: List[str] = []
+    for sess in sessions:
+        if isinstance(sess, Mapping):
+            label = sess.get("label")
+            if isinstance(label, str) and label:
+                parts.append(label)
+    return " ".join(parts)
+
+
+# Sinal forte de prova nas sessoes: P1-P4, PF, "prova N", "prova final".
+# "prova" sozinho NAO basta ("prova de teoremas" = demonstracao, nao exame).
+_STRONG_EXAM_RE = re.compile(r"\bp[1-4]\b|\bpf\b|\bprova\s+\d+\b|\bprova\s+final\b")
+
+
+def _session_exam_or_review(session_hay: str) -> Union[BlockKind, None]:
+    """Reclassifica por label de sessao quando o conteudo curado nao decide.
+
+    So para blocos sem unidade (provas/revisoes nao tem unidade pedagogica).
+    `correcao` indica AULA de correcao de prova (CLASS), nao a prova -> ignora.
+    """
+    if not session_hay or "correcao" in session_hay:
+        return None
+    if _STRONG_EXAM_RE.search(session_hay):
+        return BlockKind.ASSESSMENT
+    if "revisao" in session_hay.split():
+        return BlockKind.REVIEW
+    return None
+
+
 def _text_of(block: Mapping[str, object]) -> str:
     """Conteudo + period_label. Usado no matching de keywords (feriado etc.
     podem vir no rotulo do periodo)."""
@@ -126,7 +160,7 @@ def _text_of(block: Mapping[str, object]) -> str:
 
 
 def classify_block(block: Mapping[str, object]) -> BlockKind:
-    """Retorna BlockKind. Manual override sempre vence."""
+    """Retorna BlockKind. Manual override vence; depois source_kind (SARC); senao texto/sessao."""
     override = block.get("manual_kind_override")
     if isinstance(override, str):
         try:
@@ -134,10 +168,20 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
         except ValueError:
             pass
 
+    # Hint autoritativo do SARC (Atividade/cor). Vence texto/sessao/unidade,
+    # perde so para o override manual acima.
+    source = block.get("source_kind")
+    if isinstance(source, str) and source:
+        try:
+            return BlockKind(source)
+        except ValueError:
+            pass
+
     hay_content = _norm(_content_text(block))
     hay_all = _norm(_text_of(block))
     has_unit = bool(block.get("unit_slug"))
     has_topic = bool(block.get("primary_topic_label"))
+    session_hay = _norm(_session_text(block))
 
     # 1. Apresentacao/introducao/plano de ensino -> OVERVIEW (academica, sem
     #    unidade). Vence keyword (ex.: "plano de ensino e avaliacao" nao vira
@@ -149,9 +193,16 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
         if "introducao" in content_tokens and len(content_tokens) <= 2:
             return BlockKind.OVERVIEW
 
-    # 2. Sem conteudo real: com unit ainda e aula; com period_label e slot de
-    #    calendario reservado; totalmente vazio fica UNKNOWN (curadoria).
+    # 2. Sem conteudo real: com unit ainda e aula; sem unit, sessao pode revelar
+    #    prova/revisao (topico reduzido a stopword); senao slot reservado/vazio.
     if not hay_content:
+        # Sessao com sinal forte de prova (P1-P4/PF/"prova N") ou "revisao"
+        # vence a unidade propagada: bloco sem conteudo curado cuja sessao diz
+        # "exercicios de revisao"/"prova p1" e revisao/prova mesmo que a
+        # inferencia de unidade de vizinhos tenha preenchido um slug.
+        sess_kind = _session_exam_or_review(session_hay)
+        if sess_kind is not None:
+            return sess_kind
         if has_unit:
             return BlockKind.CLASS
         return BlockKind.RESERVED if hay_all else BlockKind.UNKNOWN
@@ -166,6 +217,13 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
             else:
                 if _phrase_match(spec, hay_all, hay_tokens):
                     return kind
+
+    # 3b. Conteudo curado nao bateu keyword. Sem unidade, o label cru da sessao
+    #     ainda pode indicar prova/revisao real (ex.: topic_text "para").
+    if not has_unit:
+        sess_kind = _session_exam_or_review(session_hay)
+        if sess_kind is not None:
+            return sess_kind
 
     if has_unit or has_topic:
         return BlockKind.CLASS

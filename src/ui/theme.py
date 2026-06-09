@@ -4,7 +4,7 @@ from pathlib import Path
 from tkinter import ttk
 from typing import Dict, Optional
 
-from src.utils.helpers import DEFAULT_OCR_LANGUAGE
+from src.utils.helpers import DEFAULT_OCR_LANGUAGE, BUILTIN_PROCESSING_PROFILES
 
 THEMES: Dict[str, Dict[str, str]] = {
     "dark": {
@@ -88,8 +88,10 @@ class AppConfig:
         "theme": "dark",
         "default_mode": "auto",
         "default_ocr_language": DEFAULT_OCR_LANGUAGE,
-        "default_profile": "auto",
         "default_backend": "auto",
+        "skip_base_backends": False,
+        "processing_profiles": [dict(b) for b in BUILTIN_PROCESSING_PROFILES],
+        "processing_profiles_seeded_v2": False,
         "image_format": "png",
         "stall_timeout": 300,
         "marker_chunking_mode": "fallback",

@@ -49,7 +49,8 @@
       "Bash(ls \"C:/Users/Humberto/Documents/GitHub/Metodos-Formais-Tutor/course/.timeline_index.json\")",
       "Bash(start \"\" \"docs/sistema-atribuicao.html\")",
       "Bash(Get-ChildItem -Filter \"manifest.json\" -Recurse -ErrorAction SilentlyContinue)",
-      "Bash(Select-Object -ExpandProperty FullName)"
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(grep -n \"\\\\d{1,2}/\\\\d{1,2}\\\\|\\\\d{2}/\\\\d{2}\\\\|DD/MM\\\\|date.*regex\\\\|\\\\\\\\\\\\\\\\d.*date\" src/builder/timeline/index.py)"
     ]
   },
   "enableAllProjectMcpServers": true,

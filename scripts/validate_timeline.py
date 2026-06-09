@@ -27,6 +27,7 @@ from typing import Iterable, List, Tuple
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.builder.timeline.classifier import classify_block  # noqa: E402
+from src.builder.timeline.conflicts import detect_timeline_conflicts  # noqa: E402
 from src.builder.timeline.index import _backfill_timeline_index  # noqa: E402
 from src.builder.timeline.status import derive_block_status  # noqa: E402
 
@@ -82,6 +83,7 @@ def health_report(blocks: Iterable[dict]) -> dict:
         "class_blocks": class_blocks,
         "class_defects": class_defects,
         "class_defect_rate": (class_defects / class_blocks) if class_blocks else 0.0,
+        "override_conflicts": detect_timeline_conflicts(blocks),
     }
 
 
@@ -119,6 +121,12 @@ def validate_file(path: Path) -> Tuple[bool, List[str]]:
         f"saúde: {report['total']} blocos · unknown {report['unknown_rate']:.0%} · "
         f"class_defect {report['class_defect_rate']:.0%} · kinds={report['kinds']}"
     )
+    conflicts = report.get("override_conflicts") or []
+    if conflicts:
+        msgs.append(
+            f"warning: {len(conflicts)} override(s) conflitam com auto-atribuicao: "
+            + ", ".join(f"{c['block_id']}/{c['field']}" for c in conflicts)
+        )
     ok = not errs and not gate_failures(report)
     return ok, msgs
 

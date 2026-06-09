@@ -4,6 +4,8 @@ from __future__ import annotations
 from collections import defaultdict
 from typing import Iterable
 
+from src.builder.timeline.conflicts import detect_timeline_conflicts
+
 # Top-N de blocos candidatos exibidos por material de baixa-confiança. N=3:
 # o suficiente para o revisor comparar o vencedor contra as 2 alternativas mais
 # próximas sem inflar o relatório; só é computado para materiais já flagados
@@ -231,4 +233,29 @@ def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:
     ]
     for n, bid in rich:
         lines.append(f"- {bid}: {n} material(is)")
+
+    conflicts = detect_timeline_conflicts(blocks or [])
+    period_by_id = {
+        str(b.get("id") or ""): str(b.get("period_label") or "")
+        for b in (blocks or [])
+    }
+    lines += [
+        "",
+        "## Conflitos de curadoria",
+        "",
+    ]
+    if not conflicts:
+        lines.append("_Nenhum conflito de curadoria._")
+    else:
+        field_labels = {"unit": "unidade", "kind": "kind"}
+        for c in conflicts:
+            period = period_by_id.get(c["block_id"], "")
+            period_part = f" ({period})" if period else ""
+            field_label = field_labels.get(c["field"], c["field"])
+            lines.append(
+                f"- ⚠️ `{c['block_id']}`{period_part} {field_label}: "
+                f"manual `{c['manual']}` ≠ auto `{c['auto']}` "
+                f"({c['confidence']:.0%})"
+            )
+
     return "\n".join(lines) + "\n"

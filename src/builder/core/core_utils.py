@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 from typing import Dict, List
 
 from src.utils.helpers import normalize_document_profile
@@ -36,27 +35,6 @@ def persist_enriched_timeline_index(timeline_index: dict) -> dict:
     payload["version"] = 3
     payload["blocks"] = blocks
     return payload
-
-
-def collapse_ws(text: str) -> str:
-    return re.sub(r"\s+", " ", (text or "")).strip()
-
-
-def strip_topic_prefix(text: str) -> str:
-    cleaned = collapse_ws(text)
-    cleaned = re.sub(r"^\d+(?:\.\d+)*\.?\s*", "", cleaned)
-    cleaned = re.sub(r"^(unidade|tema|topico)\s+\d+\s*[-—:]?\s*", "", cleaned, flags=re.IGNORECASE)
-    cleaned = re.sub(r"^(especificacao|especificação)\s+de\s+", "", cleaned, flags=re.IGNORECASE)
-    return cleaned.strip(" -:\t")
-
-
-def topic_support_tokens(text: str, *, normalize_match_text_fn) -> set:
-    normalized = normalize_match_text_fn(strip_topic_prefix(text))
-    return {
-        token[:5] if len(token) >= 5 else token
-        for token in normalized.split()
-        if len(token) >= 4 and token not in {"sobre", "para", "com", "sem", "entre"}
-    }
 
 
 def merge_manual_and_auto_tags(

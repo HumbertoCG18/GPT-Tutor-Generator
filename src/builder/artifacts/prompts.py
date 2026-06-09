@@ -23,7 +23,7 @@ buscas: são metadados do app, não material didático.
 
 def _prompt_structural_artifact_contract_lines() -> list[str]:
     return [
-        "1. Leia `course/FILE_MAP.md` e `course/COURSE_MAP.md` antes de entrar no conteúdo.",
+        "1. Leia `course/COURSE_MAP.md` e `course/FILE_MAP.md` antes de entrar no conteúdo.",
         "2. Trate `FILE_MAP.md` e `COURSE_MAP.md` como artefatos estruturais gerados pelo app.",
         "3. Valide unidades, períodos, seções e confiança; entradas `Baixa` merecem atenção especial.",
         "4. Para erros de mapeamento, use override no backlog — `manual_unit_slug` (unidade) ou `manual_timeline_block_id` (bloco da timeline; aceita o índice `N` do bloco como fallback) — seguido de `Reprocessar Repositório`.",
@@ -57,6 +57,19 @@ e do plano de ensino da disciplina.
   override `manual_timeline_block_id` (ID do bloco **ou** o índice `N`
   dele, como fallback) e reprocessando — nunca editando o FILE_MAP.
 """.strip()
+
+
+def _prompt_reference_support_text() -> str:
+    return (
+        "## Referências de apoio (linhas `📖 Apoio:` no COURSE_MAP)\n\n"
+        "Linhas `📖 Apoio:` sob um tópico/unidade no `course/COURSE_MAP.md` são "
+        "material complementar (repo/doc) mapeado àquele tópico. Trate como apoio e "
+        "reflexão, NÃO como fonte principal. Ao explicar o tópico, relacione a "
+        "referência ao material principal — por exemplo: \"além de X estar em "
+        "`<arquivo principal do FILE_MAP>`, este repo mostra X aplicado\". Só "
+        "aprofunde a referência se o aluno demonstrar interesse ou o tópico pedir. "
+        "O resumo completo de cada referência está em `content/BIBLIOGRAPHY.md`.\n"
+    )
 
 
 def _prompt_student_state_v2_contract_text() -> str:
@@ -390,6 +403,8 @@ Fluxo `map-first`: consulte primeiro os artefatos curtos e roteadores. Não abra
 
 {_prompt_map_artifact_contract_text()}
 
+{_prompt_reference_support_text()}
+
 {_prompt_student_state_v2_contract_text()}
 
 {_prompt_end_of_session_importable_block_text()}
@@ -569,6 +584,8 @@ Acesse estes arquivos sempre que relevante:
 
 {_prompt_map_artifact_contract_text()}
 
+{_prompt_reference_support_text()}
+
 {_prompt_student_state_v2_contract_text()}
 
 {_prompt_end_of_session_importable_block_text()}
@@ -712,6 +729,8 @@ Consulte estes arquivos conforme necessário:
 5. `content/`, `exercises/` e `exams/` apenas quando necessário
 
 {_prompt_map_artifact_contract_text()}
+
+{_prompt_reference_support_text()}
 
 {_prompt_student_state_v2_contract_text()}
 

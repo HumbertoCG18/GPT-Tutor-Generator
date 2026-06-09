@@ -86,6 +86,23 @@ CLASSIFIER_CASES = [
     ({"topic_text": "", "unit_slug": ""}, BlockKind.UNKNOWN),
     ({"topic_text": "", "unit_slug": "u1"}, BlockKind.CLASS),
     ({"topic_text": "tema livre", "unit_slug": "u1"}, BlockKind.CLASS),
+    # Sinal de prova/revisão só no label da sessão (topic reduzido a stopword).
+    # Caso real TCC bloco-24: 01/07 revisão P2 + 03/07 P2 fundidos, topic="para".
+    ({"topic_text": "para",
+      "sessions": [{"label": "prova p2 prova"}]}, BlockKind.ASSESSMENT),
+    ({"topic_text": "para",
+      "sessions": [{"label": "revisao para prova p2 aula"},
+                   {"label": "prova p2 prova"}]}, BlockKind.ASSESSMENT),
+    ({"topic_text": "",
+      "sessions": [{"label": "revisao geral"}]}, BlockKind.REVIEW),
+    # Caso real Metodos-Formais bloco-07: 15/04 "exercicios de revisao",
+    # topic_text vazio MAS unidade foi propagada por inferencia de vizinhos.
+    # A sessao de revisao deve vencer a unidade propagada -> REVIEW (nao CLASS).
+    ({"topic_text": "", "unit_slug": "unidade-02",
+      "sessions": [{"label": "exercicios de revisao aula"}]}, BlockKind.REVIEW),
+    # Prova com unidade propagada e topic vazio: sessao P1 vence -> ASSESSMENT.
+    ({"topic_text": "", "unit_slug": "unidade-01",
+      "sessions": [{"label": "prova p1 prova"}]}, BlockKind.ASSESSMENT),
 ]
 
 
@@ -102,6 +119,22 @@ def test_manual_override_wins():
 
 def test_invalid_override_falls_back():
     block = {"topic_text": "Feriado", "manual_kind_override": "invalid_xyz"}
+    assert classify_block(block) == BlockKind.HOLIDAY
+
+
+def test_source_kind_wins_over_text_and_unit():
+    block = {"source_kind": "assessment", "topic_text": "Lógica",
+             "unit_slug": "u1"}
+    assert classify_block(block) == BlockKind.ASSESSMENT
+
+
+def test_manual_override_wins_over_source_kind():
+    block = {"source_kind": "assessment", "manual_kind_override": "holiday"}
+    assert classify_block(block) == BlockKind.HOLIDAY
+
+
+def test_invalid_source_kind_falls_back_to_text():
+    block = {"source_kind": "garbage", "topic_text": "Feriado de Carnaval"}
     assert classify_block(block) == BlockKind.HOLIDAY
 
 
@@ -318,3 +351,33 @@ def test_real_corpus_every_block_classifies(course):
         status = derive_block_status(blk_with_kind)
         assert status in {"ok", "needs_unit", "needs_topic",
                           "needs_files", "non_applicable", "needs_review"}
+
+
+# ---------------------------------------------------------------------------
+# Block grouping splits by authoritative row kind (prova nao funde no vizinho)
+# ---------------------------------------------------------------------------
+
+from src.builder.timeline.index import _rows_belong_to_same_thematic_block  # noqa: E402
+
+
+def _r(content, kind="class", date="01/01/2026"):
+    return {"content": content, "kind": kind, "date_text": date}
+
+
+def test_grouping_splits_when_current_row_is_assessment_kind():
+    prev = _r("Feriado Aula", kind="class")
+    cur = _r("Prova P1 Prova", kind="assessment")
+    assert _rows_belong_to_same_thematic_block(prev, cur, [prev]) is False
+
+
+def test_grouping_splits_when_previous_row_is_assessment_kind():
+    prev = _r("Prova P1 Prova", kind="assessment")
+    cur = _r("Arquitetura de software camadas", kind="class")
+    assert _rows_belong_to_same_thematic_block(prev, cur, [prev]) is False
+
+
+def test_grouping_keeps_two_class_rows_with_shared_tokens_together():
+    # regressao: duas aulas do mesmo tema continuam no mesmo bloco
+    prev = _r("Arquitetura de software em camadas", kind="class")
+    cur = _r("Arquitetura de software microservicos", kind="class")
+    assert _rows_belong_to_same_thematic_block(prev, cur, [prev]) is True

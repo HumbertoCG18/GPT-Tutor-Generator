@@ -10,10 +10,11 @@ from pathlib import Path
 from src.models.core import FileEntry, SubjectProfile, StudentProfile, SubjectStore, StudentStore
 from src.utils.helpers import (
     CATEGORY_LABELS, DEFAULT_CATEGORIES, DEFAULT_OCR_LANGUAGE, PROCESSING_MODES,
-    DOCUMENT_PROFILES, PREFERRED_BACKENDS, OCR_LANGS, CODE_EXTENSIONS,
+    DOCUMENT_PROFILES, PREFERRED_BACKENDS, DATALAB_MODES, OCR_LANGS, CODE_EXTENSIONS,
     slugify, parse_html_schedule, auto_detect_category, auto_detect_title,
     fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM, normalize_document_profile,
-    is_sarc_url, fetch_schedule_html, decide_schedule_source
+    is_sarc_url, fetch_schedule_html, decide_schedule_source,
+    apply_document_profile_preset,
 )
 from src.builder.runtime.datalab_client import get_datalab_base_url, has_datalab_api_key
 from src.builder.extraction.entry_signals import (
@@ -208,7 +209,6 @@ class SettingsDialog(tk.Toplevel):
 
         self._var_mode = tk.StringVar(value=self.config.get("default_mode"))
         self._var_ocr = tk.StringVar(value=self.config.get("default_ocr_language"))
-        self._var_profile = tk.StringVar(value=normalize_document_profile(self.config.get("default_profile")))
         self._var_backend = tk.StringVar(value=self.config.get("default_backend"))
         self._var_image_format = tk.StringVar(value=self.config.get("image_format"))
 
@@ -216,7 +216,6 @@ class SettingsDialog(tk.Toplevel):
         fields = [
             ("Modo de processamento padrão", self._var_mode, PROCESSING_MODES),
             ("Idioma OCR padrão", self._var_ocr, OCR_LANGS),
-            ("Perfil de documento padrão", self._var_profile, DOCUMENT_PROFILES),
             ("Backend preferido padrão", self._var_backend, PREFERRED_BACKENDS),
             ("Formato de imagem no Markdown", self._var_image_format, IMAGE_FORMATS),
         ]
@@ -326,6 +325,23 @@ class SettingsDialog(tk.Toplevel):
             prevent_sleep,
             "Mantém o sistema acordado durante builds, OCR e reprocessamentos longos.\n"
             "Não altera a curadoria nem a aprovação; só reduz risco de pausa por suspensão.",
+        )
+
+        self._var_skip_base_backends = tk.BooleanVar(
+            value=bool(self.config.get("skip_base_backends", False))
+        )
+        skip_base = ttk.Checkbutton(
+            tab_proc,
+            text="Pular backends base (pymupdf4llm / pymupdf) — força backend avançado",
+            variable=self._var_skip_base_backends,
+        )
+        skip_base.grid(row=next_row + 6, column=0, columnspan=2, sticky="w", pady=(2, 6))
+        add_tooltip(
+            skip_base,
+            "Quando ligado, a extração nunca usa os backends base (pymupdf4llm/pymupdf):\n"
+            "todo documento — inclusive os comuns — passa por um backend avançado\n"
+            "(datalab/docling/marker). Se nenhum avançado estiver disponível, cai na base\n"
+            "como fallback pra não ficar sem extração.",
         )
 
         sep_row = next_row + 7
@@ -438,8 +454,8 @@ class SettingsDialog(tk.Toplevel):
         self.config.set("theme", self._var_theme.get())
         self.config.set("default_mode", self._var_mode.get())
         self.config.set("default_ocr_language", self._var_ocr.get())
-        self.config.set("default_profile", self._var_profile.get())
         self.config.set("default_backend", self._var_backend.get())
+        self.config.set("skip_base_backends", bool(self._var_skip_base_backends.get()))
         self.config.set("image_format", self._var_image_format.get())
         self.config.set("stall_timeout", self._var_stall_timeout.get())
         self.config.set("marker_chunking_mode", self._var_marker_chunking_mode.get())
@@ -468,6 +484,123 @@ class SettingsDialog(tk.Toplevel):
         self.theme_mgr.apply(self.parent, self.config.get("theme"))
         self.parent._theme_name = self.config.get("theme")  # type: ignore[attr-defined]
         self.destroy()
+
+
+class ProcessingProfileManagerDialog(tk.Toplevel):
+    """CRUD de perfis de processamento nomeados (settings.json)."""
+
+    def __init__(self, parent, config_obj, theme_mgr=None):
+        super().__init__(parent)
+        self.config_obj = config_obj
+        self.title("Perfis de processamento")
+        self.geometry("620x420")
+        self.transient(parent)
+        self.grab_set()
+
+        from src.utils.helpers import load_processing_profiles, save_processing_profiles
+        self._load_all = load_processing_profiles
+        self._save_all = save_processing_profiles
+        self._current = None
+
+        pw = ttk.Panedwindow(self, orient="horizontal")
+        pw.pack(fill="both", expand=True, padx=10, pady=10)
+
+        left = ttk.Frame(pw)
+        pw.add(left, weight=1)
+        self._listbox = tk.Listbox(left, exportselection=False)
+        self._listbox.pack(fill="both", expand=True)
+        self._listbox.bind("<<ListboxSelect>>", self._on_select)
+        bf = ttk.Frame(left)
+        bf.pack(fill="x", pady=(8, 0))
+        ttk.Button(bf, text="➕ Novo", command=self._new).pack(side="left")
+        ttk.Button(bf, text="✖ Excluir", command=self._delete).pack(side="right")
+
+        right = ttk.Frame(pw)
+        pw.add(right, weight=2)
+        form = ttk.LabelFrame(right, text="  Perfil", padding=12)
+        form.pack(fill="both", expand=True)
+        self._vars = {
+            "name": tk.StringVar(),
+            "processing_mode": tk.StringVar(value="auto"),
+            "preferred_backend": tk.StringVar(value="auto"),
+            "datalab_mode": tk.StringVar(value="accurate"),
+            "document_profile": tk.StringVar(value="auto"),
+        }
+        rows = [
+            ("name", "Nome", None),
+            ("processing_mode", "Modo", PROCESSING_MODES),
+            ("preferred_backend", "Backend preferido", PREFERRED_BACKENDS),
+            ("datalab_mode", "Datalab mode", DATALAB_MODES),
+            ("document_profile", "Perfil de documento", DOCUMENT_PROFILES),
+        ]
+        for i, (key, label, vals) in enumerate(rows):
+            ttk.Label(form, text=label).grid(row=i, column=0, sticky="w", pady=4)
+            if vals is None:
+                ttk.Entry(form, textvariable=self._vars[key], width=28).grid(row=i, column=1, sticky="ew", padx=(8, 0))
+            else:
+                ttk.Combobox(form, textvariable=self._vars[key], values=vals,
+                             state="readonly", width=24).grid(row=i, column=1, sticky="ew", padx=(8, 0))
+        form.columnconfigure(1, weight=1)
+        ttk.Button(right, text="💾 Salvar perfil", command=self._save).pack(fill="x", pady=(8, 0))
+
+        self._refresh_list()
+
+    def _profiles(self):
+        return self._load_all(self.config_obj)
+
+    def _refresh_list(self):
+        self._listbox.delete(0, "end")
+        for p in self._profiles():
+            self._listbox.insert("end", p.name)
+
+    def _on_select(self, _e=None):
+        sel = self._listbox.curselection()
+        if not sel:
+            return
+        name = self._listbox.get(sel[0])
+        for p in self._profiles():
+            if p.name == name:
+                self._current = name
+                for k, var in self._vars.items():
+                    var.set(getattr(p, k, ""))
+                break
+
+    def _new(self):
+        self._current = None
+        self._vars["name"].set("")
+        self._vars["processing_mode"].set("auto")
+        self._vars["preferred_backend"].set("auto")
+        self._vars["datalab_mode"].set("accurate")
+        self._vars["document_profile"].set("auto")
+
+    def _save(self):
+        from src.models.core import ProcessingProfile
+        name = self._vars["name"].get().strip()
+        if not name:
+            messagebox.showwarning("Perfil", "Preencha o nome.", parent=self)
+            return
+        prof = ProcessingProfile(
+            name=name,
+            processing_mode=self._vars["processing_mode"].get(),
+            preferred_backend=self._vars["preferred_backend"].get(),
+            datalab_mode=self._vars["datalab_mode"].get(),
+            document_profile=self._vars["document_profile"].get(),
+        )
+        profiles = [p for p in self._profiles() if p.name != name]   # upsert por nome
+        profiles.append(prof)
+        self._save_all(self.config_obj, profiles)
+        self._current = name
+        self._refresh_list()
+        messagebox.showinfo("Perfil", f"Perfil '{name}' salvo.", parent=self)
+
+    def _delete(self):
+        if not self._current:
+            return
+        profiles = [p for p in self._profiles() if p.name != self._current]
+        self._save_all(self.config_obj, profiles)
+        self._current = None
+        self._new()
+        self._refresh_list()
 
 
 # ---------------------------------------------------------------------------
@@ -1125,7 +1258,7 @@ class HTMLImportDialog(tk.Toplevel):
 class SubjectManagerDialog(tk.Toplevel):
     """Gerenciador de matérias — criar, editar, excluir perfis."""
 
-    def __init__(self, parent, subject_store: SubjectStore, theme_mgr: ThemeManager):
+    def __init__(self, parent, subject_store: SubjectStore, theme_mgr: ThemeManager, config_obj=None):
         super().__init__(parent)
         self.title("📚  Gerenciador de Matérias")
         self.geometry("780x700")
@@ -1133,6 +1266,7 @@ class SubjectManagerDialog(tk.Toplevel):
         self.grab_set()
         self._store = subject_store
         self._theme_mgr = theme_mgr
+        self._config = config_obj
         self._p = apply_theme_to_toplevel(self, parent)
         self._current_name: Optional[str] = None
         self._build_ui()
@@ -1184,9 +1318,13 @@ class SubjectManagerDialog(tk.Toplevel):
             ("schedule", "Horário", "Ex: Seg/Qua 10:15-11:55"),
             ("default_mode", "Modo padrão", "auto, quick, high_fidelity, manual_assisted"),
             ("default_ocr_lang", "OCR padrão", DEFAULT_OCR_LANGUAGE),
+            ("default_backend", "Backend padrão", "Extrator padrão (auto, datalab, pymupdf4llm...)"),
+            ("default_datalab_mode", "Datalab mode", "fast / balanced / accurate (usado quando backend = datalab)"),
             ("repo_root", "Pasta do repositório", "Caminho completo do repo (ex: C:\\Users\\...\\Metodos-Formais-Tutor)"),
+            ("stash_folder", "Pasta de arquivos (stash)", "Pasta com os PDFs/cards da matéria (fonte dos arquivos)"),
             ("github_url", "URL GitHub", "Ex: https://github.com/seu-user/metodos-formais-tutor"),
             ("preferred_llm", "LLM Principal", "Plataforma que você usa principalmente"),
+            ("processing_profile", "Perfil de processamento", "Preset que preenche modo/backend/datalab"),
         ]
 
         for i, (key, label, tip) in enumerate(labels):
@@ -1198,7 +1336,19 @@ class SubjectManagerDialog(tk.Toplevel):
             if key == "default_mode":
                 ttk.Combobox(form, textvariable=var, values=PROCESSING_MODES,
                              state="readonly", width=22).grid(row=i, column=1, sticky="ew", padx=(8, 0))
+            elif key == "default_backend":
+                ttk.Combobox(form, textvariable=var, values=PREFERRED_BACKENDS,
+                             state="readonly", width=22).grid(row=i, column=1, sticky="ew", padx=(8, 0))
+            elif key == "default_datalab_mode":
+                ttk.Combobox(form, textvariable=var, values=DATALAB_MODES,
+                             state="readonly", width=22).grid(row=i, column=1, sticky="ew", padx=(8, 0))
             elif key == "repo_root":
+                fr = ttk.Frame(form)
+                fr.grid(row=i, column=1, sticky="ew", padx=(8, 0))
+                ttk.Entry(fr, textvariable=var).pack(side="left", fill="x", expand=True)
+                ttk.Button(fr, text="📁", width=3,
+                           command=lambda v=var: v.set(filedialog.askdirectory() or v.get())).pack(side="right", padx=(4, 0))
+            elif key == "stash_folder":
                 fr = ttk.Frame(form)
                 fr.grid(row=i, column=1, sticky="ew", padx=(8, 0))
                 ttk.Entry(fr, textvariable=var).pack(side="left", fill="x", expand=True)
@@ -1208,6 +1358,26 @@ class SubjectManagerDialog(tk.Toplevel):
                 ttk.Combobox(form, textvariable=var,
                              values=["claude", "gpt", "gemini"],
                              state="readonly", width=22).grid(row=i, column=1, sticky="ew", padx=(8, 0))
+            elif key == "processing_profile":
+                from src.utils.helpers import load_processing_profiles, get_processing_profile
+                names = [""] + [p.name for p in load_processing_profiles(self._config)]
+                fr = ttk.Frame(form)
+                fr.grid(row=i, column=1, sticky="ew", padx=(8, 0))
+                cb = ttk.Combobox(fr, textvariable=var, values=names, state="readonly", width=18)
+                cb.pack(side="left", fill="x", expand=True)
+
+                def _apply_preset(_e=None):
+                    p = get_processing_profile(self._config, var.get())
+                    if p:
+                        self._vars["default_mode"].set(p.processing_mode)
+                        self._vars["default_backend"].set(p.preferred_backend)
+                        self._vars["default_datalab_mode"].set(p.datalab_mode)
+                cb.bind("<<ComboboxSelected>>", _apply_preset)
+
+                def _manage():
+                    ProcessingProfileManagerDialog(self, self._config)
+                    cb["values"] = [""] + [pp.name for pp in load_processing_profiles(self._config)]
+                ttk.Button(fr, text="Gerenciar perfis…", command=_manage).pack(side="right", padx=(4, 0))
             else:
                 ttk.Entry(form, textvariable=var, width=36).grid(row=i, column=1, sticky="ew", padx=(8, 0))
 
@@ -1301,7 +1471,10 @@ class SubjectManagerDialog(tk.Toplevel):
         self._vars["institution"].set("PUCRS")
         self._vars["default_mode"].set("auto")
         self._vars["default_ocr_lang"].set(DEFAULT_OCR_LANGUAGE)
+        self._vars["default_backend"].set("auto")
+        self._vars["default_datalab_mode"].set("accurate")
         self._vars["preferred_llm"].set("claude")
+        self._vars["processing_profile"].set("")
         self._syllabus_text.delete("1.0", "end")
         self._teaching_plan_text.delete("1.0", "end")
 
@@ -1325,9 +1498,13 @@ class SubjectManagerDialog(tk.Toplevel):
             teaching_plan=self._teaching_plan_text.get("1.0", "end-1c").strip(),
             default_mode=self._vars["default_mode"].get(),
             default_ocr_lang=self._vars["default_ocr_lang"].get().strip() or DEFAULT_OCR_LANGUAGE,
+            default_backend=self._vars["default_backend"].get() or "auto",
+            default_datalab_mode=self._vars["default_datalab_mode"].get() or "accurate",
             repo_root=self._vars["repo_root"].get().strip(),
+            stash_folder=self._vars["stash_folder"].get().strip(),
             github_url=self._vars["github_url"].get().strip(),
             preferred_llm=self._vars["preferred_llm"].get().strip() or "claude",
+            processing_profile=self._vars["processing_profile"].get(),
             queue=existing_queue,
         )
         self._store.add(sp)
@@ -1367,7 +1544,8 @@ class SubjectManagerDialog(tk.Toplevel):
                         pass  # widget destroyed while extracting
                 self.after(0, _apply)
             except Exception as e:
-                self.after(0, lambda: messagebox.showerror(APP_NAME, f"Erro ao extrair PDF:\n{e}", parent=self))
+                msg = str(e)
+                self.after(0, lambda m=msg: messagebox.showerror(APP_NAME, f"Erro ao extrair PDF:\n{m}", parent=self))
 
         threading.Thread(target=worker, daemon=True).start()
 
@@ -1461,8 +1639,68 @@ class StudentProfileDialog(tk.Toplevel):
             self._personality_text.config(fg="#888888")
             self._personality_text.bind("<FocusIn>", self._clear_placeholder)
 
+        moodle_frame = ttk.LabelFrame(self, text="  🎓  Conta Moodle (PUCRS)", padding=14)
+        moodle_frame.pack(fill="x", padx=14, pady=(0, 8))
+
+        from src.builder.sources.moodle import load_moodle_token
+        _url, _tok = load_moodle_token()
+        status = "conectado (token salvo)" if _tok else "não conectado"
+        ttk.Label(moodle_frame, text=f"Status: {status}", style="Muted.TLabel").grid(row=0, column=0, columnspan=2, sticky="w")
+
+        ttk.Label(moodle_frame, text="Matrícula").grid(row=1, column=0, sticky="w", pady=4)
+        self._moodle_user = tk.StringVar()
+        ttk.Entry(moodle_frame, textvariable=self._moodle_user, width=30).grid(row=1, column=1, sticky="ew", padx=(8, 0))
+        ttk.Label(moodle_frame, text="Senha").grid(row=2, column=0, sticky="w", pady=4)
+        self._moodle_pass = tk.StringVar()
+        ttk.Entry(moodle_frame, textvariable=self._moodle_pass, width=30, show="*").grid(row=2, column=1, sticky="ew", padx=(8, 0))
+
+        ttk.Label(moodle_frame, text="Pasta-base dos stashes").grid(row=3, column=0, sticky="w", pady=4)
+        self._moodle_base = tk.StringVar(value=getattr(self._store.profile, "moodle_base_folder", ""))
+        base_row = ttk.Frame(moodle_frame)
+        base_row.grid(row=3, column=1, sticky="ew", padx=(8, 0))
+        ttk.Entry(base_row, textvariable=self._moodle_base).pack(side="left", fill="x", expand=True)
+        ttk.Button(base_row, text="📁", width=3, command=self._pick_moodle_base).pack(side="left", padx=(4, 0))
+
+        ttk.Button(moodle_frame, text="🔗  Conectar e escolher cursos", command=self._moodle_connect).grid(
+            row=4, column=0, columnspan=2, sticky="ew", pady=(8, 0))
+        moodle_frame.columnconfigure(1, weight=1)
+        ttk.Label(moodle_frame, text="A senha não é salva — só o token (revogável).",
+                  style="Muted.TLabel").grid(row=5, column=0, columnspan=2, sticky="w", pady=(4, 0))
+
         ttk.Button(self, text="💾  Salvar Perfil", style="Accent.TButton",
                    command=self._save).pack(fill="x", padx=14, pady=(0, 14))
+
+    def _pick_moodle_base(self):
+        d = filedialog.askdirectory(title="Pasta-base dos stashes do Moodle")
+        if d:
+            self._moodle_base.set(d)
+
+    def _moodle_connect(self):
+        from src.builder.sources.moodle import MoodleClient, save_moodle_token, load_moodle_token
+        user = self._moodle_user.get().strip()
+        password = self._moodle_pass.get()
+        self._moodle_pass.set("")  # nunca mantém a senha na UI, mesmo se o login falhar
+        base = self._moodle_base.get().strip()
+        if not base:
+            messagebox.showwarning("Moodle", "Escolha a pasta-base dos stashes primeiro.")
+            return
+        url, token = load_moodle_token()
+        try:
+            if user and password:
+                token = MoodleClient.login(url, user, password)
+                save_moodle_token(token, url=url)
+            if not token:
+                messagebox.showwarning("Moodle", "Informe matrícula e senha para conectar.")
+                return
+            client = MoodleClient(url, token)
+            info = client.site_info()
+            courses = client.get_users_courses(info.get("userid"))
+        except Exception as exc:
+            messagebox.showerror("Moodle", f"Falha ao conectar: {exc}")
+            return
+        self._store.profile.moodle_base_folder = base
+        self._store.save()
+        MoodleCourseSelectDialog(self, courses, base, client, self._p)
 
     def _clear_placeholder(self, _event=None):
         if self._personality_text.get("1.0", "2.0").startswith("Exemplo:"):
@@ -1474,11 +1712,263 @@ class StudentProfileDialog(tk.Toplevel):
             full_name=self._vars["full_name"].get().strip(),
             nickname=self._vars["nickname"].get().strip(),
             personality=self._personality_text.get("1.0", "end-1c").strip(),
+            moodle_base_folder=getattr(self, "_moodle_base", tk.StringVar()).get().strip(),
         )
         self._store.profile = sp
         self._store.save()
         messagebox.showinfo("Perfil", "Perfil salvo com sucesso!")
         self.destroy()
+
+
+class MoodleCourseSelectDialog(tk.Toplevel):
+    """Lista cursos Moodle com checkbox; importa os marcados (upsert + download)."""
+
+    def __init__(self, parent, courses, base_folder, client, palette):
+        super().__init__(parent)
+        self.title("🎓  Escolher cursos do Moodle")
+        self.geometry("680x520")
+        self.transient(parent)
+        self.grab_set()
+        self._courses = list(courses or [])
+        self._base = base_folder
+        self._client = client
+        self._vars = []
+        from src.builder.sources.moodle import latest_semester
+        self._current_sem = latest_semester(self._courses)
+        self._show_all = None  # BooleanVar criado no _build_ui
+        self._existing = self._load_existing_subjects()
+        self._build_ui()
+
+    def _load_existing_subjects(self):
+        """Mapa pra detectar curso que já tem repo: por slug e por moodle_course_id."""
+        from src.models.core import SubjectStore
+        by_slug, by_cid = {}, {}
+        try:
+            store = SubjectStore()
+            for n in store.names():
+                sp = store.get(n)
+                if not sp or not getattr(sp, "repo_root", ""):
+                    continue
+                if getattr(sp, "slug", ""):
+                    by_slug[sp.slug] = sp.name
+                if getattr(sp, "moodle_course_id", ""):
+                    by_cid[sp.moodle_course_id] = sp.name
+        except Exception:
+            pass
+        return {"by_slug": by_slug, "by_cid": by_cid}
+
+    def _build_ui(self):
+        top = ttk.Frame(self); top.pack(fill="x", padx=10, pady=(10, 4))
+        ttk.Label(top, text="Marque os cursos que viram matéria:").pack(side="left")
+        self._show_all = tk.BooleanVar(value=False)
+        ttk.Checkbutton(top, text="Mostrar todos os semestres",
+                        variable=self._show_all, command=self._render_list).pack(side="right")
+
+        body = ttk.Frame(self); body.pack(fill="both", expand=True)
+        canvas = tk.Canvas(body, highlightthickness=0)
+        scroll = ttk.Scrollbar(body, orient="vertical", command=canvas.yview)
+        self._inner = ttk.Frame(canvas)
+        self._inner.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        canvas.create_window((0, 0), window=self._inner, anchor="nw")
+        canvas.configure(yscrollcommand=scroll.set)
+        canvas.pack(side="left", fill="both", expand=True, padx=(10, 0))
+        scroll.pack(side="right", fill="y")
+
+        self._download_var = tk.BooleanVar(value=True)
+        ttk.Checkbutton(
+            self, text="Baixar arquivos PDF (desmarque para só montar a estrutura dos cards)",
+            variable=self._download_var,
+        ).pack(anchor="w", padx=10, pady=(6, 0))
+        self._m365_var = tk.BooleanVar(value=False)
+        ttk.Checkbutton(
+            self, text="Incluir material do OneDrive (M365) por matéria",
+            variable=self._m365_var,
+        ).pack(anchor="w", padx=10, pady=(2, 0))
+        m365row = ttk.Frame(self)
+        m365row.pack(fill="x", padx=10)
+        ttk.Label(m365row, text="Filtro M365 (trecho do caminho, ex.: metodosformais):").pack(side="left")
+        self._m365_filter_var = tk.StringVar(value="")
+        ttk.Entry(m365row, textvariable=self._m365_filter_var).pack(side="left", fill="x", expand=True)
+        ttk.Button(self, text="📥  Importar marcados", command=self._import).pack(fill="x", padx=10, pady=10)
+        self._status_var = tk.StringVar(value="")
+        ttk.Label(self, textvariable=self._status_var).pack(anchor="w", padx=10)
+        self._progress = ttk.Progressbar(self, mode="determinate")
+        self._progress.pack(fill="x", padx=10, pady=(0, 8))
+        self._render_list()
+
+    def _render_list(self):
+        from src.builder.sources.moodle import parse_moodle_course, filter_courses_by_semester
+        for w in list(self._inner.children.values()):
+            w.destroy()
+        self._vars = []
+        if self._show_all.get() or not self._current_sem:
+            courses = list(self._courses)
+        else:
+            courses = filter_courses_by_semester(self._courses, self._current_sem)
+        for course in courses:
+            info = parse_moodle_course(course)
+            has_repo = (info["slug"] in self._existing["by_slug"]
+                        or info["moodle_course_id"] in self._existing["by_cid"])
+            var = tk.BooleanVar(value=False)
+            self._vars.append((var, course))
+            label = f"{info['name']}   ·   {info['professor'] or '—'}   ·   {info['semester'] or '—'}"
+            if has_repo:
+                label += "   🔗 já tem repo"
+            ttk.Checkbutton(self._inner, text=label, variable=var).pack(anchor="w", pady=2)
+
+    def _post(self, fn):
+        try:
+            self.after(0, fn)
+        except (tk.TclError, RuntimeError):
+            pass  # diálogo já destruído — ignora
+
+    def _busy(self, text):
+        def go():
+            self._status_var.set(text)
+            self._progress.configure(mode="indeterminate")
+            self._progress.start(12)
+        self._post(go)
+
+    def _progress_to(self, done, total, text):
+        def go():
+            self._progress.stop()
+            self._progress.configure(mode="determinate", maximum=max(total, 1), value=done)
+            self._status_var.set(text)
+        self._post(go)
+
+    def _idle(self, text):
+        def go():
+            self._progress.stop()
+            self._progress.configure(mode="determinate", value=0)
+            self._status_var.set(text)
+        self._post(go)
+
+    def _m365_prompt(self, info):
+        # Chamado da thread worker; agenda na main thread (clipboard/UI exigem main).
+        def show():
+            try:
+                self.clipboard_clear()
+                self.clipboard_append(info["user_code"])
+            except Exception:
+                pass
+            try:
+                import webbrowser
+                url = info["verification_uri"]
+                try:
+                    webbrowser.get("chrome").open(url)      # tenta Chrome explicitamente
+                except Exception:
+                    webbrowser.open(url)                     # fallback: navegador padrão
+            except Exception:
+                pass
+            messagebox.showinfo(
+                "Login M365",
+                f"Código (já copiado, cole com Ctrl+V): {info['user_code']}\n\n"
+                f"Abri o navegador em:\n{info['verification_uri']}\n\n"
+                "Autentique com a conta PUCRS. O import continua após o login.")
+        self._post(show)
+
+    def _import(self):
+        import threading
+        from src.builder.sources.moodle import import_moodle_courses
+        from src.models.core import SubjectStore
+        selected = [c for v, c in self._vars if v.get()]
+        if not selected:
+            messagebox.showinfo("Moodle", "Marque ao menos um curso.")
+            return
+
+        do_download = self._download_var.get()
+        m365_on = self._m365_var.get()
+        m365_filter = self._m365_filter_var.get().strip()
+
+        def worker():
+            store = SubjectStore()
+            # --- Login M365 PRIMEIRO (antes do import Moodle), p/ autenticar logo ---
+            m365_client = None
+            m365_login_err = ""
+            if m365_on and m365_filter:
+                try:
+                    from src.builder.sources import m365
+                    self._busy("Aguardando login M365...")
+                    m365_client = m365.get_client(prompt_callback=self._m365_prompt)
+                except Exception as exc:
+                    import logging
+                    logging.getLogger("m365").exception("Falha no login M365")
+                    m365_login_err = str(exc)
+
+            # --- Import Moodle ---
+            self._busy("Importando do Moodle...")
+            try:
+                rep = import_moodle_courses(
+                    selected, self._base, store, self._client, download=do_download)
+            except Exception as exc:
+                msg = str(exc)
+                self._idle("Falha no import.")
+                self._post(lambda m=msg: messagebox.showerror("Moodle", f"Falha no import: {m}"))
+                return
+            base_msg = (
+                f"Matérias — criadas: {rep['created']}  atualizadas: {rep['updated']}  ligadas: {rep['linked']}\n"
+                f"Cards criados: {rep['folders']}  ({rep['expected_files']} arquivos esperados)\n"
+                f"source_section preenchidos (gabarito): {rep['backfilled']}\n\n")
+            if do_download:
+                failed = rep.get("failed") or []
+                tail = f"Arquivos baixados: {rep['downloaded']}"
+                if failed:
+                    tail += (f"\nNão baixados ({len(failed)}): {', '.join(failed[:8])}"
+                             f"{' …' if len(failed) > 8 else ''}\n"
+                             "Possível token expirado/arquivo externo (M365). "
+                             "Reimporte ou baixe esses no navegador.")
+            else:
+                tail = ("Bytes não baixados (opção desmarcada) — baixe os PDFs no navegador "
+                        "e coloque nas pastas dos cards (veja _ARQUIVOS_DO_CARD.txt em cada uma).")
+
+            # --- Download M365 ---
+            m365_tail = ""
+            if m365_on and not m365_filter:
+                m365_tail = "\n\nM365: filtro vazio — pulado."
+            elif m365_on and m365_login_err:
+                m365_tail = f"\n\nM365 indisponível (login): {m365_login_err[:160]}\n(traceback no terminal)"
+            elif m365_client:
+                try:
+                    from src.builder.sources import m365
+                    from src.builder.sources.moodle import parse_moodle_course
+                    self._busy("Listando arquivos do OneDrive...")
+                    sections = []
+                    for course in selected:
+                        cid = str(course.get("id") or "")
+                        for sec in (self._client.get_course_contents(cid) or []):
+                            if sec.get("name"):
+                                sections.append(sec["name"])
+                    info0 = parse_moodle_course(selected[0])
+                    mdest = Path(self._base) / info0["slug"]
+
+                    def _pcb(done, total, name, card):
+                        self._progress_to(done, total, f"M365 {done}/{total}: {name} → {card}")
+
+                    mrep = m365.download_subject_m365(
+                        m365_client, m365_filter, sections, mdest, progress_cb=_pcb)
+                    sp0 = store.get(info0["name"]) if hasattr(store, "get") else None
+                    if sp0 and getattr(sp0, "m365_filter", "") != m365_filter:
+                        sp0.m365_filter = m365_filter
+                        store.add(sp0)
+                    repo_root = getattr(sp0, "repo_root", "") if sp0 else ""
+                    backf = m365.apply_source_section(repo_root, mrep["name_to_section"]) if repo_root else 0
+                    mapped = "; ".join(f"{s}->{c}{'' if m else ' (novo)'}"
+                                       for s, c, m in mrep["mapping"])
+                    multi = ("  (M365 aplicado só à 1ª matéria — o filtro é por matéria; "
+                             "reimporte cada uma separadamente)" if len(selected) > 1 else "")
+                    m365_tail = (f"\n\nM365 [{info0['name']}] — baixados: {mrep['downloaded']}  "
+                                 f"falhas: {len(mrep['failed'])}  source_section: {backf}{multi}\n"
+                                 f"Cards: {mapped}")
+                except Exception as exc:
+                    import logging
+                    logging.getLogger("m365").exception("Falha no import M365")
+                    m365_tail = f"\n\nM365 indisponível: {str(exc)[:160]}\n(detalhes/traceback no terminal)"
+
+            self._idle("Concluído.")
+            self._post(lambda: messagebox.showinfo("Moodle", base_msg + tail + m365_tail))
+            self._post(self.destroy)
+
+        threading.Thread(target=worker, daemon=True).start()
 
 
 # ---------------------------------------------------------------------------
@@ -1761,7 +2251,21 @@ class BacklogEntryEditDialog(tk.Toplevel):
             justify="left",
         ).grid(row=7, column=1, sticky="w", pady=(4, 0))
 
-        row_unit = row_tags + 1
+        row_origem = row_tags + 1
+        _src_section = str(self._data.get("source_section") or "").strip() or "—"
+        lbl_origem = tk.Label(tab_edit, text="Seção de origem", bg=p["bg"], fg=p["fg"],
+                              font=("Segoe UI", 10))
+        lbl_origem.grid(row=row_origem, column=0, sticky="w", padx=(0, 12), pady=6)
+        tk.Label(tab_edit, text=_src_section, bg=p["bg"], fg=p["muted"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(
+            row=row_origem, column=1, sticky="w", pady=6)
+        add_tooltip(
+            lbl_origem,
+            "Seção/pasta de onde o arquivo veio (card do Moodle ou pasta do OneDrive/M365).\n"
+            "Preenchido na importação; '—' quando a origem não foi registrada.",
+        )
+
+        row_unit = row_origem + 1
         tk.Label(tab_edit, text="Unidade manual", bg=p["bg"], fg=p["fg"],
                  font=("Segoe UI", 10)).grid(row=row_unit, column=0, sticky="w", padx=(0, 12), pady=6)
         self._manual_unit_options = _load_file_map_unit_options(self._repo_dir)
@@ -2938,12 +3442,16 @@ class BacklogEntryEditDialog(tk.Toplevel):
 class FileEntryDialog(simpledialog.Dialog):
     def __init__(self, parent, path: str, initial: Optional[FileEntry] = None,
                  default_mode: str = "auto", default_ocr_language: str = DEFAULT_OCR_LANGUAGE,
-                 file_type_hint: str = ""):
+                 file_type_hint: str = "", default_backend: str = "auto",
+                 default_datalab_mode: str = "accurate", default_profile: str = "auto"):
         self._parent = parent
         self.path = path
         self.initial = initial
         self.default_mode = default_mode
         self.default_ocr_language = default_ocr_language
+        self.default_backend = default_backend
+        self.default_datalab_mode = default_datalab_mode
+        self.default_profile = default_profile
         self.file_type_hint = file_type_hint
         self.result_entry: Optional[FileEntry] = None
         super().__init__(parent, title="Editar item")
@@ -3026,10 +3534,11 @@ class FileEntryDialog(simpledialog.Dialog):
 
         self.var_mode = tk.StringVar(value=self.initial.processing_mode if self.initial else self.default_mode)
         self.var_profile = tk.StringVar(
-            value=normalize_document_profile(self.initial.document_profile if self.initial else "auto")
+            value=normalize_document_profile(self.initial.document_profile if self.initial else self.default_profile)
         )
-        self.var_backend = tk.StringVar(value=self.initial.preferred_backend if self.initial else "auto")
-        self.var_datalab_mode = tk.StringVar(value=getattr(self.initial, "datalab_mode", "accurate") if self.initial else "accurate")
+        self.var_backend = tk.StringVar(value=self.initial.preferred_backend if self.initial else self.default_backend)
+        self.var_datalab_mode = tk.StringVar(
+            value=getattr(self.initial, "datalab_mode", "accurate") if self.initial else self.default_datalab_mode)
         self.var_formula = tk.BooleanVar(value=self.initial.formula_priority if self.initial else False)
         self.var_keep_images = tk.BooleanVar(value=self.initial.preserve_pdf_images_in_markdown if self.initial else True)
         self.var_force_ocr = tk.BooleanVar(value=self.initial.force_ocr if self.initial else False)
@@ -3105,7 +3614,7 @@ class FileEntryDialog(simpledialog.Dialog):
         self._datalab_model_combo = ttk.Combobox(
             outer,
             textvariable=self.var_datalab_mode,
-            values=["fast", "balanced", "accurate"],
+            values=DATALAB_MODES,
             state="readonly",
             width=20,
         )
@@ -3229,32 +3738,19 @@ class FileEntryDialog(simpledialog.Dialog):
         self._update_datalab_mode_visibility()
 
     def _on_profile_changed(self, _event=None):
-        """Quando o perfil muda, ajusta backend e modo automaticamente.
-        Presets baseados no nível de complexidade do documento."""
+        """Quando o perfil muda, deriva backend/modo do perfil nomeado correspondente
+        (fonte única — mesmo mapeamento do build). Heurísticas de flag por tipo de
+        documento (fórmula/OCR) permanecem, pois não vivem no ProcessingProfile."""
         profile = normalize_document_profile(self.var_profile.get())
         self.var_profile.set(profile)
-        # Reset para defaults antes de aplicar preset
-        self.var_formula.set(False)
-        self.var_force_ocr.set(False)
-
-        if profile == "auto":
-            # Texto simples, sem fórmulas → rápido
-            self.var_mode.set("auto")
-            self.var_backend.set("auto")
-        elif profile == "diagram_heavy":
-            # Algumas fórmulas → docling sem enrich-formula
-            self.var_mode.set("high_fidelity")
-            self.var_backend.set("docling")
-        elif profile == "math_heavy":
-            # Muitas fórmulas → docling com enrich-formula
-            self.var_mode.set("high_fidelity")
-            self.var_backend.set("marker")
-            self.var_formula.set(True)
-        elif profile == "scanned":
-            # PDF digitalizado/foto → força OCR
-            self.var_mode.set("auto")
-            self.var_backend.set("auto")
-            self.var_force_ocr.set(True)
+        config_obj = getattr(self._parent, "config_obj", None)
+        preset = apply_document_profile_preset(config_obj, profile)
+        self.var_mode.set(preset["processing_mode"])
+        self.var_backend.set(preset["preferred_backend"])
+        if preset["datalab_mode"]:
+            self.var_datalab_mode.set(preset["datalab_mode"])
+        self.var_formula.set(preset["formula_priority"])
+        self.var_force_ocr.set(preset["force_ocr"])
         self._update_datalab_mode_visibility()
 
     def _update_pdf_frame_visibility(self):
@@ -3626,6 +4122,20 @@ def _resolve_backlog_subunit_status(
             "assigned": _display(auto_subunit),
             "source": "Automático",
             "note": "Subunidade atribuída automaticamente no último processamento.",
+        }
+
+    # Melhor candidato best-effort (não passou no gate de confiança/ambiguidade
+    # do roteamento, mas é útil mostrar como sugestão a revisar).
+    computed = str(entry_data.get("computed_subunit_slug") or "").strip()
+    if computed:
+        conf = float(entry_data.get("subunit_match_confidence", 0.0) or 0.0)
+        return {
+            "assigned": _display(computed),
+            "source": "Sugestão (baixa confiança)",
+            "note": (
+                f"Melhor candidato do matcher (confiança {conf:.0%}), abaixo do limiar "
+                "para atribuição automática. Revise e aplique manualmente se estiver correto."
+            ),
         }
 
     return {

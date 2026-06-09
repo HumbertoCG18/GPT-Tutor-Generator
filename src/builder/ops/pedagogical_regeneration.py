@@ -8,6 +8,8 @@ from src.builder.ops.state_ops import (
     derive_active_unit_slug_from_state,
     ensure_unit_battery_directories,
 )
+from src.builder.core.reference_navigation import build_unit_topic_reference_index
+from src.builder.core.reference_summary import load_reference_curation
 from src.models.core import FileEntry
 from src.utils.helpers import slugify, write_text
 
@@ -243,6 +245,19 @@ def regenerate_pedagogical_files(
     write_text(builder.root_dir / "README.md", root_readme_fn(builder.course_meta))
     write_text(builder.root_dir / ".gitignore", generated_repo_gitignore_text_fn())
 
+    # Approach C: refs mapeadas viram linhas de apoio no COURSE_MAP.
+    # Lê manifest.json fresco (mesma fonte que gerou a curation) para alinhar ids.
+    try:
+        _manifest_entries = json.loads(
+            (builder.root_dir / "manifest.json").read_text(encoding="utf-8")
+        ).get("entries", [])
+        runtime_course_meta["_reference_nav_index"] = build_unit_topic_reference_index(
+            _manifest_entries, load_reference_curation(builder.root_dir)
+        )
+    except Exception as exc:
+        logger.warning("Approach C: índice de referência não construído: %s", exc)
+        runtime_course_meta["_reference_nav_index"] = {"by_unit": {}, "by_topic": {}}
+
     course_map_text = course_map_md_fn(runtime_course_meta, builder.subject_profile)
     write_text(builder.root_dir / "course" / "COURSE_MAP.md", course_map_text)
 
@@ -295,7 +310,6 @@ def regenerate_pedagogical_files(
 
     bib_entries = [e for e in all_entries if e.category == "bibliografia"]
     if bib_entries or getattr(builder.subject_profile, "teaching_plan", ""):
-        from src.builder.core.reference_summary import load_reference_curation
         write_text(
             builder.root_dir / "content" / "BIBLIOGRAPHY.md",
             bibliography_md_fn(

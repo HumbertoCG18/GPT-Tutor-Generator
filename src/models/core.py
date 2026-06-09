@@ -84,6 +84,10 @@ class FileEntry:
     # Faixa ("alta"/"media"/"baixa") derivada de computed_block_confidence via
     # thresholds.confidence_band; "" quando nao ha bloco atribuido.
     computed_block_band: str = ""
+    # Card/seção de origem do arquivo (= subpasta imediata no stash). Sinal
+    # autoritativo para a atribuição file->bloco (gabarito-cards). "" quando o
+    # arquivo nao veio de um card (cai no caminho lexical, sem regressao).
+    source_section: str = ""
 
     def id(self) -> str:
         if self.file_type == "url":
@@ -176,7 +180,13 @@ class SubjectProfile:
     teaching_plan: str = ""      # Plano de ensino (Ementa, Objetivos, Metodologia)
     default_mode: str = "auto"
     default_ocr_lang: str = DEFAULT_OCR_LANGUAGE
+    default_backend: str = "auto"          # backend de extração padrão da matéria
+    default_datalab_mode: str = "accurate"  # modo da API Datalab (fast/balanced/accurate)
+    processing_profile: str = ""   # nome do preset ProcessingProfile (referência)
     repo_root: str = ""
+    stash_folder: str = ""        # pasta com os arquivos-fonte (PDFs/cards) da materia
+    moodle_course_id: str = ""   # liga a matéria ao curso Moodle (re-sync, upsert)
+    m365_filter: str = ""        # substring do path OneDrive p/ filtrar insights (M365)
     github_url: str = ""           # URL base do repo no GitHub
     preferred_llm: str = "claude"  # Plataforma principal: "claude", "gpt", "gemini"
     queue: List[FileEntry] = field(default_factory=list)
@@ -200,11 +210,30 @@ class SubjectProfile:
 
 
 @dataclass
+class ProcessingProfile:
+    """Preset reutilizável de processamento (referenciado por nome pela matéria)."""
+    name: str = ""
+    processing_mode: str = "auto"
+    preferred_backend: str = "auto"
+    datalab_mode: str = "accurate"
+    document_profile: str = "auto"
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "ProcessingProfile":
+        valid = {f.name for f in fields(cls)}
+        return cls(**{k: v for k, v in (d or {}).items() if k in valid})
+
+
+@dataclass
 class StudentProfile:
     """Perfil do aluno — exportado nos repositórios gerados."""
     full_name: str = ""
     nickname: str = ""           # Como o GPT chama o aluno
     personality: str = ""        # Como o GPT deve ajudar (texto livre)
+    moodle_base_folder: str = ""  # pasta-base dos stashes baixados do Moodle
 
     def to_dict(self) -> Dict[str, str]:
         return asdict(self)

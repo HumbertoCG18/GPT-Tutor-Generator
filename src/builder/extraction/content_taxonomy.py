@@ -13,11 +13,7 @@ from src.builder.core.semantic_config import (
     resolve_semantic_profile,
     write_internal_semantic_profile,
 )
-from src.utils.helpers import slugify, write_text
-
-
-def _collapse_ws(text: str) -> str:
-    return re.sub(r"\s+", " ", (text or "")).strip()
+from src.utils.helpers import slugify, write_text, collapse_ws as _collapse_ws
 
 
 def _normalize_match_text(text: str) -> str:
@@ -576,18 +572,6 @@ def collect_strong_heading_candidates(root_dir: Optional[Path], manifest_entries
     return headings
 
 
-def _entry_tag_signal_text(entry: dict, markdown_text: str) -> str:
-    parts = [
-        entry.get("title", ""),
-        entry.get("category", ""),
-        entry.get("notes", ""),
-        entry.get("professor_signal", ""),
-        entry.get("raw_target", ""),
-        markdown_text,
-    ]
-    return _normalize_match_text(" ".join(part for part in parts if part))
-
-
 def _signal_token_set(signal_text: str) -> set:
     return {token for token in _normalize_match_text(signal_text).split() if len(token) >= 4}
 
@@ -854,6 +838,34 @@ def _best_instructional_block_fallback(
     return best_block, confidence
 
 
+CARD_SINGLE_CONF = 0.85
+
+
+def _card_scoped_block(entry, markdown_text, unit_index, instructional_blocks,
+                       card_map, score_fallback_fn):
+    """Degrau card->bloco. Retorna (block_id, confidence) ou ("", 0.0).
+
+    score_fallback_fn(entry, markdown_text, scoped_blocks, unit_slug, topic_slug)
+    -> (block, conf): o scorer real restrito aos blocos do card (sub-bloco).
+    """
+    from src.builder.timeline.card_block import lookup_card_blocks
+    card = str(entry.get("source_section") or "").strip()
+    if not card:
+        return "", 0.0
+    ids = set(lookup_card_blocks(card, card_map, unit_index, instructional_blocks))
+    if not ids:
+        return "", 0.0
+    scoped = [b for b in instructional_blocks if str(b.get("id") or "") in ids]
+    if not scoped:
+        return "", 0.0
+    if len(scoped) == 1:
+        return str(scoped[0].get("id") or ""), CARD_SINGLE_CONF
+    block, conf = score_fallback_fn(entry, markdown_text, scoped, "", "")
+    if block is None:
+        return "", 0.0
+    return str(block.get("id") or ""), float(conf)
+
+
 def resolve_unit_block_tags(
     manifest_entries,
     course_meta,
@@ -908,6 +920,14 @@ def resolve_unit_block_tags(
         except Exception:
             _tag_profile = None
 
+    _card_block_map = {}
+    if repo_root:
+        try:
+            from src.builder.timeline.card_block import load_card_block_map
+            _card_block_map = load_card_block_map(Path(repo_root) / "course")
+        except Exception:
+            _card_block_map = {}
+
     updated = []
     for entry in manifest_entries or []:
         category = _collapse_ws(str(entry.get("category") or "")).lower()
@@ -923,11 +943,16 @@ def resolve_unit_block_tags(
             preferred_topic_slug = manual_subunit
             subunit_reasons = ["manual"]
             subunit_confidence = 1.0
+            best_subunit_slug = manual_subunit
         else:
             topic_match = auto_map_entry_subtopic_fn(entry, content_taxonomy, markdown_text)
             preferred_topic_slug = ""
             subunit_reasons = list(getattr(topic_match, "reasons", []))
             subunit_confidence = float(getattr(topic_match, "confidence", 0.0))
+            # Melhor candidato de subunidade (best-effort), independente do gate:
+            # surfaçado no editor com a confiança, mesmo ambíguo/baixo. A tag
+            # `subunit:` (roteamento) continua gated abaixo via preferred_topic_slug.
+            best_subunit_slug = str(getattr(topic_match, "topic_slug", "") or "")
             if (
                 topic_match.topic_slug
                 and not topic_match.ambiguous
@@ -974,7 +999,14 @@ def resolve_unit_block_tags(
                 or []
                 if not bool(block.get("administrative_only"))
             ]
-            if instructional_blocks:
+            _card_bid, _card_conf = _card_scoped_block(
+                entry, markdown_text, unit_index, instructional_blocks, _card_block_map,
+                lambda e, md, scoped, us, ts: _best_instructional_block_fallback(e, md, scoped, us, ts),
+            )
+            if _card_bid:
+                period_block_id = _card_bid
+                block_confidence = _card_conf
+            elif instructional_blocks:
                 # Passa a unidade resolvida (mesmo fraca) so para o boost; o
                 # scorer ranqueia TODOS os blocos instrucionais.
                 unit_obj = next(
@@ -1028,6 +1060,18 @@ def resolve_unit_block_tags(
         computed_unit_slug = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= 0.65) else ""
         computed_block_id = period_block_id
         computed_block_confidence = float(block_confidence)
+
+        # Herança de unidade pelo bloco: um arquivo atribuído a um bloco pertence
+        # à unidade daquele bloco. Quando o matcher de unidade não decidiu (vazio)
+        # mas há bloco com unidade (caso comum de code/zip, cujo nome é sinal
+        # fraco), herda a unidade do bloco em vez de ficar órfão.
+        if not computed_unit_slug and computed_block_id and not manual_unit:
+            _blocks = (timeline_context.get("timeline_index") or {}).get("blocks", []) or []
+            _blk = next((b for b in _blocks if str(b.get("id") or "") == computed_block_id), None)
+            _blk_unit = str((_blk or {}).get("unit_slug") or "").strip()
+            if _blk_unit:
+                computed_unit_slug = _blk_unit
+                unit_reasons = list(unit_reasons) + [f"herdada_do_bloco={computed_block_id}"]
         # Faixa (Fase 3): so faz sentido quando ha bloco atribuido. Cutoffs
         # centralizados em thresholds.confidence_band (nada hardcoded aqui).
         # media/baixa ficam flagados pra revisao via o proprio valor da faixa.
@@ -1054,6 +1098,7 @@ def resolve_unit_block_tags(
         new_entry["computed_block_band"] = computed_block_band
         new_entry["unit_match_reasons"] = unit_reasons
         new_entry["unit_match_confidence"] = unit_confidence
+        new_entry["computed_subunit_slug"] = best_subunit_slug
         new_entry["subunit_match_reasons"] = subunit_reasons
         new_entry["subunit_match_confidence"] = subunit_confidence
         updated.append(new_entry)

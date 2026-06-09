@@ -22,7 +22,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.models.core import SubjectStore  # noqa: E402
 from src.builder import engine  # noqa: E402
-from src.builder.timeline.index import _serialize_timeline_index  # noqa: E402
 from scripts.validate_timeline import (  # noqa: E402
     gate_failures,
     health_report,
@@ -69,7 +68,10 @@ def rebuild_course(name: str, subject_profile) -> bool:
         return False
 
     timeline_index = ctx.get("timeline_index") or {"version": 4, "blocks": []}
-    serialized = _serialize_timeline_index(timeline_index)
+    # Mesmo serializador do build da GUI (mantém blocos administrativos +
+    # transforms já aplicados em build_file_map). NÃO usar _serialize_timeline_index:
+    # ele filtra blocos admin e gera um índice divergente do que a GUI grava.
+    serialized = engine._persist_enriched_timeline_index(timeline_index)
 
     after = health_report(serialized.get("blocks", []))
     errs = schema_errors(serialized)

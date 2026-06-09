@@ -11,6 +11,8 @@ from typing import Optional
 
 import requests
 
+from src.utils.helpers import collapse_ws as _collapse_ws
+
 _GITHUB_RE = re.compile(r"(?:https?://)?(?:www\.)?github\.com/([^/\s]+)/([^/\s#?]+)", re.I)
 
 
@@ -47,10 +49,6 @@ def fetch_github_readme(owner: str, repo: str, *, timeout: float = 10.0) -> str:
     if resp.status_code != 200:
         return ""
     return resp.text or ""
-
-
-def _collapse_ws(s: str) -> str:
-    return " ".join((s or "").split())
 
 
 def _fetch_doc_text(url: str, *, timeout: float = 10.0) -> str:
