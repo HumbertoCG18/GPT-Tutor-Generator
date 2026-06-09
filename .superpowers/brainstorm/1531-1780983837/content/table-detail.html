@@ -1,0 +1,69 @@
+<h2>Tabela editável — layout detalhado</h2>
+<p class="subtitle">Topo: filtros. Grid de blocos com edição inline (Tipo/Unidade = dropdown). Clicar numa linha expande os arquivos. Embaixo: arquivos não mapeados. Reação no terminal.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Aba Cronograma — Métodos Formais</div>
+  <div class="mockup-body" style="background:#1e1e2e;color:#cdd6f4;padding:12px;font-size:12px">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="display:flex;gap:6px;align-items:center">
+        <span style="color:#6c7086">Filtrar:</span>
+        <span style="background:#313244;padding:2px 8px;border-radius:10px">📘 Aula</span>
+        <span style="background:#313244;padding:2px 8px;border-radius:10px">📝 Prova</span>
+        <span style="background:#313244;padding:2px 8px;border-radius:10px">🔁 Revisão</span>
+        <span style="background:#313244;padding:2px 8px;border-radius:10px">⛔ Suspensão</span>
+      </div>
+      <div style="display:flex;gap:6px">
+        <span style="background:#313244;padding:3px 10px;border-radius:5px">↺ Recarregar</span>
+        <span style="background:#89b4fa;color:#11111b;padding:3px 10px;border-radius:5px">🔄 Reprocessar</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:30px 44px 70px 1fr 96px 92px 150px 54px;gap:0;border:1px solid #313244;border-radius:6px;overflow:hidden">
+      <!-- header -->
+      <div style="background:#11111b;padding:6px 4px;color:#6c7086">✓</div>
+      <div style="background:#11111b;padding:6px 4px;color:#6c7086">#</div>
+      <div style="background:#11111b;padding:6px 4px;color:#6c7086">Data</div>
+      <div style="background:#11111b;padding:6px 4px;color:#6c7086">Bloco / tópico</div>
+      <div style="background:#11111b;padding:6px 4px;color:#6c7086">Tipo ⌄</div>
+      <div style="background:#11111b;padding:6px 4px;color:#6c7086">Unidade ⌄</div>
+      <div style="background:#11111b;padding:6px 4px;color:#6c7086">Escopo</div>
+      <div style="background:#11111b;padding:6px 4px;color:#6c7086">Arq.</div>
+
+      <!-- row aula -->
+      <div style="padding:6px 4px">☑</div><div style="padding:6px 4px;color:#6c7086">5</div>
+      <div style="padding:6px 4px">02/04</div><div style="padding:6px 4px">Provas por indução</div>
+      <div style="padding:6px 4px"><span style="background:#313244;padding:1px 6px;border-radius:4px">📘 aula ⌄</span></div>
+      <div style="padding:6px 4px"><span style="background:#313244;padding:1px 6px;border-radius:4px">01 ⌄</span></div>
+      <div style="padding:6px 4px;color:#6c7086">—</div><div style="padding:6px 4px">3 ▸</div>
+
+      <!-- row revisao -->
+      <div style="padding:6px 4px;background:#24273a">☑</div><div style="padding:6px 4px;background:#24273a;color:#6c7086">7</div>
+      <div style="padding:6px 4px;background:#24273a">15/04</div><div style="padding:6px 4px;background:#24273a">Exercícios de revisão</div>
+      <div style="padding:6px 4px;background:#24273a"><span style="background:#1e3a2a;color:#a6e3a1;padding:1px 6px;border-radius:4px">🔁 revisão ⌄</span></div>
+      <div style="padding:6px 4px;background:#24273a;color:#6c7086">— ⌄</div>
+      <div style="padding:6px 4px;background:#24273a;color:#89b4fa">↳ herda P1</div><div style="padding:6px 4px;background:#24273a">1 ▸</div>
+
+      <!-- row P1 expandida -->
+      <div style="padding:6px 4px">☑</div><div style="padding:6px 4px;color:#6c7086">8</div>
+      <div style="padding:6px 4px;color:#f9e2af">22/04</div><div style="padding:6px 4px">P1</div>
+      <div style="padding:6px 4px"><span style="background:#3a3326;color:#f9e2af;padding:1px 6px;border-radius:4px">📝 prova ⌄</span></div>
+      <div style="padding:6px 4px;color:#6c7086">— ⌄</div>
+      <div style="padding:6px 4px">unid-01</div><div style="padding:6px 4px">2 ▾</div>
+
+      <!-- expansao: arquivos do P1 -->
+      <div style="grid-column:1 / -1;background:#181825;padding:8px 12px;border-top:1px dashed #313244">
+        <div style="color:#6c7086;margin-bottom:4px">Arquivos do bloco P1:</div>
+        <div style="display:flex;justify-content:space-between;padding:2px 0">↳ P1-2025-gabarito.pdf <span style="color:#89b4fa">mover p/ bloco ⌄</span></div>
+        <div style="display:flex;justify-content:space-between;padding:2px 0">↳ P1-enunciado.pdf <span style="color:#89b4fa">mover p/ bloco ⌄</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;color:#f9e2af">⚠ Arquivos não mapeados (3)</div>
+    <div style="border:1px solid #3a3326;border-radius:6px;margin-top:4px;padding:6px;font-size:12px">
+      <div style="display:flex;justify-content:space-between;padding:2px 0">bibliografia-cap3.pdf <span style="color:#89b4fa">atribuir a bloco ⌄</span></div>
+      <div style="display:flex;justify-content:space-between;padding:2px 0">notas-extra.pdf <span style="color:#89b4fa">atribuir a bloco ⌄</span></div>
+    </div>
+
+  </div>
+</div>

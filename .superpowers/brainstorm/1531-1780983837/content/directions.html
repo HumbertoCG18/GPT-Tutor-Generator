@@ -1,0 +1,74 @@
+<h2>Aba Cronograma — qual direção visual?</h2>
+<p class="subtitle">Hoje: accordion vertical de blocos, combos kind/unidade, filtro por tipo, seção "não mapeados". Clique na direção que mais ressoa (depois detalhamos dores e capacidades).</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="accordion" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:14px;background:#181825">
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <span style="font-size:11px;background:#313244;padding:2px 8px;border-radius:10px">📘 Aula</span>
+        <span style="font-size:11px;background:#313244;padding:2px 8px;border-radius:10px">📝 Prova</span>
+      </div>
+      <div style="border:1px solid #45475a;border-radius:6px;padding:8px;margin-bottom:6px">
+        <div style="font-size:12px">▸ unidade-01 — Métodos Formais</div>
+      </div>
+      <div style="border:1px solid #45475a;border-radius:6px;padding:8px;margin-bottom:6px;background:#24273a">
+        <div style="font-size:12px">▾ bloco-09 · P1 · 22/04 &nbsp; <span style="color:#89b4fa">📝 prova</span></div>
+        <div style="font-size:11px;color:#6c7086;margin-top:4px">Conteúdo: unidade-01 &nbsp;|&nbsp; 0 arquivos</div>
+      </div>
+      <div style="border:1px solid #45475a;border-radius:6px;padding:8px">
+        <div style="font-size:12px">▸ bloco-10 · Lógica de Hoare · 27/04</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A · Accordion polido</h3>
+      <p>Mantém a lista vertical atual, mas agrupada por unidade, com badges de tipo/escopo e datas claras. Menor mudança, expande pra ver arquivos.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="timeline" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:14px;background:#181825">
+      <div style="font-size:11px;color:#6c7086;margin-bottom:6px">março ───────── abril ───────── maio ──────── julho</div>
+      <div style="position:relative;height:88px;border-left:2px solid #45475a;padding-left:8px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <div style="height:14px;width:90px;background:#45475a;border-radius:3px"></div>
+          <span style="font-size:10px;color:#6c7086">unid-01</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <div style="height:14px;width:30px;background:#f9e2af;border-radius:3px"></div>
+          <span style="font-size:10px;color:#f9e2af">📝 P1 22/04</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <div style="height:14px;width:110px;background:#45475a;border-radius:3px"></div>
+          <span style="font-size:10px;color:#6c7086">unid-02</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="height:14px;width:30px;background:#f38ba8;border-radius:3px"></div>
+          <span style="font-size:10px;color:#f38ba8">📝 P2 06/07</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B · Linha do tempo</h3>
+      <p>Blocos numa régua temporal por data. Provas e suspensões marcadas, unidades como faixas. Vê o semestre inteiro de relance; clica num bloco pra editar.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="table" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:10px;background:#181825">
+      <div style="display:grid;grid-template-columns:34px 1fr 46px 56px;gap:4px;font-size:10px">
+        <div style="color:#6c7086">Data</div><div style="color:#6c7086">Bloco</div><div style="color:#6c7086">Tipo</div><div style="color:#6c7086">Unid.</div>
+        <div>02/04</div><div>Indução</div><div>📘</div><div>01</div>
+        <div>15/04</div><div>Revisão</div><div style="color:#a6e3a1">🔁</div><div>01</div>
+        <div style="color:#f9e2af">22/04</div><div>P1</div><div>📝</div><div style="color:#6c7086">—</div>
+        <div>27/04</div><div>Hoare</div><div>📘</div><div>02</div>
+        <div>06/07</div><div>P2</div><div>📝</div><div style="color:#6c7086">—</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C · Tabela editável</h3>
+      <p>Linhas = blocos, colunas = data/bloco/tipo/unidade/escopo. Edição inline, ordena/filtra por coluna. Denso, ótimo pra revisar e corrigir rápido em massa.</p>
+    </div>
+  </div>
+
+</div>
