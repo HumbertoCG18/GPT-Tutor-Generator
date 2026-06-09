@@ -95,6 +95,14 @@ CLASSIFIER_CASES = [
                    {"label": "prova p2 prova"}]}, BlockKind.ASSESSMENT),
     ({"topic_text": "",
       "sessions": [{"label": "revisao geral"}]}, BlockKind.REVIEW),
+    # Caso real Metodos-Formais bloco-07: 15/04 "exercicios de revisao",
+    # topic_text vazio MAS unidade foi propagada por inferencia de vizinhos.
+    # A sessao de revisao deve vencer a unidade propagada -> REVIEW (nao CLASS).
+    ({"topic_text": "", "unit_slug": "unidade-02",
+      "sessions": [{"label": "exercicios de revisao aula"}]}, BlockKind.REVIEW),
+    # Prova com unidade propagada e topic vazio: sessao P1 vence -> ASSESSMENT.
+    ({"topic_text": "", "unit_slug": "unidade-01",
+      "sessions": [{"label": "prova p1 prova"}]}, BlockKind.ASSESSMENT),
 ]
 
 

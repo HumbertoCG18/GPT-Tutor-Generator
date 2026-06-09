@@ -196,11 +196,15 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
     # 2. Sem conteudo real: com unit ainda e aula; sem unit, sessao pode revelar
     #    prova/revisao (topico reduzido a stopword); senao slot reservado/vazio.
     if not hay_content:
-        if has_unit:
-            return BlockKind.CLASS
+        # Sessao com sinal forte de prova (P1-P4/PF/"prova N") ou "revisao"
+        # vence a unidade propagada: bloco sem conteudo curado cuja sessao diz
+        # "exercicios de revisao"/"prova p1" e revisao/prova mesmo que a
+        # inferencia de unidade de vizinhos tenha preenchido um slug.
         sess_kind = _session_exam_or_review(session_hay)
         if sess_kind is not None:
             return sess_kind
+        if has_unit:
+            return BlockKind.CLASS
         return BlockKind.RESERVED if hay_all else BlockKind.UNKNOWN
 
     # 3. Keywords (sobre conteudo + period_label).

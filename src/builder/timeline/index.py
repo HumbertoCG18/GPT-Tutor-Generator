@@ -939,23 +939,7 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
             payload["auto_unit_slug"] = auto_unit_slug
         blocks.append(payload)
     # Escopo de prova por data (fallback) + revisão herda a próxima prova.
-    exam_scope = assessment_scope_by_date(blocks)
-    review_scope = link_review_scope(blocks, exam_scope)
-    for b in blocks:
-        bid = b.get("id")
-        scope = None
-        if b.get("kind") == BlockKind.ASSESSMENT.value:
-            scope = exam_scope.get(bid, [])
-        elif b.get("kind") == BlockKind.REVIEW.value:
-            scope = review_scope.get(bid, [])
-        if scope is not None:
-            b["scope_unit_slugs"] = list(scope)
-            # Label de conteúdo: define quando vazio OU quando é o nosso próprio
-            # marcador (mantém idempotente e atualiza se as datas mudarem). Label
-            # manual nunca é tocado.
-            existing = str(b.get("primary_topic_label") or "")
-            if scope and (not existing or existing.startswith("Conteúdo: ")):
-                b["primary_topic_label"] = "Conteúdo: " + ", ".join(scope)
+    apply_assessment_review_scope(blocks)
     return {"version": TIMELINE_INDEX_VERSION, "blocks": blocks}
 
 
@@ -1320,6 +1304,74 @@ def link_review_scope(blocks: List[Dict[str, object]], exam_scope: Dict[str, Lis
     return out
 
 
+def _demote_non_preexam_reviews(blocks: List[Dict[str, object]]) -> None:
+    """REVIEW que NÃO precede uma prova vira CLASS. In-place.
+
+    Spec: "exercício de revisão é sempre a linha imediatamente anterior a uma
+    prova". Um bloco "Revisão de [conteúdo]" no meio do semestre (ex.: "Revisão
+    de lógica de predicados" longe de qualquer prova) é aula de conteúdo, não
+    revisão pré-prova — vira CLASS e herda a unidade do vizinho. O elo usa a
+    ordem dos blocos, pulando blocos de calendário (suspensão/feriado/evento/
+    devolução) entre a revisão e a prova. Override manual de kind é respeitado.
+    """
+    decisive = {BlockKind.CLASS.value, BlockKind.ASSESSMENT.value}
+    for i, b in enumerate(blocks):
+        if str(b.get("kind") or "") != BlockKind.REVIEW.value:
+            continue
+        if b.get("manual_kind_override"):
+            continue
+        preexam = False
+        for nb in blocks[i + 1:]:
+            k = str(nb.get("kind") or "")
+            if k in decisive:
+                preexam = k == BlockKind.ASSESSMENT.value
+                break
+        if preexam:
+            continue
+        b["kind"] = BlockKind.CLASS.value
+        if not b.get("unit_slug") and not b.get("block_manual_unit_slug"):
+            prev_slug = ""
+            for pb in reversed(blocks[:i]):
+                if pb.get("unit_slug"):
+                    prev_slug = str(pb.get("unit_slug"))
+                    break
+            next_slug = ""
+            for nb in blocks[i + 1:]:
+                if nb.get("unit_slug"):
+                    next_slug = str(nb.get("unit_slug"))
+                    break
+            inherited = prev_slug or next_slug
+            if inherited:
+                b["unit_slug"] = inherited
+                b["unit_confidence"] = max(float(b.get("unit_confidence", 0.0) or 0.0), 0.51)
+                b["auto_unit_slug"] = inherited
+
+
+def apply_assessment_review_scope(blocks: List[Dict[str, object]]) -> None:
+    """Aplica escopo de prova por data + revisão herda a próxima prova. In-place.
+
+    Prova (ASSESSMENT): unidades por janela de data; PS/G2/PF = semestre inteiro.
+    Revisão (REVIEW): herda o escopo da próxima prova. Grava `scope_unit_slugs` e,
+    quando o label de tópico está vazio OU é o nosso próprio marcador, define um
+    `primary_topic_label = "Conteúdo: …"` legível. Idempotente; label manual nunca
+    é tocado. Provas/revisões sem data ficam sem escopo.
+    """
+    exam_scope = assessment_scope_by_date(blocks)
+    review_scope = link_review_scope(blocks, exam_scope)
+    for b in blocks:
+        bid = b.get("id")
+        scope = None
+        if b.get("kind") == BlockKind.ASSESSMENT.value:
+            scope = exam_scope.get(bid, [])
+        elif b.get("kind") == BlockKind.REVIEW.value:
+            scope = review_scope.get(bid, [])
+        if scope is not None:
+            b["scope_unit_slugs"] = list(scope)
+            existing = str(b.get("primary_topic_label") or "")
+            if scope and (not existing or existing.startswith("Conteúdo: ")):
+                b["primary_topic_label"] = "Conteúdo: " + ", ".join(scope)
+
+
 def _assessment_conflict_observation(
     assessment_label: str,
     assessment_date: str,
@@ -1388,6 +1440,14 @@ def _build_file_map_timeline_context_from_course(
     _repo_root = course_meta.get("_repo_root")
     if _repo_root:
         _apply_curation_overrides(timeline_index, Path(_repo_root) / "course")
+
+    # Revisão que não precede prova vira aula de conteúdo (herda unidade).
+    # Depois: escopo de prova por data + revisão herda a próxima prova. Aplicado
+    # aqui (após kinds/units finais via finalize_block + curation) porque o
+    # caminho real de gravação (persist_enriched_timeline_index) não passa por
+    # _serialize_timeline_index. Idempotente.
+    _demote_non_preexam_reviews(timeline_index.get("blocks", []) or [])
+    apply_assessment_review_scope(timeline_index.get("blocks", []) or [])
 
     blocks_by_unit: Dict[str, List[Dict[str, object]]] = {}
     rows_by_unit: Dict[str, List[Dict[str, object]]] = {}

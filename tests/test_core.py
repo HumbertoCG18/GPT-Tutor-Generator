@@ -5120,6 +5120,72 @@ def test_link_review_scope_no_next_exam_empty():
     assert out.get("rev", []) == []          # nenhuma prova depois -> vazio
 
 
+def test_apply_assessment_review_scope_in_place():
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "c1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1"},
+        {"id": "rev", "kind": "review", "period_start": "2026-04-15",
+         "primary_topic_label": "", "sessions": [{"label": "exercicios de revisao aula"}]},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-22",
+         "primary_topic_label": "", "sessions": [{"label": "prova p1 prova"}]},
+    ]
+    apply_assessment_review_scope(blocks)
+    p1 = next(b for b in blocks if b["id"] == "p1")
+    rev = next(b for b in blocks if b["id"] == "rev")
+    assert p1["scope_unit_slugs"] == ["unidade-1"]
+    assert p1["primary_topic_label"] == "Conteúdo: unidade-1"
+    assert rev["scope_unit_slugs"] == ["unidade-1"]      # revisao herda a P1
+    assert rev["primary_topic_label"] == "Conteúdo: unidade-1"
+
+
+def test_demote_non_preexam_review_to_class():
+    from src.builder.timeline.index import _demote_non_preexam_reviews
+    blocks = [
+        {"id": "c1", "kind": "class", "unit_slug": "unidade-1"},
+        {"id": "rev", "kind": "review", "unit_slug": ""},     # revisao de conteudo
+        {"id": "c2", "kind": "class", "unit_slug": "unidade-1"},
+    ]
+    _demote_non_preexam_reviews(blocks)
+    rev = next(b for b in blocks if b["id"] == "rev")
+    assert rev["kind"] == "class"                              # nao precede prova
+    assert rev["unit_slug"] == "unidade-1"                     # herda do vizinho
+
+
+def test_preexam_review_stays_review_skipping_suspension():
+    from src.builder.timeline.index import _demote_non_preexam_reviews
+    blocks = [
+        {"id": "rev", "kind": "review", "unit_slug": ""},
+        {"id": "susp", "kind": "suspended", "unit_slug": ""},  # entre revisao e prova
+        {"id": "p1", "kind": "assessment", "unit_slug": ""},
+    ]
+    _demote_non_preexam_reviews(blocks)
+    assert next(b for b in blocks if b["id"] == "rev")["kind"] == "review"
+
+
+def test_demote_respects_manual_review_override():
+    from src.builder.timeline.index import _demote_non_preexam_reviews
+    blocks = [
+        {"id": "rev", "kind": "review", "manual_kind_override": "review", "unit_slug": ""},
+        {"id": "c2", "kind": "class", "unit_slug": "u1"},
+    ]
+    _demote_non_preexam_reviews(blocks)
+    assert next(b for b in blocks if b["id"] == "rev")["kind"] == "review"
+
+
+def test_apply_assessment_review_scope_idempotent_and_manual_label():
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "c1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "u1"},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-22",
+         "primary_topic_label": "Minha prova", "sessions": [{"label": "prova p1 prova"}]},
+    ]
+    apply_assessment_review_scope(blocks)
+    apply_assessment_review_scope(blocks)                  # 2x -> idempotente
+    p1 = next(b for b in blocks if b["id"] == "p1")
+    assert p1["scope_unit_slugs"] == ["u1"]
+    assert p1["primary_topic_label"] == "Minha prova"     # label manual nunca tocado
+
+
 def test_serialize_attaches_scope_unit_slugs():
     from src.builder.timeline.index import _serialize_timeline_index
     ti = {"blocks": [
