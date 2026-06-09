@@ -5270,6 +5270,43 @@ def test_derive_profile_backends_empty_and_none():
     assert derive_profile_backends(None) == {}
 
 
+def test_resolve_profile_for_document_profile():
+    from src.utils.helpers import resolve_profile_for_document_profile
+    cfg = _ProfCfg([
+        {"name": "m", "document_profile": "math_heavy", "preferred_backend": "datalab"},
+    ])
+    assert resolve_profile_for_document_profile(cfg, "math_heavy").preferred_backend == "datalab"
+    assert resolve_profile_for_document_profile(cfg, "nope") is None
+    assert resolve_profile_for_document_profile(None, "math_heavy") is None
+
+
+def test_apply_document_profile_preset_math_heavy_uses_named_profile():
+    from src.utils.helpers import apply_document_profile_preset, BUILTIN_PROCESSING_PROFILES
+    cfg = _ProfCfg([dict(b) for b in BUILTIN_PROCESSING_PROFILES])
+    out = apply_document_profile_preset(cfg, "math_heavy")
+    assert out["preferred_backend"] == "datalab"      # não 'marker' (era a contradição)
+    assert out["processing_mode"] == "high_fidelity"
+    assert out["formula_priority"] is True
+    assert out["force_ocr"] is False
+
+
+def test_apply_document_profile_preset_scanned_forces_ocr():
+    from src.utils.helpers import apply_document_profile_preset, BUILTIN_PROCESSING_PROFILES
+    cfg = _ProfCfg([dict(b) for b in BUILTIN_PROCESSING_PROFILES])
+    out = apply_document_profile_preset(cfg, "scanned")
+    assert out["force_ocr"] is True
+    assert out["preferred_backend"] == "auto"
+
+
+def test_apply_document_profile_preset_unknown_falls_back_auto():
+    from src.utils.helpers import apply_document_profile_preset
+    out = apply_document_profile_preset(_ProfCfg([]), "math_heavy")
+    assert out["preferred_backend"] == "auto"
+    assert out["processing_mode"] == "auto"
+    assert out["datalab_mode"] is None
+    assert out["formula_priority"] is True            # heurística independe do perfil nomeado
+
+
 def test_appconfig_drops_removed_legacy_keys(tmp_path, monkeypatch):
     """Config legado com profile_backends/default_profile carrega sem erro e as
     chaves removidas não entram em config.data (filtradas por DEFAULTS)."""

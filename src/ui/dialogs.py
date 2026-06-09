@@ -10,10 +10,11 @@ from pathlib import Path
 from src.models.core import FileEntry, SubjectProfile, StudentProfile, SubjectStore, StudentStore
 from src.utils.helpers import (
     CATEGORY_LABELS, DEFAULT_CATEGORIES, DEFAULT_OCR_LANGUAGE, PROCESSING_MODES,
-    DOCUMENT_PROFILES, PREFERRED_BACKENDS, OCR_LANGS, CODE_EXTENSIONS,
+    DOCUMENT_PROFILES, PREFERRED_BACKENDS, DATALAB_MODES, OCR_LANGS, CODE_EXTENSIONS,
     slugify, parse_html_schedule, auto_detect_category, auto_detect_title,
     fetch_url_title, APP_NAME, HAS_PYMUPDF4LLM, normalize_document_profile,
-    is_sarc_url, fetch_schedule_html, decide_schedule_source
+    is_sarc_url, fetch_schedule_html, decide_schedule_source,
+    apply_document_profile_preset,
 )
 from src.builder.runtime.datalab_client import get_datalab_base_url, has_datalab_api_key
 from src.builder.extraction.entry_signals import (
@@ -511,7 +512,7 @@ class ProcessingProfileManagerDialog(tk.Toplevel):
             ("name", "Nome", None),
             ("processing_mode", "Modo", PROCESSING_MODES),
             ("preferred_backend", "Backend preferido", PREFERRED_BACKENDS),
-            ("datalab_mode", "Datalab mode", ["fast", "balanced", "accurate"]),
+            ("datalab_mode", "Datalab mode", DATALAB_MODES),
             ("document_profile", "Perfil de documento", DOCUMENT_PROFILES),
         ]
         for i, (key, label, vals) in enumerate(rows):
@@ -1321,7 +1322,7 @@ class SubjectManagerDialog(tk.Toplevel):
                 ttk.Combobox(form, textvariable=var, values=PREFERRED_BACKENDS,
                              state="readonly", width=22).grid(row=i, column=1, sticky="ew", padx=(8, 0))
             elif key == "default_datalab_mode":
-                ttk.Combobox(form, textvariable=var, values=["fast", "balanced", "accurate"],
+                ttk.Combobox(form, textvariable=var, values=DATALAB_MODES,
                              state="readonly", width=22).grid(row=i, column=1, sticky="ew", padx=(8, 0))
             elif key == "repo_root":
                 fr = ttk.Frame(form)
@@ -3581,7 +3582,7 @@ class FileEntryDialog(simpledialog.Dialog):
         self._datalab_model_combo = ttk.Combobox(
             outer,
             textvariable=self.var_datalab_mode,
-            values=["fast", "balanced", "accurate"],
+            values=DATALAB_MODES,
             state="readonly",
             width=20,
         )
@@ -3705,32 +3706,19 @@ class FileEntryDialog(simpledialog.Dialog):
         self._update_datalab_mode_visibility()
 
     def _on_profile_changed(self, _event=None):
-        """Quando o perfil muda, ajusta backend e modo automaticamente.
-        Presets baseados no nível de complexidade do documento."""
+        """Quando o perfil muda, deriva backend/modo do perfil nomeado correspondente
+        (fonte única — mesmo mapeamento do build). Heurísticas de flag por tipo de
+        documento (fórmula/OCR) permanecem, pois não vivem no ProcessingProfile."""
         profile = normalize_document_profile(self.var_profile.get())
         self.var_profile.set(profile)
-        # Reset para defaults antes de aplicar preset
-        self.var_formula.set(False)
-        self.var_force_ocr.set(False)
-
-        if profile == "auto":
-            # Texto simples, sem fórmulas → rápido
-            self.var_mode.set("auto")
-            self.var_backend.set("auto")
-        elif profile == "diagram_heavy":
-            # Algumas fórmulas → docling sem enrich-formula
-            self.var_mode.set("high_fidelity")
-            self.var_backend.set("docling")
-        elif profile == "math_heavy":
-            # Muitas fórmulas → docling com enrich-formula
-            self.var_mode.set("high_fidelity")
-            self.var_backend.set("marker")
-            self.var_formula.set(True)
-        elif profile == "scanned":
-            # PDF digitalizado/foto → força OCR
-            self.var_mode.set("auto")
-            self.var_backend.set("auto")
-            self.var_force_ocr.set(True)
+        config_obj = getattr(self._parent, "config_obj", None)
+        preset = apply_document_profile_preset(config_obj, profile)
+        self.var_mode.set(preset["processing_mode"])
+        self.var_backend.set(preset["preferred_backend"])
+        if preset["datalab_mode"]:
+            self.var_datalab_mode.set(preset["datalab_mode"])
+        self.var_formula.set(preset["formula_priority"])
+        self.var_force_ocr.set(preset["force_ocr"])
         self._update_datalab_mode_visibility()
 
     def _update_pdf_frame_visibility(self):

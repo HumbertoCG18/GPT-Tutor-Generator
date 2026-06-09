@@ -237,6 +237,7 @@ LEGACY_DOCUMENT_PROFILE_ALIASES = {
     "scanned": "scanned",
 }
 PREFERRED_BACKENDS = ["auto", "pymupdf4llm", "pymupdf", "datalab", "docling", "docling_python", "marker"]
+DATALAB_MODES = ["fast", "balanced", "accurate"]
 OCR_LANGS = ["por", "eng", "por,eng", "eng,por"]
 
 
@@ -725,3 +726,34 @@ def derive_profile_backends(config_obj) -> dict:
             continue
         mapping[dp] = backend
     return mapping
+
+
+def resolve_profile_for_document_profile(config_obj, document_profile):
+    """Primeiro ProcessingProfile cujo `document_profile` casa, ou None."""
+    dp = (document_profile or "").strip()
+    if not dp or config_obj is None:
+        return None
+    for prof in load_processing_profiles(config_obj):
+        if (prof.document_profile or "").strip() == dp:
+            return prof
+    return None
+
+
+def apply_document_profile_preset(config_obj, document_profile) -> dict:
+    """Deriva os ajustes ao escolher um `document_profile`, a partir do perfil
+    nomeado correspondente (fonte única) + heurísticas de flag por tipo de
+    documento. Retorna dict com `processing_mode`, `preferred_backend`,
+    `datalab_mode` (None = manter o atual), `formula_priority`, `force_ocr`.
+    """
+    profile = normalize_document_profile(document_profile)
+    named = resolve_profile_for_document_profile(config_obj, profile)
+    mode = ((named.processing_mode if named else "") or "auto")
+    backend = ((named.preferred_backend if named else "") or "auto")
+    datalab = (named.datalab_mode or "").strip() if named else ""
+    return {
+        "processing_mode": mode,
+        "preferred_backend": backend,
+        "datalab_mode": datalab or None,
+        "formula_priority": profile == "math_heavy",
+        "force_ocr": profile == "scanned",
+    }
