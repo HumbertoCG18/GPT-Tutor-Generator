@@ -1,7 +1,7 @@
 # Design: auto-roteamento derivado dos perfis nomeados
 
 last_updated: 2026-06-09
-status: aprovado
+status: implementado
 
 ## Problema
 
