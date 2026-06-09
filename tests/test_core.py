@@ -5072,3 +5072,13 @@ def test_sarc_regular_exam_orange_assessment():
     row = _sarc_row('<tr style="background-color:#ffa500"><td><span id="x_lblAtividade">Prova P1</span></td></tr>')
     kind, ignored = _aspnet_row_canonical_kind(row)
     assert kind == "assessment" and ignored is False
+
+
+def test_canonical_assessment_label_ps_g2():
+    from src.builder.timeline.index import _canonical_assessment_label
+    from src.builder.text.normalize import normalize_match_text
+    f = lambda s: _canonical_assessment_label(s, normalize_match_text=normalize_match_text)
+    assert f("Prova PS") == "PS"
+    assert f("Prova G2") == "G2"
+    assert f("P2") == "P2"
+    assert f("Prova final") == "PF"

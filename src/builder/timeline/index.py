@@ -1029,6 +1029,10 @@ def _canonical_assessment_label(raw_label: str, *, normalize_match_text: Callabl
         return f"P{int(match.group(1))}"
     if normalized in {"pf", "p final", "prova final", "exame final"}:
         return "PF"
+    if re.search(r"\bps\b", normalized):
+        return "PS"
+    if re.search(r"\bg2\b", normalized):
+        return "G2"
     if normalized.startswith("exame"):
         return "EXAME"
     if normalized.startswith("prova"):
