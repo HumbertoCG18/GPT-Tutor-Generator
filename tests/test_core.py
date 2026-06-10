@@ -5232,6 +5232,31 @@ def test_apply_assessment_review_scope_idempotent_and_manual_label():
     assert p1["primary_topic_label"] == "Minha prova"     # label manual nunca tocado
 
 
+def test_apply_scope_honors_manual_override():
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "c1", "kind": "class", "unit_slug": "u1", "period_start": "2026-03-10"},
+        {"id": "c2", "kind": "class", "unit_slug": "u2", "period_start": "2026-03-17"},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-03-20",
+         "block_manual_scope_slugs": ["u2"], "primary_topic_label": ""},
+    ]
+    apply_assessment_review_scope(blocks)
+    p1 = blocks[-1]
+    assert p1["scope_unit_slugs"] == ["u2"]  # manual, NOT derived ["u1","u2"]
+    assert p1["primary_topic_label"] == "Conteúdo: u2"
+
+
+def test_apply_scope_empty_manual_falls_back_to_derived():
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "c1", "kind": "class", "unit_slug": "u1", "period_start": "2026-03-10"},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-03-20",
+         "block_manual_scope_slugs": [], "primary_topic_label": ""},
+    ]
+    apply_assessment_review_scope(blocks)
+    assert blocks[-1]["scope_unit_slugs"] == ["u1"]  # derived by date
+
+
 def test_serialize_attaches_scope_unit_slugs():
     from src.builder.timeline.index import _serialize_timeline_index
     ti = {"blocks": [

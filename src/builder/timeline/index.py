@@ -1369,7 +1369,14 @@ def apply_assessment_review_scope(blocks: List[Dict[str, object]]) -> None:
     for b in blocks:
         bid = b.get("id")
         scope = None
-        if b.get("kind") == BlockKind.ASSESSMENT.value:
+        manual = b.get("block_manual_scope_slugs")
+        is_scopable = b.get("kind") in (
+            BlockKind.ASSESSMENT.value,
+            BlockKind.REVIEW.value,
+        )
+        if is_scopable and isinstance(manual, list) and manual:
+            scope = [str(s) for s in manual]
+        elif b.get("kind") == BlockKind.ASSESSMENT.value:
             scope = exam_scope.get(bid, [])
         elif b.get("kind") == BlockKind.REVIEW.value:
             scope = review_scope.get(bid, [])
