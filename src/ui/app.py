@@ -2635,6 +2635,17 @@ class App(tk.Tk):
                        generate_gemini_instructions(
                            meta, student_p, active_subj, **common))
 
+            from src.builder.artifacts.temporal_context import temporal_context_md
+            _tl_path = repo_dir / "course" / ".timeline_index.json"
+            _tl_blocks = []
+            if _tl_path.exists():
+                try:
+                    _tl_blocks = json.loads(_tl_path.read_text(encoding="utf-8")).get("blocks", []) or []
+                except Exception:
+                    _tl_blocks = []
+            write_text(repo_dir / "setup" / "CONTEXTO_TEMPORAL.md",
+                       temporal_context_md(meta, _tl_blocks))
+
             platform_map = {
                 "claude": "setup/INSTRUCOES_CLAUDE_PROJETO.md",
                 "gpt": "setup/INSTRUCOES_GPT_PROJETO.md",
