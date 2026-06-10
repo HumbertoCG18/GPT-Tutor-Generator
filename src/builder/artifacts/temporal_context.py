@@ -90,7 +90,10 @@ def build_unit_legend(rows: list) -> list:
             if s and s not in seen:
                 seen.add(s)
                 slugs.append(s)
-    slugs.sort(key=lambda s: (unit_number(s) if unit_number(s) is not None else 9999, s))
+    def _sort_key(s):
+        n = unit_number(s)
+        return (n if n is not None else 9999, s)
+    slugs.sort(key=_sort_key)
     return [
         {"label": unit_short_label(s), "slug": s, "nome": unit_name_from_slug(s)}
         for s in slugs
