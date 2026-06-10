@@ -66,10 +66,6 @@ def _format_date_ddmmyy(raw: str) -> str:
     return raw
 
 
-# separador vertical faux entre colunas (ttk.Treeview nao desenha grade nativa)
-_COL_SEP = "│ "
-
-
 def _extract_exam_code(block: dict) -> str:
     """Extrai o código da avaliação (P1/P2/PS/G2/PF/EXAME) dos labels crus do bloco.
     Ordem de prioridade evita confundir PS/G2 com o padrão P\\d genérico."""
@@ -463,25 +459,26 @@ class TimelineDashboardView(tk.Frame):
 
         headings = {
             "#0": "Nº · Data",
-            "nome": _COL_SEP + "Nome do bloco",
-            "tipo": _COL_SEP + "Tipo",
-            "unidade": _COL_SEP + "Unidade",
-            "escopo": _COL_SEP + "Escopo",
-            "arq": _COL_SEP + "Arq.",
+            "nome": "Nome do bloco",
+            "tipo": "Tipo",
+            "unidade": "Unidade",
+            "escopo": "Escopo",
+            "arq": "Arq.",
         }
         for col, text in headings.items():
             sort_col = self._SORT_COLUMN.get(col)
+            anchor = "w" if col == "#0" else "center"
             if sort_col:
-                tree.heading(col, text=text, command=lambda c=sort_col: self._sort_by(c))
+                tree.heading(col, text=text, anchor=anchor, command=lambda c=sort_col: self._sort_by(c))
             else:
-                tree.heading(col, text=text)
+                tree.heading(col, text=text, anchor=anchor)
 
         tree.column("#0", width=150, minwidth=110, anchor="w", stretch=False)
-        tree.column("nome", width=240, minwidth=140, anchor="w", stretch=True)
-        tree.column("tipo", width=120, minwidth=80, anchor="w", stretch=False)
-        tree.column("unidade", width=190, minwidth=100, anchor="w", stretch=False)
-        tree.column("escopo", width=210, minwidth=100, anchor="w", stretch=True)
-        tree.column("arq", width=64, minwidth=44, anchor="w", stretch=False)
+        tree.column("nome", width=240, minwidth=140, anchor="center", stretch=True)
+        tree.column("tipo", width=120, minwidth=80, anchor="center", stretch=False)
+        tree.column("unidade", width=190, minwidth=100, anchor="center", stretch=False)
+        tree.column("escopo", width=210, minwidth=100, anchor="center", stretch=True)
+        tree.column("arq", width=64, minwidth=44, anchor="center", stretch=False)
 
         # striping de linhas com mais contraste (blend rumo a 'border' p/ separar visualmente)
         base = p.get("treeview_odd", p["bg"])
@@ -716,24 +713,24 @@ class TimelineDashboardView(tk.Frame):
             id_bits = [b for b in (seq, period) if b]
             tree_text = f"{disp['icon']} " + " · ".join(id_bits) if id_bits else f"{disp['icon']} {block_id}"
 
-            nome_cell = _COL_SEP + _block_name(block, kind)
+            nome_cell = _block_name(block, kind)
 
             unit_slug = str(block.get("unit_slug") or "")
             unit_manual = bool(str(block.get("block_manual_unit_slug") or "").strip())
-            unit_cell = _COL_SEP + ((("✎ " if unit_manual else "") + unit_slug) if unit_slug else "")
+            unit_cell = (("✎ " if unit_manual else "") + unit_slug) if unit_slug else ""
 
             if kind in ("assessment", "review"):
                 scope = _block_scope_slugs(block)
-                escopo_cell = _COL_SEP + (
+                escopo_cell = (
                     ", ".join(_unit_short_label(s) for s in scope) if scope else "(definir)"
                 )
             else:
-                escopo_cell = _COL_SEP + "—"
+                escopo_cell = "—"
 
             tipo_manual = bool(str(block.get("manual_kind_override") or "").strip())
-            tipo_cell = _COL_SEP + ("✎ " if tipo_manual else "") + disp["label"]
+            tipo_cell = ("✎ " if tipo_manual else "") + disp["label"]
 
-            arq_cell = _COL_SEP + str(block.get("_file_count", 0))
+            arq_cell = str(block.get("_file_count", 0))
 
             tag = "odd" if row_i % 2 else "even"
             iid = tree.insert(
@@ -767,7 +764,7 @@ class TimelineDashboardView(tk.Frame):
             parent_iid,
             "end",
             text=f"   {icon} {title}{mark}",
-            values=(_COL_SEP, _COL_SEP, _COL_SEP, _COL_SEP, _COL_SEP + f"conf {confidence:.2f}"),
+            values=("", "", "", "", f"conf {confidence:.2f}"),
             tags=("child",),
         )
 
