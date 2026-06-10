@@ -38,3 +38,12 @@ def test_sort_by_file_count():
     # _file_count is injected by the view before sorting
     blocks = [{"id": "a", "_file_count": 3}, {"id": "b", "_file_count": 1}]
     assert _sorted_ids(blocks, "Arq.") == ["b", "a"]
+
+
+def test_sort_file_count_missing_goes_last():
+    blocks = [
+        {"id": "a", "_file_count": 0},
+        {"id": "b"},  # missing _file_count
+        {"id": "c", "_file_count": 5},
+    ]
+    assert _sorted_ids(blocks, "Arq.") == ["a", "c", "b"]

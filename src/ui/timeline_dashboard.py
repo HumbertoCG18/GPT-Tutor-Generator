@@ -70,7 +70,8 @@ def timeline_sort_key(block: dict, column: str) -> tuple:
         m = _ID_NUM_RE.search(block_id)
         return (1, 0) if not m else (0, int(m.group(1)))
     if column == "Arq.":
-        return (0, int(block.get("_file_count") or 0))
+        count = block.get("_file_count")
+        return (1, 0) if count is None else (0, int(count))
     if column == "Tipo":
         val = str(block.get("kind") or "").strip()
         return (1, "") if not val else (0, val)
