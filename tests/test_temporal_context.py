@@ -94,3 +94,47 @@ def test_unit_legend_collects_units_from_unit_and_scope_sorted_deduped():
 def test_unit_legend_empty_when_no_units():
     rows = [{"unidade_slug": "", "escopo_slugs": []}]
     assert build_unit_legend(rows) == []
+
+
+from datetime import date
+
+from src.builder.artifacts.temporal_context import (
+    temporal_context_md,
+    current_block_for_date,
+)
+
+
+def test_md_has_legend_table_iso_dates_and_short_labels():
+    blocks = [_class_block(), _assessment_block()]
+    md = temporal_context_md({"course_name": "Cálculo I"}, blocks)
+    assert "# CONTEXTO TEMPORAL — Cálculo I" in md
+    assert "## Unidades" in md
+    assert "- **U1** = `unidade-01-limites` — Limites" in md
+    assert "## Cronograma" in md
+    assert "| bloco | inicio | fim | tipo | unidade | topico | escopo |" in md
+    assert "2026-03-03" in md
+    assert "| bloco-09 | 2026-04-28 | 2026-04-28 | prova P1 | — | — | U1, U2 |" in md
+
+
+def test_md_empty_timeline_shows_unavailable_note():
+    md = temporal_context_md({"course_name": "X"}, [])
+    assert "Cronograma indisponível" in md
+    assert "## Cronograma" not in md
+    assert "## Unidades" not in md
+
+
+def test_current_block_for_date_inside_window():
+    rows = build_temporal_context_rows([_class_block()])
+    found = current_block_for_date(rows, date(2026, 3, 5))
+    assert found is not None and found["id"] == "bloco-01"
+
+
+def test_current_block_for_date_inclusive_bounds():
+    rows = build_temporal_context_rows([_class_block()])
+    assert current_block_for_date(rows, date(2026, 3, 3))["id"] == "bloco-01"
+    assert current_block_for_date(rows, date(2026, 3, 10))["id"] == "bloco-01"
+
+
+def test_current_block_for_date_outside_returns_none():
+    rows = build_temporal_context_rows([_class_block()])
+    assert current_block_for_date(rows, date(2026, 1, 1)) is None

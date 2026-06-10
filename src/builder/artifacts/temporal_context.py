@@ -76,6 +76,66 @@ def build_temporal_context_rows(timeline_blocks: list) -> list:
     return rows
 
 
+def _parse_iso(value) -> Optional[date]:
+    try:
+        return date.fromisoformat(str(value)[:10])
+    except (ValueError, TypeError):
+        return None
+
+
+def current_block_for_date(rows: list, ref_date: date) -> Optional[dict]:
+    """Primeira linha cujo intervalo [inicio, fim] contém ref_date. Bordas
+    inclusivas. None se nenhuma janela contém a data."""
+    for r in rows:
+        start = _parse_iso(r.get("inicio"))
+        end = _parse_iso(r.get("fim")) or start
+        if start and end and start <= ref_date <= end:
+            return r
+    return None
+
+
+def temporal_context_md(course_meta: dict, timeline_blocks: list) -> str:
+    """Renderiza o artefato CONTEXTO_TEMPORAL.md (cabeçalho + legenda + tabela).
+    Cronograma vazio -> nota de indisponível."""
+    course_name = (course_meta or {}).get("course_name", "Curso")
+    rows = build_temporal_context_rows(timeline_blocks)
+    lines = [
+        f"# CONTEXTO TEMPORAL — {course_name}",
+        "",
+        "> Cronograma compacto. Você (tutor) calcula a semana atual e a prontidão",
+        "> pré-prova A CADA sessão comparando com a data de hoje. Datas ISO YYYY-MM-DD.",
+        "",
+    ]
+    if not rows:
+        lines += ["_Cronograma indisponível._", ""]
+        return "\n".join(lines)
+
+    legend = build_unit_legend(rows)
+    if legend:
+        lines += ["## Unidades", ""]
+        for u in legend:
+            nome = f" — {u['nome']}" if u["nome"] else ""
+            lines.append(f"- **{u['label']}** = `{u['slug']}`{nome}")
+        lines.append("")
+
+    lines += [
+        "## Cronograma",
+        "",
+        "| bloco | inicio | fim | tipo | unidade | topico | escopo |",
+        "|-------|--------|-----|------|---------|--------|--------|",
+    ]
+    for r in rows:
+        unidade = r["unidade"] or "—"
+        topico = r["topico"] or "—"
+        escopo = ", ".join(r["escopo"]) if r["escopo"] else "—"
+        lines.append(
+            f"| {r['id']} | {r['inicio']} | {r['fim']} | {r['tipo']} | "
+            f"{unidade} | {topico} | {escopo} |"
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
 def build_unit_legend(rows: list) -> list:
     """Legenda U1/U2 -> slug + nome, só das unidades que aparecem nas linhas
     (em 'unidade_slug' ou no escopo). Ordenada por número da unidade."""
