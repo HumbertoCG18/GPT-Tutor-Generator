@@ -65,7 +65,7 @@
 
 <h1>📊 Relatório de Sistema — GPT-Tutor-Generator</h1>
 <div class="sub">Análise completa de arquitetura, pipelines, código morto, propagação de dados e roadmap · branch <code>new-features</code> · <b>atualizado 10/06/2026</b><br>
-<span class="small">Atualizado após a sessão de 10/06: manifest atômico (#1) e cronograma editável (#10) entregues na <code>new-features</code> (ver changelog abaixo). <code>main</code> tem o README reescrito (<code>208af96</code>); merge da <code>new-features</code> pendente.</span></div>
+<span class="small">Atualizado após a sessão de 10/06: manifest atômico (#1), cronograma editável (#10) e contexto temporal + prontidão pré-prova (#12+#13) entregues na <code>new-features</code> (ver changelog abaixo). <code>main</code> tem o README reescrito (<code>208af96</code>); merge da <code>new-features</code> pendente.</span></div>
 
 <div class="card toc">
   <b>Índice</b><br>
@@ -87,6 +87,7 @@
   <p><b>Usabilidade — Cronograma editável</b> (roadmap #10): aba reescrita em <code>ttk.Treeview</code> (5 tasks via subagent-driven, revisão spec+qualidade por task). Ordenação por coluna, edição inline Tipo/Unidade, override manual de escopo, coluna "Nome do bloco" (P1/P2/PS/G2/Revisão), datas DD/MM/YY, escopo <b>e coluna Unidade</b> em rótulo curto U1/U2 (<code>5356665</code>), zebrado de alto contraste, texto centralizado.</p>
   <p><b>Correções de cronograma:</b> escopo de prova respeita override manual (<code>537c161</code>/<code>29cba5c</code>); escopo de prova <b>sem sobreposição</b> entre provas — P(k) só cobre unidades novas, uma aula atrasada não polui a prova seguinte (<code>0b0b672</code>); <b>listas de revisão de prova</b> (nome casa revisão + Pk) vão ao bloco de revisão que precede a Pk, sem dump/duplicação (<code>6149bb5</code>).</p>
   <p class="small">⚠️ Mudanças de matching/escopo são do <i>build</i> — reprocessar a matéria para o cronograma na tela refletir os novos valores. Suíte: <b>1.156 testes verdes</b>.</p>
+  <p><b>Tutor proativo — Contexto temporal + prontidão pré-prova</b> (roadmap #12+#13): novo artefato <code>setup/CONTEXTO_TEMPORAL.md</code> (cronograma compacto, datas ISO, U1/U2 + legenda) + regra injetada nos 3 geradores de instrução. O tutor <b>autocalcula</b> a cada sessão a semana atual, a próxima avaliação (escopo) e a prontidão pré-prova (escopo × baterias × STUDENT_STATE) — zero staleness, sem reprocessar. Helpers de rótulo extraídos pra base <code>timeline/unit_labels.py</code>. 6 tasks subagent-driven + review final; escrita do artefato nos 3 caminhos (completo, incremental, "Gerar Instruções LLM"). <b>Suíte: 1.176 testes verdes</b>. Roadmap #18 (auditoria/limpeza de artefatos) registrado p/ depois.</p>
 </div>
 
 <!-- ============ 1. MÉTRICAS ============ -->
@@ -424,8 +425,8 @@
 
 <h3>Longo prazo — tutor proativo e contexto do aluno</h3>
 <div class="card find good">
-  <p><b>12. Contexto temporal automático ("semana atual")</b> — o <code>.timeline_index.json</code> já tem datas e blocos classificados. Gerar seção <code>CURRENT_WEEK.md</code> nas instruções do tutor: bloco vigente por data, tópico da semana, próxima avaliação e seu escopo (<code>scope_unit_slugs</code> já computado). O tutor passa a abrir a conversa sabendo onde o aluno está no semestre.</p>
-  <p><b>13. Prontidão pré-prova</b> — cruzar escopo da avaliação × baterias do aluno (<code>student/batteries/</code>) × STUDENT_STATE: "P2 em 9 dias cobre unidades 3-4; bateria da unidade 4 sem registro". Vira tabela no STUDENT_STATE e alerta nas instruções do tutor.</p>
+  <p><b>12. Contexto temporal automático ("semana atual") ✅ FEITO</b> — novo artefato <code>setup/CONTEXTO_TEMPORAL.md</code> (cronograma compacto: <code>bloco | início | fim | tipo | unidade | tópico | escopo</code>, datas ISO, rótulos curtos U1/U2 + legenda mapeando ao slug). Em vez de gravar uma "semana atual" que ficaria desatualizada, o tutor LLM <b>autocalcula</b> a cada sessão: regra injetada nos 3 geradores de instrução manda localizar a linha onde hoje ∈ [início,fim] e a próxima prova (início ≥ hoje) com escopo. <b>Zero staleness, sem reprocessar.</b> Emitido nos 3 caminhos (build completo, incremental e "Gerar Instruções LLM"). Helpers de rótulo extraídos pra módulo base <code>timeline/unit_labels.py</code> (sem builder→UI).</p>
+  <p><b>13. Prontidão pré-prova ✅ FEITO</b> — mesma regra de instrução: pra cada unidade do escopo da próxima prova, o tutor cruza tópicos do <code>COURSE_MAP</code> × <code>STUDENT_STATE</code> × <code>student/batteries/&lt;slug&gt;/</code> e lista lacunas (tópicos sem registro/pendentes), priorizando se a prova ≤ 7 dias. Spec <code>2026-06-10-contexto-temporal-tutor-design.md</code>, plano homônimo (6 tasks subagent-driven, revisão dupla + review final).</p>
   <p><b>14. Modelo de estado do aluno mais rico</b> — STUDENT_STATE hoje é registro manual de tópicos. Evoluir para: nível de confiança por tópico com decaimento temporal (spaced repetition), histórico de erros recorrentes importado das sessões do tutor, e sugestão de "próximo tópico" derivada de (timeline ∩ lacunas). O StudentStateCurator já tem o esqueleto de import.</p>
   <p><b>15. Sincronização Moodle agendada</b> — import manual hoje. Um task agendado (a infra de <code>RepoTaskStore</code> + fila persistente já existe) que detecta material novo no Moodle e enfileira reprocesso incremental tornaria o repositório auto-atualizável.</p>
   <p><b>16. Instruções de tutor adaptativas por plataforma</b> — os geradores (<code>artifacts/prompts.py</code>) são estáticos por build. Injetar: perfil/personalidade do aluno (já coletado no StudentProfileDialog e subutilizado), preferências de estudo, e o contexto temporal do item 12 — regenerados num passo leve (sem rebuild completo) via "Gerar Instruções LLM" que já existe no menu do backlog.</p>
@@ -439,7 +440,7 @@
   <tr><th>#</th><th>Item</th><th>Esforço</th><th>Impacto</th></tr>
   <tr><td>1</td><td>Manifest atômico <span class="tag t-good">✅ feito</span></td><td>baixo</td><td><span class="tag t-bad">crítico (integridade)</span></td></tr>
   <tr><td>10</td><td>Cronograma editável <span class="tag t-good">✅ feito</span></td><td>médio</td><td><span class="tag t-good">alto (usabilidade)</span></td></tr>
-  <tr><td>12+13</td><td>Semana atual + prontidão pré-prova</td><td>médio</td><td><span class="tag t-good">alto (tutor proativo)</span></td></tr>
+  <tr><td>12+13</td><td>Semana atual + prontidão pré-prova <span class="tag t-good">✅ feito</span></td><td>médio</td><td><span class="tag t-good">alto (tutor proativo)</span></td></tr>
   <tr><td>2,3,4,5</td><td>Quick wins (fila, mortos, rationale, custos)</td><td>baixo</td><td><span class="tag t-info">médio</span></td></tr>
   <tr><td>6,7</td><td>Paralelismo + retry</td><td>médio</td><td><span class="tag t-info">médio (desempenho)</span></td></tr>
   <tr><td>8,9,11</td><td>Consolidações + delta report</td><td>médio</td><td><span class="tag t-info">médio (manutenibilidade)</span></td></tr>
