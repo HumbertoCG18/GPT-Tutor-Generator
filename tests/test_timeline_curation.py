@@ -187,6 +187,15 @@ def test_scope_override_empty_list_removes(tmp_path):
     assert load_block_curation(tmp_path) == {}
 
 
+def test_save_block_scope_override_wrapper(tmp_path):
+    from src.ui.timeline_dashboard import save_block_scope_override
+    from src.builder.timeline.curation import load_block_curation
+    save_block_scope_override(tmp_path, "blk-01", ["u1", "u2"])
+    assert load_block_curation(tmp_path)["blk-01"]["manual_scope_unit_slugs"] == ["u1", "u2"]
+    save_block_scope_override(tmp_path, "blk-01", [])
+    assert load_block_curation(tmp_path) == {}
+
+
 def test_scope_override_applies_renamed(tmp_path):
     from src.builder.timeline.curation import set_block_override, apply_block_curation
     set_block_override(tmp_path, "blk-01", "manual_scope_unit_slugs", ["u1", "u2"])

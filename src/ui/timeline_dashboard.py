@@ -129,6 +129,18 @@ def save_block_unit_override(
     set_block_override(course_dir, block_id, "manual_unit_slug", unit_slug or None)
 
 
+def save_block_scope_override(
+    course_dir: Path,
+    block_id: str,
+    unit_slugs: Optional[list],
+) -> None:
+    """Persiste o override manual de escopo de prova/revisão.
+    Lista vazia/None remove o override (volta ao escopo derivado por data)."""
+    set_block_override(
+        course_dir, block_id, "manual_scope_unit_slugs", list(unit_slugs or []) or None
+    )
+
+
 def block_kind(block: dict) -> str:
     """kind efetivo do bloco (honra manual_kind_override via classifier)."""
     return classify_block(block).value
