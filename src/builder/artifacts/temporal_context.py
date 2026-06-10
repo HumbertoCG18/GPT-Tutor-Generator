@@ -34,6 +34,13 @@ _KIND_TIPO = {
 }
 
 
+def _md_cell(value: str) -> str:
+    """Escapa conteúdo para uma célula de tabela markdown: pipe -> \\|,
+    quebras de linha viram espaço."""
+    s = str(value or "")
+    return s.replace("\n", " ").replace("\r", " ").replace("|", "\\|")
+
+
 def _tipo_label(block: dict) -> str:
     kind = str(block.get("kind") or "")
     if kind == "assessment":
@@ -125,11 +132,11 @@ def temporal_context_md(course_meta: dict, timeline_blocks: list) -> str:
         "|-------|--------|-----|------|---------|--------|--------|",
     ]
     for r in rows:
-        unidade = r["unidade"] or "—"
-        topico = r["topico"] or "—"
-        escopo = ", ".join(r["escopo"]) if r["escopo"] else "—"
+        unidade = _md_cell(r["unidade"] or "—")
+        topico = _md_cell(r["topico"] or "—")
+        escopo = _md_cell(", ".join(r["escopo"]) if r["escopo"] else "—")
         lines.append(
-            f"| {r['id']} | {r['inicio']} | {r['fim']} | {r['tipo']} | "
+            f"| {_md_cell(r['id'])} | {_md_cell(r['inicio'])} | {_md_cell(r['fim'])} | {_md_cell(r['tipo'])} | "
             f"{unidade} | {topico} | {escopo} |"
         )
     lines.append("")

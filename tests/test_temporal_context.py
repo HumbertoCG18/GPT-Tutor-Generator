@@ -138,3 +138,22 @@ def test_current_block_for_date_inclusive_bounds():
 def test_current_block_for_date_outside_returns_none():
     rows = build_temporal_context_rows([_class_block()])
     assert current_block_for_date(rows, date(2026, 1, 1)) is None
+
+
+def test_md_escapes_pipe_in_cell_values():
+    blk = {
+        "id": "bloco-01",
+        "period_start": "2026-03-03",
+        "period_end": "2026-03-10",
+        "kind": "class",
+        "unit_slug": "unidade-01-limites",
+        "topics": ["Tabela|verdade", "Linha\nquebrada"],
+    }
+    md = temporal_context_md({"course_name": "Lógica"}, [blk])
+    # pipe escapado, newline virou espaço — a linha da tabela não quebra
+    assert "Tabela\\|verdade" in md
+    assert "Linha quebrada" in md
+    # nenhuma linha de dados da tabela tem mais colunas que o header
+    data_lines = [l for l in md.splitlines() if l.startswith("| bloco-01 ")]
+    assert len(data_lines) == 1
+    assert data_lines[0].count("|") == 9  # 8 pipes delimitadores + 1 do escape \| no tópico
