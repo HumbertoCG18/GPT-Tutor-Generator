@@ -4,6 +4,7 @@ import json
 import logging
 import re
 import tkinter as tk
+from datetime import datetime
 from pathlib import Path
 from tkinter import messagebox, ttk
 from typing import Callable, Optional
@@ -49,6 +50,20 @@ def _kind_display(kind_value: str) -> dict:
 _DATE_PREFIX_RE = re.compile(r"^(\d{1,2})\.(\d{2})\s+")
 
 _ID_NUM_RE = re.compile(r"(\d+)$")
+
+
+def _format_date_ddmmyy(raw: str) -> str:
+    """Formata data ISO (YYYY-MM-DD) como DD/MM/YY para exibição.
+    Retorna o valor original se vazio ou não-parseável."""
+    raw = str(raw or "").strip()
+    if not raw:
+        return ""
+    for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%d-%m-%Y"):
+        try:
+            return datetime.strptime(raw, fmt).strftime("%d/%m/%y")
+        except ValueError:
+            continue
+    return raw
 
 
 def timeline_sort_key(block: dict, column: str) -> tuple:
@@ -625,7 +640,7 @@ class TimelineDashboardView(tk.Frame):
             shown += 1
             block_id = str(block.get("id") or "")
             disp = _kind_display(kind)
-            period = str(block.get("period_start") or block.get("period_label") or "")
+            period = _format_date_ddmmyy(block.get("period_start")) or str(block.get("period_label") or "")
             topic = str(block.get("primary_topic_label") or "")
             title_bits = [b for b in (period, topic) if b]
             tree_text = f"{disp['icon']} " + " · ".join(title_bits) if title_bits else f"{disp['icon']} {block_id}"

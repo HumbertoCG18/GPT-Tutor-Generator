@@ -61,3 +61,12 @@ def test_sort_sequence_id_without_number_goes_last():
         {"id": "bloco-01"},
     ]
     assert _sorted_ids(blocks, "#") == ["bloco-01", "bloco-02", "orphan"]
+
+
+def test_format_date_ddmmyy():
+    from src.ui.timeline_dashboard import _format_date_ddmmyy
+    assert _format_date_ddmmyy("2026-03-02") == "02/03/26"
+    assert _format_date_ddmmyy("2026-12-25") == "25/12/26"
+    assert _format_date_ddmmyy("") == ""
+    assert _format_date_ddmmyy(None) == ""
+    assert _format_date_ddmmyy("texto livre") == "texto livre"  # fallback
