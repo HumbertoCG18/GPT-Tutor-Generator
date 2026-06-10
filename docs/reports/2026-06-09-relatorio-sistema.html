@@ -65,7 +65,7 @@
 
 <h1>📊 Relatório de Sistema — GPT-Tutor-Generator</h1>
 <div class="sub">Análise completa de arquitetura, pipelines, código morto, propagação de dados e roadmap · branch <code>new-features</code> · <b>atualizado 10/06/2026</b><br>
-<span class="small">Snapshot do working tree atual (new-features @ <code>c7c864b</code> + alterações não-commitadas). <code>main</code> divergiu: o README reescrito foi commitado lá (<code>208af96</code>); branches têm 3/4 commits exclusivos cada a partir da base comum <code>8f10819</code>.</span></div>
+<span class="small">Atualizado após a sessão de 10/06: manifest atômico (#1) e cronograma editável (#10) entregues na <code>new-features</code> (ver changelog abaixo). <code>main</code> tem o README reescrito (<code>208af96</code>); merge da <code>new-features</code> pendente.</span></div>
 
 <div class="card toc">
   <b>Índice</b><br>
@@ -80,6 +80,15 @@
   <a href="#roadmap">9. Roadmap: autonomia e tutor proativo</a><br>
 </div>
 
+<!-- ============ CHANGELOG 10/06 ============ -->
+<div class="card find good">
+  <h4>✅ Trabalho entregue em 10/06/2026 (branch <code>new-features</code>)</h4>
+  <p><b>Integridade — Manifest atômico</b> (roadmap #1, <code>79b6f98</code>): <code>write_text</code> tmp+<code>os.replace</code> + <code>write_json_manifest</code> com backup <code>.bak</code>; ~20 call sites. Corrige também 3 bugs do refactor em andamento de <code>engine.py</code> (sintaxe, <code>datetime.now(UTC)</code>, <code>skip_base_backends</code>). 10 testes.</p>
+  <p><b>Usabilidade — Cronograma editável</b> (roadmap #10): aba reescrita em <code>ttk.Treeview</code> (5 tasks via subagent-driven, revisão spec+qualidade por task). Ordenação por coluna, edição inline Tipo/Unidade, override manual de escopo, coluna "Nome do bloco" (P1/P2/PS/G2/Revisão), datas DD/MM/YY, escopo curto U1/U2, zebrado de alto contraste, texto centralizado.</p>
+  <p><b>Correções de cronograma:</b> escopo de prova respeita override manual (<code>537c161</code>/<code>29cba5c</code>); escopo de prova <b>sem sobreposição</b> entre provas — P(k) só cobre unidades novas, uma aula atrasada não polui a prova seguinte (<code>0b0b672</code>); <b>listas de revisão de prova</b> (nome casa revisão + Pk) vão ao bloco de revisão que precede a Pk, sem dump/duplicação (<code>6149bb5</code>).</p>
+  <p class="small">⚠️ Mudanças de matching/escopo são do <i>build</i> — reprocessar a matéria para o cronograma na tela refletir os novos valores. Suíte: <b>1.156 testes verdes</b>.</p>
+</div>
+
 <!-- ============ 1. MÉTRICAS ============ -->
 <h2 id="metricas">1. Métricas Gerais</h2>
 <div class="grid g4">
@@ -87,7 +96,7 @@
   <div class="card metric"><div class="v">39.963</div><div class="l">linhas de código</div></div>
   <div class="card metric"><div class="v">1.368</div><div class="l">funções</div></div>
   <div class="card metric"><div class="v">83</div><div class="l">classes</div></div>
-  <div class="card metric"><div class="v">1.129</div><div class="l">testes (77 arquivos)</div></div>
+  <div class="card metric"><div class="v">1.156</div><div class="l">testes (79 arquivos)</div></div>
   <div class="card metric"><div class="v">591</div><div class="l">commits totais</div></div>
   <div class="card metric"><div class="v">3/4</div><div class="l">new-features à frente / atrás de <code>main</code></div></div>
   <div class="card metric"><div class="v">0,44</div><div class="l">razão linhas-teste / linhas-código</div></div>
@@ -384,7 +393,7 @@
 <table>
   <tr><th>Achado</th><th>Tipo</th><th>Detalhe</th></tr>
   <tr><td><code>dialogs.py</code> com 4.988 linhas</td><td><span class="tag t-warn">estrutura</span></td><td>12 dialogs num arquivo. Dividir em pacote <code>ui/dialogs/</code> (1 arquivo por dialog) reduziria conflitos e tempo de leitura.</td></tr>
-  <tr><td>Cronograma read-only</td><td><span class="tag t-info">pendente</span></td><td>Qualquer ajuste exige reprocessar. Spec da tabela editável já aprovada em <code>docs/superpowers/specs/2026-06-09-cronograma-table-ui-design.md</code> — maior alavanca de usabilidade da fila atual.</td></tr>
+  <tr><td>Cronograma editável (tabela)</td><td><span class="tag t-good">FEITO</span></td><td><s>Read-only, exigia reprocessar.</s> Reescrito como tabela <code>ttk.Treeview</code>: ordenação por coluna, edição inline de Tipo/Unidade, override manual de escopo, coluna "Nome do bloco" (P1/P2/PS/G2/Revisão), datas DD/MM/YY, escopo curto (U1/U2). Spec <code>2026-06-09-cronograma-table-ui-design.md</code>.</td></tr>
   <tr><td>Curator Studio × Image Curator</td><td><span class="tag t-warn">em andamento</span></td><td>Dois fluxos de curadoria com preview/aprovação similares. Unificação <b>já iniciada</b>: <code>ui/curation_workspace.py</code> (novo, working tree) + spec <code>docs/superpowers/plans/2026-06-09-curadoria-unificada.md</code>.</td></tr>
   <tr><td>Estado de sessão não persistido</td><td><span class="tag t-info">menor</span></td><td>Aba ativa, seleção, zoom de preview e scroll voltam ao padrão a cada reinício — aceitável, mas a <b>fila volátil</b> (seção 6) é o caso que vale corrigir.</td></tr>
   <tr><td>Backlog = espelho do manifest</td><td><span class="tag t-info">design</span></td><td>Arquivo removido manualmente do disco continua aparecendo (fantasma) até reprocessar. Painel Manutenção cobre parte disso para code_curation; não para entries gerais.</td></tr>
@@ -409,7 +418,7 @@
   <p><b>7. Retry com backoff</b> — wrapper único para Gemini/Ollama/Datalab (3 tentativas, exponencial). Hoje uma falha de rede pontual deixa buracos silenciosos.</p>
   <p><b>8. Concluir consolidação de normalização</b> — migrar as 4 cópias de <code>_normalize_match_text</code>, 2 de <code>_extract_markdown_headings</code>, 2 tokenizadores+stopwords para <code>text/</code>. Os 1.119 testes existentes dão rede de segurança.</p>
   <p><b>9. Dividir <code>ui/dialogs.py</code></b> em pacote por dialog; extrair <code>_normalized_source_key</code> para módulo comum.</p>
-  <p><b>10. Tabela editável do cronograma</b> — executar a spec já aprovada (edição inline de tipo/unidade, escopo manual de provas, ordenação). Fecha o ciclo "ver problema → corrigir na hora" sem reprocessar.</p>
+  <p><b>10. Tabela editável do cronograma ✅ FEITO</b> — reescrito em <code>ttk.Treeview</code>: ordenação por coluna, edição inline de tipo/unidade, override manual de escopo, coluna "Nome do bloco" (P1/P2/PS/G2/Revisão), data DD/MM/YY, escopo curto U1/U2, zebrado de alto contraste. Implementado via subagent-driven (5 tasks, revisão dupla por task). Plano: <code>docs/superpowers/plans/2026-06-10-cronograma-editavel.md</code>.</p>
   <p><b>11. Delta report entre builds</b> — diff do <code>.timeline_index.json</code> e do matching (entries que mudaram de bloco/unidade) gravado em <code>build/CHANGES.md</code>. Auditoria de regressão de matching de graça.</p>
 </div>
 
@@ -428,7 +437,7 @@
 <table>
   <tr><th>#</th><th>Item</th><th>Esforço</th><th>Impacto</th></tr>
   <tr><td>1</td><td>Manifest atômico <span class="tag t-good">✅ feito</span></td><td>baixo</td><td><span class="tag t-bad">crítico (integridade)</span></td></tr>
-  <tr><td>10</td><td>Cronograma editável (spec pronta)</td><td>médio</td><td><span class="tag t-good">alto (usabilidade)</span></td></tr>
+  <tr><td>10</td><td>Cronograma editável <span class="tag t-good">✅ feito</span></td><td>médio</td><td><span class="tag t-good">alto (usabilidade)</span></td></tr>
   <tr><td>12+13</td><td>Semana atual + prontidão pré-prova</td><td>médio</td><td><span class="tag t-good">alto (tutor proativo)</span></td></tr>
   <tr><td>2,3,4,5</td><td>Quick wins (fila, mortos, rationale, custos)</td><td>baixo</td><td><span class="tag t-info">médio</span></td></tr>
   <tr><td>6,7</td><td>Paralelismo + retry</td><td>médio</td><td><span class="tag t-info">médio (desempenho)</span></td></tr>
