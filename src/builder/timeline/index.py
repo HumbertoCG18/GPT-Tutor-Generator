@@ -1363,6 +1363,8 @@ def apply_assessment_review_scope(blocks: List[Dict[str, object]]) -> None:
     quando o label de tópico está vazio OU é o nosso próprio marcador, define um
     `primary_topic_label = "Conteúdo: …"` legível. Idempotente; label manual nunca
     é tocado. Provas/revisões sem data ficam sem escopo.
+    Override manual: `block_manual_scope_slugs` não-vazio sobrepõe o escopo derivado
+    por data (ASSESSMENT) ou herdado da próxima prova (REVIEW) — o manual sempre vence.
     """
     exam_scope = assessment_scope_by_date(blocks)
     review_scope = link_review_scope(blocks, exam_scope)

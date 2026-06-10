@@ -5257,6 +5257,30 @@ def test_apply_scope_empty_manual_falls_back_to_derived():
     assert blocks[-1]["scope_unit_slugs"] == ["u1"]  # derived by date
 
 
+def test_apply_scope_review_honors_manual_override():
+    """REVIEW com block_manual_scope_slugs usa o manual, não o herdado da prova.
+
+    Setup: c1(u1) e c2(u2) → p1 deriva ["u1","u2"]. r1 precede p1 e herdaria
+    ["u1","u2"], mas tem manual=["u1"] — deve prevalecer o manual.
+    """
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "c1", "kind": "class", "unit_slug": "u1", "period_start": "2026-03-10"},
+        {"id": "c2", "kind": "class", "unit_slug": "u2", "period_start": "2026-03-17"},
+        {"id": "r1", "kind": "review", "period_start": "2026-03-19",
+         "block_manual_scope_slugs": ["u1"], "primary_topic_label": ""},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-03-20",
+         "primary_topic_label": ""},
+    ]
+    apply_assessment_review_scope(blocks)
+    r1 = next(b for b in blocks if b["id"] == "r1")
+    p1 = next(b for b in blocks if b["id"] == "p1")
+    # Confirma que o escopo herdado (de p1) seria diferente do manual
+    assert p1["scope_unit_slugs"] == ["u1", "u2"]  # derivado por data
+    assert r1["scope_unit_slugs"] == ["u1"]          # manual vence ["u1","u2"]
+    assert r1["primary_topic_label"] == "Conteúdo: u1"
+
+
 def test_serialize_attaches_scope_unit_slugs():
     from src.builder.timeline.index import _serialize_timeline_index
     ti = {"blocks": [
