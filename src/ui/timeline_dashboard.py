@@ -179,8 +179,114 @@ def block_kind(block: dict) -> str:
     return classify_block(block).value
 
 
+def _block_scope_slugs(block: dict) -> list[str]:
+    """Escopo efetivo de um bloco de prova/revisão para exibição.
+
+    Override manual (`block_manual_scope_slugs`) vence; senão usa o escopo
+    derivado por data (`scope_unit_slugs`) gravado no último build.
+    """
+    manual = block.get("block_manual_scope_slugs")
+    if manual:
+        return [str(s).strip() for s in manual if str(s).strip()]
+    derived = block.get("scope_unit_slugs") or []
+    return [str(s).strip() for s in derived if str(s).strip()]
+
+
+class ScopeEditDialog(tk.Toplevel):
+    """Dialogo modal: marca/desmarca unidades no escopo de uma prova/revisão.
+
+    Lista vazia ao salvar remove o override (volta ao escopo derivado por data).
+    """
+
+    def __init__(
+        self,
+        parent: tk.Widget,
+        unit_slugs: list[str],
+        current_scope: list[str],
+        on_save: Callable[[list[str]], None],
+    ):
+        super().__init__(parent)
+        self.title("Escopo manual")
+        self._on_save = on_save
+        self._vars: dict[str, tk.IntVar] = {}
+
+        p = apply_theme_to_toplevel(self, parent)
+        self.configure(bg=p["bg"])
+        self.transient(parent.winfo_toplevel())
+        self.resizable(False, False)
+
+        tk.Label(
+            self,
+            text="Unidades cobertas por este bloco:",
+            bg=p["bg"],
+            fg=p["fg"],
+            font=("", 10, "bold"),
+        ).pack(anchor="w", padx=12, pady=(12, 6))
+
+        if not unit_slugs:
+            tk.Label(
+                self,
+                text="Nenhuma unidade disponível.\nSalvar remove o override (volta ao escopo por data).",
+                bg=p["bg"],
+                fg=p["muted"],
+                font=("", 9),
+                justify="left",
+            ).pack(anchor="w", padx=12, pady=(0, 8))
+        else:
+            current = set(current_scope or [])
+            body = tk.Frame(self, bg=p["bg"])
+            body.pack(fill="both", expand=True, padx=12)
+            for slug in unit_slugs:
+                var = tk.IntVar(value=1 if slug in current else 0)
+                self._vars[slug] = var
+                tk.Checkbutton(
+                    body,
+                    text=slug,
+                    variable=var,
+                    bg=p["bg"],
+                    fg=p["fg"],
+                    selectcolor=p["input_bg"],
+                    activebackground=p["bg"],
+                    activeforeground=p["accent"],
+                    anchor="w",
+                    font=("", 9),
+                    bd=0,
+                    highlightthickness=0,
+                ).pack(fill="x", anchor="w")
+
+        btns = tk.Frame(self, bg=p["bg"])
+        btns.pack(fill="x", padx=12, pady=12)
+        ttk.Button(btns, text="OK", command=self._ok).pack(side="right", padx=(4, 0))
+        ttk.Button(btns, text="Cancelar", command=self.destroy).pack(side="right")
+
+        self.bind("<Escape>", lambda _e: self.destroy())
+        self.grab_set()
+        self.focus_set()
+
+    def _ok(self) -> None:
+        selected = [slug for slug, var in self._vars.items() if var.get()]
+        try:
+            self._on_save(selected)
+        finally:
+            self.destroy()
+
+
 class TimelineDashboardView(tk.Frame):
-    """Embeddable timeline dashboard. Pass a callable that returns the active subject."""
+    """Embeddable timeline dashboard como tabela ttk.Treeview editável.
+
+    Pass a callable that returns the active subject.
+    """
+
+    # colunas extra (alem da arvore #0)
+    _COLUMNS = ("incluir", "seq", "tipo", "unidade", "escopo", "arq")
+    # mapeamento coluna-treeview -> coluna de ordenacao (timeline_sort_key)
+    _SORT_COLUMN = {
+        "#0": "Data",
+        "seq": "#",
+        "tipo": "Tipo",
+        "unidade": "Unidade",
+        "arq": "Arq.",
+    }
 
     def __init__(
         self,
@@ -195,12 +301,23 @@ class TimelineDashboardView(tk.Frame):
         self._repo_root: Optional[Path] = None
         self._dirty = False
 
+        # estado de ordenacao: (coluna_sort, ascending)
+        self._sort_state: tuple[str, bool] = ("Data", True)
+        # iid (treeview) -> block_id
+        self._iid_to_block: dict[str, str] = {}
+        # iid (treeview, linha filha) -> entry_id
+        self._iid_to_entry: dict[str, str] = {}
+        # editor inline ativo (combobox sobreposta)
+        self._editor: Optional[ttk.Combobox] = None
+
         p = apply_theme_to_toplevel(self, parent)
         self._p = p
         self.configure(bg=p["bg"])
 
         self._build_toolbar(p)
-        self._build_scroll_area(p)
+        self._build_filter_holder(p)
+        self._build_table(p)
+        self._build_unmapped_table(p)
         self.refresh()
 
     def refresh(self) -> None:
@@ -241,43 +358,104 @@ class TimelineDashboardView(tk.Frame):
 
         ttk.Button(bar, text="↺ Recarregar", command=self.refresh).pack(side="right", padx=4)
 
-    # ---------------------------------------------------------------- scroll area
+    # ---------------------------------------------------------------- filter bar
 
-    def _build_scroll_area(self, p: dict) -> None:
+    def _build_filter_holder(self, p: dict) -> None:
+        # container persistente; o conteudo (checkboxes) e reconstruido em _render
+        self._filter_bar = tk.Frame(self, bg=p["frame_bg"])
+        self._filter_bar.pack(fill="x", side="top")
+
+    # ---------------------------------------------------------------- main table
+
+    def _build_table(self, p: dict) -> None:
         container = tk.Frame(self, bg=p["bg"])
         container.pack(fill="both", expand=True)
+        self._table_container = container
 
-        self._canvas = tk.Canvas(container, bg=p["bg"], highlightthickness=0)
-        scrollbar = ttk.Scrollbar(container, orient="vertical", command=self._canvas.yview)
-        self._canvas.configure(yscrollcommand=scrollbar.set)
+        tree = ttk.Treeview(
+            container,
+            columns=self._COLUMNS,
+            show="tree headings",
+        )
+        self._tree = tree
 
+        headings = {
+            "#0": "Data · Bloco/tópico",
+            "incluir": "✓",
+            "seq": "#",
+            "tipo": "Tipo",
+            "unidade": "Unidade",
+            "escopo": "Escopo",
+            "arq": "Arq.",
+        }
+        for col, text in headings.items():
+            sort_col = self._SORT_COLUMN.get(col)
+            if sort_col:
+                tree.heading(col, text=text, command=lambda c=sort_col: self._sort_by(c))
+            else:
+                tree.heading(col, text=text)
+
+        tree.column("#0", width=340, minwidth=180, anchor="w", stretch=True)
+        tree.column("incluir", width=36, minwidth=30, anchor="center", stretch=False)
+        tree.column("seq", width=44, minwidth=36, anchor="e", stretch=False)
+        tree.column("tipo", width=110, minwidth=80, anchor="w", stretch=False)
+        tree.column("unidade", width=180, minwidth=100, anchor="w", stretch=False)
+        tree.column("escopo", width=200, minwidth=100, anchor="w", stretch=True)
+        tree.column("arq", width=48, minwidth=40, anchor="e", stretch=False)
+
+        # striping de linhas
+        tree.tag_configure("odd", background=p.get("treeview_odd", p["bg"]))
+        tree.tag_configure("even", background=p.get("treeview_even", p["frame_bg"]))
+        tree.tag_configure("child", foreground=p["muted"])
+
+        scrollbar = ttk.Scrollbar(container, orient="vertical", command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side="right", fill="y")
-        self._canvas.pack(side="left", fill="both", expand=True)
+        tree.pack(side="left", fill="both", expand=True)
 
-        self._scroll_frame = tk.Frame(self._canvas, bg=p["bg"])
-        self._canvas_window = self._canvas.create_window(
-            (0, 0), window=self._scroll_frame, anchor="nw"
+        tree.bind("<Double-1>", self._on_tree_double_click)
+
+    def _build_unmapped_table(self, p: dict) -> None:
+        holder = tk.Frame(self, bg=p["frame_bg"])
+        holder.pack(fill="x", side="bottom")
+        self._unmapped_holder = holder
+
+        self._unmapped_label_var = tk.StringVar(value="")
+        self._unmapped_label = tk.Label(
+            holder,
+            textvariable=self._unmapped_label_var,
+            bg=p["frame_bg"],
+            fg=p["warning"],
+            font=("", 10, "bold"),
+            anchor="w",
         )
 
-        self._scroll_frame.bind("<Configure>", self._on_frame_configure)
-        self._canvas.bind("<Configure>", self._on_canvas_configure)
-        self._canvas.bind("<MouseWheel>", self._on_mousewheel)
+        ucontainer = tk.Frame(holder, bg=p["bg"])
+        self._unmapped_container = ucontainer
 
-    def _on_frame_configure(self, _event=None) -> None:
-        self._canvas.configure(scrollregion=self._canvas.bbox("all"))
+        utree = ttk.Treeview(
+            ucontainer,
+            columns=("acao",),
+            show="tree headings",
+            height=5,
+        )
+        self._unmapped_tree = utree
+        utree.heading("#0", text="Arquivo sem bloco")
+        utree.heading("acao", text="Atribuir a bloco (duplo clique)")
+        utree.column("#0", width=420, minwidth=200, anchor="w", stretch=True)
+        utree.column("acao", width=300, minwidth=150, anchor="w", stretch=True)
 
-    def _on_canvas_configure(self, event) -> None:
-        self._canvas.itemconfig(self._canvas_window, width=event.width)
+        uscroll = ttk.Scrollbar(ucontainer, orient="vertical", command=utree.yview)
+        utree.configure(yscrollcommand=uscroll.set)
+        uscroll.pack(side="right", fill="y")
+        utree.pack(side="left", fill="both", expand=True)
 
-    def _on_mousewheel(self, event) -> None:
-        self._canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        utree.bind("<Double-1>", self._on_unmapped_double_click)
 
     # ----------------------------------------------------------------- load/reload
 
     def _reload(self) -> None:
-        for widget in self._scroll_frame.winfo_children():
-            widget.destroy()
-
+        self._cancel_editor()
         self._repo_label_var.set(f"Repositório: {self._repo_root or '—'}")
 
         if not self._repo_root:
@@ -315,26 +493,52 @@ class TimelineDashboardView(tk.Frame):
             for b in blocks
             if str(b.get("unit_slug") or "").strip()
         })
+        # injeta contagem de arquivos por bloco (usada por sort/coluna Arq.)
+        for block in blocks:
+            bid = str(block.get("id") or "")
+            block["_file_count"] = len(entries_by_block_id.get(bid, []))
+
+        self._clear_error()
         self._render()
 
     # ------------------------------------------------------------------ render
 
     def _render(self) -> None:
-        """Re-desenha filtro + acordeão a partir dos dados em cache (sem ler disco)."""
-        for widget in self._scroll_frame.winfo_children():
-            widget.destroy()
+        """Reconstrói filtro + repopula tabelas a partir do cache (sem ler disco)."""
         self._build_filter_bar()
-        self._build_accordion()
+        self._populate()
+        self._populate_unmapped()
 
     def _show_error(self, msg: str) -> None:
-        tk.Label(
-            self._scroll_frame,
+        self._clear_error()
+        if hasattr(self, "_tree"):
+            self._table_container.pack_forget()
+        if hasattr(self, "_unmapped_holder"):
+            self._unmapped_holder.pack_forget()
+        for child in self._filter_bar.winfo_children():
+            child.destroy()
+        self._error_label = tk.Label(
+            self,
             text=msg,
             bg=self._p["bg"],
             fg=self._p["warning"],
             font=("", 11),
             wraplength=600,
-        ).pack(expand=True, pady=60)
+        )
+        self._error_label.pack(expand=True, pady=60)
+
+    def _clear_error(self) -> None:
+        lbl = getattr(self, "_error_label", None)
+        if lbl is not None and lbl.winfo_exists():
+            lbl.destroy()
+        self._error_label = None
+        # garante que tabela + rodapé voltem a aparecer apos um estado de erro.
+        # _unmapped_holder fica acima da tabela na ordem de pack (side=bottom),
+        # entao re-empacotamos primeiro o rodapé e depois a tabela.
+        if hasattr(self, "_unmapped_holder") and not self._unmapped_holder.winfo_ismapped():
+            self._unmapped_holder.pack(fill="x", side="bottom")
+        if hasattr(self, "_table_container") and not self._table_container.winfo_ismapped():
+            self._table_container.pack(fill="both", expand=True)
 
     # ------------------------------------------------------------------ reprocess
 
@@ -352,15 +556,16 @@ class TimelineDashboardView(tk.Frame):
 
     def _build_filter_bar(self) -> None:
         p = self._p
+        for child in self._filter_bar.winfo_children():
+            child.destroy()
+
         present = sorted({block_kind(b) for b in (self._blocks or [])})
         if len(present) <= 1:
             return  # nada pra filtrar
 
-        bar = tk.Frame(self._scroll_frame, bg=p["frame_bg"])
-        bar.pack(fill="x", pady=(0, 4))
-        tk.Label(bar, text="Filtrar:", bg=p["frame_bg"], fg=p["muted"], font=("", 9)).pack(
-            side="left", padx=(8, 4), pady=4
-        )
+        tk.Label(
+            self._filter_bar, text="Filtrar:", bg=p["frame_bg"], fg=p["muted"], font=("", 9)
+        ).pack(side="left", padx=(8, 4), pady=4)
 
         def _make_toggle(kind_value: str, var: tk.IntVar):
             def _toggle():
@@ -368,14 +573,14 @@ class TimelineDashboardView(tk.Frame):
                     self._kind_filter.add(kind_value)
                 else:
                     self._kind_filter.discard(kind_value)
-                self._render()
+                self._populate()
             return _toggle
 
         for kind_value in present:
             disp = _kind_display(kind_value)
             var = tk.IntVar(value=1 if kind_value in self._kind_filter else 0)
             cb = tk.Checkbutton(
-                bar,
+                self._filter_bar,
                 text=f"{disp['icon']} {disp['label']}",
                 variable=var,
                 command=_make_toggle(kind_value, var),
@@ -390,163 +595,208 @@ class TimelineDashboardView(tk.Frame):
             )
             cb.pack(side="left", padx=2, pady=2)
 
-    # ------------------------------------------------------------------ accordion
+    # ------------------------------------------------------------------ populate
 
-    def _build_accordion(self) -> None:
-        p = self._p
-        blocks = self._blocks or []
-        block_ids = [b["id"] for b in blocks if b.get("id")]
+    def _sorted_blocks(self) -> list[dict]:
+        col, ascending = self._sort_state
+        blocks = list(self._blocks or [])
+        blocks.sort(key=lambda b: timeline_sort_key(b, col), reverse=not ascending)
+        return blocks
+
+    def _populate(self) -> None:
+        """Repopula a tabela principal respeitando filtro de kind e ordenação."""
+        self._cancel_editor()
+        tree = self._tree
+        tree.delete(*tree.get_children(""))
+        self._iid_to_block.clear()
+        self._iid_to_entry.clear()
+
         visible = self._kind_filter
-
+        row_i = 0
         shown = 0
-        for block in blocks:
-            if block_kind(block) not in visible:
+        for block in self._sorted_blocks():
+            kind = block_kind(block)
+            if kind not in visible:
                 continue
-            self._build_block_row(block, block_ids)
             shown += 1
+            block_id = str(block.get("id") or "")
+            disp = _kind_display(kind)
+            period = str(block.get("period_start") or block.get("period_label") or "")
+            topic = str(block.get("primary_topic_label") or "")
+            title_bits = [b for b in (period, topic) if b]
+            tree_text = f"{disp['icon']} " + " · ".join(title_bits) if title_bits else f"{disp['icon']} {block_id}"
+
+            seq = ""
+            m = _ID_NUM_RE.search(block_id)
+            if m:
+                seq = m.group(1)
+
+            unit_slug = str(block.get("unit_slug") or "")
+            unit_manual = bool(str(block.get("block_manual_unit_slug") or "").strip())
+            unit_cell = (("✎ " if unit_manual else "") + unit_slug) if unit_slug else ""
+
+            if kind in ("assessment", "review"):
+                scope = _block_scope_slugs(block)
+                escopo_cell = ", ".join(scope) if scope else "(definir)"
+            else:
+                escopo_cell = "—"
+
+            tipo_manual = bool(str(block.get("manual_kind_override") or "").strip())
+            tipo_cell = ("✎ " if tipo_manual else "") + disp["label"]
+
+            tag = "odd" if row_i % 2 else "even"
+            iid = tree.insert(
+                "",
+                "end",
+                text=tree_text,
+                values=("", seq, tipo_cell, unit_cell, escopo_cell, str(block.get("_file_count", 0))),
+                tags=(tag,),
+                open=False,
+            )
+            self._iid_to_block[iid] = block_id
+            row_i += 1
+
+            for entry in self._entries_by_block_id.get(block_id, []):
+                child_iid = self._insert_entry_child(iid, entry)
+                self._iid_to_entry[child_iid] = str(entry.get("id") or "")
 
         if shown == 0:
-            tk.Label(
-                self._scroll_frame,
-                text="Nenhum bloco no filtro atual.",
-                bg=p["bg"],
-                fg=p["muted"],
-                font=("", 10),
-            ).pack(pady=20)
+            placeholder = tree.insert("", "end", text="Nenhum bloco no filtro atual.", values=("",) * len(self._COLUMNS))
+            # nao mapeia: linha informativa apenas
 
-        # seção sem bloco no rodapé
-        tk.Frame(self._scroll_frame, bg=p["border"], height=2).pack(fill="x", pady=(8, 0))
-        self._build_unmapped_section()
-
-    def _build_block_row(self, block: dict, all_block_ids: list[str]) -> None:
-        p = self._p
-        block_id = str(block.get("id") or "")
-        period_label = str(block.get("period_label") or block_id)
-        unit_slug = str(block.get("unit_slug") or "")
-        topic_label = str(block.get("primary_topic_label") or "")
-
-        kind = block_kind(block)
-        disp = _kind_display(kind)
-        status = derive_block_status(dict(block, kind=kind))
-        status_color = p.get(_STATUS_COLOR.get(status, "muted"), p["muted"])
-
-        entries = list(self._entries_by_block_id.get(block_id) or [])
-        n_entries = len(entries)
-
-        # header frame
-        header = tk.Frame(self._scroll_frame, bg=p["frame_bg"], cursor="hand2")
-        header.pack(fill="x", padx=0, pady=(0, 1))
-
-        arrow_var = tk.StringVar(value="▶")
-        tk.Label(header, textvariable=arrow_var, bg=p["frame_bg"], fg=p["muted"], width=2).pack(
-            side="left", padx=(8, 2), pady=6
+    def _insert_entry_child(self, parent_iid: str, entry: dict) -> str:
+        title = str(entry.get("title") or entry.get("source_path") or "—")
+        file_type = str(entry.get("file_type") or "")
+        icon = "🔗" if file_type in {"url", "github-repo"} else "📄"
+        confidence = float(entry.get("unit_match_confidence") or 0.0)
+        from src.builder.routing.file_map import resolve_effective_block
+        is_manual = resolve_effective_block(entry, self._blocks).source == "manual"
+        mark = " ✎" if is_manual else ""
+        tree = self._tree
+        return tree.insert(
+            parent_iid,
+            "end",
+            text=f"   {icon} {title}{mark}",
+            values=("", "", "", "", "", f"conf {confidence:.2f}"),
+            tags=("child",),
         )
 
-        # ícone do kind + período + tópico
-        title_text = f"{disp['icon']} {period_label}"
-        if topic_label:
-            title_text += f" — {topic_label}"
-        title_color = status_color if status not in ("ok", "non_applicable") else p["fg"]
-        tk.Label(
-            header, text=title_text, bg=p["frame_bg"], fg=title_color,
-            font=("", 10, "bold"), anchor="w",
-        ).pack(side="left", pady=6)
+    def _populate_unmapped(self) -> None:
+        utree = self._unmapped_tree
+        utree.delete(*utree.get_children(""))
+        unmapped = self._unmapped or []
+        n = len(unmapped)
 
-        # chip PT-BR do kind
-        tk.Label(
-            header, text=disp["label"], bg=p["frame_bg"], fg=p["muted"], font=("", 8),
-        ).pack(side="left", padx=(6, 0), pady=6)
+        if n == 0:
+            self._unmapped_label.pack_forget()
+            self._unmapped_container.pack_forget()
+            return
 
-        # unidade efetiva (display); edição via dropdown à direita
-        if unit_slug:
-            is_manual = bool(str(block.get("block_manual_unit_slug") or "").strip())
-            tk.Label(
-                header, text=("✎ " if is_manual else "") + unit_slug,
-                bg=p["frame_bg"], fg=p["accent2"] if is_manual else p["muted"], font=("", 8),
-            ).pack(side="left", padx=(6, 0), pady=6)
+        self._unmapped_label_var.set(f"⚠ Sem bloco atribuído — {n} arquivo(s)")
+        self._unmapped_label.pack(fill="x", padx=10, pady=(6, 2))
+        self._unmapped_container.pack(fill="x", padx=4, pady=(0, 6))
 
-        # dropdowns de curadoria (não propagam o toggle do acordeão)
-        kind_combo = self._build_kind_combo(header, block_id, str(block.get("manual_kind_override") or ""))
-        unit_combo = self._build_unit_combo(header, block_id, unit_slug, str(block.get("block_manual_unit_slug") or ""))
-        no_toggle = (kind_combo, unit_combo)
+        self._unmapped_iid_to_entry: dict[str, str] = {}
+        for entry in unmapped:
+            entry_id = str(entry.get("id") or "")
+            title = str(entry.get("title") or entry.get("source_path") or "—")
+            file_type = str(entry.get("file_type") or "")
+            icon = "🔗" if file_type in {"url", "github-repo"} else "📄"
+            iid = utree.insert(
+                "",
+                "end",
+                text=f"{icon} {title}",
+                values=("duplo clique p/ atribuir",),
+            )
+            self._unmapped_iid_to_entry[iid] = entry_id
 
-        # badge de status (cor derivada do block_status)
-        tk.Label(
-            header, text=_STATUS_LABEL.get(status, status), bg=p["frame_bg"],
-            fg=status_color, font=("", 9, "bold"),
-        ).pack(side="right", padx=(4, 10), pady=6)
+    # ------------------------------------------------------------------ sort
 
-        # contagem de material
-        tk.Label(
-            header, text=f"{n_entries} arq.", bg=p["frame_bg"], fg=p["muted"], font=("", 8),
-        ).pack(side="right", padx=4, pady=6)
+    def _sort_by(self, column: str) -> None:
+        cur_col, ascending = self._sort_state
+        if cur_col == column:
+            ascending = not ascending
+        else:
+            ascending = True
+        self._sort_state = (column, ascending)
+        self._populate()
 
-        # content frame (colapsável)
-        content = tk.Frame(self._scroll_frame, bg=p["bg"])
+    # ------------------------------------------------------------------ inline edit
 
-        def toggle(_event=None):
-            if content.winfo_ismapped():
-                content.pack_forget()
-                arrow_var.set("▶")
-            else:
-                content.pack(fill="x", padx=0, pady=(0, 2))
-                arrow_var.set("▼")
-
-        header.bind("<Button-1>", toggle)
-        for child in header.winfo_children():
-            if child in no_toggle:
-                continue
-            child.bind("<Button-1>", toggle)
-
-        if entries:
-            for entry in entries:
-                self._build_entry_row(content, entry, block_id, all_block_ids)
-
-    def _build_unit_combo(
-        self, header: tk.Widget, block_id: str, current_unit: str, current_override: str
-    ) -> ttk.Combobox:
-        slugs = list(getattr(self, "_unit_slugs", []) or [])
-        labels = ["⟳ auto"] + slugs
-        values = [""] + slugs
-
-        idx = values.index(current_override) if current_override in slugs else 0
-        var = tk.StringVar(value=labels[idx] if idx < len(labels) else "⟳ auto")
-        combo = ttk.Combobox(
-            header, textvariable=var, values=labels, state="readonly", width=20, font=("", 8),
-        )
-        combo.pack(side="right", padx=(4, 4), pady=4)
-
-        def on_select(_event=None):
-            selected = var.get()
-            i = labels.index(selected) if selected in labels else 0
-            chosen = values[i] if i < len(values) else ""
+    def _cancel_editor(self) -> None:
+        ed = getattr(self, "_editor", None)
+        if ed is not None:
             try:
-                save_block_unit_override(self._course_dir, block_id, chosen or None)
-                self._reveal_reprocess_btn()
-                self._reload()
+                ed.destroy()
             except Exception:
-                logger.exception("Erro ao salvar unidade do bloco %s", block_id)
+                pass
+        self._editor = None
 
-        combo.bind("<<ComboboxSelected>>", on_select)
+    def _on_tree_double_click(self, event) -> None:
+        tree = self._tree
+        iid = tree.identify_row(event.y)
+        col = tree.identify_column(event.x)  # ex "#3"
+        if not iid or iid not in self._iid_to_block:
+            return  # so linhas-pai (blocos) sao editaveis
+        block_id = self._iid_to_block[iid]
+        block = self._block_by_id(block_id)
+        if block is None:
+            return
+
+        col_name = self._col_name(col)
+        if col_name == "tipo":
+            self._edit_tipo(iid, col, block_id)
+        elif col_name == "unidade":
+            self._edit_unidade(iid, col, block_id)
+        elif col_name == "escopo":
+            self._edit_escopo(block_id, block)
+
+    def _col_name(self, col_id: str) -> str:
+        # col_id no formato "#0" (arvore) ou "#N" (1-based em _COLUMNS)
+        if col_id == "#0":
+            return "#0"
+        try:
+            idx = int(col_id.replace("#", "")) - 1
+        except ValueError:
+            return ""
+        if 0 <= idx < len(self._COLUMNS):
+            return self._COLUMNS[idx]
+        return ""
+
+    def _block_by_id(self, block_id: str) -> Optional[dict]:
+        for b in self._blocks or []:
+            if str(b.get("id") or "") == block_id:
+                return b
+        return None
+
+    def _overlay_combo(self, iid: str, col_id: str, labels: list[str], current: str) -> ttk.Combobox:
+        self._cancel_editor()
+        tree = self._tree
+        bbox = tree.bbox(iid, col_id)
+        if not bbox:
+            return None  # celula fora da viewport
+        x, y, w, h = bbox
+        var = tk.StringVar(value=current)
+        combo = ttk.Combobox(tree, textvariable=var, values=labels, state="readonly")
+        combo.place(x=x, y=y, width=w, height=h)
+        combo.focus_set()
+        self._editor = combo
         return combo
 
-    def _build_kind_combo(self, header: tk.Widget, block_id: str, current_override: str) -> ttk.Combobox:
+    def _edit_tipo(self, iid: str, col_id: str, block_id: str) -> None:
         labels = ["⟳ auto"] + [
             f"{KIND_DISPLAY[k]['icon']} {KIND_DISPLAY[k]['label']}" for k in BlockKind
         ]
         values = [""] + [k.value for k in BlockKind]
-        idx = values.index(current_override) if current_override in values and current_override else 0
+        combo = self._overlay_combo(iid, col_id, labels, labels[0])
+        if combo is None:
+            return
 
-        var = tk.StringVar(value=labels[idx])
-        combo = ttk.Combobox(
-            header, textvariable=var, values=labels, state="readonly", width=16, font=("", 8),
-        )
-        combo.pack(side="right", padx=(4, 8), pady=4)
-
-        def on_select(_event=None):
-            selected = var.get()
-            i = labels.index(selected) if selected in labels else 0
+        def on_select(_e=None):
+            sel = combo.get()
+            i = labels.index(sel) if sel in labels else 0
             new_kind = values[i] if i < len(values) else ""
+            self._cancel_editor()
             try:
                 save_block_kind_override(self._course_dir, block_id, new_kind or None)
                 self._reveal_reprocess_btn()
@@ -555,206 +805,91 @@ class TimelineDashboardView(tk.Frame):
                 logger.exception("Erro ao salvar reclassificação do bloco %s", block_id)
 
         combo.bind("<<ComboboxSelected>>", on_select)
-        return combo
+        combo.bind("<FocusOut>", lambda _e: self._cancel_editor())
+        combo.bind("<Escape>", lambda _e: self._cancel_editor())
 
-    def _build_entry_row(
-        self,
-        parent: tk.Widget,
-        entry: dict,
-        current_block_id: str,
-        all_block_ids: list[str],
-    ) -> None:
-        p = self._p
-        entry_id = str(entry.get("id") or "")
-        title = str(entry.get("title") or entry.get("source_path") or "—")
-        source_path = str(entry.get("source_path") or "")
-        confidence = float(entry.get("unit_match_confidence") or 0.0)
-        band = str(entry.get("computed_block_band") or "").strip()
-        # Marcador manual/auto via a FONTE ÚNICA (spec Fase 4), nunca relendo o
-        # campo cru aqui — concorda com health e com o roteamento do dashboard.
-        from src.builder.routing.file_map import resolve_effective_block
-        source = resolve_effective_block(entry, self._blocks).source
-        is_manual = source == "manual"
-
-        row = tk.Frame(parent, bg=p["input_bg"])
-        row.pack(fill="x", padx=24, pady=2)
-
-        # ícone por tipo
-        file_type = str(entry.get("file_type") or "")
-        icon = "🔗" if file_type in {"url", "github-repo"} else "📄"
-        tk.Label(row, text=icon, bg=p["input_bg"], fg=p["fg"]).pack(side="left", padx=(6, 2), pady=4)
-
-        tk.Label(
-            row,
-            text=title,
-            bg=p["input_bg"],
-            fg=p["fg"],
-            font=("", 9),
-            anchor="w",
-        ).pack(side="left", padx=(0, 8), pady=4, fill="x", expand=True)
-
-        # badge de confiança
-        if confidence >= 0.80:
-            conf_color = p["success"]
-        elif confidence >= 0.50:
-            conf_color = p["accent"]
-        else:
-            conf_color = p["warning"]
-        tk.Label(
-            row,
-            text=f"conf {confidence:.2f}",
-            bg=p["input_bg"],
-            fg=conf_color,
-            font=("", 8),
-        ).pack(side="left", padx=4, pady=4)
-
-        # badge de faixa de confiança de bloco (Fase 3/4): lê computed_block_band.
-        if band:
-            band_color = {
-                "alta": p["success"],
-                "media": p["accent"],
-                "baixa": p["warning"],
-            }.get(band, p["muted"])
-            tk.Label(
-                row, text=band, bg=p["input_bg"], fg=band_color, font=("", 8),
-            ).pack(side="left", padx=4, pady=4)
-
-        # badge DD.MM
-        stem = Path(source_path).stem
-        if _DATE_PREFIX_RE.match(stem):
-            tk.Label(
-                row,
-                text="🗓 DD.MM",
-                bg=p["input_bg"],
-                fg=p["accent"],
-                font=("", 8),
-            ).pack(side="left", padx=4, pady=4)
-
-        # badge manual override
-        if is_manual:
-            tk.Label(row, text="✎", bg=p["input_bg"], fg=p["accent2"], font=("", 8)).pack(
-                side="left", padx=2, pady=4
-            )
-
-        # dropdown
-        block_labels = ["— remover atribuição"] + [
-            self._block_label(b)
-            for b in (self._blocks or [])
-            if b.get("id")
-        ]
-        block_values = [""] + [b["id"] for b in (self._blocks or []) if b.get("id")]
-
-        current_idx = (block_values.index(current_block_id) if current_block_id in block_values else 0)
-        var = tk.StringVar(value=block_labels[current_idx])
-
-        combo = ttk.Combobox(row, textvariable=var, values=block_labels, state="readonly", width=28, font=("", 8))
-        combo.pack(side="right", padx=(4, 6), pady=4)
-
-        def on_select(_event=None):
-            selected_label = var.get()
-            idx = block_labels.index(selected_label) if selected_label in block_labels else 0
-            new_block_id: Optional[str] = block_values[idx] if idx < len(block_values) else None
-            if not new_block_id:
-                new_block_id = None
-            try:
-                save_block_assignment(self._manifest_path, entry_id, new_block_id)
-                self._reveal_reprocess_btn()
-            except Exception:
-                logger.exception("Erro ao salvar atribuição de bloco para entry %s", entry_id)
-
-        combo.bind("<<ComboboxSelected>>", on_select)
-
-    def _block_label(self, block: dict) -> str:
-        icon = _kind_display(block_kind(block))["icon"]
-        period = str(block.get("period_label") or block.get("id") or "")
-        topic = str(block.get("primary_topic_label") or "")
-        base = f"{period} — {topic}" if topic else period
-        return f"{icon} {base}"
-
-    def _build_unmapped_section(self) -> None:
-        p = self._p
-        unmapped = self._unmapped or []
-        n = len(unmapped)
-        if n == 0:
+    def _edit_unidade(self, iid: str, col_id: str, block_id: str) -> None:
+        slugs = list(self._unit_slugs or [])
+        labels = ["⟳ auto"] + slugs
+        values = [""] + slugs
+        combo = self._overlay_combo(iid, col_id, labels, labels[0])
+        if combo is None:
             return
 
-        header = tk.Frame(self._scroll_frame, bg=p["frame_bg"], cursor="hand2")
-        header.pack(fill="x", padx=0, pady=(0, 1))
+        def on_select(_e=None):
+            sel = combo.get()
+            i = labels.index(sel) if sel in labels else 0
+            chosen = values[i] if i < len(values) else ""
+            self._cancel_editor()
+            try:
+                save_block_unit_override(self._course_dir, block_id, chosen or None)
+                self._reveal_reprocess_btn()
+                self._reload()
+            except Exception:
+                logger.exception("Erro ao salvar unidade do bloco %s", block_id)
 
-        arrow_var = tk.StringVar(value="▶")
-        tk.Label(header, textvariable=arrow_var, bg=p["frame_bg"], fg=p["warning"], width=2).pack(
-            side="left", padx=(8, 2), pady=6
-        )
-        tk.Label(
-            header,
-            text="⚠ Sem bloco atribuído",
-            bg=p["frame_bg"],
-            fg=p["warning"],
-            font=("", 10, "bold"),
-        ).pack(side="left", pady=6)
-        tk.Label(
-            header,
-            text=f"{n} arquivo(s)",
-            bg=p["frame_bg"],
-            fg=p["warning"],
-            font=("", 9),
-        ).pack(side="right", padx=12, pady=6)
+        combo.bind("<<ComboboxSelected>>", on_select)
+        combo.bind("<FocusOut>", lambda _e: self._cancel_editor())
+        combo.bind("<Escape>", lambda _e: self._cancel_editor())
 
-        content = tk.Frame(self._scroll_frame, bg=p["bg"])
+    def _edit_escopo(self, block_id: str, block: dict) -> None:
+        if block_kind(block) not in ("assessment", "review"):
+            return  # escopo read-only para outros tipos
+        current = _block_scope_slugs(block)
 
-        def toggle(_event=None):
-            if content.winfo_ismapped():
-                content.pack_forget()
-                arrow_var.set("▶")
-            else:
-                content.pack(fill="x", padx=0, pady=(0, 2))
-                arrow_var.set("▼")
+        def on_save(selected: list[str]) -> None:
+            try:
+                save_block_scope_override(self._course_dir, block_id, selected)
+                self._reveal_reprocess_btn()
+                self._reload()
+            except Exception:
+                logger.exception("Erro ao salvar escopo do bloco %s", block_id)
 
-        header.bind("<Button-1>", toggle)
-        for child in header.winfo_children():
-            child.bind("<Button-1>", toggle)
+        ScopeEditDialog(self, list(self._unit_slugs or []), current, on_save)
 
-        for entry in unmapped:
-            self._build_unmapped_entry_row(content, entry)
+    # ------------------------------------------------------------------ unmapped reassign
 
-    def _build_unmapped_entry_row(
-        self, parent: tk.Widget, entry: dict
-    ) -> None:
+    def _on_unmapped_double_click(self, event) -> None:
+        utree = self._unmapped_tree
+        iid = utree.identify_row(event.y)
+        mapping = getattr(self, "_unmapped_iid_to_entry", {})
+        if not iid or iid not in mapping:
+            return
+        entry_id = mapping[iid]
+        self._open_block_picker(entry_id)
+
+    def _open_block_picker(self, entry_id: str) -> None:
+        """Toplevel simples: escolhe o bloco de destino para um arquivo sem bloco."""
         p = self._p
-        entry_id = str(entry.get("id") or "")
-        title = str(entry.get("title") or entry.get("source_path") or "—")
-        source_path = str(entry.get("source_path") or "")
+        labels = [self._block_label(b) for b in (self._blocks or []) if b.get("id")]
+        values = [b["id"] for b in (self._blocks or []) if b.get("id")]
+        if not values:
+            messagebox.showinfo("Atribuir bloco", "Nenhum bloco disponível.", parent=self)
+            return
 
-        row = tk.Frame(parent, bg=p["input_bg"])
-        row.pack(fill="x", padx=24, pady=2)
+        dlg = tk.Toplevel(self)
+        dlg.title("Atribuir a bloco")
+        apply_theme_to_toplevel(dlg, self)
+        dlg.configure(bg=p["bg"])
+        dlg.transient(self.winfo_toplevel())
+        dlg.resizable(False, False)
 
-        file_type = str(entry.get("file_type") or "")
-        icon = "🔗" if file_type in {"url", "github-repo"} else "📄"
-        tk.Label(row, text=icon, bg=p["input_bg"], fg=p["fg"]).pack(side="left", padx=(6, 2), pady=4)
+        tk.Label(
+            dlg, text="Atribuir o arquivo ao bloco:", bg=p["bg"], fg=p["fg"], font=("", 10, "bold")
+        ).pack(anchor="w", padx=12, pady=(12, 6))
 
-        stem = Path(source_path).stem
-        has_date = bool(_DATE_PREFIX_RE.match(stem))
+        var = tk.StringVar(value=labels[0])
+        combo = ttk.Combobox(dlg, textvariable=var, values=labels, state="readonly", width=44)
+        combo.pack(fill="x", padx=12)
 
-        tk.Label(row, text=title, bg=p["input_bg"], fg=p["fg"], font=("", 9), anchor="w").pack(
-            side="left", padx=(0, 8), pady=4, fill="x", expand=True
-        )
+        btns = tk.Frame(dlg, bg=p["bg"])
+        btns.pack(fill="x", padx=12, pady=12)
 
-        if has_date:
-            tk.Label(row, text="🗓 DD.MM", bg=p["input_bg"], fg=p["accent"], font=("", 8)).pack(
-                side="left", padx=4, pady=4
-            )
-
-        block_labels = ["— sem bloco —"] + [self._block_label(b) for b in (self._blocks or []) if b.get("id")]
-        block_values = [""] + [b["id"] for b in (self._blocks or []) if b.get("id")]
-
-        var = tk.StringVar(value=block_labels[0])
-        combo = ttk.Combobox(row, textvariable=var, values=block_labels, state="readonly", width=28, font=("", 8))
-        combo.pack(side="right", padx=(4, 6), pady=4)
-
-        def on_select(_event=None):
-            selected_label = var.get()
-            idx = block_labels.index(selected_label) if selected_label in block_labels else 0
-            new_block_id: Optional[str] = block_values[idx] if idx > 0 and idx < len(block_values) else None
+        def _ok():
+            sel = var.get()
+            idx = labels.index(sel) if sel in labels else 0
+            new_block_id = values[idx] if 0 <= idx < len(values) else None
+            dlg.destroy()
             if not new_block_id:
                 return
             try:
@@ -764,4 +899,15 @@ class TimelineDashboardView(tk.Frame):
             except Exception:
                 logger.exception("Erro ao salvar atribuição de bloco para entry %s", entry_id)
 
-        combo.bind("<<ComboboxSelected>>", on_select)
+        ttk.Button(btns, text="OK", command=_ok).pack(side="right", padx=(4, 0))
+        ttk.Button(btns, text="Cancelar", command=dlg.destroy).pack(side="right")
+        dlg.bind("<Escape>", lambda _e: dlg.destroy())
+        dlg.grab_set()
+        combo.focus_set()
+
+    def _block_label(self, block: dict) -> str:
+        icon = _kind_display(block_kind(block))["icon"]
+        period = str(block.get("period_label") or block.get("period_start") or block.get("id") or "")
+        topic = str(block.get("primary_topic_label") or "")
+        base = f"{period} — {topic}" if topic else period
+        return f"{icon} {base}"
