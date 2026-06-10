@@ -364,6 +364,12 @@ def regenerate_pedagogical_files(
         ),
     )
 
+    from src.builder.artifacts.temporal_context import temporal_context_md as _temporal_context_md
+    write_text(
+        builder.root_dir / "setup" / "CONTEXTO_TEMPORAL.md",
+        _temporal_context_md(builder.course_meta, builder._load_timeline_blocks()),
+    )
+
     from src.builder.artifacts.cronograma_health import cronograma_health_md as _cronograma_health_md
     write_text(
         builder.root_dir / "course" / "CRONOGRAMA_HEALTH.md",

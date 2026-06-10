@@ -221,6 +221,12 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
         ),
     )
 
+    from src.builder.artifacts.temporal_context import temporal_context_md as _temporal_context_md
+    write_text(
+        builder.root_dir / "setup" / "CONTEXTO_TEMPORAL.md",
+        _temporal_context_md(builder.course_meta, builder._load_timeline_blocks()),
+    )
+
     wb_entries = [e for e in builder.entries if e.category in whiteboard_categories]
     if wb_entries:
         write_text(builder.root_dir / "whiteboard" / "WHITEBOARD_INDEX.md", whiteboard_index_md_fn(builder.course_meta, wb_entries))

@@ -4444,6 +4444,7 @@ class TestIncrementalBuildLowTokenRollout:
         timeline_index = json.loads((repo / "course" / ".timeline_index.json").read_text(encoding="utf-8"))
         assessment_context = json.loads((repo / "course" / ".assessment_context.json").read_text(encoding="utf-8"))
         instructions = (repo / "setup" / "INSTRUCOES_CLAUDE_PROJETO.md").read_text(encoding="utf-8")
+        contexto_temporal = (repo / "setup" / "CONTEXTO_TEMPORAL.md").read_text(encoding="utf-8")
         bundle = json.loads((repo / "build" / "claude-knowledge" / "bundle.seed.json").read_text(encoding="utf-8"))
         lesson = (repo / "content" / "lesson.md").read_text(encoding="utf-8")
 
@@ -4458,6 +4459,7 @@ class TestIncrementalBuildLowTokenRollout:
         assert "artefatos estruturais gerados pelo app" in instructions
         assert "Reprocessar Repositório" in instructions
         assert "backlog" in instructions
+        assert "CONTEXTO TEMPORAL" in contexto_temporal
         assert "preencha a coluna **Unidade** dos itens vazios" not in instructions
         assert ".timeline_index.json" not in instructions
         assert ".content_taxonomy.json" not in instructions
