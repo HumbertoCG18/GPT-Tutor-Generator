@@ -66,6 +66,20 @@ def _format_date_ddmmyy(raw: str) -> str:
     return raw
 
 
+def _blend(hex_a: str, hex_b: str, t: float) -> str:
+    """Mistura duas cores hex (#rrggbb): t=0 -> a, t=1 -> b. Robusto a entrada inválida."""
+    try:
+        a = hex_a.lstrip("#"); b = hex_b.lstrip("#")
+        ar, ag, ab = int(a[0:2], 16), int(a[2:4], 16), int(a[4:6], 16)
+        br, bg, bb = int(b[0:2], 16), int(b[2:4], 16), int(b[4:6], 16)
+        r = round(ar + (br - ar) * t)
+        g = round(ag + (bg - ag) * t)
+        bl = round(ab + (bb - ab) * t)
+        return f"#{r:02x}{g:02x}{bl:02x}"
+    except (ValueError, IndexError):
+        return hex_a
+
+
 def timeline_sort_key(block: dict, column: str) -> tuple:
     """Chave de ordenacao por coluna para as linhas-pai (blocos) na Treeview.
 
@@ -292,7 +306,7 @@ class TimelineDashboardView(tk.Frame):
     """
 
     # colunas extra (alem da arvore #0)
-    _COLUMNS = ("incluir", "seq", "tipo", "unidade", "escopo", "arq")
+    _COLUMNS = ("seq", "tipo", "unidade", "escopo", "arq")
     # mapeamento coluna-treeview -> coluna de ordenacao (timeline_sort_key)
     _SORT_COLUMN = {
         "#0": "Data",
@@ -400,7 +414,6 @@ class TimelineDashboardView(tk.Frame):
 
         headings = {
             "#0": "Data · Bloco/tópico",
-            "incluir": "✓",
             "seq": "#",
             "tipo": "Tipo",
             "unidade": "Unidade",
@@ -415,17 +428,21 @@ class TimelineDashboardView(tk.Frame):
                 tree.heading(col, text=text)
 
         tree.column("#0", width=340, minwidth=180, anchor="w", stretch=True)
-        tree.column("incluir", width=36, minwidth=30, anchor="center", stretch=False)
         tree.column("seq", width=44, minwidth=36, anchor="e", stretch=False)
         tree.column("tipo", width=110, minwidth=80, anchor="w", stretch=False)
         tree.column("unidade", width=180, minwidth=100, anchor="w", stretch=False)
         tree.column("escopo", width=200, minwidth=100, anchor="w", stretch=True)
         tree.column("arq", width=48, minwidth=40, anchor="e", stretch=False)
 
-        # striping de linhas
-        tree.tag_configure("odd", background=p.get("treeview_odd", p["bg"]))
-        tree.tag_configure("even", background=p.get("treeview_even", p["frame_bg"]))
-        tree.tag_configure("child", foreground=p["muted"])
+        # striping de linhas com mais contraste (blend rumo a 'border' p/ separar visualmente)
+        base = p.get("treeview_odd", p["bg"])
+        even = p.get("treeview_even", p["frame_bg"])
+        border = p.get("border", even)
+        odd_bg = base
+        even_bg = _blend(even, border, 0.45)
+        tree.tag_configure("odd", background=odd_bg)
+        tree.tag_configure("even", background=even_bg)
+        tree.tag_configure("child", background=_blend(base, border, 0.12), foreground=p["muted"])
 
         scrollbar = ttk.Scrollbar(container, orient="vertical", command=tree.yview)
         tree.configure(yscrollcommand=scrollbar.set)
@@ -668,7 +685,7 @@ class TimelineDashboardView(tk.Frame):
                 "",
                 "end",
                 text=tree_text,
-                values=("", seq, tipo_cell, unit_cell, escopo_cell, str(block.get("_file_count", 0))),
+                values=(seq, tipo_cell, unit_cell, escopo_cell, str(block.get("_file_count", 0))),
                 tags=(tag,),
                 open=False,
             )
@@ -695,7 +712,7 @@ class TimelineDashboardView(tk.Frame):
             parent_iid,
             "end",
             text=f"   {icon} {title}{mark}",
-            values=("", "", "", "", "", f"conf {confidence:.2f}"),
+            values=("", "", "", "", f"conf {confidence:.2f}"),
             tags=("child",),
         )
 
