@@ -47,3 +47,17 @@ def test_sort_file_count_missing_goes_last():
         {"id": "c", "_file_count": 5},
     ]
     assert _sorted_ids(blocks, "Arq.") == ["a", "c", "b"]
+
+
+def test_sort_by_kind_string():
+    blocks = [{"id": "a", "kind": "review"}, {"id": "b", "kind": "assessment"}]
+    assert _sorted_ids(blocks, "Tipo") == ["b", "a"]
+
+
+def test_sort_sequence_id_without_number_goes_last():
+    blocks = [
+        {"id": "bloco-02"},
+        {"id": "orphan"},     # no numeric suffix -> sorts last
+        {"id": "bloco-01"},
+    ]
+    assert _sorted_ids(blocks, "#") == ["bloco-01", "bloco-02", "orphan"]
