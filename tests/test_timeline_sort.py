@@ -92,3 +92,12 @@ def test_block_name():
     assert _block_name({}, "review") == "Revisão"
     assert _block_name({"primary_topic_label": "Indução"}, "class") == "Indução"
     assert _block_name({}, "class") == "(sem tópico)"
+
+
+def test_unit_short_label():
+    from src.ui.timeline_dashboard import _unit_short_label
+    assert _unit_short_label("unidade-01-metodos-formais") == "U1"
+    assert _unit_short_label("unidade-03-verificacao-de-modelos") == "U3"
+    assert _unit_short_label("unidade-12-x") == "U12"
+    assert _unit_short_label("") == ""
+    assert _unit_short_label("livre") == "livre"

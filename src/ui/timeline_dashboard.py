@@ -92,6 +92,19 @@ def _extract_exam_code(block: dict) -> str:
     return ""
 
 
+_UNIT_NUM_RE = re.compile(r"unidade[-_\s]*0*(\d+)", re.IGNORECASE)
+
+
+def _unit_short_label(slug: str) -> str:
+    """Converte slug de unidade em rótulo curto: 'unidade-01-...' -> 'U1'.
+    Mantém o original se não casar o padrão."""
+    s = str(slug or "").strip()
+    if not s:
+        return ""
+    m = _UNIT_NUM_RE.search(s)
+    return f"U{int(m.group(1))}" if m else s
+
+
 def _block_name(block: dict, kind: str) -> str:
     """Nome legível do bloco para a coluna 'Nome do bloco':
     avaliação -> P1/P2/PS/G2/PF/EXAME; revisão -> 'Revisão'; demais -> assunto."""
@@ -711,7 +724,9 @@ class TimelineDashboardView(tk.Frame):
 
             if kind in ("assessment", "review"):
                 scope = _block_scope_slugs(block)
-                escopo_cell = _COL_SEP + (", ".join(scope) if scope else "(definir)")
+                escopo_cell = _COL_SEP + (
+                    ", ".join(_unit_short_label(s) for s in scope) if scope else "(definir)"
+                )
             else:
                 escopo_cell = _COL_SEP + "—"
 
