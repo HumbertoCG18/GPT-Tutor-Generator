@@ -620,7 +620,7 @@ FLUXO RECOMENDADO
   3. Adicione PDFs, imagens, links, código ou ZIP.
   4. Ajuste categoria, modo, perfil e backend quando necessário.
   5. Processe itens individualmente ou clique em "🚀 Criar Repositório".
-  6. Revise o que cair em manual-review/ no "🖌 Curator Studio".
+  6. Revise o que cair em manual-review/ em "🧰 Curadoria > Revisão Manual".
   7. Gere ou regenere as instruções LLM pela aba Backlog.
 
 ESTRUTURA MENTAL DO APP
@@ -653,8 +653,8 @@ TOOLBAR
   📂 Abrir Repo
     Carrega um repositório existente pelo manifest.json.
 
-  🖌 Curator Studio
-    Abre a revisão manual dos arquivos em manual-review/.
+  🧰 Curadoria
+    Abre Revisão Manual e Imagens em uma janela com abas.
 
   🚀 Criar Repositório
     Faz build novo ou incremental, dependendo do estado do repo selecionado.
@@ -831,11 +831,11 @@ OCR LANGUAGE
   Idiomas separados por vírgula.
   Padrão recomendado: por,eng
 """),
-    ("Curator Studio", """O Curator Studio revisa manualmente saídas de manual-review/.
+    ("Curadoria > Revisão Manual", """A aba Curadoria > Revisão Manual revisa manualmente saídas de manual-review/.
 
 COMO FUNCIONA
   1. Abra um repositório existente.
-  2. Clique em "🖌 Curator Studio".
+  2. Clique em "🧰 Curadoria" e abra a aba "Revisão Manual".
   3. Selecione um item da lista.
   4. Compare preview, metadados e markdown.
   5. Escolha a melhor fonte disponível: base, avançada ou template.
@@ -954,10 +954,10 @@ GITHUB
   Double-click  → edita item selecionado na fila ou backlog
   Delete        → remove item selecionado
   Espaço        → ativa/desativa item na fila
-  Ctrl+S        → salva no Curator Studio
+  Ctrl+S        → salva na aba Revisão Manual da Curadoria
 
 DICAS
-  • Use "📂 Abrir Repo" antes de mexer em backlog ou Curator Studio.
+  • Use "📂 Abrir Repo" antes de mexer em backlog ou Curadoria > Revisão Manual.
   • O manifest.json é a fonte de verdade do repositório processado.
   • O status da barra inferior é um bom diagnóstico rápido do ambiente.
   • Reprocessar Repositório é a forma mais segura de aplicar mudanças de arquitetura

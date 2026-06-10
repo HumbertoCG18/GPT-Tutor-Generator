@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Contains project state, routing table, and behavioural contract.
-last_updated: 2026-06-09
+last_updated: 2026-06-10
 ---
 
 # ROUTER.md - Session Bootstrap
@@ -19,7 +19,11 @@ Read this file before starting any task.
 - Academic-material import flow supports files and links.
 - Processing flow handles PDFs, links, images, and code.
 - Problematic processing outputs are reviewed through the generated repository's manual review area.
-- Image Curator supports images extracted from PDFs and imported photos.
+- Curadoria unificada na UI: um botão `Curadoria` abre workspace com abas
+  `Revisão Manual` e `Imagens`; revisão manual abre primeiro e o painel de
+  imagens é lazy-loaded ao selecionar a aba.
+- Image Curator supports images extracted from PDFs and imported photos inside
+  the unified curation workspace.
 - Repository builder consolidates content into Markdown.
 - Generated tutor artifacts target Claude, GPT, and Gemini.
 - Repository task queue supports builds, reprocessing, and individual material processing.

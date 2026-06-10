@@ -24,6 +24,7 @@ from src.builder.extraction.image_markdown import (
     _low_token_inject_image_descriptions,
     _strip_described_image_refs,
 )
+from src.utils.helpers import write_json_manifest
 
 logger = logging.getLogger(__name__)
 
@@ -252,26 +253,37 @@ def _inject_all_image_descriptions_from_manifest(repo_dir: Path, manifest: dict)
                 logger.warning("Could not inject image descriptions into %s: %s", path, exc)
 
 
-class ImageCurator(tk.Toplevel):
-    def __init__(self, parent, repo_dir: str, theme_mgr):
+class ImageCuratorPanel(ttk.Frame):
+    def __init__(
+        self,
+        parent,
+        repo_dir: str,
+        theme_mgr,
+        *,
+        app_parent=None,
+        bind_target=None,
+        apply_theme: bool = True,
+        title_text: str = "Image Curator",
+        active_guard=None,
+    ):
         super().__init__(parent)
         self.repo_dir = Path(repo_dir)
         self.theme_mgr = theme_mgr
+        self._app_parent = app_parent if app_parent is not None else parent
+        self._bind_target = bind_target if bind_target is not None else self
+        self._title_text = title_text
+        self._active_guard = active_guard
         self._theme_name = (
-            parent.config_obj.get("theme")
-            if hasattr(parent, "config_obj")
+            self._app_parent.config_obj.get("theme")
+            if hasattr(self._app_parent, "config_obj")
             else "dark"
         )
-        self._parent = parent
+        self._parent = self._app_parent
         self._image_description_source = (
-            parent.config_obj.get("image_description_source", "ollama")
-            if hasattr(parent, "config_obj")
+            self._app_parent.config_obj.get("image_description_source", "ollama")
+            if hasattr(self._app_parent, "config_obj")
             else "ollama"
         )
-
-        self.title("Image Curator")
-        self.geometry("1400x800")
-        self.minsize(1000, 600)
 
         # State
         self._manifest_path = self.repo_dir / "manifest.json"
@@ -286,10 +298,11 @@ class ImageCurator(tk.Toplevel):
         self._vision_busy = False   # prevent concurrent requests
         self._layout_mode = ""
 
-        self.theme_mgr.apply(self, self._theme_name)
+        if apply_theme:
+            self.theme_mgr.apply(self, self._theme_name)
         self._build_ui()
         self._load_manifest()
-        self.bind("<Delete>", self._on_delete_key)
+        self._bind_target.bind("<Delete>", self._on_delete_key)
         self.bind("<Configure>", self._on_layout_change)
         self.after_idle(self._apply_responsive_layout)
 
@@ -303,7 +316,7 @@ class ImageCurator(tk.Toplevel):
         toolbar.pack(fill="x", side="top")
         tk.Label(
             toolbar,
-            text="Image Curator",
+            text=self._title_text,
             bg=p["header_bg"],
             fg=p["header_fg"],
             font=("Segoe UI", 14, "bold"),
@@ -944,6 +957,8 @@ class ImageCurator(tk.Toplevel):
             widgets["include_var"].set(include)
 
     def _on_delete_key(self, _event=None):
+        if self._active_guard is not None and not self._active_guard():
+            return
         selected = _selected_image_names(self._image_widgets)
         if not selected:
             return
@@ -1629,10 +1644,24 @@ class ImageCurator(tk.Toplevel):
             )
         clean_manifest["entries"] = clean_entries
 
-        self._manifest_path.write_text(
-            json.dumps(clean_manifest, ensure_ascii=False, indent=2),
-            encoding="utf-8",
+        write_json_manifest(self._manifest_path, clean_manifest)
+
+
+class ImageCurator(tk.Toplevel):
+    def __init__(self, parent, repo_dir: str, theme_mgr):
+        super().__init__(parent)
+        self.title("Image Curator")
+        self.geometry("1400x800")
+        self.minsize(1000, 600)
+        self.panel = ImageCuratorPanel(
+            self,
+            repo_dir,
+            theme_mgr,
+            app_parent=parent,
+            bind_target=self,
+            apply_theme=True,
         )
+        self.panel.pack(fill="both", expand=True)
 
 
 

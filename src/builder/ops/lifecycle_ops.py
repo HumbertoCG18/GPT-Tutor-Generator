@@ -7,7 +7,7 @@ import sys
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from src.utils.helpers import write_text
+from src.utils.helpers import write_text, write_json_manifest
 
 logger = logging.getLogger(__name__)
 
@@ -74,13 +74,13 @@ def process_single_impl(
     builder.logs = []
     manifest = builder._compact_manifest(manifest)
 
-    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    write_json_manifest(manifest_path, manifest)
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
     builder._write_build_report(manifest)
 
     builder._regenerate_pedagogical_files(manifest)
-    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    write_json_manifest(manifest_path, manifest)
 
     logger.info("Single entry processed: %s", entry.id())
     return "ok"
@@ -146,7 +146,7 @@ def unprocess(builder, entry_id: str) -> bool:
     manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
     manifest = builder._compact_manifest(manifest)
 
-    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    write_json_manifest(manifest_path, manifest)
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
 
@@ -161,7 +161,7 @@ def unprocess(builder, entry_id: str) -> bool:
         logger.warning("unprocess: prune image_curation falhou: %s", exc)
     try:
         builder._regenerate_pedagogical_files(manifest)
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        write_json_manifest(manifest_path, manifest)
     except Exception as exc:
         logger.warning("unprocess: regeneração pedagógica falhou: %s", exc)
 
@@ -204,7 +204,7 @@ def sweep_orphans(builder) -> Dict[str, object]:
             manifest = json.load(f)
         builder.course_meta = builder._effective_course_meta(manifest)
         builder._regenerate_pedagogical_files(manifest)
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        write_json_manifest(manifest_path, manifest)
         report["regenerated"] = True
     except Exception as exc:
         report["errors"].append(f"regen pedagogical: {exc}")
@@ -264,7 +264,7 @@ def reject(builder, entry_id: str) -> Optional[Dict[str, object]]:
     )
     manifest = builder._compact_manifest(manifest)
 
-    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    write_json_manifest(manifest_path, manifest)
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
     builder._resolve_content_images()
@@ -280,7 +280,7 @@ def reject(builder, entry_id: str) -> Optional[Dict[str, object]]:
         logger.warning("reject: prune image_curation falhou: %s", exc)
     try:
         builder._regenerate_pedagogical_files(manifest)
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        write_json_manifest(manifest_path, manifest)
     except Exception as exc:
         logger.warning("reject: regeneração pedagógica falhou: %s", exc)
 

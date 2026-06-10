@@ -111,6 +111,31 @@ def test_app_source_no_longer_contains_dead_duplicate_action():
     assert "def duplicate_selected(" not in text
 
 
+def test_app_declares_single_curation_workspace_entry():
+    text = Path("src/ui/app.py").read_text(encoding="utf-8")
+    assert "open_curation_workspace" in text
+    assert "open_image_curator" not in text
+    assert "open_curator_studio" not in text
+    assert 'text="🧰 Curadoria"' in text
+    assert 'text="🖼 Image Curator"' not in text
+    assert 'text="🖌 Curator Studio"' not in text
+
+
+def test_curation_workspace_lazy_load_contract_is_declared():
+    text = Path("src/ui/curation_workspace.py").read_text(encoding="utf-8")
+    assert "class CurationWorkspace" in text
+    assert "self._image_panel = None" in text
+    assert "def _ensure_image_panel" in text
+    assert "ImageCuratorPanel" in text
+    assert "CuratorStudioPanel" in text
+
+
+def test_help_text_points_to_unified_curation_workspace():
+    joined = "\n".join(body for _title, body in HELP_SECTIONS)
+    assert "Curadoria > Revisão Manual" in joined
+    assert 'Clique em "🖌 Curator Studio"' not in joined
+
+
 def test_dialogs_source_no_longer_contains_unused_markdown_preview_window():
     text = Path("src/ui/dialogs.py").read_text(encoding="utf-8")
     assert "class MarkdownPreviewWindow" not in text

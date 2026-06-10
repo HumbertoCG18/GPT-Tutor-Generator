@@ -370,14 +370,11 @@ _strip_frontmatter_block = _markdown_utils_strip_frontmatter_block
 _rewrite_markdown_asset_paths = _markdown_utils_rewrite_markdown_asset_paths
 _strip_markdown_image_refs = _markdown_utils_strip_markdown_image_refs
 
-
 _entry_image_source_dirs = _entry_signals_image_source_dirs
-
 
 _build_page_chunks = _backend_build_page_chunks
 _build_marker_page_chunks = _backend_build_marker_page_chunks
 _selected_page_count = _backend_selected_page_count
-
 
 _prepare_docling_python_source_pdf = lambda ctx, out_dir: _backend_prepare_docling_python_source_pdf(
     ctx,
@@ -386,9 +383,7 @@ _prepare_docling_python_source_pdf = lambda ctx, out_dir: _backend_prepare_docli
     pymupdf_module=pymupdf if HAS_PYMUPDF else None,
 )
 
-
 _configure_docling_python_standard_gpu = _backend_configure_docling_python_standard_gpu
-
 
 _marker_chunk_size_for_workload = lambda ctx: _backend_marker_chunk_size_for_workload(
     ctx,
@@ -396,13 +391,11 @@ _marker_chunk_size_for_workload = lambda ctx: _backend_marker_chunk_size_for_wor
     selected_page_count_fn=_selected_page_count,
 )
 
-
 _datalab_chunk_size_for_workload = lambda ctx: _backend_datalab_chunk_size_for_workload(
     ctx,
     effective_document_profile_fn=_effective_document_profile,
     selected_page_count_fn=_selected_page_count,
 )
-
 
 _datalab_should_chunk = lambda ctx: _backend_datalab_should_chunk(
     ctx,
@@ -410,9 +403,7 @@ _datalab_should_chunk = lambda ctx: _backend_datalab_should_chunk(
     selected_page_count_fn=_selected_page_count,
 )
 
-
 _merge_numeric_dicts = _markdown_utils_merge_numeric_dicts
-
 
 _should_force_ocr_for_marker = _backend_should_force_ocr_for_marker
 _marker_should_use_llm = _backend_marker_should_use_llm
@@ -427,14 +418,12 @@ _marker_progress_hints = _backend_marker_progress_hints
 _load_docling_python_api = _backend_load_docling_python_api
 has_docling_python_api = lambda: bool(_load_docling_python_api())
 
-
 _advanced_cli_stall_timeout = lambda backend_name, ctx: _backend_advanced_cli_stall_timeout(
     backend_name,
     ctx,
     effective_document_profile_fn=_effective_document_profile,
     selected_page_count_fn=_selected_page_count,
 )
-
 
 def _pdf_image_extraction_policy(ctx: "BackendContext") -> Dict[str, object]:
     return _core_utils_pdf_image_extraction_policy(
@@ -447,17 +436,14 @@ def _pdf_image_extraction_policy(ctx: "BackendContext") -> Dict[str, object]:
     )
 _truncate_markdown_blocks = _url_markdown_truncate_markdown_blocks
 
-
 _compact_notebook_markdown = _markdown_utils_compact_notebook_markdown
 _generated_repo_gitignore_text = _markdown_utils_generated_repo_gitignore_text
-
 
 _html_to_structured_markdown = partial(
     _url_markdown_html_to_structured_markdown,
     collapse_ws=_collapse_ws,
     truncate_markdown_blocks=_truncate_markdown_blocks,
 )
-
 
 # ---------------------------------------------------------------------------
 # Unicode math -> LaTeX normalization
@@ -468,7 +454,6 @@ _repair_mojibake_text = _text_repair_mojibake_text
 _sanitize_external_markdown_text = _text_sanitize_external_markdown_text
 _detect_latex_corruption = _text_detect_latex_corruption
 _hybridize_marker_markdown_with_base = _text_hybridize_marker_markdown_with_base
-
 
 # ---------------------------------------------------------------------------
 # Backend architecture
@@ -498,7 +483,6 @@ class BackendContext:
     def page_label(self) -> str:
         return self.entry.page_range.strip() or "all"
 
-
 class ExtractionBackend:
     name = "base"
     layer = "base"
@@ -508,7 +492,6 @@ class ExtractionBackend:
 
     def run(self, ctx: BackendContext) -> BackendRunResult:
         raise NotImplementedError
-
 
 class PyMuPDF4LLMBackend(ExtractionBackend):
     name = "pymupdf4llm"
@@ -564,7 +547,6 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
             notes=["Markdown gerado com PyMuPDF4LLM."],
         )
 
-
 class PyMuPDFBackend(ExtractionBackend):
     name = "pymupdf"
     layer = "base"
@@ -612,7 +594,6 @@ class PyMuPDFBackend(ExtractionBackend):
             notes=["Markdown bruto gerado com PyMuPDF."],
         )
 
-
 _run_cli_with_timeout = lambda cmd, backend_name, ctx, stall_timeout=None: _backend_run_cli_with_timeout(
     cmd,
     backend_name,
@@ -627,7 +608,6 @@ _run_cli_with_timeout = lambda cmd, backend_name, ctx, stall_timeout=None: _back
 )
 
 _MARKER_CAPABILITIES_CACHE = None
-
 
 def _detect_marker_capabilities() -> Dict[str, object]:
     global _MARKER_CAPABILITIES_CACHE
@@ -735,7 +715,6 @@ class DoclingCLIBackend(ExtractionBackend):
             notes=["Saída avançada gerada com Docling CLI."],
         )
 
-
 class DoclingPythonBackend(ExtractionBackend):
     name = "docling_python"
     layer = "advanced"
@@ -756,7 +735,7 @@ class DoclingPythonBackend(ExtractionBackend):
         out_dir = ctx.root_dir / "staging" / "markdown-auto" / "docling-python" / ctx.entry_id
         ensure_dir(out_dir)
         out_path = out_dir / f"{ctx.entry_id}.md"
-
+        
         DocumentConverter = api["DocumentConverter"]
         PdfFormatOption = api["PdfFormatOption"]
         PdfPipelineOptions = api["PdfPipelineOptions"]
@@ -833,10 +812,8 @@ class DoclingPythonBackend(ExtractionBackend):
             notes=["Saída avançada gerada com Docling Python API."],
         )
 
-
 _PAGINATION_MARKER_RE = re.compile(r"^\d+\n-{40,}\s*$", re.MULTILINE)
 _IMAGE_REF_RE = re.compile(r"!\[.*?\]\((.+?)\)")
-
 
 def _extract_datalab_image_page_map(markdown: str, page_offset: int = 0) -> dict:
     """Parse a paginated Datalab markdown response into {filename: page_number}.
@@ -872,14 +849,13 @@ def _strip_pagination_markers(text: str) -> str:
     cleaned = re.sub(r"^\d+\s*$", "", cleaned, flags=re.MULTILINE)
     return cleaned
 
-
 def _extract_datalab_captions(raw_markdown: str, image_page_map: Dict[str, int]) -> dict:
     """Parse DataLab raw markdown for image captions; return image_curation dict."""
-    from datetime import datetime
+    from datetime import datetime, UTC
 
     pattern = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
     pages: Dict[str, dict] = {}
-    now = datetime.utcnow().isoformat(timespec="seconds")
+    now = datetime.now(UTC).isoformat(timespec="seconds")
 
     for m in pattern.finditer(raw_markdown):
         caption = m.group(1).strip()
@@ -900,7 +876,6 @@ def _extract_datalab_captions(raw_markdown: str, image_page_map: Dict[str, int])
         return {}
     return {"pages": pages}
 
-
 def _merge_image_curations(curations: list) -> dict:
     """Merge multiple image_curation dicts (from chunked DataLab runs) into one."""
     merged: Dict[str, dict] = {}
@@ -909,8 +884,6 @@ def _merge_image_curations(curations: list) -> dict:
             merged.setdefault(page_key, {"include_page": True, "images": {}})
             merged[page_key]["images"].update(page_data.get("images") or {})
     return {"pages": merged}
-
-
 class DatalabCloudBackend(ExtractionBackend):
     name = "datalab"
     layer = "advanced"
@@ -938,8 +911,7 @@ class DatalabCloudBackend(ExtractionBackend):
             paginate=True,
             token_efficient_markdown=False,
             poll_interval=2.0,
-            max_wait_seconds=max_wait_seconds,
-        )
+            max_wait_seconds=max_wait_seconds)
         raw_markdown = result.markdown
         image_page_map = _extract_datalab_image_page_map(raw_markdown, page_offset)
         markdown = _sanitize_external_markdown_text(raw_markdown)
@@ -948,8 +920,7 @@ class DatalabCloudBackend(ExtractionBackend):
         return result, markdown, image_page_map, raw_markdown
 
     def _save_datalab_images(
-        self, images: dict, entry_id: str, root_dir: Path
-    ) -> tuple[Path, list[str]]:
+        self, images: dict, entry_id: str, root_dir: Path ) -> tuple[Path, list[str]]:
         import base64
         images_dir = root_dir / "staging" / "assets" / "images" / entry_id
         ensure_dir(images_dir)
@@ -961,12 +932,11 @@ class DatalabCloudBackend(ExtractionBackend):
                 out_path.write_bytes(img_data)
                 saved.append(out_path.name)
             except Exception as exc:
-                logger.warning("  [datalab] Não foi possível salvar imagem %s: %s", filename, exc)
+                logger.warning(" [datalab] Não foi possível salvar imagem %s: %s", filename, exc)
         return images_dir, saved
 
     def _save_datalab_image_pages(
-        self, image_page_map: dict, out_dir: Path
-    ) -> None:
+        self, image_page_map: dict, out_dir: Path ) -> None:
         """Persist {filename: page_number} map alongside datalab-run.json."""
         if not image_page_map:
             return
@@ -988,27 +958,24 @@ class DatalabCloudBackend(ExtractionBackend):
         out_path = out_dir / f"{ctx.entry_id}.md"
 
         logger.info(
-            "  [datalab] Enviando documento para a API (mode=%s, page_range=%s, max_wait=%ss).",
+            " [datalab] Enviando documento para a API (mode=%s, page_range=%s, max_wait=%ss).",
             mode,
             page_range or "all",
-            max_wait_seconds,
-        )
+            max_wait_seconds )
 
         try:
             result, markdown, image_page_map, raw_markdown = self._convert_range(
                 ctx,
                 mode=mode,
                 page_range=page_range,
-                max_wait_seconds=max_wait_seconds,
-            )
+                max_wait_seconds=max_wait_seconds )
         except Exception as e:
             logger.error("  [datalab] Erro ao executar: %s", e)
             return BackendRunResult(
                 name=self.name,
                 layer=self.layer,
                 status="error",
-                error=str(e),
-            )
+                error=str(e) )
 
         saved_images: list = []
         images_dir_path: Optional[Path] = None
@@ -1016,7 +983,7 @@ class DatalabCloudBackend(ExtractionBackend):
             images_dir_path, saved_images = self._save_datalab_images(
                 result.images, ctx.entry_id, ctx.root_dir
             )
-            logger.info("  [datalab] %d imagens salvas em %s.", len(saved_images), images_dir_path)
+            logger.info(" [datalab] %d imagens salvas em %s.", len(saved_images), images_dir_path)
 
         image_curation = None
         if ctx.image_description_source == "datalab" and raw_markdown:
@@ -1072,8 +1039,7 @@ class DatalabCloudBackend(ExtractionBackend):
             metadata_path=safe_rel(metadata_path, ctx.root_dir),
             notes=notes,
             images_dir=safe_rel(images_dir_path, ctx.root_dir) if images_dir_path and saved_images else None,
-            image_curation=image_curation,
-        )
+            image_curation=image_curation )
 
     def _run_chunked_datalab(
         self,
@@ -1081,8 +1047,7 @@ class DatalabCloudBackend(ExtractionBackend):
         out_dir: Path,
         *,
         mode: str,
-        max_wait_seconds: int,
-    ) -> BackendRunResult:
+        max_wait_seconds: int ) -> BackendRunResult:
         chunk_size = _datalab_chunk_size_for_workload(ctx)
         chunks = _build_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=chunk_size)
         if len(chunks) <= 1:
@@ -1091,14 +1056,12 @@ class DatalabCloudBackend(ExtractionBackend):
                 out_dir,
                 mode=mode,
                 page_range=pages_to_marker_range(ctx.pages),
-                max_wait_seconds=max_wait_seconds,
-            )
+                max_wait_seconds=max_wait_seconds )
 
         logger.info(
             "  [datalab] Documento longo; processando em %d chunks de até %d páginas.",
             len(chunks),
-            chunk_size,
-        )
+            chunk_size )
 
         out_path = out_dir / f"{ctx.entry_id}.md"
         chunks_dir = out_dir / "chunks"
@@ -1119,16 +1082,14 @@ class DatalabCloudBackend(ExtractionBackend):
                 idx,
                 len(chunks),
                 chunk_pages[0] + 1,
-                chunk_pages[-1] + 1,
-            )
+                chunk_pages[-1] + 1 )
             try:
                 result, markdown, chunk_image_page_map, raw_markdown = self._convert_range(
                     ctx,
                     mode=mode,
                     page_range=chunk_range,
                     max_wait_seconds=max_wait_seconds,
-                    page_offset=chunk_pages[0],
-                )
+                    page_offset=chunk_pages[0] )
             except Exception as e:
                 logger.error("  [datalab] Erro no chunk %d/%d: %s", idx, len(chunks), e)
                 return BackendRunResult(
@@ -1154,8 +1115,7 @@ class DatalabCloudBackend(ExtractionBackend):
             chunk_body = _strip_frontmatter_block(markdown).strip()
             if chunk_body:
                 combined_parts.append(
-                    f"<!-- DATALAB_CHUNK {idx}: pages {chunk_pages[0] + 1}-{chunk_pages[-1] + 1} -->\n\n{chunk_body}"
-                )
+                    f"<!-- DATALAB_CHUNK {idx}: pages {chunk_pages[0] + 1}-{chunk_pages[-1] + 1} -->\n\n{chunk_body}" )
 
             if result.parse_quality_score is not None:
                 parse_scores.append(float(result.parse_quality_score))
@@ -1255,8 +1215,7 @@ class DatalabCloudBackend(ExtractionBackend):
             "  [datalab] Long-doc policy: should_chunk=%s (selected_pages=%d, chunk_size=%d).",
             should_chunk,
             _selected_page_count(ctx),
-            _datalab_chunk_size_for_workload(ctx),
-        )
+            _datalab_chunk_size_for_workload(ctx) or -1)
         if should_chunk:
             return self._run_chunked_datalab(
                 ctx,
@@ -1269,10 +1228,7 @@ class DatalabCloudBackend(ExtractionBackend):
             out_dir,
             mode=mode,
             page_range=page_range,
-            max_wait_seconds=max_wait_seconds,
-        )
-
-
+            max_wait_seconds=max_wait_seconds )
 class MarkerCLIBackend(ExtractionBackend):
     name = "marker"
     layer = "advanced"
@@ -1286,8 +1242,7 @@ class MarkerCLIBackend(ExtractionBackend):
         out_dir: Path,
         caps: Dict[str, object],
         pages: Optional[List[int]],
-        stall_timeout: int,
-    ) -> BackendRunResult:
+        stall_timeout: int ) -> BackendRunResult:
         ensure_dir(out_dir)
 
         cmd = [
@@ -1327,8 +1282,7 @@ class MarkerCLIBackend(ExtractionBackend):
             if not marker_model:
                 logger.warning(
                     "  [marker] LLM habilitado, mas nenhum modelo do Marker foi configurado. "
-                    "Defina 'Modelo Ollama do Marker' nas configurações para ativar --use_llm."
-                )
+                    "Defina 'Modelo Ollama do Marker' nas configurações para ativar --use_llm.")
             elif use_llm_flag:
                 cmd.append(use_llm_flag)
                 marker_llm_active = True
@@ -1369,8 +1323,7 @@ class MarkerCLIBackend(ExtractionBackend):
                 logger.info(
                     "  [marker] Processors visuais desativados via config_json "
                     "(modelo '%s' não é vision). Imagens serão tratadas pelo Image Curator.",
-                    marker_model,
-                )
+                    marker_model )
 
             # Aumentar timeout do OllamaService para modelos locais (default=30s
             # é insuficiente quando GPU é compartilhada com layout models).
@@ -1381,23 +1334,19 @@ class MarkerCLIBackend(ExtractionBackend):
         if marker_llm_active:
             if _marker_model_is_cloud_variant(marker_model):
                 logger.warning(
-                    "  [marker] O modelo '%s' parece ser variante cloud. Para estabilidade no Marker, prefira um modelo local como gemma3:4b.",
-                    marker_model,
-                )
+                    "  [marker] O modelo '%s' parece ser variante cloud. Para estabilidade no Marker, prefira um modelo local como gemma3:4b.", marker_model )
             elif not _marker_model_is_probably_vision(marker_model):
                 logger.info(
                     "  [marker] Modelo texto-only '%s' detectado. Extração de imagens desabilitada automaticamente; "
                     "LLM será usado apenas para math, tabelas e headers.",
-                    marker_model,
-                )
+                    marker_model )
             logger.info(
                 "  [marker] LLM ativo: service=%s model=%s base_url=%s redo_inline_math=%s torch_device=%s",
                 MARKER_OLLAMA_SERVICE,
                 marker_model,
                 marker_ollama_url or "(padrão do Marker)",
                 "sim" if "--redo_inline_math" in cmd or "--redo-inline-math" in cmd else "não",
-                marker_torch_device,
-            )
+                marker_torch_device )
         else:
             logger.info("  [marker] LLM inativo para esta execução. TORCH_DEVICE=%s", marker_torch_device)
 
@@ -1423,14 +1372,12 @@ class MarkerCLIBackend(ExtractionBackend):
         except (InterruptedError, TimeoutError) as e:
             return BackendRunResult(
                 name=self.name, layer=self.layer, status="error",
-                command=cmd, error=str(e),
-            )
+                command=cmd, error=str(e) )
         except Exception as e:
             logger.error("  [marker] Erro ao executar: %s", e)
             return BackendRunResult(
                 name=self.name, layer=self.layer, status="error",
-                command=cmd, error=str(e),
-            )
+                command=cmd, error=str(e) )
 
         stdout_text = "\n".join(stdout_lines)
         stderr_text = "\n".join(stderr_lines)
@@ -1492,8 +1439,7 @@ class MarkerCLIBackend(ExtractionBackend):
         ctx: BackendContext,
         out_dir: Path,
         caps: Dict[str, object],
-        stall_timeout: int,
-    ) -> BackendRunResult:
+        stall_timeout: int ) -> BackendRunResult:
         chunk_size = _marker_chunk_size_for_workload(ctx)
         chunks = _build_marker_page_chunks(ctx.pages, ctx.report.page_count, chunk_size=chunk_size)
         if len(chunks) <= 1:
@@ -1502,13 +1448,11 @@ class MarkerCLIBackend(ExtractionBackend):
         logger.info(
             "  [marker] Documento grande/pesado; processando em %d chunks de até %d páginas.",
             len(chunks),
-            chunk_size,
-        )
+            chunk_size )
         logger.info(
             "  [marker] Chunk policy: %d páginas por chunk para %d páginas selecionadas.",
             chunk_size,
-            _selected_page_count(ctx),
-        )
+            _selected_page_count(ctx) )
         combined_path = out_dir / f"{ctx.entry_id}.md"
         combined_parts: List[str] = []
         chunk_meta = []
@@ -1517,8 +1461,7 @@ class MarkerCLIBackend(ExtractionBackend):
             chunk_dir = out_dir / f"chunk-{idx:03d}"
             logger.info(
                 "  [marker] Chunk %d/%d — páginas %d-%d",
-                idx, len(chunks), chunk_pages[0] + 1, chunk_pages[-1] + 1,
-            )
+                idx, len(chunks), chunk_pages[0] + 1, chunk_pages[-1] + 1 )
             result = self._run_single_marker(ctx, chunk_dir, caps, chunk_pages, stall_timeout)
             if result.status != "ok" or not result.markdown_path:
                 return BackendRunResult(
@@ -1526,27 +1469,23 @@ class MarkerCLIBackend(ExtractionBackend):
                     layer=self.layer,
                     status="error",
                     command=result.command,
-                    error=f"Chunk {idx}/{len(chunks)} falhou: {result.error or 'sem markdown gerado'}",
-                )
+                    error=f"Chunk {idx}/{len(chunks)} falhou: {result.error or 'sem markdown gerado'}" )
 
             md_abs = ctx.root_dir / result.markdown_path
             try:
                 chunk_text = _sanitize_external_markdown_text(
-                    md_abs.read_text(encoding="utf-8", errors="replace")
-                )
+                    md_abs.read_text(encoding="utf-8", errors="replace") )
             except Exception as e:
                 return BackendRunResult(
                     name=self.name,
                     layer=self.layer,
                     status="error",
-                    error=f"Falha ao ler markdown do chunk {idx}: {e}",
-                )
+                    error=f"Falha ao ler markdown do chunk {idx}: {e}" )
 
             chunk_body = _strip_frontmatter_block(chunk_text).strip()
             chunk_body = _rewrite_markdown_asset_paths(chunk_body, md_abs.parent, combined_path.parent)
             combined_parts.append(
-                f"<!-- MARKER_CHUNK {idx}: pages {chunk_pages[0] + 1}-{chunk_pages[-1] + 1} -->\n\n{chunk_body}"
-            )
+                f"<!-- MARKER_CHUNK {idx}: pages {chunk_pages[0] + 1}-{chunk_pages[-1] + 1} -->\n\n{chunk_body}" )
             chunk_meta.append({
                 "chunk_index": idx,
                 "page_range": pages_to_marker_range(chunk_pages),

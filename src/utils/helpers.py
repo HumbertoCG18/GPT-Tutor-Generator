@@ -264,8 +264,32 @@ def ensure_dir(path: Path) -> Path:
     return path
 
 def write_text(path: Path, content: str) -> None:
+    """Write text atomically: stage to a sibling .tmp then os.replace().
+
+    os.replace is atomic on the same filesystem, so a crash/kill mid-write
+    leaves the previous file fully intact (never a torn/empty file)."""
     ensure_dir(path.parent)
-    path.write_text(content, encoding="utf-8")
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(content, encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def write_json_manifest(path: Path, data: dict) -> None:
+    """Write manifest.json atomically, keeping a .bak of the previous version.
+
+    Backup is best-effort (never blocks the write). Uses the canonical
+    serialization shared by every manifest writer (indent=2, ensure_ascii=False)."""
+    ensure_dir(path.parent)
+    if path.exists():
+        try:
+            path.with_name(path.name + ".bak").write_text(
+                path.read_text(encoding="utf-8"), encoding="utf-8"
+            )
+        except OSError:
+            pass  # backup best-effort, never block the write
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    os.replace(tmp, path)
 
 def parse_page_range(page_range: str) -> Optional[List[int]]:
     value = (page_range or "").strip()

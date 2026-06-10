@@ -7,7 +7,7 @@ from datetime import datetime
 
 from src.builder.artifacts.deeptutor import write_deeptutor_export
 from src.builder.ops.build_workflow import _run_auto_code_summarization
-from src.utils.helpers import write_text
+from src.utils.helpers import write_text, write_json_manifest
 
 logger = logging.getLogger(__name__)
 
@@ -68,13 +68,13 @@ def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_f
                 manifest.setdefault("logs", []).extend(builder.logs)
                 builder.logs = []
                 manifest = builder._compact_manifest(manifest)
-                write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+                write_json_manifest(manifest_path, manifest)
                 continue
             manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
             manifest.setdefault("logs", []).extend(builder.logs)
             builder.logs = []
             manifest = builder._compact_manifest(manifest)
-            write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+            write_json_manifest(manifest_path, manifest)
             logger.info("[%d/%d] Concluído e salvo: %s", i + 1, total, entry.title)
         if builder.progress_callback:
             builder.progress_callback(total, total, "")
@@ -83,7 +83,7 @@ def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_f
     manifest.setdefault("logs", []).extend(builder.logs)
     manifest = builder._compact_manifest(manifest)
 
-    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    write_json_manifest(manifest_path, manifest)
     removed = builder._prune_stale_image_curation()
     if removed:
         with open(manifest_path, "r", encoding="utf-8") as f:
@@ -106,7 +106,7 @@ def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_f
     if not progress_path.exists():
         write_text(progress_path, progress_schema_md_fn())
 
-    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    write_json_manifest(manifest_path, manifest)
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
     builder._write_build_report(manifest)

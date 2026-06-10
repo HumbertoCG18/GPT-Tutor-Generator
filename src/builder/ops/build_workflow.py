@@ -6,7 +6,7 @@ import sys
 from datetime import datetime
 
 from src.builder.artifacts.deeptutor import write_deeptutor_export
-from src.utils.helpers import write_text
+from src.utils.helpers import write_text, write_json_manifest
 
 logger = logging.getLogger(__name__)
 
@@ -85,18 +85,18 @@ def build_impl(
             logger.warning("[%d/%d] Pulando entry com arquivo ausente: %s", i + 1, total, exc)
             manifest["logs"] = builder.logs
             manifest = builder._compact_manifest(manifest)
-            write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+            write_json_manifest(manifest_path, manifest)
             continue
         manifest["logs"] = builder.logs
         manifest = builder._compact_manifest(manifest)
-        write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+        write_json_manifest(manifest_path, manifest)
         logger.info("[%d/%d] Concluído e salvo: %s", i + 1, total, entry.title)
     if builder.progress_callback:
         builder.progress_callback(total, total, "")
 
     manifest["logs"] = builder.logs
     manifest = builder._compact_manifest(manifest)
-    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    write_json_manifest(manifest_path, manifest)
     builder._write_source_registry(manifest)
     builder._write_bundle_seed(manifest)
     builder._write_build_report(manifest)
@@ -120,7 +120,7 @@ def build_impl(
     builder._resolve_content_images()
     builder._inject_all_image_descriptions()
     builder._regenerate_pedagogical_files(manifest)
-    write_text(manifest_path, json.dumps(manifest, indent=2, ensure_ascii=False))
+    write_json_manifest(manifest_path, manifest)
 
     write_deeptutor_export(
         builder.root_dir,

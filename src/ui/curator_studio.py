@@ -19,7 +19,7 @@ from src.builder.engine import migrate_legacy_url_manual_reviews
 from src.builder.engine import RepoBuilder
 from src.ui.image_curator import _inject_all_image_descriptions_from_manifest
 
-from src.utils.helpers import HAS_PYMUPDF, slugify
+from src.utils.helpers import HAS_PYMUPDF, slugify, write_json_manifest
 
 if HAS_PYMUPDF:
     import pymupdf
@@ -222,8 +222,19 @@ def _is_pdf_preview_target(path_value: str | None) -> bool:
     return str(path_value).lower().endswith(".pdf")
 
 
-class CuratorStudio(tk.Toplevel):
-    def __init__(self, parent, repo_dir: str, theme_mgr):
+class CuratorStudioPanel(ttk.Frame):
+    def __init__(
+        self,
+        parent,
+        repo_dir: str,
+        theme_mgr,
+        *,
+        app_parent=None,
+        bind_target=None,
+        apply_theme: bool = True,
+        title_text: str = "🖌 Curator Studio",
+        active_guard=None,
+    ):
         super().__init__(parent)
         self.repo_dir = Path(repo_dir)
         try:
@@ -233,11 +244,11 @@ class CuratorStudio(tk.Toplevel):
         except Exception as exc:
             logger.warning("Could not migrate legacy URL manual-review files: %s", exc)
         self.theme_mgr = theme_mgr
-        self._theme_name = parent.config_obj.get("theme") if hasattr(parent, "config_obj") else "dark"
-
-        self.title("Curator Studio")
-        self.geometry("1600x900")
-        self.minsize(1100, 650)
+        self._app_parent = app_parent if app_parent is not None else parent
+        self._bind_target = bind_target if bind_target is not None else self
+        self._title_text = title_text
+        self._active_guard = active_guard
+        self._theme_name = self._app_parent.config_obj.get("theme") if hasattr(self._app_parent, "config_obj") else "dark"
 
         self.current_md_path = None          # review template .md path
         self._current_content_path = None    # actual markdown file being edited
@@ -257,7 +268,8 @@ class CuratorStudio(tk.Toplevel):
         self._preview_max_pages = CURATOR_PDF_PREVIEW_MAX_PAGES
         self._layout_mode = ""
 
-        self.theme_mgr.apply(self, self._theme_name)
+        if apply_theme:
+            self.theme_mgr.apply(self, self._theme_name)
         self._build_ui()
         self._load_files()
         self.bind("<Configure>", self._on_layout_change)
@@ -282,7 +294,7 @@ class CuratorStudio(tk.Toplevel):
             except Exception as exc:
                 logger.warning("Falha ao carregar course_meta do manifest para reprovação: %s", exc)
 
-        parent_app = self.master
+        parent_app = self._app_parent
         if hasattr(parent_app, "_find_subject_by_repo_root") and hasattr(parent_app, "_build_course_meta_for_subject"):
             try:
                 subject = parent_app._find_subject_by_repo_root(self.repo_dir)
@@ -308,7 +320,7 @@ class CuratorStudio(tk.Toplevel):
         toolbar = tk.Frame(self, bg=p["header_bg"], pady=8, padx=16)
         toolbar.pack(fill="x", side="top")
         tk.Label(
-            toolbar, text="🖌 Curator Studio",
+            toolbar, text=self._title_text,
             bg=p["header_bg"], fg=p["header_fg"],
             font=("Segoe UI", 14, "bold"),
         ).pack(side="left")
@@ -317,7 +329,7 @@ class CuratorStudio(tk.Toplevel):
         ttk.Button(toolbar, text="⛔ Reprovado", command=self._reject_current).pack(side="right", padx=5)
         ttk.Button(toolbar, text="✅ Aprovar Todos", command=self._approve_all_pending).pack(side="right", padx=5)
         ttk.Button(toolbar, text="🔄 Restaurar Pendentes", command=self._restore_orphan_entries).pack(side="right", padx=5)
-        self.bind("<Control-s>", lambda e: self.save_current())  # hidden shortcut
+        self._bind_target.bind("<Control-s>", self._save_shortcut)  # hidden shortcut
 
         # Status bar
         self.status_var = tk.StringVar(value="Selecione um arquivo para revisar")
@@ -488,6 +500,11 @@ class CuratorStudio(tk.Toplevel):
                 self.canvas.unbind_all("<MouseWheel>")
             except Exception:
                 pass
+
+    def _save_shortcut(self, _event=None):
+        if self._active_guard is not None and not self._active_guard():
+            return
+        self.save_current()
 
     def _on_mousewheel(self, event):
         try:
@@ -941,10 +958,7 @@ class CuratorStudio(tk.Toplevel):
                 "category": fm.get("category", ""),
             })
 
-            manifest_path.write_text(
-                json.dumps(manifest, indent=2, ensure_ascii=False),
-                encoding="utf-8",
-            )
+            write_json_manifest(manifest_path, manifest)
             _inject_all_image_descriptions_from_manifest(self.repo_dir, manifest)
             logger.info("Approve manifest sync: entry %s atualizada com approved_markdown=%s", entry_id, approved_rel)
 
@@ -1178,8 +1192,7 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
             "status": "ok",
             "count": approved_count,
         })
-        manifest_path.write_text(
-            json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+        write_json_manifest(manifest_path, manifest)
         _inject_all_image_descriptions_from_manifest(self.repo_dir, manifest)
 
         self._load_files()
@@ -1315,7 +1328,7 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
             messagebox.showerror("Erro", f"Falha ao reconstruir item para a fila:\n{e}")
             return
 
-        parent_app = self.master
+        parent_app = self._app_parent
         try:
             if hasattr(parent_app, "entries"):
                 existing_sources = {getattr(e, "source_path", "") for e in parent_app.entries}
@@ -1442,3 +1455,20 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
             f"✅ Aprovado → {dest_label}{file_id}.md"
             + (f" | Removidos: {', '.join(deleted)}" if deleted else "")
         )
+
+
+class CuratorStudio(tk.Toplevel):
+    def __init__(self, parent, repo_dir: str, theme_mgr):
+        super().__init__(parent)
+        self.title("Curator Studio")
+        self.geometry("1600x900")
+        self.minsize(1100, 650)
+        self.panel = CuratorStudioPanel(
+            self,
+            repo_dir,
+            theme_mgr,
+            app_parent=parent,
+            bind_target=self,
+            apply_theme=True,
+        )
+        self.panel.pack(fill="both", expand=True)

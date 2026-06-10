@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List
 
-from src.utils.helpers import slugify
+from src.utils.helpers import slugify, write_json_manifest
 
 _INVALID = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
 
@@ -348,10 +348,7 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
                     if eid in assignments:
                         e["source_section"] = assignments[eid]
                         backfilled += 1
-                mpath.with_suffix(".json.apibak").write_text(
-                    mpath.read_text(encoding="utf-8"), encoding="utf-8"
-                )
-                mpath.write_text(_json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+                write_json_manifest(mpath, manifest)
         if download:
             dl = client.download_course(cid, stash)
             downloaded += int(dl.get("downloaded", 0))

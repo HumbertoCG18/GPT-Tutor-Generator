@@ -13,7 +13,7 @@ edges:
     condition: when deciding where new logic should live
   - target: context/decisions.md
     condition: when a convention comes from an architectural decision
-last_updated: 2026-06-09
+last_updated: 2026-06-10
 ---
 
 # Conventions
@@ -51,7 +51,7 @@ The README flow establishes these project patterns:
 - Imports are configured as entries before processing.
 - Processing is queue-based.
 - Difficult outputs are routed through the generated repository's manual review area.
-- Image processing has a dedicated Image Curator flow.
+- Image processing is handled in the `Imagens` tab of the unified Curadoria workspace.
 - Repository builds and reprocesses are available as repository tasks.
 - Dashboard state reflects repository task progress.
 - Generated output is Markdown plus LLM instruction artifacts.

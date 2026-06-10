@@ -384,8 +384,7 @@ class App(tk.Tk):
                                       style="Accent.TButton", command=self.build_repo)
         self._btn_build.grid(row=2, column=0, columnspan=2, sticky="ew", padx=4, pady=(6, 4))
 
-        ttk.Button(tool_actions, text="🖼 Image Curator", command=self.open_image_curator).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
-        ttk.Button(tool_actions, text="🖌 Curator Studio", command=self.open_curator_studio).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
+        ttk.Button(tool_actions, text="🧰 Curadoria", command=self.open_curation_workspace).grid(row=0, column=0, columnspan=2, sticky="ew", padx=4, pady=4)
         ttk.Button(tool_actions, text="⚙ Configurações", command=self.open_settings).grid(row=1, column=0, sticky="ew", padx=4, pady=4)
         ttk.Button(tool_actions, text="? Ajuda  F1", command=self.open_help).grid(row=1, column=1, sticky="ew", padx=4, pady=4)
         cb_shutdown = ttk.Checkbutton(
@@ -1365,23 +1364,14 @@ class App(tk.Tk):
     def open_status(self):
         StatusDialog(self, self.config_obj, self.student_store, self.theme_mgr)
 
-    def open_curator_studio(self):
+    def open_curation_workspace(self):
         repo_dir = self._repo_dir()
         if not repo_dir:
-            messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório para abrir o Curator Studio.")
-            return
-        
-        from src.ui.curator_studio import CuratorStudio
-        CuratorStudio(self, str(repo_dir), self.theme_mgr)
-
-    def open_image_curator(self):
-        repo_dir = self._repo_dir()
-        if not repo_dir:
-            messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório para abrir o Image Curator.")
+            messagebox.showinfo(APP_NAME, "Preencha a pasta do repositório para abrir a Curadoria.")
             return
 
-        from src.ui.image_curator import ImageCurator
-        ImageCurator(self, str(repo_dir), self.theme_mgr)
+        from src.ui.curation_workspace import CurationWorkspace
+        CurationWorkspace(self, str(repo_dir), self.theme_mgr)
 
     def _apply_active_profile(self):
         from src.utils.helpers import get_processing_profile

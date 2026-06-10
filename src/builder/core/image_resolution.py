@@ -7,7 +7,7 @@ import shutil
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from src.utils.helpers import ensure_dir, safe_rel, slugify
+from src.utils.helpers import ensure_dir, safe_rel, slugify, write_json_manifest
 
 logger = logging.getLogger(__name__)
 
@@ -245,9 +245,7 @@ def prune_stale_image_curation(builder) -> int:
                 curation["curated_at"] = None
 
     if total_removed:
-        manifest_path.write_text(
-            json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8"
-        )
+        write_json_manifest(manifest_path, manifest)
         logger.info("Total stale curation entries removed: %d", total_removed)
 
     return total_removed

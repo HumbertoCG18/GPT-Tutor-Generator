@@ -64,7 +64,8 @@
 <div class="wrap">
 
 <h1>📊 Relatório de Sistema — GPT-Tutor-Generator</h1>
-<div class="sub">Análise completa de arquitetura, pipelines, código morto, propagação de dados e roadmap · branch <code>new-features</code> · 09/06/2026</div>
+<div class="sub">Análise completa de arquitetura, pipelines, código morto, propagação de dados e roadmap · branch <code>new-features</code> · <b>atualizado 10/06/2026</b><br>
+<span class="small">Snapshot do working tree atual (new-features @ <code>c7c864b</code> + alterações não-commitadas). <code>main</code> divergiu: o README reescrito foi commitado lá (<code>208af96</code>); branches têm 3/4 commits exclusivos cada a partir da base comum <code>8f10819</code>.</span></div>
 
 <div class="card toc">
   <b>Índice</b><br>
@@ -82,42 +83,43 @@
 <!-- ============ 1. MÉTRICAS ============ -->
 <h2 id="metricas">1. Métricas Gerais</h2>
 <div class="grid g4">
-  <div class="card metric"><div class="v">116</div><div class="l">arquivos .py (src + scripts)</div></div>
-  <div class="card metric"><div class="v">39.700</div><div class="l">linhas de código</div></div>
-  <div class="card metric"><div class="v">1.360</div><div class="l">funções</div></div>
-  <div class="card metric"><div class="v">80</div><div class="l">classes</div></div>
-  <div class="card metric"><div class="v">1.116</div><div class="l">testes (74 arquivos, 14.357 linhas)</div></div>
-  <div class="card metric"><div class="v">588</div><div class="l">commits totais</div></div>
-  <div class="card metric"><div class="v">201</div><div class="l">commits à frente de <code>main</code></div></div>
-  <div class="card metric"><div class="v">0,36</div><div class="l">razão linhas-teste / linhas-código</div></div>
+  <div class="card metric"><div class="v">117</div><div class="l">arquivos .py (src + scripts)</div></div>
+  <div class="card metric"><div class="v">39.963</div><div class="l">linhas de código</div></div>
+  <div class="card metric"><div class="v">1.368</div><div class="l">funções</div></div>
+  <div class="card metric"><div class="v">83</div><div class="l">classes</div></div>
+  <div class="card metric"><div class="v">1.119</div><div class="l">testes (76 arquivos, 17.758 linhas)</div></div>
+  <div class="card metric"><div class="v">591</div><div class="l">commits totais</div></div>
+  <div class="card metric"><div class="v">3/4</div><div class="l">new-features à frente / atrás de <code>main</code></div></div>
+  <div class="card metric"><div class="v">0,44</div><div class="l">razão linhas-teste / linhas-código</div></div>
 </div>
 
 <h3>Linhas por pacote</h3>
 <div class="card">
-  <div class="bar-row"><div class="bar-lbl">src/ui</div><div class="bar-track"><div class="bar-fill warn" style="width:100%"></div></div><div class="bar-val">11.488</div></div>
-  <div class="bar-row"><div class="bar-lbl">src/builder/artifacts</div><div class="bar-track"><div class="bar-fill" style="width:40%"></div></div><div class="bar-val">4.650</div></div>
-  <div class="bar-row"><div class="bar-lbl">src/builder/timeline</div><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><div class="bar-val">2.840</div></div>
-  <div class="bar-row"><div class="bar-lbl">src/builder/engine.py</div><div class="bar-track"><div class="bar-fill" style="width:22%"></div></div><div class="bar-val">2.544</div></div>
-  <div class="bar-row"><div class="bar-lbl">src/builder/core</div><div class="bar-track"><div class="bar-fill" style="width:17%"></div></div><div class="bar-val">1.996</div></div>
-  <div class="bar-row"><div class="bar-lbl">scripts</div><div class="bar-track"><div class="bar-fill" style="width:14%"></div></div><div class="bar-val">1.626</div></div>
-  <div class="bar-row"><div class="bar-lbl">src/builder/extraction</div><div class="bar-track"><div class="bar-fill" style="width:14%"></div></div><div class="bar-val">1.563</div></div>
-  <div class="bar-row"><div class="bar-lbl">src/builder/routing</div><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><div class="bar-val">1.496</div></div>
-  <div class="bar-row"><div class="bar-lbl">src/builder/ops</div><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><div class="bar-val">1.457</div></div>
-  <div class="bar-row"><div class="bar-lbl">src/builder/runtime</div><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><div class="bar-val">695</div></div>
-  <div class="bar-row"><div class="bar-lbl">src/utils</div><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><div class="bar-val">673</div></div>
-  <div class="bar-row"><div class="bar-lbl">src/builder/pdf</div><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><div class="bar-val">651</div></div>
-  <div class="bar-row"><div class="bar-lbl">demais (facade, sources, text, vision, models, fac.)</div><div class="bar-track"><div class="bar-fill" style="width:30%"></div></div><div class="bar-val">~3.600</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/ui</div><div class="bar-track"><div class="bar-fill warn" style="width:100%"></div></div><div class="bar-val">13.338</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/artifacts</div><div class="bar-track"><div class="bar-fill" style="width:41%"></div></div><div class="bar-val">5.494</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/timeline</div><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><div class="bar-val">3.315</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/engine.py</div><div class="bar-track"><div class="bar-fill" style="width:19%"></div></div><div class="bar-val">2.545</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/core</div><div class="bar-track"><div class="bar-fill" style="width:18%"></div></div><div class="bar-val">2.361</div></div>
+  <div class="bar-row"><div class="bar-lbl">scripts</div><div class="bar-track"><div class="bar-fill" style="width:15%"></div></div><div class="bar-val">1.954</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/extraction</div><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><div class="bar-val">1.797</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/routing</div><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><div class="bar-val">1.685</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/ops</div><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><div class="bar-val">1.665</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/runtime</div><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><div class="bar-val">847</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/utils</div><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><div class="bar-val">804</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/pdf</div><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><div class="bar-val">737</div></div>
+  <div class="bar-row"><div class="bar-lbl">demais (sources, text, vision, models, facade)</div><div class="bar-track"><div class="bar-fill" style="width:26%"></div></div><div class="bar-val">~3.395</div></div>
 </div>
 
 <h3>Maiores arquivos (candidatos a decomposição)</h3>
 <div class="card">
   <table>
     <tr><th>Arquivo</th><th>Linhas</th><th>Funções</th><th>Avaliação</th></tr>
-    <tr><td><code>src/ui/dialogs.py</code></td><td>4.988</td><td>167 fn / 12 classes</td><td><span class="tag t-bad">crítico</span> 12 dialogs num arquivo só — dividir em <code>ui/dialogs/</code> por dialog</td></tr>
-    <tr><td><code>src/ui/app.py</code></td><td>2.763</td><td>144 fn / 3 classes</td><td><span class="tag t-warn">atenção</span> App monolítica; extrair handlers de fila/backlog</td></tr>
-    <tr><td><code>src/builder/engine.py</code></td><td>2.544</td><td>93 fn / 10 classes</td><td><span class="tag t-info">aceitável</span> façade intencional + backends; backends podiam ir pra <code>runtime/</code></td></tr>
-    <tr><td><code>src/builder/timeline/index.py</code></td><td>2.219</td><td>65 fn</td><td><span class="tag t-warn">atenção</span> parsing + classificação + scope + serialização juntos</td></tr>
-    <tr><td><code>src/builder/artifacts/repo.py</code></td><td>2.070</td><td>53 fn</td><td><span class="tag t-info">aceitável</span> geradores de markdown coesos</td></tr>
+    <tr><td><code>src/ui/dialogs.py</code></td><td>4.989</td><td>167 fn / 12 classes</td><td><span class="tag t-bad">crítico</span> 12 dialogs num arquivo só — dividir em <code>ui/dialogs/</code> por dialog</td></tr>
+    <tr><td><code>src/ui/app.py</code></td><td>2.754</td><td>143 fn / 3 classes</td><td><span class="tag t-warn">atenção</span> App monolítica; extrair handlers de fila/backlog</td></tr>
+    <tr><td><code>src/builder/engine.py</code></td><td>2.545</td><td>93 fn / 10 classes</td><td><span class="tag t-info">aceitável</span> façade intencional + backends; backends podiam ir pra <code>runtime/</code></td></tr>
+    <tr><td><code>src/builder/timeline/index.py</code></td><td>2.220</td><td>65 fn</td><td><span class="tag t-warn">atenção</span> parsing + classificação + scope + serialização juntos</td></tr>
+    <tr><td><code>src/builder/artifacts/repo.py</code></td><td>2.071</td><td>53 fn</td><td><span class="tag t-info">aceitável</span> geradores de markdown coesos</td></tr>
+    <tr><td><code>src/ui/image_curator.py</code></td><td>1.670</td><td>55 fn / 2 classes</td><td><span class="tag t-warn">atenção</span> em edição agora (working tree); curadoria sendo unificada em <code>curation_workspace.py</code></td></tr>
   </table>
 </div>
 
@@ -262,11 +264,11 @@
     <text x="1052" y="300" text-anchor="middle" transform="rotate(-90 1052 300)">dialogs → sources (8 imports diretos)</text>
   </g>
 </svg>
-<p class="small">Visão em camadas (arestas reais extraídas via AST; grafo completo: 2.904 símbolos, 25.916 referências). <b>Setas azuis</b> = fluxo normal: UI fala só com <code>engine</code> (façade), que orquestra a camada de domínio, que se apoia na base. <b>Tracejadas amarelas</b> = exceções que furam a façade: <code>ui/dialogs → sources</code> (8 imports diretos de Moodle/M365 — maior acoplamento a observar) e painéis lendo <code>builder/timeline</code> direto (aceitável: leitura de índice). Dependências internas mais fortes: <code>ops → artifacts</code> (10×), <code>engine → ops</code> (9×), <code>ops/core/ui → utils/helpers</code> (hub saudável).</p>
+<p class="small">Visão em camadas (arestas reais extraídas via AST; grafo completo: 2.905 símbolos, 25.916 referências). <b>Setas azuis</b> = fluxo normal: UI fala só com <code>engine</code> (façade), que orquestra a camada de domínio, que se apoia na base. <b>Tracejadas amarelas</b> = exceções que furam a façade: <code>ui/dialogs → sources</code> (8 imports diretos de Moodle/M365 — maior acoplamento a observar) e painéis lendo <code>builder/timeline</code> direto (aceitável: leitura de índice). Dependências internas mais fortes: <code>ops → artifacts</code> (10×), <code>engine → ops</code> (9×), <code>ops/core/ui → utils/helpers</code> (hub saudável).</p>
 </div>
 
 <!-- ============ 4. CÓDIGO MORTO ============ -->
-<h2 id="morto">4. Código Morto e Duplicatas <span class="small">(cada item verificado por busca de referências)</span></h2>
+<h2 id="morto">4. Código Morto e Duplicatas <span class="small">(cada item verificado por busca de referências · re-verificado 10/06: 3 mortos e 4 duplicatas seguem presentes)</span></h2>
 
 <h3>Código morto confirmado</h3>
 <div class="card find bad">
@@ -383,7 +385,7 @@
   <tr><th>Achado</th><th>Tipo</th><th>Detalhe</th></tr>
   <tr><td><code>dialogs.py</code> com 4.988 linhas</td><td><span class="tag t-warn">estrutura</span></td><td>12 dialogs num arquivo. Dividir em pacote <code>ui/dialogs/</code> (1 arquivo por dialog) reduziria conflitos e tempo de leitura.</td></tr>
   <tr><td>Cronograma read-only</td><td><span class="tag t-info">pendente</span></td><td>Qualquer ajuste exige reprocessar. Spec da tabela editável já aprovada em <code>docs/superpowers/specs/2026-06-09-cronograma-table-ui-design.md</code> — maior alavanca de usabilidade da fila atual.</td></tr>
-  <tr><td>Curator Studio × Image Curator</td><td><span class="tag t-info">sobreposição</span></td><td>Dois fluxos de curadoria com preview/aprovação similares; candidatos a base comum quando houver refator.</td></tr>
+  <tr><td>Curator Studio × Image Curator</td><td><span class="tag t-warn">em andamento</span></td><td>Dois fluxos de curadoria com preview/aprovação similares. Unificação <b>já iniciada</b>: <code>ui/curation_workspace.py</code> (novo, working tree) + spec <code>docs/superpowers/plans/2026-06-09-curadoria-unificada.md</code>.</td></tr>
   <tr><td>Estado de sessão não persistido</td><td><span class="tag t-info">menor</span></td><td>Aba ativa, seleção, zoom de preview e scroll voltam ao padrão a cada reinício — aceitável, mas a <b>fila volátil</b> (seção 6) é o caso que vale corrigir.</td></tr>
   <tr><td>Backlog = espelho do manifest</td><td><span class="tag t-info">design</span></td><td>Arquivo removido manualmente do disco continua aparecendo (fantasma) até reprocessar. Painel Manutenção cobre parte disso para code_curation; não para entries gerais.</td></tr>
 </table>
@@ -405,7 +407,7 @@
 <div class="card find info">
   <p><b>6. Paralelizar chunks Datalab</b> — <code>ThreadPoolExecutor</code> com 3-4 workers no loop de chunks (<code>engine.py:1115-1179</code>); maior ganho de wall-clock por menor risco. Depois, avaliar paralelismo por entry (exige cuidado com o manifest compartilhado — pré-requisito: item 1).</p>
   <p><b>7. Retry com backoff</b> — wrapper único para Gemini/Ollama/Datalab (3 tentativas, exponencial). Hoje uma falha de rede pontual deixa buracos silenciosos.</p>
-  <p><b>8. Concluir consolidação de normalização</b> — migrar as 4 cópias de <code>_normalize_match_text</code>, 2 de <code>_extract_markdown_headings</code>, 2 tokenizadores+stopwords para <code>text/</code>. Os 1.116 testes existentes dão rede de segurança.</p>
+  <p><b>8. Concluir consolidação de normalização</b> — migrar as 4 cópias de <code>_normalize_match_text</code>, 2 de <code>_extract_markdown_headings</code>, 2 tokenizadores+stopwords para <code>text/</code>. Os 1.119 testes existentes dão rede de segurança.</p>
   <p><b>9. Dividir <code>ui/dialogs.py</code></b> em pacote por dialog; extrair <code>_normalized_source_key</code> para módulo comum.</p>
   <p><b>10. Tabela editável do cronograma</b> — executar a spec já aprovada (edição inline de tipo/unidade, escopo manual de provas, ordenação). Fecha o ciclo "ver problema → corrigir na hora" sem reprocessar.</p>
   <p><b>11. Delta report entre builds</b> — diff do <code>.timeline_index.json</code> e do matching (entries que mudaram de bloco/unidade) gravado em <code>build/CHANGES.md</code>. Auditoria de regressão de matching de graça.</p>
@@ -435,7 +437,7 @@
 </table>
 </div>
 
-<p class="small" style="margin-top:40px">Metodologia: 3 varreduras paralelas (pipeline do builder, UI/config, código morto) + verificação manual de cada achado por busca de referências (falsos positivos descartados estão na seção 4) + métricas via AST sobre 116 arquivos. Grafo de código: 2.904 nós / 25.916 arestas. Gerado em 09/06/2026, branch <code>new-features</code>, commit base <code>8f10819</code>.</p>
+<p class="small" style="margin-top:40px">Metodologia: 3 varreduras paralelas (pipeline do builder, UI/config, código morto) + verificação manual de cada achado por busca de referências (falsos positivos descartados estão na seção 4) + métricas via AST sobre 117 arquivos. Grafo de código: 2.905 nós / 25.916 arestas. Gerado em 09/06/2026, <b>atualizado e re-verificado em 10/06/2026</b> (métricas, contadores de commit, código morto e duplicatas re-medidos no working tree de <code>new-features</code> @ <code>c7c864b</code>; base comum com <code>main</code>: <code>8f10819</code>).</p>
 
 </div>
 </body>
