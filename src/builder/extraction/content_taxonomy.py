@@ -866,6 +866,71 @@ def _card_scoped_block(entry, markdown_text, unit_index, instructional_blocks,
     return str(block.get("id") or ""), float(conf)
 
 
+def _exam_code_from_text(text: str) -> str:
+    """Código canônico da avaliação a partir de texto livre: P1/P2/PS/G2/PF/EXAME ou ""."""
+    t = _normalize_match_text(text)
+    if not t:
+        return ""
+    if re.search(r"\bps\b", t):
+        return "PS"
+    if re.search(r"\bg2\b", t):
+        return "G2"
+    if re.search(r"\bpf\b", t) or "prova final" in t:
+        return "PF"
+    m = re.search(r"\bp\s*(\d+)\b", t)
+    if m:
+        return f"P{int(m.group(1))}"
+    if "exame" in t:
+        return "EXAME"
+    return ""
+
+
+def _exam_code_from_block(block: dict) -> str:
+    """Código da avaliação de um bloco (lê labels crus das sessões + period_label)."""
+    parts = [str(block.get("topic_text") or ""), str(block.get("period_label") or "")]
+    for sess in block.get("sessions", []) or []:
+        if isinstance(sess, dict):
+            parts.append(str(sess.get("label") or ""))
+    return _exam_code_from_text(" ".join(parts))
+
+
+def _entry_title_text(entry: dict) -> str:
+    title = str(entry.get("title") or "").strip()
+    if title:
+        return title
+    src = str(entry.get("source_path") or "")
+    return src.replace("\\", "/").rsplit("/", 1)[-1]
+
+
+def review_list_block_for_entry(entry: dict, blocks: list) -> str:
+    """Regra léxica: arquivo cujo nome casa 'revisão' + prova (P1/P2/PS/G2/…) é
+    atribuído ao bloco de REVISÃO que precede aquela prova. Retorna o id do
+    bloco ou "" se o padrão não casar (cai no matching normal).
+
+    Não agrupa revisões genéricas — exige tanto 'revis' quanto um código de
+    prova no nome, evitando jogar todo material de revisão num bloco só.
+    """
+    title = _entry_title_text(entry)
+    tnorm = _normalize_match_text(title)
+    if "revis" not in tnorm:
+        return ""
+    code = _exam_code_from_text(title)
+    if not code:
+        return ""
+    target_idx = None
+    for i, b in enumerate(blocks):
+        if str(b.get("kind") or "") == "assessment" and _exam_code_from_block(b) == code:
+            target_idx = i
+            break
+    if target_idx is None:
+        return ""
+    # bloco de revisão imediatamente anterior à prova (ordem cronológica da lista)
+    for j in range(target_idx - 1, -1, -1):
+        if str(blocks[j].get("kind") or "") == "review":
+            return str(blocks[j].get("id") or "")
+    return ""
+
+
 def resolve_unit_block_tags(
     manifest_entries,
     course_meta,
@@ -999,55 +1064,62 @@ def resolve_unit_block_tags(
                 or []
                 if not bool(block.get("administrative_only"))
             ]
-            _card_bid, _card_conf = _card_scoped_block(
-                entry, markdown_text, unit_index, instructional_blocks, _card_block_map,
-                lambda e, md, scoped, us, ts: _best_instructional_block_fallback(e, md, scoped, us, ts),
-            )
-            if _card_bid:
-                period_block_id = _card_bid
-                block_confidence = _card_conf
-            elif instructional_blocks:
-                # Passa a unidade resolvida (mesmo fraca) so para o boost; o
-                # scorer ranqueia TODOS os blocos instrucionais.
-                unit_obj = next(
-                    (u for u in unit_index if u.get("slug") == resolved_unit_slug),
-                    {"slug": resolved_unit_slug} if resolved_unit_slug else {},
+            _review_bid = review_list_block_for_entry(entry, instructional_blocks)
+            if _review_bid:
+                # Lista de revisão para prova (nome casa revisão + Pk) -> bloco de
+                # revisão que precede a prova. Sinal léxico forte, vence card/score.
+                period_block_id = _review_bid
+                block_confidence = 0.95
+            else:
+                _card_bid, _card_conf = _card_scoped_block(
+                    entry, markdown_text, unit_index, instructional_blocks, _card_block_map,
+                    lambda e, md, scoped, us, ts: _best_instructional_block_fallback(e, md, scoped, us, ts),
                 )
-                _period, p_conf, _p_ambig, _ = select_probable_period_for_entry_fn(
-                    entry=entry,
-                    unit=unit_obj,
-                    candidate_rows=instructional_blocks,
-                    markdown_text=markdown_text,
-                    preferred_topic_slug=preferred_topic_slug,
-                )
-                # O scorer primario aplica um portao best>=0.95 (file_map.py:1098;
-                # sessao-first em :1036) que e legitimo para o roteamento do
-                # FILE_MAP (navigation.py exige match forte para nao rotear lixo),
-                # mas viola a spec aqui: para atribuicao de bloco, SEMPRE se
-                # atribui o melhor candidato e a baixa confianca vira flag de
-                # revisao (band media/baixa), nunca orfao quando ha bloco
-                # (spec linhas 92-94/127-130). Quando o portao recusa (_period
-                # vazio), cai no "pega o melhor": ranqueia TODOS os blocos
-                # instrucionais pelo MESMO scorer real e atribui o top.
-                if _period:
-                    for block in instructional_blocks:
-                        if str(block.get("period_label") or "") == _period:
-                            period_block_id = _collapse_ws(str(block.get("id") or ""))
-                            # p_conf ja e margin_confidence(best, runner_up,
-                            # k=MARGIN_K) computada dentro do scorer — reusada.
-                            block_confidence = float(p_conf)
-                            break
-                else:
-                    fallback_block, fallback_conf = _best_instructional_block_fallback(
-                        entry,
-                        markdown_text,
-                        instructional_blocks,
-                        resolved_unit_slug,
-                        preferred_topic_slug,
+                if _card_bid:
+                    period_block_id = _card_bid
+                    block_confidence = _card_conf
+                elif instructional_blocks:
+                    # Passa a unidade resolvida (mesmo fraca) so para o boost; o
+                    # scorer ranqueia TODOS os blocos instrucionais.
+                    unit_obj = next(
+                        (u for u in unit_index if u.get("slug") == resolved_unit_slug),
+                        {"slug": resolved_unit_slug} if resolved_unit_slug else {},
                     )
-                    if fallback_block is not None:
-                        period_block_id = _collapse_ws(str(fallback_block.get("id") or ""))
-                        block_confidence = float(fallback_conf)
+                    _period, p_conf, _p_ambig, _ = select_probable_period_for_entry_fn(
+                        entry=entry,
+                        unit=unit_obj,
+                        candidate_rows=instructional_blocks,
+                        markdown_text=markdown_text,
+                        preferred_topic_slug=preferred_topic_slug,
+                    )
+                    # O scorer primario aplica um portao best>=0.95 (file_map.py:1098;
+                    # sessao-first em :1036) que e legitimo para o roteamento do
+                    # FILE_MAP (navigation.py exige match forte para nao rotear lixo),
+                    # mas viola a spec aqui: para atribuicao de bloco, SEMPRE se
+                    # atribui o melhor candidato e a baixa confianca vira flag de
+                    # revisao (band media/baixa), nunca orfao quando ha bloco
+                    # (spec linhas 92-94/127-130). Quando o portao recusa (_period
+                    # vazio), cai no "pega o melhor": ranqueia TODOS os blocos
+                    # instrucionais pelo MESMO scorer real e atribui o top.
+                    if _period:
+                        for block in instructional_blocks:
+                            if str(block.get("period_label") or "") == _period:
+                                period_block_id = _collapse_ws(str(block.get("id") or ""))
+                                # p_conf ja e margin_confidence(best, runner_up,
+                                # k=MARGIN_K) computada dentro do scorer — reusada.
+                                block_confidence = float(p_conf)
+                                break
+                    else:
+                        fallback_block, fallback_conf = _best_instructional_block_fallback(
+                            entry,
+                            markdown_text,
+                            instructional_blocks,
+                            resolved_unit_slug,
+                            preferred_topic_slug,
+                        )
+                        if fallback_block is not None:
+                            period_block_id = _collapse_ws(str(fallback_block.get("id") or ""))
+                            block_confidence = float(fallback_conf)
 
         # --- computed_* sao a FONTE UNICA (Fase 1) ---
         # O slug/id resolvido vive direto no entry; as tags unit:/bloco: abaixo
