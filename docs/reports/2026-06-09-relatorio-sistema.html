@@ -430,6 +430,7 @@
   <p><b>15. Sincronização Moodle agendada</b> — import manual hoje. Um task agendado (a infra de <code>RepoTaskStore</code> + fila persistente já existe) que detecta material novo no Moodle e enfileira reprocesso incremental tornaria o repositório auto-atualizável.</p>
   <p><b>16. Instruções de tutor adaptativas por plataforma</b> — os geradores (<code>artifacts/prompts.py</code>) são estáticos por build. Injetar: perfil/personalidade do aluno (já coletado no StudentProfileDialog e subutilizado), preferências de estudo, e o contexto temporal do item 12 — regenerados num passo leve (sem rebuild completo) via "Gerar Instruções LLM" que já existe no menu do backlog.</p>
   <p><b>17. Health-check de build com gate</b> — <code>cronograma_health_md</code> já calcula distribuição de bandas de confiança; promover a um resumo pós-build na UI ("3 entries com matching de baixa confiança — revisar?") com link direto pro editor. Transforma diagnóstico passivo em fluxo de correção guiado.</p>
+  <p><b>18. Auditoria e limpeza de artefatos</b> <span class="tag t-warn">pendente</span> — são 87+ arquivos gerados por build. Revisar o conjunto: quais são realmente lidos pelo tutor, quais estão obsoletos/dessincronizados (ex.: <code>PROGRESS_SCHEMA.md</code> já marcado obsoleto), quais podem ser <b>combinados</b> (ex.: contexto temporal + cronograma detalhado), e quais podem sair. Objetivo: contrato de artefatos enxuto e sem redundância. Fazer <b>depois</b> de #12+#13 (que adiciona <code>setup/CONTEXTO_TEMPORAL.md</code>), para auditar já com o conjunto novo no lugar.</p>
 </div>
 
 <h3>Priorização sugerida</h3>
@@ -443,6 +444,7 @@
   <tr><td>6,7</td><td>Paralelismo + retry</td><td>médio</td><td><span class="tag t-info">médio (desempenho)</span></td></tr>
   <tr><td>8,9,11</td><td>Consolidações + delta report</td><td>médio</td><td><span class="tag t-info">médio (manutenibilidade)</span></td></tr>
   <tr><td>14-17</td><td>Estado do aluno rico, Moodle agendado, instruções adaptativas, health gate</td><td>alto</td><td><span class="tag t-good">alto (visão de produto)</span></td></tr>
+  <tr><td>18</td><td>Auditoria/limpeza de artefatos (após 12+13)</td><td>baixo</td><td><span class="tag t-info">médio (manutenibilidade)</span></td></tr>
 </table>
 </div>
 
