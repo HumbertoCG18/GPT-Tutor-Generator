@@ -66,6 +66,43 @@ def _format_date_ddmmyy(raw: str) -> str:
     return raw
 
 
+# separador vertical faux entre colunas (ttk.Treeview nao desenha grade nativa)
+_COL_SEP = "│ "
+
+
+def _extract_exam_code(block: dict) -> str:
+    """Extrai o código da avaliação (P1/P2/PS/G2/PF/EXAME) dos labels crus do bloco.
+    Ordem de prioridade evita confundir PS/G2 com o padrão P\\d genérico."""
+    parts = [str(block.get("topic_text") or ""), str(block.get("period_label") or "")]
+    for sess in block.get("sessions", []) or []:
+        if isinstance(sess, dict):
+            parts.append(str(sess.get("label") or ""))
+    text = " ".join(parts).lower()
+    if re.search(r"\bps\b", text):
+        return "PS"
+    if re.search(r"\bg2\b", text):
+        return "G2"
+    if re.search(r"\bpf\b", text) or "prova final" in text:
+        return "PF"
+    m = re.search(r"\bp\s*(\d+)\b", text)
+    if m:
+        return f"P{int(m.group(1))}"
+    if "exame" in text:
+        return "EXAME"
+    return ""
+
+
+def _block_name(block: dict, kind: str) -> str:
+    """Nome legível do bloco para a coluna 'Nome do bloco':
+    avaliação -> P1/P2/PS/G2/PF/EXAME; revisão -> 'Revisão'; demais -> assunto."""
+    if kind == "assessment":
+        return _extract_exam_code(block) or "Avaliação"
+    if kind == "review":
+        return "Revisão"
+    topic = str(block.get("primary_topic_label") or block.get("topic_text") or "").strip()
+    return topic or "(sem tópico)"
+
+
 def _blend(hex_a: str, hex_b: str, t: float) -> str:
     """Mistura duas cores hex (#rrggbb): t=0 -> a, t=1 -> b. Robusto a entrada inválida."""
     try:
@@ -305,12 +342,11 @@ class TimelineDashboardView(tk.Frame):
     Pass a callable that returns the active subject.
     """
 
-    # colunas extra (alem da arvore #0)
-    _COLUMNS = ("seq", "tipo", "unidade", "escopo", "arq")
+    # colunas extra (alem da arvore #0); #0 = "Nº · Data"
+    _COLUMNS = ("nome", "tipo", "unidade", "escopo", "arq")
     # mapeamento coluna-treeview -> coluna de ordenacao (timeline_sort_key)
     _SORT_COLUMN = {
         "#0": "Data",
-        "seq": "#",
         "tipo": "Tipo",
         "unidade": "Unidade",
         "arq": "Arq.",
@@ -413,12 +449,12 @@ class TimelineDashboardView(tk.Frame):
         self._tree = tree
 
         headings = {
-            "#0": "Data · Bloco/tópico",
-            "seq": "#",
-            "tipo": "Tipo",
-            "unidade": "Unidade",
-            "escopo": "Escopo",
-            "arq": "Arq.",
+            "#0": "Nº · Data",
+            "nome": _COL_SEP + "Nome do bloco",
+            "tipo": _COL_SEP + "Tipo",
+            "unidade": _COL_SEP + "Unidade",
+            "escopo": _COL_SEP + "Escopo",
+            "arq": _COL_SEP + "Arq.",
         }
         for col, text in headings.items():
             sort_col = self._SORT_COLUMN.get(col)
@@ -427,12 +463,12 @@ class TimelineDashboardView(tk.Frame):
             else:
                 tree.heading(col, text=text)
 
-        tree.column("#0", width=340, minwidth=180, anchor="w", stretch=True)
-        tree.column("seq", width=44, minwidth=36, anchor="e", stretch=False)
-        tree.column("tipo", width=110, minwidth=80, anchor="w", stretch=False)
-        tree.column("unidade", width=180, minwidth=100, anchor="w", stretch=False)
-        tree.column("escopo", width=200, minwidth=100, anchor="w", stretch=True)
-        tree.column("arq", width=48, minwidth=40, anchor="e", stretch=False)
+        tree.column("#0", width=150, minwidth=110, anchor="w", stretch=False)
+        tree.column("nome", width=240, minwidth=140, anchor="w", stretch=True)
+        tree.column("tipo", width=120, minwidth=80, anchor="w", stretch=False)
+        tree.column("unidade", width=190, minwidth=100, anchor="w", stretch=False)
+        tree.column("escopo", width=210, minwidth=100, anchor="w", stretch=True)
+        tree.column("arq", width=64, minwidth=44, anchor="w", stretch=False)
 
         # striping de linhas com mais contraste (blend rumo a 'border' p/ separar visualmente)
         base = p.get("treeview_odd", p["bg"])
@@ -658,34 +694,38 @@ class TimelineDashboardView(tk.Frame):
             block_id = str(block.get("id") or "")
             disp = _kind_display(kind)
             period = _format_date_ddmmyy(block.get("period_start")) or str(block.get("period_label") or "")
-            topic = str(block.get("primary_topic_label") or "")
-            title_bits = [b for b in (period, topic) if b]
-            tree_text = f"{disp['icon']} " + " · ".join(title_bits) if title_bits else f"{disp['icon']} {block_id}"
 
             seq = ""
             m = _ID_NUM_RE.search(block_id)
             if m:
                 seq = m.group(1)
+            # coluna-arvore #0: numero + data
+            id_bits = [b for b in (seq, period) if b]
+            tree_text = f"{disp['icon']} " + " · ".join(id_bits) if id_bits else f"{disp['icon']} {block_id}"
+
+            nome_cell = _COL_SEP + _block_name(block, kind)
 
             unit_slug = str(block.get("unit_slug") or "")
             unit_manual = bool(str(block.get("block_manual_unit_slug") or "").strip())
-            unit_cell = (("✎ " if unit_manual else "") + unit_slug) if unit_slug else ""
+            unit_cell = _COL_SEP + ((("✎ " if unit_manual else "") + unit_slug) if unit_slug else "")
 
             if kind in ("assessment", "review"):
                 scope = _block_scope_slugs(block)
-                escopo_cell = ", ".join(scope) if scope else "(definir)"
+                escopo_cell = _COL_SEP + (", ".join(scope) if scope else "(definir)")
             else:
-                escopo_cell = "—"
+                escopo_cell = _COL_SEP + "—"
 
             tipo_manual = bool(str(block.get("manual_kind_override") or "").strip())
-            tipo_cell = ("✎ " if tipo_manual else "") + disp["label"]
+            tipo_cell = _COL_SEP + ("✎ " if tipo_manual else "") + disp["label"]
+
+            arq_cell = _COL_SEP + str(block.get("_file_count", 0))
 
             tag = "odd" if row_i % 2 else "even"
             iid = tree.insert(
                 "",
                 "end",
                 text=tree_text,
-                values=(seq, tipo_cell, unit_cell, escopo_cell, str(block.get("_file_count", 0))),
+                values=(nome_cell, tipo_cell, unit_cell, escopo_cell, arq_cell),
                 tags=(tag,),
                 open=False,
             )
@@ -712,7 +752,7 @@ class TimelineDashboardView(tk.Frame):
             parent_iid,
             "end",
             text=f"   {icon} {title}{mark}",
-            values=("", "", "", "", f"conf {confidence:.2f}"),
+            values=(_COL_SEP, _COL_SEP, _COL_SEP, _COL_SEP, _COL_SEP + f"conf {confidence:.2f}"),
             tags=("child",),
         )
 
