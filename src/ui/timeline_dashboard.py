@@ -8,6 +8,7 @@ from pathlib import Path
 from tkinter import messagebox, ttk
 from typing import Callable, Optional
 
+from src.builder.routing.file_map import resolve_effective_block
 from src.builder.timeline.classifier import classify_block
 from src.builder.timeline.curation import apply_block_curation, set_block_override
 from src.builder.timeline.kinds import KIND_DISPLAY, BlockKind
@@ -110,8 +111,6 @@ def load_timeline_data(
 
     # FONTE ÚNICA da precedência manual>auto (spec Fase 4): a mesma função que
     # cronograma_health usa, eliminando o leitor divergente que vivia aqui.
-    from src.builder.routing.file_map import resolve_effective_block
-
     for entry in entries:
         assigned_id = resolve_effective_block(entry, blocks).block_id
         if assigned_id and assigned_id in block_ids:
@@ -307,8 +306,13 @@ class TimelineDashboardView(tk.Frame):
         self._iid_to_block: dict[str, str] = {}
         # iid (treeview, linha filha) -> entry_id
         self._iid_to_entry: dict[str, str] = {}
+        # iid (treeview unmapped) -> entry_id
+        self._unmapped_iid_to_entry: dict[str, str] = {}
         # editor inline ativo (combobox sobreposta)
         self._editor: Optional[ttk.Combobox] = None
+        # dialogos modais ativos (evita empilhar duas grabs)
+        self._scope_dialog: Optional[tk.Toplevel] = None
+        self._picker_dialog: Optional[tk.Toplevel] = None
 
         p = apply_theme_to_toplevel(self, parent)
         self._p = p
@@ -661,7 +665,7 @@ class TimelineDashboardView(tk.Frame):
                 self._iid_to_entry[child_iid] = str(entry.get("id") or "")
 
         if shown == 0:
-            placeholder = tree.insert("", "end", text="Nenhum bloco no filtro atual.", values=("",) * len(self._COLUMNS))
+            tree.insert("", "end", text="Nenhum bloco no filtro atual.", values=("",) * len(self._COLUMNS))
             # nao mapeia: linha informativa apenas
 
     def _insert_entry_child(self, parent_iid: str, entry: dict) -> str:
@@ -669,7 +673,6 @@ class TimelineDashboardView(tk.Frame):
         file_type = str(entry.get("file_type") or "")
         icon = "🔗" if file_type in {"url", "github-repo"} else "📄"
         confidence = float(entry.get("unit_match_confidence") or 0.0)
-        from src.builder.routing.file_map import resolve_effective_block
         is_manual = resolve_effective_block(entry, self._blocks).source == "manual"
         mark = " ✎" if is_manual else ""
         tree = self._tree
@@ -696,7 +699,7 @@ class TimelineDashboardView(tk.Frame):
         self._unmapped_label.pack(fill="x", padx=10, pady=(6, 2))
         self._unmapped_container.pack(fill="x", padx=4, pady=(0, 6))
 
-        self._unmapped_iid_to_entry: dict[str, str] = {}
+        self._unmapped_iid_to_entry = {}
         for entry in unmapped:
             entry_id = str(entry.get("id") or "")
             title = str(entry.get("title") or entry.get("source_path") or "—")
@@ -788,7 +791,16 @@ class TimelineDashboardView(tk.Frame):
             f"{KIND_DISPLAY[k]['icon']} {KIND_DISPLAY[k]['label']}" for k in BlockKind
         ]
         values = [""] + [k.value for k in BlockKind]
-        combo = self._overlay_combo(iid, col_id, labels, labels[0])
+        block = self._block_by_id(block_id)
+        # Preseleciona o override manual atual se houver; senao mostra "auto"
+        # mas posiciona no kind efetivo para o usuario ver o estado corrente.
+        manual_kind = str((block or {}).get("manual_kind_override") or "").strip()
+        effective_kind = manual_kind or block_kind(block or {})
+        cur_idx = values.index(effective_kind) if effective_kind in values else 0
+        # Se nao ha override manual, mantem "auto" selecionado (idx 0) porem
+        # ainda assim refletindo o tipo corrente quando ha override.
+        cur_label = labels[cur_idx] if manual_kind else labels[0]
+        combo = self._overlay_combo(iid, col_id, labels, cur_label)
         if combo is None:
             return
 
@@ -805,14 +817,27 @@ class TimelineDashboardView(tk.Frame):
                 logger.exception("Erro ao salvar reclassificação do bloco %s", block_id)
 
         combo.bind("<<ComboboxSelected>>", on_select)
-        combo.bind("<FocusOut>", lambda _e: self._cancel_editor())
+        # Windows Tk 8.6: abrir o popdown dispara <FocusOut> ANTES de
+        # <<ComboboxSelected>>. Adiar o cancel garante que uma selecao
+        # subsequente comite (on_select nula self._editor, tornando este
+        # cancel um no-op via guarda `self._editor is c`).
+        combo.bind(
+            "<FocusOut>",
+            lambda _e, c=combo: self.after(
+                120, lambda: self._cancel_editor() if self._editor is c else None
+            ),
+        )
         combo.bind("<Escape>", lambda _e: self._cancel_editor())
 
     def _edit_unidade(self, iid: str, col_id: str, block_id: str) -> None:
         slugs = list(self._unit_slugs or [])
         labels = ["⟳ auto"] + slugs
         values = [""] + slugs
-        combo = self._overlay_combo(iid, col_id, labels, labels[0])
+        block = self._block_by_id(block_id)
+        # Preseleciona a unidade manual atual se houver; senao "auto".
+        manual_unit = str((block or {}).get("block_manual_unit_slug") or "").strip()
+        cur_label = manual_unit if manual_unit in labels else labels[0]
+        combo = self._overlay_combo(iid, col_id, labels, cur_label)
         if combo is None:
             return
 
@@ -829,12 +854,22 @@ class TimelineDashboardView(tk.Frame):
                 logger.exception("Erro ao salvar unidade do bloco %s", block_id)
 
         combo.bind("<<ComboboxSelected>>", on_select)
-        combo.bind("<FocusOut>", lambda _e: self._cancel_editor())
+        # Vide _edit_tipo: adiar o cancel para nao perder a selecao no Windows.
+        combo.bind(
+            "<FocusOut>",
+            lambda _e, c=combo: self.after(
+                120, lambda: self._cancel_editor() if self._editor is c else None
+            ),
+        )
         combo.bind("<Escape>", lambda _e: self._cancel_editor())
 
     def _edit_escopo(self, block_id: str, block: dict) -> None:
         if block_kind(block) not in ("assessment", "review"):
             return  # escopo read-only para outros tipos
+        # Evita empilhar duas modais num duplo-clique rapido (rouba o grab).
+        if self._scope_dialog is not None and self._scope_dialog.winfo_exists():
+            self._scope_dialog.lift()
+            return
         current = _block_scope_slugs(block)
 
         def on_save(selected: list[str]) -> None:
@@ -845,7 +880,10 @@ class TimelineDashboardView(tk.Frame):
             except Exception:
                 logger.exception("Erro ao salvar escopo do bloco %s", block_id)
 
-        ScopeEditDialog(self, list(self._unit_slugs or []), current, on_save)
+        dlg = ScopeEditDialog(self, list(self._unit_slugs or []), current, on_save)
+        self._scope_dialog = dlg
+        dlg.bind("<Destroy>", lambda e: setattr(self, "_scope_dialog", None)
+                 if e.widget is dlg else None, add="+")
 
     # ------------------------------------------------------------------ unmapped reassign
 
@@ -860,6 +898,10 @@ class TimelineDashboardView(tk.Frame):
 
     def _open_block_picker(self, entry_id: str) -> None:
         """Toplevel simples: escolhe o bloco de destino para um arquivo sem bloco."""
+        # Evita empilhar duas modais num duplo-clique rapido (rouba o grab).
+        if self._picker_dialog is not None and self._picker_dialog.winfo_exists():
+            self._picker_dialog.lift()
+            return
         p = self._p
         labels = [self._block_label(b) for b in (self._blocks or []) if b.get("id")]
         values = [b["id"] for b in (self._blocks or []) if b.get("id")]
@@ -868,6 +910,9 @@ class TimelineDashboardView(tk.Frame):
             return
 
         dlg = tk.Toplevel(self)
+        self._picker_dialog = dlg
+        dlg.bind("<Destroy>", lambda e: setattr(self, "_picker_dialog", None)
+                 if e.widget is dlg else None, add="+")
         dlg.title("Atribuir a bloco")
         apply_theme_to_toplevel(dlg, self)
         dlg.configure(bg=p["bg"])
