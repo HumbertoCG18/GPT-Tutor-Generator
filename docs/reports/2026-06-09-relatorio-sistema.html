@@ -83,11 +83,11 @@
 <!-- ============ 1. MÉTRICAS ============ -->
 <h2 id="metricas">1. Métricas Gerais</h2>
 <div class="grid g4">
-  <div class="card metric"><div class="v">117</div><div class="l">arquivos .py (src + scripts)</div></div>
+  <div class="card metric"><div class="v">118</div><div class="l">arquivos .py (src + scripts)</div></div>
   <div class="card metric"><div class="v">39.963</div><div class="l">linhas de código</div></div>
   <div class="card metric"><div class="v">1.368</div><div class="l">funções</div></div>
   <div class="card metric"><div class="v">83</div><div class="l">classes</div></div>
-  <div class="card metric"><div class="v">1.119</div><div class="l">testes (76 arquivos, 17.758 linhas)</div></div>
+  <div class="card metric"><div class="v">1.129</div><div class="l">testes (77 arquivos)</div></div>
   <div class="card metric"><div class="v">591</div><div class="l">commits totais</div></div>
   <div class="card metric"><div class="v">3/4</div><div class="l">new-features à frente / atrás de <code>main</code></div></div>
   <div class="card metric"><div class="v">0,44</div><div class="l">razão linhas-teste / linhas-código</div></div>
@@ -352,11 +352,11 @@
 <table>
   <tr><th>Item</th><th>Onde</th><th>Severidade</th><th>Detalhe</th></tr>
   <tr><td>Pipeline serial</td><td><code>ops/build_workflow.py</code> loop de entries; chunks Datalab (<code>engine.py:1115-1179</code>) e Marker sequenciais; loops Gemini</td><td><span class="tag t-warn">desempenho</span></td><td>Sem threads/async no builder. Build de curso grande escala linearmente. Chunks Datalab são candidatos óbvios a paralelismo (API cloud aguenta concorrência).</td></tr>
-  <tr><td><code>manifest.json</code> sem escrita atômica</td><td><code>ops/build_workflow.py</code> — overwrite após cada entry</td><td><span class="tag t-bad">integridade</span></td><td>Queda de energia/kill durante o write ⇒ manifest corrompido, backlog inteiro "some". Corrigir com tmp+<code>os.replace()</code> é barato.</td></tr>
+  <tr><td><code>manifest.json</code> sem escrita atômica</td><td><code>utils/helpers.py</code> — <code>write_text</code> / <code>write_json_manifest</code></td><td><span class="tag t-good">RESOLVIDO</span></td><td><s>Queda de energia/kill durante o write ⇒ manifest corrompido.</s> Corrigido (commit <code>79b6f98</code>): <code>write_text</code> atômico (tmp+<code>os.replace</code>) + <code>write_json_manifest</code> (atômico + <code>.bak</code>); ~20 call sites roteados.</td></tr>
   <tr><td>Sem retry em rede</td><td>Gemini (<code>code_summarization.py</code>), Ollama, clone GitHub</td><td><span class="tag t-warn">resiliência</span></td><td>Falha pontual ⇒ entry sem resumo (cache por hash mitiga re-custo, não a falha). Datalab/Marker têm fallback de backend, o resto não tem nada.</td></tr>
   <tr><td>Matching O(E×B)</td><td><code>routing/file_map.py</code> — cada entry pontuada contra cada bloco/unidade</td><td><span class="tag t-info">ok por ora</span></td><td>Com ~50 entries × ~30 blocos é irrelevante; vira custo se cursos crescerem muito.</td></tr>
   <tr><td>Imagens duplicadas cross-entry</td><td><code>core/image_resolution.py</code> — cache <code>seen{}</code> só por caminho</td><td><span class="tag t-info">menor</span></td><td>Mesma figura referenciada por 2 PDFs ⇒ 2 cópias em <code>content/images/</code>. Dedup por hash resolveria.</td></tr>
-  <tr><td>Sem lock no manifest</td><td>UI + build em thread + scripts CLI podem escrever simultaneamente</td><td><span class="tag t-warn">integridade</span></td><td>Cenário raro mas possível (ex.: editar backlog durante build).</td></tr>
+  <tr><td>Sem lock no manifest</td><td>UI + build em thread + scripts CLI podem escrever simultaneamente</td><td><span class="tag t-info">mitigado</span></td><td>Cenário raro mas possível (ex.: editar backlog durante build). Escrita atômica (commit <code>79b6f98</code>) elimina corrupção — vira last-write-wins, sem arquivo rasgado. Lock real ainda não existe.</td></tr>
   <tr><td>Refresh de backlog/dashboard na main thread</td><td><code>ui/app.py — _refresh_backlog()</code>, <code>_refresh_repo_dashboard()</code></td><td><span class="tag t-info">menor</span></td><td>Lê manifest + percorre entries sem thread; trava a UI só com manifests muito grandes. Builds/imports longos já rodam corretamente em thread + <code>after()</code>.</td></tr>
   <tr><td>Fila volátil</td><td><code>ui/app.py — _save_current_queue()</code> só roda antes de build/process</td><td><span class="tag t-warn">UX</span></td><td>Adicionar arquivos à fila e fechar o app sem buildar ⇒ itens perdidos. Salvar a fila em toda mutação resolveria.</td></tr>
 </table>
@@ -396,7 +396,7 @@
 
 <h3>Curto prazo (dias) — integridade e quick wins</h3>
 <div class="card find good">
-  <p><b>1. Escrita atômica do manifest</b> — tmp + <code>os.replace()</code> em <code>_compact_manifest</code>. Elimina o risco nº 1 de corrupção. ~10 linhas.</p>
+  <p><b>1. Escrita atômica do manifest ✅ FEITO</b> (commit <code>79b6f98</code>) — <code>write_text</code> atômico (tmp + <code>os.replace</code>) + novo <code>write_json_manifest</code> (atômico + backup <code>.bak</code>) em <code>utils/helpers.py</code>; ~20 call sites roteados (builder + UI + sources). Nota: o fix real ficou no helper de escrita, não em <code>_compact_manifest</code> (que só compacta dados). Cobertura: 10 testes em <code>tests/test_atomic_write.py</code>.</p>
   <p><b>2. Salvar fila a cada mutação</b> — chamar <code>_save_current_queue()</code> em add/remove/toggle. Acaba com perda de itens ao fechar.</p>
   <p><b>3. Remover mortos</b> — <code>file_size_mb</code>, <code>save_card_block_map</code>, <code>score_block_unit_affinity</code> (ou integrá-lo ao matcher, se o scorer for melhor que o atual), <code>font_size</code>.</p>
   <p><b>4. Propagar <code>match_rationale</code></b> — manifest + coluna no CODE_INDEX + campo read-only no BacklogEntryEditDialog (mesmo padrão do <code>source_section</code> já implementado).</p>
@@ -427,7 +427,7 @@
 <div class="card">
 <table>
   <tr><th>#</th><th>Item</th><th>Esforço</th><th>Impacto</th></tr>
-  <tr><td>1</td><td>Manifest atômico</td><td>baixo</td><td><span class="tag t-bad">crítico (integridade)</span></td></tr>
+  <tr><td>1</td><td>Manifest atômico <span class="tag t-good">✅ feito</span></td><td>baixo</td><td><span class="tag t-bad">crítico (integridade)</span></td></tr>
   <tr><td>10</td><td>Cronograma editável (spec pronta)</td><td>médio</td><td><span class="tag t-good">alto (usabilidade)</span></td></tr>
   <tr><td>12+13</td><td>Semana atual + prontidão pré-prova</td><td>médio</td><td><span class="tag t-good">alto (tutor proativo)</span></td></tr>
   <tr><td>2,3,4,5</td><td>Quick wins (fila, mortos, rationale, custos)</td><td>baixo</td><td><span class="tag t-info">médio</span></td></tr>
