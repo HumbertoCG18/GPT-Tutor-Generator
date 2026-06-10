@@ -5184,6 +5184,41 @@ def test_apply_assessment_review_scope_in_place():
     assert rev["primary_topic_label"] == "Conteúdo: unidade-1"
 
 
+def test_assessment_scope_excludes_units_from_earlier_exams():
+    """P(k) cobre só unidades novas: aula 'atrasada' de U1 depois da P1 não
+    deve poluir o escopo da P2 (regra por unidade, sem sobreposição)."""
+    from src.builder.timeline.index import assessment_scope_by_date
+    blocks = [
+        {"id": "c1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "u1"},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-22",
+         "sessions": [{"label": "prova p1 prova"}]},
+        {"id": "c2", "kind": "class", "period_start": "2026-04-27", "unit_slug": "u1"},  # straggler U1 pós-P1
+        {"id": "c3", "kind": "class", "period_start": "2026-05-06", "unit_slug": "u2"},
+        {"id": "c4", "kind": "class", "period_start": "2026-06-15", "unit_slug": "u3"},
+        {"id": "p2", "kind": "assessment", "period_start": "2026-07-06",
+         "sessions": [{"label": "prova p2 prova"}]},
+    ]
+    scope = assessment_scope_by_date(blocks)
+    assert scope["p1"] == ["u1"]
+    assert scope["p2"] == ["u2", "u3"]  # NÃO inclui u1 (já coberta pela P1)
+
+
+def test_assessment_scope_full_label_is_whole_semester():
+    """PS/G2 cobrem o semestre inteiro, independente da exclusão por prova."""
+    from src.builder.timeline.index import assessment_scope_by_date
+    blocks = [
+        {"id": "c1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "u1"},
+        {"id": "p1", "kind": "assessment", "period_start": "2026-04-22",
+         "sessions": [{"label": "prova p1 prova"}]},
+        {"id": "c2", "kind": "class", "period_start": "2026-05-06", "unit_slug": "u2"},
+        {"id": "ps", "kind": "assessment", "period_start": "2026-07-08",
+         "sessions": [{"label": "prova ps prova de substituicao"}]},
+    ]
+    scope = assessment_scope_by_date(blocks)
+    assert scope["p1"] == ["u1"]
+    assert scope["ps"] == ["u1", "u2"]  # semestre inteiro
+
+
 def test_demote_non_preexam_review_to_class():
     from src.builder.timeline.index import _demote_non_preexam_reviews
     blocks = [

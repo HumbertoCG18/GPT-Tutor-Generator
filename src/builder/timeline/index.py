@@ -1228,7 +1228,9 @@ _FULL_SCOPE_LABELS = {"PS", "G2", "PF", "EXAME"}
 def assessment_scope_by_date(blocks: List[Dict[str, object]]) -> Dict[str, List[str]]:
     """Escopo de unidades por prova, derivado das datas dos blocos.
 
-    Prova regular (Pk): unidades das aulas (CLASS) na janela (data P(k-1), data Pk].
+    Prova regular (Pk): unidades das aulas (CLASS) na janela (data P(k-1), data Pk],
+    EXCLUINDO unidades já cobertas por uma prova anterior (sem sobreposição —
+    uma aula "atrasada" de U1 depois da P1 não polui o escopo da P2).
     PS/G2/PF/EXAME: semestre inteiro (todas as unidades vistas em aulas).
     Retorna {block_id: [unit_slug]} (ordem de aparição). Provas sem data: ignoradas.
     """
@@ -1259,13 +1261,15 @@ def assessment_scope_by_date(blocks: List[Dict[str, object]]) -> Dict[str, List[
     )
     out: Dict[str, List[str]] = {}
     prev_dt = None
+    seen: set = set()  # unidades ja cobertas por provas anteriores (sem sobreposicao)
     for e in regular:
         units = []
         for dt, slug in class_units_dated:
             if (prev_dt is None or dt > prev_dt) and dt <= e["dt"]:
-                if slug not in units:
+                if slug not in units and slug not in seen:
                     units.append(slug)
         out[e["id"]] = units
+        seen.update(units)
         prev_dt = e["dt"]
 
     for e in exams:
