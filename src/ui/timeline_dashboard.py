@@ -476,7 +476,7 @@ class TimelineDashboardView(tk.Frame):
         tree.column("#0", width=150, minwidth=110, anchor="w", stretch=False)
         tree.column("nome", width=240, minwidth=140, anchor="center", stretch=True)
         tree.column("tipo", width=120, minwidth=80, anchor="center", stretch=False)
-        tree.column("unidade", width=190, minwidth=100, anchor="center", stretch=False)
+        tree.column("unidade", width=90, minwidth=60, anchor="center", stretch=False)
         tree.column("escopo", width=210, minwidth=100, anchor="center", stretch=True)
         tree.column("arq", width=64, minwidth=44, anchor="center", stretch=False)
 
@@ -717,7 +717,7 @@ class TimelineDashboardView(tk.Frame):
 
             unit_slug = str(block.get("unit_slug") or "")
             unit_manual = bool(str(block.get("block_manual_unit_slug") or "").strip())
-            unit_cell = (("✎ " if unit_manual else "") + unit_slug) if unit_slug else ""
+            unit_cell = (("✎ " if unit_manual else "") + _unit_short_label(unit_slug)) if unit_slug else ""
 
             if kind in ("assessment", "review"):
                 scope = _block_scope_slugs(block)
