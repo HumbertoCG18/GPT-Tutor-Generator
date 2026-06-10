@@ -14,6 +14,7 @@ from src.builder.timeline.classifier import classify_block
 from src.builder.timeline.curation import apply_block_curation, set_block_override
 from src.builder.timeline.kinds import KIND_DISPLAY, BlockKind
 from src.builder.timeline.status import derive_block_status
+from src.builder.timeline.unit_labels import unit_short_label as _unit_short_label
 from src.models.core import SubjectProfile
 from src.ui.theme import apply_theme_to_toplevel
 
@@ -88,17 +89,6 @@ def _extract_exam_code(block: dict) -> str:
     return ""
 
 
-_UNIT_NUM_RE = re.compile(r"unidade[-_\s]*0*(\d+)", re.IGNORECASE)
-
-
-def _unit_short_label(slug: str) -> str:
-    """Converte slug de unidade em rótulo curto: 'unidade-01-...' -> 'U1'.
-    Mantém o original se não casar o padrão."""
-    s = str(slug or "").strip()
-    if not s:
-        return ""
-    m = _UNIT_NUM_RE.search(s)
-    return f"U{int(m.group(1))}" if m else s
 
 
 def _block_name(block: dict, kind: str) -> str:
