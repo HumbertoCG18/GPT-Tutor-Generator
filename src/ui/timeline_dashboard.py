@@ -47,6 +47,38 @@ def _kind_display(kind_value: str) -> dict:
 
 _DATE_PREFIX_RE = re.compile(r"^(\d{1,2})\.(\d{2})\s+")
 
+_ID_NUM_RE = re.compile(r"(\d+)$")
+
+
+def timeline_sort_key(block: dict, column: str) -> tuple:
+    """Chave de ordenacao por coluna para as linhas-pai (blocos) na Treeview.
+
+    Valores ausentes vao para o fim de forma estavel (primeiro elemento 0/1).
+
+    Mapeamento de campos reais (schema v4):
+      - "#"       -> sufixo numerico do campo `id` (ex: "bloco-10" -> 10)
+      - "Data"    -> `period_start` (ISO YYYY-MM-DD, ordena lexicalmente)
+      - "Tipo"    -> `kind`
+      - "Unidade" -> `unit_slug`
+      - "Arq."    -> `_file_count` (injetado pela view antes de ordenar)
+    """
+    if column == "Data":
+        raw = str(block.get("period_start") or "").strip()
+        return (1, "") if not raw else (0, raw)
+    if column == "#":
+        block_id = str(block.get("id") or "")
+        m = _ID_NUM_RE.search(block_id)
+        return (1, 0) if not m else (0, int(m.group(1)))
+    if column == "Arq.":
+        return (0, int(block.get("_file_count") or 0))
+    if column == "Tipo":
+        val = str(block.get("kind") or "").strip()
+        return (1, "") if not val else (0, val)
+    if column == "Unidade":
+        val = str(block.get("unit_slug") or "").strip()
+        return (1, "") if not val else (0, val)
+    return (0, str(block.get("id") or ""))
+
 
 def load_timeline_data(
     manifest_path: Path,
