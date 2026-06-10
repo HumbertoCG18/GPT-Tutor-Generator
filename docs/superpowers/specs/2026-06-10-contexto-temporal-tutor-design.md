@@ -46,26 +46,40 @@ BUILD (ocasional)                          SESSÃO DO TUTOR (toda vez)
 > Cronograma compacto. Você (tutor) calcula a semana atual e a prontidão
 > pré-prova A CADA sessão comparando com a data de hoje. Datas ISO YYYY-MM-DD.
 
+## Unidades
+- **U1** = `unidade-01-limites` — Limites
+- **U2** = `unidade-02-derivadas` — Derivadas
+
+## Cronograma
 | bloco | inicio | fim | tipo | unidade | topico | escopo |
 |-------|--------|-----|------|---------|--------|--------|
-| bloco-01 | 2026-03-03 | 2026-03-10 | aula | unidade-01-limites | Definição de limite | — |
-| bloco-07 | 2026-04-21 | 2026-04-21 | revisão | — | — | unidade-01-limites |
-| bloco-09 | 2026-04-28 | 2026-04-28 | prova P1 | — | — | unidade-01-limites |
+| bloco-01 | 2026-03-03 | 2026-03-10 | aula | U1 | Definição de limite; Limites laterais | — |
+| bloco-07 | 2026-04-21 | 2026-04-21 | revisão | — | — | U1 |
+| bloco-09 | 2026-04-28 | 2026-04-28 | prova P1 | — | — | U1 |
 ```
 
 Regras de conteúdo:
 
-- **`unidade` e `escopo` usam o slug canônico** (ex.: `unidade-01-limites`,
-  não `U1`) — é a chave de junção com `student/batteries/<slug>/` e o
-  `COURSE_MAP`.
+- **Coluna `unidade` e `escopo` usam rótulo curto `U1`/`U2`** (legível). A
+  seção `## Unidades` mapeia cada rótulo ao **slug canônico** + nome — é por
+  ela que o tutor resolve `U1 → unidade-01-limites` para juntar com
+  `student/batteries/<slug>/` e `COURSE_MAP`. Rótulo curto via
+  `unit_short_label` (extraído pra módulo base; ver Unidades de código). Slug
+  que não casa o padrão `unidade-NN` cai pro próprio slug.
+- A legenda lista **só as unidades que aparecem** na tabela (em aula ou escopo),
+  ordenadas por número. Nome da unidade: derivado do slug (parte após
+  `unidade-NN-`, com `-`→espaço, capitalizado) — não há fonte de nome melhor
+  disponível no bloco; YAGNI.
 - Coluna `tipo`: `aula` (CLASS), `prova <código>` (ASSESSMENT, ex.: `prova P1`),
   `revisão` (REVIEW), `feriado` (HOLIDAY), `exame` (EXAM). Código de prova via
   `_exam_code_from_block` (`content_taxonomy.py`).
-- Célula vazia → `—`. Múltiplos slugs no escopo → separados por `, `.
+- Coluna `topico`: **lista completa `topics`** do bloco, juntada por `; `
+  (cobre mais que só o tópico primário). Vazia → `—`.
+- Célula vazia → `—`. Múltiplos rótulos no escopo → separados por `, `.
 - Bloco **sem data válida** (sem `period_start`) → **omitido** da tabela
   (não há como localizá-lo no tempo).
 - **Cronograma vazio** (nenhum bloco com data) → artefato emitido com nota
-  `_Cronograma indisponível._` no lugar da tabela.
+  `_Cronograma indisponível._` no lugar da tabela e da legenda.
 
 ## Lógica de instrução (em `prompts.py`)
 
@@ -81,7 +95,7 @@ Abra `setup/CONTEXTO_TEMPORAL.md`. Com a data de HOJE:
    dias restantes e o escopo (unidades).
 3. **Prontidão pré-prova** (só se houver prova futura): pra cada unidade do escopo →
    tópicos no `COURSE_MAP.md` → status em `STUDENT_STATE.md` / `student/batteries/<unidade>/`.
-   Liste tópicos sem registro ou pendentes. Priorize se a prova ≤ 14 dias.
+   Liste tópicos sem registro ou pendentes. Priorize se a prova ≤ 7 dias.
 Se `CONTEXTO_TEMPORAL.md` não existir ou estiver vazio, pule este bloco.
 ```
 
@@ -90,22 +104,45 @@ GitHub genericamente). A seção entra junto ao contrato de artefatos existente.
 
 ## Unidades de código
 
+### Extração: `src/builder/timeline/unit_labels.py` (novo, base)
+
+`_unit_short_label` hoje vive em `src/ui/timeline_dashboard.py` (camada UI). O
+builder **não pode importar a UI**. Extrair para módulo base compartilhado:
+
+- `unit_short_label(slug: str) -> str` — `unidade-01-... → U1`; fallback ao slug.
+- `unit_name_from_slug(slug: str) -> str` — parte após `unidade-NN-`,
+  `-`→espaço, capitalizado; vazio → slug.
+- Move o regex `_UNIT_NUM_RE` para cá.
+
+`src/ui/timeline_dashboard.py` passa a importar `unit_short_label` deste módulo
+(mantém o alias `_unit_short_label = unit_short_label` para não quebrar os
+testes existentes que importam o nome privado).
+
 ### Novo módulo `src/builder/artifacts/temporal_context.py`
 
 - `build_temporal_context_rows(timeline_blocks: list[dict]) -> list[dict]`
   Puro. Mapeia cada bloco com `period_start` em
-  `{"id", "inicio", "fim", "tipo", "unidade", "topico", "escopo"}`.
+  `{"id", "inicio", "fim", "tipo", "unidade", "unidade_slug", "topico", "escopo", "escopo_slugs"}`.
   - `inicio`/`fim`: `period_start`/`period_end` (string ISO; `fim` cai pra
     `inicio` se ausente).
   - `tipo`: rótulo derivado de `kind` + código de prova (`_exam_code_from_block`).
-  - `unidade`: `unit_slug` ou `""`.
-  - `topico`: `primary_topic_label` ou `""`.
-  - `escopo`: lista `scope_unit_slugs` (vazia para aula/feriado).
+  - `unidade`: rótulo curto (`unit_short_label(unit_slug)`); `unidade_slug`: slug cru.
+  - `topico`: `topics` (lista completa) juntada por `; `; cai pra
+    `primary_topic_label` se `topics` vazio; senão `""`.
+  - `escopo`: lista de rótulos curtos dos `scope_unit_slugs`; `escopo_slugs`:
+    slugs crus (para a legenda). Vazia para aula/feriado.
   - Blocos sem `period_start` → omitidos.
 
+- `build_unit_legend(rows: list[dict]) -> list[dict]`
+  Puro. Coleta todos os slugs que aparecem em `unidade_slug` + `escopo_slugs`,
+  dedup, ordena por número da unidade, retorna
+  `[{"label": "U1", "slug": "unidade-01-limites", "nome": "Limites"}]`.
+  Nome: parte após `unidade-NN-` com `-`→espaço, capitalizado; vazio → slug.
+
 - `temporal_context_md(course_meta: dict, timeline_blocks: list[dict]) -> str`
-  Renderiza cabeçalho + nota + tabela markdown. Vazio → nota de indisponível.
-  Célula vazia vira `—`; escopo vira `, `.join(slugs)` ou `—`.
+  Renderiza cabeçalho + nota + seção `## Unidades` (legenda) + seção
+  `## Cronograma` (tabela). Vazio → nota de indisponível (sem legenda/tabela).
+  Célula vazia vira `—`; escopo vira `, `.join(rótulos)` ou `—`.
 
 - `current_block_for_date(rows: list[dict], ref_date: date) -> dict | None`
   Localiza o bloco vigente (`inicio <= ref_date <= fim`). Retorna o row ou
@@ -144,17 +181,32 @@ demais `*_fn`), e `engine._write_root_files` passa a função real importada de
 
 ## Testes
 
+Novo `tests/test_unit_labels.py`:
+
+- `unit_short_label`: `unidade-01-limites → U1`; `unidade-10-x → U10`;
+  slug fora do padrão → ele mesmo; vazio → `""`.
+- `unit_name_from_slug`: `unidade-01-limites → Limites`;
+  `unidade-02-derivadas-parciais → Derivadas parciais`; sem sufixo → slug.
+
 Novo `tests/test_temporal_context.py`:
 
-- `build_temporal_context_rows`: aula com tópico; prova com escopo + código
-  `P1`; revisão; feriado; bloco sem data (omitido); escopo multi-unidade.
-- `temporal_context_md`: contém tabela, datas ISO, slug no escopo; vazio →
-  nota `Cronograma indisponível`.
+- `build_temporal_context_rows`: aula com `topics` (lista juntada por `; `);
+  aula só com `primary_topic_label` (fallback); prova com escopo + código
+  `P1`; revisão com escopo; feriado; bloco sem data (omitido); escopo
+  multi-unidade (rótulos curtos).
+- `build_unit_legend`: coleta slugs de unidade + escopo, dedup, ordenado por
+  número; nome derivado; lista só unidades presentes.
+- `temporal_context_md`: contém `## Unidades` + `## Cronograma`, datas ISO,
+  rótulo `U1` na tabela, slug na legenda; vazio → nota `Cronograma indisponível`
+  sem tabela/legenda.
 - `current_block_for_date`: acerta bloco vigente; `None` fora de janela;
   borda inclusiva (`inicio` e `fim`).
 
 Estender `tests/test_prompts*` (ou novo): cada gerador inclui a seção
 "Contexto temporal".
+
+Reuso do regex na UI: garantir que `tests/test_timeline_sort.py` (que importa
+`_unit_short_label` da UI) segue verde após a extração (alias mantido).
 
 ## Fora de escopo (YAGNI)
 
