@@ -74,3 +74,24 @@ def build_temporal_context_rows(timeline_blocks: list) -> list:
             "escopo_slugs": scope_slugs,
         })
     return rows
+
+
+def build_unit_legend(rows: list) -> list:
+    """Legenda U1/U2 -> slug + nome, só das unidades que aparecem nas linhas
+    (em 'unidade_slug' ou no escopo). Ordenada por número da unidade."""
+    seen = set()
+    slugs = []
+    for r in rows:
+        candidates = []
+        if r.get("unidade_slug"):
+            candidates.append(r["unidade_slug"])
+        candidates.extend(r.get("escopo_slugs") or [])
+        for s in candidates:
+            if s and s not in seen:
+                seen.add(s)
+                slugs.append(s)
+    slugs.sort(key=lambda s: (unit_number(s) if unit_number(s) is not None else 9999, s))
+    return [
+        {"label": unit_short_label(s), "slug": s, "nome": unit_name_from_slug(s)}
+        for s in slugs
+    ]

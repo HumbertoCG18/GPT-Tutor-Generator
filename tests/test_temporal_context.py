@@ -73,3 +73,24 @@ def test_block_without_start_date_is_omitted():
 def test_end_falls_back_to_start_when_missing():
     blk = {"id": "b", "period_start": "2026-03-03", "kind": "class"}
     assert build_temporal_context_rows([blk])[0]["fim"] == "2026-03-03"
+
+
+from src.builder.artifacts.temporal_context import build_unit_legend
+
+
+def test_unit_legend_collects_units_from_unit_and_scope_sorted_deduped():
+    rows = [
+        {"unidade_slug": "unidade-02-derivadas", "escopo_slugs": []},
+        {"unidade_slug": "", "escopo_slugs": ["unidade-01-limites", "unidade-02-derivadas"]},
+        {"unidade_slug": "unidade-01-limites", "escopo_slugs": []},
+    ]
+    legend = build_unit_legend(rows)
+    assert legend == [
+        {"label": "U1", "slug": "unidade-01-limites", "nome": "Limites"},
+        {"label": "U2", "slug": "unidade-02-derivadas", "nome": "Derivadas"},
+    ]
+
+
+def test_unit_legend_empty_when_no_units():
+    rows = [{"unidade_slug": "", "escopo_slugs": []}]
+    assert build_unit_legend(rows) == []
