@@ -167,3 +167,31 @@ def test_status_color_map_covers_all_statuses():
                 "non_applicable", "needs_review"}
     assert statuses <= set(_STATUS_COLOR)
     assert statuses <= set(_STATUS_LABEL)
+
+
+# ---------------------------------------------------------------------------
+# manual_scope_unit_slugs override
+# ---------------------------------------------------------------------------
+
+def test_scope_override_roundtrip(tmp_path):
+    from src.builder.timeline.curation import set_block_override, load_block_curation
+    set_block_override(tmp_path, "blk-01", "manual_scope_unit_slugs", ["u1", "u2"])
+    cur = load_block_curation(tmp_path)
+    assert cur["blk-01"]["manual_scope_unit_slugs"] == ["u1", "u2"]
+
+
+def test_scope_override_empty_list_removes(tmp_path):
+    from src.builder.timeline.curation import set_block_override, load_block_curation
+    set_block_override(tmp_path, "blk-01", "manual_scope_unit_slugs", ["u1"])
+    set_block_override(tmp_path, "blk-01", "manual_scope_unit_slugs", [])
+    assert load_block_curation(tmp_path) == {}
+
+
+def test_scope_override_applies_renamed(tmp_path):
+    from src.builder.timeline.curation import set_block_override, apply_block_curation
+    set_block_override(tmp_path, "blk-01", "manual_scope_unit_slugs", ["u1", "u2"])
+    blocks = [{"id": "blk-01"}]
+    touched = apply_block_curation(blocks, tmp_path)
+    assert touched == 1
+    assert blocks[0]["block_manual_scope_slugs"] == ["u1", "u2"]
+    assert "manual_scope_unit_slugs" not in blocks[0]

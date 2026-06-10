@@ -33,12 +33,20 @@ from typing import Dict, Iterable, Optional
 
 CURATION_FILENAME = ".timeline_curation.json"
 _CURATION_VERSION = 1
-_OVERRIDE_FIELDS = ("manual_kind_override", "manual_topic_label", "manual_unit_slug")
+_OVERRIDE_FIELDS = (
+    "manual_kind_override",
+    "manual_topic_label",
+    "manual_unit_slug",
+    "manual_scope_unit_slugs",
+)
 
 # Override em escopo de bloco persistido como `manual_unit_slug`, mas injetado no
 # bloco em memoria sob esta chave renomeada (desfaz a colisao com o campo
 # entry-scoped `FileEntry.manual_unit_slug`).
-_BLOCK_FIELD_RENAMES = {"manual_unit_slug": "block_manual_unit_slug"}
+_BLOCK_FIELD_RENAMES = {
+    "manual_unit_slug": "block_manual_unit_slug",
+    "manual_scope_unit_slugs": "block_manual_scope_slugs",
+}
 
 
 def _curation_path(course_dir: Path) -> Path:
@@ -62,7 +70,7 @@ def set_block_override(
     course_dir: Path,
     block_id: str,
     field: str,
-    value: Optional[str],
+    value: Optional[str | list],
 ) -> None:
     """Persiste um override. `value` vazio/None remove o campo (e a entrada
     do bloco, se ficar vazia). Idempotente."""
