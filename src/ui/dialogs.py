@@ -2265,7 +2265,21 @@ class BacklogEntryEditDialog(tk.Toplevel):
             "Preenchido na importação; '—' quando a origem não foi registrada.",
         )
 
-        row_unit = row_origem + 1
+        row_rationale = row_origem + 1
+        _rationale = str(self._data.get("computed_block_rationale") or "").strip() or "—"
+        lbl_rationale = tk.Label(tab_edit, text="Por que este bloco?", bg=p["bg"], fg=p["fg"],
+                                 font=("Segoe UI", 10))
+        lbl_rationale.grid(row=row_rationale, column=0, sticky="w", padx=(0, 12), pady=6)
+        tk.Label(tab_edit, text=_rationale, bg=p["bg"], fg=p["muted"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(
+            row=row_rationale, column=1, sticky="w", pady=6)
+        add_tooltip(lbl_rationale,
+            "Justificativa automática do Gemini (resumo de código) para a\n"
+            "atribuição deste arquivo a um bloco do cronograma.\n"
+            "'—' quando não há resumo (arquivo não-código ou sem Gemini).",
+        )
+
+        row_unit = row_rationale + 1
         tk.Label(tab_edit, text="Unidade manual", bg=p["bg"], fg=p["fg"],
                  font=("Segoe UI", 10)).grid(row=row_unit, column=0, sticky="w", padx=(0, 12), pady=6)
         self._manual_unit_options = _load_file_map_unit_options(self._repo_dir)
