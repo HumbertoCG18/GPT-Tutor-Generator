@@ -406,7 +406,7 @@
 <h3>Curto prazo (dias) — integridade e quick wins</h3>
 <div class="card find good">
   <p><b>1. Escrita atômica do manifest ✅ FEITO</b> (commit <code>79b6f98</code>) — <code>write_text</code> atômico (tmp + <code>os.replace</code>) + novo <code>write_json_manifest</code> (atômico + backup <code>.bak</code>) em <code>utils/helpers.py</code>; ~20 call sites roteados (builder + UI + sources). Nota: o fix real ficou no helper de escrita, não em <code>_compact_manifest</code> (que só compacta dados). Cobertura: 10 testes em <code>tests/test_atomic_write.py</code>.</p>
-  <p><b>2. Salvar fila a cada mutação</b> — chamar <code>_save_current_queue()</code> em add/remove/toggle. Acaba com perda de itens ao fechar.</p>
+  <p><b>2. Salvar fila a cada mutação ✅ FEITO</b> (verificado 11/06) — auditoria confirmou que <b>ambas</b> as filas já persistem em toda mutação: a fila de fontes (<code>self.entries</code>) via <code>_save_current_queue()</code> em add_pdfs/add_images/add_url/add_code_files/import_from_stash/edit/remove/toggle/clear; a fila de repo-tasks (<code>self._repo_tasks</code>) via <code>_refresh_repo_task_views()</code> → <code>_save_repo_tasks()</code> em enqueue/remove/clear. Sem caminho de perda de itens ao fechar. (Reordenação transitória pré-build e load de matéria não precisam persistir.)</p>
   <p><b>3. Remover mortos ✅ FEITO</b> — <code>file_size_mb</code>, <code>save_card_block_map</code>, <code>score_block_unit_affinity</code> e <code>font_size</code> removidos (10/06, junto do #4). Resta só a flag <code>processing_profiles_seeded_v2</code> (migração de limpeza, baixa prioridade).</p>
   <p><b>4. Propagar <code>match_rationale</code> ✅ FEITO</b> — manifest (<code>computed_block_rationale</code>) + campo read-only no BacklogEntryEditDialog (padrão do <code>source_section</code>). Coluna no CODE_INDEX descartada de propósito (token budget do tutor). Bônus: <code>_normalized_source_key</code> deduplicada (item #9 parcial).</p>
   <p><b>5. Agregar custos no BUILD_REPORT</b> — somar <code>cost_breakdown</code> dos sidecars do Datalab + % de PDFs scaneados + imagens rejeitadas por ruído. Visibilidade de custo por build.</p>
@@ -440,7 +440,7 @@
   <tr><td>1</td><td>Manifest atômico <span class="tag t-good">✅ feito</span></td><td>baixo</td><td><span class="tag t-bad">crítico (integridade)</span></td></tr>
   <tr><td>10</td><td>Cronograma editável <span class="tag t-good">✅ feito</span></td><td>médio</td><td><span class="tag t-good">alto (usabilidade)</span></td></tr>
   <tr><td>12+13</td><td>Semana atual + prontidão pré-prova <span class="tag t-good">✅ feito</span></td><td>médio</td><td><span class="tag t-good">alto (tutor proativo)</span></td></tr>
-  <tr><td>2,3,4,5</td><td>Quick wins — <span class="tag t-good">#3 e #4 ✅ feitos</span>; restam #2 (fila) e #5 (custos)</td><td>baixo</td><td><span class="tag t-info">médio</span></td></tr>
+  <tr><td>2,3,4,5</td><td>Quick wins — <span class="tag t-good">#2, #3, #4 ✅ feitos</span>; resta #5 (custos)</td><td>baixo</td><td><span class="tag t-info">médio</span></td></tr>
   <tr><td>6,7</td><td>Paralelismo + retry</td><td>médio</td><td><span class="tag t-info">médio (desempenho)</span></td></tr>
   <tr><td>8,9,11</td><td>Consolidações + delta report</td><td>médio</td><td><span class="tag t-info">médio (manutenibilidade)</span></td></tr>
   <tr><td>14-17</td><td>Estado do aluno rico, Moodle agendado, instruções adaptativas, health gate</td><td>alto</td><td><span class="tag t-good">alto (visão de produto)</span></td></tr>
