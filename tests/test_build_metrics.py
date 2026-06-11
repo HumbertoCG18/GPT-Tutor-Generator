@@ -104,6 +104,23 @@ def test_render_build_metrics_md_with_data():
     assert "PDFs escaneados: 2 de 7 (29%) · 80 de 350 páginas" in text
 
 
+def test_collect_datalab_metrics_handles_nonnumeric_pages(tmp_path):
+    _write_sidecar(tmp_path, "staging/markdown-auto/datalab/a/datalab-run.json",
+                   {"selected_pages_count": "abc", "parse_quality_score": 0.7})
+    entries = [{"advanced_backend": "datalab",
+                "advanced_metadata_path": "staging/markdown-auto/datalab/a/datalab-run.json"}]
+    m = collect_datalab_metrics(entries, tmp_path)
+    assert m.entry_count == 1
+    assert m.processed_pages == 0  # non-numeric coerced to 0, no crash
+    assert m.avg_parse_quality == 0.7
+
+
+def test_collect_scan_stats_handles_nonnumeric_page_count():
+    entries = [{"file_type": "pdf", "document_report": {"page_count": "xx", "suspected_scan": True}}]
+    stats = collect_scan_stats(entries)
+    assert stats == ScanStats(pdf_total=1, scanned_count=1, total_pages=0, scanned_pages=0)
+
+
 def test_render_build_metrics_md_empty():
     metrics = BuildMetrics(
         scan=ScanStats(pdf_total=0, scanned_count=0, total_pages=0, scanned_pages=0),

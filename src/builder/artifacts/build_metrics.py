@@ -27,7 +27,7 @@ def collect_scan_stats(entries: List[dict]) -> ScanStats:
             continue
         pdf_total += 1
         report = entry.get("document_report") or {}
-        pages = int(report.get("page_count") or 0)
+        pages = _as_int(report.get("page_count"))
         total_pages += pages
         if bool(report.get("suspected_scan")):
             scanned_count += 1
@@ -69,7 +69,7 @@ def collect_datalab_metrics(entries: List[dict], root_dir: Path) -> DatalabMetri
         pages = payload.get("selected_pages_count")
         if pages is None:
             pages = payload.get("page_count")
-        processed_pages += int(pages or 0)
+        processed_pages += _as_int(pages)
         score = payload.get("parse_quality_score")
         if score is not None:
             try:
@@ -105,6 +105,14 @@ def _pct(part: int, whole: int) -> int:
     return round(100 * part / whole) if whole else 0
 
 
+def _as_int(value) -> int:
+    """Coage para int, retornando 0 em valores ausentes/não-numéricos."""
+    try:
+        return int(value or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
 def render_build_metrics_md(metrics: BuildMetrics) -> List[str]:
     """Renderiza a seção markdown 'Custos e qualidade do build'.
     Sempre retorna a seção; usa '—' / textos de vazio quando não há dado."""
@@ -114,7 +122,7 @@ def render_build_metrics_md(metrics: BuildMetrics) -> List[str]:
     if dl.entry_count:
         pages_line = (
             f"- páginas processadas via Datalab: {dl.processed_pages} "
-            f"(em {dl.entry_count} arquivo(s)) — proxy de custo (Datalab bilha por página)"
+            f"(em {dl.entry_count} arquivo(s)) — proxy de custo (Datalab cobra por página)"
         )
     else:
         pages_line = "- páginas processadas via Datalab: — (nenhum arquivo via Datalab)"
