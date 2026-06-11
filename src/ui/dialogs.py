@@ -4477,10 +4477,10 @@ def _load_file_map_unit_options(repo_dir: Optional[Path]) -> List[Tuple[str, str
 def _subunit_unit_map_from_plan(plan_text: str, unit_label_to_slug: Dict[str, str]) -> Dict[str, str]:
     """subunit_slug -> unit_slug, a partir do texto do plano. O unit_slug vem de
     unit_label_to_slug (título da unidade -> slug canônico); títulos sem slug
-    conhecido caem para slugify(título)."""
+    conhecido caem para _normalize_unit_slug(título), a forma canônica."""
     out: Dict[str, str] = {}
     for unit_title, topics in _parse_units_from_teaching_plan(plan_text):
-        unit_slug = unit_label_to_slug.get(unit_title) or slugify(unit_title)
+        unit_slug = unit_label_to_slug.get(unit_title) or _normalize_unit_slug(unit_title)
         if not unit_slug:
             continue
         for topic_item in topics or []:
