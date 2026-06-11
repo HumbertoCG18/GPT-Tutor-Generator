@@ -5465,3 +5465,20 @@ def test_appconfig_drops_removed_legacy_keys(tmp_path, monkeypatch):
     assert cfg.get("theme") == "light"          # chave válida preservada
     assert "default_profile" not in cfg.data    # chave removida ignorada
     assert "profile_backends" not in cfg.data
+
+
+def test_unit_block_conflict_roundtrip():
+    from src.models.core import FileEntry
+    e = FileEntry(source_path="C:/x/a.pdf", file_type="pdf", category="material", title="t",
+                  unit_block_conflict={"unit": "unidade-1", "block_unit": "unidade-2", "block_id": "bloco-3"})
+    d = e.to_dict()
+    assert d["unit_block_conflict"] == {"unit": "unidade-1", "block_unit": "unidade-2", "block_id": "bloco-3"}
+    assert FileEntry.from_dict(d).unit_block_conflict == {"unit": "unidade-1", "block_unit": "unidade-2", "block_id": "bloco-3"}
+
+
+def test_unit_block_conflict_default_not_emitted():
+    from src.models.core import FileEntry
+    d = FileEntry(source_path="C:/x/a.pdf", file_type="pdf", category="material", title="t").to_dict()
+    assert "unit_block_conflict" not in d
+    assert FileEntry.from_dict({"source_path": "C:/x/a.pdf", "file_type": "pdf",
+                                "category": "material", "title": "t"}).unit_block_conflict == {}

@@ -99,6 +99,11 @@ class FileEntry:
     # autoritativo para a atribuição file->bloco (gabarito-cards). "" quando o
     # arquivo nao veio de um card (cai no caminho lexical, sem regressao).
     source_section: str = ""
+    # Conflito unidade×bloco detectado no auto (F1): a unidade forte (>=0.65)
+    # venceu um bloco que apontava OUTRA unidade (block_confidence < unit_conf).
+    # {} quando não há conflito. Sinal de revisão exibido no editor; o build
+    # mantém a unidade forte. Distinto da herança silenciosa (que não é conflito).
+    unit_block_conflict: dict = field(default_factory=dict)
 
     def id(self) -> str:
         if self.file_type == "url":
