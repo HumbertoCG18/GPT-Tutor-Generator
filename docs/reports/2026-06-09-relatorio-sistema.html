@@ -334,17 +334,17 @@
   <h4>1. <code>match_rationale</code> do Gemini — ✅ PROPAGADO (10/06)</h4>
   <p><s>Fica preso em <code>code_curation.json</code>.</s> Agora: <code>attach_block_rationale</code> (em <code>ops/pedagogical_regeneration.py</code>, único ponto de convergência dos builds) copia pro <code>manifest.json</code> (<code>FileEntry.computed_block_rationale</code>); o editor de backlog mostra read-only ("Por que este bloco?"). Sem rationale na curation → campo removido (nada stale). CODE_INDEX ficou de fora de propósito (orçamento de token do tutor; o índice já agrupa por bloco).</p>
 </div>
-<div class="card find bad">
-  <h4>2. Custos do Datalab sem agregação</h4>
-  <p><code>cost_breakdown</code> e <code>parse_quality_score</code> são gravados por entry em <code>staging/markdown-auto/datalab/*/datalab-run.json</code> (<code>engine.py:~1030</code>), mas não existe soma no <code>BUILD_REPORT.json</code>. Impossível saber o custo total de um build sem parsear dezenas de JSONs.</p>
+<div class="card find good">
+  <h4>2. Custos do Datalab sem agregação — ✅ RESOLVIDO (11/06, via #5)</h4>
+  <p><s>Sem soma no BUILD_REPORT.</s> Agora a seção "Custos e qualidade do build" (módulo <code>artifacts/build_metrics.py</code>) agrega <b>páginas processadas via Datalab</b> (proxy de custo — Datalab cobra por página) e <code>parse_quality</code> médio, lendo os sidecars. <code>cost_breakdown</code> em si não é somado porque a API o devolve vazio (vapor); fica como slot futuro.</p>
 </div>
-<div class="card find">
-  <h4>3. <code>vision_model_quantization</code> só vale no Image Curator</h4>
-  <p>Editável no SettingsDialog (<code>dialogs.py:363/470</code>) e lido por <code>vision/vision_client.py:22</code> — mas <code>get_vision_client()</code> só é chamado pelo Image Curator (UI). O build em si usa captions do Datalab. Não é bug, mas a UI não comunica que a opção não afeta o build.</p>
+<div class="card find good">
+  <h4>3. <code>vision_model_quantization</code> só vale no Image Curator — ✅ COMUNICADO (11/06)</h4>
+  <p><s>UI não comunicava.</s> Confirmado: <code>get_vision_client()</code> só é chamado pelo Image Curator (<code>image_curator.py</code>), nunca pelo build. Agora o SettingsDialog tem tooltip no combo "Backend Vision" + hint muted visível: "Afeta apenas o Image Curator… O build usa as descrições do Datalab." Sem mudança de comportamento; só clareza.</p>
 </div>
-<div class="card find">
-  <h4>4. Perfis de documento sem agregação</h4>
-  <p><code>DocumentProfileReport</code> (<code>suspected_scan</code>, <code>text_density</code>) fica por entry no manifest; não há resumo "X% dos PDFs são scaneados" no BUILD_REPORT. Mesmo padrão: contagem de imagens rejeitadas por ruído (<code>is_noise_image</code>) é descartada após o filtro.</p>
+<div class="card find good">
+  <h4>4. Perfis de documento sem agregação — ✅ PARCIAL (11/06, via #5)</h4>
+  <p><s>Sem resumo de % scaneados.</s> Agora o BUILD_REPORT mostra <b>% de PDFs escaneados</b> (de <code>document_report.suspected_scan</code>, por contagem e páginas). Resíduo: contagem de imagens rejeitadas por ruído (<code>is_noise_image</code>) continua descartada — slot futuro que o módulo modular já comporta.</p>
 </div>
 <div class="card find">
   <h4>5. Sem delta-tracking nos índices</h4>
@@ -378,10 +378,10 @@
 <table>
   <tr><th>Chave</th><th>Status</th><th>Nota</th></tr>
   <tr><td><code>font_size</code></td><td><span class="tag t-good">✅ removida</span></td><td>Removida de <code>DEFAULTS</code> em 10/06 (nunca era lida).</td></tr>
-  <tr><td><code>vision_model_quantization</code></td><td><span class="tag t-warn">parcial</span></td><td>Só afeta Image Curator; não passa por <code>_build_options_from_config()</code>. Documentar no tooltip ou propagar.</td></tr>
-  <tr><td><code>vision_backend</code></td><td><span class="tag t-warn">parcial</span></td><td>Hoje só "ollama" é honrado de fato.</td></tr>
+  <tr><td><code>vision_model_quantization</code></td><td><span class="tag t-good">✅ comunicado</span></td><td>Só afeta Image Curator (não o build). UI agora avisa via tooltip + hint no SettingsDialog (11/06).</td></tr>
+  <tr><td><code>vision_backend</code></td><td><span class="tag t-good">✅ comunicado</span></td><td>Só "ollama" é honrado; só afeta Image Curator. Tooltip de escopo adicionado ao combo (11/06).</td></tr>
   <tr><td><code>gemini_api_key</code></td><td><span class="tag t-warn">atenção</span></td><td>Plaintext em <code>~/.gpt_tutor_config.json</code>. Considerar keyring do Windows (Moodle já evita persistir senha — padrão inconsistente entre as duas credenciais).</td></tr>
-  <tr><td><code>default_mode</code> / <code>default_backend</code> / <code>default_ocr_language</code></td><td><span class="tag t-info">duplo escopo</span></td><td>Global (config) + por matéria (SubjectProfile). Precedência funciona, mas a UI não mostra qual fonte está valendo no momento.</td></tr>
+  <tr><td><code>default_mode</code> / <code>default_backend</code> / <code>default_ocr_language</code></td><td><span class="tag t-good">✅ fonte exibida</span></td><td>Global (config) + por matéria (SubjectProfile). A UI agora mostra a fonte vigente ("Padrões da matéria «X»" vs "Padrões globais"), atualizada na troca de matéria (helper <code>ui_text.default_source_label</code>, 11/06).</td></tr>
   <tr><td><code>skip_base_backends</code>, <code>stall_timeout</code>, <code>marker_*</code>, <code>image_format</code>, <code>prevent_sleep</code>, <code>ollama_base_url</code>, <code>image_description_source</code>, <code>gemini_model</code>, <code>gemini_auto_summarize</code></td><td><span class="tag t-good">ok</span></td><td>Editáveis, persistem e chegam ao builder.</td></tr>
 </table>
 </div>
