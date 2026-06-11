@@ -232,6 +232,87 @@ def test_resolve_unit_block_tags_preserves_existing_non_managed_auto_tags():
     assert "tipo:material-base" in tags
 
 
+def test_reconcile_manual_block_overrides_unit():
+    """Bloco manual com unit_slug é autoritativo: a unidade do bloco vence o
+    que o matcher auto teria escolhido, e sem marcar conflito."""
+    entries = [_make_minimal_entry("e1", "Lista")]
+    entries[0]["manual_timeline_block_id"] = "bloco-07"
+
+    fake_block = {"id": "bloco-07", "period_label": "10/04/2026", "unit_slug": "unidade-2"}
+
+    result = resolve_unit_block_tags(
+        entries,
+        course_meta={},
+        subject_profile=None,
+        build_file_map_unit_index_from_course_fn=lambda c, s: [],
+        build_file_map_timeline_context_from_course_fn=lambda c, s: {
+            "blocks_by_unit": {},
+            "unassigned_blocks": [],
+            "timeline_index": {"blocks": [fake_block]},
+        },
+        iter_content_taxonomy_topics_fn=lambda t: [],
+        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        # Sem o override, este entry cairia em unidade-1.
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
+            "unidade-1", confidence=0.80, ambiguous=False
+        ),
+        select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
+        resolve_entry_manual_timeline_block_fn=lambda e, tc: fake_block,
+        entry_markdown_text_for_file_map_fn=lambda root, e: "",
+    )
+
+    out_entry = result[0]
+    assert out_entry["computed_unit_slug"] == "unidade-2"
+    assert out_entry.get("unit_block_conflict", {}) == {}
+    assert "unit:unidade-2" in out_entry["auto_tags"]
+
+
+def test_reconcile_conflict_unit_stronger_sets_flag():
+    """Auto: unidade forte (unidade-1, >=0.65) vs bloco auto fraco apontando
+    unidade-2 com block_confidence < unit_confidence -> mantém a unidade forte
+    e marca o conflito."""
+    entries = [_make_minimal_entry("e1", "Slides")]
+
+    # Bloco auto fraco, pertencente a unidade-2; selecionado pelo scorer (via o
+    # *_fn injetado) com confiança baixa.
+    weak_block = {
+        "id": "bloco-04",
+        "period_label": "P4",
+        "unit_slug": "unidade-2",
+        "administrative_only": False,
+    }
+
+    result = resolve_unit_block_tags(
+        entries,
+        course_meta={},
+        subject_profile=None,
+        build_file_map_unit_index_from_course_fn=lambda c, s: [],
+        build_file_map_timeline_context_from_course_fn=lambda c, s: {
+            "blocks_by_unit": {},
+            "unassigned_blocks": [],
+            "timeline_index": {"blocks": [weak_block]},
+        },
+        iter_content_taxonomy_topics_fn=lambda t: [],
+        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
+            "unidade-1", confidence=0.80, ambiguous=False
+        ),
+        # Scorer real (injetado) seleciona o bloco fraco com confiança < unidade.
+        select_probable_period_for_entry_fn=lambda **kw: ("P4", 0.30, False, ["best=0.30"]),
+        resolve_entry_manual_timeline_block_fn=lambda e, tc: None,
+        entry_markdown_text_for_file_map_fn=lambda root, e: "",
+    )
+
+    out_entry = result[0]
+    assert out_entry["computed_unit_slug"] == "unidade-1"
+    assert out_entry["unit_block_conflict"] == {
+        "unit": "unidade-1",
+        "block_unit": "unidade-2",
+        "block_id": "bloco-04",
+    }
+    assert "unit:unidade-1" in out_entry["auto_tags"]
+
+
 def test_resolve_unit_block_tags_manual_unit_slug_takes_precedence():
     entries = [_make_minimal_entry("e1", "Slides")]
     entries[0]["manual_unit_slug"] = "unidade-99-manual"

@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
 from src.builder.routing.thresholds import confidence_band, margin_confidence, T
+from src.builder.routing.file_map import reconcile_unit_with_block
 from src.builder.core.semantic_config import (
     infer_semantic_profile,
     merge_semantic_profile,
@@ -1133,17 +1134,24 @@ def resolve_unit_block_tags(
         computed_block_id = period_block_id
         computed_block_confidence = float(block_confidence)
 
-        # Herança de unidade pelo bloco: um arquivo atribuído a um bloco pertence
-        # à unidade daquele bloco. Quando o matcher de unidade não decidiu (vazio)
-        # mas há bloco com unidade (caso comum de code/zip, cujo nome é sinal
-        # fraco), herda a unidade do bloco em vez de ficar órfão.
-        if not computed_unit_slug and computed_block_id and not manual_unit:
-            _blocks = (timeline_context.get("timeline_index") or {}).get("blocks", []) or []
-            _blk = next((b for b in _blocks if str(b.get("id") or "") == computed_block_id), None)
-            _blk_unit = str((_blk or {}).get("unit_slug") or "").strip()
-            if _blk_unit:
-                computed_unit_slug = _blk_unit
-                unit_reasons = list(unit_reasons) + [f"herdada_do_bloco={computed_block_id}"]
+        # Reconciliação unidade×bloco (F1): bloco manual é autoritativo; no auto,
+        # bloco define a unidade só se block_confidence >= unit_confidence; senão
+        # mantém a unidade forte e marca conflito. Absorve a herança (unit vazio).
+        _blocks = (timeline_context.get("timeline_index") or {}).get("blocks", []) or []
+        _blk = next((b for b in _blocks if str(b.get("id") or "") == computed_block_id), None)
+        _blk_unit = str((_blk or {}).get("unit_slug") or "").strip()
+        _reconciled_unit, _unit_reason_suffix, _unit_conflict = reconcile_unit_with_block(
+            computed_unit_slug=computed_unit_slug,
+            unit_confidence=float(unit_confidence),
+            computed_block_id=computed_block_id,
+            block_confidence=float(block_confidence),
+            block_unit_slug=_blk_unit,
+            block_is_manual=bool(manual_block),
+            has_manual_unit=bool(manual_unit),
+        )
+        computed_unit_slug = _reconciled_unit
+        if _unit_reason_suffix:
+            unit_reasons = list(unit_reasons) + _unit_reason_suffix
         # Faixa (Fase 3): so faz sentido quando ha bloco atribuido. Cutoffs
         # centralizados em thresholds.confidence_band (nada hardcoded aqui).
         # media/baixa ficam flagados pra revisao via o proprio valor da faixa.
@@ -1170,6 +1178,7 @@ def resolve_unit_block_tags(
         new_entry["computed_block_band"] = computed_block_band
         new_entry["unit_match_reasons"] = unit_reasons
         new_entry["unit_match_confidence"] = unit_confidence
+        new_entry["unit_block_conflict"] = _unit_conflict
         new_entry["computed_subunit_slug"] = best_subunit_slug
         new_entry["subunit_match_reasons"] = subunit_reasons
         new_entry["subunit_match_confidence"] = subunit_confidence
