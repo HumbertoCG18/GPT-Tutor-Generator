@@ -2296,7 +2296,30 @@ class BacklogEntryEditDialog(tk.Toplevel):
             "'—' quando não há resumo (arquivo não-código ou sem Gemini).",
         )
 
-        row_unit = row_rationale + 1
+        row_match = row_rationale + 1
+        _bm_method = str(self._data.get("computed_block_method") or "").strip()
+        if _bm_method:
+            _bm_conf = self._data.get("computed_block_match_confidence") or 0.0
+            try:
+                _bm_text = f"método: {_bm_method} · confiança: {float(_bm_conf):.2f}"
+            except (TypeError, ValueError):
+                _bm_text = f"método: {_bm_method}"
+        else:
+            _bm_text = "—"
+        lbl_match = tk.Label(tab_edit, text="Match do bloco", bg=p["bg"], fg=p["fg"],
+                             font=("Segoe UI", 10))
+        lbl_match.grid(row=row_match, column=0, sticky="w", padx=(0, 12), pady=6)
+        tk.Label(tab_edit, text=_bm_text, bg=p["bg"], fg=p["muted"],
+                 font=("Segoe UI", 9), wraplength=520, justify="left").grid(
+            row=row_match, column=1, sticky="w", pady=6)
+        add_tooltip(lbl_match,
+            "Como o bloco do cronograma foi escolhido para este código:\n"
+            "consensus = Gemini e matcher local concordam; llm_only = só o Gemini;\n"
+            "auto_concept = fallback por conceito; orphan = sem bloco.\n"
+            "'—' quando não há summary (arquivo não-código).",
+        )
+
+        row_unit = row_match + 1
         tk.Label(tab_edit, text="Unidade manual", bg=p["bg"], fg=p["fg"],
                  font=("Segoe UI", 10)).grid(row=row_unit, column=0, sticky="w", padx=(0, 12), pady=6)
         self._manual_unit_options = _load_file_map_unit_options(self._repo_dir)
