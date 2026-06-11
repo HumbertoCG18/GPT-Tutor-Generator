@@ -1786,7 +1786,6 @@ class RepoBuilder:
             course_map_md_fn=course_map_md,
             glossary_md_fn=glossary_md,
             student_state_md_fn=student_state_md,
-            progress_schema_md_fn=progress_schema_md,
             student_profile_md_fn=student_profile_md,
             syllabus_md_fn=syllabus_md,
             bibliography_md_fn=bibliography_md,
@@ -2101,7 +2100,6 @@ class RepoBuilder:
         _incremental_build_incremental_build_impl(
             self,
             student_state_md_fn=student_state_md,
-            progress_schema_md_fn=progress_schema_md,
         )
 
     def _derive_active_unit_slug_from_state(self) -> str:
@@ -2161,7 +2159,6 @@ class RepoBuilder:
             file_map_md_fn=file_map_md,
             student_profile_md_fn=student_profile_md,
             student_state_md_fn=student_state_md,
-            progress_schema_md_fn=progress_schema_md,
             parse_units_from_teaching_plan_fn=_parse_units_from_teaching_plan,
             topic_text_fn=_topic_text,
             inject_executive_summary_fn=_inject_executive_summary,
@@ -2328,7 +2325,6 @@ _repo_doc_aliases = _build_repo_doc_aliases(
     code_review_profile_fn=_code_review_profile,
 )
 student_state_md = _repo_doc_aliases["student_state_md"]
-progress_schema_md = _repo_doc_aliases["progress_schema_md"]
 bibliography_md = _repo_doc_aliases["bibliography_md"]
 exam_index_md = _repo_doc_aliases["exam_index_md"]
 assignment_index_md = _repo_doc_aliases["assignment_index_md"]
@@ -2420,7 +2416,6 @@ __all__ = [
     "student_profile_md",
     "glossary_md",
     "student_state_md",
-    "progress_schema_md",
     "bibliography_md",
     "exam_index_md",
     "assignment_index_md",

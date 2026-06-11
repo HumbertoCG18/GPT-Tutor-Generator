@@ -12,7 +12,7 @@ from src.utils.helpers import write_text, write_json_manifest
 logger = logging.getLogger(__name__)
 
 
-def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_fn) -> None:
+def incremental_build_impl(builder, *, student_state_md_fn) -> None:
     """Adiciona novos arquivos a um repositório existente sem recriar do zero."""
     manifest_path = builder.root_dir / "manifest.json"
     if not manifest_path.exists():
@@ -102,9 +102,6 @@ def incremental_build_impl(builder, *, student_state_md_fn, progress_schema_md_f
         state_path.write_text(content, encoding="utf-8")
     else:
         write_text(state_path, student_state_md_fn(builder.course_meta, builder.student_profile))
-    progress_path = builder.root_dir / "build" / "PROGRESS_SCHEMA.md"
-    if not progress_path.exists():
-        write_text(progress_path, progress_schema_md_fn())
 
     write_json_manifest(manifest_path, manifest)
     builder._write_source_registry(manifest)

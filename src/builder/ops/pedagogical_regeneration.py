@@ -163,7 +163,6 @@ def regenerate_pedagogical_files(
     file_map_md_fn,
     student_profile_md_fn,
     student_state_md_fn,
-    progress_schema_md_fn,
     parse_units_from_teaching_plan_fn,
     topic_text_fn,
     inject_executive_summary_fn,
@@ -178,6 +177,7 @@ def regenerate_pedagogical_files(
         builder.root_dir / "system" / "BACKEND_ARCHITECTURE.md",
         builder.root_dir / "system" / "BACKEND_POLICY.yaml",
         builder.root_dir / "student" / "PROGRESS_SCHEMA.md",
+        builder.root_dir / "build" / "PROGRESS_SCHEMA.md",
     ]
     for stale in stale_files:
         if stale.exists():
@@ -413,9 +413,6 @@ def regenerate_pedagogical_files(
     state_path = builder.root_dir / "student" / "STUDENT_STATE.md"
     if not state_path.exists():
         write_text(state_path, student_state_md_fn(builder.course_meta, builder.student_profile))
-    progress_path = builder.root_dir / "build" / "PROGRESS_SCHEMA.md"
-    if not progress_path.exists():
-        write_text(progress_path, progress_schema_md_fn())
     ensure_unit_battery_directories(
         builder.root_dir,
         builder.subject_profile,

@@ -83,7 +83,6 @@ def write_root_files(
     course_map_md_fn,
     glossary_md_fn,
     student_state_md_fn,
-    progress_schema_md_fn,
     student_profile_md_fn,
     syllabus_md_fn,
     bibliography_md_fn,
@@ -153,7 +152,6 @@ curado e reutilizável para um tutor acadêmico baseado no Claude.
     )
 
     write_text(builder.root_dir / "student" / "STUDENT_STATE.md", student_state_md_fn(builder.course_meta, builder.student_profile))
-    write_text(builder.root_dir / "build" / "PROGRESS_SCHEMA.md", progress_schema_md_fn())
     ensure_unit_battery_directories(
         builder.root_dir,
         builder.subject_profile,

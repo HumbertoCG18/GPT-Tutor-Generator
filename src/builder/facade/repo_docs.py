@@ -15,7 +15,6 @@ def build_repo_doc_aliases(
         repo_artifacts_module.student_state_md,
         render_student_state_md_fn=student_state_render_fn,
     )
-    progress_schema_md = repo_artifacts_module.progress_schema_md
     bibliography_md = partial(
         repo_artifacts_module.bibliography_md,
         parse_bibliography_from_teaching_plan_fn=parse_bibliography_from_teaching_plan,
@@ -40,7 +39,6 @@ def build_repo_doc_aliases(
     )
     return {
         "student_state_md": student_state_md,
-        "progress_schema_md": progress_schema_md,
         "bibliography_md": bibliography_md,
         "exam_index_md": exam_index_md,
         "assignment_index_md": assignment_index_md,
