@@ -41,12 +41,16 @@ def test_fileentry_default_match_fields_not_emitted():
     assert back.computed_block_match_confidence == 0.0
 
 
-from src.builder.ops.pedagogical_regeneration import attach_block_rationale
+from src.builder.ops.pedagogical_regeneration import attach_block_summary_fields
 
 
 CURATION = {
     "entries": {
-        "id-1": {"summary": {"match_rationale": "Demonstra recursão do bloco 3"}},
+        "id-1": {"summary": {
+            "match_rationale": "Demonstra recursão do bloco 3",
+            "block_match_method": "consensus",
+            "block_match_confidence": 0.91,
+        }},
         "id-2": {"summary": {"match_rationale": "   "}},  # whitespace -> ignora
         "id-3": {},  # sem summary
     }
@@ -55,25 +59,55 @@ CURATION = {
 
 def test_attach_copies_rationale_for_matching_entry():
     entries = [{"id": "id-1", "title": "a"}]
-    out = attach_block_rationale(entries, CURATION)
+    out = attach_block_summary_fields(entries, CURATION)
     assert out[0]["computed_block_rationale"] == "Demonstra recursão do bloco 3"
 
 
 def test_attach_skips_blank_rationale_and_missing_summary():
     entries = [{"id": "id-2"}, {"id": "id-3"}, {"id": "id-9"}, {"title": "sem id"}]
-    out = attach_block_rationale(entries, CURATION)
+    out = attach_block_summary_fields(entries, CURATION)
     for e in out:
         assert "computed_block_rationale" not in e
 
 
 def test_attach_tolerates_empty_curation():
     entries = [{"id": "id-1"}]
-    assert attach_block_rationale(entries, {}) == [{"id": "id-1"}]
-    assert attach_block_rationale(entries, None) == [{"id": "id-1"}]
+    assert attach_block_summary_fields(entries, {}) == [{"id": "id-1"}]
+    assert attach_block_summary_fields(entries, None) == [{"id": "id-1"}]
 
 
 def test_attach_removes_stale_rationale():
     # curation foi pruned/reatribuída: justificativa antiga não pode sobreviver
     entries = [{"id": "id-9", "computed_block_rationale": "stale"}]
-    out = attach_block_rationale(entries, CURATION)
+    out = attach_block_summary_fields(entries, CURATION)
     assert "computed_block_rationale" not in out[0]
+
+
+def test_attach_copies_match_fields_for_matching_entry():
+    entries = [{"id": "id-1", "title": "a"}]
+    out = attach_block_summary_fields(entries, CURATION)
+    assert out[0]["computed_block_method"] == "consensus"
+    assert out[0]["computed_block_match_confidence"] == 0.91
+
+
+def test_attach_skips_match_fields_when_missing_summary():
+    entries = [{"id": "id-2"}, {"id": "id-3"}, {"id": "id-9"}]
+    out = attach_block_summary_fields(entries, CURATION)
+    for e in out:
+        assert "computed_block_method" not in e
+        assert "computed_block_match_confidence" not in e
+
+
+def test_attach_removes_stale_match_fields():
+    entries = [{"id": "id-9", "computed_block_method": "orphan",
+                "computed_block_match_confidence": 0.4}]
+    out = attach_block_summary_fields(entries, CURATION)
+    assert "computed_block_method" not in out[0]
+    assert "computed_block_match_confidence" not in out[0]
+
+
+def test_attach_drops_nonnumeric_match_confidence():
+    curation = {"entries": {"id-1": {"summary": {"block_match_confidence": "abc"}}}}
+    entries = [{"id": "id-1", "computed_block_match_confidence": 0.5}]
+    out = attach_block_summary_fields(entries, curation)
+    assert "computed_block_match_confidence" not in out[0]

@@ -112,18 +112,39 @@ def run_material_residual(builder, live_manifest_entries):
     return live_manifest_entries
 
 
-def attach_block_rationale(entries: list, code_curation: dict) -> list:
-    """Sincroniza summary.match_rationale do code_curation com o entry dict
-    (computed_block_rationale). Sem rationale na curation, remove o campo —
-    evita justificativa stale após prune/reatribuição."""
+def attach_block_summary_fields(entries: list, code_curation: dict) -> list:
+    """Sincroniza campos do code_curation (summary.*) com o entry dict:
+    match_rationale -> computed_block_rationale,
+    block_match_method -> computed_block_method,
+    block_match_confidence -> computed_block_match_confidence.
+    Sem valor na curation, remove o campo — evita dado stale após
+    prune/reatribuição."""
     curation_entries = (code_curation or {}).get("entries", {})
     for e in entries:
         rec = curation_entries.get(str(e.get("id") or "")) or {}
-        rationale = str(((rec.get("summary") or {}).get("match_rationale")) or "").strip()
+        summary = rec.get("summary") or {}
+
+        rationale = str(summary.get("match_rationale") or "").strip()
         if rationale:
             e["computed_block_rationale"] = rationale
         else:
             e.pop("computed_block_rationale", None)
+
+        method = str(summary.get("block_match_method") or "").strip()
+        if method:
+            e["computed_block_method"] = method
+        else:
+            e.pop("computed_block_method", None)
+
+        conf = summary.get("block_match_confidence")
+        if conf is not None:
+            try:
+                e["computed_block_match_confidence"] = float(conf)
+            except (TypeError, ValueError):
+                e.pop("computed_block_match_confidence", None)
+        else:
+            e.pop("computed_block_match_confidence", None)
+
     return entries
 
 
@@ -302,7 +323,7 @@ def regenerate_pedagogical_files(
     # Camada 2: residuo via Gemini (opt-in EXPLICITO). Ver run_material_residual.
     live_manifest_entries = run_material_residual(builder, live_manifest_entries)
 
-    live_manifest_entries = attach_block_rationale(
+    live_manifest_entries = attach_block_summary_fields(
         live_manifest_entries, builder._load_code_curation()
     )
 
