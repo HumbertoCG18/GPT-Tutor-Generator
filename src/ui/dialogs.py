@@ -2445,10 +2445,13 @@ class BacklogEntryEditDialog(tk.Toplevel):
                 justify="left",
             ).grid(row=row_subunit, column=1, sticky="w", pady=6)
 
+        self._subunit_unit_map = _load_subunit_unit_map(self._repo_dir)
         subunit_status = _resolve_backlog_subunit_status(
             self._data,
             self._repo_dir,
             self._manual_subunit_label_by_slug,
+            subunit_unit_map=self._subunit_unit_map,
+            block_unit_slug=str(self._data.get("computed_unit_slug") or "").strip(),
         )
         row_subunit_status = row_subunit + 1
         subunit_frame = tk.Frame(
@@ -3296,6 +3299,8 @@ class BacklogEntryEditDialog(tk.Toplevel):
             entry_view,
             self._repo_dir,
             getattr(self, "_manual_subunit_label_by_slug", {}),
+            subunit_unit_map=getattr(self, "_subunit_unit_map", {}),
+            block_unit_slug=str(self._data.get("computed_unit_slug") or "").strip(),
         )
         if hasattr(self, "_subunit_assigned_var"):
             self._subunit_assigned_var.set(subunit_status["assigned"])
@@ -4173,6 +4178,8 @@ def _resolve_backlog_subunit_status(
     entry_data: dict,
     repo_dir: Optional[Path],
     label_by_slug: Optional[Dict[str, str]] = None,
+    subunit_unit_map: Optional[Dict[str, str]] = None,
+    block_unit_slug: str = "",
 ) -> Dict[str, str]:
     label_by_slug = label_by_slug or {}
     manual_slug = str(entry_data.get("manual_subunit_slug") or "").strip()
@@ -4187,6 +4194,12 @@ def _resolve_backlog_subunit_status(
             if in_catalog
             else f"Slug `{manual_slug}` não encontrado no catálogo atual. Reprocesse após atualizar o plano de ensino."
         )
+        sub_unit = (subunit_unit_map or {}).get(manual_slug, "")
+        if block_unit_slug and sub_unit and sub_unit != block_unit_slug:
+            note += (
+                f" ⚠ A subunidade pertence à unidade «{sub_unit}», diferente da "
+                f"unidade «{block_unit_slug}» do bloco. Revise."
+            )
         return {
             "assigned": _display(manual_slug),
             "source": "Override manual salvo",
@@ -4459,6 +4472,38 @@ def _load_file_map_unit_options(repo_dir: Optional[Path]) -> List[Tuple[str, str
         pass
 
     return options
+
+
+def _subunit_unit_map_from_plan(plan_text: str, unit_label_to_slug: Dict[str, str]) -> Dict[str, str]:
+    """subunit_slug -> unit_slug, a partir do texto do plano. O unit_slug vem de
+    unit_label_to_slug (título da unidade -> slug canônico); títulos sem slug
+    conhecido caem para slugify(título)."""
+    out: Dict[str, str] = {}
+    for unit_title, topics in _parse_units_from_teaching_plan(plan_text):
+        unit_slug = unit_label_to_slug.get(unit_title) or slugify(unit_title)
+        if not unit_slug:
+            continue
+        for topic_item in topics or []:
+            raw = topic_item[0] if isinstance(topic_item, (list, tuple)) else str(topic_item)
+            label = re.sub(r"^\d+(?:\.\d+)*\.?\s*", "", (raw or "").strip()).strip()
+            slug = slugify(label)
+            if slug and slug not in out:
+                out[slug] = unit_slug
+    return out
+
+
+def _load_subunit_unit_map(repo_dir: Optional[Path]) -> Dict[str, str]:
+    """Carrega subunit_slug -> unit_slug das mesmas fontes de _load_subunit_options."""
+    if not repo_dir:
+        return {}
+    unit_label_to_slug = {label: slug for label, slug in _load_file_map_unit_options(repo_dir)}
+    course_map_path = repo_dir / "course" / "COURSE_MAP.md"
+    if course_map_path.exists():
+        try:
+            return _subunit_unit_map_from_plan(course_map_path.read_text(encoding="utf-8"), unit_label_to_slug)
+        except Exception:
+            return {}
+    return {}
 
 
 def _load_subunit_options(repo_dir: Optional[Path]) -> List[Tuple[str, str]]:
