@@ -51,3 +51,10 @@ def test_attach_tolerates_empty_curation():
     entries = [{"id": "id-1"}]
     assert attach_block_rationale(entries, {}) == [{"id": "id-1"}]
     assert attach_block_rationale(entries, None) == [{"id": "id-1"}]
+
+
+def test_attach_removes_stale_rationale():
+    # curation foi pruned/reatribuída: justificativa antiga não pode sobreviver
+    entries = [{"id": "id-9", "computed_block_rationale": "stale"}]
+    out = attach_block_rationale(entries, CURATION)
+    assert "computed_block_rationale" not in out[0]

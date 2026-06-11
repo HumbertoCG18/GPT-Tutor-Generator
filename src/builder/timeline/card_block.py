@@ -127,7 +127,6 @@ def load_card_block_map(course_dir) -> Dict[str, dict]:
         return {}
 
 
-
 def lookup_card_blocks(card_name, card_map, unit_index, blocks) -> List[str]:
     entry = (card_map or {}).get(str(card_name or ""))
     if entry and "block_ids" in entry:

@@ -85,7 +85,7 @@ class FileEntry:
     # thresholds.confidence_band; "" quando nao ha bloco atribuido.
     computed_block_band: str = ""
     # Justificativa do Gemini (code summarizer) para a escolha de bloco.
-    # Copiada de .code_curation.json (summary.match_rationale) na regeneração
+    # Copiada de code_curation.json (summary.match_rationale) na regeneração
     # pedagógica; "" para entries sem summary (não-código).
     computed_block_rationale: str = ""
     # Card/seção de origem do arquivo (= subpasta imediata no stash). Sinal

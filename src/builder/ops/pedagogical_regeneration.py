@@ -113,14 +113,17 @@ def run_material_residual(builder, live_manifest_entries):
 
 
 def attach_block_rationale(entries: list, code_curation: dict) -> list:
-    """Copia summary.match_rationale do code_curation pro entry dict
-    (computed_block_rationale). Entries sem summary/rationale ficam intactos."""
+    """Sincroniza summary.match_rationale do code_curation com o entry dict
+    (computed_block_rationale). Sem rationale na curation, remove o campo —
+    evita justificativa stale após prune/reatribuição."""
     curation_entries = (code_curation or {}).get("entries", {})
     for e in entries:
         rec = curation_entries.get(str(e.get("id") or "")) or {}
         rationale = str(((rec.get("summary") or {}).get("match_rationale")) or "").strip()
         if rationale:
             e["computed_block_rationale"] = rationale
+        else:
+            e.pop("computed_block_rationale", None)
     return entries
 
 

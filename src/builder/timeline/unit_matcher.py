@@ -55,7 +55,6 @@ def _unit_tokens(unit: Mapping) -> set:
     return _tokens(" ".join(parts)) - _UNIT_GENERIC
 
 
-
 def assign_units_positional(
     class_blocks: Sequence[Mapping], units: Sequence[Mapping]
 ) -> List[Tuple[str, float]]:
