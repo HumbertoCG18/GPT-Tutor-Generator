@@ -87,6 +87,7 @@
   <p><b>Usabilidade — Cronograma editável</b> (roadmap #10): aba reescrita em <code>ttk.Treeview</code> (5 tasks via subagent-driven, revisão spec+qualidade por task). Ordenação por coluna, edição inline Tipo/Unidade, override manual de escopo, coluna "Nome do bloco" (P1/P2/PS/G2/Revisão), datas DD/MM/YY, escopo <b>e coluna Unidade</b> em rótulo curto U1/U2 (<code>5356665</code>), zebrado de alto contraste, texto centralizado.</p>
   <p><b>Correções de cronograma:</b> escopo de prova respeita override manual (<code>537c161</code>/<code>29cba5c</code>); escopo de prova <b>sem sobreposição</b> entre provas — P(k) só cobre unidades novas, uma aula atrasada não polui a prova seguinte (<code>0b0b672</code>); <b>listas de revisão de prova</b> (nome casa revisão + Pk) vão ao bloco de revisão que precede a Pk, sem dump/duplicação (<code>6149bb5</code>).</p>
   <p class="small">⚠️ Mudanças de matching/escopo são do <i>build</i> — reprocessar a matéria para o cronograma na tela refletir os novos valores. Suíte: <b>1.156 testes verdes</b>.</p>
+  <p><b>Curadoria — match_rationale propagado</b> (roadmap #4): justificativa do Gemini ("por que este código foi atribuído a este bloco") agora sai do cache <code>code_curation.json</code> e chega ao <code>manifest.json</code> (<code>FileEntry.computed_block_rationale</code>) e ao editor de backlog (campo read-only "Por que este bloco?"). Sincronização honesta: sem rationale na curation → campo removido (nada stale). <b>Limpeza junto</b> (#3 + quick-win): removidos <code>file_size_mb</code>, <code>save_card_block_map</code>, <code>score_block_unit_affinity</code> e a config morta <code>font_size</code>; <code>_normalized_source_key</code> (2 cópias idênticas na UI) deduplicada em <code>utils/helpers.normalized_source_key</code>. <b>1.179 testes verdes.</b></p>
   <p><b>Tutor proativo — Contexto temporal + prontidão pré-prova</b> (roadmap #12+#13): novo artefato <code>setup/CONTEXTO_TEMPORAL.md</code> (cronograma compacto, datas ISO, U1/U2 + legenda) + regra injetada nos 3 geradores de instrução. O tutor <b>autocalcula</b> a cada sessão a semana atual, a próxima avaliação (escopo) e a prontidão pré-prova (escopo × baterias × STUDENT_STATE) — zero staleness, sem reprocessar. Helpers de rótulo extraídos pra base <code>timeline/unit_labels.py</code>. 6 tasks subagent-driven + review final; escrita do artefato nos 3 caminhos (completo, incremental, "Gerar Instruções LLM"). <b>Suíte: 1.176 testes verdes</b>. Roadmap #18 (auditoria/limpeza de artefatos) registrado p/ depois.</p>
 </div>
 
@@ -278,18 +279,16 @@
 </div>
 
 <!-- ============ 4. CÓDIGO MORTO ============ -->
-<h2 id="morto">4. Código Morto e Duplicatas <span class="small">(cada item verificado por busca de referências · re-verificado 10/06: 3 mortos e 4 duplicatas seguem presentes)</span></h2>
+<h2 id="morto">4. Código Morto e Duplicatas <span class="small">(cada item verificado por busca de referências · 10/06 à noite: 3 mortos removidos, 1 duplicata resolvida; restam 3 duplicatas)</span></h2>
 
 <h3>Código morto confirmado</h3>
-<div class="card find bad">
-  <h4>Funções usadas apenas por testes (API morta de fato)</h4>
-  <p><b><code>src/utils/helpers.py:331 — file_size_mb()</code></b> — única referência fora da definição: <code>tests/test_core.py:80</code>.</p>
-  <p><b><code>src/builder/timeline/card_block.py:130 — save_card_block_map()</code></b> — só <code>tests/test_card_block.py</code>; o <code>load_card_block_map</code> é usado, a escrita nunca foi integrada (UI/scripts nunca gravam o mapa).</p>
-  <p><b><code>src/builder/timeline/unit_matcher.py:58 — score_block_unit_affinity()</code></b> — só <code>tests/test_unit_matcher.py</code>; scorer implementado mas nunca ligado ao pipeline de matching.</p>
+<div class="card find good">
+  <h4>Funções usadas apenas por testes — ✅ REMOVIDAS em 10/06</h4>
+  <p><s><b><code>file_size_mb()</code></b>, <b><code>save_card_block_map()</code></b>, <b><code>score_block_unit_affinity()</code></b></s> — removidas junto com os testes que só as exercitavam (teste de round-trip do card map reescrito pra gravar o JSON direto; <code>_block_tokens</code>/<code>_unit_tokens</code> mantidos — usados por <code>assign_units_positional</code>).</p>
 </div>
 <div class="card find">
   <h4>Config morta</h4>
-  <p><b><code>font_size</code></b> (<code>ui/theme.py:102</code>) — existe em <code>DEFAULTS</code>, nunca é lida por UI nem builder. Vestígio de feature não implementada.</p>
+  <p><b><code>font_size</code></b> — <span class="tag t-good">✅ removida</span> de <code>DEFAULTS</code> (10/06). Chave stale em config salvo é ignorada pelo filtro de load.</p>
   <p><b><code>processing_profiles_seeded_v2</code></b> — flag de migração já consumida; pode ser removida com migração de limpeza.</p>
 </div>
 <div class="card find info">
@@ -321,9 +320,9 @@
   </tr>
   <tr>
     <td><code>_normalized_source_key</code></td>
-    <td><code>ui/app.py:43</code> · <code>ui/repo_dashboard.py:13</code> — <b>idênticas caractere a caractere</b></td>
-    <td>✘</td>
-    <td>Extrair para módulo comum da UI (quick win)</td>
+    <td><s><code>ui/app.py:43</code> · <code>ui/repo_dashboard.py:13</code></s></td>
+    <td>✔ <code>utils/helpers.normalized_source_key</code></td>
+    <td><span class="tag t-good">✅ feito</span> deduplicada em 10/06; ambos importam o helper</td>
   </tr>
 </table>
 </div>
@@ -331,9 +330,9 @@
 <!-- ============ 5. PROPAGAÇÃO ============ -->
 <h2 id="propagacao">5. Informação Gerada mas Não Propagada</h2>
 
-<div class="card find bad">
-  <h4>1. <code>match_rationale</code> do Gemini morre no cache</h4>
-  <p>Gerado em <code>core/code_summarization.py</code> (campo do schema <code>CodeSummary</code>: "1 frase justificando a escolha de bloco"). Fica preso em <code>.code_curation.json</code> — nunca chega ao <code>manifest.json</code>, ao <code>CODE_INDEX.md</code> nem ao editor de backlog. <b>Usuário não tem como saber POR QUE um código foi atribuído a um bloco</b> — exatamente o tipo de dúvida que motivou a investigação dos arquivos zip/código nesta semana.</p>
+<div class="card find good">
+  <h4>1. <code>match_rationale</code> do Gemini — ✅ PROPAGADO (10/06)</h4>
+  <p><s>Fica preso em <code>code_curation.json</code>.</s> Agora: <code>attach_block_rationale</code> (em <code>ops/pedagogical_regeneration.py</code>, único ponto de convergência dos builds) copia pro <code>manifest.json</code> (<code>FileEntry.computed_block_rationale</code>); o editor de backlog mostra read-only ("Por que este bloco?"). Sem rationale na curation → campo removido (nada stale). CODE_INDEX ficou de fora de propósito (orçamento de token do tutor; o índice já agrupa por bloco).</p>
 </div>
 <div class="card find bad">
   <h4>2. Custos do Datalab sem agregação</h4>
@@ -378,7 +377,7 @@
 <p>Fluxo: <code>AppConfig.DEFAULTS</code> (theme.py) → <code>~/.gpt_tutor_config.json</code> → SettingsDialog → <code>_build_options_from_config()</code> (app.py) → <code>RepoBuilder.options</code>. Pós-refatoração desta semana, <code>profile_backends</code> é <b>derivado</b> dos perfis nomeados (<code>derive_profile_backends</code>) — fonte única, sem editor manual redundante. ✔</p>
 <table>
   <tr><th>Chave</th><th>Status</th><th>Nota</th></tr>
-  <tr><td><code>font_size</code></td><td><span class="tag t-bad">morta</span></td><td>Nunca lida. Remover ou implementar.</td></tr>
+  <tr><td><code>font_size</code></td><td><span class="tag t-good">✅ removida</span></td><td>Removida de <code>DEFAULTS</code> em 10/06 (nunca era lida).</td></tr>
   <tr><td><code>vision_model_quantization</code></td><td><span class="tag t-warn">parcial</span></td><td>Só afeta Image Curator; não passa por <code>_build_options_from_config()</code>. Documentar no tooltip ou propagar.</td></tr>
   <tr><td><code>vision_backend</code></td><td><span class="tag t-warn">parcial</span></td><td>Hoje só "ollama" é honrado de fato.</td></tr>
   <tr><td><code>gemini_api_key</code></td><td><span class="tag t-warn">atenção</span></td><td>Plaintext em <code>~/.gpt_tutor_config.json</code>. Considerar keyring do Windows (Moodle já evita persistir senha — padrão inconsistente entre as duas credenciais).</td></tr>
@@ -408,8 +407,8 @@
 <div class="card find good">
   <p><b>1. Escrita atômica do manifest ✅ FEITO</b> (commit <code>79b6f98</code>) — <code>write_text</code> atômico (tmp + <code>os.replace</code>) + novo <code>write_json_manifest</code> (atômico + backup <code>.bak</code>) em <code>utils/helpers.py</code>; ~20 call sites roteados (builder + UI + sources). Nota: o fix real ficou no helper de escrita, não em <code>_compact_manifest</code> (que só compacta dados). Cobertura: 10 testes em <code>tests/test_atomic_write.py</code>.</p>
   <p><b>2. Salvar fila a cada mutação</b> — chamar <code>_save_current_queue()</code> em add/remove/toggle. Acaba com perda de itens ao fechar.</p>
-  <p><b>3. Remover mortos</b> — <code>file_size_mb</code>, <code>save_card_block_map</code>, <code>score_block_unit_affinity</code> (ou integrá-lo ao matcher, se o scorer for melhor que o atual), <code>font_size</code>.</p>
-  <p><b>4. Propagar <code>match_rationale</code></b> — manifest + coluna no CODE_INDEX + campo read-only no BacklogEntryEditDialog (mesmo padrão do <code>source_section</code> já implementado).</p>
+  <p><b>3. Remover mortos ✅ FEITO</b> — <code>file_size_mb</code>, <code>save_card_block_map</code>, <code>score_block_unit_affinity</code> e <code>font_size</code> removidos (10/06, junto do #4). Resta só a flag <code>processing_profiles_seeded_v2</code> (migração de limpeza, baixa prioridade).</p>
+  <p><b>4. Propagar <code>match_rationale</code> ✅ FEITO</b> — manifest (<code>computed_block_rationale</code>) + campo read-only no BacklogEntryEditDialog (padrão do <code>source_section</code>). Coluna no CODE_INDEX descartada de propósito (token budget do tutor). Bônus: <code>_normalized_source_key</code> deduplicada (item #9 parcial).</p>
   <p><b>5. Agregar custos no BUILD_REPORT</b> — somar <code>cost_breakdown</code> dos sidecars do Datalab + % de PDFs scaneados + imagens rejeitadas por ruído. Visibilidade de custo por build.</p>
 </div>
 
@@ -441,7 +440,7 @@
   <tr><td>1</td><td>Manifest atômico <span class="tag t-good">✅ feito</span></td><td>baixo</td><td><span class="tag t-bad">crítico (integridade)</span></td></tr>
   <tr><td>10</td><td>Cronograma editável <span class="tag t-good">✅ feito</span></td><td>médio</td><td><span class="tag t-good">alto (usabilidade)</span></td></tr>
   <tr><td>12+13</td><td>Semana atual + prontidão pré-prova <span class="tag t-good">✅ feito</span></td><td>médio</td><td><span class="tag t-good">alto (tutor proativo)</span></td></tr>
-  <tr><td>2,3,4,5</td><td>Quick wins (fila, mortos, rationale, custos)</td><td>baixo</td><td><span class="tag t-info">médio</span></td></tr>
+  <tr><td>2,3,4,5</td><td>Quick wins — <span class="tag t-good">#3 e #4 ✅ feitos</span>; restam #2 (fila) e #5 (custos)</td><td>baixo</td><td><span class="tag t-info">médio</span></td></tr>
   <tr><td>6,7</td><td>Paralelismo + retry</td><td>médio</td><td><span class="tag t-info">médio (desempenho)</span></td></tr>
   <tr><td>8,9,11</td><td>Consolidações + delta report</td><td>médio</td><td><span class="tag t-info">médio (manutenibilidade)</span></td></tr>
   <tr><td>14-17</td><td>Estado do aluno rico, Moodle agendado, instruções adaptativas, health gate</td><td>alto</td><td><span class="tag t-good">alto (visão de produto)</span></td></tr>
