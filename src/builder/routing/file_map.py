@@ -6,7 +6,7 @@ import re
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
-from typing import Callable, Dict, List, NamedTuple, Optional
+from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
 
 from src.builder.routing.dates import extract_dates
 from src.builder.routing.sequence import annotate_class_ordinals, score_sequence_match
@@ -581,6 +581,51 @@ def resolve_effective_block(
     if computed:
         return EffectiveBlock(computed, "auto")
     return EffectiveBlock("", "")
+
+
+def reconcile_unit_with_block(
+    *,
+    computed_unit_slug: str,
+    unit_confidence: float,
+    computed_block_id: str,
+    block_confidence: float,
+    block_unit_slug: str,
+    block_is_manual: bool,
+    has_manual_unit: bool,
+) -> Tuple[str, List[str], Dict[str, str]]:
+    """Reconcilia a unidade efetiva com o bloco atribuído (F1, spec linhas 36-52).
+
+    Precedência:
+      1. Bloco MANUAL com unidade -> unidade do bloco (autoritativo, vence até
+         manual_unit). reason "unidade_do_bloco_manual".
+      2. manual_unit presente (sem bloco manual) -> mantém computed_unit_slug.
+      3. Auto:
+         - sem bloco / bloco sem unidade -> mantém computed_unit_slug.
+         - computed_unit_slug vazio -> herda do bloco ("herdada_do_bloco=<id>").
+         - concordam -> mantém.
+         - discordam: block_confidence >= unit_confidence -> unidade do bloco
+           ("reconciliada_do_bloco=<id>"); senão mantém a unidade forte e devolve
+           conflict {unit, block_unit, block_id}.
+
+    conflict é {} exceto no último caso (unidade forte venceu bloco discordante).
+    """
+    if block_is_manual and block_unit_slug:
+        return block_unit_slug, ["unidade_do_bloco_manual"], {}
+    if has_manual_unit:
+        return computed_unit_slug, [], {}
+    if not computed_block_id or not block_unit_slug:
+        return computed_unit_slug, [], {}
+    if not computed_unit_slug:
+        return block_unit_slug, [f"herdada_do_bloco={computed_block_id}"], {}
+    if block_unit_slug == computed_unit_slug:
+        return computed_unit_slug, [], {}
+    if block_confidence >= unit_confidence:
+        return block_unit_slug, [f"reconciliada_do_bloco={computed_block_id}"], {}
+    return (
+        computed_unit_slug,
+        [],
+        {"unit": computed_unit_slug, "block_unit": block_unit_slug, "block_id": computed_block_id},
+    )
 
 
 def score_entry_against_timeline_row(
