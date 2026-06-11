@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List, Optional
 
 
@@ -35,4 +37,50 @@ def collect_scan_stats(entries: List[dict]) -> ScanStats:
         scanned_count=scanned_count,
         total_pages=total_pages,
         scanned_pages=scanned_pages,
+    )
+
+
+@dataclass(frozen=True)
+class DatalabMetrics:
+    entry_count: int
+    processed_pages: int
+    avg_parse_quality: Optional[float]
+
+
+def collect_datalab_metrics(entries: List[dict], root_dir: Path) -> DatalabMetrics:
+    """Lê cada sidecar datalab-run.json 1x. Soma páginas processadas
+    (selected_pages_count, fallback page_count) e calcula a média dos
+    parse_quality_score válidos. Sidecar ausente/inválido => entry pulado."""
+    entry_count = 0
+    processed_pages = 0
+    quality_scores: List[float] = []
+    for entry in entries:
+        entry = entry or {}
+        if entry.get("advanced_backend") != "datalab":
+            continue
+        rel = entry.get("advanced_metadata_path")
+        if not rel:
+            continue
+        try:
+            payload = json.loads((Path(root_dir) / rel).read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        entry_count += 1
+        pages = payload.get("selected_pages_count")
+        if pages is None:
+            pages = payload.get("page_count")
+        processed_pages += int(pages or 0)
+        score = payload.get("parse_quality_score")
+        if score is not None:
+            try:
+                quality_scores.append(float(score))
+            except (TypeError, ValueError):
+                pass
+    avg_parse_quality = (
+        round(sum(quality_scores) / len(quality_scores), 2) if quality_scores else None
+    )
+    return DatalabMetrics(
+        entry_count=entry_count,
+        processed_pages=processed_pages,
+        avg_parse_quality=avg_parse_quality,
     )
