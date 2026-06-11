@@ -366,17 +366,25 @@ class SettingsDialog(tk.Toplevel):
             value=self.config.get("image_description_source", "ollama")
         )
 
+        VISION_SCOPE_NOTE = (
+            "Afeta apenas o Image Curator (descrição manual de imagens). "
+            "O build usa as descrições geradas pelo Datalab."
+        )
+
         vision_fields = [
             ("Backend Vision", self._var_vision_backend, VISION_BACKENDS),
             ("Modelo Vision", self._var_vision_model, VISION_MODELS),
             ("Quantização", self._var_vision_quant, QUANTIZATIONS),
         ]
+        vision_backend_combo = None
         for i, (label, var, vals) in enumerate(vision_fields):
             r = sep_row + 2 + i
             ttk.Label(tab_proc, text=label).grid(row=r, column=0, sticky="w", pady=6, padx=(0, 16))
             state = "readonly" if label != "Modelo Vision" else "normal"
             vcb = ttk.Combobox(tab_proc, textvariable=var, values=vals, state=state, width=28)
             vcb.grid(row=r, column=1, sticky="ew")
+            if label == "Backend Vision":
+                vision_backend_combo = vcb
 
         url_row = sep_row + 2 + len(vision_fields)
         ttk.Label(tab_proc, text="URL do Ollama").grid(
@@ -386,9 +394,18 @@ class SettingsDialog(tk.Toplevel):
         add_tooltip(vcb, "Para Ollama, use nomes como qwen3-vl:235b-cloud ou qwen3-vl:8b.\n"
                          "qwen3-vl:235b-cloud é o padrão para máxima qualidade visual.\n"
                          "qwen3-vl:8b é o fallback local recomendado.")
+        if vision_backend_combo is not None:
+            add_tooltip(vision_backend_combo, VISION_SCOPE_NOTE)
+        ttk.Label(
+            tab_proc,
+            text=VISION_SCOPE_NOTE,
+            font=("Segoe UI", 8),
+            wraplength=320,
+            foreground="#8aa0b8",
+        ).grid(row=url_row + 1, column=0, columnspan=2, sticky="w", pady=(0, 8))
 
         # Image description source row
-        _img_desc_row = url_row + 1
+        _img_desc_row = url_row + 2
         ttk.Label(
             tab_proc, text="Fonte de descrições de imagem",
         ).grid(row=_img_desc_row, column=0, sticky="w", padx=(0, 16), pady=4)
