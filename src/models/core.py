@@ -88,6 +88,13 @@ class FileEntry:
     # Copiada de code_curation.json (summary.match_rationale) na regeneração
     # pedagógica; "" para entries sem summary (não-código).
     computed_block_rationale: str = ""
+    # Método e confiança do match code->bloco, do code summarizer (Gemini +
+    # matcher local). Copiados de code_curation.json (summary.block_match_method
+    # / block_match_confidence) na regeneração pedagógica; default vazio/0.0 para
+    # entries sem summary (não-código). Distinto de computed_block_confidence
+    # (acima), que é a confiança do routing determinístico.
+    computed_block_method: str = ""
+    computed_block_match_confidence: float = 0.0
     # Card/seção de origem do arquivo (= subpasta imediata no stash). Sinal
     # autoritativo para a atribuição file->bloco (gabarito-cards). "" quando o
     # arquivo nao veio de um card (cai no caminho lexical, sem regressao).

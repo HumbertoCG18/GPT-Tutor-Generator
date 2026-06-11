@@ -22,6 +22,25 @@ def test_fileentry_default_rationale_not_emitted():
     assert FileEntry.from_dict(d).computed_block_rationale == ""
 
 
+def test_fileentry_roundtrip_preserves_match_fields():
+    e = _entry(computed_block_method="consensus", computed_block_match_confidence=0.87)
+    d = e.to_dict()
+    assert d["computed_block_method"] == "consensus"
+    assert d["computed_block_match_confidence"] == 0.87
+    back = FileEntry.from_dict(d)
+    assert back.computed_block_method == "consensus"
+    assert back.computed_block_match_confidence == 0.87
+
+
+def test_fileentry_default_match_fields_not_emitted():
+    d = _entry().to_dict()
+    assert "computed_block_method" not in d  # default "" não incha o manifest
+    assert "computed_block_match_confidence" not in d  # default 0.0 idem
+    back = FileEntry.from_dict(d)
+    assert back.computed_block_method == ""
+    assert back.computed_block_match_confidence == 0.0
+
+
 from src.builder.ops.pedagogical_regeneration import attach_block_rationale
 
 
