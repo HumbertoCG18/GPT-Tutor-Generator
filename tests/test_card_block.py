@@ -1,4 +1,11 @@
-from src.builder.timeline.card_block import resolve_card_to_block, CardBlockResolution
+import json as _json
+
+from src.builder.timeline.card_block import (
+    CardBlockResolution,
+    load_card_block_map,
+    lookup_card_blocks,
+    resolve_card_to_block,
+)
 
 UNITS = [
     {"slug": "u-intro", "title": "Introdução a Métodos Formais", "topics": ["motivação"], "distinctive_tokens": []},
@@ -34,13 +41,6 @@ def test_unmatched_card_needs_confirmation():
     assert r.block_ids == []
     assert r.confidence == 0.0
     assert r.reason == "needs-confirmation"
-
-
-import json as _json
-
-from src.builder.timeline.card_block import (
-    load_card_block_map, lookup_card_blocks,
-)
 
 
 def test_card_map_roundtrip(tmp_path):

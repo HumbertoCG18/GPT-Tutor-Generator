@@ -367,7 +367,6 @@ def normalized_source_key(raw_path: str) -> str:
     return str(normalized).replace("\\", "/").casefold()
 
 
-
 def safe_rel(path: Optional[Path], root: Path) -> Optional[str]:
     if not path:
         return None
