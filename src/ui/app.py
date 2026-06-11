@@ -36,6 +36,7 @@ from src.ui.repo_dashboard import RepoDashboard, collect_repo_metrics
 from src.ui.timeline_dashboard import TimelineDashboardView
 from src.ui.codes_panel import CodesPanel
 from src.ui.maintenance_panel import MaintenancePanel
+from src.ui.ui_text import default_source_label
 
 logger = logging.getLogger(__name__)
 
@@ -324,6 +325,13 @@ class App(tk.Tk):
         lbl_ocr = ttk.Label(course, text="OCR padrão")
         lbl_ocr.grid(row=4, column=2, sticky="w")
         ttk.Label(course, textvariable=self.var_default_ocr_language, font=("Segoe UI", 10, "bold")).grid(row=4, column=3, sticky="w", padx=(8, 0))
+
+        # Row 5: fonte dos padrões (matéria ativa vs global)
+        self.var_default_source = tk.StringVar(
+            value=default_source_label(self._var_active_subject.get())
+        )
+        ttk.Label(course, textvariable=self.var_default_source, style="Muted.TLabel").grid(
+            row=5, column=0, columnspan=4, sticky="w", pady=(2, 4))
 
         course.columnconfigure(1, weight=1)
         course.columnconfigure(3, weight=1)
@@ -1394,6 +1402,7 @@ class App(tk.Tk):
         self.var_default_ocr_language.set(sp.default_ocr_lang)
         self.var_default_backend.set(getattr(sp, "default_backend", "auto") or "auto")
         self.var_default_datalab_mode.set(getattr(sp, "default_datalab_mode", "accurate") or "accurate")
+        self.var_default_source.set(default_source_label(self._var_active_subject.get()))
         prof_name = getattr(sp, "processing_profile", "") or ""
         self.var_active_profile.set(prof_name)
         if prof_name:
