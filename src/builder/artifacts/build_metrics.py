@@ -84,3 +84,53 @@ def collect_datalab_metrics(entries: List[dict], root_dir: Path) -> DatalabMetri
         processed_pages=processed_pages,
         avg_parse_quality=avg_parse_quality,
     )
+
+
+@dataclass(frozen=True)
+class BuildMetrics:
+    scan: ScanStats
+    datalab: DatalabMetrics
+
+
+def collect_build_metrics(manifest: dict, root_dir: Path) -> BuildMetrics:
+    """Orquestra os collectors a partir do manifest."""
+    entries = (manifest or {}).get("entries") or []
+    return BuildMetrics(
+        scan=collect_scan_stats(entries),
+        datalab=collect_datalab_metrics(entries, root_dir),
+    )
+
+
+def _pct(part: int, whole: int) -> int:
+    return round(100 * part / whole) if whole else 0
+
+
+def render_build_metrics_md(metrics: BuildMetrics) -> List[str]:
+    """Renderiza a seção markdown 'Custos e qualidade do build'.
+    Sempre retorna a seção; usa '—' / textos de vazio quando não há dado."""
+    dl = metrics.datalab
+    scan = metrics.scan
+
+    if dl.entry_count:
+        pages_line = (
+            f"- páginas processadas via Datalab: {dl.processed_pages} "
+            f"(em {dl.entry_count} arquivo(s)) — proxy de custo (Datalab bilha por página)"
+        )
+    else:
+        pages_line = "- páginas processadas via Datalab: — (nenhum arquivo via Datalab)"
+
+    quality = f"{dl.avg_parse_quality:.2f}" if dl.avg_parse_quality is not None else "—"
+
+    scan_line = (
+        f"- PDFs escaneados: {scan.scanned_count} de {scan.pdf_total} "
+        f"({_pct(scan.scanned_count, scan.pdf_total)}%) · "
+        f"{scan.scanned_pages} de {scan.total_pages} páginas"
+    )
+
+    return [
+        "",
+        "## Custos e qualidade do build",
+        pages_line,
+        f"- parse_quality médio (Datalab): {quality}",
+        scan_line,
+    ]

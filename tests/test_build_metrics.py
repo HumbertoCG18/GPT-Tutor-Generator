@@ -3,6 +3,9 @@ from pathlib import Path
 
 from src.builder.artifacts.build_metrics import collect_scan_stats, ScanStats
 from src.builder.artifacts.build_metrics import collect_datalab_metrics, DatalabMetrics
+from src.builder.artifacts.build_metrics import (
+    collect_build_metrics, render_build_metrics_md, BuildMetrics,
+)
 
 
 def _write_sidecar(root: Path, rel: str, payload: dict) -> None:
@@ -64,3 +67,50 @@ def test_collect_scan_stats_counts_scanned_pdfs_and_pages():
     ]
     stats = collect_scan_stats(entries)
     assert stats == ScanStats(pdf_total=4, scanned_count=2, total_pages=60, scanned_pages=40)
+
+
+def test_collect_build_metrics_orchestrates(tmp_path):
+    _write_sidecar(tmp_path, "staging/markdown-auto/datalab/a/datalab-run.json",
+                   {"selected_pages_count": 4, "parse_quality_score": 0.9})
+    manifest = {"entries": [
+        {"file_type": "pdf", "document_report": {"page_count": 4, "suspected_scan": True},
+         "advanced_backend": "datalab",
+         "advanced_metadata_path": "staging/markdown-auto/datalab/a/datalab-run.json"},
+        {"file_type": "pdf", "document_report": {"page_count": 6, "suspected_scan": False}},
+    ]}
+    m = collect_build_metrics(manifest, tmp_path)
+    assert m.scan.pdf_total == 2
+    assert m.scan.scanned_count == 1
+    assert m.datalab.entry_count == 1
+    assert m.datalab.processed_pages == 4
+
+
+def test_collect_build_metrics_missing_entries_key(tmp_path):
+    m = collect_build_metrics({}, tmp_path)
+    assert m.scan.pdf_total == 0
+    assert m.datalab.entry_count == 0
+
+
+def test_render_build_metrics_md_with_data():
+    metrics = BuildMetrics(
+        scan=ScanStats(pdf_total=7, scanned_count=2, total_pages=350, scanned_pages=80),
+        datalab=DatalabMetrics(entry_count=3, processed_pages=42, avg_parse_quality=0.91),
+    )
+    lines = render_build_metrics_md(metrics)
+    text = "\n".join(lines)
+    assert "## Custos e qualidade do build" in text
+    assert "páginas processadas via Datalab: 42 (em 3 arquivo(s))" in text
+    assert "parse_quality médio (Datalab): 0.91" in text
+    assert "PDFs escaneados: 2 de 7 (29%) · 80 de 350 páginas" in text
+
+
+def test_render_build_metrics_md_empty():
+    metrics = BuildMetrics(
+        scan=ScanStats(pdf_total=0, scanned_count=0, total_pages=0, scanned_pages=0),
+        datalab=DatalabMetrics(entry_count=0, processed_pages=0, avg_parse_quality=None),
+    )
+    text = "\n".join(render_build_metrics_md(metrics))
+    assert "## Custos e qualidade do build" in text
+    assert "nenhum arquivo via Datalab" in text
+    assert "parse_quality médio (Datalab): —" in text
+    assert "PDFs escaneados: 0 de 0" in text
