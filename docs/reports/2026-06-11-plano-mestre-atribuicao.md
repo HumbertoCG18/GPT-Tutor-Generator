@@ -1,0 +1,170 @@
+# Plano-mestre — Reforma do sistema de atribuição
+
+date: 2026-06-11
+base: `docs/reports/2026-06-11-diagnostico-atribuicao.md` (diagnóstico com dados reais)
+objetivo do projeto: **auto é o caminho principal**; manual é correção de exceção.
+Cada fase = ciclo próprio (brainstorm → spec → plano → subagents → eval → relatório).
+
+## Norte
+
+1. **Precisão**: atribuição automática certa por padrão (meta: ≥95% no golden set com seção; ≥80% sem).
+2. **Honestidade**: confiança baixa ⇔ chance real de erro; "confiante e errado" vira raro.
+3. **Degradação visível**: sinal faltando (seção) ⇒ confiança cai e a UI avisa — nunca falha silenciosa.
+
+## Arquitetura-alvo: funil único com precedência explícita
+
+```
+Estágio 0  manual (bloco/unidade/subunidade)        conf 1.0, vence tudo
+Estágio 1  PRIOR   seção→gabarito (card_block_map)  restringe 21 blocos → 1-3
+Estágio 2  RANK    scorer léxico                    ranqueia DENTRO do conjunto restrito
+Estágio 3  VOTO    Gemini (código)                  consenso ⇒ sobe confiança
+Saída      computed_block_id + method (qual estágio decidiu) + confiança calibrada
+```
+
+Não são cérebros rivais: o prior restringe, o scorer desempata, o LLM vota. O defeito
+atual não é a arquitetura — é (a) o estágio 1 desligar em silêncio quando `source_section`
+falta, e (b) a confiança não refletir QUEM decidiu. `computed_block_method` (já existe
+pra código) generaliza para todas as entries: `manual | card | card+scorer | scorer_only |
+consensus | review_rule`.
+
+## Estado atual (medido, repo Metodos-Formais)
+
+| Fato | Número |
+|---|---|
+| Erro geral | 8/49 (16.3%) |
+| Erro COM seção (gabarito ativo) | 0/22 |
+| Erro SEM seção (scorer solto) | 8/27 (29.6%) |
+| Scorer puro sem gabarito | 59.2% acerto |
+| Erros com conf 1.0 "alta" | 7/8 |
+| Entries com conf=1.0 | 46/54 (clamp estourado — conf não calibra) |
+
+## Fases
+
+### P0 — Medição primeiro (pré-requisito de tudo)
+
+**Por quê primeiro:** sem harness funcional, nenhuma fase posterior prova melhora.
+O `scripts/eval_assignments.py` colapsa com o índice persistido (bug B3: espera `rows`,
+índice tem `sessions`/`source_rows` → 49/49 "erradas" espúrias).
+
+- Corrigir B3 (adaptador `sessions`→`rows` ou aceitar ambos em `select_probable_period_for_entry`).
+- **Golden set versionado**: as 49 entries do Metodos-Formais com bloco esperado
+  (da avaliação do diagnóstico) viram fixture de regressão (`tests/golden/` ou
+  `scripts/golden/metodos-formais.json`). Rodável com 1 comando.
+- Métrica-padrão impressa: acurácia geral / com-seção / sem-seção / % confiante-e-errado.
+- Critério de aceite: harness reproduz os 8 erros conhecidos do manifest real.
+
+Esforço: baixo. Risco: baixo. Dependências: nenhuma.
+
+### P1 — Seção automática (mata a classe dominante de erro)
+
+**Tese comprovada:** 100% dos erros têm `source_section` vazio; o stash Moodle JÁ é
+organizado por seção — a informação existe e se perde no caminho.
+
+- Backfill automático no build/import (hoje é script manual que nunca roda):
+  durante `regenerate`/import, entries com seção vazia tentam resgate por basename
+  contra o stash da matéria (lógica do `scripts/backfill_source_section.py` movida
+  pro pipeline) e/ou API Moodle quando configurada.
+- Todo caminho de import preenche seção quando derivável (stash_import já faz;
+  raw/pdfs e import direto ganham o resgate).
+- **Degradação visível**: seção vazia após resgate ⇒ method `scorer_only`, teto de
+  confiança (ver P3) e aviso no editor ("sem seção — atribuição só léxica, revise").
+- Ambiguidade de basename (mesmo nome em 2 seções) registrada, não chutada.
+- Critério de aceite (golden set): erro sem-seção 29.6% → <10%; os 4 PDFs do caso
+  real (LogicaDeHoare etc.) ganham seção e caem nos blocos do gabarito.
+
+Esforço: médio. Risco: baixo (aditivo). Dependências: P0 (pra medir).
+
+### P2 — Calibrar confiança + method em todas as entries
+
+(antigo P3 — promovido: barato e destrava a triagem; o scorer melhor vem depois)
+
+- `margin_confidence` recebe scores grandes (~4-8) e clampa em 1.0 → 46/54 entries
+  com conf 1.0. Trocar por margem **relativa** (ex.: `(best−runner)/best` + termo de
+  força absoluta) ou normalizar scores antes da margem. Manter bands (alta/média/baixa)
+  com cutoffs recalibrados no golden set.
+- `computed_block_method` generalizado: gravar qual estágio decidiu para TODA entry
+  (hoje só código tem). Editor mostra (campo "Match do bloco" já existe — passa a
+  valer pra tudo).
+- Teto de confiança por método: `scorer_only` nunca passa de ~0.7 (não há como ter
+  certeza só com léxico); `card` single-block 0.85; `manual`/`review_rule` ~1.0;
+  `consensus` sobe.
+- Critério de aceite: % confiante-e-errado (conf≥0.5 e errado) no golden set cai de
+  87.5% dos erros para <20%; distribuição de conf deixa de ser 85% em 1.0.
+
+Esforço: baixo-médio. Risco: médio (mexe em número que outros leem — verificar
+consumidores de computed_block_confidence/band). Dependências: P0.
+
+### P3 — Higiene (bugs B1, B2, B4, B5)
+
+- B1: `_NO_TIMELINE_CATEGORIES` ganha equivalentes EN (`references`) ou normalização
+  de categoria antes do filtro.
+- B2: card bonus possivelmente somado 2× (file_map.py:795 + :874) — confirmar intenção,
+  deduplicar se bug.
+- B4: re-rodar retag no repo real pós-F1 e confirmar que `formalizacaoalgoritmos-recursao`
+  (unit u02 + bloco u01) reconcilia ou flagra conflito.
+- B5: colisão de ids no manifest (`t1-2026-1`, `introducao` 2×) — id ganha sufixo de
+  categoria ou dedup no import; auditar efeitos no code_curation.
+- Critério de aceite: suíte verde + golden set não regride.
+
+Esforço: baixo. Risco: baixo. Dependências: P0 (B4 usa o harness).
+
+### P4 — Scorer melhor (sobe o piso dos casos sem prior)
+
+Maior esforço, deixado por último de propósito: depois de P1, o scorer decide MENOS
+casos (só os sem seção resgatável); depois de P2, quando decide, a confiança é honesta.
+
+- **Raridade de token (IDF simples)**: peso do token ∝ 1/nº de blocos que o contêm.
+  "hoare" (1 bloco) passa a valer ≫ "logica" (muitos blocos). Resolve o mecanismo
+  central dos erros LogicaDeHoare.
+- **Sinal de ferramenta**: extensão/conteúdo (.thy=Isabelle, .dfy/Dafny) vs ferramenta
+  do bloco (tokens "isabelle"/"dafny" nos topics) — boost/penalidade forte. Resolve
+  intro.thy→bloco Dafny.
+- **Tokenizar CamelCase** no título ("LogicaDeHoare" → logica+de+hoare) antes de
+  normalizar. Resolve o match exato de frase perdido.
+- Avaliar: penalizar topic_text concatenado verboso (superfície inflada) via
+  normalização por tamanho do bloco.
+- Critério de aceite: scorer puro (sem gabarito) no golden set 59% → ≥80%; zero
+  regressão nos casos com gabarito.
+
+Esforço: médio-alto. Risco: médio (mexe no coração do matcher; golden set é a rede).
+Dependências: P0 (medir), idealmente após P1/P2.
+
+## Sequência e porquê
+
+```
+P0 medir → P1 seção (mata 100% dos erros observados) → P2 confiança honesta
+        → P3 higiene → P4 scorer (último: decide menos casos e com rede de medição)
+```
+
+Após CADA fase: rodar golden set, registrar números no relatório da fase, atualizar
+este plano-mestre (tabela abaixo).
+
+## Placar (atualizar por fase)
+
+| Fase | Status | Acurácia geral | Sem seção | Confiante-e-errado |
+|---|---|---|---|---|
+| baseline | — | 83.7% | 70.4% | 7/8 erros |
+| P0 | pendente | — | — | — |
+| P1 | pendente | — | — | — |
+| P2 | pendente | — | — | — |
+| P3 | pendente | — | — | — |
+| P4 | pendente | — | — | — |
+
+## Riscos transversais
+
+- **Golden set de 1 disciplina só**: Metodos-Formais pode enviesar (muito código
+  Isabelle/Dafny). Mitigação: quando outra matéria tiver cronograma rico, adicionar
+  segundo golden set (IA, SO…).
+- **Manifests existentes**: mudanças de confiança/method só se materializam após
+  retag/reprocesso — comunicar na UI ("reprocesse para aplicar").
+- **F1 na branch**: este plano continua a branch `feat/reconciliar-unit-bloco` ou
+  nova por fase — decidir no início de cada fase; merges pequenos e frequentes
+  preferíveis a uma branch gigante.
+
+## Fora de escopo (decidido)
+
+- Trocar o scorer por LLM para tudo (custo/latência; o funil com prior já entrega).
+- Remover o gabarito ou o scorer (dados provam que ambos são necessários: 0/22 com
+  prior; 59% sem).
+- Reescrever timeline_index (estrutura fiel ao cronograma; só o topic_text concatenado
+  entra como item do P4).
