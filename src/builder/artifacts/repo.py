@@ -8,6 +8,10 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
 from src.utils.helpers import json_str, safe_rel, slugify
+from src.builder.artifacts.build_metrics import (
+    collect_build_metrics,
+    render_build_metrics_md,
+)
 
 
 def student_state_md(
@@ -494,6 +498,7 @@ def write_build_report(
         "- O conhecimento final do tutor deve sair de `manual-review/` e depois ser promovido.",
         "- Atualizar `student/STUDENT_STATE.md` após cada sessão de estudo.",
     ])
+    report.extend(render_build_metrics_md(collect_build_metrics(manifest, root_dir)))
     write_text_fn(root_dir / "BUILD_REPORT.md", "\n".join(report) + "\n")
 
 

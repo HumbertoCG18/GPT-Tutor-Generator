@@ -131,3 +131,42 @@ def test_render_build_metrics_md_empty():
     assert "nenhum arquivo via Datalab" in text
     assert "parse_quality médio (Datalab): —" in text
     assert "PDFs escaneados: 0 de 0" in text
+
+
+from src.builder.artifacts.repo import write_build_report
+
+
+def test_write_build_report_includes_metrics_section(tmp_path):
+    _write_sidecar(tmp_path, "staging/markdown-auto/datalab/a/datalab-run.json",
+                   {"selected_pages_count": 5, "parse_quality_score": 0.88})
+    manifest = {
+        "generated_at": "2026-06-11T00:00:00",
+        "entries": [
+            {"file_type": "pdf", "document_report": {"page_count": 5, "suspected_scan": False},
+             "advanced_backend": "datalab",
+             "advanced_metadata_path": "staging/markdown-auto/datalab/a/datalab-run.json"},
+        ],
+    }
+    captured = {}
+
+    def fake_write_text(path, text):
+        captured["path"] = path
+        captured["text"] = text
+
+    write_build_report(
+        tmp_path,
+        manifest,
+        preferred_platform="claude",
+        has_pymupdf=True,
+        has_pymupdf4llm=True,
+        has_pdfplumber=True,
+        has_datalab_api_key_fn=lambda: True,
+        docling_cli=None,
+        has_docling_python_api_fn=lambda: False,
+        marker_cli=None,
+        write_text_fn=fake_write_text,
+    )
+
+    assert "## Custos e qualidade do build" in captured["text"]
+    assert "páginas processadas via Datalab: 5 (em 1 arquivo(s))" in captured["text"]
+    assert "parse_quality médio (Datalab): 0.88" in captured["text"]
