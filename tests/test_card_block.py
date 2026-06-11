@@ -36,8 +36,10 @@ def test_unmatched_card_needs_confirmation():
     assert r.reason == "needs-confirmation"
 
 
+import json as _json
+
 from src.builder.timeline.card_block import (
-    load_card_block_map, save_card_block_map, lookup_card_blocks,
+    load_card_block_map, lookup_card_blocks,
 )
 
 
@@ -45,7 +47,9 @@ def test_card_map_roundtrip(tmp_path):
     course = tmp_path / "course"
     course.mkdir()
     mapping = {"Meu Card": {"block_ids": ["bloco-07"], "source": "manual"}}
-    save_card_block_map(course, mapping)
+    (course / ".card_block_map.json").write_text(
+        _json.dumps(mapping, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     assert load_card_block_map(course) == mapping
 
 

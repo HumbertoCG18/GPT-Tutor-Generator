@@ -127,13 +127,6 @@ def load_card_block_map(course_dir) -> Dict[str, dict]:
         return {}
 
 
-def save_card_block_map(course_dir, mapping) -> None:
-    course = Path(course_dir)
-    course.mkdir(parents=True, exist_ok=True)
-    (course / _CARD_MAP_NAME).write_text(
-        json.dumps(mapping, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
-
 
 def lookup_card_blocks(card_name, card_map, unit_index, blocks) -> List[str]:
     entry = (card_map or {}).get(str(card_name or ""))

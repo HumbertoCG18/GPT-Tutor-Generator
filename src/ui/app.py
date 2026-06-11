@@ -20,7 +20,7 @@ from src.models.core import (
     PendingOperation, PendingOperationStore,
 )
 from src.models.task_queue import RepoTask, RepoTaskStore
-from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES, get_app_data_dir, derive_profile_backends
+from src.utils.helpers import APP_NAME, HAS_PYMUPDF, HAS_PYMUPDF4LLM, HAS_PDFPLUMBER, DOCLING_CLI, MARKER_CLI, TESSDATA_PATH, slugify, CODE_EXTENSIONS, ASSIGNMENT_CATEGORIES, CODE_CATEGORIES, WHITEBOARD_CATEGORIES, get_app_data_dir, derive_profile_backends, normalized_source_key as _normalized_source_key
 from src.builder.runtime.datalab_client import has_datalab_api_key
 from src.builder.engine import RepoBuilder
 from src.builder.artifacts.prompts import (
@@ -39,18 +39,6 @@ from src.ui.maintenance_panel import MaintenancePanel
 
 logger = logging.getLogger(__name__)
 
-
-def _normalized_source_key(raw_path: str) -> str:
-    value = str(raw_path or "").strip()
-    if not value:
-        return ""
-    if "://" in value:
-        return value.casefold()
-    try:
-        normalized = Path(value).expanduser().resolve()
-    except Exception:
-        normalized = Path(value).expanduser()
-    return str(normalized).replace("\\", "/").casefold()
 
 
 def _manifest_source_keys_for_repo(repo_dir: Optional[Path]) -> set[str]:

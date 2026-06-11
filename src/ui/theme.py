@@ -99,7 +99,6 @@ class AppConfig:
         "marker_llm_model": "qwen3-vl:8b",
         "marker_torch_device": "auto",
         "prevent_sleep_during_build": True,
-        "font_size": 10,
         "vision_backend": "ollama",
         "vision_model": "qwen3-vl:235b-cloud",
         "vision_model_quantization": "default",

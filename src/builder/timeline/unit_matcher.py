@@ -55,10 +55,6 @@ def _unit_tokens(unit: Mapping) -> set:
     return _tokens(" ".join(parts)) - _UNIT_GENERIC
 
 
-def score_block_unit_affinity(block: Mapping, unit: Mapping) -> float:
-    """Overlap de tokens entre bloco e unidade (0.0 se nenhum)."""
-    return float(len(_block_tokens(block) & _unit_tokens(unit)))
-
 
 def assign_units_positional(
     class_blocks: Sequence[Mapping], units: Sequence[Mapping]

@@ -8,19 +8,7 @@ from typing import Callable, Iterable, List, Optional
 
 from src.models.core import SubjectProfile
 from src.models.task_queue import RepoTask
-
-
-def _normalized_source_key(raw_path: str) -> str:
-    value = str(raw_path or "").strip()
-    if not value:
-        return ""
-    if "://" in value:
-        return value.casefold()
-    try:
-        normalized = Path(value).expanduser().resolve()
-    except Exception:
-        normalized = Path(value).expanduser()
-    return str(normalized).replace("\\", "/").casefold()
+from src.utils.helpers import normalized_source_key as _normalized_source_key
 
 
 def _count_curator_manual_review_items(repo_path: Path) -> int:

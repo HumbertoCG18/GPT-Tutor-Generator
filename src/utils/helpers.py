@@ -352,11 +352,21 @@ def pages_to_marker_range(pages: Optional[Sequence[int]]) -> Optional[str]:
     ranges.append(f"{start}-{prev}" if start != prev else str(start))
     return ",".join(ranges)
 
-def file_size_mb(path: Path) -> float:
+def normalized_source_key(raw_path: str) -> str:
+    """Chave canônica de um source_path para dedup: URLs casefold;
+    paths locais resolvidos, barras normalizadas, casefold."""
+    value = str(raw_path or "").strip()
+    if not value:
+        return ""
+    if "://" in value:
+        return value.casefold()
     try:
-        return round(path.stat().st_size / (1024 * 1024), 2)
+        normalized = Path(value).expanduser().resolve()
     except Exception:
-        return 0.0
+        normalized = Path(value).expanduser()
+    return str(normalized).replace("\\", "/").casefold()
+
+
 
 def safe_rel(path: Optional[Path], root: Path) -> Optional[str]:
     if not path:

@@ -77,7 +77,7 @@ from src.utils.helpers import (
     LANG_MAP,
     auto_detect_category,
     ensure_dir,
-    file_size_mb,
+
     pages_to_marker_range,
     parse_page_range,
     safe_rel,
@@ -2097,19 +2097,6 @@ class TestBuildMarkerPageChunks:
             [25, 26, 27],
         ]
 
-
-# ---------------------------------------------------------------------------
-# file_size_mb
-# ---------------------------------------------------------------------------
-
-class TestFileSizeMb:
-    def test_nonexistent_file(self):
-        assert file_size_mb(Path("/nonexistent/file.pdf")) == 0.0
-
-    def test_real_file(self, tmp_path):
-        f = tmp_path / "test.txt"
-        f.write_text("x" * (1024 * 1024))  # 1 MB
-        assert file_size_mb(f) >= 1.0
 
 
 # ---------------------------------------------------------------------------
