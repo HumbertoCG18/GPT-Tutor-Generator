@@ -112,6 +112,18 @@ def run_material_residual(builder, live_manifest_entries):
     return live_manifest_entries
 
 
+def attach_block_rationale(entries: list, code_curation: dict) -> list:
+    """Copia summary.match_rationale do code_curation pro entry dict
+    (computed_block_rationale). Entries sem summary/rationale ficam intactos."""
+    curation_entries = (code_curation or {}).get("entries", {})
+    for e in entries:
+        rec = curation_entries.get(str(e.get("id") or "")) or {}
+        rationale = str(((rec.get("summary") or {}).get("match_rationale")) or "").strip()
+        if rationale:
+            e["computed_block_rationale"] = rationale
+    return entries
+
+
 def regenerate_pedagogical_files(
     builder,
     manifest: dict,
@@ -286,6 +298,10 @@ def regenerate_pedagogical_files(
 
     # Camada 2: residuo via Gemini (opt-in EXPLICITO). Ver run_material_residual.
     live_manifest_entries = run_material_residual(builder, live_manifest_entries)
+
+    live_manifest_entries = attach_block_rationale(
+        live_manifest_entries, builder._load_code_curation()
+    )
 
     manifest["entries"] = live_manifest_entries
 
