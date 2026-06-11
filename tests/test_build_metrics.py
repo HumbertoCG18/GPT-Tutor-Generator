@@ -6,6 +6,7 @@ from src.builder.artifacts.build_metrics import collect_datalab_metrics, Datalab
 from src.builder.artifacts.build_metrics import (
     collect_build_metrics, render_build_metrics_md, BuildMetrics,
 )
+from src.builder.artifacts.repo import write_build_report
 
 
 def _write_sidecar(root: Path, rel: str, payload: dict) -> None:
@@ -131,9 +132,6 @@ def test_render_build_metrics_md_empty():
     assert "nenhum arquivo via Datalab" in text
     assert "parse_quality médio (Datalab): —" in text
     assert "PDFs escaneados: 0 de 0" in text
-
-
-from src.builder.artifacts.repo import write_build_report
 
 
 def test_write_build_report_includes_metrics_section(tmp_path):
