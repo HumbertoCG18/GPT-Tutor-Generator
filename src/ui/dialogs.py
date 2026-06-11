@@ -2343,6 +2343,9 @@ class BacklogEntryEditDialog(tk.Toplevel):
             )
             unit_combo.grid(row=row_unit, column=1, sticky="ew", pady=6)
             unit_combo.bind("<<ComboboxSelected>>", self._on_manual_unit_selection_changed)
+            if str(self._data.get("manual_timeline_block_id") or "").strip():
+                unit_combo.configure(state="disabled")
+                add_tooltip(unit_combo, "Unidade definida pelo bloco manual — limpe o bloco para editar a unidade.")
         else:
             tk.Label(
                 tab_edit,
@@ -4111,6 +4114,27 @@ def _resolve_backlog_unit_status(
     current_slug_match = re.search(r"(unidade-[a-z0-9-]+)", current_unit_cell or "")
     current_slug = current_slug_match.group(1) if current_slug_match else ""
 
+    reasons = [str(r) for r in (entry_data.get("unit_match_reasons") or [])]
+    conflict = entry_data.get("unit_block_conflict") or {}
+
+    def _auto_source(default: str) -> str:
+        if any(r == "unidade_do_bloco_manual" for r in reasons):
+            return "Definida pelo bloco manual"
+        if any(r.startswith("reconciliada_do_bloco=") for r in reasons):
+            return "Reconciliada do bloco (auto)"
+        if any(r.startswith("herdada_do_bloco=") for r in reasons):
+            return "Herdada do bloco (auto)"
+        return default
+
+    def _conflict_note() -> str:
+        if not conflict:
+            return ""
+        return (
+            f" ⚠ Conflito: o bloco «{conflict.get('block_id', '')}» aponta a unidade "
+            f"«{conflict.get('block_unit', '')}», mas o matcher escolheu "
+            f"«{conflict.get('unit', '')}» (mais confiante). Revise."
+        )
+
     if manual_slug:
         assigned = _display_unit(manual_slug)
         if current_slug == manual_slug:
@@ -4134,8 +4158,8 @@ def _resolve_backlog_unit_status(
     if current_unit_cell:
         return {
             "assigned": current_unit_cell,
-            "source": "FILE_MAP atual",
-            "note": "Unidade atribuída automaticamente com base no FILE_MAP gerado no último processamento.",
+            "source": _auto_source("FILE_MAP atual"),
+            "note": "Unidade atribuída automaticamente com base no FILE_MAP gerado no último processamento." + _conflict_note(),
         }
 
     return {
