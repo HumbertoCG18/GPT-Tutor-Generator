@@ -6,7 +6,7 @@ import unicodedata
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
-from src.builder.routing.thresholds import confidence_band, margin_confidence, T
+from src.builder.routing.thresholds import confidence_band, relative_margin_confidence, T
 from src.builder.routing.file_map import reconcile_unit_with_block
 from src.builder.core.semantic_config import (
     infer_semantic_profile,
@@ -795,8 +795,8 @@ def _best_instructional_block_fallback(
     navigation.py, mas inadequado aqui), recusa atribuir, ranqueia TODOS os
     blocos instrucionais pelo MESMO scorer real (score_entry_against_timeline_block)
     e atribui o melhor. Nada de scoring reimplementado nem numero magico: a
-    confianca vem de margin_confidence(best, runner_up, k=MARGIN_K), identica a
-    formula que o scorer primario usa internamente.
+    confianca vem de relative_margin_confidence(best, runner_up) — a mesma
+    formula de confianca de BLOCO usada pelo scorer primario (P2.1).
 
     Retorna (block, confidence) do vencedor, ou (None, 0.0) se nao ha bloco.
     """
@@ -835,7 +835,7 @@ def _best_instructional_block_fallback(
     scored.sort(key=lambda item: item[1], reverse=True)
     best_block, best_score = scored[0]
     runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
-    confidence = margin_confidence(best_score, runner_up_score, k=T.MARGIN_K)
+    confidence = relative_margin_confidence(best_score, runner_up_score)
     return best_block, confidence
 
 
@@ -1106,8 +1106,8 @@ def resolve_unit_block_tags(
                         for block in instructional_blocks:
                             if str(block.get("period_label") or "") == _period:
                                 period_block_id = _collapse_ws(str(block.get("id") or ""))
-                                # p_conf ja e margin_confidence(best, runner_up,
-                                # k=MARGIN_K) computada dentro do scorer — reusada.
+                                # p_conf ja e relative_margin_confidence(best,
+                                # runner_up) computada dentro do scorer — reusada.
                                 block_confidence = float(p_conf)
                                 break
                     else:
@@ -1125,10 +1125,11 @@ def resolve_unit_block_tags(
         # --- computed_* sao a FONTE UNICA (Fase 1) ---
         # O slug/id resolvido vive direto no entry; as tags unit:/bloco: abaixo
         # sao ESPELHO destes campos, nao um caminho de scoring paralelo.
-        # block_confidence sempre vem de margin_confidence(best, runner_up,
-        # k=MARGIN_K) — seja a computada DENTRO de select_probable_period_for_entry_fn
-        # (caminho do scorer aprovado), seja a do fallback "pega o melhor", que
-        # chama a MESMA thresholds.margin_confidence sobre os scores do MESMO
+        # block_confidence sempre vem de relative_margin_confidence(best,
+        # runner_up) (P2.1) — seja a computada DENTRO de
+        # select_probable_period_for_entry_fn (caminho do scorer aprovado), seja
+        # a do fallback "pega o melhor", que chama a MESMA
+        # thresholds.relative_margin_confidence sobre os scores do MESMO
         # scorer real. Nunca recomputado/duplicado aqui.
         computed_unit_slug = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= 0.65) else ""
         computed_block_id = period_block_id

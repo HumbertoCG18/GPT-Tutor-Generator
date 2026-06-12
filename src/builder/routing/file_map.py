@@ -10,7 +10,7 @@ from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
 
 from src.builder.routing.dates import extract_dates
 from src.builder.routing.sequence import annotate_class_ordinals, score_sequence_match
-from src.builder.routing.thresholds import T, margin_confidence
+from src.builder.routing.thresholds import T, margin_confidence, relative_margin_confidence
 
 
 @dataclass
@@ -1209,7 +1209,9 @@ def select_probable_period_for_entry(
         if not period:
             return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
 
-        confidence = min(1.0, max(0.0, (best_score - runner_up_score) + (best_score * 0.18)))
+        # Confianca de BLOCO: margem relativa x forca absoluta (P2.1) — a
+        # formula aditiva antiga saturava em 1.0 com scores 4-8.
+        confidence = relative_margin_confidence(best_score, runner_up_score)
         ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
         if len(session_scored_blocks) == 1 and not ambiguous:
             confidence = max(confidence, 0.72)
@@ -1271,7 +1273,9 @@ def select_probable_period_for_entry(
     if not period:
         return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
 
-    confidence = min(1.0, max(0.0, (best_score - runner_up_score) + (best_score * 0.18)))
+    # Confianca de BLOCO: margem relativa x forca absoluta (P2.1) — a
+    # formula aditiva antiga saturava em 1.0 com scores 4-8.
+    confidence = relative_margin_confidence(best_score, runner_up_score)
     ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
     best_block_card_bonus = min(
         0.45,

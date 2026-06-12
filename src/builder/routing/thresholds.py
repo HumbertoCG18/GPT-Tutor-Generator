@@ -12,6 +12,25 @@ def margin_confidence(winner: float, runner_up: float, *, k: float) -> float:
     return min(1.0, max(0.0, raw))
 
 
+# Score "forte" de bloco: matches genuinos do scorer real ficam >=3.x
+# (multiplos sinais somados); calibrado no golden v1 (Task 7/Step 5).
+STRONG_SCORE: float = 3.0
+
+
+def relative_margin_confidence(winner: float, runner_up: float) -> float:
+    """Confiança de BLOCO: margem RELATIVA escalada pela força absoluta.
+
+    Substitui margin_confidence SÓ nos caminhos de bloco (a aditiva saturava em
+    1.0 com scores 4-8 — 46/56 entries conf=1.0, re-análise 2026-06-11).
+    margin_confidence original permanece para unidade/tópico."""
+    w = float(winner)
+    if w <= 0:
+        return 0.0
+    rel = (w - max(float(runner_up), 0.0)) / w
+    strength = min(1.0, w / STRONG_SCORE)
+    return max(0.0, min(1.0, rel * (0.55 + 0.45 * strength)))
+
+
 # --- Faixas de confianca de atribuicao de bloco (Fase 3) ------------------
 # Escala: a confianca de bloco vem de margin_confidence(best, runner_up,
 # k=MARGIN_K=0.18), ja clampada em [0,1]. ATENCAO: na atribuicao de bloco
