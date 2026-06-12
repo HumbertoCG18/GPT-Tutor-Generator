@@ -2309,7 +2309,11 @@ class BacklogEntryEditDialog(tk.Toplevel):
         row_match = row_rationale + 1
         _bm_method = str(self._data.get("computed_block_method") or "").strip()
         if _bm_method:
-            _bm_conf = self._data.get("computed_block_match_confidence") or 0.0
+            # Caminho de código grava computed_block_match_confidence; o funil
+            # (P2.3: manual/review_rule/card/card+scorer/scorer_only) grava só
+            # computed_block_confidence — sem o fallback exibiria 0.00.
+            _bm_conf = (self._data.get("computed_block_match_confidence")
+                        or self._data.get("computed_block_confidence") or 0.0)
             try:
                 _bm_text = f"método: {_bm_method} · confiança: {float(_bm_conf):.2f}"
             except (TypeError, ValueError):
@@ -2323,10 +2327,12 @@ class BacklogEntryEditDialog(tk.Toplevel):
                  font=("Segoe UI", 9), wraplength=520, justify="left").grid(
             row=row_match, column=1, sticky="w", pady=6)
         add_tooltip(lbl_match,
-            "Como o bloco do cronograma foi escolhido para este código:\n"
+            "Como o bloco do cronograma foi escolhido para este arquivo:\n"
             "consensus = Gemini e matcher local concordam; llm_only = só o Gemini;\n"
             "auto_concept = fallback por conceito; orphan = sem bloco.\n"
-            "'—' quando não há summary (arquivo não-código).",
+            "Funil léxico: manual = fixado à mão; review_rule = regra de revisão;\n"
+            "card = gabarito do card (1 bloco); card+scorer = gabarito + desempate;\n"
+            "scorer_only = só o scorer léxico. '—' quando não há bloco.",
         )
 
         row_unit = row_match + 1

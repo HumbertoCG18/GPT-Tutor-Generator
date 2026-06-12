@@ -10,6 +10,7 @@ from src.builder.ops.state_ops import (
 )
 from src.builder.core.reference_navigation import build_unit_topic_reference_index
 from src.builder.core.reference_summary import load_reference_curation
+from src.builder.routing.thresholds import METHOD_CAPS
 from src.models.core import FileEntry
 from src.utils.helpers import slugify, write_text
 
@@ -132,8 +133,17 @@ def attach_block_summary_fields(entries: list, code_curation: dict) -> list:
 
         method = str(summary.get("block_match_method") or "").strip()
         if method:
+            # Caminho de CÓDIGO vence: roda DEPOIS de resolve_unit_block_tags
+            # no regenerate_pedagogical_files, então consensus/llm_only
+            # sobrescreve o method do funil (P2.3) — comportamento intencional.
             e["computed_block_method"] = method
-        else:
+        elif str(e.get("computed_block_method") or "") not in METHOD_CAPS:
+            # Sem method na curation: só remove se o valor existente NÃO é do
+            # funil (METHOD_CAPS = manual/review_rule/card/card+scorer/
+            # scorer_only, recém-gravado por resolve_unit_block_tags nesta
+            # mesma regeneração). Pop incondicional apagaria o method do funil
+            # de toda entry não-código; o pop continua valendo para dado de
+            # código stale (prune/reatribuição), que era o propósito original.
             e.pop("computed_block_method", None)
 
         conf = summary.get("block_match_confidence")

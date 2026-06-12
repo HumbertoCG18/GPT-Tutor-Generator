@@ -51,6 +51,21 @@ BAND_HIGH: float = 0.50
 BAND_LOW: float = 0.20
 
 
+# Tetos de confiança por método de atribuição de bloco (P2.2):
+# "não há como ter certeza só com léxico" — o teto materializa isso.
+# Aplicado em content_taxonomy.resolve_unit_block_tags na consolidação:
+# computed_block_confidence = min(conf, METHOD_CAPS[method]). Métodos de
+# CÓDIGO (consensus/llm_only, gravados por pedagogical_regeneration) não
+# passam por aqui — a confiança deles vive em computed_block_match_confidence.
+METHOD_CAPS: dict = {
+    "manual": 1.0,
+    "review_rule": 0.95,
+    "card": 0.85,          # = CARD_SINGLE_CONF (gabarito 1-bloco)
+    "card+scorer": 0.80,
+    "scorer_only": 0.70,
+}
+
+
 def confidence_band(confidence: float) -> str:
     """Mapeia uma confianca de atribuicao em faixa textual.
 

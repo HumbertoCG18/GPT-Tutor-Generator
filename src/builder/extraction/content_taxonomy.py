@@ -6,7 +6,7 @@ import unicodedata
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
-from src.builder.routing.thresholds import confidence_band, relative_margin_confidence, T
+from src.builder.routing.thresholds import METHOD_CAPS, confidence_band, relative_margin_confidence, T
 from src.builder.routing.file_map import reconcile_unit_with_block
 from src.builder.core.semantic_config import (
     infer_semantic_profile,
@@ -844,7 +844,10 @@ CARD_SINGLE_CONF = 0.85
 
 def _card_scoped_block(entry, markdown_text, unit_index, instructional_blocks,
                        card_map, score_fallback_fn):
-    """Degrau card->bloco. Retorna (block_id, confidence) ou ("", 0.0).
+    """Degrau card->bloco. Retorna (block_id, confidence, method) ou ("", 0.0, "").
+
+    method (P2.2): "card" quando o gabarito tem 1 bloco (decisão direta);
+    "card+scorer" quando o scorer restrito desempatou entre 2+ blocos do card.
 
     score_fallback_fn(entry, markdown_text, scoped_blocks, unit_slug, topic_slug)
     -> (block, conf): o scorer real restrito aos blocos do card (sub-bloco).
@@ -852,19 +855,19 @@ def _card_scoped_block(entry, markdown_text, unit_index, instructional_blocks,
     from src.builder.timeline.card_block import lookup_card_blocks
     card = str(entry.get("source_section") or "").strip()
     if not card:
-        return "", 0.0
+        return "", 0.0, ""
     ids = set(lookup_card_blocks(card, card_map, unit_index, instructional_blocks))
     if not ids:
-        return "", 0.0
+        return "", 0.0, ""
     scoped = [b for b in instructional_blocks if str(b.get("id") or "") in ids]
     if not scoped:
-        return "", 0.0
+        return "", 0.0, ""
     if len(scoped) == 1:
-        return str(scoped[0].get("id") or ""), CARD_SINGLE_CONF
+        return str(scoped[0].get("id") or ""), CARD_SINGLE_CONF, "card"
     block, conf = score_fallback_fn(entry, markdown_text, scoped, "", "")
     if block is None:
-        return "", 0.0
-    return str(block.get("id") or ""), float(conf)
+        return "", 0.0, ""
+    return str(block.get("id") or ""), float(conf), "card+scorer"
 
 
 def _exam_code_from_text(text: str) -> str:
@@ -1054,10 +1057,15 @@ def resolve_unit_block_tags(
         # Nao usa a confianca da unidade da ENTRY — so o preferred_unit_slug.
         period_block_id = ""
         block_confidence = 0.0
+        # Método do funil (P2.3): manual > review_rule > card/card+scorer >
+        # scorer_only. Gravado em computed_block_method para QUALQUER entry
+        # com bloco (antes só o caminho de código Gemini gravava).
+        block_method = ""
         manual_block = resolve_entry_manual_timeline_block_fn(entry, timeline_context)
         if manual_block:
             period_block_id = _collapse_ws(str(manual_block.get("id") or ""))
             block_confidence = 1.0
+            block_method = "manual"
         else:
             instructional_blocks = [
                 block
@@ -1071,14 +1079,16 @@ def resolve_unit_block_tags(
                 # revisão que precede a prova. Sinal léxico forte, vence card/score.
                 period_block_id = _review_bid
                 block_confidence = 0.95
+                block_method = "review_rule"
             else:
-                _card_bid, _card_conf = _card_scoped_block(
+                _card_bid, _card_conf, _card_method = _card_scoped_block(
                     entry, markdown_text, unit_index, instructional_blocks, _card_block_map,
                     lambda e, md, scoped, us, ts: _best_instructional_block_fallback(e, md, scoped, us, ts),
                 )
                 if _card_bid:
                     period_block_id = _card_bid
                     block_confidence = _card_conf
+                    block_method = _card_method
                 elif instructional_blocks:
                     # Passa a unidade resolvida (mesmo fraca) so para o boost; o
                     # scorer ranqueia TODOS os blocos instrucionais.
@@ -1109,6 +1119,7 @@ def resolve_unit_block_tags(
                                 # p_conf ja e relative_margin_confidence(best,
                                 # runner_up) computada dentro do scorer — reusada.
                                 block_confidence = float(p_conf)
+                                block_method = "scorer_only"
                                 break
                     else:
                         fallback_block, fallback_conf = _best_instructional_block_fallback(
@@ -1121,6 +1132,7 @@ def resolve_unit_block_tags(
                         if fallback_block is not None:
                             period_block_id = _collapse_ws(str(fallback_block.get("id") or ""))
                             block_confidence = float(fallback_conf)
+                            block_method = "scorer_only"
 
         # --- computed_* sao a FONTE UNICA (Fase 1) ---
         # O slug/id resolvido vive direto no entry; as tags unit:/bloco: abaixo
@@ -1133,7 +1145,13 @@ def resolve_unit_block_tags(
         # scorer real. Nunca recomputado/duplicado aqui.
         computed_unit_slug = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= 0.65) else ""
         computed_block_id = period_block_id
-        computed_block_confidence = float(block_confidence)
+        # Teto por método (P2.2): léxico nunca passa do cap do seu degrau
+        # (METHOD_CAPS em thresholds.py). manual=1.0 e review_rule=0.95 ficam
+        # intactos; card/card+scorer/scorer_only são rebaixados quando a
+        # margem relativa inflaria acima do que o método permite saber.
+        computed_block_confidence = min(
+            float(block_confidence), METHOD_CAPS.get(block_method, 1.0)
+        )
 
         # Reconciliação unidade×bloco (F1): bloco manual é autoritativo; no auto,
         # bloco define a unidade só se block_confidence >= unit_confidence; senão
@@ -1174,6 +1192,25 @@ def resolve_unit_block_tags(
         new_entry = dict(entry)
         new_entry["auto_tags"] = kept
         new_entry["computed_unit_slug"] = computed_unit_slug
+        # computed_block_method (P2.3): ordem real de escrita —
+        # regenerate_pedagogical_files roda resolve_unit_block_tags (aqui) e
+        # DEPOIS attach_block_summary_fields, então no pipeline completo o
+        # caminho de CÓDIGO (consensus/llm_only, do code_curation) sempre
+        # reescreve por cima e vence, como hoje. O conflito real é o RETAG
+        # avulso (scripts/retag_manifest.py), que chama só esta função: sem
+        # proteção, apagaria um consensus/llm_only válido. Regra: preserva o
+        # method de código SE a entry já o tem E o bloco recomputado é o MESMO
+        # (curation continua válida); se o bloco mudou, o funil grava o seu.
+        _prev_method = str(entry.get("computed_block_method") or "")
+        if computed_block_id:
+            if _prev_method in {"consensus", "llm_only"} and computed_block_id == str(
+                entry.get("computed_block_id") or ""
+            ):
+                new_entry["computed_block_method"] = _prev_method
+            else:
+                new_entry["computed_block_method"] = block_method
+        else:
+            new_entry.pop("computed_block_method", None)
         new_entry["computed_block_id"] = computed_block_id
         new_entry["computed_block_confidence"] = computed_block_confidence
         new_entry["computed_block_band"] = computed_block_band
