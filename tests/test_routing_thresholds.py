@@ -16,7 +16,6 @@ def test_thresholds_present():
     assert T.BLOCK_UNIT_MIN_WINNER == 1.0
     assert T.BLOCK_UNIT_MIN_GAP == 0.35
     assert T.VOTE_DOMINANCE == 0.60
-    assert T.MATERIAL_COVERAGE_MIN == 0.70  # gate de cobertura (Fase 4)
 
 
 def test_margin_matches_old_inline_018():

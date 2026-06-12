@@ -107,8 +107,6 @@ class _Thresholds:
     #   de sinal sem rebaixar matches reais.
     UNIT_MATCH_REL_MARGIN: float = 0.15
     UNIT_MATCH_MIN_WINNER: float = 0.5
-    # cobertura de material (Fase 4, gate opcional)
-    MATERIAL_COVERAGE_MIN: float = 0.70
     # sinal de sequencia (sequence.score_sequence_match): boost de DESEMPATE
     # quando o ordinal de aula do material casa o class_ordinal do bloco.
     # 0.20 < DATE_STRONG_BOOST(0.30) e < boost de topico(0.48): decide entre
