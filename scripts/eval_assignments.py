@@ -5,7 +5,7 @@ content_taxonomy.resolve_unit_block_tags, o mesmo caminho que escreve o
 manifest), le computed_block_id/computed_block_band e compara com o bloco
 esperado. Reporta acuracia, matriz de confusao e calibracao de band.
 
-Sem disco, sem Datalab, sem Gemini. Deterministico.
+Sem rede, sem Datalab, sem Gemini (card_block_map vai num tempdir local). Deterministico.
 
 Uso:
     python scripts/eval_assignments.py [tests/fixtures/eval/assignments_gold.json]

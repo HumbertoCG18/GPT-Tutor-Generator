@@ -95,15 +95,18 @@ def attach_markdown(case: dict, entry: dict, repo: Path) -> None:
 
 
 def merge_manual_decisions(old_cases: list, new_cases: list) -> None:
-    """Preserva expected_block_id preenchido a mao em re-runs (muta new_cases)."""
+    """Preserva expected_block_id preenchido a mao em re-runs (muta new_cases).
+
+    Chave (id, category): o manifest real tem ids duplicados entre categorias
+    (ex. 'introducao' em material-de-aula E codigo-professor)."""
     decided = {
-        str(c.get("id")): c
+        (str(c.get("id")), str(c.get("category") or "")): c
         for c in old_cases or []
         if c.get("expected_block_id")
         and c.get("expected_origin") in ("precisa_decisao", "sem_gabarito")
     }
     for case in new_cases:
-        old = decided.get(str(case.get("id")))
+        old = decided.get((str(case.get("id")), str(case.get("category") or "")))
         if old and case.get("expected_origin") in ("precisa_decisao", "sem_gabarito"):
             case["expected_block_id"] = old["expected_block_id"]
             case["note"] = str(old.get("note") or "decisao humana preservada")

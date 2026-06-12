@@ -62,7 +62,7 @@ def test_categoria_fora_da_timeline_vira_excluido():
 
 
 def test_merge_preserva_decisao_humana():
-    old = [{"id": "e2", "expected_block_id": "bloco-06",
+    old = [{"id": "e2", "category": "material-de-aula", "expected_block_id": "bloco-06",
             "expected_origin": "precisa_decisao", "note": "aula de listas"}]
     new = [build_golden.case_for_entry(_entry("e2", "b.pdf"), _SEC_INDEX, _CARD_MAP)]
     build_golden.merge_manual_decisions(old, new)
@@ -73,6 +73,20 @@ def test_merge_nao_inventa_decisao():
     new = [build_golden.case_for_entry(_entry("e2", "b.pdf"), _SEC_INDEX, _CARD_MAP)]
     build_golden.merge_manual_decisions([], new)
     assert new[0]["expected_block_id"] is None
+
+
+def test_merge_distingue_ids_duplicados_por_categoria():
+    """Manifest real tem ids duplicados (ex. 'introducao' material + codigo)."""
+    old = [{"id": "e2", "category": "material-de-aula", "expected_block_id": "bloco-05",
+            "expected_origin": "precisa_decisao", "note": ""},
+           {"id": "e2", "category": "codigo-professor", "expected_block_id": "bloco-06",
+            "expected_origin": "precisa_decisao", "note": ""}]
+    new = [build_golden.case_for_entry(_entry("e2", "b.pdf"), _SEC_INDEX, _CARD_MAP),
+           build_golden.case_for_entry(_entry("e2", "b.pdf", category="codigo-professor"),
+                                       _SEC_INDEX, _CARD_MAP)]
+    build_golden.merge_manual_decisions(old, new)
+    assert new[0]["expected_block_id"] == "bloco-05"
+    assert new[1]["expected_block_id"] == "bloco-06"
 
 
 def test_stash_section_index_exclui_basename_ambiguo(tmp_path):
