@@ -2922,13 +2922,13 @@
     "ambiguous": false
    },
    "markdown": "# MÉTODOS FORMAIS\n\nProf. Júlio Machado\n\n# LÓGICA DE PREDICADOS\n\nSemântica\n\nBaseado nos materiais do Prof. Alfio Martini\n\n# Motivação\n\n- Definir a noção de interpretação para uma assinatura da Lógica de Predicados\n- Aprender a calcular o valor semântico de termos e fórmulas\n- Revisando...\n  - Termos são elementos sintáticos que servem para representar elementos do domínio de uma determinada aplicação\n    - Símbolos de variáveis, constantes e funções\n  - Fórmulas são elementos sintáticos que denotam certas propriedades booleanas que determinados elementos do domínio possam ter\n    - Símbolos de predicados, conectivos proposicionais, quantificador universal, quantificador existencial\n\n# Interpretação\n\n- Os elementos básicos de uma interpretação para uma assinatura da lógica de predicados são:\n  - Um domínio, o qual é uma coleção não vazia de elementos, no qual as fórmulas serão avaliadas.\n  - Um elemento do domínio, para cada constante da assinatura.\n  - Um conjunto de funções sobre o domínio, uma para cada símbolo de função presente na assinatura.\n  - Um conjunto de relações sobre o domínio, uma para cada símbolo de predicado na assinatura.\n\n# Interpretação\n\n- Seja =(OP, R) uma assinatura para a lógica de predicados\n- Uma interpretação I para consiste de:\n  - Um conjunto não-vazio D de valores chamado de domínio\n  - Para cada símbolo constante c C, um valor c<sup>I</sup> D\n  - Para cada símbolo de função f F, uma função f I :D<sup>n</sup>→D tal que ArF(f) = n\n  - Para cada símb",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-03",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-02",
     "bloco-03"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03 (revisao de logica de predicados)"
   },
   {
    "id": "logicapredicados-sintaxe",
@@ -2941,13 +2941,13 @@
     "ambiguous": false
    },
    "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **LÓGICA DE PREDICADOS**\n  - Exemplo\n  - Exemplo\n- **LÓGICA DE PREDICADOS**\n\n<!-- EXEC_SUMMARY_END -->\n# MÉTODOS FORMAIS\n\nProf. Júlio Machado\n\n## LÓGICA DE PREDICADOS\n\nSintaxe\n\nBaseado nos materiais do Prof. Alfio Martini\n\n#### Sintaxe\n\n- Devido ao poder da lógica de predicados, sua linguagem é mais complexa do que a lógica proposicional\n- Conceitos:\n  - Assinaturas\n  - Termos (denotam objetos)\n  - Fórmulas (denotam valores lógicos)\n\n#### Assinatura\n\n- Assinaturas são declarações dos símbolos utilizados para a construção da linguagem específica\n- Dividida em duas partes:\n  - Assinatura para os termos\n  - Assinatura para as fórmulas\n\n#### Assinatura\n\n- Uma assinatura de primeira ordem para a lógica de predicados é uma tupla =(OP, R) onde\n  - OP = (C, F, ArF) tal que\n    - C é um conjunto de símbolos de constantes\n    - F é um conjunto de símbolos de funções\n    - ArF:F→N é uma função de aridade que indica o número de argumentos de cada símbolo de função fF\n  - R = (P, ArP) tal que\n    - P é um conjunto de símbolos de predicados\n    - ArP:P→N é uma função de aridade que indica o número de argumentos de cada símbolo de predicado pP\n- Para cada assinatura assumimos um conjunto contável de identificadores para variáveis X={x, y, z, ...}\n\n### Exemplo\n\n- Assinatura para aritmética:\n  - OP=(C,F,ArF)\n    - C={0}\n    - F={add, mult, succ}\n    - ArF={add 2,",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-03",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-02",
     "bloco-03"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03"
   },
   {
    "id": "logicaproposicional-sintaxe",
@@ -2960,13 +2960,13 @@
     "ambiguous": false
    },
    "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **LÓGICA PROPOCIONAL**\n  - Proposição\n  - Proposição\n  - Composição de Proposições\n  - Composição de Proposições\n- **LÓGICA PROPOCIONAL**\n\n<!-- EXEC_SUMMARY_END -->\n# MÉTODOS FORMAIS\n\nProf. Júlio Machado\n## LÓGICA PROPOCIONAL\n\nIntrodução\n\nBaseado nos materiais do Prof. Daniel Callegari\n### Proposição\n\n- Costuma-se usar a palavra \"**proposição**\" para designar o significado de uma sentença ou oração declarativa.\n- Exemplo: \"João ama Maria\" é o mesmo que \"Maria é amada por João\".\n### Proposição\n\n- Toda proposição é uma frase (mas nem toda frase é uma proposição); uma frase é uma proposição apenas quando admite um dos dois valores lógicos: Falso (F) ou Verdadeiro (V).\n- Frases que não são proposições\n  - Pare!\n  - Quer uma xícara de café?\n  - Eu não estou bem certo se esta cor me agrada.\n- Frases que são proposições\n  - A lua é o único satélite do planeta terra (V)\n  - A cidade de Salvador é a capital do estado do Amazonas (F)\n  - O numero 712 é ímpar (F)\n  - Raiz quadrada de dois é um número irracional (V)\n\n<!-- IMAGE_DESCRIPTION: logicaproposicional-sintaxe-_page_6_Figure_1.png -->\n<!-- Tipo: genérico -->\n> **[Descrição de imagem]** A imagem apresenta um quadro destacado em amarelo contendo explicações sobre conectivos lógicos, inserido em um contexto de lista de proposições com suas representações simbólicas.\n<!-- /IMAGE_DESCRIPTION -->\n### Compo",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-03",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-02",
     "bloco-03"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03"
   },
   {
    "id": "revisao",
@@ -2979,13 +2979,13 @@
     "ambiguous": false
    },
    "markdown": "# MÉTODOS FORMAIS\n\nProf. Júlio Machado\n## CONJUNTOS E FUNÇÕES\n\nRevisão\n\n- Um conjunto é uma coleção de elementos\n- A={0,1}\n- B=={} é o conjunto vazio\n\n- Os elementos também são chamados de membros desse conjunto\n- A={0,1}\n- 0A, 0 é um elemento do conjunto A, 0 pertence a A\n- 2A, 2 não é um elemento do conjunto A, 2 não pertence a A\n\n- Conjuntos podem também ser descritos através de uma especificação das propriedades dos seus elementos\n- A={xN/x<5}, onde N é o conjunto dos números naturais\n- B={xN/x mod 2 = 0}\n\n- Um conjunto A é subconjunto de um conjunto B, AB, se cada elemento de A também é elemento de B\n- A={0,1,2}\n- N={0,1,2,3,...}\n- AN\n- AA\n- A, o vazio está contido em qualquer conjunto\n\n- União AB = {x / xA ou xB}\n  - A={0,1,2}\n  - B={0,2,4,6}\n  - AB={0,1,2,4,6}\n- Intersecção AB = {x / xA e xB}\n  - A={0,1,2}\n  - B={0,2,4,6}\n  - AB={0,2}\n- Diferença A-B ou A/B = {x / xA e xB}\n  - A={0,1,2}\n  - B={0,2,4,6}\n  - A-B={1}\n\n- Conjunto das partes, ou conjunto potência, de um conjunto A, escrito (A), é o conjunto de todos os subconjuntos do conjunto A\n- A={0,1}\n- (A)={,{0},{1},{0,1}}\n\n- O produto cartesiano entre dois conjuntos A e B, escrito AxB, é o conjunto de todos os pares ordenados (a,b) tal que aA e bB\n- A={0,1}\n- B={x,y}\n- AxB={(0,x),(0,y),(1,x),(1,y)}\n\n- O produto cartesiano generalizado A<sup>n</sup> , com n$\\geq$0 é definido como\n  - A<sup>0</sup> = {()}\n  - An+1 = AxA<sup>n</sup>\n- A={0,1}\n- A<sup>3</sup>=AxA<sup>2</sup>=AxAxA<sup>1</sup>=AxAxAxA<sup>0</sup>\n#### Rela",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-03",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-02",
     "bloco-03"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03 (conceitos essenciais)"
   },
   {
    "id": "introducao",
@@ -2998,10 +2998,10 @@
     "ambiguous": false
    },
    "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **INTRODUÇÃO**\n  - Verificação\n  - Verificação\n  - Validação\n  - Validação\n  - Validação e Verificação\n  - Requisitos\n  - Técnicas de V&V\n  - Técnicas de V&V\n  - O que é um Método Formal?\n  - O que é uma Linguagem de Especificação Formal?\n  - Porque Métodos Formais?\n  - Quando utilizar Métodos Formais?\n- **VERIFICAÇÃO FORMAL DE SISTEMAS**\n  - Verificação Formal\n  - Abordagens para Verificação Formal\n  - Abordagens para Verificação Formal\n  - Abordagens para Verificação Formal\n\n<!-- EXEC_SUMMARY_END -->\n# MÉTODOS FORMAIS\n\nProf. Júlio Machado\n\n## INTRODUÇÃO\n\nConceitos Fundamentais\n\n- Software é um dos mais variados e complexos produtos produzidos de forma regular.\n- Requisitos de qualidade dependentes:\n  - Do domínio da aplicação\n  - Ambiente de execução\n  - Público alvo\n  - Etc.\n- Exige técnicas sofisticadas e específica para cada produto desenvolvido.\n\n#### • Ariane 5:\n\n- Explosão em seu primeiro voo.\n- Causado pelo reuso de algumas partes de código de seu predecessor sem verificação adequada.\n\n#### • Therac-25:\n\n- Máquina de terapia de radiação.\n- Devido a um erro de software, seis pessoas morreram de overdose.\n\n#### • Pentium FDIV:\n\n- Erro de projeto na unidade de divisão de ponto-flutuante.\n- Intel foi forçada a oferecer substituição de todos os processadores defeituosos.\n\n![](content/images/introducao-_page_3_Picture_10.png)\n\n![](content/imag",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-02",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): aula 04/03 = introducao a metodos formais (cronograma)"
   },
   {
    "id": "provasindutivas-especificacoesrecursivas",
@@ -3014,13 +3014,13 @@
     "ambiguous": false
    },
    "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **1. Princípio da indução matemática**\n- **2. Princípio da indução matemática generalizada**\n- **3. Provas por indução de especificações recursivas**\n  - Exemplo 1:\n  - Exemplo 2:\n\n<!-- EXEC_SUMMARY_END -->\n# Provas por Indução de Especificações Recursivas\n\n## 1. Princípio da indução matemática\n\nO princípio da indução matemática sobre os Naturais pode ser definido como: supondo que  $P(x)$  é um predicado sobre os números naturais, para provar:\n\n$$\\forall x \\in \\mathbb{N}. P(x) \\quad (P(x) \\text{ é verdadeiro para todo o natural } x)$$\n\né suficiente provar:\n\n- Caso base:  $P(0)$ ; isto é, o predicado é verdadeiro para  $x$  com valor 0.\n- Caso indutivo:  $\\forall x \\in \\mathbb{N}. (P(x) \\rightarrow P(x+1))$ ; isto é, para um natural arbitrário  $x_0$ , assumimos que  $P(x_0)$  é verdadeiro (isso é chamado de HI – Hipótese de Indução) e provamos que  $P(x_0 + 1)$  também é verdadeiro (isso é chamado de Passo da Indução).\n\n| <i>indução sobre <math>\\mathbb{N}</math></i> |               |                            |\n|----------------------------------------------|---------------|----------------------------|\n| $P(0)$                                       | $P(x_0)$ (HI) |                            |\n|                                              | ...           | $(x_0 \\text{ arbitrário})$ |\n|                                              | $P(x_0 +",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-05",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-05",
     "bloco-06"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): 30/03-01/04 provas por inducao"
   },
   {
    "id": "provasindutivas-especificacoesrecursivas-arvores",
@@ -3033,13 +3033,13 @@
     "ambiguous": false
    },
    "markdown": "# Indução Estrutural sobre Árvores\n\nPodemos provar propriedades sobre especificações recursivas para estruturas de dados indutivas utilizando a técnica de prova chamada de Indução Estrutural. A indução estrutural pode ser vista como uma generalização do processo de indução sobre os naturais para outras estruturas indutivas. Assim, uma prova por indução estrutural de uma propriedade  $P$  consiste em duas partes:\n\n- Mostrar que  $P$  vale para todos os elementos especificados nos casos base da definição indutiva da estrutura;\n- Mostrar que, se  $P$  vale para elementos usado para construir novos elementos nos casos de passo de indução da definição indutiva da estrutura, então  $P$  vale para os novos elementos.\n\nSeja a seguinte definição indutiva para árvores:\n\n$$\\frac{}{\\langle \\rangle \\in ArvBin(\\tau)} \\text{ vazia} \\qquad \\frac{L \\in ArvBin(\\tau) \\quad R \\in ArvBin(\\tau), x \\in \\tau}{\\langle L, x, R \\rangle \\in ArvBin(\\tau)} \\text{ cons}$$\n\nSeja a seguinte definição equacional recursiva para a função capaz de “espelhar” uma árvore binária:\n\n$$\\text{espelho}: ArvBin(\\tau) \\rightarrow ArvBin(\\tau)$$\n\n$$\\text{espelho}(\\langle \\rangle) = \\langle \\rangle \\qquad (\\text{espelho1})$$\n\n$$\\text{espelho}(\\langle L, x, R \\rangle) = \\langle \\text{espelho}(R), x, \\text{espelho}(L) \\rangle \\qquad (\\text{espelho2})$$\n\nDeseja-se provar\n\n$$\\forall A \\in ArvBin(\\tau). \\text{espelho}(\\text{espelho}(A)) = A$$\n\nisto é, que *espelho* é função inversa de si mesmo.\n\nObserve atentamente a propriedad",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-05",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-05",
     "bloco-06"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): 30/03-01/04 inducao sobre arvores"
   },
   {
    "id": "provasindutivas-especificacoesrecursivas-listas",
@@ -3052,13 +3052,13 @@
     "ambiguous": false
    },
    "markdown": "# Indução Estrutural sobre Listas\n\nPodemos provar propriedades sobre especificações recursivas para estruturas de dados indutivas utilizando a técnica de prova chamada de Indução Estrutural. A indução estrutural pode ser vista como uma generalização do processo de indução sobre os naturais para outras estruturas indutivas. Assim, uma prova por indução estrutural de uma propriedade  $P$  consiste em duas partes:\n\n- Mostrar que  $P$  vale para todos os elementos especificados nos casos base da definição indutiva da estrutura;\n- Mostrar que, se  $P$  vale para elementos usado para construir novos elementos nos casos de passo de indução da definição indutiva da estrutura, então  $P$  vale para os novos elementos.\n\nSeja a seguinte definição indutiva para listas:\n\n$$\\frac{}{[] \\in List(\\tau)} \\text{empty} \\qquad \\frac{L \\in List(\\tau), h \\in \\tau}{h:L \\in List(\\tau)} \\text{cons}$$\n\nSeja a seguinte definição equacional recursiva para a concatenação de duas listas:\n\n$$cat: List(\\tau) \\times List(\\tau) \\rightarrow List(\\tau)$$\n\n$$cat([], l) = l \\qquad (cat1)$$\n\n$$cat(h:T, l) = h: cat(T, l) \\qquad (cat2)$$\n\nDeseja-se provar que  $cat$  é associativa, isto é:\n\n$$\\forall L_1, L_2, L_3 \\in List(\\tau). cat(L_1, cat(L_2, L_3)) = cat(cat(L_1, L_2), L_3)$$\n\nObserve atentamente a propriedade  $P$  que queremos provar por indução em  $L_1$ , já que esse é o parâmetro que sofre o processo de recursão na definição da função  $cat$ :\n\n$$P(L) \\triangleq \\forall L_2, L_3 \\in List(\\tau). cat(L, cat(L",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-05",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-05",
     "bloco-06"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): 30/03-01/04 inducao sobre listas"
   },
   {
    "id": "exercicioscorrecaoinducaomatematica",
@@ -3071,13 +3071,13 @@
     "ambiguous": false
    },
    "markdown": "# Exercícios\n\n## Provas por Indução de Especificações Equacionais Recursivas\n\n1) Especificar via equações recursivas o cálculo de potenciação de acordo com as informações que seguem e provar sua correção parcial por indução:\n\n$pot :: \\mathbb{N} \\times \\mathbb{N} \\rightarrow \\mathbb{N}$   \n $requer: true$   \n $garante: pot(b, p) = b^p$\n\n2) Especificar via equações recursivas o cálculo da subtração truncada de acordo com as informações que seguem e provar sua correção parcial por indução:\n\n$minusNat :: \\mathbb{N} \\times \\mathbb{N} \\rightarrow \\mathbb{N}$   \n $requer: true$   \n $garante: minusNat(m, n) = m - n, se m \\geq n$   \n $garante: minusNat(m, n) = 0, se m \\leq n$\n\n3) Provar por indução a correção parcial da função  $som2kR$  que segue:\n\n$som2kR :: \\mathbb{N} \\rightarrow \\mathbb{N}$   \n $requer: true$   \n $garante: som2kR(x) = \\sum_{0 \\leq k \\leq x} 2k$   \n $som2kR(x) = som2kAux(x, 0)$   \n $onde:$   \n $som2kAux :: \\mathbb{N} \\times \\mathbb{N} \\rightarrow \\mathbb{N}$   \n $requer: true$   \n $garante: som2kAux(x, a) = \\left( \\sum_{0 \\leq k \\leq x} 2k \\right) + a$   \n $som2kAux(x, a) = a, \\quad se \\ x = 0$   \n $som2kAux(x, a) = som2kAux(x - 1, a + 2x), \\quad se \\ x > 0$\n\n4) Seja a seguinte especificação equacional recursiva para a concatenação de duas listas:\n\n$cat: List(\\tau) \\times List(\\tau) \\rightarrow List(\\tau)$   \n $cat([], l) = l \\quad (1)$\n\n$cat(h:T, l) = h: cat(T, l) \\quad (2)$\n\nProve, via indução estrutural, a seguinte propriedade:\n\n$$\\forall l_1, l_2, l_3 \\in List(",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-05",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-05",
     "bloco-06"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): exercicios de provas de especificacoes recursivas"
   },
   {
    "id": "exerciciosespecificacao-respostas",
@@ -3090,13 +3090,13 @@
     "ambiguous": false
    },
    "markdown": "# Métodos Formais\n\n## Especificação Formal\n\n1) Seja a seguinte especificação:\n\nFoi solicitado a um programador a implementação de uma função para verificar a presença ou ausência de um valor  $x$  em um array  $a$ .\n\nAntes de prosseguir, pense nos requisitos que precisamos antes de iniciar a implementação da solução.\n\nAssuma as seguintes perguntas e suas respectivas respostas:\n\n- Qual é o segmento de posições do array que deve ser pesquisado?\n  - O array deve ser pesquisado dentro de um intervalo inteiro  $[0; n - 1]$ , onde  $n$  é o número de instâncias de valores que pertencem à busca. Note que  $n$  não pode ser maior que o tamanho atual do array. Assumir que  $n$  corresponde exatamente ao tamanho do array.\n- Qual é o tipo de  $x$  e como ele deve ser comparado?\n  - O array será composto por números inteiros e comparado através da igualdade usual entre inteiros.\n- Como o resultado deve ser informado?\n  - A função deverá retornar um valor booleano *true* se  $x$  ocorre no array e *false* caso contrário.\n- O segmento do array a ser pesquisado está, por exemplo, ordenado, de modo a permitir um algoritmo mais eficiente de pesquisa?\n  - O conteúdo do array não apresenta nenhuma ordem em particular.\n- É possível que  $x$  possua mais de uma ocorrência e, se sim, tal fato deve ser relevante?\n  - O array pode possuir várias ocorrências do valor  $x$ , mas tal fato é irrelevante.\n- É possível que o segmento do array esteja vazio e, se sim, isso é um erro ou um estado normal?\n  -",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-03",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-02",
     "bloco-03"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03"
   },
   {
    "id": "exerciciosespecificacao",
@@ -3109,13 +3109,13 @@
     "ambiguous": false
    },
    "markdown": "# Métodos Formais\n\n## Especificação Formal\n\n1) Seja a seguinte especificação:\n\nFoi solicitado a um programador a implementação de uma função para verificar a presença ou ausência de um valor  $x$  em um array  $a$ .\n\nAntes de prosseguir, pense nos requisitos que precisamos antes de iniciar a implementação da solução.\n\nAssuma as seguintes perguntas e suas respectivas respostas:\n\n- Qual é o segmento de posições do array que deve ser pesquisado?\n  - O array deve ser pesquisado dentro de um intervalo inteiro  $[0; n - 1]$ , onde  $n$  é o número de instâncias de valores que pertencem à busca. Note que  $n$  não pode ser maior que o tamanho atual do array. Assumir que  $n$  corresponde exatamente ao tamanho do array.\n- Qual é o tipo de  $x$  e como ele deve ser comparado?\n  - O array será composto por números inteiros e comparado através da igualdade usual entre inteiros.\n- Como o resultado deve ser informado?\n  - A função deverá retornar um valor booleano *true* se  $x$  ocorre no array e *false* caso contrário.\n- O segmento do array a ser pesquisado está, por exemplo, ordenado, de modo a permitir um algoritmo mais eficiente de pesquisa?\n  - O conteúdo do array não apresenta nenhuma ordem em particular.\n- É possível que  $x$  possua mais de uma ocorrência e, se sim, tal fato deve ser relevante?\n  - O array pode possuir várias ocorrências do valor  $x$ , mas tal fato é irrelevante.\n- É possível que o segmento do array esteja vazio e, se sim, isso é um erro ou um estado normal?\n  -",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-03",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-02",
     "bloco-03"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03 (assercoes logicas)"
   },
   {
    "id": "exerciciosformalizacaoalgoritmosrecursao2",
@@ -3160,13 +3160,13 @@
     "ambiguous": false
    },
    "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **LÓGICA PROPOSICIONAL ---**\n- **Semântica**\n  - Interpretações\n  - Semântica dos Operadores\n  - Semântica dos Operadores\n- **Fórmulas e Interpretações**\n  - Fórmulas e Interpretações\n  - Modelos\n  - Modelos\n  - Classificação das Fórmulas\n  - Classificação das Fórmulas\n  - Consequência Lógica/Semântica\n  - Consequência Lógica/Semântica\n  - Conjectura e Consequência Lógica\n  - Teoremas Importantes\n  - Equivalências\n  - Equivalências\n  - Teoremas Importantes\n\n<!-- EXEC_SUMMARY_END -->\n# MÉTODOS FORMAIS ---\n\nProf. Júlio Machado\n\n## LÓGICA PROPOSICIONAL ---\n\nSemântica\n\nBaseado nos materiais do Prof. Alfio Martini\n\n## Semântica\n\n- O estudo da semântica da lógica proposicional consiste em atribuir **valores verdade** a **fórmulas**\n- Na lógica clássica há apenas dois valores:\n  - Verdadeiro – V\n  - Falso – F\n\n### Interpretações\n\n- Os símbolos que não possuem significado fixo são chamados de variáveis proposicionais\n- Uma interpretação  $I$  para um conjunto de variáveis proposicionais  $\\Sigma$  é uma função  $I: \\Sigma \\rightarrow B$ , onde  $B = \\{V, F\\}$\n- Exemplo:\n  - Se  $\\Sigma = \\{p, q\\}$ , então temos quatro interpretações possíveis:\n\n$$\\mathcal{I}_1 = \\{p \\mapsto F, q \\mapsto F\\}$$\n\n$$\\mathcal{I}_2 = \\{p \\mapsto F, q \\mapsto V\\}$$\n\n$$\\mathcal{I}_3 = \\{p \\mapsto V, q \\mapsto F\\}$$\n\n$$\\mathcal{I}_4 = \\{p \\mapsto V, q \\mapsto V\\}$$\n\n### Semântica",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-03",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-02",
     "bloco-03"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03"
   },
   {
    "id": "exerciciosformalizacaoalgoritmosrecursao-respostas",
@@ -3262,7 +3262,7 @@
    "expected_block_id": null,
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "AMBIGUO: deadline 06/05 (bloco-11) vs conteudo Isabelle/recursao (blocos 04-06) - decisao pedagogica do usuario"
   },
   {
    "id": "t1-2026-1",
@@ -3278,7 +3278,7 @@
    "expected_block_id": null,
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "AMBIGUO: idem t1-2026-1 trabalhos"
   },
   {
    "id": "introducao",
@@ -3291,10 +3291,10 @@
     "ambiguous": false
    },
    "markdown": "",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-12",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): Exemplos (introducao a Dafny); topic 11/05 terminacao+introducao dafny"
   },
   {
    "id": "exerciciosformalizacaoalgoritmosrecursao",
@@ -3339,13 +3339,13 @@
     "ambiguous": false
    },
    "markdown": "---\nentry_id: \"arvores\"\ntitle: \"arvores\"\nlanguage: \"isabelle\"\ncategory: \"codigo-professor\"\nunit: \"\"\nsource: \"raw/code/professor/arvores.thy\"\n---\n# arvores\n\n> **Linguagem:** isabelle\n\n```isabelle\ntheory arvores\n  imports Main\nbegin\n\ndatatype 'a ArvBin = ArvVazia | Nodo \"'a ArvBin\" 'a \"'a ArvBin\"\n\nprimrec espelho :: \"'a ArvBin \\<Rightarrow> 'a ArvBin\" where\narv1:\"espelho ArvVazia = ArvVazia\" |\narv2:\"espelho (Nodo e x d) = Nodo (espelho d) x (espelho e)\"\n\ntheorem esp:\"espelho (espelho a) = a\"\nproof (induct a)\n    have \"espelho (espelho ArvVazia) = espelho ArvVazia\" by (simp only:arv1)\n    also have \"... = ArvVazia\" by (simp only:arv1)\n    finally show \"espelho (espelho ArvVazia) = ArvVazia\" by (simp)\nnext\n  fix e::\"'a ArvBin\" and d::\"'a ArvBin\" and x::\"'a\"\n  assume HI1:\"espelho (espelho e) = e\"\n  assume HI2:\"espelho (espelho d) = d\"\n  have \"espelho (espelho (Nodo e x d)) = espelho (Nodo (espelho d) x (espelho e))\" by (simp only:arv2)\n  also have \"... = Nodo (espelho (espelho e)) x (espelho (espelho d))\" by (simp only:arv2)\n  also have \"... = Nodo e x (espelho (espelho d))\" by (simp only:HI1)\n  also have \"... = Nodo e x d\" by (simp only:HI2)\n  finally show \"espelho (espelho (Nodo e x d)) = Nodo e x d\" by (simp)\nqed\nend\n```\n",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-06",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-05",
     "bloco-06"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): ferramenta Isabelle (.thy); bloco 06-13/04 prova interativa"
   },
   {
    "id": "exemplos",
@@ -3358,13 +3358,13 @@
     "ambiguous": false
    },
    "markdown": "---\nentry_id: \"exemplos\"\ntitle: \"exemplos\"\nlanguage: \"isabelle\"\ncategory: \"codigo-professor\"\nunit: \"\"\nsource: \"raw/code/professor/exemplos.thy\"\n---\n# exemplos\n\n> **Linguagem:** isabelle\n\n```isabelle\ntheory exemplos\nimports Main\nbegin\n\ntype_synonym string = \"char list\"\n\ndatatype Nat = Z | suc Nat\n\nprint_theorems\n\ninductive par::\"nat \\<Rightarrow> bool\" where\n\"par 0\" |\n\"par x \\<Longrightarrow> par (Suc(Suc x))\"\n\nthm \"Nat.induct\"\nthm \"nat.induct\"\nthm \"par.induct\"\n\n(*funcao nao-recursiva*)\ndefinition sq::\"nat \\<Rightarrow> nat\" where\n\"sq n = n*n\"\n\nvalue \"sq 2\"\n\n(*funcao recursiva*)\nfun parn::\"nat \\<Rightarrow> bool\" where\n\"parn 0 = True\"|\n\"parn (Suc 0) = False\"|\n\"parn (Suc(Suc x)) = parn x\"\n\nvalue \"parn (Suc 0)\"\nvalue \"parn 8\"\n\nthm \"parn.simps\"\nthm \"parn.induct\"\n\nfun pelomenosdois :: \"nat \\<Rightarrow> bool\" where\n\"pelomenosdois (Suc(Suc _)) = True\"|\n\"pelomenosdois _ = False\"\n\nthm \"pelomenosdois.simps\"\n\nvalue \"pelomenosdois 0\"\nvalue \"pelomenosdois 2\"\nvalue \"pelomenosdois 3\"\n\n(*funcao recursiva*)\nprimrec add::\"nat \\<Rightarrow> nat \\<Rightarrow> nat\" where\n\"add x 0 = x\"|\n\"add x (Suc y) = Suc (add x y)\"\n\nvalue \"add (Suc 0) (Suc (Suc 0))\"\nvalue \"add 1 2\"\n\nthm \"add.simps\"\n\n(*funcao recursiva*)\n(*cuja definicao falha na prova automatica das obrigacoes*)\nfun sum::\"nat \\<Rightarrow> nat \\<Rightarrow> nat\" where\n\"sum i n = (if i>n then 0 else i + sum (Suc i) n)\"\n\nend\n```\n",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-06",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-05",
     "bloco-06"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): ferramenta Isabelle (.thy)"
   },
   {
    "id": "intro",
@@ -3377,13 +3377,13 @@
     "ambiguous": false
    },
    "markdown": "---\nentry_id: \"intro\"\ntitle: \"intro\"\nlanguage: \"isabelle\"\ncategory: \"codigo-professor\"\nunit: \"\"\nsource: \"raw/code/professor/intro.thy\"\n---\n# intro\n\n> **Linguagem:** isabelle\n\n```isabelle\ntheory intro\nimports Main\nbegin\n\n(* definição indutiva do tipo dos naturais *)\ndatatype Nat = Z | suc Nat\n\n(* verificando termos do tipo Nat*)\nterm Z\nterm \"Z\"\nterm \"suc Z\"\n\n(* regra de indução para provas nos naturais, criada pelo sistema *)\nthm \"Nat.induct\"\n(* uma forma sintática mais elegante da regra de indução *)\nprint_statement \"Nat.induct\"\n\n(* adição *)\nprimrec add::\"Nat \\<Rightarrow> Nat \\<Rightarrow> Nat\" where\n    add01: \"add x Z = x\" |\n    add02: \"add x (suc y) = suc (add x y)\"\n\nterm \"add (suc (suc Z)) (suc (suc Z))\"\nvalue \"add (suc (suc Z)) (suc (suc Z))\"\nterm \"add (suc Z)\"\nvalue \"add (suc Z)\"\n\n(* nat é o tipo indutivo dos naturais definidos pelo Isabelle *)\nthm \"nat.induct\"\nprint_statement \"nat.induct\"\n\n(* verificando termos do tipo nat *)\nterm \"12::nat\"\nterm \"Suc(5)\"\nvalue \"Suc(5)\"\n\ntheorem th_add01as:\"\\<forall>x y. add (add x y) z = add x (add y z)\"\napply(induction z)\napply(simp)\napply(simp)\ndone\n\nvalue \"(6 div 2)::nat\"\n  \nvalue \"\\<Prod>{1..3::nat}\"\n\nend\n\n```\n",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-06",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-05",
     "bloco-06"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): ferramenta Isabelle (.thy); Exemplo - introducao do card"
   },
   {
    "id": "listas",
@@ -3396,13 +3396,13 @@
     "ambiguous": false
    },
    "markdown": "---\nentry_id: \"listas\"\ntitle: \"listas\"\nlanguage: \"isabelle\"\ncategory: \"codigo-professor\"\nunit: \"\"\nsource: \"raw/code/professor/listas.thy\"\n---\n# listas\n\n> **Linguagem:** isabelle\n\n```isabelle\ntheory listas\n  imports Main\nbegin\n\nprimrec cat::\"'a list \\<Rightarrow> 'a list \\<Rightarrow> 'a list\" where\ncat1:\"cat [] l = l\" |\ncat2:\"cat (h#T) l = h#(cat T l)\"\n\ntheorem assoc:\"\\<forall>l2 l3 :: 'a list . cat l1 (cat l2 l3) = cat (cat l1 l2) l3\"\nproof (induction l1)\n  show \"\\<forall>l2 l3 :: 'a list . cat [] (cat l2 l3) = cat (cat [] l2) l3\"\n  proof (rule allI, rule allI)\n    fix l2::\"'a list\" and l3::\"'a list\"\n    have \"cat [] (cat l2 l3) = cat l2 l3\" by (simp only:cat1)\n    also have \"... = cat (cat [] l2) l3\" by (simp only:cat1)\n    finally show \"cat [] (cat l2 l3) = cat (cat [] l2) l3\" by (simp)\n  qed\nnext\n  fix h::'a and l1::\"'a list\"\n  assume HI:\"\\<forall>l2 l3 :: 'a list . cat l1 (cat l2 l3) = cat (cat l1 l2) l3\"\n  show \"\\<forall>l2 l3 :: 'a list . cat (h#l1) (cat l2 l3) = cat (cat (h#l1) l2) l3\"\n  proof (rule allI, rule allI)\n    fix l2::\"'a list\" and l3::\"'a list\"\n    have \"cat (h#l1) (cat l2 l3) = h#(cat l1 (cat l2 l3))\" by (simp only:cat2)\n    also have \"... = h#(cat (cat l1 l2) l3)\" by (simp only:HI)\n    also have \"... = cat (h#(cat l1 l2)) l3\" by (simp only:cat2)\n    also have \"... = cat (cat (h#l1) l2) l3\" by (simp only:cat2)\n    finally show \"cat (h#l1) (cat l2 l3) = cat (cat (h#l1) l2) l3\" by (simp)\n  qed\nqed\nend\n```\n",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-06",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-05",
     "bloco-06"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): ferramenta Isabelle (.thy)"
   },
   {
    "id": "provas",
@@ -3415,13 +3415,13 @@
     "ambiguous": false
    },
    "markdown": "---\nentry_id: \"provas\"\ntitle: \"provas\"\nlanguage: \"isabelle\"\ncategory: \"codigo-professor\"\nunit: \"\"\nsource: \"raw/code/professor/provas.thy\"\n---\n# provas\n\n> **Linguagem:** isabelle\n\n```isabelle\ntheory provas\nimports Main\nbegin\n\n(*funcao recursiva de somar nat*)\nprimrec add::\"nat \\<Rightarrow> nat \\<Rightarrow> nat\"\nwhere\n  add01: \"add x 0 = x\" |\n  add02: \"add x (Suc y) = Suc (add x y)\"\n\ntheorem th_add01as:\"\\<forall>x y. add (add x y) z = add x (add y z)\"\napply(induction z)\napply(simp)\napply(simp)\ndone\n\ninductive ev::\"nat \\<Rightarrow> bool\"\nwhere\n  ev0: \"ev 0\" |\n  ev1: \"ev n \\<Longrightarrow> ev (Suc (Suc n))\"\n\nthm \"ev.induct\"\n\nlemma \"ev (Suc(Suc(Suc(Suc 0))))\"\napply(rule ev1)\napply(rule ev1)\napply(rule ev0)\ndone\n\nfun even::\"nat \\<Rightarrow> bool\"\nwhere\n  \"even 0 = True\" |\n  \"even (Suc 0) = False\" |\n  \"even (Suc(Suc n)) = even n\"\n\ntheorem \"ev n \\<Longrightarrow> even n\"\napply(induct rule: ev.induct)\napply(auto)\ndone\n\ntheorem \"even n \\<Longrightarrow> ev n\"\napply(induct rule: even.induct)\napply(simp add: ev0)\napply(simp)\napply(simp add: ev1)\ndone\n\ntheorem \"ev n \\<Longrightarrow> \\<exists>k. n = 2*k\"\napply(induct rule: ev.induct)\napply(simp)\napply(arith)\ndone\n\n(*provas isar*)\n\nthm nat.induct\nprint_statement nat.induct\n\ntheorem th_add01isar:\"\\<forall>x y. add (add x y) z = add x (add y z)\"\nproof (induction z)\n  show \"\\<forall>x y. add (add x y) 0 = add x (add y 0)\" by simp\nnext\n  fix x0::nat\n  assume HI:\"\\<forall>x y. add (add x y) x0 = add x (add y x0)\"\n  show \"\\<forall>x y. add ",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-06",
    "expected_origin": "precisa_decisao",
    "candidates": [
     "bloco-05",
     "bloco-06"
    ],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): ferramenta Isabelle (.thy)"
   },
   {
    "id": "correcaoterminacao",
@@ -3434,10 +3434,10 @@
     "ambiguous": false
    },
    "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **1. Correção**\n  - Correção parcial:\n  - Correção total:\n- **2. Relações e ordens**\n- **3. Ordens bem-fundamentadas**\n- **4. Exemplos e construção de ordens bem-fundamentadas**\n- **5. Prova (informal) de terminação**\n\n<!-- EXEC_SUMMARY_END -->\n{0}------------------------------------------------\n\n# Correção de Algoritmos\n\n## 1. Correção\n\nUm passo importante no trabalho com algoritmos é ser capaz de argumentar sobre sua correção. Deve-se salientar de antemão que não é razoável falar formalmente que “um algoritmo está correto”. A correção de um algoritmo deve ser dada através da relação com sua especificação, ou seja, diz-se que “o algoritmo está correto com relação à especificação das pré e pós condições e invariantes”.\n\nExistem duas definições para correção:\n\n- Correção parcial;\n- Correção total.\n\n### Correção parcial:\n\nSeja um algoritmo  $A$  com pré-condição  $P$  e pós-condição  $Q$ , diz-se que  $(|P|)A(|Q|)$  é válida sob o critério de correção parcial se e somente se toda computação terminante que começa em um estado que satisfaz  $P$  termina em um estado que satisfaz  $Q$ .\n\n(observação: essa notação se deve ao trabalho de Hoare na prova de correção de algoritmos e programas sequenciais, e é chamada de *Tripla de Hoare*).\n\nO algoritmo  $A$  é parcialmente correto com respeito a  $P$  e  $Q$  se e somente se para todos os valores do domíni",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-11",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): topic Correcao Parcial e Total 06/05"
   },
   {
    "id": "exercicioscorrecaoterminacao",
@@ -3450,10 +3450,10 @@
     "ambiguous": false
    },
    "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n## Correção e Terminação\n\n1) Acesse o seguinte tutorial do Dafny que tratam sobre a verificação da terminação:\n\n- <https://dafny-lang.github.io/dafny/OnlineTutorial/Termination>\n\n2) Analise o seguinte laço de repetição sobre duas variáveis inteiras.\n\n```\nwhile (x$\\neq$y) {  \n    x = x-1;  \n    y = y+1;  \n}\n```\n\n- a) Qual a condição sobre os valores das variáveis  $x$  e  $y$  implica na terminação do laço?\n- b) Defina o estado da computação e mostre exemplos onde ocorre e não ocorre a terminação.\n- c) Qual a variante de laço a ser utilizada de modo a provar a terminação?\n- d) Implemente o respectivo algoritmo em Dafny e observe se a variante está correta.\n\n3) Observe o seguinte método e responda: Dafny é capaz de verificar sua correção? Caso a resposta seja negativa, apresente as correções necessárias (exercício do tutorial do Dafny).\n\n```\nmethod m()  \n{  \n    var i, n := 0, 20;  \n    while i != n  \n        decreases n - i  \n    {  \n        i := i + 1;  \n    }  \n}\n```\n\n4) Seja a seguinte especificação equacional recursiva para o cálculo do tamanho de uma lista via recursão na cauda, defina a variante a ser utilizada em uma prova de terminação.\n\n$tail\\_len :: List(\\mathbb{N}) \\times \\mathbb{N} \\rightarrow \\mathbb{N}$   \n $requer: true$   \n $garante: tail\\_len([], a) = a \\vee tail\\_len([x_1, \\dots, x_n], a) = n + a$   \n $tail\\_len([], a) = a$   \n $tail\\_len(x:L, a) = tail\\_len(L, a + 1)$\n\n{1}--------------------",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-11",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): exercicios de terminacao (correcao total)"
   },
   {
    "id": "exerciciosformalizacaoalgoritmosinvariantes",
@@ -3466,10 +3466,10 @@
     "ambiguous": false
    },
    "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n# Formalização de algoritmos com invariantes de laço\n\n1) Dado os seguintes passos de um algoritmo (definido em uma linguagem como Java), defina a noção de estado da computação e mostre os passos de computação a partir do estado inicial para o valor de entrada  $c = 4$ . Defina também uma relação de transição entre os estados.\n\n```\nx=c;  \ny=0;  \nwhile (x>0){  \n    x=x-1;  \n    y=y+1;  \n}\n```\n\n2) Para o algoritmo do exercício anterior, qual a relação entre os valores das variáveis  $c$ ,  $x$  e  $y$  a cada passo da iteração? Defina uma asserção que seja uma invariante.\n\n3) Defina um algoritmo iterativo (não recursivo) para o cálculo do fatorial de um número Natural qualquer.\n\n4) Para o algoritmo do exercício 3 (fatorial), defina uma noção de estado de computação e mostre os passos necessários para computar o valor do fatorial do número 4. Defina também uma relação de transição entre os estados.\n\n5) Para o algoritmo do exercício 3 (fatorial), defina uma asserção que mostre uma propriedade invariante adequada para o laço de repetição.\n\n6) Reescreva o algoritmo de busca binária de modo que os valores  $lo$  e  $hi$  que definem o subintervalo do array sejam ambos inclusos, isto é  $[lo..hi]$ . Modifique corretamente todas as asserções da invariante de laço. Qual o comportamento observado no resultado do algoritmo?\n\n7) Observe e se convença que o algoritmo apresentado no material de estudo não garante que o índice",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-11",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): exercicios de invariantes de laco"
   },
   {
    "id": "formalizacaoalgoritmos-invarianteslaco",
@@ -3482,10 +3482,10 @@
     "ambiguous": false
    },
    "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **1. Introdução**\n- **2. Um primeiro algoritmo**\n- **3. Algoritmos como sequências de estados**\n- **4. Máquina de estados**\n- **5. Princípio da invariante**\n- **6. Invariante de laço**\n- **7. Um segundo algoritmo**\n- **8. Um terceiro algoritmo**\n\n<!-- EXEC_SUMMARY_END -->\n{0}------------------------------------------------\n\n# Invariantes de Laço\n## 1. Introdução\n\nNosso objetivo é definir uma maneira de formalizar a noção de especificação de algoritmo de maneira a permitir, futuramente, a análise e prova de propriedades (tal como a correção) sobre estes algoritmos. Estes conceitos são chamados de pré-condições, pós-condições e invariantes. Além disso, o conceito de correção de um algoritmo sempre será uma noção relativa, ou seja, um algoritmo é correto ou não sempre em relação à sua especificação.\n\nUma pré-condição é uma condição sobre a entrada que o usuário do algoritmo ou função deve respeitar. A pré-condição é um predicado (expressão booleana) que deve ser sempre verdadeira antes da execução do algoritmo ou avaliação da função. Se esta condição for violada, o efeito do algoritmo ou função torna-se indefinido e, portanto, pode ou não executar aquilo para o qual foi projetado.\n\nUma pós-condição é a condição sobre a saída do algoritmo ou função que é garantida pelo programador (ou quem projetou o algoritmo ou função). A pós-condição também é uma ",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-11",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): invariantes = correcao parcial (topic bloco-11, 06/05)"
   },
   {
    "id": "logicadehoare",
@@ -3498,10 +3498,10 @@
     "ambiguous": false
    },
    "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **Triplas de Hoare**\n  - Exemplo 1:\n  - Exemplo 2:\n  - Exercícios:\n- **Linguagem de Programação Simplificada**\n  - SINTAXE (BNF):\n  - Expressões aritméticas:\n  - Expressões lógicas:\n  - Comandos:\n  - Exercício:\n- **Cálculo de Floyd-Hoare**\n  - Exemplo:\n- **ATRIBUIÇÃO**\n  - Exemplo:\n- **CONSEQUÊNCIA (PreForte e PosFraco)**\n  - Exemplo:\n  - Exercício:\n- **COMPOSIÇÃO**\n  - Exemplo:\n  - Exemplo completo com o uso de Atribuição + PreForte + Composicao:\n  - Exercício:\n- **CONDICIONAL**\n  - Exemplo:\n  - Exemplo completo com o uso de Atribuição + PreForte + Condicional:\n  - Exercícios:\n  - Exercícios:\n\n<!-- EXEC_SUMMARY_END -->\n{0}------------------------------------------------\n\n# Lógica de Floyd-Hoare\n\n- Método axiomático para provar que determinados programas são corretos.\n- Introduzido por Charles Antony Richard Hoare e Robert Floyd na década de 1960.\n- Também utilizado para especificar a semântica (axiomática) de linguagens de programação.\n- Por que devemos especificar e verificar código?\n  - Para redução de falhas que são introduzidas durante a especificação do sistema e, assim, reduzir o seu custo final;\n  - Código bem especificado e verificado é mais fácil de reutilizar, uma vez que temos um claro entendimento do que o sistema deve fazer;\n  - Para sistemas críticos (aviões, usinas nucleares, ...) isto se torna muito mais importante, pois se esper",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-10",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): topic Logica de Hoare 27/04-04/05 (parte 1)"
   },
   {
    "id": "logicadehoare2",
@@ -3514,10 +3514,10 @@
     "ambiguous": false
    },
    "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **Cálculo de Floyd-Hoare (continuação)**\n- **LAÇOS ENQUANTO**\n  - Exemplo completo com o uso de Atribuição + Consequência + Enquanto:\n  - Exercícios:\n- **ARRAYS**\n  - Exemplo:\n  - Exemplo completo com o uso de ArrayAtribuição:\n  - **Exercícios:**\n\n<!-- EXEC_SUMMARY_END -->\n{0}------------------------------------------------\n\n# Lógica de Floyd-Hoare\n\n## Cálculo de Floyd-Hoare (continuação)\n\n## LAÇOS ENQUANTO\n\n$$\\frac{(\\{I \\wedge B\\}) \\ C \\ (\\{I\\})}{(\\{I\\}) \\ \\text{while } B \\ \\{C\\} \\ (\\{I \\wedge \\neg B\\})} \\text{EnquantoParcial}$$\n\nNa regra apresentada  $I$  deve ser uma invariante de laço. Uma invariante de laço é uma condição que é verdadeira antes e depois de cada iteração do laço, assim como ao final dele, ou seja, sempre é verdadeira. Do ponto de vista da metodologia de programação, a invariante de laço pode ser vista como uma especificação mais abstrata do laço, o qual caracteriza o propósito mais profundo do laço além dos detalhes da implementação.\n\nExemplo: cálculo do fatorial de  $x$\n\n```\n(| ? |)\ny := 1;\nz := 0;\nwhile (z != x) {\n  z := z + 1;\n  y := y * z;\n}\n(| y = x! |)\n```\n\nObserve que queremos calcular a condição mais fraca  $\\phi$  tal que:\n\n$$(\\{ \\phi \\}) \\ \\text{while } B \\ \\{C\\} \\ (\\{ \\phi \\})$$\n\nEsta  $\\phi$  pode ser calculada da seguinte maneira:\n\na) Descobrir uma fórmula  $Inv$  que seja uma invariante de laço.\n\nb) Demonstrar:\n",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-10",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): topic Logica de Hoare 27/04-04/05 (parte 2)"
   },
   {
    "id": "exerciciosdafny1",
@@ -3530,10 +3530,10 @@
     "ambiguous": false
    },
    "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n## Programação e Verificação com Dafny\n\n1) Acesse o tutorial do Dafny e leia as seguintes seções:\n\n- Introduction\n- Methods\n- Pre and Post Conditions\n- Assertions\n- Functions\n- Loop Invariants\n- Termination\n\n2) Compute uma função Fibonacci. O primeiro código é a especificação recursiva da função. O segundo código é a implementação iterativa. Anote a implementação iterativa de modo que possa ser verificada pelo Dafny.\n\n```\nghost function Fib(n: nat): nat\n{\n  if n < 2 then n else Fib(n-2) + Fib(n-1)\n}\n\nmethod Compute_Fib(n: nat) returns (x: nat)\nensures x == Fib(n)\n{\n  x := 0;\n  var y := 1;\n  var i := 0;\n  while i < n\n  {\n    x, y := y, x + y;\n    i := i + 1;\n  }\n}\n```\n\n3) Especifique uma função recursiva  $Sum: \\mathbb{N} \\rightarrow \\mathbb{N}$ , que calcule a soma dos naturais no intervalo  $[0, n]$ . Depois, constrói um método que implementa essa função e verifique sua correção em Dafny.\n\n```\nghost function Sum(n: nat): nat\n{\n}\n```\n\n{1}------------------------------------------------\n\n```\nmethod Compute_Sum(n: nat) returns (s: nat)\nensures s == Sum(n)\n{\n}\n}\n```\n\n4) Sem alterar o código de implementação a seguir, usando apenas as anotações de especificação, faça com que o seguinte método seja verificado no Dafny. Dica: esse método está calculando certos somatórios.\n\n```\nmethod Cube(N: int) returns (c: int)\n  requires 0 <= N\n  ensures c == N*N*N\n{\n  c := 0;\n  var n := 0;\n  var k := 1;\n  var m := 6;\n  while n <",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-12",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): exercicios programacao/verificacao Dafny (intro); ALTERNATIVA bloco-13"
   },
   {
    "id": "exerciciosdafny2",
@@ -3546,10 +3546,10 @@
     "ambiguous": false
    },
    "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **Exercícios**\n- **Programação e Verificação com Dafny (Arrays)**\n\n<!-- EXEC_SUMMARY_END -->\n{0}------------------------------------------------\n\n# Métodos Formais\n\nProf. Júlio Machado\n\n## Exercícios\n\n## Programação e Verificação com Dafny (Arrays)\n\n1) Acesse o tutorial do Dafny. Execute as atividades indicadas em nas seguintes seções:\n\n- Arrays\n- Quantifiers\n- Predicates\n- Framing\n- Binary Search\n\n2) Complete as seguintes definições para encontrar o maior elemento de um array. Observe atentamente a diferença entre os dois métodos. Anote a implementação de modo que possa ser verificada a correção total.\n\n```\nmethod FindMaxIndex(a: array<int>) returns (i: int)\n// Anote este metodo com pre e pos condicoes\n{\n    // Retorna o indice do maior elemento.\n}\n```\n\n```\nmethod FindMaxValue(a: array<int>) returns (m: int)\n// Anote este metodo com pre e pos condicoes\n{\n    // Retorna o maior elemento.\n}\n```\n\n3) Dado o seguinte predicado em Dafny, complete sua definição para indicar quando um array possua somente elementos distintos e em ordem crescente. Observe atentamente a necessidade de um frame de leitura. Depois crie um método Main para verificar o funcionamento.\n\n```\nghost predicate Sorted(a: array<int>)\n    reads a\n{\n}\n```\n\n4) A seguinte função em Dafny especifica o cálculo do produto dos números em um array. Ela é definida em termos de uma função recur",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-13",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): arrays no topic do bloco-13 (13-25/05)"
   },
   {
    "id": "exerciciosdafny3",
@@ -3562,10 +3562,10 @@
     "ambiguous": false
    },
    "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n## Programação e Verificação com Dafny (Sequences)\n\n1) Acesse o tutorial do Dafny. Execute as atividades indicadas em nas seguintes seções:\n\n- Collection Types / Sequences <https://dafny-lang.github.io/dafny/OnlineTutorial/ValueTypes>\n- Sequences <https://dafny-lang.github.io/dafny/OnlineTutorial/Sequences>\n\n2) O seguinte predicado em Dafny pode ser utilizado para indicar se uma sequência possui os elementos em ordem crescente.\n\n```\nghost predicate ordenado(s: seq<int>)\n{\n  forall i,j :: 0 <= i < j < |s| ==> s[i] <= s[j]\n}\n```\n\nConstrua uma versão recursiva para o mesmo predicado.\n\n3) O seguinte predicado em Dafny pode ser utilizado para indicar se um elemento não pertence a um array.\n\n```\nghost predicate naopertence(x:int, a:array<int>)\nreads a\n{\n  forall i :: 0 <= i < a.Length ==> x != a[i]\n}\n```\n\nConstrua uma versão que não utiliza o quantificador universal para o mesmo predicado. Dica: use sequências como um tipo auxiliar.\n\n4) O uso de sequências é muito útil para simplificar especificações sobre outros tipos de coleções, tal como arrays. Estamos interessados em calcular o somatório de todos os elementos de um array de inteiros. Implemente e prove correta sua especificação, utilizando obrigatoriamente *seq* para facilitar a construção das especificações necessárias. Primeiro, especifique uma função recursiva adequada para representar o somatório de elementos de uma sequência. Somente depois, implemente um ",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-13",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): sequencias no topic do bloco-13"
   },
   {
    "id": "exerciciosdafny4",
@@ -3578,10 +3578,10 @@
     "ambiguous": false
    },
    "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n## Programação e Verificação com Dafny (Sets, Multisets)\n\n1) Acesse o tutorial do Dafny. Execute as atividades indicadas em nas seguintes seções:\n\n- Collection Types / Sets / Multisets / Maps <https://dafny-lang.github.io/dafny/OnlineTutorial/ValueTypes>\n- Sets <https://dafny-lang.github.io/dafny/OnlineTutorial/Sets>\n\n2) Explique com suas palavras o que cada asserção descrita no seguinte código significa:\n\n```\nmethod FazAlgo(a: array<int>, n: int, e: int)\n  requires 0 <= n < a.Length\n  modifies a\n  ensures multiset(a[..n+1]) == multiset(a[..n]) + multiset{e}\n{\n  a[n] := e;\n  assert a[..n+1] == a[..n] + [e];\n}\n```\n\n3) O uso de sequências, conjuntos e multiconjuntos é muito útil para simplificar especificações sobre outros tipos de coleções. Deseja-se especificar um predicado capaz de indicar se um determinado array é uma permutação de outro array. Tal predicado é bastante útil na especificação de algoritmos de ordenação, por exemplo.\n\na) De que forma você verificaria se um array é uma permutação de outro? Pense em um algoritmo antes de executar as instruções do exercício que segue.\n\nb) Seja a seguinte definição: um array  $a$  é uma permutação de um array  $b$  se e somente se para todo elemento  $e$ , tem-se que a cardinalidade de  $e$  em  $a$  é a mesma que a cardinalidade de  $e$  em  $b$ . Com base nessa definição, defina um predicado  $permutacao: sequencia\\langle\\mathbb{Z}\\rangle \\times sequencia\\langle\\",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-13",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): conjuntos no topic do bloco-13"
   },
   {
    "id": "exerciciosdafny5",
@@ -3594,10 +3594,10 @@
     "ambiguous": false
    },
    "markdown": "{0}------------------------------------------------\n\n# Exercícios\n\n## Programação e Verificação com Dafny (Classes)\n\n1) Quando utilizamos objetos, Dafny necessita da descrição clara dos objetos que podem ter seus campos lidos ou modificados através do conceito de *frames* de leitura/escrita. Considere a seguinte classe e explique o problema que o Dafny encontrou. O quê está faltando na especificação?\n\n```\nclass WrapArray\n{\n  var intarray: array<int>\n  constructor (i:int)\n    requires i > 0\n  {\n    intarray := new int[i];\n  }\n  method init(i: int)\n    modifies intarray\n  {\n    var index: int := 0;\n    while (index < intarray.Length)\n    {\n      intarray[index] := i;\n      index := index+1;\n    }\n  }\n}\n\nmethod Main()\n{\n  var sh:= new WrapArray(5);\n  sh.init(4);\n}\n```\n\n2) Implemente e verifique em Dafny a correção de uma classe que represente uma ContaCorrente com operações de depósito, saque e consulta de saldo. Sabe-se que os objetos ContaCorrente possuem um valor máximo de saldo negativo garantido pelo banco e que jamais poderão extrapolar esse limite.\n\n{1}------------------------------------------------\n\n3) Em sala de aula foi apresentada a especificação de uma estrutura de dados do tipo fila de tamanho limitado e sua implementação através de um array. Modifique a especificação para suportar uma fila de tamanho ilimitado (lembre-se que agora não existe mais o impedimento de inserção caso o array esteja cheio, necessitando a substituição por um array maior). Altere de maneira",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-15",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): exercicios classes (topic OO do bloco-15)"
   },
   {
    "id": "classes-parte1",
@@ -3610,10 +3610,10 @@
     "ambiguous": false
    },
    "markdown": "",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-15",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): exemplos classes parte 1 (topic OO)"
   },
   {
    "id": "colecoes-arrays",
@@ -3626,10 +3626,10 @@
     "ambiguous": false
    },
    "markdown": "",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-13",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): exemplos arrays"
   },
   {
    "id": "colecoes-conjuntos",
@@ -3642,10 +3642,10 @@
     "ambiguous": false
    },
    "markdown": "",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-13",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): exemplos conjuntos/multiconjuntos"
   },
   {
    "id": "colecoes-sequences",
@@ -3658,10 +3658,10 @@
     "ambiguous": false
    },
    "markdown": "",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-13",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): exemplos sequencias"
   },
   {
    "id": "exercicios-conjuntos",
@@ -3674,10 +3674,10 @@
     "ambiguous": false
    },
    "markdown": "",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-13",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): respostas dos exercicios de conjuntos"
   },
   {
    "id": "hoare",
@@ -3690,10 +3690,10 @@
     "ambiguous": false
    },
    "markdown": "",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-10",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): exemplos Floyd-Hoare (unico bloco com topic hoare); ALTERNATIVA bloco-12 (usado na intro Dafny)"
   },
   {
    "id": "invariantes",
@@ -3706,10 +3706,10 @@
     "ambiguous": false
    },
    "markdown": "",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-11",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): exemplos invariantes (correcao parcial); ALTERNATIVA bloco-12"
   },
   {
    "id": "terminacao",
@@ -3722,10 +3722,10 @@
     "ambiguous": false
    },
    "markdown": "",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-12",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): topic Terminacao introducao dafny 11/05; ALTERNATIVA bloco-11"
   },
   {
    "id": "tiposindutivos",
@@ -3738,10 +3738,10 @@
     "ambiguous": false
    },
    "markdown": "",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-15",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao assistida (Claude, 12/06): ordem do card Moodle: apos label semana 01/06"
   }
  ]
 }

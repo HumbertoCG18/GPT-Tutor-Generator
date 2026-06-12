@@ -174,8 +174,9 @@ este plano-mestre (tabela abaixo).
 
 | Fase | Status | Acurácia geral | Sem seção | Confiante-e-errado |
 |---|---|---|---|---|
-| baseline | — | 83.7% | 70.4% | 7/8 erros |
-| P0 | pendente | — | — | — |
+| baseline (diagnóstico, rótulos LLM) | — | 83.7% | 70.4% | 7/8 erros |
+| P0 — golden v1 (ground truth ancorado) | **fechado 12/06** | **56.5% (26/46)** | n/a (todos com seção física) | **7** |
+| P1 | pendente | — | — | — |
 | P1 | pendente | — | — | — |
 | P2 | pendente | — | — | — |
 | P3 | pendente | — | — | — |
