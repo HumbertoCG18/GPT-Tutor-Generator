@@ -1898,6 +1898,7 @@ class MoodleCourseSelectDialog(tk.Toplevel):
         m365_filter = self._m365_filter_var.get().strip()
 
         def worker():
+            import logging
             store = SubjectStore()
             # --- Login M365 PRIMEIRO (antes do import Moodle), p/ autenticar logo ---
             m365_client = None
@@ -1947,14 +1948,17 @@ class MoodleCourseSelectDialog(tk.Toplevel):
             elif m365_client:
                 try:
                     from src.builder.sources import m365
-                    from src.builder.sources.moodle import parse_moodle_course
+                    from src.builder.sources.moodle import (
+                        parse_moodle_course, section_file_index_strict, find_subject_for_course,
+                    )
                     self._busy("Listando arquivos do OneDrive...")
-                    sections = []
-                    for course in selected:
-                        cid = str(course.get("id") or "")
-                        for sec in (self._client.get_course_contents(cid) or []):
-                            if sec.get("name"):
-                                sections.append(sec["name"])
+                    cid0 = str(selected[0].get("id") or "")
+                    try:
+                        contents0 = self._client.get_course_contents(cid0) or []
+                    except Exception:
+                        logging.getLogger("m365").exception("contents Moodle indisponível p/ índice M365")
+                        contents0 = []
+                    section_index, _ambiguous = section_file_index_strict(contents0)
                     info0 = parse_moodle_course(selected[0])
                     mdest = Path(self._base) / info0["slug"]
 
@@ -1962,20 +1966,25 @@ class MoodleCourseSelectDialog(tk.Toplevel):
                         self._progress_to(done, total, f"M365 {done}/{total}: {name} → {card}")
 
                     mrep = m365.download_subject_m365(
-                        m365_client, m365_filter, sections, mdest, progress_cb=_pcb)
-                    sp0 = store.get(info0["name"]) if hasattr(store, "get") else None
+                        m365_client, m365_filter, section_index, mdest, progress_cb=_pcb)
+                    sp0 = find_subject_for_course(store, selected[0])
                     if sp0 and getattr(sp0, "m365_filter", "") != m365_filter:
                         sp0.m365_filter = m365_filter
                         store.add(sp0)
+                    filtro_txt = "" if sp0 else "\nAVISO: perfil da matéria não encontrado — filtro M365 não salvo."
                     repo_root = getattr(sp0, "repo_root", "") if sp0 else ""
                     backf = m365.apply_source_section(repo_root, mrep["name_to_section"]) if repo_root else 0
-                    mapped = "; ".join(f"{s}->{c}{'' if m else ' (novo)'}"
-                                       for s, c, m in mrep["mapping"])
+                    api_n = sum(1 for _b, _c, o in mrep["mapping"] if o == "moodle_api")
+                    fallback = [b for b, _c, o in mrep["mapping"] if o == "fallback_pasta"]
+                    fb_txt = (f"\nFallback — sem seção na API ({len(fallback)}): "
+                              f"{', '.join(fallback[:8])}{' …' if len(fallback) > 8 else ''}"
+                              if fallback else "")
+                    warn_txt = "".join(f"\nAVISO: {w}" for w in (mrep.get("warnings") or []))
                     multi = ("  (M365 aplicado só à 1ª matéria — o filtro é por matéria; "
                              "reimporte cada uma separadamente)" if len(selected) > 1 else "")
                     m365_tail = (f"\n\nM365 [{info0['name']}] — baixados: {mrep['downloaded']}  "
-                                 f"falhas: {len(mrep['failed'])}  source_section: {backf}{multi}\n"
-                                 f"Cards: {mapped}")
+                                 f"falhas: {len(mrep['failed'])}  cards pela API: {api_n}  "
+                                 f"source_section: {backf}{multi}{fb_txt}{warn_txt}{filtro_txt}")
                 except Exception as exc:
                     import logging
                     logging.getLogger("m365").exception("Falha no import M365")
