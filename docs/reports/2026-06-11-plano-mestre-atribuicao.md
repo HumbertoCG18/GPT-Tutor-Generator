@@ -1,9 +1,32 @@
 # Plano-mestre — Reforma do sistema de atribuição
 
-date: 2026-06-11
+date: 2026-06-11 (atualizado 2026-06-12 pós-M365)
 base: `docs/reports/2026-06-11-diagnostico-atribuicao.md` (diagnóstico com dados reais)
+revisão: `docs/reports/2026-06-11-reanalise-atribuicao.md` (re-análise independente +
+causa raiz M365 provada)
 objetivo do projeto: **auto é o caminho principal**; manual é correção de exceção.
 Cada fase = ciclo próprio (brainstorm → spec → plano → subagents → eval → relatório).
+
+## Atualização 2026-06-12 — o que mudou desde o diagnóstico
+
+- **Causa raiz a montante encontrada e CORRIGIDA (M365).** A re-análise provou que a
+  classe dominante de erro nascia ANTES do matcher: o download M365 colocava o
+  arquivo no card errado por chute léxico (pasta-tópico do OneDrive → seção Moodle
+  por afinidade de tokens), contaminando `source_section`. A feature M365
+  (spec/plano `2026-06-11-m365-card-mapping`, 7 commits, suíte verde) trocou isso
+  por índice basename→seção REAL da API Moodle; fallback honesto, nunca léxico.
+  **Para imports NOVOS, a origem do sinal está limpa.**
+- **Implicação para este plano:** o P1 muda de papel. Não é mais "resgatar a seção
+  que se perde" — a seção agora vem certa da API no import. P1 vira a **2ª linha de
+  defesa** (degradação visível quando a seção falta mesmo assim) + reparo dos DADOS
+  já contaminados (manifests/stash existentes ainda têm `source_section` errado e
+  `source_path` quebrados — reparo é trabalho à parte, fora do funil).
+- **Correções de rota da re-análise:** B2 (card bonus 2×) **refutado** — sai do P3.
+  IDF de raridade **já existe** no scorer de UNIDADE (`token_weights = 1/freq`,
+  file_map.py); P4 reusa esse mecanismo no scorer de BLOCO em vez de criar do zero.
+  CamelCase **confirmado** (fix na tokenização do título, não no `normalize` global).
+- **Sequência inalterada:** P0 (medir) continua sendo o primeiro — sem harness,
+  nenhuma fase prova melhora.
 
 ## Norte
 
@@ -55,15 +78,21 @@ O `scripts/eval_assignments.py` colapsa com o índice persistido (bug B3: espera
 
 Esforço: baixo. Risco: baixo. Dependências: nenhuma.
 
-### P1 — Seção automática (mata a classe dominante de erro)
+### P1 — Seção automática (2ª linha de defesa + reparo dos dados)
 
-**Tese comprovada:** 100% dos erros têm `source_section` vazio; o stash Moodle JÁ é
-organizado por seção — a informação existe e se perde no caminho.
+**REVISADO pós-M365.** A premissa original ("a seção existe no stash e se perde por
+basename") estava parcialmente errada: a re-análise mostrou que a seção se perdia
+porque o download M365 CHUTAVA o card por léxico. Isso foi corrigido na origem
+(feature M365). P1 deixa de ser o conserto principal e passa a cobrir os resíduos:
 
-- Backfill automático no build/import (hoje é script manual que nunca roda):
-  durante `regenerate`/import, entries com seção vazia tentam resgate por basename
-  contra o stash da matéria (lógica do `scripts/backfill_source_section.py` movida
-  pro pipeline) e/ou API Moodle quando configurada.
+- **2ª linha de defesa**: entries que mesmo assim cheguem sem `source_section`
+  (import direto de arquivo solto, raw/pdfs por categoria, Moodle offline no import)
+  tentam resgate por basename contra o índice da API quando disponível.
+- **Reparo dos dados já contaminados** (trabalho à parte, pode virar sub-fase): o
+  manifest real do Metodos-Formais tem `source_section` errado (chute léxico antigo)
+  e `source_path` quebrados (pasta `dafny\` extinta + arquivos movidos). Re-rodar
+  import M365 corrigido + retag reconcilia; precisa de passo de reconciliação de
+  caminhos.
 - Todo caminho de import preenche seção quando derivável (stash_import já faz;
   raw/pdfs e import direto ganham o resgate).
 - **Degradação visível**: seção vazia após resgate ⇒ method `scorer_only`, teto de
@@ -98,8 +127,8 @@ consumidores de computed_block_confidence/band). Dependências: P0.
 
 - B1: `_NO_TIMELINE_CATEGORIES` ganha equivalentes EN (`references`) ou normalização
   de categoria antes do filtro.
-- B2: card bonus possivelmente somado 2× (file_map.py:795 + :874) — confirmar intenção,
-  deduplicar se bug.
+- ~~B2: card bonus somado 2×~~ — **REFUTADO** na re-análise: file_map.py:795 e :874
+  são caminhos mutuamente exclusivos, sem dupla soma. Removido do escopo.
 - B4: re-rodar retag no repo real pós-F1 e confirmar que `formalizacaoalgoritmos-recursao`
   (unit u02 + bloco u01) reconcilia ou flagra conflito.
 - B5: colisão de ids no manifest (`t1-2026-1`, `introducao` 2×) — id ganha sufixo de
@@ -115,7 +144,9 @@ casos (só os sem seção resgatável); depois de P2, quando decide, a confianç
 
 - **Raridade de token (IDF simples)**: peso do token ∝ 1/nº de blocos que o contêm.
   "hoare" (1 bloco) passa a valer ≫ "logica" (muitos blocos). Resolve o mecanismo
-  central dos erros LogicaDeHoare.
+  central dos erros LogicaDeHoare. NOTA: o scorer de UNIDADE já tem isso
+  (`token_weights = 1/freq`, file_map.py:136-140) — reusar o mesmo mecanismo no
+  scorer temporal/bloco (`entry_signals.py`, hoje pesos fixos), não criar do zero.
 - **Sinal de ferramenta**: extensão/conteúdo (.thy=Isabelle, .dfy/Dafny) vs ferramenta
   do bloco (tokens "isabelle"/"dafny" nos topics) — boost/penalidade forte. Resolve
   intro.thy→bloco Dafny.
