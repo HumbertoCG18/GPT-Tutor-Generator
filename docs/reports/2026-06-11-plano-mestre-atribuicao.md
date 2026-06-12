@@ -240,10 +240,23 @@ cumprido. Force-reprocess corrigido para resolver old_id por source_path
 - `METHOD_CAPS.get(method, 1.0)`: default permissivo — method novo futuro
   passaria sem teto.
 - FILE_MAP corrigido pra fonte única (commit 94c17b3, 12/06 — a coluna Período
-  lê computed_block_id; o roteamento próprio do artefato morreu). Follow-ups:
-  (a) coluna UNIDADE do FILE_MAP ainda recomputa (auto_map_entry_unit próprio);
-  (b) leitura crua de computed_block_id sem o fallback auto_tags["bloco:"] de
-  manifests legados (unificar com resolve_effective_block).
+  lê computed_block_id; o roteamento próprio do artefato morreu). ~~Follow-up
+  (a) coluna UNIDADE~~ — RESOLVIDO na Fase 0 do P4 (8141a12). (b) leitura crua
+  de computed_block_id sem o fallback auto_tags["bloco:"] de manifests legados
+  (unificar com resolve_effective_block) — segue dívida.
+
+**Fase 0 do P4 fechada (12/06, commits 94bce21..8141a12):** 4 mortos deletados
+(flag processing_profiles_seeded_v2 PULADA — é guard de idempotência ativo, não
+morta; MATERIAL_COVERAGE_MIN tinha consumidor e foi inline), 6 unificações,
+normalize_match_text unificado com `keep="+-./"` parametrizado (51/211 textos
+reais divergiam — datas/outline justificam), 3 segundos cérebros mortos (coluna
+UNIDADE do FILE_MAP, scorer reimplementado da UI com pesos divergentes, parser
+regex de FILE_MAP renderizado; −469/+123 linhas). Golden IDÊNTICO em toda a
+fase: 36/48, confiante-e-errado 0, mesmos 12 erros. Suíte 1291.
+Dívidas de fluxo registradas (não atacadas): cronograma_health top-N roda o
+scorer com markdown vazio; retag sem `_content_taxonomy` (inputs degradados vs
+pipeline completo); índices (assignment/whiteboard/code_health) imprimem
+`e.tags` legado em vez de computed_unit_slug.
 - ~~Golden: 2 pendentes (`t1-2026-1` ×2)~~ — RESOLVIDO 12/06: usuário decidiu
   opção conteúdo (bloco-06, Isabelle/fim do arco; deadline rejeitado). Golden
   completo: 48 casos contados, 0 pendentes. Placar final do ciclo com
