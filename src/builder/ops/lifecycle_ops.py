@@ -7,9 +7,26 @@ import sys
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from src.utils.helpers import write_text, write_json_manifest
+from src.utils.helpers import write_text, write_json_manifest, slugify
 
 logger = logging.getLogger(__name__)
+
+
+def _dedup_entry_id(entry_id: str, category: str, existing_ids: set) -> str:
+    """Id colidiu com entry de OUTRO source_path: sufixa categoria, depois contador.
+
+    Ids são diretórios de assets (sobrescrita silenciosa, bug B5) — nunca colidir.
+    NÃO retroativo: aplica-se apenas à nova entry que está sendo inserida.
+    """
+    if entry_id not in existing_ids:
+        return entry_id
+    cat = slugify(category or "") if (category or "").strip() else ""
+    candidate = f"{entry_id}-{cat}" if cat else f"{entry_id}-2"
+    i = 2
+    while candidate in existing_ids:
+        candidate = f"{entry_id}-{cat}-{i}" if cat else f"{entry_id}-{i}"
+        i += 1
+    return candidate
 
 
 def process_single_impl(
@@ -68,6 +85,22 @@ def process_single_impl(
 
     logger.info("Processing single entry: %s (%s)", entry.title, entry.file_type)
     item_result = builder._process_entry(entry)
+    # Dedup de id: se o id gerado colide com entry de OUTRO source_path,
+    # sufixa com a categoria e, se necessário, um contador (bug B5).
+    # O fluxo already_exists/force (acima) já garante que o mesmo source_path
+    # não chega aqui duas vezes, então toda colisão aqui é de path diferente.
+    existing_ids = {e.get("id") for e in manifest.get("entries", [])}
+    deduped_id = _dedup_entry_id(
+        str(item_result.get("id") or ""),
+        str(item_result.get("category") or ""),
+        existing_ids,
+    )
+    if deduped_id != item_result.get("id"):
+        logger.warning(
+            "Entry id collision: %s -> %s (category=%s)",
+            item_result.get("id"), deduped_id, item_result.get("category"),
+        )
+        item_result["id"] = deduped_id
     manifest["entries"].append(item_result)
     manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
     manifest.setdefault("logs", []).extend(builder.logs)
