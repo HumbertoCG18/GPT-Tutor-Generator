@@ -5,6 +5,8 @@ candidatos; score_entry_against_timeline_block(topic_token_weights=...) usa
 esses pesos para pontuar título/markdown/tags contra o topic do bloco. Com
 weights=None o comportamento é EXATAMENTE o anterior (paridade — chamadores
 que não passam o kwarg, ex. cronograma_health, não mudam)."""
+from functools import partial
+
 from src.builder.extraction.entry_signals import (
     collect_entry_unit_signals,
     normalize_match_text,
@@ -15,6 +17,10 @@ from src.builder.routing.file_map import (
     score_card_evidence_against_entry,
     score_entry_against_timeline_block,
 )
+from src.builder.text.normalize import normalize_match_text as _normalize_match_text_base
+
+# Normalize com keep="+-./", como usa content_taxonomy._normalize_match_text
+_normalize_keep = partial(_normalize_match_text_base, keep="+-./")
 
 
 def _pblock(bid, topic, start, end, sessions=None, unit="unidade-02-verificacao-de-programas"):
@@ -163,3 +169,33 @@ def test_score_text_against_row_none_e_pesos_um_sao_identicos():
     assert score_text_against_row(
         "logica de hoare", tokens, token_weights={t: 1.0 for t in tokens}
     ) == base
+
+
+def test_block_token_weights_usa_normalize_do_call_site():
+    """Token divergente pelo normalize: "pre-condicao" com keep="+-./" é 1 token
+    (12 chars, sem divisão), mas com o canônico vira "pre condicao" — "pre" (<4)
+    é filtrado, só "condicao" entra.
+
+    Cenário: 3 blocos, todos com "pre-condicao" no topic_text.
+    Com normalize=_normalize_keep, o token "pre-condicao" aparece em df=3 →
+    peso = 1/3 < 1.0 (IDF amortece).
+    Sem o fix (normalize canônico), "pre-condicao" NÃO aparece no dict →
+    default seria 1.0 (IDF escapa).
+    """
+    topic = "verificacao pre-condicao pos-condicao invariante"
+    blocks = [
+        _pblock(f"b{i}", topic, f"2026-0{i+1}-01", f"2026-0{i+1}-14")
+        for i in range(3)
+    ]
+    weights_keep = block_token_weights(blocks, normalize=_normalize_keep)
+    # Com o normalize correto, "pre-condicao" deve estar no dict com df=3 -> peso 1/3
+    assert "pre-condicao" in weights_keep, (
+        "BUG: 'pre-condicao' ausente — normalize canônico dividiu em 'pre'(filtrado)+'condicao'; "
+        "IDF escapa (default 1.0) em vez de amortecer"
+    )
+    expected = 1.0 + 1.0 * (1.0 / 3.0 - 1.0)  # IDF_WEIGHT=1.0, df=3
+    assert abs(weights_keep["pre-condicao"] - expected) < 1e-9
+
+    # Canônico NÃO deve ter o token com hífen (ele vai para "condicao")
+    weights_canonical = block_token_weights(blocks)
+    assert "pre-condicao" not in weights_canonical

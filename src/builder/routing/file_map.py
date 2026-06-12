@@ -835,36 +835,47 @@ def timeline_block_matches_preferred_topic(block: Dict[str, object], preferred_t
     return False
 
 
-def block_token_weights(blocks: List[Dict[str, object]]) -> Dict[str, float]:
+def block_token_weights(
+    blocks: List[Dict[str, object]],
+    *,
+    normalize: Optional[Callable[[str], str]] = None,
+) -> Dict[str, float]:
     """S2 (P4): IDF por raridade entre blocos CANDIDATOS.
 
     token -> peso efetivo 1 + IDF_WEIGHT*(1/df - 1), onde df = nº de blocos
     candidatos cujo topic_text normalizado contém o token (mesma mecânica do
     token_weights do scorer de UNIDADE, peso=1/freq). Tokens de TODOS os
-    topic_texts dos candidatos entram; tokens curtos (<4) e numéricos ficam
-    fora (mesmo filtro do scorer). Tokens do nome do curso/área
+    topic_texts dos candidatos entram; tokens curtos (<4) ficam fora (mesmo
+    filtro do scorer — linha topic_tokens). Tokens do nome do curso/área
     (UNIT_GENERIC_TOKENS, ex. "metodos"/"formais" — presentes em TODO markdown
     via header) recebem raridade ZERO (df infinito): aparecem em qualquer
     entry, então não distinguem bloco nenhum — e o df dentro de um candidato
     set pequeno (card de 2 blocos) não os amortece o bastante. Computar UMA
     vez por entry, sobre o conjunto que será ranqueado, e repassar via
-    topic_token_weights= ao scorer."""
+    topic_token_weights= ao scorer.
+
+    `normalize`: normalize a usar para tokenizar topic_text; deve ser o MESMO
+    que o scorer do call site usa para tokenizar o topic (default = canônico).
+    Call sites que usam normalize com keep="+-./", como o fallback da taxonomy,
+    devem repassar seu normalize aqui — caso contrário tokens com hífen (ex.
+    "pre-condicao") divergem: presentes no topic tokenizado pelo scorer mas
+    ausentes no dict de pesos → default 1.0 (IDF escapa)."""
+    _norm = normalize if normalize is not None else _normalize_text
     frequency: Dict[str, int] = {}
     for block in blocks or []:
         if not isinstance(block, dict):
             continue
-        topic_norm = _normalize_text(str(block.get("topic_text", "") or ""))
+        topic_norm = _norm(str(block.get("topic_text", "") or ""))
         tokens = {
             token
             for token in topic_norm.split()
-            if len(token) >= 4 and not token.isdigit()
+            if len(token) >= 4
         }
         for token in tokens:
             frequency[token] = frequency.get(token, 0) + 1
     return {
         token: 1.0 + IDF_WEIGHT * ((0.0 if token in UNIT_GENERIC_TOKENS else 1.0 / freq) - 1.0)
         for token, freq in frequency.items()
-        if freq
     }
 
 
@@ -1231,7 +1242,9 @@ def select_probable_period_for_entry(
     scored_source_blocks = topic_filtered_blocks if topic_filtered_blocks else blocks
     # S2 (P4): IDF computado UMA vez por entry, sobre os blocos que este
     # ranking compara (não por bloco) — raridade é relativa ao conjunto.
-    topic_token_weights = block_token_weights(scored_source_blocks)
+    # Repassa o mesmo normalize que o scorer usa: tokens divergentes (datas,
+    # hífens, outline) não escapam do IDF por ausência no dict de pesos.
+    topic_token_weights = block_token_weights(scored_source_blocks, normalize=normalize_match_text)
     session_scored_blocks = []
     for block in scored_source_blocks:
         block_score = score_entry_against_timeline_block(

@@ -823,7 +823,9 @@ def _best_instructional_block_fallback(
     signals = collect_entry_unit_signals(entry, markdown_text)
     # S2 (P4): IDF por raridade computado UMA vez por entry, sobre o conjunto
     # de candidatos deste ranking (instructional_blocks ou o recorte do card).
-    topic_token_weights = block_token_weights(instructional_blocks)
+    # Repassa o mesmo normalize (keep="+-./") que o scorer usa neste caminho:
+    # tokens com hífen/data/outline não escapam do IDF por ausência no dict.
+    topic_token_weights = block_token_weights(instructional_blocks, normalize=_normalize_match_text)
     scored = [
         (
             block,
