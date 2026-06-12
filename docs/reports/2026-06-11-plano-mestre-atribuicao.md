@@ -184,8 +184,8 @@ este plano-mestre (tabela abaixo).
 |---|---|---|---|---|
 | baseline (diagnóstico, rótulos LLM) | — | 83.7% | 70.4% | 7/8 erros |
 | P0 — golden v1 (ground truth ancorado) | **fechado 12/06** | **56.5% (26/46)** | n/a (todos com seção física) | **7** |
-| P1 | pendente | — | — | — |
-| P1 | pendente | — | — | — |
+| P0 — golden v1.1 (rótulos confirmados + card map revisão-P1 corrigido) | — | 58.7% (27/46) | n/a | 6 |
+| P1 — card map via labels (+ fix B3 2º call site) | **fechado 12/06** | **78.3% (36/46)** | n/a | 9 (alvo do P2) |
 | P2 | pendente | — | — | — |
 | P3 | pendente | — | — | — |
 | P4 | pendente | — | — | — |
