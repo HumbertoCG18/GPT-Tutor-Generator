@@ -46,3 +46,35 @@ def test_strict_index_case_variants_across_sections_are_ambiguous():
 def test_strict_index_empty_contents():
     idx, amb = section_file_index_strict(None)
     assert idx == {} and amb == set()
+
+
+from src.builder.sources.moodle import find_subject_for_course
+
+class _FakeProfile:
+    def __init__(self, name, slug="", moodle_course_id=""):
+        self.name = name; self.slug = slug; self.moodle_course_id = moodle_course_id
+
+class _FakeStore:
+    def __init__(self, *profiles):
+        self._d = {p.name: p for p in profiles}
+    def names(self): return sorted(self._d)
+    def get(self, name): return self._d.get(name)
+
+_COURSE = {"id": 92717, "fullname":
+           "4646M-04 - Métodos Formais para Computação - Turma 031 - 2026/1 - Prof. Julio Machado"}
+
+def test_find_subject_by_moodle_course_id_wins():
+    a = _FakeProfile("Metodos-Formais", slug="metodos_formais", moodle_course_id="92717")
+    b = _FakeProfile("Métodos Formais para Computação", slug="metodos-formais-para-computacao")
+    assert find_subject_for_course(_FakeStore(a, b), _COURSE) is a
+
+def test_find_subject_by_slug_when_no_id():
+    b = _FakeProfile("Outro Nome", slug="metodos-formais-para-computacao")
+    assert find_subject_for_course(_FakeStore(b), _COURSE) is b
+
+def test_find_subject_falls_back_to_name():
+    c = _FakeProfile("Métodos Formais para Computação")
+    assert find_subject_for_course(_FakeStore(c), _COURSE) is c
+
+def test_find_subject_none_when_no_match():
+    assert find_subject_for_course(_FakeStore(_FakeProfile("X")), _COURSE) is None

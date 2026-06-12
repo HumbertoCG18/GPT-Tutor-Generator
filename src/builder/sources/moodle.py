@@ -293,6 +293,26 @@ def build_card_structure(stash_dir, contents) -> dict:
     return {"folders": folders, "expected_files": expected}
 
 
+def find_subject_for_course(store, course):
+    """Acha o SubjectProfile da matéria: moodle_course_id > slug > nome.
+
+    Mesma precedência do upsert de import_moodle_courses; usado também pela UI
+    (persistir m365_filter no perfil certo — antes o lookup por nome falhava
+    em silêncio quando o nome do store divergia do nome vindo do Moodle)."""
+    info = parse_moodle_course(course)
+    cid = info["moodle_course_id"]
+    match_by_slug = None
+    for n in store.names():
+        sp = store.get(n)
+        if not sp:
+            continue
+        if cid and getattr(sp, "moodle_course_id", "") == cid:
+            return sp
+        if not match_by_slug and getattr(sp, "slug", "") and sp.slug == info["slug"]:
+            match_by_slug = sp
+    return match_by_slug or store.get(info["name"])
+
+
 def import_moodle_courses(selected_courses, base_folder, store, client, download: bool = False) -> dict:
     """Upsert de SubjectProfile + estrutura de cards + backfill do manifest.
 
@@ -311,17 +331,9 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
         cid = info["moodle_course_id"]
         stash = str(base / info["slug"])
         # --- upsert (id -> slug -> create) ---
-        match_by_id = None
-        match_by_slug = None
-        for n in store.names():
-            sp = store.get(n)
-            if not sp:
-                continue
-            if cid and getattr(sp, "moodle_course_id", "") == cid:
-                match_by_id = sp
-                break
-            if not match_by_slug and getattr(sp, "slug", "") and sp.slug == info["slug"]:
-                match_by_slug = sp
+        sp = find_subject_for_course(store, course)
+        match_by_id = sp if (sp is not None and cid and getattr(sp, "moodle_course_id", "") == cid) else None
+        match_by_slug = sp if (sp is not None and match_by_id is None and getattr(sp, "slug", "") == info["slug"]) else None
         if match_by_id is not None:
             sp = match_by_id
             sp.stash_folder = stash
