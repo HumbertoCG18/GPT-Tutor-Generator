@@ -79,6 +79,13 @@ def _merge_manual_and_auto_tags(
 def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str]:
     manual_tags = [str(tag).strip() for tag in (entry.get("manual_tags") or []) if str(tag).strip()]
     auto_tags = [str(tag).strip() for tag in (entry.get("auto_tags") or []) if str(tag).strip()]
+    # S4 (P4): valores das auto_tags `ferramenta:` em campo próprio — o scorer
+    # de bloco (file_map, TOOL_TOKENS) filtra quais são ferramentas de verdade.
+    tool_values = [
+        tag.split(":", 1)[1].strip()
+        for tag in auto_tags
+        if tag.lower().startswith("ferramenta:")
+    ]
     legacy_tags = [
         part.strip()
         for part in str(entry.get("tags", "") or "").replace(",", ";").split(";")
@@ -107,6 +114,7 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         "category_text": normalize_match_text(entry.get("category", "")),
         "manual_tags_text": normalize_match_text("; ".join(manual_tags)),
         "auto_tags_text": normalize_match_text("; ".join(auto_tags)),
+        "tool_tags_text": normalize_match_text(" ".join(tool_values)),
         "legacy_tags_text": normalize_match_text("; ".join(legacy_tags)),
         "tags_text": normalize_match_text(merged_tags),
         "raw_text": normalize_match_text(entry.get("raw_target", "")),

@@ -71,6 +71,26 @@ DATE_WEAK_BOOST: float = 0.10
 IDF_WEIGHT: float = 1.0
 
 
+# S4 (P4): sinal de ferramenta entry x topic do bloco
+# (file_map.score_entry_against_timeline_block, só nos caminhos de ranking —
+# mesmo guard do S2: topic_token_weights is not None). As auto_tags
+# `ferramenta:<valor>` do manifest viram ferramentas da entry APENAS quando o
+# valor é chave de TOOL_TOKENS — o extrator também emite ruído
+# (ferramenta:proposicional, ferramenta:formal, ferramenta:sobre...) que NÃO é
+# ferramenta de verdade e é ignorado. Boost quando o topic do bloco contém um
+# token da ferramenta da entry; penalidade quando o bloco tem token de OUTRA
+# ferramenta do mapa e nenhum da entry (material Isabelle não pertence a bloco
+# Dafny). 0.8/0.4 calibrados no golden Metodos-Formais (T9): boost na ordem do
+# boost de tópico exato (0.8), penalidade na ordem da de unidade errada (0.45).
+TOOL_BOOST: float = 0.8
+TOOL_PENALTY: float = 0.4
+TOOL_TOKENS: dict = {
+    "isabelle": {"isabelle"},
+    "dafny": {"dafny"},
+    "hoare": {"hoare"},
+}
+
+
 # Tetos de confiança por método de atribuição de bloco (P2.2):
 # "não há como ter certeza só com léxico" — o teto materializa isso.
 # Aplicado em content_taxonomy.resolve_unit_block_tags na consolidação:

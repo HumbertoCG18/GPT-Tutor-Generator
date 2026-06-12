@@ -2843,6 +2843,9 @@
    "id": "eth2",
    "title": "GitHub - Consensys/eth2.0-dafny: Eth2.0 spec in Dafny · GitHub",
    "category": "bibliografia",
+   "auto_tags": [
+    "ferramenta:dafny"
+   ],
    "source_section_real": "",
    "unit_guess": {
     "slug": "",
@@ -2859,6 +2862,7 @@
    "id": "aws-encryption-sdk",
    "title": "GitHub - aws/aws-encryption-sdk: AWS Encryption SDK · GitHub",
    "category": "bibliografia",
+   "auto_tags": [],
    "source_section_real": "",
    "unit_guess": {
     "slug": "",
@@ -2875,6 +2879,11 @@
    "id": "archive-of-formal-proofs-355fb8",
    "title": "Archive of Formal Proofs",
    "category": "references",
+   "auto_tags": [
+    "ferramenta:axiom-free",
+    "ferramenta:formal",
+    "ferramenta:isabelle"
+   ],
    "source_section_real": "",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -2891,6 +2900,9 @@
    "id": "exerciciosformalizacaoalgoritmosrecursao3",
    "title": "ExerciciosFormalizacaoAlgoritmosRecursao3",
    "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
    "source_section_real": "Especificações Indutivas e Recursivas",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -2907,6 +2919,10 @@
    "id": "formalizacaoalgoritmos-recursao2",
    "title": "FormalizacaoAlgoritmos_Recursao2",
    "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:formal",
+    "ferramenta:sobre"
+   ],
    "source_section_real": "Especificações Indutivas e Recursivas",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -2923,6 +2939,7 @@
    "id": "exerciciosconjuntosindutivos",
    "title": "ExerciciosConjuntosIndutivos",
    "category": "listas",
+   "auto_tags": [],
    "source_section_real": "Especificações Indutivas e Recursivas",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -2939,6 +2956,7 @@
    "id": "conjuntosindutivos",
    "title": "ConjuntosIndutivos",
    "category": "material-de-aula",
+   "auto_tags": [],
    "source_section_real": "Especificações Indutivas e Recursivas",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -2955,6 +2973,9 @@
    "id": "logicapredicados-semantica",
    "title": "logicaPredicados_semantica",
    "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:predicados"
+   ],
    "source_section_real": "Revisão - Lógica e Especificação",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -2974,6 +2995,9 @@
    "id": "logicapredicados-sintaxe",
    "title": "logicaPredicados_sintaxe",
    "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:predicados"
+   ],
    "source_section_real": "Revisão - Lógica e Especificação",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -2993,6 +3017,10 @@
    "id": "logicaproposicional-sintaxe",
    "title": "logicaProposicional_sintaxe",
    "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:propocional",
+    "ferramenta:proposicional"
+   ],
    "source_section_real": "Revisão - Lógica e Especificação",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3012,6 +3040,7 @@
    "id": "revisao",
    "title": "revisao",
    "category": "material-de-aula",
+   "auto_tags": [],
    "source_section_real": "Revisão - Lógica e Especificação",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3031,9 +3060,10 @@
    "id": "introducao",
    "title": "introducao",
    "category": "material-de-aula",
+   "auto_tags": [],
    "source_section_real": "Introdução a Métodos Formais",
    "unit_guess": {
-    "slug": "unidade-02-verificacao-de-programas",
+    "slug": "unidade-01-metodos-formais",
     "confidence": 1.0,
     "ambiguous": false
    },
@@ -3050,6 +3080,7 @@
    "id": "provasindutivas-especificacoesrecursivas",
    "title": "ProvasIndutivas_EspecificaçõesRecursivas",
    "category": "material-de-aula",
+   "auto_tags": [],
    "source_section_real": "Provas por Indução",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3069,6 +3100,9 @@
    "id": "provasindutivas-especificacoesrecursivas-arvores",
    "title": "ProvasIndutivas_EspecificaçõesRecursivas_Arvores",
    "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:sobre"
+   ],
    "source_section_real": "Provas por Indução",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3088,6 +3122,9 @@
    "id": "provasindutivas-especificacoesrecursivas-listas",
    "title": "ProvasIndutivas_EspecificaçõesRecursivas_Listas",
    "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:sobre"
+   ],
    "source_section_real": "Provas por Indução",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3107,9 +3144,10 @@
    "id": "exercicioscorrecaoinducaomatematica",
    "title": "ExerciciosCorrecaoInducaoMatematica",
    "category": "listas",
+   "auto_tags": [],
    "source_section_real": "Provas por Indução",
    "unit_guess": {
-    "slug": "unidade-01-metodos-formais",
+    "slug": "unidade-02-verificacao-de-programas",
     "confidence": 1.0,
     "ambiguous": false
    },
@@ -3126,9 +3164,12 @@
    "id": "exerciciosespecificacao-respostas",
    "title": "ExerciciosEspecificacao_respostas",
    "category": "gabaritos",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
    "source_section_real": "Revisão - Lógica e Especificação",
    "unit_guess": {
-    "slug": "unidade-01-metodos-formais",
+    "slug": "unidade-02-verificacao-de-programas",
     "confidence": 1.0,
     "ambiguous": false
    },
@@ -3145,9 +3186,12 @@
    "id": "exerciciosespecificacao",
    "title": "ExerciciosEspecificacao",
    "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
    "source_section_real": "Revisão - Lógica e Especificação",
    "unit_guess": {
-    "slug": "unidade-01-metodos-formais",
+    "slug": "unidade-02-verificacao-de-programas",
     "confidence": 1.0,
     "ambiguous": false
    },
@@ -3164,6 +3208,9 @@
    "id": "exerciciosformalizacaoalgoritmosrecursao2",
    "title": "ExerciciosFormalizacaoAlgoritmosRecursao2",
    "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
    "source_section_real": "Especificações Indutivas e Recursivas",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3180,6 +3227,10 @@
    "id": "exerciciosisabelle2",
    "title": "ExerciciosIsabelle2",
    "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal",
+    "ferramenta:isabelle"
+   ],
    "source_section_real": "Provas por Indução",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3196,6 +3247,9 @@
    "id": "logicaproposicional-semantica",
    "title": "logicaProposicional_semantica",
    "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:proposicional"
+   ],
    "source_section_real": "Revisão - Lógica e Especificação",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3215,6 +3269,9 @@
    "id": "exerciciosformalizacaoalgoritmosrecursao-respostas",
    "title": "ExerciciosFormalizacaoAlgoritmosRecursao_respostas",
    "category": "gabaritos",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
    "source_section_real": "Especificações Indutivas e Recursivas",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3231,6 +3288,9 @@
    "id": "formalizacaoalgoritmos-recursao",
    "title": "FormalizacaoAlgoritmos_Recursao",
    "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
    "source_section_real": "Especificações Indutivas e Recursivas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3247,6 +3307,10 @@
    "id": "formalizacaoalgoritmos-recursao3",
    "title": "FormalizacaoAlgoritmos_Recursao3",
    "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:formal",
+    "ferramenta:sobre"
+   ],
    "source_section_real": "Especificações Indutivas e Recursivas",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3263,6 +3327,10 @@
    "id": "exerciciosisabelle",
    "title": "ExerciciosIsabelle",
    "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal",
+    "ferramenta:isabelle"
+   ],
    "source_section_real": "Provas por Indução",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3279,6 +3347,7 @@
    "id": "revisao-p1",
    "title": "revisao_p1",
    "category": "listas",
+   "auto_tags": [],
    "source_section_real": "Exercícios de Revisão para Provas",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3295,6 +3364,7 @@
    "id": "t1-2026-1",
    "title": "t1_2026_1",
    "category": "trabalhos",
+   "auto_tags": [],
    "source_section_real": "TDE Trabalho Discente Efetivo",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3311,9 +3381,10 @@
    "id": "t1-2026-1",
    "title": "T1 2026 1",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "TDE Trabalho Discente Efetivo",
    "unit_guess": {
-    "slug": "unidade-01-metodos-formais",
+    "slug": "unidade-02-verificacao-de-programas",
     "confidence": 1.0,
     "ambiguous": false
    },
@@ -3327,6 +3398,7 @@
    "id": "introducao",
    "title": "Introducao",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3350,6 +3422,9 @@
    "id": "exerciciosformalizacaoalgoritmosrecursao",
    "title": "ExerciciosFormalizacaoAlgoritmosRecursao",
    "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal"
+   ],
    "source_section_real": "Especificações Indutivas e Recursivas",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3366,6 +3441,7 @@
    "id": "revisao-p1-gabarito",
    "title": "revisao_p1_gabarito",
    "category": "provas",
+   "auto_tags": [],
    "source_section_real": "Exercícios de Revisão para Provas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3382,6 +3458,7 @@
    "id": "arvores",
    "title": "arvores",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Provas por Indução",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3401,6 +3478,7 @@
    "id": "exemplos",
    "title": "exemplos",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Provas por Indução",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3420,9 +3498,10 @@
    "id": "intro",
    "title": "intro",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Provas por Indução",
    "unit_guess": {
-    "slug": "unidade-02-verificacao-de-programas",
+    "slug": "unidade-01-metodos-formais",
     "confidence": 1.0,
     "ambiguous": false
    },
@@ -3439,6 +3518,7 @@
    "id": "listas",
    "title": "listas",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Provas por Indução",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3458,6 +3538,7 @@
    "id": "provas",
    "title": "provas",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Provas por Indução",
    "unit_guess": {
     "slug": "unidade-01-metodos-formais",
@@ -3477,6 +3558,7 @@
    "id": "correcaoterminacao",
    "title": "CorrecaoTerminacao",
    "category": "material-de-aula",
+   "auto_tags": [],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3500,6 +3582,7 @@
    "id": "exercicioscorrecaoterminacao",
    "title": "ExerciciosCorrecaoTerminacao",
    "category": "listas",
+   "auto_tags": [],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3523,6 +3606,10 @@
    "id": "exerciciosformalizacaoalgoritmosinvariantes",
    "title": "ExerciciosFormalizacaoAlgoritmosInvariantes",
    "category": "listas",
+   "auto_tags": [
+    "ferramenta:formal",
+    "ferramenta:invariantes"
+   ],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3546,6 +3633,10 @@
    "id": "formalizacaoalgoritmos-invarianteslaco",
    "title": "FormalizacaoAlgoritmos_InvariantesLaco",
    "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:formal",
+    "ferramenta:invariantes"
+   ],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3569,6 +3660,9 @@
    "id": "logicadehoare",
    "title": "LogicaDeHoare",
    "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:hoare"
+   ],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3592,6 +3686,10 @@
    "id": "logicadehoare2",
    "title": "LogicaDeHoare2",
    "category": "material-de-aula",
+   "auto_tags": [
+    "ferramenta:enquanto",
+    "ferramenta:hoare"
+   ],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3615,6 +3713,9 @@
    "id": "exerciciosdafny1",
    "title": "ExerciciosDafny1",
    "category": "listas",
+   "auto_tags": [
+    "ferramenta:dafny"
+   ],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3638,6 +3739,9 @@
    "id": "exerciciosdafny2",
    "title": "ExerciciosDafny2",
    "category": "listas",
+   "auto_tags": [
+    "ferramenta:dafny"
+   ],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3661,9 +3765,12 @@
    "id": "exerciciosdafny3",
    "title": "ExerciciosDafny3",
    "category": "listas",
+   "auto_tags": [
+    "ferramenta:dafny"
+   ],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
-    "slug": "unidade-02-verificacao-de-programas",
+    "slug": "unidade-01-metodos-formais",
     "confidence": 1.0,
     "ambiguous": false
    },
@@ -3684,6 +3791,9 @@
    "id": "exerciciosdafny4",
    "title": "ExerciciosDafny4",
    "category": "listas",
+   "auto_tags": [
+    "ferramenta:dafny"
+   ],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3707,9 +3817,12 @@
    "id": "exerciciosdafny5",
    "title": "ExerciciosDafny5",
    "category": "listas",
+   "auto_tags": [
+    "ferramenta:dafny"
+   ],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
-    "slug": "unidade-02-verificacao-de-programas",
+    "slug": "unidade-01-metodos-formais",
     "confidence": 1.0,
     "ambiguous": false
    },
@@ -3730,9 +3843,10 @@
    "id": "classes-parte1",
    "title": "classes_parte1",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
-    "slug": "unidade-01-metodos-formais",
+    "slug": "unidade-02-verificacao-de-programas",
     "confidence": 0.09327764159999999,
     "ambiguous": false
    },
@@ -3753,6 +3867,7 @@
    "id": "colecoes-arrays",
    "title": "colecoes_arrays",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3776,6 +3891,7 @@
    "id": "colecoes-conjuntos",
    "title": "colecoes_conjuntos",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3799,6 +3915,7 @@
    "id": "colecoes-sequences",
    "title": "colecoes_sequences",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3822,9 +3939,10 @@
    "id": "exercicios-conjuntos",
    "title": "exercicios_conjuntos",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
-    "slug": "unidade-01-metodos-formais",
+    "slug": "unidade-02-verificacao-de-programas",
     "confidence": 0.6018576416000001,
     "ambiguous": false
    },
@@ -3845,9 +3963,12 @@
    "id": "hoare",
    "title": "hoare",
    "category": "codigo-professor",
+   "auto_tags": [
+    "ferramenta:hoare"
+   ],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
-    "slug": "unidade-01-metodos-formais",
+    "slug": "unidade-02-verificacao-de-programas",
     "confidence": 1.0,
     "ambiguous": false
    },
@@ -3868,6 +3989,9 @@
    "id": "invariantes",
    "title": "invariantes",
    "category": "codigo-professor",
+   "auto_tags": [
+    "ferramenta:invariantes"
+   ],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3891,6 +4015,7 @@
    "id": "terminacao",
    "title": "terminacao",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
     "slug": "unidade-02-verificacao-de-programas",
@@ -3914,9 +4039,10 @@
    "id": "tiposindutivos",
    "title": "tiposindutivos",
    "category": "codigo-professor",
+   "auto_tags": [],
    "source_section_real": "Verificação de Programas",
    "unit_guess": {
-    "slug": "unidade-01-metodos-formais",
+    "slug": "unidade-02-verificacao-de-programas",
     "confidence": 0.09327764159999999,
     "ambiguous": false
    },

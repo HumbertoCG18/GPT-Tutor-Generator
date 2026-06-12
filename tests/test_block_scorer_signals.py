@@ -91,9 +91,9 @@ def _score(entry, markdown, block, *, weights=None, unit_slug="unidade-02-verifi
     )
 
 
-def _entry(title, category="listas"):
+def _entry(title, category="listas", auto_tags=None):
     return {"id": "e1", "title": title, "category": category,
-            "manual_tags": [], "auto_tags": [], "tags": ""}
+            "manual_tags": [], "auto_tags": list(auto_tags or []), "tags": ""}
 
 
 def test_token_raro_decide_entre_blocos():
@@ -199,3 +199,87 @@ def test_block_token_weights_usa_normalize_do_call_site():
     # Canônico NÃO deve ter o token com hífen (ele vai para "condicao")
     weights_canonical = block_token_weights(blocks)
     assert "pre-condicao" not in weights_canonical
+
+
+# --- S4 (P4): sinal de ferramenta entry x topic do bloco ---------------------
+
+_U1 = "unidade-01-metodos-formais"
+
+
+def _blocks_unidade1():
+    """Geometria do erro real `provas`/`t1` no golden Metodos-Formais: b05
+    (inducao em arvores) vence hoje materiais Isabelle de título neutro; b06 é
+    o bloco do Isabelle."""
+    b05 = _pblock(
+        "bloco-05", "inducao arvores", "2026-03-30", "2026-04-06",
+        sessions=["inducao estrutural arvores aula", "exercicios aula"],
+        unit=_U1,
+    )
+    b06 = _pblock(
+        "bloco-06", "interativa teoremas isabelle", "2026-04-08", "2026-04-15",
+        sessions=["prova interativa de teoremas isabelle aula", "exercicios aula"],
+        unit=_U1,
+    )
+    return b05, b06
+
+
+def test_ferramenta_isabelle_puxa_bloco_isabelle():
+    """Entry com auto_tag ferramenta:isabelle e título neutro: o bloco cujo
+    topic contém o token da ferramenta (b06) tem que vencer o b05, e o ganho
+    da tag no b06 tem que ser >= TOOL_BOOST (os canais legados de auto_tags
+    sozinhos dão bem menos — sem S4 esta margem NÃO fecha)."""
+    from src.builder.routing.thresholds import TOOL_BOOST
+
+    b05, b06 = _blocks_unidade1()
+    entry = _entry("exemplos", auto_tags=["ferramenta:isabelle"])
+    weights = block_token_weights([b05, b06])
+    score_05 = _score(entry, "", b05, weights=weights, unit_slug=_U1)
+    score_06 = _score(entry, "", b06, weights=weights, unit_slug=_U1)
+    assert score_06 > score_05
+    sem_tag_06 = _score(_entry("exemplos"), "", b06, weights=weights, unit_slug=_U1)
+    assert score_06 - sem_tag_06 >= TOOL_BOOST
+
+
+def test_ferramenta_conflitante_penaliza():
+    """Entry ferramenta:isabelle vs bloco de OUTRA ferramenta do mapa (dafny):
+    o score COM a tag tem que sair menor que o score SEM a tag (penalidade)."""
+    bloco_dafny = _pblock(
+        "bloco-12", "terminacao introducao dafny", "2026-05-11", "2026-05-12",
+        sessions=["terminacao introducao dafny aula"],
+    )
+    weights = block_token_weights([bloco_dafny])
+    com_tag = _score(
+        _entry("exemplos", auto_tags=["ferramenta:isabelle"]),
+        "", bloco_dafny, weights=weights,
+    )
+    sem_tag = _score(_entry("exemplos"), "", bloco_dafny, weights=weights)
+    assert com_tag < sem_tag
+
+
+def test_ferramenta_sem_weights_nao_dispara():
+    """Guard do S2: chamadores legados (sem topic_token_weights) não veem o
+    sinal de ferramenta. Cenário de PENALIDADE (entry isabelle vs bloco dafny):
+    os canais legados de auto_tags não casam nada neste topic, então sem o
+    kwarg o score com/sem a tag é IDÊNTICO — a penalidade não vaza."""
+    bloco_dafny = _pblock(
+        "bloco-12", "terminacao introducao dafny", "2026-05-11", "2026-05-12",
+        sessions=["terminacao introducao dafny aula"],
+    )
+    com_tag = _score(_entry("exemplos", auto_tags=["ferramenta:isabelle"]), "", bloco_dafny)
+    sem_tag = _score(_entry("exemplos"), "", bloco_dafny)
+    assert com_tag == sem_tag
+
+
+def test_ferramenta_fora_do_mapa_ignorada():
+    """ferramenta:proposicional não é ferramenta de verdade (ruído do
+    extrator) — fora de TOOL_TOKENS, não dá boost nem penalidade."""
+    b05, b06 = _blocks_unidade1()
+    weights = block_token_weights([b05, b06])
+    entry = _entry("exemplos", auto_tags=["ferramenta:proposicional"])
+    entry_sem = _entry("exemplos")
+    for block in (b05, b06):
+        com = _score(entry, "", block, weights=weights, unit_slug=_U1)
+        sem = _score(entry_sem, "", block, weights=weights, unit_slug=_U1)
+        # auto_tags_text muda (canal 0.12), mas "ferramenta proposicional" não
+        # casa topic nenhum destes blocos -> score idêntico
+        assert com == sem

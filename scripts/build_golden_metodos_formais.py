@@ -44,6 +44,16 @@ def case_for_entry(entry: dict, sec_index: dict, card_map: dict) -> dict:
         "id": str(entry.get("id") or ""),
         "title": str(entry.get("title") or ""),
         "category": str(entry.get("category") or ""),
+        # S4: SO as auto_tags `ferramenta:` do manifest real (alimentam o sinal
+        # de ferramenta do scorer via _entry_from_case do harness). As demais
+        # auto_tags computadas (unit:/bloco:/tipo:) sao PREDICOES de runs
+        # anteriores — carrega-las contamina o eval (vazamento pelo canal
+        # legado de auto_tags: 40/48 -> 37/48 medido em 12/06) e nao representa
+        # a primeira atribuicao em producao.
+        "auto_tags": [
+            str(t) for t in (entry.get("auto_tags") or [])
+            if str(t).strip().startswith("ferramenta:")
+        ],
         "source_section_real": section,
         "unit_guess": {
             "slug": str(entry.get("computed_unit_slug") or ""),

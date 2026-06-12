@@ -16,6 +16,9 @@ from src.builder.routing.thresholds import (
     DATE_STRONG_BOOST,
     DATE_WEAK_BOOST,
     IDF_WEIGHT,
+    TOOL_BOOST,
+    TOOL_PENALTY,
+    TOOL_TOKENS,
     T,
     margin_confidence,
     relative_margin_confidence,
@@ -971,6 +974,30 @@ def score_entry_against_timeline_block(
                 signals.get("legacy_tags_text", ""), topic_tokens,
                 weight=0.05, token_weights=topic_token_weights,
             )
+
+    # S4 (P4): sinal de ferramenta — atrás do MESMO guard do S2
+    # (topic_token_weights is not None = só caminhos de ranking; chamadores
+    # legados como cronograma_health ficam EXATAMENTE como antes). Ferramentas
+    # da entry = valores de `ferramenta:` (signals["tool_tags_text"]) que são
+    # chaves de TOOL_TOKENS — o resto é ruído do extrator e não conta. Topic
+    # com token da ferramenta da entry -> +TOOL_BOOST; topic com token de
+    # OUTRA ferramenta do mapa e nenhum da entry -> -TOOL_PENALTY.
+    if topic_token_weights is not None and topic_text:
+        entry_tools = {
+            tok
+            for tok in str(signals.get("tool_tags_text", "") or "").split()
+            if tok in TOOL_TOKENS
+        }
+        if entry_tools:
+            topic_token_set = set(topic_text.split())
+            if any(TOOL_TOKENS[tool] & topic_token_set for tool in entry_tools):
+                score += TOOL_BOOST
+            elif any(
+                TOOL_TOKENS[tool] & topic_token_set
+                for tool in TOOL_TOKENS
+                if tool not in entry_tools
+            ):
+                score -= TOOL_PENALTY
 
     score += min(score_card_evidence_against_entry_fn(signals, block.get("card_evidence", []) or []), 0.45)
 

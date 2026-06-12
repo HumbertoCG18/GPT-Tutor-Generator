@@ -64,7 +64,9 @@ def _entry_from_case(case: dict) -> dict:
         "source_section": str(case.get("source_section_real", "")),
         "tags": str(case.get("tags", "")),
         "manual_tags": [],
-        "auto_tags": [],
+        # S4: as auto_tags do manifest (ferramenta:isabelle etc.) alimentam o
+        # sinal de ferramenta do scorer — sem elas o sinal nunca dispara aqui.
+        "auto_tags": [str(t) for t in (case.get("auto_tags") or []) if str(t).strip()],
         "manual_unit_slug": "",
         "manual_timeline_block_id": "",
         "manual_subunit_slug": "",
