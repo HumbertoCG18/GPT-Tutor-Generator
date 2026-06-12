@@ -338,10 +338,12 @@ segundos cérebros já mortos: sinal forte existe, caminho que decide ignora.
   ⇒ taxonomia vazia no retag; um retag de subunidade hoje LIMPARIA os slugs.
   Mascarado porque o reprocesso completo do app reescreveu tudo depois.
 
-**Correções candidatas (P5, não iniciado — aguarda decisão):**
-- (a) Mínima: empate exato (`rel_margin == 0`) ou `winner_score <= 0` ⇒ NÃO
-  retornar slug (vazio + reason "empate exato entre N tópicos"), em vez do
-  `scored[0]` arbitrário. Honestidade imediata, sem tocar sinais.
+**Correções candidatas (decisão 12/06: (a) agora, (b) depois):**
+- (a) ~~Mínima~~ — **FEITO 12/06 (62da0d2)**: empate exato ou
+  `winner_score <= 0` ⇒ slug vazio + reason (`empate-exato Nx score=…` /
+  `sem-sinal`). Replay no repo real: 9/12 viram vazio honesto, 3 ganham
+  vencedor real por margem mínima (ambiguous, banda baixa). Golden intacto
+  41/48, confiante-errado 0, suíte 1320.
 - (b) Sinal real: alimentar o scorer de subunidade com `code_curation.json`
   (inferred_title + concepts + summary como campo markdown-equivalente) — mata
   o 8º segundo cérebro e dá chance real de acerto às 12 entries.
