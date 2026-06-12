@@ -18,7 +18,7 @@
   },
   "Exercícios de Revisão para Provas": {
    "block_ids": [
-    "bloco-06"
+    "bloco-07"
    ],
    "source": "manual"
   },
@@ -3262,7 +3262,7 @@
    "expected_block_id": null,
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": "AMBIGUO: deadline 06/05 (bloco-11) vs conteudo Isabelle/recursao (blocos 04-06) - decisao pedagogica do usuario"
+   "note": ""
   },
   {
    "id": "t1-2026-1",
@@ -3278,7 +3278,7 @@
    "expected_block_id": null,
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": "AMBIGUO: idem t1-2026-1 trabalhos"
+   "note": ""
   },
   {
    "id": "introducao",
@@ -3323,7 +3323,7 @@
     "ambiguous": false
    },
    "markdown": "{0}------------------------------------------------\n\n# Exercícios Revisão para P1\n\n1) Encontre uma definição indutiva para o conjunto  $S=\\{3,4,5,8,9,12,16,17,20,24,33,\\dots\\}$ .  \nDica: pense em como quebrar o conjunto  $S$  em conjuntos menores antes.\n\n2) Assuma as árvores binárias definidas indutivamente como trabalhado em sala de aula.\n\n$$\\frac{}{\\langle \\rangle \\in ArvBin(\\tau)} \\text{vazia}$$\n\n$$\\frac{L \\in ArvBin(\\tau) \\quad R \\in ArvBin(\\tau), x \\in \\tau}{\\langle L, x, R \\rangle \\in ArvBin(\\tau)} \\text{cons}$$\n\nEncontre uma definição indutiva para um conjunto de árvores binárias “Natalinas” cujos primeiros elementos são apresentados a seguir:\n\n```\n\ngraph TD\n    T1((a))\n    T2((a)) --- T2L((a))\n    T2 --- T2R((a))\n    T3((a)) --- T3L((a))\n    T3 --- T3R((a))\n    T3L --- T3LL((a))\n    T3R --- T3RR((a))\n    T4((a)) --- T4L((a))\n    T4 --- T4R((a))\n    T4L --- T4LL((a))\n    T4R --- T4RR((a))\n    \n```\n\nDiagram showing four binary trees with nodes labeled 'a'. The first tree has one node. The second tree has a root with two children. The third tree has a root with two children, and the left child has two children. The fourth tree has a root with two children, and both the left and right children have two children each.\n\n3) Apresente uma definição equacional recursiva para a função  $max: List(\\mathbb{N}) \\rightarrow \\mathbb{N}$ , que recebe uma lista de número Naturais e retorna o maior elemento dessa lista. Especifique formalmente as pré e pós-condições através de fórmulas",
-   "expected_block_id": "bloco-06",
+   "expected_block_id": "bloco-07",
    "expected_origin": "gabarito_1bloco",
    "candidates": [],
    "note": ""

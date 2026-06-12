@@ -73,12 +73,12 @@ Re-runs do gerador preservam tuas mudanças (merge por id+categoria).
 
 ## Pontos quentes pra tua revisão
 
-1. **`revisao-p1-gabarito` → bloco-06 está provavelmente ERRADO.** A tabela 1
-   mostra: 15/04 (bloco-07) = "exercícios de revisão"; a P1 é 22/04 (bloco-09).
-   O scorer previu bloco-07 — provavelmente CERTO; o bloco-06 veio do
-   card_block_map antigo (manual). Se concordares: muda o caso pra bloco-07 E
-   corrige `course/.card_block_map.json` ("Exercícios de Revisão para Provas" →
-   bloco-07). Idem `revisao-p1` (hoje bloco manual 06).
+1. ~~`revisao-p1-gabarito` → bloco-06~~ — **RESOLVIDO (12/06)**: usuário confirmou
+   que a aula de revisão da P1 é 15/04 (label no card Provas por Indução) =
+   bloco-07. `card_block_map` corrigido na fonte ("Exercícios de Revisão para
+   Provas" → bloco-07); golden regenerado; caso agora bloco-07 automático.
+   PENDÊNCIA: `revisao-p1` tem bloco MANUAL = bloco-06 no manifest do app —
+   corrigir lá (editor) pra bloco-07.
 2. **Cluster Revisão → bloco-03 (7 casos)**: âncora = label do card ("Semana
    09/03", que na tabela 1 é "revisão de lógica de predicados" — consistente).
    Scorer prevê bloco-02. Mantive 03; confirma.
