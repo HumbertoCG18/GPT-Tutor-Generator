@@ -1084,6 +1084,20 @@ def score_entry_against_timeline_sessions(
     return best_score, best_session, best_card_bonus
 
 
+def _is_prebuilt_block(item) -> bool:
+    """Bloco já construído (não linha crua de cronograma).
+
+    Legado: shape com 'rows'. Persistido (_serialize_timeline_index /
+    .timeline_index.json): 'id' + 'source_rows'/'sessions'. Aceitar ambos
+    conserta o bug B3 — o índice persistido era tratado como linha crua e a
+    predição degenerava (cf. re-análise 2026-06-11)."""
+    if not isinstance(item, dict):
+        return False
+    if "rows" in item:
+        return True
+    return "id" in item and ("source_rows" in item or "sessions" in item)
+
+
 def select_probable_period_for_entry(
     entry: dict,
     unit: dict,
@@ -1105,7 +1119,7 @@ def select_probable_period_for_entry(
         return "", 0.0, True, ["sem-linhas-candidato"]
 
     signals = collect_entry_unit_signals(entry, markdown_text)
-    if candidate_rows and "rows" in candidate_rows[0]:
+    if candidate_rows and _is_prebuilt_block(candidate_rows[0]):
         blocks = list(candidate_rows)
     else:
         timeline_index = build_timeline_index(candidate_rows, unit_index=[unit] if unit else [])
