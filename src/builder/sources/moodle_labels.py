@@ -17,6 +17,11 @@ _LESSON_FULL = re.compile(r"\((\d{1,2}/\d{1,2}/\d{4})\)\s*:\s*(.+)")
 _LOOSE_FULL = re.compile(r"\((\d{1,2}/\d{1,2}/\d{4})\)")
 _ASYNC = re.compile(r"\(atividade\s+ass[ií]ncrona\)", re.IGNORECASE)
 
+_WEEK_SHORT = re.compile(r"Semana\s*\d+\s*[-–]?\s*(\d{1,2}/\d{1,2})\s*a\s*(\d{1,2}/\d{1,2})")
+_LESSON_SHORT = re.compile(r"^(\d{1,2}/\d{1,2})\s*[:\-]\s*(.+)")
+_AULA_C = re.compile(r"Aula\s+\d+\s*[-–]\s*(\d{1,2}/\d{1,2})\b")
+_WEEK_ORDINAL = re.compile(r"Semana\s+(\d+)\b")
+
 
 def _strip_html(s: str) -> str:
     return html.unescape(re.sub(r"<[^>]+>", "\n", s or ""))
@@ -67,6 +72,58 @@ def _parse_format_a(texts: list) -> dict | None:
     return {"format": "A", "dates": sorted(set(dates)), "weeks": weeks, "lessons": lessons}
 
 
+def _parse_format_b(sec_name: str, texts: list, year: int) -> dict | None:
+    w = _WEEK_SHORT.search(sec_name)
+    if not w:
+        return None
+    a, b = _iso(w.group(1), year), _iso(w.group(2), year)
+    if not (a and b):
+        return None
+    lessons, dates = [], []
+    for txt in texts:
+        for line in txt.splitlines():
+            m = _LESSON_SHORT.match(line.strip())
+            if m:
+                d = _iso(m.group(1), year)
+                if d:
+                    lessons.append({"date": d, "text": m.group(2).strip().rstrip(";.")})
+                    dates.append(d)
+    return {"format": "B", "dates": sorted(set(dates)) or [a, b],
+            "weeks": [(a, b)], "lessons": lessons}
+
+
+def _parse_format_c(texts: list, year: int) -> dict | None:
+    dates, lessons = [], []
+    for txt in texts:
+        lines = [l.strip() for l in txt.splitlines() if l.strip()]
+        for i, line in enumerate(lines):
+            m = _AULA_C.search(line)
+            if m:
+                d = _iso(m.group(1), year)
+                if d:
+                    text = next((x.split(":", 1)[1].strip() for x in lines[i:i + 3]
+                                 if x.upper().startswith("CONTE") and ":" in x), "")
+                    lessons.append({"date": d, "text": text})
+                    dates.append(d)
+    if not dates:
+        return None
+    return {"format": "C", "dates": sorted(set(dates)), "weeks": [], "lessons": lessons}
+
+
+def _parse_format_d(sec_name: str, week_anchor: str) -> dict | None:
+    m = _WEEK_ORDINAL.search(sec_name)
+    if not m or not week_anchor:
+        return None
+    from datetime import timedelta
+    try:
+        start = date.fromisoformat(week_anchor) + timedelta(weeks=int(m.group(1)) - 1)
+    except ValueError:
+        return None
+    end = start + timedelta(days=4)
+    return {"format": "D", "dates": [], "weeks": [(start.isoformat(), end.isoformat())],
+            "lessons": []}
+
+
 def parse_card_dates(contents, year: int, week_anchor: str = "") -> dict:
     """{secao_sanitizada: {format, dates[iso], weeks[(ini,fim)], lessons}}.
 
@@ -74,11 +131,15 @@ def parse_card_dates(contents, year: int, week_anchor: str = "") -> dict:
     Seção sem sinal -> fora do dict."""
     out: dict = {}
     for sec in contents or []:
-        name = sanitize_folder_name(str(sec.get("name") or ""))
+        raw_name = str(sec.get("name") or "")
+        name = sanitize_folder_name(raw_name)
         if not name:
             continue
         texts = _label_texts(sec)
-        parsed = _parse_format_a(texts)
+        parsed = (_parse_format_a(texts)
+                  or _parse_format_b(raw_name, texts, year)
+                  or _parse_format_c(texts, year)
+                  or _parse_format_d(raw_name, week_anchor))
         if parsed:
             out[name] = parsed
     return out
