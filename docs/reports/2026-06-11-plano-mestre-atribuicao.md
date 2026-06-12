@@ -186,9 +186,21 @@ este plano-mestre (tabela abaixo).
 | P0 — golden v1 (ground truth ancorado) | **fechado 12/06** | **56.5% (26/46)** | n/a (todos com seção física) | **7** |
 | P0 — golden v1.1 (rótulos confirmados + card map revisão-P1 corrigido) | — | 58.7% (27/46) | n/a | 6 |
 | P1 — card map via labels (+ fix B3 2º call site) | **fechado 12/06** | **78.3% (36/46)** | n/a | 9 (alvo do P2) |
-| P2 | pendente | — | — | — |
-| P3 | pendente | — | — | — |
-| P4 | pendente | — | — | — |
+| P2 — margem relativa + tetos + method universal | **fechado 12/06** | 78.3% (36/46, mantida) | n/a | **0** (meta ≤2 batida; banda alta: 28 ok / 0 erro) |
+| P3 — higiene B1/B5/B4 | **fechado 12/06** | 78.3% (inalterada — higiene) | n/a | 0 |
+| P4 | **APROVADO pelos números** (12/06) | alvo ~93% | — | — |
+
+**Decisão P4 (12/06, pós-ciclo P1-P3):** dos 10 erros restantes do golden, ~8 têm
+mecanismo P4 identificado: 5 exercícios Dafny caem no bloco-15 em vez do 13
+(topic_text do 15 verboso vence — normalização por tamanho/IDF); `logicadehoare2`
+(CamelCase: título vira 1 token); `provas`.thy (sinal de ferramenta Isabelle —
+os outros 4 .thy o prior+scorer já acertam); 2× especificação (desempate fino
+02/03). Escopo do P4 confirmado: IDF/normalização no scorer de bloco (reusar
+token_weights da unidade), tokenizar CamelCase no título, sinal de ferramenta.
+Potencial: 78.3% → ~93%. B4 verificado: F1 flagrou `unit_block_conflict` na
+entry real (`formalizacaoalgoritmos-recursao`, unit u02 × bloco u01) — contrato
+cumprido. Pendência menor registrada: lookup do force-unprocess por source_path
+(observação do review T10, pré-existente).
 
 ## Riscos transversais
 
