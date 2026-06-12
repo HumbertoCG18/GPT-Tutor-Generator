@@ -494,7 +494,6 @@ def render_low_token_file_map_md(
     unit_match_result_factory: Callable[..., object],
     derive_unit_from_topic_match: Callable[[object, dict], str],
     auto_map_entry_unit: Callable[..., object],
-    select_probable_period_for_entry: Callable[..., tuple],
     file_map_markdown_cell: Callable[[str], str],
     entry_markdown_path_for_file_map: Callable[[object, dict], object],
     get_entry_sections: Callable[[object], str],
@@ -532,7 +531,15 @@ def render_low_token_file_map_md(
                 topic_labels[_slug] = _bold_re.sub(r"\1", _label).strip()
     blocks_by_unit = temporal_context.get("blocks_by_unit", {}) if temporal_context else {}
     unassigned_blocks = temporal_context.get("unassigned_blocks", []) if temporal_context else []
-    unit_by_slug = {unit.get("slug", ""): unit for unit in unit_index if unit.get("slug")}
+    # Lookup id->period_label cobrindo TODOS os blocos do timeline (atribuídos e
+    # não atribuídos). A coluna Período espelha o computed_block_id do manifest
+    # (fonte única da atribuição), nunca recomputa via scorer.
+    period_label_by_block_id: dict = {}
+    for _block_group in list(blocks_by_unit.values()) + [unassigned_blocks]:
+        for _block in _block_group or []:
+            _bid = str(_block.get("id", "") or "").strip()
+            if _bid and _bid not in period_label_by_block_id:
+                period_label_by_block_id[_bid] = str(_block.get("period_label", "") or "").strip()
     lines = [
         "---",
         f"course: {course_name}",
@@ -650,39 +657,15 @@ def render_low_token_file_map_md(
                 if match.slug and match.ambiguous
                 else match.slug
             )
-            unit_blocks = list(blocks_by_unit.get(match.slug, [])) if match.slug else []
-            if match.slug and not match.ambiguous and match.confidence >= 0.45 and unit_blocks:
-                probable_period, period_confidence, period_ambiguous, _ = select_probable_period_for_entry(
-                    entry=entry,
-                    unit=unit_by_slug.get(match.slug, {}),
-                    candidate_rows=unit_blocks,
-                    markdown_text=markdown_text,
-                    preferred_topic_slug=preferred_topic_slug,
-                )
-                if probable_period and not period_ambiguous and period_confidence >= 0.5:
-                    period = probable_period
-            if (
-                not period
-                and match.slug
-                and not match.ambiguous
-                and match.confidence >= 0.55
-                and unassigned_blocks
-            ):
-                probable_period, period_confidence, period_ambiguous, _ = select_probable_period_for_entry(
-                    entry=entry,
-                    unit=unit_by_slug.get(match.slug, {}),
-                    candidate_rows=unassigned_blocks,
-                    markdown_text=markdown_text,
-                    preferred_topic_slug=preferred_topic_slug,
-                )
-                if probable_period and not period_ambiguous and period_confidence >= 0.5:
-                    period = probable_period
-            if not period and manual_timeline_block:
+        # Período espelha o manifest (fonte única): manual > computed_block_id.
+        # Sem atribuição no manifest, a coluna fica em branco — nunca recomputa.
+        if not skip_timeline:
+            if manual_timeline_block:
                 period = str(manual_timeline_block.get("period_label", "") or "").strip()
-        if not skip_timeline and not period and manual_timeline_block:
-            period = str(manual_timeline_block.get("period_label", "") or "").strip()
-        if skip_timeline:
-            period = ""
+            if not period:
+                _computed_block_id = str(entry.get("computed_block_id") or "").strip()
+                if _computed_block_id:
+                    period = period_label_by_block_id.get(_computed_block_id, "")
         md_cell = file_map_markdown_cell(md_path)
         md_abs = entry_markdown_path_for_file_map(course_meta.get("_repo_root"), entry)
         sections = get_entry_sections(md_abs) if md_abs else ""
@@ -806,8 +789,7 @@ def low_token_file_map_md(
     resolve_entry_manual_unit_slug: Callable[[dict, list], str],
     unit_match_result_factory: Callable[..., object],
     derive_unit_from_topic_match: Callable[[object, dict], str],
-    auto_map_entry_unit: Callable[..., object],    
-    select_probable_period_for_entry: Callable[..., tuple],
+    auto_map_entry_unit: Callable[..., object],
     file_map_markdown_cell: Callable[[str], str],
     entry_markdown_path_for_file_map: Callable[[object, dict], object],
     get_entry_sections: Callable[[object], str],
@@ -833,7 +815,6 @@ def low_token_file_map_md(
         unit_match_result_factory=unit_match_result_factory,
         derive_unit_from_topic_match=derive_unit_from_topic_match,
         auto_map_entry_unit=auto_map_entry_unit,
-        select_probable_period_for_entry=select_probable_period_for_entry,
         file_map_markdown_cell=file_map_markdown_cell,
         entry_markdown_path_for_file_map=entry_markdown_path_for_file_map,
         get_entry_sections=get_entry_sections,

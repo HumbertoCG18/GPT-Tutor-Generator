@@ -812,7 +812,9 @@ def test_file_map_md_auto_fills_unit_column_from_subject_profile(tmp_path):
     result = file_map_md(course_meta, entries, subject_profile)
 
     assert "unidade-02-verificacao-de-programas" in result
-    assert "2026-03-16" in result
+    # Período espelha o manifest: sem computed_block_id/manual o FILE_MAP não
+    # recomputa mais o período via scorer — coluna fica em branco.
+    assert "2026-03-16" not in result
     assert "Exerciciosespecificacao" in result
 
 
@@ -857,10 +859,17 @@ def test_file_map_md_refines_period_by_subtopic_within_unit(tmp_path):
         }
     ]
 
+    # Período espelha o manifest: o FILE_MAP não recomputa mais via scorer.
+    # Com computed_block_id apontando para um bloco real do timeline, a coluna
+    # mostra o period_label desse bloco (fonte única).
+    context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
+    target_block = context["blocks_by_unit"]["unidade-01-metodos-formais"][0]
+    entries[0]["computed_block_id"] = target_block["id"]
+
     result = file_map_md(course_meta, entries, subject_profile)
 
     assert "unidade-01-metodos-formais" in result
-    assert "2026-03-16" in result
+    assert target_block["period_label"] in result
     assert "Exerciciosformalizacaoalgoritmosrecursao" in result
 
 
@@ -1496,7 +1505,9 @@ def test_file_map_md_respects_manual_unit_override(tmp_path):
     result = file_map_md(course_meta, entries, subject_profile)
 
     assert "unidade-02-verificacao-de-programas" in result
-    assert "2026-05-06" in result
+    # Período espelha o manifest: manual_unit_slug não dispara mais recomputação
+    # de período via scorer — sem computed_block_id/bloco manual a coluna fica vazia.
+    assert "2026-05-06" not in result
     assert "unidade-manual" in result
 
 
@@ -1530,7 +1541,10 @@ def test_file_map_md_respects_manual_timeline_block_override(tmp_path):
             "title": "Exerciciosformalizacaoalgoritmosrecursao",
             "category": "listas",
             "tags": "",
-            "manual_timeline_block_id": "bloco-02",
+            # bloco-01 é o único bloco instrucional deste syllabus. Antes o teste
+            # usava "bloco-02" (dangling) e a data vinha da RECOMPUTAÇÃO do scorer;
+            # agora o período vem do próprio bloco manual resolvido (fonte única).
+            "manual_timeline_block_id": "bloco-01",
             "base_markdown": "exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md",
             "raw_target": "raw/pdfs/listas/exerciciosformalizacaoalgoritmosrecursao.pdf",
         }
@@ -1627,6 +1641,171 @@ def test_resolve_entry_manual_timeline_block_falls_back_to_nth_instructional_blo
 
     assert resolved is not None
     assert resolved["id"] == "bloco-auto-005"
+
+
+def test_file_map_md_period_mirrors_computed_block_id_from_manifest():
+    """FILE_MAP espelha o manifest (fonte única): a coluna Período vem do
+    computed_block_id do entry, sem recomputar via scorer. Cobre lookup tanto
+    em blocks_by_unit quanto em unassigned_blocks."""
+    course_meta = {
+        "course_name": "Métodos Formais",
+        "_unit_index_for_tests": [
+            {"title": "Unidade 01 — Métodos Formais", "topics": ["Sistemas Formais"]},
+        ],
+        "_timeline_context_for_tests": {
+            "timeline_index": {"blocks": []},
+            "blocks_by_unit": {
+                "unidade-01-metodos-formais": [
+                    {
+                        "id": "bloco-03",
+                        "period_label": "16/03/2026 a 25/03/2026",
+                        "unit_slug": "unidade-01-metodos-formais",
+                        "rows": [],
+                    }
+                ]
+            },
+            "unassigned_blocks": [
+                {"id": "bloco-10", "period_label": "08/06/2026 a 10/06/2026", "rows": []}
+            ],
+        },
+    }
+    entries = [
+        {
+            "title": "Aula Sistemas",
+            "category": "material-de-aula",
+            "tags": "",
+            "computed_block_id": "bloco-03",
+            "base_markdown": "content/aula-sistemas.md",
+            "raw_target": "raw/aula-sistemas.pdf",
+            "_markdown_text_for_tests": "Sistemas formais.",
+        },
+        {
+            "title": "Aula Final",
+            "category": "material-de-aula",
+            "tags": "",
+            "computed_block_id": "bloco-10",
+            "base_markdown": "content/aula-final.md",
+            "raw_target": "raw/aula-final.pdf",
+            "_markdown_text_for_tests": "Sistemas formais.",
+        },
+    ]
+
+    result = file_map_md(course_meta, entries)
+
+    row_sistemas = next(line for line in result.splitlines() if "| Aula Sistemas |" in line)
+    row_final = next(line for line in result.splitlines() if "| Aula Final |" in line)
+    assert "16/03/2026 a 25/03/2026" in row_sistemas
+    assert "08/06/2026 a 10/06/2026" in row_final
+
+
+def test_file_map_md_period_empty_without_computed_block_id():
+    """Sem computed_block_id (e sem bloco manual) o Período fica em branco —
+    nada de recomputação via select_probable_period_for_entry."""
+    course_meta = {
+        "course_name": "Métodos Formais",
+        "_unit_index_for_tests": [
+            {"title": "Unidade 01 — Métodos Formais", "topics": ["Sistemas Formais"]},
+        ],
+        "_timeline_context_for_tests": {
+            "timeline_index": {"blocks": []},
+            "blocks_by_unit": {
+                "unidade-01-metodos-formais": [
+                    {
+                        "id": "bloco-03",
+                        "period_label": "16/03/2026 a 25/03/2026",
+                        "unit_slug": "unidade-01-metodos-formais",
+                        "rows": [
+                            {"index": 1, "date_text": "16/03/2026", "content": "Sistemas formais"},
+                        ],
+                    }
+                ]
+            },
+            "unassigned_blocks": [],
+        },
+    }
+    entries = [
+        {
+            "title": "Aula Sistemas",
+            "category": "material-de-aula",
+            "tags": "",
+            "base_markdown": "content/aula-sistemas.md",
+            "raw_target": "raw/aula-sistemas.pdf",
+            "_markdown_text_for_tests": "Sistemas formais.",
+        }
+    ]
+
+    result = file_map_md(course_meta, entries)
+
+    row = next(line for line in result.splitlines() if "| Aula Sistemas |" in line)
+    cells = [c.strip() for c in row.strip().strip("|").split("|")]
+    # Columns: #, Título, Categoria, Quando abrir, Prioridade, Markdown, Seções, Unidade, Subtópico, Confiança, Período
+    assert cells[10] == ""
+    assert "16/03/2026 a 25/03/2026" not in result
+
+
+def test_file_map_md_period_prefers_manual_block_over_computed():
+    """manual_timeline_block_id (override do tutor) vence o computed_block_id."""
+    course_meta = {
+        "course_name": "Métodos Formais",
+        "_unit_index_for_tests": [
+            {"title": "Unidade 01 — Métodos Formais", "topics": ["Sistemas Formais"]},
+        ],
+        "_timeline_context_for_tests": {
+            "timeline_index": {
+                "blocks": [
+                    {
+                        "id": "bloco-03",
+                        "period_label": "16/03/2026 a 25/03/2026",
+                        "unit_slug": "unidade-01-metodos-formais",
+                        "administrative_only": False,
+                        "rows": [],
+                    },
+                    {
+                        "id": "bloco-10",
+                        "period_label": "08/06/2026 a 10/06/2026",
+                        "unit_slug": "unidade-01-metodos-formais",
+                        "administrative_only": False,
+                        "rows": [],
+                    },
+                ]
+            },
+            "blocks_by_unit": {
+                "unidade-01-metodos-formais": [
+                    {
+                        "id": "bloco-03",
+                        "period_label": "16/03/2026 a 25/03/2026",
+                        "unit_slug": "unidade-01-metodos-formais",
+                        "rows": [],
+                    },
+                    {
+                        "id": "bloco-10",
+                        "period_label": "08/06/2026 a 10/06/2026",
+                        "unit_slug": "unidade-01-metodos-formais",
+                        "rows": [],
+                    },
+                ]
+            },
+            "unassigned_blocks": [],
+        },
+    }
+    entries = [
+        {
+            "title": "Aula Sistemas",
+            "category": "material-de-aula",
+            "tags": "",
+            "computed_block_id": "bloco-03",
+            "manual_timeline_block_id": "bloco-10",
+            "base_markdown": "content/aula-sistemas.md",
+            "raw_target": "raw/aula-sistemas.pdf",
+            "_markdown_text_for_tests": "Sistemas formais.",
+        }
+    ]
+
+    result = file_map_md(course_meta, entries)
+
+    row = next(line for line in result.splitlines() if "| Aula Sistemas |" in line)
+    assert "08/06/2026 a 10/06/2026" in row
+    assert "16/03/2026 a 25/03/2026" not in row
 
 
 def test_build_content_taxonomy_filters_noise_topics_without_code():

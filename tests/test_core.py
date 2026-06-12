@@ -3344,6 +3344,9 @@ class TestAssessmentConflicts:
             "title": "Isabelle",
             "category": "listas",
             "tags": "",
+            # Período espelha o manifest: a coluna vem do computed_block_id
+            # (lookup no timeline cacheado), não de recomputação via scorer.
+            "computed_block_id": "bloco-01",
             "raw_target": "raw/pdfs/listas/isabelle.pdf",
             "_markdown_text_for_tests": "# Provadores de Teoremas\n\nIsabelle",
         }

@@ -2370,7 +2370,6 @@ _navigation_template_aliases = _build_navigation_template_aliases(
     unit_match_result_factory=UnitMatchResult,
     derive_unit_from_topic_match=_derive_unit_from_topic_match,
     auto_map_entry_unit=_auto_map_entry_unit,
-    select_probable_period_for_entry=_select_probable_period_for_entry,
     file_map_markdown_cell=_file_map_markdown_cell,
     entry_markdown_path_for_file_map=_entry_markdown_path_for_file_map,
     get_entry_sections=_get_entry_sections,
