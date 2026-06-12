@@ -16,6 +16,12 @@ from src.builder.core.semantic_config import (
 )
 from src.utils.helpers import slugify, write_text, collapse_ws as _collapse_ws
 
+# Categorias que não recebem auto-tags de timeline (unit/subunit/bloco).
+# "references" é o equivalente EN de "referencias" (importado via Moodle EN).
+_NO_TIMELINE_CATEGORIES: frozenset = frozenset(
+    {"cronograma", "bibliografia", "referencias", "references"}
+)
+
 
 def _normalize_match_text(text: str) -> str:
     normalized = unicodedata.normalize("NFKD", text or "")
@@ -961,7 +967,6 @@ def resolve_unit_block_tags(
     preservadas. manual_unit_slug e manual_timeline_block_id tem precedencia
     absoluta (confidence = 1.0).
     """
-    _NO_TIMELINE_CATEGORIES = {"cronograma", "bibliografia", "referencias"}
     _UNIT_PREFIX = "unit:"
     _SUBUNIT_PREFIX = "subunit:"
     _BLOCO_PREFIX = "bloco:"
