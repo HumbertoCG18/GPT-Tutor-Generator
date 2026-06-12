@@ -291,6 +291,63 @@ pipeline completo); índices (assignment/whiteboard/code_health) imprimem
   denominador novo: **36/48 (75.0%)**, confiante-e-errado 0 — os 2 casos do T1
   erram hoje (scorer→bloco-05, band baixa) e são alvos do P4 (ferramenta).
 
+## Investigação subunidade conf-0.0 (12/06, pós-P4)
+
+Disparada pelo censo de bands de SUBUNIDADE no repo real (56 entries):
+**23 alta / 11 media / 20 baixa / 2 sem** — e dentro das 20 baixas, um cluster
+de **12 entries com `subunit_match_confidence = 0.0` exato, TODAS
+`codigo-professor`** (`t1-2026-1`(code), `introducao`, `intro`, `classes-parte1`,
+`colecoes-arrays`, `colecoes-conjuntos`, `colecoes-sequences`,
+`exercicios-conjuntos`, `hoare`, `invariantes`, `terminacao`, `tiposindutivos`).
+
+**Nota de escala:** a confiança de subunidade vem de OUTRA fórmula que a de
+bloco — `auto_map_entry_subtopic` (file_map.py:161-213) usa rel_margin puro
+`(winner−runner)/winner`, sem escala de força; empate exato ⇒ conf 0.0.
+
+**Causas-raiz (3, verificadas por reprodução headless):**
+
+1. **Empate exato ⇒ slug ARBITRÁRIO surfaçado.** Com rel_margin = 0 a conf vai
+   a 0.0, mas `auto_map_entry_subtopic` retorna `scored[0]` mesmo assim — e o
+   sort estável faz o vencedor ser o tópico de MENOR índice na taxonomia entre
+   os empatados. Resultado: `linguagens-de-especificacao-e-logicas` (índice 1)
+   "vence" repetidamente. Verificado: `hoare` empata 3-way em 0.603;
+   `intro` empata 2-way em 0.936. O slug exibido no editor é ruído com cara de
+   atribuição.
+2. **Zips de código têm sinal de markdown ZERO.** 10 das 12 entries são
+   `file_type=zip` com `md_path` ausente E `image_description` ausente —
+   `_entry_markdown_text_for_file_map` (navigation.py:67-78) retorna `""`.
+   Sobram título + auto_tags (pesos 3.8 / 0.22) ⇒ scores fracos que empatam no
+   nível do ruído. As 2 restantes (type=code) têm markdown mas empatam mesmo
+   assim.
+3. **Persistência incondicional do slug.** content_taxonomy.py:1272 grava
+   `computed_subunit_slug` mesmo quando conf = 0.0/ambíguo — o slug arbitrário
+   do item 1 chega à UI como se fosse atribuição.
+
+**Achado-chave (8º "segundo cérebro"):** `code_curation.json` do repo real tem,
+por código, resumo Gemini rico — `inferred_title` ("Verificação de Correção de
+Programa Simples com Tripla de Hoare"), `concepts` (6 itens: "Tripla de Hoare",
+"Pré-condição"…), `summary` em prosa, `language`. O matcher de BLOCO de código
+consome isso (consensus); o scorer de SUBUNIDADE nunca lê. Mesmo padrão dos 7
+segundos cérebros já mortos: sinal forte existe, caminho que decide ignora.
+
+**Achados secundários:**
+- Manifest real tem ids DUPLICADOS: `introducao` ×2 e `t1-2026-1` ×2 (pdf
+  trabalhos + zip codigo-professor compartilham id). Mascarou o diagnóstico
+  (probe achava o pdf conf 0.85, manifest mostrava o zip conf 0.0).
+- Dívida #5 confirmada VIVA: `retag_manifest.py` passa só `{"_repo_root": …}`
+  ⇒ taxonomia vazia no retag; um retag de subunidade hoje LIMPARIA os slugs.
+  Mascarado porque o reprocesso completo do app reescreveu tudo depois.
+
+**Correções candidatas (P5, não iniciado — aguarda decisão):**
+- (a) Mínima: empate exato (`rel_margin == 0`) ou `winner_score <= 0` ⇒ NÃO
+  retornar slug (vazio + reason "empate exato entre N tópicos"), em vez do
+  `scored[0]` arbitrário. Honestidade imediata, sem tocar sinais.
+- (b) Sinal real: alimentar o scorer de subunidade com `code_curation.json`
+  (inferred_title + concepts + summary como campo markdown-equivalente) — mata
+  o 8º segundo cérebro e dá chance real de acerto às 12 entries.
+- (c) Higiene: unicidade de id no manifest (dedupe ou sufixo por categoria).
+- (d) Dívida #5: retag carregar `course/.content_taxonomy.json` do `_repo_root`.
+
 ## Riscos transversais
 
 - **Golden set de 1 disciplina só**: Metodos-Formais pode enviesar (muito código
