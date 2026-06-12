@@ -383,6 +383,7 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
             try:
                 from src.builder.sources.moodle_labels import (
                     parse_card_dates, derive_card_block_map, merge_card_block_map,
+                    extract_assign_deadlines,
                 )
                 ti_path = Path(repo) / "course" / ".timeline_index.json"
                 map_path = Path(repo) / "course" / ".card_block_map.json"
@@ -390,6 +391,20 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
                     blocks = (_json.loads(ti_path.read_text(encoding="utf-8")) or {}).get("blocks") or []
                     year = int((info.get("semester") or "0/0").split("/")[0] or 0)
                     derived = derive_card_block_map(parse_card_dates(contents, year), blocks)
+                    # S5 (P4): deadline de entrega por seção enriquece as
+                    # entradas DERIVED (manual nunca é tocado — merge abaixo
+                    # preserva). Seção com deadline mas sem labels de semana
+                    # ganha entrada própria com block_ids vazio: isso também
+                    # DESLIGA a heurística nome/data do lookup para o card de
+                    # entrega — o due NUNCA decide bloco sozinho (convenção
+                    # reprovada na demo de 12/06); ele só restringe a janela
+                    # de candidatos do scorer no funil.
+                    for _card, _due in extract_assign_deadlines(contents, year).items():
+                        if _card in derived:
+                            derived[_card]["assign_due"] = _due
+                        else:
+                            derived[_card] = {"block_ids": [], "source": "labels",
+                                              "assign_due": _due}
                     existing = {}
                     if map_path.is_file():
                         existing = _json.loads(map_path.read_text(encoding="utf-8")) or {}

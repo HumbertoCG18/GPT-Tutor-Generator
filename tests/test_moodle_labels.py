@@ -133,3 +133,33 @@ def test_merge_labels_antigo_e_atualizado():
 def test_merge_entrada_manual_sem_derivacao_sobrevive():
     existing = {"So Manual": {"block_ids": ["bloco-07"], "source": "manual"}}
     assert merge_card_block_map(existing, {})["So Manual"]["block_ids"] == ["bloco-07"]
+
+
+# --- extract_assign_deadlines (Task 10 / S5: janela de assign) ---
+from src.builder.sources.moodle_labels import extract_assign_deadlines
+
+def test_assign_duedate_estruturado():
+    sec = {"name": "TDE", "modules": [
+        {"modname": "assign", "name": "Sala de entrega",
+         "dates": [{"label": "Vencimento:", "timestamp": 1778122740, "dataid": "duedate"}]}]}
+    out = extract_assign_deadlines([sec])
+    assert out["TDE"] == "2026-05-06"
+
+def test_deadline_no_nome_do_forum():
+    sec = {"name": "Verificação de Programas", "modules": [
+        {"modname": "forum", "name": "Sala de Entrega (10/06)", "dates": []}]}
+    out = extract_assign_deadlines([sec], year=2026)
+    assert out[list(out)[0]] == "2026-06-10"
+
+def test_assign_tem_precedencia_sobre_nome():
+    # seção com assign.dates E forum com data no nome → vale o assign
+    sec = {"name": "TDE", "modules": [
+        {"modname": "forum", "name": "Sala de Entrega (10/06)", "dates": []},
+        {"modname": "assign", "name": "Sala de entrega",
+         "dates": [{"label": "Vencimento:", "timestamp": 1778122740, "dataid": "duedate"}]}]}
+    out = extract_assign_deadlines([sec], year=2026)
+    assert out["TDE"] == "2026-05-06"
+
+def test_sem_fonte_sem_deadline():
+    sec = {"name": "X", "modules": [{"modname": "forum", "name": "Forum geral"}]}
+    assert extract_assign_deadlines([sec]) == {}

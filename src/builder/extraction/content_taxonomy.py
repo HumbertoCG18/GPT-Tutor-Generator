@@ -22,6 +22,12 @@ _NO_TIMELINE_CATEGORIES: frozenset = frozenset(
     {"cronograma", "bibliografia", "referencias", "references"}
 )
 
+# S5 (P4): categorias de TRABALHO cuja atribuição de bloco respeita a janela
+# de assign (period_start < assign_due do card). Código ("codigo-*") entra
+# pela mesma janela quando o card tem assign_due (cf. resolve_unit_block_tags).
+# "entregas" não existe nos dados reais medidos (12/06) — incluir se surgir.
+ASSIGN_WINDOW_CATEGORIES: frozenset = frozenset({"trabalhos"})
+
 
 def _normalize_match_text(text: str) -> str:
     # Fonte unica com keep="+-./": datas ("11/03/2026"), outline ("1.2.3."),
@@ -1093,6 +1099,28 @@ def resolve_unit_block_tags(
                 or []
                 if not bool(block.get("administrative_only"))
             ]
+            # S5 (P4): janela de assign para trabalhos. Quando a entry é
+            # trabalho (categoria) ou código cujo card tem deadline de entrega
+            # (assign_due no card map), os candidatos do scorer ficam restritos
+            # aos blocos com period_start < assign_due — o conteúdo foi dado
+            # ANTES da entrega. O due NUNCA decide o bloco sozinho (heurística
+            # "deadline 06/05 -> bloco-11" REPROVADA pelo usuário na demo de
+            # 12/06: é convenção, não conteúdo); o scorer ranqueia DENTRO da
+            # janela. Filtro que esvazia (nenhum bloco antes do due) não
+            # restringe nada — nunca produz órfão.
+            from src.builder.timeline.card_block import lookup_card_assign_due
+            _assign_due = lookup_card_assign_due(
+                entry.get("source_section"), _card_block_map)
+            if _assign_due and (
+                category in ASSIGN_WINDOW_CATEGORIES
+                or category.startswith("codigo")
+            ):
+                _windowed = [
+                    b for b in instructional_blocks
+                    if str(b.get("period_start") or "") < _assign_due
+                ]
+                if _windowed:
+                    instructional_blocks = _windowed
             _review_bid = review_list_block_for_entry(entry, instructional_blocks)
             if _review_bid:
                 # Lista de revisão para prova (nome casa revisão + Pk) -> bloco de

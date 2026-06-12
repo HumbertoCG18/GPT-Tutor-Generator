@@ -185,6 +185,62 @@ def test_method_codigo_bloco_muda_limpa_campos_stale():
     assert "computed_block_rationale" not in out
 
 
+# --- S5 (P4): janela de assign restringe blocos de trabalho ---
+
+_ASSIGN_BLOCKS = [
+    _pblock("bloco-antes", "logica predicados", "2026-03-09", "2026-03-09"),
+    _pblock("bloco-depois", "inducao arvores isabelle", "2026-04-06", "2026-04-13"),
+]
+
+
+def test_trabalho_com_assign_due_nunca_cai_em_bloco_depois_do_due():
+    # Entry trabalho cujo card tem assign_due 2026-04-01: o markdown casa FORTE
+    # com bloco-depois (period_start 06/04 >= due), mas ele está fora da
+    # janela — o scorer decide só entre os blocos de ANTES da entrega.
+    out = _resolve_entry(
+        {"id": "t1", "title": "Trabalho 1", "category": "trabalhos",
+         "source_section_real": "TDE",
+         "unit_guess": {"slug": "unidade-01-metodos-formais", "confidence": 0.6,
+                        "ambiguous": False},
+         "markdown": "inducao arvores isabelle provas recursivas"},
+        _ASSIGN_BLOCKS,
+        card_map={"TDE": {"block_ids": [], "source": "labels",
+                          "assign_due": "2026-04-01"}},
+    )
+    assert out["computed_block_id"] == "bloco-antes"
+
+
+def test_assign_due_que_esvazia_janela_nao_restringe():
+    # due ANTERIOR a todos os blocos -> filtro esvaziaria -> não restringe
+    # (fallback: todos os candidatos), nunca órfão.
+    out = _resolve_entry(
+        {"id": "t2", "title": "Trabalho 2", "category": "trabalhos",
+         "source_section_real": "TDE",
+         "unit_guess": {"slug": "unidade-01-metodos-formais", "confidence": 0.6,
+                        "ambiguous": False},
+         "markdown": "inducao arvores isabelle provas recursivas"},
+        _ASSIGN_BLOCKS,
+        card_map={"TDE": {"block_ids": [], "source": "labels",
+                          "assign_due": "2026-01-01"}},
+    )
+    assert out["computed_block_id"] == "bloco-depois"  # melhor match, sem janela
+
+
+def test_categoria_fora_da_janela_ignora_assign_due():
+    # material-de-aula não é trabalho nem código: assign_due do card não filtra.
+    out = _resolve_entry(
+        {"id": "m1", "title": "Slides", "category": "material-de-aula",
+         "source_section_real": "TDE",
+         "unit_guess": {"slug": "unidade-01-metodos-formais", "confidence": 0.6,
+                        "ambiguous": False},
+         "markdown": "inducao arvores isabelle provas recursivas"},
+        _ASSIGN_BLOCKS,
+        card_map={"TDE": {"block_ids": [], "source": "labels",
+                          "assign_due": "2026-04-01"}},
+    )
+    assert out["computed_block_id"] == "bloco-depois"
+
+
 def test_method_caps_valores():
     from src.builder.routing.thresholds import METHOD_CAPS
     assert METHOD_CAPS == {

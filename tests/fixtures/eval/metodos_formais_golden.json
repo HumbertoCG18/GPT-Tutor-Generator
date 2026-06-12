@@ -74,7 +74,13 @@
     "2026-06-03",
     "2026-06-08",
     "2026-06-10"
-   ]
+   ],
+   "assign_due": "2026-06-10"
+  },
+  "TDE Trabalho Discente Efetivo": {
+   "block_ids": [],
+   "source": "labels",
+   "assign_due": "2026-05-06"
   }
  },
  "timeline": {

@@ -161,6 +161,46 @@ def merge_card_block_map(existing: dict, derived: dict) -> dict:
     return out
 
 
+_DEADLINE_NAME = re.compile(r"\((\d{1,2}/\d{1,2}(?:/\d{4})?)\)")
+
+
+def extract_assign_deadlines(contents, year: int = 0) -> dict:
+    """{secao_sanitizada: iso_date} com o deadline de entrega de cada seção.
+
+    Cascata por seção: (1) módulo assign com dates[dataid=duedate] (estruturado,
+    precedência); (2) data `(DD/MM[/AAAA])` no NAME de módulo assign/forum cujo
+    nome contenha "entrega" (ano ausente -> `year`). Seção sem fonte fica FORA
+    do dict (nunca inventa)."""
+    from datetime import datetime
+    out: dict = {}
+    for sec in contents or []:
+        name = sanitize_folder_name(str(sec.get("name") or ""))
+        if not name:
+            continue
+        structured = named = ""
+        for mod in sec.get("modules", []) or []:
+            modname = str(mod.get("modname") or "")
+            mod_name = str(mod.get("name") or "")
+            if modname == "assign" and not structured:
+                for d in mod.get("dates") or []:
+                    if str(d.get("dataid") or "") == "duedate" and d.get("timestamp"):
+                        try:
+                            structured = datetime.fromtimestamp(
+                                int(d["timestamp"])).date().isoformat()
+                        except (ValueError, OSError, OverflowError):
+                            structured = ""
+                        break
+            if (not named and modname in ("assign", "forum")
+                    and "entrega" in mod_name.lower()):
+                m = _DEADLINE_NAME.search(mod_name)
+                if m:
+                    named = _iso(m.group(1), year)
+        due = structured or named
+        if due:
+            out[name] = due
+    return out
+
+
 def parse_card_dates(contents, year: int, week_anchor: str = "") -> dict:
     """{secao_sanitizada: {format, dates[iso], weeks[(ini,fim)], lessons}}.
 

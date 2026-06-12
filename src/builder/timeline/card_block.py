@@ -132,3 +132,11 @@ def lookup_card_blocks(card_name, card_map, unit_index, blocks) -> List[str]:
     if entry and "block_ids" in entry:
         return [str(b) for b in (entry.get("block_ids") or [])]
     return list(resolve_card_to_block(card_name, unit_index, blocks).block_ids)
+
+
+def lookup_card_assign_due(card_name, card_map) -> str:
+    """Deadline ISO de entrega do card no card map ("" quando ausente).
+
+    Gravado em import_moodle_courses via extract_assign_deadlines (S5)."""
+    entry = (card_map or {}).get(str(card_name or "")) or {}
+    return str(entry.get("assign_due") or "")
