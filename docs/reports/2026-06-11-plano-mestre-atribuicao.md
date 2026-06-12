@@ -161,6 +161,14 @@ ferramenta do P4, T1 → bloco-06; exemplo abre 19/06 / vence 10/07 → restriç
 até 08/07 + conteúdo model-checking → bloco-16. `allowsubmissionsfromdate`
 (quando existir) pode apertar a janela como boost.
 
+Fontes do deadline em CASCATA (varia por professor — confirmado nos dados
+reais, 12/06): (1) `assign.dates[duedate]` estruturado (MF TDE: 06/05);
+(2) regex de data no NOME do módulo de entrega — forums usados como sala
+(MF: forum "Sala de Entrega (10/06)"); (3) data no label do card (MF:
+"Trabalho 1 (06/05/2026):"; ES2: "Trabalho Final (03/07/2026):" — o parser
+de labels do P1 já captura como data avulsa). Sem fonte → sem restrição,
+scorer puro com confiança honesta, como sempre.
+
 Maior esforço, deixado por último de propósito: depois de P1, o scorer decide MENOS
 casos (só os sem seção resgatável); depois de P2, quando decide, a confiança é honesta.
 
