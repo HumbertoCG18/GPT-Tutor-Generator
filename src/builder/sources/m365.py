@@ -9,9 +9,7 @@ from __future__ import annotations
 
 import json
 import logging
-import re
 import time
-import unicodedata
 import urllib.parse
 from pathlib import Path
 
@@ -28,14 +26,6 @@ _AUTHORITY = "https://login.microsoftonline.com/organizations/oauth2/v2.0"
 _SCOPE = "Files.Read.All Sites.Read.All offline_access"
 _GRAPH = "https://graph.microsoft.com/v1.0"
 _ROOT_CARD = "_geral"
-
-# Aliases subpasta->palavras-chave: subpastas com nome de ferramenta (não-tópico)
-# não casam o cronograma sozinhas; as keywords extras puxam o card pra seção certa.
-# Heurística do currículo (Dafny/Isabelle = verificação/provas); sobrescrevível.
-_DEFAULT_ALIASES = {
-    "dafny": "verificacao programas",
-    "isabelle": "provas inducao verificacao",
-}
 
 
 def parse_onedrive_path(web_url: str) -> list:
@@ -55,47 +45,18 @@ def subfolder_for(web_url: str, m365_filter: str, default: str = _ROOT_CARD) -> 
     return sanitize_folder_name(after[0])
 
 
+def filter_in_path(web_url: str, m365_filter: str) -> bool:
+    """True se o filtro casa algum segmento do CAMINHO (não só o nome do arquivo)."""
+    fl = (m365_filter or "").lower()
+    segs = parse_onedrive_path(web_url)
+    return any(fl and fl in s.lower() for s in segs[:-1]) if segs else False
+
+
 def select_for_subject(items, m365_filter: str) -> list:
     fl = (m365_filter or "").lower()
     if not fl:
         return []
     return [it for it in items if fl in str(it.get("web_url", "")).lower()]
-
-
-def _ascii_lower(s: str) -> str:
-    return unicodedata.normalize("NFKD", str(s or "")).encode("ascii", "ignore").decode("ascii").lower()
-
-
-def _norm_tokens(s: str) -> set:
-    return {t for t in re.split(r"[\s_\-./]+", _ascii_lower(s)) if len(t) > 2}
-
-
-def _token_affinity(a: set, b: set) -> float:
-    """Sobreposição tolerante: conta tokens iguais OU um contido no outro."""
-    if not a or not b:
-        return 0.0
-    hits = 0
-    for ta in a:
-        if any(ta == tb or ta in tb or tb in ta for tb in b):
-            hits += 1
-    return hits / min(len(a), len(b))
-
-
-def match_card(subfolder: str, moodle_sections, threshold: float = 0.34, aliases=None):
-    sf = _norm_tokens(subfolder)
-    if aliases:
-        norm = {_ascii_lower(k): v for k, v in aliases.items()}
-        extra = norm.get(_ascii_lower(subfolder))
-        if extra:
-            sf = sf | _norm_tokens(extra)
-    best, best_score = None, 0.0
-    for sec in moodle_sections or []:
-        score = _token_affinity(sf, _norm_tokens(sec))
-        if score > best_score:
-            best, best_score = sec, score
-    if best and best_score >= threshold:
-        return best, True
-    return sanitize_folder_name(subfolder), False
 
 
 class M365Client:
@@ -219,45 +180,66 @@ def get_client(prompt_callback=None) -> "M365Client":
     return M365Client(tok)
 
 
-def download_subject_m365(client, m365_filter, moodle_sections, dest,
-                          skip_existing: bool = True, progress_cb=None, aliases=None) -> dict:
-    """Baixa os arquivos M365 da matéria pros cards (merge com seções Moodle).
+def download_subject_m365(client, m365_filter, section_index, dest,
+                          skip_existing: bool = True, progress_cb=None) -> dict:
+    """Baixa os arquivos M365 da matéria pros cards das seções REAIS do Moodle.
 
-    progress_cb(done, total, name, card) é chamado por item (opcional).
-    aliases: {subpasta: keywords} extras pro merge (mesclado sobre _DEFAULT_ALIASES).
-    Retorna {total, downloaded, failed, mapping:[(subfolder,card,matched)], name_to_section}.
+    section_index: {basename.casefold(): secao} de section_file_index_strict —
+    a ÚNICA fonte de card. Miss/ambíguo/índice vazio => subpasta literal do
+    OneDrive (ou _geral) com matched=False; NUNCA match léxico (a spec
+    2026-06-11 matou o match_card: pasta-tópico do professor não é card).
+
+    Retorna {total, downloaded, failed, mapping: [(basename, card, origem)],
+             name_to_section (só origem moodle_api), warnings: [str]}.
     """
     dest = Path(dest)
-    eff_aliases = {**_DEFAULT_ALIASES, **(aliases or {})}
+    index = {str(k).casefold(): v for k, v in (section_index or {}).items()}
     items = select_for_subject(client.list_shared(), m365_filter)
     total = len(items)
+    warnings: list = []
+    if not items:
+        warnings.append(
+            "filtro não casou nenhum item compartilhado — confira a grafia "
+            "(o filtro é substring da URL do OneDrive, sem espaços/acentos)")
+        log.warning(warnings[-1])
+        return {"total": 0, "downloaded": 0, "failed": [], "mapping": [],
+                "name_to_section": {}, "warnings": warnings}
+    misses = sum(1 for it in items if not filter_in_path(it.get("web_url", ""), m365_filter))
+    if misses * 2 > total:
+        warnings.append(
+            f"filtro não aparece no caminho de pastas de {misses}/{total} arquivos — "
+            "layout pode cair todo em _geral")
+    if not index:
+        warnings.append(
+            "API Moodle indisponível ou sem arquivos no curso — nenhum card "
+            "atribuído pela API; arquivos ficam nas pastas literais do OneDrive")
     log.info("filtro '%s': %d item(ns) -> %s", m365_filter, total, dest)
     downloaded, failed = 0, []
+    mapping: list = []
     name_to_section: dict = {}
-    card_cache: dict = {}      # subfolder -> (card_raw, matched)
     seen: set = set()
     for idx, it in enumerate(items):
-        sub = subfolder_for(it["web_url"], m365_filter)
-        if sub not in card_cache:
-            card_cache[sub] = match_card(sub, moodle_sections, aliases=eff_aliases)
-        # Sanitiza p/ nome de pasta válido no Windows E p/ casar com a pasta
-        # que o import Moodle cria (build_card_structure usa sanitize_folder_name).
-        card = sanitize_folder_name(card_cache[sub][0])
-        if progress_cb:
-            progress_cb(idx + 1, total, it.get("title") or "", card)
         try:
             res = client.resolve(it["id"])
             raw_name = res.get("name") or it.get("title") or "arquivo"
-            name = sanitize_folder_name(raw_name)      # tira chars inválidos do nome do arquivo
+            name = sanitize_folder_name(raw_name)
             data = client.download(res)
         except Exception:
-            log.exception("falha ao baixar item %r (subpasta %s)", it.get("title") or it.get("id"), sub)
+            log.exception("falha ao baixar item %r", it.get("title") or it.get("id"))
             failed.append(it.get("title") or it.get("id"))
             continue
         if not looks_like_expected(name, data):
             log.warning("magic-byte inválido, pulando: %s (%d bytes)", name, len(data))
             failed.append(name)
             continue
+        section = index.get(name.casefold(), "")
+        if section:
+            card, origem = section, "moodle_api"
+        else:
+            card, origem = subfolder_for(it.get("web_url", ""), m365_filter), "fallback_pasta"
+        card = sanitize_folder_name(card) or _ROOT_CARD
+        if progress_cb:
+            progress_cb(idx + 1, total, name, card)
         folder = dest / card
         folder.mkdir(parents=True, exist_ok=True)
         target = folder / name
@@ -268,17 +250,20 @@ def download_subject_m365(client, m365_filter, moodle_sections, dest,
                 i += 1
             target = folder / f"{stem} ({i}){suf}"
         seen.add(target)
-        name_to_section[target.name.casefold()] = card
+        mapping.append((target.name, card, origem))
+        if origem == "moodle_api":
+            name_to_section[target.name.casefold()] = section
         if skip_existing and target.exists():
             log.info("já existe, pulando: %s/%s", card, target.name)
             continue
         target.write_bytes(data)
         downloaded += 1
         log.info("baixado: %s/%s (%d bytes)", card, target.name, len(data))
-    log.info("concluído: %d baixados, %d falhas", downloaded, len(failed))
-    return {"total": len(items), "downloaded": downloaded, "failed": failed,
-            "mapping": [(s, c, m) for s, (c, m) in card_cache.items()],
-            "name_to_section": name_to_section}
+    log.info("concluído: %d baixados, %d falhas, %d aviso(s)",
+             downloaded, len(failed), len(warnings))
+    return {"total": total, "downloaded": downloaded, "failed": failed,
+            "mapping": mapping, "name_to_section": name_to_section,
+            "warnings": warnings}
 
 
 def apply_source_section(repo_root: str, name_to_section: dict) -> int:
