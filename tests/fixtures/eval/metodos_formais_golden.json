@@ -3302,10 +3302,10 @@
     "ambiguous": false
    },
    "markdown": "<!-- EXEC_SUMMARY_START -->\n## Sumário\n> *Leia antes de varrer o arquivo. Vá direto à seção relevante para a pergunta do aluno.*\n\n- **Provas por Indução de Especificações Equacionais Recursivas**\n  - Entrega:\n  - IMPORTANTE:\n  - Observações:\n\n<!-- EXEC_SUMMARY_END -->\n# Trabalho 1\n\n## Provas por Indução de Especificações Equacionais Recursivas\n\nO objetivo deste trabalho é construir especificações equacionais recursivas e provas formais por indução e a verificação de sua validade no sistema Isabelle usando obrigatoriamente a linguagem Isar. O trabalho será realizado em grupos de até 5 alunos.\n\nEnunciado dos problemas:\n\n1) Seja a seguinte especificação de uma função recursiva sobre números naturais para o cálculo da potência:\n\n|                                                            |          |\n|------------------------------------------------------------|----------|\n| $pot: \\mathbb{N} \\times \\mathbb{N} \\rightarrow \\mathbb{N}$ |          |\n| $pot(x, 0) = 1$                                            | (poteq1) |\n| $pot(x, y + 1) = x * pot(x, y)$                            | (poteq2) |\n\nProve primeiro o seguinte lema:\n\n$$\\forall x, m, n \\in \\mathbb{N} (pot(x, m + n) = pot(x, m) * pot(x, n))$$\n\nUtilizando o lema como auxiliar, prove o seguinte teorema:\n\n$$\\forall x, m, n \\in \\mathbb{N} (pot(x, m * n) = pot(pot(x, m), n))$$\n\n2) Sejam as seguintes especificações de funções recursivas sobre o tipo indutivo de listas:\n\n|                                                           ",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-06",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao do usuario (12/06, opcao B=conteudo): T1 em Isabelle exercita o arco blocos 04-06; bloco-06 = Isabelle, fim do arco. Deadline 06/05 (bloco-11) rejeitado como convencao."
   },
   {
    "id": "t1-2026-1",
@@ -3318,10 +3318,10 @@
     "ambiguous": false
    },
    "markdown": "---\nentry_id: \"t1-2026-1\"\ntitle: \"T1 2026 1\"\nlanguage: \"isabelle\"\ncategory: \"codigo-professor\"\nunit: \"thy\"\nsource: \"raw/code/professor/t1-2026-1.thy\"\n---\n# T1 2026 1\n\n> **Linguagem:** isabelle  |  **Unidade:** thy\n\n```isabelle\ntheory T1_2026_1\n  imports Main\nbegin\n\n(* Coloque aqui o nome dos integrantes do grupo *)\n\nprimrec pot :: \"nat \\<Rightarrow> nat \\<Rightarrow> nat\" where\npoteq1: \"pot x 0 = 1\" |\npoteq2: \"pot x (Suc y) = x * pot x y\"\n\nlemma t1: \"\\<forall>x m::nat. pot x (m + n) = pot x m * pot x n\"\n  sorry\n\ntheorem t2: \"\\<forall>x m::nat. pot x (m * n) = pot (pot x m) n\"\n  sorry\n\nprimrec cat :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> 'a list\" where\ncateq1: \"cat [] ys = ys\" |\ncateq2: \"cat (x#xs) ys = x#cat xs ys\"\n\nprimrec reverso :: \"'a list \\<Rightarrow> 'a list\" where\nreveq1: \"reverso [] = []\" |\nreveq2: \"reverso (x#xs) = cat (reverso xs) [x]\"\n\nprimrec somatorio :: \"nat list \\<Rightarrow> nat\" where\nsomaeq1: \"somatorio [] = 0\" |\nsomaeq2: \"somatorio (x#xs) = x + somatorio xs\"\n\nlemma t3: \"\\<forall>ys::nat list. somatorio (cat xs ys) = somatorio xs + somatorio ys\"\n  sorry\n\ntheorem t4: \"somatorio (reverso xs) = somatorio xs\"\n  sorry\n\nend\n```\n",
-   "expected_block_id": null,
+   "expected_block_id": "bloco-06",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": ""
+   "note": "decisao do usuario (12/06, opcao B=conteudo): T1 em Isabelle exercita o arco blocos 04-06; bloco-06 = Isabelle, fim do arco. Deadline 06/05 (bloco-11) rejeitado como convencao."
   },
   {
    "id": "introducao",
