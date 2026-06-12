@@ -13,7 +13,10 @@ from src.builder.timeline.classifier import classify_block
 from src.builder.timeline.kinds import BlockKind
 from src.builder.timeline.curation import apply_block_curation
 from src.builder.timeline.unit_matcher import assign_units_positional
-from src.builder.text.normalize import normalize_match_text as _normalize_match_text
+from src.builder.text.normalize import (
+    normalize_match_text as _normalize_match_text,
+    signal_token_set as _signal_token_set,
+)
 from src.builder.routing.thresholds import margin_confidence, T
 from src.builder.routing.file_map import UNIT_GENERIC_TOKENS
 from src.builder.extraction.teaching_plan import _normalize_unit_slug
@@ -88,14 +91,6 @@ def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
             block["unit_slug"] = manual_unit.strip()
             block["unit_confidence"] = 1.0
     return touched
-
-
-def _signal_token_set(signal_text: str) -> set:
-    return {
-        token
-        for token in _normalize_match_text(signal_text).split()
-        if len(token) >= 4
-    }
 
 
 def _matches_normalized_phrase(signal_text: str, phrase: str) -> bool:
@@ -1970,7 +1965,7 @@ def _assign_timeline_block_to_topic(
     winner_topic_tokens = [tok for tok in winner_topic_text.split() if len(tok) >= 4]
     topic_token_count = len(winner_topic_tokens)
 
-    confidence = min(1.0, max(0.0, (winner_score - runner_up_score) + (winner_score * 0.2)))
+    confidence = margin_confidence(winner_score, runner_up_score, k=T.MARGIN_K_TOPIC)
     if len(scored) == 1:
         ambiguous = winner_score <= 0.0
         if not ambiguous:
@@ -2033,8 +2028,8 @@ def _vote_unit_from_topic_candidates(
     unit_index: list,
     *,
     top_k: int = 5,
-    min_score: float = 0.10,
-    dominance_ratio: float = 0.6,
+    min_score: float = T.VOTE_MIN_SCORE,
+    dominance_ratio: float = T.VOTE_DOMINANCE,
 ) -> tuple[str, float]:
     """Fallback de unit assignment: voto majoritario por topic_candidates.
 

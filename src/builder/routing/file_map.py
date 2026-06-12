@@ -10,7 +10,13 @@ from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
 
 from src.builder.routing.dates import extract_dates
 from src.builder.routing.sequence import annotate_class_ordinals, score_sequence_match
-from src.builder.routing.thresholds import T, margin_confidence, relative_margin_confidence
+from src.builder.routing.thresholds import (
+    DATE_STRONG_BOOST,
+    DATE_WEAK_BOOST,
+    T,
+    margin_confidence,
+    relative_margin_confidence,
+)
 
 
 @dataclass
@@ -901,12 +907,6 @@ def score_entry_against_timeline_block(
     return score
 
 
-# Pesos do boost de data. DATE_STRONG_BOOST mantém o +0.30 original como base
-# calibrável (spec Fase 2). DATE_WEAK_BOOST é deliberadamente menor: mês
-# compatível é sinal mais fraco que data exata-no-range, então ~1/3 do forte —
-# o suficiente para desempatar sem competir com um match exato.
-DATE_STRONG_BOOST = 0.30
-DATE_WEAK_BOOST = 0.10
 
 
 def _block_period_bounds(block: Dict[str, object]) -> tuple[Optional[date], Optional[date]]:

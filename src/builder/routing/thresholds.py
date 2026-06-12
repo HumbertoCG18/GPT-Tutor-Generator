@@ -51,6 +51,15 @@ BAND_HIGH: float = 0.50
 BAND_LOW: float = 0.20
 
 
+# Pesos do boost de data (file_map._score_block_date_match). DATE_STRONG_BOOST
+# mantém o +0.30 original como base calibrável (spec Fase 2). DATE_WEAK_BOOST é
+# deliberadamente menor: mês compatível é sinal mais fraco que data
+# exata-no-range, então ~1/3 do forte — o suficiente para desempatar sem
+# competir com um match exato.
+DATE_STRONG_BOOST: float = 0.30
+DATE_WEAK_BOOST: float = 0.10
+
+
 # Tetos de confiança por método de atribuição de bloco (P2.2):
 # "não há como ter certeza só com léxico" — o teto materializa isso.
 # Aplicado em content_taxonomy.resolve_unit_block_tags na consolidação:

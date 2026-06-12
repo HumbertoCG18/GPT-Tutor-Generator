@@ -18,6 +18,7 @@ from src.builder.core.reference_navigation import (
     _ref_support_line,
     _REF_CAP_PER_ANCHOR,
 )
+from src.builder.extraction.content_taxonomy import _NO_TIMELINE_CATEGORIES
 
 
 def _entry_priority_label(entry: dict) -> str:
@@ -611,7 +612,6 @@ def render_low_token_file_map_md(
             or ""
         )
         raw_path = entry.get("raw_target") or ""
-        _NO_TIMELINE_CATEGORIES = {"cronograma", "bibliografia", "referencias", "references"}
         if category in _NO_TIMELINE_CATEGORIES:
             unit = "curso-inteiro"
             skip_timeline = True

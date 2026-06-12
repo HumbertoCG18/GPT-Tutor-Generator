@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-import re
 from pathlib import Path
 from typing import Dict, List
 
-from src.builder.extraction.content_taxonomy import extract_markdown_lead_text
+from src.builder.extraction.content_taxonomy import (
+    _extract_markdown_headings,
+    extract_markdown_lead_text,
+)
 from src.builder.text.normalize import normalize_match_text  # noqa: F401  (re-export)
 
 
@@ -37,21 +39,6 @@ def entry_image_source_dirs(root_dir: Path, entry: dict) -> List[Path]:
     if rendered_pages_dir:
         dirs.append(root_dir / rendered_pages_dir)
     return dirs
-
-
-def _extract_markdown_headings(raw_markdown: str, limit: int = 8) -> List[str]:
-    headings: List[str] = []
-    for line in (raw_markdown or "").splitlines():
-        match = re.match(r"^#{1,6}\s+(.+?)\s*$", line)
-        if not match:
-            continue
-        heading = re.sub(r"\s+", " ", match.group(1)).strip()
-        if not heading:
-            continue
-        headings.append(heading)
-        if len(headings) >= limit:
-            break
-    return headings
 
 
 def _merge_manual_and_auto_tags(

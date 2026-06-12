@@ -14,6 +14,7 @@ from src.builder.core.semantic_config import (
     resolve_semantic_profile,
     write_internal_semantic_profile,
 )
+from src.builder.text.normalize import signal_token_set
 from src.utils.helpers import slugify, write_text, collapse_ws as _collapse_ws
 
 # Categorias que não recebem auto-tags de timeline (unit/subunit/bloco).
@@ -580,7 +581,9 @@ def collect_strong_heading_candidates(root_dir: Optional[Path], manifest_entries
 
 
 def _signal_token_set(signal_text: str) -> set:
-    return {token for token in _normalize_match_text(signal_text).split() if len(token) >= 4}
+    # Logica unica em text.normalize.signal_token_set; passa o normalize LOCAL
+    # (copia divergente, preserva +-./) ate a Task 3 unificar o normalize.
+    return signal_token_set(signal_text, normalize=_normalize_match_text)
 
 
 def _matches_tag_slug(signal_text: str, tag_slug: str) -> bool:
@@ -845,7 +848,9 @@ def _best_instructional_block_fallback(
     return best_block, confidence
 
 
-CARD_SINGLE_CONF = 0.85
+# Gabarito 1-bloco: a confianca e o proprio teto do metodo "card" (P2.2) —
+# fonte unica em thresholds.METHOD_CAPS, sem literal duplicado.
+CARD_SINGLE_CONF = METHOD_CAPS["card"]
 
 
 def _card_scoped_block(entry, markdown_text, unit_index, instructional_blocks,
@@ -1037,7 +1042,7 @@ def resolve_unit_block_tags(
             if (
                 topic_match.topic_slug
                 and not topic_match.ambiguous
-                and topic_match.confidence >= 0.60
+                and topic_match.confidence >= T.SUBUNIT_TAG
             ):
                 preferred_topic_slug = topic_match.topic_slug
 
@@ -1155,7 +1160,7 @@ def resolve_unit_block_tags(
         # a do fallback "pega o melhor", que chama a MESMA
         # thresholds.relative_margin_confidence sobre os scores do MESMO
         # scorer real. Nunca recomputado/duplicado aqui.
-        computed_unit_slug = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= 0.65) else ""
+        computed_unit_slug = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= T.UNIT_TAG) else ""
         computed_block_id = period_block_id
         # Teto por método (P2.2): léxico nunca passa do cap do seu degrau
         # (METHOD_CAPS em thresholds.py). manual=1.0 e review_rule=0.95 ficam
