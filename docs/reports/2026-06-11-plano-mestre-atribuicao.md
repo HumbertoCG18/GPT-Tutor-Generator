@@ -199,8 +199,25 @@ os outros 4 .thy o prior+scorer já acertam); 2× especificação (desempate fin
 token_weights da unidade), tokenizar CamelCase no título, sinal de ferramenta.
 Potencial: 78.3% → ~93%. B4 verificado: F1 flagrou `unit_block_conflict` na
 entry real (`formalizacaoalgoritmos-recursao`, unit u02 × bloco u01) — contrato
-cumprido. Pendência menor registrada: lookup do force-unprocess por source_path
-(observação do review T10, pré-existente).
+cumprido. Force-reprocess corrigido para resolver old_id por source_path
+(review final; commit 09625b2).
+
+**Dívidas registradas do ciclo (review final 12/06), pro P4 ou limpeza:**
+- Portões `>= 0.5` do FILE_MAP (navigation.py:662,678) não recalibrados para a
+  fórmula relativa — confiança menor ⇒ menos linhas ganham período no artefato
+  FILE_MAP.md (mais conservador; fora do alcance do golden). Medir no artefato
+  e recalibrar ou aceitar explicitamente.
+- Spec P2.2 listava `consensus → min(0.95, conf)`; decisão final: métodos de
+  código (consensus/llm_only) ficam FORA do METHOD_CAPS (confiança deles vive em
+  computed_block_match_confidence) — documentado em thresholds.py, spec ficou
+  desatualizada nesse ponto.
+- `reconcile_unit_with_block` recebe block_confidence CRUA (pré-cap) — decidir
+  se passa o valor capado (consistência exibição×decisão).
+- Formato D dormindo: import não passa `week_anchor` (cadeiras tipo Teoria
+  degradam pra E). Derivar âncora do cronograma da matéria.
+- `METHOD_CAPS.get(method, 1.0)`: default permissivo — method novo futuro
+  passaria sem teto.
+- Golden: 2 pendentes (`t1-2026-1` ×2) aguardando decisão do usuário.
 
 ## Riscos transversais
 
