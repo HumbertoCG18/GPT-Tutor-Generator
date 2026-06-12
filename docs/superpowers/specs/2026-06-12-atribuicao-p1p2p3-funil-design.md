@@ -128,7 +128,13 @@ def margin_confidence(winner: float, runner_up: float, k: float = MARGIN_K) -> f
 `STRONG_SCORE` (novo, thresholds.py) calibrado no golden durante a implementação
 (ponto de partida: 3.0). Bands (alta/média/baixa) recalibradas no golden: cutoffs
 viram constantes nomeadas com os números justificados no relatório do ciclo.
-Assinatura preservada (mesmos chamadores).
+
+REFINAMENTO (descoberto na escrita do plano): `margin_confidence` é compartilhada
+com os caminhos de UNIDADE/tópico (k=0.20) — substituí-la mudaria a unidade junto.
+A fórmula nova entra como função NOVA `relative_margin_confidence`, usada SÓ nos
+caminhos de confiança de BLOCO (`select_probable_period_for_entry` e
+`_best_instructional_block_fallback`); `margin_confidence` original fica intocada
+para os demais usos. Raio de mudança menor, mesmo efeito na meta.
 
 ### P2.2 Teto por método (thresholds.py + content_taxonomy.py)
 
