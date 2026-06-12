@@ -180,3 +180,78 @@ def test_disco_unprocess_de_uma_entry_nao_remove_assets_da_outra(tmp_path, monke
     manifest_after = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
     remaining = [e["id"] for e in manifest_after["entries"]]
     assert remaining == ["intro"]
+
+
+# ---------------------------------------------------------------------------
+# force-reprocess com entry deduplicada (fix bug B5 pela porta do force)
+# ---------------------------------------------------------------------------
+
+
+def _setup_two_deduped_imports(tmp_path, monkeypatch):
+    """2 arquivos `intro.py` nas categorias codigo-professor / codigo-aluno.
+
+    Reproduz o estado em que a segunda entry tem id_override no manifest:
+      entries[0]: id="intro",               category="codigo-professor"
+      entries[1]: id="intro-codigo-aluno",  category="codigo-aluno"
+    """
+    repo = tmp_path / "repo"
+    file_a = tmp_path / "prof" / "intro.py"
+    file_b = tmp_path / "aluno" / "intro.py"
+    file_a.parent.mkdir(parents=True)
+    file_b.parent.mkdir(parents=True)
+    file_a.write_text("print('professor')", encoding="utf-8")
+    file_b.write_text("print('aluno')", encoding="utf-8")
+
+    builder = engine_module.RepoBuilder(
+        repo, {"course_slug": "mf", "course_name": "Métodos Formais"}, [], {}
+    )
+    monkeypatch.setattr(builder, "_regenerate_pedagogical_files", lambda manifest: None)
+    repo.mkdir()
+    (repo / "manifest.json").write_text(
+        json.dumps({"generated_at": "2026-01-01T00:00:00", "entries": [], "logs": []}),
+        encoding="utf-8",
+    )
+
+    entry_a = _code_entry(file_a, "codigo-professor")
+    entry_b = _code_entry(file_b, "codigo-aluno")
+    assert builder._process_single_impl(entry_a) == "ok"
+    assert builder._process_single_impl(entry_b) == "ok"
+
+    manifest = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+    return repo, builder, manifest, file_a, file_b
+
+
+def test_force_reprocess_entry_deduplicada_remove_segunda_nao_primeira(tmp_path, monkeypatch):
+    """force-reprocess do source_path da entry DEDUPLICADA (intro-codigo-aluno)
+    deve remover apenas essa entry e deixar a primeira (intro) intacta.
+
+    Antes do fix, `old_id = entry.id()` retornava "intro" (id base sem
+    override), e `unprocess("intro")` removia a primeira entry — reintroduzindo
+    o bug B5.
+    """
+    repo, builder, manifest, _file_a, file_b = _setup_two_deduped_imports(tmp_path, monkeypatch)
+
+    rec_a = next(e for e in manifest["entries"] if e["category"] == "codigo-professor")
+    rec_b = next(e for e in manifest["entries"] if e["category"] == "codigo-aluno")
+
+    # Garante que a segunda entry está de fato deduplicada no manifest
+    assert rec_a["id"] == "intro"
+    assert rec_b["id"] == "intro-codigo-aluno"
+    assert rec_b.get("id_override") == "intro-codigo-aluno"
+
+    # FileEntry FRESCO (sem id_override) — simula o que chega via force-reprocess
+    fresh_entry_b = _code_entry(file_b, "codigo-aluno")
+    assert fresh_entry_b.id() == "intro"  # recomputa do source_path: id base
+
+    result = builder._process_single_impl(fresh_entry_b, force=True)
+    assert result == "ok"
+
+    manifest_after = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+    ids_after = [e["id"] for e in manifest_after["entries"]]
+
+    # A primeira entry (intro) deve permanecer intacta
+    assert "intro" in ids_after, f"Entry 'intro' foi removida indevidamente; ids: {ids_after}"
+
+    # assets da primeira entry ainda existem no disco
+    assert (repo / rec_a["base_markdown"]).exists(), "base_markdown da entry A foi removido"
+    assert (repo / rec_a["raw_target"]).exists(), "raw_target da entry A foi removido"

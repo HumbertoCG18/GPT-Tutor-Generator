@@ -72,12 +72,19 @@ def process_single_impl(
             "logs": [],
         }
 
-    existing_sources = {e.get("source_path") for e in manifest.get("entries", [])}
-    if entry.source_path in existing_sources:
+    existing_entries = manifest.get("entries", [])
+    existing_entry = next(
+        (e for e in existing_entries if e.get("source_path") == entry.source_path),
+        None,
+    )
+    if existing_entry is not None:
         if not force:
             logger.info("Entry already processed: %s", entry.source_path)
             return "already_exists"
-        old_id = entry.id()
+        # Usa o id que está no manifest (pode ser deduplicado via id_override),
+        # não entry.id() que recomputa do source_path e retornaria o id base —
+        # o qual pode pertencer a outra entry (reintroduziria o bug B5).
+        old_id = existing_entry["id"]
         logger.info("Reprocessing (force): removing old entry %s", old_id)
         builder.unprocess(old_id)
         with open(manifest_path, "r", encoding="utf-8") as f:
