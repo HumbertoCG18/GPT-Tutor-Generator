@@ -217,7 +217,11 @@ cumprido. Force-reprocess corrigido para resolver old_id por source_path
   degradam pra E). Derivar âncora do cronograma da matéria.
 - `METHOD_CAPS.get(method, 1.0)`: default permissivo — method novo futuro
   passaria sem teto.
-- Golden: 2 pendentes (`t1-2026-1` ×2) aguardando decisão do usuário.
+- ~~Golden: 2 pendentes (`t1-2026-1` ×2)~~ — RESOLVIDO 12/06: usuário decidiu
+  opção conteúdo (bloco-06, Isabelle/fim do arco; deadline rejeitado). Golden
+  completo: 48 casos contados, 0 pendentes. Placar final do ciclo com
+  denominador novo: **36/48 (75.0%)**, confiante-e-errado 0 — os 2 casos do T1
+  erram hoje (scorer→bloco-05, band baixa) e são alvos do P4 (ferramenta).
 
 ## Riscos transversais
 
