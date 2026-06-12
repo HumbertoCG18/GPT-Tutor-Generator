@@ -147,14 +147,19 @@ Esforço: baixo. Risco: baixo. Dependências: P0 (B4 usa o harness).
 
 ### P4 — Scorer melhor (sobe o piso dos casos sem prior)
 
-**Sinal novo aprovado (12/06): janela de trabalho via assign.** A API expõe
-`dates` estruturado nos módulos `assign` (`duedate`, e `allowsubmissionsfromdate`
-quando configurado — confirmado no T1 real de MF: duedate 06/05). Para entries
-de trabalho (convenção B = conteúdo, decisão do usuário): (a) RESTRIÇÃO — bloco
-esperado começa antes do duedate; (b) DESEMPATE — último bloco instrucional de
-AULA que termina antes do duedate (exclui revisão/prova/admin). Validado nos 2
-casos reais: T1 duedate 06/05 → bloco-06 (= decisão humana); exemplo abre 19/06
-vence 10/07 → bloco-16. Resolve a classe "trabalhos" sem convenção manual.
+**Sinal novo aprovado (12/06, design corrigido por demo real): janela de
+trabalho via assign.** A API expõe `dates` estruturado nos módulos `assign`
+(`duedate`, e `allowsubmissionsfromdate` quando configurado — confirmado no T1
+real de MF: duedate 06/05/2026 23:59). Para entries de trabalho (convenção B =
+conteúdo): o duedate é PRIOR/RESTRIÇÃO — só blocos de aula que começam antes do
+vencimento são candidatos — e o SCORER ranqueia dentro pelo conteúdo (mesma
+forma do card map: prior restringe, scorer decide, confiança honesta). NOTA de
+projeto: a heurística "último bloco de aula antes do duedate" foi testada e
+REPROVADA no caso real (escolheria bloco-10/Hoare; o certo é bloco-06 pelo
+conteúdo Isabelle do T1) — o duedate não decide sozinho. Com o sinal de
+ferramenta do P4, T1 → bloco-06; exemplo abre 19/06 / vence 10/07 → restrição
+até 08/07 + conteúdo model-checking → bloco-16. `allowsubmissionsfromdate`
+(quando existir) pode apertar a janela como boost.
 
 Maior esforço, deixado por último de propósito: depois de P1, o scorer decide MENOS
 casos (só os sem seção resgatável); depois de P2, quando decide, a confiança é honesta.
