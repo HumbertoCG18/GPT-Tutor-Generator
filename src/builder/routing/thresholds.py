@@ -31,28 +31,22 @@ def relative_margin_confidence(winner: float, runner_up: float) -> float:
     return max(0.0, min(1.0, rel * (0.55 + 0.45 * strength)))
 
 
-# --- Faixas de confianca de atribuicao de bloco (Fase 3) ------------------
-# Escala: a confianca de bloco vem de margin_confidence(best, runner_up,
-# k=MARGIN_K=0.18), ja clampada em [0,1]. ATENCAO: na atribuicao de bloco
-# (content_taxonomy.resolve_unit_block_tags) NAO ha mais portao — sempre se
-# atribui o melhor candidato instrucional (spec "pega o melhor"; orfao so quando
-# nao existe bloco instrucional). O portao best>=0.95 do scorer (file_map.py:1098)
-# continua valendo apenas para o roteamento do FILE_MAP em navigation.py; quando
-# ele recusa, o resolver cai no fallback "pega o melhor". Logo a confianca de uma
-# atribuicao pode ser baixa de proposito (best fraco e/ou margem minima sobre o
-# runner_up ~ best*0.18 ~= 0.17), e e exatamente isso que a band media/baixa
-# sinaliza para revisao.
+# --- Faixas de confianca de atribuicao de bloco -----------------------------
+# Escala (P2.1, 2026-06-12): a confianca de bloco vem de
+# relative_margin_confidence(best, runner_up) acima — margem relativa
+# (best-runner)/best escalada pela forca absoluta (best/STRONG_SCORE). ATENCAO:
+# na atribuicao de bloco (content_taxonomy.resolve_unit_block_tags) NAO ha
+# portao — sempre se atribui o melhor candidato instrucional ("pega o melhor";
+# orfao so quando nao existe bloco instrucional); a confianca baixa e a flag de
+# revisao, nunca orfao.
 #
-# BAND_HIGH = 0.50 — alinhado ao piso de tag de bloco existente (BLOCO_TAG=0.50):
-#   uma atribuicao com gap claro (gap>=0.35, o limiar de "nao-ambiguo" usado no
-#   scorer) e best~1.0 produz confianca ~0.35 + 0.18 = 0.53, caindo em "alta".
-#   Reusa a calibracao ja validada do scale de tags, sem rebalancear nada.
-# BAND_LOW = 0.20 — logo acima do piso estrutural (~0.17) que toda atribuicao
-#   cruza; abaixo disso o melhor candidato mal supera o runner-up (margem
-#   minima), genuinamente marginal -> "baixa". Espelha, na escala comprimida por
-#   k, o corte "baixa confianca" (<0.45) ja exibido em file_map (render de slug).
-# Nao rebalanceamos os thresholds existentes — apenas ADICIONAMOS estas duas
-# constantes de faixa + o helper abaixo.
+# BAND_HIGH = 0.50 — na formula relativa, exige margem relativa >=~0.50 com
+#   best forte (>=STRONG_SCORE): vencedor com o DOBRO do runner-up. Validado no
+#   golden v1 (12/06): pos-P2.1 os 10 erros sairam todos da banda alta
+#   (28 ok / 0 erro na alta), sem recalibrar o cutoff.
+# BAND_LOW = 0.20 — margem relativa minima (~20% a frente com best forte, ou
+#   mais com best fraco): abaixo disso o vencedor mal supera o runner-up,
+#   genuinamente marginal -> "baixa".
 BAND_HIGH: float = 0.50
 BAND_LOW: float = 0.20
 
