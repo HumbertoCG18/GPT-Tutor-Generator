@@ -60,6 +60,17 @@ DATE_STRONG_BOOST: float = 0.30
 DATE_WEAK_BOOST: float = 0.10
 
 
+# S2 (P4): escala do IDF por raridade entre blocos CANDIDATOS
+# (file_map.block_token_weights). O peso bruto de um token do topic_text é
+# 1/df (df = nº de candidatos cujo topic contém o token); o peso EFETIVO é
+# 1 + IDF_WEIGHT*(1/df - 1) — interpolação entre "sem IDF" (0.0) e IDF puro
+# (1.0). Assim calibrar IDF_WEIGHT não muda o peso de tokens fora do
+# vocabulário dos candidatos (sempre 1.0). Calibrado no golden
+# Metodos-Formais (T7, sweep 0.3/0.5/0.7/1.0): 1.0 (IDF puro) deu 40/48 vs
+# 39/48 das escalas menores, sem regressão e sem confiante-e-errado.
+IDF_WEIGHT: float = 1.0
+
+
 # Tetos de confiança por método de atribuição de bloco (P2.2):
 # "não há como ter certeza só com léxico" — o teto materializa isso.
 # Aplicado em content_taxonomy.resolve_unit_block_tags na consolidação:

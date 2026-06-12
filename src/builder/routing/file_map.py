@@ -9,11 +9,13 @@ from pathlib import Path
 from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
 
 from src.builder.routing.dates import extract_dates
+from src.builder.text.normalize import normalize_match_text as _normalize_text
 from src.builder.text.normalize import split_camel_case
 from src.builder.routing.sequence import annotate_class_ordinals, score_sequence_match
 from src.builder.routing.thresholds import (
     DATE_STRONG_BOOST,
     DATE_WEAK_BOOST,
+    IDF_WEIGHT,
     T,
     margin_confidence,
     relative_margin_confidence,
@@ -833,6 +835,39 @@ def timeline_block_matches_preferred_topic(block: Dict[str, object], preferred_t
     return False
 
 
+def block_token_weights(blocks: List[Dict[str, object]]) -> Dict[str, float]:
+    """S2 (P4): IDF por raridade entre blocos CANDIDATOS.
+
+    token -> peso efetivo 1 + IDF_WEIGHT*(1/df - 1), onde df = nº de blocos
+    candidatos cujo topic_text normalizado contém o token (mesma mecânica do
+    token_weights do scorer de UNIDADE, peso=1/freq). Tokens de TODOS os
+    topic_texts dos candidatos entram; tokens curtos (<4) e numéricos ficam
+    fora (mesmo filtro do scorer). Tokens do nome do curso/área
+    (UNIT_GENERIC_TOKENS, ex. "metodos"/"formais" — presentes em TODO markdown
+    via header) recebem raridade ZERO (df infinito): aparecem em qualquer
+    entry, então não distinguem bloco nenhum — e o df dentro de um candidato
+    set pequeno (card de 2 blocos) não os amortece o bastante. Computar UMA
+    vez por entry, sobre o conjunto que será ranqueado, e repassar via
+    topic_token_weights= ao scorer."""
+    frequency: Dict[str, int] = {}
+    for block in blocks or []:
+        if not isinstance(block, dict):
+            continue
+        topic_norm = _normalize_text(str(block.get("topic_text", "") or ""))
+        tokens = {
+            token
+            for token in topic_norm.split()
+            if len(token) >= 4 and not token.isdigit()
+        }
+        for token in tokens:
+            frequency[token] = frequency.get(token, 0) + 1
+    return {
+        token: 1.0 + IDF_WEIGHT * ((0.0 if token in UNIT_GENERIC_TOKENS else 1.0 / freq) - 1.0)
+        for token, freq in frequency.items()
+        if freq
+    }
+
+
 def score_entry_against_timeline_block(
     signals: dict,
     block: Dict[str, object],
@@ -842,6 +877,7 @@ def score_entry_against_timeline_block(
     score_card_evidence_against_entry_fn: Callable[[dict, List[Dict[str, str]]], float],
     preferred_unit_slug: str = "",
     preferred_topic_slug: str = "",
+    topic_token_weights: Optional[Dict[str, float]] = None,
 ) -> float:
     rows = timeline_block_rows_for_scoring(block)
     if not rows:
@@ -887,9 +923,43 @@ def score_entry_against_timeline_block(
     topic_text = normalize_match_text(str(block.get("topic_text", "")))
     if topic_text:
         topic_tokens = [tok for tok in topic_text.split() if len(tok) >= 4]
-        score += score_text_against_row(signals.get("manual_tags_text", ""), topic_tokens, weight=0.35)
-        score += score_text_against_row(signals.get("auto_tags_text", ""), topic_tokens, weight=0.12)
-        score += score_text_against_row(signals.get("legacy_tags_text", ""), topic_tokens, weight=0.05)
+        if topic_token_weights is None:
+            # Comportamento anterior EXATO (chamadores que não passam pesos,
+            # ex. cronograma_health): só tags pontuam contra o topic.
+            score += score_text_against_row(signals.get("manual_tags_text", ""), topic_tokens, weight=0.35)
+            score += score_text_against_row(signals.get("auto_tags_text", ""), topic_tokens, weight=0.12)
+            score += score_text_against_row(signals.get("legacy_tags_text", ""), topic_tokens, weight=0.05)
+        else:
+            # S2 (P4): com pesos IDF (block_token_weights sobre os CANDIDATOS),
+            # título/markdown também pontuam contra o topic do bloco — é onde
+            # vivem os tokens raros (arrays/sequencias/conjuntos) que as rows
+            # de sessão diluem. Pesos espelham o row scorer (1.25/1.0); tokens
+            # comuns entre candidatos contribuem ~0 (peso 1/df), então o canal
+            # novo não infla blocos de topic verboso. Tokens da entry DEDUPADOS:
+            # match de topic é overlap de conjunto — sem dedupe, código que
+            # repete um identificador (ex. "arvores" num .thy) inunda o canal.
+            title_unique = " ".join(dict.fromkeys(str(signals.get("title_text", "") or "").split()))
+            markdown_unique = " ".join(dict.fromkeys(str(signals.get("markdown_text", "") or "").split()))
+            score += score_text_against_row(
+                title_unique, topic_tokens,
+                weight=1.25, token_weights=topic_token_weights,
+            )
+            score += score_text_against_row(
+                markdown_unique, topic_tokens,
+                weight=1.0, token_weights=topic_token_weights,
+            )
+            score += score_text_against_row(
+                signals.get("manual_tags_text", ""), topic_tokens,
+                weight=0.35, token_weights=topic_token_weights,
+            )
+            score += score_text_against_row(
+                signals.get("auto_tags_text", ""), topic_tokens,
+                weight=0.12, token_weights=topic_token_weights,
+            )
+            score += score_text_against_row(
+                signals.get("legacy_tags_text", ""), topic_tokens,
+                weight=0.05, token_weights=topic_token_weights,
+            )
 
     score += min(score_card_evidence_against_entry_fn(signals, block.get("card_evidence", []) or []), 0.45)
 
@@ -1159,6 +1229,9 @@ def select_probable_period_for_entry(
         block for block in blocks if timeline_block_matches_preferred_topic(block, preferred_topic_slug)
     ]
     scored_source_blocks = topic_filtered_blocks if topic_filtered_blocks else blocks
+    # S2 (P4): IDF computado UMA vez por entry, sobre os blocos que este
+    # ranking compara (não por bloco) — raridade é relativa ao conjunto.
+    topic_token_weights = block_token_weights(scored_source_blocks)
     session_scored_blocks = []
     for block in scored_source_blocks:
         block_score = score_entry_against_timeline_block(
@@ -1173,6 +1246,7 @@ def select_probable_period_for_entry(
             ),
             preferred_unit_slug=preferred_unit_slug,
             preferred_topic_slug=preferred_topic_slug,
+            topic_token_weights=topic_token_weights,
         )
         session_score, matched_session, session_card_bonus = score_entry_against_timeline_sessions(
             temporal_signals,
@@ -1253,6 +1327,7 @@ def select_probable_period_for_entry(
                 ),
                 preferred_unit_slug=preferred_unit_slug,
                 preferred_topic_slug=preferred_topic_slug,
+                topic_token_weights=topic_token_weights,
             ),
         )
         for block in scored_source_blocks

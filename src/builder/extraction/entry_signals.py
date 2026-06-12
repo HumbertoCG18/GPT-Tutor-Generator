@@ -13,7 +13,17 @@ from src.builder.text.normalize import (  # noqa: F401  (re-export)
 )
 
 
-def score_text_against_row(source_text: str, row_tokens: List[str], *, weight: float = 1.0) -> float:
+def score_text_against_row(
+    source_text: str,
+    row_tokens: List[str],
+    *,
+    weight: float = 1.0,
+    token_weights: Dict[str, float] | None = None,
+) -> float:
+    # S2 (P4): token_weights (token -> peso efetivo, cf.
+    # file_map.block_token_weights) multiplica a contribuição POR row_token —
+    # tokens raros entre os candidatos pesam mais. None = peso 1.0 para todos
+    # (comportamento anterior EXATO).
     if not source_text or not row_tokens:
         return 0.0
 
@@ -21,12 +31,13 @@ def score_text_against_row(source_text: str, row_tokens: List[str], *, weight: f
     score = 0.0
     for source_token in source_tokens:
         for row_token in row_tokens:
+            token_weight = 1.0 if token_weights is None else float(token_weights.get(row_token, 1.0))
             if source_token == row_token:
-                score += 1.0 * weight
+                score += 1.0 * weight * token_weight
             elif source_token in row_token or row_token in source_token:
-                score += 0.45 * weight
+                score += 0.45 * weight * token_weight
             elif len(source_token) >= 5 and len(row_token) >= 5 and source_token[:5] == row_token[:5]:
-                score += 0.2 * weight
+                score += 0.2 * weight * token_weight
     return score
 
 

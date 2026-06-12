@@ -812,6 +812,7 @@ def _best_instructional_block_fallback(
     from src.builder.routing.sequence import annotate_class_ordinals
     annotate_class_ordinals(instructional_blocks)
     from src.builder.routing.file_map import (
+        block_token_weights,
         score_entry_against_timeline_block,
         score_card_evidence_against_entry,
     )
@@ -820,6 +821,9 @@ def _best_instructional_block_fallback(
         score_text_against_row,
     )
     signals = collect_entry_unit_signals(entry, markdown_text)
+    # S2 (P4): IDF por raridade computado UMA vez por entry, sobre o conjunto
+    # de candidatos deste ranking (instructional_blocks ou o recorte do card).
+    topic_token_weights = block_token_weights(instructional_blocks)
     scored = [
         (
             block,
@@ -833,6 +837,7 @@ def _best_instructional_block_fallback(
                 ),
                 preferred_unit_slug=preferred_unit_slug,
                 preferred_topic_slug=preferred_topic_slug,
+                topic_token_weights=topic_token_weights,
             ),
         )
         for block in instructional_blocks
