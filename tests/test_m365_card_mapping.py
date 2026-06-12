@@ -35,6 +35,14 @@ def test_strict_index_same_section_twice_is_not_ambiguous():
     assert idx["x.pdf"] == "Seção A"
     assert amb == set()
 
+def test_strict_index_case_variants_across_sections_are_ambiguous():
+    idx, amb = section_file_index_strict(_contents(
+        ("Seção A", ["File.pdf"]),
+        ("Seção B", ["file.pdf"]),
+    ))
+    assert "file.pdf" not in idx
+    assert amb == {"file.pdf"}
+
 def test_strict_index_empty_contents():
     idx, amb = section_file_index_strict(None)
     assert idx == {} and amb == set()
