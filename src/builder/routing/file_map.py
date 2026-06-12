@@ -746,6 +746,19 @@ def score_card_evidence_against_entry(
 
 def timeline_block_rows_for_scoring(block: Dict[str, object]) -> list:
     rows = list(block.get("rows", []) or [])
+    if not rows:
+        # Bloco PERSISTIDO (.timeline_index.json) não tem 'rows' — sintetiza
+        # linhas pontuáveis de source_rows/sessions (bug B3, 2º call site:
+        # sem isso o score é 0.0 e o ranking degenera pro 1º bloco).
+        for sr in block.get("source_rows", []) or []:
+            if isinstance(sr, dict):
+                content = " ".join(str(sr.get(k) or "") for k in ("date", "description"))
+                rows.append({"content": content.strip()})
+        if not rows:
+            for sess in block.get("sessions", []) or []:
+                if isinstance(sess, dict):
+                    content = " ".join(str(sess.get(k) or "") for k in ("date", "label"))
+                    rows.append({"content": content.strip()})
     return [row for row in rows if not bool(row.get("ignored"))]
 
 

@@ -66,3 +66,28 @@ def test_persisted_index_does_not_degenerate_to_first_block():
     }
     predicted, _band = eval_assignments.predict_block(case, blocks)
     assert predicted == "bloco-02"
+
+
+def test_scoring_direto_funciona_com_bloco_persistido():
+    """B3 no 2o call site: score_entry_against_timeline_block lia so 'rows' —
+    bloco persistido pontuava 0.0 e o ranking degenerava pro primeiro."""
+    from src.builder.routing.file_map import (
+        score_entry_against_timeline_block, score_card_evidence_against_entry,
+    )
+    from src.builder.extraction.entry_signals import (
+        collect_entry_unit_signals, score_text_against_row,
+    )
+    from src.builder.text.normalize import normalize_match_text
+    block = _pblock("bloco-02", "inducao estrutural arvores", "2026-03-30", "2026-04-01")
+    entry = {"id": "x", "title": "inducao arvores", "category": "material-de-aula",
+             "tags": "", "manual_tags": [], "auto_tags": []}
+    signals = collect_entry_unit_signals(entry, "inducao estrutural sobre arvores")
+    score = score_entry_against_timeline_block(
+        signals, block,
+        normalize_match_text=normalize_match_text,
+        score_text_against_row=score_text_against_row,
+        score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
+            s, items, normalize_match_text=normalize_match_text,
+        ),
+    )
+    assert score > 0.0
