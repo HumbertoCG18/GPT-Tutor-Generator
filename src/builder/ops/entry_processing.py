@@ -35,6 +35,11 @@ def process_entry(builder, entry, *, image_categories) -> Dict[str, object]:
         "page_range": entry.page_range,
         "ocr_language": entry.ocr_language,
     }
+    # Persiste o override de id (dedup B5) no manifest: consumidores que
+    # reconstroem FileEntry via from_dict (regeneração pedagógica, UI)
+    # recalculariam o id do source_path e divergiriam do id deduplicado.
+    if entry.id_override:
+        item["id_override"] = entry.id_override
 
     src = Path(entry.source_path)
     if entry.file_type not in ("url", "github-repo") and not src.exists():

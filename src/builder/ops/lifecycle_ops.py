@@ -83,24 +83,25 @@ def process_single_impl(
         with open(manifest_path, "r", encoding="utf-8") as f:
             manifest = json.load(f)
 
-    logger.info("Processing single entry: %s (%s)", entry.title, entry.file_type)
-    item_result = builder._process_entry(entry)
-    # Dedup de id: se o id gerado colide com entry de OUTRO source_path,
-    # sufixa com a categoria e, se necessário, um contador (bug B5).
-    # O fluxo already_exists/force (acima) já garante que o mesmo source_path
-    # não chega aqui duas vezes, então toda colisão aqui é de path diferente.
+    # Dedup de id ANTES do processamento (bug B5): se o id colide com entry
+    # de OUTRO source_path, seta entry.id_override para que TODO o pipeline
+    # (raw/, staging/assets/, manual-review/, manifest) use o id final
+    # consistente — dedup pós-processamento deixava os assets em disco no id
+    # antigo, compartilhados com a entry original (sobrescrita + unprocess
+    # de uma apagava os arquivos da outra). O fluxo already_exists/force
+    # (acima) já garante que o mesmo source_path não chega aqui duas vezes,
+    # então toda colisão aqui é de path diferente.
     existing_ids = {e.get("id") for e in manifest.get("entries", [])}
-    deduped_id = _dedup_entry_id(
-        str(item_result.get("id") or ""),
-        str(item_result.get("category") or ""),
-        existing_ids,
-    )
-    if deduped_id != item_result.get("id"):
+    base_id = entry.id()
+    if base_id in existing_ids:
+        entry.id_override = _dedup_entry_id(base_id, entry.category, existing_ids)
         logger.warning(
             "Entry id collision: %s -> %s (category=%s)",
-            item_result.get("id"), deduped_id, item_result.get("category"),
+            base_id, entry.id_override, entry.category,
         )
-        item_result["id"] = deduped_id
+
+    logger.info("Processing single entry: %s (%s)", entry.title, entry.file_type)
+    item_result = builder._process_entry(entry)
     manifest["entries"].append(item_result)
     manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
     manifest.setdefault("logs", []).extend(builder.logs)

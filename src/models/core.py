@@ -104,8 +104,17 @@ class FileEntry:
     # {} quando não há conflito. Sinal de revisão exibido no editor; o build
     # mantém a unidade forte. Distinto da herança silenciosa (que não é conflito).
     unit_block_conflict: dict = field(default_factory=dict)
+    # Override do id (bug B5): setado pelo import quando o id computado do
+    # source_path colide com entry de OUTRO source_path. Quando não-vazio,
+    # id() retorna este valor — assim assets/raw/manifest usam o id final
+    # consistente desde o início do processamento. Persistido no manifest
+    # (to_dict omite quando vazio; from_dict restaura), então releituras
+    # mantêm o id deduplicado em vez de recomputar do source_path.
+    id_override: str = ""
 
     def id(self) -> str:
+        if self.id_override:
+            return self.id_override
         if self.file_type == "url":
             import hashlib
             base = slugify(self.title) or "url"
