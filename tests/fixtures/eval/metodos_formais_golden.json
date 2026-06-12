@@ -3345,7 +3345,7 @@
     "bloco-05",
     "bloco-06"
    ],
-   "note": "decisao assistida (Claude, 12/06): ferramenta Isabelle (.thy); bloco 06-13/04 prova interativa"
+   "note": "confirmado pelo usuario (12/06): card Provas por Inducao, semanas 06/04-13/04 (Isabelle) -> bloco-06"
   },
   {
    "id": "exemplos",
@@ -3364,7 +3364,7 @@
     "bloco-05",
     "bloco-06"
    ],
-   "note": "decisao assistida (Claude, 12/06): ferramenta Isabelle (.thy)"
+   "note": "confirmado pelo usuario (12/06): card Provas por Inducao, semanas 06/04-13/04 (Isabelle) -> bloco-06"
   },
   {
    "id": "intro",
@@ -3383,7 +3383,7 @@
     "bloco-05",
     "bloco-06"
    ],
-   "note": "decisao assistida (Claude, 12/06): ferramenta Isabelle (.thy); Exemplo - introducao do card"
+   "note": "confirmado pelo usuario (12/06): card Provas por Inducao, semanas 06/04-13/04 (Isabelle) -> bloco-06"
   },
   {
    "id": "listas",
@@ -3402,7 +3402,7 @@
     "bloco-05",
     "bloco-06"
    ],
-   "note": "decisao assistida (Claude, 12/06): ferramenta Isabelle (.thy)"
+   "note": "confirmado pelo usuario (12/06): card Provas por Inducao, semanas 06/04-13/04 (Isabelle) -> bloco-06"
   },
   {
    "id": "provas",
@@ -3421,7 +3421,7 @@
     "bloco-05",
     "bloco-06"
    ],
-   "note": "decisao assistida (Claude, 12/06): ferramenta Isabelle (.thy)"
+   "note": "confirmado pelo usuario (12/06): card Provas por Inducao, semanas 06/04-13/04 (Isabelle) -> bloco-06"
   },
   {
    "id": "correcaoterminacao",

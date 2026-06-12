@@ -82,8 +82,8 @@ Re-runs do gerador preservam tuas mudanças (merge por id+categoria).
 2. **Cluster Revisão → bloco-03 (7 casos)**: âncora = label do card ("Semana
    09/03", que na tabela 1 é "revisão de lógica de predicados" — consistente).
    Scorer prevê bloco-02. Mantive 03; confirma.
-3. **Os 5 `.thy` → bloco-06**: Isabelle = aulas 06-13/04. Scorer prevê bloco-05
-   (provas por indução, sem ferramenta). Mantive 06; confirma.
+3. ~~Os 5 `.thy` → bloco-06~~ — **CONFIRMADO pelo usuário (12/06)**: card
+   "Provas por Indução", semanas 06/04-13/04 (Isabelle). bloco-06 correto.
 4. **"ALTERNATIVA" na note**: `hoare`→10 (alt 12), `invariantes`→11 (alt 12),
    `terminacao`→12 (alt 11), `exerciciosdafny1`→12 (alt 13). A tabela 1 ajuda:
    invariantes/terminação são a aula de 06/05 (bloco-11); Dafny começa 11/05.
