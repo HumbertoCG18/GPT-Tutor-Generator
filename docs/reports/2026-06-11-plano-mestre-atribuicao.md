@@ -210,7 +210,35 @@ este plano-mestre (tabela abaixo).
 | P1 — card map via labels (+ fix B3 2º call site) | **fechado 12/06** | **78.3% (36/46)** | n/a | 9 (alvo do P2) |
 | P2 — margem relativa + tetos + method universal | **fechado 12/06** | 78.3% (36/46, mantida) | n/a | **0** (meta ≤2 batida; banda alta: 28 ok / 0 erro) |
 | P3 — higiene B1/B5/B4 | **fechado 12/06** | 78.3% (inalterada — higiene) | n/a | 0 |
-| P4 | **APROVADO pelos números** (12/06) | alvo ~93% | — | — |
+| P4 | **FECHADO 12/06** (Fase 0 limpeza + S1-S5 + S4b) | **85.4% (41/48)** | n/a | **0** (banda alta: 28 ok / 0 erro) |
+
+**Fechamento P4 (12/06, golden v2 = 48 casos):** progressão por sinal —
+36/48 (baseline pós-P3) → S1 CamelCase → S2 IDF **40/48** → S3 (medido
+redundante/danoso, NÃO implementado) → S4 ferramenta → S5 janela de assign →
+**S4b ferramenta por extensão (.thy/.dfy) → 41/48 (85.4%)**, confiante-e-errado
+**0**, suíte 1318 verde. Commit final `cbfb6bd`.
+
+**Teto principiado do scorer (por que 41 e não os ≥43 da meta):** os 7 erros
+restantes são TODOS band baixa/media (review-flag honesto, 0 na banda alta).
+Dois deles (`t1`, `provas` → bloco-06) só seriam alcançáveis revivendo a
+heurística "último bloco antes do prazo" — **reprovada na própria spec**: `t1`
+é `.pdf` (sem extensão de ferramenta) e seu ground-truth é o julgamento "opção B"
+do usuário (trabalho pertence ao fim do arco que exercita); `provas`.thy recebe
+o boost isabelle em bloco-06 mas o surface "inducao arvores" de bloco-05 domina
+por 4.4 — fechar isso exigiria overpeso de ferramenta que regrediria outros
+casos (overfit a 1 cadeira, risco documentado na spec). Os outros 5
+(`logicadehoare2`, `exerciciosdafny1`, `exercicios-conjuntos`, `terminacao`,
+boundary de segmentação) são fronteiras reais de timeline entre blocos
+adjacentes — confiança baixa é a resposta correta, não um defeito. **Meta
+primária (confiante-e-errado = 0) batida; a acurácia bruta cede à honestidade
+da confiança, que era o objetivo do programa todo.**
+
+**Retag do repo real (Metodos-Formais-Tutor, 12/06):** 56 entries, 6
+computed_block_id corrigidos (5 dafny exercises 15→13/11, `introducao` 11→12).
+Distribuição de bands: 33 alta / 8 media / 12 baixa / 3 sem. As 12 baixas (spec
+esperava 2-4) são honestas: exercícios Dafny entre blocos Dafny adjacentes
+(11/13/15) e Lógica de Hoare parte 1/2 têm margem relativa genuinamente baixa →
+review-flag correto. Backup em `manifest.json.retag.bak`.
 
 **Decisão P4 (12/06, pós-ciclo P1-P3):** dos 10 erros restantes do golden, ~8 têm
 mecanismo P4 identificado: 5 exercícios Dafny caem no bloco-15 em vez do 13
