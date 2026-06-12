@@ -1006,6 +1006,13 @@ def resolve_unit_block_tags(
     for entry in manifest_entries or []:
         category = _collapse_ws(str(entry.get("category") or "")).lower()
         if category in _NO_TIMELINE_CATEGORIES:
+            # Categoria fora da timeline: limpa atribuicao antiga (senao um
+            # manifest com historico carrega bloco orfao — caso real do B1).
+            for k in ("computed_block_id", "computed_block_confidence",
+                      "computed_block_band", "computed_block_method"):
+                entry.pop(k, None)
+            if entry.get("auto_tags"):
+                entry["auto_tags"] = [t for t in entry["auto_tags"] if not str(t).startswith("bloco:")]
             updated.append(entry)
             continue
 
