@@ -184,7 +184,8 @@ def download_subject_m365(client, m365_filter, section_index, dest,
                           skip_existing: bool = True, progress_cb=None) -> dict:
     """Baixa os arquivos M365 da matéria pros cards das seções REAIS do Moodle.
 
-    section_index: {basename.casefold(): secao} de section_file_index_strict —
+    section_index: {basename.casefold(): secao} de section_file_index_strict
+    (chaves são re-sanitizadas aqui — nomes Moodle crus e nomes M365 sanitizados casam) —
     a ÚNICA fonte de card. Miss/ambíguo/índice vazio => subpasta literal do
     OneDrive (ou _geral) com matched=False; NUNCA match léxico (a spec
     2026-06-11 matou o match_card: pasta-tópico do professor não é card).
@@ -193,7 +194,8 @@ def download_subject_m365(client, m365_filter, section_index, dest,
              name_to_section (só origem moodle_api), warnings: [str]}.
     """
     dest = Path(dest)
-    index = {str(k).casefold(): v for k, v in (section_index or {}).items()}
+    index = {sanitize_folder_name(str(k)).casefold(): v
+             for k, v in (section_index or {}).items()}
     items = select_for_subject(client.list_shared(), m365_filter)
     total = len(items)
     warnings: list = []

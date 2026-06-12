@@ -147,3 +147,13 @@ def test_lexical_matching_is_dead():
     import src.builder.sources.m365 as m
     for nome in ("match_card", "_token_affinity", "_norm_tokens", "_DEFAULT_ALIASES"):
         assert not hasattr(m, nome), f"{nome} deveria ter sido removido"
+
+
+def test_index_raw_moodle_key_matches_sanitized_m365_name(tmp_path):
+    """Chave do índice vem CRUA do Moodle; nome M365 é sanitizado — devem casar."""
+    client = _FakeM365([_item("1", "Logica: Hoare.pdf", "logica")],
+                       {"Logica: Hoare.pdf": b"%PDF-1.7 ok"})
+    idx = {"logica: hoare.pdf": "Verificação de Programas"}
+    rep = download_subject_m365(client, "metodosformais", idx, tmp_path)
+    assert rep["mapping"][0][1] == "Verificação de Programas"
+    assert rep["mapping"][0][2] == "moodle_api"
