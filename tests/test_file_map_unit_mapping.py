@@ -729,6 +729,77 @@ def test_auto_map_entry_subtopic_uses_heading_enriched_alias_for_logic_propositi
     assert derived_unit == "unidade-01-metodos-formais"
 
 
+def _tie_taxonomy():
+    """Dois tópicos com label idêntico, slugs neutros (que não casam o texto)
+    e MESMO kind → empate exato por construção (o scorer também casa
+    slug_phrase e dá +0.04 a kind subtopic)."""
+    return {
+        "version": 1,
+        "course_slug": "metodos-formais",
+        "units": [
+            {
+                "slug": "unidade-02-verificacao-de-programas",
+                "title": "Unidade 2 - Verificacao de Programas",
+                "topics": [
+                    {
+                        "slug": "topico-a",
+                        "label": "Logica de Hoare",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    },
+                    {
+                        "slug": "topico-b",
+                        "label": "Logica de Hoare",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    },
+                ],
+            },
+        ],
+    }
+
+
+def test_auto_map_entry_subtopic_exact_tie_returns_no_slug():
+    # Reproduz as 12 entries codigo-professor conf-0.0 do repo real: empate
+    # exato entre tópicos → o sort estável elegia um vencedor ARBITRÁRIO
+    # (menor índice na taxonomia) e o surfaçava com conf 0.0.
+    entry = {
+        "title": "hoare",
+        "category": "codigo-professor",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/zip/hoare.zip",
+    }
+    result = _auto_map_entry_subtopic(entry, _tie_taxonomy(), "Logica de Hoare")
+
+    assert result.topic_slug == ""
+    assert result.confidence == 0.0
+    assert result.ambiguous is True
+    assert any("empate-exato" in r for r in result.reasons)
+
+
+def test_auto_map_entry_subtopic_zero_score_returns_no_slug():
+    # Sem sinal nenhum (zip sem markdown, título não casa nada): winner_score
+    # 0 não deve surfaçar o primeiro tópico da taxonomia como slug.
+    entry = {
+        "title": "xyzqwabc",
+        "category": "codigo-professor",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/zip/xyzqwabc.zip",
+    }
+    result = _auto_map_entry_subtopic(entry, _tie_taxonomy(), "")
+
+    assert result.topic_slug == ""
+    assert result.confidence == 0.0
+    assert result.ambiguous is True
+    assert any("sem-sinal" in r for r in result.reasons)
+
+
 def test_derive_unit_from_topic_match_uses_topic_unit_when_present():
     taxonomy = {
         "version": 1,

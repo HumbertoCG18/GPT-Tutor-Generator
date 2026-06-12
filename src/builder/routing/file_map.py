@@ -190,10 +190,30 @@ def auto_map_entry_subtopic(
     runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
     margin = winner_score - runner_up_score
     rel_margin = margin / max(winner_score, 1e-6)
+    # Sem sinal ou empate EXATO: nao ha vencedor real — o sort estavel elegeria
+    # um slug arbitrario (menor indice na taxonomia) e o surfacaria com conf
+    # 0.0 no editor (12 entries codigo-professor do repo real, 12/06). Slug
+    # vazio e a resposta honesta; a reason preserva o diagnostico.
     if winner_score <= 0.0:
-        confidence = 0.0
-        ambiguous = True
-    elif len(scored) == 1:
+        return topic_match_result_factory(
+            topic_slug="",
+            topic_label="",
+            unit_slug="",
+            confidence=0.0,
+            ambiguous=True,
+            reasons=["sem-sinal (winner_score=0)"],
+        )
+    if len(scored) > 1 and margin == 0.0:
+        tied = sum(1 for _, score in scored if score == winner_score)
+        return topic_match_result_factory(
+            topic_slug="",
+            topic_label="",
+            unit_slug="",
+            confidence=0.0,
+            ambiguous=True,
+            reasons=[f"empate-exato {tied}x score={winner_score:.2f}"],
+        )
+    if len(scored) == 1:
         confidence = 0.72
         ambiguous = False
     else:
