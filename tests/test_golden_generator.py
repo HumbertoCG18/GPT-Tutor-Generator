@@ -61,6 +61,17 @@ def test_categoria_fora_da_timeline_vira_excluido():
     assert case["expected_origin"] == "excluido"
 
 
+def test_case_grava_raw_target_com_basename_do_source_path():
+    """S4b: o harness deriva a ferramenta da EXTENSÃO via raw_target — o caso
+    precisa carregar o basename do source_path real (.thy/.dfy inclusos)."""
+    case = build_golden.case_for_entry(_entry("e1", "a.pdf"), _SEC_INDEX, _CARD_MAP)
+    assert case["raw_target"] == "a.pdf"
+    e_thy = _entry("e7", "a.pdf")
+    e_thy["source_path"] = r"C:\x\Provas por Inducao\provas.thy"
+    case_thy = build_golden.case_for_entry(e_thy, {"provas.thy": "Secao Um Bloco"}, _CARD_MAP)
+    assert case_thy["raw_target"] == "provas.thy"
+
+
 def test_merge_preserva_decisao_humana():
     old = [{"id": "e2", "category": "material-de-aula", "expected_block_id": "bloco-06",
             "expected_origin": "precisa_decisao", "note": "aula de listas"}]

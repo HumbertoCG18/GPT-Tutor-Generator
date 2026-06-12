@@ -54,6 +54,9 @@ def case_for_entry(entry: dict, sec_index: dict, card_map: dict) -> dict:
             str(t) for t in (entry.get("auto_tags") or [])
             if str(t).strip().startswith("ferramenta:")
         ],
+        # S4b: basename do arquivo fonte real — o harness deriva a ferramenta
+        # da EXTENSÃO (.thy -> isabelle, .dfy -> dafny) via raw_target.
+        "raw_target": Path(str(entry.get("source_path") or "")).name,
         "source_section_real": section,
         "unit_guess": {
             "slug": str(entry.get("computed_unit_slug") or ""),

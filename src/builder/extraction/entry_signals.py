@@ -7,6 +7,7 @@ from src.builder.extraction.content_taxonomy import (
     _extract_markdown_headings,
     extract_markdown_lead_text,
 )
+from src.builder.routing.thresholds import TOOL_EXTENSIONS
 from src.builder.text.normalize import (  # noqa: F401  (re-export)
     normalize_match_text,
     split_camel_case,
@@ -86,6 +87,14 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         for tag in auto_tags
         if tag.lower().startswith("ferramenta:")
     ]
+    # S4b (P4): ferramenta também pela EXTENSÃO do arquivo fonte (.thy ->
+    # isabelle, .dfy -> dafny) — os .thy do manifest real não trazem
+    # ferramenta:isabelle nas auto_tags. União dos dois sinais, dedupada.
+    for field in ("source_path", "raw_target"):
+        suffix = Path(str(entry.get(field, "") or "")).suffix.lower()
+        ext_tool = TOOL_EXTENSIONS.get(suffix)
+        if ext_tool and ext_tool not in tool_values:
+            tool_values.append(ext_tool)
     legacy_tags = [
         part.strip()
         for part in str(entry.get("tags", "") or "").replace(",", ";").split(";")

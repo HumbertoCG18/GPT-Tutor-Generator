@@ -270,6 +270,50 @@ def test_ferramenta_sem_weights_nao_dispara():
     assert com_tag == sem_tag
 
 
+def test_ferramenta_por_extensao_thy_sem_auto_tags():
+    """S4b: .thy SEM auto_tags ferramenta: deriva isabelle da EXTENSÃO do
+    source_path — os .thy do manifest real não têm ferramenta:isabelle."""
+    entry = _entry("intro")
+    entry["source_path"] = "x/intro.thy"
+    signals = collect_entry_unit_signals(entry, "")
+    assert "isabelle" in signals["tool_tags_text"].split()
+
+
+def test_ferramenta_por_extensao_dfy_via_raw_target():
+    """S4b: a extensão também vale via raw_target (o harness do eval só
+    repassa raw_target) e .dfy mapeia para dafny."""
+    entry = _entry("exemplos")
+    entry["raw_target"] = "Exemplos.DFY"
+    signals = collect_entry_unit_signals(entry, "")
+    assert "dafny" in signals["tool_tags_text"].split()
+
+
+def test_ferramenta_extensao_uniao_com_auto_tags_dedupada():
+    """União dos dois sinais, dedupada: auto_tag isabelle + .thy não duplica;
+    extensão fora do mapa (.pdf) não acrescenta nada."""
+    entry = _entry("intro", auto_tags=["ferramenta:isabelle"])
+    entry["source_path"] = "x/intro.thy"
+    signals = collect_entry_unit_signals(entry, "")
+    assert signals["tool_tags_text"].split().count("isabelle") == 1
+    entry_pdf = _entry("intro")
+    entry_pdf["source_path"] = "x/intro.pdf"
+    assert "tool" not in collect_entry_unit_signals(entry_pdf, "")["tool_tags_text"]
+    assert collect_entry_unit_signals(entry_pdf, "")["tool_tags_text"] == ""
+
+
+def test_extensao_thy_puxa_bloco_isabelle_fim_a_fim():
+    """Cenário real t1/provas: entry .thy de título neutro, SEM auto_tags,
+    entre b05 (inducao arvores) e b06 (interativa teoremas isabelle) —
+    isabelle vence pela extensão (mesmo shape do teste da T9)."""
+    b05, b06 = _blocks_unidade1()
+    entry = _entry("provas")
+    entry["source_path"] = "Provas por Inducao/provas.thy"
+    weights = block_token_weights([b05, b06])
+    score_05 = _score(entry, "", b05, weights=weights, unit_slug=_U1)
+    score_06 = _score(entry, "", b06, weights=weights, unit_slug=_U1)
+    assert score_06 > score_05
+
+
 def test_ferramenta_fora_do_mapa_ignorada():
     """ferramenta:proposicional não é ferramenta de verdade (ruído do
     extrator) — fora de TOOL_TOKENS, não dá boost nem penalidade."""

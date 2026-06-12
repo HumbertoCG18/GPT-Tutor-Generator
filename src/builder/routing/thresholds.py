@@ -90,6 +90,15 @@ TOOL_TOKENS: dict = {
     "hoare": {"hoare"},
 }
 
+# S4b (P4): ferramenta derivada da EXTENSÃO do arquivo fonte
+# (entry_signals.collect_entry_unit_signals, união com as auto_tags
+# `ferramenta:`). Os .thy do manifest real NÃO têm ferramenta:isabelle nas
+# auto_tags — a extensão é o sinal que sempre existe.
+TOOL_EXTENSIONS: dict = {
+    ".thy": "isabelle",
+    ".dfy": "dafny",
+}
+
 
 # Tetos de confiança por método de atribuição de bloco (P2.2):
 # "não há como ter certeza só com léxico" — o teto materializa isso.
