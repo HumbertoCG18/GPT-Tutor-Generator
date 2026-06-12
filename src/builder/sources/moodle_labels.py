@@ -124,6 +124,32 @@ def _parse_format_d(sec_name: str, week_anchor: str) -> dict | None:
             "lessons": []}
 
 
+def derive_card_block_map(card_dates: dict, blocks: list) -> dict:
+    """{secao: {block_ids, source:"labels", format, dates}} por interseção de
+    datas de AULA (preferidas) ou semanas (formato D) com period_start..end
+    dos blocos não-administrativos. Card sem match -> fora (nunca inventa)."""
+    instructional = [b for b in blocks or [] if not bool(b.get("administrative_only"))]
+    out: dict = {}
+    for card, info in (card_dates or {}).items():
+        hits = []
+        for b in instructional:
+            start = str(b.get("period_start") or "")
+            end = str(b.get("period_end") or "") or start
+            if not start:
+                continue
+            dates = info.get("dates") or []
+            in_dates = any(start <= d <= end for d in dates)
+            in_weeks = (not dates) and any(
+                ws <= end and we >= start for ws, we in info.get("weeks") or [])
+            if in_dates or in_weeks:
+                hits.append((start, str(b.get("id") or "")))
+        if hits:
+            out[card] = {"block_ids": [bid for _s, bid in sorted(hits)],
+                         "source": "labels", "format": info.get("format", ""),
+                         "dates": list(info.get("dates") or [])}
+    return out
+
+
 def parse_card_dates(contents, year: int, week_anchor: str = "") -> dict:
     """{secao_sanitizada: {format, dates[iso], weeks[(ini,fim)], lessons}}.
 

@@ -78,3 +78,37 @@ def test_formato_a_tem_precedencia_sobre_b():
                         "description": "<p>(04/03/2026): aula com ano completo.</p>"}]}
     out = parse_card_dates([sec], year=2026)
     assert out[list(out)[0]]["format"] == "A"
+
+
+from src.builder.sources.moodle_labels import derive_card_block_map
+
+def _blk(bid, start, end, admin=False):
+    b = {"id": bid, "period_start": start, "period_end": end}
+    if admin:
+        b["administrative_only"] = True
+    return b
+
+_BLOCKS = [_blk("bloco-03", "2026-03-09", "2026-03-09"),
+           _blk("bloco-04", "2026-03-11", "2026-03-25"),
+           _blk("bloco-08", "2026-04-20", "2026-04-20", admin=True)]
+
+def test_derive_intersecta_datas_de_aula_com_periodos():
+    cards = {"Revisão": {"format": "A", "weeks": [],
+                         "dates": ["2026-03-09", "2026-03-11"], "lessons": []}}
+    out = derive_card_block_map(cards, _BLOCKS)
+    assert out["Revisão"]["block_ids"] == ["bloco-03", "bloco-04"]
+    assert out["Revisão"]["source"] == "labels"
+
+def test_derive_ignora_bloco_administrativo():
+    cards = {"X": {"format": "A", "weeks": [], "dates": ["2026-04-20"], "lessons": []}}
+    assert "X" not in derive_card_block_map(cards, _BLOCKS)
+
+def test_derive_usa_weeks_quando_nao_ha_dates():
+    cards = {"D": {"format": "D", "weeks": [("2026-03-09", "2026-03-13")],
+                   "dates": [], "lessons": []}}
+    out = derive_card_block_map(cards, _BLOCKS)
+    assert "bloco-03" in out["D"]["block_ids"] and "bloco-04" in out["D"]["block_ids"]
+
+def test_derive_card_sem_match_fica_fora():
+    cards = {"X": {"format": "A", "weeks": [], "dates": ["2027-01-01"], "lessons": []}}
+    assert derive_card_block_map(cards, _BLOCKS) == {}
