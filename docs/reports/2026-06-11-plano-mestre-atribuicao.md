@@ -239,6 +239,11 @@ cumprido. Force-reprocess corrigido para resolver old_id por source_path
   degradam pra E). Derivar âncora do cronograma da matéria.
 - `METHOD_CAPS.get(method, 1.0)`: default permissivo — method novo futuro
   passaria sem teto.
+- FILE_MAP corrigido pra fonte única (commit 94c17b3, 12/06 — a coluna Período
+  lê computed_block_id; o roteamento próprio do artefato morreu). Follow-ups:
+  (a) coluna UNIDADE do FILE_MAP ainda recomputa (auto_map_entry_unit próprio);
+  (b) leitura crua de computed_block_id sem o fallback auto_tags["bloco:"] de
+  manifests legados (unificar com resolve_effective_block).
 - ~~Golden: 2 pendentes (`t1-2026-1` ×2)~~ — RESOLVIDO 12/06: usuário decidiu
   opção conteúdo (bloco-06, Isabelle/fim do arco; deadline rejeitado). Golden
   completo: 48 casos contados, 0 pendentes. Placar final do ciclo com
