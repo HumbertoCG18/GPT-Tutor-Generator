@@ -7,7 +7,10 @@ from src.builder.extraction.content_taxonomy import (
     _extract_markdown_headings,
     extract_markdown_lead_text,
 )
-from src.builder.text.normalize import normalize_match_text  # noqa: F401  (re-export)
+from src.builder.text.normalize import (  # noqa: F401  (re-export)
+    normalize_match_text,
+    split_camel_case,
+)
 
 
 def score_text_against_row(source_text: str, row_tokens: List[str], *, weight: float = 1.0) -> float:
@@ -85,7 +88,9 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         extra_parts.append(image_description)
     effective_markdown = "\n".join(p for p in extra_parts if p).strip()
     return {
-        "title_text": normalize_match_text(entry.get("title", "")),
+        # S1 (P4): split camelCase SÓ no título — "LogicaDeHoare2" vira
+        # "logica de hoare 2" e casa com o topic do bloco. Markdown/tags intactos.
+        "title_text": normalize_match_text(split_camel_case(entry.get("title", ""))),
         "markdown_headings_text": normalize_match_text(" ".join(_extract_markdown_headings(markdown_text))),
         "markdown_lead_text": normalize_match_text(extract_markdown_lead_text(markdown_text)),
         "category_text": normalize_match_text(entry.get("category", "")),

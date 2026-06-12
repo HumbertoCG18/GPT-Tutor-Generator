@@ -25,6 +25,19 @@ def normalize_match_text(text: str, *, keep: str = "") -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+_CAMEL_BOUNDARY = re.compile(r"(?<=[a-z])(?=[A-Z])|(?<=[a-z])(?=\d)")
+
+
+def split_camel_case(text: str) -> str:
+    """Insere espaço em fronteiras minúscula→Maiúscula e minúscula→dígito.
+
+    "LogicaDeHoare2" → "Logica De Hoare 2". Siglas puras (IHC, P1) intactas —
+    a fronteira letra→dígito só vale após MINÚSCULA, senão "P1" viraria "P 1".
+    Pré-processamento de TÍTULO antes do normalize (P4/S1) — não mexe na fonte
+    única normalize_match_text."""
+    return _CAMEL_BOUNDARY.sub(" ", text or "")
+
+
 def signal_token_set(
     signal_text: str,
     *,

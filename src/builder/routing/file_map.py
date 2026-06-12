@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
 
 from src.builder.routing.dates import extract_dates
+from src.builder.text.normalize import split_camel_case
 from src.builder.routing.sequence import annotate_class_ordinals, score_sequence_match
 from src.builder.routing.thresholds import (
     DATE_STRONG_BOOST,
@@ -962,7 +963,9 @@ def collect_entry_temporal_signals(
     extract_timeline_session_signals: Callable[[str], List[dict]],
 ) -> dict:
     raw_parts = [
-        str(entry.get("title", "") or ""),
+        # S1 (P4): camelCase do título separado também no caminho temporal
+        # (combined_text alimenta card_evidence e match de sessão por bloco).
+        split_camel_case(str(entry.get("title", "") or "")),
         str(entry.get("raw_target", "") or ""),
         str(entry.get("category", "") or ""),
         str(entry.get("tags", "") or ""),
