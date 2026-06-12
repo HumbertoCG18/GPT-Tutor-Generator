@@ -10,6 +10,8 @@ import re
 import unicodedata
 from datetime import datetime
 
+from src.builder.text.normalize import normalize_match_text as _normalize_match_text
+
 _DATE_RE = r"\d{2}/\d{2}/\d{4}"
 _DATE_RANGE_RE = re.compile(
     rf"\b(?:semana\s+)?(?P<start>{_DATE_RE})\s*(?:a|ate|-)\s*(?P<end>{_DATE_RE})\b",
@@ -31,13 +33,6 @@ _IGNORED_SESSION_KINDS = {"ps", "g2", "event", "suspension"}
 def _strip_accents(text: str) -> str:
     normalized = unicodedata.normalize("NFKD", text or "")
     return "".join(ch for ch in normalized if not unicodedata.combining(ch))
-
-
-def _normalize_match_text(text: str) -> str:
-    text = _strip_accents(text)
-    text = text.lower()
-    text = re.sub(r"[^a-z0-9\s]", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
 
 
 def _normalize_timeline_text(text: str) -> str:

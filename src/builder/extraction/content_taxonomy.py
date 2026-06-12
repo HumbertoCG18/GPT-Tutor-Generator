@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import re
-import unicodedata
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
@@ -14,7 +13,7 @@ from src.builder.core.semantic_config import (
     resolve_semantic_profile,
     write_internal_semantic_profile,
 )
-from src.builder.text.normalize import signal_token_set
+from src.builder.text.normalize import normalize_match_text, signal_token_set
 from src.utils.helpers import slugify, write_text, collapse_ws as _collapse_ws
 
 # Categorias que não recebem auto-tags de timeline (unit/subunit/bloco).
@@ -25,13 +24,10 @@ _NO_TIMELINE_CATEGORIES: frozenset = frozenset(
 
 
 def _normalize_match_text(text: str) -> str:
-    normalized = unicodedata.normalize("NFKD", text or "")
-    normalized = "".join(ch for ch in normalized if not unicodedata.combining(ch))
-    normalized = normalized.lower()
-    normalized = normalized.replace("—", "-").replace("–", "-")
-    normalized = re.sub(r"[^a-z0-9+\-./\s]", " ", normalized)
-    normalized = re.sub(r"\s+", " ", normalized).strip()
-    return normalized
+    # Fonte unica com keep="+-./": datas ("11/03/2026"), outline ("1.2.3."),
+    # paths e slugs sao tokens distintivos nos dados reais (medido na Task 3
+    # do P4: 51/211 textos do indice de MF divergem sem o keep).
+    return normalize_match_text(text, keep="+-./")
 
 
 def _strip_outline_prefix(text: str) -> str:

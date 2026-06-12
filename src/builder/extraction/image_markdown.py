@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import re
-import unicodedata
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Tuple
 
+from src.builder.text.normalize import normalize_match_text as _normalize_match_text
 from src.builder.vision.image_classifier import extract_page_number
 
 _IMAGE_DESC_BLOCK_RE = re.compile(
@@ -40,15 +40,6 @@ def _compact_image_description_text(description: str, max_chars: int = 220) -> s
     if " " in truncated:
         truncated = truncated.rsplit(" ", 1)[0]
     return truncated.rstrip(" ,;:") + "..."
-
-
-def _normalize_match_text(text: str) -> str:
-    normalized = unicodedata.normalize("NFKD", text or "")
-    normalized = "".join(ch for ch in normalized if not unicodedata.combining(ch))
-    normalized = normalized.lower()
-    normalized = re.sub(r"[^a-z0-9\s]", " ", normalized)
-    normalized = re.sub(r"\s+", " ", normalized).strip()
-    return normalized
 
 
 def _tokenize_support_text(text: str) -> set[str]:
