@@ -1209,6 +1209,10 @@ def resolve_unit_block_tags(
                 new_entry["computed_block_method"] = _prev_method
             else:
                 new_entry["computed_block_method"] = block_method
+                if _prev_method in {"consensus", "llm_only"}:
+                    # campos do Gemini descrevem o bloco antigo — limpa; regeneração repõe
+                    new_entry.pop("computed_block_match_confidence", None)
+                    new_entry.pop("computed_block_rationale", None)
         else:
             new_entry.pop("computed_block_method", None)
         new_entry["computed_block_id"] = computed_block_id

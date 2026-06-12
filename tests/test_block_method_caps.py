@@ -45,7 +45,10 @@ def _resolve_entry(case: dict, blocks: list, card_map: dict | None = None) -> di
     )
     markdown = str(case.get("markdown", ""))
     entry = eval_assignments._entry_from_case(case)
-    for extra in ("manual_timeline_block_id", "computed_block_id", "computed_block_method"):
+    for extra in (
+        "manual_timeline_block_id", "computed_block_id", "computed_block_method",
+        "computed_block_match_confidence", "computed_block_rationale",
+    ):
         if case.get(extra):
             entry[extra] = case[extra]
 
@@ -155,6 +158,31 @@ def test_method_codigo_preservado_quando_bloco_nao_muda():
     )
     assert out["computed_block_id"] == "bloco-02"  # mesmo bloco recomputado
     assert out["computed_block_method"] == "consensus"  # código vence
+
+
+def test_method_codigo_bloco_muda_limpa_campos_stale():
+    # Entry com method de CÓDIGO (consensus) e bloco recomputado DIFERENTE do
+    # que estava salvo → funil assume o method do funil E os campos do Gemini
+    # (computed_block_match_confidence / computed_block_rationale) são removidos
+    # pois descrevem o bloco antigo; regeneração posterior os reporá.
+    # Usamos card_map para forçar bloco-01, enquanto a entry tinha bloco-02 salvo.
+    out = _resolve_entry(
+        {"id": "e6", "title": "Logica predicados", "source_section_real": "Secao Y",
+         # bloco salvo = bloco-02; card_map vai forçar bloco-01 → bloco muda
+         "computed_block_id": "bloco-02", "computed_block_method": "consensus",
+         "computed_block_match_confidence": 0.91,
+         "computed_block_rationale": "Gemini achou bloco-02 como melhor match",
+         "unit_guess": {"slug": "unidade-01-metodos-formais", "confidence": 0.6,
+                        "ambiguous": False},
+         "markdown": "logica predicados"},
+        BLOCKS,
+        card_map={"Secao Y": {"block_ids": ["bloco-01"], "source": "manual"}},
+    )
+    # card_map força bloco-01 → bloco mudou → method não é consensus + campos limpos
+    assert out["computed_block_id"] == "bloco-01"
+    assert out["computed_block_method"] != "consensus"
+    assert "computed_block_match_confidence" not in out
+    assert "computed_block_rationale" not in out
 
 
 def test_method_caps_valores():
