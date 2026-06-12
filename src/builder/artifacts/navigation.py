@@ -484,17 +484,9 @@ def render_low_token_file_map_md(
     subject_profile=None,
     *,
     build_file_map_content_taxonomy_from_course: Callable[[dict, object, list], dict],
-    build_file_map_unit_index_from_course: Callable[[dict, object], list],
     build_file_map_timeline_context_from_course: Callable[[dict, object], dict],
-    iter_content_taxonomy_topics: Callable[[dict], list],
     merge_manual_and_auto_tags: Callable[..., str],
     resolve_entry_manual_timeline_block: Callable[[dict, dict], object],
-    entry_markdown_text_for_file_map: Callable[[object, dict], str],
-    auto_map_entry_subtopic: Callable[[dict, dict, str], object],
-    resolve_entry_manual_unit_slug: Callable[[dict, list], str],
-    unit_match_result_factory: Callable[..., object],
-    derive_unit_from_topic_match: Callable[[object, dict], str],
-    auto_map_entry_unit: Callable[..., object],
     file_map_markdown_cell: Callable[[str], str],
     entry_markdown_path_for_file_map: Callable[[object, dict], object],
     get_entry_sections: Callable[[object], str],
@@ -502,9 +494,9 @@ def render_low_token_file_map_md(
     entry_usage_hint: Callable[[dict], str],
     entry_priority_label: Callable[[dict], str],
     clamp_navigation_artifact: Callable[..., str],
-    build_unit_tag_index: Callable[[dict], dict], 
 ) -> str:
     course_name = course_meta.get("course_name", "Curso")
+    # Taxonomia só para LABELS de subtópico — o slug em si vem do manifest.
     content_taxonomy = dict(
         course_meta.get("_content_taxonomy")
         or course_meta.get("_content_taxonomy_for_tests")
@@ -514,14 +506,11 @@ def render_low_token_file_map_md(
             manifest_entries,
         )
     )
-    unit_index = build_file_map_unit_index_from_course(course_meta, subject_profile)
     temporal_context = dict(
         course_meta.get("_timeline_context")
         or course_meta.get("_timeline_context_for_tests")
         or build_file_map_timeline_context_from_course(course_meta, subject_profile)
     )
-    topic_index = iter_content_taxonomy_topics(content_taxonomy)
-    unit_tag_index = build_unit_tag_index(content_taxonomy)
     _bold_re = re.compile(r"\*\*([^*]+)\*\*")
     topic_labels: dict = {}
     for _u in content_taxonomy.get("units", []) or []:
@@ -619,43 +608,21 @@ def render_low_token_file_map_md(
             unit = ""
             skip_timeline = False
         period = ""
-        match = unit_match_result_factory(slug="", confidence=0.0, ambiguous=True, reasons=[])
         preferred_topic_slug = ""
         manual_timeline_block = resolve_entry_manual_timeline_block(entry, temporal_context)
-        markdown_text = entry_markdown_text_for_file_map(course_meta.get("_repo_root"), entry)
-        if not skip_timeline and not unit and unit_index:
-            topic_match = auto_map_entry_subtopic(entry, content_taxonomy, markdown_text)
-            if topic_match.topic_slug and not topic_match.ambiguous and topic_match.confidence >= 0.45:
-                preferred_topic_slug = topic_match.topic_slug
-            manual_unit_slug = resolve_entry_manual_unit_slug(entry, unit_index)
-            if manual_unit_slug:
-                match = unit_match_result_factory(
-                    slug=manual_unit_slug,
-                    confidence=1.0,
-                    ambiguous=False,
-                    reasons=["manual-unit-override"],
-                )
-            else:
-                derived_unit_slug = derive_unit_from_topic_match(topic_match, content_taxonomy)
-                if topic_match.topic_slug and derived_unit_slug and not topic_match.ambiguous and topic_match.confidence >= 0.45:
-                    match = unit_match_result_factory(
-                        slug=derived_unit_slug,
-                        confidence=topic_match.confidence,
-                        ambiguous=topic_match.ambiguous,
-                        reasons=[f"topic={topic_match.topic_slug}", *topic_match.reasons],
-                    )
-                else:
-                    match = auto_map_entry_unit(entry, unit_index, markdown_text, topic_index, unit_tag_index=unit_tag_index)
-                    if not preferred_topic_slug and match.slug and not match.ambiguous and match.confidence >= 0.45:
-                        refined = auto_map_entry_subtopic(entry, content_taxonomy, markdown_text, winning_unit_slug=match.slug)
-                        if refined.topic_slug and not refined.ambiguous and refined.confidence >= 0.35:
-                            preferred_topic_slug = refined.topic_slug
-            # Low-confidence suffix dropped: redundant with the Confiança column
-            # (which renders "Baixa"). Only the distinct "ambíguo" reason is kept.
+        # Unidade/Subtópico espelham o manifest (fonte única, mesmo padrão da
+        # coluna Período): manual_* > computed_* persistidos pelo funil
+        # (resolve_unit_block_tags). O FILE_MAP nunca recomputa via matcher —
+        # sem atribuição no manifest, a coluna fica em branco. O sufixo
+        # "_(ambíguo)_" morreu: computed_unit_slug nunca é gravado ambíguo.
+        if not skip_timeline and not unit:
             unit = (
-                f"{match.slug} _(ambíguo)_"
-                if match.slug and match.ambiguous
-                else match.slug
+                str(entry.get("manual_unit_slug") or "").strip()
+                or str(entry.get("computed_unit_slug") or "").strip()
+            )
+            preferred_topic_slug = (
+                str(entry.get("manual_subunit_slug") or "").strip()
+                or str(entry.get("computed_subunit_slug") or "").strip()
             )
         # Período espelha o manifest (fonte única): manual > computed_block_id.
         # Sem atribuição no manifest, a coluna fica em branco — nunca recomputa.
@@ -669,18 +636,18 @@ def render_low_token_file_map_md(
         md_cell = file_map_markdown_cell(md_path)
         md_abs = entry_markdown_path_for_file_map(course_meta.get("_repo_root"), entry)
         sections = get_entry_sections(md_abs) if md_abs else ""
+        # Confiança: sem transiente de match — _infer_unit_confidence cai no
+        # `unit_match_confidence` persistido no manifest (fonte única).
         confidence = infer_unit_confidence(
             {
                 **entry,
-                "_resolved_unit_slug": match.slug or unit,
-                "_unit_match_confidence": match.confidence,
-                "_unit_match_ambiguous": match.ambiguous,
+                "_resolved_unit_slug": unit,
                 "_resolved_topic_slug": preferred_topic_slug,
                 "_resolved_period": period,
             }
         )
 
-        subtopic_label = topic_labels.get(preferred_topic_slug, "")
+        subtopic_label = topic_labels.get(preferred_topic_slug, preferred_topic_slug)
         lines.append(
             f"| {i} | {title} | {category} | {entry_usage_hint(entry)} | "
             f"{entry_priority_label(entry)} | {md_cell} | {sections or ''} | "
@@ -779,17 +746,9 @@ def low_token_file_map_md(
     subject_profile=None,
     *,
     build_file_map_content_taxonomy_from_course: Callable[[dict, object, list], dict],
-    build_file_map_unit_index_from_course: Callable[[dict, object], list],
     build_file_map_timeline_context_from_course: Callable[[dict, object], dict],
-    iter_content_taxonomy_topics: Callable[[dict], list],
     merge_manual_and_auto_tags: Callable[..., str],
     resolve_entry_manual_timeline_block: Callable[[dict, dict], object],
-    entry_markdown_text_for_file_map: Callable[[object, dict], str],
-    auto_map_entry_subtopic: Callable[[dict, dict, str], object],
-    resolve_entry_manual_unit_slug: Callable[[dict, list], str],
-    unit_match_result_factory: Callable[..., object],
-    derive_unit_from_topic_match: Callable[[object, dict], str],
-    auto_map_entry_unit: Callable[..., object],
     file_map_markdown_cell: Callable[[str], str],
     entry_markdown_path_for_file_map: Callable[[object, dict], object],
     get_entry_sections: Callable[[object], str],
@@ -797,24 +756,15 @@ def low_token_file_map_md(
     entry_usage_hint: Callable[[dict], str],
     entry_priority_label: Callable[[dict], str],
     clamp_navigation_artifact: Callable[..., str],
-    build_unit_tag_index: Callable[[dict], dict], 
 ) -> str:
     return render_low_token_file_map_md(
         course_meta,
         manifest_entries,
         subject_profile,
         build_file_map_content_taxonomy_from_course=build_file_map_content_taxonomy_from_course,
-        build_file_map_unit_index_from_course=build_file_map_unit_index_from_course,
         build_file_map_timeline_context_from_course=build_file_map_timeline_context_from_course,
-        iter_content_taxonomy_topics=iter_content_taxonomy_topics,
         merge_manual_and_auto_tags=merge_manual_and_auto_tags,
         resolve_entry_manual_timeline_block=resolve_entry_manual_timeline_block,
-        entry_markdown_text_for_file_map=entry_markdown_text_for_file_map,
-        auto_map_entry_subtopic=auto_map_entry_subtopic,
-        resolve_entry_manual_unit_slug=resolve_entry_manual_unit_slug,
-        unit_match_result_factory=unit_match_result_factory,
-        derive_unit_from_topic_match=derive_unit_from_topic_match,
-        auto_map_entry_unit=auto_map_entry_unit,
         file_map_markdown_cell=file_map_markdown_cell,
         entry_markdown_path_for_file_map=entry_markdown_path_for_file_map,
         get_entry_sections=get_entry_sections,
@@ -822,7 +772,6 @@ def low_token_file_map_md(
         entry_usage_hint=entry_usage_hint,
         entry_priority_label=entry_priority_label,
         clamp_navigation_artifact=clamp_navigation_artifact,
-        build_unit_tag_index=build_unit_tag_index,
     )
 
 

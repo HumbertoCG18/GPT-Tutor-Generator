@@ -18,13 +18,10 @@ from src.utils.helpers import (
 )
 from src.builder.runtime.datalab_client import get_datalab_base_url, has_datalab_api_key
 from src.builder.extraction.entry_signals import (
-    collect_entry_unit_signals as _collect_entry_unit_signals,
     entry_image_source_dirs as _entry_image_source_dirs,
     normalize_match_text as _normalize_match_text,
-    score_text_against_row as _score_text_against_row,
 )
 from src.builder.engine import BackendSelector, has_docling_python_api
-from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
 from src.builder.extraction.teaching_plan import _normalize_unit_slug, _parse_units_from_teaching_plan
 from src.ui.theme import ThemeManager, AppConfig, THEMES, apply_theme_to_toplevel
 class Tooltip:
@@ -4051,89 +4048,21 @@ def _resolve_backlog_markdown_status(entry_data: dict, repo_dir: Optional[Path])
     }
 
 
-def _find_backlog_file_map_row(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
-    if not repo_dir:
-        return {}
-    file_map_path = repo_dir / "course" / "FILE_MAP.md"
-    if not file_map_path.exists():
-        return {}
-
-    title = str(entry_data.get("title") or "").strip()
-    category = str(entry_data.get("category") or "").strip()
-    if not title:
-        return {}
-
-    try:
-        current_headers: List[str] = []
-        for line in file_map_path.read_text(encoding="utf-8").splitlines():
-            if not line.startswith("|"):
-                continue
-            parts = [part.strip() for part in line.split("|")[1:-1]]
-            if not parts:
-                continue
-            if "Título" in parts and "Categoria" in parts:
-                current_headers = parts
-                continue
-            if current_headers and len(parts) != len(current_headers):
-                continue
-            if parts[0] in {"#", ""} or parts[0].startswith("---") or "rastreabilidade" in parts:
-                continue
-            if current_headers:
-                row = {current_headers[idx]: parts[idx] for idx in range(len(parts))}
-                row_title = str(row.get("Título") or "").strip()
-                row_category = str(row.get("Categoria") or "").strip()
-                if row_title != title:
-                    continue
-                if category and row_category and row_category != category:
-                    continue
-                return {
-                    "title": row_title,
-                    "category": row_category,
-                    "markdown": str(row.get("Markdown") or "").strip(),
-                    "sections": str(row.get("Seções") or "").strip(),
-                    "unit": str(row.get("Unidade") or "").strip(),
-                    "confidence": str(row.get("Confiança") or "").strip(),
-                    "period": str(row.get("Período") or "").strip(),
-                }
-
-            if len(parts) < 8:
-                continue
-            if parts[1] != title:
-                continue
-            if category and parts[2] and parts[2] != category:
-                continue
-            return {
-                "title": parts[1],
-                "category": parts[2],
-                "markdown": parts[5],
-                "unit": parts[6],
-                "period": parts[7],
-            }
-    except Exception:
-        return {}
-    return {}
-
-
 def _resolve_backlog_unit_status(
     entry_data: dict,
     repo_dir: Optional[Path],
     unit_label_by_slug: Optional[Dict[str, str]] = None,
 ) -> Dict[str, str]:
+    # Fonte única: lê manual_unit_slug/computed_unit_slug direto da entry do
+    # manifest — nada de regex sobre a célula renderizada do FILE_MAP.md.
+    # `repo_dir` mantido por compatibilidade de assinatura com os call sites.
+    del repo_dir
     unit_label_by_slug = unit_label_by_slug or {}
     manual_slug = str(entry_data.get("manual_unit_slug") or "").strip()
-    title = str(entry_data.get("title") or "").strip()
-    category = str(entry_data.get("category") or "").strip()
-    file_map_row = _find_backlog_file_map_row(
-        {"title": title, "category": category},
-        repo_dir,
-    )
-    current_unit_cell = str(file_map_row.get("unit") or "").strip()
+    computed_slug = str(entry_data.get("computed_unit_slug") or "").strip()
 
     def _display_unit(slug: str) -> str:
         return unit_label_by_slug.get(slug, slug) if slug else "—"
-
-    current_slug_match = re.search(r"(unidade-[a-z0-9-]+)", current_unit_cell or "")
-    current_slug = current_slug_match.group(1) if current_slug_match else ""
 
     reasons = [str(r) for r in (entry_data.get("unit_match_reasons") or [])]
     conflict = entry_data.get("unit_block_conflict") or {}
@@ -4158,29 +4087,29 @@ def _resolve_backlog_unit_status(
 
     if manual_slug:
         assigned = _display_unit(manual_slug)
-        if current_slug == manual_slug:
+        if computed_slug == manual_slug:
             return {
                 "assigned": assigned,
                 "source": "Override manual aplicado",
-                "note": "O FILE_MAP atual já reflete a unidade manual selecionada.",
+                "note": "A atribuição atual já reflete a unidade manual selecionada.",
             }
-        if current_unit_cell:
+        if computed_slug:
             return {
                 "assigned": assigned,
                 "source": "Override manual salvo",
-                "note": f"O FILE_MAP atual ainda mostra `{current_unit_cell}`; reprocesse o repositório para aplicar a unidade manual.",
+                "note": f"A atribuição atual ainda registra `{computed_slug}`; reprocesse o repositório para aplicar a unidade manual.",
             }
         return {
             "assigned": assigned,
             "source": "Override manual salvo",
-            "note": "A unidade manual já está salva nesta entry; reprocesse o repositório para refletir isso no FILE_MAP.",
+            "note": "A unidade manual já está salva nesta entry; reprocesse o repositório para refletir isso nos artefatos.",
         }
 
-    if current_unit_cell:
+    if computed_slug:
         return {
-            "assigned": current_unit_cell,
-            "source": _auto_source("FILE_MAP atual"),
-            "note": "Unidade atribuída automaticamente com base no FILE_MAP gerado no último processamento." + _conflict_note(),
+            "assigned": _display_unit(computed_slug),
+            "source": _auto_source("Atribuição automática"),
+            "note": "Unidade atribuída automaticamente no último processamento (manifest)." + _conflict_note(),
         }
 
     return {
@@ -4253,14 +4182,17 @@ def _resolve_backlog_subunit_status(
 
 
 def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
-    file_map_row = _find_backlog_file_map_row(entry_data, repo_dir)
-    period = str(file_map_row.get("period") or "").strip()
-    unit_cell = str(file_map_row.get("unit") or "").strip()
+    # Fonte única: o bloco do backlog é manual_timeline_block_id >
+    # computed_block_id da entry do manifest, com lookup DIRETO no
+    # `.timeline_index.json` serializado — sem regex sobre o FILE_MAP.md
+    # renderizado e sem re-score local (o scorer paralelo morreu).
     manual_slug = str(entry_data.get("manual_unit_slug") or "").strip()
     manual_block_id = str(entry_data.get("manual_timeline_block_id") or "").strip()
+    computed_block_id = str(entry_data.get("computed_block_id") or "").strip()
+    block_id = manual_block_id or computed_block_id
 
-    if not period:
-        note = "A entry ainda não tem período preenchido no FILE_MAP."
+    if not block_id:
+        note = "A entry ainda não tem bloco do cronograma atribuído no manifest."
         if manual_slug:
             note += " Há override manual de unidade salvo; reprocesse o repositório para recalcular a conexão temporal."
         return {
@@ -4274,89 +4206,38 @@ def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path])
     timeline_path = repo_dir / "course" / ".timeline_index.json" if repo_dir else None
     if not timeline_path or not timeline_path.exists():
         return {
-            "period": _format_timeline_period_text(period),
-            "block": "—",
+            "period": "—",
+            "block": block_id,
             "topics": "—",
             "aliases": "—",
-            "note": "Há período no FILE_MAP, mas o índice temporal interno ainda não foi encontrado.",
+            "note": "Há bloco atribuído no manifest, mas o índice temporal interno ainda não foi encontrado.",
         }
-
-    unit_slug_match = re.search(r"(unidade-[a-z0-9-]+)", unit_cell)
-    unit_slug = unit_slug_match.group(1) if unit_slug_match else ""
 
     try:
         payload = json.loads(timeline_path.read_text(encoding="utf-8"))
     except Exception:
         return {
-            "period": _format_timeline_period_text(period),
-            "block": "—",
+            "period": "—",
+            "block": block_id,
             "topics": "—",
             "aliases": "—",
             "note": "O índice temporal interno existe, mas não pôde ser lido.",
         }
 
     blocks = list(payload.get("blocks") or [])
-    if manual_block_id:
-        manual_matches = [block for block in blocks if str(block.get("id") or "").strip() == manual_block_id]
-        if manual_matches:
-            block = manual_matches[0]
-            topics = ", ".join(str(item).strip() for item in list(block.get("topics") or [])[:4] if str(item).strip()) or "—"
-            aliases = ", ".join(str(item).strip() for item in list(block.get("aliases") or [])[:4] if str(item).strip()) or "—"
-            block_period = _timeline_block_display_period(block)
-            if _format_timeline_label_dates(period) == block_period:
-                note = "Bloco manual já refletido no FILE_MAP atual."
-            else:
-                note = "Bloco manual salvo; reprocesse o repositório para refletir esse período no FILE_MAP."
-            return {
-                "period": block_period,
-                "block": str(block.get("id") or "—"),
-                "topics": topics,
-                "aliases": aliases,
-                "note": note,
-            }
+    block = next((b for b in blocks if str(b.get("id") or "").strip() == block_id), None)
+    if block is None:
+        if manual_block_id:
+            note = "Há um bloco manual salvo, mas ele não foi encontrado no timeline index atual."
+        else:
+            note = "O bloco atribuído no manifest não foi encontrado no timeline index atual; reprocesse o repositório."
         return {
-            "period": _format_timeline_period_text(period) or "—",
-            "block": manual_block_id,
+            "period": "—",
+            "block": block_id,
             "topics": "—",
             "aliases": "—",
-            "note": "Há um bloco manual salvo, mas ele não foi encontrado no timeline index atual.",
+            "note": note,
         }
-
-    exact_matches = [block for block in blocks if str(block.get("period_label") or "").strip() == period]
-    overlap_matches = [block for block in blocks if _periods_overlap(period, str(block.get("period_label") or "").strip())]
-
-    candidate_blocks = exact_matches or overlap_matches or list(blocks)
-    if unit_slug:
-        unit_filtered = [block for block in candidate_blocks if str(block.get("unit_slug") or "").strip() == unit_slug]
-        if unit_filtered:
-            candidate_blocks = unit_filtered
-
-    if not candidate_blocks:
-        return {
-            "period": _format_timeline_period_text(period),
-            "block": "—",
-            "topics": "—",
-            "aliases": "—",
-            "note": "Há período no FILE_MAP, mas nenhum bloco correspondente foi localizado no timeline index atual.",
-        }
-
-    markdown_text = _entry_markdown_text_for_file_map(repo_dir, entry_data) if repo_dir else ""
-    scored_blocks = [
-        (
-            block,
-            _score_serialized_timeline_block(
-                entry_data,
-                markdown_text,
-                block,
-                preferred_unit_slug=unit_slug,
-                preferred_period=period,
-            ),
-        )
-        for block in candidate_blocks
-    ]
-    scored_blocks.sort(key=lambda item: item[1], reverse=True)
-    block, best_score = scored_blocks[0]
-    runner_up_score = scored_blocks[1][1] if len(scored_blocks) > 1 else 0.0
 
     sessions = list(block.get("sessions") or [])
     session_preview = _timeline_block_session_preview(block)
@@ -4383,25 +4264,17 @@ def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path])
 
     topics = ", ".join(topics_list) or "—"
     aliases = ", ".join(aliases_list) or "—"
-    note = "Período do FILE_MAP conectado a este bloco do cronograma via `course/.timeline_index.json`."
+    if manual_block_id:
+        if computed_block_id == manual_block_id:
+            note = "Bloco manual já refletido no processamento atual."
+        else:
+            note = "Bloco manual salvo; reprocesse o repositório para refletir esse período nos artefatos."
+    else:
+        note = "Bloco atribuído no manifest, conectado via `course/.timeline_index.json`."
     if session_preview:
         note += f" Sessões normalizadas: {len(sessions)}."
     if card_preview and not session_preview and not block.get("topics"):
         note += f" Evidências de card: {len(card_preview)}."
-    if overlap_matches and not exact_matches:
-        note = (
-            "Período do FILE_MAP foi reconciliado por sobreposição de datas e sinais do conteúdo da entry "
-            f"(score: {best_score:.2f})."
-        )
-        if session_preview:
-            note += f" Sessões normalizadas: {len(sessions)}."
-    elif len(scored_blocks) > 1 and abs(best_score - runner_up_score) < 0.20:
-        note = (
-            "Bloco selecionado heurísticamente entre múltiplos candidatos próximos; "
-            f"revise manualmente se o cronograma parecer incorreto (score: {best_score:.2f})."
-        )
-        if session_preview:
-            note += f" Sessões normalizadas: {len(sessions)}."
 
     return {
         "period": _timeline_block_display_period(block),
@@ -4628,14 +4501,6 @@ def _parse_period_bounds(text: str) -> Tuple[Optional[datetime], Optional[dateti
     return start, end
 
 
-def _periods_overlap(left: str, right: str) -> bool:
-    left_start, left_end = _parse_period_bounds(left)
-    right_start, right_end = _parse_period_bounds(right)
-    if not left_start or not left_end or not right_start or not right_end:
-        return False
-    return left_start <= right_end and right_start <= left_end
-
-
 def _timeline_block_display_period(block: Dict[str, object]) -> str:
     start_text = str(block.get("period_start") or "").strip()
     end_text = str(block.get("period_end") or "").strip()
@@ -4699,52 +4564,6 @@ def _timeline_block_card_evidence_preview(block: Dict[str, object], limit: int =
             break
 
     return preview
-
-
-def _score_serialized_timeline_block(
-    entry_data: dict,
-    markdown_text: str,
-    block: Dict[str, object],
-    *,
-    preferred_unit_slug: str = "",
-    preferred_period: str = "",
-) -> float:
-    signals = _collect_entry_unit_signals(entry_data, markdown_text)
-    score = 0.0
-
-    block_unit_slug = str(block.get("unit_slug") or "").strip()
-    if preferred_unit_slug:
-        if block_unit_slug == preferred_unit_slug:
-            score += 1.25
-        elif block_unit_slug:
-            score -= 0.35
-
-    block_period = _timeline_block_display_period(block)
-    if preferred_period:
-        preferred_norm = _format_timeline_label_dates(preferred_period)
-        if preferred_norm and block_period == preferred_norm:
-            score += 0.85
-        elif preferred_norm and _periods_overlap(preferred_norm, block_period):
-            score += 0.45
-
-    block_text_parts = [
-        str(block.get("primary_topic_label") or ""),
-        str(block.get("topic_text") or ""),
-        " ".join(str(item) for item in (block.get("topics") or []) if str(item).strip()),
-        " ".join(str(item) for item in (block.get("aliases") or []) if str(item).strip()),
-    ]
-    block_norm = _normalize_match_text(" ".join(part for part in block_text_parts if part))
-    block_tokens = [tok for tok in block_norm.split() if len(tok) >= 4]
-
-    score += _score_text_against_row(signals.get("title_text", ""), block_tokens, weight=1.25)
-    score += _score_text_against_row(signals.get("tags_text", ""), block_tokens, weight=1.05)
-    score += _score_text_against_row(signals.get("markdown_headings_text", ""), block_tokens, weight=0.95)
-    score += _score_text_against_row(signals.get("markdown_lead_text", ""), block_tokens, weight=0.75)
-    score += _score_text_against_row(signals.get("markdown_text", ""), block_tokens, weight=0.18)
-
-    score += float(block.get("primary_topic_confidence", 0.0) or 0.0) * 0.25
-    score += float(block.get("unit_confidence", 0.0) or 0.0) * 0.10
-    return score
 
 
 def _load_timeline_block_options(repo_dir: Optional[Path]) -> List[Tuple[str, str]]:

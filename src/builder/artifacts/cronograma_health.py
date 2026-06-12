@@ -134,9 +134,16 @@ def _top_candidate_blocks(entry: dict, blocks: list, n: int = _TOP_N_CANDIDATES)
             collect_entry_unit_signals,
             score_text_against_row,
         )
-        from src.builder.extraction.content_taxonomy import _normalize_match_text
+        from src.builder.text.normalize import normalize_match_text
     except Exception:
         return []
+
+    # keep="+-./" replica a tokenização do funil real (content_taxonomy):
+    # datas, prefixos de outline e paths são tokens distintivos, e o score
+    # daqui precisa ser comparável ao do pipeline. Import da fonte canônica
+    # (text/normalize) com o keep explícito, em vez do wrapper privado.
+    def _normalize_match_text(text: str) -> str:
+        return normalize_match_text(text, keep="+-./")
 
     markdown_text = ""
     signals = collect_entry_unit_signals(entry, markdown_text)

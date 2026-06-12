@@ -1310,15 +1310,6 @@ class TestBacklogMarkdownStatus:
         repo = tmp_path / "repo"
         course_dir = repo / "course"
         course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | RevisaoP1 | listas | praticar | alta | `exercises/lists/revisao-p1.md` | unidade-01-metodos-formais | 06/04/2026 a 10/04/2026 |
-""",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1348,7 +1339,7 @@ class TestBacklogMarkdownStatus:
         )
 
         status = _resolve_backlog_timeline_status(
-            {"title": "RevisaoP1", "category": "listas"},
+            {"title": "RevisaoP1", "category": "listas", "computed_block_id": "bloco-09"},
             repo,
         )
 
@@ -1653,53 +1644,34 @@ legacy
     assert manifest["entries"][0]["manual_review"] == "manual-review/web/url-item.md"
 
 
-    def test_resolves_backlog_unit_status_from_file_map(self, tmp_path):
+    def test_resolves_backlog_unit_status_from_manifest_computed_slug(self, tmp_path):
+        # Fonte única: a unidade vem do computed_unit_slug da entry do
+        # manifest — nada de regex sobre a célula do FILE_MAP.md renderizado.
         from src.ui.dialogs import _resolve_backlog_unit_status
-
-        repo = tmp_path / "repo"
-        course_dir = repo / "course"
-        course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosespecificacao | listas | praticar | alta | `exercises/lists/exerciciosespecificacao.md` | unidade-02-verificacao-de-programas | 27/04/2026 a 06/05/2026 |
-""",
-            encoding="utf-8",
-        )
-
-        status = _resolve_backlog_unit_status(
-            {"title": "Exerciciosespecificacao", "category": "listas"},
-            repo,
-        )
-
-        assert status["assigned"] == "unidade-02-verificacao-de-programas"
-        assert status["source"] == "FILE_MAP atual"
-
-    def test_resolves_backlog_unit_status_with_manual_override_pending_reprocess(self, tmp_path):
-        from src.ui.dialogs import _resolve_backlog_unit_status
-
-        repo = tmp_path / "repo"
-        course_dir = repo / "course"
-        course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosespecificacao | listas | praticar | alta | `exercises/lists/exerciciosespecificacao.md` | unidade-01-metodos-formais | 04/03/2026 |
-""",
-            encoding="utf-8",
-        )
 
         status = _resolve_backlog_unit_status(
             {
                 "title": "Exerciciosespecificacao",
                 "category": "listas",
+                "computed_unit_slug": "unidade-02-verificacao-de-programas",
+            },
+            tmp_path / "repo",
+        )
+
+        assert status["assigned"] == "unidade-02-verificacao-de-programas"
+        assert status["source"] == "Atribuição automática"
+
+    def test_resolves_backlog_unit_status_with_manual_override_pending_reprocess(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_unit_status
+
+        status = _resolve_backlog_unit_status(
+            {
+                "title": "Exerciciosespecificacao",
+                "category": "listas",
+                "computed_unit_slug": "unidade-01-metodos-formais",
                 "manual_unit_slug": "unidade-02-verificacao-de-programas",
             },
-            repo,
+            tmp_path / "repo",
             {"unidade-02-verificacao-de-programas": "Unidade 02 — Verificação de Programas"},
         )
 
@@ -1708,20 +1680,13 @@ legacy
         assert "reprocesse o repositório" in status["note"].lower()
 
     def test_resolves_backlog_timeline_status_from_timeline_index(self, tmp_path):
+        # Fonte única: o bloco vem do computed_block_id da entry do manifest,
+        # com lookup direto no .timeline_index.json — sem regex no FILE_MAP.md.
         from src.ui.dialogs import _resolve_backlog_timeline_status
 
         repo = tmp_path / "repo"
         course_dir = repo / "course"
         course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosformalizacaoalgoritmosrecursao | listas | praticar | alta | `exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md` | unidade-01-metodos-formais | 11/03/2026 a 25/03/2026 |
-""",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1742,56 +1707,17 @@ legacy
         )
 
         status = _resolve_backlog_timeline_status(
-            {"title": "Exerciciosformalizacaoalgoritmosrecursao", "category": "listas"},
+            {
+                "title": "Exerciciosformalizacaoalgoritmosrecursao",
+                "category": "listas",
+                "computed_block_id": "bloco-02",
+            },
             repo,
         )
 
         assert status["period"] == "11/03/2026 a 25/03/2026"
         assert status["block"] == "bloco-02"
         assert "funções recursivas" in status["topics"]
-
-    def test_resolves_backlog_timeline_status_from_current_file_map_layout(self, tmp_path):
-        from src.ui.dialogs import _resolve_backlog_timeline_status
-
-        repo = tmp_path / "repo"
-        course_dir = repo / "course"
-        course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Confiança | Período |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosformalizacaoalgoritmosrecursao | listas | praticar | alta | `exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md` | Definições indutivas | unidade-01-metodos-formais | Alta | 11/03/2026 a 25/03/2026 |
-|  | ↳ rastreabilidade |  | raw: `raw/aula.pdf` |  |  |  |  |  |  |
-""",
-            encoding="utf-8",
-        )
-        (course_dir / ".timeline_index.json").write_text(
-            json.dumps(
-                {
-                    "version": 1,
-                    "blocks": [
-                        {
-                            "id": "bloco-02",
-                            "period_label": "11/03/2026 a 25/03/2026",
-                            "unit_slug": "unidade-01-metodos-formais",
-                            "topics": ["definições indutivas", "funções recursivas"],
-                            "aliases": ["indução", "recursão"],
-                        }
-                    ],
-                },
-                ensure_ascii=False,
-            ),
-            encoding="utf-8",
-        )
-
-        status = _resolve_backlog_timeline_status(
-            {"title": "Exerciciosformalizacaoalgoritmosrecursao", "category": "listas"},
-            repo,
-        )
-
-        assert status["period"] == "11/03/2026 a 25/03/2026"
-        assert status["block"] == "bloco-02"
         assert "recursão" in status["aliases"]
 
     def test_resolves_backlog_timeline_status_reads_version3_sessions(self, tmp_path):
@@ -1800,15 +1726,6 @@ legacy
         repo = tmp_path / "repo"
         course_dir = repo / "course"
         course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | TÃ­tulo | Categoria | Quando abrir | Prioridade | Markdown | Unidade | PerÃ­odo |
-|---|---|---|---|---|---|---|---|
-| 1 | RevisÃ£oP1 | listas | praticar | alta | `exercises/lists/revisao-p1.md` | unidade-01-metodos-formais | 30/03/2026 a 03/04/2026 |
-""",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1855,7 +1772,7 @@ legacy
         assert options and "Especificacoes recursivas" in options[0][0]
 
         status = _resolve_backlog_timeline_status(
-            {"title": "RevisÃ£oP1", "category": "listas"},
+            {"title": "RevisÃ£oP1", "category": "listas", "computed_block_id": "bloco-08"},
             repo,
         )
 
@@ -1871,15 +1788,6 @@ legacy
         repo = tmp_path / "repo"
         course_dir = repo / "course"
         course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosformalizacaoalgoritmosrecursao | listas | praticar | alta | `exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md` | unidade-01-metodos-formais | 04/03/2026 |
-""",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1912,28 +1820,15 @@ legacy
         assert status["block"] == "bloco-02"
         assert "reprocesse o repositório" in status["note"].lower()
 
-    def test_resolves_backlog_timeline_status_prefers_best_matching_block_within_same_unit(self, tmp_path):
+    def test_resolves_backlog_timeline_status_mirrors_computed_block_id(self, tmp_path):
+        # Fonte única: morto o re-score local (_score_serialized_timeline_block),
+        # o diálogo apenas espelha o computed_block_id do manifest — mesmo que
+        # outro bloco "parecesse" melhor para um scorer paralelo.
         from src.ui.dialogs import _resolve_backlog_timeline_status
 
         repo = tmp_path / "repo"
         course_dir = repo / "course"
-        exercises_dir = repo / "exercises" / "lists"
         course_dir.mkdir(parents=True)
-        exercises_dir.mkdir(parents=True)
-
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Confiança | Período |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | Lista Isabelle | listas | praticar | alta | `exercises/lists/lista-isabelle.md` | Prova de teoremas | unidade-01-metodos-formais | Alta | 01/04/2026 a 10/04/2026 |
-""",
-            encoding="utf-8",
-        )
-        (exercises_dir / "lista-isabelle.md").write_text(
-            "# Lista Isabelle\n\nExercícios de prova de teoremas usando Isabelle.\n",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1972,6 +1867,7 @@ legacy
             {
                 "title": "Lista Isabelle",
                 "category": "listas",
+                "computed_block_id": "bloco-isabelle",
                 "approved_markdown": "exercises/lists/lista-isabelle.md",
             },
             repo,
@@ -3344,8 +3240,10 @@ class TestAssessmentConflicts:
             "title": "Isabelle",
             "category": "listas",
             "tags": "",
-            # Período espelha o manifest: a coluna vem do computed_block_id
-            # (lookup no timeline cacheado), não de recomputação via scorer.
+            # Unidade/Período espelham o manifest: as colunas vêm de
+            # computed_unit_slug/computed_block_id (lookup no timeline
+            # cacheado), não de recomputação via matcher/scorer.
+            "computed_unit_slug": "unidade-01-metodos-formais",
             "computed_block_id": "bloco-01",
             "raw_target": "raw/pdfs/listas/isabelle.pdf",
             "_markdown_text_for_tests": "# Provadores de Teoremas\n\nIsabelle",

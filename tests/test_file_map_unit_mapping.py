@@ -804,6 +804,9 @@ def test_file_map_md_auto_fills_unit_column_from_subject_profile(tmp_path):
             "title": "Exerciciosespecificacao",
             "category": "listas",
             "tags": "",
+            # Unidade espelha o manifest (fonte única): a coluna vem do
+            # computed_unit_slug persistido pelo funil, sem recomputar matcher.
+            "computed_unit_slug": "unidade-02-verificacao-de-programas",
             "base_markdown": "exercises/lists/exerciciosespecificacao.md",
             "raw_target": "raw/pdfs/listas/exerciciosespecificacao.pdf",
         }
@@ -854,6 +857,8 @@ def test_file_map_md_refines_period_by_subtopic_within_unit(tmp_path):
             "title": "Exerciciosformalizacaoalgoritmosrecursao",
             "category": "listas",
             "tags": "",
+            # Unidade espelha o manifest (fonte única) — sem recomputação.
+            "computed_unit_slug": "unidade-01-metodos-formais",
             "base_markdown": "exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md",
             "raw_target": "raw/pdfs/listas/exerciciosformalizacaoalgoritmosrecursao.pdf",
         }
@@ -1435,16 +1440,16 @@ def test_file_map_md_keeps_period_column_empty_without_subject_profile():
     assert "Aula 1" in result
 
 
-def test_file_map_md_omits_period_for_ambiguous_match():
+def test_file_map_md_leaves_unit_blank_without_computed_slug():
+    """Fonte única: sem computed_unit_slug/manual no manifest, a coluna Unidade
+    fica em branco — o FILE_MAP nunca recomputa via matcher. O sufixo
+    "_(ambíguo)_" morreu junto: computed_unit_slug nunca é gravado ambíguo
+    (gate em resolve_unit_block_tags)."""
     course_meta = {
         "course_name": "Métodos Formais",
-        "_unit_index_for_tests": [
-            {"title": "Unidade 01 — Métodos Formais", "topics": ["Lógica", "Sistemas Formais"]},
-            {"title": "Unidade 02 — Verificação de Programas", "topics": ["Lógica", "Programas"]},
-        ],
+        "_content_taxonomy_for_tests": {"units": []},
         "_period_index_for_tests": {
             "unidade-01-metodos-formais": "2026-03-04 a 2026-05-04",
-            "unidade-02-verificacao-de-programas": "2026-05-06 a 2026-06-10",
         },
     }
     entries = [
@@ -1460,8 +1465,12 @@ def test_file_map_md_omits_period_for_ambiguous_match():
 
     result = file_map_md(course_meta, entries)
 
-    assert "unidade-01-metodos-formais _(ambíguo)_" in result
+    assert "_(ambíguo)_" not in result
     assert "2026-03-04 a 2026-05-04" not in result
+    row = next(line for line in result.splitlines() if "| Revisao |" in line)
+    cells = [c.strip() for c in row.strip().strip("|").split("|")]
+    # Columns: #, Título, Categoria, Quando abrir, Prioridade, Markdown, Seções, Unidade, Subtópico, Confiança, Período
+    assert cells[7] == ""
 
 
 def test_file_map_md_respects_manual_unit_override(tmp_path):
@@ -1901,6 +1910,9 @@ def test_file_map_md_shows_subtopic_label_for_matched_entry():
             "id": "2604-escalonamento",
             "title": "Algoritimos de Escalonamento",
             "category": "material-de-aula",
+            # Subtópico espelha o manifest (fonte única): a coluna vem do
+            # computed_subunit_slug persistido, sem recomputar o matcher.
+            "computed_subunit_slug": "32-escalonamento",
             "auto_tags": ["topico:32-escalonamento"],
         }
     ]
@@ -1914,17 +1926,11 @@ def test_file_map_md_shows_subtopic_label_for_matched_entry():
 
 
 def test_file_map_md_drops_low_confidence_suffix_keeps_confidence_column():
-    # Empirically constructed low-confidence NON-ambiguous match: two units sharing
-    # the "Programação" token, an entry whose text hits one distinctive token of the
-    # winner ("denotacional" -> 0.572) plus the shared/discounted token of the runner
-    # ("proposicional"), yielding winner != runner, not ambiguous, confidence < 0.45.
-    # Empty taxonomy keeps the topic-index boost out so the unit-margin path decides.
+    # Fonte única: a coluna Unidade espelha o computed_unit_slug do manifest e
+    # a Confiança lê o unit_match_confidence persistido (via _infer_unit_confidence).
+    # Confiança baixa aparece só na coluna ("Baixa"), nunca como sufixo na célula.
     course_meta = {
         "course_name": "Semântica Formal",
-        "_unit_index_for_tests": [
-            {"title": "Unidade 01 — Programação Denotacional", "topics": ["Programação Denotacional"]},
-            {"title": "Unidade 02 — Programação Proposicional", "topics": ["Programação Proposicional"]},
-        ],
         "_content_taxonomy_for_tests": {"units": []},
         "_period_index_for_tests": {},
     }
@@ -1933,6 +1939,8 @@ def test_file_map_md_drops_low_confidence_suffix_keeps_confidence_column():
             "title": "Revisao",
             "category": "material-de-aula",
             "tags": "",
+            "computed_unit_slug": "unidade-01-programacao-denotacional",
+            "unit_match_confidence": 0.40,
             "base_markdown": "content/curated/revisao.md",
             "raw_target": "raw/pdfs/material-de-aula/revisao.pdf",
             "_markdown_text_for_tests": "denotacional proposicional",
@@ -1943,5 +1951,5 @@ def test_file_map_md_drops_low_confidence_suffix_keeps_confidence_column():
 
     assert "_(baixa confiança)_" not in result  # redundant suffix removed
     assert "Baixa" in result  # Confiança column still flags low confidence
-    # sanity: the matched slug itself is still present
+    # sanity: the mirrored slug itself is still present
     assert "unidade-01-programacao-denotacional" in result
