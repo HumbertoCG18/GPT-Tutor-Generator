@@ -137,6 +137,19 @@ def section_file_index(contents) -> dict:
     return idx
 
 
+def section_file_index_strict(contents) -> tuple:
+    """({basename.casefold(): secao} só de basenames únicos, {ambíguos}).
+
+    Basename presente em >1 seção sai do dict — ambíguo é miss e o chamador
+    decide o fallback (cf. spec 2026-06-11-m365-card-mapping)."""
+    secs: dict = {}
+    for sf in iter_section_files(contents):
+        secs.setdefault(sf.filename.casefold(), set()).add(sf.section)
+    index = {k: next(iter(v)) for k, v in secs.items() if len(v) == 1}
+    ambiguous = {k for k, v in secs.items() if len(v) > 1}
+    return index, ambiguous
+
+
 def backfill_source_section_from_api(manifest_entries, contents):
     """Casa entries do manifest com as seções da API por basename (case-insensitive).
 
