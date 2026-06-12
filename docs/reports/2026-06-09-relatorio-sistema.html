@@ -99,6 +99,14 @@
   <p><b>Reforma da atribuição — P0 entregue</b> (12/06): plano-mestre em 5 fases (P0 medir → P1 seção/2ª defesa → P2 confiança → P3 higiene → P4 scorer). P0 fechado: bug B3 corrigido (<code>_is_prebuilt_block</code> em <code>routing/file_map.py</code> — índice persistido degenerava 100% pra bloco-01), <b>golden set real versionado</b> (56 casos: 8 ground truth automático pelo gabarito, 40 pendentes de decisão humana, 8 excluídos) e harness <code>eval_assignments.py</code> com card map real, breakdown com/sem seção e pendentes que nunca contam erro. Placar inicial: <b>7/8 (87.5%)</b> nos casos com gabarito, 1 confiante-e-errado; sintomas clássicos visíveis nos pendentes (logicadehoare→bloco-03 com banda alta). <b>Suíte: 1.248 testes.</b></p>
 </div>
 
+<!-- ============ CHANGELOG 12/06 P1+P2+P3 ============ -->
+<div class="card find good">
+  <h4>✅ Trabalho entregue em 12/06/2026 (ciclo P1+P2+P3 — reforma do funil)</h4>
+  <p><b>P1 — <code>card_block_map</code> automático via labels Moodle</b>: parser em cascata dos 5 formatos catalogados nas cadeiras reais (A = MF/ES2/TCC "Semana DD/MM/AAAA", B = IA, C = UX, D = semana ordinal, E = sem sinal → fallback honesto); derivação card → datas → blocos; persistido no import com merge (manual sobrepõe). Acurácia no golden: <b>58.7% → 78.3%</b> (com fix do B3 num 2º call site: scoring direto lia só <code>'rows'</code> ao invés do índice persistido).</p>
+  <p><b>P2 — confiança honesta</b>: <code>relative_margin_confidence</code> (margem relativa × força absoluta, mata o clamp em 1.0), tetos por método (<code>scorer_only</code> ≤ 0.70 … <code>manual</code> 1.0), <code>computed_block_method</code> gravado para <em>toda</em> entry. Confiante-e-errado: <b>9 → 0</b>; banda alta ficou 28 ok / 0 erro — 100% dos erros restantes sinalizados para revisão.</p>
+  <p><b>P3 — higiene + fechamento</b>: B1 (categoria <code>references</code> no filtro), B5 (dedup de id no import via <code>id_override</code> ANTES dos assets — sem sobrescrita em disco; <code>force-reprocess</code> resolve por <code>source_path</code>), B4 verificado no repo real (F1 flagrou <code>unit_block_conflict</code>). Suíte: <b>1.290 testes</b>. P4 aprovado pelos números (8/10 erros restantes têm mecanismo P4; alvo ~93%).</p>
+</div>
+
 <!-- ============ 1. MÉTRICAS ============ -->
 <h2 id="metricas">1. Métricas Gerais</h2>
 <div class="grid g4">
@@ -456,7 +464,7 @@
 </table>
 </div>
 
-<p class="small" style="margin-top:40px">Metodologia: 3 varreduras paralelas (pipeline do builder, UI/config, código morto) + verificação manual de cada achado por busca de referências (falsos positivos descartados estão na seção 4) + métricas via AST sobre 117 arquivos. Grafo de código: 2.905 nós / 25.916 arestas. Gerado em 09/06/2026, atualizado e re-verificado em 10/06/2026 (métricas, contadores de commit, código morto e duplicatas re-medidos no working tree de <code>new-features</code> @ <code>c7c864b</code>; base comum com <code>main</code>: <code>8f10819</code>), <b>atualizado em 12/06/2026</b> com as entregas de 11–12/06 na <code>feat/reconciliar-unit-bloco</code> (F1, correção M365, P0 da reforma da atribuição; suíte em 1.248 testes).</p>
+<p class="small" style="margin-top:40px">Metodologia: 3 varreduras paralelas (pipeline do builder, UI/config, código morto) + verificação manual de cada achado por busca de referências (falsos positivos descartados estão na seção 4) + métricas via AST sobre 117 arquivos. Grafo de código: 2.905 nós / 25.916 arestas. Gerado em 09/06/2026, atualizado e re-verificado em 10/06/2026 (métricas, contadores de commit, código morto e duplicatas re-medidos no working tree de <code>new-features</code> @ <code>c7c864b</code>; base comum com <code>main</code>: <code>8f10819</code>), <b>atualizado em 12/06/2026</b> com as entregas de 11–12/06 na <code>feat/reconciliar-unit-bloco</code> (F1, correção M365, P0 da reforma da atribuição; suíte em 1.248 testes), e com o ciclo P1+P2+P3 do funil de atribuição (acurácia 78.3%, confiante-e-errado 0, suíte em 1.290 testes).</p>
 
 </div>
 </body>
