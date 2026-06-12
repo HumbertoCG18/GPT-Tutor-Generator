@@ -102,6 +102,14 @@ def predict_block(case: dict, blocks: list, course_meta: dict | None = None) -> 
 
 
 def evaluate(gold: dict) -> dict:
+    """Roda cada caso pelo scorer real e agrega o placar.
+
+    Semântica do expected_block_id: None (null no JSON) = ground truth pendente
+    de decisão humana — roda predição informativa mas não conta erro/acerto;
+    "" = legado da fixture sintética (espera órfão); expected_origin="excluido"
+    = pulado sem predição. card_block_map (se presente) vai pra um tempdir como
+    course/.card_block_map.json via course_meta._repo_root — o mesmo caminho
+    que produção usa pra carregar o gabarito."""
     import tempfile
 
     blocks = gold["timeline"]["blocks"]
