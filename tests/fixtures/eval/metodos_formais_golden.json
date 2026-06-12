@@ -2928,7 +2928,7 @@
     "bloco-02",
     "bloco-03"
    ],
-   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03 (revisao de logica de predicados)"
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
   },
   {
    "id": "logicapredicados-sintaxe",
@@ -2947,7 +2947,7 @@
     "bloco-02",
     "bloco-03"
    ],
-   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03"
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
   },
   {
    "id": "logicaproposicional-sintaxe",
@@ -2966,7 +2966,7 @@
     "bloco-02",
     "bloco-03"
    ],
-   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03"
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
   },
   {
    "id": "revisao",
@@ -2985,7 +2985,7 @@
     "bloco-02",
     "bloco-03"
    ],
-   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03 (conceitos essenciais)"
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
   },
   {
    "id": "introducao",
@@ -3001,7 +3001,7 @@
    "expected_block_id": "bloco-02",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": "decisao assistida (Claude, 12/06): aula 04/03 = introducao a metodos formais (cronograma)"
+   "note": "confirmado por label API (12/06): (04/03) introducao a metodos formais -> bloco-02"
   },
   {
    "id": "provasindutivas-especificacoesrecursivas",
@@ -3096,7 +3096,7 @@
     "bloco-02",
     "bloco-03"
    ],
-   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03"
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
   },
   {
    "id": "exerciciosespecificacao",
@@ -3115,7 +3115,7 @@
     "bloco-02",
     "bloco-03"
    ],
-   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03 (assercoes logicas)"
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
   },
   {
    "id": "exerciciosformalizacaoalgoritmosrecursao2",
@@ -3166,7 +3166,7 @@
     "bloco-02",
     "bloco-03"
    ],
-   "note": "decisao assistida (Claude, 12/06): semana do card Moodle = 09/03"
+   "note": "confirmado por label API (12/06): (09/03) revisao de fundamentos de logica -> bloco-03"
   },
   {
    "id": "exerciciosformalizacaoalgoritmosrecursao-respostas",
@@ -3437,7 +3437,7 @@
    "expected_block_id": "bloco-11",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": "decisao assistida (Claude, 12/06): topic Correcao Parcial e Total 06/05"
+   "note": "confirmado por label API (12/06): (06/05) correcao parcial/total, terminacao -> bloco-11"
   },
   {
    "id": "exercicioscorrecaoterminacao",
@@ -3453,7 +3453,7 @@
    "expected_block_id": "bloco-11",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": "decisao assistida (Claude, 12/06): exercicios de terminacao (correcao total)"
+   "note": "confirmado por label API (12/06): (06/05) -> bloco-11"
   },
   {
    "id": "exerciciosformalizacaoalgoritmosinvariantes",
@@ -3469,7 +3469,7 @@
    "expected_block_id": "bloco-11",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": "decisao assistida (Claude, 12/06): exercicios de invariantes de laco"
+   "note": "confirmado por label API (12/06): (06/05) -> bloco-11"
   },
   {
    "id": "formalizacaoalgoritmos-invarianteslaco",
@@ -3485,7 +3485,7 @@
    "expected_block_id": "bloco-11",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": "decisao assistida (Claude, 12/06): invariantes = correcao parcial (topic bloco-11, 06/05)"
+   "note": "confirmado por label API (12/06): (06/05) correcao parcial/total, terminacao -> bloco-11"
   },
   {
    "id": "logicadehoare",
@@ -3533,7 +3533,7 @@
    "expected_block_id": "bloco-12",
    "expected_origin": "sem_gabarito",
    "candidates": [],
-   "note": "decisao assistida (Claude, 12/06): exercicios programacao/verificacao Dafny (intro); ALTERNATIVA bloco-13"
+   "note": "decisao assistida: intro Dafny atravessa 11/05 (b12) e 13/05 (b13) - segmentacao da timeline; mantido b12, ALTERNATIVA b13"
   },
   {
    "id": "exerciciosdafny2",

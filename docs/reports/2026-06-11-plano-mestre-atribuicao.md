@@ -88,6 +88,14 @@ porque o download M365 CHUTAVA o card por léxico. Isso foi corrigido na origem
 - **2ª linha de defesa**: entries que mesmo assim cheguem sem `source_section`
   (import direto de arquivo solto, raw/pdfs por categoria, Moodle offline no import)
   tentam resgate por basename contra o índice da API quando disponível.
+- **card_block_map AUTOMÁTICO via labels de semana (descoberta 12/06)**: nesta
+  cadeira, TODO card de conteúdo tem labels "Semana DD/MM a DD/MM: (DD/MM): aula"
+  — parseável da API (`mod.description` dos labels). Card→datas→blocos vira
+  derivação automática com cobertura total, matando o card_block_map manual
+  (hoje 5/9 seções e com erro comprovado — revisão P1 apontava bloco-06, real
+  bloco-07). Formato varia entre cadeiras → parser tolerante + fallback manual.
+  Bônus do mesmo sinal: detecta segmentação ruim da timeline (ex.: "Introdução
+  ao Dafny" atravessa blocos 12-13).
 - **Reparo dos dados já contaminados** (trabalho à parte, pode virar sub-fase): o
   manifest real do Metodos-Formais tem `source_section` errado (chute léxico antigo)
   e `source_path` quebrados (pasta `dafny\` extinta + arquivos movidos). Re-rodar

@@ -79,13 +79,16 @@ Re-runs do gerador preservam tuas mudanças (merge por id+categoria).
    Provas" → bloco-07); golden regenerado; caso agora bloco-07 automático.
    PENDÊNCIA: `revisao-p1` tem bloco MANUAL = bloco-06 no manifest do app —
    corrigir lá (editor) pra bloco-07.
-2. **Cluster Revisão → bloco-03 (7 casos)**: âncora = label do card ("Semana
-   09/03", que na tabela 1 é "revisão de lógica de predicados" — consistente).
-   Scorer prevê bloco-02. Mantive 03; confirma.
+2. ~~Cluster Revisão → bloco-03~~ — **CONFIRMADO por label da API (12/06)**:
+   "(09/03/2026): revisão de fundamentos de lógica" → bloco-03. Os 7 erros do
+   scorer (que prevê bloco-02) são erros reais do baseline.
 3. ~~Os 5 `.thy` → bloco-06~~ — **CONFIRMADO pelo usuário (12/06)**: card
    "Provas por Indução", semanas 06/04-13/04 (Isabelle). bloco-06 correto.
-4. **"ALTERNATIVA" na note**: `hoare`→10 (alt 12), `invariantes`→11 (alt 12),
-   `terminacao`→12 (alt 11), `exerciciosdafny1`→12 (alt 13). A tabela 1 ajuda:
-   invariantes/terminação são a aula de 06/05 (bloco-11); Dafny começa 11/05.
+4. **"ALTERNATIVA" na note** (parcialmente resolvido pelos labels da API):
+   PDFs de invariantes/correção/terminação → bloco-11 **confirmados**
+   ("(06/05): correção parcial/total, terminação"). Restam os zips Dafny:
+   `hoare`→10 (alt 12), `invariantes` zip→11 (alt 12), `terminacao` zip→12
+   (alt 11), `exerciciosdafny1`→12 (alt 13 — a intro Dafny atravessa 11/05 e
+   13/05, problema de segmentação da timeline a registrar no plano-mestre).
 5. **`t1-2026-1` ×2 = null**: TDE com deadline 06/05 (bloco-11) vs conteúdo
    Isabelle/recursão (blocos 04-06). Tua chamada.
