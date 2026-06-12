@@ -150,6 +150,17 @@ def derive_card_block_map(card_dates: dict, blocks: list) -> dict:
     return out
 
 
+def merge_card_block_map(existing: dict, derived: dict) -> dict:
+    """Merge do card map: manual NUNCA é sobrescrito; labels atualiza/adiciona."""
+    out = dict(existing or {})
+    for card, entry in (derived or {}).items():
+        cur = out.get(card)
+        if cur and str(cur.get("source") or "") == "manual":
+            continue
+        out[card] = entry
+    return out
+
+
 def parse_card_dates(contents, year: int, week_anchor: str = "") -> dict:
     """{secao_sanitizada: {format, dates[iso], weeks[(ini,fim)], lessons}}.
 

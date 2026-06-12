@@ -112,3 +112,24 @@ def test_derive_usa_weeks_quando_nao_ha_dates():
 def test_derive_card_sem_match_fica_fora():
     cards = {"X": {"format": "A", "weeks": [], "dates": ["2027-01-01"], "lessons": []}}
     assert derive_card_block_map(cards, _BLOCKS) == {}
+
+
+# --- merge_card_block_map (Task 4: manual sobrepoe) ---
+from src.builder.sources.moodle_labels import merge_card_block_map
+
+def test_merge_manual_sobrepoe_auto():
+    existing = {"Revisão": {"block_ids": ["bloco-02"], "source": "manual"}}
+    derived = {"Revisão": {"block_ids": ["bloco-03"], "source": "labels", "format": "A", "dates": []},
+               "Novo": {"block_ids": ["bloco-05"], "source": "labels", "format": "A", "dates": []}}
+    out = merge_card_block_map(existing, derived)
+    assert out["Revisão"]["block_ids"] == ["bloco-02"]      # manual intocado
+    assert out["Novo"]["block_ids"] == ["bloco-05"]
+
+def test_merge_labels_antigo_e_atualizado():
+    existing = {"X": {"block_ids": ["bloco-01"], "source": "labels"}}
+    derived = {"X": {"block_ids": ["bloco-02"], "source": "labels", "format": "A", "dates": []}}
+    assert merge_card_block_map(existing, derived)["X"]["block_ids"] == ["bloco-02"]
+
+def test_merge_entrada_manual_sem_derivacao_sobrevive():
+    existing = {"So Manual": {"block_ids": ["bloco-07"], "source": "manual"}}
+    assert merge_card_block_map(existing, {})["So Manual"]["block_ids"] == ["bloco-07"]

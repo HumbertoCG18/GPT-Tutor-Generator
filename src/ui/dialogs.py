@@ -1926,7 +1926,9 @@ class MoodleCourseSelectDialog(tk.Toplevel):
             base_msg = (
                 f"Matérias — criadas: {rep['created']}  atualizadas: {rep['updated']}  ligadas: {rep['linked']}\n"
                 f"Cards criados: {rep['folders']}  ({rep['expected_files']} arquivos esperados)\n"
-                f"source_section preenchidos (gabarito): {rep['backfilled']}\n\n")
+                f"source_section preenchidos (gabarito): {rep['backfilled']}\n"
+                f"card map por labels: {rep.get('card_map_labels', 0)} "
+                f"(manuais preservadas: {rep.get('card_map_manual', 0)})\n\n")
             if do_download:
                 failed = rep.get("failed") or []
                 tail = f"Arquivos baixados: {rep['downloaded']}"

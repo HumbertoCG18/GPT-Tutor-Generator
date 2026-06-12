@@ -9,6 +9,7 @@ Só stdlib.
 from __future__ import annotations
 
 import json
+import logging
 import re
 import urllib.parse
 import urllib.request
@@ -19,6 +20,8 @@ from typing import List
 from src.utils.helpers import slugify, write_json_manifest
 
 _INVALID = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
+
+logger = logging.getLogger(__name__)
 
 import re as _re
 
@@ -325,6 +328,7 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
     base = Path(base_folder)
     created = updated = linked = 0
     folders = expected_files = backfilled = downloaded = 0
+    card_map_labels = card_map_manual = 0
     failed: list = []
     for course in selected_courses or []:
         info = parse_moodle_course(course)
@@ -374,6 +378,30 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
                         e["source_section"] = assignments[eid]
                         backfilled += 1
                 write_json_manifest(mpath, manifest)
+        # --- card_block_map automático via labels (P1) ---
+        if repo:
+            try:
+                from src.builder.sources.moodle_labels import (
+                    parse_card_dates, derive_card_block_map, merge_card_block_map,
+                )
+                ti_path = Path(repo) / "course" / ".timeline_index.json"
+                map_path = Path(repo) / "course" / ".card_block_map.json"
+                if ti_path.is_file():
+                    blocks = (_json.loads(ti_path.read_text(encoding="utf-8")) or {}).get("blocks") or []
+                    year = int((info.get("semester") or "0/0").split("/")[0] or 0)
+                    derived = derive_card_block_map(parse_card_dates(contents, year), blocks)
+                    existing = {}
+                    if map_path.is_file():
+                        existing = _json.loads(map_path.read_text(encoding="utf-8")) or {}
+                    merged = merge_card_block_map(existing, derived)
+                    if merged != existing:
+                        map_path.write_text(
+                            _json.dumps(merged, ensure_ascii=False, indent=1), encoding="utf-8")
+                    card_map_labels += sum(1 for v in derived.values())
+                    card_map_manual += sum(1 for v in merged.values()
+                                           if str(v.get("source") or "") == "manual")
+            except Exception:
+                logger.warning("card_block_map via labels falhou para %s", info["name"], exc_info=True)
         if download:
             dl = client.download_course(cid, stash)
             downloaded += int(dl.get("downloaded", 0))
@@ -382,6 +410,7 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
         "created": created, "updated": updated, "linked": linked,
         "folders": folders, "expected_files": expected_files,
         "backfilled": backfilled, "downloaded": downloaded, "failed": failed,
+        "card_map_labels": card_map_labels, "card_map_manual": card_map_manual,
     }
 
 
