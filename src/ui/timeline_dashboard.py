@@ -2,8 +2,12 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
+import subprocess
+import sys
 import tkinter as tk
+import webbrowser
 from datetime import datetime
 from pathlib import Path
 from tkinter import messagebox, ttk
@@ -39,6 +43,47 @@ _STATUS_LABEL = {
     "needs_review": "revisar",
     "non_applicable": "—",
 }
+
+
+_URL_FILE_TYPES = {"url", "github-repo"}
+
+
+def resolve_entry_open_target(entry: dict, repo_root: Optional[Path]) -> tuple[str, str]:
+    """Resolve o que abrir ao clicar num arquivo do cronograma.
+
+    Retorna ``(kind, target)``:
+      - ``("url", <url>)``  — file_type web (url/github-repo): abre source_path no navegador.
+      - ``("file", <abs>)`` — arquivo local: prefere a cópia versionada no repo
+        (``raw_target`` resolvido contra repo_root, sempre presente), com fallback
+        para ``source_path`` (original no disco do usuário).
+      - ``("", "")``        — nada abrível (caminhos ausentes/inexistentes).
+    """
+    file_type = str(entry.get("file_type") or "")
+    source_path = str(entry.get("source_path") or "").strip()
+
+    if file_type in _URL_FILE_TYPES:
+        return ("url", source_path) if source_path else ("", "")
+
+    raw_target = str(entry.get("raw_target") or "").strip()
+    if raw_target and repo_root is not None:
+        candidate = Path(repo_root) / raw_target
+        if candidate.exists():
+            return ("file", str(candidate))
+
+    if source_path and Path(source_path).exists():
+        return ("file", source_path)
+
+    return ("", "")
+
+
+def _open_local_path(path: str) -> None:
+    """Abre um arquivo com o app padrão do SO (portável)."""
+    if sys.platform.startswith("win"):
+        os.startfile(path)  # type: ignore[attr-defined]  # noqa: S606  (Windows-only)
+    elif sys.platform == "darwin":
+        subprocess.run(["open", path], check=False)
+    else:
+        subprocess.run(["xdg-open", path], check=False)
 
 
 def _kind_display(kind_value: str) -> dict:
@@ -754,7 +799,7 @@ class TimelineDashboardView(tk.Frame):
             parent_iid,
             "end",
             text=f"   {icon} {title}{mark}",
-            values=("", "", "", "", f"conf {confidence:.2f}"),
+            values=("abrir ⇲ (duplo clique)", "", "", "", f"conf {confidence:.2f}"),
             tags=("child",),
         )
 
@@ -813,6 +858,9 @@ class TimelineDashboardView(tk.Frame):
         tree = self._tree
         iid = tree.identify_row(event.y)
         col = tree.identify_column(event.x)  # ex "#3"
+        if iid and iid in self._iid_to_entry:
+            self._open_entry_file(self._iid_to_entry[iid])
+            return  # linha-filha (arquivo): abre o arquivo
         if not iid or iid not in self._iid_to_block:
             return  # so linhas-pai (blocos) sao editaveis
         block_id = self._iid_to_block[iid]
@@ -845,6 +893,44 @@ class TimelineDashboardView(tk.Frame):
             if str(b.get("id") or "") == block_id:
                 return b
         return None
+
+    def _entry_by_id(self, entry_id: str) -> Optional[dict]:
+        for entries in (self._entries_by_block_id or {}).values():
+            for e in entries:
+                if str(e.get("id") or "") == entry_id:
+                    return e
+        for e in self._unmapped or []:
+            if str(e.get("id") or "") == entry_id:
+                return e
+        return None
+
+    def _open_entry_file(self, entry_id: str) -> None:
+        """Abre o arquivo de uma linha-filha pra conferir o conteúdo."""
+        entry = self._entry_by_id(entry_id)
+        if entry is None:
+            return
+        kind, target = resolve_entry_open_target(entry, self._repo_root)
+        title = str(entry.get("title") or entry.get("source_path") or entry_id)
+        if not kind:
+            messagebox.showwarning(
+                "Arquivo não encontrado",
+                f"Não foi possível localizar o arquivo de “{title}”.\n"
+                "A cópia no repositório (raw/) e o caminho original não existem.",
+                parent=self,
+            )
+            return
+        try:
+            if kind == "url":
+                webbrowser.open(target)
+            else:
+                _open_local_path(target)
+        except OSError:
+            logger.exception("Falha ao abrir arquivo do cronograma: %s", target)
+            messagebox.showerror(
+                "Erro ao abrir",
+                f"Não foi possível abrir “{title}”.\n{target}",
+                parent=self,
+            )
 
     def _overlay_combo(self, iid: str, col_id: str, labels: list[str], current: str) -> ttk.Combobox:
         self._cancel_editor()

@@ -5,7 +5,11 @@ from pathlib import Path
 
 import pytest
 
-from src.ui.timeline_dashboard import load_timeline_data, save_block_assignment
+from src.ui.timeline_dashboard import (
+    load_timeline_data,
+    resolve_entry_open_target,
+    save_block_assignment,
+)
 
 
 def _write(path: Path, data: dict) -> None:
@@ -37,6 +41,53 @@ def test_load_data_separates_mapped_and_unmapped(tmp_path):
     assert len(by_block["blk-01"]) == 2  # e1 (auto_tags) + e2 (manual)
     assert len(unmapped) == 1
     assert unmapped[0]["id"] == "e3"
+
+
+def test_resolve_open_target_url_uses_source_path(tmp_path):
+    for ftype in ("url", "github-repo"):
+        entry = {"file_type": ftype, "source_path": "https://example.com/x"}
+        kind, target = resolve_entry_open_target(entry, tmp_path)
+        assert kind == "url"
+        assert target == "https://example.com/x"
+
+
+def test_resolve_open_target_prefers_raw_target_in_repo(tmp_path):
+    raw = tmp_path / "raw" / "pdf" / "x.pdf"
+    raw.parent.mkdir(parents=True, exist_ok=True)
+    raw.write_text("pdf", encoding="utf-8")
+    entry = {
+        "file_type": "pdf",
+        "raw_target": "raw/pdf/x.pdf",
+        "source_path": str(tmp_path / "elsewhere.pdf"),
+    }
+    kind, target = resolve_entry_open_target(entry, tmp_path)
+    assert kind == "file"
+    assert Path(target) == raw
+
+
+def test_resolve_open_target_falls_back_to_source_path(tmp_path):
+    src = tmp_path / "orig.pdf"
+    src.write_text("pdf", encoding="utf-8")
+    entry = {"file_type": "pdf", "raw_target": "raw/missing.pdf", "source_path": str(src)}
+    kind, target = resolve_entry_open_target(entry, tmp_path)
+    assert kind == "file"
+    assert Path(target) == src
+
+
+def test_resolve_open_target_none_when_nothing_exists(tmp_path):
+    entry = {"file_type": "pdf", "raw_target": "raw/missing.pdf", "source_path": "X:/nope.pdf"}
+    kind, target = resolve_entry_open_target(entry, tmp_path)
+    assert kind == ""
+    assert target == ""
+
+
+def test_resolve_open_target_no_repo_root_uses_source_path(tmp_path):
+    src = tmp_path / "orig.pdf"
+    src.write_text("pdf", encoding="utf-8")
+    entry = {"file_type": "pdf", "raw_target": "raw/x.pdf", "source_path": str(src)}
+    kind, target = resolve_entry_open_target(entry, None)
+    assert kind == "file"
+    assert Path(target) == src
 
 
 def test_load_data_manual_wins_divergent(tmp_path):
