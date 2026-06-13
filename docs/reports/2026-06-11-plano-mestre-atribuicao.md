@@ -338,15 +338,22 @@ segundos cérebros já mortos: sinal forte existe, caminho que decide ignora.
   ⇒ taxonomia vazia no retag; um retag de subunidade hoje LIMPARIA os slugs.
   Mascarado porque o reprocesso completo do app reescreveu tudo depois.
 
-**Correções candidatas (decisão 12/06: (a) agora, (b) depois):**
+**Correções candidatas (decisão 12/06: (a) agora, (b) depois — ambas FEITAS):**
 - (a) ~~Mínima~~ — **FEITO 12/06 (62da0d2)**: empate exato ou
   `winner_score <= 0` ⇒ slug vazio + reason (`empate-exato Nx score=…` /
   `sem-sinal`). Replay no repo real: 9/12 viram vazio honesto, 3 ganham
   vencedor real por margem mínima (ambiguous, banda baixa). Golden intacto
   41/48, confiante-errado 0, suíte 1320.
-- (b) Sinal real: alimentar o scorer de subunidade com `code_curation.json`
-  (inferred_title + concepts + summary como campo markdown-equivalente) — mata
-  o 8º segundo cérebro e dá chance real de acerto às 12 entries.
+- (b) ~~Sinal real~~ — **FEITO 13/06 (1c787fb)**: `code_curation_signal_text`
+  (em `code_summarization.py`) reaproveita o resumo Gemini já existente
+  (`inferred_title` como heading peso 4.4, `concepts`/`summary`/`language` no
+  corpo) como sinal léxico. Em `resolve_unit_block_tags` é injetado SÓ no input
+  do scorer de subunidade (markdown de bloco/unidade intacto → golden de bloco
+  preservado). **Geral**: qualquer cadeira com `code_curation.json` se beneficia,
+  sem hardcode de MF. Replay no repo real: 10/12 entries que davam empate-vazio
+  agora ganham subunidade real (hoare→logica-de-hoare, introducao→sistemas-formais,
+  exercicios-conjuntos→pre-e-pos-condicoes…); 2 seguem empate honesto. Golden de
+  bloco intacto 41/48, confiante-errado 0, suíte 1330.
 - (c) Higiene: unicidade de id no manifest (dedupe ou sufixo por categoria).
 - (d) Dívida #5: retag carregar `course/.content_taxonomy.json` do `_repo_root`.
 
