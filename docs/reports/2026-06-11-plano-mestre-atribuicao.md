@@ -357,6 +357,16 @@ segundos cérebros já mortos: sinal forte existe, caminho que decide ignora.
 - (c) Higiene: unicidade de id no manifest (dedupe ou sufixo por categoria).
 - (d) Dívida #5: retag carregar `course/.content_taxonomy.json` do `_repo_root`.
 
+**Modularidade (confirmado 13/06):** lógica é geral, não específica de MF.
+- `code_curation.json` é artefato genérico — qualquer cadeira com código o gera.
+- `code_curation_signal_text` lê campos genéricos (`inferred_title`, `concepts`,
+  `summary`, `language`); zero string hardcoded de MF.
+- Injeção por chave de entry (`_code_curation_entries.get(entry["id"])`): entry sem
+  resumo de código mantém `markdown_text` intacto; cadeira sem código nenhum = dict
+  vazio, efeito nulo.
+- Distinção chave: a **lógica** é modular; só a **calibração dos pesos** foi validada
+  em 1 cadeira (MF). Risco de calibração coberto abaixo (2º golden set).
+
 ## Riscos transversais
 
 - **Golden set de 1 disciplina só**: Metodos-Formais pode enviesar (muito código
