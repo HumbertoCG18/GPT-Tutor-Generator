@@ -1016,6 +1016,18 @@ def resolve_unit_block_tags(
         except Exception:
             _card_block_map = {}
 
+    # Resumo de código curado (Gemini) como sinal de SUBUNIDADE — GERAL: zips e
+    # códigos não têm .md convertido, então o scorer só via título e empatava no
+    # ruído. Carregado 1x; aplicado só ao input do subunit scorer (bloco/unidade
+    # mantêm o markdown original p/ não mexer no golden de bloco).
+    _code_curation_entries = {}
+    if repo_root:
+        try:
+            from src.builder.core.code_summarization import load_code_curation
+            _code_curation_entries = load_code_curation(Path(repo_root)).get("entries", {}) or {}
+        except Exception:
+            _code_curation_entries = {}
+
     updated = []
     for entry in manifest_entries or []:
         category = _collapse_ws(str(entry.get("category") or "")).lower()
@@ -1032,6 +1044,19 @@ def resolve_unit_block_tags(
 
         markdown_text = entry_markdown_text_for_file_map_fn(repo_root, entry)
 
+        # Texto de subunidade = markdown + resumo de código curado (se houver).
+        # Só o caminho de SUBUNIDADE usa o texto enriquecido; bloco/unidade ficam
+        # com o markdown original (preserva o golden de bloco).
+        subunit_markdown_text = markdown_text
+        _curation_entry = _code_curation_entries.get(str(entry.get("id") or ""))
+        if _curation_entry:
+            from src.builder.core.code_summarization import code_curation_signal_text
+            _curation_text = code_curation_signal_text(_curation_entry)
+            if _curation_text:
+                subunit_markdown_text = (
+                    f"{markdown_text}\n\n{_curation_text}" if markdown_text else _curation_text
+                )
+
         # --- Topic/subunit match (manual tem precedencia) ---
         manual_subunit = _collapse_ws(str(entry.get("manual_subunit_slug") or ""))
         if manual_subunit:
@@ -1040,7 +1065,7 @@ def resolve_unit_block_tags(
             subunit_confidence = 1.0
             best_subunit_slug = manual_subunit
         else:
-            topic_match = auto_map_entry_subtopic_fn(entry, content_taxonomy, markdown_text)
+            topic_match = auto_map_entry_subtopic_fn(entry, content_taxonomy, subunit_markdown_text)
             preferred_topic_slug = ""
             subunit_reasons = list(getattr(topic_match, "reasons", []))
             subunit_confidence = float(getattr(topic_match, "confidence", 0.0))

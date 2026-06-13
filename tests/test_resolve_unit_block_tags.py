@@ -146,6 +146,65 @@ def test_resolve_unit_block_tags_adds_subunit_tag():
     assert "subunit:regra-da-cadeia" in tags
 
 
+def test_resolve_unit_block_tags_enriches_subunit_input_with_code_curation(tmp_path):
+    """GERAL: entry de código sem markdown recebe o texto do code_curation.json
+    no input do scorer de SUBUNIDADE (não no de bloco)."""
+    import json
+
+    entry = _make_minimal_entry("hoare", "hoare", category="codigo-professor")
+    entry["file_type"] = "zip"
+
+    curation = {
+        "version": 1,
+        "entries": {
+            "hoare": {
+                "content_hash": "x",
+                "summary": {
+                    "inferred_title": "Verificação com Tripla de Hoare",
+                    "language": "dafny",
+                    "concepts": ["Tripla de Hoare"],
+                    "summary": "Exemplo em Dafny.",
+                },
+            }
+        },
+    }
+    (tmp_path / "code_curation.json").write_text(
+        json.dumps(curation, ensure_ascii=False), encoding="utf-8"
+    )
+
+    seen = {}
+
+    def _capture_subtopic(e, t, m):
+        seen["subunit_md"] = m
+        return _stub_topic_match()
+
+    def _capture_unit(e, u, m, ti, learned_unit_boosts=None):
+        seen["unit_md"] = m
+        return _stub_unit_match("", 0.0, True)
+
+    resolve_unit_block_tags(
+        [entry],
+        course_meta={"_repo_root": str(tmp_path)},
+        subject_profile=None,
+        build_file_map_unit_index_from_course_fn=lambda c, s: [],
+        build_file_map_timeline_context_from_course_fn=lambda c, s: {
+            "blocks_by_unit": {},
+            "unassigned_blocks": [],
+        },
+        iter_content_taxonomy_topics_fn=lambda t: [],
+        auto_map_entry_subtopic_fn=_capture_subtopic,
+        auto_map_entry_unit_fn=_capture_unit,
+        select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
+        resolve_entry_manual_timeline_block_fn=lambda e, tc: None,
+        entry_markdown_text_for_file_map_fn=lambda root, e: "",
+    )
+
+    # subunit recebe o texto de curadoria; unidade/bloco continuam com markdown vazio
+    assert "Tripla de Hoare" in seen["subunit_md"]
+    assert "dafny" in seen["subunit_md"]
+    assert seen["unit_md"] == ""
+
+
 def test_resolve_unit_block_tags_adds_bloco_tag_via_manual_override():
     entries = [_make_minimal_entry("e1", "Lista")]
     entries[0]["manual_timeline_block_id"] = "bloco-03"
