@@ -2,7 +2,7 @@
 
 date: 2026-06-16
 base: `docs/reports/2026-06-11-plano-mestre-atribuicao.md` (seção "Auditoria completa
-do sistema de atribuição (16/06, wave 1+2)") e aba 6 de `docs/sistema-atribuicao.html`.
+do sistema de atribuição (16/06, wave 1+2)") e aba 6 de `docs/Overview-Sistema.html`.
 objetivo: corrigir os defeitos estruturais achados na auditoria read-only do subsistema
 de atribuição (arquivo→bloco→unidade/subunidade), mantendo o golden de bloco.
 
@@ -59,13 +59,30 @@ Barato, independente, sem eval.
   `incremental_build.py:48`) chamam `_process_entry` direto, sem dedup → ids duplicados
   (`introducao`×2, `t1-2026-1`×2 — pdf trabalhos + zip codigo-professor compartilham id,
   reintroduz B5: dirs de assets compartilhados).
-- **Fix:** extrair helper `assign_dedup_id(entry, existing_ids)` (base_id=`entry.id()`;
-  se colide → `entry.id_override = _dedup_entry_id(base_id, entry.category, existing_ids)`;
-  registra o id final no set). Chamar nos 2 laços batch **antes** de `_process_entry`:
-  `build_workflow` semeia `existing_ids` vazio e acumula; `incremental_build` semeia com os
-  ids do manifest existente e acumula os novos.
-- **Teste:** build batch com `introducao.pdf` (trabalhos) + `introducao.zip`
-  (codigo-professor) → ids distintos no manifest. Sem impacto no scorer.
+- **Fix (implementado P0.4):** extrair helper `assign_dedup_id(entry, existing_ids)`
+  (base_id=`entry.id()`; se colide → `entry.id_override = _dedup_entry_id(...)`; registra o
+  id final no set). Chamar nos 2 laços batch **antes** de `_process_entry`: `build_workflow`
+  semeia `existing_ids` vazio e acumula; `incremental_build` semeia com os ids do manifest
+  existente e acumula os novos.
+- **Atualização 16/06 — fix c v2 (sufixo por EXTENSÃO, não categoria):** a 1ª versão
+  (mergeada) sufixava por **categoria**, o que (a) gera ids que parecem categoria
+  (`exemplos-codigo-professor`) e (b) NÃO desambigua quando a colisão é mesma-categoria
+  (`exemplos.thy` vs `exemplos.zip`, ambos `codigo-professor`; caso real do MF). Decisão:
+  `_dedup_entry_id` passa a usar **cascata extensão → token da pasta → contador**
+  (`introducao-zip`, `exemplos-zip`). Determinístico, no import, sem Gemini; o id vira
+  significativo; só entries colididas mudam (sem churn nas demais). **Gemini NÃO define o id**
+  (id nasce antes do Gemini, que é opt-in; precisa ser determinístico/estável — título de LLM
+  mudaria o id entre runs → assets/curation órfãos). Gemini fica só no TÍTULO de display (P0.5).
+- **Teste:** build batch com `introducao.pdf` + `introducao.zip` → ids distintos
+  (`introducao`, `introducao-zip`). Sem impacto no scorer.
+
+### P0.5 — Aba códigos: rótulo = `inferred_title` (display, opcional)
+- **Defeito:** a aba códigos (`codes_panel.py`) usa `eid[:8]` como rótulo da linha → dois ids
+  com prefixo igual (`exemplos.thy` e `exemplos.zip` → ambos "exemplos") parecem duplicados ou
+  somem.
+- **Fix:** rótulo da linha = `summary.inferred_title` (Gemini) com fallback pro id. Só display;
+  não toca atribuição. O Gemini já gera `inferred_title` coerente do conteúdo (usado também em
+  CODE_INDEX/CRONOGRAMA).
 
 ### P0.1 — Subunidade fonte-única (8º "segundo cérebro")
 Eval leve (muda a exibição do FILE_MAP).

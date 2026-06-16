@@ -361,6 +361,11 @@ segundos cérebros já mortos: sinal forte existe, caminho que decide ignora.
   (`build_workflow.py:64`, `incremental_build.py:48`) NÃO deduplicam → ids duplicados
   (reintroduz B5: dirs de assets compartilhados). Fix: extrair o dedup p/ helper e
   chamar nos 2 laços batch antes de `_process_entry`.
+  **fix c v2 (16/06):** o sufixo do dedup muda de categoria → **extensão** (cascata
+  ext→pasta→contador): `introducao-zip`, `exemplos-zip`. A categoria não desambigua colisão
+  mesma-categoria (`exemplos.thy` vs `exemplos.zip`) e o id `x-codigo-professor` confunde com
+  categoria. Id segue determinístico/no-import (Gemini NÃO define id; só o título de display,
+  via `inferred_title` na aba códigos).
 - (d) ~~Dívida #5~~ — **FEITO 16/06 (432b64a)**: `load_internal_content_taxonomy`
   lê `course/.content_taxonomy.json` do `_repo_root` como fallback quando
   `_content_taxonomy` não vem em memória. Antes, `resolve_unit_block_tags` lia a
@@ -391,7 +396,7 @@ passo desfaz/sobrescreve outro), **DUPLICAÇÃO** (mesma lógica em 2+ lugares),
 que ajuda). Cobertura: todo o pipeline (import → card/`source_section` → scorer file→block
 → Gemini código→bloco → matcher posicional de unidade → scorer subunit → tags → bandas/caps
 → conflicts → consumidores). Fora de escopo (não-core): `image_resolution.py`,
-`semantic_config.py`. Espelhada na aba 6 de `docs/sistema-atribuicao.html`.
+`semantic_config.py`. Espelhada na aba 6 de `docs/Overview-Sistema.html`.
 
 ### P0 — corrompe atribuição (alta confiança, cross-validado)
 
