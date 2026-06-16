@@ -17,6 +17,7 @@ _PERSISTED_ENTRY_FIELDS = (
     "unit_match_reasons",
     "subunit_match_confidence",
     "subunit_match_reasons",
+    "computed_subunit_slug",
 )
 
 
@@ -31,6 +32,7 @@ def _make_entry_dict() -> dict:
         "unit_match_reasons": ["winner_score=3.50", "date_boost"],
         "subunit_match_confidence": 0.63,
         "subunit_match_reasons": ["topic_overlap"],
+        "computed_subunit_slug": "subunidade-02-inducao",
     }
 
 

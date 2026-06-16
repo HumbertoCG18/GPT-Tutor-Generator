@@ -79,6 +79,11 @@ class FileEntry:
     # resolvido vive direto no entry, e auto_tags[unit:|bloco:] sao espelho
     # destes campos (escritos por resolve_unit_block_tags).
     computed_unit_slug: str = ""
+    # Melhor candidato de subunidade (best-effort, pode estar abaixo do gate de
+    # tag). Declarado aqui para sobreviver ao round-trip from_dict -> to_dict
+    # (antes era descartado, deixando subunit_match_confidence orfa). A tag
+    # subunit: (gated) continua sendo a atribuicao; este campo e a sugestao.
+    computed_subunit_slug: str = ""
     computed_block_id: str = ""
     computed_block_confidence: float = 0.0
     # Faixa ("alta"/"media"/"baixa") derivada de computed_block_confidence via
