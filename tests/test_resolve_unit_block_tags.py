@@ -372,6 +372,87 @@ def test_reconcile_conflict_unit_stronger_sets_flag():
     assert "unit:unidade-1" in out_entry["auto_tags"]
 
 
+def test_resolve_unit_block_tags_loads_taxonomy_from_repo_when_absent(tmp_path):
+    """Dívida #5: sem _content_taxonomy no course_meta (ex.: retag), a taxonomia
+    é carregada de course/.content_taxonomy.json do _repo_root — senão o scorer
+    de subunidade rodaria com taxonomia vazia e LIMPARIA os slugs persistidos."""
+    import json
+
+    taxonomy = {
+        "version": 1,
+        "units": [{"slug": "u1", "topics": [{"slug": "t1", "label": "Tópico 1"}]}],
+    }
+    course_dir = tmp_path / "course"
+    course_dir.mkdir()
+    (course_dir / ".content_taxonomy.json").write_text(
+        json.dumps(taxonomy, ensure_ascii=False), encoding="utf-8"
+    )
+
+    seen = {}
+
+    def _capture_iter(t):
+        seen["taxonomy"] = t
+        return []
+
+    resolve_unit_block_tags(
+        [_make_minimal_entry("e1", "Slides")],
+        course_meta={"_repo_root": str(tmp_path)},
+        subject_profile=None,
+        build_file_map_unit_index_from_course_fn=lambda c, s: [],
+        build_file_map_timeline_context_from_course_fn=lambda c, s: {
+            "blocks_by_unit": {},
+            "unassigned_blocks": [],
+        },
+        iter_content_taxonomy_topics_fn=_capture_iter,
+        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match("", 0.0, True),
+        select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
+        resolve_entry_manual_timeline_block_fn=lambda e, tc: None,
+        entry_markdown_text_for_file_map_fn=lambda root, e: "",
+    )
+
+    assert seen["taxonomy"] == taxonomy
+
+
+def test_resolve_unit_block_tags_prefers_in_memory_taxonomy_over_disk(tmp_path):
+    """In-memory _content_taxonomy (pipeline completo) tem precedência sobre o
+    arquivo em disco — o fallback é só para quem não passa a taxonomia."""
+    import json
+
+    disk = {"version": 1, "units": [{"slug": "from-disk"}]}
+    mem = {"version": 1, "units": [{"slug": "from-memory"}]}
+    course_dir = tmp_path / "course"
+    course_dir.mkdir()
+    (course_dir / ".content_taxonomy.json").write_text(
+        json.dumps(disk, ensure_ascii=False), encoding="utf-8"
+    )
+
+    seen = {}
+
+    def _capture_iter(t):
+        seen["taxonomy"] = t
+        return []
+
+    resolve_unit_block_tags(
+        [_make_minimal_entry("e1", "Slides")],
+        course_meta={"_repo_root": str(tmp_path), "_content_taxonomy": mem},
+        subject_profile=None,
+        build_file_map_unit_index_from_course_fn=lambda c, s: [],
+        build_file_map_timeline_context_from_course_fn=lambda c, s: {
+            "blocks_by_unit": {},
+            "unassigned_blocks": [],
+        },
+        iter_content_taxonomy_topics_fn=_capture_iter,
+        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match("", 0.0, True),
+        select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
+        resolve_entry_manual_timeline_block_fn=lambda e, tc: None,
+        entry_markdown_text_for_file_map_fn=lambda root, e: "",
+    )
+
+    assert seen["taxonomy"] == mem
+
+
 def test_resolve_unit_block_tags_manual_unit_slug_takes_precedence():
     entries = [_make_minimal_entry("e1", "Slides")]
     entries[0]["manual_unit_slug"] = "unidade-99-manual"

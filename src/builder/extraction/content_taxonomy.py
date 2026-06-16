@@ -528,6 +528,20 @@ def build_content_taxonomy(
 def write_internal_content_taxonomy(root_dir: Path, taxonomy: dict) -> None:
     write_text(root_dir / "course" / ".content_taxonomy.json", json.dumps(taxonomy, ensure_ascii=False, indent=2))
 
+
+def load_internal_content_taxonomy(root_dir: Path) -> dict:
+    """Lê course/.content_taxonomy.json de um repo. {} se ausente/ilegível.
+
+    Contrapartida de write_internal_content_taxonomy. Usado como fallback quando
+    a taxonomia não vem em memória (ex.: retag), evitando rodar o scorer de
+    subunidade com taxonomia vazia.
+    """
+    try:
+        path = Path(root_dir) / "course" / ".content_taxonomy.json"
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
 def build_unit_tag_index(taxonomy: dict) -> dict:
     """Map topico:slug tags to unit slugs from the content taxonomy.
     Returns {tag_str: {"unit_slug": str, "weight": float}} where weight reflects
@@ -995,6 +1009,11 @@ def resolve_unit_block_tags(
         or course_meta.get("_content_taxonomy_for_tests")
         or {}
     )
+    # Dívida #5: callers como retag não passam _content_taxonomy. Sem fallback,
+    # o scorer de subunidade rodaria com taxonomia vazia e LIMPARIA os slugs já
+    # persistidos. Lê do disco do repo quando a versão em memória não veio.
+    if not content_taxonomy and course_meta.get("_repo_root"):
+        content_taxonomy = load_internal_content_taxonomy(course_meta["_repo_root"])
     topic_index = iter_content_taxonomy_topics_fn(content_taxonomy)
     blocks_by_unit = dict(timeline_context.get("blocks_by_unit") or {})
     unassigned_blocks = list(timeline_context.get("unassigned_blocks") or [])
