@@ -21,6 +21,22 @@ from src.builder.core.reference_navigation import (
 from src.builder.extraction.content_taxonomy import _NO_TIMELINE_CATEGORIES
 
 
+def _display_subunit_slug(entry: dict) -> str:
+    """Subunidade exibida no FILE_MAP: manual > tag gated `subunit:`.
+
+    NAO cai no computed_subunit_slug (best-effort ungated) — o FILE_MAP so
+    mostra atribuicoes reais (igual ao tier 'Automatico' do editor). O
+    best-effort fica so no editor, rotulado como sugestao.
+    """
+    manual = str(entry.get("manual_subunit_slug") or "").strip()
+    if manual:
+        return manual
+    for tag in entry.get("auto_tags") or []:
+        if tag.startswith("subunit:"):
+            return tag[len("subunit:"):]
+    return ""
+
+
 def _entry_priority_label(entry: dict) -> str:
     category = (entry.get("category") or "").strip().lower()
     if entry.get("relevant_for_exam") or entry.get("include_in_bundle"):
@@ -620,10 +636,7 @@ def render_low_token_file_map_md(
                 str(entry.get("manual_unit_slug") or "").strip()
                 or str(entry.get("computed_unit_slug") or "").strip()
             )
-            preferred_topic_slug = (
-                str(entry.get("manual_subunit_slug") or "").strip()
-                or str(entry.get("computed_subunit_slug") or "").strip()
-            )
+            preferred_topic_slug = _display_subunit_slug(entry)
         # Período espelha o manifest (fonte única): manual > computed_block_id.
         # Sem atribuição no manifest, a coluna fica em branco — nunca recomputa.
         if not skip_timeline:
