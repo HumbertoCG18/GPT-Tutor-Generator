@@ -301,6 +301,18 @@ def _block_scope_slugs(block: dict) -> list[str]:
     return [str(s).strip() for s in derived if str(s).strip()]
 
 
+def _entry_label(entry: dict) -> str:
+    """Rótulo legível do material na aba cronograma: nome do arquivo original
+    (com extensão) — distingue ex.: ``exemplos.thy`` de ``exemplos.zip``, em vez
+    do id/stem ambíguo. URL/repo mostram o título. Fallback: título > id."""
+    file_type = str(entry.get("file_type") or "")
+    source_path = str(entry.get("source_path") or "").strip()
+    if file_type in {"url", "github-repo"}:
+        return str(entry.get("title") or source_path or "—")
+    basename = source_path.replace("\\", "/").rstrip("/").split("/")[-1] if source_path else ""
+    return basename or str(entry.get("title") or entry.get("id") or "—")
+
+
 class ScopeEditDialog(tk.Toplevel):
     """Dialogo modal: marca/desmarca unidades no escopo de uma prova/revisão.
 
@@ -788,7 +800,7 @@ class TimelineDashboardView(tk.Frame):
             # nao mapeia: linha informativa apenas
 
     def _insert_entry_child(self, parent_iid: str, entry: dict) -> str:
-        title = str(entry.get("title") or entry.get("source_path") or "—")
+        title = _entry_label(entry)
         file_type = str(entry.get("file_type") or "")
         icon = "🔗" if file_type in {"url", "github-repo"} else "📄"
         confidence = float(entry.get("unit_match_confidence") or 0.0)
@@ -821,7 +833,7 @@ class TimelineDashboardView(tk.Frame):
         self._unmapped_iid_to_entry = {}
         for entry in unmapped:
             entry_id = str(entry.get("id") or "")
-            title = str(entry.get("title") or entry.get("source_path") or "—")
+            title = _entry_label(entry)
             file_type = str(entry.get("file_type") or "")
             icon = "🔗" if file_type in {"url", "github-repo"} else "📄"
             iid = utree.insert(
