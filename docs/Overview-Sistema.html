@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sistema de Atribuição — Cronograma · Unidades · Blocos · Materiais</title>
+<title>Overview do Sistema — GPT-Tutor-Generator</title>
 <script src="./vendor/mermaid.min.js"></script>
 <style>
   :root { --bg:#0f1117; --panel:#171a23; --border:#2a2f3c; --fg:#d7dce5; --muted:#8a93a6; --accent:#89b4fa; }
@@ -42,11 +42,70 @@
   .sev.s2 { background:#36331a; color:#f9e2af; }
   .sev.s3 { background:#20242f; color:#8a93a6; }
   .ok-line { color:#a6e3a1; }
+
+  /* ===== CSS do Relatório de Sistema (escopado por .report-scope) ===== */
+  .report-scope {
+    --bg:#0f1419; --panel:#181f29; --panel2:#1f2937; --border:#2d3a4d;
+    --txt:#e2e8f0; --muted:#8aa0b8; --accent:#4fc3f7; --good:#4ade80;
+    --warn:#fbbf24; --bad:#f87171; --purple:#c084fc;
+    font: 15px/1.6 "Segoe UI",system-ui,sans-serif;
+    color: var(--txt);
+  }
+  .report-scope * { box-sizing: border-box; }
+  .report-scope .wrap { max-width:1180px; margin:0 auto; padding:32px 24px 80px; }
+  .report-scope h1 { font-size:30px; margin:0 0 4px; }
+  .report-scope h2 { font-size:22px; margin:48px 0 16px; color:var(--accent); border-bottom:1px solid var(--border); padding-bottom:8px; }
+  .report-scope h3 { font-size:17px; margin:28px 0 10px; color:var(--purple); }
+  .report-scope .sub { color:var(--muted); margin-bottom:28px; }
+  .report-scope .grid { display:grid; gap:14px; }
+  .report-scope .g4 { grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); }
+  .report-scope .card { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; }
+  .report-scope .metric .v { font-size:30px; font-weight:700; color:var(--accent); }
+  .report-scope .metric .l { color:var(--muted); font-size:13px; }
+  .report-scope table { width:100%; border-collapse:collapse; margin:12px 0; font-size:14px; }
+  .report-scope th { text-align:left; color:var(--muted); font-weight:600; border-bottom:2px solid var(--border); padding:8px 10px; }
+  .report-scope td { padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+  .report-scope code { background:var(--panel2); padding:1px 6px; border-radius:4px; font-size:13px; color:#a5d6ff; font-family:Consolas,monospace; }
+  .report-scope .tag { display:inline-block; padding:2px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+  .report-scope .t-bad { background:#3b1d1d; color:var(--bad); }
+  .report-scope .t-warn { background:#3b321d; color:var(--warn); }
+  .report-scope .t-good { background:#1d3b27; color:var(--good); }
+  .report-scope .t-info { background:#1d2e3b; color:var(--accent); }
+  .report-scope .bar-row { display:grid; grid-template-columns:220px 1fr 70px; align-items:center; gap:10px; margin:6px 0; }
+  .report-scope .bar-track { background:var(--panel2); border-radius:5px; height:20px; overflow:hidden; }
+  .report-scope .bar-fill { height:100%; border-radius:5px; background:linear-gradient(90deg,#0ea5e9,#4fc3f7); }
+  .report-scope .bar-fill.warn { background:linear-gradient(90deg,#d97706,#fbbf24); }
+  .report-scope .bar-lbl { font-size:13px; color:var(--muted); text-align:right; }
+  .report-scope .bar-val { font-size:13px; color:var(--txt); }
+  .report-scope .pipe { display:flex; flex-direction:column; gap:0; margin:20px 0; }
+  .report-scope .stage { background:var(--panel); border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:8px; padding:14px 18px; margin:0; }
+  .report-scope .stage h4 { margin:0 0 6px; font-size:15px; color:var(--accent); }
+  .report-scope .stage .io { font-size:13px; color:var(--muted); }
+  .report-scope .stage .io b { color:var(--txt); font-weight:600; }
+  .report-scope .arrow { text-align:center; color:var(--muted); font-size:18px; line-height:1.4; margin:2px 0; }
+  .report-scope .branch { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .report-scope .stage.s-warn { border-left-color:var(--warn); }
+  .report-scope .stage.s-purple { border-left-color:var(--purple); }
+  .report-scope .stage.s-good { border-left-color:var(--good); }
+  .report-scope .find { border-left:4px solid var(--warn); margin:10px 0; }
+  .report-scope .find.bad { border-left-color:var(--bad); }
+  .report-scope .find.info { border-left-color:var(--accent); }
+  .report-scope .find.good { border-left-color:var(--good); }
+  .report-scope .find h4 { margin:0 0 6px; font-size:15px; }
+  .report-scope .find p { margin:4px 0; font-size:14px; color:var(--muted); }
+  .report-scope .find p b { color:var(--txt); }
+  .report-scope svg text { font-family:"Segoe UI",sans-serif; }
+  .report-scope .legend { display:flex; gap:18px; flex-wrap:wrap; font-size:13px; color:var(--muted); margin:8px 0; }
+  .report-scope .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; }
+  .report-scope .toc { columns:2; font-size:14px; }
+  .report-scope .toc a { color:var(--accent); text-decoration:none; }
+  .report-scope .toc a:hover { text-decoration:underline; }
+  .report-scope .small { font-size:13px; color:var(--muted); }
 </style>
 </head>
 <body>
-<h1>Sistema de Atribuição — como tudo se conecta</h1>
-<p class="sub">Plano de ensino · Cronograma (SYLLABUS) · Taxonomy (unidades/subunidades) · Blocos · Materiais · timeline_index.json · Curadoria</p>
+<h1>Overview do Sistema — GPT-Tutor-Generator</h1>
+<p class="sub">Visão geral viva do projeto · abas 1–5 sistema de atribuição · 6 pendências · 7 relatório de sistema · 8 concluído · <b>mantido atualizado com a arquitetura atual</b></p>
 
 <div class="tabs">
   <button class="tab active" data-v="overview">1 · Visão geral (pipeline)</button>
@@ -54,7 +113,9 @@
   <button class="tab" data-v="real">3 · Caso real (TCC)</button>
   <button class="tab" data-v="nova">4 · Cadeira nova</button>
   <button class="tab" data-v="files">5 · Materiais → bloco</button>
-  <button class="tab" data-v="auditoria">6 · Auditoria (dívidas)</button>
+  <button class="tab" data-v="auditoria">6 · Pendências</button>
+  <button class="tab" data-v="relatorio">7 · Relatório de Sistema</button>
+  <button class="tab" data-v="concluido">8 · ✅ Concluído</button>
 </div>
 
 <div class="view active" id="overview">
@@ -104,45 +165,458 @@
 
 <div class="view" id="auditoria">
   <div class="card aud">
-    <p class="desc"><b>Auditoria do sistema de atribuição — 16/06 (wave 1+2).</b> Investigação read-only: 9 clusters por subagentes paralelos em 2 ondas. Categorias: <b>conflito</b> (um passo desfaz outro), <b>duplicação</b>, <b>morto</b>, <b>ruído</b>. Detalhe completo no plano-mestre (<code>docs/reports/2026-06-11-plano-mestre-atribuicao.md</code>).</p>
+    <p class="desc"><b>Pendências — sistema de atribuição.</b> O que falta implementar (P0 já mergeado está na aba "✅ Concluído"). Detalhe no plano-mestre e nas specs/planos abaixo.</p>
 
-    <h3>🔴 P0 — corrompe a atribuição</h3>
+    <h3>🟠 Arquitetura decidida — a implementar</h3>
     <ul>
-      <li><span class="sev s0">P0</span> <b>8º "segundo cérebro" = subunidade.</b> <code>computed_subunit_slug</code> gravado sempre/ungated (<code>content_taxonomy.py:1316</code>) vs tag <code>subunit:</code> só após gate (<code>:1278</code>); lidos em precedência divergente (<code>navigation.py:623</code> usa o ungated, <code>dialogs.py:4154</code> prefere a tag). Pior: <code>computed_subunit_slug</code> não é campo de <code>FileEntry</code> (<code>core.py:75</code>) → cai no round-trip, confiança vira órfã.</li>
-      <li><span class="sev s0">P0</span> <b>Gemini código→bloco paralelo ao funil.</b> <code>primary_block_id</code> (Gemini) governa CODE_INDEX/CRONOGRAMA/CODE_HEALTH (<code>repo.py:837</code>); <code>computed_block_id</code> governa o resto (<code>file_map.py:613</code>). Nunca reconciliam → mesma entry, bloco diferente por .md.</li>
-      <li><span class="sev s0">P0</span> <b><code>winning_unit_slug</code> morto</b> (<code>file_map.py:173</code>): nenhum caller passa → subunit escolhida sobre TODAS as unidades, sem restringir à do bloco. Raiz do desalinhamento subunit↛unit.</li>
-      <li><span class="sev s0">P0</span> <b>fix (c) — dedup de id ausente no batch.</b> Só <code>lifecycle_ops.process_single_impl</code> dedup; <code>build_workflow.py:64</code> e <code>incremental_build.py:48</code> não → ids duplicados (reintroduz B5).</li>
+      <li><span class="sev s1">D1=A</span> código→bloco <b>fonte única</b> <code>computed_block_id</code>; Gemini vira voto <b>band-gated</b> (código sem card + band baixa adota o bloco do Gemini; card/funil-forte nunca sobrescritos). Artefatos CODE_INDEX/CRONOGRAMA/CODE_HEALTH leem <code>resolve_effective_block</code>. <b>Plano escrito</b> (não implementado).</li>
+      <li><span class="sev s1">D2=A</span> <code>administrative_only</code>: predicado real nos 4 sites (chave nunca gravada → admin vaza como candidato). Parte do P1.</li>
     </ul>
 
-    <h3>🟠 P1 — código/contrato morto</h3>
+    <h3>🟠 P1 — morto/contrato (plano a escrever)</h3>
     <ul>
-      <li><span class="sev s1">P1</span> <b><code>administrative_only</code> contrato quebrado:</b> chave nunca gravada no payload (<code>index.py:888</code> só faz <code>continue</code>) → 4 filtros no-op (<code>content_taxonomy.py:1144</code> é o pior — blocos admin entram como candidatos; <code>file_map.py:537</code>, <code>cronograma_health.py:124</code>, <code>moodle_labels.py:131</code>). <b>→ decisão D2.</b></li>
-      <li><span class="sev s1">P1</span> <b>Piso 0.72 anulado pelo cap:</b> <code>max(conf,0.72)</code> (<code>file_map.py:1354</code>) sempre rebaixado por <code>scorer_only=0.70</code> (<code>content_taxonomy.py:1244</code>).</li>
-      <li><span class="sev s1">P1</span> <b><code>BLOCO_TAG=0.50</code> nunca lido</b> (<code>thresholds.py:139</code>): tag <code>bloco:</code> emitida sem gate de banda — morto ou gate faltante.</li>
-      <li><span class="sev s1">P1</span> <b>Fallback keyword ~600 linhas</b> (<code>index.py:2205</code>): só alcançável se <code>assign_units_positional</code> retorna [] (curso sem unidades/âncora).</li>
-      <li><span class="sev s1">P1</span> <b><code>auto_suggested_unit</code> gate 0.65 obsoleto</b> (<code>conflicts.py:31</code>): inalcançável porque o posicional sempre grava <code>auto_unit_slug</code>.</li>
-      <li><span class="sev s1">P1</span> <b>Mortos menores:</b> branch <code>consensus</code> B (<code>code_summarization.py:271</code>); method <code>auto_concept</code> efêmero (tooltip mente); <code>process_reference_entry</code> sem caller.</li>
+      <li><span class="sev s1">P1</span> <code>BLOCO_TAG</code> morto (deletar); piso 0.72 anulado pelo cap (remover); fallback keyword ~600 linhas (deletar, eval-gated); <code>auto_suggested_unit</code> gate obsoleto (simplificar); mortos menores (<code>process_reference_entry</code>, <code>consensus</code> B, <code>auto_concept</code>).</li>
     </ul>
 
-    <h3>🟡 P2 — duplicação de lógica</h3>
+    <h3>🟡 P2 — duplicação (eval-gated, plano a escrever)</h3>
     <ul>
-      <li><span class="sev s2">P2</span> <b>Família de 6 scorers</b> (maior fonte): 3 ponderados (<code>index.py:1618</code>, <code>file_map.py:236</code>, <code>index.py:1730</code>) + 3 de overlap leve com 3 fórmulas de confiança (<code>assign_code_to_block</code>, <code>assign_concepts_to_unit</code>, <code>assign_concepts_to_block</code>).</li>
-      <li><span class="sev s2">P2</span> <b>2º sistema código→bloco:</b> <code>assign_code_to_block</code>+<code>_consolidate_assignment</code> duplica o funil determinístico.</li>
-      <li><span class="sev s2">P2</span> <b>3× basename→source_section:</b> <code>stash_backfill.py:16</code>, <code>moodle.py:156</code>, <code>m365.py:271</code>.</li>
-      <li><span class="sev s2">P2</span> <b>2 rotas card→bloco:</b> <code>resolve_card_to_block</code> (léxico só-nome) vs <code>derive_card_block_map</code> (datas).</li>
-      <li><span class="sev s2">P2</span> <b>Predicados de kind</b> index vs <code>classifier.py</code> com vocabulário divergente ("prova 1/2"/"teste" vs "prova N").</li>
-      <li><span class="sev s2">P2</span> <b>Menores:</b> <code>is_exercise_entry</code> (3-4×), <code>entry_norm</code>, filtro token≥4 (~5 sites), 3 tokenizadores.</li>
+      <li><span class="sev s2">P2</span> família de 6 scorers; 3× basename→source_section; 2 rotas card→bloco; predicados de kind index vs classifier; menores (is_exercise, entry_norm, token≥4, tokenizadores).</li>
     </ul>
 
-    <h3>⚪ P3 — ruído de sinal <span style="color:var(--muted);font-weight:400;font-size:12px">(eval-gated; golden de bloco 41/48 é a rede)</span></h3>
+    <h3>⚪ P3 — ruído (eval-gated, plano a escrever)</h3>
     <ul>
-      <li><span class="sev s3">P3</span> auto_tags realimentam o scorer (auto-confirmação em retag, <code>index.py:1755</code>); <code>llm_only</code> conf 0.6 = banda alta sem corroboração; m365 sobrescreve <code>source_section</code> da API por ordem.</li>
-      <li><span class="sev s3">P3</span> "trabalho" sozinha → DELIVERABLE zera unidade (<code>classifier.py:77</code>); canal de data duplo (<code>file_map.py:1297+1311</code>); herança bidirecional soft-continuation (<code>index.py:2218</code>); substring em fontes fracas; pisos hardcoded fora de <code>thresholds.py</code>.</li>
+      <li><span class="sev s3">P3</span> auto_tags self-confirmation; <code>llm_only</code> 0.6; precedência source_section m365×moodle; "trabalho"→DELIVERABLE; canal de data duplo; herança bidirecional soft-continuation; substring em fontes fracas; pisos hardcoded.</li>
     </ul>
 
-    <div class="note"><b class="ok-line">✅ Não-problemas confirmados:</b> referências (Approach C) NÃO contaminam a atribuição principal (isolamento em 3 níveis); <code>margin</code> vs <code>relative_margin</code> disjuntos (intencional); METHOD_CAPS não tornam banda alta inalcançável; os 3 segundos-cérebros do FILE_MAP já mortos não ressurgiram.</div>
+    <div class="note">🧪 <b>Eval-gates pendentes (rodar no repo real):</b> censo de bands de <b>subunit</b> (valida P0.2); censo <b>código→bloco</b> do D1 (Gemini × computed). Scripts: <code>scripts/eval_assignments.py</code> (golden de bloco, em CI) + <code>scripts/eval_code_block_census.py</code> (a criar no D1).</div>
 
-    <div class="note"><b>2 decisões de arquitetura pendentes (a discutir):</b> <b>D1</b> — o caminho Gemini código→bloco deve existir (votar/subir confiança) ou CODE_INDEX/CRONOGRAMA passam a ler <code>resolve_effective_block</code> (fonte única, aposentando <code>_consolidate_assignment</code>)? · <b>D2</b> — <code>administrative_only</code>: ligar o campo (religando os 4 filtros) ou deletar os 4 no-ops? Cobertura: pipeline completo auditado; fora de escopo: <code>image_resolution.py</code>, <code>semantic_config.py</code>.</div>
+    <div class="note">📄 <b>Specs/Planos no disco:</b> spec <code>docs/superpowers/specs/2026-06-16-correcoes-atribuicao-wave-1-2-design.md</code> · plano P0 <code>docs/superpowers/plans/2026-06-16-correcoes-atribuicao-p0-subunit-dedup.md</code> · plano D1 <code>docs/superpowers/plans/2026-06-16-correcoes-atribuicao-d1-codigo-bloco.md</code>.</div>
+
+    <div class="note"><b>🥇 Priorização sugerida:</b> 1) <b>reprocessar + reimportar MF</b> (aplica P0 + fix c v2: dedup por extensão, subunit↛unit, FILE_MAP) → 2) <b>D1</b> (código→bloco coerente, plano pronto) → 3) <b>D2 + P1</b> (morto) → 4) <b>P2/P3</b> (duplicação/ruído). Cada passo que muda atribuição roda atrás do eval-gate. <span class="ok-line">✅ fix c v2 + P0.5 feitos.</span></div>
+
+    <div class="note"><b class="ok-line">✅ Não-problemas confirmados:</b> referências (Approach C) NÃO contaminam a atribuição; <code>margin</code> vs <code>relative_margin</code> disjuntos; METHOD_CAPS não tornam banda alta inalcançável; os 3 segundos-cérebros do FILE_MAP já mortos não ressurgiram.</div>
+  </div>
+</div>
+
+<div class="view report-scope" id="relatorio">
+<div class="wrap">
+
+<h1>📊 Relatório de Sistema — GPT-Tutor-Generator</h1>
+<div class="sub">Análise completa de arquitetura, pipelines, pendências e roadmap · branch <code>feat/reconciliar-unit-bloco</code> · <b>atualizado 12/06/2026</b><br>
+<span class="small">Changelogs de entregas (10/06, 11–12/06, P0 e P1+P2+P3) movidos para a aba "✅ Concluído". Esta aba mantém a descrição do sistema e os itens ainda abertos.</span></div>
+
+<div class="card toc">
+  <b>Índice</b><br>
+  <a href="#metricas">1. Métricas gerais</a><br>
+  <a href="#pipeline">2. Pipeline de processamento</a><br>
+  <a href="#grafo">3. Grafo de módulos</a><br>
+  <a href="#morto">4. Código morto e duplicatas</a><br>
+  <a href="#propagacao">5. Informação que não se propaga</a><br>
+  <a href="#gargalos">6. Gargalos e riscos</a><br>
+  <a href="#config">7. Saúde da configuração</a><br>
+  <a href="#ui">8. Camada de UI</a><br>
+  <a href="#roadmap">9. Roadmap: autonomia e tutor proativo</a><br>
+</div>
+
+<!-- ============ 1. MÉTRICAS ============ -->
+<h2 id="metricas">1. Métricas Gerais</h2>
+<div class="grid g4">
+  <div class="card metric"><div class="v">118</div><div class="l">arquivos .py (src + scripts)</div></div>
+  <div class="card metric"><div class="v">39.963</div><div class="l">linhas de código</div></div>
+  <div class="card metric"><div class="v">1.368</div><div class="l">funções</div></div>
+  <div class="card metric"><div class="v">83</div><div class="l">classes</div></div>
+  <div class="card metric"><div class="v">1.156</div><div class="l">testes (79 arquivos)</div></div>
+  <div class="card metric"><div class="v">591</div><div class="l">commits totais</div></div>
+  <div class="card metric"><div class="v">3/4</div><div class="l">new-features à frente / atrás de <code>main</code></div></div>
+  <div class="card metric"><div class="v">0,44</div><div class="l">razão linhas-teste / linhas-código</div></div>
+</div>
+
+<h3>Linhas por pacote</h3>
+<div class="card">
+  <div class="bar-row"><div class="bar-lbl">src/ui</div><div class="bar-track"><div class="bar-fill warn" style="width:100%"></div></div><div class="bar-val">13.338</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/artifacts</div><div class="bar-track"><div class="bar-fill" style="width:41%"></div></div><div class="bar-val">5.494</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/timeline</div><div class="bar-track"><div class="bar-fill" style="width:25%"></div></div><div class="bar-val">3.315</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/engine.py</div><div class="bar-track"><div class="bar-fill" style="width:19%"></div></div><div class="bar-val">2.545</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/core</div><div class="bar-track"><div class="bar-fill" style="width:18%"></div></div><div class="bar-val">2.361</div></div>
+  <div class="bar-row"><div class="bar-lbl">scripts</div><div class="bar-track"><div class="bar-fill" style="width:15%"></div></div><div class="bar-val">1.954</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/extraction</div><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><div class="bar-val">1.797</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/routing</div><div class="bar-track"><div class="bar-fill" style="width:13%"></div></div><div class="bar-val">1.685</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/ops</div><div class="bar-track"><div class="bar-fill" style="width:12%"></div></div><div class="bar-val">1.665</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/runtime</div><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><div class="bar-val">847</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/utils</div><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><div class="bar-val">804</div></div>
+  <div class="bar-row"><div class="bar-lbl">src/builder/pdf</div><div class="bar-track"><div class="bar-fill" style="width:6%"></div></div><div class="bar-val">737</div></div>
+  <div class="bar-row"><div class="bar-lbl">demais (sources, text, vision, models, facade)</div><div class="bar-track"><div class="bar-fill" style="width:26%"></div></div><div class="bar-val">~3.395</div></div>
+</div>
+
+<h3>Maiores arquivos (candidatos a decomposição)</h3>
+<div class="card">
+  <table>
+    <tr><th>Arquivo</th><th>Linhas</th><th>Funções</th><th>Avaliação</th></tr>
+    <tr><td><code>src/ui/dialogs.py</code></td><td>4.989</td><td>167 fn / 12 classes</td><td><span class="tag t-bad">crítico</span> 12 dialogs num arquivo só — dividir em <code>ui/dialogs/</code> por dialog</td></tr>
+    <tr><td><code>src/ui/app.py</code></td><td>2.754</td><td>143 fn / 3 classes</td><td><span class="tag t-warn">atenção</span> App monolítica; extrair handlers de fila/backlog</td></tr>
+    <tr><td><code>src/builder/engine.py</code></td><td>2.545</td><td>93 fn / 10 classes</td><td><span class="tag t-info">aceitável</span> façade intencional + backends; backends podiam ir pra <code>runtime/</code></td></tr>
+    <tr><td><code>src/builder/timeline/index.py</code></td><td>2.220</td><td>65 fn</td><td><span class="tag t-warn">atenção</span> parsing + classificação + scope + serialização juntos</td></tr>
+    <tr><td><code>src/builder/artifacts/repo.py</code></td><td>2.071</td><td>53 fn</td><td><span class="tag t-info">aceitável</span> geradores de markdown coesos</td></tr>
+    <tr><td><code>src/ui/image_curator.py</code></td><td>1.670</td><td>55 fn / 2 classes</td><td><span class="tag t-warn">atenção</span> em edição agora (working tree); curadoria sendo unificada em <code>curation_workspace.py</code></td></tr>
+  </table>
+</div>
+
+<!-- ============ 2. PIPELINE ============ -->
+<h2 id="pipeline">2. Pipeline de Processamento (Build)</h2>
+<div class="legend">
+  <span><span class="dot" style="background:var(--accent)"></span>processamento local</span>
+  <span><span class="dot" style="background:var(--warn)"></span>chamada de rede / LLM</span>
+  <span><span class="dot" style="background:var(--purple)"></span>enriquecimento</span>
+  <span><span class="dot" style="background:var(--good)"></span>persistência / artefato</span>
+</div>
+
+<div class="pipe">
+  <div class="stage">
+    <h4>① ENTRADA — fontes</h4>
+    <div class="io">PDFs locais · imagens · código/.ipynb · ZIPs · repositórios GitHub · URLs · import Moodle/M365 (stash)<br>
+    <b>Roteador:</b> <code>ops/entry_processing.py — process_entry()</code> despacha por <code>FileEntry.file_type</code> e copia bruto para <code>raw/</code></div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="stage">
+    <h4>② PERFIL DO PDF + SELEÇÃO DE BACKEND</h4>
+    <div class="io"><code>pdf/pdf_analysis.py — _profile_pdf()</code> → <code>DocumentProfileReport</code> (densidade de texto, scan suspeito, tabelas)<br>
+    <code>engine.py — BackendSelector.decide()</code> → escolhe base + avançado, honra <code>profile_backends</code> derivado dos perfis e <code>skip_base_backends</code></div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="branch">
+    <div class="stage">
+      <h4>③a EXTRAÇÃO BASE</h4>
+      <div class="io">PyMuPDF4LLM · PyMuPDF → <code>staging/markdown-auto/</code><br>(puláveis via <code>skip_base_backends</code>)</div>
+    </div>
+    <div class="stage s-warn">
+      <h4>③b EXTRAÇÃO AVANÇADA <span class="tag t-warn">rede</span></h4>
+      <div class="io">Datalab Cloud (chunked, síncrono) · Marker CLI (chunked + fallback por timeout) · Docling CLI/API<br>Metadados: <code>datalab-run.json</code> / <code>marker-run.json</code></div>
+    </div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="stage">
+    <h4>④ SANITIZAÇÃO + ASSETS</h4>
+    <div class="io"><code>text/sanitization.py</code> (corrupção LaTeX, híbrido marker+base) · normalização matemática · <code>pdf/pdf_assets.py</code> (imagens com filtro de ruído, tabelas)</div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="stage s-purple">
+    <h4>⑤ ROTEAMENTO PEDAGÓGICO (unit / bloco)</h4>
+    <div class="io">Precedência: <b>manual</b> (<code>manual_unit_slug</code>, <code>manual_timeline_block_id</code>) → <b>card Moodle</b> (<code>source_section</code>) → <b>léxico</b> (filename/tags) → <b>conteúdo</b> (<code>routing/file_map.py</code> scoring O(E×B))<br>
+    Resultado no <code>manifest.json</code>: <code>computed_unit_slug</code>, <code>computed_block_id</code>, confiança, banda, razões</div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="stage s-warn">
+    <h4>⑥ ENRIQUECIMENTO LLM (opcional) <span class="tag t-warn">rede</span></h4>
+    <div class="io">Gemini: resumo de código (<code>code_summarization.py</code>, cache por hash SHA1 em <code>.code_curation.json</code>) + resumo de referências (<code>.reference_curation.json</code>)<br>
+    Descrições de imagem: captions do Datalab durante build; Ollama/vision só via Image Curator (UI)</div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="stage s-purple">
+    <h4>⑦ TIMELINE + TAXONOMIA</h4>
+    <div class="io"><code>timeline/index.py</code>: parse do cronograma + plano de ensino → blocos classificados (<code>classifier.py</code>) → demote de revisões não pré-prova → escopo de avaliações (<code>apply_assessment_review_scope</code>) → <code>.timeline_index.json</code> v4<br>
+    <code>extraction/content_taxonomy.py</code>: vocabulário, <code>.tag_catalog.json</code>, <code>.unit_tag_index.json</code>, refresh de auto-tags</div>
+  </div>
+  <div class="arrow">↓</div>
+  <div class="stage s-good">
+    <h4>⑧ ARTEFATOS FINAIS</h4>
+    <div class="io"><b>87+ arquivos:</b> FILE_MAP.md · COURSE_MAP.md · GLOSSARY.md · CRONOGRAMA_DETALHADO.md · índices (EXAM/EXERCISE/CODE/ASSIGNMENT/WHITEBOARD) · instruções por plataforma (Claude/GPT/Gemini) · STUDENT_STATE · BUILD_REPORT.json · export DeepTutor · registros operacionais (<code>.source_registry.json</code>, <code>.bundle_seed.json</code>, <code>.assessment_context.json</code>)</div>
+  </div>
+</div>
+
+<div class="card find info">
+  <h4>Observação estrutural</h4>
+  <p>O pipeline é <b>100% serial</b>: loop de entries, chunks Datalab/Marker e loops Gemini rodam um por vez, sem <code>threading</code>/<code>asyncio</code> no builder. A UI roda o build em thread própria (correto), mas dentro do build nada é paralelo.</p>
+</div>
+
+<!-- ============ 3. GRAFO ============ -->
+<h2 id="grafo">3. Grafo de Módulos (dependências internas)</h2>
+<div class="card">
+<svg viewBox="0 0 1080 600" width="100%" style="max-width:1080px">
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7" fill="#8aa0b8"/></marker>
+    <marker id="arBig" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#4fc3f7"/></marker>
+    <marker id="arDash" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7" fill="#fbbf24"/></marker>
+  </defs>
+
+  <!-- ===== Banda 1: UI ===== -->
+  <rect x="40" y="20" width="1000" height="90" rx="12" fill="#131a23" stroke="#2d3a4d"/>
+  <text x="58" y="44" fill="#8aa0b8" font-size="12" font-weight="600">CAMADA 1 — UI (tkinter)</text>
+  <g font-size="13">
+    <g><rect x="70" y="52" width="150" height="44" rx="8" fill="#1d2e3b" stroke="#4fc3f7"/><text x="145" y="71" text-anchor="middle" fill="#e2e8f0">ui/timeline</text><text x="145" y="87" text-anchor="middle" fill="#8aa0b8" font-size="11">+ painéis (dash, códigos…)</text></g>
+    <g><rect x="330" y="52" width="140" height="44" rx="8" fill="#1d2e3b" stroke="#4fc3f7"/><text x="400" y="79" text-anchor="middle" fill="#e2e8f0">ui/app</text></g>
+    <g><rect x="590" y="52" width="140" height="44" rx="8" fill="#1d2e3b" stroke="#4fc3f7"/><text x="660" y="79" text-anchor="middle" fill="#e2e8f0">ui/dialogs</text></g>
+    <g><rect x="820" y="52" width="190" height="44" rx="8" fill="#1d2e3b" stroke="#4fc3f7"/><text x="915" y="71" text-anchor="middle" fill="#e2e8f0">curadores</text><text x="915" y="87" text-anchor="middle" fill="#8aa0b8" font-size="11">image_curator · curator_studio</text></g>
+  </g>
+
+  <!-- ===== Banda 2: engine (façade) ===== -->
+  <g font-size="14">
+    <rect x="340" y="170" width="400" height="56" rx="10" fill="#3b321d" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="540" y="193" text-anchor="middle" fill="#e2e8f0" font-weight="600">builder/engine.py — FAÇADE</text>
+    <text x="540" y="212" text-anchor="middle" fill="#8aa0b8" font-size="11">ponto único de entrada da UI · backends de extração · BackendSelector</text>
+  </g>
+
+  <!-- ===== Banda 3: orquestração e domínio ===== -->
+  <rect x="40" y="290" width="1000" height="100" rx="12" fill="#131a23" stroke="#2d3a4d"/>
+  <text x="58" y="314" fill="#8aa0b8" font-size="12" font-weight="600">CAMADA 3 — ORQUESTRAÇÃO E DOMÍNIO</text>
+  <g font-size="13">
+    <g><rect x="70" y="326" width="120" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="130" y="347" text-anchor="middle" fill="#e2e8f0">timeline</text><text x="130" y="363" text-anchor="middle" fill="#8aa0b8" font-size="11">cronograma</text></g>
+    <g><rect x="225" y="326" width="110" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="280" y="347" text-anchor="middle" fill="#e2e8f0">ops</text><text x="280" y="363" text-anchor="middle" fill="#8aa0b8" font-size="11">build workflow</text></g>
+    <g><rect x="370" y="326" width="110" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="425" y="347" text-anchor="middle" fill="#e2e8f0">core</text><text x="425" y="363" text-anchor="middle" fill="#8aa0b8" font-size="11">importers, LLM</text></g>
+    <g><rect x="515" y="326" width="130" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="580" y="347" text-anchor="middle" fill="#e2e8f0">pdf · runtime</text><text x="580" y="363" text-anchor="middle" fill="#8aa0b8" font-size="11">perfil, clientes</text></g>
+    <g><rect x="680" y="326" width="120" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="740" y="347" text-anchor="middle" fill="#e2e8f0">artifacts</text><text x="740" y="363" text-anchor="middle" fill="#8aa0b8" font-size="11">md finais</text></g>
+    <g><rect x="835" y="326" width="130" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="900" y="347" text-anchor="middle" fill="#e2e8f0">extraction</text><text x="900" y="363" text-anchor="middle" fill="#8aa0b8" font-size="11">taxonomia, sinais</text></g>
+  </g>
+
+  <!-- ===== Banda 4: base ===== -->
+  <rect x="40" y="455" width="1000" height="100" rx="12" fill="#131a23" stroke="#2d3a4d"/>
+  <text x="58" y="479" fill="#8aa0b8" font-size="12" font-weight="600">CAMADA 4 — BASE (sem dependências para cima)</text>
+  <g font-size="13">
+    <g><rect x="70" y="491" width="110" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="125" y="512" text-anchor="middle" fill="#e2e8f0">routing</text><text x="125" y="528" text-anchor="middle" fill="#8aa0b8" font-size="11">scoring E×B</text></g>
+    <g><rect x="210" y="491" width="120" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="270" y="512" text-anchor="middle" fill="#e2e8f0">text · vision</text><text x="270" y="528" text-anchor="middle" fill="#8aa0b8" font-size="11">normalização, Ollama</text></g>
+    <g><rect x="360" y="491" width="100" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="410" y="512" text-anchor="middle" fill="#e2e8f0">models</text><text x="410" y="528" text-anchor="middle" fill="#8aa0b8" font-size="11">FileEntry…</text></g>
+    <g><rect x="490" y="491" width="110" height="48" rx="8" fill="#181f29" stroke="#c084fc"/><text x="545" y="512" text-anchor="middle" fill="#e2e8f0">facade</text><text x="545" y="528" text-anchor="middle" fill="#8aa0b8" font-size="11">aliases</text></g>
+    <g><rect x="630" y="491" width="170" height="48" rx="8" fill="#1d3b27" stroke="#4ade80"/><text x="715" y="512" text-anchor="middle" fill="#e2e8f0">utils/helpers</text><text x="715" y="528" text-anchor="middle" fill="#8aa0b8" font-size="11">hub — usado por todos</text></g>
+    <g><rect x="860" y="491" width="150" height="48" rx="8" fill="#3b1d1d" stroke="#f87171"/><text x="935" y="512" text-anchor="middle" fill="#e2e8f0">sources</text><text x="935" y="528" text-anchor="middle" fill="#8aa0b8" font-size="11">Moodle · M365</text></g>
+  </g>
+
+  <!-- ===== Setas principais (sem cruzamentos) ===== -->
+  <g stroke="#4fc3f7" stroke-width="2" fill="none" marker-end="url(#arBig)">
+    <path d="M400,96 L400,166"/>   <!-- app -> engine -->
+    <path d="M660,96 L660,166"/>   <!-- dialogs -> engine -->
+    <path d="M540,226 L540,286"/>  <!-- engine -> camada 3 -->
+    <path d="M540,390 L540,451"/>  <!-- camada 3 -> camada 4 -->
+  </g>
+  <g fill="#8aa0b8" font-size="11">
+    <text x="412" y="138">chama build/process</text>
+    <text x="552" y="262">orquestra (ops 9×, core 6×, artifacts 5×)</text>
+    <text x="552" y="427">usa (helpers é o hub de todos os pacotes)</text>
+  </g>
+
+  <!-- ===== Exceções (tracejadas): UI fura a façade ===== -->
+  <g stroke="#fbbf24" stroke-width="1.6" fill="none" stroke-dasharray="6 4" marker-end="url(#arDash)">
+    <path d="M145,96 L145,322"/>                      <!-- painéis -> timeline (direto) -->
+    <path d="M730,74 L1060,74 L1060,515 L1014,515"/>  <!-- dialogs -> sources (direto) -->
+  </g>
+  <g fill="#fbbf24" font-size="11">
+    <text x="153" y="240">direto (lê .timeline_index)</text>
+    <text x="1052" y="300" text-anchor="middle" transform="rotate(-90 1052 300)">dialogs → sources (8 imports diretos)</text>
+  </g>
+</svg>
+<p class="small">Visão em camadas (arestas reais extraídas via AST; grafo completo: 2.905 símbolos, 25.916 referências). <b>Setas azuis</b> = fluxo normal: UI fala só com <code>engine</code> (façade), que orquestra a camada de domínio, que se apoia na base. <b>Tracejadas amarelas</b> = exceções que furam a façade: <code>ui/dialogs → sources</code> (8 imports diretos de Moodle/M365 — maior acoplamento a observar) e painéis lendo <code>builder/timeline</code> direto (aceitável: leitura de índice). Dependências internas mais fortes: <code>ops → artifacts</code> (10×), <code>engine → ops</code> (9×), <code>ops/core/ui → utils/helpers</code> (hub saudável).</p>
+</div>
+
+<!-- ============ 4. CÓDIGO MORTO ============ -->
+<h2 id="morto">4. Código Morto e Duplicatas <span class="small">(cada item verificado por busca de referências · itens removidos/feitos estão na aba "✅ Concluído"; restam 3 duplicatas + 1 config morta)</span></h2>
+
+<h3>Código morto confirmado</h3>
+<div class="card find">
+  <h4>Config morta</h4>
+  <p><b><code>processing_profiles_seeded_v2</code></b> — flag de migração já consumida; pode ser removida com migração de limpeza.</p>
+</div>
+<div class="card find info">
+  <h4>Falsos positivos descartados durante a verificação</h4>
+  <p><code>band_distribution()</code> — vivo: chamado por <code>cronograma_health_md()</code> que roda em <code>ops/pedagogical_regeneration.py:367</code>. <code>text/normalize.py — normalize_match_text()</code> — vivo: usado por <code>pedagogy</code>, <code>summary_core</code>, <code>reference_navigation</code>, <code>ui/dialogs</code>. Scripts (18) compilam todos sem erro.</p>
+</div>
+
+<h3>Duplicatas remanescentes</h3>
+<div class="card">
+<table>
+  <tr><th>Função</th><th>Cópias</th><th>Canônica existe?</th><th>Ação sugerida</th></tr>
+  <tr>
+    <td><code>_normalize_match_text</code></td>
+    <td><code>extraction/content_taxonomy.py:19</code> · <code>extraction/image_markdown.py:45</code> · <code>timeline/signals.py:36</code> · <code>vision/card_evidence.py:12</code></td>
+    <td>✔ <code>text/normalize.py</code> (migração já feita em 4 outros módulos)</td>
+    <td>Concluir migração — atenção: as 4 cópias têm variações sutis de caracteres permitidos (<code>/</code>, <code>+</code>); validar com testes antes</td>
+  </tr>
+  <tr>
+    <td><code>_extract_markdown_headings</code></td>
+    <td><code>extraction/content_taxonomy.py:35</code> · <code>extraction/entry_signals.py:43</code></td>
+    <td>✘ (facade só re-exporta uma)</td>
+    <td>Mover para <code>extraction/</code> compartilhado ou <code>text/</code></td>
+  </tr>
+  <tr>
+    <td><code>_tokens</code> + stopwords PT</td>
+    <td><code>timeline/card_block.py:29</code> (<code>_STOP</code>) · <code>timeline/unit_matcher.py:37</code> (<code>_STOPWORDS</code>)</td>
+    <td>✘</td>
+    <td>Consolidar tokenizador + lista única de stopwords em <code>text/</code></td>
+  </tr>
+</table>
+</div>
+
+<!-- ============ 5. PROPAGAÇÃO ============ -->
+<h2 id="propagacao">5. Informação Gerada mas Não Propagada</h2>
+
+<div class="card find">
+  <h4>5. Sem delta-tracking nos índices</h4>
+  <p><code>.unit_tag_index.json</code> e <code>.timeline_index.json</code> são sobrescritos integralmente a cada build. Não há registro de "o que mudou" (entries reatribuídas, blocos que trocaram de tipo) — dificulta auditar regressões de matching entre builds.</p>
+</div>
+<div class="card find">
+  <h4>6. Cache de capabilities do Marker só em memória</h4>
+  <p><code>_MARKER_CAPABILITIES_CACHE</code> (<code>engine.py:~632</code>) é global de processo, nunca persiste nem invalida por versão do Marker.</p>
+</div>
+
+<!-- ============ 6. GARGALOS ============ -->
+<h2 id="gargalos">6. Gargalos e Riscos</h2>
+<div class="card">
+<table>
+  <tr><th>Item</th><th>Onde</th><th>Severidade</th><th>Detalhe</th></tr>
+  <tr><td>Pipeline serial</td><td><code>ops/build_workflow.py</code> loop de entries; chunks Datalab (<code>engine.py:1115-1179</code>) e Marker sequenciais; loops Gemini</td><td><span class="tag t-warn">desempenho</span></td><td>Sem threads/async no builder. Build de curso grande escala linearmente. Chunks Datalab são candidatos óbvios a paralelismo (API cloud aguenta concorrência).</td></tr>
+  <tr><td>Sem retry em rede</td><td>Gemini (<code>code_summarization.py</code>), Ollama, clone GitHub</td><td><span class="tag t-warn">resiliência</span></td><td>Falha pontual ⇒ entry sem resumo (cache por hash mitiga re-custo, não a falha). Datalab/Marker têm fallback de backend, o resto não tem nada.</td></tr>
+  <tr><td>Matching O(E×B)</td><td><code>routing/file_map.py</code> — cada entry pontuada contra cada bloco/unidade</td><td><span class="tag t-info">ok por ora</span></td><td>Com ~50 entries × ~30 blocos é irrelevante; vira custo se cursos crescerem muito.</td></tr>
+  <tr><td>Imagens duplicadas cross-entry</td><td><code>core/image_resolution.py</code> — cache <code>seen{}</code> só por caminho</td><td><span class="tag t-info">menor</span></td><td>Mesma figura referenciada por 2 PDFs ⇒ 2 cópias em <code>content/images/</code>. Dedup por hash resolveria.</td></tr>
+  <tr><td>Refresh de backlog/dashboard na main thread</td><td><code>ui/app.py — _refresh_backlog()</code>, <code>_refresh_repo_dashboard()</code></td><td><span class="tag t-info">menor</span></td><td>Lê manifest + percorre entries sem thread; trava a UI só com manifests muito grandes. Builds/imports longos já rodam corretamente em thread + <code>after()</code>.</td></tr>
+  <tr><td>Fila volátil</td><td><code>ui/app.py — _save_current_queue()</code> só roda antes de build/process</td><td><span class="tag t-warn">UX</span></td><td>Adicionar arquivos à fila e fechar o app sem buildar ⇒ itens perdidos. Salvar a fila em toda mutação resolveria.</td></tr>
+</table>
+</div>
+
+<!-- ============ 7. CONFIG ============ -->
+<h2 id="config">7. Saúde da Configuração</h2>
+<div class="card">
+<p>Fluxo: <code>AppConfig.DEFAULTS</code> (theme.py) → <code>~/.gpt_tutor_config.json</code> → SettingsDialog → <code>_build_options_from_config()</code> (app.py) → <code>RepoBuilder.options</code>. Pós-refatoração desta semana, <code>profile_backends</code> é <b>derivado</b> dos perfis nomeados (<code>derive_profile_backends</code>) — fonte única, sem editor manual redundante. ✔</p>
+<table>
+  <tr><th>Chave</th><th>Status</th><th>Nota</th></tr>
+  <tr><td><code>font_size</code></td><td><span class="tag t-good">✅ removida</span></td><td>Removida de <code>DEFAULTS</code> em 10/06 (nunca era lida).</td></tr>
+  <tr><td><code>vision_model_quantization</code></td><td><span class="tag t-good">✅ comunicado</span></td><td>Só afeta Image Curator (não o build). UI agora avisa via tooltip + hint no SettingsDialog (11/06).</td></tr>
+  <tr><td><code>vision_backend</code></td><td><span class="tag t-good">✅ comunicado</span></td><td>Só "ollama" é honrado; só afeta Image Curator. Tooltip de escopo adicionado ao combo (11/06).</td></tr>
+  <tr><td><code>gemini_api_key</code></td><td><span class="tag t-warn">atenção</span></td><td>Plaintext em <code>~/.gpt_tutor_config.json</code>. Considerar keyring do Windows (Moodle já evita persistir senha — padrão inconsistente entre as duas credenciais).</td></tr>
+  <tr><td><code>default_mode</code> / <code>default_backend</code> / <code>default_ocr_language</code></td><td><span class="tag t-good">✅ fonte exibida</span></td><td>Global (config) + por matéria (SubjectProfile). A UI agora mostra a fonte vigente ("Padrões da matéria «X»" vs "Padrões globais"), atualizada na troca de matéria (helper <code>ui_text.default_source_label</code>, 11/06).</td></tr>
+  <tr><td><code>skip_base_backends</code>, <code>stall_timeout</code>, <code>marker_*</code>, <code>image_format</code>, <code>prevent_sleep</code>, <code>ollama_base_url</code>, <code>image_description_source</code>, <code>gemini_model</code>, <code>gemini_auto_summarize</code></td><td><span class="tag t-good">ok</span></td><td>Editáveis, persistem e chegam ao builder.</td></tr>
+</table>
+</div>
+
+<!-- ============ 8. UI ============ -->
+<h2 id="ui">8. Camada de UI</h2>
+<div class="card">
+<p><b>8 abas</b> (Fila, Tasks, Backlog, Dashboard, Cronograma, Códigos, Manutenção, Log) + <b>~14 dialogs/painéis</b>. Threading correto nas operações longas (build, import Moodle, Gemini) com padrão <code>worker thread + after()</code>. Pontos:</p>
+<table>
+  <tr><th>Achado</th><th>Tipo</th><th>Detalhe</th></tr>
+  <tr><td><code>dialogs.py</code> com 4.988 linhas</td><td><span class="tag t-warn">estrutura</span></td><td>12 dialogs num arquivo. Dividir em pacote <code>ui/dialogs/</code> (1 arquivo por dialog) reduziria conflitos e tempo de leitura.</td></tr>
+  <tr><td>Cronograma editável (tabela)</td><td><span class="tag t-good">FEITO</span></td><td><s>Read-only, exigia reprocessar.</s> Reescrito como tabela <code>ttk.Treeview</code>: ordenação por coluna, edição inline de Tipo/Unidade, override manual de escopo, coluna "Nome do bloco" (P1/P2/PS/G2/Revisão), datas DD/MM/YY, escopo e Unidade em rótulo curto (U1/U2). Spec <code>2026-06-09-cronograma-table-ui-design.md</code>.</td></tr>
+  <tr><td>Curator Studio × Image Curator</td><td><span class="tag t-warn">em andamento</span></td><td>Dois fluxos de curadoria com preview/aprovação similares. Unificação <b>já iniciada</b>: <code>ui/curation_workspace.py</code> (novo, working tree) + spec <code>docs/superpowers/plans/2026-06-09-curadoria-unificada.md</code>.</td></tr>
+  <tr><td>Estado de sessão não persistido</td><td><span class="tag t-info">menor</span></td><td>Aba ativa, seleção, zoom de preview e scroll voltam ao padrão a cada reinício — aceitável, mas a <b>fila volátil</b> (seção 6) é o caso que vale corrigir.</td></tr>
+  <tr><td>Backlog = espelho do manifest</td><td><span class="tag t-info">design</span></td><td>Arquivo removido manualmente do disco continua aparecendo (fantasma) até reprocessar. Painel Manutenção cobre parte disso para code_curation; não para entries gerais.</td></tr>
+</table>
+</div>
+
+<!-- ============ 9. ROADMAP ============ -->
+<h2 id="roadmap">9. Roadmap — Autonomia, Usabilidade e Tutor Proativo</h2>
+
+<h3>Curto prazo (dias) — integridade e quick wins</h3>
+<div class="card find good">
+  <p><b>1. Escrita atômica do manifest ✅ FEITO</b> (commit <code>79b6f98</code>) — <code>write_text</code> atômico (tmp + <code>os.replace</code>) + novo <code>write_json_manifest</code> (atômico + backup <code>.bak</code>) em <code>utils/helpers.py</code>; ~20 call sites roteados (builder + UI + sources). Nota: o fix real ficou no helper de escrita, não em <code>_compact_manifest</code> (que só compacta dados). Cobertura: 10 testes em <code>tests/test_atomic_write.py</code>.</p>
+  <p><b>2. Salvar fila a cada mutação ✅ FEITO</b> (verificado 11/06) — auditoria confirmou que <b>ambas</b> as filas já persistem em toda mutação: a fila de fontes (<code>self.entries</code>) via <code>_save_current_queue()</code> em add_pdfs/add_images/add_url/add_code_files/import_from_stash/edit/remove/toggle/clear; a fila de repo-tasks (<code>self._repo_tasks</code>) via <code>_refresh_repo_task_views()</code> → <code>_save_repo_tasks()</code> em enqueue/remove/clear. Sem caminho de perda de itens ao fechar. (Reordenação transitória pré-build e load de matéria não precisam persistir.)</p>
+  <p><b>3. Remover mortos ✅ FEITO</b> — <code>file_size_mb</code>, <code>save_card_block_map</code>, <code>score_block_unit_affinity</code> e <code>font_size</code> removidos (10/06, junto do #4). Resta só a flag <code>processing_profiles_seeded_v2</code> (migração de limpeza, baixa prioridade).</p>
+  <p><b>4. Propagar match do Gemini ✅ FEITO</b> — manifest (<code>computed_block_rationale</code>) + campo read-only no BacklogEntryEditDialog (padrão do <code>source_section</code>). Coluna no CODE_INDEX descartada de propósito (token budget do tutor). Bônus: <code>_normalized_source_key</code> deduplicada (item #9 parcial). <b>Extensão (11/06):</b> a auditoria "info gerada mas não propagada" achou que <code>block_match_method</code>/<code>block_match_confidence</code> também ficavam presos na curation — agora propagados (<code>computed_block_method</code>/<code>computed_block_match_confidence</code>) e exibidos no editor ("Match do bloco"); função renomeada <code>attach_block_rationale</code>→<code>attach_block_summary_fields</code> (3 campos, mesmo anti-stale).</p>
+  <p><b>5. Agregar custos no BUILD_REPORT ✅ FEITO</b> (11/06) — nova seção "Custos e qualidade do build" via módulo modular <code>artifacts/build_metrics.py</code> (collectors puros + renderer). Métricas com <b>dado real</b>: páginas processadas via Datalab (proxy de custo — Datalab cobra por página, somadas dos sidecars <code>datalab-run.json</code>), <code>parse_quality</code> médio e % de PDFs escaneados (de <code>document_report.suspected_scan</code>). Análise durante o brainstorm mostrou que <code>cost_breakdown</code> da API vem <b>vazio</b> (<code>{}</code>) — somá-lo seria vapor; e contar imagens rejeitadas exigiria instrumentar o pipeline (baixo valor). Ambos ficam como <b>slots futuros</b> que o desenho modular já comporta sem refatorar (novo collector + linha no render). Spec <code>2026-06-11-build-metrics-design.md</code>, plano homônimo (4 tasks subagent-driven, revisão dupla + review final). 12 testes novos; suíte 1191 verde.</p>
+</div>
+
+<h3>Médio prazo (semanas) — desempenho e consolidação</h3>
+<div class="card find info">
+  <p><b>6. Paralelizar chunks Datalab</b> — <code>ThreadPoolExecutor</code> com 3-4 workers no loop de chunks (<code>engine.py:1115-1179</code>); maior ganho de wall-clock por menor risco. Depois, avaliar paralelismo por entry (exige cuidado com o manifest compartilhado — pré-requisito: item 1).</p>
+  <p><b>7. Retry com backoff</b> — wrapper único para Gemini/Ollama/Datalab (3 tentativas, exponencial). Hoje uma falha de rede pontual deixa buracos silenciosos.</p>
+  <p><b>8. Concluir consolidação de normalização</b> — migrar as 4 cópias de <code>_normalize_match_text</code>, 2 de <code>_extract_markdown_headings</code>, 2 tokenizadores+stopwords para <code>text/</code>. Os 1.119 testes existentes dão rede de segurança.</p>
+  <p><b>9. Dividir <code>ui/dialogs.py</code></b> em pacote por dialog; extrair <code>_normalized_source_key</code> para módulo comum.</p>
+  <p><b>10. Tabela editável do cronograma ✅ FEITO</b> — reescrito em <code>ttk.Treeview</code>: ordenação por coluna, edição inline de tipo/unidade, override manual de escopo, coluna "Nome do bloco" (P1/P2/PS/G2/Revisão), data DD/MM/YY, escopo curto U1/U2, zebrado de alto contraste. Implementado via subagent-driven (5 tasks, revisão dupla por task). Plano: <code>docs/superpowers/plans/2026-06-10-cronograma-editavel.md</code>.</p>
+  <p><b>11. Delta report entre builds</b> — diff do <code>.timeline_index.json</code> e do matching (entries que mudaram de bloco/unidade) gravado em <code>build/CHANGES.md</code>. Auditoria de regressão de matching de graça.</p>
+</div>
+
+<h3>Longo prazo — tutor proativo e contexto do aluno</h3>
+<div class="card find good">
+  <p><b>12. Contexto temporal automático ("semana atual") ✅ FEITO</b> — novo artefato <code>setup/CONTEXTO_TEMPORAL.md</code> (cronograma compacto: <code>bloco | início | fim | tipo | unidade | tópico | escopo</code>, datas ISO, rótulos curtos U1/U2 + legenda mapeando ao slug). Em vez de gravar uma "semana atual" que ficaria desatualizada, o tutor LLM <b>autocalcula</b> a cada sessão: regra injetada nos 3 geradores de instrução manda localizar a linha onde hoje ∈ [início,fim] e a próxima prova (início ≥ hoje) com escopo. <b>Zero staleness, sem reprocessar.</b> Emitido nos 3 caminhos (build completo, incremental e "Gerar Instruções LLM"). Helpers de rótulo extraídos pra módulo base <code>timeline/unit_labels.py</code> (sem builder→UI).</p>
+  <p><b>13. Prontidão pré-prova ✅ FEITO</b> — mesma regra de instrução: pra cada unidade do escopo da próxima prova, o tutor cruza tópicos do <code>COURSE_MAP</code> × <code>STUDENT_STATE</code> × <code>student/batteries/&lt;slug&gt;/</code> e lista lacunas (tópicos sem registro/pendentes), priorizando se a prova ≤ 7 dias. Spec <code>2026-06-10-contexto-temporal-tutor-design.md</code>, plano homônimo (6 tasks subagent-driven, revisão dupla + review final).</p>
+  <p><b>14. Modelo de estado do aluno mais rico</b> — STUDENT_STATE hoje é registro manual de tópicos. Evoluir para: nível de confiança por tópico com decaimento temporal (spaced repetition), histórico de erros recorrentes importado das sessões do tutor, e sugestão de "próximo tópico" derivada de (timeline ∩ lacunas). O StudentStateCurator já tem o esqueleto de import.</p>
+  <p><b>15. Sincronização Moodle agendada</b> — import manual hoje. Um task agendado (a infra de <code>RepoTaskStore</code> + fila persistente já existe) que detecta material novo no Moodle e enfileira reprocesso incremental tornaria o repositório auto-atualizável.</p>
+  <p><b>16. Instruções de tutor adaptativas por plataforma</b> — os geradores (<code>artifacts/prompts.py</code>) são estáticos por build. Injetar: perfil/personalidade do aluno (já coletado no StudentProfileDialog e subutilizado), preferências de estudo, e o contexto temporal do item 12 — regenerados num passo leve (sem rebuild completo) via "Gerar Instruções LLM" que já existe no menu do backlog.</p>
+  <p><b>17. Health-check de build com gate</b> — <code>cronograma_health_md</code> já calcula distribuição de bandas de confiança; promover a um resumo pós-build na UI ("3 entries com matching de baixa confiança — revisar?") com link direto pro editor. Transforma diagnóstico passivo em fluxo de correção guiado.</p>
+  <p><b>18. Auditoria e limpeza de artefatos ✅ FEITO</b> (11/06) — inventário completo dos ~70-90 artefatos gerados, gravado em <code>docs/reports/2026-06-11-auditoria-artefatos.md</code> (contrato-referência: path · gerador · consumidor · classe · verdito). Classificação em 4 classes (código-lê / tutor-facing / diagnóstico-humano / morto). <b>Achado:</b> conjunto já bem curado — único morto real era <code>build/PROGRESS_SCHEMA.md</code> (doc estático, 0 refs, ausente de <code>prompts.py</code>, <code>STUDENT_STATE</code> é auto-descritivo), <b>removido</b> por completo (gerador + facade + engine + 3 impls) e adicionado ao stale-delete pra limpar repos existentes. Correção de premissas: <code>CODE_HEALTH</code>/<code>CRONOGRAMA_HEALTH</code> <b>não</b> são redundantes (UI não expõe ao vivo — único lugar do diagnóstico); <code>CRONOGRAMA_DETALHADO</code> é referenciado pelo tutor (MODES.md). Sem consolidação agressiva (alto risco, baixo valor). Spec/plano <code>2026-06-11-auditoria-artefatos*</code> (subagent-driven, revisão dupla). Suíte 1193 verde.</p>
+</div>
+
+<h3>Priorização sugerida</h3>
+<div class="card">
+<table>
+  <tr><th>#</th><th>Item</th><th>Esforço</th><th>Impacto</th></tr>
+  <tr><td>1</td><td>Manifest atômico <span class="tag t-good">✅ feito</span></td><td>baixo</td><td><span class="tag t-bad">crítico (integridade)</span></td></tr>
+  <tr><td>10</td><td>Cronograma editável <span class="tag t-good">✅ feito</span></td><td>médio</td><td><span class="tag t-good">alto (usabilidade)</span></td></tr>
+  <tr><td>12+13</td><td>Semana atual + prontidão pré-prova <span class="tag t-good">✅ feito</span></td><td>médio</td><td><span class="tag t-good">alto (tutor proativo)</span></td></tr>
+  <tr><td>2,3,4,5</td><td>Quick wins — <span class="tag t-good">#2, #3, #4, #5 ✅ todos feitos</span></td><td>baixo</td><td><span class="tag t-info">médio</span></td></tr>
+  <tr><td>6,7</td><td>Paralelismo + retry</td><td>médio</td><td><span class="tag t-info">médio (desempenho)</span></td></tr>
+  <tr><td>8,9,11</td><td>Consolidações + delta report</td><td>médio</td><td><span class="tag t-info">médio (manutenibilidade)</span></td></tr>
+  <tr><td>14-17</td><td>Estado do aluno rico, Moodle agendado, instruções adaptativas, health gate</td><td>alto</td><td><span class="tag t-good">alto (visão de produto)</span></td></tr>
+  <tr><td>18</td><td>Auditoria/limpeza de artefatos <span class="tag t-good">✅ feito</span></td><td>baixo</td><td><span class="tag t-info">médio (manutenibilidade)</span></td></tr>
+</table>
+</div>
+
+<p class="small" style="margin-top:40px">Metodologia: 3 varreduras paralelas (pipeline do builder, UI/config, código morto) + verificação manual de cada achado por busca de referências (falsos positivos descartados estão na seção 4) + métricas via AST sobre 117 arquivos. Grafo de código: 2.905 nós / 25.916 arestas. Gerado em 09/06/2026, atualizado e re-verificado em 10/06/2026 (métricas, contadores de commit, código morto e duplicatas re-medidos no working tree de <code>new-features</code> @ <code>c7c864b</code>; base comum com <code>main</code>: <code>8f10819</code>), <b>atualizado em 12/06/2026</b> com as entregas de 11–12/06 na <code>feat/reconciliar-unit-bloco</code> (F1, correção M365, P0 da reforma da atribuição; suíte em 1.248 testes), e com o ciclo P1+P2+P3 do funil de atribuição (acurácia 78.3%, confiante-e-errado 0, suíte em 1.290 testes).</p>
+
+</div>
+</div>
+
+<div class="view report-scope" id="concluido">
+  <div class="wrap">
+  <h1>✅ Concluído</h1>
+  <div class="sub">Trabalho entregue. Pendências e priorização ficam na aba "Pendências".</div>
+
+  <h2>P0 — reforma de atribuição (16/06, mergeado · suíte 1340 verde · golden de bloco 100%, confiante-errado 0)</h2>
+  <div class="card find good">
+    <h4>✅ P0.1 — Subunidade fonte-única (8º "segundo cérebro")</h4>
+    <p><code>computed_subunit_slug</code> virou campo de <code>FileEntry</code> (sobrevive ao round-trip) e o FILE_MAP passou a ler a tag gated <code>subunit:</code> (não o best-effort ungated) — coerente com o editor. Commits <code>e1e2c62</code>, <code>093adcd</code>.</p>
+  </div>
+  <div class="card find good">
+    <h4>✅ P0.2 — Subunidade restrita à unidade (<code>winning_unit_slug</code>)</h4>
+    <p>O scorer de subunidade recebe a unidade resolvida do bloco; subunit não é mais escolhida sobre todas as unidades (fecha o desalinhamento subunit↛unit). Reordena unit antes de subunit. Commits <code>4f9a277</code>, <code>115d912</code>.</p>
+  </div>
+  <div class="card find good">
+    <h4>✅ P0.4 — Dedup de id no build batch (fix c)</h4>
+    <p><code>assign_dedup_id</code> nos laços de <code>build_workflow</code>/<code>incremental_build</code> (antes só o single-entry deduplicava → ids duplicados, bug B5). Commits <code>45b4841</code>, <code>a42316c</code>.</p>
+    <p><b>fix c v2 (16/06, commit <code>1773bbb</code>):</b> sufixo trocado de categoria → <b>extensão</b> (cascata ext→pasta→contador): <code>introducao.pdf</code>/<code>introducao.zip</code> → <code>introducao</code>/<code>introducao-zip</code>; <code>exemplos.thy</code>/<code>exemplos.zip</code> → <code>exemplos</code>/<code>exemplos-zip</code>. Determinístico, no import; Gemini não define id. <b>Reprocessar+reimportar os colididos pra aplicar.</b></p>
+  </div>
+  <div class="card find good">
+    <h4>✅ P0.5 — Aba códigos: rótulo = <code>inferred_title</code></h4>
+    <p>A aba códigos passou a mostrar o título do Gemini (<code>inferred_title</code>) em vez de <code>eid[:8]</code> — acaba a confusão "dois exemplos". Commit <code>1773bbb</code>.</p>
+  </div>
+
+  <h2>Entregas anteriores (changelogs)</h2>
+  <div class="card find good">
+    <h4>✅ Trabalho entregue em 10/06/2026 (branch <code>new-features</code>)</h4>
+    <p><b>Integridade — Manifest atômico</b> (roadmap #1, <code>79b6f98</code>): <code>write_text</code> tmp+<code>os.replace</code> + <code>write_json_manifest</code> com backup <code>.bak</code>; ~20 call sites. Corrige também 3 bugs do refactor em andamento de <code>engine.py</code> (sintaxe, <code>datetime.now(UTC)</code>, <code>skip_base_backends</code>). 10 testes.</p>
+    <p><b>Usabilidade — Cronograma editável</b> (roadmap #10): aba reescrita em <code>ttk.Treeview</code> (5 tasks via subagent-driven, revisão spec+qualidade por task). Ordenação por coluna, edição inline Tipo/Unidade, override manual de escopo, coluna "Nome do bloco" (P1/P2/PS/G2/Revisão), datas DD/MM/YY, escopo <b>e coluna Unidade</b> em rótulo curto U1/U2 (<code>5356665</code>), zebrado de alto contraste, texto centralizado.</p>
+    <p><b>Correções de cronograma:</b> escopo de prova respeita override manual (<code>537c161</code>/<code>29cba5c</code>); escopo de prova <b>sem sobreposição</b> entre provas — P(k) só cobre unidades novas, uma aula atrasada não polui a prova seguinte (<code>0b0b672</code>); <b>listas de revisão de prova</b> (nome casa revisão + Pk) vão ao bloco de revisão que precede a Pk, sem dump/duplicação (<code>6149bb5</code>).</p>
+    <p class="small">⚠️ Mudanças de matching/escopo são do <i>build</i> — reprocessar a matéria para o cronograma na tela refletir os novos valores. Suíte: <b>1.156 testes verdes</b>.</p>
+    <p><b>Curadoria — match_rationale propagado</b> (roadmap #4): justificativa do Gemini ("por que este código foi atribuído a este bloco") agora sai do cache <code>code_curation.json</code> e chega ao <code>manifest.json</code> (<code>FileEntry.computed_block_rationale</code>) e ao editor de backlog (campo read-only "Por que este bloco?"). Sincronização honesta: sem rationale na curation → campo removido (nada stale). <b>Limpeza junto</b> (#3 + quick-win): removidos <code>file_size_mb</code>, <code>save_card_block_map</code>, <code>score_block_unit_affinity</code> e a config morta <code>font_size</code>; <code>_normalized_source_key</code> (2 cópias idênticas na UI) deduplicada em <code>utils/helpers.normalized_source_key</code>. <b>1.179 testes verdes.</b></p>
+    <p><b>Tutor proativo — Contexto temporal + prontidão pré-prova</b> (roadmap #12+#13): novo artefato <code>setup/CONTEXTO_TEMPORAL.md</code> (cronograma compacto, datas ISO, U1/U2 + legenda) + regra injetada nos 3 geradores de instrução. O tutor <b>autocalcula</b> a cada sessão a semana atual, a próxima avaliação (escopo) e a prontidão pré-prova (escopo × baterias × STUDENT_STATE) — zero staleness, sem reprocessar. Helpers de rótulo extraídos pra base <code>timeline/unit_labels.py</code>. 6 tasks subagent-driven + review final; escrita do artefato nos 3 caminhos (completo, incremental, "Gerar Instruções LLM"). <b>Suíte: 1.176 testes verdes</b>. Roadmap #18 (auditoria/limpeza de artefatos) registrado p/ depois.</p>
+  </div>
+  <div class="card find good">
+    <h4>✅ Trabalho entregue em 11–12/06/2026 (branch <code>feat/reconciliar-unit-bloco</code>)</h4>
+    <p><b>F1 — Reconciliar unidade × bloco</b> (entregue 11/06): o bloco passa a ser <b>autoritativo</b> sobre a unidade via <code>reconcile_unit_with_block</code>, com regra única: bloco <b>manual</b> com unidade vence tudo; <code>manual_unit</code> sem bloco manual mantém; auto com unit vazio herda do bloco; em discordância, o bloco vence se <code>block_conf ≥ unit_conf</code>, senão a unidade é mantida e o conflito fica registrado em <code>unit_block_conflict</code>. Na UI: editor mostra origem/conflito da unidade, trava o combo de unidade sob bloco manual e avisa subunidade órfã (unidade ≠ unidade do bloco). 6 commits, suíte verde.</p>
+    <p><b>Causa raiz M365 + correção</b> (11–12/06): re-análise independente (<code>docs/reports/2026-06-11-reanalise-atribuicao.md</code>) provou que o download M365 colocava arquivos no <b>card errado</b> por match léxico — pasta-tópico do OneDrive do professor casada à seção Moodle por afinidade de tokens; ex.: pasta "logica" → card "Revisão" com score 1.0 enquanto "Verificação de Programas" pontuava 0.0. Resultado: ~15 arquivos no card errado e <code>source_section</code> contaminado via <code>apply_source_section</code>. Correção (spec <code>2026-06-11-m365-card-mapping</code>): o card é decidido pelo índice basename→seção <b>real</b> da API Moodle (<code>section_file_index_strict</code>); fallback honesto (pasta literal + aviso, <b>nunca</b> léxico); <code>match_card</code>/aliases removidos; <code>m365_filter</code> persistido por id/slug (antes o save falhava em silêncio); validação do filtro com avisos. 7 commits, review final aprovado.</p>
+    <p><b>Reforma da atribuição — P0 entregue</b> (12/06): plano-mestre em 5 fases (P0 medir → P1 seção/2ª defesa → P2 confiança → P3 higiene → P4 scorer). P0 fechado: bug B3 corrigido (<code>_is_prebuilt_block</code> em <code>routing/file_map.py</code> — índice persistido degenerava 100% pra bloco-01), <b>golden set real versionado</b> (56 casos: 8 ground truth automático pelo gabarito, 40 pendentes de decisão humana, 8 excluídos) e harness <code>eval_assignments.py</code> com card map real, breakdown com/sem seção e pendentes que nunca contam erro. Placar inicial: <b>7/8 (87.5%)</b> nos casos com gabarito, 1 confiante-e-errado; sintomas clássicos visíveis nos pendentes (logicadehoare→bloco-03 com banda alta). <b>Suíte: 1.248 testes.</b></p>
+  </div>
+  <div class="card find good">
+    <h4>✅ Trabalho entregue em 12/06/2026 (ciclo P1+P2+P3 — reforma do funil)</h4>
+    <p><b>P1 — <code>card_block_map</code> automático via labels Moodle</b>: parser em cascata dos 5 formatos catalogados nas cadeiras reais (A = MF/ES2/TCC "Semana DD/MM/AAAA", B = IA, C = UX, D = semana ordinal, E = sem sinal → fallback honesto); derivação card → datas → blocos; persistido no import com merge (manual sobrepõe). Acurácia no golden: <b>58.7% → 78.3%</b> (com fix do B3 num 2º call site: scoring direto lia só <code>'rows'</code> ao invés do índice persistido).</p>
+    <p><b>P2 — confiança honesta</b>: <code>relative_margin_confidence</code> (margem relativa × força absoluta, mata o clamp em 1.0), tetos por método (<code>scorer_only</code> ≤ 0.70 … <code>manual</code> 1.0), <code>computed_block_method</code> gravado para <em>toda</em> entry. Confiante-e-errado: <b>9 → 0</b>; banda alta ficou 28 ok / 0 erro — 100% dos erros restantes sinalizados para revisão.</p>
+    <p><b>P3 — higiene + fechamento</b>: B1 (categoria <code>references</code> no filtro), B5 (dedup de id no import via <code>id_override</code> ANTES dos assets — sem sobrescrita em disco; <code>force-reprocess</code> resolve por <code>source_path</code>), B4 verificado no repo real (F1 flagrou <code>unit_block_conflict</code>). Suíte: <b>1.290 testes</b>. P4 aprovado pelos números (8/10 erros restantes têm mecanismo P4; alvo ~93%).</p>
+  </div>
+
+  <h2>Itens resolvidos do relatório</h2>
+  <div class="card find good">
+    <h4>✅ Funções mortas removidas (10/06)</h4>
+    <p><s><b><code>file_size_mb()</code></b>, <b><code>save_card_block_map()</code></b>, <b><code>score_block_unit_affinity()</code></b></s> — removidas junto com os testes que só as exercitavam (teste de round-trip do card map reescrito pra gravar o JSON direto; <code>_block_tokens</code>/<code>_unit_tokens</code> mantidos — usados por <code>assign_units_positional</code>).</p>
+    <p><b><code>font_size</code></b> — removida de <code>DEFAULTS</code> (10/06). Chave stale em config salvo é ignorada pelo filtro de load.</p>
+    <p><code>_normalized_source_key</code> — deduplicada em 10/06; ambos os sites importam <code>utils/helpers.normalized_source_key</code>.</p>
+  </div>
+  <div class="card find good">
+    <h4>✅ Propagação resolvida (10–11/06)</h4>
+    <p><b>1. Match do Gemini (<code>match_rationale</code> + <code>method</code>/<code>confidence</code>) — ✅ PROPAGADO (10–11/06):</b> <code>attach_block_summary_fields</code> em <code>ops/pedagogical_regeneration.py</code> copia 3 campos do summary pro <code>manifest.json</code> (<code>computed_block_rationale</code>, <code>computed_block_method</code>, <code>computed_block_match_confidence</code>). Editor de backlog mostra read-only "Por que este bloco?" + "Match do bloco". Sem valor → campo removido (nada stale). Suíte 1203 verde.</p>
+    <p><b>2. Custos do Datalab — ✅ RESOLVIDO (11/06):</b> seção "Custos e qualidade do build" em <code>artifacts/build_metrics.py</code> agrega páginas processadas via Datalab e <code>parse_quality</code> médio. <code>cost_breakdown</code> vem vazio da API — slot futuro.</p>
+    <p><b>3. <code>vision_model_quantization</code> só vale no Image Curator — ✅ COMUNICADO (11/06):</b> SettingsDialog tem tooltip + hint "Afeta apenas o Image Curator". Sem mudança de comportamento.</p>
+    <p><b>4. Perfis de documento — ✅ PARCIAL (11/06):</b> BUILD_REPORT mostra % de PDFs escaneados. Contagem de imagens rejeitadas por ruído é slot futuro.</p>
+  </div>
+  <div class="card find good">
+    <h4>✅ Gargalos resolvidos/mitigados</h4>
+    <p><b>Manifest sem escrita atômica — RESOLVIDO (commit <code>79b6f98</code>):</b> <code>write_text</code> atômico (tmp+<code>os.replace</code>) + <code>write_json_manifest</code> (atômico + <code>.bak</code>); ~20 call sites roteados.</p>
+    <p><b>Sem lock no manifest — MITIGADO:</b> escrita atômica elimina corrupção (vira last-write-wins); lock real ainda não existe.</p>
+  </div>
   </div>
 </div>
 

@@ -46,6 +46,9 @@ After every task:
 - If a pattern was deviated from or a new gotcha was found, update it.
 - If any context file is now outdated, update it surgically.
 - Update "Current Project State" in `ROUTER.md` if the work was significant.
+- **Living overview:** if the architecture, pipeline, or attribution logic changed, update
+  `docs/Overview-Sistema.html` — the single living visual overview of the system (tabs 1–5
+  attribution, 6 audit/debts, 7 system report). It must always reflect the current state.
 
 ## Navigation
 
