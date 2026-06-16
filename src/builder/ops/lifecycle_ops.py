@@ -42,6 +42,10 @@ def assign_dedup_id(entry, existing_ids: set) -> str:
     if base_id in existing_ids:
         final_id = _dedup_entry_id(base_id, entry.category, existing_ids)
         entry.id_override = final_id
+        logger.warning(
+            "Entry id collision: %s -> %s (category=%s)",
+            base_id, final_id, entry.category,
+        )
     existing_ids.add(final_id)
     return final_id
 
@@ -115,7 +119,7 @@ def process_single_impl(
     # de uma apagava os arquivos da outra). O fluxo already_exists/force
     # (acima) já garante que o mesmo source_path não chega aqui duas vezes,
     # então toda colisão aqui é de path diferente.
-    existing_ids = {e.get("id") for e in manifest.get("entries", [])}
+    existing_ids = {e.get("id") for e in manifest.get("entries", []) if e.get("id")}
     base_id = entry.id()
     if base_id in existing_ids:
         entry.id_override = _dedup_entry_id(base_id, entry.category, existing_ids)
