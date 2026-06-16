@@ -9,6 +9,12 @@ from tkinter import messagebox, simpledialog, ttk
 from typing import Callable, Optional
 
 
+def _code_row_label(summary: dict, entry: dict, eid: str) -> str:
+    """Rótulo da linha na aba códigos: título do Gemini > título da entry > id.
+    Evita o eid[:8] que colide visualmente (ex.: exemplos.thy e exemplos.zip → ambos 'exemplos')."""
+    return str((summary or {}).get("inferred_title") or (entry or {}).get("title") or eid or "")
+
+
 PEDAGOGICAL_ROLES = [
     "exemplo_demonstrativo",
     "exercicio_resolvido",
@@ -169,7 +175,7 @@ class CodesPanel(tk.Frame):
                 "",
                 "end",
                 iid=eid,
-                text=eid[:8],
+                text=_code_row_label(summary, e, eid),
                 values=(status_icon, title, lang, block_label, concepts),
             )
 

@@ -5,6 +5,7 @@ import logging
 import shutil
 import sys
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Optional
 
 from src.utils.helpers import write_text, write_json_manifest, slugify
@@ -12,20 +13,36 @@ from src.utils.helpers import write_text, write_json_manifest, slugify
 logger = logging.getLogger(__name__)
 
 
-def _dedup_entry_id(entry_id: str, category: str, existing_ids: set) -> str:
-    """Id colidiu com entry de OUTRO source_path: sufixa categoria, depois contador.
+def _entry_dedup_tokens(entry) -> tuple[str, str]:
+    """(extensão, pasta-imediata) do source_path, para o sufixo do dedup."""
+    sp = str(getattr(entry, "source_path", "") or "")
+    p = Path(sp)
+    return p.suffix.lstrip(".").lower(), p.parent.name
+
+
+def _dedup_entry_id(entry_id: str, existing_ids: set, *, ext: str = "", folder: str = "") -> str:
+    """Id colidiu: sufixa EXTENSÃO, depois pasta, depois contador.
 
     Ids são diretórios de assets (sobrescrita silenciosa, bug B5) — nunca colidir.
-    NÃO retroativo: aplica-se apenas à nova entry que está sendo inserida.
+    Extensão distingue o caso real (mesmo nome, formato diferente: pdf×zip, thy×zip);
+    pasta distingue mesmo-nome-mesma-extensão em cards diferentes; contador é o último
+    recurso. NÃO retroativo: só a entry sendo inserida. (fix c v2: antes sufixava categoria.)
     """
     if entry_id not in existing_ids:
         return entry_id
-    cat = slugify(category or "") if (category or "").strip() else ""
-    candidate = f"{entry_id}-{cat}" if cat else f"{entry_id}-2"
+    ext = slugify(ext) if ext else ""
+    folder = slugify(folder) if folder else ""
+    for suffix in (ext, folder):
+        if suffix:
+            candidate = f"{entry_id}-{suffix}"
+            if candidate not in existing_ids:
+                return candidate
+    base = f"{entry_id}-{ext}" if ext else entry_id
     i = 2
+    candidate = f"{base}-{i}"
     while candidate in existing_ids:
-        candidate = f"{entry_id}-{cat}-{i}" if cat else f"{entry_id}-{i}"
         i += 1
+        candidate = f"{base}-{i}"
     return candidate
 
 
@@ -33,18 +50,19 @@ def assign_dedup_id(entry, existing_ids: set) -> str:
     """Dedup de id para os laços de build BATCH (espelha o caminho single-entry).
 
     Se o id base do entry colide com um já presente em existing_ids, seta
-    entry.id_override (sufixo de categoria / contador via _dedup_entry_id) para
+    entry.id_override (sufixo de extensão/pasta / contador via _dedup_entry_id) para
     que TODO o pipeline use o id final. Registra o id final em existing_ids e o
     retorna. Sem colisão, mantém o id base e não toca id_override.
     """
     base_id = entry.id()
     final_id = base_id
     if base_id in existing_ids:
-        final_id = _dedup_entry_id(base_id, entry.category, existing_ids)
+        ext, folder = _entry_dedup_tokens(entry)
+        final_id = _dedup_entry_id(base_id, existing_ids, ext=ext, folder=folder)
         entry.id_override = final_id
         logger.warning(
-            "Entry id collision: %s -> %s (category=%s)",
-            base_id, final_id, entry.category,
+            "Entry id collision: %s -> %s (ext=%s folder=%s)",
+            base_id, final_id, ext, folder,
         )
     existing_ids.add(final_id)
     return final_id
@@ -122,10 +140,11 @@ def process_single_impl(
     existing_ids = {e.get("id") for e in manifest.get("entries", []) if e.get("id")}
     base_id = entry.id()
     if base_id in existing_ids:
-        entry.id_override = _dedup_entry_id(base_id, entry.category, existing_ids)
+        ext, folder = _entry_dedup_tokens(entry)
+        entry.id_override = _dedup_entry_id(base_id, existing_ids, ext=ext, folder=folder)
         logger.warning(
-            "Entry id collision: %s -> %s (category=%s)",
-            base_id, entry.id_override, entry.category,
+            "Entry id collision: %s -> %s (ext=%s folder=%s)",
+            base_id, entry.id_override, ext, folder,
         )
 
     logger.info("Processing single entry: %s (%s)", entry.title, entry.file_type)

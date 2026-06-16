@@ -1,8 +1,9 @@
 """Testes TDD para o dedup de entry id (bug B5).
 
 Comportamentos esperados (ver Task 10 do plano):
-- 2 arquivos mesmo basename, categorias diferentes -> ids únicos com sufixo de categoria
-- 3º mesmo id+categoria -> contador
+- 2 arquivos mesmo basename, extensões diferentes -> ids únicos com sufixo de extensão
+- mesmo nome+extensão em pastas diferentes -> sufixo de pasta
+- 3º mesmo id+ext+pasta -> contador
 - mesmo source_path -> fluxo already_exists intacto (não passa por _dedup_entry_id)
 - dedup acontece ANTES do processamento (id_override no FileEntry): assets em
   disco (raw/, manual-review/, code/) ficam em paths distintos e unprocess de
@@ -17,50 +18,39 @@ from src.models.core import FileEntry
 
 def test_ids_sem_colisao_retorna_original():
     existing = {"introducao", "aula-01"}
-    assert _dedup_entry_id("introducao-slides", "slides", existing) == "introducao-slides"
+    assert _dedup_entry_id("introducao-slides", existing, ext="pdf") == "introducao-slides"
 
 
-def test_ids_duplicados_ganham_sufixo_de_categoria():
-    # "introducao" existe (de outro source_path) -> ganha sufixo da categoria
+def test_ids_duplicados_ganham_sufixo_de_extensao():
     existing = {"introducao"}
-    result = _dedup_entry_id("introducao", "codigo-professor", existing)
-    assert result == "introducao-codigo-professor"
-    assert result not in existing  # novo id nao colide
+    result = _dedup_entry_id("introducao", existing, ext="zip")
+    assert result == "introducao-zip"
+    assert result not in existing
 
 
-def test_ids_duplicados_categoria_vazia_ganha_contador():
-    # sem categoria -> sufixo numérico
+def test_sem_ext_usa_pasta():
     existing = {"introducao"}
-    result = _dedup_entry_id("introducao", "", existing)
-    assert result == "introducao-2"
+    assert _dedup_entry_id("introducao", existing, ext="", folder="verificacao") == "introducao-verificacao"
 
 
-def test_mesmo_id_mesma_categoria_ganha_contador():
-    # 3o arquivo "introducao" também codigo-professor (outra pasta)
-    # -> "introducao-codigo-professor-2"
-    existing = {"introducao", "introducao-codigo-professor"}
-    result = _dedup_entry_id("introducao", "codigo-professor", existing)
-    assert result == "introducao-codigo-professor-2"
-
-
-def test_contador_incrementa_ate_livre():
-    # varios ja existentes -> continua contando
-    existing = {
-        "introducao",
-        "introducao-slides",
-        "introducao-slides-2",
-        "introducao-slides-3",
-    }
-    result = _dedup_entry_id("introducao", "slides", existing)
-    assert result == "introducao-slides-4"
-
-
-def test_categoria_slugificada():
-    # categoria com espaços/maiúsculas é slugificada
+def test_sem_ext_sem_pasta_ganha_contador():
     existing = {"introducao"}
-    result = _dedup_entry_id("introducao", "Código Professor", existing)
-    # slugify("Código Professor") -> "codigo-professor"
-    assert result == "introducao-codigo-professor"
+    assert _dedup_entry_id("introducao", existing) == "introducao-2"
+
+
+def test_mesma_ext_colide_cai_na_pasta():
+    existing = {"introducao", "introducao-zip"}
+    assert _dedup_entry_id("introducao", existing, ext="zip", folder="modelos") == "introducao-modelos"
+
+
+def test_contador_quando_ext_e_pasta_colidem():
+    existing = {"introducao", "introducao-zip", "introducao-modelos"}
+    assert _dedup_entry_id("introducao", existing, ext="zip", folder="modelos") == "introducao-zip-2"
+
+
+def test_ext_slugificada():
+    existing = {"introducao"}
+    assert _dedup_entry_id("introducao", existing, ext="ZIP") == "introducao-zip"
 
 
 # ---------------------------------------------------------------------------
@@ -140,10 +130,10 @@ def test_disco_mesmo_basename_gera_paths_de_assets_distintos(tmp_path, monkeypat
     rec_a = next(e for e in entries if e["category"] == "codigo-professor")
     rec_b = next(e for e in entries if e["category"] == "codigo-aluno")
 
-    # ids únicos; o 2º ganhou o sufixo da categoria e persiste o override
+    # ids únicos; o 2º ganhou o sufixo da extensão (.py) e persiste o override
     assert rec_a["id"] == "intro"
-    assert rec_b["id"] == "intro-codigo-aluno"
-    assert rec_b["id_override"] == "intro-codigo-aluno"
+    assert rec_b["id"] == "intro-py"
+    assert rec_b["id_override"] == "intro-py"
     assert "id_override" not in rec_a
 
     # todo path de asset/raw das 2 entries é DIFERENTE (sem sobrescrita)
@@ -159,7 +149,7 @@ def test_disco_mesmo_basename_gera_paths_de_assets_distintos(tmp_path, monkeypat
     assert (repo / rec_b["manual_review"]).exists()
 
     # releitura do manifest via from_dict mantém o id deduplicado
-    assert FileEntry.from_dict(rec_b).id() == "intro-codigo-aluno"
+    assert FileEntry.from_dict(rec_b).id() == "intro-py"
     assert FileEntry.from_dict(rec_a).id() == "intro"
 
 
@@ -191,8 +181,8 @@ def _setup_two_deduped_imports(tmp_path, monkeypatch):
     """2 arquivos `intro.py` nas categorias codigo-professor / codigo-aluno.
 
     Reproduz o estado em que a segunda entry tem id_override no manifest:
-      entries[0]: id="intro",               category="codigo-professor"
-      entries[1]: id="intro-codigo-aluno",  category="codigo-aluno"
+      entries[0]: id="intro",      category="codigo-professor"
+      entries[1]: id="intro-py",   category="codigo-aluno"
     """
     repo = tmp_path / "repo"
     file_a = tmp_path / "prof" / "intro.py"
@@ -236,8 +226,8 @@ def test_force_reprocess_entry_deduplicada_remove_segunda_nao_primeira(tmp_path,
 
     # Garante que a segunda entry está de fato deduplicada no manifest
     assert rec_a["id"] == "intro"
-    assert rec_b["id"] == "intro-codigo-aluno"
-    assert rec_b.get("id_override") == "intro-codigo-aluno"
+    assert rec_b["id"] == "intro-py"
+    assert rec_b.get("id_override") == "intro-py"
 
     # FileEntry FRESCO (sem id_override) — simula o que chega via force-reprocess
     fresh_entry_b = _code_entry(file_b, "codigo-aluno")

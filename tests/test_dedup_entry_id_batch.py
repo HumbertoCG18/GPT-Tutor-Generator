@@ -19,11 +19,11 @@ def test_assign_dedup_id_first_use_keeps_base_id():
     assert "introducao" in existing
 
 
-def test_assign_dedup_id_collision_suffixes_category():
+def test_assign_dedup_id_collision_suffixes_extension():
     existing = set()
     e1 = _entry("trabalhos/introducao.pdf", "trabalhos")
     e2 = _entry("codigo/introducao.zip", "codigo-professor")
     assert assign_dedup_id(e1, existing) == "introducao"
-    assert assign_dedup_id(e2, existing) == "introducao-codigo-professor"
-    assert e2.id_override == "introducao-codigo-professor"
-    assert e2.id() == "introducao-codigo-professor"
+    assert assign_dedup_id(e2, existing) == "introducao-zip"
+    assert e2.id_override == "introducao-zip"
+    assert e2.id() == "introducao-zip"
