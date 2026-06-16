@@ -334,9 +334,10 @@ segundos cérebros já mortos: sinal forte existe, caminho que decide ignora.
 - Manifest real tem ids DUPLICADOS: `introducao` ×2 e `t1-2026-1` ×2 (pdf
   trabalhos + zip codigo-professor compartilham id). Mascarou o diagnóstico
   (probe achava o pdf conf 0.85, manifest mostrava o zip conf 0.0).
-- Dívida #5 confirmada VIVA: `retag_manifest.py` passa só `{"_repo_root": …}`
-  ⇒ taxonomia vazia no retag; um retag de subunidade hoje LIMPARIA os slugs.
-  Mascarado porque o reprocesso completo do app reescreveu tudo depois.
+- ~~Dívida #5 confirmada VIVA~~ — **RESOLVIDA 16/06 (432b64a, fix (d))**:
+  `retag_manifest.py` passava só `{"_repo_root": …}` ⇒ taxonomia vazia no retag;
+  um retag de subunidade LIMPARIA os slugs. Mascarado porque o reprocesso completo
+  do app reescrevia tudo depois. Fix: fallback de disco em `resolve_unit_block_tags`.
 
 **Correções candidatas (decisão 12/06: (a) agora, (b) depois — ambas FEITAS):**
 - (a) ~~Mínima~~ — **FEITO 12/06 (62da0d2)**: empate exato ou
@@ -355,7 +356,16 @@ segundos cérebros já mortos: sinal forte existe, caminho que decide ignora.
   exercicios-conjuntos→pre-e-pos-condicoes…); 2 seguem empate honesto. Golden de
   bloco intacto 41/48, confiante-errado 0, suíte 1330.
 - (c) Higiene: unicidade de id no manifest (dedupe ou sufixo por categoria).
-- (d) Dívida #5: retag carregar `course/.content_taxonomy.json` do `_repo_root`.
+- (d) ~~Dívida #5~~ — **FEITO 16/06 (432b64a)**: `load_internal_content_taxonomy`
+  lê `course/.content_taxonomy.json` do `_repo_root` como fallback quando
+  `_content_taxonomy` não vem em memória. Antes, `resolve_unit_block_tags` lia a
+  taxonomia só de `course_meta["_content_taxonomy"]`; o retag passa apenas
+  `{"_repo_root": …}` → taxonomia vazia → um retag LIMPARIA todos os
+  `computed_subunit_slug` (footgun latente, mascarado só porque o reprocesso
+  completo do app reescrevia tudo depois). In-memory mantém precedência (pipeline
+  completo intacto). Replay no repo real: retag agora **preserva** os slugs
+  (42→52 não-vazios; antes iria a ~0). Golden de bloco intacto 41/48,
+  confiante-errado 0, suíte 1332.
 
 **Modularidade (confirmado 13/06):** lógica é geral, não específica de MF.
 - `code_curation.json` é artefato genérico — qualquer cadeira com código o gera.
