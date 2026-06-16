@@ -150,8 +150,9 @@ Read this file before starting any task.
   monotonico, substitui o caminho fragil; rebuild-diff guard 5 cursos; guard de
   conflito usando a sugestao do posicional).
 - Matcher posicional bloco->unidade (Plano 2 de C) ENTREGUE. Modulo novo
-  `src/builder/timeline/unit_matcher.py`: `score_block_unit_affinity` (overlap de
-  tokens bloco x titulo+topicos+aliases da unidade, stopwords PT) +
+  `src/builder/timeline/unit_matcher.py`: afinidade por overlap de tokens
+  (bloco x titulo+topicos+aliases da unidade, stopwords PT — interno, via
+  `_block_tokens`/`_unit_tokens`) +
   `assign_units_positional` (DP monotonico global: maximiza afinidade total sob
   unidade nao-decrescente; robusto a ancora espuria). Wiring two-phase em
   `_build_timeline_index`: atribui unidade aos candidatos (sem source_kind
