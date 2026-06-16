@@ -81,7 +81,7 @@ def _run(period_fn_return, *, blocks=(_INSTRUCTIONAL_BLOCK,)):
             "timeline_index": {"blocks": list(blocks)},
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-01", confidence=0.40, ambiguous=True
         ),
@@ -170,7 +170,7 @@ def _run_real(blocks):
             "timeline_index": {"blocks": list(blocks)},
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-01", confidence=0.40, ambiguous=True
         ),

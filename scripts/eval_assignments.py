@@ -94,7 +94,7 @@ def predict_block(case: dict, blocks: list, course_meta: dict | None = None) -> 
             "timeline_index": {"blocks": list(blocks)},
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: unit_stub,
         select_probable_period_for_entry_fn=_select_probable_period_for_entry,
         resolve_entry_manual_timeline_block_fn=lambda e, tc: None,

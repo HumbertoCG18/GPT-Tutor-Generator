@@ -53,7 +53,7 @@ def test_resolve_unit_block_tags_adds_unit_tag_when_high_confidence():
             "unassigned_blocks": [],
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-02", confidence=0.80, ambiguous=False
         ),
@@ -79,7 +79,7 @@ def test_resolve_unit_block_tags_skips_unit_tag_when_low_confidence():
             "unassigned_blocks": [],
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-02", confidence=0.40, ambiguous=False
         ),
@@ -105,7 +105,7 @@ def test_resolve_unit_block_tags_skips_unit_tag_when_ambiguous():
             "unassigned_blocks": [],
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-02", confidence=0.80, ambiguous=True
         ),
@@ -131,7 +131,7 @@ def test_resolve_unit_block_tags_adds_subunit_tag():
             "unassigned_blocks": [],
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(
             slug="regra-da-cadeia", confidence=0.75, ambiguous=False
         ),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
@@ -174,7 +174,7 @@ def test_resolve_unit_block_tags_enriches_subunit_input_with_code_curation(tmp_p
 
     seen = {}
 
-    def _capture_subtopic(e, t, m):
+    def _capture_subtopic(e, t, m, winning_unit_slug=""):
         seen["subunit_md"] = m
         return _stub_topic_match()
 
@@ -221,7 +221,7 @@ def test_resolve_unit_block_tags_adds_bloco_tag_via_manual_override():
             "unassigned_blocks": [],
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match("", 0.0, True),
         select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
         resolve_entry_manual_timeline_block_fn=lambda e, tc: fake_block,
@@ -255,7 +255,7 @@ def test_resolve_unit_block_tags_skips_special_categories():
             "unassigned_blocks": [],
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=counting_unit_fn,
         select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
         resolve_entry_manual_timeline_block_fn=lambda e, tc: None,
@@ -279,7 +279,7 @@ def test_resolve_unit_block_tags_preserves_existing_non_managed_auto_tags():
             "unassigned_blocks": [],
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match("", 0.0, True),
         select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
         resolve_entry_manual_timeline_block_fn=lambda e, tc: None,
@@ -310,7 +310,7 @@ def test_reconcile_manual_block_overrides_unit():
             "timeline_index": {"blocks": [fake_block]},
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         # Sem o override, este entry cairia em unidade-1.
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-1", confidence=0.80, ambiguous=False
@@ -352,7 +352,7 @@ def test_reconcile_conflict_unit_stronger_sets_flag():
             "timeline_index": {"blocks": [weak_block]},
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-1", confidence=0.80, ambiguous=False
         ),
@@ -404,7 +404,7 @@ def test_resolve_unit_block_tags_loads_taxonomy_from_repo_when_absent(tmp_path):
             "unassigned_blocks": [],
         },
         iter_content_taxonomy_topics_fn=_capture_iter,
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match("", 0.0, True),
         select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
         resolve_entry_manual_timeline_block_fn=lambda e, tc: None,
@@ -443,7 +443,7 @@ def test_resolve_unit_block_tags_prefers_in_memory_taxonomy_over_disk(tmp_path):
             "unassigned_blocks": [],
         },
         iter_content_taxonomy_topics_fn=_capture_iter,
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match("", 0.0, True),
         select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
         resolve_entry_manual_timeline_block_fn=lambda e, tc: None,
@@ -467,7 +467,7 @@ def test_resolve_unit_block_tags_manual_unit_slug_takes_precedence():
             "unassigned_blocks": [],
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
             "unidade-01", 0.90, False
         ),
@@ -479,3 +479,32 @@ def test_resolve_unit_block_tags_manual_unit_slug_takes_precedence():
     tags = result[0]["auto_tags"]
     assert "unit:unidade-99-manual" in tags
     assert "unit:unidade-01" not in tags
+
+
+def test_subtopic_matcher_receives_resolved_unit_as_winning_unit_slug():
+    captured = {}
+
+    def _capture_subtopic(e, t, m, winning_unit_slug=""):
+        captured["winning_unit_slug"] = winning_unit_slug
+        return _stub_topic_match()
+
+    resolve_unit_block_tags(
+        [_make_minimal_entry("e1", "Slides")],
+        course_meta={},
+        subject_profile=None,
+        build_file_map_unit_index_from_course_fn=lambda c, s: [],
+        build_file_map_timeline_context_from_course_fn=lambda c, s: {
+            "blocks_by_unit": {},
+            "unassigned_blocks": [],
+        },
+        iter_content_taxonomy_topics_fn=lambda t: [],
+        auto_map_entry_subtopic_fn=_capture_subtopic,
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
+            "unidade-02", confidence=0.80, ambiguous=False
+        ),
+        select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
+        resolve_entry_manual_timeline_block_fn=lambda e, tc: None,
+        entry_markdown_text_for_file_map_fn=lambda root, e: "",
+    )
+
+    assert captured["winning_unit_slug"] == "unidade-02"

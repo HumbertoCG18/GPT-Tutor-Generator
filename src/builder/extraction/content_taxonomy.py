@@ -1076,29 +1076,6 @@ def resolve_unit_block_tags(
                     f"{markdown_text}\n\n{_curation_text}" if markdown_text else _curation_text
                 )
 
-        # --- Topic/subunit match (manual tem precedencia) ---
-        manual_subunit = _collapse_ws(str(entry.get("manual_subunit_slug") or ""))
-        if manual_subunit:
-            preferred_topic_slug = manual_subunit
-            subunit_reasons = ["manual"]
-            subunit_confidence = 1.0
-            best_subunit_slug = manual_subunit
-        else:
-            topic_match = auto_map_entry_subtopic_fn(entry, content_taxonomy, subunit_markdown_text)
-            preferred_topic_slug = ""
-            subunit_reasons = list(getattr(topic_match, "reasons", []))
-            subunit_confidence = float(getattr(topic_match, "confidence", 0.0))
-            # Melhor candidato de subunidade (best-effort), independente do gate:
-            # surfaçado no editor com a confiança, mesmo ambíguo/baixo. A tag
-            # `subunit:` (roteamento) continua gated abaixo via preferred_topic_slug.
-            best_subunit_slug = str(getattr(topic_match, "topic_slug", "") or "")
-            if (
-                topic_match.topic_slug
-                and not topic_match.ambiguous
-                and topic_match.confidence >= T.SUBUNIT_TAG
-            ):
-                preferred_topic_slug = topic_match.topic_slug
-
         # --- Unit match (manual tem precedencia) ---
         manual_unit = _collapse_ws(str(entry.get("manual_unit_slug") or ""))
         if manual_unit:
@@ -1116,6 +1093,32 @@ def resolve_unit_block_tags(
             unit_confidence = unit_match.confidence
             unit_ambiguous = unit_match.ambiguous
             unit_reasons = list(unit_match.reasons)
+
+        # --- Topic/subunit match (manual tem precedencia) ---
+        manual_subunit = _collapse_ws(str(entry.get("manual_subunit_slug") or ""))
+        if manual_subunit:
+            preferred_topic_slug = manual_subunit
+            subunit_reasons = ["manual"]
+            subunit_confidence = 1.0
+            best_subunit_slug = manual_subunit
+        else:
+            topic_match = auto_map_entry_subtopic_fn(
+                entry, content_taxonomy, subunit_markdown_text,
+                winning_unit_slug=resolved_unit_slug,
+            )
+            preferred_topic_slug = ""
+            subunit_reasons = list(getattr(topic_match, "reasons", []))
+            subunit_confidence = float(getattr(topic_match, "confidence", 0.0))
+            # Melhor candidato de subunidade (best-effort), independente do gate:
+            # surfaçado no editor com a confiança, mesmo ambíguo/baixo. A tag
+            # `subunit:` (roteamento) continua gated abaixo via preferred_topic_slug.
+            best_subunit_slug = str(getattr(topic_match, "topic_slug", "") or "")
+            if (
+                topic_match.topic_slug
+                and not topic_match.ambiguous
+                and topic_match.confidence >= T.SUBUNIT_TAG
+            ):
+                preferred_topic_slug = topic_match.topic_slug
 
         # --- Block match: DESACOPLADO da unidade (Fase 1) ---
         # O bloco e SEMPRE computado direto, rodando o scorer sobre TODOS os

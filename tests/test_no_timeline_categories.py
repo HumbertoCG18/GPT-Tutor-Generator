@@ -69,7 +69,7 @@ def test_no_timeline_limpa_campos_orfaos():
                 "timeline_index": {"blocks": list(blocks)},
             },
             iter_content_taxonomy_topics_fn=lambda t: [],
-            auto_map_entry_subtopic_fn=lambda e, t, m: eval_assignments._stub_topic_match(),
+            auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": eval_assignments._stub_topic_match(),
             auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: unit_stub,
             select_probable_period_for_entry_fn=eval_assignments._select_probable_period_for_entry,
             resolve_entry_manual_timeline_block_fn=lambda e, tc: None,

@@ -225,7 +225,7 @@ def _make_resolve_kwargs(unit_slug="unidade-01", unit_confidence=0.80, unit_ambi
             "blocks_by_unit": {}, "unassigned_blocks": [], "timeline_index": {"blocks": []}
         },
         iter_content_taxonomy_topics_fn=lambda taxonomy: [],
-        auto_map_entry_subtopic_fn=lambda entry, taxonomy, md: FakeTopicMatch(),
+        auto_map_entry_subtopic_fn=lambda entry, taxonomy, md, winning_unit_slug="": FakeTopicMatch(),
         auto_map_entry_unit_fn=lambda entry, units, md, topics, learned_unit_boosts=None: UnitMatchResult(
             slug=unit_slug, confidence=unit_confidence, ambiguous=unit_ambiguous, reasons=["winner_score=3.50"]
         ),
