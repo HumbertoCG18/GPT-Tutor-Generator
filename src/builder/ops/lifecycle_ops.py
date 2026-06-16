@@ -29,6 +29,23 @@ def _dedup_entry_id(entry_id: str, category: str, existing_ids: set) -> str:
     return candidate
 
 
+def assign_dedup_id(entry, existing_ids: set) -> str:
+    """Dedup de id para os laços de build BATCH (espelha o caminho single-entry).
+
+    Se o id base do entry colide com um já presente em existing_ids, seta
+    entry.id_override (sufixo de categoria / contador via _dedup_entry_id) para
+    que TODO o pipeline use o id final. Registra o id final em existing_ids e o
+    retorna. Sem colisão, mantém o id base e não toca id_override.
+    """
+    base_id = entry.id()
+    final_id = base_id
+    if base_id in existing_ids:
+        final_id = _dedup_entry_id(base_id, entry.category, existing_ids)
+        entry.id_override = final_id
+    existing_ids.add(final_id)
+    return final_id
+
+
 def process_single_impl(
     builder,
     entry,

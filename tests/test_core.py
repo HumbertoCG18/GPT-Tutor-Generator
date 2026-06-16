@@ -3526,6 +3526,10 @@ class TestGlossarySeed:
                 self.file_type = payload["file_type"]
                 self.source_path = payload["source_path"]
                 self.enabled = True
+                self.id_override = ""
+
+            def id(self):
+                return self.id_override if self.id_override else self._payload.get("id", "")
 
             def to_dict(self):
                 return self._payload
