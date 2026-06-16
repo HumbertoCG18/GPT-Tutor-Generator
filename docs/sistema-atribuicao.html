@@ -30,6 +30,18 @@
   code { font-family:"JetBrains Mono",Consolas,monospace; font-size:12px; color:var(--accent); }
   .note { background:#10131c; border:1px solid var(--border); border-left:3px solid var(--accent);
     border-radius:8px; padding:10px 13px; font-size:12.5px; color:var(--muted); margin-top:12px; max-width:1000px; }
+  .aud h3 { font-size:14px; margin:18px 0 8px; color:var(--fg); }
+  .aud h3:first-of-type { margin-top:6px; }
+  .aud ul { margin:0; padding:0; list-style:none; max-width:1040px; }
+  .aud li { font-size:12.5px; color:var(--fg); padding:6px 0; border-bottom:1px solid #20242f; line-height:1.55; }
+  .aud li code { color:var(--accent); }
+  .sev { display:inline-block; min-width:26px; text-align:center; padding:1px 6px; border-radius:5px;
+    font-size:10.5px; font-weight:700; margin-right:8px; vertical-align:1px; }
+  .sev.s0 { background:#3a1620; color:#f38ba8; }
+  .sev.s1 { background:#3a2a16; color:#fab387; }
+  .sev.s2 { background:#36331a; color:#f9e2af; }
+  .sev.s3 { background:#20242f; color:#8a93a6; }
+  .ok-line { color:#a6e3a1; }
 </style>
 </head>
 <body>
@@ -42,6 +54,7 @@
   <button class="tab" data-v="real">3 · Caso real (TCC)</button>
   <button class="tab" data-v="nova">4 · Cadeira nova</button>
   <button class="tab" data-v="files">5 · Materiais → bloco</button>
+  <button class="tab" data-v="auditoria">6 · Auditoria (dívidas)</button>
 </div>
 
 <div class="view active" id="overview">
@@ -86,6 +99,50 @@
     <p class="desc"><b>Material → bloco.</b> Cada arquivo no <code>manifest.json</code> recebe tags gerenciadas (<code>unit:</code>, <code>subunit:</code>, <code>bloco:</code>) por confiança, ou uma atribuição manual absoluta. A UI agrupa os materiais sob cada bloco do cronograma.</p>
     <div class="render" id="r-files"></div>
     <div class="note">Critério (<code>content_taxonomy.py</code>): <code>unit:</code> conf ≥ 0.65 · <code>subunit:</code> ≥ 0.60 · <code>bloco:</code> ≥ 0.50 (e não-ambíguo). <code>manual_timeline_block_id</code> e <code>manual_unit_slug</code> têm precedência absoluta (conf = 1.0).</div>
+  </div>
+</div>
+
+<div class="view" id="auditoria">
+  <div class="card aud">
+    <p class="desc"><b>Auditoria do sistema de atribuição — 16/06 (wave 1+2).</b> Investigação read-only: 9 clusters por subagentes paralelos em 2 ondas. Categorias: <b>conflito</b> (um passo desfaz outro), <b>duplicação</b>, <b>morto</b>, <b>ruído</b>. Detalhe completo no plano-mestre (<code>docs/reports/2026-06-11-plano-mestre-atribuicao.md</code>).</p>
+
+    <h3>🔴 P0 — corrompe a atribuição</h3>
+    <ul>
+      <li><span class="sev s0">P0</span> <b>8º "segundo cérebro" = subunidade.</b> <code>computed_subunit_slug</code> gravado sempre/ungated (<code>content_taxonomy.py:1316</code>) vs tag <code>subunit:</code> só após gate (<code>:1278</code>); lidos em precedência divergente (<code>navigation.py:623</code> usa o ungated, <code>dialogs.py:4154</code> prefere a tag). Pior: <code>computed_subunit_slug</code> não é campo de <code>FileEntry</code> (<code>core.py:75</code>) → cai no round-trip, confiança vira órfã.</li>
+      <li><span class="sev s0">P0</span> <b>Gemini código→bloco paralelo ao funil.</b> <code>primary_block_id</code> (Gemini) governa CODE_INDEX/CRONOGRAMA/CODE_HEALTH (<code>repo.py:837</code>); <code>computed_block_id</code> governa o resto (<code>file_map.py:613</code>). Nunca reconciliam → mesma entry, bloco diferente por .md.</li>
+      <li><span class="sev s0">P0</span> <b><code>winning_unit_slug</code> morto</b> (<code>file_map.py:173</code>): nenhum caller passa → subunit escolhida sobre TODAS as unidades, sem restringir à do bloco. Raiz do desalinhamento subunit↛unit.</li>
+      <li><span class="sev s0">P0</span> <b>fix (c) — dedup de id ausente no batch.</b> Só <code>lifecycle_ops.process_single_impl</code> dedup; <code>build_workflow.py:64</code> e <code>incremental_build.py:48</code> não → ids duplicados (reintroduz B5).</li>
+    </ul>
+
+    <h3>🟠 P1 — código/contrato morto</h3>
+    <ul>
+      <li><span class="sev s1">P1</span> <b><code>administrative_only</code> contrato quebrado:</b> chave nunca gravada no payload (<code>index.py:888</code> só faz <code>continue</code>) → 4 filtros no-op (<code>content_taxonomy.py:1144</code> é o pior — blocos admin entram como candidatos; <code>file_map.py:537</code>, <code>cronograma_health.py:124</code>, <code>moodle_labels.py:131</code>). <b>→ decisão D2.</b></li>
+      <li><span class="sev s1">P1</span> <b>Piso 0.72 anulado pelo cap:</b> <code>max(conf,0.72)</code> (<code>file_map.py:1354</code>) sempre rebaixado por <code>scorer_only=0.70</code> (<code>content_taxonomy.py:1244</code>).</li>
+      <li><span class="sev s1">P1</span> <b><code>BLOCO_TAG=0.50</code> nunca lido</b> (<code>thresholds.py:139</code>): tag <code>bloco:</code> emitida sem gate de banda — morto ou gate faltante.</li>
+      <li><span class="sev s1">P1</span> <b>Fallback keyword ~600 linhas</b> (<code>index.py:2205</code>): só alcançável se <code>assign_units_positional</code> retorna [] (curso sem unidades/âncora).</li>
+      <li><span class="sev s1">P1</span> <b><code>auto_suggested_unit</code> gate 0.65 obsoleto</b> (<code>conflicts.py:31</code>): inalcançável porque o posicional sempre grava <code>auto_unit_slug</code>.</li>
+      <li><span class="sev s1">P1</span> <b>Mortos menores:</b> branch <code>consensus</code> B (<code>code_summarization.py:271</code>); method <code>auto_concept</code> efêmero (tooltip mente); <code>process_reference_entry</code> sem caller.</li>
+    </ul>
+
+    <h3>🟡 P2 — duplicação de lógica</h3>
+    <ul>
+      <li><span class="sev s2">P2</span> <b>Família de 6 scorers</b> (maior fonte): 3 ponderados (<code>index.py:1618</code>, <code>file_map.py:236</code>, <code>index.py:1730</code>) + 3 de overlap leve com 3 fórmulas de confiança (<code>assign_code_to_block</code>, <code>assign_concepts_to_unit</code>, <code>assign_concepts_to_block</code>).</li>
+      <li><span class="sev s2">P2</span> <b>2º sistema código→bloco:</b> <code>assign_code_to_block</code>+<code>_consolidate_assignment</code> duplica o funil determinístico.</li>
+      <li><span class="sev s2">P2</span> <b>3× basename→source_section:</b> <code>stash_backfill.py:16</code>, <code>moodle.py:156</code>, <code>m365.py:271</code>.</li>
+      <li><span class="sev s2">P2</span> <b>2 rotas card→bloco:</b> <code>resolve_card_to_block</code> (léxico só-nome) vs <code>derive_card_block_map</code> (datas).</li>
+      <li><span class="sev s2">P2</span> <b>Predicados de kind</b> index vs <code>classifier.py</code> com vocabulário divergente ("prova 1/2"/"teste" vs "prova N").</li>
+      <li><span class="sev s2">P2</span> <b>Menores:</b> <code>is_exercise_entry</code> (3-4×), <code>entry_norm</code>, filtro token≥4 (~5 sites), 3 tokenizadores.</li>
+    </ul>
+
+    <h3>⚪ P3 — ruído de sinal <span style="color:var(--muted);font-weight:400;font-size:12px">(eval-gated; golden de bloco 41/48 é a rede)</span></h3>
+    <ul>
+      <li><span class="sev s3">P3</span> auto_tags realimentam o scorer (auto-confirmação em retag, <code>index.py:1755</code>); <code>llm_only</code> conf 0.6 = banda alta sem corroboração; m365 sobrescreve <code>source_section</code> da API por ordem.</li>
+      <li><span class="sev s3">P3</span> "trabalho" sozinha → DELIVERABLE zera unidade (<code>classifier.py:77</code>); canal de data duplo (<code>file_map.py:1297+1311</code>); herança bidirecional soft-continuation (<code>index.py:2218</code>); substring em fontes fracas; pisos hardcoded fora de <code>thresholds.py</code>.</li>
+    </ul>
+
+    <div class="note"><b class="ok-line">✅ Não-problemas confirmados:</b> referências (Approach C) NÃO contaminam a atribuição principal (isolamento em 3 níveis); <code>margin</code> vs <code>relative_margin</code> disjuntos (intencional); METHOD_CAPS não tornam banda alta inalcançável; os 3 segundos-cérebros do FILE_MAP já mortos não ressurgiram.</div>
+
+    <div class="note"><b>2 decisões de arquitetura pendentes (a discutir):</b> <b>D1</b> — o caminho Gemini código→bloco deve existir (votar/subir confiança) ou CODE_INDEX/CRONOGRAMA passam a ler <code>resolve_effective_block</code> (fonte única, aposentando <code>_consolidate_assignment</code>)? · <b>D2</b> — <code>administrative_only</code>: ligar o campo (religando os 4 filtros) ou deletar os 4 no-ops? Cobertura: pipeline completo auditado; fora de escopo: <code>image_resolution.py</code>, <code>semantic_config.py</code>.</div>
   </div>
 </div>
 
@@ -230,6 +287,7 @@ mermaid.initialize({
 const done = {};
 async function show(key) {
   if (done[key]) return;
+  if (!DEFS[key]) return;
   const el = document.getElementById("r-" + key);
   try {
     const { svg } = await mermaid.render("svg-" + key, DEFS[key]);

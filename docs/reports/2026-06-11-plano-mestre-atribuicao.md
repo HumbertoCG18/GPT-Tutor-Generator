@@ -356,6 +356,11 @@ segundos cérebros já mortos: sinal forte existe, caminho que decide ignora.
   exercicios-conjuntos→pre-e-pos-condicoes…); 2 seguem empate honesto. Golden de
   bloco intacto 41/48, confiante-errado 0, suíte 1330.
 - (c) Higiene: unicidade de id no manifest (dedupe ou sufixo por categoria).
+  **Causa-raiz diagnosticada na auditoria 16/06 (P0-4):** `_dedup_entry_id` só roda no
+  caminho single-entry (`lifecycle_ops.process_single_impl`); os builds batch
+  (`build_workflow.py:64`, `incremental_build.py:48`) NÃO deduplicam → ids duplicados
+  (reintroduz B5: dirs de assets compartilhados). Fix: extrair o dedup p/ helper e
+  chamar nos 2 laços batch antes de `_process_entry`.
 - (d) ~~Dívida #5~~ — **FEITO 16/06 (432b64a)**: `load_internal_content_taxonomy`
   lê `course/.content_taxonomy.json` do `_repo_root` como fallback quando
   `_content_taxonomy` não vem em memória. Antes, `resolve_unit_block_tags` lia a
@@ -376,6 +381,109 @@ segundos cérebros já mortos: sinal forte existe, caminho que decide ignora.
   vazio, efeito nulo.
 - Distinção chave: a **lógica** é modular; só a **calibração dos pesos** foi validada
   em 1 cadeira (MF). Risco de calibração coberto abaixo (2º golden set).
+
+## Auditoria completa do sistema de atribuição (16/06, wave 1+2)
+
+Investigação read-only pedida pelo usuário ("conflitos, duplicação, mortos, ruído").
+9 clusters cobertos por subagentes paralelos em 2 ondas. Categorias: **CONFLITO** (um
+passo desfaz/sobrescreve outro), **DUPLICAÇÃO** (mesma lógica em 2+ lugares), **MORTO**
+(sem caller / campo nunca lido / ramo inalcançável), **RUÍDO** (sinal que atrapalha mais
+que ajuda). Cobertura: todo o pipeline (import → card/`source_section` → scorer file→block
+→ Gemini código→bloco → matcher posicional de unidade → scorer subunit → tags → bandas/caps
+→ conflicts → consumidores). Fora de escopo (não-core): `image_resolution.py`,
+`semantic_config.py`. Espelhada na aba 6 de `docs/sistema-atribuicao.html`.
+
+### P0 — corrompe atribuição (alta confiança, cross-validado)
+
+1. **8º "segundo cérebro" = SUBUNIDADE.** `computed_subunit_slug` gravado SEMPRE/ungated
+   (content_taxonomy.py:1316) vs tag `subunit:` gravada só após o gate (:1278-1279). Lidos
+   em precedência divergente: `navigation.py:623-625` (FILE_MAP) usa o ungated e ignora a
+   tag; `dialogs.py:4154-4166` (editor) prefere a tag gated → mesma entry atribuída no
+   FILE_MAP e "sugestão baixa confiança" no editor. PIOR: `computed_subunit_slug` NÃO é
+   campo declarado de `FileEntry` (core.py:75-76 só tem `subunit_match_confidence/reasons`)
+   → round-trip `from_dict→to_dict` (fila/SubjectProfile) descarta o slug e mantém a
+   confiança (confiança órfã).
+2. **Gemini código→bloco PARALELO ao funil determinístico.** `primary_block_id` (Gemini)
+   governa CODE_INDEX.md / CRONOGRAMA_DETALHADO.md / contagem CODE_HEALTH
+   (repo.py:837/913/994); `computed_block_id` (funil) governa todo o resto (file_map.py:613,
+   `resolve_effective_block`). Nunca reconciliam → mesma entry de código mostra bloco
+   diferente conforme o .md. **→ decisão D1.**
+3. **`winning_unit_slug` parâmetro morto** (file_map.py:173-174): nenhum caller o passa → o
+   scorer de subunidade escolhe sobre TODOS os tópicos de TODAS as unidades, sem restringir
+   à unidade do bloco. Causa-raiz do desalinhamento subunit↛unit (hoje só avisado em
+   dialogs.py:4143, nunca corrigido; nada reconcilia subunit↔unidade-do-bloco).
+4. **Fix (c) — dedup de id ausente no batch** (ver item (c) acima): `build_workflow.py:64`,
+   `incremental_build.py:48` não dedupam → `introducao`×2 / `t1-2026-1`×2 (B5).
+
+### P1 — código/contrato morto
+
+5. **`administrative_only` contrato 100% quebrado:** `_timeline_block_is_administrative_only`
+   nunca grava a chave no payload (index.py:888 só faz `continue`) → 4 filtros consumidores
+   são no-op permanentes: content_taxonomy.py:1144 (PIOR — caminho material→bloco real,
+   blocos admin entram como candidatos), file_map.py:537, cronograma_health.py:124,
+   moodle_labels.py:131. **→ decisão D2.**
+6. **Piso 0.72 anulado pelo cap:** `max(conf,0.72)` (file_map.py:1354) sempre rebaixado por
+   `min(conf, METHOD_CAPS["scorer_only"]=0.70)` (content_taxonomy.py:1244). Piso calibrado morto.
+7. **`BLOCO_TAG=0.50` morto** (thresholds.py:139): nunca lido; a tag `bloco:` é emitida sempre
+   que há `computed_block_id`, sem gate de banda. Morto OU gate faltante.
+8. **Fallback keyword ~600 linhas** (index.py:2205-2213): `_assign_timeline_block_to_unit` +
+   `_vote_unit_from_topic_candidates` + `_score_timeline_row_against_unit` só rodam quando
+   `assign_units_positional` retorna [] (<2 unidades / 0 blocos / afinidade-zero). Scorer-keyword
+   subsumido sobrevivendo como fallback de borda.
+9. **`auto_suggested_unit` gate obsoleto** (conflicts.py:31-44): ramo topic-derive (gate 0.65)
+   inalcançável porque `assign_units_positional` sempre grava `auto_unit_slug`. Docstring mente.
+10. **Mortos menores:** branch `consensus` B quase-inalcançável (code_summarization.py:271);
+    method `auto_concept` efêmero (tooltip dialogs.py:2329 mente); `process_reference_entry`
+    sem caller (reference_summary.py:56).
+
+### P2 — duplicação (manutenção; unificações eval-gated)
+
+11. **Família de 6 scorers** (maior fonte de duplicação): 3 ponderados (index.py:1618,
+    file_map.py:236, index.py:1730) + 3 de overlap leve com 3 fórmulas de confiança
+    diferentes (`assign_code_to_block`, `assign_concepts_to_unit`, `assign_concepts_to_block`).
+12. **2º sistema código→bloco:** `assign_code_to_block`+`_consolidate_assignment` (A-E,
+    code_summarization.py:164-289) duplica o funil determinístico (content_taxonomy.py:1120-1227).
+13. **3× basename→source_section:** stash_backfill.py:16, moodle.py:156, m365.py:271.
+14. **2 rotas card→bloco:** `resolve_card_to_block` (léxico só-nome, card_block.py:62) vs
+    `derive_card_block_map` (datas, autoritativo).
+15. **Predicados de kind duplicados** index vs classifier.py com vocabulário DIVERGENTE
+    (index aceita "prova 1/2"/"teste"; classifier exige "prova N") — meio conflito.
+16. **Menores:** `is_exercise_entry` (lista repetida 3-4×), `entry_norm` duplicado, filtro
+    "token significativo len≥4" (~5 sites), 3 tokenizadores divergentes.
+
+### P3 — ruído (eval-gated; golden de bloco 41/48 é a rede)
+
+17. auto_tags realimenta o scorer de subunit/unidade (auto-confirmação em retag; index.py:1755,1801).
+18. `llm_only` confiança hardcoded 0.6 = banda alta sem corroboração léxica.
+19. m365 sobrescreve `source_section` da API Moodle por ordem de execução (inverte autoridade).
+20. keyword "trabalho" sozinha → DELIVERABLE, zera unidade de aula (classifier.py:77-82).
+21. canal de data duplo (file_map.py:1297+1311); herança bidirecional soft-continuation
+    (index.py:2218, quebra monotonicidade do DP); substring em fontes fracas (file_map.py:700);
+    pisos de confiança hardcoded fora de thresholds.py.
+
+### Não-problemas confirmados
+- Referências (Approach C) NÃO contaminam a atribuição principal (isolamento em 3 níveis:
+  seleção disjunta, persistência separada, leitura sem mutação).
+- `margin_confidence` vs `relative_margin_confidence`: escopos disjuntos, intencional.
+- METHOD_CAPS não tornam banda alta inalcançável.
+- Os 3 "segundos cérebros" do FILE_MAP já mortos NÃO ressurgiram.
+
+### 2 decisões de arquitetura pendentes (discutir antes de corrigir)
+- **D1 — Gemini código→bloco:** o caminho deve existir (votar/subir confiança) ou
+  CODE_INDEX/CRONOGRAMA/CODE_HEALTH passam a ler `resolve_effective_block` (fonte única)? Se
+  fonte única, todo o ramo de DECISÃO de bloco em `_consolidate_assignment` (A-E) é redundante
+  com o funil; mantém-se do Gemini só os sinais que não duplicam (já alimentam o scorer de subunit).
+- **D2 — `administrative_only`:** ligar o campo (gravar no payload + runtime, religando os 4
+  filtros) OU deletar os 4 no-ops? Risco de deletar sem ligar: content_taxonomy.py:1144 opera
+  sobre runtime que ainda inclui blocos admin.
+
+### Sequência de fixes recomendada
+1. P0-4 (fix c) — barato, fecha B5.
+2. P0-1 + P0-3 juntos — fonte-única de subunidade (declarar `computed_subunit_slug` em
+   `FileEntry`, leitores na mesma ordem, ligar `winning_unit_slug`).
+3. D1/D2 (decisão) → então o P1 derivado.
+4. P1 morto barato (BLOCO_TAG, piso 0.72, auto_suggested_unit, mortos menores).
+5. P2 unificações + P3 ruído, cada um atrás do golden.
 
 ## Riscos transversais
 
