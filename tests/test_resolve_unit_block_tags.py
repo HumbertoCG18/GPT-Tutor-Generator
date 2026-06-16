@@ -508,3 +508,32 @@ def test_subtopic_matcher_receives_resolved_unit_as_winning_unit_slug():
     )
 
     assert captured["winning_unit_slug"] == "unidade-02"
+
+
+def test_manual_unit_feeds_winning_unit_slug():
+    captured = {}
+
+    def _capture_subtopic(e, t, m, winning_unit_slug=""):
+        captured["winning_unit_slug"] = winning_unit_slug
+        return _stub_topic_match()
+
+    resolve_unit_block_tags(
+        [{**_make_minimal_entry("e1", "Slides"), "manual_unit_slug": "unidade-manual"}],
+        course_meta={},
+        subject_profile=None,
+        build_file_map_unit_index_from_course_fn=lambda c, s: [],
+        build_file_map_timeline_context_from_course_fn=lambda c, s: {
+            "blocks_by_unit": {},
+            "unassigned_blocks": [],
+        },
+        iter_content_taxonomy_topics_fn=lambda t: [],
+        auto_map_entry_subtopic_fn=_capture_subtopic,
+        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
+            "unidade-auto", confidence=0.80, ambiguous=False
+        ),
+        select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
+        resolve_entry_manual_timeline_block_fn=lambda e, tc: None,
+        entry_markdown_text_for_file_map_fn=lambda root, e: "",
+    )
+
+    assert captured["winning_unit_slug"] == "unidade-manual"

@@ -179,7 +179,7 @@ def auto_map_entry_subtopic(
             unit_slug="",
             confidence=0.0,
             ambiguous=True,
-            reasons=["sem-taxonomia"],
+            reasons=[f"sem-topicos-para-unidade:{winning_unit_slug}" if winning_unit_slug else "sem-taxonomia"],
         )
 
     signals = collect_entry_unit_signals(entry, markdown_text)
