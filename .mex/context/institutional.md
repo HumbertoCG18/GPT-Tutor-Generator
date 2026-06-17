@@ -82,6 +82,12 @@ atribuição (arquivo→bloco→unidade/subunidade).
   (Prova Substituta), `G2` (prova de recuperação). Não há PF aqui (G2 = recuperação). Todas
   aparecem na Atividade com "Prova" → casam `assessment` via `ATIVIDADE_KIND_MAP`.
 
+- **Import na app (desde `939e483`):** o `HTMLImportDialog` aceita só a **URL do SARC**
+  (auto-fetch via `fetch_schedule_html` → `parse_html_schedule` → `_parse_aspnet_schedule`,
+  que lê a tabela `dgAulas`). O campo de paste de HTML foi removido da UI; o backend de
+  parse de HTML colado segue existindo como fallback, não exposto. (Decisão: "manter scraper
+  + só link" — link e paste sempre usaram o MESMO scraper; o link só auto-busca o HTML.)
+
 ### OpenSARC — Consulta.aspx (NÃO é fonte; página read-only do aluno)
 - Página do aluno: `Consulta.aspx` (título legado "Sistema de Alocação de Recursos -
   FACIN"). Consulta por data → tabela Recurso · Disciplina/Evento · Curso · Responsável,
@@ -134,12 +140,10 @@ atribuição (arquivo→bloco→unidade/subunidade).
   professor → o match léxico falha onde deveria casar. Candidato a melhoria futura (match
   fuzzy unidade↔card, ou alias de unidade). Relacionado a `source_section`/`card_block_map`
   e ao scorer unidade.
-- **`ATIVIDADE_KIND_MAP` não cobre "Evento Academico"** (helpers.py:425): valor real da
-  coluna Atividade que não casa nenhuma keyword → cai em `class` (aula) quando a linha NÃO
-  tem cor de exclusão (darkred=evento pega, mas evento sem cor especial vaza como aula).
-  Candidato: adicionar `evento → event`/holiday no mapa. (O texto "evento academico" JÁ está
-  em `_TIMELINE_ADMIN_PHRASES`, mas esse é o caminho de admin-por-texto-do-conteúdo, não o
-  kind do SARC.)
+- **"Evento Academico" no `ATIVIDADE_KIND_MAP` — RESOLVIDO (`939e483`):** antes não casava
+  keyword → caía em `class` (aula) quando a linha SARC não tinha cor de exclusão. Agora
+  `evento → event` (kind ignorado, igual ao evento marcado por cor darkred) → vira ignored
+  → bloco administrative_only → fora da atribuição.
 
 ## Consequência para o sistema de atribuição
 
