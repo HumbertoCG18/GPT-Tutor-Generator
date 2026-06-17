@@ -4569,8 +4569,11 @@ class TestCronogramaDetalhado:
     def test_no_todo_comment_leaks(self):
         from src.builder.artifacts.repo import cronograma_detalhado_md
         from src.models.core import FileEntry
+        # D1: o cronograma agrupa por computed_block_id (funil), não pelo
+        # primary_block_id do Gemini — o funil sempre seta computed_block_id p/ código.
         entry = FileEntry(source_path="/fake/ll.py", file_type="code",
-                          category="codigo-professor", title="linked_list")
+                          category="codigo-professor", title="linked_list",
+                          computed_block_id="b1")
         curation = {"entries": {entry.id(): {"summary": {"primary_block_id": "b1"}}}}
         blocks = [{"id": "b1", "period_label": "Aula 1", "topics": ["Listas"]}]
         r = cronograma_detalhado_md({"course_name": "ED"}, [entry], curation, blocks)

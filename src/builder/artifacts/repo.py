@@ -12,6 +12,7 @@ from src.builder.artifacts.build_metrics import (
     collect_build_metrics,
     render_build_metrics_md,
 )
+from src.builder.routing.file_map import resolve_effective_block
 
 
 def student_state_md(
@@ -834,7 +835,7 @@ def code_index_md(
     orphans: list = []
     for e in code_only:
         summary = (curation_entries.get(e.id()) or {}).get("summary") or {}
-        primary = summary.get("primary_block_id", "")
+        primary = resolve_effective_block(e.to_dict(), timeline_blocks).block_id
         if primary and primary in blocks_by_id:
             by_block.setdefault(primary, []).append((e, summary))
         else:
@@ -909,8 +910,9 @@ def cronograma_detalhado_md(
         if e.category not in ("codigo-professor", "codigo-aluno", "codigo-trabalho-aluno"):
             continue
         s = (curation_entries.get(e.id()) or {}).get("summary") or {}
-        if s.get("primary_block_id"):
-            primary_idx.setdefault(s["primary_block_id"], []).append((e, s))
+        primary = resolve_effective_block(e.to_dict(), timeline_blocks).block_id
+        if primary:
+            primary_idx.setdefault(primary, []).append((e, s))
         for sb in (s.get("secondary_block_ids") or []):
             secondary_idx.setdefault(sb, []).append((e, s))
 
@@ -991,7 +993,7 @@ def code_health_md(
     orphans_list = []
     for e in code_entries:
         s = (curation_entries.get(e.id()) or {}).get("summary") or {}
-        if s.get("primary_block_id"):
+        if resolve_effective_block(e.to_dict(), timeline_blocks).block_id:
             with_block += 1
         elif s:  # tem summary mas sem block
             orphans_list.append((e, s))
