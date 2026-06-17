@@ -136,3 +136,30 @@ def test_entry_sem_code_curation_nao_crasha():
     assert r["gemini_primary"] == ""
     assert r["true_block_id"] == ""
     assert list(r.keys()) == COLUMNS
+
+
+def test_entry_ausente_de_resolver_rows_nao_e_descartada():
+    """Entry cujo id está COMPLETAMENTE AUSENTE de resolver_rows_by_id não é descartada.
+
+    Degrada graciosamente: a linha é emitida com resolver_block/period/unit vazios.
+    Garante que um entry de código nunca se torna invisível no gold por falta de linha no resolver.
+    """
+    manifest_entries = [
+        {
+            "id": "code-sem-resolver",
+            "file_type": "code",
+            "source_section": "Aula 1",
+            "computed_block_band": "media",
+            "computed_block_id": "bloco-07",
+        }
+    ]
+    code_curation: dict = {}
+    resolver_rows_by_id: dict = {}
+    period_map: dict = {}
+
+    rows = build_code_gold_rows(manifest_entries, code_curation, resolver_rows_by_id, period_map)
+    assert len(rows) == 1, "entry não deve ser descartada quando ausente do resolver"
+    r = rows[0]
+    assert r["resolver_block"] == ""
+    assert r["resolver_period"] == ""
+    assert r["resolver_unit"] == ""

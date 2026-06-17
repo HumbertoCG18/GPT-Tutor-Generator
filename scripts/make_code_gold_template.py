@@ -1,12 +1,4 @@
-"""Gera template CSV para o gold de código (Fase 3 do resolver).
-
-Uma linha por entry de código/zip de um repo gerado, pré-preenchida com as
-predições funil/gemini/resolver + períodos do cronograma. `true_block_id`
-sai VAZIO para o humano preencher (Task 3.2.2).
-
-Uso:
-    python scripts/make_code_gold_template.py <repo_root> <out.csv>
-"""
+"""Gera template CSV para o gold de código (Fase 3 do resolver), uma linha por entry code/zip."""
 from __future__ import annotations
 
 import csv
@@ -87,7 +79,6 @@ def main(argv: list) -> int:
 
     cur_path = repo_root / "code_curation.json"
     code_curation_raw = json.loads(cur_path.read_text(encoding="utf-8")) if cur_path.exists() else {"entries": {}}
-    # Normaliza para {id: record} (sem o wrapper "entries")
     code_curation = code_curation_raw.get("entries") or {}
 
     compare_result = compare_repo(repo_root) or {}
