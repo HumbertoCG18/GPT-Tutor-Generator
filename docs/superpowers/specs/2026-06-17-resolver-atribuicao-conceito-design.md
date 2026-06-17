@@ -34,6 +34,10 @@ Esses sistemas **discordam** e são arbitrados por gates pontuais. A dívida nom
 
 Por outro lado, nos **cardless de faixa do meio o funil GANHOU do Gemini 6/7** (colecoes-arrays/conjuntos/sequencias→bloco-13, invariantes/terminacao→bloco-11, hoare→bloco-10), porque o Gemini tem viés de ancorar em **bloco-04** por keyword ("conjuntos"). Lição: **nem o funil nem o LLM sozinho bastam** — cada um erra num eixo (o funil super-pesa ferramenta/forma; o LLM ancora por keyword). Precisam ser **um modelo só** que combine os sinais e meça discriminância no nível certo.
 
+### Censo subunit/bands (17/06): divergência timeline × plano na UNIDADE
+
+`scripts/eval_subunit_census.py` no MF (pós-reprocess, **confirmado não-stale** — idêntico ao pré): cobertura subunit 27/60, band alta 40 / media 8 / baixa 9, e **7 subunit FORA da unidade** (viola a restrição do P0.2). Todos são `entry=unidade-01` com subunit de um tópico que o **Plano de Ensino** lista na unidade-02/03 (`logica-de-hoare`, `correcao-parcial-e-total`, `pre-e-pos-condicoes`, `softwares-...`). Causa: o **cronograma SARC** agenda Hoare/correção/etc. na janela da unidade-01 (a entry herda `unit` do BLOCO), mas o Plano agrupa esses tópicos na unidade-02/03 (a subunit vem do TÓPICO do plano) → **a unidade do bloco e a unidade do tópico-no-plano DIVERGEM** e a subunit escapa da unidade vencedora. É a divergência `unit_index`×`content_taxonomy` / timeline×plano vista no concreto — o resolver tem de **flagar o conflito** (bloco-unit ≠ tópico-unit), não atribuir silenciosamente uma subunit de outra unidade. (+1 slug stale `21-logica-de-hoare` = bug de normalização de slug do subunit, fix separado.)
+
 ### Por que o "quick-win" de down-weight de ferramenta NÃO resolve isolado
 
 O sinal de ferramenta **já existe e é deliberado** (P4, S4): `TOOL_BOOST=0.8` premia o bloco cujo `topic_text` contém o token da ferramenta da entry. O bug é que **bloco-06 se chama "Isabelle"** e a ferramenta é **uniforme na unidade-01 inteira** (04/05/06 são todos Isabelle) → não discrimina bloco, mas o boost age como se discriminasse. O IDF (S2) não corrige porque mede df sobre `topic_text` (isabelle aparece só no 06 → "raro" → favorecido), não sobre o uso real da ferramenta na unidade. Reduzir `TOOL_BOOST` é re-tunar uma constante deliberada (risco de regredir o P4) e é um tweak específico. **Decisão (17/06): dobrar a recalibração do sinal de ferramenta dentro deste resolver**, onde a discriminância é medida no nível certo.
@@ -125,6 +129,7 @@ Isto substitui S2 (IDF sobre `topic_text` só) e S4 (`TOOL_BOOST` constante): a 
 - censo código→bloco: confiante-errado **não sobe**; idealmente os 4 acima migram pro bloco do Gemini.
 - `scripts/rebuild_diff.py` nos 5 cursos: diffs explicáveis, nenhum flip ruim de unidade.
 - suíte `python -m pytest tests -q` verde.
+- **subunit dentro da unidade (P0.2):** `scripts/eval_subunit_census.py` — nenhum "subunit FORA da unidade" silencioso. Onde bloco-unit ≠ tópico-unit (os 7 casos MF: Hoare/correção/pré-pós/tipos-indutivos), o resolver **flaga conflito** e restringe a subunit à unidade vencedora; nunca atribui subunit de outra unidade. Sem slug stale (`21-logica-de-hoare`).
 
 ---
 
@@ -154,3 +159,4 @@ Cada fase roda atrás dos gates da seção 6.
 - Calibração dos pesos de fusão (4.3): aprender do gabarito vs fixar por princípio?
 - Blocos MERGED (apresentação+prova, ex. IA bloco-16 / SO bloco-08): resolver no agrupamento (`_rows_belong_to_same_thematic_block`) antes, ou o resolver lida com bloco multi-kind? (dívida correlata "separar blocos merged").
 - `concepts` do Gemino: usar embeddings/alias-map ou só overlap normalizado de conceito? (começar simples = overlap; embeddings é evolução).
+- **Divergência timeline×plano na unidade (7 casos MF):** quando o bloco (SARC) e o tópico (plano) discordam da unidade, quem vence a `unit` da entry? Proposta: o **bloco** (agendado/postado) vence a unidade, o conflito é **flagado**, e a subunit fica **restrita à unidade vencedora** (nunca de outra unidade). Validar no `eval_subunit_census` pós-resolver (alvo: 0 subunit fora da unidade).

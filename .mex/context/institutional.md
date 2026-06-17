@@ -154,6 +154,15 @@ atribuição (arquivo→bloco→unidade/subunidade).
   5 cursos atuais. Gotcha: alguns desses blocos vêm **MERGED** com uma prova (P1/P2) no mesmo
   intervalo → caem em ASSESSMENT (prova vence o trabalho via session-exam). Resolver de fato =
   separar blocos merged (dívida aberta).
+- **Divergência cronograma SARC × Plano de Ensino na UNIDADE — medido no MF (censo subunit, 17/06):**
+  alguns tópicos são **agendados** pelo cronograma numa unidade e **listados** pelo Plano em outra.
+  No MF, Lógica de Hoare, correção parcial/total, pré/pós-condições e tipos indutivos caem no tempo
+  da unidade-01 (bloco → `unit=unidade-01`), mas o Plano os agrupa na unidade-02/03 (tópico →
+  subunit dessas unidades) → 7 materiais com `subunit` de unidade diferente da `unit` da entry. Não
+  é ruído: SARC e Plano realmente discordam de unidade nesses tópicos. Consequência p/ a atribuição:
+  a reconciliação precisa eleger uma fonte pra `unit` (proposta: o bloco/agendado vence) e **flagar o
+  conflito**; a subunit nunca deve escapar pra outra unidade. É a face concreta da divergência latente
+  `unit_index`×`content_taxonomy`. Medido por `scripts/eval_subunit_census.py`.
 
 ## Consequência para o sistema de atribuição
 
