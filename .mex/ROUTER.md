@@ -194,6 +194,16 @@ Read this file before starting any task.
   posicional-vazio serializam SEM `auto_unit_slug` mas COM `topic_candidates`. MANTIDO
   (conflict-detection/health, golden-safe); so o comentario stale ("espelha topic-derive
   do build" -> hoje build deriva via posicional) foi corrigido. Sem mudanca de comportamento.
+- P1.3 piso 0.72 REMOVIDO (`6f24fc7`): o `max(confidence,0.72)` no session-first
+  single-block era polegar-na-balanca invisivel. A band usa a conf CAPADA
+  (scorer_only=0.70); o piso so afetava o `block_confidence` RAW passado a
+  `reconcile_unit_with_block` (bloco define unidade se block_confidence >=
+  unit_confidence). Como `unit_confidence` tambem e `relative_margin_confidence`
+  (idea 1), a comparacao e simetrica por design — o piso quebrava isso so na janela
+  unit_conf in (0.70,0.72]. Removido: discordancia marginal vira conflito flagado, conf
+  honesta. Rejeitada a opcao de reconciliar com a conf capada (method-cap = teto de
+  display, nao evidencia). Suite 1366 verde; golden 5/5. P1 restante: so o fallback
+  keyword ~600 linhas (index.py:2205, eval-gate forte, guard test antes de deletar).
 
 ### Not Declared In Brief
 

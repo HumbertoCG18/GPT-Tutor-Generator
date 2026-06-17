@@ -169,10 +169,9 @@
 
     <h3>🟠 P1 — morto/contrato (Lote B, eval-gated)</h3>
     <ul>
-      <li><span class="sev s1">piso 0.72</span> <code>file_map.py:~1356</code>: NÃO é no-op (flat 0.70 com piso vs <code>min(real,0.70)</code> sem). Decisão remove-vs-cap. Eval-gate.</li>
-      <li><span class="sev s1">fallback keyword ~600 linhas</span> <code>index.py:2205</code> + 3 fns: deletar + guard test (positional nunca []). Eval-gate forte.</li>
+      <li><span class="sev s1">fallback keyword ~600 linhas</span> <code>index.py:2205</code> + 3 fns: deletar + guard test (positional nunca []). Eval-gate forte. <b>Último item do P1.</b></li>
     </ul>
-    <p class="small"><span class="ok-line">✅ Lote A feito (<code>f45e466</code>):</span> BLOCO_TAG + process_reference_entry (mortos inequívocos) removidos. <i>consensus B / auto_concept NÃO são mortos</i> (D1 não os matou) — fora do P1. <span class="ok-line">✅ D2 feito (<code>085a725</code>):</span> <code>administrative_only</code> via predicado real nos 4 sites. <span class="ok-line">✅ auto_suggested_unit investigado (<code>8392450</code>):</span> ramo topic-derive é VIVO (não morto) — alcançável por blocos não-aula/herdados/posicional-vazio (sem <code>auto_unit_slug</code>, com <code>topic_candidates</code>); mantido, só comentário stale corrigido.</p>
+    <p class="small"><span class="ok-line">✅ Lote A feito (<code>f45e466</code>):</span> BLOCO_TAG + process_reference_entry (mortos inequívocos) removidos. <i>consensus B / auto_concept NÃO são mortos</i> (D1 não os matou) — fora do P1. <span class="ok-line">✅ D2 feito (<code>085a725</code>):</span> <code>administrative_only</code> via predicado real nos 4 sites. <span class="ok-line">✅ auto_suggested_unit investigado (<code>8392450</code>):</span> ramo topic-derive é VIVO (não morto) — alcançável por blocos não-aula/herdados/posicional-vazio (sem <code>auto_unit_slug</code>, com <code>topic_candidates</code>); mantido, só comentário stale corrigido. <span class="ok-line">✅ piso 0.72 removido (<code>6f24fc7</code>):</span> era polegar-na-balança invisível na reconciliação unit×bloco (band usa conf capada 0.70; o piso só inflava o block_confidence raw vs unit_confidence na janela 0.70-0.72). unit e bloco já são <code>relative_margin_confidence</code> (idea 1) → comparação simétrica; piso quebrava. Sem ele, discordância marginal vira conflito flagado.</p>
 
     <h3>🟡 P2 — duplicação (eval-gated, plano a escrever)</h3>
     <ul>
@@ -188,7 +187,7 @@
 
     <div class="note">📄 <b>Specs/Planos no disco:</b> spec <code>docs/superpowers/specs/2026-06-16-correcoes-atribuicao-wave-1-2-design.md</code> · plano P0 <code>docs/superpowers/plans/2026-06-16-correcoes-atribuicao-p0-subunit-dedup.md</code> · plano D1 <code>docs/superpowers/plans/2026-06-16-correcoes-atribuicao-d1-codigo-bloco.md</code>.</div>
 
-    <div class="note"><b>🥇 Priorização sugerida:</b> 1) <b>reprocessar MF</b> (app reiniciado — aplica P0 + idea 1 + D1: subunit↛unit, FILE_MAP, unit honesto, código→bloco band-gated) → 2) <b>P1 restante</b> (piso 0.72, fallback ~600 linhas) → 3) <b>P2/P3</b> (duplicação/ruído). Cada passo que muda atribuição roda atrás do eval-gate. <span class="ok-line">✅ fix c v2 + P0.5 + idea 1 (unit relative-margin) + D1 + idea 3 (source_section por pasta) + Lote A + D2 feitos.</span></div>
+    <div class="note"><b>🥇 Priorização sugerida:</b> 1) <b>reprocessar MF</b> (app reiniciado — aplica P0 + idea 1 + D1: subunit↛unit, FILE_MAP, unit honesto, código→bloco band-gated) → 2) <b>P1 restante</b> (fallback ~600 linhas — último item) → 3) <b>P2/P3</b> (duplicação/ruído). Cada passo que muda atribuição roda atrás do eval-gate. <span class="ok-line">✅ fix c v2 + P0.5 + idea 1 (unit relative-margin) + D1 + idea 3 (source_section por pasta) + Lote A + D2 feitos.</span></div>
 
     <div class="note"><b class="ok-line">✅ Não-problemas confirmados:</b> referências (Approach C) NÃO contaminam a atribuição; <code>margin</code> vs <code>relative_margin</code> disjuntos; METHOD_CAPS não tornam banda alta inalcançável; os 3 segundos-cérebros do FILE_MAP já mortos não ressurgiram.</div>
   </div>
@@ -589,6 +588,11 @@
     <h4>✅ P1 / D2 — <code>administrative_only</code> via predicado real (<code>085a725</code>)</h4>
     <p>A chave <code>administrative_only</code> nunca é gravada em produção: o <code>_build_timeline_index</code> runtime não a escreve nem remove blocos admin, e o <code>_serialize</code> já os remove. Logo o <code>block.get("administrative_only")</code> era no-op nos 4 sites — e em <code>content_taxonomy</code> e <code>file_map</code> (que leem o índice <b>runtime</b>) blocos administrativos (feriado/prova) vazavam como candidatos do scorer material→bloco e do ordinal <code>bloco-N</code>.</p>
     <p><b>D2=A uniforme:</b> key-lookup morto trocado pelo predicado real <code>timeline_block_is_administrative_only</code> (lê <code>rows</code>) nos 4 sites (<code>content_taxonomy.py</code>, <code>file_map.py</code>, <code>cronograma_health.py</code>, <code>moodle_labels.py</code>). Promovido a público (contrato compartilhado por <code>_serialize</code> + 4 consumidores + testes). Correto no runtime (filtra admin) e inócuo no serializado (sem rows → False, admin já removido). Testes que marcavam admin pela chave morta reescritos para o sinal real (rows administrativas). Suíte 1366 verde; golden de bloco 5/5, confiante-errado 0.</p>
+  </div>
+  <div class="card find good">
+    <h4>✅ P1.3 — remove piso 0.72 do block_confidence (<code>6f24fc7</code>)</h4>
+    <p>O piso <code>max(confidence, 0.72)</code> (session-first single-block) era um polegar-na-balança <b>invisível</b>: a band usa a conf <b>capada</b> (<code>scorer_only=0.70</code>), então o piso só afetava o <code>block_confidence</code> <b>raw</b> passado a <code>reconcile_unit_with_block</code> (bloco define a unidade se <code>block_confidence >= unit_confidence</code>).</p>
+    <p>Como <code>unit_confidence</code> também é <code>relative_margin_confidence</code> (idea 1, que alinhou unidade e bloco na mesma fórmula PRA a reconciliação ser justa), a comparação é <b>simétrica por design</b>. O piso quebrava isso só na janela <code>unit_conf ∈ (0.70, 0.72]</code> — bloco sobrepunha a unidade por +ε artificial, não por margem real. Removido: discordância marginal vira <b>conflito flagado</b> (conf honesta), nunca override silencioso. <i>Rejeitada</i> a opção de reconciliar com a conf capada (method-cap é teto de display, não medida de evidência → enfraqueceria bloco scorer forte). Suíte 1366 verde; golden 5/5. Eval real = censo MF.</p>
   </div>
 
   <h2>Entregas anteriores (changelogs)</h2>
