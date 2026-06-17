@@ -1,0 +1,25 @@
+{
+  "_doc": "Gold de codigo (Fase 3.2). true_block_id = bloco do cronograma a que o material de codigo/zip realmente pertence, rotulado por PROVENIENCIA FISICA (pasta-card do stash Moodle em C:/Users/Humberto/Desktop/Moodle/metodos-formais-para-computacao) + EXTENSAO real dos arquivos dentro do zip (.thy=Isabelle/unit-01, .dfy=Dafny/unit-02, .smv=NuSMV/unit-03) + topico do bloco (course/.timeline_index.json). A pasta resolve a UNIDADE decisivamente; o bloco fino dentro da unidade usa o topico do bloco (confidence media onde o bloco exato e discutivel). PROVISORIO ate revisao do usuario nos itens confidence!=alta.",
+  "repo": "Metodos-Formais-Tutor",
+  "labeled_by": "claude/folder-provenance+zip-content",
+  "entries": {
+    "arvores": {"true_block_id": "bloco-05", "confidence": "media", "card_folder": "Provas por Inducao", "kind": "thy", "evidence": "Isabelle (.thy) unit-01; arvores+inducao = bloco-05 'inducao arvores'"},
+    "exemplos": {"true_block_id": "bloco-04", "confidence": "media", "card_folder": "Provas por Inducao", "kind": "thy", "evidence": "Isabelle unit-01; defs de tipos indutivos/funcoes recursivas = bloco-04 'conjuntos indutivos equacoes recursivas'"},
+    "intro": {"true_block_id": "bloco-04", "confidence": "media", "card_folder": "Provas por Inducao", "kind": "thy", "evidence": "Isabelle unit-01; intro a tipos indutivos/recursao = bloco-04 (defs antes das provas)"},
+    "listas": {"true_block_id": "bloco-05", "confidence": "media", "card_folder": "Provas por Inducao", "kind": "thy", "evidence": "Isabelle unit-01; inducao estrutural em listas = bloco-05 'inducao'"},
+    "provas": {"true_block_id": "bloco-06", "confidence": "media", "card_folder": "Provas por Inducao", "kind": "thy", "evidence": "Isabelle unit-01; provas interativas Isar = bloco-06 'interativa teoremas isabelle'"},
+    "t1-2026-1-thy": {"true_block_id": "bloco-04", "confidence": "media", "card_folder": "TDE Trabalho Discente Efetivo", "kind": "thy", "evidence": "Isabelle unit-01; T1 recursao primitiva/tipos indutivos = bloco-04 'equacoes recursivas'"},
+    "introducao-zip": {"true_block_id": "bloco-12", "confidence": "alta", "card_folder": "Verificacao de Programas", "kind": "dfy", "evidence": "Dafny (.dfy) unit-02; funcoes/predicados/transparencia basicos = bloco-12 'introducao dafny'; 3 algos concordam 12"},
+    "tiposindutivos": {"true_block_id": "bloco-13", "confidence": "media", "card_folder": "Verificacao de Programas", "kind": "dfy", "evidence": "Dafny unit-02 (NAO unit-01 bloco-04 apesar dos 3 algos darem 04); datatypes Dafny fundacao das colecoes = bloco-13 (ou 12)"},
+    "terminacao": {"true_block_id": "bloco-12", "confidence": "media", "card_folder": "Verificacao de Programas", "kind": "dfy", "evidence": "Dafny unit-02; terminacao em Dafny = bloco-12 'terminacao introducao dafny' (vs bloco-11 teoria pre-dafny)"},
+    "hoare": {"true_block_id": "bloco-11", "confidence": "media", "card_folder": "Verificacao de Programas", "kind": "dfy", "evidence": "Dafny unit-02; verificacao de programas com Hoare em Dafny = bloco-11 'logica programas correcao parcial total' (vs bloco-10 teoria de Hoare)"},
+    "invariantes": {"true_block_id": "bloco-11", "confidence": "alta", "card_folder": "Verificacao de Programas", "kind": "dfy", "evidence": "Dafny unit-02 (NAO unit-01 bloco-04 que gem/res davam); invariantes de laco = bloco-11 que lista 'invariantes'"},
+    "colecoes-arrays": {"true_block_id": "bloco-13", "confidence": "alta", "card_folder": "Verificacao de Programas", "kind": "dfy", "evidence": "Dafny unit-02; arrays = bloco-13 'dafny colecoes arrays sequencias conjuntos' (exato); gem errou 04"},
+    "colecoes-conjuntos": {"true_block_id": "bloco-13", "confidence": "alta", "card_folder": "Verificacao de Programas", "kind": "dfy", "evidence": "Dafny unit-02; conjuntos = bloco-13 (exato); gem errou 04"},
+    "colecoes-sequences": {"true_block_id": "bloco-13", "confidence": "alta", "card_folder": "Verificacao de Programas", "kind": "dfy", "evidence": "Dafny unit-02; sequences = bloco-13 'sequencias' (exato); gem errou 04"},
+    "exercicios-conjuntos": {"true_block_id": "bloco-13", "confidence": "alta", "card_folder": "Verificacao de Programas", "kind": "dfy", "evidence": "Dafny unit-02; exercicios conjuntos/arrays = bloco-13; 3 algos concordam 13"},
+    "classes-parte1": {"true_block_id": "bloco-15", "confidence": "alta", "card_folder": "Verificacao de Programas", "kind": "dfy", "evidence": "Dafny unit-02; contadorV*.dfy classes/OO = bloco-15 'orientacao objetos dafny' (exato); funil errou 16"},
+    "exemplos-zip": {"true_block_id": "bloco-16", "confidence": "alta", "card_folder": "Especificacao e Verificacao de Modelos", "kind": "smv", "evidence": "NuSMV (.smv) unit-03 model checking; bloco-16 'verificacao modelos logica temporal'; os 3 algos erraram (deram 11/12 unit-02 Dafny; Gemini leu 'Dafny Hoare' por engano)"}
+  },
+  "baseline": {"resolver_block_accuracy": 0.0, "note": "provisorio; fixar apos revisao do usuario"}
+}
