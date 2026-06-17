@@ -574,6 +574,13 @@
     <h4>✅ P0.5 — Aba códigos: rótulo = <code>inferred_title</code></h4>
     <p>A aba códigos passou a mostrar o título do Gemini (<code>inferred_title</code>) em vez de <code>eid[:8]</code> — acaba a confusão "dois exemplos". Commit <code>1773bbb</code>.</p>
   </div>
+  <div class="card find good">
+    <h4>✅ 16/06 — UI &amp; higiene de ids (pós fix c v2)</h4>
+    <p><b>Aba cronograma:</b> materiais mostram o nome do arquivo (com extensão) em vez do id/stem ambíguo (<code>c3f8997</code>).</p>
+    <p><b>Aba códigos:</b> checkbox "Mostrar nome do arquivo" alterna a coluna #0 entre id e nome do arquivo; coluna "Título" usa <code>inferred_title</code> (<code>2bb3c4b</code>).</p>
+    <p><b>Migração de ids legados:</b> <code>scripts/migrate_collided_ids.py</code> — replay determinístico do dedup fix c v2, renomeia assets + re-chaveia <code>code_curation</code>, dry-run/<code>--apply</code>/idempotente (<code>35a72b7</code>). Aplicado no MF: <code>introducao-zip</code>, <code>exemplos-zip</code>, <code>t1-2026-1-thy</code> — zero ids duplicados.</p>
+    <p><b>Delete sem resíduo:</b> <code>unprocess</code> de ZIP agora limpa os assets dos filhos extraídos (<code>extracted_files</code>), não só o entry de topo (<code>3bf81ea</code>).</p>
+  </div>
 
   <h2>Entregas anteriores (changelogs)</h2>
   <div class="card find good">
