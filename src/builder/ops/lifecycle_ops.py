@@ -167,6 +167,29 @@ def process_single_impl(
     return "ok"
 
 
+ASSET_PATH_KEYS = (
+    "raw_target", "base_markdown", "advanced_markdown", "advanced_markdown_raw",
+    "manual_review", "images_dir", "tables_dir", "table_detection_dir",
+    "advanced_asset_dir", "asset_dir", "advanced_metadata_path",
+    "approved_markdown", "curated_markdown", "rendered_pages_dir",
+)
+
+
+def _entry_asset_paths(entry: dict) -> List[str]:
+    """Paths de asset (relativos ao repo) do entry + filhos de zip
+    (``extracted_files``). Inclui os filhos para o unprocess de um ZIP não deixar
+    resíduo das entries virtuais extraídas (o caminho antigo só limpava o entry
+    de topo → assets dos filhos ficavam órfãos em disco)."""
+    out: List[str] = []
+    sources = [entry, *(c for c in (entry.get("extracted_files") or []) if isinstance(c, dict))]
+    for src in sources:
+        for key in ASSET_PATH_KEYS:
+            val = src.get(key)
+            if val:
+                out.append(val)
+    return out
+
+
 def _remove_paths(root_dir, rel_paths: List[str], *, log_prefix: str = "") -> int:
     removed_count = 0
     for rel_path in rel_paths:
@@ -199,26 +222,7 @@ def unprocess(builder, entry_id: str) -> bool:
         logger.warning("Entry not found in manifest: %s", entry_id)
         return False
 
-    paths_to_remove: List[str] = []
-    for key in [
-        "raw_target",
-        "base_markdown",
-        "advanced_markdown",
-        "advanced_markdown_raw",
-        "manual_review",
-        "images_dir",
-        "tables_dir",
-        "table_detection_dir",
-        "advanced_asset_dir",
-        "asset_dir",
-        "advanced_metadata_path",
-        "approved_markdown",
-        "curated_markdown",
-        "rendered_pages_dir",
-    ]:
-        val = target.get(key)
-        if val:
-            paths_to_remove.append(val)
+    paths_to_remove: List[str] = _entry_asset_paths(target)
 
     removed_count = _remove_paths(builder.root_dir, paths_to_remove, log_prefix="Could not remove")
     removed_count += builder._remove_entry_consolidated_images(entry_id)
