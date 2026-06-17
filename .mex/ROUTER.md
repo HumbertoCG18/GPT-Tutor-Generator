@@ -238,6 +238,7 @@ Read this file before starting any task.
 | Task type | Load |
 |---|---|
 | Understanding how the system works | `context/architecture.md` |
+| Understanding the faculty/source platforms (Moodle, SARC, Plano de Ensino) | `context/institutional.md` |
 | Working with a specific technology or backend | `context/stack.md` |
 | Writing or reviewing code | `context/conventions.md` |
 | Making a design decision | `context/decisions.md` |
