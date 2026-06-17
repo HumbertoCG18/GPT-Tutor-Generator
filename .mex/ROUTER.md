@@ -187,6 +187,13 @@ Read this file before starting any task.
   `bloco-N`. D2=A uniforme: troca pelo predicado real
   `timeline_block_is_administrative_only` (promovido a publico; le `rows`) nos 4 sites.
   Correto no runtime, inocuo no serializado. Suite 1366 verde; golden de bloco 5/5.
+- P1.5 `auto_suggested_unit` (conflicts.py) investigado (`8392450`): o ramo topic-derive
+  e VIVO, nao morto. A premissa da spec (inalcancavel pq posicional sempre grava
+  `auto_unit_slug`) e FALSA — posicional so grava p/ class_candidates com slug; blocos
+  nao-aula, herdados (soft-continuation seta `unit_slug` sem `auto_unit_slug`) e
+  posicional-vazio serializam SEM `auto_unit_slug` mas COM `topic_candidates`. MANTIDO
+  (conflict-detection/health, golden-safe); so o comentario stale ("espelha topic-derive
+  do build" -> hoje build deriva via posicional) foi corrigido. Sem mudanca de comportamento.
 
 ### Not Declared In Brief
 
