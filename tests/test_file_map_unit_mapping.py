@@ -352,8 +352,14 @@ def test_auto_map_entry_unit_matches_exercise_to_recursive_definitions():
     result = _auto_map_entry_unit(entry, units, markdown_text="")
 
     assert isinstance(result, UnitMatchResult)
+    # Topo ainda é a unidade de recursão...
     assert result.slug == "unidade-01-metodos-formais"
-    assert result.confidence > 0
+    # ...mas o sinal (só título concatenado, sem markdown) é fraco: com
+    # relative_margin_confidence (idea 1) a confiança não satura mais via o termo
+    # winner*k — fica honestamente baixa/ambígua, abaixo do gate de tag. A unidade
+    # passa a ser herdada do BLOCO na reconciliação, em vez de cravada por ruído.
+    assert result.ambiguous
+    assert result.confidence < 0.65
 
 
 def test_auto_map_entry_unit_uses_markdown_headings_as_signal():

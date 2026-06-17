@@ -20,7 +20,6 @@ from src.builder.routing.thresholds import (
     TOOL_PENALTY,
     TOOL_TOKENS,
     T,
-    margin_confidence,
     relative_margin_confidence,
 )
 
@@ -456,10 +455,13 @@ def auto_map_entry_unit(
         confidence = 0.7
         ambiguous = False
     else:
-        # margin_confidence reintroduz o termo winner*k: um vencedor positivo
-        # rende confianca > 0 mesmo com margem nula (ex.: titulo concatenado que
-        # empata as unidades), restaurando o comportamento pre-refator.
-        confidence = margin_confidence(winner_score, runner_up_score, k=T.MARGIN_K)
+        # relative_margin_confidence (idea 1: mesma fórmula do bloco, P2): margem
+        # RELATIVA escalada pela força absoluta. Mata a saturação do margin_confidence
+        # aditivo, cujo termo winner*k clampava em 1.0 com winner_score alto → unidade
+        # confiante-ERRADA (ex.: "exemplos" casando o subtópico de OUTRA unidade dava
+        # conf 1.0 e ainda vencia o bloco na reconciliação). O piso absoluto de
+        # ambiguidade abaixo (UNIT_MATCH_MIN_WINNER) segue valendo.
+        confidence = relative_margin_confidence(winner_score, runner_up_score)
         # Ambiguo por margem RELATIVA fraca OU por score ABSOLUTO baixo: sem o
         # piso absoluto, um winner fraco com runner_up ~0 (rel_margin ~1.0)
         # passaria por confiante (caso do token "estado" acidental).
