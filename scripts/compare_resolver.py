@@ -6,11 +6,19 @@ Uso:
     python scripts/compare_resolver.py "<repo>" ["<repo2>" ...]
     python scripts/compare_resolver.py            # roda os 5 cursos default
 
-O `signals` e montado pelo MESMO caminho da producao
-(collect_entry_unit_signals + _entry_markdown_text_for_file_map); para entries
-de codigo/zip sem .md convertido, usa code_curation_signal_text como surrogate
-de conteudo (igual ao funil). O voto do LLM e o `summary` da curation (carrega
-primary/secondary/confidence/concepts).
+O `signals` e montado pelo MESMO caminho que o BLOCK scorer da producao
+(file_map._select_probable_period_for_entry -> collect_entry_unit_signals com
+markdown CRU de _entry_markdown_text_for_file_map). Para codigo/zip sem .md o
+markdown cai vazio — IGUAL ao funil; NAO injetamos o surrogate
+code_curation_signal_text (o funil so o usa na rota de subunit/topico, nunca no
+scorer de bloco) e NAO mesclamos known_tools em tool_tags_text (a producao nunca
+injeta).
+
+ATENCAO — a comparacao NAO e like-for-like: o resolver le os `concepts` do
+Gemini (injetados em entry["concepts"], canal LLM-first-class por design) + o
+voto LLM (`summary` da curation: primary/secondary/confidence). O funil (oraculo
+= computed_block_id ja no manifest) NAO le esses concepts no scorer de bloco.
+Logo: "resolver-COM-concepts-do-LLM vs funil-SEM".
 """
 from __future__ import annotations
 
@@ -22,12 +30,9 @@ from typing import Dict, List, Optional
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map  # noqa: E402
-from src.builder.core.code_summarization import code_curation_signal_text  # noqa: E402
-from src.builder.core.semantic_config import merge_semantic_profile  # noqa: E402
 from src.builder.extraction.entry_signals import collect_entry_unit_signals  # noqa: E402
 from src.builder.routing.concept_resolver import resolve_material_assignment  # noqa: E402
 from src.builder.routing.sequence import annotate_class_ordinals  # noqa: E402
-from src.builder.text.normalize import normalize_match_text  # noqa: E402
 
 DEFAULT_COURSES = [
     "Engenharia-Software-2-Tutor",
@@ -69,35 +74,26 @@ def _is_material(entry: dict) -> bool:
     return str(entry.get("file_type") or "") == "pdf" or bool(entry.get("category"))
 
 
-def _tool_tokens_from_profile(profile: dict) -> List[str]:
-    return sorted(
-        {
-            normalize_match_text(t)
-            for t in (merge_semantic_profile(profile).get("known_tools") or [])
-            if normalize_match_text(t)
-        }
-    )
-
-
 def _curation_summary(curation: dict, entry_id: str) -> dict:
     rec = (curation.get("entries") or {}).get(entry_id) or {}
     summary = rec.get("summary")
     return summary if isinstance(summary, dict) else {}
 
 
-def _build_signals(root: Path, entry: dict, summary: dict, tool_tokens: List[str]) -> dict:
+def _build_signals(root: Path, entry: dict) -> dict:
+    # FIEL A PRODUCAO: o BLOCK scorer do funil (file_map._select_probable_period_
+    # for_entry -> collect_entry_unit_signals) ve o markdown CRU
+    # (_entry_markdown_text_for_file_map), que para codigo/zip e tipicamente
+    # vazio. NAO injetamos o surrogate code_curation_signal_text aqui (o funil
+    # so o usa na rota de subunit/topico, NUNCA no scorer de bloco). O resolver
+    # recebe o sinal semantico de codigo pelo canal DESENHADO (concepts do
+    # Gemini em entry["concepts"] + voto LLM), nao por um surrogate de markdown.
     markdown_text = _entry_markdown_text_for_file_map(root, entry)
-    if not markdown_text:
-        # Codigo/zip sem .md convertido: o funil usa o resumo do Gemini como
-        # surrogate de conteudo (code_curation_signal_text). Espelhamos.
-        markdown_text = code_curation_signal_text({"summary": summary})
-    signals = collect_entry_unit_signals(entry, markdown_text)
-    # tool_tags do repo (known_tools) entram no down-weight de bloco da 2.1,
-    # alem das ferramentas que collect_entry_unit_signals ja derivou da extensao.
-    existing = signals.get("tool_tags_text", "")
-    merged = " ".join(t for t in [existing, *tool_tokens] if t)
-    signals["tool_tags_text"] = normalize_match_text(merged)
-    return signals
+    # tool_tags_text vem SO de collect_entry_unit_signals (auto_tags
+    # `ferramenta:` + extensao do arquivo), exatamente como a producao monta.
+    # NAO mesclamos known_tools do .semantic_profile aqui: a producao nunca
+    # injeta known_tools em tool_tags_text.
+    return collect_entry_unit_signals(entry, markdown_text)
 
 
 def _funil_unit(entry: dict) -> str:
@@ -116,14 +112,12 @@ def compare_repo(root: Path) -> Optional[dict]:
     timeline = _load_json(root / "course" / ".timeline_index.json") or {}
     taxonomy = _load_json(root / "course" / ".content_taxonomy.json") or {}
     curation = _load_json(root / "code_curation.json") or {"entries": {}}
-    profile = _load_json(root / "course" / ".semantic_profile.generated.json") or {}
 
     blocks = list(timeline.get("blocks") or [])
     units = list(taxonomy.get("units") or [])
     if not blocks:
         return {"error": "sem blocos em course/.timeline_index.json"}
     annotate_class_ordinals(blocks)
-    tool_tokens = _tool_tokens_from_profile(profile)
 
     entries = [e for e in (manifest.get("entries") or []) if _is_material(e)]
     rows: List[dict] = []
@@ -133,11 +127,15 @@ def compare_repo(root: Path) -> Optional[dict]:
         if not funil_block:
             continue
         summary = _curation_summary(curation, entry_id)
-        # O resolver le entry["concepts"]; a fonte real e summary.concepts.
+        # CANAL LLM-first-class do resolver: o resolver le entry["concepts"]
+        # (fonte real = summary.concepts do Gemini). MANTIDO de proposito — e
+        # o sinal semantico legitimo de codigo/zip. A comparacao e, portanto,
+        # "resolver-COM-concepts-do-LLM vs funil-SEM" (ver caveat no relatorio):
+        # o funil (oraculo) NAO le esses concepts no scorer de bloco.
         entry_for_resolver = dict(entry)
         if summary.get("concepts"):
             entry_for_resolver["concepts"] = summary.get("concepts")
-        signals = _build_signals(root, entry, summary, tool_tokens)
+        signals = _build_signals(root, entry)
         assignment = resolve_material_assignment(
             entry_for_resolver,
             blocks,
@@ -215,12 +213,21 @@ def _summary(rows: List[dict], n_blocks: int, n_units: int) -> str:
     )
 
 
+_COMPARISON_CAVEAT = (
+    "_Comparacao NAO like-for-like: resolver-COM-concepts-do-LLM "
+    "(entry[\"concepts\"] do Gemini + voto LLM) vs funil-SEM (o oraculo "
+    "computed_block_id nao le esses concepts no scorer de bloco)._"
+)
+
+
 def render_repo(name: str, result: dict) -> str:
     parts = [f"## {name}", ""]
     if result.get("error"):
         parts.append(f"ERRO: {result['error']}")
         return "\n".join(parts)
     rows = result["rows"]
+    parts.append(_COMPARISON_CAVEAT)
+    parts.append("")
     parts.append(_summary(rows, result["n_blocks"], result["n_units"]))
     parts.append("")
     parts.append(_render_table(rows))
