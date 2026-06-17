@@ -51,6 +51,22 @@ Spec: `docs/superpowers/specs/2026-06-17-signal-registry-design.md`. Alavancas c
 ## Constatação central (anti-refatoração-em-círculo)
 O fusor já existe (`concept_resolver`) e já degrada honestamente. O signal-registry é **EXTENSÃO** (adicionar extratores+pesos), não reescrita. O funil legado é **DELETADO** na 3.4, não refatorado. Coexistência 2-caminhos-atrás-de-flag = sem big-bang. NÃO tocar GOLDEN (`assign_units_positional`, `_build_timeline_index`, review rule, flag-OFF).
 
+## Backlog pós-refatoração — auditoria/unificação de artefatos (registrado 2026-06-17)
+Depois de fechar o signal-registry (alavancas) E o cutover 3.4, fazer UMA rodada de
+auditoria dos **artefatos de dados em disco**: provavelmente há artefatos mortos,
+redundantes ou duplicados que podem ser fundidos num só. NÃO executar antes do cutover
+— o funil legado ainda lê parte deles.
+- Candidatos observados (`course/` + raiz, por curso): `manifest.json`, `code_curation.json`,
+  `.timeline_index.json`, `.timeline_curation.json`, `.card_block_map.json`, `.content_taxonomy.json`,
+  `.semantic_profile.generated.json`, `.tag_profile.json`, `.tag_catalog.json`, `.assessment_context.json`,
+  `references_curation.json` + (novo) `.lessons_index.json`. Suspeitas a confirmar: `tag_profile`×`tag_catalog`;
+  sobreposição de mapa data/bloco entre `card_block_map`×`lessons_index`×`timeline_index`; curations dispersas.
+- Método: primeiro AUDITAR quem LÊ cada artefato (grep dos load points) → marcar morto/vivo/redundante;
+  só então propor fusão. Correção na RAIZ (não por curso). Cada fusão = eval-gate (golden 5/5 + suíte +
+  rebuild_diff 5 cursos) + doc-vivo atualizado.
+- Distinto do FOLD de CÓDIGO já listado na spec (signal-registry §"Mapa de reúso"): aquilo é dedup de
+  FUNÇÕES; este é dedup de ARTEFATOS de dados.
+
 ## Eval-gates / comandos
 - Suíte: `python -m pytest tests -q` (1438).
 - Golden PDF: `python scripts/eval_assignments.py` (5/5, confiante-errado 0).
