@@ -15,6 +15,12 @@ def _code_row_label(summary: dict, entry: dict, eid: str) -> str:
     return str((summary or {}).get("inferred_title") or (entry or {}).get("title") or eid or "")
 
 
+def _entry_filename(entry: dict) -> str:
+    """Nome do arquivo original (basename com extensão) do source_path."""
+    sp = str((entry or {}).get("source_path") or "")
+    return sp.replace("\\", "/").rstrip("/").split("/")[-1]
+
+
 PEDAGOGICAL_ROLES = [
     "exemplo_demonstrativo",
     "exercicio_resolvido",
@@ -48,6 +54,7 @@ class CodesPanel(tk.Frame):
         self._get_config = get_config_fn
         self._get_repo_dir = get_repo_dir_fn
         self._busy = False
+        self._show_filename = tk.BooleanVar(value=False)
         self._build_ui()
 
     # ------------------------------------------------------------------ UI
@@ -70,6 +77,12 @@ class CodesPanel(tk.Frame):
             text="🎯 Atribuir aula",
             command=self._on_assign_block,
         ).pack(side="left", padx=2)
+        ttk.Checkbutton(
+            toolbar,
+            text="Mostrar nome do arquivo",
+            variable=self._show_filename,
+            command=self.refresh,
+        ).pack(side="left", padx=(12, 2))
 
         cols = ("status", "titulo", "linguagem", "aula", "conceitos")
         self._tree = ttk.Treeview(self, columns=cols, show="tree headings")
@@ -120,11 +133,19 @@ class CodesPanel(tk.Frame):
                 return []
         return []
 
+    def _id_cell(self, entry: dict, eid: str) -> str:
+        """Coluna #0: id por padrão; nome do arquivo (com extensão) quando o
+        checkbox 'Mostrar nome do arquivo' está marcado."""
+        if self._show_filename.get():
+            return _entry_filename(entry) or eid
+        return eid
+
     # -------------------------------------------------------------- refresh
     def refresh(self):
         """Re-read manifest + curation, redraw."""
         for item in self._tree.get_children():
             self._tree.delete(item)
+        self._tree.heading("#0", text=("Arquivo" if self._show_filename.get() else "ID"))
 
         repo_dir = self._repo_dir()
         if not repo_dir:
@@ -160,7 +181,7 @@ class CodesPanel(tk.Frame):
                 with_summary += 1
 
             status_icon = "✅" if has_summary else "⏳"
-            title = summary.get("inferred_title") or e.get("title", "")
+            title = _code_row_label(summary, e, eid)
             lang = summary.get("language") or ""
             block_id = summary.get("primary_block_id", "")
             if block_id and block_id in blocks_by_id:
@@ -175,7 +196,7 @@ class CodesPanel(tk.Frame):
                 "",
                 "end",
                 iid=eid,
-                text=_code_row_label(summary, e, eid),
+                text=self._id_cell(e, eid),
                 values=(status_icon, title, lang, block_label, concepts),
             )
 
