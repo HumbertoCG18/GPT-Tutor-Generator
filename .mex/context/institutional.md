@@ -109,6 +109,16 @@ atribuição (arquivo→bloco→unidade/subunidade).
     **TDE** (Trabalho Discente Efetivo — exercícios dados em aula entram no card de TDE).
   Consequência: o match `source_section`→unidade/bloco NÃO pode assumir nome=unidade; tem
   que tolerar card por-semana, por-tipo-de-conteúdo e por-título-divergente.
+- **Label do recurso (`<span class="instancename">`) = rótulo do professor, HOJE DESCARTADO.** O
+  nome visível na lista Moodle (ex.: "Exemplos (invariantes de laço)") vem de `mod.get("name")`
+  (`moodle.py:130`), mas em MF o link redireciona pro SharePoint/OneDrive e só o filename sobrevive
+  (`invariantes.zip`). É o sinal de tópico mais forte por material — alvo do signal-registry (capturar
+  como campo `moodle_label`, NUNCA sobrescrever `title`).
+- **Resumo-da-semana = módulo `label` do Moodle com mapa data→tópico.** Muitos profs postam um Label
+  ("Semana DD/MM a DD/MM: (DD/MM): tópico; ..."). `moodle_labels.py` JÁ parseia isso (`lessons=[{date,text}]`,
+  formatos A-D), mas `derive_card_block_map` usa só as `dates` e DROPA o `text`. É o mapa data→tópico
+  do próprio professor — sinal autoritativo de bloco por sessão, sub-aproveitado. Nem todo prof faz →
+  extrator opcional com degradação honesta (cf. `docs/superpowers/specs/2026-06-17-signal-registry-design.md`).
 
 ### Microsoft 365
 - Fonte de material/seção (`m365.py` → `source_section`).

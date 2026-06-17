@@ -448,6 +448,18 @@
 <h2 id="propagacao">5. Informação Gerada mas Não Propagada</h2>
 
 <div class="card find">
+  <h4>0. Sinais de atribuição parseados/disponíveis mas DESCARTADOS <span class="tag t-warn">precisão</span></h4>
+  <p>Pistas que o professor já fornece e o pipeline joga fora — alvo do <b>signal-registry</b> (<code>docs/superpowers/specs/2026-06-17-signal-registry-design.md</code>):</p>
+  <ul>
+    <li><b>Resumo-da-semana <code>lessons[].text</code>:</b> <code>moodle_labels.py</code> parseia data→tópico por aula (formatos A-D), mas <code>derive_card_block_map</code> usa só <code>dates</code> e <b>dropa o <code>text</code></b>. É o sinal mais forte e mais limpo (mapa data→tópico do próprio professor).</li>
+    <li><b>Label do recurso (<code>&lt;span instancename&gt;</code>):</b> = <code>mod.get("name")</code> em <code>moodle.py:130</code>, usado só pro savename e descartado. O redirect p/ SharePoint deixa só o filename (ex.: "Exemplos (invariantes de laço)" → <code>invariantes.zip</code>).</li>
+    <li><b>Data de postagem:</b> Moodle <code>timemodified</code>/<code>timecreated</code> vêm no payload de <code>core_course_get_contents</code>, mas <code>iter_section_files</code> lê só filename/fileurl. Graph/Drive expõem <code>createdDateTime</code>/<code>createdTime</code> (fallback fraco — upload≠aula).</li>
+    <li><b>Metadata M365:</b> <code>resourceVisualization</code> (título/tipo) parseado em <code>m365.py</code>, usado só p/ display/filtro, não vira sinal.</li>
+    <li><b>Canal de <code>concepts</code> (Gemini):</b> o resolver lê <code>entry["concepts"]</code>; o funil léxico ignora (por design). Assimetria conhecida.</li>
+  </ul>
+  <p class="small">Plug genérico: novo extrator → chave em <code>collect_entry_unit_signals</code> → termo pesado no fusor <code>concept_resolver</code>. Degradação honesta (ausente = band baixa + flag, nunca chute confiante). Eval-gate cross-curso por canal.</p>
+</div>
+<div class="card find">
   <h4>5. Sem delta-tracking nos índices</h4>
   <p><code>.unit_tag_index.json</code> e <code>.timeline_index.json</code> são sobrescritos integralmente a cada build. Não há registro de "o que mudou" (entries reatribuídas, blocos que trocaram de tipo) — dificulta auditar regressões de matching entre builds.</p>
 </div>
