@@ -179,6 +179,14 @@ Read this file before starting any task.
   `helpers.collapse_ws`). ADIADO: Task B (`administrative_only` precisa decisao de
   produto: persistir vs deletar filtros mortos), Tasks D/E (unificar scorers/
   predicados, eval-gated). 978 testes.
+- D2 (`administrative_only`) RESOLVIDO (`085a725`, P1 Lote B; subsume a Task B acima):
+  a chave nunca e gravada em producao (`_build_timeline_index` runtime nao escreve nem
+  remove admin; `_serialize` ja remove) -> `block.get("administrative_only")` era no-op
+  nos 4 sites, e `content_taxonomy`/`file_map` (leem o indice runtime) deixavam blocos
+  admin (feriado/prova) vazarem como candidatos do scorer material->bloco e do ordinal
+  `bloco-N`. D2=A uniforme: troca pelo predicado real
+  `timeline_block_is_administrative_only` (promovido a publico; le `rows`) nos 4 sites.
+  Correto no runtime, inocuo no serializado. Suite 1366 verde; golden de bloco 5/5.
 
 ### Not Declared In Brief
 

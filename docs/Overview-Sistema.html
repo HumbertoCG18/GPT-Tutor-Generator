@@ -165,21 +165,15 @@
 
 <div class="view" id="auditoria">
   <div class="card aud">
-    <p class="desc"><b>Pendências — sistema de atribuição.</b> O que falta implementar (P0 já mergeado está na aba "✅ Concluído"). Detalhe no plano-mestre, specs/planos e no <b>handoff</b> <code>docs/reports/2026-06-16-handoff-atribuicao.md</code> (estado + próximo passo D2).</p>
-
-    <h3>🟠 Arquitetura decidida — a implementar</h3>
-    <ul>
-      <li><span class="sev s1">D2=A</span> <code>administrative_only</code>: predicado real nos 4 sites (chave nunca gravada → admin vaza como candidato). Parte do P1.</li>
-    </ul>
+    <p class="desc"><b>Pendências — sistema de atribuição.</b> O que falta implementar (P0 já mergeado está na aba "✅ Concluído"). Detalhe no plano-mestre, specs/planos e no <b>handoff</b> <code>docs/reports/2026-06-16-handoff-atribuicao.md</code> (estado + próximos passos do P1).</p>
 
     <h3>🟠 P1 — morto/contrato (Lote B, eval-gated)</h3>
     <ul>
-      <li><span class="sev s1">D2</span> <code>administrative_only</code>: predicado real em <code>content_taxonomy.py:1147</code> (vazamento runtime); deletar os 3 sites inócuos (serializado já sem admin). Eval-gate.</li>
       <li><span class="sev s1">piso 0.72</span> <code>file_map.py:~1356</code>: NÃO é no-op (flat 0.70 com piso vs <code>min(real,0.70)</code> sem). Decisão remove-vs-cap. Eval-gate.</li>
       <li><span class="sev s1">auto_suggested_unit</span> <code>conflicts.py:21-44</code>: investigar reachability do ramo topic-derive (tem testes; conflict-detection, golden-safe).</li>
       <li><span class="sev s1">fallback keyword ~600 linhas</span> <code>index.py:2205</code> + 3 fns: deletar + guard test (positional nunca []). Eval-gate forte.</li>
     </ul>
-    <p class="small"><span class="ok-line">✅ Lote A feito (<code>f45e466</code>):</span> BLOCO_TAG + process_reference_entry (mortos inequívocos) removidos. <i>consensus B / auto_concept NÃO são mortos</i> (D1 não os matou) — fora do P1.</p>
+    <p class="small"><span class="ok-line">✅ Lote A feito (<code>f45e466</code>):</span> BLOCO_TAG + process_reference_entry (mortos inequívocos) removidos. <i>consensus B / auto_concept NÃO são mortos</i> (D1 não os matou) — fora do P1. <span class="ok-line">✅ D2 feito (<code>085a725</code>):</span> <code>administrative_only</code> via predicado real nos 4 sites.</p>
 
     <h3>🟡 P2 — duplicação (eval-gated, plano a escrever)</h3>
     <ul>
@@ -195,7 +189,7 @@
 
     <div class="note">📄 <b>Specs/Planos no disco:</b> spec <code>docs/superpowers/specs/2026-06-16-correcoes-atribuicao-wave-1-2-design.md</code> · plano P0 <code>docs/superpowers/plans/2026-06-16-correcoes-atribuicao-p0-subunit-dedup.md</code> · plano D1 <code>docs/superpowers/plans/2026-06-16-correcoes-atribuicao-d1-codigo-bloco.md</code>.</div>
 
-    <div class="note"><b>🥇 Priorização sugerida:</b> 1) <b>reprocessar MF</b> (app reiniciado — aplica P0 + idea 1 + D1: subunit↛unit, FILE_MAP, unit honesto, código→bloco band-gated) → 2) <b>D2 + P1</b> (morto) → 3) <b>P2/P3</b> (duplicação/ruído). Cada passo que muda atribuição roda atrás do eval-gate. <span class="ok-line">✅ fix c v2 + P0.5 + idea 1 (unit relative-margin) + D1 + idea 3 (source_section por pasta) feitos.</span></div>
+    <div class="note"><b>🥇 Priorização sugerida:</b> 1) <b>reprocessar MF</b> (app reiniciado — aplica P0 + idea 1 + D1: subunit↛unit, FILE_MAP, unit honesto, código→bloco band-gated) → 2) <b>P1 restante</b> (piso 0.72, auto_suggested_unit, fallback ~600 linhas) → 3) <b>P2/P3</b> (duplicação/ruído). Cada passo que muda atribuição roda atrás do eval-gate. <span class="ok-line">✅ fix c v2 + P0.5 + idea 1 (unit relative-margin) + D1 + idea 3 (source_section por pasta) + Lote A + D2 feitos.</span></div>
 
     <div class="note"><b class="ok-line">✅ Não-problemas confirmados:</b> referências (Approach C) NÃO contaminam a atribuição; <code>margin</code> vs <code>relative_margin</code> disjuntos; METHOD_CAPS não tornam banda alta inalcançável; os 3 segundos-cérebros do FILE_MAP já mortos não ressurgiram.</div>
   </div>
@@ -591,6 +585,11 @@
     <p><b>D1 — código→bloco fonte única (band-gated):</b> CODE_INDEX/CRONOGRAMA/CODE_HEALTH leem <code>computed_block_id</code> (<code>resolve_effective_block</code>); Gemini vira voto — código <i>sem card</i> E <i>band baixa</i> adota o bloco do Gemini (<code>attach_block_summary_fields</code>); card/funil-forte nunca sobrescritos. Censo <code>scripts/eval_code_block_census.py</code>. Commits <code>3e4f18e</code>/<code>0774f6f</code> + repoint + census. Golden de bloco 5/5.</p>
     <p><b>Idea 3 — source_section por pasta:</b> import direto (fora do stash Moodle) não recebia <code>source_section</code> → sem card → léxico fraco. Agora <code>process_entry</code> deriva da pasta-pai quando vazio (stash/backfill vencem). Pasta = seção Moodle → casa o <code>card_block_map</code> → bloco autoritativo (recupera os zips em "Verificação de Programas" que estavam cardless). Não-match = no-op. Commit <code>(idea 3)</code>.</p>
     <p class="small">Aplicar no repo: reprocessar a matéria com o app reiniciado (re-roda funil + consenso). Não re-extrai.</p>
+  </div>
+  <div class="card find good">
+    <h4>✅ P1 / D2 — <code>administrative_only</code> via predicado real (<code>085a725</code>)</h4>
+    <p>A chave <code>administrative_only</code> nunca é gravada em produção: o <code>_build_timeline_index</code> runtime não a escreve nem remove blocos admin, e o <code>_serialize</code> já os remove. Logo o <code>block.get("administrative_only")</code> era no-op nos 4 sites — e em <code>content_taxonomy</code> e <code>file_map</code> (que leem o índice <b>runtime</b>) blocos administrativos (feriado/prova) vazavam como candidatos do scorer material→bloco e do ordinal <code>bloco-N</code>.</p>
+    <p><b>D2=A uniforme:</b> key-lookup morto trocado pelo predicado real <code>timeline_block_is_administrative_only</code> (lê <code>rows</code>) nos 4 sites (<code>content_taxonomy.py</code>, <code>file_map.py</code>, <code>cronograma_health.py</code>, <code>moodle_labels.py</code>). Promovido a público (contrato compartilhado por <code>_serialize</code> + 4 consumidores + testes). Correto no runtime (filtra admin) e inócuo no serializado (sem rows → False, admin já removido). Testes que marcavam admin pela chave morta reescritos para o sinal real (rows administrativas). Suíte 1366 verde; golden de bloco 5/5, confiante-errado 0.</p>
   </div>
 
   <h2>Entregas anteriores (changelogs)</h2>
