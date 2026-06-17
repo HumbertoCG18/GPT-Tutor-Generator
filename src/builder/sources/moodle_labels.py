@@ -128,7 +128,10 @@ def derive_card_block_map(card_dates: dict, blocks: list) -> dict:
     """{secao: {block_ids, source:"labels", format, dates}} por interseção de
     datas de AULA (preferidas) ou semanas (formato D) com period_start..end
     dos blocos não-administrativos. Card sem match -> fora (nunca inventa)."""
-    instructional = [b for b in blocks or [] if not bool(b.get("administrative_only"))]
+    # D2: predicado unico (blocks aqui vem do .timeline_index.json serializado,
+    # admin ja removido -> no-op; mantido p/ robustez se receber blocos runtime).
+    from src.builder.timeline.index import timeline_block_is_administrative_only
+    instructional = [b for b in blocks or [] if not timeline_block_is_administrative_only(b)]
     out: dict = {}
     for card, info in (card_dates or {}).items():
         hits = []

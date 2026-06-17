@@ -85,7 +85,9 @@ from src.builder.sources.moodle_labels import derive_card_block_map
 def _blk(bid, start, end, admin=False):
     b = {"id": bid, "period_start": start, "period_end": end}
     if admin:
-        b["administrative_only"] = True
+        # D2: bloco administrativo se sinaliza pelas rows (sinal real), nao pela
+        # chave morta administrative_only que o runtime nunca escreve.
+        b["rows"] = [{"content": "Feriado"}]
     return b
 
 _BLOCKS = [_blk("bloco-03", "2026-03-09", "2026-03-09"),

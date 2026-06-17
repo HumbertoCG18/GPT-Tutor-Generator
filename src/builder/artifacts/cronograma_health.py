@@ -119,9 +119,12 @@ def _top_candidate_blocks(entry: dict, blocks: list, n: int = _TOP_N_CANDIDATES)
     Degrada para [] se os blocos não trazem rows (ex.: fixtures mínimas / dados
     sem cronograma scorável) — o relatório ainda lista o material como acionável.
     """
+    # D2: predicado unico (filtra admin no runtime; inocuo nos blocos serializados
+    # deste artefato, que ja tiveram admin removido no _serialize).
+    from src.builder.timeline.index import timeline_block_is_administrative_only
     instructional = [
         b for b in (blocks or [])
-        if b.get("id") and not bool(b.get("administrative_only"))
+        if b.get("id") and not timeline_block_is_administrative_only(b)
     ]
     if not instructional:
         return []

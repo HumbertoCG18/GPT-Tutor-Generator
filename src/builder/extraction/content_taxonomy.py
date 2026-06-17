@@ -1140,11 +1140,17 @@ def resolve_unit_block_tags(
             block_confidence = 1.0
             block_method = "manual"
         else:
+            # D2: aqui o timeline_index vem do runtime (_build_timeline_index, sem
+            # _serialize) -> blocos admin (feriado/prova) presentes COM rows e SEM a
+            # chave administrative_only. O key-lookup antigo era no-op e os deixava
+            # vazar como candidatos do scorer material->bloco. O predicado lê rows
+            # (filtra admin no runtime; inócuo no serializado, que ja removeu admin).
+            from src.builder.timeline.index import timeline_block_is_administrative_only
             instructional_blocks = [
                 block
                 for block in (timeline_context.get("timeline_index") or {}).get("blocks", [])
                 or []
-                if not bool(block.get("administrative_only"))
+                if not timeline_block_is_administrative_only(block)
             ]
             # S5 (P4): janela de assign para trabalhos. Quando a entry é
             # trabalho (categoria) ou código cujo card tem deadline de entrega

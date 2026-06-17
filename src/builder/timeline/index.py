@@ -818,7 +818,7 @@ def _timeline_block_is_noninstructional(block: Dict[str, object]) -> bool:
     return has_content
 
 
-def _timeline_block_is_administrative_only(block: Dict[str, object]) -> bool:
+def timeline_block_is_administrative_only(block: Dict[str, object]) -> bool:
     rows = block.get("rows", []) or []
     if not rows:
         return False
@@ -885,7 +885,7 @@ def _assign_timeline_block_to_unit(block: Dict[str, object], unit_index: list) -
 def _serialize_timeline_index(timeline_index: dict) -> dict:
     blocks = []
     for block in (timeline_index or {}).get("blocks", []) or []:
-        if _timeline_block_is_administrative_only(block):
+        if timeline_block_is_administrative_only(block):
             continue
         kind_value = classify_block(block).value
         unit_slug = block.get("unit_slug", "")

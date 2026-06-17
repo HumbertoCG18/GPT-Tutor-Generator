@@ -533,10 +533,14 @@ def resolve_entry_manual_timeline_block(entry: dict, timeline_context: dict) -> 
     if match:
         ordinal = int(match.group(1))
         entry_unit = str(entry.get("unit_slug") or entry.get("manual_unit_slug") or "").strip()
+        # D2: blocks vem do timeline_context runtime (_build_timeline_index) ->
+        # admin presente sem a chave; o key-lookup antigo era no-op e contava blocos
+        # admin no ordinal de "bloco-N". Lazy import: timeline.index importa este modulo.
+        from src.builder.timeline.index import timeline_block_is_administrative_only
         instructional_blocks = [
             block
             for block in blocks
-            if not bool(block.get("administrative_only"))
+            if not timeline_block_is_administrative_only(block)
             and (not entry_unit or str(block.get("unit_slug", "")).strip() == entry_unit)
         ]
         if 1 <= ordinal <= len(instructional_blocks):
