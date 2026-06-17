@@ -202,7 +202,7 @@
 <div class="wrap">
 
 <h1>📊 Relatório de Sistema — GPT-Tutor-Generator</h1>
-<div class="sub">Análise completa de arquitetura, pipelines, pendências e roadmap · branch <code>feat/reconciliar-unit-bloco</code> · <b>atualizado 12/06/2026</b><br>
+<div class="sub">Análise completa de arquitetura, pipelines, pendências e roadmap · branch <code>feat/reconciliar-unit-bloco</code> · <b>atualizado 17/06/2026</b><br>
 <span class="small">Changelogs de entregas (10/06, 11–12/06, P0 e P1+P2+P3) movidos para a aba "✅ Concluído". Esta aba mantém a descrição do sistema e os itens ainda abertos.</span></div>
 
 <div class="card toc">
@@ -492,7 +492,7 @@
   <tr><th>Achado</th><th>Tipo</th><th>Detalhe</th></tr>
   <tr><td><code>dialogs.py</code> com 4.988 linhas</td><td><span class="tag t-warn">estrutura</span></td><td>12 dialogs num arquivo. Dividir em pacote <code>ui/dialogs/</code> (1 arquivo por dialog) reduziria conflitos e tempo de leitura.</td></tr>
   <tr><td>Cronograma editável (tabela)</td><td><span class="tag t-good">FEITO</span></td><td><s>Read-only, exigia reprocessar.</s> Reescrito como tabela <code>ttk.Treeview</code>: ordenação por coluna, edição inline de Tipo/Unidade, override manual de escopo, coluna "Nome do bloco" (P1/P2/PS/G2/Revisão), datas DD/MM/YY, escopo e Unidade em rótulo curto (U1/U2). Spec <code>2026-06-09-cronograma-table-ui-design.md</code>.</td></tr>
-  <tr><td>Curator Studio × Image Curator</td><td><span class="tag t-warn">em andamento</span></td><td>Dois fluxos de curadoria com preview/aprovação similares. Unificação <b>já iniciada</b>: <code>ui/curation_workspace.py</code> (novo, working tree) + spec <code>docs/superpowers/plans/2026-06-09-curadoria-unificada.md</code>.</td></tr>
+  <tr><td>Curator Studio × Image Curator</td><td><span class="tag t-good">FEITO</span></td><td><s>Dois fluxos de curadoria com preview/aprovação similares.</s> <b>Unificados</b> num único workspace <code>ui/curation_workspace.py</code> (Toplevel "Curadoria", abas <b>Revisão Manual</b> + <b>Imagens</b>; manual abre primeiro, painel de imagens lazy-loaded ao selecionar a aba). Botão "🧰 Curadoria" em <code>app.py:383</code> → <code>open_curation_workspace</code>. Spec/plano <code>2026-06-09-curadoria-unificada*</code>.</td></tr>
   <tr><td>Estado de sessão não persistido</td><td><span class="tag t-info">menor</span></td><td>Aba ativa, seleção, zoom de preview e scroll voltam ao padrão a cada reinício — aceitável, mas a <b>fila volátil</b> (seção 6) é o caso que vale corrigir.</td></tr>
   <tr><td>Backlog = espelho do manifest</td><td><span class="tag t-info">design</span></td><td>Arquivo removido manualmente do disco continua aparecendo (fantasma) até reprocessar. Painel Manutenção cobre parte disso para code_curation; não para entries gerais.</td></tr>
 </table>
@@ -546,7 +546,7 @@
 </table>
 </div>
 
-<p class="small" style="margin-top:40px">Metodologia: 3 varreduras paralelas (pipeline do builder, UI/config, código morto) + verificação manual de cada achado por busca de referências (falsos positivos descartados estão na seção 4) + métricas via AST sobre 117 arquivos. Grafo de código: 2.905 nós / 25.916 arestas. Gerado em 09/06/2026, atualizado e re-verificado em 10/06/2026 (métricas, contadores de commit, código morto e duplicatas re-medidos no working tree de <code>new-features</code> @ <code>c7c864b</code>; base comum com <code>main</code>: <code>8f10819</code>), <b>atualizado em 12/06/2026</b> com as entregas de 11–12/06 na <code>feat/reconciliar-unit-bloco</code> (F1, correção M365, P0 da reforma da atribuição; suíte em 1.248 testes), e com o ciclo P1+P2+P3 do funil de atribuição (acurácia 78.3%, confiante-e-errado 0, suíte em 1.290 testes).</p>
+<p class="small" style="margin-top:40px">Metodologia: 3 varreduras paralelas (pipeline do builder, UI/config, código morto) + verificação manual de cada achado por busca de referências (falsos positivos descartados estão na seção 4) + métricas via AST sobre 117 arquivos. Grafo de código: 2.905 nós / 25.916 arestas. Gerado em 09/06/2026, atualizado e re-verificado em 10/06/2026 (métricas, contadores de commit, código morto e duplicatas re-medidos no working tree de <code>new-features</code> @ <code>c7c864b</code>; base comum com <code>main</code>: <code>8f10819</code>), <b>atualizado em 12/06/2026</b> com as entregas de 11–12/06 na <code>feat/reconciliar-unit-bloco</code> (F1, correção M365, P0 da reforma da atribuição; suíte em 1.248 testes), e com o ciclo P1+P2+P3 do funil de atribuição (acurácia 78.3%, confiante-e-errado 0, suíte em 1.290 testes). <b>Atualizado em 17/06/2026:</b> reforma de atribuição wave 1+2 (P0 + idea 1 + D1 + idea 3 mergeados); P1 fechado exceto o fallback keyword (adiado pro P2, Alt. C) — D2 (administrative_only via predicado real), auto_suggested_unit (investigado, vivo, mantido) e piso 0.72 (removido) feitos; Curadoria unificada (Curator Studio × Image Curator) confirmada FEITA; novo contexto institucional em <code>.mex/context/institutional.md</code>. Suíte 1366 verde, golden de bloco 5/5, confiante-errado 0.</p>
 
 </div>
 </div>
@@ -598,6 +598,12 @@
     <h4>✅ P1.3 — remove piso 0.72 do block_confidence (<code>6f24fc7</code>)</h4>
     <p>O piso <code>max(confidence, 0.72)</code> (session-first single-block) era um polegar-na-balança <b>invisível</b>: a band usa a conf <b>capada</b> (<code>scorer_only=0.70</code>), então o piso só afetava o <code>block_confidence</code> <b>raw</b> passado a <code>reconcile_unit_with_block</code> (bloco define a unidade se <code>block_confidence >= unit_confidence</code>).</p>
     <p>Como <code>unit_confidence</code> também é <code>relative_margin_confidence</code> (idea 1, que alinhou unidade e bloco na mesma fórmula PRA a reconciliação ser justa), a comparação é <b>simétrica por design</b>. O piso quebrava isso só na janela <code>unit_conf ∈ (0.70, 0.72]</code> — bloco sobrepunha a unidade por +ε artificial, não por margem real. Removido: discordância marginal vira <b>conflito flagado</b> (conf honesta), nunca override silencioso. <i>Rejeitada</i> a opção de reconciliar com a conf capada (method-cap é teto de display, não medida de evidência → enfraqueceria bloco scorer forte). Suíte 1366 verde; golden 5/5. Eval real = censo MF.</p>
+  </div>
+
+  <h2>UI — Curadoria unificada</h2>
+  <div class="card find good">
+    <h4>✅ Curator Studio × Image Curator unificados</h4>
+    <p>Os dois fluxos de curadoria viraram um único workspace: <code>ui/curation_workspace.py</code> (Toplevel "Curadoria") com abas <b>Revisão Manual</b> + <b>Imagens</b> — revisão manual abre primeiro, o painel de imagens é lazy-loaded ao selecionar a aba. Entrada única pelo botão "🧰 Curadoria" (<code>app.py:383</code> → <code>open_curation_workspace</code> → <code>CurationWorkspace</code>). Acaba a duplicação de preview/aprovação entre os dois fluxos. Spec/plano <code>docs/superpowers/*/2026-06-09-curadoria-unificada*</code>.</p>
   </div>
 
   <h2>Entregas anteriores (changelogs)</h2>
