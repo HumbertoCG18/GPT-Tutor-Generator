@@ -10,6 +10,7 @@ triggers:
   - plano de ensino
   - cronograma
   - source_section
+  - horario
 edges:
   - target: context/architecture.md
     condition: quando precisar de como os componentes processam estas fontes
@@ -20,75 +21,108 @@ last_updated: 2026-06-17
 
 # Contexto Institucional
 
-Por que existe: o sistema de atribuição importa de plataformas reais da faculdade.
-Confundir o papel de cada uma leva a diagnóstico errado (ex.: tratar SARC como
-"cadeira"). Este arquivo fixa o que cada plataforma é, o que ela fornece, e como entra
-no pipeline de atribuição (arquivo→bloco→unidade/subunidade).
+Por que existe: o sistema de atribuição importa de plataformas reais da PUCRS. Confundir
+o papel de cada uma leva a diagnóstico errado (ex.: tratar SARC como "cadeira"). Este
+arquivo fixa o que cada plataforma é, o que fornece, e como entra no pipeline de
+atribuição (arquivo→bloco→unidade/subunidade).
 
 ## Faculdade
 
-- Escola Politécnica da PUCRS (ex-**FACIN** = Faculdade de Informática — nome antigo que
-  ainda aparece em títulos de páginas legadas, ex.: SARC). _Confirmar: universidade =
-  PUCRS._
+- **PUCRS**, Escola Politécnica (ex-**FACIN** = Faculdade de Informática — nome antigo que
+  ainda aparece em títulos de páginas legadas, ex.: SARC).
 
-## Plataformas-fonte
+## Plataformas-fonte (alimentam o pipeline)
 
 ### Plano de Ensino (gerenciador de cadeiras)
-- **SEMPRE importado** ao criar uma matéria nova; **todas as cadeiras atuais têm** o
-  plano no gerenciador. Premissa forte do pipeline.
+- **SEMPRE importado** ao criar matéria nova; **todas as cadeiras atuais têm** o plano.
+  Premissa forte do pipeline.
+- **SEMPRE** hierarquia explícita unidade→tópico. **Nunca** cadeira de 1 unidade →
+  `m >= 2` garantido. Nº de unidades varia por professor (uns condensam, outros espalham
+  subunidades).
 - Papel no código: fonte das **unidades/tópicos** (taxonomia). Vira `content_taxonomy`
   (`build_file_map_content_taxonomy_from_course`) E `unit_index`
   (`build_file_map_unit_index_from_course`), ambos via `parse_units_from_teaching_plan`.
-- Consequência de atribuição: como o plano sempre existe, as duas fontes de unidade têm a
-  mesma contagem e o matcher posicional (`assign_units_positional`) está sempre alimentado.
-  O caminho `_derive_unit_specs_from_repo` (fallback de `unit_index` quando NÃO há plano)
-  fica latente — não exercitado no caminho normal. (Relevante ao P1.4: o fallback keyword
-  de unidade só seria load-bearing sem plano, cenário que não ocorre em produção.)
+
+### OpenSARC — cronograma (fonte real do timeline)
+- Repo: https://github.com/mflash/OpenSARC (ASP.NET). SARC = Sistema de Alocação de
+  Recursos Computacionais (labs/salas/equipamentos + solicitação no planejamento semestral).
+- **O cronograma que o sistema parseia É uma EXPORTAÇÃO do OpenSARC**, não um sistema à
+  parte. URL: `https://sarc.pucrs.br/Default/Export.aspx?id=<GUID>&ano=2026&sem=1`.
+  - `id` = GUID de uma **TURMA** específica (não a matéria genérica; ex.: turma 01 de
+    Métodos Formais). `idturma = new Guid(Request.QueryString["id"])`.
+  - `ano`/`sem` → carrega o calendário acadêmico do período
+    (`GetCalendarioByAnoSemestre`): início de aulas, feriados, período de provas (G2).
+  - Monta a tabela via `AulaBO.GetAulas(idturma)`: **1 linha por encontro**. Colunas: nº
+    aula · dia da semana · data · horário · **descrição da atividade** · **tipo de
+    atividade** · **recursos alocados** (sala/lab).
+  - Coluna "Recursos" = `alocBO.GetRecursoAlocadoByAula(...)` (a parte de alocação do SARC).
+- **Reconciliação com o código:** o parser SARC ASP.NET (a DataGrid `dgAulas`, coluna
+  "Atividade" + cor da linha → kind do bloco; `_aspnet_row_canonical_kind`/`ATIVIDADE_KIND_MAP`)
+  lê exatamente essa tabela do `Export.aspx`. O "tipo de atividade" da coluna É o sinal de
+  kind (aula/prova/feriado/apresentação).
+- Variações na mesma pasta: `&prox=1` (só a próxima atividade, contagem natural-language);
+  `ExportIcal.aspx` (iCal p/ Google Calendar/Outlook); `ExportPlan.aspx`.
+- **Códigos de período PUCRS (2 letras) → horário real, +90 min de duração:**
+  `AB`=08:00 · `CD`=09:45 · `EX`=11:30 · `FG`=14:00 · `HI`=15:45 · `JK`=17:30 · `LM`=19:15
+  · `NP`=21:00. Ex.: "QUA LM" = quarta-feira 19:15.
+
+### OpenSARC — Consulta.aspx (NÃO é fonte; página read-only do aluno)
+- Página do aluno: `Consulta.aspx` (título legado "Sistema de Alocação de Recursos -
+  FACIN"). Consulta por data → tabela Recurso · Disciplina/Evento · Curso · Responsável,
+  com blocos "atual" e "próximo". Responde "em qual lab minha aula é hoje?". Quem aloca =
+  prof/secretaria/admin; o aluno só consulta. **Não é fonte de conteúdo nem de cronograma**
+  (o cronograma vem do `Export.aspx` acima).
 
 ### Moodle (LMS)
-- Papel: **materiais** da disciplina (PDFs, links, código, imagens) + estrutura de
-  seções/cards.
-- Entra no pipeline como: `source_section` (seção Moodle do material), `card_block_map`
-  (datas dos cards → blocos via `derive_card_block_map`), e labels temporais nos formatos
-  A–D (`moodle_labels.py`, cf. `docs/reports/2026-06-12-catalogo-formatos-labels-moodle.md`).
+- Fonte dos **materiais** (PDFs, links, código, imagens) + estrutura de seções/cards.
+- Entra como: `source_section` (seção Moodle), `card_block_map` (datas dos cards → blocos,
+  `derive_card_block_map`), labels temporais formatos A–D (`moodle_labels.py`, cf.
+  `docs/reports/2026-06-12-catalogo-formatos-labels-moodle.md`). Códigos de cadeira aparecem
+  aqui.
 
-### OpenSARC / SARC
-- Repo: https://github.com/mflash/OpenSARC (ASP.NET).
-- O que é: sistema de **alocação de recursos computacionais** (labs/salas/equipamentos) +
-  solicitação de recursos no planejamento semestral. Para o **aluno é READ-ONLY**: consulta
-  de em qual lab/sala/auditório a aula acontece. Quem aloca = professores/secretaria/admin;
-  o aluno só consulta.
-- Página do aluno: **`Consulta.aspx`** (título legado "Sistema de Alocação de Recursos -
-  FACIN"). Informa uma data (seletor de calendário, campo opcional) → "Visualizar
-  Alocações" → tabela por data com colunas **Recurso · Disciplina/Evento · Curso ·
-  Responsável**. Renderiza dois blocos: "atual" e "próximo" (o que ocupa o recurso agora e
-  o que vem em seguida).
-- Uso real do aluno: "em qual lab minha disciplina é hoje?", "esse lab está ocupado?",
-  "que evento está nessa sala nessa data?". É um quadro de ocupação de espaços, por data.
-- Conexão com o cronograma: via a coluna **"Recursos"** do cronograma.
-- NÃO é uma cadeira/disciplina. NÃO é fonte de conteúdo pedagógico.
+### Microsoft 365
+- Fonte de material/seção (`m365.py` → `source_section`).
+
+## Plataformas de consulta (não-fonte de conteúdo)
+
+- **Portal do aluno**: calendário acadêmico, info acadêmica/financeira, acessos a sistemas.
+- **Minha Biblioteca E-Books PUCRS**: e-books.
 
 ## Mapa fonte → pipeline de atribuição
 
 | Fonte | Fornece | Onde entra no código |
 |---|---|---|
 | Plano de Ensino | unidades + tópicos (taxonomia) | `content_taxonomy`, `unit_index` |
-| Cronograma | blocos + datas + kind | `_parse_syllabus_timeline`, `_build_timeline_index` |
+| OpenSARC `Export.aspx` | cronograma: blocos + datas + kind (tipo de atividade) + recursos | `_parse_syllabus_timeline`, `_aspnet_row_canonical_kind`, `_build_timeline_index` |
 | Moodle | materiais + seções + datas de card | `source_section`, `card_block_map`, `moodle_labels` |
-| SARC | alocação de sala/recurso (read-only) | coluna "Recursos" do cronograma |
+| Microsoft 365 | materiais + seção | `m365.py` (`source_section`) |
 
-## A confirmar (perguntas abertas)
+## Convenções de identidade
 
-1. **Origem do cronograma**: de onde vem o cronograma de uma cadeira típica? Faz parte do
-   Plano de Ensino, é um recurso à parte no Moodle, é exportado do SARC, ou colado manual?
-2. **SARC `dgAulas` vs `Consulta.aspx`**: o código tem parser de cronograma SARC ASP.NET
-   (`dgAulas`, coluna "Atividade" + cor da linha → kind do bloco). Isso é uma página
-   DIFERENTE da `Consulta.aspx` do aluno (grade de alocação de prof/admin)? O aluno tem
-   acesso a essa página, ou o cronograma com "Atividade" vem de outro lugar?
-3. **Estrutura do Plano de Ensino**: tem sempre hierarquia explícita unidade→tópico
-   ("Unidade 1: ...")? Quantas unidades, tipicamente (≥2 sempre, ou existe cadeira de 1
-   unidade)?
-4. **Outras plataformas**: além de Moodle, SARC e gerenciador de cadeiras, há portal
-   acadêmico oficial (notas/matrícula) que seja fonte de algum dado?
-5. **Convenções de identidade**: formato de semestre (ex.: `2026/1`), código de cadeira,
-   convenção de nome de unidade — relevante a id/`source_section`.
+- Semestre = `[Ano]/[Semestre]` (1 ano = 2 semestres), ex.: `2026/1`.
+- Códigos de cadeira aparecem no Moodle.
+- Turma do cronograma é identificada por GUID no SARC (não pelo nome da matéria).
+
+## Hipóteses / problemas conhecidos (atribuição)
+
+- **Nome da unidade × nome do card Moodle divergem** (teoria do usuário): às vezes a unidade
+  do Plano de Ensino e o card/seção do Moodle são o MESMO conceito escrito diferente pelo
+  professor → o match léxico falha onde deveria casar. Candidato a melhoria futura (match
+  fuzzy unidade↔card, ou alias de unidade). Relacionado a `source_section`/`card_block_map`
+  e ao scorer unidade.
+
+## Consequência para o sistema de atribuição
+
+- Plano sempre presente + **`m >= 2` sempre** (nunca 1 unidade) → as duas fontes de unidade
+  (`content_taxonomy.units` e `unit_index`) têm a mesma contagem e o matcher posicional
+  (`assign_units_positional`) está **sempre alimentado com m>=2**. O retorno `[]` por `m<2`
+  é **inalcançável** em produção.
+- Logo o fallback keyword de unidade (P1.4: `_assign_timeline_block_to_unit` +
+  `_vote_unit_from_topic_candidates` + `_score_timeline_row_against_unit`, no `else` de
+  `index.py:2205`) é reachable só por **afinidade-zero** (m>=2 mas zero token-overlap) ou
+  `n==0` (sem blocos-aula → laço vazio, no-op). O caso `_derive_unit_specs_from_repo`
+  (fallback de `unit_index` sem plano) fica **latente** — não exercitado, pois plano sempre
+  existe.
+- Resíduo a tratar antes de deletar o fallback: a afinidade-zero, onde o scorer frágil
+  ainda capta sinais que o posicional não tem (nº explícito de unidade "Unidade N",
+  frases/âncoras). Fold desses sinais no posicional → deleção segura.
