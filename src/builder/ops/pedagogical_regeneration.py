@@ -10,7 +10,7 @@ from src.builder.ops.state_ops import (
 )
 from src.builder.core.reference_navigation import build_unit_topic_reference_index
 from src.builder.core.reference_summary import load_reference_curation
-from src.builder.routing.thresholds import METHOD_CAPS
+from src.builder.routing.thresholds import METHOD_CAPS, confidence_band
 from src.models.core import FileEntry
 from src.utils.helpers import slugify, write_text
 
@@ -154,6 +154,27 @@ def attach_block_summary_fields(entries: list, code_curation: dict) -> list:
                 e.pop("computed_block_match_confidence", None)
         else:
             e.pop("computed_block_match_confidence", None)
+
+        # D1: consenso band-gated para CÓDIGO. computed_block_id é a fonte única
+        # do bloco. O funil decide (card-aware); o Gemini só desempata onde o
+        # funil é honestamente fraco — SEM card E band "baixa". Card e funil-forte
+        # nunca são sobrescritos (preserva o gabarito autoritativo, erro 0/22).
+        if str(e.get("file_type") or "") in ("code", "zip"):
+            gemini_primary = str(summary.get("primary_block_id") or "")
+            if (
+                gemini_primary
+                and not str(e.get("source_section") or "").strip()
+                and str(e.get("computed_block_band") or "") == "baixa"
+            ):
+                e["computed_block_id"] = gemini_primary
+                e["computed_block_method"] = method or "llm_only"
+                _gem_conf = summary.get("block_match_confidence")
+                if _gem_conf is not None:
+                    try:
+                        e["computed_block_confidence"] = float(_gem_conf)
+                        e["computed_block_band"] = confidence_band(float(_gem_conf))
+                    except (TypeError, ValueError):
+                        pass
 
     return entries
 
