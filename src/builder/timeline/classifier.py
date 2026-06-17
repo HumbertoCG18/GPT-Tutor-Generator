@@ -11,19 +11,16 @@ plano de ensino NUNCA cai em assessment mesmo contendo "avaliacao".
 from __future__ import annotations
 
 import re
-import unicodedata
 from typing import Iterable, List, Mapping, Pattern, Tuple, Union
 
+from src.builder.text.normalize import normalize_match_text
 from .kinds import BlockKind
 
 
 def _norm(text: str) -> str:
-    """NFKD + lower + so [a-z0-9 ]. Match comportamento do index.py."""
-    text = unicodedata.normalize("NFKD", text or "")
-    text = "".join(ch for ch in text if not unicodedata.combining(ch))
-    text = text.lower()
-    text = re.sub(r"[^a-z0-9\s]", " ", text)
-    return re.sub(r"\s+", " ", text).strip()
+    # Delega para a fonte unica; sem em-dash->hyphen e sem fix de typo porque
+    # o comportamento historico do classifier deixa — virar espaco via regex.
+    return normalize_match_text(text, em_dash_to_hyphen=False, fix_typos=False)
 
 
 # Excecao: se qualquer um destes termos aparecer, kind=CLASS mesmo se

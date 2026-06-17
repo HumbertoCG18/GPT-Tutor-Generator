@@ -5,7 +5,13 @@ import unicodedata
 from typing import Callable, Optional
 
 
-def normalize_match_text(text: str, *, keep: str = "") -> str:
+def normalize_match_text(
+    text: str,
+    *,
+    keep: str = "",
+    em_dash_to_hyphen: bool = True,
+    fix_typos: bool = True,
+) -> str:
     """NFKD + remove acentos + lower + so [a-z0-9 ] (+ chars em `keep`).
 
     Fonte unica do projeto (antes duplicada em ~6 modulos).
@@ -15,12 +21,19 @@ def normalize_match_text(text: str, *, keep: str = "") -> str:
     ("1.2.3."), paths ("consensys/eth2.0-dafny") e slugs com hifen que
     viram tokens distintivos — medido sobre o indice real de MF
     (51/211 textos divergem sem o keep).
+
+    `em_dash_to_hyphen=False`: nao converte — / – para -; o classifier usa
+    False porque seu comportamento historico e deixar o travessao virar
+    espaco via regex (divergencia preservada intencionalmente).
+    `fix_typos=False`: pula o fix propocional->proposicional; idem classifier.
     """
     text = unicodedata.normalize("NFKD", text or "")
     text = "".join(ch for ch in text if not unicodedata.combining(ch))
     text = text.lower()
-    text = text.replace("—", "-").replace("–", "-")
-    text = text.replace("propocional", "proposicional")
+    if em_dash_to_hyphen:
+        text = text.replace("—", "-").replace("–", "-")
+    if fix_typos:
+        text = text.replace("propocional", "proposicional")
     text = re.sub(rf"[^a-z0-9{re.escape(keep)}\s]", " ", text)
     return re.sub(r"\s+", " ", text).strip()
 
