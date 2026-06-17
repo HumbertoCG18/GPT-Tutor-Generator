@@ -204,6 +204,20 @@ Read this file before starting any task.
   honesta. Rejeitada a opcao de reconciliar com a conf capada (method-cap = teto de
   display, nao evidencia). Suite 1366 verde; golden 5/5. P1 restante: so o fallback
   keyword ~600 linhas (index.py:2205, eval-gate forte, guard test antes de deletar).
+- P1.4 fallback keyword INVESTIGADO (17/06): NAO e dead-code degenerado. So dispara quando
+  `assign_units_positional` retorna [] = m<2 / n==0 / afinidade-zero. Contexto institucional
+  (`.mex/context/institutional.md`): plano de ensino SEMPRE presente + NUNCA cadeira de 1
+  unidade -> m>=2 garantido -> m<2 inalcancavel; resta afinidade-zero (rara, Descricao do
+  SARC traz topico) e n==0 (no-op). DECISAO = Alternativa C (ADIAR pro P2): nao causa bug
+  hoje; deletar errado = regressao silenciosa em curso degenerado. Tratar o delete junto da
+  unificacao de scorers do P2 (fold no posicional dos sinais que o fragil tem e o posicional
+  nao: nº explicito "Unidade N", frases/ancoras) + guard test (posicional nunca [] no golden).
+- LATENTE (item proprio, investigar antes de mexer no fallback — interdependentes): sem
+  teaching_plan, `unit_index` cai em `_derive_unit_specs_from_repo` mas `content_taxonomy
+  ["units"]=[]` -> as 2 fontes de unidade divergem e o fallback vira load-bearing. Nao
+  exercitado (plano sempre presente). Ou remover `_derive_unit_specs_from_repo` (se nunca-hit)
+  ou dar a content_taxonomy o mesmo fallback. Outros gaps mapeados: "Evento Academico" fora
+  do ATIVIDADE_KIND_MAP; divergencia nome-unidade x nome-card Moodle (match fuzzy).
 
 ### Not Declared In Brief
 
