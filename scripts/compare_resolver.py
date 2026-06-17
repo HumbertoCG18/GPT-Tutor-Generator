@@ -29,9 +29,8 @@ from typing import Dict, List, Optional
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map  # noqa: E402
-from src.builder.extraction.entry_signals import collect_entry_unit_signals  # noqa: E402
 from src.builder.routing.concept_resolver import resolve_material_assignment  # noqa: E402
+from src.builder.routing.resolver_apply import _is_material, assemble_resolver_inputs  # noqa: E402
 from src.builder.routing.sequence import annotate_class_ordinals  # noqa: E402
 
 DEFAULT_COURSES = [
@@ -70,32 +69,6 @@ def _load_json(path: Path) -> Optional[dict]:
         return None
 
 
-def _is_material(entry: dict) -> bool:
-    return str(entry.get("file_type") or "") == "pdf" or bool(entry.get("category"))
-
-
-def _curation_summary(curation: dict, entry_id: str) -> dict:
-    rec = (curation.get("entries") or {}).get(entry_id) or {}
-    summary = rec.get("summary")
-    return summary if isinstance(summary, dict) else {}
-
-
-def _build_signals(root: Path, entry: dict) -> dict:
-    # FIEL A PRODUCAO: o BLOCK scorer do funil (file_map._select_probable_period_
-    # for_entry -> collect_entry_unit_signals) ve o markdown CRU
-    # (_entry_markdown_text_for_file_map), que para codigo/zip e tipicamente
-    # vazio. NAO injetamos o surrogate code_curation_signal_text aqui (o funil
-    # so o usa na rota de subunit/topico, NUNCA no scorer de bloco). O resolver
-    # recebe o sinal semantico de codigo pelo canal DESENHADO (concepts do
-    # Gemini em entry["concepts"] + voto LLM), nao por um surrogate de markdown.
-    markdown_text = _entry_markdown_text_for_file_map(root, entry)
-    # tool_tags_text vem SO de collect_entry_unit_signals (auto_tags
-    # `ferramenta:` + extensao do arquivo), exatamente como a producao monta.
-    # NAO mesclamos known_tools do .semantic_profile aqui: a producao nunca
-    # injeta known_tools em tool_tags_text.
-    return collect_entry_unit_signals(entry, markdown_text)
-
-
 def _funil_unit(entry: dict) -> str:
     return str(
         entry.get("computed_unit_slug")
@@ -126,16 +99,10 @@ def compare_repo(root: Path) -> Optional[dict]:
         funil_block = str(entry.get("computed_block_id") or "")
         if not funil_block:
             continue
-        summary = _curation_summary(curation, entry_id)
-        # CANAL LLM-first-class do resolver: o resolver le entry["concepts"]
-        # (fonte real = summary.concepts do Gemini). MANTIDO de proposito — e
-        # o sinal semantico legitimo de codigo/zip. A comparacao e, portanto,
-        # "resolver-COM-concepts-do-LLM vs funil-SEM" (ver caveat no relatorio):
-        # o funil (oraculo) NAO le esses concepts no scorer de bloco.
-        entry_for_resolver = dict(entry)
-        if summary.get("concepts"):
-            entry_for_resolver["concepts"] = summary.get("concepts")
-        signals = _build_signals(root, entry)
+        # assemble_resolver_inputs (DRY): mesma lógica do helper de produção.
+        # "resolver-COM-concepts-do-LLM vs funil-SEM" — ver caveat no docstring
+        # do módulo.
+        entry_for_resolver, signals, summary = assemble_resolver_inputs(root, entry, curation)
         assignment = resolve_material_assignment(
             entry_for_resolver,
             blocks,
