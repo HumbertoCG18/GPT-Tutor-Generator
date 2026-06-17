@@ -36,7 +36,7 @@ Os 6 erros do resolver: invariantes(04→11), tiposindutivos(04→13), exemplos-
 ## DOIS caminhos a seguir (decisão do usuário)
 
 ### Caminho A — Fechar a Fase 3 (cutover do bloco)
-1. **Gold sign-off (USER):** revisar os 4 `media` provisórios (`intro`→04, `terminacao`→11ou12, `tiposindutivos`→12ou13, `t1`→04) + a miss `invariantes`. `tests/fixtures/eval/code_block_gold.json` tem `evidence`+`confidence`+`moodle_label` por entry. NOTA: o resumo-da-semana do usuário sugere `terminacao`→11 (06/05 "correção parcial/total, terminação"), não 12 — reavaliar.
+1. **Gold sign-off (USER):** restam 3 `media` provisórios (`intro`→04, `tiposindutivos`→12ou13, `t1`→04) + a miss `invariantes`. (`terminacao`=bloco-12 RESOLVIDO/alta: gold é material→bloco, o .dfy rodou na sessão Dafny; resumo-da-semana põe o tópico em 06/05/bloco-11 mas Dafny só entra 11/05.) `tests/fixtures/eval/code_block_gold.json` tem `evidence`+`confidence`+`moodle_label` por entry.
 2. **Fixar baseline** no gold (`baseline.resolver_block_accuracy`) + guard de regressão real (hoje o guard é sintético).
 3. **A/B no repo real:** reprocessar MF com `use_concept_resolver=True` nas options → census. MUTA o repo (com `.bak`) → decisão do usuário.
 4. **3.4 cutover:** flip flag default ON + **DELETAR** (não refatorar) o funil de bloco legado: `score_entry_against_timeline_block` S2 (`block_token_weights`), S4 (`TOOL_BOOST/PENALTY/TOOL_TOKENS`), `select_probable_period_for_entry`, `_best_instructional_block_fallback`, 2 rotas card→bloco. Gate: golden 5/5 + gold + rebuild_diff 5 cursos.
@@ -65,7 +65,7 @@ O fusor já existe (`concept_resolver`) e já degrada honestamente. O signal-reg
 - Hook `code-review-graph` PostCommit cospe traceback **cp1252** no Windows — inofensivo, commit passa. `LF will be replaced by CRLF` idem.
 - `claude-mem` PreToolUse pode bloquear Read se o worker estiver down — workaround via PowerShell.
 - Flag `use_concept_resolver` default OFF: produção = funil. Wire só roda com flag ON; com OFF o módulo `resolver_apply` nem é importado.
-- Gold `media` PROVISÓRIO: viés possível pró-resolver nos `.thy` sem label. Os `.dfy`/`.smv` (proveniência+extensão+label) são sólidos. O resumo-da-semana do usuário move `terminacao` p/ 11.
+- Gold `media` PROVISÓRIO (3 restantes: intro/tiposindutivos/t1): viés possível pró-resolver nos `.thy` sem label. Os `.dfy`/`.smv` (proveniência+extensão+label) são sólidos. Subset alta (14): resolver 10/14 vs funil 7/14.
 - `classes-parte2` tem label mas NÃO está nas 17 entries → possível material não importado no MF (checar).
 - Artefato `docs/reports/code_gold_template_MF.csv` é gerado (template em branco), NÃO commitar.
 
