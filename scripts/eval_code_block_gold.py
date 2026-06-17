@@ -133,6 +133,31 @@ def _render(result: dict) -> str:
     return "\n".join(lines)
 
 
+def check_baseline(scored: dict, baseline: dict) -> int:
+    """Gate de regressao real: piso na acuracia do resolver + teto no confiante-errado.
+
+    Espelha eval_assignments.py (golden PDF). 0 = passa, 1 = regrediu. O numero
+    mora no gold (baseline.resolver_block_accuracy / confident_wrong_max); este
+    gate so e exercido user-side (precisa do repo vivo), o teste hermetico cobre a
+    logica com dicts sinteticos.
+    """
+    floor = float(baseline.get("resolver_block_accuracy", 0.0))
+    cw_max = baseline.get("confident_wrong_max")
+    acc = scored["resolver"]["block_accuracy"]
+    cw = scored["resolver"]["confident_wrong"]
+    teto = f", confiante-errado <= {cw_max}" if cw_max is not None else ""
+    print("")
+    print(f"baseline travado: resolver_acc >= {floor * 100:.1f}%{teto}")
+    rc = 0
+    if acc + 1e-9 < floor:
+        print(f"REGRESSAO: resolver_acc {acc * 100:.1f}% < baseline {floor * 100:.1f}%")
+        rc = 1
+    if cw_max is not None and cw > int(cw_max):
+        print(f"REGRESSAO: confiante-errado {cw} > teto {cw_max}")
+        rc = 1
+    return rc
+
+
 def main(argv: List[str]) -> int:
     repo_root = Path(argv[1]) if len(argv) > 1 else None
     if repo_root is None:
@@ -147,7 +172,7 @@ def main(argv: List[str]) -> int:
     rows_by_id = {r["id"]: r for r in result["rows"]}
     scored = score_against_gold(gold["entries"], rows_by_id)
     print(_render(scored))
-    return 0
+    return check_baseline(scored, gold.get("baseline") or {})
 
 
 if __name__ == "__main__":

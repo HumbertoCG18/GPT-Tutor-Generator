@@ -4,7 +4,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.eval_code_block_gold import score_against_gold
+from scripts.eval_code_block_gold import score_against_gold, check_baseline
+
+
+def _scored(acc, cw):
+    """Scored minimo so com o ramo resolver que check_baseline le."""
+    return {"resolver": {"block_accuracy": acc, "confident_wrong": cw}}
 
 
 def _gold(*entries):
@@ -86,3 +91,26 @@ def test_by_confidence_tier():
     assert r["funil"]["total"] == 2
     assert r["funil"]["correct"] == 1
     assert r["funil"]["block_accuracy"] == 0.5
+
+
+_BASELINE = {"resolver_block_accuracy": 0.6470588235294118, "confident_wrong_max": 1}
+
+
+def test_check_baseline_passa_no_piso():
+    """Acc exatamente no piso + cw no teto -> passa (rc 0)."""
+    assert check_baseline(_scored(0.6470588235294118, 1), _BASELINE) == 0
+
+
+def test_check_baseline_regride_acuracia():
+    """Acc abaixo do piso -> regressao (rc 1)."""
+    assert check_baseline(_scored(0.58, 1), _BASELINE) == 1
+
+
+def test_check_baseline_regride_confiante_errado():
+    """Acc ok mas confiante-errado acima do teto -> regressao (rc 1)."""
+    assert check_baseline(_scored(0.70, 2), _BASELINE) == 1
+
+
+def test_check_baseline_sem_baseline_nao_quebra():
+    """Baseline vazio (piso 0, sem teto) -> nunca regride."""
+    assert check_baseline(_scored(0.0, 9), {}) == 0
