@@ -77,8 +77,6 @@ KIND_KEYWORDS: List[Tuple[BlockKind, List[KeywordSpec]]] = [
     (BlockKind.DELIVERABLE, [
         "entrega trabalho", "entrega final", "entrega do trabalho",
         "submissao final",
-        # semana de trabalho/projeto generica (sem unidade unica)
-        "trabalho", "parte trabalho",
     ]),
     (BlockKind.WORKSHOP, [
         "oficina", "lancamento", "kick off", "kickoff",
@@ -131,9 +129,9 @@ def _session_text(block: Mapping[str, object]) -> str:
     return " ".join(parts)
 
 
-# Sinal forte de prova nas sessoes: P1-P4, PF, "prova N", "prova final".
+# Sinal forte de prova nas sessoes: P1-P4, PF, G2, PS, "prova N", "prova final".
 # "prova" sozinho NAO basta ("prova de teoremas" = demonstracao, nao exame).
-_STRONG_EXAM_RE = re.compile(r"\bp[1-4]\b|\bpf\b|\bprova\s+\d+\b|\bprova\s+final\b")
+_STRONG_EXAM_RE = re.compile(r"\bp[1-4]\b|\bpf\b|\bg2\b|\bps\b|\bprova\s+\d+\b|\bprova\s+final\b")
 
 
 def _session_exam_or_review(session_hay: str) -> Union[BlockKind, None]:
@@ -157,6 +155,14 @@ def _text_of(block: Mapping[str, object]) -> str:
     label = block.get("period_label")
     label_str = label if isinstance(label, str) else ""
     return f"{_content_text(block)} {label_str}".strip()
+
+
+def _has_unit_evidence(block: Mapping[str, object]) -> bool:
+    """Bloco tem sinal de unidade (slug atribuido ou candidatos de topico)."""
+    if block.get("unit_slug") or block.get("auto_unit_slug"):
+        return True
+    cands = block.get("topic_candidates")
+    return isinstance(cands, list) and bool(cands)
 
 
 def classify_block(block: Mapping[str, object]) -> BlockKind:
@@ -224,6 +230,13 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
         sess_kind = _session_exam_or_review(session_hay)
         if sess_kind is not None:
             return sess_kind
+
+    # 3c. "trabalho"/TP sem evidencia de unidade = apresentacao/entrega de
+    #     trabalho (atravessa unidades) -> DELIVERABLE. Com unit_slug/candidatos
+    #     "trabalho" e so o tema de uma aula -> CLASS abaixo (mantem unidade).
+    #     Gated p/ nao roubar unidade de aula que cita "trabalho" (P3.4).
+    if "trabalho" in hay_tokens and not _has_unit_evidence(block):
+        return BlockKind.DELIVERABLE
 
     if has_unit or has_topic:
         return BlockKind.CLASS

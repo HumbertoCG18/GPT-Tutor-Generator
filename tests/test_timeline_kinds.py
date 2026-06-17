@@ -63,8 +63,14 @@ CLASSIFIER_CASES = [
     ({"topic_text": "Introdução"}, BlockKind.OVERVIEW),
     ({"topic_text": "Disciplina introdução"}, BlockKind.OVERVIEW),
     ({"topic_text": "Introdução à lógica de predicados", "unit_slug": "u1"}, BlockKind.CLASS),
+    # P3.4 unit-aware: "trabalho" nu SEM evidencia de unidade = apresentacao/
+    # entrega de trabalho -> DELIVERABLE (atravessa unidades). COM unit_slug ou
+    # topic_candidates, "trabalho" e tema de aula -> CLASS (mantem unidade).
     ({"topic_text": "Trabalho gerais"}, BlockKind.DELIVERABLE),
     ({"topic_text": "Parte trabalho"}, BlockKind.DELIVERABLE),
+    ({"topic_text": "Trabalho sobre escalonamento", "unit_slug": "u1"}, BlockKind.CLASS),
+    ({"topic_text": "Trabalho de grafos",
+      "topic_candidates": [{"unit_slug": "u1", "score": 0.3}]}, BlockKind.CLASS),
     ({"period_label": "5 dias · 11/03/2026 a 25/03/2026"}, BlockKind.RESERVED),
     ({"topic_text": "Lógica de predicados", "unit_slug": "u1"}, BlockKind.CLASS),
     ({"topic_text": "Atendimento aos alunos"}, BlockKind.OFFICE_HOURS),
