@@ -165,17 +165,21 @@
 
 <div class="view" id="auditoria">
   <div class="card aud">
-    <p class="desc"><b>Pendências — sistema de atribuição.</b> O que falta implementar (P0 já mergeado está na aba "✅ Concluído"). Detalhe no plano-mestre e nas specs/planos abaixo.</p>
+    <p class="desc"><b>Pendências — sistema de atribuição.</b> O que falta implementar (P0 já mergeado está na aba "✅ Concluído"). Detalhe no plano-mestre, specs/planos e no <b>handoff</b> <code>docs/reports/2026-06-16-handoff-atribuicao.md</code> (estado + próximo passo D2).</p>
 
     <h3>🟠 Arquitetura decidida — a implementar</h3>
     <ul>
       <li><span class="sev s1">D2=A</span> <code>administrative_only</code>: predicado real nos 4 sites (chave nunca gravada → admin vaza como candidato). Parte do P1.</li>
     </ul>
 
-    <h3>🟠 P1 — morto/contrato (plano a escrever)</h3>
+    <h3>🟠 P1 — morto/contrato (Lote B, eval-gated)</h3>
     <ul>
-      <li><span class="sev s1">P1</span> <code>BLOCO_TAG</code> morto (deletar); piso 0.72 anulado pelo cap (remover); fallback keyword ~600 linhas (deletar, eval-gated); <code>auto_suggested_unit</code> gate obsoleto (simplificar); mortos menores (<code>process_reference_entry</code>, <code>consensus</code> B, <code>auto_concept</code>).</li>
+      <li><span class="sev s1">D2</span> <code>administrative_only</code>: predicado real em <code>content_taxonomy.py:1147</code> (vazamento runtime); deletar os 3 sites inócuos (serializado já sem admin). Eval-gate.</li>
+      <li><span class="sev s1">piso 0.72</span> <code>file_map.py:~1356</code>: NÃO é no-op (flat 0.70 com piso vs <code>min(real,0.70)</code> sem). Decisão remove-vs-cap. Eval-gate.</li>
+      <li><span class="sev s1">auto_suggested_unit</span> <code>conflicts.py:21-44</code>: investigar reachability do ramo topic-derive (tem testes; conflict-detection, golden-safe).</li>
+      <li><span class="sev s1">fallback keyword ~600 linhas</span> <code>index.py:2205</code> + 3 fns: deletar + guard test (positional nunca []). Eval-gate forte.</li>
     </ul>
+    <p class="small"><span class="ok-line">✅ Lote A feito (<code>f45e466</code>):</span> BLOCO_TAG + process_reference_entry (mortos inequívocos) removidos. <i>consensus B / auto_concept NÃO são mortos</i> (D1 não os matou) — fora do P1.</p>
 
     <h3>🟡 P2 — duplicação (eval-gated, plano a escrever)</h3>
     <ul>
@@ -579,6 +583,7 @@
     <p><b>Aba códigos:</b> checkbox "Mostrar nome do arquivo" alterna a coluna #0 entre id e nome do arquivo; coluna "Título" usa <code>inferred_title</code> (<code>2bb3c4b</code>).</p>
     <p><b>Migração de ids legados:</b> <code>scripts/migrate_collided_ids.py</code> — replay determinístico do dedup fix c v2, renomeia assets + re-chaveia <code>code_curation</code>, dry-run/<code>--apply</code>/idempotente (<code>35a72b7</code>). Aplicado no MF: <code>introducao-zip</code>, <code>exemplos-zip</code>, <code>t1-2026-1-thy</code> — zero ids duplicados.</p>
     <p><b>Delete sem resíduo:</b> <code>unprocess</code> de ZIP agora limpa os assets dos filhos extraídos (<code>extracted_files</code>), não só o entry de topo (<code>3bf81ea</code>).</p>
+    <p><b>P1 Lote A — código morto:</b> removidos <code>BLOCO_TAG</code> (threshold nunca lido) e <code>process_reference_entry</code> (fn só-tests). −60 linhas (<code>f45e466</code>).</p>
   </div>
   <div class="card find good">
     <h4>✅ 16/06 — Atribuição de código (idea 1 + D1 + idea 3)</h4>
