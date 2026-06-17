@@ -17,13 +17,7 @@ import re
 from typing import List, Mapping, Sequence, Tuple
 
 from src.utils.helpers import norm_ascii_lower
-
-# Stopwords PT + tokens genericos que nao discriminam unidade/topico.
-_STOPWORDS = {
-    "de", "da", "do", "das", "dos", "e", "a", "o", "as", "os", "para", "com",
-    "em", "no", "na", "nos", "nas", "ao", "aos", "um", "uma", "sobre", "que",
-    "introducao", "aula", "parte", "modulo",
-}
+from src.builder.text.stopwords import UNIT_MATCHER_STOPWORDS as _STOPWORDS
 _UNIT_GENERIC = {"unidade", "aprendizagem", "visao", "geral"}
 
 ANCHOR_MIN_MARGIN = 1.0   # margem minima (winner - runnerup) p/ confianca ANCHOR no bloco

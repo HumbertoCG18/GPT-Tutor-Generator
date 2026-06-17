@@ -13,10 +13,10 @@ from pathlib import Path
 from typing import Dict, List
 
 from src.utils.helpers import norm_ascii_lower
+from src.builder.text.stopwords import CARD_BLOCK_STOP as _STOP
 
 _DATE_RE = re.compile(r"\b(\d{1,2})/(\d{1,2})(?:/(\d{2,4}))?\b")
 _WEEK_RE = re.compile(r"\bsemana\s+(\d+)\b", re.IGNORECASE)
-_STOP = {"de", "da", "do", "e", "a", "o", "para", "por", "em", "the", "of"}
 
 
 @dataclass

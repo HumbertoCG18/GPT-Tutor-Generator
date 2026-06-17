@@ -20,6 +20,10 @@ from src.builder.text.normalize import (
 from src.builder.routing.thresholds import margin_confidence, T
 from src.builder.routing.file_map import UNIT_GENERIC_TOKENS
 from src.builder.extraction.teaching_plan import _normalize_unit_slug
+from src.builder.text.stopwords import (
+    TIMELINE_GENERIC_TOKENS as _TIMELINE_GENERIC_TOKENS,
+    TIMELINE_UNIT_NEUTRAL_TOKENS as _TIMELINE_UNIT_NEUTRAL_TOKENS,
+)
 from src.utils.helpers import slugify, ATIVIDADE_KIND_MAP, norm_ascii_lower, collapse_ws as _collapse_ws
 
 
@@ -297,49 +301,6 @@ def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[
     return candidate_rows
 
 
-_TIMELINE_GENERIC_TOKENS = {
-    "atividade",
-    "assincrona",
-    "assincrono",
-    "aula",
-    "aulas",
-    "caso",
-    "complementar",
-    "conteudo",
-    "conteudos",
-    "dia",
-    "estudo",
-    "estudos",
-    "exercicio",
-    "exercicios",
-    "gabarito",
-    "gabaritos",
-    "hora",
-    "leituras",
-    "lista",
-    "listas",
-    "material",
-    "materia",
-    "pagina",
-    "paginas",
-    "recursos",
-    "recomendadas",
-    "revisao",
-    "revisoes",
-    "resposta",
-    "respostas",
-    "semana",
-    "teorica",
-    "teoricas",
-    "pratica",
-    "praticas",
-    "apresentacao",
-    "continuacao",
-    "finalizacao",
-    "prova",
-    "provas",
-    "unidade",
-}
 
 
 _TIMELINE_ADMIN_PHRASES = {
@@ -364,47 +325,6 @@ _TIMELINE_ADMIN_PHRASES = {
 }
 
 
-_TIMELINE_UNIT_NEUTRAL_TOKENS = {
-    "algoritmo",
-    "algoritmos",
-    "aplicacao",
-    "aplicacoes",
-    "computa",
-    "computacao",
-    "computacoes",
-    "estado",
-    "estados",
-    "fundamentos",
-    "formal",
-    "formais",
-    "logica",
-    "logicas",
-    "para",
-    "passo",
-    "passos",
-    "sequencia",
-    "sequencias",
-    "metodos",
-    "modelo",
-    "modelos",
-    "predicado",
-    "predicados",
-    "programa",
-    "programas",
-    "proposicional",
-    "substituicao",
-    "simplificacao",
-    "software",
-    "softwares",
-    "suporte",
-    "sistemas",
-    "semantica",
-    "sintaxe",
-    "variavel",
-    "variaveis",
-    "verificacao",
-    "verificacoes",
-}
 
 
 def _empty_timeline_index() -> dict:

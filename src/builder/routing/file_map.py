@@ -22,6 +22,7 @@ from src.builder.routing.thresholds import (
     T,
     relative_margin_confidence,
 )
+from src.builder.text.stopwords import UNIT_GENERIC_TOKENS
 
 
 @dataclass
@@ -30,33 +31,6 @@ class UnitMatchResult:
     confidence: float
     ambiguous: bool = False
     reasons: List[str] = field(default_factory=list)
-
-
-UNIT_GENERIC_TOKENS = {
-    "metodos",
-    "formais",
-    "formal",
-    "logica",
-    "logicas",
-    "especificacao",
-    "especificacoes",
-    "verificacao",
-    "verificacoes",
-    "programas",
-    "programa",
-    "modelos",
-    "modelo",
-    "fundamentos",
-    "sistemas",
-    "software",
-    "softwares",
-    "suporte",
-    "propriedades",
-    "aplicacoes",
-    "sequenciais",
-    "concorrentes",
-    "linguagens",
-}
 
 
 def strip_outline_prefix(text: str) -> str:
