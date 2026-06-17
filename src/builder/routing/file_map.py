@@ -1354,10 +1354,17 @@ def select_probable_period_for_entry(
 
         # Confianca de BLOCO: margem relativa x forca absoluta (P2.1) — a
         # formula aditiva antiga saturava em 1.0 com scores 4-8.
+        # SEM piso (P1.3, removido 17/06): o antigo max(confidence, 0.72) p/
+        # single-block era um polegar-na-balanca invisivel. A band usa a conf
+        # CAPADA (scorer_only=0.70), entao o piso so afetava o block_confidence
+        # RAW da reconciliacao unit×bloco (reconcile_unit_with_block: bloco define
+        # a unidade se block_confidence >= unit_confidence). Como unit_confidence
+        # tambem e relative_margin_confidence (idea 1), a comparacao e simetrica
+        # por design — o piso quebrava essa simetria so na janela unit_conf in
+        # (0.70, 0.72]. Sem ele, discordancia marginal vira conflito flagado
+        # (conf honesta), nunca override silencioso. NAO re-adicionar.
         confidence = relative_margin_confidence(best_score, runner_up_score)
         ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
-        if len(session_scored_blocks) == 1 and not ambiguous:
-            confidence = max(confidence, 0.72)
         reasons = [
             f"best={best_score:.2f}",
             f"runner_up={runner_up_score:.2f}",
