@@ -65,6 +65,22 @@ atribuição (arquivo→bloco→unidade/subunidade).
 - **Códigos de período PUCRS (2 letras) → horário real, +90 min de duração:**
   `AB`=08:00 · `CD`=09:45 · `EX`=11:30 · `FG`=14:00 · `HI`=15:45 · `JK`=17:30 · `LM`=19:15
   · `NP`=21:00. Ex.: "QUA LM" = quarta-feira 19:15.
+- **Valores reais da coluna Atividade** (vistos): `Aula`, `Trabalho`, `Prova`, `Prova de
+  Substituição`, `Prova de G2`, `Evento Academico`.
+- **Kind = Atividade + COR da linha, e a cor de EXCLUSÃO vence a coluna Atividade.** O
+  professor às vezes deixa "Aula" na coluna mas marca o tipo real pela cor. Ex. concreto
+  (03/04/2026, cronograma da turma `9b679f12-...`): Atividade="Aula", Descrição="Feriado",
+  **linha inteira vermelha** = suspensão. O código resolve certo: `_aspnet_row_canonical_kind`
+  (helpers.py) checa a cor primeiro — `red`/`#ff0000` → `(suspension, ignored=True)` vence o
+  "Aula". Demais cores (helpers.py `COLOR_MAP`): lightgrey=G2/devolução, orange=assessment,
+  darkred=evento, yellow=deliverable.
+- **Descrição traz o TÓPICO/conteúdo da aula** ("Lógica de Hoare", "Máquinas de Turing"),
+  não só "Aula expositiva". Logo o bloco→unidade pode confiar no texto do cronograma
+  (`topic_text` do bloco vem da Descrição) — o matcher posicional tem sinal real, e
+  afinidade-zero é rara.
+- **Avaliações (PUCRS Politécnica):** `P1` (Prova 1), `P2` (Prova 2), `P3` (Prova 3), `PS`
+  (Prova Substituta), `G2` (prova de recuperação). Não há PF aqui (G2 = recuperação). Todas
+  aparecem na Atividade com "Prova" → casam `assessment` via `ATIVIDADE_KIND_MAP`.
 
 ### OpenSARC — Consulta.aspx (NÃO é fonte; página read-only do aluno)
 - Página do aluno: `Consulta.aspx` (título legado "Sistema de Alocação de Recursos -
@@ -79,6 +95,14 @@ atribuição (arquivo→bloco→unidade/subunidade).
   `derive_card_block_map`), labels temporais formatos A–D (`moodle_labels.py`, cf.
   `docs/reports/2026-06-12-catalogo-formatos-labels-moodle.md`). Códigos de cadeira aparecem
   aqui.
+- **Nomenclatura dos cards é HETEROGÊNEA (depende do professor)** — não há esquema único:
+  - por **semana** ("Semana N");
+  - pelo **título principal da unidade** (pode divergir do nome no Plano de Ensino → ver
+    Hipóteses);
+  - por **tipo de conteúdo** em card separado: Exercícios/Listas, Revisões de prova, ou
+    **TDE** (Trabalho Discente Efetivo — exercícios dados em aula entram no card de TDE).
+  Consequência: o match `source_section`→unidade/bloco NÃO pode assumir nome=unidade; tem
+  que tolerar card por-semana, por-tipo-de-conteúdo e por-título-divergente.
 
 ### Microsoft 365
 - Fonte de material/seção (`m365.py` → `source_section`).
@@ -110,6 +134,12 @@ atribuição (arquivo→bloco→unidade/subunidade).
   professor → o match léxico falha onde deveria casar. Candidato a melhoria futura (match
   fuzzy unidade↔card, ou alias de unidade). Relacionado a `source_section`/`card_block_map`
   e ao scorer unidade.
+- **`ATIVIDADE_KIND_MAP` não cobre "Evento Academico"** (helpers.py:425): valor real da
+  coluna Atividade que não casa nenhuma keyword → cai em `class` (aula) quando a linha NÃO
+  tem cor de exclusão (darkred=evento pega, mas evento sem cor especial vaza como aula).
+  Candidato: adicionar `evento → event`/holiday no mapa. (O texto "evento academico" JÁ está
+  em `_TIMELINE_ADMIN_PHRASES`, mas esse é o caminho de admin-por-texto-do-conteúdo, não o
+  kind do SARC.)
 
 ## Consequência para o sistema de atribuição
 
