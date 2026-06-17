@@ -218,6 +218,17 @@ Read this file before starting any task.
   exercitado (plano sempre presente). Ou remover `_derive_unit_specs_from_repo` (se nunca-hit)
   ou dar a content_taxonomy o mesmo fallback. Outros gaps mapeados: "Evento Academico" fora
   do ATIVIDADE_KIND_MAP; divergencia nome-unidade x nome-card Moodle (match fuzzy).
+- P3.4 `trabalho`->DELIVERABLE unit-aware FEITO (17/06): o token nu `"trabalho"`/`"parte
+  trabalho"` saiu de `KIND_KEYWORDS[DELIVERABLE]` (classifier.py) e virou regra gated 3c em
+  `classify_block` -> so vira DELIVERABLE quando o bloco NAO tem evidencia de unidade
+  (`_has_unit_evidence`: unit_slug/auto_unit_slug/topic_candidates). Aula "Trabalho sobre X"
+  com unidade mantem a unidade (CLASS). Bundle: `_STRONG_EXAM_RE` ganhou `\bg2\b|\bps\b`
+  (no-op no corpus atual — PS/G2 ja vem por source_kind; rede de seguranca sem source_kind).
+  DESCOBERTA: a premissa do handoff (FP frequente) NAO bate no corpus — os unicos blocos com
+  "trabalho" nu nos 5 cursos sao apresentacoes de TP/T (sem unidade), p/ os quais DELIVERABLE
+  estava certo; 2 deles (IA bloco-16, SO bloco-08) sao MERGED (apresentacao + prova P1/P2) e
+  agora caem em ASSESSMENT via session-exam (reforca a divida "separar blocos merged"). Suite
+  1370 verde; golden 5/5 confiante-errado 0.
 
 ### Not Declared In Brief
 

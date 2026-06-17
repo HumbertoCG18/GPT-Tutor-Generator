@@ -144,6 +144,16 @@ atribuição (arquivo→bloco→unidade/subunidade).
   keyword → caía em `class` (aula) quando a linha SARC não tinha cor de exclusão. Agora
   `evento → event` (kind ignorado, igual ao evento marcado por cor darkred) → vira ignored
   → bloco administrative_only → fora da atribuição.
+- **Blocos "apresentação de trabalho" (TP/T) — token "trabalho" (P3.4, 17/06):** nos cursos
+  reais, os blocos cujo tópico é só "trabalho"/"parte trabalho" são **apresentações de
+  Trabalho Prático** (TP1/TP2/T1/T2), sem unidade própria — DELIVERABLE (`unit=False`) está
+  certo p/ eles. `classify_block` só os trata como DELIVERABLE quando NÃO há evidência de
+  unidade (`_has_unit_evidence`: `unit_slug`/`auto_unit_slug`/`topic_candidates`); com unidade
+  ou candidatos, "trabalho" é tema de aula → CLASS (mantém a unidade). A FP que o radar temia
+  (aula "Trabalho sobre X" com unidade perdendo a unidade) **não se manifesta** em nenhum dos
+  5 cursos atuais. Gotcha: alguns desses blocos vêm **MERGED** com uma prova (P1/P2) no mesmo
+  intervalo → caem em ASSESSMENT (prova vence o trabalho via session-exam). Resolver de fato =
+  separar blocos merged (dívida aberta).
 
 ## Consequência para o sistema de atribuição
 
