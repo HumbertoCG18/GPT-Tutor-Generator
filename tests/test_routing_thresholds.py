@@ -12,7 +12,6 @@ def test_thresholds_present():
     # limiares nomeados centralizados
     assert T.UNIT_TAG == 0.65
     assert T.SUBUNIT_TAG == 0.60
-    assert T.BLOCO_TAG == 0.50
     assert T.BLOCK_UNIT_MIN_WINNER == 1.0
     assert T.BLOCK_UNIT_MIN_GAP == 0.35
     assert T.VOTE_DOMINANCE == 0.60

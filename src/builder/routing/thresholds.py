@@ -136,7 +136,6 @@ class _Thresholds:
     # tags gerenciadas (content_taxonomy.resolve_unit_block_tags)
     UNIT_TAG: float = 0.65
     SUBUNIT_TAG: float = 0.60
-    BLOCO_TAG: float = 0.50
     # bloco -> unidade (timeline._assign_timeline_block_to_unit)
     BLOCK_UNIT_MIN_WINNER: float = 1.0
     BLOCK_UNIT_MIN_GAP: float = 0.35
