@@ -1,22 +1,51 @@
 from __future__ import annotations
 
-from typing import Callable, Dict, List, Optional, Sequence, TypedDict, Union
+from typing import Callable, Dict, List, Optional, Sequence, TypedDict
 
-from src.builder.routing.thresholds import IDF_WEIGHT
+from src.builder.routing.file_map import (
+    _score_block_date_match,
+    score_card_evidence_against_entry,
+)
+from src.builder.routing.sequence import score_sequence_match
+from src.builder.routing.thresholds import (
+    IDF_WEIGHT,
+    confidence_band,
+    relative_margin_confidence,
+)
 from src.builder.text.normalize import normalize_match_text
 from src.builder.text.stopwords import TIMELINE_GENERIC_TOKENS, UNIT_GENERIC_TOKENS
 
 _STOPWORDS = TIMELINE_GENERIC_TOKENS | UNIT_GENERIC_TOKENS
 
 # Extensoes de arquivo-fonte: sinal de FORMATO, uniforme na unidade -> nao
-# discrimina bloco (par do down-weight de ferramenta no escopo de bloco).
-FORMAT_TOKENS: frozenset = frozenset({
-    "thy", "dfy", "smv", "als", "coq", "lean",
-    "zip", "pdf", "md", "py", "txt", "json", "csv", "ipynb",
-})
+# discrimina bloco. Tokens >=4 chars (o filtro _concept_tokens dropa os curtos
+# ANTES do down-weight); formato nao precisa discriminar a fusao, entao basta
+# zerar os que sobrevivem ao filtro (Minor da 2.1: os <4 chars eram inertes).
+FORMAT_TOKENS: frozenset = frozenset({"ipynb", "json", "lean"})
 
 # Piso do peso de ferramenta/formato no escopo de bloco: ~0 (nao negativo).
 _BLOCK_TOOL_FLOOR: float = 0.0
+
+# Pesos da fusao (spec 4.3). Calibrados por PRINCIPIO, nao por overfit:
+# - W_CONCEPT=1.0: um overlap de UM token raro/discriminante (peso IDF ~1.0)
+#   vale 1 ponto. E o nucleo.
+# - W_LLM=0.85: o voto do LLM (block_match_confidence in [0,1]) entra abaixo de
+#   um overlap de conceito FORTE (>=1 token discriminante) -> conceito exato
+#   domina o voto LLM errado (colecoes/invariantes/hoare). Mas quando o overlap
+#   e ZERO ou EMPATADO (arvores 04==05, intro/listas/classes sem token), o voto
+#   LLM (0.85*conf ~ 0.6-0.7) e o unico/maior termo e desempata.
+W_CONCEPT: float = 1.0
+W_LLM: float = 0.85
+# Voto secundario do LLM: fracao do peso do primario (sinal mais fraco).
+LLM_SECONDARY_FRAC: float = 0.4
+# Card-evidence autoritativo (tier 2): acima disto e ground-truth postado.
+CARD_AUTHORITATIVE: float = 0.5
+# source_section e a JANELA do cronograma (onde o material foi postado), nao o
+# conteudo — para um .thy a secao "Provas por Inducao" cobre 04/05/06 inteiros
+# e nao discrimina. Entra com fracao do peso do conteudo (titulo/markdown/
+# concepts do Gemini), como hint posicional fraco, nao como conceito de 1a
+# classe (senao a secao do cronograma sobrepoe o voto do LLM que LEU o arquivo).
+SECTION_CONCEPT_FRAC: float = 0.35
 
 
 def _concept_text(item: object) -> str:
@@ -107,11 +136,68 @@ def concept_vector(
 class Assignment(TypedDict):
     block_id: str
     unit_slug: str
+    subunit_slug: str
     confidence: float
     band: str
     method: str
     signals: dict
     conflict: Optional[dict]
+
+
+def _block_unit_slug(block: dict) -> str:
+    return str(block.get("unit_slug", "") or "")
+
+
+def _unit_slug(unit: dict) -> str:
+    return str(unit.get("slug", "") or unit.get("title", "") or "")
+
+
+def _topic_unit_for_entry(
+    entry_vec: Dict[str, float],
+    units: List[dict],
+    norm: Callable[[str], str],
+) -> str:
+    """Unidade que o CONCEITO do material sugeriria pelo plano (overlap do
+    vetor de conceito da entry com os topicos de cada unidade). Vazio quando
+    nenhuma unidade tem overlap — sem topico-unit nao ha conflito a flagar."""
+    if not entry_vec:
+        return ""
+    best_slug = ""
+    best = 0.0
+    for unit in units or []:
+        unit_tokens = _concept_tokens(_concept_text(unit), norm)
+        overlap = sum(w for tok, w in entry_vec.items() if tok in unit_tokens)
+        if overlap > best:
+            best = overlap
+            best_slug = _unit_slug(unit)
+    return best_slug if best > 0.0 else ""
+
+
+def _llm_vote(llm_curation: Optional[dict]) -> Dict[str, float]:
+    if not llm_curation:
+        return {}
+    try:
+        conf = float(llm_curation.get("block_match_confidence") or 0.0)
+    except (TypeError, ValueError):
+        conf = 0.0
+    conf = max(0.0, min(1.0, conf)) or 0.6  # sem confianca explicita: voto medio
+    votes: Dict[str, float] = {}
+    primary = str(llm_curation.get("primary_block_id") or "").strip()
+    if primary:
+        votes[primary] = conf
+    for sec in llm_curation.get("secondary_block_ids") or []:
+        sid = str(sec or "").strip()
+        if sid and sid not in votes:
+            votes[sid] = conf * LLM_SECONDARY_FRAC
+    return votes
+
+
+def _manual_block_id(entry: dict, blocks: List[dict]) -> str:
+    raw = str(entry.get("manual_timeline_block_id") or "").strip()
+    if not raw:
+        return ""
+    ids = {str(b.get("id", "")).strip() for b in blocks or []}
+    return raw if raw in ids else ""
 
 
 def resolve_material_assignment(
@@ -122,4 +208,142 @@ def resolve_material_assignment(
     signals: dict,
     llm_curation: Optional[dict] = None,
 ) -> Assignment:
-    raise NotImplementedError("Task 2.2: fusao de sinais + tiers de precedencia")
+    norm = normalize_match_text
+    blocks = list(blocks or [])
+    units = list(units or [])
+
+    # Tier 1 (manual): override vence tudo.
+    manual = _manual_block_id(entry, blocks)
+    if manual:
+        winner = next((b for b in blocks if str(b.get("id", "")) == manual), None)
+        return Assignment(
+            block_id=manual,
+            unit_slug=_block_unit_slug(winner) if winner else "",
+            subunit_slug="",
+            confidence=1.0,
+            band=confidence_band(1.0),
+            method="manual",
+            signals={"manual": manual},
+            conflict=None,
+        )
+
+    if not blocks:
+        return Assignment(
+            block_id="", unit_slug="", subunit_slug="", confidence=0.0,
+            band=confidence_band(0.0), method="empty", signals={}, conflict=None,
+        )
+
+    # Pesos de conceito no ESCOPO de bloco (down-weight de ferramenta/formato da
+    # 2.1) sobre os blocos candidatos; vetor de conceito da entry uma vez.
+    tool_tokens = {
+        tok for tok in str(signals.get("tool_tags_text", "") or "").split() if tok
+    }
+    weights = concept_token_weights(blocks, scope="block", tool_tokens=tool_tokens, normalize=norm)
+    # Vetor de conceito da ENTRY a partir dos SIGNALS ja normalizados pelo funil
+    # (title_text traz o split camelCase) + concepts do Gemini = o CONTEUDO.
+    # Construir do entry dict cru perderia o split camelCase ("CorrecaoTerminacao"
+    # ficaria 1 token, sem casar "correcao"/"terminacao").
+    content_text = " ".join(
+        p for p in (
+            str(signals.get("title_text", "") or ""),
+            str(signals.get("markdown_text", "") or ""),
+            " ".join(str(c or "") for c in (entry.get("concepts") or [])),
+        ) if p
+    )
+    content_vec = concept_vector(content_text, weights, normalize=norm)
+    # source_section: hint posicional FRACO (janela do cronograma), so onde nao
+    # ja coberto pelo conteudo.
+    section_vec = {
+        tok: w * SECTION_CONCEPT_FRAC
+        for tok, w in concept_vector(
+            str(entry.get("source_section", "") or ""), weights, normalize=norm
+        ).items()
+        if tok not in content_vec
+    }
+    entry_vec = {**section_vec, **content_vec}
+
+    votes = _llm_vote(llm_curation)
+
+    scored: List[tuple] = []
+    for block in blocks:
+        block_vec = concept_vector(block, weights, normalize=norm)
+        overlap = sum(
+            min(entry_vec[tok], block_vec[tok])
+            for tok in entry_vec.keys() & block_vec.keys()
+        )
+        bid = str(block.get("id", ""))
+        llm_term = votes.get(bid, 0.0)
+        date_term = _score_block_date_match(signals, block)
+        seq_term = score_sequence_match(signals, block)
+        card_term = score_card_evidence_against_entry(
+            signals, block.get("card_evidence", []) or [], normalize_match_text=norm
+        )
+        fused = (
+            W_CONCEPT * overlap
+            + W_LLM * llm_term
+            + date_term
+            + seq_term
+            + card_term
+        )
+        scored.append((block, fused, {
+            "concept": round(overlap, 4),
+            "llm": round(llm_term, 4),
+            "date": round(date_term, 4),
+            "sequence": round(seq_term, 4),
+            "card": round(card_term, 4),
+            "fused": round(fused, 4),
+            "authoritative_card": card_term >= CARD_AUTHORITATIVE,
+        }))
+
+    # Tier 2 (card/data autoritativo): se ALGUM bloco tem card-evidence forte,
+    # ele vence o concept-match. Senao, o fundido (Tier 3) decide. Posicional
+    # (Tier 4) e o fallback: empate/tudo-zero -> ordem dos blocos.
+    authoritative = [s for s in scored if s[2]["authoritative_card"]]
+    pool = authoritative if authoritative else scored
+    pool.sort(key=lambda s: s[1], reverse=True)
+
+    winner, best_score, winner_breakdown = pool[0]
+    runner_up_score = pool[1][1] if len(pool) > 1 else 0.0
+
+    if authoritative:
+        method = "card"
+    elif best_score <= 0.0:
+        method = "positional"
+    else:
+        method = "concept-fused"
+
+    confidence = relative_margin_confidence(best_score, runner_up_score)
+    if method == "positional":
+        confidence = 0.0
+
+    block_unit = _block_unit_slug(winner)
+    topic_unit = _topic_unit_for_entry(entry_vec, units, norm)
+
+    # Conflito (spec 4.5/9): bloco-unit != topico-unit (fontes fortes discordam
+    # da unidade). O bloco (agendado) vence a unit; o conflito e flagado e a
+    # subunit fica RESTRITA a unidade vencedora (nunca de outra unidade).
+    conflict: Optional[dict] = None
+    if topic_unit and block_unit and topic_unit != block_unit:
+        conflict = {
+            "kind": "block_unit_vs_topic_unit",
+            "block_unit": block_unit,
+            "topic_unit": topic_unit,
+            "block_id": str(winner.get("id", "")),
+        }
+        confidence = min(confidence, 0.45)
+
+    # Subunit restrita a unidade vencedora: esta task nao resolve subunit (e da
+    # rota de topico), entao deixa vazio — o invariante e que NUNCA escape a
+    # unidade do bloco. A flag de conflito carrega o diagnostico.
+    subunit_slug = ""
+
+    return Assignment(
+        block_id=str(winner.get("id", "")),
+        unit_slug=block_unit,
+        subunit_slug=subunit_slug,
+        confidence=confidence,
+        band=confidence_band(confidence),
+        method=method,
+        signals=winner_breakdown,
+        conflict=conflict,
+    )
