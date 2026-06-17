@@ -60,6 +60,20 @@ def test_atividade_revisao_emits_review():
     assert "{kind=review}" in md
 
 
+def test_atividade_evento_uncolored_emits_event():
+    # "Evento Academico" sem cor de exclusao: antes caia em class (gap), agora
+    # mapeia para o kind ignorado "event" (igual ao evento marcado por cor).
+    md = parse_html_schedule(_sarc_html("Evento Academico"))
+    assert "{kind=event}" in md
+
+
+def test_candidate_row_event_from_atividade_is_ignored():
+    rows = [{"content": "SE Day", "Atividade": "Evento Academico", "date": "03/07/2026"}]
+    out = _build_timeline_candidate_rows(rows)
+    assert out[0]["kind"] == "event"
+    assert out[0]["ignored"] is True
+
+
 def test_candidate_row_keeps_valid_kind():
     rows = [{"content": "Prova final {kind=assessment}", "date": "03/07/2026"}]
     out = _build_timeline_candidate_rows(rows)

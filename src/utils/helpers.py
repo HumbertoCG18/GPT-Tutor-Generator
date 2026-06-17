@@ -430,6 +430,10 @@ ATIVIDADE_KIND_MAP = {
     "trabalho": "deliverable",
     "entrega": "deliverable",
     "feriado": "holiday",
+    # "evento" (Evento Academico/Institucional): kind ignorado, igual ao evento
+    # marcado por cor (darkred -> "event"). Sem isso, "Evento Academico" na coluna
+    # Atividade caía em "class" (aula) e poluía a atribuição de unidade.
+    "evento": "event",
     "revisao": "review",
 }
 

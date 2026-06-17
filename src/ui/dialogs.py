@@ -1165,38 +1165,29 @@ class HelpWindow(tk.Toplevel):
 
 
 class HTMLImportDialog(tk.Toplevel):
-    """Diálogo para colar código HTML do cronograma e converter."""
+    """Diálogo para importar o cronograma do SARC pela URL (Export.aspx)."""
     def __init__(self, parent: "SubjectManagerDialog"):
         super().__init__(parent)
-        self.title("📥  Importar Cronograma (HTML)")
-        self.geometry("640x480")
+        self.title("📥  Importar Cronograma (SARC)")
+        self.geometry("640x170")
         self.transient(parent)
         self.grab_set()
         p = apply_theme_to_toplevel(self, parent)
         self.parent = parent
 
-        ttk.Label(self, text="Cole a URL do SARC OU o HTML da tabela do cronograma.").pack(padx=10, pady=(10, 5), anchor="w")
+        ttk.Label(
+            self,
+            text="Cole a URL do SARC (Export.aspx) do cronograma da turma.",
+            wraplength=600,
+            justify="left",
+        ).pack(padx=10, pady=(10, 5), anchor="w")
 
         url_frame = ttk.Frame(self)
         url_frame.pack(fill="x", padx=10, pady=(0, 5))
-        ttk.Label(url_frame, text="URL do SARC (opcional):").pack(side="left")
+        ttk.Label(url_frame, text="URL do SARC:").pack(side="left")
         self.url_entry = ttk.Entry(url_frame)
         self.url_entry.pack(side="left", fill="x", expand=True, padx=(6, 0))
 
-        self.text = tk.Text(
-            self,
-            font=("Consolas", 10),
-            wrap="word",
-            bg=p["input_bg"],
-            fg=p["fg"],
-            insertbackground=p["fg"],
-            selectbackground=p["select_bg"],
-            selectforeground=p["select_fg"],
-            relief="flat",
-            borderwidth=1,
-        )
-        self.text.pack(fill="both", expand=True, padx=10, pady=5)
-        
         btn_frame = ttk.Frame(self)
         btn_frame.pack(fill="x", padx=10, pady=10)
         ttk.Button(btn_frame, text="Cancelar", command=self.destroy).pack(side="right", padx=(5, 0))
@@ -1207,8 +1198,9 @@ class HTMLImportDialog(tk.Toplevel):
 
     def _process(self):
         url = self.url_entry.get().strip()
-        pasted_html = self.text.get("1.0", "end").strip()
-        decision = decide_schedule_source(url, pasted_html)
+        # Só a URL do SARC: o paste de HTML foi removido da UI (decide_schedule_source
+        # e parse_html_schedule seguem no backend como fallback, não expostos aqui).
+        decision = decide_schedule_source(url, "")
 
         action = decision["action"]
         if action == "cancel":
