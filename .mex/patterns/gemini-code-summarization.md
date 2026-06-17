@@ -11,23 +11,25 @@ edges:
     condition: when revisiting why Gemini is optional
   - target: context/architecture.md
     condition: when wiring a new summarization layer
-last_updated: 2026-06-09
+last_updated: 2026-06-17
 ---
 
 # Gemini Batch Summarization Pattern
 
 Use when adding a build-time Gemini layer that enriches a class of entries (code, PDFs, exercises) with structured summaries, cached by content hash, with lazy degradation when no API key is configured.
 
-## Reference implementation
+## Reference Implementations
 
 | Piece | File |
 |---|---|
-| Lazy client + retry | `src/builder/runtime/gemini_client.py` |
-| Engine (schemas, hash, bundle, prune) | `src/builder/core/code_summarization.py` |
+| Shared lazy client + retry | `src/builder/runtime/gemini_client.py` |
+| Code engine (schemas, hash, bundle, prune) | `src/builder/core/code_summarization.py` |
+| Reference engine (schema, fetch, hash, cache, deterministic unit/topic mapping) | `src/builder/core/reference_summary.py`, `src/builder/core/reference_content.py`, `src/builder/core/reference_topic.py` |
 | Settings UI | `src/ui/dialogs.py` (Gemini section) |
 | Engine wiring | `src/builder/engine.py` (`_load_code_curation`, `_summarize_code_entries`, `_prune_stale_code_curation`) |
-| Build pipeline prune call | `src/builder/ops/build_workflow.py` + `incremental_build.py` |
-| Renderers consuming curation | `src/builder/core/source_importers.py`, `src/builder/artifacts/repo.py` (CODE_INDEX, CRONOGRAMA_DETALHADO, CODE_HEALTH) |
+| Build pipeline wiring | `src/builder/ops/build_workflow.py` + `incremental_build.py` |
+| Renderers consuming code curation | `src/builder/core/source_importers.py`, `src/builder/artifacts/repo.py` (CODE_INDEX, CRONOGRAMA_DETALHADO, CODE_HEALTH) |
+| Renderers consuming reference curation | `src/builder/core/reference_navigation.py`, `src/builder/artifacts/navigation.py`, `src/builder/artifacts/repo.py` (COURSE_MAP support lines, BIBLIOGRAPHY) |
 
 ## Steps for a new entry class (e.g. PDFs)
 
@@ -38,6 +40,7 @@ Use when adding a build-time Gemini layer that enriches a class of entries (code
 5. Add a `prune_stale_<class>_curation(builder)` that removes ids not in the generated repo's manifest.json. Call it from `build_workflow.py` and `incremental_build.py` after manifest reload.
 6. Block matching: reuse `assign_code_to_block` if concepts shape is identical; otherwise duplicate the matcher with the same thresholds (`primary=0.4`, `secondary=0.25`, `margin=0.15`) and calibrate later.
 7. Lazy import: never `import google.genai` at module top. Always inside method bodies. Anti-pattern grep: `google.generativeai`, `genai.GenerativeModel`.
+8. Keep no-key behavior useful. Reference mapping, for example, still runs deterministically without Gemini summaries.
 
 ## Anti-patterns
 

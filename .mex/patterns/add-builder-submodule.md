@@ -14,12 +14,12 @@ edges:
     condition: when deciding which subpackage owns the new logic
   - target: patterns/add-ui-feature.md
     condition: when the new builder logic also needs a UI entry point or dialog
-last_updated: 2026-06-09
+last_updated: 2026-06-17
 ---
 
 # Add Builder Submodule
 
-Reviewed against the current `src/builder` subpackage layout on 2026-06-03.
+Reviewed against the current `src/builder` subpackage layout on 2026-06-17.
 
 ## Context
 
@@ -29,6 +29,7 @@ All new processing logic goes into a focused subpackage under `src/builder/`. Ch
 - `src/builder/pdf/` — PDF conversion and profiling
 - `src/builder/artifacts/` — generating markdown artifacts (COURSE_MAP, FILE_MAP, prompts)
 - `src/builder/runtime/` — external service clients (Datalab, backend capabilities)
+- `src/builder/sources/` — source/repository import helpers and source-specific processing
 - `src/builder/vision/` — Ollama image classification
 - `src/builder/routing/` — FILE_MAP matching and scoring
 - `src/builder/facade/` — engine-level wrappers that expose configured submodule functionality

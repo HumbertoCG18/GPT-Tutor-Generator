@@ -11,12 +11,42 @@ edges:
     condition: when a decision affects system structure
   - target: context/stack.md
     condition: when a decision affects technology choice
-last_updated: 2026-06-09
+last_updated: 2026-06-17
 ---
 
 # Decisions
 
 Append-only log. When a decision changes, mark the old entry as superseded and add the new decision above it.
+
+---
+
+### Generated Tutor Artifacts Carry Timeline Health and Temporal Context
+
+**Date:** 2026-06-17
+**Status:** Active
+**Decision:** Regeneration writes cronograma health and temporal context artifacts alongside COURSE_MAP and FILE_MAP.
+**Reasoning:** Timeline-aware tutoring needs both a compact current-schedule context and a visible audit surface for timeline/unit conflicts, stale overrides, and allocation health.
+**Consequences:** Generated-output documentation and artifact tests must include both files. Tutor instructions may refer to the temporal context artifact, while operational diagnostics should use the cronograma health artifact.
+
+---
+
+### References Are First-Class Tutor Context
+
+**Date:** 2026-06-17
+**Status:** Active
+**Decision:** Entries in reference/bibliography categories are fetched lightly, optionally summarized with Gemini, deterministically mapped to units/topics, cached in generated reference curation, surfaced in BIBLIOGRAPHY, and linked from COURSE_MAP support lines.
+**Reasoning:** A tutor that only sees reference links and titles cannot use bibliography as grounding context. The cache keeps enrichment incremental, and the deterministic mapping still works when Gemini is unavailable.
+**Consequences:** Reference changes must preserve no-key degradation, cache-by-hash behavior, COURSE_MAP support-line limits, and BIBLIOGRAPHY as the deep-reference target.
+
+---
+
+### Timeline Block Unit Assignment Uses Positional Matching
+
+**Date:** 2026-06-17
+**Status:** Active
+**Decision:** Timeline blocks receive `auto_unit_slug` through the positional matcher in `src/builder/timeline/unit_matcher.py`, with authoritative non-class kinds excluded from unit assignment and manual overrides remaining dominant.
+**Reasoning:** The previous keyword-only block-to-unit path produced confident but wrong unit inheritance. Monotonic positional assignment better matches course chronology and reduces fragile vocabulary coupling.
+**Consequences:** Timeline/unit changes should be verified with unit matcher tests and rebuild-diff/eval harnesses where possible. Conflict reporting should compare manual overrides against the positional auto suggestion.
 
 ---
 

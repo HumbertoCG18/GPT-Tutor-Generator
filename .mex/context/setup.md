@@ -13,7 +13,7 @@ edges:
     condition: when exact technology or manifest details are needed
   - target: context/architecture.md
     condition: when understanding runtime behavior after startup
-last_updated: 2026-06-09
+last_updated: 2026-06-17
 ---
 
 # Setup
@@ -22,24 +22,31 @@ last_updated: 2026-06-09
 
 | Requirement | Source |
 |---|---|
-| Python `3.8+` | README badge and requirements section reference. |
+| Python `>=3.8`; `3.11` recommended | `pyproject.toml` and README requirements section. |
 | Tkinter | README identifies the UI as Tkinter. |
+| Git | README requirements section. |
 | Ollama | README identifies Vision support through Ollama. |
 | Datalab | README identifies the PDF backend as Datalab. |
 | pytest | Brief tooling identifies `pytest` as the test runner. |
 
-The brief does not declare package dependencies, development dependencies, scripts, a formatter, a linter, or a package manager.
+The manifest declares runtime dependencies and the `dev`/`code-summarization` extras. It still does not declare project scripts, a formatter, or a linter.
 
 ## Install
 
-Use a Python virtual environment. Exact dependency installation command is not declared in the brief, because `pyproject.toml` dependencies and dev dependencies are listed as empty.
+Use a Python virtual environment and install the editable package with the development extra.
 
 ```powershell
 python -m venv .venv
-.venv\Scripts\Activate.ps1
+& .\.venv\Scripts\Activate.ps1
+python -m pip install -U pip setuptools wheel
+pip install -e .[dev]
 ```
 
-If a task needs an exact install command, read `pyproject.toml` before documenting or running one.
+For Gemini-backed code/reference summarization, install the optional extra:
+
+```powershell
+pip install -e .[code-summarization]
+```
 
 ## Run
 
@@ -57,9 +64,15 @@ The test runner is `pytest`.
 python -m pytest tests -q
 ```
 
-Known test entry points from the brief include:
+Representative targeted test entry points include:
 
 ```powershell
+python -m pytest tests/test_datalab_image_extraction.py -q
+python -m pytest tests/test_cronograma_health.py -q
+python -m pytest tests/test_reference_summary.py -q
+python -m pytest tests/test_reference_navigation.py -q
+python -m pytest tests/test_unit_matcher.py -q
+python -m pytest tests/test_eval_ground_truth.py -q
 python -m pytest tests/test_unit_fallback.py -q
 python -m pytest tests/test_ui_queue_dashboard.py -q
 python -m pytest tests/test_timeline_signals.py -q
@@ -85,3 +98,4 @@ After launching the app:
 8. Use Reprocess Repository to reapply the current architecture to existing repositories.
 9. Use Repository Tasks to queue builds, reprocessing, and individual processing.
 10. Use Dashboard to monitor operational repository state.
+11. Use Cronograma to inspect file-to-block allocation and persist manual block overrides.
