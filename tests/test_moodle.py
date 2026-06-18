@@ -60,6 +60,51 @@ def test_save_token_creates_file_when_missing(tmp_path):
     assert url == "https://moodle.pucrs.br"
 
 
+import json
+from pathlib import Path
+from src.builder.sources.moodle import (
+    backfill_repo_signals_additive, backfill_repo_signals_consumed,
+)
+
+def _fake_repo(tmp_path, entries):
+    repo = tmp_path / "repo"
+    (repo / "course").mkdir(parents=True)
+    (repo / "manifest.json").write_text(json.dumps({"entries": entries}), encoding="utf-8")
+    (repo / "course" / ".timeline_index.json").write_text(
+        json.dumps({"blocks": [{"id": "bloco-01", "period_start": "2026-02-20",
+                                "period_end": "2026-02-28", "unit_slug": "u1"}]}),
+        encoding="utf-8")
+    return repo
+
+_CONTENTS = [{"name": "Semana 1", "modules": [
+    {"name": "Exemplos (Hoare)", "contents": [
+        {"type": "file", "filename": "main.pdf", "fileurl": "u",
+         "timemodified": 1739361600, "timecreated": 1739000000}]}]}]
+
+def test_additive_sets_posting_and_label_not_section(tmp_path):
+    repo = _fake_repo(tmp_path, [{"id": "e1", "source_path": "main.pdf",
+                                  "source_section": "OLD", "moodle_label": ""}])
+    backfill_repo_signals_additive(repo, _CONTENTS, {"name": "MF", "semester": "2026/1",
+                                                     "turma": "031", "schedule_url": ""}, write=True)
+    m = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+    e = m["entries"][0]
+    assert e["posting_date"] == "2025-02-12"
+    assert e["moodle_label"] == "Exemplos (Hoare)"
+    assert e["source_section"] == "OLD"          # additive NAO toca source_section
+    assert m["turma"] == "031"
+
+def test_additive_does_not_write_card_block_map(tmp_path):
+    repo = _fake_repo(tmp_path, [{"id": "e1", "source_path": "main.pdf"}])
+    backfill_repo_signals_additive(repo, _CONTENTS, {"name": "MF", "semester": "2026/1"}, write=True)
+    assert not (repo / "course" / ".card_block_map.json").exists()
+
+def test_consumed_overwrites_section(tmp_path):
+    repo = _fake_repo(tmp_path, [{"id": "e1", "source_path": "main.pdf", "source_section": "OLD"}])
+    backfill_repo_signals_consumed(repo, _CONTENTS, {"name": "MF", "semester": "2026/1"}, write=True)
+    m = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+    assert m["entries"][0]["source_section"] == "Semana 1"   # consumed overwrita
+
+
 def test_login_posts_credentials_and_returns_token(monkeypatch):
     from src.builder.sources import moodle
     captured = {}

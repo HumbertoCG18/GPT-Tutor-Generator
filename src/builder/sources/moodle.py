@@ -381,6 +381,94 @@ def find_subject_for_course(store, course):
     return match_by_slug or store.get(info["name"])
 
 
+def backfill_repo_signals_additive(repo_root, contents, info, write: bool = True) -> dict:
+    """Backfill que NAO muda atribuicao: moodle_label (fill-if-empty), posting_date,
+    .lessons_index.json, e meta turma/schedule_url. Grava in-place se write."""
+    import json as _json
+    repo = Path(repo_root)
+    mpath = repo / "manifest.json"
+    if not mpath.is_file():
+        return {"labels": 0, "posting": 0, "lessons": 0}
+    manifest = _json.loads(mpath.read_text(encoding="utf-8"))
+    entries = manifest.get("entries", [])
+    labels = backfill_moodle_label_from_api(entries, contents)
+    posting = backfill_posting_date_from_api(entries, contents)
+    n_lab = n_post = 0
+    for e in entries:
+        eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+        if labels.get(eid) and not str(e.get("moodle_label") or "").strip():
+            e["moodle_label"] = labels[eid]
+            n_lab += 1
+        if eid in posting:
+            e["posting_date"] = posting_date_iso(posting[eid]["timemodified"])
+            e["posting_date_created"] = posting_date_iso(posting[eid]["timecreated"])
+            n_post += 1
+    if info.get("turma"):
+        manifest["turma"] = info["turma"]
+    if info.get("schedule_url"):
+        manifest["schedule_url"] = info["schedule_url"]
+    if write:
+        write_json_manifest(mpath, manifest)
+    n_lessons = 0
+    try:
+        from src.builder.sources.moodle_labels import build_lesson_topic_index
+        year = int((info.get("semester") or "0/0").split("/")[0] or 0)
+        lessons_index = build_lesson_topic_index(contents, year)
+        if lessons_index.get("by_date") and write:
+            (repo / "course" / ".lessons_index.json").write_text(
+                _json.dumps(lessons_index, ensure_ascii=False, indent=1), encoding="utf-8")
+            n_lessons = len(lessons_index["by_date"])
+    except Exception:
+        logger.warning("lessons_index falhou para %s", info.get("name"), exc_info=True)
+    return {"labels": n_lab, "posting": n_post, "lessons": n_lessons}
+
+
+def backfill_repo_signals_consumed(repo_root, contents, info, write: bool = True) -> dict:
+    """Backfill que MUDA atribuicao: source_section (overwrite) + card_block_map/assign_due.
+    Usado pelo import normal e pelo S0b (eval-gated). Grava in-place se write."""
+    import json as _json
+    repo = Path(repo_root)
+    mpath = repo / "manifest.json"
+    if not mpath.is_file():
+        return {"sections": 0, "card_labels": 0}
+    manifest = _json.loads(mpath.read_text(encoding="utf-8"))
+    entries = manifest.get("entries", [])
+    assignments, _u, _a = backfill_source_section_from_api(entries, contents)
+    n_sec = 0
+    for e in entries:
+        eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+        if eid in assignments:
+            e["source_section"] = assignments[eid]
+            n_sec += 1
+    if write:
+        write_json_manifest(mpath, manifest)
+    n_card = 0
+    try:
+        from src.builder.sources.moodle_labels import (
+            parse_card_dates, derive_card_block_map, merge_card_block_map,
+            extract_assign_deadlines,
+        )
+        ti_path = repo / "course" / ".timeline_index.json"
+        map_path = repo / "course" / ".card_block_map.json"
+        if ti_path.is_file():
+            blocks = (_json.loads(ti_path.read_text(encoding="utf-8")) or {}).get("blocks") or []
+            year = int((info.get("semester") or "0/0").split("/")[0] or 0)
+            derived = derive_card_block_map(parse_card_dates(contents, year), blocks)
+            for _card, _due in extract_assign_deadlines(contents, year).items():
+                if _card in derived:
+                    derived[_card]["assign_due"] = _due
+                else:
+                    derived[_card] = {"block_ids": [], "source": "labels", "assign_due": _due}
+            existing = _json.loads(map_path.read_text(encoding="utf-8")) if map_path.is_file() else {}
+            merged = merge_card_block_map(existing, derived)
+            if merged != existing and write:
+                map_path.write_text(_json.dumps(merged, ensure_ascii=False, indent=1), encoding="utf-8")
+            n_card = sum(1 for _ in derived.values())
+    except Exception:
+        logger.warning("card_block_map via labels falhou para %s", info.get("name"), exc_info=True)
+    return {"sections": n_sec, "card_labels": n_card}
+
+
 def import_moodle_courses(selected_courses, base_folder, store, client, download: bool = False) -> dict:
     """Upsert de SubjectProfile + estrutura de cards + backfill do manifest.
 
@@ -430,70 +518,14 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
         st = build_card_structure(base / info["slug"], contents)
         folders += st["folders"]
         expected_files += st["expected_files"]
+        sp.turma = info.get("turma", "") or getattr(sp, "turma", "")
         repo = getattr(sp, "repo_root", "") or ""
         if repo and (Path(repo) / "manifest.json").is_file():
-            mpath = Path(repo) / "manifest.json"
-            manifest = _json.loads(mpath.read_text(encoding="utf-8"))
-            entries = manifest.get("entries", [])
-            assignments, _u, _a = backfill_source_section_from_api(entries, contents)
-            labels = backfill_moodle_label_from_api(entries, contents)
-            if assignments or labels:
-                for e in entries:
-                    eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
-                    if eid in assignments:
-                        e["source_section"] = assignments[eid]
-                        backfilled += 1
-                    # alavanca 1: só preenche se vazio (não clobbera label manual)
-                    if labels.get(eid) and not str(e.get("moodle_label") or "").strip():
-                        e["moodle_label"] = labels[eid]
-                write_json_manifest(mpath, manifest)
-        # --- card_block_map automático via labels (P1) ---
-        if repo:
-            try:
-                from src.builder.sources.moodle_labels import (
-                    parse_card_dates, derive_card_block_map, merge_card_block_map,
-                    extract_assign_deadlines, build_lesson_topic_index,
-                )
-                ti_path = Path(repo) / "course" / ".timeline_index.json"
-                map_path = Path(repo) / "course" / ".card_block_map.json"
-                if ti_path.is_file():
-                    blocks = (_json.loads(ti_path.read_text(encoding="utf-8")) or {}).get("blocks") or []
-                    year = int((info.get("semester") or "0/0").split("/")[0] or 0)
-                    derived = derive_card_block_map(parse_card_dates(contents, year), blocks)
-                    # S5 (P4): deadline de entrega por seção enriquece as
-                    # entradas DERIVED (manual nunca é tocado — merge abaixo
-                    # preserva). Seção com deadline mas sem labels de semana
-                    # ganha entrada própria com block_ids vazio: isso também
-                    # DESLIGA a heurística nome/data do lookup para o card de
-                    # entrega — o due NUNCA decide bloco sozinho (convenção
-                    # reprovada na demo de 12/06); ele só restringe a janela
-                    # de candidatos do scorer no funil.
-                    for _card, _due in extract_assign_deadlines(contents, year).items():
-                        if _card in derived:
-                            derived[_card]["assign_due"] = _due
-                        else:
-                            derived[_card] = {"block_ids": [], "source": "labels",
-                                              "assign_due": _due}
-                    existing = {}
-                    if map_path.is_file():
-                        existing = _json.loads(map_path.read_text(encoding="utf-8")) or {}
-                    merged = merge_card_block_map(existing, derived)
-                    if merged != existing:
-                        map_path.write_text(
-                            _json.dumps(merged, ensure_ascii=False, indent=1), encoding="utf-8")
-                    card_map_labels += sum(1 for v in derived.values())
-                    card_map_manual += sum(1 for v in merged.values()
-                                           if str(v.get("source") or "") == "manual")
-                    # alavanca 0: índice course-level data->tópico do resumo-da-semana
-                    # (lessons[].text que derive_card_block_map dropa). Só grava se há
-                    # sinal; ausência = resolver degrada sem o termo de lesson.
-                    lessons_index = build_lesson_topic_index(contents, year)
-                    if lessons_index.get("by_date"):
-                        (Path(repo) / "course" / ".lessons_index.json").write_text(
-                            _json.dumps(lessons_index, ensure_ascii=False, indent=1),
-                            encoding="utf-8")
-            except Exception:
-                logger.warning("card_block_map via labels falhou para %s", info["name"], exc_info=True)
+            info_repo = {**info, "turma": sp.turma, "schedule_url": getattr(sp, "schedule_url", "")}
+            add = backfill_repo_signals_additive(repo, contents, info_repo, write=True)
+            con = backfill_repo_signals_consumed(repo, contents, info_repo, write=True)
+            backfilled += con["sections"]
+            card_map_labels += con["card_labels"]
         if download:
             dl = client.download_course(cid, stash)
             downloaded += int(dl.get("downloaded", 0))
