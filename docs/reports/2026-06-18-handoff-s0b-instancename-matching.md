@@ -66,3 +66,15 @@ Rotular `docs/reports/gold_templates/gold_by_card_<curso>.csv` (1 linha/card, co
 - `sanitize_folder_name` preserva acentos (só `< > : " / \ | ? *` viram espaço); `/` entre dígitos vira `.` (datas). Casar SEMPRE pelo savename sanitizado, nunca pelo instancename cru.
 - Limite conhecido S0b: colisão de savename idêntico (sufixo ` (2)` no disco via `download_course`) é ponto cego do índice — raro.
 - Re-import pode trazer arquivos novos (IA) que mudam cards → revisar `rebuild_diff` antes de aceitar; `download_course` valida magic bytes (redirect M365/HTML cai em `failed`).
+
+## Caminho de dependência (gold cross-curso) — gravado 2026-06-18
+**Regra-chave:** A1–A7 DEPENDEM do gold baseline, NÃO o contrário. O gold baseline cross-curso é o pré-requisito que **destrava** o eval-gate do A1. Logo o gold vem ANTES de A1. NÃO é preciso terminar A1–A7 para rotular gold.
+
+Faltam **4 CSVs**: IA, SO, ES2, TCC (MF já feito). O que trava os 4 é o **S0b** (este refactor), especificamente o re-sync (Task 4): TCC/IA/SO puxam do Moodle e hoje têm label/seção sujos (TCC 1/24, IA 16/68, SO colisão `slides.pdf`) — rotular antes do re-sync = rotular lixo. MF pôde ir antes por ser M365 com filename casando direto; ES2 também é M365 mas o re-sync ainda lhe traz posting/seção → rotular junto.
+
+**Caminho mínimo (executar até terminar esta rodada de refatoração):**
+1. S0b Tasks 1–3 (código): matching por savename + date zero-padding + eval-gate (`rebuild_diff` idêntico, golden 5/5, suíte verde).
+2. S0b Task 4 (re-sync manual, com o usuário): Moodle `import_moodle_courses(download=True)` p/ TCC/IA/SO; backfill aditivo p/ MF/ES2.
+3. Regenerar `gold_by_card` nos 4 → rotular `true_block_id` → `expand_card_gold` → travar baseline → destrava A1.
+
+Modo de execução escolhido: **subagent-driven** (subagent fresco por task, melhor contra regressão).
