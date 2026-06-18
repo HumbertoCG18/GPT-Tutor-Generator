@@ -51,6 +51,32 @@ def load_labels_csv(path: Path) -> dict:
     return labels
 
 
+def load_predictions_from_gold(csv_path) -> dict:
+    """Predicoes auto-contidas do CSV rotulado (snapshot), sem repo live."""
+    preds = {}
+    with Path(csv_path).open(encoding="utf-8", newline="") as f:
+        for row in csv.DictReader(f):
+            eid = str(row.get("id", "")).strip()
+            if eid:
+                preds[eid] = {"block_id": str(row.get("predicted_block_id", "")),
+                              "band": str(row.get("predicted_band", "")),
+                              "title": str(row.get("title", ""))}
+    return preds
+
+
+def check_baseline(report: dict, baseline: dict) -> int:
+    """0 = ok, 1 = regressao. Baseline vazio nunca regride."""
+    if not baseline:
+        return 0
+    acc_min = float(baseline.get("block_accuracy_min", 0.0))
+    cw_max = baseline.get("confident_wrong_max")
+    if report.get("block_accuracy", 0.0) + 1e-9 < acc_min:
+        return 1
+    if cw_max is not None and report.get("confident_wrong", 0) > int(cw_max):
+        return 1
+    return 0
+
+
 def evaluate_ground_truth(predictions: dict, labels: dict, block_map: dict) -> dict:
     bands = {"alta": {"correct": 0, "wrong": 0}, "media": {"correct": 0, "wrong": 0},
              "baixa": {"correct": 0, "wrong": 0}, "": {"correct": 0, "wrong": 0}}
