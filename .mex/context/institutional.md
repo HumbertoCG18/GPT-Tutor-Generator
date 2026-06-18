@@ -16,7 +16,7 @@ edges:
     condition: quando precisar de como os componentes processam estas fontes
   - target: context/repo-output.md
     condition: quando o foco é o formato do repo gerado
-last_updated: 2026-06-17
+last_updated: 2026-06-18
 ---
 
 # Contexto Institucional
@@ -109,19 +109,38 @@ atribuição (arquivo→bloco→unidade/subunidade).
     **TDE** (Trabalho Discente Efetivo — exercícios dados em aula entram no card de TDE).
   Consequência: o match `source_section`→unidade/bloco NÃO pode assumir nome=unidade; tem
   que tolerar card por-semana, por-tipo-de-conteúdo e por-título-divergente.
-- **Label do recurso (`<span class="instancename">`) = rótulo do professor, HOJE DESCARTADO.** O
-  nome visível na lista Moodle (ex.: "Exemplos (invariantes de laço)") vem de `mod.get("name")`
-  (`moodle.py:130`), mas em MF o link redireciona pro SharePoint/OneDrive e só o filename sobrevive
-  (`invariantes.zip`). É o sinal de tópico mais forte por material — alvo do signal-registry (capturar
-  como campo `moodle_label`, NUNCA sobrescrever `title`).
+- **Label do recurso (`<span class="instancename">`) = rótulo do professor, CAPTURADO (S0).** O
+  nome visível na lista Moodle (ex.: "Aula 03 - Funções Recursivas") vem de `mod.get("name")`
+  (`iter_section_files`, `moodle.py`) e é o sinal de tópico mais forte por material. S0 o captura
+  como `moodle_label` (NUNCA sobrescreve `title`) e o usa como **savename** em disco
+  (`_savename_from_module`), resolvendo a colisão de filename (TCC: todo recurso é `main.pdf`; SO:
+  vários `slides.pdf` — o título do módulo é único onde o filename não é).
+- **S0b (matching por savename):** o backfill (`backfill_moodle_label_from_api`/
+  `backfill_posting_date_from_api`) casava por basename do filename ORIGINAL → colidia em `main.pdf`/
+  `slides.pdf` e o label não colava (TCC pegou só 1/24). O conserto casa pelo **savename sanitizado**
+  (instancename, com `/`→`.` nas datas), nos dois lados. Spec
+  `docs/superpowers/specs/2026-06-18-moodle-label-instancename-automatico-design.md`.
 - **Resumo-da-semana = módulo `label` do Moodle com mapa data→tópico.** Muitos profs postam um Label
   ("Semana DD/MM a DD/MM: (DD/MM): tópico; ..."). `moodle_labels.py` JÁ parseia isso (`lessons=[{date,text}]`,
   formatos A-D), mas `derive_card_block_map` usa só as `dates` e DROPA o `text`. É o mapa data→tópico
   do próprio professor — sinal autoritativo de bloco por sessão, sub-aproveitado. Nem todo prof faz →
   extrator opcional com degradação honesta (cf. `docs/superpowers/specs/2026-06-17-signal-registry-design.md`).
 
-### Microsoft 365
-- Fonte de material/seção (`m365.py` → `source_section`).
+### Microsoft 365 (OneDrive/SharePoint)
+- Fonte de material/seção (`m365.py` → `source_section`). Alguns professores postam o material no
+  **OneDrive** em vez do Moodle; o link do recurso Moodle redireciona pro M365 e só o **filename**
+  sobrevive (o instancename não acompanha o blob).
+- Nomes M365 costumam trazer **data no início** ("02.06 Lâminas Gerência…", "09.04 Semáforos") →
+  esse é o sinal de tópico/data desses cursos (DD.MM → cronograma), não o `moodle_label`.
+
+### Moodle × M365 — qual fonte por curso (UM canal por curso, não duplicado)
+- Cada cadeira tem o material num canal só, **escolha do professor**. Não há sobreposição por
+  arquivo (não é o mesmo PDF nos dois com nomes diferentes).
+- Mapa atual (2026/1, confirmado pelo usuário): **Moodle** = TCC, IA, SO · **M365** = MF, ES2
+  (mesmo professor, Julio). MF/ES2: arquivos vêm do OneDrive (nome com data); do Moodle ainda vale
+  capturar `posting_date` + seção (aditivo).
+- Consequência: re-sincronização é **por curso** conforme a fonte. O matching por instancename (S0b)
+  beneficia os cursos Moodle; nos M365 o sinal é a data-no-nome.
 
 ## Plataformas de consulta (não-fonte de conteúdo)
 
@@ -134,8 +153,8 @@ atribuição (arquivo→bloco→unidade/subunidade).
 |---|---|---|
 | Plano de Ensino | unidades + tópicos (taxonomia) | `content_taxonomy`, `unit_index` |
 | OpenSARC `Export.aspx` | cronograma: blocos + datas + kind (tipo de atividade) + recursos | `_parse_syllabus_timeline`, `_aspnet_row_canonical_kind`, `_build_timeline_index` |
-| Moodle | materiais + seções + datas de card | `source_section`, `card_block_map`, `moodle_labels` |
-| Microsoft 365 | materiais + seção | `m365.py` (`source_section`) |
+| Moodle | materiais + seções + datas de card + label/instancename + posting_date | `source_section`, `card_block_map`, `moodle_labels`, `moodle_label`, `posting_date` |
+| Microsoft 365 | materiais + seção (nome com data-no-início) | `m365.py` (`source_section`); sinal = DD.MM no nome |
 
 ## Convenções de identidade
 
