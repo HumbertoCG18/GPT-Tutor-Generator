@@ -159,6 +159,39 @@ def backfill_moodle_label_from_api(manifest_entries, contents):
     return out
 
 
+def posting_date_iso(ts) -> str:
+    """Converte epoch -> "YYYY-MM-DD" UTC. Inválido/<=0 -> ""."""
+    from datetime import datetime, timezone
+    try:
+        n = int(ts)
+    except (TypeError, ValueError):
+        return ""
+    if n <= 0:
+        return ""
+    return datetime.fromtimestamp(n, tz=timezone.utc).strftime("%Y-%m-%d")
+
+
+def backfill_posting_date_from_api(manifest_entries, contents):
+    """Casa entries -> {timemodified, timecreated} por basename UNICO (igual ao
+    source_section). Basename em >1 modulo -> pulado (ambiguo)."""
+    from collections import Counter
+    counts = Counter()
+    ts_by_name = {}
+    for sf in iter_section_files(contents):
+        key = sf.filename.casefold()
+        counts[key] += 1
+        if (sf.timemodified or sf.timecreated):
+            ts_by_name.setdefault(key, {"timemodified": sf.timemodified,
+                                        "timecreated": sf.timecreated})
+    out = {}
+    for e in manifest_entries or []:
+        eid = str(e.get("id") or "")
+        base = Path(str(e.get("source_path") or "")).name.casefold()
+        if base in ts_by_name and counts[base] == 1:
+            out[eid or base] = ts_by_name[base]
+    return out
+
+
 def section_file_index(contents) -> dict:
     """{casefold(filename): section} a partir de core_course_get_contents (metadados)."""
     idx = {}

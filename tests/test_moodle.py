@@ -1,4 +1,7 @@
-from src.builder.sources.moodle import sanitize_folder_name, iter_section_files, SectionFile, MoodleClient
+from src.builder.sources.moodle import (
+    sanitize_folder_name, iter_section_files, SectionFile, MoodleClient,
+    backfill_posting_date_from_api, posting_date_iso
+)
 
 
 def test_sanitize_removes_invalid_windows_chars():
@@ -424,3 +427,29 @@ def test_iter_section_files_captures_timestamps():
     sf = iter_section_files(contents)[0]
     assert sf.timemodified == 1739361600
     assert sf.timecreated == 1739000000
+
+
+def test_posting_date_iso_utc():
+    assert posting_date_iso(1739361600) == "2025-02-12"   # 12:00 UTC
+    assert posting_date_iso(0) == ""
+    assert posting_date_iso(None) == ""
+
+
+def test_backfill_posting_date_unique_match():
+    contents = [{"name": "S1", "modules": [
+        {"name": "Aula", "contents": [
+            {"type": "file", "filename": "main.pdf", "fileurl": "u",
+             "timemodified": 1739361600, "timecreated": 1739000000}]}]}]
+    entries = [{"id": "e1", "source_path": "C:/x/main.pdf"}]
+    out = backfill_posting_date_from_api(entries, contents)
+    assert out["e1"] == {"timemodified": 1739361600, "timecreated": 1739000000}
+
+
+def test_backfill_posting_date_skips_ambiguous_basename():
+    contents = [{"name": "S1", "modules": [
+        {"name": "A", "contents": [{"type": "file", "filename": "main.pdf", "fileurl": "u",
+                                     "timemodified": 1, "timecreated": 1}]},
+        {"name": "B", "contents": [{"type": "file", "filename": "main.pdf", "fileurl": "u2",
+                                     "timemodified": 2, "timecreated": 2}]}]}]
+    entries = [{"id": "e1", "source_path": "main.pdf"}]
+    assert backfill_posting_date_from_api(entries, contents) == {}
