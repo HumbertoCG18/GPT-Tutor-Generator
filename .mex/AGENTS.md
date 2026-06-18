@@ -1,12 +1,12 @@
 ---
 name: agents
 description: Project identity, non-negotiables, commands, and scaffold growth instructions
-last_updated: 2026-06-09
+last_updated: 2026-06-18
 ---
 
 # GPT-Tutor-Generator
 
-Reviewed against `.mex/ROUTER.md` and current scaffold commands on 2026-06-03.
+Reviewed against `.mex/ROUTER.md` and current scaffold commands on 2026-06-18.
 
 ## What This Is
 
@@ -42,10 +42,10 @@ python app.py
 ## Scaffold Growth
 
 After every task:
-- If no pattern exists for this task type, create one and add it to `patterns/INDEX.md`.
+- If no pattern exists for this task type, create one and add it to `.mex/patterns/INDEX.md`.
 - If a pattern was deviated from or a new gotcha was found, update it.
 - If any context file is now outdated, update it surgically.
-- Update "Current Project State" in `ROUTER.md` if the work was significant.
+- Update "Current Project State" in `.mex/ROUTER.md` if the work was significant.
 - **Living overview:** if the architecture, pipeline, or attribution logic changed, update
   `docs/Overview-Sistema.html` — the single living visual overview of the system (tabs 1–5
   attribution, 6 audit/debts, 7 system report). It must always reflect the current state.

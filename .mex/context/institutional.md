@@ -139,7 +139,7 @@ atribuição (arquivo→bloco→unidade/subunidade).
 
 ## Convenções de identidade
 
-- Semestre = `[Ano]/[Semestre]` (1 ano = 2 semestres), ex.: `2026/1`.
+- Semestre = `[Ano]/[Semestre]` (1 ano = 2 semestres), ex.: ano 2026, semestre 1.
 - Códigos de cadeira aparecem no Moodle.
 - Turma do cronograma é identificada por GUID no SARC (não pelo nome da matéria).
 

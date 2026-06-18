@@ -1,0 +1,61 @@
+id,title,category,markdown_path,predicted_block_id,predicted_period,predicted_band,true_block_id
+eth2,GitHub - Consensys/eth2.0-dafny: Eth2.0 spec in Dafny · GitHub,bibliografia,None,,,,
+aws-encryption-sdk,GitHub - aws/aws-encryption-sdk: AWS Encryption SDK · GitHub,bibliografia,None,,,,
+archive-of-formal-proofs-355fb8,Archive of Formal Proofs,references,content/curated/archive-of-formal-proofs-355fb8.md,,,,
+exerciciosformalizacaoalgoritmosrecursao3,ExerciciosFormalizacaoAlgoritmosRecursao3,listas,exercises/lists/exerciciosformalizacaoalgoritmosrecursao3.md,bloco-04,5 dias · 11/03/2026 a 25/03/2026,alta,bloco-04
+formalizacaoalgoritmos-recursao2,FormalizacaoAlgoritmos_Recursao2,material-de-aula,content/curated/formalizacaoalgoritmos-recursao2.md,bloco-04,5 dias · 11/03/2026 a 25/03/2026,alta,bloco-04
+exerciciosconjuntosindutivos,ExerciciosConjuntosIndutivos,listas,exercises/lists/exerciciosconjuntosindutivos.md,bloco-04,5 dias · 11/03/2026 a 25/03/2026,alta,bloco-04
+conjuntosindutivos,ConjuntosIndutivos,material-de-aula,content/curated/conjuntosindutivos.md,bloco-04,5 dias · 11/03/2026 a 25/03/2026,alta,bloco-04
+logicapredicados-semantica,logicaPredicados_semantica,material-de-aula,content/curated/logicapredicados-semantica.md,bloco-03,1 dia · 09/03/2026,alta,bloco-03
+logicapredicados-sintaxe,logicaPredicados_sintaxe,material-de-aula,content/curated/logicapredicados-sintaxe.md,bloco-03,1 dia · 09/03/2026,alta,bloco-03
+logicaproposicional-sintaxe,logicaProposicional_sintaxe,material-de-aula,content/curated/logicaproposicional-sintaxe.md,bloco-03,1 dia · 09/03/2026,media,bloco-03
+revisao,revisao,material-de-aula,content/curated/revisao.md,bloco-02,1 dia · 04/03/2026,baixa,bloco-02
+introducao,introducao,material-de-aula,content/curated/introducao.md,bloco-11,1 dia · 06/05/2026,media,bloco-11
+provasindutivas-especificacoesrecursivas,ProvasIndutivas_EspecificaçõesRecursivas,material-de-aula,content/curated/provasindutivas-especificacoesrecursivas.md,bloco-05,2 dias · 30/03/2026 a 01/04/2026,alta,bloco-05
+provasindutivas-especificacoesrecursivas-arvores,ProvasIndutivas_EspecificaçõesRecursivas_Arvores,material-de-aula,content/curated/provasindutivas-especificacoesrecursivas-arvores.md,bloco-05,2 dias · 30/03/2026 a 01/04/2026,alta,bloco-05
+provasindutivas-especificacoesrecursivas-listas,ProvasIndutivas_EspecificaçõesRecursivas_Listas,material-de-aula,content/curated/provasindutivas-especificacoesrecursivas-listas.md,bloco-05,2 dias · 30/03/2026 a 01/04/2026,alta,bloco-05
+exercicioscorrecaoinducaomatematica,ExerciciosCorrecaoInducaoMatematica,listas,exercises/lists/exercicioscorrecaoinducaomatematica.md,bloco-05,2 dias · 30/03/2026 a 01/04/2026,alta,bloco-05
+exerciciosespecificacao-respostas,ExerciciosEspecificacao_respostas,gabaritos,exercises/lists/exerciciosespecificacao-respostas.md,bloco-03,1 dia · 09/03/2026,alta,bloco-03
+exerciciosespecificacao,ExerciciosEspecificacao,listas,exercises/lists/exerciciosespecificacao.md,bloco-03,1 dia · 09/03/2026,alta,bloco-03
+exerciciosformalizacaoalgoritmosrecursao2,ExerciciosFormalizacaoAlgoritmosRecursao2,listas,exercises/lists/exerciciosformalizacaoalgoritmosrecursao2.md,bloco-04,5 dias · 11/03/2026 a 25/03/2026,alta,bloco-04
+exerciciosisabelle2,ExerciciosIsabelle2,listas,exercises/lists/exerciciosisabelle2.md,bloco-06,3 dias · 06/04/2026 a 13/04/2026,alta,bloco-06
+logicaproposicional-semantica,logicaProposicional_semantica,material-de-aula,content/curated/logicaproposicional-semantica.md,bloco-03,1 dia · 09/03/2026,alta,bloco-03
+exerciciosformalizacaoalgoritmosrecursao-respostas,ExerciciosFormalizacaoAlgoritmosRecursao_respostas,gabaritos,exercises/lists/exerciciosformalizacaoalgoritmosrecursao-respostas.md,bloco-04,5 dias · 11/03/2026 a 25/03/2026,alta,bloco-04
+formalizacaoalgoritmos-recursao,FormalizacaoAlgoritmos_Recursao,material-de-aula,content/curated/formalizacaoalgoritmos-recursao.md,bloco-04,5 dias · 11/03/2026 a 25/03/2026,alta,bloco-04
+formalizacaoalgoritmos-recursao3,FormalizacaoAlgoritmos_Recursao3,material-de-aula,content/curated/formalizacaoalgoritmos-recursao3.md,bloco-04,5 dias · 11/03/2026 a 25/03/2026,alta,bloco-04
+exerciciosisabelle,ExerciciosIsabelle,listas,exercises/lists/exerciciosisabelle.md,bloco-06,3 dias · 06/04/2026 a 13/04/2026,alta,bloco-06
+revisao-p1,revisao_p1,listas,exercises/lists/revisao-p1.md,bloco-06,3 dias · 06/04/2026 a 13/04/2026,alta,bloco-06
+t1-2026-1,t1_2026_1,trabalhos,content/curated/t1-2026-1.md,bloco-05,2 dias · 30/03/2026 a 01/04/2026,alta,bloco-05
+t1-2026-1-thy,T1 2026 1,codigo-professor,code/professor/t1-2026-1-thy.md,bloco-05,2 dias · 30/03/2026 a 01/04/2026,baixa,bloco-05
+exerciciosformalizacaoalgoritmosrecursao,ExerciciosFormalizacaoAlgoritmosRecursao,listas,exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md,bloco-04,5 dias · 11/03/2026 a 25/03/2026,alta,bloco-04
+revisao-p1-gabarito,revisao_p1_gabarito,provas,exams/past-exams/revisao-p1-gabarito.md,bloco-07,1 dia · 15/04/2026,alta,bloco-07
+arvores,arvores,codigo-professor,code/professor/arvores.md,bloco-06,3 dias · 06/04/2026 a 13/04/2026,media,bloco-06
+exemplos,exemplos,codigo-professor,code/professor/exemplos.md,bloco-06,3 dias · 06/04/2026 a 13/04/2026,alta,bloco-06
+intro,intro,codigo-professor,code/professor/intro.md,bloco-06,3 dias · 06/04/2026 a 13/04/2026,baixa,bloco-06
+listas,listas,codigo-professor,code/professor/listas.md,bloco-06,3 dias · 06/04/2026 a 13/04/2026,alta,bloco-06
+provas,provas,codigo-professor,code/professor/provas.md,bloco-05,2 dias · 30/03/2026 a 01/04/2026,media,bloco-05
+correcaoterminacao,CorrecaoTerminacao,material-de-aula,content/curated/correcaoterminacao.md,bloco-11,1 dia · 06/05/2026,alta,bloco-11
+exercicioscorrecaoterminacao,ExerciciosCorrecaoTerminacao,listas,exercises/lists/exercicioscorrecaoterminacao.md,bloco-11,1 dia · 06/05/2026,media,bloco-11
+exerciciosformalizacaoalgoritmosinvariantes,ExerciciosFormalizacaoAlgoritmosInvariantes,listas,exercises/lists/exerciciosformalizacaoalgoritmosinvariantes.md,bloco-11,1 dia · 06/05/2026,alta,bloco-11
+formalizacaoalgoritmos-invarianteslaco,FormalizacaoAlgoritmos_InvariantesLaco,material-de-aula,content/curated/formalizacaoalgoritmos-invarianteslaco.md,bloco-11,1 dia · 06/05/2026,alta,bloco-11
+logicadehoare,LogicaDeHoare,material-de-aula,content/curated/logicadehoare.md,bloco-10,3 dias · 27/04/2026 a 04/05/2026,baixa,bloco-10
+logicadehoare2,LogicaDeHoare2,material-de-aula,content/curated/logicadehoare2.md,bloco-10,3 dias · 27/04/2026 a 04/05/2026,alta,bloco-10
+exerciciosdafny1,ExerciciosDafny1,listas,exercises/lists/exerciciosdafny1.md,bloco-15,4 dias · 01/06/2026 a 10/06/2026,baixa,bloco-15
+exerciciosdafny2,ExerciciosDafny2,listas,exercises/lists/exerciciosdafny2.md,bloco-11,1 dia · 06/05/2026,baixa,bloco-11
+exerciciosdafny3,ExerciciosDafny3,listas,exercises/lists/exerciciosdafny3.md,bloco-13,4 dias · 13/05/2026 a 25/05/2026,baixa,bloco-13
+exerciciosdafny4,ExerciciosDafny4,listas,exercises/lists/exerciciosdafny4.md,bloco-13,4 dias · 13/05/2026 a 25/05/2026,baixa,bloco-13
+exerciciosdafny5,ExerciciosDafny5,listas,exercises/lists/exerciciosdafny5.md,bloco-15,4 dias · 01/06/2026 a 10/06/2026,baixa,bloco-15
+verificacaomodelos,verificacaomodelos,material-de-aula,content/curated/verificacaomodelos.md,bloco-16,5 dias · 15/06/2026 a 29/06/2026,alta,bloco-16
+exercicioslogicatemporal,ExerciciosLogicaTemporal,listas,exercises/lists/exercicioslogicatemporal.md,bloco-16,5 dias · 15/06/2026 a 29/06/2026,alta,bloco-16
+exerciciosnusmv,ExerciciosNusmv,listas,exercises/lists/exerciciosnusmv.md,bloco-16,5 dias · 15/06/2026 a 29/06/2026,media,bloco-16
+classes-parte1,Classes Parte1,codigo-professor,None,bloco-16,5 dias · 15/06/2026 a 29/06/2026,media,bloco-16
+colecoes-arrays,Colecoes Arrays,codigo-professor,None,bloco-13,4 dias · 13/05/2026 a 25/05/2026,alta,bloco-13
+colecoes-conjuntos,Colecoes Conjuntos,codigo-professor,None,bloco-13,4 dias · 13/05/2026 a 25/05/2026,alta,bloco-13
+colecoes-sequences,Colecoes Sequences,codigo-professor,None,bloco-13,4 dias · 13/05/2026 a 25/05/2026,alta,bloco-13
+exercicios-conjuntos,Exercicios Conjuntos,codigo-professor,None,bloco-13,4 dias · 13/05/2026 a 25/05/2026,alta,bloco-13
+hoare,Hoare,codigo-professor,None,bloco-10,3 dias · 27/04/2026 a 04/05/2026,alta,bloco-10
+introducao-zip,Introducao,codigo-professor,None,bloco-12,1 dia · 11/05/2026,media,bloco-12
+invariantes,Invariantes,codigo-professor,None,bloco-11,1 dia · 06/05/2026,alta,bloco-11
+terminacao,Terminacao,codigo-professor,None,bloco-11,1 dia · 06/05/2026,alta,bloco-11
+tiposindutivos,Tiposindutivos,codigo-professor,None,bloco-04,5 dias · 11/03/2026 a 25/03/2026,alta,bloco-04
+exemplos-zip,Exemplos,codigo-professor,None,bloco-12,1 dia · 11/05/2026,alta,bloco-12
