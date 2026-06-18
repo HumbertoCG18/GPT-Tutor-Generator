@@ -4,6 +4,24 @@ date: 2026-06-17 (fim de sessão longa)
 branch: `feat/reconciliar-unit-bloco`
 estado: working tree com gold + docs commitados; suíte **1438 verde**; golden PDF **5/5, confiante-errado 0**; resolver de bloco **wired ATRÁS DE FLAG `use_concept_resolver` (default OFF — produção = funil, intacta)**.
 
+## Atualização — sessão 2 (2026-06-17): alavanca 2 fechada, alavanca 0 captação, pivot p/ alavanca 1
+
+Commits (branch `feat/reconciliar-unit-bloco`):
+- `dab6781` test(gold): baseline-lock real (11/17, cw≤1) — `eval_code_block_gold.py` virou gate (`check_baseline`, exit 1 em regressão; antes só sintético).
+- `d9aaef3` docs: plano alavanca 0 (`docs/superpowers/plans/2026-06-17-alavanca0-lessons-index-plan.md`) + backlog de artefatos (seção abaixo).
+- `60c4eb1` feat: captação do resumo-da-semana — `build_lesson_topic_index` (moodle_labels) → `course/.lessons_index.json` no import + `load_lessons_index` (resolver_apply). CONSUMO no fusor REVERTIDO (abaixo).
+- `013da0b` fix: captação robusta a resumo **year-less dentro do card** (formato A year-less + parens-opcional + semana-dentro; `_LESSON_SHORT` paren-opcional). Captava só 2/5 layouts → 5/5. MF inalterado (full-year).
+
+**ALAVANCA 2 (source_section):** JÁ estava implementada (consumida em `concept_resolver:259/81` + backfill nos 5 manifests). Não era greenfield. Baseline travado em 11/17.
+
+**ALAVANCA 0 (lessons[].text):** captação FEITA + robusta; **CONSUMO (lesson_term) REVERTIDO** — regrediu gold 11→10. Root cause (probe): lessons alinham PERFEITO ao bloco por data, mas casar contra os `concepts` do Gemini (ruidosos: hoare=[dafny,hoare,indutivos,terminacao]; listas=[inducao,isabelle] sem "listas"→flipa 05→06; exemplos-zip=[hoare,terminacao] errado p/ NuSMV) amplifica concept errado. **Alavancas 0 e 1 SÃO ACOPLADAS:** a lesson precisa da IDENTIDADE LIMPA do material (moodle_label), não dos concepts. `load_lessons_index` fica como infra pronta.
+
+**PRÓXIMO — ALAVANCA 1 (moodle_label):** capturar `mod.get("name")` (`moodle.py:130`, o `<span instancename>`, ex. "Exemplos (Lógica de Floyd-Hoare)") num campo NOVO `moodle_label` (NUNCA sobrescrever `title`) ANTES do redirect SharePoint que o destrói. Canal `moodle_label_text` em `collect_entry_unit_signals`. Reativar `lesson_term` casando `moodle_label × lesson`. Medir no MF.
+
+**BACKLOG NOVO:** `rebuild_diff` mostra 4/5 `.timeline_index.json` gravados STALE vs código atual (ES2 7, IA 20, SO 13 blocos divergem unit/kind) — drift PRÉ-EXISTENTE, NÃO da sessão 2 (verificado por stash). Reprocessar/regravar índices num momento controlado.
+
+**Artefato:** `…\Metodos-Formais-Tutor\course\.lessons_index.json` (28 datas, montado do resumo REAL do usuário p/ medir a alavanca 1; um re-import real regenera).
+
 ## Como retomar (nova sessão — ler nesta ordem, NÃO reler a conversa antiga)
 1. `.mex/ROUTER.md` + `.mex/AGENTS.md` (bootstrap + não-negociáveis). `.mex/context/institutional.md` (PUCRS/SARC/Moodle/Plano — atualizado com labels/resumo-da-semana).
 2. **Este handoff.**
