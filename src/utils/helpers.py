@@ -526,6 +526,20 @@ def is_sarc_url(url: Optional[str]) -> bool:
     return host == SARC_HOST
 
 
+def parse_sarc_turma_key(url: Optional[str]) -> dict:
+    """Extrai {guid, ano, sem} da query da URL do SARC Export.aspx. Ausentes -> ""."""
+    from urllib.parse import parse_qs
+    try:
+        q = parse_qs(urlparse(str(url or "")).query)
+    except Exception:
+        return {"guid": "", "ano": "", "sem": ""}
+    return {
+        "guid": (q.get("id") or [""])[0].strip(),
+        "ano": (q.get("ano") or [""])[0].strip(),
+        "sem": (q.get("sem") or [""])[0].strip(),
+    }
+
+
 def decide_schedule_source(url: Optional[str], pasted_html: Optional[str]) -> dict:
     """Decide where the cronograma HTML comes from, given the dialog fields.
 

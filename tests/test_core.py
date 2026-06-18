@@ -5407,3 +5407,13 @@ def test_fileentry_posting_date_default_omitted_in_to_dict():
     from src.models.core import FileEntry
     e = FileEntry(source_path="a.pdf", file_type="pdf", category="material", title="A")
     assert "posting_date" not in e.to_dict()
+
+
+def test_subjectprofile_turma_schedule_roundtrip():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile(name="MF", turma="031",
+                        schedule_url="https://sarc.pucrs.br/Default/Export.aspx?id=abc&ano=2026&sem=1")
+    d = sp.to_dict()
+    back = SubjectProfile.from_dict(d)
+    assert back.turma == "031"
+    assert back.schedule_url.endswith("sem=1")

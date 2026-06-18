@@ -227,6 +227,8 @@ class SubjectProfile:
     stash_folder: str = ""        # pasta com os arquivos-fonte (PDFs/cards) da materia
     moodle_course_id: str = ""   # liga a matéria ao curso Moodle (re-sync, upsert)
     m365_filter: str = ""        # substring do path OneDrive p/ filtrar insights (M365)
+    turma: str = ""              # turma(s) do curso Moodle (ex.: "031"); registro, nao scoped (S0)
+    schedule_url: str = ""       # URL do SARC Export.aspx (GUID/ano/sem da turma); registro (S0)
     github_url: str = ""           # URL base do repo no GitHub
     preferred_llm: str = "claude"  # Plataforma principal: "claude", "gpt", "gemini"
     queue: List[FileEntry] = field(default_factory=list)
