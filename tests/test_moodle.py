@@ -1,3 +1,4 @@
+import pytest
 from src.builder.sources.moodle import (
     sanitize_folder_name, iter_section_files, SectionFile, MoodleClient,
     backfill_posting_date_from_api, posting_date_iso
@@ -523,9 +524,6 @@ def test_sanitize_preserves_date_slash_as_dot():
     assert sanitize_folder_name("18/06 exemplo") == "18.06 exemplo"
     assert sanitize_folder_name("Aula 18/06/2026") == "Aula 18.06.2026"
     assert "/" not in sanitize_folder_name("a/b")   # slash entre letras vira espaco
-
-
-import pytest
 
 
 @pytest.mark.parametrize("raw, expected", [
