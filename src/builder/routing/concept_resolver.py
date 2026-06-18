@@ -173,6 +173,21 @@ def _topic_unit_for_entry(
     return best_slug if best > 0.0 else ""
 
 
+def _tool_unit(tool_tokens: set, units: List[dict], norm: Callable[[str], str]) -> str:
+    """Unidade cuja descrição contém a ferramenta do material (ex. 'dafny'->u2).
+
+    Derivado das topics da unidade (SEM hardcode de cadeira). A ferramenta é sinal
+    de UNIDADE (um Dafny não cabe numa unidade Isabelle), embora não discrimine
+    BLOCO dentro da unidade. '' quando a ferramenta não casa nenhuma unidade
+    (degradação honesta = sem âncora)."""
+    if not tool_tokens:
+        return ""
+    for unit in units or []:
+        if tool_tokens & _concept_tokens(_concept_text(unit), norm):
+            return _unit_slug(unit)
+    return ""
+
+
 def _llm_vote(llm_curation: Optional[dict]) -> Dict[str, float]:
     if not llm_curation:
         return {}
@@ -246,6 +261,10 @@ def resolve_material_assignment(
     content_text = " ".join(
         p for p in (
             str(signals.get("title_text", "") or ""),
+            # alavanca 1: label do recurso Moodle — identidade LIMPA do material
+            # (o professor nomeia o tópico, ex. "Floyd-Hoare"→bloco-10). Entra no
+            # conteúdo conceitual junto do title/markdown/concepts.
+            str(signals.get("moodle_label_text", "") or ""),
             str(signals.get("markdown_text", "") or ""),
             " ".join(str(c or "") for c in (entry.get("concepts") or [])),
         ) if p
@@ -318,6 +337,7 @@ def resolve_material_assignment(
 
     block_unit = _block_unit_slug(winner)
     topic_unit = _topic_unit_for_entry(entry_vec, units, norm)
+    tool_unit = _tool_unit(tool_tokens, units, norm)
 
     # Conflito (spec 4.5/9): bloco-unit != topico-unit (fontes fortes discordam
     # da unidade). O bloco (agendado) vence a unit; o conflito e flagado e a
@@ -331,6 +351,19 @@ def resolve_material_assignment(
             "block_id": str(winner.get("id", "")),
         }
         confidence = min(confidence, 0.45)
+    # Conflito tool-unit: a ferramenta (.dfy/.thy/.smv) ancora a UNIDADE — um
+    # material Dafny num bloco Isabelle e incoerente. Capa a confianca (degradacao
+    # honesta), sem mudar o bloco; impede que um label lexicalmente ambiguo
+    # ("Tipos Indutivos" -> bloco-04) vire confiante-errado.
+    if tool_unit and block_unit and tool_unit != block_unit:
+        confidence = min(confidence, 0.45)
+        if conflict is None:
+            conflict = {
+                "kind": "block_unit_vs_tool_unit",
+                "block_unit": block_unit,
+                "tool_unit": tool_unit,
+                "block_id": str(winner.get("id", "")),
+            }
 
     # Subunit restrita a unidade vencedora: esta task nao resolve subunit (e da
     # rota de topico), entao deixa vazio — o invariante e que NUNCA escape a

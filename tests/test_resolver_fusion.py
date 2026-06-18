@@ -233,6 +233,37 @@ def test_manual_override_wins_all_tiers():
     assert a["confidence"] >= 0.99
 
 
+def test_moodle_label_drives_block_via_concept():
+    # alavanca 1: entry com title generico ("exemplos", sem token), mas o
+    # moodle_label "Logica de Floyd-Hoare" casa o topic_text do bloco-10 -> o
+    # overlap elege o 10 mesmo com o voto LLM errado (11).
+    blocks = [_BLOCKS_BY_ID[b] for b in ("bloco-10", "bloco-11", "bloco-13")]
+    sig = _signals("exemplos", raw_target="exemplos.zip")
+    sig["moodle_label_text"] = normalize_match_text("Exemplos (Logica de Floyd-Hoare)")
+    a = resolve_material_assignment(
+        _entry("exemplos", raw_target="exemplos.zip"),
+        blocks, _units(), signals=sig, llm_curation=_llm("bloco-11", confidence=0.6))
+    assert a["block_id"] == "bloco-10"
+
+
+def test_tool_unit_conflict_caps_confidence():
+    # alavanca tool->unit: um .dfy (dafny=u2) que vence um bloco de u1 (Isabelle)
+    # é conflito de UNIDADE pela ferramenta -> banda capada (não-alta), mesmo o
+    # label "Tipos Indutivos" empurrando lexicalmente p/ bloco-04 (u1). Degradação
+    # honesta: o bloco fica, mas a confiança cai (não vira confiante-errado).
+    blocks = [_BLOCKS_BY_ID[b] for b in ("bloco-04", "bloco-13")]
+    sig = _signals("tiposindutivos", source_section="Verificacao de Programas",
+                   raw_target="tiposindutivos.dfy")
+    sig["moodle_label_text"] = normalize_match_text("Exemplos (Tipos Indutivos)")
+    a = resolve_material_assignment(
+        _entry("tiposindutivos", raw_target="tiposindutivos.dfy"),
+        blocks, _units(), signals=sig, llm_curation=_llm("bloco-04", confidence=0.85))
+    assert a["block_id"] == "bloco-04"          # label+LLM elegem o 04 (u1)
+    assert a["band"] != "alta"                  # mas tool dafny (u2) conflita -> capa
+    assert a["conflict"] is not None
+    assert a["conflict"].get("kind") == "block_unit_vs_tool_unit"
+
+
 def test_confidence_band_present_and_consistent():
     a = _resolve("colecoes_arrays", section="Verificacao de Programas", raw="colecoes_arrays.zip",
                  llm=_llm("bloco-13", confidence=0.85))
