@@ -109,6 +109,11 @@ class FileEntry:
     # ANTES do redirect SharePoint que deixa só o filename. Identidade LIMPA do
     # material — pesa como conceito no resolver. NUNCA sobrescreve title. ""=ausente.
     moodle_label: str = ""
+    # Data de upload/postagem (ISO YYYY-MM-DD) do timemodified Moodle/M365.
+    # Capturada no import (S0). NAO consumida pela atribuicao (consumo = A2).
+    # ""=ausente (HTML sem timestamp, ou fonte sem data).
+    posting_date: str = ""
+    posting_date_created: str = ""   # ISO do timecreated (diagnostico do probe)
     # Conflito unidade×bloco detectado no auto (F1): a unidade forte (>=0.65)
     # venceu um bloco que apontava OUTRA unidade (block_confidence < unit_conf).
     # {} quando não há conflito. Sinal de revisão exibido no editor; o build

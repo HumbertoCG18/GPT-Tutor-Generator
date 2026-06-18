@@ -5390,3 +5390,20 @@ def test_unit_block_conflict_default_not_emitted():
     assert "unit_block_conflict" not in d
     assert FileEntry.from_dict({"source_path": "C:/x/a.pdf", "file_type": "pdf",
                                 "category": "material", "title": "t"}).unit_block_conflict == {}
+
+
+def test_fileentry_posting_date_roundtrip():
+    from src.models.core import FileEntry
+    e = FileEntry(source_path="a.pdf", file_type="pdf", category="material", title="A",
+                  posting_date="2026-02-12", posting_date_created="2026-02-10")
+    d = e.to_dict()
+    assert d["posting_date"] == "2026-02-12"
+    back = FileEntry.from_dict(d)
+    assert back.posting_date == "2026-02-12"
+    assert back.posting_date_created == "2026-02-10"
+
+
+def test_fileentry_posting_date_default_omitted_in_to_dict():
+    from src.models.core import FileEntry
+    e = FileEntry(source_path="a.pdf", file_type="pdf", category="material", title="A")
+    assert "posting_date" not in e.to_dict()
