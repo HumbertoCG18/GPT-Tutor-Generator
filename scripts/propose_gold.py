@@ -28,8 +28,8 @@ _DATE_RE = re.compile(r"\b(\d{1,2})[/.](\d{1,2})\b")
 
 COLUMNS = [
     "id", "title", "category", "source_section", "moodle_label", "posting_date",
-    "predicted_block_id", "proposed_true_block_id", "confidence", "method",
-    "block_topic", "needs_review", "evidence",
+    "predicted_block_id", "proposed_true_block_id", "block_aulas", "block_dates",
+    "block_topic", "confidence", "method", "needs_review", "evidence",
 ]
 
 
@@ -95,6 +95,7 @@ def propose_rows(repo_root: Path) -> list[dict]:
                     evidence = f"data {day:02d}/{month:02d} no nome -> bloco unico {hits[0]}"
 
         blk = by_id.get(proposed, {})
+        _src_rows = blk.get("source_rows") or []
         rows.append({
             "id": str(e.get("id") or ""),
             "title": title,
@@ -104,9 +105,11 @@ def propose_rows(repo_root: Path) -> list[dict]:
             "posting_date": str(e.get("posting_date") or ""),
             "predicted_block_id": predicted,
             "proposed_true_block_id": proposed,
+            "block_aulas": ",".join(str(r) for r in _src_rows),   # # do cronograma cobertas pelo bloco
+            "block_dates": str(blk.get("period_label") or ""),
+            "block_topic": str(blk.get("topic_text") or blk.get("primary_topic_label") or ""),
             "confidence": conf,
             "method": method,
-            "block_topic": str(blk.get("topic_text") or blk.get("primary_topic_label") or ""),
             "needs_review": "SIM" if conf != "alta" else "",
             "evidence": evidence,
         })
