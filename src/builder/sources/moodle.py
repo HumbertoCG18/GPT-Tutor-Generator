@@ -65,7 +65,8 @@ def parse_moodle_course(course: dict) -> dict:
 
 
 def sanitize_folder_name(name: str) -> str:
-    name = _INVALID.sub(" ", str(name or ""))
+    name = re.sub(r'(?<=\d)/(?=\d)', '.', str(name or ""))  # preserva data: 18/06 -> 18.06 (senao "18 06" perde o sinal)
+    name = _INVALID.sub(" ", name)
     name = re.sub(r"\s+", " ", name).strip(" .")
     return name or "sem-secao"
 

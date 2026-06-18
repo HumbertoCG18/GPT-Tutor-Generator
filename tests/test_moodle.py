@@ -516,3 +516,10 @@ def test_parse_turma_absent():
     from src.builder.sources.moodle import parse_moodle_course
     c = {"id": 3, "fullname": "Curso de Ciência da Computação"}
     assert parse_moodle_course(c)["turma"] == ""
+
+
+def test_sanitize_preserves_date_slash_as_dot():
+    from src.builder.sources.moodle import sanitize_folder_name
+    assert sanitize_folder_name("18/06 exemplo") == "18.06 exemplo"
+    assert sanitize_folder_name("Aula 18/06/2026") == "Aula 18.06.2026"
+    assert "/" not in sanitize_folder_name("a/b")   # slash entre letras vira espaco
