@@ -4,6 +4,19 @@ date: 2026-06-18
 branch: `feat/reconciliar-unit-bloco`
 status: design aprovado (pendente review do spec escrito)
 
+## Posição na fila (pós-S0)
+
+É o **S0b** da fila `S0 (feito) → S0b → A1 → A2 → A3 → A5 → A4 → A6 → A7`
+(handoff `2026-06-17-handoff-signal-registry.md`). S0 capturou os sinais de
+Moodle/SARC de forma aditiva; o S0b torna essa captura **correta e completa**
+(label por instancename, matching robusto, datas canônicas) e **re-sincroniza**
+os repos. É pré-requisito direto de:
+- a rotulagem de gold cross-curso (pendência do usuário) — depende de TCC com
+  label limpo, IA completo e datas sem espaço;
+- **A1** (consumir `lessons[].text`/`moodle_label` no fusor) — a tese do A1 se
+  apoia no `moodle_label` (alavanca 1) e no `.lessons_index.json` confiáveis,
+  que este S0b garante.
+
 ## Problema
 
 A migração Moodle (S0) captura `moodle_label` (= `mod.name`, o instancename do
@@ -77,6 +90,30 @@ Limite conhecido: se dois recursos gerarem o MESMO savename, `download_course`
 desambigua o arquivo em disco com sufixo ` (2)`, mas o índice do backfill não vê
 esse sufixo → esse arquivo perde o label (raro; aceitável).
 
+### 1b. Normalização de data com zero-padding (fallback) — `sanitize_folder_name`
+
+Hoje a conversão de data é ingênua: `(?<=\d)/(?=\d)` → `.`, então "24/4" vira
+"24.4" (sem o zero do mês). Não quebra o sinal de data do nome (`extract_dates`
+em `routing/dates.py` casa `\d{1,2}` via `_DM_SEP_RE`/`_DM_SPACE_RE`), mas é
+malformado e consumidores estritos (`timeline/signals.py` `_DATE_RE =
+\d{2}/\d{2}/\d{4}`) exigem 2 dígitos.
+
+Fallback: trocar a conversão ingênua por um normalizador que, APENAS quando o
+separador é `/` (convenção de data; versões/numeração usam `.` e ficam
+intocadas), reconhece `DD/MM` e `DD/MM/YYYY` e emite a forma pontilhada com
+DD e MM **zero-padded a 2 dígitos** (ano de 4 dígitos preservado). Ex.:
+- `20/04 a 24/4` → `20.04 a 24.04`
+- `06/12/2026` → `06.12.2026`
+- `1/2` → `01.02`
+
+Preservação do comportamento atual: `12/2025` (mês/ano, segundo termo 4 dígitos)
+NÃO casa o padrão `DD/MM`; cai num segundo passe `(?<=\d)/(?=\d)` → `.` (mantém
+`12.2025`, como hoje). `2.10`/`1.2` com separador `.` (versão/seção) ficam
+intactos — o padding só age sobre `/`.
+
+Isto NÃO deve mudar atribuição (o sinal de data já tolerava `\d{1,2}`): o
+eval-gate é `rebuild_diff` idêntico. Se mudar, investigar antes de aceitar.
+
 ### 2. Re-sync por fonte (execução de dados)
 
 - **Moodle (TCC, IA, SO):** rodar `import_moodle_courses(download=True)`.
@@ -108,6 +145,12 @@ Asserções:
   matcher).
 - Fallback: entry cujo basename = filename original (sem savename) ainda casa
   pela key filename.
+
+Testes de `sanitize_folder_name` (date-padding, em `test_moodle.py`):
+- `"20/04 a 24/4"` → `"20.04 a 24.04"` (zero-pad do mês de 1 dígito).
+- `"06/12/2026"` → `"06.12.2026"` (ano preservado).
+- `"12/2025"` → `"12.2025"` (mês/ano, comportamento atual preservado).
+- `"2.10"` / `"versao 1.2"` → inalterado (separador `.`, não é data por `/`).
 
 Suíte existente (`test_moodle.py`, `test_moodle_labels.py`, roundtrip) verde.
 
