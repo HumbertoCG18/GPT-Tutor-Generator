@@ -523,3 +523,21 @@ def test_sanitize_preserves_date_slash_as_dot():
     assert sanitize_folder_name("18/06 exemplo") == "18.06 exemplo"
     assert sanitize_folder_name("Aula 18/06/2026") == "Aula 18.06.2026"
     assert "/" not in sanitize_folder_name("a/b")   # slash entre letras vira espaco
+
+
+import pytest
+
+
+@pytest.mark.parametrize("raw, expected", [
+    ("20/04 a 24/4", "20.04 a 24.04"),   # zero-pad do mês de 1 dígito
+    ("24/4", "24.04"),
+    ("06/12/2026", "06.12.2026"),         # data completa, ano preservado
+    ("18/06", "18.06"),                    # ja 2-digito: no-op (preserva atual)
+    ("1/2", "01.02"),
+    ("12/2025", "12.2025"),                # mes/ano: cai no passe generico, sem pad
+    ("versao 1.2", "versao 1.2"),          # separador '.' (versao) intacto
+    ("2.10.1", "2.10.1"),                  # versao 3-partes intacta
+    ("Seção A/B", "Seção A B"),            # '/' nao-data vira espaco (atual)
+])
+def test_sanitize_folder_name_date_padding(raw, expected):
+    assert sanitize_folder_name(raw) == expected

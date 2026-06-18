@@ -21,6 +21,21 @@ from src.utils.helpers import slugify, write_json_manifest
 
 _INVALID = re.compile(r'[<>:"/\\|?*\x00-\x1f]')
 
+# Datas DD/MM[/YYYY] com separador '/' (convenção de data) -> forma pontilhada
+# com dia/mês zero-padded a 2 dígitos. Só age sobre '/', então versão/numeração
+# com '.' (ex.: "2.10.1") e "12/2025" (mês/ano, 2º termo 4 dígitos) ficam fora.
+_DATE_SLASH_RE = re.compile(r'(?<!\d)(\d{1,2})/(\d{1,2})(?:/(\d{2,4}))?(?!\d)')
+
+
+def _normalize_date_seps(name: str) -> str:
+    def _repl(m):
+        head = f"{int(m.group(1)):02d}.{int(m.group(2)):02d}"
+        return f"{head}.{m.group(3)}" if m.group(3) else head
+    name = _DATE_SLASH_RE.sub(_repl, name)
+    # passe genérico: '/' restante entre dígitos (ex.: "12/2025") -> '.', sem pad
+    return re.sub(r'(?<=\d)/(?=\d)', '.', name)
+
+
 logger = logging.getLogger(__name__)
 
 import re as _re
@@ -65,7 +80,7 @@ def parse_moodle_course(course: dict) -> dict:
 
 
 def sanitize_folder_name(name: str) -> str:
-    name = re.sub(r'(?<=\d)/(?=\d)', '.', str(name or ""))  # preserva data: 18/06 -> 18.06 (senao "18 06" perde o sinal)
+    name = _normalize_date_seps(str(name or ""))
     name = _INVALID.sub(" ", name)
     name = re.sub(r"\s+", " ", name).strip(" .")
     return name or "sem-secao"
