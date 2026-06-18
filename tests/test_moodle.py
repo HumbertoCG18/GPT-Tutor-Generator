@@ -453,3 +453,21 @@ def test_backfill_posting_date_skips_ambiguous_basename():
                                      "timemodified": 2, "timecreated": 2}]}]}]
     entries = [{"id": "e1", "source_path": "main.pdf"}]
     assert backfill_posting_date_from_api(entries, contents) == {}
+
+
+def test_parse_turma_single():
+    from src.builder.sources.moodle import parse_moodle_course
+    c = {"id": 1, "fullname": "4646M-04 - Métodos Formais - Turma 031 - 2026/1 - Prof. X"}
+    assert parse_moodle_course(c)["turma"] == "031"
+
+
+def test_parse_turma_multiple():
+    from src.builder.sources.moodle import parse_moodle_course
+    c = {"id": 2, "fullname": "98702-04 - Prática em Pesquisa - Turmas 010 - 011 - 012 - 2026/1 - Profs. Y"}
+    assert parse_moodle_course(c)["turma"] == "010 - 011 - 012"
+
+
+def test_parse_turma_absent():
+    from src.builder.sources.moodle import parse_moodle_course
+    c = {"id": 3, "fullname": "Curso de Ciência da Computação"}
+    assert parse_moodle_course(c)["turma"] == ""

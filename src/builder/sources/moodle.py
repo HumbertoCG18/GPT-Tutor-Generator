@@ -44,6 +44,10 @@ def parse_moodle_course(course: dict) -> dict:
     m = _COURSE_SEM_RE.search(full)
     if m:
         semester = m.group(1)
+    turma = ""
+    m_t = _re.search(r"Turmas?\s+(\d{3}\b(?:\s*-\s*\d{3}\b)*)", full, _re.IGNORECASE)
+    if m_t:
+        turma = _re.sub(r"\s+", " ", m_t.group(1)).strip()
     # corta o tail estrutural (Turma/semestre/Prof) e remove o código inicial.
     m_turma = _re.search(r"\s*-\s*Turma\b", full, _re.IGNORECASE)
     head = full[:m_turma.start()] if m_turma else full
@@ -56,6 +60,7 @@ def parse_moodle_course(course: dict) -> dict:
         "semester": semester,
         "slug": slugify(name) if name else (slugify(str(course.get("shortname") or "")) or cid),
         "shortname": str(course.get("shortname") or ""),
+        "turma": turma,
     }
 
 
