@@ -159,24 +159,44 @@ def iter_section_files(contents) -> List[SectionFile]:
     return out
 
 
-def backfill_moodle_label_from_api(manifest_entries, contents):
-    """Casa entries -> label do recurso Moodle (mod.name) por basename, mesma
-    mecânica do source_section. Retorna {id->moodle_label}. Basename em >1 módulo
-    (colisão de filename) -> pulado (igual ao ambiguous do source_section)."""
+def _section_file_value_index(contents, value_fn):
+    """Indexa SectionFiles por savename (disk_name) E filename original,
+    casefolded. value_fn(sf) -> valor ou None. Conta ocorrências por key;
+    val_by_key guarda o valor da 1ª ocorrência (quando value_fn != None).
+    O chamador só aceita match em key com count == 1 (não-ambígua)."""
     from collections import Counter
     counts = Counter()
-    label_by_name = {}
+    val_by_key = {}
     for sf in iter_section_files(contents):
-        key = sf.filename.casefold()
-        counts[key] += 1
-        if sf.label:
-            label_by_name.setdefault(key, sf.label)
+        v = value_fn(sf)
+        for key in {sf.disk_name.casefold(), sf.filename.casefold()}:
+            counts[key] += 1
+            if v is not None:
+                val_by_key.setdefault(key, v)
+    return val_by_key, counts
+
+
+def _match_entry_basename(entry, val_by_key, counts):
+    """Casa o basename do source_path do entry contra o índice; só retorna
+    valor se a key existir, tiver valor e for única (count == 1)."""
+    base = Path(str(entry.get("source_path") or "")).name.casefold()
+    if base in val_by_key and counts[base] == 1:
+        return val_by_key[base]
+    return None
+
+
+def backfill_moodle_label_from_api(manifest_entries, contents):
+    """Casa entries -> label do recurso Moodle (mod.name) por savename
+    (instancename) com fallback no filename original. Retorna {id->moodle_label}.
+    Keys ambíguas (count>1 nas duas formas) são puladas."""
+    val_by_key, counts = _section_file_value_index(
+        contents, lambda sf: sf.label or None)
     out = {}
     for e in manifest_entries or []:
-        eid = str(e.get("id") or "")
-        base = Path(str(e.get("source_path") or "")).name.casefold()
-        if base in label_by_name and counts[base] == 1:
-            out[eid or base] = label_by_name[base]
+        v = _match_entry_basename(e, val_by_key, counts)
+        if v is not None:
+            eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+            out[eid] = v
     return out
 
 
@@ -193,23 +213,19 @@ def posting_date_iso(ts) -> str:
 
 
 def backfill_posting_date_from_api(manifest_entries, contents):
-    """Casa entries -> {timemodified, timecreated} por basename UNICO (igual ao
-    source_section). Basename em >1 modulo -> pulado (ambiguo)."""
-    from collections import Counter
-    counts = Counter()
-    ts_by_name = {}
-    for sf in iter_section_files(contents):
-        key = sf.filename.casefold()
-        counts[key] += 1
-        if (sf.timemodified or sf.timecreated):
-            ts_by_name.setdefault(key, {"timemodified": sf.timemodified,
-                                        "timecreated": sf.timecreated})
+    """Casa entries -> {timemodified, timecreated} por savename com fallback no
+    filename. Keys ambíguas puladas."""
+    def _ts(sf):
+        if sf.timemodified or sf.timecreated:
+            return {"timemodified": sf.timemodified, "timecreated": sf.timecreated}
+        return None
+    val_by_key, counts = _section_file_value_index(contents, _ts)
     out = {}
     for e in manifest_entries or []:
-        eid = str(e.get("id") or "")
-        base = Path(str(e.get("source_path") or "")).name.casefold()
-        if base in ts_by_name and counts[base] == 1:
-            out[eid or base] = ts_by_name[base]
+        v = _match_entry_basename(e, val_by_key, counts)
+        if v is not None:
+            eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
+            out[eid] = v
     return out
 
 

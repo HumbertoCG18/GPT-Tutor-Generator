@@ -216,3 +216,79 @@ def test_index_year_less_semana_no_nome_parens():
              ["(11/05): Introducao ao Dafny;\n(13/05): Arrays em Dafny."])
     idx = build_lesson_topic_index([s], year=2026)["by_date"]
     assert "Introducao" in idx.get("2026-05-11", "")
+
+
+# ---------------------------------------------------------------------------
+# Task 2: matching robusto por savename (disk_name) nos backfills aditivos
+# ---------------------------------------------------------------------------
+from src.builder.sources.moodle import (
+    backfill_moodle_label_from_api,
+    backfill_posting_date_from_api,
+)
+
+
+def _contents_colliding():
+    # Dois módulos na mesma seção, ambos 'main.pdf' (colisão), instancenames
+    # distintos -> savename desambigua ("Aula 01 - Intro.pdf"/"Aula 02 - Conjuntos.pdf").
+    return [{
+        "name": "Semana 1",
+        "modules": [
+            {"name": "Aula 01 - Intro",
+             "contents": [{"type": "file", "filename": "main.pdf", "fileurl": "u1",
+                           "timemodified": 1700000000, "timecreated": 1699999999}]},
+            {"name": "Aula 02 - Conjuntos",
+             "contents": [{"type": "file", "filename": "main.pdf", "fileurl": "u2",
+                           "timemodified": 1700100000, "timecreated": 1700099999}]},
+        ],
+    }]
+
+
+def test_label_matches_by_savename_despite_filename_collision():
+    contents = _contents_colliding()
+    entries = [
+        {"id": "e1", "source_path": "/x/Aula 01 - Intro.pdf"},
+        {"id": "e2", "source_path": "/x/Aula 02 - Conjuntos.pdf"},
+    ]
+    labels = backfill_moodle_label_from_api(entries, contents)
+    assert labels["e1"] == "Aula 01 - Intro"
+    assert labels["e2"] == "Aula 02 - Conjuntos"
+
+
+def test_posting_date_matches_by_savename_despite_filename_collision():
+    contents = _contents_colliding()
+    entries = [
+        {"id": "e1", "source_path": "/x/Aula 01 - Intro.pdf"},
+        {"id": "e2", "source_path": "/x/Aula 02 - Conjuntos.pdf"},
+    ]
+    posting = backfill_posting_date_from_api(entries, contents)
+    assert posting["e1"]["timemodified"] == 1700000000
+    assert posting["e2"]["timemodified"] == 1700100000
+
+
+def test_label_fallback_matches_by_original_filename():
+    # Curso M365: o arquivo no repo mantém o nome ORIGINAL (nao o savename).
+    contents = [{
+        "name": "U1",
+        "modules": [
+            {"name": "Lógica de Hoare",
+             "contents": [{"type": "file", "filename": "hoare.zip", "fileurl": "u",
+                           "timemodified": 111, "timecreated": 110}]},
+        ],
+    }]
+    entries = [{"id": "m1", "source_path": "/y/hoare.zip"}]
+    labels = backfill_moodle_label_from_api(entries, contents)
+    assert labels["m1"] == "Lógica de Hoare"
+
+
+def test_label_skips_when_both_keys_collide():
+    # Sem instancename -> savename = filename = "slides.pdf"; dois módulos colidem
+    # nas DUAS keys -> ambíguo -> pulado (segurança preservada).
+    contents = [{
+        "name": "S",
+        "modules": [
+            {"name": "", "contents": [{"type": "file", "filename": "slides.pdf", "fileurl": "a"}]},
+            {"name": "", "contents": [{"type": "file", "filename": "slides.pdf", "fileurl": "b"}]},
+        ],
+    }]
+    entries = [{"id": "z", "source_path": "/q/slides.pdf"}]
+    assert backfill_moodle_label_from_api(entries, contents) == {}
