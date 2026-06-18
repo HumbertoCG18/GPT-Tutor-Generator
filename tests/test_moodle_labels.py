@@ -165,3 +165,30 @@ def test_assign_tem_precedencia_sobre_nome():
 def test_sem_fonte_sem_deadline():
     sec = {"name": "X", "modules": [{"modname": "forum", "name": "Forum geral"}]}
     assert extract_assign_deadlines([sec]) == {}
+
+
+# --- build_lesson_topic_index (alavanca 0: indice course-level data->topico) ---
+from src.builder.sources.moodle_labels import build_lesson_topic_index
+
+def test_index_mapeia_data_para_topico_da_lesson():
+    out = build_lesson_topic_index([_sec("Provas por Indução", [_A])], year=2026)
+    assert out["version"] == 1
+    by_date = out["by_date"]
+    assert "Provas em Isabelle" in by_date["2026-04-13"]
+    assert "revis" in by_date["2026-04-15"].lower()
+
+def test_index_data_sem_texto_fica_fora():
+    # data avulsa (LOOSE, sem ': texto') entra em dates mas NAO vira lesson texto
+    out = build_lesson_topic_index([_sec("TDE", ["<p>(03/07/2026)</p>"])], year=2026)
+    assert "2026-07-03" not in out["by_date"]
+
+def test_index_secao_sem_sinal_by_date_vazio():
+    out = build_lesson_topic_index([_sec("Threads", [])], year=2026)
+    assert out == {"version": 1, "by_date": {}}
+
+def test_index_colisao_de_data_concatena_textos():
+    s1 = _sec("Card A", ["<p>(04/03/2026): Tema A.</p>"])
+    s2 = _sec("Card B", ["<p>(04/03/2026): Tema B.</p>"])
+    out = build_lesson_topic_index([s1, s2], year=2026)
+    txt = out["by_date"]["2026-03-04"]
+    assert "Tema A" in txt and "Tema B" in txt

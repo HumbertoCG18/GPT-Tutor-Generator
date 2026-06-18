@@ -9,6 +9,7 @@ engine.py é reservado para orquestração de alto nível (non-negotiable do pro
 from __future__ import annotations
 
 import copy
+import json
 from pathlib import Path
 from typing import List, Optional, Tuple
 
@@ -21,6 +22,27 @@ from src.builder.routing.sequence import annotate_class_ordinals
 def _is_material(entry: dict) -> bool:
     """Mesmo predicado do harness compare_resolver."""
     return str(entry.get("file_type") or "") == "pdf" or bool(entry.get("category"))
+
+
+def load_lessons_index(root: Optional[Path]) -> Optional[dict]:
+    """Carrega course/.lessons_index.json (índice course-level data->tópico).
+
+    INFRA (não consumida ainda): a captação (build_lesson_topic_index no import)
+    está ativa, mas o termo de fusão por lesson foi REVERTIDO — casar o tópico da
+    aula contra os `concepts` ruidosos do Gemini regredia o gold (11->10). Será
+    consumida pela alavanca 1, quando o `moodle_label` der a identidade LIMPA do
+    material pra casar contra a lesson. Ausente/inválido -> None (degradação honesta).
+    """
+    if root is None:
+        return None
+    path = Path(root) / "course" / ".lessons_index.json"
+    if not path.is_file():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (ValueError, OSError):
+        return None
+    return data if isinstance(data, dict) else None
 
 
 def assemble_resolver_inputs(

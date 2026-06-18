@@ -280,3 +280,19 @@ def test_unit_fields_untouched_after_apply():
     # Bloco foi atualizado
     assert "bloco:bloco-Y" in tags
     assert "bloco:bloco-X" not in tags
+
+
+# ---------------------------------------------------------------------------
+# Teste 5 — captação alavanca 0: load do .lessons_index.json (infra; o consumo
+# pelo resolver foi revertido — termo regredia o gold, aguarda alavanca 1)
+# ---------------------------------------------------------------------------
+
+def test_load_lessons_index_present_and_absent(tmp_path):
+    from src.builder.routing import resolver_apply
+    assert resolver_apply.load_lessons_index(tmp_path) is None     # sem arquivo -> None
+    course = tmp_path / "course"
+    course.mkdir()
+    (course / ".lessons_index.json").write_text(
+        '{"version": 1, "by_date": {"2026-05-09": "invariantes"}}', encoding="utf-8")
+    idx = resolver_apply.load_lessons_index(tmp_path)
+    assert idx["by_date"]["2026-05-09"] == "invariantes"

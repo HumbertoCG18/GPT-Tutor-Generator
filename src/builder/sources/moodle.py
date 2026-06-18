@@ -383,7 +383,7 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
             try:
                 from src.builder.sources.moodle_labels import (
                     parse_card_dates, derive_card_block_map, merge_card_block_map,
-                    extract_assign_deadlines,
+                    extract_assign_deadlines, build_lesson_topic_index,
                 )
                 ti_path = Path(repo) / "course" / ".timeline_index.json"
                 map_path = Path(repo) / "course" / ".card_block_map.json"
@@ -415,6 +415,14 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
                     card_map_labels += sum(1 for v in derived.values())
                     card_map_manual += sum(1 for v in merged.values()
                                            if str(v.get("source") or "") == "manual")
+                    # alavanca 0: índice course-level data->tópico do resumo-da-semana
+                    # (lessons[].text que derive_card_block_map dropa). Só grava se há
+                    # sinal; ausência = resolver degrada sem o termo de lesson.
+                    lessons_index = build_lesson_topic_index(contents, year)
+                    if lessons_index.get("by_date"):
+                        (Path(repo) / "course" / ".lessons_index.json").write_text(
+                            _json.dumps(lessons_index, ensure_ascii=False, indent=1),
+                            encoding="utf-8")
             except Exception:
                 logger.warning("card_block_map via labels falhou para %s", info["name"], exc_info=True)
         if download:

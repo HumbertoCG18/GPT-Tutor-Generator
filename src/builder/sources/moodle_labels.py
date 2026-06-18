@@ -223,3 +223,23 @@ def parse_card_dates(contents, year: int, week_anchor: str = "") -> dict:
         if parsed:
             out[name] = parsed
     return out
+
+
+def build_lesson_topic_index(contents, year: int, week_anchor: str = "") -> dict:
+    """Índice course-level {date_iso: tópico} das lessons[].text (alavanca 0).
+
+    Reusa parse_card_dates (formatos A-C populam lessons[{date,text}]); colapsa
+    TODAS as lessons COM texto por data (colisão entre cards -> concat). Lesson
+    sem texto (data avulsa/LOOSE, formato D/E) fica FORA — skip honesto, nunca
+    inventa. Shape estável p/ serializar em course/.lessons_index.json:
+    {"version": 1, "by_date": {...}}."""
+    by_date: dict = {}
+    for info in parse_card_dates(contents, year, week_anchor).values():
+        for lesson in info.get("lessons") or []:
+            d = str(lesson.get("date") or "")
+            text = str(lesson.get("text") or "").strip()
+            if not d or not text:
+                continue
+            cur = by_date.get(d)
+            by_date[d] = f"{cur}; {text}" if cur and text not in cur else (cur or text)
+    return {"version": 1, "by_date": by_date}
