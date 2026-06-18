@@ -9,7 +9,7 @@ def test_summarize_batch_and_offbatch():
                        "timemodified": ts, "timecreated": ts}
     contents = [{"name": "S", "modules": [{"name": "m", "contents": [
         f(1770336000), f(1770436000), f(1770536000),  # fev/2026
-        f(1777536000),                                  # mai/2026
+        f(1777536000),                                  # abr/2026
     ]}]}]
     r = summarize_posting_dates(contents, 2026)
     assert r["total"] == 4

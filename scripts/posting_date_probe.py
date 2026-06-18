@@ -9,7 +9,6 @@ from __future__ import annotations
 import sys
 from collections import Counter
 from datetime import datetime, timezone
-from pathlib import Path
 
 from src.builder.sources.moodle import MoodleClient, load_moodle_token, iter_section_files
 
