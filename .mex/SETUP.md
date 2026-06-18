@@ -1,10 +1,10 @@
 # Setup — Populate This Scaffold
 
-last_updated: 2026-06-17
+last_updated: 2026-06-18
 
 This file contains the prompts to populate the scaffold. It is NOT the dev environment setup — for that, see `context/setup.md` after population.
 
-This scaffold is currently empty. Follow the steps below to populate it for your project.
+Use this file when initially populating or intentionally repopulating the scaffold.
 
 ## Recommended: Use mex init
 

@@ -11,12 +11,32 @@ edges:
     condition: when a decision affects system structure
   - target: context/stack.md
     condition: when a decision affects technology choice
-last_updated: 2026-06-17
+last_updated: 2026-06-18
 ---
 
 # Decisions
 
 Append-only log. When a decision changes, mark the old entry as superseded and add the new decision above it.
+
+---
+
+### Moodle/SARC Signals Are Preserved as Separate Routing Evidence
+
+**Date:** 2026-06-18
+**Status:** Active
+**Decision:** Persist source signals such as `source_section`, `moodle_label`, `posting_date`, `posting_date_created`, `turma`, `schedule_url`, the generated card-block map, and the generated lessons index as explicit metadata instead of overwriting titles or relying only on filenames.
+**Reasoning:** Attribution accuracy depends on the original course card, Moodle resource label, posting date, and SARC schedule identity. Keeping those signals separate lets routing, eval harnesses, and manual review reason about provenance without corrupting user-visible titles.
+**Consequences:** Import and migration paths must distinguish additive signals from consumed signals that can change attribution. Backfills that alter `source_section` or card maps need eval-gated review.
+
+---
+
+### Concept Resolver Cutover Is Feature-Flagged
+
+**Date:** 2026-06-18
+**Status:** Active
+**Decision:** The concept resolver is wired through `use_concept_resolver` and, when enabled, overwrites only block fields (`computed_block_id`, confidence, band, method, and mirrored `bloco:` tag).
+**Reasoning:** The resolver unifies several attribution signals, but routing cutover needs gold coverage and regression gates before becoming default behavior.
+**Consequences:** Production-default behavior remains the existing routing funnel. Resolver work should be tested with the comparison/gold scripts and should not silently change unit fields.
 
 ---
 

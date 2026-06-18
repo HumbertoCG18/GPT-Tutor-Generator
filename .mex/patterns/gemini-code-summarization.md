@@ -11,7 +11,7 @@ edges:
     condition: when revisiting why Gemini is optional
   - target: context/architecture.md
     condition: when wiring a new summarization layer
-last_updated: 2026-06-17
+last_updated: 2026-06-18
 ---
 
 # Gemini Batch Summarization Pattern
@@ -30,6 +30,7 @@ Use when adding a build-time Gemini layer that enriches a class of entries (code
 | Build pipeline wiring | `src/builder/ops/build_workflow.py` + `incremental_build.py` |
 | Renderers consuming code curation | `src/builder/core/source_importers.py`, `src/builder/artifacts/repo.py` (CODE_INDEX, CRONOGRAMA_DETALHADO, CODE_HEALTH) |
 | Renderers consuming reference curation | `src/builder/core/reference_navigation.py`, `src/builder/artifacts/navigation.py`, `src/builder/artifacts/repo.py` (COURSE_MAP support lines, BIBLIOGRAPHY) |
+| Optional resolver consuming curation | `src/builder/routing/concept_resolver.py`, `src/builder/routing/resolver_apply.py` (`use_concept_resolver` flag; block fields only) |
 
 ## Steps for a new entry class (e.g. PDFs)
 
@@ -41,6 +42,7 @@ Use when adding a build-time Gemini layer that enriches a class of entries (code
 6. Block matching: reuse `assign_code_to_block` if concepts shape is identical; otherwise duplicate the matcher with the same thresholds (`primary=0.4`, `secondary=0.25`, `margin=0.15`) and calibrate later.
 7. Lazy import: never `import google.genai` at module top. Always inside method bodies. Anti-pattern grep: `google.generativeai`, `genai.GenerativeModel`.
 8. Keep no-key behavior useful. Reference mapping, for example, still runs deterministically without Gemini summaries.
+9. If the new summary feeds attribution, keep resolver/cutover behavior feature-flagged until eval gold coverage exists.
 
 ## Anti-patterns
 

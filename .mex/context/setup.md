@@ -13,7 +13,7 @@ edges:
     condition: when exact technology or manifest details are needed
   - target: context/architecture.md
     condition: when understanding runtime behavior after startup
-last_updated: 2026-06-17
+last_updated: 2026-06-18
 ---
 
 # Setup
@@ -82,6 +82,12 @@ python -m pytest tests/test_task_queue.py -q
 python -m pytest tests/test_tag_catalog.py -q
 python -m pytest tests/test_student_state_v2.py -q
 python -m pytest tests/test_student_state_manual_import.py -q
+python -m pytest tests/test_moodle.py -q
+python -m pytest tests/test_moodle_labels.py -q
+python -m pytest tests/test_concept_resolver.py -q
+python -m pytest tests/test_resolver_wiring.py -q
+python -m pytest tests/test_migrate_signals.py -q
+python -m pytest tests/test_posting_date_probe.py -q
 ```
 
 ## Operational Flow
@@ -99,3 +105,4 @@ After launching the app:
 9. Use Repository Tasks to queue builds, reprocessing, and individual processing.
 10. Use Dashboard to monitor operational repository state.
 11. Use Cronograma to inspect file-to-block allocation and persist manual block overrides.
+12. For Moodle-backed repositories, use the signal migration/probe scripts when backfilling labels, posting dates, card maps, or gold templates for attribution evaluation.

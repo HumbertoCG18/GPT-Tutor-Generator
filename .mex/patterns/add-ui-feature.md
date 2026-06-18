@@ -17,12 +17,12 @@ edges:
     condition: when the UI feature triggers builder logic (understand the flow first)
   - target: patterns/add-builder-submodule.md
     condition: when the UI feature requires new processing logic in a builder subpackage
-last_updated: 2026-06-17
+last_updated: 2026-06-18
 ---
 
 # Add UI Feature
 
-Reviewed against the current Tkinter UI modules and repository dashboard flow on 2026-06-17.
+Reviewed against the current Tkinter UI modules and repository dashboard flow on 2026-06-18.
 
 ## Context
 
@@ -57,6 +57,7 @@ The app is single-threaded on the UI side. All builder work runs via `TaskQueueR
 - **Dialog sizing:** Tkinter dialogs do not auto-resize on Windows with high-DPI screens. Use `dialog.geometry("NNNxNNN")` for new dialogs; check at 125% and 150% DPI.
 - **`collect_repo_metrics`** in `repo_dashboard.py` reads generated repository manifest data and is I/O heavy. Do not call it on every UI refresh tick; cache the result.
 - **Timeline dashboard state** is backed by the generated manifest and generated timeline index. Manual block assignment only persists `manual_timeline_block_id`; derived artifacts update after reprocess.
+- **SARC schedule import** is URL-based in the current UI and persists `SubjectProfile.schedule_url`; do not reintroduce pasted-HTML cronograma flows without a product decision.
 
 ## Verify
 

@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Contains project state, routing table, and behavioural contract.
-last_updated: 2026-06-10
+last_updated: 2026-06-18
 ---
 
 # ROUTER.md - Session Bootstrap
@@ -30,7 +30,7 @@ Read this file before starting any task.
 - Queue state persists between app sessions.
 - Dashboard monitors operational repository state.
 - Reprocess Repository reapplies the current architecture to existing generated repositories.
-- Test runner is `pytest`; brief lists 28 files under `tests/`.
+- Test runner is `pytest`; the tracked test suite has 122 files under `tests/`.
 - Auto-tags de unidade/subunidade/bloco geradas em `resolve_unit_block_tags()`:
   tags `unit:`, `subunit:`, `bloco:` persistidas em `auto_tags` do manifest após
   cada regeneração pedagógica.
@@ -229,32 +229,47 @@ Read this file before starting any task.
   estava certo; 2 deles (IA bloco-16, SO bloco-08) sao MERGED (apresentacao + prova P1/P2) e
   agora caem em ASSESSMENT via session-exam (reforca a divida "separar blocos merged"). Suite
   1370 verde; golden 5/5 confiante-errado 0.
+- Normalizacao/tokenizacao consolidada (P2 Fase 1): `src/builder/text/normalize.py` e
+  `src/builder/text/stopwords.py` viraram fontes unicas para normalizadores/stopwords,
+  com delegadores byte-identicos preservando comportamento legado.
+- Concept resolver (P2/Fase 2-3) existe em `src/builder/routing/concept_resolver.py` +
+  `resolver_apply.py`, com harness `scripts/compare_resolver.py` e gold de codigo em
+  `tests/fixtures/eval/code_block_gold.json`. Wiring de producao fica atras da flag
+  `use_concept_resolver` e sobrescreve apenas campos de bloco (`computed_block_id`,
+  confidence/band/method + tag `bloco:`), nao unidade.
+- Signal registry/Moodle S0: `FileEntry` preserva `source_section`, `moodle_label`,
+  `posting_date`, `posting_date_created`; `SubjectProfile` preserva `turma` e
+  `schedule_url`. `backfill_repo_signals_additive` grava labels/datas/lessons index
+  sem mudar atribuicao; `backfill_repo_signals_consumed` pode atualizar `source_section`
+  e card-block map e por isso precisa de eval-gate. Scripts atuais:
+  `migrate_signals.py`, `posting_date_probe.py`, `propose_gold.py`, `gold_by_card.py`,
+  `expand_card_gold.py`, `make_code_gold_template.py`, `eval_code_block_gold.py`.
+- SARC/Moodle metadata: `parse_sarc_turma_key` resolve GUID/ano/sem da URL; a UI persiste
+  `schedule_url` no perfil da materia. `Evento Academico` ja esta mapeado para `event`
+  em `ATIVIDADE_KIND_MAP`; o gap antigo foi fechado.
+- Docs/reports: `docs/reports/gold_templates/` contem templates/gabaritos CSV por curso
+  para medicao cross-curso e rotulagem por card.
 
 ### Not Declared In Brief
 
-- Runtime dependencies are not declared in the manifest brief.
-- Development dependencies are not declared in the manifest brief.
 - Project scripts are not declared in the manifest brief.
-- Build tool, linter, formatter, and package manager are not declared in the brief.
+- No `[build-system]` table, linter, formatter, or project scripts are declared in the manifest.
 - Exact Datalab API/package version is not declared in the brief.
 - Exact Ollama model/version is not declared in the brief.
 
 ### Current Design Focus
 
-- ENTREGUE: Referencias como contexto base do tutor (8 tasks TDD + 2 fixes de
-  wiring). Spec `docs/superpowers/specs/2026-06-04-referencias-contexto-tutor-design.md`,
-  plano `docs/superpowers/plans/2026-06-04-referencias-contexto-tutor.md`. Resolve
-  "tutor so tem link/titulo da referencia". 841 testes verdes.
-- Itens PARADOS (retomar): ver `docs/superpowers/BACKLOG.md` — verbosidade do
-  manifest (`to_dict` serializa todos os defaults), #3 decay de data, #4 piso
-  de band, Horario, conserto do clone github, token github, referencias
-  Approach C, harness de referencias, medicao de correcao com ground-truth.
+- Foco atual: substrato de medicao cross-curso e atribuicao eval-gated. S0 entregou
+  sinais aditivos de Moodle/SARC, probes, migradores e templates de gold por curso/card.
+  Proximos passos ficam em A1/S0b: consumir sinais que mudam atribuicao (`source_section`,
+  card-block map, assign_due) atras de dry-run, `rebuild_diff`, gold e baseline.
+- Resolver por conceito permanece atras de flag ate cutover com gold suficiente; ele e o
+  eixo para absorver fallback keyword, LLM vote, card/date/sequence e conflitos unidade-bloco.
 
-> Historico: o redesign do sistema de tags (unit/subunit/bloco) e a precisao de
-> atribuicao bloco/unidade ja foram implementados (auto_tags, bandas de
-> confianca Fase 1-4, harness de avaliacao, sinal de sequencia). Foco migrou de
-> "precisao de bloco" (resolvida, ~98% band alta nos repos reais) para
-> "referencias usaveis pelo tutor".
+> Historico: referencias como contexto base do tutor, redesign de tags
+> (unit/subunit/bloco), precisao bloco/unidade, guard de conflitos e higiene dos
+> MDs ja foram entregues. O foco atual migrou para medicao/gold cross-curso e
+> unificacao da atribuicao por conceito com gates de regressao.
 
 ---
 

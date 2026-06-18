@@ -14,7 +14,7 @@ edges:
     condition: when understanding why an architectural choice exists
   - target: context/repo-output.md
     condition: when the task involves the generated repository format
-last_updated: 2026-06-17
+last_updated: 2026-06-18
 ---
 
 # Architecture
@@ -30,7 +30,7 @@ The project manifest is `pyproject.toml`:
 | Package name | `academic-tutor-repo-builder` |
 | Version | `3.0.0` |
 | Main entry point | `app.py` |
-| Test runner | `pytest` (`tests/`, 111 tracked files) |
+| Test runner | `pytest` (`tests/`, 122 tracked files) |
 
 ## High-Level Flow
 
@@ -42,6 +42,7 @@ Import academic materials
   -> process PDFs, links, code, and images
   -> send difficult outputs to manual review
   -> curate images and extract descriptions
+  -> capture Moodle/SARC source signals when available
   -> map files to schedule blocks and course units
   -> enrich code/references when optional Gemini is configured
   -> consolidate content into Markdown
@@ -76,6 +77,7 @@ Create or select subject
 | Image Curator panel | Curates images extracted from PDFs or imported photos and extracts descriptions inside the unified curation workspace. |
 | Timeline Dashboard | Shows file-to-block allocation, unmapped entries, confidence badges, and manual timeline overrides. |
 | PUCRS schedule import | Parses ASP.NET `dgAulas` schedule HTML, including authoritative row kinds for suspensions, exams, holidays, and events. |
+| Moodle/SARC signal capture | Stores `source_section`, `moodle_label`, `posting_date`, `turma`, `schedule_url`, generated card-block maps, and generated lessons indexes for routing and audit tooling. |
 | Repository builder | Consolidates processed content into structured Markdown and tutor instruction artifacts. |
 | Reprocess Repository action | Reapplies the current architecture to previously generated repositories. |
 | Dashboard | Shows operational state for generated repositories and queued repository tasks. |
@@ -83,6 +85,7 @@ Create or select subject
 | Reference context pipeline | Lightweight reference fetch, optional Gemini summary, deterministic unit/topic mapping, BIBLIOGRAPHY output, and COURSE_MAP support lines. |
 | Timeline/unit matcher | Positional timeline block-to-unit assignment in `src/builder/timeline/unit_matcher.py`; manual overrides remain authoritative and conflicts are surfaced. |
 | Tag and taxonomy pipeline | Generates internal content-taxonomy, tag-catalog, assessment-context, and manifest `auto_tags` data for unit/subunit/block routing. |
+| Concept resolver | Feature-flagged routing resolver in `src/builder/routing/concept_resolver.py` and `resolver_apply.py`; can overwrite block fields only when `use_concept_resolver` is enabled. |
 
 ## Data Model Context
 
@@ -103,6 +106,8 @@ The generated tutor repository is built with context for:
 |---|---|
 | Ollama Vision | Vision support for image understanding and curation. |
 | Datalab PDF backend | PDF processing backend referenced by the README. |
+| Moodle course API | Imports course/card metadata and backfills source labels, posting dates, lesson labels, and card/block maps when credentials are configured. |
+| PUCRS SARC | Schedule import and turma/schedule URL metadata source. |
 | Claude | Generated instruction target for Claude Projects knowledge bases. |
 | GPT | Generated instruction target. |
 | Gemini | Generated instruction target. |
@@ -115,10 +120,10 @@ Exact external service versions for Datalab, Ollama, and Gemini models are not p
 
 | Path | Category | File count |
 |---|---:|---:|
-| `src` | application source | 105 |
-| `tests` | tests | 111 |
-| `docs` | documentation | 97 |
-| `scripts` | eval/diff harnesses and dev scripts | 19 |
+| `src` | application source | 108 |
+| `tests` | tests | 122 |
+| `docs` | documentation | 125 |
+| `scripts` | eval/diff harnesses and dev scripts | 28 |
 | `plans` | planning notes | 6 |
 | `.github` | GitHub metadata | 2 |
 | `schemas` | data/model schemas | 1 |
@@ -144,3 +149,12 @@ Exact external service versions for Datalab, Ollama, and Gemini models are not p
 | `tests/test_tag_catalog.py` | test |
 | `tests/test_student_state_v2.py` | test |
 | `tests/test_student_state_manual_import.py` | test |
+| `tests/test_moodle.py` | test |
+| `tests/test_moodle_labels.py` | test |
+| `tests/test_concept_resolver.py` | test |
+| `tests/test_resolver_wiring.py` | test |
+| `tests/test_migrate_signals.py` | test |
+| `scripts/migrate_signals.py` | script |
+| `scripts/propose_gold.py` | script |
+| `scripts/gold_by_card.py` | script |
+| `scripts/compare_resolver.py` | script |

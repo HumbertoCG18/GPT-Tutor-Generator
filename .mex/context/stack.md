@@ -15,7 +15,7 @@ edges:
     condition: when understanding how technologies fit into the system
   - target: context/setup.md
     condition: when setup or run commands are needed
-last_updated: 2026-06-17
+last_updated: 2026-06-18
 ---
 
 # Stack
@@ -63,7 +63,7 @@ Do not invent dependency names, package versions, extras, or scripts. If a task 
 
 ## Known Test Entry Points
 
-The tracked test suite has 111 files. Representative entry points include:
+The tracked test suite has 122 files. Representative entry points include:
 
 ```text
 tests/__init__.py
@@ -82,6 +82,12 @@ tests/test_task_queue.py
 tests/test_tag_catalog.py
 tests/test_student_state_v2.py
 tests/test_student_state_manual_import.py
+tests/test_moodle.py
+tests/test_moodle_labels.py
+tests/test_concept_resolver.py
+tests/test_resolver_wiring.py
+tests/test_migrate_signals.py
+tests/test_posting_date_probe.py
 ```
 
 ## Integration Notes
@@ -89,4 +95,5 @@ tests/test_student_state_manual_import.py
 - Vision support is implemented through Ollama, per README.
 - PDF processing support includes Datalab, per README.
 - Generated tutor instructions target Claude, GPT, and Gemini.
+- Moodle/SARC import support now persists course signals such as `source_section`, `moodle_label`, `posting_date`, `turma`, and `schedule_url` for routing and audit tooling.
 - The manifest now declares the core Python libraries listed above; exact external service versions for Datalab and Ollama are still not declared.

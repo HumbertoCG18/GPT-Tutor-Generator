@@ -13,7 +13,7 @@ edges:
     condition: when deciding where new logic should live
   - target: context/decisions.md
     condition: when a convention comes from an architectural decision
-last_updated: 2026-06-17
+last_updated: 2026-06-18
 ---
 
 # Conventions
@@ -25,10 +25,10 @@ Tracked repository layout:
 | Path | Role |
 |---|---|
 | `app.py` | Main application entry point. |
-| `src/` | Application source, 105 tracked files. |
-| `tests/` | Test suite, 111 files. |
-| `docs/` | Project documentation, 97 files. |
-| `scripts/` | Eval/diff harnesses and dev scripts, 19 files. |
+| `src/` | Application source, 108 tracked files. |
+| `tests/` | Test suite, 122 files. |
+| `docs/` | Project documentation, 125 files. |
+| `scripts/` | Eval/diff harnesses and dev scripts, 28 files. |
 | `plans/` | Planning notes, 6 files. |
 | `.github/` | GitHub metadata, 2 files. |
 | `schemas/` | Data/model schemas, 1 file. |
@@ -44,6 +44,8 @@ Observed from the brief:
 | Timeline tests | Examples include `tests/test_timeline_signals.py`, `tests/test_timeline_index_kind.py`, and `tests/test_timeline_scoring_ignored.py` |
 | Student state tests | Examples include `tests/test_student_state_v2.py`, `tests/test_student_state_manual_import.py`, and `tests/test_student_state_integration.py` |
 | Tag catalog tests | `tests/test_tag_catalog.py` |
+| Moodle/SARC signal tests | Examples include `tests/test_moodle.py`, `tests/test_moodle_labels.py`, `tests/test_migrate_signals.py`, and `tests/test_posting_date_probe.py` |
+| Concept resolver tests | Examples include `tests/test_concept_resolver.py`, `tests/test_resolver_fusion.py`, and `tests/test_resolver_wiring.py` |
 
 Use existing topic names when adding tests. Do not introduce a new naming scheme without a specific reason.
 
@@ -60,6 +62,8 @@ The README flow establishes these project patterns:
 - Cronograma state exposes file-to-block allocation and manual timeline overrides.
 - Reference/bibliography entries can become tutor context through BIBLIOGRAPHY and COURSE_MAP support lines.
 - Timeline/unit/tag metadata is regenerated into manifest `auto_tags` and internal course dotfiles.
+- Moodle/SARC-derived signals remain separate metadata fields (`source_section`, `moodle_label`, `posting_date`, `turma`, `schedule_url`) and should not overwrite display titles.
+- The concept resolver is feature-flagged; default routing behavior should not change unless the flag/cutover work is explicit.
 - Generated output is Markdown plus LLM instruction artifacts.
 
 ## Documentation Discipline
@@ -80,3 +84,5 @@ Run this checklist after code or scaffold changes:
 - [ ] Generated-repository behavior remains compatible with the README flow.
 - [ ] If changing tag behavior, update or add coverage near `tests/test_tag_catalog.py` and relevant unit/timeline scoring tests.
 - [ ] If changing timeline allocation behavior, update or add coverage near `tests/test_unit_matcher.py`, `tests/test_cronograma_health.py`, and relevant timeline scoring tests.
+- [ ] If changing Moodle/SARC signal capture or consumed attribution signals, update or add coverage near `tests/test_moodle.py`, `tests/test_moodle_labels.py`, and `tests/test_migrate_signals.py`.
+- [ ] If changing concept-resolver behavior, update or add coverage near `tests/test_concept_resolver.py`, `tests/test_resolver_fusion.py`, and `tests/test_resolver_wiring.py`.
