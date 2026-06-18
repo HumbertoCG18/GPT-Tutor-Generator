@@ -16,7 +16,11 @@ Commits (branch `feat/reconciliar-unit-bloco`):
 
 **ALAVANCA 0 (lessons[].text):** captação FEITA + robusta; **CONSUMO (lesson_term) REVERTIDO** — regrediu gold 11→10. Root cause (probe): lessons alinham PERFEITO ao bloco por data, mas casar contra os `concepts` do Gemini (ruidosos: hoare=[dafny,hoare,indutivos,terminacao]; listas=[inducao,isabelle] sem "listas"→flipa 05→06; exemplos-zip=[hoare,terminacao] errado p/ NuSMV) amplifica concept errado. **Alavancas 0 e 1 SÃO ACOPLADAS:** a lesson precisa da IDENTIDADE LIMPA do material (moodle_label), não dos concepts. `load_lessons_index` fica como infra pronta.
 
-**PRÓXIMO — ALAVANCA 1 (moodle_label):** capturar `mod.get("name")` (`moodle.py:130`, o `<span instancename>`, ex. "Exemplos (Lógica de Floyd-Hoare)") num campo NOVO `moodle_label` (NUNCA sobrescrever `title`) ANTES do redirect SharePoint que o destrói. Canal `moodle_label_text` em `collect_entry_unit_signals`. Reativar `lesson_term` casando `moodle_label × lesson`. Medir no MF.
+**ALAVANCA 1 (moodle_label): FEITO — gold 11→12/17, cw=1.** Commits `0cbbbad` (captura: campo `FileEntry.moodle_label` + canal `moodle_label_text` + `backfill_moodle_label_from_api` no import, do payload da API antes do redirect SharePoint) + `645f2b4` (consumo: label no `content_text` do resolver → conserta invariantes 04→11; + **conflito tool→unit**). Baseline travado em 12/17. Medido stampando os labels reais do gold no manifest do MF (offline; backfill da API faz ponta-a-ponta).
+
+**LEVER NOVA — conflito tool→unit (`concept_resolver._tool_unit`):** a ferramenta (.dfy/.thy/.smv) ancora a UNIDADE (derivada das topics da unidade, sem hardcode). Material Dafny num bloco Isabelle → conflito → confiança capada (degradação honesta, bloco inalterado). Impediu que o label ambíguo "Tipos Indutivos"→bloco-04 virasse confiante-errado.
+
+**Erros restantes (5/17):** hoare (res-11, true-10; único cw — bloco-10 é u1 no SARC mas .dfy=u2, conflito real plano×cronograma), exemplos-zip (NuSMV, label "NuSMV" não casa topic_text do bloco-16), intro/provas/tiposindutivos (media-gold). PRÓXIMO possível: alavanca 0 (lessons, `load_lessons_index` já é infra) agora com a identidade limpa do label; ou enriquecer topic_text do bloco-16 com "NuSMV".
 
 **BACKLOG NOVO:** `rebuild_diff` mostra 4/5 `.timeline_index.json` gravados STALE vs código atual (ES2 7, IA 20, SO 13 blocos divergem unit/kind) — drift PRÉ-EXISTENTE, NÃO da sessão 2 (verificado por stash). Reprocessar/regravar índices num momento controlado.
 
