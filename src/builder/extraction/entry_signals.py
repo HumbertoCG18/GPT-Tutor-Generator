@@ -129,5 +129,8 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         "raw_text": normalize_match_text(entry.get("raw_target", "")),
         "image_description_text": normalize_match_text(image_description),
         "markdown_text": normalize_match_text(effective_markdown),
+        # alavanca 1: label do recurso Moodle (mod.name) — identidade LIMPA do
+        # material (ex. "Exemplos (Lógica de Floyd-Hoare)"), pesa como conceito.
+        "moodle_label_text": normalize_match_text(entry.get("moodle_label", "")),
     }
 

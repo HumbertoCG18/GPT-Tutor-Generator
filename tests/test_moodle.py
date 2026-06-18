@@ -207,6 +207,25 @@ def test_backfill_source_section_from_api_matches_by_basename():
     assert "ghost" in unmatched
 
 
+def test_backfill_moodle_label_from_api_matches_by_basename():
+    # alavanca 1: captura mod.get("name") (label do recurso) por basename, igual
+    # ao source_section. Vem do payload da API -> antes do redirect SharePoint.
+    from src.builder.sources.moodle import backfill_moodle_label_from_api
+    contents = [
+        {"name": "Verificacao de Programas", "modules": [
+            {"name": "Exemplos (Logica de Floyd-Hoare)",
+             "contents": [{"type": "file", "filename": "hoare.zip",
+                           "fileurl": "https://m/a/hoare.zip"}]}]},
+    ]
+    entries = [
+        {"id": "hoare", "source_path": "C:/x/HOARE.zip"},   # case-insensitive
+        {"id": "ghost", "source_path": "X:/none/ghost.pdf"},
+    ]
+    out = backfill_moodle_label_from_api(entries, contents)
+    assert out["hoare"] == "Exemplos (Logica de Floyd-Hoare)"
+    assert "ghost" not in out
+
+
 def test_iter_section_files_disambiguates_by_module_name():
     # professor nomeia todo PDF "main.pdf"; o nome do módulo distingue as aulas.
     contents = [{"name": "Semana 2", "modules": [

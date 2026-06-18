@@ -47,6 +47,17 @@ def test_fileentry_roundtrip_preserves_persisted_match_fields():
         assert second[name] == payload[name], f"campo {name!r} divergiu: {second[name]!r}"
 
 
+def test_fileentry_roundtrip_preserves_moodle_label():
+    """alavanca 1: o label do modulo Moodle (mod.name) sobrevive ao round-trip."""
+    payload = {
+        "source_path": "staging/invariantes.zip", "file_type": "pdf",
+        "category": "material", "title": "invariantes",
+        "moodle_label": "Exemplos (Logica de Floyd-Hoare)",
+    }
+    out = FileEntry.from_dict(payload).to_dict()
+    assert out.get("moodle_label") == "Exemplos (Logica de Floyd-Hoare)"
+
+
 def test_fileentry_reason_lists_default_to_empty_list():
     entry = FileEntry(
         source_path="staging/x.pdf",

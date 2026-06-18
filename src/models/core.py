@@ -104,6 +104,11 @@ class FileEntry:
     # autoritativo para a atribuição file->bloco (gabarito-cards). "" quando o
     # arquivo nao veio de um card (cai no caminho lexical, sem regressao).
     source_section: str = ""
+    # Label do recurso no Moodle (= mod.get("name") do core_course_get_contents,
+    # ex. "Exemplos (Lógica de Floyd-Hoare)"). Capturado no import (backfill da API)
+    # ANTES do redirect SharePoint que deixa só o filename. Identidade LIMPA do
+    # material — pesa como conceito no resolver. NUNCA sobrescreve title. ""=ausente.
+    moodle_label: str = ""
     # Conflito unidade×bloco detectado no auto (F1): a unidade forte (>=0.65)
     # venceu um bloco que apontava OUTRA unidade (block_confidence < unit_conf).
     # {} quando não há conflito. Sinal de revisão exibido no editor; o build

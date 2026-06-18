@@ -19,6 +19,20 @@ def test_no_image_description_is_empty():
     assert sig["image_description_text"] == ""
 
 
+def test_moodle_label_feeds_signal():
+    # alavanca 1: o label do recurso Moodle vira canal proprio (identidade limpa)
+    entry = {"title": "invariantes.zip",
+             "moodle_label": "Exemplos (Logica de Floyd-Hoare)", "auto_tags": []}
+    sig = collect_entry_unit_signals(entry, markdown_text="")
+    assert "hoare" in sig["moodle_label_text"]
+    assert "floyd" in sig["moodle_label_text"]
+
+
+def test_no_moodle_label_is_empty():
+    sig = collect_entry_unit_signals({"title": "x.pdf"}, markdown_text="")
+    assert sig["moodle_label_text"] == ""
+
+
 from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
 
 

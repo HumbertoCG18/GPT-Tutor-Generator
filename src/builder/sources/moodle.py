@@ -100,6 +100,7 @@ class SectionFile:
     filename: str          # nome ORIGINAL do conteúdo Moodle (ex.: "main.pdf") — usado no backfill
     fileurl: str
     savename: str = ""     # nome p/ disco, derivado do título do módulo (resolve colisão de "main.pdf")
+    label: str = ""        # mod.get("name") — label do recurso no Moodle (alavanca 1)
 
     @property
     def disk_name(self) -> str:
@@ -128,7 +129,29 @@ def iter_section_files(contents) -> List[SectionFile]:
             for f in file_contents:
                 original = str(f["filename"])
                 savename = _savename_from_module(mod.get("name"), original, len(file_contents))
-                out.append(SectionFile(section, original, str(f["fileurl"]), savename))
+                out.append(SectionFile(section, original, str(f["fileurl"]), savename,
+                                       label=str(mod.get("name") or "")))
+    return out
+
+
+def backfill_moodle_label_from_api(manifest_entries, contents):
+    """Casa entries -> label do recurso Moodle (mod.name) por basename, mesma
+    mecânica do source_section. Retorna {id->moodle_label}. Basename em >1 módulo
+    (colisão de filename) -> pulado (igual ao ambiguous do source_section)."""
+    from collections import Counter
+    counts = Counter()
+    label_by_name = {}
+    for sf in iter_section_files(contents):
+        key = sf.filename.casefold()
+        counts[key] += 1
+        if sf.label:
+            label_by_name.setdefault(key, sf.label)
+    out = {}
+    for e in manifest_entries or []:
+        eid = str(e.get("id") or "")
+        base = Path(str(e.get("source_path") or "")).name.casefold()
+        if base in label_by_name and counts[base] == 1:
+            out[eid or base] = label_by_name[base]
     return out
 
 
@@ -371,12 +394,16 @@ def import_moodle_courses(selected_courses, base_folder, store, client, download
             manifest = _json.loads(mpath.read_text(encoding="utf-8"))
             entries = manifest.get("entries", [])
             assignments, _u, _a = backfill_source_section_from_api(entries, contents)
-            if assignments:
+            labels = backfill_moodle_label_from_api(entries, contents)
+            if assignments or labels:
                 for e in entries:
                     eid = str(e.get("id") or "") or Path(str(e.get("source_path") or "")).name
                     if eid in assignments:
                         e["source_section"] = assignments[eid]
                         backfilled += 1
+                    # alavanca 1: só preenche se vazio (não clobbera label manual)
+                    if labels.get(eid) and not str(e.get("moodle_label") or "").strip():
+                        e["moodle_label"] = labels[eid]
                 write_json_manifest(mpath, manifest)
         # --- card_block_map automático via labels (P1) ---
         if repo:
