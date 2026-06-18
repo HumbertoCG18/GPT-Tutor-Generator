@@ -1219,6 +1219,10 @@ class HTMLImportDialog(tk.Toplevel):
     def _fetch_and_process(self, url: str):
         """Fetch the SARC HTML on a background thread, then parse on the UI thread."""
         import threading
+        try:
+            self.parent._imported_schedule_url = url
+        except Exception:
+            pass
 
         self._btn_import.configure(state="disabled")
         self._status.configure(text="Buscando cronograma...")
@@ -1275,6 +1279,7 @@ class SubjectManagerDialog(tk.Toplevel):
         self._config = config_obj
         self._p = apply_theme_to_toplevel(self, parent)
         self._current_name: Optional[str] = None
+        self._imported_schedule_url = ""
         self._build_ui()
         self._refresh_list()
 
@@ -1463,6 +1468,7 @@ class SubjectManagerDialog(tk.Toplevel):
         if not sp:
             return
         self._current_name = name
+        self._imported_schedule_url = getattr(sp, "schedule_url", "")
         for key, var in self._vars.items():
             var.set(getattr(sp, key, ""))
         self._syllabus_text.delete("1.0", "end")
@@ -1472,6 +1478,7 @@ class SubjectManagerDialog(tk.Toplevel):
 
     def _new(self):
         self._current_name = None
+        self._imported_schedule_url = ""
         for var in self._vars.values():
             var.set("")
         self._vars["institution"].set("PUCRS")
@@ -1511,6 +1518,9 @@ class SubjectManagerDialog(tk.Toplevel):
             github_url=self._vars["github_url"].get().strip(),
             preferred_llm=self._vars["preferred_llm"].get().strip() or "claude",
             processing_profile=self._vars["processing_profile"].get(),
+            schedule_url=(getattr(self, "_imported_schedule_url", "")
+                          or (existing.schedule_url if existing else "")),
+            turma=(existing.turma if existing else ""),
             queue=existing_queue,
         )
         self._store.add(sp)
