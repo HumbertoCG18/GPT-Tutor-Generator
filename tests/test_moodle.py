@@ -414,3 +414,13 @@ def test_import_links_existing_subject_by_slug_keeping_repo(tmp_path):
     assert sp.moodle_course_id == "92717"                       # ligou
     assert sp.repo_root == "C:/repos/Metodos-Formais-Tutor"     # PRESERVOU o repo
     assert sp.stash_folder == str((tmp_path / "Moodle") / sp.slug)
+
+
+def test_iter_section_files_captures_timestamps():
+    contents = [{"name": "Semana 1", "modules": [
+        {"name": "Aula", "contents": [
+            {"type": "file", "filename": "a.pdf", "fileurl": "http://x/a.pdf",
+             "timemodified": 1739361600, "timecreated": 1739000000}]}]}]
+    sf = iter_section_files(contents)[0]
+    assert sf.timemodified == 1739361600
+    assert sf.timecreated == 1739000000

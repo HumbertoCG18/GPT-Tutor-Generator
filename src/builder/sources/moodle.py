@@ -101,6 +101,8 @@ class SectionFile:
     fileurl: str
     savename: str = ""     # nome p/ disco, derivado do título do módulo (resolve colisão de "main.pdf")
     label: str = ""        # mod.get("name") — label do recurso no Moodle (alavanca 1)
+    timemodified: int = 0  # epoch do upload/modificacao no Moodle (posting_date) — S0, nao consumido
+    timecreated: int = 0   # epoch de criacao do blob no Moodle
 
     @property
     def disk_name(self) -> str:
@@ -130,7 +132,9 @@ def iter_section_files(contents) -> List[SectionFile]:
                 original = str(f["filename"])
                 savename = _savename_from_module(mod.get("name"), original, len(file_contents))
                 out.append(SectionFile(section, original, str(f["fileurl"]), savename,
-                                       label=str(mod.get("name") or "")))
+                                       label=str(mod.get("name") or ""),
+                                       timemodified=int(f.get("timemodified") or 0),
+                                       timecreated=int(f.get("timecreated") or 0)))
     return out
 
 
