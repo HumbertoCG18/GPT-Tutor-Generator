@@ -18,7 +18,11 @@ _LOOSE_FULL = re.compile(r"\((\d{1,2}/\d{1,2}/\d{4})\)")
 _ASYNC = re.compile(r"\(atividade\s+ass[ií]ncrona\)", re.IGNORECASE)
 
 _WEEK_SHORT = re.compile(r"Semana\s*\d+\s*[-–]?\s*(\d{1,2}/\d{1,2})\s*a\s*(\d{1,2}/\d{1,2})")
-_LESSON_SHORT = re.compile(r"^(\d{1,2}/\d{1,2})\s*[:\-]\s*(.+)")
+# Semana sem ano e sem ordinal, DENTRO do card: "Semana 11/05 a 15/05".
+_WEEK_BARE = re.compile(r"Semana\s+(\d{1,2}/\d{1,2})\s*a\s*(\d{1,2}/\d{1,2})\b")
+# Aula sem ano, parênteses OPCIONAL: "(11/05): x" ou "11/05: x". O ano vem do
+# param year (default do _iso). Compartilhado pelo formato A (year-less) e B.
+_LESSON_SHORT = re.compile(r"^\(?(\d{1,2}/\d{1,2})\)?\s*[:\-]\s*(.+)")
 _AULA_C = re.compile(r"Aula\s+\d+\s*[-–]\s*(\d{1,2}/\d{1,2})\b")
 _WEEK_ORDINAL = re.compile(r"Semana\s+(\d+)\b")
 
@@ -43,8 +47,12 @@ def _label_texts(sec: dict) -> list:
             for m in sec.get("modules", []) or [] if m.get("modname") == "label"]
 
 
-def _parse_format_a(texts: list) -> dict | None:
+def _parse_format_a(texts: list, year: int = 0) -> dict | None:
     weeks, lessons, dates = [], [], []
+    # year-less coletado à parte: só conta se houver semana SEM-ANO dentro do card
+    # (resumo self-contained). Senão deixa o formato B pegar a semana do NOME — não
+    # rouba o caso "semana no nome + aulas year-less".
+    bare_lessons, bare_dates, bare_week = [], [], False
     for txt in texts:
         for line in txt.splitlines():
             line = line.strip()
@@ -63,10 +71,27 @@ def _parse_format_a(texts: list) -> dict | None:
                     lessons.append({"date": d, "text": l.group(2).strip().rstrip(";.")})
                     dates.append(d)
                 continue
+            wb = _WEEK_BARE.search(line)
+            if wb:
+                a, b = _iso(wb.group(1), year), _iso(wb.group(2), year)
+                if a and b:
+                    weeks.append((a, b))
+                    bare_week = True
+                continue
+            lb = _LESSON_SHORT.match(line)
+            if lb:
+                d = _iso(lb.group(1), year)
+                if d:
+                    bare_lessons.append({"date": d, "text": lb.group(2).strip().rstrip(";.")})
+                    bare_dates.append(d)
+                continue
             for m in _LOOSE_FULL.finditer(line):
                 d = _iso(m.group(1))
                 if d:
                     dates.append(d)
+    if bare_week:
+        lessons += bare_lessons
+        dates += bare_dates
     if not dates and not weeks:
         return None
     return {"format": "A", "dates": sorted(set(dates)), "weeks": weeks, "lessons": lessons}
@@ -216,7 +241,7 @@ def parse_card_dates(contents, year: int, week_anchor: str = "") -> dict:
         if not name:
             continue
         texts = _label_texts(sec)
-        parsed = (_parse_format_a(texts)
+        parsed = (_parse_format_a(texts, year)
                   or _parse_format_b(raw_name, texts, year)
                   or _parse_format_c(texts, year)
                   or _parse_format_d(raw_name, week_anchor))

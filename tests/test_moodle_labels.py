@@ -192,3 +192,27 @@ def test_index_colisao_de_data_concatena_textos():
     out = build_lesson_topic_index([s1, s2], year=2026)
     txt = out["by_date"]["2026-03-04"]
     assert "Tema A" in txt and "Tema B" in txt
+
+
+# --- captação robusta: resumo DENTRO do card com data SEM ANO (90% dos casos) ---
+def test_index_year_less_semana_dentro_parens():
+    # (11/05): topico + "Semana DD/MM a DD/MM" DENTRO do card (sem ano)
+    s = _sec("Verificacao de Programas",
+             ["Semana 11/05 a 15/05:\n(11/05): Introducao ao Dafny;\n(13/05): Arrays em Dafny."])
+    idx = build_lesson_topic_index([s], year=2026)["by_date"]
+    assert "Introducao" in idx.get("2026-05-11", "")
+    assert "Arrays" in idx.get("2026-05-13", "")
+
+def test_index_year_less_semana_dentro_sem_parens():
+    s = _sec("Verificacao de Programas",
+             ["Semana 11/05 a 15/05:\n11/05: Introducao ao Dafny;\n13/05: Arrays em Dafny."])
+    idx = build_lesson_topic_index([s], year=2026)["by_date"]
+    assert "Introducao" in idx.get("2026-05-11", "")
+    assert "Arrays" in idx.get("2026-05-13", "")
+
+def test_index_year_less_semana_no_nome_parens():
+    # semana no NOME do card + lessons em parênteses sem ano (formato B paren-opcional)
+    s = _sec("Semana 5 - 11/05 a 15/05 - Dafny",
+             ["(11/05): Introducao ao Dafny;\n(13/05): Arrays em Dafny."])
+    idx = build_lesson_topic_index([s], year=2026)["by_date"]
+    assert "Introducao" in idx.get("2026-05-11", "")
