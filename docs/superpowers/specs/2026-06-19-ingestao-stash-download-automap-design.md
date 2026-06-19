@@ -59,8 +59,9 @@ consome por data.
 ## Fronteira com a Spec A
 
 B é o **produtor**; A é o **consumidor**. Contrato compartilhado:
-- `.card_block_map.json` — card→`dates` (chave de join; B garante, A lê) + `topic_slugs` rótulo
-  opcional.
+- `.card_block_map.json` — card→`dates` (conjunto discreto de datas de sessão; chave de join por
+  membership; B garante a completude, A lê) + `topic_slugs` rótulo opcional. Fallback `span_fallback`
+  logado quando B não enumera.
 - Sessões SARC (datas) no `.timeline_index.json` (parse SARC já existente).
 
 B **não** mexe em atribuição nem render (isso é a Spec A). O trabalho da B termina num stash
@@ -85,9 +86,13 @@ mapeado + `.card_block_map.json` confirmado.
   do card contra os **blocos** e emite `block_ids` (+ `dates`, `source:"labels"`). É inferência
   **temporal**, e o output já contém o intervalo de datas. NÃO toca `.content_taxonomy.json`.
 - **Evolução — duas saídas, prioridades distintas:**
-  1. **`dates` confiável por card (chave de join — prioritário).** Onde há labels Moodle, já sai.
-     Onde não há (MF/ES2 via M365), derivar por **cross-check com o SARC** (casar a seção a um range
-     de datas do cronograma por nome + proximidade temporal). Marca `source:"sarc"`.
+  1. **`dates` confiável por card (chave de join — prioritário).** É um **conjunto discreto** das
+     datas das sessões SARC daquele card (a Spec A casa por membership `session.date ∈ dates`, não
+     por intervalo). Onde há labels Moodle, as datas saem do label; onde não há (MF/ES2 via M365),
+     **cross-check com o SARC enumera as sessões do tópico** (casar a seção por nome + âncora
+     temporal) → as datas exatas. Marca `source:"sarc"`. **Fallback:** se o cross-check não
+     enumerar as sessões, emite `dates:[min,max]` com `span_fallback:true` e `confirmed:false`
+     (logado) — a UI sinaliza para placement manual.
   2. **`topic_slugs` de display (rótulo — best-effort).** Casar nome da seção contra `topic`/`unit`
      label+aliases do `.content_taxonomy.json`. Ambíguo → `confirmed:false`. **Nunca bloqueia a
      atribuição** (que roda por `dates`).
@@ -95,8 +100,8 @@ mapeado + `.card_block_map.json` confirmado.
   ```json
   {
     "Verificação de Programas": {
-      "dates": ["2026-04-27", "...", "2026-05-25"],
-      "block_ids": ["bloco-10", "..."],
+      "dates": ["2026-04-27", "2026-04-29", "2026-05-04", "2026-05-06", "2026-05-11"],
+      "block_ids": ["bloco-10", "bloco-11"],
       "topic_slugs": ["logica-de-hoare", "logica-de-programas-dafny", "verificacao-de-modelos"],
       "source": "sarc",
       "confirmed": false
@@ -162,8 +167,10 @@ derive card→dates (labels Moodle; cross-check SARC quando faltam) [+ topic_slu
 - **Download M365 (já existe):** testar a **conexão** ao re-sync/auto-map (não reimplementar o
   cliente). Mock; `skip_existing` por path; idempotência (re-rodar não re-baixa).
 - **derive card→`dates`:** fixtures —
-  - card com label Moodle → `dates` do label, `source:"labels"`.
-  - card sem label, nome casa range SARC → `dates` por cross-check, `source:"sarc"`, `confirmed:false`.
+  - card com label Moodle → `dates` do label (conjunto discreto), `source:"labels"`.
+  - card sem label, nome casa o tópico SARC → cross-check **enumera as datas das sessões** (discreto),
+    `source:"sarc"`, `confirmed:false`.
+  - card sem label, cross-check não enumera → `dates:[min,max]` + `span_fallback:true`, `confirmed:false`.
   - card sem label e sem match SARC → sem `dates` (vai pra fila / drop manual).
 - **derive `topic_slugs`-rótulo:** nome ≈ tópico → slug; ambíguo → `confirmed:false`; slug emitido
   sempre ∈ `.content_taxonomy.json` (guarda dura falha senão).

@@ -146,10 +146,20 @@ leitura retro-compatível. O bump de versão é cosmético para a fatia render (
 Join determinístico **pela data** (não por slug):
 
 ```
-arquivo → card (pasta) → .card_block_map.json{dates: [intervalo]} → sessões cujo date ∈ intervalo
+arquivo → card (pasta) → .card_block_map.json{dates: [conjunto discreto]} → sessões cujo date ∈ dates
 ```
 
-- A chave de join é a **data**, comparação ISO — não o nome-do-card (string) nem o slug. Aposenta
+- **Semântica de `dates` = conjunto discreto (membership):** `session.date ∈ card.dates` (igualdade
+  exata por data ISO), NÃO intervalo `min..max`. Motivo: membership é preciso (zero over-atribuição
+  em dia de gap, zero bug de tópico não-contíguo, zero ambiguidade de overlap entre cards) e
+  determinístico (casa o invariante de projeção pura). A completude de `card.dates` é
+  responsabilidade da **ingestão** (Spec B: cross-check SARC enumera as sessões do tópico → as datas
+  exatas), não do consumo.
+- **Fallback de intervalo (explícito e logado):** quando a Spec B não consegue enumerar as sessões
+  (cross-check SARC falha), o card cai para `min(dates)..max(dates)` **com log `span fallback`** e
+  `confirmed:false`. Nunca silencioso — a UI da Spec B sinaliza sessões sem material para placement
+  manual em vez de mascarar com material do vizinho.
+- A chave de join é a **data** — não o nome-do-card (string) nem o slug. Aposenta
   `resolve_card_to_block` difuso E o bug de normalização de chave (que some por construção: a
   chave deixa de ser string sensível a caixa/acento e passa a ser data).
 - **Por que data e não slug:** o `.card_block_map.json` já carrega `dates` (interseção de datas já
@@ -241,8 +251,9 @@ sessão virar o átomo, este é o render natural.
 
 ## Invariantes (não-negociáveis)
 
-- **Chave de join da atribuição = data** (não slug, não nome-de-card-string). O slug é projeção
-  de display, nunca chave.
+- **Chave de join da atribuição = data, por membership** (`session.date ∈ card.dates`, conjunto
+  discreto — não intervalo). Não slug, não nome-de-card-string. O slug é projeção de display, nunca
+  chave. Fallback de intervalo só explícito e logado (`span fallback`).
 - Nenhuma suposição de **cadência** (semana = ISO sobre as sessões existentes). **Mas há uma
   suposição de FONTE assumida:** existe uma fonte com 1 linha datada por sessão (SARC hoje). Curso
   sem essa fonte cai no modo de degradação definido nos Riscos (não gera artefato vazio).
@@ -266,6 +277,12 @@ sessão virar o átomo, este é o render natural.
   - `assessment_scope`: P1 (início→P1), PN (P(N-1)→PN exclusivo/inclusivo), PS/G2 (semestre
     inteiro); prova cobre até a última sessão antes da data, exclui a seguinte (precisão
     subunidade sem campo).
+- **Atribuição por data (membership):**
+  - `session.date ∈ card.dates` → material atribuído; data fora → não atribuído.
+  - tópico não-contíguo: `card.dates=[11/03, 06/05]` → sessão 01/04 NÃO recebe (membership não engole
+    o gap, ao contrário do intervalo).
+  - fallback span: card sem enumeração → `min..max` com `span_fallback:true`, logado.
+  - card grosso: material em todas as datas do conjunto (grão-unidade), sem incluir gap fora do set.
 - **Render:** snapshot do `CRONOGRAMA_DETALHADO.md` (dia-a-dia por semana) contra fixture.
 - **Migração:** manifest antigo com `computed_block_id` lê corretamente sob o schema novo.
 
