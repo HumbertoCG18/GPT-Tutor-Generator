@@ -886,6 +886,19 @@ def code_index_md(
     return clamp_navigation_artifact(result, max_chars=14000, label="course/CODE_INDEX.md")
 
 
+_PT_WEEKDAYS = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"]
+
+
+def _session_date_label(date_iso: str) -> str:
+    """'qua 11/03' a partir de 'YYYY-MM-DD'; retorna a string crua se inválida/vazia."""
+    from datetime import date as _date
+    try:
+        d = _date.fromisoformat(str(date_iso))
+    except (ValueError, TypeError):
+        return str(date_iso or "")
+    return f"{_PT_WEEKDAYS[d.weekday()]} {d.day:02d}/{d.month:02d}"
+
+
 def cronograma_detalhado_md(
     course_meta: dict,
     entries: list,
@@ -941,6 +954,19 @@ def cronograma_detalhado_md(
         if topics:
             lines.append(f"**Tópicos cobertos**: {', '.join(topics)}")
         lines.append("")
+
+        sessions = blk.get("sessions") or []
+        if sessions:
+            lines += ["### Sessões", ""]
+            for s in sessions:
+                date_label = _session_date_label(str(s.get("date") or ""))
+                slabel = str(s.get("label") or "")
+                mark = " ⏱" if str(s.get("kind") or "class") == "assessment" else ""
+                line = f"- **{date_label}**{mark}" if date_label else f"- **(sem data)**{mark}"
+                if slabel:
+                    line += f" — {slabel}"
+                lines.append(line)
+            lines.append("")
 
         # Materiais (code-only por enquanto)
         primaries = primary_idx.get(bid, [])
