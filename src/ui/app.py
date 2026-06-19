@@ -1497,7 +1497,7 @@ class App(tk.Tk):
                         f_data.get("effective_profile", ""),
                         f_data.get("tags", ""),
                         _format_backlog_title(f_data),
-                        f_data.get("base_backend", ""),
+                        status.get("effective_backend", ""),
                         Path(f_data.get("source_path", f_data.get("source_file", ""))).name,
                     )
                 )

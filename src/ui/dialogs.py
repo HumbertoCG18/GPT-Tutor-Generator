@@ -3967,7 +3967,7 @@ def _is_github_repo(url: str) -> bool:
         r'^https?://github\.com/[\w.-]+/[\w.-]+(\.git)?$', url))
 
 
-def _resolve_backlog_markdown_status(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
+def _resolve_backlog_markdown_status_core(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
     """Resolve o estado do markdown de uma entry processada para a UI do backlog."""
     final_prefixes = (
         "content/",
@@ -4048,6 +4048,32 @@ def _resolve_backlog_markdown_status(entry_data: dict, repo_dir: Optional[Path])
         "needs_reprocess": "true",
         "note": "Nenhum markdown associado à entry.",
     }
+
+
+def _effective_backend_for_source(entry_data: dict, source_key: str) -> str:
+    """Backend a exibir no backlog: o do markdown FINAL/aprovado, não o base.
+
+    A coluna antiga mostrava sempre base_backend (~pymupdf4llm). O usuário quer
+    o backend efetivamente usado/aprovado: quando o variante avançado (datalab/
+    marker/docling) foi gerado e promovido, é ele que vale.
+    """
+    base = str(entry_data.get("base_backend") or "")
+    adv = str(entry_data.get("advanced_backend") or "")
+    if source_key == "base_markdown":
+        return base
+    if source_key == "advanced_markdown":
+        return adv
+    # approved/curated/derived_final/externo: o avançado é o promovido quando
+    # existe; senão cai no base.
+    return adv or base
+
+
+def _resolve_backlog_markdown_status(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
+    """Resolve o status do markdown + injeta effective_backend (backend do final/aprovado)."""
+    result = _resolve_backlog_markdown_status_core(entry_data, repo_dir)
+    result["effective_backend"] = _effective_backend_for_source(
+        entry_data, result.get("source_key", ""))
+    return result
 
 
 def _resolve_backlog_unit_status(

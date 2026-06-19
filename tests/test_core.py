@@ -1231,6 +1231,36 @@ class TestBacklogMarkdownStatus:
         assert status["status"] == "Aprovado/final"
         assert status["needs_reprocess"] == "false"
 
+    def test_effective_backend_prefers_advanced_when_promoted(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_markdown_status
+
+        entry = {
+            "approved_markdown": "content/curated/item.md",
+            "base_backend": "pymupdf4llm",
+            "advanced_backend": "datalab",
+        }
+        (tmp_path / "content" / "curated").mkdir(parents=True)
+        (tmp_path / "content" / "curated" / "item.md").write_text("# x", encoding="utf-8")
+
+        status = _resolve_backlog_markdown_status(entry, tmp_path)
+
+        assert status["effective_backend"] == "datalab"
+
+    def test_effective_backend_falls_back_to_base_when_no_advanced(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_markdown_status
+
+        entry = {
+            "base_markdown": "content/curated/item.md",
+            "base_backend": "pymupdf4llm",
+            "advanced_backend": "",
+        }
+        (tmp_path / "content" / "curated").mkdir(parents=True)
+        (tmp_path / "content" / "curated" / "item.md").write_text("# x", encoding="utf-8")
+
+        status = _resolve_backlog_markdown_status(entry, tmp_path)
+
+        assert status["effective_backend"] == "pymupdf4llm"
+
     def test_loads_manual_unit_options_from_course_map(self, tmp_path):
         from src.ui.dialogs import _load_file_map_unit_options
 
