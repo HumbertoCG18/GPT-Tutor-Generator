@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Contains project state, routing table, and behavioural contract.
-last_updated: 2026-06-18
+last_updated: 2026-06-19
 ---
 
 # ROUTER.md - Session Bootstrap
@@ -249,6 +249,24 @@ Read this file before starting any task.
   em `ATIVIDADE_KIND_MAP`; o gap antigo foi fechado.
 - Docs/reports: `docs/reports/gold_templates/` contem templates/gabaritos CSV por curso
   para medicao cross-curso e rotulagem por card.
+- Cronograma sessao-atomo (Specs A+B, design revisado 19/06 via workflow adversarial):
+  a CHAVE de join da atribuicao passa a ser a DATA por membership (`session.date in
+  card.dates`, conjunto discreto + fallback span logado); slug vira projecao de display.
+  Specs `docs/superpowers/specs/2026-06-19-cronograma-sessao-atomo-design.md` (consumidor)
+  + `...-ingestao-stash-download-automap-design.md` (produtor). Roteiro em degraus:
+  1 render+normalizacao (FEITO), 2 over-merge temporal (ADIADO — block_id posicional
+  cascateia, funde no 3), 3 atribuicao = signal-registry (em curso), 4 ingestao, 5 inversao
+  sessao-atomo. Handoff `docs/reports/2026-06-19-handoff-cronograma-degraus.md`; progresso
+  duravel em `.git/sdd/progress.md`.
+- Degrau 1 FEITO (merge-ready, nao mergeado): `cronograma_detalhado_md` (`repo.py`) lista
+  `### Sessoes` por bloco (data+dia-semana+label+marcador de prova) lendo `blocks[].sessions[]`;
+  `lookup_card_blocks`/`lookup_card_assign_due` (`card_block.py`) casam a chave do card por
+  `norm_ascii_lower` (caixa/acento). Nao-regressivo, atras de nenhuma flag (render/normalizacao
+  sao seguros). Sem material por dia ainda (depende do degrau 3/5).
+- Degrau 3 = signal-registry do `concept_resolver`: alavancas 2 (source_section) e 1
+  (moodle_label) JA no fusor; alavanca 0 (lessons[].text data->topico) e a unica aberta,
+  PLANEJADA (`docs/superpowers/plans/2026-06-19-degrau3a-alavanca0-lesson-signal.md`) — termo
+  lesson capado casando o sinal LIMPO (moodle_label+titulo), atras da flag, eval-gate decisivo.
 
 ### Not Declared In Brief
 
@@ -259,12 +277,15 @@ Read this file before starting any task.
 
 ### Current Design Focus
 
-- Foco atual: substrato de medicao cross-curso e atribuicao eval-gated. S0 entregou
-  sinais aditivos de Moodle/SARC, probes, migradores e templates de gold por curso/card.
-  Proximos passos ficam em A1/S0b: consumir sinais que mudam atribuicao (`source_section`,
-  card-block map, assign_due) atras de dry-run, `rebuild_diff`, gold e baseline.
-- Resolver por conceito permanece atras de flag ate cutover com gold suficiente; ele e o
-  eixo para absorver fallback keyword, LLM vote, card/date/sequence e conflitos unidade-bloco.
+- Foco atual: refactor do cronograma sessao-atomo em DEGRAUS, atribuicao por DATA
+  (membership) eval-gated. Degrau 1 (render dia-a-dia + fix de normalizacao) FEITO. Proximo =
+  degrau 3a / alavanca 0 (sinal lessons[].text data->topico no `concept_resolver`, atras da
+  flag, casando o moodle_label limpo) — plano escrito, aguarda execucao em sessao fresca.
+- Resolver por conceito permanece atras de flag ate cutover com gold suficiente; degrau 3
+  o estende como signal-registry (alavancas 2/1 ja no fusor; alavanca 0 = proxima). O
+  over-merge de blocos foi adiado pro degrau 3 (block_id posicional cascateia se cortado antes).
+- Dependencia user-side: gold cross-curso (ground_truth_<curso>.csv IA/SO/ES2/TCC) + re-sync
+  por fonte destravam a medicao dos 4 cursos; MF ja mede.
 
 > Historico: referencias como contexto base do tutor, redesign de tags
 > (unit/subunit/bloco), precisao bloco/unidade, guard de conflitos e higiene dos
