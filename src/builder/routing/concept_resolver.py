@@ -47,6 +47,14 @@ CARD_AUTHORITATIVE: float = 0.5
 # classe (senao a secao do cronograma sobrepoe o voto do LLM que LEU o arquivo).
 SECTION_CONCEPT_FRAC: float = 0.35
 
+# Alavanca 0 (lessons[].text): tópico da aula daquele DIA (resumo-da-semana do
+# professor, indexado por data) reforça o bloco cujas sessões cobrem essa data.
+# Casa SÓ o sinal LIMPO do material (moodle_label + título) — casar contra
+# markdown/concepts do Gemini regredia o gold (revert anterior). Capado p/ não
+# dominar conceito/LLM (anti-envenenamento).
+W_LESSON: float = 0.5
+LESSON_OVERLAP_CAP: int = 3
+
 
 def _concept_text(item: object) -> str:
     if isinstance(item, str):
@@ -93,6 +101,36 @@ def _concept_tokens(text: str, normalize: Callable[[str], str]) -> set:
         for token in normalize(text).split()
         if len(token) >= 4 and token not in _STOPWORDS
     }
+
+
+def score_lesson_match(
+    signals: dict,
+    block: dict,
+    lessons_index: Optional[dict],
+    normalize: Callable[[str], str],
+) -> float:
+    """Reforço data→tópico: tokens do tópico das aulas DESTE bloco (via
+    lessons_index[session.date]) ∩ tokens do sinal LIMPO do material
+    (moodle_label + título). Capado. 0.0 quando o índice falta ou não casa."""
+    by_date = (lessons_index or {}).get("by_date") or {}
+    if not by_date:
+        return 0.0
+    lesson_tokens: set = set()
+    for session in block.get("sessions") or []:
+        topic = by_date.get(str(session.get("date") or ""))
+        if topic:
+            lesson_tokens |= _concept_tokens(str(topic), normalize)
+    if not lesson_tokens:
+        return 0.0
+    clean = " ".join(p for p in (
+        str(signals.get("moodle_label_text", "") or ""),
+        str(signals.get("title_text", "") or ""),
+    ) if p)
+    clean_tokens = _concept_tokens(clean, normalize)
+    overlap = len(clean_tokens & lesson_tokens)
+    if overlap <= 0:
+        return 0.0
+    return W_LESSON * float(min(overlap, LESSON_OVERLAP_CAP))
 
 
 def concept_token_weights(
@@ -222,6 +260,7 @@ def resolve_material_assignment(
     *,
     signals: dict,
     llm_curation: Optional[dict] = None,
+    lessons_index: Optional[dict] = None,
 ) -> Assignment:
     norm = normalize_match_text
     blocks = list(blocks or [])
@@ -297,12 +336,14 @@ def resolve_material_assignment(
         card_term = score_card_evidence_against_entry(
             signals, block.get("card_evidence", []) or [], normalize_match_text=norm
         )
+        lesson_term = score_lesson_match(signals, block, lessons_index, norm)
         fused = (
             W_CONCEPT * overlap
             + W_LLM * llm_term
             + date_term
             + seq_term
             + card_term
+            + lesson_term
         )
         scored.append((block, fused, {
             "concept": round(overlap, 4),
@@ -310,6 +351,7 @@ def resolve_material_assignment(
             "date": round(date_term, 4),
             "sequence": round(seq_term, 4),
             "card": round(card_term, 4),
+            "lesson": round(lesson_term, 4),
             "fused": round(fused, 4),
             "authoritative_card": card_term >= CARD_AUTHORITATIVE,
         }))

@@ -93,7 +93,7 @@ CODE_CURATION_NO_SUMMARY = {
 }
 
 
-def _fake_assignment_bloco_y(entry_for_resolver, blocks, units, *, signals, llm_curation=None):
+def _fake_assignment_bloco_y(entry_for_resolver, blocks, units, *, signals, llm_curation=None, lessons_index=None):
     """Stub do resolver: sempre retorna bloco-Y independente do input."""
     from src.builder.routing.concept_resolver import Assignment
     return Assignment(

@@ -91,6 +91,7 @@ def apply_concept_resolver(
     de resolver (o harness também faz isso antes do loop). Muta entries in-place.
     """
     blocks = annotate_class_ordinals(copy.deepcopy(blocks))
+    lessons_index = load_lessons_index(root)
 
     for entry in entries:
         if not _is_material(entry):
@@ -105,6 +106,7 @@ def apply_concept_resolver(
             units,
             signals=signals,
             llm_curation=summary or None,
+            lessons_index=lessons_index,
         )
 
         # Sobrescreve SÓ campos de bloco
