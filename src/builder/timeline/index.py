@@ -655,6 +655,14 @@ def _row_is_standalone_kind(row: Dict[str, object]) -> bool:
     return bool(kind) and kind != "class"
 
 
+# Cap de span temporal (interino, degrau 2): blocos temáticos não fundem
+# através de um intervalo maior que isto, mesmo com overlap de tokens —
+# quebra os blocos over-merged (ex.: IA 29 dias). Conservador (21d): mantém
+# blocos legítimos de até ~2 semanas. Substituído pelo agrupamento por slug
+# igual no degrau 3.
+MAX_THEMATIC_BLOCK_SPAN_DAYS = 21
+
+
 def _rows_belong_to_same_thematic_block(
     previous_row: Dict[str, object],
     current_row: Dict[str, object],
@@ -670,6 +678,12 @@ def _rows_belong_to_same_thematic_block(
 
     if _timeline_row_is_review_or_assessment(current_text):
         return False
+
+    block_start_dt = (current_rows[0].get("date_dt") if current_rows else previous_row.get("date_dt"))
+    current_dt = current_row.get("date_dt")
+    if block_start_dt and current_dt:
+        if (current_dt - block_start_dt).days > MAX_THEMATIC_BLOCK_SPAN_DAYS:
+            return False
 
     block_tokens = set()
     for row in current_rows or [previous_row]:
