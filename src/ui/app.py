@@ -875,6 +875,19 @@ class App(tk.Tk):
         if current is getattr(self, "_maint_tab", None) and hasattr(self, "_maint_panel"):
             self._maint_panel.refresh()
 
+    def _refresh_timeline_dashboard(self) -> None:
+        """Re-le o cronograma do disco apos um build/processamento.
+
+        A view (TimelineDashboardView) le manifest.json + .timeline_index.json
+        sob demanda em refresh(); sem esta chamada a aba Cronograma fica com o
+        estado anterior ate o usuario trocar de aba ou reiniciar o app.
+        """
+        if hasattr(self, "_timeline_dashboard"):
+            try:
+                self._timeline_dashboard.refresh()
+            except Exception:
+                logger.exception("Falha ao atualizar a aba Cronograma apos build.")
+
     def _make_maintenance_builder(self):
         """Builder real para sweep — mesmo padrão do reprocessamento."""
         repo_dir = self._repo_dir()
@@ -2029,6 +2042,7 @@ class App(tk.Tk):
             self._refresh_repo_progress_state(Path(self._active_operation.repo_root))
         self._active_operation = None
         self._reset_build_finish_options()
+        self._refresh_timeline_dashboard()
         self._set_status("Build cancelado.")
 
     def _on_build_complete(self, meta: dict, repo_dir: Path, incremental: bool, failed_count: int = 0, failed_list: list | None = None):
@@ -2077,6 +2091,7 @@ class App(tk.Tk):
         self._reset_build_finish_options()
         self._refresh_backlog()
         self._refresh_repo_dashboard()
+        self._refresh_timeline_dashboard()
 
     def _on_build_error(self, traceback_str: str):
         self._end_progress()
@@ -2207,12 +2222,14 @@ class App(tk.Tk):
             self._save_current_queue()
         self._clear_pending_operation()
         self._refresh_backlog()
+        self._refresh_timeline_dashboard()
         self._set_status("Item processado com sucesso.")
 
     def _on_single_interrupted(self, status_msg: str):
         self._end_progress()
         self._set_processing_state(False)
         self._active_operation = None
+        self._refresh_timeline_dashboard()
         self._set_status(status_msg)
 
     def _show_error_detail(self, title: str, message: str):
