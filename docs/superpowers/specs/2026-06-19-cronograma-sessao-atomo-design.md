@@ -44,10 +44,18 @@ Esta spec é o **consumidor**. Ela assume um stash organizado e o cronograma SAR
 Ela **não** cobre como o stash é baixado/organizado — isso é a Spec B
 (`2026-06-19-ingestao-stash-sarc-skeleton-design.md`).
 
-Contrato de dados compartilhado (B produz, A consome):
-- **`_CRONOGRAMA.json`** na raiz do stash: lista de sessões SARC (data, kind, topic, unit).
-- **`_CARD.json`** em cada pasta-card: declara `topic_slug`, `topic_label`, `unit_slug`
-  (ou lista de unidades), `session_dates`, `source` ("sarc"|"manual"), `confirmed` (bool).
+Contrato de dados — **REUSA artefatos existentes, NÃO cria novos** (inventário 2026-06-19;
+decisão: gabarito repo-side):
+- **`.card_block_map.json`** (`course/`, já existe): gabarito card→destino, auto-derivado de
+  labels Moodle (`derive_card_block_map`/`merge_card_block_map`, source:"labels") + override
+  manual (source:"manual"). **Evolui** de `block_ids` (bloco heurístico) para **slug canônico
+  de tópico/unidade**. O padrão auto-sugere+congela JÁ EXISTE aqui. A pasta-card (nome = chave)
+  é o gabarito; organizar o stash É autorar.
+- **`.content_taxonomy.json`** (`course/`, já existe): autoridade do slug canônico
+  (units→topics→subtopics com `slug`+`code`, ex. "1.1"). Card, SARC e plano referenciam ESTES slugs.
+- **Sessões** vivem no `.timeline_index.json` (já têm `blocks[].sessions[]`); a inversão as
+  promove a primárias (seção 1). **Sem `_CRONOGRAMA.json` novo** — o esqueleto da Spec B lê o
+  parse SARC direto (que hoje já é transiente, não persistido).
 
 A consome um stash organizado **à mão** igual a um organizado pela B. A automação da B é
 ortogonal à correção da A.
@@ -56,8 +64,9 @@ ortogonal à correção da A.
 
 ### 1. Átomo — Sessão
 
-Unidade persistida, 1:1 com uma linha do cronograma SARC. Substitui o bloco como primário no
-`.timeline_index.json`.
+Unidade persistida, 1:1 com uma linha do cronograma SARC. Promove a sessão a primária no
+`.timeline_index.json` (v4 já tem `blocks[].sessions[]`; a inversão sobe a sessão ao topo —
+bump v5, com leitura retro-compatível do v4).
 
 ```json
 {
@@ -89,8 +98,9 @@ Unidade persistida, 1:1 com uma linha do cronograma SARC. Substitui o bloco como
 - `assessment_scope(sessions) -> {assessment_session_id: [in_scope_session_id]}`: janela por
   data. Para cada sessão `kind=assessment`, inclui sessões `class` com `date <= assessment.date`
   e `> data da prova anterior` (P1: início→P1; PN: P(N-1)→PN; PS/G2: semestre inteiro). Re-aloja
-  a lógica já implementada (`assessment_scope_by_date`), agora **sobre sessões** → precisão de
-  subunidade de graça (inclui sessões taught até a data, exclui as depois), sem campo de subunidade.
+  a lógica já implementada (`assessment_scope_by_date`) e reusa `.assessment_context.json` (que já
+  tem `unit_periods`), agora **sobre sessões** → precisão de subunidade de graça (inclui sessões
+  até a data, exclui as depois), sem campo de subunidade.
 - `progression(sessions)`: sessões ordenadas por data. A progressão "primeiro X, depois Y" é
   emergente da ordem; não requer hierarquia de subunidade.
 
@@ -99,23 +109,26 @@ Unidade persistida, 1:1 com uma linha do cronograma SARC. Substitui o bloco como
 Join explícito, determinístico:
 
 ```
-arquivo → card (pasta) → _CARD.json{topic_slug|unit_slug} → sessões com esse slug → datas
+arquivo → card (pasta) → .card_block_map.json{slug canônico} → sessões com esse slug → datas
 ```
 
-- O slug do card e o slug da sessão vêm da **mesma taxonomia canônica** (derivada do plano de
-  ensino / SARC) → join é identidade, não inferência. Aposenta `resolve_card_to_block` difuso e
-  o bug de normalização.
+- O slug do card (`.card_block_map.json`) e o slug da sessão vêm da **mesma autoridade**
+  (`.content_taxonomy.json`) → join é identidade, não inferência. Aposenta `resolve_card_to_block`
+  difuso e o bug de normalização.
+- **Reusa campos do manifest que já existem:** `computed_unit_slug` + `computed_subunit_slug`
+  (NÃO criar `computed_topic_slug`/`computed_session_ids`). `computed_block_id` vira **projeção
+  derivada** (unit/subunit + data da sessão) ou depreciado — não mais a fonte primária.
 - **Uma atribuição por material** (nunca N entries — proíbe o bug de duplicata já corrigido por
-  `scripts/dedup_manifest.py`). Persistido como `computed_session_ids` (lista) OU
-  `computed_topic_slug` no manifest; o render expande. Substitui `computed_block_id`.
-- **Manual override:** `manual_session_ids` / `manual_topic_slug` substitui
-  `manual_timeline_block_id`, com migração retro-compatível.
+  `scripts/dedup_manifest.py`). As sessões do material são **projeção** do seu slug, não lista
+  persistida duplicada.
+- **Manual override:** reusa `manual_unit_slug` (e `manual_timeline_block_id` durante a
+  transição). Sem campo manual novo paralelo.
 - **Política de render para tópico multi-sessão** (decisão em aberto, ver Riscos): material de um
   tópico ensinado em N sessões aparece (a) repetido em cada sessão, ou (b) uma vez sob o
   cabeçalho do tópico, demais sessões marcam "continuação". Default proposto: **(a) repetir**,
   porque o usuário quer "o que estudar para esta aula" e a aula dura ~1h30.
-- **Subunidade: opcional e cosmética.** Quando o `_CARD.json` declara `subunit_slug` (ou o stash
-  tem subpasta de subunidade), vira rótulo de display. Nenhuma das dores operacionais
+- **Subunidade: opcional e cosmética.** O `.content_taxonomy.json` já carrega `subtopics` com
+  `code` (ex. "1.1"); quando presente, vira rótulo de display. Nenhuma das dores operacionais
   (progressão, escopo) depende dela — ambas saem das datas. Curso sem subunidade funciona; com,
   ganha rótulo mais fino. **Nada quebra se faltar.**
 
@@ -139,9 +152,10 @@ arquivo → card (pasta) → _CARD.json{topic_slug|unit_slug} → sessões com e
 ### 5. Migração
 
 - Inverter primazia bloco↔sessão no `.timeline_index.json` (bump de versão).
-- `computed_block_id` → `computed_session_ids`/`computed_topic_slug`; leitura retro-compatível
-  do schema antigo durante transição.
-- `manual_timeline_block_id` → `manual_session_ids`/`manual_topic_slug` (migração).
+- `computed_block_id` deixa de ser fonte primária → vira projeção derivada de
+  `computed_unit_slug`/`computed_subunit_slug` + data da sessão; leitura retro-compatível.
+- `.card_block_map.json`: migrar valores de `block_ids` → slug canônico (`.content_taxonomy.json`).
+- `manual_unit_slug` / `manual_timeline_block_id` mantidos; sem campo manual novo.
 - Re-alojar `source_kind` (por-sessão, sem agregação) e `assessment_scope_by_date` (sobre
   sessões).
 - Depreciar `_rows_belong_to_same_thematic_block` (substituído por `thematic()`).
@@ -163,6 +177,9 @@ aula) sem depender do refactor.
 - Projeções são funções puras/determinísticas (testáveis isoladas, mesmo input → mesmo output).
 - Subunidade é opcional; ausência não quebra nada.
 - LLM nunca é autoridade de runtime na atribuição (só sugestor congelado, se usado — ver Spec B).
+- Reusar artefatos existentes (`.card_block_map.json`, `.content_taxonomy.json`, campos
+  `computed_unit_slug`/`computed_subunit_slug` do manifest, `sessions[]` do `.timeline_index.json`,
+  `.assessment_context.json`); **não criar arquivos nem campos novos paralelos**.
 
 ## Testes
 
