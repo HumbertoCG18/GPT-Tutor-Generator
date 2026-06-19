@@ -364,6 +364,11 @@ class App(tk.Tk):
         self._profile_combo.grid(row=3, column=1, sticky="ew", padx=4, pady=(6, 0))
         self._profile_combo.bind("<<ComboboxSelected>>", lambda _e: self._apply_active_profile())
 
+        _btn_remove_entry = ttk.Button(
+            import_actions, text="🗑 Remover selecionado", command=self.remove_selected)
+        _btn_remove_entry.grid(row=4, column=0, columnspan=2, sticky="ew", padx=4, pady=(6, 4))
+        add_tooltip(_btn_remove_entry, "Remove o item selecionado da fila (a tecla Delete também funciona).")
+
         ttk.Button(build_actions, text="📂 Abrir Repo", command=self.open_repo_folder).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
         ttk.Button(build_actions, text="🧠 Student State", command=self.open_student_state_curator).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
         self._btn_process = ttk.Button(build_actions, text="⚡ Processar",
