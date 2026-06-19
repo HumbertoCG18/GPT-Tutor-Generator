@@ -122,11 +122,19 @@ leitura retro-compatível. O bump de versão é cosmético para a fatia render (
   iso_week, mon, sun, sessions[]}`. Determinístico, sem suposição de cadência.
 - `thematic(sessions) -> [TopicGroup]`: agrupa por `topic_slug`/`unit_slug` projetado, **quando
   disponível**. Como o slug por-sessão é projeção do bloco (pode faltar — ver seção 1), esta
-  projeção NÃO é o que mata o over-merge sozinha. **Fix do over-merge (interino, independente de
-  slug):** adicionar um teto temporal (mesma-semana-ISO ou gap-de-dias-máx) à condição de
-  `_rows_belong_to_same_thematic_block` (`index.py:699-700`) — `date_dt` já está disponível na
-  call-site. Resolve a granularidade desigual (IA bloco-05 de 29 dias) sem depender de slug
-  canônico pronto. Substituir por agrupamento puro-por-slug fica como refinamento posterior.
+  projeção NÃO é o que mata o over-merge sozinha.
+  - **Fix do over-merge — teto temporal interino TENTADO E ADIADO (degrau 2, revertido).** O cap de
+    span (`MAX_THEMATIC_BLOCK_SPAN_DAYS`) quebrava o over-merge, mas o gate revelou que **`block_id`
+    é posicional** (`bloco-{NN}`, `index.py:2066`): qualquer split renumera os blocos seguintes em
+    cascata (IA: +17 ids deslocados) e **desalinha o `.card_block_map.json`** (que referencia ids
+    posicionais, ex. MF "Verificação de Programas" → `bloco-10..15`) e os `computed_block_id`
+    persistidos. MF golden ficou 5/5 (mudança segura p/ correção), mas o churn de id não vale o
+    ganho — degrau 1 já mostra os dias.
+  - **Decisão:** o over-merge é resolvido AQUI no degrau 3, por **agrupamento por slug igual** +
+    **migração do join para a DATA** (seção 3). Com a chave de join sendo a data, o `block_id`
+    posicional deixa de ser carga-crítica da atribuição, e re-agrupar deixa de quebrar o
+    `card_block_map`. **Pré-condição do degrau 3:** tratar estabilidade do `block_id` (ou
+    confirmar que nada de atribuição depende mais dele) ANTES de mudar fronteiras de bloco.
 - `assessment_scope(sessions) -> {assessment_id: [in_scope_session_id]}`: janela por data.
   **Âncora = blocos/sessões `kind=assessment` que carregam `date`** (no MF real existem 4 blocos
   `kind=assessment` com `period_start` válido, do parse SARC). NÃO depende de `assessments[]` do
