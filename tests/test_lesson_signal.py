@@ -37,11 +37,16 @@ def test_lesson_match_ignores_markdown_and_concepts():
 
 
 def test_lesson_match_capped():
-    # muitas datas com o mesmo tópico não estouram o teto
-    block = _block("bloco-10", "u-verif", ["2026-04-27", "2026-04-29"])
-    signals = {"moodle_label_text": "logica de hoare", "title_text": "hoare"}
-    score = score_lesson_match(signals, block, _LESSONS, normalize_match_text)
-    assert score <= W_LESSON * 3  # cap de overlap aplicado
+    # overlap > LESSON_OVERLAP_CAP deve TRUNCAR em W_LESSON*cap, não crescer
+    # linearmente — exercita o min() (anti-envenenamento), não só o teto folgado.
+    rich = {"version": 1, "by_date": {
+        "2026-04-27": "logica hoare dafny invariantes terminacao",
+    }}
+    block = _block("bloco-10", "u-verif", ["2026-04-27"])
+    # sinal limpo casa 5 tokens distintos (> cap 3) -> score travado em W_LESSON*3
+    signals = {"moodle_label_text": "logica hoare dafny invariantes", "title_text": "terminacao"}
+    score = score_lesson_match(signals, block, rich, normalize_match_text)
+    assert score == W_LESSON * 3  # truncamento real (overlap 5 -> cap 3)
 
 
 def test_lesson_index_absent_scores_zero():
