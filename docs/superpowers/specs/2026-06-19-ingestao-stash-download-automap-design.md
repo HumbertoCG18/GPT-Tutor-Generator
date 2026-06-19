@@ -33,8 +33,9 @@ Automatizar a pipeline de **ingestão** que alimenta a Spec A: baixar materiais 
 M365 já implementado) para as pastas-seção do professor e garantir que cada card tenha um
 **intervalo de datas confiável** (a chave de join da Spec A) no `.card_block_map.json` —
 auto-derivado de labels Moodle quando existem, ou por **cross-check com o SARC** quando não.
-Opcionalmente derivar um `topic_slugs` de **display** por seção (best-effort), com
-**auto-sugestão + confirmação-dos-incertos + congelamento**.
+Opcionalmente derivar um `topic_slugs` de **display** por seção (best-effort). **Atribuição
+automática**: tudo com sinal de data é colocado sem confirmação; revisão pelo `rebuild_diff`/
+eval-gate (1/curso); fila de exceção só pro que não tem sinal. Congela correções manuais.
 
 Reusa artefatos existentes; **não cria arquivos novos**. O resultado é um stash bem-mapeado +
 `.card_block_map.json` com `dates` confiáveis (+ slug-rótulo opcional) — o contrato que a Spec A
@@ -48,8 +49,9 @@ consome por data.
   `derive_card_block_map` / `merge_card_block_map` para (a) garantir `dates` confiáveis por card
   (cross-check SARC quando faltam labels) e (b) opcionalmente sugerir `topic_slugs` de **display**
   (`.content_taxonomy.json`) por seção. O slug é rótulo, não chave.
-- **Auto-sugere + confirma-os-incertos + congela** (`source`: "sarc"|"labels"|"manual";
-  `confirmed`: bool). ~6 confirmações por curso (nível-seção, não por arquivo).
+- **Auto-atribui tudo que tem sinal + revisa o diff agregado + congela** (`source`:
+  "sarc"|"labels"|"manual"; `confirmed`: bool). **Sem confirmação card-por-card** — revisão via
+  `rebuild_diff`/eval-gate (1 por curso). Fila de exceção só pro que não tem sinal nenhum.
 - **Seção grossa** (ex.: "Verificação de Programas" = Hoare+Dafny+Modelos) → intervalo de datas
   largo → material cai em todas as sessões do intervalo (grão-unidade — política já aceita na
   Spec A). Grão fino = rachar a seção em subpastas mais finas (cada uma com seu intervalo de datas),
@@ -96,30 +98,65 @@ mapeado + `.card_block_map.json` confirmado.
   2. **`topic_slugs` de display (rótulo — best-effort).** Casar nome da seção contra `topic`/`unit`
      label+aliases do `.content_taxonomy.json`. Ambíguo → `confirmed:false`. **Nunca bloqueia a
      atribuição** (que roda por `dates`).
+- **Precisão por arquivo (automático, mata o manual do card grosso) — `moodle_label` do arquivo:**
+  cada arquivo já carrega seu próprio `moodle_label` no manifest (dado real: `LogicaDeHoare2.pdf` →
+  "Lógica de Hoare (parte 2)"; `FormalizacaoAlgoritmos_Recursao2.pdf` → "Especificações recursivas -
+  listas"). Resolução de datas em **dois níveis**:
+  1. **Nível-arquivo (preferido):** se o `moodle_label` do arquivo casa um tópico do
+     `.content_taxonomy.json` (match de alias, **determinístico** — é metadado que o professor
+     escreveu, NÃO o filename nem inferência de conteúdo) → o arquivo herda as **datas das sessões
+     SARC daquele tópico**. Ex.: `LogicaDeHoare2.pdf` → `logica-de-hoare` → `[27/04, 29/04]`, mesmo
+     estando num card grosso. **Precisão grão-sessão, sem manual.**
+  2. **Nível-card (fallback):** label genérico (ex.: "Introdução") ou sem match → herda `card.dates`
+     (grão-unidade). Sempre coloca algo.
+  Isto resolve o card grosso "Verificação de Programas" automaticamente: os arquivos com label de
+  tópico (Hoare, Dafny) caem nas datas certas; só os genéricos repetem na unidade. **Zero subpasta
+  manual.** Não é o scorer difuso (que lê conteúdo) — é match de label autorado pelo professor.
 - Output no `.card_block_map.json` (a chave de join é `dates`):
   ```json
   {
     "Verificação de Programas": {
-      "dates": ["2026-04-27", "2026-04-29", "2026-05-04", "2026-05-06", "2026-05-11"],
-      "block_ids": ["bloco-10", "bloco-11"],
-      "topic_slugs": ["logica-de-hoare", "logica-de-programas-dafny", "verificacao-de-modelos"],
-      "source": "sarc",
+      "dates": ["2026-04-27","2026-04-29","2026-05-04","2026-05-06","2026-05-11","2026-05-13",
+                "2026-05-18","2026-05-20","2026-05-25","2026-05-27","2026-06-01","2026-06-03",
+                "2026-06-08","2026-06-10"],
+      "block_ids": ["bloco-10","bloco-11","bloco-12","bloco-13","bloco-14","bloco-15"],
+      "unit_slug": "unidade-02-verificacao-de-programas",
+      "topic_slugs": ["logica-de-hoare", "softwares-de-suporte-a-verificacao-formal-de-programas"],
+      "source": "labels",
       "confirmed": false
     }
   }
   ```
+  > Dado REAL do MF (verbatim do `.card_block_map.json`): este card é **unidade-02 inteira**
+  > (Hoare → Dafny), `source:"labels"` com 14 datas já enumeradas. Modelos (bloco-16) **não** está
+  > neste card. Exemplo anterior (hoare/dafny/modelos) estava errado — corrigido.
+
 - **Confiança:** datas casam por label → forte; datas por cross-check SARC sem label → média,
   `confirmed:false` (não congelar mapa derivado de bloco possivelmente over-merged). Slug-rótulo
   forte (nome ≈ tópico) pode `confirmed:true`.
 - **Retro-compat:** `block_ids`/`dates` preservados — são a chave de join, não descartados. A Spec A
   consome `dates`; `topic_slugs` é aditivo.
 
-### 3. Confirmação + congelamento (UI)
+### 3. Atribuição automática + revisão por diff (não confirmação por-card)
 
-- Painel lista as seções com slug sugerido + confiança + datas que casaram. Tu confirma/corrige só
-  os `confirmed:false`. Confirmar grava `source:"manual"`, `confirmed:true`.
-- `merge_card_block_map` já preserva manual sobre auto re-derivado — **reusar esse comportamento**.
-- Volume: ~6 seções por curso (MF), não 60 arquivos.
+Decisão de automação (2026-06-19): **auto-atribui TUDO que tem sinal de data; o humano revisa o
+diff agregado, não confirma card por card.** Habilitado pelo join-por-data: como o slug virou
+display, slug errado é cosmético — não precisa confirmar slug pra colocar certo. O que importa
+(`dates`) é objetivo (uma data está ou não no SARC), então é seguro automatizar.
+
+- **Auto-assign:** todo card/arquivo com sinal (label de data, label de tópico, ou cross-check SARC)
+  é atribuído automaticamente, `confirmed:false`. Nada bloqueia.
+- **Superfície de revisão = `rebuild_diff` + eval-gate/gold (JÁ EXISTEM no A1-A7).** Você revisa o
+  que **mudou** por curso (o diff) e o eval contra o gold — não 6 cards. Regressão aparece no diff/
+  eval. Isto escala: 1 revisão de diff por curso, não N confirmações.
+- **Fila de exceção (mínima):** só entra na fila o que **não tem sinal nenhum** (sem label de data,
+  sem label de tópico, sem match SARC — ex.: legado solto, nome genérico). Não adivinha: sinaliza.
+  Meta: fila pequena, encolhendo a cada melhoria de sinal.
+- **Congelamento:** `merge_card_block_map` preserva `source:"manual"`/`confirmed:true` sobre auto
+  re-derivado — **reusar**. Correção manual continua possível, mas é exceção, não rotina.
+- **Manual override deixa de ser caminho primário.** O órfão real `21-logica-de-hoare` (+
+  `unidade-01` errado em arquivo de Hoare) nasceu de override manual sem validação. Com auto-by-date
+  confiável + guarda dura de slug, overrides caem a quase zero.
 
 ### 4. SARC como insumo (sem novo artefato)
 

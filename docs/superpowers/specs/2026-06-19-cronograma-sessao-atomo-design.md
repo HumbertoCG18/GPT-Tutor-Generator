@@ -155,6 +155,11 @@ arquivo → card (pasta) → .card_block_map.json{dates: [conjunto discreto]} �
   determinístico (casa o invariante de projeção pura). A completude de `card.dates` é
   responsabilidade da **ingestão** (Spec B: cross-check SARC enumera as sessões do tópico → as datas
   exatas), não do consumo.
+- **Resolução de datas em dois níveis (arquivo > card):** as `dates` efetivas de um arquivo são, em
+  ordem de precedência: (1) **nível-arquivo** — se o `moodle_label` do próprio arquivo casa um tópico
+  do `.content_taxonomy.json` (match de alias determinístico), o arquivo herda as datas das sessões
+  daquele tópico (precisão grão-sessão mesmo dentro de card grosso); senão (2) **nível-card** — herda
+  `card.dates`. Quem produz isso é a Spec B; a Spec A só consome as `dates` efetivas já resolvidas.
 - **Fallback de intervalo (explícito e logado):** quando a Spec B não consegue enumerar as sessões
   (cross-check SARC falha), o card cai para `min(dates)..max(dates)` **com log `span fallback`** e
   `confirmed:false`. Nunca silencioso — a UI da Spec B sinaliza sessões sem material para placement
