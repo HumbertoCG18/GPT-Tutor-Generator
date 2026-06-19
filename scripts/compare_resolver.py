@@ -30,7 +30,7 @@ from typing import Dict, List, Optional
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.builder.routing.concept_resolver import resolve_material_assignment  # noqa: E402
-from src.builder.routing.resolver_apply import _is_material, assemble_resolver_inputs  # noqa: E402
+from src.builder.routing.resolver_apply import _is_material, assemble_resolver_inputs, load_lessons_index  # noqa: E402
 from src.builder.routing.sequence import annotate_class_ordinals  # noqa: E402
 
 DEFAULT_COURSES = [
@@ -91,6 +91,7 @@ def compare_repo(root: Path) -> Optional[dict]:
     if not blocks:
         return {"error": "sem blocos em course/.timeline_index.json"}
     annotate_class_ordinals(blocks)
+    lessons_index = load_lessons_index(root)
 
     entries = [e for e in (manifest.get("entries") or []) if _is_material(e)]
     rows: List[dict] = []
@@ -109,6 +110,7 @@ def compare_repo(root: Path) -> Optional[dict]:
             units,
             signals=signals,
             llm_curation=summary or None,
+            lessons_index=lessons_index,
         )
         rows.append({
             "id": entry_id,
