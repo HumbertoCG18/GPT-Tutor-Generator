@@ -164,6 +164,26 @@ SARC já é parseado (HTML → markdown → `SYLLABUS.md` → `.timeline_index.j
 como o sinal de cross-check do passo 2 (qual seção casa qual range de datas). **Não persiste
 `_CRONOGRAMA.json` novo.**
 
+### 5. Classificação na ingestão: material datado vs bibliografia vs fila
+
+Todo item importado cai em **uma de três trilhas** (determinístico, na ingestão):
+
+1. **Material datado → cronograma.** Tem sinal de data (label de data, label de tópico que casa
+   SARC, ou cross-check de card). Vai pro dia-a-dia via `dates` (seção 2-3). É a maioria.
+2. **Bibliografia / material de apoio → seção de referências (NÃO o dia-a-dia).** Itens sem data por
+   natureza: links/URLs e repos (`file_type` ∈ {`url`, `github-repo`}) e `category` ∈
+   {`bibliografia`, `references`}. Dado real do MF: `eth2.0-dafny`, `aws-encryption-sdk`,
+   `Archive of Formal Proofs`. **Não vão pra fila de exceção** — são referências, não material de
+   aula sem lugar. Renderizam num bloco de referências separado (Spec A).
+3. **Fila de exceção (mínima):** só material que **deveria** ter data (PDF/zip de aula) mas não tem
+   sinal nenhum. Com a resolução por `moodle_label` (seção 2), isto encolhe a quase nada — no MF,
+   os 14 itens de `source_section` vazio que **têm** label se auto-colocam; sobram só os 3 de
+   bibliografia (trilha 2, não fila). **Fila MF ≈ 0.**
+
+> Insight dos dados reais: o "espalhamento" (28% `source_section` vazio) NÃO é problema de
+> atribuição — é classificação. 14/17 têm `moodle_label` → trilha 1 (auto-colocados por data);
+> 3/17 são links → trilha 2 (referências). Nenhum precisa de fila.
+
 ## Fluxo de dados
 
 ```
@@ -244,3 +264,16 @@ Faseamento revisado (a inversão v5 deixou de ser pré-req):
 
 B depende do contrato de dados (`dates`) fechado em A-passo-3; por isso vem depois dele, mas
 **antes** da inversão v5.
+
+## Fora de escopo (futuro — pós A+B)
+
+Registrado para não esquecer; **não desenhar nem implementar agora** (depende das 2 refatorações
+grandes estarem fechadas):
+
+- **Consumo otimizado de bibliografia pelo tutor.** Hoje a ingestão já **captura** os links de
+  material de apoio/bibliografia dos cards (dado real: os 3 URLs `github-repo`/`url` do MF já estão
+  no manifest). O trabalho futuro é o **tutor consumir** essas referências de forma otimizada
+  (indexar/resumir/linkar ao tópico relevante), não só listá-las. Pré-condição: A+B fechadas.
+- **Garantir captura completa de links no import Moodle.** Ao importar, trazer **todos** os links
+  embutidos nos cards de bibliografia/material de apoio (não só os arquivos baixáveis). Verificar a
+  cobertura do parser de labels/conteúdo Moodle para URLs. Refinamento da trilha-2 (seção 5).

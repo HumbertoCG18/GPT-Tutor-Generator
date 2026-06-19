@@ -213,6 +213,10 @@ arquivo → card (pasta) → .card_block_map.json{dates: [conjunto discreto]} �
 
 - **Escopo de prova no display:** "P1 (22/04) cobre até: Provas Interativas / Isabelle" —
   derivado do `topic_label` da última sessão no escopo.
+- **Bibliografia/referências em bloco separado:** itens sem data (links/URLs, repos — `file_type` ∈
+  {`url`, `github-repo`}, `category` ∈ {`bibliografia`, `references`}) **não** entram no dia-a-dia;
+  renderizam num bloco de referências ao fim (a classificação vem da Spec B, seção 5). Consumo
+  otimizado dessas referências pelo tutor = fora de escopo (futuro pós A+B).
 - Dashboard (`src/ui/timeline_dashboard.py`): consome sessões (não só `period_start/end`).
 
 ### 5. Migração
