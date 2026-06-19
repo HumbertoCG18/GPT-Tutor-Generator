@@ -4,6 +4,7 @@ from src.builder.timeline.card_block import (
     CardBlockResolution,
     load_card_block_map,
     lookup_card_blocks,
+    lookup_card_assign_due,
     resolve_card_to_block,
 )
 
@@ -163,3 +164,27 @@ def test_unit_title_match_still_wins_over_block_topic():
     r = resolve_card_to_block("Verificação de Programas", units, blocks)
     assert set(r.block_ids) == {"bloco-10", "bloco-11"}
     assert r.reason.startswith("unit:")
+
+
+def test_lookup_blocks_matches_card_key_case_accent_insensitive():
+    # chave do mapa com caixa/acento "originais"; source_section divergente ainda casa
+    card_map = {
+        "Especificações Indutivas e Recursivas": {"block_ids": ["bloco-04"], "source": "manual"}
+    }
+    assert lookup_card_blocks(
+        "especificacoes indutivas e recursivas", card_map, UNITS, BLOCKS
+    ) == ["bloco-04"]
+    assert lookup_card_blocks(
+        "ESPECIFICAÇÕES INDUTIVAS E RECURSIVAS", card_map, UNITS, BLOCKS
+    ) == ["bloco-04"]
+
+
+def test_lookup_assign_due_case_accent_insensitive():
+    card_map = {"Verificação de Programas": {"assign_due": "2026-06-10", "source": "labels"}}
+    assert lookup_card_assign_due("verificacao de programas", card_map) == "2026-06-10"
+
+
+def test_lookup_blocks_exact_key_still_matches():
+    # não regride o match exato
+    card_map = {"Meu Card": {"block_ids": ["bloco-07"], "source": "manual"}}
+    assert lookup_card_blocks("Meu Card", card_map, UNITS, BLOCKS) == ["bloco-07"]

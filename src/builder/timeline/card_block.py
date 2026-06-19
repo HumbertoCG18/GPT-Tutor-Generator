@@ -127,8 +127,21 @@ def load_card_block_map(course_dir) -> Dict[str, dict]:
         return {}
 
 
+def _normalized_card_map(card_map) -> Dict[str, dict]:
+    """Índice do card_map por chave normalizada (NFKD + sem acento + lower).
+
+    Resolve divergência de caixa/acento entre o source_section da entry e a
+    chave (nome de pasta) do .card_block_map.json — relevante para cards
+    M365/legados com acentuação inconsistente. Em colisão, o último vence.
+    """
+    out: Dict[str, dict] = {}
+    for key, value in (card_map or {}).items():
+        out[norm_ascii_lower(str(key))] = value
+    return out
+
+
 def lookup_card_blocks(card_name, card_map, unit_index, blocks) -> List[str]:
-    entry = (card_map or {}).get(str(card_name or ""))
+    entry = _normalized_card_map(card_map).get(norm_ascii_lower(str(card_name or "")))
     if entry and "block_ids" in entry:
         return [str(b) for b in (entry.get("block_ids") or [])]
     return list(resolve_card_to_block(card_name, unit_index, blocks).block_ids)
@@ -138,5 +151,5 @@ def lookup_card_assign_due(card_name, card_map) -> str:
     """Deadline ISO de entrega do card no card map ("" quando ausente).
 
     Gravado em import_moodle_courses via extract_assign_deadlines (S5)."""
-    entry = (card_map or {}).get(str(card_name or "")) or {}
+    entry = _normalized_card_map(card_map).get(norm_ascii_lower(str(card_name or ""))) or {}
     return str(entry.get("assign_due") or "")
