@@ -57,3 +57,4 @@ def test_render_session_with_empty_date_does_not_crash():
     }]
     md = repo.cronograma_detalhado_md({"course_name": "ED"}, [], {}, blocks)
     assert "atividade ead" in md
+    assert "(sem data)" in md
