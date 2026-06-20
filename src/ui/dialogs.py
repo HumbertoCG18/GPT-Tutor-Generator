@@ -4253,7 +4253,10 @@ def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path])
         }
 
     blocks = list(payload.get("blocks") or [])
-    block = next((b for b in blocks if str(b.get("id") or "").strip() == block_id), None)
+    # block_id pode ser uuid (computed_block_id) ou bloco-NN legado.
+    block = next((b for b in blocks if str(b.get("block_uuid") or "").strip() == block_id), None)
+    if block is None:
+        block = next((b for b in blocks if str(b.get("id") or "").strip() == block_id), None)
     if block is None:
         if manual_block_id:
             note = "Há um bloco manual salvo, mas ele não foi encontrado no timeline index atual."

@@ -170,7 +170,7 @@ def derive_card_block_map(card_dates: dict, blocks: list) -> dict:
             in_weeks = (not dates) and any(
                 ws <= end and we >= start for ws, we in info.get("weeks") or [])
             if in_dates or in_weeks:
-                hits.append((start, str(b.get("id") or "")))
+                hits.append((start, str(b.get("block_uuid") or b.get("id") or "")))
         if hits:
             out[card] = {"block_ids": [bid for _s, bid in sorted(hits)],
                          "source": "labels", "format": info.get("format", ""),

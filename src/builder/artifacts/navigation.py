@@ -544,8 +544,14 @@ def render_low_token_file_map_md(
     for _block_group in list(blocks_by_unit.values()) + [unassigned_blocks]:
         for _block in _block_group or []:
             _bid = str(_block.get("id", "") or "").strip()
+            _buuid = str(_block.get("block_uuid", "") or "").strip()
+            _label = str(_block.get("period_label", "") or "").strip()
+            # Re-key por uuid também: computed_block_id agora é uuid, mas refs
+            # legadas (bloco-NN) ainda devem casar — ambas as chaves dão o label.
             if _bid and _bid not in period_label_by_block_id:
-                period_label_by_block_id[_bid] = str(_block.get("period_label", "") or "").strip()
+                period_label_by_block_id[_bid] = _label
+            if _buuid and _buuid not in period_label_by_block_id:
+                period_label_by_block_id[_buuid] = _label
     lines = [
         "---",
         f"course: {course_name}",

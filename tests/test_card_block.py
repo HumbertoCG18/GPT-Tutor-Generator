@@ -13,9 +13,9 @@ UNITS = [
     {"slug": "u-verif", "title": "Verificação de Programas", "topics": ["hoare", "dafny"], "distinctive_tokens": []},
 ]
 BLOCKS = [
-    {"id": "bloco-01", "unit_slug": "u-intro", "period_start": "2026-03-02", "period_end": "2026-03-02"},
-    {"id": "bloco-10", "unit_slug": "u-verif", "period_start": "2026-04-27", "period_end": "2026-05-04"},
-    {"id": "bloco-11", "unit_slug": "u-verif", "period_start": "2026-05-06", "period_end": "2026-05-06"},
+    {"id": "bloco-01", "block_uuid": "uuid-01", "unit_slug": "u-intro", "period_start": "2026-03-02", "period_end": "2026-03-02"},
+    {"id": "bloco-10", "block_uuid": "uuid-10", "unit_slug": "u-verif", "period_start": "2026-04-27", "period_end": "2026-05-04"},
+    {"id": "bloco-11", "block_uuid": "uuid-11", "unit_slug": "u-verif", "period_start": "2026-05-06", "period_end": "2026-05-06"},
 ]
 
 
@@ -59,9 +59,10 @@ def test_load_missing_map_returns_empty(tmp_path):
 
 
 def test_lookup_prefers_manual_map_over_auto():
-    card_map = {"Verificação de Programas": {"block_ids": ["bloco-99"], "source": "manual"}}
+    # bloco-10 existe no índice → resolve para seu uuid (lazy compat Task 2)
+    card_map = {"Verificação de Programas": {"block_ids": ["bloco-10"], "source": "manual"}}
     ids = lookup_card_blocks("Verificação de Programas", card_map, UNITS, BLOCKS)
-    assert ids == ["bloco-99"]
+    assert ids == ["uuid-10"]
 
 
 def test_lookup_falls_back_to_auto_resolution():
@@ -169,14 +170,15 @@ def test_unit_title_match_still_wins_over_block_topic():
 def test_lookup_blocks_matches_card_key_case_accent_insensitive():
     # chave do mapa com caixa/acento "originais"; source_section divergente ainda casa
     card_map = {
-        "Especificações Indutivas e Recursivas": {"block_ids": ["bloco-04"], "source": "manual"}
+        "Especificações Indutivas e Recursivas": {"block_ids": ["bloco-01"], "source": "manual"}
     }
+    # bloco-01 resolve para uuid-01 (lazy compat Task 2)
     assert lookup_card_blocks(
         "especificacoes indutivas e recursivas", card_map, UNITS, BLOCKS
-    ) == ["bloco-04"]
+    ) == ["uuid-01"]
     assert lookup_card_blocks(
         "ESPECIFICAÇÕES INDUTIVAS E RECURSIVAS", card_map, UNITS, BLOCKS
-    ) == ["bloco-04"]
+    ) == ["uuid-01"]
 
 
 def test_lookup_assign_due_case_accent_insensitive():
@@ -185,6 +187,6 @@ def test_lookup_assign_due_case_accent_insensitive():
 
 
 def test_lookup_blocks_exact_key_still_matches():
-    # não regride o match exato
-    card_map = {"Meu Card": {"block_ids": ["bloco-07"], "source": "manual"}}
-    assert lookup_card_blocks("Meu Card", card_map, UNITS, BLOCKS) == ["bloco-07"]
+    # não regride o match exato; bloco-11 resolve para uuid-11 (lazy compat Task 2)
+    card_map = {"Meu Card": {"block_ids": ["bloco-11"], "source": "manual"}}
+    assert lookup_card_blocks("Meu Card", card_map, UNITS, BLOCKS) == ["uuid-11"]

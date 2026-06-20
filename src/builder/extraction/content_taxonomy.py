@@ -890,18 +890,24 @@ def _card_scoped_block(entry, markdown_text, unit_index, instructional_blocks,
     card = str(entry.get("source_section") or "").strip()
     if not card:
         return "", 0.0, ""
+    # lookup_card_blocks retorna uuids (lazy compat Task 2). O join e o retorno
+    # casam por block_uuid (fallback id para blocos legados sem uuid).
     ids = set(lookup_card_blocks(card, card_map, unit_index, instructional_blocks))
     if not ids:
         return "", 0.0, ""
-    scoped = [b for b in instructional_blocks if str(b.get("id") or "") in ids]
+
+    def _block_key(b):
+        return str(b.get("block_uuid") or b.get("id") or "")
+
+    scoped = [b for b in instructional_blocks if _block_key(b) in ids]
     if not scoped:
         return "", 0.0, ""
     if len(scoped) == 1:
-        return str(scoped[0].get("id") or ""), CARD_SINGLE_CONF, "card"
+        return _block_key(scoped[0]), CARD_SINGLE_CONF, "card"
     block, conf = score_fallback_fn(entry, markdown_text, scoped, "", "")
     if block is None:
         return "", 0.0, ""
-    return str(block.get("id") or ""), float(conf), "card+scorer"
+    return _block_key(block), float(conf), "card+scorer"
 
 
 def _exam_code_from_text(text: str) -> str:
@@ -965,7 +971,7 @@ def review_list_block_for_entry(entry: dict, blocks: list) -> str:
     # bloco de revisão imediatamente anterior à prova (ordem cronológica da lista)
     for j in range(target_idx - 1, -1, -1):
         if str(blocks[j].get("kind") or "") == "review":
-            return str(blocks[j].get("id") or "")
+            return str(blocks[j].get("block_uuid") or blocks[j].get("id") or "")
     return ""
 
 
@@ -1136,7 +1142,9 @@ def resolve_unit_block_tags(
         block_method = ""
         manual_block = resolve_entry_manual_timeline_block_fn(entry, timeline_context)
         if manual_block:
-            period_block_id = _collapse_ws(str(manual_block.get("id") or ""))
+            period_block_id = _collapse_ws(
+                str(manual_block.get("block_uuid") or manual_block.get("id") or "")
+            )
             block_confidence = 1.0
             block_method = "manual"
         else:
@@ -1216,7 +1224,9 @@ def resolve_unit_block_tags(
                     if _period:
                         for block in instructional_blocks:
                             if str(block.get("period_label") or "") == _period:
-                                period_block_id = _collapse_ws(str(block.get("id") or ""))
+                                period_block_id = _collapse_ws(
+                                    str(block.get("block_uuid") or block.get("id") or "")
+                                )
                                 # p_conf ja e relative_margin_confidence(best,
                                 # runner_up) computada dentro do scorer — reusada.
                                 block_confidence = float(p_conf)
@@ -1231,7 +1241,9 @@ def resolve_unit_block_tags(
                             preferred_topic_slug,
                         )
                         if fallback_block is not None:
-                            period_block_id = _collapse_ws(str(fallback_block.get("id") or ""))
+                            period_block_id = _collapse_ws(
+                                str(fallback_block.get("block_uuid") or fallback_block.get("id") or "")
+                            )
                             block_confidence = float(fallback_conf)
                             block_method = "scorer_only"
 
@@ -1258,7 +1270,9 @@ def resolve_unit_block_tags(
         # bloco define a unidade só se block_confidence >= unit_confidence; senão
         # mantém a unidade forte e marca conflito. Absorve a herança (unit vazio).
         _blocks = (timeline_context.get("timeline_index") or {}).get("blocks", []) or []
-        _blk = next((b for b in _blocks if str(b.get("id") or "") == computed_block_id), None)
+        _blk = next((b for b in _blocks if str(b.get("block_uuid") or "") == computed_block_id), None)
+        if _blk is None:
+            _blk = next((b for b in _blocks if str(b.get("id") or "") == computed_block_id), None)
         _blk_unit = str((_blk or {}).get("unit_slug") or "").strip()
         _reconciled_unit, _unit_reason_suffix, _unit_conflict = reconcile_unit_with_block(
             computed_unit_slug=computed_unit_slug,
@@ -1288,7 +1302,18 @@ def resolve_unit_block_tags(
             kept.append(f"{_SUBUNIT_PREFIX}{preferred_topic_slug}")
 
         if computed_block_id:
-            kept.append(f"{_BLOCO_PREFIX}{computed_block_id}")
+            # CRÍTICO: a tag bloco: deve continuar DISPLAY (bloco-NN), nunca uuid.
+            # file_map.py:506 parseia bloco-(\d+) e QUEBRA com uuid. Resolve
+            # uuid->display via índice; fallback = computed_block_id (já era legado).
+            _display_id_for_tag = next(
+                (
+                    str(b.get("id") or "")
+                    for b in _blocks
+                    if str(b.get("block_uuid") or "") == computed_block_id
+                ),
+                computed_block_id,
+            )
+            kept.append(f"{_BLOCO_PREFIX}{_display_id_for_tag}")
 
         new_entry = dict(entry)
         new_entry["auto_tags"] = kept

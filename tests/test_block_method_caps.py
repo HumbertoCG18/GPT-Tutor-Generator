@@ -16,7 +16,7 @@ _SPEC.loader.exec_module(eval_assignments)
 
 def _pblock(bid, topic, start, end, unit="unidade-01-metodos-formais"):
     return {
-        "id": bid, "period_start": start, "period_end": end,
+        "id": bid, "block_uuid": f"uuid-{bid}", "period_start": start, "period_end": end,
         "period_label": f"{start}..{end}", "kind": "class",
         "unit_slug": unit, "unit_confidence": 0.8,
         "primary_topic_slug": topic.replace(" ", "-"),
@@ -94,7 +94,7 @@ def test_method_card_com_teto():
         BLOCKS,
         card_map={"Secao X": {"block_ids": ["bloco-02"], "source": "manual"}},
     )
-    assert out["computed_block_id"] == "bloco-02"
+    assert out["computed_block_id"] == "uuid-bloco-02"  # uuid (Task 2)
     assert out["computed_block_method"] == "card"
     assert out["computed_block_confidence"] == 0.85
 
@@ -122,7 +122,7 @@ def test_method_manual():
          "markdown": ""},
         BLOCKS,
     )
-    assert out["computed_block_id"] == "bloco-01"
+    assert out["computed_block_id"] == "uuid-bloco-01"  # uuid (Task 2)
     assert out["computed_block_method"] == "manual"
     assert out["computed_block_confidence"] == 1.0
 
@@ -139,7 +139,7 @@ def test_method_card_scorer():
         card_map={"Secao X": {"block_ids": ["bloco-01", "bloco-02"],
                               "source": "manual"}},
     )
-    assert out["computed_block_id"] in {"bloco-01", "bloco-02"}
+    assert out["computed_block_id"] in {"uuid-bloco-01", "uuid-bloco-02"}  # uuid (Task 2)
     assert out["computed_block_method"] == "card+scorer"
     assert out["computed_block_confidence"] <= 0.80
 
@@ -150,13 +150,13 @@ def test_method_codigo_preservado_quando_bloco_nao_muda():
     # que NÃO muda no retag -> o retag NÃO sobrescreve o method de código.
     out = _resolve_entry(
         {"id": "e5", "title": "Inducao em arvores", "source_section_real": "",
-         "computed_block_id": "bloco-02", "computed_block_method": "consensus",
+         "computed_block_id": "uuid-bloco-02", "computed_block_method": "consensus",
          "unit_guess": {"slug": "unidade-01-metodos-formais", "confidence": 0.6,
                         "ambiguous": False},
          "markdown": "inducao estrutural arvores"},
         BLOCKS,
     )
-    assert out["computed_block_id"] == "bloco-02"  # mesmo bloco recomputado
+    assert out["computed_block_id"] == "uuid-bloco-02"  # mesmo bloco recomputado (uuid)
     assert out["computed_block_method"] == "consensus"  # código vence
 
 
@@ -168,8 +168,8 @@ def test_method_codigo_bloco_muda_limpa_campos_stale():
     # Usamos card_map para forçar bloco-01, enquanto a entry tinha bloco-02 salvo.
     out = _resolve_entry(
         {"id": "e6", "title": "Logica predicados", "source_section_real": "Secao Y",
-         # bloco salvo = bloco-02; card_map vai forçar bloco-01 → bloco muda
-         "computed_block_id": "bloco-02", "computed_block_method": "consensus",
+         # bloco salvo = uuid-bloco-02; card_map vai forçar bloco-01 → bloco muda
+         "computed_block_id": "uuid-bloco-02", "computed_block_method": "consensus",
          "computed_block_match_confidence": 0.91,
          "computed_block_rationale": "Gemini achou bloco-02 como melhor match",
          "unit_guess": {"slug": "unidade-01-metodos-formais", "confidence": 0.6,
@@ -179,7 +179,7 @@ def test_method_codigo_bloco_muda_limpa_campos_stale():
         card_map={"Secao Y": {"block_ids": ["bloco-01"], "source": "manual"}},
     )
     # card_map força bloco-01 → bloco mudou → method não é consensus + campos limpos
-    assert out["computed_block_id"] == "bloco-01"
+    assert out["computed_block_id"] == "uuid-bloco-01"  # uuid (Task 2)
     assert out["computed_block_method"] != "consensus"
     assert "computed_block_match_confidence" not in out
     assert "computed_block_rationale" not in out
@@ -207,7 +207,7 @@ def test_trabalho_com_assign_due_nunca_cai_em_bloco_depois_do_due():
         card_map={"TDE": {"block_ids": [], "source": "labels",
                           "assign_due": "2026-04-01"}},
     )
-    assert out["computed_block_id"] == "bloco-antes"
+    assert out["computed_block_id"] == "uuid-bloco-antes"  # uuid (Task 2)
 
 
 def test_assign_due_que_esvazia_janela_nao_restringe():
@@ -223,7 +223,7 @@ def test_assign_due_que_esvazia_janela_nao_restringe():
         card_map={"TDE": {"block_ids": [], "source": "labels",
                           "assign_due": "2026-01-01"}},
     )
-    assert out["computed_block_id"] == "bloco-depois"  # melhor match, sem janela
+    assert out["computed_block_id"] == "uuid-bloco-depois"  # melhor match, sem janela (uuid)
 
 
 def test_categoria_fora_da_janela_ignora_assign_due():
@@ -238,7 +238,7 @@ def test_categoria_fora_da_janela_ignora_assign_due():
         card_map={"TDE": {"block_ids": [], "source": "labels",
                           "assign_due": "2026-04-01"}},
     )
-    assert out["computed_block_id"] == "bloco-depois"
+    assert out["computed_block_id"] == "uuid-bloco-depois"  # uuid (Task 2)
 
 
 def test_method_caps_valores():

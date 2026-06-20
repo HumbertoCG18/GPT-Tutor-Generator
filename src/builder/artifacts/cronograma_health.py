@@ -245,10 +245,17 @@ def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:
         lines.append(f"- {bid}: {n} material(is)")
 
     conflicts = detect_timeline_conflicts(blocks or [])
-    period_by_id = {
-        str(b.get("id") or ""): str(b.get("period_label") or "")
-        for b in (blocks or [])
-    }
+    # Re-key por uuid também: c["block_id"] pode ser uuid (computed_block_id) ou
+    # bloco-NN legado; ambas as chaves apontam o mesmo period_label.
+    period_by_id = {}
+    for _b in (blocks or []):
+        _k = str(_b.get("id") or "").strip()
+        _uk = str(_b.get("block_uuid") or "").strip()
+        _pl = str(_b.get("period_label") or "")
+        if _k:
+            period_by_id[_k] = _pl
+        if _uk:
+            period_by_id[_uk] = _pl
     lines += [
         "",
         "## Conflitos de curadoria",

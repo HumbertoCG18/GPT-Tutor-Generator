@@ -14,6 +14,7 @@ from typing import Dict, List
 
 from src.utils.helpers import norm_ascii_lower
 from src.builder.text.stopwords import CARD_BLOCK_STOP as _STOP
+from src.builder.timeline.block_identity import _POSITIONAL_RE, _is_uuid_ref
 
 _DATE_RE = re.compile(r"\b(\d{1,2})/(\d{1,2})(?:/(\d{2,4}))?\b")
 _WEEK_RE = re.compile(r"\bsemana\s+(\d+)\b", re.IGNORECASE)
@@ -114,6 +115,35 @@ def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
     return CardBlockResolution([], 0.0, "needs-confirmation")
 
 
+def resolve_block_ref(raw: str, index_blocks: list) -> str:
+    """Recebe raw (bloco-NN, índice N, ou já-uuid) e retorna block_uuid correspondente ("" se não resolve).
+
+    uuid passthrough: se raw já é uuid-format (não casa _POSITIONAL_RE), devolve raw.
+    bloco-NN: procura em index_blocks por b["id"] == raw, retorna b["block_uuid"].
+    índice nu N: idem com b["id"] == f"bloco-{int(N):02d}".
+    """
+    raw = str(raw or "").strip()
+    if not raw:
+        return ""
+    # UUID passthrough: não casa positional → é uuid-format
+    if _is_uuid_ref(raw):
+        return raw
+    # bloco-NN explícito
+    if re.match(r"^bloco-\d+$", raw):
+        for b in index_blocks:
+            if str(b.get("id") or "") == raw:
+                return str(b.get("block_uuid") or "")
+        return ""
+    # Índice nu (bare integer)
+    if re.match(r"^\d+$", raw):
+        target = f"bloco-{int(raw):02d}"
+        for b in index_blocks:
+            if str(b.get("id") or "") == target:
+                return str(b.get("block_uuid") or "")
+        return ""
+    return ""
+
+
 _CARD_MAP_NAME = ".card_block_map.json"
 
 
@@ -143,7 +173,17 @@ def _normalized_card_map(card_map) -> Dict[str, dict]:
 def lookup_card_blocks(card_name, card_map, unit_index, blocks) -> List[str]:
     entry = _normalized_card_map(card_map).get(norm_ascii_lower(str(card_name or "")))
     if entry and "block_ids" in entry:
-        return [str(b) for b in (entry.get("block_ids") or [])]
+        raw_ids = [str(b) for b in (entry.get("block_ids") or [])]
+        if not blocks:
+            # fallback seguro: sem índice, retorna o raw
+            return raw_ids
+        # Lazy compat: resolve bloco-NN / índice-nu para uuid; uuid passthrough
+        resolved = []
+        for bid in raw_ids:
+            r = resolve_block_ref(bid, blocks)
+            if r:
+                resolved.append(r)
+        return resolved
     return list(resolve_card_to_block(card_name, unit_index, blocks).block_ids)
 
 

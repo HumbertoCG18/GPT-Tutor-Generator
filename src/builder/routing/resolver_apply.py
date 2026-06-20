@@ -17,6 +17,23 @@ from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
 from src.builder.extraction.entry_signals import collect_entry_unit_signals
 from src.builder.routing.concept_resolver import resolve_material_assignment
 from src.builder.routing.sequence import annotate_class_ordinals
+from src.builder.timeline.card_block import resolve_block_ref
+
+
+def _display_id_for_block(block_id: str, blocks: List[dict]) -> str:
+    """Resolve um block_id (uuid OU bloco-NN legado) ao seu display id (bloco-NN).
+
+    A tag bloco: DEVE permanecer display (file_map.py:506 parseia bloco-(\\d+)).
+    Se block_id é uuid, encontra o bloco e devolve seu id; senão (já é display
+    ou não resolve), devolve block_id intacto.
+    """
+    bid = str(block_id or "").strip()
+    if not bid:
+        return ""
+    for b in blocks:
+        if str(b.get("block_uuid") or "") == bid:
+            return str(b.get("id") or bid)
+    return bid
 
 
 def _is_material(entry: dict) -> bool:
@@ -109,15 +126,20 @@ def apply_concept_resolver(
             lessons_index=lessons_index,
         )
 
-        # Sobrescreve SÓ campos de bloco
-        entry["computed_block_id"] = assignment["block_id"]
+        # Sobrescreve SÓ campos de bloco. computed_block_id é uuid (join interno):
+        # resolve_block_ref faz passthrough se já-uuid e mapeia bloco-NN legado
+        # (compat enquanto o resolver ainda retorna display id — migra na Task 4).
+        _raw_block_id = assignment["block_id"]
+        _uuid_block_id = resolve_block_ref(_raw_block_id, blocks) or _raw_block_id
+        entry["computed_block_id"] = _uuid_block_id
         entry["computed_block_confidence"] = assignment["confidence"]
         entry["computed_block_band"] = assignment["band"]
         entry["computed_block_method"] = assignment["method"]
 
         # Mirror de tag: troca bloco:<old> por bloco:<new> em auto_tags
-        # (mesma mecânica de pedagogical_regeneration.py:110-112)
-        new_block_id = assignment["block_id"]
+        # (mesma mecânica de pedagogical_regeneration.py:110-112). A tag DEVE
+        # continuar display (bloco-NN) — resolve uuid->display antes de montar.
+        new_block_id = _display_id_for_block(_uuid_block_id, blocks)
         tags = [t for t in (entry.get("auto_tags") or []) if not str(t).startswith("bloco:")]
         if new_block_id:
             tags.append(f"bloco:{new_block_id}")
