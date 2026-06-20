@@ -60,6 +60,10 @@ def _date_in_range(month: int, day: int, start_iso: str, end_iso: str) -> bool:
     return s <= (month, day) <= e
 
 
+def _block_ref(b: dict) -> str:
+    return str(b.get("block_uuid") or b.get("id") or "")
+
+
 def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
     card_tokens = _tokens(str(card_name or ""))
     need = min(2, len(card_tokens)) if card_tokens else 99
@@ -70,7 +74,7 @@ def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
         day, month = int(m.group(1)), int(m.group(2))
         for b in blocks:
             if _date_in_range(month, day, str(b.get("period_start") or ""), str(b.get("period_end") or "")):
-                return CardBlockResolution([str(b.get("id"))], 0.9, f"date:{day:02d}/{month:02d}")
+                return CardBlockResolution([_block_ref(b)], 0.9, f"date:{day:02d}/{month:02d}")
 
     # (2) nome casa o TÍTULO de uma unidade -> unidade inteira (card largo intencional).
     title_scored = sorted(
@@ -82,7 +86,7 @@ def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
         tie = len(title_scored) > 1 and title_scored[1][0] == best_t and best_t > 0
         if best_t >= need and not tie:
             slug = str(best_u.get("slug"))
-            ids = [str(b.get("id")) for b in blocks if str(b.get("unit_slug") or "") == slug]
+            ids = [_block_ref(b) for b in blocks if str(b.get("unit_slug") or "") == slug]
             if ids:
                 return CardBlockResolution(ids, min(0.95, 0.5 + 0.15 * best_t), f"unit:{slug}")
 
@@ -95,7 +99,7 @@ def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
         elif ov == best_ov and ov > 0:
             best_blocks.append(b)
     if best_ov >= need and best_blocks:
-        ids = [str(b.get("id")) for b in best_blocks]
+        ids = [_block_ref(b) for b in best_blocks]
         return CardBlockResolution(ids, min(0.9, 0.45 + 0.15 * best_ov), "topic")
 
     # (4) overlap de TÓPICOS da unidade (coarse) -> unidade inteira (fallback).
@@ -108,7 +112,7 @@ def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
         tie = len(total_scored) > 1 and total_scored[1][0] == best_tot and best_tot > 0
         if best_tot >= need and not tie:
             slug = str(best_u.get("slug"))
-            ids = [str(b.get("id")) for b in blocks if str(b.get("unit_slug") or "") == slug]
+            ids = [_block_ref(b) for b in blocks if str(b.get("unit_slug") or "") == slug]
             if ids:
                 return CardBlockResolution(ids, min(0.9, 0.5 + 0.12 * best_tot), f"unit:{slug}")
 
@@ -116,12 +120,7 @@ def resolve_card_to_block(card_name, unit_index, blocks) -> CardBlockResolution:
 
 
 def resolve_block_ref(raw: str, index_blocks: list) -> str:
-    """Recebe raw (bloco-NN, índice N, ou já-uuid) e retorna block_uuid correspondente ("" se não resolve).
-
-    uuid passthrough: se raw já é uuid-format (não casa _POSITIONAL_RE), devolve raw.
-    bloco-NN: procura em index_blocks por b["id"] == raw, retorna b["block_uuid"].
-    índice nu N: idem com b["id"] == f"bloco-{int(N):02d}".
-    """
+    """Resolve bloco-NN / índice-nu / uuid → block_uuid ("" se não resolve)."""
     raw = str(raw or "").strip()
     if not raw:
         return ""

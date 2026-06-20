@@ -405,12 +405,23 @@ def summarize_code_entry(builder, entry_data: dict, client) -> Optional[dict]:
         summary_dict = result.model_dump()
         # Matcher local determinístico
         local = assign_code_to_block(summary_dict["concepts"], blocks)
-        # Consolida com sugestão Gemini (validada contra whitelist)
-        valid_ids = {b.get("id", "") for b in blocks if b.get("id")}
+        # Whitelist inclui uuid e id legado; sugestões Gemini (bloco-NN ou uuid)
+        # são resolvidas para uuid via lazy compat antes de validar.
+        from src.builder.timeline.card_block import resolve_block_ref
+        valid_ids = {
+            str(b.get("block_uuid") or b.get("id") or "")
+            for b in blocks
+            if b.get("block_uuid") or b.get("id")
+        }
+
+        def _to_uuid(raw: str) -> str:
+            r = resolve_block_ref(raw, blocks)
+            return r if r else (raw if raw in valid_ids else "")
+
         primary, secondaries, conf, method = _consolidate_assignment(
             local,
-            summary_dict.get("suggested_block_id", "") or "",
-            summary_dict.get("suggested_secondary_ids", []) or [],
+            _to_uuid(summary_dict.get("suggested_block_id", "") or ""),
+            [_to_uuid(s) for s in (summary_dict.get("suggested_secondary_ids", []) or [])],
             valid_ids,
         )
         summary_dict["primary_block_id"] = primary

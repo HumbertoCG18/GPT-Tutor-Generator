@@ -21,19 +21,19 @@ BLOCKS = [
 
 def test_card_name_matches_unit_returns_its_blocks():
     r = resolve_card_to_block("Verificação de Programas", UNITS, BLOCKS)
-    assert set(r.block_ids) == {"bloco-10", "bloco-11"}
+    assert set(r.block_ids) == {"uuid-10", "uuid-11"}
     assert r.confidence > 0.0
     assert r.reason.startswith("unit:")
 
 
 def test_card_partial_name_still_matches_unit():
     r = resolve_card_to_block("Verificacao de Programas (Hoare/Dafny)", UNITS, BLOCKS)
-    assert set(r.block_ids) == {"bloco-10", "bloco-11"}
+    assert set(r.block_ids) == {"uuid-10", "uuid-11"}
 
 
 def test_card_with_date_maps_to_covering_block():
     r = resolve_card_to_block("Aula 06/05", UNITS, BLOCKS)
-    assert r.block_ids == ["bloco-11"]
+    assert r.block_ids == ["uuid-11"]
     assert r.reason.startswith("date:")
 
 
@@ -67,7 +67,7 @@ def test_lookup_prefers_manual_map_over_auto():
 
 def test_lookup_falls_back_to_auto_resolution():
     ids = lookup_card_blocks("Verificação de Programas", {}, UNITS, BLOCKS)
-    assert set(ids) == {"bloco-10", "bloco-11"}
+    assert set(ids) == {"uuid-10", "uuid-11"}
 
 
 def test_single_token_card_matches_when_unambiguous():
@@ -123,7 +123,7 @@ def test_card_matches_block_topic_when_no_unit_match():
 def test_unit_match_still_takes_priority_over_topic():
     # card casa o título da unidade -> retorna blocos da unidade (comportamento atual)
     r = resolve_card_to_block("Verificação de Programas", UNITS, BLOCKS)
-    assert set(r.block_ids) == {"bloco-10", "bloco-11"}
+    assert set(r.block_ids) == {"uuid-10", "uuid-11"}
     assert r.reason.startswith("unit:")
 
 

@@ -939,6 +939,9 @@ def cronograma_detalhado_md(
 
     for blk in timeline_blocks:
         bid = blk["id"]
+        # Lookup por uuid (computed_block_id/secondary_block_ids já são uuid pós-Task 2);
+        # fallback por id legado para compat com refs manuais que ainda usam bloco-NN.
+        buuid = str(blk.get("block_uuid") or "")
         period = blk.get("period_label", bid)
         topic = blk.get("primary_topic_label", "")
         topics = blk.get("topics") or []
@@ -969,8 +972,8 @@ def cronograma_detalhado_md(
             lines.append("")
 
         # Materiais (code-only por enquanto)
-        primaries = primary_idx.get(bid, [])
-        secondaries = secondary_idx.get(bid, [])
+        primaries = primary_idx.get(buuid) or primary_idx.get(bid, [])
+        secondaries = secondary_idx.get(buuid) or secondary_idx.get(bid, [])
 
         if primaries or secondaries:
             lines += ["### Códigos desta aula", ""]

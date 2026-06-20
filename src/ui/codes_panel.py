@@ -384,8 +384,10 @@ class CodesPanel(tk.Frame):
             return f"{period} — {topic}" if topic else period
 
         labels = [_block_label(b) for b in blocks]
-        label_to_id = {lbl: b["id"] for lbl, b in zip(labels, blocks)}
-        id_to_label = {b["id"]: lbl for lbl, b in zip(labels, blocks)}
+        # Usa block_uuid como chave interna; fallback p/ id legado (lazy compat Task 2).
+        _bid = lambda b: str(b.get("block_uuid") or b.get("id") or "")
+        label_to_id = {lbl: _bid(b) for lbl, b in zip(labels, blocks)}
+        id_to_label = {_bid(b): lbl for lbl, b in zip(labels, blocks)}
 
         current_primary = summary.get("primary_block_id", "")
         current_secondaries = list(summary.get("secondary_block_ids") or [])

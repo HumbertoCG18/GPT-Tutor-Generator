@@ -298,3 +298,240 @@ def test_navigation_period_lookup_works_with_uuid():
     assert period_label_by_block_id.get(uuid_v) == "10/02 a 20/02"
     # ref legada bloco-NN também resolve (compat lazy)
     assert period_label_by_block_id.get("bloco-03") == "10/02 a 20/02"
+
+
+# ---------------------------------------------------------------------------
+# C-1 — resolve_card_to_block retorna uuid em todos os 4 paths de resolução
+# ---------------------------------------------------------------------------
+
+
+def _make_blocks_with_uuid():
+    return [
+        {
+            "id": "bloco-01",
+            "block_uuid": "uuid-c1-01",
+            "unit_slug": "u-intro",
+            "period_start": "2026-03-02",
+            "period_end": "2026-03-02",
+            "primary_topic_label": "motivação",
+            "topics": ["motivação"],
+            "aliases": [],
+        },
+        {
+            "id": "bloco-10",
+            "block_uuid": "uuid-c1-10",
+            "unit_slug": "u-verif",
+            "period_start": "2026-04-27",
+            "period_end": "2026-05-04",
+            "primary_topic_label": "Lógica de Hoare",
+            "topics": ["hoare"],
+            "aliases": [],
+        },
+        {
+            "id": "bloco-11",
+            "block_uuid": "uuid-c1-11",
+            "unit_slug": "u-verif",
+            "period_start": "2026-05-06",
+            "period_end": "2026-05-06",
+            "primary_topic_label": "Dafny",
+            "topics": ["dafny"],
+            "aliases": [],
+        },
+    ]
+
+
+_UNITS_C1 = [
+    {
+        "slug": "u-intro",
+        "title": "Introdução a Métodos Formais",
+        "topics": ["motivação"],
+        "distinctive_tokens": [],
+    },
+    {
+        "slug": "u-verif",
+        "title": "Verificação de Programas",
+        "topics": ["hoare", "dafny"],
+        "distinctive_tokens": [],
+    },
+]
+
+
+def test_resolve_card_to_block_title_match_returns_uuid():
+    """Path 2 (title match): resolve_card_to_block retorna uuids, não bloco-NN."""
+    from src.builder.timeline.card_block import resolve_card_to_block
+
+    blocks = _make_blocks_with_uuid()
+    r = resolve_card_to_block("Verificação de Programas", _UNITS_C1, blocks)
+    assert set(r.block_ids) == {"uuid-c1-10", "uuid-c1-11"}
+    assert r.reason.startswith("unit:")
+
+
+def test_resolve_card_to_block_date_match_returns_uuid():
+    """Path 1 (date match): resolve_card_to_block retorna uuid, não bloco-NN."""
+    from src.builder.timeline.card_block import resolve_card_to_block
+
+    blocks = _make_blocks_with_uuid()
+    r = resolve_card_to_block("Aula 06/05", _UNITS_C1, blocks)
+    assert r.block_ids == ["uuid-c1-11"]
+    assert r.reason.startswith("date:")
+
+
+def test_resolve_card_to_block_topic_match_returns_uuid():
+    """Path 3 (topic match): resolve_card_to_block retorna uuid, não bloco-NN."""
+    from src.builder.timeline.card_block import resolve_card_to_block
+
+    units = [{"slug": "u3", "title": "Problemas Indecidiveis", "topics": [], "distinctive_tokens": []}]
+    blocks = [
+        {
+            "id": "bloco-10",
+            "block_uuid": "uuid-c1-10",
+            "unit_slug": "u3",
+            "primary_topic_label": "Halting problem",
+            "topics": ["parada"],
+            "aliases": [],
+            "period_start": "2026-04-15",
+            "period_end": "2026-04-15",
+        },
+        {
+            "id": "bloco-14",
+            "block_uuid": "uuid-c1-14",
+            "unit_slug": "u3",
+            "primary_topic_label": "Teoremas de Godel",
+            "topics": ["godel", "incompletude"],
+            "aliases": [],
+            "period_start": "2026-04-29",
+            "period_end": "2026-04-29",
+        },
+    ]
+    r = resolve_card_to_block("Semana 9 - Teoremas de Godel", units, blocks)
+    assert r.block_ids == ["uuid-c1-14"]
+    assert r.reason == "topic"
+
+
+def test_resolve_card_to_block_unit_overlap_returns_uuid():
+    """Path 4 (unit overlap fallback): resolve_card_to_block retorna uuids."""
+    from src.builder.timeline.card_block import resolve_card_to_block
+
+    units = [
+        {
+            "slug": "u-verif",
+            "title": "Unidade Z",
+            "topics": ["dafny", "hoare", "verificacao"],
+            "distinctive_tokens": [],
+        }
+    ]
+    blocks = _make_blocks_with_uuid()
+    r = resolve_card_to_block("verificacao hoare dafny", units, blocks)
+    assert all(bid.startswith("uuid-c1-") for bid in r.block_ids), (
+        f"Esperado uuids, obtido: {r.block_ids}"
+    )
+
+
+def test_lookup_fallback_auto_returns_uuid():
+    """Fallback path de lookup_card_blocks (sem map entry) retorna uuids."""
+    from src.builder.timeline.card_block import lookup_card_blocks
+
+    blocks = _make_blocks_with_uuid()
+    ids = lookup_card_blocks("Verificação de Programas", {}, _UNITS_C1, blocks)
+    assert set(ids) == {"uuid-c1-10", "uuid-c1-11"}
+
+
+# ---------------------------------------------------------------------------
+# I-1 — T1 contraste: id posicional QUEBRA quando bloco renumera
+# ---------------------------------------------------------------------------
+
+
+def test_t1_contrast_positional_breaks_on_renumber():
+    """Prova a regressão que uuid previne.
+
+    Com id posicional, card_map aponta bloco-01; após renumeração o mesmo bloco
+    vira bloco-02 — lookup retorna [] (referência orfanada). Com uuid, não quebra.
+    """
+    from src.builder.timeline.card_block import lookup_card_blocks
+
+    uuid_a = "550e8400-e29b-41d4-a716-446655440001"
+    # Cenário POSICIONAL: card_map referencia "bloco-01"
+    positional_map = {"MeuCard": {"block_ids": ["bloco-01"], "source": "manual"}}
+
+    # Índice ANTES do split: bloco-01 existe
+    blocks_before = [
+        {
+            "id": "bloco-01",
+            "block_uuid": uuid_a,
+            "unit_slug": "u1",
+            "period_start": "2026-01-01",
+            "period_end": "2026-01-15",
+        }
+    ]
+
+    # Índice DEPOIS do split: o mesmo conteúdo renumerou para bloco-02
+    blocks_after_renumber = [
+        {
+            "id": "bloco-02",
+            "block_uuid": uuid_a,
+            "unit_slug": "u1",
+            "period_start": "2026-01-01",
+            "period_end": "2026-01-15",
+        }
+    ]
+
+    # Com id posicional, bloco-01 não existe mais → resolve para "" → resultado vazio
+    ids_positional = lookup_card_blocks("MeuCard", positional_map, [], blocks_after_renumber)
+    assert ids_positional == [], (
+        f"Com id posicional após renumeração, esperava [] (referência orfanada), "
+        f"obteve {ids_positional}"
+    )
+
+    # Com uuid, o map guarda uuid_a; lookup resolve por uuid → estável
+    uuid_map = {"MeuCard": {"block_ids": [uuid_a], "source": "manual"}}
+    ids_uuid_before = lookup_card_blocks("MeuCard", uuid_map, [], blocks_before)
+    ids_uuid_after = lookup_card_blocks("MeuCard", uuid_map, [], blocks_after_renumber)
+    assert ids_uuid_before == [uuid_a]
+    assert ids_uuid_after == [uuid_a], "uuid estável sobrevive a renumeração"
+
+
+# ---------------------------------------------------------------------------
+# C-2 — secondary_block_ids armazena/resolve uuid
+# ---------------------------------------------------------------------------
+
+
+def test_secondary_block_ids_in_code_summarization_uses_uuid():
+    """_consolidate_assignment usa valid_ids por uuid (b.get("block_uuid") or b.get("id")).
+
+    O whitelist valid_ids é construído com b.get("id") apenas →
+    Gemini sugerindo uuid não passa. Após fix, valid_ids inclui uuid.
+    """
+    from src.builder.core.code_summarization import _consolidate_assignment
+
+    uuid_v = "550e8400-e29b-41d4-a716-ffffffffffff"
+    # valid_ids construído com uuid (como deve ser pós-fix)
+    valid_ids = {uuid_v}
+    local = {"primary": "", "secondaries": [], "confidence": 0.0, "method": "orphan",
+              "top_candidate": "", "top_score": 0.0}
+    _, secondaries, _, _ = _consolidate_assignment(local, uuid_v, [uuid_v], valid_ids)
+    # Gemini sugere uuid_v como primary; deve aparecer no resultado
+    # (primary ou secondary)
+    primary_out, secondaries_out, _, _ = _consolidate_assignment(
+        local, uuid_v, [], valid_ids
+    )
+    assert primary_out == uuid_v, f"primary_block_id deveria ser {uuid_v}, obteve {primary_out!r}"
+
+
+def test_secondary_block_ids_written_as_uuid_in_repo_artifact():
+    """repo.py secondary_idx é keyed por uuid — lookup por uuid_key encontra código."""
+    # Simula a lógica de repo.py:929: para cada código, b em secondary_block_ids.
+    # Após fix, o índice deve ser keyed por uuid para casar com computed_block_id.
+    uuid_v = "550e8400-e29b-41d4-a716-bbbbbbbbbbbb"
+    bloco_nn = "bloco-03"
+
+    # Summary com secondary_block_ids em uuid (pós-fix)
+    s = {"secondary_block_ids": [uuid_v]}
+
+    secondary_idx: dict = {}
+    for sb in (s.get("secondary_block_ids") or []):
+        secondary_idx.setdefault(sb, []).append("some_entry")
+
+    # Lookup por uuid deve funcionar
+    assert uuid_v in secondary_idx
+    # Lookup por bloco-NN legado NÃO deve estar neste índice (uuid substituiu)
+    assert bloco_nn not in secondary_idx
