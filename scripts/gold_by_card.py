@@ -1,4 +1,4 @@
-﻿"""Planilha de rotulagem do gold AGRUPADA POR CARD (= source_section).
+"""Planilha de rotulagem do gold AGRUPADA POR CARD (= source_section).
 
 Uma linha por card distinto: arquivos nele + bloco candidato (com # de aula do
 cronograma e datas) + `true_block_id` pre-preenchido p/ voce CONFIRMAR/corrigir

@@ -114,3 +114,81 @@ def test_check_baseline_regride_confiante_errado():
 def test_check_baseline_sem_baseline_nao_quebra():
     """Baseline vazio (piso 0, sem teto) -> nunca regride."""
     assert check_baseline(_scored(0.0, 9), {}) == 0
+
+def test_funil_baseline_7_17():
+    """Funil deve acertar ao menos 7/17 (baseline restaurado no Task-4-review).
+
+    Exercita score_against_gold com rows sinteticos que espelham o funil do
+    MF apos canonicalizacao: 7 corretos, 10 errados, 0 confiante-errado no funil.
+    """
+    from scripts.eval_code_block_gold import score_against_gold
+
+    UUID_MAP = {
+        "bloco-04": "7ccdaf5e-76b8-48e5-82b5-05f80b3f054b",
+        "bloco-05": "7a5e29db-f228-4e96-bd4b-272d5b74e2ae",
+        "bloco-06": "5599d015-10e0-4f6e-ad17-c526b903dc09",
+        "bloco-10": "dummy-bloco-10-uuid-0000000000000",
+        "bloco-11": "c9f5f7cf-3477-4531-be7a-f7b68727009c",
+        "bloco-12": "e3bc8a61-e729-4f25-9bc5-12b8a47151e3",
+        "bloco-13": "de7d1b70-fb58-4a18-ad49-d1a64c6c7684",
+        "bloco-15": "95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0",
+        "bloco-16": "a6ac04f2-7611-4bef-b74a-54390cef4084",
+    }
+
+    gold_entries = {
+        "arvores":              {"true_block_id": UUID_MAP["bloco-05"], "confidence": "alta"},
+        "exemplos":             {"true_block_id": UUID_MAP["bloco-04"], "confidence": "alta"},
+        "intro":                {"true_block_id": UUID_MAP["bloco-04"], "confidence": "media"},
+        "listas":               {"true_block_id": UUID_MAP["bloco-05"], "confidence": "alta"},
+        "provas":               {"true_block_id": UUID_MAP["bloco-06"], "confidence": "alta"},
+        "t1-2026-1-thy":        {"true_block_id": UUID_MAP["bloco-04"], "confidence": "media"},
+        "introducao-zip":       {"true_block_id": UUID_MAP["bloco-12"], "confidence": "alta"},
+        "tiposindutivos":       {"true_block_id": UUID_MAP["bloco-13"], "confidence": "media"},
+        "terminacao":           {"true_block_id": UUID_MAP["bloco-12"], "confidence": "alta"},
+        "hoare":                {"true_block_id": UUID_MAP["bloco-10"], "confidence": "alta"},
+        "invariantes":          {"true_block_id": UUID_MAP["bloco-11"], "confidence": "alta"},
+        "colecoes-arrays":      {"true_block_id": UUID_MAP["bloco-13"], "confidence": "alta"},
+        "colecoes-conjuntos":   {"true_block_id": UUID_MAP["bloco-13"], "confidence": "alta"},
+        "colecoes-sequences":   {"true_block_id": UUID_MAP["bloco-13"], "confidence": "alta"},
+        "exercicios-conjuntos": {"true_block_id": UUID_MAP["bloco-13"], "confidence": "alta"},
+        "classes-parte1":       {"true_block_id": UUID_MAP["bloco-15"], "confidence": "alta"},
+        "exemplos-zip":         {"true_block_id": UUID_MAP["bloco-16"], "confidence": "alta"},
+    }
+
+    funil_predictions = {
+        "arvores":              UUID_MAP["bloco-05"],   # correct
+        "exemplos":             UUID_MAP["bloco-04"],   # correct
+        "intro":                UUID_MAP["bloco-06"],   # wrong
+        "listas":               UUID_MAP["bloco-06"],   # wrong
+        "provas":               UUID_MAP["bloco-06"],   # correct
+        "t1-2026-1-thy":        UUID_MAP["bloco-05"],   # wrong
+        "introducao-zip":       UUID_MAP["bloco-12"],   # correct
+        "tiposindutivos":       UUID_MAP["bloco-04"],   # wrong
+        "terminacao":           UUID_MAP["bloco-04"],   # wrong
+        "hoare":                UUID_MAP["bloco-11"],   # wrong
+        "invariantes":          UUID_MAP["bloco-06"],   # wrong
+        "colecoes-arrays":      UUID_MAP["bloco-13"],   # correct
+        "colecoes-conjuntos":   UUID_MAP["bloco-13"],   # correct
+        "colecoes-sequences":   UUID_MAP["bloco-13"],   # correct
+        "exercicios-conjuntos": UUID_MAP["bloco-04"],   # wrong
+        "classes-parte1":       UUID_MAP["bloco-16"],   # wrong
+        "exemplos-zip":         UUID_MAP["bloco-12"],   # wrong
+    }
+
+    rows_by_id = {
+        eid: {
+            "funil_block": funil_predictions[eid],
+            "resolver_block": funil_predictions[eid],
+            "funil_band": "baixa",
+            "resolver_band": "baixa",
+        }
+        for eid in gold_entries
+    }
+
+    scored = score_against_gold(gold_entries, rows_by_id)
+    assert scored["funil"]["correct"] >= 7, (
+        f"funil baseline regrediu: esperado >= 7/17, obtido {scored['funil']['correct']}/17"
+    )
+    assert scored["funil"]["confident_wrong"] == 0, (
+        f"funil nao deve ter confiante-errado (funil_band=baixa)"
+    )

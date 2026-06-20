@@ -1,4 +1,4 @@
-﻿"""Draft de gabarito (true_block_id) para o gold file->bloco, com EVIDENCIA.
+"""Draft de gabarito (true_block_id) para o gold file->bloco, com EVIDENCIA.
 
 NAO e gold final: e um pre-preenchimento por sinais OBJETIVOS/curados, para o
 humano VERIFICAR (evita rotular do zero). Confianca por linha:

@@ -1,4 +1,4 @@
-﻿"""Harness read-only: roda o resolver novo (Fase 2.2) sobre os materiais de um
+"""Harness read-only: roda o resolver novo (Fase 2.2) sobre os materiais de um
 repo gerado REAL e compara com a resposta do funil (computed_block_id ja no
 manifest). NAO escreve no repo, NAO chama API (so le code_curation.json).
 
@@ -98,6 +98,24 @@ def _inject_block_uuids_from_ledger(blocks: List[dict], ledger: List[dict]) -> N
             block["block_uuid"] = uuid
 
 
+def _build_ledger_display_map(ledger: List[dict]) -> Dict[str, str]:
+    """Retorna mapa display_id_last -> uuid a partir do ledger."""
+    return {
+        str(rec.get("display_id_last") or ""): str(rec.get("uuid") or "")
+        for rec in (ledger or [])
+        if rec.get("display_id_last") and rec.get("uuid")
+    }
+
+
+def _canonicalize_block_id(block_id: str, display_map: Dict[str, str]) -> str:
+    """Converte bloco-NN para uuid via ledger; uuid passthrough; unresolvable fica como esta."""
+    if not block_id:
+        return block_id
+    if block_id.startswith("bloco-"):
+        return display_map.get(block_id, block_id)
+    return block_id
+
+
 def compare_repo(root: Path) -> Optional[dict]:
     manifest = _load_json(root / "manifest.json")
     if not manifest:
@@ -113,12 +131,14 @@ def compare_repo(root: Path) -> Optional[dict]:
     annotate_class_ordinals(blocks)
     lessons_index = load_lessons_index(root)
 
-    # Injeta block_uuid do ledger nos blocos que ainda nao o tem (pre-rebuild).
     ledger_path = root / "course" / ".block_identity.json"
+    display_map: Dict[str, str] = {}
     if ledger_path.exists():
         try:
             ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
-            _inject_block_uuids_from_ledger(blocks, ledger if isinstance(ledger, list) else [])
+            ledger_list = ledger if isinstance(ledger, list) else []
+            _inject_block_uuids_from_ledger(blocks, ledger_list)
+            display_map = _build_ledger_display_map(ledger_list)
         except Exception:
             pass
 
@@ -126,7 +146,7 @@ def compare_repo(root: Path) -> Optional[dict]:
     rows: List[dict] = []
     for entry in entries:
         entry_id = str(entry.get("id") or "")
-        funil_block = str(entry.get("computed_block_id") or "")
+        funil_block = _canonicalize_block_id(str(entry.get("computed_block_id") or ""), display_map)
         if not funil_block:
             continue
         # assemble_resolver_inputs (DRY): mesma logica do helper de producao.
