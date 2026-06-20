@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -92,29 +93,50 @@ def test_persist_false_ledger_absent_but_refs_exist_raises(tmp_path):
 
 
 def test_persist_false_stale_block_in_memory_no_write(tmp_path, caplog):
-    """persist=False + ledger vazio (sem refs) → minta in-memory, sem escrita."""
+    """persist=False + bloco stale (ledger vazio, mint necessário) → uuid in-memory, WARNING, sem escrita."""
     _write_syllabus(tmp_path)
     _make_ledger(tmp_path, [])
 
     course_dir = tmp_path / "course"
-    before_names = set(p.name for p in course_dir.iterdir())
+    before_mtimes = {p: p.stat().st_mtime for p in course_dir.rglob("*") if p.is_file()}
 
-    with caplog.at_level(logging.WARNING):
-        _build_file_map_timeline_context_from_course(
-            {"_repo_root": tmp_path},
-            persist=False,
-            **_DUMMY_KWARG,
-        )
+    stale_uuid = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+    stale_block = {"id": "bloco-01", "block_uuid": stale_uuid}
 
-    after_names = set(p.name for p in course_dir.iterdir())
-    ledger_path = course_dir / ".block_identity.json"
-    if ledger_path.exists():
-        ledger_after = json.loads(ledger_path.read_text(encoding="utf-8"))
-        assert ledger_after == [], "persist=False não deve ter escrito no ledger"
+    def _fake_reattach(blocks, ledger, *, has_existing_refs, **kw):
+        for b in blocks:
+            b["block_uuid"] = stale_uuid
+        return blocks, ledger, [f"no-date:mint:{stale_uuid}:bloco-01"]
 
-    new_files = after_names - before_names
-    for f in new_files:
-        assert not f.endswith(".json"), f"Arquivo escrito em persist=False: {f}"
+    with caplog.at_level(logging.WARNING, logger="src.builder.timeline.index"):
+        with patch(
+            "src.builder.timeline.index.reattach_block_uuids",
+            side_effect=_fake_reattach,
+        ):
+            result = _build_file_map_timeline_context_from_course(
+                {"_repo_root": tmp_path},
+                persist=False,
+                **_DUMMY_KWARG,
+            )
+
+    # (a) uuid presente in-memory
+    blocks = (result or {}).get("timeline_index", {}).get("blocks") or []
+    for b in blocks:
+        assert b.get("block_uuid"), f"bloco sem uuid in-memory: {b}"
+
+    # (b) WARNING "ledger stale" logado
+    stale_warnings = [r for r in caplog.records if r.levelno >= logging.WARNING and "stale" in r.message.lower()]
+    assert stale_warnings, (
+        f"Esperava WARNING 'ledger stale' mas nenhum foi logado. "
+        f"Records: {[r.message for r in caplog.records]}"
+    )
+
+    # (c) nenhum arquivo escrito
+    after_mtimes = {p: p.stat().st_mtime for p in course_dir.rglob("*") if p.is_file()}
+    new_files = set(after_mtimes) - set(before_mtimes)
+    modified = {p for p in set(before_mtimes) & set(after_mtimes) if after_mtimes[p] != before_mtimes[p]}
+    assert not new_files, f"Novos arquivos em persist=False: {[str(p) for p in new_files]}"
+    assert not modified, f"Arquivos modificados em persist=False: {[str(p) for p in modified]}"
 
 
 # ---------------------------------------------------------------------------

@@ -1406,6 +1406,10 @@ def _build_file_map_timeline_context_from_course(
                 _blocks_list, _ledger, has_existing_refs=_has_refs
             )
             timeline_index["blocks"] = _blocks_list
+            if not persist and any("mint" in f for f in _id_flags):
+                logging.getLogger(__name__).warning(
+                    "ledger stale; rebuild %s to persist new block uuids", _course_dir
+                )
             if persist:
                 save_identity_ledger(_course_dir, _ledger)
         except BlockIdentityError:
