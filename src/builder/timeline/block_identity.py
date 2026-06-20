@@ -296,3 +296,112 @@ def scan_existing_block_refs(course_dir, manifest: dict) -> bool:
             pass
 
     return False
+
+
+# ---------------------------------------------------------------------------
+# Task 3 — HUMAN-TRUTH migration with FLAG trava
+# ---------------------------------------------------------------------------
+
+
+def migrate_human_truth_block_refs(
+    manifest_entries: list,
+    curation_blocks: dict,
+    blocks: list,
+    *,
+    logger=None,
+) -> tuple:
+    """Migrate legacy bloco-NN/bare-N refs to uuid in human-truth surfaces.
+
+    Returns (updated_manifest_entries, updated_curation_blocks, flags).
+    flags: list[dict] with {surface, entry_id, raw_value, reason}.
+    Unresolvable -> FLAG + keep original. Never silent-drop.
+    """
+    from src.builder.timeline.card_block import resolve_block_ref
+
+    flags = []
+    updated_entries = []
+    for entry in (manifest_entries or []):
+        e = dict(entry)
+        raw = str(e.get("manual_timeline_block_id") or "").strip()
+        if raw and _POSITIONAL_RE.match(raw):
+            resolved = resolve_block_ref(raw, blocks)
+            if resolved:
+                e["manual_timeline_block_id"] = resolved
+            else:
+                flags.append({
+                    "surface": "manual_timeline_block_id",
+                    "entry_id": e.get("id"),
+                    "raw_value": raw,
+                    "reason": "unresolvable",
+                })
+                if logger:
+                    logger.warning(
+                        "FLAG manual_timeline_block_id entry=%s raw=%s unresolvable",
+                        e.get("id"), raw,
+                    )
+        updated_entries.append(e)
+
+    updated_curation = {}
+    for key, value in (curation_blocks or {}).items():
+        k = str(key).strip()
+        if _POSITIONAL_RE.match(k):
+            resolved = resolve_block_ref(k, blocks)
+            if resolved:
+                updated_curation[resolved] = value
+            else:
+                flags.append({
+                    "surface": "timeline_curation_key",
+                    "entry_id": None,
+                    "raw_value": k,
+                    "reason": "unresolvable",
+                })
+                if logger:
+                    logger.warning(
+                        "FLAG timeline_curation_key key=%s unresolvable", k,
+                    )
+                updated_curation[k] = value  # keep original
+        else:
+            updated_curation[key] = value
+
+    return updated_entries, updated_curation, flags
+
+
+def migrate_primary_block_ids(
+    code_curation_entries: list,
+    blocks: list,
+    *,
+    logger=None,
+) -> tuple:
+    """Lazy-migrate primary_block_id in code_curation entries to uuid.
+
+    Returns (updated_entries, flags).
+    Each entry may have a nested 'summary' dict with 'primary_block_id'.
+    """
+    from src.builder.timeline.card_block import resolve_block_ref
+
+    flags = []
+    updated = []
+    for entry in (code_curation_entries or []):
+        e = dict(entry)
+        summary = e.get("summary")
+        if isinstance(summary, dict):
+            raw = str(summary.get("primary_block_id") or "").strip()
+            if raw and _POSITIONAL_RE.match(raw):
+                resolved = resolve_block_ref(raw, blocks)
+                if resolved:
+                    e["summary"] = {**summary, "primary_block_id": resolved}
+                else:
+                    flags.append({
+                        "surface": "primary_block_id",
+                        "entry_id": e.get("id"),
+                        "raw_value": raw,
+                        "reason": "unresolvable",
+                    })
+                    if logger:
+                        logger.warning(
+                            "FLAG primary_block_id entry=%s raw=%s unresolvable",
+                            e.get("id"), raw,
+                        )
+        updated.append(e)
+
+    return updated, flags

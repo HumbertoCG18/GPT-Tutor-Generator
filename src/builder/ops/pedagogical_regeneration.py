@@ -113,7 +113,7 @@ def run_material_residual(builder, live_manifest_entries):
     return live_manifest_entries
 
 
-def attach_block_summary_fields(entries: list, code_curation: dict) -> list:
+def attach_block_summary_fields(entries: list, code_curation: dict, blocks: list = None) -> list:
     """Sincroniza campos do code_curation (summary.*) com o entry dict:
     match_rationale -> computed_block_rationale,
     block_match_method -> computed_block_method,
@@ -161,6 +161,13 @@ def attach_block_summary_fields(entries: list, code_curation: dict) -> list:
         # nunca são sobrescritos (preserva o gabarito autoritativo, erro 0/22).
         if str(e.get("file_type") or "") in ("code", "zip"):
             gemini_primary = str(summary.get("primary_block_id") or "")
+            if gemini_primary and blocks:
+                from src.builder.timeline.block_identity import _POSITIONAL_RE as _POS_RE
+                from src.builder.timeline.card_block import resolve_block_ref as _rbr
+                if _POS_RE.match(gemini_primary):
+                    _r = _rbr(gemini_primary, blocks)
+                    if _r:
+                        gemini_primary = _r
             if (
                 gemini_primary
                 and not str(e.get("source_section") or "").strip()
