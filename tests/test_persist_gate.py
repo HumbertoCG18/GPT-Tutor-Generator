@@ -134,3 +134,24 @@ def test_persist_true_writes_ledger(tmp_path):
     )
 
     assert (course_dir / ".block_identity.json").exists(), "persist=True deve escrever ledger"
+
+
+# ---------------------------------------------------------------------------
+# T5-5: engine facade threads persist=False (does not write)
+# ---------------------------------------------------------------------------
+
+
+def test_facade_threads_persist_false(tmp_path):
+    """engine._build_file_map_timeline_context_from_course passa persist=False p/ index."""
+    _write_syllabus(tmp_path)
+    course_dir = tmp_path / "course"
+
+    import src.builder.engine as engine
+    engine._build_file_map_timeline_context_from_course(
+        {"_repo_root": tmp_path},
+        persist=False,
+    )
+
+    assert not (course_dir / ".block_identity.json").exists(), (
+        "engine facade com persist=False nao deve escrever ledger"
+    )
