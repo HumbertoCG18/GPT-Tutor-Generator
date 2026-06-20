@@ -25,6 +25,13 @@ from src.builder.text.stopwords import (
     TIMELINE_UNIT_NEUTRAL_TOKENS as _TIMELINE_UNIT_NEUTRAL_TOKENS,
 )
 from src.utils.helpers import slugify, ATIVIDADE_KIND_MAP, norm_ascii_lower, collapse_ws as _collapse_ws
+from src.builder.timeline.block_identity import (
+    BlockIdentityError,
+    load_identity_ledger,
+    reattach_block_uuids,
+    save_identity_ledger,
+    scan_existing_block_refs,
+)
 
 
 TIMELINE_INDEX_VERSION = 4
@@ -816,6 +823,7 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
             unit_confidence = 0.0
         payload = {
             "id": block.get("id", ""),
+            "block_uuid": block.get("block_uuid", ""),
             "period_start": block.get("period_start", ""),
             "period_end": block.get("period_end", ""),
             "period_label": block.get("period_label", ""),
@@ -1383,9 +1391,27 @@ def _build_file_map_timeline_context_from_course(
         else:
             timeline_index = _empty_timeline_index()
 
+    # Re-attach block_uuid via identity ledger (Task 1 — additive, não muda bloco-NN).
+    _repo_root = course_meta.get("_repo_root")
+    if _repo_root:
+        _course_dir = Path(_repo_root) / "course"
+        _ledger = load_identity_ledger(_course_dir)
+        _manifest = course_meta.get("manifest") or {}
+        _has_refs = scan_existing_block_refs(_course_dir, _manifest)
+        _blocks_list = timeline_index.get("blocks") or []
+        try:
+            _blocks_list, _ledger, _id_flags = reattach_block_uuids(
+                _blocks_list, _ledger, has_existing_refs=_has_refs
+            )
+            timeline_index["blocks"] = _blocks_list
+            save_identity_ledger(_course_dir, _ledger)
+        except BlockIdentityError:
+            raise
+        except OSError:
+            pass  # I/O error on ledger read/write: non-fatal for additive Task 1
+
     # Merge de overrides manuais (curation) por block_id. Sobrevive ao rebuild
     # from-syllabus porque mora num arquivo separado. Re-deriva kind/topic.
-    _repo_root = course_meta.get("_repo_root")
     if _repo_root:
         _apply_curation_overrides(timeline_index, Path(_repo_root) / "course")
 
