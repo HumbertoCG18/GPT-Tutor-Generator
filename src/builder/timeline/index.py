@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -1409,6 +1410,55 @@ def _build_file_map_timeline_context_from_course(
             raise
         except OSError:
             pass  # I/O error on ledger read/write: non-fatal for additive Task 1
+
+    # Task 3: migrate human-truth legacy bloco-NN refs to uuid before curation apply.
+    if _repo_root:
+        from src.builder.timeline.block_identity import migrate_human_truth_block_refs
+        from src.builder.timeline.curation import CURATION_FILENAME
+        _blocks_for_mig = timeline_index.get("blocks") or []
+        _manifest_path = Path(_repo_root) / "manifest.json"
+        _curation_file = Path(_repo_root) / "course" / CURATION_FILENAME
+        try:
+            if _manifest_path.is_file():
+                _mf = json.loads(_manifest_path.read_text(encoding="utf-8"))
+                _mf_entries = _mf.get("entries") or []
+            else:
+                _mf = None
+                _mf_entries = []
+        except (json.JSONDecodeError, OSError):
+            _mf = None
+            _mf_entries = []
+        try:
+            if _curation_file.is_file():
+                _cur_raw = json.loads(_curation_file.read_text(encoding="utf-8"))
+                _cur_blocks = dict(_cur_raw.get("blocks") or {}) if isinstance(_cur_raw, dict) else {}
+            else:
+                _cur_raw = {"version": 1, "blocks": {}}
+                _cur_blocks = {}
+        except (json.JSONDecodeError, OSError):
+            _cur_raw = {"version": 1, "blocks": {}}
+            _cur_blocks = {}
+        _upd_entries, _upd_cur_blocks, _mig_flags = migrate_human_truth_block_refs(
+            _mf_entries, _cur_blocks, _blocks_for_mig, logger=logging.getLogger(__name__),
+        )
+        if _mig_flags:
+            logging.getLogger(__name__).warning("Task3 migration flags: %s", _mig_flags)
+        if _mf is not None and _upd_entries != _mf_entries:
+            try:
+                _mf["entries"] = _upd_entries
+                _manifest_path.write_text(
+                    json.dumps(_mf, ensure_ascii=False, indent=2), encoding="utf-8"
+                )
+            except OSError:
+                pass
+        if _upd_cur_blocks != _cur_blocks:
+            try:
+                _cur_raw["blocks"] = _upd_cur_blocks
+                _curation_file.write_text(
+                    json.dumps(_cur_raw, ensure_ascii=False, indent=2), encoding="utf-8"
+                )
+            except OSError:
+                pass
 
     # Merge de overrides manuais (curation) por block_id. Sobrevive ao rebuild
     # from-syllabus porque mora num arquivo separado. Re-deriva kind/topic.

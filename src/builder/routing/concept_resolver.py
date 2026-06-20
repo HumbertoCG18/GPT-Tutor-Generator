@@ -340,7 +340,7 @@ def resolve_material_assignment(
             min(entry_vec[tok], block_vec[tok])
             for tok in entry_vec.keys() & block_vec.keys()
         )
-        bid = str(block.get("id", ""))
+        bid = str(block.get("block_uuid") or block.get("id") or "")
         llm_term = votes.get(bid, 0.0)
         date_term = _score_block_date_match(signals, block)
         seq_term = score_sequence_match(signals, block)
@@ -424,7 +424,7 @@ def resolve_material_assignment(
     subunit_slug = ""
 
     return Assignment(
-        block_id=str(winner.get("id", "")),
+        block_id=str(winner.get("block_uuid") or winner.get("id") or ""),
         unit_slug=block_unit,
         subunit_slug=subunit_slug,
         confidence=confidence,

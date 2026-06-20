@@ -362,7 +362,7 @@ def regenerate_pedagogical_files(
     live_manifest_entries = run_material_residual(builder, live_manifest_entries)
 
     _code_curation = builder._load_code_curation()
-    live_manifest_entries = attach_block_summary_fields(live_manifest_entries, _code_curation)
+    live_manifest_entries = attach_block_summary_fields(live_manifest_entries, _code_curation, blocks=enriched_timeline_index.get("blocks") or [])
     if bool(builder.options.get("use_concept_resolver", False)):
         from src.builder.routing.resolver_apply import apply_concept_resolver
         live_manifest_entries = apply_concept_resolver(
