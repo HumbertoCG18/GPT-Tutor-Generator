@@ -155,3 +155,48 @@ def test_facade_threads_persist_false(tmp_path):
     assert not (course_dir / ".block_identity.json").exists(), (
         "engine facade com persist=False nao deve escrever ledger"
     )
+
+
+# ---------------------------------------------------------------------------
+# T5-6: rebuild_diff-style call writes nothing (strong acceptance criterion)
+# ---------------------------------------------------------------------------
+
+
+def test_rebuild_diff_style_call_writes_nothing(tmp_path):
+    """Simula exatamente o que rebuild_diff.py faz; nenhum arquivo criado ou modificado."""
+    import src.builder.engine as engine
+
+    course_dir = tmp_path / "course"
+    course_dir.mkdir()
+    (course_dir / "SYLLABUS.md").write_text(
+        "## Semana 1 (01/03/2026 - 07/03/2026)\nIntroducao\n", encoding="utf-8"
+    )
+    ledger = [
+        {
+            "uuid": "550e8400-e29b-41d4-a716-446655440001",
+            "anchor": {
+                "period_start": "2026-03-01",
+                "period_end": "2026-03-07",
+                "topic_tokens": ["introducao"],
+            },
+            "display_id_last": "bloco-01",
+            "first_seen": "2026-03-01",
+            "last_seen": "2026-03-01",
+        }
+    ]
+    save_identity_ledger(course_dir, ledger)
+
+    before_files = {p: p.stat().st_mtime for p in course_dir.rglob("*") if p.is_file()}
+
+    cm = {}
+    engine._build_file_map_timeline_context_from_course(
+        {**cm, "_repo_root": tmp_path}, None, content_taxonomy=None, persist=False
+    )
+
+    after_files = {p: p.stat().st_mtime for p in course_dir.rglob("*") if p.is_file()}
+
+    new_files = set(after_files) - set(before_files)
+    modified_files = {p for p in set(before_files) & set(after_files) if after_files[p] != before_files[p]}
+
+    assert not new_files, f"rebuild_diff-style criou arquivos: {[str(p) for p in new_files]}"
+    assert not modified_files, f"rebuild_diff-style modificou arquivos: {[str(p) for p in modified_files]}"
