@@ -1,4 +1,4 @@
-"""Planilha de rotulagem do gold AGRUPADA POR CARD (= source_section).
+﻿"""Planilha de rotulagem do gold AGRUPADA POR CARD (= source_section).
 
 Uma linha por card distinto: arquivos nele + bloco candidato (com # de aula do
 cronograma e datas) + `true_block_id` pre-preenchido p/ voce CONFIRMAR/corrigir
@@ -43,7 +43,12 @@ def build_card_rows(repo_root: Path) -> list[dict]:
     entries = manifest.get("entries") or []
     blocks = (_load(repo_root / "course" / ".timeline_index.json").get("blocks")) or []
     card_map = _load(repo_root / "course" / ".card_block_map.json")
+    # Indexa por id (bloco-NN) E por block_uuid para suportar computed_block_id em uuid.
     by_id = {str(b.get("id")): b for b in blocks}
+    for b in blocks:
+        uid = str(b.get("block_uuid") or "")
+        if uid:
+            by_id[uid] = b
 
     groups: dict = defaultdict(list)
     for e in entries:
@@ -62,7 +67,6 @@ def build_card_rows(repo_root: Path) -> list[dict]:
         group = groups[card]
         fids = [str(e.get("id") or "") for e in group]
         if not card:
-            # arquivos sem card: 1 linha cada (precisam de rotulo individual)
             for e in group:
                 bid = str(e.get("computed_block_id") or "")
                 aulas, dates, topic = _blk_cols(bid)

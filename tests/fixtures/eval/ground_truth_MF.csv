@@ -1,59 +1,59 @@
-id,title,predicted_block_id,predicted_band,true_block_id
+﻿id,title,predicted_block_id,predicted_band,true_block_id
 archive-of-formal-proofs-355fb8,Archive of Formal Proofs,,,
-verificacaomodelos,verificacaomodelos,bloco-16,alta,bloco-16
-exercicioslogicatemporal,ExerciciosLogicaTemporal,bloco-16,alta,bloco-16
-exerciciosnusmv,ExerciciosNusmv,bloco-16,media,bloco-16
-classes-parte1,Classes Parte1,bloco-16,media,bloco-15
-colecoes-arrays,Colecoes Arrays,bloco-13,alta,bloco-13
-colecoes-conjuntos,Colecoes Conjuntos,bloco-13,alta,bloco-13
-colecoes-sequences,Colecoes Sequences,bloco-13,alta,bloco-13
-exercicios-conjuntos,Exercicios Conjuntos,bloco-13,alta,bloco-13
-hoare,Hoare,bloco-10,alta,bloco-10
-introducao-zip,Introducao,bloco-12,media,bloco-12
-invariantes,Invariantes,bloco-11,alta,bloco-11
-terminacao,Terminacao,bloco-11,alta,bloco-11
-tiposindutivos,Tiposindutivos,bloco-04,alta,bloco-04
-exemplos-zip,Exemplos,bloco-12,alta,bloco-12
-exerciciosformalizacaoalgoritmosrecursao3,ExerciciosFormalizacaoAlgoritmosRecursao3,bloco-04,alta,bloco-04
-formalizacaoalgoritmos-recursao2,FormalizacaoAlgoritmos_Recursao2,bloco-04,alta,bloco-04
-exerciciosconjuntosindutivos,ExerciciosConjuntosIndutivos,bloco-04,alta,bloco-04
-conjuntosindutivos,ConjuntosIndutivos,bloco-04,alta,bloco-04
-exerciciosformalizacaoalgoritmosrecursao2,ExerciciosFormalizacaoAlgoritmosRecursao2,bloco-04,alta,bloco-04
-exerciciosformalizacaoalgoritmosrecursao-respostas,ExerciciosFormalizacaoAlgoritmosRecursao_respostas,bloco-04,alta,bloco-04
-formalizacaoalgoritmos-recursao,FormalizacaoAlgoritmos_Recursao,bloco-04,alta,bloco-04
-formalizacaoalgoritmos-recursao3,FormalizacaoAlgoritmos_Recursao3,bloco-04,alta,bloco-04
-exerciciosformalizacaoalgoritmosrecursao,ExerciciosFormalizacaoAlgoritmosRecursao,bloco-04,alta,bloco-04
-revisao-p1,revisao_p1,bloco-06,alta,bloco-07
-revisao-p1-gabarito,revisao_p1_gabarito,bloco-07,alta,bloco-07
-provas,provas,bloco-05,media,bloco-05
-arvores,arvores,bloco-06,media,bloco-06
-exemplos,exemplos,bloco-06,alta,bloco-06
-intro,intro,bloco-06,baixa,bloco-06
-listas,listas,bloco-06,alta,bloco-06
-exerciciosisabelle,ExerciciosIsabelle,bloco-06,alta,bloco-06
-exerciciosisabelle2,ExerciciosIsabelle2,bloco-06,alta,bloco-06
-provasindutivas-especificacoesrecursivas,ProvasIndutivas_EspecificaçõesRecursivas,bloco-05,alta,bloco-06
-provasindutivas-especificacoesrecursivas-arvores,ProvasIndutivas_EspecificaçõesRecursivas_Arvores,bloco-05,alta,bloco-06
-provasindutivas-especificacoesrecursivas-listas,ProvasIndutivas_EspecificaçõesRecursivas_Listas,bloco-05,alta,bloco-06
-exercicioscorrecaoinducaomatematica,ExerciciosCorrecaoInducaoMatematica,bloco-05,alta,bloco-05
-logicapredicados-semantica,logicaPredicados_semantica,bloco-03,alta,bloco-03
-logicapredicados-sintaxe,logicaPredicados_sintaxe,bloco-03,alta,bloco-03
-logicaproposicional-sintaxe,logicaProposicional_sintaxe,bloco-03,media,bloco-03
-revisao,revisao,bloco-02,baixa,bloco-03
-exerciciosespecificacao-respostas,ExerciciosEspecificacao_respostas,bloco-03,alta,bloco-03
-exerciciosespecificacao,ExerciciosEspecificacao,bloco-03,alta,bloco-03
-logicaproposicional-semantica,logicaProposicional_semantica,bloco-03,alta,bloco-03
-t1-2026-1,t1_2026_1,bloco-05,alta,bloco-05
-t1-2026-1-thy,T1 2026 1,bloco-05,baixa,bloco-05
-logicadehoare,LogicaDeHoare,bloco-10,baixa,bloco-10
-logicadehoare2,LogicaDeHoare2,bloco-10,alta,bloco-10
-correcaoterminacao,CorrecaoTerminacao,bloco-11,alta,bloco-11
-exercicioscorrecaoterminacao,ExerciciosCorrecaoTerminacao,bloco-11,media,bloco-11
-exerciciosformalizacaoalgoritmosinvariantes,ExerciciosFormalizacaoAlgoritmosInvariantes,bloco-11,alta,bloco-11
-formalizacaoalgoritmos-invarianteslaco,FormalizacaoAlgoritmos_InvariantesLaco,bloco-11,alta,bloco-11
-introducao,introducao,bloco-11,media,bloco-12
-exerciciosdafny1,ExerciciosDafny1,bloco-15,baixa,bloco-13
-exerciciosdafny2,ExerciciosDafny2,bloco-11,baixa,bloco-13
-exerciciosdafny3,ExerciciosDafny3,bloco-13,baixa,bloco-13
-exerciciosdafny4,ExerciciosDafny4,bloco-13,baixa,bloco-13
-exerciciosdafny5,ExerciciosDafny5,bloco-15,baixa,bloco-13
+verificacaomodelos,verificacaomodelos,bloco-16,alta,a6ac04f2-7611-4bef-b74a-54390cef4084
+exercicioslogicatemporal,ExerciciosLogicaTemporal,bloco-16,alta,a6ac04f2-7611-4bef-b74a-54390cef4084
+exerciciosnusmv,ExerciciosNusmv,bloco-16,media,a6ac04f2-7611-4bef-b74a-54390cef4084
+classes-parte1,Classes Parte1,bloco-16,media,95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0
+colecoes-arrays,Colecoes Arrays,bloco-13,alta,de7d1b70-fb58-4a18-ad49-d1a64c6c7684
+colecoes-conjuntos,Colecoes Conjuntos,bloco-13,alta,de7d1b70-fb58-4a18-ad49-d1a64c6c7684
+colecoes-sequences,Colecoes Sequences,bloco-13,alta,de7d1b70-fb58-4a18-ad49-d1a64c6c7684
+exercicios-conjuntos,Exercicios Conjuntos,bloco-13,alta,de7d1b70-fb58-4a18-ad49-d1a64c6c7684
+hoare,Hoare,bloco-10,alta,171a1a09-a72d-490d-b4d8-5843cfb301b4
+introducao-zip,Introducao,bloco-12,media,e3bc8a61-e729-4f25-9bc5-12b8a47151e3
+invariantes,Invariantes,bloco-11,alta,c9f5f7cf-3477-4531-be7a-f7b68727009c
+terminacao,Terminacao,bloco-11,alta,e3bc8a61-e729-4f25-9bc5-12b8a47151e3
+tiposindutivos,Tiposindutivos,bloco-04,alta,de7d1b70-fb58-4a18-ad49-d1a64c6c7684
+exemplos-zip,Exemplos,bloco-12,alta,a6ac04f2-7611-4bef-b74a-54390cef4084
+exerciciosformalizacaoalgoritmosrecursao3,ExerciciosFormalizacaoAlgoritmosRecursao3,bloco-04,alta,7ccdaf5e-76b8-48e5-82b5-05f80b3f054b
+formalizacaoalgoritmos-recursao2,FormalizacaoAlgoritmos_Recursao2,bloco-04,alta,7ccdaf5e-76b8-48e5-82b5-05f80b3f054b
+exerciciosconjuntosindutivos,ExerciciosConjuntosIndutivos,bloco-04,alta,7ccdaf5e-76b8-48e5-82b5-05f80b3f054b
+conjuntosindutivos,ConjuntosIndutivos,bloco-04,alta,7ccdaf5e-76b8-48e5-82b5-05f80b3f054b
+exerciciosformalizacaoalgoritmosrecursao2,ExerciciosFormalizacaoAlgoritmosRecursao2,bloco-04,alta,7ccdaf5e-76b8-48e5-82b5-05f80b3f054b
+exerciciosformalizacaoalgoritmosrecursao-respostas,ExerciciosFormalizacaoAlgoritmosRecursao_respostas,bloco-04,alta,7ccdaf5e-76b8-48e5-82b5-05f80b3f054b
+formalizacaoalgoritmos-recursao,FormalizacaoAlgoritmos_Recursao,bloco-04,alta,7ccdaf5e-76b8-48e5-82b5-05f80b3f054b
+formalizacaoalgoritmos-recursao3,FormalizacaoAlgoritmos_Recursao3,bloco-04,alta,7ccdaf5e-76b8-48e5-82b5-05f80b3f054b
+exerciciosformalizacaoalgoritmosrecursao,ExerciciosFormalizacaoAlgoritmosRecursao,bloco-04,alta,7ccdaf5e-76b8-48e5-82b5-05f80b3f054b
+revisao-p1,revisao_p1,bloco-06,alta,1dd6f143-d239-45bb-8a05-391ef8acbba1
+revisao-p1-gabarito,revisao_p1_gabarito,bloco-07,alta,1dd6f143-d239-45bb-8a05-391ef8acbba1
+provas,provas,bloco-05,media,7a5e29db-f228-4e96-bd4b-272d5b74e2ae
+arvores,arvores,bloco-06,media,5599d015-10e0-4f6e-ad17-c526b903dc09
+exemplos,exemplos,bloco-06,alta,5599d015-10e0-4f6e-ad17-c526b903dc09
+intro,intro,bloco-06,baixa,5599d015-10e0-4f6e-ad17-c526b903dc09
+listas,listas,bloco-06,alta,5599d015-10e0-4f6e-ad17-c526b903dc09
+exerciciosisabelle,ExerciciosIsabelle,bloco-06,alta,5599d015-10e0-4f6e-ad17-c526b903dc09
+exerciciosisabelle2,ExerciciosIsabelle2,bloco-06,alta,5599d015-10e0-4f6e-ad17-c526b903dc09
+provasindutivas-especificacoesrecursivas,ProvasIndutivas_EspecificaçõesRecursivas,bloco-05,alta,5599d015-10e0-4f6e-ad17-c526b903dc09
+provasindutivas-especificacoesrecursivas-arvores,ProvasIndutivas_EspecificaçõesRecursivas_Arvores,bloco-05,alta,5599d015-10e0-4f6e-ad17-c526b903dc09
+provasindutivas-especificacoesrecursivas-listas,ProvasIndutivas_EspecificaçõesRecursivas_Listas,bloco-05,alta,5599d015-10e0-4f6e-ad17-c526b903dc09
+exercicioscorrecaoinducaomatematica,ExerciciosCorrecaoInducaoMatematica,bloco-05,alta,7a5e29db-f228-4e96-bd4b-272d5b74e2ae
+logicapredicados-semantica,logicaPredicados_semantica,bloco-03,alta,2edd762f-2dc8-4437-90c7-c207b796434a
+logicapredicados-sintaxe,logicaPredicados_sintaxe,bloco-03,alta,2edd762f-2dc8-4437-90c7-c207b796434a
+logicaproposicional-sintaxe,logicaProposicional_sintaxe,bloco-03,media,2edd762f-2dc8-4437-90c7-c207b796434a
+revisao,revisao,bloco-02,baixa,2edd762f-2dc8-4437-90c7-c207b796434a
+exerciciosespecificacao-respostas,ExerciciosEspecificacao_respostas,bloco-03,alta,2edd762f-2dc8-4437-90c7-c207b796434a
+exerciciosespecificacao,ExerciciosEspecificacao,bloco-03,alta,2edd762f-2dc8-4437-90c7-c207b796434a
+logicaproposicional-semantica,logicaProposicional_semantica,bloco-03,alta,2edd762f-2dc8-4437-90c7-c207b796434a
+t1-2026-1,t1_2026_1,bloco-05,alta,7a5e29db-f228-4e96-bd4b-272d5b74e2ae
+t1-2026-1-thy,T1 2026 1,bloco-05,baixa,7a5e29db-f228-4e96-bd4b-272d5b74e2ae
+logicadehoare,LogicaDeHoare,bloco-10,baixa,171a1a09-a72d-490d-b4d8-5843cfb301b4
+logicadehoare2,LogicaDeHoare2,bloco-10,alta,171a1a09-a72d-490d-b4d8-5843cfb301b4
+correcaoterminacao,CorrecaoTerminacao,bloco-11,alta,c9f5f7cf-3477-4531-be7a-f7b68727009c
+exercicioscorrecaoterminacao,ExerciciosCorrecaoTerminacao,bloco-11,media,c9f5f7cf-3477-4531-be7a-f7b68727009c
+exerciciosformalizacaoalgoritmosinvariantes,ExerciciosFormalizacaoAlgoritmosInvariantes,bloco-11,alta,c9f5f7cf-3477-4531-be7a-f7b68727009c
+formalizacaoalgoritmos-invarianteslaco,FormalizacaoAlgoritmos_InvariantesLaco,bloco-11,alta,c9f5f7cf-3477-4531-be7a-f7b68727009c
+introducao,introducao,bloco-11,media,e3bc8a61-e729-4f25-9bc5-12b8a47151e3
+exerciciosdafny1,ExerciciosDafny1,bloco-15,baixa,de7d1b70-fb58-4a18-ad49-d1a64c6c7684
+exerciciosdafny2,ExerciciosDafny2,bloco-11,baixa,de7d1b70-fb58-4a18-ad49-d1a64c6c7684
+exerciciosdafny3,ExerciciosDafny3,bloco-13,baixa,de7d1b70-fb58-4a18-ad49-d1a64c6c7684
+exerciciosdafny4,ExerciciosDafny4,bloco-13,baixa,de7d1b70-fb58-4a18-ad49-d1a64c6c7684
+exerciciosdafny5,ExerciciosDafny5,bloco-15,baixa,de7d1b70-fb58-4a18-ad49-d1a64c6c7684

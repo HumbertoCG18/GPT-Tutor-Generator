@@ -1,4 +1,4 @@
-"""Harness read-only: roda o resolver novo (Fase 2.2) sobre os materiais de um
+﻿"""Harness read-only: roda o resolver novo (Fase 2.2) sobre os materiais de um
 repo gerado REAL e compara com a resposta do funil (computed_block_id ja no
 manifest). NAO escreve no repo, NAO chama API (so le code_curation.json).
 
@@ -78,6 +78,26 @@ def _funil_unit(entry: dict) -> str:
     )
 
 
+def _inject_block_uuids_from_ledger(blocks: List[dict], ledger: List[dict]) -> None:
+    """Injeta block_uuid nos blocos do timeline via ledger (display_id_last -> uuid).
+
+    Usado quando o .timeline_index.json ainda nao foi rebuilt com block_uuid
+    (ex: MF antes do proximo rebuild). Nao sobrescreve block_uuid ja presente.
+    """
+    by_display: Dict[str, str] = {
+        str(rec.get("display_id_last") or ""): str(rec.get("uuid") or "")
+        for rec in (ledger or [])
+        if rec.get("display_id_last") and rec.get("uuid")
+    }
+    for block in blocks:
+        if block.get("block_uuid"):
+            continue
+        display_id = str(block.get("id") or "")
+        uuid = by_display.get(display_id)
+        if uuid:
+            block["block_uuid"] = uuid
+
+
 def compare_repo(root: Path) -> Optional[dict]:
     manifest = _load_json(root / "manifest.json")
     if not manifest:
@@ -93,6 +113,15 @@ def compare_repo(root: Path) -> Optional[dict]:
     annotate_class_ordinals(blocks)
     lessons_index = load_lessons_index(root)
 
+    # Injeta block_uuid do ledger nos blocos que ainda nao o tem (pre-rebuild).
+    ledger_path = root / "course" / ".block_identity.json"
+    if ledger_path.exists():
+        try:
+            ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+            _inject_block_uuids_from_ledger(blocks, ledger if isinstance(ledger, list) else [])
+        except Exception:
+            pass
+
     entries = [e for e in (manifest.get("entries") or []) if _is_material(e)]
     rows: List[dict] = []
     for entry in entries:
@@ -100,9 +129,9 @@ def compare_repo(root: Path) -> Optional[dict]:
         funil_block = str(entry.get("computed_block_id") or "")
         if not funil_block:
             continue
-        # assemble_resolver_inputs (DRY): mesma lógica do helper de produção.
+        # assemble_resolver_inputs (DRY): mesma logica do helper de producao.
         # "resolver-COM-concepts-do-LLM vs funil-SEM" — ver caveat no docstring
-        # do módulo.
+        # do modulo.
         entry_for_resolver, signals, summary = assemble_resolver_inputs(root, entry, curation)
         assignment = resolve_material_assignment(
             entry_for_resolver,

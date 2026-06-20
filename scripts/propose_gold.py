@@ -1,4 +1,4 @@
-"""Draft de gabarito (true_block_id) para o gold file->bloco, com EVIDENCIA.
+﻿"""Draft de gabarito (true_block_id) para o gold file->bloco, com EVIDENCIA.
 
 NAO e gold final: e um pre-preenchimento por sinais OBJETIVOS/curados, para o
 humano VERIFICAR (evita rotular do zero). Confianca por linha:
@@ -57,7 +57,12 @@ def propose_rows(repo_root: Path) -> list[dict]:
     entries = manifest.get("entries") or []
     blocks = (_load(repo_root / "course" / ".timeline_index.json").get("blocks")) or []
     card_map = _load(repo_root / "course" / ".card_block_map.json")
+    # Indexa por id (bloco-NN) E por block_uuid para suportar computed_block_id em uuid.
     by_id = {str(b.get("id")): b for b in blocks}
+    for b in blocks:
+        uid = str(b.get("block_uuid") or "")
+        if uid:
+            by_id[uid] = b
 
     rows = []
     for e in entries:
@@ -105,7 +110,7 @@ def propose_rows(repo_root: Path) -> list[dict]:
             "posting_date": str(e.get("posting_date") or ""),
             "predicted_block_id": predicted,
             "proposed_true_block_id": proposed,
-            "block_aulas": ",".join(str(r) for r in _src_rows),   # # do cronograma cobertas pelo bloco
+            "block_aulas": ",".join(str(r) for r in _src_rows),
             "block_dates": str(blk.get("period_label") or ""),
             "block_topic": str(blk.get("topic_text") or blk.get("primary_topic_label") or ""),
             "confidence": conf,
