@@ -122,7 +122,10 @@ def apply_block_curation(blocks: Iterable[dict], course_dir: Path) -> int:
     for block in blocks or []:
         if not isinstance(block, dict):
             continue
-        override = curation.get(str(block.get("id") or ""))
+        override = (
+            curation.get(str(block.get("block_uuid") or ""))
+            or curation.get(str(block.get("id") or ""))
+        )
         if not override:
             continue
         hit = False
