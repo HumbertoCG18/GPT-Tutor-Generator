@@ -1353,6 +1353,7 @@ def _build_file_map_timeline_context_from_course(
     *,
     build_file_map_unit_index_from_course: Callable[[dict, object], list],
     build_file_map_content_taxonomy_from_course: Callable[[dict, object], dict],
+    persist: bool = True,
 ) -> dict:
     test_context = course_meta.get("_timeline_context") or course_meta.get("_timeline_context_for_tests")
     if test_context:
@@ -1405,7 +1406,8 @@ def _build_file_map_timeline_context_from_course(
                 _blocks_list, _ledger, has_existing_refs=_has_refs
             )
             timeline_index["blocks"] = _blocks_list
-            save_identity_ledger(_course_dir, _ledger)
+            if persist:
+                save_identity_ledger(_course_dir, _ledger)
         except BlockIdentityError:
             raise
         except OSError:
@@ -1443,7 +1445,7 @@ def _build_file_map_timeline_context_from_course(
         )
         if _mig_flags:
             logging.getLogger(__name__).warning("Task3 migration flags: %s", _mig_flags)
-        if _mf is not None and _upd_entries != _mf_entries:
+        if persist and _mf is not None and _upd_entries != _mf_entries:
             try:
                 _mf["entries"] = _upd_entries
                 _manifest_path.write_text(
@@ -1451,7 +1453,7 @@ def _build_file_map_timeline_context_from_course(
                 )
             except OSError:
                 pass
-        if _upd_cur_blocks != _cur_blocks:
+        if persist and _upd_cur_blocks != _cur_blocks:
             try:
                 _cur_raw["blocks"] = _upd_cur_blocks
                 _curation_file.write_text(
