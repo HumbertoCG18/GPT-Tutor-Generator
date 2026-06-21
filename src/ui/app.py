@@ -80,8 +80,8 @@ def _format_backlog_title(entry_data: Dict[str, object]) -> str:
     return title
 
 
-def _build_options_from_config(default_mode: str, default_ocr_language: str, config_obj) -> Dict[str, object]:
-    return {
+def _build_options_from_config(default_mode: str, default_ocr_language: str, config_obj, subject=None) -> Dict[str, object]:
+    opts = {
         "default_processing_mode": default_mode,
         "default_ocr_language": default_ocr_language,
         "image_format": config_obj.get("image_format"),
@@ -96,6 +96,11 @@ def _build_options_from_config(default_mode: str, default_ocr_language: str, con
         "profile_backends": derive_profile_backends(config_obj),
         "skip_base_backends": config_obj.get("skip_base_backends", False),
     }
+    # Surface durável de feature flags por matéria: injeta o que ESTÁ em
+    # feature_flags (genérico). Ausente/{} → nada adicionado → byte-idêntico.
+    for key, value in (getattr(subject, "feature_flags", None) or {}).items():
+        opts[str(key)] = value
+    return opts
 
 
 class _UILogHandler(logging.Handler):
@@ -1834,10 +1839,13 @@ class App(tk.Tk):
 
     def _build_options(self) -> Dict[str, object]:
         """Monta o dict de opções para o RepoBuilder."""
+        name = self._var_active_subject.get()
+        subject = self.subject_store.get(name) if name and name != "(nenhuma)" else None
         return _build_options_from_config(
             self.var_default_mode.get(),
             self.var_default_ocr_language.get(),
             self.config_obj,
+            subject=subject,
         )
 
     def _repo_dir(self) -> Optional[Path]:
