@@ -495,14 +495,33 @@ def resolve_entry_manual_unit_slug(
     return normalized if normalized in valid_slugs else ""
 
 
+def _block_by_migrated_ref(raw: str, blocks: list) -> Optional[Dict[str, object]]:
+    """Casa uma ref de chave migrada (Fase 1) ao bloco: uuid-first, fallback bloco-NN.
+
+    Helper ÚNICO da classe "leitor de verdade-humana migrada": a Fase 1 migrou as
+    chaves (manual_timeline_block_id etc.) pra block_uuid, mas leitores que casavam
+    só block.id (bloco-NN) deixavam o uuid sem casar → verdade-humana invisível.
+    """
+    raw = str(raw or "").strip()
+    if not raw:
+        return None
+    for block in blocks:
+        if str(block.get("block_uuid") or "").strip() == raw:
+            return block
+    for block in blocks:
+        if str(block.get("id", "")).strip() == raw:
+            return block
+    return None
+
+
 def resolve_entry_manual_timeline_block(entry: dict, timeline_context: dict) -> Optional[Dict[str, object]]:
     raw = str(entry.get("manual_timeline_block_id") or "").strip()
     if not raw:
         return None
     blocks = list(((timeline_context or {}).get("timeline_index") or {}).get("blocks", []) or [])
-    for block in blocks:
-        if str(block.get("id", "")).strip() == raw:
-            return block
+    hit = _block_by_migrated_ref(raw, blocks)
+    if hit is not None:
+        return hit
     match = re.fullmatch(r"bloco-(\d+)", raw, flags=re.IGNORECASE)
     if match:
         ordinal = int(match.group(1))
