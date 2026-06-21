@@ -22,9 +22,13 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   > sub-nota DERIVADO-STALE: TODOS os números embutidos são pré-reprocess (gold_templates +
   > evals de 17–18/06): card-counts MF6/IA9/SO5/ES2 3/TCC13, "MF mede 5/5", e qualquer placar
   > tipo "~41% funil MF / resolver 12/17". Não verificados pós-reprocess.
-- [USER] **4 IA manual-pins suspeitos** — `caracteristicasdosdados`/`caracteristicas-dos-dados`
-  (conteúdo=DADOS, talvez bloco-05 ≠ Semana 2) + `introducao-a-ml`/`introducaoml-2025`. Conferir antes de pinar.
-  > **STALE — não verificado pós-reprocess (origem: investigação 20/06).**
+- [USER] **IA placements gold-relevant** — `verificado as-of reprocess IA 7561f5c`:
+  - **4 weak unpinned** (section Semana 2, hoje em bloco-04 dados 11–16/03):
+    - `caracteristicasdosdados`/`caracteristicas-dos-dados` → bloco-04 **parecem certas** (content=DADOS bate "tipos dados/preparação").
+    - `introducao-a-ml`/`introducaoml-atualizacao2025` → bloco-04, mas **DESLOCAMENTO candidato**: intro-ML real = **bloco-03** (09/03 "ml introducao a ml", hoje VAZIO). ABERTO p/ o gold.
+  - **5 PINS preservados** (manual≠vazio): `oracle`/`ia-responsável`→bloco-01 (refs), `p1-2024-02`→bloco-08 (provas),
+    `artigo-usando-k-nn`→bloco-05 (k-NN supervis = ok), **`artigo-usando-agrupamento`→bloco-05 SUSPEITO**
+    (agrupamento=clustering=**bloco-06**, não supervis-05). Verificar no gold.
 - [USER] **8 SO DIFFERS** (data-postagem vs data-aula) + **1 SO NO_MATCH** (02/05 cai no gap entre blocos).
   > **STALE — não verificado pós-reprocess (origem: investigação 20/06).**
 - ~~TCC sem CRONOGRAMA~~ **CORRIGIDO (21/06): claim era STALE (pré-reprocess).** TCC TEM cronograma
@@ -70,13 +74,11 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 
 ## DECISION
 
-- [DECISION] **bloco-15 over-merge (IA)** — dijkstra + hc-sa caem em bloco-15 pela Semana 14, minimax pela 15.
-  Over-merge ou correto? (cura de timeline separada).
-  > **STALE — não verificado pós-reprocess (origem: stageA 21/06, canary em manifest pré-reprocess).**
-  > Relance não conta; re-confirmar contra timeline_index vivo na Fase 1.
-- [DECISION] **5 IA topic-mismatch Semana 12** ("Algoritmos de Busca" seção vs sessão "Correção P1 + Agentes")
-  = discrepância Moodle×SARC → cura de timeline separada (não inflar anchor).
-  > **STALE — não verificado pós-reprocess (origem: investigação 20/06).**
+- [DECISION] **bloco-15 over-merge (IA)** — bloco-15 = 01–08/06; merge **Semana 14** (dijkstra/hc-sa, sess 01,03/06)
+  + **Semana 15** (minimax/listas, sess 08/06). **still-valid, verificado as-of reprocess IA 7561f5c.** Cura de timeline separada.
+- [DECISION] **5 IA busca — bloco-12 vs bloco-13** — section "Semana 12 - Algoritmos de Busca", caem em **bloco-12**
+  (Correção P1+Agentes, 18–20/05). MAS **bloco-13** (25/05, "Algoritmos busca") = candidato topic-match → **um bloco fora**.
+  Mismatch Moodle×SARC persiste. **still-valid, verificado as-of 7561f5c.** Gold-relevant.
 - [DECISION] **A1 (lessons no fusor)** — chamar brainstorming antes de spec.
 
 ## CROSS-CUTTING
