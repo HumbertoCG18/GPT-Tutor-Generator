@@ -25,6 +25,14 @@ A desktop tool (Python/tkinter) that converts academic PDFs into structured GitH
 - Before calling any `mcp__code-review-graph__*` or `mcp__token-savior__*` tool, use `ToolSearch select:<name>` to load the schema first. Calling without loading fails with `InputValidationError`.
 - Gemini integration uses `google-genai` (NOT `google-generativeai`). Imports via `from google import genai` and must stay lazy inside method bodies — never at module top level. Anti-patterns to grep: `google.generativeai`, `genai.GenerativeModel`.
 - The generated repo's code_curation.json is a generated artifact (not source). Treat it like manifest cache: prune stale entries before reads, write atomically.
+- **Arquivamento de concluídos (NÃO-NEGOCIÁVEL):** quando um plano termina de executar e passa 100%
+  (gate verde — golden/eval/pytest verdes, sem drift), MOVER seu `.md` (plano + spec + report associados)
+  para a subpasta `Feitos/` do diretório de origem: `docs/superpowers/plans/Feitos/`,
+  `docs/superpowers/specs/Feitos/`, `docs/reports/Feitos/`, `.git/sdd/Feitos/`. Usar `git mv` quando
+  trackeado (preserva histórico). A RAIZ desses diretórios só contém trabalho em andamento ou a-fazer.
+- **Tracker de pendências (NÃO-NEGOCIÁVEL):** manter `docs/reports/2026-06-21-pendencias.md` SEMPRE
+  atualizado: ao concluir um item, removê-lo da lista viva e registrá-lo na seção "Concluído"; ao
+  descobrir nova pendência, adicioná-la com tag [USER|CODE|DECISION].
 
 ## Commands
 
