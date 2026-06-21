@@ -7,17 +7,26 @@ status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negoci�
 Legenda: **[USER]** = ação humana (rotular/decidir/rodar). **[CODE]** = implementável.
 **[DECISION]** = decisão de produto antes de codar.
 
+CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos repos) carrega
+`as-of <data/commit>`. Sem isso, volta a mentir na próxima mudança de estado. Itens DURÁVEIS
+(goal/decisão/plano) não carimbam.
+
 ---
 
 ## USER-SIDE — destravam a cadeia de medição/cutover
 
-- [USER] **Gold cross-curso** — rotular `tests/fixtures/eval/ground_truth_<curso>.csv` IA/SO/ES2/TCC
+- [USER] **Gold cross-curso** (DURÁVEL/intent) — rotular `tests/fixtures/eval/ground_truth_<curso>.csv` IA/SO/ES2/TCC
   (MF já mede via eval_assignments 5/5). Planilhas em `docs/reports/gold_templates/gold_by_card_<curso>.csv`
   (MF 6 cards · IA 9 · SO 5 · ES2 3 · TCC 13 + avulsos). **Bloqueia: cutover Fase 3.4, lever lessons[].text,
   resolvers SO/MF, avaliação do anchor.** ← MAIOR GARGALO.
+  > sub-nota DERIVADO-STALE: TODOS os números embutidos são pré-reprocess (gold_templates +
+  > evals de 17–18/06): card-counts MF6/IA9/SO5/ES2 3/TCC13, "MF mede 5/5", e qualquer placar
+  > tipo "~41% funil MF / resolver 12/17". Não verificados pós-reprocess.
 - [USER] **4 IA manual-pins suspeitos** — `caracteristicasdosdados`/`caracteristicas-dos-dados`
   (conteúdo=DADOS, talvez bloco-05 ≠ Semana 2) + `introducao-a-ml`/`introducaoml-2025`. Conferir antes de pinar.
+  > **STALE — não verificado pós-reprocess (origem: investigação 20/06).**
 - [USER] **8 SO DIFFERS** (data-postagem vs data-aula) + **1 SO NO_MATCH** (02/05 cai no gap entre blocos).
+  > **STALE — não verificado pós-reprocess (origem: investigação 20/06).**
 - ~~TCC sem CRONOGRAMA~~ **CORRIGIDO (21/06): claim era STALE (pré-reprocess).** TCC TEM cronograma
   completo pós-reprocess (31 blocos datados, SARC setado, 39/40 entries com "Semana N"). É
   week-anchorable igual IA/ES2. NÃO é blocker.
@@ -47,9 +56,12 @@ Legenda: **[USER]** = ação humana (rotular/decidir/rodar). **[CODE]** = implem
 ## CODE — bugs pré-existentes localizados
 
 - [CODE] `SubjectManagerDialog._save` (dialogs.py:1503-1525) **dropa `moodle_course_id`/`m365_filter`** ao salvar.
+  > derived-código, não-reprocess-stale, as-of 18/06 (S0). Baixa urgência; carrega proveniência.
 - [CODE] `migrate_signals` standalone **não grava `turma`** (só `import_moodle_courses` grava) — derivar do curso.
+  > derived-código, não-reprocess-stale, as-of 18/06 (S0).
 - [CODE] **Latente:** sem teaching_plan, `_derive_unit_specs_from_repo` vs `content_taxonomy["units"]=[]` divergem
   → fallback vira load-bearing. Remover ou dar mesmo fallback à taxonomy.
+  > derived-código, não-reprocess-stale, as-of 17/06.
 
 ## CODE — UI (Parte B de features backend já entregues)
 
@@ -60,8 +72,11 @@ Legenda: **[USER]** = ação humana (rotular/decidir/rodar). **[CODE]** = implem
 
 - [DECISION] **bloco-15 over-merge (IA)** — dijkstra + hc-sa caem em bloco-15 pela Semana 14, minimax pela 15.
   Over-merge ou correto? (cura de timeline separada).
+  > **STALE — não verificado pós-reprocess (origem: stageA 21/06, canary em manifest pré-reprocess).**
+  > Relance não conta; re-confirmar contra timeline_index vivo na Fase 1.
 - [DECISION] **5 IA topic-mismatch Semana 12** ("Algoritmos de Busca" seção vs sessão "Correção P1 + Agentes")
   = discrepância Moodle×SARC → cura de timeline separada (não inflar anchor).
+  > **STALE — não verificado pós-reprocess (origem: investigação 20/06).**
 - [DECISION] **A1 (lessons no fusor)** — chamar brainstorming antes de spec.
 
 ## CROSS-CUTTING
@@ -70,6 +85,8 @@ Legenda: **[USER]** = ação humana (rotular/decidir/rodar). **[CODE]** = implem
   Merge/PR = decisão do user.
 - [CODE] **`.timeline_index.json` stale** (drift pré-existente ES2 7/IA 20/SO 13) — o reprocess desta sessão
   regravou os índices dos 5; RE-MEDIR rebuild_diff baseline pra confirmar se está resolvido.
+  > **STALE — não verificado pós-reprocess (origem: 17/06; reprocess 21/06 regravou índices →
+  > provavelmente já resolvido, RE-MEDIR).**
 
 ---
 
