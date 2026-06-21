@@ -280,12 +280,23 @@ Read this file before starting any task.
 - Gate de persistencia do timeline: `_build_file_map_timeline_context_from_course(...,
   persist=False)` e a facade do engine nao escrevem ledger/manifest/curation em dry-run;
   se houver refs UUID e ledger ausente, falha claramente para evitar orfandade.
-- Anchor placement (`src/builder/routing/anchor_placement.py`) existe como camada temporal
-  aditiva atras da flag duravel `use_anchor_placement`: manual vence, semana-validada por
-  `source_section` pode escrever `temporal_block_id`/`temporal_block_method`, scorer e KB
-  permanecem intocados quando a flag esta OFF.
+- Anchor placement (`src/builder/routing/anchor_placement.py`) WIRED como camada temporal
+  aditiva atras da flag duravel `use_anchor_placement`: producer `apply_anchor_placement`
+  ANCHOR-ONLY escreve `temporal_block_id`/`temporal_block_method` (so method=anchor; manual/
+  scorer caem no fallback), gated em `regenerate_pedagogical_files`. Leitura via helper unico
+  `resolve_temporal_block` (temporal vence; fallback `resolve_effective_block` honra manual)
+  nos 6 consumidores temporais (timeline_dashboard:225, dialogs:4220, navigation Periodo,
+  repo cronograma_detalhado:926, cronograma_health._entry_block_id). `computed_block_id` e
+  `resolve_effective_block` (KB) NUNCA tocados. `year` deterministico via
+  `_course_year_from_blocks` (ano modal das sessoes).
 - `SubjectProfile.feature_flags` persiste flags por materia e `_build_options_from_config`
   injeta somente as flags presentes; `use_anchor_placement` nao liga `use_concept_resolver`.
+- Leitor de verdade-humana migrada uuid-safe (WO2): `resolve_entry_manual_timeline_block`
+  agora casa `block_uuid` via helper unico `_block_by_migrated_ref` (uuid-first + fallback
+  bloco-NN), antes so casava `block.id` -> pins migrados pra uuid (Fase 1) viravam invisiveis
+  (periodo em branco). Auditoria da classe: gold/evals (Task 4) + `apply_block_curation`
+  (Task 3) + slugs de unidade ja eram uuid-safe. 23 pins humanos recuperados nos 5 cursos
+  (ES2 1/IA 5/MF 9/SO 4/TCC 4).
 
 ### Not Declared In Brief
 
@@ -299,7 +310,15 @@ Read this file before starting any task.
 - Foco atual: refactor do cronograma sessao-atomo em DEGRAUS, atribuicao por DATA
   (membership) eval-gated. Degrau 1 (render dia-a-dia + fix de normalizacao) FEITO; degrau
   3a (lesson_term capado no resolver) FEITO. Branch atual estabiliza `block_uuid`, migracoes
-  UUID, gate `persist=False` e canario de anchor placement por `source_section`.
+  UUID, gate `persist=False`, anchor placement WIRED por `source_section`, surface durable
+  `feature_flags` e fix WO2 (leitor manual uuid-safe).
+- REPROCESS dos 5 cursos FEITO (user-side, GUI): `computed_block_id` migrado bloco-NN->uuid
+  em todos; IA com `use_anchor_placement=true` (33 `temporal_block_id`, exatamente 2 movers
+  Semana 9 agrupamento bloco-07->bloco-06); outros 4 sem temporal (isolamento da flag). Gate
+  pos-reprocess do IA: A=46 migracao display-fiel, B=4 pins via read-path, C=0 unit, D=33
+  temporal/2 movers, HARD-drift=0 (soft churn band/method/diagnosticos = recomputo do scorer).
+  23/23 pins humanos resolvem cross-repo. Manifests reprocessados nos 5 repos-tutor: commit
+  pendente decisao user (working tree dos tutores).
 - Resolver por conceito permanece atras de flag ate cutover com gold suficiente; anchor
   placement tambem fica atras de `use_anchor_placement` e escreve campo temporal aditivo
   sem tocar `computed_block_id`.
