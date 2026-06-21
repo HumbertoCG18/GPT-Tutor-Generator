@@ -29,8 +29,10 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   - **5 PINS preservados** (manual≠vazio): `oracle`/`ia-responsável`→bloco-01 (refs), `p1-2024-02`→bloco-08 (provas),
     `artigo-usando-k-nn`→bloco-05 (k-NN supervis = ok), **`artigo-usando-agrupamento`→bloco-05 SUSPEITO**
     (agrupamento=clustering=**bloco-06**, não supervis-05). Verificar no gold.
-- [USER] **8 SO DIFFERS** (data-postagem vs data-aula) + **1 SO NO_MATCH** (02/05 cai no gap entre blocos).
-  > **STALE — não verificado pós-reprocess (origem: investigação 20/06).**
+- [USER] **9 SO date-vs-block** (8 DIFFERS + 1 NO_MATCH) — **still-valid, verificado as-of reprocess SO 320712d.**
+  Os 9 ainda divergem (bloco-da-data ≠ bloco-vivo). CONFIRMA "data-prefix = POSTAGEM, não aula": 3 arquivos com
+  prefixo **02/06** caem em **blocos diferentes** (05/03/11). → pro gold SO, confiar em **tópico/seção**, NÃO na
+  data do filename. Decisão humana por entry.
 - ~~TCC sem CRONOGRAMA~~ **CORRIGIDO (21/06): claim era STALE (pré-reprocess).** TCC TEM cronograma
   completo pós-reprocess (31 blocos datados, SARC setado, 39/40 entries com "Semana N"). É
   week-anchorable igual IA/ES2. NÃO é blocker.
@@ -85,10 +87,9 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 
 - [DECISION] **Branch `feat/block-stable-id` NÃO mergeada** — carrega Fase 1 + Fase 2 + campanha anchor/WO2/reprocess.
   Merge/PR = decisão do user.
-- [CODE] **`.timeline_index.json` stale** (drift pré-existente ES2 7/IA 20/SO 13) — o reprocess desta sessão
-  regravou os índices dos 5; RE-MEDIR rebuild_diff baseline pra confirmar se está resolvido.
-  > **STALE — não verificado pós-reprocess (origem: 17/06; reprocess 21/06 regravou índices →
-  > provavelmente já resolvido, RE-MEDIR).**
+- ~~`.timeline_index.json` stale (ES2 7/IA20/SO13)~~ **RESOLVED-BY-REPROCESS, verificado as-of 21/06:**
+  o reprocess regravou os 5 índices; rebuild_diff vivo = **ES2 0/IA1/MF1/SO0/TCC0** (= baseline pré-existente,
+  NÃO o drift 7/20/13). O drift de índice stale sumiu.
 
 ---
 
