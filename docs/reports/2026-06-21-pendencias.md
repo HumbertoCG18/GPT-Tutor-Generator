@@ -18,7 +18,9 @@ Legenda: **[USER]** = ação humana (rotular/decidir/rodar). **[CODE]** = implem
 - [USER] **4 IA manual-pins suspeitos** — `caracteristicasdosdados`/`caracteristicas-dos-dados`
   (conteúdo=DADOS, talvez bloco-05 ≠ Semana 2) + `introducao-a-ml`/`introducaoml-2025`. Conferir antes de pinar.
 - [USER] **8 SO DIFFERS** (data-postagem vs data-aula) + **1 SO NO_MATCH** (02/05 cai no gap entre blocos).
-- [USER] **TCC sem CRONOGRAMA** — pré-requisito; 15 entries manual não-verificáveis sem ele.
+- ~~TCC sem CRONOGRAMA~~ **CORRIGIDO (21/06): claim era STALE (pré-reprocess).** TCC TEM cronograma
+  completo pós-reprocess (31 blocos datados, SARC setado, 39/40 entries com "Semana N"). É
+  week-anchorable igual IA/ES2. NÃO é blocker.
 
 ## CODE — cadeia de atribuição (degrau 3 / Fase 3)
 
