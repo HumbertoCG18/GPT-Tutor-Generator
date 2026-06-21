@@ -373,6 +373,16 @@ def regenerate_pedagogical_files(
             builder.root_dir,
         )
 
+    # Camada de placement por âncora (TEMPORAL-only, aditiva). Escreve
+    # temporal_block_id sem tocar computed_block_id (KB). Import function-local
+    # sob o gate: módulo não carrega com a flag OFF (padrão do use_concept_resolver).
+    if bool(builder.options.get("use_anchor_placement", False)):
+        from src.builder.routing.anchor_placement import apply_anchor_placement
+        live_manifest_entries = apply_anchor_placement(
+            live_manifest_entries,
+            enriched_timeline_index.get("blocks") or [],
+        )
+
     manifest["entries"] = live_manifest_entries
 
     try:

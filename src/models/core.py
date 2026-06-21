@@ -100,6 +100,13 @@ class FileEntry:
     # (acima), que é a confiança do routing determinístico.
     computed_block_method: str = ""
     computed_block_match_confidence: float = 0.0
+    # Bloco TEMPORAL (cronograma) resolvido pela camada de âncora, ADITIVO e
+    # disjunto de computed_block_id (KB). Escrito SÓ com flag use_anchor_placement
+    # e method anchor/manual; "" (omitido do to_dict) quando scorer ou flag OFF
+    # -> resolve_temporal_block cai no fallback resolve_effective_block. NUNCA
+    # alimenta file->card/unit (não re-conflaciona temporal vs KB).
+    temporal_block_id: str = ""
+    temporal_block_method: str = ""
     # Card/seção de origem do arquivo (= subpasta imediata no stash). Sinal
     # autoritativo para a atribuição file->bloco (gabarito-cards). "" quando o
     # arquivo nao veio de um card (cai no caminho lexical, sem regressao).

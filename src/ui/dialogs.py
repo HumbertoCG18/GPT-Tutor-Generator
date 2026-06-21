@@ -4216,8 +4216,11 @@ def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path])
     # renderizado e sem re-score local (o scorer paralelo morreu).
     manual_slug = str(entry_data.get("manual_unit_slug") or "").strip()
     manual_block_id = str(entry_data.get("manual_timeline_block_id") or "").strip()
+    # TEMPORAL: âncora (temporal_block_id) entre manual e computed; ausente com
+    # flag OFF -> precedência idêntica à de antes (manual > computed).
+    temporal_block_id = str(entry_data.get("temporal_block_id") or "").strip()
     computed_block_id = str(entry_data.get("computed_block_id") or "").strip()
-    block_id = manual_block_id or computed_block_id
+    block_id = manual_block_id or temporal_block_id or computed_block_id
 
     if not block_id:
         note = "A entry ainda não tem bloco do cronograma atribuído no manifest."

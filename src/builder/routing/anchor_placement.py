@@ -317,6 +317,67 @@ def resolve_placement(
 
 
 # ---------------------------------------------------------------------------
+# Produtor de produção — escreve temporal_block_id (aditivo, flag-gated)
+# ---------------------------------------------------------------------------
+
+def _course_year_from_blocks(blocks: List[dict]) -> int:
+    """Ano civil determinístico = ano MODAL das datas de sessão dos blocos.
+
+    Não é chute: lê blocks[].sessions[].date (ISO). Sem datas → 0 (degrada
+    seguro: _parse_date_ddmm falha → âncora falha → scorer). Limitação para
+    cursos que cruzam ano (ago→jan): o ano modal pode errar uma janela de
+    janeiro por 1 ano → sem sessão na janela → âncora falha → scorer (não
+    corrompe). Generalização robusta = year-resolution por-janela (follow-up).
+    """
+    from collections import Counter
+    c: Counter = Counter()
+    for b in blocks or []:
+        for s in b.get("sessions") or []:
+            raw = str(s.get("date") or "")
+            if len(raw) >= 4 and raw[:4].isdigit():
+                c[int(raw[:4])] += 1
+    if not c:
+        return 0
+    return c.most_common(1)[0][0]
+
+
+def apply_anchor_placement(
+    entries: list,
+    blocks: List[dict],
+    *,
+    enabled: bool = True,
+    scorer_resolver: Optional[Callable[[dict, List[dict]], str]] = None,
+) -> list:
+    """Escreve `temporal_block_id`/`temporal_block_method` nas entries (in place).
+
+    ADITIVO: NUNCA toca computed_block_id nem manual_timeline_block_id. Grava
+    temporal SÓ para method == "anchor" (ANCHOR-ONLY). method manual e scorer
+    NÃO gravam nada: o leitor cai no fallback resolve_effective_block, que já
+    honra manual > computed inalterado.
+
+    Por que anchor-only (e não anchor+manual): gravar temporal p/ manual
+    re-roteia em volta do resolve_effective_block e, onde este retorna vazio por
+    um bug latente (manual_timeline_block_id uuid migrado na Fase 1 que o leitor
+    não casa), surfaciaria 4 entries IA — mudança fora de escopo que quebra a
+    promessa "manual NO-DIFF". Manual fica intocado aqui; o bug do leitor é fase
+    própria.
+
+    `enabled=False` (flag OFF / outros 4 repos) retorna as entries SEM chamar
+    resolve_placement — isolamento total.
+    """
+    if not enabled:
+        return entries
+    year = _course_year_from_blocks(blocks)
+    resolver = scorer_resolver or (lambda e, b: str(e.get("computed_block_id") or ""))
+    for entry in entries:
+        result = resolve_placement(entry, blocks, scorer_resolver=resolver, year=year)
+        if result.method == "anchor":
+            entry["temporal_block_id"] = result.block_uuid
+            entry["temporal_block_method"] = result.method
+    return entries
+
+
+# ---------------------------------------------------------------------------
 # Canário IA — computação em memória (persist=False)
 # ---------------------------------------------------------------------------
 

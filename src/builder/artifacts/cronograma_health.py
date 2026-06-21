@@ -30,10 +30,13 @@ def _entry_block_id(entry: dict, blocks: list | None = None) -> str:
 
     Lazy-import: cronograma_health é importado por caminhos do builder que
     file_map também toca; o import tardio evita ciclo (padrão das fases 1-3).
+    TEMPORAL: via resolve_temporal_block (âncora>manual>computed); flag OFF cai
+    no resolve_effective_block (byte-idêntico). _entry_block_source abaixo fica
+    no resolve_effective_block (manual-ness, ortogonal à âncora).
     """
-    from src.builder.routing.file_map import resolve_effective_block
+    from src.builder.routing.file_map import resolve_temporal_block
 
-    return resolve_effective_block(entry, blocks).block_id
+    return resolve_temporal_block(entry, blocks)
 
 
 def _entry_block_source(entry: dict, blocks: list | None = None) -> str:

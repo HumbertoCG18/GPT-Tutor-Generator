@@ -595,6 +595,28 @@ def resolve_effective_block(
     return EffectiveBlock("", "")
 
 
+def resolve_temporal_block(
+    entry: dict,
+    blocks: Optional[List[Dict[str, object]]] = None,
+) -> str:
+    """Bloco TEMPORAL (cronograma) efetivo do material.
+
+    Precedência: `temporal_block_id` (âncora cronograma-validada, escrito só com
+    a flag use_anchor_placement) sobrepõe; ausente → cai na FONTE ÚNICA
+    compartilhada `resolve_effective_block` (manual > computed). Com a flag OFF
+    o campo nunca existe → este helper é byte-idêntico ao resolve_effective_block
+    de hoje. Disjunto de KB: NÃO chama reconcile_unit_with_block.
+
+    O fallback é `resolve_effective_block` (NÃO computed_block_id cru) de
+    propósito: os consumidores temporais honram manual_timeline_block_id stale-safe
+    via essa fonte; trocar pelo computed cru perderia o manual com a flag OFF.
+    """
+    temporal = str(entry.get("temporal_block_id") or "").strip()
+    if temporal:
+        return temporal
+    return resolve_effective_block(entry, blocks).block_id
+
+
 def reconcile_unit_with_block(
     *,
     computed_unit_slug: str,

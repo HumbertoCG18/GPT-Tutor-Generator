@@ -13,7 +13,7 @@ from pathlib import Path
 from tkinter import messagebox, ttk
 from typing import Callable, Optional
 
-from src.builder.routing.file_map import resolve_effective_block
+from src.builder.routing.file_map import resolve_effective_block, resolve_temporal_block
 from src.builder.timeline.classifier import classify_block
 from src.builder.timeline.curation import apply_block_curation, set_block_override
 from src.builder.timeline.kinds import KIND_DISPLAY, BlockKind
@@ -222,7 +222,7 @@ def load_timeline_data(
     # FONTE ÚNICA da precedência manual>auto (spec Fase 4): a mesma função que
     # cronograma_health usa, eliminando o leitor divergente que vivia aqui.
     for entry in entries:
-        assigned_id = resolve_effective_block(entry, blocks).block_id
+        assigned_id = resolve_temporal_block(entry, blocks)
         if assigned_id and assigned_id in block_ids:
             entries_by_block_id[assigned_id].append(entry)
         else:

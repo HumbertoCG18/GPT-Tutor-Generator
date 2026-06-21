@@ -12,7 +12,7 @@ from src.builder.artifacts.build_metrics import (
     collect_build_metrics,
     render_build_metrics_md,
 )
-from src.builder.routing.file_map import resolve_effective_block
+from src.builder.routing.file_map import resolve_effective_block, resolve_temporal_block
 
 
 def student_state_md(
@@ -923,7 +923,8 @@ def cronograma_detalhado_md(
         if e.category not in ("codigo-professor", "codigo-aluno", "codigo-trabalho-aluno"):
             continue
         s = (curation_entries.get(e.id()) or {}).get("summary") or {}
-        primary = resolve_effective_block(e.to_dict(), timeline_blocks).block_id
+        # TEMPORAL (CRONOGRAMA_DETALHADO): bloco efetivo via âncora>manual>computed.
+        primary = resolve_temporal_block(e.to_dict(), timeline_blocks)
         if primary:
             primary_idx.setdefault(primary, []).append((e, s))
         for sb in (s.get("secondary_block_ids") or []):

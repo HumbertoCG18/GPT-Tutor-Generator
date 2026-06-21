@@ -648,6 +648,12 @@ def render_low_token_file_map_md(
         if not skip_timeline:
             if manual_timeline_block:
                 period = str(manual_timeline_block.get("period_label", "") or "").strip()
+            # TEMPORAL: âncora entre manual e computed; ausente com flag OFF ->
+            # cai no computed (coluna idêntica à de antes).
+            if not period:
+                _temporal_block_id = str(entry.get("temporal_block_id") or "").strip()
+                if _temporal_block_id:
+                    period = period_label_by_block_id.get(_temporal_block_id, "")
             if not period:
                 _computed_block_id = str(entry.get("computed_block_id") or "").strip()
                 if _computed_block_id:
