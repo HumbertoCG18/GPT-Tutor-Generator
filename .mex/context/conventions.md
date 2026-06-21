@@ -13,7 +13,7 @@ edges:
     condition: when deciding where new logic should live
   - target: context/decisions.md
     condition: when a convention comes from an architectural decision
-last_updated: 2026-06-18
+last_updated: 2026-06-21
 ---
 
 # Conventions
@@ -25,10 +25,10 @@ Tracked repository layout:
 | Path | Role |
 |---|---|
 | `app.py` | Main application entry point. |
-| `src/` | Application source, 108 tracked files. |
-| `tests/` | Test suite, 122 files. |
-| `docs/` | Project documentation, 125 files. |
-| `scripts/` | Eval/diff harnesses and dev scripts, 28 files. |
+| `src/` | Application source, 110 tracked files. |
+| `tests/` | Test suite, 136 files. |
+| `docs/` | Project documentation, 147 files. |
+| `scripts/` | Eval/diff harnesses and dev scripts, 29 files. |
 | `plans/` | Planning notes, 6 files. |
 | `.github/` | GitHub metadata, 2 files. |
 | `schemas/` | Data/model schemas, 1 file. |
@@ -46,6 +46,8 @@ Observed from the brief:
 | Tag catalog tests | `tests/test_tag_catalog.py` |
 | Moodle/SARC signal tests | Examples include `tests/test_moodle.py`, `tests/test_moodle_labels.py`, `tests/test_migrate_signals.py`, and `tests/test_posting_date_probe.py` |
 | Concept resolver tests | Examples include `tests/test_concept_resolver.py`, `tests/test_resolver_fusion.py`, and `tests/test_resolver_wiring.py` |
+| Stable block/anchor tests | Examples include `tests/test_block_identity.py`, `tests/test_anchor_placement.py`, `tests/test_temporal_block_wire.py`, and `tests/test_persist_gate.py` |
+| Stash/card import tests | Examples include `tests/test_stash_import.py` and `tests/test_stash_backfill.py` |
 
 Use existing topic names when adding tests. Do not introduce a new naming scheme without a specific reason.
 
@@ -63,7 +65,10 @@ The README flow establishes these project patterns:
 - Reference/bibliography entries can become tutor context through BIBLIOGRAPHY and COURSE_MAP support lines.
 - Timeline/unit/tag metadata is regenerated into manifest `auto_tags` and internal course dotfiles.
 - Moodle/SARC-derived signals remain separate metadata fields (`source_section`, `moodle_label`, `posting_date`, `turma`, `schedule_url`) and should not overwrite display titles.
+- Stash/card imports use the immediate folder name as `source_section`; ambiguous basename backfills should remain manual.
+- Timeline block references prefer stable `block_uuid`; positional `bloco-NN` ids are compatibility fallbacks, not new durable truth.
 - The concept resolver is feature-flagged; default routing behavior should not change unless the flag/cutover work is explicit.
+- Anchor placement is feature-flagged through `use_anchor_placement` and writes additive temporal fields; default KB routing should remain unchanged while the flag is off.
 - Generated output is Markdown plus LLM instruction artifacts.
 
 ## Documentation Discipline
@@ -86,3 +91,6 @@ Run this checklist after code or scaffold changes:
 - [ ] If changing timeline allocation behavior, update or add coverage near `tests/test_unit_matcher.py`, `tests/test_cronograma_health.py`, and relevant timeline scoring tests.
 - [ ] If changing Moodle/SARC signal capture or consumed attribution signals, update or add coverage near `tests/test_moodle.py`, `tests/test_moodle_labels.py`, and `tests/test_migrate_signals.py`.
 - [ ] If changing concept-resolver behavior, update or add coverage near `tests/test_concept_resolver.py`, `tests/test_resolver_fusion.py`, and `tests/test_resolver_wiring.py`.
+- [ ] If changing stable block identity, UUID migration, or dry-run persistence behavior, update or add coverage near `tests/test_block_identity.py`, `tests/test_task2_uuid_migration.py`, `tests/test_task3_human_truth_migration.py`, `tests/test_task4_eval_uuid.py`, and `tests/test_persist_gate.py`.
+- [ ] If changing anchor placement or temporal block behavior, update or add coverage near `tests/test_anchor_placement.py` and `tests/test_temporal_block_wire.py`.
+- [ ] If changing stash/card import behavior, update or add coverage near `tests/test_stash_import.py` and `tests/test_stash_backfill.py`.

@@ -14,7 +14,7 @@ edges:
     condition: when understanding why an architectural choice exists
   - target: context/repo-output.md
     condition: when the task involves the generated repository format
-last_updated: 2026-06-18
+last_updated: 2026-06-21
 ---
 
 # Architecture
@@ -30,7 +30,7 @@ The project manifest is `pyproject.toml`:
 | Package name | `academic-tutor-repo-builder` |
 | Version | `3.0.0` |
 | Main entry point | `app.py` |
-| Test runner | `pytest` (`tests/`, 122 tracked files) |
+| Test runner | `pytest` (`tests/`, 136 tracked files) |
 
 ## High-Level Flow
 
@@ -43,6 +43,7 @@ Import academic materials
   -> send difficult outputs to manual review
   -> curate images and extract descriptions
   -> capture Moodle/SARC source signals when available
+  -> attach stable timeline block UUIDs and optional temporal placement evidence
   -> map files to schedule blocks and course units
   -> enrich code/references when optional Gemini is configured
   -> consolidate content into Markdown
@@ -78,14 +79,18 @@ Create or select subject
 | Timeline Dashboard | Shows file-to-block allocation, unmapped entries, confidence badges, and manual timeline overrides. |
 | PUCRS schedule import | Parses ASP.NET `dgAulas` schedule HTML, including authoritative row kinds for suspensions, exams, holidays, and events. |
 | Moodle/SARC signal capture | Stores `source_section`, `moodle_label`, `posting_date`, `turma`, `schedule_url`, generated card-block maps, and generated lessons indexes for routing and audit tooling. |
+| Stash/card import | Scans a subject stash folder, treats the immediate subfolder as the card/source section, creates import entries, and backfills existing entries by basename when unambiguous. |
 | Repository builder | Consolidates processed content into structured Markdown and tutor instruction artifacts. |
 | Reprocess Repository action | Reapplies the current architecture to previously generated repositories. |
 | Dashboard | Shows operational state for generated repositories and queued repository tasks. |
 | Code Summarization (Gemini) | Lazy `google-genai` client + concept-based timeline block matcher. Backbone in `src/builder/core/code_summarization.py` and `src/builder/runtime/gemini_client.py`. |
 | Reference context pipeline | Lightweight reference fetch, optional Gemini summary, deterministic unit/topic mapping, BIBLIOGRAPHY output, and COURSE_MAP support lines. |
 | Timeline/unit matcher | Positional timeline block-to-unit assignment in `src/builder/timeline/unit_matcher.py`; manual overrides remain authoritative and conflicts are surfaced. |
+| Timeline block identity | Stable `block_uuid` ledger in `src/builder/timeline/block_identity.py`, reattached by date/topic overlap and persisted as generated course metadata. |
+| Anchor placement | Feature-flagged temporal placement layer in `src/builder/routing/anchor_placement.py`; writes additive temporal block fields without changing the default computed block. |
 | Tag and taxonomy pipeline | Generates internal content-taxonomy, tag-catalog, assessment-context, and manifest `auto_tags` data for unit/subunit/block routing. |
 | Concept resolver | Feature-flagged routing resolver in `src/builder/routing/concept_resolver.py` and `resolver_apply.py`; can overwrite block fields only when `use_concept_resolver` is enabled. |
+| Feature flags | `SubjectProfile.feature_flags` persists per-subject routing flags such as `use_anchor_placement`; only explicitly set flags are injected into builder options. |
 
 ## Data Model Context
 
@@ -120,10 +125,10 @@ Exact external service versions for Datalab, Ollama, and Gemini models are not p
 
 | Path | Category | File count |
 |---|---:|---:|
-| `src` | application source | 108 |
-| `tests` | tests | 122 |
-| `docs` | documentation | 125 |
-| `scripts` | eval/diff harnesses and dev scripts | 28 |
+| `src` | application source | 110 |
+| `tests` | tests | 136 |
+| `docs` | documentation | 147 |
+| `scripts` | eval/diff harnesses and dev scripts | 29 |
 | `plans` | planning notes | 6 |
 | `.github` | GitHub metadata | 2 |
 | `schemas` | data/model schemas | 1 |
@@ -153,6 +158,12 @@ Exact external service versions for Datalab, Ollama, and Gemini models are not p
 | `tests/test_moodle_labels.py` | test |
 | `tests/test_concept_resolver.py` | test |
 | `tests/test_resolver_wiring.py` | test |
+| `tests/test_anchor_placement.py` | test |
+| `tests/test_block_identity.py` | test |
+| `tests/test_temporal_block_wire.py` | test |
+| `tests/test_persist_gate.py` | test |
+| `tests/test_stash_import.py` | test |
+| `tests/test_stash_backfill.py` | test |
 | `tests/test_migrate_signals.py` | test |
 | `scripts/migrate_signals.py` | script |
 | `scripts/propose_gold.py` | script |

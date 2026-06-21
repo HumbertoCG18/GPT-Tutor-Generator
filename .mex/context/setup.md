@@ -13,7 +13,7 @@ edges:
     condition: when exact technology or manifest details are needed
   - target: context/architecture.md
     condition: when understanding runtime behavior after startup
-last_updated: 2026-06-18
+last_updated: 2026-06-21
 ---
 
 # Setup
@@ -86,6 +86,11 @@ python -m pytest tests/test_moodle.py -q
 python -m pytest tests/test_moodle_labels.py -q
 python -m pytest tests/test_concept_resolver.py -q
 python -m pytest tests/test_resolver_wiring.py -q
+python -m pytest tests/test_block_identity.py -q
+python -m pytest tests/test_anchor_placement.py -q
+python -m pytest tests/test_temporal_block_wire.py -q
+python -m pytest tests/test_persist_gate.py -q
+python -m pytest tests/test_stash_import.py -q
 python -m pytest tests/test_migrate_signals.py -q
 python -m pytest tests/test_posting_date_probe.py -q
 ```

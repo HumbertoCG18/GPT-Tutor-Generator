@@ -11,12 +11,32 @@ edges:
     condition: when a decision affects system structure
   - target: context/stack.md
     condition: when a decision affects technology choice
-last_updated: 2026-06-18
+last_updated: 2026-06-21
 ---
 
 # Decisions
 
 Append-only log. When a decision changes, mark the old entry as superseded and add the new decision above it.
+
+---
+
+### Stable Timeline Block Identity Uses UUID Ledger
+
+**Date:** 2026-06-21
+**Status:** Active
+**Decision:** Timeline blocks get durable `block_uuid` values from the generated course block-identity ledger, reattached across rebuilds by date overlap and topic-token tie-breaking; human and generated block references migrate toward UUIDs while positional block ids remain compatibility fallbacks.
+**Reasoning:** Positional `bloco-NN` ids change when schedule blocks split, merge, or move, which can orphan manual truth, curation, eval fixtures, and card maps. A ledger preserves identity across rebuilds without hashing content that intentionally changes during timeline cleanup.
+**Consequences:** Timeline rebuild code must respect the `persist` gate, avoid writing ledgers during dry-run/eval paths, and fail clearly when UUID references exist but the ledger is missing.
+
+---
+
+### Anchor Placement Is Additive and Feature-Flagged
+
+**Date:** 2026-06-21
+**Status:** Active
+**Decision:** The anchor placement layer can write `temporal_block_id` and `temporal_block_method` only behind per-subject `use_anchor_placement`; it does not overwrite `computed_block_id`, and manual block truth still wins.
+**Reasoning:** Card/source-section dates are strong temporal evidence, but cutover needs gold-backed evaluation. Additive temporal fields allow canary comparison without changing the default knowledge-base routing surface.
+**Consequences:** Builder options inject only explicit `SubjectProfile.feature_flags`; anchor placement tests must prove flag-off behavior is byte-compatible and no resolver call happens when disabled.
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Contains project state, routing table, and behavioural contract.
-last_updated: 2026-06-19
+last_updated: 2026-06-21
 ---
 
 # ROUTER.md - Session Bootstrap
@@ -30,7 +30,7 @@ Read this file before starting any task.
 - Queue state persists between app sessions.
 - Dashboard monitors operational repository state.
 - Reprocess Repository reapplies the current architecture to existing generated repositories.
-- Test runner is `pytest`; the tracked test suite has 122 files under `tests/`.
+- Test runner is `pytest`; the tracked test suite has 136 files under `tests/`.
 - Auto-tags de unidade/subunidade/bloco geradas em `resolve_unit_block_tags()`:
   tags `unit:`, `subunit:`, `bloco:` persistidas em `auto_tags` do manifest após
   cada regeneração pedagógica.
@@ -244,6 +244,11 @@ Read this file before starting any task.
   e card-block map e por isso precisa de eval-gate. Scripts atuais:
   `migrate_signals.py`, `posting_date_probe.py`, `propose_gold.py`, `gold_by_card.py`,
   `expand_card_gold.py`, `make_code_gold_template.py`, `eval_code_block_gold.py`.
+- Stash/card import: `SubjectProfile.stash_folder` aponta para a pasta de arquivos da
+  materia; `scan_stash_cards` trata a subpasta imediata como card/`source_section`,
+  cria entries para PDF/imagem/zip/codigo, deduplica por basename ja processado e
+  nunca herda backend PDF para codigo/zip. `match_entries_to_cards` backfill por
+  basename sem atribuir casos ambiguos.
 - SARC/Moodle metadata: `parse_sarc_turma_key` resolve GUID/ano/sem da URL; a UI persiste
   `schedule_url` no perfil da materia. `Evento Academico` ja esta mapeado para `event`
   em `ATIVIDADE_KIND_MAP`; o gap antigo foi fechado.
@@ -253,7 +258,7 @@ Read this file before starting any task.
   a CHAVE de join da atribuicao passa a ser a DATA por membership (`session.date in
   card.dates`, conjunto discreto + fallback span logado); slug vira projecao de display.
   Specs `docs/superpowers/specs/2026-06-19-cronograma-sessao-atomo-design.md` (consumidor)
-  + `...-ingestao-stash-download-automap-design.md` (produtor). Roteiro em degraus:
+  + `docs/superpowers/specs/2026-06-19-ingestao-stash-download-automap-design.md` (produtor). Roteiro em degraus:
   1 render+normalizacao (FEITO), 2 over-merge temporal (ADIADO — block_id posicional
   cascateia, funde no 3), 3 atribuicao = signal-registry (em curso), 4 ingestao, 5 inversao
   sessao-atomo. Handoff `docs/reports/2026-06-19-handoff-cronograma-degraus.md`; progresso
@@ -263,10 +268,24 @@ Read this file before starting any task.
   `lookup_card_blocks`/`lookup_card_assign_due` (`card_block.py`) casam a chave do card por
   `norm_ascii_lower` (caixa/acento). Nao-regressivo, atras de nenhuma flag (render/normalizacao
   sao seguros). Sem material por dia ainda (depende do degrau 3/5).
-- Degrau 3 = signal-registry do `concept_resolver`: alavancas 2 (source_section) e 1
-  (moodle_label) JA no fusor; alavanca 0 (lessons[].text data->topico) e a unica aberta,
-  PLANEJADA (`docs/superpowers/plans/2026-06-19-degrau3a-alavanca0-lesson-signal.md`) — termo
-  lesson capado casando o sinal LIMPO (moodle_label+titulo), atras da flag, eval-gate decisivo.
+- Degrau 3a = signal-registry do `concept_resolver`: alavancas 2 (source_section), 1
+  (moodle_label) e 0 (lessons[].text data->topico) estao no fusor; o termo `lesson`
+  e capado e casa o sinal limpo (moodle_label+titulo). `compare_resolver` passa
+  lessons_index ao resolver para paridade com producao.
+- Identidade estavel de blocos (`src/builder/timeline/block_identity.py`): cada bloco recebe
+  `block_uuid` reanexado por overlap de datas + tokens no ledger gerado da materia;
+  referencias humanas/persistidas foram migradas para UUID (`manual_timeline_block_id`,
+  card-block map, computed/secondary ids, curation de timeline, fixtures/evals).
+  Posicional `bloco-NN` segue como fallback legado quando resolvivel.
+- Gate de persistencia do timeline: `_build_file_map_timeline_context_from_course(...,
+  persist=False)` e a facade do engine nao escrevem ledger/manifest/curation em dry-run;
+  se houver refs UUID e ledger ausente, falha claramente para evitar orfandade.
+- Anchor placement (`src/builder/routing/anchor_placement.py`) existe como camada temporal
+  aditiva atras da flag duravel `use_anchor_placement`: manual vence, semana-validada por
+  `source_section` pode escrever `temporal_block_id`/`temporal_block_method`, scorer e KB
+  permanecem intocados quando a flag esta OFF.
+- `SubjectProfile.feature_flags` persiste flags por materia e `_build_options_from_config`
+  injeta somente as flags presentes; `use_anchor_placement` nao liga `use_concept_resolver`.
 
 ### Not Declared In Brief
 
@@ -278,14 +297,15 @@ Read this file before starting any task.
 ### Current Design Focus
 
 - Foco atual: refactor do cronograma sessao-atomo em DEGRAUS, atribuicao por DATA
-  (membership) eval-gated. Degrau 1 (render dia-a-dia + fix de normalizacao) FEITO. Proximo =
-  degrau 3a / alavanca 0 (sinal lessons[].text data->topico no `concept_resolver`, atras da
-  flag, casando o moodle_label limpo) — plano escrito, aguarda execucao em sessao fresca.
-- Resolver por conceito permanece atras de flag ate cutover com gold suficiente; degrau 3
-  o estende como signal-registry (alavancas 2/1 ja no fusor; alavanca 0 = proxima). O
-  over-merge de blocos foi adiado pro degrau 3 (block_id posicional cascateia se cortado antes).
+  (membership) eval-gated. Degrau 1 (render dia-a-dia + fix de normalizacao) FEITO; degrau
+  3a (lesson_term capado no resolver) FEITO. Branch atual estabiliza `block_uuid`, migracoes
+  UUID, gate `persist=False` e canario de anchor placement por `source_section`.
+- Resolver por conceito permanece atras de flag ate cutover com gold suficiente; anchor
+  placement tambem fica atras de `use_anchor_placement` e escreve campo temporal aditivo
+  sem tocar `computed_block_id`.
 - Dependencia user-side: gold cross-curso (ground_truth_<curso>.csv IA/SO/ES2/TCC) + re-sync
-  por fonte destravam a medicao dos 4 cursos; MF ja mede.
+  por fonte destravam a medicao dos 4 cursos; MF ja mede. O canario de anchor placement deve
+  ser avaliado contra esses golds antes de qualquer cutover.
 
 > Historico: referencias como contexto base do tutor, redesign de tags
 > (unit/subunit/bloco), precisao bloco/unidade, guard de conflitos e higiene dos

@@ -10,12 +10,12 @@ edges:
     condition: when understanding the existing output structure
   - target: context/architecture.md
     condition: when identifying which module should own the new artifact
-last_updated: 2026-06-18
+last_updated: 2026-06-21
 ---
 
 # Add Build Artifact
 
-Reviewed against the current artifact generation modules and build workflow on 2026-06-18.
+Reviewed against the current artifact generation modules and build workflow on 2026-06-21.
 
 ## Context
 
@@ -34,6 +34,7 @@ Load `context/repo-output.md` (existing artifacts) and `context/architecture.md`
 - Internal artifacts (not meant to be loaded eagerly by Claude Projects) must go under the generated repository's build metadata directory.
 - Internal routing/taxonomy artifacts that regeneration reads live as generated course dotfiles.
 - Course-level routing evidence from source platforms also lives as generated course dotfiles, such as the generated card-block map and lessons index.
+- Stable timeline identity lives in generated course dotfiles too; dry-run paths with `persist=False` must not write the block-identity ledger or timeline curation data.
 - Progress schema output currently belongs under the generated student directory; the old build-directory schema path is legacy cleanup territory.
 - Do not add generation logic to `engine.py`.
 - If the artifact references other artifacts (e.g., FILE_MAP references COURSE_MAP), ensure build order is correct in `build_workflow.py`.

@@ -15,7 +15,7 @@ edges:
     condition: when understanding how technologies fit into the system
   - target: context/setup.md
     condition: when setup or run commands are needed
-last_updated: 2026-06-18
+last_updated: 2026-06-21
 ---
 
 # Stack
@@ -63,7 +63,7 @@ Do not invent dependency names, package versions, extras, or scripts. If a task 
 
 ## Known Test Entry Points
 
-The tracked test suite has 122 files. Representative entry points include:
+The tracked test suite has 136 files. Representative entry points include:
 
 ```text
 tests/__init__.py
@@ -86,6 +86,11 @@ tests/test_moodle.py
 tests/test_moodle_labels.py
 tests/test_concept_resolver.py
 tests/test_resolver_wiring.py
+tests/test_block_identity.py
+tests/test_anchor_placement.py
+tests/test_temporal_block_wire.py
+tests/test_persist_gate.py
+tests/test_stash_import.py
 tests/test_migrate_signals.py
 tests/test_posting_date_probe.py
 ```

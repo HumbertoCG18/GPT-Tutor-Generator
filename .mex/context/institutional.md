@@ -16,7 +16,7 @@ edges:
     condition: quando precisar de como os componentes processam estas fontes
   - target: context/repo-output.md
     condition: quando o foco é o formato do repo gerado
-last_updated: 2026-06-18
+last_updated: 2026-06-21
 ---
 
 # Contexto Institucional
@@ -101,6 +101,10 @@ atribuição (arquivo→bloco→unidade/subunidade).
   `derive_card_block_map`), labels temporais formatos A–D (`moodle_labels.py`, cf.
   `docs/reports/2026-06-12-catalogo-formatos-labels-moodle.md`). Códigos de cadeira aparecem
   aqui.
+- O import por **stash** usa a subpasta imediata como card/`source_section`
+  (`scan_stash_cards` / `build_stash_entries`); arquivos soltos ficam sem card e seguem o
+  caminho lexical. Backfill por basename (`match_entries_to_cards`) só atribui quando o nome
+  aparece em um único card.
 - **Nomenclatura dos cards é HETEROGÊNEA (depende do professor)** — não há esquema único:
   - por **semana** ("Semana N");
   - pelo **título principal da unidade** (pode divergir do nome no Plano de Ensino → ver
@@ -153,7 +157,7 @@ atribuição (arquivo→bloco→unidade/subunidade).
 |---|---|---|
 | Plano de Ensino | unidades + tópicos (taxonomia) | `content_taxonomy`, `unit_index` |
 | OpenSARC `Export.aspx` | cronograma: blocos + datas + kind (tipo de atividade) + recursos | `_parse_syllabus_timeline`, `_aspnet_row_canonical_kind`, `_build_timeline_index` |
-| Moodle | materiais + seções + datas de card + label/instancename + posting_date | `source_section`, `card_block_map`, `moodle_labels`, `moodle_label`, `posting_date` |
+| Moodle | materiais + seções/cards + datas de card + label/instancename + posting_date + stash de arquivos | `source_section`, `stash_import`, `stash_backfill`, `card_block_map`, `moodle_labels`, `moodle_label`, `posting_date` |
 | Microsoft 365 | materiais + seção (nome com data-no-início) | `m365.py` (`source_section`); sinal = DD.MM no nome |
 
 ## Convenções de identidade
