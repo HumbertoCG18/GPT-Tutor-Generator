@@ -99,7 +99,7 @@ atribuição (arquivo→bloco→unidade/subunidade).
 - Fonte dos **materiais** (PDFs, links, código, imagens) + estrutura de seções/cards.
 - Entra como: `source_section` (seção Moodle), `card_block_map` (datas dos cards → blocos,
   `derive_card_block_map`), labels temporais formatos A–D (`moodle_labels.py`, cf.
-  `docs/reports/2026-06-12-catalogo-formatos-labels-moodle.md`). Códigos de cadeira aparecem
+  `docs/reports/Feitos/2026-06-12-catalogo-formatos-labels-moodle.md`). Códigos de cadeira aparecem
   aqui.
 - O import por **stash** usa a subpasta imediata como card/`source_section`
   (`scan_stash_cards` / `build_stash_entries`); arquivos soltos ficam sem card e seguem o
@@ -123,7 +123,7 @@ atribuição (arquivo→bloco→unidade/subunidade).
   `backfill_posting_date_from_api`) casava por basename do filename ORIGINAL → colidia em `main.pdf`/
   `slides.pdf` e o label não colava (TCC pegou só 1/24). O conserto casa pelo **savename sanitizado**
   (instancename, com `/`→`.` nas datas), nos dois lados. Spec
-  `docs/superpowers/specs/2026-06-18-moodle-label-instancename-automatico-design.md`.
+  `docs/superpowers/specs/Feitos/2026-06-18-moodle-label-instancename-automatico-design.md`.
 - **Resumo-da-semana = módulo `label` do Moodle com mapa data→tópico.** Muitos profs postam um Label
   ("Semana DD/MM a DD/MM: (DD/MM): tópico; ..."). `moodle_labels.py` JÁ parseia isso (`lessons=[{date,text}]`,
   formatos A-D), mas `derive_card_block_map` usa só as `dates` e DROPA o `text`. É o mapa data→tópico

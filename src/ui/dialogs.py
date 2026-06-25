@@ -1520,6 +1520,10 @@ class SubjectManagerDialog(tk.Toplevel):
             processing_profile=self._vars["processing_profile"].get(),
             schedule_url=(getattr(self, "_imported_schedule_url", "")
                           or (existing.schedule_url if existing else "")),
+            # Preservados de existing: não há campo no dialog (setados pelo import
+            # Moodle/M365). Sem isto, todo save zerava moodle_course_id/m365_filter.
+            moodle_course_id=(existing.moodle_course_id if existing else ""),
+            m365_filter=(existing.m365_filter if existing else ""),
             turma=(existing.turma if existing else ""),
             queue=existing_queue,
         )

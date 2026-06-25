@@ -1,0 +1,51 @@
+arquivo,topico_cronograma,bloco_computado,pin_manual,bloco_temporal,datas_bloco
+o-que-é-inteligência-artificial-ia-oracle-brasil-43437f,,,bloco-01,,2026-03-02→2026-03-02
+ia-responsável-7c4626,,,bloco-01,,2026-03-02→2026-03-02
+aprendizadonaosupervisionado-agrupamento-parte1,Semana 8 - 20.04 a 24.04 - ML - Aprendizado Não Supervisionado,bloco-06,,bloco-06,2026-04-20→2026-04-27
+aprendizadonaosupervisionado-agrupamento-parte2,Semana 9 - 27.04 a 01.05 - ML - Aprendizado Não Supervisionado,bloco-07,,bloco-06,2026-04-20→2026-04-27
+aprendizadosupervisionado-arvoresdedecisao-duncan,,bloco-04,,,2026-03-11→2026-03-16
+mlp-novaversao,Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado,bloco-05,,bloco-05,2026-03-18→2026-04-15
+redesperceptron2023-02,Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado,bloco-05,,bloco-05,2026-03-18→2026-04-15
+aula01-introducao-ia,Semana 1 - 02.03 a 06.03 - Plano de Ensino e Introdução a IA,bloco-01,,bloco-01,2026-03-02→2026-03-02
+p1-2024-02-ia,TDE Trabalho Discente Efetivo,bloco-08,bloco-08,,2026-05-04→2026-05-04
+como-analisar-resultados-sse-comcorrecoes,Semana 6 - 06.04 a 10.04 - ML - Aprendizado Supervisionado,bloco-05,,bloco-05,2026-03-18→2026-04-15
+inteligencia-artificial-aula-29-aprendizagem-de-maquina-medidas-de-avaliacao,,bloco-04,,,2026-03-11→2026-03-16
+perceptron-equacaodereta,Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado,bloco-05,,bloco-05,2026-03-18→2026-04-15
+introducaoredesneurais-2023-02,Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado,bloco-05,,bloco-05,2026-03-18→2026-04-15
+aprendizadosupervisionado-classificacao-knn,Semana 3 - 16.03 a 20.03 - Machine Learning e Dados,bloco-04,,bloco-04,2026-03-11→2026-03-16
+caracteristicasdosdados,Semana 2 - 09.03 a 13.03 - Introdução a IA (continuação) e Introdução a ML,bloco-04,,,2026-03-11→2026-03-16
+introducaoml-atualizacao2025,Semana 2 - 09.03 a 13.03 - Introdução a IA (continuação) e Introdução a ML,bloco-04,,,2026-03-11→2026-03-16
+visao-geral-introducao-e-historico,Semana 1 - 02.03 a 06.03 - Plano de Ensino e Introdução a IA,bloco-01,,bloco-01,2026-03-02→2026-03-02
+cap-sobre-algoritmos-geneticos-lacerda-e-outros,Semana 12 - 18.05 a 22.05 - Algoritmos de Busca com Informação,bloco-12,,,2026-05-18→2026-05-20
+minimax-teoria,Semana 15 - 08.06 a 12.06 - Algoritmos de Busca,bloco-15,,bloco-15,2026-06-01→2026-06-08
+rede-perceptron,Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado,bloco-05,,bloco-05,2026-03-18→2026-04-15
+mlp,Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado,bloco-05,,bloco-05,2026-03-18→2026-04-15
+arvores-de-decisao,Semana 7 - 13.04 a 17.04 - ML - Aprendizado Supervisionado,bloco-05,,bloco-05,2026-03-18→2026-04-15
+aula-sobre-agrupamento-parte-1-particional,Semana 8 - 20.04 a 24.04 - ML - Aprendizado Não Supervisionado,bloco-06,,bloco-06,2026-04-20→2026-04-27
+aula-sobre-agrupamento-parte-2-hierarquico,Semana 9 - 27.04 a 01.05 - ML - Aprendizado Não Supervisionado,bloco-07,,bloco-06,2026-04-20→2026-04-27
+minimax,Semana 15 - 08.06 a 12.06 - Algoritmos de Busca,bloco-15,,bloco-15,2026-06-01→2026-06-08
+algoritmo-genetico,Semana 12 - 18.05 a 22.05 - Algoritmos de Busca com Informação,bloco-12,,,2026-05-18→2026-05-20
+introducao-a-busca-informada,Semana 12 - 18.05 a 22.05 - Algoritmos de Busca com Informação,bloco-12,,,2026-05-18→2026-05-20
+outros-operadores,Semana 12 - 18.05 a 22.05 - Algoritmos de Busca com Informação,bloco-12,,,2026-05-18→2026-05-20
+programa-exemplo-ag,Semana 12 - 18.05 a 22.05 - Algoritmos de Busca com Informação,bloco-12,,,2026-05-18→2026-05-20
+ag-feito-em-aula-pelo-luca,Semana 13 - 25.05 a 29.05 - Algoritmos de Busca com Informação,bloco-13,,bloco-13,2026-05-25→2026-05-25
+algoritmo-dijkstra,Semana 14 - 01.06 a 05.06 - Algoritmos de Busca com Informação,bloco-15,,bloco-15,2026-06-01→2026-06-08
+hill-climbing-e-simulated-annealing,Semana 14 - 01.06 a 05.06 - Algoritmos de Busca com Informação,bloco-15,,bloco-15,2026-06-01→2026-06-08
+programas-exemplo-hc-sa-versao-para-nrainhas-e-distribuicao-de-cargas,Semana 14 - 01.06 a 05.06 - Algoritmos de Busca com Informação,bloco-15,,bloco-15,2026-06-01→2026-06-08
+implementacaominimax,Semana 15 - 08.06 a 12.06 - Algoritmos de Busca,bloco-15,,bloco-15,2026-06-01→2026-06-08
+lista1,Semana 15 - 08.06 a 12.06 - Algoritmos de Busca,bloco-15,,bloco-15,2026-06-01→2026-06-08
+caracteristicas-dos-dados,Semana 2 - 09.03 a 13.03 - Introdução a IA (continuação) e Introdução a ML,bloco-04,,,2026-03-11→2026-03-16
+introducao-a-ml,Semana 2 - 09.03 a 13.03 - Introdução a IA (continuação) e Introdução a ML,bloco-04,,,2026-03-11→2026-03-16
+algoritmo-de-classificacao-k-nn,Semana 3 - 16.03 a 20.03 - Machine Learning e Dados,bloco-04,,bloco-04,2026-03-11→2026-03-16
+analise-exploratoria-dos-dados-exemplo-2,Semana 3 - 16.03 a 20.03 - Machine Learning e Dados,bloco-04,,bloco-04,2026-03-11→2026-03-16
+artigo-usando-k-nn-em-texto,Semana 3 - 16.03 a 20.03 - Machine Learning e Dados,,bloco-05,,2026-03-18→2026-04-15
+exemplo-de-programa-com-k-nn-em-java,Semana 3 - 16.03 a 20.03 - Machine Learning e Dados,bloco-04,,bloco-04,2026-03-11→2026-03-16
+introducao-a-redes-neurais,Semana 4 - 23.03 a 27.03 - Machine Learning Aprendizado Supervisionado,bloco-05,,bloco-05,2026-03-18→2026-04-15
+rede-perceptron-e-equacao-de-reta,Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado,bloco-05,,bloco-05,2026-03-18→2026-04-15
+como-analisar-resultados-acc-pr-re-e-f1,Semana 6 - 06.04 a 10.04 - ML - Aprendizado Supervisionado,bloco-05,,bloco-05,2026-03-18→2026-04-15
+agrupamento-usando-k-means-exemplo-1-ipynb,Semana 8 - 20.04 a 24.04 - ML - Aprendizado Não Supervisionado,bloco-06,,bloco-06,2026-04-20→2026-04-27
+agrupamento-usando-k-means-exemplo-2-ipynb,Semana 8 - 20.04 a 24.04 - ML - Aprendizado Não Supervisionado,bloco-06,,bloco-06,2026-04-20→2026-04-27
+artigo-usando-agrupamento,Semana 8 - 20.04 a 24.04 - ML - Aprendizado Não Supervisionado,,bloco-05,,2026-03-18→2026-04-15
+survey-on-clustering,Semana 8 - 20.04 a 24.04 - ML - Aprendizado Não Supervisionado,bloco-06,,bloco-06,2026-04-20→2026-04-27
+prova-1-2024-02,TDE Trabalho Discente Efetivo,bloco-04,,,2026-03-11→2026-03-16
+lista-de-exercicios-i,Semana 15 - 08.06 a 12.06 - Algoritmos de Busca,bloco-15,,bloco-15,2026-06-01→2026-06-08

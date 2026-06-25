@@ -261,7 +261,7 @@ Read this file before starting any task.
   + `docs/superpowers/specs/2026-06-19-ingestao-stash-download-automap-design.md` (produtor). Roteiro em degraus:
   1 render+normalizacao (FEITO), 2 over-merge temporal (ADIADO — block_id posicional
   cascateia, funde no 3), 3 atribuicao = signal-registry (em curso), 4 ingestao, 5 inversao
-  sessao-atomo. Handoff `docs/reports/2026-06-19-handoff-cronograma-degraus.md`; progresso
+  sessao-atomo. Handoff `docs/reports/Feitos/2026-06-19-handoff-cronograma-degraus.md`; progresso
   duravel em `.git/sdd/progress.md`.
 - Degrau 1 FEITO (merge-ready, nao mergeado): `cronograma_detalhado_md` (`repo.py`) lista
   `### Sessoes` por bloco (data+dia-semana+label+marcador de prova) lendo `blocks[].sessions[]`;
