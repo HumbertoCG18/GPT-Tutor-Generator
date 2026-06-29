@@ -46,6 +46,82 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   completo pós-reprocess (31 blocos datados, SARC setado, 39/40 entries com "Semana N"). É
   week-anchorable igual IA/ES2. NÃO é blocker.
 
+## MEDIÇÃO IA — conversor gold→ground_truth (as-of mundo-63, 2026-06-25)
+
+- [DERIVADO] **Gold-method straddle = MAIOR história do crosswalk** (`as-of mundo-63`). O gold IA rotula em
+  **subtópico (2 sessões)**; o pipeline placeia em **bloco (≈1 sessão)**. 11/20 subtópicos ATRAVESSAM fronteira
+  de bloco → **21 materiais clean ficam inscoráveis** porque o subtópico sozinho não determina o bloco.
+  **Propriedade do MÉTODO de gold, NÃO do pipeline.** Só subt 4-8 single-block (monstro bloco-05 absorve 4-7).
+- [USER] **21 straddle clean** — inscoráveis por falta de `data_real` por-material. Re-entram via **batch SARC**
+  (selector escolhe a SESSÃO/data, NÃO o bloco; conversor mapeia data→bloco sob `[início,fim)`). **Zona
+  alta-FAIL** (fronteira). PROTOCOLO: medir taxa-FAIL straddle vs não-straddle SEPARADO — comparação some se
+  misturar no agregado. Sequência: eval nos 33 PRIMEIRO (baseline), straddle como 2ª camada depois.
+- [DECISION] **16 gold materiais fora da manifest viva** — gold rotulado PRÉ-poda (53/55), manifest PÓS-poda (42).
+  **13 PODADOS** (no prepoda-55): out-of-escopo aceito (re-importar pra inflar denominador desfaria curadoria
+  por vaidade métrica). **3 NEVER-IMPORT** (nem no pre55): `P2_IA_2024`, `Agentes`, `P2_IA_2024_02_A_turma30` —
+  **buraco de PROCESSO** (rotulado, nunca entrou em build), NÃO decisão de poda. Investigar separado.
+- [DERIVADO] **Denominador derivado: 33 scorable** (clean ∩ joined ∩ single-block ∩ resolved). **4 FAILs nomeados**,
+  2 mecanismos: **(a) âncora-janela-de-pasta** (3: `Exemplo 2 k-NN IRIS`, `Exemplo com k-NN` — fronteira `[)`;
+  `IA Aula 29` MLP) — placement por janela-de-pasta-Semana erra material cujo tópico-SARC pertence a outro bloco;
+  **(b) pin-manual-errado** (1: `artigo-usando-agrupamento` — computed=None + manual-pin→bloco-05, oráculo=bloco-06;
+  MESMO material "sem computed" da 2.5, não dois). Teste-unidade de borda `[início,fim)` = FIADOR dos FAILs k-NN.
+- [CODE] **calibração-de-confiança — caso-âncora IRIS, PRIORIDADE ALTA** (`as-of mundo-63`). `exemplo-2-k-nn-IRIS`
+  previu bloco-04 (errado; true bloco-05) com **band ALTA** = confiante-e-errado. NÃO é nota de rodapé: é a
+  pendência de calibração do handoff inicial com caso vivo. Entre os DISCRIMINANTES a taxa confiante-errado é
+  1/N-discriminante, NÃO 1/28 — diluir no monstro esconde. E é o modo de falha que o protocolo "só reviso o
+  flagado" é **CEGO POR CONSTRUÇÃO** (confiante-errado não se auto-flagra). A âncora por-janela-de-pasta emite
+  band alta mesmo placeando pela pasta errada → a confiança não reflete a incerteza de FRONTEIRA. Entra ANTES de
+  gerar mais número.
+- [DERIVADO] **DOIS mecanismos de FAIL, não um** (`as-of mundo-63`) — refuta "erra só na fronteira":
+  **(1) âncora/janela-de-pasta** — 3 FAILs DISCRIMINANTES de fronteira (IRIS band-alta, exemplo-com-k-nn,
+  artigo-pin); off-by-one adjacente; só pega material de fronteira. **(2) sem-cobertura→fallback-computed** —
+  `IA-aula-29` é INTERIOR (subt-6, 06+08/04 ambos bloco-05, miolo do monstro) e ERRA mesmo assim:
+  `source_section=None` → âncora não placeia → `temporal` VAZIO → eval cai no `computed` (`file_map:636`),
+  `scorer_only` **band baixa** = bloco-04. Caso VIVO da fragilidade temporal-vazio (dentro do scored-set IA, não
+  hipotético SO/MF). NÃO é calibração-errada: band baixa = incerteza honesta (≠ IRIS band-alta-errado). Mecanismo
+  (2) alcança INTERIOR. Distância dos 4 segue off-by-one, mas "só fronteira" caiu.
+- [DECISION] **80% discriminante assume proxy-date fiel pros existentes** (`as-of mundo-63`). Existentes datados por
+  **1ª-data-do-subtópico** (só notebooks têm data por-material exata). 1 proxy-frágil: `arvores-de-decisao` (subt-7,
+  proxy 13/04=trivial vs real 15/04=discriminante) — **passa em ambas → proxy NÃO esconde FAIL aqui**. Limitação
+  nomeada: onde proxy≠real caírem em blocos diferentes, o proxy fabrica/esconde FAIL. 5 agrupamento usam 20/04
+  (suspensão; aula real 22/04, mesmo bloco bloco-06).
+- [DERIVADO] **Cobertura prediz correção — mas o sinal é MECANISMO, não taxa** (`as-of mundo-63`). Dos 33 scorable,
+  só **2 uncovered** (temporal cru vazio → fallback): IA-aula-29 (sem-pasta→computed) + artigo-agrupamento
+  (pin→manual); ambos falharam. NÃO reportar "100% uncovered-fail" — n=2, amostra pequena demais pra taxa
+  (número inflado contra o sistema é tão inválido quanto a favor). O sinal é o MECANISMO sem-pasta→fallback→erro,
+  que IA-aula-29 dá sozinho; os 2 ilustram, não quantificam. **0 uncovered PASSOU → a 3ª categoria temida
+  (acertos-frágeis-por-sorte-do-fallback) NÃO existe neste set.**
+- [CODE] **PIN-SWEEP — pins manuais que discordam da âncora** (`as-of mundo-63`). 5 pins, 2 discordam, mas
+  **"discorda" ≠ "errado"** (oráculo separa): **(WRONG) `artigo-usando-agrupamento`** pin-05 vs âncora/oráculo-06 →
+  **TOPO da fila, fix-de-1-linha: deleta o pin**, âncora-bloco-06 correta emerge. **(GOOD) `artigo-usando-k-nn-em-texto`**
+  pin-05 vs âncora-04: o pin está CERTO (k-NN=18/03→bloco-05), a âncora ERRARIA (Semana-3 começa 16/03=prep) — o pin
+  **resgata** a âncora do erro Semana-3-prep-vs-k-NN-18/03 (mesmo que derruba os notebooks k-NN). Evidência de patch
+  humano sobre fraqueza sistemática da âncora. Regra de varredura futura: pin-disagreement = CANDIDATO, confirma
+  com oráculo antes de deletar (deletar pin-bom quebra).
+- [DECISION/USER] **never-import resolvido — não é buraco de conteúdo** (`as-of mundo-63`). Dos 3 unjoined-never-import:
+  **`Agentes.pdf` = FALSO ALARME** (existe na manifest como `introducao-a-agentes`, Semana-16; gold usou nome
+  divergente → join-miss; fix: alias/renome no gold). **`P2_IA_2024` + `P2_IA_2024_02_A_turma30`** = 2 provas-2 fora
+  do stash → DUAS hipóteses DISTINTAS (NÃO fundir): **phantom-no-gold** (rótulo de material inexistente = erro de
+  rotulagem) vs **nunca-baixada** (existe no Moodle, download pulou = mini-buraco-de-processo que repete em SO/MF).
+  Distinguir precisa checar Moodle. Gap estreito, provas não-conteúdo; nenhum material pedagógico dropado pelo import.
+- [DERIVADO] **80% é PÓS-2-CAMADAS-DE-CORREÇÃO** (`as-of mundo-63`). Mascaramento empilhado: âncora mascara
+  erro-de-computed (hierárquico bloco-07→06), pins mascaram erro-de-âncora (`k-nn-texto`: pin-05 corrige âncora-04).
+  `k-nn-texto` é **FÓSSIL** — humano patcheou o bug Semana-3-prep-vs-k-NN ANTES desta campanha = confirmação
+  INDEPENDENTE do mecanismo (não artefato de medição). O erro BRUTO do placement-por-pasta (sem âncora, sem pins) é
+  **MAIOR que 20%**; o 80% é performance real COM as 2 correções e **NÃO generaliza sem elas** (SO/MF podem não ter
+  as camadas de patch).
+- [UX/CODE] **aviso GUI "sem bloco atribuído" induz pin desnecessário = armadilha de UX** (`as-of 2026-06-26`). O
+  aviso do cronograma conta materiais sem atribuição MANUAL (pin), NÃO sem placement — 58/63 (os que usam
+  auto-placement, o estado DESEJADO). A redação empurra o usuário a preencher pins à mão → re-introduz circularidade
+  (mão atribuindo o bloco que o pipeline computa) + risco de pin-stale (caso `artigo`). Custou uma **deleção-de-entry
+  acidental** nesta sessão (delete-entry vs pop-field quase-idênticos na GUI do Timeline Dashboard; 63→62, pego pelo
+  gate (b)). Fix: re-redigir ("sem override manual", não "sem bloco") ou suprimir quando há placement auto; e separar
+  visualmente delete-entry de clear-pin.
+- [PROTOCOL] **conserto-de-pin loop: pós-mutação do vivo, REGENERA o CSV antes de classificar** (`as-of 2026-06-26`).
+  No 1º fix (artigo) o `eval` (lê manifesto vivo) deu 30/33 mas o `classify` (lê coluna `temporal_block_id` do CSV
+  pré-reprocess) deu 12/15 — defasagem CSV-stale vs vivo. NÃO escolher um: regenerar o CSV (`build_ground_truth_IA`)
+  pós-reprocess e re-classificar. Sequência: rename→gate-vivo→reprocess→diff_pinfix→**regen CSV**→eval+classify.
+
 ## CODE — cadeia de atribuição (degrau 3 / Fase 3)
 
 - [CODE] Degrau 3a **alavanca 0** (lessons[].text → índice data→tópico no fusor) — plano escrito, não
@@ -58,6 +134,18 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - [CODE] **topic-resolver (SO)** + **label-resolver (MF)** — próximos resolvers de âncora (reusam
   `anchor_placement`/`resolve_temporal_block`); cada um TDD + canário próprio.
 - [CODE] Degrau 2/3c **over-merge temporal** (merge feriado+prova) — adiado; funde no degrau 3 quando join virar DATA.
+- [CODE] **placement-computed-errado-mascarado-por-âncora** (`as-of mundo-63 IA, 2026-06-25`) — o
+  `_card_scoped_block` (computed) ERRA o hierárquico: `computed_block_id=bloco-07` ("duvidas"), enquanto a
+  verdade-oráculo é **bloco-06** (27/04, SARC, proveniência cravada por redundância tabela+bullets). O eval
+  pontua `temporal` (`resolve_temporal_block`, `file_map:633/635` — `temporal_block_id` da âncora vence ANTES
+  do fallback), e a âncora pôs bloco-06 → **passa HOJE**. MAS `file_map:636`: `temporal` vazio → fallback
+  `computed`. Os 24 notebooks IA têm temporal setado → nenhum cai. Material com temporal vazio (SO/MF/ES2, ou
+  IA futuro sem cobertura de âncora) → eval pontua `computed` = o canal que erra o hierárquico.
+  **"Hierárquico passa" é verdade hoje, frágil amanhã; a fragilidade vive na COBERTURA DA ÂNCORA, não no
+  computed.** NÃO é "sistema consertou" — é erro-de-computed mascarado por override temporal. Delta
+  computed-vs-temporal nos 24: **3 diferem** (hierárquico×2, "Exemplo com k-NN"), 21 idênticos. Mesmo
+  mecanismo dos 2 FAILs k-NN (placement por janela-de-pasta-Semana erra material cujo tópico-SARC pertence a
+  outro bloco) — só que nos k-NN a âncora TAMBÉM erra (não mascara). Reaparece sem boa cobertura de âncora.
 
 ## CODE — limpeza / dead-code (auditoria pronta)
 

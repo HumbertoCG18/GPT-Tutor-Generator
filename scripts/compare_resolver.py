@@ -27,6 +27,11 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
+# stdout UTF-8: console cp1252 (Windows) crasha em char fora do Latin-1 (ex.: titulo TCC).
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.builder.routing.concept_resolver import resolve_material_assignment  # noqa: E402
