@@ -476,6 +476,129 @@ detalhe do SO provider (fase SO), e sub-investigações não-bloqueantes (plano 
 
 ---
 
+## Achado F-TCC — week_anchor ordinal-linear DRIFTA; TCC = provider por TÓPICO  [2026-06-29]
+
+Probe read-only no repo `TCC-Tutor`. Cards = "Semana N - Tópico" (N 1-14, **sem data**),
+arquivos = "Aula NN - Tópico" (**sem data**), blocos COM datas reais (`.timeline_index.json`,
+31 blocos). `card_block_map` popula só por **5 pinos MANUAIS** (`source=manual`); derivação
+por labels = **VAZIA** (sem label datado → formatos A-C de `parse_card_dates` falham; formato
+D pula porque `week_anchor` nunca é suprido).
+
+Formato D (`_parse_format_d`, `src/builder/sources/moodle_labels.py:138`) existe mas
+**DORMENTE**: `start = week_anchor + (N-1) semanas`, range 5 dias, intersecta
+`period_start/end`. Call-sites de produção (`src/builder/sources/moodle.py:448` e `:488`)
+NUNCA passam `week_anchor` → default `""` → formato D pula. `SubjectProfile`
+(`src/models/core.py:218`) não tem `course_start`. Wiring mecânico = ~1 linha.
+
+**FALSIFICAÇÃO** (simulação linear `week_anchor=2026-03-04` cruzada contra os 5 pinos reais):
+
+| Card | Linear (sim) | Pino manual (verdade) | |
+|---|---|---|---|
+| Semana 3 | bloco-03,04 | bloco-03,04 | ✓ |
+| Semana 7 | bloco-10,11 | bloco-10,11 | ✓ |
+| Semana 10 | bloco-16,17 | bloco-16 | ~ over |
+| Semana 12 | bloco-19 | bloco-21,22 | ✗ drift 2-3 |
+| Semana 13 | bloco-20,21 | bloco-23 | ✗ drift |
+
+Semanas cedo casam; semanas tarde **driftam 2-3 blocos**. Causa: feriado/recesso/prova
+quebram a cadência fixa de 7 dias. Ligar `week_anchor` naive = janela ERRADA nas semanas
+finais = **confident-wrong** (PIOR que vazio, que cairia no funil seguro).
+
+**DECISÃO/IMPLICAÇÃO:** TCC `WindowProvider` = por **TÓPICO** (card "Semana N - TÓPICO" →
+`block.topic_text`), reusa o Disambiguator content↔topic, imune a drift de calendário. TCC é
+**SO-like** (provider por tópico), NÃO ordinal-like. Confirma D10/D12 ("TCC precisa de
+cuidado") com a razão exata: **ordinal-de-semana é ARMADILHA (drift), tópico é o sinal real**.
+Ordinal "Aula NN" fica como sinal SOFT dentro da semana.
+
+**Topic-bridge confirmado (probe vs 5 pinos): 4/5 determinístico, 1 = resíduo-LLM.**
+
+| Card | topic_text do bloco-pino | casa? |
+|---|---|---|
+| Semana 3 (Minimização/T1) | bloco-03 "…minimizacao…"; bloco-04 "trabalho" | ✓ |
+| Semana 7 (Halte/Entscheidung) | bloco-10 "halting problem"; bloco-11 "entscheidungsproblem" | ✓ exato |
+| Semana 10 (Revisão P1) | bloco-16 topic="para" (genérico) MAS session-label "revisao para prova p1 aula" | ✓ via SESSÃO |
+| Semana 12 (NP-completude) | bloco-21 "theorema cook levin"; bloco-22 "…pspace complete" | ✗ lexical (NP ausente) |
+| Semana 13 (Trabalho T2) | bloco-23 "trabalho" | ✓ |
+
+Dois aprendizados NOVOS:
+1. **Sinal de SESSÃO** (`sessions[].label`/descrição) rescata onde `block.topic_text` é
+   genérico (S10). O Disambiguator deve minerar texto de SESSÃO, não só `topic_text` do bloco.
+   (Schema: `sessions` carrega mais que `{date}` — há label/descrição. Corrige a leitura
+   anterior que via só `{date}`.)
+2. **S12 NP-completude = caso D8 canônico do TCC:** "NP-completude" ≠ "Cook-Levin"/"PSPACE"
+   lexicalmente, mas Cook-Levin É a base de NP-completude → ponte **SEMÂNTICA = LLM** (TIER 3).
+   Mesma estrutura da série same-theme do Dafny (MF): vocab-de-tema afoga o discriminante.
+   (Nota: o linear pôs S12→bloco-19="classes complexidade", que é o tópico da **Semana 11** →
+   drift "1 semana atrás", consistente com feriado/recesso.)
+
+**Síntese TCC:** melhor determinístico = TÓPICO (`block.topic_text` + texto de sessão) = 4/5;
+resíduo (NP-completude) = D8 LLM. Ordinal = soft. Confirma a arquitetura de 3 tiers **sem caso
+especial pro TCC** — só muda o WindowProvider (tópico, não ordinal-linear).
+
+> Nota de método: o agent de probe declarou "TRIVIAL, 14/14 casam" porque só checou
+> intersecção NÃO-VAZIA, não BLOCO-CERTO. O cruzamento adversarial contra os pinos reais
+> pegou o confident-wrong. Lição: validar contra verdade, não contra "não-vazio".
+
+---
+
+## Restrições de PLATAFORMA & faculdade  [confirmado pelo usuário, 2026-06-29]
+
+- **SARC = data POR AULA** (1 linha = 1 data + tópico + `kind`). "Semana" NÃO é do SARC — é
+  agrupamento do professor no Moodle. SARC é a VERDADE de data/tópico/kind.
+- **SARC completo desde o início do semestre** (todas as sessões). O **Moodle é INCREMENTAL**
+  (arquivos postados ao longo do tempo). → confirma D12: o backbone (blocos/datas/tópicos)
+  existe cedo; material chega aos poucos; motor coloca incremental. Exceção: arquivos do
+  semestre passado (stale) ou upload-total raro = **ANOMALIA-DE-DADO** (D11).
+- **Fonte do arquivo varia: Moodle vs M365.** MF e ES2 = **todos os arquivos vêm do M365**
+  (professor upa no M365; API do Moodle não pega). → `moodle_label`/instancename pode FALTAR;
+  `source_section` vem da estrutura de PASTAS (M365/stash), não da seção Moodle. Sinais
+  disponíveis mudam por curso (impacta o Disambiguator e o gerador de gold-scaffold).
+- **OpenSarc** = reserva de sala/lab (aparece horas antes da aula). IGNORAR por hora (futuro).
+- **Convenção de card por curso (D7):**
+  - IA = week-card (2x/sem, range seg-sex).
+  - MF = **unit-card + roteiro interno** (linhas data→tópico, ex.: "(09/03): revisão lógica;
+    (11/03): conjuntos indutivos; (assíncrona): exercícios"). Range seg-sex mesmo com aula seg/qua.
+  - TCC = week-card ORDINAL (sem data no card → topic-bridge; ver F-TCC).
+  - ES2 = week-card 1x/sem (M365). Risco = **conteúdo repetido entre blocos** (same-theme →
+    D8 LLM), NÃO drift de ordinal. Ordinal ≈ semana 1:1 (1 aula/sem).
+  - SO = **unit-card, SEM roteiro, MAS data no instancename E no nome do arquivo** →
+    **data-no-nome FORTE** (step 0 do Disambiguator); topic-window fraco (ver memória 2078).
+- **Roteiro NÃO é universal** — depende do professor (IA/MF têm; SO não; ES2 a confirmar). O
+  Disambiguator usa o sinal que TIVER (D3).
+
+---
+
+## Mapa de WindowProvider dos 5 cursos  [probes read-only, 2026-06-29]
+
+| Curso | Fonte | source_section | card_block_map | Sinal PRIMÁRIO | Resíduo (→ D8 LLM) |
+|---|---|---|---|---|---|
+| IA | Moodle | seção Moodle | popula (labels, datado) | data-de-seção (week-card, range) | degenerado (seção≈1 bloco) |
+| MF | M365 | pasta/stash | popula (manual + labels) | unit-card + **roteiro** (data→tópico) | série same-theme (Dafny) |
+| TCC | Moodle | seção Moodle | só 5 pinos manuais; labels VAZIA | **TÓPICO** (card ↔ block topic_text + sessão) | NP-completude (Cook-Levin) |
+| ES2 | M365 | pasta (Desktop dump) | popula labels MAS GROSSO (1 card "Microsserviços" = 10 blocos) | **session-label** data→tópico (fino) | same-theme microsserviços espiral (5 blocos) |
+| SO | Moodle | seção Moodle | VAZIA (unit-card, sem label datado) | **DATA-NO-NOME** (title+label+path, 45%, 1:1 determinístico, 0 colisão) | undated 55%: trabalho/revisão→categoria D6; resto = topic fraco (81% blocos 1-2 palavras) |
+
+**Achados transversais (load-bearing pro spec):**
+
+1. **card_block_map NÃO é provider universal suficiente.** Vazio (SO), grosso-inútil
+   (ES2: 1 card = 10 blocos ≈ semestre todo), só-manual (TCC labels vazia). Só IA (e MF)
+   populam útil. → o **WindowProvider é uma CASCATA/UNIÃO de providers por sinal disponível**,
+   não só `card_block_map`. **AJUSTA o Contrato 1 do spec** (que assumia card_block_map universal).
+2. **session-label do SARC (`sessions[].label` = data→tópico) é o sinal UNIVERSAL
+   subutilizado.** Existe em TODOS (vem do SARC, completo desde o início). Rescatou TCC-S10 e é o
+   lever fino do ES2. Disambiguator deve tratá-lo como PRIMEIRA-CLASSE, não só `block.topic_text`
+   (agregado/grosso).
+3. **Cada curso tem sinal PRIMÁRIO diferente** → confirma D0/D5 (motor plugável mode-aware) como
+   NECESSÁRIO, não over-engineering. Matriz de disponibilidade: data-de-seção=IA · roteiro-no-card=MF ·
+   data-no-nome=SO(forte)/IA(parcial) · tópico-do-card=TCC · ordinal=TCC/ES2(soft) ·
+   **session-label-SARC=TODOS**.
+4. **Resíduo é SEMPRE same-theme** (Dafny / NP-completude / microsserviços) → mesma cura **D8 LLM**.
+   Um único tier LLM serve os 4 cursos não-triviais. Reforça D8.
+5. **Categoria (D6) corta o resíduo do SO:** parte dos 55% undated são trabalho (→assign-due),
+   revisão (→review_rule) e plano-de-ensino (→overview/excluído), não falhas de disambiguação.
+
+---
+
 ## Forks ABERTOS (próximos)
 
 - ~~F2 política de janela~~ → RESOLVIDO por D3/D4.
