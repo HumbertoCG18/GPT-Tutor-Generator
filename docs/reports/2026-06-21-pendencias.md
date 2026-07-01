@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-06-22
+last_updated: 2026-07-01
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
 `.mex/AGENTS.md`). Concluído 100% (gate verde) → remover daqui + mover o plano pra `Feitos/`.
 
@@ -19,6 +19,57 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   (MF já mede via eval_assignments 5/5). Planilhas em `docs/reports/gold_templates/gold_by_card_<curso>.csv`
   (MF 6 cards · IA 9 · SO 5 · ES2 3 · TCC 13 + avulsos). **Bloqueia: cutover Fase 3.4, lever lessons[].text,
   resolvers SO/MF, avaliação do anchor.** ← MAIOR GARGALO.
+  > progresso `as-of 2026-07-01`: **5/5 CURSOS COM RÉGUA.** IA ✅ · MF ✅ (67 scorable/24 disc, `511ea1e`) ·
+  > ES2 ✅ (28/14, `4aa9bcd`) · **SO ✅ 42 scorable/23 disc** (`ground_truth_SO.csv`) · **TCC ✅ 42 scorable/
+  > 20 disc** (`ground_truth_TCC.csv`) — ambos UNCOMMITTED, HALT pendente revisão humana do crosswalk.
+  > TCC: template refeito (tipo=file_type puro) com backup `gold_TCC_rotular.pre-refazer-20260701-165239.bak.xlsx`;
+  > 4 rótulos off-by-one detectados na revisão HALT e corrigidos com confirmação do user (+gêmeos, 7 células;
+  > obs carimbada no xlsx). Gêmeos md5 rotulados SEM conflito (validado).
+  > Evidência p/ o motor: as 3 cópias byte-idênticas da aula-06 têm temporal em 3 blocos DIFERENTES
+  > (bloco-06/09/22) = dup-divergence vivo, motor não trata dup hoje.
+  > **EVAL BASELINE OFICIAL 5/5 (as-of 2026-07-01, HALTs sign-off user, colapso de par ativo):**
+  > **IA 38/44 = 86.4%** (6/6 erros off-by-one adjacente, 0 miss-tópico; calibração ok: alta 32ok/3erro) ·
+  > **MF 42/66 = 63.6%** (12/24 adjacente; 1 órfão) · **TCC 14/25 = 56.0%** (pós-poda; pré era 15/27 55.6%) ·
+  > **ES2 14/28 = 50.0%** (12/14 = miss de tópico) · **SO 18/38 = 47.4%** (17/20 miss de tópico; band alta
+  > 15ok/16erro = confiança NÃO informa). Leitura: IA (única com âncora data-de-seção) erra SÓ fronteira;
+  > os 4 sem âncora afundam em miss-de-tópico — confirma o desenho janela+disambiguator do motor. É o placar
+  > que o AnchorEngine tem que bater SEM regressão no IA. Confiante-e-errado dominante fora do IA reforça a
+  > pendência de calibração.
+- [DERIVADO] **Sweep md5 dos 5 cursos COMPLETO** (`as-of 2026-07-01`, via `raw/` de cada repo) — dups por
+  conteúdo: **IA 3 grupos** (já cobertos no pairs) · **ES2 0** · **MF 1** (`logicadehoare1-exercicios-respostas`
+  ≡ `logicadehoare-exercicios-respostas`, ESCAPOU do `511ea1e`; pairs preenchido + CSV regenerado 2026-07-01,
+  67/24 mantidos, unidades de eval 67→66; gêmeos ambos bloco-10 PASS = sem flip) · **SO 4** · **TCC 14**.
+  Todos os grupos agora cobertos em `COURSE_CONFIG.pairs`. IA tem 3 entries sem `raw_target` no disco
+  (2 artigos-web com sufixo hash + `artigo-usando-agrupamento`) — não-verificáveis por hash, vigiar.
+- ~~TCC `pairs` dedup a preencher~~ **PREENCHIDO (2026-07-01, uncommitted)** — sweep md5 via `raw/` do repo:
+  **42 entries = 27 materiais distintos, 14 grupos dup** (11 cross-stash OLD≡Moodle + triplo intra-OLD aula-06 +
+  2 intra-Moodle). `COURSE_CONFIG["TCC"]["pairs"]` populado (canônico = id Moodle vivo). Causa CONFIRMADA por
+  hash: stash antigo `Downloads/TCC` + stash Moodle acumulados sem poda de migração — mesmo mecanismo do IA.
+- [DERIVADO] **TCC: 24/42 sources SUMIDOS do disco** (`as-of 2026-07-01`) — todo o lado `Downloads/TCC` não
+  existe mais (migração pro `Desktop/Moodle` levou a pasta). Entries seguem vivas via `raw/` do repo. Download
+  Moodle do TCC é **PARCIAL**: 10 materiais OLD sem substituta Moodle (aulas 01-03, 05, 09, 14, 15, prova-revisão,
+  referência Karp, weighted-max-cut) — podar esses = perder conteúdo. Igual "stash IA parcial".
+- ~~TCC poda de migração~~ **EXECUTADA em 2 rodadas (2026-07-01), ESCOPO AMPLIADO pelo user**: rodada 1 (GUI,
+  user) matou 7 (aula-04, aula-06 ×2 — colisão de id RESOLVIDA —, aula-08, aula07-grudada, enunciado-t1/t2);
+  rodada 2 (script CC autorizado pelo user, executado pelo user via `!`, backup
+  `TCC-Tutor/manifest.pre-poda16-20260701-184119.bak.json`) matou os **17 restantes do Downloads** — decisão
+  EXPLÍCITA do user de incluir os **11 SEM substituta Moodle** (aulas 01-03/05/06-revisão/09/14/15,
+  exemplo-prova-revisão, referência Karp, weighted-max-cut). Manifest TCC: 42→**18 entries, 100% Moodle**.
+  **Consequência assumida: esses 11 conteúdos estão FORA do tutor até re-import Moodle completo** (entra na
+  refatoração de ingestão de apoio). Gold xlsx TCC: ~24 linhas viram unjoined no próximo crosswalk (esperado,
+  não é bug). Dups restantes: só os 2 intra-Moodle (3d-matching, integer-programming), `pairs` cobre.
+  ~~PENDENTE reprocessar~~ **CICLO FECHADO (2026-07-01): reprocess + gate VERDE.** Descoberta que mata a
+  teoria "download parcial": as entries velhas do Downloads **SOMBREAVAM o import** (dedup por slug) — poda
+  liberou o importer, que re-ingeriu **9 dos 11 "perdidos" direto do stash Moodle** com seção Semana-N correta.
+  Perda líquida real = **2 arquivos** (referência Karp + weighted-max-cut; só existiam no Downloads; recuperáveis
+  do backup). Manifest TCC final: **27 entries, 100% Moodle**, colisão de id morta, dups = só 2 intra-Moodle.
+  Gate: **0 drift** de temporal/true nos 18 sobreviventes ✓; re-importados ganharam placement novo (esperado):
+  aula-01 virou FAIL novo (true bloco-01, temporal bloco-02 — janela Semana-1 ambígua), aula-06 temporal
+  bloco-09. Crosswalk 36/42 joined (6 unjoined = exatamente os nomes mortos, sem gap silencioso).
+  **EVAL TCC pós-poda = 14/25 (56.0%)** — baseline re-referenciado (pré-poda 15/27 55.6%, estável).
+  **INSIGHT p/ refatoração de ingestão: import dedup-por-slug deixa entry morta BLOQUEAR fonte viva** —
+  mesma mecânica pode estar escondendo material em outros cursos; sweep de shadowing entra no escopo da
+  refatoração de apoio/bibliografia.
   > sub-nota DERIVADO-STALE: TODOS os números embutidos são pré-reprocess (gold_templates +
   > evals de 17–18/06): card-counts MF6/IA9/SO5/ES2 3/TCC13, "MF mede 5/5", e qualquer placar
   > tipo "~41% funil MF / resolver 12/17". Não verificados pós-reprocess.
@@ -38,6 +89,10 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
     (bloco-06 inválido como alvo file-bearing). Fix **EXISTE** (não é código novo): `.timeline_curation.json`
     `manual_kind_override:class` — honrado em `classifier.py:167-172`, aplicado em `index.py:85-90`. Passe de
     curadoria **pós-gold, GATEADO** (diff antes/depois, só `kind` muda; sem relance).
+    > **CONCLUÍDO (2026-07-01): curation escrita + IA reprocessado + GATE VERDE.** bloco-06 kind
+    > `suspended`→`class` (override honrado; key migrada pra uuid `17ea65f3` pelo pipeline). Zero placement
+    > movido nos 7 de clustering; eval IA 38/44 = 86.4% byte-idêntico ao baseline (mesmos 6 off-by-one).
+    > Os 7 materiais de clustering voltaram à vista do gabarito/GUI.
 - [USER] **9 SO date-vs-block** (8 DIFFERS + 1 NO_MATCH) — **still-valid, verificado as-of reprocess SO 320712d.**
   Os 9 ainda divergem (bloco-da-data ≠ bloco-vivo). CONFIRMA "data-prefix = POSTAGEM, não aula": 3 arquivos com
   prefixo **02/06** caem em **blocos diferentes** (05/03/11). → pro gold SO, confiar em **tópico/seção**, NÃO na
@@ -92,8 +147,9 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   que IA-aula-29 dá sozinho; os 2 ilustram, não quantificam. **0 uncovered PASSOU → a 3ª categoria temida
   (acertos-frágeis-por-sorte-do-fallback) NÃO existe neste set.**
 - [CODE] **PIN-SWEEP — pins manuais que discordam da âncora** (`as-of mundo-63`). 5 pins, 2 discordam, mas
-  **"discorda" ≠ "errado"** (oráculo separa): **(WRONG) `artigo-usando-agrupamento`** pin-05 vs âncora/oráculo-06 →
-  **TOPO da fila, fix-de-1-linha: deleta o pin**, âncora-bloco-06 correta emerge. **(GOOD) `artigo-usando-k-nn-em-texto`**
+  **"discorda" ≠ "errado"** (oráculo separa): ~~(WRONG) `artigo-usando-agrupamento` pin-05~~ **JÁ RESOLVIDO
+  (verificado 2026-07-01: pin=None, temporal=bloco-06 correto — deletado em sessão anterior ou reprocess).**
+  **(GOOD) `artigo-usando-k-nn-em-texto`**
   pin-05 vs âncora-04: o pin está CERTO (k-NN=18/03→bloco-05), a âncora ERRARIA (Semana-3 começa 16/03=prep) — o pin
   **resgata** a âncora do erro Semana-3-prep-vs-k-NN-18/03 (mesmo que derruba os notebooks k-NN). Evidência de patch
   humano sobre fraqueza sistemática da âncora. Regra de varredura futura: pin-disagreement = CANDIDATO, confirma
@@ -124,15 +180,25 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 
 ## CODE — cadeia de atribuição (degrau 3 / Fase 3)
 
-- [CODE] Degrau 3a **alavanca 0** (lessons[].text → índice data→tópico no fusor) — plano escrito, não
-  executado; `load_lessons_index` dormente. Eval-gate (precisa gold). Refazer com identidade limpa do label
-  (a versão anterior regrediu o gold com concepts ruidosos).
-- [CODE] **Alavanca 3** (posting_date / seleção por sessão) — não implementada.
+- ~~Degrau 3a alavanca 0 (lessons no fusor)~~ **SUPERSEDED PELO MOTOR (2026-07-01, verificado)** — o SINAL
+  (`.lessons_index.json`/roteiro) virou 1ª classe no disambiguator do motor (D3/D5; exercitado no MARCO 0).
+  O PLANO original (termo β no fusor velho via `resolver_apply`/`score_lesson_match` peso 0.5) mira o caminho
+  que morre no cutover 3.4 — `load_lessons_index` está chamado em `resolver_apply.py:111`, atrás da flag
+  desligada, fundo da cascata. Plano `2026-06-17-alavanca0-lessons-index-plan.md` carimbado superseded.
+  **Herança viva pro spec:** o caso-alvo do A1 (card "Verificação de Programas" MF, 14 lessons, blocos 10-15)
+  é onde MARCO 0/1 ainda erra (hoare/tiposindutivos/dafny1-2) → matching fino de lesson = requisito do
+  disambiguator real.
+- ~~Alavanca 3 (posting_date / seleção por sessão)~~ **SUPERSEDED (2026-07-01)** — posting_date foi declarado
+  lixo como sinal de base (decisão 28/06); o motor D0-D13 não o usa (sinais: seção/roteiro/prazo/conteúdo).
 - [CODE] **Fase 3.4 cutover** — default ON do concept_resolver + DELETE do funil legado
   (`score_entry_against_timeline_block` S2/S4, `select_probable_period`, `_best_instructional_block_fallback`,
   2 rotas card). Eval-gated.
-- [CODE] **topic-resolver (SO)** + **label-resolver (MF)** — próximos resolvers de âncora (reusam
-  `anchor_placement`/`resolve_temporal_block`); cada um TDD + canário próprio.
+- ~~topic-resolver (SO) + label-resolver (MF)~~ **SUPERSEDED PELO MOTOR (2026-07-01)** — viraram
+  WindowProviders por curso dentro do AnchorEngine (D5/D10), não resolvers avulsos. E são LOAD-BEARING,
+  não rollout tardio — cobertura de card-window medida hoje:
+  **IA 56/62 (90%) · MF 60/67 (90%) · ES2 30/35 (86%) · TCC 7/27 (26%) · SO 0/42 (0%).**
+  Sem provider próprio, o motor = funil pra SO inteiro e 20/27 do TCC. Spec deve tratar
+  WindowProvider-por-curso (SO topic/filename-date; TCC parse "Semana N") como fase de 1ª classe.
 - [CODE] Degrau 2/3c **over-merge temporal** (merge feriado+prova) — adiado; funde no degrau 3 quando join virar DATA.
 - [CODE] **placement-computed-errado-mascarado-por-âncora** (`as-of mundo-63 IA, 2026-06-25`) — o
   `_card_scoped_block` (computed) ERRA o hierárquico: `computed_block_id=bloco-07` ("duvidas"), enquanto a
@@ -167,6 +233,9 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - [CODE] **Latente:** sem teaching_plan, `_derive_unit_specs_from_repo` vs `content_taxonomy["units"]=[]` divergem
   → fallback vira load-bearing. Remover ou dar mesmo fallback à taxonomy.
   > derived-código, não-reprocess-stale, as-of 17/06.
+- [CODE] **Latente: TCC NFD dotless-i no manifest** (`as-of 2026-07-01`, herdado do handoff 28/06 P4) — slug
+  `aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis` carrega U+0131 (NFD do macOS). Join por nome pode
+  falhar silencioso. Fix: normalizar NFC no import. Não urgente; vigiar no crosswalk TCC.
 
 ## CODE — UI (Parte B de features backend já entregues)
 
@@ -180,7 +249,20 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - [DECISION] **5 IA busca — bloco-12 vs bloco-13** — section "Semana 12 - Algoritmos de Busca", caem em **bloco-12**
   (Correção P1+Agentes, 18–20/05). MAS **bloco-13** (25/05, "Algoritmos busca") = candidato topic-match → **um bloco fora**.
   Mismatch Moodle×SARC persiste. **still-valid, verificado as-of 7561f5c.** Gold-relevant.
-- [DECISION] **A1 (lessons no fusor)** — chamar brainstorming antes de spec.
+- [DERIVADO] **MARCO 0/1 EXECUTADOS (2026-07-01)** — validação do D8 com número (detalhe no log de
+  decisões, seção D8): ordinal-no-nome morto por medição (DP-monotone = lift negativo); len-norm +6.5pp;
+  **LLM 3/18→8/18 no flagged** (converte confusão-semântica, não grão-de-semana); global escopo-disamb
+  58.1%→66.1% (empata funil). **Gargalo real = recall do gate D4** (11 confiante-errado cegos pro LLM).
+  Scripts novos (uncommitted): `marco0_prova_deterministica.py`, `marco1_voto_llm.py`; sidecars
+  `marco0_flagged_MF.json`, `marco1_votes_MF.json`. Próximo: spec do motor incorpora D8-refinado
+  (voto em "flagged OU série same-theme", ignorar autoconfiança do LLM, gate D4 = fase com número).
+- ~~A1 (lessons no fusor) — brainstorming antes de spec~~ **SUPERSEDED (2026-07-01)** — ver entrada
+  Degrau 3a acima; sinal absorvido pelo motor, plano velho mirava o fusor que morre no cutover.
+- [DECISION/CODE] **Refatoração futura: ingestão de material de APOIO (durável/intent, 2026-07-01)** — artigos
+  web, papers e bibliografias ainda NÃO são ingeridos 100% no tutor (ex.: IA tem 3 entries sem `raw/`, 2 delas
+  artigos-web). Fazer motor análogo ao de atribuição, mas para apoio/bibliografia — atribuir ao card/bloco
+  certo SEM inflar verbosidade/custo do tutor (requisito explícito do user). Fora do escopo do motor atual;
+  entra DEPOIS dele.
 - [DECISION] **Span-cap de over-merge REFUTADO (as-of 2026-06-22)** — tentativa de cap de span temporal em
   `_rows_belong_to_same_thematic_block` (15d) reverteu por EVIDÊNCIA, não por calibração: (1) IA bloco-05
   ("monstro" 28d) é unidade COESA *ML supervisionado* (kNN→redes neurais→árvores); só a cauda 04-15
