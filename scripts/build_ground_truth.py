@@ -78,9 +78,79 @@ COURSE_CONFIG = {
     # MF: subtopico testado mas 10/18 semanas STRADDLE (blocos do MF nao alinham
     # com a semana do roteiro) -> forcado a bloco via FORCE_BLOCK em build_gold_xlsx.
     # clean/eco inertes em modo-bloco; sarc_subtopics_MF.csv fica so como registro.
-    "MF":  {"clean_subtopics": set(), "eco_subtopics": set(), "pairs": {}, "year": 2026},
-    "SO":  {"clean_subtopics": set(), "eco_subtopics": set(), "pairs": {}, "year": 2026},
-    "TCC": {"clean_subtopics": set(), "eco_subtopics": set(), "pairs": {}, "year": 2026},
+    # MF: 1 par md5-provado via raw/ (sweep 2026-07-01); gemeos ambos bloco-10 no gold
+    # (consistentes, ambos PASS) — sem flip de veredito, so dedup de denominador.
+    "MF":  {"clean_subtopics": set(), "eco_subtopics": set(), "pairs": {
+        "logicadehoare1-exercicios-respostas": "logicadehoare-exercicios-respostas",
+        "logicadehoare-exercicios-respostas": "logicadehoare-exercicios-respostas",
+    }, "year": 2026},
+    # SO: dups md5-provados via raw/ (sweep 2026-07-01; 42 entries = 38 distintos).
+    # Fonte 100% Moodle (sem stash antigo) — 4 pares intra-Moodle, rotulos dos gemeos
+    # consistentes no gold (validado). Canonico = id mais descritivo.
+    "SO":  {"clean_subtopics": set(), "eco_subtopics": set(), "pairs": {
+        "lista1-gab": "lista-exercicios-p1-gabarito",
+        "lista-exercicios-p1-gabarito": "lista-exercicios-p1-gabarito",
+        "lista2": "lista-exercicios-p2",
+        "lista-exercicios-p2": "lista-exercicios-p2",
+        "programa": "plano-de-ensino",
+        "plano-de-ensino": "plano-de-ensino",
+        "14-04-troca-de-mensagens": "1404-troca-de-mensagens",
+        "1404-troca-de-mensagens": "1404-troca-de-mensagens",
+    }, "year": 2026},
+    # TCC: dups md5-provados via raw/ do repo (sweep 2026-07-01; 42 entries = 27 distintos).
+    # Causa: stash antigo Downloads/TCC (24 entries, sources ja SUMIDOS do disco) acumulado
+    # com o stash Moodle (18) sem poda de migracao — mesmo mecanismo do IA (2026-06-23).
+    # Canonico = id do lado MOODLE (vivo) quando existe, pra sobreviver a poda futura.
+    # ATENCAO: aula-06 tem COLISAO DE ID no manifest (2 entries com o mesmo id) + 3a copia
+    # com id proprio; as 3 sao byte-identicas e mapeiam ao mesmo canonico.
+    "TCC": {"clean_subtopics": set(), "eco_subtopics": set(), "pairs": {
+        # --- 11 pares cross-stash (OLD ≡ Moodle, byte-identico) ---
+        "enunciado-t2": "trabalho-t2-enunciado",
+        "trabalho-t2-enunciado": "trabalho-t2-enunciado",
+        "aula-13-teorema-de-rice": "aula-13-teorema-de-rice-pdf",
+        "aula-13-teorema-de-rice-pdf": "aula-13-teorema-de-rice-pdf",
+        "aula-11-o-problema-da-parada-halting-problem-halteproblem":
+            "aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf",
+        "aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf":
+            "aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf",
+        "aula-08-maquinas-de-turing-como-processadores-de-funcoes":
+            "aula-08-maquinas-de-turing-como-processadoras-de-funcoes",
+        "aula-08-maquinas-de-turing-como-processadoras-de-funcoes":
+            "aula-08-maquinas-de-turing-como-processadoras-de-funcoes",
+        "aula-12-entscheidungsproblem": "aula-12-entscheidungsproblem-pdf",
+        "aula-12-entscheidungsproblem-pdf": "aula-12-entscheidungsproblem-pdf",
+        "aula-04-funcoes-computaveis-funcoes-recursivas-parciais":
+            "aula-04-funcoes-computaveis-funcoes-recursivas-parciais-pdf",
+        "aula-04-funcoes-computaveis-funcoes-recursivas-parciais-pdf":
+            "aula-04-funcoes-computaveis-funcoes-recursivas-parciais-pdf",
+        "aula-17-np-completude": "aula-17-np-completude-pdf",
+        "aula-17-np-completude-pdf": "aula-17-np-completude-pdf",
+        "enunciado-t1": "t1-enunciado",
+        "t1-enunciado": "t1-enunciado",
+        "aula-16-classes-de-problemas-e-complexidade":
+            "aula-16-classes-de-problemas-e-complexidade-pdf",
+        "aula-16-classes-de-problemas-e-complexidade-pdf":
+            "aula-16-classes-de-problemas-e-complexidade-pdf",
+        "aula07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis":
+            "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis",
+        "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis":
+            "aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis",
+        # ids carregam U+0131 (dotless-i, NFD macOS) — copiar byte-a-byte, nao "corrigir".
+        "aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis":
+            "aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf",
+        "aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf":
+            "aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf",
+        # --- triplo intra-OLD (aula-06 x3; sem copia Moodle) ---
+        "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos":
+            "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+        "revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos":
+            "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",
+        # --- 2 pares intra-Moodle (mesmo PDF postado 2x com nomes diferentes) ---
+        "3dm-caetano-gabriel-e-gustavo": "3d-matching",
+        "3d-matching": "3d-matching",
+        "programacao-inteira-01-20260617-154423-0000": "integer-programming-0001",
+        "integer-programming-0001": "integer-programming-0001",
+    }, "year": 2026},
 }
 
 OUT_COLS = ["id", "material", "true_block_id", "computed_block_id", "temporal_block_id",
