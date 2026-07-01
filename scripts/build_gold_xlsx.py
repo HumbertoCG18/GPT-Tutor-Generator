@@ -79,7 +79,7 @@ _IA_CLUSTER_RULES = [
 _TOPIC_CLUSTERS = {"IA": (_IA_CLUSTER_ORDER, _IA_CLUSTER_RULES)}
 # Ordem dos grupos genéricos (por `tipo` de tipo_of). Tipo fora da lista vai ao
 # fim, alfabético.
-_TIPO_ORDER = ["prova", "lista", "código", "artigo", "pdf", "link", "material"]
+_TIPO_ORDER = ["pdf", "código", "imagem", "link", "material"]
 
 
 def _strip_accents(s: str) -> str:
@@ -185,22 +185,13 @@ def topico_from_filename(repo: Path, entry: dict) -> str:
 
 
 def tipo_of(entry: dict) -> str:
-    cat = str(entry.get("category", "") or "")
-    ft = str(entry.get("file_type", "") or "")
-    idt = _norm(entry.get("id", "") + " " + entry.get("title", ""))
-    if cat == "provas" or re.search(r"\bp[12]\b", idt) or "prova" in idt:
-        return "prova"
-    if cat == "listas" or "lista" in idt:
-        return "lista"
-    if cat in ("references", "bibliografia") or "artigo" in idt or "survey" in idt:
-        return "artigo"
-    if cat == "codigo-professor" or ft in ("zip", "code"):
-        return "código"
-    if ft == "url":
-        return "link"
-    if ft == "pdf":
-        return "pdf"
-    return ft or "material"
+    """Tipo = FILE_TYPE puro (padrão consistente entre cursos). NÃO usa keyword do
+    nome: 'ProvasIndutivas' (demonstração matemática) virava 'prova' e sobrescrevia
+    o file_type correto — em MF "prova"=proof, não exame. A distinção semântica
+    (exercício/prova/artigo) mora no nome + tópico, não aqui."""
+    ft = str(entry.get("file_type", "") or "").lower()
+    return {"pdf": "pdf", "zip": "código", "code": "código",
+            "image": "imagem", "url": "link"}.get(ft, ft or "material")
 
 
 def cluster_of(entry: dict, curso: str) -> str:
