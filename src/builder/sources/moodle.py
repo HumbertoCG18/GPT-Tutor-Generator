@@ -375,6 +375,9 @@ def filter_courses_by_semester(courses, semester) -> list:
     return [c for c in (courses or []) if parse_moodle_course(c)["semester"] == semester]
 
 
+_CARD_LISTING = "_ARQUIVOS_DO_CARD.txt"
+
+
 def build_card_structure(stash_dir, contents) -> dict:
     """Cria <stash_dir>/<seção>/ + _ARQUIVOS_DO_CARD.txt (lista esperada). Sem bytes."""
     stash_dir = Path(stash_dir)
@@ -389,8 +392,29 @@ def build_card_structure(stash_dir, contents) -> dict:
         folders += 1
         expected += len(names)
         listing = "Arquivos esperados neste card (baixe do Moodle e coloque aqui):\n\n" + "\n".join(names) + "\n"
-        (folder / "_ARQUIVOS_DO_CARD.txt").write_text(listing, encoding="utf-8")
+        (folder / _CARD_LISTING).write_text(listing, encoding="utf-8")
     return {"folders": folders, "expected_files": expected}
+
+
+def refresh_card_listings_from_disk(stash_dir) -> int:
+    """Reescreve <card>/_ARQUIVOS_DO_CARD.txt espelhando os arquivos REAIS de cada
+    card. Fonte da verdade = DISCO, não a API Moodle — pra matéria M365 os nomes
+    (ex.: 'devops.pdf') batem com o arquivo real, não com o nome/caixa do Moodle
+    ('DevOps.pdf'). Chamado após o download M365. Retorna nº de cards atualizados.
+    O fluxo Moodle (build_card_structure) NÃO usa isto — segue com 'lista esperada'."""
+    root = Path(stash_dir)
+    if not root.is_dir():
+        return 0
+    updated = 0
+    for folder in sorted(root.iterdir()):
+        if not folder.is_dir():
+            continue
+        names = sorted(p.name for p in folder.iterdir()
+                       if p.is_file() and p.name != _CARD_LISTING)
+        listing = "Arquivos presentes neste card:\n\n" + "\n".join(names) + "\n"
+        (folder / _CARD_LISTING).write_text(listing, encoding="utf-8")
+        updated += 1
+    return updated
 
 
 def find_subject_for_course(store, course):

@@ -17,6 +17,7 @@ import requests
 
 from src.builder.sources.moodle import (
     looks_like_expected, sanitize_folder_name, default_token_path,
+    refresh_card_listings_from_disk,
 )
 
 log = logging.getLogger("m365")
@@ -263,6 +264,9 @@ def download_subject_m365(client, m365_filter, section_index, dest,
         log.info("baixado: %s/%s (%d bytes)", card, target.name, len(data))
     log.info("concluído: %d baixados, %d falhas, %d aviso(s)",
              downloaded, len(failed), len(warnings))
+    # Reconcilia os _ARQUIVOS_DO_CARD.txt com o que REALMENTE caiu no disco
+    # (nomes M365), matando o listing stale herdado da API Moodle.
+    refresh_card_listings_from_disk(dest)
     return {"total": total, "downloaded": downloaded, "failed": failed,
             "mapping": mapping, "name_to_section": name_to_section,
             "warnings": warnings}
