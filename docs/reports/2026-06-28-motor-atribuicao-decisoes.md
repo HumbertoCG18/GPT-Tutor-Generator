@@ -599,6 +599,84 @@ especial pro TCC** — só muda o WindowProvider (tópico, não ordinal-linear).
 
 ---
 
+## D13 — Gold: modo de gabarito por curso (ergonomia vs cobertura) + resolução de straddle  [DECIDIDO — 2026-06-30; premissa corrigida 2026-07-01]
+
+Refina D12 pelo lado da FERRAMENTA (`build_gold_xlsx` → `build_ground_truth` →
+`eval_ground_truth`). O gold-scaffold tem **dois modos de gabarito**, auto-detectados
+pelo NOME DA ABA do xlsx:
+
+- **MODO SUBTÓPICO** (aba `Gabarito Subtopicos`): humano rotula por **subtópico#**
+  (semântico, datado); a máquina deriva o bloco pelas datas SARC sob a borda
+  `[início, fim)` (esq-inclusiva, dir-exclusiva; `data==início` cai NAQUELE bloco).
+  Sobrevive a renumeração de bloco. Precisa de `sarc_subtopics_<curso>.csv`.
+- **MODO BLOCO** (aba `Gabarito dos Blocos`): humano escolhe `bloco-NN` direto no
+  dropdown; `true_block = bloco_correto`, sem crosswalk de data.
+
+**STRADDLE** = subtópico-semana cujas 2 datas caem em blocos diferentes. A máquina não
+escolhe um → `scorable=no`, A MENOS que o humano desambigue por-material via `obs -> DD/MM`
+(aponta a sessão exata). Straddle NÃO mata o material — é trabalho extra de resolução.
+
+**CORREÇÃO de premissa (2026-07-01):** a 1ª versão desta D13 dizia que o critério de modo
+era o "straddle rate" (straddle alto → bloco). ERRADO, falsificado na medição:
+- IA straddla **14/20** subtópicos — MAIS que o MF (**10/18**). Não é o menos-straddle.
+- IA funciona em subtópico porque os straddles foram **resolvidos** via `obs -> DD/MM`
+  (29→44 scorable; 6 discriminantes após resolução). Straddle é resolvível, não bloqueio.
+
+**Critério REAL do modo = ergonomia+robustez vs cobertura+simplicidade:**
+
+| | Subtópico | Bloco |
+|---|---|---|
+| Rotula por | tópico (fácil; não precisa saber fronteiras) | `bloco-NN` (mapeia material→bloco) |
+| Straddle | resolve por-material via `obs` (custo) | não existe (escolhe 1 direto) |
+| Cobertura | perde o que não resolver | cheia |
+| Renumeração | robusto | rótulo quebra |
+
+**Resultado empírico por curso:**
+
+| Curso | Fonte roteiro | Straddle | Modo | Motivo |
+|---|---|---|---|---|
+| IA | Moodle `lessons_index` | 14/20 (resolvidos via obs) | subtópico | estabelecido; obs resolve |
+| ES2 | Moodle `lessons_index` (15 datas, 1x/sem) | **0/13** | subtópico | encaixe mais limpo (sem obs) |
+| MF | Moodle `lessons_index` (39 datas, 2x/sem) | 10/18 | **bloco** (FORCE_BLOCK) | conveniência: cobertura cheia dos 67 sem resolver ~10 straddles à mão. NÃO por straddle-rate |
+| SO | **sem `lessons_index`** | — | bloco | sem roteiro datado extraído |
+| TCC | **sem `lessons_index`** | — | bloco | sem roteiro datado (topic-provider, F-TCC) |
+
+MF em bloco é escolha de **conveniência** (cobertura cheia sem resolver straddles à mão),
+não porque straddla mais — straddla MENOS que o IA. Poderia ser subtópico+obs, como o IA.
+SO/TCC sem `lessons_index` = topic-provider (D10/F-TCC), não date-provider.
+
+**Resolução de straddle: PRECEDÊNCIA de sinal (aprendido 2026-07-01):** ao decidir qual
+sessão um material straddle é, checar nesta ordem — **pino manual (`manual_timeline_block_id`)
+> pasta de origem (`source_path`) > conteúdo↔tópico-da-sessão (`lessons_index`)**.
+Falsificação no IA: dos 24 straddles resolvidos por conteúdo, **4 estavam errados** contra
+sinal mais forte (3 contra pino manual, 1 contra pasta `Semana 15 - Busca`) — geraram
+discriminantes FALSOS. Corrigidos → **10→6** discriminantes reais. Melhoria futura: o
+`run_subtopic` podia honrar o pino manual como verdade de maior precedência (hoje só lê
+`obs`/crosswalk) — mas cuidado com circularidade (pino é dado de produção; ver D12).
+
+**`clean_subtopics` (denominador do modo subtópico) = DERIVADO do csv:** `letivo=yes` e
+fonte sem "Card" → clean; "Card" → eco (baixa confiança, carimbado-excluído). Reproduz o
+IA byte-a-byte (`1-11,16-20` clean; `12-15` eco). ACOPLADO à ordem das linhas do csv →
+reordenar/fundir exige re-derivar (o gerador imprime o set). Inerte em modo-bloco
+(`run_block` ignora — só `run_subtopic` lê).
+
+**Grão do gold subtópico = semana ISO** (unidade de ensino real: MF 2 sessões/sem, ES2
+1/sem), com merge de semanas adjacentes de rótulo IDÊNTICO (evita 2 opções indistinguíveis
+no dropdown). Gerado de `lessons_index` por `scripts/draft_subtopics.py` (rascunho
+revisável); `fonte_data=Roteiro (Moodle)` marca NÃO-reconciliado com SARC (datas planejadas,
+não reais — reconciliar onde houve feriado/aula-deslocada).
+
+**FIREWALL do menu (mantido):** subtópico `letivo=no` (feriado/suspensão) NUNCA entra no
+dropdown (assert em runtime); aparece só cinza como contexto. Material não pode ser rotulado
+a feriado → crosswalk nunca faz data-math em feriado.
+
+**Ferramenta:** `build_gold_xlsx.py` (scaffold; `FORCE_BLOCK={"MF"}`; reader `utf-8-sig`
+p/ Excel), `build_ground_truth.py` (crosswalk; `COURSE_CONFIG` por-curso; modo auto por
+aba), `eval_ground_truth.py` (já genérico). CSV com BOM (Excel lê UTF-8 direto). Gold =
+régua de dev, não entra em produção (D12).
+
+---
+
 ## Forks ABERTOS (próximos)
 
 - ~~F2 política de janela~~ → RESOLVIDO por D3/D4.
