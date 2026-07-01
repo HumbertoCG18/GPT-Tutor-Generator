@@ -1,0 +1,43 @@
+id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante
+3d-matching,3D Matching.pdf,bloco-24,bloco-24,bloco-24,3d-matching,block-direct,clean,,yes,no
+3dm-caetano-gabriel-e-gustavo,"3DM - Caetano, Gabriel e Gustavo.pdf",bloco-24,bloco-22,bloco-22,3d-matching,block-direct,clean,,yes,yes
+aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade,"Aula 01 - Apresentação da Disciplina, Revisão de Teoria de Conjuntos e Enumerabilidade.pdf",bloco-01,bloco-02,bloco-02,,block-direct,clean,,yes,yes
+aula-02-conjuntos-enumeraveis-e-nao-enumeraveis-argumento-da-diagonalizacao-de-cantor,Aula 02 - Conjuntos Enumeráveis e Não-Enumeráveis; Argumento da Diagonalização de Cantor.pdf,bloco-02,bloco-02,bloco-02,,block-direct,clean,,yes,no
+aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes,Aula 03 - Funções Recursivas Primitivas e Composição de Funções.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no
+aula-04-funcoes-computaveis-funcoes-recursivas-parciais-pdf,Aula 04  Funções Computáveis Funções Recursivas Parciais .pdf,bloco-03,bloco-03,bloco-03,aula-04-funcoes-computaveis-funcoes-recursivas-parciais-pdf,block-direct,clean,,yes,no
+aula-04-funcoes-computaveis-funcoes-recursivas-parciais-pdf,Aula 04 - Funções Computáveis Funções Recursivas Parciais.pdf,bloco-03,bloco-03,bloco-03,aula-04-funcoes-computaveis-funcoes-recursivas-parciais-pdf,block-direct,clean,,yes,no
+aula-05-minimizacao-de-funcoes-recursivas-parciais,Aula 05 - Minimização de Funções Recursivas Parciais.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no
+aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos,"Aula 06 - Revisão Alfabeto, Cadeia, Linguagem, Hierarquia de Chomsky, Lemas e Propriedades de Autômatos .pdf",bloco-05,bloco-09,bloco-09,aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos,block-direct,clean,,yes,yes
+aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos,"Aula 06 - Revisão Alfabeto, Cadeia, Linguagem, Hierarquia de Chomsky, Lemas e Propriedades de Autômatos.pdf",bloco-05,bloco-09,bloco-09,aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos,block-direct,clean,,yes,yes
+aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis,Aula 07 - Máquinas de Turing e Linguagens Recursivamente Enumeráveis.pdf,bloco-06,bloco-09,bloco-09,aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis,block-direct,clean,,yes,yes
+aula-08-maquinas-de-turing-como-processadoras-de-funcoes,Aula 08 - Máquinas de Turing como Processadoras de Funções.pdf,bloco-06,bloco-09,bloco-09,aula-08-maquinas-de-turing-como-processadoras-de-funcoes,block-direct,clean,,yes,yes
+,Aula 08 Maquinas de Turing como Processadores de Funções.pdf,,,,,block-direct,clean,,no,no
+aula-09-variacoes-de-maquinas-de-turing,Aula 09 - Variações de Máquinas de Turing.pdf,bloco-08,bloco-09,bloco-09,,block-direct,clean,,yes,yes
+aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf,Aula 10 - Linguagens Reconhecı́veis e Linguagens Decidı́veis .pdf,bloco-09,bloco-09,bloco-09,aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf,block-direct,clean,,yes,no
+aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf,Aula 10 - Linguagens Reconhecı́veis e Linguagens Decidı́veis.pdf,bloco-09,bloco-09,bloco-09,aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis-pdf,block-direct,clean,,yes,no
+aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf,"Aula 11 - O Problema da Parada (Halting Problem, Halteproblem) .pdf",bloco-10,bloco-10,bloco-10,aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf,block-direct,clean,,yes,no
+aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf,"Aula 11 - O Problema da Parada (Halting Problem, Halteproblem).pdf",bloco-10,bloco-10,bloco-10,aula-11-o-problema-da-parada-halting-problem-halteproblem-pdf,block-direct,clean,,yes,no
+aula-12-entscheidungsproblem-pdf,Aula 12 - Entscheidungsproblem .pdf,bloco-11,bloco-10,bloco-10,aula-12-entscheidungsproblem-pdf,block-direct,clean,,yes,yes
+aula-12-entscheidungsproblem-pdf,Aula 12 - Entscheidungsproblem.pdf,bloco-11,bloco-10,bloco-10,aula-12-entscheidungsproblem-pdf,block-direct,clean,,yes,yes
+aula-13-teorema-de-rice-pdf,Aula 13 - Teorema de Rice .pdf,bloco-12,bloco-13,bloco-13,aula-13-teorema-de-rice-pdf,block-direct,clean,,yes,yes
+aula-13-teorema-de-rice-pdf,Aula 13 - Teorema de Rice.pdf,bloco-12,bloco-13,bloco-13,aula-13-teorema-de-rice-pdf,block-direct,clean,,yes,yes
+aula-14-problema-da-correspondencia-de-post,Aula 14 - Problema da Correspondência de Post.pdf,bloco-13,bloco-13,bloco-13,,block-direct,clean,,yes,no
+aula-15-teoremas-de-incompletude-de-godel,Aula 15 - Teoremas de Incompletude de Gödel.pdf,bloco-14,bloco-14,bloco-14,,block-direct,clean,,yes,no
+aula-16-classes-de-problemas-e-complexidade-pdf,Aula 16 - Classes de Problemas e Complexidade .pdf,bloco-19,bloco-19,bloco-19,aula-16-classes-de-problemas-e-complexidade-pdf,block-direct,clean,,yes,no
+aula-16-classes-de-problemas-e-complexidade-pdf,Aula 16 - Classes de Problemas e Complexidade.pdf,bloco-19,bloco-19,bloco-19,aula-16-classes-de-problemas-e-complexidade-pdf,block-direct,clean,,yes,no
+aula-16-exemplo-de-prova-para-revisao,Aula 16 - Exemplo de Prova para Revisão.pdf,bloco-16,bloco-16,bloco-16,,block-direct,clean,,yes,no
+aula-17-complexidade-de-tempo-classes-p-e-np,Aula 17 - Complexidade de Tempo Classes P e NP.pdf,bloco-19,bloco-19,bloco-19,,block-direct,clean,,yes,no
+aula-17-np-completude-pdf,Aula 17 - NP-Completude .pdf,bloco-22,bloco-22,bloco-22,aula-17-np-completude-pdf,block-direct,clean,,yes,no
+aula-17-np-completude-pdf,Aula 17 - NP-Completude.pdf,bloco-22,bloco-22,bloco-22,aula-17-np-completude-pdf,block-direct,clean,,yes,no
+aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis,Aula07 Máquinas de Turing e Linguagens Recursivamente Enumeráveis.pdf,bloco-06,bloco-09,bloco-09,aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis,block-direct,clean,,yes,yes
+cubic-3-edge-coloring,Cubic 3-Edge Coloring.pdf,bloco-24,bloco-26,bloco-26,,block-direct,clean,,yes,yes
+,Enunciado T1.pdf,,,,,block-direct,clean,,no,no
+,Enunciado T2.pdf,,,,,block-direct,clean,,no,no
+integer-programming-0001,Integer Programming 00.01.pdf,bloco-24,bloco-13,bloco-13,integer-programming-0001,block-direct,clean,,yes,yes
+plano-de-ensino,Plano de Ensino.pdf,bloco-01,,bloco-01,,block-direct,clean,,yes,no
+,Problema Weighted Max-Cut.pdf,,,,,block-direct,clean,,no,no
+programacao-inteira-01-20260617-154423-0000,Programação Inteira 01_20260617_154423_0000.pdf,bloco-24,bloco-13,bloco-13,integer-programming-0001,block-direct,clean,,yes,yes
+,Referência- REDUCIBILITY AMONG COMBINATORIAL PROBLEMS.pdf,,,,,block-direct,clean,,no,no
+,"Revisão Alfabeto, Cadeia, Linguagem, Hierarquia de Chomsky, Lemas e Propriedades de Autômatos.pdf",,,,,block-direct,clean,,no,no
+t1-enunciado,T1 - Enunciado.pdf,bloco-04,bloco-03,bloco-03,t1-enunciado,block-direct,clean,,yes,yes
+trabalho-t2-enunciado,Trabalho T2 - Enunciado.pdf,bloco-23,bloco-23,bloco-23,trabalho-t2-enunciado,block-direct,clean,,yes,no
