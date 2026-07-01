@@ -79,6 +79,11 @@ class FileEntry:
     # resolvido vive direto no entry, e auto_tags[unit:|bloco:] sao espelho
     # destes campos (escritos por resolve_unit_block_tags).
     computed_unit_slug: str = ""
+    # Melhor candidato de subunidade (best-effort, pode estar abaixo do gate de
+    # tag). Declarado aqui para sobreviver ao round-trip from_dict -> to_dict
+    # (antes era descartado, deixando subunit_match_confidence orfa). A tag
+    # subunit: (gated) continua sendo a atribuicao; este campo e a sugestao.
+    computed_subunit_slug: str = ""
     computed_block_id: str = ""
     computed_block_confidence: float = 0.0
     # Faixa ("alta"/"media"/"baixa") derivada de computed_block_confidence via
@@ -95,12 +100,43 @@ class FileEntry:
     # (acima), que é a confiança do routing determinístico.
     computed_block_method: str = ""
     computed_block_match_confidence: float = 0.0
+    # Bloco TEMPORAL (cronograma) resolvido pela camada de âncora, ADITIVO e
+    # disjunto de computed_block_id (KB). Escrito SÓ com flag use_anchor_placement
+    # e method anchor/manual; "" (omitido do to_dict) quando scorer ou flag OFF
+    # -> resolve_temporal_block cai no fallback resolve_effective_block. NUNCA
+    # alimenta file->card/unit (não re-conflaciona temporal vs KB).
+    temporal_block_id: str = ""
+    temporal_block_method: str = ""
     # Card/seção de origem do arquivo (= subpasta imediata no stash). Sinal
     # autoritativo para a atribuição file->bloco (gabarito-cards). "" quando o
     # arquivo nao veio de um card (cai no caminho lexical, sem regressao).
     source_section: str = ""
+    # Label do recurso no Moodle (= mod.get("name") do core_course_get_contents,
+    # ex. "Exemplos (Lógica de Floyd-Hoare)"). Capturado no import (backfill da API)
+    # ANTES do redirect SharePoint que deixa só o filename. Identidade LIMPA do
+    # material — pesa como conceito no resolver. NUNCA sobrescreve title. ""=ausente.
+    moodle_label: str = ""
+    # Data de upload/postagem (ISO YYYY-MM-DD) do timemodified Moodle/M365.
+    # Capturada no import (S0). NAO consumida pela atribuicao (consumo = A2).
+    # ""=ausente (HTML sem timestamp, ou fonte sem data).
+    posting_date: str = ""
+    posting_date_created: str = ""   # ISO do timecreated (diagnostico do probe)
+    # Conflito unidade×bloco detectado no auto (F1): a unidade forte (>=0.65)
+    # venceu um bloco que apontava OUTRA unidade (block_confidence < unit_conf).
+    # {} quando não há conflito. Sinal de revisão exibido no editor; o build
+    # mantém a unidade forte. Distinto da herança silenciosa (que não é conflito).
+    unit_block_conflict: dict = field(default_factory=dict)
+    # Override do id (bug B5): setado pelo import quando o id computado do
+    # source_path colide com entry de OUTRO source_path. Quando não-vazio,
+    # id() retorna este valor — assim assets/raw/manifest usam o id final
+    # consistente desde o início do processamento. Persistido no manifest
+    # (to_dict omite quando vazio; from_dict restaura), então releituras
+    # mantêm o id deduplicado em vez de recomputar do source_path.
+    id_override: str = ""
 
     def id(self) -> str:
+        if self.id_override:
+            return self.id_override
         if self.file_type == "url":
             import hashlib
             base = slugify(self.title) or "url"
@@ -198,8 +234,14 @@ class SubjectProfile:
     stash_folder: str = ""        # pasta com os arquivos-fonte (PDFs/cards) da materia
     moodle_course_id: str = ""   # liga a matéria ao curso Moodle (re-sync, upsert)
     m365_filter: str = ""        # substring do path OneDrive p/ filtrar insights (M365)
+    turma: str = ""              # turma(s) do curso Moodle (ex.: "031"); registro, nao scoped (S0)
+    schedule_url: str = ""       # URL do SARC Export.aspx (GUID/ano/sem da turma); registro (S0)
     github_url: str = ""           # URL base do repo no GitHub
     preferred_llm: str = "claude"  # Plataforma principal: "claude", "gpt", "gemini"
+    # Flags de feature por matéria (durável). Ausente/{} → todas False. Injetadas
+    # nas builder.options por _build_options_from_config. Liga capacidades wired
+    # atrás de flag (ex.: use_anchor_placement) sem schema novo por flag.
+    feature_flags: Dict[str, bool] = field(default_factory=dict)
     queue: List[FileEntry] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:

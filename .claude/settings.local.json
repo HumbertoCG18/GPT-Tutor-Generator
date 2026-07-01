@@ -52,7 +52,10 @@
       "Bash(Select-Object -ExpandProperty FullName)",
       "Bash(grep -n \"\\\\d{1,2}/\\\\d{1,2}\\\\|\\\\d{2}/\\\\d{2}\\\\|DD/MM\\\\|date.*regex\\\\|\\\\\\\\\\\\\\\\d.*date\" src/builder/timeline/index.py)",
       "mcp__claude-mem__timeline",
-      "mcp__claude-mem__memory_search"
+      "mcp__claude-mem__memory_search",
+      "Bash(ls -d .venv venv env)",
+      "Bash(ls pytest.ini pyproject.toml setup.cfg requirements*.txt)",
+      "Bash(./.venv/Scripts/python.exe scripts/compare_resolver.py)"
     ]
   },
   "enableAllProjectMcpServers": true,

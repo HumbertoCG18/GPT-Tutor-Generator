@@ -90,13 +90,16 @@ def build_teaching_timeline_aliases(
 
     aggregate_unit_periods_from_blocks = timeline_aggregate_unit_periods_from_blocks
 
-    def build_file_map_timeline_context_from_course(course_meta, subject_profile=None, content_taxonomy=None):
+    def build_file_map_timeline_context_from_course(
+        course_meta, subject_profile=None, content_taxonomy=None, *, persist=True
+    ):
         return timeline_build_file_map_timeline_context_from_course(
             course_meta,
             subject_profile,
             content_taxonomy,
             build_file_map_unit_index_from_course=build_file_map_unit_index_from_course,
             build_file_map_content_taxonomy_from_course=build_file_map_content_taxonomy_from_course,
+            persist=persist,
         )
 
     parse_bibliography_from_teaching_plan = teaching_plan_parse_bibliography

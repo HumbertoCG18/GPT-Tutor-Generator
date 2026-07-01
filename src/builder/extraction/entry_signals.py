@@ -1,15 +1,30 @@
 from __future__ import annotations
 
-import re
 from pathlib import Path
-from datetime import date
-from typing import Dict, List, Optional
+from typing import Dict, List
 
-from src.builder.extraction.content_taxonomy import extract_markdown_lead_text
-from src.builder.text.normalize import normalize_match_text  # noqa: F401  (re-export)
+from src.builder.extraction.content_taxonomy import (
+    _extract_markdown_headings,
+    extract_markdown_lead_text,
+)
+from src.builder.routing.thresholds import TOOL_EXTENSIONS
+from src.builder.text.normalize import (  # noqa: F401  (re-export)
+    normalize_match_text,
+    split_camel_case,
+)
 
 
-def score_text_against_row(source_text: str, row_tokens: List[str], *, weight: float = 1.0) -> float:
+def score_text_against_row(
+    source_text: str,
+    row_tokens: List[str],
+    *,
+    weight: float = 1.0,
+    token_weights: Dict[str, float] | None = None,
+) -> float:
+    # S2 (P4): token_weights (token -> peso efetivo, cf.
+    # file_map.block_token_weights) multiplica a contribuição POR row_token —
+    # tokens raros entre os candidatos pesam mais. None = peso 1.0 para todos
+    # (comportamento anterior EXATO).
     if not source_text or not row_tokens:
         return 0.0
 
@@ -17,12 +32,13 @@ def score_text_against_row(source_text: str, row_tokens: List[str], *, weight: f
     score = 0.0
     for source_token in source_tokens:
         for row_token in row_tokens:
+            token_weight = 1.0 if token_weights is None else float(token_weights.get(row_token, 1.0))
             if source_token == row_token:
-                score += 1.0 * weight
+                score += 1.0 * weight * token_weight
             elif source_token in row_token or row_token in source_token:
-                score += 0.45 * weight
+                score += 0.45 * weight * token_weight
             elif len(source_token) >= 5 and len(row_token) >= 5 and source_token[:5] == row_token[:5]:
-                score += 0.2 * weight
+                score += 0.2 * weight * token_weight
     return score
 
 
@@ -38,21 +54,6 @@ def entry_image_source_dirs(root_dir: Path, entry: dict) -> List[Path]:
     if rendered_pages_dir:
         dirs.append(root_dir / rendered_pages_dir)
     return dirs
-
-
-def _extract_markdown_headings(raw_markdown: str, limit: int = 8) -> List[str]:
-    headings: List[str] = []
-    for line in (raw_markdown or "").splitlines():
-        match = re.match(r"^#{1,6}\s+(.+?)\s*$", line)
-        if not match:
-            continue
-        heading = re.sub(r"\s+", " ", match.group(1)).strip()
-        if not heading:
-            continue
-        headings.append(heading)
-        if len(headings) >= limit:
-            break
-    return headings
 
 
 def _merge_manual_and_auto_tags(
@@ -79,6 +80,21 @@ def _merge_manual_and_auto_tags(
 def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str]:
     manual_tags = [str(tag).strip() for tag in (entry.get("manual_tags") or []) if str(tag).strip()]
     auto_tags = [str(tag).strip() for tag in (entry.get("auto_tags") or []) if str(tag).strip()]
+    # S4 (P4): valores das auto_tags `ferramenta:` em campo próprio — o scorer
+    # de bloco (file_map, TOOL_TOKENS) filtra quais são ferramentas de verdade.
+    tool_values = [
+        tag.split(":", 1)[1].strip()
+        for tag in auto_tags
+        if tag.lower().startswith("ferramenta:")
+    ]
+    # S4b (P4): ferramenta também pela EXTENSÃO do arquivo fonte (.thy ->
+    # isabelle, .dfy -> dafny) — os .thy do manifest real não trazem
+    # ferramenta:isabelle nas auto_tags. União dos dois sinais, dedupada.
+    for field in ("source_path", "raw_target"):
+        suffix = Path(str(entry.get(field, "") or "")).suffix.lower()
+        ext_tool = TOOL_EXTENSIONS.get(suffix)
+        if ext_tool and ext_tool not in tool_values:
+            tool_values.append(ext_tool)
     legacy_tags = [
         part.strip()
         for part in str(entry.get("tags", "") or "").replace(",", ";").split(";")
@@ -99,36 +115,22 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         extra_parts.append(image_description)
     effective_markdown = "\n".join(p for p in extra_parts if p).strip()
     return {
-        "title_text": normalize_match_text(entry.get("title", "")),
+        # S1 (P4): split camelCase SÓ no título — "LogicaDeHoare2" vira
+        # "logica de hoare 2" e casa com o topic do bloco. Markdown/tags intactos.
+        "title_text": normalize_match_text(split_camel_case(entry.get("title", ""))),
         "markdown_headings_text": normalize_match_text(" ".join(_extract_markdown_headings(markdown_text))),
         "markdown_lead_text": normalize_match_text(extract_markdown_lead_text(markdown_text)),
         "category_text": normalize_match_text(entry.get("category", "")),
         "manual_tags_text": normalize_match_text("; ".join(manual_tags)),
         "auto_tags_text": normalize_match_text("; ".join(auto_tags)),
+        "tool_tags_text": normalize_match_text(" ".join(tool_values)),
         "legacy_tags_text": normalize_match_text("; ".join(legacy_tags)),
         "tags_text": normalize_match_text(merged_tags),
         "raw_text": normalize_match_text(entry.get("raw_target", "")),
         "image_description_text": normalize_match_text(image_description),
         "markdown_text": normalize_match_text(effective_markdown),
+        # alavanca 1: label do recurso Moodle (mod.name) — identidade LIMPA do
+        # material (ex. "Exemplos (Lógica de Floyd-Hoare)"), pesa como conceito.
+        "moodle_label_text": normalize_match_text(entry.get("moodle_label", "")),
     }
 
-
-_DATE_PREFIX_RE = re.compile(r"^(\d{1,2})\.(\d{2})\s+")
-
-
-def extract_date_prefix_signal(filename: str, year: int) -> Optional[date]:
-    """Extrai sinal de data DD.MM do início do nome do arquivo.
-
-    Padrão esperado: '12.03 Processos.pdf' → date(year, 3, 12)
-    O ponto é usado como separador porque '/' não é válido em nomes de
-    arquivo no Windows. Retorna None se o padrão não casar ou a data
-    for inválida.
-    """
-    stem = Path(filename).stem
-    m = _DATE_PREFIX_RE.match(stem)
-    if not m:
-        return None
-    try:
-        return date(year, int(m.group(2)), int(m.group(1)))
-    except ValueError:
-        return None

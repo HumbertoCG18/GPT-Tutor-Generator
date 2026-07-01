@@ -12,6 +12,7 @@ from src.builder.artifacts.build_metrics import (
     collect_build_metrics,
     render_build_metrics_md,
 )
+from src.builder.routing.file_map import resolve_effective_block, resolve_temporal_block
 
 
 def student_state_md(
@@ -834,7 +835,7 @@ def code_index_md(
     orphans: list = []
     for e in code_only:
         summary = (curation_entries.get(e.id()) or {}).get("summary") or {}
-        primary = summary.get("primary_block_id", "")
+        primary = resolve_effective_block(e.to_dict(), timeline_blocks).block_id
         if primary and primary in blocks_by_id:
             by_block.setdefault(primary, []).append((e, summary))
         else:
@@ -885,6 +886,19 @@ def code_index_md(
     return clamp_navigation_artifact(result, max_chars=14000, label="course/CODE_INDEX.md")
 
 
+_PT_WEEKDAYS = ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"]
+
+
+def _session_date_label(date_iso: str) -> str:
+    """'qua 11/03' a partir de 'YYYY-MM-DD'; retorna a string crua se inválida/vazia."""
+    from datetime import date as _date
+    try:
+        d = _date.fromisoformat(str(date_iso))
+    except (ValueError, TypeError):
+        return str(date_iso or "")
+    return f"{_PT_WEEKDAYS[d.weekday()]} {d.day:02d}/{d.month:02d}"
+
+
 def cronograma_detalhado_md(
     course_meta: dict,
     entries: list,
@@ -909,8 +923,10 @@ def cronograma_detalhado_md(
         if e.category not in ("codigo-professor", "codigo-aluno", "codigo-trabalho-aluno"):
             continue
         s = (curation_entries.get(e.id()) or {}).get("summary") or {}
-        if s.get("primary_block_id"):
-            primary_idx.setdefault(s["primary_block_id"], []).append((e, s))
+        # TEMPORAL (CRONOGRAMA_DETALHADO): bloco efetivo via âncora>manual>computed.
+        primary = resolve_temporal_block(e.to_dict(), timeline_blocks)
+        if primary:
+            primary_idx.setdefault(primary, []).append((e, s))
         for sb in (s.get("secondary_block_ids") or []):
             secondary_idx.setdefault(sb, []).append((e, s))
 
@@ -924,6 +940,9 @@ def cronograma_detalhado_md(
 
     for blk in timeline_blocks:
         bid = blk["id"]
+        # Lookup por uuid (computed_block_id/secondary_block_ids já são uuid pós-Task 2);
+        # fallback por id legado para compat com refs manuais que ainda usam bloco-NN.
+        buuid = str(blk.get("block_uuid") or "")
         period = blk.get("period_label", bid)
         topic = blk.get("primary_topic_label", "")
         topics = blk.get("topics") or []
@@ -940,9 +959,22 @@ def cronograma_detalhado_md(
             lines.append(f"**Tópicos cobertos**: {', '.join(topics)}")
         lines.append("")
 
+        sessions = blk.get("sessions") or []
+        if sessions:
+            lines += ["### Sessões", ""]
+            for s in sessions:
+                date_label = _session_date_label(str(s.get("date") or ""))
+                slabel = str(s.get("label") or "")
+                mark = " ⏱" if str(s.get("kind") or "class") == "assessment" else ""
+                line = f"- **{date_label}**{mark}" if date_label else f"- **(sem data)**{mark}"
+                if slabel:
+                    line += f" — {slabel}"
+                lines.append(line)
+            lines.append("")
+
         # Materiais (code-only por enquanto)
-        primaries = primary_idx.get(bid, [])
-        secondaries = secondary_idx.get(bid, [])
+        primaries = primary_idx.get(buuid) or primary_idx.get(bid, [])
+        secondaries = secondary_idx.get(buuid) or secondary_idx.get(bid, [])
 
         if primaries or secondaries:
             lines += ["### Códigos desta aula", ""]
@@ -991,7 +1023,7 @@ def code_health_md(
     orphans_list = []
     for e in code_entries:
         s = (curation_entries.get(e.id()) or {}).get("summary") or {}
-        if s.get("primary_block_id"):
+        if resolve_effective_block(e.to_dict(), timeline_blocks).block_id:
             with_block += 1
         elif s:  # tem summary mas sem block
             orphans_list.append((e, s))

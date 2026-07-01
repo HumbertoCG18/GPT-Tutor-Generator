@@ -195,7 +195,8 @@ def test_auto_suggested_unit_prefers_auto_unit_slug():
 
 def test_auto_suggested_unit_falls_back_to_candidates_without_auto_unit():
     from src.builder.timeline.conflicts import auto_suggested_unit
-    # sem auto_unit_slug, mantem o caminho antigo (topico confiante)
+    # sem auto_unit_slug (nao-aula/herdado/posicional-vazio), usa o fallback
+    # topic-derive: topico confiante e nao-ambiguo -> unidade do candidato top.
     block = {"topic_ambiguous": False, "primary_topic_confidence": 1.0,
              "topic_candidates": [{"unit_slug": "unidade-01-conjuntos"}]}
     slug, conf = auto_suggested_unit(block)

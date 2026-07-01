@@ -193,3 +193,17 @@ def test_decide_source_both_empty_cancels():
 
 def test_decide_source_handles_none_inputs():
     assert decide_schedule_source(None, None) == {"action": "cancel"}
+
+
+# --- parse_sarc_turma_key ---------------------------------------------------
+
+
+def test_parse_sarc_turma_key():
+    from src.utils.helpers import parse_sarc_turma_key
+    url = "https://sarc.pucrs.br/Default/Export.aspx?id=9b679f12-aaaa&ano=2026&sem=1"
+    assert parse_sarc_turma_key(url) == {"guid": "9b679f12-aaaa", "ano": "2026", "sem": "1"}
+
+
+def test_parse_sarc_turma_key_malformed():
+    from src.utils.helpers import parse_sarc_turma_key
+    assert parse_sarc_turma_key("not a url") == {"guid": "", "ano": "", "sem": ""}

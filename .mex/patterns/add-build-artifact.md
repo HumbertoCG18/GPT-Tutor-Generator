@@ -10,12 +10,12 @@ edges:
     condition: when understanding the existing output structure
   - target: context/architecture.md
     condition: when identifying which module should own the new artifact
-last_updated: 2026-06-09
+last_updated: 2026-06-21
 ---
 
 # Add Build Artifact
 
-Reviewed against the current artifact generation modules and build workflow on 2026-06-03.
+Reviewed against the current artifact generation modules and build workflow on 2026-06-21.
 
 ## Context
 
@@ -23,22 +23,26 @@ Load `context/repo-output.md` (existing artifacts) and `context/architecture.md`
 
 ## Steps
 
-1. Identify which subpackage owns this artifact: `src/builder/artifacts/` for pedagogical files, `src/builder/facade/` for configured wrappers.
+1. Identify which subpackage owns this artifact: `src/builder/artifacts/` for renderers, `src/builder/ops/` for lifecycle/write orchestration, `src/builder/facade/` only for configured wrappers.
 2. Create the generator module in the correct subpackage.
-3. Register the artifact in `src/builder/ops/build_workflow.py` so it runs as part of the build.
+3. Register the artifact in `src/builder/ops/pedagogical_regeneration.py` if it is regenerated with COURSE_MAP/FILE_MAP, or in `src/builder/ops/build_workflow.py` only if it belongs to the outer build lifecycle.
 4. Add the output path to `context/repo-output.md`.
 5. Write tests in `tests/test_<artifact_name>.py`.
 
 ## Gotchas
 
 - Internal artifacts (not meant to be loaded eagerly by Claude Projects) must go under the generated repository's build metadata directory.
+- Internal routing/taxonomy artifacts that regeneration reads live as generated course dotfiles.
+- Course-level routing evidence from source platforms also lives as generated course dotfiles, such as the generated card-block map and lessons index.
+- Stable timeline identity lives in generated course dotfiles too; dry-run paths with `persist=False` must not write the block-identity ledger or timeline curation data.
+- Progress schema output currently belongs under the generated student directory; the old build-directory schema path is legacy cleanup territory.
 - Do not add generation logic to `engine.py`.
 - If the artifact references other artifacts (e.g., FILE_MAP references COURSE_MAP), ensure build order is correct in `build_workflow.py`.
 
 ## Verify
 
 - [ ] Generator lives in the correct subpackage, not in `engine.py`.
-- [ ] Artifact is registered in `build_workflow.py`.
+- [ ] Artifact is registered in `pedagogical_regeneration.py` or `build_workflow.py`, depending on lifecycle ownership.
 - [ ] Internal-only artifacts are output to the generated repository's build metadata directory, not to the repo root.
 - [ ] Tests exist.
 

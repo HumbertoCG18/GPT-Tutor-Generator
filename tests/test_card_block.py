@@ -4,6 +4,7 @@ from src.builder.timeline.card_block import (
     CardBlockResolution,
     load_card_block_map,
     lookup_card_blocks,
+    lookup_card_assign_due,
     resolve_card_to_block,
 )
 
@@ -12,27 +13,27 @@ UNITS = [
     {"slug": "u-verif", "title": "Verificação de Programas", "topics": ["hoare", "dafny"], "distinctive_tokens": []},
 ]
 BLOCKS = [
-    {"id": "bloco-01", "unit_slug": "u-intro", "period_start": "2026-03-02", "period_end": "2026-03-02"},
-    {"id": "bloco-10", "unit_slug": "u-verif", "period_start": "2026-04-27", "period_end": "2026-05-04"},
-    {"id": "bloco-11", "unit_slug": "u-verif", "period_start": "2026-05-06", "period_end": "2026-05-06"},
+    {"id": "bloco-01", "block_uuid": "uuid-01", "unit_slug": "u-intro", "period_start": "2026-03-02", "period_end": "2026-03-02"},
+    {"id": "bloco-10", "block_uuid": "uuid-10", "unit_slug": "u-verif", "period_start": "2026-04-27", "period_end": "2026-05-04"},
+    {"id": "bloco-11", "block_uuid": "uuid-11", "unit_slug": "u-verif", "period_start": "2026-05-06", "period_end": "2026-05-06"},
 ]
 
 
 def test_card_name_matches_unit_returns_its_blocks():
     r = resolve_card_to_block("Verificação de Programas", UNITS, BLOCKS)
-    assert set(r.block_ids) == {"bloco-10", "bloco-11"}
+    assert set(r.block_ids) == {"uuid-10", "uuid-11"}
     assert r.confidence > 0.0
     assert r.reason.startswith("unit:")
 
 
 def test_card_partial_name_still_matches_unit():
     r = resolve_card_to_block("Verificacao de Programas (Hoare/Dafny)", UNITS, BLOCKS)
-    assert set(r.block_ids) == {"bloco-10", "bloco-11"}
+    assert set(r.block_ids) == {"uuid-10", "uuid-11"}
 
 
 def test_card_with_date_maps_to_covering_block():
     r = resolve_card_to_block("Aula 06/05", UNITS, BLOCKS)
-    assert r.block_ids == ["bloco-11"]
+    assert r.block_ids == ["uuid-11"]
     assert r.reason.startswith("date:")
 
 
@@ -58,14 +59,15 @@ def test_load_missing_map_returns_empty(tmp_path):
 
 
 def test_lookup_prefers_manual_map_over_auto():
-    card_map = {"Verificação de Programas": {"block_ids": ["bloco-99"], "source": "manual"}}
+    # bloco-10 existe no índice → resolve para seu uuid (lazy compat Task 2)
+    card_map = {"Verificação de Programas": {"block_ids": ["bloco-10"], "source": "manual"}}
     ids = lookup_card_blocks("Verificação de Programas", card_map, UNITS, BLOCKS)
-    assert ids == ["bloco-99"]
+    assert ids == ["uuid-10"]
 
 
 def test_lookup_falls_back_to_auto_resolution():
     ids = lookup_card_blocks("Verificação de Programas", {}, UNITS, BLOCKS)
-    assert set(ids) == {"bloco-10", "bloco-11"}
+    assert set(ids) == {"uuid-10", "uuid-11"}
 
 
 def test_single_token_card_matches_when_unambiguous():
@@ -121,7 +123,7 @@ def test_card_matches_block_topic_when_no_unit_match():
 def test_unit_match_still_takes_priority_over_topic():
     # card casa o título da unidade -> retorna blocos da unidade (comportamento atual)
     r = resolve_card_to_block("Verificação de Programas", UNITS, BLOCKS)
-    assert set(r.block_ids) == {"bloco-10", "bloco-11"}
+    assert set(r.block_ids) == {"uuid-10", "uuid-11"}
     assert r.reason.startswith("unit:")
 
 
@@ -163,3 +165,28 @@ def test_unit_title_match_still_wins_over_block_topic():
     r = resolve_card_to_block("Verificação de Programas", units, blocks)
     assert set(r.block_ids) == {"bloco-10", "bloco-11"}
     assert r.reason.startswith("unit:")
+
+
+def test_lookup_blocks_matches_card_key_case_accent_insensitive():
+    # chave do mapa com caixa/acento "originais"; source_section divergente ainda casa
+    card_map = {
+        "Especificações Indutivas e Recursivas": {"block_ids": ["bloco-01"], "source": "manual"}
+    }
+    # bloco-01 resolve para uuid-01 (lazy compat Task 2)
+    assert lookup_card_blocks(
+        "especificacoes indutivas e recursivas", card_map, UNITS, BLOCKS
+    ) == ["uuid-01"]
+    assert lookup_card_blocks(
+        "ESPECIFICAÇÕES INDUTIVAS E RECURSIVAS", card_map, UNITS, BLOCKS
+    ) == ["uuid-01"]
+
+
+def test_lookup_assign_due_case_accent_insensitive():
+    card_map = {"Verificação de Programas": {"assign_due": "2026-06-10", "source": "labels"}}
+    assert lookup_card_assign_due("verificacao de programas", card_map) == "2026-06-10"
+
+
+def test_lookup_blocks_exact_key_still_matches():
+    # não regride o match exato; bloco-11 resolve para uuid-11 (lazy compat Task 2)
+    card_map = {"Meu Card": {"block_ids": ["bloco-11"], "source": "manual"}}
+    assert lookup_card_blocks("Meu Card", card_map, UNITS, BLOCKS) == ["uuid-11"]

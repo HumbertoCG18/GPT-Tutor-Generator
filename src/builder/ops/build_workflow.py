@@ -6,6 +6,7 @@ import sys
 from datetime import datetime
 
 from src.builder.artifacts.deeptutor import write_deeptutor_export
+from src.builder.ops.lifecycle_ops import assign_dedup_id
 from src.utils.helpers import write_text, write_json_manifest
 
 logger = logging.getLogger(__name__)
@@ -56,10 +57,12 @@ def build_impl(
     if skipped:
         logger.info("Pulando %d entries desabilitados.", skipped)
     total = len(active_entries)
+    existing_ids: set = set()
     for i, entry in enumerate(active_entries):
         logger.info("[%d/%d] Processing: %s (%s)", i + 1, total, entry.title, entry.file_type)
         if builder.progress_callback:
             builder.progress_callback(i, total, entry.title)
+        assign_dedup_id(entry, existing_ids)
         try:
             item_result = builder._process_entry(entry)
             manifest["entries"].append(item_result)

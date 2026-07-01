@@ -5,7 +5,7 @@ content_taxonomy.resolve_unit_block_tags, o mesmo caminho que escreve o
 manifest), le computed_block_id/computed_block_band e compara com o bloco
 esperado. Reporta acuracia, matriz de confusao e calibracao de band.
 
-Sem disco, sem Datalab, sem Gemini. Deterministico.
+Sem rede, sem Datalab, sem Gemini (card_block_map vai num tempdir local). Deterministico.
 
 Uso:
     python scripts/eval_assignments.py [tests/fixtures/eval/assignments_gold.json]
@@ -61,16 +61,19 @@ def _entry_from_case(case: dict) -> dict:
         "file_type": "pdf",
         "source_path": str(case.get("raw_target", "")),
         "raw_target": str(case.get("raw_target", "")),
+        "source_section": str(case.get("source_section_real", "")),
         "tags": str(case.get("tags", "")),
         "manual_tags": [],
-        "auto_tags": [],
+        # S4: as auto_tags do manifest (ferramenta:isabelle etc.) alimentam o
+        # sinal de ferramenta do scorer — sem elas o sinal nunca dispara aqui.
+        "auto_tags": [str(t) for t in (case.get("auto_tags") or []) if str(t).strip()],
         "manual_unit_slug": "",
         "manual_timeline_block_id": "",
         "manual_subunit_slug": "",
     }
 
 
-def predict_block(case: dict, blocks: list) -> tuple[str, str]:
+def predict_block(case: dict, blocks: list, course_meta: dict | None = None) -> tuple[str, str]:
     """Retorna (computed_block_id, computed_block_band) do scorer real."""
     guess = case.get("unit_guess") or {}
     unit_stub = _stub_unit_match(
@@ -82,7 +85,7 @@ def predict_block(case: dict, blocks: list) -> tuple[str, str]:
 
     out = resolve_unit_block_tags(
         [_entry_from_case(case)],
-        course_meta={},
+        course_meta=dict(course_meta or {}),
         subject_profile=None,
         build_file_map_unit_index_from_course_fn=lambda c, s: [],
         build_file_map_timeline_context_from_course_fn=lambda c, s: {
@@ -91,7 +94,7 @@ def predict_block(case: dict, blocks: list) -> tuple[str, str]:
             "timeline_index": {"blocks": list(blocks)},
         },
         iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m: _stub_topic_match(),
+        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
         auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: unit_stub,
         select_probable_period_for_entry_fn=_select_probable_period_for_entry,
         resolve_entry_manual_timeline_block_fn=lambda e, tc: None,
@@ -101,10 +104,22 @@ def predict_block(case: dict, blocks: list) -> tuple[str, str]:
 
 
 def evaluate(gold: dict) -> dict:
+    """Roda cada caso pelo scorer real e agrega o placar.
+
+    Semântica do expected_block_id: None (null no JSON) = ground truth pendente
+    de decisão humana — roda predição informativa mas não conta erro/acerto;
+    "" = legado da fixture sintética (espera órfão); expected_origin="excluido"
+    = pulado sem predição. card_block_map (se presente) vai pra um tempdir como
+    course/.card_block_map.json via course_meta._repo_root — o mesmo caminho
+    que produção usa pra carregar o gabarito."""
+    import tempfile
+
     blocks = gold["timeline"]["blocks"]
     cases = gold["cases"]
+    card_map = gold.get("card_block_map") or {}
 
     case_rows = []
+    pending_rows = []
     confusion: dict = {}
     bands = {
         "alta": {"correct": 0, "wrong": 0},
@@ -114,40 +129,76 @@ def evaluate(gold: dict) -> dict:
     }
     correct = 0
     orphans = 0
+    pending = 0
+    excluded = 0
+    with_section = {"total": 0, "correct": 0}
+    without_section = {"total": 0, "correct": 0}
 
-    for case in cases:
-        expected = str(case.get("expected_block_id", ""))
-        predicted, band = predict_block(case, blocks)
-        is_correct = predicted == expected
-        if is_correct:
-            correct += 1
-        if predicted == "":
-            orphans += 1
-        bands.setdefault(band, {"correct": 0, "wrong": 0})
-        bands[band]["correct" if is_correct else "wrong"] += 1
-        key = f"{expected}->{predicted or '(orfao)'}"
-        confusion[key] = confusion.get(key, 0) + 1
-        case_rows.append({
-            "id": str(case.get("id", "")),
-            "expected": expected,
-            "predicted": predicted,
-            "band": band,
-            "correct": is_correct,
-            "note": str(case.get("note", "")),
-        })
+    with tempfile.TemporaryDirectory() as td:
+        course_meta: dict = {}
+        if card_map:
+            course_dir = Path(td) / "course"
+            course_dir.mkdir(parents=True)
+            (course_dir / ".card_block_map.json").write_text(
+                json.dumps(card_map, ensure_ascii=False), encoding="utf-8")
+            course_meta = {"_repo_root": td}
 
-    total = len(cases)
+        for case in cases:
+            origin = str(case.get("expected_origin") or "")
+            if origin == "excluido":
+                excluded += 1
+                continue
+            predicted, band = predict_block(case, blocks, course_meta)
+            raw_expected = case.get("expected_block_id", "")
+            if raw_expected is None:
+                # null explícito = ground truth pendente de decisão humana.
+                # ("" continua sendo o legado "espera órfão" da fixture sintética.)
+                pending += 1
+                pending_rows.append({
+                    "id": str(case.get("id", "")), "origin": origin,
+                    "predicted": predicted, "band": band,
+                    "candidates": list(case.get("candidates") or []),
+                })
+                continue
+            expected = str(raw_expected)
+            is_correct = predicted == expected
+            if is_correct:
+                correct += 1
+            if predicted == "":
+                orphans += 1
+            seg = with_section if str(case.get("source_section_real") or "") else without_section
+            seg["total"] += 1
+            seg["correct"] += int(is_correct)
+            bands.setdefault(band, {"correct": 0, "wrong": 0})
+            bands[band]["correct" if is_correct else "wrong"] += 1
+            key = f"{expected}->{predicted or '(orfao)'}"
+            confusion[key] = confusion.get(key, 0) + 1
+            case_rows.append({
+                "id": str(case.get("id", "")),
+                "expected": expected,
+                "predicted": predicted,
+                "band": band,
+                "correct": is_correct,
+                "note": str(case.get("note", "")),
+            })
+
+    total = len(case_rows)
     return {
         "total": total,
         "correct": correct,
         "wrong": total - correct,
         "orphans": orphans,
+        "pending": pending,
+        "excluded": excluded,
         "block_accuracy": (correct / total) if total else 0.0,
+        "with_section": with_section,
+        "without_section": without_section,
         # confiante e ERRADO = pior falha (band alta mas bloco errado)
         "confident_wrong": bands["alta"]["wrong"],
         "bands": bands,
         "confusion": confusion,
         "cases": case_rows,
+        "pending_cases": pending_rows,
     }
 
 
@@ -160,6 +211,13 @@ def format_report(report: dict, gold: dict) -> str:
         f"({acc * 100:.1f}%)   orfaos: {report['orphans']}"
     )
     lines.append(f"Confiante e ERRADO (band alta, bloco errado): {report['confident_wrong']}")
+    ws, wos = report["with_section"], report["without_section"]
+    lines.append(
+        f"Com secao real: {ws['correct']}/{ws['total']}   "
+        f"Sem secao: {wos['correct']}/{wos['total']}   "
+        f"Pendentes (decisao humana): {report['pending']}   "
+        f"Excluidos: {report['excluded']}"
+    )
     lines.append("")
     lines.append("Calibracao por band (correto / errado):")
     for band in ("alta", "media", "baixa", ""):
@@ -178,6 +236,12 @@ def format_report(report: dict, gold: dict) -> str:
             )
     else:
         lines.append("Sem erros.")
+    if report["pending_cases"]:
+        lines.append("")
+        lines.append("Pendentes (expected_block_id null — preencher no golden):")
+        for p in report["pending_cases"]:
+            cands = f"  candidatos: {', '.join(p['candidates'])}" if p["candidates"] else ""
+            lines.append(f"  - {p['id']:<40} previu={p['predicted'] or '(orfao)'} band={p['band'] or '-'}{cands}")
     baseline = float((gold.get("baseline") or {}).get("block_accuracy", 0.0))
     lines.append("")
     lines.append(f"Baseline registrado: {baseline * 100:.1f}%")

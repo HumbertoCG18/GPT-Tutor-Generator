@@ -1,0 +1,152 @@
+[
+  {
+    "id": "bloco-01",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "plano ensino programatico cronograma forma datas avaliacao bibliografia historico"
+  },
+  {
+    "id": "bloco-02",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "visao geral"
+  },
+  {
+    "id": "bloco-03",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "introducao"
+  },
+  {
+    "id": "bloco-04",
+    "n_sessoes": 2,
+    "span_dias": 5,
+    "topico": "tipos dados preparacao dados; preparacao dados"
+  },
+  {
+    "id": "bloco-05",
+    "n_sessoes": 9,
+    "span_dias": 28,
+    "topico": "abordagem supervisionada"
+  },
+  {
+    "id": "bloco-06",
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "suspensao; abordagem supervisionada"
+  },
+  {
+    "id": "bloco-07",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "duvidas para"
+  },
+  {
+    "id": "bloco-08",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "trabalho"
+  },
+  {
+    "id": "bloco-09",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "trabalho"
+  },
+  {
+    "id": "bloco-10",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "gerais"
+  },
+  {
+    "id": "bloco-11",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-de-aprendizagem-01-visao-geral-5"
+  },
+  {
+    "id": "bloco-12",
+    "n_sessoes": 2,
+    "span_dias": 2,
+    "topico": "correcao introducao agentes; introducao agentes"
+  },
+  {
+    "id": "bloco-13",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "algoritmos busca"
+  },
+  {
+    "id": "bloco-14",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "evento academico"
+  },
+  {
+    "id": "bloco-15",
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "algoritmos busca"
+  },
+  {
+    "id": "bloco-16",
+    "n_sessoes": 2,
+    "span_dias": 5,
+    "topico": "planejamento"
+  },
+  {
+    "id": "bloco-17",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "duvidas"
+  },
+  {
+    "id": "bloco-18",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "trabalho"
+  },
+  {
+    "id": "bloco-19",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "trabalho"
+  },
+  {
+    "id": "bloco-20",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "gerias"
+  },
+  {
+    "id": "bloco-21",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-de-aprendizagem-02-solucao-de-problemas-10, unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento"
+  },
+  {
+    "id": "bloco-22",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "substituicao"
+  },
+  {
+    "id": "bloco-23",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "atendimento divulgacao resultados"
+  },
+  {
+    "id": "bloco-24",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-de-aprendizagem-01-visao-geral-5, unidade-de-aprendizagem-02-solucao-de-problemas-10, unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento"
+  },
+  {
+    "id": "bloco-25",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": ""
+  }
+]

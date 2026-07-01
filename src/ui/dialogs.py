@@ -18,13 +18,10 @@ from src.utils.helpers import (
 )
 from src.builder.runtime.datalab_client import get_datalab_base_url, has_datalab_api_key
 from src.builder.extraction.entry_signals import (
-    collect_entry_unit_signals as _collect_entry_unit_signals,
     entry_image_source_dirs as _entry_image_source_dirs,
     normalize_match_text as _normalize_match_text,
-    score_text_against_row as _score_text_against_row,
 )
 from src.builder.engine import BackendSelector, has_docling_python_api
-from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
 from src.builder.extraction.teaching_plan import _normalize_unit_slug, _parse_units_from_teaching_plan
 from src.ui.theme import ThemeManager, AppConfig, THEMES, apply_theme_to_toplevel
 class Tooltip:
@@ -1168,38 +1165,29 @@ class HelpWindow(tk.Toplevel):
 
 
 class HTMLImportDialog(tk.Toplevel):
-    """Diálogo para colar código HTML do cronograma e converter."""
+    """Diálogo para importar o cronograma do SARC pela URL (Export.aspx)."""
     def __init__(self, parent: "SubjectManagerDialog"):
         super().__init__(parent)
-        self.title("📥  Importar Cronograma (HTML)")
-        self.geometry("640x480")
+        self.title("📥  Importar Cronograma (SARC)")
+        self.geometry("640x170")
         self.transient(parent)
         self.grab_set()
         p = apply_theme_to_toplevel(self, parent)
         self.parent = parent
 
-        ttk.Label(self, text="Cole a URL do SARC OU o HTML da tabela do cronograma.").pack(padx=10, pady=(10, 5), anchor="w")
+        ttk.Label(
+            self,
+            text="Cole a URL do SARC (Export.aspx) do cronograma da turma.",
+            wraplength=600,
+            justify="left",
+        ).pack(padx=10, pady=(10, 5), anchor="w")
 
         url_frame = ttk.Frame(self)
         url_frame.pack(fill="x", padx=10, pady=(0, 5))
-        ttk.Label(url_frame, text="URL do SARC (opcional):").pack(side="left")
+        ttk.Label(url_frame, text="URL do SARC:").pack(side="left")
         self.url_entry = ttk.Entry(url_frame)
         self.url_entry.pack(side="left", fill="x", expand=True, padx=(6, 0))
 
-        self.text = tk.Text(
-            self,
-            font=("Consolas", 10),
-            wrap="word",
-            bg=p["input_bg"],
-            fg=p["fg"],
-            insertbackground=p["fg"],
-            selectbackground=p["select_bg"],
-            selectforeground=p["select_fg"],
-            relief="flat",
-            borderwidth=1,
-        )
-        self.text.pack(fill="both", expand=True, padx=10, pady=5)
-        
         btn_frame = ttk.Frame(self)
         btn_frame.pack(fill="x", padx=10, pady=10)
         ttk.Button(btn_frame, text="Cancelar", command=self.destroy).pack(side="right", padx=(5, 0))
@@ -1210,8 +1198,9 @@ class HTMLImportDialog(tk.Toplevel):
 
     def _process(self):
         url = self.url_entry.get().strip()
-        pasted_html = self.text.get("1.0", "end").strip()
-        decision = decide_schedule_source(url, pasted_html)
+        # Só a URL do SARC: o paste de HTML foi removido da UI (decide_schedule_source
+        # e parse_html_schedule seguem no backend como fallback, não expostos aqui).
+        decision = decide_schedule_source(url, "")
 
         action = decision["action"]
         if action == "cancel":
@@ -1230,6 +1219,10 @@ class HTMLImportDialog(tk.Toplevel):
     def _fetch_and_process(self, url: str):
         """Fetch the SARC HTML on a background thread, then parse on the UI thread."""
         import threading
+        try:
+            self.parent._imported_schedule_url = url
+        except Exception:
+            pass
 
         self._btn_import.configure(state="disabled")
         self._status.configure(text="Buscando cronograma...")
@@ -1286,6 +1279,7 @@ class SubjectManagerDialog(tk.Toplevel):
         self._config = config_obj
         self._p = apply_theme_to_toplevel(self, parent)
         self._current_name: Optional[str] = None
+        self._imported_schedule_url = ""
         self._build_ui()
         self._refresh_list()
 
@@ -1474,6 +1468,7 @@ class SubjectManagerDialog(tk.Toplevel):
         if not sp:
             return
         self._current_name = name
+        self._imported_schedule_url = getattr(sp, "schedule_url", "")
         for key, var in self._vars.items():
             var.set(getattr(sp, key, ""))
         self._syllabus_text.delete("1.0", "end")
@@ -1483,6 +1478,7 @@ class SubjectManagerDialog(tk.Toplevel):
 
     def _new(self):
         self._current_name = None
+        self._imported_schedule_url = ""
         for var in self._vars.values():
             var.set("")
         self._vars["institution"].set("PUCRS")
@@ -1522,6 +1518,13 @@ class SubjectManagerDialog(tk.Toplevel):
             github_url=self._vars["github_url"].get().strip(),
             preferred_llm=self._vars["preferred_llm"].get().strip() or "claude",
             processing_profile=self._vars["processing_profile"].get(),
+            schedule_url=(getattr(self, "_imported_schedule_url", "")
+                          or (existing.schedule_url if existing else "")),
+            # Preservados de existing: não há campo no dialog (setados pelo import
+            # Moodle/M365). Sem isto, todo save zerava moodle_course_id/m365_filter.
+            moodle_course_id=(existing.moodle_course_id if existing else ""),
+            m365_filter=(existing.m365_filter if existing else ""),
+            turma=(existing.turma if existing else ""),
             queue=existing_queue,
         )
         self._store.add(sp)
@@ -1898,11 +1901,26 @@ class MoodleCourseSelectDialog(tk.Toplevel):
         m365_filter = self._m365_filter_var.get().strip()
 
         def worker():
+            import logging
             store = SubjectStore()
+            # Filtro efetivo: DIGITADO > SALVO no perfil (o campo comeca vazio a cada
+            # import). Reusa o salvo sem re-digitar; avisa ALTO se ambos vazios numa
+            # materia M365 (senao baixa 0 em silencio).
+            from src.builder.sources.m365 import effective_m365_filter
+            from src.builder.sources.moodle import find_subject_for_course as _find_subj
+            _sp_pre = _find_subj(store, selected[0]) if selected else None
+            eff_filter = effective_m365_filter(
+                m365_filter, getattr(_sp_pre, "m365_filter", "") if _sp_pre else "")
+            if m365_on and not eff_filter:
+                self._post(lambda: messagebox.showwarning(
+                    "M365 — filtro nao configurado",
+                    "A materia usa M365 (OneDrive) mas esta SEM filtro (nem digitado, "
+                    "nem salvo no perfil).\nNenhum arquivo do OneDrive sera baixado.\n\n"
+                    "Configure o 'Filtro M365' da materia (ex.: engenhariadesoftware2)."))
             # --- Login M365 PRIMEIRO (antes do import Moodle), p/ autenticar logo ---
             m365_client = None
             m365_login_err = ""
-            if m365_on and m365_filter:
+            if m365_on and eff_filter:
                 try:
                     from src.builder.sources import m365
                     self._busy("Aguardando login M365...")
@@ -1925,7 +1943,9 @@ class MoodleCourseSelectDialog(tk.Toplevel):
             base_msg = (
                 f"Matérias — criadas: {rep['created']}  atualizadas: {rep['updated']}  ligadas: {rep['linked']}\n"
                 f"Cards criados: {rep['folders']}  ({rep['expected_files']} arquivos esperados)\n"
-                f"source_section preenchidos (gabarito): {rep['backfilled']}\n\n")
+                f"source_section preenchidos (gabarito): {rep['backfilled']}\n"
+                f"card map por labels: {rep.get('card_map_labels', 0)} "
+                f"(manuais preservadas: {rep.get('card_map_manual', 0)})\n\n")
             if do_download:
                 failed = rep.get("failed") or []
                 tail = f"Arquivos baixados: {rep['downloaded']}"
@@ -1940,21 +1960,24 @@ class MoodleCourseSelectDialog(tk.Toplevel):
 
             # --- Download M365 ---
             m365_tail = ""
-            if m365_on and not m365_filter:
-                m365_tail = "\n\nM365: filtro vazio — pulado."
+            if m365_on and not eff_filter:
+                m365_tail = "\n\nM365: filtro vazio — pulado (configure o filtro da matéria)."
             elif m365_on and m365_login_err:
                 m365_tail = f"\n\nM365 indisponível (login): {m365_login_err[:160]}\n(traceback no terminal)"
             elif m365_client:
                 try:
                     from src.builder.sources import m365
-                    from src.builder.sources.moodle import parse_moodle_course
+                    from src.builder.sources.moodle import (
+                        parse_moodle_course, section_file_index_strict, find_subject_for_course,
+                    )
                     self._busy("Listando arquivos do OneDrive...")
-                    sections = []
-                    for course in selected:
-                        cid = str(course.get("id") or "")
-                        for sec in (self._client.get_course_contents(cid) or []):
-                            if sec.get("name"):
-                                sections.append(sec["name"])
+                    cid0 = str(selected[0].get("id") or "")
+                    try:
+                        contents0 = self._client.get_course_contents(cid0) or []
+                    except Exception:
+                        logging.getLogger("m365").exception("contents Moodle indisponível p/ índice M365")
+                        contents0 = []
+                    section_index, _ambiguous = section_file_index_strict(contents0)
                     info0 = parse_moodle_course(selected[0])
                     mdest = Path(self._base) / info0["slug"]
 
@@ -1962,22 +1985,26 @@ class MoodleCourseSelectDialog(tk.Toplevel):
                         self._progress_to(done, total, f"M365 {done}/{total}: {name} → {card}")
 
                     mrep = m365.download_subject_m365(
-                        m365_client, m365_filter, sections, mdest, progress_cb=_pcb)
-                    sp0 = store.get(info0["name"]) if hasattr(store, "get") else None
-                    if sp0 and getattr(sp0, "m365_filter", "") != m365_filter:
-                        sp0.m365_filter = m365_filter
+                        m365_client, eff_filter, section_index, mdest, progress_cb=_pcb)
+                    sp0 = find_subject_for_course(store, selected[0])
+                    if sp0 and getattr(sp0, "m365_filter", "") != eff_filter:
+                        sp0.m365_filter = eff_filter
                         store.add(sp0)
+                    filtro_txt = "" if sp0 else "\nAVISO: perfil da matéria não encontrado — filtro M365 não salvo."
                     repo_root = getattr(sp0, "repo_root", "") if sp0 else ""
                     backf = m365.apply_source_section(repo_root, mrep["name_to_section"]) if repo_root else 0
-                    mapped = "; ".join(f"{s}->{c}{'' if m else ' (novo)'}"
-                                       for s, c, m in mrep["mapping"])
+                    api_n = sum(1 for _b, _c, o in mrep["mapping"] if o == "moodle_api")
+                    fallback = [b for b, _c, o in mrep["mapping"] if o == "fallback_pasta"]
+                    fb_txt = (f"\nFallback — sem seção na API ({len(fallback)}): "
+                              f"{', '.join(fallback[:8])}{' …' if len(fallback) > 8 else ''}"
+                              if fallback else "")
+                    warn_txt = "".join(f"\nAVISO: {w}" for w in (mrep.get("warnings") or []))
                     multi = ("  (M365 aplicado só à 1ª matéria — o filtro é por matéria; "
                              "reimporte cada uma separadamente)" if len(selected) > 1 else "")
                     m365_tail = (f"\n\nM365 [{info0['name']}] — baixados: {mrep['downloaded']}  "
-                                 f"falhas: {len(mrep['failed'])}  source_section: {backf}{multi}\n"
-                                 f"Cards: {mapped}")
+                                 f"falhas: {len(mrep['failed'])}  cards pela API: {api_n}  "
+                                 f"source_section: {backf}{multi}{fb_txt}{warn_txt}{filtro_txt}")
                 except Exception as exc:
-                    import logging
                     logging.getLogger("m365").exception("Falha no import M365")
                     m365_tail = f"\n\nM365 indisponível: {str(exc)[:160]}\n(detalhes/traceback no terminal)"
 
@@ -2299,7 +2326,11 @@ class BacklogEntryEditDialog(tk.Toplevel):
         row_match = row_rationale + 1
         _bm_method = str(self._data.get("computed_block_method") or "").strip()
         if _bm_method:
-            _bm_conf = self._data.get("computed_block_match_confidence") or 0.0
+            # Caminho de código grava computed_block_match_confidence; o funil
+            # (P2.3: manual/review_rule/card/card+scorer/scorer_only) grava só
+            # computed_block_confidence — sem o fallback exibiria 0.00.
+            _bm_conf = (self._data.get("computed_block_match_confidence")
+                        or self._data.get("computed_block_confidence") or 0.0)
             try:
                 _bm_text = f"método: {_bm_method} · confiança: {float(_bm_conf):.2f}"
             except (TypeError, ValueError):
@@ -2313,10 +2344,12 @@ class BacklogEntryEditDialog(tk.Toplevel):
                  font=("Segoe UI", 9), wraplength=520, justify="left").grid(
             row=row_match, column=1, sticky="w", pady=6)
         add_tooltip(lbl_match,
-            "Como o bloco do cronograma foi escolhido para este código:\n"
+            "Como o bloco do cronograma foi escolhido para este arquivo:\n"
             "consensus = Gemini e matcher local concordam; llm_only = só o Gemini;\n"
             "auto_concept = fallback por conceito; orphan = sem bloco.\n"
-            "'—' quando não há summary (arquivo não-código).",
+            "Funil léxico: manual = fixado à mão; review_rule = regra de revisão;\n"
+            "card = gabarito do card (1 bloco); card+scorer = gabarito + desempate;\n"
+            "scorer_only = só o scorer léxico. '—' quando não há bloco.",
         )
 
         row_unit = row_match + 1
@@ -2343,6 +2376,9 @@ class BacklogEntryEditDialog(tk.Toplevel):
             )
             unit_combo.grid(row=row_unit, column=1, sticky="ew", pady=6)
             unit_combo.bind("<<ComboboxSelected>>", self._on_manual_unit_selection_changed)
+            if str(self._data.get("manual_timeline_block_id") or "").strip():
+                unit_combo.configure(state="disabled")
+                add_tooltip(unit_combo, "Unidade definida pelo bloco manual — limpe o bloco para editar a unidade.")
         else:
             tk.Label(
                 tab_edit,
@@ -2442,10 +2478,13 @@ class BacklogEntryEditDialog(tk.Toplevel):
                 justify="left",
             ).grid(row=row_subunit, column=1, sticky="w", pady=6)
 
+        self._subunit_unit_map = _load_subunit_unit_map(self._repo_dir)
         subunit_status = _resolve_backlog_subunit_status(
             self._data,
             self._repo_dir,
             self._manual_subunit_label_by_slug,
+            subunit_unit_map=self._subunit_unit_map,
+            block_unit_slug=str(self._data.get("computed_unit_slug") or "").strip(),
         )
         row_subunit_status = row_subunit + 1
         subunit_frame = tk.Frame(
@@ -3293,6 +3332,8 @@ class BacklogEntryEditDialog(tk.Toplevel):
             entry_view,
             self._repo_dir,
             getattr(self, "_manual_subunit_label_by_slug", {}),
+            subunit_unit_map=getattr(self, "_subunit_unit_map", {}),
+            block_unit_slug=str(self._data.get("computed_unit_slug") or "").strip(),
         )
         if hasattr(self, "_subunit_assigned_var"):
             self._subunit_assigned_var.set(subunit_status["assigned"])
@@ -3944,7 +3985,7 @@ def _is_github_repo(url: str) -> bool:
         r'^https?://github\.com/[\w.-]+/[\w.-]+(\.git)?$', url))
 
 
-def _resolve_backlog_markdown_status(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
+def _resolve_backlog_markdown_status_core(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
     """Resolve o estado do markdown de uma entry processada para a UI do backlog."""
     final_prefixes = (
         "content/",
@@ -4027,67 +4068,30 @@ def _resolve_backlog_markdown_status(entry_data: dict, repo_dir: Optional[Path])
     }
 
 
-def _find_backlog_file_map_row(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
-    if not repo_dir:
-        return {}
-    file_map_path = repo_dir / "course" / "FILE_MAP.md"
-    if not file_map_path.exists():
-        return {}
+def _effective_backend_for_source(entry_data: dict, source_key: str) -> str:
+    """Backend a exibir no backlog: o do markdown FINAL/aprovado, não o base.
 
-    title = str(entry_data.get("title") or "").strip()
-    category = str(entry_data.get("category") or "").strip()
-    if not title:
-        return {}
+    A coluna antiga mostrava sempre base_backend (~pymupdf4llm). O usuário quer
+    o backend efetivamente usado/aprovado: quando o variante avançado (datalab/
+    marker/docling) foi gerado e promovido, é ele que vale.
+    """
+    base = str(entry_data.get("base_backend") or "")
+    adv = str(entry_data.get("advanced_backend") or "")
+    if source_key == "base_markdown":
+        return base
+    if source_key == "advanced_markdown":
+        return adv
+    # approved/curated/derived_final/externo: o avançado é o promovido quando
+    # existe; senão cai no base.
+    return adv or base
 
-    try:
-        current_headers: List[str] = []
-        for line in file_map_path.read_text(encoding="utf-8").splitlines():
-            if not line.startswith("|"):
-                continue
-            parts = [part.strip() for part in line.split("|")[1:-1]]
-            if not parts:
-                continue
-            if "Título" in parts and "Categoria" in parts:
-                current_headers = parts
-                continue
-            if current_headers and len(parts) != len(current_headers):
-                continue
-            if parts[0] in {"#", ""} or parts[0].startswith("---") or "rastreabilidade" in parts:
-                continue
-            if current_headers:
-                row = {current_headers[idx]: parts[idx] for idx in range(len(parts))}
-                row_title = str(row.get("Título") or "").strip()
-                row_category = str(row.get("Categoria") or "").strip()
-                if row_title != title:
-                    continue
-                if category and row_category and row_category != category:
-                    continue
-                return {
-                    "title": row_title,
-                    "category": row_category,
-                    "markdown": str(row.get("Markdown") or "").strip(),
-                    "sections": str(row.get("Seções") or "").strip(),
-                    "unit": str(row.get("Unidade") or "").strip(),
-                    "confidence": str(row.get("Confiança") or "").strip(),
-                    "period": str(row.get("Período") or "").strip(),
-                }
 
-            if len(parts) < 8:
-                continue
-            if parts[1] != title:
-                continue
-            if category and parts[2] and parts[2] != category:
-                continue
-            return {
-                "title": parts[1],
-                "category": parts[2],
-                "markdown": parts[5],
-                "unit": parts[6],
-                "period": parts[7],
-            }
-    except Exception:
-        return {}
-    return {}
+def _resolve_backlog_markdown_status(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
+    """Resolve o status do markdown + injeta effective_backend (backend do final/aprovado)."""
+    result = _resolve_backlog_markdown_status_core(entry_data, repo_dir)
+    result["effective_backend"] = _effective_backend_for_source(
+        entry_data, result.get("source_key", ""))
+    return result
 
 
 def _resolve_backlog_unit_status(
@@ -4095,47 +4099,63 @@ def _resolve_backlog_unit_status(
     repo_dir: Optional[Path],
     unit_label_by_slug: Optional[Dict[str, str]] = None,
 ) -> Dict[str, str]:
+    # Fonte única: lê manual_unit_slug/computed_unit_slug direto da entry do
+    # manifest — nada de regex sobre a célula renderizada do FILE_MAP.md.
+    # `repo_dir` mantido por compatibilidade de assinatura com os call sites.
+    del repo_dir
     unit_label_by_slug = unit_label_by_slug or {}
     manual_slug = str(entry_data.get("manual_unit_slug") or "").strip()
-    title = str(entry_data.get("title") or "").strip()
-    category = str(entry_data.get("category") or "").strip()
-    file_map_row = _find_backlog_file_map_row(
-        {"title": title, "category": category},
-        repo_dir,
-    )
-    current_unit_cell = str(file_map_row.get("unit") or "").strip()
+    computed_slug = str(entry_data.get("computed_unit_slug") or "").strip()
 
     def _display_unit(slug: str) -> str:
         return unit_label_by_slug.get(slug, slug) if slug else "—"
 
-    current_slug_match = re.search(r"(unidade-[a-z0-9-]+)", current_unit_cell or "")
-    current_slug = current_slug_match.group(1) if current_slug_match else ""
+    reasons = [str(r) for r in (entry_data.get("unit_match_reasons") or [])]
+    conflict = entry_data.get("unit_block_conflict") or {}
+
+    def _auto_source(default: str) -> str:
+        if any(r == "unidade_do_bloco_manual" for r in reasons):
+            return "Definida pelo bloco manual"
+        if any(r.startswith("reconciliada_do_bloco=") for r in reasons):
+            return "Reconciliada do bloco (auto)"
+        if any(r.startswith("herdada_do_bloco=") for r in reasons):
+            return "Herdada do bloco (auto)"
+        return default
+
+    def _conflict_note() -> str:
+        if not conflict:
+            return ""
+        return (
+            f" ⚠ Conflito: o bloco «{conflict.get('block_id', '')}» aponta a unidade "
+            f"«{conflict.get('block_unit', '')}», mas o matcher escolheu "
+            f"«{conflict.get('unit', '')}» (mais confiante). Revise."
+        )
 
     if manual_slug:
         assigned = _display_unit(manual_slug)
-        if current_slug == manual_slug:
+        if computed_slug == manual_slug:
             return {
                 "assigned": assigned,
                 "source": "Override manual aplicado",
-                "note": "O FILE_MAP atual já reflete a unidade manual selecionada.",
+                "note": "A atribuição atual já reflete a unidade manual selecionada.",
             }
-        if current_unit_cell:
+        if computed_slug:
             return {
                 "assigned": assigned,
                 "source": "Override manual salvo",
-                "note": f"O FILE_MAP atual ainda mostra `{current_unit_cell}`; reprocesse o repositório para aplicar a unidade manual.",
+                "note": f"A atribuição atual ainda registra `{computed_slug}`; reprocesse o repositório para aplicar a unidade manual.",
             }
         return {
             "assigned": assigned,
             "source": "Override manual salvo",
-            "note": "A unidade manual já está salva nesta entry; reprocesse o repositório para refletir isso no FILE_MAP.",
+            "note": "A unidade manual já está salva nesta entry; reprocesse o repositório para refletir isso nos artefatos.",
         }
 
-    if current_unit_cell:
+    if computed_slug:
         return {
-            "assigned": current_unit_cell,
-            "source": "FILE_MAP atual",
-            "note": "Unidade atribuída automaticamente com base no FILE_MAP gerado no último processamento.",
+            "assigned": _display_unit(computed_slug),
+            "source": _auto_source("Atribuição automática"),
+            "note": "Unidade atribuída automaticamente no último processamento (manifest)." + _conflict_note(),
         }
 
     return {
@@ -4149,6 +4169,8 @@ def _resolve_backlog_subunit_status(
     entry_data: dict,
     repo_dir: Optional[Path],
     label_by_slug: Optional[Dict[str, str]] = None,
+    subunit_unit_map: Optional[Dict[str, str]] = None,
+    block_unit_slug: str = "",
 ) -> Dict[str, str]:
     label_by_slug = label_by_slug or {}
     manual_slug = str(entry_data.get("manual_subunit_slug") or "").strip()
@@ -4163,6 +4185,12 @@ def _resolve_backlog_subunit_status(
             if in_catalog
             else f"Slug `{manual_slug}` não encontrado no catálogo atual. Reprocesse após atualizar o plano de ensino."
         )
+        sub_unit = (subunit_unit_map or {}).get(manual_slug, "")
+        if block_unit_slug and sub_unit and sub_unit != block_unit_slug:
+            note += (
+                f" ⚠ A subunidade pertence à unidade «{sub_unit}», diferente da "
+                f"unidade «{block_unit_slug}» do bloco. Revise."
+            )
         return {
             "assigned": _display(manual_slug),
             "source": "Override manual salvo",
@@ -4200,14 +4228,20 @@ def _resolve_backlog_subunit_status(
 
 
 def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path]) -> Dict[str, str]:
-    file_map_row = _find_backlog_file_map_row(entry_data, repo_dir)
-    period = str(file_map_row.get("period") or "").strip()
-    unit_cell = str(file_map_row.get("unit") or "").strip()
+    # Fonte única: o bloco do backlog é manual_timeline_block_id >
+    # computed_block_id da entry do manifest, com lookup DIRETO no
+    # `.timeline_index.json` serializado — sem regex sobre o FILE_MAP.md
+    # renderizado e sem re-score local (o scorer paralelo morreu).
     manual_slug = str(entry_data.get("manual_unit_slug") or "").strip()
     manual_block_id = str(entry_data.get("manual_timeline_block_id") or "").strip()
+    # TEMPORAL: âncora (temporal_block_id) entre manual e computed; ausente com
+    # flag OFF -> precedência idêntica à de antes (manual > computed).
+    temporal_block_id = str(entry_data.get("temporal_block_id") or "").strip()
+    computed_block_id = str(entry_data.get("computed_block_id") or "").strip()
+    block_id = manual_block_id or temporal_block_id or computed_block_id
 
-    if not period:
-        note = "A entry ainda não tem período preenchido no FILE_MAP."
+    if not block_id:
+        note = "A entry ainda não tem bloco do cronograma atribuído no manifest."
         if manual_slug:
             note += " Há override manual de unidade salvo; reprocesse o repositório para recalcular a conexão temporal."
         return {
@@ -4221,89 +4255,41 @@ def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path])
     timeline_path = repo_dir / "course" / ".timeline_index.json" if repo_dir else None
     if not timeline_path or not timeline_path.exists():
         return {
-            "period": _format_timeline_period_text(period),
-            "block": "—",
+            "period": "—",
+            "block": block_id,
             "topics": "—",
             "aliases": "—",
-            "note": "Há período no FILE_MAP, mas o índice temporal interno ainda não foi encontrado.",
+            "note": "Há bloco atribuído no manifest, mas o índice temporal interno ainda não foi encontrado.",
         }
-
-    unit_slug_match = re.search(r"(unidade-[a-z0-9-]+)", unit_cell)
-    unit_slug = unit_slug_match.group(1) if unit_slug_match else ""
 
     try:
         payload = json.loads(timeline_path.read_text(encoding="utf-8"))
     except Exception:
         return {
-            "period": _format_timeline_period_text(period),
-            "block": "—",
+            "period": "—",
+            "block": block_id,
             "topics": "—",
             "aliases": "—",
             "note": "O índice temporal interno existe, mas não pôde ser lido.",
         }
 
     blocks = list(payload.get("blocks") or [])
-    if manual_block_id:
-        manual_matches = [block for block in blocks if str(block.get("id") or "").strip() == manual_block_id]
-        if manual_matches:
-            block = manual_matches[0]
-            topics = ", ".join(str(item).strip() for item in list(block.get("topics") or [])[:4] if str(item).strip()) or "—"
-            aliases = ", ".join(str(item).strip() for item in list(block.get("aliases") or [])[:4] if str(item).strip()) or "—"
-            block_period = _timeline_block_display_period(block)
-            if _format_timeline_label_dates(period) == block_period:
-                note = "Bloco manual já refletido no FILE_MAP atual."
-            else:
-                note = "Bloco manual salvo; reprocesse o repositório para refletir esse período no FILE_MAP."
-            return {
-                "period": block_period,
-                "block": str(block.get("id") or "—"),
-                "topics": topics,
-                "aliases": aliases,
-                "note": note,
-            }
+    # block_id pode ser uuid (computed_block_id) ou bloco-NN legado.
+    block = next((b for b in blocks if str(b.get("block_uuid") or "").strip() == block_id), None)
+    if block is None:
+        block = next((b for b in blocks if str(b.get("id") or "").strip() == block_id), None)
+    if block is None:
+        if manual_block_id:
+            note = "Há um bloco manual salvo, mas ele não foi encontrado no timeline index atual."
+        else:
+            note = "O bloco atribuído no manifest não foi encontrado no timeline index atual; reprocesse o repositório."
         return {
-            "period": _format_timeline_period_text(period) or "—",
-            "block": manual_block_id,
+            "period": "—",
+            "block": block_id,
             "topics": "—",
             "aliases": "—",
-            "note": "Há um bloco manual salvo, mas ele não foi encontrado no timeline index atual.",
+            "note": note,
         }
-
-    exact_matches = [block for block in blocks if str(block.get("period_label") or "").strip() == period]
-    overlap_matches = [block for block in blocks if _periods_overlap(period, str(block.get("period_label") or "").strip())]
-
-    candidate_blocks = exact_matches or overlap_matches or list(blocks)
-    if unit_slug:
-        unit_filtered = [block for block in candidate_blocks if str(block.get("unit_slug") or "").strip() == unit_slug]
-        if unit_filtered:
-            candidate_blocks = unit_filtered
-
-    if not candidate_blocks:
-        return {
-            "period": _format_timeline_period_text(period),
-            "block": "—",
-            "topics": "—",
-            "aliases": "—",
-            "note": "Há período no FILE_MAP, mas nenhum bloco correspondente foi localizado no timeline index atual.",
-        }
-
-    markdown_text = _entry_markdown_text_for_file_map(repo_dir, entry_data) if repo_dir else ""
-    scored_blocks = [
-        (
-            block,
-            _score_serialized_timeline_block(
-                entry_data,
-                markdown_text,
-                block,
-                preferred_unit_slug=unit_slug,
-                preferred_period=period,
-            ),
-        )
-        for block in candidate_blocks
-    ]
-    scored_blocks.sort(key=lambda item: item[1], reverse=True)
-    block, best_score = scored_blocks[0]
-    runner_up_score = scored_blocks[1][1] if len(scored_blocks) > 1 else 0.0
 
     sessions = list(block.get("sessions") or [])
     session_preview = _timeline_block_session_preview(block)
@@ -4330,25 +4316,17 @@ def _resolve_backlog_timeline_status(entry_data: dict, repo_dir: Optional[Path])
 
     topics = ", ".join(topics_list) or "—"
     aliases = ", ".join(aliases_list) or "—"
-    note = "Período do FILE_MAP conectado a este bloco do cronograma via `course/.timeline_index.json`."
+    if manual_block_id:
+        if computed_block_id == manual_block_id:
+            note = "Bloco manual já refletido no processamento atual."
+        else:
+            note = "Bloco manual salvo; reprocesse o repositório para refletir esse período nos artefatos."
+    else:
+        note = "Bloco atribuído no manifest, conectado via `course/.timeline_index.json`."
     if session_preview:
         note += f" Sessões normalizadas: {len(sessions)}."
     if card_preview and not session_preview and not block.get("topics"):
         note += f" Evidências de card: {len(card_preview)}."
-    if overlap_matches and not exact_matches:
-        note = (
-            "Período do FILE_MAP foi reconciliado por sobreposição de datas e sinais do conteúdo da entry "
-            f"(score: {best_score:.2f})."
-        )
-        if session_preview:
-            note += f" Sessões normalizadas: {len(sessions)}."
-    elif len(scored_blocks) > 1 and abs(best_score - runner_up_score) < 0.20:
-        note = (
-            "Bloco selecionado heurísticamente entre múltiplos candidatos próximos; "
-            f"revise manualmente se o cronograma parecer incorreto (score: {best_score:.2f})."
-        )
-        if session_preview:
-            note += f" Sessões normalizadas: {len(sessions)}."
 
     return {
         "period": _timeline_block_display_period(block),
@@ -4435,6 +4413,38 @@ def _load_file_map_unit_options(repo_dir: Optional[Path]) -> List[Tuple[str, str
         pass
 
     return options
+
+
+def _subunit_unit_map_from_plan(plan_text: str, unit_label_to_slug: Dict[str, str]) -> Dict[str, str]:
+    """subunit_slug -> unit_slug, a partir do texto do plano. O unit_slug vem de
+    unit_label_to_slug (título da unidade -> slug canônico); títulos sem slug
+    conhecido caem para _normalize_unit_slug(título), a forma canônica."""
+    out: Dict[str, str] = {}
+    for unit_title, topics in _parse_units_from_teaching_plan(plan_text):
+        unit_slug = unit_label_to_slug.get(unit_title) or _normalize_unit_slug(unit_title)
+        if not unit_slug:
+            continue
+        for topic_item in topics or []:
+            raw = topic_item[0] if isinstance(topic_item, (list, tuple)) else str(topic_item)
+            label = re.sub(r"^\d+(?:\.\d+)*\.?\s*", "", (raw or "").strip()).strip()
+            slug = slugify(label)
+            if slug and slug not in out:
+                out[slug] = unit_slug
+    return out
+
+
+def _load_subunit_unit_map(repo_dir: Optional[Path]) -> Dict[str, str]:
+    """Carrega subunit_slug -> unit_slug das mesmas fontes de _load_subunit_options."""
+    if not repo_dir:
+        return {}
+    unit_label_to_slug = {label: slug for label, slug in _load_file_map_unit_options(repo_dir)}
+    course_map_path = repo_dir / "course" / "COURSE_MAP.md"
+    if course_map_path.exists():
+        try:
+            return _subunit_unit_map_from_plan(course_map_path.read_text(encoding="utf-8"), unit_label_to_slug)
+        except Exception:
+            return {}
+    return {}
 
 
 def _load_subunit_options(repo_dir: Optional[Path]) -> List[Tuple[str, str]]:
@@ -4543,14 +4553,6 @@ def _parse_period_bounds(text: str) -> Tuple[Optional[datetime], Optional[dateti
     return start, end
 
 
-def _periods_overlap(left: str, right: str) -> bool:
-    left_start, left_end = _parse_period_bounds(left)
-    right_start, right_end = _parse_period_bounds(right)
-    if not left_start or not left_end or not right_start or not right_end:
-        return False
-    return left_start <= right_end and right_start <= left_end
-
-
 def _timeline_block_display_period(block: Dict[str, object]) -> str:
     start_text = str(block.get("period_start") or "").strip()
     end_text = str(block.get("period_end") or "").strip()
@@ -4614,52 +4616,6 @@ def _timeline_block_card_evidence_preview(block: Dict[str, object], limit: int =
             break
 
     return preview
-
-
-def _score_serialized_timeline_block(
-    entry_data: dict,
-    markdown_text: str,
-    block: Dict[str, object],
-    *,
-    preferred_unit_slug: str = "",
-    preferred_period: str = "",
-) -> float:
-    signals = _collect_entry_unit_signals(entry_data, markdown_text)
-    score = 0.0
-
-    block_unit_slug = str(block.get("unit_slug") or "").strip()
-    if preferred_unit_slug:
-        if block_unit_slug == preferred_unit_slug:
-            score += 1.25
-        elif block_unit_slug:
-            score -= 0.35
-
-    block_period = _timeline_block_display_period(block)
-    if preferred_period:
-        preferred_norm = _format_timeline_label_dates(preferred_period)
-        if preferred_norm and block_period == preferred_norm:
-            score += 0.85
-        elif preferred_norm and _periods_overlap(preferred_norm, block_period):
-            score += 0.45
-
-    block_text_parts = [
-        str(block.get("primary_topic_label") or ""),
-        str(block.get("topic_text") or ""),
-        " ".join(str(item) for item in (block.get("topics") or []) if str(item).strip()),
-        " ".join(str(item) for item in (block.get("aliases") or []) if str(item).strip()),
-    ]
-    block_norm = _normalize_match_text(" ".join(part for part in block_text_parts if part))
-    block_tokens = [tok for tok in block_norm.split() if len(tok) >= 4]
-
-    score += _score_text_against_row(signals.get("title_text", ""), block_tokens, weight=1.25)
-    score += _score_text_against_row(signals.get("tags_text", ""), block_tokens, weight=1.05)
-    score += _score_text_against_row(signals.get("markdown_headings_text", ""), block_tokens, weight=0.95)
-    score += _score_text_against_row(signals.get("markdown_lead_text", ""), block_tokens, weight=0.75)
-    score += _score_text_against_row(signals.get("markdown_text", ""), block_tokens, weight=0.18)
-
-    score += float(block.get("primary_topic_confidence", 0.0) or 0.0) * 0.25
-    score += float(block.get("unit_confidence", 0.0) or 0.0) * 0.10
-    return score
 
 
 def _load_timeline_block_options(repo_dir: Optional[Path]) -> List[Tuple[str, str]]:

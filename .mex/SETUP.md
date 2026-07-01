@@ -1,21 +1,21 @@
 # Setup — Populate This Scaffold
 
-last_updated: 2026-06-09
+last_updated: 2026-06-21
 
 This file contains the prompts to populate the scaffold. It is NOT the dev environment setup — for that, see `context/setup.md` after population.
 
-This scaffold is currently empty. Follow the steps below to populate it for your project.
+Use this file when initially populating or intentionally repopulating the scaffold.
 
-## Recommended: Use setup.sh
+## Recommended: Use mex init
 
 ```bash
-.mex/setup.sh
+mex init
 ```
 
-The script handles everything automatically:
+The CLI handles the scaffold population flow:
 1. Detects your project state (existing codebase, fresh project, or partial)
 2. Asks which AI tool you use and copies the right config file
-3. Pre-scans your codebase with `mex init` to build a structured brief (~5-8k tokens vs ~50k from AI exploration)
+3. Pre-scans your codebase to build a structured brief (~5-8k tokens vs ~50k from AI exploration)
 4. Builds and runs the population prompt — or prints it for manual paste
 
 If you want to populate manually instead, use the prompts below.

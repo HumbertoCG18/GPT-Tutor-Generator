@@ -2,28 +2,38 @@ from __future__ import annotations
 
 import json
 import re
-import unicodedata
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
 
-from src.builder.routing.thresholds import confidence_band, margin_confidence, T
+from src.builder.routing.thresholds import METHOD_CAPS, confidence_band, relative_margin_confidence, T
+from src.builder.routing.file_map import reconcile_unit_with_block
 from src.builder.core.semantic_config import (
     infer_semantic_profile,
     merge_semantic_profile,
     resolve_semantic_profile,
     write_internal_semantic_profile,
 )
+from src.builder.text.normalize import normalize_match_text, signal_token_set
 from src.utils.helpers import slugify, write_text, collapse_ws as _collapse_ws
+
+# Categorias que não recebem auto-tags de timeline (unit/subunit/bloco).
+# "references" é o equivalente EN de "referencias" (importado via Moodle EN).
+_NO_TIMELINE_CATEGORIES: frozenset = frozenset(
+    {"cronograma", "bibliografia", "referencias", "references"}
+)
+
+# S5 (P4): categorias de TRABALHO cuja atribuição de bloco respeita a janela
+# de assign (period_start < assign_due do card). Código ("codigo-*") entra
+# pela mesma janela quando o card tem assign_due (cf. resolve_unit_block_tags).
+# "entregas" não existe nos dados reais medidos (12/06) — incluir se surgir.
+ASSIGN_WINDOW_CATEGORIES: frozenset = frozenset({"trabalhos"})
 
 
 def _normalize_match_text(text: str) -> str:
-    normalized = unicodedata.normalize("NFKD", text or "")
-    normalized = "".join(ch for ch in normalized if not unicodedata.combining(ch))
-    normalized = normalized.lower()
-    normalized = normalized.replace("—", "-").replace("–", "-")
-    normalized = re.sub(r"[^a-z0-9+\-./\s]", " ", normalized)
-    normalized = re.sub(r"\s+", " ", normalized).strip()
-    return normalized
+    # Fonte unica com keep="+-./": datas ("11/03/2026"), outline ("1.2.3."),
+    # paths e slugs sao tokens distintivos nos dados reais (medido na Task 3
+    # do P4: 51/211 textos do indice de MF divergem sem o keep).
+    return normalize_match_text(text, keep="+-./")
 
 
 def _strip_outline_prefix(text: str) -> str:
@@ -518,6 +528,20 @@ def build_content_taxonomy(
 def write_internal_content_taxonomy(root_dir: Path, taxonomy: dict) -> None:
     write_text(root_dir / "course" / ".content_taxonomy.json", json.dumps(taxonomy, ensure_ascii=False, indent=2))
 
+
+def load_internal_content_taxonomy(root_dir: Path) -> dict:
+    """Lê course/.content_taxonomy.json de um repo. {} se ausente/ilegível.
+
+    Contrapartida de write_internal_content_taxonomy. Usado como fallback quando
+    a taxonomia não vem em memória (ex.: retag), evitando rodar o scorer de
+    subunidade com taxonomia vazia.
+    """
+    try:
+        path = Path(root_dir) / "course" / ".content_taxonomy.json"
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
 def build_unit_tag_index(taxonomy: dict) -> dict:
     """Map topico:slug tags to unit slugs from the content taxonomy.
     Returns {tag_str: {"unit_slug": str, "weight": float}} where weight reflects
@@ -573,7 +597,9 @@ def collect_strong_heading_candidates(root_dir: Optional[Path], manifest_entries
 
 
 def _signal_token_set(signal_text: str) -> set:
-    return {token for token in _normalize_match_text(signal_text).split() if len(token) >= 4}
+    # Logica unica em text.normalize.signal_token_set; passa o normalize LOCAL
+    # (copia divergente, preserva +-./) ate a Task 3 unificar o normalize.
+    return signal_token_set(signal_text, normalize=_normalize_match_text)
 
 
 def _matches_tag_slug(signal_text: str, tag_slug: str) -> bool:
@@ -794,8 +820,8 @@ def _best_instructional_block_fallback(
     navigation.py, mas inadequado aqui), recusa atribuir, ranqueia TODOS os
     blocos instrucionais pelo MESMO scorer real (score_entry_against_timeline_block)
     e atribui o melhor. Nada de scoring reimplementado nem numero magico: a
-    confianca vem de margin_confidence(best, runner_up, k=MARGIN_K), identica a
-    formula que o scorer primario usa internamente.
+    confianca vem de relative_margin_confidence(best, runner_up) — a mesma
+    formula de confianca de BLOCO usada pelo scorer primario (P2.1).
 
     Retorna (block, confidence) do vencedor, ou (None, 0.0) se nao ha bloco.
     """
@@ -806,6 +832,7 @@ def _best_instructional_block_fallback(
     from src.builder.routing.sequence import annotate_class_ordinals
     annotate_class_ordinals(instructional_blocks)
     from src.builder.routing.file_map import (
+        block_token_weights,
         score_entry_against_timeline_block,
         score_card_evidence_against_entry,
     )
@@ -814,6 +841,11 @@ def _best_instructional_block_fallback(
         score_text_against_row,
     )
     signals = collect_entry_unit_signals(entry, markdown_text)
+    # S2 (P4): IDF por raridade computado UMA vez por entry, sobre o conjunto
+    # de candidatos deste ranking (instructional_blocks ou o recorte do card).
+    # Repassa o mesmo normalize (keep="+-./") que o scorer usa neste caminho:
+    # tokens com hífen/data/outline não escapam do IDF por ausência no dict.
+    topic_token_weights = block_token_weights(instructional_blocks, normalize=_normalize_match_text)
     scored = [
         (
             block,
@@ -827,6 +859,7 @@ def _best_instructional_block_fallback(
                 ),
                 preferred_unit_slug=preferred_unit_slug,
                 preferred_topic_slug=preferred_topic_slug,
+                topic_token_weights=topic_token_weights,
             ),
         )
         for block in instructional_blocks
@@ -834,16 +867,21 @@ def _best_instructional_block_fallback(
     scored.sort(key=lambda item: item[1], reverse=True)
     best_block, best_score = scored[0]
     runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
-    confidence = margin_confidence(best_score, runner_up_score, k=T.MARGIN_K)
+    confidence = relative_margin_confidence(best_score, runner_up_score)
     return best_block, confidence
 
 
-CARD_SINGLE_CONF = 0.85
+# Gabarito 1-bloco: a confianca e o proprio teto do metodo "card" (P2.2) —
+# fonte unica em thresholds.METHOD_CAPS, sem literal duplicado.
+CARD_SINGLE_CONF = METHOD_CAPS["card"]
 
 
 def _card_scoped_block(entry, markdown_text, unit_index, instructional_blocks,
                        card_map, score_fallback_fn):
-    """Degrau card->bloco. Retorna (block_id, confidence) ou ("", 0.0).
+    """Degrau card->bloco. Retorna (block_id, confidence, method) ou ("", 0.0, "").
+
+    method (P2.2): "card" quando o gabarito tem 1 bloco (decisão direta);
+    "card+scorer" quando o scorer restrito desempatou entre 2+ blocos do card.
 
     score_fallback_fn(entry, markdown_text, scoped_blocks, unit_slug, topic_slug)
     -> (block, conf): o scorer real restrito aos blocos do card (sub-bloco).
@@ -851,19 +889,25 @@ def _card_scoped_block(entry, markdown_text, unit_index, instructional_blocks,
     from src.builder.timeline.card_block import lookup_card_blocks
     card = str(entry.get("source_section") or "").strip()
     if not card:
-        return "", 0.0
+        return "", 0.0, ""
+    # lookup_card_blocks retorna uuids (lazy compat Task 2). O join e o retorno
+    # casam por block_uuid (fallback id para blocos legados sem uuid).
     ids = set(lookup_card_blocks(card, card_map, unit_index, instructional_blocks))
     if not ids:
-        return "", 0.0
-    scoped = [b for b in instructional_blocks if str(b.get("id") or "") in ids]
+        return "", 0.0, ""
+
+    def _block_key(b):
+        return str(b.get("block_uuid") or b.get("id") or "")
+
+    scoped = [b for b in instructional_blocks if _block_key(b) in ids]
     if not scoped:
-        return "", 0.0
+        return "", 0.0, ""
     if len(scoped) == 1:
-        return str(scoped[0].get("id") or ""), CARD_SINGLE_CONF
+        return _block_key(scoped[0]), CARD_SINGLE_CONF, "card"
     block, conf = score_fallback_fn(entry, markdown_text, scoped, "", "")
     if block is None:
-        return "", 0.0
-    return str(block.get("id") or ""), float(conf)
+        return "", 0.0, ""
+    return _block_key(block), float(conf), "card+scorer"
 
 
 def _exam_code_from_text(text: str) -> str:
@@ -927,7 +971,7 @@ def review_list_block_for_entry(entry: dict, blocks: list) -> str:
     # bloco de revisão imediatamente anterior à prova (ordem cronológica da lista)
     for j in range(target_idx - 1, -1, -1):
         if str(blocks[j].get("kind") or "") == "review":
-            return str(blocks[j].get("id") or "")
+            return str(blocks[j].get("block_uuid") or blocks[j].get("id") or "")
     return ""
 
 
@@ -957,7 +1001,6 @@ def resolve_unit_block_tags(
     preservadas. manual_unit_slug e manual_timeline_block_id tem precedencia
     absoluta (confidence = 1.0).
     """
-    _NO_TIMELINE_CATEGORIES = {"cronograma", "bibliografia", "referencias"}
     _UNIT_PREFIX = "unit:"
     _SUBUNIT_PREFIX = "subunit:"
     _BLOCO_PREFIX = "bloco:"
@@ -972,6 +1015,11 @@ def resolve_unit_block_tags(
         or course_meta.get("_content_taxonomy_for_tests")
         or {}
     )
+    # Dívida #5: callers como retag não passam _content_taxonomy. Sem fallback,
+    # o scorer de subunidade rodaria com taxonomia vazia e LIMPARIA os slugs já
+    # persistidos. Lê do disco do repo quando a versão em memória não veio.
+    if not content_taxonomy and course_meta.get("_repo_root"):
+        content_taxonomy = load_internal_content_taxonomy(course_meta["_repo_root"])
     topic_index = iter_content_taxonomy_topics_fn(content_taxonomy)
     blocks_by_unit = dict(timeline_context.get("blocks_by_unit") or {})
     unassigned_blocks = list(timeline_context.get("unassigned_blocks") or [])
@@ -993,37 +1041,46 @@ def resolve_unit_block_tags(
         except Exception:
             _card_block_map = {}
 
+    # Resumo de código curado (Gemini) como sinal de SUBUNIDADE — GERAL: zips e
+    # códigos não têm .md convertido, então o scorer só via título e empatava no
+    # ruído. Carregado 1x; aplicado só ao input do subunit scorer (bloco/unidade
+    # mantêm o markdown original p/ não mexer no golden de bloco).
+    _code_curation_entries = {}
+    if repo_root:
+        try:
+            from src.builder.core.code_summarization import load_code_curation
+            _code_curation_entries = load_code_curation(Path(repo_root)).get("entries", {}) or {}
+        except Exception:
+            _code_curation_entries = {}
+
     updated = []
     for entry in manifest_entries or []:
         category = _collapse_ws(str(entry.get("category") or "")).lower()
         if category in _NO_TIMELINE_CATEGORIES:
+            # Categoria fora da timeline: limpa atribuicao antiga (senao um
+            # manifest com historico carrega bloco orfao — caso real do B1).
+            for k in ("computed_block_id", "computed_block_confidence",
+                      "computed_block_band", "computed_block_method"):
+                entry.pop(k, None)
+            if entry.get("auto_tags"):
+                entry["auto_tags"] = [t for t in entry["auto_tags"] if not str(t).startswith("bloco:")]
             updated.append(entry)
             continue
 
         markdown_text = entry_markdown_text_for_file_map_fn(repo_root, entry)
 
-        # --- Topic/subunit match (manual tem precedencia) ---
-        manual_subunit = _collapse_ws(str(entry.get("manual_subunit_slug") or ""))
-        if manual_subunit:
-            preferred_topic_slug = manual_subunit
-            subunit_reasons = ["manual"]
-            subunit_confidence = 1.0
-            best_subunit_slug = manual_subunit
-        else:
-            topic_match = auto_map_entry_subtopic_fn(entry, content_taxonomy, markdown_text)
-            preferred_topic_slug = ""
-            subunit_reasons = list(getattr(topic_match, "reasons", []))
-            subunit_confidence = float(getattr(topic_match, "confidence", 0.0))
-            # Melhor candidato de subunidade (best-effort), independente do gate:
-            # surfaçado no editor com a confiança, mesmo ambíguo/baixo. A tag
-            # `subunit:` (roteamento) continua gated abaixo via preferred_topic_slug.
-            best_subunit_slug = str(getattr(topic_match, "topic_slug", "") or "")
-            if (
-                topic_match.topic_slug
-                and not topic_match.ambiguous
-                and topic_match.confidence >= 0.60
-            ):
-                preferred_topic_slug = topic_match.topic_slug
+        # Texto de subunidade = markdown + resumo de código curado (se houver).
+        # Só o caminho de SUBUNIDADE usa o texto enriquecido; bloco/unidade ficam
+        # com o markdown original (preserva o golden de bloco).
+        subunit_markdown_text = markdown_text
+        _curation_entry = _code_curation_entries.get(str(entry.get("id") or ""))
+        if _curation_entry:
+            from src.builder.core.code_summarization import code_curation_signal_text
+            _curation_text = code_curation_signal_text(_curation_entry)
+            if _curation_text:
+                subunit_markdown_text = (
+                    f"{markdown_text}\n\n{_curation_text}" if markdown_text else _curation_text
+                )
 
         # --- Unit match (manual tem precedencia) ---
         manual_unit = _collapse_ws(str(entry.get("manual_unit_slug") or ""))
@@ -1043,6 +1100,32 @@ def resolve_unit_block_tags(
             unit_ambiguous = unit_match.ambiguous
             unit_reasons = list(unit_match.reasons)
 
+        # --- Topic/subunit match (manual tem precedencia) ---
+        manual_subunit = _collapse_ws(str(entry.get("manual_subunit_slug") or ""))
+        if manual_subunit:
+            preferred_topic_slug = manual_subunit
+            subunit_reasons = ["manual"]
+            subunit_confidence = 1.0
+            best_subunit_slug = manual_subunit
+        else:
+            topic_match = auto_map_entry_subtopic_fn(
+                entry, content_taxonomy, subunit_markdown_text,
+                winning_unit_slug=resolved_unit_slug,
+            )
+            preferred_topic_slug = ""
+            subunit_reasons = list(getattr(topic_match, "reasons", []))
+            subunit_confidence = float(getattr(topic_match, "confidence", 0.0))
+            # Melhor candidato de subunidade (best-effort), independente do gate:
+            # surfaçado no editor com a confiança, mesmo ambíguo/baixo. A tag
+            # `subunit:` (roteamento) continua gated abaixo via preferred_topic_slug.
+            best_subunit_slug = str(getattr(topic_match, "topic_slug", "") or "")
+            if (
+                topic_match.topic_slug
+                and not topic_match.ambiguous
+                and topic_match.confidence >= T.SUBUNIT_TAG
+            ):
+                preferred_topic_slug = topic_match.topic_slug
+
         # --- Block match: DESACOPLADO da unidade (Fase 1) ---
         # O bloco e SEMPRE computado direto, rodando o scorer sobre TODOS os
         # blocos instrucionais (nao-administrative_only). A unidade deixou de
@@ -1053,31 +1136,68 @@ def resolve_unit_block_tags(
         # Nao usa a confianca da unidade da ENTRY — so o preferred_unit_slug.
         period_block_id = ""
         block_confidence = 0.0
+        # Método do funil (P2.3): manual > review_rule > card/card+scorer >
+        # scorer_only. Gravado em computed_block_method para QUALQUER entry
+        # com bloco (antes só o caminho de código Gemini gravava).
+        block_method = ""
         manual_block = resolve_entry_manual_timeline_block_fn(entry, timeline_context)
         if manual_block:
-            period_block_id = _collapse_ws(str(manual_block.get("id") or ""))
+            period_block_id = _collapse_ws(
+                str(manual_block.get("block_uuid") or manual_block.get("id") or "")
+            )
             block_confidence = 1.0
+            block_method = "manual"
         else:
+            # D2: aqui o timeline_index vem do runtime (_build_timeline_index, sem
+            # _serialize) -> blocos admin (feriado/prova) presentes COM rows e SEM a
+            # chave administrative_only. O key-lookup antigo era no-op e os deixava
+            # vazar como candidatos do scorer material->bloco. O predicado lê rows
+            # (filtra admin no runtime; inócuo no serializado, que ja removeu admin).
+            from src.builder.timeline.index import timeline_block_is_administrative_only
             instructional_blocks = [
                 block
                 for block in (timeline_context.get("timeline_index") or {}).get("blocks", [])
                 or []
-                if not bool(block.get("administrative_only"))
+                if not timeline_block_is_administrative_only(block)
             ]
+            # S5 (P4): janela de assign para trabalhos. Quando a entry é
+            # trabalho (categoria) ou código cujo card tem deadline de entrega
+            # (assign_due no card map), os candidatos do scorer ficam restritos
+            # aos blocos com period_start < assign_due — o conteúdo foi dado
+            # ANTES da entrega. O due NUNCA decide o bloco sozinho (heurística
+            # "deadline 06/05 -> bloco-11" REPROVADA pelo usuário na demo de
+            # 12/06: é convenção, não conteúdo); o scorer ranqueia DENTRO da
+            # janela. Filtro que esvazia (nenhum bloco antes do due) não
+            # restringe nada — nunca produz órfão.
+            from src.builder.timeline.card_block import lookup_card_assign_due
+            _assign_due = lookup_card_assign_due(
+                entry.get("source_section"), _card_block_map)
+            if _assign_due and (
+                category in ASSIGN_WINDOW_CATEGORIES
+                or category.startswith("codigo")
+            ):
+                _windowed = [
+                    b for b in instructional_blocks
+                    if str(b.get("period_start") or "") < _assign_due
+                ]
+                if _windowed:
+                    instructional_blocks = _windowed
             _review_bid = review_list_block_for_entry(entry, instructional_blocks)
             if _review_bid:
                 # Lista de revisão para prova (nome casa revisão + Pk) -> bloco de
                 # revisão que precede a prova. Sinal léxico forte, vence card/score.
                 period_block_id = _review_bid
                 block_confidence = 0.95
+                block_method = "review_rule"
             else:
-                _card_bid, _card_conf = _card_scoped_block(
+                _card_bid, _card_conf, _card_method = _card_scoped_block(
                     entry, markdown_text, unit_index, instructional_blocks, _card_block_map,
                     lambda e, md, scoped, us, ts: _best_instructional_block_fallback(e, md, scoped, us, ts),
                 )
                 if _card_bid:
                     period_block_id = _card_bid
                     block_confidence = _card_conf
+                    block_method = _card_method
                 elif instructional_blocks:
                     # Passa a unidade resolvida (mesmo fraca) so para o boost; o
                     # scorer ranqueia TODOS os blocos instrucionais.
@@ -1104,10 +1224,13 @@ def resolve_unit_block_tags(
                     if _period:
                         for block in instructional_blocks:
                             if str(block.get("period_label") or "") == _period:
-                                period_block_id = _collapse_ws(str(block.get("id") or ""))
-                                # p_conf ja e margin_confidence(best, runner_up,
-                                # k=MARGIN_K) computada dentro do scorer — reusada.
+                                period_block_id = _collapse_ws(
+                                    str(block.get("block_uuid") or block.get("id") or "")
+                                )
+                                # p_conf ja e relative_margin_confidence(best,
+                                # runner_up) computada dentro do scorer — reusada.
                                 block_confidence = float(p_conf)
+                                block_method = "scorer_only"
                                 break
                     else:
                         fallback_block, fallback_conf = _best_instructional_block_fallback(
@@ -1118,32 +1241,51 @@ def resolve_unit_block_tags(
                             preferred_topic_slug,
                         )
                         if fallback_block is not None:
-                            period_block_id = _collapse_ws(str(fallback_block.get("id") or ""))
+                            period_block_id = _collapse_ws(
+                                str(fallback_block.get("block_uuid") or fallback_block.get("id") or "")
+                            )
                             block_confidence = float(fallback_conf)
+                            block_method = "scorer_only"
 
         # --- computed_* sao a FONTE UNICA (Fase 1) ---
         # O slug/id resolvido vive direto no entry; as tags unit:/bloco: abaixo
         # sao ESPELHO destes campos, nao um caminho de scoring paralelo.
-        # block_confidence sempre vem de margin_confidence(best, runner_up,
-        # k=MARGIN_K) — seja a computada DENTRO de select_probable_period_for_entry_fn
-        # (caminho do scorer aprovado), seja a do fallback "pega o melhor", que
-        # chama a MESMA thresholds.margin_confidence sobre os scores do MESMO
+        # block_confidence sempre vem de relative_margin_confidence(best,
+        # runner_up) (P2.1) — seja a computada DENTRO de
+        # select_probable_period_for_entry_fn (caminho do scorer aprovado), seja
+        # a do fallback "pega o melhor", que chama a MESMA
+        # thresholds.relative_margin_confidence sobre os scores do MESMO
         # scorer real. Nunca recomputado/duplicado aqui.
-        computed_unit_slug = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= 0.65) else ""
+        computed_unit_slug = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= T.UNIT_TAG) else ""
         computed_block_id = period_block_id
-        computed_block_confidence = float(block_confidence)
+        # Teto por método (P2.2): léxico nunca passa do cap do seu degrau
+        # (METHOD_CAPS em thresholds.py). manual=1.0 e review_rule=0.95 ficam
+        # intactos; card/card+scorer/scorer_only são rebaixados quando a
+        # margem relativa inflaria acima do que o método permite saber.
+        computed_block_confidence = min(
+            float(block_confidence), METHOD_CAPS.get(block_method, 1.0)
+        )
 
-        # Herança de unidade pelo bloco: um arquivo atribuído a um bloco pertence
-        # à unidade daquele bloco. Quando o matcher de unidade não decidiu (vazio)
-        # mas há bloco com unidade (caso comum de code/zip, cujo nome é sinal
-        # fraco), herda a unidade do bloco em vez de ficar órfão.
-        if not computed_unit_slug and computed_block_id and not manual_unit:
-            _blocks = (timeline_context.get("timeline_index") or {}).get("blocks", []) or []
+        # Reconciliação unidade×bloco (F1): bloco manual é autoritativo; no auto,
+        # bloco define a unidade só se block_confidence >= unit_confidence; senão
+        # mantém a unidade forte e marca conflito. Absorve a herança (unit vazio).
+        _blocks = (timeline_context.get("timeline_index") or {}).get("blocks", []) or []
+        _blk = next((b for b in _blocks if str(b.get("block_uuid") or "") == computed_block_id), None)
+        if _blk is None:
             _blk = next((b for b in _blocks if str(b.get("id") or "") == computed_block_id), None)
-            _blk_unit = str((_blk or {}).get("unit_slug") or "").strip()
-            if _blk_unit:
-                computed_unit_slug = _blk_unit
-                unit_reasons = list(unit_reasons) + [f"herdada_do_bloco={computed_block_id}"]
+        _blk_unit = str((_blk or {}).get("unit_slug") or "").strip()
+        _reconciled_unit, _unit_reason_suffix, _unit_conflict = reconcile_unit_with_block(
+            computed_unit_slug=computed_unit_slug,
+            unit_confidence=float(unit_confidence),
+            computed_block_id=computed_block_id,
+            block_confidence=float(block_confidence),
+            block_unit_slug=_blk_unit,
+            block_is_manual=bool(manual_block),
+            has_manual_unit=bool(manual_unit),
+        )
+        computed_unit_slug = _reconciled_unit
+        if _unit_reason_suffix:
+            unit_reasons = list(unit_reasons) + _unit_reason_suffix
         # Faixa (Fase 3): so faz sentido quando ha bloco atribuido. Cutoffs
         # centralizados em thresholds.confidence_band (nada hardcoded aqui).
         # media/baixa ficam flagados pra revisao via o proprio valor da faixa.
@@ -1160,16 +1302,51 @@ def resolve_unit_block_tags(
             kept.append(f"{_SUBUNIT_PREFIX}{preferred_topic_slug}")
 
         if computed_block_id:
-            kept.append(f"{_BLOCO_PREFIX}{computed_block_id}")
+            # CRÍTICO: a tag bloco: deve continuar DISPLAY (bloco-NN), nunca uuid.
+            # file_map.py:506 parseia bloco-(\d+) e QUEBRA com uuid. Resolve
+            # uuid->display via índice; fallback = computed_block_id (já era legado).
+            _display_id_for_tag = next(
+                (
+                    str(b.get("id") or "")
+                    for b in _blocks
+                    if str(b.get("block_uuid") or "") == computed_block_id
+                ),
+                computed_block_id,
+            )
+            kept.append(f"{_BLOCO_PREFIX}{_display_id_for_tag}")
 
         new_entry = dict(entry)
         new_entry["auto_tags"] = kept
         new_entry["computed_unit_slug"] = computed_unit_slug
+        # computed_block_method (P2.3): ordem real de escrita —
+        # regenerate_pedagogical_files roda resolve_unit_block_tags (aqui) e
+        # DEPOIS attach_block_summary_fields, então no pipeline completo o
+        # caminho de CÓDIGO (consensus/llm_only, do code_curation) sempre
+        # reescreve por cima e vence, como hoje. O conflito real é o RETAG
+        # avulso (scripts/retag_manifest.py), que chama só esta função: sem
+        # proteção, apagaria um consensus/llm_only válido. Regra: preserva o
+        # method de código SE a entry já o tem E o bloco recomputado é o MESMO
+        # (curation continua válida); se o bloco mudou, o funil grava o seu.
+        _prev_method = str(entry.get("computed_block_method") or "")
+        if computed_block_id:
+            if _prev_method in {"consensus", "llm_only"} and computed_block_id == str(
+                entry.get("computed_block_id") or ""
+            ):
+                new_entry["computed_block_method"] = _prev_method
+            else:
+                new_entry["computed_block_method"] = block_method
+                if _prev_method in {"consensus", "llm_only"}:
+                    # campos do Gemini descrevem o bloco antigo — limpa; regeneração repõe
+                    new_entry.pop("computed_block_match_confidence", None)
+                    new_entry.pop("computed_block_rationale", None)
+        else:
+            new_entry.pop("computed_block_method", None)
         new_entry["computed_block_id"] = computed_block_id
         new_entry["computed_block_confidence"] = computed_block_confidence
         new_entry["computed_block_band"] = computed_block_band
         new_entry["unit_match_reasons"] = unit_reasons
         new_entry["unit_match_confidence"] = unit_confidence
+        new_entry["unit_block_conflict"] = _unit_conflict
         new_entry["computed_subunit_slug"] = best_subunit_slug
         new_entry["subunit_match_reasons"] = subunit_reasons
         new_entry["subunit_match_confidence"] = subunit_confidence

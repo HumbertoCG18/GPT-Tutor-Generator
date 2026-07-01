@@ -1,12 +1,12 @@
 ---
 name: agents
 description: Project identity, non-negotiables, commands, and scaffold growth instructions
-last_updated: 2026-06-09
+last_updated: 2026-06-21
 ---
 
 # GPT-Tutor-Generator
 
-Reviewed against `.mex/ROUTER.md` and current scaffold commands on 2026-06-03.
+Reviewed against `.mex/ROUTER.md` and current scaffold commands on 2026-06-21.
 
 ## What This Is
 
@@ -25,6 +25,14 @@ A desktop tool (Python/tkinter) that converts academic PDFs into structured GitH
 - Before calling any `mcp__code-review-graph__*` or `mcp__token-savior__*` tool, use `ToolSearch select:<name>` to load the schema first. Calling without loading fails with `InputValidationError`.
 - Gemini integration uses `google-genai` (NOT `google-generativeai`). Imports via `from google import genai` and must stay lazy inside method bodies — never at module top level. Anti-patterns to grep: `google.generativeai`, `genai.GenerativeModel`.
 - The generated repo's code_curation.json is a generated artifact (not source). Treat it like manifest cache: prune stale entries before reads, write atomically.
+- **Arquivamento de concluídos (NÃO-NEGOCIÁVEL):** quando um plano termina de executar e passa 100%
+  (gate verde — golden/eval/pytest verdes, sem drift), MOVER os arquivos Markdown concluídos (plano + spec + report associados)
+  para a subpasta de concluídos do diretório de origem: `docs/superpowers/plans/Feitos/`,
+  `docs/superpowers/specs/Feitos/`, `docs/reports/Feitos/`, `.git/sdd/Feitos/`. Usar `git mv` quando
+  trackeado (preserva histórico). A RAIZ desses diretórios só contém trabalho em andamento ou a-fazer.
+- **Tracker de pendências (NÃO-NEGOCIÁVEL):** manter `docs/reports/2026-06-21-pendencias.md` SEMPRE
+  atualizado: ao concluir um item, removê-lo da lista viva e registrá-lo na seção "Concluído"; ao
+  descobrir nova pendência, adicioná-la com tag [USER|CODE|DECISION].
 
 ## Commands
 
@@ -42,10 +50,13 @@ python app.py
 ## Scaffold Growth
 
 After every task:
-- If no pattern exists for this task type, create one and add it to `patterns/INDEX.md`.
+- If no pattern exists for this task type, create one and add it to `.mex/patterns/INDEX.md`.
 - If a pattern was deviated from or a new gotcha was found, update it.
 - If any context file is now outdated, update it surgically.
-- Update "Current Project State" in `ROUTER.md` if the work was significant.
+- Update "Current Project State" in `.mex/ROUTER.md` if the work was significant.
+- **Living overview:** if the architecture, pipeline, or attribution logic changed, update
+  `docs/Overview-Sistema.html` — the single living visual overview of the system (tabs 1–5
+  attribution, 6 audit/debts, 7 system report). It must always reflect the current state.
 
 ## Navigation
 

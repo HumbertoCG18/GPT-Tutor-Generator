@@ -11,12 +11,82 @@ edges:
     condition: when a decision affects system structure
   - target: context/stack.md
     condition: when a decision affects technology choice
-last_updated: 2026-06-09
+last_updated: 2026-06-21
 ---
 
 # Decisions
 
 Append-only log. When a decision changes, mark the old entry as superseded and add the new decision above it.
+
+---
+
+### Stable Timeline Block Identity Uses UUID Ledger
+
+**Date:** 2026-06-21
+**Status:** Active
+**Decision:** Timeline blocks get durable `block_uuid` values from the generated course block-identity ledger, reattached across rebuilds by date overlap and topic-token tie-breaking; human and generated block references migrate toward UUIDs while positional block ids remain compatibility fallbacks.
+**Reasoning:** Positional `bloco-NN` ids change when schedule blocks split, merge, or move, which can orphan manual truth, curation, eval fixtures, and card maps. A ledger preserves identity across rebuilds without hashing content that intentionally changes during timeline cleanup.
+**Consequences:** Timeline rebuild code must respect the `persist` gate, avoid writing ledgers during dry-run/eval paths, and fail clearly when UUID references exist but the ledger is missing.
+
+---
+
+### Anchor Placement Is Additive and Feature-Flagged
+
+**Date:** 2026-06-21
+**Status:** Active
+**Decision:** The anchor placement layer can write `temporal_block_id` and `temporal_block_method` only behind per-subject `use_anchor_placement`; it does not overwrite `computed_block_id`, and manual block truth still wins.
+**Reasoning:** Card/source-section dates are strong temporal evidence, but cutover needs gold-backed evaluation. Additive temporal fields allow canary comparison without changing the default knowledge-base routing surface.
+**Consequences:** Builder options inject only explicit `SubjectProfile.feature_flags`; anchor placement tests must prove flag-off behavior is byte-compatible and no resolver call happens when disabled.
+
+---
+
+### Moodle/SARC Signals Are Preserved as Separate Routing Evidence
+
+**Date:** 2026-06-18
+**Status:** Active
+**Decision:** Persist source signals such as `source_section`, `moodle_label`, `posting_date`, `posting_date_created`, `turma`, `schedule_url`, the generated card-block map, and the generated lessons index as explicit metadata instead of overwriting titles or relying only on filenames.
+**Reasoning:** Attribution accuracy depends on the original course card, Moodle resource label, posting date, and SARC schedule identity. Keeping those signals separate lets routing, eval harnesses, and manual review reason about provenance without corrupting user-visible titles.
+**Consequences:** Import and migration paths must distinguish additive signals from consumed signals that can change attribution. Backfills that alter `source_section` or card maps need eval-gated review.
+
+---
+
+### Concept Resolver Cutover Is Feature-Flagged
+
+**Date:** 2026-06-18
+**Status:** Active
+**Decision:** The concept resolver is wired through `use_concept_resolver` and, when enabled, overwrites only block fields (`computed_block_id`, confidence, band, method, and mirrored `bloco:` tag).
+**Reasoning:** The resolver unifies several attribution signals, but routing cutover needs gold coverage and regression gates before becoming default behavior.
+**Consequences:** Production-default behavior remains the existing routing funnel. Resolver work should be tested with the comparison/gold scripts and should not silently change unit fields.
+
+---
+
+### Generated Tutor Artifacts Carry Timeline Health and Temporal Context
+
+**Date:** 2026-06-17
+**Status:** Active
+**Decision:** Regeneration writes cronograma health and temporal context artifacts alongside COURSE_MAP and FILE_MAP.
+**Reasoning:** Timeline-aware tutoring needs both a compact current-schedule context and a visible audit surface for timeline/unit conflicts, stale overrides, and allocation health.
+**Consequences:** Generated-output documentation and artifact tests must include both files. Tutor instructions may refer to the temporal context artifact, while operational diagnostics should use the cronograma health artifact.
+
+---
+
+### References Are First-Class Tutor Context
+
+**Date:** 2026-06-17
+**Status:** Active
+**Decision:** Entries in reference/bibliography categories are fetched lightly, optionally summarized with Gemini, deterministically mapped to units/topics, cached in generated reference curation, surfaced in BIBLIOGRAPHY, and linked from COURSE_MAP support lines.
+**Reasoning:** A tutor that only sees reference links and titles cannot use bibliography as grounding context. The cache keeps enrichment incremental, and the deterministic mapping still works when Gemini is unavailable.
+**Consequences:** Reference changes must preserve no-key degradation, cache-by-hash behavior, COURSE_MAP support-line limits, and BIBLIOGRAPHY as the deep-reference target.
+
+---
+
+### Timeline Block Unit Assignment Uses Positional Matching
+
+**Date:** 2026-06-17
+**Status:** Active
+**Decision:** Timeline blocks receive `auto_unit_slug` through the positional matcher in `src/builder/timeline/unit_matcher.py`, with authoritative non-class kinds excluded from unit assignment and manual overrides remaining dominant.
+**Reasoning:** The previous keyword-only block-to-unit path produced confident but wrong unit inheritance. Monotonic positional assignment better matches course chronology and reduces fragile vocabulary coupling.
+**Consequences:** Timeline/unit changes should be verified with unit matcher tests and rebuild-diff/eval harnesses where possible. Conflict reporting should compare manual overrides against the positional auto suggestion.
 
 ---
 

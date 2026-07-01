@@ -352,8 +352,14 @@ def test_auto_map_entry_unit_matches_exercise_to_recursive_definitions():
     result = _auto_map_entry_unit(entry, units, markdown_text="")
 
     assert isinstance(result, UnitMatchResult)
+    # Topo ainda é a unidade de recursão...
     assert result.slug == "unidade-01-metodos-formais"
-    assert result.confidence > 0
+    # ...mas o sinal (só título concatenado, sem markdown) é fraco: com
+    # relative_margin_confidence (idea 1) a confiança não satura mais via o termo
+    # winner*k — fica honestamente baixa/ambígua, abaixo do gate de tag. A unidade
+    # passa a ser herdada do BLOCO na reconciliação, em vez de cravada por ruído.
+    assert result.ambiguous
+    assert result.confidence < 0.65
 
 
 def test_auto_map_entry_unit_uses_markdown_headings_as_signal():
@@ -729,6 +735,77 @@ def test_auto_map_entry_subtopic_uses_heading_enriched_alias_for_logic_propositi
     assert derived_unit == "unidade-01-metodos-formais"
 
 
+def _tie_taxonomy():
+    """Dois tópicos com label idêntico, slugs neutros (que não casam o texto)
+    e MESMO kind → empate exato por construção (o scorer também casa
+    slug_phrase e dá +0.04 a kind subtopic)."""
+    return {
+        "version": 1,
+        "course_slug": "metodos-formais",
+        "units": [
+            {
+                "slug": "unidade-02-verificacao-de-programas",
+                "title": "Unidade 2 - Verificacao de Programas",
+                "topics": [
+                    {
+                        "slug": "topico-a",
+                        "label": "Logica de Hoare",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    },
+                    {
+                        "slug": "topico-b",
+                        "label": "Logica de Hoare",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    },
+                ],
+            },
+        ],
+    }
+
+
+def test_auto_map_entry_subtopic_exact_tie_returns_no_slug():
+    # Reproduz as 12 entries codigo-professor conf-0.0 do repo real: empate
+    # exato entre tópicos → o sort estável elegia um vencedor ARBITRÁRIO
+    # (menor índice na taxonomia) e o surfaçava com conf 0.0.
+    entry = {
+        "title": "hoare",
+        "category": "codigo-professor",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/zip/hoare.zip",
+    }
+    result = _auto_map_entry_subtopic(entry, _tie_taxonomy(), "Logica de Hoare")
+
+    assert result.topic_slug == ""
+    assert result.confidence == 0.0
+    assert result.ambiguous is True
+    assert any("empate-exato" in r for r in result.reasons)
+
+
+def test_auto_map_entry_subtopic_zero_score_returns_no_slug():
+    # Sem sinal nenhum (zip sem markdown, título não casa nada): winner_score
+    # 0 não deve surfaçar o primeiro tópico da taxonomia como slug.
+    entry = {
+        "title": "xyzqwabc",
+        "category": "codigo-professor",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/zip/xyzqwabc.zip",
+    }
+    result = _auto_map_entry_subtopic(entry, _tie_taxonomy(), "")
+
+    assert result.topic_slug == ""
+    assert result.confidence == 0.0
+    assert result.ambiguous is True
+    assert any("sem-sinal" in r for r in result.reasons)
+
+
 def test_derive_unit_from_topic_match_uses_topic_unit_when_present():
     taxonomy = {
         "version": 1,
@@ -804,6 +881,9 @@ def test_file_map_md_auto_fills_unit_column_from_subject_profile(tmp_path):
             "title": "Exerciciosespecificacao",
             "category": "listas",
             "tags": "",
+            # Unidade espelha o manifest (fonte única): a coluna vem do
+            # computed_unit_slug persistido pelo funil, sem recomputar matcher.
+            "computed_unit_slug": "unidade-02-verificacao-de-programas",
             "base_markdown": "exercises/lists/exerciciosespecificacao.md",
             "raw_target": "raw/pdfs/listas/exerciciosespecificacao.pdf",
         }
@@ -812,7 +892,9 @@ def test_file_map_md_auto_fills_unit_column_from_subject_profile(tmp_path):
     result = file_map_md(course_meta, entries, subject_profile)
 
     assert "unidade-02-verificacao-de-programas" in result
-    assert "2026-03-16" in result
+    # Período espelha o manifest: sem computed_block_id/manual o FILE_MAP não
+    # recomputa mais o período via scorer — coluna fica em branco.
+    assert "2026-03-16" not in result
     assert "Exerciciosespecificacao" in result
 
 
@@ -852,15 +934,24 @@ def test_file_map_md_refines_period_by_subtopic_within_unit(tmp_path):
             "title": "Exerciciosformalizacaoalgoritmosrecursao",
             "category": "listas",
             "tags": "",
+            # Unidade espelha o manifest (fonte única) — sem recomputação.
+            "computed_unit_slug": "unidade-01-metodos-formais",
             "base_markdown": "exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md",
             "raw_target": "raw/pdfs/listas/exerciciosformalizacaoalgoritmosrecursao.pdf",
         }
     ]
 
+    # Período espelha o manifest: o FILE_MAP não recomputa mais via scorer.
+    # Com computed_block_id apontando para um bloco real do timeline, a coluna
+    # mostra o period_label desse bloco (fonte única).
+    context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
+    target_block = context["blocks_by_unit"]["unidade-01-metodos-formais"][0]
+    entries[0]["computed_block_id"] = target_block["id"]
+
     result = file_map_md(course_meta, entries, subject_profile)
 
     assert "unidade-01-metodos-formais" in result
-    assert "2026-03-16" in result
+    assert target_block["period_label"] in result
     assert "Exerciciosformalizacaoalgoritmosrecursao" in result
 
 
@@ -1426,16 +1517,16 @@ def test_file_map_md_keeps_period_column_empty_without_subject_profile():
     assert "Aula 1" in result
 
 
-def test_file_map_md_omits_period_for_ambiguous_match():
+def test_file_map_md_leaves_unit_blank_without_computed_slug():
+    """Fonte única: sem computed_unit_slug/manual no manifest, a coluna Unidade
+    fica em branco — o FILE_MAP nunca recomputa via matcher. O sufixo
+    "_(ambíguo)_" morreu junto: computed_unit_slug nunca é gravado ambíguo
+    (gate em resolve_unit_block_tags)."""
     course_meta = {
         "course_name": "Métodos Formais",
-        "_unit_index_for_tests": [
-            {"title": "Unidade 01 — Métodos Formais", "topics": ["Lógica", "Sistemas Formais"]},
-            {"title": "Unidade 02 — Verificação de Programas", "topics": ["Lógica", "Programas"]},
-        ],
+        "_content_taxonomy_for_tests": {"units": []},
         "_period_index_for_tests": {
             "unidade-01-metodos-formais": "2026-03-04 a 2026-05-04",
-            "unidade-02-verificacao-de-programas": "2026-05-06 a 2026-06-10",
         },
     }
     entries = [
@@ -1451,8 +1542,12 @@ def test_file_map_md_omits_period_for_ambiguous_match():
 
     result = file_map_md(course_meta, entries)
 
-    assert "unidade-01-metodos-formais _(ambíguo)_" in result
+    assert "_(ambíguo)_" not in result
     assert "2026-03-04 a 2026-05-04" not in result
+    row = next(line for line in result.splitlines() if "| Revisao |" in line)
+    cells = [c.strip() for c in row.strip().strip("|").split("|")]
+    # Columns: #, Título, Categoria, Quando abrir, Prioridade, Markdown, Seções, Unidade, Subtópico, Confiança, Período
+    assert cells[7] == ""
 
 
 def test_file_map_md_respects_manual_unit_override(tmp_path):
@@ -1496,7 +1591,9 @@ def test_file_map_md_respects_manual_unit_override(tmp_path):
     result = file_map_md(course_meta, entries, subject_profile)
 
     assert "unidade-02-verificacao-de-programas" in result
-    assert "2026-05-06" in result
+    # Período espelha o manifest: manual_unit_slug não dispara mais recomputação
+    # de período via scorer — sem computed_block_id/bloco manual a coluna fica vazia.
+    assert "2026-05-06" not in result
     assert "unidade-manual" in result
 
 
@@ -1530,7 +1627,10 @@ def test_file_map_md_respects_manual_timeline_block_override(tmp_path):
             "title": "Exerciciosformalizacaoalgoritmosrecursao",
             "category": "listas",
             "tags": "",
-            "manual_timeline_block_id": "bloco-02",
+            # bloco-01 é o único bloco instrucional deste syllabus. Antes o teste
+            # usava "bloco-02" (dangling) e a data vinha da RECOMPUTAÇÃO do scorer;
+            # agora o período vem do próprio bloco manual resolvido (fonte única).
+            "manual_timeline_block_id": "bloco-01",
             "base_markdown": "exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md",
             "raw_target": "raw/pdfs/listas/exerciciosformalizacaoalgoritmosrecursao.pdf",
         }
@@ -1613,11 +1713,11 @@ def test_resolve_entry_manual_timeline_block_falls_back_to_nth_instructional_blo
     timeline_context = {
         "timeline_index": {
             "blocks": [
-                {"id": "bloco-auto-001", "administrative_only": False, "unit_slug": "u1"},
-                {"id": "bloco-auto-002", "administrative_only": True, "unit_slug": "u1"},
-                {"id": "bloco-auto-003", "administrative_only": False, "unit_slug": "u1"},
-                {"id": "bloco-auto-004", "administrative_only": False, "unit_slug": "u1"},
-                {"id": "bloco-auto-005", "administrative_only": False, "unit_slug": "u1"},
+                {"id": "bloco-auto-001", "unit_slug": "u1", "rows": [{"content": "Aula 1"}]},
+                {"id": "bloco-auto-002", "unit_slug": "u1", "rows": [{"content": "Feriado"}]},
+                {"id": "bloco-auto-003", "unit_slug": "u1", "rows": [{"content": "Aula 3"}]},
+                {"id": "bloco-auto-004", "unit_slug": "u1", "rows": [{"content": "Aula 4"}]},
+                {"id": "bloco-auto-005", "unit_slug": "u1", "rows": [{"content": "Aula 5"}]},
             ]
         }
     }
@@ -1627,6 +1727,171 @@ def test_resolve_entry_manual_timeline_block_falls_back_to_nth_instructional_blo
 
     assert resolved is not None
     assert resolved["id"] == "bloco-auto-005"
+
+
+def test_file_map_md_period_mirrors_computed_block_id_from_manifest():
+    """FILE_MAP espelha o manifest (fonte única): a coluna Período vem do
+    computed_block_id do entry, sem recomputar via scorer. Cobre lookup tanto
+    em blocks_by_unit quanto em unassigned_blocks."""
+    course_meta = {
+        "course_name": "Métodos Formais",
+        "_unit_index_for_tests": [
+            {"title": "Unidade 01 — Métodos Formais", "topics": ["Sistemas Formais"]},
+        ],
+        "_timeline_context_for_tests": {
+            "timeline_index": {"blocks": []},
+            "blocks_by_unit": {
+                "unidade-01-metodos-formais": [
+                    {
+                        "id": "bloco-03",
+                        "period_label": "16/03/2026 a 25/03/2026",
+                        "unit_slug": "unidade-01-metodos-formais",
+                        "rows": [],
+                    }
+                ]
+            },
+            "unassigned_blocks": [
+                {"id": "bloco-10", "period_label": "08/06/2026 a 10/06/2026", "rows": []}
+            ],
+        },
+    }
+    entries = [
+        {
+            "title": "Aula Sistemas",
+            "category": "material-de-aula",
+            "tags": "",
+            "computed_block_id": "bloco-03",
+            "base_markdown": "content/aula-sistemas.md",
+            "raw_target": "raw/aula-sistemas.pdf",
+            "_markdown_text_for_tests": "Sistemas formais.",
+        },
+        {
+            "title": "Aula Final",
+            "category": "material-de-aula",
+            "tags": "",
+            "computed_block_id": "bloco-10",
+            "base_markdown": "content/aula-final.md",
+            "raw_target": "raw/aula-final.pdf",
+            "_markdown_text_for_tests": "Sistemas formais.",
+        },
+    ]
+
+    result = file_map_md(course_meta, entries)
+
+    row_sistemas = next(line for line in result.splitlines() if "| Aula Sistemas |" in line)
+    row_final = next(line for line in result.splitlines() if "| Aula Final |" in line)
+    assert "16/03/2026 a 25/03/2026" in row_sistemas
+    assert "08/06/2026 a 10/06/2026" in row_final
+
+
+def test_file_map_md_period_empty_without_computed_block_id():
+    """Sem computed_block_id (e sem bloco manual) o Período fica em branco —
+    nada de recomputação via select_probable_period_for_entry."""
+    course_meta = {
+        "course_name": "Métodos Formais",
+        "_unit_index_for_tests": [
+            {"title": "Unidade 01 — Métodos Formais", "topics": ["Sistemas Formais"]},
+        ],
+        "_timeline_context_for_tests": {
+            "timeline_index": {"blocks": []},
+            "blocks_by_unit": {
+                "unidade-01-metodos-formais": [
+                    {
+                        "id": "bloco-03",
+                        "period_label": "16/03/2026 a 25/03/2026",
+                        "unit_slug": "unidade-01-metodos-formais",
+                        "rows": [
+                            {"index": 1, "date_text": "16/03/2026", "content": "Sistemas formais"},
+                        ],
+                    }
+                ]
+            },
+            "unassigned_blocks": [],
+        },
+    }
+    entries = [
+        {
+            "title": "Aula Sistemas",
+            "category": "material-de-aula",
+            "tags": "",
+            "base_markdown": "content/aula-sistemas.md",
+            "raw_target": "raw/aula-sistemas.pdf",
+            "_markdown_text_for_tests": "Sistemas formais.",
+        }
+    ]
+
+    result = file_map_md(course_meta, entries)
+
+    row = next(line for line in result.splitlines() if "| Aula Sistemas |" in line)
+    cells = [c.strip() for c in row.strip().strip("|").split("|")]
+    # Columns: #, Título, Categoria, Quando abrir, Prioridade, Markdown, Seções, Unidade, Subtópico, Confiança, Período
+    assert cells[10] == ""
+    assert "16/03/2026 a 25/03/2026" not in result
+
+
+def test_file_map_md_period_prefers_manual_block_over_computed():
+    """manual_timeline_block_id (override do tutor) vence o computed_block_id."""
+    course_meta = {
+        "course_name": "Métodos Formais",
+        "_unit_index_for_tests": [
+            {"title": "Unidade 01 — Métodos Formais", "topics": ["Sistemas Formais"]},
+        ],
+        "_timeline_context_for_tests": {
+            "timeline_index": {
+                "blocks": [
+                    {
+                        "id": "bloco-03",
+                        "period_label": "16/03/2026 a 25/03/2026",
+                        "unit_slug": "unidade-01-metodos-formais",
+                        "administrative_only": False,
+                        "rows": [],
+                    },
+                    {
+                        "id": "bloco-10",
+                        "period_label": "08/06/2026 a 10/06/2026",
+                        "unit_slug": "unidade-01-metodos-formais",
+                        "administrative_only": False,
+                        "rows": [],
+                    },
+                ]
+            },
+            "blocks_by_unit": {
+                "unidade-01-metodos-formais": [
+                    {
+                        "id": "bloco-03",
+                        "period_label": "16/03/2026 a 25/03/2026",
+                        "unit_slug": "unidade-01-metodos-formais",
+                        "rows": [],
+                    },
+                    {
+                        "id": "bloco-10",
+                        "period_label": "08/06/2026 a 10/06/2026",
+                        "unit_slug": "unidade-01-metodos-formais",
+                        "rows": [],
+                    },
+                ]
+            },
+            "unassigned_blocks": [],
+        },
+    }
+    entries = [
+        {
+            "title": "Aula Sistemas",
+            "category": "material-de-aula",
+            "tags": "",
+            "computed_block_id": "bloco-03",
+            "manual_timeline_block_id": "bloco-10",
+            "base_markdown": "content/aula-sistemas.md",
+            "raw_target": "raw/aula-sistemas.pdf",
+            "_markdown_text_for_tests": "Sistemas formais.",
+        }
+    ]
+
+    result = file_map_md(course_meta, entries)
+
+    row = next(line for line in result.splitlines() if "| Aula Sistemas |" in line)
+    assert "08/06/2026 a 10/06/2026" in row
+    assert "16/03/2026 a 25/03/2026" not in row
 
 
 def test_build_content_taxonomy_filters_noise_topics_without_code():
@@ -1722,6 +1987,9 @@ def test_file_map_md_shows_subtopic_label_for_matched_entry():
             "id": "2604-escalonamento",
             "title": "Algoritimos de Escalonamento",
             "category": "material-de-aula",
+            # Subtópico espelha o manifest (fonte única): a coluna vem do
+            # computed_subunit_slug persistido, sem recomputar o matcher.
+            "computed_subunit_slug": "32-escalonamento",
             "auto_tags": ["topico:32-escalonamento"],
         }
     ]
@@ -1735,17 +2003,11 @@ def test_file_map_md_shows_subtopic_label_for_matched_entry():
 
 
 def test_file_map_md_drops_low_confidence_suffix_keeps_confidence_column():
-    # Empirically constructed low-confidence NON-ambiguous match: two units sharing
-    # the "Programação" token, an entry whose text hits one distinctive token of the
-    # winner ("denotacional" -> 0.572) plus the shared/discounted token of the runner
-    # ("proposicional"), yielding winner != runner, not ambiguous, confidence < 0.45.
-    # Empty taxonomy keeps the topic-index boost out so the unit-margin path decides.
+    # Fonte única: a coluna Unidade espelha o computed_unit_slug do manifest e
+    # a Confiança lê o unit_match_confidence persistido (via _infer_unit_confidence).
+    # Confiança baixa aparece só na coluna ("Baixa"), nunca como sufixo na célula.
     course_meta = {
         "course_name": "Semântica Formal",
-        "_unit_index_for_tests": [
-            {"title": "Unidade 01 — Programação Denotacional", "topics": ["Programação Denotacional"]},
-            {"title": "Unidade 02 — Programação Proposicional", "topics": ["Programação Proposicional"]},
-        ],
         "_content_taxonomy_for_tests": {"units": []},
         "_period_index_for_tests": {},
     }
@@ -1754,6 +2016,8 @@ def test_file_map_md_drops_low_confidence_suffix_keeps_confidence_column():
             "title": "Revisao",
             "category": "material-de-aula",
             "tags": "",
+            "computed_unit_slug": "unidade-01-programacao-denotacional",
+            "unit_match_confidence": 0.40,
             "base_markdown": "content/curated/revisao.md",
             "raw_target": "raw/pdfs/material-de-aula/revisao.pdf",
             "_markdown_text_for_tests": "denotacional proposicional",
@@ -1764,5 +2028,5 @@ def test_file_map_md_drops_low_confidence_suffix_keeps_confidence_column():
 
     assert "_(baixa confiança)_" not in result  # redundant suffix removed
     assert "Baixa" in result  # Confiança column still flags low confidence
-    # sanity: the matched slug itself is still present
+    # sanity: the mirrored slug itself is still present
     assert "unidade-01-programacao-denotacional" in result

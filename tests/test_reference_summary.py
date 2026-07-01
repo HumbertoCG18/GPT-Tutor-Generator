@@ -27,45 +27,6 @@ def test_returns_none_on_client_exception():
     assert summarize_reference("texto", client) is None
 
 
-from src.builder.core.reference_summary import process_reference_entry
-
-
-def test_process_reference_entry_fills_fields():
-    entry = {"id": "r1", "category": "referencias", "file_type": "github-repo",
-             "source_path": "https://github.com/a/b", "auto_tags": []}
-    units = [{"slug": "unidade-01", "normalized_title": "seguranca",
-              "topic_phrases": ["autenticacao"], "topic_tokens": ["autenticacao"], "distinctive_tokens": ["oauth"]}]
-    client = MagicMock()
-    client.summarize_bundle.return_value = ReferenceSummary(
-        inferred_title="t", summary="resumo base", concepts=["autenticacao", "oauth"])
-    import src.builder.core.reference_summary as rs
-    rs_fetch = rs.fetch_reference_text
-    try:
-        rs.fetch_reference_text = lambda e, **k: "readme de autenticacao oauth"
-        out = process_reference_entry(entry, units, client)
-    finally:
-        rs.fetch_reference_text = rs_fetch
-    assert out["ref_summary"] == "resumo base"
-    assert out["computed_ref_unit"] == "unidade-01"
-    assert "oauth" in out["ref_concepts"]
-
-
-def test_process_degrades_without_client():
-    entry = {"id": "r1", "category": "referencias", "file_type": "github-repo",
-             "source_path": "https://github.com/a/b"}
-    units = [{"slug": "unidade-01", "normalized_title": "seguranca",
-              "topic_phrases": ["autenticacao"], "topic_tokens": ["autenticacao"], "distinctive_tokens": ["oauth"]}]
-    import src.builder.core.reference_summary as rs
-    rs_fetch = rs.fetch_reference_text
-    try:
-        rs.fetch_reference_text = lambda e, **k: "texto sobre autenticacao oauth"
-        out = process_reference_entry(entry, units, None)  # sem Gemini
-    finally:
-        rs.fetch_reference_text = rs_fetch
-    assert out["ref_summary"] == ""                 # sem resumo
-    assert out["computed_ref_unit"] == "unidade-01" # mas mapeia por texto
-
-
 def test_batch_writes_only_curation(tmp_path):
     import json as _json
     from src.builder.core import reference_summary as rs

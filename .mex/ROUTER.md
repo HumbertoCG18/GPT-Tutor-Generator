@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Contains project state, routing table, and behavioural contract.
-last_updated: 2026-06-10
+last_updated: 2026-06-21
 ---
 
 # ROUTER.md - Session Bootstrap
@@ -30,7 +30,7 @@ Read this file before starting any task.
 - Queue state persists between app sessions.
 - Dashboard monitors operational repository state.
 - Reprocess Repository reapplies the current architecture to existing generated repositories.
-- Test runner is `pytest`; brief lists 28 files under `tests/`.
+- Test runner is `pytest`; the tracked test suite has 136 files under `tests/`.
 - Auto-tags de unidade/subunidade/bloco geradas em `resolve_unit_block_tags()`:
   tags `unit:`, `subunit:`, `bloco:` persistidas em `auto_tags` do manifest após
   cada regeneração pedagógica.
@@ -150,8 +150,9 @@ Read this file before starting any task.
   monotonico, substitui o caminho fragil; rebuild-diff guard 5 cursos; guard de
   conflito usando a sugestao do posicional).
 - Matcher posicional bloco->unidade (Plano 2 de C) ENTREGUE. Modulo novo
-  `src/builder/timeline/unit_matcher.py`: `score_block_unit_affinity` (overlap de
-  tokens bloco x titulo+topicos+aliases da unidade, stopwords PT) +
+  `src/builder/timeline/unit_matcher.py`: afinidade por overlap de tokens
+  (bloco x titulo+topicos+aliases da unidade, stopwords PT — interno, via
+  `_block_tokens`/`_unit_tokens`) +
   `assign_units_positional` (DP monotonico global: maximiza afinidade total sob
   unidade nao-decrescente; robusto a ancora espuria). Wiring two-phase em
   `_build_timeline_index`: atribui unidade aos candidatos (sem source_kind
@@ -178,32 +179,157 @@ Read this file before starting any task.
   `helpers.collapse_ws`). ADIADO: Task B (`administrative_only` precisa decisao de
   produto: persistir vs deletar filtros mortos), Tasks D/E (unificar scorers/
   predicados, eval-gated). 978 testes.
+- D2 (`administrative_only`) RESOLVIDO (`085a725`, P1 Lote B; subsume a Task B acima):
+  a chave nunca e gravada em producao (`_build_timeline_index` runtime nao escreve nem
+  remove admin; `_serialize` ja remove) -> `block.get("administrative_only")` era no-op
+  nos 4 sites, e `content_taxonomy`/`file_map` (leem o indice runtime) deixavam blocos
+  admin (feriado/prova) vazarem como candidatos do scorer material->bloco e do ordinal
+  `bloco-N`. D2=A uniforme: troca pelo predicado real
+  `timeline_block_is_administrative_only` (promovido a publico; le `rows`) nos 4 sites.
+  Correto no runtime, inocuo no serializado. Suite 1366 verde; golden de bloco 5/5.
+- P1.5 `auto_suggested_unit` (conflicts.py) investigado (`8392450`): o ramo topic-derive
+  e VIVO, nao morto. A premissa da spec (inalcancavel pq posicional sempre grava
+  `auto_unit_slug`) e FALSA — posicional so grava p/ class_candidates com slug; blocos
+  nao-aula, herdados (soft-continuation seta `unit_slug` sem `auto_unit_slug`) e
+  posicional-vazio serializam SEM `auto_unit_slug` mas COM `topic_candidates`. MANTIDO
+  (conflict-detection/health, golden-safe); so o comentario stale ("espelha topic-derive
+  do build" -> hoje build deriva via posicional) foi corrigido. Sem mudanca de comportamento.
+- P1.3 piso 0.72 REMOVIDO (`6f24fc7`): o `max(confidence,0.72)` no session-first
+  single-block era polegar-na-balanca invisivel. A band usa a conf CAPADA
+  (scorer_only=0.70); o piso so afetava o `block_confidence` RAW passado a
+  `reconcile_unit_with_block` (bloco define unidade se block_confidence >=
+  unit_confidence). Como `unit_confidence` tambem e `relative_margin_confidence`
+  (idea 1), a comparacao e simetrica por design — o piso quebrava isso so na janela
+  unit_conf in (0.70,0.72]. Removido: discordancia marginal vira conflito flagado, conf
+  honesta. Rejeitada a opcao de reconciliar com a conf capada (method-cap = teto de
+  display, nao evidencia). Suite 1366 verde; golden 5/5. P1 restante: so o fallback
+  keyword ~600 linhas (index.py:2205, eval-gate forte, guard test antes de deletar).
+- P1.4 fallback keyword INVESTIGADO (17/06): NAO e dead-code degenerado. So dispara quando
+  `assign_units_positional` retorna [] = m<2 / n==0 / afinidade-zero. Contexto institucional
+  (`.mex/context/institutional.md`): plano de ensino SEMPRE presente + NUNCA cadeira de 1
+  unidade -> m>=2 garantido -> m<2 inalcancavel; resta afinidade-zero (rara, Descricao do
+  SARC traz topico) e n==0 (no-op). DECISAO = Alternativa C (ADIAR pro P2): nao causa bug
+  hoje; deletar errado = regressao silenciosa em curso degenerado. Tratar o delete junto da
+  unificacao de scorers do P2 (fold no posicional dos sinais que o fragil tem e o posicional
+  nao: nº explicito "Unidade N", frases/ancoras) + guard test (posicional nunca [] no golden).
+- LATENTE (item proprio, investigar antes de mexer no fallback — interdependentes): sem
+  teaching_plan, `unit_index` cai em `_derive_unit_specs_from_repo` mas `content_taxonomy
+  ["units"]=[]` -> as 2 fontes de unidade divergem e o fallback vira load-bearing. Nao
+  exercitado (plano sempre presente). Ou remover `_derive_unit_specs_from_repo` (se nunca-hit)
+  ou dar a content_taxonomy o mesmo fallback. Outros gaps mapeados: "Evento Academico" fora
+  do ATIVIDADE_KIND_MAP; divergencia nome-unidade x nome-card Moodle (match fuzzy).
+- P3.4 `trabalho`->DELIVERABLE unit-aware FEITO (17/06): o token nu `"trabalho"`/`"parte
+  trabalho"` saiu de `KIND_KEYWORDS[DELIVERABLE]` (classifier.py) e virou regra gated 3c em
+  `classify_block` -> so vira DELIVERABLE quando o bloco NAO tem evidencia de unidade
+  (`_has_unit_evidence`: unit_slug/auto_unit_slug/topic_candidates). Aula "Trabalho sobre X"
+  com unidade mantem a unidade (CLASS). Bundle: `_STRONG_EXAM_RE` ganhou `\bg2\b|\bps\b`
+  (no-op no corpus atual — PS/G2 ja vem por source_kind; rede de seguranca sem source_kind).
+  DESCOBERTA: a premissa do handoff (FP frequente) NAO bate no corpus — os unicos blocos com
+  "trabalho" nu nos 5 cursos sao apresentacoes de TP/T (sem unidade), p/ os quais DELIVERABLE
+  estava certo; 2 deles (IA bloco-16, SO bloco-08) sao MERGED (apresentacao + prova P1/P2) e
+  agora caem em ASSESSMENT via session-exam (reforca a divida "separar blocos merged"). Suite
+  1370 verde; golden 5/5 confiante-errado 0.
+- Normalizacao/tokenizacao consolidada (P2 Fase 1): `src/builder/text/normalize.py` e
+  `src/builder/text/stopwords.py` viraram fontes unicas para normalizadores/stopwords,
+  com delegadores byte-identicos preservando comportamento legado.
+- Concept resolver (P2/Fase 2-3) existe em `src/builder/routing/concept_resolver.py` +
+  `resolver_apply.py`, com harness `scripts/compare_resolver.py` e gold de codigo em
+  `tests/fixtures/eval/code_block_gold.json`. Wiring de producao fica atras da flag
+  `use_concept_resolver` e sobrescreve apenas campos de bloco (`computed_block_id`,
+  confidence/band/method + tag `bloco:`), nao unidade.
+- Signal registry/Moodle S0: `FileEntry` preserva `source_section`, `moodle_label`,
+  `posting_date`, `posting_date_created`; `SubjectProfile` preserva `turma` e
+  `schedule_url`. `backfill_repo_signals_additive` grava labels/datas/lessons index
+  sem mudar atribuicao; `backfill_repo_signals_consumed` pode atualizar `source_section`
+  e card-block map e por isso precisa de eval-gate. Scripts atuais:
+  `migrate_signals.py`, `posting_date_probe.py`, `propose_gold.py`, `gold_by_card.py`,
+  `expand_card_gold.py`, `make_code_gold_template.py`, `eval_code_block_gold.py`.
+- Stash/card import: `SubjectProfile.stash_folder` aponta para a pasta de arquivos da
+  materia; `scan_stash_cards` trata a subpasta imediata como card/`source_section`,
+  cria entries para PDF/imagem/zip/codigo, deduplica por basename ja processado e
+  nunca herda backend PDF para codigo/zip. `match_entries_to_cards` backfill por
+  basename sem atribuir casos ambiguos.
+- SARC/Moodle metadata: `parse_sarc_turma_key` resolve GUID/ano/sem da URL; a UI persiste
+  `schedule_url` no perfil da materia. `Evento Academico` ja esta mapeado para `event`
+  em `ATIVIDADE_KIND_MAP`; o gap antigo foi fechado.
+- Docs/reports: `docs/reports/gold_templates/` contem templates/gabaritos CSV por curso
+  para medicao cross-curso e rotulagem por card.
+- Cronograma sessao-atomo (Specs A+B, design revisado 19/06 via workflow adversarial):
+  a CHAVE de join da atribuicao passa a ser a DATA por membership (`session.date in
+  card.dates`, conjunto discreto + fallback span logado); slug vira projecao de display.
+  Specs `docs/superpowers/specs/2026-06-19-cronograma-sessao-atomo-design.md` (consumidor)
+  + `docs/superpowers/specs/2026-06-19-ingestao-stash-download-automap-design.md` (produtor). Roteiro em degraus:
+  1 render+normalizacao (FEITO), 2 over-merge temporal (ADIADO — block_id posicional
+  cascateia, funde no 3), 3 atribuicao = signal-registry (em curso), 4 ingestao, 5 inversao
+  sessao-atomo. Handoff `docs/reports/Feitos/2026-06-19-handoff-cronograma-degraus.md`; progresso
+  duravel em `.git/sdd/progress.md`.
+- Degrau 1 FEITO (merge-ready, nao mergeado): `cronograma_detalhado_md` (`repo.py`) lista
+  `### Sessoes` por bloco (data+dia-semana+label+marcador de prova) lendo `blocks[].sessions[]`;
+  `lookup_card_blocks`/`lookup_card_assign_due` (`card_block.py`) casam a chave do card por
+  `norm_ascii_lower` (caixa/acento). Nao-regressivo, atras de nenhuma flag (render/normalizacao
+  sao seguros). Sem material por dia ainda (depende do degrau 3/5).
+- Degrau 3a = signal-registry do `concept_resolver`: alavancas 2 (source_section), 1
+  (moodle_label) e 0 (lessons[].text data->topico) estao no fusor; o termo `lesson`
+  e capado e casa o sinal limpo (moodle_label+titulo). `compare_resolver` passa
+  lessons_index ao resolver para paridade com producao.
+- Identidade estavel de blocos (`src/builder/timeline/block_identity.py`): cada bloco recebe
+  `block_uuid` reanexado por overlap de datas + tokens no ledger gerado da materia;
+  referencias humanas/persistidas foram migradas para UUID (`manual_timeline_block_id`,
+  card-block map, computed/secondary ids, curation de timeline, fixtures/evals).
+  Posicional `bloco-NN` segue como fallback legado quando resolvivel.
+- Gate de persistencia do timeline: `_build_file_map_timeline_context_from_course(...,
+  persist=False)` e a facade do engine nao escrevem ledger/manifest/curation em dry-run;
+  se houver refs UUID e ledger ausente, falha claramente para evitar orfandade.
+- Anchor placement (`src/builder/routing/anchor_placement.py`) WIRED como camada temporal
+  aditiva atras da flag duravel `use_anchor_placement`: producer `apply_anchor_placement`
+  ANCHOR-ONLY escreve `temporal_block_id`/`temporal_block_method` (so method=anchor; manual/
+  scorer caem no fallback), gated em `regenerate_pedagogical_files`. Leitura via helper unico
+  `resolve_temporal_block` (temporal vence; fallback `resolve_effective_block` honra manual)
+  nos 6 consumidores temporais (timeline_dashboard:225, dialogs:4220, navigation Periodo,
+  repo cronograma_detalhado:926, cronograma_health._entry_block_id). `computed_block_id` e
+  `resolve_effective_block` (KB) NUNCA tocados. `year` deterministico via
+  `_course_year_from_blocks` (ano modal das sessoes).
+- `SubjectProfile.feature_flags` persiste flags por materia e `_build_options_from_config`
+  injeta somente as flags presentes; `use_anchor_placement` nao liga `use_concept_resolver`.
+- Leitor de verdade-humana migrada uuid-safe (WO2): `resolve_entry_manual_timeline_block`
+  agora casa `block_uuid` via helper unico `_block_by_migrated_ref` (uuid-first + fallback
+  bloco-NN), antes so casava `block.id` -> pins migrados pra uuid (Fase 1) viravam invisiveis
+  (periodo em branco). Auditoria da classe: gold/evals (Task 4) + `apply_block_curation`
+  (Task 3) + slugs de unidade ja eram uuid-safe. 23 pins humanos recuperados nos 5 cursos
+  (ES2 1/IA 5/MF 9/SO 4/TCC 4).
 
 ### Not Declared In Brief
 
-- Runtime dependencies are not declared in the manifest brief.
-- Development dependencies are not declared in the manifest brief.
 - Project scripts are not declared in the manifest brief.
-- Build tool, linter, formatter, and package manager are not declared in the brief.
+- No `[build-system]` table, linter, formatter, or project scripts are declared in the manifest.
 - Exact Datalab API/package version is not declared in the brief.
 - Exact Ollama model/version is not declared in the brief.
 
 ### Current Design Focus
 
-- ENTREGUE: Referencias como contexto base do tutor (8 tasks TDD + 2 fixes de
-  wiring). Spec `docs/superpowers/specs/2026-06-04-referencias-contexto-tutor-design.md`,
-  plano `docs/superpowers/plans/2026-06-04-referencias-contexto-tutor.md`. Resolve
-  "tutor so tem link/titulo da referencia". 841 testes verdes.
-- Itens PARADOS (retomar): ver `docs/superpowers/BACKLOG.md` — verbosidade do
-  manifest (`to_dict` serializa todos os defaults), #3 decay de data, #4 piso
-  de band, Horario, conserto do clone github, token github, referencias
-  Approach C, harness de referencias, medicao de correcao com ground-truth.
+- Foco atual: refactor do cronograma sessao-atomo em DEGRAUS, atribuicao por DATA
+  (membership) eval-gated. Degrau 1 (render dia-a-dia + fix de normalizacao) FEITO; degrau
+  3a (lesson_term capado no resolver) FEITO. Branch atual estabiliza `block_uuid`, migracoes
+  UUID, gate `persist=False`, anchor placement WIRED por `source_section`, surface durable
+  `feature_flags` e fix WO2 (leitor manual uuid-safe).
+- REPROCESS dos 5 cursos FEITO (user-side, GUI): `computed_block_id` migrado bloco-NN->uuid
+  em todos; IA com `use_anchor_placement=true` (33 `temporal_block_id`, exatamente 2 movers
+  Semana 9 agrupamento bloco-07->bloco-06); outros 4 sem temporal (isolamento da flag). Gate
+  pos-reprocess do IA: A=46 migracao display-fiel, B=4 pins via read-path, C=0 unit, D=33
+  temporal/2 movers, HARD-drift=0 (soft churn band/method/diagnosticos = recomputo do scorer).
+  23/23 pins humanos resolvem cross-repo. Manifests reprocessados nos 5 repos-tutor: commit
+  pendente decisao user (working tree dos tutores).
+- Resolver por conceito permanece atras de flag ate cutover com gold suficiente; anchor
+  placement tambem fica atras de `use_anchor_placement` e escreve campo temporal aditivo
+  sem tocar `computed_block_id`.
+- Dependencia user-side: gold cross-curso (ground_truth_<curso>.csv IA/SO/ES2/TCC) + re-sync
+  por fonte destravam a medicao dos 4 cursos; MF ja mede. O canario de anchor placement deve
+  ser avaliado contra esses golds antes de qualquer cutover.
 
-> Historico: o redesign do sistema de tags (unit/subunit/bloco) e a precisao de
-> atribuicao bloco/unidade ja foram implementados (auto_tags, bandas de
-> confianca Fase 1-4, harness de avaliacao, sinal de sequencia). Foco migrou de
-> "precisao de bloco" (resolvida, ~98% band alta nos repos reais) para
-> "referencias usaveis pelo tutor".
+> Historico: referencias como contexto base do tutor, redesign de tags
+> (unit/subunit/bloco), precisao bloco/unidade, guard de conflitos e higiene dos
+> MDs ja foram entregues. O foco atual migrou para medicao/gold cross-curso e
+> unificacao da atribuicao por conceito com gates de regressao.
 
 ---
 
@@ -212,6 +338,7 @@ Read this file before starting any task.
 | Task type | Load |
 |---|---|
 | Understanding how the system works | `context/architecture.md` |
+| Understanding the faculty/source platforms (Moodle, SARC, Plano de Ensino) | `context/institutional.md` |
 | Working with a specific technology or backend | `context/stack.md` |
 | Writing or reviewing code | `context/conventions.md` |
 | Making a design decision | `context/decisions.md` |

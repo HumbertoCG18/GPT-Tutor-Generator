@@ -7,6 +7,21 @@ from typing import Dict
 from src.utils.helpers import ensure_dir, safe_rel
 
 
+def _section_from_source_path(entry) -> str:
+    """Seção (card) derivada da pasta-pai do source_path (idea 3).
+
+    Imports DIRETOS (fora do stash Moodle) não recebem source_section por
+    backfill; mas a pasta-pai costuma SER a própria seção Moodle (o usuário
+    organiza por seção). Derivar dela casa o card_block_map e recupera o bloco
+    autoritativo (ex.: zips em "Verificação de Programas" sem source_section).
+    Não-match no card_block_map = no-op (cai no scorer). URL/repo não têm pasta.
+    Nunca sobrescreve um source_section já presente (stash/backfill vence)."""
+    if str(getattr(entry, "file_type", "") or "") in ("url", "github-repo"):
+        return ""
+    sp = str(getattr(entry, "source_path", "") or "")
+    return Path(sp).parent.name if sp else ""
+
+
 def process_entry(builder, entry, *, image_categories) -> Dict[str, object]:
     item: Dict[str, object] = {
         "id": entry.id(),
@@ -14,6 +29,7 @@ def process_entry(builder, entry, *, image_categories) -> Dict[str, object]:
         "category": entry.category,
         "file_type": entry.file_type,
         "source_path": entry.source_path,
+        "source_section": getattr(entry, "source_section", "") or _section_from_source_path(entry),
         "tags": entry.tags,
         "manual_tags": list(entry.manual_tags or []),
         "auto_tags": list(entry.auto_tags or []),
@@ -35,6 +51,11 @@ def process_entry(builder, entry, *, image_categories) -> Dict[str, object]:
         "page_range": entry.page_range,
         "ocr_language": entry.ocr_language,
     }
+    # Persiste o override de id (dedup B5) no manifest: consumidores que
+    # reconstroem FileEntry via from_dict (regeneração pedagógica, UI)
+    # recalculariam o id do source_path e divergiriam do id deduplicado.
+    if entry.id_override:
+        item["id_override"] = entry.id_override
 
     src = Path(entry.source_path)
     if entry.file_type not in ("url", "github-repo") and not src.exists():

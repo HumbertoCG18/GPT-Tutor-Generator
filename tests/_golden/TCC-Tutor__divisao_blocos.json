@@ -1,0 +1,188 @@
+[
+  {
+    "id": "bloco-01",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "sobre teoria conjuntos"
+  },
+  {
+    "id": "bloco-02",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "conjuntos enumeraveis enumeraveis argumento diagonalizacao cantor"
+  },
+  {
+    "id": "bloco-03",
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "funcoes recursivas primitivas composicao funcoes; funcoes recursivas parciais funcoes computaveis; minimizacao funcoes recursivas parciais"
+  },
+  {
+    "id": "bloco-04",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "trabalho"
+  },
+  {
+    "id": "bloco-05",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "alfabeto cadeia linguagem hierarquia chomsky lemas propriedades automatos"
+  },
+  {
+    "id": "bloco-06",
+    "n_sessoes": 2,
+    "span_dias": 5,
+    "topico": "maquinas turing linguagens recursivamente enumeraveis; maquinas turing como processadoras funcoes"
+  },
+  {
+    "id": "bloco-07",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "feriado"
+  },
+  {
+    "id": "bloco-08",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "variacoes maquias turing"
+  },
+  {
+    "id": "bloco-09",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "linguagens reconheciveis linguagens decidiveis maquinas turing universais"
+  },
+  {
+    "id": "bloco-10",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "halting problem"
+  },
+  {
+    "id": "bloco-11",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "entscheidungsproblem"
+  },
+  {
+    "id": "bloco-12",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "theorema rice"
+  },
+  {
+    "id": "bloco-13",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "problema correspondencia post"
+  },
+  {
+    "id": "bloco-14",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "teoremas godel"
+  },
+  {
+    "id": "bloco-15",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "feriado"
+  },
+  {
+    "id": "bloco-16",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "para"
+  },
+  {
+    "id": "bloco-17",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas, unidade-02-turing-computabilidade"
+  },
+  {
+    "id": "bloco-18",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "correcao"
+  },
+  {
+    "id": "bloco-19",
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "classes problemas complexidade tempo espaco teorema savitch complete hard intractability; complexidade tempo"
+  },
+  {
+    "id": "bloco-20",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "evento academico"
+  },
+  {
+    "id": "bloco-21",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "theorema cook levin"
+  },
+  {
+    "id": "bloco-22",
+    "n_sessoes": 2,
+    "span_dias": 2,
+    "topico": "complexidade tempo"
+  },
+  {
+    "id": "bloco-23",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "trabalho"
+  },
+  {
+    "id": "bloco-24",
+    "n_sessoes": 4,
+    "span_dias": 12,
+    "topico": "oficina problemas"
+  },
+  {
+    "id": "bloco-25",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "oficina problemas"
+  },
+  {
+    "id": "bloco-26",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "para"
+  },
+  {
+    "id": "bloco-27",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-03-problemas-indecidiveis, unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais"
+  },
+  {
+    "id": "bloco-28",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "substituicao"
+  },
+  {
+    "id": "bloco-29",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "correcao"
+  },
+  {
+    "id": "bloco-30",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "atendimento duvidas"
+  },
+  {
+    "id": "bloco-31",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas, unidade-02-turing-computabilidade, unidade-03-problemas-indecidiveis, unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais"
+  }
+]

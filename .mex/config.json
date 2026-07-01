@@ -1,6 +1,9 @@
 {
   "aiTools": [
-    "codex",
     "claude"
-  ]
+  ],
+  "scaffold_id": "9f99ceeb-414a-46f7-9362-87fe5ad088cc",
+  "scaffold_name": "GPT-Tutor-Generator",
+  "origin": null,
+  "upstream": null
 }

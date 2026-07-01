@@ -17,28 +17,33 @@ edges:
     condition: when the UI feature triggers builder logic (understand the flow first)
   - target: patterns/add-builder-submodule.md
     condition: when the UI feature requires new processing logic in a builder subpackage
-last_updated: 2026-06-09
+last_updated: 2026-06-21
 ---
 
 # Add UI Feature
 
-Reviewed against the current Tkinter UI modules and repository dashboard flow on 2026-06-03.
+Reviewed against the current Tkinter UI modules and repository dashboard flow on 2026-06-21.
 
 ## Context
 
 UI code lives in `src/ui/`. Key files:
 - `src/ui/app.py` — main window, tab routing, entry list management, task queue integration
+- `src/ui/codes_panel.py` — code-entry curation and Gemini summary controls
+- `src/ui/curation_workspace.py` — unified curation workspace shell
 - `src/ui/dialogs.py` — settings dialog, entry edit dialogs, status dialog, help window
+- `src/ui/maintenance_panel.py` — generated-repo maintenance operations
 - `src/ui/repo_dashboard.py` — `RepoDashboard` widget and `collect_repo_metrics`
-- `src/ui/curator_studio.py` — manual review / curation studio
+- `src/ui/curator_studio.py` — manual review / curation studio internals
 - `src/ui/image_curator.py` — image curation and visual extraction
+- `src/ui/timeline_dashboard.py` — Cronograma allocation dashboard and manual block assignment
 - `src/ui/theme.py` — `ThemeManager` and `AppConfig` (persisted preferences)
+- `src/ui/ui_text.py` — shared UI labels/copy constants
 
 The app is single-threaded on the UI side. All builder work runs via `TaskQueueRunner` in a background thread. UI updates from threads must use `widget.after(0, callback)` — never update Tkinter widgets directly from a non-UI thread.
 
 ## Steps
 
-1. Decide which file owns the feature: small standalone dialog → `dialogs.py`; new tab → `app.py`; dashboard column → `repo_dashboard.py`
+1. Decide which file owns the feature: small standalone dialog → `dialogs.py`; new tab wiring → `app.py`; dashboard column → `repo_dashboard.py`; timeline allocation → `timeline_dashboard.py`; curation workspace shell → `curation_workspace.py`
 2. If the feature needs a new persistent config key: add it to `AppConfig` in `theme.py` with a sensible default
 3. If the feature triggers a build or task: enqueue a `RepoTask` via `RepoTaskStore` and let `TaskQueueRunner` run it — do NOT call `RepoBuilder` directly from a UI callback
 4. If the feature needs to update the UI with build progress: use `builder.progress_callback` (set by the UI before starting the task) and call updates via `root.after(0, ...)`
@@ -51,6 +56,10 @@ The app is single-threaded on the UI side. All builder work runs via `TaskQueueR
 - **Entry list state:** `FileEntry` objects are stored in `SubjectStore` (JSON persistence). After editing an entry, call the appropriate `SubjectStore.save()` — UI list refresh does not persist.
 - **Dialog sizing:** Tkinter dialogs do not auto-resize on Windows with high-DPI screens. Use `dialog.geometry("NNNxNNN")` for new dialogs; check at 125% and 150% DPI.
 - **`collect_repo_metrics`** in `repo_dashboard.py` reads generated repository manifest data and is I/O heavy. Do not call it on every UI refresh tick; cache the result.
+- **Timeline dashboard state** is backed by the generated manifest and generated timeline index. Manual block assignment only persists `manual_timeline_block_id`; derived artifacts update after reprocess.
+- **SARC schedule import** is URL-based in the current UI and persists `SubjectProfile.schedule_url`; do not reintroduce pasted-HTML cronograma flows without a product decision.
+- **Stash import** uses `SubjectProfile.stash_folder` and creates entries from immediate card folders; preserve `source_section` and do not route code/zip entries through PDF backend defaults.
+- **Feature flags** live in `SubjectProfile.feature_flags`; UI changes must inject only explicit flags and preserve the no-flag option set.
 
 ## Verify
 

@@ -4,13 +4,14 @@ from pathlib import Path
 from scripts.eval_assignments import evaluate, load_gold, predict_block
 
 GOLD = Path("tests/fixtures/eval/assignments_gold.json")
+_BLOCO_01_UUID = "00000000-0000-0000-0000-000000000001"
 
 
 def test_predict_block_returns_id_and_band_for_date_case():
     gold = load_gold(GOLD)
     case = next(c for c in gold["cases"] if c["id"] == "case-date")
     block_id, band = predict_block(case, gold["timeline"]["blocks"])
-    assert block_id == "bloco-01"
+    assert block_id == _BLOCO_01_UUID
     assert band in {"alta", "media", "baixa"}
 
 
@@ -24,9 +25,9 @@ def test_evaluate_reports_accuracy_and_band_calibration():
     # calibracao por band existe e soma o total
     band_total = sum(b["correct"] + b["wrong"] for b in report["bands"].values())
     assert band_total == report["total"]
-    # o caso de data deve acertar o bloco-01
+    # o caso de data deve acertar o bloco-01 (uuid)
     by_id = {r["id"]: r for r in report["cases"]}
-    assert by_id["case-date"]["predicted"] == "bloco-01"
+    assert by_id["case-date"]["predicted"] == _BLOCO_01_UUID
     assert by_id["case-date"]["correct"] is True
 
 

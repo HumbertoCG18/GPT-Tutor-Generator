@@ -30,10 +30,13 @@ def _entry_block_id(entry: dict, blocks: list | None = None) -> str:
 
     Lazy-import: cronograma_health é importado por caminhos do builder que
     file_map também toca; o import tardio evita ciclo (padrão das fases 1-3).
+    TEMPORAL: via resolve_temporal_block (âncora>manual>computed); flag OFF cai
+    no resolve_effective_block (byte-idêntico). _entry_block_source abaixo fica
+    no resolve_effective_block (manual-ness, ortogonal à âncora).
     """
-    from src.builder.routing.file_map import resolve_effective_block
+    from src.builder.routing.file_map import resolve_temporal_block
 
-    return resolve_effective_block(entry, blocks).block_id
+    return resolve_temporal_block(entry, blocks)
 
 
 def _entry_block_source(entry: dict, blocks: list | None = None) -> str:
@@ -119,9 +122,12 @@ def _top_candidate_blocks(entry: dict, blocks: list, n: int = _TOP_N_CANDIDATES)
     Degrada para [] se os blocos não trazem rows (ex.: fixtures mínimas / dados
     sem cronograma scorável) — o relatório ainda lista o material como acionável.
     """
+    # D2: predicado unico (filtra admin no runtime; inocuo nos blocos serializados
+    # deste artefato, que ja tiveram admin removido no _serialize).
+    from src.builder.timeline.index import timeline_block_is_administrative_only
     instructional = [
         b for b in (blocks or [])
-        if b.get("id") and not bool(b.get("administrative_only"))
+        if b.get("id") and not timeline_block_is_administrative_only(b)
     ]
     if not instructional:
         return []
@@ -134,9 +140,16 @@ def _top_candidate_blocks(entry: dict, blocks: list, n: int = _TOP_N_CANDIDATES)
             collect_entry_unit_signals,
             score_text_against_row,
         )
-        from src.builder.extraction.content_taxonomy import _normalize_match_text
+        from src.builder.text.normalize import normalize_match_text
     except Exception:
         return []
+
+    # keep="+-./" replica a tokenização do funil real (content_taxonomy):
+    # datas, prefixos de outline e paths são tokens distintivos, e o score
+    # daqui precisa ser comparável ao do pipeline. Import da fonte canônica
+    # (text/normalize) com o keep explícito, em vez do wrapper privado.
+    def _normalize_match_text(text: str) -> str:
+        return normalize_match_text(text, keep="+-./")
 
     markdown_text = ""
     signals = collect_entry_unit_signals(entry, markdown_text)
@@ -235,10 +248,17 @@ def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:
         lines.append(f"- {bid}: {n} material(is)")
 
     conflicts = detect_timeline_conflicts(blocks or [])
-    period_by_id = {
-        str(b.get("id") or ""): str(b.get("period_label") or "")
-        for b in (blocks or [])
-    }
+    # Re-key por uuid também: c["block_id"] pode ser uuid (computed_block_id) ou
+    # bloco-NN legado; ambas as chaves apontam o mesmo period_label.
+    period_by_id = {}
+    for _b in (blocks or []):
+        _k = str(_b.get("id") or "").strip()
+        _uk = str(_b.get("block_uuid") or "").strip()
+        _pl = str(_b.get("period_label") or "")
+        if _k:
+            period_by_id[_k] = _pl
+        if _uk:
+            period_by_id[_uk] = _pl
     lines += [
         "",
         "## Conflitos de curadoria",

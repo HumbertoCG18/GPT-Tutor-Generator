@@ -1,0 +1,573 @@
+{
+  "generated_at": "2026-06-21",
+  "entries": [
+    {
+      "entry_id": "0206-laminas-gerencia-de-i-o-livro-texto",
+      "title": "02.06 Lâminas Gerência de I O (Livro-texto)",
+      "source_section": "Gerência de I O",
+      "parsed_date": "02/06/2026",
+      "block_uuid": "a838bf45-b6d1-48fc-b70b-0bd4de35d1ef",
+      "block_display": "bloco-12",
+      "unit": "unidade-03-programacao-concorrente",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-05"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "0205-laminas-segmentacao",
+      "title": "02.05 Lâminas Segmentação",
+      "source_section": "Gerência de Memória",
+      "parsed_date": "02/05/2026",
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": "filename-date",
+      "flag": "NO_MATCH",
+      "note": "Date 02/05/2026 not in any block period",
+      "existing_auto_bloco": [
+        "bloco-11"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "1205-laminas-gerencia-de-memoria",
+      "title": "12.05 Lâminas Gerência de Memória",
+      "source_section": "Gerência de Memória",
+      "parsed_date": "12/05/2026",
+      "block_uuid": "fc0b5c7e-2071-490f-b65d-284ddc127963",
+      "block_display": "bloco-11",
+      "unit": "unidade-05-gerencia-de-memoria",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-11"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "2105-laminas-paginacao",
+      "title": "21.05 Lâminas Paginação",
+      "source_section": "Gerência de Memória",
+      "parsed_date": "21/05/2026",
+      "block_uuid": "fc0b5c7e-2071-490f-b65d-284ddc127963",
+      "block_display": "bloco-11",
+      "unit": "unidade-05-gerencia-de-memoria",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-11"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "2403-escalonamento-de-processos",
+      "title": "24.03 Escalonamento de Processos",
+      "source_section": "Gerência de Processos CPU",
+      "parsed_date": "24/03/2026",
+      "block_uuid": "bdcc7b26-25b0-4102-9c5b-d3af31606ad3",
+      "block_display": "bloco-03",
+      "unit": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "2603-algoritmos-de-escalonamento",
+      "title": "26.03 Algoritmos de Escalonamento",
+      "source_section": "Gerência de Processos CPU",
+      "parsed_date": "26/03/2026",
+      "block_uuid": "bdcc7b26-25b0-4102-9c5b-d3af31606ad3",
+      "block_display": "bloco-03",
+      "unit": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "exercicios",
+      "title": "Exercícios",
+      "source_section": "Gerência de Processos CPU",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "apresentacao-da-disciplina",
+      "title": "Apresentação da Disciplina",
+      "source_section": "Informações Gerais",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "lista-exercicios-p1-gabarito",
+      "title": "Lista Exercícios P1 Gabarito",
+      "source_section": "Informações Gerais",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "lista-exercicios-p1",
+      "title": "Lista Exercícios P1",
+      "source_section": "Informações Gerais",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "lista1-gab",
+      "title": "lista1_gab",
+      "source_section": "Informações Gerais",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "lista2",
+      "title": "lista2",
+      "source_section": "Informações Gerais",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-11"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "plano-de-ensino",
+      "title": "Plano de Ensino",
+      "source_section": "Informações Gerais",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [],
+      "existing_manual": "31997686-f3b5-4ecc-870c-0774732c3ee0"
+    },
+    {
+      "entry_id": "questoes-do-enade-sobre-sisop",
+      "title": "Questões do ENADE sobre SISOP",
+      "source_section": "Informações Gerais",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "definicao-e-historico",
+      "title": "Definição e Histórico",
+      "source_section": "Introdução aos Sistemas Operacionais",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "1203-processos",
+      "title": "12.03 Processos",
+      "source_section": "Processo e Estruturas de Controle",
+      "parsed_date": "12/03/2026",
+      "block_uuid": "bdcc7b26-25b0-4102-9c5b-d3af31606ad3",
+      "block_display": "bloco-03",
+      "unit": "unidade-03-programacao-concorrente",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "1703-chamada-de-sistema",
+      "title": "17.03 Chamada de Sistema",
+      "source_section": "Processo e Estruturas de Controle",
+      "parsed_date": "17/03/2026",
+      "block_uuid": "bdcc7b26-25b0-4102-9c5b-d3af31606ad3",
+      "block_display": "bloco-03",
+      "unit": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "1903-estruturas-de-controle",
+      "title": "19.03 Estruturas de Controle",
+      "source_section": "Processo e Estruturas de Controle",
+      "parsed_date": "19/03/2026",
+      "block_uuid": "bdcc7b26-25b0-4102-9c5b-d3af31606ad3",
+      "block_display": "bloco-03",
+      "unit": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "exemplo-criacao-de-processos-no-unix-linux-filho",
+      "title": "Exemplo Criação de Processos no Unix Linux - filho",
+      "source_section": "Processo e Estruturas de Controle",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste01",
+      "title": "Exemplo Criação de Processos no Unix Linux - teste01",
+      "source_section": "Processo e Estruturas de Controle",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste02",
+      "title": "Exemplo Criação de Processos no Unix Linux - teste02",
+      "source_section": "Processo e Estruturas de Controle",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "exemplo-criacao-de-processos-no-unix-linux-teste03",
+      "title": "Exemplo Criação de Processos no Unix Linux - teste03",
+      "source_section": "Processo e Estruturas de Controle",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "0704-laminas-comunicacao-e-sincronizacao",
+      "title": "07.04 Lâminas Comunicação e Sincronização",
+      "source_section": "Sincronização e Comunicação de Processos",
+      "parsed_date": "07/04/2026",
+      "block_uuid": "1945c228-4ca2-4a76-8d63-47c804459ecd",
+      "block_display": "bloco-05",
+      "unit": "unidade-03-programacao-concorrente",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-07"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "0904-laminas-semaforos",
+      "title": "09.04 Lâminas Semáforos",
+      "source_section": "Sincronização e Comunicação de Processos",
+      "parsed_date": "09/04/2026",
+      "block_uuid": "1945c228-4ca2-4a76-8d63-47c804459ecd",
+      "block_display": "bloco-05",
+      "unit": "unidade-03-programacao-concorrente",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-07"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "14-04-troca-de-mensagens",
+      "title": "14 04 Troca de Mensagens",
+      "source_section": "Sincronização e Comunicação de Processos",
+      "parsed_date": "14/04/2026",
+      "block_uuid": "1945c228-4ca2-4a76-8d63-47c804459ecd",
+      "block_display": "bloco-05",
+      "unit": "unidade-03-programacao-concorrente",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-07"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "1404-laminas-ipc",
+      "title": "14.04 Lâminas IPC",
+      "source_section": "Sincronização e Comunicação de Processos",
+      "parsed_date": "14/04/2026",
+      "block_uuid": "1945c228-4ca2-4a76-8d63-47c804459ecd",
+      "block_display": "bloco-05",
+      "unit": "unidade-03-programacao-concorrente",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-07"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "laminas-cs-4244-internet-programming-sockets-programming",
+      "title": "Lâminas CS 4244 Internet Programming Sockets Programming",
+      "source_section": "Sincronização e Comunicação de Processos",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [],
+      "existing_manual": "1945c228-4ca2-4a76-8d63-47c804459ecd"
+    },
+    {
+      "entry_id": "laminas-sockets-material-alternativo-em-pt",
+      "title": "Lâminas Sockets (material alternativo em PT)",
+      "source_section": "Sincronização e Comunicação de Processos",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [],
+      "existing_manual": "1945c228-4ca2-4a76-8d63-47c804459ecd"
+    },
+    {
+      "entry_id": "0704-exemplo-threads-em-java",
+      "title": "07.04 Exemplo threads em Java",
+      "source_section": "Threads",
+      "parsed_date": "07/04/2026",
+      "block_uuid": "1945c228-4ca2-4a76-8d63-47c804459ecd",
+      "block_display": "bloco-05",
+      "unit": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "3103-threads",
+      "title": "31.03 Threads",
+      "source_section": "Threads",
+      "parsed_date": "31/03/2026",
+      "block_uuid": "bdcc7b26-25b0-4102-9c5b-d3af31606ad3",
+      "block_display": "bloco-03",
+      "unit": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "biblioteca-em-c-pthread",
+      "title": "Biblioteca em C - pthread",
+      "source_section": "Threads",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [],
+      "existing_manual": "bdcc7b26-25b0-4102-9c5b-d3af31606ad3"
+    },
+    {
+      "entry_id": "exemplo-threads-em-c-exemplo1",
+      "title": "Exemplo threads em C - exemplo1",
+      "source_section": "Threads",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "exemplo-threads-em-c-exemplo2",
+      "title": "Exemplo threads em C - exemplo2",
+      "source_section": "Threads",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "exemplo-threads-em-c-exemplo3",
+      "title": "Exemplo threads em C - exemplo3",
+      "source_section": "Threads",
+      "parsed_date": null,
+      "block_uuid": null,
+      "block_display": null,
+      "unit": null,
+      "source_type": null,
+      "flag": "NO_DATE",
+      "note": "No parseable date in title/id",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "0206-laminas-mecanismos-de-interrupcao",
+      "title": "02.06 Lâminas Mecanismos de Interrupção",
+      "source_section": "Gerência de I O",
+      "parsed_date": "02/06/2026",
+      "block_uuid": "a838bf45-b6d1-48fc-b70b-0bd4de35d1ef",
+      "block_display": "bloco-12",
+      "unit": "unidade-01-introducao-ao-estudo-de-sistemas-operacionais",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-03"
+      ],
+      "existing_manual": ""
+    },
+    {
+      "entry_id": "0206-laminas-memoria-virtual-livro-texto",
+      "title": "02.06 Lâminas Memória Virtual (Livro-texto)",
+      "source_section": "Gerência de Memória",
+      "parsed_date": "02/06/2026",
+      "block_uuid": "a838bf45-b6d1-48fc-b70b-0bd4de35d1ef",
+      "block_display": "bloco-12",
+      "unit": "unidade-05-gerencia-de-memoria",
+      "source_type": "filename-date",
+      "flag": "OK",
+      "note": "",
+      "existing_auto_bloco": [
+        "bloco-11"
+      ],
+      "existing_manual": ""
+    }
+  ]
+}

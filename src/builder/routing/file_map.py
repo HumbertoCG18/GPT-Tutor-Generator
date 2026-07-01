@@ -6,11 +6,23 @@ import re
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
-from typing import Callable, Dict, List, NamedTuple, Optional
+from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
 
 from src.builder.routing.dates import extract_dates
+from src.builder.text.normalize import normalize_match_text as _normalize_text
+from src.builder.text.normalize import split_camel_case
 from src.builder.routing.sequence import annotate_class_ordinals, score_sequence_match
-from src.builder.routing.thresholds import T, margin_confidence
+from src.builder.routing.thresholds import (
+    DATE_STRONG_BOOST,
+    DATE_WEAK_BOOST,
+    IDF_WEIGHT,
+    TOOL_BOOST,
+    TOOL_PENALTY,
+    TOOL_TOKENS,
+    T,
+    relative_margin_confidence,
+)
+from src.builder.text.stopwords import UNIT_GENERIC_TOKENS
 
 
 @dataclass
@@ -19,33 +31,6 @@ class UnitMatchResult:
     confidence: float
     ambiguous: bool = False
     reasons: List[str] = field(default_factory=list)
-
-
-UNIT_GENERIC_TOKENS = {
-    "metodos",
-    "formais",
-    "formal",
-    "logica",
-    "logicas",
-    "especificacao",
-    "especificacoes",
-    "verificacao",
-    "verificacoes",
-    "programas",
-    "programa",
-    "modelos",
-    "modelo",
-    "fundamentos",
-    "sistemas",
-    "software",
-    "softwares",
-    "suporte",
-    "propriedades",
-    "aplicacoes",
-    "sequenciais",
-    "concorrentes",
-    "linguagens",
-}
 
 
 def strip_outline_prefix(text: str) -> str:
@@ -167,7 +152,7 @@ def auto_map_entry_subtopic(
             unit_slug="",
             confidence=0.0,
             ambiguous=True,
-            reasons=["sem-taxonomia"],
+            reasons=[f"sem-topicos-para-unidade:{winning_unit_slug}" if winning_unit_slug else "sem-taxonomia"],
         )
 
     signals = collect_entry_unit_signals(entry, markdown_text)
@@ -178,10 +163,30 @@ def auto_map_entry_subtopic(
     runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
     margin = winner_score - runner_up_score
     rel_margin = margin / max(winner_score, 1e-6)
+    # Sem sinal ou empate EXATO: nao ha vencedor real — o sort estavel elegeria
+    # um slug arbitrario (menor indice na taxonomia) e o surfacaria com conf
+    # 0.0 no editor (12 entries codigo-professor do repo real, 12/06). Slug
+    # vazio e a resposta honesta; a reason preserva o diagnostico.
     if winner_score <= 0.0:
-        confidence = 0.0
-        ambiguous = True
-    elif len(scored) == 1:
+        return topic_match_result_factory(
+            topic_slug="",
+            topic_label="",
+            unit_slug="",
+            confidence=0.0,
+            ambiguous=True,
+            reasons=["sem-sinal (winner_score=0)"],
+        )
+    if len(scored) > 1 and margin == 0.0:
+        tied = sum(1 for _, score in scored if score == winner_score)
+        return topic_match_result_factory(
+            topic_slug="",
+            topic_label="",
+            unit_slug="",
+            confidence=0.0,
+            ambiguous=True,
+            reasons=[f"empate-exato {tied}x score={winner_score:.2f}"],
+        )
+    if len(scored) == 1:
         confidence = 0.72
         ambiguous = False
     else:
@@ -424,10 +429,13 @@ def auto_map_entry_unit(
         confidence = 0.7
         ambiguous = False
     else:
-        # margin_confidence reintroduz o termo winner*k: um vencedor positivo
-        # rende confianca > 0 mesmo com margem nula (ex.: titulo concatenado que
-        # empata as unidades), restaurando o comportamento pre-refator.
-        confidence = margin_confidence(winner_score, runner_up_score, k=T.MARGIN_K)
+        # relative_margin_confidence (idea 1: mesma fórmula do bloco, P2): margem
+        # RELATIVA escalada pela força absoluta. Mata a saturação do margin_confidence
+        # aditivo, cujo termo winner*k clampava em 1.0 com winner_score alto → unidade
+        # confiante-ERRADA (ex.: "exemplos" casando o subtópico de OUTRA unidade dava
+        # conf 1.0 e ainda vencia o bloco na reconciliação). O piso absoluto de
+        # ambiguidade abaixo (UNIT_MATCH_MIN_WINNER) segue valendo.
+        confidence = relative_margin_confidence(winner_score, runner_up_score)
         # Ambiguo por margem RELATIVA fraca OU por score ABSOLUTO baixo: sem o
         # piso absoluto, um winner fraco com runner_up ~0 (rel_margin ~1.0)
         # passaria por confiante (caso do token "estado" acidental).
@@ -487,22 +495,45 @@ def resolve_entry_manual_unit_slug(
     return normalized if normalized in valid_slugs else ""
 
 
+def _block_by_migrated_ref(raw: str, blocks: list) -> Optional[Dict[str, object]]:
+    """Casa uma ref de chave migrada (Fase 1) ao bloco: uuid-first, fallback bloco-NN.
+
+    Helper ÚNICO da classe "leitor de verdade-humana migrada": a Fase 1 migrou as
+    chaves (manual_timeline_block_id etc.) pra block_uuid, mas leitores que casavam
+    só block.id (bloco-NN) deixavam o uuid sem casar → verdade-humana invisível.
+    """
+    raw = str(raw or "").strip()
+    if not raw:
+        return None
+    for block in blocks:
+        if str(block.get("block_uuid") or "").strip() == raw:
+            return block
+    for block in blocks:
+        if str(block.get("id", "")).strip() == raw:
+            return block
+    return None
+
+
 def resolve_entry_manual_timeline_block(entry: dict, timeline_context: dict) -> Optional[Dict[str, object]]:
     raw = str(entry.get("manual_timeline_block_id") or "").strip()
     if not raw:
         return None
     blocks = list(((timeline_context or {}).get("timeline_index") or {}).get("blocks", []) or [])
-    for block in blocks:
-        if str(block.get("id", "")).strip() == raw:
-            return block
+    hit = _block_by_migrated_ref(raw, blocks)
+    if hit is not None:
+        return hit
     match = re.fullmatch(r"bloco-(\d+)", raw, flags=re.IGNORECASE)
     if match:
         ordinal = int(match.group(1))
         entry_unit = str(entry.get("unit_slug") or entry.get("manual_unit_slug") or "").strip()
+        # D2: blocks vem do timeline_context runtime (_build_timeline_index) ->
+        # admin presente sem a chave; o key-lookup antigo era no-op e contava blocos
+        # admin no ordinal de "bloco-N". Lazy import: timeline.index importa este modulo.
+        from src.builder.timeline.index import timeline_block_is_administrative_only
         instructional_blocks = [
             block
             for block in blocks
-            if not bool(block.get("administrative_only"))
+            if not timeline_block_is_administrative_only(block)
             and (not entry_unit or str(block.get("unit_slug", "")).strip() == entry_unit)
         ]
         if 1 <= ordinal <= len(instructional_blocks):
@@ -581,6 +612,73 @@ def resolve_effective_block(
     if computed:
         return EffectiveBlock(computed, "auto")
     return EffectiveBlock("", "")
+
+
+def resolve_temporal_block(
+    entry: dict,
+    blocks: Optional[List[Dict[str, object]]] = None,
+) -> str:
+    """Bloco TEMPORAL (cronograma) efetivo do material.
+
+    Precedência: `temporal_block_id` (âncora cronograma-validada, escrito só com
+    a flag use_anchor_placement) sobrepõe; ausente → cai na FONTE ÚNICA
+    compartilhada `resolve_effective_block` (manual > computed). Com a flag OFF
+    o campo nunca existe → este helper é byte-idêntico ao resolve_effective_block
+    de hoje. Disjunto de KB: NÃO chama reconcile_unit_with_block.
+
+    O fallback é `resolve_effective_block` (NÃO computed_block_id cru) de
+    propósito: os consumidores temporais honram manual_timeline_block_id stale-safe
+    via essa fonte; trocar pelo computed cru perderia o manual com a flag OFF.
+    """
+    temporal = str(entry.get("temporal_block_id") or "").strip()
+    if temporal:
+        return temporal
+    return resolve_effective_block(entry, blocks).block_id
+
+
+def reconcile_unit_with_block(
+    *,
+    computed_unit_slug: str,
+    unit_confidence: float,
+    computed_block_id: str,
+    block_confidence: float,
+    block_unit_slug: str,
+    block_is_manual: bool,
+    has_manual_unit: bool,
+) -> Tuple[str, List[str], Dict[str, str]]:
+    """Reconcilia a unidade efetiva com o bloco atribuído (F1, spec linhas 36-52).
+
+    Precedência:
+      1. Bloco MANUAL com unidade -> unidade do bloco (autoritativo, vence até
+         manual_unit). reason "unidade_do_bloco_manual".
+      2. manual_unit presente (sem bloco manual) -> mantém computed_unit_slug.
+      3. Auto:
+         - sem bloco / bloco sem unidade -> mantém computed_unit_slug.
+         - computed_unit_slug vazio -> herda do bloco ("herdada_do_bloco=<id>").
+         - concordam -> mantém.
+         - discordam: block_confidence >= unit_confidence -> unidade do bloco
+           ("reconciliada_do_bloco=<id>"); senão mantém a unidade forte e devolve
+           conflict {unit, block_unit, block_id}.
+
+    conflict é {} exceto no último caso (unidade forte venceu bloco discordante).
+    """
+    if block_is_manual and block_unit_slug:
+        return block_unit_slug, ["unidade_do_bloco_manual"], {}
+    if has_manual_unit:
+        return computed_unit_slug, [], {}
+    if not computed_block_id or not block_unit_slug:
+        return computed_unit_slug, [], {}
+    if not computed_unit_slug:
+        return block_unit_slug, [f"herdada_do_bloco={computed_block_id}"], {}
+    if block_unit_slug == computed_unit_slug:
+        return computed_unit_slug, [], {}
+    if block_confidence >= unit_confidence:
+        return block_unit_slug, [f"reconciliada_do_bloco={computed_block_id}"], {}
+    return (
+        computed_unit_slug,
+        [],
+        {"unit": computed_unit_slug, "block_unit": block_unit_slug, "block_id": computed_block_id},
+    )
 
 
 def score_entry_against_timeline_row(
@@ -701,6 +799,19 @@ def score_card_evidence_against_entry(
 
 def timeline_block_rows_for_scoring(block: Dict[str, object]) -> list:
     rows = list(block.get("rows", []) or [])
+    if not rows:
+        # Bloco PERSISTIDO (.timeline_index.json) não tem 'rows' — sintetiza
+        # linhas pontuáveis de source_rows/sessions (bug B3, 2º call site:
+        # sem isso o score é 0.0 e o ranking degenera pro 1º bloco).
+        for sr in block.get("source_rows", []) or []:
+            if isinstance(sr, dict):
+                content = " ".join(str(sr.get(k) or "") for k in ("date", "description"))
+                rows.append({"content": content.strip()})
+        if not rows:
+            for sess in block.get("sessions", []) or []:
+                if isinstance(sess, dict):
+                    content = " ".join(str(sess.get(k) or "") for k in ("date", "label"))
+                    rows.append({"content": content.strip()})
     return [row for row in rows if not bool(row.get("ignored"))]
 
 
@@ -768,6 +879,50 @@ def timeline_block_matches_preferred_topic(block: Dict[str, object], preferred_t
     return False
 
 
+def block_token_weights(
+    blocks: List[Dict[str, object]],
+    *,
+    normalize: Optional[Callable[[str], str]] = None,
+) -> Dict[str, float]:
+    """S2 (P4): IDF por raridade entre blocos CANDIDATOS.
+
+    token -> peso efetivo 1 + IDF_WEIGHT*(1/df - 1), onde df = nº de blocos
+    candidatos cujo topic_text normalizado contém o token (mesma mecânica do
+    token_weights do scorer de UNIDADE, peso=1/freq). Tokens de TODOS os
+    topic_texts dos candidatos entram; tokens curtos (<4) ficam fora (mesmo
+    filtro do scorer — linha topic_tokens). Tokens do nome do curso/área
+    (UNIT_GENERIC_TOKENS, ex. "metodos"/"formais" — presentes em TODO markdown
+    via header) recebem raridade ZERO (df infinito): aparecem em qualquer
+    entry, então não distinguem bloco nenhum — e o df dentro de um candidato
+    set pequeno (card de 2 blocos) não os amortece o bastante. Computar UMA
+    vez por entry, sobre o conjunto que será ranqueado, e repassar via
+    topic_token_weights= ao scorer.
+
+    `normalize`: normalize a usar para tokenizar topic_text; deve ser o MESMO
+    que o scorer do call site usa para tokenizar o topic (default = canônico).
+    Call sites que usam normalize com keep="+-./", como o fallback da taxonomy,
+    devem repassar seu normalize aqui — caso contrário tokens com hífen (ex.
+    "pre-condicao") divergem: presentes no topic tokenizado pelo scorer mas
+    ausentes no dict de pesos → default 1.0 (IDF escapa)."""
+    _norm = normalize if normalize is not None else _normalize_text
+    frequency: Dict[str, int] = {}
+    for block in blocks or []:
+        if not isinstance(block, dict):
+            continue
+        topic_norm = _norm(str(block.get("topic_text", "") or ""))
+        tokens = {
+            token
+            for token in topic_norm.split()
+            if len(token) >= 4
+        }
+        for token in tokens:
+            frequency[token] = frequency.get(token, 0) + 1
+    return {
+        token: 1.0 + IDF_WEIGHT * ((0.0 if token in UNIT_GENERIC_TOKENS else 1.0 / freq) - 1.0)
+        for token, freq in frequency.items()
+    }
+
+
 def score_entry_against_timeline_block(
     signals: dict,
     block: Dict[str, object],
@@ -777,6 +932,7 @@ def score_entry_against_timeline_block(
     score_card_evidence_against_entry_fn: Callable[[dict, List[Dict[str, str]]], float],
     preferred_unit_slug: str = "",
     preferred_topic_slug: str = "",
+    topic_token_weights: Optional[Dict[str, float]] = None,
 ) -> float:
     rows = timeline_block_rows_for_scoring(block)
     if not rows:
@@ -822,9 +978,67 @@ def score_entry_against_timeline_block(
     topic_text = normalize_match_text(str(block.get("topic_text", "")))
     if topic_text:
         topic_tokens = [tok for tok in topic_text.split() if len(tok) >= 4]
-        score += score_text_against_row(signals.get("manual_tags_text", ""), topic_tokens, weight=0.35)
-        score += score_text_against_row(signals.get("auto_tags_text", ""), topic_tokens, weight=0.12)
-        score += score_text_against_row(signals.get("legacy_tags_text", ""), topic_tokens, weight=0.05)
+        if topic_token_weights is None:
+            # Comportamento anterior EXATO (chamadores que não passam pesos,
+            # ex. cronograma_health): só tags pontuam contra o topic.
+            score += score_text_against_row(signals.get("manual_tags_text", ""), topic_tokens, weight=0.35)
+            score += score_text_against_row(signals.get("auto_tags_text", ""), topic_tokens, weight=0.12)
+            score += score_text_against_row(signals.get("legacy_tags_text", ""), topic_tokens, weight=0.05)
+        else:
+            # S2 (P4): com pesos IDF (block_token_weights sobre os CANDIDATOS),
+            # título/markdown também pontuam contra o topic do bloco — é onde
+            # vivem os tokens raros (arrays/sequencias/conjuntos) que as rows
+            # de sessão diluem. Pesos espelham o row scorer (1.25/1.0); tokens
+            # comuns entre candidatos contribuem ~0 (peso 1/df), então o canal
+            # novo não infla blocos de topic verboso. Tokens da entry DEDUPADOS:
+            # match de topic é overlap de conjunto — sem dedupe, código que
+            # repete um identificador (ex. "arvores" num .thy) inunda o canal.
+            title_unique = " ".join(dict.fromkeys(str(signals.get("title_text", "") or "").split()))
+            markdown_unique = " ".join(dict.fromkeys(str(signals.get("markdown_text", "") or "").split()))
+            score += score_text_against_row(
+                title_unique, topic_tokens,
+                weight=1.25, token_weights=topic_token_weights,
+            )
+            score += score_text_against_row(
+                markdown_unique, topic_tokens,
+                weight=1.0, token_weights=topic_token_weights,
+            )
+            score += score_text_against_row(
+                signals.get("manual_tags_text", ""), topic_tokens,
+                weight=0.35, token_weights=topic_token_weights,
+            )
+            score += score_text_against_row(
+                signals.get("auto_tags_text", ""), topic_tokens,
+                weight=0.12, token_weights=topic_token_weights,
+            )
+            score += score_text_against_row(
+                signals.get("legacy_tags_text", ""), topic_tokens,
+                weight=0.05, token_weights=topic_token_weights,
+            )
+
+    # S4 (P4): sinal de ferramenta — atrás do MESMO guard do S2
+    # (topic_token_weights is not None = só caminhos de ranking; chamadores
+    # legados como cronograma_health ficam EXATAMENTE como antes). Ferramentas
+    # da entry = valores de `ferramenta:` (signals["tool_tags_text"]) que são
+    # chaves de TOOL_TOKENS — o resto é ruído do extrator e não conta. Topic
+    # com token da ferramenta da entry -> +TOOL_BOOST; topic com token de
+    # OUTRA ferramenta do mapa e nenhum da entry -> -TOOL_PENALTY.
+    if topic_token_weights is not None and topic_text:
+        entry_tools = {
+            tok
+            for tok in str(signals.get("tool_tags_text", "") or "").split()
+            if tok in TOOL_TOKENS
+        }
+        if entry_tools:
+            topic_token_set = set(topic_text.split())
+            if any(TOOL_TOKENS[tool] & topic_token_set for tool in entry_tools):
+                score += TOOL_BOOST
+            elif any(
+                TOOL_TOKENS[tool] & topic_token_set
+                for tool in TOOL_TOKENS
+                if tool not in entry_tools
+            ):
+                score -= TOOL_PENALTY
 
     score += min(score_card_evidence_against_entry_fn(signals, block.get("card_evidence", []) or []), 0.45)
 
@@ -843,12 +1057,6 @@ def score_entry_against_timeline_block(
     return score
 
 
-# Pesos do boost de data. DATE_STRONG_BOOST mantém o +0.30 original como base
-# calibrável (spec Fase 2). DATE_WEAK_BOOST é deliberadamente menor: mês
-# compatível é sinal mais fraco que data exata-no-range, então ~1/3 do forte —
-# o suficiente para desempatar sem competir com um match exato.
-DATE_STRONG_BOOST = 0.30
-DATE_WEAK_BOOST = 0.10
 
 
 def _block_period_bounds(block: Dict[str, object]) -> tuple[Optional[date], Optional[date]]:
@@ -904,7 +1112,9 @@ def collect_entry_temporal_signals(
     extract_timeline_session_signals: Callable[[str], List[dict]],
 ) -> dict:
     raw_parts = [
-        str(entry.get("title", "") or ""),
+        # S1 (P4): camelCase do título separado também no caminho temporal
+        # (combined_text alimenta card_evidence e match de sessão por bloco).
+        split_camel_case(str(entry.get("title", "") or "")),
         str(entry.get("raw_target", "") or ""),
         str(entry.get("category", "") or ""),
         str(entry.get("tags", "") or ""),
@@ -1039,6 +1249,20 @@ def score_entry_against_timeline_sessions(
     return best_score, best_session, best_card_bonus
 
 
+def _is_prebuilt_block(item) -> bool:
+    """Bloco já construído (não linha crua de cronograma).
+
+    Legado: shape com 'rows'. Persistido (_serialize_timeline_index /
+    .timeline_index.json): 'id' + 'source_rows'/'sessions'. Aceitar ambos
+    conserta o bug B3 — o índice persistido era tratado como linha crua e a
+    predição degenerava (cf. re-análise 2026-06-11)."""
+    if not isinstance(item, dict):
+        return False
+    if "rows" in item:
+        return True
+    return "id" in item and ("source_rows" in item or "sessions" in item)
+
+
 def select_probable_period_for_entry(
     entry: dict,
     unit: dict,
@@ -1060,7 +1284,7 @@ def select_probable_period_for_entry(
         return "", 0.0, True, ["sem-linhas-candidato"]
 
     signals = collect_entry_unit_signals(entry, markdown_text)
-    if candidate_rows and "rows" in candidate_rows[0]:
+    if candidate_rows and _is_prebuilt_block(candidate_rows[0]):
         blocks = list(candidate_rows)
     else:
         timeline_index = build_timeline_index(candidate_rows, unit_index=[unit] if unit else [])
@@ -1084,6 +1308,11 @@ def select_probable_period_for_entry(
         block for block in blocks if timeline_block_matches_preferred_topic(block, preferred_topic_slug)
     ]
     scored_source_blocks = topic_filtered_blocks if topic_filtered_blocks else blocks
+    # S2 (P4): IDF computado UMA vez por entry, sobre os blocos que este
+    # ranking compara (não por bloco) — raridade é relativa ao conjunto.
+    # Repassa o mesmo normalize que o scorer usa: tokens divergentes (datas,
+    # hífens, outline) não escapam do IDF por ausência no dict de pesos.
+    topic_token_weights = block_token_weights(scored_source_blocks, normalize=normalize_match_text)
     session_scored_blocks = []
     for block in scored_source_blocks:
         block_score = score_entry_against_timeline_block(
@@ -1098,6 +1327,7 @@ def select_probable_period_for_entry(
             ),
             preferred_unit_slug=preferred_unit_slug,
             preferred_topic_slug=preferred_topic_slug,
+            topic_token_weights=topic_token_weights,
         )
         session_score, matched_session, session_card_bonus = score_entry_against_timeline_sessions(
             temporal_signals,
@@ -1137,10 +1367,19 @@ def select_probable_period_for_entry(
         if not period:
             return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
 
-        confidence = min(1.0, max(0.0, (best_score - runner_up_score) + (best_score * 0.18)))
+        # Confianca de BLOCO: margem relativa x forca absoluta (P2.1) — a
+        # formula aditiva antiga saturava em 1.0 com scores 4-8.
+        # SEM piso (P1.3, removido 17/06): o antigo max(confidence, 0.72) p/
+        # single-block era um polegar-na-balanca invisivel. A band usa a conf
+        # CAPADA (scorer_only=0.70), entao o piso so afetava o block_confidence
+        # RAW da reconciliacao unit×bloco (reconcile_unit_with_block: bloco define
+        # a unidade se block_confidence >= unit_confidence). Como unit_confidence
+        # tambem e relative_margin_confidence (idea 1), a comparacao e simetrica
+        # por design — o piso quebrava essa simetria so na janela unit_conf in
+        # (0.70, 0.72]. Sem ele, discordancia marginal vira conflito flagado
+        # (conf honesta), nunca override silencioso. NAO re-adicionar.
+        confidence = relative_margin_confidence(best_score, runner_up_score)
         ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
-        if len(session_scored_blocks) == 1 and not ambiguous:
-            confidence = max(confidence, 0.72)
         reasons = [
             f"best={best_score:.2f}",
             f"runner_up={runner_up_score:.2f}",
@@ -1176,6 +1415,7 @@ def select_probable_period_for_entry(
                 ),
                 preferred_unit_slug=preferred_unit_slug,
                 preferred_topic_slug=preferred_topic_slug,
+                topic_token_weights=topic_token_weights,
             ),
         )
         for block in scored_source_blocks
@@ -1199,7 +1439,9 @@ def select_probable_period_for_entry(
     if not period:
         return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
 
-    confidence = min(1.0, max(0.0, (best_score - runner_up_score) + (best_score * 0.18)))
+    # Confianca de BLOCO: margem relativa x forca absoluta (P2.1) — a
+    # formula aditiva antiga saturava em 1.0 com scores 4-8.
+    confidence = relative_margin_confidence(best_score, runner_up_score)
     ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
     best_block_card_bonus = min(
         0.45,

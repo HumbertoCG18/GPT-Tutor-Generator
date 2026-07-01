@@ -21,12 +21,12 @@ edges:
     condition: when vision is used after PDF image extraction and before Ollama classification
   - target: patterns/debug-build-failure.md
     condition: when a vision failure causes a build entry to fail
-last_updated: 2026-06-09
+last_updated: 2026-06-21
 ---
 
 # Ollama Vision
 
-Reviewed against the current vision modules and Image Curator integration on 2026-06-03.
+Reviewed against the current vision modules and Image Curator integration on 2026-06-21.
 
 ## Context
 
@@ -35,6 +35,8 @@ Key files:
 - `src/builder/vision/ollama_client.py` — `OllamaClient`, `IMAGE_TYPE_PROMPTS`, `LATEX_EXTRACT_PROMPT`, `_clean_thinking_artifacts`
 - `src/builder/vision/image_classifier.py` — `classify_image(path)` (heuristic, no Pillow), `group_images_by_page`, `extract_page_number`
 - `src/builder/vision/card_evidence.py` — card-level evidence aggregation for the Image Curator
+- `src/ui/curation_workspace.py` — unified curation workspace container
+- `src/ui/image_curator.py` — image curation UI, including Ollama-vs-Datalab description-source behavior
 
 Ollama runs as an **independent service** — the app never starts it. It must be running before any vision call is made.
 
@@ -46,7 +48,7 @@ Ollama runs as an **independent service** — the app never starts it. It must b
 2. For new image types: add a key to `IMAGE_TYPE_PROMPTS` in `ollama_client.py`; use Portuguese key names (e.g. `"mapa"`, `"gráfico"`) consistent with the existing keys (`"diagrama"`, `"tabela"`, `"fórmula"`, `"código"`, `"genérico"`)
 3. For prompt changes: edit the relevant string in `IMAGE_TYPE_PROMPTS` or `LATEX_EXTRACT_PROMPT`; keep the Portuguese instruction style
 4. For heuristic classification changes: edit `classify_image` in `image_classifier.py`; thresholds are module-level constants (`MIN_FILE_SIZE`, `MIN_DIMENSION`, `MAX_ASPECT_RATIO`, `MAX_NOISE_COLORS`)
-5. For adding a new classification stage in the UI: update `src/ui/image_curator.py` — calls go through `vision_client.get_vision_client(config).describe_image(path, type, context)`
+5. For adding a new classification stage in the UI: update `src/ui/image_curator.py` — Ollama calls go through `vision_client.get_vision_client(config).describe_image(path, type, context)`
 6. Any call to `OllamaClient` methods is a long blocking operation (up to 600s per image). Do NOT call from the UI thread. Dispatch via `TaskQueueRunner` or a `threading.Thread`; update UI via `widget.after(0, callback)`
 
 ### Gotchas
@@ -57,6 +59,7 @@ Ollama runs as an **independent service** — the app never starts it. It must b
 - **`classify_image` uses pure PNG parsing** — it does NOT use Pillow; it reads PNG IHDR directly. Only PNG files are classified by dimension/color; other formats default to `"genérico"`. Don't add Pillow imports — the design is intentional.
 - **`group_images_by_page` searches 3 image locations**: the Image Curator image root, scanned-page images below the scanned child directory for the entry, and curator crops below the manual-crops child directory. New image sources must be added to this function or they won't appear in the curator.
 - **`image_type` keys are Portuguese strings** — passing an unknown key returns the `"genérico"` prompt silently. Test with `IMAGE_TYPE_PROMPTS.get("yourkey")` before wiring.
+- **Datalab description mode bypasses Ollama generation controls** — when `image_description_source == "datalab"`, descriptions come from Datalab captions captured during PDF processing and the curator hides Ollama generation controls.
 
 ### Verify
 
@@ -64,6 +67,7 @@ Ollama runs as an **independent service** — the app never starts it. It must b
 - [ ] No blocking vision calls in UI thread callbacks
 - [ ] `classify_image` changes tested with PNG files (non-PNG files always return `"genérico"`)
 - [ ] `group_images_by_page` updated if a new image source location was added
+- [ ] `image_description_source` behavior checked if the feature touches descriptions or captions
 - [ ] `ollama serve` running with at least `qwen3-vl:8b` pulled before testing
 
 ## Task: Debug Vision Failures

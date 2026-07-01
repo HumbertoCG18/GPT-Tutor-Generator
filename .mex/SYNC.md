@@ -1,6 +1,6 @@
 # Sync — Realign This Scaffold
 
-last_updated: 2026-06-09
+last_updated: 2026-06-21
 
 ## Recommended: Use mex sync
 

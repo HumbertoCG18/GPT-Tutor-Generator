@@ -1231,6 +1231,36 @@ class TestBacklogMarkdownStatus:
         assert status["status"] == "Aprovado/final"
         assert status["needs_reprocess"] == "false"
 
+    def test_effective_backend_prefers_advanced_when_promoted(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_markdown_status
+
+        entry = {
+            "approved_markdown": "content/curated/item.md",
+            "base_backend": "pymupdf4llm",
+            "advanced_backend": "datalab",
+        }
+        (tmp_path / "content" / "curated").mkdir(parents=True)
+        (tmp_path / "content" / "curated" / "item.md").write_text("# x", encoding="utf-8")
+
+        status = _resolve_backlog_markdown_status(entry, tmp_path)
+
+        assert status["effective_backend"] == "datalab"
+
+    def test_effective_backend_falls_back_to_base_when_no_advanced(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_markdown_status
+
+        entry = {
+            "base_markdown": "content/curated/item.md",
+            "base_backend": "pymupdf4llm",
+            "advanced_backend": "",
+        }
+        (tmp_path / "content" / "curated").mkdir(parents=True)
+        (tmp_path / "content" / "curated" / "item.md").write_text("# x", encoding="utf-8")
+
+        status = _resolve_backlog_markdown_status(entry, tmp_path)
+
+        assert status["effective_backend"] == "pymupdf4llm"
+
     def test_loads_manual_unit_options_from_course_map(self, tmp_path):
         from src.ui.dialogs import _load_file_map_unit_options
 
@@ -1310,15 +1340,6 @@ class TestBacklogMarkdownStatus:
         repo = tmp_path / "repo"
         course_dir = repo / "course"
         course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | RevisaoP1 | listas | praticar | alta | `exercises/lists/revisao-p1.md` | unidade-01-metodos-formais | 06/04/2026 a 10/04/2026 |
-""",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1348,7 +1369,7 @@ class TestBacklogMarkdownStatus:
         )
 
         status = _resolve_backlog_timeline_status(
-            {"title": "RevisaoP1", "category": "listas"},
+            {"title": "RevisaoP1", "category": "listas", "computed_block_id": "bloco-09"},
             repo,
         )
 
@@ -1653,53 +1674,34 @@ legacy
     assert manifest["entries"][0]["manual_review"] == "manual-review/web/url-item.md"
 
 
-    def test_resolves_backlog_unit_status_from_file_map(self, tmp_path):
+    def test_resolves_backlog_unit_status_from_manifest_computed_slug(self, tmp_path):
+        # Fonte única: a unidade vem do computed_unit_slug da entry do
+        # manifest — nada de regex sobre a célula do FILE_MAP.md renderizado.
         from src.ui.dialogs import _resolve_backlog_unit_status
-
-        repo = tmp_path / "repo"
-        course_dir = repo / "course"
-        course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosespecificacao | listas | praticar | alta | `exercises/lists/exerciciosespecificacao.md` | unidade-02-verificacao-de-programas | 27/04/2026 a 06/05/2026 |
-""",
-            encoding="utf-8",
-        )
-
-        status = _resolve_backlog_unit_status(
-            {"title": "Exerciciosespecificacao", "category": "listas"},
-            repo,
-        )
-
-        assert status["assigned"] == "unidade-02-verificacao-de-programas"
-        assert status["source"] == "FILE_MAP atual"
-
-    def test_resolves_backlog_unit_status_with_manual_override_pending_reprocess(self, tmp_path):
-        from src.ui.dialogs import _resolve_backlog_unit_status
-
-        repo = tmp_path / "repo"
-        course_dir = repo / "course"
-        course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosespecificacao | listas | praticar | alta | `exercises/lists/exerciciosespecificacao.md` | unidade-01-metodos-formais | 04/03/2026 |
-""",
-            encoding="utf-8",
-        )
 
         status = _resolve_backlog_unit_status(
             {
                 "title": "Exerciciosespecificacao",
                 "category": "listas",
+                "computed_unit_slug": "unidade-02-verificacao-de-programas",
+            },
+            tmp_path / "repo",
+        )
+
+        assert status["assigned"] == "unidade-02-verificacao-de-programas"
+        assert status["source"] == "Atribuição automática"
+
+    def test_resolves_backlog_unit_status_with_manual_override_pending_reprocess(self, tmp_path):
+        from src.ui.dialogs import _resolve_backlog_unit_status
+
+        status = _resolve_backlog_unit_status(
+            {
+                "title": "Exerciciosespecificacao",
+                "category": "listas",
+                "computed_unit_slug": "unidade-01-metodos-formais",
                 "manual_unit_slug": "unidade-02-verificacao-de-programas",
             },
-            repo,
+            tmp_path / "repo",
             {"unidade-02-verificacao-de-programas": "Unidade 02 — Verificação de Programas"},
         )
 
@@ -1708,20 +1710,13 @@ legacy
         assert "reprocesse o repositório" in status["note"].lower()
 
     def test_resolves_backlog_timeline_status_from_timeline_index(self, tmp_path):
+        # Fonte única: o bloco vem do computed_block_id da entry do manifest,
+        # com lookup direto no .timeline_index.json — sem regex no FILE_MAP.md.
         from src.ui.dialogs import _resolve_backlog_timeline_status
 
         repo = tmp_path / "repo"
         course_dir = repo / "course"
         course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosformalizacaoalgoritmosrecursao | listas | praticar | alta | `exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md` | unidade-01-metodos-formais | 11/03/2026 a 25/03/2026 |
-""",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1742,56 +1737,17 @@ legacy
         )
 
         status = _resolve_backlog_timeline_status(
-            {"title": "Exerciciosformalizacaoalgoritmosrecursao", "category": "listas"},
+            {
+                "title": "Exerciciosformalizacaoalgoritmosrecursao",
+                "category": "listas",
+                "computed_block_id": "bloco-02",
+            },
             repo,
         )
 
         assert status["period"] == "11/03/2026 a 25/03/2026"
         assert status["block"] == "bloco-02"
         assert "funções recursivas" in status["topics"]
-
-    def test_resolves_backlog_timeline_status_from_current_file_map_layout(self, tmp_path):
-        from src.ui.dialogs import _resolve_backlog_timeline_status
-
-        repo = tmp_path / "repo"
-        course_dir = repo / "course"
-        course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Confiança | Período |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosformalizacaoalgoritmosrecursao | listas | praticar | alta | `exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md` | Definições indutivas | unidade-01-metodos-formais | Alta | 11/03/2026 a 25/03/2026 |
-|  | ↳ rastreabilidade |  | raw: `raw/aula.pdf` |  |  |  |  |  |  |
-""",
-            encoding="utf-8",
-        )
-        (course_dir / ".timeline_index.json").write_text(
-            json.dumps(
-                {
-                    "version": 1,
-                    "blocks": [
-                        {
-                            "id": "bloco-02",
-                            "period_label": "11/03/2026 a 25/03/2026",
-                            "unit_slug": "unidade-01-metodos-formais",
-                            "topics": ["definições indutivas", "funções recursivas"],
-                            "aliases": ["indução", "recursão"],
-                        }
-                    ],
-                },
-                ensure_ascii=False,
-            ),
-            encoding="utf-8",
-        )
-
-        status = _resolve_backlog_timeline_status(
-            {"title": "Exerciciosformalizacaoalgoritmosrecursao", "category": "listas"},
-            repo,
-        )
-
-        assert status["period"] == "11/03/2026 a 25/03/2026"
-        assert status["block"] == "bloco-02"
         assert "recursão" in status["aliases"]
 
     def test_resolves_backlog_timeline_status_reads_version3_sessions(self, tmp_path):
@@ -1800,15 +1756,6 @@ legacy
         repo = tmp_path / "repo"
         course_dir = repo / "course"
         course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | TÃ­tulo | Categoria | Quando abrir | Prioridade | Markdown | Unidade | PerÃ­odo |
-|---|---|---|---|---|---|---|---|
-| 1 | RevisÃ£oP1 | listas | praticar | alta | `exercises/lists/revisao-p1.md` | unidade-01-metodos-formais | 30/03/2026 a 03/04/2026 |
-""",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1855,7 +1802,7 @@ legacy
         assert options and "Especificacoes recursivas" in options[0][0]
 
         status = _resolve_backlog_timeline_status(
-            {"title": "RevisÃ£oP1", "category": "listas"},
+            {"title": "RevisÃ£oP1", "category": "listas", "computed_block_id": "bloco-08"},
             repo,
         )
 
@@ -1871,15 +1818,6 @@ legacy
         repo = tmp_path / "repo"
         course_dir = repo / "course"
         course_dir.mkdir(parents=True)
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Unidade | Período |
-|---|---|---|---|---|---|---|---|
-| 1 | Exerciciosformalizacaoalgoritmosrecursao | listas | praticar | alta | `exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md` | unidade-01-metodos-formais | 04/03/2026 |
-""",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1912,28 +1850,15 @@ legacy
         assert status["block"] == "bloco-02"
         assert "reprocesse o repositório" in status["note"].lower()
 
-    def test_resolves_backlog_timeline_status_prefers_best_matching_block_within_same_unit(self, tmp_path):
+    def test_resolves_backlog_timeline_status_mirrors_computed_block_id(self, tmp_path):
+        # Fonte única: morto o re-score local (_score_serialized_timeline_block),
+        # o diálogo apenas espelha o computed_block_id do manifest — mesmo que
+        # outro bloco "parecesse" melhor para um scorer paralelo.
         from src.ui.dialogs import _resolve_backlog_timeline_status
 
         repo = tmp_path / "repo"
         course_dir = repo / "course"
-        exercises_dir = repo / "exercises" / "lists"
         course_dir.mkdir(parents=True)
-        exercises_dir.mkdir(parents=True)
-
-        (course_dir / "FILE_MAP.md").write_text(
-            """# FILE_MAP
-
-| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Confiança | Período |
-|---|---|---|---|---|---|---|---|---|---|
-| 1 | Lista Isabelle | listas | praticar | alta | `exercises/lists/lista-isabelle.md` | Prova de teoremas | unidade-01-metodos-formais | Alta | 01/04/2026 a 10/04/2026 |
-""",
-            encoding="utf-8",
-        )
-        (exercises_dir / "lista-isabelle.md").write_text(
-            "# Lista Isabelle\n\nExercícios de prova de teoremas usando Isabelle.\n",
-            encoding="utf-8",
-        )
         (course_dir / ".timeline_index.json").write_text(
             json.dumps(
                 {
@@ -1972,6 +1897,7 @@ legacy
             {
                 "title": "Lista Isabelle",
                 "category": "listas",
+                "computed_block_id": "bloco-isabelle",
                 "approved_markdown": "exercises/lists/lista-isabelle.md",
             },
             repo,
@@ -3344,6 +3270,11 @@ class TestAssessmentConflicts:
             "title": "Isabelle",
             "category": "listas",
             "tags": "",
+            # Unidade/Período espelham o manifest: as colunas vêm de
+            # computed_unit_slug/computed_block_id (lookup no timeline
+            # cacheado), não de recomputação via matcher/scorer.
+            "computed_unit_slug": "unidade-01-metodos-formais",
+            "computed_block_id": "bloco-01",
             "raw_target": "raw/pdfs/listas/isabelle.pdf",
             "_markdown_text_for_tests": "# Provadores de Teoremas\n\nIsabelle",
         }
@@ -3625,6 +3556,10 @@ class TestGlossarySeed:
                 self.file_type = payload["file_type"]
                 self.source_path = payload["source_path"]
                 self.enabled = True
+                self.id_override = ""
+
+            def id(self):
+                return self.id_override if self.id_override else self._payload.get("id", "")
 
             def to_dict(self):
                 return self._payload
@@ -4664,8 +4599,11 @@ class TestCronogramaDetalhado:
     def test_no_todo_comment_leaks(self):
         from src.builder.artifacts.repo import cronograma_detalhado_md
         from src.models.core import FileEntry
+        # D1: o cronograma agrupa por computed_block_id (funil), não pelo
+        # primary_block_id do Gemini — o funil sempre seta computed_block_id p/ código.
         entry = FileEntry(source_path="/fake/ll.py", file_type="code",
-                          category="codigo-professor", title="linked_list")
+                          category="codigo-professor", title="linked_list",
+                          computed_block_id="b1")
         curation = {"entries": {entry.id(): {"summary": {"primary_block_id": "b1"}}}}
         blocks = [{"id": "b1", "period_label": "Aula 1", "topics": ["Listas"]}]
         r = cronograma_detalhado_md({"course_name": "ED"}, [entry], curation, blocks)
@@ -5465,3 +5403,47 @@ def test_appconfig_drops_removed_legacy_keys(tmp_path, monkeypatch):
     assert cfg.get("theme") == "light"          # chave válida preservada
     assert "default_profile" not in cfg.data    # chave removida ignorada
     assert "profile_backends" not in cfg.data
+
+
+def test_unit_block_conflict_roundtrip():
+    from src.models.core import FileEntry
+    e = FileEntry(source_path="C:/x/a.pdf", file_type="pdf", category="material", title="t",
+                  unit_block_conflict={"unit": "unidade-1", "block_unit": "unidade-2", "block_id": "bloco-3"})
+    d = e.to_dict()
+    assert d["unit_block_conflict"] == {"unit": "unidade-1", "block_unit": "unidade-2", "block_id": "bloco-3"}
+    assert FileEntry.from_dict(d).unit_block_conflict == {"unit": "unidade-1", "block_unit": "unidade-2", "block_id": "bloco-3"}
+
+
+def test_unit_block_conflict_default_not_emitted():
+    from src.models.core import FileEntry
+    d = FileEntry(source_path="C:/x/a.pdf", file_type="pdf", category="material", title="t").to_dict()
+    assert "unit_block_conflict" not in d
+    assert FileEntry.from_dict({"source_path": "C:/x/a.pdf", "file_type": "pdf",
+                                "category": "material", "title": "t"}).unit_block_conflict == {}
+
+
+def test_fileentry_posting_date_roundtrip():
+    from src.models.core import FileEntry
+    e = FileEntry(source_path="a.pdf", file_type="pdf", category="material", title="A",
+                  posting_date="2026-02-12", posting_date_created="2026-02-10")
+    d = e.to_dict()
+    assert d["posting_date"] == "2026-02-12"
+    back = FileEntry.from_dict(d)
+    assert back.posting_date == "2026-02-12"
+    assert back.posting_date_created == "2026-02-10"
+
+
+def test_fileentry_posting_date_default_omitted_in_to_dict():
+    from src.models.core import FileEntry
+    e = FileEntry(source_path="a.pdf", file_type="pdf", category="material", title="A")
+    assert "posting_date" not in e.to_dict()
+
+
+def test_subjectprofile_turma_schedule_roundtrip():
+    from src.models.core import SubjectProfile
+    sp = SubjectProfile(name="MF", turma="031",
+                        schedule_url="https://sarc.pucrs.br/Default/Export.aspx?id=abc&ano=2026&sem=1")
+    d = sp.to_dict()
+    back = SubjectProfile.from_dict(d)
+    assert back.turma == "031"
+    assert back.schedule_url.endswith("sem=1")

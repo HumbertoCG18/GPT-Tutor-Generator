@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -13,11 +14,25 @@ from src.builder.timeline.classifier import classify_block
 from src.builder.timeline.kinds import BlockKind
 from src.builder.timeline.curation import apply_block_curation
 from src.builder.timeline.unit_matcher import assign_units_positional
-from src.builder.text.normalize import normalize_match_text as _normalize_match_text
+from src.builder.text.normalize import (
+    normalize_match_text as _normalize_match_text,
+    signal_token_set as _signal_token_set,
+)
 from src.builder.routing.thresholds import margin_confidence, T
 from src.builder.routing.file_map import UNIT_GENERIC_TOKENS
 from src.builder.extraction.teaching_plan import _normalize_unit_slug
+from src.builder.text.stopwords import (
+    TIMELINE_GENERIC_TOKENS as _TIMELINE_GENERIC_TOKENS,
+    TIMELINE_UNIT_NEUTRAL_TOKENS as _TIMELINE_UNIT_NEUTRAL_TOKENS,
+)
 from src.utils.helpers import slugify, ATIVIDADE_KIND_MAP, norm_ascii_lower, collapse_ws as _collapse_ws
+from src.builder.timeline.block_identity import (
+    BlockIdentityError,
+    load_identity_ledger,
+    reattach_block_uuids,
+    save_identity_ledger,
+    scan_existing_block_refs,
+)
 
 
 TIMELINE_INDEX_VERSION = 4
@@ -88,14 +103,6 @@ def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
             block["unit_slug"] = manual_unit.strip()
             block["unit_confidence"] = 1.0
     return touched
-
-
-def _signal_token_set(signal_text: str) -> set:
-    return {
-        token
-        for token in _normalize_match_text(signal_text).split()
-        if len(token) >= 4
-    }
 
 
 def _matches_normalized_phrase(signal_text: str, phrase: str) -> bool:
@@ -302,49 +309,6 @@ def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[
     return candidate_rows
 
 
-_TIMELINE_GENERIC_TOKENS = {
-    "atividade",
-    "assincrona",
-    "assincrono",
-    "aula",
-    "aulas",
-    "caso",
-    "complementar",
-    "conteudo",
-    "conteudos",
-    "dia",
-    "estudo",
-    "estudos",
-    "exercicio",
-    "exercicios",
-    "gabarito",
-    "gabaritos",
-    "hora",
-    "leituras",
-    "lista",
-    "listas",
-    "material",
-    "materia",
-    "pagina",
-    "paginas",
-    "recursos",
-    "recomendadas",
-    "revisao",
-    "revisoes",
-    "resposta",
-    "respostas",
-    "semana",
-    "teorica",
-    "teoricas",
-    "pratica",
-    "praticas",
-    "apresentacao",
-    "continuacao",
-    "finalizacao",
-    "prova",
-    "provas",
-    "unidade",
-}
 
 
 _TIMELINE_ADMIN_PHRASES = {
@@ -369,47 +333,6 @@ _TIMELINE_ADMIN_PHRASES = {
 }
 
 
-_TIMELINE_UNIT_NEUTRAL_TOKENS = {
-    "algoritmo",
-    "algoritmos",
-    "aplicacao",
-    "aplicacoes",
-    "computa",
-    "computacao",
-    "computacoes",
-    "estado",
-    "estados",
-    "fundamentos",
-    "formal",
-    "formais",
-    "logica",
-    "logicas",
-    "para",
-    "passo",
-    "passos",
-    "sequencia",
-    "sequencias",
-    "metodos",
-    "modelo",
-    "modelos",
-    "predicado",
-    "predicados",
-    "programa",
-    "programas",
-    "proposicional",
-    "substituicao",
-    "simplificacao",
-    "software",
-    "softwares",
-    "suporte",
-    "sistemas",
-    "semantica",
-    "sintaxe",
-    "variavel",
-    "variaveis",
-    "verificacao",
-    "verificacoes",
-}
 
 
 def _empty_timeline_index() -> dict:
@@ -823,7 +746,7 @@ def _timeline_block_is_noninstructional(block: Dict[str, object]) -> bool:
     return has_content
 
 
-def _timeline_block_is_administrative_only(block: Dict[str, object]) -> bool:
+def timeline_block_is_administrative_only(block: Dict[str, object]) -> bool:
     rows = block.get("rows", []) or []
     if not rows:
         return False
@@ -890,7 +813,7 @@ def _assign_timeline_block_to_unit(block: Dict[str, object], unit_index: list) -
 def _serialize_timeline_index(timeline_index: dict) -> dict:
     blocks = []
     for block in (timeline_index or {}).get("blocks", []) or []:
-        if _timeline_block_is_administrative_only(block):
+        if timeline_block_is_administrative_only(block):
             continue
         kind_value = classify_block(block).value
         unit_slug = block.get("unit_slug", "")
@@ -901,6 +824,7 @@ def _serialize_timeline_index(timeline_index: dict) -> dict:
             unit_confidence = 0.0
         payload = {
             "id": block.get("id", ""),
+            "block_uuid": block.get("block_uuid", ""),
             "period_start": block.get("period_start", ""),
             "period_end": block.get("period_end", ""),
             "period_label": block.get("period_label", ""),
@@ -1429,6 +1353,7 @@ def _build_file_map_timeline_context_from_course(
     *,
     build_file_map_unit_index_from_course: Callable[[dict, object], list],
     build_file_map_content_taxonomy_from_course: Callable[[dict, object], dict],
+    persist: bool = True,
 ) -> dict:
     test_context = course_meta.get("_timeline_context") or course_meta.get("_timeline_context_for_tests")
     if test_context:
@@ -1468,9 +1393,81 @@ def _build_file_map_timeline_context_from_course(
         else:
             timeline_index = _empty_timeline_index()
 
+    # Re-attach block_uuid via identity ledger (Task 1 — additive, não muda bloco-NN).
+    _repo_root = course_meta.get("_repo_root")
+    if _repo_root:
+        _course_dir = Path(_repo_root) / "course"
+        _ledger = load_identity_ledger(_course_dir)
+        _manifest = course_meta.get("manifest") or {}
+        _has_refs = scan_existing_block_refs(_course_dir, _manifest)
+        _blocks_list = timeline_index.get("blocks") or []
+        try:
+            _blocks_list, _ledger, _id_flags = reattach_block_uuids(
+                _blocks_list, _ledger, has_existing_refs=_has_refs
+            )
+            timeline_index["blocks"] = _blocks_list
+            if not persist and any("mint" in f for f in _id_flags):
+                logging.getLogger(__name__).warning(
+                    "ledger stale; rebuild %s to persist new block uuids", _course_dir
+                )
+            if persist:
+                save_identity_ledger(_course_dir, _ledger)
+        except BlockIdentityError:
+            raise
+        except OSError:
+            pass  # I/O error on ledger read/write: non-fatal for additive Task 1
+
+    # Task 3: migrate human-truth legacy bloco-NN refs to uuid before curation apply.
+    if _repo_root:
+        from src.builder.timeline.block_identity import migrate_human_truth_block_refs
+        from src.builder.timeline.curation import CURATION_FILENAME
+        _blocks_for_mig = timeline_index.get("blocks") or []
+        _manifest_path = Path(_repo_root) / "manifest.json"
+        _curation_file = Path(_repo_root) / "course" / CURATION_FILENAME
+        try:
+            if _manifest_path.is_file():
+                _mf = json.loads(_manifest_path.read_text(encoding="utf-8"))
+                _mf_entries = _mf.get("entries") or []
+            else:
+                _mf = None
+                _mf_entries = []
+        except (json.JSONDecodeError, OSError):
+            _mf = None
+            _mf_entries = []
+        try:
+            if _curation_file.is_file():
+                _cur_raw = json.loads(_curation_file.read_text(encoding="utf-8"))
+                _cur_blocks = dict(_cur_raw.get("blocks") or {}) if isinstance(_cur_raw, dict) else {}
+            else:
+                _cur_raw = {"version": 1, "blocks": {}}
+                _cur_blocks = {}
+        except (json.JSONDecodeError, OSError):
+            _cur_raw = {"version": 1, "blocks": {}}
+            _cur_blocks = {}
+        _upd_entries, _upd_cur_blocks, _mig_flags = migrate_human_truth_block_refs(
+            _mf_entries, _cur_blocks, _blocks_for_mig, logger=logging.getLogger(__name__),
+        )
+        if _mig_flags:
+            logging.getLogger(__name__).warning("Task3 migration flags: %s", _mig_flags)
+        if persist and _mf is not None and _upd_entries != _mf_entries:
+            try:
+                _mf["entries"] = _upd_entries
+                _manifest_path.write_text(
+                    json.dumps(_mf, ensure_ascii=False, indent=2), encoding="utf-8"
+                )
+            except OSError:
+                pass
+        if persist and _upd_cur_blocks != _cur_blocks:
+            try:
+                _cur_raw["blocks"] = _upd_cur_blocks
+                _curation_file.write_text(
+                    json.dumps(_cur_raw, ensure_ascii=False, indent=2), encoding="utf-8"
+                )
+            except OSError:
+                pass
+
     # Merge de overrides manuais (curation) por block_id. Sobrevive ao rebuild
     # from-syllabus porque mora num arquivo separado. Re-deriva kind/topic.
-    _repo_root = course_meta.get("_repo_root")
     if _repo_root:
         _apply_curation_overrides(timeline_index, Path(_repo_root) / "course")
 
@@ -1970,7 +1967,7 @@ def _assign_timeline_block_to_topic(
     winner_topic_tokens = [tok for tok in winner_topic_text.split() if len(tok) >= 4]
     topic_token_count = len(winner_topic_tokens)
 
-    confidence = min(1.0, max(0.0, (winner_score - runner_up_score) + (winner_score * 0.2)))
+    confidence = margin_confidence(winner_score, runner_up_score, k=T.MARGIN_K_TOPIC)
     if len(scored) == 1:
         ambiguous = winner_score <= 0.0
         if not ambiguous:
@@ -2033,8 +2030,8 @@ def _vote_unit_from_topic_candidates(
     unit_index: list,
     *,
     top_k: int = 5,
-    min_score: float = 0.10,
-    dominance_ratio: float = 0.6,
+    min_score: float = T.VOTE_MIN_SCORE,
+    dominance_ratio: float = T.VOTE_DOMINANCE,
 ) -> tuple[str, float]:
     """Fallback de unit assignment: voto majoritario por topic_candidates.
 

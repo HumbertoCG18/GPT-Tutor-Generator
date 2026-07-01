@@ -289,6 +289,42 @@ def _consolidate_assignment(
     return ("", [], local_conf, "orphan")
 
 
+def code_curation_signal_text(curation_entry: dict) -> str:
+    """Texto markdown-equivalente a partir do resumo de código curado (Gemini).
+
+    GERAL (qualquer cadeira): zips/códigos não têm `.md` convertido nem
+    descrição de imagem, então o scorer de subunidade só via título + auto_tags
+    e empatava no ruído. Este texto reaproveita o resumo que já existe em
+    `code_curation.json` (consumido pelo matcher de BLOCO) como sinal léxico
+    para a SUBUNIDADE. Formata o `inferred_title` como heading `#` (campo de
+    maior peso, 4.4) e conceitos/summary/linguagem como corpo. Retorna "" se
+    não houver resumo utilizável (no-op para entries sem curadoria de código).
+    """
+    summary = curation_entry.get("summary") if isinstance(curation_entry, dict) else None
+    if not isinstance(summary, dict):
+        return ""
+
+    title = str(summary.get("inferred_title") or "").strip()
+    prose = str(summary.get("summary") or "").strip()
+    language = str(summary.get("language") or "").strip()
+    concepts = [
+        str(c).strip()
+        for c in (summary.get("concepts") or [])
+        if str(c).strip()
+    ]
+
+    parts: list[str] = []
+    if title:
+        parts.append(f"# {title}")
+    if prose:
+        parts.append(prose)
+    if concepts:
+        parts.append("Conceitos: " + ", ".join(concepts))
+    if language:
+        parts.append(f"Ferramenta: {language}")
+    return "\n\n".join(parts)
+
+
 def load_code_curation(repo_dir: Path) -> dict:
     path = repo_dir / "code_curation.json"
     if not path.exists():
@@ -369,12 +405,23 @@ def summarize_code_entry(builder, entry_data: dict, client) -> Optional[dict]:
         summary_dict = result.model_dump()
         # Matcher local determinístico
         local = assign_code_to_block(summary_dict["concepts"], blocks)
-        # Consolida com sugestão Gemini (validada contra whitelist)
-        valid_ids = {b.get("id", "") for b in blocks if b.get("id")}
+        # Whitelist inclui uuid e id legado; sugestões Gemini (bloco-NN ou uuid)
+        # são resolvidas para uuid via lazy compat antes de validar.
+        from src.builder.timeline.card_block import resolve_block_ref
+        valid_ids = {
+            str(b.get("block_uuid") or b.get("id") or "")
+            for b in blocks
+            if b.get("block_uuid") or b.get("id")
+        }
+
+        def _to_uuid(raw: str) -> str:
+            r = resolve_block_ref(raw, blocks)
+            return r if r else (raw if raw in valid_ids else "")
+
         primary, secondaries, conf, method = _consolidate_assignment(
             local,
-            summary_dict.get("suggested_block_id", "") or "",
-            summary_dict.get("suggested_secondary_ids", []) or [],
+            _to_uuid(summary_dict.get("suggested_block_id", "") or ""),
+            [_to_uuid(s) for s in (summary_dict.get("suggested_secondary_ids", []) or [])],
             valid_ids,
         )
         summary_dict["primary_block_id"] = primary

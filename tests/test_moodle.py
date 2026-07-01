@@ -1,4 +1,8 @@
-from src.builder.sources.moodle import sanitize_folder_name, iter_section_files, SectionFile, MoodleClient
+import pytest
+from src.builder.sources.moodle import (
+    sanitize_folder_name, iter_section_files, SectionFile, MoodleClient,
+    backfill_posting_date_from_api, posting_date_iso
+)
 
 
 def test_sanitize_removes_invalid_windows_chars():
@@ -55,6 +59,51 @@ def test_save_token_creates_file_when_missing(tmp_path):
     url, tok = load_moodle_token(dotenv_path=env)
     assert tok == "t1"
     assert url == "https://moodle.pucrs.br"
+
+
+import json
+from pathlib import Path
+from src.builder.sources.moodle import (
+    backfill_repo_signals_additive, backfill_repo_signals_consumed,
+)
+
+def _fake_repo(tmp_path, entries):
+    repo = tmp_path / "repo"
+    (repo / "course").mkdir(parents=True)
+    (repo / "manifest.json").write_text(json.dumps({"entries": entries}), encoding="utf-8")
+    (repo / "course" / ".timeline_index.json").write_text(
+        json.dumps({"blocks": [{"id": "bloco-01", "period_start": "2026-02-20",
+                                "period_end": "2026-02-28", "unit_slug": "u1"}]}),
+        encoding="utf-8")
+    return repo
+
+_CONTENTS = [{"name": "Semana 1", "modules": [
+    {"name": "Exemplos (Hoare)", "contents": [
+        {"type": "file", "filename": "main.pdf", "fileurl": "u",
+         "timemodified": 1739361600, "timecreated": 1739000000}]}]}]
+
+def test_additive_sets_posting_and_label_not_section(tmp_path):
+    repo = _fake_repo(tmp_path, [{"id": "e1", "source_path": "main.pdf",
+                                  "source_section": "OLD", "moodle_label": ""}])
+    backfill_repo_signals_additive(repo, _CONTENTS, {"name": "MF", "semester": "2026/1",
+                                                     "turma": "031", "schedule_url": ""}, write=True)
+    m = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+    e = m["entries"][0]
+    assert e["posting_date"] == "2025-02-12"
+    assert e["moodle_label"] == "Exemplos (Hoare)"
+    assert e["source_section"] == "OLD"          # additive NAO toca source_section
+    assert m["turma"] == "031"
+
+def test_additive_does_not_write_card_block_map(tmp_path):
+    repo = _fake_repo(tmp_path, [{"id": "e1", "source_path": "main.pdf"}])
+    backfill_repo_signals_additive(repo, _CONTENTS, {"name": "MF", "semester": "2026/1"}, write=True)
+    assert not (repo / "course" / ".card_block_map.json").exists()
+
+def test_consumed_overwrites_section(tmp_path):
+    repo = _fake_repo(tmp_path, [{"id": "e1", "source_path": "main.pdf", "source_section": "OLD"}])
+    backfill_repo_signals_consumed(repo, _CONTENTS, {"name": "MF", "semester": "2026/1"}, write=True)
+    m = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+    assert m["entries"][0]["source_section"] == "Semana 1"   # consumed overwrita
 
 
 def test_login_posts_credentials_and_returns_token(monkeypatch):
@@ -205,6 +254,25 @@ def test_backfill_source_section_from_api_matches_by_basename():
     assignments, unmatched, ambiguous = backfill_source_section_from_api(entries, contents)
     assert assignments["intro"] == "Introdução"
     assert "ghost" in unmatched
+
+
+def test_backfill_moodle_label_from_api_matches_by_basename():
+    # alavanca 1: captura mod.get("name") (label do recurso) por basename, igual
+    # ao source_section. Vem do payload da API -> antes do redirect SharePoint.
+    from src.builder.sources.moodle import backfill_moodle_label_from_api
+    contents = [
+        {"name": "Verificacao de Programas", "modules": [
+            {"name": "Exemplos (Logica de Floyd-Hoare)",
+             "contents": [{"type": "file", "filename": "hoare.zip",
+                           "fileurl": "https://m/a/hoare.zip"}]}]},
+    ]
+    entries = [
+        {"id": "hoare", "source_path": "C:/x/HOARE.zip"},   # case-insensitive
+        {"id": "ghost", "source_path": "X:/none/ghost.pdf"},
+    ]
+    out = backfill_moodle_label_from_api(entries, contents)
+    assert out["hoare"] == "Exemplos (Logica de Floyd-Hoare)"
+    assert "ghost" not in out
 
 
 def test_iter_section_files_disambiguates_by_module_name():
@@ -395,3 +463,79 @@ def test_import_links_existing_subject_by_slug_keeping_repo(tmp_path):
     assert sp.moodle_course_id == "92717"                       # ligou
     assert sp.repo_root == "C:/repos/Metodos-Formais-Tutor"     # PRESERVOU o repo
     assert sp.stash_folder == str((tmp_path / "Moodle") / sp.slug)
+
+
+def test_iter_section_files_captures_timestamps():
+    contents = [{"name": "Semana 1", "modules": [
+        {"name": "Aula", "contents": [
+            {"type": "file", "filename": "a.pdf", "fileurl": "http://x/a.pdf",
+             "timemodified": 1739361600, "timecreated": 1739000000}]}]}]
+    sf = iter_section_files(contents)[0]
+    assert sf.timemodified == 1739361600
+    assert sf.timecreated == 1739000000
+
+
+def test_posting_date_iso_utc():
+    assert posting_date_iso(1739361600) == "2025-02-12"   # 12:00 UTC
+    assert posting_date_iso(0) == ""
+    assert posting_date_iso(None) == ""
+
+
+def test_backfill_posting_date_unique_match():
+    contents = [{"name": "S1", "modules": [
+        {"name": "Aula", "contents": [
+            {"type": "file", "filename": "main.pdf", "fileurl": "u",
+             "timemodified": 1739361600, "timecreated": 1739000000}]}]}]
+    entries = [{"id": "e1", "source_path": "C:/x/main.pdf"}]
+    out = backfill_posting_date_from_api(entries, contents)
+    assert out["e1"] == {"timemodified": 1739361600, "timecreated": 1739000000}
+
+
+def test_backfill_posting_date_skips_ambiguous_basename():
+    contents = [{"name": "S1", "modules": [
+        {"name": "A", "contents": [{"type": "file", "filename": "main.pdf", "fileurl": "u",
+                                     "timemodified": 1, "timecreated": 1}]},
+        {"name": "B", "contents": [{"type": "file", "filename": "main.pdf", "fileurl": "u2",
+                                     "timemodified": 2, "timecreated": 2}]}]}]
+    entries = [{"id": "e1", "source_path": "main.pdf"}]
+    assert backfill_posting_date_from_api(entries, contents) == {}
+
+
+def test_parse_turma_single():
+    from src.builder.sources.moodle import parse_moodle_course
+    c = {"id": 1, "fullname": "4646M-04 - Métodos Formais - Turma 031 - 2026/1 - Prof. X"}
+    assert parse_moodle_course(c)["turma"] == "031"
+
+
+def test_parse_turma_multiple():
+    from src.builder.sources.moodle import parse_moodle_course
+    c = {"id": 2, "fullname": "98702-04 - Prática em Pesquisa - Turmas 010 - 011 - 012 - 2026/1 - Profs. Y"}
+    assert parse_moodle_course(c)["turma"] == "010 - 011 - 012"
+
+
+def test_parse_turma_absent():
+    from src.builder.sources.moodle import parse_moodle_course
+    c = {"id": 3, "fullname": "Curso de Ciência da Computação"}
+    assert parse_moodle_course(c)["turma"] == ""
+
+
+def test_sanitize_preserves_date_slash_as_dot():
+    from src.builder.sources.moodle import sanitize_folder_name
+    assert sanitize_folder_name("18/06 exemplo") == "18.06 exemplo"
+    assert sanitize_folder_name("Aula 18/06/2026") == "Aula 18.06.2026"
+    assert "/" not in sanitize_folder_name("a/b")   # slash entre letras vira espaco
+
+
+@pytest.mark.parametrize("raw, expected", [
+    ("20/04 a 24/4", "20.04 a 24.04"),   # zero-pad do mês de 1 dígito
+    ("24/4", "24.04"),
+    ("06/12/2026", "06.12.2026"),         # data completa, ano preservado
+    ("18/06", "18.06"),                    # ja 2-digito: no-op (preserva atual)
+    ("1/2", "01.02"),
+    ("12/2025", "12.2025"),                # mes/ano: cai no passe generico, sem pad
+    ("versao 1.2", "versao 1.2"),          # separador '.' (versao) intacto
+    ("2.10.1", "2.10.1"),                  # versao 3-partes intacta
+    ("Seção A/B", "Seção A B"),            # '/' nao-data vira espaco (atual)
+])
+def test_sanitize_folder_name_date_padding(raw, expected):
+    assert sanitize_folder_name(raw) == expected

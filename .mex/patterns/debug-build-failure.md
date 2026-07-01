@@ -19,29 +19,33 @@ edges:
     condition: when the failure is in a specific PDF backend
   - target: patterns/ollama-vision.md
     condition: when the build failure occurs during image classification or vision processing
-last_updated: 2026-06-09
+last_updated: 2026-06-21
 ---
 
 # Debug Build Failure
 
-Reviewed against the current repository task and backend diagnostic paths on 2026-06-03.
+Reviewed against the current repository task and backend diagnostic paths on 2026-06-21.
 
 ## Context
 
 Builds run in a background thread via `TaskQueueRunner`. Failures are recorded in two places:
 1. The generated repository manifest has a `failed_entries` array (each entry has `error_type` and `error_message`)
 2. The generated repository manifest has a `logs` array (step-by-step log for each entry)
-3. Python `logging` output (visible in terminal or log file)
+3. The generated cronograma health artifact surfaces timeline/unit allocation conflicts and stale curation warnings
+4. Moodle-backed generated repositories may also have generated card-block and lessons-index course dotfiles as attribution evidence
+5. Python `logging` output (visible in terminal or log file)
 
 ## Steps
 
 1. **Check manifest first** — open the generated repository manifest and read `failed_entries`; note `error_type` (`missing_source`, `conversion_error`, etc.)
 2. **Check logs array** — find entries with `status: "error"` for the failing entry; `step` field tells you which stage failed
-3. **Check Python log output** — if the app was run from terminal, look for `ERROR` lines from `src.builder.*` loggers
-4. **Identify the stage** from `context/pdf-pipeline.md` stages 1-6 — the `step` field in logs maps to stage names
-5. **Check backend availability** — run in Python console: `from src.builder.runtime.backend_runtime import detect_marker_capabilities; print(detect_marker_capabilities())`
-6. **Check API key** — for Datalab failures: `from src.builder.runtime.datalab_client import has_datalab_api_key; print(has_datalab_api_key())`
-7. **Reproduce in isolation** — create a minimal test that calls the specific backend function directly on the failing PDF
+3. **Check CRONOGRAMA_HEALTH** — for wrong unit/block assignment, stale overrides, or curation conflicts
+4. **For wrong block attribution, check source signals** — inspect `source_section`, `moodle_label`, `computed_block_id`, and the generated card-block / lessons-index course dotfiles
+5. **Check Python log output** — if the app was run from terminal, look for `ERROR` lines from `src.builder.*` loggers
+6. **Identify the stage** from `context/pdf-pipeline.md` stages — the `step` field in logs maps to stage names
+7. **Check backend availability** — run in Python console: `from src.builder.runtime.backend_runtime import detect_marker_capabilities; print(detect_marker_capabilities())`
+8. **Check API key** — for Datalab failures: `from src.builder.runtime.datalab_client import has_datalab_api_key; print(has_datalab_api_key())`
+9. **Reproduce in isolation** — create a minimal test that calls the specific backend function directly on the failing PDF
 
 ## Failure Types and First Actions
 
@@ -53,6 +57,7 @@ Builds run in a background thread via `TaskQueueRunner`. Failures are recorded i
 | `conversion_error` (LaTeX) | `pymupdf4llm` used on math-heavy PDF — switch `document_profile` to `math_heavy` and re-process |
 | Timeout / stall | Check which phase stalled in logs; only `LLM processors running` has phase override; increase general timeout or reduce PDF size |
 | `FileNotFoundError` in incremental build | The generated repository manifest references a path that no longer exists; remove the entry from the manifest or re-add the source file |
+| Wrong block from Moodle card | Check `source_section` and the generated card-block map; consumed backfill can change attribution and should be eval-gated |
 
 ## Gotchas
 
@@ -66,6 +71,7 @@ Builds run in a background thread via `TaskQueueRunner`. Failures are recorded i
 - [ ] `failed_entries` in manifest is empty for the repaired entry
 - [ ] `logs` shows `status: "ok"` for all stages of the entry
 - [ ] `images_dir` populated if image extraction was expected
+- [ ] The generated cronograma health artifact has no new unresolved conflict if the fix touched timeline/unit assignment
 - [ ] Re-run `python -m pytest tests -q` to confirm no regressions
 
 ## Update Scaffold

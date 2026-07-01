@@ -10,6 +10,7 @@ from src.builder.ops.state_ops import (
 )
 from src.builder.core.reference_navigation import build_unit_topic_reference_index
 from src.builder.core.reference_summary import load_reference_curation
+from src.builder.routing.thresholds import METHOD_CAPS, confidence_band
 from src.models.core import FileEntry
 from src.utils.helpers import slugify, write_text
 
@@ -112,7 +113,7 @@ def run_material_residual(builder, live_manifest_entries):
     return live_manifest_entries
 
 
-def attach_block_summary_fields(entries: list, code_curation: dict) -> list:
+def attach_block_summary_fields(entries: list, code_curation: dict, blocks: list = None) -> list:
     """Sincroniza campos do code_curation (summary.*) com o entry dict:
     match_rationale -> computed_block_rationale,
     block_match_method -> computed_block_method,
@@ -132,8 +133,17 @@ def attach_block_summary_fields(entries: list, code_curation: dict) -> list:
 
         method = str(summary.get("block_match_method") or "").strip()
         if method:
+            # Caminho de CÓDIGO vence: roda DEPOIS de resolve_unit_block_tags
+            # no regenerate_pedagogical_files, então consensus/llm_only
+            # sobrescreve o method do funil (P2.3) — comportamento intencional.
             e["computed_block_method"] = method
-        else:
+        elif str(e.get("computed_block_method") or "") not in METHOD_CAPS:
+            # Sem method na curation: só remove se o valor existente NÃO é do
+            # funil (METHOD_CAPS = manual/review_rule/card/card+scorer/
+            # scorer_only, recém-gravado por resolve_unit_block_tags nesta
+            # mesma regeneração). Pop incondicional apagaria o method do funil
+            # de toda entry não-código; o pop continua valendo para dado de
+            # código stale (prune/reatribuição), que era o propósito original.
             e.pop("computed_block_method", None)
 
         conf = summary.get("block_match_confidence")
@@ -144,6 +154,34 @@ def attach_block_summary_fields(entries: list, code_curation: dict) -> list:
                 e.pop("computed_block_match_confidence", None)
         else:
             e.pop("computed_block_match_confidence", None)
+
+        # D1: consenso band-gated para CÓDIGO. computed_block_id é a fonte única
+        # do bloco. O funil decide (card-aware); o Gemini só desempata onde o
+        # funil é honestamente fraco — SEM card E band "baixa". Card e funil-forte
+        # nunca são sobrescritos (preserva o gabarito autoritativo, erro 0/22).
+        if str(e.get("file_type") or "") in ("code", "zip"):
+            gemini_primary = str(summary.get("primary_block_id") or "")
+            if gemini_primary and blocks:
+                from src.builder.timeline.block_identity import _POSITIONAL_RE as _POS_RE
+                from src.builder.timeline.card_block import resolve_block_ref as _rbr
+                if _POS_RE.match(gemini_primary):
+                    _r = _rbr(gemini_primary, blocks)
+                    if _r:
+                        gemini_primary = _r
+            if (
+                gemini_primary
+                and not str(e.get("source_section") or "").strip()
+                and str(e.get("computed_block_band") or "") == "baixa"
+            ):
+                e["computed_block_id"] = gemini_primary
+                e["computed_block_method"] = method or "llm_only"
+                _gem_conf = summary.get("block_match_confidence")
+                if _gem_conf is not None:
+                    try:
+                        e["computed_block_confidence"] = float(_gem_conf)
+                        e["computed_block_band"] = confidence_band(float(_gem_conf))
+                    except (TypeError, ValueError):
+                        pass
 
     return entries
 
@@ -323,9 +361,27 @@ def regenerate_pedagogical_files(
     # Camada 2: residuo via Gemini (opt-in EXPLICITO). Ver run_material_residual.
     live_manifest_entries = run_material_residual(builder, live_manifest_entries)
 
-    live_manifest_entries = attach_block_summary_fields(
-        live_manifest_entries, builder._load_code_curation()
-    )
+    _code_curation = builder._load_code_curation()
+    live_manifest_entries = attach_block_summary_fields(live_manifest_entries, _code_curation, blocks=enriched_timeline_index.get("blocks") or [])
+    if bool(builder.options.get("use_concept_resolver", False)):
+        from src.builder.routing.resolver_apply import apply_concept_resolver
+        live_manifest_entries = apply_concept_resolver(
+            live_manifest_entries,
+            enriched_timeline_index.get("blocks") or [],
+            content_taxonomy.get("units") or [],
+            _code_curation,
+            builder.root_dir,
+        )
+
+    # Camada de placement por âncora (TEMPORAL-only, aditiva). Escreve
+    # temporal_block_id sem tocar computed_block_id (KB). Import function-local
+    # sob o gate: módulo não carrega com a flag OFF (padrão do use_concept_resolver).
+    if bool(builder.options.get("use_anchor_placement", False)):
+        from src.builder.routing.anchor_placement import apply_anchor_placement
+        live_manifest_entries = apply_anchor_placement(
+            live_manifest_entries,
+            enriched_timeline_index.get("blocks") or [],
+        )
 
     manifest["entries"] = live_manifest_entries
 

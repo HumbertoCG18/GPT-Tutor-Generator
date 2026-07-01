@@ -27,20 +27,6 @@ def test_select_for_subject_filters_by_substring():
 def test_select_for_subject_empty_filter_returns_nothing():
     assert select_for_subject([{"web_url": "x"}], "") == []
 
-from src.builder.sources.m365 import match_card
-
-_SECTIONS = ["Introdução a Métodos Formais", "Provas por Indução",
-             "Verificação de Programas", "Plano de Ensino"]
-
-def test_match_card_matches_by_normalized_tokens():
-    assert match_card("introducao", _SECTIONS) == ("Introdução a Métodos Formais", True)
-    assert match_card("correcao_provasinducao", _SECTIONS)[1] is True
-    assert match_card("logica_programas", _SECTIONS) == ("Verificação de Programas", True)
-
-def test_match_card_falls_back_to_new_card_when_no_match():
-    card, matched = match_card("dafny", _SECTIONS)
-    assert matched is False and card == "dafny"
-
 from src.builder.sources import m365 as m365mod
 
 class _Resp:
@@ -151,14 +137,13 @@ def test_download_subject_m365_merges_cards_and_validates(tmp_path):
             return {"Hoare.pdf": b"%PDF-1.7 ok", "hoare.zip": b"PK\x03\x04zip",
                     "ruim.pdf": b'{"error":"x"}'}[item["name"]]
 
-    sections = ["Verificação de Programas", "Provas por Indução"]
-    rep = download_subject_m365(FakeClient(), "metodosformais", sections, tmp_path)
+    section_index = {"hoare.pdf": "Verificação de Programas",
+                     "hoare.zip": "Verificação de Programas"}
+    rep = download_subject_m365(FakeClient(), "metodosformais", section_index, tmp_path)
 
     assert rep["downloaded"] == 2
     assert "ruim.pdf" in rep["failed"]                          # magic byte errado
-    # logica_programas casa com "Verificação de Programas" (token 'programas')
     assert (tmp_path / "Verificação de Programas" / "Hoare.pdf").exists()
-    # dafny -> "Verificação de Programas" via DEFAULT alias (ferramenta de verificação)
     assert (tmp_path / "Verificação de Programas" / "hoare.zip").exists()
     assert not (tmp_path / "dafny").exists()
     # item de outro curso ignorado pelo filtro
@@ -177,10 +162,11 @@ def test_download_subject_m365_no_collision_loss(tmp_path):
             return {"name": "main.pdf", "id": iid, "parentReference": {"driveId": "D"}}
         def download(self, item):
             return b"%PDF-1.7 x"
-    rep = download_subject_m365(FakeClient(), "metodosformais", [], tmp_path)
+    rep = download_subject_m365(FakeClient(), "metodosformais",
+                                {"main.pdf": "Provas por Indução"}, tmp_path)
     assert rep["downloaded"] == 2                              # nenhum perdido
-    assert (tmp_path / "dafny" / "main.pdf").exists()
-    assert (tmp_path / "dafny" / "main (2).pdf").exists()
+    assert (tmp_path / "Provas por Indução" / "main.pdf").exists()
+    assert (tmp_path / "Provas por Indução" / "main (2).pdf").exists()
     # FIX 3: both the original and renamed file must be tracked in name_to_section
     assert "main.pdf" in rep["name_to_section"]
     assert "main (2).pdf" in rep["name_to_section"]
@@ -227,9 +213,9 @@ def test_download_subject_m365_sanitizes_invalid_card_and_filename(tmp_path):
         def download(self, item):
             return b"%PDF-1.7 ok"
 
-    # seção Moodle com chars inválidos de path ('/', ':') que casa com logica_programas
-    sections = ["Lógica: Programas/Hoare"]
-    rep = download_subject_m365(FakeClient(), "metodosformais", sections, tmp_path)
+    # seção Moodle com chars inválidos de path ('/', ':'); chave = nome SANITIZADO
+    section_index = {"logica hoare.pdf": "Lógica: Programas/Hoare"}
+    rep = download_subject_m365(FakeClient(), "metodosformais", section_index, tmp_path)
     assert rep["downloaded"] == 1
     # pasta sanitizada existe e o arquivo foi gravado (sem WinError)
     written = list(tmp_path.rglob("*.pdf"))
@@ -237,30 +223,3 @@ def test_download_subject_m365_sanitizes_invalid_card_and_filename(tmp_path):
     rel = written[0].relative_to(tmp_path)
     assert ":" not in str(rel)                 # nenhum char inválido no caminho relativo
     assert all(part not in ("", ".", "..") for part in rel.parts)
-
-
-def test_match_card_uses_aliases_extra_tokens():
-    from src.builder.sources.m365 import match_card
-    sections = ["Verificação de Programas", "Provas por Indução"]
-    # 'dafny' sozinho não casa; o alias injeta tokens de verificação
-    card, matched = match_card("dafny", sections, aliases={"dafny": "verificacao programas"})
-    assert matched is True and card == "Verificação de Programas"
-
-
-def test_download_subject_m365_default_aliases_fold_tools(tmp_path):
-    from src.builder.sources.m365 import download_subject_m365
-    base = "https://x/Documents/Documentos/metodosformais/dafny"
-
-    class FakeClient:
-        def list_shared(self, top=200):
-            return [{"id": "1", "title": "hoare", "type": "Pdf", "web_url": f"{base}/hoare.pdf"}]
-        def resolve(self, iid):
-            return {"name": "hoare.pdf", "id": iid, "parentReference": {"driveId": "D"}}
-        def download(self, item):
-            return b"%PDF-1.7 ok"
-
-    sections = ["Verificação de Programas", "Plano de Ensino"]
-    rep = download_subject_m365(FakeClient(), "metodosformais", sections, tmp_path)
-    # default alias dafny -> verificação: arquivo cai na seção certa, não em card 'dafny'
-    assert (tmp_path / "Verificação de Programas" / "hoare.pdf").exists()
-    assert not (tmp_path / "dafny").exists()

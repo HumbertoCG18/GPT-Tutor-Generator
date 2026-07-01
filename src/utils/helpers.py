@@ -430,6 +430,10 @@ ATIVIDADE_KIND_MAP = {
     "trabalho": "deliverable",
     "entrega": "deliverable",
     "feriado": "holiday",
+    # "evento" (Evento Academico/Institucional): kind ignorado, igual ao evento
+    # marcado por cor (darkred -> "event"). Sem isso, "Evento Academico" na coluna
+    # Atividade caía em "class" (aula) e poluía a atribuição de unidade.
+    "evento": "event",
     "revisao": "review",
 }
 
@@ -520,6 +524,20 @@ def is_sarc_url(url: Optional[str]) -> bool:
         return False
     host = (parsed.hostname or "").lower()
     return host == SARC_HOST
+
+
+def parse_sarc_turma_key(url: Optional[str]) -> dict:
+    """Extrai {guid, ano, sem} da query da URL do SARC Export.aspx. Ausentes -> ""."""
+    from urllib.parse import parse_qs
+    try:
+        q = parse_qs(urlparse(str(url or "")).query)
+    except Exception:
+        return {"guid": "", "ano": "", "sem": ""}
+    return {
+        "guid": (q.get("id") or [""])[0].strip(),
+        "ano": (q.get("ano") or [""])[0].strip(),
+        "sem": (q.get("sem") or [""])[0].strip(),
+    }
 
 
 def decide_schedule_source(url: Optional[str], pasted_html: Optional[str]) -> dict:

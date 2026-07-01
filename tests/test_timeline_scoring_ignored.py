@@ -1,7 +1,7 @@
 """Tests for Task 4: scorer descarta rows ignoradas."""
 
 from src.builder.engine import _score_entry_against_timeline_block
-from src.builder.timeline.index import _timeline_block_is_administrative_only
+from src.builder.timeline.index import timeline_block_is_administrative_only
 
 
 def _make_signals(text: str) -> dict:
@@ -61,7 +61,7 @@ def test_administrative_only_true_when_all_rows_ignored():
             {"content": "SE Day", "ignored": True},
         ]
     }
-    assert _timeline_block_is_administrative_only(block) is True
+    assert timeline_block_is_administrative_only(block) is True
 
 
 def test_administrative_only_ignores_ignored_rows_when_mixed():
@@ -72,4 +72,4 @@ def test_administrative_only_ignores_ignored_rows_when_mixed():
             {"content": "Provas por inducao", "ignored": False},
         ]
     }
-    assert _timeline_block_is_administrative_only(block) is False
+    assert timeline_block_is_administrative_only(block) is False

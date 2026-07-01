@@ -1,0 +1,128 @@
+[
+  {
+    "id": "bloco-01",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "disciplina"
+  },
+  {
+    "id": "bloco-02",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "introducao metodos formais"
+  },
+  {
+    "id": "bloco-03",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "logica predicados"
+  },
+  {
+    "id": "bloco-04",
+    "n_sessoes": 5,
+    "span_dias": 14,
+    "topico": "conjuntos indutivos equacoes recursivas; arvores"
+  },
+  {
+    "id": "bloco-05",
+    "n_sessoes": 2,
+    "span_dias": 2,
+    "topico": "inducao; inducao arvores"
+  },
+  {
+    "id": "bloco-06",
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "interativa teoremas"
+  },
+  {
+    "id": "bloco-07",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-01-metodos-formais"
+  },
+  {
+    "id": "bloco-08",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "suspensao"
+  },
+  {
+    "id": "bloco-09",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-01-metodos-formais"
+  },
+  {
+    "id": "bloco-10",
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "logica hoare"
+  },
+  {
+    "id": "bloco-11",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "logica programas correcao parcial correcao total terminacao invariantes laco"
+  },
+  {
+    "id": "bloco-12",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "terminacao introducao dafny"
+  },
+  {
+    "id": "bloco-13",
+    "n_sessoes": 4,
+    "span_dias": 12,
+    "topico": "logica programas"
+  },
+  {
+    "id": "bloco-14",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "evento academico"
+  },
+  {
+    "id": "bloco-15",
+    "n_sessoes": 4,
+    "span_dias": 9,
+    "topico": "logica programas"
+  },
+  {
+    "id": "bloco-16",
+    "n_sessoes": 5,
+    "span_dias": 14,
+    "topico": "verificacao modelos logica temporal; verificacao modelos ferramenta"
+  },
+  {
+    "id": "bloco-17",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-02-verificacao-de-programas"
+  },
+  {
+    "id": "bloco-18",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-02-verificacao-de-programas"
+  },
+  {
+    "id": "bloco-19",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "substituicao"
+  },
+  {
+    "id": "bloco-20",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "devolucao"
+  },
+  {
+    "id": "bloco-21",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-01-metodos-formais, unidade-02-verificacao-de-programas"
+  }
+]

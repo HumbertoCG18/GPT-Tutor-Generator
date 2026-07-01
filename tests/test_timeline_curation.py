@@ -204,3 +204,76 @@ def test_scope_override_applies_renamed(tmp_path):
     assert touched == 1
     assert blocks[0]["block_manual_scope_slugs"] == ["u1", "u2"]
     assert "manual_scope_unit_slugs" not in blocks[0]
+
+
+# ---------------------------------------------------------------------------
+# apply_block_curation — uuid-keyed curation (migrated files, Task 3)
+# ---------------------------------------------------------------------------
+
+def test_apply_uuid_keyed_curation_applies_override(tmp_path):
+    """Curation migrada (chave = block_uuid) deve ser aplicada ao bloco."""
+    import json
+    uuid = "a1b2c3d4-0001-0000-0000-000000000000"
+    curation_data = {
+        "version": 1,
+        "blocks": {uuid: {"manual_kind_override": "holiday"}},
+    }
+    (tmp_path / ".timeline_curation.json").write_text(
+        json.dumps(curation_data), encoding="utf-8"
+    )
+    blocks = [{"id": "bloco-03", "block_uuid": uuid}]
+    touched = apply_block_curation(blocks, tmp_path)
+    assert touched == 1
+    assert blocks[0]["manual_kind_override"] == "holiday"
+
+
+def test_apply_uuid_keyed_all_fields(tmp_path):
+    """Todos os campos override funcionam via chave uuid."""
+    import json
+    uuid = "a1b2c3d4-0002-0000-0000-000000000000"
+    curation_data = {
+        "version": 1,
+        "blocks": {uuid: {
+            "manual_kind_override": "assessment",
+            "manual_topic_label": "Prova Final",
+            "manual_unit_slug": "unidade-10",
+        }},
+    }
+    (tmp_path / ".timeline_curation.json").write_text(
+        json.dumps(curation_data), encoding="utf-8"
+    )
+    blocks = [{"id": "bloco-07", "block_uuid": uuid}]
+    touched = apply_block_curation(blocks, tmp_path)
+    assert touched == 1
+    assert blocks[0]["manual_kind_override"] == "assessment"
+    assert blocks[0]["manual_topic_label"] == "Prova Final"
+    assert blocks[0]["block_manual_unit_slug"] == "unidade-10"
+
+
+def test_apply_legacy_key_still_works_after_uuid_support(tmp_path):
+    """Backwards-compat: curation keyed por bloco-NN (não migrada) ainda aplica."""
+    set_block_override(tmp_path, "bloco-05", "manual_kind_override", "holiday")
+    blocks = [{"id": "bloco-05"}]
+    touched = apply_block_curation(blocks, tmp_path)
+    assert touched == 1
+    assert blocks[0]["manual_kind_override"] == "holiday"
+
+
+def test_apply_uuid_takes_priority_over_legacy_key(tmp_path):
+    """Se existirem entradas uuid E bloco-NN, uuid vence."""
+    import json
+    uuid = "a1b2c3d4-0003-0000-0000-000000000000"
+    curation_data = {
+        "version": 1,
+        "blocks": {
+            uuid: {"manual_kind_override": "holiday"},
+            "bloco-01": {"manual_kind_override": "assessment"},
+        },
+    }
+    (tmp_path / ".timeline_curation.json").write_text(
+        json.dumps(curation_data), encoding="utf-8"
+    )
+    blocks = [{"id": "bloco-01", "block_uuid": uuid}]
+    touched = apply_block_curation(blocks, tmp_path)
+    assert touched == 1
+    assert blocks[0]["manual_kind_override"] == "holiday"

@@ -7,6 +7,7 @@ from datetime import datetime
 
 from src.builder.artifacts.deeptutor import write_deeptutor_export
 from src.builder.ops.build_workflow import _run_auto_code_summarization
+from src.builder.ops.lifecycle_ops import assign_dedup_id
 from src.utils.helpers import write_text, write_json_manifest
 
 logger = logging.getLogger(__name__)
@@ -37,10 +38,16 @@ def incremental_build_impl(builder, *, student_state_md_fn) -> None:
 
         manifest.setdefault("failed_entries", [])
         total = len(new_entries)
+        existing_ids = {
+            str(e.get("id") or "")
+            for e in manifest.get("entries", [])
+            if e.get("id")
+        }
         for i, entry in enumerate(new_entries):
             logger.info("[%d/%d] Processing: %s (%s)", i + 1, total, entry.title, entry.file_type)
             if builder.progress_callback:
                 builder.progress_callback(i, total, entry.title)
+            assign_dedup_id(entry, existing_ids)
             try:
                 item_result = builder._process_entry(entry)
                 manifest["entries"].append(item_result)

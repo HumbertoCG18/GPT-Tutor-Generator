@@ -80,8 +80,8 @@ def _format_backlog_title(entry_data: Dict[str, object]) -> str:
     return title
 
 
-def _build_options_from_config(default_mode: str, default_ocr_language: str, config_obj) -> Dict[str, object]:
-    return {
+def _build_options_from_config(default_mode: str, default_ocr_language: str, config_obj, subject=None) -> Dict[str, object]:
+    opts = {
         "default_processing_mode": default_mode,
         "default_ocr_language": default_ocr_language,
         "image_format": config_obj.get("image_format"),
@@ -96,6 +96,11 @@ def _build_options_from_config(default_mode: str, default_ocr_language: str, con
         "profile_backends": derive_profile_backends(config_obj),
         "skip_base_backends": config_obj.get("skip_base_backends", False),
     }
+    # Surface durável de feature flags por matéria: injeta o que ESTÁ em
+    # feature_flags (genérico). Ausente/{} → nada adicionado → byte-idêntico.
+    for key, value in (getattr(subject, "feature_flags", None) or {}).items():
+        opts[str(key)] = value
+    return opts
 
 
 class _UILogHandler(logging.Handler):
@@ -363,6 +368,11 @@ class App(tk.Tk):
             values=[""] + [p.name for p in load_processing_profiles(self.config_obj)], width=18)
         self._profile_combo.grid(row=3, column=1, sticky="ew", padx=4, pady=(6, 0))
         self._profile_combo.bind("<<ComboboxSelected>>", lambda _e: self._apply_active_profile())
+
+        _btn_remove_entry = ttk.Button(
+            import_actions, text="🗑 Remover selecionado", command=self.remove_selected)
+        _btn_remove_entry.grid(row=4, column=0, columnspan=2, sticky="ew", padx=4, pady=(6, 4))
+        add_tooltip(_btn_remove_entry, "Remove o item selecionado da fila (a tecla Delete também funciona).")
 
         ttk.Button(build_actions, text="📂 Abrir Repo", command=self.open_repo_folder).grid(row=0, column=0, sticky="ew", padx=4, pady=4)
         ttk.Button(build_actions, text="🧠 Student State", command=self.open_student_state_curator).grid(row=0, column=1, sticky="ew", padx=4, pady=4)
@@ -874,6 +884,19 @@ class App(tk.Tk):
             self._codes_panel.refresh()
         if current is getattr(self, "_maint_tab", None) and hasattr(self, "_maint_panel"):
             self._maint_panel.refresh()
+
+    def _refresh_timeline_dashboard(self) -> None:
+        """Re-le o cronograma do disco apos um build/processamento.
+
+        A view (TimelineDashboardView) le manifest.json + .timeline_index.json
+        sob demanda em refresh(); sem esta chamada a aba Cronograma fica com o
+        estado anterior ate o usuario trocar de aba ou reiniciar o app.
+        """
+        if hasattr(self, "_timeline_dashboard"):
+            try:
+                self._timeline_dashboard.refresh()
+            except Exception:
+                logger.exception("Falha ao atualizar a aba Cronograma apos build.")
 
     def _make_maintenance_builder(self):
         """Builder real para sweep — mesmo padrão do reprocessamento."""
@@ -1479,7 +1502,7 @@ class App(tk.Tk):
                         f_data.get("effective_profile", ""),
                         f_data.get("tags", ""),
                         _format_backlog_title(f_data),
-                        f_data.get("base_backend", ""),
+                        status.get("effective_backend", ""),
                         Path(f_data.get("source_path", f_data.get("source_file", ""))).name,
                     )
                 )
@@ -1816,10 +1839,13 @@ class App(tk.Tk):
 
     def _build_options(self) -> Dict[str, object]:
         """Monta o dict de opções para o RepoBuilder."""
+        name = self._var_active_subject.get()
+        subject = self.subject_store.get(name) if name and name != "(nenhuma)" else None
         return _build_options_from_config(
             self.var_default_mode.get(),
             self.var_default_ocr_language.get(),
             self.config_obj,
+            subject=subject,
         )
 
     def _repo_dir(self) -> Optional[Path]:
@@ -2029,6 +2055,7 @@ class App(tk.Tk):
             self._refresh_repo_progress_state(Path(self._active_operation.repo_root))
         self._active_operation = None
         self._reset_build_finish_options()
+        self._refresh_timeline_dashboard()
         self._set_status("Build cancelado.")
 
     def _on_build_complete(self, meta: dict, repo_dir: Path, incremental: bool, failed_count: int = 0, failed_list: list | None = None):
@@ -2077,6 +2104,7 @@ class App(tk.Tk):
         self._reset_build_finish_options()
         self._refresh_backlog()
         self._refresh_repo_dashboard()
+        self._refresh_timeline_dashboard()
 
     def _on_build_error(self, traceback_str: str):
         self._end_progress()
@@ -2207,12 +2235,14 @@ class App(tk.Tk):
             self._save_current_queue()
         self._clear_pending_operation()
         self._refresh_backlog()
+        self._refresh_timeline_dashboard()
         self._set_status("Item processado com sucesso.")
 
     def _on_single_interrupted(self, status_msg: str):
         self._end_progress()
         self._set_processing_state(False)
         self._active_operation = None
+        self._refresh_timeline_dashboard()
         self._set_status(status_msg)
 
     def _show_error_detail(self, title: str, message: str):

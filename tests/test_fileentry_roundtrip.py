@@ -17,6 +17,7 @@ _PERSISTED_ENTRY_FIELDS = (
     "unit_match_reasons",
     "subunit_match_confidence",
     "subunit_match_reasons",
+    "computed_subunit_slug",
 )
 
 
@@ -31,6 +32,7 @@ def _make_entry_dict() -> dict:
         "unit_match_reasons": ["winner_score=3.50", "date_boost"],
         "subunit_match_confidence": 0.63,
         "subunit_match_reasons": ["topic_overlap"],
+        "computed_subunit_slug": "subunidade-02-inducao",
     }
 
 
@@ -43,6 +45,17 @@ def test_fileentry_roundtrip_preserves_persisted_match_fields():
     for name in _PERSISTED_ENTRY_FIELDS:
         assert name in second, f"campo {name!r} sumiu no round-trip"
         assert second[name] == payload[name], f"campo {name!r} divergiu: {second[name]!r}"
+
+
+def test_fileentry_roundtrip_preserves_moodle_label():
+    """alavanca 1: o label do modulo Moodle (mod.name) sobrevive ao round-trip."""
+    payload = {
+        "source_path": "staging/invariantes.zip", "file_type": "pdf",
+        "category": "material", "title": "invariantes",
+        "moodle_label": "Exemplos (Logica de Floyd-Hoare)",
+    }
+    out = FileEntry.from_dict(payload).to_dict()
+    assert out.get("moodle_label") == "Exemplos (Logica de Floyd-Hoare)"
 
 
 def test_fileentry_reason_lists_default_to_empty_list():
