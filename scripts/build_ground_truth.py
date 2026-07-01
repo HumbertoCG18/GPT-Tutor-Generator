@@ -73,7 +73,7 @@ COURSE_CONFIG = {
     # Regra reproduz o IA byte-a-byte. ACOPLADO a ordem das linhas do csv: se
     # reordenar/fundir, re-derive (scripts/../draft_subtopics.py imprime o set).
     # pairs placeholder: preencha quando souber os dups (NUNCA de bloco computado).
-    "ES2": {"clean_subtopics": set(range(1, 16)) - {5, 9}, "eco_subtopics": set(), "pairs": {}, "year": 2026},
+    "ES2": {"clean_subtopics": set(range(1, 18)) - {5, 9}, "eco_subtopics": set(), "pairs": {}, "year": 2026},
     # --- modo-bloco (placeholders; preencha pairs quando souber os dups) -------
     # MF: subtopico testado mas 10/18 semanas STRADDLE (blocos do MF nao alinham
     # com a semana do roteiro) -> forcado a bloco via FORCE_BLOCK em build_gold_xlsx.
