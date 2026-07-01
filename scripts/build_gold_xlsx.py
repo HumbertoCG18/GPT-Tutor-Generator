@@ -41,8 +41,11 @@ CURSO_REPOS = {
     "TCC": "TCC-Tutor",
 }
 
-# --- clusters de tópico (ordem de EXIBIÇÃO = sequência pedagógica) -------------
-CLUSTER_ORDER = [
+# --- clusters de tópico POR CURSO (opt-in) ------------------------------------
+# Curso COM taxonomia própria agrupa a Aba 1 por tópico pedagógico (IA abaixo).
+# Curso SEM entrada agrupa por `tipo` do material (genérico, firewall-safe) — não
+# inventamos taxonomia por-curso que não dá pra validar (= chute confiante).
+_IA_CLUSTER_ORDER = [
     "Intro / IA",
     "Dados",
     "Intro ML",
@@ -55,7 +58,7 @@ CLUSTER_ORDER = [
 ]
 # Ordem de ATRIBUIÇÃO (específico vence genérico): cada material cai no 1º cluster
 # cujos tokens casarem. Derivado do NOME do material — não do placement.
-_CLUSTER_RULES = [
+_IA_CLUSTER_RULES = [
     ("Avaliação", ("analisar-resultados", "analisarresultados", "avaliacao", "medidas-de-avaliacao",
                    "acc-pr", "acc, pr", " f1", "-f1", "sse")),
     ("Clustering", ("agrupamento", "cluster", "k-means", "kmeans", "hierarquico", "particional",
@@ -72,6 +75,11 @@ _CLUSTER_RULES = [
     ("Intro / IA", ("inteligencia", "historico", "visao-geral", "oracle", "responsavel",
                     "introducao-ia", "aula01", "-ia", " ia")),
 ]
+# Registry curso -> (ordem de exibição, regras). Ausente = agrupa por `tipo`.
+_TOPIC_CLUSTERS = {"IA": (_IA_CLUSTER_ORDER, _IA_CLUSTER_RULES)}
+# Ordem dos grupos genéricos (por `tipo` de tipo_of). Tipo fora da lista vai ao
+# fim, alfabético.
+_TIPO_ORDER = ["prova", "lista", "código", "artigo", "pdf", "link", "material"]
 
 
 def _strip_accents(s: str) -> str:
@@ -122,7 +130,7 @@ def load_subtopics(path: Path) -> list:
     Colunas: subtopico,datas,guarda_chuva,letivo. READ-ONLY."""
     import csv
     rows = []
-    with open(path, encoding="utf-8") as f:
+    with open(path, encoding="utf-8-sig") as f:  # tolera BOM (Excel-friendly)
         for r in csv.DictReader(f):
             sub = str(r.get("subtopico", "") or "").strip()
             if not sub:
@@ -195,12 +203,25 @@ def tipo_of(entry: dict) -> str:
     return ft or "material"
 
 
-def cluster_of(entry: dict) -> str:
+def cluster_of(entry: dict, curso: str) -> str:
+    """Grupo da Aba 1. Curso com taxonomia -> tópico; senão -> tipo do material."""
+    topic = _TOPIC_CLUSTERS.get(curso)
+    if not topic:
+        return tipo_of(entry)
     name = _norm(entry.get("id", "") + " " + entry.get("title", ""))
-    for cluster, toks in _CLUSTER_RULES:
+    for cluster, toks in topic[1]:
         if any(tok in name for tok in toks):
             return cluster
     return "Outros"
+
+
+def cluster_order_for(curso: str, entries: list) -> list:
+    """Ordem de exibição dos grupos. Taxonomia do curso, ou tipos presentes."""
+    topic = _TOPIC_CLUSTERS.get(curso)
+    if topic:
+        return topic[0]
+    present = {tipo_of(e) for e in entries}
+    return [t for t in _TIPO_ORDER if t in present] + sorted(present - set(_TIPO_ORDER))
 
 
 # ============================ Aba 2 (cronograma) =============================
@@ -295,11 +316,12 @@ def build_workbook(repo: Path, curso: str, subtopics: list | None = None):
     block_rows.sort(key=lambda r: r["sort"])
 
     # ---- Aba 1: materiais (cego), agrupado por cluster ----
-    disp_index = {c: i for i, c in enumerate(CLUSTER_ORDER)}
+    cluster_order = cluster_order_for(curso, entries)
+    disp_index = {c: i for i, c in enumerate(cluster_order)}
     mat_rows = []
     for e in entries:
         topico = topico_from_filename(repo, e)
-        cl = cluster_of(e)
+        cl = cluster_of(e, curso)
         mat_rows.append({
             "material": material_filename(e),
             "tipo": tipo_of(e),
@@ -451,7 +473,7 @@ def build_workbook(repo: Path, curso: str, subtopics: list | None = None):
     ws1.protection.sort = False
     ws1.protection.autoFilter = False
 
-    return wb, mat_rows, menu_count, menu_total
+    return wb, mat_rows, menu_count, menu_total, cluster_order
 
 
 def main(argv) -> int:
@@ -479,10 +501,14 @@ def main(argv) -> int:
     out = Path(args.out) if args.out else (templates_dir / f"gold_{curso}_rotular.xlsx")
     out.parent.mkdir(parents=True, exist_ok=True)
 
+    # Cursos cujos blocos NAO alinham com a semana do roteiro (straddle alto) ->
+    # forcados a modo-bloco mesmo com csv presente. MF: 10/18 semanas straddle.
+    FORCE_BLOCK = {"MF"}
     sub_path = Path(args.subtopics) if args.subtopics else (templates_dir / f"sarc_subtopics_{curso}.csv")
-    subtopics = load_subtopics(sub_path) if sub_path.exists() else None
+    subtopics = (load_subtopics(sub_path)
+                 if (sub_path.exists() and curso not in FORCE_BLOCK) else None)
 
-    wb, mat_rows, menu_count, menu_total = build_workbook(repo, curso, subtopics)
+    wb, mat_rows, menu_count, menu_total, cluster_order = build_workbook(repo, curso, subtopics)
     wb.save(out)
 
     # ---- resumo + confirmação de firewall ----
@@ -499,7 +525,7 @@ def main(argv) -> int:
         print("      FIREWALL menu OK: nenhuma entrada é guarda-chuva (ML/Supervisionada/Clustering);"
               " nenhuma suspensão/feriado no dropdown.")
     print(f"    saída: {out}")
-    print("    clusters Aba 1:", {k: clusters[k] for k in CLUSTER_ORDER if clusters.get(k)})
+    print("    clusters Aba 1:", {k: clusters[k] for k in cluster_order if clusters.get(k)})
     print("    FIREWALL Aba 1 OK: [#, material, tipo, tópico, bloco_correto(VAZIO),"
           " confiança(VAZIO), obs(VAZIO)]; nenhum bloco/subtópico pré-preenchido;"
           " tópico derivado do nome do arquivo.")
