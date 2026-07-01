@@ -1,29 +1,29 @@
 {
   "aprendizadonaosupervisionado-agrupamento-parte2": {
-    "band": "alta",
-    "computed_block_id": "696e2177-a69e-4dbb-9b79-73e03f3e8c85",
-    "computed_unit_slug": "unidade-de-aprendizagem-05-aprendizado-de-maquina",
-    "moodle_label": "Aula sobre Agrupamento - parte 2 (hierarquico)",
-    "presente": true,
-    "source_section": "Semana 9 - 27.04 a 01.05 - ML - Aprendizado Não Supervisionado",
-    "temporal_block_id": "17ea65f3-5f84-47c7-9357-e090ee1f80ed"
+    "band": "",
+    "computed_block_id": "",
+    "computed_unit_slug": "",
+    "moodle_label": "",
+    "presente": false,
+    "source_section": "",
+    "temporal_block_id": ""
   },
   "introducao-a-busca-informada": {
     "band": "alta",
     "computed_block_id": "0b986383-663a-4a54-b000-4b97ebce59c4",
     "computed_unit_slug": "unidade-de-aprendizagem-02-solucao-de-problemas-10",
-    "moodle_label": "",
+    "moodle_label": "Introducao a busca informada",
     "presente": true,
     "source_section": "Semana 12 - 18.05 a 22.05 - Algoritmos de Busca com Informação",
     "temporal_block_id": ""
   },
   "mlp-novaversao": {
-    "band": "alta",
-    "computed_block_id": "2fdbf4f5-fe92-46c7-b3d6-b4a09d87615f",
-    "computed_unit_slug": "unidade-de-aprendizagem-01-visao-geral-5",
-    "moodle_label": "MLP",
-    "presente": true,
-    "source_section": "Semana 5 -30.03 a 01.04 ML - Aprendizado Supervisionado",
-    "temporal_block_id": "2fdbf4f5-fe92-46c7-b3d6-b4a09d87615f"
+    "band": "",
+    "computed_block_id": "",
+    "computed_unit_slug": "",
+    "moodle_label": "",
+    "presente": false,
+    "source_section": "",
+    "temporal_block_id": ""
   }
 }

@@ -99,13 +99,13 @@
     "id": "bloco-17",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-02-verificacao-de-programas, unidade-03-verificacao-de-modelos"
+    "topico": "Conteúdo: unidade-02-verificacao-de-programas"
   },
   {
     "id": "bloco-18",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-02-verificacao-de-programas, unidade-03-verificacao-de-modelos"
+    "topico": "Conteúdo: unidade-02-verificacao-de-programas"
   },
   {
     "id": "bloco-19",
@@ -123,6 +123,6 @@
     "id": "bloco-21",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-01-metodos-formais, unidade-02-verificacao-de-programas, unidade-03-verificacao-de-modelos"
+    "topico": "Conteúdo: unidade-01-metodos-formais, unidade-02-verificacao-de-programas"
   }
 ]
