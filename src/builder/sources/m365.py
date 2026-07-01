@@ -60,6 +60,14 @@ def select_for_subject(items, m365_filter: str) -> list:
     return [it for it in items if fl in str(it.get("web_url", "")).lower()]
 
 
+def effective_m365_filter(typed: str, saved: str) -> str:
+    """Filtro efetivo: o DIGITADO tem precedência; senão cai no SALVO no perfil.
+    '' se ambos vazios — nesse caso a UI deve AVISAR (matéria M365 sem filtro
+    baixa nada), nunca prosseguir em silêncio. Resolve o campo-que-começa-vazio:
+    setou uma vez no perfil, reusa sempre sem re-digitar."""
+    return str(typed or "").strip() or str(saved or "").strip()
+
+
 class M365Client:
     def __init__(self, access_token: str):
         self._token = access_token

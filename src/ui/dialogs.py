@@ -1903,10 +1903,24 @@ class MoodleCourseSelectDialog(tk.Toplevel):
         def worker():
             import logging
             store = SubjectStore()
+            # Filtro efetivo: DIGITADO > SALVO no perfil (o campo comeca vazio a cada
+            # import). Reusa o salvo sem re-digitar; avisa ALTO se ambos vazios numa
+            # materia M365 (senao baixa 0 em silencio).
+            from src.builder.sources.m365 import effective_m365_filter
+            from src.builder.sources.moodle import find_subject_for_course as _find_subj
+            _sp_pre = _find_subj(store, selected[0]) if selected else None
+            eff_filter = effective_m365_filter(
+                m365_filter, getattr(_sp_pre, "m365_filter", "") if _sp_pre else "")
+            if m365_on and not eff_filter:
+                self._post(lambda: messagebox.showwarning(
+                    "M365 — filtro nao configurado",
+                    "A materia usa M365 (OneDrive) mas esta SEM filtro (nem digitado, "
+                    "nem salvo no perfil).\nNenhum arquivo do OneDrive sera baixado.\n\n"
+                    "Configure o 'Filtro M365' da materia (ex.: engenhariadesoftware2)."))
             # --- Login M365 PRIMEIRO (antes do import Moodle), p/ autenticar logo ---
             m365_client = None
             m365_login_err = ""
-            if m365_on and m365_filter:
+            if m365_on and eff_filter:
                 try:
                     from src.builder.sources import m365
                     self._busy("Aguardando login M365...")
@@ -1946,8 +1960,8 @@ class MoodleCourseSelectDialog(tk.Toplevel):
 
             # --- Download M365 ---
             m365_tail = ""
-            if m365_on and not m365_filter:
-                m365_tail = "\n\nM365: filtro vazio — pulado."
+            if m365_on and not eff_filter:
+                m365_tail = "\n\nM365: filtro vazio — pulado (configure o filtro da matéria)."
             elif m365_on and m365_login_err:
                 m365_tail = f"\n\nM365 indisponível (login): {m365_login_err[:160]}\n(traceback no terminal)"
             elif m365_client:
@@ -1971,10 +1985,10 @@ class MoodleCourseSelectDialog(tk.Toplevel):
                         self._progress_to(done, total, f"M365 {done}/{total}: {name} → {card}")
 
                     mrep = m365.download_subject_m365(
-                        m365_client, m365_filter, section_index, mdest, progress_cb=_pcb)
+                        m365_client, eff_filter, section_index, mdest, progress_cb=_pcb)
                     sp0 = find_subject_for_course(store, selected[0])
-                    if sp0 and getattr(sp0, "m365_filter", "") != m365_filter:
-                        sp0.m365_filter = m365_filter
+                    if sp0 and getattr(sp0, "m365_filter", "") != eff_filter:
+                        sp0.m365_filter = eff_filter
                         store.add(sp0)
                     filtro_txt = "" if sp0 else "\nAVISO: perfil da matéria não encontrado — filtro M365 não salvo."
                     repo_root = getattr(sp0, "repo_root", "") if sp0 else ""
