@@ -1,19 +1,19 @@
 id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante
-,aula01_Introducao_IA.pdf,,,,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-ia-responsável-7c4626,IA Responsável,,,bloco-01,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-o-que-é-inteligência-artificial-ia-oracle-brasil-43437f,O que é Inteligência Artificial (IA)? | Oracle Brasil,,,bloco-01,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-visao-geral-introducao-e-historico,Visão Geral - Introdução e Histórico.pdf,,bloco-01,bloco-01,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-analise-exploratoria-dos-dados-exemplo-2,Analise Exploratória dos Dados - Exemplo 2.ipynb,,bloco-04,bloco-04,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-,CaracteristicasDosDados.pdf,,,,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-caracteristicas-dos-dados,Características dos Dados.pdf,,bloco-04,bloco-04,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-introducao-a-ml,Introdução a ML.pdf,,bloco-04,bloco-04,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-,IntroducaoML - atualização2025.pdf,,,,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-algoritmo-de-classificacao-k-nn,Algoritmo de Classificação k-NN.pdf,,bloco-04,bloco-04,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
+,aula01_Introducao_IA.pdf,,,,,obs:Roteiro+SARC,clean,02/03,no,no
+ia-responsável-7c4626,IA Responsável,bloco-01,,bloco-01,,obs:Roteiro+SARC,clean,02/03,yes,no
+o-que-é-inteligência-artificial-ia-oracle-brasil-43437f,O que é Inteligência Artificial (IA)? | Oracle Brasil,bloco-01,,bloco-01,,obs:Roteiro+SARC,clean,02/03,yes,no
+visao-geral-introducao-e-historico,Visão Geral - Introdução e Histórico.pdf,bloco-02,bloco-01,bloco-01,,obs:Roteiro+SARC,clean,04/03,yes,yes
+analise-exploratoria-dos-dados-exemplo-2,Analise Exploratória dos Dados - Exemplo 2.ipynb,bloco-04,bloco-04,bloco-04,,obs:Roteiro+SARC,clean,16/03,yes,no
+,CaracteristicasDosDados.pdf,,,,,obs:Roteiro+SARC,clean,16/03,no,no
+caracteristicas-dos-dados,Características dos Dados.pdf,bloco-04,bloco-04,bloco-04,,obs:Roteiro+SARC,clean,11/03,yes,no
+introducao-a-ml,Introdução a ML.pdf,bloco-03,bloco-04,bloco-04,,obs:Roteiro+SARC,clean,09/03,yes,yes
+,IntroducaoML - atualização2025.pdf,,,,,obs:Roteiro+SARC,clean,09/03,no,no
+algoritmo-de-classificacao-k-nn,Algoritmo de Classificação k-NN.pdf,bloco-05,bloco-04,bloco-04,,obs:Roteiro+SARC,clean,18/03,yes,yes
 ,AprendizadoSupervisionado-ArvoresDeDecisao-Duncan.pdf,,,,,subt-single:Roteiro+SARC (13/04: SARC),clean,13/04,no,no
-,AprendizadoSupervisionado-Classificacao - kNN.pdf,,,,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-artigo-usando-k-nn-em-texto,Artigo usando k-NN em texto.pdf,,,bloco-05,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
+,AprendizadoSupervisionado-Classificacao - kNN.pdf,,,,,obs:Roteiro+SARC,clean,18/03,no,no
+artigo-usando-k-nn-em-texto,Artigo usando k-NN em texto.pdf,bloco-05,,bloco-05,,obs:Roteiro+SARC,clean,18/03,yes,no
 arvores-de-decisao,Árvores de Decisão.pdf,bloco-05,bloco-05,bloco-05,,subt-single:Roteiro+SARC (13/04: SARC),clean,13/04,yes,no
-exemplo-de-programa-com-k-nn-em-java,Exemplo de programa com k-NN (em java).zip,,bloco-04,bloco-04,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
+exemplo-de-programa-com-k-nn-em-java,Exemplo de programa com k-NN (em java).zip,bloco-05,bloco-04,bloco-04,,obs:Roteiro+SARC,clean,18/03,yes,yes
 introducao-a-redes-neurais,Introducao a redes neurais.pdf,bloco-05,bloco-05,bloco-05,,subt-single:Roteiro+SARC,clean,23/03,yes,no
 ,IntroducaoRedesNeurais_2023_02.pdf,,,,,subt-single:Roteiro+SARC,clean,23/03,no,no
 mlp,MLP.pdf,bloco-05,bloco-05,bloco-05,,subt-single:Roteiro+SARC,clean,30/03,yes,no
@@ -28,10 +28,10 @@ como-analisar-resultados-acc-pr-re-e-f1,"Como analisar resultados Acc, Pr, Re e 
 agrupamento-usando-k-means-exemplo-1-ipynb,agrupamento usando k-Means exemplo 1 (.ipynb).ipynb,bloco-06,bloco-06,bloco-06,,subt-single:SARC,clean,20/04,yes,no
 agrupamento-usando-k-means-exemplo-2-ipynb,agrupamento usando k-Means exemplo 2 (.ipynb).ipynb,bloco-06,bloco-06,bloco-06,,subt-single:SARC,clean,20/04,yes,no
 ,AprendizadoNaoSupervisionado-Agrupamento - parte1.pdf,,,,,subt-single:SARC,clean,20/04,no,no
-,AprendizadoNaoSupervisionado-Agrupamento - parte2.pdf,,,,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
+,AprendizadoNaoSupervisionado-Agrupamento - parte2.pdf,,,,,obs:Roteiro+SARC,clean,27/04,no,no
 artigo-usando-agrupamento,Artigo usando agrupamento.pdf,bloco-06,,bloco-06,,subt-single:SARC,clean,20/04,yes,no
 aula-sobre-agrupamento-parte-1-particional,Aula sobre Agrupamento - parte 1 (particional).pdf,bloco-06,bloco-06,bloco-06,,subt-single:SARC,clean,20/04,yes,no
-aula-sobre-agrupamento-parte-2-hierarquico,Aula sobre Agrupamento - parte 2 (hierarquico).pdf,,bloco-07,bloco-06,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
+aula-sobre-agrupamento-parte-2-hierarquico,Aula sobre Agrupamento - parte 2 (hierarquico).pdf,bloco-06,bloco-07,bloco-06,,obs:Roteiro+SARC,clean,27/04,yes,no
 survey-on-clustering,Survey on Clustering.pdf,bloco-06,bloco-06,bloco-06,,subt-single:SARC,clean,20/04,yes,no
 ag-feito-em-aula-pelo-luca,AG feito em aula pelo Luca.py,,bloco-13,bloco-13,,subt-STRADDLE:Card S13 + mat,eco-excluido,,no,no
 algoritmo-dijkstra,Algoritmo Dijkstra.pdf,,bloco-15,bloco-15,,subt-single:Roteiro (01/06) + Card S14,eco-excluido,01/06,no,no
@@ -46,15 +46,15 @@ outros-operadores,Outros operadores.pdf,,bloco-12,bloco-12,,subt-single:Card S12
 programa-exemplo-ag,programa-exemplo AG.zip,,bloco-12,bloco-12,,?,sem-subtopico,,no,no
 programas-exemplo-hc-sa-versao-para-nrainhas-e-distribuicao-de-cargas,"Programas-exemplo HC, SA (versão para NRainhas e Distribuição de Cargas).zip",,bloco-15,bloco-15,,subt-single:Roteiro (01/06) + Card S14,eco-excluido,01/06,no,no
 lista-de-exercicios-i,Lista de Exercicios I.pdf,,bloco-15,bloco-15,lista-de-exercicios-i,subt-STRADDLE:Card S15 + mat,eco-excluido,,no,no
-lista1,lista1.pdf,,bloco-15,bloco-15,lista-de-exercicios-i,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-,P1_2024_02_IA.pdf,,,,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-prova-1-2024-02,Prova 1 2024 02.pdf,,bloco-08,bloco-08,prova-1-2024-02,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-,P2_IA_2024.pdf ,,,,,subt-STRADDLE:SARC,clean,,no,no
-,Agentes.pdf,,,,,subt-STRADDLE:SARC,clean,,no,no
-,P2_IA_2024_02_A_turma30.pdf ,,,,,subt-STRADDLE:SARC,clean,,no,no
-analise-exploratoria-de-dados-exemplo-1,Análise Exploratória de Dados - Exemplo 1.ipynb,,bloco-04,bloco-04,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-exemplo-2-k-nn-com-iriscsv-mais-completo,Exemplo 2 k-NN (com IRIS.csv) - mais completo.ipynb,,bloco-04,bloco-04,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
-exemplo-com-k-nn,Exemplo com k-NN.ipynb,,bloco-05,bloco-04,,subt-STRADDLE:Roteiro+SARC,clean,,no,no
+lista1,lista1.pdf,bloco-15,bloco-15,bloco-15,lista-de-exercicios-i,obs:Roteiro+SARC,clean,01/06,yes,no
+,P1_2024_02_IA.pdf,,,,,obs:Roteiro+SARC,clean,13/05,no,no
+prova-1-2024-02,Prova 1 2024 02.pdf,bloco-08,bloco-08,bloco-08,prova-1-2024-02,obs:Roteiro+SARC,clean,04/05,yes,no
+,P2_IA_2024.pdf ,,,,,obs:SARC,clean,01/07,no,no
+,Agentes.pdf,,,,,obs:SARC,clean,22/06,no,no
+,P2_IA_2024_02_A_turma30.pdf ,,,,,obs:SARC,clean,01/07,no,no
+analise-exploratoria-de-dados-exemplo-1,Análise Exploratória de Dados - Exemplo 1.ipynb,bloco-04,bloco-04,bloco-04,,obs:Roteiro+SARC,clean,16/03,yes,no
+exemplo-2-k-nn-com-iriscsv-mais-completo,Exemplo 2 k-NN (com IRIS.csv) - mais completo.ipynb,bloco-05,bloco-04,bloco-04,,obs:Roteiro+SARC,clean,18/03,yes,yes
+exemplo-com-k-nn,Exemplo com k-NN.ipynb,bloco-05,bloco-05,bloco-04,,obs:Roteiro+SARC,clean,18/03,yes,yes
 exercicio-2-solucao-com-rede-perceptron-atualizado,Exercicio 2 - Solução com rede Perceptron (atualizado).ipynb,bloco-05,bloco-05,bloco-05,,subt-single:Roteiro+SARC,clean,23/03,yes,no
 k-nn-para-classificacao-exemplo-cardio,K-NN para Classificação Exemplo Cardio.ipynb,bloco-05,bloco-05,bloco-05,,subt-single:Roteiro+SARC,clean,23/03,yes,no
 k-nn-para-regressao-exemplo-imc,K-NN para Regressão exemplo IMC.ipynb,bloco-05,bloco-05,bloco-05,,subt-single:Roteiro+SARC,clean,23/03,yes,no
