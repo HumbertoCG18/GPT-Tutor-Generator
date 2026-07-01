@@ -278,6 +278,31 @@ no resíduo, card-window no erro de janela.
 **Validação pendente:** rodar Gemini no conjunto flagged do MF pra PROVAR que o voto
 conserta same-theme (Dafny OO→15). Mecanismo desenhado pra isso; teto real no protótipo.
 
+**Validação EXECUTADA (2026-07-01 — MARCO 0/1, `scripts/marco0_prova_deterministica.py`
++ `scripts/marco1_voto_llm.py`, régua = ground_truth_MF.csv 66 unidades):**
+- **MARCO 0 (sem LLM):** ordinal-no-nome MORREU por medição — prior linear = lift zero;
+  DP-monotone = lift NEGATIVO (importa erro do vizinho: quebrou Dafny1 que o content
+  acertava). Confirma o "gap menor" do design, agora com número. Achado colateral:
+  **len-norm da assinatura (+6.5pp grátis)** — o sumidouro bloco-11 era assinatura
+  gorda, não semântica. Piso determinístico do probe (tokenizer cru): 59.7% no escopo.
+- **MARCO 1 (Gemini 2.5-flash, 18 flagged, ≤cap):** determinístico 3/18 → **LLM 8/18
+  (+5)**. Global escopo-disamb: 58.1% → **66.1% (empata com o funil)**. O LLM converte
+  a classe CONFUSÃO-SEMÂNTICA (sintaxe/semântica proposicional↔predicados: 4/4;
+  isabelle2; plano→bloco-01), mas NÃO converte grão-de-semana same-theme (Dafny1,
+  indução 05↔06, tiposindutivos) nem bibliografia/apoio (0/3 — classe fora de escopo,
+  refatoração de ingestão). Confiança do voto = "alta" em 18/18 → inútil como sinal;
+  não usar como gate.
+- **Gargalo REAL medido = recall do gate D4:** 11 confiante-e-ERRADO ficaram CEGOS pro
+  LLM (gate proxy τ=0.25 pegou 15/26 erros). O lever do teto não é o LLM nem o ordinal:
+  é o gate pegar mais erro (ou escopo do voto ampliar p/ séries same-theme inteiras).
+- **Caveats:** probe é PISO (sem concept-IDF real do `concept_resolver`, sem split
+  avançado); flagged set muda quando o disambiguator real entrar. MARCO 1 prova o
+  MECANISMO (lift existe e é barato), não o teto.
+- **D8 REFINADO pela evidência:** TIER 3 fica, mas o wiring deve (a) ampliar escopo do
+  voto pra "flagged OU membro de série same-theme", (b) ignorar a autoconfiança do LLM,
+  (c) priorizar calibração do gate D4 como fase com número próprio (era "fase 2";
+  agora é o lever dominante).
+
 ## Nota — Frequência de aula = UPSTREAM, não core  [DECIDIDO escopo]
 
 "Card = semana inteira" (IA, 2 aulas/sem) JÁ é tratado genericamente: o range de
