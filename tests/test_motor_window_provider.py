@@ -58,3 +58,26 @@ def test_card_lookup_is_accent_and_case_insensitive():
     # "provas por inducao" (sem acento, minúsculo) casa "Provas por Indução"
     win, prov = resolve_window({"source_section": "provas por inducao"}, ctx)
     assert (win, prov) == (["bloco-05", "bloco-06"], "manual")
+
+
+def test_malformed_card_value_yields_no_window():
+    """Card quebrado (valor não-dict) degrada para funil, não AttributeError."""
+    malformed_cbm = {
+        "Card Quebrado": ["bloco-01"],  # Lista em vez de dict
+        "String Card": "Introdução",    # String em vez de dict
+        "Valid Card": {"block_ids": ["bloco-02"], "source": "manual"},
+    }
+    blocks = [
+        {"id": "bloco-01", "period_start": "2026-03-02"},
+        {"id": "bloco-02", "period_start": "2026-03-04"},
+    ]
+    ctx = MotorContext.from_artifacts(
+        blocks=blocks,
+        card_block_map=malformed_cbm,
+        lessons_index={}
+    )
+    # Malformed cards retornam janela vazia (funil) sem crash:
+    assert resolve_window({"source_section": "Card Quebrado"}, ctx) == ([], "")
+    assert resolve_window({"source_section": "String Card"}, ctx) == ([], "")
+    # Card válido funciona normalmente:
+    assert resolve_window({"source_section": "Valid Card"}, ctx) == (["bloco-02"], "manual")

@@ -19,7 +19,9 @@ def _card_entry(entry: dict, ctx: MotorContext) -> dict:
     if not key:
         return {}
     normalized = {norm_ascii_lower(str(k)): v for k, v in ctx.card_block_map.items()}
-    return normalized.get(key) or {}
+    # Card malformado (não-dict) degrada para janela vazia, não crashes.
+    info = normalized.get(key)
+    return info if isinstance(info, dict) else {}
 
 
 def _window_for_source(entry: dict, ctx: MotorContext, source: str) -> List[str]:
