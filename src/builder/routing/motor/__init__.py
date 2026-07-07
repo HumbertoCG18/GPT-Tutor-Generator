@@ -12,5 +12,9 @@ from src.builder.routing.motor.contracts import (
 )
 from src.builder.routing.motor.window_provider import resolve_window
 from src.builder.routing.motor.disambiguator import disambiguate
+from src.builder.routing.motor.anchor_engine import AnchorEngine, is_out_of_disamb_scope
 
-__all__ = ["AnchorDecision", "MotorContext", "resolve_window", "disambiguate"]
+__all__ = [
+    "AnchorDecision", "MotorContext", "resolve_window", "disambiguate",
+    "AnchorEngine", "is_out_of_disamb_scope",
+]
