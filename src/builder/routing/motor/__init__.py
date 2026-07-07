@@ -10,5 +10,6 @@ from src.builder.routing.motor.contracts import (
     AnchorDecision,
     MotorContext,
 )
+from src.builder.routing.motor.window_provider import resolve_window
 
-__all__ = ["AnchorDecision", "MotorContext"]
+__all__ = ["AnchorDecision", "MotorContext", "resolve_window"]
