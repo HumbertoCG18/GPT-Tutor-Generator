@@ -11,5 +11,6 @@ from src.builder.routing.motor.contracts import (
     MotorContext,
 )
 from src.builder.routing.motor.window_provider import resolve_window
+from src.builder.routing.motor.disambiguator import disambiguate
 
-__all__ = ["AnchorDecision", "MotorContext", "resolve_window"]
+__all__ = ["AnchorDecision", "MotorContext", "resolve_window", "disambiguate"]

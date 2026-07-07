@@ -10,11 +10,13 @@ select_probable_period_for_entry (guard test).
 """
 from __future__ import annotations
 
+import math
 import re
 from typing import List
 
 from src.builder.text.normalize import normalize_match_text
-from src.builder.routing.motor.contracts import MotorContext
+from src.builder.routing.motor.contracts import MotorContext, AnchorDecision
+from src.builder.routing.thresholds import confidence_band
 
 # Espelha marco0._GEN: stems (prefixo 8) que NÃO discriminam bloco.
 _GENERIC_STEMS = frozenset({
@@ -63,3 +65,65 @@ def block_session_tokens(block: dict, ctx: MotorContext) -> set:
         if topic:
             out |= _toks(str(topic))
     return out
+
+
+# Pesos da fusão (calibração TDD — spec §12). session-label (fino) > topic (grosso).
+W_SESSION_LABEL: float = 1.0
+W_TOPIC: float = 0.6
+# Gate D4 proxy (MARCO 0): margem relativa mínima p/ band "alta". Calibração
+# fina COM RECALL = FASE 1; aqui só garante confiante-errado=0 no gold.
+MARGIN_TAU: float = 0.25
+_EPS: float = 1e-9
+
+
+def _block_signature(block: dict, ctx: MotorContext) -> dict:
+    """{token: peso} do bloco: session-label (1ª classe) sobrepõe topic (grosso)."""
+    sig: dict = {}
+    for t in block_topic_tokens(block):
+        sig[t] = W_TOPIC
+    for t in block_session_tokens(block, ctx):
+        sig[t] = W_SESSION_LABEL  # 1ª classe: substitui o peso grosso se colidir
+    return sig
+
+
+def _score(mat: set, sig: dict, m: int, df: dict) -> float:
+    """IDF local (log(1+m/df)) ponderado pelo peso do token, LEN-NORMalizado."""
+    if not sig:
+        return 0.0
+    raw = sum(sig[t] * math.log(1.0 + m / df[t]) for t in (mat & set(sig)))
+    return raw / math.sqrt(len(sig))
+
+
+def disambiguate(entry: dict, window: List[str], ctx: MotorContext, markdown: str = "") -> AnchorDecision:
+    win = list(window or [])
+    blocks = [ctx.block_by_ref(r) for r in win]
+    blocks = [b for b in blocks if b is not None]
+    if not blocks:
+        return AnchorDecision(block_ref="", method="funil", window=win)
+    if len(blocks) == 1:
+        ref = str(blocks[0].get("id") or blocks[0].get("block_uuid") or win[0])
+        return AnchorDecision(block_ref=ref, conf=1.0, band="alta", flag=False,
+                              method="janela-1", window=win)
+
+    mat = entry_tokens(entry, markdown)
+    sigs = [_block_signature(b, ctx) for b in blocks]
+    m = len(blocks)
+    df: dict = {}
+    for sig in sigs:
+        for t in sig:
+            df[t] = df.get(t, 0) + 1
+    scores = [_score(mat, sig, m, df) for sig in sigs]
+
+    order = sorted(range(len(blocks)), key=lambda i: scores[i], reverse=True)
+    i1 = order[0]
+    s1 = scores[i1]
+    s2 = scores[order[1]] if len(order) > 1 else 0.0
+    rel_margin = (s1 - s2) / max(s1, _EPS)
+    confident = s1 > 0 and rel_margin >= MARGIN_TAU
+
+    ref = str(blocks[i1].get("id") or blocks[i1].get("block_uuid") or win[i1])
+    band = "alta" if confident else confidence_band(rel_margin)
+    return AnchorDecision(
+        block_ref=ref, conf=float(rel_margin),
+        band=band, flag=not confident, method="disamb", window=win,
+    )
