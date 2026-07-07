@@ -3,9 +3,10 @@
 
 Reproduz a régua do MARCO 0 (colapso de par, escopo-disamb) chamando o motor de
 produção (src/builder/routing/motor). Verifica:
-  - escopo-disamb par-colapsado >= 59.7% (piso MARCO 0 Config A')
-  - contenção 100% (verdade dentro da janela quando ancora)
-  - confiante-e-errado (band alta + errado) = 0
+  - escopo-disamb par-colapsado >= 59.7% (piso MARCO 0 Config A' — HARD)
+  - contenção fora da janela <= BASELINE_CONTENCAO_FORA (baseline consciente)
+  - confiante-e-errado (band alta + errado) <= BASELINE_CONFIANTE_ERRADO
+    (baseline consciente — dívida FASE 1; regressão acima = FAIL)
 NÃO muta manifest/artefato. Uso:
   python scripts/fase0_prova_motor_MF.py [--repo PATH] [--gold CSV]
 """
@@ -33,6 +34,15 @@ from src.builder.routing.motor.anchor_engine import (                 # noqa: E4
 DEFAULT_REPO = Path.home() / "Documents" / "GitHub" / "Metodos-Formais-Tutor"
 DEFAULT_GOLD = Path(__file__).resolve().parents[1] / "docs" / "reports" / "ground_truth_MF.csv"
 PISO = 59.7
+# Baselines CONSCIENTES da FASE 0 (decisão controller/USER 2026-07-07) — dívida
+# da FASE 1 (calibração com recall). Regressão ACIMA destes números = FAIL.
+# confiante-errado = 7: 2 casos de poluição nome-do-curso no topic do bloco-02
+#   ("introducao metodos formais") + 5 casos gold discriminante=yes onde o
+#   motor reproduz a heurística antiga (piso ainda-não-resolvido, não regressão).
+BASELINE_CONFIANTE_ERRADO = 7
+# contenção-fora = 2: lacuna do card_block_map REAL do repo MF — seção
+# "Verificação de Programas" sem bloco-09. Pendência de curadoria USER.
+BASELINE_CONTENCAO_FORA = 2
 MD_CAP = 6000
 
 
@@ -123,17 +133,19 @@ def main() -> int:
     print("=" * 70)
     print(f"FASE 0 — motor real  repo={repo.name}  escopo-disamb={tot} (par-colapsado)")
     print(f"  escopo-disamb: {ok}/{tot} = {pct:.1f}%   (piso MARCO 0 A' = {PISO}%)")
-    print(f"  contenção fora da janela: {len(contencao_fora)}")
+    print(f"  contenção fora da janela: {len(contencao_fora)} "
+          f"(baseline consciente FASE 0 = {BASELINE_CONTENCAO_FORA})")
     for x in contencao_fora:
         print(f"    {x}")
-    print(f"  confiante-e-errado (band alta): {len(confiante_errado)}")
+    print(f"  confiante-e-errado (band alta): {len(confiante_errado)} "
+          f"(baseline consciente FASE 0 = {BASELINE_CONFIANTE_ERRADO}, dívida FASE 1)")
     for x in confiante_errado:
         print(f"    {x}")
     print("=" * 70)
 
     ok_number = pct + 1e-9 >= PISO
-    ok_conten = not contencao_fora
-    ok_conf = not confiante_errado
+    ok_conten = len(contencao_fora) <= BASELINE_CONTENCAO_FORA
+    ok_conf = len(confiante_errado) <= BASELINE_CONFIANTE_ERRADO
     verdict = ok_number and ok_conten and ok_conf
     print(f"VEREDITO FASE 0: {'PASS' if verdict else 'FAIL'} "
           f"(num={ok_number} conten={ok_conten} conf={ok_conf})")
