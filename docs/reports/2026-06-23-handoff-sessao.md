@@ -60,7 +60,7 @@ Repo principal (`feat/block-stable-id`):
 - `src/ui/dialogs.py` — fix moodle_course_id/m365_filter.
 - `scripts/gold_score.py` (novo) — amostrador + pair_key.
 - `scripts/eval_ground_truth.py` — off-by-one + colapso de par.
-- `docs/reports/2026-06-21-pendencias.md` — várias edições (regra dedup-md5, span-cap refutado, "2 aulas" aposentada, poda IA, correção mlp/introducao, fix moodle_course_id, +mais teu trabalho pré-sessão misturado).
+- `docs/reports/pendencias.md` — várias edições (regra dedup-md5, span-cap refutado, "2 aulas" aposentada, poda IA, correção mlp/introducao, fix moodle_course_id, +mais teu trabalho pré-sessão misturado).
 - `docs/reports/gold_templates/gold_IA_rotular.xlsx` — user rotulou 51/53.
 - `docs/reports/2026-06-23-handoff-sessao.md` — este arquivo.
 

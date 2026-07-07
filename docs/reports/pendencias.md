@@ -1,6 +1,8 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-07-01
+last_updated: 2026-07-07
+> Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
+> mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
 `.mex/AGENTS.md`). Concluído 100% (gate verde) → remover daqui + mover o plano pra `Feitos/`.
 
@@ -100,6 +102,12 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - ~~TCC sem CRONOGRAMA~~ **CORRIGIDO (21/06): claim era STALE (pré-reprocess).** TCC TEM cronograma
   completo pós-reprocess (31 blocos datados, SARC setado, 39/40 entries com "Semana N"). É
   week-anchorable igual IA/ES2. NÃO é blocker.
+- [USER] **card "Verificação de Programas" MF sem bloco-09 na janela** (`as-of 2026-07-07`, fechamento
+  FASE 0 do motor) — no repo MF real a seção tem labels/blocos 10-15 no `card_block_map`, mas falta o
+  bloco-09; probe externo do motor (`scripts/fase0_prova_motor_MF.py`) gera 2 contenção-fora por essa
+  lacuna (baseline aceito como dívida FASE 1, ver DECISION). Ação: curadoria manual do `card_block_map`
+  do repo-tutor MF (incluir bloco-09 na janela da seção) OU reprocess — mutação do repo-tutor é ação
+  humana na GUI, fora do escopo do motor (que é read-only).
 
 ## MEDIÇÃO IA — conversor gold→ground_truth (as-of mundo-63, 2026-06-25)
 
@@ -215,12 +223,47 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 
 ## CODE — limpeza / dead-code (auditoria pronta)
 
-- [CODE] **Tasks D/E** — unificar 3 scorers de unidade dup + vocab/normalizadores ×4. Eval-gated.
-- [CODE] **Task B** `administrative_only` — persistir vs deletar filtros mortos (decisão de produto).
-- [CODE] **fallback keyword** (~600 linhas, index.py) — deletar junto da unificação P2 (fold dos sinais que
-  o frágil tem: "Unidade N" explícita, frases/âncoras) + guard test.
-- [CODE] **Auditoria de artefatos** — mapear quem lê `.timeline_index`/`.card_block_map`/`.lessons_index`/
-  `code_curation`/`.tag_profile`/etc. → morto/vivo/redundante → fundir, cada fusão eval-gated.
+> Revisão spec×código×dívida (2026-07-03, agente read-only): âncoras §8 do spec = **0 drift / 0 missing /
+> 0 divergente** (plano fase 0 parte delas sem re-verificação). Veredito de ordem: unificação D/E **NÃO
+> antecede a fase 0** — primitivas do Disambiguator (`concept_token_weights`/`concept_vector`/
+> `score_lesson_match`, concept_resolver.py) já são a cópia canônica sobre normalize/stopwords canônicos;
+> o gêmeo IDF (`block_token_weights`, file_map.py:882) é o S2 que morre no cutover.
+
+- [CODE] **Tasks D/E (corrigidas 2026-07-03)** — "vocab/normalizadores ×4" JÁ RESOLVIDO no código: todos
+  delegam a `text/normalize.py:normalize_match_text` (variantes só paramétricas); `_collapse_ws` e
+  `UNIT_GENERIC_TOKENS` fonte única. Resta: 3 scorers de unidade dup (`file_map.py:209`,
+  `index.py:1620`, `index.py:1732`) + signal-key mismatch (H3) + predicados (M3). Eval-gated, trilho
+  próprio, DEPOIS da fase 0 (grafo disjunto do motor; unificar antes não reduz risco).
+- [CODE] **Task B** `administrative_only` — persistir vs deletar (decisão de produto). **CONGELADA até os
+  testes de janela da fase 0**: predicado usado DENTRO de `derive_card_block_map`
+  (moodle_labels.py:158-159) = WindowProvider P1/P2; mexer nele altera a janela do motor. Nota da
+  revisão 03/07: os "filtros mortos" originais já não existem — predicado lê `rows` no runtime e é real.
+- [CODE] **fallback keyword (~600 linhas, index.py) — DIVIDIDO 2026-07-03, não deletar em bloco**:
+  (a) ramo fallback de UNIDADE (index.py:2207-2215, dispara só com `assign_units_positional` vazio) =
+  deletável no cutover c/ guard test; (b) cadeia topic-labels (index.py:2174 → 1929/1732) RODA SEMPRE e
+  alimenta UI/badges = VIVA, fora da lista de morto.
+- [CODE] ~~**Auditoria de artefatos**~~ **FEITA 2026-07-03** — mapa de leitores no relatório da revisão:
+  `.timeline_index`/`.card_block_map`/`.lessons_index`/`code_curation`/`.tag_profile` TODOS vivos;
+  `.timeline_index` ganha consumidor novo no motor (`sessions[].label`); cache do motor =
+  `material_curation.json` NOVO, sem colisão com `code_curation`.
+- [CODE] **RUN dedicada de remoção de mortos (decisão user 2026-07-03)** — separada do plano do motor,
+  qualquer hora. Primeiro alvo provado: `_derive_unit_from_topic_match` (index.py:2080; morto em
+  produção; só re-export engine.py:241/2443 + tests/test_file_map_unit_mapping.py:11,647,705,732,836).
+  Remoção pura, sem eval.
+- [CODE] **Mapa de deleção do cutover fase 5 — 5 conflitos, resoluções travadas 2026-07-03**:
+  1. `cronograma_health.py:117-171` reusa o scorer S2 condenado → **fase 4 decide** portar pro scoring
+     do motor ou aposentar (band/flag do Dashboard na mão); fase 5 não deleta antes da decisão.
+  2. `scripts/eval_assignments.py:99` + `scripts/retag_manifest.py:60` injetam `select_probable_period`
+     → **LEGADO-NÃO-USAR desde já**; aposentar no MESMO commit da deleção (régua oficial =
+     `eval_ground_truth.py`, mede via `resolve_temporal_block`, que sobrevive).
+  3. Deleção por **LISTA NOMEADA de símbolos**: morrem `score_entry_against_timeline_block` /
+     `block_token_weights` (S2) / `TOOL_*` (S4) / `select_probable_period_for_entry` /
+     `_best_instructional_block_fallback` / `_card_scoped_block`; FICAM
+     `score_card_evidence_against_entry` + `_score_block_date_match` (file_map.py:737/1078 — usados
+     pelo `concept_resolver` VIVO) e `card_block.py` inteiro. Guard test na fase 0: pacote do motor
+     proibido de importar os condenados.
+  4. = Task B congelada (acima).
+  5. = fallback dividido (acima).
 
 ## CODE — bugs pré-existentes localizados
 
@@ -244,6 +287,16 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 
 ## DECISION
 
+- [DECISION] **Sign-off §9 do spec do motor (2026-07-03)** — resoluções **9** (TCC topic-bridge) e **11**
+  (aceite duplo contenção+cobertura) APROVADAS; **10** (`material_curation.json` keyed md5/pair_key) e
+  **12** (voto aceito cego bounded, autoconfiança ignorada) APROVADAS **CONDICIONAIS à fase 3** —
+  go/no-go da fase 3 decidido DEPOIS do recall medido do gate D4 (fase 1). Sem LLM, flagged = fila
+  humana no Dashboard (MF: 18 casos; voto resolveria ~1/3 — saldo real nas regras finais = **+4**, não
+  +5: `plano.pdf` sem janela não vota; 3 bibliografias nem chegam ao voto). Ambiguidade achada → §12 do
+  spec: MARCO 1 converteu `plano.pdf` SEM janela, mas regra "voto bounded à janela" o proíbe — definir
+  na fase 3. Escopo de ciclo: reorg física de `scripts/` só PÓS-motor (mapa adiado); modularização de
+  `dialogs.py` (4.998 linhas) e sentença dos HTMLs (02–18/06, pré-motor) FORA deste ciclo; remoção de
+  mortos = run dedicada (ver CODE).
 - [DECISION] **bloco-15 over-merge (IA)** — bloco-15 = 01–08/06; merge **Semana 14** (dijkstra/hc-sa, sess 01,03/06)
   + **Semana 15** (minimax/listas, sess 08/06). **still-valid, verificado as-of reprocess IA 7561f5c.** Cura de timeline separada.
 - [DECISION] **5 IA busca — bloco-12 vs bloco-13** — section "Semana 12 - Algoritmos de Busca", caem em **bloco-12**
@@ -254,8 +307,44 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   **LLM 3/18→8/18 no flagged** (converte confusão-semântica, não grão-de-semana); global escopo-disamb
   58.1%→66.1% (empata funil). **Gargalo real = recall do gate D4** (11 confiante-errado cegos pro LLM).
   Scripts novos (uncommitted): `marco0_prova_deterministica.py`, `marco1_voto_llm.py`; sidecars
-  `marco0_flagged_MF.json`, `marco1_votes_MF.json`. Próximo: spec do motor incorpora D8-refinado
-  (voto em "flagged OU série same-theme", ignorar autoconfiança do LLM, gate D4 = fase com número).
+  `marco0_flagged_MF.json`, `marco1_votes_MF.json`. → **SPEC ESCRITO (2026-07-03)**:
+  `docs/superpowers/specs/2026-07-01-motor-atribuicao-spec.md` incorpora D8-refinado (voto em "flagged OU
+  série same-theme", autoconfiança ignorada, gate D4 = fase 1 com recall medido), TIER 0 dup-grouping
+  (md5-gêmeos = 1 decisão), exclusão bibliografia/apoio do motor, aceite contenção+cobertura por provider,
+  cache `material_curation.json` keyed por md5/pair_key (seed = votos MARCO 1). Resoluções de conflito na
+  §9 do spec (TCC = topic-bridge, NÃO parse ordinal de "Semana N"). Próximo: plano fase 0 (`writing-plans`).
+- [DERIVADO] **FASE 0 do motor de atribuição FECHADA (as-of 2026-07-07; código COMMITADO em 12 commits
+  `f75d22b..fff7d47` na branch `feat/motor-atribuicao` — inclui o fix de review final
+  `fff7d47` (janela-1 gated no tamanho da janela + funil unificado); papelada docs ainda sem commit)** —
+  pacote isolado `src/builder/routing/motor/` (contracts, window_provider, disambiguator, anchor_engine),
+  READ-ONLY, **NÃO integrado ao pipeline** (integração = FASE 4). Regressão global: suíte inteira
+  **1688 passed / 4 skipped, 0 falha** (as-of pré-fix-final; +1 teste ref-fantasma depois); 28 testes do
+  motor + 6 `tests/test_anchor_placement.py`
+  (call-site velho intacto, FASE 0 é ADITIVA) todos verdes.
+  **Probe externo** (`scripts/fase0_prova_motor_MF.py`, régua par-colapsada `pair_key`+`scorable==yes`):
+  escopo-disamb MF **36/58 = 62.1%** (piso MARCO 0 A' = 59.7%, folga +2.4pp) → **VEREDITO FASE 0: PASS**
+  (exit 0).
+  **Gold embutido** (`tests/test_motor_golden_mf.py`, roda em CI): 45 casos mensuráveis; contenção
+  **100%**; confiante-errado **0**; janela-1 OK.
+  **Calibração final:** `MARGIN_TAU=0.45`, `W_SESSION_LABEL=1.0`, `W_TOPIC=0.6`; gate estrutural
+  (decisão user 2026-07-07): `confident` exige `s2>0` (competição real) e decisão `flagged` nunca sai da
+  band "alta" (capada em "media" — fecha vazamento de `confidence_band` no ramo flagged, `BAND_HIGH=0.50`).
+  **Dívida FASE 1 (baselines conscientes aceitos no probe):** confiante-errado ≤7 e contenção-fora ≤2 na
+  régua externa. Composição dos 7 confiante-errado: **2 poluição nome-do-curso** (`topic_text` do
+  bloco-02 = "introducao metodos formais" contamina materiais que citam o nome da disciplina — candidato
+  de calibração FASE 1) + **5 casos gold `discriminante=yes`** onde o motor reproduz a heurística antiga
+  (recall do gate/TIER 3). Motor = subset EXATO dos 11 confiante-errado do marco0 (gate novo cortou
+  11→7); seleção reproduz Config A' byte-a-byte.
+  **Tensão "Verificação de Programas" (prevista no plano):** no gold EMBUTIDO o card tem `block_ids: []`
+  → funil na CI, não exercível. No repo REAL a janela existe (labels, blocos 10-15) mas SEM bloco-09 →
+  as 2 contenção-fora do probe. **PENDÊNCIA [USER]:** curadoria do `card_block_map` do repo MF (incluir
+  bloco-09 na janela da seção "Verificação de Programas") ou reprocess; mutação do repo-tutor é ação do
+  user na GUI — ver item espelhado em USER-SIDE.
+  Guard AST do motor endurecido além do plano previsto (star-imports proibidos + acesso
+  module-qualified detectado).
+  **Fixes do review final (commit `fff7d47`):** fast-path janela-1 e funil `block_ref=""`
+  corrigidos no fechamento (review final) — Protocols de `contracts.py` ainda divergem das
+  assinaturas reais (`markdown`; shadowing `AnchorEngine`) = item FASE 1.
 - ~~A1 (lessons no fusor) — brainstorming antes de spec~~ **SUPERSEDED (2026-07-01)** — ver entrada
   Degrau 3a acima; sinal absorvido pelo motor, plano velho mirava o fusor que morre no cutover.
 - [DECISION/CODE] **Refatoração futura: ingestão de material de APOIO (durável/intent, 2026-07-01)** — artigos

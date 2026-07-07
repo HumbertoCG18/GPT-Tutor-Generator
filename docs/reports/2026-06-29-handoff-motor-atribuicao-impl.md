@@ -51,7 +51,7 @@ provider (filename-date + section-topic, D10). `Disambiguator` é compartilhado.
 - `code_curation.json` = artefato gerado (não-fonte). Prune stale antes de ler, write atômico.
 - Antes de chamar `mcp__code-review-graph__*` ou `mcp__token-savior__*`: `ToolSearch select:<name>`
   pra carregar o schema, senão `InputValidationError`.
-- Arquivamento de concluídos + tracker `docs/reports/2026-06-21-pendencias.md` sempre atualizado.
+- Arquivamento de concluídos + tracker `docs/reports/pendencias.md` sempre atualizado.
 - Idioma PT-BR. Sem emoji/em-dash/fluff em output de código/doc.
 
 ## 4. Âncoras de código (onde o motor vive / o que reusar)

@@ -151,7 +151,7 @@ Repo IA: `C:/Users/Humberto/Documents/GitHub/Inteligencia-Artifical-Tutor` (typo
 
 ---
 
-## 8. PENDÊNCIAS (em `docs/reports/2026-06-21-pendencias.md`)
+## 8. PENDÊNCIAS (em `docs/reports/pendencias.md`)
 
 Seção nova **"MEDIÇÃO IA — conversor gold→ground_truth (as-of mundo-63)"** com: straddle-gold-method, 21-straddle-batch-SARC, 16-unjoined (poda/never-import split), denominador-33, 2-mecanismos-FAIL, calibração-IRIS, pin-sweep, UX-trap-aviso-GUI, protocolo-regen-CSV, 80%-pós-2-camadas. Tudo carimbado `as-of`.
 

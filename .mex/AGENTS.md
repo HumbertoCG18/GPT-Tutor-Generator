@@ -30,7 +30,7 @@ A desktop tool (Python/tkinter) that converts academic PDFs into structured GitH
   para a subpasta de concluídos do diretório de origem: `docs/superpowers/plans/Feitos/`,
   `docs/superpowers/specs/Feitos/`, `docs/reports/Feitos/`, `.git/sdd/Feitos/`. Usar `git mv` quando
   trackeado (preserva histórico). A RAIZ desses diretórios só contém trabalho em andamento ou a-fazer.
-- **Tracker de pendências (NÃO-NEGOCIÁVEL):** manter `docs/reports/2026-06-21-pendencias.md` SEMPRE
+- **Tracker de pendências (NÃO-NEGOCIÁVEL):** manter `docs/reports/pendencias.md` SEMPRE
   atualizado: ao concluir um item, removê-lo da lista viva e registrá-lo na seção "Concluído"; ao
   descobrir nova pendência, adicioná-la com tag [USER|CODE|DECISION].
 

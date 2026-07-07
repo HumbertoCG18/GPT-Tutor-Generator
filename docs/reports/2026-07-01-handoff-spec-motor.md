@@ -22,7 +22,7 @@ status: marco de medição 100% FECHADO. Próximo passo = **spec** (`writing-pla
 - Probes/scripts de CC = READ-ONLY nos repos-tutor.
 - Lógica nova em `src/builder/routing/`, NUNCA `engine.py`. Gemini = `google-genai` lazy (`from google import genai`).
 - ANCHOR-ONLY: motor escreve `temporal_block_id`; funil (`computed`) = piso intacto. Cascata `temporal>manual>computed`.
-- Tracker `docs/reports/2026-06-21-pendencias.md` sempre atualizado; concluído vai pra `Feitos/`.
+- Tracker `docs/reports/pendencias.md` sempre atualizado; concluído vai pra `Feitos/`.
 - PT-BR; UTF-8 shim em todo script novo (console cp1252).
 
 ## 2. Git — estado exato
@@ -64,7 +64,7 @@ Critério de DONE (inalterado): sem-regressão vs gold; IA não pode cair.
 
 1. `docs/reports/2026-06-28-motor-atribuicao-decisoes.md` — D0-D13 + SÍNTESE + **"Validação EXECUTADA" no D8** (números do MARCO 0/1).
 2. Este handoff (seção 4).
-3. `docs/reports/2026-06-21-pendencias.md` — tracker vivo (baselines, superseded, cobertura de janela).
+3. `docs/reports/pendencias.md` — tracker vivo (baselines, superseded, cobertura de janela).
 4. `scripts/marco0_prova_deterministica.py` + `scripts/marco1_voto_llm.py` — provas reproduzíveis; sidecars `marco0_flagged_MF.json`/`marco1_votes_MF.json`.
 5. Âncoras de código: tabela do handoff 29/06 (§4) segue válida (`anchor_placement.py`, `moodle_labels.py:derive_card_block_map`, `concept_resolver.py:score_lesson_match`, `file_map.py:resolve_temporal_block`, `entry_signals.py`).
 
