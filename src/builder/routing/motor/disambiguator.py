@@ -70,9 +70,10 @@ def block_session_tokens(block: dict, ctx: MotorContext) -> set:
 # Pesos da fusão (calibração TDD — spec §12). session-label (fino) > topic (grosso).
 W_SESSION_LABEL: float = 1.0
 W_TOPIC: float = 0.6
-# Gate D4 proxy (MARCO 0): margem relativa mínima p/ band "alta". Calibração
-# fina COM RECALL = FASE 1; aqui só garante confiante-errado=0 no gold.
-MARGIN_TAU: float = 0.25
+# Gate D4 proxy (MARCO 0): margem relativa mínima p/ band "alta". Calibrado no
+# gold MF embutido (decisão controller 2026-07-07): 0.45 supera o 0.441 do case
+# 'intro' -> confiante-errado=0. Calibração fina COM RECALL = FASE 1.
+MARGIN_TAU: float = 0.45
 _EPS: float = 1e-9
 
 
@@ -119,10 +120,20 @@ def disambiguate(entry: dict, window: List[str], ctx: MotorContext, markdown: st
     s1 = scores[i1]
     s2 = scores[order[1]] if len(order) > 1 else 0.0
     rel_margin = (s1 - s2) / max(s1, _EPS)
-    confident = s1 > 0 and rel_margin >= MARGIN_TAU
+    # Confiança exige COMPETIÇÃO real (s2>0): runner-up zerado = sem evidência
+    # de disputa, nunca confiante (mata rel_margin=1.0 degenerado no gold MF —
+    # decisão controller 2026-07-07).
+    confident = s1 > 0 and s2 > 0 and rel_margin >= MARGIN_TAU
 
     ref = str(blocks[i1].get("id") or blocks[i1].get("block_uuid") or win[i1])
-    band = "alta" if confident else confidence_band(rel_margin)
+    if confident:
+        band = "alta"
+    else:
+        # Decisão flagada NUNCA carrega band "alta" (fecha o vazamento
+        # BAND_HIGH=0.50 de confidence_band — decisão controller 2026-07-07).
+        band = confidence_band(rel_margin)
+        if band == "alta":
+            band = "media"
     return AnchorDecision(
         block_ref=ref, conf=float(rel_margin),
         band=band, flag=not confident, method="disamb", window=win,
