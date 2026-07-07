@@ -48,3 +48,35 @@ def test_multiblock_window_runs_disambiguator_and_sets_provider():
     assert d.block_ref == "bloco-06"      # session-label 'arvores' discrimina
     assert d.provider == "manual"
     assert d.method == "disamb"
+
+
+def test_janela_com_ref_fantasma_nao_vira_confianca():
+    """Ref obsoleto no card_block_map (drift) não pode virar confiança "alta"
+    sem evidência de token. Janela com 2 refs onde só 1 resolve deve cair no
+    scoring normal (1 bloco resolvível => s2=0 => flagado/media), não no
+    fast-path janela-1. Janela 100% fantasma (nenhum ref resolve) => funil."""
+    ctx = MotorContext.from_artifacts(
+        blocks=BLOCKS,
+        card_block_map={
+            **CBM,
+            "Janela Fantasma": {"block_ids": ["bloco-05", "bloco-fantasma"], "source": "manual"},
+            "Janela Toda Fantasma": {"block_ids": ["bloco-x", "bloco-y"], "source": "manual"},
+        },
+        lessons_index={},
+    )
+    eng = AnchorEngine()
+
+    d = eng.resolve(
+        {"category": "material", "source_section": "Janela Fantasma",
+         "title": "Prova por indução"},
+        ctx,
+    )
+    assert d is not None
+    assert d.band != "alta"
+    assert d.flag is True
+
+    assert eng.resolve(
+        {"category": "material", "source_section": "Janela Toda Fantasma",
+         "title": "Qualquer coisa"},
+        ctx,
+    ) is None

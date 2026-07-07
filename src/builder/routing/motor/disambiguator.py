@@ -101,7 +101,11 @@ def disambiguate(entry: dict, window: List[str], ctx: MotorContext, markdown: st
     blocks = [b for b in blocks if b is not None]
     if not blocks:
         return AnchorDecision(block_ref="", method="funil", window=win)
-    if len(blocks) == 1:
+    # Fast-path janela-1 exige que a JANELA ORIGINAL tenha 1 ref, não apenas
+    # os resolvíveis: ref obsoleto no card_block_map (drift) não pode virar
+    # confiança "alta"/1.0 sem evidência de token — cai no scoring normal,
+    # onde 1 bloco resolvível => s2=0 => flagado/media (honesto).
+    if len(win) == 1 and len(blocks) == 1:
         ref = str(blocks[0].get("id") or blocks[0].get("block_uuid") or win[0])
         return AnchorDecision(block_ref=ref, conf=1.0, band="alta", flag=False,
                               method="janela-1", window=win)

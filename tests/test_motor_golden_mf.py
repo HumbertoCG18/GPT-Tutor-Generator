@@ -1,8 +1,6 @@
 import json
 from pathlib import Path
 
-import pytest
-
 from src.builder.routing.motor.contracts import MotorContext
 from src.builder.routing.motor.anchor_engine import AnchorEngine, is_out_of_disamb_scope
 from src.utils.helpers import norm_ascii_lower
