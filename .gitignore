@@ -219,6 +219,7 @@ __marimo__/
 *.pdf
 
 # LLM context dirs (ferramentas internas, não commitadas)
+graphify-out/
 .LLM_Context/
 .agents/
 .claude/
