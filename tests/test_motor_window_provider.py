@@ -173,3 +173,48 @@ class TestExtractDateInName:
         from src.builder.routing.motor.window_provider import extract_date_in_name
         assert extract_date_in_name({"title": "Plano de Ensino"}) is None
         assert extract_date_in_name({}) is None
+
+
+class TestProviderTopic:
+    @staticmethod
+    def _ctx():
+        from src.builder.routing.motor.contracts import MotorContext
+        blocks = [
+            {"id": "bloco-16", "period_start": "2026-05-06", "topic_text": "",
+             "sessions": [{"date": "2026-05-06", "label": "prova p1 prova"}]},
+            {"id": "bloco-21", "period_start": "2026-05-27",
+             "topic_text": "reducoes polinomiais",
+             "sessions": [{"date": "2026-05-27", "label": "reducoes np"}]},
+            {"id": "bloco-22", "period_start": "2026-06-03",
+             "topic_text": "complexidade tempo classe hard reducao problemas pspace complete",
+             "sessions": [{"date": "2026-06-03", "label": "complexidade de tempo classe np hard"}]},
+        ]
+        return MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+
+    def test_topico_com_stem_prefix(self):
+        from src.builder.routing.motor.window_provider import provider_topic
+        # caso real que falhava cru: "completude" ~ "complexidade"/"complete"
+        win = provider_topic({"source_section": "Semana 12 - NP-completude"}, self._ctx())
+        assert "bloco-22" in win
+
+    def test_ordinal_nunca_vira_janela(self):
+        from src.builder.routing.motor.window_provider import provider_topic
+        # F-TCC: card só-ordinal (sem tópico) NÃO rende janela por week-math
+        assert provider_topic({"source_section": "Semana 5 -"}, self._ctx()) == []
+        assert provider_topic({"source_section": "Semana 5"}, self._ctx()) == []
+
+    def test_section_sem_padrao_semana_rende_vazio(self):
+        from src.builder.routing.motor.window_provider import provider_topic
+        # provider é do padrão "Semana N - Tópico"; outros cards ficam com P1/P2
+        assert provider_topic(
+            {"source_section": "Verificação de Programas"}, self._ctx()) == []
+
+    def test_token_curto_curado_casa(self):
+        from src.builder.routing.motor.window_provider import provider_topic
+        win = provider_topic({"source_section": "Semana 10 - Revisão para P1 e Prova P1"},
+                             self._ctx())
+        assert "bloco-16" in win
+
+    def test_cascata_topic_por_ultimo(self):
+        from src.builder.routing.motor.window_provider import resolve_window, _CASCADE
+        assert [name for _, name in _CASCADE] == ["manual", "labels", "data", "topic"]

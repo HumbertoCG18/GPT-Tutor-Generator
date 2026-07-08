@@ -10,6 +10,8 @@ from typing import List, Tuple
 
 from src.utils.helpers import norm_ascii_lower
 from src.builder.timeline.card_block import normalized_card_map
+from src.builder.text.normalize import normalize_match_text
+from src.builder.routing.motor.disambiguator import block_topic_tokens, block_session_tokens, _GENERIC_STEMS
 
 from src.builder.routing.motor.contracts import MotorContext
 
@@ -76,11 +78,49 @@ def provider_date(entry: dict, ctx: MotorContext) -> List[str]:
     return []
 
 
+# P4 — topic-bridge (spec §3 [Δ item 9]; F-TCC: o N ordinal NUNCA vira janela).
+_SEMANA_TOPIC_RE = re.compile(r"^\s*semana\s*\d+\s*-\s*(.+)$", re.IGNORECASE)
+TOPIC_STEM_LEN: int = 6
+TOPIC_MIN_TOKEN: int = 2
+
+
+def _topic_tokens(topic: str) -> set:
+    """Tokens do TÓPICO curado do card: >=2 chars (segura np/t2), sem genéricos."""
+    out = set()
+    for t in normalize_match_text(str(topic or "")).split():
+        if len(t) >= TOPIC_MIN_TOKEN and not t.isdigit() and t[:8] not in _GENERIC_STEMS:
+            out.add(t)
+    return out
+
+
+def _stems(tokens: set) -> set:
+    return {t[:TOPIC_STEM_LEN] for t in tokens}
+
+
+def provider_topic(entry: dict, ctx: MotorContext) -> List[str]:
+    """P4 — TÓPICO do card "Semana N - Tópico" ↔ topic_text/sessions[].label."""
+    m = _SEMANA_TOPIC_RE.match(str(entry.get("source_section") or ""))
+    if not m:
+        return []
+    tstems = _stems(_topic_tokens(m.group(1)))
+    if not tstems:
+        return []  # card só-ordinal: week-math PROIBIDO -> sem janela
+    refs = []
+    for b in ctx.blocks:
+        sig = block_topic_tokens(b) | block_session_tokens(b, ctx)
+        if tstems & _stems(sig):
+            ref = str(b.get("id") or "")
+            if ref:
+                refs.append(ref)
+    return refs
+
+
 # Cascata em ordem de CONFIABILIDADE. Cada par (fn, nome).
 _CASCADE = (
     (provider_manual, "manual"),
     (provider_labels, "labels"),
     (provider_date, "data"),
+    (provider_topic, "topic"),
 )
 
 
