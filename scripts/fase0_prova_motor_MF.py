@@ -63,12 +63,15 @@ def _md_text(repo: Path, e: dict) -> str:
     return ""
 
 
-def build_context(repo: Path) -> MotorContext:
+def build_context(repo: Path, course_name: str = "") -> MotorContext:
     tl = _load(repo, "course/.timeline_index.json")
     blocks = tl if isinstance(tl, list) else (tl.get("blocks") or [])
     cbm = _load(repo, "course/.card_block_map.json")
     lessons = (_load(repo, "course/.lessons_index.json") or {}).get("by_date", {})
-    return MotorContext.from_artifacts(blocks=blocks, card_block_map=cbm, lessons_index=lessons)
+    return MotorContext.from_artifacts(
+        blocks=blocks, card_block_map=cbm, lessons_index=lessons,
+        course_name=course_name,
+    )
 
 
 def display_of(ctx: MotorContext, ref: str) -> str:
@@ -98,11 +101,12 @@ def main() -> int:
         return 2
 
     man = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+    course_name = str((man.get("course") or {}).get("course_name") or "")
     byid = {}
     for e in man.get("entries") or []:
         byid.setdefault(str(e.get("id")), e)
 
-    ctx = build_context(repo)
+    ctx = build_context(repo, course_name)
     eng = AnchorEngine()
 
     rows = [r for r in csv.DictReader(open(gold_path, encoding="utf-8"))

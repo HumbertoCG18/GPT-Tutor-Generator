@@ -14,6 +14,7 @@ def _load_ctx_and_cases():
         blocks=data["timeline"]["blocks"],  # gold embute blocos em timeline.blocks (mesmo shape de test_resolver_fusion.py)
         card_block_map=data["card_block_map"],
         lessons_index={},  # gold não embute lessons_index; session-label vem de sessions[].label
+        course_name=str(data.get("subject") or ""),
     )
     return ctx, data["cases"]
 

@@ -32,10 +32,14 @@ class MotorContext:
     """Contexto READ-ONLY de um curso: blocos + card_block_map + lessons_index.
 
     blocks ficam ORDENADOS por period_start; _by_ref indexa id E block_uuid.
+    course_name = nome da disciplina (manifest course.course_name / gold
+    subject); tokens dele são BOILERPLATE local e saem das assinaturas de
+    bloco no disambiguator ("" = sem desconto, comportamento FASE 0).
     """
     blocks: List[dict]
     card_block_map: Dict[str, dict]
     lessons_index: Dict[str, str]  # {date_iso: topico} (by_date do .lessons_index.json)
+    course_name: str = ""
     _by_ref: Dict[str, dict] = field(default_factory=dict, repr=False)
 
     @classmethod
@@ -45,6 +49,7 @@ class MotorContext:
         blocks: List[dict],
         card_block_map: Dict[str, dict],
         lessons_index: Dict[str, str],
+        course_name: str = "",
     ) -> "MotorContext":
         ordered = sorted(blocks or [], key=lambda b: str(b.get("period_start") or ""))
         by_ref: Dict[str, dict] = {}
@@ -56,6 +61,7 @@ class MotorContext:
             blocks=ordered,
             card_block_map=dict(card_block_map or {}),
             lessons_index=dict(lessons_index or {}),
+            course_name=str(course_name or ""),
             _by_ref=by_ref,
         )
 

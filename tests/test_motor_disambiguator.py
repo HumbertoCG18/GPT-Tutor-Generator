@@ -94,3 +94,35 @@ def test_tie_flags_and_is_not_high_band():
     assert d.band != "alta"
     assert d.block_ref in {"bloco-05", "bloco-06"}
     assert d.window == ["bloco-05", "bloco-06"]
+
+
+def test_nome_do_curso_nao_pontua_assinatura():
+    # bloco-A só tem tokens do nome do curso; bloco-B tem token real do material.
+    blocks = [
+        {"id": "bloco-A", "period_start": "2026-03-01",
+         "topic_text": "introducao metodos formais", "sessions": []},
+        {"id": "bloco-B", "period_start": "2026-03-08",
+         "topic_text": "logica predicados", "sessions": []},
+    ]
+    ctx = MotorContext.from_artifacts(
+        blocks=blocks, card_block_map={}, lessons_index={},
+        course_name="Metodos-Formais",
+    )
+    entry = {"title": "exercicios metodos formais logica"}
+    d = disambiguate(entry, ["bloco-A", "bloco-B"], ctx)
+    # sem o desconto, bloco-A ganharia por "metodos"+"formais" (2 tokens vs 1)
+    assert d.block_ref == "bloco-B"
+
+
+def test_course_name_default_vazio_preserva_fase0():
+    # sem course_name, comportamento FASE 0: nome do curso pontua normalmente
+    blocks = [
+        {"id": "bloco-A", "period_start": "2026-03-01",
+         "topic_text": "introducao metodos formais", "sessions": []},
+        {"id": "bloco-B", "period_start": "2026-03-08",
+         "topic_text": "logica predicados", "sessions": []},
+    ]
+    ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+    entry = {"title": "exercicios metodos formais"}
+    d = disambiguate(entry, ["bloco-A", "bloco-B"], ctx)
+    assert d.block_ref == "bloco-A"

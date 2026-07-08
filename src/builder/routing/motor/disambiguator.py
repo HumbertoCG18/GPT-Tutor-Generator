@@ -78,11 +78,16 @@ _EPS: float = 1e-9
 
 
 def _block_signature(block: dict, ctx: MotorContext) -> dict:
-    """{token: peso} do bloco: session-label (1ª classe) sobrepõe topic (grosso)."""
+    """{token: peso} do bloco: session-label (1ª classe) sobrepõe topic (grosso).
+
+    Tokens do NOME DO CURSO (ctx.course_name) saem da assinatura: são
+    boilerplate local (2 confiante-errado externos na FASE 0 vinham do
+    topic "introducao metodos formais" do bloco-02 — dívida do tracker)."""
+    drop = _toks(ctx.course_name)
     sig: dict = {}
-    for t in block_topic_tokens(block):
+    for t in block_topic_tokens(block) - drop:
         sig[t] = W_TOPIC
-    for t in block_session_tokens(block, ctx):
+    for t in block_session_tokens(block, ctx) - drop:
         sig[t] = W_SESSION_LABEL  # 1ª classe: substitui o peso grosso se colidir
     return sig
 
