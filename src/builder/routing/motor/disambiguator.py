@@ -70,10 +70,13 @@ def block_session_tokens(block: dict, ctx: MotorContext) -> set:
 # Pesos da fusão (calibração TDD — spec §12). session-label (fino) > topic (grosso).
 W_SESSION_LABEL: float = 1.0
 W_TOPIC: float = 0.6
-# Gate D4 proxy (MARCO 0): margem relativa mínima p/ band "alta". Calibrado no
-# gold MF embutido (decisão controller 2026-07-07): 0.45 supera o 0.441 do case
-# 'intro' -> confiante-errado=0. Calibração fina COM RECALL = FASE 1.
-MARGIN_TAU: float = 0.45
+# Calibração FASE 1 (grade com recall, 2026-07-07): grade 4x3x3 na régua
+# externa MF mostrou acc par-colapsada invariante a W_TOPIC/W_SESSION_LABEL
+# (70.7% em todos os 36 pontos); só MARGIN_TAU move confiante-errado/recall.
+# 0.55 é o mínimo de confiante-errado (5->3) com recall máximo (0.706->0.824)
+# na grade, com W_TOPIC/W_SESSION_LABEL mantidos (empate de 6 pontos; menor
+# diff das constantes vigentes escolhido no desempate).
+MARGIN_TAU: float = 0.55
 _EPS: float = 1e-9
 
 

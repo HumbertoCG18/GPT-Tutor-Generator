@@ -149,15 +149,20 @@ def test_vitoria_so_por_peso_sem_token_exclusivo_flagra():
 
 
 def test_token_exclusivo_permite_confianca():
-    # best casa "hoare" (exclusivo) + "verificacao"; runner casa só "verificacao"
+    # best casa "hoare"+"axiomatica" (exclusivos) + "verificacao"; runner casa
+    # só "verificacao". Margem calculada: rel_margin=0.661 (dois exclusivos p/
+    # folga acima do MARGIN_TAU=0.55 pós-calibração FASE 1, 2026-07-07; com só
+    # 1 exclusivo a margem cai p/ 0.526, que passava no MARGIN_TAU=0.45 da
+    # FASE 0 mas não sobrevive à recalibração — ajustado para continuar
+    # exercendo a mesma intenção qualitativa do teste).
     blocks = [
         {"id": "bloco-A", "period_start": "2026-03-01",
-         "topic_text": "verificacao logica hoare", "sessions": []},
+         "topic_text": "verificacao logica hoare axiomatica", "sessions": []},
         {"id": "bloco-B", "period_start": "2026-03-08",
          "topic_text": "verificacao modelos", "sessions": []},
     ]
     ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
-    entry = {"title": "deducao hoare verificacao"}
+    entry = {"title": "deducao hoare verificacao axiomatica"}
     d = disambiguate(entry, ["bloco-A", "bloco-B"], ctx)
     assert d.block_ref == "bloco-A"
     assert d.flag is False
