@@ -76,9 +76,14 @@ class WindowProvider(Protocol):
 
 class Disambiguator(Protocol):
     """Escolhe DENTRO da janela (só roda se |janela| > 1)."""
-    def __call__(self, entry: dict, window: List[str], ctx: MotorContext) -> AnchorDecision: ...
+    def __call__(self, entry: dict, window: List[str], ctx: MotorContext,
+                 markdown: str = "") -> AnchorDecision: ...
 
 
-class AnchorEngine(Protocol):
-    """Orquestra tiers; None = sem âncora -> funil."""
-    def resolve(self, entry: dict, ctx: MotorContext) -> Optional[AnchorDecision]: ...
+class AnchorEngineProtocol(Protocol):
+    """Orquestra tiers; None = sem âncora -> funil.
+
+    Nome com sufixo Protocol: a implementação concreta anchor_engine.AnchorEngine
+    tinha shadowing com este Protocol na FASE 0 (dívida do tracker)."""
+    def resolve(self, entry: dict, ctx: MotorContext,
+                markdown: str = "") -> Optional[AnchorDecision]: ...
