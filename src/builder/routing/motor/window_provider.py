@@ -43,10 +43,44 @@ def provider_labels(entry: dict, ctx: MotorContext) -> List[str]:
     return _window_for_source(entry, ctx, "labels")
 
 
+def _modal_years(ctx: MotorContext) -> List[str]:
+    """Anos das sessions, mais frequente primeiro (curso pode virar o ano)."""
+    counts: dict = {}
+    for b in ctx.blocks:
+        for s in b.get("sessions") or []:
+            y = str(s.get("date") or "")[:4]
+            if y.isdigit():
+                counts[y] = counts.get(y, 0) + 1
+    return sorted(counts, key=lambda y: counts[y], reverse=True)
+
+
+def provider_date(entry: dict, ctx: MotorContext) -> List[str]:
+    """P3 — DATA-no-nome (DD.MM) -> sessão do cronograma -> bloco (janela ~1).
+
+    0 colisão medida no corpus SO; se uma data cair em 2 blocos a janela
+    carrega ambos (honesto — o disambiguator decide)."""
+    dm = extract_date_in_name(entry)
+    if not dm:
+        return []
+    dd, mm = dm
+    for year in _modal_years(ctx):
+        iso = f"{year}-{mm:02d}-{dd:02d}"
+        refs = [
+            str(b.get("id") or "")
+            for b in ctx.blocks
+            if any(str(s.get("date") or "") == iso for s in b.get("sessions") or [])
+        ]
+        refs = [r for r in refs if r]
+        if refs:
+            return refs
+    return []
+
+
 # Cascata em ordem de CONFIABILIDADE. Cada par (fn, nome).
 _CASCADE = (
     (provider_manual, "manual"),
     (provider_labels, "labels"),
+    (provider_date, "data"),
 )
 
 

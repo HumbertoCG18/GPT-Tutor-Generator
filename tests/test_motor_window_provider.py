@@ -95,6 +95,51 @@ def test_card_entry_usa_normalizacao_unica_do_card_block():
     assert "verificacao de programas" in normalized_card_map(cbm)
 
 
+def _ctx_com_datas():
+    from src.builder.routing.motor.contracts import MotorContext
+    blocks = [
+        {"id": "bloco-01", "period_start": "2026-03-03",
+         "sessions": [{"date": "2026-03-03", "label": "apresentacao"}]},
+        {"id": "bloco-02", "period_start": "2026-03-10",
+         "sessions": [{"date": "2026-03-10", "label": "processos"},
+                      {"date": "2026-03-12", "label": "threads"}]},
+    ]
+    return MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+
+
+class TestProviderDate:
+    def test_data_casa_sessao(self):
+        from src.builder.routing.motor.window_provider import provider_date
+        win = provider_date({"title": "10.03 Processos"}, _ctx_com_datas())
+        assert win == ["bloco-02"]
+
+    def test_data_sem_sessao_rende_vazio(self):
+        from src.builder.routing.motor.window_provider import provider_date
+        # 02.05: data válida mas nenhuma sessão nesse dia -> [] (funil/próximo provider)
+        assert provider_date({"title": "02.05 Segmentação"}, _ctx_com_datas()) == []
+
+    def test_sem_data_rende_vazio(self):
+        from src.builder.routing.motor.window_provider import provider_date
+        assert provider_date({"title": "Plano de Ensino"}, _ctx_com_datas()) == []
+
+    def test_cascata_p3_depois_de_labels(self):
+        from src.builder.routing.motor.window_provider import resolve_window
+        win, provider = resolve_window({"title": "10.03 Processos"}, _ctx_com_datas())
+        assert (win, provider) == (["bloco-02"], "data")
+
+    def test_card_manual_vence_data(self):
+        from src.builder.routing.motor.contracts import MotorContext
+        from src.builder.routing.motor.window_provider import resolve_window
+        ctx = MotorContext.from_artifacts(
+            blocks=_ctx_com_datas().blocks,
+            card_block_map={"Card X": {"source": "manual", "block_ids": ["bloco-01"]}},
+            lessons_index={},
+        )
+        win, provider = resolve_window(
+            {"title": "10.03 Processos", "source_section": "Card X"}, ctx)
+        assert (win, provider) == (["bloco-01"], "manual")
+
+
 class TestExtractDateInName:
     def test_title_com_ponto(self):
         from src.builder.routing.motor.window_provider import extract_date_in_name

@@ -14,7 +14,7 @@ class AnchorDecision:
     """Decisão do motor para uma entry (grão de bloco DISPLAY, não uuid).
 
     band ∈ {"alta","media","baixa",""}; flag=True => entra na fila humana / TIER 3.
-    provider = qual WindowProvider rendeu a janela ("manual"|"labels"|"").
+    provider = qual WindowProvider rendeu a janela ("manual"|"labels"|"data"|"topic"|"").
     method = tier/caminho que decidiu ("janela-1"|"disamb"|"funil"|"d6"|...).
     window = janela DISPLAY considerada (para auditoria/serialização Dashboard).
     """
