@@ -34,6 +34,7 @@ DEFAULT_GOLD = Path(__file__).resolve().parents[1] / "docs" / "reports" / "groun
 PISO_ACURACIA = 59.7          # HARD (MARCO 0 Config A'); FASE 0 entregou 62.1
 PISO_RECALL_REFERENCIA = 0.577  # proxy MARCO 1 (15/26) — referência ruim a bater
 BASELINE_RECALL = 14 / 17  # =0.8235... medido na calibração FASE 1 (grade, MARGIN_TAU=0.55) — regressão abaixo = FAIL
+BASELINE_CONFIANTE_ERRADO = 3   # espelha o probe fase0 — guard ABSOLUTO do gate
 MD_CAP = 6000
 
 
@@ -147,7 +148,13 @@ def main() -> int:
     print("=" * 70)
 
     ok_acc = pct + 1e-9 >= PISO_ACURACIA
-    ok_recall = rep["recall_gate"] + 1e-9 >= BASELINE_RECALL and rep["recall_gate"] > PISO_RECALL_REFERENCIA
+    # Recall é RAZÃO (flagados/erros): curadoria do USER que conserta erros
+    # FLAGADOS derruba a razão sem regressão de código. Regressão REAL do gate
+    # = erro confiante novo; por isso o veredito compõe com o guard absoluto.
+    ok_recall = (
+        rep["recall_gate"] + 1e-9 >= BASELINE_RECALL
+        or rep["confiante_errado"] <= BASELINE_CONFIANTE_ERRADO
+    ) and rep["recall_gate"] > PISO_RECALL_REFERENCIA
     verdict = ok_acc and ok_recall
     print(f"VEREDITO FASE 1: {'PASS' if verdict else 'FAIL'} (acc={ok_acc} recall={ok_recall})")
     return 0 if verdict else 1

@@ -1,6 +1,14 @@
+import inspect
 from dataclasses import fields
 
-from src.builder.routing.motor.contracts import AnchorDecision, MotorContext
+from src.builder.routing.motor.anchor_engine import AnchorEngine as ConcreteEngine
+from src.builder.routing.motor.contracts import (
+    AnchorDecision,
+    AnchorEngineProtocol,
+    Disambiguator,
+    MotorContext,
+)
+from src.builder.routing.motor.disambiguator import disambiguate
 
 
 def test_anchor_decision_fields_and_defaults():
@@ -35,13 +43,6 @@ def test_motor_context_indexes_blocks_by_ref():
     assert ctx.block_by_ref("bloco-01")["block_uuid"] == "u1"
     assert ctx.block_by_ref("u2")["id"] == "bloco-02"
     assert ctx.block_by_ref("inexistente") is None
-
-
-import inspect
-
-from src.builder.routing.motor.contracts import AnchorEngineProtocol, Disambiguator
-from src.builder.routing.motor.disambiguator import disambiguate
-from src.builder.routing.motor.anchor_engine import AnchorEngine as ConcreteEngine
 
 
 def test_protocols_batem_com_assinaturas_reais():

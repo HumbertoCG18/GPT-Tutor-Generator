@@ -55,6 +55,17 @@ def test_window_of_one_places_directly_high_band_no_flag():
     assert d.band == "alta" and d.flag is False and d.method == "janela-1"
 
 
+def test_janela_1_emite_band_alta_conf_1():
+    # metrics.gate_report conta erro janela-1 como confiante_errado PORQUE o
+    # fast-path emite band "alta"; este pino protege essa semântica.
+    blocks = [{"id": "bloco-A", "period_start": "2026-03-01",
+               "topic_text": "logica", "sessions": []}]
+    ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+    d = disambiguate({"title": "qualquer"}, ["bloco-A"], ctx)
+    assert d.method == "janela-1"
+    assert d.band == "alta" and d.flag is False and d.conf == 1.0
+
+
 def test_len_norm_beats_verbose_sink_block():
     # bloco-verboso tem assinatura enorme (sink); bloco-alvo é enxuto e casa 'hoare'.
     blocks = [
@@ -132,7 +143,7 @@ def test_vitoria_so_por_peso_sem_token_exclusivo_flagra():
     # os DOIS blocos casam exatamente os mesmos tokens do material ("inducao",
     # "estrutural"); o best vence só por peso (session-label 1.0 vs topic 0.6)
     # + len-norm (assinatura do runner é maior). Margem calculada: s1=0.980,
-    # s2=0.416, rel_margin=0.576 >= MARGIN_TAU(0.45) e s2>0 => o gate ATUAL
+    # s2=0.416, rel_margin=0.576 >= MARGIN_TAU(0.55) e s2>0 => o gate ATUAL
     # dá "alta" sem nenhum token exclusivo — exatamente o furo do D4 proxy.
     blocks = [
         {"id": "bloco-A", "period_start": "2026-03-01", "topic_text": "",
