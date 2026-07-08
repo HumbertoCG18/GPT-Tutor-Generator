@@ -5,6 +5,7 @@ Retorna janela como lista de refs DISPLAY (bloco-NN). [] = sem janela = funil.
 """
 from __future__ import annotations
 
+import re
 from typing import List, Tuple
 
 from src.utils.helpers import norm_ascii_lower
@@ -56,3 +57,26 @@ def resolve_window(entry: dict, ctx: MotorContext) -> Tuple[List[str], str]:
         if win:
             return win, name
     return [], ""
+
+
+# P3 — data-no-nome (spec §8: extrator DD.MM de title/moodle_label/source_path).
+# Reimplementado PURO: o sinal DD.MM legado vive em símbolo condenado do cutover.
+_DATE_PREFIX_RE = re.compile(r"^\s*(\d{1,2})[. ](\d{1,2})\b")
+
+
+def _moodle_label_text(entry: dict) -> str:
+    ml = entry.get("moodle_label")
+    return ml.get("text", "") if isinstance(ml, dict) else str(ml or "")
+
+
+def extract_date_in_name(entry: dict):
+    """(dd, mm) do PREFIXO de title/moodle_label/basename(source_path); None se ausente."""
+    basename = re.split(r"[\\/]", str(entry.get("source_path") or ""))[-1]
+    for text in (str(entry.get("title") or ""), _moodle_label_text(entry), basename):
+        m = _DATE_PREFIX_RE.match(text)
+        if not m:
+            continue
+        dd, mm = int(m.group(1)), int(m.group(2))
+        if 1 <= dd <= 31 and 1 <= mm <= 12:
+            return dd, mm
+    return None

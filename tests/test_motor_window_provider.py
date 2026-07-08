@@ -93,3 +93,38 @@ def test_card_entry_usa_normalizacao_unica_do_card_block():
     assert win == ["bloco-10"] and provider == "labels"
     # e o índice público de card_block dá a mesma visão normalizada
     assert "verificacao de programas" in normalized_card_map(cbm)
+
+
+class TestExtractDateInName:
+    def test_title_com_ponto(self):
+        from src.builder.routing.motor.window_provider import extract_date_in_name
+        assert extract_date_in_name({"title": "12.03 Processos"}) == (12, 3)
+
+    def test_title_com_espaco(self):
+        from src.builder.routing.motor.window_provider import extract_date_in_name
+        assert extract_date_in_name({"title": "14 04 Troca de Mensagens"}) == (14, 4)
+
+    def test_mes_invalido_rejeitado(self):
+        from src.builder.routing.motor.window_provider import extract_date_in_name
+        # "Integer Programming 00.01" -> dd=00 inválido; não é data
+        assert extract_date_in_name({"title": "Integer Programming 00.01"}) is None
+        assert extract_date_in_name({"title": "25.13 Coisa"}) is None
+
+    def test_data_no_meio_do_titulo_nao_conta(self):
+        from src.builder.routing.motor.window_provider import extract_date_in_name
+        # convenção SO = PREFIXO; data no meio é ruído (CS 4244 etc.)
+        assert extract_date_in_name({"title": "Aula sobre 12.03 Processos"}) is None
+
+    def test_fallback_moodle_label_e_source_path(self):
+        from src.builder.routing.motor.window_provider import extract_date_in_name
+        assert extract_date_in_name(
+            {"title": "Processos", "moodle_label": {"text": "21.05 Paginação"}}
+        ) == (21, 5)
+        assert extract_date_in_name(
+            {"title": "x", "source_path": r"C:\stash\SO\02.06 Interrupção.pdf"}
+        ) == (2, 6)
+
+    def test_sem_data(self):
+        from src.builder.routing.motor.window_provider import extract_date_in_name
+        assert extract_date_in_name({"title": "Plano de Ensino"}) is None
+        assert extract_date_in_name({}) is None
