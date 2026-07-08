@@ -1,9 +1,9 @@
 id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante
 conjuntosindutivos,ConjuntosIndutivos.pdf,bloco-04,bloco-04,bloco-04,,block-direct,clean,,yes,no
-correcaoterminacao,CorrecaoTerminacao.pdf,bloco-10,bloco-11,bloco-11,,block-direct,clean,,yes,yes
+correcaoterminacao,CorrecaoTerminacao.pdf,bloco-11,bloco-11,bloco-11,,block-direct,clean,,yes,yes
 exerciciosconjuntosindutivos,ExerciciosConjuntosIndutivos.pdf,bloco-04,bloco-04,bloco-04,,block-direct,clean,,yes,no
-exercicioscorrecaoinducaomatematica,ExerciciosCorrecaoInducaoMatematica.pdf,bloco-06,bloco-05,bloco-05,,block-direct,clean,,yes,yes
-exercicioscorrecaoterminacao,ExerciciosCorrecaoTerminacao.pdf,bloco-10,bloco-11,bloco-11,,block-direct,clean,,yes,yes
+exercicioscorrecaoinducaomatematica,ExerciciosCorrecaoInducaoMatematica.pdf,bloco-05,bloco-05,bloco-05,,block-direct,clean,,yes,yes
+exercicioscorrecaoterminacao,ExerciciosCorrecaoTerminacao.pdf,bloco-11,bloco-11,bloco-11,,block-direct,clean,,yes,yes
 exerciciosdafny1,ExerciciosDafny1.pdf,bloco-12,bloco-15,bloco-15,,block-direct,clean,,yes,yes
 exerciciosdafny2,ExerciciosDafny2.pdf,bloco-13,bloco-11,bloco-11,,block-direct,clean,,yes,yes
 exerciciosdafny3,ExerciciosDafny3.pdf,bloco-13,bloco-13,bloco-13,,block-direct,clean,,yes,no
@@ -11,7 +11,7 @@ exerciciosdafny4,ExerciciosDafny4.pdf,bloco-13,bloco-13,bloco-13,,block-direct,c
 exerciciosdafny5,ExerciciosDafny5.pdf,bloco-15,bloco-15,bloco-15,,block-direct,clean,,yes,no
 exerciciosespecificacao,ExerciciosEspecificacao.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no
 exerciciosespecificacao-respostas,ExerciciosEspecificacao_respostas.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no
-exerciciosformalizacaoalgoritmosinvariantes,ExerciciosFormalizacaoAlgoritmosInvariantes.pdf,bloco-10,bloco-11,bloco-11,,block-direct,clean,,yes,yes
+exerciciosformalizacaoalgoritmosinvariantes,ExerciciosFormalizacaoAlgoritmosInvariantes.pdf,bloco-11,bloco-11,bloco-11,,block-direct,clean,,yes,yes
 exerciciosformalizacaoalgoritmosrecursao,ExerciciosFormalizacaoAlgoritmosRecursao.pdf,bloco-04,bloco-04,bloco-04,,block-direct,clean,,yes,no
 exerciciosformalizacaoalgoritmosrecursao-respostas,ExerciciosFormalizacaoAlgoritmosRecursao_respostas.pdf,bloco-04,bloco-04,bloco-04,,block-direct,clean,,yes,no
 exerciciosformalizacaoalgoritmosrecursao2,ExerciciosFormalizacaoAlgoritmosRecursao2.pdf,bloco-04,bloco-04,bloco-04,,block-direct,clean,,yes,no
@@ -21,7 +21,7 @@ exerciciosisabelle,ExerciciosIsabelle.pdf,bloco-06,bloco-06,bloco-06,,block-dire
 exerciciosisabelle2,ExerciciosIsabelle2.pdf,bloco-06,bloco-06,bloco-06,,block-direct,clean,,yes,no
 exercicioslogicatemporal,ExerciciosLogicaTemporal.pdf,bloco-16,bloco-16,bloco-16,,block-direct,clean,,yes,no
 exerciciosnusmv,ExerciciosNusmv.pdf,bloco-16,bloco-16,bloco-16,,block-direct,clean,,yes,no
-formalizacaoalgoritmos-invarianteslaco,FormalizacaoAlgoritmos_InvariantesLaco.pdf,bloco-09,bloco-11,bloco-11,,block-direct,clean,,yes,yes
+formalizacaoalgoritmos-invarianteslaco,FormalizacaoAlgoritmos_InvariantesLaco.pdf,bloco-11,bloco-11,bloco-11,,block-direct,clean,,yes,yes
 formalizacaoalgoritmos-recursao,FormalizacaoAlgoritmos_Recursao.pdf,bloco-04,bloco-04,bloco-04,,block-direct,clean,,yes,no
 formalizacaoalgoritmos-recursao2,FormalizacaoAlgoritmos_Recursao2.pdf,bloco-04,bloco-04,bloco-04,,block-direct,clean,,yes,no
 formalizacaoalgoritmos-recursao3,FormalizacaoAlgoritmos_Recursao3.pdf,bloco-04,bloco-04,bloco-04,,block-direct,clean,,yes,no
@@ -54,10 +54,10 @@ exemplos,exemplos.thy,bloco-06,bloco-06,bloco-06,,block-direct,clean,,yes,no
 exemplos-zip,exemplos.zip,bloco-16,bloco-17,bloco-17,,block-direct,clean,,yes,yes
 exercicios-arrays,exercicios_arrays.zip,bloco-13,bloco-15,bloco-15,,block-direct,clean,,yes,yes
 exercicios-conjuntos,exercicios_conjuntos.zip,bloco-13,bloco-15,bloco-15,,block-direct,clean,,yes,yes
-hoare,hoare.zip,bloco-13,bloco-10,bloco-10,,block-direct,clean,,yes,yes
+hoare,hoare.zip,bloco-10,bloco-10,bloco-10,,block-direct,clean,,yes,yes
 intro,intro.thy,bloco-06,bloco-06,bloco-06,,block-direct,clean,,yes,no
 introducao-zip,introducao.zip,bloco-12,bloco-12,bloco-12,,block-direct,clean,,yes,no
-invariantes,invariantes.zip,bloco-09,bloco-11,bloco-11,,block-direct,clean,,yes,yes
+invariantes,invariantes.zip,bloco-11,bloco-11,bloco-11,,block-direct,clean,,yes,yes
 listas,listas.thy,bloco-06,bloco-06,bloco-06,,block-direct,clean,,yes,no
 provas,provas.thy,bloco-06,bloco-05,bloco-05,,block-direct,clean,,yes,yes
 t1-2026-1-thy,T1_2026_1.thy,bloco-15,bloco-05,bloco-05,,block-direct,clean,,yes,yes

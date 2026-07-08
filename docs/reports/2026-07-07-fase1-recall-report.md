@@ -89,3 +89,33 @@ wiring multi-curso.
 FASE 2 (providers P3 SO / P4 TCC) é a próxima fase do spec §7. Go/no-go da FASE 3 (LLM) é decisão
 do USER com este report em mãos (condição do sign-off §9); sem LLM, flagged = fila humana no
 Dashboard (37 itens no MF hoje).
+
+---
+
+## ADENDO (2026-07-08) — Auditoria do gold: os números reais são melhores
+
+O user contestou a "pendência de curadoria bloco-09" — e tinha razão. Auditoria completa do
+`ground_truth_MF.csv` (67 rows vs timeline atual, READ-ONLY) provou **drift posicional de
+`bloco-NN` pós-reprocess**: o bloco-09 de HOJE é a prova P1 (22/04, sessão "prova p1") — rótulos
+antigos apontavam pra numeração pré-reprocess. O card map estava CERTO o tempo todo; a régua é que
+estava stale. **7 rows re-rotuladas com sign-off do user** (invariantes×2 09→11, correcaoterminacao×2
+10→11, exerciciosformalizacaoalgoritmosinvariantes 10→11, hoare 13→10,
+exercicioscorrecaoinducaomatematica 06→05; tiposindutivos mantido 15 por decisão do user;
+exerciciosespecificacao×2/revisao confirmados corretos pela section).
+
+**Números finais REAIS da FASE 1 (régua corrigida):**
+
+| Métrica | Reportado (régua stale) | REAL (pós-auditoria) |
+|---|---|---|
+| Acurácia escopo-disamb | 70.7% (41/58) | **82.8% (48/58)** |
+| Confiante-errado | 3 | **1** (`exerciciosdafny2`, same-theme Dafny) |
+| Contenção-fora | 2 | **0** |
+| Recall do gate | 0.824 (14/17) | **0.900 (9/10)** |
+| Fila do flag | 37 (23 certos) | 37 (**28 certos** — falso-alarme maior: mais flags eram acertos) |
+
+Baselines renegociados: probe fase0 `conf≤1`/`conten≤0`; harness fase1 `BASELINE_RECALL=9/10`.
+Pendência USER bloco-09 **morta** no tracker. Resíduo TIER 3 encolheu para **1 caso**.
+
+**Lição durável (pré-FASE 2):** gold em `bloco-NN` posicional é frágil a reprocess. Antes de medir
+SO/TCC/IA/ES2 na FASE 2, auditar o frescor dos respectivos `ground_truth_*` vs timeline atual
+(mesmo método desta auditoria); considerar migrar os CSVs pra `block_uuid`.

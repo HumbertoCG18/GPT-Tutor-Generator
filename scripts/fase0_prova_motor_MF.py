@@ -34,19 +34,20 @@ from src.builder.routing.motor.anchor_engine import (                 # noqa: E4
 DEFAULT_REPO = Path.home() / "Documents" / "GitHub" / "Metodos-Formais-Tutor"
 DEFAULT_GOLD = Path(__file__).resolve().parents[1] / "docs" / "reports" / "ground_truth_MF.csv"
 PISO = 59.7
-# Baselines renegociados na FASE 1 (calibração com recall, 2026-07-07):
-# confiante-errado 3 (era 7 na FASE 0: -2 poluição nome-do-curso via desconto
-# course_name Task 3; -2 via calibração MARGIN_TAU 0.45->0.55 na grade FASE 1
-# Task 5 — a redução veio do desconto + da calibração, NÃO do gate
-# discriminante Task 4, que não converteu erro nenhum neste corpus e só
-# custou 2 falso-alarme). Resíduo final (3): exerciciosdafny2,
-# formalizacaoalgoritmos-invarianteslaco, hoare — todos gold discriminante=yes
-# same-theme (Dafny/verificação/indução) que o token discriminante não
-# resolve; candidatos a TIER 3 (LLM).
-BASELINE_CONFIANTE_ERRADO = 3
-# contenção-fora = 2: lacuna do card_block_map REAL do repo MF — seção
-# "Verificação de Programas" sem bloco-09. Pendência de curadoria USER.
-BASELINE_CONTENCAO_FORA = 2
+# Baselines renegociados na FASE 1 (calibração com recall, 2026-07-07) e na
+# auditoria do gold (2026-07-08, sign-off USER): 7 rows do ground_truth_MF.csv
+# tinham true_block_id STALE (drift posicional bloco-NN pós-reprocess — ex.
+# bloco-09 hoje é a prova P1) e foram re-rotuladas por conteúdo. Trajetória do
+# confiante-errado: 7 -> 5 (desconto course_name, Task 3) -> 3 (MARGIN_TAU
+# 0.45->0.55, Task 5) -> 1 (gold corrigido; 2 dos 3 "erros" eram acertos do
+# motor contra régua stale). O gate discriminante (Task 4) não converteu erro
+# neste corpus. Resíduo final (1): exerciciosdafny2 (pred bloco-11 vs true
+# bloco-13, same-theme Dafny) — candidato a TIER 3 (LLM).
+BASELINE_CONFIANTE_ERRADO = 1
+# contenção-fora = 0: as 2 antigas eram gold stale (true=bloco-09/prova, fora
+# da janela CORRETA do card) — a "lacuna do card_block_map" foi diagnóstico
+# errado da FASE 0; card map estava certo. Não há pendência de curadoria.
+BASELINE_CONTENCAO_FORA = 0
 MD_CAP = 6000
 
 

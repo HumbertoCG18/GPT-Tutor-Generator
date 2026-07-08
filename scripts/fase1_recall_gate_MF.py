@@ -33,8 +33,8 @@ DEFAULT_REPO = Path.home() / "Documents" / "GitHub" / "Metodos-Formais-Tutor"
 DEFAULT_GOLD = Path(__file__).resolve().parents[1] / "docs" / "reports" / "ground_truth_MF.csv"
 PISO_ACURACIA = 59.7          # HARD (MARCO 0 Config A'); FASE 0 entregou 62.1
 PISO_RECALL_REFERENCIA = 0.577  # proxy MARCO 1 (15/26) — referência ruim a bater
-BASELINE_RECALL = 14 / 17  # =0.8235... medido na calibração FASE 1 (grade, MARGIN_TAU=0.55) — regressão abaixo = FAIL
-BASELINE_CONFIANTE_ERRADO = 3   # espelha o probe fase0 — guard ABSOLUTO do gate
+BASELINE_RECALL = 9 / 10  # =0.900 pós-auditoria do gold (2026-07-08; era 14/17 na calibração) — regressão abaixo = FAIL
+BASELINE_CONFIANTE_ERRADO = 1   # espelha o probe fase0 — guard ABSOLUTO do gate (pós-auditoria do gold)
 MD_CAP = 6000
 
 

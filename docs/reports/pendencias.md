@@ -102,16 +102,18 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - ~~TCC sem CRONOGRAMA~~ **CORRIGIDO (21/06): claim era STALE (pré-reprocess).** TCC TEM cronograma
   completo pós-reprocess (31 blocos datados, SARC setado, 39/40 entries com "Semana N"). É
   week-anchorable igual IA/ES2. NÃO é blocker.
-- [USER] **card "Verificação de Programas" MF sem bloco-09 na janela** (`as-of 2026-07-07`, fechamento
-  FASE 0 do motor) — no repo MF real a seção tem labels/blocos 10-15 no `card_block_map`, mas falta o
-  bloco-09; probe externo do motor (`scripts/fase0_prova_motor_MF.py`) gera 2 contenção-fora por essa
-  lacuna (baseline aceito como dívida FASE 1, ver DECISION). Ação: curadoria manual do `card_block_map`
-  do repo-tutor MF (incluir bloco-09 na janela da seção) OU reprocess — mutação do repo-tutor é ação
-  humana na GUI, fora do escopo do motor (que é read-only). **Atualização FASE 1 (2026-07-07):** a
-  lacuna agora custa TAMBÉM 1 dos 3 confiante-errado residuais (`formalizacaoalgoritmos-invarianteslaco`,
-  true=bloco-09 fora da janela — o gate não contém o que a janela não contém). Curadoria resolve os dois.
-  Pós-curadoria, re-rodar o harness e re-baselinar `BASELINE_RECALL` conscientemente (veredito composto
-  já tolera a queda da razão; ver report FASE 1).
+- ~~[USER] card "Verificação de Programas" MF sem bloco-09 na janela~~ **MORTA (2026-07-08): diagnóstico
+  da FASE 0 estava ERRADO — o card map estava CERTO; o defeito era GOLD STALE.** User contestou a
+  pendência; auditoria completa do `ground_truth_MF.csv` (67 rows, READ-ONLY vs timeline atual) provou
+  drift posicional de `bloco-NN` pós-reprocess: bloco-09 HOJE é a prova P1 (22/04) — material de conteúdo
+  rotulado nela era rótulo antigo deslocado. **7 rows re-rotuladas com sign-off do user** (invariantes×2
+  09→11; correcaoterminacao×2 10→11; exerciciosformalizacaoalgoritmosinvariantes 10→11; hoare 13→10;
+  exercicioscorrecaoinducaomatematica 06→05; tiposindutivos mantido 15 por decisão do user). Números
+  reais do motor pós-correção: **acurácia 82.8% (48/58), contenção-fora 0, confiante-errado 1
+  (exerciciosdafny2), recall 0.900** — a régua stale escondia 12pp. Baselines dos probes renegociados
+  (conf≤1, conten≤0, recall≥9/10). LIÇÃO DURÁVEL: gold em `bloco-NN` posicional é frágil a reprocess —
+  antes de qualquer medição cross-curso (FASE 2), auditar frescor dos ground_truth_* vs timeline atual
+  (SO/TCC/IA/ES2 podem ter o mesmo drift); considerar migrar gold pra `block_uuid`.
 
 ## MEDIÇÃO IA — conversor gold→ground_truth (as-of mundo-63, 2026-06-25)
 
@@ -370,6 +372,11 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   (23 falso-alarme, 63%) = O número do go/no-go FASE 3. Limitação documentada: desconto course_name
   em curso nomeado-pelo-tópico degrada para flag (nunca confiante-errado). Próximo: FASE 2 (P3 SO /
   P4 TCC); go/no-go FASE 3 = decisão USER com o report em mãos (sign-off condicional §9).
+  **ADENDO auditoria do gold (2026-07-08, sign-off USER):** 7 rows do `ground_truth_MF.csv` com
+  true_block_id stale (drift posicional pós-reprocess) re-rotuladas — números REAIS da FASE 1:
+  **acurácia 82.8% / contenção 0 / confiante-errado 1 / recall 0.900**; resíduo TIER 3 = só
+  `exerciciosdafny2`; fila flag 37 (28 certos). Pendência USER bloco-09 MORTA (card map estava certo).
+  Baselines renegociados nos 2 probes. Ver item USER-SIDE riscado e report FASE 1 (adendo).
 - ~~A1 (lessons no fusor) — brainstorming antes de spec~~ **SUPERSEDED (2026-07-01)** — ver entrada
   Degrau 3a acima; sinal absorvido pelo motor, plano velho mirava o fusor que morre no cutover.
 - [DECISION/CODE] **Refatoração futura: ingestão de material de APOIO (durável/intent, 2026-07-01)** — artigos

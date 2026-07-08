@@ -304,7 +304,11 @@ Read this file before starting any task.
   62.1%->70.7% (piso 59.7%), MARGIN_TAU=0.55, desconto nome-do-curso (MotorContext.course_name), gate
   token-discriminante. Gold embutido (CI) contencao 100%/conf-errado 0. Harness
   `scripts/fase1_recall_gate_MF.py` (veredito HARD composto). Report
-  `docs/reports/2026-07-07-fase1-recall-report.md`. Residuo TIER 3: 3 same-theme + fila flag 37/23.
+  `docs/reports/2026-07-07-fase1-recall-report.md`. AUDITORIA DO GOLD (08/07, sign-off user): 7 rows
+  do ground_truth_MF.csv com drift posicional pos-reprocess re-rotuladas — numeros REAIS: acuracia
+  82.8%, conten 0, conf-errado 1, recall 0.900; residuo TIER 3 = so exerciciosdafny2; pendencia
+  bloco-09 MORTA (card map estava certo). LICAO pre-FASE 2: auditar frescor dos ground_truth_* dos
+  outros cursos (mesmo drift possivel); considerar migrar gold pra block_uuid.
   Guard AST proibe import dos simbolos condenados. Proximo: FASE 2 (P3 SO / P4 TCC); go/no-go FASE 3
   = decisao USER pos-recall.
 
