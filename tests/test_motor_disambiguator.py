@@ -126,3 +126,39 @@ def test_course_name_default_vazio_preserva_fase0():
     entry = {"title": "exercicios metodos formais"}
     d = disambiguate(entry, ["bloco-A", "bloco-B"], ctx)
     assert d.block_ref == "bloco-A"
+
+
+def test_vitoria_so_por_peso_sem_token_exclusivo_flagra():
+    # os DOIS blocos casam exatamente os mesmos tokens do material ("inducao",
+    # "estrutural"); o best vence só por peso (session-label 1.0 vs topic 0.6)
+    # + len-norm (assinatura do runner é maior). Margem calculada: s1=0.980,
+    # s2=0.416, rel_margin=0.576 >= MARGIN_TAU(0.45) e s2>0 => o gate ATUAL
+    # dá "alta" sem nenhum token exclusivo — exatamente o furo do D4 proxy.
+    blocks = [
+        {"id": "bloco-A", "period_start": "2026-03-01", "topic_text": "",
+         "sessions": [{"date": "2026-03-02", "label": "inducao estrutural"}]},
+        {"id": "bloco-B", "period_start": "2026-03-08",
+         "topic_text": "inducao estrutural conjuntos recursao", "sessions": []},
+    ]
+    ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+    entry = {"title": "lista inducao estrutural"}
+    d = disambiguate(entry, ["bloco-A", "bloco-B"], ctx)
+    assert d.block_ref == "bloco-A"      # seleção não muda (peso decide)
+    assert d.flag is True                 # mas SEM token exclusivo => nunca confiante
+    assert d.band != "alta"
+
+
+def test_token_exclusivo_permite_confianca():
+    # best casa "hoare" (exclusivo) + "verificacao"; runner casa só "verificacao"
+    blocks = [
+        {"id": "bloco-A", "period_start": "2026-03-01",
+         "topic_text": "verificacao logica hoare", "sessions": []},
+        {"id": "bloco-B", "period_start": "2026-03-08",
+         "topic_text": "verificacao modelos", "sessions": []},
+    ]
+    ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+    entry = {"title": "deducao hoare verificacao"}
+    d = disambiguate(entry, ["bloco-A", "bloco-B"], ctx)
+    assert d.block_ref == "bloco-A"
+    assert d.flag is False
+    assert d.band == "alta"

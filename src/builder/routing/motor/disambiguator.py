@@ -129,10 +129,13 @@ def disambiguate(entry: dict, window: List[str], ctx: MotorContext, markdown: st
     s1 = scores[i1]
     s2 = scores[order[1]] if len(order) > 1 else 0.0
     rel_margin = (s1 - s2) / max(s1, _EPS)
-    # Confiança exige COMPETIÇÃO real (s2>0): runner-up zerado = sem evidência
-    # de disputa, nunca confiante (mata rel_margin=1.0 degenerado no gold MF —
-    # decisão controller 2026-07-07).
-    confident = s1 > 0 and s2 > 0 and rel_margin >= MARGIN_TAU
+    # D4 literal (spec §3): confiança exige COMPETIÇÃO real (s2>0) E >=1 token
+    # DISCRIMINANTE — token do material que casa a assinatura do best e NÃO a
+    # do runner-up. Vitória só-por-peso/IDF (mesmos tokens) nunca é confiante.
+    hits_best = mat & set(sigs[i1])
+    hits_runner = mat & set(sigs[order[1]]) if len(order) > 1 else set()
+    discriminante = hits_best - hits_runner
+    confident = s1 > 0 and s2 > 0 and rel_margin >= MARGIN_TAU and bool(discriminante)
 
     ref = str(blocks[i1].get("id") or blocks[i1].get("block_uuid") or win[i1])
     if confident:
