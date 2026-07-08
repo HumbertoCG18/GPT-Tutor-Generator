@@ -81,11 +81,15 @@ def provider_date(entry: dict, ctx: MotorContext) -> List[str]:
 # P4 — topic-bridge (spec §3 [Δ item 9]; F-TCC: o N ordinal NUNCA vira janela).
 _SEMANA_TOPIC_RE = re.compile(r"^\s*semana\s*\d+\s*-\s*(.+)$", re.IGNORECASE)
 TOPIC_STEM_LEN: int = 6
-TOPIC_MIN_TOKEN: int = 2
+TOPIC_MIN_TOKEN: int = 3
 
 
 def _topic_tokens(topic: str) -> set:
-    """Tokens do TÓPICO curado do card: >=2 chars (segura np/t2), sem genéricos."""
+    """Tokens do TÓPICO curado do card: >=3 chars, sem genéricos.
+
+    Piso 2 seria no-op: a assinatura do bloco (_toks) tem piso 3 — token
+    curto do tópico nunca casa. Se a calibração TCC pedir np/t2, o piso-2
+    exige assinatura própria do P4 nos DOIS lados (decisão por número)."""
     out = set()
     for t in normalize_match_text(str(topic or "")).split():
         if len(t) >= TOPIC_MIN_TOKEN and not t.isdigit() and t[:8] not in _GENERIC_STEMS:

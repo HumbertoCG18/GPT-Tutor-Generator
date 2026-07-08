@@ -203,13 +203,18 @@ class TestProviderTopic:
         assert provider_topic({"source_section": "Semana 5 -"}, self._ctx()) == []
         assert provider_topic({"source_section": "Semana 5"}, self._ctx()) == []
 
+    def test_topico_so_digito_rende_vazio(self):
+        from src.builder.routing.motor.window_provider import provider_topic
+        # regex casa, mas tópico só-dígito não gera token útil -> sem janela
+        assert provider_topic({"source_section": "Semana 5 - 2026"}, self._ctx()) == []
+
     def test_section_sem_padrao_semana_rende_vazio(self):
         from src.builder.routing.motor.window_provider import provider_topic
         # provider é do padrão "Semana N - Tópico"; outros cards ficam com P1/P2
         assert provider_topic(
             {"source_section": "Verificação de Programas"}, self._ctx()) == []
 
-    def test_token_curto_curado_casa(self):
+    def test_topico_de_revisao_casa_bloco_de_prova(self):
         from src.builder.routing.motor.window_provider import provider_topic
         win = provider_topic({"source_section": "Semana 10 - Revisão para P1 e Prova P1"},
                              self._ctx())
