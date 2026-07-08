@@ -38,7 +38,7 @@ class AnchorEngine:
         window, provider = resolve_window(entry, ctx)
         if not window:
             return None  # sem janela -> funil (invariante ANCHOR-ONLY)
-        decision = disambiguate(entry, window, ctx, markdown)
+        decision = disambiguate(entry, window, ctx, markdown, provider=provider)
         if not decision.block_ref:
             return None  # nenhum ref da janela resolve -> funil honesto
         decision.provider = provider

@@ -178,3 +178,53 @@ def test_token_exclusivo_permite_confianca():
     assert d.block_ref == "bloco-A"
     assert d.flag is False
     assert d.band == "alta"
+
+
+class TestGateConcordanciaData:
+    """D4 para janela-1 vinda de P3: alta só com token discriminante global."""
+
+    @staticmethod
+    def _ctx():
+        from src.builder.routing.motor.contracts import MotorContext
+        # "gerencia" aparece em 3 blocos (df alto = boilerplate do curso);
+        # "escalonamento" e "memoria" são específicos (df=1).
+        blocks = [
+            {"id": "bloco-03", "period_start": "2026-03-10",
+             "topic_text": "escalonamento gerencia processador",
+             "sessions": [{"date": "2026-03-10", "label": "escalonamento"}]},
+            {"id": "bloco-11", "period_start": "2026-05-12",
+             "topic_text": "gerencia memoria paginacao",
+             "sessions": [{"date": "2026-05-12", "label": "gerencia de memoria"}]},
+            {"id": "bloco-12", "period_start": "2026-06-02",
+             "topic_text": "enunciado gerencia",
+             "sessions": [{"date": "2026-06-02", "label": "enunciado do tp2"}]},
+        ]
+        return MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+
+    def test_concordancia_discriminante_ancora_alta(self):
+        from src.builder.routing.motor.disambiguator import disambiguate
+        d = disambiguate({"title": "24.03 Escalonamento de Processos"},
+                         ["bloco-03"], self._ctx(), provider="data")
+        assert (d.block_ref, d.band, d.flag) == ("bloco-03", "alta", False)
+
+    def test_token_boilerplate_nao_da_alta(self):
+        from src.builder.routing.motor.disambiguator import disambiguate
+        # caso real 02.06: material de I/O postado no dia do enunciado TP2.
+        # "gerencia" casa bloco-12 mas tem df=3 -> NÃO discriminante -> flag.
+        d = disambiguate({"title": "02.06 Lâminas Gerência de I O"},
+                         ["bloco-12"], self._ctx(), provider="data")
+        assert d.block_ref == "bloco-12"       # ancora no melhor (invariante)
+        assert d.flag is True
+        assert d.band != "alta"
+
+    def test_silencio_lexical_flagado(self):
+        from src.builder.routing.motor.disambiguator import disambiguate
+        d = disambiguate({"title": "09.04 Lâminas Semáforos"},
+                         ["bloco-12"], self._ctx(), provider="data")
+        assert (d.flag, d.band != "alta") == (True, True)
+
+    def test_provider_default_preserva_fast_path(self):
+        from src.builder.routing.motor.disambiguator import disambiguate
+        # P1/P2 (manual/labels ou default ""): janela-1 segue alta/1.0 (FASE 0/1)
+        d = disambiguate({"title": "qualquer"}, ["bloco-12"], self._ctx())
+        assert (d.band, d.conf, d.flag) == ("alta", 1.0, False)

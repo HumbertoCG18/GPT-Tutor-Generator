@@ -79,6 +79,12 @@ W_TOPIC: float = 0.6
 MARGIN_TAU: float = 0.55
 _EPS: float = 1e-9
 
+# Gate de concordância do P3 (D4, spec §3): janela-1 vinda de DATA só é
+# confiante se o material carrega token ESPECÍFICO do bloco no curso —
+# df global (nº de blocos cuja assinatura tem o token) <= DATE_DF_MAX.
+# Data de POSTAGEM != aula do conteúdo (5 misses medidos no gold SO).
+DATE_DF_MAX: int = 2
+
 
 def _block_signature(block: dict, ctx: MotorContext) -> dict:
     """{token: peso} do bloco: session-label (1ª classe) sobrepõe topic (grosso).
@@ -103,17 +109,43 @@ def _score(mat: set, sig: dict, m: int, df: dict) -> float:
     return raw / math.sqrt(len(sig))
 
 
-def disambiguate(entry: dict, window: List[str], ctx: MotorContext, markdown: str = "") -> AnchorDecision:
+def _global_df(ctx: MotorContext) -> dict:
+    """df de cada token sobre as assinaturas de TODOS os blocos do curso."""
+    df: dict = {}
+    for b in ctx.blocks:
+        for t in set(_block_signature(b, ctx)):
+            df[t] = df.get(t, 0) + 1
+    return df
+
+
+def _date_window1_decision(entry: dict, block: dict, ctx: MotorContext,
+                           markdown: str, win: List[str]) -> AnchorDecision:
+    """Janela-1 de P3: alta exige concordância por token discriminante global."""
+    ref = str(block.get("id") or block.get("block_uuid") or win[0])
+    mat = entry_tokens(entry, markdown)
+    sig = set(_block_signature(block, ctx))
+    df = _global_df(ctx)
+    discriminante = {t for t in (mat & sig) if df.get(t, 0) <= DATE_DF_MAX}
+    if discriminante:
+        return AnchorDecision(block_ref=ref, conf=1.0, band="alta", flag=False,
+                              method="janela-1", window=win)
+    return AnchorDecision(block_ref=ref, conf=0.0, band="media", flag=True,
+                          method="janela-1", window=win)
+
+
+def disambiguate(entry: dict, window: List[str], ctx: MotorContext,
+                 markdown: str = "", provider: str = "") -> AnchorDecision:
     win = list(window or [])
     blocks = [ctx.block_by_ref(r) for r in win]
     blocks = [b for b in blocks if b is not None]
     if not blocks:
         return AnchorDecision(block_ref="", method="funil", window=win)
     # Fast-path janela-1 exige que a JANELA ORIGINAL tenha 1 ref, não apenas
-    # os resolvíveis: ref obsoleto no card_block_map (drift) não pode virar
-    # confiança "alta"/1.0 sem evidência de token — cai no scoring normal,
-    # onde 1 bloco resolvível => s2=0 => flagado/media (honesto).
+    # os resolvíveis (comentário FASE 1 mantido). Janela-1 vinda de DATA passa
+    # pelo gate de concordância D4 — postagem != aula do conteúdo.
     if len(win) == 1 and len(blocks) == 1:
+        if provider == "data":
+            return _date_window1_decision(entry, blocks[0], ctx, markdown, win)
         ref = str(blocks[0].get("id") or blocks[0].get("block_uuid") or win[0])
         return AnchorDecision(block_ref=ref, conf=1.0, band="alta", flag=False,
                               method="janela-1", window=win)

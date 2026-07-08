@@ -77,7 +77,7 @@ class WindowProvider(Protocol):
 class Disambiguator(Protocol):
     """Escolhe DENTRO da janela (só roda se |janela| > 1)."""
     def __call__(self, entry: dict, window: List[str], ctx: MotorContext,
-                 markdown: str = "") -> AnchorDecision: ...
+                 markdown: str = "", provider: str = "") -> AnchorDecision: ...
 
 
 class AnchorEngineProtocol(Protocol):
