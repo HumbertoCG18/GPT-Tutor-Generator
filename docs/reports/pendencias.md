@@ -107,7 +107,11 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   bloco-09; probe externo do motor (`scripts/fase0_prova_motor_MF.py`) gera 2 contenção-fora por essa
   lacuna (baseline aceito como dívida FASE 1, ver DECISION). Ação: curadoria manual do `card_block_map`
   do repo-tutor MF (incluir bloco-09 na janela da seção) OU reprocess — mutação do repo-tutor é ação
-  humana na GUI, fora do escopo do motor (que é read-only).
+  humana na GUI, fora do escopo do motor (que é read-only). **Atualização FASE 1 (2026-07-07):** a
+  lacuna agora custa TAMBÉM 1 dos 3 confiante-errado residuais (`formalizacaoalgoritmos-invarianteslaco`,
+  true=bloco-09 fora da janela — o gate não contém o que a janela não contém). Curadoria resolve os dois.
+  Pós-curadoria, re-rodar o harness e re-baselinar `BASELINE_RECALL` conscientemente (veredito composto
+  já tolera a queda da razão; ver report FASE 1).
 
 ## MEDIÇÃO IA — conversor gold→ground_truth (as-of mundo-63, 2026-06-25)
 
@@ -345,6 +349,27 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   **Fixes do review final (commit `fff7d47`):** fast-path janela-1 e funil `block_ref=""`
   corrigidos no fechamento (review final) — Protocols de `contracts.py` ainda divergem das
   assinaturas reais (`markdown`; shadowing `AnchorEngine`) = item FASE 1.
+  **→ Números e dívidas desta entrada SUPERSEDED pela FASE 1 (entrada seguinte, 2026-07-07):**
+  MARGIN_TAU agora 0.55; baseline confiante-errado agora 3; Protocols/unificação resolvidos.
+- [DERIVADO] **FASE 1 do motor de atribuição FECHADA (as-of 2026-07-07; 8 commits `2e49ceb..ccea93c`
+  na branch `feat/motor-atribuicao`, review final fable "Ready to merge: Yes" pós fix-wave)** —
+  gate D4 calibrado COM RECALL MEDIDO (spec §7 fase 1). Report completo:
+  `docs/reports/2026-07-07-fase1-recall-report.md`. Números: **recall do gate 0.824 (14/17)** vs
+  referência proxy MARCO 1 0.577 (15/26); **confiante-errado 7→3**; **acurácia escopo-disamb
+  62.1%→70.7%** (par-colapsada; piso HARD 59.7%); contenção-fora 2 (inalterada, pendência USER
+  bloco-09 — agora custa também 1 confiante-errado). Gold embutido inviolado (contenção 100%,
+  conf-errado 0). Suite **1701 passed / 4 skipped**. Levers: desconto nome-do-curso
+  (`MotorContext.course_name`, −2 conf-errado, +8.6pp acc), `MARGIN_TAU` 0.45→0.55 (grade 36 pontos,
+  −2 conf-errado, acc invariante), gate token-discriminante D4 literal (NEUTRO neste corpus — mantido
+  por conformidade ao spec §3, custo 2 falso-alarme). Novos: `motor/metrics.py` (gate_report puro),
+  `scripts/fase1_recall_gate_MF.py` (harness READ-ONLY, veredito HARD composto: recall ≥ 14/17 OU
+  conf-errado ≤ 3, E > 0.577). Dívidas FECHADAS: poluição nome-do-curso, Protocols/shadowing
+  (`AnchorEngineProtocol`), unificação `_card_entry`↔`card_block.normalized_card_map`. Dívidas que
+  FICAM: hardening MotorContext (YAGNI), memoização `normalized_card_map` (FASE 4), resíduo TIER 3 =
+  3 confiante-errado same-theme (Dafny/Hoare; 1 deles cai com curadoria bloco-09) + fila flag 37/59
+  (23 falso-alarme, 63%) = O número do go/no-go FASE 3. Limitação documentada: desconto course_name
+  em curso nomeado-pelo-tópico degrada para flag (nunca confiante-errado). Próximo: FASE 2 (P3 SO /
+  P4 TCC); go/no-go FASE 3 = decisão USER com o report em mãos (sign-off condicional §9).
 - ~~A1 (lessons no fusor) — brainstorming antes de spec~~ **SUPERSEDED (2026-07-01)** — ver entrada
   Degrau 3a acima; sinal absorvido pelo motor, plano velho mirava o fusor que morre no cutover.
 - [DECISION/CODE] **Refatoração futura: ingestão de material de APOIO (durável/intent, 2026-07-01)** — artigos

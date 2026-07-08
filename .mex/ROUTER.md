@@ -297,11 +297,16 @@ Read this file before starting any task.
   (periodo em branco). Auditoria da classe: gold/evals (Task 4) + `apply_block_curation`
   (Task 3) + slugs de unidade ja eram uuid-safe. 23 pins humanos recuperados nos 5 cursos
   (ES2 1/IA 5/MF 9/SO 4/TCC 4).
-- Motor de atribuicao FASE 0 ENTREGUE (as-of 2026-07-07, codigo commitado f75d22b..ff5ea4f): pacote isolado
-  `src/builder/routing/motor/` (contracts/window_provider/disambiguator/anchor_engine), READ-ONLY, NAO
-  integrado ao pipeline (integracao = FASE 4). Numeros-chave: probe externo escopo-disamb MF 62.1% >=
-  piso 59.7%; gold embutido (CI) contencao 100%/confiante-errado 0. Guard AST proibe import dos
-  simbolos condenados (star-imports + acesso module-qualified detectados).
+- Motor de atribuicao FASE 0+1 ENTREGUES (as-of 2026-07-07; F0 f75d22b..fff7d47, F1 2e49ceb..ccea93c):
+  pacote isolado `src/builder/routing/motor/` (contracts/window_provider/disambiguator/anchor_engine
+  + metrics), READ-ONLY, NAO integrado ao pipeline (integracao = FASE 4). FASE 1 = gate D4 calibrado
+  com RECALL MEDIDO: recall 0.824 (ref proxy 0.577), confiante-errado 7->3, acuracia escopo-disamb MF
+  62.1%->70.7% (piso 59.7%), MARGIN_TAU=0.55, desconto nome-do-curso (MotorContext.course_name), gate
+  token-discriminante. Gold embutido (CI) contencao 100%/conf-errado 0. Harness
+  `scripts/fase1_recall_gate_MF.py` (veredito HARD composto). Report
+  `docs/reports/2026-07-07-fase1-recall-report.md`. Residuo TIER 3: 3 same-theme + fila flag 37/23.
+  Guard AST proibe import dos simbolos condenados. Proximo: FASE 2 (P3 SO / P4 TCC); go/no-go FASE 3
+  = decisao USER pos-recall.
 
 ### Not Declared In Brief
 
