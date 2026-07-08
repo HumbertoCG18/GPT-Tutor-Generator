@@ -382,6 +382,23 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   candidato TIER 3), 2 = títulos 100% stem-genérico (introducao/revisao — sem sinal lexical), 1 =
   tiposindutivos (código sem léxico no roteiro). ~7/10 fora do alcance de scorer lexical → próximo
   ponto de acurácia = FASE 2/pinos, não calibração.
+- [DERIVADO] **PRÉ-FLIGHT FASE 2 item 1 CONCLUÍDO (as-of 2026-07-08): golds SO/TCC/IA/ES2 FRESCOS —
+  0 re-rotulagens necessárias.** Auditoria READ-ONLY via `scripts/audit_gold_freshness.py` (novo;
+  checks MISSING_BLOCK/DATE_MISMATCH/ADMIN_TRUE/OUT_OF_WINDOW/PAIR_MISMATCH/ZERO_OVERLAP, filtra
+  scorable=yes). Prova de frescor: `computed_block_id` congelado nos CSVs == computed atual do
+  manifest (uuid→display) em **0 DIFF nos 4 cursos** (SO 38/38, TCC 35/35, IA 40/40, ES2 27/27;
+  0 órfãos scorable); timelines intocadas desde 28/06–01/07 = época da rotulagem (01/07, pós-reprocess
+  21/06). ES2 validado também por data_real ∈ período do bloco true em 100% dos rotulados. O drift do
+  MF NÃO se reproduz. ZERO_OVERLAPs remanescentes = limitação do léxico (NP filtrado, semântica
+  semáforos→sincronização), não drift. Casos SO contra-intuitivos (segmentação→bloco-12=enunciado TP2;
+  IPC→bloco-05 com computed=bloco-07) são rótulos humanos deliberados CONTRA o computed — ficam.
+  Probes fase0+fase1 re-rodados em par: ambos PASS (82.8% / conten 0 / conf-errado 1 / recall 0.900).
+  Item 2 do pré-flight DECIDIDO (user, 2026-07-08): migração gold→block_uuid fica DÍVIDA para a
+  FASE 4 (junto do trabalho de reprocess); regra vigente = `audit_gold_freshness.py` roda como
+  PRÉ-GATE antes de QUALQUER medição contra ground_truth_* (especialmente pós-reprocess).
+- [CODE] **Migrar ground_truth_*.csv de bloco-NN → block_uuid (FASE 4)** — decisão user 2026-07-08
+  (pré-flight FASE 2 item 2). Inclui: 5 CSVs + eval_ground_truth + harnesses fase0/fase1 resolvendo
+  uuid→display. Até lá, auditor de frescor é pré-gate obrigatório de medição.
 - ~~A1 (lessons no fusor) — brainstorming antes de spec~~ **SUPERSEDED (2026-07-01)** — ver entrada
   Degrau 3a acima; sinal absorvido pelo motor, plano velho mirava o fusor que morre no cutover.
 - [DECISION/CODE] **Refatoração futura: ingestão de material de APOIO (durável/intent, 2026-07-01)** — artigos
