@@ -119,3 +119,19 @@ Pendência USER bloco-09 **morta** no tracker. Resíduo TIER 3 encolheu para **1
 **Lição durável (pré-FASE 2):** gold em `bloco-NN` posicional é frágil a reprocess. Antes de medir
 SO/TCC/IA/ES2 na FASE 2, auditar o frescor dos respectivos `ground_truth_*` vs timeline atual
 (mesmo método desta auditoria); considerar migrar os CSVs pra `block_uuid`.
+
+### Composição FINAL do resíduo (10 pares errados de 58) — supersede a tabela (a)-(d) acima
+
+9 dos 10 flagados (fila honesta); 1 confiante-errado. Por classe, com o lever que resolve cada uma:
+
+| Classe | Casos | Diagnóstico | Lever real |
+|---|---|---|---|
+| Cluster indução×Isabelle (05 vs 06) | 6: exerciciosisabelle2, provasindutivas-especificacoesrecursivas (+-arvores, -listas), arvores, listas | materiais Isabelle cujo conteúdo é indução/listas/árvores — léxico casa o bloco-05; verdade é a semana Isabelle que reusa os temas. Grão-de-semana same-theme: MARCO 1 mediu que LLM NÃO converte essa classe | pino manual ou card-window mais fino; NÃO calibração, NÃO LLM |
+| Confiante-errado | 1: exerciciosdafny2 (pred 11, true 13, band alta) | "Dafny 2" = ordinal de série; ordinal-como-sinal morto por medição (MARCO 0) | TIER 3 (LLM) tem chance, ou pino |
+| Título 100% stem genérico | 2: introducao (01 vs 02), revisao (02 vs 03) | `introduc`/`revisao` ∈ _GENERIC_STEMS — material entra no scoring sem tokens; adjacentes | sem sinal lexical possível; fila/pino |
+| Código sem léxico no roteiro | 1: tiposindutivos (pred 10, true 15) | "tipos indutivos" ausente dos labels de maio/junho | pino; (código-professor → voto de código FASE 3?) |
+
+Conclusão operacional: ~7 dos 10 são estruturalmente fora do alcance de QUALQUER scorer lexical —
+o teto previsto no spec §3 ("resíduo determinístico é SEMPRE same-theme"). O próximo ponto de
+acurácia real vem de FASE 2/pinos, não de mais calibração. Fila do flag final: 37 (28 certos,
+9 errados).

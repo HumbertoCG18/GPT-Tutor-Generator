@@ -377,6 +377,11 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   **acurácia 82.8% / contenção 0 / confiante-errado 1 / recall 0.900**; resíduo TIER 3 = só
   `exerciciosdafny2`; fila flag 37 (28 certos). Pendência USER bloco-09 MORTA (card map estava certo).
   Baselines renegociados nos 2 probes. Ver item USER-SIDE riscado e report FASE 1 (adendo).
+  Composição dos 10 pares errados restantes (report, tabela final): 6 = cluster indução×Isabelle
+  05↔06 (grão-de-semana, LLM não converte — lever = pino/card fino), 1 = exerciciosdafny2 (confiante,
+  candidato TIER 3), 2 = títulos 100% stem-genérico (introducao/revisao — sem sinal lexical), 1 =
+  tiposindutivos (código sem léxico no roteiro). ~7/10 fora do alcance de scorer lexical → próximo
+  ponto de acurácia = FASE 2/pinos, não calibração.
 - ~~A1 (lessons no fusor) — brainstorming antes de spec~~ **SUPERSEDED (2026-07-01)** — ver entrada
   Degrau 3a acima; sinal absorvido pelo motor, plano velho mirava o fusor que morre no cutover.
 - [DECISION/CODE] **Refatoração futura: ingestão de material de APOIO (durável/intent, 2026-07-01)** — artigos
