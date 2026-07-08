@@ -3,7 +3,9 @@
 
 Números do aceite (spec §6): cobertura ~45%, data->exatamente 1 bloco (0 colisão),
 confiante-errado 0 no escopo P3. Reporta tb acurácia par-colapsada vs baseline
-do funil (47.4%). NÃO muta manifest/artefato. Uso:
+do funil (47.4%). NÃO muta manifest/artefato. A acurácia/matriz é WHOLE-CASCADE
+por design (padrão dos probes FASE 0/1); a linha 'providers' do output denuncia
+contaminação de outro provider. Uso:
   python scripts/fase2_prova_SO.py [--repo PATH] [--gold CSV]
 """
 from __future__ import annotations
@@ -79,6 +81,7 @@ def main() -> int:
     engine = AnchorEngine()
     cobertos, colisoes, contidos, fora = [], [], [], []
     results, cw, matriz = {}, [], defaultdict(int)
+    prov_count = defaultdict(int)
     for r in rows:
         e = entries.get(r["id"])
         if e is None:
@@ -95,6 +98,7 @@ def main() -> int:
         if d is None:
             continue
         pred = str((ctx.block_by_ref(d.block_ref) or {}).get("id") or d.block_ref)
+        prov_count[d.provider or "?"] += 1
         ok = pred == r["true_block_id"]
         results[r["id"]] = ok
         matriz[("alta" if d.band == "alta" else "resto", "ok" if ok else "err")] += 1
@@ -117,6 +121,7 @@ def main() -> int:
     print(f"  acurácia motor (par-colapsada, com-janela): {acc:.1%} de {total} pares "
           f"(baseline funil {BASELINE_FUNIL:.1%})")
     print(f"  matriz gate: {dict(matriz)}")
+    print(f"  providers das decisões: {dict(prov_count)}")
     print(f"  confiante-e-errado (band alta, sem flag): {len(cw)} {cw}")
     ok_cob = cob >= PISO_COBERTURA
     ok_col = not colisoes
