@@ -46,11 +46,12 @@ def test_motor_context_indexes_blocks_by_ref():
 
 
 def test_protocols_batem_com_assinaturas_reais():
-    # Disambiguator: (entry, window, ctx, markdown="")
+    # Disambiguator: (entry, window, ctx, markdown="", provider="") — provider
+    # entrou no gate D4 de concordancia janela-1 (fase2/P3).
     params = list(inspect.signature(disambiguate).parameters)
-    assert params == ["entry", "window", "ctx", "markdown"]
+    assert params == ["entry", "window", "ctx", "markdown", "provider"]
     proto_params = list(inspect.signature(Disambiguator.__call__).parameters)
-    assert proto_params[1:] == ["entry", "window", "ctx", "markdown"]
+    assert proto_params[1:] == ["entry", "window", "ctx", "markdown", "provider"]
     # AnchorEngineProtocol.resolve: (entry, ctx, markdown="")
     proto_resolve = list(inspect.signature(AnchorEngineProtocol.resolve).parameters)
     real_resolve = list(inspect.signature(ConcreteEngine.resolve).parameters)
