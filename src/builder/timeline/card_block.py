@@ -156,7 +156,7 @@ def load_card_block_map(course_dir) -> Dict[str, dict]:
         return {}
 
 
-def _normalized_card_map(card_map) -> Dict[str, dict]:
+def normalized_card_map(card_map) -> Dict[str, dict]:
     """Índice do card_map por chave normalizada (NFKD + sem acento + lower).
 
     Resolve divergência de caixa/acento entre o source_section da entry e a
@@ -170,7 +170,7 @@ def _normalized_card_map(card_map) -> Dict[str, dict]:
 
 
 def lookup_card_blocks(card_name, card_map, unit_index, blocks) -> List[str]:
-    entry = _normalized_card_map(card_map).get(norm_ascii_lower(str(card_name or "")))
+    entry = normalized_card_map(card_map).get(norm_ascii_lower(str(card_name or "")))
     if entry and "block_ids" in entry:
         raw_ids = [str(b) for b in (entry.get("block_ids") or [])]
         if not blocks:
@@ -190,5 +190,5 @@ def lookup_card_assign_due(card_name, card_map) -> str:
     """Deadline ISO de entrega do card no card map ("" quando ausente).
 
     Gravado em import_moodle_courses via extract_assign_deadlines (S5)."""
-    entry = _normalized_card_map(card_map).get(norm_ascii_lower(str(card_name or ""))) or {}
+    entry = normalized_card_map(card_map).get(norm_ascii_lower(str(card_name or ""))) or {}
     return str(entry.get("assign_due") or "")

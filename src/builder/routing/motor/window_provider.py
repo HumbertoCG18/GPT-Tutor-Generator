@@ -8,19 +8,20 @@ from __future__ import annotations
 from typing import List, Tuple
 
 from src.utils.helpers import norm_ascii_lower
+from src.builder.timeline.card_block import normalized_card_map
 
 from src.builder.routing.motor.contracts import MotorContext
 
 
 def _card_entry(entry: dict, ctx: MotorContext) -> dict:
     """Entrada do card_block_map para a source_section da entry (match sem
-    acento/caixa; em colisão, o último vence — igual a card_block._normalized)."""
+    acento/caixa via card_block.normalized_card_map — helper ÚNICO; em
+    colisão, o último vence)."""
     key = norm_ascii_lower(str(entry.get("source_section") or ""))
     if not key:
         return {}
-    normalized = {norm_ascii_lower(str(k)): v for k, v in ctx.card_block_map.items()}
     # Card malformado (não-dict) degrada para janela vazia, não crashes.
-    info = normalized.get(key)
+    info = normalized_card_map(ctx.card_block_map).get(key)
     return info if isinstance(info, dict) else {}
 
 

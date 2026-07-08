@@ -4,6 +4,7 @@ from src.builder.routing.motor.window_provider import (
     provider_labels,
     resolve_window,
 )
+from src.builder.timeline.card_block import normalized_card_map
 
 BLOCKS = [
     {"id": "bloco-01", "period_start": "2026-03-02"},
@@ -81,3 +82,14 @@ def test_malformed_card_value_yields_no_window():
     assert resolve_window({"source_section": "String Card"}, ctx) == ([], "")
     # Card válido funciona normalmente:
     assert resolve_window({"source_section": "Valid Card"}, ctx) == (["bloco-02"], "manual")
+
+
+def test_card_entry_usa_normalizacao_unica_do_card_block():
+    # a MESMA chave com acento/caixa divergente resolve nos dois caminhos
+    cbm = {"Verificação de Programas": {"source": "labels", "block_ids": ["bloco-10"]}}
+    ctx = MotorContext.from_artifacts(blocks=[], card_block_map=cbm, lessons_index={})
+    entry = {"source_section": "verificacao de programas"}
+    win, provider = resolve_window(entry, ctx)
+    assert win == ["bloco-10"] and provider == "labels"
+    # e o índice público de card_block dá a mesma visão normalizada
+    assert "verificacao de programas" in normalized_card_map(cbm)
