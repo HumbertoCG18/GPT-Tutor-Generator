@@ -83,6 +83,11 @@ _EPS: float = 1e-9
 # confiante se o material carrega token ESPECÍFICO do bloco no curso —
 # df global (nº de blocos cuja assinatura tem o token) <= DATE_DF_MAX.
 # Data de POSTAGEM != aula do conteúdo (5 misses medidos no gold SO).
+# Calibração FASE 2 (grade 1/2/3 na régua externa SO, fase2_prova_SO.py,
+# 2026-07-08): confErrado=0 nos 3 pontos; matriz (resto-err, resto-ok,
+# alta-ok) = (4,7,8) em 1; (4,2,13) em 2; (4,2,13) em 3 — empate 2x3 no
+# máximo de alta-ok. Mantido 2 (vigente desde a calibração D4 da FASE 1
+# MF): menor diff da constante e nenhuma regressão nos dois cursos.
 DATE_DF_MAX: int = 2
 
 
