@@ -17,7 +17,7 @@ import os
 import re
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Optional, Set
 
 from pydantic import BaseModel
 
@@ -122,3 +122,111 @@ def detect_same_theme_series(entries: List[dict]) -> Set[str]:
         if len(ms) >= 2 and len({o for _, o in ms}) >= 2:
             members.update(rid for rid, _o in ms)
     return members
+
+
+def _block_lines(window: List[str], ctx) -> str:
+    out = []
+    for ref in window:
+        b = ctx.block_by_ref(ref) or {}
+        did = str(b.get("id") or ref)
+        datas = (f"{str(b.get('period_start') or '')[:10]}.."
+                 f"{str(b.get('period_end') or '')[:10]}")
+        top = str(b.get("topic_text") or b.get("primary_topic_label") or "").strip()
+        rot = " ; ".join(
+            ctx.lessons_index.get(str(s.get("date") or "")[:10], "")
+            for s in (b.get("sessions") or [])
+            if ctx.lessons_index.get(str(s.get("date") or "")[:10])
+        )
+        out.append(f"- {did} [{datas}] topico: {top[:90]}  roteiro: {rot[:120]}")
+    return "\n".join(out)
+
+
+def build_vote_prompt(entry: dict, window: List[str], ctx,
+                      markdown: str = "") -> str:
+    """Prompt do MARCO 1 generalizado (roteiro via ctx.lessons_index)."""
+    md = (markdown or "")[:MD_PROMPT_CAP]
+    return (
+        f"CONTEÚDO:\n"
+        f"  titulo: {entry.get('title')}\n"
+        f"  categoria: {entry.get('category')}\n"
+        f"  secao/card da Plataforma: {entry.get('source_section') or '(sem secao)'}\n"
+        f"  trecho do conteudo:\n---\n{md or '(sem markdown extraido)'}\n---\n\n"
+        f"BLOCOS CANDIDATOS:\n{_block_lines(window, ctx)}\n\n"
+        f"Qual bloco? Responda no schema."
+    )
+
+
+def match_window_ref(block_id_vote: str, window: List[str],
+                     ctx) -> Optional[str]:
+    """Voto -> ref da janela (bounded). Fora da janela = None (mantem FLAG)."""
+    v = str(block_id_vote or "").strip()
+    if not v:
+        return None
+    for ref in window:
+        b = ctx.block_by_ref(ref) or {}
+        if v in (str(ref), str(b.get("id") or ""), str(b.get("block_uuid") or "")):
+            return ref
+    return None
+
+
+class LlmVoter:
+    """Voto Gemini cacheado com cap por rodada. vote() -> ref da janela ou None.
+
+    client injetavel (testes); em producao lazy via get_gemini_client (spec §4).
+    Erro de API NAO e cacheado (rodada seguinte re-tenta); voto fora da janela
+    E cacheado (voto real, so nao ancora).
+    """
+
+    def __init__(self, config: Optional[dict], cache_path: Path, repo_dir: Path,
+                 cap: int = DEFAULT_CAP, client=None):
+        self._config = config or {}
+        self._cache_path = Path(cache_path)
+        self._repo_dir = Path(repo_dir)
+        self._cap = int(cap)
+        self._client = client
+        self._client_loaded = client is not None
+        self._data = load_material_curation(self._cache_path)
+        self.calls = 0          # chamadas API na rodada (cache hit nao conta)
+        self.skipped_cap = 0    # escopo sem voto por cap estourado
+        self.errors = 0
+
+    def _get_client(self):
+        if not self._client_loaded:
+            from src.builder.runtime.gemini_client import get_gemini_client  # lazy
+            self._client = get_gemini_client(self._config)
+            self._client_loaded = True
+        return self._client
+
+    def has_vote(self, entry: dict) -> bool:
+        return content_key(entry, self._repo_dir) in self._data["votes"]
+
+    def vote(self, entry: dict, window: List[str], ctx,
+             markdown: str = "") -> Optional[str]:
+        if not window:
+            return None                      # sem-janela NAO vota (spec §12)
+        key = content_key(entry, self._repo_dir)
+        cached = self._data["votes"].get(key)
+        if cached is None:
+            if self.calls >= self._cap:
+                self.skipped_cap += 1
+                return None
+            client = self._get_client()
+            if client is None:
+                return None                  # sem chave -> mantem FLAG
+            prompt = build_vote_prompt(entry, window, ctx, markdown)
+            system = SYSTEM_TEMPLATE.format(course=ctx.course_name or "curso")
+            self.calls += 1
+            try:
+                voto = client.summarize_bundle(prompt, Voto, system)
+            except Exception:  # noqa: BLE001 — voto falhou: FLAG fica, sem cache
+                self.errors += 1
+                return None
+            cached = {
+                "block_id": str(voto.block_id).strip(),
+                "confianca": str(voto.confianca).strip(),  # auditoria; nunca gate
+                "justificativa": str(voto.justificativa_curta)[:200],
+                "model": getattr(client, "model", ""),
+            }
+            self._data["votes"][key] = cached
+            save_material_curation(self._cache_path, self._data)
+        return match_window_ref(str(cached.get("block_id") or ""), window, ctx)
