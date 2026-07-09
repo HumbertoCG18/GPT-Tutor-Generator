@@ -87,3 +87,9 @@ class AnchorEngineProtocol(Protocol):
     tinha shadowing com este Protocol na FASE 0 (dívida do tracker)."""
     def resolve(self, entry: dict, ctx: MotorContext,
                 markdown: str = "") -> Optional[AnchorDecision]: ...
+
+
+class LlmVoterProtocol(Protocol):
+    """TIER 3: voto LLM bounded a janela; None = sem voto -> mantem decisao/FLAG."""
+    def vote(self, entry: dict, window: List[str], ctx: MotorContext,
+             markdown: str = "") -> Optional[str]: ...

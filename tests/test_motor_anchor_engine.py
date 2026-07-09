@@ -80,3 +80,73 @@ def test_janela_com_ref_fantasma_nao_vira_confianca():
          "title": "Qualquer coisa"},
         ctx,
     ) is None
+
+
+# TIER 3 Tests (FASE 3 Task 4)
+from src.builder.routing.motor.contracts import AnchorDecision, MotorContext
+from src.builder.routing.motor import anchor_engine as ae
+
+
+class _FakeVoter:
+    def __init__(self, answer):
+        self.answer = answer
+        self.seen = []
+
+    def vote(self, entry, window, ctx, markdown=""):
+        self.seen.append(str(entry.get("id")))
+        return self.answer
+
+
+def _tier3_ctx():
+    return MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-01"}, {"id": "bloco-02"}],
+        card_block_map={}, lessons_index={})
+
+
+def _stub_cascade(monkeypatch, *, flag: bool, band: str = "baixa"):
+    monkeypatch.setattr(ae, "resolve_window",
+                        lambda e, c: (["bloco-01", "bloco-02"], "topic"))
+    monkeypatch.setattr(
+        ae, "disambiguate",
+        lambda e, w, c, m, provider="": AnchorDecision(
+            block_ref="bloco-01", conf=0.9 if band == "alta" else 0.2,
+            band=band, flag=flag, window=list(w)))
+
+
+def test_tier3_flagged_voto_valido_ancora_media(monkeypatch):
+    _stub_cascade(monkeypatch, flag=True)
+    voter = _FakeVoter("bloco-02")
+    d = ae.AnchorEngine(voter=voter).resolve({"id": "e1", "category": "m"}, _tier3_ctx())
+    assert d.block_ref == "bloco-02"
+    assert d.band == "media" and d.flag is False
+    assert d.provider == "llm" and d.method == "llm"
+    assert voter.seen == ["e1"]
+
+
+def test_tier3_voto_none_mantem_flag(monkeypatch):
+    _stub_cascade(monkeypatch, flag=True)
+    d = ae.AnchorEngine(voter=_FakeVoter(None)).resolve(
+        {"id": "e1", "category": "m"}, _tier3_ctx())
+    assert d.block_ref == "bloco-01" and d.flag is True and d.provider == "topic"
+
+
+def test_tier3_sem_voter_byte_identico(monkeypatch):
+    _stub_cascade(monkeypatch, flag=True)
+    d0 = ae.AnchorEngine().resolve({"id": "e1", "category": "m"}, _tier3_ctx())
+    assert d0.block_ref == "bloco-01" and d0.flag is True and d0.band == "baixa"
+
+
+def test_tier3_nao_flagado_fora_de_serie_nao_vota(monkeypatch):
+    _stub_cascade(monkeypatch, flag=False, band="alta")
+    voter = _FakeVoter("bloco-02")
+    d = ae.AnchorEngine(voter=voter).resolve({"id": "e1", "category": "m"}, _tier3_ctx())
+    assert voter.seen == [] and d.block_ref == "bloco-01" and d.band == "alta"
+
+
+def test_tier3_membro_de_serie_vota_mesmo_sem_flag(monkeypatch):
+    _stub_cascade(monkeypatch, flag=False, band="alta")
+    voter = _FakeVoter("bloco-02")
+    d = ae.AnchorEngine(voter=voter, series_ids={"e1"}).resolve(
+        {"id": "e1", "category": "m"}, _tier3_ctx())
+    assert voter.seen == ["e1"]
+    assert d.block_ref == "bloco-02" and d.band == "media" and d.provider == "llm"

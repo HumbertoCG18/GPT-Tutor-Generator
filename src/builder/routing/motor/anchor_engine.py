@@ -5,9 +5,9 @@ TIER 0 (dup), TIER 1 (pino manual), janela-de-prazo real (assign_due) e TIER 3
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Set
 
-from src.builder.routing.motor.contracts import AnchorDecision, MotorContext
+from src.builder.routing.motor.contracts import AnchorDecision, MotorContext, LlmVoterProtocol
 from src.builder.routing.motor.window_provider import resolve_window
 from src.builder.routing.motor.disambiguator import disambiguate
 
@@ -30,7 +30,18 @@ def is_out_of_disamb_scope(entry: dict) -> bool:
 
 
 class AnchorEngine:
-    """resolve(entry, ctx) -> AnchorDecision | None (None = funil-piso)."""
+    """resolve(entry, ctx) -> AnchorDecision | None (None = funil-piso).
+
+    TIER 3 (FASE 3): voter opcional — voter=None => saida byte-identica as
+    FASES 0-2. Escopo do voto = decisao FLAGADA ∪ membro de serie same-theme
+    (spec §3 TIER 3); aceitacao cega: band "media", flag=False, provider="llm"
+    (spec §12 regra 3). Sem-janela nunca chega ao voto (funil antes).
+    """
+
+    def __init__(self, voter: Optional["LlmVoterProtocol"] = None,
+                 series_ids: Optional[Set[str]] = None):
+        self._voter = voter
+        self._series_ids = frozenset(series_ids or ())
 
     def resolve(self, entry: dict, ctx: MotorContext, markdown: str = "") -> Optional[AnchorDecision]:
         if is_out_of_disamb_scope(entry):
@@ -42,4 +53,13 @@ class AnchorEngine:
         if not decision.block_ref:
             return None  # nenhum ref da janela resolve -> funil honesto
         decision.provider = provider
+        if self._voter is not None and (
+                decision.flag or str(entry.get("id") or "") in self._series_ids):
+            voted = self._voter.vote(entry, window, ctx, markdown)
+            if voted:
+                decision.block_ref = voted
+                decision.band = "media"
+                decision.flag = False
+                decision.provider = "llm"
+                decision.method = "llm"
         return decision
