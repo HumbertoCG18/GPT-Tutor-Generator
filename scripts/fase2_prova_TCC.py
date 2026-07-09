@@ -3,7 +3,9 @@
 
 Números do aceite (spec §6): >=4/5 pinos manuais reproduzidos (janela P4 acha o
 bloco do pino SEM olhar o manual), cobertura >26%, resíduo cai pro TIER 3 SEM
-errar confiante. F-TCC: o N de "Semana N" NUNCA vira janela. Uso:
+errar confiante. F-TCC: o N de "Semana N" NUNCA vira janela. NÃO muta manifest/artefato.
+A acurácia/matriz é WHOLE-CASCADE por design (padrão dos probes FASE 0/1); a linha
+'providers' do output denuncia a mistura manual/topic no headline. Uso:
   python scripts/fase2_prova_TCC.py [--repo PATH] [--gold CSV]
 """
 from __future__ import annotations
@@ -88,6 +90,8 @@ def main() -> int:
 
     engine = AnchorEngine()
     com_janela, results, cw = [], {}, []
+    prov_count = defaultdict(int)
+    results_by_prov = defaultdict(list)
     for r in rows:
         e = entries.get(r["id"])
         if e is None:
@@ -101,6 +105,8 @@ def main() -> int:
             continue
         pred = str((ctx.block_by_ref(d.block_ref) or {}).get("id") or d.block_ref)
         ok = pred == r["true_block_id"]
+        prov_count[d.provider or "?"] += 1
+        results_by_prov[d.provider or "?"].append(ok)
         results[r["id"]] = ok
         if d.band == "alta" and not ok and not d.flag:
             cw.append((r["id"], pred, r["true_block_id"], d.provider))
@@ -120,6 +126,10 @@ def main() -> int:
     print(f"  cobertura P4: {len(com_janela)}/{len(rows)} = {cob:.1%} (piso >{PISO_COBERTURA:.0%})")
     print(f"  acurácia motor (par-colapsada, com-janela): {acc:.1%} de {total} pares "
           f"(baseline funil {BASELINE_FUNIL:.1%})")
+    print(f"  providers das decisões: {dict(prov_count)}")
+    for prov in sorted(results_by_prov):
+        oks = results_by_prov[prov]
+        print(f"    acc {prov}: {sum(oks)}/{len(oks)} = {sum(oks)/len(oks):.1%} (por caso, não par-colapsada)")
     print(f"  confiante-e-errado: {len(cw)} {cw}")
     ok_p = len(reproduzidos) >= PISO_PINOS
     ok_c = cob > PISO_COBERTURA
