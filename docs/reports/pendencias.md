@@ -396,8 +396,8 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   Item 2 do pré-flight DECIDIDO (user, 2026-07-08): migração gold→block_uuid fica DÍVIDA para a
   FASE 4 (junto do trabalho de reprocess); regra vigente = `audit_gold_freshness.py` roda como
   PRÉ-GATE antes de QUALQUER medição contra ground_truth_* (especialmente pós-reprocess).
-- [DERIVADO] **FASE 2 do motor de atribuição FECHADA (as-of 2026-07-09; código COMMITADO em 6
-  commits `985351b..9119ac4` na branch `feat/motor-atribuicao`)** — providers P3 (SO, data-no-nome)
+- [DERIVADO] **FASE 2 do motor de atribuição FECHADA (as-of 2026-07-09; código COMMITADO em 9
+  commits `985351b..9119ac4` — 6 tasks + 3 fix-waves de review — na branch `feat/motor-atribuicao`)** — providers P3 (SO, data-no-nome)
   e P4 (TCC, topic-bridge) implementados + provados por réguas externas HARD. Report completo:
   `docs/reports/2026-07-09-fase2-providers-report.md`.
   **P3/SO** (`scripts/fase2_prova_SO.py`): cobertura **45.2% (19/42)**, colisões **0**, matriz gate

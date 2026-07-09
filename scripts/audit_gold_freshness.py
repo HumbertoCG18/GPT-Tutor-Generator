@@ -134,7 +134,7 @@ def audit_course(code: str, repo: Path, gold_csv: Path) -> list[dict]:
                 dd, mm = int(dm.group(1)), int(dm.group(2))
                 sess_dates = [str(s.get("date") or "") for s in tb.get("sessions") or []]
                 start, end = str(tb.get("period_start") or ""), str(tb.get("period_end") or "")
-                year = (sess_dates[0] or start)[:4]
+                year = ((sess_dates[0] if sess_dates else "") or start)[:4]
                 iso = f"{year}-{mm:02d}-{dd:02d}" if year.isdigit() else ""
                 in_sessions = iso in sess_dates
                 in_period = bool(start and end and start <= iso <= end)
