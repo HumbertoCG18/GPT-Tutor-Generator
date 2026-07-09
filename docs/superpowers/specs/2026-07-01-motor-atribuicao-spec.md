@@ -263,6 +263,11 @@ FASE 3  Escalada LLM (TIER 3). GATE DE ENTRADA [sign-off 03/07]: go/no-go do use
         Escopo ampliado, cache material_curation.json, seed dos votos MARCO 1.
         Número: lift ≥ +4 no flagged MF sem novo confiante-errado (era +5 no MARCO 1 cru;
         nas regras finais plano.pdf sem-janela não vota — ver §12).
+        [REVISÃO 09/07, SIGN-OFF user] Piso revisado para ≥ +3 pós-medição: rodada mista
+        (seed 2.5 + flash-latest) deu FAIL +1; experimento com gemini-3.5-flash PINADO
+        (44 votos frescos, seed excluído) = lift +3, global 82.8%→87.9%, conf-errado 0.
+        Variante flagged-only medida offline é PIOR (+2, conf-errado 1) — escopo
+        flagged∪série confirmado ótimo. GO ACEITO com +3; LIFT_MIN=3 na régua.
 FASE 4  Integração D9: AnchorEngine SUBSTITUI apply_anchor_placement
         (call-site pedagogical_regeneration.py:381), feature-flag por-curso, funil intacto.
         Número: flag-OFF byte-idêntico; flag-ON sem-regressão 5/5.

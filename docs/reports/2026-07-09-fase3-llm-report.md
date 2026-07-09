@@ -238,3 +238,49 @@ compatíveis com os dados:
 Dívida #1 (band no ramo flagado): como o veredito é **FAIL**, ela **permanece aberta**, apontando
 para a re-decisão do user (não é N/A — N/A só se aplicaria em caso de PASS, quando a TIER 3
 "consome" o flag e tornaria a granularidade de band irrelevante para essa fila).
+
+---
+
+## Adendo (2026-07-09, pós-fechamento) — experimento gemini-3.5-flash e ACEITE com piso revisado
+
+O user levantou a hipótese de que o veredito FAIL (+1) foi deprimido por infra: modelo
+`gemini-2.5-flash` aposentado no meio da medição + 18/48 votos vindos do seed MARCO 1
+(modelo 2.5, duas gerações atrás). Experimento controlado autorizado (sign-off user):
+
+**Protocolo:** cache zerado (rodada mista preservada em
+`material_curation_MF_2026-07-09_run1_mixed.json`), seed EXCLUÍDO, modelo PINADO
+`gemini-3.5-flash` (existe e gera — smoke de `generateContent` pré-rodada), `--cap 50`,
+44 votos frescos em 1 rodada, 0 erros, escopo completo.
+
+**Resultado:** hipótese parcialmente CONFIRMADA.
+
+| Métrica | Rodada mista | 3.5-flash puro |
+|---|---|---|
+| Lift no escopo (44) | +1 | **+3** |
+| Global par-colapsado | 84.5% (49/58) | **87.9% (51/58)** |
+| Confiante-errado | 0 | **0** |
+
+6 conversões (`exerciciosdafny2`, `exerciciosisabelle2`, `introducao`, `revisao`,
+`arvores`, `listas` — o 3.5 converteu parte do cluster indução 05↔06 dado como
+não-conversível) − 3 regressões (`exercicioscorrecaoterminacao` 11→12, `logicadehoare2`
+10→11, `terminacao` 12→11 — acertos frágeis FLAGADOS que o voto cego derrubou).
+
+**Variante offline "flagged-only" (série não vota), zero API:** lift +2, global 86.2%,
+confiante-errado **1** (`exerciciosdafny2` volta a band alta errado — só vota via série).
+As 3 regressões são todas FLAG; nenhuma regra de escopo as evita. **Escopo flagged∪série
+do spec §12 confirmado ótimo.**
+
+**ACEITE (sign-off user, 2026-07-09):** piso da régua renegociado ≥+4→**≥+3**
+(`LIFT_MIN=3` em `fase3_prova_LLM_MF.py`, baseline consciente — regressão futura <+3 =
+FAIL). Spec §7 FASE 3 anotado. Dívida #1 (band no ramo flagado) → N/A (GO aceito).
+[DECISION] D4×janela-1 vira item obrigatório do plano da FASE 4.
+
+**Resíduo pós-voto (7 pares) → checklist de PINOS (TIER 1, user na GUI):**
+`exercicioscorrecaoterminacao`→bloco-11 · `logicadehoare2`→bloco-10 ·
+`terminacao`→bloco-12 · `provasindutivas-especificacoesrecursivas`
+(+`-arvores`/`-listas`)→bloco-06 · `tiposindutivos`→bloco-15.
+Com pinos: 58/58 no gold (100% no gold ≠ 100% no curso — gold é amostra).
+
+**Configuração vigente:** `gemini_model=gemini-3.5-flash` pinado no config pessoal do
+user (não alias — reprodutibilidade); pré-flight FASE 4 item 0 atualiza `DEFAULT_MODEL`
+e o combo da UI (`dialogs.py:430/441`).

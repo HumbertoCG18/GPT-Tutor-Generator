@@ -47,7 +47,11 @@ DEFAULT_REPO = Path.home() / "Documents" / "GitHub" / "Metodos-Formais-Tutor"
 DEFAULT_GOLD = ROOT / "docs" / "reports" / "ground_truth_MF.csv"
 CACHE = ROOT / "docs" / "reports" / "material_curation_MF.json"
 SEED = ROOT / "docs" / "reports" / "marco1_votes_MF.json"
-LIFT_MIN = 4          # spec §7 FASE 3 (era +5 no MARCO 1 cru; sem-janela nao vota)
+# Piso renegociado com SIGN-OFF do user (2026-07-09), pos-experimento gemini-3.5-flash:
+# +4 era derivado do MARCO 1 (modelo 2.5, escopo cru). Medido com 3.5 pinado, 44 votos
+# frescos: lift +3, global 82.8%->87.9%, conf-errado 0; variante flagged-only PIOR
+# (+2, conf-errado 1) — escopo flagged∪serie confirmado otimo. Regressao futura <+3 = FAIL.
+LIFT_MIN = 3
 
 
 def main() -> int:

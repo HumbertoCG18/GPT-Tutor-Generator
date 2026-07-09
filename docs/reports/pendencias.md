@@ -453,6 +453,24 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   fica OPEN** — como o veredito é FAIL, a TIER 3 não "consome" o flag; N/A só se aplicaria em
   PASS. Plano **NÃO arquivado** (regra do brief: só arquiva em gate verde) — segue em
   `docs/superpowers/plans/2026-07-09-fase3-voto-llm.md` até a re-decisão do user.
+- [DERIVADO] **FASE 3 ACEITA com piso revisado (as-of 2026-07-09, SIGN-OFF user, pós-experimento
+  gemini-3.5-flash) — supersede o FAIL da entrada acima.** Hipótese do user (modelo aposentado +
+  seed 2.5 deprimiram o lift) parcialmente CONFIRMADA: re-voto das 44 rows com `gemini-3.5-flash`
+  PINADO (cache zerado, seed excluído, 44 chamadas, 0 erros, smoke de geração pré-rodada) =
+  lift **+3** (6 conversões − 3 regressões), global par-colapsado **82.8%→87.9%** (51/58),
+  conf-errado **0**. Variante offline "flagged-only" (série não vota) é PIOR: +2 e conf-errado
+  volta a 1 (`exerciciosdafny2` só vota via série) — escopo flagged∪série do spec confirmado
+  ÓTIMO; as 3 regressões (`exercicioscorrecaoterminacao`, `logicadehoare2`, `terminacao`) são
+  todas FLAG (falso-alarme do gate D4 votando) — nenhuma regra de escopo as evita. Piso da régua
+  renegociado ≥+4→**≥+3** (`LIFT_MIN=3`, baseline consciente; regressão futura <+3 = FAIL).
+  **Dívida #1 (band no ramo flagado) → N/A** (GO aceito: TIER 3 consome flag, não band). Config
+  do user pinada `gemini-3.5-flash` (era alias `gemini-flash-latest`); cache da rodada mista
+  preservado em `material_curation_MF_2026-07-09_run1_mixed.json`. Resíduo pós-voto: 7 pares →
+  checklist de PINOS (TIER 1, user na GUI): `exercicioscorrecaoterminacao`→bloco-11,
+  `logicadehoare2`→bloco-10, `terminacao`→bloco-12, `provasindutivas-especificacoesrecursivas`
+  (+`-arvores`/`-listas`)→bloco-06, `tiposindutivos`→bloco-15. Com pinos: 58/58 no gold (100%
+  no gold ≠ 100% no curso). A [DECISION] D4×janela-1 abaixo vira item OBRIGATÓRIO do plano da
+  FASE 4 (voter vai ligar).
 - [DECISION] **D4 × TIER 3 janela-1** — decisão D4-flagada de janela-1 (provider data/topic) entra
   no escopo do voto com UM candidato — LLM confirma o único bloco e desflaga sem informação nova
   (band media, invisível à métrica confiante-errado). Antes de ligar voter na FASE 4: excluir

@@ -1,0 +1,293 @@
+{
+  "version": 1,
+  "votes": {
+    "eb86c62015296f8f5ddbc36d352ec9ed": {
+      "block_id": "bloco-05",
+      "confianca": "alta",
+      "justificativa": "O material trata de exercícios de provas por indução, incluindo indução estrutural em listas e árvores, o que se alinha perfeitamente com o tópico e roteiro do bloco que aborda 'inducao arvores' e 'Es",
+      "model": "gemini-2.5-flash"
+    },
+    "5d504c4d3509a10bb5a96aff14f218ab": {
+      "block_id": "bloco-12",
+      "confianca": "alta",
+      "justificativa": "O material é focado em 'Correção e Terminação' e utiliza o Dafny, referenciando explicitamente seu tutorial sobre terminação. O tópico do bloco-12 é 'terminacao introducao dafny', o que se alinha perf",
+      "model": "gemini-2.5-flash"
+    },
+    "d393da56138cfc06a1dc6b77a132b78e": {
+      "block_id": "bloco-13",
+      "confianca": "alta",
+      "justificativa": "O material é de exercícios introdutórios de Dafny ('Dafny1') que se encaixam perfeitamente no período de 'Introdução ao Dafny' listado no roteiro do bloco-13.",
+      "model": "gemini-2.5-flash"
+    },
+    "71352202aef61f0b1ceedc4aeb0259af": {
+      "block_id": "bloco-15",
+      "confianca": "alta",
+      "justificativa": "O material trata de exercícios de programação e verificação com Dafny, com foco explícito em 'Classes', 'objetos', e 'frames'/'modifies', o que se alinha perfeitamente com o tópico de 'Classes e objet",
+      "model": "gemini-2.5-flash"
+    },
+    "07a5afa9017d8417afe751dba92d8814": {
+      "block_id": "bloco-03",
+      "confianca": "alta",
+      "justificativa": "O material é uma lista de exercícios sobre especificação formal usando lógica de predicados, alinhando-se perfeitamente com o tópico 'lógica de predicados' e 'revisão de fundamentos de lógica' do bloc",
+      "model": "gemini-2.5-flash"
+    },
+    "3675435c561bb82584762575178e650a": {
+      "block_id": "bloco-03",
+      "confianca": "alta",
+      "justificativa": "O material é um gabarito de exercícios sobre 'Especificação Formal' usando 'Lógica de Predicados'. O Bloco-03 aborda 'lógica predicados' e 'revisão de fundamentos de lógica', que se alinha perfeitamen",
+      "model": "gemini-2.5-flash"
+    },
+    "8e9dd6ca6ef17b7bf82567ffa3c2a720": {
+      "block_id": "bloco-06",
+      "confianca": "alta",
+      "justificativa": "O material é focado em exercícios de prova por indução no Isabelle (parte 2), o que se alinha perfeitamente com o tópico 'interativa teoremas isabelle' e o roteiro 'Especificações recursivas e provas ",
+      "model": "gemini-2.5-flash"
+    },
+    "6dab5beff4e7851b81bbfd1baa80dca6": {
+      "block_id": "bloco-11",
+      "confianca": "alta",
+      "justificativa": "O material detalha a Lógica de Hoare, com foco intenso em 'LAÇOS ENQUANTO' e o conceito de 'invariante de laço', que é um tópico central de 'bloco-11'.",
+      "model": "gemini-2.5-flash"
+    },
+    "a92ac97de1d95e3de4f9a063ae14a979": {
+      "block_id": "bloco-03",
+      "confianca": "alta",
+      "justificativa": "O material trata da semântica da Lógica de Predicados, um tópico central do bloco 'logica predicados' e alinhado com a 'revisão de fundamentos de lógica'.",
+      "model": "gemini-2.5-flash"
+    },
+    "6f740b94088948a534a720727706f1de": {
+      "block_id": "bloco-03",
+      "confianca": "alta",
+      "justificativa": "O material é sobre 'LÓGICA DE PREDICADOS - Sintaxe' e o bloco-03 tem 'topico: logica predicados' e 'roteiro: revisão de fundamentos de lógica', o que se encaixa perfeitamente. A seção do Moodle 'Revis",
+      "model": "gemini-2.5-flash"
+    },
+    "83c50d7a7169d34d3826b279ec696890": {
+      "block_id": "bloco-01",
+      "confianca": "alta",
+      "justificativa": "O material é o 'Plano de Ensino' da disciplina, que é apresentado no primeiro bloco, 'apresentação da disciplina'.",
+      "model": "gemini-2.5-flash"
+    },
+    "e74e6f570386c3e2e4e5126d57976c09": {
+      "block_id": "bloco-05",
+      "confianca": "alta",
+      "justificativa": "O material trata de 'Indução Estrutural sobre Listas' e 'Especificações Recursivas', o que se alinha perfeitamente com o roteiro do bloco 'Especificações recursivas e provas por indução'. O outro bloc",
+      "model": "gemini-2.5-flash"
+    },
+    "33a20a2f57001ef536a3e87ddc45e6f9": {
+      "block_id": "bloco-05",
+      "confianca": "alta",
+      "justificativa": "O material trata de árvores binárias e uma prova por indução em Isabelle, o que se alinha perfeitamente com o tópico 'inducao arvores' e o roteiro 'Especificações recursivas e provas por indução' do b",
+      "model": "gemini-2.5-flash"
+    },
+    "58be45b1365d515696b62980b64821e6": {
+      "block_id": "bloco-16",
+      "confianca": "alta",
+      "justificativa": "O tópico do bloco 'verificacao modelos logica temporal ferramenta' e o roteiro 'Verificação de modelos, lógica temporal' correspondem diretamente à seção do Moodle 'Especificação e Verificação de Mode",
+      "model": "gemini-2.5-flash"
+    },
+    "f634b21d4a451f084d97ab2a063783d3": {
+      "block_id": "bloco-13",
+      "confianca": "alta",
+      "justificativa": "O material 'Tiposindutivos' (código-professor) se alinha com o tópico de Dafny e coleções (sequências, conjuntos), que frequentemente envolvem tipos definidos indutivamente em linguagens de verificaçã",
+      "model": "gemini-2.5-flash"
+    },
+    "archive-of-formal-proofs-355fb8": {
+      "block_id": "bloco-06",
+      "confianca": "alta",
+      "justificativa": "O material é sobre 'Archive of Formal Proofs' para o provador de teoremas Isabelle, e o bloco-06 aborda explicitamente 'Isabelle' e 'provas por indução em Isabelle'.",
+      "model": "gemini-2.5-flash"
+    },
+    "aws-encryption-sdk": {
+      "block_id": "bloco-15",
+      "confianca": "alta",
+      "justificativa": "O material é um SDK (Software Development Kit) de criptografia, que consiste em código. O bloco 15 aborda Dafny com foco em classes, objetos, ghosts e autocontratos, sendo ideal para discutir a verifi",
+      "model": "gemini-2.5-flash"
+    },
+    "eth2": {
+      "block_id": "bloco-13",
+      "confianca": "alta",
+      "justificativa": "O material é uma especificação em Dafny, e o bloco-13 aborda tópicos como 'Arrays em Dafny' e 'Coleções auxiliares em Dafny', que são cruciais para a construção de especificações complexas em Dafny, i",
+      "model": "gemini-2.5-flash"
+    },
+    "9487c8bae204112b26a1102230bced84": {
+      "block_id": "bloco-11",
+      "confianca": "alta",
+      "justificativa": "O material aborda conceitos de correcao parcial, correcao total e terminacao de algoritmos, que correspondem exatamente aos topicos e roteiro descritos no bloco-11.",
+      "model": "gemini-flash-latest"
+    },
+    "7ad33d6a04b23ad6e0a5c998a9cbb657": {
+      "block_id": "bloco-13",
+      "confianca": "alta",
+      "justificativa": "O material trata especificamente de exercicios de programacao e verificacao com Arrays no Dafny, correspondente ao topico 'Arrays em Dafny' abordado no bloco-13.",
+      "model": "gemini-flash-latest"
+    },
+    "3b288abd424cbab4b6f6aa989e03aad8": {
+      "block_id": "bloco-13",
+      "confianca": "alta",
+      "justificativa": "O material trata de exercícios de Dafny focados em sequências (sequences) e arrays, tópicos que são explicitamente abordados no roteiro e título do bloco-13.",
+      "model": "gemini-flash-latest"
+    },
+    "b80a8d95f80a4367a093edf756a9190f": {
+      "block_id": "bloco-13",
+      "confianca": "alta",
+      "justificativa": "O material trata de exercicios em Dafny focando em colecoes auxiliares como Sets, Multisets e Arrays, o que corresponde perfeitamente ao conteudo do bloco-13.",
+      "model": "gemini-flash-latest"
+    },
+    "8d2d2518799037958631164e4f7476e9": {
+      "block_id": "bloco-11",
+      "confianca": "alta",
+      "justificativa": "O material trata explicitamente de formalização de algoritmos com invariantes de laço, o que está diretamente alinhado com o tópico do bloco-11 (correção parcial/total, terminação e invariantes de laç",
+      "model": "gemini-flash-latest"
+    },
+    "988bc7f95c598b5e83dc68061c333609": {
+      "block_id": "bloco-04",
+      "confianca": "Alta",
+      "justificativa": "O material trata de formalizacao de algoritmos como equacoes recursivas e definicao indutiva de listas, o que coincide exatamente com o roteiro do bloco-04 (conjuntos indutivos e equacoes recursivas, ",
+      "model": "gemini-flash-latest"
+    },
+    "920062c495b03accf2b31c6fcc90ea2b": {
+      "block_id": "bloco-04",
+      "confianca": "alta",
+      "justificativa": "O material trata de equacoes recursivas e arvores binarias sob definicao indutiva, o que se alinha perfeitamente com o roteiro do bloco-04 que cobre conjuntos indutivos, equacoes recursivas e arvores.",
+      "model": "gemini-flash-latest"
+    },
+    "e5c9ddb859e782e55a5a242322e4131c": {
+      "block_id": "bloco-16",
+      "confianca": "alta",
+      "justificativa": "O material trata de exerc'icios de L'ogica Temporal e Verifica'c#o de Modelos, o que corresponde diretamente ao t'opico e roteiro descritos no bloco-16 (Verifica'c#o de modelos, l'ogica temporal).",
+      "model": "gemini-flash-latest"
+    },
+    "1b984adde24775ecca47a5a4c5db2344": {
+      "block_id": "bloco-04",
+      "confianca": "total",
+      "justificativa": "O material trata de definições indutivas de listas polimórficas e equações recursivas sobre listas, o que se alinha perfeitamente com o tópico de conjuntos indutivos e equações recursivas abordado no ",
+      "model": "gemini-flash-latest"
+    },
+    "9c8509494a6f03fe36b3b12dce4210c4": {
+      "block_id": "bloco-04",
+      "confianca": "alta",
+      "justificativa": "O material aborda definicoes indutivas e equacoes recursivas sobre arvores, o que se alinha perfeitamente com os topicos descritos no bloco-04.",
+      "model": "gemini-flash-latest"
+    },
+    "be9661ffbee479426af7c6fa1fe5efca": {
+      "block_id": "bloco-02",
+      "confianca": "alta",
+      "justificativa": "O material contem a introducao aos conceitos de metodos formais, verificacao e validacao, o que se alinha perfeitamente ao topico do bloco-0-bloco 02.",
+      "model": "gemini-flash-latest"
+    },
+    "929b27066b74f0084754715cae03376b": {
+      "block_id": "bloco-10",
+      "confianca": "excelente",
+      "justificativa": "O material trata extensivamente da Lógica de Hoare (Triplas de Hoare, Cálculo de Floyd-Hoare), que corresponde diretamente ao tópico e roteiro do bloco-10.",
+      "model": "gemini-flash-latest"
+    },
+    "8b39ef76e7c336a98c3a03558bc75d6f": {
+      "block_id": "bloco-03",
+      "confianca": "alta",
+      "justificativa": "O material trata de semantica de logica proposicional, que e um fundamento de logica, correspondente ao bloco-03 que tem como roteiro a revisao de fundamentos de logica.",
+      "model": "gemini-flash-latest"
+    },
+    "843864bcfd287c10c2df0c08103c4342": {
+      "block_id": "bloco-03",
+      "confianca": "alta",
+      "justificativa": "O material trata de sintaxe de logica proposicional para revisao, o que se alinha perfeitamente com o roteiro de revisao de fundamentos de logica do bloco-03.",
+      "model": "gemini-flash-latest"
+    },
+    "29038aa22321d3b3f3c5aadac68c6e3b": {
+      "block_id": "bloco-05",
+      "confianca": "alta",
+      "justificativa": "O material aborda os principios da inducao matematica e inducao de especificacoes recursivas de forma geral e teorica, o que corresponde diretamente ao roteiro do bloco-05 ('Especificacoes recursivas ",
+      "model": "gemini-flash-latest"
+    },
+    "748624ca0a264df51991de528408569b": {
+      "block_id": "bloco-05",
+      "confianca": "alta",
+      "justificativa": "O material trata de indução estrutural sobre árvores com provas matemáticas manuais (sem Isabelle), condizente com o tópico 'inducao arvores' e roteiro 'Especificações recursivas e provas por indução'",
+      "model": "gemini-flash-latest"
+    },
+    "8c9bcc1be020487df5ded715433909b5": {
+      "block_id": "bloco-03",
+      "confianca": "alta",
+      "justificativa": "O material trata de uma revisão de conceitos fundamentais como conjuntos, relações, funções e linguagens formais, o que se alinha com o roteiro de revisão de fundamentos de lógica do bloco-03.",
+      "model": "gemini-flash-latest"
+    },
+    "d783e651b8fb30ddc18a293f66e4e69e": {
+      "block_id": "bloco-15",
+      "confianca": "alta",
+      "justificativa": "O material 'Classes Parte1' trata de classes e objetos, o que corresponde diretamente ao roteiro do bloco-15 que aborda 'Classes e objetos em Dafny, ghosts e autocontrato'.",
+      "model": "gemini-flash-latest"
+    },
+    "77f05155124be7bec7155468d3c85120": {
+      "block_id": "bloco-15",
+      "confianca": "alta",
+      "justificativa": "O material trata de classes em Dafny, o que corresponde diretamente ao roteiro e topicos do bloco-15 (Classes e objetos em Dafny).",
+      "model": "gemini-flash-latest"
+    },
+    "1c3e29a2ddacbe9e8649e32f5ddd3954": {
+      "block_id": "bloco-13",
+      "confianca": "alta",
+      "justificativa": "O material trata de 'Colecoes Arrays', o que coincide diretamente com os topicos do bloco-13 que cobrem arrays e colecoes auxiliares em Dafny.",
+      "model": "gemini-flash-latest"
+    },
+    "06a67b8fc83aaa0d4f2abb5f855dfd78": {
+      "block_id": "bloco-13",
+      "confianca": "alta",
+      "justificativa": "O material trata de coleções e conjuntos no contexto de Dafny, o que corresponde diretamente ao tópico e roteiro do bloco-13, que explicitamente menciona coleções, sequências e conjuntos em Dafny.",
+      "model": "gemini-flash-latest"
+    },
+    "0cef11f9074554fa59988e0da6e1eb4f": {
+      "block_id": "bloco-13",
+      "confianca": "alta",
+      "justificativa": "O material trata de colecoes (sequences) em Dafny, o que coincide diretamente com o topico de colecoes auxiliares e sequencias em Dafny abordado no bloco-13.",
+      "model": "gemini-flash-latest"
+    },
+    "c85f04bce9a1f2be53ef793246d92196": {
+      "block_id": "bloco-06",
+      "confianca": "alta",
+      "justificativa": "O material é um código Isabelle (.thy) contendo definições de tipos, funções e teoremas indutivos, o que corresponde diretamente ao roteiro do bloco-06 focado em especificações recursivas e provas por",
+      "model": "gemini-flash-latest"
+    },
+    "a593b95d9f5b5d4f6c332acb194d2643": {
+      "block_id": "bloco-13",
+      "confianca": "alta",
+      "justificativa": "O material trata de exercicios com arrays no contexto de verificacao de programas, o que se alinha diretamente com o bloco-13 que aborda 'Arrays em Dafny' e colecoes.",
+      "model": "gemini-flash-latest"
+    },
+    "1aeebfe7142d652107d24fe23de88f6f": {
+      "block_id": "bloco-13",
+      "confianca": "alta",
+      "justificativa": "O material trata de exercicios de conjuntos e o bloco-13 aborda explicitamente colecoes auxiliares em Dafny, especificamente sequencias e conjuntos.",
+      "model": "gemini-flash-latest"
+    },
+    "0102837542a0d47df09bf635f1246638": {
+      "block_id": "bloco-06",
+      "confianca": "alta",
+      "justificativa": "O material é um arquivo de teoria do Isabelle (.thy) contendo código sobre indução matemática em Isabelle, o que corresponde diretamente ao roteiro do bloco-06, focado em especificações recursivas e p",
+      "model": "gemini-flash-latest"
+    },
+    "70547fd8d364cdf668ae11473491947f": {
+      "block_id": "bloco-12",
+      "confianca": "Alta",
+      "justificativa": "O material e um codigo de introducao na secao de Verificacao de Programas, o que se alinha perfeitamente com a 'Introducao ao Dafny' no bloco-12.",
+      "model": "gemini-flash-latest"
+    },
+    "397c6bc11f02e44e79c9252110ead52e": {
+      "block_id": "bloco-11",
+      "confianca": "alta",
+      "justificativa": "O material trata de invariantes e o bloco-11 possui como topico explicitamente 'invariantes laco' e 'correcao parcial total', relacionados a Verificacao de Programas.",
+      "model": "gemini-flash-latest"
+    },
+    "e734a13442d42ac43e0b707cad3fbcad": {
+      "block_id": "bloco-06",
+      "confianca": "alta",
+      "justificativa": "O material e um codigo em Isabelle provando propriedades de listas por inducao, correspondendo ao bloco de inducao em Isabelle (bloco-06).",
+      "model": "gemini-flash-latest"
+    },
+    "e489dbdb1c05c81bf22f18675364513c": {
+      "block_id": "bloco-11",
+      "confianca": "alta",
+      "justificativa": "O material trata de Terminacao sob a secao de Verificacao de Programas, o que condiz perfeitamente com o roteiro do bloco-11 que aborda correcao parcial/total e terminacao.",
+      "model": "gemini-flash-latest"
+    }
+  }
+}
