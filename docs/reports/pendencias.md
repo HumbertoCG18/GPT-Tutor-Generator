@@ -396,6 +396,35 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   Item 2 do pré-flight DECIDIDO (user, 2026-07-08): migração gold→block_uuid fica DÍVIDA para a
   FASE 4 (junto do trabalho de reprocess); regra vigente = `audit_gold_freshness.py` roda como
   PRÉ-GATE antes de QUALQUER medição contra ground_truth_* (especialmente pós-reprocess).
+- [DERIVADO] **FASE 2 do motor de atribuição FECHADA (as-of 2026-07-09; código COMMITADO em 6
+  commits `985351b..9119ac4` na branch `feat/motor-atribuicao`)** — providers P3 (SO, data-no-nome)
+  e P4 (TCC, topic-bridge) implementados + provados por réguas externas HARD. Report completo:
+  `docs/reports/2026-07-09-fase2-providers-report.md`.
+  **P3/SO** (`scripts/fase2_prova_SO.py`): cobertura **45.2% (19/42)**, colisões **0**, matriz gate
+  {alta-ok 13, resto-ok 2, resto-err 4}, confiante-errado **0**, acurácia par-colapsada **77.8%**
+  (14/18) vs baseline funil 47.4%; 100% das decisões via provider `data`. `DATE_DF_MAX` recalibrado
+  na grade 1/2/3 (protocolo D4) e **mantido em 2** (empata com 3 no `alta-ok` máximo, desempate pela
+  constante já vigente/validada na FASE 1 MF).
+  **P4/TCC** (`scripts/fase2_prova_TCC.py`): pinos manuais **5/5** por interseção (contenção total
+  3/5 — NP-completude perde bloco-21, Halteproblem perde bloco-10, métrica secundária sem piso),
+  cobertura **83.3% (30/36)**, confiante-errado **0**, acurácia par-colapsada **84.2%** (19 pares) vs
+  baseline funil 56.0%; breakdown por provider: manual 8/8=100%, topic 16/20=80%. `TOPIC_STEM_LEN=6`
+  / `TOPIC_MIN_TOKEN=3` mantidos (grade não disparou — pinos 5/5 já no ponto default).
+  **MF (regressão): intacto** — acc 82.8%, contenção 0, confiante-errado 1, recall 0.900; probes
+  fase0/fase1 PASS em toda a fase. **Suite completa: 1722 passed / 4 skipped / 0 failed.**
+  **Fila humana consolidada (go/no-go FASE 3): MF 37 + SO 6 + TCC 22 = 65 flagados** (SO/TCC
+  derivados da matriz gate/banda — não expostos direto no output do probe original, confirmados por
+  reexecução read-only contando `AnchorDecision.flag`, 0 mismatch contra `flag == (band != "alta")`).
+  **Riscos residuais (não bloqueantes, ver report):** (1) ramo flagado do gate de data hardcoda
+  `band="media"` — perde granularidade silêncio-lexical vs overlap-boilerplate na fila SO; (2)
+  janela-1 vinda de provider `topic` NÃO passa pelo gate D4 (só `data` passa) — 0 ocorrências hoje no
+  TCC, monitorar; (3) `TOPIC_MIN_TOKEN` piso-2 é no-op estrutural (assinatura de bloco tem piso-3) —
+  calibração futura de tokens curtos exige assinatura própria do P4 nos dois lados; (4) réguas
+  SO/TCC medem acurácia WHOLE-CASCADE por design, com linha `providers` denunciando mistura; (5)
+  contenção total de pinos 3/5 (vs interseção 5/5, o aceite) — relevante se FASE 3+ exigir contenção
+  dura multi-bloco; (6) memoização `_global_df`/`_modal_years`/`normalized_card_map` deferida pra
+  FASE 4. Próximo: go/no-go FASE 3 = decisão USER com este report em mãos (sign-off condicional §9,
+  resoluções 9/11 do spec já aprovadas).
 - [CODE] **Migrar ground_truth_*.csv de bloco-NN → block_uuid (FASE 4)** — decisão user 2026-07-08
   (pré-flight FASE 2 item 2). Inclui: 5 CSVs + eval_ground_truth + harnesses fase0/fase1 resolvendo
   uuid→display. Até lá, auditor de frescor é pré-gate obrigatório de medição.

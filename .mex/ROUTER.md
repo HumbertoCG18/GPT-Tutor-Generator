@@ -297,7 +297,8 @@ Read this file before starting any task.
   (periodo em branco). Auditoria da classe: gold/evals (Task 4) + `apply_block_curation`
   (Task 3) + slugs de unidade ja eram uuid-safe. 23 pins humanos recuperados nos 5 cursos
   (ES2 1/IA 5/MF 9/SO 4/TCC 4).
-- Motor de atribuicao FASE 0+1 ENTREGUES (as-of 2026-07-07; F0 f75d22b..fff7d47, F1 2e49ceb..ccea93c):
+- Motor de atribuicao FASE 0+1+2 ENTREGUES (as-of 2026-07-09; F0 f75d22b..fff7d47, F1 2e49ceb..ccea93c,
+  F2 985351b..9119ac4):
   pacote isolado `src/builder/routing/motor/` (contracts/window_provider/disambiguator/anchor_engine
   + metrics), READ-ONLY, NAO integrado ao pipeline (integracao = FASE 4). FASE 1 = gate D4 calibrado
   com RECALL MEDIDO: recall 0.824 (ref proxy 0.577), confiante-errado 7->3, acuracia escopo-disamb MF
@@ -309,8 +310,14 @@ Read this file before starting any task.
   82.8%, conten 0, conf-errado 1, recall 0.900; residuo TIER 3 = so exerciciosdafny2; pendencia
   bloco-09 MORTA (card map estava certo). LICAO pre-FASE 2: auditar frescor dos ground_truth_* dos
   outros cursos (mesmo drift possivel); considerar migrar gold pra block_uuid.
-  Guard AST proibe import dos simbolos condenados. Proximo: FASE 2 (P3 SO / P4 TCC); go/no-go FASE 3
-  = decisao USER pos-recall.
+  Guard AST proibe import dos simbolos condenados.
+  FASE 2 = providers P3 (SO, data-no-nome) + P4 (TCC, topic-bridge), provados por reguas HARD
+  `scripts/fase2_prova_SO.py`/`fase2_prova_TCC.py`. P3/SO: cobertura 45.2% (19/42), colisao 0, gate
+  de concordancia DATE_DF_MAX=2 (grade 1/2/3 testada, mantido). P4/TCC: pinos 5/5 (interseccao),
+  cobertura 83.3% (30/36), stem-prefix-6 (TOPIC_STEM_LEN=6/TOPIC_MIN_TOKEN=3, grade nao disparou).
+  Confiante-errado 0 em ambos; acc par-colapsada SO 77.8%/TCC 84.2% vs baselines funil 47.4%/56.0%.
+  MF intacto (regressao). Report `docs/reports/2026-07-09-fase2-providers-report.md`. Proximo:
+  go/no-go FASE 3 = decisao USER com o report em maos.
 
 ### Not Declared In Brief
 
