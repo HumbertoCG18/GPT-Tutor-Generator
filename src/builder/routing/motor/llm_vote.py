@@ -146,10 +146,10 @@ def build_vote_prompt(entry: dict, window: List[str], ctx,
     """Prompt do MARCO 1 generalizado (roteiro via ctx.lessons_index)."""
     md = (markdown or "")[:MD_PROMPT_CAP]
     return (
-        f"CONTEÚDO:\n"
+        f"MATERIAL:\n"
         f"  titulo: {entry.get('title')}\n"
         f"  categoria: {entry.get('category')}\n"
-        f"  secao/card da Plataforma: {entry.get('source_section') or '(sem secao)'}\n"
+        f"  secao/card do Moodle: {entry.get('source_section') or '(sem secao)'}\n"
         f"  trecho do conteudo:\n---\n{md or '(sem markdown extraido)'}\n---\n\n"
         f"BLOCOS CANDIDATOS:\n{_block_lines(window, ctx)}\n\n"
         f"Qual bloco? Responda no schema."

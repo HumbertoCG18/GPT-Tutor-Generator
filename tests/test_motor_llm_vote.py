@@ -132,11 +132,11 @@ class FakeClient:
 def test_build_vote_prompt_conteudo_e_cap():
     ctx = _ctx()
     e = _entry("e1", title="Lista Inducao", section="Card X")
-    prompt = build_vote_prompt(e, ["bloco-01", "bloco-02"], ctx, "M" * 9999)
+    prompt = build_vote_prompt(e, ["bloco-01", "bloco-02"], ctx, "Z" * 9999)
     assert "Lista Inducao" in prompt
     assert "bloco-01" in prompt and "bloco-02" in prompt
     assert "inducao em listas" in prompt          # roteiro via ctx.lessons_index
-    assert prompt.count("M") == MD_PROMPT_CAP     # trecho capado (protocolo MARCO 1)
+    assert prompt.count("Z") == MD_PROMPT_CAP     # trecho capado (protocolo MARCO 1)
 
 
 def test_match_window_ref_bounded():
