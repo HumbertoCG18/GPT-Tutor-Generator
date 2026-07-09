@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-07-07
+last_updated: 2026-07-09
 > Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
 > mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
@@ -425,6 +425,30 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   dura multi-bloco; (6) memoização `_global_df`/`_modal_years`/`normalized_card_map` deferida pra
   FASE 4. Próximo: go/no-go FASE 3 = decisão USER com este report em mãos (sign-off condicional §9,
   resoluções 9/11 do spec já aprovadas).
+- [DERIVADO] **FASE 3 do motor de atribuição FECHADA (as-of 2026-07-09; código COMMITADO Tasks 1-5
+  `512afcd..c70c272` na branch `feat/motor-atribuicao`; Task 6 = esta medição real, uncommitted até
+  este commit) — VEREDITO: FAIL HONESTO.** Report completo:
+  `docs/reports/2026-07-09-fase3-llm-report.md`. Rodada real (3 rodadas, cap 20/rodada):
+  **50 chamadas API tentadas, 30 úteis** (rodada 1 = 20/20 erro 404 — bloqueio de infra, não
+  conteúdo: `gemini-2.5-flash` aposentado neste ambiente para `generateContent`; fix = trocar
+  `gemini_model` pra `gemini-flash-latest` no `~/.gpt_tutor_config.json` pessoal, sem tocar
+  código/repo; ver report). **Números**: lift **+1** (piso +4, FAIL) · confiante-errado **0**
+  (piso cumprido — o único resíduo herdado, `exerciciosdafny2`, foi corrigido pelo voto) · rodada
+  **completa** (48/48 votos cacheados, 18 seed MARCO 1 + 30 novos). Acurácia global par-colapsada
+  82.8%→84.5% (48/58→49/58). **Achado central**: na fila FLAGADA (37/44, a fila que a TIER 3
+  deveria reduzir) o saldo foi **ZERO** (28→28: 4 correções anuladas por 4 regressões); todo o
+  lift (+1) veio do lado série-same-theme não-flagado (7/44, 6→7). Ou seja, medido honestamente,
+  **o voto TIER 3 não reduziu a fila humana no MF** — só resolveu 1 caso pontual que já não
+  estava na fila. 5 casos seguem não-conversíveis (cluster indução×Isabelle 05↔06 núcleo duro
+  — 4 casos — + `tiposindutivos`); 2 dos 6 casos originalmente nomeados nesse cluster (FASE 1)
+  CONVERTERAM nesta rodada, refutando a categorização binária "100% não-conversível". Regressão
+  total: fase0/fase1/fase2-SO/fase2-TCC PASS intactos (rodam sem voter); suite **1743 passed / 4
+  skipped / 0 failed**. Por spec §12 regra 4, **NÃO iterei prompt** — número é definitivo para
+  esta rodada; decisão go-forward (aceitar lift menor com sign-off OU reverter GO da TIER 3) é do
+  **user**, com o report em mãos. **Dívida #1 (band no ramo flagado, risco residual #1 da FASE 2)
+  fica OPEN** — como o veredito é FAIL, a TIER 3 não "consome" o flag; N/A só se aplicaria em
+  PASS. Plano **NÃO arquivado** (regra do brief: só arquiva em gate verde) — segue em
+  `docs/superpowers/plans/2026-07-09-fase3-voto-llm.md` até a re-decisão do user.
 - [CODE] **Migrar ground_truth_*.csv de bloco-NN → block_uuid (FASE 4)** — decisão user 2026-07-08
   (pré-flight FASE 2 item 2). Inclui: 5 CSVs + eval_ground_truth + harnesses fase0/fase1 resolvendo
   uuid→display. Até lá, auditor de frescor é pré-gate obrigatório de medição.
