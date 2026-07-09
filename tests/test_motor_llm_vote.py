@@ -6,6 +6,7 @@ from pathlib import Path
 
 from src.builder.routing.motor.llm_vote import (
     content_key,
+    detect_same_theme_series,
     import_marco1_seed,
     load_material_curation,
     save_material_curation,
@@ -55,3 +56,30 @@ def test_import_marco1_seed_rechaveia_por_conteudo(tmp_path: Path):
     key = content_key(entries["rid1"], tmp_path)
     assert set(votes) == {key}
     assert votes[key]["block_id"] == "bloco-05"
+
+
+def test_serie_same_theme_detecta_membros():
+    entries = [
+        _entry("d1", title="Exercicios Dafny 1", section="Verificacao"),
+        _entry("d2", title="Exercicios Dafny 2", section="Verificacao"),
+        _entry("solo", title="Prova Especial 9", section="Outra"),
+    ]
+    assert detect_same_theme_series(entries) == {"d1", "d2"}
+
+
+def test_serie_exige_ordinais_distintos_e_card():
+    entries = [
+        _entry("a1", title="Lista 1", section="Card A"),
+        _entry("a2", title="Lista 1", section="Card A"),      # mesmo ordinal: nao
+        _entry("b1", title="Lista 1", section=""),            # sem card: nao
+        _entry("b2", title="Lista 2", section=""),
+    ]
+    assert detect_same_theme_series(entries) == set()
+
+
+def test_serie_exclui_fora_de_escopo_d6():
+    entries = [
+        _entry("t1", title="TDE 1", section="Verificacao", category="trabalhos"),
+        _entry("t2", title="TDE 2", section="Verificacao", category="trabalhos"),
+    ]
+    assert detect_same_theme_series(entries) == set()

@@ -14,9 +14,14 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
+from collections import defaultdict
 from pathlib import Path
+from typing import Dict, List, Set
 
 from pydantic import BaseModel
+
+from src.builder.text.normalize import normalize_match_text
 
 MD_PROMPT_CAP = 3500   # protocolo MARCO 1
 DEFAULT_CAP = 20       # orcamento D8 por rodada/reprocess
@@ -87,3 +92,33 @@ def import_marco1_seed(seed_votes: dict, entries_by_id: dict, repo_dir: Path) ->
             continue
         votes[content_key(e, repo_dir)] = dict(vote)
     return votes
+
+
+_DIGITS = re.compile(r"\d+")
+
+
+def detect_same_theme_series(entries: List[dict]) -> Set[str]:
+    """Membros de serie same-theme: mesmo card + mesmo stem, >=2 ordinais distintos.
+
+    Porta detect_series do marco0 (metodologia validada no MARCO 1).
+    Import lazy de is_out_of_disamb_scope: anchor_engine nao importa llm_vote,
+    entao o lazy quebra o ciclo so por higiene de dependencia.
+    """
+    from src.builder.routing.motor.anchor_engine import is_out_of_disamb_scope
+
+    groups: Dict[tuple, list] = defaultdict(list)
+    for e in entries or []:
+        if is_out_of_disamb_scope(e):
+            continue
+        rid = str(e.get("id") or "")
+        name = str(e.get("title") or rid)
+        nums = _DIGITS.findall(name)
+        stem = _DIGITS.sub("", normalize_match_text(name)).strip()
+        sec = str(e.get("source_section") or "").strip()
+        if rid and nums and stem and sec:
+            groups[(sec, stem)].append((rid, int(nums[-1])))
+    members: Set[str] = set()
+    for ms in groups.values():
+        if len(ms) >= 2 and len({o for _, o in ms}) >= 2:
+            members.update(rid for rid, _o in ms)
+    return members
