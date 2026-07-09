@@ -79,10 +79,12 @@ W_TOPIC: float = 0.6
 MARGIN_TAU: float = 0.55
 _EPS: float = 1e-9
 
-# Gate de concordância do P3 (D4, spec §3): janela-1 vinda de DATA só é
-# confiante se o material carrega token ESPECÍFICO do bloco no curso —
-# df global (nº de blocos cuja assinatura tem o token) <= DATE_DF_MAX.
-# Data de POSTAGEM != aula do conteúdo (5 misses medidos no gold SO).
+# Gate de concordância (D4, spec §3) para janela-1 vinda de sinal INDIRETO
+# (P3 data, P4 topic): só é confiante se o material carrega token ESPECÍFICO
+# do bloco no curso — df global (nº de blocos cuja assinatura tem o token)
+# <= DATE_DF_MAX. Data de POSTAGEM != aula do conteúdo (5 misses medidos no
+# gold SO); janela topic-1 tem o mesmo shape (Halteproblem TCC, mascarado
+# por pino manual — review final F2, finding 3).
 # Calibração FASE 2 (grade 1/2/3 na régua externa SO, fase2_prova_SO.py,
 # 2026-07-08): confErrado=0 nos 3 pontos; matriz (resto-err, resto-ok,
 # alta-ok) = (4,7,8) em 1; (4,2,13) em 2; (4,2,13) em 3 — empate 2x3 no
@@ -123,9 +125,9 @@ def _global_df(ctx: MotorContext) -> dict:
     return df
 
 
-def _date_window1_decision(entry: dict, block: dict, ctx: MotorContext,
-                           markdown: str, win: List[str]) -> AnchorDecision:
-    """Janela-1 de P3: alta exige concordância por token discriminante global."""
+def _gated_window1_decision(entry: dict, block: dict, ctx: MotorContext,
+                            markdown: str, win: List[str]) -> AnchorDecision:
+    """Janela-1 de P3/P4: alta exige concordância por token discriminante global."""
     ref = str(block.get("id") or block.get("block_uuid") or win[0])
     mat = entry_tokens(entry, markdown)
     sig = set(_block_signature(block, ctx))
@@ -146,11 +148,12 @@ def disambiguate(entry: dict, window: List[str], ctx: MotorContext,
     if not blocks:
         return AnchorDecision(block_ref="", method="funil", window=win)
     # Fast-path janela-1 exige que a JANELA ORIGINAL tenha 1 ref, não apenas
-    # os resolvíveis (comentário FASE 1 mantido). Janela-1 vinda de DATA passa
-    # pelo gate de concordância D4 — postagem != aula do conteúdo.
+    # os resolvíveis (comentário FASE 1 mantido). Janela-1 vinda de sinal
+    # INDIRETO (data/topic) passa pelo gate de concordância D4; manual/labels
+    # (verdade humana / datado) mantêm o fast-path incondicional.
     if len(win) == 1 and len(blocks) == 1:
-        if provider == "data":
-            return _date_window1_decision(entry, blocks[0], ctx, markdown, win)
+        if provider in ("data", "topic"):
+            return _gated_window1_decision(entry, blocks[0], ctx, markdown, win)
         ref = str(blocks[0].get("id") or blocks[0].get("block_uuid") or win[0])
         return AnchorDecision(block_ref=ref, conf=1.0, band="alta", flag=False,
                               method="janela-1", window=win)

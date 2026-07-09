@@ -228,3 +228,21 @@ class TestGateConcordanciaData:
         # P1/P2 (manual/labels ou default ""): janela-1 segue alta/1.0 (FASE 0/1)
         d = disambiguate({"title": "qualquer"}, ["bloco-12"], self._ctx())
         assert (d.band, d.conf, d.flag) == ("alta", 1.0, False)
+
+    def test_janela1_topic_concordante_ancora_alta(self):
+        from src.builder.routing.motor.disambiguator import disambiguate
+        # P4 janela-1: mesmo gate do P3 — token discriminante global => alta
+        d = disambiguate({"title": "Escalonamento de Processos"},
+                         ["bloco-03"], self._ctx(), provider="topic")
+        assert (d.block_ref, d.band, d.flag) == ("bloco-03", "alta", False)
+
+    def test_janela1_topic_sem_discriminante_flagada(self):
+        from src.builder.routing.motor.disambiguator import disambiguate
+        # P4 janela-1 sem concordância específica: ancora + flag, nunca alta
+        # cega (simetria com "data"; fecha o buraco Halteproblem mascarado
+        # por pino manual no TCC).
+        d = disambiguate({"title": "Material genérico sobre gerência"},
+                         ["bloco-12"], self._ctx(), provider="topic")
+        assert d.block_ref == "bloco-12"
+        assert d.flag is True
+        assert d.band != "alta"

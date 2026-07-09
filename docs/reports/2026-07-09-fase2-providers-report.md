@@ -88,11 +88,13 @@ provider existe exatamente para não esconder essa mistura (fix de review, commi
    `band="media"`: silêncio lexical total e overlap-boilerplate caem na mesma band — perda de
    granularidade de triagem da fila de flag do SO. Não é bug; documentado para não confundir na
    FASE 3/5 (a fila de flag do SO não distingue "sem sinal nenhum" de "sinal fraco/ambíguo").
-2. **[Task 6, Minor]** Janela-1 vinda de provider `"topic"` **não** passa pelo gate D4 de
-   concordância (só `provider="data"` passa, `disambiguator.py:151-156`) — **0 ocorrências** no gold
-   TCC atual (as janelas do P4 hoje são sempre ≥2 blocos). Risco residual a monitorar: se um pino
-   futuro do TCC produzir janela-1 via topic, ela sai como `band="alta"`/`flag=False` sem o gate de
-   concordância que o P3 tem.
+2. ~~**[Task 6, Minor]** Janela-1 vinda de provider `"topic"` não passa pelo gate D4~~ **RESOLVIDO
+   (2026-07-09, pós-review-final, autorização do user):** gate estendido a `provider in ("data",
+   "topic")` (`_gated_window1_decision`, ex-`_date_window1_decision`). Motivo: o review final provou
+   que o shape existe hoje (Halteproblem → `p4=['bloco-11']`, mascarado pelo pino manual P1 — drift
+   de pino viraria alta-cega silenciosa). Mudança estruturalmente segura (só rebaixa alta→flag, nunca
+   cria confiante-errado). Regressão: suite 1724 passed/0 failed (+2 testes), 4 probes PASS com
+   números idênticos.
 3. **[Task 4]** `TOPIC_MIN_TOKEN` piso-2 é **no-op estrutural** — a assinatura de bloco (usada pelos
    dois lados do match) já tem piso-3, então baixar o piso do provider sozinho não abre tokens
    curtos. Se calibração futura exigir tokens curtos (ex.: `np`, `t2`), o caminho correto é dar ao
