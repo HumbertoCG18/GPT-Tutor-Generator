@@ -2,7 +2,7 @@
 
 date: 2026-07-09
 branch: feat/motor-atribuicao
-commits: `512afcd..c70c272` (Tasks 1-5: cache, série same-theme, `LlmVoter`, hook no `AnchorEngine`,
+commits: `512afcd–c70c272 (inclusive)` (Tasks 1-5: cache, série same-theme, `LlmVoter`, hook no `AnchorEngine`,
 régua HARD `fase3_prova_LLM_MF.py`) + esta rodada (Task 6, medição real)
 
 ## Veredito
@@ -17,6 +17,10 @@ abaixo é a medição real, sem tentativa de prompt-engineering. Decisão go-for
 | Lift no escopo do voto (flagged ∪ série) | ≥ +4 | **+1** (34/44 → 35/44) | ❌ |
 | Confiante-errado novo (band alta, global) | 0 | **0** | ✅ |
 | Rodada completa (sem pendência de cap) | sim | **sim** (48/48 votos cacheados) | ✅ |
+
+**Pré-gate de frescor**: `audit_gold_freshness.py` re-executado no fechamento — golds frescos
+(MF: 67 rows, 47 suspeitas ZERO_OVERLAP, **hard=0**; SO/TCC/IA/ES2 sem HARD drift, falso-alarme
+conhecido SO `lista2` ADMIN_TRUE). Medição do lift válida contra gold MF fresco.
 
 ## Bloqueio de infraestrutura encontrado e corrigido
 

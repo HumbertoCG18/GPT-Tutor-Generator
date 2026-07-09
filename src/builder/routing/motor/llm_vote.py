@@ -21,6 +21,7 @@ from typing import Dict, List, Optional, Set
 
 from pydantic import BaseModel
 
+from src.builder.routing.motor.contracts import MotorContext
 from src.builder.text.normalize import normalize_match_text
 
 MD_PROMPT_CAP = 3500   # protocolo MARCO 1
@@ -124,7 +125,7 @@ def detect_same_theme_series(entries: List[dict]) -> Set[str]:
     return members
 
 
-def _block_lines(window: List[str], ctx) -> str:
+def _block_lines(window: List[str], ctx: MotorContext) -> str:
     out = []
     for ref in window:
         b = ctx.block_by_ref(ref) or {}
@@ -141,7 +142,7 @@ def _block_lines(window: List[str], ctx) -> str:
     return "\n".join(out)
 
 
-def build_vote_prompt(entry: dict, window: List[str], ctx,
+def build_vote_prompt(entry: dict, window: List[str], ctx: MotorContext,
                       markdown: str = "") -> str:
     """Prompt do MARCO 1 generalizado (roteiro via ctx.lessons_index)."""
     md = (markdown or "")[:MD_PROMPT_CAP]
@@ -157,7 +158,7 @@ def build_vote_prompt(entry: dict, window: List[str], ctx,
 
 
 def match_window_ref(block_id_vote: str, window: List[str],
-                     ctx) -> Optional[str]:
+                     ctx: MotorContext) -> Optional[str]:
     """Voto -> ref da janela (bounded). Fora da janela = None (mantem FLAG)."""
     v = str(block_id_vote or "").strip()
     if not v:
@@ -200,7 +201,7 @@ class LlmVoter:
     def has_vote(self, entry: dict) -> bool:
         return content_key(entry, self._repo_dir) in self._data["votes"]
 
-    def vote(self, entry: dict, window: List[str], ctx,
+    def vote(self, entry: dict, window: List[str], ctx: MotorContext,
              markdown: str = "") -> Optional[str]:
         if not window:
             return None                      # sem-janela NAO vota (spec §12)

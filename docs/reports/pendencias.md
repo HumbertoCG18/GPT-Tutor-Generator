@@ -273,6 +273,10 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 
 ## CODE — bugs pré-existentes localizados
 
+- [CODE] **`gemini_client.py DEFAULT_MODEL = "gemini-2.5-flash"` APOSENTADO pela API** (404 em
+  2026-07-09 durante a medição F3; contorno: `gemini_model=gemini-flash-latest` no config pessoal
+  do user). **Dono: pré-flight FASE 4 item 0** — atualizar `DEFAULT_MODEL` + values do combo na UI
+  (`src/ui/dialogs.py:441`) antes de qualquer chamada Gemini do reprocess.
 - ~~[CODE] `SubjectManagerDialog._save` (dialogs.py:1503-1525) **dropa `moodle_course_id`/`m365_filter`** ao salvar.~~
   **FIX aplicado (2026-06-22, working tree, uncommitted):** `_save` agora preserva ambos de `existing`
   (espelha `turma`/`schedule_url`, dialogs.py:1521-1525). 388 testes verdes (core/moodle/m365). NOTA: o fix
@@ -449,6 +453,11 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   fica OPEN** — como o veredito é FAIL, a TIER 3 não "consome" o flag; N/A só se aplicaria em
   PASS. Plano **NÃO arquivado** (regra do brief: só arquiva em gate verde) — segue em
   `docs/superpowers/plans/2026-07-09-fase3-voto-llm.md` até a re-decisão do user.
+- [DECISION] **D4 × TIER 3 janela-1** — decisão D4-flagada de janela-1 (provider data/topic) entra
+  no escopo do voto com UM candidato — LLM confirma o único bloco e desflaga sem informação nova
+  (band media, invisível à métrica confiante-errado). Antes de ligar voter na FASE 4: excluir
+  |janela|==1 do escopo do voto OU dar opção "nenhum destes" no prompt degenerado. Decidir junto
+  com a re-decisão do GO (FAIL F3).
 - [CODE] **Migrar ground_truth_*.csv de bloco-NN → block_uuid (FASE 4)** — decisão user 2026-07-08
   (pré-flight FASE 2 item 2). Inclui: 5 CSVs + eval_ground_truth + harnesses fase0/fase1 resolvendo
   uuid→display. Até lá, auditor de frescor é pré-gate obrigatório de medição.
