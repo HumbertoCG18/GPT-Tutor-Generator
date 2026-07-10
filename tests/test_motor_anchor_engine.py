@@ -91,8 +91,10 @@ class _FakeVoter:
     def __init__(self, answer):
         self.answer = answer
         self.seen = []
+        self.calls = 0
 
     def vote(self, entry, window, ctx, markdown=""):
+        self.calls += 1
         self.seen.append(str(entry.get("id")))
         return self.answer
 
@@ -150,3 +152,26 @@ def test_tier3_membro_de_serie_vota_mesmo_sem_flag(monkeypatch):
         {"id": "e1", "category": "m"}, _tier3_ctx())
     assert voter.seen == ["e1"]
     assert d.block_ref == "bloco-02" and d.band == "media" and d.provider == "llm"
+
+
+def _ctx_janela_unica():
+    return MotorContext.from_artifacts(
+        blocks=BLOCKS,
+        card_block_map={**CBM, "aula unica": {"block_ids": ["bloco-01"], "source": "manual"}},
+        lessons_index={},
+    )
+
+
+def test_janela_1_nao_entra_no_voto_mesmo_em_serie():
+    """D4×janela-1 (decisão D-A, 10/07): voto com 1 candidato desflaga sem
+    informação nova. |janela|==1 fica FORA do escopo do voter; a decisão
+    determinística (e o FLAG, se houver) sobrevive pra fila humana."""
+    ctx = _ctx_janela_unica()          # card 'aula unica' -> ['bloco-01']
+    entry = {"id": "e1", "title": "Aula 3", "source_section": "aula unica",
+             "category": "materiais"}
+    voter = _FakeVoter("bloco-01")
+    eng = AnchorEngine(voter=voter, series_ids={"e1"})
+    d = eng.resolve(entry, ctx)
+    assert d is not None and d.block_ref
+    assert voter.calls == 0            # janela-1: voter NUNCA chamado
+    assert d.provider != "llm" and d.method != "llm"

@@ -36,6 +36,7 @@ class AnchorEngine:
     FASES 0-2. Escopo do voto = decisao FLAGADA ∪ membro de serie same-theme
     (spec §3 TIER 3); aceitacao cega: band "media", flag=False, provider="llm"
     (spec §12 regra 3). Sem-janela nunca chega ao voto (funil antes).
+    Janela-1 NUNCA vota (D4×janela-1, decisão 10/07): 1 candidato = voto sem informação.
     """
 
     def __init__(self, voter: Optional["LlmVoterProtocol"] = None,
@@ -53,7 +54,7 @@ class AnchorEngine:
         if not decision.block_ref:
             return None  # nenhum ref da janela resolve -> funil honesto
         decision.provider = provider
-        if self._voter is not None and (
+        if self._voter is not None and len(window) > 1 and (
                 decision.flag or str(entry.get("id") or "") in self._series_ids):
             voted = self._voter.vote(entry, window, ctx, markdown)
             if voted:
