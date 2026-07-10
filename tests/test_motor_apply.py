@@ -82,3 +82,22 @@ def test_tier0_gemeos_md5_mesma_decisao(tmp_path):
     ]
     apply_anchor_engine(entries, repo, "MF")
     assert entries[0].get("temporal_block_id") == entries[1].get("temporal_block_id")
+
+
+def test_build_motor_voter_off_por_default(tmp_path):
+    from src.builder.ops.pedagogical_regeneration import _build_motor_voter
+
+    class _B:
+        options = {}
+        root_dir = tmp_path
+    assert _build_motor_voter(_B()) is None
+
+
+def test_build_motor_voter_on_sem_chave_degrada_none(tmp_path, monkeypatch):
+    from src.builder.ops import pedagogical_regeneration as pr
+
+    class _B:
+        options = {"use_llm_voter": True}
+        root_dir = tmp_path
+    monkeypatch.setattr(pr.Path, "home", lambda: tmp_path)  # sem config -> sem chave
+    assert pr._build_motor_voter(_B()) is None

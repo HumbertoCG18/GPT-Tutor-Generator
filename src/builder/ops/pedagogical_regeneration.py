@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+from pathlib import Path
 
 from src.builder.artifacts import student_state as student_state_v2
 from src.builder.ops.state_ops import (
@@ -37,6 +38,34 @@ def _resolve_gemini_client(builder):
         if not isinstance(config, dict):
             return None
         return get_gemini_client(config)
+    except Exception:
+        return None
+
+
+def _build_motor_voter(builder):
+    """Voter TIER 3 do motor. OPT-IN por flag de curso `use_llm_voter`.
+
+    None em qualquer falha/ausência: voter=None => AnchorEngine byte-idêntico
+    às FASES 0-2 (determinístico). Cache = sidecar do repo-tutor; o reprocess
+    roda na task queue (background), nunca na UI thread. Cap=20 (orçamento D8).
+    """
+    options = getattr(builder, "options", {}) or {}
+    if not bool(options.get("use_llm_voter", False)):
+        return None
+    try:
+        import json as _json
+        from src.builder.routing.motor.llm_vote import LlmVoter, material_curation_path
+
+        cfg_path = Path.home() / ".gpt_tutor_config.json"
+        config = _json.loads(cfg_path.read_text(encoding="utf-8")) if cfg_path.exists() else {}
+        if not isinstance(config, dict) or not str(config.get("gemini_api_key") or "").strip():
+            return None
+        return LlmVoter(
+            config,
+            cache_path=material_curation_path(builder.root_dir),
+            repo_dir=builder.root_dir,
+            cap=20,
+        )
     except Exception:
         return None
 
@@ -374,9 +403,31 @@ def regenerate_pedagogical_files(
         )
 
     # Camada de placement por âncora (TEMPORAL-only, aditiva). Escreve
-    # temporal_block_id sem tocar computed_block_id (KB). Import function-local
-    # sob o gate: módulo não carrega com a flag OFF (padrão do use_concept_resolver).
-    if bool(builder.options.get("use_anchor_placement", False)):
+    # temporal_* sem tocar computed_block_id (KB). Precedência: motor D9
+    # (use_anchor_engine, FASE 4) > legado (use_anchor_placement, morre no
+    # cutover FASE 5). Imports function-local sob o gate (padrão existente).
+    if bool(builder.options.get("use_anchor_engine", False)):
+        from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
+        from src.builder.routing.motor.apply import apply_anchor_engine
+        from src.builder.routing.motor.llm_vote import content_key
+
+        voter = _build_motor_voter(builder)
+        if voter is not None:
+            live_keys = {content_key(e, builder.root_dir) for e in live_manifest_entries}
+            pruned = voter.prune(live_keys)
+            if pruned:
+                logger.info("motor/voter: %d voto(s) órfão(s) removido(s) do sidecar", pruned)
+        live_manifest_entries = apply_anchor_engine(
+            live_manifest_entries,
+            builder.root_dir,
+            str((builder.course_meta or {}).get("course_name") or ""),
+            enabled=True,
+            voter=voter,
+            markdown_fn=lambda e: _entry_markdown_text_for_file_map(builder.root_dir, e) or "",
+        )
+        if voter is not None:
+            logger.info("motor/voter round_summary: %s", voter.round_summary())
+    elif bool(builder.options.get("use_anchor_placement", False)):
         from src.builder.routing.anchor_placement import apply_anchor_placement
         live_manifest_entries = apply_anchor_placement(
             live_manifest_entries,
