@@ -427,7 +427,7 @@ class SettingsDialog(tk.Toplevel):
             row=sep_row + 10, column=0, columnspan=2, sticky="w", pady=(0, 8))
 
         self._var_gemini_api_key = tk.StringVar(value=self.config.get("gemini_api_key", ""))
-        self._var_gemini_model = tk.StringVar(value=self.config.get("gemini_model", "gemini-2.5-flash"))
+        self._var_gemini_model = tk.StringVar(value=self.config.get("gemini_model", "gemini-3.5-flash"))
         self._var_gemini_auto = tk.BooleanVar(value=bool(self.config.get("gemini_auto_summarize", False)))
 
         ttk.Label(tab_proc, text="Chave da API do Gemini").grid(
@@ -438,7 +438,7 @@ class SettingsDialog(tk.Toplevel):
         ttk.Label(tab_proc, text="Modelo Gemini").grid(
             row=sep_row + 12, column=0, sticky="w", pady=6, padx=(0, 16))
         ttk.Combobox(tab_proc, textvariable=self._var_gemini_model,
-                     values=["gemini-2.5-flash", "gemini-2.5-pro"],
+                     values=["gemini-3.5-flash", "gemini-flash-latest"],
                      state="readonly", width=25).grid(
             row=sep_row + 12, column=1, sticky="ew")
 

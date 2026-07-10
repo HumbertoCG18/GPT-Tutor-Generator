@@ -105,7 +105,7 @@ class AppConfig:
         "ollama_base_url": "http://localhost:11434",
         "image_description_source": "ollama",
         "gemini_api_key": "",
-        "gemini_model": "gemini-2.5-flash",
+        "gemini_model": "gemini-3.5-flash",
         "gemini_auto_summarize": False,
     }
 
