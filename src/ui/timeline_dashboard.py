@@ -301,6 +301,25 @@ def _block_scope_slugs(block: dict) -> list[str]:
     return [str(s).strip() for s in derived if str(s).strip()]
 
 
+def motor_badge(entry: dict) -> str:
+    """Badge do motor (F4 item 7): band/flag/provider serializados pelo D9.
+
+    band é o sinal AUTORITATIVO de confiança do temporal (review F3): decisão
+    votada carrega conf determinístico residual — conf/computed_* NUNCA entram
+    aqui. Vazio quando a entry não passou pelo motor.
+    """
+    band = str(entry.get("temporal_block_band") or "").strip()
+    if not band:
+        return ""
+    parts = [band]
+    if entry.get("temporal_block_flag"):
+        parts.append("⚑")
+    provider = str(entry.get("temporal_block_provider") or "").strip()
+    if provider:
+        parts.append(provider)
+    return "[" + " ".join(parts) + "]"
+
+
 def _entry_label(entry: dict) -> str:
     """Rótulo legível do material na aba cronograma: nome do arquivo original
     (com extensão) — distingue ex.: ``exemplos.thy`` de ``exemplos.zip``, em vez
@@ -308,9 +327,12 @@ def _entry_label(entry: dict) -> str:
     file_type = str(entry.get("file_type") or "")
     source_path = str(entry.get("source_path") or "").strip()
     if file_type in {"url", "github-repo"}:
-        return str(entry.get("title") or source_path or "—")
-    basename = source_path.replace("\\", "/").rstrip("/").split("/")[-1] if source_path else ""
-    return basename or str(entry.get("title") or entry.get("id") or "—")
+        label = str(entry.get("title") or source_path or "—")
+    else:
+        basename = source_path.replace("\\", "/").rstrip("/").split("/")[-1] if source_path else ""
+        label = basename or str(entry.get("title") or entry.get("id") or "—")
+    badge = motor_badge(entry)
+    return f"{label} {badge}" if badge else label
 
 
 class ScopeEditDialog(tk.Toplevel):
