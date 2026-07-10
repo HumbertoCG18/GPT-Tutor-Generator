@@ -70,6 +70,36 @@ def _build_motor_voter(builder):
         return None
 
 
+def _run_anchor_engine_layer(builder, live_manifest_entries):
+    """Camada temporal do motor (D9). Falha aqui NUNCA derruba a regeneração:
+    camada é opcional — loga e devolve as entries como estão (funil intacto)."""
+    try:
+        from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
+        from src.builder.routing.motor.apply import apply_anchor_engine
+        from src.builder.routing.motor.llm_vote import content_key
+
+        voter = _build_motor_voter(builder)
+        if voter is not None:
+            live_keys = {content_key(e, builder.root_dir) for e in live_manifest_entries}
+            pruned = voter.prune(live_keys)
+            if pruned:
+                logger.info("motor/voter: %d voto(s) órfão(s) removido(s) do sidecar", pruned)
+        live_manifest_entries = apply_anchor_engine(
+            live_manifest_entries,
+            builder.root_dir,
+            str((builder.course_meta or {}).get("course_name") or ""),
+            enabled=True,
+            voter=voter,
+            markdown_fn=lambda e: _entry_markdown_text_for_file_map(builder.root_dir, e) or "",
+        )
+        if voter is not None:
+            logger.info("motor/voter round_summary: %s", voter.round_summary())
+    except Exception as exc:
+        logger.warning("motor D9: camada temporal pulada nesta regeneração (%s: %s)",
+                       type(exc).__name__, exc)
+    return live_manifest_entries
+
+
 def run_material_residual(builder, live_manifest_entries):
     """Camada 2: residuo Gemini p/ materiais sem bloco. OPT-IN EXPLICITO.
 
@@ -407,26 +437,7 @@ def regenerate_pedagogical_files(
     # (use_anchor_engine, FASE 4) > legado (use_anchor_placement, morre no
     # cutover FASE 5). Imports function-local sob o gate (padrão existente).
     if bool(builder.options.get("use_anchor_engine", False)):
-        from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
-        from src.builder.routing.motor.apply import apply_anchor_engine
-        from src.builder.routing.motor.llm_vote import content_key
-
-        voter = _build_motor_voter(builder)
-        if voter is not None:
-            live_keys = {content_key(e, builder.root_dir) for e in live_manifest_entries}
-            pruned = voter.prune(live_keys)
-            if pruned:
-                logger.info("motor/voter: %d voto(s) órfão(s) removido(s) do sidecar", pruned)
-        live_manifest_entries = apply_anchor_engine(
-            live_manifest_entries,
-            builder.root_dir,
-            str((builder.course_meta or {}).get("course_name") or ""),
-            enabled=True,
-            voter=voter,
-            markdown_fn=lambda e: _entry_markdown_text_for_file_map(builder.root_dir, e) or "",
-        )
-        if voter is not None:
-            logger.info("motor/voter round_summary: %s", voter.round_summary())
+        live_manifest_entries = _run_anchor_engine_layer(builder, live_manifest_entries)
     elif bool(builder.options.get("use_anchor_placement", False)):
         from src.builder.routing.anchor_placement import apply_anchor_placement
         live_manifest_entries = apply_anchor_placement(

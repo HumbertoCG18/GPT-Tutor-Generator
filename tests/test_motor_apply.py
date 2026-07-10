@@ -101,3 +101,41 @@ def test_build_motor_voter_on_sem_chave_degrada_none(tmp_path, monkeypatch):
         root_dir = tmp_path
     monkeypatch.setattr(pr.Path, "home", lambda: tmp_path)  # sem config -> sem chave
     assert pr._build_motor_voter(_B()) is None
+
+
+def test_run_anchor_engine_layer_isola_falha_do_voter(tmp_path, monkeypatch, caplog):
+    """Important do review T7: falha de I/O do voter/prune não derruba a regeneração."""
+    from src.builder.ops import pedagogical_regeneration as pr
+
+    class _Boom:
+        def prune(self, keys):
+            raise OSError("sidecar lockado")
+
+    class _B:
+        options = {"use_anchor_engine": True, "use_llm_voter": True}
+        root_dir = tmp_path
+        course_meta = {"course_name": "X"}
+
+    monkeypatch.setattr(pr, "_build_motor_voter", lambda b: _Boom())
+    entries = [{"id": "e1", "title": "t", "category": "materiais"}]
+    with caplog.at_level("WARNING"):
+        out = pr._run_anchor_engine_layer(_B(), entries)
+    assert out == entries
+    assert any("camada temporal pulada" in r.message for r in caplog.records)
+
+
+def test_run_anchor_engine_layer_happy_path_sem_warning(tmp_path, monkeypatch, caplog):
+    """Sem voter e sem timeline no repo, a camada devolve as entries sem warning."""
+    from src.builder.ops import pedagogical_regeneration as pr
+
+    class _B:
+        options = {"use_anchor_engine": True}
+        root_dir = tmp_path
+        course_meta = {"course_name": "X"}
+
+    monkeypatch.setattr(pr, "_build_motor_voter", lambda b: None)
+    entries = [{"id": "e1", "title": "t", "category": "materiais"}]
+    with caplog.at_level("WARNING"):
+        out = pr._run_anchor_engine_layer(_B(), entries)
+    assert out == entries
+    assert not [r for r in caplog.records if r.levelname == "WARNING"]
