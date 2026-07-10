@@ -23,13 +23,13 @@ if hasattr(sys.stdout, "reconfigure"):
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from src.builder.routing.motor.contracts import MotorContext          # noqa: E402
 from src.builder.routing.motor.anchor_engine import (                  # noqa: E402
     AnchorEngine, is_out_of_disamb_scope,
 )
 from src.builder.routing.motor.window_provider import (                # noqa: E402
     provider_date, resolve_window,
 )
+from src.builder.routing.motor.context import build_motor_context  # loader migrado (F4 item 5)  # noqa: E402
 
 DEFAULT_REPO = Path.home() / "Documents" / "GitHub" / "Sistemas-Operacionais-Tutor"
 DEFAULT_GOLD = Path(__file__).resolve().parents[1] / "docs" / "reports" / "ground_truth_SO.csv"
@@ -55,25 +55,15 @@ def _md_text(repo: Path, e: dict) -> str:
     return ""
 
 
-def build_context(repo: Path) -> MotorContext:
-    tl = _load(repo, "course/.timeline_index.json")
-    blocks = tl if isinstance(tl, list) else (tl.get("blocks") or [])
-    cbm = _load(repo, "course/.card_block_map.json")
-    m = _load(repo, "manifest.json")
-    course_name = str(((m.get("course") or {}).get("course_name")) or "")
-    return MotorContext.from_artifacts(
-        blocks=blocks, card_block_map=cbm, lessons_index={}, course_name=course_name,
-    )
-
-
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", type=Path, default=DEFAULT_REPO)
     ap.add_argument("--gold", type=Path, default=DEFAULT_GOLD)
     args = ap.parse_args()
 
-    ctx = build_context(args.repo)
     manifest = _load(args.repo, "manifest.json")
+    course_name = str(((manifest.get("course") or {}).get("course_name")) or "")
+    ctx = build_motor_context(args.repo, course_name)
     entries = {str(e.get("id")): e for e in manifest.get("entries") or []}
     with args.gold.open(encoding="utf-8-sig", newline="") as fh:
         rows = [r for r in csv.DictReader(fh) if (r.get("scorable") or "") == "yes"]

@@ -28,6 +28,7 @@ from src.builder.routing.motor.metrics import gate_report              # noqa: E
 from src.builder.routing.motor.anchor_engine import (                  # noqa: E402
     AnchorEngine, is_out_of_disamb_scope,
 )
+from src.builder.routing.motor.context import build_motor_context as build_context  # loader migrado (F4 item 5)  # noqa: E402
 
 DEFAULT_REPO = Path.home() / "Documents" / "GitHub" / "Metodos-Formais-Tutor"
 DEFAULT_GOLD = Path(__file__).resolve().parents[1] / "docs" / "reports" / "ground_truth_MF.csv"
@@ -36,11 +37,6 @@ PISO_RECALL_REFERENCIA = 0.577  # proxy MARCO 1 (15/26) — referência ruim a b
 BASELINE_RECALL = 9 / 10  # =0.900 pós-auditoria do gold (2026-07-08; era 14/17 na calibração) — regressão abaixo = FAIL
 BASELINE_CONFIANTE_ERRADO = 1   # espelha o probe fase0 — guard ABSOLUTO do gate (pós-auditoria do gold)
 MD_CAP = 6000
-
-
-def _load(repo: Path, rel: str):
-    p = repo / rel
-    return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else {}
 
 
 def _md_text(repo: Path, e: dict) -> str:
@@ -53,17 +49,6 @@ def _md_text(repo: Path, e: dict) -> str:
             except OSError:
                 pass
     return ""
-
-
-def build_context(repo: Path, course_name: str = "") -> MotorContext:
-    tl = _load(repo, "course/.timeline_index.json")
-    blocks = tl if isinstance(tl, list) else (tl.get("blocks") or [])
-    cbm = _load(repo, "course/.card_block_map.json")
-    lessons = (_load(repo, "course/.lessons_index.json") or {}).get("by_date", {})
-    return MotorContext.from_artifacts(
-        blocks=blocks, card_block_map=cbm, lessons_index=lessons,
-        course_name=course_name,
-    )
 
 
 def display_of(ctx: MotorContext, ref: str) -> str:
