@@ -24,7 +24,9 @@ def _card_entry(entry: dict, ctx: MotorContext) -> dict:
     if not key:
         return {}
     # Card malformado (não-dict) degrada para janela vazia, não crashes.
-    info = normalized_card_map(ctx.card_block_map).get(key)
+    if ctx._ncm_cache is None:
+        ctx._ncm_cache = normalized_card_map(ctx.card_block_map)
+    info = ctx._ncm_cache.get(key)
     return info if isinstance(info, dict) else {}
 
 
@@ -47,13 +49,17 @@ def provider_labels(entry: dict, ctx: MotorContext) -> List[str]:
 
 def _modal_years(ctx: MotorContext) -> List[str]:
     """Anos das sessions, mais frequente primeiro (curso pode virar o ano)."""
+    if ctx._modal_years_cache is not None:
+        return ctx._modal_years_cache
     counts: dict = {}
     for b in ctx.blocks:
         for s in b.get("sessions") or []:
             y = str(s.get("date") or "")[:4]
             if y.isdigit():
                 counts[y] = counts.get(y, 0) + 1
-    return sorted(counts, key=lambda y: counts[y], reverse=True)
+    years = sorted(counts, key=lambda y: counts[y], reverse=True)
+    ctx._modal_years_cache = years
+    return years
 
 
 def provider_date(entry: dict, ctx: MotorContext) -> List[str]:

@@ -118,10 +118,13 @@ def _score(mat: set, sig: dict, m: int, df: dict) -> float:
 
 def _global_df(ctx: MotorContext) -> dict:
     """df de cada token sobre as assinaturas de TODOS os blocos do curso."""
+    if ctx._global_df_cache is not None:
+        return ctx._global_df_cache
     df: dict = {}
     for b in ctx.blocks:
         for t in set(_block_signature(b, ctx)):
             df[t] = df.get(t, 0) + 1
+    ctx._global_df_cache = df
     return df
 
 

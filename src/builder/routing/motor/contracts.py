@@ -41,6 +41,9 @@ class MotorContext:
     lessons_index: Dict[str, str]  # {date_iso: topico} (by_date do .lessons_index.json)
     course_name: str = ""
     _by_ref: Dict[str, dict] = field(default_factory=dict, repr=False)
+    _global_df_cache: Optional[dict] = field(default=None, repr=False, compare=False)
+    _modal_years_cache: Optional[list] = field(default=None, repr=False, compare=False)
+    _ncm_cache: Optional[dict] = field(default=None, repr=False, compare=False)
 
     @classmethod
     def from_artifacts(
