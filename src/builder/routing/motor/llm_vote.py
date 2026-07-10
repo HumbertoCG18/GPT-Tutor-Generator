@@ -82,6 +82,15 @@ def save_material_curation(path: Path, data: dict) -> None:
     os.replace(tmp, path)
 
 
+def material_curation_path(repo_dir: Path) -> Path:
+    """Sidecar de votos no repo-tutor (spec §12 item 10): raiz, como code_curation.json.
+
+    Escrito SÓ pelo reprocess (ação do user na GUI). Probes usam cache próprio
+    em docs/reports/ — nunca este path.
+    """
+    return Path(repo_dir) / "material_curation.json"
+
+
 def import_marco1_seed(seed_votes: dict, entries_by_id: dict, repo_dir: Path) -> dict:
     """Re-chaveia votos do MARCO 1 (por entry-id) para identidade de conteudo.
 

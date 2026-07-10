@@ -19,6 +19,11 @@ def _entry(rid: str, source_path: str = "", title: str = "", section: str = "",
             "source_section": section, "category": category}
 
 
+def test_material_curation_path_segue_convencao_code_curation(tmp_path):
+    from src.builder.routing.motor.llm_vote import material_curation_path
+    assert material_curation_path(tmp_path) == tmp_path / "material_curation.json"
+
+
 def test_content_key_gemeos_compartilham_chave(tmp_path: Path):
     (tmp_path / "a.pdf").write_bytes(b"mesmo conteudo")
     (tmp_path / "b.pdf").write_bytes(b"mesmo conteudo")
