@@ -212,3 +212,53 @@ def test_voter_sem_janela_nao_vota(tmp_path: Path):
     voter = LlmVoter({}, cache_path=tmp_path / "c.json", repo_dir=tmp_path, client=client)
     assert voter.vote(_entry("e1"), [], ctx) is None
     assert voter.calls == 0 and client.prompts == []
+
+
+# ===== TASK 4 TESTES =====
+
+
+def test_persist_merges_disk_state(tmp_path):
+    """Duas instancias no MESMO cache: a segunda nao apaga o voto da primeira
+    (last-writer-wins morto; review final F3)."""
+    cache = tmp_path / "material_curation.json"
+    e1, e2 = _entry("a"), _entry("b")
+    ctx = _ctx()
+    va = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([FakeVotoResp("bloco-01")]))
+    vb = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([FakeVotoResp("bloco-01")]))
+    va.vote(e1, ["bloco-01"], ctx)          # persiste voto de e1
+    vb.vote(e2, ["bloco-01"], ctx)          # vb carregou ANTES do save de va
+    final = json.loads(cache.read_text(encoding="utf-8"))["votes"]
+    assert len(final) == 2                   # merge, nao overwrite
+
+
+def test_error_is_logged_not_swallowed(caplog):
+    """Item 4: excecao da API vira WARNING com id da entry e tipo do erro
+    (o 404 da F3 so foi visto reproduzindo por fora)."""
+    class Boom:
+        model = "x"
+        def summarize_bundle(self, *a, **k):
+            raise RuntimeError("404 model retired")
+    v = LlmVoter({}, cache_path=Path("nao-usado.json"), repo_dir=Path("."), client=Boom())
+    with caplog.at_level("WARNING"):
+        got = v.vote(_entry("a"), ["bloco-01"], _ctx())
+    assert got is None and v.errors == 1
+    assert any("RuntimeError" in r.message and "404" in r.message for r in caplog.records)
+
+
+def test_no_key_counter_and_round_summary(tmp_path):
+    v = LlmVoter({}, cache_path=tmp_path / "c.json", repo_dir=tmp_path, client=None)
+    v._client_loaded = True                  # simula get_gemini_client -> None
+    assert v.vote(_entry("a"), ["bloco-01"], _ctx()) is None
+    s = v.round_summary()
+    assert s["no_key"] == 1 and s["calls"] == 0
+    assert set(s) == {"calls", "errors", "skipped_cap", "no_key", "cache_hits"}
+
+
+def test_prune_removes_orphan_keys(tmp_path):
+    cache = tmp_path / "c.json"
+    cache.write_text(json.dumps({"version": 1, "votes": {
+        "viva": {"block_id": "bloco-01"}, "orfa": {"block_id": "bloco-02"}}}),
+        encoding="utf-8")
+    v = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([FakeVotoResp("bloco-01")]))
+    assert v.prune({"viva"}) == 1
+    assert set(json.loads(cache.read_text(encoding="utf-8"))["votes"]) == {"viva"}

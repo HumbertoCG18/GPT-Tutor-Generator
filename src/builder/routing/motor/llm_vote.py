@@ -13,8 +13,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import os
 import re
+import threading
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Optional, Set
@@ -23,6 +25,8 @@ from pydantic import BaseModel
 
 from src.builder.routing.motor.contracts import MotorContext
 from src.builder.text.normalize import normalize_match_text
+
+logger = logging.getLogger(__name__)
 
 MD_PROMPT_CAP = 3500   # protocolo MARCO 1
 DEFAULT_CAP = 20       # orcamento D8 por rodada/reprocess
@@ -187,9 +191,12 @@ class LlmVoter:
         self._client = client
         self._client_loaded = client is not None
         self._data = load_material_curation(self._cache_path)
+        self._lock = threading.Lock()
         self.calls = 0          # chamadas API na rodada (cache hit nao conta)
         self.skipped_cap = 0    # escopo sem voto por cap estourado
         self.errors = 0
+        self.no_key = 0
+        self.cache_hits = 0
 
     def _get_client(self):
         if not self._client_loaded:
@@ -201,33 +208,62 @@ class LlmVoter:
     def has_vote(self, entry: dict) -> bool:
         return content_key(entry, self._repo_dir) in self._data["votes"]
 
+    def _persist(self) -> None:
+        disk = load_material_curation(self._cache_path)
+        merged = dict(disk.get("votes") or {})
+        merged.update(self._data["votes"])
+        self._data["votes"] = merged
+        save_material_curation(self._cache_path, self._data)
+
+    def prune(self, live_keys: set) -> int:
+        """Remove votos cuja identidade de conteudo sumiu do manifest (item 2)."""
+        with self._lock:
+            stale = [k for k in self._data["votes"] if k not in live_keys]
+            for k in stale:
+                self._data["votes"].pop(k, None)
+            if stale:
+                save_material_curation(self._cache_path, self._data)
+        return len(stale)
+
+    def round_summary(self) -> dict:
+        return {"calls": self.calls, "errors": self.errors,
+                "skipped_cap": self.skipped_cap, "no_key": self.no_key,
+                "cache_hits": self.cache_hits}
+
     def vote(self, entry: dict, window: List[str], ctx: MotorContext,
              markdown: str = "") -> Optional[str]:
         if not window:
             return None                      # sem-janela NAO vota (spec §12)
         key = content_key(entry, self._repo_dir)
-        cached = self._data["votes"].get(key)
-        if cached is None:
-            if self.calls >= self._cap:
-                self.skipped_cap += 1
-                return None
-            client = self._get_client()
-            if client is None:
-                return None                  # sem chave -> mantem FLAG
-            prompt = build_vote_prompt(entry, window, ctx, markdown)
-            system = SYSTEM_TEMPLATE.format(course=ctx.course_name or "curso")
-            self.calls += 1
-            try:
-                voto = client.summarize_bundle(prompt, Voto, system)
-            except Exception:  # noqa: BLE001 — voto falhou: FLAG fica, sem cache
-                self.errors += 1
-                return None
-            cached = {
-                "block_id": str(voto.block_id).strip(),
-                "confianca": str(voto.confianca).strip(),  # auditoria; nunca gate
-                "justificativa": str(voto.justificativa_curta)[:200],
-                "model": getattr(client, "model", ""),
-            }
-            self._data["votes"][key] = cached
-            save_material_curation(self._cache_path, self._data)
+        with self._lock:
+            cached = self._data["votes"].get(key)
+            if cached is None:
+                if self.calls >= self._cap:
+                    self.skipped_cap += 1
+                    return None
+                client = self._get_client()
+                if client is None:
+                    self.no_key += 1
+                    logger.info("TIER 3: sem gemini_api_key; voto pulado p/ %s", entry.get("id"))
+                    return None               # sem chave -> mantem FLAG
+                prompt = build_vote_prompt(entry, window, ctx, markdown)
+                system = SYSTEM_TEMPLATE.format(course=ctx.course_name or "curso")
+                self.calls += 1
+                try:
+                    voto = client.summarize_bundle(prompt, Voto, system)
+                except Exception as exc:  # noqa: BLE001 — voto falhou: FLAG fica, sem cache
+                    self.errors += 1
+                    logger.warning("TIER 3: voto falhou p/ %s (%s: %s)",
+                                    entry.get("id"), type(exc).__name__, exc)
+                    return None
+                cached = {
+                    "block_id": str(voto.block_id).strip(),
+                    "confianca": str(voto.confianca).strip(),  # auditoria; nunca gate
+                    "justificativa": str(voto.justificativa_curta)[:200],
+                    "model": getattr(client, "model", ""),
+                }
+                self._data["votes"][key] = cached
+                self._persist()
+            else:
+                self.cache_hits += 1
         return match_window_ref(str(cached.get("block_id") or ""), window, ctx)
