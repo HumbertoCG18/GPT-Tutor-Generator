@@ -10,6 +10,10 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_MODEL = "gemini-3.5-flash"
 
+# Modelos aposentados pela API (404 em generateContent). Config persistido
+# antigo pode ainda apontar pra eles: resolve em runtime pro default vivo.
+RETIRED_MODELS = frozenset({"gemini-2.5-flash", "gemini-2.5-pro"})
+
 
 def _resolve_gemini_key(config) -> str:
     """Chave Gemini com precedência config (UI) > GEMINI_API_KEY do .env/ambiente.
@@ -99,4 +103,6 @@ def get_gemini_client(config) -> Optional[GeminiClient]:
     if not key:
         return None
     model = config.get("gemini_model", DEFAULT_MODEL) if config is not None else DEFAULT_MODEL
+    if model in RETIRED_MODELS:
+        model = DEFAULT_MODEL
     return GeminiClient(api_key=key, model=model)
