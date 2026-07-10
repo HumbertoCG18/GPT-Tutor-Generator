@@ -171,6 +171,16 @@ def _top_candidate_blocks(entry: dict, blocks: list, n: int = _TOP_N_CANDIDATES)
     return scored[:n]
 
 
+def _candidate_refs(entry: dict, blocks: list) -> list:
+    """Candidatos p/ material flagado. Janela do motor (F4) quando serializada:
+    lista ordenada sem re-scoring — o S2 condenado (cutover F5) só roda p/
+    entries que não passaram pelo motor (flag OFF)."""
+    window = [str(r) for r in (entry.get("temporal_block_window") or []) if str(r)]
+    if window:
+        return [(ref, None) for ref in window]
+    return _top_candidate_blocks(entry, blocks)
+
+
 def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:
     rep = material_coverage(entries, blocks)
     dist = band_distribution(entries, blocks)
@@ -228,9 +238,10 @@ def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:
                 f"- **{_entry_title(entry)}** — bloco `{effective}` "
                 f"(faixa {band}, conf {conf:.2f}, {source_label})"
             )
-            candidates = _top_candidate_blocks(entry, blocks)
+            candidates = _candidate_refs(entry, blocks)
             for cand_id, cand_score in candidates:
-                lines.append(f"    - candidato `{cand_id}` (score {cand_score:.2f})")
+                score_label = f"{cand_score:.2f}" if cand_score is not None else "—"
+                lines.append(f"    - candidato `{cand_id}` (score {score_label})")
 
     counts = _blocks_by_material_count(entries, blocks)
     poor = [bid for bid, n in counts.items() if n == 0]
