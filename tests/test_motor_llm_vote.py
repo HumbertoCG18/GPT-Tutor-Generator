@@ -262,3 +262,18 @@ def test_prune_removes_orphan_keys(tmp_path):
     v = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([FakeVotoResp("bloco-01")]))
     assert v.prune({"viva"}) == 1
     assert set(json.loads(cache.read_text(encoding="utf-8"))["votes"]) == {"viva"}
+
+
+def test_prune_preserves_concurrent_vote_from_other_instance(tmp_path):
+    """Poda de A nao apaga voto que B persistiu depois do load de A
+    (merge-on-save tambem no prune; review T4)."""
+    cache = tmp_path / "c.json"
+    cache.write_text(json.dumps({"version": 1, "votes": {
+        "orfa": {"block_id": "bloco-02"}}}), encoding="utf-8")
+    a = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([]))
+    b = LlmVoter({}, cache_path=cache, repo_dir=tmp_path,
+                 client=FakeClient([FakeVotoResp("bloco-01")]))
+    b.vote(_entry("viva_b"), ["bloco-01"], _ctx())   # disco: orfa + viva_b; A so viu orfa
+    assert a.prune({"viva_b"}) == 1                  # so orfa e stale
+    final = json.loads(cache.read_text(encoding="utf-8"))["votes"]
+    assert set(final) == {"viva_b"}                  # voto de B sobrevive

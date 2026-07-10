@@ -218,9 +218,13 @@ class LlmVoter:
     def prune(self, live_keys: set) -> int:
         """Remove votos cuja identidade de conteudo sumiu do manifest (item 2)."""
         with self._lock:
-            stale = [k for k in self._data["votes"] if k not in live_keys]
+            disk = load_material_curation(self._cache_path)
+            merged = dict(disk.get("votes") or {})
+            merged.update(self._data["votes"])
+            stale = [k for k in merged if k not in live_keys]
             for k in stale:
-                self._data["votes"].pop(k, None)
+                merged.pop(k, None)
+            self._data["votes"] = merged
             if stale:
                 save_material_curation(self._cache_path, self._data)
         return len(stale)
