@@ -10,8 +10,24 @@ def test_janela_do_motor_substitui_scoring_s2():
     assert refs == [("bloco-03", None), ("bloco-04", None)]
 
 
-def test_sem_janela_cai_no_caminho_legado():
-    # blocks=[] faz o caminho legado degradar para [] (comportamento atual
-    # documentado de _top_candidate_blocks) — o que importa é NÃO explodir
-    # e NÃO inventar candidatos.
-    assert _candidate_refs({}, blocks=[]) == []
+def test_sem_janela_delega_ao_s2_legado(monkeypatch):
+    from src.builder.artifacts import cronograma_health as ch
+    sentinel = [("bloco-99", 1.23)]
+    called = {}
+
+    def _fake_top(entry, blocks, n=ch._TOP_N_CANDIDATES):
+        called["with"] = (entry, blocks)
+        return sentinel
+
+    monkeypatch.setattr(ch, "_top_candidate_blocks", _fake_top)
+    entry = {"id": "x"}
+    blocks = [{"id": "bloco-01"}]
+    assert ch._candidate_refs(entry, blocks) == sentinel
+    assert called["with"] == (entry, blocks)
+
+
+def test_janela_do_motor_nao_e_capada_em_top_n():
+    """D-C literal: a janela ordenada do motor vai INTEIRA pro health (sem cap _TOP_N_CANDIDATES do S2)."""
+    entry = {"temporal_block_window": ["b1", "b2", "b3", "b4", "b5"]}
+    refs = _candidate_refs(entry, blocks=[])
+    assert refs == [(f"b{i}", None) for i in range(1, 6)]
