@@ -55,10 +55,15 @@ def _build_motor_voter(builder):
     try:
         import json as _json
         from src.builder.routing.motor.llm_vote import LlmVoter, material_curation_path
+        from src.builder.runtime.gemini_client import has_gemini_api_key
 
         cfg_path = Path.home() / ".gpt_tutor_config.json"
         config = _json.loads(cfg_path.read_text(encoding="utf-8")) if cfg_path.exists() else {}
-        if not isinstance(config, dict) or not str(config.get("gemini_api_key") or "").strip():
+        # review F4 I2: precedência real (config > GEMINI_API_KEY do ambiente),
+        # a MESMA usada por get_gemini_client — um pré-check que só lia
+        # config.get("gemini_api_key") devolvia None mesmo com a chave só no
+        # ambiente, degradando o voter silenciosamente.
+        if not isinstance(config, dict) or not has_gemini_api_key(config):
             return None
         return LlmVoter(
             config,

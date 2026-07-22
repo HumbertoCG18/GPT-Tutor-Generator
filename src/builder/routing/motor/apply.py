@@ -13,7 +13,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Callable, Optional
 
-from src.builder.routing.motor.anchor_engine import AnchorEngine
+from src.builder.routing.motor.anchor_engine import AnchorEngine, is_out_of_disamb_scope
 from src.builder.routing.motor.context import build_motor_context
 from src.builder.routing.motor.contracts import AnchorDecision, MotorContext
 from src.builder.routing.motor.llm_vote import content_key, detect_same_theme_series
@@ -65,6 +65,14 @@ def apply_anchor_engine(
     decided: dict = {}
     for entry in entries:
         if _valid_manual_pin(entry, ctx):
+            _clear_temporal(entry)
+            continue
+        if is_out_of_disamb_scope(entry):
+            # review F4 I1: escopo é atributo da ENTRY, não do conteúdo. Sem este
+            # skip ANTES do lookup em `decided`, um gêmeo md5 fora-de-escopo
+            # (bibliografia/TDE) herdaria a decisão do gêmeo in-scope (cache-hit)
+            # OU, na ordem inversa, gravaria decided[key]=None e apagaria a
+            # decisão do gêmeo in-scope processado depois (cache-poison).
             _clear_temporal(entry)
             continue
         key = content_key(entry, repo)

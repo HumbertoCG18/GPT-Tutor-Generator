@@ -84,6 +84,45 @@ def test_tier0_gemeos_md5_mesma_decisao(tmp_path):
     assert entries[0].get("temporal_block_id") == entries[1].get("temporal_block_id")
 
 
+def test_tier0_fora_de_escopo_nao_herda_decisao_do_gemeo_in_scope(tmp_path):
+    """review F4 I1: gêmeo md5 fora-de-escopo (bibliografia) processado DEPOIS
+    do gêmeo in-scope não deve herdar temporal_* via cache de content_key —
+    is_out_of_disamb_scope é atributo da ENTRY, não do conteúdo compartilhado."""
+    repo = _repo(tmp_path)
+    twin = repo / "twin.pdf"
+    twin.write_bytes(b"conteudo identico")
+    entries = [
+        {"id": "g1", "title": "inducao 1", "category": "materiais",
+         "source_section": "card a", "source_path": "twin.pdf"},
+        {"id": "g2-fora", "title": "inducao 2", "category": "bibliografia",
+         "source_section": "card a", "source_path": "twin.pdf"},
+    ]
+    apply_anchor_engine(entries, repo, "MF")
+    g1 = next(e for e in entries if e["id"] == "g1")
+    fora = next(e for e in entries if e["id"] == "g2-fora")
+    assert g1.get("temporal_block_id")                      # in-scope decidido normalmente
+    assert all(k not in fora for k in TEMPORAL_KEYS)         # fora-de-escopo NUNCA herda
+
+
+def test_tier0_in_scope_nao_perde_decisao_apos_gemeo_fora_de_escopo(tmp_path):
+    """review F4 I1: ordem inversa — gêmeo fora-de-escopo processado PRIMEIRO não
+    pode poluir o cache decided[key]=None e apagar a decisão do gêmeo in-scope."""
+    repo = _repo(tmp_path)
+    twin = repo / "twin.pdf"
+    twin.write_bytes(b"conteudo identico")
+    entries = [
+        {"id": "g2-fora", "title": "inducao 2", "category": "bibliografia",
+         "source_section": "card a", "source_path": "twin.pdf"},
+        {"id": "g1", "title": "inducao 1", "category": "materiais",
+         "source_section": "card a", "source_path": "twin.pdf"},
+    ]
+    apply_anchor_engine(entries, repo, "MF")
+    g1 = next(e for e in entries if e["id"] == "g1")
+    fora = next(e for e in entries if e["id"] == "g2-fora")
+    assert g1.get("temporal_block_id")                      # decisão NÃO apagada pelo cache
+    assert all(k not in fora for k in TEMPORAL_KEYS)
+
+
 def test_build_motor_voter_off_por_default(tmp_path):
     from src.builder.ops.pedagogical_regeneration import _build_motor_voter
 
@@ -100,7 +139,27 @@ def test_build_motor_voter_on_sem_chave_degrada_none(tmp_path, monkeypatch):
         options = {"use_llm_voter": True}
         root_dir = tmp_path
     monkeypatch.setattr(pr.Path, "home", lambda: tmp_path)  # sem config -> sem chave
+    # review F4 I2: precedência agora cobre env também (has_gemini_api_key) —
+    # delenv garante "sem chave" de verdade, independente do .env local do dev
+    # (que carrega GEMINI_API_KEY em os.environ no import de src.utils.helpers).
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     assert pr._build_motor_voter(_B()) is None
+
+
+def test_build_motor_voter_chave_via_ambiente_constroi_voter(tmp_path, monkeypatch):
+    """review F4 I2: gemini_api_key ausente no config mas presente via
+    GEMINI_API_KEY do ambiente -> voter CONSTRUÍDO (precedência real config>env,
+    igual à usada por get_gemini_client — não um pré-check que só olha config)."""
+    from src.builder.ops import pedagogical_regeneration as pr
+    from src.builder.routing.motor.llm_vote import LlmVoter
+
+    class _B:
+        options = {"use_llm_voter": True}
+        root_dir = tmp_path
+    monkeypatch.setattr(pr.Path, "home", lambda: tmp_path)  # sem config no disco
+    monkeypatch.setenv("GEMINI_API_KEY", "env-key-123")
+    voter = pr._build_motor_voter(_B())
+    assert isinstance(voter, LlmVoter)
 
 
 def test_run_anchor_engine_layer_isola_falha_do_voter(tmp_path, monkeypatch, caplog):
