@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-07-09
+last_updated: 2026-07-22
 > Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
 > mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
@@ -273,10 +273,10 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 
 ## CODE — bugs pré-existentes localizados
 
-- [CODE] **`gemini_client.py DEFAULT_MODEL = "gemini-2.5-flash"` APOSENTADO pela API** (404 em
-  2026-07-09 durante a medição F3; contorno: `gemini_model=gemini-flash-latest` no config pessoal
-  do user). **Dono: pré-flight FASE 4 item 0** — atualizar `DEFAULT_MODEL` + values do combo na UI
-  (`src/ui/dialogs.py:441`) antes de qualquer chamada Gemini do reprocess.
+- ~~[CODE] `gemini_client.py DEFAULT_MODEL = "gemini-2.5-flash"` APOSENTADO pela API~~ **FECHADO
+  (F4 item 0, pré-flight — commits `8f73084`/`79c...` guard em `get_gemini_client`)**: `DEFAULT_MODEL`
+  migrado para `gemini-3.5-flash` pinado + guard contra config persistido antigo vazando o modelo
+  morto pro endpoint (review T1).
 - ~~[CODE] `SubjectManagerDialog._save` (dialogs.py:1503-1525) **dropa `moodle_course_id`/`m365_filter`** ao salvar.~~
   **FIX aplicado (2026-06-22, working tree, uncommitted):** `_save` agora preserva ambos de `existing`
   (espelha `turma`/`schedule_url`, dialogs.py:1521-1525). 388 testes verdes (core/moodle/m365). NOTA: o fix
@@ -471,14 +471,55 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   (+`-arvores`/`-listas`)→bloco-06, `tiposindutivos`→bloco-15. Com pinos: 58/58 no gold (100%
   no gold ≠ 100% no curso). A [DECISION] D4×janela-1 abaixo vira item OBRIGATÓRIO do plano da
   FASE 4 (voter vai ligar).
-- [DECISION] **D4 × TIER 3 janela-1** — decisão D4-flagada de janela-1 (provider data/topic) entra
-  no escopo do voto com UM candidato — LLM confirma o único bloco e desflaga sem informação nova
-  (band media, invisível à métrica confiante-errado). Antes de ligar voter na FASE 4: excluir
-  |janela|==1 do escopo do voto OU dar opção "nenhum destes" no prompt degenerado. Decidir junto
-  com a re-decisão do GO (FAIL F3).
-- [CODE] **Migrar ground_truth_*.csv de bloco-NN → block_uuid (FASE 4)** — decisão user 2026-07-08
-  (pré-flight FASE 2 item 2). Inclui: 5 CSVs + eval_ground_truth + harnesses fase0/fase1 resolvendo
-  uuid→display. Até lá, auditor de frescor é pré-gate obrigatório de medição.
+- [DERIVADO] **FASE 4 do motor de atribuição FECHADA (as-of 2026-07-22; código COMMITADO
+  `8f73084..4a73b5b` na branch `feat/motor-atribuicao`; régua `fase4_prova_D9.py` = Task 11,
+  este commit)** — AnchorEngine substitui `apply_anchor_placement` no call-site do reprocess,
+  atrás de `use_anchor_engine` por-curso (precedência sobre a flag legada; caminho legado intacto
+  até o cutover FASE 5); voter TIER 3 opt-in via `use_llm_voter`. **9 itens do handoff (0-8)
+  FECHADOS:** item 0 (modelo Gemini morto → `gemini-3.5-flash` pinado + guard), item 1 (D4×janela-1
+  — ver entrada riscada acima), item 2 (sidecar `material_curation.json` no repo-tutor +
+  `prune()` merge-on-save), item 3/4 (`LlmVoter` thread-safe: lock, log de erro, `no_key`,
+  `round_summary`, cache por content_key), item 5 (`motor/context.py` loader único +
+  memoizações `_global_df`/`_modal_years`/`normalized_card_map` — fecha a dívida FASE 1 do mesmo
+  nome), item 6 (gold→`block_uuid` — ver entrada riscada acima), item 7 (badges band/flag/provider
+  no Timeline Dashboard, band autoritativa do motor), item 8 (`cronograma_health` lê a janela do
+  motor quando `temporal_block_window` existe; S2 legado vira fallback só flag-OFF, pré-requisito
+  nomeado da deleção FASE 5).
+  **Número do aceite (spec §7), medido por `scripts/fase4_prova_D9.py`:** flag-OFF byte-idêntico ✓;
+  flag-ON `computed_*` inalterado (só `temporal_*`) ✓; pino manual nunca sobrescrito (11 pinos,
+  0 `TEMPORAL_KEYS` vazadas) ✓; dup-divergence 0 (TIER 0 por `content_key` md5) ✓; gold MF
+  pair-colapsado **det 48/58 = 82.8% (conf-errado 1) · voter all-cache (cap=0) 51/58 = 87.9%
+  (conf-errado 0)** — byte-idêntico aos baselines FASE 0/FASE 3, 0 chamadas API na rodada de prova.
+  **VEREDITO FASE 4: PASS.** Regressão: 6 probes (fase0/fase1/fase2-SO/fase2-TCC/fase3/fase4) PASS
+  + suite **1779 passed / 4 skipped / 0 failed**.
+  **2 adjudicações do controller registradas no ledger, durante a escrita da régua (Task 11):**
+  (1) *defeito-de-plano — universo do gold-check.* O snippet do plano (Step 1) omitiu o filtro
+  `is_out_of_disamb_scope` em `_gold_check`; sem ele a régua mediu as 66 rows scorable (incluindo
+  as 8 TIER-2 fora do mandato do motor) em vez das 58 do universo disamb-scope que os baselines
+  F0/F3 declaram — FAIL espúrio (74.2%/78.8%) mascarando comportamento byte-idêntico ao aceito.
+  Fix: 1 guard-clause em `_gold_check` (skip out-of-scope), alinhando o universo medido ao
+  universo declarado. (2) *precedente explícito F1 (BASELINE_RECALL=14/17 fração exata) — pisos
+  em fração exata, não display arredondado.* `82.8`/`87.9` como floats literais eram o valor
+  ARREDONDADO de `48/58`/`51/58`; `48/58 = 82.7586...` é `< 82.8` em ponto flutuante (comparação
+  estrita), gerando 2º FAIL espúrio (det=False) mesmo com o universo já corrigido. Fix: pisos
+  viram `48/58`/`51/58` (frações exatas); display em `%` mantido via `100 * PISO:.1f`. Nenhum piso
+  foi *afrouxado* em nenhuma das duas correções — ambas alinham a MEDIÇÃO ao número já aceito, não
+  mudam o número aceito.
+  **Dívida nomeada nova [CODE]:** TIER-2 no gold MF (`trabalhos/provas/TDE`, 8 rows scorable) =
+  **1/8 pelo funil** — categorias saem do motor via `_OUT_CATEGORIES` por design (janela-de-prazo
+  real T1/T2→blocos 15/16 é dívida separada, ver "Fora de escopo" do plano F4); medição própria
+  destas 8 rows entra no rollout FASE 5, não bloqueia o aceite F4 (que mede só o universo
+  disamb-scope, por declaração explícita dos pisos).
+  Housekeeping: `docs/superpowers/plans/2026-07-10-fase4-integracao-d9.md` movido para
+  `Feitos/` (gate verde). Reprocess REAL nos repos-tutor (escrever temporal/sidecar de verdade) e
+  ligar `use_anchor_engine`/`use_llm_voter` em `SubjectProfile.feature_flags` = ação do user na
+  GUI, curso a curso — rollout FASE 5.
+- ~~[DECISION] D4 × TIER 3 janela-1~~ **FECHADO (F4 item 1, commit `1f80f2a`)** — Opção A (D-A do
+  plano F4) implementada: `len(window) > 1` gateia o hook do voter em `anchor_engine.py:57`;
+  |janela|==1 nunca entra no escopo do voto, FLAG honesto sobrevive pra fila humana.
+- ~~[CODE] Migrar ground_truth_*.csv de bloco-NN → block_uuid (FASE 4)~~ **FECHADO (F4 item 6,
+  commit `4a73b5b`, decisão user 08/07)** — 5 CSVs + `true_of` uuid-first nos probes; auditor de
+  frescor (`audit_gold_freshness.py`) segue como pré-gate obrigatório de qualquer medição.
 - ~~A1 (lessons no fusor) — brainstorming antes de spec~~ **SUPERSEDED (2026-07-01)** — ver entrada
   Degrau 3a acima; sinal absorvido pelo motor, plano velho mirava o fusor que morre no cutover.
 - [DECISION/CODE] **Refatoração futura: ingestão de material de APOIO (durável/intent, 2026-07-01)** — artigos

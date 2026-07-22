@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Contains project state, routing table, and behavioural contract.
-last_updated: 2026-06-21
+last_updated: 2026-07-22
 ---
 
 # ROUTER.md - Session Bootstrap
@@ -318,6 +318,27 @@ Read this file before starting any task.
   Confiante-errado 0 em ambos; acc par-colapsada SO 77.8%/TCC 84.2% vs baselines funil 47.4%/56.0%.
   MF intacto (regressao). Report `docs/reports/2026-07-09-fase2-providers-report.md`. Proximo:
   go/no-go FASE 3 = decisao USER com o report em maos.
+- FASE 3 (voto LLM TIER 3) ACEITA (sign-off user, 2026-07-09): `LlmVoter` bounded a janela, cache por
+  content_key/md5, gemini-3.5-flash pinado; lift +3 (piso LIFT_MIN=3), global par-colapsado MF
+  82.8%->87.9% (51/58), conf-errado 0. Report `docs/reports/2026-07-09-fase3-llm-report.md`.
+- FASE 4 (integracao D9) ENTREGUE (as-of 2026-07-22; commits `8f73084..4a73b5b` na branch
+  `feat/motor-atribuicao`, regua Task 11 neste commit): `apply_anchor_engine` (`motor/apply.py`)
+  substitui `apply_anchor_placement` no call-site do reprocess, atras da flag por-curso
+  `use_anchor_engine` (precedencia sobre a legada; caminho legado intacto ate o cutover FASE 5);
+  voter TIER 3 opt-in via `use_llm_voter`, com sidecar `material_curation.json` no repo-tutor
+  (thread-safe, prune, round_summary). Loader unico `motor/context.py` (memoizacoes
+  `_global_df`/`_modal_years`/`normalized_card_map`) substitui os `build_context` duplicados dos
+  probes. Badges band/flag/provider no Timeline Dashboard (band autoritativa do motor);
+  `cronograma_health` le a janela do motor quando `temporal_block_window` existe, S2 legado vira
+  fallback so flag-OFF (pre-requisito da delecao FASE 5). Gold dos 5 cursos migrado pra
+  `block_uuid`. Regua agora **6 probes**: fase0/fase1/fase2-SO/fase2-TCC/fase3 + NOVO
+  `scripts/fase4_prova_D9.py` (numero do aceite spec S7: flag-OFF byte-identico; flag-ON
+  `computed_*` intacto/so `temporal_*`; pino manual nunca sobrescrito; dup-divergence 0; gold MF
+  det 48/58=82.8%/conf-errado 1 e voter all-cache 51/58=87.9%/conf-errado 0 — byte-identico aos
+  baselines F0/F3, 0 chamadas API). VEREDITO FASE 4: PASS. Suite 1779 passed/4 skipped/0 failed.
+  Divida nomeada: TIER-2 no gold MF (trabalhos/provas/TDE, 8 rows) fica no funil por design, medicao
+  propria no rollout FASE 5 (janela-de-prazo real ainda nao entra no motor). Proximo: reprocess REAL
+  nos repos-tutor + ligar as flags por-curso = acao do user na GUI (FASE 5).
 
 ### Not Declared In Brief
 
