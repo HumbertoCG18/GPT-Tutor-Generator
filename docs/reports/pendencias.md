@@ -472,8 +472,8 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   no gold ≠ 100% no curso). A [DECISION] D4×janela-1 abaixo vira item OBRIGATÓRIO do plano da
   FASE 4 (voter vai ligar).
 - [DERIVADO] **FASE 4 do motor de atribuição FECHADA (as-of 2026-07-22; código COMMITADO
-  `8f73084..4a73b5b` na branch `feat/motor-atribuicao`; régua `fase4_prova_D9.py` = Task 11,
-  este commit)** — AnchorEngine substitui `apply_anchor_placement` no call-site do reprocess,
+  `8f73084..480231a` na branch `feat/motor-atribuicao`; régua `fase4_prova_D9.py` = Task 11,
+  commit `2fd725a`; fix-wave pós-review `54e7662..480231a`)** — AnchorEngine substitui `apply_anchor_placement` no call-site do reprocess,
   atrás de `use_anchor_engine` por-curso (precedência sobre a flag legada; caminho legado intacto
   até o cutover FASE 5); voter TIER 3 opt-in via `use_llm_voter`. **9 itens do handoff (0-8)
   FECHADOS:** item 0 (modelo Gemini morto → `gemini-3.5-flash` pinado + guard), item 1 (D4×janela-1
@@ -491,7 +491,13 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   pair-colapsado **det 48/58 = 82.8% (conf-errado 1) · voter all-cache (cap=0) 51/58 = 87.9%
   (conf-errado 0)** — byte-idêntico aos baselines FASE 0/FASE 3, 0 chamadas API na rodada de prova.
   **VEREDITO FASE 4: PASS.** Regressão: 6 probes (fase0/fase1/fase2-SO/fase2-TCC/fase3/fase4) PASS
-  + suite **1779 passed / 4 skipped / 0 failed**.
+  + suite **1787 passed / 4 skipped / 0 failed** (pós fix-wave `54e7662..480231a`).
+  **Review final whole-branch (fable): Ready to merge YES** — fix-wave fechou 1 Critical
+  (C1: `resolve_temporal_block` agora resolve uuid→display no chokepoint leitor; producer intocado,
+  flag-OFF byte-idêntico preservado) + 2 Important (I1: TIER 0 não atravessa fronteira de escopo —
+  gêmeo md5 fora-de-escopo não herda nem apaga temporal; I2: `_build_motor_voter` usa a precedência
+  real config > `GEMINI_API_KEY` do ambiente) + 7 minors fix-now da triage. Defer-F5 registrados
+  no ledger `.superpowers/sdd/progress.md`.
   **2 adjudicações do controller registradas no ledger, durante a escrita da régua (Task 11):**
   (1) *defeito-de-plano — universo do gold-check.* O snippet do plano (Step 1) omitiu o filtro
   `is_out_of_disamb_scope` em `_gold_check`; sem ele a régua mediu as 66 rows scorable (incluindo
@@ -514,6 +520,53 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   `Feitos/` (gate verde). Reprocess REAL nos repos-tutor (escrever temporal/sidecar de verdade) e
   ligar `use_anchor_engine`/`use_llm_voter` em `SubjectProfile.feature_flags` = ação do user na
   GUI, curso a curso — rollout FASE 5.
+- [DERIVADO] **Triage completa do review final whole-branch F4 (fable, 2026-07-22; veredito
+  pós-fix-wave: Ready to merge YES).** Registro integral por decisão do user (inclusive os
+  "ignore" — catalogados mesmo sem ação prevista):
+  **FECHADOS na fix-wave (`54e7662..480231a`):** C1 uuid→display no leitor `resolve_temporal_block`
+  (producer intocado); I1 TIER 0 `decided`-cache não atravessa fronteira de escopo (skip
+  `is_out_of_disamb_scope` antes do lookup, ambas as ordens testadas); I2 `_build_motor_voter`
+  com precedência real config > `GEMINI_API_KEY` do ambiente; T1a logger.info no remap
+  RETIRED_MODELS; T6 testes pino-inválido/None-em-gêmeos; T7c asserts de `_run_anchor_engine_layer`
+  com deepcopy (não-vácuos); T7d `exc_info=True` no warning da camada; T11a import morto +
+  param `repo` não usado removidos da régua; T11b veredito imprime `voter=SKIPPED` sem cache;
+  dup-div exclui entries sem temporal (evita FAIL espúrio com pino gêmeo em F5).
+  **[CODE] Defer-FASE 5 (entram junto do rollout, não bloqueiam):** T1b combo da UI mostra modelo
+  stale órfão (migração em `AppConfig._load` é o fix certo); T2b `load_repo_artifact` engole
+  exceção com `{}` — timeline corrompida vira motor no-op silencioso (1 logger.debug basta);
+  T3 `fase3_prova` vote_rows não filtra janela-1 (row nova flagged sem cache = "pend" perpétua no
+  gate de completude); T4b lock do voter é por-processo (TOCTOU entre processos; single-writer
+  hoje via task queue); T7a double-hashing md5 (live_keys + apply — compartilhar mapa de chaves);
+  T7b sem teste e2e do gate via `regenerate_pedagogical_files` (elif verificado por inspeção;
+  e2e entra na suite do cutover); T9a ref `None` vira `"None"` e sobrevive ao filtro do health
+  (só manifest editado à mão aciona); herdados do review F3: parent-dir em
+  `save_material_curation`, fold caso/acento em `source_section`, `match_window_ref`
+  strip/casefold, truncamento do dry-run, stopwords PT no P4.
+  **Ignore (catalogados, sem ação prevista — razões do reviewer):** T1c guard test exime
+  `gemini_client.py` inteiro por nome (único uso legítimo de "gemini-2.5" vive lá); T1d fix-wave
+  T1 rodou só `-k gemini` (superado: suite completa verde no head); T2a gate T2 re-rodou só 3
+  probes (superado: Task 11 re-rodou os 6); T4a memória-vence em chave conflitante entre
+  instâncias (mesma content_key = mesmo conteúdo, qualquer voto é válido); T8 teste não-leak
+  do badge cobre só `computed_block_band` (motor_badge só lê temporal_*); T9b anotação `-> list`
+  frouxa; T10a `true_of` chamado 3x/2x por row em SO/TCC (probe, custo desprezível); T10b
+  fallback devolve uuid cru se bloco sem `id` (falha honesta de display em timeline malformada);
+  T10c `migrate_gold_uuid` sem try/except (one-shot já executado); T11c divisão ok/tot duplicada.
+- [USER/DECISION] **Auditoria .env (2026-07-22): armadilha de token Moodle stale.**
+  `MOODLE_URL`/`MOODLE_TOKEN` existem no `.env` RAIZ e em `moddle/.env`; a raiz vence
+  (os.environ carregado no import por `helpers._load_project_env_file`), mas a GUI
+  (`save_moodle_token`, moodle.py:638) escreve SÓ em `moddle/.env` → renovar token pela GUI
+  não tem efeito enquanto a cópia stale viver no raiz (falha silenciosa). Recomendação do
+  controller: remover as chaves MOODLE do `.env` raiz (zero código; `moddle/.env` vira fonte
+  única). Alternativa [CODE]: `save_moodle_token` fazer merge no raiz e aposentar `moddle/.env`.
+  DECISÃO PENDENTE do user.
+- [USER] **`MOODLE_PRIVATE_TOKEN` é chave morta** — presente no `.env` raiz e documentada no
+  `.env.exemple`, mas ZERO consumidores no código (grep 2026-07-22). Remover do `.env` e do
+  template (o template hoje ensina a criar uma chave que não faz nada).
+- [CODE] **`datalab_client` depende de import transitivo de `helpers` para ver o `.env`** —
+  lê `os.environ` em call-time sem carregar o `.env` por conta própria; hoje todos os chamadores
+  (engine, dialogs) importam helpers antes, mas um script standalone futuro que o use direto
+  não veria as chaves. Fix barato quando tocar o arquivo: import de helpers (ou chamada explícita
+  ao loader) no topo do datalab_client.
 - ~~[DECISION] D4 × TIER 3 janela-1~~ **FECHADO (F4 item 1, commit `1f80f2a`)** — Opção A (D-A do
   plano F4) implementada: `len(window) > 1` gateia o hook do voter em `anchor_engine.py:57`;
   |janela|==1 nunca entra no escopo do voto, FLAG honesto sobrevive pra fila humana.

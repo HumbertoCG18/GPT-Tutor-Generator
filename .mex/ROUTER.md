@@ -321,8 +321,8 @@ Read this file before starting any task.
 - FASE 3 (voto LLM TIER 3) ACEITA (sign-off user, 2026-07-09): `LlmVoter` bounded a janela, cache por
   content_key/md5, gemini-3.5-flash pinado; lift +3 (piso LIFT_MIN=3), global par-colapsado MF
   82.8%->87.9% (51/58), conf-errado 0. Report `docs/reports/2026-07-09-fase3-llm-report.md`.
-- FASE 4 (integracao D9) ENTREGUE (as-of 2026-07-22; commits `8f73084..4a73b5b` na branch
-  `feat/motor-atribuicao`, regua Task 11 neste commit): `apply_anchor_engine` (`motor/apply.py`)
+- FASE 4 (integracao D9) ENTREGUE (as-of 2026-07-22; commits `8f73084..480231a` na branch
+  `feat/motor-atribuicao`; regua Task 11 = `2fd725a`; fix-wave pos-review = `54e7662..480231a`): `apply_anchor_engine` (`motor/apply.py`)
   substitui `apply_anchor_placement` no call-site do reprocess, atras da flag por-curso
   `use_anchor_engine` (precedencia sobre a legada; caminho legado intacto ate o cutover FASE 5);
   voter TIER 3 opt-in via `use_llm_voter`, com sidecar `material_curation.json` no repo-tutor
@@ -335,7 +335,10 @@ Read this file before starting any task.
   `scripts/fase4_prova_D9.py` (numero do aceite spec S7: flag-OFF byte-identico; flag-ON
   `computed_*` intacto/so `temporal_*`; pino manual nunca sobrescrito; dup-divergence 0; gold MF
   det 48/58=82.8%/conf-errado 1 e voter all-cache 51/58=87.9%/conf-errado 0 — byte-identico aos
-  baselines F0/F3, 0 chamadas API). VEREDITO FASE 4: PASS. Suite 1779 passed/4 skipped/0 failed.
+  baselines F0/F3, 0 chamadas API). VEREDITO FASE 4: PASS. Suite 1787 passed/4 skipped/0 failed.
+  Review final whole-branch (fable): READY TO MERGE YES — fix-wave fechou C1 (leitor
+  resolve_temporal_block resolve uuid->display; producer intocado), I1 (TIER 0 nao atravessa
+  fronteira de escopo) e I2 (voter com precedencia real config > GEMINI_API_KEY do ambiente).
   Divida nomeada: TIER-2 no gold MF (trabalhos/provas/TDE, 8 rows) fica no funil por design, medicao
   propria no rollout FASE 5 (janela-de-prazo real ainda nao entra no motor). Proximo: reprocess REAL
   nos repos-tutor + ligar as flags por-curso = acao do user na GUI (FASE 5).
