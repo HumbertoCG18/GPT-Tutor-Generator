@@ -591,6 +591,12 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   (engine, dialogs) importam helpers antes, mas um script standalone futuro que o use direto
   não veria as chaves. Fix barato quando tocar o arquivo: import de helpers (ou chamada explícita
   ao loader) no topo do datalab_client.
+- [USER/DECISION] **Bibliografia = caso à parte (decisão user 2026-07-22, brainstorm F5):** tutor
+  deve passar a CONSUMIR bibliografias (hoje só resumo leve + mapa 📖 Apoio) sem estourar o limite
+  de projeto Claude/GPT — brainstorm/spec próprios, fora do provider janela-de-prazo. Até lá,
+  bibliografia/references/cronograma seguem fora total do motor. Contexto: gold TIER-2 MF tem
+  eth2→bloco-12 (residual conhecido), archive/aws→bloco-01. Spec da janela-de-prazo §7:
+  `docs/superpowers/specs/2026-07-22-janela-de-prazo-tier2-design.md`.
 - ~~[DECISION] D4 × TIER 3 janela-1~~ **FECHADO (F4 item 1, commit `1f80f2a`)** — Opção A (D-A do
   plano F4) implementada: `len(window) > 1` gateia o hook do voter em `anchor_engine.py:57`;
   |janela|==1 nunca entra no escopo do voto, FLAG honesto sobrevive pra fila humana.
