@@ -40,7 +40,7 @@ from src.builder.routing.motor.llm_vote import (                        # noqa: 
     import_marco1_seed, save_material_curation,
 )
 from fase0_prova_motor_MF import (                                      # noqa: E402
-    _md_text, build_context, collapse, display_of,
+    _md_text, build_context, collapse, display_of, true_of,
 )
 
 DEFAULT_REPO = Path.home() / "Documents" / "GitHub" / "Metodos-Formais-Tutor"
@@ -130,16 +130,17 @@ def main() -> int:
         d1 = eng1.resolve(e, ctx, markdown=md)
         pred0 = display_of(ctx, d0.block_ref)
         pred1 = display_of(ctx, d1.block_ref) if d1 else pred0
-        ok0, ok1 = pred0 == r["true_block_id"], pred1 == r["true_block_id"]
+        true = true_of(ctx, r)
+        ok0, ok1 = pred0 == true, pred1 == true
         res_det[r["id"]], res_llm[r["id"]] = ok0, ok1
         if d1 and d1.band == "alta" and not d1.flag and not ok1:
-            cw.append((r["id"], pred1, r["true_block_id"]))
+            cw.append((r["id"], pred1, true))
         if r in vote_rows:
             d_ok += ok0
             l_ok += ok1
             mark0, mark1 = ("ok" if ok0 else "X "), ("ok" if ok1 else "X ")
             print(f"  {r['id'][:46]:46} det={pred0:9}{mark0} "
-                  f"llm={pred1:9}{mark1} true={r['true_block_id']:9} "
+                  f"llm={pred1:9}{mark1} true={true:9} "
                   f"[{d1.method if d1 else '-'}]")
 
     pend = [r["id"] for r in vote_rows if not voter.has_vote(byid[r["id"]])]

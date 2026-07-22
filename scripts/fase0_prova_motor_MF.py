@@ -69,6 +69,17 @@ def display_of(ctx: MotorContext, ref: str) -> str:
     return str((b or {}).get("id") or ref)
 
 
+def true_of(ctx: MotorContext, row: dict) -> str:
+    """Verdade do gold em DISPLAY: uuid-first (estável a drift posicional),
+    fallback true_block_id legado enquanto a coluna não existe."""
+    uid = str(row.get("true_block_uuid") or "").strip()
+    if uid:
+        b = ctx.block_by_ref(uid)
+        if b is not None:
+            return str(b.get("id") or uid)
+    return str(row.get("true_block_id") or "").strip()
+
+
 def collapse(results: dict, rows: list) -> tuple:
     by_pair = defaultdict(list)
     for r in rows:
@@ -108,7 +119,7 @@ def main() -> int:
     contencao_fora = []
     confiante_errado = []
     for r in scope:
-        rid, true = r["id"], r["true_block_id"]
+        rid, true = r["id"], true_of(ctx, r)
         e = byid[rid]
         d = eng.resolve(e, ctx, markdown=_md_text(repo, e))
         if d is None:

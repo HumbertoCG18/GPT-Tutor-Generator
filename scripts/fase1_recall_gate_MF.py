@@ -29,6 +29,7 @@ from src.builder.routing.motor.anchor_engine import (                  # noqa: E
     AnchorEngine, is_out_of_disamb_scope,
 )
 from src.builder.routing.motor.context import build_motor_context as build_context  # loader migrado (F4 item 5)  # noqa: E402
+from fase0_prova_motor_MF import true_of  # gold uuid-first (F4 item 6)  # noqa: E402
 
 DEFAULT_REPO = Path.home() / "Documents" / "GitHub" / "Metodos-Formais-Tutor"
 DEFAULT_GOLD = Path(__file__).resolve().parents[1] / "docs" / "reports" / "ground_truth_MF.csv"
@@ -95,7 +96,7 @@ def main() -> int:
     outcomes: list = []
     detalhe_erros: list = []
     for r in scope:
-        rid, true = r["id"], r["true_block_id"]
+        rid, true = r["id"], true_of(ctx, r)
         e = byid[rid]
         d = eng.resolve(e, ctx, markdown=_md_text(repo, e))
         if d is None:

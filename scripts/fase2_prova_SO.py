@@ -30,6 +30,7 @@ from src.builder.routing.motor.window_provider import (                # noqa: E
     provider_date, resolve_window,
 )
 from src.builder.routing.motor.context import build_motor_context  # loader migrado (F4 item 5)  # noqa: E402
+from fase0_prova_motor_MF import true_of  # gold uuid-first (F4 item 6)  # noqa: E402
 
 DEFAULT_REPO = Path.home() / "Documents" / "GitHub" / "Sistemas-Operacionais-Tutor"
 DEFAULT_GOLD = Path(__file__).resolve().parents[1] / "docs" / "reports" / "ground_truth_SO.csv"
@@ -81,7 +82,7 @@ def main() -> int:
             cobertos.append(r["id"])
             if len(win) > 1:
                 colisoes.append((r["id"], win))
-            (contidos if r["true_block_id"] in win else fora).append(r["id"])
+            (contidos if true_of(ctx, r) in win else fora).append(r["id"])
         if is_out_of_disamb_scope(e):
             continue
         d = engine.resolve(e, ctx, _md_text(args.repo, e))
@@ -89,11 +90,11 @@ def main() -> int:
             continue
         pred = str((ctx.block_by_ref(d.block_ref) or {}).get("id") or d.block_ref)
         prov_count[d.provider or "?"] += 1
-        ok = pred == r["true_block_id"]
+        ok = pred == true_of(ctx, r)
         results[r["id"]] = ok
         matriz[("alta" if d.band == "alta" else "resto", "ok" if ok else "err")] += 1
         if d.band == "alta" and not ok and not d.flag:
-            cw.append((r["id"], pred, r["true_block_id"], d.provider))
+            cw.append((r["id"], pred, true_of(ctx, r), d.provider))
 
     by_pair = defaultdict(list)
     for r in rows:
