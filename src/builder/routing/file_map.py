@@ -629,9 +629,21 @@ def resolve_temporal_block(
     O fallback é `resolve_effective_block` (NÃO computed_block_id cru) de
     propósito: os consumidores temporais honram manual_timeline_block_id stale-safe
     via essa fonte; trocar pelo computed cru perderia o manual com a flag OFF.
+
+    review F4 C1: o producer (_write_temporal, motor/apply.py) grava
+    block_uuid cru em temporal_block_id; os leitores (dashboard, cronograma_health)
+    casam contra display id (block["id"]). Sem resolução aqui, flag-ON vira
+    "unmapped" em cascata. Quando `blocks` está disponível, casa o uuid contra
+    block_uuid e devolve o display id do mesmo bloco (reusa _block_by_migrated_ref,
+    que também aceita um valor já-display e o devolve intacto). uuid que não
+    resolve (blocks ausente/desatualizado) cai no valor cru — sem crash.
     """
     temporal = str(entry.get("temporal_block_id") or "").strip()
     if temporal:
+        if blocks:
+            hit = _block_by_migrated_ref(temporal, blocks)
+            if hit is not None:
+                return str(hit.get("id", "")).strip() or temporal
         return temporal
     return resolve_effective_block(entry, blocks).block_id
 

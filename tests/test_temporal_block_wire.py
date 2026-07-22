@@ -226,7 +226,35 @@ def test_resolve_temporal_block_temporal_wins():
         "computed_block_id": "bloco-07",
         "temporal_block_id": UUID_06,
     }
-    assert resolve_temporal_block(entry, BLOCKS) == UUID_06
+    # review F4 C1: _write_temporal grava block_uuid cru; o leitor resolve p/
+    # display id quando `blocks` está disponível (senão a cascata dashboard/
+    # health/cronograma_health casa contra display ids e vê "unmapped").
+    assert resolve_temporal_block(entry, BLOCKS) == "bloco-06"
+
+
+def test_resolve_temporal_block_uuid_already_display_passes_through():
+    """review F4 C1: valor já-display (não-uuid) continua passando intacto."""
+    from src.builder.routing.file_map import resolve_temporal_block
+    entry = {
+        "id": "e",
+        "manual_timeline_block_id": "",
+        "computed_block_id": "bloco-07",
+        "temporal_block_id": "bloco-06",
+    }
+    assert resolve_temporal_block(entry, BLOCKS) == "bloco-06"
+
+
+def test_resolve_temporal_block_uuid_unresolvable_returns_raw_no_crash():
+    """review F4 C1: uuid que não casa nenhum block_uuid -> comportamento atual
+    (valor cru), sem crash — degradação graciosa quando blocks está desatualizado."""
+    from src.builder.routing.file_map import resolve_temporal_block
+    entry = {
+        "id": "e",
+        "manual_timeline_block_id": "",
+        "computed_block_id": "bloco-07",
+        "temporal_block_id": "uuid-que-nao-existe-em-blocks",
+    }
+    assert resolve_temporal_block(entry, BLOCKS) == "uuid-que-nao-existe-em-blocks"
 
 
 # ---------------------------------------------------------------------------
