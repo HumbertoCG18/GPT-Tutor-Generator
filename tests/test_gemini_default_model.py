@@ -30,3 +30,20 @@ def test_retired_model_in_config_resolves_to_default(monkeypatch):
     monkeypatch.setattr(gc, "GeminiClient", _FakeClient)
     gc.get_gemini_client({"gemini_api_key": "k", "gemini_model": "gemini-2.5-flash"})
     assert captured["model"] == gc.DEFAULT_MODEL
+
+
+def test_retired_model_remap_logs_info(monkeypatch, caplog):
+    """review F4 T1a: remap silencioso de modelo aposentado -> logger.info p/ auditoria."""
+    import src.builder.runtime.gemini_client as gc
+
+    class _FakeClient:
+        def __init__(self, api_key, model):
+            pass
+
+    monkeypatch.setattr(gc, "GeminiClient", _FakeClient)
+    with caplog.at_level("INFO", logger="src.builder.runtime.gemini_client"):
+        gc.get_gemini_client({"gemini_api_key": "k", "gemini_model": "gemini-2.5-flash"})
+    assert any(
+        "gemini-2.5-flash" in r.message and gc.DEFAULT_MODEL in r.message
+        for r in caplog.records
+    )

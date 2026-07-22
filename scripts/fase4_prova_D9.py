@@ -33,7 +33,7 @@ from src.builder.routing.motor.apply import TEMPORAL_KEYS, apply_anchor_engine  
 from src.builder.routing.motor.context import build_motor_context               # noqa: E402
 from src.builder.routing.motor.anchor_engine import is_out_of_disamb_scope      # noqa: E402
 from src.builder.routing.motor.llm_vote import LlmVoter                         # noqa: E402
-from fase0_prova_motor_MF import _md_text, collapse, display_of, true_of        # noqa: E402
+from fase0_prova_motor_MF import _md_text, collapse, true_of                    # noqa: E402
 
 DEFAULT_REPO = Path.home() / "Documents" / "GitHub" / "Metodos-Formais-Tutor"
 DEFAULT_GOLD = ROOT / "docs" / "reports" / "ground_truth_MF.csv"
@@ -42,7 +42,7 @@ ACC_DET_MIN, CW_DET_MAX = 48 / 58, 1   # fração exata baseline F0 (precedente 
 ACC_LLM_MIN, CW_LLM_MAX = 51 / 58, 0   # fração exata baseline F3
 
 
-def _gold_check(entries, ctx, gold_path, repo) -> tuple:
+def _gold_check(entries, ctx, gold_path) -> tuple:
     rows = [r for r in csv.DictReader(open(gold_path, encoding="utf-8"))
             if str(r.get("scorable")) == "yes"]
     byid = {str(e.get("id")): e for e in entries}
@@ -107,10 +107,16 @@ def main() -> int:
     from src.builder.routing.motor.llm_vote import content_key
     groups: dict = {}
     for e in on:
-        groups.setdefault(content_key(e, repo), set()).add(
-            str(e.get("temporal_block_id") or ""))
+        # review F4 régua dup-div: pino manual válido / fora-de-escopo / funil-sem-
+        # janela legitimamente NÃO tem temporal_block_id (limpo por design, não por
+        # decisão do motor) — incluir esses "" no set geraria FAIL espúrio de
+        # dup-divergence contra um gêmeo md5 que FOI decidido.
+        temporal = str(e.get("temporal_block_id") or "").strip()
+        if not temporal:
+            continue
+        groups.setdefault(content_key(e, repo), set()).add(temporal)
     p_dup = all(len(v) == 1 for v in groups.values())
-    ok_d, tot_d, cw_d = _gold_check(on, ctx, gold_path, repo)
+    ok_d, tot_d, cw_d = _gold_check(on, ctx, gold_path)
     acc_d = 100.0 * ok_d / tot_d if tot_d else 0.0
     p_det = (ok_d / tot_d if tot_d else 0.0) >= ACC_DET_MIN and cw_d <= CW_DET_MAX
     print(f"flag-ON det: computed intacto={p_computed} pinos intactos={p_pins} "
@@ -120,6 +126,9 @@ def main() -> int:
 
     # 3) flag-ON com voter ALL-CACHE (cap=0: zero chamadas API; cache copiado)
     p_llm = True
+    voter_label: object = "SKIPPED"  # review F4 T11b: sem cache F3 o passo é pulado
+    # (gate continua passável — skip é legítimo), mas o print do veredito não pode
+    # sugerir "voter=True" como se o passo tivesse rodado e passado.
     if CACHE_F3.is_file():
         with tempfile.TemporaryDirectory() as td:
             tmp_cache = Path(td) / "material_curation.json"
@@ -127,9 +136,10 @@ def main() -> int:
             voter = LlmVoter({}, cache_path=tmp_cache, repo_dir=repo, cap=0)
             lv = copy.deepcopy(entries0)
             apply_anchor_engine(lv, repo, course_name, voter=voter, markdown_fn=md_fn)
-            ok_l, tot_l, cw_l = _gold_check(lv, ctx, gold_path, repo)
+            ok_l, tot_l, cw_l = _gold_check(lv, ctx, gold_path)
         acc_l = 100.0 * ok_l / tot_l if tot_l else 0.0
         p_llm = (ok_l / tot_l if tot_l else 0.0) >= ACC_LLM_MIN and cw_l <= CW_LLM_MAX
+        voter_label = p_llm
         print(f"flag-ON voter all-cache: {ok_l}/{tot_l} = {acc_l:.1f}% "
               f"(piso {100 * ACC_LLM_MIN:.1f}) conf-errado={cw_l} (max {CW_LLM_MAX}) "
               f"chamadas API={voter.calls} (esperado 0)")
@@ -140,7 +150,7 @@ def main() -> int:
     print("=" * 70)
     print(f"VEREDITO FASE 4: {'PASS' if ok else 'FAIL'} "
           f"(off={p_off} computed={p_computed} pinos={p_pins} dup={p_dup} "
-          f"det={p_det} voter={p_llm})")
+          f"det={p_det} voter={voter_label})")
     return 0 if ok else 1
 
 

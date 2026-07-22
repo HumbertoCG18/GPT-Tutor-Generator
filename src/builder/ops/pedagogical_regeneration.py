@@ -100,8 +100,10 @@ def _run_anchor_engine_layer(builder, live_manifest_entries):
         if voter is not None:
             logger.info("motor/voter round_summary: %s", voter.round_summary())
     except Exception as exc:
+        # review F4 T7d: exc_info=True p/ stacktrace completo no log (camada
+        # isolada não derruba a build, mas o traceback é essencial p/ diagnosticar).
         logger.warning("motor D9: camada temporal pulada nesta regeneração (%s: %s)",
-                       type(exc).__name__, exc)
+                       type(exc).__name__, exc, exc_info=True)
     return live_manifest_entries
 
 

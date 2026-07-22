@@ -104,5 +104,8 @@ def get_gemini_client(config) -> Optional[GeminiClient]:
         return None
     model = config.get("gemini_model", DEFAULT_MODEL) if config is not None else DEFAULT_MODEL
     if model in RETIRED_MODELS:
+        # review F4 T1a: remap silencioso de modelo aposentado -> log p/ auditoria
+        # (config persistido antigo apontando pra um modelo morto some sem rastro).
+        logger.info("gemini_model %r aposentado; usando default %r", model, DEFAULT_MODEL)
         model = DEFAULT_MODEL
     return GeminiClient(api_key=key, model=model)

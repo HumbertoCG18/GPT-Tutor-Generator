@@ -70,6 +70,39 @@ def test_fora_do_motor_nao_ganha_temporal(tmp_path):
     assert all(k not in fora for k in TEMPORAL_KEYS)       # bibliografia -> funil
 
 
+def test_pino_manual_invalido_nao_pula_motor_prossegue(tmp_path):
+    """review F4 T6: pino manual que NÃO resolve no ctx (id/uuid inexistente)
+    não conta como pino válido — _valid_manual_pin=False e o motor prossegue a
+    resolução normal em vez de pular a entry (semântica atual, travada com teste)."""
+    entries = [
+        {"id": "e1", "title": "inducao estrutural slides", "category": "materiais",
+         "source_section": "card a", "computed_block_id": "u-1",
+         "manual_timeline_block_id": "uuid-que-nao-existe-no-ctx"},
+    ]
+    apply_anchor_engine(entries, _repo(tmp_path), "MF")
+    e1 = entries[0]
+    assert e1["manual_timeline_block_id"] == "uuid-que-nao-existe-no-ctx"  # não mexido
+    assert e1.get("temporal_block_id") in {"u-1", "u-2"}                  # motor resolveu, não pulou
+
+
+def test_tier0_gemeos_decisao_none_propaga_para_ambos(tmp_path):
+    """review F4 T6: quando o motor não acha janela pro 1º gêmeo (funil, decision
+    None), o cache por content_key propaga None -> 2º gêmeo também fica sem
+    temporal_* (cache honesto: None é uma decisão cacheada como qualquer outra)."""
+    repo = _repo(tmp_path)
+    twin = repo / "twin2.pdf"
+    twin.write_bytes(b"outro conteudo identico")
+    entries = [
+        {"id": "n1", "title": "artigo externo", "category": "materiais",
+         "source_section": "card inexistente", "source_path": "twin2.pdf"},
+        {"id": "n2", "title": "artigo externo copia", "category": "materiais",
+         "source_section": "card inexistente", "source_path": "twin2.pdf"},
+    ]
+    apply_anchor_engine(entries, repo, "MF")
+    assert all(k not in entries[0] for k in TEMPORAL_KEYS)
+    assert all(k not in entries[1] for k in TEMPORAL_KEYS)
+
+
 def test_tier0_gemeos_md5_mesma_decisao(tmp_path):
     repo = _repo(tmp_path)
     twin = repo / "twin.pdf"
@@ -177,9 +210,11 @@ def test_run_anchor_engine_layer_isola_falha_do_voter(tmp_path, monkeypatch, cap
 
     monkeypatch.setattr(pr, "_build_motor_voter", lambda b: _Boom())
     entries = [{"id": "e1", "title": "t", "category": "materiais"}]
+    before = copy.deepcopy(entries)  # review F4 T7c: `out == entries` era vácuo (out IS entries,
+    # mesma lista mutada in place — a igualdade nunca podia falhar). Compara contra snapshot.
     with caplog.at_level("WARNING"):
         out = pr._run_anchor_engine_layer(_B(), entries)
-    assert out == entries
+    assert out == before
     assert any("camada temporal pulada" in r.message for r in caplog.records)
 
 
@@ -194,7 +229,8 @@ def test_run_anchor_engine_layer_happy_path_sem_warning(tmp_path, monkeypatch, c
 
     monkeypatch.setattr(pr, "_build_motor_voter", lambda b: None)
     entries = [{"id": "e1", "title": "t", "category": "materiais"}]
+    before = copy.deepcopy(entries)  # review F4 T7c: snapshot p/ comparação não-vácua
     with caplog.at_level("WARNING"):
         out = pr._run_anchor_engine_layer(_B(), entries)
-    assert out == entries
+    assert out == before
     assert not [r for r in caplog.records if r.levelname == "WARNING"]
