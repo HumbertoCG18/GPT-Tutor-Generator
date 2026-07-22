@@ -516,6 +516,13 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   real T1/T2→blocos 15/16 é dívida separada, ver "Fora de escopo" do plano F4); medição própria
   destas 8 rows entra no rollout FASE 5, não bloqueia o aceite F4 (que mede só o universo
   disamb-scope, por declaração explícita dos pisos).
+  *Composição concreta no MF (diagnóstico do piloto 2026-07-22, verificado entry-a-entry):*
+  `t1-2026-1`/`t2-2026-1` (trabalhos TDE) = alvo direto da janela-de-prazo; `t1-2026-1-thy`
+  (codigo-professor) = companion do t1, herda a atribuição; `revisao-p1-gabarito` (provas) =
+  **pino trivial na GUI** (mesmo bloco `5599d015` do `revisao-p1`, já pinado) — não precisa de
+  código; `plano` (cronograma) = **funil deliberado** (plano de ensino não pertence a bloco;
+  "corrigir" seria inventar pertencimento). Só 3 dos 5 dependem de código novo (o provider
+  janela-de-prazo).
   Housekeeping: `docs/superpowers/plans/2026-07-10-fase4-integracao-d9.md` movido para
   `Feitos/` (gate verde). Reprocess REAL nos repos-tutor (escrever temporal/sidecar de verdade) e
   ligar `use_anchor_engine`/`use_llm_voter` em `SubjectProfile.feature_flags` = ação do user na
@@ -551,6 +558,23 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   frouxa; T10a `true_of` chamado 3x/2x por row em SO/TCC (probe, custo desprezível); T10b
   fallback devolve uuid cru se bloco sem `id` (falha honesta de display em timeline malformada);
   T10c `migrate_gold_uuid` sem try/except (one-shot já executado); T11c divisão ok/tot duplicada.
+- [DERIVADO] **Piloto flag-ON MF (2026-07-22, dry-run em memória — zero writes no repo-tutor):
+  retrato do que `use_anchor_engine`+`use_llm_voter` fariam hoje no reprocess do MF.**
+  67 entries → **51 com `temporal_*`** (bands 15 alta / 36 media; providers 9 manual / 6 labels /
+  36 llm), **11 com pino manual** (motor respeita e limpa temporal — resolvidos por decisão
+  humana, pino > temporal na cascata) e **5 TIER-2 fora-de-escopo** (composição acima). Voter
+  100% cache da F3: 36 hits, **0 chamadas API**, 0 erros; **fila humana 0** (o cache cobre
+  exatamente os casos flagáveis). Delta visível: 42 decisões confirmam o funil, **9 divergem** —
+  por gold/auditoria-0807: `exerciciosdafny1` (12 vs 15), `exerciciosdafny2` (13 vs 11) e
+  `revisao` (03 vs 02) são CORREÇÕES de erro do funil; `tiposindutivos` (13 vs 15) e
+  `exercicioscorrecaoterminacao` (12 vs 11) são os erros residuais conhecidos (band media, nunca
+  alta); `provas` (06 vs 05, alta) consistente com a régua (voter cw=0); `exemplos-zip`/
+  `exercicios-arrays`/`exercicios-conjuntos` sem gold direto. Balanço flag-ON: **62/67 com dono
+  certo** (51 motor + 11 pino), 1 pino trivial pendente, 3 aguardando janela-de-prazo, 1
+  deliberadamente sem bloco.
+  **[CODE] Pré-requisito do flip real:** o sidecar `material_curation.json` NÃO existe na raiz do
+  `Metodos-Formais-Tutor` — fazer seed do cache F3 (`docs/reports/material_curation_MF.json` →
+  raiz do repo-tutor) antes do 1º reprocess flag-ON, senão a 1ª rodada re-paga até 20 votos (cap).
 - [USER/DECISION] **Auditoria .env (2026-07-22): armadilha de token Moodle stale.**
   `MOODLE_URL`/`MOODLE_TOKEN` existem no `.env` RAIZ e em `moddle/.env`; a raiz vence
   (os.environ carregado no import por `helpers._load_project_env_file`), mas a GUI

@@ -339,6 +339,12 @@ Read this file before starting any task.
   Review final whole-branch (fable): READY TO MERGE YES — fix-wave fechou C1 (leitor
   resolve_temporal_block resolve uuid->display; producer intocado), I1 (TIER 0 nao atravessa
   fronteira de escopo) e I2 (voter com precedencia real config > GEMINI_API_KEY do ambiente).
+  Mergeado em new-features (fast-forward 933485d->ad58da6; main so no fim da refatoracao —
+  decisao user 2026-07-22). PILOTO flag-ON MF em memoria (2026-07-22): 67 entries = 51 motor
+  (15 alta/36 media; voter all-cache 0 chamadas; fila 0) + 11 pino manual (respeitados) + 5
+  TIER-2 fora-de-escopo; 9 divergencias vs funil (3 correcoes confirmadas por gold, 2 erros
+  residuais conhecidos band media). Pre-requisito do flip real: seed do cache F3 como
+  material_curation.json na raiz do repo-tutor. Detalhe completo: pendencias.md.
   Divida nomeada: TIER-2 no gold MF (trabalhos/provas/TDE, 8 rows) fica no funil por design, medicao
   propria no rollout FASE 5 (janela-de-prazo real ainda nao entra no motor). Proximo: reprocess REAL
   nos repos-tutor + ligar as flags por-curso = acao do user na GUI (FASE 5).
