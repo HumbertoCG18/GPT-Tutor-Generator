@@ -85,6 +85,69 @@ def test_pino_manual_invalido_nao_pula_motor_prossegue(tmp_path):
     assert e1.get("temporal_block_id") in {"u-1", "u-2"}                  # motor resolveu, não pulou
 
 
+def _repo_due(tmp_path, blocks, card_map):
+    """Repo tmp mínimo p/ testes do provider due-window (TIER 2, Task 4).
+
+    `_repo()` acima é fixo (blocos u-1/u-2 + card map manual); este helper
+    parametriza blocks/card_map pros cenários de janela-de-prazo."""
+    repo = tmp_path / "repo_due"
+    (repo / "course").mkdir(parents=True)
+    (repo / "course" / ".timeline_index.json").write_text(
+        json.dumps({"blocks": blocks}), encoding="utf-8")
+    (repo / "course" / ".card_block_map.json").write_text(
+        json.dumps(card_map), encoding="utf-8")
+    (repo / "course" / ".lessons_index.json").write_text(
+        json.dumps({"by_date": {}}), encoding="utf-8")
+    return repo
+
+
+def test_tier2_due_window_escreve_temporal(tmp_path):
+    """Entry trabalhos com due casado ganha temporal_* do provider due-window."""
+    repo = _repo_due(
+        tmp_path,
+        blocks=[{"id": "bloco-15", "block_uuid": "u15",
+                 "period_start": "2026-06-01", "period_end": "2026-06-10"}],
+        card_map={"TDE Trabalho Discente Efetivo": {"assign_dues": [
+            {"name": "Entrega T1", "due": "2026-06-10", "source": "structured"}]}},
+    )
+    entries = [{"id": "t1-2026-1", "title": "t1 2026 1", "category": "trabalhos",
+                "source_section": "TDE Trabalho Discente Efetivo"}]
+    out = apply_anchor_engine(entries, repo, "MF", enabled=True, voter=None)
+    e = out[0]
+    assert e["temporal_block_id"] == "u15"
+    assert e["temporal_block_band"] == "alta"
+    assert e["temporal_block_provider"] == "due-window"
+
+
+def test_tier2_sem_due_limpa_temporal_e_vai_pro_funil(tmp_path):
+    repo = _repo_due(
+        tmp_path,
+        blocks=[{"id": "bloco-15", "block_uuid": "u15",
+                 "period_start": "2026-06-01", "period_end": "2026-06-10"}],
+        card_map={},
+    )
+    entries = [{"id": "revisao-p1-gabarito", "title": "revisao p1 gabarito",
+                "category": "provas", "source_section": "Exercicios de Revisao",
+                "temporal_block_id": "stale"}]
+    out = apply_anchor_engine(entries, repo, "MF", enabled=True, voter=None)
+    assert not out[0].get("temporal_block_id")  # limpo, funil responde
+
+
+def test_pino_manual_vence_due_window(tmp_path):
+    repo = _repo_due(
+        tmp_path,
+        blocks=[{"id": "bloco-15", "block_uuid": "u15",
+                 "period_start": "2026-06-01", "period_end": "2026-06-10"}],
+        card_map={"TDE Trabalho Discente Efetivo": {"assign_dues": [
+            {"name": "Entrega T1", "due": "2026-06-10", "source": "structured"}]}},
+    )
+    entries = [{"id": "t1-2026-1", "title": "t1 2026 1", "category": "trabalhos",
+                "source_section": "TDE Trabalho Discente Efetivo",
+                "manual_timeline_block_id": "u15"}]
+    out = apply_anchor_engine(entries, repo, "MF", enabled=True, voter=None)
+    assert not out[0].get("temporal_block_id")  # pino: motor respeita e limpa temporal
+
+
 def test_tier0_gemeos_decisao_none_propaga_para_ambos(tmp_path):
     """review F4 T6: quando o motor não acha janela pro 1º gêmeo (funil, decision
     None), o cache por content_key propaga None -> 2º gêmeo também fica sem

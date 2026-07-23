@@ -6,7 +6,12 @@ Substitui apply_anchor_placement no call-site quando use_anchor_engine=ON
 - Pino manual válido = verdade humana: motor NÃO escreve e REMOVE temporal
   stale (leitor resolve_temporal_block cai no fallback manual>computed).
 - TIER 0: grupo md5 (content_key) recebe UMA decisão (dup-divergence = 0).
+- TIER 2 janela-de-prazo (FASE 5): due-window plugado ANTES do fora-de-escopo,
+  decisão por-entry SEM dup-cache (escopo é atributo da ENTRY, review F4 I1).
 - Sem âncora (None) = funil-piso: temporal_* removido se existia.
+
+Cascata: pino > tier2_due_scope(provider due-window) > is_out_of_disamb_scope
+> dup-cache (TIER 0) > engine (janela+disambig+voto).
 """
 from __future__ import annotations
 
@@ -16,6 +21,7 @@ from typing import Callable, Optional
 from src.builder.routing.motor.anchor_engine import AnchorEngine, is_out_of_disamb_scope
 from src.builder.routing.motor.context import build_motor_context
 from src.builder.routing.motor.contracts import AnchorDecision, MotorContext
+from src.builder.routing.motor.due_window import resolve_due_window, tier2_due_scope
 from src.builder.routing.motor.llm_vote import content_key, detect_same_theme_series
 
 TEMPORAL_KEYS = (
@@ -66,6 +72,15 @@ def apply_anchor_engine(
     for entry in entries:
         if _valid_manual_pin(entry, ctx):
             _clear_temporal(entry)
+            continue
+        if tier2_due_scope(entry):
+            # TIER 2 janela-de-prazo (spec 2026-07-22): decisão por-entry, sem
+            # dup-cache — escopo é atributo da ENTRY (lição review F4 I1).
+            decision = resolve_due_window(entry, ctx)
+            if decision is None:
+                _clear_temporal(entry)
+                continue
+            _write_temporal(entry, decision, ctx)
             continue
         if is_out_of_disamb_scope(entry):
             # review F4 I1: escopo é atributo da ENTRY, não do conteúdo. Sem este
