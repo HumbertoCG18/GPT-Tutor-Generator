@@ -229,6 +229,47 @@ def extract_assign_deadlines(contents, year: int = 0) -> dict:
     return out
 
 
+def extract_assign_deadlines_detailed(contents, year: int = 0) -> dict:
+    """{secao_sanitizada: [{name, due, source}]} — UM item por módulo, sem colapsar.
+
+    Mesma cascata POR MÓDULO da versão colapsada: (1) assign com
+    dates[dataid=duedate] -> source="structured"; (2) assign/forum com "entrega"
+    no nome e data `(DD/MM[/AAAA])` -> source="named". Módulo sem fonte fica
+    fora; seção sem itens fica fora (nunca inventa). Consumidor: motor/due_window.
+    """
+    from datetime import datetime
+    out: dict = {}
+    for sec in contents or []:
+        name = sanitize_folder_name(str(sec.get("name") or ""))
+        if not name:
+            continue
+        items: list = []
+        for mod in sec.get("modules", []) or []:
+            modname = str(mod.get("modname") or "")
+            mod_name = str(mod.get("name") or "")
+            due = source = ""
+            if modname == "assign":
+                for d in mod.get("dates") or []:
+                    if str(d.get("dataid") or "") == "duedate" and d.get("timestamp"):
+                        try:
+                            due = datetime.fromtimestamp(int(d["timestamp"])).date().isoformat()
+                            source = "structured"
+                        except (ValueError, OSError, OverflowError):
+                            due = ""
+                        break
+            if (not due and modname in ("assign", "forum")
+                    and "entrega" in mod_name.lower()):
+                m = _DEADLINE_NAME.search(mod_name)
+                if m:
+                    due = _iso(m.group(1), year)
+                    source = "named"
+            if due:
+                items.append({"name": mod_name, "due": due, "source": source})
+        if items:
+            out[name] = items
+    return out
+
+
 def parse_card_dates(contents, year: int, week_anchor: str = "") -> dict:
     """{secao_sanitizada: {format, dates[iso], weeks[(ini,fim)], lessons}}.
 
