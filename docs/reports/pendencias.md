@@ -591,6 +591,22 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   (engine, dialogs) importam helpers antes, mas um script standalone futuro que o use direto
   não veria as chaves. Fix barato quando tocar o arquivo: import de helpers (ou chamada explícita
   ao loader) no topo do datalab_client.
+- [DERIVADO] **Provider janela-de-prazo (TIER 2) ENTREGUE (2026-07-22, commits `b64d983..6d1418a`,
+  7 commits; spec `2026-07-22-janela-de-prazo-tier2-design.md`, plano em plans/).** Probe-first:
+  `fase5_prova_tier2.py` cravou baseline **1/8** ANTES de código (universo 8 rows out-of-scope,
+  guard n==8). Produtor: `extract_assign_deadlines_detailed` (um due por módulo, sem colapso) +
+  `assign_dues` aditivo no card map. Motor: `due_window.py` (tier2_due_scope, matching stem com
+  guard de conflito, containment/straddle D-A/D-B, band D-D, nunca chuta) + wiring na cascata
+  `pino > tier2 > out-of-scope` (sem dup-cache no TIER-2, lição F4 I1). Review final whole-branch
+  (fable) + fix wave + re-review: **READY TO MERGE YES**. Régua: 6 probes byte-idênticos + fase5
+  baseline-only PASS; suite ~1806/4/0. **Invariante testado**: true-set do tier2_due_scope ⊂
+  is_out_of_disamb_scope (flag-ON fora do TIER-2 idêntico ao pré-branch por construção).
+  **[USER] Pré-requisitos da medição target (piso 4/8, cw 0)**: (a) sync Moodle do MF na GUI
+  (popula assign_dues real); (b) **card `source=="manual"` NUNCA ganha assign_dues**
+  (merge_card_block_map) — se o piloto pinar o card TDE manualmente, o 4/8 fica inalcançável POR
+  DESIGN; interpretar FAIL com isso em mente antes de culpar o provider. FAIL = resultado honesto.
+  **[CODE] residual cosmético**: `mine = _stems(...)` computado 2× em `_match_due` (hoist de 1
+  linha, minors-batch futuro).
 - [USER/DECISION] **Bibliografia = caso à parte (decisão user 2026-07-22, brainstorm F5):** tutor
   deve passar a CONSUMIR bibliografias (hoje só resumo leve + mapa 📖 Apoio) sem estourar o limite
   de projeto Claude/GPT — brainstorm/spec próprios, fora do provider janela-de-prazo. Até lá,
