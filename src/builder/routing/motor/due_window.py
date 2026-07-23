@@ -54,6 +54,10 @@ def _match_due(entry: dict, ctx: MotorContext) -> Optional[dict]:
     if not dues:
         return None
     if len(dues) == 1:
+        mine = _stems(f"{entry.get('title') or ''} {entry.get('id') or ''}")
+        theirs = _stems(str(dues[0].get("name") or ""))
+        if mine and theirs and not (mine & theirs):
+            return None  # stem-conflito: extracao parcial nao pode virar chute
         return dues[0]
     mine = _stems(f"{entry.get('title') or ''} {entry.get('id') or ''}")
     if not mine:

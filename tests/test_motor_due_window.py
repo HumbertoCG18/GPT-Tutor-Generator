@@ -91,3 +91,35 @@ def test_lookup_de_card_fold_caso_acento():
         {"name": "Entrega T1", "due": "2026-06-10", "source": "structured"}]}}
     d = resolve_due_window(_t("t1-x", sec="exercicios de revisao"), _ctx(cm))
     assert d is not None and d.block_ref == "bloco-15"
+
+
+def test_due_unico_com_stem_conflitante_nao_casa():
+    """Guard do review final F5: 1 due na secao mas stems disjuntos (t1 x Entrega T2)
+    -> None. Extracao parcial nao pode virar chute com band alta."""
+    cm = {"TDE Trabalho Discente Efetivo": {"assign_dues": [
+        {"name": "Entrega T2", "due": "2026-06-29", "source": "structured"}]}}
+    assert resolve_due_window(_t("t1-2026-1"), _ctx(cm)) is None
+
+
+def test_empate_de_stem_retorna_none():
+    """hits >= 2 -> None (nunca chuta)."""
+    cm = {"TDE Trabalho Discente Efetivo": {"assign_dues": [
+        {"name": "Entrega T1 parte A", "due": "2026-06-10", "source": "structured"},
+        {"name": "Entrega T1 parte B", "due": "2026-06-29", "source": "structured"}]}}
+    assert resolve_due_window(_t("t1-2026-1"), _ctx(cm)) is None
+
+
+def test_tier2_scope_e_subconjunto_do_out_of_scope():
+    """Invariante estrutural da cascata (review final F5): toda entry tier2-true
+    e out-of-scope-true — flag-ON fora do TIER-2 fica identico ao pre-branch.
+    Se este teste quebrar, a ordem pino > tier2 > out-of-scope precisa ser repensada."""
+    from src.builder.routing.motor.anchor_engine import is_out_of_disamb_scope
+    cases = [
+        {"category": "trabalhos", "source_section": ""},
+        {"category": "provas", "source_section": "Revisao"},
+        {"category": "codigo-professor", "source_section": "TDE Trabalho Discente Efetivo"},
+        {"category": "codigo-aluno", "source_section": "TDE X"},
+    ]
+    for e in cases:
+        assert tier2_due_scope(e), e
+        assert is_out_of_disamb_scope(e), e
