@@ -133,6 +133,24 @@ def test_tier2_sem_due_limpa_temporal_e_vai_pro_funil(tmp_path):
     assert not out[0].get("temporal_block_id")  # limpo, funil responde
 
 
+def test_tier2_codigo_tde_sem_due_funil_discrimina_branch(tmp_path):
+    """codigo-* + secao TDE e a UNICA categoria TIER-2 fora de _OUT_CATEGORIES:
+    sem o branch tier2_due_scope na cascata, esta entry chegaria ao ENGINE
+    (podendo ganhar temporal); com o branch, sem due casado -> temporal limpo.
+    Discrimina o wiring de verdade (review F5 Task 4, Important plan-mandated)."""
+    repo = _repo_due(
+        tmp_path,
+        blocks=[{"id": "bloco-15", "block_uuid": "u15",
+                 "period_start": "2026-06-01", "period_end": "2026-06-10"}],
+        card_map={},
+    )
+    entries = [{"id": "t9-materia-thy", "title": "T9 materia",
+                "category": "codigo-professor", "source_section": "TDE Trabalho Discente Efetivo",
+                "temporal_block_id": "stale"}]
+    out = apply_anchor_engine(entries, repo, "MF", enabled=True, voter=None)
+    assert not out[0].get("temporal_block_id")  # limpo, funil responde
+
+
 def test_pino_manual_vence_due_window(tmp_path):
     repo = _repo_due(
         tmp_path,
