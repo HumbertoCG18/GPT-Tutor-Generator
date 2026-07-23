@@ -133,11 +133,11 @@ def test_tier2_sem_due_limpa_temporal_e_vai_pro_funil(tmp_path):
     assert not out[0].get("temporal_block_id")  # limpo, funil responde
 
 
-def test_tier2_codigo_tde_sem_due_funil_discrimina_branch(tmp_path):
-    """codigo-* + secao TDE e a UNICA categoria TIER-2 fora de _OUT_CATEGORIES:
-    sem o branch tier2_due_scope na cascata, esta entry chegaria ao ENGINE
-    (podendo ganhar temporal); com o branch, sem due casado -> temporal limpo.
-    Discrimina o wiring de verdade (review F5 Task 4, Important plan-mandated)."""
+def test_tier2_codigo_tde_sem_due_funil(tmp_path):
+    """codigo-* + secao TDE sem due casado -> temporal limpo (funil). NAO discrimina
+    o wiring: sec.startswith("TDE") ja torna a entry out-of-scope no caminho legado
+    (true-set do tier2_due_scope e subconjunto estrito do is_out_of_disamb_scope —
+    re-review F5 T4); o discriminador real da cascata e test_tier2_due_window_escreve_temporal."""
     repo = _repo_due(
         tmp_path,
         blocks=[{"id": "bloco-15", "block_uuid": "u15",
