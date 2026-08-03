@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-07-22
+last_updated: 2026-08-03
 > Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
 > mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
@@ -607,6 +607,23 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   DESIGN; interpretar FAIL com isso em mente antes de culpar o provider. FAIL = resultado honesto.
   **[CODE] residual cosmético**: `mine = _stems(...)` computado 2× em `_match_due` (hoist de 1
   linha, minors-batch futuro).
+- [DERIVADO/DECISION] **Medição TARGET da janela-de-prazo EXECUTADA (2026-08-03): FAIL honesto
+  1/8 (piso 4/8) · cw=0.** Sync do MF rodou HEADLESS (token `moddle/.env` + `MoodleClient` +
+  `backfill_repo_signals_consumed`, mesmo caminho da GUI; MF ainda visível na matrícula,
+  id=92717) — `assign_dues` real populado, card TDE `source=labels` (caveat do pino manual NÃO
+  se aplicou). Causa do FAIL: **os dados reais do Moodle falsificam a inferência do design**
+  (spec §6 já hedgeava: "dues dos exemplos são INFERÊNCIA do gold"). Três quebras verificadas
+  na API: (1) os 2 assigns do card TDE chamam-se ambos "Sala de entrega" — SEM stem t1/t2 →
+  matching D-C nunca casa → funil (por isso 1/8, não cw). (2) Mesmo casando por posição: due
+  estruturado do T1 = 2026-05-06 (stale — professor moveu a entrega; a sala real do T1 é o
+  FORUM "Sala de Entrega (10/06)" na seção Verificação de Programas, outro card) → containment
+  daria bloco-11 ≠ gold bloco-15 = confident-wrong band alta. (3) Due do T2 = 2026-07-06 cai
+  DENTRO de bloco-18 [06/07..06/07] (dia-único de devolução) → containment daria bloco-18 ≠
+  gold bloco-16 = segundo confident-wrong. **D-E (nunca chuta) foi o que segurou cw=0** — a
+  recusa por falta de stem evitou 2 erros confiantes. Spec §12 regra 4: FAIL registrado, ZERO
+  re-tuning. Redesign (dues cross-card/forum, ordinal por label, due→bloco-de-conteúdo-anterior)
+  = decisão de design NOVA do user, não patch. Semestre 2026/2 já visível na matrícula — cursos
+  novos são o teste out-of-sample natural do provider como está.
 - [USER/DECISION] **Bibliografia = caso à parte (decisão user 2026-07-22, brainstorm F5):** tutor
   deve passar a CONSUMIR bibliografias (hoje só resumo leve + mapa 📖 Apoio) sem estourar o limite
   de projeto Claude/GPT — brainstorm/spec próprios, fora do provider janela-de-prazo. Até lá,
