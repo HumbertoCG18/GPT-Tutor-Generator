@@ -624,6 +624,21 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   re-tuning. Redesign (dues cross-card/forum, ordinal por label, due→bloco-de-conteúdo-anterior)
   = decisão de design NOVA do user, não patch. Semestre 2026/2 já visível na matrícula — cursos
   novos são o teste out-of-sample natural do provider como está.
+- [DERIVADO] **GOLD t1/t1-thy CORRIGIDO bloco-15 → bloco-11 (2026-08-03, autorizado user).**
+  Investigação pós-FAIL derrubou a inferência da spec F5: probe one-off do LlmVoter (0/3, cache
+  isolado em scratchpad, 3 calls) expôs que conteúdo do T1 = Isabelle/indução, não Dafny →
+  auditoria via API Moodle com evidência DEFINITIVA: submissão real do T1 = **2026-05-05 15:56**
+  (assign 212883, `mod_assign_get_submission_status`) → due 06/05 do Moodle era CORRETO, não
+  stale; fórum "Sala de Entrega (10/06)" ≠ T1 (são exercícios Dafny — disc. "Humberto - Fila
+  Ilimitada" 10/06). T2 submetido 2026-06-27 (assign 215115) → gold bloco-16 confirmado.
+  **Decisões user**: semântica do trabalho = ÉPOCA DE ENTREGA; fonte de verdade = Moodle
+  ("geralmente a mais correta"). Auditor de frescor MF: hard=0 (ZERO_OVERLAP em t1/t2 = suspeita
+  soft esperada de PDF de trabalho, 47 rows na mesma condição). Probe fase5 pós-correção:
+  FAIL 1/8 esperado (provider ainda decide por stem/containment — F5b pendente). **[DECISION]
+  F5b proposto (aguarda autorização)**: (1) matching posicional `label → resources → assign` na
+  ordem da seção (mata dependência de stem); (2) D-A revisada: "último bloco DE CONTEÚDO com
+  `period_end <= due`" no lugar de containment puro (t1: 06/05→bloco-11 ✓; t2: 06/07→pula
+  17/18 sem tópicos→bloco-16 ✓). Piso 4/8 mantido, cw=0 mantido.
 - [USER/DECISION] **Bibliografia = caso à parte (decisão user 2026-07-22, brainstorm F5):** tutor
   deve passar a CONSUMIR bibliografias (hoje só resumo leve + mapa 📖 Apoio) sem estourar o limite
   de projeto Claude/GPT — brainstorm/spec próprios, fora do provider janela-de-prazo. Até lá,

@@ -41,7 +41,7 @@ provasindutivas-especificacoesrecursivas-listas,ProvasIndutivas_Especificações
 revisao,revisao.pdf,bloco-03,bloco-02,bloco-02,,block-direct,clean,,yes,yes,2edd762f-2dc8-4437-90c7-c207b796434a
 revisao-p1,revisao_p1.pdf,bloco-07,bloco-06,bloco-06,,block-direct,clean,,yes,yes,1dd6f143-d239-45bb-8a05-391ef8acbba1
 revisao-p1-gabarito,revisao_p1_gabarito.pdf,bloco-07,bloco-07,bloco-07,,block-direct,clean,,yes,no,1dd6f143-d239-45bb-8a05-391ef8acbba1
-t1-2026-1,t1_2026_1.pdf,bloco-15,bloco-05,bloco-05,,block-direct,clean,,yes,yes,95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0
+t1-2026-1,t1_2026_1.pdf,bloco-11,bloco-05,bloco-05,,block-direct,clean,,yes,yes,c9f5f7cf-3477-4531-be7a-f7b68727009c
 t2-2026-1,t2_2026_1.pdf,bloco-16,bloco-02,bloco-02,,block-direct,clean,,yes,yes,a6ac04f2-7611-4bef-b74a-54390cef4084
 verificacaomodelos,verificacaomodelos.pdf,bloco-16,bloco-16,bloco-16,,block-direct,clean,,yes,no,a6ac04f2-7611-4bef-b74a-54390cef4084
 arvores,arvores.thy,bloco-06,bloco-06,bloco-06,,block-direct,clean,,yes,no,5599d015-10e0-4f6e-ad17-c526b903dc09
@@ -60,7 +60,7 @@ introducao-zip,introducao.zip,bloco-12,bloco-12,bloco-12,,block-direct,clean,,ye
 invariantes,invariantes.zip,bloco-11,bloco-11,bloco-11,,block-direct,clean,,yes,yes,c9f5f7cf-3477-4531-be7a-f7b68727009c
 listas,listas.thy,bloco-06,bloco-06,bloco-06,,block-direct,clean,,yes,no,5599d015-10e0-4f6e-ad17-c526b903dc09
 provas,provas.thy,bloco-06,bloco-05,bloco-05,,block-direct,clean,,yes,yes,5599d015-10e0-4f6e-ad17-c526b903dc09
-t1-2026-1-thy,T1_2026_1.thy,bloco-15,bloco-05,bloco-05,,block-direct,clean,,yes,yes,95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0
+t1-2026-1-thy,T1_2026_1.thy,bloco-11,bloco-05,bloco-05,,block-direct,clean,,yes,yes,c9f5f7cf-3477-4531-be7a-f7b68727009c
 terminacao,terminacao.zip,bloco-12,bloco-11,bloco-11,,block-direct,clean,,yes,yes,e3bc8a61-e729-4f25-9bc5-12b8a47151e3
 tiposindutivos,tiposindutivos.zip,bloco-15,bloco-15,bloco-15,,block-direct,clean,,yes,no,95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0
 archive-of-formal-proofs-355fb8,Archive of Formal Proofs,bloco-01,,bloco-01,,block-direct,clean,,yes,no,c4bf9e4c-80f8-4e57-b2b1-a943c6656e52
