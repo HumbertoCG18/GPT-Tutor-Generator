@@ -643,12 +643,17 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   cw=0.** Re-sync HEADLESS do MF (mesmo caminho `MoodleClient` + `backfill_repo_signals_consumed`
   usado no FAIL 1/8 anterior) gravou `file_dues` real no card TDE: `t1_2026_1.pdf`/
   `t1_2026_1.thy` due `2026-05-06`, `t2_2026_1.pdf` due `2026-07-06` (posicional, `source=
-  structured`). Probe `fase5_prova_tier2.py`: `t1→bloco-11 OK, t1-thy→bloco-11 OK, t2→bloco-16
-  OK, revisao-p1-gabarito→bloco-07 OK` — as 4 previsões exigidas pela spec F5b bateram
-  exatamente; `plano`/`archive-of-formal-proofs`/`aws-encryption-sdk`/`eth2` seguem sem match
-  (fora de escopo por design, D-E). Confirma a virada de causa registrada no FAIL: o problema
-  não era o design da janela-de-prazo, era o matching por stem (Task 1 produtor + Task 2 motor
-  do F5b resolveram). Régua flag-OFF (6 probes) byte-idêntica: fase0 82.8%/conten 0/cw 1 · fase1
+  structured`); re-sync também gravou uma key extra `"arquivo .thy.thy"` (due `2026-05-06`),
+  vinda de um resource `.thy` com nome genérico na mesma seção — observado, não-bloqueante,
+  nenhuma assertiva afetada. Probe `fase5_prova_tier2.py`: `t1→bloco-11 OK, t1-thy→bloco-11 OK,
+  t2→bloco-16 OK, revisao-p1-gabarito→bloco-07 OK` — as 4 previsões exigidas pela spec F5b
+  bateram exatamente; `plano`/`archive-of-formal-proofs`/`aws-encryption-sdk`/`eth2` seguem sem
+  match (fora de escopo por design, D-E). Confirma a virada de causa registrada no FAIL: a
+  correção veio de DOIS ajustes do F5b, não um só — (1) matching posicional `file_dues` (stem
+  nunca casaria "Sala de entrega") e (2) revisão da semântica de janela D-A→D-H/D-I ("último
+  bloco DE CONTEÚDO com period_end <= due"; blocos administrativos como bloco-17/18 nunca
+  ancoram) — por isso t2 cai em bloco-16, não no confident-wrong bloco-18 que containment puro
+  daria. Régua flag-OFF (6 probes) byte-idêntica: fase0 82.8%/conten 0/cw 1 · fase1
   9/10 · fase2-SO 45.2%/0/0 · fase2-TCC 5/5 pinos+83.3%/0 · fase3 lift +3 sem API nova · fase4 det
   48/58 cw1, voter 87.9%/cw0. Suite: 1816 passed, 4 skipped. Head dos commits F5b: `843475f`
   (produtor `extract_file_dues` posicional), `1d39cb4` (motor `_match_due` posicional +
