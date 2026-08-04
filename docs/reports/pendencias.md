@@ -665,7 +665,12 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   required, enum tipado; candidato a F6/minors-batch com re-medição). (b) Limite conhecido da
   herança posicional: arquivo postado ENTRE o assign do grupo N e o label do grupo N+1
   herdaria o due do grupo N+1 (inexistente no MF atual; fix de 1 linha + teste + re-medição
-  quando o produtor for tocado de novo).
+  quando o produtor for tocado de novo). **[CODE] minors-batch F5b (review final, deferred
+  com ruling)**: filtro de `extract_file_dues` não exige `fileurl` (diverge de
+  `iter_section_files` → savename key pode divergir; chave por filename original cobre);
+  `file_dues` com due vazio cai no fallback stem (produtor nunca emite — gate `if due:`);
+  imports function-local em `_module_due`/`extract_file_dues` (estilo da casa); hoist
+  `mine=_stems()` 2× herdado de F5.
 - [USER/DECISION] **Bibliografia = caso à parte (decisão user 2026-07-22, brainstorm F5):** tutor
   deve passar a CONSUMIR bibliografias (hoje só resumo leve + mapa 📖 Apoio) sem estourar o limite
   de projeto Claude/GPT — brainstorm/spec próprios, fora do provider janela-de-prazo. Até lá,
