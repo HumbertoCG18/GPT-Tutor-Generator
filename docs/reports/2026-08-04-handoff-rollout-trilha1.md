@@ -11,7 +11,7 @@ plano pós-F5b (`docs/superpowers/plans/2026-08-03-rollout-flagon-trilha1.md`), 
   intactos. Distribuição de providers nos 51 não-tier2: **9 manual/5 labels/37 llm** (nova
   referência do rollout, substitui piloto 9/6/36 — migração labels→llm é a mesma
   `verificacaomodelos`, contenção gold bloco-16, correção da era-labels, não regressão). Voter
-  retry: **0 chamadas API novas** (cache 45→45 cobriu 100%). Régua completa pós-flip: **7 probes
+  retry: **0 chamadas API novas** (cache 45→45 cobriu 100%; 1 voto Gemini pago na rodada 1 — 44→45, adjudicado CASE B: conteúdo verificacaomodelos nunca votado em produção). Régua completa pós-flip: **7 probes
   + pytest 100%**, fase5 target PASS 4/8 cw=0, **pytest 1820 passed / 4 skipped / 0 failed**.
   Gold MF: 67/67 `auto_tags bloco:` zero-diff.
 - **SO — flip ADIADO.** Pré-flight `audit_gold_freshness.py --course SO`: hard=1, única row
@@ -78,6 +78,11 @@ plano pós-F5b (`docs/superpowers/plans/2026-08-03-rollout-flagon-trilha1.md`), 
 - TDD por task; fixture ajustável (timezone), implementação nunca.
 
 **Infra (estado 2026-08-04):**
+
+**AVISO — Importantes para operação headless futura:**
+- **ARMADILHA (review final):** reprocess headless futuro do MF SEMPRE com `--flags use_anchor_engine,use_llm_voter`. As flags NÃO persistem nas options do manifest e `reprocess_assignments.py` NÃO lê subjects.json — rodada sem --flags pula a camada temporal inteira e o efeito sobre os 54 temporal_* existentes (strip vs stale) nunca foi medido. Durabilidade das flags vale só pro caminho GUI. Fix estrutural (script ler subjects.json) = Plano B.
+- **SO-Tutor** está com ~21 arquivos modificados UNCOMMITTED desde 28/jun (pré-campanha). NÃO rodar git checkout/clean nele sem snapshot antes — o fluxo de flip (Task 6 do plano) já prevê snapshot; fora dele, não tocar.
+
 - Flags atuais persistidas em `subjects.json`: **só MF ON** (`use_anchor_engine`+
   `use_llm_voter`). SO/TCC/ES2 = `{}`. IA = `{"use_anchor_placement": true}` (legado).
 - Token Moodle vivo em `moddle/.env`; Gemini em `.env` raiz (`GEMINI_API_KEY`).
