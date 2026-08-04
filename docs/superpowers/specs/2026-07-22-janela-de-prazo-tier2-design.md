@@ -1,5 +1,9 @@
 # Janela-de-prazo (TIER 2) — provider due-window do motor de atribuição
 
+> **2026-08-03:** gold t1/t1-thy CORRIGIDO bloco-15 → bloco-11 com evidência de submissão
+> (API Moodle); matching e semântica de janela revisados — ver adendo
+> `2026-08-03-janela-de-prazo-f5b-adendo.md` (governa onde contradiz esta spec).
+
 Data: 2026-07-22 · Status: DESIGN aprovado em brainstorm (decisões do user registradas) ·
 Spec-mãe: `2026-07-01-motor-atribuicao-spec.md` (§3 TIER 2, §4.9) · Fase: F5 (rollout)
 

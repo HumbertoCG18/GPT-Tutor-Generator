@@ -658,6 +658,14 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   48/58 cw1, voter 87.9%/cw0. Suite: 1816 passed, 4 skipped. Head dos commits F5b: `843475f`
   (produtor `extract_file_dues` posicional), `1d39cb4` (motor `_match_due` posicional +
   âncora bloco-de-conteúdo).
+  **[USER] Pré-requisitos de rollout flag-ON em curso NOVO (review final F5b)**: (a) o filtro
+  de bloco-de-conteúdo (D-H) usa `topics` — campo OPCIONAL no schema v4; curso com timeline
+  sem topics populado deixa o provider silenciosamente morto (funil total, honesto mas
+  invisível) — antes do flag-ON, garantir topics OU migrar o filtro para `kind` (campo
+  required, enum tipado; candidato a F6/minors-batch com re-medição). (b) Limite conhecido da
+  herança posicional: arquivo postado ENTRE o assign do grupo N e o label do grupo N+1
+  herdaria o due do grupo N+1 (inexistente no MF atual; fix de 1 linha + teste + re-medição
+  quando o produtor for tocado de novo).
 - [USER/DECISION] **Bibliografia = caso à parte (decisão user 2026-07-22, brainstorm F5):** tutor
   deve passar a CONSUMIR bibliografias (hoje só resumo leve + mapa 📖 Apoio) sem estourar o limite
   de projeto Claude/GPT — brainstorm/spec próprios, fora do provider janela-de-prazo. Até lá,

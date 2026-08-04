@@ -28,7 +28,7 @@ one-off (0/3) e DESCARTADO — voter decide por conteúdo, semântica escolhida 
 |---|---------|---------|
 | D-F | Semântica | Trabalho ancora no bloco da ÉPOCA DE ENTREGA (não do conteúdo que exercita). Fonte = due do Moodle. |
 | D-G | Matching posicional | Produtor associa cada resource ao assign SEGUINTE na ordem da seção (grupo `label → resources → assign`) e emite `file_dues: {casefold(filename): {due, source}}` por seção. Motor casa entry→due por FILENAME (mesma chave do backfill de seções). Stem matching (D-C) vira FALLBACK — segue válido p/ cursos que nomeiam "Entrega T1". |
-| D-H | Janela (substitui D-A/D-B) | Bloco escolhido = **último bloco DE CONTEÚDO com `period_end <= due`**. Bloco de conteúdo = `topics` não-vazio no timeline index. Nenhum candidato → `None` → funil (D-E intacto). |
+| D-H | Janela (substitui D-A/D-B) | Bloco escolhido = **bloco DE CONTEÚDO que CONTÉM o due; senão o último bloco de conteúdo com `period_end <= due`**. Bloco de conteúdo = `topics` não-vazio no timeline index. Nenhum candidato → `None` → funil (D-E intacto). |
 | D-I | Band/flag (revisa D-D) | Bloco escolhido CONTÉM o due → band pela fonte (estruturado=alta, named=media), sem flag. Bloco NÃO contém o due (caiu depois do `period_end`, pulou admin/gap) → **media + FLAG** sempre. Preserva cw=0 por construção honesta. |
 
 ## §3 Verificação contra o gold corrigido (dados reais já sincados)
