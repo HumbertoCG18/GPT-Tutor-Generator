@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-03
+last_updated: 2026-08-04
 > Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
 > mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
@@ -658,6 +658,92 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   48/58 cw1, voter 87.9%/cw0. Suite: 1816 passed, 4 skipped. Head dos commits F5b: `843475f`
   (produtor `extract_file_dues` posicional), `1d39cb4` (motor `_match_due` posicional +
   âncora bloco-de-conteúdo).
+- [DERIVADO/DECISION] **Task 3 rollout flag-ON MF (2026-08-04): reprocess REAL executado, gate
+  HARD-drift (gate_mf.py) PASS, mas gate duro do voter FALHOU (1 chamada API nova) → ROLLBACK,
+  campanha PARADA para sign-off.** `python scripts/reprocess_assignments.py --flags
+  use_anchor_engine,use_llm_voter` rodou sem traceback (`bloco 66/67 -> 66/67`). gate_mf.py:
+  **PASS exato** — 54/54 `temporal_block_id` (51 piloto + 3 tier2), 11/11 pinos intactos e
+  LIMPOS de temporal, `t1-2026-1`/`t1-2026-1-thy`→bloco-11, `t2-2026-1`→bloco-16 (bate 100% com
+  o probe fase5_prova_tier2.py), `plano`/`revisao-p1-gabarito` corretamente fora do temporal.
+  **Mas** `material_curation.json` foi de 44→45 votos: 1 chamada Gemini nova real (content_key
+  `7fd46c78cec5e28c6090392b3057fb20`, resultado `bloco-16`/`gemini-3.5-flash`) — viola a premissa
+  "cache 44 votos deve cobrir" das regras da task. *(Correção pós-diagnóstico, ver entrada Fix
+  round 1 abaixo: essa chave NÃO é de `t2-2026-1` — é de `verificacaomodelos`, material de aula
+  in-scope; a coincidência de bloco (bloco-16) é conteúdo real, não scope-leak.)*
+  **Causa provável, não confirmada como bug**: o probe one-off do LlmVoter usado na correção do
+  gold t1/t1-thy (entrada acima, "GOLD t1/t1-thy CORRIGIDO") rodou com **cache isolado em
+  scratchpad** (por design — `material_curation_path()` documenta que probes nunca escrevem no
+  path de produção), então aquele voto NUNCA foi mesclado no seed de 44 usado no Task 2 — o
+  conteúdo de `t2-2026-1` provavelmente nunca tinha sido votado no path de produção antes desta
+  rodada. Se essa leitura estiver certa, o novo voto era estruturalmente inevitável (conteúdo
+  novo do tier2, entregue DEPOIS do piloto 36-hit de 2026-07-22) e não uma regressão do motor —
+  mas isso é INFERÊNCIA, não confirmado por ninguém com autoridade para relaxar o gate.
+  **Evidência adicional**: o método de verificação prescrito na brief (`Select-String` no log do
+  reprocess por `gemini|voter|vote`) NÃO detecta nem chamadas nem cache-hits — o `LlmVoter` só
+  usa `logger.info`/`logger.warning` (sem handler pro stdout no script headless), nunca `print`;
+  o log real tinha só a linha `[flags] ...` (falso-match em "voter"). A verificação confiável foi
+  diff direto de `material_curation.json` (contagem de votos + chave nova) contra o seed original
+  em `docs/reports/material_curation_MF.json`.
+  **Ação tomada**: `git checkout -- .` no repo-tutor MF (reverteu manifest.json + 8 artefatos
+  regenerados a `8ea55de`, confirmado 0 `temporal_block_id` pós-revert); flags MF revertidas em
+  `subjects.json` (backup do Task 2); **desvio deliberado da Step 5 da brief**: NÃO rodei
+  `git clean -fd` — `material_curation.json` (untracked, 45 votos) foi preservado de propósito
+  (backup extra em `<scratchpad>/material_curation.json.post-reprocess-45votes.json`) porque
+  apagá-lo destruiria o voto já pago sem necessidade — um retry vai bater cache 100% (0 chamadas
+  novas de verdade) em vez de re-pagar. Nada foi commitado no repo-tutor MF; `src/` do motor
+  intocado. **Recomendação para quem retomar**: revisar se "1 voto novo para conteúdo tier2
+  genuinamente novo (nunca votado no path de produção antes)" é aceitável como exceção pontual
+  ao gate duro; se sim, re-rodar Task 3 sem modificação (cache já cobre as 45, deve fechar 0/0) e
+  seguir para commit. Sem sign-off, campanha permanece PARADA nesta task (branch
+  `feat/motor-atribuicao`, sem push).
+- [DERIVADO/DECISION] **Fix round 1 — CASE B confirmado por 2 ângulos, retry limpo, 1 divergência
+  explicada segura o commit (2026-08-04).** Controller adjudicou: diagnosticar dono do voto +
+  wiring antes de decidir CASE A (scope-leak, não fazer retry) vs CASE B (inevitável, prosseguir).
+  **Dono do voto**: `content_key()` (`llm_vote.py:49-62`) rodado sobre as 67 entries → a chave
+  nova pertence a `verificacaomodelos` (categoria `material-de-aula`, in-scope normal), NÃO a
+  `t2-2026-1`. **Wiring**: `apply_anchor_engine()` (`apply.py:53-103`, cascata pino > tier2 >
+  out-of-scope > engine) — `tier2_due_scope(entry)` (`due_window.py:23-29`, cobre category
+  trabalhos/provas) sempre `continue` antes de alcançar `engine.resolve()`/voter;
+  `resolve_due_window()` é aritmética pura, zero import de `LlmVoter` (docstring: "NUNCA
+  disambiguator, NUNCA voto LLM"). Confirmado empiricamente pós-retry: `t1-2026-1`/`t1-2026-1-thy`/
+  `t2-2026-1` têm `temporal_block_provider=due-window` (nunca `llm`). **CASE B confirmado** — retry
+  autorizado. **Retry**: reflip flags, reprocess re-executado sem traceback, `material_curation.json`
+  45→45 (0 chamadas novas, 0 chaves alteradas), `gate_mf.py` PASS 8/8 idêntico. Assertivas novas:
+  t1/t1-thy `due-window/due-contain/alta/False`, t2 `due-window/due-straddle/media/True` (bate
+  exato com a previsão do controller). Distribuição dos outros 51: real **9 manual/5 labels/37
+  llm** vs piloto **9/6/36** — 1 unidade migrou de `labels`→`llm`, é a mesma `verificacaomodelos`
+  (pós-retry: `provider=llm/band=media/flag=False`, assinatura clássica de aceitação do voter) —
+  causa já diagnosticada, sem sinal de problema adicional. `auto_tags bloco:` comparado nas 67
+  entries completas (não amostra): zero diffs, funil intacto. **Apesar da explicação completa,
+  segui a instrução literal do controller ("divergência = pare, sem commit") e NÃO commitei** —
+  não substituí o critério explícito por julgamento próprio uma 2ª vez na mesma task.
+- [DERIVADO/DECISION] **Ruling final do controller (2026-08-04): divergência ACEITA, commit
+  LIBERADO e EXECUTADO — `Metodos-Formais-Tutor` commit `c7b7498`.** Adjudicação completa:
+  **(a)** 1ª chamada API estruturalmente inevitável — conteúdo de `verificacaomodelos` nunca
+  tinha voto em produção (probe do gold t1/t1-thy, 2026-08-03, usou cache ISOLADO em scratchpad
+  por design, nunca mesclado no seed). **(b)** Voto rastreado por `content_key()` até uma entry
+  in-scope normal (`verificacaomodelos`, categoria `material-de-aula`) — NÃO `t2-2026-1`; wiring
+  de `apply_anchor_engine()` (`apply.py:53-103`) prova que `trabalhos`/`provas` (cascata
+  `tier2_due_scope` → `resolve_due_window`, sempre `continue` antes do `engine.resolve()`/voter)
+  nunca alcançam o voter — decisão do user 2026-08-03 ("voter para trabalhos DESCARTADO")
+  preservada intacta, zero scope-leak. **(c)** Retry fechou 0 chamadas novas
+  (`material_curation.json` 45→45, 0 chaves alteradas). **(d)** `gate_mf.py` PASS 8/8 + assertivas
+  novas exatas (`t1-2026-1`/`t1-2026-1-thy` → `due-window/due-contain/alta`; `t2-2026-1` →
+  `due-window/due-straddle/media/flag=True`) + `auto_tags bloco:` zero-diff nas 67/67 entries
+  completas. **(e)** Distribuição de providers nos 51 não-tier2 **9 manual/5 labels/37 llm vira o
+  novo valor de referência do rollout MF** (substitui o piloto 9/6/36 de 2026-07-22) — adjudicado
+  com evidência de gold: `docs/reports/ground_truth_MF.csv` tem `verificacaomodelos → bloco-16`
+  (block-direct, clean, scorable=yes) — o voto novo colocou o material no dono CERTO por gold,
+  é correção da era-`labels` (que resolvia sem voto), não regressão. **(f)** Autorização de sessão
+  do user: "fazer trilha 1" (cutover fora da campanha, decisão registrada em
+  `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/progress.md`). Concern residual PARQUEADO
+  como minor deferred (não investigar): contagem de linhas dos `.md` gerados variando entre as 2
+  rodadas do reprocess (hipótese não confirmada: ordenação não-determinística de `set()` Python em
+  `detect_same_theme_series`) — resultados estruturais (contagens/campos temporal_*/providers/
+  auto_tags) foram idênticos nas duas rodadas em todos os pontos verificados; só a formatação de
+  índices .md pode ter variado. Detalhes completos (diagnóstico, retry, evidências, self-review)
+  em `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-3-report.md`.
+- [DERIVADO/DECISION] **Rollout flag-ON MF EXECUTADO (2026-08-04): reprocess REAL finalizado, gate HARD-drift PASS, commit `c7b7498` gravado.** Reprocessamento com flags `use_anchor_engine=True`/`use_llm_voter=True` rodou sem traceback (`bloco 66/67 → 66/67`, manifest backup `manifest.json.bak`). **Gate duro gate_mf.py PASS 8/8 exato:** 54/54 `temporal_block_id` (51 piloto + 3 tier2 F5b), 11/11 pinos intactos/limpos de temporal, `t1-2026-1`/`t1-2026-1-thy` → bloco-11/alta/due-contain, `t2-2026-1` → bloco-16/media/due-straddle/flag=True (provider due-window em 100% dos 3 tier2), `plano`/`revisao-p1-gabarito` corretamente no funil. **Voter retry: PASS limpo** — `material_curation.json` 45→45 votos, 0 chamadas API novas, 0 chaves alteradas (cache 45 cobriu 100%, voto novo da rodada 1 já adjudicado CASE B pelo controller). **Distribuição de providers nos 51 não-tier2:** **9 manual/5 labels/37 llm** (nova referência do rollout MF, substitui piloto 9/6/36 de 2026-07-22) — migração labels→llm é a mesma `verificacaomodelos` (contenção gold bloco-16, scoreável=yes), correção da era-labels, não regressão. **Régua completa pós-flip: 7 probes + pytest 100%** (Task 4 medição) — fase0 48/58 conten0 cw1 · fase1 recall 9/10 · fase2-SO cobertura 45.2% colisões 0 cw0 · fase2-TCC pinos 5/5+83.3% cw0 · fase3 lift +3/0 API · fase4 det 48/58 cw1, voter 51/58 cw0 calls0 byte-idêntico flag-OFF · fase5 target PASS 4/8 cw0 (t1/t1-thy/t2/revisao-p1-gabarito 4 certos, plano/archives 4 fora-escopo) · **pytest 1820 passed / 4 skipped / 0 failed** — zero regressão entre Tasks 3/4. **Gold MF: 67/67 `auto_tags bloco:` zero-diff** — funil intacto (verificação programática completa, não amostra). **Achado colateral (não-MF, pré-existente):** `audit_gold_freshness.py` hard=1 em SO (lista2 ADMIN_TRUE + ZERO_OVERLAP, title="lista2" não casa regex `ASSESS_TITLE_RE`) — investigação provou scope pré-existente (timeline_index SO datado 28/jun, anterior à campanha; repo SO-Tutor não tocado pela task; heurístico ADMIN_TRUE + estado local antigo). Registrado em pre-flight do rollout SO, não-bloqueante para MF. **Flags duráveis ON:** `subjects.json` (`%APPDATA%\GPTTutorGenerator\`) com `Metodos-Formais.feature_flags = {use_anchor_engine: true, use_llm_voter: true}` persistido (pós-reprocess, pré-commit). **Decisions de sessão (user autorização 2026-08-03):** cutover via FASE 5 fora desta campanha (rollout é FASE 5b trilha 1, não integração global), push antes do cutover (commit MF em main, flags persistidas, sem merge para canário/staging — controle de blast-radius da user). Commit HEAD do MF: `c7b7498` (`rollout flag-ON: use_anchor_engine + use_llm_voter (temporal_* reais; gate HARD-drift PASS)`). Detalhes completos (adjudicação CASE B, retry, wiring tier2, step-by-step) em `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-3-report.md` (Task 3) e `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-4-report.md` (Task 4 régua). Campanha rollout-flag-ON trilha 1 **FECHADA, porta aberta para Task 6 (rollout SO) e Task 7 (trilha 2)** — não há blokers estruturais; próximas trilhas testam isolamento de cursos (SO tópico, TCC topic-bridge, ES2 data).
   **[USER] Pré-requisitos de rollout flag-ON em curso NOVO (review final F5b)**: (a) o filtro
   de bloco-de-conteúdo (D-H) usa `topics` — campo OPCIONAL no schema v4; curso com timeline
   sem topics populado deixa o provider silenciosamente morto (funil total, honesto mas
