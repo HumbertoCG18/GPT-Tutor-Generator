@@ -25,6 +25,28 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.builder.engine import RepoBuilder  # noqa: E402
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+
+def _apply_flags(options: dict, flag_names: list) -> None:
+    """Merge {flag: True} nas options (flags ficam FLAT, como _build_options_from_config)."""
+    for name in flag_names:
+        options[str(name)] = True
+
+
+def _parse_argv(argv: list) -> tuple[list, list]:
+    """['--flags', 'a,b', pat...] -> (['a','b'], [pat...]); sem --flags -> ([], argv)."""
+    pats = list(argv)
+    flags: list = []
+    if pats and pats[0] == "--flags":
+        if len(pats) < 2:
+            return [], []
+        flags = [f for f in pats[1].split(",") if f]
+        pats = pats[2:]
+    return flags, pats
+
 
 def _coverage(manifest_path: Path) -> tuple[int, int]:
     """(materiais_com_bloco, total_materiais) lendo auto_tags bloco: do manifest."""
@@ -39,7 +61,7 @@ def _coverage(manifest_path: Path) -> tuple[int, int]:
     return with_block, total
 
 
-def reprocess(repo: Path) -> None:
+def reprocess(repo: Path, flags: list) -> None:
     manifest_path = repo / "manifest.json"
     if not manifest_path.exists():
         print(f"[skip] {repo.name}: sem manifest.json")
@@ -48,6 +70,9 @@ def reprocess(repo: Path) -> None:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     course_meta = manifest.get("course", {}) or {}
     options = manifest.get("options", {}) or {}
+    _apply_flags(options, flags)
+    if flags:
+        print(f"[flags] {repo.name}: {', '.join(flags)}")
 
     before = _coverage(manifest_path)
     backup = manifest_path.with_suffix(".json.bak")
@@ -64,6 +89,7 @@ def reprocess(repo: Path) -> None:
 
 
 def main(argv: list) -> int:
+    flags, argv = _parse_argv(argv)
     if not argv:
         print(__doc__)
         return 2
@@ -75,7 +101,7 @@ def main(argv: list) -> int:
         print("nenhum repo encontrado")
         return 1
     for repo in repos:
-        reprocess(repo)
+        reprocess(repo, flags)
     return 0
 
 
