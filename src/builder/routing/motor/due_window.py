@@ -1,13 +1,15 @@
 """TIER 2 janela-de-prazo: due-date por-assignment -> bloco da entrega.
 
-Spec: docs/superpowers/specs/2026-07-22-janela-de-prazo-tier2-design.md.
-Semântica (D-A/D-B): bloco cujo [period_start, period_end] CONTÉM o due;
-straddle -> bloco anterior mais próximo, band media + FLAG. Nunca chuta:
-sem due casado -> None -> funil. NUNCA disambiguator, NUNCA voto LLM.
+Spec: 2026-07-22-janela-de-prazo-tier2-design.md + adendo F5b 2026-08-03.
+Matching: posicional (file_dues por filename, D-G) com fallback stem (D-C).
+Janela (D-H/D-I): só bloco DE CONTEÚDO (topics não-vazio) ancora — containment
+-> band pela fonte; senão último bloco de conteúdo anterior -> media+FLAG.
+Nunca chuta: sem due casado -> None -> funil. NUNCA disambiguator, NUNCA voto LLM.
 """
 from __future__ import annotations
 
 import re
+from pathlib import Path
 from typing import Optional
 
 from src.builder.routing.motor.contracts import AnchorDecision, MotorContext
@@ -47,9 +49,16 @@ def _stems(text: str) -> set:
 
 
 def _match_due(entry: dict, ctx: MotorContext) -> Optional[dict]:
-    """UM {name, due, source} de assign_dues, ou None (0-match/empate)."""
+    """UM {name, due, source}: posicional (file_dues, D-G) > stem (D-C) > None."""
     card = _card_entry(entry, ctx)
-    dues = [d for d in ((card or {}).get("assign_dues") or [])
+    if card is None:
+        return None
+    base = Path(str(entry.get("source_path") or "")).name.casefold()
+    hit = (card.get("file_dues") or {}).get(base) if base else None
+    if isinstance(hit, dict) and str(hit.get("due") or ""):
+        return {"name": base, "due": str(hit.get("due")),
+                "source": str(hit.get("source") or "")}
+    dues = [d for d in (card.get("assign_dues") or [])
             if isinstance(d, dict) and str(d.get("due") or "")]
     if not dues:
         return None
@@ -73,6 +82,8 @@ def resolve_due_window(entry: dict, ctx: MotorContext) -> Optional[AnchorDecisio
     due = str(m.get("due") or "")
     contain = prev = None
     for b in ctx.blocks:  # ordenados por period_start (contrato do MotorContext)
+        if not (b.get("topics") or []):
+            continue  # D-H: só bloco DE CONTEÚDO ancora entrega (admin/prova fora)
         start = str(b.get("period_start") or "")
         end = str(b.get("period_end") or "") or start
         if not start:

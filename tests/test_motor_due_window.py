@@ -9,10 +9,10 @@ from src.builder.routing.motor.due_window import tier2_due_scope, resolve_due_wi
 
 def _ctx(card_map=None):
     blocks = [
-        {"id": "bloco-07", "block_uuid": "u07", "period_start": "2026-04-15", "period_end": "2026-04-15"},
-        {"id": "bloco-08", "block_uuid": "u08", "period_start": "2026-04-20", "period_end": "2026-04-20"},
-        {"id": "bloco-15", "block_uuid": "u15", "period_start": "2026-06-01", "period_end": "2026-06-10"},
-        {"id": "bloco-16", "block_uuid": "u16", "period_start": "2026-06-15", "period_end": "2026-06-29"},
+        {"id": "bloco-07", "block_uuid": "u07", "period_start": "2026-04-15", "period_end": "2026-04-15", "topics": ["t"]},
+        {"id": "bloco-08", "block_uuid": "u08", "period_start": "2026-04-20", "period_end": "2026-04-20", "topics": ["t"]},
+        {"id": "bloco-15", "block_uuid": "u15", "period_start": "2026-06-01", "period_end": "2026-06-10", "topics": ["t"]},
+        {"id": "bloco-16", "block_uuid": "u16", "period_start": "2026-06-15", "period_end": "2026-06-29", "topics": ["t"]},
     ]
     return MotorContext.from_artifacts(
         blocks=blocks, card_block_map=card_map or {}, lessons_index={})
@@ -24,9 +24,12 @@ TDE = {"TDE Trabalho Discente Efetivo": {"block_ids": [], "source": "labels", "a
 ]}}
 
 
-def _t(eid, cat="trabalhos", sec="TDE Trabalho Discente Efetivo", title=None):
-    return {"id": eid, "title": title or eid.replace("-", " "),
-            "category": cat, "source_section": sec}
+def _t(eid, cat="trabalhos", sec="TDE Trabalho Discente Efetivo", title=None, source_path=""):
+    e = {"id": eid, "title": title or eid.replace("-", " "),
+         "category": cat, "source_section": sec}
+    if source_path:
+        e["source_path"] = source_path
+    return e
 
 
 def test_scope_categorias():
@@ -123,3 +126,65 @@ def test_tier2_scope_e_subconjunto_do_out_of_scope():
     for e in cases:
         assert tier2_due_scope(e), e
         assert is_out_of_disamb_scope(e), e
+
+
+TDE_POSICIONAL = {"TDE Trabalho Discente Efetivo": {
+    "block_ids": [], "source": "labels",
+    "file_dues": {
+        "t1_2026_1.pdf": {"due": "2026-05-06", "source": "structured"},
+        "t1_2026_1.thy": {"due": "2026-05-06", "source": "structured"},
+        "t2_2026_1.pdf": {"due": "2026-07-06", "source": "structured"},
+    },
+    # dues SEM stem no nome (realidade MF): fallback stem nunca casa aqui
+    "assign_dues": [
+        {"name": "Sala de entrega", "due": "2026-05-06", "source": "structured"},
+        {"name": "Sala de entrega", "due": "2026-07-06", "source": "structured"},
+    ],
+}}
+
+
+def _ctx_mf_real(card_map):
+    """Blocos do caso real: 11 (conteúdo, dia-único 06/05), 16 (conteúdo),
+    17/18 (administrativos, topics vazio — prova/devolução)."""
+    blocks = [
+        {"id": "bloco-11", "block_uuid": "u11", "period_start": "2026-05-06", "period_end": "2026-05-06", "topics": ["invariantes"]},
+        {"id": "bloco-16", "block_uuid": "u16", "period_start": "2026-06-15", "period_end": "2026-06-29", "topics": ["modelos"]},
+        {"id": "bloco-17", "block_uuid": "u17", "period_start": "2026-07-01", "period_end": "2026-07-01", "topics": []},
+        {"id": "bloco-18", "block_uuid": "u18", "period_start": "2026-07-06", "period_end": "2026-07-06", "topics": []},
+    ]
+    return MotorContext.from_artifacts(
+        blocks=blocks, card_block_map=card_map, lessons_index={})
+
+
+def test_posicional_casa_por_filename_e_ancora_containment_alta():
+    d = resolve_due_window(
+        _t("t1-2026-1", source_path="files/t1_2026_1.pdf"),
+        _ctx_mf_real(TDE_POSICIONAL))
+    assert d.block_ref == "bloco-11" and d.band == "alta" and not d.flag
+    assert d.method == "due-contain"
+
+
+def test_posicional_companion_thy_casa_igual():
+    d = resolve_due_window(
+        _t("t1-2026-1-thy", cat="codigo-professor", source_path="files/T1_2026_1.thy"),
+        _ctx_mf_real(TDE_POSICIONAL))
+    assert d.block_ref == "bloco-11"
+
+
+def test_due_em_bloco_sem_topicos_cai_no_ultimo_bloco_de_conteudo():
+    # due 2026-07-06 CONTIDO no bloco-18 (admin) -> pula 18/17 -> bloco-16, media+FLAG
+    d = resolve_due_window(
+        _t("t2-2026-1", source_path="files/t2_2026_1.pdf"),
+        _ctx_mf_real(TDE_POSICIONAL))
+    assert d.block_ref == "bloco-16" and d.band == "media" and d.flag
+    assert d.method == "due-straddle"
+
+
+def test_sem_file_dues_sem_stem_vai_pro_funil():
+    # realidade MF pré-Task1: só assign_dues sem stem -> None (nunca chuta)
+    so_assign = {"TDE Trabalho Discente Efetivo": {
+        "block_ids": [], "source": "labels",
+        "assign_dues": TDE_POSICIONAL["TDE Trabalho Discente Efetivo"]["assign_dues"]}}
+    assert resolve_due_window(
+        _t("t1-2026-1", source_path="files/t1_2026_1.pdf"),
+        _ctx_mf_real(so_assign)) is None

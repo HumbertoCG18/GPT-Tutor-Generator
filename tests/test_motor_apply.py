@@ -106,7 +106,7 @@ def test_tier2_due_window_escreve_temporal(tmp_path):
     repo = _repo_due(
         tmp_path,
         blocks=[{"id": "bloco-15", "block_uuid": "u15",
-                 "period_start": "2026-06-01", "period_end": "2026-06-10"}],
+                 "period_start": "2026-06-01", "period_end": "2026-06-10", "topics": ["t"]}],
         card_map={"TDE Trabalho Discente Efetivo": {"assign_dues": [
             {"name": "Entrega T1", "due": "2026-06-10", "source": "structured"}]}},
     )
