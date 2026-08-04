@@ -88,6 +88,10 @@ plano pós-F5b (`docs/superpowers/plans/2026-08-03-rollout-flagon-trilha1.md`), 
 - Token Moodle vivo em `moddle/.env`; Gemini em `.env` raiz (`GEMINI_API_KEY`).
 - Cache do voter TCC: **16 votos untracked** em `material_curation.json` na raiz do
   `TCC-Tutor` (preservado do rollback, para retry sem re-pagar).
+- Higiene (minor do review final): `manifest.json.bak` ficou TRACKED no MF-Tutor (`add -A` do
+  rollout) — gera diff-ruído a cada reprocess; remover do tracking no Plano B/cutover.
+- Workspace SDD da campanha deletado pós-review-final (histórico = git + pendencias; os paths
+  `.superpowers/sdd/...` citados nas entradas 2026-08-04 são referências históricas).
 
 ## §6 Comando de partida da próxima sessão
 
