@@ -47,7 +47,7 @@ def _write_temporal(entry: dict, decision: AnchorDecision, ctx: MotorContext) ->
     entry["temporal_block_band"] = decision.band
     entry["temporal_block_flag"] = bool(decision.flag)
     entry["temporal_block_provider"] = decision.provider
-    entry["temporal_block_window"] = [str(r) for r in (decision.window or [])]
+    entry["temporal_block_window"] = [str(r) for r in (decision.window or []) if r]
 
 
 def apply_anchor_engine(
