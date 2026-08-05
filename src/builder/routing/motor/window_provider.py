@@ -107,6 +107,21 @@ def _stems(tokens: set) -> set:
     return {t[:TOPIC_STEM_LEN] for t in tokens}
 
 
+def _block_topic_stems(ctx: MotorContext) -> dict:
+    """id(block) -> _stems(assinatura) de TODOS os blocos, memoizado por ctx (item 16).
+
+    Assinatura por bloco e invariante por indice; mesmo padrao de
+    ctx._global_df_cache (disambiguator.py:123-132)."""
+    if ctx._stems_cache is not None:
+        return ctx._stems_cache
+    cache: dict = {}
+    for b in ctx.blocks:
+        sig = block_topic_tokens(b) | block_session_tokens(b, ctx)
+        cache[id(b)] = _stems(sig)
+    ctx._stems_cache = cache
+    return cache
+
+
 def provider_topic(entry: dict, ctx: MotorContext) -> List[str]:
     """P4 — TÓPICO do card "Semana N - Tópico" ↔ topic_text/sessions[].label."""
     m = _SEMANA_TOPIC_RE.match(str(entry.get("source_section") or ""))
@@ -115,10 +130,10 @@ def provider_topic(entry: dict, ctx: MotorContext) -> List[str]:
     tstems = _stems(_topic_tokens(m.group(1)))
     if not tstems:
         return []  # card só-ordinal: week-math PROIBIDO -> sem janela
+    stems_by_block = _block_topic_stems(ctx)
     refs = []
     for b in ctx.blocks:
-        sig = block_topic_tokens(b) | block_session_tokens(b, ctx)
-        if tstems & _stems(sig):
+        if tstems & stems_by_block[id(b)]:
             ref = str(b.get("id") or "")
             if ref:
                 refs.append(ref)

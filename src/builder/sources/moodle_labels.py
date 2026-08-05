@@ -295,7 +295,7 @@ def extract_file_dues(contents, year: int = 0) -> dict:
         pending: list = []
         for mod in sec.get("modules", []) or []:
             files = [f for f in (mod.get("contents", []) or [])
-                     if f.get("type") == "file" and f.get("filename")]
+                     if f.get("type") == "file" and f.get("fileurl") and f.get("filename")]
             for f in files:
                 original = str(f["filename"])
                 save = _savename_from_module(mod.get("name"), original, len(files))

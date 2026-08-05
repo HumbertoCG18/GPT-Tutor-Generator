@@ -49,7 +49,18 @@ def _stems(text: str) -> set:
 
 
 def _match_due(entry: dict, ctx: MotorContext) -> Optional[dict]:
-    """UM {name, due, source}: posicional (file_dues, D-G) > stem (D-C) > None."""
+    """UM {name, due, source}: posicional (file_dues, D-G) > stem (D-C) > None.
+
+    Gate unico de due vazio na saida (item 14): os caminhos internos ja
+    filtram due presente, mas o caminho stem podia, em tese, devolver due=""
+    sem re-checar aqui — um so ponto de saida cobre os dois."""
+    m = _match_due_raw(entry, ctx)
+    if not m or not str(m.get("due") or ""):
+        return None
+    return m
+
+
+def _match_due_raw(entry: dict, ctx: MotorContext) -> Optional[dict]:
     card = _card_entry(entry, ctx)
     if card is None:
         return None
