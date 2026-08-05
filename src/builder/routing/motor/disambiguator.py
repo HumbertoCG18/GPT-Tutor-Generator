@@ -19,10 +19,14 @@ from src.builder.routing.motor.contracts import MotorContext, AnchorDecision
 from src.builder.routing.thresholds import confidence_band
 
 # Espelha marco0._GEN: stems (prefixo 8) que NÃO discriminam bloco.
+# Palavras-função PT: medição 2026-08-05 (docs/reports/2026-08-05-planob-investigacao.md
+# §2a) — lista conservadora zera confident-wrong com acurácia intacta (84.2%);
+# NÃO estender com demonstrativos/comparativos: a versão larga custou 2 casos (78.9%).
 _GENERIC_STEMS = frozenset({
     "introduc", "continua", "exercici", "revisao", "conteudo", "material",
     "aplicac", "apresent", "sobre", "parte", "exemplo", "usando", "aula",
     "para", "resposta", "solucao", "lista",
+    "nao", "sim", "com", "sem", "por", "dos", "das", "nos", "nas", "uma", "que",
 })
 
 

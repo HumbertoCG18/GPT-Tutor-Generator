@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-04
+last_updated: 2026-08-05
 > Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
 > mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
@@ -893,3 +893,20 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - WO2 fix manual-uuid (`_block_by_migrated_ref` uuid-first) — 23 pins humanos recuperados nos 5. Commit `d67bb19`.
 - Reprocess dos 5 tutores (computed→uuid; IA com 33 temporal/2 movers; outros sem temporal). Commits tutor repos:
   IA 7561f5c · ES2 abc8ee2 · MF 357a59b · SO 320712d · TCC 6b6e1e3. Gates: HARD-drift 0 em todos.
+
+## Concluído (2026-08-05 — Plano B Task 1)
+- [DERIVADO] **T12 stopwords PT: causa-raiz do cw TCC fechada (cw 1→0, acc intacta).** 11 palavras-função PT
+  (`nao`/`sim`/`com`/`sem`/`por`/`dos`/`das`/`nos`/`nas`/`uma`/`que`) adicionadas a `_GENERIC_STEMS`
+  (`disambiguator.py:22-26`, espelha `marco0._GEN`) — causa: `nao` (df_global=1) satisfazia
+  `bool(discriminante)` (`disambiguator.py:184`) e produzia band "alta" indevida em `aula-01-apresentacao-
+  da-disciplina...` (TCC), fechando o `fase2_TCC FAIL cw=1` deixado em aberto pela entrada CROSS-CUTTING
+  "CORREÇÃO DE ATRIBUIÇÃO do cw TCC" (2026-08-04) — motor real volta a `cw=0`. TDD: 3 testes novos
+  `tests/test_motor_stopwords_pt.py` (RED confirmado pré-fix, GREEN pós-fix). Régua completa pós-fix
+  (7 probes + suite): fase0 48/58 conten0 cw1 · fase1 recall 9/10 · fase2-SO 45.2%/colisões0/cw0 ·
+  **fase2-TCC pinos 5/5 + cobertura 83.3% + acc 84.2% + cw0 (PASS — número EXATO da medição empírica)** ·
+  fase3 lift +3/0 chamadas API · fase4 det 48/58 cw1, voter 51/58 cw0/calls0 · fase5 target 4/8 cw0 ·
+  **pytest 1826 passed / 4 skipped / 0 failed** (1823 prévios + 3 novos). Lista CONSERVADORA por medição:
+  versão larga (+ demonstrativos/comparativos) custou 2 casos (84.2%→78.9%), NÃO adotada (ver comentário
+  no código). `last_seen` de `Metodos-Formais-Tutor/course/.block_identity.json` (bumped pelos probes)
+  restaurado; SO/TCC sem alteração. Report completo:
+  `.superpowers/sdd/2026-08-05-planob-motor/task-1-report.md`.
