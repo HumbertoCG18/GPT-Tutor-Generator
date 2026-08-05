@@ -5405,6 +5405,44 @@ def test_appconfig_drops_removed_legacy_keys(tmp_path, monkeypatch):
     assert "profile_backends" not in cfg.data
 
 
+def test_appconfig_migrates_legacy_vision_model_via_table(tmp_path, monkeypatch):
+    """Migração de vision_model é tabela (_MODEL_MIGRATIONS), não if inline (T1b):
+    cada (backend, modelo_velho) da tabela migra para o novo; combinações fora
+    da tabela (backend diferente, ou modelo já novo) não mexem no valor."""
+    import json as _json
+    import src.ui.theme as theme_mod
+
+    for old_model in ("qwen3-vl", "qwen2.5vl:7b", "qwen3-vl:8b"):
+        cfg_path = tmp_path / f"cfg_{old_model.replace(':', '_')}.json"
+        cfg_path.write_text(_json.dumps({
+            "vision_backend": "ollama",
+            "vision_model": old_model,
+        }), encoding="utf-8")
+        monkeypatch.setattr(theme_mod, "CONFIG_PATH", cfg_path)
+        cfg = theme_mod.AppConfig()
+        assert cfg.get("vision_model") == "qwen3-vl:235b-cloud", old_model
+
+    # backend diferente com o mesmo modelo velho: fora da tabela, não migra
+    other_backend = tmp_path / "cfg_other_backend.json"
+    other_backend.write_text(_json.dumps({
+        "vision_backend": "gemini",
+        "vision_model": "qwen3-vl",
+    }), encoding="utf-8")
+    monkeypatch.setattr(theme_mod, "CONFIG_PATH", other_backend)
+    cfg = theme_mod.AppConfig()
+    assert cfg.get("vision_model") == "qwen3-vl"
+
+    # modelo já migrado: idempotente, não muda
+    already_new = tmp_path / "cfg_already_new.json"
+    already_new.write_text(_json.dumps({
+        "vision_backend": "ollama",
+        "vision_model": "qwen3-vl:235b-cloud",
+    }), encoding="utf-8")
+    monkeypatch.setattr(theme_mod, "CONFIG_PATH", already_new)
+    cfg = theme_mod.AppConfig()
+    assert cfg.get("vision_model") == "qwen3-vl:235b-cloud"
+
+
 def test_unit_block_conflict_roundtrip():
     from src.models.core import FileEntry
     e = FileEntry(source_path="C:/x/a.pdf", file_type="pdf", category="material", title="t",
