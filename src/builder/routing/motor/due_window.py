@@ -2,8 +2,10 @@
 
 Spec: 2026-07-22-janela-de-prazo-tier2-design.md + adendo F5b 2026-08-03.
 Matching: posicional (file_dues por filename, D-G) com fallback stem (D-C).
-Janela (D-H/D-I): só bloco DE CONTEÚDO (topics não-vazio) ancora — containment
--> band pela fonte; senão último bloco de conteúdo anterior -> media+FLAG.
+Janela (D-H/D-I): só bloco DE CONTEÚDO (kind fora de _NON_CONTENT_KINDS) ancora
+— containment -> band pela fonte; senão último bloco de conteúdo anterior ->
+media+FLAG. `kind` é required no schema (topics não é: curso recém-rolado
+pode ter topics=[] num bloco de aula legítimo — T17).
 Nunca chuta: sem due casado -> None -> funil. NUNCA disambiguator, NUNCA voto LLM.
 """
 from __future__ import annotations
@@ -18,6 +20,18 @@ from src.utils.helpers import norm_ascii_lower
 _TDE_PREFIX = "TDE"
 _STEM_RE = re.compile(r"\bt(\d+)\b")
 _CONF_ALTA, _CONF_MEDIA = 0.95, 0.75
+
+# T17: kinds NAO-CONTEUDO do filtro D-H (bloco nunca ancora due-window).
+# Derivado dos 4 .timeline_index.json reais disponiveis (TCC/MF/SO/ES2, ver
+# tests/test_motor_due_window.py) pelo criterio "kind cujos blocos hoje
+# aparecem com topics=[]" — os unicos dois sao assessment (prova) e review
+# (revisao), coerente com o uso ja existente em content_taxonomy.py:966,973.
+# Todo outro kind observado (class, deliverable, holiday, academic_event,
+# office_hours, overview, results, reserved, suspended, workshop) tem topics
+# sempre populado hoje -> permanece CONTEUDO. `kind` ausente/desconhecido
+# tambem fica CONTEUDO (fail-open: nao inventa exclusao para kind fora do
+# enum fechado do schema).
+_NON_CONTENT_KINDS = frozenset({"assessment", "review"})
 
 
 def tier2_due_scope(entry: dict) -> bool:
@@ -93,7 +107,7 @@ def resolve_due_window(entry: dict, ctx: MotorContext) -> Optional[AnchorDecisio
     due = str(m.get("due") or "")
     contain = prev = None
     for b in ctx.blocks:  # ordenados por period_start (contrato do MotorContext)
-        if not (b.get("topics") or []):
+        if str(b.get("kind") or "") in _NON_CONTENT_KINDS:
             continue  # D-H: só bloco DE CONTEÚDO ancora entrega (admin/prova fora)
         start = str(b.get("period_start") or "")
         end = str(b.get("period_end") or "") or start

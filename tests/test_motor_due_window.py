@@ -144,13 +144,15 @@ TDE_POSICIONAL = {"TDE Trabalho Discente Efetivo": {
 
 
 def _ctx_mf_real(card_map):
-    """Blocos do caso real: 11 (conteúdo, dia-único 06/05), 16 (conteúdo),
-    17/18 (administrativos, topics vazio — prova/devolução)."""
+    """Blocos do caso real (MF .timeline_index.json, kind conferido em disco):
+    11 (kind=class, conteúdo, dia-único 06/05), 16 (kind=class, conteúdo),
+    17 (kind=review, topics vazio — revisão), 18 (kind=assessment, topics
+    vazio — prova)."""
     blocks = [
-        {"id": "bloco-11", "block_uuid": "u11", "period_start": "2026-05-06", "period_end": "2026-05-06", "topics": ["invariantes"]},
-        {"id": "bloco-16", "block_uuid": "u16", "period_start": "2026-06-15", "period_end": "2026-06-29", "topics": ["modelos"]},
-        {"id": "bloco-17", "block_uuid": "u17", "period_start": "2026-07-01", "period_end": "2026-07-01", "topics": []},
-        {"id": "bloco-18", "block_uuid": "u18", "period_start": "2026-07-06", "period_end": "2026-07-06", "topics": []},
+        {"id": "bloco-11", "block_uuid": "u11", "period_start": "2026-05-06", "period_end": "2026-05-06", "kind": "class", "topics": ["invariantes"]},
+        {"id": "bloco-16", "block_uuid": "u16", "period_start": "2026-06-15", "period_end": "2026-06-29", "kind": "class", "topics": ["modelos"]},
+        {"id": "bloco-17", "block_uuid": "u17", "period_start": "2026-07-01", "period_end": "2026-07-01", "kind": "review", "topics": []},
+        {"id": "bloco-18", "block_uuid": "u18", "period_start": "2026-07-06", "period_end": "2026-07-06", "kind": "assessment", "topics": []},
     ]
     return MotorContext.from_artifacts(
         blocks=blocks, card_block_map=card_map, lessons_index={})
@@ -188,3 +190,63 @@ def test_sem_file_dues_sem_stem_vai_pro_funil():
     assert resolve_due_window(
         _t("t1-2026-1", source_path="files/t1_2026_1.pdf"),
         _ctx_mf_real(so_assign)) is None
+
+
+# --- T17: filtro D-H topics(opcional) -> kind(required) --------------------
+#
+# Tabela kind -> classe, derivada dos 4 .timeline_index.json REAIS disponiveis
+# em ~/Documents/GitHub (TCC-Tutor, Metodos-Formais-Tutor,
+# Sistemas-Operacionais-Tutor, Engenharia-Software-2-Tutor; IA-Tutor nao tem
+# indice — sem motor rodado). Criterio: um kind e NAO-CONTEUDO quando (e so
+# quando) blocos REAIS desse kind aparecem hoje com topics=[] (o gate antigo
+# ja os pulava). Todo outro kind observado tem topics SEMPRE populado hoje.
+#
+#   kind            topics=[] / topics!=[] (somado nos 4 cursos)   classe
+#   assessment      10 / 5                                          NAO-CONTEUDO
+#   review           2 / 1                                          NAO-CONTEUDO
+#   class            0 / 45                                         CONTEUDO
+#   deliverable       0 / 7                                          CONTEUDO
+#   holiday           0 / 7                                          CONTEUDO
+#   academic_event    0 / 2                                          CONTEUDO
+#   office_hours      0 / 2                                          CONTEUDO
+#   overview          0 / 2                                          CONTEUDO
+#   results           0 / 1                                          CONTEUDO
+#   reserved          0 / 1                                          CONTEUDO
+#   suspended         0 / 1                                          CONTEUDO
+#   workshop          0 / 1                                          CONTEUDO
+#
+# assessment/review batem com o uso ja existente em content_taxonomy.py:966,973
+# (prova/revisao). Confirmado no MF real: bloco-17 kind=review topics=[],
+# bloco-18 kind=assessment topics=[] — os dois blocos que o teste
+# `test_due_em_bloco_sem_topicos_cai_no_ultimo_bloco_de_conteudo` acima
+# preserva pulados, agora via kind (nao mais via topics vazio).
+
+
+def _ctx_kind_gate(card_map):
+    blocks = [
+        {"id": "bloco-20", "block_uuid": "u20", "period_start": "2026-08-01",
+         "period_end": "2026-08-05", "kind": "class", "topics": []},
+        {"id": "bloco-21", "block_uuid": "u21", "period_start": "2026-08-06",
+         "period_end": "2026-08-10", "kind": "assessment", "topics": ["prova final"]},
+    ]
+    return MotorContext.from_artifacts(
+        blocks=blocks, card_block_map=card_map, lessons_index={})
+
+
+def test_kind_class_topics_vazio_ancora():
+    """T17 core: curso novo com topics ainda nao populado (rollout) nao pode
+    ficar sem ancora so por isso. kind=class e conteudo mesmo com topics=[]."""
+    cm = {"TDE": {"assign_dues": [
+        {"name": "Entrega T1", "due": "2026-08-03", "source": "structured"}]}}
+    d = resolve_due_window(_t("t1-x", sec="TDE"), _ctx_kind_gate(cm))
+    assert d.block_ref == "bloco-20" and d.method == "due-contain"
+
+
+def test_kind_assessment_nunca_ancora_mesmo_com_topics():
+    """kind=assessment e NAO-CONTEUDO incondicional: mesmo com topics
+    preenchido (o filtro antigo teria ancorado), devolve straddle para o
+    ultimo bloco de conteudo, nunca a propria prova."""
+    cm = {"TDE": {"assign_dues": [
+        {"name": "Entrega T2", "due": "2026-08-08", "source": "structured"}]}}
+    d = resolve_due_window(_t("t2-x", sec="TDE"), _ctx_kind_gate(cm))
+    assert d.block_ref == "bloco-20" and d.method == "due-straddle" and d.flag
