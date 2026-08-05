@@ -24,6 +24,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.builder.engine import RepoBuilder  # noqa: E402
+from src.models.core import SubjectStore  # noqa: E402
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -48,6 +49,31 @@ def _parse_argv(argv: list) -> tuple[list, list]:
     return flags, pats
 
 
+def _find_subject_profile(repo: Path, store):
+    """Perfil do SubjectStore cujo repo_root resolve para o mesmo dir de `repo`.
+    None se nao ha match (ou store vazio, ex.: sem subjects.json)."""
+    target = repo.resolve()
+    for name in store.names():
+        profile = store.get(name)
+        root = str(getattr(profile, "repo_root", "") or "").strip()
+        if not root:
+            continue
+        try:
+            if Path(root).resolve() == target:
+                return profile
+        except OSError:
+            continue
+    return None
+
+
+def _merge_profile_flags(options: dict, profile) -> None:
+    """Injeta feature_flags do perfil VIVO nas options (mesmo padrao flat de
+    _build_options_from_config, src/ui/app.py:101-102). Chamado ANTES de
+    _apply_flags: o --flags da CLI e aplicado depois e sempre vence."""
+    for key, value in (getattr(profile, "feature_flags", None) or {}).items():
+        options[str(key)] = value
+
+
 def _coverage(manifest_path: Path) -> tuple[int, int]:
     """(materiais_com_bloco, total_materiais) lendo auto_tags bloco: do manifest."""
     m = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -61,7 +87,7 @@ def _coverage(manifest_path: Path) -> tuple[int, int]:
     return with_block, total
 
 
-def reprocess(repo: Path, flags: list) -> None:
+def reprocess(repo: Path, flags: list, store=None) -> None:
     manifest_path = repo / "manifest.json"
     if not manifest_path.exists():
         print(f"[skip] {repo.name}: sem manifest.json")
@@ -70,7 +96,15 @@ def reprocess(repo: Path, flags: list) -> None:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     course_meta = manifest.get("course", {}) or {}
     options = manifest.get("options", {}) or {}
-    _apply_flags(options, flags)
+
+    if store is None:
+        store = SubjectStore()
+    profile = _find_subject_profile(repo, store)
+    if profile is not None:
+        _merge_profile_flags(options, profile)
+        print(f"[profile] {repo.name}: perfil '{profile.name}' aplicado (feature_flags={profile.feature_flags})")
+
+    _apply_flags(options, flags)  # CLI --flags aplicado por ultimo: sempre vence
     if flags:
         print(f"[flags] {repo.name}: {', '.join(flags)}")
 
