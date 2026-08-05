@@ -17,6 +17,11 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 
 ## USER-SIDE — destravam a cadeia de medição/cutover
 
+- [USER] **ES2-Tutor com sujeira pré-existente** (`as-of 2026-08-05`, achado Plano B Task 5, NÃO
+  causada pela sessão) — **45 arquivos** com mtimes de **01/07** e **04/08**. Inspecionar antes do
+  rollout ES2 (item "Depois do Plano B" da fila): confirmar se é lixo de builds/experimentos
+  anteriores ou conteúdo válido não-limpo, antes de flag-ON o motor no curso.
+
 - [USER] **Gold cross-curso** (DURÁVEL/intent) — rotular `tests/fixtures/eval/ground_truth_<curso>.csv` IA/SO/ES2/TCC
   (MF já mede via eval_assignments 5/5). Planilhas em `docs/reports/gold_templates/gold_by_card_<curso>.csv`
   (MF 6 cards · IA 9 · SO 5 · ES2 3 · TCC 13 + avulsos). **Bloqueia: cutover Fase 3.4, lever lessons[].text,
@@ -283,9 +288,46 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   evita zeragem FUTURA; o `moodle_course_id` do IA já perdido precisa **re-import Moodle** pra restaurar.
 - [CODE] `migrate_signals` standalone **não grava `turma`** (só `import_moodle_courses` grava) — derivar do curso.
   > derived-código, não-reprocess-stale, as-of 18/06 (S0).
-- [CODE] **Latente:** sem teaching_plan, `_derive_unit_specs_from_repo` vs `content_taxonomy["units"]=[]` divergem
-  → fallback vira load-bearing. Remover ou dar mesmo fallback à taxonomy.
-  > derived-código, não-reprocess-stale, as-of 17/06.
+- ~~[CODE] **Latente:** sem teaching_plan, `_derive_unit_specs_from_repo` vs `content_taxonomy["units"]=[]`
+  divergem → fallback vira load-bearing.~~ **CONFIRMADO EM PRODUÇÃO (2026-08-05, investigação
+  `docs/reports/2026-08-05-unit-sources-investigacao.md`) — vira o item [CODE] PRIORITÁRIO abaixo.**
+- [CODE] **PRIORITÁRIO — campanha u3/subject_profile** (`as-of 2026-08-05`, investigação
+  `docs/reports/2026-08-05-unit-sources-investigacao.md`). Causa-raiz FATO: `scripts/
+  reprocess_assignments.py:81` monta `RepoBuilder` SEM `subject_profile` → `teaching_plan=""` →
+  `content_taxonomy["units"]=[]` (`file_map.py:1500-1501`) → `assign_units_positional` retorna `[]`
+  no guard `m<2` (`unit_matcher.py:66-67`) → cai no scorer legado alimentado pelo índice de 2
+  unidades derivado do COURSE_MAP (`file_map.py:1628`), que a mesma rodada RE-ESCREVE em disco
+  (`pedagogical_regeneration.py:402`) — loop auto-perpetuante. **Matcher inocentado**: com as 3
+  unidades reais do plano.md, bloco-16 (MF) cai em unidade-03 com argmax 4 (overlap
+  logica/modelos/temporal/verificacao) vs 3 (u01) vs 2 (u02), confiança 0.6 — provado por
+  experimento real (`assign_units_positional` real + blocos reais + taxonomy real). **+2
+  vazamentos do mesmo formato**: `src/ui/app.py:2391` (unprocess) e `src/ui/curator_studio.py:
+  1293,1303` (reject) — mesma falta de `subject_profile`, mesmo efeito, cada clique re-envenena o
+  repo. **Fix**: importar `_resolve_subject_profile` de `scripts/retag_manifest.py:30-41` (já
+  resolve corretamente) nos 3 sites; subsume o T18 (feature_flags) já fechado — profile em mãos,
+  merge de `feature_flags` é 2 linhas junto. **MUDA ATRIBUIÇÕES → gold obrigatório** antes/depois
+  (mesmo protocolo do Fix 2b). Guardrail barato: `logger.warning` nos 2 early-returns silenciosos
+  (`file_map.py:1500` e `:1628`) — hoje nenhum loga, curso perde 1/3 da estrutura sem nenhum sinal.
+  **Depois do wiring fix** (não antes — evita migrar o veneno): unificar as 2 fontes de unidade
+  (`unit_index` vira projeção de `content_taxonomy`) — merge antes do fix causaria churn de slugs
+  nos 5 repos-tutor (títulos Title-Cased do fallback ≠ títulos acentuados do plano).
+- [CODE] **BLOQUEANTE pré-rollout ES2/curso novo** (`as-of 2026-08-05`, achado Plano B Task 5 fix
+  round 1, deferido). Filtro D-H do due-window (`due_window.py`, `_NON_CONTENT_KINDS=
+  {"assessment","review"}`) foi derivado só dos kinds REALMENTE observados nos 4 índices
+  disponíveis hoje (TCC/MF/SO/ES2 sem due real; IA-Tutor sem índice) — kinds administrativos nunca
+  vistos com `topics=[]` no corpus atual (`holiday`, `suspended`, `office_hours`, etc.) **fail-open**:
+  se um curso novo produzir um desses com `topics=[]`, o filtro os deixa elegíveis à janela de
+  prazo (deveriam ser excluídos como não-conteúdo). Fix: mover de lista-por-observação pra
+  allowlist positiva de kinds de conteúdo, OU expandir `_NON_CONTENT_KINDS` com os kinds
+  administrativos conhecidos do `BlockKind` antes do próximo curso/ES2 entrar em produção com o
+  motor ON.
+- [CODE] **Integrar `knowledge_graph.py`** (`as-of 2026-08-05`) — gerador de grafo de conhecimento
+  do tutor, hoje só no scratchpad da sessão (stdlib-only; produziu `mf_knowledge_graph.html`, 90
+  nós/78 arestas/1 órfão "plano", MF confirmado intocado, 12 divergências temporal≠computed
+  visíveis). Falta: mover pra `scripts/` + melhorias já decididas (espinha temporal
+  bloco-01→NN e unidades derivadas do plano de ensino — 3 no MF, incluindo a vazia/perdida u3
+  acima). Foi o grafo que achou a perda da u3 (via inspeção visual das 12 divergências) — vale
+  como ferramenta de auditoria recorrente, não one-off.
 - [CODE] **Latente: TCC NFD dotless-i no manifest** (`as-of 2026-07-01`, herdado do handoff 28/06 P4) — slug
   `aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis` carrega U+0131 (NFD do macOS). Join por nome pode
   falhar silencioso. Fix: normalizar NFC no import. Não urgente; vigiar no crosswalk TCC.
@@ -1023,3 +1065,34 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
     removido (`git worktree remove`) ao final.
   - Nenhuma mudança de código neste round (`src/` intocado); só a medição registrada aqui e em
     `.superpowers/sdd/2026-08-05-planob-motor/task-5-report.md` §8 (comandos + saída completos).
+
+## Concluído (2026-08-05 — Plano B FECHAMENTO: 7/7 tasks)
+
+- [DERIVADO] **Plano B ENTREGUE — 7/7 tasks, 19/19 dívidas mecânicas + 2a + 2b pagas** (commits
+  `d3cd0fa..84d25b0` na branch `feat/motor-atribuicao`, + `Metodos-Formais-Tutor@235e8a7` para o
+  T19). Task 1 (T12 stopwords PT, ver Concluído acima) e Task 4 (fix 2b, ver Concluído acima) e
+  Task 5 (T17 D-H por kind, ver Concluído acima) já têm entrada própria. Tasks 2/3/6/7 fecham
+  aqui: **Task 2** batch higiene sem mudança de comportamento (T9a/T2b/T8/T9/T10/T7a/T16/T13/T14/
+  T11 — 4 commits por área, régua byte-idêntica); **Task 3** sonda fase3 filtra janela-1 antes da
+  medição 2b (T3, alinhada ao gate real do engine `anchor_engine.py:57-58`, lift +3/0 API mantido);
+  **Task 6** lock cross-processo do voter (T4b — sentinela `O_EXCL`, 3 rounds de hardening:
+  deadline+sleep nos `continue` órfãos, takeover single-winner via rename, guard `SidecarLockTimeout`
+  em `vote()`/`prune()` pra não derrubar a rodada D9 inteira); **Task 7** infra final (T15 imports,
+  T1b tabela de migração, **T18** reprocess lê `SubjectStore`/injeta `feature_flags` vivas — mata a
+  armadilha operacional `--flags` obrigatório do reprocess headless, T7b e2e da ordem
+  refresh→resolve→attach, **T19** `*.bak` no `.gitignore` gerado + destracking dos 5 `.bak` do MF
+  (autorizado pelo user), read_only probe — `retag_manifest`/`rebuild_timeline` em modo leitura
+  agora passam `persist=False`, fechando o write-trap achado na Task 4).
+  **Review final whole-branch (fable, `d3cd0fa..896592c`, 20 commits): READY TO MERGE YES** — 1
+  Important (guard `OSError` no `os.remove` pós-takeover do lock, última saída desprotegida) + 3
+  minors (skipif POSIX no teste de dono-vivo; `.get()` no `stems_by_block`; docstring
+  caller-holds em `_persist`); fix wave dispatched ao implementer do lock, fechado em `84d25b0`
+  (re-review limpo, campanha ENCERRADA).
+  **Régua**: 7 probes (fase0/fase1/fase2-SO/fase2-TCC/fase3/fase4/fase5) **byte-idênticos em TODOS
+  os gates** através das 7 tasks (única mudança de número intencional foi o cw TCC 1→0 na Task 1
+  e as 4 atribuições TCC movidas na Task 4, ambas medidas e registradas nas entradas próprias).
+  **Suite: 1823 → 1858 passed / 4 skipped / 0 failed** (+35 testes novos ao longo das 7 tasks).
+  Repos-tutor: read-only durante todo o plano (MF/SO seguem flag-ON como estavam; TCC/ES2 OFF);
+  `last_seen` bumped pelos probes restaurado a cada task. Ledger completo:
+  `.superpowers/sdd/2026-08-05-planob-motor/progress.md` (briefs + reports + diffs de review por
+  task). Fila pós-plano: ver `docs/reports/2026-08-05-handoff-planob-fechado.md`.
