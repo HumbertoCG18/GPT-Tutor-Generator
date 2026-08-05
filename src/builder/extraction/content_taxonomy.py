@@ -15,6 +15,20 @@ from src.builder.core.semantic_config import (
 )
 from src.builder.text.normalize import normalize_match_text, signal_token_set
 from src.utils.helpers import slugify, write_text, collapse_ws as _collapse_ws
+from src.builder.routing.sequence import annotate_class_ordinals
+from src.builder.routing.file_map import (
+    block_token_weights,
+    score_entry_against_timeline_block,
+    score_card_evidence_against_entry,
+)
+from src.builder.timeline.card_block import (
+    lookup_card_blocks,
+    load_card_block_map,
+    lookup_card_assign_due,
+)
+from src.models.tag_profile import load_tag_profile, build_learned_unit_boosts
+from src.builder.core.code_summarization import load_code_curation, code_curation_signal_text
+from src.builder.timeline.index import timeline_block_is_administrative_only
 
 # Categorias que não recebem auto-tags de timeline (unit/subunit/bloco).
 # "references" é o equivalente EN de "referencias" (importado via Moodle EN).
@@ -827,15 +841,8 @@ def _best_instructional_block_fallback(
     """
     if not instructional_blocks:
         return None, 0.0
-    # Import tardio: entry_signals importa content_taxonomy no topo, entao um
-    # import de topo aqui criaria ciclo. So precisamos destes na hora do fallback.
-    from src.builder.routing.sequence import annotate_class_ordinals
     annotate_class_ordinals(instructional_blocks)
-    from src.builder.routing.file_map import (
-        block_token_weights,
-        score_entry_against_timeline_block,
-        score_card_evidence_against_entry,
-    )
+    # import local: ciclo com entry_signals (entry_signals importa content_taxonomy no topo)
     from src.builder.extraction.entry_signals import (
         collect_entry_unit_signals,
         score_text_against_row,
@@ -886,7 +893,6 @@ def _card_scoped_block(entry, markdown_text, unit_index, instructional_blocks,
     score_fallback_fn(entry, markdown_text, scoped_blocks, unit_slug, topic_slug)
     -> (block, conf): o scorer real restrito aos blocos do card (sub-bloco).
     """
-    from src.builder.timeline.card_block import lookup_card_blocks
     card = str(entry.get("source_section") or "").strip()
     if not card:
         return "", 0.0, ""
@@ -1025,7 +1031,6 @@ def resolve_unit_block_tags(
     unassigned_blocks = list(timeline_context.get("unassigned_blocks") or [])
     repo_root = course_meta.get("_repo_root")
 
-    from src.models.tag_profile import load_tag_profile, build_learned_unit_boosts
     _tag_profile = None
     if repo_root:
         try:
@@ -1036,7 +1041,6 @@ def resolve_unit_block_tags(
     _card_block_map = {}
     if repo_root:
         try:
-            from src.builder.timeline.card_block import load_card_block_map
             _card_block_map = load_card_block_map(Path(repo_root) / "course")
         except Exception:
             _card_block_map = {}
@@ -1048,7 +1052,6 @@ def resolve_unit_block_tags(
     _code_curation_entries = {}
     if repo_root:
         try:
-            from src.builder.core.code_summarization import load_code_curation
             _code_curation_entries = load_code_curation(Path(repo_root)).get("entries", {}) or {}
         except Exception:
             _code_curation_entries = {}
@@ -1075,7 +1078,6 @@ def resolve_unit_block_tags(
         subunit_markdown_text = markdown_text
         _curation_entry = _code_curation_entries.get(str(entry.get("id") or ""))
         if _curation_entry:
-            from src.builder.core.code_summarization import code_curation_signal_text
             _curation_text = code_curation_signal_text(_curation_entry)
             if _curation_text:
                 subunit_markdown_text = (
@@ -1153,7 +1155,6 @@ def resolve_unit_block_tags(
             # chave administrative_only. O key-lookup antigo era no-op e os deixava
             # vazar como candidatos do scorer material->bloco. O predicado lê rows
             # (filtra admin no runtime; inócuo no serializado, que ja removeu admin).
-            from src.builder.timeline.index import timeline_block_is_administrative_only
             instructional_blocks = [
                 block
                 for block in (timeline_context.get("timeline_index") or {}).get("blocks", [])
@@ -1169,7 +1170,6 @@ def resolve_unit_block_tags(
             # 12/06: é convenção, não conteúdo); o scorer ranqueia DENTRO da
             # janela. Filtro que esvazia (nenhum bloco antes do due) não
             # restringe nada — nunca produz órfão.
-            from src.builder.timeline.card_block import lookup_card_assign_due
             _assign_due = lookup_card_assign_due(
                 entry.get("source_section"), _card_block_map)
             if _assign_due and (

@@ -14,6 +14,8 @@ from src.builder.routing.thresholds import (
 )
 from src.builder.text.normalize import normalize_match_text
 from src.builder.text.stopwords import TIMELINE_GENERIC_TOKENS, UNIT_GENERIC_TOKENS
+from src.builder.timeline.card_block import resolve_block_ref as _rbr
+from src.builder.timeline.block_identity import _POSITIONAL_RE as _POS_RE
 
 _STOPWORDS = TIMELINE_GENERIC_TOKENS | UNIT_GENERIC_TOKENS
 
@@ -323,10 +325,8 @@ def resolve_material_assignment(
     votes = _llm_vote(llm_curation)
     # Lazy-resolve legacy bloco-NN vote keys to uuid
     if votes and blocks:
-        from src.builder.timeline.card_block import resolve_block_ref as _rbr
         _resolved_votes: Dict[str, float] = {}
         for _k, _v in votes.items():
-            from src.builder.timeline.block_identity import _POSITIONAL_RE as _POS_RE
             if _POS_RE.match(str(_k)):
                 _r = _rbr(_k, blocks)
                 _k = _r if _r else _k
