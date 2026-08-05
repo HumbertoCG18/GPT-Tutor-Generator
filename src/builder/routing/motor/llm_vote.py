@@ -144,6 +144,9 @@ def _cache_lock(cache_path: Path, timeout: float = _LOCK_TIMEOUT_S,
             # PermissionError e NAO rouba); no Windows tambem falha sozinho se o
             # dono ainda segura o handle aberto — nunca toma lock vivo (fix round 1,
             # IMPORTANT 2: unlink() incondicional deixava 2 donos simultaneos).
+            # portabilidade: essa garantia de "nunca rouba lock vivo" e especifica
+            # do Windows (sharing violation); POSIX permite rename() de um path
+            # com fd aberto por outro processo — la a defesa e so o timeout/staleness.
             stale_name = f"{lock_path}.stale.{os.getpid()}"
             try:
                 os.rename(lock_path, stale_name)
@@ -307,17 +310,29 @@ class LlmVoter:
             save_material_curation(self._cache_path, self._data)
 
     def prune(self, live_keys: set) -> int:
-        """Remove votos cuja identidade de conteudo sumiu do manifest (item 2)."""
-        with self._lock, _cache_lock(self._cache_path):
-            disk = load_material_curation(self._cache_path)
-            merged = dict(disk.get("votes") or {})
-            merged.update(self._data["votes"])
-            stale = [k for k in merged if k not in live_keys]
-            for k in stale:
-                merged.pop(k, None)
-            self._data["votes"] = merged
-            if stale:
-                save_material_curation(self._cache_path, self._data)
+        """Remove votos cuja identidade de conteudo sumiu do manifest (item 2).
+
+        Timeout do lock cross-processo NAO propaga: prune() e o unico chamado
+        de pedagogical_regeneration.py:89, ANTES de apply_anchor_engine, dentro
+        do MESMO try/except da camada D9 inteira — propagar abortaria a rodada
+        antes de qualquer material ser processado (pior que vote(): nem os
+        votos ja cacheados seriam usados). Poda e higiene, nao correcao: pular
+        uma rodada e inocuo, a proxima poda de novo (fix round 2, T4b).
+        """
+        try:
+            with self._lock, _cache_lock(self._cache_path):
+                disk = load_material_curation(self._cache_path)
+                merged = dict(disk.get("votes") or {})
+                merged.update(self._data["votes"])
+                stale = [k for k in merged if k not in live_keys]
+                for k in stale:
+                    merged.pop(k, None)
+                self._data["votes"] = merged
+                if stale:
+                    save_material_curation(self._cache_path, self._data)
+        except SidecarLockTimeout as exc:
+            logger.warning("TIER 3: sidecar ocupado, poda pulada nesta rodada (%s)", exc)
+            return 0
         return len(stale)
 
     def round_summary(self) -> dict:

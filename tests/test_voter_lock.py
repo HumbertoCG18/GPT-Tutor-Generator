@@ -239,3 +239,26 @@ def test_vote_persist_timeout_nao_propaga_e_voto_sobrevive_ao_proximo_persist(tm
     v._persist()                          # proxima rodada: lock livre, merge de verdade
     saved = json.loads(cache.read_text(encoding="utf-8"))
     assert saved["votes"]["a"]["block_id"] == "bloco-01"
+
+
+def test_prune_timeout_nao_propaga_e_vira_no_op_nesta_rodada(tmp_path, monkeypatch):
+    """Fix round 2 (Important, task-introduced): SidecarLockTimeout dentro de
+    prune() NAO pode propagar — prune() e o UNICO chamado de
+    pedagogical_regeneration.py:89, ANTES de apply_anchor_engine, dentro do
+    MESMO try/except da camada D9 inteira. Propagar dali aborta a rodada
+    antes de qualquer material ser processado — pior que o caso vote(), nem
+    os votos ja cacheados seriam usados. Poda e higiene: pular a rodada e
+    inocuo (proxima poda de novo); prune() tem que devolver 0, nao explodir."""
+    cache = tmp_path / "material_curation.json"
+    cache.write_text(json.dumps({"version": 1, "votes": {
+        "orfa": {"block_id": "bloco-02"}}}), encoding="utf-8")
+    v = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([]))
+
+    def raising_lock(path, *a, **k):
+        raise SidecarLockTimeout("simulado: sidecar ocupado")
+
+    monkeypatch.setattr(llm_vote, "_cache_lock", raising_lock)
+
+    assert v.prune({"viva"}) == 0            # no-op, nao propaga
+    # nada foi tocado: o voto "orfa" (que seria podado) continua no disco
+    assert json.loads(cache.read_text(encoding="utf-8"))["votes"] == {"orfa": {"block_id": "bloco-02"}}
