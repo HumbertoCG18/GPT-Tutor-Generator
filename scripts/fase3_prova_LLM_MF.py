@@ -101,7 +101,7 @@ def main() -> int:
         for r in vote_rows[:5]:
             d, md = base[r["id"]]
             print(f"\n===== {r['id']} =====")
-            print(build_vote_prompt(byid[r["id"]], d.window, ctx, md)[:900])
+            print(build_vote_prompt(byid[r["id"]], d.window, ctx, md))
         print(f"\n(dry-run: {len(vote_rows)} prompts montaveis; nada chamado)")
         return 0
 
