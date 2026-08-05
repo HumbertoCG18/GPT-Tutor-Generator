@@ -937,18 +937,30 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   0.22/0.25, gold ainda bloco-24 — erro persiste, agora com confiança honesta, não regressão);
   integer/programacao **permanecem** bloco-16 mas com conf honesta 0.0451 (era 0.0 cego) — empate
   real do scorer bruto (bloco-16==bloco-26 @20.5456) decidido por ordem estável de lista dentro de
-  `_best_instructional_block_fallback` (fora do range 1225-1234 escopado para tie-break — ramo
-  1225-1234 **inalcançável** pelas 7 entries, evidenciado por repo, tie-break dispensado); MF (3) e
-  SO (1) **sem nenhuma mudança** — achado que CORRIGE a investigação: MF nunca passa por
-  `select_probable_period_for_entry_fn` (resolve via `_card_scoped_block`/`card+scorer`, fora do
-  escopo do bug 2b desde sempre) e SO já tinha `conf=0.0539>0`, que já passava pelo piso literal
-  `p_conf>0` ANTES do fix (o texto §2b "só o piso pega o SO" não se sustenta matematicamente para
-  este valor). Régua completa (7 probes) **byte-idêntica** aos baselines pós-Task-3 (fase0 48/58
-  conten0 cw1 · fase1 9/10 · fase2-SO 45.2%/0/cw0 · fase2-TCC 5/5/83.3%/cw0/84.2% · fase3 39
-  rows/+3 lift/0 API · fase4 det48/58cw1 voter51/58cw0calls0 · fase5 4/8cw0) — confirma isolamento
-  total do fix (código do motor/`AnchorEngine`, via `engine.py`, não tocado). **pytest 1838 passed
-  / 4 skipped / 0 failed** (1835 prévios + 3 novos). Repos-tutor: **zero escrita líquida** — nenhum
-  `last_seen` para restaurar (medição usou wrapper `persist=False`, ver achado abaixo).
+  `_best_instructional_block_fallback` (fora do range 1225-1234 escopado para tie-break); ramo
+  1225-1234 **inalcançável pelas 6 entries TCC+MF; alcançável pelo SO, mas sem `period_label`
+  duplicado para desempatar** (evidência direta: `candidate_rows` de `exercicios-p2` tem 17 blocos,
+  só 1 com o `period_label` devolvido — instrumentado dentro do próprio `resolve_unit_block_tags`,
+  não emprestado da sonda `fase2_prova_SO.py`, que mede outro código, `provider_date` do motor);
+  tie-break dispensado. MF (3) e SO (1) **sem nenhuma mudança** — achado que CORRIGE a
+  investigação: MF nunca passa por `select_probable_period_for_entry_fn` (resolve via
+  `_card_scoped_block`/`card+scorer`, fora do escopo do bug 2b desde sempre) e SO já tinha
+  `conf=0.0539>0`, que já passava pelo piso literal `p_conf>0` ANTES do fix (o texto §2b "só o piso
+  pega o SO" não se sustenta matematicamente para este valor). **Delta corpus-wide (fix round 1,
+  os 136 entries dos 3 repos, não só as 8 conhecidas):** medido via `git worktree` do repo do
+  PROJETO em `2c3fe45~1` (pré-fix) vs `2c3fe45` (pós-fix), harness `persist=False` idêntico —
+  **4/136 mudaram, exatamente as 4 TCC já auditadas linha-a-linha; os 132 restantes (23 TCC + 67 MF
+  + 42 SO) são byte-idênticos** (`computed_block_id`/`method`/`confidence`). Régua completa (7
+  probes) **byte-idêntica** aos baselines pós-Task-3 (fase0 48/58 conten0 cw1 · fase1 9/10 ·
+  fase2-SO 45.2%/0/cw0 · fase2-TCC 5/5/83.3%/cw0/84.2% · fase3 39 rows/+3 lift/0 API · fase4
+  det48/58cw1 voter51/58cw0calls0 · fase5 4/8cw0) — mas nenhum dos 7 probes importa
+  `content_taxonomy` (confirmado por grep): a régua prova só isolamento do caminho
+  `engine.py`/`AnchorEngine` (não tocado), NÃO prova acurácia do funil. Evidência real de acurácia
+  do funil = suíte de gate gold que EXECUTA `resolve_unit_block_tags` (`test_eval_assignments.py`
+  `test_block_accuracy_not_below_baseline` + `test_eval_golden_real.py` + `test_block_method_caps.py`,
+  17/17 verdes, já inclusos nos 1838) + o delta corpus-wide acima. **pytest 1838 passed / 4 skipped
+  / 0 failed** (1835 prévios + 3 novos). Repos-tutor: **zero escrita líquida** — nenhum `last_seen`
+  para restaurar (medição usou wrapper `persist=False`, ver achado abaixo).
   **Achado extra (registrar como pendência nova, não corrigido — fora do escopo desta task):**
   `_build_file_map_timeline_context_from_course` tem `persist=True` por padrão e, além do bump de
   `last_seen` já catalogado, TAMBÉM grava `manifest.json` (migração `manual_timeline_block_id`
