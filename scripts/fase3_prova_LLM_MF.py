@@ -90,7 +90,7 @@ def main() -> int:
         if d is None:
             continue             # sem janela/decisao -> funil; NAO vota (spec §12)
         base[r["id"]] = (d, md)
-        if d.flag or r["id"] in series:
+        if (d.flag and len(d.window) > 1) or r["id"] in series:
             vote_rows.append(r)
 
     n_flag = sum(1 for r in vote_rows if base[r["id"]][0].flag)
