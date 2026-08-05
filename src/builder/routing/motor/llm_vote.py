@@ -17,7 +17,9 @@ import logging
 import os
 import re
 import threading
+import time
 from collections import defaultdict
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Dict, List, Optional, Set
 
@@ -91,6 +93,59 @@ def material_curation_path(repo_dir: Path) -> Path:
     em docs/reports/ — nunca este path.
     """
     return Path(repo_dir) / "material_curation.json"
+
+
+_LOCK_TIMEOUT_S = 10.0   # espera maxima por uma rodada de reprocess concorrente
+_LOCK_STALE_S = 60.0     # sentinela mais velho que isso: dono provavelmente morreu
+_LOCK_POLL_S = 0.05
+
+
+class SidecarLockTimeout(RuntimeError):
+    """Lock cross-processo do sidecar nao liberado dentro do timeout (T4b)."""
+
+
+@contextmanager
+def _cache_lock(cache_path: Path, timeout: float = _LOCK_TIMEOUT_S,
+                stale_after: float = _LOCK_STALE_S):
+    """Lock cross-processo (sentinela `O_EXCL`) em volta do read-merge-write do
+    sidecar: sem isto, dois reprocess simultaneos podem ler o mesmo estado em
+    disco e o segundo save apaga o voto que o primeiro acabou de gravar (item 4
+    do mapa). Sentinela mais velho que `stale_after` e tratado como orfao (dono
+    morreu sem liberar) e tomado; espera de aquisicao limitada a `timeout`,
+    depois desiste com excecao clara — nunca espera infinita.
+
+    # ponytail: lock por sentinela O_EXCL; trocar por portalocker se contencao real aparecer
+    """
+    lock_path = Path(str(cache_path) + ".lock")
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    deadline = time.monotonic() + timeout
+    fd = None
+    while fd is None:
+        try:
+            fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            try:
+                age = time.time() - lock_path.stat().st_mtime
+            except OSError:
+                continue                    # sentinela sumiu entre EEXIST e stat: retenta
+            if age > stale_after:
+                try:
+                    lock_path.unlink()
+                except OSError:
+                    pass
+                continue                    # toma o lock orfao na proxima iteracao
+            if time.monotonic() >= deadline:
+                raise SidecarLockTimeout(
+                    f"lock do sidecar ocupado ha mais de {timeout}s: {lock_path}")
+            time.sleep(_LOCK_POLL_S)
+    try:
+        yield
+    finally:
+        os.close(fd)
+        try:
+            lock_path.unlink()
+        except OSError:
+            pass
 
 
 def import_marco1_seed(seed_votes: dict, entries_by_id: dict, repo_dir: Path) -> dict:
@@ -232,15 +287,16 @@ class LlmVoter:
         return self._content_key(entry) in self._data["votes"]
 
     def _persist(self) -> None:
-        disk = load_material_curation(self._cache_path)
-        merged = dict(disk.get("votes") or {})
-        merged.update(self._data["votes"])
-        self._data["votes"] = merged
-        save_material_curation(self._cache_path, self._data)
+        with _cache_lock(self._cache_path):
+            disk = load_material_curation(self._cache_path)
+            merged = dict(disk.get("votes") or {})
+            merged.update(self._data["votes"])
+            self._data["votes"] = merged
+            save_material_curation(self._cache_path, self._data)
 
     def prune(self, live_keys: set) -> int:
         """Remove votos cuja identidade de conteudo sumiu do manifest (item 2)."""
-        with self._lock:
+        with self._lock, _cache_lock(self._cache_path):
             disk = load_material_curation(self._cache_path)
             merged = dict(disk.get("votes") or {})
             merged.update(self._data["votes"])
