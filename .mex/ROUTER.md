@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Contains project state, routing table, and behavioural contract.
-last_updated: 2026-07-22
+last_updated: 2026-08-05
 ---
 
 # ROUTER.md - Session Bootstrap
@@ -348,6 +348,20 @@ Read this file before starting any task.
   Divida nomeada: TIER-2 no gold MF (trabalhos/provas/TDE, 8 rows) fica no funil por design, medicao
   propria no rollout FASE 5 (janela-de-prazo real ainda nao entra no motor). Proximo: reprocess REAL
   nos repos-tutor + ligar as flags por-curso = acao do user na GUI (FASE 5).
+- Plano B ENTREGUE (2026-08-05; commits `d3cd0fa..84d25b0` na branch `feat/motor-atribuicao`,
+  7/7 tasks, 19/19 divida mecanica + 2a + 2b pagas, review final READY TO MERGE pos fix-wave):
+  stopwords PT em `_GENERIC_STEMS` zera o confident-wrong TCC (cw 1->0); gate do funil-base le
+  `_p_ambig` + piso de confianca (`content_taxonomy.py:1224`, delta corpus-wide 4/136); filtro
+  D-H do due-window troca `topics` por `kind` (required); lock cross-processo por sentinela
+  `O_EXCL` no voter (3 rounds de hardening: deadline+sleep, takeover single-winner, guard em
+  vote()/prune()); T18 reprocess le `SubjectStore`/injeta feature_flags vivas (mata `--flags`
+  obrigatorio); T19 `.bak` no `.gitignore` gerado; `persist=False` nos scripts read-only
+  (retag_manifest/rebuild_timeline). Suite 1823->1858 passed/4 skipped/0 failed. Handoff:
+  `docs/reports/2026-08-05-handoff-planob-fechado.md`. **NOVA PENDENCIA PRIORITARIA [CODE]:**
+  campanha u3/subject_profile — `reprocess_assignments.py:81` monta RepoBuilder sem
+  `subject_profile` -> `content_taxonomy["units"]=[]` -> matcher nunca roda -> MF perde a
+  unidade-03 em producao (matcher inocentado, causa e so falta de wiring). Investigacao:
+  `docs/reports/2026-08-05-unit-sources-investigacao.md`.
 
 ### Not Declared In Brief
 
