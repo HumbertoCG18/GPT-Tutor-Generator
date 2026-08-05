@@ -152,7 +152,12 @@ def _cache_lock(cache_path: Path, timeout: float = _LOCK_TIMEOUT_S,
                 os.rename(lock_path, stale_name)
             except OSError:
                 continue                    # outro dono vivo, ou outro waiter ja venceu
-            os.remove(stale_name)           # so o vencedor do rename chega aqui
+            try:
+                os.remove(stale_name)       # so o vencedor do rename chega aqui
+            except OSError:
+                pass                        # AV/indexer segurando o .stale.<pid> por um
+                                             # instante: cosmetico, o lock_path original ja
+                                             # esta livre (fechamento review final, IMPORTANT 1)
     try:
         yield
     finally:
@@ -302,6 +307,10 @@ class LlmVoter:
         return self._content_key(entry) in self._data["votes"]
 
     def _persist(self) -> None:
+        """Read-merge-write do sidecar. Chamador (hoje: vote(), o unico) tem
+        que segurar self._lock antes de chamar — _persist() so serializa
+        cross-processo (_cache_lock); a serializacao in-process/in-instancia
+        e responsabilidade do chamador, nao daqui."""
         with _cache_lock(self._cache_path):
             disk = load_material_curation(self._cache_path)
             merged = dict(disk.get("votes") or {})

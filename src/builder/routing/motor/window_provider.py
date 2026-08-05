@@ -133,7 +133,7 @@ def provider_topic(entry: dict, ctx: MotorContext) -> List[str]:
     stems_by_block = _block_topic_stems(ctx)
     refs = []
     for b in ctx.blocks:
-        if tstems & stems_by_block[id(b)]:
+        if tstems & stems_by_block.get(id(b), set()):
             ref = str(b.get("id") or "")
             if ref:
                 refs.append(ref)

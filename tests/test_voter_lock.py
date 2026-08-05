@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 import threading
 import time
 from contextlib import contextmanager
@@ -167,6 +168,10 @@ def test_persist_concorrente_entre_duas_instancias_nao_perde_voto(tmp_path, monk
 
 # ===== fix round 1 (review) =====
 
+@pytest.mark.skipif(sys.platform != "win32",
+                     reason="rename() de path com fd aberto SUCEDE em POSIX; "
+                            "a garantia 'nunca rouba lock vivo' e sharing-violation "
+                            "do Windows (fechamento review final, MINOR 1)")
 def test_cache_lock_dono_vivo_sentinela_velho_respeita_timeout_sem_spin(tmp_path):
     """CRITICAL 1: sentinela mais velho que stale_after mas com o DONO AINDA
     VIVO segurando o handle (nao um dono morto) — laptop suspenso, debugger
