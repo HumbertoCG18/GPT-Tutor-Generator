@@ -968,3 +968,58 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   investigação e pela Task 4) **não é read-only de verdade**; reproduzido e revertido no TCC-Tutor
   antes de qualquer medição válida. Report completo:
   `.superpowers/sdd/2026-08-05-planob-motor/task-4-report.md`.
+
+## Concluído (2026-08-05 — Plano B Task 5)
+- [DERIVADO] **T17: filtro D-H do due-window troca `topics` (opcional) por `kind` (required).**
+  `due_window.py:96` excluía bloco de conteúdo com `topics=[]` — matava pré-requisito artificial
+  de rollout (curso novo sem topics populado). Fix: `_NON_CONTENT_KINDS = frozenset({"assessment",
+  "review"})`, derivado dos 4 `.timeline_index.json` reais disponíveis (TCC/MF/SO/ES2 — IA-Tutor
+  sem índice, motor nunca rodou lá): únicos 2 kinds com blocos `topics=[]` hoje (assessment 10/5,
+  review 2/1 vazio/preenchido); todo outro kind observado (class, deliverable, holiday,
+  academic_event, office_hours, overview, results, reserved, suspended, workshop) sempre tem
+  `topics` populado. Coerente com uso já existente de `kind` em `content_taxonomy.py:966,973`.
+  TDD: `tests/test_motor_due_window.py` (2 testes novos, RED confirmado pré-fix — bloco
+  `kind=class topics=[]` não ancorava; bloco `kind=assessment topics≠[]` ancorava direto — GREEN
+  pós-fix) + `_ctx_mf_real` atualizado com `kind` real por bloco (11/16=class, 17=review,
+  18=assessment). Régua completa (7 probes) **byte-idêntica** ao baseline pós-Task-4 (fase0
+  48/58 conten0 cw1 · fase1 recall 9/10 · fase2-SO 45.2%/colisões0/cw0 · fase2-TCC pinos
+  5/5+83.3%+cw0+84.2% · fase3 39 rows/lift+3/0 API · fase4 det48/58cw1 voter51/58cw0calls0 ·
+  **fase5 4/8 cw0 idêntico** — o gate central da task, D-H não mudou resultado no MF). **pytest
+  1840 passed / 4 skipped / 0 failed** (1838 prévios + 2 novos). `last_seen` de
+  `Metodos-Formais-Tutor/course/.block_identity.json` (bumped pelos probes fase0/1/4/5, mesmo
+  padrão já catalogado) restaurado; TCC (só `?? material_curation.json` pré-existente, não meu) e
+  SO sem alteração. Commit `4190abb`.
+
+  **Fix round 1 (revisão do coordenador) — medição PRÉ/PÓS em TCC e SO, corpus real de produção.**
+  Achado do report original citava blocos `assessment`/`review` com `topics≠[]` em TCC (bloco-05
+  review, bloco-28 assessment) e SO (bloco-18 assessment) como "efeito pretendido não medido fora
+  do MF" — a revisão pediu medição direta em vez de diferimento, já que SO está flag-ON em
+  produção. Medido `resolve_due_window` para TODO entry `tier2_due_scope` de TCC-Tutor e
+  Sistemas-Operacionais-Tutor, PRÉ (`git worktree` do repo do PROJETO em `4190abb~1`, código
+  anterior ao fix) vs PÓS (HEAD `4190abb`), via `build_motor_context` (loader já read-only,
+  docstring própria confirma "nunca escreve" — não é o `persist=True` da Task 4 §0, função
+  diferente). **Resultado: zero deltas nos dois cursos, e por um motivo mais forte que "o kind não
+  importou" — o filtro por kind nunca chega a ser exercido:**
+  - **SO: 0 entries passam `tier2_due_scope`** (categorias reais: material-de-aula/listas/
+    gabaritos/cronograma/codigo-professor/outros/bibliografia — nenhuma `trabalhos`/`provas`, e
+    `codigo-professor` não tem `source_section` prefixado `TDE`). `resolve_due_window` nunca é
+    chamada para nenhum entry real do SO hoje — o achado do bloco-18 é um FATO de dados
+    (kind=assessment, topics≠[]) inerte em produção, confirmado por medição direta, não por
+    inferência.
+  - **TCC: 5 entries passam `tier2_due_scope`**, mas `resolve_due_window` retorna `null`
+    idêntico PRÉ e PÓS para as 5 (`3dm-caetano-gabriel-e-gustavo`, `cubic-3-edge-coloring`,
+    `programacao-inteira-01-...`, `t1-enunciado`, `trabalho-t2-enunciado`) — o passo `_match_due`
+    (upstream do loop de blocos onde o fix vive) já retorna `None` nas duas versões: confirmado
+    que `course/.card_block_map.json` de TCC (5 cards) e SO (1 card) não têm nenhum `assign_dues`/
+    `file_dues` estruturado — a due-window TIER 2 só está de fato populada com dados reais no MF
+    hoje. O achado do bloco-05/28 é igualmente um fato de dados inerte, mesma razão.
+  - **Interpretação (linha 3 do fix): nenhum delta observado, logo nenhum julgamento
+    correção-vs-regressão foi necessário** — não houve "due parando de ancorar em prova" para
+    avaliar, porque devido a esta cascata (`tier2_due_scope` vazio em SO; `_match_due` vazio em
+    TCC) o provider due-window está estruturalmente adormecido nos dois cursos, independente do
+    fix de kind. Não há BLOCKED a levantar.
+  - Repos-tutor: zero escrita (`build_motor_context` confirmado read-only por medição — `git
+    status` limpo em TCC/SO antes e depois; nenhum `last_seen` a restaurar). Worktree temporário
+    removido (`git worktree remove`) ao final.
+  - Nenhuma mudança de código neste round (`src/` intocado); só a medição registrada aqui e em
+    `.superpowers/sdd/2026-08-05-planob-motor/task-5-report.md` §8 (comandos + saída completos).
