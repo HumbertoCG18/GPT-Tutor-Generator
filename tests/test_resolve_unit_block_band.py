@@ -101,8 +101,12 @@ def test_wiring_high_confidence_maps_to_band_alta():
 
 
 def test_wiring_medium_confidence_maps_to_band_media():
+    # ambig=False (nao True): este teste prova SO o mapeamento confidence->band,
+    # nao o gate de ambiguidade (fix 2b, content_taxonomy.py:1224) — com
+    # ambig=True o gate agora recusa corretamente e cai no fallback, que nao
+    # preserva o midpoint injetado aqui.
     midpoint = (BAND_HIGH + BAND_LOW) / 2.0
-    out = _run((_INSTRUCTIONAL_BLOCK["period_label"], midpoint, True, []))
+    out = _run((_INSTRUCTIONAL_BLOCK["period_label"], midpoint, False, []))
     assert out["computed_block_id"] == "bloco-01"
     assert out["computed_block_band"] == "media"
 

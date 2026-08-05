@@ -1221,7 +1221,8 @@ def resolve_unit_block_tags(
                     # (spec linhas 92-94/127-130). Quando o portao recusa (_period
                     # vazio), cai no "pega o melhor": ranqueia TODOS os blocos
                     # instrucionais pelo MESMO scorer real e atribui o top.
-                    if _period:
+                    # le a flag de ambiguidade + piso trivial — palpite conf=0/ambig nunca vira atribuicao dura (investigacao 2026-08-05 §2b)
+                    if _period and not _p_ambig and p_conf > 0:
                         for block in instructional_blocks:
                             if str(block.get("period_label") or "") == _period:
                                 period_block_id = _collapse_ws(

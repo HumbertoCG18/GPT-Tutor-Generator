@@ -910,3 +910,49 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   no código). `last_seen` de `Metodos-Formais-Tutor/course/.block_identity.json` (bumped pelos probes)
   restaurado; SO/TCC sem alteração. Report completo:
   `.superpowers/sdd/2026-08-05-planob-motor/task-1-report.md`.
+
+## Concluído (2026-08-05 — Plano B Task 4)
+- [DERIVADO] **Fix 2b: funil-base lê `_p_ambig` + piso de confiança (MUDA ATRIBUIÇÕES, medido).**
+  `content_taxonomy.py:1224` gateava atribuição de bloco só em `if _period:`, ignorando a flag
+  `_p_ambig` (atribuída em `:1208`, nunca lida) e sem piso de confiança — um palpite `conf=0.0/
+  ambig=True` de `select_probable_period_for_entry` virava atribuição dura (`scorer_only`) em vez
+  de cair no `_best_instructional_block_fallback` honesto. Fix: `if _period and not _p_ambig and
+  p_conf > 0:`. TDD: `tests/test_funil_gate_ambiguidade.py` (novo, RED 2/3 pré-fix confirmado via
+  `git stash`, GREEN 3/3 pós-fix) + 1 teste pré-existente corrigido
+  (`test_resolve_unit_block_band.py::test_wiring_medium_confidence_maps_to_band_media` passava
+  `ambig=True` indevidamente — corrigido `False`, seu próprio docstring só prova confidence→band).
+  **PRÉ (id → bloco atual → gold, medição in-memory read-only nos 3 repos reais):**
+
+  | repo | id | atual | conf | gold |
+  |---|---|---|---|---|
+  | TCC | 3dm-caetano-gabriel-e-gustavo | bloco-26 | 0.0000 | bloco-24 |
+  | TCC | cubic-3-edge-coloring | bloco-26 | 0.0000 | bloco-24 |
+  | TCC | integer-programming-0001 | bloco-16 | 0.0000 | bloco-24 |
+  | TCC | programacao-inteira-01-... | bloco-16 | 0.0000 | bloco-24 |
+  | MF | logicadehoare | bloco-11 | 0.0037 | bloco-10 |
+  | MF | classes-parte1 / classes-parte2 | bloco-13 | 0.0389 | bloco-15 |
+  | SO | exercicios-p2 | bloco-16 | 0.0539 | bloco-17 |
+
+  **PÓS (mesma tabela, delta):** TCC 3dm/cubic **movem** bloco-26→**bloco-22** (conf honesta
+  0.22/0.25, gold ainda bloco-24 — erro persiste, agora com confiança honesta, não regressão);
+  integer/programacao **permanecem** bloco-16 mas com conf honesta 0.0451 (era 0.0 cego) — empate
+  real do scorer bruto (bloco-16==bloco-26 @20.5456) decidido por ordem estável de lista dentro de
+  `_best_instructional_block_fallback` (fora do range 1225-1234 escopado para tie-break — ramo
+  1225-1234 **inalcançável** pelas 7 entries, evidenciado por repo, tie-break dispensado); MF (3) e
+  SO (1) **sem nenhuma mudança** — achado que CORRIGE a investigação: MF nunca passa por
+  `select_probable_period_for_entry_fn` (resolve via `_card_scoped_block`/`card+scorer`, fora do
+  escopo do bug 2b desde sempre) e SO já tinha `conf=0.0539>0`, que já passava pelo piso literal
+  `p_conf>0` ANTES do fix (o texto §2b "só o piso pega o SO" não se sustenta matematicamente para
+  este valor). Régua completa (7 probes) **byte-idêntica** aos baselines pós-Task-3 (fase0 48/58
+  conten0 cw1 · fase1 9/10 · fase2-SO 45.2%/0/cw0 · fase2-TCC 5/5/83.3%/cw0/84.2% · fase3 39
+  rows/+3 lift/0 API · fase4 det48/58cw1 voter51/58cw0calls0 · fase5 4/8cw0) — confirma isolamento
+  total do fix (código do motor/`AnchorEngine`, via `engine.py`, não tocado). **pytest 1838 passed
+  / 4 skipped / 0 failed** (1835 prévios + 3 novos). Repos-tutor: **zero escrita líquida** — nenhum
+  `last_seen` para restaurar (medição usou wrapper `persist=False`, ver achado abaixo).
+  **Achado extra (registrar como pendência nova, não corrigido — fora do escopo desta task):**
+  `_build_file_map_timeline_context_from_course` tem `persist=True` por padrão e, além do bump de
+  `last_seen` já catalogado, TAMBÉM grava `manifest.json` (migração `manual_timeline_block_id`
+  bloco-NN→uuid) quando encontra refs legadas — `scripts/retag_manifest.retag()` (usado por esta
+  investigação e pela Task 4) **não é read-only de verdade**; reproduzido e revertido no TCC-Tutor
+  antes de qualquer medição válida. Report completo:
+  `.superpowers/sdd/2026-08-05-planob-motor/task-4-report.md`.
