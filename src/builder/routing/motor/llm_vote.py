@@ -25,6 +25,7 @@ from pydantic import BaseModel
 
 from src.builder.routing.motor.contracts import MotorContext
 from src.builder.text.normalize import normalize_match_text
+from src.utils.helpers import norm_ascii_lower
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +78,7 @@ def load_material_curation(path: Path) -> dict:
 def save_material_curation(path: Path, data: dict) -> None:
     """Write atomico: tmp + os.replace (spec §12 regra 5)."""
     path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
     tmp.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
     os.replace(tmp, path)
@@ -128,7 +130,7 @@ def detect_same_theme_series(entries: List[dict]) -> Set[str]:
         name = str(e.get("title") or rid)
         nums = _DIGITS.findall(name)
         stem = _DIGITS.sub("", normalize_match_text(name)).strip()
-        sec = str(e.get("source_section") or "").strip()
+        sec = norm_ascii_lower(str(e.get("source_section") or ""))
         if rid and nums and stem and sec:
             groups[(sec, stem)].append((rid, int(nums[-1])))
     members: Set[str] = set()
@@ -173,12 +175,13 @@ def build_vote_prompt(entry: dict, window: List[str], ctx: MotorContext,
 def match_window_ref(block_id_vote: str, window: List[str],
                      ctx: MotorContext) -> Optional[str]:
     """Voto -> ref da janela (bounded). Fora da janela = None (mantem FLAG)."""
-    v = str(block_id_vote or "").strip()
+    v = str(block_id_vote or "").strip().casefold()
     if not v:
         return None
     for ref in window:
         b = ctx.block_by_ref(ref) or {}
-        if v in (str(ref), str(b.get("id") or ""), str(b.get("block_uuid") or "")):
+        candidates = (str(ref), str(b.get("id") or ""), str(b.get("block_uuid") or ""))
+        if v in (c.strip().casefold() for c in candidates):
             return ref
     return None
 
@@ -200,6 +203,7 @@ class LlmVoter:
         self._client = client
         self._client_loaded = client is not None
         self._data = load_material_curation(self._cache_path)
+        self._key_cache: dict = {}   # entry["id"] -> content_key (evita re-md5 por chamada)
         self._lock = threading.Lock()
         self.calls = 0          # chamadas API na rodada (cache hit nao conta)
         self.skipped_cap = 0    # escopo sem voto por cap estourado
@@ -214,8 +218,18 @@ class LlmVoter:
             self._client_loaded = True
         return self._client
 
+    def _content_key(self, entry: dict) -> str:
+        """content_key memoizado por entry["id"] (evita re-md5 do arquivo por chamada)."""
+        rid = str(entry.get("id") or "")
+        if rid and rid in self._key_cache:
+            return self._key_cache[rid]
+        key = content_key(entry, self._repo_dir)
+        if rid:
+            self._key_cache[rid] = key
+        return key
+
     def has_vote(self, entry: dict) -> bool:
-        return content_key(entry, self._repo_dir) in self._data["votes"]
+        return self._content_key(entry) in self._data["votes"]
 
     def _persist(self) -> None:
         disk = load_material_curation(self._cache_path)
@@ -247,7 +261,7 @@ class LlmVoter:
              markdown: str = "") -> Optional[str]:
         if not window:
             return None                      # sem-janela NAO vota (spec §12)
-        key = content_key(entry, self._repo_dir)
+        key = self._content_key(entry)
         with self._lock:
             cached = self._data["votes"].get(key)
             if cached is None:
