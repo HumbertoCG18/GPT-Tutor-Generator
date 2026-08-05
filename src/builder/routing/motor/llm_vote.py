@@ -124,20 +124,32 @@ def _cache_lock(cache_path: Path, timeout: float = _LOCK_TIMEOUT_S,
         try:
             fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
         except FileExistsError:
-            try:
-                age = time.time() - lock_path.stat().st_mtime
-            except OSError:
-                continue                    # sentinela sumiu entre EEXIST e stat: retenta
-            if age > stale_after:
-                try:
-                    lock_path.unlink()
-                except OSError:
-                    pass
-                continue                    # toma o lock orfao na proxima iteracao
+            # deadline+sleep PRIMEIRO, incondicional: todo caminho abaixo (stat
+            # falhando, rename perdendo a corrida, dono vivo segurando o handle)
+            # tem que passar por aqui, senao um dono lento-mas-vivo (>stale_after
+            # sem crashar — laptop suspenso, debugger pausado) vira spin de CPU
+            # 100% que nunca levanta SidecarLockTimeout (fix round 1, CRITICAL 1).
             if time.monotonic() >= deadline:
                 raise SidecarLockTimeout(
                     f"lock do sidecar ocupado ha mais de {timeout}s: {lock_path}")
             time.sleep(_LOCK_POLL_S)
+            try:
+                age = time.time() - lock_path.stat().st_mtime
+            except OSError:
+                continue                    # sentinela sumiu entre EEXIST e stat: retenta
+            if age <= stale_after:
+                continue                    # dono ainda dentro do prazo: so espera
+            # sentinela orfao: takeover single-winner via rename (nao unlink direto).
+            # rename tem exatamente um vencedor (quem perde pega FileNotFoundError/
+            # PermissionError e NAO rouba); no Windows tambem falha sozinho se o
+            # dono ainda segura o handle aberto — nunca toma lock vivo (fix round 1,
+            # IMPORTANT 2: unlink() incondicional deixava 2 donos simultaneos).
+            stale_name = f"{lock_path}.stale.{os.getpid()}"
+            try:
+                os.rename(lock_path, stale_name)
+            except OSError:
+                continue                    # outro dono vivo, ou outro waiter ja venceu
+            os.remove(stale_name)           # so o vencedor do rename chega aqui
     try:
         yield
     finally:
@@ -346,7 +358,16 @@ class LlmVoter:
                     "model": getattr(client, "model", ""),
                 }
                 self._data["votes"][key] = cached
-                self._persist()
+                try:
+                    self._persist()
+                except SidecarLockTimeout as exc:
+                    # nao propaga: vote() alimenta anchor_engine -> _run_anchor_engine_layer,
+                    # que so tem catch-all (derrubaria a rodada D9 inteira, jogando fora a
+                    # chamada de API paga p/ TODOS os materiais, nao so este). O voto ja
+                    # esta em self._data["votes"]; o proximo _persist() bem-sucedido
+                    # mescla ele de volta ao disco (self-healing; fix round 1, IMPORTANT 3).
+                    logger.warning("TIER 3: sidecar ocupado, voto de %s fica so em memoria "
+                                    "por agora (%s)", entry.get("id"), exc)
             else:
                 self.cache_hits += 1
         return match_window_ref(str(cached.get("block_id") or ""), window, ctx)
