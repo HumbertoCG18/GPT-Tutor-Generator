@@ -3776,6 +3776,7 @@ class TestGeneratedRepoGitignore:
         assert "course/.assessment_context.json" in text
         assert "course/.tag_catalog.json" in text
         assert "setup/" in text
+        assert "*.bak" in text  # T19: backups de retag/reprocess nao versionados
         assert "manifest.json" not in text
         assert "course/FILE_MAP.md" not in text
         assert "course/COURSE_MAP.md" not in text
