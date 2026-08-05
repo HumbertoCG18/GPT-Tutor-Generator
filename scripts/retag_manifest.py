@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import sys
+from functools import partial
 from pathlib import Path
 
 
@@ -50,10 +51,16 @@ def retag(repo_root: Path, subject_profile):
     )
     manifest = json.loads((repo_root / "manifest.json").read_text(encoding="utf-8"))
     before = manifest.get("entries", [])
+    # read_only probe (Plano B): retag() so LE (mesmo com --write, quem grava o
+    # manifest e o proprio script, abaixo); persist=False evita que o helper
+    # migre/grave ledger, manifest.json e curation por baixo dos panos so por
+    # ter sido chamado (achado: Task 4 §0 do Plano B).
     after = _resolve_unit_block_tags(
         before, {"_repo_root": repo_root}, subject_profile,
         build_file_map_unit_index_from_course_fn=_build_file_map_unit_index_from_course,
-        build_file_map_timeline_context_from_course_fn=_build_file_map_timeline_context_from_course,
+        build_file_map_timeline_context_from_course_fn=partial(
+            _build_file_map_timeline_context_from_course, persist=False
+        ),
         iter_content_taxonomy_topics_fn=_iter_content_taxonomy_topics,
         auto_map_entry_subtopic_fn=_auto_map_entry_subtopic,
         auto_map_entry_unit_fn=_auto_map_entry_unit,

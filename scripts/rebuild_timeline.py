@@ -60,8 +60,11 @@ def rebuild_course(name: str, subject_profile) -> bool:
     before = _old_health(index_path)
 
     try:
+        # read_only probe (Plano B): persist=WRITE — dry-run (padrao) fica
+        # honesto com o proprio print "não grava"; --write mantem o
+        # comportamento de hoje (ledger/manifest/curation migrados).
         ctx = engine._build_file_map_timeline_context_from_course(
-            runtime_course_meta, subject_profile, content_taxonomy=None
+            runtime_course_meta, subject_profile, content_taxonomy=None, persist=WRITE
         )
     except Exception as exc:  # pragma: no cover - diagnóstico
         print(f"[FAIL] {name}: build falhou: {exc}")
