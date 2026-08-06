@@ -1,7 +1,7 @@
 ---
 name: agents
 description: Project identity, non-negotiables, commands, and scaffold growth instructions
-last_updated: 2026-06-21
+last_updated: 2026-08-06
 ---
 
 # GPT-Tutor-Generator
@@ -33,6 +33,13 @@ A desktop tool (Python/tkinter) that converts academic PDFs into structured GitH
 - **Tracker de pendências (NÃO-NEGOCIÁVEL):** manter `docs/reports/pendencias.md` SEMPRE
   atualizado: ao concluir um item, removê-lo da lista viva e registrá-lo na seção "Concluído"; ao
   descobrir nova pendência, adicioná-la com tag [USER|CODE|DECISION].
+- **Fixtures copiam contrato real (NÃO-NEGOCIÁVEL, 2026-08-06):** dado sintético de teste
+  reproduz o contrato REAL da fonte (nome/tipo/formato/encoding) com proveniência declarada.
+  Regra completa: `context/conventions.md` §Fixtures; dicionário campo-a-campo:
+  `context/institutional.md` §Contratos.
+- **Fonte única de fatos (dieta MEX 2026-08-06):** estado vivo mora no tracker de pendências
+  (nunca duplicar em ROUTER/context); estrutura de código mora no graphify (`graphify update .`
+  após mudar código); MEX guarda só intenção, decisões, convenções e contratos externos.
 
 ## Commands
 
@@ -53,7 +60,8 @@ After every task:
 - If no pattern exists for this task type, create one and add it to `.mex/patterns/INDEX.md`.
 - If a pattern was deviated from or a new gotcha was found, update it.
 - If any context file is now outdated, update it surgically.
-- Update "Current Project State" in `.mex/ROUTER.md` if the work was significant.
+- Estado vivo (números, gates, pendências) vai para `docs/reports/pendencias.md` — NÃO para o
+  ROUTER (que só aponta fontes; dieta 2026-08-06). Se mudou código, rodar `graphify update .`.
 - **Living overview:** if the architecture, pipeline, or attribution logic changed, update
   `docs/Overview-Sistema.html` — the single living visual overview of the system (tabs 1–5
   attribution, 6 audit/debts, 7 system report). It must always reflect the current state.

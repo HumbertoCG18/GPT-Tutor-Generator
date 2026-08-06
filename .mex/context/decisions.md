@@ -11,12 +11,22 @@ edges:
     condition: when a decision affects system structure
   - target: context/stack.md
     condition: when a decision affects technology choice
-last_updated: 2026-06-21
+last_updated: 2026-08-06
 ---
 
 # Decisions
 
 Append-only log. When a decision changes, mark the old entry as superseded and add the new decision above it.
+
+---
+
+### Motor de Atribuição (AnchorEngine + LlmVoter) Roda Por Curso Atrás de Flags Próprias
+
+**Date:** 2026-08-06 (fases 0-5a entregues 07/07..08/05; rollout MF/SO 08/04)
+**Status:** Active
+**Decision:** A atribuição temporal nova vive em `src/builder/routing/motor/` (WindowProviders por curso, Disambiguator, gate D4, voter LLM TIER 3 bounded à janela, TIER 2 janela-de-prazo) e roda por curso atrás de `use_anchor_engine`/`use_llm_voter` em `SubjectProfile.feature_flags`, com precedência sobre o legado `use_anchor_placement`. Escreve SÓ campos `temporal_*` (+ sidecar `material_curation.json` de votos, keyed por md5); `computed_*` e pino manual intocados. Funil legado vive até o cutover F5 (deleção por lista nomeada de símbolos).
+**Reasoning:** Cutover exige gold-gated por curso; flags por curso limitam blast-radius e permitem rollback barato (provado 2×: TCC 2026-08-04 e 2026-08-06).
+**Consequences:** Toda medição passa por `audit_gold_freshness` (pré-gate hard=0) + probes fase0-5 byte-idênticos; FAIL de gate = rollback + investigação, NUNCA re-tuning pós-hoc (spec §12); rollback de reprocess DEVE cobrir artefatos gitignored (índice/sidecars) — snapshot só de tracked é rede furada. Supersede na prática o "Anchor Placement Is Additive and Feature-Flagged" abaixo (o campo temporal aditivo e o princípio flag-off-byte-idêntico permanecem; o produtor mudou).
 
 ---
 
@@ -33,7 +43,7 @@ Append-only log. When a decision changes, mark the old entry as superseded and a
 ### Anchor Placement Is Additive and Feature-Flagged
 
 **Date:** 2026-06-21
-**Status:** Active
+**Status:** Superseded per-course (2026-08-06) — ver "Motor de Atribuição" acima; `use_anchor_engine` precede `use_anchor_placement` (IA ainda roda o legado até o flip)
 **Decision:** The anchor placement layer can write `temporal_block_id` and `temporal_block_method` only behind per-subject `use_anchor_placement`; it does not overwrite `computed_block_id`, and manual block truth still wins.
 **Reasoning:** Card/source-section dates are strong temporal evidence, but cutover needs gold-backed evaluation. Additive temporal fields allow canary comparison without changing the default knowledge-base routing surface.
 **Consequences:** Builder options inject only explicit `SubjectProfile.feature_flags`; anchor placement tests must prove flag-off behavior is byte-compatible and no resolver call happens when disabled.
