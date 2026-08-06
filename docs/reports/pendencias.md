@@ -1096,3 +1096,72 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   `last_seen` bumped pelos probes restaurado a cada task. Ledger completo:
   `.superpowers/sdd/2026-08-05-planob-motor/progress.md` (briefs + reports + diffs de review por
   task). Fila pós-plano: ver `docs/reports/2026-08-05-handoff-planob-fechado.md`.
+
+## [DERIVADO] Fio subject_profile — Task 2: verificação 5 cursos + recompute MF em memória
+
+- [DERIVADO] **Verificação parser-vs-índice, 5 cursos** (`as-of f11dda7`, read-only, `json.load`
+  puro de `course/.timeline_index.json` vs `_parse_units_from_teaching_plan` sobre o
+  `teaching_plan` real do `subjects.json` via `SubjectStore.find_by_repo_root`). **4/5 cursos com
+  PERDA de unidade, não só o MF.** TCC 4/4 OK (único intacto). MF 3→2 (falta u03, causa-raiz já
+  mapeada). SO 7→6 (falta a unidade do **MEIO**, u04-deadlock — u05/06/07 sobrevivem intactas no
+  índice, **não é truncamento de cauda**). ES2 3→2 (falta u03-testes-de-software). IA 5→3 (faltam
+  u04-raciocinio-sob-incerteza e u05-aprendizado-de-maquina). Todos os 5 repos TÊM
+  `.timeline_index.json` (a suposição "IA pode não ter índice" estava desatualizada). Mesmo
+  mecanismo da investigação MF (`2026-08-05-unit-sources-investigacao.md`): qualquer reprocess
+  headless sem `subject_profile` (pré-Task-1) perde parte das unidades em QUALQUER curso com plano
+  de ensino real — não é peculiaridade do MF. **Eleva o escopo da Fio Task 3**: reprocess real +
+  gold/medição pré-pós precisam cobrir SO/ES2/IA também, não só o MF.
+
+- [DERIVADO] **Recompute MF em memória pelo fio consertado** (`as-of f11dda7`, read-only,
+  `scripts.retag_manifest.retag(MF, subject_profile_real)` persist=False +
+  `_build_file_map_timeline_context_from_course(persist=False)` direto p/ block→unidade). Aceite
+  do brief **CONFIRMADO em 4/5 pontos**: 3 unidades presentes; bloco-16 →
+  `unidade-03-verificacao-de-modelos` (era `unidade-02` no disco — poison confirmado); blocos
+  01-06 → `unidade-01-metodos-formais` e 10-15 → `unidade-02-verificacao-de-programas`
+  **byte-idênticos ao disco** (inclui bloco-14 vazio nos dois lados, non-instructional). Único
+  delta de `unit_slug` nos 21 blocos é o bloco-16 (o fix pretendido).
+  **DESVIO — PARADO, NÃO ajustado (regra da task):** `computed_block_id` não é byte-idêntico em
+  **3/67 entries** (`logicadehoare` bloco-10→bloco-11; `classes-parte1`/`classes-parte2`
+  bloco-15→bloco-13). **Causa-raiz isolada e NÃO é o fio**: reproduzido byte-a-byte rodando
+  `retag(MF, subject_profile=None)` — mesmos 3 IDs, mesmos blocos de destino, independente de
+  `subject_profile`. É a "Dívida #5" já documentada em código
+  (`content_taxonomy.py:1024-1028,1327-1338`): `retag()` monta `course_meta` sem
+  `_content_taxonomy`, cai no fallback de disco (possivelmente stale) pro scorer de bloco; quando
+  esse scorer legado (`card+scorer`) diverge do `computed_block_id` já gravado por método de
+  maior precedência (`llm_only`, curadoria de código Gemini), a regra de preservação só mantém o
+  method antigo se o ID bater — senão sobrescreve e apaga `computed_block_match_confidence`/
+  `computed_block_rationale`. `classes-parte1/2` (disco `llm_only`, conf 0.28, band media,
+  **CORRETO no gold** `true_block_id=bloco-15`) caem pra `card+scorer`, conf 0.039, band baixa,
+  **ERRADO no gold**. `logicadehoare` já era `card+scorer`/band baixa nos dois lados (0.009→0.004,
+  ambos chutes fracos) — não é regressão de confiança. **Confirmado que o caminho de PRODUÇÃO não
+  tem essa lacuna**: `ops/pedagogical_regeneration.py:319-325` injeta `_content_taxonomy` fresco
+  ANTES de chamar `resolve_unit_block_tags_fn` — só o script `retag_manifest.py` standalone (usado
+  aqui como sonda, por instrução do brief) tem o buraco. **Implicação p/ Fio Task 3**: `retag()`
+  não é 100% fiel ao reprocess real para entries com `computed_block_method` em
+  `{llm_only, consensus}`; medir o reprocess real precisa rodar o pipeline completo
+  (`RepoBuilder`/`_regenerate_pedagogical_files`), não só `retag()`, e vigiar os 3 IDs
+  (`logicadehoare`, `classes-parte1`, `classes-parte2`) no diff pré/pós para separar efeito do fio
+  de artefato do script-sonda.
+
+- [DERIVADO] **Régua completa (7 probes) + suite byte-idênticos, pós-Task-1** (`as-of f11dda7`).
+  fase0 48/58=82.8% conten0 cw1 · fase1 recall 0.900 (9/10) · fase2-SO 45.2%/colisões0/cw0/77.8% ·
+  fase2-TCC pinos5/5/83.3%/cw0/84.2% · fase3 escopo39/lift+3/0 chamadas API/cw0 · fase4
+  flag-OFF idêntico/det48-58cw1/voter51-58cw0calls0 · fase5 4/8/cw0 — **todos PASS, todos os
+  números idênticos ao baseline** (nenhum probe roda `subject_profile`/unit_index no seu próprio
+  `build_context`, então nada deveria mudar com a Task 1 — confirmado). **pytest 1862 passed / 4
+  skipped / 0 failed** (igual ao pós-Task-1, nenhum teste novo nesta task de medição).
+  `last_seen` de `Metodos-Formais-Tutor/course/.block_identity.json` bumped pelos probes (mesmo
+  padrão já catalogado, diff conferido = só `last_seen`) restaurado via `git checkout`; TCC (só
+  `?? material_curation.json` pré-existente) e SO sem alteração; ES2 não tocado (45 dirty
+  pré-existentes, regra da task). Report completo:
+  `.superpowers/sdd/2026-08-05-fio-subject-profile/task-2-report.md`.
+
+- [USER] **Inteligência-Artificial-Tutor com sujeira pré-existente, NÃO catalogada até agora**
+  (`as-of 2026-08-05`, achado incidental desta task, leitura pura — repo intocado por esta
+  sessão). `git status --porcelain` = **48 entradas** (M `manifest.json`, `.block_identity.json`,
+  `.card_block_map.json`, `.lessons_index.json`, `.timeline_curation.json`, vários `.md` gerados,
+  2 `content/curated/*.md` deletados + ~24 `?? code/professor/*.md`/exams/backups
+  não-trackeados). Mesmo formato do achado ES2 (Plano B Task 5, 45 arquivos), mas em curso
+  diferente e nunca registrado antes. Mesma regra: SÓ LEITURA, sem checkout/restore, inspecionar
+  antes de qualquer rollout/reprocess IA (já era pré-requisito listado no handoff — este achado
+  documenta o tamanho exato do problema).
