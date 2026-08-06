@@ -331,6 +331,12 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - [CODE] **Latente: TCC NFD dotless-i no manifest** (`as-of 2026-07-01`, herdado do handoff 28/06 P4) — slug
   `aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis` carrega U+0131 (NFD do macOS). Join por nome pode
   falhar silencioso. Fix: normalizar NFC no import. Não urgente; vigiar no crosswalk TCC.
+- [CODE] **`preserve_raw` morto no `reject`** (`as-of 2026-08-06`, achado fio Task 1, reviewer
+  pré-existente não desta task). `builder.reject(entry_id, preserve_raw=False)` sempre cai no
+  `except TypeError` — a assinatura atual de `reject` não tem parâmetro `preserve_raw`
+  (`engine.py:2194` / `lifecycle_ops.py:307`). 2 builders passam por esse caminho no reject hoje.
+  Fix: remover o parâmetro morto das chamadas OU implementar o comportamento que o nome promete
+  (não decidido; registrar para triagem).
 
 ## CODE — UI (Parte B de features backend já entregues)
 
@@ -1156,6 +1162,26 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   do gravado em disco.** `manifest.json` do MF tem mtime 2026-08-04 17:58 (a MESMA rodada que
   produziu o `.content_taxonomy.json` envenenado) — não é staleness de meses, é a última rodada
   real, sem mecanismo de divergência identificado.
+  > **AMENDMENT 2026-08-06** (task-3, reprocess real do MF; detalhe completo, matriz de afinidade
+  > e reconstrução do DP em `docs/reports/2026-08-06-task3-colisao-rotulo-mf.md`) — a HIPÓTESE
+  > ABERTA acima ("A CAUSA REAL da divergência disco-vs-recompute é HIPÓTESE ABERTA — resolver na
+  > Task 3 com o diff pré/pós do reprocess real") está **FECHADA**: 0/67 `computed_block_id` mudou
+  > no reprocess REAL (pipeline completo `RepoBuilder.incremental_build()`), incluindo os 3 IDs
+  > flagados (`logicadehoare`/`classes-parte1`/`classes-parte2`). Causa: **dual-source** — o probe
+  > isolado `retag(persist=False)` pula etapas do pipeline completo (`attach_block_summary_fields`
+  > etc.) e por isso diverge do disco; não é staleness do disco.
+  > **RETRATAÇÃO EXPLÍCITA** da frase "o `computed_block_id` **também driftaria em produção real**"
+  > (item (c) acima, sobre `classes-parte1`/`classes-parte2`) — **FALSIFICADA** pelo reprocess real
+  > (0/67 mudou em produção). O mecanismo descrito no Teste B (o D1 restore gate exige "sem card",
+  > os 3 TÊM card, nunca dispara) **existe de fato no código** — mas a PREMISSA de que os insumos
+  > da sonda equivalem aos da produção é falsa, então a conclusão que dependia dela não se sustenta.
+  > Além disso, o "CONFIRMADO em 4/5 pontos" no topo deste bullet **validou só o CAMINHO DA SONDA,
+  > não previu a produção**: no reprocess real, bloco-16 NÃO foi para unidade-03 (a sonda tinha
+  > dado conf=0.6) — ficou em unidade-02 conf=0.4, empate 4×4 entre unidade-01/unidade-03 no
+  > matcher posicional (colisão de rótulo: "Verificação de Modelos" é pré-visualização 1.3.1 dentro
+  > da abertura da Unidade 01). **Prova do DUAL-SOURCE nos dois sentidos**: 3 falsos alarmes de
+  > drift (este bullet, sonda via `computed_block_id`) + 1 falso positivo de unidade (bloco-16,
+  > sentido oposto — sonda previu certo, produção não confirmou).
 
 - [DERIVADO] **Régua completa (7 probes) + suite byte-idênticos, pós-Task-1** (`as-of f11dda7`).
   fase0 48/58=82.8% conten0 cw1 · fase1 recall 0.900 (9/10) · fase2-SO 45.2%/colisões0/cw0/77.8% ·
@@ -1179,3 +1205,29 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   diferente e nunca registrado antes. Mesma regra: SÓ LEITURA, sem checkout/restore, inspecionar
   antes de qualquer rollout/reprocess IA (já era pré-requisito listado no handoff — este achado
   documenta o tamanho exato do problema).
+
+- [DERIVADO] **Fio Task 3 (cura MF, reprocess real, GATED) — STATUS FINAL: BLOCKED → ROLLED_BACK**
+  (`as-of 2026-08-06`, sign-off user SATISFIED, escrita real autorizada e executada no MF-Tutor;
+  detalhe completo, matriz de afinidade e reconstrução do DP:
+  `docs/reports/2026-08-06-task3-colisao-rotulo-mf.md`). O fio funcionou até a camada de
+  taxonomia (`content_taxonomy.json` com as 3 unidades corretas, títulos acentuados), mas o
+  objetivo central — bloco-16 carregar `unit_slug=unidade-03-verificacao-de-modelos` — **não
+  aconteceu**: matcher posicional manteve bloco-16 em unidade-02, conf 0.4, por **colisão de
+  rótulo de tópico** ("Verificação de Modelos" aparece como pré-visualização 1.3.1 dentro da
+  abertura da Unidade 01 do plano de ensino, contaminando a assinatura de u01 com tokens de u03) +
+  **DP monotônico global sem sinal na cauda** (empate 4×4 u01/u03, tie-break fica na unidade
+  anterior). Gate (a) mandatório FALHOU → nenhum commit em nenhum repo. **Rollback executado**:
+  MF-Tutor restaurado ao snapshot `f83adc9fe8509bc49d68eba11f2e327afda0800e` (hash-verificado —
+  sha256 dos 5 sidecars gitignored idêntico byte-a-byte ao snapshot pré-cura; `git status
+  --porcelain -uall` vazio pós-restore). Achados extra registrados para a próxima campanha: (1)
+  **`U+FFFD` (replacement character) pré-existente no `teaching_plan` do MF em `subjects.json`**
+  (`%APPDATA%/GPTTutorGenerator/subjects.json`, live `SubjectStore`) — dado JÁ corrompido na
+  fonte, fora de escopo desta task, **consertar antes da próxima cura** (o texto contaminado é
+  literalmente o do bullet "1.3.1. Verifica��o de Modelos" que colide com u03); (2)
+  `unit_confidence=1.0` pré-cura em bloco-16 era stale (o DP real nunca produz 1.0 — valores
+  possíveis são 0.4/0.6/0.8 — resíduo de rodada muito anterior nunca recalculado). **CAVEAT para a
+  próxima sessão**: restaurar o fio (`subject_profile` chegando ao `RepoBuilder`) **NÃO restaura
+  automaticamente a unidade perdida** quando há empate no DP — não assumir que reprocessar
+  SO/ES2/IA recupera as unidades que a verificação da Task 2 encontrou faltando (SO 7→6, ES2 3→2,
+  IA 5→3); cada curso pode ter o mesmo padrão de colisão de rótulo do MF e vai exigir a mesma
+  investigação antes de confiar no reprocess sozinho.

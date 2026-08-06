@@ -188,6 +188,9 @@ reprocess converge; todos os seguintes são no-op. Não há oscilação. É
 **determinístico-e-sensível-ao-input**, não não-determinismo — e a "instabilidade" é
 one-shot, não recorrente. Flags ON/OFF não mudam nada aqui: nenhuma delas toca este ramo.
 
+> **2026-08-06:** hipótese manifest-stale FALSIFICADA pelo reprocess real — ver `pendencias.md`
+> amendment / handoff 2026-08-06.
+
 ### Causa-raiz — flag de ambiguidade lida e jogada fora
 
 `src/builder/extraction/content_taxonomy.py:1208`:
