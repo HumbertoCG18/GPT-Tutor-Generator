@@ -2388,7 +2388,8 @@ class App(tk.Tk):
 
         def worker():
             try:
-                builder = RepoBuilder(repo_dir, meta, [], {})
+                profile = SubjectStore().find_by_repo_root(repo_dir)
+                builder = RepoBuilder(repo_dir, meta, [], {}, subject_profile=profile)
                 ok = builder.unprocess(entry_id)
                 self.after(0, lambda: self._on_unprocess_done(entry_id, ok, None))
             except Exception as exc:

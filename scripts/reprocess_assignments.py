@@ -52,18 +52,7 @@ def _parse_argv(argv: list) -> tuple[list, list]:
 def _find_subject_profile(repo: Path, store):
     """Perfil do SubjectStore cujo repo_root resolve para o mesmo dir de `repo`.
     None se nao ha match (ou store vazio, ex.: sem subjects.json)."""
-    target = repo.resolve()
-    for name in store.names():
-        profile = store.get(name)
-        root = str(getattr(profile, "repo_root", "") or "").strip()
-        if not root:
-            continue
-        try:
-            if Path(root).resolve() == target:
-                return profile
-        except OSError:
-            continue
-    return None
+    return store.find_by_repo_root(repo)
 
 
 def _merge_profile_flags(options: dict, profile) -> None:
@@ -112,7 +101,8 @@ def reprocess(repo: Path, flags: list, store=None) -> None:
     backup = manifest_path.with_suffix(".json.bak")
     shutil.copy2(manifest_path, backup)
 
-    builder = RepoBuilder(root_dir=repo, course_meta=course_meta, entries=[], options=options)
+    builder = RepoBuilder(root_dir=repo, course_meta=course_meta, entries=[], options=options,
+                          subject_profile=profile)
     builder.incremental_build()
 
     after = _coverage(manifest_path)

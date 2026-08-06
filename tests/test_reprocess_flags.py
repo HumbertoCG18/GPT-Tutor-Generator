@@ -40,7 +40,7 @@ class _FakeProfile:
 
 
 class _FakeStore:
-    """Duck-type de SubjectStore (.names()/.get()) sem tocar o filesystem real."""
+    """Duck-type de SubjectStore (.names()/.get()/.find_by_repo_root()) sem tocar o filesystem real."""
 
     def __init__(self, profiles):
         self._data = {p.name: p for p in profiles}
@@ -50,6 +50,15 @@ class _FakeStore:
 
     def get(self, name):
         return self._data.get(name)
+
+    def find_by_repo_root(self, repo_root):
+        target = str(repo_root).replace("\\", "/").rstrip("/").casefold()
+        for name in self.names():
+            sp = self.get(name)
+            rr = str(getattr(sp, "repo_root", "") or "").replace("\\", "/").rstrip("/").casefold()
+            if rr and rr == target:
+                return sp
+        return None
 
 
 def test_find_subject_profile_by_resolved_repo_root(tmp_path):
@@ -81,7 +90,7 @@ def test_reprocess_profile_on_injects_flags_when_no_cli_flags(tmp_path, monkeypa
     captured = {}
 
     class _StubBuilder:
-        def __init__(self, root_dir, course_meta, entries, options):
+        def __init__(self, root_dir, course_meta, entries, options, **kwargs):
             captured["options"] = options
 
         def incremental_build(self):
@@ -107,7 +116,7 @@ def test_reprocess_cli_flags_override_profile(tmp_path, monkeypatch):
     captured = {}
 
     class _StubBuilder:
-        def __init__(self, root_dir, course_meta, entries, options):
+        def __init__(self, root_dir, course_meta, entries, options, **kwargs):
             captured["options"] = options
 
         def incremental_build(self):
@@ -132,7 +141,7 @@ def test_reprocess_no_subjects_json_behaves_like_today(tmp_path, monkeypatch):
     captured = {}
 
     class _StubBuilder:
-        def __init__(self, root_dir, course_meta, entries, options):
+        def __init__(self, root_dir, course_meta, entries, options, **kwargs):
             captured["options"] = options
 
         def incremental_build(self):

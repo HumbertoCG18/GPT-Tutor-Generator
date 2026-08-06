@@ -364,6 +364,16 @@ class SubjectStore:
     def names(self) -> List[str]:
         return sorted(list(self._data.keys()))
 
+    def find_by_repo_root(self, repo_root) -> Optional[SubjectProfile]:
+        """Resolve o perfil da materia dono de um repo-tutor gerado (match por repo_root)."""
+        target = str(repo_root).replace("\\", "/").rstrip("/").casefold()
+        for name in self.names():
+            sp = self.get(name)
+            rr = str(getattr(sp, "repo_root", "") or "").replace("\\", "/").rstrip("/").casefold()
+            if rr and rr == target:
+                return sp
+        return None
+
 
 class StudentStore:
     """Persistência única do perfil do aluno em JSON."""

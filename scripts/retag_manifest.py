@@ -33,13 +33,7 @@ def _resolve_subject_profile(repo_root: Path, subject_name: str):
     store = SubjectStore()
     if subject_name:
         return store.get(subject_name)
-    target = str(repo_root).replace("\\", "/").rstrip("/").casefold()
-    for name in store.names():
-        sp = store.get(name)
-        rr = str(getattr(sp, "repo_root", "") or "").replace("\\", "/").rstrip("/").casefold()
-        if rr and rr == target:
-            return sp
-    return None
+    return store.find_by_repo_root(repo_root)
 
 
 def retag(repo_root: Path, subject_profile):

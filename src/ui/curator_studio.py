@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List
 from PIL import Image, ImageTk
-from src.models.core import FileEntry
+from src.models.core import FileEntry, SubjectStore
 from src.builder.artifacts.navigation import (
     _clean_extraction_noise,
     _inject_executive_summary,
@@ -1290,21 +1290,25 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
             return
 
         try:
+            profile = SubjectStore().find_by_repo_root(self.repo_dir)
             builder = RepoBuilder(
                 root_dir=self.repo_dir,
                 course_meta=self._repo_course_meta(),
                 entries=[],
                 options={},
+                subject_profile=profile,
             )
             entry_data = builder.reject(entry_id, preserve_raw=False)
         except TypeError:
             # Compatibilidade se o engine local ainda estiver com assinatura antiga
             try:
+                profile = SubjectStore().find_by_repo_root(self.repo_dir)
                 builder = RepoBuilder(
                     root_dir=self.repo_dir,
                     course_meta=self._repo_course_meta(),
                     entries=[],
                     options={},
+                    subject_profile=profile,
                 )
                 entry_data = builder.reject(entry_id)
             except Exception as e:
