@@ -29,6 +29,18 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   > com +10 materiais, 6 curated referenciados no manifest; IA: poda 23/06 executada + import
   > de 21 notebooks 25/06 + reprocess 01/07). Ação certa = COMMITAR (sem os .bak), nunca
   > checkout/clean. 3 decisões pedidas no dossiê (ruling do user).
+  > **FECHADO (2026-08-06, ruling user "vamos fazer os commits + confirmar poda"):** ES2
+  > commitado `d287426` (+10 materiais oficiais), IA commitado `ceae83e` (poda de 14
+  > confirmada, aula-29 via gêmeo; 21 notebooks; `manifest.json.bak` destrackeado T19);
+  > `*.bak`/`*.apibak` gitignorados nos 2. Árvores 0 dirty. **E os DOIS ROLLOUTS flag-ON
+  > EXECUTADOS na sequência (mesma sessão): ES2 `dc74c12`** — 3 runs, 25 votos estáveis
+  > (0 novos no run 3), temporal 29/35 {labels:4, llm:25}, fila 0, funil 0 drift, computed
+  > 0 diffs, pino 1/1, audit hard=0, units 2→2 (u03 = campanha); **IA `86f00d9`** — swap
+  > legado no mesmo ato (`use_anchor_placement` OFF), 47 temporal `anchor` reescritos →
+  > 54/62 motor {labels:35, llm:19}, resíduo legado 0, 17 votos estáveis, fila 0, funil 0
+  > drift, computed 0 diffs, pinos 4/4, audit hard=0, units 3→3 (u04/u05 = campanha).
+  > **PLACAR ROLLOUT: 4/5 cursos flag-ON em produção (MF/SO/ES2/IA); só TCC bloqueado**
+  > (divergência de geradores de índice — campanha de unificação).
 
 - [USER] **Gold cross-curso** (DURÁVEL/intent) — rotular `tests/fixtures/eval/ground_truth_<curso>.csv` IA/SO/ES2/TCC
   (MF já mede via eval_assignments 5/5). Planilhas em `docs/reports/gold_templates/gold_by_card_<curso>.csv`
