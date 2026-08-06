@@ -1549,6 +1549,9 @@ def build_file_map_content_taxonomy_from_course(
 
 def _derive_unit_specs_from_repo(course_meta: dict) -> list:
     """Fallback: deriva unit_specs do COURSE_MAP.md + .timeline_index.json do repo."""
+    _logger.warning(
+        "unidades derivadas do repo gerado, nao do plano de ensino — fallback"
+    )
     from src.builder.extraction.teaching_plan import _normalize_unit_slug as _slug_fn
 
     repo_root = course_meta.get("_repo_root")

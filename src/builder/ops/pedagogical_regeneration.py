@@ -252,6 +252,47 @@ def attach_block_summary_fields(entries: list, code_curation: dict, blocks: list
     return entries
 
 
+def _guard_units_not_silently_lost(root_dir, course_name: str, parsed_unit_count: int) -> None:
+    """Guard "unidade nunca encolhe em silencio" (fio subject_profile, Task 4).
+
+    Recusa PERSISTIR um indice/taxonomia reconstruidos quando o plano de
+    ensino recem-parseado devolveu 0 unidades ENQUANTO o
+    `course/.timeline_index.json` JA EXISTENTE no repo carrega >=2
+    unit-slugs distintos. Esse padrao e o mecanismo exato da perda
+    silenciosa da u3 do MF (docs/reports/2026-08-05-unit-sources-investigacao.md):
+    `subject_profile` ausente -> `teaching_plan=""` -> `content_taxonomy["units"]=[]`
+    -> unidades somem sem nenhum log. Repo novo (sem indice ainda) ou plano
+    legitimamente vazio (indice com <2 slugs) NAO disparam.
+
+    Generico: recebe `root_dir`/`course_name` como parametros, sem hardcode
+    por curso -- roda para qualquer curso que passe por
+    `regenerate_pedagogical_files`.
+    """
+    if parsed_unit_count != 0:
+        return
+    idx_path = Path(root_dir) / "course" / ".timeline_index.json"
+    if not idx_path.is_file():
+        return
+    try:
+        existing = json.loads(idx_path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return
+    slugs = set()
+    for block in existing.get("blocks") or []:
+        for key in ("unit_slug", "auto_unit_slug"):
+            slug = str(block.get(key) or "").strip()
+            if slug:
+                slugs.add(slug)
+    if len(slugs) < 2:
+        return
+    raise RuntimeError(
+        f"Guard 'unidade nunca encolhe em silencio': curso {course_name!r} - "
+        f"plano de ensino recem-parseado tem {parsed_unit_count} unidades, mas "
+        f"o indice existente ({idx_path}) tem {len(slugs)} unit-slugs "
+        f"distintos. Perfil da materia ausente? subjects.json?"
+    )
+
+
 def regenerate_pedagogical_files(
     builder,
     manifest: dict,
@@ -320,6 +361,11 @@ def regenerate_pedagogical_files(
         runtime_course_meta,
         builder.subject_profile,
         live_manifest_entries,
+    )
+    _guard_units_not_silently_lost(
+        builder.root_dir,
+        runtime_course_meta.get("course_name", "Curso"),
+        len(content_taxonomy.get("units") or []),
     )
     runtime_course_meta["_content_taxonomy"] = content_taxonomy
     write_internal_content_taxonomy_fn(builder.root_dir, content_taxonomy)
