@@ -24,6 +24,11 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   > recontagem `as-of 2026-08-06` (varredura): **46** entradas em `git status --porcelain -uall`
   > (33 M + 13 ??, incluindo `course/.timeline_index.json.bak` e `manifest.json.apibak`).
   > IA-Tutor no mesmo estado: **48** entradas, idêntico ao catalogado em 2026-08-05.
+  > **DOSSIÊ PRONTO (2026-08-06, `docs/reports/2026-08-06-dossie-triagem-es2-ia.md`) — VEREDITO
+  > INVERTE A HIPÓTESE: não é lixo, são sessões VÁLIDAS nunca commitadas** (ES2: import 01/07
+  > com +10 materiais, 6 curated referenciados no manifest; IA: poda 23/06 executada + import
+  > de 21 notebooks 25/06 + reprocess 01/07). Ação certa = COMMITAR (sem os .bak), nunca
+  > checkout/clean. 3 decisões pedidas no dossiê (ruling do user).
 
 - [USER] **Gold cross-curso** (DURÁVEL/intent) — rotular `tests/fixtures/eval/ground_truth_<curso>.csv` IA/SO/ES2/TCC
   (MF já mede via eval_assignments 5/5). Planilhas em `docs/reports/gold_templates/gold_by_card_<curso>.csv`
