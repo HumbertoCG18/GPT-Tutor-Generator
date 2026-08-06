@@ -1104,7 +1104,15 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   `teaching_plan` real do `subjects.json` via `SubjectStore.find_by_repo_root`). **4/5 cursos com
   PERDA de unidade, não só o MF.** TCC 4/4 OK (único intacto). MF 3→2 (falta u03, causa-raiz já
   mapeada). SO 7→6 (falta a unidade do **MEIO**, u04-deadlock — u05/06/07 sobrevivem intactas no
-  índice, **não é truncamento de cauda**). ES2 3→2 (falta u03-testes-de-software). IA 5→3 (faltam
+  índice, **não é truncamento de cauda**; sanity check fix-round-1: 0 referência pendurada a
+  u04/deadlock em `unit_slug`/`auto_unit_slug`/`period_label` de qualquer bloco = drop limpo, NÃO
+  ref quebrada — **mas achado NOVO mais sério**: o `topic_text` de bloco-05 (unidade-02) contém
+  literalmente "...sincronizacao **deadlock** especi..." — o CONTEÚDO de deadlock foi absorvido
+  no texto agregado do bloco vizinho sob a unidade ERRADA, perda de fidelidade, não só de rótulo;
+  e **a ordem das unidades no índice SO não é monotônica** — bloco-10=`unidade-07`,
+  bloco-11=`unidade-05`, bloco-12=`unidade-07` de novo — sinal de múltiplas rodadas de reprocess
+  sobrepostas, mecanismo não investigado, registrado para a Task 3). ES2 3→2 (falta
+  u03-testes-de-software). IA 5→3 (faltam
   u04-raciocinio-sob-incerteza e u05-aprendizado-de-maquina). Todos os 5 repos TÊM
   `.timeline_index.json` (a suposição "IA pode não ter índice" estava desatualizada). Mesmo
   mecanismo da investigação MF (`2026-08-05-unit-sources-investigacao.md`): qualquer reprocess
@@ -1122,26 +1130,32 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   delta de `unit_slug` nos 21 blocos é o bloco-16 (o fix pretendido).
   **DESVIO — PARADO, NÃO ajustado (regra da task):** `computed_block_id` não é byte-idêntico em
   **3/67 entries** (`logicadehoare` bloco-10→bloco-11; `classes-parte1`/`classes-parte2`
-  bloco-15→bloco-13). **Causa-raiz isolada e NÃO é o fio**: reproduzido byte-a-byte rodando
+  bloco-15→bloco-13). **Causa-raiz isolada e NÃO é o fio** (reproduzido byte-a-byte com
   `retag(MF, subject_profile=None)` — mesmos 3 IDs, mesmos blocos de destino, independente de
-  `subject_profile`. É a "Dívida #5" já documentada em código
-  (`content_taxonomy.py:1024-1028,1327-1338`): `retag()` monta `course_meta` sem
-  `_content_taxonomy`, cai no fallback de disco (possivelmente stale) pro scorer de bloco; quando
-  esse scorer legado (`card+scorer`) diverge do `computed_block_id` já gravado por método de
-  maior precedência (`llm_only`, curadoria de código Gemini), a regra de preservação só mantém o
-  method antigo se o ID bater — senão sobrescreve e apaga `computed_block_match_confidence`/
-  `computed_block_rationale`. `classes-parte1/2` (disco `llm_only`, conf 0.28, band media,
-  **CORRETO no gold** `true_block_id=bloco-15`) caem pra `card+scorer`, conf 0.039, band baixa,
-  **ERRADO no gold**. `logicadehoare` já era `card+scorer`/band baixa nos dois lados (0.009→0.004,
-  ambos chutes fracos) — não é regressão de confiança. **Confirmado que o caminho de PRODUÇÃO não
-  tem essa lacuna**: `ops/pedagogical_regeneration.py:319-325` injeta `_content_taxonomy` fresco
-  ANTES de chamar `resolve_unit_block_tags_fn` — só o script `retag_manifest.py` standalone (usado
-  aqui como sonda, por instrução do brief) tem o buraco. **Implicação p/ Fio Task 3**: `retag()`
-  não é 100% fiel ao reprocess real para entries com `computed_block_method` em
-  `{llm_only, consensus}`; medir o reprocess real precisa rodar o pipeline completo
-  (`RepoBuilder`/`_regenerate_pedagogical_files`), não só `retag()`, e vigiar os 3 IDs
-  (`logicadehoare`, `classes-parte1`, `classes-parte2`) no diff pré/pós para separar efeito do fio
-  de artefato do script-sonda.
+  `subject_profile`) — isso está confirmado por teste. **A CAUSA REAL da divergência disco-vs-
+  recompute é HIPÓTESE ABERTA — resolver na Task 3 com o diff pré/pós do reprocess real**
+  (item PRIMÁRIO, não afterthought — fix round 1 da revisão retirou a atribuição original a
+  "Dívida #5" por falta de teste; ver reconciliação completa em
+  `.superpowers/sdd/2026-08-05-fio-subject-profile/task-2-report.md` §"Fix round 1"). O que ESTÁ
+  testado e confirmado: (a) não é o fio; (b) não é `_content_taxonomy` ausente — injetei a
+  taxonomia real e o drift persiste idêntico (o caminho real desses 3 entries,
+  `_card_scoped_block`→`_best_instructional_block_fallback`, é puramente lexical, nunca lê
+  `_content_taxonomy` — meu diagnóstico original estava ERRADO, código-fonte confirma:
+  `content_taxonomy.py:886-916,825-878`, `preferred_unit_slug`/`preferred_topic_slug` hardcoded
+  vazios); (c) para `classes-parte1`/`classes-parte2` (têm `code_curation.json`), simular a ORDEM
+  real de produção (`resolve_unit_block_tags` + `attach_block_summary_fields`,
+  `pedagogical_regeneration.py:182-252`) mostra que o `computed_block_id` **também driftaria em
+  produção real** para o mesmo bloco novo (o D1 restore gate exige "sem card", e os 3 TÊM card —
+  nunca dispara) — só o `computed_block_method` seria restaurado para `llm_only` pelo cache,
+  criando uma inconsistência method-vs-id (`llm_only` mas id/conf/band são do `card+scorer`) que
+  também existiria em produção, não só no script-sonda; (d) `logicadehoare` não tem
+  `code_curation.json` (é PDF) — nem a hipótese (c) se aplica a ele. **Nenhuma das 3 histórias
+  causais testadas (minha original, a do revisor, e a do achado independente
+  `2026-08-05-planob-investigacao.md` §2b Evidência 2 — que já nomeava os MESMOS 3 IDs como
+  "manifest stale" antes desta task) explica por que o scorer de hoje prefere um bloco diferente
+  do gravado em disco.** `manifest.json` do MF tem mtime 2026-08-04 17:58 (a MESMA rodada que
+  produziu o `.content_taxonomy.json` envenenado) — não é staleness de meses, é a última rodada
+  real, sem mecanismo de divergência identificado.
 
 - [DERIVADO] **Régua completa (7 probes) + suite byte-idênticos, pós-Task-1** (`as-of f11dda7`).
   fase0 48/58=82.8% conten0 cw1 · fase1 recall 0.900 (9/10) · fase2-SO 45.2%/colisões0/cw0/77.8% ·
