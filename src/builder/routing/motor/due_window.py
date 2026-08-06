@@ -15,23 +15,24 @@ from pathlib import Path
 from typing import Optional
 
 from src.builder.routing.motor.contracts import AnchorDecision, MotorContext
+from src.builder.timeline.kinds import NON_ACADEMIC_KINDS
 from src.utils.helpers import norm_ascii_lower
 
 _TDE_PREFIX = "TDE"
 _STEM_RE = re.compile(r"\bt(\d+)\b")
 _CONF_ALTA, _CONF_MEDIA = 0.95, 0.75
 
-# T17: kinds NAO-CONTEUDO do filtro D-H (bloco nunca ancora due-window).
-# Derivado dos 4 .timeline_index.json reais disponiveis (TCC/MF/SO/ES2, ver
-# tests/test_motor_due_window.py) pelo criterio "kind cujos blocos hoje
-# aparecem com topics=[]" — os unicos dois sao assessment (prova) e review
-# (revisao), coerente com o uso ja existente em content_taxonomy.py:966,973.
-# Todo outro kind observado (class, deliverable, holiday, academic_event,
-# office_hours, overview, results, reserved, suspended, workshop) tem topics
-# sempre populado hoje -> permanece CONTEUDO. `kind` ausente/desconhecido
-# tambem fica CONTEUDO (fail-open: nao inventa exclusao para kind fora do
-# enum fechado do schema).
-_NON_CONTENT_KINDS = frozenset({"assessment", "review"})
+# T17 + expansao D-H (2026-08-06): kinds NAO-CONTEUDO do filtro (bloco nunca
+# ancora due-window). assessment/review = prova/revisao (T17, coerente com
+# content_taxonomy.py:966,973); NON_ACADEMIC_KINDS (kinds.py) = conjunto
+# canonico "sem unit/topic/files esperados" (holiday, suspended,
+# academic_event, office_hours, planning, reserved, results) — nenhum pode
+# ser "ultimo bloco de conteudo" de entrega, mesmo com topics populado
+# (fecha o fail-open pre-rollout ES2/curso novo). makeup/overview/unknown
+# ficam CONTEUDO: reposicao/introducao sao aula; kind ausente/desconhecido
+# segue fail-open (nao inventa exclusao para kind fora do enum do schema).
+_NON_CONTENT_KINDS = frozenset({"assessment", "review"}) | frozenset(
+    k.value for k in NON_ACADEMIC_KINDS)
 
 
 def tier2_due_scope(entry: dict) -> bool:

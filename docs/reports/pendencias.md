@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-05
+last_updated: 2026-08-06 (varredura com dados reais — suite 1869/4/0; audit_gold_freshness hard=0 nos 5 cursos)
 > Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
 > mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
@@ -21,6 +21,9 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   causada pela sessão) — **45 arquivos** com mtimes de **01/07** e **04/08**. Inspecionar antes do
   rollout ES2 (item "Depois do Plano B" da fila): confirmar se é lixo de builds/experimentos
   anteriores ou conteúdo válido não-limpo, antes de flag-ON o motor no curso.
+  > recontagem `as-of 2026-08-06` (varredura): **46** entradas em `git status --porcelain -uall`
+  > (33 M + 13 ??, incluindo `course/.timeline_index.json.bak` e `manifest.json.apibak`).
+  > IA-Tutor no mesmo estado: **48** entradas, idêntico ao catalogado em 2026-08-05.
 
 - [USER] **Gold cross-curso** (DURÁVEL/intent) — rotular `tests/fixtures/eval/ground_truth_<curso>.csv` IA/SO/ES2/TCC
   (MF já mede via eval_assignments 5/5). Planilhas em `docs/reports/gold_templates/gold_by_card_<curso>.csv`
@@ -286,8 +289,12 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   **FIX aplicado (2026-06-22, working tree, uncommitted):** `_save` agora preserva ambos de `existing`
   (espelha `turma`/`schedule_url`, dialogs.py:1521-1525). 388 testes verdes (core/moodle/m365). NOTA: o fix
   evita zeragem FUTURA; o `moodle_course_id` do IA já perdido precisa **re-import Moodle** pra restaurar.
-- [CODE] `migrate_signals` standalone **não grava `turma`** (só `import_moodle_courses` grava) — derivar do curso.
+- ~~[CODE] `migrate_signals` standalone **não grava `turma`** (só `import_moodle_courses` grava) — derivar do curso.~~
   > derived-código, não-reprocess-stale, as-of 18/06 (S0).
+  **STALE — fechado em algum ponto pós-18/06 (verificado 2026-08-06, varredura):**
+  `backfill_repo_signals_additive` grava `manifest["turma"]` quando `info` traz turma
+  (`moodle.py:462-463`), o parse do curso extrai turma (`moodle.py:62-78`) e o docstring do
+  migrador declara turma no escopo S0. Sem gap restante.
 - ~~[CODE] **Latente:** sem teaching_plan, `_derive_unit_specs_from_repo` vs `content_taxonomy["units"]=[]`
   divergem → fallback vira load-bearing.~~ **CONFIRMADO EM PRODUÇÃO (2026-08-05, investigação
   `docs/reports/2026-08-05-unit-sources-investigacao.md`) — vira o item [CODE] PRIORITÁRIO abaixo.**
@@ -311,7 +318,13 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   **Depois do wiring fix** (não antes — evita migrar o veneno): unificar as 2 fontes de unidade
   (`unit_index` vira projeção de `content_taxonomy`) — merge antes do fix causaria churn de slugs
   nos 5 repos-tutor (títulos Title-Cased do fallback ≠ títulos acentuados do plano).
-- [CODE] **BLOQUEANTE pré-rollout ES2/curso novo** (`as-of 2026-08-05`, achado Plano B Task 5 fix
+- ~~[CODE] **BLOQUEANTE pré-rollout ES2/curso novo**~~ **RESOLVIDO (2026-08-06, TDD):**
+  `_NON_CONTENT_KINDS` expandido com `NON_ACADEMIC_KINDS` canônico de `kinds.py` (holiday,
+  suspended, academic_event, office_hours, planning, reserved, results) — admin nunca ancora
+  entrega, mesmo com `topics` populado; makeup/overview/unknown seguem CONTEÚDO (fail-open
+  para fora-do-enum preservado). RED confirmado pré-fix (holiday ancorava), GREEN 20/20 no
+  arquivo, fase5 PASS 4/8 cw0 byte-idêntico, suite 1871/4/0. Texto original:
+  (`as-of 2026-08-05`, achado Plano B Task 5 fix
   round 1, deferido). Filtro D-H do due-window (`due_window.py`, `_NON_CONTENT_KINDS=
   {"assessment","review"}`) foi derivado só dos kinds REALMENTE observados nos 4 índices
   disponíveis hoje (TCC/MF/SO/ES2 sem due real; IA-Tutor sem índice) — kinds administrativos nunca
@@ -334,7 +347,8 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - [CODE] **`preserve_raw` morto no `reject`** (`as-of 2026-08-06`, achado fio Task 1, reviewer
   pré-existente não desta task). `builder.reject(entry_id, preserve_raw=False)` sempre cai no
   `except TypeError` — a assinatura atual de `reject` não tem parâmetro `preserve_raw`
-  (`engine.py:2194` / `lifecycle_ops.py:307`). 2 builders passam por esse caminho no reject hoje.
+  (`engine.py:2194` / `lifecycle_ops.py:313`; re-verificado 2026-08-06, call-site
+  `curator_studio.py:1301` com os 2 builders no try/except). 2 builders passam por esse caminho no reject hoje.
   Fix: remover o parâmetro morto das chamadas OU implementar o comportamento que o nome promete
   (não decidido; registrar para triagem).
 
@@ -623,7 +637,11 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   **[CODE] Pré-requisito do flip real:** o sidecar `material_curation.json` NÃO existe na raiz do
   `Metodos-Formais-Tutor` — fazer seed do cache F3 (`docs/reports/material_curation_MF.json` →
   raiz do repo-tutor) antes do 1º reprocess flag-ON, senão a 1ª rodada re-paga até 20 votos (cap).
-- [USER/DECISION] **Auditoria .env (2026-07-22): armadilha de token Moodle stale.**
+- ~~[USER/DECISION] **Auditoria .env (2026-07-22): armadilha de token Moodle stale.**~~
+  **RESOLVIDO (verificado 2026-08-06, varredura):** `.env` raiz hoje só tem
+  `GEMINI_API_KEY`/`DATALAB_API_KEY`/`DATALAB_BASE_URL` — as chaves MOODLE saíram do raiz;
+  `moddle/.env` virou fonte única (recomendação do controller executada; zero código).
+  Texto original preservado abaixo:
   `MOODLE_URL`/`MOODLE_TOKEN` existem no `.env` RAIZ e em `moddle/.env`; a raiz vence
   (os.environ carregado no import por `helpers._load_project_env_file`), mas a GUI
   (`save_moodle_token`, moodle.py:638) escreve SÓ em `moddle/.env` → renovar token pela GUI
@@ -631,14 +649,25 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   controller: remover as chaves MOODLE do `.env` raiz (zero código; `moddle/.env` vira fonte
   única). Alternativa [CODE]: `save_moodle_token` fazer merge no raiz e aposentar `moddle/.env`.
   DECISÃO PENDENTE do user.
-- [USER] **`MOODLE_PRIVATE_TOKEN` é chave morta** — presente no `.env` raiz e documentada no
+- ~~[USER] **`MOODLE_PRIVATE_TOKEN` é chave morta** — presente no `.env` raiz e documentada no
   `.env.exemple`, mas ZERO consumidores no código (grep 2026-07-22). Remover do `.env` e do
-  template (o template hoje ensina a criar uma chave que não faz nada).
+  template (o template hoje ensina a criar uma chave que não faz nada).~~
+  **RESOLVIDO (verificado 2026-08-06, varredura):** fora do `.env` raiz e do `.env.exemple`
+  (as duas remoções pedidas). Zero consumidores re-confirmado por grep (só menções em docs).
+  Residual inofensivo: a chave ainda existe em `moddle/.env` — ninguém a lê; apagar é opcional.
 - [CODE] **`datalab_client` depende de import transitivo de `helpers` para ver o `.env`** —
+  (re-verificado 2026-08-06: ainda vivo; arquivo hoje em `src/builder/runtime/datalab_client.py`,
+  lê `os.environ` nas linhas 30/61/65 sem loader próprio) —
   lê `os.environ` em call-time sem carregar o `.env` por conta própria; hoje todos os chamadores
   (engine, dialogs) importam helpers antes, mas um script standalone futuro que o use direto
   não veria as chaves. Fix barato quando tocar o arquivo: import de helpers (ou chamada explícita
   ao loader) no topo do datalab_client.
+- [CODE] **Hook `code-review-graph` crasha com erro de encoding cp1252 em todo commit**
+  (`as-of 2026-08-06`; o handoff 2026-08-05/06 dizia "registrado como pendência", mas o item não
+  existia neste tracker — registrado agora). Cosmético: engole o painel de risco no output do
+  commit, não bloqueia o commit. Fix provável: forçar UTF-8 no stdout do hook
+  (`PYTHONIOENCODING=utf-8` ou `sys.stdout.reconfigure`). Mesma família do mojibake de console
+  que fabricou o falso U+FFFD da fio Task 3 (ver AMENDMENT 2026-08-06).
 - [DERIVADO] **Provider janela-de-prazo (TIER 2) ENTREGUE (2026-07-22, commits `b64d983..6d1418a`,
   7 commits; spec `2026-07-22-janela-de-prazo-tier2-design.md`, plano em plans/).** Probe-first:
   `fase5_prova_tier2.py` cravou baseline **1/8** ANTES de código (universo 8 rows out-of-scope,
@@ -808,7 +837,24 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - [USER/DECISION] **Pre-flight rollout SO (2026-08-04): flip ADIADO — hard=1.** Auditoria `audit_gold_freshness.py --course SO` (`as-of 2026-08-04`): 42 entries scorable, 21 suspeitas (hard=1). Única row com hard-flag = `lista2` [ADMIN_TRUE, ZERO_OVERLAP] true=bloco-17, kind=assessment, título="lista2" não casa regex `ASSESS_TITLE_RE` (label=1 dia · 25/06/2026). **Achado PRÉ-EXISTENTE:** timeline_index SO datado 28/jun (anterior à campanha); Sistemas-Operacionais-Tutor não tocado pela task; heurístico ADMIN_TRUE reproduz estado pré-existente (não regressão do motor). **Regra não-negociável:** medição só com hard=0 e gold muda SÓ com evidência + autorização do user → flip SO bloqueado até ruling do user sobre lista2 (re-rotular true_block OU confirmar bloco-17 como legítimo — lista de revisão de prova). **Pré-requisitos técnicos SATISFEITOS:** baseline fase2_SO 45.2%/0/0 segue válido e byte-idêntico (medido 2026-08-04); topics 19/21 blocos ok (ZERO_OVERLAP = limitação de léxico em nomes como "segmentação" sem overlap semântico com conteúdo bloco-12=TP2, não erro de placement); material_curation.json próprio na raiz do SO-Tutor presente (cache voter local; flip futuro liga use_anchor_engine+use_llm_voter normalmente). **Decisão:** SO flip adiado até autorização do user; Task 7 (TCC trilha 2) pode prosseguir em paralelo (cursos independentes). **Report completo:** `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-6-report.md`.
 - [DERIVADO/DECISION] **Rollout flag-ON TCC BLOQUEADO (2026-08-04): gate estrutural (b) funil FALHOU — achado PRÉ-EXISTENTE e ORTOGONAL às flags, confirmado por diagnóstico; sem commit, flags revertidas.** Pre-flight `audit_gold_freshness.py --course TCC`: hard=0 (42 rows, 8 suspeitas ZERO_OVERLAP não-hard). Baseline `fase2_prova_TCC.py`: pinos 5/5 + cobertura 83.3% (30/36) + cw=0 — byte-idêntico ao aceito. Snapshot pré-rollout: `TCC-Tutor` commit `28bb29f`. Flip aplicado e verificado por round-trip (`Teoria da Computabilidade e Complexidade.feature_flags = {use_anchor_engine:true, use_llm_voter:true}`; MF e SO confirmados intocados no mesmo round-trip). Reprocess (`--flags use_anchor_engine,use_llm_voter`) rodou sem traceback: `bloco 27/27 → 27/27`. **Voter SEM cache prévio (TCC não tinha `material_curation.json` na raiz): 16 votos NOVOS pagos (Gemini `gemini-3.5-flash`), todos `confianca=alta`, 0 fila humana (nenhum `temporal_block_flag=True`)** — abaixo do cap built-in 20. **Gate estrutural a/c/d PASS:** (a) os 2 únicos `manual_timeline_block_id` do manifest (`plano-de-ensino`, `3d-matching`) preservados byte-idênticos, nenhum com `temporal_block_id` sujo. (c) 19/27 entries com `temporal_block_id`: providers `{llm:16, manual:1, topic:2}`, bands `{media:16, alta:3}`, methods `{llm:16, janela-1:1, disamb:2}` — zero entries de categoria out-of-scope (trabalhos/provas/cronograma/etc.) com temporal fora de due-window. (d) `material_curation.json` criado na raiz, 16/20 votos. **Gate (b) FUNIL FALHOU:** 4/27 entries mudaram `auto_tags bloco:` entre `manifest.json.bak` (pré) e `manifest.json` (pós) SEM nenhum `temporal_block_id` associado (motor não tocou essas entries — todos os campos `temporal_*` = None nelas): `3dm-caetano-gabriel-e-gustavo` bloco-22→16, `cubic-3-edge-coloring` bloco-26→16, `integer-programming-0001` bloco-13→16, `programacao-inteira-01-20260617-154423-0000` bloco-13→16 — exatamente as mesmas 4 (de 8) linhas já flagueadas `ZERO_OVERLAP` no pre-flight (workshop "Semana 14 - Apresentações T2", conteúdo de teoria dos grafos sem overlap léxico com o vocabulário do curso). **Diagnóstico (prova de causa):** árvore revertida pro snapshot `28bb29f` e `reprocess_assignments.py` rodado SEM `--flags` (flag-OFF puro) como controle — a MESMA drift bloco-22/26/13/13→16 reproduziu IDÊNTICA nas mesmas 4 entries, 0 `temporal_block_id` gerado. **Conclusão: instabilidade do funil-base (recompute de `auto_tags bloco:` fora do anchor engine) é PRÉ-EXISTENTE e ORTOGONAL ao flip `use_anchor_engine`/`use_llm_voter`** — não é regressão desta task, mas viola a letra do gate "(b) zero mudanças" tal como especificado na dispatch. **Ação tomada (sem mandato para autorizar unilateralmente a exceção):** `TCC-Tutor` revertido (`git checkout -- .`) ao snapshot `28bb29f` (working tree limpa; `material_curation.json` de 16 votos PRESERVADO untracked, para reaproveitar cache em retry e não pagar de novo); `subjects.json` revertido (`Teoria da Computabilidade e Complexidade.feature_flags = {}`; MF/SO/IA/ES2 confirmados intocados). **Nenhum commit feito em `TCC-Tutor` nem push.** Pendência: ruling humano sobre se a drift do funil-base nas 4 entries de workshop (pré-existente, comprovadamente independente do flip, mesmas 4 já suspeitas no gold) é aceitável para prosseguir com o rollout TCC, ou se exige correção separada do funil-base antes do flip (fora do mandato desta task — proibido tocar `src/`, proibido re-tuning). Retry recomendado após ruling: reflip + reprocess deve reaproveitar os 16 votos já pagos (cache bate por `content_key` md5) e fechar 0 chamadas API novas. **Report completo:** `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-7-report.md`.
 - [DERIVADO/DECISION] **Fix round 1 — rollout flag-ON TCC (2026-08-04): controller ACEITOU condicionalmente a exceção do gate (b) e pediu critério decisivo mensurável; critério decisivo FALHOU → flip TCC ADIADO (bug funil-base, mesmo tratamento do SO), rollback completo, sem commit.** Ruling do controller sobre o BLOCKED anterior: experimento de controle (drift reproduzido com flags OFF) aceito como prova de causa ortogonal — não é aceitação cega, decisão final condicionada a medição. Executado: **(1)** re-flip TCC (`feature_flags={use_anchor_engine:true, use_llm_voter:true}`), MF confirmado ON no mesmo round-trip. **(2)** reprocess retry sem traceback (`bloco 27/27 → 27/27`); `material_curation.json` **16→16 votos, 0 chamadas novas** (diff de chaves: `novas={}`, `removidas={}` — cache cobriu 100%, dentro da tolerância ≤2). **(3)** gate a/c/d PASS de novo (idênticos ao round anterior); gate (b) restrito: drift bateu **exatamente** as mesmas 4 entries do experimento de controle (`3dm-caetano-gabriel-e-gustavo`, `cubic-3-edge-coloring`, `integer-programming-0001`, `programacao-inteira-01-20260617-154423-0000`), nenhuma entry adicional — condição do controller satisfeita nesse ponto. **(4) CRITÉRIO DECISIVO — MISTO:** `audit_gold_freshness.py --course TCC` pós-reprocess = **hard=0** (idêntico, mesmas 8 suspeitas ZERO_OVERLAP) → PASS; mas `fase2_prova_TCC.py` pós-reprocess **NÃO bateu idêntico**: pinos seguem 5/5 e cobertura 83.3%, porém **`confiante-e-errado` foi de 0 para 1** (`aula-01-apresentacao-da-disciplina-...`, computado=bloco-02, gold true=bloco-01, provider=`topic`) e a acurácia par-colapsada subiu 84.2%→89.5% (par-colapsada 16/19=84.2%→17/19=89.5%; acc topic bruta 16/20→17/20) — **VEREDITO FASE2: FAIL**. Isso viola a letra do critério ("AMBOS idênticos") → **rollback obrigatório**. **Fato registrado sobre as 4 entries do gate (b):** todas têm row no gold TCC (`scorable=yes`, `true_block_id=bloco-24`), mas o `computed_block_id` congelado no CSV já era bloco-22/26/13/13 (ERRADO vs bloco-24) **antes** desta task tocar qualquer coisa — a drift do funil-base trocou um valor errado por outro valor errado (bloco-16), não mudou o veredito de correção dessas 4 linhas especificamente. **O achado novo e mais sério é `aula-01`:** seu `auto_tags bloco:` no manifest (`bloco-02`) ficou byte-idêntico nas 3 fotografias comparadas (pristine pré-reprocess, 1º run flag-ON, retry flag-ON) — a mudança NÃO é no funil-base desta vez. O que mudou foi que `aula-01` passou a ter `temporal_block_id` populado via voter LLM (`provider=llm`, `band=media`, voto cacheado do 1º run) nesta rodada, e isso por si só empurrou o cálculo de confiança do `fase2_prova_TCC.py` para "confiante" sobre uma resposta que já estava errada e antes não era contada como confiante — **este efeito É causado pelo flip** (voter tocando uma entry cuja resposta de base já era errada e endossando-a com confiança), diferente da drift das 4 entries (comprovadamente ortogonal). **Ação (rollback completo, sem mandato para seguir com desvio no critério decisivo):** `TCC-Tutor` revertido (`git checkout -- .`) pro snapshot `28bb29f` (confirmado: 0 `temporal_block_id` no manifest pós-revert); `material_curation.json` (16 votos) **preservado untracked** para retry futuro sem custo; `subjects.json` revertido (`Teoria da Computabilidade e Complexidade.feature_flags = {}`, MF/SO/IA/ES2 confirmados intocados). **Nenhum commit em `TCC-Tutor`.** **Decisão: TCC flip ADIADO, mesmo tratamento do SO** — pendente de investigação/fix do bug de instabilidade do funil-base (ver item de dívida técnica abaixo) antes de reautorizar novo retry. **Report completo (todos os números, diffs, evidência):** `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-7-report.md`.
-- [CODE] **Funil-base TCC recomputa `auto_tags bloco:`/confiança de forma instável a cada reprocess — candidato a bug de idempotência do retag (não investigado, fora do mandato de tocar `src/`).** Evidência: reprocess de `TCC-Tutor` (com OU sem `--flags`) muda `auto_tags bloco:` de 4 entries fixas (`3dm-caetano-gabriel-e-gustavo`, `cubic-3-edge-coloring`, `integer-programming-0001`, `programacao-inteira-01-20260617-154423-0000`) mesmo sem o anchor engine tocá-las (`temporal_block_id=None` nas 4). Adicionalmente, no Fix round 1, `aula-01-apresentacao-...` teve seu `temporal_block_id` populado via voter LLM (cache) numa rodada e isso sozinho fez `fase2_prova_TCC.py` marcar a entry como `confiante-e-errado` (era wrong-mas-não-confiante antes). Não sabemos se a causa é não-determinismo de `set()`/hash (hipótese já registrada no achado colateral do Task 3 MF) ou algo mais estrutural do recompute do funil-base/voter-confidence — candidato a investigação e fix antes de reautorizar o rollout TCC. Vai para o Plano B/cutover.
+- [DERIVADO/DECISION] **TCC re-flip tentativa 3 (2026-08-06): FAIL honesto do critério decisivo →
+  rollback completo sha256-verificado, flags revertidas, sem commit.** Report:
+  `docs/reports/2026-08-06-tcc-reflip-fail-report.md`. Resumo: gates a/c/d PASS (pinos 2/2;
+  temporal 19/27 idêntico à referência {llm:16,manual:1,topic:2}, fila 0; votos 16→16, 0 API);
+  gate (b) 1 drift `cubic` bloco-26→22 = materialização esperada do fix 2b (integer/programacao
+  ESTÁVEIS — instabilidade antiga do funil-base NÃO reproduziu, fix 2b estabilizou); MAS
+  fase2-TCC pós caiu 84.2%→78.9% (cw manteve 0) e audit hard 0→1 (`aula-14` ADMIN_TRUE:
+  **bloco-13 virou `kind=assessment` no índice do reprocess**, janela do card Semana-10 ganhou
+  bloco-13). **Causa nomeada: índice de `reprocess_assignments` ≠ índice do rebuild cirúrgico
+  (`rebuild_course`) que vive no repo desde 2026-08-04 — 3ª aparição da família dual-source
+  (gerador-vs-gerador).** TCC re-flip re-BLOQUEADO; pré-requisito = reconciliar os 2 geradores
+  de índice (kind de bloco determinístico) — insumo PRIORITÁRIO da campanha de unificação.
+  T18 confirmado em produção no mesmo rito (`[profile]` no stdout, sem `--flags`).
+- [CODE] **Funil-base TCC recomputa `auto_tags bloco:`/confiança de forma instável a cada reprocess — candidato a bug de idempotência do retag (não investigado, fora do mandato de tocar `src/`).**
+  > AMENDMENT 2026-08-06 (re-flip tentativa 3): a instabilidade das 4 entries NÃO reproduziu
+  > pós-fix-2b (integer/programacao estáveis; cubic moveu 1x para o valor previsto pelo fix e
+  > 3dm já estava lá) — ESTA parte está resolvida. O problema vivo mudou de endereço: divergência
+  > reprocess-vs-rebuild do ÍNDICE (kind do bloco-13), ver entrada nova acima. Evidência: reprocess de `TCC-Tutor` (com OU sem `--flags`) muda `auto_tags bloco:` de 4 entries fixas (`3dm-caetano-gabriel-e-gustavo`, `cubic-3-edge-coloring`, `integer-programming-0001`, `programacao-inteira-01-20260617-154423-0000`) mesmo sem o anchor engine tocá-las (`temporal_block_id=None` nas 4). Adicionalmente, no Fix round 1, `aula-01-apresentacao-...` teve seu `temporal_block_id` populado via voter LLM (cache) numa rodada e isso sozinho fez `fase2_prova_TCC.py` marcar a entry como `confiante-e-errado` (era wrong-mas-não-confiante antes). Não sabemos se a causa é não-determinismo de `set()`/hash (hipótese já registrada no achado colateral do Task 3 MF) ou algo mais estrutural do recompute do funil-base/voter-confidence — candidato a investigação e fix antes de reautorizar o rollout TCC. Vai para o Plano B/cutover.
 - [DERIVADO] **Audit pré-rollout IA/ES2 (2026-08-04)**: IA (74 rows, 0 hard, 7 soft ZERO_OVERLAP) + ES2 (35 rows, 0 hard, 22 soft ZERO_OVERLAP). Feature flags: IA `{"use_anchor_placement": true}` (legado ativo), ES2 `{}` (OK). `material_curation.json` não presente em ambos (não-crítico). **IA:** gold user-side pendente (trilha 4, 21 SARC batch), stash ~45 `.ipynb`/datasets, timeline 24-29/06 vs SARC vivo (bug conhecido, OK), legado `use_anchor_placement=true` reforça bloqueio pós-flip (flip futuro do motor DEVE desligar no mesmo ato — precedência já OK em `pedagogical_regeneration.py:444`, manter ambos ON é estado não-medido). **ES2:** sem gold fresco desde 21/06 (medição pré-flip obrigatória), ZERO_OVERLAP severo (22/35 rows, validar download SARC). ES2 pronto para rollout flag-ON; IA pronto com ações documentadas pós-flip. Sem flip nesta campanha em nenhum dos dois (audit report-only). Report completo: `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-8-report.md`.
 - [DERIVADO/DECISION] **Rollout flag-ON SO EXECUTADO (2026-08-04, verificado/fechado 2026-08-05):
   gate estrutural a/c/d PASS, gate (b) 1 exceção registrada (classe funil-base já conhecida), fase2
@@ -1231,3 +1277,15 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   SO/ES2/IA recupera as unidades que a verificação da Task 2 encontrou faltando (SO 7→6, ES2 3→2,
   IA 5→3); cada curso pode ter o mesmo padrão de colisão de rótulo do MF e vai exigir a mesma
   investigação antes de confiar no reprocess sozinho.
+  > **AMENDMENT 2026-08-06 (varredura com dados reais): achado extra (1) — U+FFFD — FALSIFICADO.**
+  > `subjects.json` real (`%APPDATA%/GPTTutorGenerator/`, mtime 2026-08-04 20:18:59 — ANTERIOR ao
+  > achado da Task 3 e intocado desde então) tem **0 ocorrências de U+FFFD no arquivo inteiro**
+  > (verificação programática por codepoint); o `teaching_plan` do MF contém "1.3.1. Verificação
+  > de Modelos" acentuado e íntegro, e o inventário non-ASCII do campo só tem acentos legítimos +
+  > símbolos matemáticos. `SubjectStore` lê/grava com `encoding="utf-8"` explícito
+  > (`src/models/core.py:341,349`) — a corrupção também não acontece na leitura. O "Verifica��o"
+  > visto na Task 3 era **mojibake de console** (stdout cp1252 renderizando UTF-8), mesma família
+  > do crash cp1252 do hook `code-review-graph`. **Consequência: o pré-passo "consertar o U+FFFD
+  > antes" da campanha colisão-de-rótulo CAI** — a colisão em si (1.3.1 é texto legítimo do plano
+  > dentro da abertura da u01) permanece o problema real e único. Achado extra (2)
+  > (`unit_confidence=1.0` stale) não afetado.

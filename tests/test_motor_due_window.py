@@ -250,3 +250,45 @@ def test_kind_assessment_nunca_ancora_mesmo_com_topics():
         {"name": "Entrega T2", "due": "2026-08-08", "source": "structured"}]}}
     d = resolve_due_window(_t("t2-x", sec="TDE"), _ctx_kind_gate(cm))
     assert d.block_ref == "bloco-20" and d.method == "due-straddle" and d.flag
+
+
+# --- D-H expansao admin-kinds (pendencia pre-rollout ES2/curso novo) --------
+#
+# NON_ACADEMIC_KINDS (kinds.py) e o conjunto canonico "sem unit/topic/files
+# esperados": holiday, suspended, academic_event, office_hours, planning,
+# reserved, results. Nenhum deles pode ser "ultimo bloco de conteudo" de uma
+# entrega — mesmo quando o corpus atual os traz com topics populado (holiday
+# 0/7 na tabela acima). makeup/overview/unknown ficam CONTEUDO (reposicao e
+# introducao sao aula; unknown preserva o fail-open documentado).
+
+
+def _ctx_admin_kind(kind):
+    blocks = [
+        {"id": "bloco-30", "block_uuid": "u30", "period_start": "2026-09-01",
+         "period_end": "2026-09-05", "kind": "class", "topics": ["t"]},
+        {"id": "bloco-31", "block_uuid": "u31", "period_start": "2026-09-08",
+         "period_end": "2026-09-12", "kind": kind, "topics": ["evento no calendario"]},
+    ]
+    cm = {"TDE": {"assign_dues": [
+        {"name": "Entrega T1", "due": "2026-09-10", "source": "structured"}]}}
+    return MotorContext.from_artifacts(
+        blocks=blocks, card_block_map=cm, lessons_index={})
+
+
+def test_admin_kinds_nunca_ancoram_mesmo_com_topics():
+    """Due CONTIDO em bloco administrativo (mesmo topics!=[]) -> pula para o
+    ultimo bloco de conteudo anterior (straddle+flag), nunca ancora no admin."""
+    for kind in ("holiday", "suspended", "academic_event", "office_hours",
+                 "planning", "reserved", "results"):
+        d = resolve_due_window(_t("t1-x", sec="TDE"), _ctx_admin_kind(kind))
+        assert d is not None, kind
+        assert d.block_ref == "bloco-30", (kind, d.block_ref)
+        assert d.method == "due-straddle" and d.flag, kind
+
+
+def test_makeup_e_overview_seguem_conteudo():
+    """Reposicao e introducao sao aula: ancoram containment normal."""
+    for kind in ("makeup", "overview"):
+        d = resolve_due_window(_t("t1-x", sec="TDE"), _ctx_admin_kind(kind))
+        assert d is not None and d.block_ref == "bloco-31", (kind, d)
+        assert d.method == "due-contain", kind
