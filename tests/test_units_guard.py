@@ -1,7 +1,12 @@
-"""Fio subject_profile — Task 4: guard "unidade nunca encolhe em silencio".
+"""Fio subject_profile — Task 4 (fix round 1): guard "unidade nunca encolhe em silencio".
+
+v2 mede o ENCOLHIMENTO REAL do indice prestes a ser persistido (novo vs existente em
+disco), nao mais o proxy antigo (parsed==0 E existente>=2) -- o proxy disparava mesmo
+quando o fallback repo-derived preservava as unidades (fluxo legitimo "reprocessar sem
+perfil"). Ver CONTROLLER RULING / fix round 1 no task-4-report.md.
 
 Fixtures SINTETICAS apenas (nenhum repo real tocado, per constraint da task).
-Cobre: (a)/(b)/(c) o guard em pedagogical_regeneration.py; (d) scripts/verify_units.py
+Cobre: (a)/(a2)/(b)/(c) o guard em pedagogical_regeneration.py; (d) scripts/verify_units.py
 FAIL em perda nova vs baseline / WARN+exit0 em perda ja conhecida; (e) aviso alto
 do fallback _derive_unit_specs_from_repo (file_map.py).
 """
@@ -12,7 +17,10 @@ import logging
 
 import pytest
 
-from src.builder.ops.pedagogical_regeneration import _guard_units_not_silently_lost
+from src.builder.ops.pedagogical_regeneration import (
+    UnitsShrinkError,
+    _guard_units_not_silently_lost,
+)
 from src.builder.routing.file_map import _derive_unit_specs_from_repo
 
 
@@ -28,37 +36,60 @@ def _write_index(root_dir, unit_slugs):
     )
 
 
-class TestGuardUnitsNotSilentlyLost:
-    def test_fires_when_index_has_units_and_parser_returns_none(self, tmp_path):
-        """(a) indice existente com 2 unit-slugs + parser [] -> RuntimeError com nome do curso."""
-        root_dir = tmp_path / "repo"
-        _write_index(root_dir, ["unidade-01-intro", "unidade-02-avancado"])
+def _index_dict(unit_slugs):
+    return {
+        "version": 3,
+        "blocks": [
+            {"id": f"bloco-{i:02d}", "unit_slug": slug, "auto_unit_slug": slug}
+            for i, slug in enumerate(unit_slugs, start=1)
+        ],
+    }
 
-        with pytest.raises(RuntimeError) as excinfo:
-            _guard_units_not_silently_lost(root_dir, "Metodos Formais", 0)
+
+class TestGuardUnitsNotSilentlyLost:
+    def test_a_fires_on_shrink_with_parsed_zero(self, tmp_path):
+        """(a) indice existente 3 slugs -> novo indice 2 slugs, parser 0 -> UnitsShrinkError
+        com nome do curso (o incidente real de agosto: 3->2 sem subject_profile)."""
+        root_dir = tmp_path / "repo"
+        _write_index(root_dir, ["unidade-01", "unidade-02", "unidade-03"])
+        new_index = _index_dict(["unidade-01", "unidade-02"])
+
+        with pytest.raises(UnitsShrinkError) as excinfo:
+            _guard_units_not_silently_lost(root_dir, "Metodos Formais", 0, new_index)
 
         assert "Metodos Formais" in str(excinfo.value)
 
-    def test_does_not_fire_on_brand_new_repo_without_index(self, tmp_path):
-        """(b) repo novo sem .timeline_index.json + parser [] -> nao dispara."""
+    def test_a2_does_not_fire_when_new_index_preserves_count(self, tmp_path):
+        """(a2) parser 0 (sem perfil) MAS o novo indice preserva as mesmas unidades do
+        existente (fallback repo-derived reconstruiu certo) -> nao dispara. Fluxo real:
+        botao "Reprocessar Repositorio" sem subject_profile (app.py)."""
+        root_dir = tmp_path / "repo"
+        _write_index(root_dir, ["unidade-01", "unidade-02"])
+        new_index = _index_dict(["unidade-01", "unidade-02"])
+
+        _guard_units_not_silently_lost(root_dir, "TCC", 0, new_index)  # nao levanta
+
+    def test_b_does_not_fire_on_brand_new_repo_without_index(self, tmp_path):
+        """(b) repo novo sem .timeline_index.json + parser [] -> nao dispara (nada pra encolher)."""
         root_dir = tmp_path / "repo"
         root_dir.mkdir(parents=True, exist_ok=True)
+        new_index = _index_dict([])
 
-        _guard_units_not_silently_lost(root_dir, "Curso Novo", 0)  # nao levanta
+        _guard_units_not_silently_lost(root_dir, "Curso Novo", 0, new_index)  # nao levanta
 
-    def test_does_not_fire_when_parser_has_units(self, tmp_path):
-        """(c) parser devolve 3 unidades -> nao dispara mesmo com indice antigo pequeno."""
+    def test_c_does_not_fire_with_parser_positive_even_if_count_drops(self, tmp_path, caplog):
+        """(c) parser>0 (plano de ensino presente) e o novo indice tem MENOS unidades que o
+        existente -> reducao AUTORADA (usuario editou o plano), nao dispara -- so loga info."""
         root_dir = tmp_path / "repo"
-        _write_index(root_dir, ["unidade-01-intro"])
+        _write_index(root_dir, ["unidade-01", "unidade-02", "unidade-03"])
+        new_index = _index_dict(["unidade-01", "unidade-02"])
 
-        _guard_units_not_silently_lost(root_dir, "Curso Sadio", 3)  # nao levanta
+        with caplog.at_level(logging.INFO, logger="src.builder.ops.pedagogical_regeneration"):
+            _guard_units_not_silently_lost(root_dir, "Curso Editado", 2, new_index)  # nao levanta
 
-    def test_does_not_fire_when_index_has_fewer_than_two_slugs(self, tmp_path):
-        """Indice existente com so 1 unit-slug nao e evidencia suficiente de perda."""
-        root_dir = tmp_path / "repo"
-        _write_index(root_dir, ["unidade-01-intro"])
-
-        _guard_units_not_silently_lost(root_dir, "Curso Unico", 0)  # nao levanta
+        assert any(
+            "reduziram de 3 para 2" in rec.message for rec in caplog.records
+        ), [rec.message for rec in caplog.records]
 
 
 class TestDeriveUnitSpecsFromRepoWarnsLoud:

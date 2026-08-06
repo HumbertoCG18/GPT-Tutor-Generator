@@ -252,44 +252,82 @@ def attach_block_summary_fields(entries: list, code_curation: dict, blocks: list
     return entries
 
 
-def _guard_units_not_silently_lost(root_dir, course_name: str, parsed_unit_count: int) -> None:
-    """Guard "unidade nunca encolhe em silencio" (fio subject_profile, Task 4).
+class UnitsShrinkError(RuntimeError):
+    """Indice de unidades encolheu sem plano de ensino para autorizar (fio subject_profile Task 4).
 
-    Recusa PERSISTIR um indice/taxonomia reconstruidos quando o plano de
-    ensino recem-parseado devolveu 0 unidades ENQUANTO o
-    `course/.timeline_index.json` JA EXISTENTE no repo carrega >=2
-    unit-slugs distintos. Esse padrao e o mecanismo exato da perda
-    silenciosa da u3 do MF (docs/reports/2026-08-05-unit-sources-investigacao.md):
-    `subject_profile` ausente -> `teaching_plan=""` -> `content_taxonomy["units"]=[]`
-    -> unidades somem sem nenhum log. Repo novo (sem indice ainda) ou plano
-    legitimamente vazio (indice com <2 slugs) NAO disparam.
-
-    Generico: recebe `root_dir`/`course_name` como parametros, sem hardcode
-    por curso -- roda para qualquer curso que passe por
-    `regenerate_pedagogical_files`.
+    Tipo dedicado (nao ``RuntimeError`` cru) para que callers que envolvem
+    ``regenerate_pedagogical_files`` num ``except Exception`` amplo (``unprocess``,
+    ``reject`` em lifecycle_ops.py) possam re-levantar SELETIVAMENTE em vez de
+    engolir num ``logger.warning`` que a UI nunca mostra.
     """
-    if parsed_unit_count != 0:
-        return
-    idx_path = Path(root_dir) / "course" / ".timeline_index.json"
-    if not idx_path.is_file():
-        return
-    try:
-        existing = json.loads(idx_path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return
-    slugs = set()
-    for block in existing.get("blocks") or []:
+
+
+def _distinct_unit_slugs(index: dict) -> set:
+    slugs: set = set()
+    for block in (index or {}).get("blocks") or []:
         for key in ("unit_slug", "auto_unit_slug"):
             slug = str(block.get(key) or "").strip()
             if slug:
                 slugs.add(slug)
-    if len(slugs) < 2:
+    return slugs
+
+
+def _guard_units_not_silently_lost(
+    root_dir, course_name: str, parsed_unit_count: int, new_index: dict,
+) -> None:
+    """Guard "unidade nunca encolhe em silencio" (fio subject_profile, Task 4, fix round 1).
+
+    Mede o ENCOLHIMENTO REAL do indice prestes a ser persistido -- nao um proxy de risco.
+    Compara unit-slugs distintos (``unit_slug``/``auto_unit_slug``) do NOVO indice
+    (``new_index``, ja calculado, ainda nao escrito) vs o ``course/.timeline_index.json``
+    EXISTENTE no repo (lido daqui, ANTES do write).
+
+    Sem encolhimento (novo >= existente, inclui "sem indice previo") -> nunca dispara,
+    mesmo com plano de ensino ausente. Cobre o fluxo legitimo "reprocessar sem perfil"
+    (app.py ``_reprocess_repository``, botao "Reprocessar Repositorio"): o fallback
+    repo-derived (``_derive_unit_specs_from_repo``, file_map.py) reconstroi as MESMAS
+    unidades a partir do COURSE_MAP/indice antigos -- proxy antigo (parsed==0 E
+    existente>=2) disparava aqui por engano; a v2 mede o resultado real.
+
+    Com encolhimento: se o plano de ensino recem-parseado tem unidades
+    (``parsed_unit_count>0``), e reducao AUTORADA (usuario editou o plano) -- loga
+    info, nao bloqueia. Se ``parsed_unit_count==0`` (plano ausente ou parser nao
+    reconheceu o formato), e o mecanismo exato da perda silenciosa da u3 do MF
+    (docs/reports/2026-08-05-unit-sources-investigacao.md) -> levanta
+    ``UnitsShrinkError`` ANTES do write.
+
+    Generico: recebe ``root_dir``/``course_name`` como parametros, sem hardcode por
+    curso -- roda para qualquer curso que passe por ``regenerate_pedagogical_files``.
+    """
+    idx_path = Path(root_dir) / "course" / ".timeline_index.json"
+    existing_index: dict = {}
+    if idx_path.is_file():
+        try:
+            existing_index = json.loads(idx_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            existing_index = {}
+    existing_slugs = _distinct_unit_slugs(existing_index)
+    new_slugs = _distinct_unit_slugs(new_index)
+
+    if len(new_slugs) >= len(existing_slugs):
         return
-    raise RuntimeError(
+
+    if parsed_unit_count > 0:
+        logger.info(
+            "unidades do indice reduziram de %d para %d em curso %r -- plano de ensino "
+            "presente (%d unidades parseadas), reducao autorada, guard nao bloqueia",
+            len(existing_slugs), len(new_slugs), course_name, parsed_unit_count,
+        )
+        return
+
+    raise UnitsShrinkError(
         f"Guard 'unidade nunca encolhe em silencio': curso {course_name!r} - "
-        f"plano de ensino recem-parseado tem {parsed_unit_count} unidades, mas "
-        f"o indice existente ({idx_path}) tem {len(slugs)} unit-slugs "
-        f"distintos. Perfil da materia ausente? subjects.json?"
+        f"o indice existente tinha {len(existing_slugs)} unit-slugs distintos, o novo "
+        f"indice a persistir teria {len(new_slugs)} (plano de ensino recem-parseado tem "
+        f"0 unidades). Perfil da materia ausente? subjects.json? ou o formato do plano de "
+        f"ensino mudou e o parser nao o reconhece? "
+        f"O material ja foi processado e esta no manifest; a regeneracao pedagogica foi "
+        f"abortada para nao encolher unidades."
     )
 
 
@@ -362,11 +400,6 @@ def regenerate_pedagogical_files(
         builder.subject_profile,
         live_manifest_entries,
     )
-    _guard_units_not_silently_lost(
-        builder.root_dir,
-        runtime_course_meta.get("course_name", "Curso"),
-        len(content_taxonomy.get("units") or []),
-    )
     runtime_course_meta["_content_taxonomy"] = content_taxonomy
     write_internal_content_taxonomy_fn(builder.root_dir, content_taxonomy)
 
@@ -378,6 +411,12 @@ def regenerate_pedagogical_files(
     runtime_course_meta["_timeline_context"] = timeline_context
     enriched_timeline_index = persist_enriched_timeline_index_fn(
         timeline_context.get("timeline_index", empty_timeline_index_fn()),
+    )
+    _guard_units_not_silently_lost(
+        builder.root_dir,
+        runtime_course_meta.get("course_name", "Curso"),
+        len(content_taxonomy.get("units") or []),
+        enriched_timeline_index,
     )
     write_text(
         builder.root_dir / "course" / ".timeline_index.json",

@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from src.builder.ops.pedagogical_regeneration import UnitsShrinkError
 from src.utils.helpers import write_text, write_json_manifest, slugify
 
 logger = logging.getLogger(__name__)
@@ -247,6 +248,11 @@ def unprocess(builder, entry_id: str) -> bool:
     try:
         builder._regenerate_pedagogical_files(manifest)
         write_json_manifest(manifest_path, manifest)
+    except UnitsShrinkError:
+        # Nao engolir: unprocess() retorna bool, um `logger.warning` aqui vira
+        # sucesso indistinguivel pra UI (Important 1, fio task 4 fix round 1).
+        # Re-levanta pro caller (app.py) mostrar o erro acionavel.
+        raise
     except Exception as exc:
         logger.warning("unprocess: regeneração pedagógica falhou: %s", exc)
 
@@ -366,6 +372,10 @@ def reject(builder, entry_id: str) -> Optional[Dict[str, object]]:
     try:
         builder._regenerate_pedagogical_files(manifest)
         write_json_manifest(manifest_path, manifest)
+    except UnitsShrinkError:
+        # Nao engolir: mesma razao do unprocess() acima (Important 1, fio task 4
+        # fix round 1) -- re-levanta pro caller (curator_studio.py) mostrar o erro.
+        raise
     except Exception as exc:
         logger.warning("reject: regeneração pedagógica falhou: %s", exc)
 
