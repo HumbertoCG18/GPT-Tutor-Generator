@@ -1,6 +1,8 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-06 (varredura com dados reais — suite 1869/4/0; audit_gold_freshness hard=0 nos 5 cursos)
+last_updated: 2026-08-07 (Task 6/6 campanha "gerador de índice único" — régua integral: suite
+1879 passed/4 skipped/1 failed (fail = golden IA stale, item CODE próprio abaixo, não é
+regressão da campanha); rebuild_diff 0 mudanças nos 5 cursos; audit_gold_freshness hard=0 nos 5)
 > Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
 > mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
@@ -139,6 +141,15 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   (conf≤1, conten≤0, recall≥9/10). LIÇÃO DURÁVEL: gold em `bloco-NN` posicional é frágil a reprocess —
   antes de qualquer medição cross-curso (FASE 2), auditar frescor dos ground_truth_* vs timeline atual
   (SO/TCC/IA/ES2 podem ter o mesmo drift); considerar migrar gold pra `block_uuid`.
+- [USER] **pino antigo `eth2` (MF) discorda do gold — pin-vs-gold disagreement**
+  (`as-of 2026-08-06`, achado review Task 2 da campanha índice único). O pino manual resolve
+  pro uuid `c4bf9e4c` (→ `bloco-01`), mas o gold true de `eth2` é `bloco-12`. Mesma classe do
+  caso `revisao-p1-gabarito` resolvido em 2026-08-06 (pin trivial já correto — ver PIN-SWEEP
+  acima): "discorda" ≠ "errado" até confirmar com o oráculo do user. Pós-fix C5
+  (`fase5_prova_tier2` honra temporal→manual→computed, commit `305cd9f`), `eth2` HOJE exibe
+  `bloco-01` na régua (antes exibia vazio) — decidir se o pino é STALE (deletar, deixa a
+  âncora computar) ou se há razão de negócio pro `bloco-01` que o gold desconhece. Bloqueia:
+  nada estrutural (é 1 entry), mas contamina qualquer eval futuro de `eth2` sem ruling.
 
 ## MEDIÇÃO IA — conversor gold→ground_truth (as-of mundo-63, 2026-06-25)
 
@@ -297,8 +308,64 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   5. = fallback dividido (acima).
   6. `_serialize_timeline_index` (index.py:813-866, fantasma v4 filtrador de admin) + testes legados dele
      (tests/test_core.py:2939,2953,5248-5271; test_fileentry_roundtrip.py:155,181;
-     test_file_map_unit_mapping.py:1097) morrem JUNTOS no cutover; guard de condenação em
-     `tests/test_persist_enriched_serializer.py` (C3, 2026-08-07).
+     test_file_map_unit_mapping.py:1097; **tests/test_timeline_schema.py:29,92,118**;
+     **tests/test_unit_matcher.py:18,21** — achado review Task 4 da campanha índice, 2026-08-07,
+     também chamam o fantasma e morrem JUNTOS no mesmo cutover) morrem JUNTOS no cutover; guard
+     de condenação em `tests/test_persist_enriched_serializer.py` (C3, 2026-08-07).
+  7. **Família dual-source R4/R5/R6** (varredura 2026-08-06, campanha índice único, Task 6) —
+     R4 `scripts/compare_resolver.py:86-103` (`_inject_block_uuids_from_ledger`: harness injeta
+     `block_uuid` no timeline que a produção não injeta); R5 = mesmo item 2 acima
+     (`scripts/eval_assignments.py:99`, já LEGADO-NÃO-USAR); R6 `scripts/eval_assignments.py:
+     135-138` (2º produtor de `.card_block_map.json`, escrito num tempdir só pro harness —
+     produção usa `derive_card_block_map`, `moodle_labels.py:158-159`). Morrem no cutover junto
+     com a lista nomeada do item 3.
+
+## CODE — família dual-source (R1-R12, varredura 2026-08-06, campanha "gerador de índice único")
+
+> Inventário completo dos 3 agentes que varreram a base antes da campanha 1/3
+> (`docs/superpowers/specs/2026-08-06-gerador-indice-unico-design.md` §8). R4/R5/R6 (cutover)
+> vivem no Mapa de deleção acima (item 7); aqui ficam os que NÃO entraram no escopo da
+> campanha 1/3 — trilho separado ou minors-batch/subprojeto SO — mais o status dos que a
+> campanha fechou (R1/R8/R10).
+
+- [CODE] **R1 — dois serializadores do timeline (v3 produção / v4 só-testes)** — **CONDENADO,
+  não deletado** (C3 da campanha índice, commit `9155224`, `as-of 2026-08-06`):
+  `_serialize_timeline_index` (v4, filtra admin, força kind; ids posicionais deslocam entre
+  formatos — `.bak` do TCC é v4/23 blocos vs vivo v3/31) segue vivo até o cutover; guard test
+  `tests/test_persist_enriched_serializer.py` proíbe caller novo de produção. Deleção física:
+  item 6 do Mapa de deleção do cutover (acima).
+- [CODE] **R2 — render de FILE_MAP com `persist=True` escreve efeitos colaterais no meio do
+  build** (`navigation.py:525-529` + `teaching_timeline.py:93-95`, `as-of 2026-08-06`) — mint
+  de uuid/migração de refs disparados por uma chamada de RENDER, não só pelos 2 write-sites do
+  índice (W1/W2). Fora do escopo de C2 (que exige só paridade de CONTEÚDO, não de efeito
+  colateral de `persist`) — item [CODE] próprio, trilho separado.
+- [CODE] **R3 — bootstrap × regenerate escrevem os mesmos `.md` com insumos diferentes**
+  (`bootstrap_ops` vs `pedagogical_regeneration`, `as-of 2026-08-06`) — mesma família
+  dual-source do índice (C2), só que do lado dos materiais didáticos gerados, não do timeline.
+  Trilho próprio.
+- ~~[CODE] R8 — fase5 sem precedência de pino~~ **FECHADO (C5 da campanha índice, commit
+  `305cd9f`, `as-of 2026-08-06`)** — `fase5_prova_tier2._effective_display` passa a honrar
+  temporal→manual→computed (espelha `resolve_temporal_block`); acc 4/8→6/8, cw=0 mantido.
+- [CODE] **R7 — 4 loaders de índice com fallbacks distintos** (`as-of 2026-08-06`) — sem
+  file:line detalhado nesta varredura (nível "achado", não "localizado"); minors-batch, fora
+  da campanha índice (C2 unificou só os 2 write-sites, não os loaders de leitura).
+- ~~[CODE] R10 — taxonomia com/sem `manifest_entries` vivas filtradas (causa-raiz do dual-source
+  de índice)~~ **FECHADO (C2 da campanha índice, commits `305877a`+`328a0b2`,
+  `as-of 2026-08-06`)** — montador único `_build_file_map_timeline_context_from_course`
+  (`index.py:1349`) usado pelos 2 write-sites E pelas sondas read-only; `rebuild_diff` W1×W2 =
+  **0 diff nos 5 cursos** (medido nesta Task 6, `as-of 2026-08-07`).
+- [CODE] **R9 — `scan_existing_block_refs` lê nível errado do manifest, guard cego**
+  (`index.py:1401` + `block_identity.py:269-272`, `as-of 2026-08-06`) — o guard de UUID-ref
+  confere `manual_timeline_block_id`/`computed_block_id` no manifest mas não desce pro nível
+  certo em todo caminho; minors-batch/subprojeto SO.
+- [CODE] **R11 — dashboard escreve manifest não-atômico** (`timeline_dashboard.py:248-251`,
+  `as-of 2026-08-06`) — `manifest_path.write_text(...)` direto, sem write-temp+rename; write
+  parcial em crash/kill corrompe o manifest vivo. Minors-batch, fora da campanha índice.
+- [CODE] **R12 — join de data truncado vs cru dentro do motor** (`disambiguator.py:68` usa
+  `sess.get("date")` cru vs `llm_vote.py:227-229` que trunca `[:10]` antes do lookup em
+  `ctx.lessons_index`, `as-of 2026-08-06`) — mesma chave semântica, formatos diferentes;
+  candidato ao subprojeto SO (roteiro/lessons_index é sinal fraco em SO hoje, ver
+  WindowProvider acima).
 
 ## CODE — bugs pré-existentes localizados
 
@@ -372,6 +439,15 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   `curator_studio.py:1301` com os 2 builders no try/except). 2 builders passam por esse caminho no reject hoje.
   Fix: remover o parâmetro morto das chamadas OU implementar o comportamento que o nome promete
   (não decidido; registrar para triagem).
+- [CODE] **golden `test_caracterizacao_blocos_atual[IA]` stale pós-rollout IA `86f00d9`**
+  (`as-of 2026-08-06`, achado sessão campanha índice único, Task 1) — o rollout IA
+  (`use_anchor_placement` OFF) mudou `computed_block_id` do caso-chave
+  `agrupamento-parte2` de `""` pra uuid real (`0b986383-663a-4a54-b000-4b97ebce59c4`); o
+  baseline `_golden/Inteligencia-Artifical-Tutor__casos_chave.json` não foi re-versionado.
+  Suite roda **1879 passed / 4 skipped / 1 failed** desde então — o 1 failed é EXATAMENTE este
+  golden, não é fail de gate de nenhuma task da campanha (confirmado régua Task 6,
+  `as-of 2026-08-07`). Fix: re-baseline GATEADO do golden (regenerar `_golden/*.json` com diff
+  revisado antes de versionar) — fora do escopo da campanha índice único.
 
 ## CODE — UI (Parte B de features backend já entregues)
 
