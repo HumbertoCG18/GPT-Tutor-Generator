@@ -56,6 +56,24 @@ def _strip_outline_prefix(text: str) -> str:
     return cleaned.strip()
 
 
+# Exclusividade de nucleo de titulo (campanha 2 §4-U1): nucleo por TOKENS,
+# nunca regex de prefixo — titulos reais variam ("Unidade NN —", "Unidade de
+# Aprendizagem N —", "UNIDADE NN —") e nada garante padrao em curso futuro.
+_UNIT_TITLE_GENERIC = {"unidade", "aprendizagem", "modulo", "parte", "topico"}
+# _topic_support_tokens trunca tokens >=5 chars pro stem de 5 (mesma regra do
+# fuzzy-match do modulo); comparar contra a palavra cheia nunca bate ("unidade"
+# vira "unida" no toks, mas nao em _UNIT_TITLE_GENERIC) — TDD (Step 3) pegou:
+# _unit_title_core_tokens("Unidade de Aprendizagem 5 -- ...") vazava "unida"/
+# "apren" no nucleo. Pre-computa os mesmos stems pra comparar stem-a-stem.
+_UNIT_TITLE_GENERIC_STEMS = {w[:5] if len(w) >= 5 else w for w in _UNIT_TITLE_GENERIC}
+_TITLE_CORE_MIN_TOKENS = 2  # nucleo de 1 token ("Deadlock") nao move nada: falso-positivo > beneficio
+
+
+def _unit_title_core_tokens(title: str) -> set:
+    toks = _topic_support_tokens(_strip_topic_code(str(title or "")))
+    return {t for t in toks if t not in _UNIT_TITLE_GENERIC_STEMS and not t.isdigit()}
+
+
 def _extract_markdown_headings(raw_markdown: str, limit: int = 8) -> List[str]:
     headings: List[str] = []
     for line in (raw_markdown or "").splitlines():
@@ -499,6 +517,31 @@ def build_content_taxonomy(
 
         result_units.append({"slug": unit_slug, "title": unit_title, "topics": _dedupe_taxonomy_topics(topic_records)})
 
+    # (a) topico-preview cujo rotulo contem o nucleo do titulo de OUTRA unidade
+    # migra pra unidade dona (bug MF: "1.3.1. Verificacao de Modelos" na abertura
+    # da u01 empatava o DP 4x4 no bloco-16).
+    title_cores = {}
+    for unit in result_units:
+        core = _unit_title_core_tokens(unit.get("title", ""))
+        if len(core) >= _TITLE_CORE_MIN_TOKENS:
+            title_cores[unit["slug"]] = core
+    for unit in result_units:
+        kept = []
+        for topic in unit.get("topics", []) or []:
+            label_toks = _topic_support_tokens(str(topic.get("label", "") or ""))
+            owner = next(
+                (slug for slug, core in title_cores.items()
+                 if slug != unit["slug"] and core <= label_toks),
+                None,
+            )
+            if owner is None:
+                kept.append(topic)
+                continue
+            topic["unit_slug"] = owner
+            dest = next(u for u in result_units if u["slug"] == owner)
+            dest["topics"] = _dedupe_taxonomy_topics(list(dest.get("topics", []) or []) + [topic])
+        unit["topics"] = kept
+
     for heading in heading_sources:
         heading_text = _collapse_ws(_strip_topic_code(heading))
         heading_slug = slugify(heading_text)
@@ -507,7 +550,12 @@ def build_content_taxonomy(
         best_unit: Optional[dict] = None
         best_topic: Optional[dict] = None
         best_score = 0.0
-        for unit in result_units:
+        # (b) heading que contem nucleo de titulo de unidade so enriquece a dona
+        heading_toks = _topic_support_tokens(heading_text)
+        owner_units = [u for u in result_units
+                       if title_cores.get(u["slug"]) and title_cores[u["slug"]] <= heading_toks]
+        search_units = owner_units or result_units
+        for unit in search_units:
             candidate_topic = _select_supported_taxonomy_topic(
                 heading_text,
                 unit.get("topics", []) or [],
