@@ -93,6 +93,16 @@ def rebuild_course(name: str, subject_profile) -> bool:
             print(f"      schema: {e}")
 
     if WRITE:
+        from src.builder.ops.pedagogical_regeneration import (
+            _guard_units_not_silently_lost, UnitsShrinkError,
+        )
+        try:
+            _guard_units_not_silently_lost(
+                repo_root, name, len(rich_taxonomy.get("units") or []), serialized,
+            )
+        except UnitsShrinkError as exc:
+            print(f"[FAIL] {name}: {exc} — indice NAO gravado")
+            return False
         if index_path.exists():
             backup = index_path.with_suffix(".json.bak")
             backup.write_text(index_path.read_text(encoding="utf-8"), encoding="utf-8")
