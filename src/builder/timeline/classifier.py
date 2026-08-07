@@ -219,6 +219,16 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
                     return kind
             else:
                 if _phrase_match(spec, hay_all, hay_tokens):
+                    # Guard anti-falso-exame (so 'prova'/'teste' nus, ruling
+                    # 2026-08-06): em texto de CONTEUDO essas 2 palavras sao
+                    # vocabulario de plano de ensino (demonstracao, teste de
+                    # mesa) - exame de verdade exige sinal forte (P1-4/PF/G2/
+                    # PS/"prova N"), mesmo criterio de _session_exam_or_review.
+                    # 'substitutiva'/'recuperacao'/'avaliacao'/'exame' sao
+                    # inequivocos e ficam fora do guard (corpus auditado).
+                    if (kind is BlockKind.ASSESSMENT and spec in ("prova", "teste")
+                            and not _STRONG_EXAM_RE.search(hay_all)):
+                        continue
                     return kind
 
     # 3b. Conteudo curado nao bateu keyword. Sem unidade, o label cru da sessao
