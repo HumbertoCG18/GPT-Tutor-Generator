@@ -18,8 +18,10 @@ reprodução A/B.
 Cadeia exata (file:line da varredura):
 
 1. Produção passa `manifest_entries` à taxonomia (`pedagogical_regeneration.py:398-402`);
-   `rebuild_course` passa `content_taxonomy=None` (`rebuild_timeline.py:67`) → `index.py:1363`
-   reconstrói com `manifest_entries=None` → `collect_strong_heading_candidates` devolve `[]`.
+   o CALLER `rebuild_course` não monta taxonomia rica e passa `content_taxonomy=None`
+   (`rebuild_timeline.py:67`) — o fallback `index.py:1363` então reconstrói com
+   `manifest_entries=None` (o fallback é efeito, a causa é o caller) →
+   `collect_strong_heading_candidates` devolve `[]`.
 2. COM entries: headings reais ("Problema da Correspondência de Post", "Halting Problem - O
    Problema da Parada") viram ALIASES do tópico `prova-da-indecidibilidade-do-problema-da-parada`
    → score do bloco-13 contra o tópico salta **0.122 → 1.037** → cruza gate
@@ -31,7 +33,10 @@ Cadeia exata (file:line da varredura):
 4. Reprodução A/B: `taxonomy=None → class` · `taxonomy+entries → assessment`. Vizinhos 12/14
    estáveis nos dois. Byte a byte o sintoma do re-flip.
 
-**Verdade do bloco-13**: AULA. SARC linha 15 (SYLLABUS.md:28): `24/04/2026 · "Problema da
+**Estado atual (explícito, para não confundir)**: TCC está flag-OFF (`feature_flags={}`) e o
+índice EM DISCO hoje é o do rebuild (bloco-13 `class`, restaurado por backup no rollback de
+2026-08-06); um reprocess HOJE regeneraria `assessment` (o bug). **Verdade do bloco-13**: AULA.
+SARC linha 15 (SYLLABUS.md:28): `24/04/2026 · "Problema da
 Correspondência de Post" · Atividade="Aula"`. "Prova" no rótulo do plano = demonstração
 matemática, não exame — MESMA classe semântica da colisão "Verificação de Modelos" do MF
 (preview 1.3.1). O caminho de sessão tem guard (`_STRONG_EXAM_RE`, `classifier.py:131`); o
@@ -75,10 +80,14 @@ bloco-13 real: RED = taxonomy+entries→assessment hoje; GREEN = class. SEM C1, 
 bloco-13 nos dois caminhos (piora provada pela reprodução A/B).
 
 **C2 — Montador único de insumos.** Helper único que monta a taxonomia COM `manifest_entries`
-(o que a produção já faz) e é usado pelos dois write-paths e pelas sondas: `rebuild_timeline`,
-`rebuild_diff`, `retag_manifest` deixam de passar `content_taxonomy=None`. Assinatura/portas
-exatas decididas no plano lendo o código real (NUNCA ASSUMIR: verificar cada caller e o que
-`manifest_entries` deve conter — entries vivas filtradas, `pedagogical_regeneration.py:394`).
+**vivas filtradas** (replica `filter_live_manifest_entries`, `pedagogical_regeneration.py:394`).
+Consumidores em dois papéis distintos: (i) o WRITE-SITE W2 (`rebuild_course`) passa a usar o
+montador — os 2 únicos write-sites do índice ficam com insumo idêntico; (ii) as SONDAS
+read-only (`rebuild_diff`, `retag_manifest` — persist=False, nunca escrevem índice) usam o
+mesmo montador para que sonda==produção em CONTEÚDO (mata a família retag). Paridade exigida é
+de CONTEÚDO (blocos/kind/units/topics); efeitos colaterais de `persist` (mint de uuid, migração
+de refs) ficam explicitamente FORA — são o R2, trilho próprio. Assinatura exata decidida no
+plano lendo cada caller real.
 
 **C3 — Serializador fantasma CONDENADO (não deletado).** `_serialize_timeline_index`
 (`index.py:813-866`, v4, filtra admin, força kind — ZERO callers de produção; testes validam
@@ -117,10 +126,13 @@ medição honesta do TCC re-flip. Baseline re-capturado ANTES do fix para compar
 ## 6. Aceite (nesta ordem)
 
 1. C1: teste bloco-13 GREEN (class com taxonomia rica); zero regressão na suite; 7 probes
-   byte-idênticos.
+   byte-idênticos; **`rebuild_diff` (dry-run) nos 5 cursos ANTES/DEPOIS do C1 — toda mudança
+   de `kind` fora do TCC-bloco-13 vira lista explícita para ruling do user antes de seguir**
+   (cobre MF/SO/ES2/IA que estão flag-ON em produção).
 2. C5: fase5 re-medida com precedência de pino correta; delta documentado (se houver).
-3. C2: `rebuild_diff` W1×W2 zero diff nos 5 cursos; sondas (`retag`/`rebuild_diff`) produzem
-   taxonomia idêntica à produção.
+3. C2: `rebuild_diff` W1×W2 zero diff nos 5 cursos; teste direto: taxonomia montada pelo
+   montador nos caminhos de sonda == taxonomia da produção, comparação estrutural de
+   units/topics/aliases por curso (assert de igualdade, não inspeção).
 4. C3: testes migrados verdes; guard de condenação ativo; fantasma na lista do cutover.
 5. C4: guard de encolhimento dispara em W2 (teste sintético).
 6. **TCC re-flip**: rito completo (backup → flip → reprocess → gates a-d + funil 0 drift +
