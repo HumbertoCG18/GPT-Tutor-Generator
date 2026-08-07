@@ -12,6 +12,7 @@ from src.utils.helpers import norm_ascii_lower
 from src.builder.timeline.card_block import normalized_card_map
 from src.builder.text.normalize import normalize_match_text
 from src.builder.routing.motor.disambiguator import block_topic_tokens, block_session_tokens, _GENERIC_STEMS
+from src.builder.timeline.classifier import _STRONG_EXAM_RE
 
 from src.builder.routing.motor.contracts import MotorContext
 
@@ -107,16 +108,47 @@ def _stems(tokens: set) -> set:
     return {t[:TOPIC_STEM_LEN] for t in tokens}
 
 
+# Exam-vocab fraco (par do ruling C1): sozinho não indica EXAME, só quando o
+# bloco tem sinal FORTE (_STRONG_EXAM_RE) em algum outro lugar do próprio bloco.
+_TOPIC_EXAM_STEMS = frozenset({"prova", "teste"})
+
+
+def _block_session_hay(b: dict, ctx: MotorContext) -> str:
+    """Texto CRU das sessões do bloco (labels + lessons_index) — a MESMA
+    fonte de block_session_tokens (disambiguator.py:63-71), só que não
+    tokenizado: _STRONG_EXAM_RE precisa ver "p1"/"p2" etc. inteiros, que o
+    piso de 3 chars de _toks descartaria."""
+    parts = []
+    for sess in b.get("sessions") or []:
+        parts.append(str(sess.get("label") or ""))
+        topic = ctx.lessons_index.get(str(sess.get("date") or ""))
+        if topic:
+            parts.append(str(topic))
+    return " ".join(parts)
+
+
 def _block_topic_stems(ctx: MotorContext) -> dict:
     """id(block) -> _stems(assinatura) de TODOS os blocos, memoizado por ctx (item 16).
 
     Assinatura por bloco e invariante por indice; mesmo padrao de
-    ctx._global_df_cache (disambiguator.py:123-132)."""
+    ctx._global_df_cache (disambiguator.py:123-132).
+
+    Guard C6 (diagnóstico 2026-08-06, re-flip TCC tentativa 4): rótulo de
+    taxonomia rica do bloco (primary_topic_label, ex. "Prova da
+    Indecidibilidade...") vaza "prova"/"teste" pro stem-matching do P4 via
+    block_topic_tokens mesmo quando o bloco é uma AULA, não um exame. O
+    ruling C1 (mesmo par prova/teste) só libera esses tokens do lado TOPIC
+    quando o bloco tem sinal FORTE de exame (_STRONG_EXAM_RE) no seu próprio
+    texto de sessões; o lado SESSION (block_session_tokens) nunca é
+    filtrado — é dele que vêm os 8 membros legítimos da janela real."""
     if ctx._stems_cache is not None:
         return ctx._stems_cache
     cache: dict = {}
     for b in ctx.blocks:
-        sig = block_topic_tokens(b) | block_session_tokens(b, ctx)
+        topic_toks = block_topic_tokens(b)
+        if topic_toks & _TOPIC_EXAM_STEMS and not _STRONG_EXAM_RE.search(_block_session_hay(b, ctx)):
+            topic_toks = topic_toks - _TOPIC_EXAM_STEMS
+        sig = topic_toks | block_session_tokens(b, ctx)
         cache[id(b)] = _stems(sig)
     ctx._stems_cache = cache
     return cache

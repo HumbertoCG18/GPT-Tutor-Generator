@@ -2,6 +2,7 @@ from src.builder.routing.motor.contracts import MotorContext
 from src.builder.routing.motor.window_provider import (
     provider_manual,
     provider_labels,
+    provider_topic,
     resolve_window,
 )
 from src.builder.timeline.card_block import normalized_card_map
@@ -223,3 +224,35 @@ class TestProviderTopic:
     def test_cascata_topic_por_ultimo(self):
         from src.builder.routing.motor.window_provider import resolve_window, _CASCADE
         assert [name for _, name in _CASCADE] == ["manual", "labels", "data", "topic"]
+
+    def test_rotulo_taxonomia_rica_nao_vaza_prova_sem_sinal_forte(self):
+        """C6 (diagnóstico 2026-08-06, re-flip TCC tentativa 4): bloco de AULA
+        com primary_topic_label "Prova da Indecidibilidade..." (rótulo de
+        taxonomia rica) vaza "prova" pro stem-matching do P4 via
+        block_topic_tokens; sem sinal FORTE de exame no bloco (labels de
+        sessão sem P1-4/PF/G2/PS/"prova N"), o bloco NÃO pode casar o card
+        de PROVA."""
+        blocks = [
+            {"id": "bloco-13", "kind": "class", "period_start": "2026-05-06",
+             "primary_topic_label": "Prova da Indecidibilidade do Problema da Parada",
+             "topic_text": "problema da correspondencia de post",
+             "sessions": [{"date": "2026-05-06",
+                           "label": "problema da correspondencia de post aula"}]},
+        ]
+        ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+        win = provider_topic({"source_section": "Semana 10 - Revisão para P1 e Prova P1"}, ctx)
+        assert "bloco-13" not in win
+
+    def test_rotulo_taxonomia_rica_casa_prova_com_sinal_forte_no_bloco(self):
+        """Controle positivo: sinal forte (aqui "p1") no PRÓPRIO bloco (session
+        label) libera o token exam-vocab do lado topic também — o guard só
+        filtra quando o bloco não tem sinal forte algum."""
+        blocks = [
+            {"id": "bloco-13b", "kind": "assessment", "period_start": "2026-05-06",
+             "primary_topic_label": "Prova de Corretude do Algoritmo",
+             "topic_text": "",
+             "sessions": [{"date": "2026-05-06", "label": "prova p1 prova"}]},
+        ]
+        ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+        win = provider_topic({"source_section": "Semana 10 - Revisão para P1 e Prova P1"}, ctx)
+        assert "bloco-13b" in win
