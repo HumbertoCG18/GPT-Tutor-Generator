@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-06 (Task 6/6 campanha "gerador de índice único" — régua integral: suite
+last_updated: 2026-08-07 (Task 6/6 campanha "gerador de índice único" — régua integral: suite
 1879 passed/4 skipped/1 failed (fail = golden IA stale, item CODE próprio abaixo, não é
 regressão da campanha); rebuild_diff 0 mudanças nos 5 cursos; audit_gold_freshness hard=0 nos 5;
 campanha índice fechada, 5/5 flag-ON)
