@@ -1,8 +1,9 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-07 (Task 6/6 campanha "gerador de índice único" — régua integral: suite
+last_updated: 2026-08-06 (Task 6/6 campanha "gerador de índice único" — régua integral: suite
 1879 passed/4 skipped/1 failed (fail = golden IA stale, item CODE próprio abaixo, não é
-regressão da campanha); rebuild_diff 0 mudanças nos 5 cursos; audit_gold_freshness hard=0 nos 5)
+regressão da campanha); rebuild_diff 0 mudanças nos 5 cursos; audit_gold_freshness hard=0 nos 5;
+campanha índice fechada, 5/5 flag-ON)
 > Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
 > mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
@@ -43,6 +44,9 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   > drift, computed 0 diffs, pinos 4/4, audit hard=0, units 3→3 (u04/u05 = campanha).
   > **PLACAR ROLLOUT: 4/5 cursos flag-ON em produção (MF/SO/ES2/IA); só TCC bloqueado**
   > (divergência de geradores de índice — campanha de unificação).
+  > **SUPERSEDED 2026-08-06 (mesma noite): campanha gerador-índice-único fechou o TCC —
+  > PLACAR FINAL 5/5 flag-ON** (TCC-Tutor `31f6025` flip + `91c1d2a` pino aula-13; ver entrada
+  > Concluído da campanha).
 
 - [USER] **Gold cross-curso** (DURÁVEL/intent) — rotular `tests/fixtures/eval/ground_truth_<curso>.csv` IA/SO/ES2/TCC
   (MF já mede via eval_assignments 5/5). Planilhas em `docs/reports/gold_templates/gold_by_card_<curso>.csv`
@@ -319,6 +323,17 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
      135-138` (2º produtor de `.card_block_map.json`, escrito num tempdir só pro harness —
      produção usa `derive_card_block_map`, `moodle_labels.py:158-159`). Morrem no cutover junto
      com a lista nomeada do item 3.
+  8. **Achados adicionais do cutover (Task 4/6, review final, 2026-08-06/07)**:
+     (a) `tests/test_persist_enriched_serializer.py` fixa `version==3` — bump v3→v4 no cutover
+     quebra o teste de propósito (atualizar junto); (b) unificar o par de vocabulário fraco exam
+     (`("prova","teste")` no classifier + `_TOPIC_EXAM_STEMS` no motor — 2 literais, 1 conceito) e
+     o import privado cross-package `_STRONG_EXAM_RE` classifier→motor; (c) W1
+     (`pedagogical_regeneration.py:394-402`) adotar `engine._build_rich_content_taxonomy` (hoje
+     replica inline as mesmas 3 linhas — dual-source por cópia); (d) W2 `rebuild_course --write`
+     não escreve `.content_taxonomy.json` (W1 escreve; sidecar envelhece — leitores:
+     `concept_resolver.py:79`, `compare_resolver.py:129`, `eval_subunit_census.py:42`); (e)
+     `build_rich_content_taxonomy` degrada silencioso p/ taxonomia pobre se manifest.json
+     faltar/corromper — adicionar warning quando W2 --write.
 
 ## CODE — família dual-source (R1-R12, varredura 2026-08-06, campanha "gerador de índice único")
 
@@ -448,6 +463,12 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   golden, não é fail de gate de nenhuma task da campanha (confirmado régua Task 6,
   `as-of 2026-08-07`). Fix: re-baseline GATEADO do golden (regenerar `_golden/*.json` com diff
   revisado antes de versionar) — fora do escopo da campanha índice único.
+- [CODE] **Scorer do AnchorEngine sensível a rótulo rico de taxonomia em vizinhos topicais**
+  (`as-of 2026-08-06`, tentativa 5 do re-flip TCC): `aula-13-teorema-de-rice` foi de
+  bloco-12→bloco-13 quando o rótulo rico "Prova da Indecidibilidade do Problema da Parada"
+  entrou na assinatura do bloco — caso FLAGADO (band media, cw=0), mitigado por pino
+  gold-backed (`91c1d2a`); o caminho do scorer NÃO tem guard C6-equivalente. Insumo nomeado da
+  campanha 2 (unidades/colisão de rótulo).
 
 ## CODE — UI (Parte B de features backend já entregues)
 
@@ -829,7 +850,8 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   ancoram) — por isso t2 cai em bloco-16, não no confident-wrong bloco-18 que containment puro
   daria. Régua flag-OFF (6 probes) byte-idêntica: fase0 82.8%/conten 0/cw 1 · fase1
   9/10 · fase2-SO 45.2%/0/0 · fase2-TCC 5/5 pinos+83.3%/0 · fase3 lift +3 sem API nova · fase4 det
-  48/58 cw1, voter 87.9%/cw0. Suite: 1816 passed, 4 skipped. Head dos commits F5b: `843475f`
+  48/58 cw1, voter 87.9%/cw0 (baselines pós-pinos MF 2026-08-06: det 53/58, voter 58/58 — drift
+  dos 7 pinos, isolado via stash). Suite: 1816 passed, 4 skipped. Head dos commits F5b: `843475f`
   (produtor `extract_file_dues` posicional), `1d39cb4` (motor `_match_due` posicional +
   âncora bloco-de-conteúdo).
 - [DERIVADO/DECISION] **Task 3 rollout flag-ON MF (2026-08-04): reprocess REAL executado, gate
@@ -917,7 +939,8 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   auto_tags) foram idênticos nas duas rodadas em todos os pontos verificados; só a formatação de
   índices .md pode ter variado. Detalhes completos (diagnóstico, retry, evidências, self-review)
   em `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-3-report.md`.
-- [DERIVADO/DECISION] **Rollout flag-ON MF EXECUTADO (2026-08-04): reprocess REAL finalizado, gate HARD-drift PASS, commit `c7b7498` gravado.** Reprocessamento com flags `use_anchor_engine=True`/`use_llm_voter=True` rodou sem traceback (`bloco 66/67 → 66/67`, manifest backup `manifest.json.bak`). **Gate duro gate_mf.py PASS 8/8 exato:** 54/54 `temporal_block_id` (51 piloto + 3 tier2 F5b), 11/11 pinos intactos/limpos de temporal, `t1-2026-1`/`t1-2026-1-thy` → bloco-11/alta/due-contain, `t2-2026-1` → bloco-16/media/due-straddle/flag=True (provider due-window em 100% dos 3 tier2), `plano`/`revisao-p1-gabarito` corretamente no funil. **Voter retry: PASS limpo** — `material_curation.json` 45→45 votos, 0 chamadas API novas, 0 chaves alteradas (cache 45 cobriu 100%, voto novo da rodada 1 já adjudicado CASE B pelo controller). **Distribuição de providers nos 51 não-tier2:** **9 manual/5 labels/37 llm** (nova referência do rollout MF, substitui piloto 9/6/36 de 2026-07-22) — migração labels→llm é a mesma `verificacaomodelos` (contenção gold bloco-16, scoreável=yes), correção da era-labels, não regressão. **Régua completa pós-flip: 7 probes + pytest 100%** (Task 4 medição) — fase0 48/58 conten0 cw1 · fase1 recall 9/10 · fase2-SO cobertura 45.2% colisões 0 cw0 · fase2-TCC pinos 5/5+83.3% cw0 · fase3 lift +3/0 API · fase4 det 48/58 cw1, voter 51/58 cw0 calls0 byte-idêntico flag-OFF · fase5 target PASS 4/8 cw0 (t1/t1-thy/t2/revisao-p1-gabarito 4 certos, plano/archives 4 fora-escopo) · **pytest 1820 passed / 4 skipped / 0 failed** — zero regressão entre Tasks 3/4. **Gold MF: 67/67 `auto_tags bloco:` zero-diff** — funil intacto (verificação programática completa, não amostra). **Achado colateral (não-MF, pré-existente):** `audit_gold_freshness.py` hard=1 em SO (lista2 ADMIN_TRUE + ZERO_OVERLAP, title="lista2" não casa regex `ASSESS_TITLE_RE`) — investigação provou scope pré-existente (timeline_index SO datado 28/jun, anterior à campanha; repo SO-Tutor não tocado pela task; heurístico ADMIN_TRUE + estado local antigo). Registrado em pre-flight do rollout SO, não-bloqueante para MF. **Flags duráveis ON:** `subjects.json` (`%APPDATA%\GPTTutorGenerator\`) com `Metodos-Formais.feature_flags = {use_anchor_engine: true, use_llm_voter: true}` persistido (pós-reprocess, pré-commit). **Decisions de sessão (user autorização 2026-08-03):** cutover via FASE 5 fora desta campanha (rollout é FASE 5b trilha 1, não integração global), push antes do cutover (commit MF em main, flags persistidas, sem merge para canário/staging — controle de blast-radius da user). Commit HEAD do MF: `c7b7498` (`rollout flag-ON: use_anchor_engine + use_llm_voter (temporal_* reais; gate HARD-drift PASS)`). Detalhes completos (adjudicação CASE B, retry, wiring tier2, step-by-step) em `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-3-report.md` (Task 3) e `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-4-report.md` (Task 4 régua). Campanha rollout-flag-ON trilha 1 **FECHADA, porta aberta para Task 6 (rollout SO) e Task 7 (trilha 2)** — não há blokers estruturais; próximas trilhas testam isolamento de cursos (SO tópico, TCC topic-bridge, ES2 data). **AVISO operacional:** reprocess headless futuro do MF exige `--flags use_anchor_engine,use_llm_voter` (flags não persistem no manifest; headless não lê subjects.json).
+- [DERIVADO/DECISION] **Rollout flag-ON MF EXECUTADO (2026-08-04): reprocess REAL finalizado, gate HARD-drift PASS, commit `c7b7498` gravado.** Reprocessamento com flags `use_anchor_engine=True`/`use_llm_voter=True` rodou sem traceback (`bloco 66/67 → 66/67`, manifest backup `manifest.json.bak`). **Gate duro gate_mf.py PASS 8/8 exato:** 54/54 `temporal_block_id` (51 piloto + 3 tier2 F5b), 11/11 pinos intactos/limpos de temporal, `t1-2026-1`/`t1-2026-1-thy` → bloco-11/alta/due-contain, `t2-2026-1` → bloco-16/media/due-straddle/flag=True (provider due-window em 100% dos 3 tier2), `plano`/`revisao-p1-gabarito` corretamente no funil. **Voter retry: PASS limpo** — `material_curation.json` 45→45 votos, 0 chamadas API novas, 0 chaves alteradas (cache 45 cobriu 100%, voto novo da rodada 1 já adjudicado CASE B pelo controller). **Distribuição de providers nos 51 não-tier2:** **9 manual/5 labels/37 llm** (nova referência do rollout MF, substitui piloto 9/6/36 de 2026-07-22) — migração labels→llm é a mesma `verificacaomodelos` (contenção gold bloco-16, scoreável=yes), correção da era-labels, não regressão. **Régua completa pós-flip: 7 probes + pytest 100%** (Task 4 medição) — fase0 48/58 conten0 cw1 · fase1 recall 9/10 · fase2-SO cobertura 45.2% colisões 0 cw0 · fase2-TCC pinos 5/5+83.3% cw0 · fase3 lift +3/0 API · fase4 det 48/58 cw1, voter 51/58 cw0 calls0 byte-idêntico flag-OFF (baselines pós-pinos MF
+  2026-08-06: det 53/58, voter 58/58 — drift dos 7 pinos, isolado via stash) · fase5 target PASS 4/8 cw0 (t1/t1-thy/t2/revisao-p1-gabarito 4 certos, plano/archives 4 fora-escopo) · **pytest 1820 passed / 4 skipped / 0 failed** — zero regressão entre Tasks 3/4. **Gold MF: 67/67 `auto_tags bloco:` zero-diff** — funil intacto (verificação programática completa, não amostra). **Achado colateral (não-MF, pré-existente):** `audit_gold_freshness.py` hard=1 em SO (lista2 ADMIN_TRUE + ZERO_OVERLAP, title="lista2" não casa regex `ASSESS_TITLE_RE`) — investigação provou scope pré-existente (timeline_index SO datado 28/jun, anterior à campanha; repo SO-Tutor não tocado pela task; heurístico ADMIN_TRUE + estado local antigo). Registrado em pre-flight do rollout SO, não-bloqueante para MF. **Flags duráveis ON:** `subjects.json` (`%APPDATA%\GPTTutorGenerator\`) com `Metodos-Formais.feature_flags = {use_anchor_engine: true, use_llm_voter: true}` persistido (pós-reprocess, pré-commit). **Decisions de sessão (user autorização 2026-08-03):** cutover via FASE 5 fora desta campanha (rollout é FASE 5b trilha 1, não integração global), push antes do cutover (commit MF em main, flags persistidas, sem merge para canário/staging — controle de blast-radius da user). Commit HEAD do MF: `c7b7498` (`rollout flag-ON: use_anchor_engine + use_llm_voter (temporal_* reais; gate HARD-drift PASS)`). Detalhes completos (adjudicação CASE B, retry, wiring tier2, step-by-step) em `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-3-report.md` (Task 3) e `.superpowers/sdd/2026-08-03-rollout-flagon-trilha1/task-4-report.md` (Task 4 régua). Campanha rollout-flag-ON trilha 1 **FECHADA, porta aberta para Task 6 (rollout SO) e Task 7 (trilha 2)** — não há blokers estruturais; próximas trilhas testam isolamento de cursos (SO tópico, TCC topic-bridge, ES2 data). **AVISO operacional:** reprocess headless futuro do MF exige `--flags use_anchor_engine,use_llm_voter` (flags não persistem no manifest; headless não lê subjects.json).
   **[USER] Pré-requisitos de rollout flag-ON em curso NOVO (review final F5b)**: (a) o filtro
   de bloco-de-conteúdo (D-H) usa `topics` — campo OPCIONAL no schema v4; curso com timeline
   sem topics populado deixa o provider silenciosamente morto (funil total, honesto mas
@@ -947,6 +970,8 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   (gerador-vs-gerador).** TCC re-flip re-BLOQUEADO; pré-requisito = reconciliar os 2 geradores
   de índice (kind de bloco determinístico) — insumo PRIORITÁRIO da campanha de unificação.
   T18 confirmado em produção no mesmo rito (`[profile]` no stdout, sem `--flags`).
+  **SUPERSEDED: TCC flag-ON em `31f6025`/`91c1d2a` (2026-08-06, tentativa 6, campanha
+  gerador-índice-único — ver Concluído).**
 - [CODE] **Funil-base TCC recomputa `auto_tags bloco:`/confiança de forma instável a cada reprocess — candidato a bug de idempotência do retag (não investigado, fora do mandato de tocar `src/`).**
   > AMENDMENT 2026-08-06 (re-flip tentativa 3): a instabilidade das 4 entries NÃO reproduziu
   > pós-fix-2b (integer/programacao estáveis; cubic moveu 1x para o valor previsto pelo fix e
@@ -1386,3 +1411,17 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   > antes" da campanha colisão-de-rótulo CAI** — a colisão em si (1.3.1 é texto legítimo do plano
   > dentro da abertura da u01) permanece o problema real e único. Achado extra (2)
   > (`unit_confidence=1.0` stale) não afetado.
+
+## Concluído (2026-08-06 — campanha gerador de índice único, 1/3 da unificação)
+
+- [DERIVADO] **Campanha "gerador de índice único" ENTREGUE — 9 tasks, TCC destravado, PLACAR
+  FINAL 5/5 flag-ON.** Tasks: **C1** guard classifier `0bc4265` (c/ ruling user só-prova/teste);
+  **C5** régua fase5 pino `305cd9f`; **C2** montador único `305877a`+`328a0b2`; **C3** condenação
+  serializador `9155224`; **C4** guard W2 `4b6e793`; **Task 6** tracker `8a80ad3`; **C6** guard
+  janela P4 `b4c9672`; re-flip TCC tentativa 6 GREEN — TCC-Tutor `31f6025`+`91c1d2a`. **6
+  tentativas de re-flip no total, 3 camadas de colisão prova/demonstração mortas** (kind, janela
+  P4, scorer-mitigado-por-pino). **fase2-TCC final 84.2% cw=0 byte-idêntica** — baseline
+  renegociado 78.9 com sign-off user na fase A, devolvido a 84.2 pela fase B. **Suite 1881/4/1**
+  (1 = golden IA, item próprio). **rebuild_diff 0/5.** Review final whole-branch: **zero Critical
+  de código**, findings de docs fechados neste commit. **PLACAR 5/5 FLAG-ON.** Review final
+  verificou §6.3 empiricamente: taxonomia montador==produção byte-idêntica nos 5 cursos.

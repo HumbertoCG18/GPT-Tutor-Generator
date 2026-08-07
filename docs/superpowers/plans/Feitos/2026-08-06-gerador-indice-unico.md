@@ -33,14 +33,14 @@
 - Consumes: `classify_block`, `_STRONG_EXAM_RE` (`classifier.py:131`), `KIND_KEYWORDS` (`:53-99`), `BlockKind`.
 - Produces: comportamento novo — keyword FRACA de ASSESSMENT (`"prova"`, `"avaliacao"`, `"exame"`, `"recuperacao"`, `"substitutiva"`, `"teste"`) só classifica assessment se `_STRONG_EXAM_RE` também casar em `hay_all`; specs regex (`\bp[1-4]\b`, `\bpf\b`) intocadas. Tasks 3/7 dependem disso.
 
-- [ ] **Step 1: Baseline PRÉ — rebuild_diff dry-run nos 5 cursos (captura, sem escrita)**
+- [x] **Step 1: Baseline PRÉ — rebuild_diff dry-run nos 5 cursos (captura, sem escrita)**
 
 ```powershell
 python scripts/rebuild_diff.py > "$env:TEMP\rebuild_diff_PRE_task1.txt" 2>&1; Get-Content "$env:TEMP\rebuild_diff_PRE_task1.txt" -Tail 20
 ```
 Guardar o arquivo; ele é a referência do Step 6. (rebuild_diff é `persist=False`, não grava — verificado `scripts/rebuild_diff.py:36-37`.)
 
-- [ ] **Step 2: Escrever os testes que falham**
+- [x] **Step 2: Escrever os testes que falham**
 
 ```python
 """Guard anti-falso-exame: 'prova' vindo de rotulo de taxonomia/plano e
@@ -93,12 +93,12 @@ def test_prova_n_segue_assessment():
     assert classify_block(b) is BlockKind.ASSESSMENT  # "prova N" casa _STRONG_EXAM_RE
 ```
 
-- [ ] **Step 3: Rodar e confirmar RED no caso-alvo**
+- [x] **Step 3: Rodar e confirmar RED no caso-alvo**
 
 Run: `python -m pytest tests/test_classifier_guard_prova_plano.py -v`
 Expected: `test_prova_de_demonstracao_no_label_nao_vira_assessment` FAIL (retorna ASSESSMENT hoje — keyword `prova` casa no label); `test_teste_nu...` FAIL; os 2 de sinal forte PASS. Se o RED não for exatamente esse, PARAR e diagnosticar antes de qualquer edit.
 
-- [ ] **Step 4: Implementar o guard (edit mínimo no loop :213-222)**
+- [x] **Step 4: Implementar o guard (edit mínimo no loop :213-222)**
 
 Trocar o corpo do passo 3 do `classify_block` por:
 
@@ -122,12 +122,12 @@ Trocar o corpo do passo 3 do `classify_block` por:
                     return kind
 ```
 
-- [ ] **Step 5: GREEN + suite completa**
+- [x] **Step 5: GREEN + suite completa**
 
 Run: `python -m pytest tests/test_classifier_guard_prova_plano.py -v` → 4 PASS.
 Run: `python -m pytest tests -q` → esperado 1875 passed / 4 skipped (1871+4). Qualquer FAIL = analisar; se for teste legado que assume "prova" nu ⇒ ASSESSMENT vindo de conteúdo, é exatamente a mudança intencional: registrar o teste, avaliar se o caso era falso-exame (corrigir o teste com nota) ou exame real (então o guard quebrou algo — PARAR).
 
-- [ ] **Step 6: Medição PÓS — rebuild_diff 5 cursos e diff contra o PRÉ**
+- [x] **Step 6: Medição PÓS — rebuild_diff 5 cursos e diff contra o PRÉ**
 
 ```powershell
 python scripts/rebuild_diff.py > "$env:TEMP\rebuild_diff_POS_task1.txt" 2>&1
@@ -135,14 +135,14 @@ git diff --no-index "$env:TEMP\rebuild_diff_PRE_task1.txt" "$env:TEMP\rebuild_di
 ```
 Esperado: ZERO diff (taxonomia dos caminhos de sonda ainda é pobre; o guard só muda casos com "prova"/"teste" nus em topic_text/period_label). **Qualquer diff = lista explícita curso/bloco/kind-antes-depois PARA RULING DO USER antes de commitar** (MF/SO/ES2/IA estão flag-ON em produção).
 
-- [ ] **Step 7: Probes 7/7 byte-idênticos**
+- [x] **Step 7: Probes 7/7 byte-idênticos**
 
 ```powershell
 foreach ($p in "fase0_prova_motor_MF","fase1_recall_gate_MF","fase2_prova_SO","fase2_prova_TCC","fase3_prova_LLM_MF","fase4_prova_D9","fase5_prova_tier2") { python "scripts/$p.py" 2>&1 | Select-Object -Last 2 }
 ```
 Esperado: mesmos vereditos/números da baseline da sessão (fase0 48/58 conten0 cw1 · fase1 9/10 · fase2-SO 45.2%/0/cw0 · fase2-TCC 5/5+83.3%+cw0+84.2% · fase3 lift+3/0 API · fase4 det 48/58 cw1, voter 51/58 cw0 calls0 · fase5 4/8 cw0). Restaurar `last_seen` do MF se bumpado (`git -C <MF> checkout -- course/.block_identity.json` só se o diff for exclusivamente `last_seen`).
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/builder/timeline/classifier.py tests/test_classifier_guard_prova_plano.py
@@ -160,14 +160,14 @@ git commit -m "fix(classifier): keyword fraca de ASSESSMENT exige sinal forte �
 - Consumes: manifest entries (campos `temporal_block_id`, `manual_timeline_block_id`, `computed_block_id`), `ctx.block_by_ref`.
 - Produces: probe espelha a leitura de produção `resolve_temporal_block` → fallback manual→computed (`file_map.py:641-648` → `:594-613`). Task 7 usa esta régua no gate do re-flip.
 
-- [ ] **Step 1: Baseline — rodar a régua ANTES do fix e guardar**
+- [x] **Step 1: Baseline — rodar a régua ANTES do fix e guardar**
 
 ```powershell
 python scripts/fase5_prova_tier2.py > "$env:TEMP\fase5_PRE_pinfix.txt" 2>&1; Get-Content "$env:TEMP\fase5_PRE_pinfix.txt" -Tail 4
 ```
 Esperado hoje: `PASS: acc 4/8 vs piso 4/8 · cw=0`.
 
-- [ ] **Step 2: Aplicar o fix (ordem temporal → manual → computed)**
+- [x] **Step 2: Aplicar o fix (ordem temporal → manual → computed)**
 
 Trocar `_effective_display` por:
 
@@ -188,7 +188,7 @@ def _effective_display(e: dict, ctx) -> str:
     return str((block or {}).get("id") or ref)
 ```
 
-- [ ] **Step 3: Re-rodar e comparar**
+- [x] **Step 3: Re-rodar e comparar**
 
 ```powershell
 python scripts/fase5_prova_tier2.py > "$env:TEMP\fase5_POS_pinfix.txt" 2>&1
@@ -198,11 +198,11 @@ Esperado: veredito segue `PASS 4/8 cw=0`. Diff permitido APENAS em linha de entr
 (`revisao-p1-gabarito` tem pino trivial no MF) mudando a predição para o bloco do pino — se
 mudar, documentar o delta no commit. Diff em entry NÃO-pinada = PARAR (fix errado).
 
-- [ ] **Step 4: Suite (probe não tem teste próprio; suite garante que nada importou dele)**
+- [x] **Step 4: Suite (probe não tem teste próprio; suite garante que nada importou dele)**
 
 Run: `python -m pytest tests -q` → mesmo número da Task 1.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add scripts/fase5_prova_tier2.py
@@ -225,7 +225,7 @@ git commit -m "fix(fase5): regua honra pino manual entre temporal e computed (C5
 - Consumes: `build_file_map_content_taxonomy_from_course` (wired no engine como `_build_file_map_content_taxonomy_from_course`, `engine.py:2274`), `filter_live_manifest_entries` (`src/builder/artifacts/repo.py:207`).
 - Produces: `build_rich_content_taxonomy(repo_root, course_meta, subject_profile, *, taxonomy_fn, filter_live_fn) -> dict` em `taxonomy_inputs.py`; wired no engine como `engine._build_rich_content_taxonomy(repo_root, course_meta, subject_profile)`. Tasks seguintes e sondas usam SEMPRE este nome.
 
-- [ ] **Step 1: Teste que falha (paridade montador == produção)**
+- [x] **Step 1: Teste que falha (paridade montador == produção)**
 
 ```python
 """Montador unico de taxonomia rica: sonda == producao por construcao.
@@ -274,11 +274,11 @@ def test_montador_sem_manifest_devolve_taxonomia_sem_entries(tmp_path):
     assert out["got"] == []
 ```
 
-- [ ] **Step 2: RED**
+- [x] **Step 2: RED**
 
 Run: `python -m pytest tests/test_taxonomy_inputs.py -v` → FAIL (módulo não existe).
 
-- [ ] **Step 3: Implementar `src/builder/ops/taxonomy_inputs.py`**
+- [x] **Step 3: Implementar `src/builder/ops/taxonomy_inputs.py`**
 
 ```python
 """Montador UNICO de insumos de taxonomia (campanha gerador-indice-unico, C2).
@@ -315,11 +315,11 @@ def build_rich_content_taxonomy(
     return taxonomy_fn(course_meta, subject_profile, live)
 ```
 
-- [ ] **Step 4: GREEN**
+- [x] **Step 4: GREEN**
 
 Run: `python -m pytest tests/test_taxonomy_inputs.py -v` → 2 PASS.
 
-- [ ] **Step 5: Wire no engine (façade — lógica fica no ops/)**
+- [x] **Step 5: Wire no engine (façade — lógica fica no ops/)**
 
 Em `src/builder/engine.py`, junto dos outros imports de ops (ler a vizinhança real antes; padrão do arquivo):
 
@@ -340,7 +340,7 @@ def _build_rich_content_taxonomy(repo_root, course_meta, subject_profile):
 
 VERIFICAR (nunca assumir) o nome wired real do filtro no engine: `grep -n "filter_live_manifest_entries" src/builder/engine.py`. Se o engine não o expõe, importar direto de `src/builder/artifacts/repo.py:207`.
 
-- [ ] **Step 6: Consumir nos 3 callers (cada um: ler o trecho real, editar, conferir)**
+- [x] **Step 6: Consumir nos 3 callers (cada um: ler o trecho real, editar, conferir)**
 
 `scripts/rebuild_timeline.py:66-68` — trocar `content_taxonomy=None` por:
 
@@ -371,7 +371,7 @@ VERIFICAR (nunca assumir) o nome wired real do filtro no engine: `grep -n "filte
 
 (Conferir os imports reais do retag antes — ele importa símbolos com underscore do engine; seguir o padrão do arquivo.)
 
-- [ ] **Step 7: Efeito medido — rebuild_diff agora com taxonomia rica, 5 cursos**
+- [x] **Step 7: Efeito medido — rebuild_diff agora com taxonomia rica, 5 cursos**
 
 ```powershell
 python scripts/rebuild_diff.py > "$env:TEMP\rebuild_diff_POS_task3.txt" 2>&1; Get-Content "$env:TEMP\rebuild_diff_POS_task3.txt" -Tail 30
@@ -382,11 +382,11 @@ Toda mudança de `kind` = lista curso/bloco/antes/depois; qualquer kind mudando 
 "falso-exame corrigido" = PARAR para ruling. Verificação A/B da causa-raiz (reproduz o
 experimento do agente): com o guard, taxonomia rica NÃO flipa o bloco-13.
 
-- [ ] **Step 8: Suite + probes**
+- [x] **Step 8: Suite + probes**
 
 `python -m pytest tests -q` (mesma contagem) + os 7 probes byte-idênticos (probes não usam os 3 scripts alterados; qualquer mudança = investigar antes de seguir).
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add src/builder/ops/taxonomy_inputs.py src/builder/engine.py scripts/rebuild_timeline.py scripts/rebuild_diff.py scripts/retag_manifest.py tests/test_taxonomy_inputs.py
@@ -405,7 +405,7 @@ git commit -m "feat(taxonomy): montador unico de taxonomia rica — W2 e sondas 
 - Consumes: `persist_enriched_timeline_index` (`src/builder/core/core_utils.py:14-37`), `_serialize_timeline_index` (`src/builder/timeline/index.py:813-866`, fantasma).
 - Produces: cobertura de teste do serializador que a PRODUÇÃO usa (hoje só o fantasma tem testes — inversão comprovada pela varredura) + guard AST impedindo caller novo de produção.
 
-- [ ] **Step 1: Testes (RED parcial — guard deve passar, cobertura é nova)**
+- [x] **Step 1: Testes (RED parcial — guard deve passar, cobertura é nova)**
 
 ```python
 """Serializador de PRODUCAO (persist_enriched_timeline_index) ganha cobertura
@@ -442,13 +442,13 @@ def test_fantasma_condenado_sem_caller_de_producao():
     assert set(offenders) <= allowed, f"caller novo do serializador condenado: {offenders}"
 ```
 
-- [ ] **Step 2: Rodar — cobertura PASS direto, guard PASS direto (estado atual já cumpre)**
+- [x] **Step 2: Rodar — cobertura PASS direto, guard PASS direto (estado atual já cumpre)**
 
 Run: `python -m pytest tests/test_persist_enriched_serializer.py -v` → 2 PASS. Se o teste de
 produção FALHAR, o contrato real difere do documentado — PARAR, ler `core_utils.py` de novo e
 corrigir O TESTE com nota (não o serializador).
 
-- [ ] **Step 3: Registrar no tracker a entrada de cutover**
+- [x] **Step 3: Registrar no tracker a entrada de cutover**
 
 Em `docs/reports/pendencias.md`, adicionar ao item do mapa de deleção do cutover (lista de
 símbolos condenados): `_serialize_timeline_index` (index.py:813-866) + testes legados dele
@@ -456,7 +456,7 @@ símbolos condenados): `_serialize_timeline_index` (index.py:813-866) + testes l
 test_file_map_unit_mapping.py:1097) morrem JUNTOS no cutover; guard de condenação em
 `tests/test_persist_enriched_serializer.py`.
 
-- [ ] **Step 4: Suite + commit**
+- [x] **Step 4: Suite + commit**
 
 ```bash
 python -m pytest tests -q
@@ -476,11 +476,11 @@ git commit -m "test(serializer): cobertura do serializador de producao + guard d
 - Consumes: `_guard_units_not_silently_lost(root_dir, course_name, parsed_unit_count, new_index)` (`src/builder/ops/pedagogical_regeneration.py:275`) e `UnitsShrinkError`; call-site de referência W1: `pedagogical_regeneration.py:415-420` (LER antes e espelhar os argumentos exatos, inclusive como `parsed_unit_count` é computado do teaching_plan).
 - Produces: `rebuild_course --write` aborta sem escrever quando o índice novo encolhe unidades.
 
-- [ ] **Step 1: Ler o call-site W1 real (`pedagogical_regeneration.py:405-425`) e copiar o padrão de argumentos**
+- [x] **Step 1: Ler o call-site W1 real (`pedagogical_regeneration.py:405-425`) e copiar o padrão de argumentos**
 
 Registrar no report da task o trecho lido. Se a assinatura divergir do plano, PARAR e ajustar.
 
-- [ ] **Step 2: Teste que falha (tmp repo + monkeypatch do build)**
+- [x] **Step 2: Teste que falha (tmp repo + monkeypatch do build)**
 
 ```python
 """W2 (rebuild_course --write) ganha o mesmo guard de encolhimento do W1."""
@@ -523,11 +523,11 @@ def test_rebuild_write_aborta_em_encolhimento(tmp_path, monkeypatch):
 
 (Se `rebuild_course` usar `WRITE` como global de módulo de outro nome/forma — LER `scripts/rebuild_timeline.py:31` antes — ajustar o monkeypatch para o mecanismo real.)
 
-- [ ] **Step 3: RED**
+- [x] **Step 3: RED**
 
 Run: `python -m pytest tests/test_rebuild_course_guard.py -v` → FAIL (hoje escreve o encolhido).
 
-- [ ] **Step 4: Implementar no `rebuild_course` (antes do write)**
+- [x] **Step 4: Implementar no `rebuild_course` (antes do write)**
 
 Espelhando o call-site W1 lido no Step 1 (ajustar nomes ao trecho real):
 
@@ -546,7 +546,7 @@ Espelhando o call-site W1 lido no Step 1 (ajustar nomes ao trecho real):
                 return False
 ```
 
-- [ ] **Step 5: GREEN + suite + commit**
+- [x] **Step 5: GREEN + suite + commit**
 
 ```bash
 python -m pytest tests/test_rebuild_course_guard.py tests -q
@@ -565,7 +565,7 @@ git commit -m "fix(rebuild): guard UnitsShrinkError tambem no W2 — paridade de
 - Consumes: resultados das Tasks 1-5.
 - Produces: aceite §6.1-6.5 do spec fechado e documentado; tracker com a família R registrada.
 
-- [ ] **Step 1: Régua integral**
+- [x] **Step 1: Régua integral**
 
 ```powershell
 python -m pytest tests -q
@@ -574,7 +574,7 @@ foreach ($c in "MF","SO","TCC","IA","ES2") { python scripts/audit_gold_freshness
 ```
 Esperado: suite verde (contagem das tasks); rebuild_diff SEM mudança de kind pendente de ruling; audit hard=0 nos 5.
 
-- [ ] **Step 2: Registrar no tracker (CODE — bugs pré-existentes / seção própria "família dual-source")**
+- [x] **Step 2: Registrar no tracker (CODE — bugs pré-existentes / seção própria "família dual-source")**
 
 Adicionar itens com evidência file:line da varredura de 2026-08-06: R2 (render FILE_MAP
 persist=True escreve ledger/manifest/curation — `navigation.py:525-529`+`teaching_timeline.py:93-95`),
@@ -586,7 +586,7 @@ R3 (bootstrap×regenerate mesmos .md insumos diferentes — `bootstrap_ops` vs
 `llm_vote.py:227-229`; candidato ao subprojeto SO), R4/R5/R6 (cutover — anexar à lista de
 deleção). Marcar o que a campanha 1/3 já fechou: R10 (C2) + R8 (C5) + R1 (C3, condenado).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add docs/reports/pendencias.md
@@ -604,7 +604,7 @@ git commit -m "docs(tracker): familia dual-source R2-R12 registrada com evidenci
 - Consumes: Tasks 1-6 verdes; cache `TCC-Tutor/material_curation.json` (16 votos, untracked); rito registrado em `docs/reports/2026-08-06-tcc-reflip-fail-report.md` (a tentativa 3 é o template do rito e do rollback).
 - Produces: TCC flag-ON commitado OU FAIL honesto com rollback sha256 e diagnóstico.
 
-- [ ] **Step 1: Backup completo (tracked + gitignored, com verificação)**
+- [x] **Step 1: Backup completo (tracked + gitignored, com verificação)**
 
 ```bash
 TCC=/c/Users/Humberto/Documents/GitHub/TCC-Tutor
@@ -615,7 +615,7 @@ while read f; do cp "$TCC/course/$f" "$BK/course/$f" && echo "OK $f"; done < /tm
 ```
 TODO arquivo listado deve ecoar OK (a lição da tentativa 3: glob silencioso = rede furada).
 
-- [ ] **Step 2: Baseline fase2-TCC + audit (pré-flip)**
+- [x] **Step 2: Baseline fase2-TCC + audit (pré-flip)**
 
 ```bash
 python scripts/fase2_prova_TCC.py > /tmp/fase2_TCC_pre4.txt 2>&1; tail -3 /tmp/fase2_TCC_pre4.txt
@@ -623,7 +623,7 @@ python scripts/audit_gold_freshness.py --course TCC 2>&1 | grep hard
 ```
 Esperado: PASS 5/5+83.3%+cw0+84.2%; hard=0. Diferente = PARAR (estado mudou desde o plano).
 
-- [ ] **Step 3: Flip via SubjectStore + round-trip 5 cursos**
+- [x] **Step 3: Flip via SubjectStore + round-trip 5 cursos**
 
 ```bash
 python - <<'EOF'
@@ -639,7 +639,7 @@ for n in ['Metodos-Formais','Inteligencia Artificial','Teoria da Computabilidade
 EOF
 ```
 
-- [ ] **Step 4: Reprocess (T18, sem --flags) + gates estruturais**
+- [x] **Step 4: Reprocess (T18, sem --flags) + gates estruturais**
 
 ```bash
 python scripts/reprocess_assignments.py "C:/Users/Humberto/Documents/GitHub/TCC-Tutor" 2>&1 | tail -3
@@ -649,7 +649,7 @@ morreu, o report da tentativa 3 documenta cada gate): (a) pinos 2/2 (`plano-de-e
 `3d-matching`) intactos e sem temporal; (b) funil `auto_tags bloco:` ZERO drift vs backup;
 computed 0 diffs; (c) temporal ~19/27, zero out-of-scope; (d) votos 16→16, 0 chaves novas.
 
-- [ ] **Step 5: CRITÉRIO DECISIVO — o que derrubou a tentativa 3**
+- [x] **Step 5: CRITÉRIO DECISIVO — o que derrubou a tentativa 3**
 
 ```bash
 python scripts/fase2_prova_TCC.py > /tmp/fase2_TCC_pos4.txt 2>&1
@@ -670,7 +670,7 @@ reprocess** (a prova final da campanha) · units 4. QUALQUER falha = rollback do
 report da tentativa 3 (checkout tracked + restore sidecars do backup + sha256 + flags `{}` +
 fase2 re-rodada byte-idêntica) e FAIL honesto registrado.
 
-- [ ] **Step 6: Commit no TCC-Tutor + tracker + Concluído**
+- [x] **Step 6: Commit no TCC-Tutor + tracker + Concluído**
 
 ```bash
 git -C "C:/Users/Humberto/Documents/GitHub/TCC-Tutor" add -A
@@ -700,11 +700,11 @@ mover spec/plano para `Feitos/` (`git mv`) SE gate 100% verde (regra AGENTS.md) 
 - Consumes: `block_topic_tokens`/`block_session_tokens` (`disambiguator.py:56-71`), `_STRONG_EXAM_RE` (`src/builder/timeline/classifier.py:131` — importar; passa o import-guard do motor), fixture `_ctx` existente (`tests/test_motor_window_provider.py:179-192`).
 - Produces: na união da assinatura (`window_provider.py:119`), tokens exam-vocab fracos (`"prova"`, `"teste"` — mesmo par do ruling C1) vindos de `block_topic_tokens` só entram se o BLOCO tiver sinal forte de exame (`_STRONG_EXAM_RE` sobre o texto de sessões — labels + lessons_index, o mesmo texto de `block_session_tokens`); a metade `block_session_tokens` NUNCA é filtrada (é dela que vêm os 8 membros legítimos do caso real).
 
-- [ ] **Step 1: Teste RED** — na `TestProviderTopic`: card `"Semana 10 - Revisão para P1 e Prova P1"`; bloco kind=class, `primary_topic_label="Prova da Indecidibilidade do Problema da Parada"`, `topic_text="problema da correspondencia de post"`, session label `"problema da correspondencia de post aula"` (sem sinal forte) → bloco NÃO pode entrar na janela. Segundo teste (controle positivo): bloco com session label `"prova p1 prova"` E `primary_topic_label` com "Prova" acadêmica → CONTINUA na janela (sinal forte presente). Rodar: o 1º FALHA hoje (bloco entra), o 2º passa.
-- [ ] **Step 2: Implementar o guard** em `_block_topic_stems` (linha ~119): separar `topic_toks = block_topic_tokens(b)`; se `not _STRONG_EXAM_RE.search(texto_de_sessoes_do_bloco)`, remover de `topic_toks` os tokens `{"prova", "teste"}`; `sig = topic_toks | block_session_tokens(b, ctx)`. Comentário citando C1 + diagnóstico 2026-08-06. Invalidar/respeitar o cache `ctx._stems_cache` como está.
-- [ ] **Step 3: GREEN** nos 2 testes novos + `tests/test_motor_window_provider.py` inteiro + `tests/test_motor_golden_mf.py` + `tests/test_motor_higiene_batch.py` verdes.
-- [ ] **Step 4: Régua** — `python scripts/fase2_prova_TCC.py` byte-idêntica ao baseline (estado em disco atual é no-op para o guard — MEDIDO no diagnóstico); suite 1880/4/1 (1879+1 novo… são 2 novos: 1881/4/1); 7 probes vereditos PASS inalterados.
-- [ ] **Step 5: Commit** — `fix(motor): P4 nao casa exam-vocab vindo de rotulo de taxonomia sem sinal forte no bloco (C6, 3a camada da colisao prova/demonstracao)`
+- [x] **Step 1: Teste RED** — na `TestProviderTopic`: card `"Semana 10 - Revisão para P1 e Prova P1"`; bloco kind=class, `primary_topic_label="Prova da Indecidibilidade do Problema da Parada"`, `topic_text="problema da correspondencia de post"`, session label `"problema da correspondencia de post aula"` (sem sinal forte) → bloco NÃO pode entrar na janela. Segundo teste (controle positivo): bloco com session label `"prova p1 prova"` E `primary_topic_label` com "Prova" acadêmica → CONTINUA na janela (sinal forte presente). Rodar: o 1º FALHA hoje (bloco entra), o 2º passa.
+- [x] **Step 2: Implementar o guard** em `_block_topic_stems` (linha ~119): separar `topic_toks = block_topic_tokens(b)`; se `not _STRONG_EXAM_RE.search(texto_de_sessoes_do_bloco)`, remover de `topic_toks` os tokens `{"prova", "teste"}`; `sig = topic_toks | block_session_tokens(b, ctx)`. Comentário citando C1 + diagnóstico 2026-08-06. Invalidar/respeitar o cache `ctx._stems_cache` como está.
+- [x] **Step 3: GREEN** nos 2 testes novos + `tests/test_motor_window_provider.py` inteiro + `tests/test_motor_golden_mf.py` + `tests/test_motor_higiene_batch.py` verdes.
+- [x] **Step 4: Régua** — `python scripts/fase2_prova_TCC.py` byte-idêntica ao baseline (estado em disco atual é no-op para o guard — MEDIDO no diagnóstico); suite 1880/4/1 (1879+1 novo… são 2 novos: 1881/4/1); 7 probes vereditos PASS inalterados.
+- [x] **Step 5: Commit** — `fix(motor): P4 nao casa exam-vocab vindo de rotulo de taxonomia sem sinal forte no bloco (C6, 3a camada da colisao prova/demonstracao)`
 
 ### Task 9: TCC re-flip tentativa 5 (aceite final)
 
