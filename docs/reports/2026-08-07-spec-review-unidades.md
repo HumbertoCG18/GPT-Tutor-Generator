@@ -75,3 +75,26 @@ gates de cura.
 5. §4 U4: mecanismos por curso nomeados (SO absorção; ES2 sinal ausente; IA monotonicidade,
    HALT ruling).
 6. §7: aceite do IA condicionado ao ruling de viabilidade (honestidade > meta bonita).
+
+## Rodada 2 — auditoria de nomes reais (Moodle), pedido do user
+
+Script `audit_filenames.py` (scratchpad), 5 manifests reais:
+
+**F1 — nome de arquivo NÃO entra na assinatura de unidade.** `_tokens` só aceita alfabético ≥3:
+prefixo-data SO (`0206-laminas-...` = DDMM de POSTAGEM) e hash-suffix IA viram nada. Nome entra
+na cadeia SÓ via resolução de path no `collect_strong_heading_candidates`
+(`content_taxonomy.py:592-609`), que faz `continue` MUDO no que não resolve.
+
+**F2 — estado real dos skips**: MF 52/67 md ok (15 sem campo md = código/professor, esperado) ·
+SO 41/42 · ES2 27/35 (**8 roteiros sem md por construção** → zero sinal; pista nomeada pra
+investigação u03-testes) · IA 57/62 (**1 quebra viva**: `artigo-usando-agrupamento` →
+`content/curated/*.md` INEXISTENTE, skip silencioso) · TCC 27/27 — **dotless-i U+0131
+CONSISTENTE manifest↔disco, NÃO quebra hoje** (falsifica o alarme; item NFC segue latente no
+tracker).
+
+**F3 — headings reais são sujos**: `**Exercícios**`, `[Formal Verification...](./…html)`,
+linha de TABELA com e-mails de professor, "PLANO DE ENSINO", "PROFESSOR (ES)" — candidatos a
+alias hoje. U1(c) criado: normalizar decoração markdown + barrar administrativo.
+
+**F4 — consequências aplicadas no spec**: §2 parágrafo "nomes reais × cadeia de sinal"; U1(c);
+U5 += warning no skip do coletor; U4-ES2 += pista dos roteiros; U3 += tooling sem assumir ASCII.

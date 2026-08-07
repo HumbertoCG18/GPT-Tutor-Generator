@@ -68,6 +68,19 @@ monotônico. Cura IA começa com HALT de diagnóstico + ruling de produto.
 
 **TCC — saudável**: 4/4 unidades, 0 colisões, recompute == disco nos blocos de produção.
 
+**Nomes reais de arquivo (Moodle) × cadeia de sinal** (auditoria 2026-08-07, 5 manifests):
+nome/slug/id NUNCA entra em `_unit_tokens`/`_block_tokens` (tokens só alfabéticos ≥3; prefixo-
+data `0206-laminas-...` do SO vira nada; ids acentuados+hash do IA idem). Nome entra na cadeia
+SÓ por resolução de PATH no `collect_strong_heading_candidates` (`content_taxonomy.py:598`),
+que pula mudo o que não resolve. Estado real: **IA 1 quebra viva** (`artigo-usando-agrupamento`
+→ `content/curated/*.md` inexistente, 0 headings, silêncio) · **ES2 8/35 entries sem campo md
+por construção (roteiro1-7 + history-service)** → zero contribuição de sinal — insumo nomeado
+da investigação u03-testes · **TCC dotless-i U+0131 CONSISTENTE manifest↔disco (27/27
+resolvem)** — latente, não quebra hoje (item NFC-no-import segue no tracker, fora daqui) ·
+MF 15 e IA 4 entries sem md = código/professor, esperado. **Headings reais carregam ruído**:
+`**Exercícios**` (bold), sintaxe de link `[...](...)`, linha de tabela com e-mails, "PLANO DE
+ENSINO"/"PROFESSOR (ES)" — tudo candidato a alias hoje.
+
 ## 3. Objetivo e não-objetivos
 
 **Objetivo**: índice dos 5 cursos com a contagem de unidades do plano ONDE VIÁVEL (MF 3 · SO 7 ·
@@ -89,7 +102,10 @@ sonda ≡ produção byte-idêntico; gold de unidade como régua permanente; cur
 Em `build_content_taxonomy`: (a) tópico cujo rótulo casa núcleo de título de OUTRA unidade não
 contribui tokens/aliases pra hospedeira (decisão fina excluir vs re-atribuir no plano; simulação
 mostrou ambos equivalentes pro DP do MF; re-atribuir enriquece a dona — preferência default);
-(b) alias-enrichment prefere tópico da unidade dona quando heading casa núcleo de título.
+(b) alias-enrichment prefere tópico da unidade dona quando heading casa núcleo de título;
+(c) o match do lado do heading normaliza decoração markdown (bold/link/tabela) e não promove
+heading administrativo a alias ("PLANO DE ENSINO", linha de tabela — casos reais coletados) —
+gate de vocab-support existente + teste com os headings reais dos 5 cursos.
 Efeito PROVADO: mata as 2 colisões do MF; aff bloco-16 `[4,3,4]`→`[2,3,4]`; **NÃO move bloco-16
 sozinho** (empate de caminho, §2). No-op provado em SO/ES2/IA/TCC (0 colisões hoje) — guard
 genérico pra planos futuros com preview.
@@ -111,7 +127,8 @@ Sondas de unidade obtêm block→unit pelo caminho COMPLETO de produção (monta
 Template CSV por curso: `block_uuid` (presença verificada 21/21·21/21·14/14·25/25·31/31),
 bloco-NN informativo, datas, `topic_text`, `unit_slug` atual, `true_unit` vazia. **82 linhas no
 total** (contado). Vira `tests/fixtures/eval/gold_units_<curso>.csv` + `scripts/eval_units.py`.
-Baseline pré-cura medido e versionado ANTES de qualquer escrita.
+Baseline pré-cura medido e versionado ANTES de qualquer escrita. Tooling em UTF-8 explícito,
+sem assumir slug ASCII (ids reais: `ia-responsável-7c4626`, dotless-i TCC).
 
 **U4 — Curas gated, curso a curso: MF → SO → ES2 → IA (TCC sem cura).**
 Por curso: snapshot+sha256 (protocolo provado 3×) → reprocess pipeline REAL → gates: (a)
@@ -122,7 +139,8 @@ novo. FAIL → rollback + report + HALT se mecanismo novo.
 - **SO**: diagnóstico da absorção do deadlock + ordem não-monotônica ANTES da cura; recompute
   muda bloco-12 u07→u05 (esperado, camada stale — gold decide o certo); re-segmentação além de
   unidade → HALT ruling.
-- **ES2**: investigar por que u03-testes nunca vence (assinatura vs blocos); fix próprio + gold.
+- **ES2**: investigar por que u03-testes nunca vence (assinatura vs blocos); pista da auditoria:
+  8/35 entries (roteiros) não contribuem heading nenhum por não terem md; fix próprio + gold.
 - **IA**: HALT-primeiro — diagnóstico da violação monotônica com ruling de produto (aceitar
   limitação documentada, modo não-monotônico por curso, ou outra via). U1b só entra em IA com
   aprovação pós-diagnóstico.
@@ -133,7 +151,9 @@ W1 (`pedagogical_regeneration.py:394-404`) adota `engine._build_rich_content_tax
 (dual-source por cópia de `taxonomy_inputs.py:16-32`, verificado) · warning na degradação
 silenciosa (`taxonomy_inputs.py:26-30`: manifest ausente/corrupto → `entries=[]` mudo) ·
 `logger.warning` nos 2 early-returns mudos (`file_map.py:1500-1501` e `:1629-1634`, verificados
-sem log). Nota: guard `_guard_units_not_silently_lost` (encolhimento de índice) JÁ existe
+sem log) · warning no skip mudo do `collect_strong_heading_candidates`
+(`content_taxonomy.py:598` — caso vivo: IA `artigo-usando-agrupamento` com md inexistente).
+Nota: guard `_guard_units_not_silently_lost` (encolhimento de índice) JÁ existe
 (`pedagogical_regeneration.py:275`) — U5 cobre as camadas que ele não vê.
 
 **U6 — Resíduo do scorer do AnchorEngine (condicional, pós-U1).**
