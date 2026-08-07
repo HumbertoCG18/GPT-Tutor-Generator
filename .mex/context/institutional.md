@@ -81,6 +81,13 @@ atribuição (arquivo→bloco→unidade/subunidade).
 - **Avaliações (PUCRS Politécnica):** `P1` (Prova 1), `P2` (Prova 2), `P3` (Prova 3), `PS`
   (Prova Substituta), `G2` (prova de recuperação). Não há PF aqui (G2 = recuperação). Todas
   aparecem na Atividade com "Prova" → casam `assessment` via `ATIVIDADE_KIND_MAP`.
+- **REGRA (user, 2026-08-06): antes de toda prova há uma aula de revisão/tirar dúvidas** —
+  a ÚLTIMA aula antes do bloco `assessment` (pulando não-aula: suspensão/feriado) é a
+  revisão. Material "revisão de PN" pertence a ESSA aula (kind `review` quando o SARC marca).
+  Caso provado: MF `revisao-p1` → bloco-07 15/04 (review) com P1 em bloco-09 22/04 e
+  suspensão no meio (pino corrigido `751955f`, eval 97.0%/cw 0). Prior candidato pro motor:
+  material com stem `revis` + `\bp[12]\b` → âncora no último bloco de aula antes do
+  assessment correspondente (mesma família do D-H/D-I do due-window).
 
 - **Import na app (desde `939e483`):** o `HTMLImportDialog` aceita só a **URL do SARC**
   (auto-fetch via `fetch_schedule_html` → `parse_html_schedule` → `_parse_aspnet_schedule`,
