@@ -295,6 +295,10 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
      proibido de importar os condenados.
   4. = Task B congelada (acima).
   5. = fallback dividido (acima).
+  6. `_serialize_timeline_index` (index.py:813-866, fantasma v4 filtrador de admin) + testes legados dele
+     (tests/test_core.py:2939,2953,5248-5271; test_fileentry_roundtrip.py:155,181;
+     test_file_map_unit_mapping.py:1097) morrem JUNTOS no cutover; guard de condenação em
+     `tests/test_persist_enriched_serializer.py` (C3, 2026-08-07).
 
 ## CODE — bugs pré-existentes localizados
 
