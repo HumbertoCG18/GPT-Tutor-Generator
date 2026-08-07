@@ -63,8 +63,9 @@ def rebuild_course(name: str, subject_profile) -> bool:
         # read_only probe (Plano B): persist=WRITE — dry-run (padrao) fica
         # honesto com o proprio print "não grava"; --write mantem o
         # comportamento de hoje (ledger/manifest/curation migrados).
+        rich_taxonomy = engine._build_rich_content_taxonomy(repo_root, runtime_course_meta, subject_profile)
         ctx = engine._build_file_map_timeline_context_from_course(
-            runtime_course_meta, subject_profile, content_taxonomy=None, persist=WRITE
+            runtime_course_meta, subject_profile, content_taxonomy=rich_taxonomy, persist=WRITE
         )
     except Exception as exc:  # pragma: no cover - diagnóstico
         print(f"[FAIL] {name}: build falhou: {exc}")

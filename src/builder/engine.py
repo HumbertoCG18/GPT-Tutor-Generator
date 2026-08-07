@@ -169,6 +169,9 @@ from src.builder.ops.url_and_cleanup import (
     process_url as _ops_process_url,
     remove_entry_consolidated_images as _ops_remove_entry_consolidated_images,
 )
+from src.builder.ops.taxonomy_inputs import (
+    build_rich_content_taxonomy as _ops_build_rich_content_taxonomy,
+)
 from src.builder.core.source_importers import (
     process_code as _source_importers_process_code,
     process_github_repo as _source_importers_process_github_repo,
@@ -2272,6 +2275,16 @@ _normalize_unit_slug = _file_map_aliases["_normalize_unit_slug"]
 _build_file_map_unit_index = _file_map_aliases["_build_file_map_unit_index"]
 _collect_entry_unit_signals = _file_map_aliases["_collect_entry_unit_signals"]
 _build_file_map_content_taxonomy_from_course = _file_map_aliases["_build_file_map_content_taxonomy_from_course"]
+
+
+def _build_rich_content_taxonomy(repo_root, course_meta, subject_profile):
+    return _ops_build_rich_content_taxonomy(
+        repo_root, course_meta, subject_profile,
+        taxonomy_fn=_build_file_map_content_taxonomy_from_course,
+        filter_live_fn=_filter_live_manifest_entries,
+    )
+
+
 _auto_map_entry_subtopic = _file_map_aliases["_auto_map_entry_subtopic"]
 _score_entry_against_unit = _file_map_aliases["_score_entry_against_unit"]
 _auto_map_entry_unit = _file_map_aliases["_auto_map_entry_unit"]

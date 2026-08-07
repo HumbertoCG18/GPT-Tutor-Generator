@@ -32,8 +32,9 @@ def diff_course(name: str, sp) -> None:
         return
     old = {b.get("id"): b for b in json.loads(idx_path.read_text(encoding="utf-8")).get("blocks", [])}
     cm = json.loads((repo / "manifest.json").read_text(encoding="utf-8")).get("course", {}) if (repo / "manifest.json").exists() else {}
+    rich_taxonomy = engine._build_rich_content_taxonomy(repo, {**cm, "_repo_root": repo}, sp)
     ctx = engine._build_file_map_timeline_context_from_course(
-        {**cm, "_repo_root": repo}, sp, content_taxonomy=None, persist=False
+        {**cm, "_repo_root": repo}, sp, content_taxonomy=rich_taxonomy, persist=False
     )
     new = engine._persist_enriched_timeline_index(ctx.get("timeline_index") or {"version": 4, "blocks": []})
     print(f"=== {name} ({len(new['blocks'])} blocos) ===")

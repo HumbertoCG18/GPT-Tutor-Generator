@@ -42,6 +42,7 @@ def retag(repo_root: Path, subject_profile):
         _build_file_map_timeline_context_from_course, _iter_content_taxonomy_topics,
         _auto_map_entry_subtopic, _auto_map_entry_unit, _select_probable_period_for_entry,
         _resolve_entry_manual_timeline_block, _entry_markdown_text_for_file_map,
+        _build_rich_content_taxonomy,
     )
     manifest = json.loads((repo_root / "manifest.json").read_text(encoding="utf-8"))
     before = manifest.get("entries", [])
@@ -53,7 +54,8 @@ def retag(repo_root: Path, subject_profile):
         before, {"_repo_root": repo_root}, subject_profile,
         build_file_map_unit_index_from_course_fn=_build_file_map_unit_index_from_course,
         build_file_map_timeline_context_from_course_fn=partial(
-            _build_file_map_timeline_context_from_course, persist=False
+            _build_file_map_timeline_context_from_course, persist=False,
+            content_taxonomy=_build_rich_content_taxonomy(repo_root, {"_repo_root": repo_root}, subject_profile),
         ),
         iter_content_taxonomy_topics_fn=_iter_content_taxonomy_topics,
         auto_map_entry_subtopic_fn=_auto_map_entry_subtopic,

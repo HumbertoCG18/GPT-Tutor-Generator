@@ -31,7 +31,7 @@ def test_retag_passes_persist_false_to_timeline_context_builder(tmp_path, monkey
 
     captured = {}
 
-    def _fake_ctx_builder(course_meta, subject_profile, *, persist=True):
+    def _fake_ctx_builder(course_meta, subject_profile, *, persist=True, content_taxonomy=None):
         captured["persist"] = persist
         return {"blocks_by_unit": {}, "unassigned_blocks": [], "timeline_index": {"blocks": []}}
 
