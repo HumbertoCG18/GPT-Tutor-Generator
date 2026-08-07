@@ -46,7 +46,13 @@ def _load_manifest_entries(repo: Path) -> list:
 
 
 def _effective_display(e: dict, ctx) -> str:
+    # Espelha a producao (resolve_temporal_block -> resolve_effective_block):
+    # temporal vence; sem temporal, PINO MANUAL vence computed. O motor limpa
+    # temporal_* em entry pinada (apply.py:73-75) exatamente para o leitor
+    # cair no manual - a regua tem que cair igual.
     ref = str(e.get("temporal_block_id") or "").strip()
+    if not ref:
+        ref = str(e.get("manual_timeline_block_id") or "").strip()
     if not ref:
         ref = str(e.get("computed_block_id") or "").strip()
     if not ref:
