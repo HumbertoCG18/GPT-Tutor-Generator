@@ -44,10 +44,15 @@ Agravantes provados:
    (`unit_matcher.py:84-88`) mantém u02@0.4. **Por isso U1 sozinho NÃO move o bloco-16**
    (falsificado por simulação — spec v1 previa o contrário; corrigido).
 
-**Definição operacional de "casa o título"**: pelo NÚCLEO do título — strip do prefixo
-`unidade( de aprendizagem)? N —` (real: "Unidade 03 — Verificação de Modelos", "Unidade de
-Aprendizagem 5 — Aprendizado de máquina", "UNIDADE 02 — Turing-Computabilidade"). Match ingênuo
-por título completo = no-op provado.
+**Definição operacional de "casa o título"**: pelo NÚCLEO do título, definido por TOKENS —
+tokens do título menos genéricos/numerais (mecanismo `_UNIT_GENERIC`/stopwords já existente no
+matcher), NÃO por regex de prefixo. Os 5 cursos atuais seguem 2 padrões ("Unidade NN —" ×4 ·
+"Unidade de Aprendizagem N —" IA · "UNIDADE" maiúsculo TCC), mas NADA garante o padrão em curso
+futuro ("Módulo 1", "Parte I", título sem prefixo) — e o lado do HEADING (texto livre dos
+arquivos de material) não tem padrão nenhum (ruling do user 2026-08-07). Degradação graciosa:
+sem prefixo → núcleo = título inteiro. Guard anti-falso-positivo pra núcleo curto/genérico
+(ex.: "Testes"): calibrar no plano com os 5 corpora reais + fixture de título sem padrão.
+Match ingênuo por título completo = no-op provado.
 
 **SO — absorção de conteúdo, NÃO colisão** (0 colisões na varredura): o conteúdo de deadlock
 (u04) foi absorvido no texto agregado do bloco vizinho sob u02; nenhum bloco carrega sinal de
@@ -152,7 +157,8 @@ Re-medir aula-13 TCC em sandbox sem pino: persiste → guard C6-equivalente; mor
 
 - **U1**: TDD fixture da taxonomia real MF (proveniência registrada). RED: 2 tópicos-preview sob
   u01, aff bloco-16 `[4,3,4]` · GREEN: colisões mortas, aff `[2,3,4]`. Não-regressão: TCC
-  byte-idêntico (0 colisões → no-op).
+  byte-idêntico (0 colisões → no-op). + casos do núcleo por tokens: título SEM prefixo padrão
+  casa; núcleo curto/genérico NÃO dispara falso positivo.
 - **U1b**: TDD no `unit_matcher`: caso empate-de-caminho real do MF (RED: u02@0.4 · GREEN:
   u03@0.6); caso sem-empate → saída idêntica à atual (SO/ES2/TCC como fixtures de não-regressão).
 - **U2**: teste sonda≡produção por curso.
