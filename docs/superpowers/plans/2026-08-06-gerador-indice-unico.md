@@ -687,3 +687,25 @@ mover spec/plano para `Feitos/` (`git mv`) SE gate 100% verde (regra AGENTS.md) 
 1. Cobertura do spec: C1→Task1, C5→Task2, C2→Task3, C3→Task4, C4→Task5, aceite §6.1-6.5→Tasks 1-6, §6.6→Task7, §6.7→Tasks 4/6/7. Sem lacuna.
 2. Placeholders: nenhum "TBD"; os pontos "LER antes" são verificação obrigatória do protocolo (nunca assumir), cada um com fallback definido (parar/ajustar/registrar).
 3. Consistência de nomes: `build_rich_content_taxonomy` / `engine._build_rich_content_taxonomy` usados idênticos nas Tasks 3, 5(não usa) e 7(não usa); `_effective_display` só Task 2; `UnitsShrinkError` Tasks 5/7 conforme `pedagogical_regeneration.py:275`.
+
+---
+
+### Task 8: Guard exam-vocab na assinatura de janela do P4 (C6)
+
+**Files:**
+- Modify: `src/builder/routing/motor/window_provider.py` (~:110-122, `_block_topic_stems`)
+- Test: `tests/test_motor_window_provider.py` (adicionar à `TestProviderTopic`)
+
+**Interfaces:**
+- Consumes: `block_topic_tokens`/`block_session_tokens` (`disambiguator.py:56-71`), `_STRONG_EXAM_RE` (`src/builder/timeline/classifier.py:131` — importar; passa o import-guard do motor), fixture `_ctx` existente (`tests/test_motor_window_provider.py:179-192`).
+- Produces: na união da assinatura (`window_provider.py:119`), tokens exam-vocab fracos (`"prova"`, `"teste"` — mesmo par do ruling C1) vindos de `block_topic_tokens` só entram se o BLOCO tiver sinal forte de exame (`_STRONG_EXAM_RE` sobre o texto de sessões — labels + lessons_index, o mesmo texto de `block_session_tokens`); a metade `block_session_tokens` NUNCA é filtrada (é dela que vêm os 8 membros legítimos do caso real).
+
+- [ ] **Step 1: Teste RED** — na `TestProviderTopic`: card `"Semana 10 - Revisão para P1 e Prova P1"`; bloco kind=class, `primary_topic_label="Prova da Indecidibilidade do Problema da Parada"`, `topic_text="problema da correspondencia de post"`, session label `"problema da correspondencia de post aula"` (sem sinal forte) → bloco NÃO pode entrar na janela. Segundo teste (controle positivo): bloco com session label `"prova p1 prova"` E `primary_topic_label` com "Prova" acadêmica → CONTINUA na janela (sinal forte presente). Rodar: o 1º FALHA hoje (bloco entra), o 2º passa.
+- [ ] **Step 2: Implementar o guard** em `_block_topic_stems` (linha ~119): separar `topic_toks = block_topic_tokens(b)`; se `not _STRONG_EXAM_RE.search(texto_de_sessoes_do_bloco)`, remover de `topic_toks` os tokens `{"prova", "teste"}`; `sig = topic_toks | block_session_tokens(b, ctx)`. Comentário citando C1 + diagnóstico 2026-08-06. Invalidar/respeitar o cache `ctx._stems_cache` como está.
+- [ ] **Step 3: GREEN** nos 2 testes novos + `tests/test_motor_window_provider.py` inteiro + `tests/test_motor_golden_mf.py` + `tests/test_motor_higiene_batch.py` verdes.
+- [ ] **Step 4: Régua** — `python scripts/fase2_prova_TCC.py` byte-idêntica ao baseline (estado em disco atual é no-op para o guard — MEDIDO no diagnóstico); suite 1880/4/1 (1879+1 novo… são 2 novos: 1881/4/1); 7 probes vereditos PASS inalterados.
+- [ ] **Step 5: Commit** — `fix(motor): P4 nao casa exam-vocab vindo de rotulo de taxonomia sem sinal forte no bloco (C6, 3a camada da colisao prova/demonstracao)`
+
+### Task 9: TCC re-flip tentativa 5 (aceite final)
+
+Repetir o rito COMPLETO da Task 7 (mesmo brief `task-7-brief.md`, mesmos gates, mesmo protocolo de backup/rollback), com o critério decisivo AMPLIADO: fase2-TCC byte-idêntica ao pré-flip **incluindo a linha da janela do card "Semana 10" SEM bloco-13**; bloco-13 kind=class; units=4; votos 16→16; audit hard=0. Verde = commit no TCC-Tutor + fechamento (entrada Concluído no tracker, spec/plano → `Feitos/`, ledger). Vermelho = rollback + BLOCKED (sem 6ª tentativa automática).
