@@ -91,3 +91,28 @@ def test_titulo_de_um_token_nao_participa_da_exclusividade():
     assert _unit_title_core_tokens("Unidade 04 — _Deadlock_") == {"deadl"}
     # a exclusividade exige >= 2 tokens; taxonomia com titulo curto nao move nada
     # (coberto indiretamente: MF nao tem titulo de 1 token; asserção documental)
+
+
+from src.builder.extraction.content_taxonomy import _clean_heading_text
+
+
+def test_clean_heading_strips_decoracao_markdown():
+    assert _clean_heading_text("**Exercícios**") == "Exercícios"
+    assert (
+        _clean_heading_text("[Formal Verification of Axiom-Free Proof](./entries/x.html)")
+        == "Formal Verification of Axiom-Free Proof"
+    )
+
+
+def test_clean_heading_descarta_administrativo_e_tabela():
+    # casos reais: TCC plano-de-ensino.md e geradas "Sumário"/"Conteúdo Extraído"
+    assert _clean_heading_text("| NOME | E-MAIL | |---| Anderson |") == ""
+    assert _clean_heading_text("PLANO DE ENSINO") == ""
+    assert _clean_heading_text("PROFESSOR (ES)") == ""
+    assert _clean_heading_text("Sumário") == ""
+    assert _clean_heading_text("Conteúdo Extraído") == ""
+    assert _clean_heading_text("Imagens Curadas") == ""
+
+
+def test_clean_heading_preserva_conteudo_legitimo():
+    assert _clean_heading_text("Verificação de Modelos e Lógica Temporal") == "Verificação de Modelos e Lógica Temporal"

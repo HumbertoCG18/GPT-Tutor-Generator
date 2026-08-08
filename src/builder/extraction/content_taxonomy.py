@@ -632,6 +632,29 @@ def extract_markdown_lead_text(markdown_text: str, max_chars: int = 2600) -> str
     return clipped.strip()
 
 
+_ADMIN_HEADING_NORMS = {
+    "plano de ensino", "professor", "professor es", "professores",
+    "sumario", "conteudo extraido", "imagens curadas", "referencias", "bibliografia",
+}
+_MD_LINK_RE = re.compile(r"\[([^\]]*)\]\([^)]*\)")
+
+
+def _clean_heading_text(text: str) -> str:
+    """Remove decoracao markdown (link, bold) e descarta heading administrativo
+    ou linha de tabela antes de entrar no alias-enrichment (campanha 2 U1c).
+    "" = descartar."""
+    t = _MD_LINK_RE.sub(r"\1", str(text or ""))
+    t = t.replace("**", "").replace("__", "")
+    if "|" in t:  # linha de tabela nunca e heading legitimo
+        return ""
+    t = _collapse_ws(t)
+    norm = _normalize_match_text(t)
+    norm_alpha = " ".join(w for w in norm.split() if w.isalpha())
+    if norm_alpha in _ADMIN_HEADING_NORMS:
+        return ""
+    return t
+
+
 def collect_strong_heading_candidates(root_dir: Optional[Path], manifest_entries: Optional[List[dict]]) -> List[str]:
     if not root_dir:
         return []
@@ -650,6 +673,7 @@ def collect_strong_heading_candidates(root_dir: Optional[Path], manifest_entries
             except Exception:
                 file_headings = []
             for heading in file_headings[:4]:
+                heading = _clean_heading_text(heading)
                 heading_slug = slugify(heading)
                 if heading_slug and heading_slug not in seen:
                     seen.add(heading_slug)
