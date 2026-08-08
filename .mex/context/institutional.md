@@ -81,6 +81,15 @@ atribuição (arquivo→bloco→unidade/subunidade).
 - **Avaliações (PUCRS Politécnica):** `P1` (Prova 1), `P2` (Prova 2), `P3` (Prova 3), `PS`
   (Prova Substituta), `G2` (prova de recuperação). Não há PF aqui (G2 = recuperação). Todas
   aparecem na Atividade com "Prova" → casam `assessment` via `ATIVIDADE_KIND_MAP`.
+- **REGRA (user, 2026-08-07): PS e G2 são provas OPCIONAIS/condicionais, não do fluxo
+  regular** — o sistema hoje não as trata distintamente ("não pega"). Semântica: **G2**
+  (recuperação) só existe se média final G1 < 7; nota final = (G1 + G2) / 2, aprovado se
+  ≥ 5, reprovado se < 5. **PS** (substituição) é pra quem PERDEU uma prova, e cobre **o
+  conteúdo do semestre inteiro** da cadeira. Consequências pro pipeline: (a) PS/G2 não
+  pertencem a NENHUMA unidade (conteúdo integral) — gold de unidade deixa `true_unit`
+  vazio nesses blocos; (b) material de PS/G2 não deve ancorar em unidade específica;
+  (c) due-window/priors de revisão valem pra P1/P2/P3, não pra PS/G2 (sem aula de revisão
+  própria garantida). Tratamento estrutural: item futuro (registrado na campanha 2, Task 13).
 - **REGRA (user, 2026-08-06): antes de toda prova há uma aula de revisão/tirar dúvidas** —
   a ÚLTIMA aula antes do bloco `assessment` (pulando não-aula: suspensão/feriado) é a
   revisão. Material "revisão de PN" pertence a ESSA aula (kind `review` quando o SARC marca).
