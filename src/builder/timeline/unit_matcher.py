@@ -72,24 +72,28 @@ def assign_units_positional(
     if not any(aff[i][j] > 0 for i in range(n) for j in range(m)):
         return []  # nenhum sinal -> fallback
 
-    NEG = float("-inf")
+    # Tie-break secundario por sinal concentrado (campanha 2 U1b): empate na
+    # soma -> vence o caminho com maior soma de quadrados (sinal forte num
+    # bloco > migalhas espalhadas; caso real bloco-16 MF). Empate duplo
+    # mantem menor indice (nao avancar atoa).
+    NEG = (float("-inf"), float("-inf"))
     dp = [[NEG] * m for _ in range(n)]
     par = [[-1] * m for _ in range(n)]
     for u in range(m):
-        dp[0][u] = aff[0][u]
+        dp[0][u] = (aff[0][u], aff[0][u] ** 2)
     for i in range(1, n):
         for u in range(m):
             best = NEG
             bu = -1
-            # melhor unidade anterior pu <= u; empate -> menor pu (nao avancar atoa)
+            # melhor unidade anterior pu <= u; empate (soma E soma^2) -> menor pu
             for pu in range(u + 1):
                 if dp[i - 1][pu] > best:
                     best = dp[i - 1][pu]
                     bu = pu
-            dp[i][u] = aff[i][u] + best
+            dp[i][u] = (aff[i][u] + best[0], aff[i][u] ** 2 + best[1])
             par[i][u] = bu
 
-    # unidade final: maior dp; empate -> menor indice (nao super-avancar)
+    # unidade final: maior (soma, soma^2); empate -> menor indice
     last = 0
     best = NEG
     for u in range(m):
