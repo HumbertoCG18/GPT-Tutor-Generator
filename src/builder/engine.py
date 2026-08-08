@@ -2121,7 +2121,7 @@ class RepoBuilder:
             self,
             manifest,
             filter_live_manifest_entries_fn=_filter_live_manifest_entries,
-            build_file_map_content_taxonomy_from_course_fn=_build_file_map_content_taxonomy_from_course,
+            build_rich_content_taxonomy_fn=_build_rich_content_taxonomy,
             write_internal_content_taxonomy_fn=_write_internal_content_taxonomy,
             build_file_map_timeline_context_from_course_fn=_build_file_map_timeline_context_from_course,
             persist_enriched_timeline_index_fn=_persist_enriched_timeline_index,
@@ -2277,11 +2277,12 @@ _collect_entry_unit_signals = _file_map_aliases["_collect_entry_unit_signals"]
 _build_file_map_content_taxonomy_from_course = _file_map_aliases["_build_file_map_content_taxonomy_from_course"]
 
 
-def _build_rich_content_taxonomy(repo_root, course_meta, subject_profile):
+def _build_rich_content_taxonomy(repo_root, course_meta, subject_profile, *, entries=None):
     return _ops_build_rich_content_taxonomy(
         repo_root, course_meta, subject_profile,
         taxonomy_fn=_build_file_map_content_taxonomy_from_course,
         filter_live_fn=_filter_live_manifest_entries,
+        entries=entries,
     )
 
 

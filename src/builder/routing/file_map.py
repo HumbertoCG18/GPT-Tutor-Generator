@@ -1498,6 +1498,7 @@ def build_file_map_content_taxonomy_from_course(
 
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     if not teaching_plan:
+        _logger.warning("sem teaching_plan no perfil — content_taxonomy vazia (curso perde estrutura de unidades)")
         return {"version": 1, "course_slug": "", "units": []}
 
     root_dir = course_meta.get("_repo_root")
@@ -1629,6 +1630,9 @@ def build_file_map_unit_index_from_course(
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     if not teaching_plan:
         unit_specs = _derive_unit_specs_from_repo(course_meta)
+        _logger.warning(
+            "sem teaching_plan — unit_index cai pro fallback repo-derived (%d specs)", len(unit_specs)
+        )
         if unit_specs:
             return build_file_map_unit_index_fn(unit_specs)
         return []

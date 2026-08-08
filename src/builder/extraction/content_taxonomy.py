@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 from src.builder.routing.thresholds import METHOD_CAPS, confidence_band, relative_margin_confidence, T
 from src.builder.routing.file_map import reconcile_unit_with_block
@@ -667,6 +670,7 @@ def collect_strong_heading_candidates(root_dir: Optional[Path], manifest_entries
                 continue
             md_path = root_dir / rel_path
             if not md_path.exists() or not md_path.is_file():
+                logger.warning("heading skip: %s aponta md inexistente (%s)", entry.get("id"), rel_path)
                 continue
             try:
                 file_headings = _extract_markdown_headings(md_path.read_text(encoding="utf-8"))

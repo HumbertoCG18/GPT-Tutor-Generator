@@ -336,7 +336,7 @@ def regenerate_pedagogical_files(
     manifest: dict,
     *,
     filter_live_manifest_entries_fn,
-    build_file_map_content_taxonomy_from_course_fn,
+    build_rich_content_taxonomy_fn,
     write_internal_content_taxonomy_fn,
     build_file_map_timeline_context_from_course_fn,
     persist_enriched_timeline_index_fn,
@@ -395,10 +395,11 @@ def regenerate_pedagogical_files(
     manifest["entries"] = live_manifest_entries
     runtime_course_meta = {**builder.course_meta, "_repo_root": builder.root_dir}
 
-    content_taxonomy = build_file_map_content_taxonomy_from_course_fn(
+    content_taxonomy = build_rich_content_taxonomy_fn(
+        builder.root_dir,
         runtime_course_meta,
         builder.subject_profile,
-        live_manifest_entries,
+        entries=live_manifest_entries,
     )
     runtime_course_meta["_content_taxonomy"] = content_taxonomy
     write_internal_content_taxonomy_fn(builder.root_dir, content_taxonomy)
