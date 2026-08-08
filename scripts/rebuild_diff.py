@@ -14,7 +14,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.models.core import SubjectStore  # noqa: E402
-import src.builder.engine as engine  # noqa: E402
+import scripts.course_probe as course_probe  # noqa: E402
 
 BASE = Path(os.environ.get("TUTOR_COURSES_DIR", r"C:\Users\Humberto\Documents\GitHub"))
 
@@ -31,12 +31,7 @@ def diff_course(name: str, sp) -> None:
         print(f"[skip] {name}: sem indice ({idx_path})")
         return
     old = {b.get("id"): b for b in json.loads(idx_path.read_text(encoding="utf-8")).get("blocks", [])}
-    cm = json.loads((repo / "manifest.json").read_text(encoding="utf-8")).get("course", {}) if (repo / "manifest.json").exists() else {}
-    rich_taxonomy = engine._build_rich_content_taxonomy(repo, {**cm, "_repo_root": repo}, sp)
-    ctx = engine._build_file_map_timeline_context_from_course(
-        {**cm, "_repo_root": repo}, sp, content_taxonomy=rich_taxonomy, persist=False
-    )
-    new = engine._persist_enriched_timeline_index(ctx.get("timeline_index") or {"version": 4, "blocks": []})
+    new = course_probe.compute_production_index(sp)
     print(f"=== {name} ({len(new['blocks'])} blocos) ===")
     changed = 0
     for b in new["blocks"]:
