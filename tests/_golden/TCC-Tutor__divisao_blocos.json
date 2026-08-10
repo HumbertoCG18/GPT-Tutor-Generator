@@ -123,25 +123,25 @@
     "id": "bloco-21",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "theorema cook levin"
+    "topico": "oficina problemas"
   },
   {
     "id": "bloco-22",
-    "n_sessoes": 2,
-    "span_dias": 2,
-    "topico": "complexidade tempo"
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "theorema cook levin"
   },
   {
     "id": "bloco-23",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "trabalho"
+    "topico": "complexidade tempo"
   },
   {
     "id": "bloco-24",
-    "n_sessoes": 4,
-    "span_dias": 12,
-    "topico": "oficina problemas"
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "complexidade tempo"
   },
   {
     "id": "bloco-25",
@@ -153,34 +153,58 @@
     "id": "bloco-26",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "para"
+    "topico": "oficina problemas trabalho"
   },
   {
     "id": "bloco-27",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-03-problemas-indecidiveis, unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais"
+    "topico": "oficina problemas trabalho"
   },
   {
     "id": "bloco-28",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "substituicao"
+    "topico": "oficina problemas trabalho"
   },
   {
     "id": "bloco-29",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "correcao"
+    "topico": "oficina problemas"
   },
   {
     "id": "bloco-30",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "atendimento duvidas"
+    "topico": "para"
   },
   {
     "id": "bloco-31",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-03-problemas-indecidiveis, unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais"
+  },
+  {
+    "id": "bloco-32",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "substituicao"
+  },
+  {
+    "id": "bloco-33",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "correcao"
+  },
+  {
+    "id": "bloco-34",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "atendimento duvidas"
+  },
+  {
+    "id": "bloco-35",
     "n_sessoes": 1,
     "span_dias": 0,
     "topico": "Conteúdo: unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas, unidade-02-turing-computabilidade, unidade-03-problemas-indecidiveis, unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais"

@@ -51,19 +51,19 @@
     "id": "bloco-09",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "autenticacao autorizacao"
+    "topico": "comunicacao"
   },
   {
     "id": "bloco-10",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "comunicacao"
+    "topico": "autenticacao autorizacao"
   },
   {
     "id": "bloco-11",
     "n_sessoes": 2,
     "span_dias": 7,
-    "topico": "devops"
+    "topico": "suspensao jogo copa mundo; devops"
   },
   {
     "id": "bloco-12",

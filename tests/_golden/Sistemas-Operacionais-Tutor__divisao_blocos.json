@@ -45,13 +45,13 @@
     "id": "bloco-08",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "parte trabalho"
+    "topico": "duvidas"
   },
   {
     "id": "bloco-09",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "parte trabalho"
+    "topico": "duvidas duvidas"
   },
   {
     "id": "bloco-10",
@@ -61,66 +61,78 @@
   },
   {
     "id": "bloco-11",
-    "n_sessoes": 6,
-    "span_dias": 16,
-    "topico": "gerencia memoria politicas basicas; gerencia memoria memoria virtual paginacao; gerencia memoria memoria virtual segmentacao; gerencia memoria memoria virtual segmentacao paginada"
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "gerencia memoria memoria virtual paginacao"
   },
   {
     "id": "bloco-12",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "enunciado gerencia"
+    "topico": "parte trabalho"
   },
   {
     "id": "bloco-13",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "feriado"
+    "topico": "parte trabalho"
   },
   {
     "id": "bloco-14",
-    "n_sessoes": 2,
-    "span_dias": 2,
-    "topico": "gerencia"
+    "n_sessoes": 4,
+    "span_dias": 12,
+    "topico": "gerencia memoria memoria virtual paginacao; gerencia memoria memoria virtual segmentacao; gerencia memoria memoria virtual segmentacao paginada"
   },
   {
     "id": "bloco-15",
-    "n_sessoes": 2,
-    "span_dias": 2,
-    "topico": "gerencia arquivos"
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "feriado"
   },
   {
     "id": "bloco-16",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "duvidas para"
+    "topico": "gerencia enunciado"
   },
   {
     "id": "bloco-17",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-05-gerencia-de-memoria, unidade-07-gerencia-de-entrada-e-saida, unidade-06-gerencia-de-arquivos"
+    "topico": "gerencia"
   },
   {
     "id": "bloco-18",
-    "n_sessoes": 1,
-    "span_dias": 0,
-    "topico": "substituicao"
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "gerencia arquivos; gerencia arquivos duvidas para"
   },
   {
     "id": "bloco-19",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "parte trabalho"
+    "topico": "Conteúdo: unidade-05-gerencia-de-memoria, unidade-07-gerencia-de-entrada-e-saida"
   },
   {
     "id": "bloco-20",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "parte trabalho"
+    "topico": "substituicao"
   },
   {
     "id": "bloco-21",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "parte trabalho"
+  },
+  {
+    "id": "bloco-22",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "parte trabalho"
+  },
+  {
+    "id": "bloco-23",
     "n_sessoes": 3,
     "span_dias": 7,
     "topico": "reserva tecnica"
