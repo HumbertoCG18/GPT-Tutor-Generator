@@ -254,11 +254,38 @@ def export() -> int:
     return 0
 
 
+def fix_dropdowns() -> int:
+    """Recria os DataValidations (o save do Excel os converte pra extensao x14,
+    que o openpyxl descarta na gravacao seguinte). Rodar apos QUALQUER gravacao
+    openpyxl no workbook."""
+    wb = load_workbook(XLSX)
+    ws_s = wb["_slugs"]
+    for col in range(1, ws_s.max_column + 1):
+        sig = ws_s.cell(1, col).value
+        if not sig or sig not in wb.sheetnames:
+            continue
+        n = max((r for r in range(2, ws_s.max_row + 1) if ws_s.cell(r, col).value), default=1)
+        letter = get_column_letter(col)
+        ws = wb[sig]
+        ws.data_validations.dataValidation = []
+        dv = DataValidation(type="list", formula1=f"'_slugs'!${letter}$2:${letter}${n}",
+                            allow_blank=True, showDropDown=False)
+        dv.error = "Escolha um slug da lista (ou deixe vazio = fora da regua)."
+        ws.add_data_validation(dv)
+        dv.add(f"{get_column_letter(COL_TRUE)}2:{get_column_letter(COL_TRUE)}{ws.max_row}")
+        print(f"  {sig}: dropdown ok")
+    wb.save(XLSX)
+    print("salvo")
+    return 0
+
+
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else ""
     if mode == "build":
         raise SystemExit(build())
     if mode == "export":
         raise SystemExit(export())
+    if mode == "fix-dropdowns":
+        raise SystemExit(fix_dropdowns())
     print(__doc__)
     raise SystemExit(2)
