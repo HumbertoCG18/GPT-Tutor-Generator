@@ -154,11 +154,20 @@ def build() -> int:
             row = ws.max_row
             for c in range(1, len(FIELDS) + 1):
                 cell = ws.cell(row, c)
-                editable = (c in (COL_TRUE, COL_NOTES)) and not fora and editable_ok
+                if c == COL_NOTES:
+                    # notes editavel TAMBEM em prova/trabalho (user anota a
+                    # COBERTURA: "P1: cobre u01" — insumo do item covered_units,
+                    # decisao user 2026-08-08). Linha sintetica segue travada.
+                    editable = editable_ok
+                elif c == COL_TRUE:
+                    editable = (not fora) and editable_ok
+                else:
+                    editable = False
                 cell.protection = UNLOCKED if editable else LOCKED
                 if fora:
-                    cell.fill = FORA_FILL
-                    cell.font = FORA_FONT
+                    cell.fill = EDIT_FILL if (c == COL_NOTES and editable) else FORA_FILL
+                    if not (c == COL_NOTES and editable):
+                        cell.font = FORA_FONT
                 elif editable:
                     cell.fill = EDIT_FILL
                 cell.alignment = WRAP if FIELDS[c - 1] in ("topic_text", "notes") else TOP
