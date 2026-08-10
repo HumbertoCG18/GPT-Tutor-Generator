@@ -91,6 +91,80 @@ def test_positional_dp_resists_spurious_early_high_unit():
     assert out[2][0] == "u2"
 
 
+def test_tokens_expands_e_s_abbreviation_before_filtering():
+    # Causa-raiz SO: label SARC "Gerencia de E/S" normaliza pra "gerencia de e s";
+    # "e"/"s" isolados (1 char) sao descartados pelo filtro len>=3 -> sessoes de
+    # E/S ficam sem nenhum token de "entrada"/"saida" pra casar com a unidade-07.
+    # Fix: bigrama "e s" (2 tokens de 1 char adjacentes) expande pra
+    # "entrada saida" ANTES do filtro de tamanho.
+    from src.builder.timeline.unit_matcher import _tokens
+    toks = _tokens("gerencia de e s")
+    assert "entrada" in toks and "saida" in toks
+    assert "e" not in toks and "s" not in toks  # letras soltas continuam descartadas
+
+
+def test_tokens_e_s_expansion_does_not_touch_unrelated_text():
+    # Nao-regressao: texto sem a abreviacao mantem tokens identicos.
+    from src.builder.timeline.unit_matcher import _tokens
+    assert _tokens("gerencia de memoria virtual") == {"gerencia", "memoria", "virtual"}
+    assert _tokens("chamadas de sistema") == {"chamadas", "sistema"}
+
+
+def test_real_so_e_s_sessions_overlap_unidade07_after_expansion():
+    # Assinatura real da unidade-07 (SO .content_taxonomy.json, conferido em disco
+    # 2026-08-10): titulo "Unidade 07 - Gerencia de entrada e saida" + topicos
+    # "Dispositivos de entrada e saida"/"Controladores dos dispositivos"/etc.
+    # Blocos reais (SO .timeline_index.json, bloco-16/17, conferidos em disco):
+    # sessao unica com label "gerencia de e s"/"gerencia de e s aula".
+    from src.builder.timeline.unit_matcher import _block_tokens, _unit_tokens
+
+    u07 = {
+        "slug": "unidade-07-gerencia-de-entrada-e-saida",
+        "title": "Unidade 07 \u2013 Ger\u00eancia de entrada e sa\u00edda",
+        "topics": [
+            {"label": "**2.1** Dispositivos de entrada e sa\u00edda", "aliases": []},
+            {"label": "**2.2** Controladores dos dispositivos", "aliases": []},
+            {"label": "**2.3** _Drivers_ dos dispositivos", "aliases": []},
+            {"label": "**2.4** Estudo de casos", "aliases": []},
+        ],
+    }
+    u05 = {
+        "slug": "unidade-05-gerencia-de-memoria",
+        "title": "Unidade 05 \u2013 Ger\u00eancia de Mem\u00f3ria",
+        "topics": [{"label": "**6.2** Mem\u00f3ria virtual", "aliases": []}],
+    }
+    bloco16 = {"sessions": [{"label": "gerencia de e s"}], "topic_text": "gerencia enunciado"}
+    bloco17 = {"sessions": [{"label": "gerencia de e s aula"}], "topic_text": "gerencia"}
+
+    for block in (bloco16, bloco17):
+        overlap_u07 = _block_tokens(block) & _unit_tokens(u07)
+        overlap_u05 = _block_tokens(block) & _unit_tokens(u05)
+        assert len(overlap_u07) >= 2, f"overlap fraco com u07: {overlap_u07}"
+        assert len(overlap_u07) > len(overlap_u05), (
+            f"u07 ({overlap_u07}) deveria vencer u05 ({overlap_u05}) sem empate"
+        )
+
+
+def test_real_so_bloco16_17_positional_unit_is_unidade07():
+    # Sonda canonica (regra U2 da campanha): mesmo caminho de rebuild_diff.py.
+    import os
+    from src.models.core import SubjectStore
+    import scripts.course_probe as course_probe
+    base = os.environ.get("TUTOR_COURSES_DIR", r"C:\Users\Humberto\Documents\GitHub")
+    repo = _Path(base) / "Sistemas-Operacionais-Tutor"
+    if not repo.exists():
+        import pytest
+        pytest.skip("corpus indisponivel")
+    sp = SubjectStore().get("Sistemas Operacionais")
+    idx = course_probe.compute_production_index(sp)
+    blocks = {b["id"]: b for b in idx["blocks"]}
+    for bid in ("bloco-16", "bloco-17"):
+        b = blocks[bid]
+        assert b.get("auto_unit_slug") == "unidade-07-gerencia-de-entrada-e-saida", (
+            f"{bid}: auto_unit_slug={b.get('auto_unit_slug')!r}"
+        )
+
+
 def test_real_metodos_hoare_unit_sane():
     import os
     from src.models.core import SubjectStore

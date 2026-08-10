@@ -27,10 +27,17 @@ CONF_STRONG = 0.8   # ancora com margem forte
 CONF_ANCHOR = 0.6   # ancora normal
 CONF_FILL = 0.4     # preenchido por posicao (sem sinal proprio)
 
+# "E/S" normaliza a montante (normalize_match_text troca "/" por espaco) pra
+# "e s" -- bigrama de 2 tokens de 1 char, descartado pelo filtro len>=3 abaixo.
+# Sessoes de E/S ficavam com sinal zero pra unidade-07-gerencia-de-entrada-e-saida
+# (caso real SO bloco-16/17: label "gerencia de e s"). Expande ANTES de tokenizar.
+_ABBR_ES_RE = re.compile(r"\be\s+s\b")
+
 
 def _tokens(text: str) -> set:
     """Tokens alfabeticos >=3 chars, sem acento/stopword."""
     norm = norm_ascii_lower(text or "")
+    norm = _ABBR_ES_RE.sub("entrada saida", norm)
     return {t for t in re.findall(r"[a-z]+", norm) if len(t) >= 3 and t not in _STOPWORDS}
 
 
