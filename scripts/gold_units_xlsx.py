@@ -149,6 +149,21 @@ def build() -> int:
             cell = ws.cell(1, c)
             cell.font = HDR_FONT
             cell.fill = EDIT_FILL if c in (COL_TRUE, COL_NOTES) else HDR_FILL
+        def _emit(vals, fora, editable_ok=True):
+            ws.append(vals)
+            row = ws.max_row
+            for c in range(1, len(FIELDS) + 1):
+                cell = ws.cell(row, c)
+                editable = (c in (COL_TRUE, COL_NOTES)) and not fora and editable_ok
+                cell.protection = UNLOCKED if editable else LOCKED
+                if fora:
+                    cell.fill = FORA_FILL
+                    cell.font = FORA_FONT
+                elif editable:
+                    cell.fill = EDIT_FILL
+                cell.alignment = WRAP if FIELDS[c - 1] in ("topic_text", "notes") else TOP
+
+        NONLECT = ("suspensao", "feriado", "recesso")
         for b in blocks:
             fora = bool(b.get("source_kind"))
             ds, de = _lective_span(b)
@@ -159,20 +174,24 @@ def build() -> int:
                 nt = f"{FORA_NOTE} (kind={kind})"
             if tu:
                 kept += 1
-            ws.append([uuid, b.get("id", ""), ds, de, kind,
-                       str(b.get("topic_text", "") or ""),
-                       str(b.get("unit_slug", "") or ""), tu, nt])
-            row = ws.max_row
-            for c in range(1, len(FIELDS) + 1):
-                cell = ws.cell(row, c)
-                editable = (c in (COL_TRUE, COL_NOTES)) and not fora
-                cell.protection = UNLOCKED if editable else LOCKED
-                if fora:
-                    cell.fill = FORA_FILL
-                    cell.font = FORA_FONT
-                elif editable:
-                    cell.fill = EDIT_FILL
-                cell.alignment = WRAP if FIELDS[c - 1] in ("topic_text", "notes") else TOP
+            # sessao NAO-letiva embutida em bloco de aula -> linha propria
+            # sintetica (pedido user 2026-08-08: planilha espelha o CRONOGRAMA,
+            # nao a segmentacao do indice; caso IA bloco-06). Sem uuid: nunca
+            # exporta/rotula. topic_text do bloco fica sem os tokens nao-letivos.
+            embedded = [s for s in (b.get("sessions") or [])
+                        if any(k in _norm(s.get("label", "")) for k in NONLECT)]
+            tt = str(b.get("topic_text", "") or "")
+            if embedded and not fora and len(embedded) < len(b.get("sessions") or []):
+                for s in sorted(embedded, key=lambda x: str(x.get("date", ""))):
+                    d = str(s.get("date", ""))[:10]
+                    lab = str(s.get("label", "") or "").strip()
+                    _emit(["", f"({b.get('id', '')})", d, d, "suspended",
+                           lab, "", "", f"{FORA_NOTE} (sessão não-letiva dentro de "
+                           f"{b.get('id', '')} no índice; bloco próprio = fix de "
+                           "segmentação pendente)"], fora=True)
+                tt = " ".join(w for w in tt.split() if _norm(w) not in NONLECT)
+            _emit([uuid, b.get("id", ""), ds, de, kind, tt,
+                   str(b.get("unit_slug", "") or ""), tu, nt], fora=fora)
         for c, name in enumerate(FIELDS, start=1):
             ws.column_dimensions[get_column_letter(c)].width = WIDTHS[name]
         ws.column_dimensions["A"].hidden = True  # block_uuid: chave, nao mexer
@@ -214,6 +233,8 @@ def export() -> int:
                 vals = ["" if v is None else str(v).strip() for v in row[: len(FIELDS)]]
                 if not any(vals):
                     continue
+                if not vals[0]:
+                    continue  # linha sintetica (sessao nao-letiva) — sem uuid, nao exporta
                 if vals[COL_NOTES - 1].startswith(FORA_NOTE):
                     vals[COL_TRUE - 1] = ""  # fora da regua nunca leva rotulo
                 w.writerow(vals)
