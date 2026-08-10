@@ -1,12 +1,14 @@
 """Camada de edicao xlsx pro gold de unidades (campanha 2, Task 7).
 
-build:  le docs/reports/gold_templates/gold_units_<CURSO>.csv (5 cursos) e gera
-        UM workbook com 1 aba por curso: true_unit com dropdown dos slugs reais
-        do curso (taxonomia via course_probe), descritores travados, so
-        true_unit/notes editaveis (amarelo). block_uuid fica oculto (chave do
-        round-trip, nao mexer).
-export: le o workbook editado e REESCREVE os 5 CSVs no mesmo formato utf-8-sig
-        (fluxo da Task 7: user edita xlsx -> export -> congelar CSVs em fixtures).
+build:  gera UM workbook com 1 aba por curso a partir do INDICE EM DISCO de cada
+        repo-tutor: TODOS os blocos (pedido do user 2026-08-08 — linha do tempo
+        sem buracos), com os fora-da-regua (source_kind: prova/trabalho)
+        acinzentados e marcados em notes. true_unit com dropdown dos slugs reais
+        (taxonomia via course_probe). Datas exibidas = span das sessoes LETIVAS
+        (borda suspensao/feriado fora — caso IA bloco-06). Se o workbook ja
+        existe, PRESERVA true_unit/notes preenchidos (chave: block_uuid).
+export: le o workbook editado e reescreve os CSVs canonico (utf-8-sig).
+        Linhas fora-da-regua saem com true_unit vazio (eval ignora).
 
 Uso:
     python scripts/gold_units_xlsx.py build
@@ -15,7 +17,9 @@ Uso:
 from __future__ import annotations
 
 import csv
+import json
 import sys
+import unicodedata
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -35,10 +39,21 @@ if hasattr(sys.stdout, "reconfigure"):
 
 XLSX = OUT_DIR / "gold_units_rotular.xlsx"
 ORDER = ["MF", "SO", "ES2", "IA", "TCC"]
+FORA_NOTE = "FORA DA RÉGUA"
+
+# Correcoes de EXIBICAO de kind provadas na varredura 2026-08-08 (classifier de
+# review por keyword nua — item [CODE] no tracker via T13). Morrem com o fix real.
+DISPLAY_KIND_FIX = {
+    ("TCC", "bloco-05"): "class",   # "Revisão: Chomsky..." = conteudo, dist 12 da prova
+    ("TCC", "bloco-16"): "review",  # "revisão para prova p1", vespera real
+    ("TCC", "bloco-26"): "review",  # "revisão para prova p2", vespera real
+}
 
 HDR_FILL = PatternFill("solid", fgColor="D9D9D9")
-EDIT_FILL = PatternFill("solid", fgColor="FFF2CC")  # amarelo = preencher
+EDIT_FILL = PatternFill("solid", fgColor="FFF2CC")   # amarelo = preencher
+FORA_FILL = PatternFill("solid", fgColor="F2F2F2")   # cinza = fora da regua
 HDR_FONT = Font(bold=True)
+FORA_FONT = Font(italic=True, color="999999")
 WRAP = Alignment(vertical="top", wrap_text=True)
 TOP = Alignment(vertical="top")
 LOCKED = Protection(locked=True)
@@ -51,79 +66,132 @@ WIDTHS = {"block_uuid": 4, "block_id": 10, "date_start": 11, "date_end": 11,
           "notes": 30}
 
 
-def _slugs_por_sigla() -> dict:
-    out = {}
+def _norm(s: str) -> str:
+    s = unicodedata.normalize("NFD", str(s or ""))
+    return "".join(c for c in s if not unicodedata.combining(c)).lower()
+
+
+def _lective_span(block: dict) -> tuple[str, str]:
+    """Span das sessoes letivas (suspensao/feriado/recesso de borda fora)."""
+    dates = [str(s.get("date", ""))[:10] for s in (block.get("sessions") or [])
+             if not any(k in _norm(s.get("label", "")) for k in ("suspensao", "feriado", "recesso"))]
+    if not dates:  # bloco 100% nao-letivo (feriado puro): usa period original
+        return str(block.get("period_start", ""))[:10], str(block.get("period_end", ""))[:10]
+    return min(dates), max(dates)
+
+
+def _courses():
     store = SubjectStore()
+    out = []
     for name in store.names():
         sp = store.get(name)
         if sp is None or not getattr(sp, "repo_root", ""):
             continue
         sig = sigla_for_repo(Path(sp.repo_root))
-        if not sig:
+        if sig:
+            out.append((sig, sp))
+    out.sort(key=lambda t: ORDER.index(t[0]) if t[0] in ORDER else 99)
+    return out
+
+
+def _harvest_labels() -> dict:
+    """{(sheet, block_uuid): (true_unit, notes)} do workbook existente."""
+    if not XLSX.exists():
+        return {}
+    wb = load_workbook(XLSX, data_only=True)
+    out = {}
+    for sig in ORDER:
+        if sig not in wb.sheetnames:
             continue
-        tax = compute_production_taxonomy(sp)
-        out[sig] = [u.get("slug") for u in tax.get("units", []) if u.get("slug")]
+        ws = wb[sig]
+        hdr = [c.value for c in ws[1]]
+        try:
+            cu = hdr.index("block_uuid") + 1
+            ct = hdr.index("true_unit") + 1
+            cn = hdr.index("notes") + 1
+        except ValueError:
+            continue
+        for r in range(2, ws.max_row + 1):
+            uuid = str(ws.cell(r, cu).value or "").strip()
+            tu = str(ws.cell(r, ct).value or "").strip()
+            nt = str(ws.cell(r, cn).value or "").strip()
+            if uuid and (tu or nt):
+                out[(sig, uuid)] = (tu, nt)
     return out
 
 
 def build() -> int:
-    slugs = _slugs_por_sigla()
+    saved = _harvest_labels()
     wb = Workbook()
     wb.remove(wb.active)
 
     ws_s = wb.create_sheet("_slugs")
     ranges = {}
-    for col, sig in enumerate([s for s in ORDER if s in slugs], start=1):
+    courses = _courses()
+    for col, (sig, sp) in enumerate(courses, start=1):
+        tax = compute_production_taxonomy(sp)
+        slugs = [u.get("slug") for u in tax.get("units", []) if u.get("slug")]
         ws_s.cell(1, col, sig)
-        for i, slug in enumerate(slugs[sig], start=2):
+        for i, slug in enumerate(slugs, start=2):
             ws_s.cell(i, col, slug)
         letter = get_column_letter(col)
-        ranges[sig] = f"'_slugs'!${letter}$2:${letter}${1 + len(slugs[sig])}"
+        ranges[sig] = f"'_slugs'!${letter}$2:${letter}${1 + len(slugs)}"
     ws_s.sheet_state = "hidden"
 
-    total = 0
-    for sig in ORDER:
-        csv_path = OUT_DIR / f"gold_units_{sig}.csv"
-        if not csv_path.exists():
-            print(f"[skip] {sig}: sem {csv_path.name}")
-            continue
-        with open(csv_path, encoding="utf-8-sig", newline="") as f:
-            rows = list(csv.DictReader(f))
+    total = kept = 0
+    for sig, sp in courses:
+        idx = json.loads((Path(sp.repo_root) / "course" / ".timeline_index.json")
+                         .read_text(encoding="utf-8"))
+        blocks = idx.get("blocks", [])
         ws = wb.create_sheet(sig)
         ws.append(FIELDS)
         for c in range(1, len(FIELDS) + 1):
             cell = ws.cell(1, c)
             cell.font = HDR_FONT
             cell.fill = EDIT_FILL if c in (COL_TRUE, COL_NOTES) else HDR_FILL
-        for r in rows:
-            ws.append([r.get(k, "") for k in FIELDS])
+        for b in blocks:
+            fora = bool(b.get("source_kind"))
+            ds, de = _lective_span(b)
+            kind = DISPLAY_KIND_FIX.get((sig, b.get("id")), b.get("kind", ""))
+            uuid = str(b.get("block_uuid") or "")
+            tu, nt = saved.get((sig, uuid), ("", ""))
+            if fora and not nt:
+                nt = f"{FORA_NOTE} (kind={kind})"
+            if tu:
+                kept += 1
+            ws.append([uuid, b.get("id", ""), ds, de, kind,
+                       str(b.get("topic_text", "") or ""),
+                       str(b.get("unit_slug", "") or ""), tu, nt])
             row = ws.max_row
             for c in range(1, len(FIELDS) + 1):
                 cell = ws.cell(row, c)
-                editable = c in (COL_TRUE, COL_NOTES)
+                editable = (c in (COL_TRUE, COL_NOTES)) and not fora
                 cell.protection = UNLOCKED if editable else LOCKED
-                if editable:
+                if fora:
+                    cell.fill = FORA_FILL
+                    cell.font = FORA_FONT
+                elif editable:
                     cell.fill = EDIT_FILL
                 cell.alignment = WRAP if FIELDS[c - 1] in ("topic_text", "notes") else TOP
         for c, name in enumerate(FIELDS, start=1):
             ws.column_dimensions[get_column_letter(c)].width = WIDTHS[name]
         ws.column_dimensions["A"].hidden = True  # block_uuid: chave, nao mexer
         ws.freeze_panes = "A2"
-        if sig in ranges:
-            dv = DataValidation(type="list", formula1=ranges[sig],
-                                allow_blank=True, showDropDown=False)
-            dv.error = "Escolha um slug da lista (ou deixe vazio = fora da regua)."
-            dv.prompt = "Slug da unidade CERTA deste bloco."
-            ws.add_data_validation(dv)
-            dv.add(f"{get_column_letter(COL_TRUE)}2:{get_column_letter(COL_TRUE)}{ws.max_row}")
+        dv = DataValidation(type="list", formula1=ranges[sig],
+                            allow_blank=True, showDropDown=False)
+        dv.error = "Escolha um slug da lista (ou deixe vazio = fora da regua)."
+        dv.prompt = "Slug da unidade CERTA deste bloco."
+        ws.add_data_validation(dv)
+        dv.add(f"{get_column_letter(COL_TRUE)}2:{get_column_letter(COL_TRUE)}{ws.max_row}")
         ws.protection.sheet = True
         ws.protection.selectLockedCells = True
         ws.protection.selectUnlockedCells = True
-        total += len(rows)
-        print(f"  {sig}: {len(rows)} blocos, dropdown {len(slugs.get(sig, []))} slugs")
+        n_gold = sum(1 for b in blocks if not b.get("source_kind"))
+        total += n_gold
+        print(f"  {sig}: {len(blocks)} blocos ({n_gold} na regua)")
 
     wb.save(XLSX)
-    print(f"OK  {total} blocos -> {XLSX}")
+    print(f"OK  {total} blocos-regua -> {XLSX} | rotulos preservados: {kept}")
     return 0
 
 
@@ -146,6 +214,8 @@ def export() -> int:
                 vals = ["" if v is None else str(v).strip() for v in row[: len(FIELDS)]]
                 if not any(vals):
                     continue
+                if vals[COL_NOTES - 1].startswith(FORA_NOTE):
+                    vals[COL_TRUE - 1] = ""  # fora da regua nunca leva rotulo
                 w.writerow(vals)
                 n += 1
                 if vals[COL_TRUE - 1]:
