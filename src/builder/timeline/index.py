@@ -12,7 +12,7 @@ from src.builder.vision.card_evidence import extract_card_evidence
 from src.builder.timeline.signals import extract_timeline_session_signals
 from src.builder.timeline.classifier import classify_block
 from src.builder.timeline.kinds import BlockKind
-from src.builder.timeline.curation import apply_block_curation
+from src.builder.timeline.curation import apply_block_curation, load_boundary_dates
 from src.builder.timeline.unit_matcher import assign_units_positional
 from src.builder.text.normalize import (
     normalize_match_text as _normalize_match_text,
@@ -1390,8 +1390,17 @@ def _build_file_map_timeline_context_from_course(
     timeline = _parse_syllabus_timeline(syllabus) if syllabus else []
     candidate_rows = _build_timeline_candidate_rows(timeline)
     if candidate_rows:
+        _repo_root_for_boundaries = course_meta.get("_repo_root")
+        boundary_dates = (
+            load_boundary_dates(Path(_repo_root_for_boundaries) / "course")
+            if _repo_root_for_boundaries
+            else None
+        )
         timeline_index = _build_timeline_index(
-            candidate_rows, unit_index=unit_index, content_taxonomy=content_taxonomy
+            candidate_rows,
+            unit_index=unit_index,
+            content_taxonomy=content_taxonomy,
+            boundary_dates=boundary_dates,
         )
     else:
         # Último fallback: usa o índice já salvo em disco para preservar atribuições anteriores
@@ -2122,6 +2131,7 @@ def _build_timeline_index(
     candidate_rows: List[Dict[str, object]],
     unit_index: list,
     content_taxonomy: Optional[dict] = None,
+    boundary_dates: Optional[set] = None,
 ) -> dict:
     if not candidate_rows:
         return _empty_timeline_index()
@@ -2138,7 +2148,13 @@ def _build_timeline_index(
             current_rows = [row]
             continue
 
-        if _rows_belong_to_same_thematic_block(current_rows[-1], row, current_rows=current_rows):
+        row_date = row.get("date_dt")
+        row_date_text = row_date.strftime("%Y-%m-%d") if row_date else ""
+        forced_boundary = bool(boundary_dates) and row_date_text in boundary_dates
+
+        if not forced_boundary and _rows_belong_to_same_thematic_block(
+            current_rows[-1], row, current_rows=current_rows
+        ):
             current_rows.append(row)
             continue
 

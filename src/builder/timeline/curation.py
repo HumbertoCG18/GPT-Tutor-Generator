@@ -7,12 +7,21 @@ Persiste em `course/.timeline_curation.json`, separado do `.timeline_index.json`
 Formato:
     {
       "version": 1,
+      "boundary_dates": ["2026-03-19", "2026-04-14"],
       "blocks": {
         "bloco-03": {"manual_kind_override": "holiday"},
         "bloco-07": {"manual_topic_label": "Indução estrutural"},
         "bloco-12": {"manual_unit_slug": "unidade-03-indecidibilidade"}
       }
     }
+
+`boundary_dates` (opcional, curso-scoped, formato "YYYY-MM-DD"): override de
+FRONTEIRA na segmentação (`_build_timeline_index`), não de bloco já fechado.
+Uma linha cuja data está na lista nunca funde com a anterior — força início
+de bloco novo ali, mesmo que a regra textual de fusão diria "mesmo tema".
+Precisa ser curso-scoped (não block_uuid-scoped) porque o uuid só existe
+depois que os blocos já foram fechados (`reattach_block_uuids`), tarde
+demais para influenciar o agrupamento. Ausente/vazio -> raio zero.
 
 Modulo puro: so le/grava/merge campos crus. A re-derivacao de `kind`/topic
 (que depende do classifier) acontece em quem chama, evitando ciclo de import.
@@ -107,6 +116,26 @@ def set_block_override(
         json.dumps(data, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+
+
+def load_boundary_dates(course_dir: Path) -> set[str]:
+    """Retorna o conjunto de datas ("YYYY-MM-DD") que forcam quebra de bloco
+    na segmentacao (`_build_timeline_index`). Chave top-level `boundary_dates`
+    no mesmo arquivo de curadoria (curso-scoped, fora do escopo por-bloco:
+    a fronteira nao pode ser keyed por block_uuid porque o uuid so existe
+    depois que os blocos ja foram fechados). {} se ausente/corrompido/curso
+    sem a chave -> raio zero (comportamento hoje preservado)."""
+    path = _curation_path(course_dir)
+    if not path.exists():
+        return set()
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError, ValueError):
+        return set()
+    dates = data.get("boundary_dates") if isinstance(data, dict) else None
+    if not isinstance(dates, list):
+        return set()
+    return {str(d).strip() for d in dates if str(d).strip()}
 
 
 def apply_block_curation(blocks: Iterable[dict], course_dir: Path) -> int:
