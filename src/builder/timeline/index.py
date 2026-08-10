@@ -469,7 +469,20 @@ def _extract_timeline_topics(rows: List[Dict[str, object]]) -> tuple[List[str], 
     seen_aliases = set()
     topic_tokens: List[str] = []
 
-    for row in rows or []:
+    # Linha nao-letiva (suspensao/feriado/recesso) mesclada num bloco de aula
+    # nao contribui pro topic_text/topicos agregados (Task 2b, caso real IA
+    # bloco-06: topic_text comecava com "suspensao"). As rows continuam
+    # intactas no bloco (auditoria/GUI); so a agregacao filtra. Bloco 100%
+    # administrativo (feriado puro) mantem o texto -- e ele que hoje alimenta
+    # a propria classificacao HOLIDAY/SUSPENDED via keyword no topic_text.
+    content_rows = [r for r in (rows or []) if _collapse_ws(str(r.get("content", "")))]
+    non_admin_rows = [
+        r for r in content_rows
+        if not _timeline_text_is_administrative(_collapse_ws(str(r.get("content", ""))))
+    ]
+    use_rows = non_admin_rows if non_admin_rows else content_rows
+
+    for row in use_rows:
         text = _collapse_ws(str(row.get("content", "")))
         if not text:
             continue
