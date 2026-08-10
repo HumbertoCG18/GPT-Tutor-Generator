@@ -13,126 +13,138 @@
   },
   {
     "id": "bloco-03",
-    "n_sessoes": 7,
-    "span_dias": 21,
-    "topico": "historico evolucao sistemas operacionais; estruturas sistemas operacionais processos chamadas sistema; gerencia processador processos chamadas sistema escalonamento; gerencia processador threads exclusao mutua"
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "historico evolucao sistemas operacionais; estruturas sistemas operacionais processos chamadas sistema"
   },
   {
     "id": "bloco-04",
-    "n_sessoes": 1,
-    "span_dias": 0,
-    "topico": "feriado"
+    "n_sessoes": 4,
+    "span_dias": 12,
+    "topico": "gerencia processador processos chamadas sistema escalonamento; gerencia processador threads exclusao mutua"
   },
   {
     "id": "bloco-05",
-    "n_sessoes": 4,
-    "span_dias": 9,
-    "topico": "gerencia processador sincronizacao deadlock; especificacao gerencia processador sincronizacao deadlock"
-  },
-  {
-    "id": "bloco-06",
     "n_sessoes": 1,
     "span_dias": 0,
     "topico": "feriado"
+  },
+  {
+    "id": "bloco-06",
+    "n_sessoes": 2,
+    "span_dias": 2,
+    "topico": "gerencia processador sincronizacao deadlock"
   },
   {
     "id": "bloco-07",
     "n_sessoes": 2,
-    "span_dias": 5,
-    "topico": "comunicacao entre processos pipes filas"
+    "span_dias": 2,
+    "topico": "especificacao gerencia processador sincronizacao deadlock"
   },
   {
     "id": "bloco-08",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "duvidas"
+    "topico": "feriado"
   },
   {
     "id": "bloco-09",
-    "n_sessoes": 1,
-    "span_dias": 0,
-    "topico": "duvidas duvidas"
+    "n_sessoes": 2,
+    "span_dias": 5,
+    "topico": "comunicacao entre processos pipes filas"
   },
   {
     "id": "bloco-10",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-01-introducao-ao-estudo-de-sistemas-operacionais, unidade-02-gerencia-do-processador, unidade-03-programacao-concorrente"
+    "topico": "duvidas"
   },
   {
     "id": "bloco-11",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "gerencia memoria memoria virtual paginacao"
+    "topico": "duvidas duvidas"
   },
   {
     "id": "bloco-12",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "parte trabalho"
+    "topico": "Conteúdo: unidade-01-introducao-ao-estudo-de-sistemas-operacionais, unidade-02-gerencia-do-processador, unidade-04-deadlock, unidade-03-programacao-concorrente"
   },
   {
     "id": "bloco-13",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "parte trabalho"
+    "topico": "gerencia memoria memoria virtual paginacao"
   },
   {
     "id": "bloco-14",
-    "n_sessoes": 4,
-    "span_dias": 12,
-    "topico": "gerencia memoria memoria virtual paginacao; gerencia memoria memoria virtual segmentacao; gerencia memoria memoria virtual segmentacao paginada"
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "parte trabalho"
   },
   {
     "id": "bloco-15",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "feriado"
+    "topico": "parte trabalho"
   },
   {
     "id": "bloco-16",
-    "n_sessoes": 1,
-    "span_dias": 0,
-    "topico": "gerencia enunciado"
+    "n_sessoes": 4,
+    "span_dias": 12,
+    "topico": "gerencia memoria memoria virtual paginacao; gerencia memoria memoria virtual segmentacao; gerencia memoria memoria virtual segmentacao paginada"
   },
   {
     "id": "bloco-17",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "gerencia"
+    "topico": "feriado"
   },
   {
     "id": "bloco-18",
-    "n_sessoes": 3,
-    "span_dias": 7,
-    "topico": "gerencia arquivos; gerencia arquivos duvidas para"
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "gerencia enunciado"
   },
   {
     "id": "bloco-19",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-05-gerencia-de-memoria, unidade-07-gerencia-de-entrada-e-saida"
+    "topico": "gerencia"
   },
   {
     "id": "bloco-20",
-    "n_sessoes": 1,
-    "span_dias": 0,
-    "topico": "substituicao"
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "gerencia arquivos; gerencia arquivos duvidas para"
   },
   {
     "id": "bloco-21",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "parte trabalho"
+    "topico": "Conteúdo: unidade-05-gerencia-de-memoria, unidade-07-gerencia-de-entrada-e-saida, unidade-06-gerencia-de-arquivos"
   },
   {
     "id": "bloco-22",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "parte trabalho"
+    "topico": "substituicao"
   },
   {
     "id": "bloco-23",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "parte trabalho"
+  },
+  {
+    "id": "bloco-24",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "parte trabalho"
+  },
+  {
+    "id": "bloco-25",
     "n_sessoes": 3,
     "span_dias": 7,
     "topico": "reserva tecnica"

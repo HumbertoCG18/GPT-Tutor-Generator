@@ -157,11 +157,14 @@ def test_real_so_bloco16_17_positional_unit_is_unidade07():
         pytest.skip("corpus indisponivel")
     sp = SubjectStore().get("Sistemas Operacionais")
     idx = course_probe.compute_production_index(sp)
-    blocks = {b["id"]: b for b in idx["blocks"]}
-    for bid in ("bloco-16", "bloco-17"):
-        b = blocks[bid]
+    # Chave por uuid, nao por id posicional (bloco-NN desloca a cada split de
+    # curadoria -- licao do drift do gold MF, mesmo motivo do gold_units_*.csv
+    # ser keyed por block_uuid). uuids reais das 2 sessoes de E/S do SO.
+    by_uuid = {b.get("block_uuid"): b for b in idx["blocks"]}
+    for uuid in ("2455cd0a-52aa-4753-bf07-df6bbc8a0408", "b6a5d63d-a959-485e-961e-94dbb7749dad"):
+        b = by_uuid[uuid]
         assert b.get("auto_unit_slug") == "unidade-07-gerencia-de-entrada-e-saida", (
-            f"{bid}: auto_unit_slug={b.get('auto_unit_slug')!r}"
+            f"{uuid} ({b.get('id')}): auto_unit_slug={b.get('auto_unit_slug')!r}"
         )
 
 
