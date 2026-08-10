@@ -146,6 +146,27 @@ def _session_exam_or_review(session_hay: str) -> Union[BlockKind, None]:
     return None
 
 
+def _office_hours_session_majority(block: Mapping[str, object], needle: str) -> bool:
+    """Maioria das sessoes do bloco tem `needle` no proprio label (nao so no
+    topic_text agregado). Sem isso, uma sobra tipo "duvidas para a p2" que so
+    sobrevive no topic_text agregado (nao no label de nenhuma sessao)
+    sequestra o bloco inteiro pra OFFICE_HOURS mesmo quando as sessoes reais
+    sao aula de conteudo (caso real SO bloco-18: 3 sessoes "gerencia de
+    arquivos", nenhuma com "duvidas" no proprio label)."""
+    sessions = block.get("sessions")
+    if not isinstance(sessions, list) or not sessions:
+        return True  # sem sessoes pra checar: mantem comportamento historico
+    total = hits = 0
+    for sess in sessions:
+        if not isinstance(sess, Mapping):
+            continue
+        total += 1
+        label = _norm(str(sess.get("label", "") or ""))
+        if _phrase_match(needle, label, set(label.split())):
+            hits += 1
+    return total == 0 or hits * 2 > total
+
+
 def _text_of(block: Mapping[str, object]) -> str:
     """Conteudo + period_label. Usado no matching de keywords (feriado etc.
     podem vir no rotulo do periodo)."""
@@ -228,6 +249,12 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
                     # inequivocos e ficam fora do guard (corpus auditado).
                     if (kind is BlockKind.ASSESSMENT and spec in ("prova", "teste")
                             and not _STRONG_EXAM_RE.search(hay_all)):
+                        continue
+                    # Guard anti-sequestro OFFICE_HOURS: keyword so decide se
+                    # aparece no label da MAIORIA das sessoes (nao so no
+                    # topic_text agregado) -- caso real SO bloco-18.
+                    if (kind is BlockKind.OFFICE_HOURS
+                            and not _office_hours_session_majority(block, spec)):
                         continue
                     return kind
 
