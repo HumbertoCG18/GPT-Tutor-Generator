@@ -1625,10 +1625,12 @@ VITRINE e CUSTO — nada de migrar pra catalogação+LLM-runtime.
     e fortes em fórmula→LaTeX e layout acadêmico (a dor real do user com Marker).
     Bake-off nos 164 PDFs: MinerU vs Docling vs CLI-multimodal-por-conta vs Datalab;
     medir taxa de LaTeX correto + descrição de imagem. Datalab vira último fallback.
-  - **Export vault Obsidian** (ALTERNATIVA BARATA ao item "visão de grafo"): gerar
-    vault markdown com nota por bloco/unidade/material/prova e wikilinks das relações
-    que os índices JÁ têm → grafo nativo do Obsidian de graça, regenerado no
-    reprocess. ~1 script; adiar/matar a UI de grafo própria.
+  - **Export vault Obsidian** — REBAIXADO a bônus opcional (ruling user 2026-08-11:
+    grafo tem que ser NA WEB, pra quem não usa Obsidian). Item grafo atualizado:
+    página de grafo no PAINEL com lib pronta (Cytoscape.js/force-graph — commodity,
+    1 componente lendo o JSON relacional dos índices); interatividade rica (filtros,
+    painéis, tempo real) incremental depois. Vault Obsidian = ~1 script sobre o mesmo
+    JSON, se sobrar vontade.
   - **Citação por página** (padrão PageIndex): resumos/artefatos do tutor citarem
     página exata do PDF de origem — extensão natural da nossa disciplina de
     proveniência (URLs, bands, notes).
@@ -1648,6 +1650,15 @@ VITRINE e CUSTO — nada de migrar pra catalogação+LLM-runtime.
   - **DESCARTADOS de propósito** (peso de produto público, caso nosso é 1 usuário
     local): multi-user/auth, 15 canais IM, skill hubs/marketplace, partners/personas,
     MCP services store.
+  - [DECISION] **Frameworks RAG (LlamaIndex/LightRAG/GraphRAG/PageIndex) — AVALIADOS
+    E ADIADOS (2026-08-11)**: retrieval do chat já resolvido 2x (Projects = RAG do
+    provedor; bridge CLI = retrieval agentic sobre índices estruturados); o motor JÁ
+    é retrieval especializado com régua (chunking vetorial achataria a estrutura
+    temporal/curricular; GraphRAG reconstruiria por LLM, sem régua, o grafo que temos
+    determinístico); custo = subsistema novo (vector store+embeddings+versão).
+    GATILHO de reavaliação: busca lexical acento-insensível do painel medir MAL em
+    sinônimos ("onde vi isso?" cross-curso) → adotar embedding local PONTUAL
+    (ollama/BM25+expansão), nunca o framework inteiro.
     PRÉ-REQUISITO técnico: separar CÓDIGO de DADOS/CONFIG — hoje paths dos
     repos-tutor/subjects.json são locais e acoplados; empacotar exige o "Settings —
     one control plane" (config única apontando pros dados do usuário) e garantir que
