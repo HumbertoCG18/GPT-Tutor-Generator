@@ -1500,6 +1500,15 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - [DECISION] **Subunidades** (ideia do user, pós-campanha): grão mais fino repete lição do
   straddle IA mundo-63; base já existe (computed_subunit_slug/eval_subunit_census);
   cruzamentos como insumo.
+  > **Design candidato (2026-08-11, discussão user+CC)**: grão = SESSÃO (não bloco —
+  > mata o straddle); vocabulário = TÓPICOS do plano por unidade (já parseados com
+  > profundidade em _parse_units_from_teaching_plan); atribuição = token-overlap do
+  > label da sessão contra os tópicos DA unidade do bloco (escopo restrito, precedente
+  > do concept_resolver; sem DP — medir antes de sofisticar); representação =
+  > sessions[].subunit_slug + bloco agrega LISTA de subunidades cobertas; régua = gold
+  > por sessão só nas unidades com texto repetido (caso motivador: "mesma unidade no
+  > cronograma, conteúdo diferente"). PRÓXIMO PASSO: diagnóstico read-only — casar
+  > labels de sessão x tópicos do plano nos 5 cursos, medir taxa de casamento.
 - [DECISION] **Modo não-monotônico por curso** — descartado no ruling T11 (opção C): 1/5
   cursos inverte, scorer puro erra sob co-ocorrência; reavaliar SE a família crescer.
   > **Anotação 2026-08-11 (análise a pedido do user, veredicto: NÃO implementar agora —
@@ -1595,3 +1604,15 @@ VITRINE e CUSTO — nada de migrar pra catalogação+LLM-runtime.
     nova a integrar), relógio/dia/data em tempo real, uso/quota das LLMs.
   - **Agenda da semana sincronizada com Google Agenda**: além do .ics estático —
     sync (push) do calendário acadêmico.
+  Ideias adicionadas 2026-08-11 (2ª leva):
+  - **Página de health**: status úteis em um lugar — LLM/bridge offline, dependência
+    faltando (Node, CLI, pacotes), freshness por curso, quota/uso, último build por
+    repo. Herda os gates CLI (verify_units, check_sarc_freshness) como widgets.
+  - **Upload de arquivos pela web**: ingestão de material direto na UI local
+    (drag-and-drop → staging → motor processa gated como sempre) — substitui o fluxo
+    manual de copiar arquivo pra pasta.
+  - **Limpeza/simplificação dos dados por arquivo** [CODE, pós-cutover]: auditoria de
+    CONSUMO real dos campos de manifest/índice (quem lê o quê — grep de consumidores
+    por campo) e poda do que ninguém usa; junta com a poda de artefatos .md por repo
+    (COURSE_MAP/FILE_MAP/GLOSSARY/...) já nomeada como gordura na discussão de
+    overengineering. Regra: podar SÓ com auditoria de consumo, campo a campo.
