@@ -1619,6 +1619,35 @@ VITRINE e CUSTO — nada de migrar pra catalogação+LLM-runtime.
   - **Distribuição: PyPI e/ou Docker** (modelo DeepTutor): `pip install` → web app
     completa + CLI sem clone (`tutor start` spawna o Next.js standalone; requer
     Python 3.11–3.13 + Node 20+ no PATH) e/ou container único com imagens no GHCR.
+  Ideias da leitura do repo DeepTutor (HKUDS, 2026-08-11 — CC leu features/arquitetura):
+  - **Bake-off de engines de parsing** (refina o item extração): DeepTutor pluga
+    MinerU/Docling/markitdown/PyMuPDF4LLM — MinerU e Docling são locais, open-source
+    e fortes em fórmula→LaTeX e layout acadêmico (a dor real do user com Marker).
+    Bake-off nos 164 PDFs: MinerU vs Docling vs CLI-multimodal-por-conta vs Datalab;
+    medir taxa de LaTeX correto + descrição de imagem. Datalab vira último fallback.
+  - **Export vault Obsidian** (ALTERNATIVA BARATA ao item "visão de grafo"): gerar
+    vault markdown com nota por bloco/unidade/material/prova e wikilinks das relações
+    que os índices JÁ têm → grafo nativo do Obsidian de graça, regenerado no
+    reprocess. ~1 script; adiar/matar a UI de grafo própria.
+  - **Citação por página** (padrão PageIndex): resumos/artefatos do tutor citarem
+    página exata do PDF de origem — extensão natural da nossa disciplina de
+    proveniência (URLs, bands, notes).
+  - **Segurança no upload web** (anexo ao item upload): herdar os gates do DeepTutor
+    — extração defensiva (zip-slip/zip-bomb), whitelist de sufixos, limites de
+    tamanho configuráveis.
+  - **Índice versionado leve** (padrão version-N imutável): formalizar o protocolo de
+    snapshot das campanhas como versionamento do reprocess (re-index nunca destrói o
+    índice ativo; rollback = trocar ponteiro). Nossos snapshots+git cobrem 90% —
+    item só formaliza.
+  - **Tutor como CLI agent-native**: expor consulta ao acervo como comando com saída
+    JSON/NDJSON e session_id — outros agentes (Claude Code etc.) consultam o motor
+    como ferramenta. Barato: os dados já são JSON.
+  - Notas menores: thinking-model routing por tarefa na bridge (modelo barato pra
+    extração, forte pra síntese); bounded caches/hot-reload quando o painel existir;
+    Mastery Path (aprendizado adaptativo) como ideia distante de produto.
+  - **DESCARTADOS de propósito** (peso de produto público, caso nosso é 1 usuário
+    local): multi-user/auth, 15 canais IM, skill hubs/marketplace, partners/personas,
+    MCP services store.
     PRÉ-REQUISITO técnico: separar CÓDIGO de DADOS/CONFIG — hoje paths dos
     repos-tutor/subjects.json são locais e acoplados; empacotar exige o "Settings —
     one control plane" (config única apontando pros dados do usuário) e garantir que
