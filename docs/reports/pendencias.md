@@ -1534,3 +1534,39 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   IA 4/5 (u04 sem aula própria no SARC vivo — baseline). Lições: 5ª geração prova/rótulo
   (inversões LOCAIS calendário-vs-plano → pino gold-backed); régua mede o que o sistema
   produz (gold por bloco, keyed uuid, política = miss documentado); SARC vivo > import.
+
+## CAMPANHA FUTURA (produto) — web local + camada LLM por conta [BACKLOG VIVO]
+
+Decisão do user 2026-08-11: campanha própria, DEPOIS da campanha 3 (cutover — motor
+estável antes de produto). Backlog ABERTO: o user vai adicionando ideias com o tempo
+(minerar DeepTutor e spec "Nexo" do amigo como referências). Princípio acordado nas
+discussões: manter o motor de compreensão (compile-time, medido) e trocar só
+VITRINE e CUSTO — nada de migrar pra catalogação+LLM-runtime.
+
+- [DECISION] **Painel web local** (substitui a GUI Python como cara do sistema; motor
+  já é headless, zero mudança nele). Fase A read-only: "minha semana" cross-curso
+  agregando os 5 `.timeline_index.json`, avaliações cronológicas com escopo
+  (covered_units quando existir), materiais com estado lido/catalogado/não-extraído,
+  badge de freshness (`check_sarc_freshness` como status), download `.ics` (assessments
+  já têm data+escopo nos índices). Fase B: curadoria na web (pinos, overrides,
+  reprocess gated com preview) — aposenta a GUI Python de vez.
+- [DECISION] **Camada LLM por conta (não API)**: bridge HTTP local → CLI autenticado
+  (padrão Nexo/Codex, mas provider-agnóstico). COMEÇAR COM 1 provider (YAGNI no
+  multi). DOIS usos: (a) chat tutor lendo os artefatos/índices locais; (b) **EXTRAÇÃO
+  PDF→markdown multimodal** — transcreve LaTeX de verdade e DESCREVE figuras (dor real
+  do user com Marker offline), one-shot por material, revisável, gate de qualidade
+  barato (headings/fórmulas contadas + diff). **Mata o Datalab** (único custo pago
+  recorrente do pipeline). Teto do design: quota da assinatura compartilhada entre
+  extração e chat.
+- [DECISION] **Modo Projects por provedor**: repo-tutor como KB de Claude Projects
+  (GitHub linkado) / GPT custom — já é o padrão atual com ChatGPT; custo ~zero, é
+  apontar o Project pro repo. Item = documentar/otimizar artefatos pro formato de KB
+  de cada provedor (tamanho, granularidade).
+- [DECISION] **Coleta Moodle assistida** (API local sobre a sessão logada, "como o
+  usuário clicando", estilo Nexo) como fonte UPSTREAM de ingestão: material novo →
+  staging → motor atribui como sempre. Read-only estrito. Riscos registrados:
+  fragilidade de seletores a cada mudança de layout, termos de uso institucionais.
+  Complementa (não substitui) o SARC público já automatizado.
+- [USER] **Backlog aberto de ideias de produto** — user adiciona aqui conforme surgir
+  (DeepTutor: UI de estudo + KB local; Nexo: .ics, estados de leitura, status de sync
+  por fonte — os dois já parcialmente absorvidos nos itens acima).
