@@ -54,6 +54,7 @@ from src.builder.artifacts.prompts import (
 )
 from src.builder.artifacts.repo import rows_to_markdown_table, wrap_frontmatter
 from src.builder.extraction.teaching_plan import (
+    _normalize_unit_slug,
     _parse_units_from_teaching_plan,
     _topic_depth,
     _topic_text,
@@ -2679,6 +2680,29 @@ class TestParseUnitsFromTeachingPlan:
 
     def test_empty_string_returns_empty(self):
         assert _parse_units_from_teaching_plan("") == []
+
+
+class TestNormalizeUnitSlug:
+    def test_zero_pads_unit_number(self):
+        assert _normalize_unit_slug("Unidade 1 — Limites") == "unidade-01-limites"
+
+    def test_strips_workload_percent_from_title(self):
+        # Caso real IA: percentual de carga no título vazava pro slug
+        # ("...visao-geral-5"), poluindo display e fragilizando a chave.
+        assert (
+            _normalize_unit_slug("Unidade de Aprendizagem 1 — Visão Geral (5%)")
+            == "unidade-de-aprendizagem-01-visao-geral"
+        )
+        assert (
+            _normalize_unit_slug("Unidade de Aprendizagem 2 — Solução de Problemas (10%)")
+            == "unidade-de-aprendizagem-02-solucao-de-problemas"
+        )
+
+    def test_title_without_percent_unchanged(self):
+        assert (
+            _normalize_unit_slug("UNIDADE 04 — Hierarquia de Classes de Complexidade de Problemas Computacionais")
+            == "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais"
+        )
 
     def test_no_units_returns_empty(self):
         assert _parse_units_from_teaching_plan("Texto sem unidades aqui.") == []

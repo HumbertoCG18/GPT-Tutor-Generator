@@ -189,7 +189,11 @@ def _parse_bibliography_from_teaching_plan(text: str) -> dict:
 
 
 def _normalize_unit_slug(title: str) -> str:
-    slug = slugify((title or "").replace(_EM_DASH, "-"))
+    # Percentual de carga horária no título (caso real IA: "Visão Geral (5%)")
+    # não é identidade da unidade — fora do slug, senão vira sufixo numérico
+    # ("visao-geral-5") e muda junto com a carga.
+    clean = re.sub(r"\(\s*\d+(?:[.,]\d+)?\s*%\s*\)", " ", title or "")
+    slug = slugify(clean.replace(_EM_DASH, "-"))
     match = re.match(r"^(unidade(?:-de-aprendizagem)?-)(\d+)(-.+)?$", slug)
     if not match:
         return slug
