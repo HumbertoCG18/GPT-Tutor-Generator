@@ -1616,3 +1616,10 @@ VITRINE e CUSTO — nada de migrar pra catalogação+LLM-runtime.
     por campo) e poda do que ninguém usa; junta com a poda de artefatos .md por repo
     (COURSE_MAP/FILE_MAP/GLOSSARY/...) já nomeada como gordura na discussão de
     overengineering. Regra: podar SÓ com auditoria de consumo, campo a campo.
+  - **Distribuição: PyPI e/ou Docker** (modelo DeepTutor): `pip install` → web app
+    completa + CLI sem clone (`tutor start` spawna o Next.js standalone; requer
+    Python 3.11–3.13 + Node 20+ no PATH) e/ou container único com imagens no GHCR.
+    PRÉ-REQUISITO técnico: separar CÓDIGO de DADOS/CONFIG — hoje paths dos
+    repos-tutor/subjects.json são locais e acoplados; empacotar exige o "Settings —
+    one control plane" (config única apontando pros dados do usuário) e garantir que
+    NENHUM dado pessoal/material de curso vai dentro do pacote/imagem.
