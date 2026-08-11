@@ -1443,11 +1443,14 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   de `_apply_curation_overrides`; auto_unit_slug guarda o que o DP deu, unit_slug fica vazio.
   Workaround institucional: kind override + pino `manual_unit_slug` JUNTOS (precedentes:
   bloco-18 SO T9c, bloco-16 IA T11).
-- [CODE] **Guard C6-equivalente no scorer de card (aula-13 TCC)** (`as-of 2026-08-11`, RED =
-  sandbox T12, report `2026-08-11-t12-sandbox-aula13-tcc.md`): sem pino, aula-13 cai no
-  bloco-13 via `card` band ALTA 0.85 (winner_score=48.76, topic_score=8.83) — confiante-e-
-  errado. Pista: exigir coerência tópico-vs-card antes de banda alta em herança de bloco.
-  Implementar SÓ com aval do user; pino segura produção.
+- [CODE] ~~Guard C6-equivalente no scorer de card (aula-13 TCC)~~ **RESOLVIDO POR MEDIÇÃO
+  2026-08-11 (ruling user, zero código — report
+  `2026-08-11-guard-c6-resolvido-por-medicao.md`)**: o motor novo pra aula-13 sem pino dá
+  conf 0.08 band BAIXA (honesto; card_term=0 em todos os blocos); o confiante-e-errado
+  0.85-alta do T12 era o resolver LEGADO, que só decidiu porque `apply_concept_resolver`
+  pula entry com computed_block_id vazio (resolver_apply.py:116). Legado morre no cutover
+  Fase 3.4 (campanha 3); pino segura produção até lá. Sandbox T12 vira RED DE REGRESSÃO
+  do cutover: pós-cutover, aula-13 sem pino deve dar band não-alta.
 - [CODE] **boundary_dates sem validação de formato** (T9c, deferred): data inválida na
   curadoria = fail-open silencioso; warning sugerido.
 - [CODE] **`card_block._tokens` aceita pontuação como token** (`as-of 2026-08-11`, análise
