@@ -1456,14 +1456,13 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - [CODE] **Fix profundo T2b — não mergear sessão não-letiva em bloco de aula** (IA bloco-06,
   suspensão 20/04): fix cirúrgico topic_text já em produção (3d5d7fb); o profundo junta com
   item over-merge existente (Degrau 2/3c).
-- [CODE] **`check_sarc_freshness` 3/5 no fechamento — 6 diffs, TODOS artefato, zero drift
-  real** (`as-of 2026-08-11`, achado review final): (a) 4 diffs IA = espaço duplo no
-  IMPORTADO ("Abordagem  Supervisionada") vs simples no vivo — comparador precisa colapsar
-  whitespace; (b) 2 diffs = LINHA FANTASMA `('', 'Aula')` no importado (IA 15/07, SO 16/07)
-  sem correspondente no vivo — import de tabela não pula célula vazia, e a do IA é a ORIGEM
-  do bloco-23 do índice (gold marca fantasma, fora da régua). Fix: normalizar whitespace no
-  comparador + pular linha vazia no import (e re-avaliar bloco-23/IA e 16/07/SO após).
-  Gate fecha a campanha em "vermelho artefactual" — diagnóstico completo, sem urgência.
+- [CODE] ~~`check_sarc_freshness` 3/5 no fechamento~~ **FECHADO 2026-08-11 (aprovado pelo
+  user, mesmo dia)**: comparador normaliza whitespace + descarta sessão-sem-descrição nos
+  DOIS lados (`_norm_desc`; testes `tests/test_check_sarc_freshness.py`). Gate de volta a
+  **5/5, 0 diffs**. CORREÇÃO FACTUAL do diagnóstico do review final: as linhas 15/07 IA e
+  16/07 SO NÃO eram fantasma de import — são sessões REAIS do SARC agendadas sem descrição
+  (confirmado no HTML vivo; `parse_html_schedule` as descarta do lado vivo). Bloco-23 IA é
+  legítimo; notes do gold/cruzamento corrigidas. Parser de produção intocado.
 - [CODE] Minors acumulados da campanha: `eval_units --baseline` compara ok ABSOLUTO (ler
   pct+totais impressos); `by_uuid` dict-comp sem guard de colisão de uuid vazio/dup;
   `sonda_units`/`check_repo` com sp!=None sem teste automatizado (fake sp sugerido);

@@ -31,13 +31,19 @@ _LIVE_RE = re.compile(
 _DATE_RE = re.compile(r"(\d{2})/(\d{2})/(\d{4})")
 
 
+def _norm_desc(text: str) -> str:
+    """Colapsa whitespace pra comparação (import preserva espaço duplo do HTML;
+    parse_html_schedule colapsa — 4 falsos-stale IA em 2026-08-11)."""
+    return re.sub(r"\s+", " ", text or "").strip()
+
+
 def parse_live(md: str) -> dict:
     rows = {}
     for line in md.splitlines():
         m = _LIVE_RE.match(line.strip())
         if m:
             rows[f"{m.group(3)}-{m.group(2)}-{m.group(1)}"] = (
-                m.group(4).strip(), m.group(5).strip())
+                _norm_desc(m.group(4)), _norm_desc(m.group(5)))
     return rows
 
 
@@ -52,7 +58,13 @@ def parse_syllabus(text: str) -> dict:
         m = _DATE_RE.search(cells[2])
         if not m:
             continue
-        rows[f"{m.group(3)}-{m.group(2)}-{m.group(1)}"] = (cells[4], cells[5])
+        # Sessão agendada SEM descrição (fim de semestre; ex.: IA 15/07, SO 16/07)
+        # é REAL no SARC, mas parse_html_schedule a descarta do lado vivo — pular
+        # aqui também mantém os dois lados no mesmo universo (senão: falso-stale).
+        if not _norm_desc(cells[4]):
+            continue
+        rows[f"{m.group(3)}-{m.group(2)}-{m.group(1)}"] = (
+            _norm_desc(cells[4]), _norm_desc(cells[5]))
     return rows
 
 

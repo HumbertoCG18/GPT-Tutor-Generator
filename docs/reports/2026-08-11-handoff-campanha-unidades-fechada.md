@@ -53,10 +53,12 @@ juntos (precedentes bloco-18 SO, bloco-16 IA).
 
 ## §4b Estado do freshness gate no fechamento (review final)
 
-`check_sarc_freshness` = **3/5 (IA 5 diffs, SO 1)** — diagnóstico completo: **100% artefato,
-zero drift de professor** (4× espaço duplo no importado; 2× linha fantasma `('', 'Aula')`
-sem correspondente no vivo — a do IA 15/07 é a origem do bloco-23). Gold IA congelado
-SEGURO. Item [CODE] no tracker (normalizar whitespace + pular linha vazia no import).
+`check_sarc_freshness` = **5/5, 0 diffs (fix aprovado e aplicado pós-fechamento, mesmo
+dia)**. Os 6 falsos-stale eram artefato do COMPARADOR: espaço duplo preservado pelo
+import vs colapsado pelo parse vivo, e sessão REAL agendada sem descrição (IA 15/07 =
+bloco-23, SO 16/07; confirmadas no HTML vivo — NÃO eram fantasma de import) descartada
+só do lado vivo. Fix: `_norm_desc` nos dois lados + testes; parser de produção intocado.
+Gold IA congelado SEGURO.
 Reviews finais: T11 "With fixes" → fix round completo (2c99e75/15d4d94); whole-branch
 "With fixes" → os 2 fixes de registro fechados neste commit.
 
