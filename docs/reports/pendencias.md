@@ -3,7 +3,9 @@
 last_updated: 2026-08-11b (pós-fechamento: 3 decisões batch executadas — freshness 5/5 verde,
 kind-override promove auto_unit [pino IA removido, 11 pinos], guard C6 resolvido por medição;
 suite 1925/0/4. CAMPANHA FUTURA de produto web criada [backlog vivo ~24 itens, seção no fim].
-Fila: pré-reqs campanha 3 [classifier posicional + remendo golds] → cutover → campanha web)
+Fila RATIFICADA pelo user 2026-08-11: classifier posicional → remendo golds → AUDITORIA-ENXAME
+[análise geral e profunda do sistema com subagentes em workflow: código morto, não-otimizado,
+achados novos — pré-cutover] → campanha 3 cutover → campanha web)
 > Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
 > mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
