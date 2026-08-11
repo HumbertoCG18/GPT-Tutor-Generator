@@ -1,8 +1,9 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-11 (campanha 2 UNIDADES fechada 13/13 — eval_units MF 12/14 · SO 9/11 ·
-ES2 7/7 · TCC 13/13 · IA 9/10, misses = política; suite 1920/0/4, golden IA crônico FECHADO;
-12 pinos gold-backed em produção; dívida nova nas seções "campanha 2" abaixo)
+last_updated: 2026-08-11b (pós-fechamento: 3 decisões batch executadas — freshness 5/5 verde,
+kind-override promove auto_unit [pino IA removido, 11 pinos], guard C6 resolvido por medição;
+suite 1925/0/4. CAMPANHA FUTURA de produto web criada [backlog vivo ~24 itens, seção no fim].
+Fila: pré-reqs campanha 3 [classifier posicional + remendo golds] → cutover → campanha web)
 > Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
 > mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
