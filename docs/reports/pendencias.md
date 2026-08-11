@@ -1,9 +1,8 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-07 (Task 6/6 campanha "gerador de índice único" — régua integral: suite
-1879 passed/4 skipped/1 failed (fail = golden IA stale, item CODE próprio abaixo, não é
-regressão da campanha); rebuild_diff 0 mudanças nos 5 cursos; audit_gold_freshness hard=0 nos 5;
-campanha índice fechada, 5/5 flag-ON)
+last_updated: 2026-08-11 (campanha 2 UNIDADES fechada 13/13 — eval_units MF 12/14 · SO 9/11 ·
+ES2 7/7 · TCC 13/13 · IA 9/10, misses = política; suite 1920/0/4, golden IA crônico FECHADO;
+12 pinos gold-backed em produção; dívida nova nas seções "campanha 2" abaixo)
 > Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
 > mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
@@ -1425,3 +1424,98 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   (1 = golden IA, item próprio). **rebuild_diff 0/5.** Review final whole-branch: **zero Critical
   de código**, findings de docs fechados neste commit. **PLACAR 5/5 FLAG-ON.** Review final
   verificou §6.3 empiricamente: taxonomia montador==produção byte-idêntica nos 5 cursos.
+
+## CODE — dívida da campanha 2 (unidades, 2026-08-11)
+
+- [CODE] **Classifier de kind por keyword sem posição/contexto — família completa, RED pronto**
+  (`as-of 2026-08-11`): (a) `review` sem posição — TCC bloco-05 (revisão LFA, dist 12 da prova)
+  falso positivo vs bloco-16/26 ("revisão para prova", dist 1) falsos negativos; MF acerta os
+  mesmos padrões; (b) correção de prova sem kind próprio (TCC class vs MF results); (c)
+  `office_hours` por 'duvidas' no último label — SO bloco-18 (3 sessões de arquivos 16-23/06)
+  sequestrado (curado no T9a); (d) `planning` por keyword no TEMA — IA bloco-16 "agentes e
+  planejamento" Atividade=Aula virou planning (curado com override+pino, T11); (e) `workshop`
+  não cobre 'desenvolvimento/apresentação de trabalho' com Atividade=Aula. Destino: ANTES da
+  campanha 3 (prior de revisão do SO depende de kind confiável). Regra institucional posicional
+  em `institutional.md`. Fallback de COR existe (helpers.py:398-411) — cores novas = 1 linha
+  com export como prova.
+- [CODE] **`manual_kind_override`→class NÃO re-deriva unidade** (`as-of 2026-08-11`, RED =
+  bloco-16 IA): `_serialize_timeline_index` (index.py:835) zera `unit_slug` de não-class ANTES
+  de `_apply_curation_overrides`; auto_unit_slug guarda o que o DP deu, unit_slug fica vazio.
+  Workaround institucional: kind override + pino `manual_unit_slug` JUNTOS (precedentes:
+  bloco-18 SO T9c, bloco-16 IA T11).
+- [CODE] **Guard C6-equivalente no scorer de card (aula-13 TCC)** (`as-of 2026-08-11`, RED =
+  sandbox T12, report `2026-08-11-t12-sandbox-aula13-tcc.md`): sem pino, aula-13 cai no
+  bloco-13 via `card` band ALTA 0.85 (winner_score=48.76, topic_score=8.83) — confiante-e-
+  errado. Pista: exigir coerência tópico-vs-card antes de banda alta em herança de bloco.
+  Implementar SÓ com aval do user; pino segura produção.
+- [CODE] **boundary_dates sem validação de formato** (T9c, deferred): data inválida na
+  curadoria = fail-open silencioso; warning sugerido.
+- [CODE] **`card_block._tokens` aceita pontuação como token** (`as-of 2026-08-11`, análise
+  slug): título "Visão Geral (5%)" gera token lixo `'(5%)'` (split ingênuo; len>2 passa).
+  Inofensivo hoje (não casa com nada); fragilidade do tokenizador arquivo→bloco.
+- [CODE] **Fix profundo T2b — não mergear sessão não-letiva em bloco de aula** (IA bloco-06,
+  suspensão 20/04): fix cirúrgico topic_text já em produção (3d5d7fb); o profundo junta com
+  item over-merge existente (Degrau 2/3c).
+- [CODE] **`check_sarc_freshness` 3/5 no fechamento — 6 diffs, TODOS artefato, zero drift
+  real** (`as-of 2026-08-11`, achado review final): (a) 4 diffs IA = espaço duplo no
+  IMPORTADO ("Abordagem  Supervisionada") vs simples no vivo — comparador precisa colapsar
+  whitespace; (b) 2 diffs = LINHA FANTASMA `('', 'Aula')` no importado (IA 15/07, SO 16/07)
+  sem correspondente no vivo — import de tabela não pula célula vazia, e a do IA é a ORIGEM
+  do bloco-23 do índice (gold marca fantasma, fora da régua). Fix: normalizar whitespace no
+  comparador + pular linha vazia no import (e re-avaliar bloco-23/IA e 16/07/SO após).
+  Gate fecha a campanha em "vermelho artefactual" — diagnóstico completo, sem urgência.
+- [CODE] Minors acumulados da campanha: `eval_units --baseline` compara ok ABSOLUTO (ler
+  pct+totais impressos); `by_uuid` dict-comp sem guard de colisão de uuid vazio/dup;
+  `sonda_units`/`check_repo` com sp!=None sem teste automatizado (fake sp sugerido);
+  `collect_strong_heading_candidates` sem teste de integração lendo disco (débito antigo);
+  import de `_clean_heading_text` no meio de arquivo de teste (linha ~96); anotação
+  `-> set` vs `-> set[str]` (content_taxonomy.py:72); `period_start→date_start` sem comentário
+  inline (gold_units template); runbooks/handoffs com `pytest -k ES2` NO-OP (0 testes — usar
+  `-k "Engenharia-Software-2"`); gold_units_ES2.csv linhas 5/8/10/11 sem note de pino
+  (convenção SO documenta na linha); racional do ruling posicional ES2 09/10 só em arquivo
+  gitignored (levar pra docs/reports).
+
+## USER/DECISION — dívida da campanha 2 (unidades, 2026-08-11)
+
+- [USER] **Remendo dos golds antigos (arquivo→bloco, campanha 1) pós-refresh** (`as-of
+  2026-08-11`, audit_gold_freshness): SO 32 suspeitas **hard=13** · ES2 21 suspeitas ·
+  IA 7 suspeitas hard=1 (pós-refresh T11) · MF ~7 (eval 50/57=87.7, denom 66→57) · TCC 8.
+  ~60/235 linhas concentradas onde o cronograma mexeu. Inclui re-auditoria do
+  `ground_truth_MF` vs timeline pós-refresh. Pré-requisito da campanha 3 e cutover.
+- [USER] **Revisar gold IA congelado** (`as-of 2026-08-11`): `gold_units_IA.csv` derivado do
+  CRUZAMENTO_IA_SARC.md (validado) — conferir régua 10 e vazios (blocos 07/10/13/21/23);
+  aba MF do xlsx pendente de revisão pós-refresh (blocos de junho recompuseram).
+  **Aba IA + lista `_slugs` do `gold_units_rotular.xlsx` estão STALE** (25 blocos pré-refresh,
+  slugs mortos com percentual; achado review T11) — arquivo em rotulagem ativa, NÃO tocado;
+  regenerar via `scripts/gold_units_xlsx.py` (+`fix-dropdowns`) quando o user pausar, ou
+  tratar a aba IA como superseded (gold IA veio do CRUZAMENTO).
+- [DECISION] **covered_units (lista) p/ assessment/deliverable** (decisão user 2026-08-08):
+  contexto pro tutor; fonte candidata due-window + `.assessment_context.json` (inspecionar
+  primeiro) + notas de cobertura do gold como verdade inicial. Regra IA: P1=u01+u05,
+  P2 CUMULATIVA=u01+u05+u02+u03, PS=tudo (regra DESTE plano; MF/TCC não-cumulativo).
+- [DECISION] **Tratamento estrutural PS/G2** (regra institucional 2026-08-08): provas
+  opcionais sem unidade (PS = semestre; G2 condicional G1<7, (G1+G2)/2>=5).
+- [DECISION] **Subunidades** (ideia do user, pós-campanha): grão mais fino repete lição do
+  straddle IA mundo-63; base já existe (computed_subunit_slug/eval_subunit_census);
+  cruzamentos como insumo.
+- [DECISION] **Modo não-monotônico por curso** — descartado no ruling T11 (opção C): 1/5
+  cursos inverte, scorer puro erra sob co-ocorrência; reavaliar SE a família crescer.
+
+## Concluído (2026-08-11 — campanha 2: unidades, 13/13 tasks)
+
+- [DERIVADO] **Campanha 2 (unidades) ENTREGUE — placar eval_units 5/5: MF 12/14 (85.7) ·
+  SO 9/11 (81.8) · ES2 7/7 (100) · TCC 13/13 (100) · IA 9/10 (90). Misses restantes = 100%
+  POLÍTICA (overview/véspera/entrega-embutida não carregam unidade), zero erro de matcher.
+  SUITE 1920 passed/0 failed/4 skipped — golden IA crônico FECHADO.** Tasks 1-13: U1 título
+  exclusivo `dd10126` · U1c `fda3151` · U1b DP tie-break `e4af4a9` · U5 `f1e8e5e` · U2 sonda
+  canônica `1cd481c` · U3 gold xlsx `1539fc3`+`6a96324` · T7a refresh SARC 5/5 (40 diffs
+  reais; `check_sarc_freshness.py` gate permanente) · T8 cura MF (30454ee, 3 unidades disco)
+  · T9 cura SO em 3 atos (E/S '/', office_hours, boundary_dates `9c89082`, 3 pinos;
+  SO-Tutor `24029c5`) · T10 cura ES2 (4 pinos, ES2-Tutor `b06b264`; review byte-a-byte OK)
+  · T11 ruling IA opção B (IA-Tutor `dd9967d`+`458f744`: refresh + 4 pinos u05 + bloco-16
+  class/u03; projeto `8683a39` fix slug percentual + `96dfb3e` gold IA 23/10) · T12 sandbox
+  aula-13 (resíduo VIVO, guard C6 → item CODE) · T13 fechamento. **12 pinos gold-backed em
+  produção** (3 SO + 4 ES2 + 5 IA). Índices em disco: MF 3/3 · SO 7/7 · ES2 3/3 · TCC 4/4 ·
+  IA 4/5 (u04 sem aula própria no SARC vivo — baseline). Lições: 5ª geração prova/rótulo
+  (inversões LOCAIS calendário-vs-plano → pino gold-backed); régua mede o que o sistema
+  produz (gold por bloco, keyed uuid, política = miss documentado); SARC vivo > import.

@@ -43,7 +43,7 @@ Validar/corrigir = insumo do ruling T11. Blocos do indice atual sao STALE.
 | 06/07 | SEG | Prova PS | Prova de Substituição | — |
 | 08/07 | QUA | Atendimento. Divulgação dos resultados da G1 até 09/07 | Aula | — |
 | 13/07 | SEG | Prova G2 | Prova de G2 | — |
-| 15/07 | QUA | (sessão "aula" residual pós-G2, sem descrição de conteúdo no SARC vivo) | Aula | — |
+| 15/07 | QUA | (LINHA FANTASMA do import: `('', 'Aula')` no syllabus importado, SEM correspondente no SARC vivo — origem do bloco-23; item [CODE] freshness/import no tracker) | Aula | — |
 
 ## Cobertura das provas (regra do plano de ensino IA, user 2026-08-08)
 
