@@ -91,6 +91,19 @@ def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
             finalize_block(block)
             # source_kind (hint de linha do SARC) NAO e re-derivado aqui: e
             # row-level; o override manual ja vence o source_kind em classify_block.
+            # Override -> CLASS: o serialize ja zerou unit_slug quando o bloco era
+            # nao-class, mas auto_unit_slug preserva o que o DP atribuiu — promover
+            # (caso real bloco-16 IA 2026-08-11; sem isso, so pino devolvia a unidade).
+            if (
+                block.get("kind") == BlockKind.CLASS.value
+                and not block.get("unit_slug")
+                and not block.get("block_manual_unit_slug")
+                and block.get("auto_unit_slug")
+            ):
+                block["unit_slug"] = block["auto_unit_slug"]
+                block["unit_confidence"] = max(
+                    float(block.get("unit_confidence", 0.0) or 0.0), 0.51
+                )
         if block.get("manual_topic_label"):
             label, slug, source = _resolve_block_topic_label(block)
             if label:
