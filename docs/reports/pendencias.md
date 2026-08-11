@@ -1570,3 +1570,28 @@ VITRINE e CUSTO — nada de migrar pra catalogação+LLM-runtime.
 - [USER] **Backlog aberto de ideias de produto** — user adiciona aqui conforme surgir
   (DeepTutor: UI de estudo + KB local; Nexo: .ics, estados de leitura, status de sync
   por fonte — os dois já parcialmente absorvidos nos itens acima).
+  Ideias adicionadas 2026-08-11:
+  - **Visão de grafo estilo Obsidian**: unidades/subunidades/blocos/materiais/provas
+    como grafo navegável, atualização em tempo real. Base já existe: os índices são
+    relacionais (bloco→unidade, material→bloco, prova→escopo) e
+    `computed_subunit_slug` é a semente de subunidades (item DECISION próprio).
+  - **Question Banks**: junção de exercícios + trabalhos + provas por
+    unidade/subunidade. Base: assessments/exercises já catalogados nos manifests;
+    liga com covered_units (escopo por prova).
+  - **Memória em camadas com proveniência** (DeepTutor: "L1 traces, L2 surface
+    summaries, L3 synthesis" + Memory Graph): personalização visível e EDITÁVEL,
+    cada claim rastreável à evidência — casa com nossa disciplina de
+    gold/proveniência (URLs de origem, bands, notes).
+  - **Grouped Workspaces com instruções persistentes por grupo** (DeepTutor):
+    workspace por disciplina/tema com custom instructions próprias.
+  - **Living Books** (DeepTutor): "livro vivo" gerado dos materiais do curso,
+    reorganizado por unidade/subunidade, atualizado quando material novo chega.
+  - **Settings — one control plane**: config única (providers LLM, quotas, fontes,
+    flags por curso) — hoje espalhado em subjects.json/feature_flags/scripts.
+  - **ManimCat / vídeos Manim**: geração de visuais matemáticos (dual-mode AI
+    workspace) — candidato natural pra MF/TCC (LaTeX/provas formais).
+  - **Dashboard como home**: atividades a entregar, próximas aulas com horário e
+    SALA/LABORATÓRIO (fonte: SARC e **OpenSarc** — registrar OpenSarc como fonte
+    nova a integrar), relógio/dia/data em tempo real, uso/quota das LLMs.
+  - **Agenda da semana sincronizada com Google Agenda**: além do .ics estático —
+    sync (push) do calendário acadêmico.
