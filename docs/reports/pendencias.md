@@ -1500,15 +1500,19 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   cruzamentos como insumo.
 - [DECISION] **Modo não-monotônico por curso** — descartado no ruling T11 (opção C): 1/5
   cursos inverte, scorer puro erra sob co-ocorrência; reavaliar SE a família crescer.
-  > **SUPERSEDED por design melhor (ideia do user, 2026-08-11): "modelo de alinhamento
-  > segmentado"** — mesma família dos modelos de atribuição existentes (data de arquivo,
-  > semana, card). Dados da campanha mostram que a inversão IA é BIMODAL com quebra na P1
-  > (u01+u05 antes; u02+u03 depois) — monotonicidade vale DENTRO de cada segmento. Design:
-  > **DP monotônico POR SEGMENTO com âncoras nos assessments** (preserva a proteção
-  > anti-co-ocorrência que o scorer livre perde — medido M1/M2=0) + **detector automático**
-  > (afinidade argmax-livre >> DP-global, OU unidade com sinal forte ausente do resultado
-  > — caso u05). Substituiria os 5 pinos IA. RED congelado: gold_units_IA.csv + índice IA
-  > 2026/1. Prioridade: pós-campanha 3 (não bloqueia; pinos seguram produção).
+  > **Anotação 2026-08-11 (análise a pedido do user, veredicto: NÃO implementar agora —
+  > risco de overengineering confirmado no código):** o caminho bloco→unidade já empilha
+  > ~8 camadas (DP global, 2 fallbacks, 2 heranças, curadoria, demote de revisão, escopo
+  > por janela) e o conceito "segmento entre provas" JÁ EXISTE (`assessment_scope_by_date`
+  > + `link_review_scope`, index.py:1299). Detector automático é frágil em curso de sinal
+  > fraco (SO: 'gerencia' em 4/7 títulos — dispararia falso e podia regredir cursos 100%).
+  > Verbosidade das respostas: modelo não muda nada (só o valor do slug; COURSE_MAP já
+  > exibe certo). Pinos custam ~zero manutenção. **Gatilho de reavaliação: inversão em
+  > 2+ cursos OU 2+ semestres.** Se disparar, o design é GENERALIZAR o DP existente
+  > (reset PENALIZADO nas âncoras de assessment que o código já computa) — 1 algoritmo,
+  > sem modo novo, sem detector. RED congelado: gold_units_IA.csv + índice IA 2026/1.
+  > Inversão IA é bimodal com quebra na P1 (u01+u05 antes; u02+u03 depois) —
+  > monotonicidade vale dentro de cada segmento.
 
 ## Concluído (2026-08-11 — campanha 2: unidades, 13/13 tasks)
 
