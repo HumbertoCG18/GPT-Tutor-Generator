@@ -23,8 +23,8 @@ Rotular = colar um destes na coluna `true_unit`. Vazio = bloco fora da régua.
 - unidade-03-testes-de-software
 
 ## IA (gold_units_IA.csv)
-- unidade-de-aprendizagem-01-visao-geral-5
-- unidade-de-aprendizagem-02-solucao-de-problemas-10
+- unidade-de-aprendizagem-01-visao-geral
+- unidade-de-aprendizagem-02-solucao-de-problemas
 - unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento
 - unidade-de-aprendizagem-04-raciocinio-sob-incerteza
 - unidade-de-aprendizagem-05-aprendizado-de-maquina

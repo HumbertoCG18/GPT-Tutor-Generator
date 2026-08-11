@@ -2697,6 +2697,10 @@ class TestNormalizeUnitSlug:
             _normalize_unit_slug("Unidade de Aprendizagem 2 — Solução de Problemas (10%)")
             == "unidade-de-aprendizagem-02-solucao-de-problemas"
         )
+        assert (
+            _normalize_unit_slug("Unidade 3 — Tópicos Avançados (7,5%)")
+            == "unidade-03-topicos-avancados"
+        )
 
     def test_title_without_percent_unchanged(self):
         assert (
