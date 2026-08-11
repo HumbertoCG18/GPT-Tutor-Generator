@@ -1,0 +1,24 @@
+block_uuid,block_id,date_start,date_end,kind,topic_text,unit_slug_atual,true_unit,notes
+43b6f936-7dc9-49fa-8f19-a88b66dc9b98,bloco-01,2026-03-02,2026-03-02,overview,plano ensino programatico cronograma forma datas avaliacao bibliografia historico,,unidade-de-aprendizagem-01-visao-geral,
+55691241-63a8-4053-aea8-8a835c90f4f7,bloco-02,2026-03-04,2026-03-04,class,visao geral,unidade-de-aprendizagem-01-visao-geral,unidade-de-aprendizagem-01-visao-geral,
+fbf15f4c-54b1-489d-bb02-f9bd33dc1bd3,bloco-03,2026-03-09,2026-03-09,class,introducao,unidade-de-aprendizagem-05-aprendizado-de-maquina,unidade-de-aprendizagem-05-aprendizado-de-maquina,"pino gold-backed manual_unit_slug (inversao calendario/plano, ruling T11 opcao B)"
+af22fe17-ee73-407f-9af5-d730739d71e0,bloco-04,2026-03-11,2026-03-16,class,tipos dados preparacao,unidade-de-aprendizagem-05-aprendizado-de-maquina,unidade-de-aprendizagem-05-aprendizado-de-maquina,pino gold-backed manual_unit_slug (ruling T11)
+2fdbf4f5-fe92-46c7-b3d6-b4a09d87615f,bloco-05,2026-03-18,2026-04-15,class,abordagem supervisionada rede neural introducao perceptron analise resultados regressao ar,unidade-de-aprendizagem-05-aprendizado-de-maquina,unidade-de-aprendizagem-05-aprendizado-de-maquina,pino gold-backed manual_unit_slug (ruling T11)
+17ea65f3-5f84-47c7-9357-e090ee1f80ed,bloco-06,2026-04-20,2026-04-27,class,abordagem supervisionada means hierarquico analise resultados,unidade-de-aprendizagem-05-aprendizado-de-maquina,unidade-de-aprendizagem-05-aprendizado-de-maquina,pino gold-backed manual_unit_slug (ruling T11); suspensao 20/04 merged no bloco (item T2b deferido)
+696e2177-a69e-4dbb-9b79-73e03f3e8c85,bloco-07,2026-04-29,2026-04-29,office_hours,duvidas para,,,"duvidas T1 (office_hours, politica sem unidade; conteudo adjacente ~u05)"
+5256ec08-7e5d-4c55-8a3c-e1a7f981ac71,bloco-08,2026-05-04,2026-05-04,deliverable,trabalho,,,FORA DA REGUA: apresentacao T1 (deliverable)
+55c7cdd4-b450-458e-880b-7c5e4ffb1ba4,bloco-09,2026-05-06,2026-05-06,deliverable,trabalho,,,FORA DA REGUA: apresentacao T1 (deliverable)
+7eb6a214-73e1-48c7-a4a7-8bf66cf66385,bloco-10,2026-05-11,2026-05-11,class,gerais,unidade-de-aprendizagem-01-visao-geral,,"vespera P1, exercicios gerais (cruzamento: sem unidade)"
+f611d54d-9f6a-4534-b54c-01a600d38d8f,bloco-11,2026-05-13,2026-05-13,assessment,,,,FORA DA REGUA: P1 cobre u01+u05 (kind=assessment; regra cumulativa do plano IA)
+0b986383-663a-4a54-b000-4b97ebce59c4,bloco-12,2026-05-18,2026-05-25,class,correcao algoritmos busca,unidade-de-aprendizagem-02-solucao-de-problemas,unidade-de-aprendizagem-02-solucao-de-problemas,"sessao mista 18/05: correcao P1 + inicio busca (dominante u02, cruzamento)"
+d75c82cf-f46d-4b1e-8a65-9b890166dc7d,bloco-13,2026-05-27,2026-05-27,academic_event,evento academico,,,ES Day (academic_event)
+1de905a2-724e-4841-8d7b-a62bf7a42212,bloco-14,2026-06-01,2026-06-08,class,algoritmos busca,unidade-de-aprendizagem-02-solucao-de-problemas,unidade-de-aprendizagem-02-solucao-de-problemas,
+4062d883-01e9-47d1-be03-61ea23b0adff,bloco-15,2026-06-10,2026-06-15,class,correcao duvidas algoritmos busca,unidade-de-aprendizagem-02-solucao-de-problemas,unidade-de-aprendizagem-02-solucao-de-problemas,10/06 correcao P1/duvidas T2; 15/06 busca exercicios (dominante u02)
+7aa48de9-e821-4cb7-8e89-3c68c530e552,bloco-16,2026-06-17,2026-06-22,class,introducao agentes planejamento,unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento,unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento,falso positivo classifier (keyword 'planejamento' no TEMA; Atividade=Aula no SARC): curado com manual_kind_override=class + pino manual_unit_slug u03 (serialize zera unit de nao-class antes da curadoria — item [CODE] T13)
+851995f0-743a-480f-bc63-304f8354919d,bloco-17,2026-06-24,2026-06-24,holiday,suspensao atividades feriado,,,feriado 24/06 (Copa)
+5f917e10-322b-40f4-807d-cef684be70fd,bloco-18,2026-06-29,2026-06-29,deliverable,trabalho,,,FORA DA REGUA: apresentacao T2 (deliverable)
+421fe467-6e6d-40b5-911e-95abfa402def,bloco-19,2026-07-01,2026-07-01,assessment,,,,FORA DA REGUA: P2 CUMULATIVA cobre u01+u05+u02+u03 (regra do plano IA)
+38627373-95a6-4a0b-8504-de82c6ce8723,bloco-20,2026-07-06,2026-07-06,assessment,substituicao,,,FORA DA REGUA: PS cobre tudo (regra institucional)
+ec23115c-f511-45dc-bbee-c13f4df83a6e,bloco-21,2026-07-08,2026-07-08,results,atendimento divulgacao resultados,,,atendimento/divulgacao resultados G1 (results)
+60d8cfd2-eb1f-40fe-aa3d-1f55f56d9e5b,bloco-22,2026-07-13,2026-07-13,assessment,,,,FORA DA REGUA: G2 condicional cobre tudo (regra institucional)
+d0e31a6f-832e-44f1-b550-dc711edb9196,bloco-23,2026-07-15,2026-07-15,class,,unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento,,sessao 'aula' 15/07 pos-G2 sem conteudo no SARC vivo (topic_text vazio)

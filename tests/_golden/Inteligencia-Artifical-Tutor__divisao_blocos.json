@@ -27,13 +27,13 @@
     "id": "bloco-05",
     "n_sessoes": 9,
     "span_dias": 28,
-    "topico": "abordagem supervisionada"
+    "topico": "abordagem supervisionada; regressao"
   },
   {
     "id": "bloco-06",
     "n_sessoes": 3,
     "span_dias": 7,
-    "topico": "suspensao; abordagem supervisionada"
+    "topico": "abordagem supervisionada"
   },
   {
     "id": "bloco-07",
@@ -63,43 +63,43 @@
     "id": "bloco-11",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-de-aprendizagem-01-visao-geral-5"
+    "topico": "Conteúdo: unidade-de-aprendizagem-01-visao-geral, unidade-de-aprendizagem-05-aprendizado-de-maquina"
   },
   {
     "id": "bloco-12",
-    "n_sessoes": 2,
-    "span_dias": 2,
-    "topico": "correcao introducao agentes; introducao agentes"
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "correcao algoritmos busca; algoritmos busca"
   },
   {
     "id": "bloco-13",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "algoritmos busca"
-  },
-  {
-    "id": "bloco-14",
-    "n_sessoes": 1,
-    "span_dias": 0,
     "topico": "evento academico"
   },
   {
-    "id": "bloco-15",
+    "id": "bloco-14",
     "n_sessoes": 3,
     "span_dias": 7,
     "topico": "algoritmos busca"
   },
   {
+    "id": "bloco-15",
+    "n_sessoes": 2,
+    "span_dias": 5,
+    "topico": "correcao duvidas; algoritmos busca"
+  },
+  {
     "id": "bloco-16",
     "n_sessoes": 2,
     "span_dias": 5,
-    "topico": "planejamento"
+    "topico": "introducao agentes planejamento"
   },
   {
     "id": "bloco-17",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "duvidas"
+    "topico": "suspensao atividades feriado"
   },
   {
     "id": "bloco-18",
@@ -111,40 +111,28 @@
     "id": "bloco-19",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "trabalho"
+    "topico": "Conteúdo: unidade-de-aprendizagem-02-solucao-de-problemas, unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento"
   },
   {
     "id": "bloco-20",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "gerias"
+    "topico": "substituicao"
   },
   {
     "id": "bloco-21",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-de-aprendizagem-02-solucao-de-problemas-10, unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento"
+    "topico": "atendimento divulgacao resultados"
   },
   {
     "id": "bloco-22",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "substituicao"
+    "topico": "Conteúdo: unidade-de-aprendizagem-01-visao-geral, unidade-de-aprendizagem-05-aprendizado-de-maquina, unidade-de-aprendizagem-02-solucao-de-problemas, unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento"
   },
   {
     "id": "bloco-23",
-    "n_sessoes": 1,
-    "span_dias": 0,
-    "topico": "atendimento divulgacao resultados"
-  },
-  {
-    "id": "bloco-24",
-    "n_sessoes": 1,
-    "span_dias": 0,
-    "topico": "Conteúdo: unidade-de-aprendizagem-01-visao-geral-5, unidade-de-aprendizagem-02-solucao-de-problemas-10, unidade-de-aprendizagem-03-raciocinio-planejamento-e-representacao-de-conhecimento"
-  },
-  {
-    "id": "bloco-25",
     "n_sessoes": 1,
     "span_dias": 0,
     "topico": ""
