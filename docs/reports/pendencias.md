@@ -1430,7 +1430,16 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 
 ## CODE — dívida da campanha 2 (unidades, 2026-08-11)
 
-- [CODE] **Classifier de kind por keyword sem posição/contexto — família completa, RED pronto**
+- [CODE] ~~Classifier de kind por keyword sem posição/contexto~~ **FECHADO 2026-08-12
+  (commits projeto `a6f7b73` + TCC `887dfe4` + IA `87f134a`; TDD 6 testes; suite 1930/0/4;
+  eval 5/5 intacto)**: (a)+(b) promote posicional de véspera (TCC 16/30 review c/ scope da
+  prova) + demote existente + override stale TCC-05 removido (código acerta sozinho);
+  (c) já resolvido no T9a (guard maioria-de-sessões); (d) guard planning-com-evidência-de-
+  unidade (IA-16, override removido); (e) workshop-gap: varrido, ZERO instâncias vivas
+  pós-refresh (source_kind cobre) — 1 linha de keyword SE aparecer. BÔNUS: revisão herda
+  scope MANUAL da prova (véspera-P1 TCC) + 2 scopes gold-backed P1/P2 TCC. Correção de
+  prova sem kind próprio (TCC class vs MF results): inconsistência TEXTUAL entre cursos,
+  não bug — segue documentada. Era item original:**
   (`as-of 2026-08-11`): (a) `review` sem posição — TCC bloco-05 (revisão LFA, dist 12 da prova)
   falso positivo vs bloco-16/26 ("revisão para prova", dist 1) falsos negativos; MF acerta os
   mesmos padrões; (b) correção de prova sem kind próprio (TCC class vs MF results); (c)
