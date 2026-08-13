@@ -1,6 +1,6 @@
 id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante,true_block_uuid
-3d-matching,3D Matching.pdf,bloco-24,bloco-24,bloco-24,3d-matching,block-direct,clean,,yes,no,3a7783ef-c47a-4d99-9038-dacc0c4593b9
-3dm-caetano-gabriel-e-gustavo,"3DM - Caetano, Gabriel e Gustavo.pdf",bloco-24,bloco-22,bloco-22,3d-matching,block-direct,clean,,yes,yes,3a7783ef-c47a-4d99-9038-dacc0c4593b9
+3d-matching,3D Matching.pdf,bloco-25,bloco-24,bloco-24,3d-matching,block-direct,clean,,yes,no,3a7783ef-c47a-4d99-9038-dacc0c4593b9
+3dm-caetano-gabriel-e-gustavo,"3DM - Caetano, Gabriel e Gustavo.pdf",bloco-25,bloco-22,bloco-22,3d-matching,block-direct,clean,,yes,yes,3a7783ef-c47a-4d99-9038-dacc0c4593b9
 aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade,"Aula 01 - Apresentação da Disciplina, Revisão de Teoria de Conjuntos e Enumerabilidade.pdf",bloco-01,bloco-02,bloco-02,,block-direct,clean,,yes,yes,667491f1-cffe-45f5-8b3f-29b0cec9d25a
 aula-02-conjuntos-enumeraveis-e-nao-enumeraveis-argumento-da-diagonalizacao-de-cantor,Aula 02 - Conjuntos Enumeráveis e Não-Enumeráveis; Argumento da Diagonalização de Cantor.pdf,bloco-02,bloco-02,bloco-02,,block-direct,clean,,yes,no,18a1092a-9a22-4d54-b02b-59414b171496
 aula-03-funcoes-recursivas-primitivas-e-composicao-de-funcoes,Aula 03 - Funções Recursivas Primitivas e Composição de Funções.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,e4678122-f30f-4385-bbed-3a682d728920
@@ -30,14 +30,14 @@ aula-17-complexidade-de-tempo-classes-p-e-np,Aula 17 - Complexidade de Tempo Cla
 aula-17-np-completude-pdf,Aula 17 - NP-Completude .pdf,bloco-22,bloco-22,bloco-22,aula-17-np-completude-pdf,block-direct,clean,,yes,no,224e19c2-5329-44d8-a47e-9a7fdf1f36c3
 aula-17-np-completude-pdf,Aula 17 - NP-Completude.pdf,bloco-22,bloco-22,bloco-22,aula-17-np-completude-pdf,block-direct,clean,,yes,no,224e19c2-5329-44d8-a47e-9a7fdf1f36c3
 aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis,Aula07 Máquinas de Turing e Linguagens Recursivamente Enumeráveis.pdf,bloco-06,bloco-09,bloco-09,aula-07-maquinas-de-turing-e-linguagens-recursivamente-enumeraveis,block-direct,clean,,yes,yes,cbf887a2-7073-441b-b695-8b3d8d1d1b86
-cubic-3-edge-coloring,Cubic 3-Edge Coloring.pdf,bloco-24,bloco-26,bloco-26,,block-direct,clean,,yes,yes,3a7783ef-c47a-4d99-9038-dacc0c4593b9
+cubic-3-edge-coloring,Cubic 3-Edge Coloring.pdf,bloco-25,bloco-26,bloco-26,,block-direct,clean,,yes,yes,3a7783ef-c47a-4d99-9038-dacc0c4593b9
 ,Enunciado T1.pdf,,,,,block-direct,clean,,no,no,
 ,Enunciado T2.pdf,,,,,block-direct,clean,,no,no,
-integer-programming-0001,Integer Programming 00.01.pdf,bloco-24,bloco-13,bloco-13,integer-programming-0001,block-direct,clean,,yes,yes,3a7783ef-c47a-4d99-9038-dacc0c4593b9
+integer-programming-0001,Integer Programming 00.01.pdf,bloco-25,bloco-13,bloco-13,integer-programming-0001,block-direct,clean,,yes,yes,3a7783ef-c47a-4d99-9038-dacc0c4593b9
 plano-de-ensino,Plano de Ensino.pdf,bloco-01,,bloco-01,,block-direct,clean,,yes,no,667491f1-cffe-45f5-8b3f-29b0cec9d25a
 ,Problema Weighted Max-Cut.pdf,,,,,block-direct,clean,,no,no,
-programacao-inteira-01-20260617-154423-0000,Programação Inteira 01_20260617_154423_0000.pdf,bloco-24,bloco-13,bloco-13,integer-programming-0001,block-direct,clean,,yes,yes,3a7783ef-c47a-4d99-9038-dacc0c4593b9
+programacao-inteira-01-20260617-154423-0000,Programação Inteira 01_20260617_154423_0000.pdf,bloco-25,bloco-13,bloco-13,integer-programming-0001,block-direct,clean,,yes,yes,3a7783ef-c47a-4d99-9038-dacc0c4593b9
 ,Referência- REDUCIBILITY AMONG COMBINATORIAL PROBLEMS.pdf,,,,,block-direct,clean,,no,no,
 ,"Revisão Alfabeto, Cadeia, Linguagem, Hierarquia de Chomsky, Lemas e Propriedades de Autômatos.pdf",,,,,block-direct,clean,,no,no,
 t1-enunciado,T1 - Enunciado.pdf,bloco-04,bloco-03,bloco-03,t1-enunciado,block-direct,clean,,yes,yes,d186cb31-790d-442f-9af0-df306a4dd8e4
-trabalho-t2-enunciado,Trabalho T2 - Enunciado.pdf,bloco-23,bloco-23,bloco-23,trabalho-t2-enunciado,block-direct,clean,,yes,no,dfd5b65d-4aa6-445b-bad1-bf86b1b672b5
+trabalho-t2-enunciado,Trabalho T2 - Enunciado.pdf,bloco-24,bloco-23,bloco-23,trabalho-t2-enunciado,block-direct,clean,,yes,no,dfd5b65d-4aa6-445b-bad1-bf86b1b672b5

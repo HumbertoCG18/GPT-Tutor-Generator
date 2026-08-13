@@ -1491,11 +1491,14 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 
 ## USER/DECISION — dívida da campanha 2 (unidades, 2026-08-11)
 
-- [USER] **Remendo dos golds antigos (arquivo→bloco, campanha 1) pós-refresh** (`as-of
-  2026-08-11`, audit_gold_freshness): SO 32 suspeitas **hard=13** · ES2 21 suspeitas ·
-  IA 7 suspeitas hard=1 (pós-refresh T11) · MF ~7 (eval 50/57=87.7, denom 66→57) · TCC 8.
-  ~60/235 linhas concentradas onde o cronograma mexeu. Inclui re-auditoria do
-  `ground_truth_MF` vs timeline pós-refresh. Pré-requisito da campanha 3 e cutover.
+- [USER] ~~Remendo dos golds antigos~~ **PARTE MECÂNICA FECHADA 2026-08-12** (dossiê
+  `2026-08-12-remendo-golds-dossie.md`): 32 remendos Tier-A (uuid vivo→display novo,
+  SO 25 · TCC 6 · IA 1) aplicados; **audit hard=0 nos 5/5** (era SO 13 + IA 1).
+  ACHADO: eval SO honesto = **17/38 (44.7%)** — baseline real pro cutover julgar
+  (materiais "Lâminas" sem sinal; 19 ZERO_OVERLAP). RESTA [USER] opcional sem urgência:
+  ~102 suspeitas soft (sinal fraco, rótulo possivelmente certo) + 7 drifts SEMÂNTICOS
+  do MF — arbitragem de conteúdo com os CSVs `remendo_golds/` como material.
+  Pré-requisito da campanha 3: **DESTRAVADO** (a régua mede honesto).
 - [USER] **Revisar gold IA congelado** (`as-of 2026-08-11`): `gold_units_IA.csv` derivado do
   CRUZAMENTO_IA_SARC.md (validado) — conferir régua 10 e vazios (blocos 07/10/13/21/23);
   aba MF do xlsx pendente de revisão pós-refresh (blocos de junho recompuseram).
