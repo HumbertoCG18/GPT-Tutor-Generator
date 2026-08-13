@@ -1258,10 +1258,13 @@ def _promote_preexam_reviews(blocks: List[Dict[str, object]]) -> None:
     era consultado quando não havia unidade. Critérios: kind CLASS, sem override
     manual, token "revisao" no label de alguma sessão, SEM "correcao" (correção de
     prova é aula), e o PRÓXIMO bloco decisivo na ordem cronológica é ASSESSMENT
-    (mesma semântica de adjacência do demote — pula feriado/suspensão). Review não
-    carrega unidade; o escopo vem de link_review_scope (herda a prova seguinte).
+    (adjacência como no demote — pula feriado/suspensão). Review não carrega
+    unidade; o escopo vem de link_review_scope (herda a prova seguinte).
+    REVIEW é decisivo AQUI (diferente do demote): senão, com revisões encadeadas
+    (R1-class → R2-review → prova), cada rebuild promoveria um bloco a mais —
+    não-idempotente (achado do review 2026-08-12).
     """
-    decisive = {BlockKind.CLASS.value, BlockKind.ASSESSMENT.value}
+    decisive = {BlockKind.CLASS.value, BlockKind.ASSESSMENT.value, BlockKind.REVIEW.value}
     n = len(blocks)
     order = sorted(
         range(n),
@@ -1378,7 +1381,7 @@ def apply_assessment_review_scope(blocks: List[Dict[str, object]]) -> None:
         manual = b.get("block_manual_scope_slugs")
         if (b.get("kind") == BlockKind.ASSESSMENT.value
                 and isinstance(manual, list) and manual):
-            exam_scope[b.get("id")] = [str(s) for s in manual]
+            exam_scope[str(b.get("id") or "")] = [str(s) for s in manual]
     review_scope = link_review_scope(blocks, exam_scope)
     for b in blocks:
         bid = b.get("id")

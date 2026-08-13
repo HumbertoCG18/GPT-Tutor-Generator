@@ -5283,6 +5283,28 @@ def test_classify_planning_keyword_needs_no_unit_evidence():
     assert classify_block(admin) is BlockKind.PLANNING
 
 
+def test_promote_idempotent_with_chained_reviews():
+    # Achado do review 2026-08-12: com R1-class "revisao" -> R2 "revisao" ->
+    # prova, cada run promovia um bloco a mais (REVIEW nao era decisivo no
+    # promote). Idempotencia: 2 runs = mesmo resultado.
+    from src.builder.timeline.index import _promote_preexam_reviews
+    def build():
+        return [
+            {"id": "r1", "kind": "class", "unit_slug": "u1",
+             "period_start": "2026-05-04", "sessions": [{"label": "revisao geral aula"}]},
+            {"id": "r2", "kind": "class", "unit_slug": "u1",
+             "period_start": "2026-05-06", "sessions": [{"label": "revisao para prova p1"}]},
+            {"id": "p1", "kind": "assessment", "unit_slug": "",
+             "period_start": "2026-05-08", "sessions": [{"label": "prova p1"}]},
+        ]
+    blocks = build()
+    _promote_preexam_reviews(blocks)
+    once = [(b["id"], b["kind"]) for b in blocks]
+    _promote_preexam_reviews(blocks)
+    twice = [(b["id"], b["kind"]) for b in blocks]
+    assert once == twice == [("r1", "class"), ("r2", "review"), ("p1", "assessment")]
+
+
 def test_review_inherits_manual_scope_of_next_exam():
     # RED real (TCC vespera-P1, 2026-08-11): prova com manual_scope_unit_slugs
     # ("P1 cobre u01+u02", note do gold) mas a revisao herdava o scope POR DATA
