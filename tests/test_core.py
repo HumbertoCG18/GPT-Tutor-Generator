@@ -5209,6 +5209,98 @@ def test_demote_respects_manual_review_override():
     assert next(b for b in blocks if b["id"] == "rev")["kind"] == "review"
 
 
+def test_promote_preexam_session_review_to_review():
+    # RED real (TCC bloco-16/30, 2026-08-11): vespera com unidade herdada fica
+    # class porque o label de sessao ("revisao para prova p1") so era consultado
+    # sem unidade — falso negativo simetrico ao demote.
+    from src.builder.timeline.index import _promote_preexam_reviews
+    blocks = [
+        {"id": "c1", "kind": "class", "unit_slug": "u1",
+         "period_start": "2026-05-01", "sessions": [{"label": "conteudo aula"}]},
+        {"id": "vesp", "kind": "class", "unit_slug": "u1", "unit_confidence": 0.4,
+         "period_start": "2026-05-06",
+         "sessions": [{"label": "revisao para prova p1 aula"}]},
+        {"id": "p1", "kind": "assessment", "unit_slug": "",
+         "period_start": "2026-05-08", "sessions": [{"label": "prova p1"}]},
+    ]
+    _promote_preexam_reviews(blocks)
+    vesp = next(b for b in blocks if b["id"] == "vesp")
+    assert vesp["kind"] == "review"
+    assert vesp["unit_slug"] == ""          # vespera nao carrega unidade
+    assert vesp["unit_confidence"] == 0.0
+
+
+def test_promote_skips_content_review_far_from_exam():
+    # MF bloco-03 ("revisao de logica de predicados"): proximo decisivo e class
+    # -> NAO promove (revisao de conteudo segue aula).
+    from src.builder.timeline.index import _promote_preexam_reviews
+    blocks = [
+        {"id": "rev-cont", "kind": "class", "unit_slug": "u1",
+         "period_start": "2026-03-11",
+         "sessions": [{"label": "revisao de logica de predicados exercicios aula"}]},
+        {"id": "c2", "kind": "class", "unit_slug": "u1",
+         "period_start": "2026-03-13", "sessions": [{"label": "inducao aula"}]},
+        {"id": "p1", "kind": "assessment", "unit_slug": "",
+         "period_start": "2026-04-01", "sessions": [{"label": "prova p1"}]},
+    ]
+    _promote_preexam_reviews(blocks)
+    assert next(b for b in blocks if b["id"] == "rev-cont")["kind"] == "class"
+
+
+def test_promote_skips_correction_and_manual_override():
+    from src.builder.timeline.index import _promote_preexam_reviews
+    blocks = [
+        {"id": "corr", "kind": "class", "unit_slug": "u2",
+         "period_start": "2026-06-10",
+         "sessions": [{"label": "correcao da p1 revisao aula"}]},  # correcao: fica
+        {"id": "manual", "kind": "class", "manual_kind_override": "class",
+         "unit_slug": "u2", "period_start": "2026-06-12",
+         "sessions": [{"label": "revisao para prova p2"}]},
+        {"id": "p2", "kind": "assessment", "unit_slug": "",
+         "period_start": "2026-06-15", "sessions": [{"label": "prova p2"}]},
+    ]
+    _promote_preexam_reviews(blocks)
+    assert next(b for b in blocks if b["id"] == "corr")["kind"] == "class"
+    assert next(b for b in blocks if b["id"] == "manual")["kind"] == "class"
+
+
+def test_classify_planning_keyword_needs_no_unit_evidence():
+    # RED real (IA bloco-16, 2026-08-11): "introducao a agentes e planejamento"
+    # (TEMA de aula, Atividade=Aula, DP da unidade) virou kind=planning pela
+    # keyword — sequestro administrativo de aula de conteudo.
+    from src.builder.timeline.classifier import classify_block
+    from src.builder.timeline.kinds import BlockKind
+    aula = {
+        "topic_text": "introducao agentes planejamento",
+        "auto_unit_slug": "unidade-03",
+        "sessions": [{"label": "introducao a agentes e planejamento aula"}],
+    }
+    assert classify_block(aula) is BlockKind.CLASS
+    admin = {
+        "topic_text": "planejamento",
+        "sessions": [{"label": "planejamento do semestre"}],
+    }
+    assert classify_block(admin) is BlockKind.PLANNING
+
+
+def test_review_inherits_manual_scope_of_next_exam():
+    # RED real (TCC vespera-P1, 2026-08-11): prova com manual_scope_unit_slugs
+    # ("P1 cobre u01+u02", note do gold) mas a revisao herdava o scope POR DATA
+    # (u01+u02+u03) — link_review_scope nao via o manual da prova.
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "rev", "kind": "review", "unit_slug": "",
+         "period_start": "2026-05-06", "sessions": [{"label": "revisao para prova p1"}]},
+        {"id": "p1", "kind": "assessment", "unit_slug": "",
+         "period_start": "2026-05-08",
+         "block_manual_scope_slugs": ["u1", "u2"],
+         "sessions": [{"label": "prova p1"}]},
+    ]
+    apply_assessment_review_scope(blocks)
+    assert next(b for b in blocks if b["id"] == "p1")["scope_unit_slugs"] == ["u1", "u2"]
+    assert next(b for b in blocks if b["id"] == "rev")["scope_unit_slugs"] == ["u1", "u2"]
+
+
 def test_apply_assessment_review_scope_idempotent_and_manual_label():
     from src.builder.timeline.index import apply_assessment_review_scope
     blocks = [

@@ -256,6 +256,12 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
                     if (kind is BlockKind.OFFICE_HOURS
                             and not _office_hours_session_majority(block, spec)):
                         continue
+                    # Guard anti-sequestro PLANNING: bloco com evidencia de
+                    # unidade e aula cujo TEMA cita "planejamento" (caso real
+                    # IA bloco-16 "introducao a agentes e planejamento");
+                    # planejamento administrativo real nao tem unidade.
+                    if kind is BlockKind.PLANNING and _has_unit_evidence(block):
+                        continue
                     return kind
 
     # 3b. Conteudo curado nao bateu keyword. Sem unidade, o label cru da sessao

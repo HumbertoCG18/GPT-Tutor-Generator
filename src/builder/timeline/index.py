@@ -1250,6 +1250,56 @@ def link_review_scope(blocks: List[Dict[str, object]], exam_scope: Dict[str, Lis
     return out
 
 
+def _promote_preexam_reviews(blocks: List[Dict[str, object]]) -> None:
+    """CLASS de véspera cujo label de sessão diz "revisao" vira REVIEW. In-place.
+
+    Simétrico do demote abaixo (caso real TCC bloco-16/30, 2026-08-11): bloco com
+    unidade herdada ficava CLASS porque o label cru ("revisao para prova p1") só
+    era consultado quando não havia unidade. Critérios: kind CLASS, sem override
+    manual, token "revisao" no label de alguma sessão, SEM "correcao" (correção de
+    prova é aula), e o PRÓXIMO bloco decisivo na ordem cronológica é ASSESSMENT
+    (mesma semântica de adjacência do demote — pula feriado/suspensão). Review não
+    carrega unidade; o escopo vem de link_review_scope (herda a prova seguinte).
+    """
+    decisive = {BlockKind.CLASS.value, BlockKind.ASSESSMENT.value}
+    n = len(blocks)
+    order = sorted(
+        range(n),
+        key=lambda i: (
+            _parse_timeline_date_value(str(blocks[i].get("period_start") or "")) or datetime.max,
+            i,
+        ),
+    )
+    pos = {idx: p for p, idx in enumerate(order)}
+    for idx in range(n):
+        b = blocks[idx]
+        if str(b.get("kind") or "") != BlockKind.CLASS.value:
+            continue
+        if b.get("manual_kind_override"):
+            continue
+        labels = " ".join(
+            _normalize_match_text(str(s.get("label") or ""))
+            for s in (b.get("sessions") or [])
+            if isinstance(s, dict)
+        )
+        tokens = set(labels.split())
+        if "revisao" not in tokens or "correcao" in tokens:
+            continue
+        p = pos[idx]
+        preexam = False
+        for q in range(p + 1, n):
+            k = str(blocks[order[q]].get("kind") or "")
+            if k in decisive:
+                preexam = k == BlockKind.ASSESSMENT.value
+                break
+        if not preexam:
+            continue
+        b["kind"] = BlockKind.REVIEW.value
+        if not b.get("block_manual_unit_slug"):
+            b["unit_slug"] = ""
+            b["unit_confidence"] = 0.0
+
+
 def _demote_non_preexam_reviews(blocks: List[Dict[str, object]]) -> None:
     """REVIEW que NÃO precede uma prova vira CLASS. In-place.
 
@@ -1321,6 +1371,14 @@ def apply_assessment_review_scope(blocks: List[Dict[str, object]]) -> None:
     por data (ASSESSMENT) ou herdado da próxima prova (REVIEW) — o manual sempre vence.
     """
     exam_scope = assessment_scope_by_date(blocks)
+    # Scope MANUAL da prova sobrepõe o por-data ANTES do link: a revisão herda o
+    # scope EFETIVO da prova seguinte (caso real TCC véspera-P1: manual "u01+u02"
+    # vs janela por data "u01+u02+u03").
+    for b in blocks:
+        manual = b.get("block_manual_scope_slugs")
+        if (b.get("kind") == BlockKind.ASSESSMENT.value
+                and isinstance(manual, list) and manual):
+            exam_scope[b.get("id")] = [str(s) for s in manual]
     review_scope = link_review_scope(blocks, exam_scope)
     for b in blocks:
         bid = b.get("id")
@@ -1351,6 +1409,7 @@ def _apply_timeline_post_transforms(blocks: List[Dict[str, object]]) -> None:
       2. escopo de prova por data + revisão herda a próxima prova.
     Idempotente.
     """
+    _promote_preexam_reviews(blocks)
     _demote_non_preexam_reviews(blocks)
     apply_assessment_review_scope(blocks)
 
