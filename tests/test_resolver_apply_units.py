@@ -110,3 +110,13 @@ def test_manual_subunit_tem_precedencia():
     assert out[0]["computed_subunit_slug"] == "sman"
     assert out[0]["subunit_match_confidence"] == 1.0
     assert "subunit:sman" in out[0]["auto_tags"]
+
+def test_pino_manual_de_bloco_da_unidade_do_bloco_mesmo_com_method_trocado():
+    # attach pode reescrever computed_block_method p/ consensus; o pino
+    # manual_timeline_block_id continua valendo como bloco manual no reconcile.
+    e = _entry(manual_timeline_block_id="u-2", computed_block_method="consensus")
+    m = SimpleNamespace(slug="u1", confidence=0.9, ambiguous=False, reasons=["score"])
+    out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_unit_slug"] == "u2"
+    assert "unidade_do_bloco_manual" in out[0]["unit_match_reasons"]
+    assert out[0]["unit_block_conflict"] == {}

@@ -223,13 +223,19 @@ def apply_unit_subunit_fields(
             blk = next((b for b in blocks if str(b.get("id") or "") == block_id), None)
         block_unit = str((blk or {}).get("unit_slug") or "").strip()
 
+        # Pino manual direto do entry: computed_block_method pode ter sido
+        # trocado p/ consensus/llm_only pelo attach ANTES deste apply — o
+        # method nao e prova de pino (review final F4, I2).
+        _pin = str(entry.get("manual_timeline_block_id") or "").strip()
+        block_is_manual = bool(_pin) and _pin in {block_id, str((blk or {}).get("id") or "")}
+
         reconciled, suffix, conflict = reconcile_unit_with_block(
             computed_unit_slug=gated_unit,
             unit_confidence=float(unit_confidence),
             computed_block_id=block_id,
             block_confidence=float(entry.get("computed_block_confidence") or 0.0),
             block_unit_slug=block_unit,
-            block_is_manual=str(entry.get("computed_block_method") or "") == "manual",
+            block_is_manual=block_is_manual,
             has_manual_unit=bool(manual_unit),
         )
         if suffix:
