@@ -1,11 +1,12 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-11b (pós-fechamento: 3 decisões batch executadas — freshness 5/5 verde,
-kind-override promove auto_unit [pino IA removido, 11 pinos], guard C6 resolvido por medição;
-suite 1925/0/4. CAMPANHA FUTURA de produto web criada [backlog vivo ~24 itens, seção no fim].
-Fila RATIFICADA pelo user 2026-08-11: classifier posicional → remendo golds → AUDITORIA-ENXAME
-[análise geral e profunda do sistema com subagentes em workflow: código morto, não-otimizado,
-achados novos — pré-cutover] → campanha 3 cutover → campanha web)
+last_updated: 2026-08-14 (AUDITORIA-ENXAME EXECUTADA — workflow 45 agentes [7 finders + 37
+verificadores adversariais + síntese; mix sonnet/fable], 32 achados CONFIRMADOS / 5 refutados;
+relatório ranqueado em `docs/reports/2026-08-14-auditoria-enxame.md`; ver Concluído 2026-08-14.
+Fila restante da ratificação 2026-08-11: campanha 3 cutover → campanha web)
+> histórico 2026-08-11b: 3 decisões batch executadas — freshness 5/5 verde, kind-override
+> promove auto_unit [pino IA removido, 11 pinos], guard C6 resolvido por medição; suite
+> 1925/0/4. CAMPANHA FUTURA de produto web criada [backlog vivo ~24 itens, seção no fim].
 > Renomeado de `2026-06-21-pendencias.md` em 2026-07-03 (decisão do user: nome geral sem data,
 > mais fácil de achar/revisar). Histórico preservado via `git mv`; 7 referências atualizadas.
 status: documento VIVO. Atualizar a cada conclusão de plano (regra não-negociável,
@@ -1558,6 +1559,34 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   IA 4/5 (u04 sem aula própria no SARC vivo — baseline). Lições: 5ª geração prova/rótulo
   (inversões LOCAIS calendário-vs-plano → pino gold-backed); régua mede o que o sistema
   produz (gold por bloco, keyed uuid, política = miss documentado); SARC vivo > import.
+
+## Concluído (2026-08-14 — auditoria-enxame pré-cutover)
+
+- [DERIVADO] **Auditoria-enxame EXECUTADA (`as-of 2026-08-14`, branch feat/motor-atribuicao)** —
+  workflow de 45 agentes (7 dimensões em paralelo, verificação adversarial de todo achado sério,
+  síntese ranqueada; mix de modelos sonnet/fable adotado após 3 estouros de limite em 48h),
+  ~2.03M tokens, 0 erros. Placar: **32 confirmados / 5 refutados**. Relatório completo ranqueado
+  (Pré-cutover / Quick wins / Estrutural / Registrar-ignorar):
+  `docs/reports/2026-08-14-auditoria-enxame.md`. Destaques que ALIMENTAM a campanha 3:
+  **1.1 BLOQUEANTE** — campos de unidade 100% do legado (resolver_apply.py:132-137 descarta o
+  `unit_slug` que o motor novo calcula; Fase 4 vira pré-req duro do cutover) · **1.2** gap de
+  reconciliação unidade×bloco pós-apply (dormente, ativa no cutover) · **1.3** drift REAL do
+  espelho auto_tags em produção · **1.5** mapa de deleção de testes (3 lotes; ~1240 linhas
+  apagáveis em bloco; test_file_map_unit_mapping.py exige auditoria função-a-função).
+  Quick wins top: loop incremental (write+compact por entry, 32x medido — DESEMPATE: design
+  deliberado de crash-resume `10bec352`/`79b6f98`, fix = checkpoint a cada N com compact junto,
+  nunca deletar linha isolada) · 5 mocks docling = suite ~2x mais rápida · loaders silenciosos
+  sem log (engine:1831 + 3 loaders de artefato) · 6 símbolos mortos de UI · 3 campos nunca
+  lidos no approve-flow.
+  **DESEMPATE MANUAL pós-relatório (mesma data)**: journal tinha vereditos duplicados
+  divergentes (pause/resume); 3 contestados decididos por evidência primária, todos pró
+  contra-veredito: **2.5 rebaixado** (sem corrupção cross-entry, class_ordinal não persiste,
+  deepcopy desnecessário — resta só 3.2), **2.2 fundido no 2.1** (acima), **1.5b reescopado**
+  (apagar em bloco só 4 arquivos puros/911 linhas; test_block_scorer_signals.py: mover os 3
+  testes S4b [única cobertura de extensão→ferramenta] pra test_entry_signals_materials.py
+  antes de apagar). Relatório carrega as marcações [REESCOPADO]/[FUNDIDOS]/[REBAIXADO].
+  Workflow reusável em `.claude/workflows/auditoria-enxame.js` (duplicata `-mew.js` deletada —
+  colisão de meta.name causava resolução aleatória).
 
 ## CAMPANHA FUTURA (produto) — web local + camada LLM por conta [BACKLOG VIVO]
 
