@@ -100,7 +100,7 @@ bug novo do wiring desta fase):
 | `revisao-p1-gabarito` | unidade-02 → unidade-02 (**slug IDÊNTICO**, conflict novo) | bloco mudou (1dd6f1.. → 7ccdaf..) | não conta como unit alterada — só ganha `unit_block_conflict` |
 | `t1-2026-1-thy` | unidade-01 → unidade-02 | bloco mudou (7a5e29.. → 7ccdaf..) | propagação do bloco motor |
 | `t2-2026-1` | unidade-01 → `""` | bloco mudou (1e7362.. → c9f5f7..) | propagação do bloco motor |
-| `tiposindutivos` | unidade-02 → unidade-01 | bloco mudou (95d7c9.. → 7ccdaf..) | propagação do bloco motor |
+| `tiposindutivos` | unidade-02 → unidade-01 | bloco mudou (95d7c9.. → 7ccdaf..) | pino manual descartado pelo motor (bug F3: concept_resolver.py:250-255 casa display, pino é uuid) — NÃO é propagação benigna |
 | `verificacaomodelos` | unidade-03 → `""` | bloco mudou (a6ac04.. → c9f5f7..) | propagação do bloco motor |
 
 (NB: os dois "11/12" a seguir são eixos independentes que coincidem em contagem —
@@ -126,11 +126,13 @@ do resolver de bloco (pré-Fase 4), não do wiring novo de unit/subunit.
 
 **Nenhuma das 12 linhas da tabela UNIT (11 com slug alterado + 1 só-conflict) é atribuível a um
 bug no código NOVO desta fase** (`apply_unit_subunit_fields`/wiring do reconcile) — todas
-rastreiam a um input diferente (bloco ou confiança de bloco) vindo do resolver de bloco, já
-gateado fora desta task. **Ressalva honesta**: não existe gold MATERIAL-a-material pra MF (só
-gold por BLOCO, `gold_units_MF.csv`), então não dá pra afirmar que as 11 reatribuições de slug
-estão CORRETAS em verdade-terreno — só que são coerentes e explicáveis pela mecânica, e que não
-regridem o único gate mensurável hoje (bloco, 12/14 idêntico).
+rastreiam a um input diferente (bloco ou confiança de bloco) vindo do resolver de bloco. A raiz é
+da F3 (`_manual_block_id`, `concept_resolver.py:250-255`), mas **NÃO era conhecida nem homologada**
+— é bug descoberto por esta review (caso `tiposindutivos`, pino uuid descartado). **Ressalva
+honesta**: não existe gold MATERIAL-a-material pra MF (só gold por BLOCO, `gold_units_MF.csv`),
+então não dá pra afirmar que as 11 reatribuições de slug estão CORRETAS em verdade-terreno — só
+que são coerentes e explicáveis pela mecânica, e que não regridem o único gate mensurável hoje
+(bloco, 12/14 idêntico).
 
 ### SUBUNIT (`computed_subunit_slug`) — correção esperada por design
 
@@ -169,13 +171,20 @@ resync de `auto_tags` é passo 2 da campanha, fora desta task).
 - Sem gold MATERIAL-a-material pra MF: as divergências caso-a-caso (11 unit-slug + 11 subunit,
   3 em overlap) são coerentes/explicadas pela mecânica, não provadas individualmente contra
   verdade-terreno.
+- A medição não verificou a sobrevivência dos 17 pinos manuais (`manual_timeline_block_id`) da MF
+  nem rodou o diff global de `computed_block_id` por entry — `eval_units` mede unit por BLOCO,
+  cego a pinos manuais (o caso `tiposindutivos` só apareceu por inspeção caso-a-caso da tabela
+  UNIT, não por um gate dedicado a pino).
 
 ## Veredito go/no-go
 
-**GO** para o gate mensurável definido pelo handoff (placar `eval_units.py`/`gold_units_MF.csv`,
-nível de BLOCO): MF empata a própria baseline **12/14 (85.7%)** com a flag ON, zero regressão,
-zero novo erro, mesmos 2 misses de política. O resíduo de cobertura (1/67, categoria de
-cronograma) é idêntico nos dois lados.
+**GO CONDICIONADO** — não GO puro. No gate mensurável definido pelo handoff (placar
+`eval_units.py`/`gold_units_MF.csv`, nível de BLOCO): MF empata a própria baseline **12/14
+(85.7%)** com a flag ON, zero regressão, zero novo erro, mesmos 2 misses de política. O resíduo
+de cobertura (1/67, categoria de cronograma) é idêntico nos dois lados. Mas esse gate é cego a
+pino manual (ver Limitações) e a review encontrou 1 caso concreto de pino descartado
+(`tiposindutivos`). **Condicionado a**: gaps 1.2/1.3 do plano + o motor honrar pinos manuais em
+uuid (fix em `_manual_block_id`, passo 2 da campanha).
 
 **Ressalva não-bloqueante**: as 11 reatribuições de unidade a nível de MATERIAL (entry, slug
 efetivamente alterado — + 1 caso `revisao-p1-gabarito` com slug idêntico e só conflict novo) não
