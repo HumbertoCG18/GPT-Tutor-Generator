@@ -25,15 +25,15 @@ def _fns(unit_match):
     )
 
 def test_unit_reconciliada_contra_bloco_do_motor():
-    # unidade auto (u1, conf 0.6) discorda do bloco NOVO (u-2 -> u2) com block_conf 0.8
-    # >= unit_conf: reconcilia pro bloco, reason "reconciliada_do_bloco=u-2".
+    # unidade auto (u1, conf 0.7) discorda do bloco NOVO (u-2 -> u2) com block_conf 0.8
+    # block_conf >= unit_conf: reconcilia pro bloco, reason "reconciliada_do_bloco=u-2".
     e = _entry()
-    m = SimpleNamespace(slug="u1", confidence=0.6, ambiguous=False, reasons=["score"])
+    m = SimpleNamespace(slug="u1", confidence=0.7, ambiguous=False, reasons=["score"])
     out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
     assert out[0]["computed_unit_slug"] == "u2"
     assert "reconciliada_do_bloco=u-2" in out[0]["unit_match_reasons"]
     assert out[0]["unit_block_conflict"] == {}
-    assert out[0]["unit_match_confidence"] == 0.6
+    assert out[0]["unit_match_confidence"] == 0.7
 
 def test_unit_forte_vence_e_flaga_conflito():
     e = _entry(computed_block_confidence=0.5)
@@ -67,3 +67,13 @@ def test_nao_material_e_sem_bloco_ficam_intocados():
     out = apply_unit_subunit_fields([sem_bloco, nao_material], BLOCKS, {}, None, None, {}, **_fns(m))
     assert "computed_unit_slug" not in out[0]
     assert "computed_unit_slug" not in out[1]
+
+def test_unit_fraca_nunca_vence_bloco_mesmo_com_block_conf_menor():
+    # conf 0.5 < T.UNIT_TAG: gate zera o slug ANTES do reconcile -> herda a
+    # unidade do bloco, sem conflito espurio (semantica do legado).
+    e = _entry(computed_block_confidence=0.3)
+    m = SimpleNamespace(slug="u1", confidence=0.5, ambiguous=False, reasons=["fraca"])
+    out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_unit_slug"] == "u2"
+    assert "herdada_do_bloco=u-2" in out[0]["unit_match_reasons"]
+    assert out[0]["unit_block_conflict"] == {}

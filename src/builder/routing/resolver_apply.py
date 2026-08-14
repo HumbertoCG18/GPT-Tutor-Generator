@@ -216,13 +216,15 @@ def apply_unit_subunit_fields(
             unit_ambiguous = match.ambiguous
             unit_reasons = list(match.reasons)
 
+        gated_unit = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= T.UNIT_TAG) else ""
+
         blk = next((b for b in blocks if str(b.get("block_uuid") or "") == block_id), None)
         if blk is None:
             blk = next((b for b in blocks if str(b.get("id") or "") == block_id), None)
         block_unit = str((blk or {}).get("unit_slug") or "").strip()
 
         reconciled, suffix, conflict = reconcile_unit_with_block(
-            computed_unit_slug=resolved_unit_slug,
+            computed_unit_slug=gated_unit,
             unit_confidence=float(unit_confidence),
             computed_block_id=block_id,
             block_confidence=float(entry.get("computed_block_confidence") or 0.0),
