@@ -779,7 +779,10 @@ def score_card_evidence_against_entry(
 
     score = 0.0
     for item in card_items:
-        normalized_title = normalize_match_text(str(item.get("normalized_title", "") or ""))
+        # normalized_title já sai normalizado da extração (card_evidence._build_item,
+        # canônico [a-z0-9 ]); renormalizar aqui era no-op pago O(entries×blocos×cards)
+        # — provado por probe nos 5 índices vivos (auditoria 2.8).
+        normalized_title = str(item.get("normalized_title", "") or "")
         if not normalized_title:
             continue
         title_tokens = [tok for tok in normalized_title.split() if len(tok) >= 4]
