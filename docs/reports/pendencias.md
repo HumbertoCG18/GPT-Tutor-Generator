@@ -1,6 +1,7 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-14 (AUDITORIA-ENXAME EXECUTADA — workflow 45 agentes [7 finders + 37
+last_updated: 2026-08-14b (CAMPANHA 3 FASE 4 ENTREGUE — unit/subunit no motor, GO pro flip
+pós-gaps 1.2/1.3; ver Concluído 2026-08-14 F4. Antes na mesma data: AUDITORIA-ENXAME EXECUTADA — workflow 45 agentes [7 finders + 37
 verificadores adversariais + síntese; mix sonnet/fable], 32 achados CONFIRMADOS / 5 refutados;
 relatório ranqueado em `docs/reports/2026-08-14-auditoria-enxame.md`; ver Concluído 2026-08-14.
 Fila restante da ratificação 2026-08-11: campanha 3 cutover → campanha web)
@@ -250,6 +251,13 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - [CODE] **Fase 3.4 cutover** — default ON do concept_resolver + DELETE do funil legado
   (`score_entry_against_timeline_block` S2/S4, `select_probable_period`, `_best_instructional_block_fallback`,
   2 rotas card). Eval-gated.
+  > **PRÉ-REQ FASE 4 CONCLUÍDO (`as-of 2026-08-14`, commits `5da5f2e..b9a4a53`)**: unit/subunit no
+  > motor (`apply_unit_subunit_fields`, resolver_apply.py; wire flag-gated engine→pedagogical_regeneration)
+  > — achado 1.1 da auditoria destravado. Medição sandbox MF: golds unit 12/14 BEFORE=AFTER (zero
+  > regressão), GO. Flip agora depende só dos gaps 1.2/1.3 (passo 2 da campanha 3).
+  > **Dependência nova pra F5**: ao deletar `resolve_unit_block_tags`, portar a limpeza
+  > `_NO_TIMELINE_CATEGORIES` (content_taxonomy.py:1137-1147) pro caminho do motor — hoje ela só
+  > roda dentro do legado.
 - ~~topic-resolver (SO) + label-resolver (MF)~~ **SUPERSEDED PELO MOTOR (2026-07-01)** — viraram
   WindowProviders por curso dentro do AnchorEngine (D5/D10), não resolvers avulsos. E são LOAD-BEARING,
   não rollout tardio — cobertura de card-window medida hoje:
@@ -1596,6 +1604,24 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   da campanha 3 cutover).
   Workflow reusável em `.claude/workflows/auditoria-enxame.js` (duplicata `-mew.js` deletada —
   colisão de meta.name causava resolução aleatória).
+
+## Concluído (2026-08-14 — campanha 3, FASE 4: unit/subunit no motor)
+
+- [DERIVADO] **FASE 4 ENTREGUE (`as-of 2026-08-14`, commits `5da5f2e..b9a4a53`, SDD 5 tasks +
+  2 fix rounds, reviews limpas)** — sob `use_concept_resolver=True` o motor produz TODOS os campos
+  de unidade/subunidade que a UI lê (contrato do legado `resolve_unit_block_tags`):
+  `apply_unit_subunit_fields` em `resolver_apply.py` — unit via scorer sobrevivente + gate
+  `T.UNIT_TAG` + `reconcile_unit_with_block` contra o bloco NOVO do motor (fecha o gap 1.2 pro
+  caminho unit por construção); subunit restrita à unidade FINAL reconciliada (**correção
+  deliberada** vs legado, que restringia à unidade crua pré-reconcile — invariante do spec:
+  subunit nunca escapa a unidade final); wire flag-gated `engine.py` (partial, aliases legados)
+  → `pedagogical_regeneration.py:528`. Gates: suite **1945/1/0**, sentinelas **0 diff** (flag OFF
+  byte-idêntico), régua MF **50/57**, golds unit MF **12/14 BEFORE=AFTER**. Medição sandbox MF
+  (67 entries): 12 unit divergentes (11 slug-alterado rastreando bloco motor ≠ legado — território
+  pré-F4; 1 só-conflict), 11 subunit (design). **GO pro flip** após gaps 1.2/1.3.
+  Relatório: `docs/reports/2026-08-14-f4-medicao-unit-motor.md`. Plano:
+  `docs/superpowers/plans/2026-08-14-fase4-unit-subunit-motor.md`. Limitação registrada: sem gold
+  por-material pras 12 reatribuições (só gold por bloco); scripts ad-hoc da medição não commitados.
 
 ## CAMPANHA FUTURA (produto) — web local + camada LLM por conta [BACKLOG VIVO]
 
