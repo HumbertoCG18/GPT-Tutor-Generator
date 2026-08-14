@@ -1,0 +1,29 @@
+{
+  "0206-laminas-gerencia-de-i-o-livro-texto": {
+    "band": "media",
+    "computed_block_id": "e4f7e22a-e091-46f8-b70e-a65f387dbf84",
+    "computed_unit_slug": "unidade-02-gerencia-do-processador",
+    "moodle_label": "02/06 Lâminas: Gerência de I/O (Livro-texto)",
+    "presente": true,
+    "source_section": "Gerência de I O",
+    "temporal_block_id": "a838bf45-b6d1-48fc-b70b-0bd4de35d1ef"
+  },
+  "0704-exemplo-threads-em-java": {
+    "band": "alta",
+    "computed_block_id": "e4f7e22a-e091-46f8-b70e-a65f387dbf84",
+    "computed_unit_slug": "unidade-02-gerencia-do-processador",
+    "moodle_label": "07/04 Exemplo: threads em Java",
+    "presente": true,
+    "source_section": "Threads",
+    "temporal_block_id": "1945c228-4ca2-4a76-8d63-47c804459ecd"
+  },
+  "0904-laminas-semaforos": {
+    "band": "media",
+    "computed_block_id": "e4f7e22a-e091-46f8-b70e-a65f387dbf84",
+    "computed_unit_slug": "unidade-03-programacao-concorrente",
+    "moodle_label": "09/04 Lâminas: Semáforos",
+    "presente": true,
+    "source_section": "Sincronização e Comunicação de Processos",
+    "temporal_block_id": "1945c228-4ca2-4a76-8d63-47c804459ecd"
+  }
+}

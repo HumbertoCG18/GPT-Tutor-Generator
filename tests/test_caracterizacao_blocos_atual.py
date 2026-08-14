@@ -176,11 +176,32 @@ def test_maior_bloco_documenta_over_merge(repo: Path):
 
 # Casos-chave por repo: arquivos que sabemos hoje estarem no bloco errado ou na fronteira.
 # IDs reais dos relatórios; chave = repo.name real (nome da pasta), não o apelido curto.
+# ES2 sem casos: os 12/14 miss-de-tópico do baseline 2026-07-01 nunca tiveram ids
+# nomeados em relatório (ground_truth_ES2.csv não chegou às fixtures) — mapear
+# quando a régua ES2 entrar.
 CASOS_CHAVE: dict[str, list[str]] = {
     "Inteligencia-Artifical-Tutor": [
         "aprendizadonaosupervisionado-agrupamento-parte2",  # hierárquico: hoje vai pra "dúvidas t1"?
         "introducao-a-busca-informada",                     # Semana 12: card diz busca, sessão = agentes
         "mlp-novaversao",                                   # posting_date 24/02 (slide reusado)
+    ],
+    # FAILs vivos da régua MF (eval_ground_truth 2026-08-14, 50/57) + pin aberto.
+    "Metodos-Formais-Tutor": [
+        "tiposindutivos",  # confiante-errado: band alta, prevê b15, verdade b13 (lesson fino do card Verificação)
+        "t1-2026-1",       # confiante-errado: band alta, prevê b11, verdade b05 — salto não-adjacente (família t1/.thy)
+        "introducao",      # confiante-errado: band alta, prevê b02, verdade b12 — título genérico atravessa o curso
+        "eth2",            # pin-vs-gold aberto (tracker): pino manual→b01, gold diz b12 — snapshot muda no ruling
+    ],
+    # Mecanismo "data no filename = POSTAGEM, não aula" (so-differs-classification 2026-06-21).
+    "Sistemas-Operacionais-Tutor": [
+        "0206-laminas-gerencia-de-i-o-livro-texto",  # 02/06 = dia do enunciado TP2; conteúdo é I/O (b05)
+        "0904-laminas-semaforos",                    # 09/04 = aula de processador/deadlock; semáforos é b07
+        "0704-exemplo-threads-em-java",              # "07.04" é seção Moodle, NEM É data — armadilha de parse
+    ],
+    # Fronteira Semana-1 + dup-divergence (poda/reprocess TCC 2026-07-01).
+    "TCC-Tutor": [
+        "aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade",  # true b01, temporal b02 (janela Semana-1 ambígua)
+        "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos",  # dup md5 caiu em 3 blocos; hoje temporal≠computed AO VIVO
     ],
 }
 
