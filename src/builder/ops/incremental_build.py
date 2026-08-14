@@ -12,6 +12,11 @@ from src.utils.helpers import write_text, write_json_manifest
 
 logger = logging.getLogger(__name__)
 
+# Auditoria 2.1+2.2: compact+write POR ENTRY era o gargalo do build incremental
+# (32x medido). O par por-entry é design de crash-resume (10bec352/79b6f98) —
+# vira checkpoint a cada N: crash perde no máximo N-1 entries de trabalho.
+_CHECKPOINT_EVERY = 10
+
 
 def incremental_build_impl(builder, *, student_state_md_fn) -> None:
     """Adiciona novos arquivos a um repositório existente sem recriar do zero."""
@@ -80,9 +85,12 @@ def incremental_build_impl(builder, *, student_state_md_fn) -> None:
             manifest["updated_at"] = datetime.now().isoformat(timespec="seconds")
             manifest.setdefault("logs", []).extend(builder.logs)
             builder.logs = []
-            manifest = builder._compact_manifest(manifest)
-            write_json_manifest(manifest_path, manifest)
-            logger.info("[%d/%d] Concluído e salvo: %s", i + 1, total, entry.title)
+            if (i + 1) % _CHECKPOINT_EVERY == 0:
+                manifest = builder._compact_manifest(manifest)
+                write_json_manifest(manifest_path, manifest)
+                logger.info("[%d/%d] Concluído (checkpoint salvo): %s", i + 1, total, entry.title)
+            else:
+                logger.info("[%d/%d] Concluído: %s", i + 1, total, entry.title)
         if builder.progress_callback:
             builder.progress_callback(total, total, "")
 
