@@ -1585,6 +1585,15 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   (apagar em bloco só 4 arquivos puros/911 linhas; test_block_scorer_signals.py: mover os 3
   testes S4b [única cobertura de extensão→ferramenta] pra test_entry_signals_materials.py
   antes de apagar). Relatório carrega as marcações [REESCOPADO]/[FUNDIDOS]/[REBAIXADO].
+  **QUICK WINS EXECUTADOS (mesma noite, suite 1931/0/4 verde em cada lote):** 2.10+2.11
+  código morto UI + campos approve-flow (`1d6e07c`, -150 linhas) · 2.4+2.6 warnings em
+  loaders fail-open (`bb19bd8`) · 2.3 mocks docling (`3c98813`, **suite 51.7s→23.8s**) ·
+  2.12+2.14 strip_accents fonte única + docstrings cruzados (`69e050b`) · 2.8+2.9 no-ops
+  de scoring (probe 5 índices = 0 divergentes) + memo unit_index (`b698028`) · 2.1+2.2
+  checkpoint a cada 10 no incremental (`1e1c06e`). **FICAM do relatório:** 2.7
+  signal_token_set (eval-gated, mexe em input de scoring — trilho próprio), 2.13 smoke
+  tests deeptutor/golds, 3.1-3.3 estruturais (campanha), seção 1 inteira (insumo do spec
+  da campanha 3 cutover).
   Workflow reusável em `.claude/workflows/auditoria-enxame.js` (duplicata `-mew.js` deletada —
   colisão de meta.name causava resolução aleatória).
 
