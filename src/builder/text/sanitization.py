@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import Counter
 import difflib
 import re
-import unicodedata
+from src.utils.helpers import strip_accents
 from typing import Dict, List, Tuple
 
 
@@ -359,8 +359,7 @@ def is_plain_text_recovery_candidate(line: str) -> bool:
 
 
 def normalize_recovery_line(line: str) -> str:
-    normalized = unicodedata.normalize("NFKD", line)
-    normalized = "".join(ch for ch in normalized if not unicodedata.combining(ch))
+    normalized = strip_accents(line)
     normalized = re.sub(r"[`*_>#\[\](){}|~]+", " ", normalized)
     normalized = re.sub(r"[^a-zA-Z0-9\s]", " ", normalized)
     normalized = re.sub(r"\s+", " ", normalized).strip().lower()

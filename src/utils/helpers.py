@@ -247,9 +247,15 @@ def normalize_document_profile(profile: str | None) -> str:
 
 # Utilities
 
+def strip_accents(text: str) -> str:
+    """NFKD + remove marcas combinantes. Fonte única do strip de acento
+    (antes reescrito byte-a-byte em 6 módulos — auditoria 2.12)."""
+    text = unicodedata.normalize("NFKD", text or "")
+    return "".join(ch for ch in text if not unicodedata.combining(ch))
+
+
 def slugify(value: str) -> str:
-    value = unicodedata.normalize("NFKD", value or "")
-    value = "".join(ch for ch in value if not unicodedata.combining(ch))
+    value = strip_accents(value)
     value = value.strip().lower()
     value = re.sub(r"[^\w\s-]", "", value, flags=re.UNICODE)
     value = re.sub(r"[\s_]+", "-", value)
@@ -439,11 +445,11 @@ ATIVIDADE_KIND_MAP = {
 
 
 def norm_ascii_lower(text: str) -> str:
-    """NFKD + remove acentos + lower + strip. Para casar Atividade do SARC."""
-    import unicodedata as _ud
-    text = _ud.normalize("NFKD", text or "")
-    text = "".join(ch for ch in text if not _ud.combining(ch))
-    return text.lower().strip()
+    """NFKD + remove acentos + lower + strip. Para casar Atividade do SARC.
+
+    Preserva pontuação (≠ normalize_match_text, que reduz a [a-z0-9 ] para
+    matching fuzzy — precisa de chave exata? use este; matching? use aquele)."""
+    return strip_accents(text).lower().strip()
 
 
 def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:

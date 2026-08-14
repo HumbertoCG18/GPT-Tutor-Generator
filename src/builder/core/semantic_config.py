@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import re
-import unicodedata
+from src.utils.helpers import strip_accents
 from collections import Counter
 from pathlib import Path
 from typing import Iterable, Optional
@@ -72,9 +72,7 @@ _TOOL_CONTEXT_CUES = (
 
 
 def _normalize_text(text: str) -> str:
-    cleaned = unicodedata.normalize("NFKD", text or "")
-    cleaned = "".join(ch for ch in cleaned if not unicodedata.combining(ch))
-    cleaned = cleaned.lower()
+    cleaned = strip_accents(text).lower()
     cleaned = re.sub(r"[^a-z0-9#+.\-\s]", " ", cleaned)
     cleaned = re.sub(r"\s+", " ", cleaned).strip()
     return cleaned
