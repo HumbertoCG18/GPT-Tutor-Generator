@@ -933,9 +933,6 @@ class CuratorStudioPanel(ttk.Frame):
             # Campo novo e explícito para o backlog / viewers
             target["approved_markdown"] = approved_rel
             target["curated_markdown"] = approved_rel
-            target["approved_source_markdown"] = approved_source_rel
-            target["approved_at"] = datetime.now().isoformat(timespec="seconds")
-            target["review_status"] = "approved"
 
             # Limpa ponteiros antigos se eles foram apagados ou não existem mais
             for key in ("base_markdown", "advanced_markdown", "manual_review"):
@@ -1173,8 +1170,6 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
                 approved_rel = self._repo_relative(dest_path)
                 target["approved_markdown"] = approved_rel
                 target["curated_markdown"] = approved_rel
-                target["approved_at"] = datetime.now().isoformat(timespec="seconds")
-                target["review_status"] = "approved"
                 approved_count += 1
 
             # Limpar template de manual-review se existir
@@ -1459,20 +1454,3 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
             f"✅ Aprovado → {dest_label}{file_id}.md"
             + (f" | Removidos: {', '.join(deleted)}" if deleted else "")
         )
-
-
-class CuratorStudio(tk.Toplevel):
-    def __init__(self, parent, repo_dir: str, theme_mgr):
-        super().__init__(parent)
-        self.title("Curator Studio")
-        self.geometry("1600x900")
-        self.minsize(1100, 650)
-        self.panel = CuratorStudioPanel(
-            self,
-            repo_dir,
-            theme_mgr,
-            app_parent=parent,
-            bind_target=self,
-            apply_theme=True,
-        )
-        self.panel.pack(fill="both", expand=True)
