@@ -254,7 +254,9 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   > **PRÉ-REQ FASE 4 CONCLUÍDO (`as-of 2026-08-14`, commits `5da5f2e..b9a4a53`)**: unit/subunit no
   > motor (`apply_unit_subunit_fields`, resolver_apply.py; wire flag-gated engine→pedagogical_regeneration)
   > — achado 1.1 da auditoria destravado. Medição sandbox MF: golds unit 12/14 BEFORE=AFTER (zero
-  > regressão), GO. Flip agora depende só dos gaps 1.2/1.3 (passo 2 da campanha 3).
+  > regressão), **GO CONDICIONADO** (review final F4, Opus): flip depende dos gaps 1.2/1.3 E do
+  > fix dos pinos manuais (achado C1 abaixo). Régua adicional pro flip: verificar sobrevivência
+  > dos pinos por curso (eval_units é cego a pinos — mede unit por bloco).
   > **Dependência nova pra F5**: ao deletar `resolve_unit_block_tags`, portar a limpeza
   > `_NO_TIMELINE_CATEGORIES` (content_taxonomy.py:1137-1147) pro caminho do motor — hoje ela só
   > roda dentro do legado.
@@ -1622,6 +1624,28 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   Relatório: `docs/reports/2026-08-14-f4-medicao-unit-motor.md`. Plano:
   `docs/superpowers/plans/2026-08-14-fase4-unit-subunit-motor.md`. Limitação registrada: sem gold
   por-material pras 12 reatribuições (só gold por bloco); scripts ad-hoc da medição não commitados.
+  **Review final (Opus 5) pós-fecho**: C1+I2 corrigidos na fix wave (`bd43430` block_is_manual lê
+  pino direto + teste; `7cb0e21` medição emendada, GO condicionado); minors M4-M8 registrados como
+  itens abaixo. Rulings do SDD todos sustentados.
+
+- [CODE] **C1 (BLOQUEIA O FLIP) — motor descarta pinos manuais em uuid** (`as-of 2026-08-14`,
+  review final F4): `_manual_block_id` (`concept_resolver.py:250-255`) casa o pino só contra
+  `block["id"]` (display `bloco-NN`), mas `manual_timeline_block_id` migrou pra uuid na Fase 1
+  (`file_map.py:498-513`) — MF tem 17/17 pinos em uuid. Sob flag ON o Tier 1 manual morre e o
+  scorer SOBRESCREVE o pino (caso real: `tiposindutivos`, reclassificado no relatório de medição).
+  Fix no passo 2 da campanha: aceitar uuid E display (resolver via `resolve_block_ref`), + teste;
+  régua do flip ganha check de sobrevivência de pinos por curso.
+- [CODE] **Dívidas menores da review final F4 (passo 2 / oportunista)**: M4 teste de wiring
+  flag-ON não valida assinatura do partial (`inspect.signature(...).bind` na sentinela —
+  `test_resolver_wiring.py:310-334`); M5 `unit_block_conflict`/reasons órfãos quando
+  `resolve_material_assignment` devolve `block_id=""` e o apply pula (conflito fantasma na UI —
+  `dialogs.py:4114`; não observado na MF); M6 dedup do lookup uuid-then-id em
+  `resolver_apply.py:221-223` vs `_display_id_for_block`; M7 reconcile compara confiança do MOTOR
+  contra confiança do scorer legado de unidade (escalas distintas — caso `colecoes-conjuntos`
+  0.80→0.45 inverteu desempate; calibrar antes do flip); M8 coberturas ausentes em
+  `test_resolver_apply_units.py` (branch code_curation, lookup display, unit==bloco, tag_profile,
+  e — da re-review da fix wave — ramo do pino em forma DISPLAY vs computed uuid no
+  block_is_manual novo).
 
 ## CAMPANHA FUTURA (produto) — web local + camada LLM por conta [BACKLOG VIVO]
 
