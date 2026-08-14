@@ -1836,7 +1836,10 @@ class RepoBuilder:
         try:
             data = _json.loads(path.read_text(encoding="utf-8"))
             return data.get("blocks", []) or []
-        except Exception:
+        except Exception as exc:
+            # Arquivo EXISTE mas falhou: sem o warning, o curso roda como se não
+            # tivesse cronograma e nenhum gate acusa (achado auditoria 2.4).
+            logger.warning("Falha ao ler %s (%s: %s) — seguindo SEM blocos de cronograma", path, type(exc).__name__, exc)
             return []
 
     def _summarize_code_entries(self, client, progress_cb=None) -> dict:

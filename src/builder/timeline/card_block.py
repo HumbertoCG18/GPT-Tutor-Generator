@@ -7,6 +7,7 @@ Puro: sem I/O além do load/save do mapa persistido.
 from __future__ import annotations
 
 import json
+import logging
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -15,6 +16,8 @@ from typing import Dict, List
 from src.utils.helpers import norm_ascii_lower
 from src.builder.text.stopwords import CARD_BLOCK_STOP as _STOP
 from src.builder.timeline.block_identity import _POSITIONAL_RE, _is_uuid_ref
+
+logger = logging.getLogger(__name__)
 
 _DATE_RE = re.compile(r"\b(\d{1,2})/(\d{1,2})(?:/(\d{2,4}))?\b")
 _WEEK_RE = re.compile(r"\bsemana\s+(\d+)\b", re.IGNORECASE)
@@ -152,7 +155,10 @@ def load_card_block_map(course_dir) -> Dict[str, dict]:
         return {}
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception as exc:
+        # Mapa corrompido derruba o tier "card" do manifesto INTEIRO (shift em
+        # massa pra scorer_only) — nunca degradar sem rastro (auditoria 2.6).
+        logger.warning("Falha ao ler %s (%s: %s) — seguindo SEM overrides de card", path, type(exc).__name__, exc)
         return {}
 
 

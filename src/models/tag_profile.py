@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -70,7 +73,8 @@ def load_tag_profile(course_dir: Path) -> Optional[SubjectTagProfile]:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
         return SubjectTagProfile.from_dict(data)
-    except Exception:
+    except Exception as exc:
+        logger.warning("Falha ao ler %s (%s: %s) — seguindo SEM tag profile", path, type(exc).__name__, exc)
         return None
 
 
