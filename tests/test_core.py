@@ -2369,7 +2369,12 @@ class TestBackendSelector:
             processing_mode="quick",
         )
         report = DocumentProfileReport(suggested_profile="auto")
-        decision = selector.decide(entry, report)
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True},
+        ):
+            decision = selector.decide(entry, report)
         assert decision.processing_mode == "quick"
         assert decision.advanced_backend is None
 
@@ -2383,7 +2388,12 @@ class TestBackendSelector:
             processing_mode="auto",
         )
         report = DocumentProfileReport(suggested_profile="auto")
-        decision = selector.decide(entry, report)
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True},
+        ):
+            decision = selector.decide(entry, report)
         assert decision.advanced_backend is None
 
     def test_auto_mode_math_heavy_tries_advanced(self):
@@ -2396,8 +2406,13 @@ class TestBackendSelector:
             processing_mode="auto",
         )
         report = DocumentProfileReport(suggested_profile="math_heavy")
-        decision = selector.decide(entry, report)
         # Even if no advanced backend is available, the logic should try
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": False, "docling": False, "marker": False},
+        ):
+            decision = selector.decide(entry, report)
         assert decision.effective_profile == "math_heavy"
 
     def test_formula_priority_activates_advanced(self):
@@ -2411,19 +2426,21 @@ class TestBackendSelector:
             formula_priority=True,
         )
         report = DocumentProfileReport(suggested_profile="auto")
-        decision = selector.decide(entry, report)
-        available = selector.available_backends()
-        has_advanced = available.get("datalab") or available.get("docling") or available.get("marker")
-        if has_advanced:
-            assert decision.advanced_backend is not None
-            assert "formula_priority" in " ".join(decision.reasons)
-        else:
-            # No advanced backend installed; formula_priority cannot activate one
-            assert decision.advanced_backend is None
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True},
+        ):
+            decision = selector.decide(entry, report)
+        assert decision.advanced_backend is not None
+        assert "formula_priority" in " ".join(decision.reasons)
 
     def test_available_backends_returns_dict(self):
         selector = BackendSelector()
-        available = selector.available_backends()
+        # Só o probe docling-python importa docling de verdade (~20s); o contrato
+        # do dict (chaves) não depende dele.
+        with mock.patch.object(engine_module, "has_docling_python_api", lambda: False):
+            available = selector.available_backends()
         assert isinstance(available, dict)
         assert "pymupdf4llm" in available
         assert "pymupdf" in available
