@@ -245,4 +245,44 @@ def apply_unit_subunit_fields(
             tags.append(f"unit:{reconciled}")
         entry["auto_tags"] = tags
 
+        # --- Subunit (rota de tópico, restrita à unidade FINAL reconciliada) ---
+        manual_subunit = _collapse_ws(str(entry.get("manual_subunit_slug") or ""))
+        if manual_subunit:
+            preferred_topic_slug = manual_subunit
+            best_subunit_slug = manual_subunit
+            subunit_reasons = ["manual"]
+            subunit_confidence = 1.0
+        else:
+            # Texto enriquecido: zips/código sem .md só têm sinal via resumo curado
+            # (mesma mecânica do legado; unit/bloco ficam com o markdown original).
+            sub_md = markdown_text
+            rec = (code_curation.get("entries") or {}).get(str(entry.get("id") or "")) or {}
+            if rec:
+                from src.builder.core.code_summarization import code_curation_signal_text
+                extra = code_curation_signal_text(rec)
+                if extra:
+                    sub_md = f"{markdown_text}\n\n{extra}" if markdown_text else extra
+            topic_match = auto_map_entry_subtopic_fn(
+                entry, content_taxonomy, sub_md, winning_unit_slug=reconciled,
+            )
+            best_subunit_slug = str(getattr(topic_match, "topic_slug", "") or "")
+            subunit_reasons = list(getattr(topic_match, "reasons", []))
+            subunit_confidence = float(getattr(topic_match, "confidence", 0.0))
+            preferred_topic_slug = ""
+            if (
+                topic_match.topic_slug
+                and not topic_match.ambiguous
+                and topic_match.confidence >= T.SUBUNIT_TAG
+            ):
+                preferred_topic_slug = topic_match.topic_slug
+
+        entry["computed_subunit_slug"] = best_subunit_slug
+        entry["subunit_match_reasons"] = subunit_reasons
+        entry["subunit_match_confidence"] = subunit_confidence
+
+        tags = [t for t in (entry.get("auto_tags") or []) if not str(t).startswith("subunit:")]
+        if preferred_topic_slug:
+            tags.append(f"subunit:{preferred_topic_slug}")
+        entry["auto_tags"] = tags
+
     return entries

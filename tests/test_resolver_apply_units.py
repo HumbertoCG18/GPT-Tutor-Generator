@@ -77,3 +77,36 @@ def test_unit_fraca_nunca_vence_bloco_mesmo_com_block_conf_menor():
     assert out[0]["computed_unit_slug"] == "u2"
     assert "herdada_do_bloco=u-2" in out[0]["unit_match_reasons"]
     assert out[0]["unit_block_conflict"] == {}
+
+def test_subunit_gated_e_best_effort():
+    e = _entry()
+    m = SimpleNamespace(slug="u2", confidence=0.9, ambiguous=False, reasons=[])
+    fns = _fns(m)
+    fns["auto_map_entry_subtopic_fn"] = lambda e_, tax, md, winning_unit_slug="": SimpleNamespace(
+        topic_slug="t-fraco", topic_label="", unit_slug="u2",
+        confidence=0.30, ambiguous=False, reasons=["topico"])
+    out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **fns)
+    assert out[0]["computed_subunit_slug"] == "t-fraco"          # best-effort persiste
+    assert not any(t.startswith("subunit:") for t in out[0]["auto_tags"])  # gate 0.60 segura a tag
+
+def test_subunit_restrita_a_unidade_reconciliada():
+    seen = {}
+    e = _entry()
+    m = SimpleNamespace(slug="u1", confidence=0.5, ambiguous=False, reasons=[])  # gated vazio -> herda u2
+    fns = _fns(m)
+    def _sub(e_, tax, md, winning_unit_slug=""):
+        seen["unit"] = winning_unit_slug
+        return SimpleNamespace(topic_slug="t1", topic_label="", unit_slug="u2",
+                               confidence=0.9, ambiguous=False, reasons=[])
+    fns["auto_map_entry_subtopic_fn"] = _sub
+    out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **fns)
+    assert seen["unit"] == "u2"                                   # restrição usa a unidade FINAL
+    assert "subunit:t1" in out[0]["auto_tags"]
+
+def test_manual_subunit_tem_precedencia():
+    e = _entry(manual_subunit_slug="sman")
+    m = SimpleNamespace(slug="u2", confidence=0.9, ambiguous=False, reasons=[])
+    out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_subunit_slug"] == "sman"
+    assert out[0]["subunit_match_confidence"] == 1.0
+    assert "subunit:sman" in out[0]["auto_tags"]
