@@ -146,3 +146,101 @@ def apply_concept_resolver(
         entry["auto_tags"] = tags
 
     return entries
+
+
+def apply_unit_subunit_fields(
+    entries: list,
+    blocks: List[dict],
+    course_meta: dict,
+    subject_profile,
+    root: Optional[Path],
+    code_curation: dict,
+    *,
+    auto_map_entry_unit_fn,
+    auto_map_entry_subtopic_fn,
+    build_file_map_unit_index_from_course_fn,
+    iter_content_taxonomy_topics_fn,
+    entry_markdown_text_for_file_map_fn,
+) -> list:
+    """Fase 4 do cutover: unit/subunit no caminho do motor.
+
+    Roda DEPOIS de apply_concept_resolver, sob a mesma flag: recomputa a
+    unidade com o scorer sobrevivente e reconcilia contra o bloco que o
+    motor acabou de gravar (fecha o gap 1.2 para os campos de unidade).
+    Só toca entries que o motor decidiu (material + computed_block_id).
+    """
+    from src.builder.routing.file_map import reconcile_unit_with_block
+    from src.builder.routing.thresholds import T
+    from src.models.tag_profile import build_learned_unit_boosts, load_tag_profile
+    from src.utils.helpers import collapse_ws as _collapse_ws
+
+    unit_index = build_file_map_unit_index_from_course_fn(course_meta, subject_profile)
+    content_taxonomy = (
+        course_meta.get("_content_taxonomy")
+        or course_meta.get("_content_taxonomy_for_tests")
+        or {}
+    )
+    if not content_taxonomy and course_meta.get("_repo_root"):
+        from src.builder.extraction.content_taxonomy import load_internal_content_taxonomy
+        content_taxonomy = load_internal_content_taxonomy(course_meta["_repo_root"])
+    topic_index = iter_content_taxonomy_topics_fn(content_taxonomy)
+
+    tag_profile = None
+    if root:
+        try:
+            tag_profile = load_tag_profile(Path(root) / "course")
+        except Exception:
+            tag_profile = None
+
+    for entry in entries:
+        if not _is_material(entry):
+            continue
+        block_id = str(entry.get("computed_block_id") or "").strip()
+        if not block_id:
+            continue
+
+        markdown_text = entry_markdown_text_for_file_map_fn(root, entry) if root is not None else ""
+
+        manual_unit = _collapse_ws(str(entry.get("manual_unit_slug") or ""))
+        if manual_unit:
+            resolved_unit_slug, unit_confidence = manual_unit, 1.0
+            unit_ambiguous, unit_reasons = False, ["manual"]
+        else:
+            learned = build_learned_unit_boosts(tag_profile, entry) if tag_profile else {}
+            match = auto_map_entry_unit_fn(
+                entry, unit_index, markdown_text, topic_index,
+                learned_unit_boosts=learned,
+            )
+            resolved_unit_slug = match.slug
+            unit_confidence = match.confidence
+            unit_ambiguous = match.ambiguous
+            unit_reasons = list(match.reasons)
+
+        blk = next((b for b in blocks if str(b.get("block_uuid") or "") == block_id), None)
+        if blk is None:
+            blk = next((b for b in blocks if str(b.get("id") or "") == block_id), None)
+        block_unit = str((blk or {}).get("unit_slug") or "").strip()
+
+        reconciled, suffix, conflict = reconcile_unit_with_block(
+            computed_unit_slug=resolved_unit_slug,
+            unit_confidence=float(unit_confidence),
+            computed_block_id=block_id,
+            block_confidence=float(entry.get("computed_block_confidence") or 0.0),
+            block_unit_slug=block_unit,
+            block_is_manual=str(entry.get("computed_block_method") or "") == "manual",
+            has_manual_unit=bool(manual_unit),
+        )
+        if suffix:
+            unit_reasons = list(unit_reasons) + suffix
+
+        entry["computed_unit_slug"] = reconciled
+        entry["unit_match_reasons"] = unit_reasons
+        entry["unit_match_confidence"] = unit_confidence
+        entry["unit_block_conflict"] = conflict
+
+        tags = [t for t in (entry.get("auto_tags") or []) if not str(t).startswith("unit:")]
+        if reconciled:
+            tags.append(f"unit:{reconciled}")
+        entry["auto_tags"] = tags
+
+    return entries
