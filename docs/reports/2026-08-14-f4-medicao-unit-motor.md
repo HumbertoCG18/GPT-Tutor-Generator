@@ -42,11 +42,20 @@ python <scratchpad>/eval_sandbox.py           # eval_units.score_course contra o
   categoria de cronograma, não é material de aula) não muda com a flag — não é afetado pelo motor
   em nenhum dos dois lados. Confirma a nota de escopo do plano: motor só sobrepõe entries com
   `computed_block_id`.
-- **`computed_unit_slug` divergente**: **12/67** entries.
+- **`computed_unit_slug` efetivamente alterado**: **11/67** entries. Mais 1 entry
+  (`revisao-p1-gabarito`) com slug IDÊNTICO antes/depois (unidade-02 → unidade-02) e só
+  `unit_block_conflict` passando de `{}` pra preenchido — entra na tabela UNIT abaixo por
+  completude (campo mudou, slug não), não conta pro total de slug alterado. **12 linhas na tabela
+  UNIT (11 slug-alterado + 1 só-conflict)**.
 - **`computed_subunit_slug` divergente**: **11/67** entries.
-- **Tags `unit:`/`subunit:` em `auto_tags` divergentes**: 18/67 entries (soma dos dois acima com
-  overlap; ver listas completas abaixo).
-- **`unit_block_conflict` passa a não-vazio** em 6 dessas 12 (era `{}` no BEFORE em todos os 12).
+- **Tags `unit:`/`subunit:` em `auto_tags`**: a métrica bruta original (script ad-hoc
+  `diff_manifest.py`) não bate com a aritmética das duas listas caso-a-caso abaixo e o script não
+  sobrevive à limpeza do sandbox (não commitado; ver Limitações) — descartada. Fonte de verdade:
+  as listas UNIT (12 linhas) + SUBUNIT (11) abaixo, 3 em overlap (`exercicios-arrays`,
+  `formalizacaoalgoritmos-recursao`, `hoare`) → **20 entries únicas** com algum campo unit/subunit
+  alterado.
+- **`unit_block_conflict` passa a não-vazio** em 6 das 12 linhas UNIT (era `{}` no BEFORE em
+  todas as 12).
 
 ## Placar golds (`scripts/eval_units.py` / `gold_units_MF.csv`)
 
@@ -88,11 +97,16 @@ bug novo do wiring desta fase):
 | `formalizacaoalgoritmos-recursao` | unidade-01 → `""` | bloco mudou (7ccdaf.. → c9f5f7..) | propagação do bloco motor |
 | `hoare` | unidade-02 → `""` | bloco mudou (171a1a.. → c9f5f7..) | propagação do bloco motor |
 | `listas` | unidade-01 → unidade-03 | bloco mudou (5599d0.. → 7a5e29..) | propagação do bloco motor |
-| `revisao-p1-gabarito` | unidade-02 → unidade-02 (conflict novo) | bloco mudou (1dd6f1.. → 7ccdaf..) | propagação do bloco motor (unit final igual, só ganha flag de conflito) |
+| `revisao-p1-gabarito` | unidade-02 → unidade-02 (**slug IDÊNTICO**, conflict novo) | bloco mudou (1dd6f1.. → 7ccdaf..) | não conta como unit alterada — só ganha `unit_block_conflict` |
 | `t1-2026-1-thy` | unidade-01 → unidade-02 | bloco mudou (7a5e29.. → 7ccdaf..) | propagação do bloco motor |
 | `t2-2026-1` | unidade-01 → `""` | bloco mudou (1e7362.. → c9f5f7..) | propagação do bloco motor |
 | `tiposindutivos` | unidade-02 → unidade-01 | bloco mudou (95d7c9.. → 7ccdaf..) | propagação do bloco motor |
 | `verificacaomodelos` | unidade-03 → `""` | bloco mudou (a6ac04.. → c9f5f7..) | propagação do bloco motor |
+
+(NB: os dois "11/12" a seguir são eixos independentes que coincidem em contagem —
+`computed_block_id` mudou em 11 das 12 linhas [todas exceto `colecoes-conjuntos`], enquanto o
+slug de unidade mudou em 11 das 12 linhas [todas exceto `revisao-p1-gabarito`]. Não é o mesmo
+conjunto de 11.)
 
 **11/12** têm `computed_block_id` diferente entre BEFORE/AFTER — a mudança de unidade é
 consequência direta e coerente de `reconcile_unit_with_block` (função ÚNICA, reusada sem
@@ -110,12 +124,12 @@ confiança menor) perdeu o desempate, gerando `unit_block_conflict`. A diferenç
 **confiança de bloco** calculada pelo motor vs funil pro mesmo bloco vencedor — também território
 do resolver de bloco (pré-Fase 4), não do wiring novo de unit/subunit.
 
-**Nenhuma das 12 divergências de unit é atribuível a um bug no código NOVO desta fase**
-(`apply_unit_subunit_fields`/wiring do reconcile) — todas rastreiam a um input diferente
-(bloco ou confiança de bloco) vindo do resolver de bloco, já gateado fora desta task.
-**Ressalva honesta**: não existe gold MATERIAL-a-material pra MF (só gold por BLOCO,
-`gold_units_MF.csv`), então não dá pra afirmar que as 12 reatribuições individuais estão
-CORRETAS em verdade-terreno — só que são coerentes e explicáveis pela mecânica, e que não
+**Nenhuma das 12 linhas da tabela UNIT (11 com slug alterado + 1 só-conflict) é atribuível a um
+bug no código NOVO desta fase** (`apply_unit_subunit_fields`/wiring do reconcile) — todas
+rastreiam a um input diferente (bloco ou confiança de bloco) vindo do resolver de bloco, já
+gateado fora desta task. **Ressalva honesta**: não existe gold MATERIAL-a-material pra MF (só
+gold por BLOCO, `gold_units_MF.csv`), então não dá pra afirmar que as 11 reatribuições de slug
+estão CORRETAS em verdade-terreno — só que são coerentes e explicáveis pela mecânica, e que não
 regridem o único gate mensurável hoje (bloco, 12/14 idêntico).
 
 ### SUBUNIT (`computed_subunit_slug`) — correção esperada por design
@@ -145,6 +159,17 @@ mudou; os outros 8 têm unit final igual e só o pool de busca do subunit mudou 
 plano (1.2 bloco→reconcile pós-`attach_block_summary_fields` fecha só o caminho de unidade;
 resync de `auto_tags` é passo 2 da campanha, fora desta task).
 
+## Limitações
+
+- **Scripts ad-hoc da medição não commitados** (`run_sandbox.py`, `diff_manifest.py`,
+  `eval_sandbox.py`, `diff_block_context.py`, todos no scratchpad da sessão): irreprodutíveis sem
+  re-rodar o sandbox (já removido, conforme instrução de limpeza). A métrica de tags
+  `unit:`/`subunit:` descartada acima é o exemplo concreto — o número original não bate com a
+  aritmética das listas caso-a-caso e não há como recomputar sem repetir o processo do zero.
+- Sem gold MATERIAL-a-material pra MF: as divergências caso-a-caso (11 unit-slug + 11 subunit,
+  3 em overlap) são coerentes/explicadas pela mecânica, não provadas individualmente contra
+  verdade-terreno.
+
 ## Veredito go/no-go
 
 **GO** para o gate mensurável definido pelo handoff (placar `eval_units.py`/`gold_units_MF.csv`,
@@ -152,8 +177,9 @@ nível de BLOCO): MF empata a própria baseline **12/14 (85.7%)** com a flag ON,
 zero novo erro, mesmos 2 misses de política. O resíduo de cobertura (1/67, categoria de
 cronograma) é idêntico nos dois lados.
 
-**Ressalva não-bloqueante**: as 12 reatribuições de unidade a nível de MATERIAL (entry) não têm
-gold próprio pra verificação individual — são coerentes com a mecânica (bloco motor diferente,
+**Ressalva não-bloqueante**: as 11 reatribuições de unidade a nível de MATERIAL (entry, slug
+efetivamente alterado — + 1 caso `revisao-p1-gabarito` com slug idêntico e só conflict novo) não
+têm gold próprio pra verificação individual — são coerentes com a mecânica (bloco motor diferente,
 já homologado fora desta fase) mas não есtão provadas caso-a-caso contra verdade-terreno. Se o
 controlador quiser fechar esse gap antes do flip real de produção, é trabalho de gold
 MATERIAL-a-material (fora do escopo desta Task 5, que mediu contra o gold de BLOCO existente).
