@@ -357,6 +357,7 @@ def regenerate_pedagogical_files(
     write_tag_catalog_fn,
     refresh_manifest_auto_tags_fn,
     resolve_unit_block_tags_fn,
+    apply_unit_subunit_fn,
     syllabus_md_fn,
     exam_index_md_fn,
     exercise_index_md_fn,
@@ -523,6 +524,15 @@ def regenerate_pedagogical_files(
             content_taxonomy.get("units") or [],
             _code_curation,
             builder.root_dir,
+        )
+        # F4: unit/subunit do motor, reconciliados contra o bloco recém-gravado.
+        live_manifest_entries = apply_unit_subunit_fn(
+            live_manifest_entries,
+            enriched_timeline_index.get("blocks") or [],
+            runtime_course_meta,
+            builder.subject_profile,
+            builder.root_dir,
+            _code_curation,
         )
 
     # Camada de placement por âncora (TEMPORAL-only, aditiva). Escreve

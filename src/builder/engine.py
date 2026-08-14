@@ -57,6 +57,9 @@ from src.builder.routing.file_map import (
     timeline_block_matches_preferred_topic as _file_map_timeline_block_matches_preferred_topic,
     timeline_block_rows_for_scoring as _file_map_timeline_block_rows_for_scoring,
 )
+from src.builder.routing.resolver_apply import (
+    apply_unit_subunit_fields as _apply_unit_subunit_fields,
+)
 from src.builder.runtime.backend_runtime import (
     MARKER_OLLAMA_SERVICE,
     advanced_cli_stall_timeout as _backend_advanced_cli_stall_timeout,
@@ -2155,6 +2158,14 @@ class RepoBuilder:
                 resolve_entry_manual_timeline_block_fn=_resolve_entry_manual_timeline_block,
                 entry_markdown_text_for_file_map_fn=_entry_markdown_text_for_file_map,
             ),
+            apply_unit_subunit_fn=partial(
+                _apply_unit_subunit_fields,
+                auto_map_entry_unit_fn=_auto_map_entry_unit,
+                auto_map_entry_subtopic_fn=_auto_map_entry_subtopic,
+                build_file_map_unit_index_from_course_fn=_build_file_map_unit_index_from_course,
+                iter_content_taxonomy_topics_fn=_iter_content_taxonomy_topics,
+                entry_markdown_text_for_file_map_fn=_entry_markdown_text_for_file_map,
+            ),
             syllabus_md_fn=syllabus_md,
             exam_index_md_fn=exam_index_md,
             exercise_index_md_fn=exercise_index_md,
@@ -2443,6 +2454,7 @@ __all__ = [
     "backend_policy_yaml",
     "UnitMatchResult",
     "TopicMatchResult",
+    "_apply_unit_subunit_fields",
     "_auto_map_entry_subtopic",
     "_auto_map_entry_unit",
     "_build_assessment_context_from_course",
