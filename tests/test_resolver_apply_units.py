@@ -131,3 +131,18 @@ def test_apply_concept_resolver_honra_pino_uuid():
     assert out[0]["computed_block_method"] == "manual"
     assert out[0]["computed_block_confidence"] == 1.0
     assert "bloco:bloco-02" in out[0]["auto_tags"]       # espelho display resync
+
+def test_cadeia_motor_unit_descreve_bloco_pos_apply():
+    # 1.2 (auditoria): unit fields nao podem descrever o bloco ANTIGO.
+    # Pino move e1 de u-1 pra u-2; a unidade final deve ser a de u-2.
+    from src.builder.routing.resolver_apply import apply_concept_resolver
+    e = {"id": "e1", "file_type": "pdf", "computed_block_id": "u-1",
+         "manual_timeline_block_id": "u-2", "auto_tags": ["unit:u1", "bloco:bloco-01"]}
+    entries = apply_concept_resolver([e], list(BLOCKS), [], {}, None)
+    m = SimpleNamespace(slug="u1", confidence=0.9, ambiguous=False, reasons=["score"])
+    out = apply_unit_subunit_fields(entries, BLOCKS, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_block_id"] == "u-2"
+    assert out[0]["computed_unit_slug"] == "u2"          # unidade do bloco NOVO (pino manual)
+    assert "unidade_do_bloco_manual" in out[0]["unit_match_reasons"]
+    assert out[0]["unit_block_conflict"] == {}
+    assert "unit:u2" in out[0]["auto_tags"] and "unit:u1" not in out[0]["auto_tags"]
