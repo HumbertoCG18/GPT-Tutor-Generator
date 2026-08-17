@@ -357,15 +357,35 @@ def test_apply_unit_subunit_fn_called_when_flag_on(tmp_path, monkeypatch):
     assert isinstance(code_curation, dict)
 
 
-def test_apply_unit_subunit_fn_not_called_when_flag_off(tmp_path, monkeypatch):
-    """use_concept_resolver OFF (ausente de options) -> apply_unit_subunit_fn
-    NUNCA é invocado; sentinela explode se chamado."""
+def test_apply_unit_subunit_fn_called_when_flag_absent(tmp_path, monkeypatch):
+    """Cutover passo 3: flag AUSENTE de options -> default ON, motor roda.
+    Sentinela do flip (2026-08-17): ausente == ligado."""
     from src.builder import engine as engine_mod
 
     builder = _minimal_builder(tmp_path, {})
 
+    calls = []
+
     def _sentinel(*args, **kwargs):
-        raise AssertionError("apply_unit_subunit_fn NAO deve ser chamado com a flag OFF")
+        calls.append(args)
+        return args[0]
+
+    monkeypatch.setattr(engine_mod, "_apply_unit_subunit_fields", _sentinel)
+
+    builder._regenerate_pedagogical_files({"entries": [], "logs": []})
+
+    assert len(calls) == 1, "flag ausente = default ON: apply_unit_subunit_fn deve rodar"
+
+
+def test_apply_unit_subunit_fn_not_called_when_flag_explicit_off(tmp_path, monkeypatch):
+    """Opt-out pós-flip: use_concept_resolver=False EXPLICITO -> apply_unit_subunit_fn
+    NUNCA é invocado; sentinela explode se chamado."""
+    from src.builder import engine as engine_mod
+
+    builder = _minimal_builder(tmp_path, {"use_concept_resolver": False})
+
+    def _sentinel(*args, **kwargs):
+        raise AssertionError("apply_unit_subunit_fn NAO deve ser chamado com opt-out explicito")
 
     monkeypatch.setattr(engine_mod, "_apply_unit_subunit_fields", _sentinel)
 

@@ -528,7 +528,9 @@ def regenerate_pedagogical_files(
 
     _code_curation = builder._load_code_curation()
     live_manifest_entries = attach_block_summary_fields(live_manifest_entries, _code_curation, blocks=enriched_timeline_index.get("blocks") or [])
-    if bool(builder.options.get("use_concept_resolver", False)):
+    # Cutover passo 3 (2026-08-17): default ON — opt-out explicito por curso via
+    # feature_flags {"use_concept_resolver": false} no subjects.json.
+    if bool(builder.options.get("use_concept_resolver", True)):
         from src.builder.routing.resolver_apply import apply_concept_resolver
         live_manifest_entries = apply_concept_resolver(
             live_manifest_entries,
