@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Points to the single source of truth for each kind of fact.
-last_updated: 2026-08-06
+last_updated: 2026-08-14
 ---
 
 # ROUTER.md - Session Bootstrap
@@ -30,13 +30,9 @@ com atribuição arquivo→bloco→unidade dirigida por sinais Moodle/SARC/plano
 | Pipeline de PDF (backends, falhas conhecidas) | `context/pdf-pipeline.md` |
 | Setup/stack/manifest | `context/setup.md`, `context/stack.md` |
 
-Snapshot mínimo (as-of 2026-08-06; o resto está no tracker): branch de trabalho
-`feat/motor-atribuicao`; suite 1871 passed/4 skipped/0 failed; motor de atribuição
-fases 0-5a entregues, rollout flag-ON em produção MF+SO (TCC re-BLOQUEADO por
-divergência de geradores de índice; ES2/IA aguardam inspeção de sujeira); flags por
-curso vivem em `subjects.json` (`%APPDATA%/GPTTutorGenerator/`). Foco atual: campanha
-de unificação de fontes (colisão de rótulo de unidade + reconciliação
-reprocess×rebuild) e rollouts restantes.
+Estado atual (branch, números de suite, fases, rollouts, foco da campanha): SEMPRE no
+tracker `docs/reports/pendencias.md` + handoff mais recente em `docs/reports/`. Este
+arquivo não carrega snapshot — snapshot aqui envelhece e mente.
 
 ---
 

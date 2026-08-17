@@ -1,7 +1,7 @@
 ---
 name: agents
 description: Project identity, non-negotiables, commands, and scaffold growth instructions
-last_updated: 2026-08-06
+last_updated: 2026-08-14
 ---
 
 # GPT-Tutor-Generator
@@ -22,7 +22,6 @@ A desktop tool (Python/tkinter) that converts academic PDFs into structured GitH
 - No obvious comments; only non-obvious WHY comments.
 - No multi-paragraph docstrings.
 - Skip files over 100KB unless strictly required.
-- Before calling any `mcp__code-review-graph__*` or `mcp__token-savior__*` tool, use `ToolSearch select:<name>` to load the schema first. Calling without loading fails with `InputValidationError`.
 - Gemini integration uses `google-genai` (NOT `google-generativeai`). Imports via `from google import genai` and must stay lazy inside method bodies — never at module top level. Anti-patterns to grep: `google.generativeai`, `genai.GenerativeModel`.
 - The generated repo's code_curation.json is a generated artifact (not source). Treat it like manifest cache: prune stale entries before reads, write atomically.
 - **Arquivamento de concluídos (NÃO-NEGOCIÁVEL):** quando um plano termina de executar e passa 100%
