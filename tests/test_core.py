@@ -4614,11 +4614,10 @@ class TestNewGenerators:
         assert "[a preencher]" not in r
         assert "Preencha conforme analisar" not in r
 
-    def test_whiteboard_professor_signal(self):
+    def test_whiteboard_lista_entrada(self):
         from src.builder.engine import whiteboard_index_md
         e = self._e("quadro-branco", "AulaHash", ".png")
-        e.professor_signal = "usa colisão linear"
-        assert "colisão linear" in whiteboard_index_md(self.COURSE_META, [e])
+        assert "AulaHash" in whiteboard_index_md(self.COURSE_META, [e])
 
     def test_whiteboard_empty(self):
         from src.builder.engine import whiteboard_index_md
@@ -4634,9 +4633,8 @@ class TestNewGenerators:
     def test_whiteboard_entries_no_patterns_section(self):
         from src.builder.engine import whiteboard_index_md
         e = self._e("quadro-branco", "AulaHash", ".png")
-        e.professor_signal = "usa colisão linear"
         r = whiteboard_index_md(self.COURSE_META, [e])
-        assert "colisão linear" in r
+        assert "AulaHash" in r
         assert "Padrões pedagógicos" not in r
 
 

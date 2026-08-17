@@ -49,7 +49,6 @@ class FileEntry:
     manual_subunit_slug: str = ""
     manual_timeline_block_id: str = ""
     notes: str = ""
-    professor_signal: str = ""
     relevant_for_exam: bool = True
     include_in_bundle: bool = True
 

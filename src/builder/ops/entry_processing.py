@@ -36,7 +36,6 @@ def process_entry(builder, entry, *, image_categories) -> Dict[str, object]:
         "manual_unit_slug": entry.manual_unit_slug,
         "manual_timeline_block_id": entry.manual_timeline_block_id,
         "notes": entry.notes,
-        "professor_signal": entry.professor_signal,
         "include_in_bundle": entry.include_in_bundle,
         "relevant_for_exam": entry.relevant_for_exam,
         "processing_mode": entry.processing_mode,

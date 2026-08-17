@@ -331,7 +331,6 @@ def write_source_registry(
                 f"    processing_mode: {item.get('processing_mode', 'auto')}",
                 f"    effective_profile: {item.get('effective_profile', 'auto')}",
                 f"    include_in_bundle: {str(item.get('include_in_bundle', True)).lower()}",
-                f"    professor_signal: {json_str(item.get('professor_signal', ''))}",
             ]
         )
     write_text_fn(root_dir / "course" / "SOURCE_REGISTRY.yaml", "\n".join(lines) + "\n")
@@ -664,8 +663,6 @@ def bibliography_md(
                 lines.append(f"- **Tags:** {entry.tags}")
             if entry.notes:
                 lines.append(f"- **Nota:** {entry.notes}")
-            if entry.professor_signal:
-                lines.append(f"- **Indicação do professor:** {entry.professor_signal}")
             rec = _rec(entry)
             ref_summary = rec.get("ref_summary") or ""
             if ref_summary:
@@ -719,13 +716,13 @@ def exam_index_md(course_meta: dict, entries=None, *, clamp_navigation_artifact:
     ]
 
     if entries:
-        lines.append("| Arquivo | Tipo | Prova | Observação | Padrão do professor |")
-        lines.append("|---|---|---|---|---|")
+        lines.append("| Arquivo | Tipo | Prova | Observação |")
+        lines.append("|---|---|---|---|")
         for entry in entries:
             tipo = "foto" if entry.category == "fotos-de-prova" else "original"
             lines.append(
                 f"| {Path(entry.source_path).name} | {tipo} | {entry.title} "
-                f"| {entry.notes or ''} | {entry.professor_signal or ''} |"
+                f"| {entry.notes or ''} |"
             )
     else:
         lines.append("_Nenhuma prova mapeada ainda._")
@@ -809,11 +806,10 @@ def code_index_md(
             lines += [
                 profile["code_index_section"],
                 "",
-                "| Arquivo | Linguagem | Unidade | Conceito demonstrado | Notas |",
-                "|---|---|---|---|---|",
+                "| Arquivo | Linguagem | Unidade | Notas |",
+                "|---|---|---|---|",
             ]
             for e in prof_entries:
-                conceito = e.professor_signal or ""
                 unit_str = ""
                 if e.notes and "Unidade:" in e.notes:
                     try:
@@ -821,7 +817,7 @@ def code_index_md(
                     except (IndexError, AttributeError):
                         pass
                 lines.append(
-                    f"| {Path(e.source_path).name} | {e.tags or ''} | {unit_str} | {conceito} | |"
+                    f"| {Path(e.source_path).name} | {e.tags or ''} | {unit_str} | |"
                 )
             lines.append("")
         else:
@@ -1085,7 +1081,7 @@ def whiteboard_index_md(course_meta: dict, entries=None, *, clamp_navigation_art
     if entries:
         lines += ["| Arquivo | Título | Unidade | Padrão identificado |", "|---|---|---|---|"]
         for e in entries:
-            lines.append(f"| {Path(e.source_path).name} | {e.title} | {e.tags or ''} | {e.professor_signal or ''} |")
+            lines.append(f"| {Path(e.source_path).name} | {e.title} | {e.tags or ''} |")
     else:
         lines.append("_Nenhum registro de quadro ainda._")
     lines.append("")
@@ -1790,7 +1786,6 @@ source_image: {json.dumps(image_path, ensure_ascii=False)}
 ## Metadados
 - Tags: `{entry.tags}`
 - Relevante para prova: `{entry.relevant_for_exam}`
-- Sinal do professor: `{entry.professor_signal}`
 
 ## Transcrição fiel
 <!-- Escreva o texto da imagem aqui -->

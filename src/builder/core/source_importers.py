@@ -211,7 +211,6 @@ def process_zip(builder, entry: FileEntry, raw_target: Path) -> Dict[str, object
             title=relative_name,
             tags=entry.tags,
             notes=f"Extraído de: {entry.title}",
-            professor_signal=entry.professor_signal,
             include_in_bundle=entry.include_in_bundle,
         )
         code_subdir = "student" if entry.category == "codigo-aluno" else "professor"
@@ -303,7 +302,6 @@ def process_github_repo(builder, entry: FileEntry) -> Dict[str, object]:
             title=relative_name,
             tags=entry.tags,
             notes=f"Branch: {branch} — {url}",
-            professor_signal=entry.professor_signal,
             include_in_bundle=entry.include_in_bundle,
         )
         code_subdir = "student" if category == "codigo-aluno" else "professor"

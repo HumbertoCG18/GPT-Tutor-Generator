@@ -193,7 +193,6 @@ def test_auto_map_entry_unit_applies_learned_unit_boosts():
         "tags": "",
         "raw_target": "",
         "notes": "",
-        "professor_signal": "",
     }
     markdown_text = ""
 
