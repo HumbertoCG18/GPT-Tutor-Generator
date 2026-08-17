@@ -4,8 +4,8 @@ sem passar nenhum arquivo pelo Datalab/Marker.
 Replica o caminho do botao "Reprocessar Repositorio" da UI de forma headless:
 RepoBuilder(entries=[]).incremental_build() -> como nao ha novas entries, o loop
 de _process_entry/PDF e pulado e so roda regenerate_pedagogical_files
-(refresh_manifest_auto_tags -> resolve_unit_block_tags -> indices), lendo o
-markdown ja gerado no repo.
+(refresh_manifest_auto_tags -> attach -> motor apply_concept_resolver/
+apply_unit_subunit -> indices), lendo o markdown ja gerado no repo.
 
 Uso:
     python scripts/reprocess_assignments.py "C:/.../X-Tutor"  ["C:/.../*-Tutor"] ...

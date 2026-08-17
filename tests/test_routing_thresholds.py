@@ -9,12 +9,10 @@ def test_margin_confidence_formula():
 
 
 def test_thresholds_present():
-    # limiares nomeados centralizados
+    # limiares nomeados centralizados (BLOCK_UNIT_*/VOTE_* morreram com o
+    # fallback keyword de unidade no cutover passo 3)
     assert T.UNIT_TAG == 0.65
     assert T.SUBUNIT_TAG == 0.60
-    assert T.BLOCK_UNIT_MIN_WINNER == 1.0
-    assert T.BLOCK_UNIT_MIN_GAP == 0.35
-    assert T.VOTE_DOMINANCE == 0.60
 
 
 def test_margin_matches_old_inline_018():

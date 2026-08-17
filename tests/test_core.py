@@ -64,7 +64,6 @@ from src.builder.timeline.index import (
     _build_timeline_index,
     _parse_syllabus_timeline,
     _parse_timeline_date_value,
-    _score_timeline_row_against_unit,
     _serialize_timeline_index,
 )
 from src.models.core import (
@@ -2906,11 +2905,24 @@ class TestTimelineIndex:
         assert "2 dias · 06/04/2026 a 08/04/2026" in periods
 
     def test_build_timeline_index_assigns_matching_block_to_unit(self):
+        # Cutover passo 3: unidade vem SÓ do matcher posicional (fallback
+        # keyword morto) — o teste passa a alimentar content_taxonomy, como
+        # produção (montador único W1/W2 sempre fornece taxonomy).
         timeline = _parse_syllabus_timeline(METODOS_FORMAIS_SYLLABUS)
         candidate_rows = _build_timeline_candidate_rows(timeline)
         unit_index = _build_file_map_unit_index(METODOS_FORMAIS_UNITS)
+        taxonomy = {"units": [
+            {"slug": "unidade-01-metodos-formais",
+             "title": "Unidade 01 — Métodos Formais",
+             "topics": [{"label": "Especificação de Conjuntos Indutivos"},
+                        {"label": "Especificação de Funções Recursivas"}]},
+            {"slug": "unidade-02-prova-interativa-de-teoremas",
+             "title": "Unidade 02 — Prova Interativa de Teoremas",
+             "topics": [{"label": "Isabelle"}]},
+        ]}
 
-        timeline_index = _build_timeline_index(candidate_rows, unit_index=unit_index)
+        timeline_index = _build_timeline_index(
+            candidate_rows, unit_index=unit_index, content_taxonomy=taxonomy)
 
         recursion_block = next(
             block for block in timeline_index["blocks"]
@@ -2923,31 +2935,6 @@ class TestTimelineIndex:
 
         assert recursion_block["unit_slug"] == "unidade-01-metodos-formais"
         assert isabelle_block["unit_slug"] == "unidade-02-prova-interativa-de-teoremas"
-
-    def test_timeline_unit_scoring_is_conservative_for_generic_logic_and_admin_rows(self):
-        unit_index = _build_file_map_unit_index(_parse_units_from_teaching_plan(PUCRS_PLAN))
-        scores_by_slug = {
-            unit["slug"]: _score_timeline_row_against_unit("Lógica de Hoare", unit)
-            for unit in unit_index
-        }
-
-        assert scores_by_slug["unidade-02-verificacao-de-programas"] > scores_by_slug["unidade-01-metodos-formais"]
-        assert scores_by_slug["unidade-02-verificacao-de-programas"] > scores_by_slug["unidade-03-verificacao-de-modelos"]
-
-        predicados_scores = {
-            unit["slug"]: _score_timeline_row_against_unit("Lógica de Predicados", unit)
-            for unit in unit_index
-        }
-        assert predicados_scores["unidade-03-verificacao-de-modelos"] == 0.0
-        assert _score_timeline_row_against_unit(
-            "Lógica de Programas - coleções Dafny (conjuntos)",
-            next(unit for unit in unit_index if unit["slug"] == "unidade-01-metodos-formais"),
-        ) == 0.0
-
-        assert all(
-            _score_timeline_row_against_unit("Suspensão de aulas", unit) == 0.0
-            for unit in unit_index
-        )
 
     def test_timeline_index_does_not_assign_administrative_blocks(self):
         timeline = _parse_syllabus_timeline("""\
@@ -2962,8 +2949,22 @@ class TestTimelineIndex:
             ("Unidade 02 — Verificação de Programas", ["Lógica de Hoare"]),
             ("Unidade 03 — Verificação de Modelos", ["Modelos de Kripke"]),
         ])
+        # Cutover passo 3: rota posicional exige taxonomy (fallback keyword morto).
+        taxonomy = {"units": [
+            {"slug": "unidade-01-metodos-formais",
+             "title": "Unidade 01 — Métodos Formais",
+             "topics": [{"label": "Lógica de Predicados"}]},
+            {"slug": "unidade-02-verificacao-de-programas",
+             "title": "Unidade 02 — Verificação de Programas",
+             "topics": [{"label": "Lógica de Hoare"}]},
+            {"slug": "unidade-03-verificacao-de-modelos",
+             "title": "Unidade 03 — Verificação de Modelos",
+             "topics": [{"label": "Modelos de Kripke"}]},
+        ]}
 
-        timeline_index = _build_timeline_index(_build_timeline_candidate_rows(timeline), unit_index=unit_index)
+        timeline_index = _build_timeline_index(
+            _build_timeline_candidate_rows(timeline), unit_index=unit_index,
+            content_taxonomy=taxonomy)
         suspension_block = next(
             block for block in timeline_index["blocks"]
             if "suspensao" in block["topic_text"]
@@ -3077,10 +3078,21 @@ class TestCourseMapTimeline:
 
     def test_timeline_section_present_for_learning_unit_format(self):
         from src.models.core import SubjectProfile
+        # Cutover passo 3: unidade só via matcher posicional (afinidade de
+        # conteúdo) — o syllabus da fixture precisa CASAR com o plano IA
+        # (antes o fallback keyword mascarava o descasamento MF×IA).
         sp = SubjectProfile(
             name="Inteligência Artificial",
             slug="inteligencia-artificial",
-            syllabus=SYLLABUS_TABLE,
+            syllabus="""\
+| Semana | Data | Conteúdo |
+|---|---|---|
+| 1 | 2026-03-02 | Conceituação e breve histórico de IA |
+| 2 | 2026-03-09 | Subáreas e disciplinas afins |
+| 3 | 2026-03-16 | Introdução a agentes em ambientes determinísticos |
+| 4 | 2026-03-23 | Representação de problemas |
+| 5 | 2026-03-30 | Busca informada (heurística) |
+""",
             teaching_plan=LEARNING_UNIT_PLAN,
         )
         result = course_map_md({"course_name": "Inteligência Artificial"}, sp)
@@ -4257,10 +4269,16 @@ class TestCourseMapLowToken:
                 f"Subtópico {i}.3\n"
             )
 
+        # Cutover passo 3: syllabus sintético com afinidade de conteúdo com o
+        # plano sintético (o fallback keyword que casava com SYLLABUS_TABLE
+        # do MF morreu; o matcher posicional exige overlap real de tokens).
+        syllabus_rows = ["| Semana | Data | Conteúdo |", "|---|---|---|"]
+        for i in range(1, 10):
+            syllabus_rows.append(f"| {i} | 2026-03-{i:02d} | Tópico {i} e Subtópico {i}.1 |")
         sp = SubjectProfile(
             name="Teste",
             slug="teste",
-            syllabus=SYLLABUS_TABLE,
+            syllabus="\n".join(syllabus_rows) + "\n",
             teaching_plan="\n".join(teaching_plan_parts),
         )
         result = course_map_md({"course_name": "Teste"}, sp)

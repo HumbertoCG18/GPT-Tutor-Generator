@@ -14,10 +14,12 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
+from src.builder.extraction.content_taxonomy import _NO_TIMELINE_CATEGORIES
 from src.builder.extraction.entry_signals import collect_entry_unit_signals
 from src.builder.routing.concept_resolver import resolve_material_assignment
 from src.builder.routing.sequence import annotate_class_ordinals
 from src.builder.timeline.card_block import resolve_block_ref
+from src.utils.helpers import collapse_ws as _collapse_ws_cat
 
 
 def _display_id_for_block(block_id: str, blocks: List[dict]) -> str:
@@ -104,6 +106,11 @@ def apply_concept_resolver(
     Unit fields (computed_unit_slug, unit:/subunit: em auto_tags) ficam intocados —
     BLOCK-only cutover (Fase 3.3; a unidade é Fase 4).
 
+    Cutover passo 3: o motor é o atribuidor ÚNICO — semeia entries novos (sem
+    computed_block_id) e re-resolve os existentes. Categorias fora da timeline
+    (_NO_TIMELINE_CATEGORIES) são LIMPAS e puladas — porte da limpeza B1 do
+    funil legado (resolve_unit_block_tags, content_taxonomy), morto neste passo.
+
     Idêntico ao harness: faz annotate_class_ordinals numa cópia dos blocks antes
     de resolver (o harness também faz isso antes do loop). Muta entries in-place.
     """
@@ -113,7 +120,15 @@ def apply_concept_resolver(
     for entry in entries:
         if not _is_material(entry):
             continue
-        if not str(entry.get("computed_block_id") or "").strip():
+        category = _collapse_ws_cat(str(entry.get("category") or "")).lower()
+        if category in _NO_TIMELINE_CATEGORIES:
+            # Categoria fora da timeline: limpa atribuicao antiga (senao um
+            # manifest com historico carrega bloco orfao — caso real do B1).
+            for k in ("computed_block_id", "computed_block_confidence",
+                      "computed_block_band", "computed_block_method"):
+                entry.pop(k, None)
+            if entry.get("auto_tags"):
+                entry["auto_tags"] = [t for t in entry["auto_tags"] if not str(t).startswith("bloco:")]
             continue
 
         entry_for_resolver, signals, summary = assemble_resolver_inputs(root, entry, code_curation)

@@ -9,8 +9,8 @@
     "temporal_block_id": ""
   },
   "introducao": {
-    "band": "alta",
-    "computed_block_id": "1e73625a-de3e-4c8a-87c4-d301a3138c0b",
+    "band": "baixa",
+    "computed_block_id": "5599d015-10e0-4f6e-ad17-c526b903dc09",
     "computed_unit_slug": "unidade-01-metodos-formais",
     "moodle_label": "Introdução",
     "presente": true,
@@ -18,8 +18,8 @@
     "temporal_block_id": "1e73625a-de3e-4c8a-87c4-d301a3138c0b"
   },
   "t1-2026-1": {
-    "band": "alta",
-    "computed_block_id": "7a5e29db-f228-4e96-bd4b-272d5b74e2ae",
+    "band": "media",
+    "computed_block_id": "5599d015-10e0-4f6e-ad17-c526b903dc09",
     "computed_unit_slug": "unidade-01-metodos-formais",
     "moodle_label": "Definição",
     "presente": true,

@@ -30,42 +30,9 @@ CODE_GOLD_PATH = Path(__file__).parent / "fixtures" / "eval" / "code_block_gold.
 
 
 # ---------------------------------------------------------------------------
-# T6_assignments
+# T6_assignments: testes do harness eval_assignments (predict_block/evaluate)
+# morreram com o script no cutover passo 3 (régua oficial = eval_ground_truth).
 # ---------------------------------------------------------------------------
-
-
-def test_T6_assignments_predict_returns_uuid():
-    """predict_block deve retornar uuid (nao bloco-NN) quando block_uuid esta no bloco."""
-    from scripts.eval_assignments import predict_block
-
-    gold = json.loads(GOLD_PATH.read_text(encoding="utf-8"))
-    blocks = gold["timeline"]["blocks"]
-    for b in blocks:
-        bid = b.get("id", "")
-        assert b.get("block_uuid"), f"bloco {bid} sem block_uuid -- fixture nao migrada (3a)"
-
-    case_date = next(c for c in gold["cases"] if c["id"] == "case-date")
-    predicted, _band = predict_block(case_date, blocks)
-    assert predicted == _U["bloco-01"], (
-        f"esperado uuid {_U['bloco-01']}, obtido {predicted!r}"
-    )
-
-
-def test_T6_assignments_evaluate_5_5_cw0():
-    """evaluate() com fixture migrada deve retornar 5/5 cw0."""
-    from scripts.eval_assignments import evaluate
-
-    gold = json.loads(GOLD_PATH.read_text(encoding="utf-8"))
-    for c in gold["cases"]:
-        exp = c.get("expected_block_id", "")
-        assert exp and not exp.startswith("bloco-"), (
-            f"caso {c['id']} expected_block_id ainda e bloco-NN: {exp!r}"
-        )
-
-    report = evaluate(gold)
-    assert report["correct"] == 5, f"esperado 5/5, obtido {report['correct']}/{report['total']}"
-    assert report["confident_wrong"] == 0, f"confiante-errado: {report['confident_wrong']}"
-
 
 # ---------------------------------------------------------------------------
 # T6_code_block_gold

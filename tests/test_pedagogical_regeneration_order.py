@@ -1,25 +1,35 @@
+"""Ordem do pipeline de regeneração (re-versionado no cutover passo 3).
+
+Pós-funil: refresh_manifest_auto_tags -> attach_block_summary_fields ->
+apply_concept_resolver -> apply_unit_subunit_fields. O attach (caminho de
+CÓDIGO, consenso D1) roda ANTES do motor; o motor decide por cima com a
+curation como sinal (llm_curation) — invariante da cadeia testado também em
+test_routing (passo 2, gap 1.2).
+"""
 import inspect
+
 from src.builder.ops import pedagogical_regeneration as pr
 
 
-def test_resolve_unit_block_tags_runs_before_attach_block_summary():
+def test_attach_runs_before_concept_resolver():
     src = inspect.getsource(pr.regenerate_pedagogical_files)
-    i_resolve = src.find("resolve_unit_block_tags_fn(")
     i_attach = src.find("attach_block_summary_fields(")
-    assert i_resolve != -1 and i_attach != -1
-    assert i_resolve < i_attach, "funil deve rodar antes do attach (consenso D1 depende disso)"
+    i_apply = src.find("apply_concept_resolver(")
+    i_unit = src.find("apply_unit_subunit_fn(")
+    assert i_attach != -1 and i_apply != -1 and i_unit != -1
+    assert i_attach < i_apply < i_unit, (
+        "ordem quebrada: attach deve preceder o motor; unit/subunit fecham a cadeia"
+    )
 
 
 def test_regenerate_pedagogical_files_e2e_locks_call_order(tmp_path, monkeypatch):
-    """e2e (T7b): trava em RUNTIME a ordem refresh_manifest_auto_tags ->
-    resolve_unit_block_tags -> attach_block_summary_fields via
-    regenerate_pedagogical_files real (fixture minima, nao so grep de fonte
-    como o teste irmao acima). A precedencia de computed_block_method depende
-    dela: attach_block_summary_fields roda DEPOIS e o caminho de codigo
-    (consensus/llm_only) sobrescreve o method do funil por cima
-    (content_taxonomy.py:1322-1330)."""
+    """e2e: trava em RUNTIME a ordem refresh_manifest_auto_tags ->
+    attach_block_summary_fields -> apply_concept_resolver ->
+    apply_unit_subunit_fields via regenerate_pedagogical_files real
+    (fixture minima; flag ausente = motor ON, default do cutover)."""
     from src.models.core import StudentProfile, SubjectProfile
     from src.builder import engine as engine_mod
+    from src.builder.routing import resolver_apply as ra
 
     calls = []
 
@@ -34,12 +44,16 @@ def test_regenerate_pedagogical_files_e2e_locks_call_order(tmp_path, monkeypatch
         _spy("refresh_manifest_auto_tags", engine_mod._refresh_manifest_auto_tags),
     )
     monkeypatch.setattr(
-        engine_mod, "_resolve_unit_block_tags",
-        _spy("resolve_unit_block_tags", engine_mod._resolve_unit_block_tags),
-    )
-    monkeypatch.setattr(
         pr, "attach_block_summary_fields",
         _spy("attach_block_summary_fields", pr.attach_block_summary_fields),
+    )
+    monkeypatch.setattr(
+        ra, "apply_concept_resolver",
+        _spy("apply_concept_resolver", ra.apply_concept_resolver),
+    )
+    monkeypatch.setattr(
+        engine_mod, "_apply_unit_subunit_fields",
+        _spy("apply_unit_subunit_fields", engine_mod._apply_unit_subunit_fields),
     )
 
     repo = tmp_path / "repo"
@@ -74,6 +88,7 @@ def test_regenerate_pedagogical_files_e2e_locks_call_order(tmp_path, monkeypatch
 
     assert calls == [
         "refresh_manifest_auto_tags",
-        "resolve_unit_block_tags",
         "attach_block_summary_fields",
+        "apply_concept_resolver",
+        "apply_unit_subunit_fields",
     ], calls

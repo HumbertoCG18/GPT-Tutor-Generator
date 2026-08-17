@@ -199,17 +199,16 @@ def attach_block_summary_fields(entries: list, code_curation: dict, blocks: list
 
         method = str(summary.get("block_match_method") or "").strip()
         if method:
-            # Caminho de CÓDIGO vence: roda DEPOIS de resolve_unit_block_tags
-            # no regenerate_pedagogical_files, então consensus/llm_only
-            # sobrescreve o method do funil (P2.3) — comportamento intencional.
+            # Caminho de CÓDIGO vence: roda DEPOIS da atribuicao (hoje o motor,
+            # apply_concept_resolver) no regenerate_pedagogical_files, então
+            # consensus/llm_only sobrescreve o method (P2.3) — intencional.
             e["computed_block_method"] = method
         elif str(e.get("computed_block_method") or "") not in METHOD_CAPS:
-            # Sem method na curation: só remove se o valor existente NÃO é do
-            # funil (METHOD_CAPS = manual/review_rule/card/card+scorer/
-            # scorer_only, recém-gravado por resolve_unit_block_tags nesta
-            # mesma regeneração). Pop incondicional apagaria o method do funil
-            # de toda entry não-código; o pop continua valendo para dado de
-            # código stale (prune/reatribuição), que era o propósito original.
+            # Sem method na curation: só remove se o valor existente NÃO é dos
+            # methods de atribuicao (METHOD_CAPS) recém-gravados nesta mesma
+            # regeneração. Pop incondicional apagaria o method de toda entry
+            # não-código; o pop continua valendo para dado de código stale
+            # (prune/reatribuição), que era o propósito original.
             e.pop("computed_block_method", None)
 
         conf = summary.get("block_match_confidence")
@@ -368,7 +367,6 @@ def regenerate_pedagogical_files(
     glossary_md_fn,
     write_tag_catalog_fn,
     refresh_manifest_auto_tags_fn,
-    resolve_unit_block_tags_fn,
     apply_unit_subunit_fn,
     syllabus_md_fn,
     exam_index_md_fn,
@@ -517,11 +515,9 @@ def regenerate_pedagogical_files(
     )
     live_manifest_entries = refresh_manifest_auto_tags_fn(builder.root_dir, live_manifest_entries, tag_catalog)
 
-    live_manifest_entries = resolve_unit_block_tags_fn(
-        live_manifest_entries,
-        runtime_course_meta,
-        builder.subject_profile,
-    )
+    # Cutover passo 3 (2026-08-17): funil legado (resolve_unit_block_tags) morto.
+    # Atribuicao bloco/unit/subunit e' 100% do motor (apply_concept_resolver +
+    # apply_unit_subunit_fn abaixo), incluindo semeadura de entries novos.
 
     # Camada 2: residuo via Gemini (opt-in EXPLICITO). Ver run_material_residual.
     live_manifest_entries = run_material_residual(builder, live_manifest_entries)

@@ -792,50 +792,6 @@ def timeline_block_is_administrative_only(block: Dict[str, object]) -> bool:
     return has_content
 
 
-def _assign_timeline_block_to_unit(block: Dict[str, object], unit_index: list) -> tuple[str, float]:
-    if not unit_index:
-        return "", 0.0
-    if _timeline_block_is_noninstructional(block):
-        return "", 0.0
-
-    full_text = " ".join(
-        _normalize_match_text(str(row.get("content", "")))
-        for row in block.get("rows", []) or []
-        if str(row.get("content", "")).strip()
-    ).strip()
-    topic_text = str(block.get("topic_text", "")).strip()
-    if not full_text and not topic_text:
-        return "", 0.0
-    if all(
-        _timeline_text_is_administrative(text)
-        for text in [full_text, topic_text]
-        if text
-    ):
-        return "", 0.0
-
-    scored = []
-    for unit in unit_index:
-        score = 0.0
-        if full_text:
-            score += _score_timeline_row_against_unit(full_text, unit)
-        if topic_text and topic_text != full_text:
-            score += _score_timeline_row_against_unit(topic_text, unit) * 0.7
-        if score > 0:
-            scored.append((unit, score))
-
-    if not scored:
-        return "", 0.0
-
-    scored.sort(key=lambda item: item[1], reverse=True)
-    winner, winner_score = scored[0]
-    runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
-    if winner_score < T.BLOCK_UNIT_MIN_WINNER or abs(winner_score - runner_up_score) < T.BLOCK_UNIT_MIN_GAP:
-        return "", 0.0
-
-    confidence = margin_confidence(winner_score, runner_up_score, k=T.MARGIN_K)
-    return winner.get("slug", ""), confidence
-
-
 def _serialize_timeline_index(timeline_index: dict) -> dict:
     blocks = []
     for block in (timeline_index or {}).get("blocks", []) or []:
@@ -1714,89 +1670,6 @@ def _build_assessment_context_from_course(
     }
 
 
-def _score_timeline_row_against_unit(row_text: str, unit: dict) -> float:
-    row_norm = _normalize_match_text(row_text)
-    if not row_norm or not unit:
-        return 0.0
-    if _timeline_text_is_administrative(row_norm):
-        return 0.0
-
-    row_tokens = [tok for tok in row_norm.split() if len(tok) >= 4]
-    row_token_set = set(row_tokens)
-    unit_title = unit.get("normalized_title", "")
-    topic_phrases = unit.get("topic_phrases", []) or []
-    topic_tokens = unit.get("topic_tokens", []) or []
-    title_anchor_tokens = unit.get("title_anchor_tokens", []) or []
-    topic_anchor_tokens = unit.get("topic_anchor_tokens", []) or []
-    extra_signals = unit.get("extra_signals", []) or []
-    distinctive_tokens = unit.get("distinctive_tokens", []) or []
-    token_weights = unit.get("token_weights", {}) or {}
-
-    score = 0.0
-    exact_phrase_hits = 0
-    matched_specific_tokens = set()
-    distinctive_hits = 0
-    composite_anchor_hits = 0
-
-    explicit_unit_number = _timeline_unit_number_from_text(row_norm)
-    unit_number = _timeline_unit_number_from_unit(unit)
-    if explicit_unit_number is not None:
-        if unit_number != explicit_unit_number:
-            return 0.0
-        score += 6.0
-
-    if unit_title and unit_title in row_norm:
-        score += 2.6
-        exact_phrase_hits += 1
-    elif unit_title:
-        score += _score_timeline_unit_phrase(row_norm, row_token_set, unit_title, token_weights) * 0.55
-
-    for topic_phrase in topic_phrases:
-        phrase_score = _score_timeline_unit_phrase(row_norm, row_token_set, topic_phrase, token_weights)
-        if phrase_score > 0.0:
-            if _normalize_match_text(topic_phrase) in row_norm:
-                exact_phrase_hits += 1
-            score += phrase_score
-
-    for topic_token in topic_tokens:
-        if not topic_token or " " in topic_token or topic_token not in row_token_set:
-            continue
-        weight = token_weights.get(topic_token, 1.0)
-        if topic_token in _TIMELINE_UNIT_NEUTRAL_TOKENS:
-            weight *= 0.2
-        else:
-            matched_specific_tokens.add(topic_token)
-        score += 0.95 * weight
-
-    for token in distinctive_tokens:
-        if token in row_token_set:
-            score += 0.25 if token in matched_specific_tokens else 0.8
-            matched_specific_tokens.add(token)
-            distinctive_hits += 1
-
-    title_anchor_hits = {token for token in title_anchor_tokens if token in row_token_set}
-    topic_anchor_hits = {token for token in topic_anchor_tokens if token in row_token_set}
-    if extra_signals and title_anchor_hits and topic_anchor_hits:
-        shared_hits = title_anchor_hits & topic_anchor_hits
-        score += 0.95 + (0.2 * len(title_anchor_hits | topic_anchor_hits))
-        if shared_hits:
-            score += 0.12 * len(shared_hits)
-        composite_anchor_hits = len(title_anchor_hits | topic_anchor_hits)
-
-    if (
-        explicit_unit_number is None
-        and exact_phrase_hits == 0
-        and distinctive_hits == 0
-        and not matched_specific_tokens
-        and composite_anchor_hits == 0
-    ):
-        return 0.0
-    if explicit_unit_number is None and exact_phrase_hits == 0 and len(matched_specific_tokens) == 1:
-        score *= 0.35
-
-    return score
-
-
 def _iter_content_taxonomy_topics(taxonomy: dict) -> List[dict]:
     topics: List[dict] = []
     seen = set()
@@ -2122,58 +1995,6 @@ def _assign_timeline_block_to_topic(
     return topic_candidates, primary
 
 
-def _vote_unit_from_topic_candidates(
-    block: Dict[str, object],
-    unit_index: list,
-    *,
-    top_k: int = 5,
-    min_score: float = T.VOTE_MIN_SCORE,
-    dominance_ratio: float = T.VOTE_DOMINANCE,
-) -> tuple[str, float]:
-    """Fallback de unit assignment: voto majoritario por topic_candidates.
-
-    Quando _assign_timeline_block_to_unit retorna "" (score baixo, topic
-    ambiguo), inspeciona topic_candidates do bloco. Se >=dominance_ratio dos
-    top-K candidatos apontam pra mesma unit_slug, atribui essa unit com
-    confidence reduzida.
-
-    Resolve casos tipo ES2 bloco-06 ("microservicos spring circuit breaker"),
-    onde todos topic_candidates apontam pra unidade-01-arquitetura mas o
-    primary_topic e ambiguo.
-    """
-    candidates = block.get("topic_candidates") or []
-    if not candidates or not unit_index:
-        return "", 0.0
-    valid_slugs = {
-        _normalize_unit_slug(str(u.get("slug", "") or u.get("title", "") or ""))
-        for u in unit_index
-    }
-    valid_slugs.discard("")
-
-    votes: Dict[str, float] = {}
-    counted = 0
-    for cand in candidates[:top_k]:
-        if not isinstance(cand, dict):
-            continue
-        score = float(cand.get("score") or 0.0)
-        if score < min_score:
-            continue
-        slug = _normalize_unit_slug(str(cand.get("unit_slug") or ""))
-        if not slug or slug not in valid_slugs:
-            continue
-        votes[slug] = votes.get(slug, 0.0) + score
-        counted += 1
-    if counted == 0 or not votes:
-        return "", 0.0
-
-    winner_slug, winner_weight = max(votes.items(), key=lambda kv: kv[1])
-    total = sum(votes.values()) or 1.0
-    if winner_weight / total < dominance_ratio:
-        return "", 0.0
-    confidence = min(0.55, max(0.30, winner_weight / total * 0.6))
-    return winner_slug, confidence
-
-
 def _derive_unit_from_topic_match(match: TopicMatchResult, taxonomy: dict) -> str:
     if not match or not match.topic_slug:
         return ""
@@ -2309,14 +2130,14 @@ def _build_timeline_index(
             if slug:
                 b["auto_unit_slug"] = slug
     else:
+        # Cutover passo 3 (2026-08-17): fallback keyword de unidade APOSENTADO
+        # (_assign_timeline_block_to_unit + _vote_unit_from_topic_candidates).
+        # Ramo só alcançável com assign_units_positional vazio (<2 unidades no
+        # plano / afinidade zero) — nunca dispara nos cursos reais (rebuild_diff
+        # 0 nos 5 no flip). Sem matcher, blocos ficam sem unidade (honesto).
         for b in class_candidates:
-            us, uc = _assign_timeline_block_to_unit(b, unit_index)
-            if not us:
-                us, uc = _vote_unit_from_topic_candidates(b, unit_index)
-            b["unit_slug"] = us
-            b["unit_confidence"] = uc
-            if us:
-                b["auto_unit_slug"] = us
+            b["unit_slug"] = ""
+            b["unit_confidence"] = 0.0
 
     for index, block in enumerate(runtime_blocks):
         if block.get("unit_slug") or not _timeline_block_is_soft_continuation(block):

@@ -13,16 +13,7 @@ def build_teaching_timeline_aliases(
     file_map_timeline_block_rows_for_scoring,
     file_map_timeline_block_matches_preferred_topic,
     file_map_score_card_evidence_against_entry,
-    file_map_score_entry_against_timeline_block,
-    file_map_select_probable_period_for_entry,
-    collect_entry_unit_signals,
-    build_timeline_index,
-    timeline_period_label,
-    collapse_ws,
     normalize_match_text,
-    extract_date_range_signal,
-    extract_timeline_session_signals,
-    parse_timeline_date_value,
     timeline_aggregate_unit_periods_from_blocks,
     timeline_build_file_map_timeline_context_from_course,
     build_file_map_unit_index_from_course,
@@ -46,46 +37,6 @@ def build_teaching_timeline_aliases(
             signals,
             card_items,
             normalize_match_text=normalize_match_text,
-        )
-
-    def score_entry_against_timeline_block(
-        signals,
-        block,
-        preferred_unit_slug="",
-        preferred_topic_slug="",
-    ):
-        return file_map_score_entry_against_timeline_block(
-            signals,
-            block,
-            normalize_match_text=normalize_match_text,
-            score_text_against_row=score_text_against_row,
-            score_card_evidence_against_entry_fn=score_card_evidence_against_entry,
-            preferred_unit_slug=preferred_unit_slug,
-            preferred_topic_slug=preferred_topic_slug,
-        )
-
-    def select_probable_period_for_entry(
-        entry,
-        unit,
-        candidate_rows,
-        markdown_text,
-        preferred_topic_slug="",
-    ):
-        return file_map_select_probable_period_for_entry(
-            entry,
-            unit,
-            candidate_rows,
-            markdown_text,
-            preferred_topic_slug=preferred_topic_slug,
-            collect_entry_unit_signals=collect_entry_unit_signals,
-            build_timeline_index=build_timeline_index,
-            timeline_period_label=timeline_period_label,
-            collapse_ws=collapse_ws,
-            normalize_match_text=normalize_match_text,
-            score_text_against_row=score_text_against_row,
-            extract_date_range_signal=extract_date_range_signal,
-            extract_timeline_session_signals=extract_timeline_session_signals,
-            parse_timeline_date_value=parse_timeline_date_value,
         )
 
     aggregate_unit_periods_from_blocks = timeline_aggregate_unit_periods_from_blocks
@@ -130,8 +81,6 @@ def build_teaching_timeline_aliases(
         "_timeline_block_rows_for_scoring": timeline_block_rows_for_scoring,
         "_timeline_block_matches_preferred_topic": timeline_block_matches_preferred_topic,
         "_score_card_evidence_against_entry": score_card_evidence_against_entry,
-        "_score_entry_against_timeline_block": score_entry_against_timeline_block,
-        "_select_probable_period_for_entry": select_probable_period_for_entry,
         "_aggregate_unit_periods_from_blocks": aggregate_unit_periods_from_blocks,
         "_build_file_map_timeline_context_from_course": build_file_map_timeline_context_from_course,
         "_parse_bibliography_from_teaching_plan": parse_bibliography_from_teaching_plan,

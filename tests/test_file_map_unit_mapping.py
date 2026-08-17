@@ -16,9 +16,7 @@ from src.builder.engine import (
     _collect_entry_unit_signals,
     _entry_markdown_text_for_file_map,
     _format_file_map_unit_cell,
-    _select_probable_period_for_entry,
     _score_entry_against_unit,
-    _score_entry_against_timeline_block,
     _serialize_timeline_index,
     _write_internal_content_taxonomy,
     file_map_md,
@@ -909,6 +907,8 @@ def test_file_map_md_refines_period_by_subtopic_within_unit(tmp_path):
     )
 
     course_meta = {"course_name": "Métodos Formais", "_repo_root": repo}
+    # Cutover passo 3: fixture ganhou uma 2ª unidade (fallback keyword de
+    # unidade morreu; matcher posicional exige >=2 unidades no plano).
     subject_profile = SubjectProfile(
         teaching_plan="""
 ### Unidade 1 — Métodos Formais
@@ -916,6 +916,10 @@ def test_file_map_md_refines_period_by_subtopic_within_unit(tmp_path):
 - Linguagens de Especificação e Lógicas
 - Especificação de Conjuntos Indutivos
 - Especificação de Funções Recursivas
+
+### Unidade 2 — Verificação de Programas
+- Lógica de Hoare
+- Invariantes de Laço
 """.strip()
         ,
         syllabus="""
@@ -927,6 +931,8 @@ def test_file_map_md_refines_period_by_subtopic_within_unit(tmp_path):
 | 4 | 2026-03-23 | definições indutivas e recursivas sobre árvores |
 | 5 | 2026-03-25 | exercícios |
 | 6 | 2026-03-27 | atividade assíncrona: complementar os estudos com as leituras recomendadas, realizar os exercícios. |
+| 7 | 2026-04-27 | Unidade 2: Lógica de Hoare |
+| 8 | 2026-05-06 | invariantes de laço |
 """.strip()
     )
     entries = [
@@ -955,63 +961,6 @@ def test_file_map_md_refines_period_by_subtopic_within_unit(tmp_path):
     assert "Exerciciosformalizacaoalgoritmosrecursao" in result
 
 
-def test_file_map_md_prefers_exercise_block_over_intro_row_in_realistic_schedule(tmp_path):
-    repo = tmp_path / "repo"
-    md_dir = repo / "exercises" / "lists"
-    md_dir.mkdir(parents=True)
-    md_file = md_dir / "exerciciosformalizacaoalgoritmosrecursao.md"
-    md_file.write_text(
-        "# Exercícios\n\n## Formalização de Algoritmos — Recursão\n\n### Exercícios\n",
-        encoding="utf-8",
-    )
-
-    course_meta = {"course_name": "Métodos Formais", "_repo_root": repo}
-    subject_profile = SubjectProfile(
-        teaching_plan="""
-### Unidade 1 — Métodos Formais
-- Sistemas Formais
-- Linguagens de Especificação e Lógicas
-- Especificação de Conjuntos Indutivos
-- Especificação de Funções Recursivas
-""".strip(),
-        syllabus="""
-| # | Dia | Data | Hora | Descrição | Atividade | Recursos |
-|---|---|---|---|---|---|---|
-| 4 | QUA | 11/03/2026 | LM 19:15 - 20:45 | Conjuntos indutivos e equações recursivas | Aula |  |
-| 5 | SEG | 16/03/2026 | LM 19:15 - 20:45 | Exercícios | Aula |  |
-| 6 | QUA | 18/03/2026 | LM 19:15 - 20:45 | Estudo de caso: listas | Aula |  |
-| 7 | SEG | 23/03/2026 | LM 19:15 - 20:45 | Estudo de caso: árvores | Aula |  |
-| 8 | QUA | 25/03/2026 | LM 19:15 - 20:45 | Exercícios | Aula |  |
-| 9 | SEG | 30/03/2026 | LM 19:15 - 20:45 | Provas por indução | Aula |  |
-""".strip(),
-    )
-    entries = [
-        {
-            "title": "Exerciciosformalizacaoalgoritmosrecursao",
-            "category": "listas",
-            "tags": "",
-            "base_markdown": "exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md",
-            "raw_target": "raw/pdfs/listas/exerciciosformalizacaoalgoritmosrecursao.pdf",
-        }
-    ]
-
-    markdown_text = _entry_markdown_text_for_file_map(repo, entries[0])
-    unit_index = _build_file_map_unit_index_from_course(course_meta, subject_profile)
-    unit_match = _auto_map_entry_unit(entries[0], unit_index, markdown_text)
-    timeline_context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
-    unit_rows = timeline_context["rows_by_unit"][unit_match.slug]
-    unit_by_slug = {unit["slug"]: unit for unit in unit_index}
-
-    probable_period, _, period_ambiguous, _ = _select_probable_period_for_entry(
-        entry=entries[0],
-        unit=unit_by_slug[unit_match.slug],
-        candidate_rows=unit_rows,
-        markdown_text=markdown_text,
-    )
-
-    assert unit_match.slug == "unidade-01-metodos-formais"
-    assert period_ambiguous is False
-    assert probable_period == "5 dias · 11/03/2026 a 25/03/2026"
 
 
 def test_file_map_timeline_context_filters_rows_outside_unit_period():
@@ -1047,11 +996,18 @@ def test_file_map_timeline_context_filters_rows_outside_unit_period():
 
 def test_file_map_timeline_context_exposes_blocks_by_unit():
     course_meta = {"course_name": "Métodos Formais"}
+    # Cutover passo 3: fixture ganhou uma 2ª unidade — o fallback keyword que
+    # cobria plano de 1 unidade morreu; com <2 unidades o matcher posicional
+    # (m<2) recusa e nenhum bloco recebe unidade (comportamento honesto novo).
     subject_profile = SubjectProfile(
         teaching_plan="""
 ### Unidade 1 — Métodos Formais
 - Especificação de Conjuntos Indutivos
 - Especificação de Funções Recursivas
+
+### Unidade 2 — Verificação de Programas
+- Lógica de Hoare
+- Invariantes de Laço
 """.strip(),
         syllabus="""
 | # | Dia | Data | Hora | Descrição | Atividade | Recursos |
@@ -1061,6 +1017,8 @@ def test_file_map_timeline_context_exposes_blocks_by_unit():
 | 6 | QUA | 18/03/2026 | LM 19:15 - 20:45 | Estudo de caso: listas | Aula |  |
 | 7 | SEG | 23/03/2026 | LM 19:15 - 20:45 | Estudo de caso: árvores | Aula |  |
 | 8 | QUA | 25/03/2026 | LM 19:15 - 20:45 | Exercícios | Aula |  |
+| 9 | SEG | 27/04/2026 | LM 19:15 - 20:45 | Lógica de Hoare | Aula |  |
+| 10 | QUA | 06/05/2026 | LM 19:15 - 20:45 | Invariantes de Laço | Aula |  |
 """.strip(),
     )
 
@@ -1143,360 +1101,12 @@ def test_file_map_timeline_context_extends_program_verification_unit_with_glossa
     assert context["unit_periods"]["unidade-02-verificacao-de-programas"] == "5 blocos · 27/04/2026 a 15/06/2026"
 
 
-def test_select_probable_period_for_entry_prefers_blocks_matching_subtopic():
-    unit = {
-        "slug": "unidade-01-metodos-formais",
-        "title": "Unidade 1 — Métodos Formais",
-    }
-    blocks = [
-        {
-            "id": "bloco-01",
-            "period_label": "16/03/2026 a 18/03/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "conjuntos-indutivos",
-            "primary_topic_label": "Conjuntos Indutivos",
-            "primary_topic_confidence": 0.92,
-            "topic_ambiguous": False,
-            "topic_candidates": [
-                {
-                    "topic_slug": "conjuntos-indutivos",
-                    "topic_label": "Conjuntos Indutivos",
-                    "unit_slug": "unidade-01-metodos-formais",
-                }
-            ],
-            "rows": [
-                {"index": 1, "date_text": "16/03/2026", "content": "Exercícios"},
-                {"index": 2, "date_text": "18/03/2026", "content": "Exercícios"},
-            ],
-        },
-        {
-            "id": "bloco-02",
-            "period_label": "23/03/2026 a 25/03/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "provadores-de-teoremas",
-            "primary_topic_label": "Provadores de Teoremas",
-            "primary_topic_confidence": 0.98,
-            "topic_ambiguous": False,
-            "topic_candidates": [
-                {
-                    "topic_slug": "provadores-de-teoremas",
-                    "topic_label": "Provadores de Teoremas",
-                    "unit_slug": "unidade-01-metodos-formais",
-                }
-            ],
-            "rows": [
-                {"index": 3, "date_text": "23/03/2026", "content": "Exercícios"},
-                {"index": 4, "date_text": "25/03/2026", "content": "Exercícios"},
-            ],
-        },
-    ]
-    entry = {
-        "title": "Isabelle",
-        "category": "listas",
-        "tags": "",
-        "raw_target": "raw/pdfs/listas/isabelle.pdf",
-    }
-
-    period, confidence, ambiguous, reasons = _select_probable_period_for_entry(
-        entry=entry,
-        unit=unit,
-        candidate_rows=blocks,
-        markdown_text="# Provadores de Teoremas\n\nIsabelle",
-        preferred_topic_slug="provadores-de-teoremas",
-    )
-
-    assert period == "23/03/2026 a 25/03/2026"
-    assert ambiguous is False
-    assert confidence > 0
-    assert any(reason == "topic=provadores-de-teoremas" for reason in reasons)
-    assert any(reason == "topic-filtered" for reason in reasons)
 
 
-def test_select_probable_period_for_entry_prefers_matching_session_over_stronger_block_text():
-    unit = {
-        "slug": "unidade-01-metodos-formais",
-        "title": "Unidade 1 — Métodos Formais",
-    }
-    blocks = [
-        {
-            "id": "bloco-01",
-            "period_label": "30/03/2026 a 03/04/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "",
-            "primary_topic_label": "",
-            "primary_topic_confidence": 0.0,
-            "topic_ambiguous": True,
-            "topic_candidates": [],
-            "rows": [
-                {"index": 1, "date_text": "30/03/2026", "content": "Aula"},
-                {"index": 2, "date_text": "01/04/2026", "content": "Aula"},
-            ],
-            "sessions": [
-                {
-                    "id": "bloco-01-sessao-2026-03-30",
-                    "date": "2026-03-30",
-                    "kind": "class",
-                    "label": "Especificações recursivas e provas por indução",
-                    "signals": [
-                        "2026-03-30",
-                        "especificacoes recursivas",
-                        "provas por inducao",
-                    ],
-                }
-            ],
-        },
-        {
-            "id": "bloco-02",
-            "period_label": "06/04/2026 a 10/04/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "",
-            "primary_topic_label": "",
-            "primary_topic_confidence": 0.0,
-            "topic_ambiguous": True,
-            "topic_candidates": [],
-            "rows": [
-                {
-                    "index": 3,
-                    "date_text": "06/04/2026",
-                    "content": "Especificações recursivas e provas por indução",
-                },
-                {
-                    "index": 4,
-                    "date_text": "08/04/2026",
-                    "content": "Especificações recursivas e provas por indução",
-                },
-            ],
-            "sessions": [
-                {
-                    "id": "bloco-02-sessao-2026-04-06",
-                    "date": "2026-04-06",
-                    "kind": "class",
-                    "label": "Aula de revisão",
-                    "signals": ["2026-04-06", "aula", "revisao"],
-                }
-            ],
-        },
-    ]
-    entry = {
-        "title": "Lista de revisão",
-        "category": "listas",
-        "tags": "",
-        "raw_target": "raw/pdfs/listas/lista-revisao.pdf",
-    }
-    markdown_text = """
-Semana 30/03/2026 a 03/04/2026
-(30/03/2026): Especificações recursivas e provas por indução
-""".strip()
-
-    period, confidence, ambiguous, reasons = _select_probable_period_for_entry(
-        entry=entry,
-        unit=unit,
-        candidate_rows=blocks,
-        markdown_text=markdown_text,
-        preferred_topic_slug="",
-    )
-
-    assert period == "30/03/2026 a 03/04/2026"
-    assert ambiguous is False
-    assert confidence > 0
-    assert any(reason == "session-first" for reason in reasons)
-    assert any(reason == "session=bloco-01-sessao-2026-03-30" for reason in reasons)
 
 
-def test_select_probable_period_for_entry_reports_card_evidence_when_it_reinforces_session():
-    unit = {"slug": "unidade-01-metodos-formais"}
-    blocks = [
-        {
-            "id": "bloco-01",
-            "period_label": "30/03/2026 a 03/04/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "",
-            "primary_topic_label": "",
-            "primary_topic_confidence": 0.0,
-            "topic_ambiguous": True,
-            "topic_candidates": [],
-            "rows": [
-                {"index": 1, "date_text": "30/03/2026", "content": "Aula"},
-                {"index": 2, "date_text": "01/04/2026", "content": "Aula"},
-            ],
-            "sessions": [
-                {
-                    "id": "bloco-01-sessao-2026-03-30",
-                    "date": "2026-03-30",
-                    "kind": "class",
-                    "label": "Especificações recursivas e provas por indução",
-                    "signals": [
-                        "2026-03-30",
-                        "especificacoes recursivas",
-                        "provas por inducao",
-                    ],
-                    "card_evidence": [
-                        {
-                            "title": "Especificações recursivas e provas por indução",
-                            "normalized_title": "especificacoes recursivas e provas por inducao",
-                            "date": "",
-                            "source_kind": "topic-title",
-                        }
-                    ],
-                }
-            ],
-            "card_evidence": [
-                {
-                    "title": "Especificações recursivas e provas por indução",
-                    "normalized_title": "especificacoes recursivas e provas por inducao",
-                    "date": "",
-                    "source_kind": "card-title",
-                }
-            ],
-        },
-        {
-            "id": "bloco-02",
-            "period_label": "06/04/2026 a 10/04/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "",
-            "primary_topic_label": "",
-            "primary_topic_confidence": 0.0,
-            "topic_ambiguous": True,
-            "topic_candidates": [],
-            "rows": [{"index": 3, "date_text": "06/04/2026", "content": "Revisao geral"}],
-            "sessions": [
-                {
-                    "id": "bloco-02-sessao-2026-04-06",
-                    "date": "2026-04-06",
-                    "kind": "class",
-                    "label": "Revisao geral",
-                    "signals": ["2026-04-06", "revisao", "geral"],
-                }
-            ],
-            "card_evidence": [],
-        },
-    ]
-    entry = {
-        "title": "Lista de revisão - Especificações recursivas e provas por indução",
-        "category": "listas",
-        "tags": "",
-        "raw_target": "raw/pdfs/listas/lista-revisao.pdf",
-    }
-    markdown_text = """
-Semana 30/03/2026 a 03/04/2026
-(30/03/2026): Especificações recursivas e provas por indução
-""".strip()
-
-    period, confidence, ambiguous, reasons = _select_probable_period_for_entry(
-        entry=entry,
-        unit=unit,
-        candidate_rows=blocks,
-        markdown_text=markdown_text,
-        preferred_topic_slug="",
-    )
-
-    assert period == "30/03/2026 a 03/04/2026"
-    assert ambiguous is False
-    assert confidence > 0
-    assert any(reason == "session-first" for reason in reasons)
-    assert any(reason == "card-evidence" for reason in reasons)
 
 
-def test_select_probable_period_for_entry_keeps_explicit_session_ahead_of_stronger_card_evidence():
-    unit = {"slug": "unidade-01-metodos-formais"}
-    blocks = [
-        {
-            "id": "bloco-01",
-            "period_label": "30/03/2026 a 03/04/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "",
-            "primary_topic_label": "",
-            "primary_topic_confidence": 0.0,
-            "topic_ambiguous": True,
-            "topic_candidates": [],
-            "rows": [
-                {"index": 1, "date_text": "30/03/2026", "content": "Especificações recursivas e provas por indução"},
-                {"index": 2, "date_text": "01/04/2026", "content": "Especificações recursivas e provas por indução"},
-            ],
-            "sessions": [
-                {
-                    "id": "bloco-01-sessao-2026-03-30",
-                    "date": "2026-03-30",
-                    "kind": "class",
-                    "label": "Especificações recursivas e provas por indução",
-                    "signals": [
-                        "2026-03-30",
-                        "especificacoes recursivas",
-                        "provas por inducao",
-                    ],
-                }
-            ],
-            "card_evidence": [],
-        },
-        {
-            "id": "bloco-02",
-            "period_label": "06/04/2026 a 10/04/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "",
-            "primary_topic_label": "",
-            "primary_topic_confidence": 0.0,
-            "topic_ambiguous": True,
-            "topic_candidates": [],
-            "rows": [{"index": 3, "date_text": "06/04/2026", "content": "Aula de revisão"}],
-            "sessions": [
-                {
-                    "id": "bloco-02-sessao-2026-04-06",
-                    "date": "2026-04-06",
-                    "kind": "class",
-                    "label": "Aula de revisão",
-                    "signals": ["2026-04-06", "aula", "revisao"],
-                    "card_evidence": [
-                        {
-                            "title": "Especificações recursivas e provas por indução",
-                            "normalized_title": "especificacoes recursivas e provas por inducao",
-                            "date": "",
-                            "source_kind": "topic-title",
-                        }
-                    ],
-                }
-            ],
-            "card_evidence": [
-                {
-                    "title": "Especificações recursivas e provas por indução",
-                    "normalized_title": "especificacoes recursivas e provas por inducao",
-                    "date": "",
-                    "source_kind": "card-title",
-                }
-            ],
-        },
-    ]
-    entry = {
-        "title": "Lista de revisão - Especificações recursivas e provas por indução",
-        "category": "listas",
-        "tags": "",
-        "raw_target": "raw/pdfs/listas/lista-revisao.pdf",
-    }
-    markdown_text = """
-Semana 30/03/2026 a 03/04/2026
-(30/03/2026): Especificações recursivas e provas por indução
-""".strip()
-
-    period, confidence, ambiguous, reasons = _select_probable_period_for_entry(
-        entry=entry,
-        unit=unit,
-        candidate_rows=blocks,
-        markdown_text=markdown_text,
-        preferred_topic_slug="",
-    )
-
-    assert period == "30/03/2026 a 03/04/2026"
-    assert ambiguous is False
-    assert confidence > 0
-    assert any(reason == "session-first" for reason in reasons)
-    assert not any(reason == "card-evidence" for reason in reasons)
 
 
 def test_file_map_md_keeps_period_column_empty_without_subject_profile():
@@ -1691,22 +1301,6 @@ def test_file_map_skips_timeline_for_reference_categories():
         assert period_cell == ""
 
 
-def test_score_entry_against_timeline_block_ignores_rows_marked_ignored():
-    signals = {
-        "title_text": "Lista de exercicios",
-        "markdown_text": "Lista de exercicios",
-        "category_text": "",
-        "tags_text": "listas",
-        "raw_text": "",
-        "manual_tags_text": "",
-        "auto_tags_text": "",
-        "legacy_tags_text": "",
-    }
-    ignored_block = {"rows": [{"content": "Lista de exercicios", "ignored": True}]}
-    active_block = {"rows": [{"content": "Lista de exercicios"}]}
-
-    assert _score_entry_against_timeline_block(signals, ignored_block) == 0.0
-    assert _score_entry_against_timeline_block(signals, active_block) > 0.0
 
 
 def test_resolve_entry_manual_timeline_block_falls_back_to_nth_instructional_block():

@@ -67,9 +67,9 @@ class FileEntry:
     ocr_language: str = DEFAULT_OCR_LANGUAGE
     enabled: bool = True
 
-    # Sinais de match persistidos no manifest.json (gravados por
-    # resolve_unit_block_tags). Declarados aqui para o round-trip from_dict ->
-    # to_dict parar de descarta-los silenciosamente.
+    # Sinais de match persistidos no manifest.json (gravados pelo motor,
+    # resolver_apply.apply_unit_subunit_fields). Declarados aqui para o
+    # round-trip from_dict -> to_dict parar de descarta-los silenciosamente.
     unit_match_confidence: float = 0.0
     unit_match_reasons: List[str] = field(default_factory=list)
     subunit_match_confidence: float = 0.0
@@ -77,7 +77,8 @@ class FileEntry:
 
     # Atribuicao first-class (Fase 1). Resolve "tudo e parse de tag": o slug/id
     # resolvido vive direto no entry, e auto_tags[unit:|bloco:] sao espelho
-    # destes campos (escritos por resolve_unit_block_tags).
+    # destes campos (escritos pelo motor: apply_concept_resolver +
+    # apply_unit_subunit_fields).
     computed_unit_slug: str = ""
     # Melhor candidato de subunidade (best-effort, pode estar abaixo do gate de
     # tag). Declarado aqui para sobreviver ao round-trip from_dict -> to_dict

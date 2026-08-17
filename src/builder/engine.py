@@ -50,9 +50,7 @@ from src.builder.routing.file_map import (
     resolve_entry_manual_timeline_block as _file_map_resolve_entry_manual_timeline_block,
     resolve_entry_manual_unit_slug as _file_map_resolve_entry_manual_unit_slug,
     score_card_evidence_against_entry as _file_map_score_card_evidence_against_entry,
-    score_entry_against_timeline_block as _file_map_score_entry_against_timeline_block,
     score_entry_against_unit as _file_map_score_entry_against_unit,
-    select_probable_period_for_entry as _file_map_select_probable_period_for_entry,
     strip_outline_prefix as _file_map_strip_outline_prefix,
     timeline_block_matches_preferred_topic as _file_map_timeline_block_matches_preferred_topic,
     timeline_block_rows_for_scoring as _file_map_timeline_block_rows_for_scoring,
@@ -339,7 +337,6 @@ def _build_content_taxonomy(
 _write_internal_content_taxonomy = _content_taxonomy.write_internal_content_taxonomy
 _collect_strong_heading_candidates = _content_taxonomy.collect_strong_heading_candidates
 _build_unit_tag_index = _content_taxonomy.build_unit_tag_index
-_resolve_unit_block_tags = _content_taxonomy.resolve_unit_block_tags
 
 
 def _write_tag_catalog(
@@ -2147,17 +2144,6 @@ class RepoBuilder:
             glossary_md_fn=glossary_md,
             write_tag_catalog_fn=_write_tag_catalog,
             refresh_manifest_auto_tags_fn=_refresh_manifest_auto_tags,
-            resolve_unit_block_tags_fn=partial(
-                _resolve_unit_block_tags,
-                build_file_map_unit_index_from_course_fn=_build_file_map_unit_index_from_course,
-                build_file_map_timeline_context_from_course_fn=_build_file_map_timeline_context_from_course,
-                iter_content_taxonomy_topics_fn=_iter_content_taxonomy_topics,
-                auto_map_entry_subtopic_fn=_auto_map_entry_subtopic,
-                auto_map_entry_unit_fn=_auto_map_entry_unit,
-                select_probable_period_for_entry_fn=_select_probable_period_for_entry,
-                resolve_entry_manual_timeline_block_fn=_resolve_entry_manual_timeline_block,
-                entry_markdown_text_for_file_map_fn=_entry_markdown_text_for_file_map,
-            ),
             apply_unit_subunit_fn=partial(
                 _apply_unit_subunit_fields,
                 auto_map_entry_unit_fn=_auto_map_entry_unit,
@@ -2317,16 +2303,7 @@ _teaching_timeline_aliases = _build_teaching_timeline_aliases(
     file_map_timeline_block_rows_for_scoring=_file_map_timeline_block_rows_for_scoring,
     file_map_timeline_block_matches_preferred_topic=_file_map_timeline_block_matches_preferred_topic,
     file_map_score_card_evidence_against_entry=_file_map_score_card_evidence_against_entry,
-    file_map_score_entry_against_timeline_block=_file_map_score_entry_against_timeline_block,
-    file_map_select_probable_period_for_entry=_file_map_select_probable_period_for_entry,
-    collect_entry_unit_signals=_collect_entry_unit_signals,
-    build_timeline_index=_build_timeline_index,
-    timeline_period_label=_timeline_period_label,
-    collapse_ws=_collapse_ws,
     normalize_match_text=_normalize_match_text,
-    extract_date_range_signal=extract_date_range_signal,
-    extract_timeline_session_signals=extract_timeline_session_signals,
-    parse_timeline_date_value=_parse_timeline_date_value,
     timeline_aggregate_unit_periods_from_blocks=_timeline_aggregate_unit_periods_from_blocks,
     timeline_build_file_map_timeline_context_from_course=_timeline_build_file_map_timeline_context_from_course,
     build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
@@ -2336,8 +2313,6 @@ _teaching_timeline_aliases = _build_teaching_timeline_aliases(
     repo_artifacts_module=_repo_artifacts,
     write_text_fn=write_text,
 )
-_score_entry_against_timeline_block = _teaching_timeline_aliases["_score_entry_against_timeline_block"]
-_select_probable_period_for_entry = _teaching_timeline_aliases["_select_probable_period_for_entry"]
 _aggregate_unit_periods_from_blocks = _teaching_timeline_aliases["_aggregate_unit_periods_from_blocks"]
 _build_file_map_timeline_context_from_course = _teaching_timeline_aliases["_build_file_map_timeline_context_from_course"]
 _parse_bibliography_from_teaching_plan = _teaching_timeline_aliases["_parse_bibliography_from_teaching_plan"]
@@ -2485,12 +2460,9 @@ __all__ = [
     "_parse_timeline_date_value",
     "_repair_mojibake_text",
     "_resolve_entry_manual_timeline_block",
-    "_resolve_unit_block_tags",
     "_sanitize_external_markdown_text",
-    "_score_entry_against_timeline_block",
     "_score_entry_against_unit",
     "_seed_glossary_fields",
-    "_select_probable_period_for_entry",
     "_serialize_timeline_index",
     "_write_internal_content_taxonomy",
 ]
