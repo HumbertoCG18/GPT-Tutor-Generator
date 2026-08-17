@@ -47,7 +47,12 @@ def _safe_date(year: int, month: int, day: int) -> date | None:
         return None
 
 
-def extract_dates(text: str, *, default_year: int | None = None) -> list[date]:
+def extract_dates(
+    text: str,
+    *,
+    default_year: int | None = None,
+    dm_two_digit_only: bool = False,
+) -> list[date]:
     """Extrai todas as datas reconhecíveis de ``text``, em qualquer posição.
 
     Reconhece ISO ``YYYY-MM-DD``, ``DD.MM.YYYY``/``DD/MM/YYYY``/``DD-MM-YYYY``
@@ -59,6 +64,11 @@ def extract_dates(text: str, *, default_year: int | None = None) -> list[date]:
     PULADO em vez de chutar um ano: um boost de data baseado num ano arbitrário
     seria pior que ausência de sinal (cairia no match textual existente, que é
     o comportamento atual preservado; cf. spec, bordas "texto sem data").
+
+    ``dm_two_digit_only=True`` (tier de data-no-NOME, cutover passo 3): os
+    year-less só casam com dia E mês de 2 DÍGITOS ("07.04"); "5.4"/"2.1" são
+    numeração de seção/capítulo, não data — guarda anti-falso-positivo pro
+    uso autoritativo sobre título CRU (data em qualquer posição).
 
     Determinístico, sem rede. Datas inválidas são ignoradas. O resultado é
     deduplicado preservando a ordem de aparição.
@@ -90,6 +100,10 @@ def extract_dates(text: str, *, default_year: int | None = None) -> list[date]:
         for year_less_re in (_DM_SEP_RE, _DM_SPACE_RE):
             for match in year_less_re.finditer(text):
                 if _overlaps(*match.span()):
+                    continue
+                if dm_two_digit_only and (
+                    len(match.group(1)) != 2 or len(match.group(2)) != 2
+                ):
                     continue
                 dt = _safe_date(default_year, int(match.group(2)), int(match.group(1)))
                 if dt:

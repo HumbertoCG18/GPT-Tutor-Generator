@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import Callable, Dict, List, Optional, Sequence, TypedDict
 
+from src.builder.routing.dates import extract_dates
 from src.builder.routing.file_map import (
+    _block_period_bounds,
     _score_block_date_match,
     score_card_evidence_against_entry,
 )
@@ -353,6 +355,22 @@ def resolve_material_assignment(
         bid = str(block.get("block_uuid") or block.get("id") or "")
         llm_term = votes.get(bid, 0.0)
         date_term = _score_block_date_match(signals, block)
+        # Data do NOME do arquivo (title/raw_target CRUS) — unica fonte que
+        # vira tier autoritativo. Extraida com dm_two_digit_only ("07.04" sim;
+        # "5.4"/"2.1" sao secao/capitulo, nao data) e em QUALQUER posicao do
+        # titulo (o separador real sobrevive no texto cru; a forma com espaco
+        # segue ancorada no inicio, cf. dates.py). Data no MARKDOWN (enunciado:
+        # entrega/prova) fica so no boost do fused: "due nunca decide sozinho"
+        # (spec Tier 2 categoria; casos reais ES2 t1/TCC T2).
+        _start_b, _end_b = _block_period_bounds(block)
+        name_date_in_period = False
+        if _start_b and _end_b:
+            for _src in (str(entry.get("title") or ""), str(entry.get("raw_target") or "")):
+                if any(_start_b <= d <= _end_b
+                       for d in extract_dates(_src, default_year=_start_b.year,
+                                              dm_two_digit_only=True)):
+                    name_date_in_period = True
+                    break
         seq_term = score_sequence_match(signals, block)
         card_term = score_card_evidence_against_entry(
             signals, block.get("card_evidence", []) or [], normalize_match_text=norm
@@ -375,12 +393,19 @@ def resolve_material_assignment(
             "lesson": round(lesson_term, 4),
             "fused": round(fused, 4),
             "authoritative_card": card_term >= CARD_AUTHORITATIVE,
+            # Data NO NOME dentro do periodo do bloco (o nome de arquivo
+            # carrega a data da aula — ruling user 2026-08-17, caso SO
+            # 0704-threads: prova e "atrator de conceito" e vencia a aula).
+            "authoritative_date": name_date_in_period,
         }))
 
-    # Tier 2 (card/data autoritativo): se ALGUM bloco tem card-evidence forte,
-    # ele vence o concept-match. Senao, o fundido (Tier 3) decide. Posicional
-    # (Tier 4) e o fallback: empate/tudo-zero -> ordem dos blocos.
-    authoritative = [s for s in scored if s[2]["authoritative_card"]]
+    # Tier 2 (card/data autoritativo): se ALGUM bloco tem card-evidence forte
+    # OU data do material dentro do periodo, o pool encolhe pra esses — o
+    # concept-match nao compete de fora (fecha o gap do comentario original:
+    # so card estava implementado). Senao, o fundido (Tier 3) decide.
+    # Posicional (Tier 4) e o fallback: empate/tudo-zero -> ordem dos blocos.
+    authoritative = [s for s in scored
+                     if s[2]["authoritative_card"] or s[2]["authoritative_date"]]
     pool = authoritative if authoritative else scored
     pool.sort(key=lambda s: s[1], reverse=True)
 
@@ -388,7 +413,7 @@ def resolve_material_assignment(
     runner_up_score = pool[1][1] if len(pool) > 1 else 0.0
 
     if authoritative:
-        method = "card"
+        method = "card" if winner_breakdown["authoritative_card"] else "date"
     elif best_score <= 0.0:
         method = "positional"
     else:
