@@ -32,7 +32,10 @@ def persist_enriched_timeline_index(timeline_index: dict) -> dict:
             else:
                 block_payload[key] = [value]
         blocks.append(block_payload)
-    payload["version"] = 3
+    # Cutover passo 3 (item 8a): v3 -> 4. Serializador UNICO pos-morte do
+    # fantasma _serialize_timeline_index (v4 so-testes); versao unificada com
+    # o schema (validate_timeline, const 4) e TIMELINE_INDEX_VERSION.
+    payload["version"] = 4
     payload["blocks"] = blocks
     return payload
 

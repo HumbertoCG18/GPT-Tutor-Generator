@@ -792,61 +792,8 @@ def timeline_block_is_administrative_only(block: Dict[str, object]) -> bool:
     return has_content
 
 
-def _serialize_timeline_index(timeline_index: dict) -> dict:
-    blocks = []
-    for block in (timeline_index or {}).get("blocks", []) or []:
-        if timeline_block_is_administrative_only(block):
-            continue
-        kind_value = classify_block(block).value
-        unit_slug = block.get("unit_slug", "")
-        unit_confidence = float(block.get("unit_confidence", 0.0) or 0.0)
-        # Non-aula nao carrega unidade pedagogica (override manual preservado).
-        if kind_value != BlockKind.CLASS.value and not block.get("block_manual_unit_slug"):
-            unit_slug = ""
-            unit_confidence = 0.0
-        payload = {
-            "id": block.get("id", ""),
-            "block_uuid": block.get("block_uuid", ""),
-            "period_start": block.get("period_start", ""),
-            "period_end": block.get("period_end", ""),
-            "period_label": block.get("period_label", ""),
-            "kind": kind_value,
-            "unit_slug": unit_slug,
-            "unit_confidence": unit_confidence,
-            "primary_topic_slug": block.get("primary_topic_slug", ""),
-            "primary_topic_label": block.get("primary_topic_label", ""),
-            "primary_topic_confidence": float(block.get("primary_topic_confidence", 0.0) or 0.0),
-            "topic_ambiguous": bool(block.get("topic_ambiguous", False)),
-            "topic_candidates": list(block.get("topic_candidates", []) or []),
-            "topic_text": block.get("topic_text", ""),
-            "topics": list(block.get("topics", []) or []),
-            "aliases": list(block.get("aliases", []) or []),
-            "card_evidence": list(block.get("card_evidence", []) or []),
-            "sessions": list(block.get("sessions", []) or []),
-            "source_rows": list(block.get("source_rows", []) or []),
-        }
-        manual_override = block.get("manual_kind_override")
-        if manual_override:
-            payload["manual_kind_override"] = manual_override
-        topic_source = block.get("topic_source")
-        if topic_source:
-            payload["topic_source"] = topic_source
-        manual_topic_label = block.get("manual_topic_label")
-        if manual_topic_label:
-            payload["manual_topic_label"] = manual_topic_label
-        block_manual_unit_slug = block.get("block_manual_unit_slug")
-        if block_manual_unit_slug:
-            payload["block_manual_unit_slug"] = block_manual_unit_slug
-        source_kind = block.get("source_kind")
-        if source_kind:
-            payload["source_kind"] = source_kind
-        auto_unit_slug = block.get("auto_unit_slug")
-        if auto_unit_slug:
-            payload["auto_unit_slug"] = auto_unit_slug
-        blocks.append(payload)
-    _apply_timeline_post_transforms(blocks)
-    return {"version": TIMELINE_INDEX_VERSION, "blocks": blocks}
-
+# (Cutover passo 3: o serializador fantasma _serialize_timeline_index que vivia
+# aqui morreu — serializador único = core_utils.persist_enriched_timeline_index.)
 
 _TEACHING_PLAN_ASSESSMENT_START = re.compile(r"^(?:AVALIA[ÇC][AÃ]O|AVALIACAO)\b", re.IGNORECASE)
 _TEACHING_PLAN_ASSESSMENT_STOP = re.compile(

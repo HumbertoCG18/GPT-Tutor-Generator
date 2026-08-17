@@ -17,7 +17,6 @@ from src.builder.engine import (
     _entry_markdown_text_for_file_map,
     _format_file_map_unit_cell,
     _score_entry_against_unit,
-    _serialize_timeline_index,
     _write_internal_content_taxonomy,
     file_map_md,
     _resolve_entry_manual_timeline_block,
@@ -1052,7 +1051,9 @@ def test_build_timeline_index_serializes_sessions_inside_block():
     ]
 
     timeline_index = _build_timeline_index(candidate_rows, unit_index=[], content_taxonomy={})
-    serialized = _serialize_timeline_index(timeline_index)
+    # Cutover passo 3: serializador unico (persist_enriched, v4).
+    from src.builder.core.core_utils import persist_enriched_timeline_index
+    serialized = persist_enriched_timeline_index(timeline_index)
 
     assert timeline_index["version"] == 4
     assert serialized["version"] == 4

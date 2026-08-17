@@ -249,7 +249,6 @@ from src.builder.timeline.index import (
     _parse_timeline_date_value,
     _score_entry_against_taxonomy_topic,
     _score_timeline_unit_phrase,
-    _serialize_timeline_index as _timeline_serialize_timeline_index,
     _timeline_period_label,
     _TIMELINE_UNIT_NEUTRAL_TOKENS,
 )
@@ -308,9 +307,6 @@ _build_timeline_candidate_rows = _timeline_build_timeline_candidate_rows
 
 
 _parse_syllabus_timeline = _timeline_parse_syllabus_timeline
-
-
-_serialize_timeline_index = _timeline_serialize_timeline_index
 
 
 _parse_glossary_terms = _content_taxonomy._parse_glossary_terms
@@ -2463,7 +2459,6 @@ __all__ = [
     "_sanitize_external_markdown_text",
     "_score_entry_against_unit",
     "_seed_glossary_fields",
-    "_serialize_timeline_index",
     "_write_internal_content_taxonomy",
 ]
 

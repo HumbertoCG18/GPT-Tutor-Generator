@@ -111,6 +111,11 @@ def rebuild_course(name: str, subject_profile) -> bool:
             json.dumps(serialized, ensure_ascii=False, indent=2), encoding="utf-8"
         )
         print(f"    GRAVADO -> {index_path}  (.bak salvo)")
+        # Item 8d (cutover passo 3): --write tambem atualiza o sidecar
+        # .content_taxonomy.json (antes so o W1 escrevia e o sidecar
+        # envelhecia; leitores: concept_resolver/compare_resolver/censo).
+        engine._write_internal_content_taxonomy(repo_root, rich_taxonomy)
+        print("    .content_taxonomy.json atualizado (8d)")
 
     return not errs
 

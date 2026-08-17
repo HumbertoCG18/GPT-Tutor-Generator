@@ -15,10 +15,12 @@ def _block(*session_labels, topic_text=""):
 
 
 def test_serializer_keeps_auto_unit_slug():
-    from src.builder.timeline.index import _serialize_timeline_index
+    # Cutover passo 3: serializador unico = persist_enriched_timeline_index
+    # (fantasma _serialize_timeline_index morreu).
+    from src.builder.core.core_utils import persist_enriched_timeline_index
     blk = {"id": "b", "kind": "class", "unit_slug": "u1", "auto_unit_slug": "u1",
            "period_start": "2026-03-01", "period_end": "2026-03-01"}
-    out = _serialize_timeline_index({"version": 4, "blocks": [blk]})
+    out = persist_enriched_timeline_index({"version": 4, "blocks": [blk]})
     assert out["blocks"][0].get("auto_unit_slug") == "u1"
 
 

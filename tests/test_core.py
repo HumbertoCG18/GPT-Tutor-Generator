@@ -64,7 +64,6 @@ from src.builder.timeline.index import (
     _build_timeline_index,
     _parse_syllabus_timeline,
     _parse_timeline_date_value,
-    _serialize_timeline_index,
 )
 from src.models.core import (
     DocumentProfileReport,
@@ -2982,10 +2981,12 @@ class TestTimelineIndex:
         assert hoare_block["unit_slug"] == "unidade-02-verificacao-de-programas"
         assert kripke_block["unit_slug"] == "unidade-03-verificacao-de-modelos"
 
-        serialized = _serialize_timeline_index(timeline_index)
-        assert all("suspensao" not in block["topic_text"] for block in serialized["blocks"])
+    def test_timeline_index_serialization_keeps_review_sessions_and_admin_events(self):
+        """Cutover passo 3: serializador unico (persist_enriched) NAO filtra
+        blocos admin (o filtro era do fantasma v4 so-testes, morto). Blocos
+        admin persistem e sao tratados a jusante (health/D2 predicado)."""
+        from src.builder.core.core_utils import persist_enriched_timeline_index
 
-    def test_timeline_index_serialization_keeps_review_sessions_but_drops_admin_events(self):
         timeline = _parse_syllabus_timeline("""\
 | Semana | Data | Conteúdo |
 |---|---|---|
@@ -2996,13 +2997,14 @@ class TestTimelineIndex:
         unit_index = _build_file_map_unit_index(_parse_units_from_teaching_plan(PUCRS_PLAN))
 
         timeline_index = _build_timeline_index(_build_timeline_candidate_rows(timeline), unit_index=unit_index)
-        serialized = _serialize_timeline_index(timeline_index)
+        serialized = persist_enriched_timeline_index(timeline_index)
 
         periods = [str(block.get("period_start", "")) for block in serialized["blocks"]]
         topics = [str(block.get("topic_text", "")) for block in serialized["blocks"]]
         assert "2026-04-15" in periods
         assert any("isabelle" in topic for topic in topics)
-        assert "2026-05-27" not in periods
+        assert "2026-05-27" in periods  # admin persiste (era filtrado pelo fantasma)
+        assert serialized["version"] == 4
 
     def test_timeline_index_keeps_weak_single_token_overlap_unassigned(self):
         timeline = _parse_syllabus_timeline("""\
@@ -3516,7 +3518,7 @@ class TestGlossarySeed:
         assert taxonomy["version"] == 1
         assert taxonomy["course_slug"]
         assert taxonomy["units"]
-        assert timeline_index["version"] == 3
+        assert timeline_index["version"] == 4  # bump 8a (cutover passo 3)
         assert isinstance(timeline_index["blocks"], list)
         assert timeline_index["blocks"][0]["card_evidence"]
         assert assessment_context["version"] == 1
@@ -4438,7 +4440,7 @@ class TestIncrementalBuildLowTokenRollout:
         assert "Quando abrir" in file_map
         assert "Mapa pedagógico curto da disciplina" in course_map
         assert content_taxonomy["version"] == 1
-        assert timeline_index["version"] == 3
+        assert timeline_index["version"] == 4  # bump 8a (cutover passo 3)
         assert isinstance(timeline_index["blocks"], list)
         assert assessment_context["version"] == 1
         assert "Ordem de leitura econômica" in instructions
@@ -5421,40 +5423,9 @@ def test_apply_scope_review_honors_manual_override():
     assert r1["primary_topic_label"] == "Conteúdo: u1"
 
 
-def test_serialize_attaches_scope_unit_slugs():
-    from src.builder.timeline.index import _serialize_timeline_index
-    ti = {"blocks": [
-        {"id": "b1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1", "topic_text": "Logica", "rows": []},
-        {"id": "p1", "kind": "assessment", "period_start": "2026-04-02", "topic_text": "Prova P1", "rows": []},
-        {"id": "rev", "kind": "review", "period_start": "2026-04-01", "topic_text": "Exercicios de revisao", "rows": []},
-    ]}
-    out = _serialize_timeline_index(ti)
-    by_id = {b["id"]: b for b in out["blocks"]}
-    assert by_id["p1"]["scope_unit_slugs"] == ["unidade-1"]
-    assert by_id["rev"]["scope_unit_slugs"] == ["unidade-1"]   # herda P1
-    assert "scope_unit_slugs" not in by_id["b1"] or by_id["b1"]["scope_unit_slugs"] == []
-
-
-def test_serialize_timeline_idempotent_scope():
-    """Regressão: re-serializar o output não muda scope nem rótulo (idempotente)."""
-    from src.builder.timeline.index import _serialize_timeline_index
-    ti = {"blocks": [
-        {"id": "b1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1", "topic_text": "Logica", "rows": []},
-        {"id": "p1", "kind": "assessment", "period_start": "2026-04-02", "topic_text": "Prova P1", "rows": []},
-        {"id": "ps", "kind": "assessment", "period_start": "2026-07-08", "topic_text": "Prova PS", "rows": []},
-        {"id": "rev", "kind": "review", "period_start": "2026-04-01", "topic_text": "Exercicios de revisao", "rows": []},
-    ]}
-    out1 = _serialize_timeline_index(ti)
-    out2 = _serialize_timeline_index(out1)
-    s1 = {b["id"]: b.get("scope_unit_slugs") for b in out1["blocks"]}
-    s2 = {b["id"]: b.get("scope_unit_slugs") for b in out2["blocks"]}
-    assert s1 == s2
-    assert s2["p1"] == ["unidade-1"]
-    assert s2["ps"] == ["unidade-1"]
-    assert s2["rev"] == ["unidade-1"]
-    l1 = {b["id"]: b.get("primary_topic_label") for b in out1["blocks"]}
-    l2 = {b["id"]: b.get("primary_topic_label") for b in out2["blocks"]}
-    assert l1 == l2
+# Cutover passo 3: os 2 testes de scope VIA _serialize_timeline_index (fantasma
+# v4, morto) foram removidos — a cobertura do invariante de escopo permanece no
+# teste direto de apply_assessment_review_scope acima.
 
 
 class _ProfCfg:

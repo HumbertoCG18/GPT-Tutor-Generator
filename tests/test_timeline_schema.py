@@ -26,7 +26,7 @@ from scripts.validate_timeline import (  # noqa: E402
     schema_errors,
     validate_file,
 )
-from src.builder.timeline.index import _serialize_timeline_index  # noqa: E402
+from src.builder.core.core_utils import persist_enriched_timeline_index  # noqa: E402
 
 import glob  # noqa: E402
 
@@ -73,11 +73,14 @@ def test_fixture_has_no_schema_errors(path):
 # ---------------------------------------------------------------------------
 
 def test_serializer_output_matches_schema():
+    # Cutover passo 3: serializador unico (persist_enriched, v4). O kind vem
+    # dos builders (finalize_block), nao do serializer — fixture producao-like.
     raw = {
         "version": 3,
         "blocks": [
             {
                 "id": "bloco-01",
+                "kind": "class",
                 "period_start": "2026-03-11",
                 "period_end": "2026-03-11",
                 "period_label": "1 dia · 11/03/2026",
@@ -89,9 +92,8 @@ def test_serializer_output_matches_schema():
             }
         ],
     }
-    out = _serialize_timeline_index(raw)
+    out = persist_enriched_timeline_index(raw)
     assert out["version"] == 4
-    assert out["blocks"][0]["kind"] == "class"  # injetado pelo serializer
     assert schema_errors(out) == []
 
 
@@ -115,7 +117,7 @@ def test_real_course_structure_validates(course):
     if not path.exists():
         pytest.skip(f"corpus indisponível: {path}")
     index = json.loads(path.read_text(encoding="utf-8"))
-    out = _serialize_timeline_index(index)
+    out = persist_enriched_timeline_index(index)
     errs = schema_errors(out)
     assert errs == [], f"{course} drift de schema:\n  " + "\n  ".join(errs)
 

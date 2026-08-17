@@ -12,7 +12,8 @@ from src.utils.helpers import norm_ascii_lower
 from src.builder.timeline.card_block import normalized_card_map
 from src.builder.text.normalize import normalize_match_text
 from src.builder.routing.motor.disambiguator import block_topic_tokens, block_session_tokens, _GENERIC_STEMS
-from src.builder.timeline.classifier import _STRONG_EXAM_RE
+from src.builder.timeline.classifier import STRONG_EXAM_RE as _STRONG_EXAM_RE
+from src.builder.timeline.classifier import WEAK_EXAM_TOKENS as _TOPIC_EXAM_STEMS
 
 from src.builder.routing.motor.contracts import MotorContext
 
@@ -109,8 +110,10 @@ def _stems(tokens: set) -> set:
 
 
 # Exam-vocab fraco (par do ruling C1): sozinho não indica EXAME, só quando o
-# bloco tem sinal FORTE (_STRONG_EXAM_RE) em algum outro lugar do próprio bloco.
-_TOPIC_EXAM_STEMS = frozenset({"prova", "teste"})
+# bloco tem sinal FORTE (STRONG_EXAM_RE) em algum outro lugar do próprio bloco.
+# Item 8b (cutover passo 3): vocabulario UNIFICADO no classifier (nomes
+# publicos STRONG_EXAM_RE/WEAK_EXAM_TOKENS, importados no topo) — os aliases
+# locais _STRONG_EXAM_RE/_TOPIC_EXAM_STEMS preservam o vocabulario deste modulo.
 
 
 def _block_session_hay(b: dict, ctx: MotorContext) -> str:

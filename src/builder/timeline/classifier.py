@@ -128,7 +128,13 @@ def _session_text(block: Mapping[str, object]) -> str:
 
 # Sinal forte de prova nas sessoes: P1-P4, PF, G2, PS, "prova N", "prova final".
 # "prova" sozinho NAO basta ("prova de teoremas" = demonstracao, nao exame).
-_STRONG_EXAM_RE = re.compile(r"\bp[1-4]\b|\bpf\b|\bg2\b|\bps\b|\bprova\s+\d+\b|\bprova\s+final\b")
+# Item 8b (cutover passo 3): vocabulario de exame UNIFICADO aqui, com nomes
+# PUBLICOS — o motor (window_provider) importa STRONG_EXAM_RE/WEAK_EXAM_TOKENS
+# em vez de duplicar literais ou importar nome privado cross-package.
+STRONG_EXAM_RE = re.compile(r"\bp[1-4]\b|\bpf\b|\bg2\b|\bps\b|\bprova\s+\d+\b|\bprova\s+final\b")
+_STRONG_EXAM_RE = STRONG_EXAM_RE  # compat interna (usos historicos)
+# "prova"/"teste" nus = vocabulario fraco (conteudo de plano de ensino).
+WEAK_EXAM_TOKENS = frozenset({"prova", "teste"})
 
 
 def _session_exam_or_review(session_hay: str) -> Union[BlockKind, None]:
@@ -247,7 +253,7 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
                     # PS/"prova N"), mesmo criterio de _session_exam_or_review.
                     # 'substitutiva'/'recuperacao'/'avaliacao'/'exame' sao
                     # inequivocos e ficam fora do guard (corpus auditado).
-                    if (kind is BlockKind.ASSESSMENT and spec in ("prova", "teste")
+                    if (kind is BlockKind.ASSESSMENT and spec in WEAK_EXAM_TOKENS
                             and not _STRONG_EXAM_RE.search(hay_all)):
                         continue
                     # Guard anti-sequestro OFFICE_HOURS: keyword so decide se
