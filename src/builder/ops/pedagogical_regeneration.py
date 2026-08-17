@@ -248,6 +248,18 @@ def attach_block_summary_fields(entries: list, code_curation: dict, blocks: list
                         e["computed_block_band"] = confidence_band(float(_gem_conf))
                     except (TypeError, ValueError):
                         pass
+                # Resync do espelho: sem isto a tag bloco: segue descrevendo o
+                # bloco antigo (drift 1.3, auditoria 2026-08-14). Tag e DISPLAY.
+                if blocks:
+                    _display = next(
+                        (str(b.get("id") or "") for b in blocks
+                         if str(b.get("block_uuid") or "") == gemini_primary),
+                        gemini_primary,
+                    )
+                    _tags = [t for t in (e.get("auto_tags") or []) if not str(t).startswith("bloco:")]
+                    if _display:
+                        _tags.append(f"bloco:{_display}")
+                    e["auto_tags"] = _tags
 
     return entries
 

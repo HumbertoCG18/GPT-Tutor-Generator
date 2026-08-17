@@ -58,3 +58,20 @@ def test_non_code_entry_untouched_by_consensus():
 def test_no_gemini_primary_keeps_funnel_block():
     [out] = attach_block_summary_fields([_code_entry()], _curation(""))
     assert out["computed_block_id"] == "bloco-05"
+
+
+def test_swap_d1_resincroniza_tag_bloco():
+    blocks = [
+        {"id": "bloco-01", "block_uuid": "u-1"},
+        {"id": "bloco-02", "block_uuid": "u-2"},
+    ]
+    e = {"id": "e1", "file_type": "code", "computed_block_id": "u-1",
+         "computed_block_band": "baixa", "auto_tags": ["bloco:bloco-01", "outra:tag"]}
+    curation = {"entries": {"e1": {"summary": {
+        "primary_block_id": "u-2", "block_match_method": "llm_only",
+        "block_match_confidence": 0.9}}}}
+    out = attach_block_summary_fields([e], curation, blocks=blocks)
+    assert out[0]["computed_block_id"] == "u-2"
+    assert "bloco:bloco-02" in out[0]["auto_tags"]      # resync (era o drift 1.3)
+    assert "bloco:bloco-01" not in out[0]["auto_tags"]
+    assert "outra:tag" in out[0]["auto_tags"]
