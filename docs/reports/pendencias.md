@@ -1,8 +1,10 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-17 (PASSO 3 etapa 1 ENTREGUE — medição pré-flip 5 cursos, 4 gates verdes,
-GO pro flip, ver Concluído 2026-08-17b. Antes: PASSO 2 ENTREGUE — C1 pinos + gaps 1.2/1.3
-fechados, FLIP DESTRAVADO, ver Concluído 2026-08-17. Histórico 2026-08-14: F4 unit/subunit no motor + AUDITORIA-ENXAME EXECUTADA — workflow 45 agentes [7 finders + 37
+last_updated: 2026-08-17 (**CAMPANHA 3 / PASSO 3 FECHADO — FLIP + DELEÇÃO COMPLETOS: motor é o
+atribuidor ÚNICO em 100% do sistema, funil legado deletado (-4747 linhas), serializador único
+v4, 5 cursos reprocessados/commitados**, ver Concluído 2026-08-17c e relatório
+`docs/reports/2026-08-17-passo3-flip-delecao-fechado.md`. Antes no mesmo dia: etapa 1 medição
+pré-flip (Concluído 2026-08-17b); PASSO 2 C1 pinos + gaps 1.2/1.3 (Concluído 2026-08-17). Histórico 2026-08-14: F4 unit/subunit no motor + AUDITORIA-ENXAME EXECUTADA — workflow 45 agentes [7 finders + 37
 verificadores adversariais + síntese; mix sonnet/fable], 32 achados CONFIRMADOS / 5 refutados;
 relatório ranqueado em `docs/reports/2026-08-14-auditoria-enxame.md`; ver Concluído 2026-08-14.
 Fila restante da ratificação 2026-08-11: campanha 3 cutover → campanha web)
@@ -303,7 +305,9 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   testes de janela da fase 0**: predicado usado DENTRO de `derive_card_block_map`
   (moodle_labels.py:158-159) = WindowProvider P1/P2; mexer nele altera a janela do motor. Nota da
   revisão 03/07: os "filtros mortos" originais já não existem — predicado lê `rows` no runtime e é real.
-- [CODE] **fallback keyword (~600 linhas, index.py) — DIVIDIDO 2026-07-03, não deletar em bloco**:
+- ~~[CODE] **fallback keyword (~600 linhas, index.py) — DIVIDIDO 2026-07-03, não deletar em bloco**~~
+  **FECHADO (2026-08-17, passo 3, `df86203`)**: ramo (a) deletado (+ helpers e thresholds órfãos);
+  cadeia (b) topic-labels segue VIVA como decidido.
   (a) ramo fallback de UNIDADE (index.py:2207-2215, dispara só com `assign_units_positional` vazio) =
   deletável no cutover c/ guard test; (b) cadeia topic-labels (index.py:2174 → 1929/1732) RODA SEMPRE e
   alimenta UI/badges = VIVA, fora da lista de morto.
@@ -315,7 +319,10 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   qualquer hora. Primeiro alvo provado: `_derive_unit_from_topic_match` (index.py:2080; morto em
   produção; só re-export engine.py:241/2443 + tests/test_file_map_unit_mapping.py:11,647,705,732,836).
   Remoção pura, sem eval.
-- [CODE] **Mapa de deleção do cutover fase 5 — 5 conflitos, resoluções travadas 2026-07-03**:
+- ~~[CODE] **Mapa de deleção do cutover fase 5 — 5 conflitos, resoluções travadas 2026-07-03**~~
+  **FECHADO (2026-08-17, passo 3, `df86203` + `037ddbe`)**: itens 1-8 TODOS executados conforme
+  travado (1 aposentado · 2 aposentados · 3 lista nomeada completa · 6 fantasma+testes ·
+  7 R4/R6 · 8a-8e entregues/verificados). Ver Concluído 2026-08-17c. Histórico abaixo:
   1. `cronograma_health.py:117-171` reusa o scorer S2 condenado → **fase 4 decide** portar pro scoring
      do motor ou aposentar (band/flag do Dashboard na mão); fase 5 não deleta antes da decisão.
   2. `scripts/eval_assignments.py:99` + `scripts/retag_manifest.py:60` injetam `select_probable_period`
@@ -1612,6 +1619,28 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   da campanha 3 cutover).
   Workflow reusável em `.claude/workflows/auditoria-enxame.js` (duplicata `-mew.js` deletada —
   colisão de meta.name causava resolução aleatória).
+
+## Concluído (2026-08-17c — campanha 3, PASSO 3 FECHADO: flip + deleção do funil)
+
+- [DERIVADO] **PASSO 3 ENTREGUE (`as-of 2026-08-17`, commits `c5ecb5f` flip · `df86203`
+  deleção -4747/+334 · `037ddbe` serializador v4 + item 8; repos-tutor: flip, pós-deleção e
+  v4 commitados nos 5)** — **flip**: `use_concept_resolver` default ON (ausente=ON, opt-out
+  explícito), pino de curadoria `revisao_p1_gabarito→bloco-07` (régua ficaria 49/57), 7
+  sentinelas casos-chave revisadas caso a caso e re-baselined; **deleção por lista nomeada**
+  (resoluções 2026-07-03 TODAS executadas): funil `resolve_unit_block_tags` + S2 + S4
+  (TOOL_EXTENSIONS fica) + fallback keyword de unidade + fallback S2 do health + R4 mortos,
+  scripts retag/eval_assignments aposentados, limpeza `_NO_TIMELINE_CATEGORIES` portada, motor
+  agora SEMEIA entries novos (gate invertido); **serializador único** persist_enriched v4
+  (fantasma morto, bump 8a, índices de produção v4), itens 8b (vocab exam unificado) e 8d
+  (--write grava taxonomy) entregues, 8c/8e já estavam feitos. **Achado**: deleção removeu o
+  viés P3.1 (scorer lia tags unit:/subunit: re-escritas pelo funil — auto-confirmação);
+  confidences honestas, ~15 slugs de unit/subunit por material mudaram one-time, idempotência
+  0 diffs. Testes: 12 arquivos-fantasma deletados, invariantes migrados pro motor (M8 parcial:
+  learned boosts coberto). Gates finais: suite **1852/1/0**, golds unit **5/5**, régua MF
+  **50/57**, pinos **0 violados**, rebuild_diff **5/5=0**, guard verde. Relatório:
+  `docs/reports/2026-08-17-passo3-flip-delecao-fechado.md`. **Candidatos a pino (rótulo
+  user)**: SO `0704-threads`, IA `introducao-a-busca-informada`. **Próximo: campanha web
+  (backlog no fim do tracker) — motor estável e único, fundação pronta.**
 
 ## Concluído (2026-08-17b — campanha 3, PASSO 3 etapa 1: medição pré-flip 5 cursos)
 
