@@ -1,7 +1,8 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-17 (PASSO 2 ENTREGUE — C1 pinos + gaps 1.2/1.3 fechados, FLIP DESTRAVADO,
-ver Concluído 2026-08-17. Histórico 2026-08-14: F4 unit/subunit no motor + AUDITORIA-ENXAME EXECUTADA — workflow 45 agentes [7 finders + 37
+last_updated: 2026-08-17 (PASSO 3 etapa 1 ENTREGUE — medição pré-flip 5 cursos, 4 gates verdes,
+GO pro flip, ver Concluído 2026-08-17b. Antes: PASSO 2 ENTREGUE — C1 pinos + gaps 1.2/1.3
+fechados, FLIP DESTRAVADO, ver Concluído 2026-08-17. Histórico 2026-08-14: F4 unit/subunit no motor + AUDITORIA-ENXAME EXECUTADA — workflow 45 agentes [7 finders + 37
 verificadores adversariais + síntese; mix sonnet/fable], 32 achados CONFIRMADOS / 5 refutados;
 relatório ranqueado em `docs/reports/2026-08-14-auditoria-enxame.md`; ver Concluído 2026-08-14.
 Fila restante da ratificação 2026-08-11: campanha 3 cutover → campanha web)
@@ -1611,6 +1612,23 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   da campanha 3 cutover).
   Workflow reusável em `.claude/workflows/auditoria-enxame.js` (duplicata `-mew.js` deletada —
   colisão de meta.name causava resolução aleatória).
+
+## Concluído (2026-08-17b — campanha 3, PASSO 3 etapa 1: medição pré-flip 5 cursos)
+
+- [DERIVADO] **MEDIÇÃO PRÉ-FLIP ENTREGUE (`as-of 2026-08-17`, HEAD `b4d119d`, sandbox
+  read-only)** — 4 gates da etapa 1 TODOS verdes: golds unit **5/5 sem regressão**
+  (MF 12/14 · SO 9/11 · ES2 7/7 · IA 9/10 · TCC 13/13, mismatches byte-idênticos
+  BEFORE/AFTER); pinos **29/29 sem violação** (26 honrados no escopo do motor — inclui
+  `tiposindutivos`, caso-bug F3/C1, primeira medição do fix em curso real; 3 MF
+  `fora_do_motor`, bibliografia, flip-neutros); `rebuild_diff` produção **5/5 = 0**;
+  **M7 fora do pré-flip** (1 caso único nos 5 cursos, `colecoes-conjuntos` MF 0.80→0.45,
+  não é inversão em escala — dívida segue aberta). Delta informacional de bloco:
+  23/67 · 15/42 · 17/35 · 31/62 · 17/27 (100% troca, 0 mudança de cobertura) = o diff
+  esperado das sentinelas no flip. Driver COMMITADO `scripts/measure_flip.py` (fecha
+  limitação F4 "scripts ad-hoc irreprodutíveis"). Relatório:
+  `docs/reports/2026-08-17-medicao-pre-flip-5cursos.md`. **VEREDITO: GO pra etapa 2
+  (flip default ON)** — protocolo: snapshot antes de reprocess, sentinelas re-versionadas
+  conscientemente.
 
 ## Concluído (2026-08-17 — campanha 3, PASSO 2: C1 pinos + gaps 1.2/1.3)
 
