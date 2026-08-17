@@ -250,7 +250,7 @@ def attach_block_summary_fields(entries: list, code_curation: dict, blocks: list
                         pass
                 # Resync do espelho: sem isto a tag bloco: segue descrevendo o
                 # bloco antigo (drift 1.3, auditoria 2026-08-14). Tag e DISPLAY.
-                if blocks:
+                if blocks is not None:
                     _display = next(
                         (str(b.get("id") or "") for b in blocks
                          if str(b.get("block_uuid") or "") == gemini_primary),

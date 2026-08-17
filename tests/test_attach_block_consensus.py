@@ -75,3 +75,17 @@ def test_swap_d1_resincroniza_tag_bloco():
     assert "bloco:bloco-02" in out[0]["auto_tags"]      # resync (era o drift 1.3)
     assert "bloco:bloco-01" not in out[0]["auto_tags"]
     assert "outra:tag" in out[0]["auto_tags"]
+
+
+def test_swap_d1_resincroniza_tag_mesmo_com_blocks_vazio():
+    # blocks=[] (valor real de producao quando o indice nao tem blocos):
+    # o swap dispara e o resync usa o fallback raw — tag nunca fica stale.
+    e = {"id": "e1", "file_type": "code", "computed_block_id": "u-1",
+         "computed_block_band": "baixa", "auto_tags": ["bloco:bloco-01"]}
+    curation = {"entries": {"e1": {"summary": {
+        "primary_block_id": "u-2", "block_match_method": "llm_only",
+        "block_match_confidence": 0.9}}}}
+    out = attach_block_summary_fields([e], curation, blocks=[])
+    assert out[0]["computed_block_id"] == "u-2"
+    assert "bloco:bloco-01" not in out[0]["auto_tags"]   # stale removida
+    assert "bloco:u-2" in out[0]["auto_tags"]            # fallback raw (precedente resolver_apply)
