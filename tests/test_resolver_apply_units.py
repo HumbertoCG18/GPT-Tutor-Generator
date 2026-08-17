@@ -120,3 +120,14 @@ def test_pino_manual_de_bloco_da_unidade_do_bloco_mesmo_com_method_trocado():
     assert out[0]["computed_unit_slug"] == "u2"
     assert "unidade_do_bloco_manual" in out[0]["unit_match_reasons"]
     assert out[0]["unit_block_conflict"] == {}
+
+
+def test_apply_concept_resolver_honra_pino_uuid():
+    from src.builder.routing.resolver_apply import apply_concept_resolver
+    e = {"id": "e1", "file_type": "pdf", "computed_block_id": "u-1",
+         "manual_timeline_block_id": "u-2", "auto_tags": ["bloco:bloco-01"]}
+    out = apply_concept_resolver([e], list(BLOCKS), [], {}, None)
+    assert out[0]["computed_block_id"] == "u-2"          # pino vence o scorer
+    assert out[0]["computed_block_method"] == "manual"
+    assert out[0]["computed_block_confidence"] == 1.0
+    assert "bloco:bloco-02" in out[0]["auto_tags"]       # espelho display resync

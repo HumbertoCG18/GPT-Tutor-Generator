@@ -248,11 +248,17 @@ def _llm_vote(llm_curation: Optional[dict]) -> Dict[str, float]:
 
 
 def _manual_block_id(entry: dict, blocks: List[dict]) -> str:
+    """Pino manual em uuid OU display (bloco-NN legado); devolve o id CANONICO
+    (uuid quando o bloco tem) ou ''. Pinos migraram pra uuid na Fase 1
+    (file_map.py:498-513); casar so display matava o Tier 1 em producao
+    (review final F4, achado C1)."""
     raw = str(entry.get("manual_timeline_block_id") or "").strip()
     if not raw:
         return ""
-    ids = {str(b.get("id", "")).strip() for b in blocks or []}
-    return raw if raw in ids else ""
+    for b in blocks or []:
+        if raw in (str(b.get("id", "")).strip(), str(b.get("block_uuid", "")).strip()):
+            return str(b.get("block_uuid") or b.get("id") or "")
+    return ""
 
 
 def resolve_material_assignment(
@@ -271,7 +277,11 @@ def resolve_material_assignment(
     # Tier 1 (manual): override vence tudo.
     manual = _manual_block_id(entry, blocks)
     if manual:
-        winner = next((b for b in blocks if str(b.get("id", "")) == manual), None)
+        winner = next(
+            (b for b in blocks
+             if manual in (str(b.get("block_uuid") or ""), str(b.get("id") or ""))),
+            None,
+        )
         return Assignment(
             block_id=manual,
             unit_slug=_block_unit_slug(winner) if winner else "",
