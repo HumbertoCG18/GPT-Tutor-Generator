@@ -1,7 +1,7 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-14b (CAMPANHA 3 FASE 4 ENTREGUE — unit/subunit no motor, GO pro flip
-pós-gaps 1.2/1.3; ver Concluído 2026-08-14 F4. Antes na mesma data: AUDITORIA-ENXAME EXECUTADA — workflow 45 agentes [7 finders + 37
+last_updated: 2026-08-17 (PASSO 2 ENTREGUE — C1 pinos + gaps 1.2/1.3 fechados, FLIP DESTRAVADO,
+ver Concluído 2026-08-17. Histórico 2026-08-14: F4 unit/subunit no motor + AUDITORIA-ENXAME EXECUTADA — workflow 45 agentes [7 finders + 37
 verificadores adversariais + síntese; mix sonnet/fable], 32 achados CONFIRMADOS / 5 refutados;
 relatório ranqueado em `docs/reports/2026-08-14-auditoria-enxame.md`; ver Concluído 2026-08-14.
 Fila restante da ratificação 2026-08-11: campanha 3 cutover → campanha web)
@@ -257,6 +257,11 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   > regressão), **GO CONDICIONADO** (review final F4, Opus): flip depende dos gaps 1.2/1.3 E do
   > fix dos pinos manuais (achado C1 abaixo). Régua adicional pro flip: verificar sobrevivência
   > dos pinos por curso (eval_units é cego a pinos — mede unit por bloco).
+  > **CONDIÇÕES FECHADAS (2026-08-17, passo 2, `636f299..d319477`)**: C1 pinos ✓ (Tier 1 casa
+  > uuid+display) · gap 1.3 ✓ (resync tag `bloco:` no swap D1, cobre blocks=[]/None) · gap 1.2 ✓
+  > (teste de integração da cadeia, não-vacuidade provada por mutação). Gates: suite 1952/1/0,
+  > sentinelas 0 diff, MF 50/57. **Flip destravado** — falta só a própria medição do passo 3:
+  > golds 5/5 cursos + sobrevivência de pinos por curso + rebuild_diff 0.
   > **Dependência nova pra F5**: ao deletar `resolve_unit_block_tags`, portar a limpeza
   > `_NO_TIMELINE_CATEGORIES` (content_taxonomy.py:1137-1147) pro caminho do motor — hoje ela só
   > roda dentro do legado.
@@ -1607,6 +1612,20 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   Workflow reusável em `.claude/workflows/auditoria-enxame.js` (duplicata `-mew.js` deletada —
   colisão de meta.name causava resolução aleatória).
 
+## Concluído (2026-08-17 — campanha 3, PASSO 2: C1 pinos + gaps 1.2/1.3)
+
+- [DERIVADO] **PASSO 2 ENTREGUE (`as-of 2026-08-17`, commits `636f299..d319477`, SDD 4 tasks +
+  1 fix round, reviews limpas)** — as 3 pré-condições do flip fechadas: **C1** Tier 1 casa pino
+  uuid+display (id canônico; 3 testes; bônus: harness compare_resolver sem `changed` espúrio);
+  **1.3** attach resincroniza tag `bloco:` no swap D1 (guard `is not None` — cobre blocks=[]
+  de produção e blocks=None legado; invariante testado; MUDA produção flag-OFF de propósito —
+  era drift real); **1.2** teste de integração da cadeia `apply_concept_resolver →
+  apply_unit_subunit_fields` (unit fields descrevem bloco pós-motor; não-vacuidade provada por
+  mutação dupla na review). Gates: suite **1952/1/0**, sentinelas **0 diff**, MF **50/57**.
+  Plano: `docs/superpowers/plans/2026-08-17-passo2-gaps-flip.md`. **Próximo: passo 3 (flip +
+  deleção)** — medição 5 cursos (golds unit + pinos + rebuild_diff), default ON, delete por
+  lista nomeada.
+
 ## Concluído (2026-08-14 — campanha 3, FASE 4: unit/subunit no motor)
 
 - [DERIVADO] **FASE 4 ENTREGUE (`as-of 2026-08-14`, commits `5da5f2e..b9a4a53`, SDD 5 tasks +
@@ -1628,13 +1647,11 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   pino direto + teste; `7cb0e21` medição emendada, GO condicionado); minors M4-M8 registrados como
   itens abaixo. Rulings do SDD todos sustentados.
 
-- [CODE] **C1 (BLOQUEIA O FLIP) — motor descarta pinos manuais em uuid** (`as-of 2026-08-14`,
-  review final F4): `_manual_block_id` (`concept_resolver.py:250-255`) casa o pino só contra
-  `block["id"]` (display `bloco-NN`), mas `manual_timeline_block_id` migrou pra uuid na Fase 1
-  (`file_map.py:498-513`) — MF tem 17/17 pinos em uuid. Sob flag ON o Tier 1 manual morre e o
-  scorer SOBRESCREVE o pino (caso real: `tiposindutivos`, reclassificado no relatório de medição).
-  Fix no passo 2 da campanha: aceitar uuid E display (resolver via `resolve_block_ref`), + teste;
-  régua do flip ganha check de sobrevivência de pinos por curso.
+- ~~[CODE] **C1 (BLOQUEAVA O FLIP) — motor descarta pinos manuais em uuid**~~ **FECHADO
+  (2026-08-17, passo 2, `636f299`)**: `_manual_block_id` casa uuid E display e devolve id
+  canônico; winner lookup do Tier 1 idem; 3 testes (2 unit + 1 fim-a-fim pelo apply). Bônus:
+  corrigiu `changed` espúrio do harness `compare_resolver` pra pinos uuid. A régua de
+  sobrevivência de pinos POR CURSO permanece na medição do flip (passo 3).
 - [CODE] **Dívidas menores da review final F4 (passo 2 / oportunista)**: M4 teste de wiring
   flag-ON não valida assinatura do partial (`inspect.signature(...).bind` na sentinela —
   `test_resolver_wiring.py:310-334`); M5 `unit_block_conflict`/reasons órfãos quando
