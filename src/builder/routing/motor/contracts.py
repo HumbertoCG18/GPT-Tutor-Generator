@@ -45,6 +45,8 @@ class MotorContext:
     _modal_years_cache: Optional[list] = field(default=None, repr=False, compare=False)
     _ncm_cache: Optional[dict] = field(default=None, repr=False, compare=False)
     _stems_cache: Optional[dict] = field(default=None, repr=False, compare=False)
+    # ordinal de ENCONTRO -> ref do bloco (provider_ordinal, P3b)
+    _session_ordinal_cache: Optional[dict] = field(default=None, repr=False, compare=False)
 
     @classmethod
     def from_artifacts(

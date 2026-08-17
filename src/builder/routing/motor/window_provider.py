@@ -12,6 +12,7 @@ from src.utils.helpers import norm_ascii_lower
 from src.builder.timeline.card_block import normalized_card_map
 from src.builder.text.normalize import normalize_match_text
 from src.builder.routing.motor.disambiguator import block_topic_tokens, block_session_tokens, _GENERIC_STEMS
+from src.builder.routing.sequence import extract_lecture_ordinal
 from src.builder.timeline.classifier import STRONG_EXAM_RE as _STRONG_EXAM_RE
 from src.builder.timeline.classifier import WEAK_EXAM_TOKENS as _TOPIC_EXAM_STEMS
 
@@ -157,6 +158,49 @@ def _block_topic_stems(ctx: MotorContext) -> dict:
     return cache
 
 
+def _session_ordinal_index(ctx: MotorContext) -> dict:
+    """ordinal de ENCONTRO (1..N, cronologico) -> ref do bloco que o contem.
+
+    O professor numera "Aula N" por ENCONTRO, nao por bloco: um bloco tematico
+    pode agrupar varias aulas (TCC bloco-03 = 3 encontros), entao contar blocos
+    desanda o alvo. Memoizado por ctx (mesmo padrao de _block_topic_stems).
+    """
+    if getattr(ctx, "_session_ordinal_cache", None) is not None:
+        return ctx._session_ordinal_cache
+    pairs = []
+    for b in ctx.blocks:
+        if str(b.get("kind") or "") != "class":
+            continue
+        ref = str(b.get("id") or "")
+        if not ref:
+            continue
+        for s in (b.get("sessions") or []) or [{}]:
+            pairs.append((str(s.get("date") or ""), ref))
+    pairs.sort(key=lambda p: p[0])
+    index = {i + 1: ref for i, (_d, ref) in enumerate(pairs)}
+    try:
+        ctx._session_ordinal_cache = index
+    except AttributeError:  # ctx sem slot (fixture minima)
+        pass
+    return index
+
+
+def provider_ordinal(entry: dict, ctx: MotorContext) -> List[str]:
+    """P3b — ORDINAL-no-nome ("Aula 14") -> N-esimo ENCONTRO -> bloco.
+
+    Depois de DATA (data e mais forte: aponta o dia exato) e antes de TOPICO.
+    Medido no TCC: alvo por encontro bate o gold em 16/19; por bloco, 1/19.
+    Fora do range de encontros -> sem janela (nunca chuta o ultimo bloco).
+    """
+    ordinal = extract_lecture_ordinal(normalize_match_text(str(entry.get("title") or "")))
+    if ordinal is None:
+        ordinal = extract_lecture_ordinal(normalize_match_text(str(entry.get("raw_target") or "")))
+    if ordinal is None:
+        return []
+    ref = _session_ordinal_index(ctx).get(ordinal)
+    return [ref] if ref else []
+
+
 def provider_topic(entry: dict, ctx: MotorContext) -> List[str]:
     """P4 — TÓPICO do card "Semana N - Tópico" ↔ topic_text/sessions[].label."""
     m = _SEMANA_TOPIC_RE.match(str(entry.get("source_section") or ""))
@@ -180,6 +224,7 @@ _CASCADE = (
     (provider_manual, "manual"),
     (provider_labels, "labels"),
     (provider_date, "data"),
+    (provider_ordinal, "ordinal"),
     (provider_topic, "topic"),
 )
 

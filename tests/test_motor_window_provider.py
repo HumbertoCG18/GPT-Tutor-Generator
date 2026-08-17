@@ -222,8 +222,11 @@ class TestProviderTopic:
         assert "bloco-16" in win
 
     def test_cascata_topic_por_ultimo(self):
+        """Ordem por CONFIABILIDADE. `ordinal` (P3b, "Aula N" -> N-esimo
+        encontro) entra depois de DATA — data aponta o dia exato — e antes de
+        TOPICO, que casa por stems e e o mais fraco."""
         from src.builder.routing.motor.window_provider import resolve_window, _CASCADE
-        assert [name for _, name in _CASCADE] == ["manual", "labels", "data", "topic"]
+        assert [name for _, name in _CASCADE] == ["manual", "labels", "data", "ordinal", "topic"]
 
     def test_rotulo_taxonomia_rica_nao_vaza_prova_sem_sinal_forte(self):
         """C6 (diagnóstico 2026-08-06, re-flip TCC tentativa 4): bloco de AULA
