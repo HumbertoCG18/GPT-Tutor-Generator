@@ -1,6 +1,13 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-17 (**CAMPANHA 3 / PASSO 3 FECHADO — FLIP + DELEÇÃO COMPLETOS: motor é o
+last_updated: 2026-08-18 (sessao COBERTURA + TAXONOMIA — **APLICADA EM PRODUCAO nos 5**.
+Feito: perda de topicos do plano de ensino corrigida (TCC 11/27, SO 3/34, ES2 1/21 -> 0
+ausentes), heading institucional fora dos aliases, card do Moodle como sinal de unidade,
+reprocess dos 5 repos com reguas sem regressao e 0 pinos violados, suite 1886. Regua de
+COBERTURA montada e com baseline medido (0/9, 8 sem predicao). FALTA RULING DO USER:
+vetar/confirmar os 7 rotulos propostos, pino do `Cap. Algoritmos Geneticos` (IA),
+granularidade das avaliacoes, destino das duplicatas/fantasma do IA.
+Antes: **CAMPANHA 3 / PASSO 3 FECHADO — FLIP + DELEÇÃO COMPLETOS: motor é o
 atribuidor ÚNICO em 100% do sistema, funil legado deletado (-4747 linhas), serializador único
 v4, 5 cursos reprocessados/commitados**, ver Concluído 2026-08-17c e relatório
 `docs/reports/2026-08-17-passo3-flip-delecao-fechado.md`. Antes no mesmo dia: etapa 1 medição
@@ -495,6 +502,126 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   entrou na assinatura do bloco — caso FLAGADO (band media, cw=0), mitigado por pino
   gold-backed (`91c1d2a`); o caminho do scorer NÃO tem guard C6-equivalente. Insumo nomeado da
   campanha 2 (unidades/colisão de rótulo).
+
+## CODE — camada de COBERTURA (material transversal, 2026-08-18)
+
+Eixo novo, separado do motor. Motor responde "QUANDO isso foi dado" (1 bloco temporal);
+cobertura responde "O QUE isso cobre" (N unidades/topicos). Prova, lista, gabarito,
+bibliografia, apoio e codigo de exemplo so tem o segundo eixo — nao entram no motor.
+Fila acordada com o user (2026-08-18): regua -> referencias -> codigo/exemplos ->
+exercicios/listas/provas antigas.
+Regua: `docs/reports/coverage_gt_<SIGLA>.csv` + `scripts/eval_coverage.py` +
+gerador `scripts/make_coverage_labels.py`.
+
+- [USER] **Rotular a regua de cobertura das referencias — 9/10 PREENCHIDOS, AGUARDANDO VETO**
+  (`as-of 2026-08-18`). SO 3/3 com `provenance=plano-de-ensino` (evidencia documental, o plano
+  responde sozinho: threads e u03). MF 3/3 e IA 3/3 com `provenance=proposto-claude` — o user
+  precisa vetar ou confirmar. IA4 (`artigo-usando-agrupamento`) marcado `scorable=no` por ser
+  entry fantasma. **BASELINE MEDIDO: 0/9 exact-set-match, 8 de 9 SEM PREDICAO NENHUMA** —
+  e o retrato de partida contra o qual os 4 fixes da camada de referencia serao medidos.
+  Detalhe original:
+  10 entries vivas (SO 3, MF 3, IA 4; ES2/TCC 0). Preencher `gold_units` (pipe-separated) nos
+  CSVs `coverage_gt_{SO,MF,IA}.csv`; catalogo de slugs em `coverage_units_<SIGLA>.md`. Sem
+  rotulo nao ha baseline. N=10 mede caso-a-caso, nao estatistica.
+  Proposta ja apresentada ao user (aguardando veto/confirmacao): SO1=3, SO2=3, SO3=3(DUVIDA),
+  MF1=1,2 · MF2=1,2 · MF3=1 · IA1=1 · IA2=1 · IA3=5 · IA4=skip(fantasma).
+  **SO RESOLVIDO pelo plano de ensino (2026-08-18, ruling do user "da para saber analisando o
+  plano")**: threads e u03. Evidencia: topico `4.1 Programas multithreads` na u03; descritivo da
+  u03 "conceitos de processos leves e pesados (Tasks e Threads)"; objetivo 4 "conhecer
+  programacao concorrente e mecanismos de exclusao mutua"; bibliografia "Threads Primer: A Guide
+  to Multithreaded Programming". A u02 nao cita threads em nenhum dos 4 topicos. SO1/SO2/SO3
+  rotulados no CSV com `provenance=plano-de-ensino`. Baseline medido: **0/3, sem predicao**
+  (as 3 nunca foram mapeadas — e o `fetch_reference_text` so-rede). Faltam MF (3) e IA (4).
+  Contexto que o user ja deu: MF2 (AWS Encryption SDK) e caso de uso de metodo formal provando
+  codigo; IA2 (IA Responsavel) e artigo, possivelmente sobre LLMs.
+- [CODE] **`fetch_reference_text` so busca rede** (`core/reference_content.py`) — GitHub README
+  ou HTML. PDF local do Moodle -> texto vazio -> 0 conceitos -> 0 mapeamento. Causa raiz de
+  **1 de 15 refs mapeadas** (`as-of 2026-08-18`). Fix: ler `approved/curated/base_markdown`
+  antes da rede.
+- [CODE] **`assign_concepts_to_unit` e single-winner** (`core/reference_topic.py`) — elege 1
+  unidade e descarta o resto. Modelo errado para material transversal: precisa devolver a
+  lista acima do threshold.
+- [CODE] **`computed_ref_topics` devolve todos os `topic_phrases` da unidade vencedora**
+  (`core/reference_topic.py:60`), nao os que casaram. Dado enganoso mesmo quando mapeia.
+- [CODE] **Categoria `references` nao e reconhecida** — `_REFERENCE_CATEGORIES = {"referencias",
+  "bibliografia"}` (`core/reference_summary.py`). 3 entries vivas com `category='references'`
+  (MF 1, IA 2) nunca entram na camada (`as-of 2026-08-18`). Vocabulario da UI diz `referencias`;
+  ha 3 grafias em uso.
+- [CODE] **Curation sem prune de orfaos** — `references_curation.json` guarda entries que nao
+  existem mais no manifest: ES2 6/6 orfas, TCC 2/2 (`as-of 2026-08-18`). `code_curation.json`
+  ja poda; esta nao.
+- [CODE] **Entry fantasma no IA** (`as-of 2026-08-18`) — `artigo-usando-agrupamento` tem
+  `review_status: approved` e aponta `content/curated/*.md` + `raw/pdfs/*.pdf` que NAO existem
+  no disco. Ainda alimenta `content/BIBLIOGRAPHY.md`.
+- [CODE] **EXAM_INDEX / EXERCISE_INDEX sao vitrines vazias** (`artifacts/repo.py:703,2029`) —
+  EXAM: colunas `Observacao`/`Padrao do professor` dependem de `notes` manual sempre vazio.
+  EXERCISE: coluna "Unidade" imprime tag crua (`topico:...; tipo:gabarito; bloco:...`) tendo
+  `computed_unit_slug` disponivel; coluna `Solucao` procura "gabarito" em `notes` em vez de
+  parear com o irmao no repo (SO tem `lista-exercicios-p1` + `-gabarito` e diz "nao").
+- [CODE] **Duplicatas de prova nao detectadas** (IA, `as-of 2026-08-18`) — mesma P1 em
+  `p1-2024-02-ia.md`, `prova-1-2024-02.md`, `prova-1-202402.md` (67 linhas cada); uma delas
+  nem aparece no EXAM_INDEX.
+- [USER] **Decidir o destino das duplicatas e do fantasma do IA** — qual das 3 copias da P1
+  fica; e se `artigo-usando-agrupamento` e reimportado ou removido. Sem ruling, os dois
+  seguem alimentando `EXAM_INDEX`/`BIBLIOGRAPHY`.
+- [CODE] **Descritivo da unidade no plano nunca vira sinal** (`as-of 2026-08-18`) — o paragrafo
+  que fecha cada unidade PUCRS ("Nesta unidade sera estudada programacao concorrente. Serao
+  enfatizados os conceitos de processos leves e pesados (Tasks e Threads)...") e a mencao mais
+  explicita a THREADS em todo o plano do SO. Antes do fix ele entrava como "topico" (poluindo a
+  taxonomia com metodologia); agora `_finalize_topics` o descarta junto com "Uso de projetor
+  multimidia". Nenhum dos dois estados aproveita o texto. Ganho REAL confirmado: "Threads" ->
+  token `threa`, enquanto `4.1 Programas multithreads` -> `{multi, progr}`; o token `threa` SO
+  existe no descritivo.
+  **MAS a implementacao naive e perigosa (medido 2026-08-18, por isso NAO entrou no rollout):**
+  os tokens do descritivo da u03 do SO contem `{geren, proce}` — que e exatamente o
+  `_unit_title_core_tokens` da **u02** ("Gerencia do Processador"). A regra (a) de
+  `build_content_taxonomy` ("topico cujo rotulo contem o nucleo do titulo de OUTRA unidade migra
+  pra unidade dona") mandaria o texto — e o token `threa` — para a u02, o oposto do desejado. O
+  descritivo tambem contem o core da propria u03 (`{conco, progr}`), entao haveria duas donas
+  candidatas e o `next(...)` decide por ordem de iteracao. Mesmo mecanismo de alias que causou o
+  caso ES2.
+  Implementacao segura (a fazer): injetar TOKENS (nunca topico, nunca alias que participe da
+  migracao), filtrando token que pertenca ao core de outra unidade. Pre-requisito: regua
+  entry->unidade rotulada, senao nao ha como medir o efeito.
+  **PRIORIDADE REBAIXADA (2026-08-18, verificacao de cards):** o token que faltava (`threa`) esta
+  no CARD, nao so no descritivo — os 5 materiais de threads do SO (`07.04 Exemplo threads em
+  Java`, `Exemplo threads em C - exemplo1/2/3`, `Biblioteca em C - pthread`) estao TODOS no card
+  `Threads`. Campo curto e limpo contra paragrafo poluido: o card entrega o mesmo sinal sem o
+  risco de migracao para a unidade errada. Fazer o CARD primeiro; o descritivo talvez nem seja
+  necessario.
+- [CASO REAL — motor x cobertura] **SO threads: cronograma e ementa discordam POR DESIGN**
+  (`as-of 2026-08-18`) — o cronograma poe threads nas aulas 8 e 9 ("Gerencia do processador,
+  threads e exclusao mutua", periodo da u02); a ementa poe em `4.1 Programas multithreads` (u03).
+  Nao e conflito: e o eixo TEMPORAL (quando foi dado) contra o eixo de COBERTURA (o que cobre).
+  Melhor evidencia concreta de que as duas camadas precisam existir separadas — e explica por que
+  os `Exemplo threads em C` viviam caindo em unidade errada.
+- [USER] **IA: 1 regressao remanescente do rollout de 2026-08-18** — decidir se leva pino manual.
+  O caso (b) abaixo (`Visao Geral`) foi RESOLVIDO pelo card. O caso (a) permanece:
+  (a) `Cap. sobre Algoritmos Geneticos (Lacerda e outros)` — card `Semana 12 - 18.05 a 22.05 -
+      Algoritmos de Busca com Informacao`. Producao tinha `unidade-02-solucao-de-problemas` (que
+      cobre busca, coerente com o card); o fix move para `unidade-05-aprendizado-de-maquina`.
+      **O card indica que o fix PIOROU este caso** — unico regressao identificada por evidencia
+      independente em todos os 5 cursos.
+  (b) `Visao Geral - Introducao e Historico` — card `Semana 1 - Plano de Ensino e Introducao a
+      IA`. Producao: `unidade-05-aprendizado-de-maquina` (errado); fix: vazio (menos errado). O
+      card daria a resposta certa (`unidade-01-visao-geral`), reforcando o item do CARD acima.
+  Confirmacoes do lado bom: `Kubernetes` e `devops` estao no card `DevOps` e ambos terminam em
+  `unidade-02-devops` apos o fix do alias; os 5 de threads no card `Threads` -> u03.
+  `t1_2026_1` (ES2) esta no card administrativo `TDE Trabalho Discente Efetivo`, que nao nomeia
+  unidade — arbitrario nos dois lados, candidato a pino manual ou a ficar sem unidade.
+- [CODE] **FASE 3 da fila — codigo e exemplos** (`as-of 2026-08-18`, NAO INICIADA). Pedido do
+  user: depois das referencias, atacar "arquivos de codigo, exemplos". `code_curation.json` ja
+  existe com resumo Gemini + `assign_code_to_block` (bloco, nao unidade) — avaliar se entra na
+  mesma camada de cobertura ou se ja esta suficientemente servido.
+- [CODE] **FASE 4 da fila — exercicios, listas e provas antigas** (`as-of 2026-08-18`, NAO
+  INICIADA). Era o PEDIDO ORIGINAL da sessao ("estao jogados"). Diagnostico ja levantado: prova
+  e tratada como material de aula (1 arquivo -> 1 bloco -> 1 unidade) sendo multi-topico por
+  natureza; indices vazios; enunciado e gabarito nao pareados; zero extracao de questoes.
+  Depende de: camada de cobertura de pe + regua rotulada.
+- [DECISION] **Granularidade da cobertura de avaliacoes** — marcar a prova inteira com um
+  conjunto de topicos (barato, deterministico) ou quebrar em questoes individuais (caro, LLM,
+  mas e o que habilita "incidencia por topico" que o header do EXAM_INDEX ja promete).
+  Perguntado ao user em 2026-08-18, sem ruling.
 
 ## CODE — UI (Parte B de features backend já entregues)
 
@@ -1109,6 +1236,141 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   nenhum card cavalga a janela trocada. Gold: tratar 24/06=feriado / 29/06=T2 por override **no gold**, sem tocar repo.
 
 ---
+
+## Concluído (2026-08-18 — taxonomia do plano de ensino + card como sinal de unidade)
+
+APLICADO EM PRODUCAO nos 5 repos-tutor (reprocess 2026-08-18). Gate verde: reguas por
+material SO 27/38 · MF 63/66 · IA 43/44 · ES2 22/28 · TCC 18/25 (todas sem regressao,
+TCC melhora confiante-e-errado 2->1); golds de unidade ES2 7/7 · IA 9/10 · MF 12/14 ·
+SO 9/11 · TCC 13/13; 0 pinos violados; suite 1886 passed / 1 skipped;
+`scripts/audit_taxonomy_losses.py` = 0 ausentes nos 5 (era TCC 11/27, SO 3/34, ES2 1/21).
+Taxonomia em disco: SO 31->36 topicos, TCC 14->26, ES2 20->21.
+Medicao completa (2 rodadas): `docs/reports/2026-08-18-medicao-fix-taxonomia.md`.
+Patch da 1a tentativa do card: `docs/reports/2026-08-18-card-signal-tentativa.patch`.
+
+- [CODE] **CAUSA RAIZ DO MATCHING FRACO DE UNIDADE: `_topic_text` serializa dict**
+  (`extraction/teaching_plan.py:_topic_text`, `as-of 2026-08-18`) — a funcao trata tupla e str,
+  mas a taxonomia passa cada topico como **dict**
+  (`{code, slug, label, aliases, kind, unit_slug}`), entao cai no `str(topic)` e o
+  `topic_phrases` de `build_file_map_unit_index` fica sendo o dict SERIALIZADO:
+  `"code 1 2 slug visoes arquiteturais estrutural e dinamica label visoes ... aliases ... kind
+  topic unit slug unidade 01 arquitetura de software"`. Consequencias: (1) os pesos altos de
+  frase de `score_entry_against_unit` (headings 3.0, lead 2.8, title 2.7) **nunca disparam** para
+  topico vindo da taxonomia — a phrase e um blob que nao casa em texto nenhum; (2) `topic_tokens`
+  ganha lixo estrutural (`code`, `slug`, `label`, `aliases`, `kind`) e os tokens dos ALIASES,
+  que foi por onde o heading institucional do ES2 entrou. O scorer de SUBtopico
+  (`_score_entry_against_taxonomy_topic`) esta saudavel — usa `topic_label` limpo. **Este e o
+  proximo alvo**: e a razao pela qual sinal novo (como o card) nao pega no eixo de unidade.
+  Pre-requisito: regua entry->unidade rotulada, porque o alcance e todas as entries dos 5 cursos.
+- [CODE] **CARD DO MOODLE COMO SINAL DE UNIDADE — IMPLEMENTADO E MEDIDO em 2026-08-18** (ruling
+  do user). `card_text` nos sinais (`extraction/entry_signals.py`); no scorer de unidade
+  (`routing/file_map.py`) pesa 1,5 contra o TITULO da unidade, 2,5 contra frase de topico e 0,40
+  no overlap parcial — so nivel de frase, para card administrativo ficar inerte. Teste
+  `test_card_nao_afeta_o_scorer_de_bloco_do_motor` fixa o contrato: o card NAO entra no eixo
+  temporal. Depende de dois fixes irmaos: `_topic_text` tratando dict e o descarte de frase que e
+  titulo de OUTRA unidade (sem este, o card regredia 6 entries do MF). Gates verdes nos 5, suite
+  1886. Saldo julgado caso a caso: 13 ganhos, 9 neutros, 1 regressao isolada
+  (`Cap. sobre Algoritmos Geneticos` no IA — candidato a pino). Detalhe:
+  `docs/reports/2026-08-18-medicao-fix-taxonomia.md` §Rodada 2.
+- [HISTORICO] **Card: primeira tentativa revertida no mesmo dia.**
+  Patch guardado: `docs/reports/2026-08-18-card-signal-tentativa.patch` (`card_text` nos sinais
+  + peso 2.5 exato / 0.40 parcial no scorer de unidade; testes inclusos). Medicao em sandbox nos
+  5 cursos: gates continuaram verdes (reguas sem regressao, 0 pinos violados), MAS bissecao
+  isolando o card mostrou dano real no MF — **delta de unidade 1 (so ganho) sem o card contra 9
+  com o card, incluindo 6 REGRESSOES**: `Hoare`, `Invariantes`, `Colecoes Arrays`,
+  `Colecoes Conjuntos`, `Exercicios Conjuntos`, `classes_parte2` saem de
+  `unidade-02-verificacao-de-programas` — que e o nome EXATO do card (`Verificacao de
+  Programas`). E nao resolveu os 2 alvos do IA (`Cap. sobre Algoritmos Geneticos` segue em
+  `aprendizado-de-maquina` apesar do card dizer busca; `Visao Geral` segue sem unidade).
+  Ganhos que o card SIM trouxe (IA): `programa-exemplo AG` e `Programas-exemplo HC, SA` saem de
+  sem-unidade para `solucao-de-problemas`; `Introducao a redes neurais` e os 2 exemplos de k-NN
+  vao para `aprendizado-de-maquina` (todos confirmados pelo card).
+  **A ideia segue certa; a implementacao por frase nao funciona enquanto `_topic_text` serializar
+  dict** (item acima). Reabrir depois desse fix e com a regua de pe.
+  Levantamento que continua valido: Ruling do user: "da para saber a unidade com base no card que o link esta,
+  e a maneira mais precisa e o que podemos fazer agora". Levantamento (`as-of 2026-08-18`):
+  **API do Moodle NAO e necessaria** — `source_section` ja vem preenchido em **228 de 233**
+  entries dos 5 cursos (SO 42/42, MF 64/67, IA 60/62, ES2 35/35, TCC 27/27); nas categorias
+  transversais, 161/166. As 5 sem card sao links externos (GitHub/Oracle/Microsoft/isa-afp)
+  que nunca estiveram em card.
+  Dois furos conhecidos antes de codar:
+  (a) **cards administrativos** nao nomeiam unidade — SO tem `Informacoes Gerais` 10x (24% do
+      curso), ES2 tem `Exercicios Revisao para Provas` 4x + `Revisao` 3x, mais `TDE` e
+      `Plano de Ensino` em varios. E justamente o material que mais precisa de cobertura
+      multi-unidade (prova, lista de revisao) que cai no card generico;
+  (b) `card -> bloco` esta vazio: `.card_block_map.json` do SO tem 1 entrada
+      (`Informacoes Gerais`) com `block_ids: []`. A rota viavel e direta: **card -> unidade**
+      casando o nome do card contra a taxonomia (`Threads`, `Sincronizacao e Comunicacao de
+      Processos` casam sozinhos).
+  ALERTA DE VIES: se o gold sair do card E o algoritmo usar o card, a regua se auto-confirma
+  (mesmo P3.1 que morreu com o funil). Separacao acordada: gold = julgamento do conteudo
+  (card e evidencia auxiliar); algoritmo pode usar card; a regua mede quando o card mente.
+- [CODE→USER] **TAXONOMIA PERDE TOPICOS DO PLANO DE ENSINO — CORRIGIDO E MEDIDO 2026-08-18,
+  FALTA APLICAR EM PRODUCAO.** Medicao em sandbox nos 5 cursos:
+  `docs/reports/2026-08-18-medicao-fix-taxonomia.md` (driver `scripts/measure_taxonomy_fix.py`).
+  Gates verdes: nenhuma regua regride, 0 pinos violados, TCC melhora 1 confiante-e-errado.
+  Ganhos qualitativos: SO corrige 4 entries de threads (erros ja catalogados no handoff §B),
+  TCC corrige PCP e os subtopicos de complexidade (inclusive "Aula 16 - Classes de Problemas",
+  erro conhecido), MF e ES2 ganham entries que estavam sem unidade.
+  **ES2 investigado a fundo (2026-08-18): a causa nao era o topico recuperado.** Ver secao
+  dedicada no relatorio de medicao. Decisao do user pendente: aplicar nos 5 repos.
+- [CODE] **Heading institucional virava alias de topico — CORRIGIDO 2026-08-18**
+  (`extraction/content_taxonomy.py`, bloco de enriquecimento por `strong_headings`). O cabecalho
+  que abre TODO material do curso (`ENGENHARIA DE SOFTWARE II ---`, `Trabalho FinalEngenharia de
+  Software II`) era anexado como alias do topico mais proximo, e os tokens `engenharia`,
+  `trabalho`, `finalengenharia` entravam nos `distinctive_tokens` da unidade dona — que virava
+  ima do curso inteiro (score de `Kubernetes`: u01 4.70 -> 9.45 so pelo alias). O perfil ja
+  marcava o slug do curso em `generic_slug_blacklist`; o bloco de enriquecimento nunca consultava.
+  Fix: descartar heading cujo slug esta em `tag_generic_slugs` ou que contenha o nome do curso.
+  Teste `test_heading_institucional_nao_vira_alias_de_topico`.
+- [NOTA] **Slug de subtopico do SO muda de forma** (`as-of 2026-08-18`) — com o codigo numerico
+  extraido, `33-algoritmos-de-escalonamento` vira `algoritmos-de-escalonamento`. So o SO usa
+  numeracao em negrito. Verificado: os unicos arquivos com os slugs antigos sao GERADOS
+  (taxonomy, tag_catalog, timeline_index, FILE_MAP, manifest, .deeptutor) e todos sao reescritos
+  no reprocess; nenhum gold, sentinela ou curadoria manual depende deles. `scripts/audit_taxonomy_losses.py` agora reporta **0 ausentes nos 5
+  cursos** (era TCC 11/27, SO 3/34, ES2 1/21) e a suite passa 1881/0/1skip. Os repos-tutor
+  **nao foram reprocessados**: o `.content_taxonomy.json` e o `.semantic_profile.generated.json`
+  em producao seguem com a perda. Antes de aplicar: medir as reguas dos 5 (a taxonomia alimenta
+  `topic_phrases`/`distinctive_tokens` do matching de unidade, entao os numeros DEVEM mexer).
+  Correcoes: parser normaliza a linha num ponto so (markdown + zero-width) e casa todo ramo
+  contra ela; itens colados pelo PDF viram topicos separados; o codigo numerico passa a viver
+  NO texto do topico (contrato que `content_taxonomy` ja esperava via `_extract_topic_code`);
+  bullets sem numero sao descartados quando a unidade tem numerados (mata "Uso de projetor
+  multimidia" e o topico-lixo `processo-de-discussao` do SO); `_looks_like_tool_candidate` casa
+  em fronteira alfanumerica; `_infer_tool_candidates` nao promove mais CAIXA ALTA a ferramenta.
+  Testes: `tests/test_taxonomy_topic_loss.py` (8 casos, fixtures literais dos 4 formatos de
+  plano reais). Diagnostico original abaixo.
+- [DIAGNOSTICO original] **`known_tools` envenenado**
+  (`as-of 2026-08-18`, auditoria `scripts/audit_taxonomy_losses.py`). Perdas medidas:
+  **TCC 11/27** (unidade 04 inteira: Hierarquia de Classes, Classe P, Cook-Levin, Reducao
+  Polinomial, NP-Completude, PSPACE x3, Intratabilidade — a taxonomia do repo tem 4 de 11
+  topicos nessa unidade), **SO 3/34** (4.1 Programas multithreads, 6.1.1, 7.3), **ES2 1/21**
+  (1.1 Conceito de arquitetura de software). MF e IA: 0.
+  Tres causas somadas:
+  1. `_infer_tool_candidates` (`core/semantic_config.py:243`) aceita como "ferramenta" qualquer
+     palavra com maiuscula fora da 1a posicao **com count>=1**. Plano de ensino em CAIXA ALTA
+     (PDF PUCRS) faz TODA palavra de titulo virar `known_tools`: `ementa`, `horas`, `carga`,
+     `percentual`, `objetivos` no SO; `pspace`, `np-completude`, `cook-levin`, `hierarquia`,
+     `exemplo` no TCC. Loop perverso: quanto mais central o termo, mais provavel virar "tool"
+     e sumir do indice.
+  2. `_looks_like_tool_candidate` (`extraction/content_taxonomy.py:89`) casa **substring sem
+     fronteira de palavra** para tools >=4 chars: `ementa` mata "impl-EMENTA-cao", `threads`
+     mata "multi-THREADS", `exemplo` mata "exemplos".
+  3. O escape hatch `if not topic_code and not _is_valid_topic_candidate(...)`
+     (`content_taxonomy.py:487`) **nunca protege**: `_extract_topic_code` nao tolera markdown
+     (`**4.1**` -> code vazio) e o `numbered_topic_re` do parser ja remove o codigo do texto.
+     Todos os topicos ficam com `code` vazio e passam pelo filtro.
+  Impacto alem da cobertura: a taxonomia alimenta `topic_phrases`/`distinctive_tokens` do
+  matching de unidade — TCC sem "Classe P"/"NP-Completude" explica erro conhecido
+  ("Aula 16 - Classes de Problemas"). Fix minimo = (3): fazer o codigo numerico sobreviver,
+  que sozinho salva 9 dos 15 casos; (1) e (2) sao os fixes de raiz.
+- [CODE] **Parser do plano de ensino perde topico sem bullet e itens colados**
+  (`extraction/teaching_plan.py:57`, `as-of 2026-08-18`) — `numbered_topic_re` exige ponto
+  apos a numeracao e casa contra a linha CRUA (nao a normalizada), entao `**5.1.** Conceitos
+  basicos` (negrito, sem bullet) e `1.1 Conceito de arquitetura` (sem ponto) somem. Itens
+  colados na mesma linha pelo PDF (`4.5.2 ... 4.5.3 ...`, `1.2 ... 1.3 ...`) so rendem o
+  primeiro. Entra tambem lixo de metodologia como topico ("Uso de projetor multimidia",
+  "processo de discussao." — este ultimo esta na taxonomia do SO, unidade 07).
 
 ## Concluído (2026-06-22 — divisão de blocos: prova estrutural)
 > Carimbo (ROUTER): **Fases 0-2 — estrutural provado (não-cascateamento + golden 5/5); correção de
