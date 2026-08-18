@@ -534,25 +534,29 @@ gerador `scripts/make_coverage_labels.py`.
   (as 3 nunca foram mapeadas — e o `fetch_reference_text` so-rede). Faltam MF (3) e IA (4).
   Contexto que o user ja deu: MF2 (AWS Encryption SDK) e caso de uso de metodo formal provando
   codigo; IA2 (IA Responsavel) e artigo, possivelmente sobre LLMs.
-- [CODE] **`fetch_reference_text` so busca rede** (`core/reference_content.py`) — GitHub README
+- [CONCLUIDO 2026-08-18] **`fetch_reference_text` so busca rede** — CORRIGIDO (le markdown local antes da rede) (`core/reference_content.py`) — GitHub README
   ou HTML. PDF local do Moodle -> texto vazio -> 0 conceitos -> 0 mapeamento. Causa raiz de
   **1 de 15 refs mapeadas** (`as-of 2026-08-18`). Fix: ler `approved/curated/base_markdown`
   antes da rede.
-- [CODE] **`assign_concepts_to_unit` e single-winner** (`core/reference_topic.py`) — elege 1
+- [CONCLUIDO 2026-08-18] **`assign_concepts_to_unit` e single-winner** — CORRIGIDO (devolve `units[]`) (`core/reference_topic.py`) — elege 1
   unidade e descarta o resto. Modelo errado para material transversal: precisa devolver a
   lista acima do threshold.
-- [CODE] **`computed_ref_topics` devolve todos os `topic_phrases` da unidade vencedora**
+- [CONCLUIDO 2026-08-18] **`computed_ref_topics` devolvia topicos errados** — CORRIGIDO (so os que casaram)
   (`core/reference_topic.py:60`), nao os que casaram. Dado enganoso mesmo quando mapeia.
-- [CODE] **Categoria `references` nao e reconhecida** — `_REFERENCE_CATEGORIES = {"referencias",
+- [CONCLUIDO 2026-08-18] **Categoria `references` nao era reconhecida** — CORRIGIDO — `_REFERENCE_CATEGORIES = {"referencias",
   "bibliografia"}` (`core/reference_summary.py`). 3 entries vivas com `category='references'`
   (MF 1, IA 2) nunca entram na camada (`as-of 2026-08-18`). Vocabulario da UI diz `referencias`;
   ha 3 grafias em uso.
-- [CODE] **Curation sem prune de orfaos** — `references_curation.json` guarda entries que nao
+- [CONCLUIDO 2026-08-18] **Curation sem prune de orfaos** — CORRIGIDO — `references_curation.json` guarda entries que nao
   existem mais no manifest: ES2 6/6 orfas, TCC 2/2 (`as-of 2026-08-18`). `code_curation.json`
   ja poda; esta nao.
 - [CODE] **Entry fantasma no IA** (`as-of 2026-08-18`) — `artigo-usando-agrupamento` tem
   `review_status: approved` e aponta `content/curated/*.md` + `raw/pdfs/*.pdf` que NAO existem
   no disco. Ainda alimenta `content/BIBLIOGRAPHY.md`.
+- [CODE] **Referencia GitHub depende da rede a cada build** (`as-of 2026-08-18`) — `eth2` e
+  `aws-encryption-sdk` (MF) ficam com 0 byte de texto quando o README nao vem, e sem texto nao ha
+  cobertura. E o teto atual da camada, nao o matcher. Cachear o README no repo resolveria.
+  `ia-responsavel` (IA, 258B) e caso irmao: a pagina nunca foi convertida, so a URL foi salva.
 - [CODE] **EXAM_INDEX / EXERCISE_INDEX sao vitrines vazias** (`artifacts/repo.py:703,2029`) —
   EXAM: colunas `Observacao`/`Padrao do professor` dependem de `notes` manual sempre vazio.
   EXERCISE: coluna "Unidade" imprime tag crua (`topico:...; tipo:gabarito; bloco:...`) tendo

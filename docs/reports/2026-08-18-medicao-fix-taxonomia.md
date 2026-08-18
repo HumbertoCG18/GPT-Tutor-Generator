@@ -202,3 +202,52 @@ sessão). Revisão caso a caso antes de aceitar:
 Em 4 dos 6 casos o `computed_block_id` passou a concordar com a âncora temporal registrada no
 próprio baseline — efeito do date-tier e do `provider_ordinal`, commitados na sessão anterior e
 que só chegaram a produção neste reprocess. Ganho de coerência, não deriva.
+
+
+## Camada de COBERTURA das referências — 4 fixes (mesmo dia)
+
+Medido com a régua nova (`scripts/eval_coverage.py`) contra os 9 rótulos aprovados.
+
+| curso | antes | depois |
+|---|---|---|
+| SO | 0/3 exact · F1 0,0 · **3 sem predição** | 1/3 exact · **F1 0,778** (P 0,667 / R 1,0) · 0 sem predição |
+| IA | 0/3 exact · F1 0,0 · 3 sem predição | 0/3 exact · F1 0,222 · 1 sem predição |
+| MF | 0/3 exact · F1 0,0 · 3 sem predição | 0/3 exact · F1 0,0 · 2 sem predição |
+
+Global: "sem predição" caiu de **8 de 9 para 3 de 9**; F1 macro saiu de 0,0.
+
+Os fixes:
+1. **`fetch_reference_text` lê o markdown local do repo antes da rede** (`read_local_markdown`,
+   pulando o sumário executivo injetado). Era a causa raiz: as referências do Moodle são PDFs
+   locais já convertidos, e o fetch só olhava GitHub README e página HTML.
+2. **`assign_concepts_to_unit` devolve `units[]`** — todas as unidades cobertas, com os tópicos
+   que **de fato casaram** (antes devolvia todos os tópicos da unidade vencedora). As chaves
+   antigas seguem apontando a vencedora, porque COURSE_MAP e BIBLIOGRAPHY consomem uma só.
+3. **Categoria `references` reconhecida** — o dado real tem 3 grafias; 3 entries vivas nunca
+   entravam na camada.
+4. **Poda de órfãos na curation** — ES2 tinha 6/6 e TCC 2/2 apontando entries que sumiram.
+
+Mais duas correções que a medição exigiu, cada uma com teste que documenta o número que a
+motivou:
+
+- **métrica invertida no fallback sem LLM**: sem Gemini os "conceitos" viram o texto inteiro
+  (~2000 termos) e `overlap/len(termos)` fica diluído a zero — 0 de 10 refs mapeadas mesmo com o
+  texto disponível. Com texto bruto a pergunta certa passa a ser quantos tópicos **da unidade** o
+  texto cita;
+- **casamento de frase por palavra, com contenção**: exigir que todas as variantes (token e
+  radical) estivessem no texto era critério impossível; e "pthread"/"threads" precisa casar o
+  tópico "Programas multithreads" do plano do SO, o que nenhum radical liga. Piso de 6 caracteres
+  para a contenção.
+- **corte por margem relativa (máx. 2 unidades, ≥50% da melhor confiança)**: sem ele o critério
+  de frase distintiva enchia a lista e derrubava a precisão do SO de 0,667 para 0,528.
+
+O card (`source_section`) também entrou no texto de fallback da referência, pelo mesmo motivo
+pelo qual entrou no eixo de unidade.
+
+### O teto agora é outro
+
+Das 3 referências que seguem sem cobertura, **nenhuma é falha de matching**: `eth2` e
+`aws-encryption-sdk` (MF) têm **0 byte** de texto local — são repositórios GitHub cujo README
+depende da rede — e `ia-responsável` (IA) tem 258 bytes, só a URL, nunca foi convertido. As 6
+referências que têm texto de verdade receberam cobertura. Próximo passo natural, se valer a pena:
+cachear o README no repo em vez de buscar a cada build.
