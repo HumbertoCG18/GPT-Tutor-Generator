@@ -1,12 +1,16 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-18 (sessao COBERTURA + TAXONOMIA — **APLICADA EM PRODUCAO nos 5**.
-Feito: perda de topicos do plano de ensino corrigida (TCC 11/27, SO 3/34, ES2 1/21 -> 0
-ausentes), heading institucional fora dos aliases, card do Moodle como sinal de unidade,
-reprocess dos 5 repos com reguas sem regressao e 0 pinos violados, suite 1886. Regua de
-COBERTURA montada e com baseline medido (0/9, 8 sem predicao). FALTA RULING DO USER:
-vetar/confirmar os 7 rotulos propostos, pino do `Cap. Algoritmos Geneticos` (IA),
-granularidade das avaliacoes, destino das duplicatas/fantasma do IA.
+last_updated: 2026-08-18 (sessao EIXO DE COBERTURA + TAXONOMIA — **TUDO APLICADO EM PRODUCAO
+e commitado**; gerador HEAD `843db1e`, 5 repos-tutor limpos e reprocessados; suite 1898.
+Handoff da sessao: `docs/reports/2026-08-18-handoff-cobertura-taxonomia.md`.
+Feito: (1) perda de topicos do plano de ensino corrigida — TCC 11/27, SO 3/34, ES2 1/21 -> 0
+ausentes nos 5; (2) heading institucional e frase-titulo-de-outra-unidade fora da assinatura;
+(3) card do Moodle como sinal do eixo de UNIDADE; (4) regua entry->unidade criada com 9 rotulos
+aprovados e baseline medido; (5) camada de referencia destravada — "sem predicao" de 8/9 para
+3/9, SO F1 0,778. Reguas por material e golds de unidade sem regressao em nenhum curso.
+FILA: fase 3 (codigo/exemplos) -> fase 4 (exercicios/listas/provas antigas, o pedido original).
+RULING PENDENTE DO USER: pino do `Cap. Algoritmos Geneticos` (IA), duplicatas da P1 do IA,
+destino do entry fantasma, granularidade da cobertura de avaliacoes.
 Antes: **CAMPANHA 3 / PASSO 3 FECHADO — FLIP + DELEÇÃO COMPLETOS: motor é o
 atribuidor ÚNICO em 100% do sistema, funil legado deletado (-4747 linhas), serializador único
 v4, 5 cursos reprocessados/commitados**, ver Concluído 2026-08-17c e relatório
