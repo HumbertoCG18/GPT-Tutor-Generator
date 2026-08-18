@@ -1625,3 +1625,80 @@ def test_file_map_md_drops_low_confidence_suffix_keeps_confidence_column():
     assert "Baixa" in result  # Confiança column still flags low confidence
     # sanity: the mirrored slug itself is still present
     assert "unidade-01-programacao-denotacional" in result
+
+
+# Card do Moodle como sinal de unidade: TENTADO e REVERTIDO em 2026-08-18 — a
+# versao por frase e inerte (os `topic_phrases` do indice de unidade vem do dict
+# serializado do topico, ver `_topic_text`) e por via indireta regride o MF: 6
+# entries do card `Verificacao de Programas` saem de
+# `unidade-02-verificacao-de-programas`. Patch guardado no relatorio da medicao.
+# Reabrir SO depois de corrigir `_topic_text` e com a regua entry->unidade de pe.
+
+
+# --- topico como DICT no indice de unidade (bug achado em 2026-08-18) ---
+# `build_content_taxonomy` devolve cada topico como dict
+# {code, slug, label, aliases, kind, unit_slug}; `_topic_text` tratava tupla e
+# str, entao caia no `str(topic)` e o topic_phrase virava o dict serializado.
+
+_TOPICO_DICT = {
+    "code": "1.2",
+    "slug": "visoes-arquiteturais-estrutural-e-dinamica",
+    "label": "Visões arquiteturais: estrutural e dinâmica",
+    "aliases": ["1.2 Visões arquiteturais: estrutural e dinâmica"],
+    "kind": "topic",
+    "unit_slug": "unidade-01-arquitetura-de-software",
+}
+
+
+def test_topic_text_extrai_label_de_topico_dict():
+    from src.builder.extraction.teaching_plan import _topic_text as tt
+
+    assert tt(_TOPICO_DICT) == "Visões arquiteturais: estrutural e dinâmica"
+    assert tt(("2.1 Lógica de Hoare", 0)) == "2.1 Lógica de Hoare"
+    assert tt("texto solto") == "texto solto"
+
+
+def test_build_file_map_unit_index_nao_serializa_dict_do_topico():
+    index = _build_file_map_unit_index([
+        {"title": "Unidade 01 — Arquitetura de Software", "topics": [_TOPICO_DICT]},
+    ])
+
+    frases = index[0]["topic_phrases"]
+    assert frases == ["visoes arquiteturais estrutural e dinamica"]
+    # lixo estrutural do dict fora dos tokens
+    for sujeira in ("code", "slug", "label", "aliases", "kind"):
+        assert sujeira not in index[0]["topic_tokens"]
+
+
+def test_score_entry_against_unit_casa_frase_de_topico_dict():
+    """Com o dict serializado, `topic_phrase in headings_text` nunca casava e os
+    pesos altos de frase (3.0/2.8/2.7) ficavam inertes no eixo de unidade."""
+    unit = _build_file_map_unit_index([
+        {"title": "Unidade 01 — Arquitetura de Software", "topics": [_TOPICO_DICT]},
+    ])[0]
+    signals = _collect_entry_unit_signals(
+        {"title": "aula", "category": "material-de-aula"},
+        "# Visões arquiteturais: estrutural e dinâmica\n\nconteudo.")
+
+    assert _score_entry_against_unit(signals, unit) >= 3.0
+
+
+def test_unit_index_descarta_frase_que_e_titulo_de_outra_unidade():
+    """Glossario e aliases injetavam na u01 do MF duas frases `verificacao de
+    programas` — o titulo da u02. Qualquer sinal com o nome de OUTRA unidade
+    rouba material dela (medido 2026-08-18: card `Verificacao de Programas`
+    levava 6 entries da u02 para a u01)."""
+    index = _build_file_map_unit_index([
+        {"title": "Unidade 01 — Métodos Formais",
+         "topics": ["Sistemas Formais"],
+         "extra_signals": ["Verificação de Programas", "Provadores de Teoremas"]},
+        {"title": "Unidade 02 — Verificação de Programas",
+         "topics": ["Lógica de Hoare"]},
+    ])
+
+    u01 = next(u for u in index if u["slug"].startswith("unidade-01"))
+    u02 = next(u for u in index if u["slug"].startswith("unidade-02"))
+    assert "verificacao de programas" not in u01["topic_phrases"]
+    assert "sistemas formais" in u01["topic_phrases"]
+    assert "provadores de teoremas" in u01["topic_phrases"]
+    assert "logica de hoare" in u02["topic_phrases"]

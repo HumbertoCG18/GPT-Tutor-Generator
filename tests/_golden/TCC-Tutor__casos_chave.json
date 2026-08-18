@@ -1,12 +1,12 @@
 {
   "aula-01-apresentacao-da-disciplina-revisao-de-teoria-de-conjuntos-e-enumerabilidade": {
-    "band": "media",
-    "computed_block_id": "e4678122-f30f-4385-bbed-3a682d728920",
+    "band": "baixa",
+    "computed_block_id": "18a1092a-9a22-4d54-b02b-59414b171496",
     "computed_unit_slug": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
     "moodle_label": "",
     "presente": true,
     "source_section": "Semana 1 - Enumerabilidade e Argumento da Diagonalização de Cantor",
-    "temporal_block_id": "18a1092a-9a22-4d54-b02b-59414b171496"
+    "temporal_block_id": "667491f1-cffe-45f5-8b3f-29b0cec9d25a"
   },
   "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos": {
     "band": "media",

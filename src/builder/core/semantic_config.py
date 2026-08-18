@@ -243,7 +243,9 @@ def _infer_tool_candidates(
         has_special_shape = (
             any(ch in raw for ch in "+#.")
             or any(ch.isdigit() for ch in raw)
-            or any(ch.isupper() for ch in raw[1:])
+            # CamelCase (NuSMV, PySpark) e sinal de ferramenta; CAIXA ALTA e so
+            # formatacao de titulo do PDF e promovia EMENTA/PSPACE/HIERARQUIA.
+            or (any(ch.isupper() for ch in raw[1:]) and not raw.isupper())
         )
         if normalized in default_tools:
             accepted.append(normalized)

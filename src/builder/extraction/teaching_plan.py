@@ -13,6 +13,13 @@ _C_CEDILLA_UPPER = "\u00c7"
 _A_TILDE_UPPER = "\u00c3"
 _U_ACUTE_UPPER = "\u00da"
 
+_ZERO_WIDTH_TABLE = {ord(ch): None for ch in "​‌‍﻿"}
+_LINE_STARTS_NUMBERED = re.compile(r"^[-•*\s]*\d+(?:\.\d+)+\.?\s")
+_NUMBERED_ITEM_RE = re.compile(
+    r"(?<![\w.])(\d+(?:\.\d+)+)\.?\s+(.+?)(?=\s+\d+(?:\.\d+)+\.?\s+|$)"
+)
+_NUMBERED_PREFIX_RE = re.compile(r"^\d+(?:\.\d+)+\s")
+
 _TEACHING_PLAN_SECTION_STOP = re.compile(
     rf"^(?:AVALIA[{_C_CEDILLA_UPPER}C][A{_A_TILDE_UPPER}]O|BIBLIOGRAFIA)",
     re.IGNORECASE,
@@ -20,11 +27,39 @@ _TEACHING_PLAN_SECTION_STOP = re.compile(
 
 
 def _normalize_teaching_plan_heading(line: str) -> str:
-    """Normalize markdown-heavy headings before parser checks."""
+    """Normalize markdown-heavy headings before parser checks.
+
+    Ponto UNICO de normalizacao da linha: todo ramo do parser casa contra a saida
+    daqui, nunca contra a linha crua. Zero-width vem colado nos titulos extraidos
+    de PDF (visto no plano do TCC) e contamina slug e comparacao.
+    """
     normalized = (line or "").strip()
+    normalized = normalized.translate(_ZERO_WIDTH_TABLE)
     normalized = re.sub(r"^#+\s*", "", normalized)
     normalized = normalized.replace("*", "").strip()
     return normalized
+
+
+def _split_numbered_items(line: str) -> list:
+    """[(codigo, texto)] de UMA linha. A extracao de PDF cola varios itens numa
+    linha so ("4.6.1 Definicao da Classe 4.6.2 Exemplos ..."), entao um item por
+    linha perde o resto. Ponto final apos o codigo e opcional (ES2 nao usa)."""
+    if not _LINE_STARTS_NUMBERED.match(line or ""):
+        return []
+    items = []
+    for match in _NUMBERED_ITEM_RE.finditer(line):
+        text = match.group(2).strip(" .")
+        if text:
+            items.append((match.group(1), text))
+    return items
+
+
+def _finalize_topics(topics: list) -> list:
+    """Numerado presente => bullets sem numero sao metodologia ("Uso de projetor
+    multimidia"), nao conteudo. Unidade sem numeracao nenhuma (formato IA) mantem
+    tudo, que la os topicos vem em linha solta."""
+    numbered = [topic for topic in topics if _NUMBERED_PREFIX_RE.match(str(topic[0]))]
+    return numbered or topics
 
 
 def _parse_units_from_teaching_plan(text: str):
@@ -53,7 +88,6 @@ def _parse_units_from_teaching_plan(text: str):
         rf"^(?:#{{0,4}}\s*)?(unidade(?:\s+de\s+aprendizagem)?\s+(?:\d+|[ivxlcdm]+))\s*[-{_EN_DASH}:{_EM_DASH}]\s*(.+)",
         re.IGNORECASE,
     )
-    numbered_topic_re = re.compile(r"^(\d+\.\d+(?:\.\d+)*)\.\s+(.+)")
     bullet_topic_re = re.compile(rf"^[-{_BULLET}*]\s+(.+)")
 
     for raw in text.splitlines():
@@ -72,7 +106,7 @@ def _parse_units_from_teaching_plan(text: str):
         m = pucrs_unit_re.match(normalized_line)
         if m:
             if current_title is not None:
-                units.append((current_title, current_topics))
+                units.append((current_title, _finalize_topics(current_topics)))
             current_unit_num = m.group(1)
             current_topics = []
             current_style = "pucrs"
@@ -92,7 +126,7 @@ def _parse_units_from_teaching_plan(text: str):
         m = generic_unit_re.match(normalized_line)
         if m:
             if current_title is not None:
-                units.append((current_title, current_topics))
+                units.append((current_title, _finalize_topics(current_topics)))
             current_title = f"{m.group(1).strip()} {_EM_DASH} {m.group(2).strip()}"
             current_unit_num = None
             current_topics = []
@@ -100,29 +134,43 @@ def _parse_units_from_teaching_plan(text: str):
             continue
 
         if current_title is not None:
-            m = numbered_topic_re.match(line)
-            if m:
-                numbering = m.group(1)
-                depth = numbering.count(".") - 1
-                current_topics.append((m.group(2).strip(), max(depth, 0)))
+            items = _split_numbered_items(normalized_line)
+            if items:
+                # O codigo fica NO TEXTO: content_taxonomy chama _extract_topic_code
+                # sobre ele e so pula o filtro de known_tools quando acha codigo.
+                for code, label in items:
+                    current_topics.append((f"{code} {label}", max(code.count(".") - 1, 0)))
                 continue
-            m = bullet_topic_re.match(line)
+            m = bullet_topic_re.match(normalized_line)
             if m:
                 current_topics.append((m.group(1).strip(), 0))
                 continue
             if current_style == "learning_unit" and not normalized_line.endswith(":"):
-                current_topics.append((line, 0))
+                current_topics.append((normalized_line, 0))
 
     if current_title is not None:
-        units.append((current_title, current_topics))
+        units.append((current_title, _finalize_topics(current_topics)))
 
     return units
 
 
 def _topic_text(topic) -> str:
-    """Extrai o texto de um topico, seja tupla (text, depth) ou string legada."""
+    """Texto de um topico: tupla (text, depth) do parser, dict da taxonomia, ou
+    string legada.
+
+    O ramo do dict e obrigatorio: `build_content_taxonomy` devolve cada topico como
+    {code, slug, label, aliases, kind, unit_slug} e, sem ele, o `str(topic)`
+    serializava o dict inteiro dentro de `topic_phrases`
+    (`build_file_map_unit_index`) — os pesos de FRASE do scorer de unidade nunca
+    casavam e o lixo estrutural virava token.
+    """
     if isinstance(topic, tuple):
         return topic[0]
+    if isinstance(topic, dict):
+        label = str(topic.get("label") or "").strip()
+        if label:
+            return label
+        return str(topic.get("slug") or "").replace("-", " ").strip()
     return str(topic)
 
 

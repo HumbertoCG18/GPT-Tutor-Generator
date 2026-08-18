@@ -52,6 +52,16 @@ def build_file_map_unit_index(
     unit_generic_tokens: set[str],
 ) -> list:
     indexed = []
+    # Titulo normalizado de cada unidade: frase igual ao titulo de OUTRA unidade e
+    # sinal roubado (glossario e aliases injetavam `verificacao de programas` na u01
+    # do MF, titulo da u02 — 6 entries migravam para a unidade errada).
+    other_unit_titles = set()
+    for unit in units or []:
+        raw_title = unit.get("title", "") if isinstance(unit, dict) else unit[0]
+        title_norm = normalize_match_text(strip_outline_prefix(raw_title))
+        if title_norm:
+            other_unit_titles.add(title_norm)
+
     for unit in units or []:
         if isinstance(unit, dict):
             title = unit.get("title", "")
@@ -67,6 +77,8 @@ def build_file_map_unit_index(
         for topic in list(topics) + list(extra_signals):
             topic_norm = normalize_match_text(strip_outline_prefix(topic_text(topic)))
             if not topic_norm:
+                continue
+            if topic_norm != normalize_match_text(clean_title) and topic_norm in other_unit_titles:
                 continue
             topic_phrases.append(topic_norm)
             if topic_norm not in seen_topic_tokens:
@@ -218,6 +230,8 @@ def score_entry_against_unit(
     legacy_tags_text = signals.get("legacy_tags_text", "")
     tags_text = signals.get("tags_text", "")
     raw_text = signals.get("raw_text", "")
+    card_text = signals.get("card_text", "")
+    card_tokens = {tok for tok in card_text.split() if len(tok) >= 4}
     title_tokens = {tok for tok in title_text.split() if len(tok) >= 4}
     markdown_headings_tokens = {tok for tok in markdown_headings_text.split() if len(tok) >= 4}
     markdown_lead_tokens = {tok for tok in markdown_lead_text.split() if len(tok) >= 4}
@@ -247,6 +261,10 @@ def score_entry_against_unit(
             score += 1.8
         if unit_title in title_text:
             score += 1.0
+        # O card do Moodle costuma nomear a UNIDADE (MF: "Verificacao de Programas",
+        # "Provas por Inducao") ou o TEMA (SO: "Threads"; IA: "Machine Learning").
+        if unit_title in card_text or (card_text and card_text in unit_title):
+            score += 1.5
 
     for topic_phrase in topic_phrases:
         if not topic_phrase:
@@ -261,6 +279,13 @@ def score_entry_against_unit(
             continue
         if topic_phrase in title_text:
             score += 2.7
+            exact_topic_hits += 1
+            continue
+        # Card: sinal humano (o professor postou o material naquela secao). So no
+        # nivel de FRASE — card administrativo ("Informacoes Gerais", 10x no SO)
+        # nao casa frase nenhuma e fica inerte.
+        if topic_phrase in card_text:
+            score += 2.5
             exact_topic_hits += 1
             continue
         if topic_phrase in markdown_text:
@@ -283,6 +308,7 @@ def score_entry_against_unit(
         score += score_timeline_unit_phrase(markdown_lead_text, markdown_lead_tokens, topic_phrase, token_weights) * 0.48
         score += score_timeline_unit_phrase(markdown_text, markdown_tokens, topic_phrase, token_weights) * 0.18
         score += score_timeline_unit_phrase(title_text, title_tokens, topic_phrase, token_weights) * 0.45
+        score += score_timeline_unit_phrase(card_text, card_tokens, topic_phrase, token_weights) * 0.40
         score += score_timeline_unit_phrase(manual_tags_text, manual_tags_tokens, topic_phrase, token_weights) * 0.35
         score += score_timeline_unit_phrase(auto_tags_text, auto_tags_tokens, topic_phrase, token_weights) * 0.04
         score += score_timeline_unit_phrase(legacy_tags_text, legacy_tags_tokens, topic_phrase, token_weights) * 0.02

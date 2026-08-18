@@ -90,17 +90,16 @@ def _looks_like_tool_candidate(text: str, semantic_profile: Optional[dict] = Non
     normalized = _normalize_match_text(text)
     effective_profile = merge_semantic_profile(semantic_profile)
     known_tools = list(effective_profile.get("known_tools") or [])
-    normalized_tokens = set(normalized.split())
     for tool in known_tools:
         tool_norm = _normalize_match_text(tool)
         if not tool_norm:
             continue
-        if len(tool_norm) < 4:
-            if tool_norm in normalized_tokens:
-                return True
-        else:
-            if tool_norm in normalized:
-                return True
+        # Fronteira alfanumerica sempre: substring crua fazia `ementa` derrubar
+        # "implementacao" e `threads` derrubar "multithreads". Separadores que o
+        # normalizador preserva (+-./) seguem contando como fronteira, entao
+        # "isabelle" ainda casa em "Isabelle/HOL".
+        if re.search(rf"(?<![0-9a-z]){re.escape(tool_norm)}(?![0-9a-z])", normalized):
+            return True
     return False
 
 
@@ -332,7 +331,7 @@ def build_tag_catalog(
 
 
 def _extract_topic_code(text: str) -> str:
-    match = re.match(r"^\s*(\d+(?:\.\d+)*)(?:\.)?\s+", _collapse_ws(text))
+    match = re.match(r"^\s*\**\s*(\d+(?:\.\d+)*)(?:\.)?\**\s+", _collapse_ws(text))
     return match.group(1) if match else ""
 
 
@@ -340,7 +339,7 @@ def _strip_topic_code(text: str) -> str:
     cleaned = _collapse_ws(text)
     if not cleaned:
         return ""
-    return re.sub(r"^\s*\d+(?:\.\d+)*\.?\s*", "", cleaned).strip()
+    return re.sub(r"^\s*\**\s*\d+(?:\.\d+)*\.?\**\s*", "", cleaned).strip()
 
 
 def _parse_glossary_terms(glossary_md: str) -> List[Dict[str, object]]:
@@ -531,10 +530,24 @@ def build_content_taxonomy(
             dest["topics"] = _dedupe_taxonomy_topics(list(dest.get("topics", []) or []) + [topic])
         unit["topics"] = kept
 
+    # Heading institucional ("ENGENHARIA DE SOFTWARE II ---", "Trabalho
+    # FinalEngenharia de Software II") aparece no cabecalho de TODO material e,
+    # virando alias, transforma o topico dono num ima: no ES2 puxou Kubernetes e
+    # o T1 para a unidade de arquitetura (medicao 2026-08-18). O perfil ja marca
+    # o slug do curso como generico — aqui a checagem faltava.
+    effective_profile = merge_semantic_profile(semantic_profile)
+    generic_slugs = set(effective_profile.get("tag_generic_slugs") or [])
+    course_norm = _normalize_match_text(
+        str(effective_profile.get("course_slug") or "").replace("-", " ")
+    )
     for heading in heading_sources:
         heading_text = _collapse_ws(_strip_topic_code(heading))
         heading_slug = slugify(heading_text)
         if not heading_text or not heading_slug:
+            continue
+        if heading_slug in generic_slugs:
+            continue
+        if course_norm and course_norm in _normalize_match_text(heading_text):
             continue
         best_unit: Optional[dict] = None
         best_topic: Optional[dict] = None

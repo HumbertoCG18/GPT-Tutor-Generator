@@ -1,8 +1,8 @@
 {
   "0206-laminas-gerencia-de-i-o-livro-texto": {
-    "band": "baixa",
-    "computed_block_id": "599004b1-292b-4648-9221-9bc432b77937",
-    "computed_unit_slug": "unidade-06-gerencia-de-arquivos",
+    "band": "media",
+    "computed_block_id": "a838bf45-b6d1-48fc-b70b-0bd4de35d1ef",
+    "computed_unit_slug": "unidade-05-gerencia-de-memoria",
     "moodle_label": "02/06 Lâminas: Gerência de I/O (Livro-texto)",
     "presente": true,
     "source_section": "Gerência de I O",
@@ -10,8 +10,8 @@
   },
   "0704-exemplo-threads-em-java": {
     "band": "media",
-    "computed_block_id": "57df1003-b598-42f4-b58d-f465aea7fa20",
-    "computed_unit_slug": "unidade-07-gerencia-de-entrada-e-saida",
+    "computed_block_id": "1945c228-4ca2-4a76-8d63-47c804459ecd",
+    "computed_unit_slug": "unidade-03-programacao-concorrente",
     "moodle_label": "07/04 Exemplo: threads em Java",
     "presente": true,
     "source_section": "Threads",
@@ -19,7 +19,7 @@
   },
   "0904-laminas-semaforos": {
     "band": "media",
-    "computed_block_id": "e4f7e22a-e091-46f8-b70e-a65f387dbf84",
+    "computed_block_id": "1945c228-4ca2-4a76-8d63-47c804459ecd",
     "computed_unit_slug": "unidade-03-programacao-concorrente",
     "moodle_label": "09/04 Lâminas: Semáforos",
     "presente": true,

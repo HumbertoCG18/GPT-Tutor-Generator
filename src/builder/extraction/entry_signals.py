@@ -132,5 +132,9 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         # alavanca 1: label do recurso Moodle (mod.name) — identidade LIMPA do
         # material (ex. "Exemplos (Lógica de Floyd-Hoare)"), pesa como conceito.
         "moodle_label_text": normalize_match_text(entry.get("moodle_label", "")),
+        # card do Moodle (secao onde o professor postou). Sinal de COBERTURA, nao
+        # temporal: o motor ja usa o card como janela por outra via. Consumido SO
+        # pelo scorer de unidade — ver test_card_nao_afeta_o_scorer_de_bloco_do_motor.
+        "card_text": normalize_match_text(entry.get("source_section", "")),
     }
 

@@ -2661,7 +2661,10 @@ class TestParseUnitsFromTeachingPlan:
     def test_pucrs_stops_at_markdown_section_heading(self):
         units = _parse_units_from_teaching_plan(PUCRS_PLAN_WITH_MARKDOWN_SECTIONS)
         all_topics = [_topic_text(t) for _, topics in units for t in topics]
-        assert "Sistemas Formais" in all_topics
+        # O texto do topico carrega o codigo ("1.1 Sistemas Formais"): sem ele,
+        # build_content_taxonomy nao reconhece o topico como vindo do plano e o
+        # joga no filtro de known_tools (perda medida em 2026-08-18).
+        assert "1.1 Sistemas Formais" in all_topics
         assert not any("PROCEDIMENTOS" in t for t in all_topics)
         assert not any("AVALIAÇÃO" in t for t in all_topics)
 
@@ -2739,7 +2742,7 @@ class TestNormalizeUnitSlug:
         """1.1. Sistemas Formais → depth 0 (tópico principal)"""
         units = _parse_units_from_teaching_plan(PUCRS_PLAN)
         topics_u1 = units[0][1]
-        sistemas = [t for t in topics_u1 if _topic_text(t) == "Sistemas Formais"]
+        sistemas = [t for t in topics_u1 if _topic_text(t) == "1.1 Sistemas Formais"]
         assert len(sistemas) == 1
         assert _topic_depth(sistemas[0]) == 0
 
