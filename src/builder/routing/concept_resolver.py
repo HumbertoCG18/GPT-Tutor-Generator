@@ -161,6 +161,26 @@ def concept_token_weights(
     return weights
 
 
+
+def overlap_min(entry_vec: dict, block_vec: dict) -> float:
+    """Soma de min() sobre a interseccao, em ordem FIXA.
+
+    O `sorted()` NAO e cosmetico. `keys() & keys()` devolve set, e a ordem de
+    iteracao de um set de str muda a cada processo (hash randomization do
+    Python). Somar float em ordem diferente da resultados diferentes no ultimo
+    ULP — o bastante pra `computed_block_confidence` mudar entre duas rodadas
+    identicas do reprocess, a `band` flipar na fronteira baixa/media e, num
+    empate tecnico, o bloco VENCEDOR trocar (medido 2026-08-19: 6 entries do TCC
+    divergiam entre rodadas; TCC aula-06, confianca 0.084, trocava de bloco; com
+    PYTHONHASHSEED=0, zero divergencias). Reprocess so e idempotente com a soma
+    em ordem fixa. Coberto por tests/test_determinismo_do_score.py.
+    """
+    return sum(
+        min(entry_vec[tok], block_vec[tok])
+        for tok in sorted(entry_vec.keys() & block_vec.keys())
+    )
+
+
 def concept_vector(
     item: object,
     weights: Dict[str, float],
@@ -348,10 +368,7 @@ def resolve_material_assignment(
     scored: List[tuple] = []
     for block in blocks:
         block_vec = concept_vector(block, weights, normalize=norm)
-        overlap = sum(
-            min(entry_vec[tok], block_vec[tok])
-            for tok in entry_vec.keys() & block_vec.keys()
-        )
+        overlap = overlap_min(entry_vec, block_vec)
         bid = str(block.get("block_uuid") or block.get("id") or "")
         llm_term = votes.get(bid, 0.0)
         date_term = _score_block_date_match(signals, block)

@@ -116,7 +116,10 @@ def _score(mat: set, sig: dict, m: int, df: dict) -> float:
     """IDF local (log(1+m/df)) ponderado pelo peso do token, LEN-NORMalizado."""
     if not sig:
         return 0.0
-    raw = sum(sig[t] * math.log(1.0 + m / df[t]) for t in (mat & set(sig)))
+    # sorted(): mesmo defeito de concept_resolver.py:360 — soma de float sobre
+    # set de str, cuja ordem de iteracao muda a cada processo. Sem isto o score
+    # difere no ultimo ULP entre rodadas identicas.
+    raw = sum(sig[t] * math.log(1.0 + m / df[t]) for t in sorted(mat & set(sig)))
     return raw / math.sqrt(len(sig))
 
 
