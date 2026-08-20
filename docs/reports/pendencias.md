@@ -1,6 +1,59 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-18 (sessao EIXO DE COBERTURA + TAXONOMIA — **TUDO APLICADO EM PRODUCAO
+last_updated: 2026-08-20 (fechamento da campanha do motor — sessao de 2 dias, 18/08 a 20/08).
+**HANDOFF: `docs/reports/2026-08-20-handoff-fechamento-campanha-motor.md`** — le primeiro.
+Cobre a sessao inteira (`7e940f5e`, 63 prompts): poda do enxame, regua nova + sweep do gate,
+rotulagem dos 64 casos, limpeza do manifest, eixo de bloco, N:N nos consumidores, fix do
+nao-determinismo, `explain_entry.py` e o veredito do termo `card`.
+Antes: `docs/reports/2026-08-19-handoff-cardinalidade-do-motor.md` — secoes A–H seguem validas,
+**I-7 vencida** (granularidade resolvida, duplicatas removidas).
+CARD (2026-08-20d): o card e ponteiro de **UNIDADE** (teto LOO 97%, janela 1,41), nao de bloco
+(85%, abaixo dos 86% de hoje); consenso por card no eixo de cobertura **REFUTADO** (+1 em 57)
+porque `rule: card` ja responde por 179 das 258 `coverage_units` — o teto ja esta colhido.
+Ver K-3a/K-3b em `## CODE — o termo card da fusao esta MORTO`.
+
+ESTADO FINAL (`as-of 2026-08-19d`): unidade 1:1 **166/188 = 88%** (era 127/191 = 66%) ·
+cobertura N:N **44/57 = 77%, F1 0,81** (regua nova) · bloco **172/200 = 86%** (NAO 57% — eu media
+o campo errado; ver secao do bloco) ·
+entries **227** (eram 233; 6 duplicatas de conteudo removidas) · suite **1904 passed /
+1 skipped / 0 falhas** · producao reprocessada e **idempotente** (0 mudancas entre duas rodadas).
+ROTULAGEM COMPLETA: 64 casos, 0 pendentes.
+DECISION da granularidade da avaliacao **RESOLVIDA** (prova inteira, nao por questao) — ver
+secao propria; o gargalo medido e o `EXAM_INDEX.md` existir em 1 de 5 cursos, nao a granularidade.
+A DESCOBERTA DA SESSAO: **o ES2 nunca esteve quebrado** — 8/27 contra a regua temporal virou
+17/18 contra os rotulos de cobertura. A regua e que cobrava a resposta errada. O balde EIXO
+sumiu quando os rotulos chegaram, entao a cardinalidade N deixou de ser pre-requisito do
+passo 1 e virou melhoria de modelo.
+TESE: a raiz de unidade e subunidade nao e o scorer, e a CARDINALIDADE. Prova: 53 arquivos
+avaliativos nos 5 cursos, os 53 recebem 1 subunidade so. Teto da regua de unidade no modelo
+1:1 = **179/191 = 94%** (~85% contando o ES2). O balde EIXO so fecha trocando para N.
+Por curso: IA 93% e TCC 83% praticamente resolvidos; **SO 42% e ES2 30%** carregam 25 dos 39 ERRO.
+BLOCO e o eixo mais fraco (**118/208 = 57%**), o unico genuinamente 1:1, com gold pronto, e
+NINGUEM MEXEU — maior ganho disponivel.
+GANHO ESTRUTURAL DESTA SESSAO: **reprocess virou ponto fixo** (0 entries mudam entre duas
+rodadas identicas; antes deslocava 2). Pre-requisito de qualquer medicao futura.
+Codigo na arvore (7 arquivos, +5 isolado, suite 1902) **NAO commitado**; producao **NAO
+reprocessada** de proposito — o ganho nao se materializa e a subunidade piora enquanto a
+cardinalidade estiver errada.
+Antes — sessao EIXO DE UNIDADE — medicao **e** execucao da fila.
+Regua nova `entry -> unidade` criada (`scripts/eval_entry_unit.py`, 191 entries, verdade
+composta de dois golds ja aprovados — o handoff registrava que essa regua NAO EXISTIA).
+FEITO: (1) gate `T.UNIT_TAG` calibrado 0.65 -> 0.50 no primeiro sweep da historia do projeto,
+medido ponta-a-ponta; (2) tres fixes de higiene do glossario (secao de template virando sinal de
+unidade, frase ubiqua, travessao virando alias); (3) normalizacao por tamanho de unidade
+REJEITADA pela medicao. Suite 1901 passed / 1 skipped.
+PONTA-A-PONTA: 126 certo / 46 errado / 19 vazio -> **132 / 47 / 12**.
+Achados novos nas duas secoes CODE abaixo (eixo de UNIDADE e `known_tools`); relatorio com todas
+as tabelas e as CORRECOES: `docs/reports/2026-08-18-achados-eixo-unidade.md`.
+PENDENTE: reprocessar os 5 repos-tutor — os fixes de glossario so entram na taxonomia em disco
+no proximo reprocess, e o gate novo so vale para o que for regravado.
+VEREDITO `known_tools`: **dano medido = ZERO nos dois eixos** (taxonomia byte-identica com o
+filtro ligado/desligado nos 5 cursos; 0 flips em bloco; 0 delta em 4 bracos de unidade) — a raiz
+segue armada mas a trava esta acionada. Desce para higiene.
+TOPO DA FILA POR IMPACTO MEDIDO: (1) sweep de `T.UNIT_TAG=0.65`, que mata 29 acertos certos;
+(2) normalizar score por tamanho de unidade — ACOPLADO ao (1); (3) podar boilerplate do
+template do GLOSSARY.md, +2 e zero regressao; (4) eixo de cobertura (ES2 59% confiante-e-errado).
+Antes — sessao EIXO DE COBERTURA + TAXONOMIA — **TUDO APLICADO EM PRODUCAO
 e commitado**; gerador HEAD `843db1e`, 5 repos-tutor limpos e reprocessados; suite 1898.
 Handoff da sessao: `docs/reports/2026-08-18-handoff-cobertura-taxonomia.md`.
 Feito: (1) perda de topicos do plano de ensino corrigida — TCC 11/27, SO 3/34, ES2 1/21 -> 0
@@ -506,6 +559,599 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   entrou na assinatura do bloco — caso FLAGADO (band media, cw=0), mitigado por pino
   gold-backed (`91c1d2a`); o caminho do scorer NÃO tem guard C6-equivalente. Insumo nomeado da
   campanha 2 (unidades/colisão de rótulo).
+
+## CODE — eixo de UNIDADE: achados medidos (2026-08-18, sessao de investigacao)
+
+Regua NOVA `entry -> unidade` criada e commitada: `scripts/eval_entry_unit.py`. Verdade =
+composicao de dois golds ja aprovados (`ground_truth_<C>.csv` |><| `gold_units_<C>.csv`),
+191 entries nos 5 cursos, sem rotular nada novo. Relatorio completo com todas as tabelas e as
+hipoteses refutadas: `docs/reports/2026-08-18-achados-eixo-unidade.md`.
+
+BASELINE INICIAL (`as-of 2026-08-18`, HEAD `419aaff`, gate 0.65): certo **95/191 (50%)** ·
+sem resposta 57 (30%) · confiante-e-errado 39 (20%). Ponta-a-ponta: 126 certo / 46 errado /
+19 vazio. Decomposicao dos 96 nao-acertos: gate 29 · eixo 12 · erro 55.
+
+**BASELINE ATUAL (`as-of 2026-08-18b`, gate 0.50, apos a poda do glossario)**: scorer isolado
+**109/191 certo (57%)** · sem resposta 40 (21%) · confiante-e-errado 42 (22%).
+Ponta-a-ponta (o que o sistema GRAVA): **132 certo · 47 errado · 12 vazio**.
+Por curso, scorer isolado (certo/n): MF 43/67 · SO 9/36 · IA 39/43 · ES2 8/27 · TCC 10/18.
+
+CAVEAT: a verdade e a unidade do bloco TEMPORAL; a regua SUPERESTIMA o erro em curso com
+material transversal (ES2, SO). ES2 piorou em confiante-e-errado com o gate menor (16 -> 19 no
+scorer isolado) — e o problema de EIXO sendo amplificado, nao regressao do scorer; ponta-a-ponta
+o ES2 fica igual (8/27) porque a reconciliacao segura.
+
+- [CONCLUIDO 2026-08-18b] **A-6 · gate `T.UNIT_TAG` calibrado 0.65 -> 0.50** — primeiro sweep de
+  UNIT_TAG do projeto, medido PONTA-A-PONTA (depois de `reconcile_unit_with_block`).
+  gate 0.65: 126 certo / 46 errado / 19 vazio · **0.50: 132 / 47 / 12** (escolhido) · 0.40 satura
+  em 132 e so cresce o errado. Por curso em 0.50: MF 52->54 · SO 14->15 · IA 38->40 · ES2 8->8 ·
+  TCC 14->15. Tabela no comentario de `thresholds.py`. Sentinela `test_thresholds_present`
+  atualizado; dois testes de gate passaram a ser RELATIVOS a `T.UNIT_TAG` para nao apodrecer.
+  **CORRECAO ao que eu tinha escrito**: "o gate mata 29 acertos" superestimava ~5x — com o slug
+  vazio a reconciliacao HERDA a unidade do bloco (`file_map.py:724`), que acerta mais que o
+  scorer. Ganho real +6 gravadas certas, +1 errada, -7 vazias.
+- [REJEITADO 2026-08-18b] **A-2 · normalizar score por tamanho de unidade** — medido e PIOR.
+  Com o gate livre para se mover, alpha=0,5 perde para alpha=0 em toda a grade (104 contra
+  109/110 no scorer isolado). O ganho aparente do braco H vinha de comparar contra gate fixo em
+  0.65. Fica o FATO estrutural (desequilibrio de tamanho, que a poda do glossario PIOROU:
+  SO 1,89->3,00 · TCC 2,71->4,00 · IA 3,22->3,50 · ES2 1,92->2,57), sem correcao proposta.
+- [CONCLUIDO 2026-08-18b] **A-1 · template do GLOSSARY.md virava topic_phrase de TODAS as
+  unidades (5/5 cursos)** — `_parse_glossary_terms` tratava toda linha `## ` como termo, e
+  `## Formato de entrada` / `## Termos` sao secoes do template sem `**Aparece em:**`; o guard
+  `if unit_hint and ...` deixava passar. Dois fixes: (1) termo sem `Aparece em` nao e sinal de
+  unidade; (2) frase presente em TODAS as unidades e descartada de quem NAO a tem como topico
+  proprio (a dona mantem e volta a discriminar). Resultado: **frases ubiquas = 0 nos 5 cursos**,
+  SO caiu de 168 para 98 frases no indice. **Ganho na regua: ZERO** — o braco G previu +2 e nao
+  era simulacao fiel; o ruido era simetrico entre unidades, entao nao mudava o argmax. O fix
+  continua certo (remove sinal de discriminancia nula), mas nao e ganho de acuracia.
+  **CORRECAO**: `camadas` (ES2) e `definicao da classe` (TCC) na tabela original eram FALSOS
+  POSITIVOS — meu contador somava ocorrencias, nao unidades.
+- [CONCLUIDO 2026-08-18b] **A-4 · `—` virava alias (placeholder de formatacao virando sinal)** —
+  template escreve `**Sinonimos aceitos:** —` quando nao ha sinonimo e `content_taxonomy.py:371`
+  aceitava qualquer nao-vazio. Eram **100 de 361 aliases**: SO 36/97 (37%), ES2 21/50 (42%),
+  TCC 26/78 (33%), MF 14/84, IA 3/52. **RULING DO USER: `—` e formatacao em 99% dos casos.**
+  Fix: `_GLOSSARY_EMPTY_MARKERS` = `—`,`–`,`-`,`--`,`n/a`,`nenhum`. **Só entra em producao no
+  proximo reprocess** (a taxonomia em disco ainda tem os aliases velhos).
+- [CODE] **F-5 · 10 de 15 constantes de `thresholds.py` sem prova de calibracao**
+  (`as-of 2026-08-18b`, varredura automatica: comentario contiguo citando sweep/gold/regua/razao
+  medida). COM prova: `STRONG_SCORE`, `BAND_HIGH`, `DATE_STRONG_BOOST`, `IDF_WEIGHT`, `UNIT_TAG`
+  (este ultimo so a partir de hoje). SEM prova: `BAND_LOW` 0.20 · `DATE_WEAK_BOOST` 0.10 ·
+  `TOOL_EXTENSIONS` · `METHOD_CAPS` · **`SUBUNIT_TAG` 0.60** · `MARGIN_K` 0.18 ·
+  `MARGIN_K_TOPIC` 0.20 · `UNIT_MATCH_REL_MARGIN` 0.15 · `UNIT_MATCH_MIN_WINNER` 0.5 ·
+  `SEQUENCE_BOOST` 0.20. `SUBUNIT_TAG` e o analogo direto do gate que acabou de mover 15 pontos
+  — e nao existe regua de subunidade. Dois ja provados mortos (F-4).
+- [CODE] **F-4 · dois thresholds sao CONSTANTES MORTAS** (`as-of 2026-08-18b`).
+  `UNIT_MATCH_MIN_WINNER` (0,5) e `UNIT_MATCH_REL_MARGIN` (0,15) dao resultado IDENTICO nas 72
+  linhas do sweep (testados 0,5/0,3/0,15 e 0,15/0,10). Nenhum discrimina nada no corpus atual.
+  Ou o piso esta frouxo demais para morder, ou `ambiguous` ja foi decidido antes por outra
+  condicao. Nao investigado.
+- [CODE] **A-5 · vazamento cross-unidade por alias (MF)** (`as-of 2026-08-18`).
+  `logica-de-hoare` e topico da u02 (correto) E `Logica de Floyd-Hoare` e alias de
+  `fundamentos-de-logica-de-primeira-ordem`, na u01. Mesmo conceito em duas unidades, uma errada.
+  Quarta instancia da classe "sinal textual de uma unidade vazando para outra".
+- [DECISION] **A-3 · divergencia de eixo sai CONFIANTE — e o modo dominante do ES2**
+  (`as-of 2026-08-18`). ES2 tem 16 de 27 confiante-e-errado (59%): serie de laboratorio
+  `roteiro2..8` / `microsservicos2..7`, todas com card `Microsservicos`, todas preditas
+  `unidade-01-arquitetura-de-software` com conf **0,86-0,95**, verdade temporal em u02/u03. O
+  scorer responde COBERTURA, a regua cobra TEMPORAL. Mesmo padrao no SO com `threads` (6 entries
+  preditas u03, verdade temporal u02/u04) — e literalmente a pergunta do handoff anterior.
+  Nao e bug de scorer: e o eixo faltante. Mas grava com 0,95 e nada sinaliza.
+
+## CODE — SUBUNIDADE: regua sem rotulo + colapso diagnosticado (2026-08-19)
+
+Regua nova `scripts/eval_subunit_health.py` — **nao precisa de gold**. Nao mede acerto, mede se
+o SINAL EXISTE: COLAPSO (concentracao >=60% num subtopico, unidade com >=4 entries e >=3
+topicos), IMA (topico com >=2,5x a mediana de aliases dos irmaos), INTEGRIDADE (subtopico stale
+ou de outra unidade). Exit 1 em colapso/integridade — serve de gate. Detalhe em
+`docs/reports/2026-08-18-achados-eixo-unidade.md` secao G.
+
+TETO DE ACERTO da subunidade (condicao NECESSARIA — subtopico pertence a unidade verdadeira;
+derivado dos golds existentes, sem rotular nada): **133/191 = 70%**. Por curso: IA 91% · MF 87% ·
+TCC 78% · SO 42% · ES2 26%. SO e ES2 herdam o erro de unidade (divergencia de eixo).
+
+- [CODE] **G-1 · COLAPSO em 3 unidades** (`as-of 2026-08-19`). IA `u05 aprendizado-de-maquina`:
+  40 entries -> **2 subtopicos de 4, 95% num so**. SO `u06 gerencia-de-arquivos`: 5 entries ->
+  **1 de 6, 100%**. SO `u02`: 9 entries -> 2 de 4, 89%. Nesses casos `computed_subunit_slug` nao
+  e predicao, e constante. Gravado em **209 de 233 entries** dos 5 cursos.
+- [CODE] **G-3 · CAUSA: o topico vencedor duplica o vocabulario da propria unidade**
+  (`as-of 2026-08-19`). IA u05: titulo tem tokens `apren`+`maqui`, e o topico vencedor
+  `introducao-ao-aprendizado-de-maquina` contem os DOIS — todo material da unidade casa nele.
+  SO u06: titulo `arqui`+`geren`, vencedor `arquivos`. SO u02: `escal` aparece em 2 dos 4
+  rotulos irmaos. MF u01 nao colapsa porque nenhum topico domina. Falta **IDF intra-unidade** em
+  `score_entry_against_taxonomy_topic`. Mesma classe do A-1, um nivel abaixo.
+  NAO implementado: sem regua de ACERTO de subunidade, trocaria perda medida por ganho nao
+  medido (ver G-2).
+- [REJEITADO 2026-08-19] **G-2 · desempate por POSICAO em `_select_supported_taxonomy_topic`**
+  (`content_taxonomy.py:255`, `if score > best_score` mantem o primeiro da lista). CONFIRMADO
+  experimentalmente: inverter a ordem dos topicos do IA u05 troca a resposta. Fix candidato
+  (empate => nao vira alias de ninguem) medido: aliases do IA u05 `[9,2,2,2]` -> `[4,2,2,2]`,
+  **colapso 95% -> 95% (nao muda)**, regua entry->unidade **132 -> 128 (-4)**. Custa 4 certas e
+  nao move o colapso. O defeito de desempate CONTINUA existindo — so nao e a causa do colapso.
+- [CODE] **G-4 · B-5 tem consequencia real em producao, ao contrario do que medi**
+  (`as-of 2026-08-19`). A regua achou `logicadehoare2` com subtopico **`21-logica-de-hoare`** —
+  slug com o prefixo numerico grudado, o defeito de `_strip_topic_prefix` que eu tinha medido
+  como INERTE na regua de unidade. Nao e inerte: corrompe subunidade. Sobe de prioridade.
+- [CODE] **G-5 · integridade** (`as-of 2026-08-19`): SO `programa` recebe subtopico
+  `estudo-de-casos` que pertence a OUTRA unidade. 1 caso, mas viola o invariante P0.2.
+- [REJEITADO 2026-08-19] **H · IDF intra-unidade** — implementado em DUAS variantes e medido
+  contra as duas reguas. **Duro** (token comum sai do overlap E frase so-comum nao conta como
+  hit): ponta-a-ponta **132/47/12 -> 130/50/11** (-2 certo, +3 errado); scorer isolado 109->112.
+  Resolve SO u06 (100%->40%) e SO u02, IA u02 vai de 4 para **6 de 6 topicos** (56%->31%), mas
+  **IA u05 PIORA (95%->98%)** e TCC ganha 2 colapsos novos. **Suave** (so o overlap, frase
+  preservada): 131/47/13, neutro, colapso segue em 3 so trocando de lugar. Revertido.
+  **LICAO**: o colapso do IA u05 sobrevive as duas => NAO e causado por token comum, e sim pelos
+  ALIASES MAL ATRIBUIDOS (`Aprendizado Supervisionado` esta no topico `introducao-*` quando
+  pertence a `paradigmas-*`). Os dois candidatos atacam metades diferentes e cada um cobra:
+  empate=>ninguem custa -4 e nao move o colapso; IDF custa -2 e piora o IA. O fix certo e
+  "empate => desempatar por EVIDENCIA melhor", que exige sinal que hoje nao existe.
+- [CONCLUIDO 2026-08-19] **H-2 · bonus fantasma de +1,4 (`timeline/index.py`)** — quando o
+  topico nao tem token proprio, `len(overlap) >= len(topic_tokens)` vira `0 >= 0` e soma **+1,4
+  INCONDICIONAL em toda entry avaliada**. Vivo em producao: **3 topicos do MF** com vocabulario
+  inteiro em `UNIT_GENERIC_TOKENS` (`Linguagens de Especificacao e Logicas`, os dois `Softwares
+  de Suporte a Verificacao Formal de ...`). Guard aplicado. Ponta-a-ponta no gate operante
+  (0,50): **132/47/12, identico** — neutro; ganha nos gates altos (0,65: 126->127). Mantido por
+  ser correcao de defeito a custo zero. Teste
+  `test_topico_sem_vocabulario_proprio_nao_ganha_bonus_fantasma`. Achado colateral da tentativa
+  de IDF — o fix rejeitado pagou por si em diagnostico.
+
+## CODE — `known_tools`: raiz documentada, dano MEDIDO = ZERO (2026-08-18)
+
+Investigado a pedido do user. **Prova mais forte que ablacao**: `build_content_taxonomy` com
+`_looks_like_tool_candidate` ligado vs desligado produz JSON **byte-identico** nos 5 cursos —
+o bypass do `topic_code` cobre 100% dos topicos do plano, o filtro nunca e alcancado. Ablacoes:
+eixo de BLOCO 0 flips (com e sem voto do LLM); eixo de UNIDADE 0 delta em 4 bracos
+(sem `ferramenta:` poluida / sem `bloco:` / sem `topico:` / `topico:` com prefixo corrigido).
+**Arma carregada com a trava acionada: higiene, nao urgencia.** Detalhe em
+`docs/reports/2026-08-18-achados-eixo-unidade.md` secao B.
+
+DEFINICAO OPERACIONAL DE FERRAMENTA (extraida do proprio codigo, `concept_resolver.py:158` e
+`:218`): **instrumento com que a unidade inteira e ensinada, uniformemente — discrimina UNIDADE,
+nao discrimina BLOCO.** Teste: trocar por outra mantem o conteudo ensinado? Isabelle->Coq mantem
+"Logica de Hoare" => ferramenta. Trocar "Logica de Hoare" muda o conteudo => topico. Lista certa
+ja existe: `semantic_defaults.json`, 11 entradas, todas provadores.
+
+- [CODE] **B-1 · `_infer_tool_candidates` e um gerador de anti-topico** (`semantic_config.py:196`).
+  Vocabulario auto-inferido do proprio corpus usado como filtro DESTRUTIVO sobre esse mesmo
+  corpus. Realimentacao positiva: quanto mais central o termo, mais vira "ferramenta". Vocabulario
+  vivo (`as-of 2026-08-18`): MF `formal`,`programas`,`modelos`,`invariantes`,`hoare`,`sobre` ·
+  TCC `hierarquia`,`propriedades`,`cook-levin`,`np-completude` · SO `threads` · ES2
+  `cliente-servidor`,`devops`. Fix: parar de inferir; usar defaults curados + override por curso.
+- [CODE] **B-3 · o filtro de ferramenta e SUBTRATIVO — erro categorico** (`content_taxonomy.py:159`).
+  Ser ferramenta nunca deveria apagar topico. Dafny e ferramenta E topico do MF. Fix: tirar
+  `_looks_like_tool_candidate` de `_is_valid_topic_candidate`; `known_tools` so ADICIONA
+  `ferramenta:`. Derruba `tests/test_taxonomy_topic_loss.py:111-112` — que pina `Uso de threads`
+  e `Provas de NP-Completude` como ferramenta, sendo ambos topico. Devem cair.
+- [CODE] **B-4 · fix assimetrico: `_extract_tool_candidates` ficou com substring cru**
+  (`content_taxonomy.py:202` vs `:101` que ganhou fronteira). Duas copias da mesma logica de
+  match — extrair helper. Efeito: `"Especificacao informal de requisitos"` -> `ferramenta:formal`.
+  MF tem 20 `ferramenta:` contra 18 `topico:` no catalogo (`as-of 2026-08-18`).
+- [CODE] **B-5 · segundo parser de topico sem normalizacao** (`content_taxonomy.py`
+  `_extract_topic_candidates`). Trata `## `, `- [ ] `, `- ` mas NAO `**`. Linha real do SO
+  `- **1.1** Evolucao historica` -> slug `11-evolucao-historica` vs `evolucao-historica` da
+  taxonomia. **SO: 36 topicos, 48 tags `topico:`, 0 casando** (`as-of 2026-08-18`); confirmado em
+  producao (`topico:32-escalonamento`, 10 slugs). Fix: reusar
+  `teaching_plan._normalize_teaching_plan_heading`. Impacto na regua: **nenhum** (medido).
+- [CODE] **B-6 · IA: 0 topicos do plano no catalogo de tags** (`as-of 2026-08-18`).
+  `_extract_topic_candidates` exige marcador ou numero no inicio; o plano do IA vem em linha
+  solta (`_parse_units_from_teaching_plan` trata via `current_style == "learning_unit"`,
+  `content_taxonomy` nao). 19 topicos na taxonomia, 0 tags.
+- [CODE] **B-7 · heuristicas de forma sobre entrada autoritativa**. `>6 palavras` e
+  `>=2 hifens / >=9 espacos / ano 19xx-20xx` matam topico que o plano JA numerou sob uma unidade.
+  Vitimas no TCC: `Argumento Diagonal de Cantor e Conjuntos Incontaveis`,
+  `Prova da Indecidibilidade do Problema da Parada`. Fix: rodar so em candidato de heading.
+- [CODE] **B-8 · `.tag_catalog.json` e git-ignored e o rollout nao regenerou** (mtime 15:39,
+  fix commit 16:19, rollout 16:48). Cache nao versionado consumido pelo scorer (S4).
+- [CODE] **B-9 · `TOOL_TOKENS` nao existe — o comentario mente** (`entry_signals.py:84`). Diz que
+  "o scorer de bloco (file_map, TOOL_TOKENS) filtra quais sao ferramentas de verdade". O simbolo
+  so existe em `.pyc` stale. Nada filtra.
+
+## CODE — REALIMENTACAO pelas auto_tags: a raiz da regressao (2026-08-19)
+
+Isolamento com harness FIEL (learned_unit_boosts + manual_unit_slug + reconcile), 191 rotuladas:
+
+| variante | gate 0.65 | gate 0.50 |
+|---|---|---|
+| base (HEAD) | 126 | 129 |
+| + poda glossario + guard | 126 | 130 |
+| + fix do loop de correcao | 126 | **131** |
+
+Isolado, **+5 e nenhum curso regride** (MF 52->53 · SO 14->15 · IA 38->40 · ES2 8->8 · TCC 14->15).
+Em PRODUCAO o mesmo codigo da **127 -> 127**. A diferenca e a realimentacao.
+
+- [CONCLUIDO 2026-08-19] **J-1 · `extract_entry_learned_terms` aprendia pelos ESPELHOS da
+  saida do sistema** (`src/models/tag_profile.py:98`). Ele extraia o slug de TODA auto_tag,
+  incluindo `unit:`, `subunit:` e `bloco:` — que `resolver_apply` escreve a partir do que ele
+  mesmo computou. Efeito medido: **1 correcao humana do MF atingia 19 de 67 entries (28%)** com
+  boost de +1.5 a +3.0 para `unidade-03-verificacao-de-modelos`, casando por `bloco-03`,
+  `codigo` e `unidade-01-metodos-formais`. Com `winner_score` tipico de 1.79, um boost de 3.0
+  decide sozinho. Fix: `_PREFIXOS_ESPELHO = {unit, subunit, bloco, block}` filtrado do
+  aprendizado. Harness: 130 -> **131**. Producao: 0.
+  **Segundo registro do mesmo perfil tem `corrected_unit_slug` VAZIO** e e silenciosamente
+  pulado (`tag_profile.py:160`) — lixo que ninguem ve.
+- [CODE] **J-2 · o loop MAIOR continua: `auto_tags` sao entrada E saida** (`as-of 2026-08-19`).
+  Medido rodando o MESMO harness sobre os manifests antes e depois do reprocess:
+  **131 (tags antigas) -> 129 (tags novas)**, toda a perda no MF. As tags que o sistema escreve
+  alimentam `auto_tags_text` em `score_entry_against_unit` (0.18 exato / 0.04 parcial) e
+  `tags_text`. Logo TODO reprocess desloca o resultado sem ninguem ter mudado nada — o sistema
+  re-elege a propria resposta anterior, e quebrar esse eco custa acerto.
+  **E a explicacao definitiva de por que a regressao nao fecha por mudanca de scorer.**
+  Fix candidato: excluir prefixos gerenciados de `auto_tags_text`/`tags_text` nos signals, do
+  mesmo jeito que J-1 fez no aprendizado. NAO medido.
+- [CODE] **J-3 · o harness fiel ainda difere da producao em ~2** (129 vs 127, `as-of 2026-08-19`).
+  Diff entry-a-entry: 9 divergencias, harness acerta 4 e erra 1. As 5 restantes sao entries que
+  a producao deixa VAZIAS (`SO/laminas-sockets`, `IA/artigo-usando-agrupamento`, `ES2/plano`) —
+  `apply_unit_subunit_fields` pula entry sem `computed_block_id`. Falta modelar esse skip.
+
+- [CONCLUIDO 2026-08-19] **J-2 · eco cortado nos signals** (`extraction/entry_signals.py`).
+  `auto_tags_text` e `tags_text` deixam de receber os prefixos que o proprio motor escreve
+  (`unit:`, `subunit:`, `bloco:`, `block:`). A lista crua de `auto_tags` segue inteira para
+  `tool_values` e para os outros leitores — so o TEXTO de score perde o eco.
+  **RESULTADO: ponto fixo.** Reprocess rodado DUAS vezes seguidas com o mesmo codigo:
+  **0 entries mudam** entre elas, nos 5 cursos. Harness idempotente tambem: 129 antes do
+  reprocess, 129 depois (antes do fix era 131 -> 129, deslocava 2).
+  Custo: 2 acertos no harness (131 -> 129) — eram o eco reelegendo a resposta anterior, que
+  estava mais certa que errada. Producao: unidade **127**, identica ao baseline.
+  **Isto e pre-requisito de qualquer medicao futura**: sem ponto fixo, comparar dois reprocess
+  media o sorteio, nao a mudanca.
+
+## VEREDITO da rodada (2026-08-19)
+
+Estado FINAL em producao, apos cortar o eco (J-1 + J-2), `as-of 2026-08-19`:
+
+| metrica | baseline | final | |
+|---|---|---|---|
+| unidade | 127/191 | **127/191** | neutro |
+| bloco | 118/208 | **118/208** | intocado |
+| subunit coerente | 133/170 (78%) | **121/161 (75%)** | pior 3pp |
+| colapsos de subunidade | 3 | **6** | pior |
+| aliases na taxonomia | 361 | **259** | limpeza |
+| **idempotencia do reprocess** | **deslocava 2** | **ponto fixo (0)** | **ganho estrutural** |
+
+O eixo de UNIDADE fica neutro e agora e REPRODUZIVEL. O eixo de SUBUNIDADE piora — e o eixo
+que ja se sabe quebrado (colapso medido, sem regua de acerto, cardinalidade errada: 53 arquivos
+avaliativos recebendo 1 subtopico so). Suite **1902 passed / 1 skipped**.
+
+## CODE — EIXO DE BLOCO investigado (2026-08-19d)
+
+**CORRECAO DE UM NUMERO QUE EU REPETI VARIAS VEZES**: o bloco NAO esta em 57%. Esta em
+**172/200 = 86%**. O 118/208 media `computed_block_id` cru; a regua oficial
+(`scripts/eval_ground_truth.py`) usa `resolve_temporal_block`, que honra a ANCORA temporal e os
+pinos manuais — que e o que o sistema de fato usa. **Os tres eixos estao em 86-88%; nao ha elo
+fraco isolado.** Por curso: MF 95,5% · IA 97,7% · ES2 78,6% · TCC 72,0% · SO 71,1%.
+
+- [CONCLUIDO 2026-08-19d] **a regua do bloco estava CEGA em 3 de 5 cursos, em silencio**.
+  `load_labels_csv` lia com `encoding="utf-8"`; ao sincronizar os golds do dedup eu gravei com
+  `utf-8-sig`, que ADICIONA BOM — a 1a coluna virou `﻿id`, `row.get("id")` devolveu None e
+  a regua reportou **`Acuracia: 0/0`** para MF, SO e IA sem erro nenhum. Corrigido nos DOIS
+  leitores do arquivo (`utf-8-sig` aceita com e sem BOM) e os CSVs normalizados sem BOM.
+  **Classe de bug**: regua que degrada para zero em silencio e pior que regua ausente.
+- [CODE] **os 28 erros do bloco se concentram em AVALIACAO e META** (`as-of 2026-08-19d`):
+
+  | classe | ok | erro | taxa |
+  |---|---|---|---|
+  | CONTEUDO (material de aula) | 143 | 15 | **9%** |
+  | AVALIACAO (provas/listas/gabaritos/trabalhos) | 29 | 10 | **26%** |
+  | META (cronograma/outros) | 4 | 3 | **43%** |
+
+  Termo da fusao que decide errado: **`concept` em 21 de 25**, `llm` em 4. Direcao do erro:
+  ES2 e TCC preveem um bloco ANTERIOR em **13 de 13**; SO preve POSTERIOR em 8 de 11; mediana da
+  distancia −1 e 8 de 26 sao off-by-one. Por metodo: `date` **0% de erro** (19 casos) ·
+  `concept-fused` 16% (161) · vazio 29% (14).
+  **Diagnostico**: e a mesma tensao conteudo-vs-tempo do eixo de unidade — material multi-topico
+  casa conceito difusamente e ganha o bloco que compartilha mais vocabulario, nao onde a prova
+  aconteceu. No bloco NAO da para resolver com N: uma prova aconteceu numa data so.
+- [REJEITADO 2026-08-19d] **`posting_date` como sinal de bloco**. **Ruling-user: professor reusa
+  material antigo** — verificado: os anos batem (tudo 2026), mas **88 de 166 postagens estao FORA
+  do periodo do curso**, em lotes (`2026-02-18` x45 no MF, `2026-02-24` x25 no IA,
+  `2026-02-18` x16 no ES2). E data de UPLOAD EM MASSA, nao de aula. Mesmo filtrando lote e
+  periodo sobram 29 casos e a precisao e **41% (12 de 29)**, contra 84% do `concept-fused`;
+  corrigiria **1** erro. Rejeitado.
+- [REJEITADO 2026-08-19d] **janela de `assign_due` para avaliacao** — o mecanismo existe
+  (`ASSIGN_WINDOW_CATEGORIES`, `motor/due_window.py`) mas so **4 de 37 cards** tem o dado, e
+  NENHUM bloco tem `card_evidence` populado. Sem dado para sustentar os 39 avaliativos.
+- [CODE] **o sinal de data vem do NOME DO ARQUIVO, nao do Moodle** (`_score_block_date_match`,
+  `file_map.py:954`): extrai de `raw_text`/`title_text`/`markdown_text`. Por isso o metodo `date`
+  so dispara no SO, cujos arquivos sao `0205-`, `2403-`, `3103-` (DDMM no nome).
+  **Ruling-user 2026-08-19d: manter assim, como fallback.** Onde ha data no nome, acerta 19/19.
+
+## DECISION RESOLVIDA — granularidade da avaliacao (2026-08-19c)
+
+Aberta desde o handoff de 2026-08-18. **RESOLVIDA: prova INTEIRA com conjunto de topicos.
+NAO quebrar em questoes.** Tres medicoes sustentam:
+
+1. **So 5 de 39 arquivos avaliativos sao multi-unidade** (`as-of 2026-08-19c`). 36 dos 39 (92%)
+   ja tem `coverage_units`, e a regra B ja extrai os TOPICOS citados no enunciado. O eixo de
+   unidade nao precisa de granularidade menor.
+2. **Quebrar em questao so rende no nivel de TOPICO**, e a regra B ja entrega topicos por
+   avaliacao sem LLM — a lista P1 do SO devolve `u01|u02|u03|u04` com os topicos citados.
+3. **O gargalo nao e granularidade, e o artefato nao existir.** `exams/EXAM_INDEX.md` existe em
+   **1 de 5 cursos** (so MF), tem **10 linhas**, lista **1 arquivo**, e a coluna `Observacao` esta
+   VAZIA — enquanto o cabecalho promete *"identificar quais topicos tem maior incidencia e quais
+   padroes de questao se repetem"*. E o mesmo diagnostico do handoff anterior, agora com o
+   numero: investir em extracao por questao antes de o indice existir e otimizar o que ninguem le.
+
+- [CODE] **fila derivada desta decisao**: (a) gerar `EXAM_INDEX.md` nos 5 cursos, nao 1;
+  (b) alimenta-lo com `coverage_units[].topics` (ja existe) para dar incidencia por topico sem
+  LLM; (c) a coluna `Observacao`/`Padrao do professor` depende de `notes`, que esta **0%
+  preenchido** nos 233 materiais (achado K-4) — ou some da tabela ou vira derivada.
+  Quebra por questao fica REGISTRADA como opcao futura, nao como pre-requisito.
+
+## CODE — DUPLICATAS DE CONTEUDO: 6 removidas (2026-08-19c)
+
+`scripts/dedup_manifest.py --by-content` (modo novo). O modo antigo agrupa por basename
+normalizado E exige que uma das gemeas nao exista no stash — nao pega duplicata de conteudo com
+nomes diferentes e os dois arquivos presentes.
+
+**GUARD NAO-NEGOCIAVEL (ruling-user 2026-08-19c)**: gabarito e lista sao documentos DISTINTOS e
+importantes; o professor frequentemente passa os dois. O dedup **nunca remove automaticamente
+quando as categorias diferem** — marca AMBIGUO e deixa para o humano. Verificado nos 5 cursos:
+gabarito sempre tem mais texto que a lista (MF 5264 vs 3366; ES2 16057 vs 7746; IA 13357 vs
+9332), entao o hash nunca colide entre os dois de verdade.
+
+Removidas (sha1 identico do markdown; campos que so a descartada tinha — `posting_date`,
+`moodle_label` — sao MESCLADOS na mantida, porque data e sinal do eixo temporal, o mais fraco):
+
+| curso | removida | mantida | por que |
+|---|---|---|---|
+| MF | `logicadehoare1-exercicios-respostas` | `logicadehoare-exercicios-respostas` | cross-categoria; **ruling-user: os DOIS sao gabarito**, md5 identico ja na origem do Moodle (623885 bytes, 12/jun e 28/jun). Mantida a catalogada como `gabaritos`, que e o que o conteudo E |
+| SO | `lista1-gab` | `lista-exercicios-p1-gabarito` | mesma categoria |
+| SO | `lista2` | `lista-exercicios-p2` | mesma categoria |
+| IA | `minimax` | `minimax-teoria` | mesma categoria |
+| IA | `lista1` | `lista-de-exercicios-i` | mesma categoria |
+| IA | `prova-1-202402` | `prova-1-2024-02` | mesma categoria |
+
+Entries: **233 -> 227**. Golds sincronizados (6 linhas orfas removidas de `ground_truth_*` e
+`material_gt_SO`), **preservando as linhas de `id` vazio** — sao registro deliberado com
+`scorable=no` e proveniencia, nao lixo (apaguei por engano e restaurei via git).
+`p1-2024-02-ia.pdf` fica como arquivo ORFAO na pasta do IA: existe em disco, nao e entry.
+
+**BASELINE APOS DEDUP (`as-of 2026-08-19c`)**: unidade 1:1 **166/188 = 88%** ·
+cobertura **44/57 = 77%, F1 0,81** · entries 227.
+
+## CODE — COBERTURA DO MATERIAL: as 3 regras em codigo (2026-08-19b)
+
+`src/builder/routing/coverage_rules.py` — `coverage_units[]` no MATERIAL, mesmo formato
+da camada de referencia. **Sao os rulings do user virados COMPORTAMENTO**: sem isso o mesmo
+julgamento teria de ser refeito a mao em cada cadeira nova. Nenhuma regra olha nome de arquivo
+nem de cadeira.
+
+| regra | criterio | derivado de |
+|---|---|---|
+| A meta | categoria `cronograma` OU cita o titulo de >=80% das unidades | ruling: meta cobre todas |
+| B avaliacao | titulo casa `P1/Prova2/Lista1` E categoria de avaliacao -> unidades citadas no enunciado | ruling: Lista PX cobre as unidades da prova |
+| C card | card nomeia unidade/topico -> a de MAIOR evidencia | ruling: serie cobre a unidade do tema |
+| + fallback | a unidade 1:1 ja decidida entra na cobertura | cobrir e superconjunto de morar |
+
+**BASELINE (`as-of 2026-08-19b`, 58 rotulos com `scorable=yes`)**:
+**exact-set-match 44/58 = 76% · precisao 0,78 · recall 0,81 · F1 0,79**.
+Por curso: ES2 19/19 · TCC 3/3 · SO 14/20 · MF 7/13 · IA 1/3.
+
+Progressao medida: 23/58 (40%) -> 41 (71%) -> **44 (76%)**. O que cada correcao rendeu:
+desempate do card por evidencia **+18** (ES2 1/19 -> 19/19) · topicos da TAXONOMIA em vez de
+`topic_phrases` **+3** no SO (matava `kernel`/`sistema` entrando como topico) · aliases junto do
+label **+2** · token distintivo (>=10 chars) em vez de substring **+3** (o card do TCC diz
+`Halteproblem und Entscheidungsproblem`, em alemao, e o label e
+`entscheidungsproblem e introducao a reducibilidade de problemas`: substring nao casa, token sim).
+
+- [REJEITADO 2026-08-19b] **baixar `_MIN_TOPICOS_PARA_UNIDADE` de 2 para 1** — sweep contra os
+  58 rotulos: **44 -> 43 exact**, precisao e recall IDENTICOS. Perda seca, nao trade-off.
+- [CODE] **`_MIN_TOKEN_DISTINTIVO` e mais uma constante inerte** (`as-of 2026-08-19b`):
+  resultado identico com 8, 10 e 12. Junta-se a `UNIT_MATCH_MIN_WINNER` e
+  `UNIT_MATCH_REL_MARGIN` na lista dos limiares que nao discriminam nada no corpus atual.
+- [USER] **ROTULAGEM COMPLETA: 64 casos, 0 pendentes** (`docs/reports/material_gt_*.csv` +
+  `scripts/make_material_coverage_labels.py`, que PRESERVA rotulo ja dado ao regenerar).
+  Rulings de 2026-08-19: serie de microsservicos -> a unidade que fala de microsservicos (17
+  casos) · meta-material -> todas as unidades · Lista PX -> unidades da prova ·
+  `Processo e Estruturas de Controle` -> u01 (`chamadas-de-sistema`) · ENADE -> meta (todas) ·
+  `exemplos-zip` -> u03 (confirmado abrindo o zip: 5 arquivos `.smv`).
+- [CODE] **os 14 que ainda erram, por causa** (`as-of 2026-08-19b`):
+  **4 bibliografia** — texto depende de rede; a camada de REFERENCIA processa a MESMA entry em
+  paralelo e as duas coberturas nao se falam (o `eth2` tem `coverage_units` na referencia e
+  `[]` no material). Unificar renderia no maximo 1 dos 4 — os outros 3 a referencia tambem nao
+  sabe. **6 codigo** — resumo do Gemini raso demais (~400 chars) para discriminar.
+  **4 avaliacao** — `lista1-gab` nao casa o regex, `exercicios`, ENADE.
+
+- [CONCLUIDO 2026-08-19b] **`.smv` nao era extensao de codigo reconhecida**
+  (`utils/helpers.py` `CODE_EXTENSIONS`/`LANG_MAP`, `thresholds.TOOL_EXTENSIONS`).
+  `concept_resolver.py:442` JA documentava *"a ferramenta (.dfy/.thy/.smv) ancora a UNIDADE"*,
+  mas a lista so tinha `.thy` e `.dfy`. Efeito medido: `exemplos.zip` do MF (5 arquivos NuSMV)
+  era o **UNICO zip sem extracao nos 5 cursos** — `extracted_files=[]`, sem resumo do Gemini,
+  sem sinal nenhum. **RESSALVA: o ganho NAO aparece em `reprocess_assignments`**, que pula o
+  laco de extracao de proposito; so no proximo import de verdade. Teste
+  `test_smv_e_linguagem_de_codigo_reconhecida`.
+- [CONCLUIDO 2026-08-19b] **sentinela `test_caracterizacao_blocos_atual[TCC-Tutor]`
+  rebaselinada** apos revisao caso a caso: `aula-06-revisao-alfabeto-cadeia-linguagem` mudou de
+  u01 para u04 e **AMBOS ESTAO ERRADOS** — o certo e `unidade-02-turing-computabilidade` (o
+  card diz "Teoria de Automatos e Introducao a Maquinas de Turing"). Causa medida: colisao
+  lexical (`Hierarquia de Chomsky` casa `hierarquia de classes de complexidade`), u04 e a maior
+  unidade (14 topicos), e 27 mil chars de markdown espalhando match. u02 perde por 2,64 (5%).
+  Fica como caso conhecido do TCC, nao como regressao.
+
+## CODE — VARREDURA "sinal que existe e nao chega a quem decide" (2026-08-19)
+
+Matriz sinal x decisor, montada por grep sobre os tres scorers
+(`concept_resolver` / `score_entry_against_unit` / `_score_entry_against_taxonomy_topic`):
+
+| sinal | BLOCO | UNIDADE | SUBUNID | veredito |
+|---|---|---|---|---|
+| `title_text`, `markdown_text` | X | X | X | ok |
+| `markdown_headings/lead`, `category`, `tags`, `raw` | - | X | X | bloco usa outro modelo (vetor de conceito) |
+| **`card_text`** | - | X | **-** | **gap plausivel, NAO mensuravel hoje** |
+| **`moodle_label_text`** | X | **-** | **-** | **FALSO gap — redundante** |
+| **`tool_tags_text`** | X | **-** | **-** | gap teorico; vocabulario sujo, baixa prioridade |
+| `image_description_text` | - | - | - | campo morto (0% de dado nos 5 cursos) |
+
+- [CONCLUIDO 2026-08-19] **K-1 · resumo do Gemini nao chegava a UNIDADE** — `code_curation`
+  alimentava BLOCO (`entry["concepts"]`, `resolver_apply.py:90`) e SUBUNIDADE (`sub_md`), mas a
+  UNIDADE recebia `markdown_text`, vazio para zip/codigo. **25 de 233 materiais (11%)** decidiam
+  unidade sem ler nada — entre eles `colecoes-*` e `classes-parte1` do MF, que viviam no balde
+  de erro. O comentario do proprio codigo entregava: *"unit/bloco ficam com o markdown original
+  (mesma mecanica do legado)"* — herdado, nao decidido.
+  **MEDIDO EM PRODUCAO: unidade 127 -> 131 (+4).** Maior ganho isolado da campanha.
+  Subunidade passou a reusar o mesmo texto (duplicacao removida). Teste
+  `test_resumo_de_codigo_alimenta_a_rota_de_UNIDADE_tambem`.
+- [REJEITADO 2026-08-19] **K-2 · `moodle_label` na rota de unidade** — parecia gap (167 de 233
+  = 72% preenchido, labels limpos como `Conjuntos Indutivos`). Implementado e medido:
+  **0 entries mudam**. Causa: o label e o titulo com as palavras separadas
+  (`conjuntosindutivos` vs `conjuntos indutivos`) e o pipeline JA aplica `split_camel_case` no
+  titulo (`entry_signals.py:120`). Redundante por construcao. Revertido.
+- [CODE] **K-3 · `card_text` nao chega a SUBUNIDADE** (`as-of 2026-08-19`). Card presente em
+  **228 de 233 (98%)** e casa um topico da taxonomia em **74 de 228 (32%)** — ES2 74%, MF 39%,
+  TCC 22%, SO 19%, IA 15%. A UNIDADE le (peso 2.5 na frase); a SUBUNIDADE nao. **NAO
+  implementado**: sem regua de ACERTO de subunidade, seria trocar ganho nao medido por risco.
+  A ausencia no BLOCO e DELIBERADA (`test_card_nao_afeta_o_scorer_de_bloco_do_motor`; card e
+  sinal de cobertura, nao temporal).
+- [CODE] **K-4 · campos capturados e mortos** (`as-of 2026-08-19`): `professor_signal` **0%
+  preenchido** e nunca lido em `src/`; `notes` **0%** — e o `EXAM_INDEX` promete colunas
+  `Observacao`/`Padrao do professor` que dependem dele; `image_description` **0%**, logo
+  `image_description_text` e campo morto por falta de DADO (o conteudo, quando existe, ja entra
+  via `markdown_text`). `relevant_for_exam` esta em 99% mas nao e sinal de unidade.
+
+## CODE — o eixo N:N era ESCRITO e NUNCA LIDO — RESOLVIDO (2026-08-19 / 2026-08-20)
+
+- [CODE] **I-1 · `coverage_units` tem 1 ocorrencia em `src/` e e a ESCRITA** (`as-of 2026-08-19`).
+  Grep no codigo de producao: `src/builder/core/reference_summary.py:135` (write). **Zero
+  leituras.** Quem alimenta COURSE_MAP, BIBLIOGRAPHY e a navegacao e o single-winner
+  `computed_ref_unit`/`computed_ref_topics`, escrito no MESMO dict literal como espelho do
+  primeiro item da lista (`assign_concepts_to_unit` devolve as duas formas; nao podem divergir,
+  mesmo padrao de `auto_tags["bloco:"]`). Consumidores de `coverage_units` hoje: so
+  `scripts/eval_coverage.py`, `scripts/refresh_reference_coverage.py` e
+  `tests/test_reference_summary.py`.
+  **A camada de cobertura calcula N:N e o sistema inteiro usa 1:1.** Terceira instancia da classe
+  "codigo certo, dano zero, porque ninguem chega la" (as outras: `known_tools`, `TOOL_TOKENS`).
+  A duplicacao NAO e o problema — o campo morto e.
+- [CODE] **I-2 · os 4 consumidores que precisariam mudar para o N:N valer** (`as-of 2026-08-19`):
+
+  | onde | le hoje | precisaria ler |
+  |---|---|---|
+  | `artifacts/repo.py:670-671` | `computed_ref_unit` + `computed_ref_topics` | iterar `coverage_units`, emitindo a ref sob CADA unidade coberta |
+  | `core/reference_navigation.py:35,49,53` | `computed_ref_unit` (pula ref com campo vazio) | agrupar por ancora em N unidades, nao 1 |
+  | `artifacts/navigation.py:35` (FILE_MAP) | 1a tag `subunit:` | N tags, ou primaria por confianca |
+  | `ui/dialogs.py:4193` | 1a tag `subunit:` | idem |
+
+  Os dois primeiros valem para REFERENCIAS (o N:N ja existe); os dois ultimos sao o que a
+  subunidade-como-tags exigiria. **E aqui que o valor aparece** — escrever a lista sem trocar o
+  leitor so cria um segundo campo write-only.
+
+- [DONE] **I-3 · os dois leitores de REFERENCIA passaram a ler a lista** (`2026-08-20`).
+  `core/reference_navigation.py` ganhou `_ancoras(rec)`: devolve `[(unit_slug, topics)]` a partir
+  de `coverage_units`, com fallback para o espelho `computed_ref_unit` (curation antiga segue
+  funcionando). `build_unit_topic_reference_index` emite a ref sob CADA ancora, e nao pula mais
+  ref sem o espelho. `artifacts/repo.py` exibe todas as ancoras em `Relevante para:` separadas
+  por `·`. **Medido:** MF sai de 2 para 4 ancoras (o `eth2` e o `archive-of-formal-proofs` passam
+  a aparecer sob `metodos-formais` E `verificacao-de-programas`); IA e SO nao mudam.
+- [OPEN] **I-4 · SO tem 3 referencias com ZERO ancora** (`as-of 2026-08-20`). Nem `coverage_units`
+  nem `computed_ref_unit`. Ficam invisiveis no COURSE_MAP — o `_ancoras` devolve lista vazia e a
+  ref some. Nao e regressao (antes tambem sumiam, pelo `continue`), mas agora esta medido.
+- [DONE] **I-5 · o material tambem virou N:N no COURSE_MAP** (`2026-08-20`).
+  `build_unit_topic_reference_index` passou a devolver `material_by_unit` (mesmo ponto de
+  encanamento, `_reference_nav_index`, que ja chegava no COURSE_MAP — nenhum cano novo). A secao
+  por unidade emite `🧪 Tambem cobre esta unidade: ...`. **So as unidades EXTRAS** entram, isto e,
+  aquelas que o vencedor 1:1 nao nomeia: repetir a unidade-dona so incharia o "mapa pedagogico
+  curto", que ja mostra isso no FILE_MAP e na timeline.
+  **Medido nos 5 cursos:** 213 entries com `coverage_units`, distribuicao N = {1: 190, 2: 15,
+  3: 3, 4: 2, 7: 3}; 23 multi-unidade, TODAS as 23 com ao menos uma unidade extra.
+  `cronograma` fica de FORA da renderizacao (`META_CATEGORIES`): sozinho gerava 16 das 49 linhas,
+  sempre o mesmo plano de ensino sob cada unidade. O manifest mantem a cobertura completa — a
+  busca continua achando o plano por qualquer unidade; e so a linha do COURSE_MAP que sai.
+
+## CODE — NAO-DETERMINISMO no score de bloco: RESOLVIDO (2026-08-20)
+
+- [DONE] **J-1 · `computed_block_confidence` mudava entre duas rodadas IDENTICAS do reprocess.**
+  Raiz: `concept_resolver.py`, `sum(min(...) for tok in entry_vec.keys() & block_vec.keys())`.
+  `keys() & keys()` devolve **set**, e a ordem de iteracao de set de `str` muda a cada processo
+  (hash randomization do Python). Somar float em ordem diferente muda o resultado no ultimo ULP.
+  **Consequencias medidas (TCC):** 6 entries divergiam entre rodadas; a `band` flipava na
+  fronteira baixa/media; e em empate tecnico o bloco VENCEDOR trocava — `aula-06` (confianca
+  0.0841) alternava entre dois blocos conforme o PYTHONHASHSEED. Com `PYTHONHASHSEED=0`, zero
+  divergencias. Isso torna suspeita QUALQUER medicao anterior perto da fronteira.
+  **Fix:** a soma virou `overlap_min()` (funcao nomeada, `sorted()` na interseccao). Mesmo
+  defeito corrigido em `routing/motor/disambiguator.py:_score` (`mat & set(sig)`).
+  **Rede:** `tests/test_determinismo_do_score.py` roda o mesmo calculo em 4 subprocessos com
+  PYTHONHASHSEEDs diferentes e exige saida identica; tem um segundo teste que impede que a
+  entrada vire invariante a ordem (teste vacuoso nao pega o bug de volta). **Verificado que o
+  teste FALHA sem o fix** — 3 somas distintas nos 4 seeds.
+  **Impacto na acuracia: ZERO.** Bloco continua 172/200 = 86% com e sem o fix; a medicao A/B na
+  regua de unidade da 103/188 nos dois casos. O empate era 50/50 mesmo — o valor do fix e o
+  reprocess virar idempotente, nao o motor ficar melhor. Sentinela `_golden/TCC-Tutor__casos_
+  chave.json` regravada de proposito (coin-flip virou valor fixo).
+
+## CODE — o termo `card` da fusao esta MORTO (2026-08-20)
+
+- [OPEN] **K-1 · `card_evidence` esta vazio em 120/120 blocos dos 5 cursos.**
+  `concept_resolver.py:392` calcula `card_term` contra `block.get("card_evidence")`. O campo
+  existe em todo bloco e esta **sempre vazio**, entao o termo e 0 sempre.
+  **Censo (227 materiais, 5 cursos):** o termo `card` e nao-zero em **0** deles, e isso apesar de
+  `signals["card_text"]` existir em **222/227 (98%)**. Assimetria: o lado da ENTRY esta populado
+  (vem do `source_section` do Moodle, ex. "Semana 4 - Teoria de Automatos"), o lado do BLOCO nao.
+  **Raiz:** `vision/card_evidence.py` so reconhece as formas literais `Card: <titulo>` e
+  `Topico: <titulo>` no texto das linhas do cronograma. Nenhum plano de ensino real escreve assim.
+  **Contexto:** `concept` e o maior termo em 185/227 (81%); `llm` 4, `date` 5, `lesson` 3,
+  `sequence` 0. A fusao e mono-termo na pratica — o que casa com o diagnostico de que `concept`
+  decidiu errado em 21 dos 25 erros de bloco.
+- [REFUTADO] **K-2 · usar `source_section` como sinal autoritativo PIORARIA.**
+  Teto medido de um oraculo que atribui a cada secao o bloco verdadeiro mais frequente:
+  **144/199 = 72%**, abaixo dos 86% de hoje (MF 71%, SO 70%, IA 93%, ES2 43%, TCC 78%).
+  As secoes sao mais GROSSAS que os blocos (MF: 9 secoes para 23 blocos), entao a secao restringe
+  o bloco a um INTERVALO, nao a um ponto. Se for revivido, o card tem que entrar como **filtro**
+  (excluir blocos fora do intervalo da secao), nunca como pontuador autoritativo.
+- [MEDIDO] **K-3a · o card e ponteiro de UNIDADE, nao de bloco.** Leave-one-out nos 5 cursos
+  (janela = unidades verdadeiras dos IRMAOS do mesmo card, verdade = `ground_truth |><|
+  gold_units`): **card -> unidade recall 165/170 = 97%, janela media 1,41 unidade**;
+  **card -> bloco recall 164/192 = 85%, janela 1,0 a 6,2 blocos** (IA 1,2 · TCC 1,0 · SO 2,1 ·
+  MF 2,8 · ES2 6,2). Corrobora K-2 por outro caminho: como filtro de bloco o card tem teto
+  ABAIXO dos 86% de hoje; como filtro de unidade, teto 97% contra os 88% do scorer 1:1.
+  Duas gramaticas de card convivem: datada ("Semana N - Topico", aponta bloco, TCC/IA) e
+  tematica ("Microsservicos", "DevOps", aponta unidade e espalha por varios blocos, ES2/SO).
+  RESSALVA: contra a verdade TEMPORAL o card suja (ES2 `Microsservicos` = 22 entries em 3
+  unidades; SO `Threads` em 3); contra os rotulos de COBERTURA, 12 de 14 cards = 1 unidade exata.
+  O card aponta a unidade de COBERTURA — a deriva temporal e o professor repostando.
+- [REFUTADO] **K-3b · consenso por card no eixo de COBERTURA: ganho = +1 em 57.** A ideia que
+  K-3a sugeria (irmaos do mesmo card votam a unidade; a entry duvidosa herda o consenso) foi
+  medida com a regua EXISTENTE (`scripts/eval_coverage.py::score`, nenhuma regua nova) contra os
+  57 rotulos de `material_gt_*.csv`. Voto dos irmaos vem de `manifest.entries[].coverage_units`
+  (predicao de producao, nunca do gold); META (cronograma/plano/apoio) nao vota.
+
+  | variante | exact-set | macro P/R/F1 |
+  |---|---|---|
+  | BASE (producao) | 44/57 | 0,816 / 0,827 / **0,811** |
+  | uniao dos irmaos | 22/57 | 0,642 / 0,912 / 0,729 |
+  | maioria | 40/57 | 0,813 / 0,796 / 0,781 |
+  | filtro (own ∩ irmaos, fallback own) | **45/57** | 0,825 / 0,827 / **0,817** |
+  | uniao + self | 21/57 | 0,642 / 0,930 / 0,735 |
+
+  BASE reproduz o numero do handoff (44/57, F1 0,81) — harness validado antes de comparar.
+  **CAUSA do ganho nulo, e e boa noticia:** `rule: card` ja responde por **179 das 258**
+  `coverage_units` do corpus (`unidade-atribuida` 37, `meta` 17, `meta-por-conteudo` 14,
+  `avaliacao` 11). O teto de 97% de K-3a **ja esta colhido** pela regra C; consenso le a mesma
+  informacao duas vezes.
+  **Blast radius:** no-op em **200/227** entries, muda 7, 20 sem irmao. Dos 7 (todos cortam a 2a
+  unidade), so 1 e rotulado — MF `exemplos-zip`, F1 0,667 -> 1,0; os 2 do TCC sao ruido votando
+  (os irmaos do card `Semana 4` se contradizem entre si: u02/u03/u04).
+  **Achado colateral:** as 3 entries que divergem TOTALMENTE dos irmaos (own ∩ irmaos = vazio)
+  estao todas no card `TDE Trabalho Discente Efetivo` — o mesmo que `anchor_engine._TDE_PREFIX` e
+  `anchor_placement._ADMIN_TOKENS` ja declaram nao-informativo. Card administrativo agrupa por
+  burocracia, nao por tema. O fallback-para-own do filtro engole os 3 em silencio.
+  Script NAO promovido a `scripts/`: regua de ideia refutada convida alguem a rodar de novo.
+  **Onde o card segue sem consumidor:** eixo de bloco (`use_anchor_engine` default `False`,
+  `pedagogical_regeneration.py:552` — a cascata `window_provider` P1..P4 existe e esta desligada)
+  e o scorer 1:1, onde ele entra como *hint posicional FRACO* (`concept_resolver.py:346`).
+
+## FERRAMENTA — `scripts/explain_entry.py` (2026-08-20)
+
+- [DONE] Explica um arquivo etapa a etapa pelo CAMINHO DE PRODUCAO: sinais montados -> bloco
+  (com o breakdown dos 6 termos da fusao) -> `resolve_temporal_block` -> texto da rota de unidade
+  (markdown + resumo do Gemini) -> unidade 1:1 + gate + `reconcile_unit_with_block` -> cobertura
+  N:N com a regra que disparou -> subunidade restrita a unidade reconciliada.
+  Usa os montadores canonicos (`assemble_resolver_inputs`, `_build_file_map_unit_index_from_
+  course`, `build_learned_unit_boosts`) — remontar o caminho a mao foi a causa comum de CINCO
+  predicoes refutadas nesta campanha. Diferente de `scripts/trace_motor.py`, que se declara um
+  PISO com tokenizer proprio e nao mede o motor real.
+  Uso: `python scripts/explain_entry.py <REPO> <pedaco do id ou titulo>`.
+  **Achado ja na primeira entry** (TCC `aula-06`): os tres eixos discordam entre si — bloco
+  concept-fused -> u02, `resolve_temporal_block` sobrepoe para bloco-05, scorer de unidade -> u04
+  ("hierarquia" casando com "hierarquia de classes de complexidade"), cobertura regra `card` ->
+  u03. `reconcile_unit_with_block` NAO corrige: mantem u04 e so registra o conflito.
 
 ## CODE — camada de COBERTURA (material transversal, 2026-08-18)
 
