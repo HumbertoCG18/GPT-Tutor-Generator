@@ -96,7 +96,10 @@ def load_block_period_map(repo_root: Path) -> dict:
 
 def load_labels_csv(path: Path) -> dict:
     labels = {}
-    with Path(path).open(encoding="utf-8", newline="") as f:
+    # utf-8-sig: o CSV pode vir com BOM (Excel/Windows gravam assim). Com
+    # `utf-8` puro a 1a coluna vira "﻿id", `row.get("id")` devolve None e a
+    # regua reporta 0/0 EM SILENCIO — aconteceu com 3 de 5 cursos em 2026-08-19c.
+    with Path(path).open(encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f):
             eid = str(row.get("id", "")).strip()
             true_block = str(row.get("true_block_id", "")).strip()
@@ -111,7 +114,10 @@ def load_pair_keys(path: Path) -> dict:
     `pair_key` = id canônico (Moodle original), gancho ESTRUTURADO do colapso de par.
     Definido por conteúdo na folha (gold_score.VERSION_PAIRS), nunca por bloco computado."""
     out = {}
-    with Path(path).open(encoding="utf-8", newline="") as f:
+    # utf-8-sig: o CSV pode vir com BOM (Excel/Windows gravam assim). Com
+    # `utf-8` puro a 1a coluna vira "﻿id", `row.get("id")` devolve None e a
+    # regua reporta 0/0 EM SILENCIO — aconteceu com 3 de 5 cursos em 2026-08-19c.
+    with Path(path).open(encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f):
             eid = str(row.get("id", "")).strip()
             pk = str(row.get("pair_key", "")).strip()

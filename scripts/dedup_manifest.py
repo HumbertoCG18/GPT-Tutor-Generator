@@ -93,19 +93,76 @@ def _stash_basenames(stash_root: Path) -> set:
     return out
 
 
+
+def plan_dedup_por_conteudo(entries: list, repo: Path) -> list:
+    """Duplicatas de CONTEUDO: mesmo markdown, ids diferentes.
+
+    O modo por basename nao pega esta classe — `lista1-gab` e
+    `lista-exercicios-p1-gabarito` tem nomes distintos e os DOIS arquivos existem
+    (nao ha stale). Sao o mesmo PDF importado duas vezes com nomes diferentes:
+    medido 2026-08-19, 2 pares nos 5 cursos, com sha1 identico do markdown.
+
+    Mantem o id MAIS DESCRITIVO (o mais longo), desempatando pelo `approved_at`
+    mais antigo — criterio deterministico, sem chute.
+
+    NUNCA remove automaticamente quando as entries tem CATEGORIA diferente: lista
+    e gabarito sao documentos distintos e importantes, e um par lista/gabarito com
+    o mesmo conteudo significa erro de catalogacao, nao duplicata — quem decide e
+    o humano. Verificado nos 5 cursos (2026-08-19): gabarito sempre tem mais texto
+    que a lista, entao o hash nunca colide entre os dois de verdade; o unico caso
+    cross-categoria era o mesmo PDF importado duas vezes.
+
+    Devolve (remocoes, ambiguos) com remocoes=[(idx, entry, id_mantido)].
+    """
+    import hashlib
+    from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
+
+    por_hash: dict = {}
+    for idx, e in enumerate(entries):
+        texto = _entry_markdown_text_for_file_map(repo, e) or ""
+        if len(texto) < 200:      # vazio/stub nao caracteriza duplicata
+            continue
+        h = hashlib.sha1(texto.encode("utf-8")).hexdigest()
+        por_hash.setdefault(h, []).append((idx, e))
+
+    remocoes, ambiguos = [], []
+    for h, membros in por_hash.items():
+        if len(membros) < 2:
+            continue
+        categorias = {str(e.get("category") or "") for _i, e in membros}
+        if len(categorias) > 1:
+            ambiguos.append((sorted(categorias), [str(e.get("id")) for _i, e in membros]))
+            continue
+        membros.sort(key=lambda m: (-len(str(m[1].get("id") or "")),
+                                    str(m[1].get("approved_at") or "9999")))
+        mantido_idx, mantido_e = membros[0]
+        for idx, e in membros[1:]:
+            # Mescla o que so o descartado tem: `posting_date` e sinal do eixo
+            # TEMPORAL (o mais fraco do sistema, 57%) e some em 3 dos 6 pares se
+            # a remocao for cega.
+            for campo in ("posting_date", "posting_date_created", "moodle_label",
+                          "source_section", "notes"):
+                if not str(mantido_e.get(campo) or "").strip() and str(e.get(campo) or "").strip():
+                    mantido_e[campo] = e[campo]
+            remocoes.append((idx, e, str(mantido_e.get("id") or "")))
+    return remocoes, ambiguos
+
+
 def main(argv: list) -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8")
     except Exception:
         pass
     write = "--write" in argv
+    por_conteudo = "--by-content" in argv
     stash = ""
     if "--stash" in argv:
         i = argv.index("--stash")
         stash = argv[i + 1] if i + 1 < len(argv) else ""
     pos = [a for a in argv if not a.startswith("-") and a != stash]
-    if not pos or not stash:
+    if not pos or (not stash and not por_conteudo):
         print("uso: python -m scripts.dedup_manifest <repo_root> --stash <stash_root> [--write]")
+        print("     python -m scripts.dedup_manifest <repo_root> --by-content [--write]")
         return 2
     repo = Path(pos[0])
     mpath = repo / "manifest.json"
@@ -114,6 +171,31 @@ def main(argv: list) -> int:
         return 2
     manifest = json.loads(mpath.read_text(encoding="utf-8"))
     entries = manifest.get("entries", [])
+
+    if por_conteudo:
+        dups, ambiguos = plan_dedup_por_conteudo(entries, repo)
+        print(f"repo={repo}  entries={len(entries)}  duplicatas de CONTEUDO: {len(dups)}"
+              f"  | cross-categoria PRESERVADOS: {len(ambiguos)}")
+        for _idx, e, mantido in dups:
+            print(f"  REMOVE id={e.get('id')!r}  (mantem {mantido!r})")
+        for cats, ids in ambiguos:
+            print(f"  AMBIGUO categorias={cats} ids={ids} -> decisao humana, nao removido")
+        if not write:
+            print("Dry-run. Use --write para gravar (faz .bak antes).")
+            return 0
+        if not dups:
+            print("Nada a remover.")
+            return 0
+        mpath.with_suffix(".json.bak").write_text(mpath.read_text(encoding="utf-8"), encoding="utf-8")
+        fora = {idx for idx, _e, _m in dups}
+        manifest["entries"] = [e for i, e in enumerate(entries) if i not in fora]
+        mpath.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+        print(f"Gravado (.bak feito). Removidas {len(fora)} entries.")
+        print("Artefatos orfaos (limpar via aba Manutencao/sweep):")
+        for _idx, e, _m in dups:
+            print(f"  content/curated/{e.get('id')}.md  (e sidecars correlatos)")
+        return 0
+
     stash_bn = _stash_basenames(Path(stash))
 
     removals, ambiguous = plan_dedup(entries, stash_bn)
