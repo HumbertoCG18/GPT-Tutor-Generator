@@ -342,6 +342,13 @@ def _strip_topic_code(text: str) -> str:
     return re.sub(r"^\s*\**\s*\d+(?:\.\d+)*\.?\**\s*", "", cleaned).strip()
 
 
+# O template do GLOSSARY.md escreve um travessão quando o campo está VAZIO
+# ("**Sinônimos aceitos:** —"). Sem isto o placeholder virava sinônimo, virava
+# alias do tópico e entrava na assinatura da unidade: 100 de 361 aliases dos 5
+# cursos eram travessão ou vazio (medido 2026-08-18).
+_GLOSSARY_EMPTY_MARKERS = {"—", "–", "-", "--", "n/a", "N/A", "nenhum", "Nenhum"}
+
+
 def _parse_glossary_terms(glossary_md: str) -> List[Dict[str, object]]:
     terms: List[Dict[str, object]] = []
     current: Optional[Dict[str, object]] = None
@@ -368,7 +375,11 @@ def _parse_glossary_terms(glossary_md: str) -> List[Dict[str, object]]:
 
         match = re.match(r"^\*\*Sin[ôo]nimos aceitos:\*\*\s*(.+)$", line, flags=re.IGNORECASE)
         if match:
-            values = [item.strip() for item in re.split(r"[,;/|]", match.group(1)) if item.strip()]
+            values = [
+                item.strip()
+                for item in re.split(r"[,;/|]", match.group(1))
+                if item.strip() and item.strip() not in _GLOSSARY_EMPTY_MARKERS
+            ]
             current.setdefault("synonyms", []).extend(values)
             continue
 

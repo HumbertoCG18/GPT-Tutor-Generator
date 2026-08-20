@@ -77,9 +77,25 @@ def _merge_manual_and_auto_tags(
     return "; ".join(merged)
 
 
+# Prefixos que o PROPRIO motor escreve (`resolver_apply` espelha o que ele
+# computou). Realimentar o scorer com eles faz o sistema re-eleger a resposta
+# anterior: medido 2026-08-19 rodando o mesmo scorer sobre os manifests antes e
+# depois de um reprocess — 131 -> 129 acertos, toda a perda no MF, sem ninguem
+# ter mudado nada. `topico:`/`ferramenta:`/`tipo:` NAO entram aqui: vem do
+# catalogo/taxonomia, nao da atribuicao.
+_PREFIXOS_ESPELHO_DO_MOTOR = ("unit:", "subunit:", "bloco:", "block:")
+
+
+def _sem_eco(tags: List[str]) -> List[str]:
+    return [t for t in tags if not str(t).lower().startswith(_PREFIXOS_ESPELHO_DO_MOTOR)]
+
+
 def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str]:
     manual_tags = [str(tag).strip() for tag in (entry.get("manual_tags") or []) if str(tag).strip()]
     auto_tags = [str(tag).strip() for tag in (entry.get("auto_tags") or []) if str(tag).strip()]
+    # Lista SEM eco: so o que vira TEXTO de score. A lista crua segue inteira
+    # para `tool_values` e para quem le auto_tags fora daqui.
+    auto_tags_sem_eco = _sem_eco(auto_tags)
     # S4 (P4): valores das auto_tags `ferramenta:` em campo próprio — o scorer
     # de bloco (file_map, TOOL_TOKENS) filtra quais são ferramentas de verdade.
     tool_values = [
@@ -102,7 +118,7 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
     ]
     merged_tags = _merge_manual_and_auto_tags(
         manual_tags,
-        auto_tags,
+        auto_tags_sem_eco,
         fallback_tags="; ".join(legacy_tags),
         limit=6,
     )
@@ -122,7 +138,7 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         "markdown_lead_text": normalize_match_text(extract_markdown_lead_text(markdown_text)),
         "category_text": normalize_match_text(entry.get("category", "")),
         "manual_tags_text": normalize_match_text("; ".join(manual_tags)),
-        "auto_tags_text": normalize_match_text("; ".join(auto_tags)),
+        "auto_tags_text": normalize_match_text("; ".join(auto_tags_sem_eco)),
         "tool_tags_text": normalize_match_text(" ".join(tool_values)),
         "legacy_tags_text": normalize_match_text("; ".join(legacy_tags)),
         "tags_text": normalize_match_text(merged_tags),

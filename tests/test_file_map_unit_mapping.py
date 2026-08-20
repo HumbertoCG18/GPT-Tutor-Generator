@@ -733,9 +733,14 @@ def test_auto_map_entry_subtopic_uses_heading_enriched_alias_for_logic_propositi
 
 
 def _tie_taxonomy():
-    """Dois tópicos com label idêntico, slugs neutros (que não casam o texto)
-    e MESMO kind → empate exato por construção (o scorer também casa
-    slug_phrase e dá +0.04 a kind subtopic)."""
+    """Dois tópicos DISTINTOS que casam o mesmo texto com o mesmo peso, slugs
+    neutros (que não casam o texto) e MESMO kind → empate exato por construção.
+
+    Labels distintos de propósito: desde o IDF intra-unidade (2026-08-19), label
+    REPETIDO entre irmãos não discrimina e é descartado dos dois — o empate
+    viraria "sem-sinal". `hoare` é comum aos dois e some; `alfa` e `beta`
+    são exclusivos e sustentam a frase (termos neutros de propósito: `logica`
+    está em UNIT_GENERIC_TOKENS e zeraria um dos lados)."""
     return {
         "version": 1,
         "course_slug": "metodos-formais",
@@ -746,14 +751,14 @@ def _tie_taxonomy():
                 "topics": [
                     {
                         "slug": "topico-a",
-                        "label": "Logica de Hoare",
+                        "label": "Alfa de Hoare",
                         "aliases": [],
                         "kind": "topic",
                         "unit_slug": "unidade-02-verificacao-de-programas",
                     },
                     {
                         "slug": "topico-b",
-                        "label": "Logica de Hoare",
+                        "label": "Beta de Hoare",
                         "aliases": [],
                         "kind": "topic",
                         "unit_slug": "unidade-02-verificacao-de-programas",
@@ -769,14 +774,14 @@ def test_auto_map_entry_subtopic_exact_tie_returns_no_slug():
     # exato entre tópicos → o sort estável elegia um vencedor ARBITRÁRIO
     # (menor índice na taxonomia) e o surfaçava com conf 0.0.
     entry = {
-        "title": "hoare",
+        "title": "Alfa de Hoare Beta de Hoare",
         "category": "codigo-professor",
         "tags": "",
         "manual_tags": [],
         "auto_tags": [],
         "raw_target": "raw/zip/hoare.zip",
     }
-    result = _auto_map_entry_subtopic(entry, _tie_taxonomy(), "Logica de Hoare")
+    result = _auto_map_entry_subtopic(entry, _tie_taxonomy(), "unidade-02-verificacao-de-programas")
 
     assert result.topic_slug == ""
     assert result.confidence == 0.0
@@ -1702,3 +1707,130 @@ def test_unit_index_descarta_frase_que_e_titulo_de_outra_unidade():
     assert "sistemas formais" in u01["topic_phrases"]
     assert "provadores de teoremas" in u01["topic_phrases"]
     assert "logica de hoare" in u02["topic_phrases"]
+
+
+def _plano_duas_unidades():
+    return (
+        "Unidade 01 - Introducao\n"
+        "1.1 Evolucao historica\n"
+        "1.2 Chamadas de sistema\n"
+        "Unidade 02 - Gerencia do processador\n"
+        "2.1 Escalonamento\n"
+        "2.2 Algoritmos de escalonamento\n"
+    )
+
+
+def _glossario_com_template(definicao_boilerplate: str) -> str:
+    """GLOSSARY.md como o build gera: duas secoes de TEMPLATE sem `Aparece em`,
+    e termos reais cuja definicao e a mesma frase-modelo para todas as unidades."""
+    return (
+        "# GLOSSARY - Curso\n"
+        "\n"
+        "## Formato de entrada\n"
+        "```\n"
+        "## [Termo]\n"
+        "```\n"
+        "\n"
+        "## Termos\n"
+        "> Termos extraidos automaticamente do plano de ensino.\n"
+        "\n"
+        "## 1.1 Evolucao historica\n"
+        f"**Definicao:** {definicao_boilerplate}\n"
+        "**Sinonimos aceitos:** \u2014\n"
+        "**Aparece em:** Unidade 01 - Introducao\n"
+        "\n"
+        "## 2.1 Escalonamento\n"
+        f"**Definicao:** {definicao_boilerplate}\n"
+        "**Sinonimos aceitos:** \u2014\n"
+        "**Aparece em:** Unidade 02 - Gerencia do processador\n"
+    )
+
+
+def _indice(monkeypatch, glossario: str):
+    import src.builder.routing.file_map as fm
+
+    monkeypatch.setattr(
+        "src.builder.facade.file_map.glossary_md",
+        lambda *a, **k: glossario,
+        raising=False,
+    )
+    profile = SubjectProfile(name="Curso", teaching_plan=_plano_duas_unidades())
+    return _build_file_map_unit_index_from_course({"name": "Curso"}, profile)
+
+
+def test_secao_de_template_do_glossario_nao_vira_sinal_de_unidade(monkeypatch):
+    """`## Formato de entrada` e `## Termos` sao secoes do TEMPLATE, nao termos.
+
+    Nao tem `Aparece em`, entao o unit_hint fica vazio e o guard antigo
+    (`if unit_hint and ...`) as colava em TODA unidade — medido nos 5 cursos
+    de producao em 2026-08-18.
+    """
+    index = _indice(monkeypatch, _glossario_com_template("Definicao real e especifica."))
+
+    for unit in index:
+        frases = " | ".join(unit["topic_phrases"])
+        assert "formato de entrada" not in frases
+        assert frases.count("termos") == 0
+
+
+def test_sinal_presente_em_todas_as_unidades_e_descartado(monkeypatch):
+    """Token em TODAS as unidades tem poder discriminante ZERO.
+
+    A definicao auto-gerada e a MESMA frase-modelo para todo termo, entao
+    `conceito`/`central`/`reconhecido`/... viravam frase de todas as unidades.
+    """
+    boiler = (
+        "Conceito central de esta unidade que deve ser reconhecido e usado "
+        "corretamente nas respostas e revisoes."
+    )
+    index = _indice(monkeypatch, _glossario_com_template(boiler))
+
+    ubiquas = set.intersection(*(set(u["topic_phrases"]) for u in index))
+    assert not ubiquas, f"frases presentes em todas as unidades: {sorted(ubiquas)}"
+
+
+def test_travessao_de_formatacao_nao_vira_alias():
+    """`**Sinonimos aceitos:** \u2014` e placeholder de VAZIO, nao um sinonimo."""
+    from src.builder.extraction.content_taxonomy import _parse_glossary_terms
+
+    termos = _parse_glossary_terms(
+        "## Escalonamento\n"
+        "**Definicao:** Ordem de execucao.\n"
+        "**Sinonimos aceitos:** \u2014\n"
+        "**Aparece em:** Unidade 02\n"
+        "\n"
+        "## Deadlock\n"
+        "**Sinonimos aceitos:** impasse; \u2013\n"
+        "**Aparece em:** Unidade 04\n"
+    )
+
+    por_termo = {t["term"]: t["synonyms"] for t in termos}
+    assert por_termo["Escalonamento"] == []
+    assert por_termo["Deadlock"] == ["impasse"]
+
+
+def test_topico_sem_vocabulario_proprio_nao_ganha_bonus_fantasma():
+    """Topico cujos tokens sao TODOS genericos nao pode pontuar sem casar nada.
+
+    `topic_tokens` vazio caia em `len(overlap) >= len(topic_tokens)` -> `0 >= 0`
+    e somava +1.4 INCONDICIONAL. Vivo em producao (2026-08-19): 3 topicos do MF,
+    entre eles "Linguagens de Especificacao e Logicas".
+    """
+    from src.builder.engine import _score_entry_against_taxonomy_topic
+    from src.builder.timeline.index import UNIT_GENERIC_TOKENS
+
+    label = "Linguagens de Especificacao e Logicas"
+    assert all(
+        tok in UNIT_GENERIC_TOKENS
+        for tok in label.lower().split()
+        if len(tok) >= 4
+    ), "fixture depende de todos os tokens serem genericos"
+
+    topico = {"topic_label": label, "topic_slug": "linguagens-de-especificacao-e-logicas",
+              "aliases": [], "kind": "topic"}
+    signals = {"title_text": "conteudo totalmente sem relacao xyzqwabc",
+               "markdown_headings_text": "", "markdown_lead_text": "", "markdown_text": "",
+               "category_text": "", "manual_tags_text": "", "auto_tags_text": "",
+               "legacy_tags_text": "", "raw_text": ""}
+
+    assert _score_entry_against_taxonomy_topic(signals, topico) == 0.0

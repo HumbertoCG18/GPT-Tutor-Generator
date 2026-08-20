@@ -86,6 +86,9 @@ def save_tag_profile(course_dir: Path, profile: SubjectTagProfile) -> None:
     )
 
 
+_PREFIXOS_ESPELHO = frozenset({"unit", "subunit", "bloco", "block"})
+
+
 def extract_entry_learned_terms(entry: dict) -> List[str]:
     """Extract significant tokens from entry dict for subject-local learning."""
     terms: set = set()
@@ -97,10 +100,20 @@ def extract_entry_learned_terms(entry: dict) -> List[str]:
 
     for tag in list(entry.get("auto_tags") or []):
         tag_str = str(tag)
-        if ":" in tag_str:
-            slug = tag_str.split(":", 1)[1]
-            if len(slug) >= 4:
-                terms.add(slug)
+        if ":" not in tag_str:
+            continue
+        prefixo, slug = tag_str.split(":", 1)
+        # Prefixos GERENCIADOS sao espelho da resposta anterior do proprio
+        # sistema (resolver_apply escreve `unit:`/`subunit:`/`bloco:` a partir do
+        # que ele mesmo computou). Aprender com eles fecha um loop: a correcao
+        # humana passa a casar pela saida da maquina, e um reprocess que mexa nas
+        # tags muda QUEM recebe o boost sem ninguem ter corrigido nada.
+        # Medido 2026-08-19: 1 correcao do MF atingia 19 de 67 entries com
+        # +1.5 a +3.0, ancorada em `bloco-03` e `unidade-01-metodos-formais`.
+        if prefixo.strip().lower() in _PREFIXOS_ESPELHO:
+            continue
+        if len(slug) >= 4:
+            terms.add(slug)
 
     raw = str(entry.get("raw_target", "") or "").lower()
     stem = Path(raw).stem if raw else ""

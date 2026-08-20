@@ -79,6 +79,7 @@ IDF_WEIGHT: float = 1.0
 TOOL_EXTENSIONS: dict = {
     ".thy": "isabelle",
     ".dfy": "dafny",
+    ".smv": "nusmv",
 }
 
 
@@ -117,7 +118,17 @@ def confidence_band(confidence: float) -> str:
 @dataclass(frozen=True)
 class _Thresholds:
     # tags gerenciadas (hoje gravadas por resolver_apply.apply_unit_subunit_fields)
-    UNIT_TAG: float = 0.65
+    # UNIT_TAG calibrado 0.65 -> 0.50 em 2026-08-18, primeiro sweep contra uma
+    # regua entry->unidade (`scripts/eval_entry_unit.py`, 191 entries dos 5 cursos).
+    # Medido PONTA-A-PONTA, depois de reconcile_unit_with_block — baixar o gate nao
+    # e de graca: com o slug vazio a reconciliacao herda a unidade do BLOCO, que
+    # acerta mais que o scorer, entao medir so o scorer inflava o ganho em ~5x.
+    # gate  grava-certo  errado  vazio
+    # 0.65      126        46      19   <- anterior
+    # 0.55      129        47      15
+    # 0.50      132        47      12   <- escolhido: +6 certo, +1 errado
+    # 0.40      132        49      10   <- satura; abaixo daqui so cresce o errado
+    UNIT_TAG: float = 0.50
     SUBUNIT_TAG: float = 0.60
     # K da formula de margem (padrao). Topico usa 0.20 historicamente.
     MARGIN_K: float = 0.18

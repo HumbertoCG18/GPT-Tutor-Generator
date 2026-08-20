@@ -62,14 +62,32 @@ def build_file_map_unit_index(
         if title_norm:
             other_unit_titles.add(title_norm)
 
-    for unit in units or []:
+    def _partes(unit):
         if isinstance(unit, dict):
-            title = unit.get("title", "")
-            topics = unit.get("topics", []) or []
-            extra_signals = unit.get("extra_signals", []) or []
-        else:
-            title, topics = unit
-            extra_signals = []
+            return (unit.get("title", ""), unit.get("topics", []) or [],
+                    unit.get("extra_signals", []) or [])
+        return (unit[0], unit[1], [])
+
+    def _frases(itens):
+        return {normalize_match_text(strip_outline_prefix(topic_text(i))) for i in itens} - {""}
+
+    # Frase presente em TODAS as unidades tem poder discriminante ZERO — so infla
+    # o score da unidade maior. Origens medidas (2026-08-18): a definicao
+    # auto-gerada do glossario, que e a MESMA frase-modelo para todo termo, e
+    # definicao que virou dump de sumario (ES2 injetava `camadas`, topico da u01,
+    # nas outras duas). Descarta so onde a frase NAO e topico proprio: a unidade
+    # dona mantem e volta a discriminar, as outras perdem.
+    proprias = [_frases(topics) for _, topics, _ in map(_partes, units or [])]
+    ubiquas: set = set()
+    if len(proprias) > 1:
+        ubiquas = set.intersection(
+            *(proprias[i] | _frases(extras)
+              for i, (_, _, extras) in enumerate(map(_partes, units or [])))
+        )
+
+    for unit_pos, unit in enumerate(units or []):
+        title, topics, extra_signals = _partes(unit)
+        descartar = ubiquas - proprias[unit_pos]
         clean_title = strip_outline_prefix(title)
         topic_phrases = []
         topic_tokens = []
@@ -79,6 +97,8 @@ def build_file_map_unit_index(
             if not topic_norm:
                 continue
             if topic_norm != normalize_match_text(clean_title) and topic_norm in other_unit_titles:
+                continue
+            if topic_norm in descartar:
                 continue
             topic_phrases.append(topic_norm)
             if topic_norm not in seen_topic_tokens:
@@ -1278,7 +1298,13 @@ def build_file_map_unit_index_from_course(
         seen_signals = set()
         for term in glossary_terms:
             unit_hint = normalize_match_text_fn(str(term.get("unit_hint", "") or ""))
-            if unit_hint and unit_hint not in normalized_unit and normalized_unit not in unit_hint:
+            # Termo SEM `Aparece em` nao aponta unidade nenhuma — e secao do
+            # template (`## Formato de entrada`, `## Termos`), nao terminologia.
+            # O guard antigo (`if unit_hint and ...`) deixava passar e colava em
+            # TODA unidade dos 5 cursos (medido 2026-08-18).
+            if not unit_hint:
+                continue
+            if unit_hint not in normalized_unit and normalized_unit not in unit_hint:
                 continue
             for candidate in [
                 str(term.get("term", "") or ""),
@@ -1301,4 +1327,5 @@ def build_file_map_unit_index_from_course(
                 extra_signals.append(token)
 
         unit_specs.append({"title": title, "topics": topics, "extra_signals": extra_signals})
+
     return build_file_map_unit_index_fn(unit_specs)

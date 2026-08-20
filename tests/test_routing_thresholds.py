@@ -11,7 +11,10 @@ def test_margin_confidence_formula():
 def test_thresholds_present():
     # limiares nomeados centralizados (BLOCK_UNIT_*/VOTE_* morreram com o
     # fallback keyword de unidade no cutover passo 3)
-    assert T.UNIT_TAG == 0.65
+    # UNIT_TAG: 0.65 -> 0.50 em 2026-08-18, sweep ponta-a-ponta contra
+    # `scripts/eval_entry_unit.py` (191 entries, 5 cursos): +6 gravadas certas,
+    # +1 errada, -7 vazias. Satura em 0.40. Ver thresholds.py para a tabela.
+    assert T.UNIT_TAG == 0.50
     assert T.SUBUNIT_TAG == 0.60
 
 
@@ -50,3 +53,23 @@ def test_signal_token_set_fonte_unica():
     assert signal_token_set("Logica de Hoare e C++ 2024") == {"logica", "hoare", "2024"}
     # wrapper da taxonomy preserva a copia divergente local (mantem +-./)
     assert ct._signal_token_set("isabelle/hol provas") == {"isabelle/hol", "provas"}
+
+
+def test_smv_e_linguagem_de_codigo_reconhecida():
+    """NuSMV e ferramenta central do MF e `.smv` nao estava na lista.
+
+    `concept_resolver.py:442` ja documentava "a ferramenta (.dfy/.thy/.smv)
+    ancora a UNIDADE", mas `CODE_EXTENSIONS` so tinha .thy e .dfy — o
+    `exemplos.zip` do MF (5 arquivos .smv de model checking) saia com
+    `extracted_files=[]`, sem resumo do Gemini e sem sinal nenhum
+    (medido 2026-08-19: era o UNICO zip sem extracao nos 5 cursos).
+    """
+    from src.utils.helpers import CODE_EXTENSIONS, LANG_MAP
+    from src.builder.routing.thresholds import TOOL_EXTENSIONS
+
+    assert ".smv" in CODE_EXTENSIONS
+    assert LANG_MAP["smv"] == "nusmv"
+    assert TOOL_EXTENSIONS[".smv"] == "nusmv"
+    # os tres pares de metodos formais andam juntos
+    for ext, lang in ((".thy", "isabelle"), (".dfy", "dafny"), (".smv", "nusmv")):
+        assert ext in CODE_EXTENSIONS and TOOL_EXTENSIONS[ext] == lang

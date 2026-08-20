@@ -1725,7 +1725,13 @@ def _score_entry_against_taxonomy_topic(signals: dict, topic: dict) -> float:
         if len(token) >= 4
     }
     overlap = topic_tokens & signal_tokens
-    if len(topic_tokens) == 1:
+    if not topic_tokens:
+        # Topico cujo vocabulario inteiro esta em UNIT_GENERIC_TOKENS (3 no MF:
+        # "Linguagens de Especificacao e Logicas", os dois "Softwares de Suporte
+        # a Verificacao Formal de ..."). Sem este guard cai no ramo seguinte com
+        # `0 >= 0` e ganha +1.4 INCONDICIONAL em toda entry avaliada.
+        pass
+    elif len(topic_tokens) == 1:
         if overlap:
             score += 0.9
     elif len(overlap) >= len(topic_tokens):
