@@ -1,5 +1,7 @@
 from types import SimpleNamespace
 
+from src.builder.routing.thresholds import T
+
 from src.builder.routing.resolver_apply import apply_unit_subunit_fields
 
 BLOCKS = [
@@ -43,9 +45,11 @@ def test_unit_forte_vence_e_flaga_conflito():
     assert out[0]["unit_block_conflict"] == {"unit": "u1", "block_unit": "u2", "block_id": "u-2"}
 
 def test_gate_unit_tag_e_espelho_de_tags():
-    # conf < T.UNIT_TAG (0.65) -> slug gated vazio -> herda a do bloco; tag unit: espelha o resultado
+    # conf < T.UNIT_TAG -> slug gated vazio -> herda a do bloco; tag unit: espelha o
+    # resultado. Confianca RELATIVA ao threshold: o valor foi recalibrado em
+    # 2026-08-18 (0.65 -> 0.50) e o teste nao pode depender do numero.
     e = _entry()
-    m = SimpleNamespace(slug="u1", confidence=0.5, ambiguous=False, reasons=["fraca"])
+    m = SimpleNamespace(slug="u1", confidence=T.UNIT_TAG - 0.1, ambiguous=False, reasons=["fraca"])
     out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
     assert out[0]["computed_unit_slug"] == "u2"          # herdada_do_bloco
     assert "unit:u2" in out[0]["auto_tags"]
@@ -69,10 +73,10 @@ def test_nao_material_e_sem_bloco_ficam_intocados():
     assert "computed_unit_slug" not in out[1]
 
 def test_unit_fraca_nunca_vence_bloco_mesmo_com_block_conf_menor():
-    # conf 0.5 < T.UNIT_TAG: gate zera o slug ANTES do reconcile -> herda a
+    # conf < T.UNIT_TAG: gate zera o slug ANTES do reconcile -> herda a
     # unidade do bloco, sem conflito espurio (semantica do legado).
     e = _entry(computed_block_confidence=0.3)
-    m = SimpleNamespace(slug="u1", confidence=0.5, ambiguous=False, reasons=["fraca"])
+    m = SimpleNamespace(slug="u1", confidence=T.UNIT_TAG - 0.1, ambiguous=False, reasons=["fraca"])
     out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
     assert out[0]["computed_unit_slug"] == "u2"
     assert "herdada_do_bloco=u-2" in out[0]["unit_match_reasons"]
@@ -146,3 +150,32 @@ def test_cadeia_motor_unit_descreve_bloco_pos_apply():
     assert "unidade_do_bloco_manual" in out[0]["unit_match_reasons"]
     assert out[0]["unit_block_conflict"] == {}
     assert "unit:u2" in out[0]["auto_tags"] and "unit:u1" not in out[0]["auto_tags"]
+
+
+def test_resumo_de_codigo_alimenta_a_rota_de_UNIDADE_tambem():
+    """Zip/codigo nao tem .md: o unico sinal e o resumo do Gemini.
+
+    O BLOCO ja recebia via `entry["concepts"]` e a SUBUNIDADE via `sub_md`; a
+    UNIDADE decidia com texto VAZIO — 25 de 233 materiais dos 5 cursos (11%).
+    Medido 2026-08-19: 129 -> 133 acertos na regua entry->unidade.
+    """
+    visto = {}
+
+    def _captura_markdown(entry_, units_, markdown_, topic_index_=None, **kw):
+        visto["unidade"] = markdown_
+        return SimpleNamespace(slug="u2", confidence=0.9, ambiguous=False, reasons=[])
+
+    e = _entry()
+    fns = _fns(SimpleNamespace(slug="u2", confidence=0.9, ambiguous=False, reasons=[]))
+    fns["auto_map_entry_unit_fn"] = _captura_markdown
+    curation = {"entries": {e["id"]: {"summary": {
+        "inferred_title": "Implementacao de Microsservicos com Spring Cloud",
+        "concepts": ["Service Discovery", "Feign Client", "Circuit Breaker"],
+    }}}}
+
+    apply_unit_subunit_fields([e], BLOCKS, {}, None, None, curation, **fns)
+
+    texto = visto.get("unidade") or ""
+    assert "Service Discovery" in texto or "Microsservicos" in texto, (
+        f"resumo do codigo nao chegou na rota de unidade: {texto!r}"
+    )

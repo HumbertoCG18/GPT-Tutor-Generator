@@ -667,11 +667,14 @@ def bibliography_md(
             ref_summary = rec.get("ref_summary") or ""
             if ref_summary:
                 lines.append(f"- **Resumo:** {ref_summary}")
-            ref_unit = rec.get("computed_ref_unit") or ""
-            ref_topics = rec.get("computed_ref_topics") or []
-            if ref_unit or ref_topics:
-                rel = ref_unit + (f" / {', '.join(ref_topics)}" if ref_topics else "")
-                lines.append(f"- **Relevante para:** {rel}")
+            # N ancoras: uma referencia cobre mais de uma unidade (o eth2 do MF
+            # cobre verificacao de programas E metodos formais). Ate 2026-08-19
+            # so o espelho single-winner era exibido.
+            from src.builder.core.reference_navigation import _ancoras
+            ancoras = _ancoras(rec)
+            if ancoras:
+                partes = [u + (f" / {', '.join(t)}" if t else "") for u, t in ancoras]
+                lines.append(f"- **Relevante para:** {' · '.join(partes)}")
             lines.append(f"- **Incluir no bundle:** {'sim' if entry.include_in_bundle else 'não'}")
             lines.append("")
 

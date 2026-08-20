@@ -212,9 +212,34 @@ def apply_unit_subunit_fields(
             continue
         block_id = str(entry.get("computed_block_id") or "").strip()
         if not block_id:
-            continue
+            # Bibliografia/referencias/cronograma sao limpas do BLOCO de proposito
+            # (`apply_concept_resolver`): nao foram "dadas" numa aula, nao tem eixo
+            # temporal. Mas TEM eixo de cobertura — sao material bibliografico DE
+            # alguma unidade, e o proprio gold ja as rotula (as laminas de sockets
+            # do SO estao em `coverage_gt_SO.csv` como u03, provenance=plano-de-
+            # ensino). Sem bloco, `reconcile_unit_with_block` devolve a unidade do
+            # scorer intacta (file_map.py:722), entao passar por aqui e seguro.
+            # Medido 2026-08-19: 14 entries nesta situacao nos 5 cursos, 6 passam
+            # a acertar e NENHUMA passa a errar (as outras 8 morrem no gate).
+            categoria = _collapse_ws_cat(str(entry.get("category") or "")).lower()
+            if categoria not in _NO_TIMELINE_CATEGORIES:
+                continue
 
         markdown_text = entry_markdown_text_for_file_map_fn(root, entry) if root is not None else ""
+
+        # Zip/codigo nao tem .md: o unico sinal e o resumo do Gemini em
+        # `code_curation.json`. O BLOCO ja recebe (`entry["concepts"]`, linha 90)
+        # e a SUBUNIDADE tambem (`sub_md` abaixo) — a UNIDADE era a unica cega,
+        # decidindo com texto vazio para 25 de 233 materiais dos 5 cursos (11%),
+        # entre eles `colecoes-*` e `classes-parte1` do MF, que viviam no balde
+        # de erro. Medido 2026-08-19: 129 -> 133 acertos, nenhum curso regride.
+        code_rec = (code_curation.get("entries") or {}).get(str(entry.get("id") or "")) or {}
+        texto_para_unidade = markdown_text
+        if code_rec:
+            from src.builder.core.code_summarization import code_curation_signal_text
+            resumo = code_curation_signal_text(code_rec)
+            if resumo:
+                texto_para_unidade = f"{markdown_text}\n\n{resumo}" if markdown_text else resumo
 
         manual_unit = _collapse_ws(str(entry.get("manual_unit_slug") or ""))
         if manual_unit:
@@ -223,7 +248,7 @@ def apply_unit_subunit_fields(
         else:
             learned = build_learned_unit_boosts(tag_profile, entry) if tag_profile else {}
             match = auto_map_entry_unit_fn(
-                entry, unit_index, markdown_text, topic_index,
+                entry, unit_index, texto_para_unidade, topic_index,
                 learned_unit_boosts=learned,
             )
             resolved_unit_slug = match.slug
@@ -232,6 +257,22 @@ def apply_unit_subunit_fields(
             unit_reasons = list(match.reasons)
 
         gated_unit = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= T.UNIT_TAG) else ""
+
+        # Eixo de COBERTURA (N unidades), separado do 1:1 acima. Prova, lista,
+        # plano de ensino e serie de laboratorio cobrem mais de uma unidade —
+        # forcar uma so e o erro de cardinalidade que travava a medicao.
+        from src.builder.routing.coverage_rules import derive_coverage_units
+        from src.builder.text.normalize import normalize_match_text as _norm_cov
+        cobertura = derive_coverage_units(
+            entry, unit_index, texto_para_unidade,
+            normalize=lambda t: _norm_cov(t, keep="+-./"),
+            fallback_unit_slug=gated_unit,
+            topic_index=topic_index,
+        )
+        if cobertura:
+            entry["coverage_units"] = cobertura
+        else:
+            entry.pop("coverage_units", None)
 
         blk = next((b for b in blocks if str(b.get("block_uuid") or "") == block_id), None)
         if blk is None:
@@ -274,17 +315,9 @@ def apply_unit_subunit_fields(
             subunit_reasons = ["manual"]
             subunit_confidence = 1.0
         else:
-            # Texto enriquecido: zips/código sem .md só têm sinal via resumo curado
-            # (mesma mecânica do legado; unit/bloco ficam com o markdown original).
-            sub_md = markdown_text
-            rec = (code_curation.get("entries") or {}).get(str(entry.get("id") or "")) or {}
-            if rec:
-                from src.builder.core.code_summarization import code_curation_signal_text
-                extra = code_curation_signal_text(rec)
-                if extra:
-                    sub_md = f"{markdown_text}\n\n{extra}" if markdown_text else extra
+            # Mesmo texto enriquecido da rota de unidade — montado uma vez só.
             topic_match = auto_map_entry_subtopic_fn(
-                entry, content_taxonomy, sub_md, winning_unit_slug=reconciled,
+                entry, content_taxonomy, texto_para_unidade, winning_unit_slug=reconciled,
             )
             best_subunit_slug = str(getattr(topic_match, "topic_slug", "") or "")
             subunit_reasons = list(getattr(topic_match, "reasons", []))

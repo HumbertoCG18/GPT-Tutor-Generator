@@ -354,6 +354,7 @@ def render_low_token_course_map_md(
     ref_index = course_meta.get("_reference_nav_index") or {}
     ref_by_unit = ref_index.get("by_unit", {}) or {}
     ref_by_topic = ref_index.get("by_topic", {}) or {}
+    material_by_unit = ref_index.get("material_by_unit", {}) or {}
 
     lines += ["## Estrutura do curso", ""]
     if units:
@@ -377,6 +378,15 @@ def render_low_token_course_map_md(
             leftovers = [r for r in ref_by_unit.get(unit_slug, [])
                          if r["entry_id"] not in shown_ids and r["entry_id"] not in topic_anchored]
             _emit_support_lines(lines, leftovers, shown_ids, "")
+            # material cuja cobertura N:N alcanca esta unidade sem morar nela
+            cobre = material_by_unit.get(unit_slug, [])
+            if cobre:
+                head = cobre[:_REF_CAP_PER_ANCHOR]
+                nomes = ", ".join(f"`{m['title']}`" for m in head)
+                sobra = len(cobre) - len(head)
+                if sobra:
+                    nomes += f" (+{sobra})"
+                lines.append(f"- 🧪 Tambem cobre esta unidade: {nomes}")
             lines.append("")
     else:
         # Tenta renderizar unidades reais do timeline_index quando não há teaching_plan
