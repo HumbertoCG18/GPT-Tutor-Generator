@@ -246,3 +246,46 @@ class TestGateConcordanciaData:
         assert d.block_ref == "bloco-12"
         assert d.flag is True
         assert d.band != "alta"
+
+
+def test_evidencia_exclusiva_sem_competicao_e_confiante():
+    """D4 relido (2026-08-21): `s2 > 0` exigia "competicao real" e confundia
+    SEM COMPETICAO com SEM EVIDENCIA. Quando so um bloco da janela casa algum
+    token do material (s1>0, s2=0) e ha token discriminante, e a evidencia
+    lexica mais exclusiva possivel. Medido nos 5 cursos (87 janelas >= 2):
+    nesse balde o lexico acerta 21/23, o LLM 22/23 — mesma acuracia total
+    (73/87) com 22 votos de LLM a menos."""
+    blocks = [
+        {"id": "bloco-A", "period_start": "2026-03-01",
+         "topic_text": "logica hoare triplas", "sessions": []},
+        {"id": "bloco-B", "period_start": "2026-03-08",
+         "topic_text": "modelos kripke temporal", "sessions": []},
+    ]
+    ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+    d = disambiguate({"title": "exercicios triplas de hoare"}, ["bloco-A", "bloco-B"], ctx)
+    assert d.block_ref == "bloco-A"
+    assert d.flag is False and d.band == "alta"
+
+
+def test_silencio_total_continua_flagado():
+    """s1 = 0 (nenhum token casa bloco nenhum) NAO e evidencia: segue flag."""
+    blocks = [
+        {"id": "bloco-A", "period_start": "2026-03-01", "topic_text": "hoare", "sessions": []},
+        {"id": "bloco-B", "period_start": "2026-03-08", "topic_text": "kripke", "sessions": []},
+    ]
+    ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+    d = disambiguate({"title": "material qualquer"}, ["bloco-A", "bloco-B"], ctx)
+    assert d.flag is True and d.band != "alta"
+
+
+def test_boilerplate_de_curso_nao_e_token():
+    """"Apresentacao da DISCIPLINA", "ESTUDO de CASO" aparecem em todo curso e
+    puxavam o material para o bloco-01 (MF `introducao`, ES2 `azure`)."""
+    toks = entry_tokens({"title": "Estudo de caso: apresentacao da disciplina"})
+    assert not ({"estudo", "caso", "disciplina"} & toks)
+
+
+def test_trabalho_nao_e_token_de_assunto():
+    """ES2 `kubernetes` ia sozinho para "Entrega trabalho final" pelo token
+    "trabalho" — nome da categoria, nao do assunto."""
+    assert "trabalho" not in entry_tokens({"title": "Kubernetes trabalho final"})

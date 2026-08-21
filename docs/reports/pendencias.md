@@ -1137,6 +1137,43 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   `pedagogical_regeneration.py:552` — a cascata `window_provider` P1..P4 existe e esta desligada)
   e o scorer 1:1, onde ele entra como *hint posicional FRACO* (`concept_resolver.py:346`).
 
+## CODE — "TUDO PELO MOTOR": lexico vs LLM medido; D4 relido; -26% de votos (2026-08-21b)
+
+Pedido do user: decidir pelo motor, LLM o minimo; raiz, nunca remendo. Primeiro o dado que
+contradiz a percepcao "maioria dos erros e bibliografia": dos 15 erros de bloco, **1** e
+bibliografia (`eth2`, preco aceito da regra B-6); 7 sao `codigo-professor`, 3 material, 2 listas.
+- [MEDIDO] **D-1 · lexico top-1 vs LLM em TODA janela >= 2 (87 casos com gold):** lexico **55/87**,
+  LLM **69/87**. Por balde de sinal lexico:
+
+  | balde | n | lexico ok | LLM ok |
+  |---|---|---|---|
+  | `s1=0` (cego) | 13 | 1 | 8 |
+  | `s1>0, s2=0` (so 1 bloco casa) | 23 | **21** | 22 |
+  | `rel<tau` (competicao) | 40 | 23 | **34** |
+  | `rel>=tau` (ja confiante) | 11 | 10 | — |
+
+  "Tudo pelo motor" hoje custaria 14 pontos nessas 87. O LLM ganha onde ha competicao real e
+  onde o lexico e cego; nesses dois baldes o sinal que falta e **ordem da serie** ("roteiro N",
+  "microsservicos N": gold monotono no tempo, duas series intercaladas no mesmo card do ES2) —
+  candidato a provider deterministico, nao medido. Resumo de codigo no disambiguator: medido e
+  DESCARTADO (nao move o total; vira `rel<tau` e vai ao LLM do mesmo jeito).
+- [DONE] **D-2 · gate D4 relido: `s2=0` com token discriminante e CONFIANTE.** O `s2 > 0`
+  obrigatorio ("competicao real") confundia sem-competicao com sem-evidencia. Guard: janela
+  degradada (ref fantasma, 1 bloco resolvivel) nao tem runner-up e segue flagada (teste existente
+  preservado). Stems genericos +`disciplina`/`estudo`/`caso` (boilerplate do bloco-01) e
+  +`trabalho` (nome de categoria; ES2 `kubernetes` ia sozinho para "Entrega trabalho final").
+  Gate de df global na exclusividade: simulado, tira 2 confiantes certos e nao remove `azure` —
+  descartado. **Producao: votos de LLM 81 -> 60 (-26%), `disamb` 10 -> 31, regua 185/200
+  identica, confiante-e-errado 1** (`azure`: "servicos" colide com "arquitetura baseada em
+  servicos"; aceito). Suite 1993 passed.
+- [DONE] **D-3 · trabalhos/provas NAO passam pelo desempate lexico** (`resolve_unscoped(lexical=
+  False)`): o enunciado descreve o conteudo cobrado, nao a entrega — TCC `t1-enunciado` ia para a
+  aula 03 (tokens `minimizacao`/`primitivas`) em vez da entrega 04. Janela-1 estrutural decide;
+  janela > 1 vai ao voto sobre a janela. Achado pelo primeiro reprocess (a simulacao so tinha
+  material) — a regua pegou, o fix e de raiz (categoria inteira), nao de caso.
+- [NOTA] Sentinela `_golden/Metodos-Formais-Tutor__casos_chave.json` regravada de proposito: unico
+  diff e `eth2` com temporal via `ref-generica` (mesmo uuid do pino removido em B-6).
+
 ## CODE — OS 8 OFF-BY-ONE: 1 defeito de codigo, 7 nao (2026-08-20h)
 
 - [DONE] **O-1 · provider ordinal contava a aula de CORRECAO como encontro.** TCC `bloco-18`

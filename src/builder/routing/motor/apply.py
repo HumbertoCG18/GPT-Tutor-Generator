@@ -84,7 +84,8 @@ def apply_anchor_engine(
                 # janela (card manual/datado, data, ordinal, topico -> desempate ->
                 # voto) e so entao o llm-funil. Um card manual cobre o cluster
                 # inteiro de uma vez (TCC "Semana 14 - Apresentacoes T2").
-                decision = engine.resolve_unscoped(entry, ctx, markdown=str(md_of(entry) or ""))
+                decision = engine.resolve_unscoped(
+                    entry, ctx, markdown=str(md_of(entry) or ""), lexical=False)
             if decision is None:
                 _clear_temporal(entry)
                 continue

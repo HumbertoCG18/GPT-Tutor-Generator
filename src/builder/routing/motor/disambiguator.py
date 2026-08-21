@@ -26,6 +26,13 @@ _GENERIC_STEMS = frozenset({
     "introduc", "continua", "exercici", "revisao", "conteudo", "material",
     "aplicac", "apresent", "sobre", "parte", "exemplo", "usando", "aula",
     "para", "resposta", "solucao", "lista",
+    # boilerplate de curso (2026-08-21): "apresentacao da DISCIPLINA" e
+    # "ESTUDO de CASO" vivem na assinatura do bloco-01 de todo curso e puxavam
+    # material generico para la (MF `introducao`, ES2 `azure`).
+    "discipli", "estudo", "caso",
+    # "trabalho" e o nome da categoria, nao do assunto (ES2 `kubernetes` ia
+    # sozinho para "Entrega trabalho final" por esse unico token).
+    "trabalho",
     "nao", "sim", "com", "sem", "por", "dos", "das", "nos", "nas", "uma", "que",
 })
 
@@ -182,13 +189,22 @@ def disambiguate(entry: dict, window: List[str], ctx: MotorContext,
     s1 = scores[i1]
     s2 = scores[order[1]] if len(order) > 1 else 0.0
     rel_margin = (s1 - s2) / max(s1, _EPS)
-    # D4 literal (spec §3): confiança exige COMPETIÇÃO real (s2>0) E >=1 token
-    # DISCRIMINANTE — token do material que casa a assinatura do best e NÃO a
-    # do runner-up. Vitória só-por-peso/IDF (mesmos tokens) nunca é confiante.
+    # D4 (spec §3), relido 2026-08-21: confiança exige >=1 token DISCRIMINANTE
+    # — token do material que casa a assinatura do best e NÃO a do runner-up —
+    # e, HAVENDO competição (s2>0), margem >= MARGIN_TAU. Vitória só-por-peso/
+    # IDF (mesmos tokens) nunca é confiante. O `s2 > 0` obrigatório de antes
+    # confundia SEM COMPETIÇÃO com SEM EVIDÊNCIA: s1>0 com s2=0 (só o best casa
+    # algum token) é a evidência lexical mais exclusiva possível. Medido nos 5
+    # cursos (87 janelas >= 2): nesse balde o léxico acerta 21/23 e o LLM
+    # 22/23 — acurácia total igual (73/87) com 22 votos de LLM a menos.
     hits_best = mat & set(sigs[i1])
     hits_runner = mat & set(sigs[order[1]]) if len(order) > 1 else set()
     discriminante = hits_best - hits_runner
-    confident = s1 > 0 and s2 > 0 and rel_margin >= MARGIN_TAU and bool(discriminante)
+    # Janela degradada (ref fantasma: so 1 bloco resolve) nao tem runner-up —
+    # s2=0 ali nao e exclusividade, e ausencia de comparacao: segue flagada.
+    exclusivo = s2 <= 0 and len(blocks) >= 2
+    confident = s1 > 0 and bool(discriminante) and (
+        exclusivo or (s2 > 0 and rel_margin >= MARGIN_TAU))
 
     ref = str(blocks[i1].get("id") or blocks[i1].get("block_uuid") or win[i1])
     if confident:

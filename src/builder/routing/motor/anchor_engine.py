@@ -100,14 +100,29 @@ class AnchorEngine:
             return None
         return self.resolve_unscoped(entry, ctx, markdown)
 
-    def resolve_unscoped(self, entry: dict, ctx: MotorContext, markdown: str = "") -> Optional[AnchorDecision]:
+    def resolve_unscoped(self, entry: dict, ctx: MotorContext, markdown: str = "",
+                         *, lexical: bool = True) -> Optional[AnchorDecision]:
         """Cascata de janela + desempate + voto + llm-funil, SEM a checagem de
         escopo. apply.py chama daqui para provas/trabalhos sem due casado (B-6,
         2026-08-21): um card MANUAL "Semana 14 - Apresentacoes T2" -> bloco-25
-        cobre as 5 entries do cluster de uma vez, em vez de 5 pinos."""
+        cobre as 5 entries do cluster de uma vez, em vez de 5 pinos.
+
+        lexical=False (trabalhos/provas): o texto de um enunciado descreve o
+        CONTEUDO cobrado, nao a entrega — o desempate por token aponta a aula
+        do assunto (TCC `t1-enunciado` -> aula 03, entrega = 04). Com janela
+        de 1 bloco a estrutura (card/data) decide; com mais, so o voto sobre a
+        janela, nunca o token."""
         window, provider = resolve_window(entry, ctx)
         if not window:
             return self.resolve_funnel(entry, ctx, markdown)  # sem janela -> llm-funil ou None
+        if not lexical and len(window) > 1:
+            if self._voter is None:
+                return None
+            voted = self._voter.vote(entry, window, ctx, markdown)
+            if not voted:
+                return None
+            return AnchorDecision(block_ref=voted, conf=0.0, band="media", flag=False,
+                                  provider="llm", method="llm", window=list(window))
         decision = disambiguate(entry, window, ctx, markdown, provider=provider)
         if not decision.block_ref:
             return None  # nenhum ref da janela resolve -> funil honesto

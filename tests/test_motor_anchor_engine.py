@@ -231,3 +231,26 @@ def test_referencia_sem_card_vai_para_o_primeiro_bloco():
     assert ae.resolve_generic_reference(
         {"category": "bibliografia", "source_section": "Semana 8 - 20.04 a 24.04"}, ctx) is None
     assert ae.resolve_generic_reference({"category": "material-de-aula"}, ctx) is None
+
+
+def test_trabalho_com_janela_multipla_nao_usa_token_de_conteudo():
+    """lexical=False (trabalhos/provas): enunciado descreve o CONTEUDO cobrado,
+    nao a entrega. TCC `t1-enunciado`: tokens "minimizacao/primitivas" casam a
+    aula 03; a entrega e o bloco-04. Com janela > 1 so o voto sobre a janela
+    decide; sem voter, None (funil/limpo). Janela-1 segue estrutural."""
+    ctx = MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-03", "period_start": "2026-03-11",
+                 "topic_text": "funcoes recursivas primitivas minimizacao", "sessions": []},
+                {"id": "bloco-04", "period_start": "2026-03-20", "kind": "deliverable",
+                 "topic_text": "entrega", "sessions": []}],
+        card_block_map={"Semana 3 - Trabalho T1": {"source": "manual", "block_ids": ["bloco-03", "bloco-04"]}},
+        lessons_index={})
+    entry = {"id": "t1", "category": "trabalhos", "title": "T1 - Enunciado",
+             "source_section": "Semana 3 - Trabalho T1"}
+    md = "minimizacao de funcoes recursivas primitivas e parciais"
+    # com token de conteudo, o lexico iria para bloco-03 (errado para uma entrega)
+    assert ae.AnchorEngine(voter=None).resolve_unscoped(entry, ctx, md, lexical=True).block_ref == "bloco-03"
+    assert ae.AnchorEngine(voter=None).resolve_unscoped(entry, ctx, md, lexical=False) is None
+    voter = _FakeVoter("bloco-04")
+    d = ae.AnchorEngine(voter=voter).resolve_unscoped(entry, ctx, md, lexical=False)
+    assert d.block_ref == "bloco-04" and d.method == "llm" and d.window == ["bloco-03", "bloco-04"]
