@@ -11,13 +11,14 @@ from src.builder.routing.motor.contracts import AnchorDecision, MotorContext, Ll
 from src.builder.routing.motor.window_provider import resolve_window
 from src.builder.routing.motor.disambiguator import disambiguate
 
-# Categorias que NUNCA entram no disambiguator na FASE 0 (spec §3 TIER 2 + marco0).
-# bibliografia/references/cronograma = funil direto (0 chamada LLM depois).
-# trabalhos/provas = janela-de-prazo (FASE 4); fora do disambiguator já agora.
-_OUT_CATEGORIES = frozenset({
-    "bibliografia", "references", "referencias", "cronograma", "apoio",
-    "trabalhos", "provas",
-})
+# Categorias que NUNCA entram no disambiguator (spec §3 TIER 2 + marco0).
+# trabalhos/provas = janela-de-prazo (tier2 no apply.py, antes do engine).
+# bibliografia/references/cronograma/apoio SAIRAM da lista em 2026-08-21 (B-5):
+# o gold da a elas um bloco (plano -> bloco-01; artigo com card datado -> bloco
+# da semana) e 12 das 14 em producao ja tinham pino manual, que vence antes.
+# Liberadas, as 2 sem pino acertam (janela-1 pelo card datado; llm-funil).
+# O card TDE continua fora: e agrupamento administrativo, nao tema.
+_OUT_CATEGORIES = frozenset({"trabalhos", "provas"})
 _TDE_PREFIX = "TDE"
 
 

@@ -1185,6 +1185,22 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   no bloco errado; `definicao-e-historico` gold fora). Liberar `trabalhos` pela janela manual do
   card no TCC = +1 (`t1-enunciado`) / -1 (`trabalho-t2`, gold fora). Nao implementar. O funil e
   estrutural: o sinal que resolveria (data da avaliacao/apresentacao) nao esta no texto.
+- [DONE 2026-08-21] **B-5 · bibliografia/references/cronograma/apoio LIBERADAS de `_OUT_CATEGORIES`.**
+  Ficam fora so `trabalhos`/`provas` (tier2) e o card TDE. Achado no caminho: das 14 entries
+  dessas categorias em producao, **12 tem pino manual** (o pino vence antes do escopo; 11/12 batem
+  com o gold, a 12a e `eth2`, B-3) — por isso so 2 apareciam no funil. Medido em memoria SEM pino
+  (curso novo): 7/14 = 50%; os erros sao referencia generica que o gold poe em bloco-01 e o LLM
+  manda para bloco tematico. **Producao: mudam exatamente as 2 sem pino**, MF `plano` (llm-funil)
+  e IA `artigo-usando-agrupamento` (janela-1/labels/alta), ambas = gold. Regua **179 -> 181/200
+  (90,5%)**; **IA 43/43**; **funil 0/0 nos 5**; confiante-e-errado 0. Suite 1985 passed.
+  Sinal para B-3: o LLM, sem ver o pino, poe `eth2` em **bloco-12 = gold**, contra o pino
+  (bloco-01).
+- [NOTA · higiene] Dois ruidos de reprocess vistos aqui, nenhum muda decisao: (a) ordem de chaves
+  do JSON do manifest alterna entre rodadas (`computed_block_method` troca de posicao com uma
+  lista) em SO/ES2/TCC — semanticamente identico, diff sujo; (b) `manual_timeline_block_id` do
+  TCC `3d-matching` alterna uuid <-> `bloco-24` a cada reprocess (`block_identity.py:329`
+  reescreve o pino). Campo MANUAL nao deveria ser tocado por reprocess. Ambos revertidos, nao
+  investigados.
 - [DONE 2026-08-21] **B-4 · llm-funil IMPLEMENTADO e em producao.** `AnchorEngine.resolve_funnel`
   (janela = todos os blocos, band `media`, flag=True, method/provider `llm-funil`); `resolve()`
   cai nele sem janela; `apply.py` manda provas/trabalhos sem due para ele; cap 20 -> 60.

@@ -19,8 +19,14 @@ def _ctx():
     return MotorContext.from_artifacts(blocks=BLOCKS, card_block_map=CBM, lessons_index={})
 
 
-def test_bibliografia_routes_out_of_motor():
-    assert is_out_of_disamb_scope({"category": "bibliografia"}) is True
+def test_bibliografia_entra_no_motor_e_tde_continua_fora():
+    """B-5 (2026-08-21): bibliografia/references/cronograma/apoio passam pela
+    cascata — o gold da bloco a elas e 12/14 em producao ja tinham pino. Sem
+    voter e sem janela o resultado e None (funil), como antes; a diferenca e
+    que um card datado ou o llm-funil agora podem decidir. TDE segue fora."""
+    assert is_out_of_disamb_scope({"category": "bibliografia"}) is False
+    assert is_out_of_disamb_scope({"category": "cronograma"}) is False
+    assert is_out_of_disamb_scope({"category": "bibliografia", "source_section": "TDE 3"}) is True
     eng = AnchorEngine()
     assert eng.resolve({"category": "bibliografia", "source_section": "Bibliografia-Livros"}, _ctx()) is None
 

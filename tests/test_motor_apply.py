@@ -199,17 +199,18 @@ def test_tier0_gemeos_md5_mesma_decisao(tmp_path):
 
 
 def test_tier0_fora_de_escopo_nao_herda_decisao_do_gemeo_in_scope(tmp_path):
-    """review F4 I1: gêmeo md5 fora-de-escopo (bibliografia) processado DEPOIS
+    """review F4 I1: gêmeo md5 fora-de-escopo (card TDE) processado DEPOIS
     do gêmeo in-scope não deve herdar temporal_* via cache de content_key —
-    is_out_of_disamb_scope é atributo da ENTRY, não do conteúdo compartilhado."""
+    is_out_of_disamb_scope é atributo da ENTRY, não do conteúdo compartilhado.
+    (B-5: bibliografia entrou no motor; o fora-de-escopo que resta é o TDE.)"""
     repo = _repo(tmp_path)
     twin = repo / "twin.pdf"
     twin.write_bytes(b"conteudo identico")
     entries = [
         {"id": "g1", "title": "inducao 1", "category": "materiais",
          "source_section": "card a", "source_path": "twin.pdf"},
-        {"id": "g2-fora", "title": "inducao 2", "category": "bibliografia",
-         "source_section": "card a", "source_path": "twin.pdf"},
+        {"id": "g2-fora", "title": "inducao 2", "category": "materiais",
+         "source_section": "TDE 3 - entrega", "source_path": "twin.pdf"},
     ]
     apply_anchor_engine(entries, repo, "MF")
     g1 = next(e for e in entries if e["id"] == "g1")
@@ -225,8 +226,8 @@ def test_tier0_in_scope_nao_perde_decisao_apos_gemeo_fora_de_escopo(tmp_path):
     twin = repo / "twin.pdf"
     twin.write_bytes(b"conteudo identico")
     entries = [
-        {"id": "g2-fora", "title": "inducao 2", "category": "bibliografia",
-         "source_section": "card a", "source_path": "twin.pdf"},
+        {"id": "g2-fora", "title": "inducao 2", "category": "materiais",
+         "source_section": "TDE 3 - entrega", "source_path": "twin.pdf"},
         {"id": "g1", "title": "inducao 1", "category": "materiais",
          "source_section": "card a", "source_path": "twin.pdf"},
     ]
@@ -329,8 +330,8 @@ class _VoterFunil:
 
 def test_llm_funil_escreve_temporal_para_sem_janela_e_provas_sem_due(tmp_path):
     """B-4: entry in-scope sem janela e provas/trabalhos sem due recebem o voto
-    do LLM com janela = todos os blocos (method llm-funil). Bibliografia segue
-    sem eixo temporal (design do apply_concept_resolver), mesmo com voter."""
+    do LLM com janela = todos os blocos (method llm-funil). B-5: bibliografia/
+    cronograma tambem (o gold da bloco a elas). Card TDE segue sem temporal."""
     repo = _repo(tmp_path)
     voter = _VoterFunil("bloco-02")
     entries = [
@@ -338,15 +339,17 @@ def test_llm_funil_escreve_temporal_para_sem_janela_e_provas_sem_due(tmp_path):
          "source_section": "Informacoes Gerais"},
         {"id": "prova-sem-due", "title": "lista p1", "category": "provas",
          "source_section": "Informacoes Gerais"},
-        {"id": "fora", "title": "plano de ensino", "category": "bibliografia"},
+        {"id": "biblio", "title": "plano de ensino", "category": "bibliografia"},
+        {"id": "tde", "title": "entrega", "category": "materiais",
+         "source_section": "TDE 3 - entrega"},
     ]
     apply_anchor_engine(entries, repo, "MF", voter=voter)
     by = {e["id"]: e for e in entries}
-    for eid in ("sem-janela", "prova-sem-due"):
+    for eid in ("sem-janela", "prova-sem-due", "biblio"):
         assert by[eid]["temporal_block_id"] == "u-2", eid
         assert by[eid]["temporal_block_method"] == "llm-funil"
         assert by[eid]["temporal_block_band"] == "media"
         assert by[eid]["temporal_block_flag"] is True
         assert by[eid]["temporal_block_window"] == ["bloco-01", "bloco-02"]
-    assert all(k not in by["fora"] for k in TEMPORAL_KEYS)
-    assert sorted(eid for eid, _ in voter.windows) == ["prova-sem-due", "sem-janela"]
+    assert all(k not in by["tde"] for k in TEMPORAL_KEYS)
+    assert sorted(eid for eid, _ in voter.windows) == ["biblio", "prova-sem-due", "sem-janela"]
