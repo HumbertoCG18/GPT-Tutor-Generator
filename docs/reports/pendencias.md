@@ -1173,6 +1173,27 @@ bibliografia (`eth2`, preco aceito da regra B-6); 7 sao `codigo-professor`, 3 ma
   material) — a regua pegou, o fix e de raiz (categoria inteira), nao de caso.
 - [NOTA] Sentinela `_golden/Metodos-Formais-Tutor__casos_chave.json` regravada de proposito: unico
   diff e `eth2` com temporal via `ref-generica` (mesmo uuid do pino removido em B-6).
+- [REFUTADO 2026-08-21c] **D-4 · provider "ordinal dentro do card" (serie numerada no mesmo card,
+  alinhamento monotono + lexico).** Universo: 19 membros de serie com gold em janela >= 2 (MF
+  `exerciciosdafny1-5`, `classes-parte1/2`; ES2 `microsservicos2-7`, `roteiro1-7`). Gold e
+  monotono em N em 3 de 4 series — o sinal de ORDEM existe. Mas o alinhamento monotono (DP
+  maximizando score lexico sob ordem) da **7/19**, contra lexico top-1 9/19 e producao (LLM)
+  **15/19**: com score zero (roteiros = codigo sem markdown, titulo "roteiroN") o DP colapsa
+  tudo no bloco-01, e o ima `bloco-04` engole os slides. A ordem diz a DIRECAO, nao o bloco; o
+  mapeamento N -> bloco exigiria o cronograma nomear os roteiros por data — o do ES2 nao nomeia
+  (0 de 20 sessoes). O LLM acerta lendo datas + sequencia, sem ancora deterministica possivel.
+- [MEDIDO] **D-5 · eixo de bloco por categoria (200 unidades) — a ordem de ataque do user:**
+  material-de-aula **86/89** (96,6%) · codigo-professor **52/59** (88,1%) · listas 24/26 ·
+  trabalhos 6/7 · gabaritos 3/4 · bibliografia 6/7 · provas 2/2 · cronograma 4/4.
+  **Os 3 erros de material-de-aula tem 3 raizes distintas e nenhuma e sistemica:** SO
+  `definicao-e-historico` (card tematico "Introducao aos SO", gold bloco-02 "Introducao" kind
+  overview — o stem generico `introduc` apaga o unico token que ligaria card e bloco; tirar o
+  stem reabre o ima "Introducao" em todo curso), ES2 `azure` (custo aceito de D-2), TCC
+  `aula-17-np-completude` (professor numerou duas "Aula 17"). Material-de-aula esta no teto do
+  dado; nao ha fix de raiz barato. Em codigo-professor os 7 erros sao os 3 `threads` do SO (card
+  tematico sem janela, llm-funil) e 4 roteiros do ES2 (sem texto, ver D-4) — ambos sem sinal no
+  dado atual; o resumo de codigo no disambiguator foi medido (D-1): recupera 4/12 no balde
+  `s1=0` mas nao move o total com o LLM ligado.
 
 ## CODE — OS 8 OFF-BY-ONE: 1 defeito de codigo, 7 nao (2026-08-20h)
 
