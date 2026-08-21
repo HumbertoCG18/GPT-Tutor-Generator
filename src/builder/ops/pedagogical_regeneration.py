@@ -69,7 +69,9 @@ def _build_motor_voter(builder):
             config,
             cache_path=material_curation_path(builder.root_dir),
             repo_dir=builder.root_dir,
-            cap=20,
+            # B-4: o llm-funil soma ate 17 votos numa rodada (SO); com 20 o curso
+            # levava 2 rodadas para cobrir o funil. Cache hit nao conta.
+            cap=60,
         )
     except Exception:
         return None

@@ -1185,7 +1185,18 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   no bloco errado; `definicao-e-historico` gold fora). Liberar `trabalhos` pela janela manual do
   card no TCC = +1 (`t1-enunciado`) / -1 (`trabalho-t2`, gold fora). Nao implementar. O funil e
   estrutural: o sinal que resolveria (data da avaliacao/apresentacao) nao esta no texto.
-- [MEDIDO · DECISION] **B-4 · LLM votando no FUNIL com janela = todos os blocos: 6/26 -> 13/26,
+- [DONE 2026-08-21] **B-4 · llm-funil IMPLEMENTADO e em producao.** `AnchorEngine.resolve_funnel`
+  (janela = todos os blocos, band `media`, flag=True, method/provider `llm-funil`); `resolve()`
+  cai nele sem janela; `apply.py` manda provas/trabalhos sem due para ele; cap 20 -> 60.
+  Bibliografia/references/cronograma/apoio/TDE seguem FORA (sem eixo temporal por design) —
+  por isso MF `plano` e IA `artigo` continuam no funil. 5 repos reprocessados: llm-funil decidiu
+  **30 entries, 24 com gold -> 12 ok / 12 erro (50%)**; regua de bloco **173 -> 179/200**
+  (SO 27->31, ES2 22->23, TCC 19->20); confiante-e-errado 0 nos 5. Testes: 3 no engine + 1 no
+  apply. Suite 1985 passed / 1 skipped. Nota: o voto do LLM varia entre rodadas (ES2
+  `revisao-p1` errou no experimento e acertou em producao; TCC `programacao-inteira` foi 23 ->
+  26) — o cache congela o primeiro voto, entao a producao e estavel daqui em diante.
+  Medicao original do experimento abaixo.
+- [MEDIDO] **B-4 (experimento) · LLM votando no FUNIL com janela = todos os blocos: 6/26 -> 13/26,
   0 regressoes.** Experimento read-only (2026-08-21, `gemini-3.5-flash`, cache proprio no
   scratchpad, 26 chamadas, 0 erros): mesmo `LlmVoter`/prompt de producao, janela = todos os
   blocos do curso (14-35). Resultado: **scorer concept-fused 6/26 = 23% -> LLM 13/26 = 50%**;

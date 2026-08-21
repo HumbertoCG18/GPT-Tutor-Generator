@@ -315,3 +315,38 @@ def test_run_anchor_engine_layer_happy_path_sem_warning(tmp_path, monkeypatch, c
         out = pr._run_anchor_engine_layer(_B(), entries)
     assert out == before
     assert not [r for r in caplog.records if r.levelname == "WARNING"]
+
+
+class _VoterFunil:
+    """Responde sempre o mesmo bloco; registra a janela que recebeu."""
+    def __init__(self, answer):
+        self.answer, self.windows = answer, []
+
+    def vote(self, entry, window, ctx, markdown=""):
+        self.windows.append((str(entry.get("id")), list(window)))
+        return self.answer
+
+
+def test_llm_funil_escreve_temporal_para_sem_janela_e_provas_sem_due(tmp_path):
+    """B-4: entry in-scope sem janela e provas/trabalhos sem due recebem o voto
+    do LLM com janela = todos os blocos (method llm-funil). Bibliografia segue
+    sem eixo temporal (design do apply_concept_resolver), mesmo com voter."""
+    repo = _repo(tmp_path)
+    voter = _VoterFunil("bloco-02")
+    entries = [
+        {"id": "sem-janela", "title": "sem sinal nenhum", "category": "materiais",
+         "source_section": "Informacoes Gerais"},
+        {"id": "prova-sem-due", "title": "lista p1", "category": "provas",
+         "source_section": "Informacoes Gerais"},
+        {"id": "fora", "title": "plano de ensino", "category": "bibliografia"},
+    ]
+    apply_anchor_engine(entries, repo, "MF", voter=voter)
+    by = {e["id"]: e for e in entries}
+    for eid in ("sem-janela", "prova-sem-due"):
+        assert by[eid]["temporal_block_id"] == "u-2", eid
+        assert by[eid]["temporal_block_method"] == "llm-funil"
+        assert by[eid]["temporal_block_band"] == "media"
+        assert by[eid]["temporal_block_flag"] is True
+        assert by[eid]["temporal_block_window"] == ["bloco-01", "bloco-02"]
+    assert all(k not in by["fora"] for k in TEMPORAL_KEYS)
+    assert sorted(eid for eid, _ in voter.windows) == ["prova-sem-due", "sem-janela"]

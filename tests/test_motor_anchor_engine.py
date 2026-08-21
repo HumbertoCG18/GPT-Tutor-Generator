@@ -175,3 +175,36 @@ def test_janela_1_nao_entra_no_voto_mesmo_em_serie():
     assert d is not None and d.block_ref
     assert voter.calls == 0            # janela-1: voter NUNCA chamado
     assert d.provider != "llm" and d.method != "llm"
+
+
+# B-4 (2026-08-21): llm-funil — sem janela, o LLM vota com janela = blocos do curso.
+def _funil_ctx():
+    return MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-01"}, {"id": "bloco-02"}, {"id": "bloco-03"}],
+        card_block_map={}, lessons_index={})
+
+
+def test_llm_funil_vota_com_janela_de_todos_os_blocos():
+    """Medido 2026-08-21: funil concept-fused 6/26 -> LLM janela=tudo 13/26,
+    0 regressoes. band media + flag=True: 50% e honesto, fica na fila humana."""
+    voter = _FakeVoter("bloco-03")
+    d = ae.AnchorEngine(voter=voter).resolve_funnel(
+        {"id": "e1", "category": "material-de-aula"}, _funil_ctx())
+    assert d.block_ref == "bloco-03"
+    assert d.method == "llm-funil" and d.provider == "llm-funil"
+    assert d.band == "media" and d.flag is True
+    assert d.window == ["bloco-01", "bloco-02", "bloco-03"]
+    assert voter.seen == ["e1"]
+
+
+def test_llm_funil_sem_voter_ou_sem_voto_devolve_none():
+    ctx = _funil_ctx()
+    assert ae.AnchorEngine(voter=None).resolve_funnel({"id": "e1"}, ctx) is None
+    assert ae.AnchorEngine(voter=_FakeVoter(None)).resolve_funnel({"id": "e1"}, ctx) is None
+
+
+def test_resolve_sem_janela_cai_no_llm_funil(monkeypatch):
+    monkeypatch.setattr(ae, "resolve_window", lambda e, c: ([], ""))
+    voter = _FakeVoter("bloco-02")
+    d = ae.AnchorEngine(voter=voter).resolve({"id": "e1", "category": "m"}, _funil_ctx())
+    assert d is not None and d.method == "llm-funil" and d.block_ref == "bloco-02"

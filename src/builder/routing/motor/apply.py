@@ -78,6 +78,10 @@ def apply_anchor_engine(
             # dup-cache — escopo é atributo da ENTRY (lição review F4 I1).
             decision = resolve_due_window(entry, ctx)
             if decision is None:
+                # B-4: sem due casado, provas/trabalhos caem no llm-funil (janela
+                # = todos os blocos) em vez de irem direto ao scorer de conceito.
+                decision = engine.resolve_funnel(entry, ctx, markdown=str(md_of(entry) or ""))
+            if decision is None:
                 _clear_temporal(entry)
                 continue
             _write_temporal(entry, decision, ctx)

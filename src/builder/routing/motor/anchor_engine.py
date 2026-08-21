@@ -44,12 +44,33 @@ class AnchorEngine:
         self._voter = voter
         self._series_ids = frozenset(series_ids or ())
 
+    def resolve_funnel(self, entry: dict, ctx: MotorContext, markdown: str = "") -> Optional[AnchorDecision]:
+        """B-4 (2026-08-21): sem janela, o LLM vota com janela = TODOS os blocos.
+
+        Revoga o "sem-janela nunca vota" da spec §12 por medicao: no funil o
+        scorer concept-fused acertava 6/26 (23%); o LLM com a janela inteira,
+        13/26 (50%), mantendo as 6 e sem voto fora da janela. band "media" +
+        flag=True de proposito: 50% e honesto, a entry fica na fila humana e o
+        method "llm-funil" deixa a regua vigiar esse degrau em separado.
+        voter=None => None (funil de antes, byte-identico).
+        """
+        if self._voter is None:
+            return None
+        window = [str(b.get("id") or "") for b in ctx.blocks if b.get("id")]
+        if not window:
+            return None
+        voted = self._voter.vote(entry, window, ctx, markdown)
+        if not voted:
+            return None
+        return AnchorDecision(block_ref=voted, conf=0.0, band="media", flag=True,
+                              provider="llm-funil", method="llm-funil", window=window)
+
     def resolve(self, entry: dict, ctx: MotorContext, markdown: str = "") -> Optional[AnchorDecision]:
         if is_out_of_disamb_scope(entry):
             return None
         window, provider = resolve_window(entry, ctx)
         if not window:
-            return None  # sem janela -> funil (invariante ANCHOR-ONLY)
+            return self.resolve_funnel(entry, ctx, markdown)  # sem janela -> llm-funil ou None
         decision = disambiguate(entry, window, ctx, markdown, provider=provider)
         if not decision.block_ref:
             return None  # nenhum ref da janela resolve -> funil honesto
