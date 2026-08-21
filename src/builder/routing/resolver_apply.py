@@ -184,7 +184,9 @@ def apply_unit_subunit_fields(
     motor acabou de gravar (fecha o gap 1.2 para os campos de unidade).
     Só toca entries que o motor decidiu (material + computed_block_id).
     """
-    from src.builder.routing.file_map import reconcile_unit_with_block
+    from src.builder.routing.file_map import (
+        reconcile_unit_with_block, resolve_temporal_block, unit_of_block_or_neighbor,
+    )
     from src.builder.routing.thresholds import T
     from src.models.tag_profile import build_learned_unit_boosts, load_tag_profile
     from src.utils.helpers import collapse_ws as _collapse_ws
@@ -211,7 +213,7 @@ def apply_unit_subunit_fields(
         if not _is_material(entry):
             continue
         block_id = str(entry.get("computed_block_id") or "").strip()
-        if not block_id:
+        if not block_id and not str(entry.get("temporal_block_id") or "").strip():
             # Bibliografia/referencias/cronograma sao limpas do BLOCO de proposito
             # (`apply_concept_resolver`): nao foram "dadas" numa aula, nao tem eixo
             # temporal. Mas TEM eixo de cobertura — sao material bibliografico DE
@@ -274,26 +276,36 @@ def apply_unit_subunit_fields(
         else:
             entry.pop("coverage_units", None)
 
-        blk = next((b for b in blocks if str(b.get("block_uuid") or "") == block_id), None)
-        if blk is None:
-            blk = next((b for b in blocks if str(b.get("id") or "") == block_id), None)
-        block_unit = str((blk or {}).get("unit_slug") or "").strip()
+        # 2026-08-21: o bloco que manda na unidade e o TEMPORAL (ancora:
+        # manual > temporal_block_id > computed), o mesmo que a regua mede —
+        # nao o computed_block_id do scorer de conceito. Esta fase roda DEPOIS
+        # da camada temporal (pedagogical_regeneration) justamente para ve-lo.
+        # Bloco sem unit_slug (avaliacao/revisao/overview) herda do vizinho de
+        # conteudo. Medido: scorer 130/188 -> bloco temporal + heranca 178/188.
+        temporal_id = resolve_temporal_block(entry, blocks)
+        block_unit, vizinho = unit_of_block_or_neighbor(temporal_id, blocks)
+        blk = next((b for b in blocks
+                    if str(b.get("id") or "") == temporal_id or str(b.get("block_uuid") or "") == temporal_id), None)
+        block_ref = str((blk or {}).get("id") or temporal_id or block_id)
 
         # Pino manual direto do entry: computed_block_method pode ter sido
         # trocado p/ consensus/llm_only pelo attach ANTES deste apply — o
         # method nao e prova de pino (review final F4, I2).
         _pin = str(entry.get("manual_timeline_block_id") or "").strip()
-        block_is_manual = bool(_pin) and _pin in {block_id, str((blk or {}).get("id") or "")}
+        block_is_manual = bool(_pin) and _pin in {temporal_id, block_id, str((blk or {}).get("id") or ""),
+                                                  str((blk or {}).get("block_uuid") or "")}
 
         reconciled, suffix, conflict = reconcile_unit_with_block(
             computed_unit_slug=gated_unit,
             unit_confidence=float(unit_confidence),
-            computed_block_id=block_id,
-            block_confidence=float(entry.get("computed_block_confidence") or 0.0),
+            computed_block_id=block_ref if block_unit else "",
+            block_confidence=1.0,
             block_unit_slug=block_unit,
             block_is_manual=block_is_manual,
             has_manual_unit=bool(manual_unit),
         )
+        if vizinho and reconciled == block_unit and not manual_unit:
+            suffix = list(suffix) + [f"herdada_do_vizinho={vizinho}"]
         if suffix:
             unit_reasons = list(unit_reasons) + suffix
 

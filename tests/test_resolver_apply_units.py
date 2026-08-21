@@ -33,16 +33,39 @@ def test_unit_reconciliada_contra_bloco_do_motor():
     m = SimpleNamespace(slug="u1", confidence=0.7, ambiguous=False, reasons=["score"])
     out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
     assert out[0]["computed_unit_slug"] == "u2"
-    assert "reconciliada_do_bloco=u-2" in out[0]["unit_match_reasons"]
-    assert out[0]["unit_block_conflict"] == {}
+    assert "reconciliada_do_bloco=bloco-02" in out[0]["unit_match_reasons"]   # id display do bloco
+    assert out[0]["unit_block_conflict"] == {"unit": "u1", "block_unit": "u2", "block_id": "bloco-02"}
     assert out[0]["unit_match_confidence"] == 0.7
 
-def test_unit_forte_vence_e_flaga_conflito():
+def test_bloco_vence_unidade_forte_e_registra_conflito():
+    """2026-08-21: a unidade e a do bloco; o texto forte discordante vira so
+    registro de conflito (auditoria), nao decisao."""
     e = _entry(computed_block_confidence=0.5)
     m = SimpleNamespace(slug="u1", confidence=0.9, ambiguous=False, reasons=["score"])
     out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_unit_slug"] == "u2"
+    assert out[0]["unit_block_conflict"] == {"unit": "u1", "block_unit": "u2", "block_id": "bloco-02"}
+
+
+def test_bloco_temporal_vence_o_computed_na_unidade():
+    """A ancora (temporal_block_id) e o bloco que a regua mede; a unidade tem
+    que vir dele, nao do computed_block_id do scorer de conceito."""
+    e = _entry(computed_block_id="u-1", temporal_block_id="u-2", temporal_block_band="alta")
+    m = SimpleNamespace(slug="u1", confidence=0.9, ambiguous=False, reasons=["score"])
+    out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_unit_slug"] == "u2"
+
+
+def test_bloco_sem_unidade_herda_do_vizinho_de_conteudo():
+    blocks = [
+        {"id": "bloco-01", "block_uuid": "u-1", "unit_slug": "u1", "kind": "class", "period_start": "2026-03-01"},
+        {"id": "bloco-02", "block_uuid": "u-2", "unit_slug": "", "kind": "assessment", "period_start": "2026-03-08"},
+    ]
+    e = _entry(computed_block_id="u-2")
+    m = SimpleNamespace(slug="", confidence=0.0, ambiguous=True, reasons=[])
+    out = apply_unit_subunit_fields([e], blocks, {}, None, None, {}, **_fns(m))
     assert out[0]["computed_unit_slug"] == "u1"
-    assert out[0]["unit_block_conflict"] == {"unit": "u1", "block_unit": "u2", "block_id": "u-2"}
+    assert any(r.startswith("herdada_do_vizinho=bloco-01") for r in out[0]["unit_match_reasons"])
 
 def test_gate_unit_tag_e_espelho_de_tags():
     # conf < T.UNIT_TAG -> slug gated vazio -> herda a do bloco; tag unit: espelha o
@@ -79,7 +102,7 @@ def test_unit_fraca_nunca_vence_bloco_mesmo_com_block_conf_menor():
     m = SimpleNamespace(slug="u1", confidence=T.UNIT_TAG - 0.1, ambiguous=False, reasons=["fraca"])
     out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
     assert out[0]["computed_unit_slug"] == "u2"
-    assert "herdada_do_bloco=u-2" in out[0]["unit_match_reasons"]
+    assert "herdada_do_bloco=bloco-02" in out[0]["unit_match_reasons"]   # id display do bloco
     assert out[0]["unit_block_conflict"] == {}
 
 def test_subunit_gated_e_best_effort():

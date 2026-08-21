@@ -11,7 +11,7 @@
   "0704-exemplo-threads-em-java": {
     "band": "media",
     "computed_block_id": "1945c228-4ca2-4a76-8d63-47c804459ecd",
-    "computed_unit_slug": "unidade-03-programacao-concorrente",
+    "computed_unit_slug": "unidade-04-deadlock",
     "moodle_label": "07/04 Exemplo: threads em Java",
     "presente": true,
     "source_section": "Threads",
@@ -20,7 +20,7 @@
   "0904-laminas-semaforos": {
     "band": "media",
     "computed_block_id": "1945c228-4ca2-4a76-8d63-47c804459ecd",
-    "computed_unit_slug": "unidade-03-programacao-concorrente",
+    "computed_unit_slug": "unidade-04-deadlock",
     "moodle_label": "09/04 Lâminas: Semáforos",
     "presente": true,
     "source_section": "Sincronização e Comunicação de Processos",

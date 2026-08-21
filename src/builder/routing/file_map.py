@@ -725,13 +725,52 @@ def reconcile_unit_with_block(
         return block_unit_slug, [f"herdada_do_bloco={computed_block_id}"], {}
     if block_unit_slug == computed_unit_slug:
         return computed_unit_slug, [], {}
-    if block_confidence >= unit_confidence:
-        return block_unit_slug, [f"reconciliada_do_bloco={computed_block_id}"], {}
+    # 2026-08-21: a verdade de unidade e, por construcao, a unidade do bloco
+    # (ground_truth |><| gold_units). Medido nos 5 cursos (188 entries): scorer
+    # de texto 130, unidade do bloco temporal 162, bloco + heranca do vizinho
+    # 178 — e o scorer nao acrescenta nada por cima do bloco. Comparar
+    # confiancas (block_confidence >= unit_confidence) so deixava o texto
+    # vencer onde ele erra. O bloco decide; o texto discordante vira registro
+    # de conflito para auditoria (unit_block_conflict), nunca decisao.
     return (
-        computed_unit_slug,
-        [],
+        block_unit_slug,
+        [f"reconciliada_do_bloco={computed_block_id}"],
         {"unit": computed_unit_slug, "block_unit": block_unit_slug, "block_id": computed_block_id},
     )
+
+
+_CONTENT_BLOCK_KINDS = frozenset({"class", "overview", ""})
+
+
+def unit_of_block_or_neighbor(block_id: str, blocks: List[Dict[str, object]]) -> Tuple[str, str]:
+    """(unit_slug, id_do_vizinho_de_onde_veio) para o bloco `block_id`.
+
+    Bloco de avaliacao/revisao/entrega/feriado nao recebe unit_slug por design
+    (timeline/index.py: so blocos de aula entram no posicional). O material
+    que cai nele pertence ao que veio ANTES (a prova/revisao fecha a unidade
+    anterior): herda do bloco de conteudo anterior. `overview` (apresentacao/
+    plano) abre o que vem: herda do proximo. Bloco com unit_slug proprio
+    devolve ("slug", ""). Medido 2026-08-21: 16 das 188 entries com gold caiam
+    em bloco sem unidade; a heranca acerta 11 delas (167 -> 178)."""
+    ordered = sorted(blocks or [], key=lambda b: str(b.get("period_start") or ""))
+    idx = next((i for i, b in enumerate(ordered)
+                if str(b.get("id") or "") == block_id or str(b.get("block_uuid") or "") == block_id), None)
+    if idx is None:
+        return "", ""
+    own = str(ordered[idx].get("unit_slug") or "").strip()
+    if own:
+        return own, ""
+    prefer_next = str(ordered[idx].get("kind") or "") == "overview"
+    before = range(idx - 1, -1, -1)
+    after = range(idx + 1, len(ordered))
+    for j in (list(after) + list(before)) if prefer_next else (list(before) + list(after)):
+        cand = ordered[j]
+        if str(cand.get("kind") or "") not in _CONTENT_BLOCK_KINDS:
+            continue
+        slug = str(cand.get("unit_slug") or "").strip()
+        if slug:
+            return slug, str(cand.get("id") or "")
+    return "", ""
 
 
 def score_entry_against_timeline_row(

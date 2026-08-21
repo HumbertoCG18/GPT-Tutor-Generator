@@ -537,15 +537,6 @@ def regenerate_pedagogical_files(
             _code_curation,
             builder.root_dir,
         )
-        # F4: unit/subunit do motor, reconciliados contra o bloco recém-gravado.
-        live_manifest_entries = apply_unit_subunit_fn(
-            live_manifest_entries,
-            enriched_timeline_index.get("blocks") or [],
-            runtime_course_meta,
-            builder.subject_profile,
-            builder.root_dir,
-            _code_curation,
-        )
 
     # Camada de placement por âncora (TEMPORAL-only, aditiva). Escreve
     # temporal_* sem tocar computed_block_id (KB). Precedência: motor D9
@@ -558,6 +549,22 @@ def regenerate_pedagogical_files(
         live_manifest_entries = apply_anchor_placement(
             live_manifest_entries,
             enriched_timeline_index.get("blocks") or [],
+        )
+
+    # F4: unit/subunit do motor, reconciliados contra o bloco TEMPORAL.
+    # 2026-08-21: esta fase rodava ANTES da camada temporal e reconciliava
+    # contra o computed_block_id do scorer de conceito — o eixo de unidade
+    # nunca via a decisao da ancora (a que a regua mede). Movida para depois:
+    # unidade = unidade do bloco temporal (+ heranca do vizinho de conteudo),
+    # medido 130/188 -> 178/188.
+    if bool(builder.options.get("use_concept_resolver", True)):
+        live_manifest_entries = apply_unit_subunit_fn(
+            live_manifest_entries,
+            enriched_timeline_index.get("blocks") or [],
+            runtime_course_meta,
+            builder.subject_profile,
+            builder.root_dir,
+            _code_curation,
         )
 
     manifest["entries"] = live_manifest_entries

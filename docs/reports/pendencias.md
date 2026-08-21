@@ -1137,6 +1137,36 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   `pedagogical_regeneration.py:552` — a cascata `window_provider` P1..P4 existe e esta desligada)
   e o scorer 1:1, onde ele entra como *hint posicional FRACO* (`concept_resolver.py:346`).
 
+## CODE — EIXO DE UNIDADE: unidade = unidade do bloco TEMPORAL — 130 -> 178/188 (2026-08-21d)
+
+- [DONE] **U-1 · duas raizes, nenhum remendo.** A verdade de unidade e, por construcao, a unidade do
+  bloco verdadeiro (`ground_truth |><| gold_units`) — entao a unidade tem que ser funcao do eixo
+  de bloco (185/200), nao do texto. Medido (188 entries): scorer gravado **130** · unidade do bloco
+  temporal **162** · bloco + heranca do vizinho **178** · so bloco + heranca, SEM scorer **178** —
+  o texto nao acrescenta nada por cima do bloco.
+  **Raiz 1 (ORDEM):** `apply_unit_subunit_fields` rodava ANTES de `_run_anchor_engine_layer` e
+  reconciliava contra `computed_block_id` (scorer de conceito antigo) — o eixo de unidade nunca
+  viu `temporal_block_*`, o bloco que a regua mede. Fase movida para depois da ancora; bloco =
+  `resolve_temporal_block` (manual > temporal > computed).
+  **Raiz 2 (PRECEDENCIA):** `reconcile_unit_with_block` comparava `block_confidence >=
+  unit_confidence` e deixava o texto forte vencer o bloco — onde o texto erra. Agora o bloco com
+  unidade decide sempre; o texto discordante fica em `unit_block_conflict` (auditoria).
+  **Heranca:** bloco sem `unit_slug` (avaliacao/revisao/entrega/overview, por design do
+  posicional) herda do vizinho de CONTEUDO — anterior para o que fecha a unidade, proximo para
+  overview (`file_map.unit_of_block_or_neighbor`). 16/188 caiam nesses blocos; a heranca acerta 11.
+  **Producao:** unidade **178/188 = 94,7%** (MF 65/66 · SO 29/35 · IA 42/42 · ES2 24/27 · TCC
+  18/18; material **82/83** · codigo 54/59 · listas 21/23). **Os 10 erros de unidade sao os erros
+  de bloco** — nao existe mais erro proprio do eixo de unidade. Bloco 185/200 intocado. Cobertura
+  N:N 44 -> **46/57**, F1 0,811 -> **0,847**, sem-predicao 4 -> 0. Sentinelas MF/SO/TCC regravadas
+  (diffs so em `computed_unit_slug`). Suite 1996 passed.
+  **Consequencia para a regua:** `scripts/eval_entry_unit.py` mede o SCORER isolado (55%) — numero
+  que deixou de importar; a medida do eixo e "unidade gravada vs verdade" (harness em
+  `scratchpad/unidade_vs_bloco.py`, a promover). O scorer de texto segue util so para: entry sem
+  bloco nenhum, eixo de cobertura (N:N) e o `unit_block_conflict` como sinal de revisao.
+  **Armadilha de ferramenta:** `eval_coverage.py <repo> material_gt_*.csv` le `coverage_curation.json`
+  / `references_curation.json` (camada de referencia), nao o `coverage_units` do manifest — da
+  0/0 para material. A medicao valida de material usa `eval_coverage.score` sobre o manifest.
+
 ## CODE — "TUDO PELO MOTOR": lexico vs LLM medido; D4 relido; -26% de votos (2026-08-21b)
 
 Pedido do user: decidir pelo motor, LLM o minimo; raiz, nunca remendo. Primeiro o dado que

@@ -148,15 +148,22 @@ def explicar(repo: Path, entry: dict, ctx: dict) -> None:
     if motivos:
         print(f"    motivos : {motivos[:6]}")
 
-    unidade_do_bloco = str((venc or {}).get("unit_slug") or "").strip()
+    # 2026-08-21: a unidade vem do bloco TEMPORAL (ancora), com heranca do
+    # vizinho de conteudo quando o bloco nao tem unit_slug — espelha
+    # resolver_apply.apply_unit_subunit_fields.
+    from src.builder.routing.file_map import unit_of_block_or_neighbor
+    bloco_temporal = resolve_temporal_block(entry, ctx["blocks"]) or str(atrib.get("block_id") or "")
+    unidade_do_bloco, vizinho = unit_of_block_or_neighbor(bloco_temporal, ctx["blocks"])
+    if vizinho:
+        print(f"    bloco {bloco_temporal} sem unidade -> herda de {vizinho}: {unidade_do_bloco}")
     pino = str(entry.get("manual_timeline_block_id") or "").strip()
     reconciliado, sufixo, conflito = reconcile_unit_with_block(
         computed_unit_slug=gated,
         unit_confidence=float(conf),
-        computed_block_id=str(atrib.get("block_id") or ""),
-        block_confidence=conf_bloco,
+        computed_block_id=bloco_temporal if unidade_do_bloco else "",
+        block_confidence=1.0,
         block_unit_slug=unidade_do_bloco,
-        block_is_manual=bool(pino) and pino in {str(atrib.get("block_id")), str((venc or {}).get("id"))},
+        block_is_manual=bool(pino) and pino in {bloco_temporal, str(atrib.get("block_id")), str((venc or {}).get("id"))},
         has_manual_unit=bool(manual),
     )
     print(f"    reconcilia com a unidade DO BLOCO ({unidade_do_bloco or 'bloco sem unidade'})"
