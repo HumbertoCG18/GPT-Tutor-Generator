@@ -1232,6 +1232,30 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   blocos do curso, band `media`, method `llm-funil` (rastreavel). Fora-de-escopo (`_OUT_CATEGORIES`)
   tambem teria que passar: 7 dos 26 sao `trabalhos`/`bibliografia`/`cronograma`, e 3 desses 7 o
   LLM acertou. Decisao do user.
+- [INVESTIGADO 2026-08-21] **B-3 · evidencia dos 2 pinos + CENSO DE PINOS (objetivo: pinar menos).**
+  *`3d-matching`*: o enunciado do T2 diz literalmente **"Data Entrega: 12/06/2026 (data da
+  apresentacao)"** = bloco-25. Pino bloco-24 (10/06) esta ERRADO; o gemeo `3dm-caetano` (mesma
+  apresentacao) tem gold 25 — regra do par exige o mesmo bloco. Consequencia: o gold de
+  `trabalho-t2-enunciado` (24) tambem esta errado pela propria data do enunciado -> 25.
+  *`eth2`*: bibliografia externa (GitHub, Dafny), sem card, sem data, 0 chars de texto. Pino
+  bloco-01 segue a convencao "bibliografia -> apresentacao da disciplina" (mesmo pino uuid de
+  `aws` e `archive`). Gold bloco-12 = "introducao ao Dafny" (topico). LLM sem pino: bloco-13
+  (Dafny tambem, adjacente). Veredito provavel: pino errado, gold certo (referencia ESPECIFICA
+  vai ao topico; generica vai ao bloco-01). **Decisao do user.**
+  **Censo (30 pinos em producao, todos com gold), motor rodando SEM nenhum pino:**
+  **13 REDUNDANTES (43%)** — motor = pino = gold, podem ser apagados sem mudar nada ·
+  **15 NECESSARIOS** — motor erra: 7 no MF sao LLM escolhendo o vizinho dentro da janela
+  (`provasindutivas` x3, `logicadehoare2`, `terminacao`, `tiposindutivos`, `exercicioscorrecao
+  terminacao`), 4 sao referencia generica -> bloco-01 (`aws`, `archive`, `o-que-e-IA`,
+  `ia-responsavel`), 3 sao bibliografia do SO com card tematico, 1 e IA `prova-1` ·
+  **2 ERRADOS** (os de cima).
+  **Regras testadas para substituir pino:** (a) "referencia sem card -> bloco-01": **4/5** no
+  gold (excecao = `eth2`), cobre 4 pinos necessarios — unica regra que sobreviveu; (b) "Prova N /
+  Lista PN -> N-esimo bloco de avaliacao": **2/8**, REFUTADA; (c) refinada "bloco de revisao
+  antes da prova N, senao a prova": **4/8**, REFUTADA — o labeler poe a preparacao da P1 onde o
+  professor a usou (bloco `class` anterior), nao na revisao; (d) data explicita no texto da
+  avaliacao: so **2 de 50** textos tem ("Data Entrega: 12/06/2026" no T2; "data limite 03/07" no
+  T1 do ES2) — provider nao se paga agora, mas os 2 casos apontam bloco coerente.
 - [USER] **B-3 · 2 pinos manuais discordam do gold:** MF `eth2` (pino -> bloco-01, gold
   bloco-12) e TCC `3d-matching` (pino bloco-24, gold bloco-25; e o unico confiante-e-errado que
   resta). Um dos lados esta errado em cada par — decidir qual.
