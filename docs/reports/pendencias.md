@@ -1137,6 +1137,27 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   `pedagogical_regeneration.py:552` — a cascata `window_provider` P1..P4 existe e esta desligada)
   e o scorer 1:1, onde ele entra como *hint posicional FRACO* (`concept_resolver.py:346`).
 
+## CODE — OS 8 OFF-BY-ONE: 1 defeito de codigo, 7 nao (2026-08-20h)
+
+- [DONE] **O-1 · provider ordinal contava a aula de CORRECAO como encontro.** TCC `bloco-18`
+  "Correcao" (13/05, pos-P1) e `kind=class` de proposito (classifier.py:144) — certo para o
+  conteudo — mas o professor nao a numera: "Aula 16" e 15/05. `_session_ordinal_index` punha o
+  16o encontro na correcao: janela-1, band ALTA, bloco errado — o unico confiante-e-errado do
+  motor apos B-1. Fix em `window_provider._session_ordinal_index` (pula sessao com "correcao"
+  no hay), teste `test_correcao_de_prova_nao_conta_como_encontro`. **Medido:** so o TCC tem
+  titulos "Aula N" (19, todos com gold): 16/19 -> **17/19**, 0 regressoes; IA tem 2 blocos de
+  correcao e 0 ordinais -> intocado. TCC reprocessado: 1 entry muda, acuracia 18/25 -> **19/25**,
+  confiante-e-errado **1 -> 0**. Evidencia de 1 curso — se um professor numerar o dia da correcao,
+  este fix regride 1; o gold do TCC diz que nao.
+- [MEDIDO] **O-2 · os outros 7 nao sao bug:** 3 funil (SO `definicao-e-historico`,
+  `lista-exercicios-p2`; TCC `t1-enunciado` — B-2, estrutural); 1 pino manual vs gold (TCC
+  `3d-matching` — B-3); 2 voto do LLM numa janela de **10 blocos** no ES2 (`roteiro5`, `azure`:
+  card "Microsservicos" cobre a unidade inteira, P4 abre a unidade toda e o LLM escolhe o vizinho);
+  1 numeracao DUPLICADA do professor (TCC tem dois "Aula 16" e dois "Aula 17"; `aula-17-np-
+  completude` gold = 03/06, ordinal nao recupera duplicata, LLM escolheu 29/05).
+- [NOTA] `git diff` do TCC mostra "+1 linha" num `.md` curado a cada reprocess: e CRLF/LF do git
+  (HEAD `\n`, arvore `\r\n`), nao conteudo. Nao fere o ponto fixo.
+
 ## CODE — BANDA "INVERTIDA" era artefato de regua; o ralo e o FUNIL (2026-08-20g)
 
 - [DONE] **B-1 · `eval_ground_truth.py` lia `computed_block_band` para uma predicao que vinha da

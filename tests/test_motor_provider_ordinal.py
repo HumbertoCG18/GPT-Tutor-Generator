@@ -80,3 +80,21 @@ def test_cascata_usa_ordinal_quando_nao_ha_data():
     ctx = _ctx(_tcc_like())
     win, name = resolve_window({"title": "Aula 02 - Conjuntos Enumeráveis"}, ctx)
     assert name == "ordinal" and win == ["bloco-02"]
+
+
+def test_correcao_de_prova_nao_conta_como_encontro():
+    """TCC real: bloco "Correção" (13/05, pós-P1) tem kind=class de proposito
+    (classifier.py:144 — e aula de correcao, nao prova) mas o professor NAO a
+    numera: "Aula 16" e 15/05, nao 13/05. Com a correcao na contagem, o 16o
+    encontro caia no dia da correcao, janela-1, band ALTA, bloco errado — o
+    unico confiante-e-errado do motor nos 5 cursos (2026-08-20). Medido:
+    excluir correcao = 16/19 -> 17/19 no TCC, 0 regressoes."""
+    blocks = _tcc_like() + [
+        {"id": "bloco-06", "kind": "class", "topic_text": "Correcao",
+         "primary_topic_label": "Correcao", "period_start": "2026-03-27",
+         "period_end": "2026-03-27",
+         "sessions": [{"date": "2026-03-27", "label": "Correção da P1"}]},
+        _block("bloco-07", "class", "2026-04-01", topic="Complexidade"),
+    ]
+    ctx = _ctx(blocks)
+    assert provider_ordinal({"title": "Aula 07 - Complexidade"}, ctx) == ["bloco-07"]

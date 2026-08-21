@@ -174,6 +174,12 @@ def _session_ordinal_index(ctx: MotorContext) -> dict:
         ref = str(b.get("id") or "")
         if not ref:
             continue
+        # Aula de CORRECAO de prova e class para o conteudo (classifier.py:144),
+        # mas o professor nao a numera: no TCC "Aula 16" e 15/05, nao o dia da
+        # correcao (13/05). Contando-a, o 16o encontro caia na correcao —
+        # janela-1, band alta, bloco errado. Medido: 16/19 -> 17/19, 0 regressoes.
+        if "correcao" in normalize_match_text(_block_session_hay(b, ctx)):
+            continue
         for s in (b.get("sessions") or []) or [{}]:
             pairs.append((str(s.get("date") or ""), ref))
     pairs.sort(key=lambda p: p[0])
