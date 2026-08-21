@@ -1511,10 +1511,14 @@ def test_build_content_taxonomy_filters_noise_topics_without_code():
 
     unit = taxonomy["units"][0]
     slugs = [t["slug"] for t in unit["topics"]]
+    codes = {t["slug"]: t["code"] for t in unit["topics"]}
 
-    # Tópicos com código devem estar presentes
-    assert "11-evolucao-historica" in slugs
-    assert "12-chamadas-de-sistema" in slugs
+    # Tópicos com código devem estar presentes. O slug NAO carrega o codigo
+    # (forma de producao: `maquinas-de-turing` + code "2.1"); o `11-...` antigo
+    # era artefato do checkbox `[ ]` vazando para o texto do topico.
+    assert "evolucao-historica" in slugs
+    assert "chamadas-de-sistema" in slugs
+    assert codes["evolucao-historica"] == "1.1"
 
     # Noise topics sem código devem ter sido filtrados
     noise_slugs = [
@@ -1543,9 +1547,11 @@ def test_build_content_taxonomy_includes_topic_42_comunicacao():
 
     unit = taxonomy["units"][0]
     slugs = [t["slug"] for t in unit["topics"]]
-    assert "41-programas-multithreads" in slugs
-    assert "42-comunicacao-e-sincronizacao-de-processos" in slugs
-    assert "43-primitivas-de-sincronizacao" in slugs
+    # slug sem codigo (forma de producao); o codigo vive em `code`.
+    assert "programas-multithreads" in slugs
+    assert "comunicacao-e-sincronizacao-de-processos" in slugs
+    assert "primitivas-de-sincronizacao" in slugs
+    assert {t["code"] for t in unit["topics"]} == {"4.1", "4.2", "4.3"}
 
 
 def test_file_map_md_includes_subtopic_column_in_header():

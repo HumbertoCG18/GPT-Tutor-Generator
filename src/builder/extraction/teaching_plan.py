@@ -37,6 +37,10 @@ def _normalize_teaching_plan_heading(line: str) -> str:
     normalized = normalized.translate(_ZERO_WIDTH_TABLE)
     normalized = re.sub(r"^#+\s*", "", normalized)
     normalized = normalized.replace("*", "").strip()
+    # Checkbox markdown ("- [ ] 1.1 Topico", formato do COURSE_MAP gerado): o
+    # `[ ]` ficava no texto, _NUMBERED_PREFIX_RE nao casava e _finalize_topics
+    # nao via numerado nenhum -- a metodologia sobrevivia como topico.
+    normalized = re.sub(rf"^([-{_BULLET}*]\s+)\[[ xX]\]\s*", r"\1", normalized)
     return normalized
 
 

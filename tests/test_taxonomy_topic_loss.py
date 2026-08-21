@@ -170,3 +170,22 @@ def test_topico_do_plano_sem_codigo_nao_passa_pelo_filtro_de_heading():
     slugs = [t["slug"] for u in tax["units"] for t in u["topics"]]
     assert "modelos-preditivos" in slugs, slugs
     assert len(slugs) == 5, slugs
+
+
+def test_checkbox_markdown_nao_esconde_a_numeracao():
+    """Formato COURSE_MAP gerado ("- [ ] **1.1** Topico"): o `[ ]` ficava no
+    texto do topico, _NUMBERED_PREFIX_RE nao casava e _finalize_topics achava
+    que a unidade nao tinha numerados -- a metodologia ("Uso de projetor")
+    sobrevivia como topico (2026-08-20)."""
+    plan = "\n".join([
+        "### Unidade 01 \u2014 Introdu\u00e7\u00e3o ao estudo de sistemas operacionais",
+        "- [ ] **1.1** Evolu\u00e7\u00e3o hist\u00f3rica",
+        "- [ ] **1.2** Chamadas de sistema",
+        "- [ ] Uso de projetor multim\u00eddia.",
+        "- [x] Aulas expositivas nas quais se buscar\u00e1 a participa\u00e7\u00e3o dos alunos.",
+    ])
+    labels = _labels(plan)
+    assert not any("[ ]" in label or "[x]" in label for label in labels), labels
+    assert {"1.1", "1.2"} <= _codes(plan)
+    assert not any("projetor" in label for label in labels), labels
+    assert not any("expositivas" in label for label in labels), labels
