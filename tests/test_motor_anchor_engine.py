@@ -214,3 +214,20 @@ def test_resolve_sem_janela_cai_no_llm_funil(monkeypatch):
     voter = _FakeVoter("bloco-02")
     d = ae.AnchorEngine(voter=voter).resolve({"id": "e1", "category": "m"}, _funil_ctx())
     assert d is not None and d.method == "llm-funil" and d.block_ref == "bloco-02"
+
+
+# B-6 (2026-08-21): referencia sem card -> primeiro bloco overview/class.
+def test_referencia_sem_card_vai_para_o_primeiro_bloco():
+    """Convencao dos pinos manuais (aws/archive/o-que-e-IA/ia-responsavel, 4/5
+    no gold). IA e SO tem kind=overview no bloco-01 (plano/apresentacao)."""
+    ctx = MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-01", "kind": "overview", "period_start": "2026-03-02"},
+                {"id": "bloco-02", "kind": "class", "period_start": "2026-03-04"}],
+        card_block_map={}, lessons_index={})
+    d = ae.resolve_generic_reference({"category": "bibliografia", "title": "AFP"}, ctx)
+    assert d is not None and d.block_ref == "bloco-01"
+    assert d.method == "ref-generica" and d.flag is False
+    # com card segue a cascata normal (card datado do IA resolve `artigo` sozinho)
+    assert ae.resolve_generic_reference(
+        {"category": "bibliografia", "source_section": "Semana 8 - 20.04 a 24.04"}, ctx) is None
+    assert ae.resolve_generic_reference({"category": "material-de-aula"}, ctx) is None

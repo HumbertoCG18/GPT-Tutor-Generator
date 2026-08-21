@@ -1232,6 +1232,23 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   blocos do curso, band `media`, method `llm-funil` (rastreavel). Fora-de-escopo (`_OUT_CATEGORIES`)
   tambem teria que passar: 7 dos 26 sao `trabalhos`/`bibliografia`/`cronograma`, e 3 desses 7 o
   LLM acertou. Decisao do user.
+- [DONE 2026-08-21] **B-6 · PINAR MENOS: 30 -> 11 pinos, regua 181 -> 185/200, user aprovou as 4 acoes.**
+  (1) `eth2`: pino removido, gold 12 mantido — a regra nova poe em bloco-01 (erro aceito, 1/5).
+  (2) `3d-matching`: pino removido; gold de `trabalho-t2-enunciado` 24 -> 25 (data do enunciado);
+  **uma curadoria de card** em `TCC/course/.card_block_map.json` ("Semana 14 - Apresentacoes T2"
+  -> [bloco-25]; "Semana 13 - Trabalho T2" -> [23, 25]) cobre as 5 entries do cluster via
+  janela-1/alta — exigiu `AnchorEngine.resolve_unscoped` + `apply.py` mandando provas/trabalhos
+  sem due pela cascata antes do llm-funil (`resolve_due_window` so le `assign_due`; card manual
+  nao valia para trabalhos). (3) 13 pinos redundantes apagados (+ `aws`/`archive`/`o-que-e-IA`/
+  `ia-responsavel`, redundantes com a regra 4). (4) **`resolve_generic_reference`**: referencia
+  sem card -> primeiro bloco `overview`/`class` (IA e SO tem `kind=overview` no bloco-01).
+  **Resultado:** TCC 20 -> **24/25**, MF 64, SO 31, IA **43/43**, ES2 23 = **185/200 (92,5%)**;
+  confiante-e-errado 0; funil 0/0; pinos restantes **11, 11/11 certos**: MF 7 (LLM escolhe o
+  vizinho na janela — `provasindutivas` x3, `logicadehoare2`, `terminacao`, `tiposindutivos`,
+  `exercicioscorrecaoterminacao`), SO 3 (bibliografia com card tematico), IA 1 (`prova-1` sem
+  due). Suite 1988 passed / 1 skipped. Testes: 3 novos + 2 reescritos. **Proximo ganho real:
+  o LLM errar o vizinho em janela curta (7 do MF + 2 do ES2) — investigavel com os votos
+  cacheados em `material_curation.json`.**
 - [INVESTIGADO 2026-08-21] **B-3 · evidencia dos 2 pinos + CENSO DE PINOS (objetivo: pinar menos).**
   *`3d-matching`*: o enunciado do T2 diz literalmente **"Data Entrega: 12/06/2026 (data da
   apresentacao)"** = bloco-25. Pino bloco-24 (10/06) esta ERRADO; o gemeo `3dm-caetano` (mesma

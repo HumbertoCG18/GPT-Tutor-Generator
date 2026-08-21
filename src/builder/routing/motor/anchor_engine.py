@@ -30,6 +30,35 @@ def is_out_of_disamb_scope(entry: dict) -> bool:
     return sec.startswith(_TDE_PREFIX)
 
 
+_REFERENCE_CATEGORIES = frozenset({"bibliografia", "references", "referencias"})
+
+
+def resolve_generic_reference(entry: dict, ctx: MotorContext) -> Optional[AnchorDecision]:
+    """B-6 (2026-08-21): referencia SEM card -> primeiro bloco de aula.
+
+    Convencao que o user aplicava a mao (4 pinos identicos em MF/IA para
+    `aws`, `archive`, `o-que-e-IA`, `ia-responsavel`): bibliografia geral, sem
+    secao no Moodle e sem data, mora na apresentacao da disciplina. Medido
+    contra o gold: 4/5 — a excecao e `eth2` (referencia ESPECIFICA de Dafny,
+    gold no bloco do topico), preco aceito para nao pinar. Com card, a entry
+    segue a cascata normal (o card datado do IA resolve `artigo` sozinho).
+    """
+    cat = str(entry.get("category") or "").strip().lower()
+    if cat not in _REFERENCE_CATEGORIES:
+        return None
+    if str(entry.get("source_section") or "").strip():
+        return None
+    # "overview" = apresentacao da disciplina/plano (IA e SO usam esse kind no
+    # bloco-01); onde nao existe, o primeiro bloco de aula.
+    first = next((b for b in ctx.blocks
+                  if str(b.get("kind") or "") in ("overview", "class", "") and b.get("id")), None)
+    if first is None:
+        return None
+    ref = str(first.get("id"))
+    return AnchorDecision(block_ref=ref, conf=0.0, band="media", flag=False,
+                          provider="ref-generica", method="ref-generica", window=[ref])
+
+
 class AnchorEngine:
     """resolve(entry, ctx) -> AnchorDecision | None (None = funil-piso).
 
@@ -69,6 +98,13 @@ class AnchorEngine:
     def resolve(self, entry: dict, ctx: MotorContext, markdown: str = "") -> Optional[AnchorDecision]:
         if is_out_of_disamb_scope(entry):
             return None
+        return self.resolve_unscoped(entry, ctx, markdown)
+
+    def resolve_unscoped(self, entry: dict, ctx: MotorContext, markdown: str = "") -> Optional[AnchorDecision]:
+        """Cascata de janela + desempate + voto + llm-funil, SEM a checagem de
+        escopo. apply.py chama daqui para provas/trabalhos sem due casado (B-6,
+        2026-08-21): um card MANUAL "Semana 14 - Apresentacoes T2" -> bloco-25
+        cobre as 5 entries do cluster de uma vez, em vez de 5 pinos."""
         window, provider = resolve_window(entry, ctx)
         if not window:
             return self.resolve_funnel(entry, ctx, markdown)  # sem janela -> llm-funil ou None

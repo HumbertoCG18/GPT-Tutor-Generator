@@ -63,11 +63,15 @@ def test_anchor_only_computed_intocado_e_temporal_escrito(tmp_path):
     assert "temporal_block_band" in e1 and "temporal_block_provider" in e1
 
 
-def test_fora_do_motor_nao_ganha_temporal(tmp_path):
+def test_bibliografia_sem_card_vai_para_o_primeiro_bloco(tmp_path):
+    """Era `test_fora_do_motor_nao_ganha_temporal` (bibliografia -> funil). B-5
+    trouxe bibliografia para o motor e B-6 deu a regra: sem card -> primeiro
+    bloco de aula (convencao dos pinos manuais, 4/5 no gold)."""
     entries = _entries()
     apply_anchor_engine(entries, _repo(tmp_path), "MF")
     fora = next(e for e in entries if e["id"] == "fora")
-    assert all(k not in fora for k in TEMPORAL_KEYS)       # bibliografia -> funil
+    assert fora["temporal_block_id"] == "u-1"
+    assert fora["temporal_block_method"] == "ref-generica"
 
 
 def test_pino_manual_invalido_nao_pula_motor_prossegue(tmp_path):
@@ -345,11 +349,44 @@ def test_llm_funil_escreve_temporal_para_sem_janela_e_provas_sem_due(tmp_path):
     ]
     apply_anchor_engine(entries, repo, "MF", voter=voter)
     by = {e["id"]: e for e in entries}
-    for eid in ("sem-janela", "prova-sem-due", "biblio"):
+    for eid in ("sem-janela", "prova-sem-due"):
         assert by[eid]["temporal_block_id"] == "u-2", eid
         assert by[eid]["temporal_block_method"] == "llm-funil"
         assert by[eid]["temporal_block_band"] == "media"
         assert by[eid]["temporal_block_flag"] is True
         assert by[eid]["temporal_block_window"] == ["bloco-01", "bloco-02"]
+    # B-6: bibliografia SEM card nem chega ao voto — regra ref-generica decide.
+    assert by["biblio"]["temporal_block_method"] == "ref-generica"
+    assert by["biblio"]["temporal_block_id"] == "u-1"
     assert all(k not in by["tde"] for k in TEMPORAL_KEYS)
-    assert sorted(eid for eid, _ in voter.windows) == ["biblio", "prova-sem-due", "sem-janela"]
+    assert sorted(eid for eid, _ in voter.windows) == ["prova-sem-due", "sem-janela"]
+
+
+def test_trabalho_sem_due_usa_card_manual_antes_do_llm_funil(tmp_path):
+    """B-6: trabalhos/provas sem due percorrem a cascata de janela. Um card
+    MANUAL cobre o cluster inteiro (TCC "Semana 14 - Apresentacoes T2" ->
+    bloco-25, 5 entries) sem pino nenhum; o voter nem e chamado (janela-1)."""
+    repo = _repo_due(
+        tmp_path,
+        blocks=[{"id": "bloco-24", "block_uuid": "u24", "kind": "deliverable",
+                 "period_start": "2026-06-10", "period_end": "2026-06-10"},
+                {"id": "bloco-25", "block_uuid": "u25", "kind": "deliverable",
+                 "period_start": "2026-06-12", "period_end": "2026-06-12"}],
+        card_map={"Semana 14 - Apresentacoes T2": {"source": "manual", "block_ids": ["bloco-25"]}},
+    )
+    voter = _VoterFunil("bloco-24")
+    entries = [{"id": "cubic", "title": "Cubic 3-edge coloring", "category": "trabalhos",
+                "source_section": "Semana 14 - Apresentacoes T2"}]
+    apply_anchor_engine(entries, repo, "TCC", voter=voter)
+    e = entries[0]
+    assert e["temporal_block_id"] == "u25"
+    assert e["temporal_block_method"] == "janela-1" and e["temporal_block_provider"] == "manual"
+    assert voter.windows == []
+
+
+def test_referencia_sem_card_recebe_primeiro_bloco_no_apply(tmp_path):
+    repo = _repo(tmp_path)
+    entries = [{"id": "afp", "title": "Archive of Formal Proofs", "category": "references"}]
+    apply_anchor_engine(entries, repo, "MF", voter=_VoterFunil("bloco-02"))
+    assert entries[0]["temporal_block_method"] == "ref-generica"
+    assert entries[0]["temporal_block_id"] == "u-1"

@@ -18,7 +18,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Callable, Optional
 
-from src.builder.routing.motor.anchor_engine import AnchorEngine, is_out_of_disamb_scope
+from src.builder.routing.motor.anchor_engine import (
+    AnchorEngine, is_out_of_disamb_scope, resolve_generic_reference,
+)
 from src.builder.routing.motor.context import build_motor_context
 from src.builder.routing.motor.contracts import AnchorDecision, MotorContext
 from src.builder.routing.motor.due_window import resolve_due_window, tier2_due_scope
@@ -78,9 +80,11 @@ def apply_anchor_engine(
             # dup-cache — escopo é atributo da ENTRY (lição review F4 I1).
             decision = resolve_due_window(entry, ctx)
             if decision is None:
-                # B-4: sem due casado, provas/trabalhos caem no llm-funil (janela
-                # = todos os blocos) em vez de irem direto ao scorer de conceito.
-                decision = engine.resolve_funnel(entry, ctx, markdown=str(md_of(entry) or ""))
+                # B-4/B-6: sem due casado, provas/trabalhos percorrem a cascata de
+                # janela (card manual/datado, data, ordinal, topico -> desempate ->
+                # voto) e so entao o llm-funil. Um card manual cobre o cluster
+                # inteiro de uma vez (TCC "Semana 14 - Apresentacoes T2").
+                decision = engine.resolve_unscoped(entry, ctx, markdown=str(md_of(entry) or ""))
             if decision is None:
                 _clear_temporal(entry)
                 continue
@@ -93,6 +97,12 @@ def apply_anchor_engine(
             # OU, na ordem inversa, gravaria decided[key]=None e apagaria a
             # decisão do gêmeo in-scope processado depois (cache-poison).
             _clear_temporal(entry)
+            continue
+        # B-6: referencia sem card -> primeiro bloco de aula (convencao dos pinos).
+        # Antes do cache por conteudo: escopo e atributo da ENTRY (review F4 I1).
+        decision = resolve_generic_reference(entry, ctx)
+        if decision is not None:
+            _write_temporal(entry, decision, ctx)
             continue
         key = content_key(entry, repo)
         if key in decided:
