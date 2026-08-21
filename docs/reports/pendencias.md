@@ -1137,6 +1137,37 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   `pedagogical_regeneration.py:552` — a cascata `window_provider` P1..P4 existe e esta desligada)
   e o scorer 1:1, onde ele entra como *hint posicional FRACO* (`concept_resolver.py:346`).
 
+## CODE — BANDA "INVERTIDA" era artefato de regua; o ralo e o FUNIL (2026-08-20g)
+
+- [DONE] **B-1 · `eval_ground_truth.py` lia `computed_block_band` para uma predicao que vinha da
+  ANCORA.** A acuracia e medida em `resolve_temporal_block` (temporal vence), mas a banda vinha
+  do scorer de conceito — confianca de um metodo, acerto de outro. Isso fabricava "media 78% <
+  baixa 85%". Fix: banda do METODO QUE DECIDIU (manual > temporal > funil) + campo `source` +
+  linha "Por fonte" no relatorio. Teste `test_band_e_a_do_metodo_que_decidiu_o_bloco`.
+  **Regua corrigida, 200 unidades:** alta **72/1 = 99%** · media **72/18 = 80%** · baixa 1/5 ·
+  manual 27/3 — MONOTONICA. Confiante-e-errado 2 -> 1.
+  **Por fonte (190 entries):** temporal alta **70/71 = 99%** · temporal media **70/77 = 91%** ·
+  manual 28/30 · **funil (scorer sem janela) 6/26 = 23%**. Por metodo: janela-1 69/70,
+  llm 63/69, disamb 6/6, concept-fused (funil) **6/24**. O roteador real e a FONTE, nao a banda:
+  `source == funil` e a fila de revisao. O `AnchorEngine` ja esta ON em producao via
+  `feature_flags` do perfil (`subjects.json`: IA tem `use_anchor_engine` e `use_llm_voter`) — o
+  "default False" do codigo engana; o reprocess headless injeta as flags do perfil.
+- [MEDIDO] **B-2 · anatomia do funil (26 entries, 20 erros):**
+  SO 17: cards TEMATICOS ("Threads", "Gerencia de Memoria", "Informacoes Gerais") — sem
+  `Semana N`, sem data, `card_block_map` do SO tem 1 entrada -> nenhum provider abre janela.
+  8 dos 17 sao `Informacoes Gerais` (listas/gabaritos P1-P2, gold = bloco da prova): card
+  administrativo, certo ficar sem janela; o sinal que falta e a DATA DA PROVA. TCC 6: 5 sao
+  `trabalhos` -> `_OUT_CATEGORIES` antes de qualquer provider; card "Semana 14 - Apresentacoes
+  T2" nao casa bloco nenhum (precisa de data, nao de topico).
+  **Hipotese testada e REFUTADA:** P4 aceitando card tematico sem "Semana" no SO = +1 plausivel
+  (`exercicios`, janela 12) e **4 confiante-e-errados novos** (`Threads` x3 viram janela-1 = alta
+  no bloco errado; `definicao-e-historico` gold fora). Liberar `trabalhos` pela janela manual do
+  card no TCC = +1 (`t1-enunciado`) / -1 (`trabalho-t2`, gold fora). Nao implementar. O funil e
+  estrutural: o sinal que resolveria (data da avaliacao/apresentacao) nao esta no texto.
+- [USER] **B-3 · 2 pinos manuais discordam do gold:** MF `eth2` (pino -> bloco-01, gold
+  bloco-12) e TCC `3d-matching` (pino bloco-24, gold bloco-25; e o unico confiante-e-errado que
+  resta). Um dos lados esta errado em cada par — decidir qual.
+
 ## CODE — SUBUNIDADE colapsada: RAIZ RASTREADA, fix NAO aplicado (2026-08-20e)
 
 - [OPEN] **S-1 · ECO de heading: o material e pontuado contra o PROPRIO titulo.** Cadeia:
