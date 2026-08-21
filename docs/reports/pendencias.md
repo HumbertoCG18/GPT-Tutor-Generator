@@ -1185,6 +1185,26 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   no bloco errado; `definicao-e-historico` gold fora). Liberar `trabalhos` pela janela manual do
   card no TCC = +1 (`t1-enunciado`) / -1 (`trabalho-t2`, gold fora). Nao implementar. O funil e
   estrutural: o sinal que resolveria (data da avaliacao/apresentacao) nao esta no texto.
+- [MEDIDO · DECISION] **B-4 · LLM votando no FUNIL com janela = todos os blocos: 6/26 -> 13/26,
+  0 regressoes.** Experimento read-only (2026-08-21, `gemini-3.5-flash`, cache proprio no
+  scratchpad, 26 chamadas, 0 erros): mesmo `LlmVoter`/prompt de producao, janela = todos os
+  blocos do curso (14-35). Resultado: **scorer concept-fused 6/26 = 23% -> LLM 13/26 = 50%**;
+  as 6 que o scorer acertava o LLM manteve (0 regressao); 0 votos fora da janela. Ganhos: MF
+  `plano`, SO `apresentacao-da-disciplina`/`programa`/`questoes-do-enade`/`lista-exercicios-p2`,
+  IA `artigo-usando-agrupamento`, TCC `t1-enunciado`. Persistem 13 erros: SO `Threads` x3 (LLM
+  -> bloco-04, gold 06), `lista-p1` x2 (-> 12, gold 09), ES2 `revisao-p1`, e o cluster TCC das
+  apresentacoes T2 (4x -> bloco-23, gold 25; `trabalho-t2-enunciado` -> 25 lendo a data do
+  enunciado, gold 24 — o gold desse cluster merece revisao junto com B-3).
+  A `confianca` do LLM e "alta" em 25/26 — inutil como gate (ja documentado: auditoria, nunca
+  gate). **Custo em producao:** 32 entries no funil nos 5 cursos (SO 17) = 32 chamadas UMA vez,
+  depois cache; `cap=20` por rodada em `pedagogical_regeneration._build_motor_voter` teria que
+  subir ou o SO leva 2 rodadas. Os 5 perfis ja tem `use_llm_voter`.
+  **E mudanca de SPEC, nao bug:** spec §12 "sem-janela nunca vota" (`LlmVoter.vote` devolve None
+  com janela vazia; `AnchorEngine.resolve` devolve None antes do voto). Implementar = no
+  `AnchorEngine.resolve`, quando `resolve_window` falha e o voter existe, votar com janela =
+  blocos do curso, band `media`, method `llm-funil` (rastreavel). Fora-de-escopo (`_OUT_CATEGORIES`)
+  tambem teria que passar: 7 dos 26 sao `trabalhos`/`bibliografia`/`cronograma`, e 3 desses 7 o
+  LLM acertou. Decisao do user.
 - [USER] **B-3 · 2 pinos manuais discordam do gold:** MF `eth2` (pino -> bloco-01, gold
   bloco-12) e TCC `3d-matching` (pino bloco-24, gold bloco-25; e o unico confiante-e-errado que
   resta). Um dos lados esta errado em cada par — decidir qual.
