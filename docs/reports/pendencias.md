@@ -1188,9 +1188,18 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   decisao", "perceptron", "k-NN" nao contem "modelos preditivos". O plano e CATEGORICO
   (preditivo/descritivo) e o material e ALGORITMICO; nao existe ponte lexica em lugar nenhum —
   `GLOSSARY.md` do IA tem 23 termos e **zero de ML**. Nao e bug de scorer: e lacuna de vocabulario.
-  Caminhos possiveis, nenhum medido: (a) geracao do glossario (LLM) produzir os termos dos
-  algoritmos com `Aparece em` — e conteudo, nao codigo; (b) aceitar vazio/colapso como resposta
-  honesta do modelo lexico. O censo `COLAPSO` do `eval_subunit_health.py` tambem e regua fraca:
+  Caminhos possiveis: (a) geracao do glossario (LLM) produzir os termos dos algoritmos com
+  `Aparece em` — e conteudo, nao codigo; (b) aceitar vazio/colapso como resposta honesta do
+  modelo lexico.
+  **Reaproveitamento medido (2026-08-20f):** o vocabulario-ponte EXISTE nos textos do u05 —
+  "supervisionado" em 25/39 entries, "classificacao" 26, "agrupamento/cluster" 14, "regressao" 10;
+  e a taxonomia ja traz o alias `modelos supervisionados` em `modelos-preditivos` (glossario).
+  **Nao serve:** polaridade. Os 9 textos com "nao supervisionado" tambem casam "supervisionado"
+  (substring) e `modelos-descritivos` so tem o alias "modelos exploratorios" — ponte lexica
+  mandaria agrupamento para preditivo. O resumo do Gemini (`code_curation`, 25/39) ja alimenta o
+  scorer de subunidade. Nada barato e seguro para reusar. DECISAO: (b) — subunidade do IA u05
+  fica como esta; a taxonomia em disco foi regravada com os 5 topicos (reprocess do IA, 0
+  mudancas de atribuicao, `updated_at` revertido para nao commitar timestamp). O censo `COLAPSO` do `eval_subunit_health.py` tambem e regua fraca:
   TCC u02 (4 entries -> `maquinas-de-turing`) e SO u02 (-> `escalonamento`) sao provavelmente
   CERTOS — concentracao nao e erro sem gold.
 - [OPEN · higiene UI] **S-3 · marcador de bibliografia `ed`/`eds` casa SUBSTRING.** Mesmo defeito
