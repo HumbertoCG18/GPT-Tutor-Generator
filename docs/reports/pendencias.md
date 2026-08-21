@@ -1137,6 +1137,71 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   `pedagogical_regeneration.py:552` — a cascata `window_provider` P1..P4 existe e esta desligada)
   e o scorer 1:1, onde ele entra como *hint posicional FRACO* (`concept_resolver.py:346`).
 
+## CODE — SUBUNIDADE colapsada: RAIZ RASTREADA, fix NAO aplicado (2026-08-20e)
+
+- [OPEN] **S-1 · ECO de heading: o material e pontuado contra o PROPRIO titulo.** Cadeia:
+  `collect_strong_heading_candidates` (content_taxonomy.py:671) le os 4 primeiros headings do
+  .md de CADA material -> `build_content_taxonomy` (linha 554) anexa cada heading como ALIAS do
+  topico que `_select_supported_taxonomy_topic` escolher -> `_score_entry_against_taxonomy_topic`
+  (timeline/index.py:1685) da `peso x 0.82` POR ALIAS casado em `markdown_headings_text` (peso 4.4)
+  -> o material casa o alias que e o seu proprio heading. Mesma classe do eco das `auto_tags`
+  cortado em 2026-08-19, so que via taxonomia em disco.
+  **Censo (5 cursos): 103 de 259 aliases (40%) sao heading/titulo de material** — MF 34/70,
+  TCC 23/52, SO 21/59, ES2 10/29, IA 15/49. No IA u05 o ima `introducao-ao-aprendizado-de-
+  maquina` tem 9 aliases, **8 sao eco** ("Aula 02 - ... k-Means - Exemplo 2", "Aula 29 - ...
+  Medidas de Avaliacao") e recebe 33 de 39 entries com `winner_score` 13-23 e conf 0.99;
+  `arvores-de-decisao` e `agrupamento-hierarquico` caem nele. Agravante: o topico que carrega o
+  NOME da unidade absorve todo heading que cita a unidade (overlap de 2 tokens ja da 6.3 no
+  seletor), entao o eco concentra num topico so. A taxonomia do u05 tem so 4 topicos — nenhum
+  e "arvores", "redes neurais", "k-nn" ou "agrupamento" (limite do plano de ensino, problema
+  SEPARADO do eco).
+  **Hipotese TESTADA e REFUTADA 3x (2026-08-20e)** — o mecanismo de alias NAO e o defeito.
+  Harness: taxonomia alterada em memoria, `_auto_map_entry_subtopic` + `_auto_map_entry_unit`
+  pelo caminho de producao, 5 cursos, regua de unidade (`eval_entry_unit`) como rede:
+
+  | variante | UNIDADE certo/188 | SUBUNIDADE vazios/214 | colapsadas |
+  |---|---|---|---|
+  | base | **103** | **93** | 5 |
+  | H1 · cortar TODO alias-eco (103 aliases) | 89 | 121 | 7 |
+  | H2 · cortar so o absorvido via tokens do titulo da unidade | 89 | 119 | 4 |
+  | H3 · excluir so o PROPRIO heading da entry (analogo ao eco de auto_tags) | 96 | 115 | 6 |
+
+  Toda variante perde unidade e ESVAZIA subunidade. O caso que decide: TCC
+  `aula-03-funcoes-recursivas-primitivas` acerta na base e vira (vazio) em H3 — o proprio
+  heading E a evidencia mais forte do que o material trata. **O enquadramento "eco" estava
+  errado:** `auto_tags` era SAIDA do motor realimentada; heading e ENTRADA. A taxonomia tem so
+  label + 1-2 aliases de glossario; os headings dos materiais sao o vocabulario principal dos
+  topicos. Mexer neles so esvazia. **Nao retentar pelo alias.**
+- [DONE 2026-08-20e] **S-2 · a raiz REAL do IA u05: "Modelos Preditivos" sumia da taxonomia.**
+  O plano lista 5 topicos na u05; a taxonomia tinha 4. Perdido em `build_content_taxonomy`:
+  `_is_valid_topic_candidate` — filtro de RUIDO DE HEADING — e aplicado ao CONTEUDOS do plano, e
+  o marcador de bibliografia `ed` casa substring em "pr**ed**itivos". Medido nos 5 cursos: o filtro
+  rejeita **27 de 127 topicos do plano (21%), todos legitimos, zero lixo** ("Logica de Hoare",
+  "Teorema de Cook-Levin", "Conjectura de Church-Turing"); sobreviviam SO pela isencao de codigo
+  numerico — e o plano do IA nao numera. Fix: topico vindo do plano nao passa pelo filtro
+  (`topics_from_plan`); o filtro segue para o fallback via COURSE_MAP. Teste em
+  `tests/test_taxonomy_topic_loss.py` (RED antes, GREEN depois). **Medido pelo montador de
+  producao:** so o IA muda (+`modelos-preditivos`, aliases 49 -> 51); MF/SO/ES2/TCC byte-identicos;
+  regua de unidade identica (103/188). Suite 1978 passed / 1 skipped. NAO commitado, producao NAO
+  reprocessada.
+  **MAS o colapso do u05 NAO muda com o topico de volta** (28 -> 28 em `introducao`): "arvores de
+  decisao", "perceptron", "k-NN" nao contem "modelos preditivos". O plano e CATEGORICO
+  (preditivo/descritivo) e o material e ALGORITMICO; nao existe ponte lexica em lugar nenhum —
+  `GLOSSARY.md` do IA tem 23 termos e **zero de ML**. Nao e bug de scorer: e lacuna de vocabulario.
+  Caminhos possiveis, nenhum medido: (a) geracao do glossario (LLM) produzir os termos dos
+  algoritmos com `Aparece em` — e conteudo, nao codigo; (b) aceitar vazio/colapso como resposta
+  honesta do modelo lexico. O censo `COLAPSO` do `eval_subunit_health.py` tambem e regua fraca:
+  TCC u02 (4 entries -> `maquinas-de-turing`) e SO u02 (-> `escalonamento`) sao provavelmente
+  CERTOS — concentracao nao e erro sem gold.
+- [OPEN · higiene UI] **S-3 · marcador de bibliografia `ed`/`eds` casa SUBSTRING.** Mesmo defeito
+  do `known_tools` ja corrigido (teste `test_tool_so_casa_em_fronteira_de_palavra`). No caminho do
+  `.tag_catalog.json` derruba 12 headings nos 5 cursos, 9 no IA ("Rede Neural Perceptron", "Redes
+  Feed Forward", "Introducao a redes neurais"), "Reducao Polinomial" no TCC, "LOGICA DE PREDICADOS"
+  no MF. Consumidor: so a UI (`ui/dialogs.py:2180`, seletor de tags) — **zero impacto nos eixos
+  medidos**. Fix trivial (fronteira de palavra), so quando mexer na UI.
+- [NOTA] TCC 27 -> 26 topicos: `definicao-da-classe` existe em 4.5.1 e 4.6.1 e
+  `_dedupe_taxonomy_topics` funde pelo slug. Dois pais, um slug. Nao investigado.
+
 ## FERRAMENTA — `scripts/explain_entry.py` (2026-08-20)
 
 - [DONE] Explica um arquivo etapa a etapa pelo CAMINHO DE PRODUCAO: sinais montados -> bloco

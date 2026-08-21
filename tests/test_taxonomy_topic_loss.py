@@ -137,3 +137,36 @@ def test_heading_institucional_nao_vira_alias_de_topico():
 
     aliases = [a.lower() for u in tax["units"] for t in u["topics"] for a in (t.get("aliases") or [])]
     assert not any("engenharia de software ii" in a for a in aliases), aliases
+
+
+def test_topico_do_plano_sem_codigo_nao_passa_pelo_filtro_de_heading():
+    """IA u05 (2026-08-20): "Modelos Preditivos" sumia da taxonomia porque o plano
+    nao tem codigo numerico e `_is_valid_topic_candidate` -- filtro de RUIDO DE
+    HEADING -- e aplicado ao CONTEUDOS do plano. O marcador de bibliografia `ed`
+    casa substring em "prEDitivos". Medido nos 5 cursos: o filtro rejeita 27 de
+    127 topicos do plano, todos legitimos ("Logica de Hoare", "Teorema de
+    Cook-Levin"); sobrevivem so pela isencao de codigo. Plano e fonte humana:
+    nao e heading, nao passa pelo filtro."""
+    from src.builder.extraction.content_taxonomy import build_content_taxonomy
+    from src.builder.extraction.teaching_plan import _normalize_unit_slug
+
+    plan = "\n".join([
+        "Unidade de Aprendizagem 5: Aprendizado de m\u00e1quina",
+        "Introdu\u00e7\u00e3o ao aprendizado de m\u00e1quina",
+        "",
+        "Paradigmas de aprendizado",
+        "",
+        "Modelos Preditivos",
+        "",
+        "Modelos Descritivos",
+        "",
+        "M\u00e9tricas de Avalia\u00e7\u00e3o",
+    ])
+    tax = build_content_taxonomy(
+        plan, "", "", strong_headings=[], semantic_profile=None,
+        parse_units_from_teaching_plan=_parse_units_from_teaching_plan,
+        topic_text=_topic_text, normalize_unit_slug=_normalize_unit_slug)
+
+    slugs = [t["slug"] for u in tax["units"] for t in u["topics"]]
+    assert "modelos-preditivos" in slugs, slugs
+    assert len(slugs) == 5, slugs

@@ -480,6 +480,14 @@ def build_content_taxonomy(
     normalize_unit_slug: Callable[[str], str],
 ) -> dict:
     units = parse_units_from_teaching_plan(teaching_plan or "")
+    # O CONTEUDOS do plano e lista humana: nao passa pelo filtro de ruido de
+    # heading. Medido nos 5 cursos (2026-08-20): o filtro rejeitava 27 de 127
+    # topicos do plano, TODOS legitimos ("Logica de Hoare", "Teorema de
+    # Cook-Levin") e zero lixo; sobreviviam so pela isencao de codigo numerico.
+    # O plano do IA nao numera -> "Modelos Preditivos" sumia e 33 entries da u05
+    # colapsavam no topico "introducao". O filtro segue valendo para o fallback
+    # (COURSE_MAP e markdown gerado, onde heading de template e ruido real).
+    topics_from_plan = bool(units)
     if not units and course_map_md:
         units = parse_units_from_teaching_plan(course_map_md)
 
@@ -496,7 +504,7 @@ def build_content_taxonomy(
                 continue
             topic_code = _extract_topic_code(topic_text(topic))
             # Filtrar noise topics: sem código numérico e que não passam na validação
-            if not topic_code and not _is_valid_topic_candidate(
+            if not topics_from_plan and not topic_code and not _is_valid_topic_candidate(
                 current_topic_text, semantic_profile=semantic_profile
             ):
                 continue
