@@ -1,7 +1,12 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-20 (fechamento da campanha do motor — sessao de 2 dias, 18/08 a 20/08).
-**HANDOFF: `docs/reports/2026-08-20-handoff-fechamento-campanha-motor.md`** — le primeiro.
+last_updated: 2026-08-21 (sessao "rumo aos 100%" — 20/08 noite a 21/08).
+**HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** — le primeiro. Substitui o de 20/08.
+ESTADO (`scripts/eval_eixos.py`, novo): bloco **186/200** (conf-err 1) · unidade **178/188** (os 10 erros
+= os de bloco) · cobertura **46/57 F1 0,847** · pinos **11** · LLM 61 votos + 28 funil. Tudo commitado nos
+6 repos. O que falta para 100% no bloco NAO e codigo: 6 golds a revisar + 2 curadorias de card (SO) +
+5 roteiros do ES2 sem sinal no dado — tabela no handoff. Subunidade: sem gold; primeiro rotular.
+Antes: `docs/reports/2026-08-20-handoff-fechamento-campanha-motor.md`.
 Cobre a sessao inteira (`7e940f5e`, 63 prompts): poda do enxame, regua nova + sweep do gate,
 rotulagem dos 64 casos, limpeza do manifest, eixo de bloco, N:N nos consumidores, fix do
 nao-determinismo, `explain_entry.py` e o veredito do termo `card`.
