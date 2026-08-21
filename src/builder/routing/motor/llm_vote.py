@@ -354,8 +354,18 @@ class LlmVoter:
         if not window:
             return None                      # sem-janela NAO vota (spec §12)
         key = self._content_key(entry)
+        win_now = [str(r) for r in window]
         with self._lock:
             cached = self._data["votes"].get(key)
+            # 2026-08-21: o voto e por CONTEUDO, mas a pergunta e sobre uma
+            # JANELA. Voto cacheado fora da janela atual, quando a janela mudou
+            # (ou e desconhecida — cache legado sem "window"), e resposta a
+            # outra pergunta: repergunta uma vez e regrava. IA `ag-feito`: voto
+            # "bloco-13" (evento) ficou fora de toda janela depois do filtro de
+            # kind e a entry perdia o temporal para sempre.
+            if cached is not None and match_window_ref(str(cached.get("block_id") or ""), win_now, ctx) is None \
+                    and sorted(cached.get("window") or []) != sorted(win_now):
+                cached = None
             if cached is None:
                 if self.calls >= self._cap:
                     self.skipped_cap += 1
@@ -380,6 +390,7 @@ class LlmVoter:
                     "confianca": str(voto.confianca).strip(),  # auditoria; nunca gate
                     "justificativa": str(voto.justificativa_curta)[:200],
                     "model": getattr(client, "model", ""),
+                    "window": win_now,  # a pergunta feita; muda a janela, muda a pergunta
                 }
                 self._data["votes"][key] = cached
                 try:

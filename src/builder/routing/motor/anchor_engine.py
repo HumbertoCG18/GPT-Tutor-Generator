@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import Optional, Set
 
 from src.builder.routing.motor.contracts import AnchorDecision, MotorContext, LlmVoterProtocol
-from src.builder.routing.motor.window_provider import resolve_window
+from src.builder.routing.motor.window_provider import resolve_window, drop_never_hosts
 from src.builder.routing.motor.disambiguator import disambiguate
 
 # Categorias que NUNCA entram no disambiguator (spec §3 TIER 2 + marco0).
@@ -86,7 +86,7 @@ class AnchorEngine:
         """
         if self._voter is None:
             return None
-        window = [str(b.get("id") or "") for b in ctx.blocks if b.get("id")]
+        window = drop_never_hosts([str(b.get("id") or "") for b in ctx.blocks if b.get("id")], ctx)
         if not window:
             return None
         voted = self._voter.vote(entry, window, ctx, markdown)
@@ -125,7 +125,11 @@ class AnchorEngine:
                                   provider="llm", method="llm", window=list(window))
         decision = disambiguate(entry, window, ctx, markdown, provider=provider)
         if not decision.block_ref:
-            return None  # nenhum ref da janela resolve -> funil honesto
+            # nenhum ref da janela resolve (card_block_map com uuid obsoleto):
+            # "funil honesto" hoje e o llm-funil, nao None. IA `ag-feito`: janela
+            # [fantasma, evento]; sem o evento (kind proibido) sobrava so o
+            # fantasma e a entry perdia o temporal inteiro (2026-08-21).
+            return self.resolve_funnel(entry, ctx, markdown)
         decision.provider = provider
         if self._voter is not None and len(window) > 1 and (
                 decision.flag or str(entry.get("id") or "") in self._series_ids):

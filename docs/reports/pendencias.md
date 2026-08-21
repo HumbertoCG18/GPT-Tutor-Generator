@@ -1137,6 +1137,41 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   `pedagogical_regeneration.py:552` — a cascata `window_provider` P1..P4 existe e esta desligada)
   e o scorer 1:1, onde ele entra como *hint posicional FRACO* (`concept_resolver.py:346`).
 
+## CODE — RUMO AOS 100% NO BLOCO: prior de kind + a lista do que NAO e codigo (2026-08-21e)
+
+- [DONE] **K-1 · kinds que nunca hospedam material saem de qualquer janela.** Medido nos 200 golds:
+  nenhum bloco-gold e `holiday`/`office_hours`/`workshop`/`academic_event` (avaliacao/revisao/
+  overview/entrega/suspensao aparecem e seguem elegiveis). Fonte unica `kinds.NEVER_HOSTS_MATERIAL_
+  KINDS`; aplicado em `window_provider.drop_never_hosts` (cascata) e no llm-funil. TCC `aula-17`
+  (card = [oficina, aula Cook-Levin]) vira janela-1 → **TCC 25/25**, bloco **186/200**, LLM 60 → 58.
+- [DONE] **K-2 · janela so com ref fantasma cai no llm-funil, nao em None.** `card_block_map` do IA
+  tem uuid OBSOLETO ("Semana 13": [fantasma, evento]); sem o evento (K-1) a entry `ag-feito-em-aula`
+  perdia o temporal — o ramo "nenhum ref resolve → funil honesto" devolvia None desde antes do
+  llm-funil existir. [NOTA · higiene] uuid obsoleto no card_block_map = drift de dado (timeline
+  regenerada, mapa nao) — a regeneracao do mapa deveria invalidar refs mortos.
+  **Segunda raiz no mesmo caso (K-2b):** o voto do LLM e cacheado por CONTEUDO, mas a pergunta e
+  sobre uma JANELA. O voto antigo ("bloco-13", o evento) ficou fora de toda janela e
+  `match_window_ref` devolvia None para sempre — nem o llm-funil reperguntava. `LlmVoter.vote`
+  agora grava `window` junto do voto e repergunta (1x, dentro do cap) quando o voto cacheado cai
+  fora de uma janela DIFERENTE (ou desconhecida: cache legado). Mesma janela = cache hit; voto
+  dentro da janela nova nao repergunta. Testes em `test_motor_llm_vote.py` (1 novo, 1 ajustado).
+- [USER] **K-3 · os 14 erros que restam NAO sao codigo. Classificacao com evidencia:**
+  *Gold a revisar (6):* MF `t2-2026-1` — due da sala de entrega T2 = **06/07**; o motor ancora no
+  ultimo bloco de conteudo antes (18, 29/06); gold 16 (15-22/06) segue "postagem", contra a
+  convencao decidida para o T2 do TCC (entrega). SO `exercicios` — card "Gerencia de Processos
+  CPU", conteudo = escalonamento; gold 03 "Comunicacao e sincronizacao" vs previsto 04
+  "Escalonamento". SO `lista-p1` + `gabarito` — gold 09 (ultima aula antes da P1), mas as
+  `lista-p2` do MESMO curso tem gold 21 = dia da P2: o gold do SO e inconsistente entre P1 e P2;
+  decidir "lista PN → bloco da prova N" (alinha com P2 e com o motor) ou o inverso. MF `eth2` —
+  regra B-6 (ref sem card → bloco-01) vs gold 12: 100% exige re-decidir o gold (01) ou pinar.
+  *Curadoria de card, 1 ato por cluster (4):* SO "Threads" → [bloco-06] (3 entries `exemplo-
+  threads`; o pino `biblioteca-pthread` tem gold 03 — janela [03, 06] deixa o voto decidir);
+  SO "Introducao aos Sistemas Operacionais" → [bloco-02] (`definicao-e-historico`).
+  *Sem sinal no dado (5):* ES2 `roteiro2/4/5/7` + `azure` — card "Microsservicos" = unidade inteira
+  (10 blocos), cronograma nao nomeia laboratorios (0 de 20 sessoes), codigo sem markdown. 100% aqui
+  = dado novo (sessoes do cronograma nomeando os roteiros) ou curadoria por entry.
+  Depois disso o eixo de UNIDADE vai junto (178/188 → os mesmos casos).
+
 ## CODE — EIXO DE UNIDADE: unidade = unidade do bloco TEMPORAL — 130 -> 178/188 (2026-08-21d)
 
 - [DONE] **U-1 · duas raizes, nenhum remendo.** A verdade de unidade e, por construcao, a unidade do

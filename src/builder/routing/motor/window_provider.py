@@ -15,6 +15,7 @@ from src.builder.routing.motor.disambiguator import block_topic_tokens, block_se
 from src.builder.routing.sequence import extract_lecture_ordinal
 from src.builder.timeline.classifier import STRONG_EXAM_RE as _STRONG_EXAM_RE
 from src.builder.timeline.classifier import WEAK_EXAM_TOKENS as _TOPIC_EXAM_STEMS
+from src.builder.timeline.kinds import NEVER_HOSTS_MATERIAL_KINDS
 
 from src.builder.routing.motor.contracts import MotorContext
 
@@ -235,12 +236,30 @@ _CASCADE = (
 )
 
 
+def drop_never_hosts(window: List[str], ctx: MotorContext) -> List[str]:
+    """Tira da janela os kinds que nunca hospedam material (feriado, atendimento,
+    oficina, evento, administrativos — kinds.NEVER_HOSTS_MATERIAL_KINDS). So
+    quando sobra algum bloco: janela toda desses kinds fica como esta (o
+    disambiguator/funil respondem honestamente)."""
+    kept = []
+    for ref in window:
+        b = ctx.block_by_ref(ref)
+        if b is not None and str(b.get("kind") or "") in NEVER_HOSTS_MATERIAL_KINDS:
+            continue
+        kept.append(ref)
+    return kept or list(window)
+
+
 def resolve_window(entry: dict, ctx: MotorContext) -> Tuple[List[str], str]:
-    """1º provider com janela não-vazia -> (janela, nome_provider). ([], "") = funil."""
+    """1º provider com janela não-vazia -> (janela, nome_provider). ([], "") = funil.
+
+    A janela sai sem os kinds que nunca hospedam material (medido 2026-08-21:
+    0 golds em feriado/atendimento/oficina/evento). Card manual do TCC
+    "Semana 12" = [oficina, aula de Cook-Levin]: o slide "Aula 17" e da aula."""
     for fn, name in _CASCADE:
         win = fn(entry, ctx)
         if win:
-            return win, name
+            return drop_never_hosts(win, ctx), name
     return [], ""
 
 

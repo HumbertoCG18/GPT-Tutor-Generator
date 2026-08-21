@@ -57,6 +57,19 @@ KIND_REQUIREMENTS: Dict[BlockKind, Dict[str, object]] = {
 }
 
 
+# Kinds que NUNCA hospedam material (janela do motor). Medido 2026-08-21 nos
+# 200 golds de bloco dos 5 cursos: nenhum bloco-gold e feriado, atendimento,
+# oficina ou evento academico (avaliacao/revisao/overview/entrega/suspensao
+# APARECEM no gold e ficam elegiveis). Mais os administrativos. O motor remove
+# estes kinds de qualquer janela (card, funil) quando sobra algum bloco: TCC
+# `aula-17` caia na "Oficina de problemas" vizinha da aula de Cook-Levin.
+NEVER_HOSTS_MATERIAL_KINDS = frozenset({
+    BlockKind.HOLIDAY.value, BlockKind.OFFICE_HOURS.value, BlockKind.WORKSHOP.value,
+    BlockKind.ACADEMIC_EVENT.value, BlockKind.RESERVED.value, BlockKind.RESULTS.value,
+    BlockKind.PLANNING.value,
+})
+
+
 # Lookup table de UI. Driver unico de icone/cor/label.
 KIND_DISPLAY: Dict[BlockKind, Dict[str, str]] = {
     BlockKind.CLASS:          {"icon": "📚", "label": "Aula",              "color": "blue"},

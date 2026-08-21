@@ -188,11 +188,37 @@ def test_voter_voto_fora_da_janela_cacheia_mas_nao_ancora(tmp_path: Path):
     client = FakeClient([FakeVotoResp("bloco-99")])
     voter = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=client)
     assert voter.vote(e, ["bloco-01"], ctx) is None       # bounded: mantem FLAG
-    assert load_material_curation(cache)["votes"]["e1"]["block_id"] == "bloco-99"
-    # re-rodada: cache hit, sem nova chamada
+    rec = load_material_curation(cache)["votes"]["e1"]
+    assert rec["block_id"] == "bloco-99" and rec["window"] == ["bloco-01"]
+    # re-rodada com a MESMA janela: cache hit, sem nova chamada (a pergunta e a mesma)
     voter2 = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([]))
     assert voter2.vote(e, ["bloco-01"], ctx) is None
     assert voter2.calls == 0
+
+
+def test_voter_reperg_quando_a_janela_muda_e_o_voto_ficou_fora(tmp_path: Path):
+    """2026-08-21: o voto e por conteudo, a pergunta e sobre uma janela. IA
+    `ag-feito`: voto "bloco-13" (evento) ficou fora de toda janela depois do
+    filtro de kind e a entry perdia o temporal para sempre. Janela diferente
+    (ou desconhecida: cache legado sem "window") com voto fora -> repergunta
+    uma vez e regrava; mesma janela -> cache."""
+    ctx = _ctx()
+    e = _entry("e1")
+    cache = tmp_path / "cur.json"
+    # cache LEGADO: voto em bloco-02, sem "window"
+    save_material_curation(cache, {"version": 1, "votes": {"e1": {"block_id": "bloco-02"}}})
+    client = FakeClient([FakeVotoResp("bloco-01")])
+    voter = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=client)
+    assert voter.vote(e, ["bloco-01"], ctx) == "bloco-01"   # reperguntou (janela desconhecida, voto fora)
+    assert voter.calls == 1
+    rec = load_material_curation(cache)["votes"]["e1"]
+    assert rec["block_id"] == "bloco-01" and rec["window"] == ["bloco-01"]
+    # mesma janela de novo: cache
+    voter2 = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([]))
+    assert voter2.vote(e, ["bloco-01"], ctx) == "bloco-01" and voter2.calls == 0
+    # voto dentro da janela nova (mesmo que a janela tenha mudado): nao repergunta
+    voter3 = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([]))
+    assert voter3.vote(e, ["bloco-01", "bloco-02"], ctx) == "bloco-01" and voter3.calls == 0
 
 
 def test_voter_cap_e_erro(tmp_path: Path):
