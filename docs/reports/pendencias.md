@@ -6,6 +6,8 @@ ESTADO (`scripts/eval_eixos.py`, novo): bloco **186/200** (conf-err 1) · unidad
 = os de bloco) · cobertura **46/57 F1 0,847** · pinos **11** · LLM 61 votos + 28 funil. Tudo commitado nos
 6 repos. O que falta para 100% no bloco NAO e codigo: 6 golds a revisar + 2 curadorias de card (SO) +
 5 roteiros do ES2 sem sinal no dado — tabela no handoff. Subunidade: sem gold; primeiro rotular.
+PUSH (as-of 2026-08-24): gerador `07c95dc`, MF, IA e TCC sincronizados com `origin`. **SO e ES2 sem
+remote** — so em disco local, sem backup; criar os repos e ligar `origin` e decisao do user.
 Antes: `docs/reports/2026-08-20-handoff-fechamento-campanha-motor.md`.
 Cobre a sessao inteira (`7e940f5e`, 63 prompts): poda do enxame, regua nova + sweep do gate,
 rotulagem dos 64 casos, limpeza do manifest, eixo de bloco, N:N nos consumidores, fix do
