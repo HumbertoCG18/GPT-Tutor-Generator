@@ -38,6 +38,12 @@ Sessão `a109e4cc` — **20/08 (noite) → 21/08**. Continua a campanha do motor
 4. **Sem motor por categoria.** Regras são gerais (kind, card, série, referência); medem-se em tudo
    e leem-se por categoria. A ordem de ataque do user: material-de-aula → listas → … mas com uma
    cascata só.
+   **4b. Sem motor por CURSO** (explicitado pelo user em 2026-08-25). MF/SO/IA/ES2/TCC são
+   **bancada de teste**, escolhidas porque o material do semestre passado já está 100% subido —
+   não são o alvo. Regra que só vale para um curso é pino ou curadoria, nunca código. O teste
+   real é com o semestre corrente, depois dos eixos em ~100%. Bloqueador já conhecido para essa
+   hora: **Computação Gráfica publica HTM** — `.htm` é descartado no import e `.html` entra como
+   `codigo-professor`; mecanismo e fix de raiz em `pendencias.md`.
 5. **Pinar menos.** Pino que o motor reproduz é pino a apagar (30 → 11). Curadoria de **card** cobre
    um cluster; pino cobre uma entry.
 

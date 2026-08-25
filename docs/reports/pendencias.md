@@ -110,14 +110,37 @@ Cada entry grava a origem resolvida em `source_path`. Nao confundir com `raw_tar
 falar em "o bruto", checar de qual dos dois se trata — foi essa confusao que gerou a avaliacao
 de risco errada do `reject` em 24/08.
 
-- [USER] **EXISTE UM 6o PERFIL, fora de tudo que este projeto mede** (`as-of 2026-08-25`):
-  **"Laboratorio de Redes de Computadores"** tem `stash_folder` configurado
-  (`.../Moodle/laboratorio-de-redes-de-computadores`, **pasta existe no disco**) e `repo_root`
-  **VAZIO** — nao ha repo-tutor. Todo o vocabulario do projeto ("os 5 cursos", `eval_eixos.py`
-  medindo 5, "os 6 repos" contando o gerador) ignora este perfil. Nao sei se e cadeira sem
-  tutor, resto de semestre anterior ou algo pela metade — **decisao do user**: criar o repo,
-  apagar o perfil, ou deixar registrado como fora de escopo. So nao deixar como surpresa para
-  a proxima sessao.
+- [RESOLVIDO 2026-08-25] **6o perfil "Laboratorio de Redes de Computadores" = FORA DE ESCOPO,
+  de proposito.** Tem `stash_folder` configurado (pasta existe no disco) e `repo_root` VAZIO.
+  **Ruling do user:** e cadeira NOVA, com os arquivos sendo subidos ao longo do semestre —
+  material incompleto, entao nao serve nem para desenvolver nem para medir. Nao criar repo-tutor,
+  nao apagar o perfil. Quando "os 5 cursos" aparecer neste tracker, e por isso; o perfil existir
+  em `subjects.json` nao e bug.
+
+LEI DA CAMPANHA — **AS CADEIRAS DO SEMESTRE PASSADO SAO BANCADA DE TESTE, NAO O ALVO**
+(user, 2026-08-25; extensao explicita da lei "sem motor por categoria"). Desenvolvemos e medimos
+sobre MF/SO/IA/ES2/TCC porque o material ja esta 100% subido e as informacoes sao conhecidas —
+e isso torna a medicao possivel. **NAO significa que se corrija para essas cadeiras.** Regra que
+so vale para um curso e pino ou curadoria, nunca codigo; toda regra tem que se medir em tudo e
+ler-se por categoria. O teste real vem depois, com o semestre corrente, quando os eixos e o motor
+estiverem em ~100%.
+
+**BLOQUEADOR CONHECIDO DO TESTE REAL — Computacao Grafica publica HTM** (user, 2026-08-25;
+mecanismo verificado no codigo em 25/08). Nao e "feature nao implementada", sao DOIS defeitos
+distintos e o segundo e o pior:
+1. **`.htm` (sem L) nao existe em `src/`** — `stash_import._classify_file_type` devolve `""` e o
+   arquivo cai em `StashScanResult.skipped`. A UI mostra so a CONTAGEM ("N ignorado(s) por
+   extensao", `ui/app.py:1679`), nunca os nomes. Material some sem ninguem saber qual.
+2. **`.html` (com L) esta em `CODE_EXTENSIONS`** (`utils/helpers.py:204`), entao e importado —
+   como `file_type="code"` e `auto_detect_category` -> **`codigo-professor`**
+   (`utils/helpers.py:647-648`). Slide/apostila publicada como pagina web entra no sistema
+   classificada como CODIGO DO PROFESSOR: ganha resumo de codigo do Gemini em vez de tratamento
+   de material, e cai no balde que ja e o 2o pior do eixo de bloco (D-5: codigo-professor
+   52/59 = 88,1%, contra material-de-aula 96,6%).
+Fix de raiz quando chegar a hora: reconhecer `.htm`/`.html` como um `file_type` PROPRIO
+(documento web), nao como codigo, com extracao de texto propria — e nomear os `skipped` na UI,
+que e barato e vale para qualquer extensao futura. **Nao fazer agora**: nao ha material de CG no
+corpus para medir, e regra sem regua e exatamente o que esta campanha proibiu.
 
 AVISO DE DRIFT DE CAMINHO (`as-of 2026-08-24`): os modulos foram movidos depois que boa parte
 deste tracker foi escrita. `core/file_map.py` -> **`routing/file_map.py`** (ha tambem
