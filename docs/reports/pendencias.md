@@ -1,13 +1,14 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-24 (sessao de higiene: FILA acordada + FASE 0 executada).
+last_updated: 2026-08-25 (FASE 2 + FASE 1 executadas; subunidade tem regua e alavanca medida).
 **FILA VIVA: secao `## FILA ACORDADA COM O USER (2026-08-24)` logo abaixo — le antes de escolher
-trabalho.** Fase 0 (remocao de morto) CONCLUIDA, regua byte-identica. Proximo: FASE 1 (6 golds +
-2 curadorias de card do SO, um reprocess so) ou FASE 2 (gold de subunidade, a maior alavanca).
-Anterior: 2026-08-21 (sessao "rumo aos 100%" — 20/08 noite a 21/08).
+trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) user decide os 8 erros
+de bloco restantes (4 listas + 3 exemplo-threads + azure: pino ou aceitar); (2) implementar a
+alavanca (iii) da subunidade — glossario com nomes de algoritmo por topico (medido 4->37/39 no IA);
+(3) FASE 3 cobertura (11 erros, explain_entry um a um).
 **HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** — le primeiro. Substitui o de 20/08.
-ESTADO (`scripts/eval_eixos.py`, novo): bloco **186/200** (conf-err 1) · unidade **178/188** (os 10 erros
-= os de bloco) · cobertura **46/57 F1 0,847** · pinos **11** · LLM 61 votos + 28 funil. Tudo commitado nos
+ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25): bloco **192/200** (conf-err 1 = azure) · unidade **184/190** (os 6
+erros = os de bloco) · cobertura **46/57 F1 0,847** · pinos **11** · subunidade **19/66** (gold novo) · LLM 53 votos + 27 funil + 8 irmao-card. Tudo commitado nos
 6 repos. O que falta para 100% no bloco NAO e codigo: 6 golds a revisar + 2 curadorias de card (SO) +
 5 roteiros do ES2 sem sinal no dado — tabela no handoff. Subunidade: sem gold; primeiro rotular.
 PUSH (as-of 2026-08-24): gerador `07c95dc`, MF, IA e TCC sincronizados com `origin`. **SO e ES2 sem
@@ -226,7 +227,7 @@ mais o diff das sentinelas revisado campo a campo. **Nada avanca com regua pior 
 
 ### FASE 0 — limpeza de morto — **CONCLUIDA 2026-08-24** (ver secao propria abaixo)
 
-### FASE 1 — fechar o eixo de bloco: UMA decisao, UM reprocess
+### FASE 1 — fechar o eixo de bloco — **CONCLUIDA 2026-08-25** (ver secao propria abaixo; 8 erros restam, nenhum e codigo)
 Os 6 golds **e** as 2 curadorias de card do SO no mesmo ato; reprocess de SO+MF; uma medicao.
 Distincao que muda a expectativa: os **6 golds mudam a REGUA, nao o sistema** — 186 -> ~195 nao
 deixa o tutor melhor, deixa a medicao honesta (um gold errado envenena toda medicao futura; foi o
@@ -249,6 +250,69 @@ ja foi refutado, +1/57). So entao a **FASE 4** (exercicios, listas, provas antig
 PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
+
+## FASE 1 EXECUTADA (2026-08-25) — golds, curadorias, duplicata, regra do irmao; DOIS reprocesses
+
+Gate: **bloco 186 -> 192/200** (conf-err 1: `azure`) · **unidade 178 -> 184/190** · cobertura 46/57 F1 0,847
+(igual) · pinos **11** (igual) · suite **2005 passed / 1 skipped** (+4 testes) · subunidade **19/66** (3
+`exemplo-threads` viraram rotulaveis). MF **66/66** e IA/TCC 100%; ES2 **27/28**; SO 31/38.
+
+### Aplicado (rulings do user desta sessao)
+- **Golds de bloco** (`ground_truth_<C>.csv`, provenance `relabel-2026-08-25-fase1`, `.bak` ao lado):
+  MF `t2-2026-1` 16->18 (convencao ENTREGA, igual T2 do TCC) · MF `eth2` 12->01 (regra B-6) ·
+  SO `exercicios` 03->04 (card "Gerencia de Processos CPU") · SO `lista-exercicios-p2` + `exercicios-p2`
+  21->20 (**convencao do user: lista-pN = ULTIMA AULA antes da prova N**; o gold da P2 e que estava no
+  dia da prova) · SO `exemplo-threads-em-c-exemplo1/2/3` 06->04 (**ruling: usados na aula de threads
+  26-31/03**, nao na de sincronizacao/deadlock; o gold 06 era por associacao com o exemplo em Java
+  de 07/04).
+- **Duplicata `1404-troca-de-mensagens` removida** via `RepoBuilder.reject` (curated/staging apagados,
+  `raw/` mantido por ruling anterior). `dedup_manifest.py` NAO serve: so pega gemeo stale, e os dois
+  arquivos existem no stash. `ground_truth_SO.csv`: linha removida, `pair_key` do `14-04` limpo (39 linhas).
+- **Curadoria de card SO** (`.card_block_map.json`): `"Introducao aos Sistemas Operacionais"` manual ->
+  bloco-02 — `definicao-e-historico` acertou. A curadoria `"Threads": [03, 06]` do handoff foi
+  **aplicada, medida e REVERTIDA**: tirou o bloco-04 da janela, `3103-threads` (gold 04, certo por
+  data-no-nome) caiu em 03 com band alta, e os 3 exemplos foram de 04 para 03. Card com 3 blocos de
+  verdade (03 pthread pinado, 04 aula, 06 java) nao se descreve com janela.
+- **Regra do irmao numerado no card** — unica mudanca de MOTOR (`routing/motor/apply.py`,
+  `_inherit_from_numbered_sibling`, metodo/provider `irmao-card`; teste `tests/test_motor_sibling.py`).
+  Entry SEM markdown herda o bloco do irmao COM texto que partilha card + radical + numero
+  (`roteiro4.zip` <- `Roteiro4_circuitbreaker.pdf`). **Dado antes de codigo:** censo nos 5 cursos,
+  10 grupos, 8 com gold, **8/8 concordam** (MF, IA, ES2). Efeito: 8 entries `irmao-card`, os 4
+  roteiros do ES2 corrigidos (2->04, 4->07, 5->08, 7->09), `roteiro6` 07->08 (sem gold, plausivel),
+  zero mudanca fora do ES2. So entries sem texto, em escopo, sem pino e sem due; irmaos com texto que
+  discordam nao decidem.
+
+### Os 8 erros restantes — nenhum e codigo, todos decisao do user
+| entries | gold | motor | por que | 100% exige |
+|---|---|---|---|---|
+| SO `lista-p1` + gabarito, `lista-p2`, `exercicios-p2` (3 pts) | aula antes da prova | dia da prova | convencao adotada no gold; motor sem regra (medida 4/8 antes, com golds inconsistentes) | remedir "lista antes da prova" com golds consistentes; senao 4 pinos |
+| SO `exemplo-threads-em-c` x3 | 04 | 03 (llm-funil) | o LLM votava 04 na rodada anterior; a janela mudou, o cache invalidou, a rodada nova votou 03. Codigo `.c` sem sinal deterministico | 3 pinos |
+| ES2 `azure` | 09 | 01 (disamb, conf-err) | PDF de 877k chars sobre cloud; nada o liga a 05/06 | 1 pino ou dado |
+
+### Refutado nesta fase (nao retentar)
+- **"apoio segue a aula do card"** (bibliografia/codigo herda o bloco do material-de-aula do mesmo
+  card): gold concorda **73/98**; em cards com 1 aula, 54/64 — e o motor ja acerta 85/98 e 56/64.
+  Card "Verificacao de Programas" do MF tem 15 entries de apoio em 5 blocos. Pior que o motor.
+- **Voto do LLM no funil e instavel entre rodadas** (confirmado de novo: `exemplo-threads` 04 -> 03
+  sem mudanca de codigo, so de janela). Toda mudanca de janela custa votos novos E pode trocar acertos.
+
+### Subunidade — as 3 alavancas MEDIDAS em memoria contra o gold (harness reproduz o gravado 7/8/4)
+| alavanca | IA /39 | 3 cursos /63 | veredito |
+|---|---|---|---|
+| base | 4 | 19 | |
+| (i) piso absoluto 0,5 / 1,0 / 2,0 | 3 / 2 / 1 | 18 / 17 / 13 | **REFUTADA** — os scores baixos sao onde o acerto mora (SO 8->4 com piso 2) |
+| (ii) desempate do seletor de alias | 1 | — | **REFUTADA sozinha** — move o ima INTRO para PARAD; gold diz PRED/DESC |
+| (iii) glossario de algoritmos | **37** | **52** | **CONFIRMADA** — 4->37; lista minima (perceptron, mlp, k-nn, arvore, k-means, agrupamento, cluster, acuracia...) da 30/39; 3 termos, 27/39 |
+| (ii)+(iii) | 36 | 51 | (ii) nao acrescenta a (iii) |
+Mecanismo do colapso (medido, `timeline/index.py:1649`): `modelos-preditivos`/`modelos-descritivos`
+marcam **0,00 em 40/40** — os 4 aliases deles nao ocorrem em texto nenhum, `modelos` e generico e
+`preditivos/supervisionados` sao plural (texto tem singular). O vocabulario que EXISTE (aprendizado
+supervisionado 26/40, agrupamento hierarquico, k-means, machine learning) e alias de INTRO — chegou
+la por empate 3,4 x 3,4 com PARAD no seletor de alias, desfeito por `>` estrito = primeiro da lista.
+Conf relativa sem piso: 0,11 de um token (`exemplo`/`aula`) vira conf 1,000.
+**Caminho da (iii):** `_glossary_aliases_for_topic` exige que o termo case o LABEL do topico, logo a
+entrada e `Modelos Preditivos` com `synonyms = [perceptron, k-NN, arvore de decisao, ...]` — conteudo
+gerado (glossario + `Aparece em`), nao codigo. E o proximo passo da subunidade.
 
 ## FASE 2 EXECUTADA (2026-08-25) — gold de subunidade pronto, hipotese do bloco REFUTADA
 

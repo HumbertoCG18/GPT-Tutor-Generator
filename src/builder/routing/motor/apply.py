@@ -15,6 +15,7 @@ Cascata: pino > tier2_due_scope(provider due-window) > is_out_of_disamb_scope
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Callable, Optional
 
@@ -115,4 +116,51 @@ def apply_anchor_engine(
             _clear_temporal(entry)
             continue
         _write_temporal(entry, decision, ctx)
+    _inherit_from_numbered_sibling(entries, ctx, md_of)
     return entries
+
+
+_SIBLING_RE = re.compile(r"^([a-z]+?)[-_]?(\d{1,2})(?!\d)")
+
+
+def _sibling_key(entry: dict):
+    """(card, radical, numero) de ids como `roteiro4` / `roteiro4-circuitbreaker`."""
+    m = _SIBLING_RE.match(str(entry.get("id") or "").lower())
+    card = str(entry.get("source_section") or "").strip().casefold()
+    return (card, m.group(1), m.group(2)) if (m and card) else None
+
+
+def _inherit_from_numbered_sibling(entries: list, ctx: MotorContext, md_of) -> None:
+    """Irmão numerado no card (2026-08-25): entry SEM texto herda o bloco do
+    irmão COM texto que partilha card + radical + número.
+
+    ES2: `roteiro4.zip` (código sem markdown, o LLM vota no vazio) mora no
+    mesmo card que `Roteiro4_circuitbreaker.pdf`, que o motor acerta. Censo
+    nos 5 cursos: 8 grupos com gold, 8 concordam (MF, IA, ES2) — estrutura do
+    Moodle, não regra por curso/categoria. Só entries sem texto, em escopo e
+    sem pino mudam; irmãos com texto que discordam entre si não decidem."""
+    groups: dict = {}
+    for e in entries:
+        key = _sibling_key(e)
+        if key:
+            groups.setdefault(key, []).append(e)
+    for members in groups.values():
+        if len(members) < 2:
+            continue
+        has_text = {e["id"]: bool(str(md_of(e) or "").strip()) for e in members}
+        refs = {str(e.get("manual_timeline_block_id") or e.get("temporal_block_id") or "").strip()
+                for e in members if has_text[e["id"]]}
+        refs.discard("")
+        if len(refs) != 1:
+            continue
+        block = ctx.block_by_ref(refs.pop())
+        if block is None:
+            continue
+        ref = str(block.get("id") or "")
+        for e in members:
+            if has_text[e["id"]] or _valid_manual_pin(e, ctx) or tier2_due_scope(e) \
+                    or is_out_of_disamb_scope(e):
+                continue
+            _write_temporal(e, AnchorDecision(block_ref=ref, conf=0.0, band="media", flag=False,
+                                              provider="irmao-card", method="irmao-card",
+                                              window=[ref]), ctx)
