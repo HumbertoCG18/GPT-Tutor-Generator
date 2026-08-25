@@ -8,7 +8,6 @@ from src.builder.engine import (
     _build_timeline_index,
     _auto_map_entry_subtopic,
     _auto_map_entry_unit,
-    _derive_unit_from_topic_match,
     _file_map_markdown_cell,
     _build_file_map_timeline_context_from_course,
     _build_file_map_unit_index_from_course,
@@ -641,11 +640,9 @@ def test_auto_map_entry_subtopic_prefers_specific_topic_and_derives_unit():
     markdown = "# Exercicios\n\n## Logica de Hoare\n\n### Pre e Pos Condicoes\n"
 
     result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
-    derived_unit = _derive_unit_from_topic_match(result, taxonomy)
 
     assert isinstance(result, TopicMatchResult)
     assert result.topic_slug in {"logica-de-hoare", "pre-e-pos-condicoes"}
-    assert derived_unit == "unidade-02-verificacao-de-programas"
     assert result.confidence > 0
 
 
@@ -699,10 +696,8 @@ def test_auto_map_entry_subtopic_prefers_title_and_headings_over_late_body_menti
     )
 
     result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
-    derived_unit = _derive_unit_from_topic_match(result, taxonomy)
 
     assert result.topic_slug == "especificacao-de-funcoes-recursivas"
-    assert derived_unit == "unidade-01-metodos-formais"
 
 
 def test_auto_map_entry_subtopic_uses_heading_enriched_alias_for_logic_propositional():
@@ -726,10 +721,8 @@ def test_auto_map_entry_subtopic_uses_heading_enriched_alias_for_logic_propositi
     markdown = "# Lógica Proposicional\n\n# Sintaxe\n\nFórmulas bem-formadas."
 
     result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
-    derived_unit = _derive_unit_from_topic_match(result, taxonomy)
 
     assert result.topic_slug == "linguagens-de-especificacao-e-logicas"
-    assert derived_unit == "unidade-01-metodos-formais"
 
 
 def _tie_taxonomy():
@@ -806,36 +799,6 @@ def test_auto_map_entry_subtopic_zero_score_returns_no_slug():
     assert result.confidence == 0.0
     assert result.ambiguous is True
     assert any("sem-sinal" in r for r in result.reasons)
-
-
-def test_derive_unit_from_topic_match_uses_topic_unit_when_present():
-    taxonomy = {
-        "version": 1,
-        "course_slug": "metodos-formais",
-        "units": [
-            {
-                "slug": "unidade-02-verificacao-de-programas",
-                "title": "Unidade 2 - Verificacao de Programas",
-                "topics": [
-                    {
-                        "slug": "logica-de-hoare",
-                        "label": "Logica de Hoare",
-                        "aliases": ["pre e pos condicoes"],
-                        "kind": "topic",
-                        "unit_slug": "unidade-02-verificacao-de-programas",
-                    },
-                ],
-            },
-        ],
-    }
-    match = TopicMatchResult(
-        topic_slug="logica-de-hoare",
-        topic_label="Logica de Hoare",
-        unit_slug="unidade-02-verificacao-de-programas",
-        confidence=0.93,
-    )
-
-    assert _derive_unit_from_topic_match(match, taxonomy) == "unidade-02-verificacao-de-programas"
 
 
 def test_format_file_map_unit_cell_marks_ambiguous_result():

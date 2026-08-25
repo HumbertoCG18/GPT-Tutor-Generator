@@ -1284,6 +1284,12 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
         if not messagebox.askyesno("Reprovar arquivo", msg):
             return
 
+        # `reject(entry_id)` e a unica assinatura que existe (ops/lifecycle_ops.py:313).
+        # A chamada com `preserve_raw=False` SEMPRE levantava TypeError e caia num ramo
+        # de compatibilidade que remontava um RepoBuilder identico e chamava a mesma
+        # coisa — dois builders, um resultado. Colapsado.
+        # ATENCAO (decisao pendente do user, ver pendencias.md): `reject` NAO apaga
+        # `raw_target`; o texto do dialogo acima promete que apaga.
         try:
             profile = SubjectStore().find_by_repo_root(self.repo_dir)
             builder = RepoBuilder(
@@ -1293,22 +1299,7 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
                 options={},
                 subject_profile=profile,
             )
-            entry_data = builder.reject(entry_id, preserve_raw=False)
-        except TypeError:
-            # Compatibilidade se o engine local ainda estiver com assinatura antiga
-            try:
-                profile = SubjectStore().find_by_repo_root(self.repo_dir)
-                builder = RepoBuilder(
-                    root_dir=self.repo_dir,
-                    course_meta=self._repo_course_meta(),
-                    entries=[],
-                    options={},
-                    subject_profile=profile,
-                )
-                entry_data = builder.reject(entry_id)
-            except Exception as e:
-                messagebox.showerror("Erro", f"Falha ao reprovar:\n{e}")
-                return
+            entry_data = builder.reject(entry_id)
         except Exception as e:
             messagebox.showerror("Erro", f"Falha ao reprovar:\n{e}")
             return

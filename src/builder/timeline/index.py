@@ -1948,34 +1948,6 @@ def _assign_timeline_block_to_topic(
     return topic_candidates, primary
 
 
-def _derive_unit_from_topic_match(match: TopicMatchResult, taxonomy: dict) -> str:
-    if not match or not match.topic_slug:
-        return ""
-    topic_slug = slugify(str(match.topic_slug or ""))
-    if not topic_slug:
-        return ""
-
-    valid_units = {
-        _normalize_unit_slug(str(unit.get("slug", "") or unit.get("title", "") or "")): _normalize_unit_slug(
-            str(unit.get("slug", "") or unit.get("title", "") or "")
-        )
-        for unit in (taxonomy or {}).get("units", []) or []
-        if _normalize_unit_slug(str(unit.get("slug", "") or unit.get("title", "") or ""))
-    }
-
-    candidate_unit = _normalize_unit_slug(match.unit_slug)
-    if candidate_unit and candidate_unit in valid_units:
-        return valid_units[candidate_unit]
-
-    for unit in (taxonomy or {}).get("units", []) or []:
-        unit_slug = _normalize_unit_slug(str(unit.get("slug", "") or unit.get("title", "") or ""))
-        for topic in unit.get("topics", []) or []:
-            current_topic_slug = slugify(str(topic.get("slug", "") or ""))
-            if current_topic_slug == topic_slug:
-                return unit_slug
-    return candidate_unit
-
-
 def _build_timeline_index(
     candidate_rows: List[Dict[str, object]],
     unit_index: list,

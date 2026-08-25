@@ -20,6 +20,7 @@ from src.builder.timeline.kinds import KIND_DISPLAY, BlockKind
 from src.builder.timeline.status import derive_block_status
 from src.builder.timeline.unit_labels import unit_short_label as _unit_short_label
 from src.models.core import SubjectProfile
+from src.utils.helpers import write_json_manifest
 from src.ui.theme import apply_theme_to_toplevel
 
 logger = logging.getLogger(__name__)
@@ -245,10 +246,9 @@ def save_block_assignment(
             else:
                 entry.pop("manual_timeline_block_id", None)
             break
-    manifest_path.write_text(
-        json.dumps(data, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
+    # R11: write direto corrompia o manifest vivo se o processo morresse no meio.
+    # `write_json_manifest` e o writer canonico (tmp + os.replace, .bak best-effort).
+    write_json_manifest(manifest_path, data)
 
 
 def save_block_kind_override(

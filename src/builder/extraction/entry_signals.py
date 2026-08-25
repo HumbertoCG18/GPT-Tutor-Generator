@@ -96,8 +96,12 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
     # Lista SEM eco: so o que vira TEXTO de score. A lista crua segue inteira
     # para `tool_values` e para quem le auto_tags fora daqui.
     auto_tags_sem_eco = _sem_eco(auto_tags)
-    # S4 (P4): valores das auto_tags `ferramenta:` em campo próprio — o scorer
-    # de bloco (file_map, TOOL_TOKENS) filtra quais são ferramentas de verdade.
+    # S4 (P4): valores das auto_tags `ferramenta:` em campo próprio.
+    # ATENCAO: o comentario antigo dizia que "o scorer de bloco (file_map,
+    # TOOL_TOKENS) filtra quais sao ferramentas de verdade". `TOOL_TOKENS` NAO
+    # existe em `src/` (so sobrevivia num .pyc stale) — **nada filtra esta lista**.
+    # Ver B-9 em pendencias.md; o vocabulario de `ferramenta:` e auto-inferido do
+    # proprio corpus (B-1) e por isso vem sujo.
     tool_values = [
         tag.split(":", 1)[1].strip()
         for tag in auto_tags
