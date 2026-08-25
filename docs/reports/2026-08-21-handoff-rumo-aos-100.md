@@ -13,8 +13,9 @@ Sessão `a109e4cc` — **20/08 (noite) → 21/08**. Continua a campanha do motor
 2. `python scripts/eval_eixos.py` — a régua dos três eixos pelo estado gravado. Tem que imprimir
    **bloco 186/200 · unidade 178/188 · cobertura 46/57 F1 0,847 · pinos 11**. Se não bater, alguém
    reprocessou com código diferente — `git log` nos 5 repos-tutor antes de qualquer coisa.
-3. `git status` nos 6 repos: **tudo commitado**, árvores limpas. Gerador HEAD `07c95dc` (este
-   handoff). Repos-tutor: MF `0e5d6d6` · SO `a86cd7c` · IA `def08ba` · ES2 `460c997` · TCC `5a4eb53`.
+3. `git status` nos 6 repos: **tudo commitado**, árvores limpas. No gerador, `07c95dc` é o commit
+   deste handoff; HEAD pode estar à frente por commits **só de `docs/`** — isso não é deriva de
+   estado, confira com `git log --oneline 07c95dc..HEAD --name-only`. Repos-tutor: MF `0e5d6d6` · SO `a86cd7c` · IA `def08ba` · ES2 `460c997` · TCC `5a4eb53`.
    **Push (24/08):** gerador, MF, IA e TCC estão sincronizados com `origin`. **SO e ES2 não têm
    remote nenhum** (`git remote -v` vazio) — existem só em disco local, sem backup. Criar os repos
    e ligar o `origin` é decisão do user (visibilidade pública/privada); não foi feito.
