@@ -139,8 +139,47 @@ distintos e o segundo e o pior:
    52/59 = 88,1%, contra material-de-aula 96,6%).
 Fix de raiz quando chegar a hora: reconhecer `.htm`/`.html` como um `file_type` PROPRIO
 (documento web), nao como codigo, com extracao de texto propria — e nomear os `skipped` na UI,
-que e barato e vale para qualquer extensao futura. **Nao fazer agora**: nao ha material de CG no
-corpus para medir, e regra sem regua e exatamente o que esta campanha proibiu.
+que e barato e vale para qualquer extensao futura.
+
+**CG ENTRA NO ESCOPO (ruling do user 2026-08-25)** — e por um motivo que NAO vale para o Lab
+Redes: **o professor reutiliza os materiais**, entao cards, links e PDFs ja estao no Moodle mesmo
+para unidades/topicos ainda nao dados. O material esta COMPLETO; e a completude que decide se uma
+cadeira serve de bancada, nao o semestre.
+
+**ANATOMIA DO SITE DE CG (verificado 2026-08-25, `inf.pucrs.br/pinho/CG/`):** e uma arvore de
+HUBS e FOLHAS, nao paginas de conteudo soltas.
+- hub (`Aulas/GeomComp/GeomComp.htm`): **~150 palavras** + 3 logos + 3 links relativos
+  (`Dominancia/Domina.html`, `Slab/Slab.html`, `PlaneSweep/PlaneSweep.html`).
+- folha (`Dominancia/Domina.html`): ~350 palavras, **5 diagramas** (`domina1..5.jpg`),
+  pseudocodigo em `<pre>`, formulas inline.
+- indice do curso (`/pinho/CG/`): mesma forma — cronograma, bibliografia, listas P1/P2, tudo `.htm`.
+- HTML estatico puro: **sem applet, Flash, canvas ou JS**. Nada se perde numa conversao.
+Consequencia: converter o HUB rende 150 palavras e tres logos. **O material esta nas FOLHAS** —
+qualquer caminho exige crawl de 1 nivel; nao ha atalho de "converter a pagina da aula".
+
+**PLANO DO USER (HTML -> PDF -> Datalab -> sistema): avaliado, com ressalva.** Funciona HOJE com
+zero codigo (`.pdf` ja e `file_type` de 1a classe; e so por no `stash_folder`) e serve de
+desbloqueio imediato. Mas e a forma errada para o regime permanente, por tres razoes medidas:
+1. **O sistema JA converte HTML**: `text/url_markdown.py:189 html_to_structured_markdown`
+   (BeautifulSoup, ja e dependencia em `pyproject.toml`), usada por `fetch_reference_text`.
+   Preserva `h1`-`h6`, listas, tabelas e **`<pre>`** — exatamente onde vive o pseudocodigo.
+2. **O round-trip destroi a estrutura e depois paga para adivinha-la de volta.** No HTML o heading
+   e `<h2>` declarado; virando PDF vira "texto maior em negrito" e o Datalab tem de inferir. E
+   essa estrutura NAO e decorativa aqui: `markdown_headings_text` tem peso **4,4** no scorer de
+   subunidade e `collect_strong_heading_candidates` le os 4 primeiros headings para alimentar a
+   taxonomia. O round-trip degrada justamente o sinal mais forte dos eixos.
+3. **Custo**: o Datalab e o unico custo pago recorrente do pipeline e mata-lo e objetivo declarado
+   da campanha web. Mandar HTML para la e pagar OCR por conteudo sem problema de OCR.
+
+**LACUNA HONESTA do caminho recomendado:** `html_to_structured_markdown` **nao trata `img`**
+(`img` nao esta nos `block_tags`, `url_markdown.py:217`). As 5 figuras do Domina.html sao carga
+util numa aula de geometria. O caminho bom exige baixar as imagens e referencia-las — o mesmo
+trabalho que o pipeline ja faz para PDF (`images_dir`). Nao e de graca; e mais barato que o
+round-trip.
+
+**NAO FAZER AGORA**: nao ha material de CG no corpus para medir, e regra sem regua e exatamente o
+que esta campanha proibiu. Entra depois dos eixos, como pre-requisito do teste real — nao como
+descoberta de ultima hora.
 
 AVISO DE DRIFT DE CAMINHO (`as-of 2026-08-24`): os modulos foram movidos depois que boa parte
 deste tracker foi escrita. `core/file_map.py` -> **`routing/file_map.py`** (ha tambem
