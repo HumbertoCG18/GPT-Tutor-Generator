@@ -1277,9 +1277,10 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
             "Reprovar este arquivo?\n\n"
             "Isso irá:\n"
             "- remover os arquivos Markdown gerados\n"
-            "- remover o PDF/arquivo bruto copiado para o repositório\n"
             "- retirar a entry do manifest\n"
-            "- devolver o arquivo para a fila 'A Processar'\n"
+            "- devolver o arquivo para a fila 'A Processar'\n\n"
+            "O PDF/arquivo bruto em raw/ é MANTIDO de propósito: serve de rede para\n"
+            "reimportar sem depender do stash. Apague à mão se quiser limpar."
         )
         if not messagebox.askyesno("Reprovar arquivo", msg):
             return
@@ -1288,8 +1289,10 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
         # A chamada com `preserve_raw=False` SEMPRE levantava TypeError e caia num ramo
         # de compatibilidade que remontava um RepoBuilder identico e chamava a mesma
         # coisa — dois builders, um resultado. Colapsado.
-        # ATENCAO (decisao pendente do user, ver pendencias.md): `reject` NAO apaga
-        # `raw_target`; o texto do dialogo acima promete que apaga.
+        # `reject` NAO apaga `raw_target` (a copia em `raw/`), so os derivados. Isso e
+        # DELIBERADO — ruling do user 2026-08-25, opcao (b): o bruto no repo e rede para
+        # reimportar sem depender do stash. O texto do dialogo acima foi corrigido para
+        # parar de prometer a delecao. Ver a secao do reject em pendencias.md.
         try:
             profile = SubjectStore().find_by_repo_root(self.repo_dir)
             builder = RepoBuilder(

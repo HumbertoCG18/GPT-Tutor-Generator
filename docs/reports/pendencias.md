@@ -98,6 +98,12 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 `as-of <data/commit>`. Sem isso, volta a mentir na próxima mudança de estado. Itens DURÁVEIS
 (goal/decisão/plano) não carimbam.
 
+FATO DURAVEL — O STASH (confirmado pelo user 2026-08-25): a pasta de origem dos materiais e
+SEMPRE `C:\Users\Humberto\Desktop\Moodle\<curso>\...`, e e o que cada entry grava em
+`source_path`. Nao confundir com `raw_target` (`raw/pdfs/...`), que e a COPIA dentro do
+repo-tutor e esta no `.gitignore`. Quando um item falar em "o bruto", checar de qual dos dois
+se trata — foi a confusao que gerou a avaliacao de risco errada do `reject` em 24/08.
+
 AVISO DE DRIFT DE CAMINHO (`as-of 2026-08-24`): os modulos foram movidos depois que boa parte
 deste tracker foi escrita. `core/file_map.py` -> **`routing/file_map.py`** (ha tambem
 `facade/file_map.py`, que e outro arquivo) e `core/content_taxonomy.py` ->
@@ -182,14 +188,30 @@ builders, um resultado. Isso foi colapsado — comportamento identico, -14 linha
 **`raw_target` NAO esta na lista** — o PDF/arquivo bruto sobrevive. O texto do dialogo, porem,
 promete ao usuario: *"- remover o PDF/arquivo bruto copiado para o repositorio"*.
 
-**Decisao do user, duas saidas, NAO tomei nenhuma de proposito:**
-(a) **implementar** — `reject` passa a apagar `raw_target`. E o que o dialogo promete, mas e
-    APAGAR ARQUIVO DE ORIGEM do user: destrutivo, irreversivel, nao entra em "limpeza de morto"
-    sem tua palavra explicita.
-(b) **corrigir o texto do dialogo** — para de prometer o que nao faz; o raw fica no repo e a entry
-    volta para a fila 'A Processar' com o bruto disponivel (que e o comportamento de HOJE).
-Enquanto nao houver ruling, o codigo carrega um comentario `ATENCAO` no call-site apontando para
-aqui. **Nao deixar isso sem decisao**: um dialogo que mente sobre deletar arquivo e armadilha.
+**CORRECAO da minha primeira avaliacao de risco (2026-08-25):** eu escrevi que apagar
+`raw_target` seria "apagar arquivo de origem do user, destrutivo e irreversivel". **Errado** —
+inferi sem olhar o manifest. Cada entry carrega DOIS caminhos: `raw_target` = `raw/pdfs/...`
+(copia DENTRO do repo-tutor) e `source_path` = `C:\Users\Humberto\Desktop\Moodle\<curso>\...`
+(o original, FORA do repo). Apagar `raw_target` apaga a copia, nao o download. `raw/` esta no
+`.gitignore` dos repos-tutor (0 arquivos rastreados), entao essa copia nunca teve versionamento
+— mas tambem nao e fonte de verdade de nada.
+
+**RULING DO USER 2026-08-25: opcao (b) — corrigir o texto, manter o bruto.** O `raw/` fica no
+repo de proposito, como rede para reimportar sem depender do stash. Aplicado: a linha
+"- remover o PDF/arquivo bruto copiado para o repositorio" saiu do dialogo e foi substituida por
+um aviso explicito de que o bruto e MANTIDO; o comentario do call-site deixou de ser "ATENCAO
+pendente" e passou a registrar o ruling. **`reject` NAO foi alterado** — o comportamento de
+sempre esta agora descrito com honestidade.
+
+Opcao (a), NAO escolhida, fica registrada: por `raw_target` na `keys_to_clean` de
+`ops/lifecycle_ops.py:reject`. Argumento contra que pesou: o TCC ja perdeu 24 de 42 sources
+quando `Downloads/TCC` foi movida (so 2 recuperaveis pelo backup) — nesse cenario a copia em
+`raw/` e a ultima existente, e `raw/` e gitignored. Trocar risco de perda de conteudo por
+economia de disco e troca ruim num Moodle que expira no fim do semestre.
+
+Ideia registrada, NAO implementada (o user nao pediu): um `sweep_orphans` que LISTE — sem apagar
+— os arquivos em `raw/` sem entry no manifest, para decisao em lote. Ja existe um
+`sweep_orphans` em `engine.py:2196` para reaproveitar.
 
 ## USER-SIDE — destravam a cadeia de medição/cutover
 
