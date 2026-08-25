@@ -94,6 +94,14 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 `as-of <data/commit>`. Sem isso, volta a mentir na próxima mudança de estado. Itens DURÁVEIS
 (goal/decisão/plano) não carimbam.
 
+AVISO DE DRIFT DE CAMINHO (`as-of 2026-08-24`): os modulos foram movidos depois que boa parte
+deste tracker foi escrita. `core/file_map.py` -> **`routing/file_map.py`** (ha tambem
+`facade/file_map.py`, que e outro arquivo) e `core/content_taxonomy.py` ->
+**`extraction/content_taxonomy.py`**. As 8 citacoes soltas `file_map.py:NNN` daqui sao ambiguas
+entre os dois file_map E tem numero de linha velho. **Confirme com grep antes de agir sobre
+qualquer `arquivo.py:linha` deste documento** — um item pode parecer aberto so porque o grep
+foi no caminho errado (aconteceu com o guardrail do subject_profile em 24/08).
+
 ---
 
 ## USER-SIDE — destravam a cadeia de medição/cutover
@@ -390,6 +398,9 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   qualquer hora. Primeiro alvo provado: `_derive_unit_from_topic_match` (index.py:2080; morto em
   produção; só re-export engine.py:241/2443 + tests/test_file_map_unit_mapping.py:11,647,705,732,836).
   Remoção pura, sem eval.
+  > **RE-VERIFICADO ABERTO 2026-08-24:** a funcao vive hoje em `timeline/index.py:1951` (linha
+  > mudou); alcancada so por `engine.py:245`/`:2443` (re-export) e por um comentario em
+  > `timeline/conflicts.py:48`. Segue morta em producao.
 - ~~[CODE] **Mapa de deleção do cutover fase 5 — 5 conflitos, resoluções travadas 2026-07-03**~~
   **FECHADO (2026-08-17, passo 3, `df86203` + `037ddbe`)**: itens 1-8 TODOS executados conforme
   travado (1 aposentado · 2 aposentados · 3 lista nomeada completa · 6 fantasma+testes ·
@@ -470,7 +481,8 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   (`index.py:1401` + `block_identity.py:269-272`, `as-of 2026-08-06`) — o guard de UUID-ref
   confere `manual_timeline_block_id`/`computed_block_id` no manifest mas não desce pro nível
   certo em todo caminho; minors-batch/subprojeto SO.
-- [CODE] **R11 — dashboard escreve manifest não-atômico** (`timeline_dashboard.py:248-251`,
+- [CODE · RE-VERIFICADO ABERTO 2026-08-24] **R11 — dashboard escreve manifest não-atômico**
+  (`src/ui/timeline_dashboard.py:248`, `write_text` direto — confirmado hoje,
   `as-of 2026-08-06`) — `manifest_path.write_text(...)` direto, sem write-temp+rename; write
   parcial em crash/kill corrompe o manifest vivo. Minors-batch, fora da campanha índice.
 - [CODE] **R12 — join de data truncado vs cru dentro do motor** (`disambiguator.py:68` usa
@@ -515,6 +527,15 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   merge de `feature_flags` é 2 linhas junto. **MUDA ATRIBUIÇÕES → gold obrigatório** antes/depois
   (mesmo protocolo do Fix 2b). Guardrail barato: `logger.warning` nos 2 early-returns silenciosos
   (`file_map.py:1500` e `:1628`) — hoje nenhum loga, curso perde 1/3 da estrutura sem nenhum sinal.
+  > **FECHADO (verificado no codigo 2026-08-24):** o wiring foi aplicado nos 3 sites —
+  > `scripts/reprocess_assignments.py:52` (`_find_subject_profile`) passa o perfil em `:105`;
+  > `src/ui/app.py:2387` passa `subject_profile=profile` no unprocess; `_resolve_subject_profile`
+  > e usado em todo o app. **Os 2 guardrails tambem entraram**, ao contrario do que este item
+  > pedia como pendente: `routing/file_map.py:1185` loga "sem teaching_plan no perfil —
+  > content_taxonomy vazia" e `:1237` loga "unidades derivadas do repo gerado, nao do plano de
+  > ensino — fallback". Item inteiro fechado; nada aqui e acao.
+  > PENDENTE do mesmo item, NAO fechado: unificar as 2 fontes de unidade (`unit_index` como
+  > projecao de `content_taxonomy`) — era "depois do wiring fix", e o wiring ja esta feito.
   **Depois do wiring fix** (não antes — evita migrar o veneno): unificar as 2 fontes de unidade
   (`unit_index` vira projeção de `content_taxonomy`) — merge antes do fix causaria churn de slugs
   nos 5 repos-tutor (títulos Title-Cased do fallback ≠ títulos acentuados do plano).
@@ -544,7 +565,8 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 - [CODE] **Latente: TCC NFD dotless-i no manifest** (`as-of 2026-07-01`, herdado do handoff 28/06 P4) — slug
   `aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis` carrega U+0131 (NFD do macOS). Join por nome pode
   falhar silencioso. Fix: normalizar NFC no import. Não urgente; vigiar no crosswalk TCC.
-- [CODE] **`preserve_raw` morto no `reject`** (`as-of 2026-08-06`, achado fio Task 1, reviewer
+- [CODE · RE-VERIFICADO ABERTO 2026-08-24] **`preserve_raw` morto no `reject`** — segue vivo em
+  `src/ui/curator_studio.py:1296`. (`as-of 2026-08-06`, achado fio Task 1, reviewer
   pré-existente não desta task). `builder.reject(entry_id, preserve_raw=False)` sempre cai no
   `except TypeError` — a assinatura atual de `reject` não tem parâmetro `preserve_raw`
   (`engine.py:2194` / `lifecycle_ops.py:313`; re-verificado 2026-08-06, call-site
@@ -560,6 +582,9 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
   golden, não é fail de gate de nenhuma task da campanha (confirmado régua Task 6,
   `as-of 2026-08-07`). Fix: re-baseline GATEADO do golden (regenerar `_golden/*.json` com diff
   revisado antes de versionar) — fora do escopo da campanha índice único.
+  > **FECHADO (verificado 2026-08-24, execucao da suite):** `python -m pytest -q` da
+  > **2002 passed / 1 skipped / 0 failed**. O golden foi rebaselinado em alguma das campanhas
+  > seguintes (as sentinelas foram regravadas varias vezes em 20-21/08). Nao ha fail pendente.
 - [CODE] **Scorer do AnchorEngine sensível a rótulo rico de taxonomia em vizinhos topicais**
   (`as-of 2026-08-06`, tentativa 5 do re-flip TCC): `aula-13-teorema-de-rice` foi de
   bloco-12→bloco-13 quando o rótulo rico "Prova da Indecidibilidade do Problema da Parada"
