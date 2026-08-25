@@ -98,11 +98,26 @@ CONVENÇÃO (não-negociável): todo item DERIVADO (fato sobre estado vivo dos r
 `as-of <data/commit>`. Sem isso, volta a mentir na próxima mudança de estado. Itens DURÁVEIS
 (goal/decisão/plano) não carimbam.
 
-FATO DURAVEL — O STASH (confirmado pelo user 2026-08-25): a pasta de origem dos materiais e
-SEMPRE `C:\Users\Humberto\Desktop\Moodle\<curso>\...`, e e o que cada entry grava em
-`source_path`. Nao confundir com `raw_target` (`raw/pdfs/...`), que e a COPIA dentro do
-repo-tutor e esta no `.gitignore`. Quando um item falar em "o bruto", checar de qual dos dois
-se trata — foi a confusao que gerou a avaliacao de risco errada do `reject` em 24/08.
+FATO DURAVEL — O STASH E CONFIGURACAO, NAO CAMINHO FIXO (corrigido pelo user 2026-08-25;
+minha primeira redacao dizia "SEMPRE C:\...\Desktop\Moodle" como se fosse constante — ERRADO).
+A pasta de origem de cada cadeira vem de **`SubjectProfile.stash_folder`** (`src/models/core.py:234`,
+"pasta com os arquivos-fonte (PDFs/cards) da materia"), persistido em
+`%APPDATA%/GPTTutorGenerator/subjects.json` por perfil. Os 6 perfis tem o campo preenchido e
+todas as pastas existem em disco (`as-of 2026-08-25`); o VALOR segue hoje a convencao
+`Desktop/Moodle/<slug-do-curso>`, mas o MECANISMO e configuracao — nunca hardcodar o caminho.
+Cada entry grava a origem resolvida em `source_path`. Nao confundir com `raw_target`
+(`raw/pdfs/...`), que e a COPIA dentro do repo-tutor e esta no `.gitignore`. Quando um item
+falar em "o bruto", checar de qual dos dois se trata — foi essa confusao que gerou a avaliacao
+de risco errada do `reject` em 24/08.
+
+- [USER] **EXISTE UM 6o PERFIL, fora de tudo que este projeto mede** (`as-of 2026-08-25`):
+  **"Laboratorio de Redes de Computadores"** tem `stash_folder` configurado
+  (`.../Moodle/laboratorio-de-redes-de-computadores`, **pasta existe no disco**) e `repo_root`
+  **VAZIO** — nao ha repo-tutor. Todo o vocabulario do projeto ("os 5 cursos", `eval_eixos.py`
+  medindo 5, "os 6 repos" contando o gerador) ignora este perfil. Nao sei se e cadeira sem
+  tutor, resto de semestre anterior ou algo pela metade — **decisao do user**: criar o repo,
+  apagar o perfil, ou deixar registrado como fora de escopo. So nao deixar como surpresa para
+  a proxima sessao.
 
 AVISO DE DRIFT DE CAMINHO (`as-of 2026-08-24`): os modulos foram movidos depois que boa parte
 deste tracker foi escrita. `core/file_map.py` -> **`routing/file_map.py`** (ha tambem

@@ -1291,8 +1291,9 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
         # coisa — dois builders, um resultado. Colapsado.
         # `reject` NAO apaga `raw_target` (a copia em `raw/`), so os derivados. Isso e
         # DELIBERADO — ruling do user 2026-08-25, opcao (b): o bruto no repo e rede para
-        # reimportar sem depender do stash. O texto do dialogo acima foi corrigido para
-        # parar de prometer a delecao. Ver a secao do reject em pendencias.md.
+        # reimportar sem depender do stash (`SubjectProfile.stash_folder`, por cadeira).
+        # O texto do dialogo acima foi corrigido para parar de prometer a delecao.
+        # Ver a secao do reject em pendencias.md.
         try:
             profile = SubjectStore().find_by_repo_root(self.repo_dir)
             builder = RepoBuilder(
