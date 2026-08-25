@@ -234,7 +234,7 @@ drift do MF em julho). As **2 curadorias de card** sao o oposto: 4 entries passa
 certo de verdade. Mata K-3 e B-3. Depois disso o bloco esta no TETO DO DADO — os 5 roteiros do ES2
 nao tem solucao sem cronograma novo, entao "100%" e inalcancavel; a meta real e ~195/200.
 
-### FASE 2 — gold de subunidade — **A MAIOR ALAVANCA DA FILA**
+### FASE 2 — gold de subunidade — **CONCLUIDA 2026-08-25** (ver secao propria abaixo; hipotese REFUTADA)
 Rotular ~40 entries em `subunit_gt_<C>.csv` (IA u05, SO u01/u02, TCC u01/u02). **Zero codigo, zero
 risco de regressao** — e medicao pura. E a maior alavanca por razao estrutural: um eixo inteiro
 esta cego, e a cegueira bloqueia ~6 itens de uma vez (G-1, G-3, G-5, K-3 `card_text`, `SUBUNIT_TAG`
@@ -249,6 +249,95 @@ ja foi refutado, +1/57). So entao a **FASE 4** (exercicios, listas, provas antig
 PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
+
+## FASE 2 EXECUTADA (2026-08-25) — gold de subunidade pronto, hipotese do bloco REFUTADA
+
+Zero codigo no repo (scripts de extracao/medicao ficaram no scratchpad). Regua byte-identica
+(bloco 186/200 · unidade 178/188 · cobertura 46/57 F1 0,847 · pinos 11; suite 2001 passed / 1 skipped).
+
+**Gold: `docs/reports/subunit_gt_{TCC,SO,IA}.csv` — 75 linhas, 63 scorable** (TCC 12/11 ·
+SO 23/13 · IA 40/39). O handoff estimou "~40"; o universo real das 5 unidades era 75. Protocolo,
+todo por ruling do user: rotulo por CONTEUDO (card oculto durante a proposta) para aula e para os
+notebooks do IA — eles SAO a aula; rotulo pelo CARD so para material de apoio (bibliografia,
+codigo de contexto), coluna `gold_fonte` registra qual. `gold_subunit` (1 primario) +
+`gold_subunits_extra` (`;`) + `scorable`. Gold VAZIO com `scorable=yes` = "nenhum topico se
+aplica, predizer e erro" (aula-06 TCC: revisao online de Automatos, pre-requisito). Transversal
+(plano de ensino, prova antiga, lista multi-unidade, entry com UNIDADE errada) = `scorable=no`.
+
+### Medicao — "subunidade = primary_topic_slug do bloco temporal": REFUTADA (nao retentar)
+
+| preditor | estrito | leniente (primario ou extra) | predicao vazia |
+|---|---|---|---|
+| MOTOR (computed_subunit_slug gravado) | **19/63 (30,2%)** | 24/63 (38,1%) | 6 |
+| HIP (topico do bloco temporal) | **6/63 (9,5%)** | 8/63 (12,7%) | **44** |
+
+Por curso, estrito — motor / hip: TCC 7/11 / 5/11 · SO 8/13 / 1/13 · IA 4/39 / **0/39**. A
+hipotese nao vence o motor em nenhum curso. Tres causas, todas no dado do bloco, nenhuma no scorer:
+
+1. **Granularidade.** Bloco e janela temporal, subunidade e topico. IA `bloco-05` vai de 18/03 a
+   15/04 (4 semanas), carrega 26 entries e 3 topicos-gold distintos (k-NN/perceptron/MLP/arvores
+   = preditivos, metricas, e mais). Um topico por bloco nao tem como acertar — mesmo com o topico
+   do bloco perfeito, o teto da hipotese no IA e ~1/3.
+2. **`primary_topic_slug` vazio em 44/63.** Todos os 4 blocos da u05 do IA e 3 dos 4 do TCC tem
+   `topic_source=topic_text_fallback` — e o fallback, por design, NUNCA popula o slug
+   (`timeline/index.py:2035`). No IA os candidatos vem poluidos por topicos de OUTRA unidade
+   (`busca-adversaria`, `algoritmos-de-busca-com-informacao` a 1.0 num bloco de ML), 4 empatados
+   a 1.0 -> `topic_ambiguous` -> vazio.
+3. **Topico do bloco fora da propria unidade.** SO `bloco-03` (unit=u01) recebeu
+   `comunicacao-e-sincronizacao-de-processos`, topico da u03, com `chamadas-de-sistema` (u01, o
+   certo, 7 entries-gold) em 2o a 0.95. O candidato nao e restrito a unidade do bloco — a mesma
+   violacao que o P0.2 proibiu na entry, so que no bloco. Vale registrar como defeito do eixo de
+   bloco; nao move a regua de subunidade.
+
+### O que o gold revela do MOTOR (baseline para a proxima etapa — o alvo agora e o scorer)
+
+- **IA colapsou**: 34/40 entries predizem `introducao-ao-aprendizado-de-maquina`; `paradigmas`,
+  `modelos-preditivos` e `modelos-descritivos` tem **0 predicoes** e o gold tem 25+8+0 delas.
+  Estrito 4/39. Hipotese para investigar (NAO testada): todo notebook abre com "aprendizado de
+  maquina"/"machine learning" no header e o topico "introducao" ganha no lexico.
+- SO: os 5 rotulados por card acertam 5/5; os por conteudo 3/8. `3103-threads` e
+  `1903-estruturas-de-controle` caem em `escalonamento` (topico do bloco) em vez de
+  `conceitos-basicos`; `2603-algoritmos` cai no vizinho `escalonamento`.
+- TCC 7/11: erra `aula-02` (Cantor -> conjuntos-enumeraveis), `aula-08` (Church-Turing -> MT),
+  `aula-10` (decidiveis -> MT), `aula-06` (revisao: prediz conjuntos onde o gold manda VAZIO).
+- 6 predicoes vazias no motor, 5 delas notebooks do IA com conteudo obvio (perceptron, k-NN java).
+
+### Achados de dado durante a rotulagem (fila da FASE 1 / higiene — nada aplicado)
+
+- [DECISION USER 2026-08-25] **`exercicios` (SO) tem gold de UNIDADE errado**: card `Gerencia de
+  Processos CPU` => u02. `2403-escalonamento` e `2603-algoritmos` estao no MESMO card com gold
+  bloco-04; so `exercicios` ficou em bloco-03 (posting_date 2026-03-10 e artefato de download em
+  lote — dezenas de entries do SO tem essa data). Aplicar no ato da FASE 1: `ground_truth_SO.csv:24`
+  bloco-03/bdcc7b26 -> bloco-04/e4f7e22a. **Efeito previsto: bloco 186->185, unidade 178->179.**
+- [DECISION USER 2026-08-25] **`1404-troca-de-mensagens` e duplicata de `14-04-troca-de-mensagens`**
+  (dois arquivos reais no stash, mesmo card, conteudo identico) -> REMOVER no ato da FASE 1 via
+  `scripts/dedup_manifest.py`. Hoje o ruler ja colapsa o par (`pair_key`), remover nao muda numero.
+- **`plano-de-ensino` e `programa` (SO) sao o mesmo PDF** ("programa" = nome original baixado do
+  Moodle; categorias `cronograma` vs `outros`). Sem ruling de remocao ainda.
+- **`moodle_label` vazio em 61/227 entries (5 repos), correlacao PERFEITA com `posting_date` vazio**
+  — uma causa so: o backfill (`sources/moodle.py:162-186`) casa por basename EXATO casefolded e
+  exige key UNICA no curso. 5 sao URLs (correto); 56 sao falha real, todas com `source_path` no
+  stash. Duas formas de morrer: (A) `main.pdf` repetido -> count>1 -> pulado (hipotese do user,
+  o codigo a implementa); (B) o stash chega RENOMEADO para o rotulo, entao o basename nunca e
+  `main.pdf` — a key some antes de a ambiguidade contar. Separar A de B exige re-rodar
+  `moodle_pull` (rede+auth): nao ha dump da API em cache. Importa porque `moodle_label` alimenta o
+  sinal limpo de `concept_resolver.py:118` e `disambiguator.py:58` — canal apagado em 56 entries.
+- **"Threads" nao existe como topico em nenhuma unidade do plano do SO** (nem u01 nem u02); 3
+  entries foram forcadas a vizinhos. Lacuna de TAXONOMIA, nao de motor. User: "investigar mais a
+  fundo" — em aberto. Lei dos aliases intacta.
+- `biblioteca-em-c-pthread` (SO, pinada via `manual_timeline_block_id`) tem `temporal_block_id`
+  e `computed_block_id` **None** — entry pinada nao recebe bloco temporal gravado. Higiene.
+- TCC: `moodle_label` vazio em 12/27, inclusive `aula-01/02/03/05/06/09`. O nome de arquivo salva
+  (ja e o rotulo), mas e o mesmo canal apagado.
+
+### Retratacoes desta sessao (para nao repetir)
+
+- Li `ground_truth_SO.csv` col.3 como PREDICAO; e `true_block_id`. Isso gerou a falsa suspeita
+  de unidade errada em `biblioteca-em-c-pthread` (esta certa, bloco-03/u01) e o falso achado
+  "card Threads estilhacado" — card e secao do Moodle e acumula semanas; bloco e janela. Um card
+  em 2 blocos com 1 mes de distancia e normal, nao incoerencia.
+- Propus `aula-08` (TCC) como `maquinas-de-turing` pelo titulo; o conteudo e a Tese de
+  Church-Turing (l.381). Corrigido pelo challenge do user. Regra: heading interno > titulo.
 
 ## FASE 0 EXECUTADA (2026-08-24) — remocao de morto, regua byte-identica
 
