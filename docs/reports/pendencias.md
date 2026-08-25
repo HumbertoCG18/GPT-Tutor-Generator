@@ -1,6 +1,10 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-21 (sessao "rumo aos 100%" — 20/08 noite a 21/08).
+last_updated: 2026-08-24 (sessao de higiene: FILA acordada + FASE 0 executada).
+**FILA VIVA: secao `## FILA ACORDADA COM O USER (2026-08-24)` logo abaixo — le antes de escolher
+trabalho.** Fase 0 (remocao de morto) CONCLUIDA, regua byte-identica. Proximo: FASE 1 (6 golds +
+2 curadorias de card do SO, um reprocess so) ou FASE 2 (gold de subunidade, a maior alavanca).
+Anterior: 2026-08-21 (sessao "rumo aos 100%" — 20/08 noite a 21/08).
 **HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** — le primeiro. Substitui o de 20/08.
 ESTADO (`scripts/eval_eixos.py`, novo): bloco **186/200** (conf-err 1) · unidade **178/188** (os 10 erros
 = os de bloco) · cobertura **46/57 F1 0,847** · pinos **11** · LLM 61 votos + 28 funil. Tudo commitado nos
@@ -103,6 +107,89 @@ qualquer `arquivo.py:linha` deste documento** — um item pode parecer aberto so
 foi no caminho errado (aconteceu com o guardrail do subject_profile em 24/08).
 
 ---
+
+## FILA ACORDADA COM O USER (2026-08-24) — ordem, gate e o porque da ordem
+
+**Principio que decide a ordem:** neste projeto a regressao entre itens vem do REPROCESS, nao do
+codigo. O voto do LLM varia entre rodadas (o cache congela o primeiro), a ordem de chaves do JSON
+alterna, e toda mudanca de scorer move dois eixos ao mesmo tempo (H1/H2/H3 ganharam unidade e
+esvaziaram subunidade). Logo: ir do que **nao pode** regredir para o que pode, e AGRUPAR as
+mudancas de comportamento em poucos reprocesses, nunca intercalar.
+
+**GATE UNICO entre fases (nao negociavel):**
+```
+python scripts/eval_eixos.py     # bloco / unidade / cobertura / pinos
+python -m pytest -q              # ler a linha "N passed", NUNCA o exit code
+```
+mais o diff das sentinelas revisado campo a campo. **Nada avanca com regua pior em qualquer eixo.**
+
+### FASE 0 — limpeza de morto — **CONCLUIDA 2026-08-24** (ver secao propria abaixo)
+
+### FASE 1 — fechar o eixo de bloco: UMA decisao, UM reprocess
+Os 6 golds **e** as 2 curadorias de card do SO no mesmo ato; reprocess de SO+MF; uma medicao.
+Distincao que muda a expectativa: os **6 golds mudam a REGUA, nao o sistema** — 186 -> ~195 nao
+deixa o tutor melhor, deixa a medicao honesta (um gold errado envenena toda medicao futura; foi o
+drift do MF em julho). As **2 curadorias de card** sao o oposto: 4 entries passam a ser atribuidas
+certo de verdade. Mata K-3 e B-3. Depois disso o bloco esta no TETO DO DADO — os 5 roteiros do ES2
+nao tem solucao sem cronograma novo, entao "100%" e inalcancavel; a meta real e ~195/200.
+
+### FASE 2 — gold de subunidade — **A MAIOR ALAVANCA DA FILA**
+Rotular ~40 entries em `subunit_gt_<C>.csv` (IA u05, SO u01/u02, TCC u01/u02). **Zero codigo, zero
+risco de regressao** — e medicao pura. E a maior alavanca por razao estrutural: um eixo inteiro
+esta cego, e a cegueira bloqueia ~6 itens de uma vez (G-1, G-3, G-5, K-3 `card_text`, `SUBUNIT_TAG`
+em F-5, e a hipotese do `primary_topic_slug`). Todos param na mesma frase: *"sem regua de ACERTO de
+subunidade, trocaria perda medida por ganho nao medido"*. Precedente: foi exatamente esse movimento
+— parar de consertar o scorer e perguntar DE ONDE A VERDADE VEM — que levou a unidade de 130 a 178.
+So DEPOIS do gold, testar "subunidade = `primary_topic_slug` do bloco temporal". Nunca antes.
+
+### FASE 3 — cobertura (11 erros), depois a FASE 4 original
+Cobertura: os 11 erros com `explain_entry.py`, um a um, ANTES de qualquer regra (consenso por card
+ja foi refutado, +1/57). So entao a **FASE 4** (exercicios, listas, provas antigas), que era o
+PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
+
+---
+
+## FASE 0 EXECUTADA (2026-08-24) — remocao de morto, regua byte-identica
+
+Gate: suite **2001 passed / 1 skipped** (era 2002; o -1 e exatamente o teste dedicado a funcao
+removida) e `eval_eixos.py` **byte-identico ao baseline** (bloco 186/200 · unidade 178/188 ·
+cobertura 46/57 F1 0,847 · pinos 11). Nenhum numero se mexeu — que e a prova de que era morto.
+
+- [DONE] **`_derive_unit_from_topic_match` REMOVIDO** (era `timeline/index.py:1951`). Alvo do item
+  "RUN dedicada de remocao de mortos" (decisao user 2026-07-03). Sairam junto: import e `__all__`
+  em `engine.py`, o teste dedicado, e as 3 asserts parasitas dentro de testes cujo sujeito real e
+  `_auto_map_entry_subtopic` (esses testes ficaram, so perderam a assert da funcao morta).
+  Comentario stale em `timeline/conflicts.py:48` (dizia "o build resolve via ...") corrigido.
+- [DONE] **R11 · manifest escrito de forma nao-atomica** (`ui/timeline_dashboard.py:248`) — passou a
+  usar `utils/helpers.write_json_manifest` (tmp + `os.replace`, `.bak` best-effort), que ja era o
+  writer canonico de manifest. Nao escrevi helper novo: reuso.
+- [DONE] **`preserve_raw` morto colapsado** (`ui/curator_studio.py`) — ver o ACHADO abaixo, que e
+  mais grave que o item registrado.
+- [DONE] **comentario mentiroso de `TOOL_TOKENS`** (`extraction/entry_signals.py:100`, item B-9) —
+  dizia que "o scorer de bloco (file_map, TOOL_TOKENS) filtra quais sao ferramentas de verdade";
+  `TOOL_TOKENS` nao existe em `src/`. Comentario agora diz que **nada filtra** e aponta B-1/B-9.
+
+### ACHADO NOVO na Fase 0 — [DECISION · USER] o dialogo de reprovar PROMETE o que nao cumpre
+
+Ao colapsar o `preserve_raw` descobri que o item era maior do que o tracker registrava. O que o
+codigo fazia: `builder.reject(entry_id, preserve_raw=False)` levantava `TypeError` **sempre** (a
+assinatura real e `reject(self, entry_id)`, `ops/lifecycle_ops.py:313`), caia num ramo de
+"compatibilidade" que remontava um `RepoBuilder` IDENTICO e chamava `reject(entry_id)`. Dois
+builders, um resultado. Isso foi colapsado — comportamento identico, -14 linhas.
+
+**Mas a intencao por tras do `preserve_raw=False` nunca foi cumprida.** `reject` limpa
+`base_markdown`, `advanced_markdown`, `images_dir`, `tables_dir` etc. (lista `keys_to_clean`), e
+**`raw_target` NAO esta na lista** — o PDF/arquivo bruto sobrevive. O texto do dialogo, porem,
+promete ao usuario: *"- remover o PDF/arquivo bruto copiado para o repositorio"*.
+
+**Decisao do user, duas saidas, NAO tomei nenhuma de proposito:**
+(a) **implementar** — `reject` passa a apagar `raw_target`. E o que o dialogo promete, mas e
+    APAGAR ARQUIVO DE ORIGEM do user: destrutivo, irreversivel, nao entra em "limpeza de morto"
+    sem tua palavra explicita.
+(b) **corrigir o texto do dialogo** — para de prometer o que nao faz; o raw fica no repo e a entry
+    volta para a fila 'A Processar' com o bruto disponivel (que e o comportamento de HOJE).
+Enquanto nao houver ruling, o codigo carrega um comentario `ATENCAO` no call-site apontando para
+aqui. **Nao deixar isso sem decisao**: um dialogo que mente sobre deletar arquivo e armadilha.
 
 ## USER-SIDE — destravam a cadeia de medição/cutover
 

@@ -185,7 +185,25 @@ False` (t1-enunciado → aula do conteúdo).
 
 ---
 
-## Fila sugerida para a próxima sessão
+## ADENDO 2026-08-24 — a fila virou acordo, e a Fase 0 já foi executada
+
+A "fila sugerida" abaixo foi **revisada com o user em 24/08** e vive agora em
+`pendencias.md`, seção `## FILA ACORDADA COM O USER (2026-08-24)` — é ela que manda.
+Três mudanças em relação ao que está escrito no fim deste arquivo:
+
+1. **Fase 0 (limpeza de morto) foi executada** e não aparecia nesta fila. Régua byte-idêntica,
+   suíte 2001/1 (o −1 é o teste da função removida). Detalhe em `pendencias.md`.
+2. **A meta "100%" é inalcançável no dado atual** — os 5 roteiros do ES2 exigem cronograma
+   nomeando os laboratórios (0 de 20 sessões nomeiam). O teto real é **≈195/200**; o título
+   deste handoff engana.
+3. **A ordem foi invertida por argumento de alavanca:** o gold de subunidade (Fase 2) desbloqueia
+   ~6 itens do tracker de uma vez, contra ~9 entries dos 6 golds. Os 6 golds mudam a RÉGUA, não o
+   sistema. Fazer os dois é barato; a dúvida é só qual primeiro, e é decisão do user.
+
+Achado novo registrado no tracker: o diálogo de reprovar arquivo **promete apagar o PDF bruto e
+não apaga** (`reject` não toca `raw_target`). Decisão pendente — implementar ou corrigir o texto.
+
+## Fila sugerida para a próxima sessão (SUPERSEDED pelo adendo acima)
 
 1. **User decide os 6 golds** (tabela acima) e aprova as 2 curadorias de card do SO → reprocessar
    SO/MF → `eval_eixos.py` → esperado bloco ≈ 195/200.
