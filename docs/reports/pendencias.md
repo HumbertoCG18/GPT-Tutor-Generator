@@ -177,9 +177,27 @@ util numa aula de geometria. O caminho bom exige baixar as imagens e referencia-
 trabalho que o pipeline ja faz para PDF (`images_dir`). Nao e de graca; e mais barato que o
 round-trip.
 
-**NAO FAZER AGORA**: nao ha material de CG no corpus para medir, e regra sem regua e exatamente o
-que esta campanha proibiu. Entra depois dos eixos, como pre-requisito do teste real — nao como
-descoberta de ultima hora.
+**CORRECAO (user, 2026-08-25):** nao ha material de CG no corpus porque **nada foi baixado
+ainda** — nao porque nao exista. E o acervo tem TRES formas, e so uma e problema:
+
+| forma | estado |
+|---|---|
+| **PDFs** | o professor tambem publica PDF — funcionam HOJE, pipeline de sempre, zero codigo novo |
+| **paginas `.htm`** | os dois defeitos acima (descarte silencioso / classificado como codigo) |
+| **modals** | forma ainda NAO investigada — **adiado por decisao do user**, "por hora nao" |
+
+**Consequencia pratica: CG NAO esta bloqueada.** Baixar os PDFs e processar funciona sem uma linha
+de codigo nova; o trabalho de `.htm` so limita a parcela do acervo que vive como pagina. Nao tratar
+"CG" como um bloco monolitico que espera o fix de HTM.
+
+**NAO FAZER AGORA (o trabalho de `.htm`/modals)**: sem material baixado nao ha o que medir, e regra
+sem regua e exatamente o que esta campanha proibiu. Entra depois dos eixos, como pre-requisito do
+teste real — nao como descoberta de ultima hora. Os PDFs, esses, podem entrar quando o user quiser.
+
+- [USER] **Investigar os "modals" de CG** (`as-of 2026-08-25`, adiado pelo proprio user). Forma de
+  material que o professor publica e que ainda nao sabemos o que e tecnicamente (janela modal na
+  pagina? conteudo carregado por JS? outra coisa?). Sem isso nao da para dizer se sobrevive a
+  qualquer extracao. Investigar SO quando CG entrar de verdade.
 
 AVISO DE DRIFT DE CAMINHO (`as-of 2026-08-24`): os modulos foram movidos depois que boa parte
 deste tracker foi escrita. `core/file_map.py` -> **`routing/file_map.py`** (ha tambem

@@ -191,23 +191,69 @@ False` (t1-enunciado → aula do conteúdo).
 
 ---
 
-## ADENDO 2026-08-24 — a fila virou acordo, e a Fase 0 já foi executada
+## ADENDO 2026-08-24/25 — fila acordada, Fase 0 executada, 4 rulings do user
 
-A "fila sugerida" abaixo foi **revisada com o user em 24/08** e vive agora em
-`pendencias.md`, seção `## FILA ACORDADA COM O USER (2026-08-24)` — é ela que manda.
-Três mudanças em relação ao que está escrito no fim deste arquivo:
+Sessão de higiene, **sem mudança de comportamento do motor**. A régua ficou byte-idêntica do
+começo ao fim: **bloco 186/200 · unidade 178/188 · cobertura 46/57 F1 0,847 · pinos 11**.
+Suíte **2001 passed / 1 skipped** (era 2002; o −1 é exatamente o teste da função morta removida).
 
-1. **Fase 0 (limpeza de morto) foi executada** e não aparecia nesta fila. Régua byte-idêntica,
-   suíte 2001/1 (o −1 é o teste da função removida). Detalhe em `pendencias.md`.
-2. **A meta "100%" é inalcançável no dado atual** — os 5 roteiros do ES2 exigem cronograma
-   nomeando os laboratórios (0 de 20 sessões nomeiam). O teto real é **≈195/200**; o título
-   deste handoff engana.
-3. **A ordem foi invertida por argumento de alavanca:** o gold de subunidade (Fase 2) desbloqueia
-   ~6 itens do tracker de uma vez, contra ~9 entries dos 6 golds. Os 6 golds mudam a RÉGUA, não o
-   sistema. Fazer os dois é barato; a dúvida é só qual primeiro, e é decisão do user.
+**A fila agora vive em `pendencias.md`, seção `## FILA ACORDADA COM O USER (2026-08-24)`** — é ela
+que manda. A "fila sugerida" no fim deste arquivo está SUPERSEDED.
 
-Achado novo registrado no tracker: o diálogo de reprovar arquivo **promete apagar o PDF bruto e
-não apaga** (`reject` não toca `raw_target`). Decisão pendente — implementar ou corrigir o texto.
+### O que mudou de enquadramento
+
+1. **A meta "100%" é inalcançável no dado atual.** Os 5 roteiros do ES2 exigem o cronograma nomear
+   os laboratórios, e ele nomeia 0 de 20 sessões. Teto real **≈195/200** — o título deste handoff
+   engana.
+2. **Os 6 golds mudam a RÉGUA, não o sistema.** Valem por higiene de medição (gold errado envenena
+   toda medição futura, cf. drift do MF em julho), não por capacidade. As 2 curadorias de card do
+   SO são o oposto: 4 entries passam a ser atribuídas certo de verdade.
+3. **A ordem foi discutida por alavanca:** o gold de subunidade (Fase 2) desbloqueia ~6 itens do
+   tracker de uma vez, contra ~9 entries dos 6 golds. Os dois são baratos; a dúvida é só a ordem.
+
+### Fase 0 — CONCLUÍDA (remoção de morto, régua byte-idêntica)
+
+`_derive_unit_from_topic_match` removido · R11 (manifest não-atômico no dashboard) passou a usar
+`utils/helpers.write_json_manifest` · `preserve_raw` colapsado · comentário mentiroso de
+`TOOL_TOKENS` corrigido. Detalhe em `pendencias.md`.
+
+### Os 4 rulings do user (todos aplicados, nada pendente)
+
+- **`reject`** — o diálogo prometia "remover o PDF/arquivo bruto" e `reject` nunca tocou
+  `raw_target`. **Opção (b): corrigir o texto, manter o bruto** como rede para reimportar sem
+  depender do stash. `reject` NÃO foi alterado.
+- **Stash** — é `SubjectProfile.stash_folder` **por cadeira** (`models/core.py:234`), não caminho
+  fixo. O valor segue a convenção `Desktop/Moodle/<slug>`, mas o mecanismo é configuração.
+  (Eu tinha registrado como constante; o user corrigiu.)
+- **Laboratório de Redes** (6º perfil, `repo_root` vazio) — **fora de escopo de propósito**:
+  cadeira nova, arquivos ainda subindo, material incompleto não serve de bancada.
+- **Computação Gráfica** — **DENTRO do escopo**, e o motivo distingue os dois casos: o professor
+  **reutiliza** os materiais, então cards, links e PDFs já estão no Moodle mesmo para tópicos não
+  dados. É a completude do material que decide se a cadeira serve de bancada, não o semestre.
+
+### CG: estado real e o que falta (pré-requisito do teste real, não da fila)
+
+**Nada foi baixado ainda** — é por isso que não há material de CG no corpus, não porque não
+exista. O acervo tem três formas, e só uma delas é problema:
+
+| forma | estado |
+|---|---|
+| **PDFs** | funcionam HOJE, pipeline de sempre, zero trabalho |
+| **páginas `.htm`** | `.htm` é descartado no import; `.html` entra como `codigo-professor` |
+| **modals** | forma ainda não investigada; **adiado por decisão do user** |
+
+Ou seja: **CG não está bloqueada.** Baixar os PDFs e processar funciona sem uma linha de código
+nova. Só as páginas e os modals precisam de trabalho. Mecanismo dos dois defeitos de HTM,
+anatomia do site (`inf.pucrs.br/pinho/CG`) e a avaliação do plano "HTML → PDF → Datalab" estão
+em `pendencias.md` — resumo: o sistema **já** tem `html_to_structured_markdown`
+(`text/url_markdown.py:189`) e o round-trip por PDF destruiria headings que valem peso 4,4 no
+scorer de subunidade, para depois pagar Datalab a fim de adivinhá-los de volta.
+
+### Lei nova
+
+**4b — sem motor por CURSO.** MF/SO/IA/ES2/TCC são **bancada de teste**, escolhidas porque o
+material do semestre passado já está todo subido. Não são o alvo. Regra que só vale para um curso
+é pino ou curadoria, nunca código. Está na lista de leis acima.
 
 ## Fila sugerida para a próxima sessão (SUPERSEDED pelo adendo acima)
 
