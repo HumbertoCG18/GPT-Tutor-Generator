@@ -77,6 +77,19 @@ def _exam_number(entry: dict) -> int:
     return 0
 
 
+_PREP_WORD = re.compile(r"revis[aã]o|lista|exerc[ií]cio", re.I)
+
+
+def is_exam_prep_material(entry: dict) -> bool:
+    """"lista/revisao pN" e o seu gabarito sao PREPARACAO, nao a prova em si —
+    mesmo quando a categoria e `provas` (MF `revisao-p1-gabarito`, "Respostas"
+    da lista de revisao). A prova propriamente dita ("prova-1-2024-02") nao
+    tem a palavra de preparacao e segue lexical=False."""
+    if _exam_number(entry) <= 0:
+        return False
+    return any(_PREP_WORD.search(str(entry.get(k) or "")) for k in ("id", "title", "source_section"))
+
+
 def resolve_exam_prep(entry: dict, ctx: MotorContext) -> Optional[AnchorDecision]:
     """Preparacao de prova (2026-08-25): "lista/revisao pN" SEM janela -> ultimo
     bloco hospedavel antes da N-esima prova PRINCIPAL.
@@ -163,11 +176,22 @@ class AnchorEngine:
         de 1 bloco a estrutura (card/data) decide; com mais, so o voto sobre a
         janela, nunca o token."""
         window, provider = resolve_window(entry, ctx)
+        prep_ok = lexical or is_exam_prep_material(entry)
         if not window:
             # sem janela -> preparacao de prova (deterministico; nunca para a
             # PROPRIA prova/trabalho, lexical=False) -> llm-funil ou None
-            prep = resolve_exam_prep(entry, ctx) if lexical else None
+            prep = resolve_exam_prep(entry, ctx) if prep_ok else None
             return prep or self.resolve_funnel(entry, ctx, markdown)
+        if prep_ok and provider in ("ordinal", "topic"):
+            # Balde B (2026-08-26): janela INDIRETA (card por topico "Exercicios de
+            # Revisao para Prova" -> [05, 06]; "Aula 16" -> 16o encontro) nao vence a
+            # convencao de preparacao de prova: o LLM votava 05 para MF revisao-p1
+            # (gold 07 = ultimo bloco antes da P1) e o ordinal dava 19 para TCC
+            # aula-16 (gold 16). Card manual/datado e data-no-nome continuam
+            # decidindo antes. Medido no motor nu dos 5: +2, 0 regressoes.
+            prep = resolve_exam_prep(entry, ctx)
+            if prep is not None:
+                return prep
         if not lexical and len(window) > 1:
             if self._voter is None:
                 return None

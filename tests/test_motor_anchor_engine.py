@@ -316,3 +316,44 @@ def test_provider_labels_resolve_datas_contra_os_blocos_atuais():
         card_block_map={"DevOps": {"source": "labels", "block_ids": ["u-11", "u-13"], "dates": ["2026-06-26", "2026-07-03"]}},
         lessons_index={})
     assert provider_labels({"id": "devops", "source_section": "DevOps"}, ctx) == ["u-12", "u-13"]
+
+
+# Balde B (2026-08-26): janela INDIRETA (topic/ordinal) + cue de preparacao de
+# prova -> prep-prova decide antes do desempate/voto. MF revisao-p1: card por
+# topico dava [05, 06] e o LLM votava 05 (gold 07); TCC aula-16: ordinal 19 (gold 16).
+def _ctx_prep_janela():
+    return MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-05", "kind": "class", "period_start": "2026-03-30", "topic_text": "inducao arvores"},
+                {"id": "bloco-06", "kind": "class", "period_start": "2026-04-06", "topic_text": "isabelle"},
+                {"id": "bloco-07", "kind": "review", "period_start": "2026-04-15"},
+                {"id": "bloco-09", "kind": "assessment", "period_start": "2026-04-22"}],
+        card_block_map={}, lessons_index={})
+
+
+def test_prep_prova_vence_janela_por_topico(monkeypatch):
+    monkeypatch.setattr(ae, "resolve_window", lambda e, c: (["bloco-05", "bloco-06"], "topic"))
+    entry = {"id": "revisao-p1", "category": "listas", "title": "Exercicios para P1",
+             "source_section": "Exercícios de Revisão para Prova"}
+    d = ae.AnchorEngine(voter=_FakeVoter("bloco-05")).resolve_unscoped(entry, _ctx_prep_janela(), "inducao")
+    assert d.block_ref == "bloco-07" and d.method == "prep-prova"
+
+
+def test_prep_prova_nao_sobrepoe_card_manual_ou_datado(monkeypatch):
+    monkeypatch.setattr(ae, "resolve_window", lambda e, c: (["bloco-05"], "labels"))
+    entry = {"id": "revisao-p1", "category": "listas", "source_section": "Semana 5"}
+    d = ae.AnchorEngine(voter=None).resolve_unscoped(entry, _ctx_prep_janela(), "")
+    assert d.block_ref == "bloco-05" and d.method == "janela-1"
+
+
+def test_gabarito_da_revisao_e_preparacao_mesmo_com_categoria_provas(monkeypatch):
+    monkeypatch.setattr(ae, "resolve_window", lambda e, c: (["bloco-05", "bloco-06"], "topic"))
+    gab = {"id": "revisao-p1-gabarito", "category": "provas", "title": "Respostas",
+           "source_section": "Exercícios de Revisão para Prova"}
+    assert ae.is_exam_prep_material(gab) is True
+    d = ae.AnchorEngine(voter=_FakeVoter("bloco-05")).resolve_unscoped(gab, _ctx_prep_janela(), "", lexical=False)
+    assert d.block_ref == "bloco-07" and d.method == "prep-prova"
+
+
+def test_prova_antiga_nao_e_material_de_preparacao():
+    assert ae.is_exam_prep_material({"id": "prova-1-2024-02", "category": "provas",
+                                     "title": "Prova 1 2024/02", "source_section": "TDE"}) is False
