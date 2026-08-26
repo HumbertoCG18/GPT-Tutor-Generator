@@ -1571,6 +1571,55 @@ def seed_glossary_fields(
     )
 
 
+_GLOSSARY_CURATION_NAME = ".glossary_curation.json"
+_GLOSSARY_EMPTY = {"", "—", "-", "n/a", "N/A"}
+
+
+def _glossary_curation_key(term: str) -> str:
+    return " ".join(str(term or "").split()).casefold()
+
+
+def load_glossary_curation(root_dir: Optional[Path]) -> Dict[str, List[str]]:
+    """{termo (casefold): [sinonimos]} de `course/.glossary_curation.json`.
+
+    2026-08-25 (alavanca iii da subunidade): o GLOSSARY.md e artefato DERIVADO,
+    regravado a cada build a partir do plano + seed; a taxonomia consome o texto
+    gerado, nao o arquivo. Curadoria a mao no .md morre no proximo build. Este
+    sidecar e o lugar que sobrevive (mesmo padrao do .card_block_map): os
+    sinonimos entram em "Sinonimos aceitos" e viram alias do topico via
+    `_glossary_aliases_for_topic`. E conteudo por curso (vocabulario dos
+    algoritmos que o plano nao nomeia: "Modelos Preditivos" <- perceptron,
+    k-NN, arvore de decisao), nunca regra de motor. Medido no IA u05: 4 -> 37/39.
+    Formato: {"<Termo do plano>": {"synonyms": ["..."]}}."""
+    if not root_dir:
+        return {}
+    path = Path(root_dir) / "course" / _GLOSSARY_CURATION_NAME
+    if not path.is_file():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (ValueError, OSError):
+        return {}
+    out: Dict[str, List[str]] = {}
+    for term, info in (data or {}).items():
+        syn = info.get("synonyms") if isinstance(info, dict) else info
+        vals = [" ".join(str(s).split()) for s in (syn or []) if " ".join(str(s).split())]
+        if vals:
+            out[_glossary_curation_key(term)] = vals
+    return out
+
+
+def merge_glossary_synonyms(seed: str, curated: List[str]) -> str:
+    """Linha "Sinonimos aceitos" = seed + curadoria, sem repetir, sem marcador vazio."""
+    parts = [p.strip() for p in re.split(r"[,;/|]", str(seed or "")) if p.strip() not in _GLOSSARY_EMPTY]
+    seen = {p.casefold() for p in parts}
+    for s in curated or []:
+        if s.casefold() not in seen:
+            parts.append(s)
+            seen.add(s.casefold())
+    return ", ".join(parts) if parts else "—"
+
+
 def glossary_md(
     course_meta: dict,
     subject_profile=None,
@@ -1612,6 +1661,7 @@ def glossary_md(
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     units = parse_units_from_teaching_plan_fn(teaching_plan) if teaching_plan else []
     evidence_docs = collect_glossary_evidence_fn(root_dir, manifest_entries=manifest_entries) if root_dir else []
+    curated_synonyms = load_glossary_curation(root_dir)
 
     candidates = []
     for unit_title, topics in units:
@@ -1625,6 +1675,7 @@ def glossary_md(
         for term, unit_title in candidates:
             evidence = find_glossary_evidence_fn(term, unit_title, evidence_docs)
             definition, synonyms, not_confuse = seed_glossary_fields_fn(term, unit_title, evidence=evidence)
+            synonyms = merge_glossary_synonyms(synonyms, curated_synonyms.get(_glossary_curation_key(term), []))
             lines += [
                 f"## {term}",
                 f"**Definição:** {definition}",

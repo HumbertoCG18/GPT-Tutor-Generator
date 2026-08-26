@@ -2,12 +2,11 @@
 
 last_updated: 2026-08-25 (FASE 2 + FASE 1 executadas; subunidade tem regua e alavanca medida).
 **FILA VIVA: secao `## FILA ACORDADA COM O USER (2026-08-24)` logo abaixo — le antes de escolher
-trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) `azure` = unico erro de bloco (pino, ou backfill do Moodle); (2) implementar a
-alavanca (iii) da subunidade — glossario com nomes de algoritmo por topico (medido 4->37/39 no IA);
+trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) `azure` = unico erro de bloco (pino, ou backfill do Moodle); (2) alavanca (iii) FEITA no IA; estender `.glossary_curation.json` a SO/TCC (subunidade 8/16 e 7/11) e gerar via LLM;
 (3) FASE 3 cobertura (11 erros, explain_entry um a um).
 **HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** — le primeiro. Substitui o de 20/08.
 ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25c): bloco **199/200** (conf-err 1 = azure) · unidade **190/191** (o erro
-= azure) · cobertura **46/57 F1 0,847** · pinos **11** · subunidade **19/66** (gold novo) · 4 raizes de identidade fechadas (secao propria). Tudo commitado nos
+= azure) · cobertura **46/57 F1 0,847** · pinos **11** · subunidade **53/66** (IA 37/39 via glossario curado) · 7 raizes fechadas hoje (secoes proprias). Tudo commitado nos
 6 repos. O que falta para 100% no bloco NAO e codigo: 6 golds a revisar + 2 curadorias de card (SO) +
 5 roteiros do ES2 sem sinal no dado — tabela no handoff. Subunidade: sem gold; primeiro rotular.
 PUSH (as-of 2026-08-24): gerador `07c95dc`, MF, IA e TCC sincronizados com `origin`. **SO e ES2 sem
@@ -249,6 +248,38 @@ ja foi refutado, +1/57). So entao a **FASE 4** (exercicios, listas, provas antig
 PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
+
+## ALAVANCA (iii) EXECUTADA + R7 · glossario curado por sidecar; pino de unidade nao propaga (2026-08-25e)
+
+**Subunidade 19 -> 53/66 (IA 4 -> 37/39)** pelo pipeline REAL, bloco/unidade/cobertura/pinos identicos,
+0 votos novos, goldens de caracterizacao passam sem regenerar. Suite 2025+ passed.
+
+### Como o glossario chega ao motor (descoberto medindo, nao lendo)
+`GLOSSARY.md` e artefato DERIVADO: regravado a cada build a partir do plano + `seed_glossary_fields`
+(tabela FIXA no codigo, com strings por curso — "modelos supervisionados" para o IA esta hardcoded em
+`artifacts/repo.py`: a lei 4b violada desde antes). A taxonomia consome o TEXTO gerado em memoria,
+nao o arquivo: sinonimos escritos a mao no .md **nao chegaram aos aliases** (testado) e morreriam no
+build seguinte. Fix: `course/.glossary_curation.json` ({"<Termo do plano>": {"synonyms": [...]}}),
+mesclado por `glossary_md` em "Sinonimos aceitos" -> `_glossary_aliases_for_topic` -> alias do
+topico. Sobrevive ao reprocess (padrao do `.card_block_map`). Sem sidecar = byte-identico. Testes em
+`test_glossary_curation.py` (3). Conteudo do IA u05 = vocabulario dos algoritmos que o plano
+categorico nao nomeia (perceptron, k-NN, arvore de decisao -> Modelos Preditivos; k-means,
+agrupamento -> Descritivos; acuracia, F1 -> Metricas). Proposto-claude, revisar a mao; proximo passo
+e GERAR esse sidecar por LLM (1 chamada por unidade) e estender a SO (8/16) e TCC (7/11).
+
+### R7 · o DP monotonico de unidade nao sabia dos pinos — regressao pega pelo diff, nao pela regua
+Ao ligar os aliases, `assign_units_positional` (afinidade por tokens de unidade, DP monotonico
+GLOBAL pela ordem do plano) passou a ver u05 FORTE nos blocos de ML de marco-abril e empurrou TODOS
+os blocos de maio-junho (busca, minimax, agentes: u02/u03) para u05 — **16 entries do IA trocaram
+de unidade, nenhuma com gold: a regua dizia 42/42.** Os goldens de caracterizacao e o diff por campo
+pegaram. Raiz: o IA ensina ML (u05) ANTES de busca (u02) — inversao calendario-vs-plano que o T9c
+resolveu com PINOS de unidade (`block_manual_unit_slug`); os pinos eram aplicados DEPOIS do DP e nao
+isolavam a inversao. Fix: `unit_matcher.assign_units_around_pins` re-roda o DP so nos blocos-aula
+sem pino (excecao local nao constrange vizinhos); chamado apos `_apply_curation_overrides`; sem pino
+e no-op. Rebuild em memoria: IA volta EXATAMENTE aos u01/u02/u02/u02/u03/u03 de antes; MF/SO/ES2/TCC
+identicos. Testes em `test_unit_matcher.py` (+2).
+- Licao: **"sem regressao" so se prova por diff de sentinelas campo a campo nos 5 repos** — a regua
+  cobre 200 de 227 entries e ficou cega para as 16. Manter o diff no gate.
 
 ## R6 · provider de topico preso ao formato "Semana N - Topico" (2026-08-25d) — bloco 196 -> 199
 

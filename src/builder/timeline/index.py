@@ -1476,7 +1476,18 @@ def _build_file_map_timeline_context_from_course(
     # Merge de overrides manuais (curation) por block_id. Sobrevive ao rebuild
     # from-syllabus porque mora num arquivo separado. Re-deriva kind/topic.
     if _repo_root:
-        _apply_curation_overrides(timeline_index, Path(_repo_root) / "course")
+        touched = _apply_curation_overrides(timeline_index, Path(_repo_root) / "course")
+        if touched:
+            # Pino de unidade = inversao LOCAL calendario-vs-plano: o DP monotonico
+            # nao pode arrastar os vizinhos atras dele (IA: ML pinado em marco
+            # empurrava busca/agentes de junho para u05). Re-roda so nos livres.
+            from src.builder.timeline.unit_matcher import assign_units_around_pins
+            _blocks = timeline_index.get("blocks", []) or []
+            if assign_units_around_pins(_blocks, list((content_taxonomy or {}).get("units", []) or []),
+                                        is_pinned=lambda b: bool(b.get("block_manual_unit_slug"))):
+                for _b in _blocks:
+                    if not _b.get("block_manual_unit_slug"):
+                        finalize_block(_b)
 
     # Transforms pós-classificação (demote revisão + escopo). Aplicado aqui (após
     # kinds/units finais via finalize_block + curation) porque o caminho real de

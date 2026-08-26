@@ -206,3 +206,33 @@ def test_positional_confidence_is_fill_when_assigned_not_argmax():
         f"bloco0 atribuido a nao-argmax deveria ter CONF_FILL={CONF_FILL}, "
         f"obtido {confs[0]} (CONF_ANCHOR={CONF_ANCHOR}, CONF_STRONG={CONF_STRONG})"
     )
+
+
+def test_pino_de_unidade_e_excecao_local_e_nao_propaga():
+    """IA (2026-08-25): ML (u05) pinado em marco-abril com afinidade forte
+    (aliases do glossario) empurrava, pelo DP monotonico, busca/agentes de
+    maio-junho para u05. Com os pinados fora da cadeia, o resto volta a u02."""
+    from src.builder.timeline.unit_matcher import assign_units_around_pins
+    units = [_unit("u01", "Visao geral", "Conceituacao"),
+             _unit("u02", "Solucao de problemas", "Busca informada heuristica"),
+             _unit("u05", "Aprendizado de maquina", "Modelos preditivos")]
+    units[2]["topics"][0]["aliases"] = ["perceptron", "rede neural", "arvore de decisao"]
+    ml1 = {**_block("perceptron rede neural arvore de decisao"), "block_manual_unit_slug": "u05"}
+    ml2 = {**_block("perceptron rede neural arvore de decisao"), "block_manual_unit_slug": "u05"}
+    busca1 = _block("busca informada heuristica")
+    busca2 = _block("busca informada")
+    blocks = [ml1, ml2, busca1, busca2]
+    # DP original (cego aos pinos): 2 blocos fortes de u05 antes -> tudo u05
+    for b, (slug, conf) in zip(blocks, assign_units_positional(blocks, units)):
+        b["unit_slug"], b["unit_confidence"] = slug, conf
+    assert busca1["unit_slug"] == "u05"
+    n = assign_units_around_pins(blocks, units, is_pinned=lambda b: bool(b.get("block_manual_unit_slug")))
+    assert n == 2 and busca1["unit_slug"] == "u02" and busca2["unit_slug"] == "u02"
+    assert ml1["unit_slug"] == "u05"          # pinado: intocado
+
+
+def test_sem_pino_around_pins_e_noop():
+    from src.builder.timeline.unit_matcher import assign_units_around_pins
+    units = [_unit("u01", "A", "alfa"), _unit("u02", "B", "beta")]
+    blocks = [_block("alfa"), _block("beta")]
+    assert assign_units_around_pins(blocks, units, is_pinned=lambda b: False) == 0

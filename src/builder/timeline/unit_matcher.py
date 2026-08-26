@@ -127,3 +127,30 @@ def assign_units_positional(
             conf = CONF_FILL
         out.append((uslugs[u], conf))
     return out
+
+
+def assign_units_around_pins(blocks: Sequence[dict], units: Sequence[Mapping], *, is_pinned) -> int:
+    """Re-roda o DP monotonico SO nos blocos-aula sem pino de unidade. In-place.
+
+    2026-08-25: um pino de unidade (curadoria, `block_manual_unit_slug`) e uma
+    inversao LOCAL calendario-vs-plano (IA ensina ML/u05 em marco-abril, antes
+    de busca/u02; ruling T9c). O DP original nao sabe dos pinos: com afinidade
+    forte nos blocos pinados (aliases do glossario), a monotonicidade empurrava
+    TODOS os blocos seguintes para u05 (16 entries do IA, sem gold, trocaram de
+    unidade). Excluindo os pinados da cadeia, a excecao nao propaga. Sem pino
+    e no-op (mesma lista, mesmo DP). Retorna quantos blocos foram re-atribuidos."""
+    free = [b for b in blocks if not b.get("source_kind") and not is_pinned(b)]
+    if len(free) == len([b for b in blocks if not b.get("source_kind")]):
+        return 0  # sem pino: o DP ja rodou sobre esta mesma lista
+    result = assign_units_positional(free, units)
+    if not result:
+        return 0
+    n = 0
+    for b, (slug, conf) in zip(free, result):
+        if (b.get("unit_slug"), b.get("unit_confidence")) != (slug, conf):
+            n += 1
+        b["unit_slug"] = slug
+        b["unit_confidence"] = conf
+        if slug:
+            b["auto_unit_slug"] = slug
+    return n
