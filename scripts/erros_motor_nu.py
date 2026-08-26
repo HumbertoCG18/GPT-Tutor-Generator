@@ -1,4 +1,4 @@
-"""Lista erros de BLOCO por uuid do motor nu, com os sinais de cada entry e se algum sinal teria acertado."""
+"""Lista erros de BLOCO por uuid do motor nu (rodar com os 5 repos ablacionados: scratch ablacao.py), com os sinais de cada entry e se algum sinal teria acertado."""
 import sys, csv, json, re
 from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -34,4 +34,3 @@ for sig, rn in REPO.items():
 print(f"TOTAL por uuid: {tot_ok}/{tot_n}\n")
 print(f"{'c':3} {'entry':34} {'gold':10} {'gold agora':32} {'pred':36} {'metodo':22} {'card':32} {'moodle_label':28} {'post':10} pd? sem?")
 for r in rows: print(f"{r['c']:3} {r['id']:34} {r['gold']:10} {r['gold_now']:32} {r['pred']:36} {r['met']:22} {r['card']:32} {r['label']:28} {r['pd']:10} {r['pd_hit']:3} {r['sem_hit']}")
-json.dump(rows, open(Path(r"C:/Users/Humberto/AppData/Local/Temp/claude/C--Users-Humberto-Documents-GitHub-GPT-Tutor-Generator/822c8c20-18ed-41cf-ab0b-755fe994d517/scratchpad/erros_nu.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
