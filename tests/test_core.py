@@ -5635,3 +5635,17 @@ def test_subjectprofile_turma_schedule_roundtrip():
     back = SubjectProfile.from_dict(d)
     assert back.turma == "031"
     assert back.schedule_url.endswith("sem=1")
+
+
+def test_auto_detect_category_biblioteca_nao_e_bibliografia():
+    from src.utils.helpers import auto_detect_category
+    assert auto_detect_category("biblioteca-grafica-opengl.pdf") != "bibliografia"
+    assert auto_detect_category("imageclass-biblioteca-para-manipulacao-de-imagens.pdf") != "bibliografia"
+    assert auto_detect_category("bibliografia-complementar.pdf") == "bibliografia"
+    assert auto_detect_category("Bibliography.pdf") == "bibliografia"
+
+
+def test_auto_detect_category_ementa_so_como_palavra():
+    from src.utils.helpers import auto_detect_category
+    assert auto_detect_category("material-complementar.pdf") != "cronograma"
+    assert auto_detect_category("ementa-2026.pdf") == "cronograma"

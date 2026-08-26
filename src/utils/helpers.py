@@ -655,11 +655,15 @@ def auto_detect_category(name: str, is_image: bool = False) -> str:
         return "listas"
     if any(k in name for k in ["gabarito", "resol", "soluc", "key", "espelho"]):
         return "gabaritos"
-    if any(k in name for k in ["cronograma", "plano", "agenda", "schedule", "ementa"]):
+    # "ementa" so como palavra: "material-complementar" contem "ementa" (holdout CG 2026-08-26).
+    if any(k in name for k in ["cronograma", "plano", "agenda", "schedule"]) or _wb("ementa"):
         return "cronograma"
     if any(k in name for k in ["slide", "aula", "apresenta", "unidade", "modulo", "cap"]):
         return "material-de-aula"
-    if any(k in name for k in ["livro", "referencia", "biblio", "artigo", "paper"]):
+    # "bibliogra", nao "biblio": "biblioteca" (library de codigo: "Biblioteca Grafica OpenGL",
+    # "ImageClass - biblioteca para manipulacao de imagens") virava bibliografia e saia do
+    # desempate de bloco (ref-generica -> 1o bloco). Achado no holdout CG 2026-08-26.
+    if any(k in name for k in ["livro", "referencia", "bibliogra", "artigo", "paper"]):
         return "bibliografia"
 
     if any(k in name for k in ["trabalho", "projeto", "assignment",
