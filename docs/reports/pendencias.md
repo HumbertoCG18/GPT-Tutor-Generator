@@ -1,16 +1,17 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-25 (FASE 2 + FASE 1 executadas; subunidade tem regua e alavanca medida).
-**FILA VIVA: secao `## FILA ACORDADA COM O USER (2026-08-24)` logo abaixo — le antes de escolher
-trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) `azure` = unico erro de bloco (pino, ou backfill do Moodle); (2) alavanca (iii) FEITA nos 3 cursos com gold; gerar o sidecar via LLM (1 chamada/unidade) (backfill do Moodle FEITO);
-(3) FASE 3 cobertura (11 erros, explain_entry um a um).
-**HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** — le primeiro. Substitui o de 20/08.
-ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25c): bloco **199/200** (conf-err 1 = azure) · unidade **190/191** (o erro
-= azure) · **unidade 191/191 (100%)** · conf-err **0** · cobertura **40/57 F1 0,811** (ver R9 e ES2) · pinos **11** · subunidade **88/94** (4 cursos com gold; ES2 26/28) (IA 37/39 · SO 16/16 · TCC 9/11) · 8 raizes fechadas (secoes proprias). Tudo commitado nos
-6 repos. O que falta para 100% no bloco NAO e codigo: 6 golds a revisar + 2 curadorias de card (SO) +
-5 roteiros do ES2 sem sinal no dado — tabela no handoff. Subunidade: sem gold; primeiro rotular.
-PUSH (as-of 2026-08-24): gerador `07c95dc`, MF, IA e TCC sincronizados com `origin`. **SO e ES2 sem
-remote** — so em disco local, sem backup; criar os repos e ligar `origin` e decisao do user.
+last_updated: 2026-08-26 (balde A/B fechados, 7 golds corrigidos, R3 titulo-topico, t1/t2, ablacao rapida, humano 23 -> 6).
+**FILA VIVA: secao `## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
+A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
+**HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** (+ ADENDO CG) — le primeiro.
+ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-26): bloco **199/200** conf-err **0** (o erro = ES2 `azure`, convencao) ·
+unidade **191/191 (100%)** · cobertura **40/57 F1 0,811** · subunidade **87/93** (4 cursos com gold) · **pinos 5** ·
+cards manuais **1** (TCC "Semana 12") · decisoes humanas de bloco **6** (eram 23) · suite **2047 passed**.
+MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py`, 81 s): bloco **205/212 por uuid (96,7%)**, display 194/200,
+conf-err 2 · unidade 134/191 · cobertura 34/57 · subunidade ~21/94. Os 7 erros nus restantes: 3 ruido do voto LLM
+(MF), 2 convencao sem texto (IA prova-1-2024-02, ES2 azure), 2 dominio (TCC aula-17 = Cook-Levin).
+PUSH (as-of 2026-08-26): gerador `4ab9acc`; MF `ceffe1f`, IA, TCC sincronizados com `origin`. **SO (`099165a`) e ES2
+sem remote** — so em disco local, sem backup; criar os repos e ligar `origin` e decisao do user.
 Antes: `docs/reports/2026-08-20-handoff-fechamento-campanha-motor.md`.
 Cobre a sessao inteira (`7e940f5e`, 63 prompts): poda do enxame, regua nova + sweep do gate,
 rotulagem dos 64 casos, limpeza do manifest, eixo de bloco, N:N nos consumidores, fix do
@@ -242,12 +243,53 @@ subunidade, trocaria perda medida por ganho nao medido"*. Precedente: foi exatam
 — parar de consertar o scorer e perguntar DE ONDE A VERDADE VEM — que levou a unidade de 130 a 178.
 So DEPOIS do gold, testar "subunidade = `primary_topic_slug` do bloco temporal". Nunca antes.
 
-### FASE 3 — cobertura (11 erros), depois a FASE 4 original
+### FASE 3 — cobertura — **PENDENTE** (17 erros na regua atual 40/57; reescrita na FILA VIVA 2026-08-26, itens 4 e 9)
 Cobertura: os 11 erros com `explain_entry.py`, um a um, ANTES de qualquer regra (consenso por card
 ja foi refutado, +1/57). So entao a **FASE 4** (exercicios, listas, provas antigas), que era o
 PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
+
+## FILA VIVA (2026-08-26) — o que falta, em ordem, com gate
+
+**Gate unico entre itens (inalterado + 2 itens novos):** `eval_eixos.py` (4 eixos) · `pytest -q` (ler "N passed") ·
+sentinela campo a campo contra `git show HEAD:manifest.json` (nao contra `.bak`) · **determinismo** (2 reprocess
+seguidos = 0 campos; R11) · para regra de motor: `scripts/ablacao_rapida.py` antes/depois (nu) e `--curado` (copia ==
+original). Nada avanca com regua pior em qualquer eixo. Restaurou tutor por git -> reprocessa (derivados fora do git).
+
+1. **HOLDOUT Computacao Grafica, zero curadoria** — a unica prova real de "cadeira nova nao cai". Pre-requisito
+   (nao e codigo): baixar os PDFs do site do professor (`inf.pucrs.br/pinho/CG`; ver ADENDO do handoff — os PDFs
+   dispensam o problema do `.htm`), criar o repo-tutor pela UI **sem nenhum pino/card/sidecar**, rotular o gold de
+   bloco por uuid (~30 entries, protocolo dos outros). Medida = bloco por uuid; expectativa honesta **>= 90%** (os 5
+   deram 96,7% mas foram vistos). O que a CG revela primeiro: qual habito o professor tem (datas na secao? no nome?
+   "Aula N"?) — o motor tem um provider por habito; se for um habito novo, e balde A/B de novo, nao curadoria.
+2. **Teto do cru — os 7 erros nus (decisao, nao codigo):** (a) MF terminacao / exercicioscorrecaoterminacao /
+   tiposindutivos = ruido do voto (liquido +31/-2): ACEITAR, ficam os 3 pinos; (b) IA prova-1-2024-02 e ES2 azure =
+   convencao sem texto: pino/gold `scorable=no`, decisao do user; (c) TCC aula-17 x2 = Cook-Levin <-> NP-completude:
+   testar alias no `.glossary_curation.json` do TCC (sidecar ja existe) e medir; se fechar, o card manual "Semana 12"
+   sai e o TCC fica com zero humano.
+3. **Conflito de ruling `pthread` (SO):** 25/08 o user disse bloco-03 (heading "Thread APIs vs. System calls"); 26/08
+   disse 04 (card Threads; os `exemplo-threads-em-c` x3 ja sao 04). Mantido 04 — reverter e 1 gold + 1 pino. User decide.
+4. **FASE 3 — cobertura 40/57 (17 erros):** `explain_entry.py` um a um ANTES de regra. Sabido: 5 pdf-roteiros do ES2 so
+   emitem `card u01` (scorer de texto nao alcanca u02); R9 (definicoes honestas do glossario) custou 47 -> 40 e foi
+   aceito como baseline honesto. Candidato ja anotado: vocabulario de unidade deterministico via headings.
+5. **Unidade NUA 134/191** (curada e 100% so com pinos de unidade em IA/ES2): raiz = DP monotonico assume "ordem do
+   plano = ordem do calendario" (IA ensina ML/u05 em marco). Item de motor: DP robusto a inversao local. Medir com
+   `ablacao_rapida` (unidade nua) antes/depois; gate curado 191/191 intacto.
+6. **Subunidade 87/93:** 6 residuais documentados como teto (IA); decisao pendente do user sobre gerar
+   `.glossary_curation.json` por LLM (user ve LLM como fallback); `pthread` fora da regua (reversivel, ver item 3).
+7. **MF depende do LLM em 30/66** (professor sem nenhum sinal temporal: tudo postado 18/02, sem "Aula N", sem data em
+   secao ou nome; cards de 2-9 blocos; vocabulario repetido). Nao e bug: fallback funcionando, 30/30 certos. Se quiser
+   reduzir: assinatura de bloco mais rica que "logica de hoare aula" (medir), nao regra nova (3 medidas hoje, 2 perdem).
+8. **Divida/infra:** SO e ES2 sem remote (backup!); `.htm` = 2 defeitos (sem L: ignorado em silencio; com L: vira
+   `codigo-professor`) so importam se a CG precisar de HTML; `seed_glossary_fields` com strings por curso (lei 4b);
+   artefato "Razao dos Blocos" (claude.ai/code/artifact/d2ef4eaa-...) regenera com `scratch/dados_artefato.py` +
+   `patch_razao.py` — mover para `scripts/` se virar rotina; harness `scratch/harness_regras.py` e `redundancia.py` idem.
+9. **FASE 4 original** (exercicios, listas, provas antigas — pedido de 18/08): depende da cobertura (item 4).
+
+**Refutado hoje (nao retentar sem dado novo):** `posting_date` como provider (modal = carga inicial; nao-modal em
+mini-lotes e pos-bloco: +1/-0 unico, +2/-2 tolerancia 2); afinidade de kind material-de-aula -> so `class` (-25/+2);
+topico vence ordinal (-3/0); bola de neve como raiz do SO (era a cabeca da linha).
 
 ## OS 15 ERROS NUS REABERTOS: 7 eram gold errado, 1 regra nova, 7 ficam (2026-08-26)
 
