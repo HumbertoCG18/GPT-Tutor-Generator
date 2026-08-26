@@ -210,11 +210,18 @@ def provider_ordinal(entry: dict, ctx: MotorContext) -> List[str]:
 
 
 def provider_topic(entry: dict, ctx: MotorContext) -> List[str]:
-    """P4 — TÓPICO do card "Semana N - Tópico" ↔ topic_text/sessions[].label."""
-    m = _SEMANA_TOPIC_RE.match(str(entry.get("source_section") or ""))
-    if not m:
-        return []
-    tstems = _stems(_topic_tokens(m.group(1)))
+    """P4 — TÓPICO do card ↔ topic_text/sessions[].label.
+
+    Card "Semana N - Tópico" usa o tópico; qualquer outro card usa o NOME
+    inteiro (2026-08-25: exigir o prefixo era vício do formato do IA — o card
+    "Threads" do SO é tópico puro e o bloco-04 tem "threads" nas sessões;
+    sem isto as 3 `exemplo-threads` iam ao funil e o LLM errava). Medido nos
+    19 do funil dos 5 cursos: 9 ganham janela, gold dentro em 9/9, 3 viram
+    janela-1 certa; cards genéricos ("Informações Gerais", "TDE") não casam
+    bloco nenhum e seguem ao funil."""
+    sec = str(entry.get("source_section") or "")
+    m = _SEMANA_TOPIC_RE.match(sec)
+    tstems = _stems(_topic_tokens(m.group(1) if m else sec))
     if not tstems:
         return []  # card só-ordinal: week-math PROIBIDO -> sem janela
     stems_by_block = _block_topic_stems(ctx)

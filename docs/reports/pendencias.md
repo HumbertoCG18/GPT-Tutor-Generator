@@ -2,13 +2,12 @@
 
 last_updated: 2026-08-25 (FASE 2 + FASE 1 executadas; subunidade tem regua e alavanca medida).
 **FILA VIVA: secao `## FILA ACORDADA COM O USER (2026-08-24)` logo abaixo — le antes de escolher
-trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) user decide os 4 erros
-de bloco restantes (3 exemplo-threads + azure: pino, ou backfill do Moodle para o azure); (2) implementar a
+trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) `azure` = unico erro de bloco (pino, ou backfill do Moodle); (2) implementar a
 alavanca (iii) da subunidade — glossario com nomes de algoritmo por topico (medido 4->37/39 no IA);
 (3) FASE 3 cobertura (11 erros, explain_entry um a um).
 **HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** — le primeiro. Substitui o de 20/08.
-ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25c): bloco **196/200** (conf-err 1 = azure) · unidade **187/191** (os 4
-erros = os de bloco) · cobertura **46/57 F1 0,847** · pinos **11** · subunidade **19/66** (gold novo) · 4 raizes de identidade fechadas (secao propria). Tudo commitado nos
+ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25c): bloco **199/200** (conf-err 1 = azure) · unidade **190/191** (o erro
+= azure) · cobertura **46/57 F1 0,847** · pinos **11** · subunidade **19/66** (gold novo) · 4 raizes de identidade fechadas (secao propria). Tudo commitado nos
 6 repos. O que falta para 100% no bloco NAO e codigo: 6 golds a revisar + 2 curadorias de card (SO) +
 5 roteiros do ES2 sem sinal no dado — tabela no handoff. Subunidade: sem gold; primeiro rotular.
 PUSH (as-of 2026-08-24): gerador `07c95dc`, MF, IA e TCC sincronizados com `origin`. **SO e ES2 sem
@@ -250,6 +249,19 @@ ja foi refutado, +1/57). So entao a **FASE 4** (exercicios, listas, provas antig
 PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
+
+## R6 · provider de topico preso ao formato "Semana N - Topico" (2026-08-25d) — bloco 196 -> 199
+
+O user seguia "encucado" com os 4 erros. Os 3 `exemplo-threads-em-c` (SO, card "Threads") iam ao
+`llm-funil` porque `provider_topic` so aceitava card no formato do IA; o bloco-04 tem "threads"
+nas sessoes de 26 e 31/03. Formato de UM curso virando regra de motor (lei 4b). Fix: card sem o
+prefixo usa o NOME inteiro como topico (mesma assinatura por stems; `_GENERIC_STEMS` filtra).
+Medido nos 19 entries do funil dos 5 cursos: 9 ganham janela, **gold dentro em 9/9**, 3 viram
+janela-1 certa (as threads); "Informacoes Gerais"/"TDE"/"Plano de Ensino" nao casam bloco e
+seguem ao funil. Reprocess do SO: 3 entries mudaram de bloco (para o gold), 6 so de metodo
+(`llm-funil` -> `llm`, mesmo bloco, cache dentro da janela), **0 votos novos**. Testes +2.
+**Resta 1 erro de bloco: `azure`** (tutorial de conta Azure; `posting_date`/`moodle_label`
+vazios = backfill do Moodle falhou em 56 entries; sem sinal no texto). Pino ou re-rodar o backfill.
 
 ## RAIZ: BLOCO MISTO + IDENTIDADE POR DISPLAY — 4 defeitos fechados (2026-08-25c)
 

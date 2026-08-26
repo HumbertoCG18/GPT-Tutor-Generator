@@ -209,11 +209,25 @@ class TestProviderTopic:
         # regex casa, mas tópico só-dígito não gera token útil -> sem janela
         assert provider_topic({"source_section": "Semana 5 - 2026"}, self._ctx()) == []
 
-    def test_section_sem_padrao_semana_rende_vazio(self):
+    def test_card_sem_semana_usa_o_nome_inteiro_como_topico(self):
         from src.builder.routing.motor.window_provider import provider_topic
-        # provider é do padrão "Semana N - Tópico"; outros cards ficam com P1/P2
+        # 2026-08-25: o prefixo "Semana N -" era vicio do formato do IA. Card
+        # de topico puro casa as sessoes; nome sem eco em bloco nenhum -> [].
         assert provider_topic(
             {"source_section": "Verificação de Programas"}, self._ctx()) == []
+        assert provider_topic({"source_section": "Reduções"}, self._ctx()) == ["bloco-21"]
+
+    def test_card_threads_do_so_vira_janela_1(self):
+        """SO: 3 `exemplo-threads-em-c` no card "Threads" iam ao funil (LLM
+        errava); o bloco das aulas de threads tem "threads" nas sessoes."""
+        from src.builder.routing.motor.window_provider import provider_topic
+        ctx = MotorContext.from_artifacts(blocks=[
+            {"id": "bloco-03", "period_start": "2026-03-10", "topic_text": "processos chamadas sistema",
+             "sessions": [{"date": "2026-03-10", "label": "estruturas processos chamadas de sistema aula"}]},
+            {"id": "bloco-04", "period_start": "2026-03-19", "topic_text": "escalonamento threads exclusao mutua",
+             "sessions": [{"date": "2026-03-26", "label": "gerencia do processador threads e exclusao mutua aula"}]},
+        ], card_block_map={}, lessons_index={})
+        assert provider_topic({"source_section": "Threads"}, ctx) == ["bloco-04"]
 
     def test_topico_de_revisao_casa_bloco_de_prova(self):
         from src.builder.routing.motor.window_provider import provider_topic
