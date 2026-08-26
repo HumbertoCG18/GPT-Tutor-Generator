@@ -68,6 +68,24 @@ decodifica com `get_content_charset("utf-8")` fixo → UTF-16 vira "l e t r a", 
 BOM → `<meta charset>` → header → cp1252; (4) `.htm` (sem L) é descartado em silêncio no import e `.html` vira
 `codigo-professor` (`utils/helpers.py:204/647`) — 2 defeitos conhecidos, só importam na rota direta.
 
+## 2b. CG no Moodle — censo pela API (26/08, passo 2 executado)
+
+**Curso 95106** "98716-04 - Computação Gráfica - Turma 310 - **2026/2** - Prof. Marcio Sarroglia Pinho", 03/08–15/12/2026.
+**Correção do passo 1:** o `CronogramaAtualCG.html` do site é de 2026/1 (março). O cronograma certo é
+`Cronograma2026-2.pdf` na seção "Plano de Ensino" (resource) → pipeline normal de PDF; o `--syllabus` do site não se usa aqui.
+**Hábito do professor (o que o motor vai enxergar):** seções nomeadas **"N - Tópico"** (1–17), sem data e sem "Semana";
+arquivos sem data no nome; slides como `resource` OU como link para PDF no site; páginas de aula no site
+(`/pinho/CG/Aulas/...`, `/pinho/CGII/Exercicios/...`); **31 `page` internas** ("Página com Vídeos sobre X" = lista de
+YouTube; "Exercícios…/Resolução…/Atividade" = texto; 1 é código C++ colado); 11 labels (sub-cards: INSTANCIAMENTO /
+RECORTE / MAPEAMENTO / EXERCÍCIOS dentro da seção 6); 27 URLs = página do site (15), PDF no site (5), YouTube (7).
+**Zero links de bibliografia/repositório** — a bibliografia só existe no site. As páginas internas eram os "modals":
+`core_course_get_contents` dá `contents[0].fileurl` (pluginfile) e o HTML vem com `&token=`.
+**Stash montado inteiro pela API** (`scripts/moodle_pull.py --course 95106 --root <dir> --pdf`): 75 arquivos em 21
+seções; `links.json` (93 itens, 0 em review), `raw/moodle/{contents.json,pages/,labels.json}`, `raw/site/`.
+**Pendências do passo 2 (decisão do user):** "Resolução de Prova 2D/3D" (10 vídeos, 10 palavras) = material ou
+referência; `.xlsx` (2) é extensão desconhecida no import (ignorado em silêncio); páginas repetidas em 2 seções viram
+2 PDFs (dedup por hash do HTML antes de imprimir?); índices de vídeo: só IDs/títulos ou transcrições depois.
+
 ## 3. Decisão de rota (user, 26/08): PDF como desbloqueio, HTML direto como regime permanente
 
 **Rota escolhida para o holdout: snapshot → PDF (Edge headless) → stash → Datalab → pipeline de sempre.** Por quê:
