@@ -25,9 +25,10 @@ def _ctx():
 
 
 def test_conjunto_medido():
-    assert {"holiday", "office_hours", "workshop", "academic_event"} <= NEVER_HOSTS_MATERIAL_KINDS
-    # aparecem no gold: seguem elegiveis
-    assert not ({"class", "overview", "assessment", "review", "deliverable", "suspended"} & NEVER_HOSTS_MATERIAL_KINDS)
+    assert {"holiday", "office_hours", "workshop", "academic_event", "suspended"} <= NEVER_HOSTS_MATERIAL_KINDS
+    # aparecem no gold: seguem elegiveis. ("suspended" saiu daqui em 2026-08-25:
+    # so "aparecia no gold" porque a suspensao engolia a aula vizinha.)
+    assert not ({"class", "overview", "assessment", "review", "deliverable"} & NEVER_HOSTS_MATERIAL_KINDS)
 
 
 def test_janela_do_card_perde_a_oficina_e_vira_janela_1():

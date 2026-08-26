@@ -61,24 +61,30 @@
   },
   {
     "id": "bloco-11",
-    "n_sessoes": 2,
-    "span_dias": 7,
-    "topico": "suspensao jogo copa mundo; devops"
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "suspensao jogo copa mundo"
   },
   {
     "id": "bloco-12",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "entrega trabalho final"
+    "topico": "devops"
   },
   {
     "id": "bloco-13",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "substituicao"
+    "topico": "entrega trabalho final"
   },
   {
     "id": "bloco-14",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "substituicao"
+  },
+  {
+    "id": "bloco-15",
     "n_sessoes": 1,
     "span_dias": 0,
     "topico": "Conteúdo: unidade-01-arquitetura-de-software, unidade-02-integracao-de-desenvolvimento-e-operacao-devops, unidade-03-testes-de-software"

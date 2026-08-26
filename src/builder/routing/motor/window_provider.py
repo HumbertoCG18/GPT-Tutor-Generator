@@ -38,7 +38,8 @@ def _window_for_source(entry: dict, ctx: MotorContext, source: str) -> List[str]
     info = _card_entry(entry, ctx)
     if str(info.get("source") or "") != source:
         return []
-    return [str(b) for b in (info.get("block_ids") or []) if str(b)]
+    from src.builder.timeline.card_block import card_entry_block_ids
+    return card_entry_block_ids(info, ctx.blocks)  # labels: datas do rotulo mandam (2026-08-25)
 
 
 def provider_manual(entry: dict, ctx: MotorContext) -> List[str]:

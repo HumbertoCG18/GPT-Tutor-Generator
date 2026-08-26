@@ -3,12 +3,12 @@
 last_updated: 2026-08-25 (FASE 2 + FASE 1 executadas; subunidade tem regua e alavanca medida).
 **FILA VIVA: secao `## FILA ACORDADA COM O USER (2026-08-24)` logo abaixo — le antes de escolher
 trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) user decide os 4 erros
-de bloco restantes (3 exemplo-threads + azure: pino ou aceitar); (2) implementar a
+de bloco restantes (3 exemplo-threads + azure: pino, ou backfill do Moodle para o azure); (2) implementar a
 alavanca (iii) da subunidade — glossario com nomes de algoritmo por topico (medido 4->37/39 no IA);
 (3) FASE 3 cobertura (11 erros, explain_entry um a um).
 **HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** — le primeiro. Substitui o de 20/08.
-ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25b): bloco **196/200** (conf-err 1 = azure) · unidade **186/190** (os 4
-erros = os de bloco) · cobertura **46/57 F1 0,847** · pinos **11** · subunidade **19/66** (gold novo) · LLM 53 votos + 23 funil + 8 irmao-card + 4 prep-prova. Tudo commitado nos
+ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25c): bloco **196/200** (conf-err 1 = azure) · unidade **187/191** (os 4
+erros = os de bloco) · cobertura **46/57 F1 0,847** · pinos **11** · subunidade **19/66** (gold novo) · 4 raizes de identidade fechadas (secao propria). Tudo commitado nos
 6 repos. O que falta para 100% no bloco NAO e codigo: 6 golds a revisar + 2 curadorias de card (SO) +
 5 roteiros do ES2 sem sinal no dado — tabela no handoff. Subunidade: sem gold; primeiro rotular.
 PUSH (as-of 2026-08-24): gerador `07c95dc`, MF, IA e TCC sincronizados com `origin`. **SO e ES2 sem
@@ -250,6 +250,75 @@ ja foi refutado, +1/57). So entao a **FASE 4** (exercicios, listas, provas antig
 PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
+
+## RAIZ: BLOCO MISTO + IDENTIDADE POR DISPLAY — 4 defeitos fechados (2026-08-25c)
+
+Ponto de partida: o user apontou `azure` (ES2) em bloco-01 como absurdo ("um dos ultimos
+conteudos"). O `azure` em si NAO tem rota (e o tutorial de criar conta; `posting_date` e
+`moodle_label` vazios = backfill do Moodle falhou; gold 09 fica; 1 pino ou dado). Mas ao olhar os
+blocos do ES2 apareceu um defeito estrutural, e ao corrigi-lo, mais tres da mesma familia. Ordem
+do user: "sem regressao do estado; causa raiz real, nao o erro especifico". Regua ANTES = DEPOIS:
+bloco 196/200 · cobertura 46/57 · pinos 11; unidade 186/190 -> 187/191 (bloco novo com gold).
+MF/TCC/SO byte-identicos em todas as rodadas. Suite 2016+ passed (goldens de caracterizacao
+regenerados para IA/SO/ES2 — a divisao mudou DE PROPOSITO).
+
+### R1 · linha do cronograma so tinha kind pela coluna Atividade; o texto nunca era lido
+ES2 bloco-11 = `19/06 "suspensao jogo copa do mundo"` + `26/06 "devops exercicios"` num bloco
+`suspended`: a linha 19/06 vinha com Atividade "aula" (=class), "devops **exercicios**" caia na
+regra de continuacao e grudava; o classificador so via o agregado. Censo por sessoes nos 5 cursos:
+**4 blocos mistos** (IA 06 "suspensao de aulas"+ML, IA 15 atendimento+aula, SO 25 reserva+G2,
+ES2 11). Fix na ORIGEM: `_build_timeline_candidate_rows` deriva o kind do texto quando Atividade
+e aula/vazia — `classifier.row_kind_from_text`, MESMA tabela de keywords, mas so
+`ROW_TEXT_KINDS` = nao-academicos inequivocos. **OFFICE_HOURS e PLANNING ficam fora**: a
+primeira tentativa (todos os nao-academicos) sequestrou "introducao a agentes e **planejamento**"
+(IA, conteudo) e "gerencia de arquivos, **duvidas**" (SO, aula) — no bloco eles tem guard
+(evidencia de unidade / maioria das sessoes) que a linha isolada nao tem. Medido por rebuild EM
+MEMORIA dos 5 timelines com diff bloco a bloco antes de gravar: MF/TCC identicos; IA 23->24,
+SO 25->26 (so o ultimo bloco), ES2 14->15. Testes em `test_atividade_kind.py` (5).
+- Efeito colateral bom: a curadoria manual do IA bloco-06 (`manual_kind_override: class` +
+  `manual_unit_slug: u05`) era um REMENDO de julho contra exatamente este defeito.
+
+### R2 · identidade no split: a primeira fatia roubava o uuid
+`reattach_block_uuids` reescrevia a ancora do registro DENTRO do laco; a fatia de 1 dia (20/04)
+vinha primeiro, herdava o uuid das aulas de ML de 22-27/04 com 1 dia de overlap e encolhia a
+ancora; a fatia de 6 dias chegava com overlap 0 e mintava — levando curadoria, pino u05 e 8 golds
+(todos por uuid) para a suspensao. Fix: pontuar TODOS os blocos contra as ancoras de ENTRADA
+(congeladas) e atribuir cada registro ao bloco que mais o cobre, EXCLUSIVO; sem competicao o
+resultado e o de sempre. Testes em `test_block_identity.py` (+2). Verificado: IA 22-27/04 herda
+`17ea65f3`; ES2 26/06 (DevOps) minta e a suspensao 19/06 fica com o antigo (1 dia cada, tokens
+decidem) -> gold do `devops` re-rotulado para a aula (`22a44498`, bloco-12) + linha nova em
+`gold_units_ES2.csv` (u02). Displays dos golds re-derivados por uuid (IA 9 + gold_units 18/18/3).
+
+### R3 · voto do LLM cacheado por DISPLAY: stale silencioso
+Apos renumerar, o voto "bloco-15" (10-15/06 na epoca) passou a apontar para o bloco que HOJE se
+chama bloco-15 (01-08/06) — `match_window_ref` aceitou porque o display existe na janela nova.
+**3 entries do IA (card Semana 15) trocaram de bloco sem revotar; o sidecar nao mudou.** Pior que
+o "voto varia entre rodadas": e o voto certo apontando para o bloco errado. Fix: voto grava
+`block_uuid` + `window_uuids`; leitura compara por uuid; legado (sem uuid) segue por display.
+Votos legados migrados UMA vez (dado): IA/SO/ES2 pelo `.timeline_index.json.bak` pre-rebuild,
+MF/TCC pelo indice atual (o .bak deles era antigo — 9+3 displays fora do indice denunciaram; sidecar
+restaurado do git antes). Resultado: as 8 entries do IA VOLTARAM aos blocos originais com 0 votos
+novos. Teste em `test_motor_llm_vote.py` (+1).
+
+### R4 · card de rotulo guardava uuids resolvidos uma vez
+`.card_block_map.json` (`source: labels`) JA carrega as datas do rotulo ("DevOps": 26/06, 03/07,
+10/07) mas o motor lia `block_ids` congelados: a aula nova de 26/06 nao entrava na janela. Fix:
+`card_block.card_entry_block_ids` resolve as datas contra os blocos ATUAIS (block_ids = fallback),
+usado por `lookup_card_blocks` E por `window_provider._window_for_source` (o primeiro fix so no
+lookup nao chegou ao motor). Censo: caches divergentes em MF 1, IA 4 (com uuids MORTOS
+`ab4631aa?` — o item "uuid obsoleto no card_block_map do IA" do handoff fecha de graca), ES2 1.
+`devops` e `kubernetes` foram para a aula de 26/06. Teste em `test_motor_anchor_engine.py` (+1).
+
+### R5 · `suspended` entra em NEVER_HOSTS_MATERIAL_KINDS
+So "aparecia no gold" (medicao de 21/08) porque a suspensao engolia a aula vizinha. Com R1, raio
+medido: 0 entries em bloco suspenso nos 5 cursos, 9 janelas que o continham ja decidiam outro
+bloco. Remendo local do `prep-prova` removido.
+
+### Ferramentas de medicao (scratchpad, nao commitadas)
+Rebuild em memoria + diff bloco a bloco (`tl_diff.py`), censo de blocos mistos por sessao, censo
+cache-vs-datas do card map, diff de sentinelas POR UUID (display renumera; comparar por display
+mente), migracao de votos. Um reprocess de 5 cursos travou 10 min com a API fora — rodar por
+curso em background quando a rede oscilar.
 
 ## FASE 1 EXECUTADA (2026-08-25) — golds, curadorias, duplicata, regra do irmao; DOIS reprocesses
 

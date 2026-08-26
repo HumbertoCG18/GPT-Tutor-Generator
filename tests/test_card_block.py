@@ -190,3 +190,17 @@ def test_lookup_blocks_exact_key_still_matches():
     # não regride o match exato; bloco-11 resolve para uuid-11 (lazy compat Task 2)
     card_map = {"Meu Card": {"block_ids": ["bloco-11"], "source": "manual"}}
     assert lookup_card_blocks("Meu Card", card_map, UNITS, BLOCKS) == ["uuid-11"]
+
+
+def test_lookup_por_rotulo_resolve_datas_contra_os_blocos_atuais():
+    """2026-08-25: card `labels` guardava uuids resolvidos UMA vez; um split de
+    bloco deixava a aula nova fora da janela (ES2 "DevOps" -> [suspensao 19/06,
+    entrega, PS], sem a aula de 26/06). As datas do rotulo sao a verdade;
+    block_ids e so cache."""
+    card_map = {"DevOps": {"block_ids": ["uuid-01"], "source": "labels", "dates": ["2026-05-06"]}}
+    assert lookup_card_blocks("DevOps", card_map, UNITS, BLOCKS) == ["uuid-11"]
+
+
+def test_lookup_por_rotulo_sem_datas_usa_block_ids():
+    card_map = {"X": {"block_ids": ["uuid-10"], "source": "labels"}}
+    assert lookup_card_blocks("X", card_map, UNITS, BLOCKS) == ["uuid-10"]

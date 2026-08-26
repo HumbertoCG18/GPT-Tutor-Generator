@@ -63,11 +63,9 @@ def resolve_generic_reference(entry: dict, ctx: MotorContext) -> Optional[Anchor
 
 # "p1" / "prova 2" / "revisao p1" / "revisão para P1" -> N
 _EXAM_CUE = re.compile(r"(?:^|[^a-z])(?:p\s?-?(\d)|prova\s?-?(\d)|revis[aã]o[- ]?(?:para[- ]?)?(?:a[- ]?)?p(\d))", re.I)
-# Nao hospedam preparacao de prova: kinds administrativos + a prova + aula suspensa
-# (MF bloco-08 "suspensao" fica ENTRE a revisao e a P1; `suspended` ainda nao esta
-# em NEVER_HOSTS por causa do raio: ES2 `devops`/`kubernetes` estao gravados num
-# bloco suspenso — higiene a parte).
-_NOT_PREP_HOSTS = frozenset(NEVER_HOSTS_MATERIAL_KINDS) | {"assessment", "suspended"}
+# Nao hospedam preparacao de prova: kinds que nunca hospedam material (inclui a
+# aula suspensa — MF bloco-08 "suspensao" fica ENTRE a revisao e a P1) + a prova.
+_NOT_PREP_HOSTS = frozenset(NEVER_HOSTS_MATERIAL_KINDS) | {"assessment"}
 _NOT_MAIN_EXAM = ("substitui", "entrega", "trabalho", "recupera")
 
 

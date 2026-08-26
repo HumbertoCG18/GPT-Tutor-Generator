@@ -302,3 +302,17 @@ def test_prep_prova_nao_se_aplica_a_propria_prova(monkeypatch):
     d = ae.AnchorEngine(voter=None).resolve_unscoped(
         {"id": "prova-1-2024-02", "category": "provas"}, _ctx_provas(), lexical=False)
     assert d is None
+
+
+def test_provider_labels_resolve_datas_contra_os_blocos_atuais():
+    """2026-08-25: o window_provider lia block_ids do card map direto; com o
+    split do ES2 bloco-11 a aula nova de 26/06 ficava fora da janela do card
+    "DevOps" mesmo com a data no rotulo. Datas mandam; block_ids e cache."""
+    from src.builder.routing.motor.window_provider import provider_labels
+    ctx = MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-11", "block_uuid": "u-11", "kind": "suspended", "period_start": "2026-06-19", "period_end": "2026-06-19"},
+                {"id": "bloco-12", "block_uuid": "u-12", "kind": "class", "period_start": "2026-06-26", "period_end": "2026-06-26"},
+                {"id": "bloco-13", "block_uuid": "u-13", "kind": "assessment", "period_start": "2026-07-03", "period_end": "2026-07-03"}],
+        card_block_map={"DevOps": {"source": "labels", "block_ids": ["u-11", "u-13"], "dates": ["2026-06-26", "2026-07-03"]}},
+        lessons_index={})
+    assert provider_labels({"id": "devops", "source_section": "DevOps"}, ctx) == ["u-12", "u-13"]

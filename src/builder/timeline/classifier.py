@@ -14,7 +14,7 @@ import re
 from typing import Iterable, List, Mapping, Pattern, Tuple, Union
 
 from src.builder.text.normalize import normalize_match_text
-from .kinds import BlockKind
+from .kinds import NON_ACADEMIC_KINDS, BlockKind
 
 
 def _norm(text: str) -> str:
@@ -293,3 +293,27 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
     if len(hay_content) >= 8 or len(content_tokens) >= 2:
         return BlockKind.CLASS
     return BlockKind.UNKNOWN
+
+
+def row_kind_from_text(content: str) -> str:
+    """Kind NAO-ACADEMICO que o texto de UMA linha do cronograma denuncia
+    ("suspensao ...", "feriado ...", "reserva tecnica"); "" se a linha e aula.
+
+    Mesma tabela de keywords de classify_block (uma fonte), mas SO os kinds
+    cujo vocabulario e inequivocamente administrativo: a linha vira bloco
+    proprio e nao funde com aula vizinha. OFFICE_HOURS ("duvidas") e PLANNING
+    ("planejamento") ficam de fora — no bloco eles tem guard (maioria das
+    sessoes / evidencia de unidade) que a linha isolada nao tem: "introducao a
+    agentes e planejamento" (IA) e "gerencia de arquivos, duvidas" (SO) sao
+    aula. Prova/revisao/entrega continuam vindo da coluna Atividade."""
+    text = " ".join(str(content or "").split())
+    if not text:
+        return ""
+    kind = classify_block({"topic_text": text, "topics": [], "sessions": [], "unit_slug": ""})
+    return kind.value if kind in ROW_TEXT_KINDS else ""
+
+
+# Kinds que UMA linha do cronograma pode assumir so pelo texto (ver
+# row_kind_from_text). Subconjunto de NON_ACADEMIC_KINDS sem os dois que
+# precisam de contexto de bloco.
+ROW_TEXT_KINDS = frozenset(NON_ACADEMIC_KINDS) - {BlockKind.OFFICE_HOURS, BlockKind.PLANNING}

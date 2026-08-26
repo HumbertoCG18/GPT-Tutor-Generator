@@ -1,4 +1,4 @@
-id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante,true_block_uuid
+﻿id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante,true_block_uuid
 ,aula01_Introducao_IA.pdf,,,,,obs:Roteiro+SARC,clean,02/03,no,no,
 ia-responsável-7c4626,IA Responsável,bloco-01,,bloco-01,,obs:Roteiro+SARC,clean,02/03,yes,no,43b6f936-7dc9-49fa-8f19-a88b66dc9b98
 o-que-é-inteligência-artificial-ia-oracle-brasil-43437f,O que é Inteligência Artificial (IA)? | Oracle Brasil,bloco-01,,bloco-01,,obs:Roteiro+SARC,clean,02/03,yes,no,43b6f936-7dc9-49fa-8f19-a88b66dc9b98
@@ -25,14 +25,14 @@ rede-perceptron-e-equacao-de-reta,Rede Perceptron e Equação de Reta.pdf,bloco-
 como-analisar-resultados-acc-pr-re-e-f1,"Como analisar resultados Acc, Pr, Re e F1.pdf",bloco-05,bloco-05,bloco-05,,subt-single:Roteiro+SARC,clean,06/04,yes,no,2fdbf4f5-fe92-46c7-b3d6-b4a09d87615f
 ,Como Analisar Resultados - SSE_comCorrecoes.pdf,,,,,subt-single:Roteiro+SARC,clean,06/04,no,no,
 ,Inteligencia Artificial Aula 29 - Aprendizagem de Maquina Medidas de avaliação.pdf,,,,,subt-single:Roteiro+SARC,clean,06/04,no,no,
-agrupamento-usando-k-means-exemplo-1-ipynb,agrupamento usando k-Means exemplo 1 (.ipynb).ipynb,bloco-06,bloco-06,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
-agrupamento-usando-k-means-exemplo-2-ipynb,agrupamento usando k-Means exemplo 2 (.ipynb).ipynb,bloco-06,bloco-06,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
+agrupamento-usando-k-means-exemplo-1-ipynb,agrupamento usando k-Means exemplo 1 (.ipynb).ipynb,bloco-07,bloco-06,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
+agrupamento-usando-k-means-exemplo-2-ipynb,agrupamento usando k-Means exemplo 2 (.ipynb).ipynb,bloco-07,bloco-06,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
 ,AprendizadoNaoSupervisionado-Agrupamento - parte1.pdf,,,,,subt-single:SARC,clean,20/04,no,no,
 ,AprendizadoNaoSupervisionado-Agrupamento - parte2.pdf,,,,,obs:Roteiro+SARC,clean,27/04,no,no,
-artigo-usando-agrupamento,Artigo usando agrupamento.pdf,bloco-06,,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
-aula-sobre-agrupamento-parte-1-particional,Aula sobre Agrupamento - parte 1 (particional).pdf,bloco-06,bloco-06,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
-aula-sobre-agrupamento-parte-2-hierarquico,Aula sobre Agrupamento - parte 2 (hierarquico).pdf,bloco-06,bloco-07,bloco-06,,obs:Roteiro+SARC,clean,27/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
-survey-on-clustering,Survey on Clustering.pdf,bloco-06,bloco-06,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
+artigo-usando-agrupamento,Artigo usando agrupamento.pdf,bloco-07,,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
+aula-sobre-agrupamento-parte-1-particional,Aula sobre Agrupamento - parte 1 (particional).pdf,bloco-07,bloco-06,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
+aula-sobre-agrupamento-parte-2-hierarquico,Aula sobre Agrupamento - parte 2 (hierarquico).pdf,bloco-07,bloco-07,bloco-06,,obs:Roteiro+SARC,clean,27/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
+survey-on-clustering,Survey on Clustering.pdf,bloco-07,bloco-06,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
 ag-feito-em-aula-pelo-luca,AG feito em aula pelo Luca.py,,bloco-13,bloco-13,,subt-STRADDLE:Card S13 + mat,eco-excluido,,no,no,
 algoritmo-dijkstra,Algoritmo Dijkstra.pdf,,bloco-15,bloco-15,,subt-single:Roteiro (01/06) + Card S14,eco-excluido,01/06,no,no,
 algoritmo-genetico,Algoritmo Genetico.pdf,,bloco-12,bloco-12,,subt-single:Card S12 + mat,eco-excluido,18/05,no,no,
@@ -46,7 +46,7 @@ programa-exemplo-ag,programa-exemplo AG.zip,,bloco-12,bloco-12,,?,sem-subtopico,
 programas-exemplo-hc-sa-versao-para-nrainhas-e-distribuicao-de-cargas,"Programas-exemplo HC, SA (versão para NRainhas e Distribuição de Cargas).zip",,bloco-15,bloco-15,,subt-single:Roteiro (01/06) + Card S14,eco-excluido,01/06,no,no,
 lista-de-exercicios-i,Lista de Exercicios I.pdf,,bloco-15,bloco-15,lista-de-exercicios-i,subt-STRADDLE:Card S15 + mat,eco-excluido,,no,no,
 ,P1_2024_02_IA.pdf,,,,,obs:Roteiro+SARC,clean,13/05,no,no,
-prova-1-2024-02,Prova 1 2024 02.pdf,bloco-08,bloco-08,bloco-08,prova-1-2024-02,obs:Roteiro+SARC,clean,04/05,yes,no,5256ec08-7e5d-4c55-8a3c-e1a7f981ac71
+prova-1-2024-02,Prova 1 2024 02.pdf,bloco-09,bloco-08,bloco-08,prova-1-2024-02,obs:Roteiro+SARC,clean,04/05,yes,no,5256ec08-7e5d-4c55-8a3c-e1a7f981ac71
 ,P2_IA_2024.pdf ,,,,,obs:SARC,clean,01/07,no,no,
 ,Agentes.pdf,,,,,obs:SARC,clean,22/06,no,no,
 ,P2_IA_2024_02_A_turma30.pdf ,,,,,obs:SARC,clean,01/07,no,no,
@@ -69,5 +69,5 @@ xor-backpropagation-em-python,XOR - Backpropagation em python.ipynb,bloco-05,blo
 exemplo-1-arvores-de-decisao-classificacao-planta-iris,Exemplo 1 - Árvores de Decisão Classificação - Planta Iris.ipynb,bloco-05,bloco-05,bloco-05,,subt-single:Roteiro+SARC (13/04: SARC),clean,13/04,yes,no,2fdbf4f5-fe92-46c7-b3d6-b4a09d87615f
 exemplo-2-arvores-de-decisao-regressao-diabetes,Exemplo 2 - Arvores de Decisão - Regressão - Diabetes.ipynb,bloco-05,bloco-05,bloco-05,,subt-single:Roteiro+SARC (13/04: SARC),clean,13/04,yes,no,2fdbf4f5-fe92-46c7-b3d6-b4a09d87615f
 exemplo-complementar-classificacao-com-arvores-de-decisao,Exemplo Complementar - Classificação com Árvores de Decisão.ipynb,bloco-05,bloco-05,bloco-05,,subt-single:Roteiro+SARC (13/04: SARC),clean,13/04,yes,no,2fdbf4f5-fe92-46c7-b3d6-b4a09d87615f
-agrupamento-hierarquico-exemplo-1,agrupamento hierarquico - exemplo 1.ipynb,bloco-06,bloco-07,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
-agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris,agrupamento hierarquico - exemplo 2 (use o dataset da planta IRIS).ipynb,bloco-06,bloco-07,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
+agrupamento-hierarquico-exemplo-1,agrupamento hierarquico - exemplo 1.ipynb,bloco-07,bloco-07,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed
+agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris,agrupamento hierarquico - exemplo 2 (use o dataset da planta IRIS).ipynb,bloco-07,bloco-07,bloco-06,,subt-single:SARC,clean,20/04,yes,no,17ea65f3-5f84-47c7-9357-e090ee1f80ed

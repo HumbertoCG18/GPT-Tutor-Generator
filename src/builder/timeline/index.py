@@ -10,7 +10,7 @@ from typing import Callable, Dict, List, Optional
 
 from src.builder.vision.card_evidence import extract_card_evidence
 from src.builder.timeline.signals import extract_timeline_session_signals
-from src.builder.timeline.classifier import classify_block
+from src.builder.timeline.classifier import classify_block, row_kind_from_text
 from src.builder.timeline.kinds import BlockKind
 from src.builder.timeline.curation import apply_block_curation, load_boundary_dates
 from src.builder.timeline.unit_matcher import assign_units_positional
@@ -308,6 +308,13 @@ def _build_timeline_candidate_rows(timeline: List[Dict[str, str]]) -> List[Dict[
                 if needle in atividade:
                     kind = mapped
                     break
+            if kind == "class":
+                # Atividade "aula"/vazia nao e sinal: o TEXTO da linha pode
+                # denunciar suspensao/feriado/reserva. Sem isto a linha entra
+                # como aula, funde com a vizinha e o classificador so ve o
+                # agregado (ES2 bloco-11 `suspended` inteiro; IA bloco-06
+                # engoliu "suspensao de aulas"). So kinds nao-academicos.
+                kind = row_kind_from_text(content) or "class"
         ignored = kind in _IGNORED_KINDS
         candidate_rows.append({
             "index": index,

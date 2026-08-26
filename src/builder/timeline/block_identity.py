@@ -143,6 +143,36 @@ def reattach_block_uuids(
     updated_ledger = list(ledger)
     flags: List[str] = []
 
+    # 2026-08-25: pontuar TODOS os blocos contra as ancoras de ENTRADA (congeladas)
+    # e atribuir cada registro ao bloco que mais o cobre, EXCLUSIVO. Antes a
+    # ancora era reescrita dentro do laco: no split de um bloco over-merged a
+    # PRIMEIRA fatia (por data) capturava o uuid com 1 dia de overlap e encolhia
+    # a ancora; a fatia grande chegava depois com overlap 0 e mintava — levando
+    # embora curadoria, pino de unidade e gold, todos por uuid (IA bloco-06:
+    # "suspensao de aulas" 20/04 ficou com o uuid das aulas de ML de 22-27/04).
+    frozen = []
+    for idx, rec in enumerate(updated_ledger):
+        anchor = rec.get("anchor") or {}
+        frozen.append((idx, _parse_date(str(anchor.get("period_start") or "")),
+                       _parse_date(str(anchor.get("period_end") or "")),
+                       set(anchor.get("topic_tokens") or [])))
+
+    def _new_record(new_uuid: str, block: dict, b_tokens: set, display_id: str,
+                    start_text: str, end_text: str) -> None:
+        updated_ledger.append({
+            "uuid": new_uuid,
+            "anchor": {
+                "period_start": start_text,
+                "period_end": end_text,
+                "topic_tokens": sorted(b_tokens),
+            },
+            "display_id_last": display_id,
+            "first_seen": today,
+            "last_seen": today,
+        })
+        block["block_uuid"] = new_uuid
+
+    pending = []
     for block in runtime_blocks:
         b_start = _parse_date(str(block.get("period_start") or ""))
         b_end = _parse_date(str(block.get("period_end") or ""))
@@ -152,56 +182,37 @@ def reattach_block_uuids(
         if not (b_start and b_end):
             new_uuid = mint()
             flags.append(f"no-date:mint:{new_uuid}:{display_id}")
-            updated_ledger.append({
-                "uuid": new_uuid,
-                "anchor": {
-                    "period_start": str(block.get("period_start") or ""),
-                    "period_end": str(block.get("period_end") or ""),
-                    "topic_tokens": sorted(b_tokens),
-                },
-                "display_id_last": display_id,
-                "first_seen": today,
-                "last_seen": today,
-            })
-            block["block_uuid"] = new_uuid
+            _new_record(new_uuid, block, b_tokens, display_id,
+                        str(block.get("period_start") or ""), str(block.get("period_end") or ""))
             continue
 
-        # Score every ledger record
         scored: List[Tuple[int, float, int, dict]] = []
-        for rec in updated_ledger:
-            anchor = rec.get("anchor") or {}
-            r_start = _parse_date(str(anchor.get("period_start") or ""))
-            r_end = _parse_date(str(anchor.get("period_end") or ""))
+        for idx, r_start, r_end, r_tokens in frozen:
             ov = _overlap_days(b_start, b_end, r_start, r_end)
             if ov == 0:
                 continue
-            tok_ov = _token_overlap(b_tokens, set(anchor.get("topic_tokens") or []))
-            idx = updated_ledger.index(rec)
-            scored.append((ov, tok_ov, idx, rec))
-
-        if not scored:
-            new_uuid = mint()
-            updated_ledger.append({
-                "uuid": new_uuid,
-                "anchor": {
-                    "period_start": b_start.isoformat(),
-                    "period_end": b_end.isoformat(),
-                    "topic_tokens": sorted(b_tokens),
-                },
-                "display_id_last": display_id,
-                "first_seen": today,
-                "last_seen": today,
-            })
-            block["block_uuid"] = new_uuid
-            continue
-
+            scored.append((ov, _token_overlap(b_tokens, r_tokens), idx, updated_ledger[idx]))
         # Sort by (overlap_days DESC, token_overlap DESC)
         scored.sort(key=lambda x: (x[0], x[1]), reverse=True)
-        best_ov, best_tok, best_idx, best_rec = scored[0]
+        pending.append((block, b_start, b_end, b_tokens, display_id, scored))
+
+    # Quem cobre mais escolhe primeiro (no split, a fatia grande); ordem de
+    # entrada desempata para manter o comportamento de sempre sem competicao.
+    order = sorted(range(len(pending)),
+                   key=lambda i: (pending[i][5][0][0], pending[i][5][0][1]) if pending[i][5] else (0, 0.0),
+                   reverse=True)
+    taken: set = set()
+    for i in order:
+        block, b_start, b_end, b_tokens, display_id, scored = pending[i]
+        avail = [s for s in scored if s[2] not in taken]
+        if not avail:
+            _new_record(mint(), block, b_tokens, display_id, b_start.isoformat(), b_end.isoformat())
+            continue
+        best_ov, best_tok, best_idx, best_rec = avail[0]
 
         # Near-tie radar: second candidate within epsilon of best
-        if len(scored) >= 2:
-            second_ov, second_tok, _, second_rec = scored[1]
+        if len(avail) >= 2:
+            second_ov, second_tok, _, second_rec = avail[1]
             if best_ov > 0:
                 relative_gap = (best_ov - second_ov) / best_ov
                 if relative_gap < _NEAR_TIE_EPSILON and (_has_human_ref(best_rec) or _has_human_ref(second_rec)):
@@ -209,29 +220,17 @@ def reattach_block_uuids(
                         f"near-tie:{best_rec['uuid']}:{second_rec['uuid']}:{display_id}"
                     )
 
-        # Exact tie on overlap with no token differentiation → mint
-        if len(scored) >= 2:
-            second_ov, second_tok, _, _ = scored[1]
+        # Exact tie on overlap with no token differentiation -> mint
+        if len(avail) >= 2:
+            second_ov, second_tok, _, _ = avail[1]
             if best_ov == second_ov and best_tok == second_tok and best_tok == 0.0:
                 new_uuid = mint()
                 flags.append(f"exact-tie:mint:{new_uuid}:{display_id}")
-                updated_ledger.append({
-                    "uuid": new_uuid,
-                    "anchor": {
-                        "period_start": b_start.isoformat(),
-                        "period_end": b_end.isoformat(),
-                        "topic_tokens": sorted(b_tokens),
-                    },
-                    "display_id_last": display_id,
-                    "first_seen": today,
-                    "last_seen": today,
-                })
-                block["block_uuid"] = new_uuid
+                _new_record(new_uuid, block, b_tokens, display_id, b_start.isoformat(), b_end.isoformat())
                 continue
 
-        # Inherit best match
-        inherited_uuid = best_rec["uuid"]
-        # Refresh anchor and last_seen in-place
+        # Inherit best match (exclusivo) e refresh anchor/last_seen in-place
+        taken.add(best_idx)
         updated_ledger[best_idx] = {
             **best_rec,
             "anchor": {
@@ -242,7 +241,7 @@ def reattach_block_uuids(
             "display_id_last": display_id,
             "last_seen": today,
         }
-        block["block_uuid"] = inherited_uuid
+        block["block_uuid"] = best_rec["uuid"]
 
     return runtime_blocks, updated_ledger, flags
 

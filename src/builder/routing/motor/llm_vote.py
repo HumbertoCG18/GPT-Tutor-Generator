@@ -247,6 +247,13 @@ def build_vote_prompt(entry: dict, window: List[str], ctx: MotorContext,
     )
 
 
+def _uuid_of_ref(ref: str, ctx: MotorContext) -> str:
+    """bloco-NN / uuid -> block_uuid do bloco (ref inalterada se nao resolve:
+    voto fora do indice continua "fora" em vez de virar uuid falso)."""
+    b = ctx.block_by_ref(str(ref or ""))
+    return str((b or {}).get("block_uuid") or ref or "")
+
+
 def match_window_ref(block_id_vote: str, window: List[str],
                      ctx: MotorContext) -> Optional[str]:
     """Voto -> ref da janela (bounded). Fora da janela = None (mantem FLAG)."""
@@ -355,6 +362,7 @@ class LlmVoter:
             return None                      # sem-janela NAO vota (spec §12)
         key = self._content_key(entry)
         win_now = [str(r) for r in window]
+        win_uuids = sorted(_uuid_of_ref(r, ctx) for r in win_now)
         with self._lock:
             cached = self._data["votes"].get(key)
             # 2026-08-21: o voto e por CONTEUDO, mas a pergunta e sobre uma
@@ -363,9 +371,17 @@ class LlmVoter:
             # outra pergunta: repergunta uma vez e regrava. IA `ag-feito`: voto
             # "bloco-13" (evento) ficou fora de toda janela depois do filtro de
             # kind e a entry perdia o temporal para sempre.
-            if cached is not None and match_window_ref(str(cached.get("block_id") or ""), win_now, ctx) is None \
-                    and sorted(cached.get("window") or []) != sorted(win_now):
-                cached = None
+            # 2026-08-25: voto e janela comparados por UUID. Um split renumera
+            # os bloco-NN seguintes e o voto "bloco-15" cacheado passava a
+            # apontar para OUTRO bloco sem revotar (IA, card Semana 15).
+            # Cache legado (sem block_uuid) segue o caminho por display.
+            if cached is not None:
+                voted = str(cached.get("block_uuid") or cached.get("block_id") or "")
+                cached_uuids = cached.get("window_uuids")
+                same_window = (sorted(str(u) for u in cached_uuids) == win_uuids) if cached_uuids is not None \
+                    else (sorted(cached.get("window") or []) == sorted(win_now))
+                if match_window_ref(voted, win_now, ctx) is None and not same_window:
+                    cached = None
             if cached is None:
                 if self.calls >= self._cap:
                     self.skipped_cap += 1
@@ -387,10 +403,12 @@ class LlmVoter:
                     return None
                 cached = {
                     "block_id": str(voto.block_id).strip(),
+                    "block_uuid": _uuid_of_ref(str(voto.block_id).strip(), ctx),  # identidade
                     "confianca": str(voto.confianca).strip(),  # auditoria; nunca gate
                     "justificativa": str(voto.justificativa_curta)[:200],
                     "model": getattr(client, "model", ""),
                     "window": win_now,  # a pergunta feita; muda a janela, muda a pergunta
+                    "window_uuids": win_uuids,
                 }
                 self._data["votes"][key] = cached
                 try:
@@ -405,4 +423,4 @@ class LlmVoter:
                                     "por agora (%s)", entry.get("id"), exc)
             else:
                 self.cache_hits += 1
-        return match_window_ref(str(cached.get("block_id") or ""), window, ctx)
+        return match_window_ref(str(cached.get("block_uuid") or cached.get("block_id") or ""), window, ctx)

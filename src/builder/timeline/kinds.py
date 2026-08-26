@@ -67,6 +67,11 @@ NEVER_HOSTS_MATERIAL_KINDS = frozenset({
     BlockKind.HOLIDAY.value, BlockKind.OFFICE_HOURS.value, BlockKind.WORKSHOP.value,
     BlockKind.ACADEMIC_EVENT.value, BlockKind.RESERVED.value, BlockKind.RESULTS.value,
     BlockKind.PLANNING.value,
+    # 2026-08-25: aula suspensa nao hospeda material. So entrou agora porque
+    # ate hoje "suspensao" engolia a aula vizinha (kind da linha nao lia o
+    # texto) e havia material GRAVADO em bloco suspenso (ES2 devops/kubernetes).
+    # Raiz corrigida e raio medido nos 5 cursos: 0 entries em bloco suspenso.
+    BlockKind.SUSPENDED.value,
 })
 
 
