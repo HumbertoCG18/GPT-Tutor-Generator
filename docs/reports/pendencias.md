@@ -6,7 +6,7 @@ trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) `
 (3) FASE 3 cobertura (11 erros, explain_entry um a um).
 **HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** — le primeiro. Substitui o de 20/08.
 ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25c): bloco **199/200** (conf-err 1 = azure) · unidade **190/191** (o erro
-= azure) · cobertura **44/57 F1 0,835** (47 era artefato de lixo no glossario; ver R9) · pinos **11** · subunidade **62/66** (IA 37/39 · SO 16/16 · TCC 9/11) · 8 raizes fechadas (secoes proprias). Tudo commitado nos
+= azure) · **unidade 191/191 (100%)** · conf-err **0** · cobertura **40/57 F1 0,811** (ver R9 e ES2) · pinos **11** · subunidade **88/94** (4 cursos com gold; ES2 26/28) (IA 37/39 · SO 16/16 · TCC 9/11) · 8 raizes fechadas (secoes proprias). Tudo commitado nos
 6 repos. O que falta para 100% no bloco NAO e codigo: 6 golds a revisar + 2 curadorias de card (SO) +
 5 roteiros do ES2 sem sinal no dado — tabela no handoff. Subunidade: sem gold; primeiro rotular.
 PUSH (as-of 2026-08-24): gerador `07c95dc`, MF, IA e TCC sincronizados com `origin`. **SO e ES2 sem
@@ -248,6 +248,38 @@ ja foi refutado, +1/57). So entao a **FASE 4** (exercicios, listas, provas antig
 PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
+
+## GOLD DE SUBUNIDADE DO ES2 + sidecar do ES2 + 2 golds de unidade/cobertura corrigidos (2026-08-26)
+
+**Gold:** `subunit_gt_ES2.csv`, 35 linhas, 28 scorable (u01 8, u02 21 + os 6 dos blocos 09/10, u03 0).
+Protocolo dos outros 3 (conteudo primeiro; zip sem markdown = card/irmao numerado). Rulings do user:
+- **Blocos 09 (05/06 "comunicacao assincrona") e 10 (12/06 "autenticacao/autorizacao") NAO sao u03 "Testes
+  de Software"** — nada de testes em nenhuma das 6 entries; e a continuacao dos labs de microsservicos =
+  **2.7 estudo de caso (u02)**. `gold_units_ES2` corrigido; os PINOS de curadoria que os prendiam em u03
+  (`manual_unit_slug`, gold antigo pela ordem do plano) trocados para u02. **Unidade 191/191.**
+- **Roteiros 2-8 cobrem u01 (arquitetura) E u02 (2.7)** — o gold de cobertura dizia so u01 e contradizia a
+  subunidade 2.7 recem-rotulada. `material_gt_ES2` +u02 em 12 roteiros; motor acerta os 7 que ja emitia
+  {card u01, texto u02}; os 5 pdf-roteiros que so tem `card u01` viram erro (mesma classe: o scorer de
+  texto nao alcanca u02 neles). ES2 cobertura 18 -> 14/19 pelo gold novo; total 44 -> 40/57.
+- `azure`: saiu de bloco-01 (disamb, confiante-errado) para bloco-08 (22/05, voto cacheado) — gold 09, mas
+  conf-err 0 pela 1a vez.
+
+**Sidecar `.glossary_curation.json` do ES2 (proposto-claude):** o plano diz so "Estudo de caso" para os
+labs; o lexico real (service discovery, name server, API gateway, circuit breaker, compose, filas,
+RabbitMQ, Auth0, Kubernetes/Docker/conteineres, monolito, SOA) entra em 1.3.3/1.3.4/1.5/2.6/2.7.
+Subunidade ES2 **12 -> 26/28** em memoria e em producao. Tres sinonimos foram MEDIDOS e removidos, cada um
+por um efeito colateral diferente (todos pegos em memoria antes de gravar):
+`Spring` (palavra do curso inteiro: puxou o bloco de 27/03 de u01 para u02 no DP), `microsservicos`/
+`microservicos` (idem: bloco 22-29/05 empatou e caiu em u01), `comunicacao entre microsservicos` (token
+"microsservicos" faz a regra `card` da cobertura reivindicar u02 para o card inteiro), `roteiro` (palavra
+de formato: deu texto aos zips e o scorer de unidade passou o gate com u02). **Criterio consolidado:
+sinonimo = vocabulario especifico do topico; palavra do curso inteiro, do card ou do formato nunca.**
+
+Respostas ao user: (a) o glossario JA e por subunidade (termos = topicos do plano); (b) o motor grava UMA
+subunidade; `gold_subunits_extra` e so regua (63/66 leniente x 62/66 estrito) — multi-subunidade nao se
+paga e nao seria "motor separado", seria o mesmo scorer devolvendo o 2o com margem; (c) sem LLM, o
+glossario = definicoes genericas (99/132) + sinonimos por sidecar curado a mao (~30 min/cadeira), e isso
+entrega subunidade 88/94.
 
 ## GLOSSARIO: como e gerado, e a evidencia que era lixo (2026-08-26, pedido do user)
 
