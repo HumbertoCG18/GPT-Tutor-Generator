@@ -1,3 +1,4 @@
+from src.builder.routing.motor import window_provider as wp
 from src.builder.routing.motor.contracts import MotorContext
 from src.builder.routing.motor.window_provider import (
     provider_manual,
@@ -273,3 +274,36 @@ class TestProviderTopic:
         ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
         win = provider_topic({"source_section": "Semana 10 - Revisão para P1 e Prova P1"}, ctx)
         assert "bloco-13b" in win
+
+
+# Identificador de trabalho (2026-08-26): "T2" do card casa "entrega t2" das sessoes,
+# em UNIAO com o topico (o card "Semana 3 - ... e Trabalho T1" precisa de [aula, entrega]).
+def _ctx_trabalhos():
+    return MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-03", "kind": "class", "period_start": "2026-03-11",
+                 "sessions": [{"date": "2026-03-11", "label": "minimizacao de funcoes recursivas parciais aula"}]},
+                {"id": "bloco-04", "kind": "deliverable", "period_start": "2026-03-20",
+                 "sessions": [{"date": "2026-03-20", "label": "t1 em aula trabalho"}]},
+                {"id": "bloco-21", "kind": "workshop", "period_start": "2026-05-29",
+                 "sessions": [{"date": "2026-05-29", "label": "oficina de problemas entrega t2 aula"}]},
+                {"id": "bloco-23", "kind": "deliverable", "period_start": "2026-06-05",
+                 "sessions": [{"date": "2026-06-05", "label": "complexidade de tempo classe np hard"}]},
+                {"id": "bloco-25", "kind": "deliverable", "period_start": "2026-06-12",
+                 "sessions": [{"date": "2026-06-12", "label": "oficina de problemas entrega t2 trabalho"}]}],
+        card_block_map={}, lessons_index={})
+
+
+def test_work_id_t2_do_card_casa_sessoes_entrega_t2():
+    win, prov = wp.resolve_window({"id": "3d-matching", "source_section": "Semana 14 - Apresentações T2"}, _ctx_trabalhos())
+    assert prov == "topic" and win == ["bloco-25"]  # bloco-21 (oficina) sai por never-hosts
+
+
+def test_work_id_em_uniao_com_topico():
+    win, prov = wp.resolve_window({"id": "t1-enunciado", "source_section": "Semana 3 - Operações de Minimização e Trabalho T1"}, _ctx_trabalhos())
+    assert prov == "topic" and win == ["bloco-03", "bloco-04"]
+
+
+def test_work_id_nao_casa_numero_solto_nem_pn():
+    assert wp._work_ids("Semana 14 - Apresentações T2") == {"t2"}
+    assert wp._work_ids("Trabalho TP1 e P1") == {"tp1"}
+    assert wp._work_ids("Aula 14") == set()

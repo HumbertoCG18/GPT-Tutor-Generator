@@ -18,6 +18,7 @@ Uso:
 """
 from __future__ import annotations
 
+import os
 import argparse
 import csv
 import json
@@ -44,6 +45,8 @@ from src.models.core import SubjectStore  # noqa: E402
 from src.models.tag_profile import build_learned_unit_boosts, load_tag_profile  # noqa: E402
 
 GITHUB_DIR = ROOT.parent
+if os.environ.get("TUTOR_REPOS_DIR"):  # harness em copia (ablacao rapida)
+    GITHUB_DIR = Path(os.environ["TUTOR_REPOS_DIR"])
 COURSES = {
     "MF": "Metodos-Formais-Tutor",
     "SO": "Sistemas-Operacionais-Tutor",

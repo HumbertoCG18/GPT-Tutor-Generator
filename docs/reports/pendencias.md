@@ -249,6 +249,43 @@ PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
 
+## MENOS HUMANO: 23 -> 13 decisoes de bloco; regra t1/t2; ablacao em 81 s (2026-08-26)
+
+**Pergunta do user:** "queria diminuir o humano". Cruzamento decisao a decisao (`scratch/redundancia.py`:
+cada pino / card manual x o que o motor nu faz nas entries cobertas, por uuid, contra o gold):
+23 decisoes humanas de bloco cobrindo 51 entries -> **7 redundantes** (motor nu acerta todas: MF cards
+"Especificacoes Indutivas e Recursivas" 10, "Provas por Inducao" 8, "Revisao - Logica e Especificacao" 7,
+"Exercicios de Revisao para Provas" 2; TCC "Semana 10", "Semana 13", "Semana 7"), **15 necessarias** em 3
+naturezas: regra geral pendente (TCC "Semana 14 - Apresentacoes T2" x5, "Semana 3 ... Trabalho T1"), ruido do
+voto LLM (MF pinos terminacao, exercicioscorrecaoterminacao, logicadehoare2, tiposindutivos — o desempate
+deterministico acerta, o voto sobrepoe; voto e liquido +31/-2, fica), convencao do professor (MF
+provasindutivas x3, SO sockets x2 + pthread + card "Introducao", IA prova-1-2024-02, TCC "Semana 12").
+
+**Regra t1/t2 (user: "Apresentacao + T2 nao seria sinal?").** "Apresentacoes" nao esta em linha nenhuma do
+cronograma; "t2" esta em DUAS (29/05 oficina "entrega t2", 12/06 entrega "entrega t2") e "t1" em 20/03.
+`provider_topic` descartava tokens < 3 chars nos dois lados (piso de `_topic_tokens` e `_toks`). Agora:
+identificador de trabalho (`(tp|t)\d{1,2}`) extraido do card e do texto CRU das sessoes
+(`_block_session_hay`), em UNIAO com o topico — "Semana 3 - Minimizacao e Trabalho T1" precisa de [aula,
+entrega], nao de janela-1 na entrega. A oficina de 29/05 sai por never-hosts -> janela-1 = 12/06. Curado:
+neutro (0 campos; cards manuais vinham antes). Nu: TCC 28 -> 34/36.
+
+**Cards apagados (MF 5 incl. "Bibliografia-Livros" vazio; TCC 5 = 3 redundantes + os 2 que a regra
+substitui).** Gate: regua identica 199/200 conf-err 0, 191/191, 40/57; sentinela so `temporal_block_method`
+(MF 15: janela-1/disamb -> llm; TCC 5: llm -> janela-1/prep-prova — TCC ficou MAIS deterministico); 2044
+passed. Trade-off dito ao user e aceito: nos 4 cards grandes do MF, "humano confiante" virou "LLM
+correto-mas-flagado" (banda media) em ~20 entries. Restam 13 decisoes humanas de bloco: 11 pinos + card SO
+"Introducao aos SO" + card TCC "Semana 12 - NP-completude".
+
+**Ablacao rapida (`scripts/ablacao_rapida.py`).** Copia dos 5 repos (robocopy incremental, sem .git/build),
+ablacao na copia, reprocess dos 5 em PARALELO, medicao pela copia (`TUTOR_REPOS_DIR` nos avaliadores;
+`TUTOR_REPOS_ORIG` faz o reprocess casar o perfil da disciplina pelo repo original — `find_by_repo_root` e
+por caminho). **12 min -> 81 s.** Gate `--curado`: copia reprocessada == original, 0 campos nos 5 (a 1a
+versao sem raw/staging/images reprovou: `image_curation` mudava em todos e o MF perdia 13 entries — por isso
+a copia e completa). Cache de votos nu persiste na copia (medida nua deterministica entre rodadas).
+
+**Motor nu agora: bloco 197/212 por uuid (93%), display 186/200, conf-err 3.** Erros restantes 15: ruido do
+voto 4 (MF), convencao 10, C 1 (aula-17 Cook-Levin). Proximo: holdout Computacao Grafica com zero curadoria.
+
 ## BALDE B ATACADO: prep-prova antes do voto em janela indireta; posting_date medido e descartado (2026-08-26)
 
 **Harness** `scripts/harness_balde_b.py` (repos ablacionados): para cada gold, janela/provider atual +

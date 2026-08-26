@@ -16,6 +16,7 @@ Deterministico: o residuo Gemini (enable_material_residual) NAO e ligado aqui.
 from __future__ import annotations
 
 import glob
+import os
 import json
 import shutil
 import sys
@@ -52,7 +53,12 @@ def _parse_argv(argv: list) -> tuple[list, list]:
 def _find_subject_profile(repo: Path, store):
     """Perfil do SubjectStore cujo repo_root resolve para o mesmo dir de `repo`.
     None se nao ha match (ou store vazio, ex.: sem subjects.json)."""
-    return store.find_by_repo_root(repo)
+    prof = store.find_by_repo_root(repo)
+    if prof is None and os.environ.get("TUTOR_REPOS_ORIG"):
+        # Harness em copia (ablacao rapida): a copia vive em outro diretorio, mas o
+        # perfil (feature_flags) e o do repo original de mesmo nome.
+        prof = store.find_by_repo_root(Path(os.environ["TUTOR_REPOS_ORIG"]) / Path(repo).name)
+    return prof
 
 
 def _merge_profile_flags(options: dict, profile) -> None:

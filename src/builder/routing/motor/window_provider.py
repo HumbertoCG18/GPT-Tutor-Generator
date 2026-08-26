@@ -209,6 +209,18 @@ def provider_ordinal(entry: dict, ctx: MotorContext) -> List[str]:
     return [ref] if ref else []
 
 
+# Identificador de TRABALHO no card e nas sessoes ("Semana 14 - Apresentacoes T2" <->
+# "oficina de problemas entrega t2"; "Trabalho T1" <-> "t1 em aula"). Tem 2 chars: o
+# piso 3 de _topic_tokens/_toks o descartava nos DOIS lados, e as 5 apresentacoes do
+# TCC iam ao llm-funil (gold = a 2a linha "entrega t2"). Assinatura propria, nos dois
+# lados, sobre o texto CRU (_block_session_hay). "pN" continua com o prep-prova.
+_WORK_ID_RE = re.compile(r"(?:^|[^a-z0-9])((?:tp|t)\d{1,2})(?![a-z0-9])")
+
+
+def _work_ids(text: str) -> set:
+    return set(_WORK_ID_RE.findall(normalize_match_text(str(text or ""))))
+
+
 def provider_topic(entry: dict, ctx: MotorContext) -> List[str]:
     """P4 — TÓPICO do card ↔ topic_text/sessions[].label.
 
@@ -222,12 +234,16 @@ def provider_topic(entry: dict, ctx: MotorContext) -> List[str]:
     sec = str(entry.get("source_section") or "")
     m = _SEMANA_TOPIC_RE.match(sec)
     tstems = _stems(_topic_tokens(m.group(1) if m else sec))
-    if not tstems:
+    wids = _work_ids(sec)
+    if not tstems and not wids:
         return []  # card só-ordinal: week-math PROIBIDO -> sem janela
     stems_by_block = _block_topic_stems(ctx)
     refs = []
     for b in ctx.blocks:
-        if tstems & stems_by_block.get(id(b), set()):
+        hit = bool(tstems & stems_by_block.get(id(b), set()))
+        if not hit and wids:
+            hit = bool(wids & _work_ids(_block_session_hay(b, ctx)))
+        if hit:
             ref = str(b.get("id") or "")
             if ref:
                 refs.append(ref)
