@@ -2,7 +2,7 @@
 
 last_updated: 2026-08-25 (FASE 2 + FASE 1 executadas; subunidade tem regua e alavanca medida).
 **FILA VIVA: secao `## FILA ACORDADA COM O USER (2026-08-24)` logo abaixo — le antes de escolher
-trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) `azure` = unico erro de bloco (pino, ou backfill do Moodle); (2) alavanca (iii) FEITA nos 3 cursos com gold; gerar o sidecar via LLM (1 chamada/unidade) e o backfill do Moodle (51 labels + datas, dry-run OK);
+trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) `azure` = unico erro de bloco (pino, ou backfill do Moodle); (2) alavanca (iii) FEITA nos 3 cursos com gold; gerar o sidecar via LLM (1 chamada/unidade) (backfill do Moodle FEITO);
 (3) FASE 3 cobertura (11 erros, explain_entry um a um).
 **HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** — le primeiro. Substitui o de 20/08.
 ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25c): bloco **199/200** (conf-err 1 = azure) · unidade **190/191** (o erro
@@ -277,12 +277,12 @@ vazio por design) e `aula-08` (heading proprio ecoa em MT, 41 x 21 — sinonimos
 compensam e custam cobertura); IA 2 EDA.
 - Licao: a alavanca (iii) e conteudo, e conteudo tambem regride. Gate = 3 eixos + diff campo a campo.
 
-### Backfill do Moodle — dry-run OK, nao gravado ainda
+### Backfill do Moodle — GRAVADO nos 5 (2026-08-26): 51 labels, datas so preenchidas, 0 mudanca de atribuicao
 A API TEM as entries: labels preencheria **51 das 56** vazias (5 sao URLs), `posting_date` so preenche
 (0 sobrescritas; unica mudanca TCC `3dm` 17/06 -> 02/07, mais perto do gold 03/07). ES2 `azure` = label
 "Instrucoes: cadastro Azure", postado 18/02 em lote: confirma tutorial de conta sem rota por data.
 ES2 `codigo.zip x7` na API = o "main.pdf" que o user descreveu (stash renomeia; casamento vai pelo
-`filename` original, unico). Gravar e reprocessar os 5 e o proximo ato.
+`filename` original, unico). Gravado (`migrate_signals --write`, `.apibak` descartado) e reprocessado: **0 mudanca** em bloco/unidade/subunidade/cobertura, 0 votos novos — `posting_date` nao alimenta provider de janela (so data-no-nome), e `moodle_label` entra no sinal limpo sem mover nada mensuravel hoje. `azure` segue sem rota: e tutorial de conta, postado em lote em 18/02; so pino.
 
 ## ALAVANCA (iii) EXECUTADA + R7 · glossario curado por sidecar; pino de unidade nao propaga (2026-08-25e)
 
