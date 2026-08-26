@@ -3,7 +3,7 @@
 last_updated: 2026-08-26 (balde A/B fechados, 7 golds corrigidos, R3 titulo-topico, t1/t2, ablacao rapida, humano 23 -> 6).
 **FILA VIVA: secao `## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
-**HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** (+ ADENDO CG) — le primeiro.
+**HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
 ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-26): bloco **199/200** conf-err **0** (o erro = ES2 `azure`, convencao) ·
 unidade **191/191 (100%)** · cobertura **40/57 F1 0,811** · subunidade **87/93** (4 cursos com gold) · **pinos 5** ·
 cards manuais **1** (TCC "Semana 12") · decisoes humanas de bloco **6** (eram 23) · suite **2047 passed**.
@@ -257,7 +257,10 @@ sentinela campo a campo contra `git show HEAD:manifest.json` (nao contra `.bak`)
 seguidos = 0 campos; R11) · para regra de motor: `scripts/ablacao_rapida.py` antes/depois (nu) e `--curado` (copia ==
 original). Nada avanca com regua pior em qualquer eixo. Restaurou tutor por git -> reprocessa (derivados fora do git).
 
-1. **HOLDOUT Computacao Grafica, zero curadoria** — a unica prova real de "cadeira nova nao cai". Pre-requisito
+1. **HOLDOUT Computacao Grafica, zero curadoria** — plano detalhado no handoff de 26/08 (4 passos: `site_snapshot.py`
+   com PDF via Edge headless e cronograma HTML -> SYLLABUS.md direto; links do Moodle importados e CLASSIFICADOS material
+   vs bibliografia/referencia/repositorio, ambiguos em manual-review; `build_course.py` CLI; gold + medida). Site verificado
+   26/08: HTML estatico, sem modal, cronograma UTF-16 em formato SARC, paginas de aula chegam pelo Moodle. Pre-requisito antigo
    (nao e codigo): baixar os PDFs do site do professor (`inf.pucrs.br/pinho/CG`; ver ADENDO do handoff — os PDFs
    dispensam o problema do `.htm`), criar o repo-tutor pela UI **sem nenhum pino/card/sidecar**, rotular o gold de
    bloco por uuid (~30 entries, protocolo dos outros). Medida = bloco por uuid; expectativa honesta **>= 90%** (os 5
