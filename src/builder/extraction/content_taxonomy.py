@@ -415,7 +415,17 @@ def _glossary_aliases_for_topic(topic_label: str, unit_title: str, glossary_term
         if unit_hint and unit_hint not in unit_norm and unit_norm not in unit_hint:
             continue
 
-        if term_norm == topic_norm or term_norm in topic_norm or topic_norm in term_norm:
+        # R8 (2026-08-26): termo NUMERADO do plano casa so pelo nucleo EXATO.
+        # Por contencao, "3.3 Algoritmos de escalonamento" (e seus sinonimos
+        # FCFS/SJF) entrava tambem em "Escalonamento" e os dois topicos
+        # empatavam; "2.3 Variacoes de Maquinas de Turing" virava alias de
+        # "Maquinas de Turing". Termo sem numeracao mantem a contencao.
+        core_norm = _normalize_match_text(_strip_topic_code(term_text))
+        if _extract_topic_code(term_text):
+            matched = core_norm == topic_norm
+        else:
+            matched = term_norm == topic_norm or term_norm in topic_norm or topic_norm in term_norm
+        if matched:
             for candidate in [term_text, *list(term.get("synonyms", []) or [])]:
                 candidate_text = _collapse_ws(candidate)
                 candidate_slug = slugify(candidate_text)

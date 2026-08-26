@@ -2,11 +2,11 @@
 
 last_updated: 2026-08-25 (FASE 2 + FASE 1 executadas; subunidade tem regua e alavanca medida).
 **FILA VIVA: secao `## FILA ACORDADA COM O USER (2026-08-24)` logo abaixo — le antes de escolher
-trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) `azure` = unico erro de bloco (pino, ou backfill do Moodle); (2) alavanca (iii) FEITA no IA; estender `.glossary_curation.json` a SO/TCC (subunidade 8/16 e 7/11) e gerar via LLM;
+trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) `azure` = unico erro de bloco (pino, ou backfill do Moodle); (2) alavanca (iii) FEITA nos 3 cursos com gold; gerar o sidecar via LLM (1 chamada/unidade) e o backfill do Moodle (51 labels + datas, dry-run OK);
 (3) FASE 3 cobertura (11 erros, explain_entry um a um).
 **HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** — le primeiro. Substitui o de 20/08.
 ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25c): bloco **199/200** (conf-err 1 = azure) · unidade **190/191** (o erro
-= azure) · cobertura **46/57 F1 0,847** · pinos **11** · subunidade **53/66** (IA 37/39 via glossario curado) · 7 raizes fechadas hoje (secoes proprias). Tudo commitado nos
+= azure) · cobertura **47/57 F1 0,876** · pinos **11** · subunidade **62/66** (IA 37/39 · SO 16/16 · TCC 9/11) · 8 raizes fechadas (secoes proprias). Tudo commitado nos
 6 repos. O que falta para 100% no bloco NAO e codigo: 6 golds a revisar + 2 curadorias de card (SO) +
 5 roteiros do ES2 sem sinal no dado — tabela no handoff. Subunidade: sem gold; primeiro rotular.
 PUSH (as-of 2026-08-24): gerador `07c95dc`, MF, IA e TCC sincronizados com `origin`. **SO e ES2 sem
@@ -248,6 +248,41 @@ ja foi refutado, +1/57). So entao a **FASE 4** (exercicios, listas, provas antig
 PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
+
+## (iii) em SO e TCC + R8 · glossario casava topico por CONTENCAO (2026-08-26)
+
+**Subunidade 53 -> 62/66** (SO 8 -> 16/16, TCC 7 -> 9/11, IA 37/39) · **cobertura 46 -> 47/57 F1 0,876** ·
+bloco 199/200 e unidade 190/191 identicos · pinos 11 · 0 votos novos · timelines dos 5 identicos.
+
+### R8 — a raiz atras dos empates do SO e do TCC
+`_glossary_aliases_for_topic` casava termo do glossario com topico por CONTENCAO: "3.3 Algoritmos de
+escalonamento" contem "escalonamento", logo o termo E os sinonimos curados (FCFS, SJF...) entravam TAMBEM
+em "Escalonamento" — os dois empatavam (51,9 x 51,4) e o primeiro da lista vencia. TCC idem ("2.3
+Variacoes de MT" e "2.5 MT Universais" viravam alias de "Maquinas de Turing"). Fix: termo NUMERADO
+casa so pelo nucleo EXATO; termo sem numeracao mantem a contencao. Aliases: SO 104 -> 91, TCC 78 -> 73,
+ES2 -1, MF/IA iguais. `test_glossary_alias_exato.py` (2). O "desempate pelo label mais longo" no
+seletor de heading foi medido antes e REFUTADO (0 efeito): o mecanismo era o glossario, nao o seletor.
+
+### Sidecars SO/TCC — e a segunda regressao pega pelo gate de 3 eixos
+Primeira versao dos sinonimos derrubou a COBERTURA 46 -> 42/57 (TCC 3/3 -> 1/3): a regra `card` da
+cobertura casa nome do card contra aliases por contencao/token>=10, e a regra `unidade-atribuida` usa
+o scorer de unidade do texto — ambos consomem os mesmos aliases. Sinonimo generico ou compartilhado
+com outra unidade envenena: "processo"/"estruturas de controle" (card de u01) puxavam u02 no SO;
+"decidivel"/"decidibilidade" e "Church-Turing"/"calculo lambda" (u02) casavam o texto de aulas de u03
+no TCC (Halting, Entscheidungsproblem citam a tese legitimamente). Criterio que ficou: **sinonimo =
+vocabulario ESPECIFICO do topico** (PCB, round-robin, Turing-decidivel, diagonalizacao de Cantor),
+nunca palavra que apareca em card ou texto de outra unidade. Podado e remedido em memoria com harness
+de cobertura (`cov.py`, reproduz SO/TCC da regua) ANTES do reprocess. Restam: TCC `aula-06` (gold
+vazio por design) e `aula-08` (heading proprio ecoa em MT, 41 x 21 — sinonimos de Church-Turing nao
+compensam e custam cobertura); IA 2 EDA.
+- Licao: a alavanca (iii) e conteudo, e conteudo tambem regride. Gate = 3 eixos + diff campo a campo.
+
+### Backfill do Moodle — dry-run OK, nao gravado ainda
+A API TEM as entries: labels preencheria **51 das 56** vazias (5 sao URLs), `posting_date` so preenche
+(0 sobrescritas; unica mudanca TCC `3dm` 17/06 -> 02/07, mais perto do gold 03/07). ES2 `azure` = label
+"Instrucoes: cadastro Azure", postado 18/02 em lote: confirma tutorial de conta sem rota por data.
+ES2 `codigo.zip x7` na API = o "main.pdf" que o user descreveu (stash renomeia; casamento vai pelo
+`filename` original, unico). Gravar e reprocessar os 5 e o proximo ato.
 
 ## ALAVANCA (iii) EXECUTADA + R7 · glossario curado por sidecar; pino de unidade nao propaga (2026-08-25e)
 
