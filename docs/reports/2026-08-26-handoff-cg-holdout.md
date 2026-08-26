@@ -86,6 +86,20 @@ seções; `links.json` (93 itens, 0 em review), `raw/moodle/{contents.json,pages
 referência; `.xlsx` (2) é extensão desconhecida no import (ignorado em silêncio); páginas repetidas em 2 seções viram
 2 PDFs (dedup por hash do HTML antes de imprimir?); índices de vídeo: só IDs/títulos ou transcrições depois.
 
+## 2c. Passos 1–3 executados (26/08) — o que já existe e o que falta para o build
+
+- **Passo 1** `scripts/site_snapshot.py` (commit `5582e98`): site → `raw/site/` + PDFs (Edge headless) + `site_links.json`.
+- **Passo 2** `scripts/moodle_pull.py` (`420c37c`): curso 95106 inteiro pela API → **stash em
+  `C:/Users/Humberto/Desktop/Moodle/computacao-grafica`** (75 arquivos, 21 cards; padrão dos outros cursos) e
+  `…/computacao-grafica-raw/` (contents.json, pages/, labels.json, raw/site, links.json, manual-review).
+- **Passo 3** `scripts/build_course.py` (`3cc1baa` + fixture): perfil "Computação Gráfica" já gravado no `subjects.json`
+  (syllabus = 38 linhas do `Cronograma2026-2.pdf` por geometria; plano = 9 unidades via pymupdf4llm; flags
+  `use_anchor_engine`/`use_llm_voter`; backend datalab/balanced, modo high_fidelity, `image_description_source=datalab`).
+  `--dry-run`: 73 entries em 21 cards; 2 `.xlsx` ignorados. Repo alvo: `C:/Users/Humberto/Documents/GitHub/Computacao-Grafica-Tutor`.
+- **Falta (decisão do user):** rodar o build real (Datalab pago, 73 arquivos com muitas figuras); depois
+  `reprocess_assignments.py` + gold de bloco (~30) + `ablacao_rapida.py --repos CG` (adicionar CG ao `REPO`).
+  Pendências do passo 2 continuam (Resolução de Prova, `.xlsx`, páginas duplicadas em 2 seções, índices de vídeo).
+
 ## 3. Decisão de rota (user, 26/08): PDF como desbloqueio, HTML direto como regime permanente
 
 **Rota escolhida para o holdout: snapshot → PDF (Edge headless) → stash → Datalab → pipeline de sempre.** Por quê:
