@@ -81,12 +81,14 @@ def teaching_plan_md(pdf_path: Path) -> str:
 
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--name", required=True)
-    ap.add_argument("--repo", required=True)
-    ap.add_argument("--stash", required=True)
+    ap.add_argument("--name")
+    ap.add_argument("--repo")
+    ap.add_argument("--stash")
     ap.add_argument("--syllabus-pdf")
     ap.add_argument("--syllabus-md", help="tabela SARC ja em markdown (alternativa ao PDF)")
     ap.add_argument("--teaching-plan-pdf")
+    ap.add_argument("--teaching-plan-md", help="plano ja em markdown (alternativa ao PDF)")
+    ap.add_argument("--args-json", help="JSON UTF-8 com os mesmos parametros (evita acentos corrompidos por Start-Process/cmd)")
     ap.add_argument("--professor", default="")
     ap.add_argument("--schedule", default="")
     ap.add_argument("--semester", default="")
@@ -98,6 +100,10 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--flags", default="use_anchor_engine,use_llm_voter")
     ap.add_argument("--dry-run", action="store_true", help="grava o perfil e lista as entries; NAO roda o build")
     args = ap.parse_args(argv)
+    if args.args_json:
+        import json
+        for k, v in json.loads(Path(args.args_json).read_text(encoding="utf-8")).items():
+            setattr(args, k.replace("-", "_"), v)
 
     from src.builder.core.stash_import import build_stash_entries, scan_stash_cards
     from src.builder.engine import RepoBuilder
@@ -106,6 +112,8 @@ def main(argv: list[str]) -> int:
     from src.ui.theme import AppConfig
     from src.utils.helpers import DEFAULT_OCR_LANGUAGE, ensure_builtin_profiles, slugify
 
+    if not (args.name and args.repo and args.stash):
+        print("faltam --name/--repo/--stash (ou --args-json)"); return 2
     repo = Path(args.repo).resolve()
     stash = Path(args.stash).resolve()
     if not stash.is_dir():
@@ -127,7 +135,9 @@ def main(argv: list[str]) -> int:
         sp.syllabus = Path(args.syllabus_md).read_text(encoding="utf-8")
     elif args.syllabus_pdf:
         sp.syllabus = sarc_pdf_to_table(Path(args.syllabus_pdf))
-    if args.teaching_plan_pdf:
+    if args.teaching_plan_md:
+        sp.teaching_plan = Path(args.teaching_plan_md).read_text(encoding="utf-8")
+    elif args.teaching_plan_pdf:
         sp.teaching_plan = teaching_plan_md(Path(args.teaching_plan_pdf))
     store.add(sp)
     n_rows = max(0, len(sp.syllabus.splitlines()) - 2)
