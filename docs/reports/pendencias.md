@@ -257,7 +257,9 @@ sentinela campo a campo contra `git show HEAD:manifest.json` (nao contra `.bak`)
 seguidos = 0 campos; R11) · para regra de motor: `scripts/ablacao_rapida.py` antes/depois (nu) e `--curado` (copia ==
 original). Nada avanca com regua pior em qualquer eixo. Restaurou tutor por git -> reprocessa (derivados fora do git).
 
-1. **HOLDOUT Computacao Grafica, zero curadoria** — plano detalhado no handoff de 26/08 (4 passos: `site_snapshot.py`
+1. **HOLDOUT Computacao Grafica, zero curadoria** — **passos 1-3 EXECUTADOS 26/08** (`site_snapshot.py`, `moodle_pull.py`,
+   `build_course.py`; stash em Desktop/Moodle/computacao-grafica, perfil gravado, 73 entries em dry-run). FALTA: build real
+   (Datalab pago) -> reprocess -> gold de bloco -> `ablacao_rapida --repos CG`. Plano detalhado no handoff de 26/08 (4 passos: `site_snapshot.py`
    com PDF via Edge headless e cronograma HTML -> SYLLABUS.md direto; links do Moodle importados e CLASSIFICADOS material
    vs bibliografia/referencia/repositorio, ambiguos em manual-review; `build_course.py` CLI; gold + medida). Site verificado
    26/08: HTML estatico, sem modal, cronograma UTF-16 em formato SARC, paginas de aula chegam pelo Moodle. Pre-requisito antigo
