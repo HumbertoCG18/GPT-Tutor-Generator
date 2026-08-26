@@ -2,13 +2,13 @@
 
 last_updated: 2026-08-25 (FASE 2 + FASE 1 executadas; subunidade tem regua e alavanca medida).
 **FILA VIVA: secao `## FILA ACORDADA COM O USER (2026-08-24)` logo abaixo — le antes de escolher
-trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) user decide os 8 erros
-de bloco restantes (4 listas + 3 exemplo-threads + azure: pino ou aceitar); (2) implementar a
+trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) user decide os 4 erros
+de bloco restantes (3 exemplo-threads + azure: pino ou aceitar); (2) implementar a
 alavanca (iii) da subunidade — glossario com nomes de algoritmo por topico (medido 4->37/39 no IA);
 (3) FASE 3 cobertura (11 erros, explain_entry um a um).
 **HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** — le primeiro. Substitui o de 20/08.
-ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25): bloco **192/200** (conf-err 1 = azure) · unidade **184/190** (os 6
-erros = os de bloco) · cobertura **46/57 F1 0,847** · pinos **11** · subunidade **19/66** (gold novo) · LLM 53 votos + 27 funil + 8 irmao-card. Tudo commitado nos
+ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25b): bloco **196/200** (conf-err 1 = azure) · unidade **186/190** (os 4
+erros = os de bloco) · cobertura **46/57 F1 0,847** · pinos **11** · subunidade **19/66** (gold novo) · LLM 53 votos + 23 funil + 8 irmao-card + 4 prep-prova. Tudo commitado nos
 6 repos. O que falta para 100% no bloco NAO e codigo: 6 golds a revisar + 2 curadorias de card (SO) +
 5 roteiros do ES2 sem sinal no dado — tabela no handoff. Subunidade: sem gold; primeiro rotular.
 PUSH (as-of 2026-08-24): gerador `07c95dc`, MF, IA e TCC sincronizados com `origin`. **SO e ES2 sem
@@ -282,7 +282,30 @@ Gate: **bloco 186 -> 192/200** (conf-err 1: `azure`) · **unidade 178 -> 184/190
   zero mudanca fora do ES2. So entries sem texto, em escopo, sem pino e sem due; irmaos com texto que
   discordam nao decidem.
 
-### Os 8 erros restantes — nenhum e codigo, todos decisao do user
+### Regra `prep-prova` — remedicao pedida pelo user (2026-08-25b): 6/7 -> 7/7, bloco 192 -> 196
+A "revisao antes da prova" tinha sido REFUTADA em 4/8 com golds inconsistentes (SO tinha lista-p1 na
+aula antes e lista-p2 no dia da prova). Com a convencao do user aplicada ao gold, remedida nos 5
+cursos: **"lista/revisao pN -> ultimo bloco hospedavel antes da N-esima prova PRINCIPAL"** da
+**7/7** (MF revisao-p1, SO x4, ES2 revisao-p1, TCC aula-16), desde que (a) substituicao/entrega nao
+contem como prova principal e (b) `suspended` nao hospede — MF bloco-08 ("suspensao") fica entre a
+revisao (07, gold) e a P1. Implementada em `motor/anchor_engine.py::resolve_exam_prep`, metodo
+`prep-prova`, **so no caminho SEM janela** (card generico "Informacoes Gerais" -> era llm-funil) e
+**nunca para a propria prova/trabalho** (`lexical=False`; a prova antiga do IA `prova-1-2024-02`
+iria para o bloco errado). Card datado continua decidindo antes. Reprocess do SO: exatamente as 4
+listas mudaram (llm-funil -> prep-prova), zero efeito colateral. Testes em
+`tests/test_motor_anchor_engine.py` (5). **Nao e regra por categoria:** o gatilho e o NOME (pN),
+a estrutura e o cronograma (assessments).
+- [HIGIENE] `suspended` fora de `NEVER_HOSTS_MATERIAL_KINDS`. Raio medido: MF 2 blocos (1 entry com
+  suspended na janela), ES2 1 bloco (7 na janela) e **`devops`/`kubernetes` GRAVADOS no bloco
+  suspenso 11 do ES2**. Mexer no NEVER muda janelas -> votos novos. Deixado local a regra por ora.
+
+### Os 4 erros restantes — nenhum e codigo, todos decisao do user
+| entries | gold | motor | por que | 100% exige |
+|---|---|---|---|---|
+| SO `exemplo-threads-em-c` x3 | 04 | 03 (llm-funil) | o LLM votava 04 na rodada anterior; a janela mudou, o cache invalidou, a rodada nova votou 03. Codigo `.c` sem sinal deterministico | 3 pinos |
+| ES2 `azure` | 09 | 01 (disamb, conf-err) | PDF de 877k chars sobre cloud; nada o liga a 05/06 | 1 pino ou dado |
+
+#### (historico) os 8 de antes da regra prep-prova
 | entries | gold | motor | por que | 100% exige |
 |---|---|---|---|---|
 | SO `lista-p1` + gabarito, `lista-p2`, `exercicios-p2` (3 pts) | aula antes da prova | dia da prova | convencao adotada no gold; motor sem regra (medida 4/8 antes, com golds inconsistentes) | remedir "lista antes da prova" com golds consistentes; senao 4 pinos |

@@ -254,3 +254,51 @@ def test_trabalho_com_janela_multipla_nao_usa_token_de_conteudo():
     voter = _FakeVoter("bloco-04")
     d = ae.AnchorEngine(voter=voter).resolve_unscoped(entry, ctx, md, lexical=False)
     assert d.block_ref == "bloco-04" and d.method == "llm" and d.window == ["bloco-03", "bloco-04"]
+
+
+# prep-prova (2026-08-25): "lista/revisao pN" sem janela -> ultimo bloco hospedavel
+# antes da N-esima prova PRINCIPAL (substituicao/entrega nao contam; suspended,
+# feriado, atendimento e a propria prova nao hospedam). Gold: 7/7 nos 5 cursos.
+def _ctx_provas():
+    return MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-01", "kind": "class", "period_start": "2026-03-02"},
+                {"id": "bloco-02", "kind": "review", "period_start": "2026-04-15"},
+                {"id": "bloco-03", "kind": "suspended", "period_start": "2026-04-20", "topic_text": "suspensao"},
+                {"id": "bloco-04", "kind": "assessment", "period_start": "2026-04-22"},
+                {"id": "bloco-05", "kind": "class", "period_start": "2026-06-16"},
+                {"id": "bloco-06", "kind": "office_hours", "period_start": "2026-06-23"},
+                {"id": "bloco-07", "kind": "assessment", "period_start": "2026-06-25"},
+                {"id": "bloco-08", "kind": "assessment", "period_start": "2026-06-30", "topic_text": "substituicao"}],
+        card_block_map={}, lessons_index={})
+
+
+def test_prep_prova_p1_pula_suspended_e_para_na_revisao():
+    d = ae.resolve_exam_prep({"id": "revisao-p1", "category": "listas"}, _ctx_provas())
+    assert d is not None and d.block_ref == "bloco-02" and d.method == "prep-prova"
+
+
+def test_prep_prova_p2_ignora_substituicao_e_atendimento():
+    d = ae.resolve_exam_prep({"id": "lista-exercicios-p2", "category": "listas",
+                              "source_section": "Informações Gerais"}, _ctx_provas())
+    assert d is not None and d.block_ref == "bloco-05"
+
+
+def test_prep_prova_sem_cue_ou_prova_inexistente_devolve_none():
+    assert ae.resolve_exam_prep({"id": "exercicios", "category": "listas"}, _ctx_provas()) is None
+    assert ae.resolve_exam_prep({"id": "lista-p3", "category": "listas"}, _ctx_provas()) is None
+
+
+def test_resolve_sem_janela_tenta_prep_prova_antes_do_funil(monkeypatch):
+    monkeypatch.setattr(ae, "resolve_window", lambda e, c: ([], ""))
+    voter = _FakeVoter("bloco-01")     # o funil votaria 01; a regra decide antes
+    d = ae.AnchorEngine(voter=voter).resolve({"id": "lista-p1", "category": "listas"}, _ctx_provas())
+    assert d is not None and d.method == "prep-prova" and d.block_ref == "bloco-02"
+
+
+def test_prep_prova_nao_se_aplica_a_propria_prova(monkeypatch):
+    """provas/trabalhos sem due chegam aqui com lexical=False: a prova antiga do
+    IA (`prova-1-2024-02`, gold no TDE) nao e preparacao — cai no funil."""
+    monkeypatch.setattr(ae, "resolve_window", lambda e, c: ([], ""))
+    d = ae.AnchorEngine(voter=None).resolve_unscoped(
+        {"id": "prova-1-2024-02", "category": "provas"}, _ctx_provas(), lexical=False)
+    assert d is None

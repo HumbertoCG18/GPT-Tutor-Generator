@@ -5,8 +5,10 @@ TIER 0 (dup), TIER 1 (pino manual), janela-de-prazo real (assign_due) e TIER 3
 """
 from __future__ import annotations
 
+import re
 from typing import Optional, Set
 
+from src.builder.timeline.kinds import NEVER_HOSTS_MATERIAL_KINDS
 from src.builder.routing.motor.contracts import AnchorDecision, MotorContext, LlmVoterProtocol
 from src.builder.routing.motor.window_provider import resolve_window, drop_never_hosts
 from src.builder.routing.motor.disambiguator import disambiguate
@@ -57,6 +59,56 @@ def resolve_generic_reference(entry: dict, ctx: MotorContext) -> Optional[Anchor
     ref = str(first.get("id"))
     return AnchorDecision(block_ref=ref, conf=0.0, band="media", flag=False,
                           provider="ref-generica", method="ref-generica", window=[ref])
+
+
+# "p1" / "prova 2" / "revisao p1" / "revisão para P1" -> N
+_EXAM_CUE = re.compile(r"(?:^|[^a-z])(?:p\s?-?(\d)|prova\s?-?(\d)|revis[aã]o[- ]?(?:para[- ]?)?(?:a[- ]?)?p(\d))", re.I)
+# Nao hospedam preparacao de prova: kinds administrativos + a prova + aula suspensa
+# (MF bloco-08 "suspensao" fica ENTRE a revisao e a P1; `suspended` ainda nao esta
+# em NEVER_HOSTS por causa do raio: ES2 `devops`/`kubernetes` estao gravados num
+# bloco suspenso — higiene a parte).
+_NOT_PREP_HOSTS = frozenset(NEVER_HOSTS_MATERIAL_KINDS) | {"assessment", "suspended"}
+_NOT_MAIN_EXAM = ("substitui", "entrega", "trabalho", "recupera")
+
+
+def _exam_number(entry: dict) -> int:
+    for text in (entry.get("id"), entry.get("title"), entry.get("source_section")):
+        m = _EXAM_CUE.search(str(text or ""))
+        if m:
+            return int(next(g for g in m.groups() if g))
+    return 0
+
+
+def resolve_exam_prep(entry: dict, ctx: MotorContext) -> Optional[AnchorDecision]:
+    """Preparacao de prova (2026-08-25): "lista/revisao pN" SEM janela -> ultimo
+    bloco hospedavel antes da N-esima prova PRINCIPAL.
+
+    Convencao do user ("essas listas preparam o aluno para a prova, e sempre
+    uma aula antes"), aplicada ao gold e medida nos 5 cursos: 7/7 (MF revisao-p1,
+    SO lista-p1/p2 + gabarito + exercicios-p2, ES2 revisao-p1, TCC aula-16).
+    Substituicao/entrega nao contam como prova principal. So entra onde a
+    cascata nao tem janela (card generico "Informacoes Gerais" -> era llm-funil);
+    card datado continua decidindo antes."""
+    n = _exam_number(entry)
+    if n <= 0:
+        return None
+    mains = [b for b in ctx.blocks if str(b.get("kind") or "") == "assessment"
+             and not any(w in str(b.get("topic_text") or "").lower() for w in _NOT_MAIN_EXAM)]
+    if n > len(mains):
+        return None
+    target = mains[n - 1]
+    prev = None
+    for b in ctx.blocks:
+        if b is target:
+            break
+        if str(b.get("kind") or "") in _NOT_PREP_HOSTS or not b.get("id"):
+            continue
+        prev = b
+    if prev is None:
+        return None
+    ref = str(prev.get("id"))
+    return AnchorDecision(block_ref=ref, conf=0.0, band="media", flag=False,
+                          provider="prep-prova", method="prep-prova", window=[ref])
 
 
 class AnchorEngine:
@@ -114,7 +166,10 @@ class AnchorEngine:
         janela, nunca o token."""
         window, provider = resolve_window(entry, ctx)
         if not window:
-            return self.resolve_funnel(entry, ctx, markdown)  # sem janela -> llm-funil ou None
+            # sem janela -> preparacao de prova (deterministico; nunca para a
+            # PROPRIA prova/trabalho, lexical=False) -> llm-funil ou None
+            prep = resolve_exam_prep(entry, ctx) if lexical else None
+            return prep or self.resolve_funnel(entry, ctx, markdown)
         if not lexical and len(window) > 1:
             if self._voter is None:
                 return None
