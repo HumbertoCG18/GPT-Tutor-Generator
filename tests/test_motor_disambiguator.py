@@ -289,3 +289,35 @@ def test_trabalho_nao_e_token_de_assunto():
     """ES2 `kubernetes` ia sozinho para "Entrega trabalho final" pelo token
     "trabalho" — nome da categoria, nao do assunto."""
     assert "trabalho" not in entry_tokens({"title": "Kubernetes trabalho final"})
+
+
+# R3 titulo-topico (2026-08-26): titulo/rotulo contem TODOS os tokens do topico de
+# exatamente 1 bloco da janela -> escolha confiante, sem voto.
+def _ctx_hoare():
+    return MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-10", "kind": "class", "period_start": "2026-04-27", "primary_topic_label": "Lógica de Hoare",
+                 "sessions": [{"date": "2026-04-27", "label": "logica de hoare aula"}]},
+                {"id": "bloco-11", "kind": "deliverable", "period_start": "2026-05-06", "primary_topic_label": "Correção Parcial e Total",
+                 "sessions": [{"date": "2026-05-06", "label": "correcao parcial e total"}]}],
+        card_block_map={}, lessons_index={})
+
+
+def test_titulo_topico_escolhe_bloco_nomeado_sem_voto():
+    e = {"id": "logicadehoare2", "title": "LogicaDeHoare2", "moodle_label": "Lógica de Hoare (parte 2)"}
+    d = disambiguate(e, ["bloco-10", "bloco-11"], _ctx_hoare(), "correcao parcial total invariantes terminacao " * 20)
+    assert d.block_ref == "bloco-10" and d.method == "titulo-topico" and d.flag is False
+
+
+def test_titulo_topico_ambiguo_cai_no_desempate():
+    e = {"id": "x", "title": "Lógica de Hoare: correção parcial e total"}
+    d = disambiguate(e, ["bloco-10", "bloco-11"], _ctx_hoare(), "")
+    assert d.method != "titulo-topico"
+
+
+def test_titulo_topico_ignora_topico_so_de_enchimento():
+    ctx = MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-01", "kind": "class", "period_start": "2026-03-02", "primary_topic_label": "Introdução", "sessions": []},
+                {"id": "bloco-02", "kind": "class", "period_start": "2026-03-09", "primary_topic_label": "Processos", "sessions": []}],
+        card_block_map={}, lessons_index={})
+    d = disambiguate({"id": "y", "title": "Introdução aos sistemas"}, ["bloco-01", "bloco-02"], ctx, "")
+    assert d.method != "titulo-topico"

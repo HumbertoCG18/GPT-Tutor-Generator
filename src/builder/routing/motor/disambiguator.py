@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import math
 import re
-from typing import List
+from typing import Optional, List
 
 from src.builder.text.normalize import normalize_match_text
 from src.builder.routing.motor.contracts import MotorContext, AnchorDecision
@@ -157,6 +157,26 @@ def _gated_window1_decision(entry: dict, block: dict, ctx: MotorContext,
                           method="janela-1", window=win)
 
 
+# R3 "titulo-topico" (2026-08-26): o professor nomeia o arquivo pelo TOPICO da aula
+# ("Logica de Hoare (parte 2)" <-> bloco "Logica de Hoare"). Se titulo+rotulo contem
+# TODOS os tokens do topico de exatamente 1 bloco da janela, e escolha confiante — sem
+# voto. Medido nos 5 (nu com markdown + curado): +1 (MF hoare2, que o voto punha no
+# bloco vizinho), 0 regressoes, 5 votos de LLM a menos onde o lexico ja acertava.
+_TOPIC_FILLER = frozenset({"introducao", "conceitos", "exercicios", "exercicio", "revisao", "aula", "parte"})
+
+
+def _block_named_in_title(entry: dict, blocks: List[dict]) -> Optional[dict]:
+    named = _toks(str(entry.get("title") or "") + " " + _moodle_label_text(entry))
+    if not named:
+        return None
+    hits = []
+    for b in blocks:
+        topic = _toks(str(b.get("primary_topic_label") or "")) - _TOPIC_FILLER
+        if topic and topic <= named:
+            hits.append(b)
+    return hits[0] if len(hits) == 1 else None
+
+
 def disambiguate(entry: dict, window: List[str], ctx: MotorContext,
                  markdown: str = "", provider: str = "") -> AnchorDecision:
     win = list(window or [])
@@ -174,6 +194,12 @@ def disambiguate(entry: dict, window: List[str], ctx: MotorContext,
         ref = str(blocks[0].get("id") or blocks[0].get("block_uuid") or win[0])
         return AnchorDecision(block_ref=ref, conf=1.0, band="alta", flag=False,
                               method="janela-1", window=win)
+
+    named = _block_named_in_title(entry, blocks)
+    if named is not None:
+        ref = str(named.get("id") or named.get("block_uuid") or "")
+        return AnchorDecision(block_ref=ref, conf=1.0, band="alta", flag=False,
+                              method="titulo-topico", window=win)
 
     mat = entry_tokens(entry, markdown)
     sigs = [_block_signature(b, ctx) for b in blocks]
