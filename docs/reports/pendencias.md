@@ -249,6 +249,43 @@ PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
 
+## BALDE A ATACADO: corte de bloco pela CABECA da linha do cronograma — SO sem boundary_dates (2026-08-26)
+
+**Correcao do diagnostico anterior.** Eu tinha nomeado a "bola de neve" (`block_tokens` = uniao acumulada)
+como raiz. O log linha a linha mostrou que nao: 17/03 -> 19/03 compartilham 3 tokens entre si
+(`processos, chamadas, sistema`) — overlap de sacola de tokens, com ou sem acumulo, NUNCA separa esses
+dois. O que separa e a cabeca da linha: "Estruturas dos SO, processos, chamadas" vs "Gerencia do
+processador, processos, chamadas, escalonamento"; e 14/04 "Especificacao TP1; Gerencia...". O `content`
+junta as colunas do SYLLABUS com espaco e `_timeline_core_text` so cortava em `:`/` - `, nao em `,`/`;`.
+
+**Regra (geral, sem nada de curso):** `_timeline_row_head` = 1o segmento antes de `: ; ,` ou ` - `.
+Cabecas com tokens especificos disjuntos cortam o bloco — salvo se a cabeca nova ja aparece no texto da
+linha anterior (continuacao anunciada: TCC 15/05 "Classes de Problemas; Complexidade de Tempo vs. Espaco;
+..." -> 20/05 "Complexidade de Tempo: Classes P e NP" fica no mesmo bloco; sem a excecao o bloco-19 do TCC
+partia e 3 golds sumiam). Linha sem separador cai na regra de overlap de antes (10/03 "Historico e
+evolucao dos SO" continua fundindo com 12/03 — o gold tambem funde).
+
+**Gate:** harness em memoria com `load_boundary_dates` neutralizado: **5/5 cursos com estrutura identica
+a curada** (SO 26 blocos com cortes em 19/03 e 14/04 sem pino). `boundary_dates` removido da curadoria do
+SO (pinos de estrutura 2 -> 0); reprocess do SO = 0 campos vs HEAD; eval 38/38. Testes de boundary
+reescritos (eram a caracterizacao do defeito: "sem boundary funde em 1") + caso TCC. 2037 passed. Regua
+curada intacta: 199/200 conf-err 0, 191/191, 40/57, 88/94.
+
+**Ablacao re-medida (motor nu, zero curadoria):**
+
+| eixo | nu antes | nu agora |
+|---|---|---|
+| bloco (display) | 155/200, conf-err 21 | **179/200, conf-err 5** |
+| bloco por uuid | 179/212 (SO 26/39, 12 SUMIU) | **188/212** (SO 35/39, 0 SUMIU) |
+| unidade | 124/191 (SO 20/37) | **131/191** (SO 27/37) — unidade segue bloco |
+| cobertura | 34/57 | 34/57 |
+
+Sobram no SO nu 4, todos ja classificados C/D: biblioteca-pthread (card "Threads" -> bloco 04; gold 03 e
+convencao), definicao-e-historico (ambiguo), sockets x2 (convencao). Balde A fechado: 12 -> 3 (os 3 que
+ficam nao eram segmentacao, eram convencao escondida atras do SUMIU). Motor nu: 84% -> **89% por uuid**.
+Proximo: balde B (7 erros, prioridade da cascata: data > ordinal, prep-prova antes do voto LLM, topico
+exato do bloco antes do LLM).
+
 ## OS 33 ERROS DO MOTOR NU, UM A UM — onde esta o teto de 84% (2026-08-26)
 
 Pergunta do user: "como chegar a 95% no motor cru? qual o gargalo?". Ablacao reaberta so para listar os 33
