@@ -249,6 +249,41 @@ PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
 
+## BALDE B ATACADO: prep-prova antes do voto em janela indireta; posting_date medido e descartado (2026-08-26)
+
+**Harness** `scripts/harness_balde_b.py` (repos ablacionados): para cada gold, janela/provider atual +
+desempate SEM LLM + 3 regras candidatas, contadas em todos os golds dos 5 (nao so nas 7 do balde).
+
+**O que o harness mostrou antes de qualquer codigo:**
+- `posting_date` NAO e provider do motor ("data" = DD.MM no NOME). E nao deve virar: a data modal e a
+  carga inicial (MF 46/66 em 18/02, SO 33/39, IA 45/59, ES2 22/35); a nao-modal vem em **mini-lotes**
+  (MF 11/05 = hoare+invariantes+terminacao; ES2 05/06 = 7 roteiros com gold em 4 blocos) e em
+  **postagem pos-bloco** (MF exercicios-arrays 08/06, gold = bloco de 13-25/05). Medido: data unica
+  +1/-0 (IA k-nn, que o LLM ja acertava); tolerancia 2 +2/-2. **Descartado.**
+- O voto LLM e liquido POSITIVO no nu: det✗->nu✓ MF 9, SO 5, IA 5, ES2 12; det✓->nu✗ so 2 (MF
+  terminacao, exercicioscorrecaoterminacao). Nao se mexe no voto por 2 casos.
+- `hoare2`: "det confiante" era artefato do harness sem markdown; com o texto dos slides fica flagado
+  -> LLM -> 11. Ruido do voto. Vai para C.
+- IA `prova-1-2024-02`: prep-prova daria bloco-11 (aula 11/05, ultimo hospedavel antes da P1); gold 09
+  (entrega 04/05). Nao e sinal nao usado, e convencao. Vai para D.
+
+**R2 (implementado):** janela vinda de provider INDIRETO (`topic`/`ordinal`) + cue de preparacao de prova
+-> `resolve_exam_prep` decide antes do desempate/voto. `is_exam_prep_material`: "lista/revisao pN" e o
+gabarito sao preparacao mesmo com `cat=provas` (MF `revisao-p1-gabarito` "Respostas": antes
+lexical=False pulava o prep). Card manual/datado e data-no-nome continuam antes. +2/-0 no harness.
+
+**Gate:** 2041 passed; curado 199/200 conf-err 0, 191/191, 40/57; sentinela = 1 mudanca fora da regua
+(ES2 `revisao-p2`, `scorable=no`: llm-funil -> bloco-13 "entrega trabalho final" virou prep-prova ->
+bloco-12, aula de 26/06 = ultimo hospedavel antes da P2 de 17/07, postado 27/06 — convencao cumprida).
+
+**Ablacao re-medida:** bloco por uuid **188 -> 191/212** (MF 57->59, TCC 27->28), display 179 -> 182/200,
+conf-err 5 -> 4. Motor nu: 89% -> **90% por uuid**. Balde B: 7 -> 3 (terminacao, exercicioscorrecao,
+hoare2 = ruido do voto LLM, aceito) + 1 reclassificado D (prova-1-2024-02).
+
+**Teto honesto agora:** 21 erros nus = C 5 + D 10 + ruido do voto 3 + SO convencao 3. Sem convencao do
+professor derivavel de texto, o cru para em ~90-92%. Os 95% exigem ou glossario (C: Cook-Levin =
+NP-completude) ou curadoria de 10 min por cadeira (D).
+
 ## BALDE A ATACADO: corte de bloco pela CABECA da linha do cronograma — SO sem boundary_dates (2026-08-26)
 
 **Correcao do diagnostico anterior.** Eu tinha nomeado a "bola de neve" (`block_tokens` = uniao acumulada)
