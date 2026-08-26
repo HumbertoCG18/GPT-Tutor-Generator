@@ -249,6 +249,33 @@ PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
 
+## OS 15 ERROS NUS REABERTOS: 7 eram gold errado, 1 regra nova, 7 ficam (2026-08-26)
+
+**Labels dos cards (pergunta do user):** e o professor. O mapa `.card_block_map.json` com source `labels` nasce
+de DATAS que o professor escreve — no titulo da secao do Moodle (IA: "Semana 4 - 23.03 a 27.03 - ...", 18 cards)
+ou em rotulos datados dentro da secao (MF "Verificacao de Programas", ES2 "Microsservicos"). SO poe a data no
+NOME do arquivo ("12/03 Processos" -> provider `data`); TCC numera "Aula N" (-> `ordinal`) e nomeia a secao
+"Semana N - Topico" (-> `topic`). "Sem mapa" nao e "sem sinal": o provider `topic` casa o nome da secao com as
+sessoes em tempo de execucao (SO "Threads" -> bloco-04). Um provider por habito de professor.
+
+**Gold errado (ruling do user com evidencia):** MF `provasindutivas` x3 (0x Isabelle, 0x lemma; sessao literal
+"provas por inducao listas e arvores" no bloco 05) 06 -> 05; SO `pthread` (card Threads; unico bloco com
+threads e o 04) 03 -> 04; SO `sockets` x2 (138x socket, 0x deadlock/sincronizacao; 23/04 e "comunicacao entre
+processos") 06 -> 09; SO `definicao-e-historico` (linha 10/03 "historico e evolucao") 02 -> 03. 6 pinos + card
+manual "Introducao aos SO" removidos. `subunit_gt_SO` pthread: scorable=no (u02 nao tem topico de threads).
+
+**Regras medidas (harness `scratch/harness_regras.py`, nu com markdown + curado):** R3 titulo-topico
+(titulo+rotulo ⊇ tokens do topico de exatamente 1 bloco da janela -> confiante, sem voto): +1 (MF hoare2),
+0 regressoes, 5 votos a menos -> **implementada** (`disambiguate`, method `titulo-topico`). R5 afinidade de
+kind (material de aula so em bloco class): -25/+2 -> descartada. R6 topico vence ordinal: -3/0 -> descartada.
+
+**Regua curada:** 199/200 conf-err 0, 191/191, 40/57, subunidade 87/93, **pinos 11 -> 5**, cards manuais
+12 -> 1 (TCC "Semana 12"). Decisoes humanas de bloco: 23 -> **6**. 2047 passed.
+**Motor nu:** 197 -> **205/212 (96,7%)**, display 194/200, conf-err 2. Restam 7: MF terminacao /
+exercicioscorrecaoterminacao / tiposindutivos (ruido do voto LLM, +31/-2 liquido), IA prova-1-2024-02 e
+ES2 azure (convencao sem texto), TCC aula-17 x2 (Cook-Levin = NP-completude: dominio; o card "Semana 12"
+manual segura no curado). Teto do cru alcancado sem convencao: ~97%.
+
 ## MENOS HUMANO: 23 -> 13 decisoes de bloco; regra t1/t2; ablacao em 81 s (2026-08-26)
 
 **Pergunta do user:** "queria diminuir o humano". Cruzamento decisao a decisao (`scratch/redundancia.py`:
