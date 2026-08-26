@@ -249,6 +249,40 @@ PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
 
+## ABLACAO "MOTOR NU" — quanto do numero e regra geral e quanto e curadoria por cadeira (2026-08-26)
+
+Pergunta do user: "se eu criar um repo de cadeira nova e os numeros cairem, o trabalho foi especifico?"
+Medido: os 5 repos reprocessados com o MESMO codigo e ZERO curadoria por cadeira (pinos de bloco/unidade/
+subunidade nas entries, `.timeline_curation.json` incl. `boundary_dates`, cards `manual`, sidecar de
+sinonimos; cache de votos LLM ficou — e motor). Restaurado por git depois; regua curada confirmada.
+
+| eixo | curado | motor NU | perda |
+|---|---|---|---|
+| bloco (display) | 199/200 | **155/200**, 21 conf-err | 44 |
+| bloco por UUID (sem artefato de renumeracao) | — | MF 57/66 · SO 26/39 · IA 42/43 · ES2 27/28 · TCC 27/36 = 179/212 (84%) | |
+| unidade | 191/191 | **124/191** (IA 3/42, ES2 17/28, SO 20/37) | 67 |
+| cobertura | 40/57 | 34/57 | 6 |
+| subunidade | 88/94 | **21/94** (IA 0/39) | 67 |
+
+**Leitura honesta.** As regras de codigo generalizam (IA e ES2 mantem o BLOCO em 42/43 e 27/28 nus). O
+que depende de curadoria e concentrado em 3 mecanismos, e sao eles o custo por cadeira:
+1. **Inversao calendario-vs-plano -> pinos de UNIDADE nos blocos.** IA ensina ML (u05) em marco-abril, antes
+   de busca (u02); ES2 mistura u01/u02. O DP monotonico assume "ordem do plano = ordem do calendario" e
+   falha em **2 das 5 cadeiras**; sem pino a unidade colapsa (IA 3/42) e a subunidade vai junto (0/39),
+   porque os topicos sao filtrados pela unidade. Registrado em T9c como "DP nao alcanca sem pino".
+2. **Estrutura de blocos -> `boundary_dates` e pinos de bloco.** SO: sem o split curado de 19/03 os blocos
+   03/04 se fundem e **12 uuids do gold somem** — nao e "o motor errou", e a estrutura ficando mais grossa.
+   MF: 7 pinos de referencia (aws/archive/...; B-6 cobre parte) e 5 cards manuais.
+3. **Cards sem data -> cards `manual`.** TCC: 6 cards manuais ("Semana 14 - Apresentacoes T2" cobre 5
+   entries); sem eles 27/36 por uuid.
+4. Sidecar de sinonimos: subunidade cai de 88 para 21, mas a maior parte e efeito 1 (unidade errada);
+   IA sem sidecar E com unidade certa media 4/39 (medido antes).
+
+**Conclusao para cadeira nova:** bloco deve nascer em ~85% por uuid, unidade depende de o calendario seguir
+o plano (se nao seguir, pinos de unidade — hoje humano), subunidade nasce cega ate ter sidecar. O proximo
+passo que ataca a raiz (nao a curadoria) e o item 1: unidade de bloco robusta a inversao local. Segundo:
+holdout real (Computacao Grafica, zero curadoria) para confirmar o 85%.
+
 ## GOLD DE SUBUNIDADE DO ES2 + sidecar do ES2 + 2 golds de unidade/cobertura corrigidos (2026-08-26)
 
 **Gold:** `subunit_gt_ES2.csv`, 35 linhas, 28 scorable (u01 8, u02 21 + os 6 dos blocos 09/10, u03 0).
