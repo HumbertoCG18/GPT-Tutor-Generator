@@ -3,16 +3,16 @@
     "band": "baixa",
     "computed_block_id": "18a1092a-9a22-4d54-b02b-59414b171496",
     "computed_unit_slug": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
-    "moodle_label": "",
+    "moodle_label": "Aula 01 - Apresentação da Disciplina, Revisão de Teoria de Conjuntos e Enumerabilidade",
     "presente": true,
     "source_section": "Semana 1 - Enumerabilidade e Argumento da Diagonalização de Cantor",
     "temporal_block_id": "667491f1-cffe-45f5-8b3f-29b0cec9d25a"
   },
   "aula-06-revisao-alfabeto-cadeia-linguagem-hierarquia-de-chomsky-lemas-e-propriedades-de-automatos": {
-    "band": "baixa",
-    "computed_block_id": "cbf887a2-7073-441b-b695-8b3d8d1d1b86",
+    "band": "media",
+    "computed_block_id": "ee594a67-ac2f-480c-ae87-9f4bdcdb5f52",
     "computed_unit_slug": "unidade-01-conjuntos-enumeraveis-e-funcoes-recursivas",
-    "moodle_label": "",
+    "moodle_label": "Aula 06 - Revisão: Alfabeto, Cadeia, Linguagem, Hierarquia de Chomsky, Lemas e Propriedades de Autômatos",
     "presente": true,
     "source_section": "Semana 4 - Teoria de Autômatos e Introdução a Máquinas de Turing",
     "temporal_block_id": "ee594a67-ac2f-480c-ae87-9f4bdcdb5f52"

@@ -1345,9 +1345,14 @@ def build_file_map_unit_index_from_course(
                 continue
             if unit_hint not in normalized_unit and normalized_unit not in unit_hint:
                 continue
+            # 2026-08-26: sinonimos do glossario ficam FORA do indice de UNIDADE.
+            # Sao vocabulario de subtopico (alias na taxonomia, scorer de
+            # subunidade); no scorer de unidade puxam a unidade que por acaso tem
+            # sidecar curado (SO u02 com PCB/FCFS/threads dominou: cobertura
+            # 47 -> 36/57). Medido em memoria: sem sinonimos 43/57, sem
+            # sinonimos E sem definicao 42 — definicao honesta ainda ajuda.
             for candidate in [
                 str(term.get("term", "") or ""),
-                *list(term.get("synonyms", []) or []),
             ]:
                 cleaned = collapse_ws_fn(str(candidate))
                 normalized = normalize_match_text_fn(cleaned)

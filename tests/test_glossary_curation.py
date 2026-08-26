@@ -48,3 +48,16 @@ def test_sem_sidecar_e_byte_identico(tmp_path):
     sp = SubjectProfile(name="IA", slug="ia", teaching_plan=PLAN)
     (tmp_path / "course").mkdir()
     assert engine.glossary_md({"course_name": "IA"}, sp, root_dir=tmp_path) == engine.glossary_md({"course_name": "IA"}, sp)
+
+
+def test_sinonimos_curados_nao_entram_no_indice_de_unidade(tmp_path):
+    """Sinonimo e vocabulario de SUBtopico (alias na taxonomia). No indice de
+    UNIDADE ele puxava a unidade curada (cobertura 47 -> 36/57 no SO)."""
+    root = _repo(tmp_path, {"Modelos Preditivos": {"synonyms": ["perceptron"]}})
+    sp = SubjectProfile(name="IA", slug="ia", teaching_plan=PLAN)
+    idx = engine._build_file_map_unit_index_from_course({"course_name": "IA", "_repo_root": root}, sp)
+    u = next(u for u in idx if "05" in u["slug"])
+    extras = " ".join(u.get("extra_signals") or []).lower()
+    assert "modelos preditivos" in extras and "perceptron" not in extras
+    tax = engine._build_content_taxonomy(PLAN, "", engine.glossary_md({"course_name": "IA"}, sp, root_dir=root))
+    assert "perceptron" in next(t for u in tax["units"] for t in u["topics"] if t["slug"] == "modelos-preditivos")["aliases"]

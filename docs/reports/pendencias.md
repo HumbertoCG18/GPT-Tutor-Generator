@@ -6,7 +6,7 @@ trabalho.** Fase 0, Fase 2 e Fase 1 CONCLUIDAS (secoes proprias). Proximo: (1) `
 (3) FASE 3 cobertura (11 erros, explain_entry um a um).
 **HANDOFF: `docs/reports/2026-08-21-handoff-rumo-aos-100.md`** — le primeiro. Substitui o de 20/08.
 ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-25c): bloco **199/200** (conf-err 1 = azure) · unidade **190/191** (o erro
-= azure) · cobertura **47/57 F1 0,876** · pinos **11** · subunidade **62/66** (IA 37/39 · SO 16/16 · TCC 9/11) · 8 raizes fechadas (secoes proprias). Tudo commitado nos
+= azure) · cobertura **44/57 F1 0,835** (47 era artefato de lixo no glossario; ver R9) · pinos **11** · subunidade **62/66** (IA 37/39 · SO 16/16 · TCC 9/11) · 8 raizes fechadas (secoes proprias). Tudo commitado nos
 6 repos. O que falta para 100% no bloco NAO e codigo: 6 golds a revisar + 2 curadorias de card (SO) +
 5 roteiros do ES2 sem sinal no dado — tabela no handoff. Subunidade: sem gold; primeiro rotular.
 PUSH (as-of 2026-08-24): gerador `07c95dc`, MF, IA e TCC sincronizados com `origin`. **SO e ES2 sem
@@ -248,6 +248,78 @@ ja foi refutado, +1/57). So entao a **FASE 4** (exercicios, listas, provas antig
 PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
+
+## GLOSSARIO: como e gerado, e a evidencia que era lixo (2026-08-26, pedido do user)
+
+Pergunta do user: o glossario e gerado a partir dos arquivos processados? e modular? codifica/normaliza
+bem os acentos? Resposta medida (censo em memoria, pipeline real, 5 cursos, 132 termos):
+
+**Anatomia (`artifacts/repo.py`, fiacao em `facade/glossary.py`).** Modular: funcoes puras com
+callables injetados (parciais), sem estado; a taxonomia consome o TEXTO gerado (`glossary_md`), o
+arquivo `GLOSSARY.md` e artefato derivado regravado a cada build. Cascata por termo: (1) tabela FIXA
+no codigo por termo conhecido (`seed_glossary_fields`: MF/IA — "logica de hoare", "modelos preditivos"...
+lei 4b violada de nascenca; `_unit_hint` idem) -> (2) "evidencia": melhor frase de `content/curated`
+por overlap de tokens -> (3) generico "Conceito central de ...". **Termos = so topicos do plano**; os
+materiais nunca geram termo, so a frase de evidencia. Sinonimos: so tabela fixa ou sidecar
+(`.glossary_curation.json`) — nunca dos materiais (93/132 vazios).
+
+**Encoding/normalizacao.** Arquivos UTF-8 NFC limpos, zero mojibake nos 5 cursos; leitura/escrita
+`encoding="utf-8"`, `write_text` atomico. Para MATCHING ha duas convencoes: `glossary_tokens` (lower,
+mantem acento e flexao: "historica" != "historico") vs `normalize_match_text` (NFKD sem acento) no
+resto do motor. Medido: normalizar tokens muda so o IA (13 -> 17 evidencias de 20). Nao era a raiz.
+
+**A raiz: a evidencia era lixo estruturado.** Censo ANTES: 73/132 genericas, 49 "Conceito central de
+esta unidade" (erro gramatical), 10 definicoes com texto cru do plano ("CONTEUDOS: ### UNIDADE 01") ou
+TOC injetado ("Sumario Introducao a IA: Visao Geral Roteiro..."). Das 47 "com evidencia", 2 eram frases
+reais. Cinco mecanismos, todos no extrator, nenhum de acento:
+1. docs META (plano de ensino, programa, apresentacao) entravam como evidencia e ganhavam o +8 sempre —
+   contem a string de TODOS os termos (SO: 32 evidencias, 12 fora de docs meta; ES2 21 -> 1). Fix:
+   `_doc_is_meta` por CONTEUDO (cita >= 80% dos titulos de unidade, `_FRACAO_META` da cobertura), sobre
+   o texto COM headings (o plano lista as unidades como heading — a 1a versao olhava o corpo sem
+   headings e o plano voltou; pego pelo censo).
+2. o termo casava NUMERADO ("1.2 Chamadas de sistema"): material real diz "chamadas de sistema", so o
+   PDF do plano contem o numero — o +8 ia para o plano POR CAUSA do numero. Fix: `glossary_term_core`
+   (nucleo sem codigo) no +8, nos tokens e no `refine`; titulo de unidade sem o prefixo "Unidade NN —".
+3. `best_glossary_sentence` tinha FALLBACK: sem frase candidata devolvia os 180 primeiros chars do doc
+   ("{0}------ # Titulo Autor 2026") e isso virava definicao (SO 3.3, TCC 2.2/2.3/2.5/4.5.5). Fix:
+   sem frase, sem evidencia (generico honesto). Fontes de frase = so o CORPO; titulo e headings
+   concatenados ("Escalonamento de Processos Definicao (1) Definicao (2)...") nao sao frase.
+4. bloco EXEC_SUMMARY (TOC injetado no build) e blocos IMAGE_DESCRIPTION saiam como texto; linhas de
+   heading grudavam na 1a frase ("# Chamadas de sistema em Linux As chamadas..."). Fix: removidos antes
+   de extrair frases; headings ficam so na lista `headings`.
+5. `normalize_glossary_sentence` e `trim_glossary_prefix` ARRANCAVAM o termo do inicio da frase mesmo
+   quando era o sujeito ("Conceituacao estabelece o escopo..." -> "estabelece..."), matando exatamente
+   as frases definicionais. Fix: tira prefixo so quando vem separador ("Termo - texto", "Termo: texto").
+   Era o que fazia o teste de `test_core` passar so gracas ao fallback (3).
+
+**Censo DEPOIS: 99/132 genericas (honesto: o 73 antigo contava eco do plano como evidencia), 0 lixo,
+0 "de esta".** O que sobra nao-generico: a tabela fixa (MF/IA) + ~8 frases reais. Conclusao: o extrator
+heuristico NAO consegue produzir definicao — nao e tarefa dele; e do gerador LLM, que agora tem
+entrada limpa (topicos do plano + titulos/headings dos materiais da unidade, sem docs meta, sem TOC).
+Testes: `test_glossary_evidencia.py` (3). Residuo conhecido: descricao de imagem em texto puro do
+Datalab ("Faded coat of arms of the Holy See", TCC aula-16) — sem marcador, nao filtravel sem heuristica.
+Golden `TCC__casos_chave` regenerado: mudou porque o backfill preencheu `moodle_label` (dado).
+
+### R9 · o lixo era estrutural: cobertura caiu 47 -> 36/57 ao limpar as definicoes
+Reprocess pos-consertos: bloco/unidade/subunidade identicos, **cobertura 47 -> 36/57** (SO 15 -> 6).
+Meu diff daquela rodada nao olhava `coverage_units` — de novo. Mecanismo (`file_map.py`, indice de
+unidade): `extra_signals` da unidade = termo do glossario + SINONIMOS + tokens da DEFINICAO. As
+definicoes-lixo (prosa de objetivos do plano) davam vocabulario a TODAS as unidades e equilibravam o
+scorer de unidade do texto (regra `unidade-atribuida` da cobertura); limpas, so as unidades com
+sidecar tinham sinal extra e u02 do SO (PCB/FCFS/threads) dominou. Medido em memoria (harness de
+cobertura, 4 variantes): atual 34 · sem definicao 37 · **sem sinonimos 43** · sem ambos 42. Fix:
+sinonimos ficam FORA do indice de unidade — sao vocabulario de subtopico (alias na taxonomia, scorer
+de subunidade); definicao honesta continua entrando. `test_glossary_curation.py` (+1).
+- Licao (3a vez): **o gate e sempre os 3 eixos + subunidade + diff por campo incluindo
+  `coverage_units`** — `scratchpad/sentinel.py` passa a ser o diff padrao.
+- Estado final desta etapa: **cobertura 44/57 F1 0,835** (SO 14, MF 8, IA 2, ES2 18, TCC 2). Os 4 pontos
+  a menos vs 47 sao todos `unidade-atribuida` adicionando unidade ESPURIA (scorer de texto confiante e
+  errado: SO `exemplo-criacao` u03, TCC `aula-12` u04, ES2 `roteiro7-history` devops, IA `o-que-e-IA`
+  u02); +1 no MF. O 47 se apoiava em prosa de OBJETIVOS/EMENTA (nivel de curso) que caia por acaso em
+  termos de certas unidades. **DECISAO PENDENTE DO USER:** aceitar 44 como baseline honesto (recuperacao
+  esperada pelo gerador LLM: definicoes reais por unidade = vocabulario balanceado) ou reverter a
+  limpeza das definicoes (volta o lixo, volta 47).
+
 
 ## (iii) em SO e TCC + R8 · glossario casava topico por CONTENCAO (2026-08-26)
 

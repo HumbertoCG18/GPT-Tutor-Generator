@@ -36,10 +36,11 @@ def build_glossary_aliases(
         collapse_ws=collapse_ws,
     )
 
-    def collect_glossary_evidence(root_dir, manifest_entries=None):
+    def collect_glossary_evidence(root_dir, manifest_entries=None, unit_titles=None):
         return repo_artifacts_module.collect_glossary_evidence(
             root_dir,
             manifest_entries=manifest_entries,
+            unit_titles=unit_titles,
             collapse_ws=collapse_ws,
             strip_frontmatter_block=strip_frontmatter_block,
             extract_markdown_headings_fn=extract_markdown_headings,

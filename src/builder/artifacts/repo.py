@@ -1125,16 +1125,57 @@ def extract_markdown_headings(
     return headings
 
 
+_EXEC_SUMMARY_RE = re.compile(r"<!-- EXEC_SUMMARY_START -->.*?<!-- EXEC_SUMMARY_END -->\n?", re.DOTALL)
+# Descricoes de imagem injetadas no build ("Uma seta descendente...", "Faded coat of
+# arms of the Holy See") nao sao frases do professor. Linhas de heading (# ...) sao
+# estrutura, nao prosa: fora do corpo (ficam em `headings`).
+_IMAGE_DESC_RE = re.compile(r"<!-- IMAGE_DESCRIPTION:.*?<!-- /IMAGE_DESCRIPTION -->\n?|^> \*\*\[Descrição de imagem\]\*\*.*$", re.DOTALL | re.MULTILINE)
+_HEADING_LINE_RE = re.compile(r"^#{1,6}\s+.*$", re.MULTILINE)
+# "1.2 Chamadas de sistema" -> "Chamadas de sistema"; "Unidade 01 — Titulo" -> "Titulo".
+_TOPIC_CODE_RE = re.compile(r"^\s*\**\s*\d+(?:\.\d+)*\.?\**\s*")
+_UNIT_PREFIX_RE = re.compile(r"^\s*unidade(?:\s+de\s+aprendizagem)?\s*\d+\s*[—:\-–]?\s*", re.IGNORECASE)
+
+
+def glossary_term_core(term: str) -> str:
+    """Nucleo do termo sem a numeracao do plano. O material real diz "chamadas de
+    sistema", nunca "1.2 Chamadas de sistema" — casar o termo numerado so
+    encontrava o proprio plano de ensino (2026-08-26)."""
+    return _TOPIC_CODE_RE.sub("", str(term or "")).strip()
+
+
+def _doc_is_meta(text_norm: str, unit_titles_norm: List[str]) -> bool:
+    """Doc que DESCREVE o curso (plano, programa, apresentacao): cita quase todos os
+    titulos de unidade. Mesmo criterio de conteudo da cobertura (coverage_rules,
+    `_FRACAO_META`), nao por nome de arquivo nem categoria."""
+    from src.builder.routing.coverage_rules import _FRACAO_META
+    titulos = [_UNIT_PREFIX_RE.sub("", t).strip() for t in unit_titles_norm]
+    titulos = [t for t in titulos if len(t) >= 6]
+    if not titulos or not text_norm:
+        return False
+    return sum(1 for t in titulos if t in text_norm) / len(titulos) >= _FRACAO_META
+
+
 def collect_glossary_evidence(
     root_dir: Optional[Path],
     *,
     manifest_entries: Optional[List[dict]] = None,
+    unit_titles: Optional[List[str]] = None,
     collapse_ws: Callable[[str], str],
     strip_frontmatter_block: Callable[[str], str],
     extract_markdown_headings_fn: Callable[[str], List[str]],
 ) -> List[Dict[str, str]]:
+    """Docs de `content/curated` como evidencia para definicoes do glossario.
+
+    2026-08-26 (censo nos 5 cursos: 73/132 definicoes genericas, 10 com lixo):
+    (1) o bloco EXEC_SUMMARY (TOC injetado no build) sai antes de extrair
+    frases/headings — "Sumario Introducao a IA: Visao Geral Roteiro..." virava
+    definicao; (2) docs META (plano de ensino, programa, apresentacao) saem —
+    contem a string de TODOS os topicos, ganhavam o +8 sempre e a "definicao"
+    de "Conjuntos Enumeraveis" era "CONTEUDOS: ### UNIDADE 01..." (TCC)."""
     if not root_dir:
         return []
+    from src.utils.helpers import norm_ascii_lower
+    titles_norm = [norm_ascii_lower(t) for t in (unit_titles or []) if t]
     curated_dir = root_dir / "content" / "curated"
     if not curated_dir.exists():
         return []
@@ -1159,10 +1200,14 @@ def collect_glossary_evidence(
             raw = md_path.read_text(encoding="utf-8")
         except Exception:
             continue
-        body = collapse_ws(strip_frontmatter_block(raw))
+        stripped = _IMAGE_DESC_RE.sub("", _EXEC_SUMMARY_RE.sub("", strip_frontmatter_block(raw)))
+        # meta: texto COM headings (o plano lista as unidades como "### UNIDADE 01: ...");
+        # frases: corpo SEM headings (estrutura nao e prosa).
+        if titles_norm and _doc_is_meta(norm_ascii_lower(collapse_ws(stripped)), titles_norm):
+            continue
+        body = collapse_ws(_HEADING_LINE_RE.sub("", stripped))
         if not body:
             continue
-        stripped = strip_frontmatter_block(raw)
         title_match = re.search(r"^#\s+(.+)$", stripped, flags=re.MULTILINE)
         title = collapse_ws(title_match.group(1)) if title_match else md_path.stem.replace("-", " ")
         docs.append({
@@ -1192,7 +1237,9 @@ def trim_glossary_prefix(text: str, prefixes: List[str], *, collapse_ws: Callabl
         prefix = collapse_ws(prefix)
         if not prefix:
             continue
-        if cleaned.lower().startswith(prefix.lower()):
+        # So e rotulo ("Titulo - texto") se vier separador; "Conceituacao estabelece..."
+        # e frase com o termo como sujeito e fica inteira.
+        if cleaned.lower().startswith(prefix.lower()) and re.match(r"\s*[-:|#]", cleaned[len(prefix):]):
             cleaned = cleaned[len(prefix):].lstrip(" -:|#")
     return collapse_ws(cleaned)
 
@@ -1214,6 +1261,10 @@ def is_bad_glossary_evidence(sentence: str, *, collapse_ws: Callable[[str], str]
     if sent.count("**") >= 2:
         return True
     if sent.lower().startswith("exemplo:"):
+        return True
+    # Ruido de extracao de PDF ("{4}------", marcador de pagina) e headings
+    # markdown embutidos no fluxo ("... # Algoritmos de Escalonamento Miguel ...").
+    if "----" in sent or re.search(r"\{\d+\}", sent) or " # " in f" {sent}" or sent.startswith("#"):
         return True
     if re.match(r"^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ][\wÁÀÂÃÉÊÍÓÔÕÚÇáàâãéêíóôõúç-]+\s+[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ]", sent):
         if re.search(r"\d", sent) and len(sent) <= 80:
@@ -1237,7 +1288,9 @@ def normalize_glossary_sentence(
         prefix = collapse_ws(prefix)
         if not prefix:
             continue
-        if sent.lower().startswith(prefix.lower()):
+        # So tira o prefixo quando e rotulo ("Termo - texto", "Termo: texto"); numa frase
+        # definicional ("Conceituacao estabelece o escopo...") o termo E o sujeito.
+        if sent.lower().startswith(prefix.lower()) and re.match(r"\s*[-:|#]", sent[len(prefix):]):
             sent = sent[len(prefix):].lstrip(" -:|#")
     sent = collapse_ws(sent)
     if not sent:
@@ -1264,13 +1317,15 @@ def best_glossary_sentence(
         doc.get("title", ""),
         *doc.get("headings", []),
     ]
+    # 2026-08-26: so o CORPO do texto e fonte de frase. Titulo e headings
+    # concatenados viravam "definicao" ("Escalonamento de Processos Definicao (1)
+    # Definicao (2) Troca de Contexto...", "Aula 02 - Conjuntos Enumeraveis...") —
+    # censo nos 5 cursos: das 47 definicoes "com evidencia", 2 eram frases reais.
     sources = [
-        doc.get("manifest_title", ""),
-        doc.get("title", ""),
-        " ".join(doc.get("headings", [])),
         trim_glossary_prefix_fn(doc.get("text", ""), prefixes),
     ]
-    term_tokens = glossary_tokens_fn(term) + glossary_tokens_fn(unit_title)
+    core = glossary_term_core(term)
+    term_tokens = glossary_tokens_fn(glossary_term_core(term)) + glossary_tokens_fn(_UNIT_PREFIX_RE.sub("", unit_title or ""))
     candidate_sentences: List[str] = []
     for source in sources:
         if not source:
@@ -1288,14 +1343,16 @@ def best_glossary_sentence(
         sent = normalize_glossary_sentence_fn(term, unit_title, sent)
         sent_lower = sent.lower()
         score = 0
-        if term.lower() in sent_lower:
+        if core.lower() in sent_lower:
             score += 6
         score += sum(1 for token in dict.fromkeys(term_tokens) if token in sent_lower)
         if score > best_score:
             best_score = score
             best_sentence = sent
-    fallback = trim_glossary_prefix_fn(doc.get("text", ""), prefixes)
-    return best_sentence or shorten_glossary_sentence_fn(fallback or collapse_ws(doc.get("text", "")), 180)
+    # 2026-08-26: sem frase candidata, sem evidencia. O fallback devolvia os
+    # primeiros 180 chars do documento ("{0}------ # Titulo Autor 2026") e isso
+    # virava "definicao" (SO 3.3, TCC 2.2/2.3/2.5/4.5.5). Generico honesto e melhor.
+    return best_sentence
 
 
 def find_glossary_evidence(
@@ -1309,8 +1366,8 @@ def find_glossary_evidence(
     if not docs:
         return ""
 
-    term_lower = (term or "").lower()
-    tokens = glossary_tokens_fn(term) + glossary_tokens_fn(unit_title)
+    term_lower = glossary_term_core(term).lower()
+    tokens = glossary_tokens_fn(glossary_term_core(term)) + glossary_tokens_fn(_UNIT_PREFIX_RE.sub("", unit_title or ""))
     best_score = 0
     best_text = ""
 
@@ -1346,19 +1403,21 @@ def refine_glossary_definition_from_evidence(
     compact = collapse_ws(evidence)
     if compact:
         sentences = re.split(r"(?<=[.!?])\s+", compact)
-        term_tokens = glossary_tokens_fn(term)
+        core = glossary_term_core(term)
+        term_tokens = glossary_tokens_fn(core)
         for sentence in sentences:
             sent = normalize_glossary_sentence_fn(term, unit_hint, sentence)
             sent_lower = sent.lower()
             if len(sent) < 40:
                 continue
-            if term.lower() in sent_lower or sum(1 for token in term_tokens if token in sent_lower) >= 2:
+            if core.lower() in sent_lower or sum(1 for token in term_tokens if token in sent_lower) >= 2:
                 cleaned = re.sub(r"^[^A-Za-zÀ-ÿ0-9]*", "", sent).rstrip(" .")
                 cleaned = shorten_glossary_sentence_fn(cleaned, 180)
                 if not cleaned.endswith("."):
                     cleaned += "."
                 return cleaned
-    return f"Conceito central de {unit_hint} que deve ser reconhecido e usado corretamente nas respostas e revisões."
+    de_hint = "desta unidade" if unit_hint.strip().lower() == "esta unidade" else f"de {unit_hint}"
+    return f"Conceito central {de_hint} que deve ser reconhecido e usado corretamente nas respostas e revisões."
 
 
 def seed_glossary_fields(
@@ -1660,7 +1719,9 @@ def glossary_md(
 
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     units = parse_units_from_teaching_plan_fn(teaching_plan) if teaching_plan else []
-    evidence_docs = collect_glossary_evidence_fn(root_dir, manifest_entries=manifest_entries) if root_dir else []
+    evidence_docs = collect_glossary_evidence_fn(
+        root_dir, manifest_entries=manifest_entries, unit_titles=[title for title, _t in units],
+    ) if root_dir else []
     curated_synonyms = load_glossary_curation(root_dir)
 
     candidates = []
