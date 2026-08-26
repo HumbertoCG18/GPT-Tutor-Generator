@@ -249,6 +249,36 @@ PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
 
+## OS 33 ERROS DO MOTOR NU, UM A UM — onde esta o teto de 84% (2026-08-26)
+
+Pergunta do user: "como chegar a 95% no motor cru? qual o gargalo?". Ablacao reaberta so para listar os 33
+erros por uuid (179/212) com os sinais de cada entry (`posting_date`, `moodle_label`, card, metodo) e testar
+se algum sinal presente no repo teria acertado. Script `erros_nu.py` (scratch). Repos restaurados por git +
+reprocess (1 rodada = HEAD, 0 campos: R11 confirmado de novo).
+
+| balde | n | entries | leitura |
+|---|---|---|---|
+| **A. Segmentacao (SO)** | 12 | 1203-processos, 1703-chamada, biblioteca-pthread, exemplo-criacao x4, 0704-laminas x2, 0704-exemplo-threads, laminas-cs-4244, laminas-sockets | gold SUMIU: nu funde 10-31/03 (7 dias, 3 temas) e 07-16/04. 9 deles ja caem no bloco grosso certo por data; so falta o corte |
+| **B. Tem sinal, motor nao usou** | 7 | MF terminacao (pd = dia do gold), MF tiposindutivos (pd = vespera), TCC aula-16 (pd = vespera; ordinal "Semana 10" venceu), MF revisao-p1 x2 (cue prep-prova; cascata foi ao LLM dentro da janela do card), MF logicadehoare2 (label "Logica de Hoare (parte 2)" = topico do bloco 10; LLM sobrepos), IA prova-1-2024-02 (cue "Prova 1"; foi llm-funil, a confirmar por que prep nao disparou) | raiz de codigo: ordem/prioridade da cascata |
+| **C. Sinal ambiguo / precisa dominio** | 5 | TCC aula-17 x2 (NP-completude <-> Cook-Levin 03/06 vs linha "NP-complete" 05/06), TCC t1-enunciado (T1 <-> linha Trabalho 20/03), SO definicao-e-historico ("historico" em 05/03 e 10/03), MF exercicioscorrecaoterminacao (exercicio vai ao deliverable anterior) | parte resolve com glossario/LLM; parte e convencao |
+| **D. Convencao, sem sinal derivavel** | 9 | TCC "Semana 14 - Apresentacoes T2" x5 (posting DEPOIS da apresentacao; "Apresentacoes" nao esta no cronograma; 2 linhas "Entrega T2"), MF provasindutivas x3 (conteudo aponta bloco 05 "Inducao arvores"; gold 06 Isabelle pelo card), ES2 azure | teto do motor cru |
+
+**Raiz do balde A (12/33):** `_rows_belong_to_same_thematic_block` funde a linha nova se ela compartilha >= 2
+tokens com `block_tokens` = **uniao acumulada de todas as linhas do bloco**. Bola de neve: "gerencia do
+processador ... escalonamento" (19/03) compartilha processos/chamadas/sistema com as linhas anteriores e
+entra; "threads e exclusao mutua" (26/03) compartilha gerencia/processador com o acumulado e entra. O gold
+corta em 19/03 (linha muda de unidade do plano: estruturas dos SO -> gerencia do processador) e em 14/04
+(aula -> "especificacao tp1"). O sinal esta nas linhas do cronograma; a regra o dilui. Candidato: overlap
+contra a linha anterior / nucleo do tema, e corte quando a linha ancora outra unidade do plano.
+
+**Descoberta paralela:** "Semana N" do Moodle (TCC) NAO e semana de calendario (semana 12 -> 20/05 pelo
+calendario; gold 03/06). Sinal de ordinal e menos confiavel que `posting_date` — hoje a prioridade e a
+inversa (aula-16).
+
+**Conta:** A + B = 19 -> 198/212 (93%). + C parcial -> 95% alcancavel. D = 9 e o teto (~96%). Ordem de
+ataque: A (1 regra, 12 erros, tambem melhora unidade que segue bloco) > B (prioridade data > ordinal;
+prep-prova antes do voto LLM; topico exato do bloco antes do LLM) > C via glossario.
+
 ## R11 + R12: o build dependia da rodada anterior (perfil em cache) e o injetor do sumario crescia (2026-08-26)
 
 **Sintoma.** Depois da ablacao, `git checkout -- . && git clean -fd` deixou os 5 repos "0 sujos", mas
