@@ -696,6 +696,25 @@ def _row_is_standalone_kind(row: Dict[str, object]) -> bool:
     return bool(kind) and kind != "class"
 
 
+_TIMELINE_HEAD_SPLIT_RE = re.compile(r"\s*[:;,]\s*|\s+[—–-]\s+")
+
+
+def _timeline_row_head(text: str) -> Optional[str]:
+    """CABECA normalizada da linha do cronograma: o 1o segmento antes de `:` `;` `,`
+    ou ` - ` ("Gerencia do processador, processos, ..." -> "gerencia do processador";
+    "Especificacao TP1; Gerencia ..." -> "especificacao tp1"). None quando a linha
+    nao tem separador — sem cabeca nao ha o que comparar (cai na regra de overlap).
+    A cabeca e o tema que o professor escreveu; a cauda repete subtemas entre temas
+    vizinhos ("processos, chamadas de sistema" em Estruturas E em Gerencia), e por
+    isso overlap de sacola de tokens nao enxerga a troca de tema."""
+    raw = _collapse_ws(text)
+    parts = _TIMELINE_HEAD_SPLIT_RE.split(raw, maxsplit=1)
+    if len(parts) < 2:
+        return None
+    head = _normalize_match_text(parts[0])
+    return head or None
+
+
 def _rows_belong_to_same_thematic_block(
     previous_row: Dict[str, object],
     current_row: Dict[str, object],
@@ -722,6 +741,26 @@ def _rows_belong_to_same_thematic_block(
             for row in current_rows or [previous_row]
         )
         return bool(block_tokens) and not has_only_unit_anchors
+
+    # Troca de tema na cabeca da linha corta o bloco, mesmo que a cauda repita
+    # subtemas (SO: "Estruturas dos SO, processos, chamadas" -> "Gerencia do
+    # processador, processos, chamadas, escalonamento"; "Gerencia..." ->
+    # "Especificacao TP1; Gerencia..."). Antes: so boundary_dates curado cortava.
+    # Excecao: cabeca nova ja anunciada na cauda da linha anterior e continuacao
+    # (TCC: "Classes de Problemas; Complexidade de Tempo vs. Espaco; ..." ->
+    # "Complexidade de Tempo: Classes P e NP" fica no mesmo bloco).
+    previous_head = _timeline_row_head(previous_text)
+    current_head = _timeline_row_head(current_text)
+    if previous_head and current_head:
+        previous_head_tokens = set(_timeline_specific_tokens(previous_head))
+        current_head_tokens = set(_timeline_specific_tokens(current_head))
+        if (
+            previous_head_tokens
+            and current_head_tokens
+            and not (previous_head_tokens & current_head_tokens)
+            and current_head not in _normalize_match_text(previous_text)
+        ):
+            return False
 
     previous_core = _timeline_core_text(previous_text)
     current_core = _timeline_core_text(current_text)
