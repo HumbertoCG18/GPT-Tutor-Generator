@@ -1,66 +1,216 @@
-"""Baixa um curso do Moodle organizado por seção (= card) numa pasta destino.
+"""Puxa um curso do Moodle pela API e monta o stash: arquivos, paginas internas e links CLASSIFICADOS.
 
-Lê MOODLE_URL/MOODLE_TOKEN de moddle/.env (ou ambiente). Não imprime o token.
+    python scripts/moodle_pull.py --course 95106 --root <dir> --dry-run      # so classifica: links.json + resumo
+    python scripts/moodle_pull.py --course 95106 --root <dir> --pdf          # baixa/imprime tudo
 
-Uso:
-    python -m scripts.moodle_pull --course <id> <dest>
-    python -m scripts.moodle_pull --course <id> <dest> --dry-run
+Saida (debaixo de --root):
+    stash/<secao>/<arquivo>          resources baixados + paginas (site/Moodle) impressas em PDF (--pdf)
+    raw/moodle/contents.json         core_course_get_contents cru
+    raw/moodle/pages/<cmid>.html     HTML das paginas internas (mod_page)
+    raw/moodle/labels.json           labels (sub-cards) na ordem em que aparecem
+    raw/site/...                     snapshot das paginas do site do professor (site_snapshot)
+    links.json                       cada url/page com {secao, nome, url, tipo, acao, destino, sinal}
+    manual-review/links.md           o que ficou ambiguo (nunca chute silencioso)
+
+Classificacao (handoff 2026-08-26, passo 2) — deterministica, SEM nada por curso, em ordem de confianca:
+  1. card: secao com bibliografia/referencia/links uteis/leitura/complementar -> referencia
+  2. dominio/caminho: PDF -> material (download); pagina no MESMO host das outras paginas do professor -> material
+     (snapshot+PDF); youtube/vimeo -> video (referencia); github/gitlab/doi/acm/ieee/springer/sciencedirect/
+     scholar/books.google/amazon/wikipedia -> referencia/repositorio
+  3. nome do link: livro/artigo/paper/repositorio/documentacao/tutorial/manual -> referencia
+  4. pagina interna do Moodle: NOME primeiro (exercic/resolucao/atividade/lista -> material; 'videos' -> indice),
+     conteudo como desempate (>= 3 links de video e < 300 palavras -> indice); material -> PDF
+  Resto -> review.
 """
 from __future__ import annotations
 
+import argparse
+import json
+import re
 import sys
+import urllib.parse
+import urllib.request
+from collections import Counter
 from pathlib import Path
+from urllib.parse import urlparse
 
-from src.builder.sources.moodle import MoodleClient, iter_section_files
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
+from scripts.migrate_signals import load_moodle_token  # noqa: E402
+from scripts.site_snapshot import Snapshot, detect_encoding, find_browser, normalize_html, print_pdf, pdf_stats, slug  # noqa: E402
+from src.builder.sources.moodle import MoodleClient, sanitize_folder_name  # noqa: E402
 
-def _load_env() -> dict:
-    env = {}
-    dotenv = Path(__file__).resolve().parent.parent / "moddle" / ".env"
-    if dotenv.is_file():
-        for line in dotenv.read_text(encoding="utf-8").splitlines():
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                k, v = line.split("=", 1)
-                env[k.strip()] = v.strip()
-    import os
-    env.setdefault("MOODLE_URL", os.environ.get("MOODLE_URL", "https://moodle.pucrs.br"))
-    if os.environ.get("MOODLE_TOKEN"):
-        env["MOODLE_TOKEN"] = os.environ["MOODLE_TOKEN"]
-    return env
+VIDEO_HOSTS = ("youtube.com", "youtu.be", "vimeo.com")
+REFERENCE_HOSTS = ("github.com", "gitlab.com", "doi.org", "dl.acm.org", "ieeexplore.ieee.org", "link.springer.com",
+                   "sciencedirect.com", "scholar.google", "books.google", "amazon.com", "amazon.com.br", "wikipedia.org",
+                   "medium.com", "stackoverflow.com")
+REFERENCE_CARD_RE = re.compile(r"bibliograf|refer[eê]ncia|links?\s*[úu]teis|leitura|complementar", re.I)
+REFERENCE_NAME_RE = re.compile(r"\b(livro|artigo|paper|reposit[óo]rio|documenta[çc][ãa]o|tutorial|manual|cap[íi]tulo)\b", re.I)
+YT_RE = re.compile(r"(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/))([\w-]{6,})")
 
 
-def main(argv: list) -> int:
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except Exception:
-        pass
-    dry = "--dry-run" in argv
-    course_id = ""
-    if "--course" in argv:
-        i = argv.index("--course")
-        if i + 1 < len(argv):
-            course_id = argv[i + 1]
-    pos = [a for a in argv if not a.startswith("-") and a != course_id]
-    if not course_id or not pos:
-        print("uso: python -m scripts.moodle_pull --course <id> <dest> [--dry-run]")
-        return 2
-    dest = Path(pos[0])
-    env = _load_env()
-    token = env.get("MOODLE_TOKEN", "")
-    if not token or token == "cole_o_wstoken_aqui":
-        print("Faltando MOODLE_TOKEN em moddle/.env.")
-        return 2
-    client = MoodleClient(env["MOODLE_URL"], token)
-    if dry:
-        files = iter_section_files(client.get_course_contents(course_id))
-        print(f"[dry-run] {len(files)} arquivos em {len({f.section for f in files})} seções -> {dest}")
-        for f in files:
-            print(f"  {f.section}/{f.disk_name}")
-        return 0
-    summary = client.download_course(course_id, dest)
-    print(f"OK -> {dest}")
-    print(f"  total={summary['total']}  baixados={summary['downloaded']}  pulados(existiam)={summary['skipped']}")
+def host_of(url: str) -> str:
+    return urlparse(url).netloc.lower().removeprefix("www.")
+
+
+def classify_url(name: str, section: str, url: str, professor_hosts: set[str]) -> tuple[str, str, str]:
+    """-> (tipo, acao, sinal). tipo: material-pagina | material-pdf | video | referencia | review."""
+    h = host_of(url)
+    path = urlparse(url).path.lower()
+    if REFERENCE_CARD_RE.search(section):
+        return "referencia", "referencia", "card"
+    if any(h.endswith(v) for v in VIDEO_HOSTS):
+        return "video", "referencia", "dominio"
+    if any(h.endswith(r) for r in REFERENCE_HOSTS):
+        return "referencia", "referencia", "dominio"
+    if h in professor_hosts:
+        if path.endswith(".pdf"):
+            return "material-pdf", "download", "dominio+pdf"
+        if path.endswith((".htm", ".html", "/")) or "." not in path.rsplit("/", 1)[-1]:
+            return "material-pagina", "snapshot", "dominio+pagina"
+    if REFERENCE_NAME_RE.search(name):
+        return "referencia", "referencia", "nome"
+    if path.endswith(".pdf"):
+        return "material-pdf", "download", "pdf"
+    return "review", "review", "nenhum"
+
+
+PAGE_VIDEO_NAME_RE = re.compile(r"v[íi]deos?", re.I)
+PAGE_MATERIAL_NAME_RE = re.compile(r"exerc[íi]c|resolu[çc][ãa]o|atividade|lista|enunciado|roteiro", re.I)
+
+
+def classify_page(html: str, name: str = "") -> tuple[str, str, str]:
+    """Nome primeiro (o professor nomeia a pagina pelo que ela e), conteudo como desempate."""
+    text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html))
+    words = len(text.split())
+    videos = len(set(YT_RE.findall(html)))
+    stats = f"{videos} videos, {words} palavras"
+    if PAGE_MATERIAL_NAME_RE.search(name):
+        return "material-pagina-moodle", "print", "nome+" + stats
+    if PAGE_VIDEO_NAME_RE.search(name) and (videos >= 1 or words < 300):
+        return "indice-videos", "referencia", "nome+" + stats
+    if videos >= 3 and words < 300:
+        return "indice-videos", "referencia", stats
+    return "material-pagina-moodle", "print", stats
+
+
+class Pull:
+    def __init__(self, client: MoodleClient, token: str, root: Path, pdf: bool, dry: bool):
+        self.c, self.tok, self.root, self.pdf, self.dry = client, token, root, pdf, dry
+        self.stash = root / "stash"
+        self.rawm = root / "raw" / "moodle"
+        self.links: list[dict] = []
+        self.labels: list[dict] = []
+        self.browser = find_browser() if pdf else None
+        self.snap = Snapshot(root, depth=1, pdf=pdf)
+
+    def get(self, fileurl: str) -> bytes:
+        sep = "&" if "?" in fileurl else "?"
+        req = urllib.request.Request(fileurl + f"{sep}token={self.tok}", headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            return r.read()
+
+    def run(self, course: int) -> None:
+        contents = self.c.get_course_contents(course)
+        self.rawm.mkdir(parents=True, exist_ok=True)
+        (self.rawm / "contents.json").write_text(json.dumps(contents, ensure_ascii=False, indent=1), encoding="utf-8")
+        urls = [(m.get("contents") or [{}])[0].get("fileurl", "") for s in contents for m in s.get("modules", []) if m["modname"] == "url"]
+        hosts = Counter(host_of(u) for u in urls if u and not any(host_of(u).endswith(v) for v in VIDEO_HOSTS + REFERENCE_HOSTS))
+        professor_hosts = {h for h, n in hosts.items() if n >= 2}  # host que o professor usa repetidamente = site dele
+        print(f"hosts do professor (>=2 links): {sorted(professor_hosts)}")
+        for sec in contents:
+            card = sanitize_folder_name(sec.get("name") or "") or f"secao-{sec.get('section')}"
+            for m in sec.get("modules", []):
+                mn = m["modname"]
+                if mn == "label":
+                    txt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.get("description") or "")).strip()
+                    self.labels.append({"secao": sec.get("name"), "cmid": m["id"], "texto": txt[:500]})
+                elif mn == "resource":
+                    for f in m.get("contents") or []:
+                        dest = self.stash / card / f.get("filename", "arquivo")
+                        rec = {"secao": sec.get("name"), "nome": m.get("name"), "url": f.get("fileurl", ""), "tipo": "arquivo",
+                               "acao": "download", "destino": str(dest.relative_to(self.root)), "sinal": "resource"}
+                        self.links.append(rec)
+                        if not self.dry:
+                            dest.parent.mkdir(parents=True, exist_ok=True)
+                            if not dest.exists():
+                                dest.write_bytes(self.get(f["fileurl"]))
+                elif mn == "url":
+                    ext = (m.get("contents") or [{}])[0].get("fileurl", "")
+                    tipo, acao, sinal = classify_url(m.get("name", ""), sec.get("name", ""), ext, professor_hosts)
+                    rec = {"secao": sec.get("name"), "nome": m.get("name"), "url": ext, "tipo": tipo, "acao": acao, "destino": "", "sinal": sinal}
+                    self.links.append(rec)
+                    if self.dry:
+                        continue
+                    if acao == "download":
+                        dest = self.stash / card / (Path(urlparse(ext).path).name or "arquivo.pdf")
+                        dest.parent.mkdir(parents=True, exist_ok=True)
+                        if not dest.exists():
+                            try:
+                                dest.write_bytes(self.get_plain(ext))
+                            except Exception as exc:
+                                rec["erro"] = str(exc)[:120]
+                        rec["destino"] = str(dest.relative_to(self.root))
+                    elif acao == "snapshot":
+                        self.snap.stash = self.stash
+                        page = self.snap.save_page(ext, card, "hub", 0, follow=True)
+                        rec["destino"] = page["local"] if page else ""
+                elif mn == "page":
+                    fu = (m.get("contents") or [{}])[0].get("fileurl", "")
+                    raw = self.get(fu) if fu else b""
+                    html = raw.decode(detect_encoding(raw, "utf-8"), errors="replace") if raw else ""
+                    tipo, acao, sinal = classify_page(html, m.get("name", ""))
+                    rec = {"secao": sec.get("name"), "nome": m.get("name"), "url": m.get("url", ""), "tipo": tipo, "acao": acao,
+                           "destino": "", "sinal": sinal, "videos": sorted(set(YT_RE.findall(html)))}
+                    self.links.append(rec)
+                    if self.dry:
+                        continue
+                    pages_dir = self.rawm / "pages"; pages_dir.mkdir(parents=True, exist_ok=True)
+                    hp = pages_dir / f"{m['id']}-{slug(m.get('name', 'pagina'))}.html"
+                    hp.write_text(normalize_html(html), encoding="utf-8")
+                    rec["raw"] = str(hp.relative_to(self.root))
+                    if acao == "print" and self.browser:
+                        out = self.stash / card / f"{slug(m.get('name', 'pagina'))}.pdf"
+                        if print_pdf(self.browser, hp, out):
+                            rec["destino"] = str(out.relative_to(self.root)); rec["pdf_pages"], rec["pdf_images"] = pdf_stats(out)
+        if not self.dry and self.pdf:
+            self.snap.print_all()
+            for p in self.snap.pages.values():
+                for rec in self.links:
+                    if rec.get("url") == p["url"]:
+                        rec["destino"] = p.get("pdf", "") or rec["destino"]; rec["pdf_pages"] = p.get("pdf_pages"); rec["pdf_images"] = p.get("pdf_images")
+        self.snap.write_links()
+        (self.rawm / "labels.json").write_text(json.dumps(self.labels, ensure_ascii=False, indent=1), encoding="utf-8")
+        (self.root / "links.json").write_text(json.dumps(self.links, ensure_ascii=False, indent=1), encoding="utf-8")
+        review = [r for r in self.links if r["acao"] == "review"]
+        (self.root / "manual-review").mkdir(exist_ok=True)
+        (self.root / "manual-review" / "links.md").write_text(
+            "# Links sem classificacao (decidir: material / referencia / ignorar)\n\n" + "\n".join(f"- [{r['secao']}] {r['nome']} -> {r['url']}" for r in review) + "\n", encoding="utf-8")
+
+    def get_plain(self, url: str) -> bytes:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            return r.read()
+
+
+def main(argv: list[str]) -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--course", type=int, required=True)
+    ap.add_argument("--root", required=True)
+    ap.add_argument("--pdf", action="store_true")
+    ap.add_argument("--dry-run", action="store_true")
+    args = ap.parse_args(argv)
+    url, tok = load_moodle_token()
+    if not tok:
+        print("Faltando MOODLE_TOKEN"); return 2
+    pull = Pull(MoodleClient(url, tok), tok, Path(args.root), args.pdf, args.dry_run)
+    pull.run(args.course)
+    by = Counter((r["tipo"], r["acao"]) for r in pull.links)
+    print("\n== classificacao (tipo, acao): contagem")
+    for (t, a), n in sorted(by.items(), key=lambda kv: -kv[1]):
+        print(f"   {n:3}  {t:24} -> {a}")
+    print(f"labels: {len(pull.labels)} | links.json: {len(pull.links)} itens | review: {sum(1 for r in pull.links if r['acao'] == 'review')}")
     return 0
 
 
