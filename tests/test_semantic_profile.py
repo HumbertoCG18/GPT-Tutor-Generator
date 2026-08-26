@@ -102,3 +102,23 @@ def test_infer_semantic_profile_short_default_tools_still_accepted():
     )
     known = profile.get("known_tools", [])
     assert "z3" in known, f"Z3 (default tool) should be in known_tools, got: {known}"
+
+
+def test_resolve_semantic_profile_ignora_perfil_gerado_da_rodada_anterior(tmp_path: Path):
+    """R11: o build e funcao pura de input + curadoria; o .generated.json da rodada
+    anterior (estado derivado, fora do git) nao pode vazar para a rodada atual."""
+    repo = tmp_path / "repo"
+    (repo / "course").mkdir(parents=True)
+    write_internal_semantic_profile(repo, {"course_slug": "velho", "known_tools": ["ferramenta-fantasma"]})
+
+    profile = resolve_semantic_profile(
+        root_dir=repo,
+        course_name="Compiladores 2026",
+        teaching_plan="## Análise Léxica",
+        course_map_md="",
+        glossary_md="",
+        strong_headings=["ANTLR4"],
+    )
+
+    assert "ferramenta-fantasma" not in profile["known_tools"]
+    assert profile["course_slug"] != "velho"

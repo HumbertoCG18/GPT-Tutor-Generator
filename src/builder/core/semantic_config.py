@@ -371,7 +371,9 @@ def resolve_semantic_profile(
     glossary_md: str = "",
     strong_headings: Optional[list[str]] = None,
 ) -> dict:
-    cached = read_internal_semantic_profile(root_dir)
+    # R11: NAO funde o `.semantic_profile.generated.json` da rodada anterior — ele e so o
+    # `inferred` gravado por write_tag_catalog, e fundi-lo tornava o build dependente do
+    # estado derivado anterior (1 passo de memoria: tags/confidencias mudavam entre 2 reprocess).
     override = read_semantic_profile_override(root_dir)
     inferred = infer_semantic_profile(
         course_name=course_name,
@@ -380,4 +382,4 @@ def resolve_semantic_profile(
         glossary_md=glossary_md,
         strong_headings=strong_headings,
     )
-    return merge_semantic_profile(cached, inferred, override)
+    return merge_semantic_profile(inferred, override)

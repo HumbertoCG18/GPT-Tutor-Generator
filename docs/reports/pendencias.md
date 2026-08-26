@@ -249,12 +249,54 @@ PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ---
 
+## R11 + R12: o build dependia da rodada anterior (perfil em cache) e o injetor do sumario crescia (2026-08-26)
+
+**Sintoma.** Depois da ablacao, `git checkout -- . && git clean -fd` deixou os 5 repos "0 sujos", mas
+`eval_eixos` deu **bloco 165/200, conf-err 13** (SO 4/38) em vez de 199/200. Eu tinha escrito no tracker
+"regua curada confirmada" sem ter confirmado — corrigido acima.
+
+**Causa 1 (nao e bug, e regra):** `course/.timeline_index.json`, `.content_taxonomy.json`, `.tag_catalog.json`,
+`.semantic_profile.generated.json`, `.assessment_context.json` sao **ignorados pelo git** em todos os tutores.
+Restaurar por git devolve manifest + curadoria, mas o indice de blocos fica o da ablacao; no SO o manifest
+restaurado apontava uuids que o indice ablacionado nao tinha. **Regra: depois de restaurar um tutor por git,
+reprocessar** — o estado derivado nao e versionado.
+
+**Causa 2 = R11 (bug de raiz, corrigido):** reprocessar o SO duas vezes seguidas dava **34 campos diferentes**
+(confidencias de unidade, 1 subunidade, `coverage_units`, auto_tags). Nao era aleatorio: rodada 3 = rodada 2.
+Era memoria de 1 passo: `resolve_semantic_profile` fazia `merge(cached, inferred, override)` onde `cached` =
+`.semantic_profile.generated.json` gravado pela rodada anterior (que so contem o `inferred` daquela rodada).
+`known_tools`, `generic_slug_blacklist` e `heading_single_overlap_cues` da rodada N-1 vazavam para N (uniao
+nunca esquece: a blacklist acumulada mudava tags e confidencias). Fix: `merge(inferred, override)` — o build
+e funcao pura de (conteudo + curadoria). Prova: perfil sujo injetado a mao no SO + reprocess = **0 campos
+diferentes vs HEAD**. Teste `test_resolve_semantic_profile_ignora_perfil_gerado_da_rodada_anterior`.
+
+**Consequencia honesta:** os manifests de HEAD de MF/IA/TCC (commit 01:45) tinham sido gerados com a
+blacklist/cues acumuladas de builds antigos; o ponto fixo puro difere deles em campos SECUNDARIOS
+(`auto_tags` `ferramenta:lemas`/`topico:...`, confidencias, e no TCC o campo legado `computed_block_id`
+concept-fused do aula-06 — `temporal_block_id` intacto). Regua identica: bloco 199/200 conf-err 0, unidade
+191/191, cobertura 40/57, subunidade 88/94. Golden `TCC casos_chave` regenerado de proposito (so esse campo).
+SO e ES2 ja coincidiam com HEAD (0 campos).
+
+**R12 (bug de raiz, corrigido):** `content/curated/referencia-reducibility...md` do TCC ganhava **+1 linha em
+branco por build** (HEAD ja tinha 36). `_inject_executive_summary` insere `"
+" + block` mas a regex de
+remocao tirava so `block + 
+?` — cada build deixava o `
+` prefixado. Fix: `
+?` tambem no inicio da regex;
+chamada repetida agora e no-op. Testes em `test_navigation_exec_summary.py`. As 36 linhas antigas ficam
+(inofensivas; colapsar em massa mexeria em todos os md curados).
+
+**Suite:** 2036 passed. Gate: eval + pytest + sentinela contra `git show HEAD:manifest.json` (nao contra
+`.bak`, que era da ablacao) + 2 reprocess seguidos = 0 campos (novo item do gate: **determinismo**).
+
 ## ABLACAO "MOTOR NU" — quanto do numero e regra geral e quanto e curadoria por cadeira (2026-08-26)
 
 Pergunta do user: "se eu criar um repo de cadeira nova e os numeros cairem, o trabalho foi especifico?"
 Medido: os 5 repos reprocessados com o MESMO codigo e ZERO curadoria por cadeira (pinos de bloco/unidade/
 subunidade nas entries, `.timeline_curation.json` incl. `boundary_dates`, cards `manual`, sidecar de
-sinonimos; cache de votos LLM ficou — e motor). Restaurado por git depois; regua curada confirmada.
+sinonimos; cache de votos LLM ficou — e motor). **Restaurar por git NAO bastou** (ver R11 abaixo): a regua so voltou
+a 199/200 depois de reprocessar os 5 com a curadoria de volta.
 
 | eixo | curado | motor NU | perda |
 |---|---|---|---|

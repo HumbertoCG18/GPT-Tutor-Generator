@@ -183,8 +183,11 @@ def _inject_executive_summary(md_path: Path) -> bool:
         return False
 
     content = md_path.read_text(encoding="utf-8")
+    # O `\n?` inicial consome a linha em branco que a insercao prefixa ao bloco
+    # (`"\n" + block`); sem ele cada build deixava +1 linha em branco no md
+    # (md curado do TCC acumulou 36). Remover + reinserir agora e idempotente.
     summary_re = re.compile(
-        r"<!-- EXEC_SUMMARY_START -->.*?<!-- EXEC_SUMMARY_END -->\n?",
+        r"\n?<!-- EXEC_SUMMARY_START -->.*?<!-- EXEC_SUMMARY_END -->\n?",
         flags=re.DOTALL,
     )
     clean = summary_re.sub("", content)
