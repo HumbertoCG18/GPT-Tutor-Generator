@@ -1,7 +1,35 @@
 # Pendências — tracker vivo
 
 last_updated: 2026-08-26 (balde A/B fechados, 7 golds corrigidos, R3 titulo-topico, t1/t2, ablacao rapida, humano 23 -> 6).
-**FILA VIVA: secao `## AUDITORIA v2 — uso real e efeito medido (2026-08-27, pedido do user: "entender o que ja existe e o que e usado")
+**FILA VIVA: secao `## A2 EXECUTADO: genericos de unidade por curso (df do plano + nome do curso) — lista do MF aposentada (2026-08-27)
+
+**Nao e tokenizador novo.** Os scorers de unidade (`file_map.score_entry_against_unit` via `_score_timeline_unit_phrase`),
+o indice de unidade e o scorer de subunidade (`_score_entry_against_taxonomy_topic`) recebem o conjunto de genericos
+por PARAMETRO: `stopwords.unit_generic_tokens_from_units` (token em >= 40% das unidades do plano, titulo + topicos,
++ estruturais) ∪ tokens do nome do curso; carimbado no indice de unidade e em cada topico da taxonomia (`course_name`
+gravado na raiz via semantic_profile). `UNIT_GENERIC_MODE`: **df (default)** | lista (constantes antigas; byte-identico:
+gate 0 campos em 5/6, os 2 do IA sao ruido de voto no cache da copia) | ambos.
+
+**Comparacao nas copias dos 6 (harness rapido, 3 modos):**
+| modo | bloco | unidade | cobertura | subunidade |
+|---|---|---|---|---|
+| lista (antes) | 199/200 | 191/191 | 40/57 | 87/93 |
+| **df + nome do curso** | 199/200 | 191/191 | **41/57** | 87/93 |
+| ambos | 199/200 | 191/191 | 40/57 | 87/93 |
+Primeira rodada do df (SEM nome do curso) expos a mesma raiz do A1 no eixo de unidade: a lista do MF continha
+"computacao" por acaso; sem ela, a u09 da CG ("Temas ... de Computacao Grafica") casava todo PDF pelo cabecalho.
+Nome do curso e boilerplate em qualquer eixo.
+
+**Fora do gold (df):** ganhos — ES2 `azure` -> plataformas-de-devops; IA `introducao-a-agentes` -> planejamento-
+classico; TCC `aula-14` PCP -> prova-da-indecidibilidade, `integer-programming` -> reducao-polinomial; CG
+`opengl3dcpp-vdi` -> camera sintetica, `exerciciodemodelagem` +u07, u09 deixa de poluir 3 exercicios; SO I/O perde
+"paginacao" errada. Perdas anotadas (cobertura): IA `o-que-e-ia` perde u01, ES2 `roteiro6` perde u02, TCC
+`aula-13-rice` perde u04. Colecoes multi-topico (MF `listas`, `exemplos-zip`) ficam sem subunidade — honesto.
+
+Persistido nos 6 (reprocess in-place 93 s, sentinela sem mudanca de bloco). Proximo: A1 (bloco: um tokenizador
+e uma assinatura para P4 + desempate com o `_global_df`), B (kind x categoria), C (apagar `anchor_placement`).
+
+## AUDITORIA v2 — uso real e efeito medido (2026-08-27, pedido do user: "entender o que ja existe e o que e usado")
 
 **Chamadores reais (arquivo:linha), no caminho do reprocess:**
 - `disambiguator._toks/_block_signature/_global_df`: so o desempate do motor (+ gate D4). `_global_df` =
@@ -134,7 +162,7 @@ producao e o proprio motor (flagados / llm-funil / conf-err -> fila de revisao).
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
 **HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
 ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-26): bloco **199/200** conf-err **0** (o erro = ES2 `azure`, convencao) ·
-unidade **191/191 (100%)** · cobertura **40/57 F1 0,811** · subunidade **87/93** (4 cursos com gold) · **pinos 5** ·
+unidade **191/191 (100%)** · cobertura **41/57 F1 0,829** · subunidade **87/93** (4 cursos com gold) · **pinos 5** ·
 cards manuais **1** (TCC "Semana 12") · decisoes humanas de bloco **6** (eram 23) · suite **2047 passed**.
 MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py`, 81 s): bloco **205/212 por uuid (96,7%)**, display 194/200,
 conf-err 2 · unidade 134/191 · cobertura 34/57 · subunidade ~21/94. Os 7 erros nus restantes: 3 ruido do voto LLM
