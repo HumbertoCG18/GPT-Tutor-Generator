@@ -1,7 +1,62 @@
 # Pendências — tracker vivo
 
 last_updated: 2026-08-26 (balde A/B fechados, 7 golds corrigidos, R3 titulo-topico, t1/t2, ablacao rapida, humano 23 -> 6).
-**FILA VIVA: secao `## HOLDOUT CG EXECUTADO: 4 raizes gerais, 13 -> 2 suspeitos, bancada intacta (2026-08-27)
+**FILA VIVA: secao `## AUDITORIA: o que o sistema JA faz de tokenizacao, boilerplate, frequencia, kinds e categoria (2026-08-27)
+
+Pedido do user antes de implementar "IDF por curso + tokenizador unico": nao reconstruir o que existe. Mapa (arquivo:linha):
+
+**Tokenizadores (7, cada um com regra propria):**
+| onde | regra | consome |
+|---|---|---|
+| `motor/disambiguator._toks:40` | >=3 chars, sem digitos, `_GENERIC_STEMS` (prefixo 8), quebra camelCase | desempate; assinatura do bloco (topic + sessions) |
+| `motor/window_provider._topic_tokens:104` | >=3 chars + dimensionais 2d/3d (novo), `_GENERIC_STEMS`; stems de 6 | P4 topic (card) — + `_course_stems`, `_unit_stems` (novos) |
+| `timeline/index._timeline_specific_tokens:362` | >=4 chars, `TIMELINE_GENERIC_TOKENS` | fusao de blocos (cabeca da linha), fronteiras |
+| `timeline/index` unidade `:467/:1754` | >=4, `TIMELINE_UNIT_NEUTRAL_TOKENS` / `UNIT_GENERIC_TOKENS` | DP de unidade (`_score_timeline_unit_phrase`) |
+| `timeline/unit_matcher._tokens:37` | >=3, `UNIT_MATCHER_STOPWORDS` | DP posicional bloco->unidade |
+| `timeline/card_block._tokens:33` = `block_identity._tokens:40` | >2, `CARD_BLOCK_STOP` | card->bloco (labels), identidade |
+| `extraction/content_taxonomy._topic_support_tokens:208` | >=4, prefixo 5 | aliases de subunidade |
+| `routing/file_map` (scorer de unidade) | `UNIT_GENERIC_TOKENS` | unidade 1:1 / cobertura |
+Normalizacao e unica (`text/normalize.normalize_match_text`), mas piso, stems e stopwords divergem por modulo:
+o que sobrevive num lado morre no outro (raiz das 4 correcoes da CG e do t2).
+
+**Listas manuais de "generico" (6 + 2 duplicadas):** `_GENERIC_STEMS` (disambiguator:25; **duplicada** em
+`routing/anchor_placement.py:60`, legado gated por `use_anchor_placement`, morto com `use_anchor_engine`),
+`TIMELINE_GENERIC_TOKENS` (calendario/atividade — ok, e de dominio), **`TIMELINE_UNIT_NEUTRAL_TOKENS` e
+`UNIT_GENERIC_TOKENS` (stopwords.py:23/:35) carregam vocabulario do METODOS FORMAIS** ("formais", "predicado",
+"proposicional", "sintaxe", "semantica", "verificacao", "especificacao", "linguagens", "concorrentes"...) — lei
+4b violada numa constante global; funciona no MF e no SO por acaso, e vira ruido em cadeira nova. `_TOPIC_FILLER`
+(R3), `_TIMELINE_ADMIN_PHRASES`, `UNIT_MATCHER_STOPWORDS`, `CARD_BLOCK_STOP` (PT puro, ok).
+
+**Frequencia / inferido por curso (JA EXISTE, parcial):**
+- `disambiguator._global_df:133` + `_score:122`: **IDF por token sobre as assinaturas dos blocos do curso**, so no
+  DESEMPATE (e no gate D4 de janela-1: `DATE_DF_MAX`). O provider de janela (P4) nao usa — casa por stem sem peso.
+- `disambiguator._block_signature:107`: tokens de `ctx.course_name` saem da assinatura (so no desempate; P4 ganhou
+  o equivalente ontem).
+- `core/semantic_config.infer_semantic_profile:267`: por curso, a partir de plano/COURSE_MAP/glossario/headings:
+  `known_tools`, `generic_slug_blacklist` (= so o slug do curso), `heading_single_overlap_cues`. Consumido por
+  `content_taxonomy` (aliases) e `teaching_plan`; **nada disso chega ao motor**.
+- `coverage_rules._FRACAO_META` / `repo._doc_is_meta`: doc que cita >=80% dos titulos de unidade = meta (plano/TOC).
+- `window_provider._modal_years`: ano modal das sessoes.
+
+**Kinds / hosting:** `timeline/kinds.NEVER_HOSTS_MATERIAL_KINDS:66` (holiday, office_hours, workshop,
+academic_event, reserved, results, planning, suspended) usado em `drop_never_hosts` (+`assessment` desde ontem, com
+fallback) e em `_NOT_PREP_HOSTS`. Nao ha tabela kind x categoria; e edicao ad hoc.
+
+**Categoria no roteamento (so 4 pontos):** `anchor_engine.is_out_of_disamb_scope:27` (`trabalhos`/`provas` +
+card TDE), `anchor_engine.resolve_generic_reference:48` (`bibliografia`/`references` -> 1o bloco),
+`due_window.tier2_due_scope:40` (`trabalhos`/`provas`, `codigo` em TDE), `coverage_rules:94`. `outros`/
+`material-de-aula` sao neutros. O detector (`helpers.auto_detect_category`) e so por nome de arquivo.
+
+**Conclusao da auditoria:** o IDF por curso EXISTE (desempate) e nao foi levado ao P4 nem aos eixos de
+unidade; as listas globais de unidade sao MF em disfarce; os 7 tokenizadores sao a origem estrutural das
+correcoes repetidas. Plano sem regressao: (A1) motor — um tokenizador e uma assinatura para P4 + desempate,
+boilerplate = IDF do curso (`_global_df`) no lugar de `_GENERIC_STEMS`/`_course_stems`, gate nos 6 (5 curados
+199/200 + nu 205/212 + CG); (A2) eixo de unidade — trocar `TIMELINE_UNIT_NEUTRAL_TOKENS`/`UNIT_GENERIC_TOKENS` por
+IDF do curso no `_score_timeline_unit_phrase` e no scorer do file_map, gate 191/191 + cobertura 40/57;
+(B) tabela kind x categoria derivada dos golds (212 pares) no lugar de `NEVER_HOSTS` ad hoc; (C) apagar
+`anchor_placement._GENERIC_STEMS` (legado morto); (D) invariantes como teste sobre os 6 cursos reais.
+
+## HOLDOUT CG EXECUTADO: 4 raizes gerais, 13 -> 2 suspeitos, bancada intacta (2026-08-27)
 
 **Build** `Computacao-Grafica-Tutor` (build_course CLI, zero curadoria): 73/73 entries, 29 blocos, Datalab balanced em
 52 PDFs (4h30). Repo com git init + .gitattributes + commits; perfil "Computacao Grafica" no subjects.json.
