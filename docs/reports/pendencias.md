@@ -1,7 +1,39 @@
 # Pendências — tracker vivo
 
 last_updated: 2026-08-26 (balde A/B fechados, 7 golds corrigidos, R3 titulo-topico, t1/t2, ablacao rapida, humano 23 -> 6).
-**FILA VIVA: secao `## A2 EXECUTADO: genericos de unidade por curso (df do plano + nome do curso) — lista do MF aposentada (2026-08-27)
+**FILA VIVA: secao `## COBERTURA 41 -> 52/57: cinco raizes em `coverage_rules.py`, medidas offline antes de tocar producao (2026-08-27)
+
+Pergunta do user: "a cobertura so aumentou 1? nao tem como chegar a 54-55?". Resposta: sim, mas nao pelo A2 —
+a cobertura tem regras proprias. `scripts/harness_cobertura.py` (novo) recomputa o eixo em ~15 s sem reprocessar
+e reproduziu os 41/57 exatos; cada regra foi medida nele (corrigiu/quebrou) antes de entrar. Os 16 erros:
+
+| raiz | entries | regra |
+|---|---|---|
+| fallback do scorer somado ao card que ja decidiu (4/4 sobre-coberturas) | MF formalizacao, exemplos-zip, TCC aula-12, SO exercicios | **R4** fallback so sem regra |
+| token generico distintivo no card ("Gerencia de **Processos** CPU" -> u03) | SO exercicios | **R2** genericos do A2 + `_GENERIC_STEMS` |
+| empate do card descarta a 2a unidade (ruling 26/08: roteiros = u01 E u02) | ES2 roteiros x5 (+7 que acertavam por SORTE do scorer) | **R5** pratico (roteiro/lab) mantem todas do card |
+| PX sem topico no texto; `\bP1\b` nao casa "Revisao_P1_Gabarito" | MF revisao-p1-gabarito | **R6** calendario: unidades entre a prova N-1 e a N (titulo E id) |
+| avaliacao global | SO ENADE -> todas | **R7** convencao do user (ENADE/concurso/prova final) |
+| scorer 1:1 erra conteudo: "chamada de sistema" vs "Chamada**s**" (sem stem) | SO fork x3 | A1 |
+| sem texto (0 chars) | MF eth2, aws | so com a pagina do link (pipeline `moodle_pull`) |
+
+Variantes descartadas (medidas): R1 "fallback = unidade temporal final" 34/57 — gold de UNIDADE e "unidade do bloco
+temporal" (onde mora) e gold de COBERTURA e "o que o conteudo cobre" (colunas distintas do CSV; SO threads mora em u02,
+cobre u03). R3 "texto corrobora 2a unidade" 32/57 — slides de microsservicos (gold u01) e threads da SO ganham unidade
+espuria. R4 sozinho 37/57 (quebra os 7 roteiros que so acertavam pelo flip do scorer) — R5 e o que os estabiliza.
+
+Gate: 199/200 conf-err 0 · 191/191 · **52/57 F1 0,912** · subunidade 87/93 · pinos 5 · suite 2090 · determinismo 0
+campos em 5/6 (CG 2 `auto_tags`: `ferramenta:animacao-v2` flipa entre dois runs identicos — nao-determinismo
+PRE-EXISTENTE do catalogo `ferramenta:` em `content_taxonomy.build_tag_catalog`, mesma classe do `ferramenta:lemas`
+x7 do TCC vs HEAD; as tags alimentam `build_learned_unit_boosts` -> confidencias -> `computed_block_id` do scorer de
+conceito; nenhum campo da regua. Entrou na FILA). Sentinela: 55 `coverage_units` mudaram, revisadas uma a uma —
+nenhuma mudanca de bloco/unidade/subunidade. Fora do gold: CG perde a u09 espuria em 10 entries (R2/R4), ES2
+revisao-p2/respostas ganham u02 pela regra B (id casa), IA p2-202402 ganha calendario.
+
+Achado colateral: `exemplos-zip` (MF) tem resumo Gemini ERRADO — fala em Dafny/Hoare para um zip de `.smv` (NuSMV);
+o motor acerta u03 pelo card apesar do dado ruim. Restam 5: 3 forks (A1) + 2 links sem texto.
+
+## A2 EXECUTADO: genericos de unidade por curso (df do plano + nome do curso) — lista do MF aposentada (2026-08-27)
 
 **Nao e tokenizador novo.** Os scorers de unidade (`file_map.score_entry_against_unit` via `_score_timeline_unit_phrase`),
 o indice de unidade e o scorer de subunidade (`_score_entry_against_taxonomy_topic`) recebem o conjunto de genericos
@@ -161,9 +193,9 @@ producao e o proprio motor (flagados / llm-funil / conf-err -> fila de revisao).
 ## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
 **HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
-ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-26): bloco **199/200** conf-err **0** (o erro = ES2 `azure`, convencao) ·
-unidade **191/191 (100%)** · cobertura **41/57 F1 0,829** · subunidade **87/93** (4 cursos com gold) · **pinos 5** ·
-cards manuais **1** (TCC "Semana 12") · decisoes humanas de bloco **6** (eram 23) · suite **2047 passed**.
+ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-27): bloco **199/200** conf-err **0** (o erro = ES2 `azure`, convencao) ·
+unidade **191/191 (100%)** · cobertura **52/57 F1 0,912** · subunidade **87/93** (4 cursos com gold) · **pinos 5** ·
+cards manuais **1** (TCC "Semana 12") · decisoes humanas de bloco **6** (eram 23) · suite **2090 passed**.
 MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py`, 81 s): bloco **205/212 por uuid (96,7%)**, display 194/200,
 conf-err 2 · unidade 134/191 · cobertura 34/57 · subunidade ~21/94. Os 7 erros nus restantes: 3 ruido do voto LLM
 (MF), 2 convencao sem texto (IA prova-1-2024-02, ES2 azure), 2 dominio (TCC aula-17 = Cook-Levin).
@@ -408,6 +440,11 @@ PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 ---
 
 ## FILA VIVA (2026-08-26) — o que falta, em ordem, com gate
+
+0. **Nao-determinismo do catalogo `ferramenta:`** (`content_taxonomy.build_tag_catalog` / `_extract_tool_candidates`):
+   `ferramenta:animacao-v2` (CG) flipa entre dois reprocess identicos; `ferramenta:lemas` x7 (TCC) sumiu vs HEAD.
+   Propaga por `build_learned_unit_boosts` para confidencias e `computed_block_id` do scorer de conceito (nao a regua).
+   Gate de determinismo deveria ser 0 campos em 6/6 — hoje 5/6. Raiz provavel: ordem de set/dict nos headings fortes.
 
 **Gate unico entre itens (inalterado + 2 itens novos):** `eval_eixos.py` (4 eixos) · `pytest -q` (ler "N passed") ·
 sentinela campo a campo contra `git show HEAD:manifest.json` (nao contra `.bak`) · **determinismo** (2 reprocess

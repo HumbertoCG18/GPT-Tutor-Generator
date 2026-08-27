@@ -270,6 +270,7 @@ def apply_unit_subunit_fields(
             normalize=lambda t: _norm_cov(t, keep="+-./"),
             fallback_unit_slug=gated_unit,
             topic_index=topic_index,
+            blocks=blocks,
         )
         if cobertura:
             entry["coverage_units"] = cobertura

@@ -402,12 +402,14 @@ class TestConstantes:
 
 
 class TestHelper_Casa:
-    """Helper _casa(): contencao OU token distintivo >= 10 chars."""
+    """Helper _casa(): contencao OU token distintivo >= 10 chars — so com token distintivo (R2)."""
 
     def test_casa_contencao_exata(self):
-        """Se um e substring do outro, retorna True."""
-        assert _casa("seg", "seguranca")
-        assert _casa("seguranca", "seg")
+        """Contencao conta quando a frase tem 2 tokens distintivos ou 1 longo (R2, 2026-08-27):
+        "processos" dentro de "gerencia de processos cpu" NAO sustenta unidade."""
+        assert _casa("seguranca de redes", "topico seguranca de redes avancado")
+        assert _casa("criptografia", "aula de criptografia")          # 12 chars, longo
+        assert not _casa("processos", "gerencia de processos cpu")    # 1 token curto
         assert not _casa("seg", "auth")
 
     def test_casa_token_distintivo_10_chars(self):
@@ -497,3 +499,106 @@ class TestOrdenacao:
         # com a melhor confidence. Entao: u1@0.9, u2@0.9, depois u3 se entra.
         # Se nenhuma regra cobrir u3, nao entra.
         assert result[0]["confidence"] >= result[1]["confidence"]
+
+
+# ---------------------------------------------------------------- 2026-08-27: R2/R4/R5/R6/R7
+def _ti(unit_slug, *labels):
+    return [{"unit_slug": unit_slug, "topic_label": lb, "aliases": []} for lb in labels]
+
+
+_U = [{"slug": "u1", "normalized_title": "introducao"}, {"slug": "u2", "normalized_title": "processador"},
+      {"slug": "u3", "normalized_title": "concorrencia"}]
+
+
+class TestR2_GenericoNaoDistingue:
+    def test_topico_de_uma_palavra_curta_no_card_nao_adiciona_unidade(self):
+        """SO `exercicios`: card 'Gerencia de Processos CPU' casava u03 pelo topico 'processos'."""
+        entry = {"category": "listas", "title": "Exercicios", "source_section": "gerencia de processos cpu"}
+        ti = _ti("u3", "processos") + _ti("u2", "escalonamento")
+        out = derive_coverage_units(entry, _U, "", normalize=_norm, fallback_unit_slug="u2", topic_index=ti)
+        assert [c["unit_slug"] for c in out] == ["u2"]
+
+    def test_topico_multi_token_ou_longo_continua_casando(self):
+        entry = {"category": "material-de-aula", "title": "x", "source_section": "comunicacao entre processos"}
+        ti = _ti("u3", "comunicacao entre processos")
+        out = derive_coverage_units(entry, _U, "", normalize=_norm, topic_index=ti)
+        assert [c["unit_slug"] for c in out] == ["u3"]
+
+    def test_generico_do_curso_carimbado_no_indice_e_ignorado(self):
+        """Token generico por curso (A2, `generic_tokens` no indice) nao e distintivo."""
+        units = [dict(_U[0], generic_tokens=["gerencia"]), _U[1], _U[2]]
+        entry = {"category": "material-de-aula", "title": "x", "source_section": "gerencia"}
+        out = derive_coverage_units(entry, units, "", normalize=_norm, topic_index=_ti("u2", "gerencia"))
+        assert out == []
+
+
+class TestR4_FallbackSoSemRegra:
+    def test_scorer_nao_soma_ao_card_que_ja_decidiu(self):
+        """4 sobre-coberturas do gold (MF formalizacao/exemplos-zip, TCC aula-12, SO exercicios)."""
+        entry = {"category": "material-de-aula", "title": "x", "source_section": "exercicios de logica de hoare"}
+        out = derive_coverage_units(entry, _U, "", normalize=_norm, fallback_unit_slug="u3",
+                                    topic_index=_ti("u1", "logica de hoare"))
+        assert [c["unit_slug"] for c in out] == ["u1"]
+
+    def test_scorer_entra_quando_nenhuma_regra_disparou(self):
+        entry = {"category": "material-de-aula", "title": "x", "source_section": "informacoes gerais"}
+        out = derive_coverage_units(entry, _U, "", normalize=_norm, fallback_unit_slug="u3", topic_index=[])
+        assert [(c["unit_slug"], c["rule"]) for c in out] == [("u3", "unidade-atribuida")]
+
+
+class TestR5_PraticoCobreTodasDoCard:
+    TI = _ti("u1", "orientada a microsservicos", "criando um par de microsservicos") + _ti("u2", "estudo de caso integracao de microsservicos")
+
+    def test_roteiro_mantem_as_duas_unidades_do_card(self):
+        """ES2 ruling 2026-08-26: roteiros 2-8 cobrem u01 E u02. 'Roteiro2' sem fronteira de palavra."""
+        entry = {"id": "roteiro2-nameserver", "category": "material-de-aula", "title": "Roteiro2 - NameServer", "source_section": "microsservicos"}
+        out = derive_coverage_units(entry, _U, "", normalize=_norm, fallback_unit_slug="u1", topic_index=self.TI)
+        assert {c["unit_slug"] for c in out} == {"u1", "u2"}
+        assert {c["rule"] for c in out} == {"card", "card-pratica"}
+
+    def test_expositivo_fica_com_a_de_maior_evidencia(self):
+        entry = {"id": "microsservicos2", "category": "material-de-aula", "title": "Microsservicos 2", "source_section": "microsservicos"}
+        out = derive_coverage_units(entry, _U, "", normalize=_norm, fallback_unit_slug="u1", topic_index=self.TI)
+        assert [c["unit_slug"] for c in out] == ["u1"]
+
+
+class TestR6_CalendarioDaProva:
+    BLOCKS = [{"id": "b1", "kind": "class", "unit_slug": "u1"}, {"id": "b2", "kind": "review"},
+              {"id": "b3", "kind": "assessment", "topic_text": "P1"}, {"id": "b4", "kind": "class", "unit_slug": "u2"},
+              {"id": "b5", "kind": "assessment", "topic_text": "Entrega T1"},
+              {"id": "b6", "kind": "class", "unit_slug": "u3"}, {"id": "b7", "kind": "assessment", "topic_text": "P2"}]
+
+    def test_revisao_p1_sem_topico_no_texto_cobre_o_que_veio_antes_da_p1(self):
+        """MF revisao-p1-gabarito: titulo 'Revisao_P1_Gabarito' (underscore), 0 topicos no texto."""
+        entry = {"id": "revisao-p1-gabarito", "category": "provas", "title": "Revisao_P1_Gabarito", "source_section": "revisao"}
+        out = derive_coverage_units(entry, _U, "", normalize=_norm, fallback_unit_slug="u2", topic_index=[], blocks=self.BLOCKS)
+        assert [(c["unit_slug"], c["rule"]) for c in out] == [("u1", "calendario")]
+
+    def test_p2_cobre_a_janela_entre_p1_e_p2_ignorando_entrega(self):
+        entry = {"id": "lista-p2", "category": "listas", "title": "Lista P2", "source_section": ""}
+        out = derive_coverage_units(entry, _U, "", normalize=_norm, topic_index=[], blocks=self.BLOCKS)
+        assert [c["unit_slug"] for c in out] == ["u2", "u3"]
+
+    def test_texto_com_topicos_manda_sobre_o_calendario(self):
+        entry = {"id": "lista-p2", "category": "listas", "title": "Lista P2", "source_section": ""}
+        out = derive_coverage_units(entry, _U, "escalonamento e quantum", normalize=_norm,
+                                    topic_index=_ti("u2", "escalonamento", "quantum"), blocks=self.BLOCKS)
+        assert [(c["unit_slug"], c["rule"]) for c in out] == [("u2", "avaliacao")]
+
+    def test_sem_blocks_cai_no_fallback(self):
+        entry = {"id": "lista-p2", "category": "listas", "title": "Lista P2", "source_section": ""}
+        out = derive_coverage_units(entry, _U, "", normalize=_norm, fallback_unit_slug="u3", topic_index=[])
+        assert [c["rule"] for c in out] == ["unidade-atribuida"]
+
+
+class TestR7_AvaliacaoGlobal:
+    def test_enade_cobre_todas(self):
+        entry = {"id": "questoes-do-enade-sobre-sisop", "category": "listas", "title": "Questoes do ENADE sobre SISOP", "source_section": "informacoes gerais"}
+        out = derive_coverage_units(entry, _U, "", normalize=_norm, fallback_unit_slug="u1", topic_index=[])
+        assert {c["unit_slug"] for c in out} == {"u1", "u2", "u3"}
+        assert {c["rule"] for c in out} == {"avaliacao-global"}
+
+    def test_lista_p1_nao_e_global(self):
+        entry = {"id": "lista-p1", "category": "listas", "title": "Lista P1", "source_section": ""}
+        out = derive_coverage_units(entry, _U, "", normalize=_norm, fallback_unit_slug="u1", topic_index=[])
+        assert [c["unit_slug"] for c in out] == ["u1"]
