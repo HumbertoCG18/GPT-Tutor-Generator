@@ -100,6 +100,9 @@ referência; `.xlsx` (2) é extensão desconhecida no import (ignorado em silên
   `reprocess_assignments.py` + gold de bloco (~30) + `ablacao_rapida.py --repos CG` (adicionar CG ao `REPO`).
   Pendências do passo 2 continuam (Resolução de Prova, `.xlsx`, páginas duplicadas em 2 seções, índices de vídeo).
 
+## 2d. Holdout executado (27/08) — ver `pendencias.md` § "HOLDOUT CG EXECUTADO": 4 raízes gerais no `provider_topic`,
+13 → 2 suspeitos + convenções, bancada 199/200 intacta, nu 205/212 igual. Falta: ruling do user nos residuais → `ground_truth_CG.csv` (última régua).
+
 ## 3. Decisão de rota (user, 26/08): PDF como desbloqueio, HTML direto como regime permanente
 
 **Rota escolhida para o holdout: snapshot → PDF (Edge headless) → stash → Datalab → pipeline de sempre.** Por quê:

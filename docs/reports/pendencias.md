@@ -1,7 +1,39 @@
 # Pendências — tracker vivo
 
 last_updated: 2026-08-26 (balde A/B fechados, 7 golds corrigidos, R3 titulo-topico, t1/t2, ablacao rapida, humano 23 -> 6).
-**FILA VIVA: secao `## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
+**FILA VIVA: secao `## HOLDOUT CG EXECUTADO: 4 raizes gerais, 13 -> 2 suspeitos, bancada intacta (2026-08-27)
+
+**Build** `Computacao-Grafica-Tutor` (build_course CLI, zero curadoria): 73/73 entries, 29 blocos, Datalab balanced em
+52 PDFs (4h30). Repo com git init + .gitattributes + commits; perfil "Computacao Grafica" no subjects.json.
+**Pre-revisao (sem gold, so cronograma x card):** 13 suspeitos, 10 deles material de aula em bloco de PROVA (card 13
+"CG 3D" -> G2 08/12 e P1; card 16 "Sintese de Imagens" -> P2). O professor reusa o mesmo Moodle: nada disso e prova.
+
+**Raizes (todas gerais, todas no `provider_topic`; medidas com gate curado nos 5 = 199/200 intacto e nu 205/212 igual):**
+1. **Bloco de prova saia como candidato.** Nos 5 golds, **0/212** entries tem bloco-verdade `assessment`; o
+   `topic_text` da prova e a COBERTURA ("Conteudo: unidade-08...") e casava qualquer card com nome de unidade —
+   40/70 janelas da CG traziam 2-3 provas. `drop_never_hosts` agora tira `assessment` (fallback se so ha prova).
+2. **"2d"/"3d" morriam no piso de 3 chars** (mesma classe do t2): "Computacao Grafica 3D" ficava so com o nome do
+   curso. Token dimensional com assinatura propria no texto cru das sessoes; dimensao SOZINHA que aponta 1 bloco
+   ("Exercicios 2D") = escopo, nao aula -> funil (o LLM acertava; janela-1 forcada regredia 3).
+3. **Nome do curso nao era boilerplate no provider** ("comput" casava "Geometria/Visao COMPUTacional"; so o
+   disambiguator descartava). Stems do course_name saem dos dois lados.
+4. **Card nomeado pela UNIDADE do plano** ("Sintese de Imagens Realisticas" vs linha "Iluminacao"): o bloco tem
+   `unit_slug` da unidade (DP) e o P4 nao olhava. unit_slug entra na assinatura do bloco.
+Efeito na CG: cards 1-16 todos nos blocos esperados; restam `matematica.cpp` (card 3 -> 10/09), Texturas (card 17
+-> 25/08, "mapeamento" 2D; o cronograma nao tem linha de texturas) e convencoes (Resolucoes de Prova 2D/3D, lista
+da P1). Sentinela nos 5: SO 1 metodo (llm -> llm-funil, certo), ES2 2 metodos (-> janela-1), IA 2 provas antigas
+saem do bloco da P2. Tutores reprocessados e commitados.
+
+**Achados de ingestao no caminho (todos corrigidos):** cue `biblio` casava "biblioteca" (2 falsos `bibliografia`,
+que sairiam do desempate) e `ementa` casava "complementar" (-> cronograma); acentos nao sobrevivem ao Start-Process
+(`--args-json`); Edge headless devolve antes de fechar o PDF (espera estabilizar); golden da CG nascido vazio durante
+o build (regenerado). Categoria: 35 `outros` (detector so olha o nome; neutro para o motor).
+
+**Politica de gold (user, 27/08):** gold NAO faz parte do fluxo de cadeira nova; a CG e a ULTIMA regua a ser
+rotulada, e por verificacao (tu marca ✗ no artefato), nao por rotulagem do zero. Depois disso, o termometro em
+producao e o proprio motor (flagados / llm-funil / conf-err -> fila de revisao).
+
+## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
 **HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
 ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-26): bloco **199/200** conf-err **0** (o erro = ES2 `azure`, convencao) ·
