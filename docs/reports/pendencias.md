@@ -30,6 +30,8 @@ conceito; nenhum campo da regua. Entrou na FILA). Sentinela: 55 `coverage_units`
 nenhuma mudanca de bloco/unidade/subunidade. Fora do gold: CG perde a u09 espuria em 10 entries (R2/R4), ES2
 revisao-p2/respostas ganham u02 pela regra B (id casa), IA p2-202402 ganha calendario.
 
+Commits: gerador `6499217`; MF `bc75df4`, TCC `b5f10f2`, IA `8fd1f48` (push), SO `0f6c023`, ES2 `c517579`, CG `eb628e8` (sem remote). Gate curado nas copias: 0 campos em 5/6, IA 2 = `p2-202402` llm-funil (ruido de voto no cache da copia, igual ao A2).
+
 Achado colateral: `exemplos-zip` (MF) tem resumo Gemini ERRADO — fala em Dafny/Hoare para um zip de `.smv` (NuSMV);
 o motor acerta u03 pelo card apesar do dado ruim. Restam 5: 3 forks (A1) + 2 links sem texto.
 
