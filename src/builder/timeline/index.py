@@ -455,16 +455,18 @@ def _timeline_unit_number_from_unit(unit: dict) -> Optional[int]:
         return None
 
 
-def _score_timeline_unit_phrase(row_norm: str, row_tokens: set[str], phrase: str, token_weights: dict) -> float:
+def _score_timeline_unit_phrase(row_norm: str, row_tokens: set[str], phrase: str, token_weights: dict,
+                                neutral_tokens=None) -> float:
     phrase_norm = _normalize_match_text(phrase)
     if not phrase_norm:
         return 0.0
     if phrase_norm in row_norm:
         return 3.8
 
+    neutral = _TIMELINE_UNIT_NEUTRAL_TOKENS if neutral_tokens is None else neutral_tokens  # A2: por curso
     phrase_tokens = [
         token for token in phrase_norm.split()
-        if len(token) >= 4 and token not in _TIMELINE_UNIT_NEUTRAL_TOKENS
+        if len(token) >= 4 and token not in neutral
     ]
     if not phrase_tokens:
         return 0.0
@@ -1677,6 +1679,15 @@ def _build_assessment_context_from_course(
 def _iter_content_taxonomy_topics(taxonomy: dict) -> List[dict]:
     topics: List[dict] = []
     seen = set()
+    # A2: genericos de unidade POR CURSO (df sobre as unidades da taxonomia), carimbados em cada
+    # topico para o scorer de subunidade; modo em UNIT_GENERIC_MODE (lista = constante de antes).
+    from src.builder.text.stopwords import resolve_unit_generic_tokens
+    _units = (taxonomy or {}).get("units", []) or []
+    _resolved = resolve_unit_generic_tokens(
+        [(str(u.get("title") or u.get("slug") or "").replace("-", " "),
+          [str(t.get("label") or "") for t in (u.get("topics") or [])]) for u in _units],
+        UNIT_GENERIC_TOKENS, course_name=str((taxonomy or {}).get("course_name") or (taxonomy or {}).get("course") or ""))
+    _generic = sorted(_resolved) if _resolved is not None else None
     for unit in (taxonomy or {}).get("units", []) or []:
         unit_slug = _normalize_unit_slug(str(unit.get("slug", "") or unit.get("title", "") or ""))
         unit_title = _collapse_ws(str(unit.get("title", "") or ""))
@@ -1697,6 +1708,7 @@ def _iter_content_taxonomy_topics(taxonomy: dict) -> List[dict]:
                     "topic_label": topic_label,
                     "topic_code": str(topic.get("code", "") or ""),
                     "kind": str(topic.get("kind", "") or "topic"),
+                    "generic_tokens": _generic,
                     "aliases": [str(alias) for alias in (topic.get("aliases", []) or []) if _collapse_ws(str(alias))],
                 }
             )
@@ -1748,22 +1760,23 @@ def _score_entry_against_taxonomy_topic(signals: dict, topic: dict) -> float:
                 score += weight * 0.82
                 exact_hits += 1
 
+    _generic = set(topic.get("generic_tokens") or []) or UNIT_GENERIC_TOKENS  # A2: por curso
     topic_tokens = {
         token
         for token in _normalize_match_text(label).split()
-        if len(token) >= 4 and token not in UNIT_GENERIC_TOKENS
+        if len(token) >= 4 and token not in _generic
     }
     if topic_slug:
         topic_tokens.update(
             token
             for token in _normalize_match_text(topic_slug.replace("-", " ")).split()
-            if len(token) >= 4 and token not in UNIT_GENERIC_TOKENS
+            if len(token) >= 4 and token not in _generic
         )
     for alias in aliases:
         topic_tokens.update(
             token
             for token in _normalize_match_text(alias).split()
-            if len(token) >= 4 and token not in UNIT_GENERIC_TOKENS
+            if len(token) >= 4 and token not in _generic
         )
 
     signal_tokens = {

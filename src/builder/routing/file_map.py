@@ -87,6 +87,9 @@ def build_file_map_unit_index(
 
     for unit_pos, unit in enumerate(units or []):
         title, topics, extra_signals = _partes(unit)
+        # A2: conjunto de genericos POR CURSO carimbado no spec (build_file_map_unit_index_from_course);
+        # sem carimbo cai na constante injetada (comportamento de antes).
+        unit_generic = set((unit.get("generic_tokens") or []) if isinstance(unit, dict) else []) or set(unit_generic_tokens)
         descartar = ubiquas - proprias[unit_pos]
         clean_title = strip_outline_prefix(title)
         topic_phrases = []
@@ -105,11 +108,13 @@ def build_file_map_unit_index(
                 topic_tokens.append(topic_norm)
                 seen_topic_tokens.add(topic_norm)
             for token in topic_norm.split():
-                if len(token) >= 4 and token not in seen_topic_tokens and token not in unit_generic_tokens:
+                if len(token) >= 4 and token not in seen_topic_tokens and token not in unit_generic:
                     topic_tokens.append(token)
                     seen_topic_tokens.add(token)
         indexed.append({
             "title": title,
+            # carimbo so quando veio calculado por curso; None -> cada consumidor usa a sua constante
+            "generic_tokens": sorted(unit_generic) if (isinstance(unit, dict) and unit.get("generic_tokens")) else None,
             "slug": normalize_unit_slug(title),
             "normalized_title": normalize_match_text(clean_title),
             "topics": topics,
@@ -134,7 +139,7 @@ def build_file_map_unit_index(
         unit_tokens = set()
         for text in [unit["normalized_title"]] + unit.get("topic_tokens", []):
             for token in text.split():
-                if len(token) >= 4 and not token.isdigit() and token not in unit_generic_tokens:
+                if len(token) >= 4 and not token.isdigit() and token not in unit_generic:
                     unit_tokens.add(token)
         for token in unit_tokens:
             token_frequency[token] = token_frequency.get(token, 0) + 1
@@ -143,7 +148,7 @@ def build_file_map_unit_index(
         unit_tokens = set()
         for text in [unit["normalized_title"]] + unit.get("topic_tokens", []):
             for token in text.split():
-                if len(token) >= 4 and not token.isdigit() and token not in unit_generic_tokens:
+                if len(token) >= 4 and not token.isdigit() and token not in unit_generic:
                     unit_tokens.add(token)
         unit["token_weights"] = {
             token: 1.0 / token_frequency[token]
@@ -251,6 +256,8 @@ def score_entry_against_unit(
     tags_text = signals.get("tags_text", "")
     raw_text = signals.get("raw_text", "")
     card_text = signals.get("card_text", "")
+    # A2: genericos de unidade POR CURSO (carimbados no indice); sem carimbo, a constante.
+    _neutral = set(unit.get("generic_tokens") or []) or set(timeline_unit_neutral_tokens)
     card_tokens = {tok for tok in card_text.split() if len(tok) >= 4}
     title_tokens = {tok for tok in title_text.split() if len(tok) >= 4}
     markdown_headings_tokens = {tok for tok in markdown_headings_text.split() if len(tok) >= 4}
@@ -324,11 +331,11 @@ def score_entry_against_unit(
             score += 0.24
             exact_topic_hits += 1
             continue
-        score += score_timeline_unit_phrase(markdown_headings_text, markdown_headings_tokens, topic_phrase, token_weights) * 0.55
-        score += score_timeline_unit_phrase(markdown_lead_text, markdown_lead_tokens, topic_phrase, token_weights) * 0.48
-        score += score_timeline_unit_phrase(markdown_text, markdown_tokens, topic_phrase, token_weights) * 0.18
-        score += score_timeline_unit_phrase(title_text, title_tokens, topic_phrase, token_weights) * 0.45
-        score += score_timeline_unit_phrase(card_text, card_tokens, topic_phrase, token_weights) * 0.40
+        score += score_timeline_unit_phrase(markdown_headings_text, markdown_headings_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.55
+        score += score_timeline_unit_phrase(markdown_lead_text, markdown_lead_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.48
+        score += score_timeline_unit_phrase(markdown_text, markdown_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.18
+        score += score_timeline_unit_phrase(title_text, title_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.45
+        score += score_timeline_unit_phrase(card_text, card_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.40
         score += score_timeline_unit_phrase(manual_tags_text, manual_tags_tokens, topic_phrase, token_weights) * 0.35
         score += score_timeline_unit_phrase(auto_tags_text, auto_tags_tokens, topic_phrase, token_weights) * 0.04
         score += score_timeline_unit_phrase(legacy_tags_text, legacy_tags_tokens, topic_phrase, token_weights) * 0.02
@@ -1322,6 +1329,10 @@ def build_file_map_unit_index_from_course(
         return []
 
     parsed_units = parse_units_from_teaching_plan(teaching_plan)
+    from src.builder.text.stopwords import resolve_unit_generic_tokens
+    course_generic = resolve_unit_generic_tokens(parsed_units, set(unit_generic_tokens) | set(timeline_unit_neutral_tokens),
+                                                 course_name=str(course_meta.get("course_name") or ""))
+    _def_generic = course_generic if course_generic is not None else (set(unit_generic_tokens) | set(timeline_unit_neutral_tokens))
     root_dir = course_meta.get("_repo_root")
     glossary_text = ""
     try:
@@ -1363,13 +1374,14 @@ def build_file_map_unit_index_from_course(
 
             definition = normalize_match_text_fn(str(term.get("definition", "") or ""))
             for token in definition.split():
-                if len(token) < 5 or token in unit_generic_tokens or token in timeline_unit_neutral_tokens:
+                if len(token) < 5 or token in _def_generic:
                     continue
                 if token in seen_signals:
                     continue
                 seen_signals.add(token)
                 extra_signals.append(token)
 
-        unit_specs.append({"title": title, "topics": topics, "extra_signals": extra_signals})
+        unit_specs.append({"title": title, "topics": topics, "extra_signals": extra_signals,
+                           "generic_tokens": sorted(course_generic) if course_generic is not None else None})
 
     return build_file_map_unit_index_fn(unit_specs)

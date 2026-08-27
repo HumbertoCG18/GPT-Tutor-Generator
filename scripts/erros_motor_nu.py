@@ -5,7 +5,7 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 import os
 GEN = Path(__file__).resolve().parents[1]
 GH = Path(os.environ["TUTOR_REPOS_DIR"]) if os.environ.get("TUTOR_REPOS_DIR") else GEN.parent  # harness em copia
-REPO = {"MF": "Metodos-Formais-Tutor", "SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artifical-Tutor", "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor"}
+REPO = {"MF": "Metodos-Formais-Tutor", "SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artifical-Tutor", "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor", "CG": "Computacao-Grafica-Tutor"}
 SEM = re.compile(r"semana\s*(\d+)", re.I)
 tot_ok = tot_n = 0; rows = []
 for sig, rn in REPO.items():

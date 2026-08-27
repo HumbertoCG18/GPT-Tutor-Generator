@@ -615,7 +615,11 @@ def build_content_taxonomy(
             best_topic["aliases"] = aliases
             best_unit["topics"] = _dedupe_taxonomy_topics(list(best_unit.get("topics", []) or []))
 
-    return {"version": 1, "course_slug": _infer_course_slug_from_units(units), "units": result_units}
+    # A2 (2026-08-27): nome do curso na raiz, para o scorer de subunidade tratar os tokens do nome
+    # como boilerplate por curso. Vem do semantic_profile (course_slug = slugify(course_name)); o
+    # `course_slug` desta raiz e inferido das UNIDADES (outra coisa) e fica como estava.
+    course_name = str((semantic_profile or {}).get("course_slug") or "").replace("-", " ")
+    return {"version": 1, "course_slug": _infer_course_slug_from_units(units), "course_name": course_name, "units": result_units}
 
 
 def write_internal_content_taxonomy(root_dir: Path, taxonomy: dict) -> None:
