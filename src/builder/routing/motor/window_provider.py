@@ -95,17 +95,38 @@ TOPIC_STEM_LEN: int = 6
 TOPIC_MIN_TOKEN: int = 3
 
 
+# Token DIMENSIONAL ("2d", "3d"): 2 chars, morria no piso 3 nos dois lados. E o unico
+# discriminador de "Computacao Grafica 3D" vs "Processo de Visualizacao 2D" (holdout CG
+# 2026-08-27). Assinatura propria, no texto cru das sessoes, como o identificador t1/t2.
+_DIM_TOKEN_RE = re.compile(r"^\d[a-z]{1,2}$")
+
+
 def _topic_tokens(topic: str) -> set:
-    """Tokens do TÓPICO curado do card: >=3 chars, sem genéricos.
+    """Tokens do TÓPICO curado do card: >=3 chars, sem genéricos (+ dimensionais 2d/3d).
 
     Piso 2 seria no-op: a assinatura do bloco (_toks) tem piso 3 — token
     curto do tópico nunca casa. Se a calibração TCC pedir np/t2, o piso-2
     exige assinatura própria do P4 nos DOIS lados (decisão por número)."""
     out = set()
     for t in normalize_match_text(str(topic or "")).split():
-        if len(t) >= TOPIC_MIN_TOKEN and not t.isdigit() and t[:8] not in _GENERIC_STEMS:
+        if (len(t) >= TOPIC_MIN_TOKEN and not t.isdigit() and t[:8] not in _GENERIC_STEMS) or _DIM_TOKEN_RE.match(t):
             out.add(t)
     return out
+
+
+def _course_stems(ctx: MotorContext) -> set:
+    """Stems do NOME DO CURSO: boilerplate dos dois lados do P4. "Computacao Grafica" casava
+    "Geometria/Visao COMPUTacional" e levava o card "CG 3D" para 20/08 e 01/09 (CG 2026-08-27).
+    O disambiguator ja descartava esses tokens da assinatura; o provider nao."""
+    return _stems(_topic_tokens(str(getattr(ctx, "course_name", "") or "")))
+
+
+def _unit_stems(block: dict) -> set:
+    """Stems do unit_slug do bloco ("unidade-08-sintese-de-imagens-realisticas"): o professor
+    nomeia cards pela UNIDADE do plano e a linha do cronograma diz outra coisa ("Iluminacao");
+    o elo card -> unidade -> blocos da unidade ja existe no DP e o P4 nao olhava (CG 2026-08-27)."""
+    slug = str(block.get("unit_slug") or "").replace("-", " ")
+    return _stems(_topic_tokens(slug) - {"unidade", "aprendizagem"})
 
 
 def _stems(tokens: set) -> set:
@@ -155,7 +176,7 @@ def _block_topic_stems(ctx: MotorContext) -> dict:
         if topic_toks & _TOPIC_EXAM_STEMS and not _STRONG_EXAM_RE.search(_block_session_hay(b, ctx)):
             topic_toks = topic_toks - _TOPIC_EXAM_STEMS
         sig = topic_toks | block_session_tokens(b, ctx)
-        cache[id(b)] = _stems(sig)
+        cache[id(b)] = (_stems(sig) | _unit_stems(b)) - _course_stems(ctx)
     ctx._stems_cache = cache
     return cache
 
@@ -233,20 +254,28 @@ def provider_topic(entry: dict, ctx: MotorContext) -> List[str]:
     bloco nenhum e seguem ao funil."""
     sec = str(entry.get("source_section") or "")
     m = _SEMANA_TOPIC_RE.match(sec)
-    tstems = _stems(_topic_tokens(m.group(1) if m else sec))
+    tstems = _stems(_topic_tokens(m.group(1) if m else sec)) - _course_stems(ctx)
+    dims = {t for t in tstems if _DIM_TOKEN_RE.match(t)}
+    tstems -= dims
     wids = _work_ids(sec)
-    if not tstems and not wids:
+    if not tstems and not wids and not dims:
         return []  # card só-ordinal: week-math PROIBIDO -> sem janela
     stems_by_block = _block_topic_stems(ctx)
     refs = []
     for b in ctx.blocks:
         hit = bool(tstems & stems_by_block.get(id(b), set()))
-        if not hit and wids:
-            hit = bool(wids & _work_ids(_block_session_hay(b, ctx)))
+        if not hit and (wids or dims):
+            hay = _block_session_hay(b, ctx)
+            hit = bool(wids & _work_ids(hay)) or bool(dims & set(normalize_match_text(hay).split()))
         if hit:
             ref = str(b.get("id") or "")
             if ref:
                 refs.append(ref)
+    if not tstems and not wids and dims and len(refs) == 1:
+        # Dimensao SOZINHA ("Exercicios 2D") e escopo, nao aula: com 1 bloco so, e fina demais para
+        # forcar janela-1 — vai ao funil (o LLM ve a timeline inteira e acertava). Com >= 2 blocos
+        # ("CG 3D" -> 27/10 e 29/10) a janela vale. Mesma etica do ordinal: nunca chuta.
+        return []
     return refs
 
 
@@ -265,10 +294,17 @@ def drop_never_hosts(window: List[str], ctx: MotorContext) -> List[str]:
     oficina, evento, administrativos — kinds.NEVER_HOSTS_MATERIAL_KINDS). So
     quando sobra algum bloco: janela toda desses kinds fica como esta (o
     disambiguator/funil respondem honestamente)."""
+    # Bloco de PROVA tambem nao hospeda material (holdout CG 2026-08-27): nos 5 golds,
+    # 0/212 entries tem bloco-verdade `assessment` (provas/listas/gabaritos vivem em
+    # review/deliverable). O topic_text da prova e a COBERTURA ("Conteudo: unidade-01,
+    # unidade-08...") e casa qualquer card com nome de unidade: na CG 40/70 janelas
+    # traziam 2-3 provas e 10 decisoes cairam nelas (P1, P2, G2). Fallback mantido:
+    # janela so de provas fica como esta (o funil/disambiguator respondem).
     kept = []
     for ref in window:
         b = ctx.block_by_ref(ref)
-        if b is not None and str(b.get("kind") or "") in NEVER_HOSTS_MATERIAL_KINDS:
+        kind = str(b.get("kind") or "") if b is not None else ""
+        if b is not None and (kind in NEVER_HOSTS_MATERIAL_KINDS or kind == "assessment"):
             continue
         kept.append(ref)
     return kept or list(window)

@@ -307,3 +307,52 @@ def test_work_id_nao_casa_numero_solto_nem_pn():
     assert wp._work_ids("Semana 14 - Apresentações T2") == {"t2"}
     assert wp._work_ids("Trabalho TP1 e P1") == {"tp1"}
     assert wp._work_ids("Aula 14") == set()
+
+
+# Holdout CG (2026-08-27): bloco de prova nao hospeda material; sai da janela como feriado/atendimento.
+def test_drop_never_hosts_tira_prova_da_janela_e_mantem_fallback():
+    ctx = MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-18", "kind": "class", "period_start": "2026-10-27", "sessions": [{"date": "2026-10-27", "label": "visualizacao 3d projecao aula"}]},
+                {"id": "bloco-23", "kind": "assessment", "period_start": "2026-11-19", "topic_text": "Conteúdo: unidade-08-sintese-de-imagens-realisticas", "sessions": []},
+                {"id": "bloco-28", "kind": "assessment", "period_start": "2026-12-08", "topic_text": "Conteúdo: unidade-01, unidade-08", "sessions": []}],
+        card_block_map={}, lessons_index={})
+    assert wp.drop_never_hosts(["bloco-18", "bloco-23", "bloco-28"], ctx) == ["bloco-18"]
+    assert wp.drop_never_hosts(["bloco-23", "bloco-28"], ctx) == ["bloco-23", "bloco-28"]
+
+
+# Holdout CG (2026-08-27): "3d"/"2d" discriminam; nome do curso e boilerplate; unit_slug do bloco entra.
+def _ctx_cg():
+    return MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-05", "kind": "class", "period_start": "2026-08-20", "unit_slug": "unidade-02-fundamentos-matematicos",
+                 "sessions": [{"date": "2026-08-20", "label": "geometria computacional aula"}]},
+                {"id": "bloco-06", "kind": "class", "period_start": "2026-08-25", "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+                 "sessions": [{"date": "2026-08-25", "label": "processo de visualizacao 2d instanciamento aula"}]},
+                {"id": "bloco-07", "kind": "class", "period_start": "2026-09-01", "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+                 "sessions": [{"date": "2026-09-01", "label": "processamento de imagens e visao computacional aula"}]},
+                {"id": "bloco-18", "kind": "class", "period_start": "2026-10-27", "unit_slug": "unidade-06-processo-de-visualizacao-3d",
+                 "sessions": [{"date": "2026-10-27", "label": "visualizacao 3d projecao aula"}]},
+                {"id": "bloco-19", "kind": "class", "period_start": "2026-10-29", "unit_slug": "unidade-06-processo-de-visualizacao-3d",
+                 "sessions": [{"date": "2026-10-29", "label": "visualizacao 3d observador aula"}]},
+                {"id": "bloco-21", "kind": "class", "period_start": "2026-11-10", "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+                 "sessions": [{"date": "2026-11-10", "label": "iluminacao aula"}]}],
+        card_block_map={}, lessons_index={}, course_name="Computação Gráfica")
+
+
+def test_token_dimensional_3d_discrimina_e_nome_do_curso_e_boilerplate():
+    win, prov = wp.resolve_window({"id": "opengl-3d", "source_section": "13 - Computação Gráfica 3D"}, _ctx_cg())
+    assert prov == "topic" and win == ["bloco-18", "bloco-19"]
+
+
+def test_card_nomeado_pela_unidade_casa_os_blocos_da_unidade():
+    win, prov = wp.resolve_window({"id": "modelos-de-iluminacao", "source_section": "16 - Síntese de Imagens Realísticas"}, _ctx_cg())
+    assert prov == "topic" and "bloco-21" in win and "bloco-18" not in win
+
+
+def test_card_2d_nao_perde_o_bloco_2d():
+    win, prov = wp.resolve_window({"id": "vis2d", "source_section": "6 - Processo de Visualização 2D"}, _ctx_cg())
+    assert "bloco-06" in win
+
+
+def test_dimensao_sozinha_com_um_bloco_so_vai_ao_funil():
+    win, prov = wp.resolve_window({"id": "exercicios-de-geometria-computacional", "source_section": "Exercícios 2D"}, _ctx_cg())
+    assert win == [] and prov == ""
