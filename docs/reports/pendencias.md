@@ -1,7 +1,49 @@
 # Pendências — tracker vivo
 
 last_updated: 2026-08-26 (balde A/B fechados, 7 golds corrigidos, R3 titulo-topico, t1/t2, ablacao rapida, humano 23 -> 6).
-**FILA VIVA: secao `## AUDITORIA: o que o sistema JA faz de tokenizacao, boilerplate, frequencia, kinds e categoria (2026-08-27)
+**FILA VIVA: secao `## AUDITORIA v2 — uso real e efeito medido (2026-08-27, pedido do user: "entender o que ja existe e o que e usado")
+
+**Chamadores reais (arquivo:linha), no caminho do reprocess:**
+- `disambiguator._toks/_block_signature/_global_df`: so o desempate do motor (+ gate D4). `_global_df` =
+  IDF por BLOCO, memoizado no ctx. Usado. `window_provider` NAO o usa (P4 casa por stem sem peso).
+- `window_provider._topic_tokens/_stems/_block_topic_stems`: so o P4 (`provider_topic`). Usado. Homonimo
+  `file_map._topic_tokens` e OUTRA funcao (indice de unidade).
+- `timeline/index._timeline_specific_tokens`: fusao de blocos, extracao de topicos, deteccao de nao-instrucional
+  (11 usos). Usado no build e no reprocess (timeline e reconstruida).
+- `_score_timeline_unit_phrase` + `TIMELINE_UNIT_NEUTRAL_TOKENS`: DP de unidade via engine.py:250/2251. Usado.
+- `UNIT_GENERIC_TOKENS`: indice de unidade do file_map (facade:167, routing/file_map), vocabulario de unidade dos
+  blocos (index.py:1754-1766) e `concept_resolver` (legado concept-fused: roda a cada reprocess, calcula
+  `computed_block_*`, e SOBREPOSTO por `resolve_temporal_block` -> custo sem efeito no bloco).
+- `infer/resolve_semantic_profile`: taxonomia, tag catalog, file_map (extra signals), teaching_plan. Nunca no motor.
+- `anchor_placement` (+ copia de `_GENERIC_STEMS`): gated por `use_anchor_placement`, nenhum perfil liga = MORTO.
+- `content_taxonomy` tem `_toks`/`_GENERIC_STEMS`/`_UNIT_TITLE_GENERIC` proprios (aliases de subunidade). Usado.
+
+**Efeito medido das listas nos 6 cursos (tokens do vocabulario do curso que cada lista remove):**
+- `_GENERIC_STEMS` (motor): so palavras de ATIVIDADE em todos (aula, exercicios, introducao, apresentacao,
+  disciplina, trabalho, revisao, estudo/caso). E dominio, nao curso. Mantem como semente.
+- `TIMELINE_UNIT_NEUTRAL_TOKENS` + `UNIT_GENERIC_TOKENS`: MF perde 9-10 palavras reais (logica, verificacao,
+  modelos, programas, predicados, formais...) — proposito da lista; SO/IA/ES2/TCC quase nada; **CG perde
+  `fundamentos`** (titulo da unidade 2) e `algoritmos/modelos/metodos/aplicacoes`. Lista MF em disfarce.
+- IDF por BLOCO (o `_global_df` que existe) NAO reproduz a lista do MF: so `logica` passa de 40% dos blocos.
+- **IDF por UNIDADE do plano (titulo+topicos, df/n >= 0,4) REPRODUZ a lista do MF onde ela acerta**
+  (`formal`/`verificacao`/`logica` em 3/3) **e acha o que ela nao sabe**: SO `gerencia` 4/7 + `estudo de casos`
+  5/7, IA `aprendizagem` 5/5, ES2 `software`/`microsservicos`/`integracao`, CG `algoritmos` 4/9 — sem matar
+  topico raro (CG `fundamentos` 1/9, SO `programas`, TCC `linguagens`, IA `modelos`). `file_map.ubiquas`
+  (frase presente em TODAS as unidades) e a versao estrita disso.
+
+**Plano final (cada fase com o gate: 5 curados 199/200 + 191/191 + 40/57, nu 205/212, CG, suite):**
+- **A1 (bloco):** P4 e desempate com o MESMO tokenizador (`_toks` + dims/wids) e a MESMA assinatura de bloco;
+  boilerplate do P4 = semente de atividade (`_GENERIC_STEMS`) + `course_name` + `_global_df` (df/m >= 0,4);
+  stems de 6 so como fuzzy por cima do token unificado. Some `_topic_tokens`/`_course_stems` duplicados.
+- **A2 (unidade):** `TIMELINE_UNIT_NEUTRAL_TOKENS` e `UNIT_GENERIC_TOKENS` viram df por unidade do plano,
+  calculado por curso na construcao do indice (taxonomia ja carregada); `TIMELINE_GENERIC_TOKENS` (atividade)
+  fica. Consumidores: `_score_timeline_unit_phrase`, index.py:1754-1766, file_map unit index.
+- **B (kinds):** tabela kind x categoria derivada dos 212+73 pares; substitui edicoes ad hoc em NEVER_HOSTS.
+- **C (morto):** `anchor_placement.py` + sua `_GENERIC_STEMS`; avaliar `concept_resolver` (roda, nao decide).
+- **D (invariantes):** testes sobre os 6 cursos reais: nome do curso fora de assinatura; 2d/3d/t2 sobrevivem;
+  prova fora de janela; df>=40% nunca discrimina.
+
+## AUDITORIA: o que o sistema JA faz de tokenizacao, boilerplate, frequencia, kinds e categoria (2026-08-27)
 
 Pedido do user antes de implementar "IDF por curso + tokenizador unico": nao reconstruir o que existe. Mapa (arquivo:linha):
 
