@@ -19,6 +19,10 @@ _NUMBERED_ITEM_RE = re.compile(
     r"(?<![\w.])(\d+(?:\.\d+)+)\.?\s+(.+?)(?=\s+\d+(?:\.\d+)+\.?\s+|$)"
 )
 _NUMBERED_PREFIX_RE = re.compile(r"^\d+(?:\.\d+)+\s")
+# Topico de UM nivel ("1. HTTP e HTTPS"): template PUCRS "N. DA UNIDADE" do Lab de Redes
+# (2026-08-28) lista os topicos assim; o codigo de um digito nao e codigo de taxonomia,
+# entao fica so o rotulo.
+_SINGLE_NUMBERED_RE = re.compile(r"^(\d{1,2})\.\s+(\S.*)$")
 
 _TEACHING_PLAN_SECTION_STOP = re.compile(
     rf"^(?:AVALIA[{_C_CEDILLA_UPPER}C][A{_A_TILDE_UPPER}]O|BIBLIOGRAFIA)",
@@ -122,7 +126,10 @@ def _parse_units_from_teaching_plan(text: str):
             continue
 
         if current_unit_num is not None and current_title is None:
-            m = pucrs_content_re.match(normalized_line)
+            # `search`, nao `match`: o pymupdf4llm rende a celula "CONTEUDO:" do template
+            # como item de lista ("- CONTEUDO: Nivel de aplicacao") — Lab de Redes 2026/2
+            # perdia 2 de 3 unidades por isso.
+            m = pucrs_content_re.search(normalized_line)
             if m:
                 current_title = f"Unidade {current_unit_num} {_EM_DASH} {m.group(1).strip()}"
                 continue
@@ -148,6 +155,10 @@ def _parse_units_from_teaching_plan(text: str):
             m = bullet_topic_re.match(normalized_line)
             if m:
                 current_topics.append((m.group(1).strip(), 0))
+                continue
+            m = _SINGLE_NUMBERED_RE.match(normalized_line)
+            if m:
+                current_topics.append((m.group(2).strip(), 0))
                 continue
             if current_style == "learning_unit" and not normalized_line.endswith(":"):
                 current_topics.append((normalized_line, 0))
