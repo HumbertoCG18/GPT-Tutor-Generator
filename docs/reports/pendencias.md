@@ -1,7 +1,25 @@
 # Pendências — tracker vivo
 
 last_updated: 2026-08-26 (balde A/B fechados, 7 golds corrigidos, R3 titulo-topico, t1/t2, ablacao rapida, humano 23 -> 6).
-**FILA VIVA: secao `## DISSECACAO 28/08: tres cadeiras novas (Lab Redes, Lab SO, Fund. Redes), fontes da formula do G1, 2 fixes de extracao
+**FILA VIVA: secao `## DECISOES 28/08 (user, uma a uma — le antes de tocar em prova/entrega/identidade)
+
+**D1 — Provas e notas (decidido).** Provas PRINCIPAIS sao P1, P2 (e P3 quando existe; raro). **PS** = prova
+SUBSTITUTIVA: quem faltou a P1 ou a P2 faz a PS (depois da P2) no lugar dela — nao e marco novo, cobre o conteudo da
+prova substituida. **G2** = RECUPERACAO: quem fecha G1 < 7 vai para a G2, desde que G1 >= 5 (abaixo de 5 reprova
+direto); nota final = (G1 + G2) / 2, aprovado se >= 5. Consequencias para o motor: (a) "prova principal" = rotulo
+`P<n>`/`Prova N` — NUNCA PS/G2/PF; a lista `_NOT_MAIN_EXAM` (substitui/entrega/trabalho/recupera) sai, e os termos
+`P<n>` da formula do G1 confirmam a contagem; (b) G2 cobre a disciplina inteira -> regra R7 (avaliacao-global) passa a
+incluir G2 e PF; (c) PS herda o escopo da prova que substitui (P1 ou P2) — nao entra como N-esima prova em prep-prova/R6.
+Caso que motivou: Fund. Redes tem "Prova P1", "Prova 2", "Prova PS", "Prova G2" -> a lista dava 4 principais; sao 2.
+
+**D5 — Identidade da cadeira (decidido).** Chave = Moodle course id + codigo SARC (ex.: Fund. Redes 98709 / Lab Redes
+98710 — nomes quase iguais). Nome e so rotulo. Perfil deixa de ser achado por nome.
+
+**Em aberto, nesta ordem:** 2 (entrega numerada = marco do mesmo tipo que prova?), 3 (`U<n>` no card e "Laboratorio N"
+como sinal de 1a classe?), 4 (`moodle_pull` gravar `summary` de secao — lacuna, nao decisao), 6 (`build_course
+--syllabus-url` e aposentar o PDF do SARC), 7 (jitter `ferramenta:` — bug, raiz a achar).
+
+## DISSECACAO 28/08: tres cadeiras novas (Lab Redes, Lab SO, Fund. Redes), fontes da formula do G1, 2 fixes de extracao
 
 **Verificado contra o dado (Moodle API, SARC HTML, planos):** Lab Redes = so SEG (19 linhas SARC), sem prova,
 `G1=(T1+T2+T3)/3`, cards `[DD/MM] - Tema` (data no card), arquivos "Laboratorio N - X", assigns com due · Lab SO =
