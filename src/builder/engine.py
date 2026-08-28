@@ -522,7 +522,9 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
             kwargs.pop("image_path", None)
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
-        md = pymupdf4llm.to_markdown(str(ctx.raw_target), **kwargs)
+        from src.utils.pdf_markdown import respect_actualtext
+        with respect_actualtext():  # 2026-08-28: /ActualText -> glifos PUA sem isso
+            md = pymupdf4llm.to_markdown(str(ctx.raw_target), **kwargs)
         if isinstance(md, list):
             body = "\n\n".join(chunk.get("text", "") for chunk in md)
         else:

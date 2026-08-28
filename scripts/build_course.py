@@ -75,8 +75,8 @@ def sarc_pdf_to_table(pdf_path: Path) -> str:
 
 
 def teaching_plan_md(pdf_path: Path) -> str:
-    import pymupdf4llm  # mesmo conversor do botao "Extrair PDF" da UI
-    return pymupdf4llm.to_markdown(str(pdf_path))
+    from src.utils.pdf_markdown import pdf_to_markdown  # mesmo conversor do botao "Extrair PDF" da UI
+    return pdf_to_markdown(pdf_path)
 
 
 def main(argv: list[str]) -> int:

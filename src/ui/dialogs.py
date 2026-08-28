@@ -1552,8 +1552,8 @@ class SubjectManagerDialog(tk.Toplevel):
         
         def worker():
             try:
-                import pymupdf4llm
-                md_text = pymupdf4llm.to_markdown(pdf_path)
+                from src.utils.pdf_markdown import pdf_to_markdown
+                md_text = pdf_to_markdown(pdf_path)
 
                 def _apply():
                     try:
