@@ -4,12 +4,12 @@ last_updated: 2026-08-26 (balde A/B fechados, 7 golds corrigidos, R3 titulo-topi
 **FILA VIVA: secao `## DECISOES 28/08 (user, uma a uma — le antes de tocar em prova/entrega/identidade)
 
 **D1 — Provas e notas (decidido).** Provas PRINCIPAIS sao P1, P2 (e P3 quando existe; raro). **PS** = prova
-SUBSTITUTIVA: quem faltou a P1 ou a P2 faz a PS (depois da P2) no lugar dela — nao e marco novo, cobre o conteudo da
-prova substituida. **G2** = RECUPERACAO: quem fecha G1 < 7 vai para a G2, desde que G1 >= 5 (abaixo de 5 reprova
+SUBSTITUTIVA: quem faltou a P1 ou a P2 faz a PS (depois da P2) no lugar dela — nao e marco novo e cobre o SEMESTRE
+INTEIRO (mesmo conteudo da G2; corrigido pelo user 28/08 — NAO herda o escopo da prova substituida). **G2** = RECUPERACAO: quem fecha G1 < 7 vai para a G2, desde que G1 >= 5 (abaixo de 5 reprova
 direto); nota final = (G1 + G2) / 2, aprovado se >= 5. Consequencias para o motor: (a) "prova principal" = rotulo
 `P<n>`/`Prova N` — NUNCA PS/G2/PF; a lista `_NOT_MAIN_EXAM` (substitui/entrega/trabalho/recupera) sai, e os termos
-`P<n>` da formula do G1 confirmam a contagem; (b) G2 cobre a disciplina inteira -> regra R7 (avaliacao-global) passa a
-incluir G2 e PF; (c) PS herda o escopo da prova que substitui (P1 ou P2) — nao entra como N-esima prova em prep-prova/R6.
+`P<n>` da formula do G1 confirmam a contagem; (b) PS e G2 cobrem a disciplina inteira -> regra R7 (avaliacao-global) passa a
+incluir PS, G2 e PF; (c) PS/G2 nao entram como N-esima prova em prep-prova/R6 (nao definem janela de escopo).
 Caso que motivou: Fund. Redes tem "Prova P1", "Prova 2", "Prova PS", "Prova G2" -> a lista dava 4 principais; sao 2.
 
 **D5 — Identidade da cadeira (decidido).** Chave = Moodle course id + codigo SARC (ex.: Fund. Redes 98709 / Lab Redes
