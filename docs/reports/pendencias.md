@@ -15,7 +15,18 @@ Caso que motivou: Fund. Redes tem "Prova P1", "Prova 2", "Prova PS", "Prova G2" 
 **D5 — Identidade da cadeira (decidido).** Chave = Moodle course id + codigo SARC (ex.: Fund. Redes 98709 / Lab Redes
 98710 — nomes quase iguais). Nome e so rotulo. Perfil deixa de ser achado por nome.
 
-**Em aberto, nesta ordem:** 2 (entrega numerada = marco do mesmo tipo que prova?), 3 (`U<n>` no card e "Laboratorio N"
+**D2 — Trabalho como marco (decidido).** Marco de trabalho = TERMO NUMERADO da formula do G1 (T1, TP1, TF, T2...)
+na linha AMARELA (Atividade "Trabalho") de apresentacao/fechamento — mesma semantica de marco que P<n>: janela,
+preparacao, escopo por calendario. Amarelo SEM numero ("Oficina de problemas" do TCC, labs DHCP/DNS do Lab Redes)
+= dia avaliado que hospeda material, sem semantica de marco. Linha BRANCA (Aula) com "duvidas/desenvolvimento/
+especificacao/enunciado do Tn" = preparacao dentro da janela do marco (como "revisao para P1"). Vocabulario de cores
+do SARC, identico em 8 cronogramas (salvos em Desktop/claude-tutor/sarc/): branco=aula, #FFFF00=trabalho,
+#FFA500=prova principal, #FF8C00=PS (cor propria em 6/6), LightGrey=pos-semestre (G2/devolucao/atendimento/vazio),
+Red/#FF4500=feriado/suspensao, #8B0000=evento. O mapa cor->kind ja existe (`_ASPNET_COLOR_KIND_MAP`) mas so no
+caminho "importar SARC pela URL" (`{kind=}` por linha); os 7 perfis sao tabelas markdown SEM cor -> PS/G2/P colapsam
+em assessment. Re-importar pela URL (item 6) e pre-requisito de D1/D2 no calendario.
+
+**Em aberto, nesta ordem:** 3 (`U<n>` no card e "Laboratorio N"
 como sinal de 1a classe?), 4 (`moodle_pull` gravar `summary` de secao — lacuna, nao decisao), 6 (`build_course
 --syllabus-url` e aposentar o PDF do SARC), 7 (jitter `ferramenta:` — bug, raiz a achar).
 
