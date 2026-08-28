@@ -24,6 +24,15 @@ estavel; operadores nao. `moodle_pull` NAO grava o `summary` das secoes (labels 
 texto identico aos perfis gravados (ratio 1,000 TCC/SO/ES2), 0 PUA em 7 planos. Perfis existentes estao corretos.
 PUA residual nos repos: so `staging/assets/tables/*.md` (MF 55, SO 20, IA 3, TCC 4) — tabelas, nao conteudo.
 
+**Fix 3 — fracao empilhada (`0c8ec30`):** a media do G1 em SO/MF/ES2 e uma EQUACAO (Word/LaTeX): numerador, barra
+como linha vetorial, denominador centrado; o texto perdia a divisao (`G1 = P1 + P2 + TP` + `3` noutra linha — o user
+apontou pelo PDF de apresentacao da SO, que diz `(P1 + P2 + TP) / 3`). `stacked_fractions()` detecta por geometria
+(regua fina, curta, isolada — sem regua vizinha nem borda vertical, que e o que tabela tem —, texto cobrindo por cima e
+centrado por baixo) e `splice_fractions()` reescreve `lhs = (num) / den` com NFKC. 10 PDFs: SO/MF/ES2 corrigidos,
+0 falsos positivos (borda "Evento/Academico" da CG derrubou a versao ingenua). **Perfis SO/MF/ES2 reextraidos**
+(backup `subjects.json.bak-2026-08-28-fracao`): diff = so a linha da formula; reprocess dos 3 = sentinela 0 campos,
+regua igual; alteracoes restantes eram so timestamps, descartadas.
+
 **Fix 2 — parser de unidades (`e878f5d`):** template "N. DA UNIDADE" com CONTEUDO rendido como bullet e topicos
 "1. HTTP e HTTPS" (Lab Redes: 1 unidade/0 topicos -> 3/11); 9 outros planos identicos ao baseline.
 
