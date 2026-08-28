@@ -1,7 +1,46 @@
 # Pendências — tracker vivo
 
 last_updated: 2026-08-26 (balde A/B fechados, 7 golds corrigidos, R3 titulo-topico, t1/t2, ablacao rapida, humano 23 -> 6).
-**FILA VIVA: secao `## COBERTURA 41 -> 52/57: cinco raizes em `coverage_rules.py`, medidas offline antes de tocar producao (2026-08-27)
+**FILA VIVA: secao `## DISSECACAO 28/08: tres cadeiras novas (Lab Redes, Lab SO, Fund. Redes), fontes da formula do G1, 2 fixes de extracao
+
+**Verificado contra o dado (Moodle API, SARC HTML, planos):** Lab Redes = so SEG (19 linhas SARC), sem prova,
+`G1=(T1+T2+T3)/3`, cards `[DD/MM] - Tema` (data no card), arquivos "Laboratorio N - X", assigns com due · Lab SO =
+**TER/QUI** 17:30 (user dissera qua/sex), prof. Miguel Xavier = SO, cards tematicos + "Leitura indicada" como a SO,
+arquivos "07/08 Slides: ...", 4 "Fechamento da parte N" = 4 unidades do plano, sem prova, `G1=(TP1+..+TP4)/4, media
+5.0, sem G2` **so no `summary` da secao 0 do Moodle** (o plano 4646I e generico, sem secao de avaliacao) · Fund.
+Redes = TER/QUI 19:15, cards `U1 - Redes de Computadores` (numero da unidade no card — sinal novo), P1 24/09 (u01-03),
+P2 26/11 (u04-06), TF, PS, G2 · **SARC exporta HTML sem login** (`Export.aspx?id=...&ano=&sem=`), tabela de 7 colunas
+— caminho PDF->geometria da CG fica obsoleto (`build_course --syllabus-url`, a fazer).
+
+**Onde mora a formula do G1 (9 cursos):** plano em 8/9 (TCC incluso: `G1=(P1+P2+T)/3`, P1=u1-3, P2=u4), `summary`
+da secao 0 do Moodle em 2 (SO, Lab SO), label em 1 (IA). Formas variam: `(P1+P2+T)/3`, `P1P2T/3` (glifos), letras
+matematicas Unicode (MF/ES2, NFKC resolve), `G1: MP*0.7+MT*0.3` (CG). **Termos** (P1, P2, T, TPn, MT, TF) sao o
+estavel; operadores nao. `moodle_pull` NAO grava o `summary` das secoes (labels truncados em 500) — lacuna a fechar.
+
+**Fix 1 — `src/utils/pdf_markdown.py` (`e8f926d`):** pymupdf4llm >= 1.27 monta o layout com
+`TEXT_IGNORE_ACTUALTEXT` (Google Docs + Inter codifica `( + ) :` via /ActualText -> PUA: TCC dava
+`G1 = \ue081P1\ue09dP2\ue09dT\ue082/3`) e `use_ocr=True` OCR-iza e descarta texto nativo de pagina com logo
+(`img_text`: SO/Lab SO/Fund. Redes perdiam ~400 chars). Helper unico (UI "Extrair PDF", `build_course`, backend base):
+texto identico aos perfis gravados (ratio 1,000 TCC/SO/ES2), 0 PUA em 7 planos. Perfis existentes estao corretos.
+PUA residual nos repos: so `staging/assets/tables/*.md` (MF 55, SO 20, IA 3, TCC 4) — tabelas, nao conteudo.
+
+**Fix 2 — parser de unidades (`e878f5d`):** template "N. DA UNIDADE" com CONTEUDO rendido como bullet e topicos
+"1. HTTP e HTTPS" (Lab Redes: 1 unidade/0 topicos -> 3/11); 9 outros planos identicos ao baseline.
+
+**Suite: `test_caracterizacao_blocos_atual[TCC]` VERMELHO** desde o reprocess de cobertura (`b5f10f2`): golden
+`_golden/TCC-Tutor__casos_chave.json` tem `aula-06 computed_block_id cbf887a2`, manifest tem `ee594a67` — e o flip
+do scorer de conceito causado pelo jitter das tags `ferramenta:` (FILA item 0). Nao atualizar o golden: corrigir a
+raiz e o manifest volta. Rodar com `--deselect` ate la.
+
+**Em duvida (28/08):** (1) `_NOT_MAIN_EXAM` trata "Prova PS"/"Prova G2" como principais (FR teria 4; a formula diz 2)
+— ler os termos da formula do G1 (plano -> summary sec0 -> label) e substituir a lista; (2) cadeira sem prova: marco =
+entrega ("Fechamento da parte N", "Apresentacao do T1"); `_exam_number`/prep-prova/R6 so entendem P; "duvidas do TP1"
+= preparacao de entrega; (3) provedor de unidade-no-card (`U1 - ...`) e ordinal "Laboratorio N"/"Tutorial 1.2";
+(4) identidade de curso = Moodle id + codigo SARC (98709 vs 98710), nunca nome; (5) plano do Lab SO nao tem avaliacao:
+a unica fonte e o Moodle — o pipeline precisa ler `summary` de secao; (6) Lab Redes com ~10 blocos de conteudo em 19
+sessoes (3 feriados + 6 desenvolvimento/apresentacao) — regua magra.
+
+## COBERTURA 41 -> 52/57: cinco raizes em `coverage_rules.py`, medidas offline antes de tocar producao (2026-08-27)
 
 Pergunta do user: "a cobertura so aumentou 1? nao tem como chegar a 54-55?". Resposta: sim, mas nao pelo A2 —
 a cobertura tem regras proprias. `scripts/harness_cobertura.py` (novo) recomputa o eixo em ~15 s sem reprocessar
@@ -197,7 +236,7 @@ A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente 
 **HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
 ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-27): bloco **199/200** conf-err **0** (o erro = ES2 `azure`, convencao) ·
 unidade **191/191 (100%)** · cobertura **52/57 F1 0,912** · subunidade **87/93** (4 cursos com gold) · **pinos 5** ·
-cards manuais **1** (TCC "Semana 12") · decisoes humanas de bloco **6** (eram 23) · suite **2090 passed**.
+cards manuais **1** (TCC "Semana 12") · decisoes humanas de bloco **6** (eram 23) · suite **2094 passed** (+1 golden TCC vermelho por jitter `ferramenta:`, ver 28/08).
 MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py`, 81 s): bloco **205/212 por uuid (96,7%)**, display 194/200,
 conf-err 2 · unidade 134/191 · cobertura 34/57 · subunidade ~21/94. Os 7 erros nus restantes: 3 ruido do voto LLM
 (MF), 2 convencao sem texto (IA prova-1-2024-02, ES2 azure), 2 dominio (TCC aula-17 = Cook-Levin).
