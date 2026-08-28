@@ -26,7 +26,16 @@ Red/#FF4500=feriado/suspensao, #8B0000=evento. O mapa cor->kind ja existe (`_ASP
 caminho "importar SARC pela URL" (`{kind=}` por linha); os 7 perfis sao tabelas markdown SEM cor -> PS/G2/P colapsam
 em assessment. Re-importar pela URL (item 6) e pre-requisito de D1/D2 no calendario.
 
-**Em aberto, nesta ordem:** 3 (`U<n>` no card e "Laboratorio N"
+**D3 — Sinais numerados (decidido, censo de 13 cursos do Moodle 2026).** (a) `U<n>`/`Unidade N` EXPLICITO no card ou no
+nome do arquivo = sinal de 1a classe do eixo de UNIDADE (numeracao vem do plano = autoridade); hoje so Fund. Redes
+("U1 - Redes de Computadores", "Lista de exercicios - Unidade 1"); medir quando o FR for construido. (b) SEM provedor
+novo para "Laboratorio N"/"Tutorial N.M"/"Roteiro N": em toda ocorrencia real ha data ao lado (Lab Redes card
+`[10/08]`, Lab SO "14/08 Tutorial 1.1"); heranca de irmaos (ES2) + datas cobrem; reabre so se aparecer cadeira com
+serie numerada sem datas. Censo: data e o sinal mais frequente (cards/labels/arquivos em 8 cadeiras); "Semana N" em 4,
+sempre com data ou topico ao lado; "Aula N" em 4 (ja tratado); "Parte N" (MF/EU/Simulacao) e serie dentro de topico,
+nao posicao.
+
+**Em aberto, nesta ordem:** 4 (`U<n>` no card e "Laboratorio N"
 como sinal de 1a classe?), 4 (`moodle_pull` gravar `summary` de secao — lacuna, nao decisao), 6 (`build_course
 --syllabus-url` e aposentar o PDF do SARC), 7 (jitter `ferramenta:` — bug, raiz a achar).
 
