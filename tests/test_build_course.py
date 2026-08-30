@@ -21,3 +21,23 @@ def test_sarc_pdf_celulas_quebradas_nao_vazam_para_colunas_vizinhas():
     md = sarc_pdf_to_table(FIX)
     assert "| 8 | QUI | 27/08/2026 | JK | Processo de Visualização 2D - Recorte e mapeamento | Aula | Retirar notebook |" in md
     assert "Fundamentos JK" not in md and "CG & Aula" not in md
+
+
+def test_sarc_html_vira_tabela_com_turma():
+    """F12: export HTML publico do SARC -> tabela markdown + turma do cabecalho."""
+    from scripts.build_course import sarc_html_to_table
+    html = (
+        "<html><body><span>98710-2 Laboratorio de Redes de Computadores (340) - 32/406</span>"
+        "<table><tr><th>#</th><th>Dia</th><th>Data</th><th>Hora</th><th>Descri\u00e7\u00e3o</th>"
+        "<th>Atividade</th><th>Recursos</th></tr>"
+        "<tr><td>1</td><td>SEG</td><td>03/08/2026</td><td>LM 19:15 - 20:45</td>"
+        "<td>Apresenta\u00e7\u00e3o da disciplina</td><td>Aula</td><td>Retirar notebook</td></tr>"
+        "<tr><td>2</td><td>SEG</td><td>10/08/2026</td><td>LM 19:15 - 20:45</td>"
+        "<td>Wireshark</td><td>Aula</td><td></td></tr></table></body></html>"
+    )
+    tabela, turma = sarc_html_to_table(html)
+    assert turma == "340"
+    linhas = tabela.strip().splitlines()
+    assert linhas[0].startswith("| # | Dia | Data |")
+    assert len(linhas) == 4  # header + separador + 2 datas
+    assert "03/08/2026" in linhas[2] and "Wireshark" in linhas[3]

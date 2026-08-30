@@ -8,6 +8,10 @@ Saida (debaixo de --root):
     raw/moodle/contents.json         core_course_get_contents cru
     raw/moodle/pages/<cmid>.html     HTML das paginas internas (mod_page)
     raw/moodle/labels.json           labels (sub-cards) na ordem em que aparecem
+    raw/moodle/sections.json         summary + labels COMPLETOS por secao (F1: a formula do G1 do
+                                     Lab SO vive no summary da secao 0, fora de qualquer card)
+    raw/sarc/cronograma-*.html       export do SARC descoberto no proprio Moodle (F12), so quando a
+                                     TURMA do export bate com a do shortname (330 != 310 -> review)
     raw/site/...                     snapshot das paginas do site do professor (site_snapshot)
     links.json                       cada url/page com {secao, nome, url, tipo, acao, destino, sinal}
     manual-review/links.md           o que ficou ambiguo (nunca chute silencioso)
@@ -54,10 +58,33 @@ def host_of(url: str) -> str:
     return urlparse(url).netloc.lower().removeprefix("www.")
 
 
+SARC_EXPORT_RE = re.compile(r"sarc\.pucrs\.br/.*export\.aspx", re.I)
+# Turma no shortname do Moodle: "4646I-04310262" = codigo-CC TTT SSS (TTT = turma 310).
+# Medido nos 9 cursos do user (MF 031, SO 032, ..., CG 310, FR 320, Lab Redes 340, Lab SO 310).
+_SHORTNAME_TURMA_RE = re.compile(r"-\d{2}(\d{3})\d{3}$")
+# Turma no cabecalho do export: "4646I-4 Laboratorio de Sistemas Operacionais (330) - 32/410".
+_EXPORT_TURMA_RE = re.compile(r"\((\d{3})\)")
+
+
+def turma_do_shortname(shortname: str) -> str:
+    m = _SHORTNAME_TURMA_RE.search(str(shortname or "").strip())
+    return m.group(1) if m else ""
+
+
+def turma_do_export(html: str) -> str:
+    texto = re.sub(r"<[^>]+>", " ", str(html or "")[:4000])
+    m = _EXPORT_TURMA_RE.search(texto)
+    return m.group(1) if m else ""
+
+
 def classify_url(name: str, section: str, url: str, professor_hosts: set[str]) -> tuple[str, str, str]:
-    """-> (tipo, acao, sinal). tipo: material-pagina | material-pdf | video | referencia | review."""
+    """-> (tipo, acao, sinal). tipo: cronograma | material-pagina | material-pdf | video | referencia | review."""
     h = host_of(url)
     path = urlparse(url).path.lower()
+    # F12: o export do SARC esta postado como link nos 3 cursos novos ("Cronograma") — e o
+    # cronograma da disciplina, nao material nem referencia, mesmo dentro de card de plano.
+    if SARC_EXPORT_RE.search(url):
+        return "cronograma", "cronograma", "sarc"
     if REFERENCE_CARD_RE.search(section):
         return "referencia", "referencia", "card"
     if any(h.endswith(v) for v in VIDEO_HOSTS):
@@ -102,6 +129,8 @@ class Pull:
         self.rawm = root / "raw" / "moodle"
         self.links: list[dict] = []
         self.labels: list[dict] = []
+        self.sections: list[dict] = []
+        self.turma_moodle = ""
         self.browser = find_browser() if pdf else None
         self.snap = Snapshot(root, depth=1, pdf=pdf)
 
@@ -113,6 +142,13 @@ class Pull:
 
     def run(self, course: int) -> None:
         contents = self.c.get_course_contents(course)
+        try:
+            info = self.c._call("core_course_get_courses_by_field", field="id", value=course)
+            shortname = str((info.get("courses") or [{}])[0].get("shortname") or "")
+        except Exception:
+            shortname = ""
+        self.turma_moodle = turma_do_shortname(shortname)
+        print(f"turma do Moodle ({shortname or '?'}): {self.turma_moodle or '?'}")
         self.rawm.mkdir(parents=True, exist_ok=True)
         (self.rawm / "contents.json").write_text(json.dumps(contents, ensure_ascii=False, indent=1), encoding="utf-8")
         urls = [(m.get("contents") or [{}])[0].get("fileurl", "") for s in contents for m in s.get("modules", []) if m["modname"] == "url"]
@@ -121,11 +157,17 @@ class Pull:
         print(f"hosts do professor (>=2 links): {sorted(professor_hosts)}")
         for sec in contents:
             card = sanitize_folder_name(sec.get("name") or "") or f"secao-{sec.get('section')}"
+            # F1: summary da secao (fora de card) + labels completos — e onde mora a formula
+            # do G1 do Lab SO ("Avaliacao: G1 = (TP1+TP2+TP3+TP4)/4 ... media 5.0, sem G2").
+            _summary = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", sec.get("summary") or "")).strip()
+            _sec_rec = {"secao": sec.get("name"), "section": sec.get("section"), "summary": _summary, "labels": []}
+            self.sections.append(_sec_rec)
             for m in sec.get("modules", []):
                 mn = m["modname"]
                 if mn == "label":
                     txt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.get("description") or "")).strip()
                     self.labels.append({"secao": sec.get("name"), "cmid": m["id"], "texto": txt[:500]})
+                    _sec_rec["labels"].append(txt)
                 elif mn == "resource":
                     for f in m.get("contents") or []:
                         dest = self.stash / card / f.get("filename", "arquivo")
@@ -141,6 +183,25 @@ class Pull:
                     tipo, acao, sinal = classify_url(m.get("name", ""), sec.get("name", ""), ext, professor_hosts)
                     rec = {"secao": sec.get("name"), "nome": m.get("name"), "url": ext, "tipo": tipo, "acao": acao, "destino": "", "sinal": sinal}
                     self.links.append(rec)
+                    if tipo == "cronograma":
+                        # F12: valida a TURMA antes de confiar — o professor do Lab SO postou o
+                        # export da 330 no Moodle da 310 (achado do user, 2026-08-30).
+                        try:
+                            html = self.get_plain(ext).decode("utf-8", errors="replace")
+                        except Exception as exc:
+                            rec["acao"], rec["sinal"], rec["erro"] = "review", "sarc-inacessivel", str(exc)[:120]
+                            continue
+                        rec["turma_export"] = turma_do_export(html)
+                        rec["turma_moodle"] = self.turma_moodle
+                        if self.turma_moodle and rec["turma_export"] and rec["turma_export"] != self.turma_moodle:
+                            rec["acao"], rec["sinal"] = "review", "turma-divergente"
+                            print(f"!! cronograma do SARC e da turma {rec['turma_export']}, Moodle e {self.turma_moodle} -> review")
+                        elif not self.dry:
+                            sarc_dir = self.root / "raw" / "sarc"; sarc_dir.mkdir(parents=True, exist_ok=True)
+                            out = sarc_dir / f"cronograma-{slug(m.get('name', 'sarc'))}.html"
+                            out.write_text(html, encoding="utf-8")
+                            rec["destino"] = str(out.relative_to(self.root))
+                        continue
                     if self.dry:
                         continue
                     if acao == "download":
@@ -182,6 +243,7 @@ class Pull:
                         rec["destino"] = p.get("pdf", "") or rec["destino"]; rec["pdf_pages"] = p.get("pdf_pages"); rec["pdf_images"] = p.get("pdf_images")
         self.snap.write_links()
         (self.rawm / "labels.json").write_text(json.dumps(self.labels, ensure_ascii=False, indent=1), encoding="utf-8")
+        (self.rawm / "sections.json").write_text(json.dumps(self.sections, ensure_ascii=False, indent=1), encoding="utf-8")
         (self.root / "links.json").write_text(json.dumps(self.links, ensure_ascii=False, indent=1), encoding="utf-8")
         review = [r for r in self.links if r["acao"] == "review"]
         (self.root / "manual-review").mkdir(exist_ok=True)

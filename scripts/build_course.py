@@ -1,7 +1,8 @@
 """Build inicial de um curso por CLI — o MESMO caminho da UI (perfil -> stash -> RepoBuilder.build).
 
     python scripts/build_course.py --name "Computação Gráfica" --repo <repo-dir> --stash <stash-dir> \\
-        --syllabus-pdf <Cronograma SARC.pdf> --teaching-plan-pdf <PlanoDeEnsino.pdf> \\
+        --syllabus-url "https://sarc.pucrs.br/Default/Export.aspx?id=...&ano=2026&sem=2" \\
+        --teaching-plan-pdf <PlanoDeEnsino.pdf> \\
         [--professor ...] [--schedule "Ter/Qui 17:30 - 19:00"] [--semester 2026/2] [--moodle-course 95106] \\
         [--flags use_anchor_engine,use_llm_voter] [--dry-run]
 
@@ -13,8 +14,10 @@ O que faz, na ordem da UI (ui/app.py: Gerenciador de Materias -> Importar do sta
   3. RepoBuilder(course_meta, entries, options=_build_options_from_config(AppConfig), subject_profile).build().
   Zero curadoria: nenhum pino, card manual, sidecar ou boundary_dates e criado. E o holdout.
 
---syllabus-pdf: o export do SARC em PDF (celulas quebradas em varias linhas visuais) -> tabela markdown por
-geometria: fronteiras de coluna = celulas do find_tables, faixa vertical = cada data. Medido na CG: 38/38.
+--syllabus-url: o export HTML publico do SARC (F12, 2026-08-30) -> tabela markdown direto; imprime a TURMA do
+cabecalho para conferencia (o link postado no Moodle pode ser de OUTRA turma — Lab SO 330 vs 310).
+--syllabus-pdf: fallback quando o cronograma so existe em PDF (caso CG) -> tabela markdown por geometria:
+fronteiras de coluna = celulas do find_tables, faixa vertical = cada data. Medido na CG: 38/38.
 """
 from __future__ import annotations
 
@@ -27,6 +30,27 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 SARC_COLS = ["#", "Dia", "Data", "Hora", "Descrição", "Atividade", "Recursos"]
+
+
+def sarc_html_to_table(html: str) -> tuple[str, str]:
+    """Export HTML do SARC -> (tabela markdown SARC, turma do cabecalho). Linha = <tr> com data DD/MM/AAAA."""
+    import html as _html
+    import re as _re
+    turma = ""
+    m = _re.search(r"\((\d{3})\)", _re.sub(r"<[^>]+>", " ", html[:4000]))
+    if m:
+        turma = m.group(1)
+    rows = []
+    for r in _re.findall(r"<tr[^>]*>(.*?)</tr>", html, _re.S | _re.I):
+        cells = [" ".join(_html.unescape(_re.sub(r"<[^>]+>", " ", c)).split())
+                 for c in _re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", r, _re.S | _re.I)]
+        if len(cells) >= 7 and _re.fullmatch(r"\d{2}/\d{2}/\d{4}", cells[2]):
+            rows.append(cells[:7])
+    if not rows:
+        raise SystemExit("nenhuma linha com data no export HTML do SARC")
+    out = ("| " + " | ".join(SARC_COLS) + " |\n| " + " | ".join("---" for _ in SARC_COLS) + " |\n"
+           + "\n".join("| " + " | ".join(c.replace("|", "/") for c in r) + " |" for r in rows) + "\n")
+    return out, turma
 
 
 def sarc_pdf_to_table(pdf_path: Path) -> str:
@@ -85,6 +109,7 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--repo")
     ap.add_argument("--stash")
     ap.add_argument("--syllabus-pdf")
+    ap.add_argument("--syllabus-url", help="URL do export HTML do SARC (Export.aspx...); PDF vira fallback")
     ap.add_argument("--syllabus-md", help="tabela SARC ja em markdown (alternativa ao PDF)")
     ap.add_argument("--teaching-plan-pdf")
     ap.add_argument("--teaching-plan-md", help="plano ja em markdown (alternativa ao PDF)")
@@ -133,6 +158,12 @@ def main(argv: list[str]) -> int:
     sp.feature_flags = {f.strip(): True for f in args.flags.split(",") if f.strip()}
     if args.syllabus_md:
         sp.syllabus = Path(args.syllabus_md).read_text(encoding="utf-8")
+    elif args.syllabus_url:
+        import urllib.request
+        with urllib.request.urlopen(args.syllabus_url, timeout=60) as r:
+            html = r.read().decode("utf-8", errors="replace")
+        sp.syllabus, turma = sarc_html_to_table(html)
+        print(f"[sarc] turma do export: ({turma or '?'}) — confira que e a SUA turma (Lab SO tinha 330 postado na 310)")
     elif args.syllabus_pdf:
         sp.syllabus = sarc_pdf_to_table(Path(args.syllabus_pdf))
     if args.teaching_plan_md:

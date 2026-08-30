@@ -40,3 +40,23 @@ def test_pagina_interna_sem_nome_decide_pelo_conteudo():
     videos = "".join(f'<a href="https://www.youtube.com/watch?v=abcdef{i}">v</a>' for i in range(5))
     assert classify_page(videos, "Sem pista")[0] == "indice-videos"
     assert classify_page("<p>" + "texto " * 400 + "</p>", "Sem pista")[0] == "material-pagina-moodle"
+
+
+def test_url_do_sarc_e_cronograma_mesmo_em_card_de_plano():
+    """F12: o export do SARC postado no Moodle e o cronograma da disciplina."""
+    from scripts.moodle_pull import classify_url
+    tipo, acao, sinal = classify_url(
+        "Cronograma", "Plano de Ensino",
+        "https://sarc.pucrs.br/Default/Export.aspx?id=abc&ano=2026&sem=2", set())
+    assert (tipo, acao, sinal) == ("cronograma", "cronograma", "sarc")
+
+
+def test_turma_do_shortname_e_do_export():
+    """F12/F14: turma do shortname ("4646I-04310262" -> 310) x turma do cabecalho ("(330)")."""
+    from scripts.moodle_pull import turma_do_export, turma_do_shortname
+    assert turma_do_shortname("4646I-04310262") == "310"
+    assert turma_do_shortname("98710-02340262") == "340"
+    assert turma_do_shortname("4646M-04031261") == "031"
+    assert turma_do_shortname("sem-padrao") == ""
+    assert turma_do_export("<div>4646I-4 Laborat\u00f3rio de Sistemas Operacionais (330) - 32/410</div>") == "330"
+    assert turma_do_export("<div>sem turma</div>") == ""

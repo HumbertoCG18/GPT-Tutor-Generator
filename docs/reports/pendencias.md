@@ -109,7 +109,8 @@ Dados: planos em `Desktop/claude-tutor/*.plano.md` (pymupdf4llm; lab-so e escane
   do build_course fica obsoleto para quem tiver a URL.
 
 **Lacunas/erros achados (F1-F8), com causa lida no codigo:**
-- F1 `moodle_pull` NAO captura `summary` de secao (a formula do Lab SO so existe la) e trunca label em 500 chars.
+- F1 **EXECUTADO (30/08)**: `raw/moodle/sections.json` = summary + labels COMPLETOS por secao (medido: formula do
+  G1 do Lab SO capturada do summary da sec0). labels.json continua igual (compat).
 - F2 Lab SO: "Avaliacao de desempenho de escalonamento" x3 + "Avaliacao de desempenho" -> `kind=assessment` FALSO.
   Causa: keyword "avaliacao" na tabela ASSESSMENT de `classify_block` (classifier.py:93). E conteudo da cadeira —
   "avaliacao/desempenho" estao ate no generic df POR CURSO (>=40% das unidades). O proprio df prova que e conteudo.
@@ -167,8 +168,11 @@ Preview nos novos: Lab Redes **4/6 ancorados** pelo card `[03/08]`; FR 0/20 (esp
 - F11 colisao cue x conteudo na CATEGORIA: "02 - Modelos de Referencia.pdf" -> bibliografia (cue "referencia"),
   mas "Modelos de referencia OSI" e topico da u01 do plano do FR. Mesma raiz de F2/F3: cue nao deveria disparar
   quando a frase e conteudo do plano daquele curso.
-- F12 a URL do SARC Export esta como link nos cards do Moodle dos 3 cursos (nome "Cronograma") e hoje cai em
-  `review` — o cronograma e descobrivel automaticamente (e o export e HTML publico).
+- F12 **EXECUTADO (30/08)**: `classify_url` reconhece o export do SARC como `cronograma` e VALIDA a turma
+  (cabecalho do export x shortname do Moodle): FR 320=320 e Lab Redes 340=340 aceitos; Lab SO 330!=310 ->
+  `review` sinal `turma-divergente` (pega automaticamente o link errado do professor). HTML salvo em
+  `raw/sarc/cronograma-*.html` quando valido. `build_course --syllabus-url` (novo): export HTML -> tabela
+  markdown + turma impressa p/ conferencia; PDF (`sarc_pdf_to_table`, caso CG) vira fallback. Suite 2107.
 - F13 sinais de ancora por entry (censo, sem construir): FR 19/20 (tudo U<n> — sem provedor, F7, e filenames com
   ordinal proprio "01 -", "02 -"); Lab Redes 5/6 (DATA-CARD + "Laboratorio N" + due — motor quase pronto, so F9);
   Lab SO 11/20 (datas nos nomes + "aula0N"/"Tutorial 1.N" estilo TCC ✓). Sem sinal = "Informacoes Gerais" com
