@@ -130,7 +130,25 @@ Dados: planos em `Desktop/claude-tutor/*.plano.md` (pymupdf4llm; lab-so e escane
   2 provas (P1, P2). A formula do G1 da os marcos derivados: termos P = provas, TPn/T/TF = entregas, "sem G2" =
   nao esperar final; contagem TPn bate com "Fechamento" do SARC (4=4 no Lab SO).
 
-**Direcao (sem codar ainda, tudo derivado, lei 4b):** fonte "avaliacao do curso" = plano -> summary sec0 -> labels
+**Censo Moodle dos 3 (moodle_pull --dry-run, `(scratch)/pull-*`), F9-F13:**
+- F9 `_DATE_PREFIX_RE` (window_provider:328) so aceita `DD.MM`/`DD MM` — nao casa `[03/08]` (cards do Lab Redes)
+  nem `07/08 Slides:` (nomes do Lab SO). Os dois formatos novos de data ficam sem provedor.
+- F10 o stash salva o FILENAME (`moodle_pull.py:131`) e joga fora o NOME DO MODULO. Medido: categoria diverge
+  modulo x arquivo em 10 arquivos do FR (modulo certo: "(Slides)" -> material; arquivo "03 - Tipos de Redes.pdf"
+  -> outros) e 8 do Lab SO (arquivo certo: "aula02_introducao.pdf" -> material; modulo "Livro-texto: Buildroot"
+  -> bibliografia). Nenhum nome sozinho basta — categoria deveria ver os DOIS.
+- F11 colisao cue x conteudo na CATEGORIA: "02 - Modelos de Referencia.pdf" -> bibliografia (cue "referencia"),
+  mas "Modelos de referencia OSI" e topico da u01 do plano do FR. Mesma raiz de F2/F3: cue nao deveria disparar
+  quando a frase e conteudo do plano daquele curso.
+- F12 a URL do SARC Export esta como link nos cards do Moodle dos 3 cursos (nome "Cronograma") e hoje cai em
+  `review` — o cronograma e descobrivel automaticamente (e o export e HTML publico).
+- F13 sinais de ancora por entry (censo, sem construir): FR 19/20 (tudo U<n> — sem provedor, F7, e filenames com
+  ordinal proprio "01 -", "02 -"); Lab Redes 5/6 (DATA-CARD + "Laboratorio N" + due — motor quase pronto, so F9);
+  Lab SO 11/20 (datas nos nomes + "aula0N"/"Tutorial 1.N" estilo TCC ✓). Sem sinal = "Informacoes Gerais" com
+  livros O'Reilly inteiros (camada de referencia, e o ima de bloco-01 ja conhecido). Links: FR 24 (2 review),
+  Lab Redes 8 (2), Lab SO 27 (5) — review = SARC (F12), IMDB, wireshark.org, SBC, LinkedIn, Debian.
+
+**Direcao (sem codar ainda, tudo derivado, lei 4b):** F9 barra/colchete no `_DATE_PREFIX_RE`; F10 categoria ve modulo+arquivo (stash guarda os dois nomes); F11=F2/F3 (cue x plano); F12 build_course puxa o SARC do links.json; fonte "avaliacao do curso" = plano -> summary sec0 -> labels
 (conflito = manual-review); cue de assessment/makeup nao dispara quando a palavra e conteudo do curso (df/topicos
 do plano — F2/F3); em cadeira sem prova, entregas herdam o papel de marco (F5/F6); provedor "U<n>" (F7);
 `_NOT_MAIN_EXAM` -> leitura da formula (F8). Identidade de curso por Moodle id + codigo SARC (98709 vs 98710 —
