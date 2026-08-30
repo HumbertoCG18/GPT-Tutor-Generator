@@ -87,6 +87,55 @@ entrega ("Fechamento da parte N", "Apresentacao do T1"); `_exam_number`/prep-pro
 a unica fonte e o Moodle — o pipeline precisa ler `summary` de secao; (6) Lab Redes com ~10 blocos de conteudo em 19
 sessoes (3 feriados + 6 desenvolvimento/apresentacao) — regua magra.
 
+## DISSECACAO: 3 cursos novos 2026/2 (Fund. Redes, Lab Redes, Lab SO) — achados ANTES de codar (2026-08-28)
+
+Contexto (user): cadeiras de curriculo especial (sem prova, media por trabalhos) existem — Lab Redes, Lab SO e uma
+online neste semestre; Experiencia do Usuario e Pratica em Pesquisa em 2026/1. Decisao: dissecar antes do A1.
+Dados: planos em `Desktop/claude-tutor/*.plano.md` (pymupdf4llm; lab-so e escaneado/OCR), SARC em
+`Desktop/claude-tutor/sarc/*.bin`; harness `(scratch)/timeline_labs.py` roda o indice de timeline PURO
+(SARC HTML -> tabela markdown -> `_build_file_map_timeline_context_from_course`, sem stash/repo/Datalab).
+
+**Fatos verificados** (afirmacoes do user checadas na fonte):
+- Lab Redes (Moodle 95473, cod 98710): so SEG, 19 linhas SARC, sem prova; `G1=(T1+T2+T3)/3` no plano; cards
+  `[03/08] - Introducao` (DATA no card — melhor caso do motor); arquivos "Laboratorio N - X"; assign com due. A
+  afirmacao "labels tipo Aula 0/Aula 01 como TCC" nao confere nos cards (so 1 arquivo "Aula 01").
+- Lab SO (95227, 4646I): TER/QUI 17:30 JK (user dissera qua/sex — corrigido); prof Miguel Xavier = SO ✓, mesma
+  organizacao de Moodle ✓; plano GENERICO sem secao de avaliacao; formula esta no **summary da secao 0 do Moodle**
+  (fora de card): `G1 = (TP1+TP2+TP3+TP4)/4`, "media 5.0, sem G2" — SARC coerente (0 Prova, 4 "Fechamento da
+  parte N", sem linha G2). Fund. Redes tem G2/PS no SARC (10/12, 01/12).
+- Onde mora a formula por curso: plano (MF, IA, SO, ES2, CG, FR, Lab Redes) · summary sec0 (Lab SO, SO) ·
+  label (IA). TCC: nao achada. Fontes concordam quando coexistem (SO, IA).
+- **SARC exporta HTML publico sem login** (`Export.aspx?id=...&ano=&sem=`): tabela 7 colunas — caminho PDF+geometria
+  do build_course fica obsoleto para quem tiver a URL.
+
+**Lacunas/erros achados (F1-F8), com causa lida no codigo:**
+- F1 `moodle_pull` NAO captura `summary` de secao (a formula do Lab SO so existe la) e trunca label em 500 chars.
+- F2 Lab SO: "Avaliacao de desempenho de escalonamento" x3 + "Avaliacao de desempenho" -> `kind=assessment` FALSO.
+  Causa: keyword "avaliacao" na tabela ASSESSMENT de `classify_block` (classifier.py:93). E conteudo da cadeira —
+  "avaliacao/desempenho" estao ate no generic df POR CURSO (>=40% das unidades). O proprio df prova que e conteudo.
+- F3 Lab SO: "Algoritmos de substituicao de paginas" -> `kind=makeup` FALSO (cue "substituicao", classifier.py:64
+  = prova substituta na PUCRS). Colisao lexico-de-prova x conteudo (page replacement) — o medo do user, confirmado.
+- F4 Lab Redes: Atividade=Trabalho nos DIAS DE LAB (praticas com material) -> `deliverable` via ATIVIDADE_KIND_MAP.
+  deliverable nao esta em NEVER_HOSTS (material ancora), mas o bloco fica sem unit_slug: 11 de 17 blocos sem
+  unidade, u03 (nivel de rede) com ZERO blocos. Em cadeira de lab a coluna Atividade nao separa aula de entrega.
+- F5 Lab SO: unidades por frase falham na segmentacao — blocos 8-11 (device drivers) cairam na u01, u02 fica com 0
+  blocos. Os 4 "Fechamento da parte N" delimitam as 4 unidades do plano de graca (parte N = unidade N) — sinal
+  estrutural de cadeira por trabalhos: entrega = fronteira de unidade, papel que a prova faz nas outras.
+- F6 prep de entrega nao existe: "Aula reservada para duvidas do TP1" -> office_hours (ok) mas nada liga ao TP1;
+  `_exam_number`/`is_exam_prep_material`/R6 so entendem P. "Desenvolvimento do T1" x2 -> class na unidade errada.
+- F7 FR: `U1 - Redes de Computadores` no card do Moodle e "Lista de exercicios - Unidade 1" no arquivo — numero de
+  unidade explicito, sem provedor no motor (analogo ao t1/t2). FR bloco-20 (Camada de Enlace) -> u04 errado (fusao
+  com vizinho); bloco-13 "Introducao ao roteamento IP" -> overview (stem "introduc" generico).
+- F8 FR: "Prova PS" e "Prova G2" contam como prova principal (`_NOT_MAIN_EXAM` nao as filtra); formula do plano diz
+  2 provas (P1, P2). A formula do G1 da os marcos derivados: termos P = provas, TPn/T/TF = entregas, "sem G2" =
+  nao esperar final; contagem TPn bate com "Fechamento" do SARC (4=4 no Lab SO).
+
+**Direcao (sem codar ainda, tudo derivado, lei 4b):** fonte "avaliacao do curso" = plano -> summary sec0 -> labels
+(conflito = manual-review); cue de assessment/makeup nao dispara quando a palavra e conteudo do curso (df/topicos
+do plano — F2/F3); em cadeira sem prova, entregas herdam o papel de marco (F5/F6); provedor "U<n>" (F7);
+`_NOT_MAIN_EXAM` -> leitura da formula (F8). Identidade de curso por Moodle id + codigo SARC (98709 vs 98710 —
+nomes quase iguais: Fundamentos de Redes x Laboratorio de Redes).
+
 ## COBERTURA 41 -> 52/57: cinco raizes em `coverage_rules.py`, medidas offline antes de tocar producao (2026-08-27)
 
 Pergunta do user: "a cobertura so aumentou 1? nao tem como chegar a 54-55?". Resposta: sim, mas nao pelo A2 —
