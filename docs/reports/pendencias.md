@@ -138,11 +138,14 @@ identicas, suite 2104 (golden TCC aula-06 regenerado DE PROPOSITO — deriva de 
 tag `ferramenta:lemas` -> boosts -> computed_block_id, fora da regua; desta vez o jitter NAO reapareceu).
 Preview nos novos: Lab Redes **4/6 ancorados** pelo card `[03/08]`; FR 0/20 (esperado — FR e U<n>, F7).
 
-- F14 **SARC x Moodle discordam no Lab SO**: SARC (id 273a562b) = TER/QUI 17:30; datas nos ARQUIVOS do professor
-  (07/08, 12/08, 14/08, 21/08, 26/08) = QUA/SEX — o user afirmara qua/sex e estava CERTO; a correcao que registrei
-  na dissecacao estava errada. Consequencia: provider_date recusa todos (validacao por calendario funcionando) e o
-  Lab SO fica 0/20 ancorado por data ate resolver a fonte. Hipoteses: link SARC de outra turma, ou SARC formal
-  (reserva de sala) != calendario real. PERGUNTAR AO USER qual e o SARC da turma 310 dele.
+- F14 **RESOLVIDO (30/08): casca de Moodle COPIADA de 2025/2.** As datas nos arquivos do professor (07/08, 12/08,
+  14/08, 21/08, 26/08) so formam padrao de 2 dias fixos em 2025 (QUI/TER); em 2026 dariam SEX/QUA e o SARC 2026/2
+  (re-baixado 30/08, identico linha a linha: TER/QUI 17:30 JK) nao tem sessao nelas. Os labels do curso dizem
+  "(copiado)" — datas de arquivo em shell reaproveitado sao RELIQUIA do semestre anterior, nao sinal. CG teve o
+  mesmo (6 entries iam para a G2 por convencao velha). Licao de motor: provider_date RECUSAR data sem sessao e o
+  comportamento certo — nada de afrouxar; entries com data-reliquia caem para card/topico. Nota do user (30/08):
+  cronograma da CG veio DENTRO de um PDF — raro, mas o caminho `sarc_pdf_to_table` (38/38 medido) fica como
+  fallback permanente do `--syllabus-url` (F12).
 
 **Censo Moodle dos 3 (moodle_pull --dry-run, `(scratch)/pull-*`), F9-F13:**
 - F9 `_DATE_PREFIX_RE` (window_provider:328) so aceita `DD.MM`/`DD MM` — nao casa `[03/08]` (cards do Lab Redes)
