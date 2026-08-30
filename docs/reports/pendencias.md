@@ -138,14 +138,18 @@ identicas, suite 2104 (golden TCC aula-06 regenerado DE PROPOSITO — deriva de 
 tag `ferramenta:lemas` -> boosts -> computed_block_id, fora da regua; desta vez o jitter NAO reapareceu).
 Preview nos novos: Lab Redes **4/6 ancorados** pelo card `[03/08]`; FR 0/20 (esperado — FR e U<n>, F7).
 
-- F14 **RESOLVIDO (30/08): casca de Moodle COPIADA de 2025/2.** As datas nos arquivos do professor (07/08, 12/08,
-  14/08, 21/08, 26/08) so formam padrao de 2 dias fixos em 2025 (QUI/TER); em 2026 dariam SEX/QUA e o SARC 2026/2
-  (re-baixado 30/08, identico linha a linha: TER/QUI 17:30 JK) nao tem sessao nelas. Os labels do curso dizem
-  "(copiado)" — datas de arquivo em shell reaproveitado sao RELIQUIA do semestre anterior, nao sinal. CG teve o
-  mesmo (6 entries iam para a G2 por convencao velha). Licao de motor: provider_date RECUSAR data sem sessao e o
-  comportamento certo — nada de afrouxar; entries com data-reliquia caem para card/topico. Nota do user (30/08):
-  cronograma da CG veio DENTRO de um PDF — raro, mas o caminho `sarc_pdf_to_table` (38/38 medido) fica como
-  fallback permanente do `--syllabus-url` (F12).
+- F14 **RESOLVIDO DE VEZ (30/08, descoberta do USER): o professor postou no Moodle o link do SARC da TURMA
+  ERRADA.** Cabecalho do export: "4646I-4 Laboratorio de Sistemas Operacionais **(330)**"; shortname do Moodle:
+  "4646I-04**310**262" (turma 310). A 330 e TER/QUI 17:30; a 310 do user e QUA/SEX — e as datas dos arquivos
+  (07/08, 12/08, 14/08, 21/08, 26/08) caem exatamente em SEX/QUA de 2026. Nao era casca copiada: minha hipotese
+  "2025/2" foi coincidencia de calendario (padrao de 2 dias fixos repete entre anos — QUI/TER de 2025 batia por
+  acaso) e o "(copiado)" dos labels e so marca de copia de material. Mea culpa registrada: pulei de correlacao
+  para conclusao duas vezes (primeiro "user errou os dias", depois "casca 2025").
+  **Regra derivada para o F12**: turma do cabecalho do export TEM que bater com a turma do shortname do Moodle
+  (medido: Lab SO 330!=310 pega o erro; Lab Redes 340=340 e FR 320=320 passam). Mismatch -> manual-review, nunca
+  usar o cronograma silenciosamente. Falta: obter o export da turma 310 (o link certo nao esta no Moodle).
+  Nota do user (30/08): cronograma da CG veio DENTRO de um PDF — raro, mas o caminho `sarc_pdf_to_table` (38/38
+  medido) fica como fallback permanente do `--syllabus-url` (F12).
 
 **Censo Moodle dos 3 (moodle_pull --dry-run, `(scratch)/pull-*`), F9-F13:**
 - F9 `_DATE_PREFIX_RE` (window_provider:328) so aceita `DD.MM`/`DD MM` — nao casa `[03/08]` (cards do Lab Redes)
