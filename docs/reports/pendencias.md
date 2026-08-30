@@ -138,6 +138,12 @@ identicas, suite 2104 (golden TCC aula-06 regenerado DE PROPOSITO — deriva de 
 tag `ferramenta:lemas` -> boosts -> computed_block_id, fora da regua; desta vez o jitter NAO reapareceu).
 Preview nos novos: Lab Redes **4/6 ancorados** pelo card `[03/08]`; FR 0/20 (esperado — FR e U<n>, F7).
 
+- GRADE DO USER 2026/2 (30/08, cruzada com exports/perfis — tudo consistente): Seg = Lingua Inglesa IV
+  (125AB-04 T2, E-E1) + Lab Redes (98710-02 T340, LM); Ter = CG (98716-04 T310, JK) + Fund. Redes (98709-04
+  T320, LM); Qua = Lingua Inglesa + Lab SO (4646I-04 T310, LM); Qui = CG + Fund. Redes; Sex = Lab SO (JK).
+  Horarios PUCRS confirmados nos exports: JK = 17:30-19:00, LM = 19:15-20:45. Lab SO 310 tem horario diferente
+  por dia (qua LM, sex JK). Validacao independente p/ F12: dias do cronograma x grade do user, alem de turma do
+  export x shortname. Falta ainda: export SARC da turma 310 do Lab SO (GUID nao derivavel; user vai copiar do SARC).
 - F14 **RESOLVIDO DE VEZ (30/08, descoberta do USER): o professor postou no Moodle o link do SARC da TURMA
   ERRADA.** Cabecalho do export: "4646I-4 Laboratorio de Sistemas Operacionais **(330)**"; shortname do Moodle:
   "4646I-04**310**262" (turma 310). A 330 e TER/QUI 17:30; a 310 do user e QUA/SEX — e as datas dos arquivos
