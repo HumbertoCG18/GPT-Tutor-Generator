@@ -130,6 +130,20 @@ Dados: planos em `Desktop/claude-tutor/*.plano.md` (pymupdf4llm; lab-so e escane
   2 provas (P1, P2). A formula do G1 da os marcos derivados: termos P = provas, TPn/T/TF = entregas, "sem G2" =
   nao esperar final; contagem TPn bate com "Fechamento" do SARC (4=4 no Lab SO).
 
+**F9 EXECUTADO (2026-08-28):** `_DATE_PREFIX_RE` aceita `[`-opcional e separador `./espaco/barra`; o CARD
+(`source_section`) entrou na varredura do `extract_date_in_name` (so PREFIXO — "Semana 13/04/2026 a ..." segue
+fora). Falso positivo "Tutorial 1.2" -> (1,2) morre no calendario (provider exige sessao real). +4 testes.
+Gate: extracao identica nos 6 cursos velhos (medida entry a entry), sentinela 0 campos nos 6, regua e subunidade
+identicas, suite 2104 (golden TCC aula-06 regenerado DE PROPOSITO — deriva de 27/08 ja documentada no sentinel:
+tag `ferramenta:lemas` -> boosts -> computed_block_id, fora da regua; desta vez o jitter NAO reapareceu).
+Preview nos novos: Lab Redes **4/6 ancorados** pelo card `[03/08]`; FR 0/20 (esperado — FR e U<n>, F7).
+
+- F14 **SARC x Moodle discordam no Lab SO**: SARC (id 273a562b) = TER/QUI 17:30; datas nos ARQUIVOS do professor
+  (07/08, 12/08, 14/08, 21/08, 26/08) = QUA/SEX — o user afirmara qua/sex e estava CERTO; a correcao que registrei
+  na dissecacao estava errada. Consequencia: provider_date recusa todos (validacao por calendario funcionando) e o
+  Lab SO fica 0/20 ancorado por data ate resolver a fonte. Hipoteses: link SARC de outra turma, ou SARC formal
+  (reserva de sala) != calendario real. PERGUNTAR AO USER qual e o SARC da turma 310 dele.
+
 **Censo Moodle dos 3 (moodle_pull --dry-run, `(scratch)/pull-*`), F9-F13:**
 - F9 `_DATE_PREFIX_RE` (window_provider:328) so aceita `DD.MM`/`DD MM` — nao casa `[03/08]` (cards do Lab Redes)
   nem `07/08 Slides:` (nomes do Lab SO). Os dois formatos novos de data ficam sem provedor.

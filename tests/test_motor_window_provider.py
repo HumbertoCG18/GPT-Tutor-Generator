@@ -176,6 +176,33 @@ class TestExtractDateInName:
         assert extract_date_in_name({"title": "Plano de Ensino"}) is None
         assert extract_date_in_name({}) is None
 
+    def test_data_com_barra_no_nome(self):
+        """F9: Lab SO nomeia '07/08 Slides: Revisão SISOP'."""
+        from src.builder.routing.motor.window_provider import extract_date_in_name
+        assert extract_date_in_name({"title": "07/08 Slides: Revisão SISOP"}) == (7, 8)
+
+    def test_data_entre_colchetes_no_card(self):
+        """F9: Lab Redes usa o card '[03/08] - Introdução'; title sem data."""
+        from src.builder.routing.motor.window_provider import extract_date_in_name
+        assert extract_date_in_name(
+            {"title": "Aula 01 - Introdução", "source_section": "[03/08] - Introdução"}
+        ) == (3, 8)
+
+    def test_card_semana_com_data_no_meio_nao_casa(self):
+        """Cards 'Semana 13/04/2026 a 17/04/2026' (MF/ES2) não começam com data."""
+        from src.builder.routing.motor.window_provider import extract_date_in_name
+        assert extract_date_in_name({"source_section": "Semana 13/04/2026 a 17/04/2026"}) is None
+
+    def test_numero_de_secao_cai_no_calendario(self):
+        """'Tutorial 1.2' extrai (1,2) mas o provider exige sessão real na data."""
+        from types import SimpleNamespace
+        from src.builder.routing.motor.window_provider import extract_date_in_name, provider_date
+        assert extract_date_in_name({"title": "1.2 - qemu-network"}) == (1, 2)
+        ctx = SimpleNamespace(blocks=[{"id": "bloco-01", "sessions": [{"date": "2026-08-07"}]}],
+                              _modal_years_cache=None)
+        assert provider_date({"title": "1.2 - qemu-network"}, ctx) == []
+        assert provider_date({"title": "07/08 Slides: Revisão"}, ctx) == ["bloco-01"]
+
 
 class TestProviderTopic:
     @staticmethod

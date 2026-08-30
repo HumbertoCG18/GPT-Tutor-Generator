@@ -325,7 +325,12 @@ def resolve_window(entry: dict, ctx: MotorContext) -> Tuple[List[str], str]:
 
 # P3 — data-no-nome (spec §8: extrator DD.MM de title/moodle_label/source_path).
 # Reimplementado PURO: o sinal DD.MM legado vive em símbolo condenado do cutover.
-_DATE_PREFIX_RE = re.compile(r"^\s*(\d{1,2})[. ](\d{1,2})\b")
+# F9 (censo 2026-08-28): Lab SO nomeia "07/08 Slides: ..." (barra) e Lab Redes usa
+# o CARD "[03/08] - Introdução" (colchete) — separador aceita ./espaço/barra, "["
+# opcional, e o card entra na varredura. Só data no PREFIXO: "Semana 13/04/2026 a
+# ..." (cards MF/ES2) segue fora. Falso positivo tipo "Tutorial 1.2" morre no
+# calendário — provider_date exige sessão real naquela data.
+_DATE_PREFIX_RE = re.compile(r"^\s*\[?\s*(\d{1,2})[./ ](\d{1,2})\b")
 
 
 def _moodle_label_text(entry: dict) -> str:
@@ -334,9 +339,10 @@ def _moodle_label_text(entry: dict) -> str:
 
 
 def extract_date_in_name(entry: dict):
-    """(dd, mm) do PREFIXO de title/moodle_label/basename(source_path); None se ausente."""
+    """(dd, mm) do PREFIXO de title/moodle_label/card/basename(source_path); None se ausente."""
     basename = re.split(r"[\\/]", str(entry.get("source_path") or ""))[-1]
-    for text in (str(entry.get("title") or ""), _moodle_label_text(entry), basename):
+    for text in (str(entry.get("title") or ""), _moodle_label_text(entry),
+                 str(entry.get("source_section") or ""), basename):
         m = _DATE_PREFIX_RE.match(text)
         if not m:
             continue
