@@ -160,8 +160,19 @@ Teste novo `test_page_text_becomes_base_markdown_even_when_clone_fails`. Gate co
        "Arquitetura Serverless" pela rota de overlap fraco do heading->alias (content_taxonomy ~L572-616,
        score 5.0+0.4/token, piso efetivo ~5.4) e ganha de cliente-servidor por 8.65 x 8.31. Piso 8.0
        (igualdade/contencao) TESTADO E REFUTADO 31/08: 729 campos em 5 cursos — a rota fraca e LOAD-BEARING
-       (sustenta dezenas de aliases legitimos). Nao retentar piso global; um fix teria de ser cirurgico
-       (ex.: so heading multi-tema com overlap de 1 token) e MEDIDO. Teto documentado.
+       (sustenta dezenas de aliases legitimos). MAIS DOIS desenhos cirurgicos TESTADOS E REFUTADOS
+       31/08 (tarde), ambos no braco de overlap-1-token do `_select_supported_taxonomy_topic`:
+       (1) unicidade do token ENTRE IRMAOS da unidade: o alias nao morre, MIGRA para a unidade onde o
+       token e localmente unico ("Teoria de Conjuntos" TCC -> decidibilidade-de-teorias-logicas; logicas
+       do MF -> logica-de-hoare; o proprio web -> teste-de-sistema). ES2 subunit 27->28 (web FECHA) mas
+       TCC 11->9: aula-01 perde o alias legitimo e a taxonomia nova reergue aula-06 acima do piso 7.0
+       do gate de revisao. Saldo 91/93 com bombas -> reprovado.
+       (2) unicidade do token no CURSO inteiro (morte sem migracao): mata aliases legitimos de 1 token
+       ambiguo ("conju" e promiscuo no TCC por design da u01) — COBERTURA 56->55 F1 0.980 (lei viola),
+       TCC subunit 9/11 igual. Reprovado e revertido (sentinela 0 vs HEAD).
+       CONCLUSAO REFORCADA: fechar web por rota lexical custa o TCC; a ambiguidade de 1 token as vezes
+       E o alias certo (tema realmente pertence a um dos irmaos) e as vezes e podre (tema nem existe na
+       taxonomia) — indistinguivel no lexico puro. Teto do motor; so com sinal de outro tipo.
      - Familia C (ES2 roteiro5 = proposito vs vocabulario 19.3x16.4; TCC aula-08 idem 35x4.6; TCC aula-06 =
        over-assignment em aula de revisao, gold vazio): teto do motor lexical; so fecham com sinal de outro
        tipo (papel/estrutura do material ou LLM lendo a tese). Documentado, revisitavel com desenho novo.
