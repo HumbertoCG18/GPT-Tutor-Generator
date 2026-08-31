@@ -1872,7 +1872,9 @@ Ideia registrada, NAO implementada (o user nao pediu): um `sweep_orphans` que LI
   disambiguator real.
 - ~~Alavanca 3 (posting_date / seleção por sessão)~~ **SUPERSEDED (2026-07-01)** — posting_date foi declarado
   lixo como sinal de base (decisão 28/06); o motor D0-D13 não o usa (sinais: seção/roteiro/prazo/conteúdo).
-- [CODE] **Fase 3.4 cutover** — default ON do concept_resolver + DELETE do funil legado
+- [CODE] ~~**Fase 3.4 cutover**~~ **FECHADO (cutover passo 3, 2026-08-17, `c5ecb5f`/`df86203` — flip +
+  delecao do funil; ver Concluido 2026-08-17c. Marcado aqui em 2026-08-31 na auditoria de vencidos.)**
+  Era: default ON do concept_resolver + DELETE do funil legado
   (`score_entry_against_timeline_block` S2/S4, `select_probable_period`, `_best_instructional_block_fallback`,
   2 rotas card). Eval-gated.
   > **PRÉ-REQ FASE 4 CONCLUÍDO (`as-of 2026-08-14`, commits `5da5f2e..b9a4a53`)**: unit/subunit no
@@ -1940,9 +1942,9 @@ Ideia registrada, NAO implementada (o user nao pediu): um `sweep_orphans` que LI
   qualquer hora. Primeiro alvo provado: `_derive_unit_from_topic_match` (index.py:2080; morto em
   produção; só re-export engine.py:241/2443 + tests/test_file_map_unit_mapping.py:11,647,705,732,836).
   Remoção pura, sem eval.
-  > **RE-VERIFICADO ABERTO 2026-08-24:** a funcao vive hoje em `timeline/index.py:1951` (linha
-  > mudou); alcancada so por `engine.py:245`/`:2443` (re-export) e por um comentario em
-  > `timeline/conflicts.py:48`. Segue morta em producao.
+  > **ALVO 1 VENCIDO (verificado 31/08): `_derive_unit_from_topic_match` ja foi REMOVIDO** (so um
+  > comentario em `timeline/conflicts.py:48` menciona a remocao). A RUN dedicada segue valida
+  > como conceito p/ os proximos alvos, sem alvo provado no momento.
 - ~~[CODE] **Mapa de deleção do cutover fase 5 — 5 conflitos, resoluções travadas 2026-07-03**~~
   **FECHADO (2026-08-17, passo 3, `df86203` + `037ddbe`)**: itens 1-8 TODOS executados conforme
   travado (1 aposentado · 2 aposentados · 3 lista nomeada completa · 6 fantasma+testes ·
@@ -1993,7 +1995,9 @@ Ideia registrada, NAO implementada (o user nao pediu): um `sweep_orphans` que LI
 > campanha 1/3 — trilho separado ou minors-batch/subprojeto SO — mais o status dos que a
 > campanha fechou (R1/R8/R10).
 
-- [CODE] **R1 — dois serializadores do timeline (v3 produção / v4 só-testes)** — **CONDENADO,
+- [CODE] ~~R1 — dois serializadores do timeline~~ **VENCIDO (verificado no codigo 31/08): a
+  delecao fisica ACONTECEU no cutover passo 3 — `_serialize_timeline_index` so existe em
+  comentarios historicos.** Era: **CONDENADO,
   não deletado** (C3 da campanha índice, commit `9155224`, `as-of 2026-08-06`):
   `_serialize_timeline_index` (v4, filtra admin, força kind; ids posicionais deslocam entre
   formatos — `.bak` do TCC é v4/23 blocos vs vivo v3/31) segue vivo até o cutover; guard test
@@ -2043,6 +2047,8 @@ Ideia registrada, NAO implementada (o user nao pediu): um `sweep_orphans` que LI
   **FIX aplicado (2026-06-22, working tree, uncommitted):** `_save` agora preserva ambos de `existing`
   (espelha `turma`/`schedule_url`, dialogs.py:1521-1525). 388 testes verdes (core/moodle/m365). NOTA: o fix
   evita zeragem FUTURA; o `moodle_course_id` do IA já perdido precisa **re-import Moodle** pra restaurar.
+  > **VENCIDO o residual (verificado 31/08 tarde): o id do IA = '93156' esta PRESENTE no perfil hoje**
+  > (restaurado em algum ponto; nenhum re-import necessario). Sem gap restante.
 - ~~[CODE] `migrate_signals` standalone **não grava `turma`** (só `import_moodle_courses` grava) — derivar do curso.~~
   > derived-código, não-reprocess-stale, as-of 18/06 (S0).
   **STALE — fechado em algum ponto pós-18/06 (verificado 2026-08-06, varredura):**
@@ -2076,8 +2082,12 @@ Ideia registrada, NAO implementada (o user nao pediu): um `sweep_orphans` que LI
   > pedia como pendente: `routing/file_map.py:1185` loga "sem teaching_plan no perfil —
   > content_taxonomy vazia" e `:1237` loga "unidades derivadas do repo gerado, nao do plano de
   > ensino — fallback". Item inteiro fechado; nada aqui e acao.
-  > PENDENTE do mesmo item, NAO fechado: unificar as 2 fontes de unidade (`unit_index` como
-  > projecao de `content_taxonomy`) — era "depois do wiring fix", e o wiring ja esta feito.
+  > ~~PENDENTE do mesmo item: unificar as 2 fontes de unidade~~ **RECLASSIFICADO 31/08 (tarde),
+  > MEDIDO: identidade (slugs/unidades) = 0 divergencia nos 6 cursos — a metade estrutural JA e
+  > projecao de fato (wiring + guardrails mataram o veneno). A metade de VOCABULARIO diverge
+  > grande e bidirecional (IA u02: 41 frases so no unit_index; ES2 u02: 32 so na taxonomy) —
+  > unificar muda scores em escala, mesma classe das mudancas refutadas 31/08. NAO fazer sem
+  > hipotese de ganho medivel; regua hoje 199/191/56/90 nao pede.**
   **Depois do wiring fix** (não antes — evita migrar o veneno): unificar as 2 fontes de unidade
   (`unit_index` vira projeção de `content_taxonomy`) — merge antes do fix causaria churn de slugs
   nos 5 repos-tutor (títulos Title-Cased do fallback ≠ títulos acentuados do plano).
@@ -2104,10 +2114,16 @@ Ideia registrada, NAO implementada (o user nao pediu): um `sweep_orphans` que LI
   bloco-01→NN e unidades derivadas do plano de ensino — 3 no MF, incluindo a vazia/perdida u3
   acima). Foi o grafo que achou a perda da u3 (via inspeção visual das 12 divergências) — vale
   como ferramenta de auditoria recorrente, não one-off.
-- [CODE] **Latente: TCC NFD dotless-i no manifest** (`as-of 2026-07-01`, herdado do handoff 28/06 P4) — slug
+- [CODE] ~~Latente: TCC NFD dotless-i no manifest~~ **FECHADO 31/08 (tarde): caso ESPECIFICO, nao
+  sistematico (varredura nos 6: 3 ids nao-ascii, 2 do IA sao acentos NFC legitimos). U+0131 nem e
+  questao de NFC (char proprio que NFKD nao decompoe). Fix de raiz: translit U+0131->i na fonte
+  unica `strip_accents` (p/ imports e matching futuros; aula-10 ws 37.45->45.16). Id existente
+  fica (renomear quebraria golds).** Era: slug
   `aula-10-linguagens-reconhecıveis-e-linguagens-decidıveis` carrega U+0131 (NFD do macOS). Join por nome pode
   falhar silencioso. Fix: normalizar NFC no import. Não urgente; vigiar no crosswalk TCC.
-- [CODE · RE-VERIFICADO ABERTO 2026-08-24] **`preserve_raw` morto no `reject`** — segue vivo em
+- [CODE] ~~`preserve_raw` morto no `reject`~~ **VENCIDO (verificado 31/08): o call-site atual chama
+  `builder.reject(entry_id)` limpo, com o ruling de 25/08 (opcao b: raw fica DE PROPOSITO como
+  rede p/ reimport; dialogo corrigido). O parametro fantasma morreu.** Era: segue vivo em
   `src/ui/curator_studio.py:1296`. (`as-of 2026-08-06`, achado fio Task 1, reviewer
   pré-existente não desta task). `builder.reject(entry_id, preserve_raw=False)` sempre cai no
   `except TypeError` — a assinatura atual de `reject` não tem parâmetro `preserve_raw`
@@ -3111,22 +3127,33 @@ gerador `scripts/make_coverage_labels.py`.
 - [CONCLUIDO 2026-08-18] **Curation sem prune de orfaos** — CORRIGIDO — `references_curation.json` guarda entries que nao
   existem mais no manifest: ES2 6/6 orfas, TCC 2/2 (`as-of 2026-08-18`). `code_curation.json`
   ja poda; esta nao.
-- [CODE] **Entry fantasma no IA** (`as-of 2026-08-18`) — `artigo-usando-agrupamento` tem
+- [CODE] ~~Entry fantasma no IA~~ **FECHADO 31/08 (tarde): RAIZ = poda de 14 stale (01/07,
+  `ceae83e`) deletou o md de material VIVO (PDF segue no stash e no Moodle) e deixou a entry.
+  Caso UNICO nos 6 repos (varredura). Restaurados md (git `ceae83e~1`) e raw (stash); com texto
+  real ws 4.10->12.59, slug intacto (gold confere), gate verde.** Era: `artigo-usando-agrupamento` tem
   `review_status: approved` e aponta `content/curated/*.md` + `raw/pdfs/*.pdf` que NAO existem
   no disco. Ainda alimenta `content/BIBLIOGRAPHY.md`.
-- [CODE] **Referencia GitHub depende da rede a cada build** (`as-of 2026-08-18`) — `eth2` e
+- [CODE] ~~Referencia GitHub depende da rede a cada build~~ **FECHADO NO GROSSO pelo P1 31/08
+  (rota de texto do github-repo: pagina vira base_markdown PERSISTIDO no repo — rede so no
+  re-import, nao no build). RESIDUAL vivo: `ia-responsavel` (IA, 258B, pagina nunca convertida).**
+  Era: `eth2` e
   `aws-encryption-sdk` (MF) ficam com 0 byte de texto quando o README nao vem, e sem texto nao ha
   cobertura. E o teto atual da camada, nao o matcher. Cachear o README no repo resolveria.
   `ia-responsavel` (IA, 258B) e caso irmao: a pagina nunca foi convertida, so a URL foi salva.
-- [CODE] **EXAM_INDEX / EXERCISE_INDEX sao vitrines vazias** (`artifacts/repo.py:703,2029`) —
+- [CODE] ~~EXAM_INDEX / EXERCISE_INDEX sao vitrines vazias~~ **FECHADO no P2b 31/08 (EXERCISE:
+  Unidade = computed_unit_slug real + pareamento enunciado<->gabarito por stem; EXAM: dedup +
+  Unidades cobertas = coverage_units). Indices existem e populados nos repos (verificado hoje).** Era:
   EXAM: colunas `Observacao`/`Padrao do professor` dependem de `notes` manual sempre vazio.
   EXERCISE: coluna "Unidade" imprime tag crua (`topico:...; tipo:gabarito; bloco:...`) tendo
   `computed_unit_slug` disponivel; coluna `Solucao` procura "gabarito" em `notes` em vez de
   parear com o irmao no repo (SO tem `lista-exercicios-p1` + `-gabarito` e diz "nao").
-- [CODE] **Duplicatas de prova nao detectadas** (IA, `as-of 2026-08-18`) — mesma P1 em
+- [CODE] ~~Duplicatas de prova nao detectadas (IA)~~ **VENCIDO (verificado 31/08): a P1 existe
+  UMA vez no manifest atual (`prova-1-2024-02`; as 3 copias morreram na limpeza de 20/08) e
+  `detecta_duplicatas --repos IA` = 0 grupos.** Era: mesma P1 em
   `p1-2024-02-ia.md`, `prova-1-2024-02.md`, `prova-1-202402.md` (67 linhas cada); uma delas
   nem aparece no EXAM_INDEX.
-- [USER] **Decidir o destino das duplicatas e do fantasma do IA** — qual das 3 copias da P1
+- [USER] ~~Decidir o destino das duplicatas e do fantasma do IA~~ **VENCIDO 31/08: duplicatas ja
+  removidas (20/08) e fantasma restaurado (ver item acima).** Era: qual das 3 copias da P1
   fica; e se `artigo-usando-agrupamento` e reimportado ou removido. Sem ruling, os dois
   seguem alimentando `EXAM_INDEX`/`BIBLIOGRAPHY`.
 - [CODE] **Descritivo da unidade no plano nunca vira sinal** (`as-of 2026-08-18`) — o paragrafo
@@ -3498,7 +3525,8 @@ gerador `scripts/make_coverage_labels.py`.
   (engine, dialogs) importam helpers antes, mas um script standalone futuro que o use direto
   não veria as chaves. Fix barato quando tocar o arquivo: import de helpers (ou chamada explícita
   ao loader) no topo do datalab_client.
-- [CODE] **Hook `code-review-graph` crasha com erro de encoding cp1252 em todo commit**
+- [CODE] ~~Hook `code-review-graph` crasha cp1252 em todo commit~~ **VENCIDO (verificado 31/08:
+  commits do dia rodam o hook limpo, painel de risco visivel).** Era:
   (`as-of 2026-08-06`; o handoff 2026-08-05/06 dizia "registrado como pendência", mas o item não
   existia neste tracker — registrado agora). Cosmético: engole o painel de risco no output do
   commit, não bloqueia o commit. Fix provável: forçar UTF-8 no stdout do hook
@@ -3781,7 +3809,12 @@ gerador `scripts/make_coverage_labels.py`.
   diferentes, mesma aula) é **`inteligencia-artificial-aula-29...` ≡ `como-analisar-resultados-acc-pr-re-e-f1`**
   (md5 5bdaa9c7 vs 84a1f47a; o aula-29 é órfão byte-único, source sumiu — tratar à parte, não podar). Trocar o
   VERSION_PAIRS hardcoded por dedup-por-md5 no pipeline (causa), gate golden 5/5 + não-cascateamento + rebuild_diff.
-- [USER] **Stash IA é download PARCIAL** — API Moodle (course 93156) mostra ~45 arquivos no Moodle ausentes do
+- [USER] ~~Stash IA e download PARCIAL~~ **FECHADO COMO LIMITE ACEITO (ruling user 31/08: cadeira
+  fora da grade atual, sem reimport). RAIZ rastreada: stash veio de download MANUAL seletivo
+  (pre-moodle_pull; IA nunca teve raw/moodle) — 90 arquivos, semanas 10-11 AUSENTES — e o
+  `moodle_course_id` zerado pelo bug do `_save` impediu verificacao automatica na epoca. Ambos os
+  mecanismos corrigidos (fix 22/06; id 93156 presente no perfil hoje). Consequencia aceita: ~45
+  arquivos do Moodle nunca ingeridos.** Era: API Moodle (course 93156) mostra ~45 arquivos no Moodle ausentes do
   stash local (grosso = `.ipynb`/datasets que o pipeline pula; alguns PDF reais ex.: `Agentes.pdf` Semana 16,
   `Future of Jobs`, TDE `P2`). Lista definitiva exige baixar+hashear (content-match), não slug.
 
