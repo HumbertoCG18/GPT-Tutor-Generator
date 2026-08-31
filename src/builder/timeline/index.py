@@ -17,6 +17,7 @@ from src.builder.timeline.unit_matcher import assign_units_by_work_milestones, a
 from src.builder.text.normalize import (
     normalize_match_text as _normalize_match_text,
     signal_token_set as _signal_token_set,
+    stem6 as _stem6,
 )
 from src.builder.routing.thresholds import margin_confidence, T
 from src.builder.routing.file_map import UNIT_GENERIC_TOKENS
@@ -137,14 +138,27 @@ def _apply_curation_overrides(timeline_index: dict, course_dir: Path) -> int:
     return touched
 
 
-def _matches_normalized_phrase(signal_text: str, phrase: str) -> bool:
+def _matches_normalized_phrase(signal_text: str, phrase: str, stem_fallback: bool = False) -> bool:
+    """A1 (2026-08-31, medido em 3 tentativas): o fallback por RADICAL (stem6, mesma
+    convencao do motor de bloco) e OPT-IN. Ligado globalmente derrubou subunidade
+    87->83 e bloco 199->198; ligado so aqui com stem_fallback=True na rota de
+    TOPICO do mapeador de UNIDADE fecha os 3 forks do SO ("chamadas de sistema" ~
+    "chamada de sistema fork()") sem tocar a subunidade (exata)."""
     normalized_signal = _normalize_match_text(signal_text)
     normalized_phrase = _normalize_match_text(phrase)
     if not normalized_signal or not normalized_phrase:
         return False
     if " " not in normalized_phrase:
         return normalized_phrase in _signal_token_set(normalized_signal)
-    return normalized_phrase in normalized_signal
+    if normalized_phrase in normalized_signal:
+        return True
+    if not stem_fallback:
+        return False
+    frase_toks = [t for t in normalized_phrase.split() if len(t) >= 4]
+    if len(frase_toks) < 2:
+        return False
+    sinal_stems = {_stem6(t) for t in _signal_token_set(normalized_signal)}
+    return all(_stem6(t) in sinal_stems for t in frase_toks)
 
 
 @dataclass
@@ -1736,7 +1750,7 @@ def _iter_content_taxonomy_topics(taxonomy: dict) -> List[dict]:
     return topics
 
 
-def _score_entry_against_taxonomy_topic(signals: dict, topic: dict) -> float:
+def _score_entry_against_taxonomy_topic(signals: dict, topic: dict, *, stem_fallback: bool = False) -> float:
     title_text = signals.get("title_text", "")
     markdown_headings_text = signals.get("markdown_headings_text", "")
     markdown_lead_text = signals.get("markdown_lead_text", "")
@@ -1765,19 +1779,19 @@ def _score_entry_against_taxonomy_topic(signals: dict, topic: dict) -> float:
         (legacy_tags_text, 0.15),
         (raw_text, 0.9),
     ]:
-        if label and _matches_normalized_phrase(text, label):
+        if label and _matches_normalized_phrase(text, label, stem_fallback):
             score += weight
             exact_hits += 1
         if topic_slug:
             slug_phrase = topic_slug.replace("-", " ")
-            if slug_phrase and _matches_normalized_phrase(text, slug_phrase):
+            if slug_phrase and _matches_normalized_phrase(text, slug_phrase, stem_fallback):
                 score += weight * 0.65
                 exact_hits += 1
         for alias in aliases:
             alias_norm = _normalize_match_text(alias)
             if not alias_norm:
                 continue
-            if _matches_normalized_phrase(text, alias_norm):
+            if _matches_normalized_phrase(text, alias_norm, stem_fallback):
                 score += weight * 0.82
                 exact_hits += 1
 

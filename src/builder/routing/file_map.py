@@ -489,7 +489,9 @@ def auto_map_entry_unit(
             for topic in normalized_topic_index:
                 if normalize_unit_slug(str(topic.get("unit_slug", "") or "")) != unit_slug:
                     continue
-                topic_score = score_entry_against_taxonomy_topic(signals, topic)
+                # A1: rota de TOPICO do mapeador de UNIDADE usa o fallback por radical
+                # (stem6); a rota de SUBUNIDADE (score_entry_topics) continua exata.
+                topic_score = score_entry_against_taxonomy_topic(signals, topic, stem_fallback=True)
                 if topic_score > best_topic_score:
                     best_topic_score = topic_score
             if best_topic_score >= 0.25:

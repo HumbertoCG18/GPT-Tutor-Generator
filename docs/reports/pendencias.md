@@ -87,6 +87,25 @@ entrega ("Fechamento da parte N", "Apresentacao do T1"); `_exam_number`/prep-pro
 a unica fonte e o Moodle — o pipeline precisa ler `summary` de secao; (6) Lab Redes com ~10 blocos de conteudo em 19
 sessoes (3 feriados + 6 desenvolvimento/apresentacao) — regua magra.
 
+## A1 EXECUTADO (recorte cirurgico): stem6 compartilhado fecha os 3 forks — cobertura 52 -> 55/57 (2026-08-31)
+
+`text/normalize.stem6` (radical de 6 chars, a MESMA convencao do TOPIC_STEM_LEN do motor de bloco) agora e o stem
+oficial compartilhado. Tres tentativas MEDIDAS ate o recorte certo:
+1. stem em `_matches_normalized_phrase` + `_score_timeline_unit_phrase` (amplo): cobertura 54 mas subunidade
+   87->83, bloco 199->198 conf-err 1, IA oracle regride. REPROVADO pela lei (regua pior em qualquer eixo).
+2. stem so no `_score_timeline_unit_phrase`: eixos voltam mas forks NAO fecham (o fix vinha da rota de topico) e
+   oracle segue errado — cobertura 51. REPROVADO.
+3. **ADOTADO**: `_matches_normalized_phrase(..., stem_fallback=)` OPT-IN; so a rota de TOPICO do MAPEADOR DE
+   UNIDADE (`file_map.auto_map` topic_score) passa True; subunidade (`score_entry_topics`) continua exata; scorer
+   de frase intocado. "Chamadas de sistema" (plano) casa "chamada de sistema fork()" (resumo Gemini) e os 3
+   `exemplo-criacao-de-processos` fecham.
+
+Regua: bloco 199/200 conf-err 0 | unidade 191/191 | **cobertura 55/57 F1 0,965** | subunidade 87/93 | suite 2132.
+Restam na cobertura APENAS eth2 e aws-encryption-sdk (0 chars — so com o texto da pagina do link). Sentinela:
+apenas `unit_match_confidence` (topic_score mudou) + coverage_units off-gold mistos e honestos (SO
+`1703-chamada-de-sistema` ganha u01; forks passam a cair no fallback da unidade final, que e u01 correto).
+O A1 "grande" (P4 + desempate no mesmo tokenizador) fica aberto como refactor de higiene — o ganho de regua ja veio.
+
 ## DISSECACAO: 3 cursos novos 2026/2 (Fund. Redes, Lab Redes, Lab SO) — achados ANTES de codar (2026-08-28)
 
 Contexto (user): cadeiras de curriculo especial (sem prova, media por trabalhos) existem — Lab Redes, Lab SO e uma
@@ -407,7 +426,7 @@ producao e o proprio motor (flagados / llm-funil / conf-err -> fila de revisao).
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
 **HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
 ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-27): bloco **199/200** conf-err **0** (o erro = ES2 `azure`, convencao) ·
-unidade **191/191 (100%)** · cobertura **52/57 F1 0,912** · subunidade **87/93** (4 cursos com gold) · **pinos 5** ·
+unidade **191/191 (100%)** · cobertura **55/57 F1 0,965** · subunidade **87/93** (4 cursos com gold) · **pinos 5** ·
 cards manuais **1** (TCC "Semana 12") · decisoes humanas de bloco **6** (eram 23) · suite **2094 passed** (+1 golden TCC vermelho por jitter `ferramenta:`, ver 28/08).
 MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py`, 81 s): bloco **205/212 por uuid (96,7%)**, display 194/200,
 conf-err 2 · unidade 134/191 · cobertura 34/57 · subunidade ~21/94. Os 7 erros nus restantes: 3 ruido do voto LLM

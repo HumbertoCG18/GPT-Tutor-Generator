@@ -66,3 +66,22 @@ def signal_token_set(
     """
     normalizer = normalize or normalize_match_text
     return {token for token in normalizer(signal_text).split() if len(token) >= min_token_len}
+
+
+# --- A1 (2026-08-31): UM stem para casamento de topicos em todos os eixos ---
+# Mesma convencao do motor de bloco (TOPIC_STEM_LEN=6 no window_provider): radical
+# de 6 chars. "chamadas"/"chamada" -> "chamad"; "processos"/"processo" -> "proces".
+# Caso real: resumo do Gemini diz "chamada de sistema fork()" (singular) e o topico
+# do plano do SO e "Chamadas de sistema" (plural) — igualdade exata perdia os 3
+# exemplo-criacao-de-processos (cobertura 52/57).
+STEM_LEN = 6
+
+
+def stem6(token: str) -> str:
+    """Radical do token: 6 chars quando ha o que truncar; curto fica inteiro."""
+    t = str(token or "")
+    return t[:STEM_LEN] if len(t) > STEM_LEN else t
+
+
+def stem_set(tokens) -> set:
+    return {stem6(t) for t in tokens if t}
