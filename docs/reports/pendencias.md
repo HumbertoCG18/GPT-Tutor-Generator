@@ -184,6 +184,11 @@ CONFIGURACAO + CI num arquivo), campo comporta 1 subunit; (4) papel pedagogico v
 Itens novos da fila (sem data, decisao de priorizar e do user):
   - Gate de meta/abrangente na SUBUNIDADE (espelho da regra A da cobertura): categorias/nomes de plano,
     programa, cronograma, revisao -> subunit vazia. Fecha SO plano/programa e TCC aula-06. Medir com gate.
+    NOTA (31/08): SO `plano-de-ensino` e `programa` sao o MESMO documento postado 2x no Moodle (card
+    "Informacoes Gerais"; corpo 0,901 similar, difere so formatacao de extracao) com categorias
+    INCONSISTENTES ("cronograma" vs "outros") — o gate nao pode ser so por categoria (META_CATEGORIES
+    perderia o "outros"); precisa de sinal de conteudo (ementa/titulo). Dedup md5 nao pega (PDFs distintos
+    byte a byte com mesmo conteudo).
   - Detector de headings como script de auditoria (`heading nomeia subunit irma != atribuida, atribuida fora
     dos headings`): achou os 2 meta do SO que NENHUM gold cobria; rodar pos-reprocess. Calibrar matching
     label<->heading (substring nos 2 sentidos; caso `devops`).
