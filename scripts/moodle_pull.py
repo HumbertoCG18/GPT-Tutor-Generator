@@ -12,6 +12,11 @@ Saida (debaixo de --root):
                                      Lab SO vive no summary da secao 0, fora de qualquer card)
     raw/sarc/cronograma-*.html       export do SARC descoberto no proprio Moodle (F12), so quando a
                                      TURMA do export bate com a do shortname (330 != 310 -> review)
+    stash/.moodle_nomes.json         F10: "card/arquivo" -> NOME DO MODULO no Moodle. O stash salva o
+                                     filename ("03 - Tipos de Redes.pdf"), mas a categoria certa muitas
+                                     vezes so existe no nome do modulo ("Tipos de Redes (Slides)") — ou
+                                     vice-versa ("Livro-texto: Buildroot" vs "aula03 - buildroot.pdf").
+                                     scan_stash_cards le o sidecar e detecta sobre OS DOIS nomes.
     raw/site/...                     snapshot das paginas do site do professor (site_snapshot)
     links.json                       cada url/page com {secao, nome, url, tipo, acao, destino, sinal}
     manual-review/links.md           o que ficou ambiguo (nunca chute silencioso)
@@ -130,6 +135,7 @@ class Pull:
         self.links: list[dict] = []
         self.labels: list[dict] = []
         self.sections: list[dict] = []
+        self.nomes: dict[str, str] = {}  # F10: "card/arquivo-no-disco" -> nome do modulo
         self.turma_moodle = ""
         self.browser = find_browser() if pdf else None
         self.snap = Snapshot(root, depth=1, pdf=pdf)
@@ -171,6 +177,7 @@ class Pull:
                 elif mn == "resource":
                     for f in m.get("contents") or []:
                         dest = self.stash / card / f.get("filename", "arquivo")
+                        self.nomes[f"{card}/{dest.name}"] = str(m.get("name") or "")
                         rec = {"secao": sec.get("name"), "nome": m.get("name"), "url": f.get("fileurl", ""), "tipo": "arquivo",
                                "acao": "download", "destino": str(dest.relative_to(self.root)), "sinal": "resource"}
                         self.links.append(rec)
@@ -206,6 +213,7 @@ class Pull:
                         continue
                     if acao == "download":
                         dest = self.stash / card / (Path(urlparse(ext).path).name or "arquivo.pdf")
+                        self.nomes[f"{card}/{dest.name}"] = str(m.get("name") or "")
                         dest.parent.mkdir(parents=True, exist_ok=True)
                         if not dest.exists():
                             try:
@@ -233,6 +241,7 @@ class Pull:
                     rec["raw"] = str(hp.relative_to(self.root))
                     if acao == "print" and self.browser:
                         out = self.stash / card / f"{slug(m.get('name', 'pagina'))}.pdf"
+                        self.nomes[f"{card}/{out.name}"] = str(m.get("name") or "")
                         if print_pdf(self.browser, hp, out):
                             rec["destino"] = str(out.relative_to(self.root)); rec["pdf_pages"], rec["pdf_images"] = pdf_stats(out)
         if not self.dry and self.pdf:
@@ -244,6 +253,9 @@ class Pull:
         self.snap.write_links()
         (self.rawm / "labels.json").write_text(json.dumps(self.labels, ensure_ascii=False, indent=1), encoding="utf-8")
         (self.rawm / "sections.json").write_text(json.dumps(self.sections, ensure_ascii=False, indent=1), encoding="utf-8")
+        if self.nomes and not self.dry:
+            self.stash.mkdir(parents=True, exist_ok=True)
+            (self.stash / ".moodle_nomes.json").write_text(json.dumps(self.nomes, ensure_ascii=False, indent=1), encoding="utf-8")
         (self.root / "links.json").write_text(json.dumps(self.links, ensure_ascii=False, indent=1), encoding="utf-8")
         review = [r for r in self.links if r["acao"] == "review"]
         (self.root / "manual-review").mkdir(exist_ok=True)

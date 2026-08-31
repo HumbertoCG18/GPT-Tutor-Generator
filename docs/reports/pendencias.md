@@ -164,10 +164,12 @@ Preview nos novos: Lab Redes **4/6 ancorados** pelo card `[03/08]`; FR 0/20 (esp
 **Censo Moodle dos 3 (moodle_pull --dry-run, `(scratch)/pull-*`), F9-F13:**
 - F9 `_DATE_PREFIX_RE` (window_provider:328) so aceita `DD.MM`/`DD MM` — nao casa `[03/08]` (cards do Lab Redes)
   nem `07/08 Slides:` (nomes do Lab SO). Os dois formatos novos de data ficam sem provedor.
-- F10 o stash salva o FILENAME (`moodle_pull.py:131`) e joga fora o NOME DO MODULO. Medido: categoria diverge
-  modulo x arquivo em 10 arquivos do FR (modulo certo: "(Slides)" -> material; arquivo "03 - Tipos de Redes.pdf"
-  -> outros) e 8 do Lab SO (arquivo certo: "aula02_introducao.pdf" -> material; modulo "Livro-texto: Buildroot"
-  -> bibliografia). Nenhum nome sozinho basta — categoria deveria ver os DOIS.
+- F10 **EXECUTADO (30/08)**: `moodle_pull` grava `stash/.moodle_nomes.json` ("card/arquivo" -> nome do modulo);
+  `scan_stash_cards` detecta a categoria sobre MODULO + ARQUIVO concatenados (arquivo por ultimo preserva a
+  extensao) — a ordem de prioridade dos cues decide os dois sentidos ("aula" antes de "livro"). Medido nos 3
+  cursos reais: FR 9 correcoes (todas as "(Slides)" -> material, inclusive "Modelos de Referencia" — F10 e F11 se
+  protegem), Lab Redes "Plano de ensino/320-340.pdf" -> cronograma, Lab SO 0 mudancas (filenames ja acertavam).
+  Sem sidecar (stash manual, cursos antigos) comportamento byte-igual. Categoria so em import — sem reprocess.
 - F11 **EXECUTADO (30/08)**: `auto_detect_category(..., frases_do_plano=)` — cue de bibliografia suprimido
   quando o nome casa frase do plano contendo o cue ("02 - Modelos de Referencia.pdf" deixa de ser bibliografia;
   "referencias bibliograficas.pdf" continua). `scan_stash_cards` e `build_course` passam as frases do plano;

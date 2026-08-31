@@ -10,6 +10,7 @@ Módulo PURO: sem Tkinter, sem I/O além de varrer o filesystem.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import json
 from pathlib import Path
 from typing import List
 
@@ -58,6 +59,18 @@ def scan_stash_cards(stash_root, frases_do_plano=None) -> StashScanResult:
     result = StashScanResult()
     if not root.is_dir():
         return result
+    # F10 (censo 2026-08-28): a categoria certa vive ora no nome do MODULO do Moodle
+    # ("Tipos de Redes (Slides)"), ora no nome do ARQUIVO ("aula03 - buildroot-intro.pdf").
+    # Detecta sobre os dois concatenados — arquivo por ULTIMO preserva a extensao — e a
+    # ordem de prioridade dos cues decide ("aula" antes de "livro"). Sem sidecar
+    # (stash montado a mao, cursos antigos): comportamento identico ao de antes.
+    nomes_moodle: dict = {}
+    sidecar = root / ".moodle_nomes.json"
+    if sidecar.is_file():
+        try:
+            nomes_moodle = json.loads(sidecar.read_text(encoding="utf-8")) or {}
+        except Exception:
+            nomes_moodle = {}
     for path in sorted(root.rglob("*")):
         if not path.is_file():
             continue
@@ -70,7 +83,9 @@ def scan_stash_cards(stash_root, frases_do_plano=None) -> StashScanResult:
         if ftype == "zip":
             category = "codigo-professor"
         else:
-            category = auto_detect_category(path.name, is_image=(ftype == "image"),
+            modulo = str(nomes_moodle.get(f"{_card_for(path, root)}/{path.name}") or "")
+            nome_para_categoria = f"{modulo} {path.name}" if modulo else path.name
+            category = auto_detect_category(nome_para_categoria, is_image=(ftype == "image"),
                                             frases_do_plano=frases_do_plano)
         result.items.append(StashItem(
             source_path=str(path),
