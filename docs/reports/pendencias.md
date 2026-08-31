@@ -111,11 +111,14 @@ Dados: planos em `Desktop/claude-tutor/*.plano.md` (pymupdf4llm; lab-so e escane
 **Lacunas/erros achados (F1-F8), com causa lida no codigo:**
 - F1 **EXECUTADO (30/08)**: `raw/moodle/sections.json` = summary + labels COMPLETOS por secao (medido: formula do
   G1 do Lab SO capturada do summary da sec0). labels.json continua igual (compat).
-- F2 Lab SO: "Avaliacao de desempenho de escalonamento" x3 + "Avaliacao de desempenho" -> `kind=assessment` FALSO.
-  Causa: keyword "avaliacao" na tabela ASSESSMENT de `classify_block` (classifier.py:93). E conteudo da cadeira —
-  "avaliacao/desempenho" estao ate no generic df POR CURSO (>=40% das unidades). O proprio df prova que e conteudo.
-- F3 Lab SO: "Algoritmos de substituicao de paginas" -> `kind=makeup` FALSO (cue "substituicao", classifier.py:64
-  = prova substituta na PUCRS). Colisao lexico-de-prova x conteudo (page replacement) — o medo do user, confirmado.
+- F2+F3 **EXECUTADOS (30/08)**: guard cue-x-conteudo-do-plano em `classify_block` — keyword de
+  ASSESSMENT/MAKEUP nao dispara quando o texto casa frase de CONTEUDO do plano contendo o cue
+  (`_cue_e_conteudo_do_plano`; frases normalizadas carimbadas em `block["_plan_phrases"]` por
+  `plan_phrases_para_classificacao(unit_index)` nos 2 pontos de finalize do index, transiente, nunca persiste).
+  Substitui a lista "corpus auditado" (avaliacao/substituicao "inequivocos") que o Lab SO falsificou.
+  Medido no timeline puro: blocos 18-20+25 ("Avaliacao de desempenho...") -> class u03/u04; bloco-23
+  ("Algoritmos de substituicao de paginas") -> class u04; u03/u04 deixam de ficar orfas. "Prova P1"/"substituicao"
+  solto (MF bloco-21) intactos — o guard exige outro token distintivo da frase do plano no texto.
 - F4 Lab Redes: Atividade=Trabalho nos DIAS DE LAB (praticas com material) -> `deliverable` via ATIVIDADE_KIND_MAP.
   deliverable nao esta em NEVER_HOSTS (material ancora), mas o bloco fica sem unit_slug: 11 de 17 blocos sem
   unidade, u03 (nivel de rede) com ZERO blocos. Em cadeira de lab a coluna Atividade nao separa aula de entrega.
@@ -165,9 +168,11 @@ Preview nos novos: Lab Redes **4/6 ancorados** pelo card `[03/08]`; FR 0/20 (esp
   modulo x arquivo em 10 arquivos do FR (modulo certo: "(Slides)" -> material; arquivo "03 - Tipos de Redes.pdf"
   -> outros) e 8 do Lab SO (arquivo certo: "aula02_introducao.pdf" -> material; modulo "Livro-texto: Buildroot"
   -> bibliografia). Nenhum nome sozinho basta — categoria deveria ver os DOIS.
-- F11 colisao cue x conteudo na CATEGORIA: "02 - Modelos de Referencia.pdf" -> bibliografia (cue "referencia"),
-  mas "Modelos de referencia OSI" e topico da u01 do plano do FR. Mesma raiz de F2/F3: cue nao deveria disparar
-  quando a frase e conteudo do plano daquele curso.
+- F11 **EXECUTADO (30/08)**: `auto_detect_category(..., frases_do_plano=)` — cue de bibliografia suprimido
+  quando o nome casa frase do plano contendo o cue ("02 - Modelos de Referencia.pdf" deixa de ser bibliografia;
+  "referencias bibliograficas.pdf" continua). `scan_stash_cards` e `build_course` passam as frases do plano;
+  UI sem parametro = comportamento antigo.
+  Gate: suite 2116 · reprocess 6 + regua identica (199/200, 191/191, 52/57, 87/93) · sentinela 0 campos nos 6 · ablacao nu identica · curado 5/6 + IA p2-202402 (excecao documentada).
 - F12 **EXECUTADO (30/08)**: `classify_url` reconhece o export do SARC como `cronograma` e VALIDA a turma
   (cabecalho do export x shortname do Moodle): FR 320=320 e Lab Redes 340=340 aceitos; Lab SO 330!=310 ->
   `review` sinal `turma-divergente` (pega automaticamente o link errado do professor). HTML salvo em

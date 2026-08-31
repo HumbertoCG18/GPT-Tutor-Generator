@@ -44,7 +44,26 @@ def ensure_block_kind(block: dict) -> dict:
         return block
     if not block.get("kind"):
         block["kind"] = classify_block(block).value
+    # transiente do guard cue-x-conteudo (F2/F3): nunca persiste no JSON
+    block.pop("_plan_phrases", None)
     return block
+
+
+def plan_phrases_para_classificacao(unit_index) -> tuple:
+    """Frases de CONTEUDO do plano (titulos + topicos das unidades), normalizadas como o
+    classificador normaliza o texto do bloco. Insumo do guard cue-x-conteudo (F2/F3):
+    carimbadas em `block["_plan_phrases"]` antes do finalize e removidas depois."""
+    from src.builder.timeline.classifier import _norm as _cls_norm
+    frases = []
+    for u in unit_index or []:
+        brutos = [u.get("title") if isinstance(u, dict) else ""]
+        for t in (u.get("topics") or []) if isinstance(u, dict) else []:
+            brutos.append(t[0] if isinstance(t, (tuple, list)) and t else t)
+        for bruto in brutos:
+            fr = _cls_norm(str(bruto or ""))
+            if len(fr) >= 6:
+                frases.append(fr)
+    return tuple(dict.fromkeys(frases))
 
 
 def finalize_block(block: dict) -> dict:
@@ -1526,8 +1545,10 @@ def _build_file_map_timeline_context_from_course(
             _blocks = timeline_index.get("blocks", []) or []
             if assign_units_around_pins(_blocks, list((content_taxonomy or {}).get("units", []) or []),
                                         is_pinned=lambda b: bool(b.get("block_manual_unit_slug"))):
+                _frases = plan_phrases_para_classificacao(unit_index)
                 for _b in _blocks:
                     if not _b.get("block_manual_unit_slug"):
+                        _b["_plan_phrases"] = _frases
                         finalize_block(_b)
 
     # Transforms pós-classificação (demote revisão + escopo). Aplicado aqui (após
@@ -2144,6 +2165,8 @@ def _build_timeline_index(
             block["unit_slug"] = inherited_slug
             block["unit_confidence"] = max(float(block.get("unit_confidence", 0.0) or 0.0), 0.51)
 
+    _frases = plan_phrases_para_classificacao(unit_index)
     for block in runtime_blocks:
+        block["_plan_phrases"] = _frases
         finalize_block(block)
     return {"version": TIMELINE_INDEX_VERSION, "blocks": runtime_blocks}

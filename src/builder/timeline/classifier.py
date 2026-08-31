@@ -189,6 +189,24 @@ def _has_unit_evidence(block: Mapping[str, object]) -> bool:
     return isinstance(cands, list) and bool(cands)
 
 
+def _cue_e_conteudo_do_plano(spec: str, block: Mapping[str, object], hay_tokens: set) -> bool:
+    """F2/F3 (Lab SO, censo 2026-08-28): cue de prova/substituicao NAO dispara quando o
+    texto casa uma frase de CONTEUDO do plano que contem o cue — "avaliacao de desempenho
+    da nova implementacao" (topico 2.4) faz "Avaliacao de desempenho de escalonamento"
+    ser AULA; "algoritmos de substituicao de paginas" (4.3) nao e prova substituta.
+    "Prova P1" nao casa topico nenhum e segue assessment. As frases chegam normalizadas
+    em block["_plan_phrases"], carimbadas pelo builder do indice (que conhece o plano);
+    sem elas (dashboard, dados legados) o comportamento e exatamente o de antes.
+    Substitui a lista "corpus auditado" que dizia avaliacao/substituicao inequivocos —
+    eram, ate a primeira cadeira cujo PLANO usa essas palavras como conteudo."""
+    frases = block.get("_plan_phrases") or ()
+    for fr in frases:
+        if spec in fr:
+            if any(t in hay_tokens for t in fr.split() if len(t) >= 4 and spec not in t):
+                return True
+    return False
+
+
 def classify_block(block: Mapping[str, object]) -> BlockKind:
     """Retorna BlockKind. Manual override vence; depois source_kind (SARC); senao texto/sessao."""
     override = block.get("manual_kind_override")
@@ -255,6 +273,11 @@ def classify_block(block: Mapping[str, object]) -> BlockKind:
                     # inequivocos e ficam fora do guard (corpus auditado).
                     if (kind is BlockKind.ASSESSMENT and spec in WEAK_EXAM_TOKENS
                             and not _STRONG_EXAM_RE.search(hay_all)):
+                        continue
+                    # Guard cue-x-conteudo-do-plano (F2/F3): so para os kinds cujo
+                    # vocabulario colide com topico de plano medido (Lab SO).
+                    if (kind in (BlockKind.ASSESSMENT, BlockKind.MAKEUP)
+                            and _cue_e_conteudo_do_plano(spec, block, hay_tokens)):
                         continue
                     # Guard anti-sequestro OFFICE_HOURS: keyword so decide se
                     # aparece no label da MAIORIA das sessoes (nao so no

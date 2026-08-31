@@ -636,8 +636,13 @@ def get_app_data_dir() -> Path:
         base_dir = Path.home() / ".config" / "gpt_tutor_generator"
     ensure_dir(base_dir)
     return base_dir
-def auto_detect_category(name: str, is_image: bool = False) -> str:
-    """Detecta a categoria provável baseada no nome do arquivo."""
+def auto_detect_category(name: str, is_image: bool = False, frases_do_plano=None) -> str:
+    """Detecta a categoria provável baseada no nome do arquivo.
+
+    `frases_do_plano` (F11, opcional): frases de conteúdo do plano de ensino, minúsculas.
+    Cue de bibliografia não dispara quando o nome casa uma frase do plano que contém o
+    cue — "02 - Modelos de Referencia.pdf" é tópico da u01 do FR ("modelos de referência
+    de interconexão OSI/ISO"), não bibliografia. Sem o parâmetro, comportamento de antes."""
     if is_image:
         return "fotos-de-prova"
     
@@ -660,10 +665,18 @@ def auto_detect_category(name: str, is_image: bool = False) -> str:
         return "cronograma"
     if any(k in name for k in ["slide", "aula", "apresenta", "unidade", "modulo", "cap"]):
         return "material-de-aula"
+    def _cue_e_conteudo_do_plano(cue: str) -> bool:
+        for fr in (frases_do_plano or ()):
+            fr = str(fr or "").lower()
+            if cue in fr and any(len(t) >= 4 and cue not in t and t in name for t in fr.split()):
+                return True
+        return False
+
     # "bibliogra", nao "biblio": "biblioteca" (library de codigo: "Biblioteca Grafica OpenGL",
     # "ImageClass - biblioteca para manipulacao de imagens") virava bibliografia e saia do
     # desempate de bloco (ref-generica -> 1o bloco). Achado no holdout CG 2026-08-26.
-    if any(k in name for k in ["livro", "referencia", "bibliogra", "artigo", "paper"]):
+    if any(k in name for k in ["livro", "referencia", "bibliogra", "artigo", "paper"]
+           if not _cue_e_conteudo_do_plano(k)):
         return "bibliografia"
 
     if any(k in name for k in ["trabalho", "projeto", "assignment",

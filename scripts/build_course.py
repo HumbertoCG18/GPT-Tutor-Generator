@@ -174,7 +174,13 @@ def main(argv: list[str]) -> int:
     n_rows = max(0, len(sp.syllabus.splitlines()) - 2)
     print(f"[perfil] '{sp.name}' salvo em {store._path}: syllabus {n_rows} linhas, plano {len(sp.teaching_plan)} chars, flags {sp.feature_flags}")
 
-    scan = scan_stash_cards(stash)
+    # F11: frases do plano suprimem cue de bibliografia colidindo com conteudo
+    from src.builder.extraction.teaching_plan import _parse_units_from_teaching_plan
+    frases = []
+    for titulo, topicos in (_parse_units_from_teaching_plan(sp.teaching_plan) or []):
+        frases.append(str(titulo or "").lower())
+        frases.extend(str(t[0] if isinstance(t, (tuple, list)) else t).lower() for t in topicos or [])
+    scan = scan_stash_cards(stash, frases_do_plano=[f for f in frases if len(f) >= 6])
     entries = build_stash_entries(scan, existing_source_paths=set(), defaults={
         "processing_mode": sp.default_mode, "ocr_language": sp.default_ocr_lang, "preferred_backend": sp.default_backend,
         "datalab_mode": sp.default_datalab_mode, "document_profile": "",

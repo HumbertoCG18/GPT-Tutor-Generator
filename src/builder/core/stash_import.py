@@ -53,7 +53,7 @@ def _card_for(path: Path, root: Path) -> str:
     return rel_parts[0] if len(rel_parts) > 1 else ""
 
 
-def scan_stash_cards(stash_root) -> StashScanResult:
+def scan_stash_cards(stash_root, frases_do_plano=None) -> StashScanResult:
     root = Path(stash_root)
     result = StashScanResult()
     if not root.is_dir():
@@ -70,7 +70,8 @@ def scan_stash_cards(stash_root) -> StashScanResult:
         if ftype == "zip":
             category = "codigo-professor"
         else:
-            category = auto_detect_category(path.name, is_image=(ftype == "image"))
+            category = auto_detect_category(path.name, is_image=(ftype == "image"),
+                                            frases_do_plano=frases_do_plano)
         result.items.append(StashItem(
             source_path=str(path),
             card_name=_card_for(path, root),
