@@ -699,8 +699,9 @@ original). Nada avanca com regua pior em qualquer eixo. Restaurou tutor por git 
 7. **MF depende do LLM em 30/66** (professor sem nenhum sinal temporal: tudo postado 18/02, sem "Aula N", sem data em
    secao ou nome; cards de 2-9 blocos; vocabulario repetido). Nao e bug: fallback funcionando, 30/30 certos. Se quiser
    reduzir: assinatura de bloco mais rica que "logica de hoare aula" (medir), nao regra nova (3 medidas hoje, 2 perdem).
-8. **Divida/infra:** remotes SO/ES2/CG: DECIDIDO (31/08) criar privados em HumbertoCG18 — `origin` ja configurado
-   nos 3; falta o user criar os repos vazios no GitHub (gh CLI nao instalado) e o push sai. Resto: `.htm` = 2 defeitos (sem L: ignorado em silencio; com L: vira
+8. **Divida/infra:** remotes SO/ES2/CG: **FEITO (31/08)** — privados em HumbertoCG18, push com upstream nos 3
+   (gh instalado + auth keyring; o GITHUB_TOKEN do ambiente e um PAT sem createRepository — contornar com
+   `$env:GITHUB_TOKEN=""` antes de chamar gh). Os 6 tutores agora tem backup. Resto: `.htm` = 2 defeitos (sem L: ignorado em silencio; com L: vira
    `codigo-professor`) so importam se a CG precisar de HTML; `seed_glossary_fields` com strings por curso (lei 4b);
    artefato "Razao dos Blocos" (claude.ai/code/artifact/d2ef4eaa-...) regenera com `scratch/dados_artefato.py` +
    `patch_razao.py` — mover para `scripts/` se virar rotina; harness `scratch/harness_regras.py` e `redundancia.py` idem.
