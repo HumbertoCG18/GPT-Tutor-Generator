@@ -558,12 +558,12 @@ producao e o proprio motor (flagados / llm-funil / conf-err -> fila de revisao).
 ## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
 **HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
-ESTADO (`scripts/eval_eixos.py`, as-of **2026-08-31b**): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
+ESTADO (`scripts/eval_eixos.py`, as-of **2026-08-31c**): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
 convencao ACEITA por ruling 31/08) · unidade **191/191 (100%)** · cobertura **56/57 F1 0,982** (resta SO
 aws-encryption-sdk — teto documentado, ver P1 EXECUTADO; eth2 fechou pelo motor com o texto da pagina) ·
-subunidade **87/93** (4 cursos com gold) · **pinos 5** · cards manuais **1** (TCC
-"Semana 12", MANTIDO por refutacao 31/08) · decisoes humanas de bloco **6** (eram 23) · suite **2133 passed** ·
-determinismo **6/6** (o "jitter" ferramenta: era convergencia em 1 passo, resolvido 31/08).
+subunidade **89/93** (4 cursos com gold; +2 pelo glossario IA do P2f) · **pinos 5** · cards manuais **1** (TCC
+"Semana 12", MANTIDO por refutacao 31/08) · decisoes humanas de bloco **6** (eram 23) · suite **2138 passed** ·
+determinismo **6/6** · 6 entries com `duplicate_of` (SO 1, TCC 2, CG 3 — confirmadas por hash e pelo user).
 MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py` nos 6): bloco display **194/200** conf-err 2 (205/212 por
 uuid, medido 27/08) · unidade **170/191 (89%)** — era 134, +36 pelo DP com desvio de janela (P2a 31/08) ·
 cobertura **54/57 F1 0,947** — era 55: knn/IA passou a acertar (bloco certo -> card certo) e as 2 entries u01
