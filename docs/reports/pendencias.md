@@ -680,13 +680,14 @@ original). Nada avanca com regua pior em qualquer eixo. Restaurou tutor por git 
    bloco por uuid (~30 entries, protocolo dos outros). Medida = bloco por uuid; expectativa honesta **>= 90%** (os 5
    deram 96,7% mas foram vistos). O que a CG revela primeiro: qual habito o professor tem (datas na secao? no nome?
    "Aula N"?) — o motor tem um provider por habito; se for um habito novo, e balde A/B de novo, nao curadoria.
-2. **Teto do cru — os 7 erros nus (decisao, nao codigo):** (a) MF terminacao / exercicioscorrecaoterminacao /
-   tiposindutivos = ruido do voto (liquido +31/-2): ACEITAR, ficam os 3 pinos; (b) IA prova-1-2024-02 e ES2 azure =
-   convencao sem texto: pino/gold `scorable=no`, decisao do user; (c) TCC aula-17 x2 = Cook-Levin <-> NP-completude:
-   testar alias no `.glossary_curation.json` do TCC (sidecar ja existe) e medir; se fechar, o card manual "Semana 12"
-   sai e o TCC fica com zero humano.
-3. **Conflito de ruling `pthread` (SO):** 25/08 o user disse bloco-03 (heading "Thread APIs vs. System calls"); 26/08
-   disse 04 (card Threads; os `exemplo-threads-em-c` x3 ja sao 04). Mantido 04 — reverter e 1 gold + 1 pino. User decide.
+2. **Teto do cru — os 7 erros nus:** (a) MF x3 = ruido do voto: ACEITO, ficam os 3 pinos; (b) **RESOLVIDO (31/08,
+   ruling do user): IA prova-1-2024-02 e ES2 azure FICAM COMO ESTAO** — IA com o pino existente, azure como o erro
+   honesto e visivel da regua (199/200). Sem scorable=no, sem pino novo; teto documentado, nao maquiado. (c) TCC
+   aula-17 x2 = Cook-Levin <-> NP-completude: testar alias no `.glossary_curation.json` do TCC e medir; se fechar,
+   o card manual "Semana 12" sai e o TCC fica com zero humano. (Unico sub-item ainda aberto.)
+3. **RESOLVIDO (31/08, ruling final do user): `pthread` FICA no bloco-04** (card Threads, coerente com os 3
+   `exemplo-threads-em-c`). O ruling de 25/08 (bloco-03) esta SUPERSEDIDO — nao reabrir. Custo zero (gold e motor
+   ja estavam em 04).
 4. **FASE 3 — cobertura 40/57 (17 erros):** `explain_entry.py` um a um ANTES de regra. Sabido: 5 pdf-roteiros do ES2 so
    emitem `card u01` (scorer de texto nao alcanca u02); R9 (definicoes honestas do glossario) custou 47 -> 40 e foi
    aceito como baseline honesto. Candidato ja anotado: vocabulario de unidade deterministico via headings.
@@ -698,7 +699,8 @@ original). Nada avanca com regua pior em qualquer eixo. Restaurou tutor por git 
 7. **MF depende do LLM em 30/66** (professor sem nenhum sinal temporal: tudo postado 18/02, sem "Aula N", sem data em
    secao ou nome; cards de 2-9 blocos; vocabulario repetido). Nao e bug: fallback funcionando, 30/30 certos. Se quiser
    reduzir: assinatura de bloco mais rica que "logica de hoare aula" (medir), nao regra nova (3 medidas hoje, 2 perdem).
-8. **Divida/infra:** SO e ES2 sem remote (backup!); `.htm` = 2 defeitos (sem L: ignorado em silencio; com L: vira
+8. **Divida/infra:** remotes SO/ES2/CG: DECIDIDO (31/08) criar privados em HumbertoCG18 — `origin` ja configurado
+   nos 3; falta o user criar os repos vazios no GitHub (gh CLI nao instalado) e o push sai. Resto: `.htm` = 2 defeitos (sem L: ignorado em silencio; com L: vira
    `codigo-professor`) so importam se a CG precisar de HTML; `seed_glossary_fields` com strings por curso (lei 4b);
    artefato "Razao dos Blocos" (claude.ai/code/artifact/d2ef4eaa-...) regenera com `scratch/dados_artefato.py` +
    `patch_razao.py` — mover para `scripts/` se virar rotina; harness `scratch/harness_regras.py` e `redundancia.py` idem.
