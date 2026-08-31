@@ -4329,6 +4329,34 @@ class TestExerciseIndexLowToken:
         assert "Adicione listas ou provas antigas" in result
         assert "Mapeamento de exercícios por tópico" not in result
 
+    def test_exercise_index_pairs_statement_with_answer_and_uses_real_unit(self):
+        # FASE 4 (31/08): X <-> X_respostas pareados; coluna Unidade = motor.
+        entries = [
+            FileEntry(title="ExerciciosEspecificacao", source_path="raw/ee.pdf",
+                      category="listas", file_type="pdf",
+                      computed_unit_slug="unidade-01-metodos-formais"),
+            FileEntry(title="ExerciciosEspecificacao_respostas", source_path="raw/eer.pdf",
+                      category="listas", file_type="pdf"),
+        ]
+        result = exercise_index_md({"course_name": "Teste"}, entries)
+        assert "sim — ExerciciosEspecificacao_respostas" in result
+        assert "é o gabarito" in result
+        assert "| gabarito |" in result
+        assert "unidade-01-metodos-formais" in result
+        assert "conferir após tentar" in result
+
+    def test_exam_index_dedups_and_shows_coverage_units(self):
+        from src.builder.engine import exam_index_md
+        e1 = FileEntry(title="P1 2024", source_path="raw/p1.pdf", category="provas",
+                       file_type="pdf",
+                       coverage_units=[{"unit_slug": "u01", "rule": "avaliacao"},
+                                       {"unit_slug": "u02", "rule": "calendario"}])
+        dup = FileEntry(title="P1 2024", source_path="raw/p1.pdf", category="provas", file_type="pdf")
+        r = exam_index_md({"course_name": "Teste"}, [e1, dup])
+        assert r.count("| p1.pdf |") == 1
+        assert "u01, u02" in r
+        assert "unidades têm maior incidência" in r
+
     def test_exercise_index_uses_auto_tags_when_manual_tags_are_empty(self):
         entries = [
             FileEntry(

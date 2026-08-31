@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
-from src.utils.helpers import json_str, safe_rel, slugify
+from src.utils.helpers import json_str, norm_ascii_lower, safe_rel, slugify
 from src.builder.artifacts.build_metrics import (
     collect_build_metrics,
     render_build_metrics_md,
@@ -710,22 +710,30 @@ def exam_index_md(course_meta: dict, entries=None, *, clamp_navigation_artifact:
     lines = [
         f"# EXAM_INDEX — {course_name}",
         "",
-        "> **Como usar:** Índice de provas anteriores por tópico.",
+        "> **Como usar:** Índice de provas anteriores por unidade.",
         "> O tutor consulta este arquivo no modo `exam_prep` para identificar",
-        "> quais tópicos têm maior incidência e quais padrões de questão se repetem.",
+        "> quais unidades têm maior incidência. (Incidência por tópico/questão",
+        "> depende da extração de questões — item futuro da fila.)",
         "",
         "## Provas disponíveis",
         "",
     ]
 
     if entries:
-        lines.append("| Arquivo | Tipo | Prova | Observação |")
-        lines.append("|---|---|---|---|")
+        lines.append("| Arquivo | Tipo | Prova | Unidades cobertas | Observação |")
+        lines.append("|---|---|---|---|---|")
+        seen = set()
         for entry in entries:
+            key = (Path(entry.source_path).name, entry.title)
+            if key in seen:  # FASE 4: fotos/duplicatas do mesmo arquivo = 1 linha
+                continue
+            seen.add(key)
             tipo = "foto" if entry.category == "fotos-de-prova" else "original"
+            cov = [str(c.get("unit_slug") or "") for c in (getattr(entry, "coverage_units", None) or [])]
+            unidades = ", ".join(u for u in cov if u) or str(getattr(entry, "computed_unit_slug", "") or "")
             lines.append(
                 f"| {Path(entry.source_path).name} | {tipo} | {entry.title} "
-                f"| {entry.notes or ''} |"
+                f"| {unidades} | {entry.notes or ''} |"
             )
     else:
         lines.append("_Nenhuma prova mapeada ainda._")
@@ -2115,6 +2123,16 @@ policy:
 """
 
 
+_ANSWER_SUFFIX_RE = re.compile(r"\s*(?:respostas?|gabaritos?|solucao|solucoes|resolucao)$")
+
+
+def _exercise_answer_stem(title: str) -> tuple:
+    """(stem normalizado, e_gabarito) do titulo — casa X com X_respostas."""
+    norm = re.sub(r"[^a-z0-9]+", " ", norm_ascii_lower(str(title or ""))).strip()
+    stripped = _ANSWER_SUFFIX_RE.sub("", norm).strip()
+    return stripped, stripped != norm and bool(stripped)
+
+
 def exercise_index_md(
     course_meta: dict,
     entries=None,
@@ -2136,6 +2154,13 @@ def exercise_index_md(
         "|---|---|---|---|---|---|",
     ]
     if entries:
+        # FASE 4: pareamento enunciado<->gabarito por stem do titulo
+        # ("ExerciciosEspecificacao" <-> "ExerciciosEspecificacao_respostas").
+        answer_by_stem = {}
+        for entry in entries:
+            stem, is_answer = _exercise_answer_stem(entry.title)
+            if is_answer:
+                answer_by_stem[stem] = entry.title
         for entry in entries:
             notes = collapse_ws_fn(entry.notes or "")
             tags = collapse_ws_fn(
@@ -2148,12 +2173,27 @@ def exercise_index_md(
             )
             category = collapse_ws_fn(entry.category or "")
             category_lower = category.lower()
-            kind = "prova" if "prova" in category_lower else "lista" if "lista" in category_lower else "exercício"
-            has_solution = "sim" if any(token in notes.lower() for token in ["gabarito", "resolu", "soluç"]) else "não"
-            priority = "alta" if "prova" in category_lower or has_solution == "sim" else "média"
-            usage = "revisão de prova" if "prova" in category_lower else "fixação por unidade"
+            stem, is_answer = _exercise_answer_stem(entry.title)
+            kind = ("gabarito" if is_answer
+                    else "prova" if "prova" in category_lower
+                    else "lista" if "lista" in category_lower else "exercício")
+            paired = answer_by_stem.get(stem) if not is_answer else None
+            if is_answer:
+                has_solution = "é o gabarito"
+            elif paired:
+                has_solution = f"sim — {paired}"
+            elif any(token in notes.lower() for token in ["gabarito", "resolu", "soluç"]):
+                has_solution = "sim"
+            else:
+                has_solution = "não"
+            # unidade REAL do motor; tags so como fallback (pre-FASE 4 a coluna
+            # inteira era tags cruas).
+            unidade = str(getattr(entry, "computed_unit_slug", "") or "") or tags or "não mapeado"
+            priority = "alta" if "prova" in category_lower or has_solution != "não" else "média"
+            usage = ("conferir após tentar" if is_answer
+                     else "revisão de prova" if "prova" in category_lower else "fixação por unidade")
             lines.append(
-                f"| {entry.title} | {kind} | {tags or 'não mapeado'} | {has_solution} | {priority} | {usage} |"
+                f"| {entry.title} | {kind} | {unidade} | {has_solution} | {priority} | {usage} |"
             )
     else:
         lines += [

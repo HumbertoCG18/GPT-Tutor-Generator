@@ -57,7 +57,7 @@
     "id": "bloco-10",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-01-introducao-ao-processamento-grafico, unidade-02-fundamentos-matematicos, unidade-03-processamento-de-imagens-e-visao-computacional, unidade-06-processo-de-visualizacao-3d"
+    "topico": "Conteúdo: unidade-01-introducao-ao-processamento-grafico, unidade-02-fundamentos-matematicos, unidade-04-processo-de-visualizacao-2d, unidade-03-processamento-de-imagens-e-visao-computacional, unidade-06-processo-de-visualizacao-3d"
   },
   {
     "id": "bloco-11",
@@ -165,7 +165,7 @@
     "id": "bloco-28",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-01-introducao-ao-processamento-grafico, unidade-02-fundamentos-matematicos, unidade-03-processamento-de-imagens-e-visao-computacional, unidade-06-processo-de-visualizacao-3d, unidade-08-sintese-de-imagens-realisticas"
+    "topico": "Conteúdo: unidade-01-introducao-ao-processamento-grafico, unidade-02-fundamentos-matematicos, unidade-04-processo-de-visualizacao-2d, unidade-03-processamento-de-imagens-e-visao-computacional, unidade-06-processo-de-visualizacao-3d, unidade-08-sintese-de-imagens-realisticas"
   },
   {
     "id": "bloco-29",

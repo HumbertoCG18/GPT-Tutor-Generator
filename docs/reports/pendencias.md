@@ -126,8 +126,20 @@ Teste novo `test_page_text_becomes_base_markdown_even_when_clone_fails`. Gate co
      (ver MOTOR NU no ESTADO). Teste: `test_positional_detour_window_recovers_local_inversion`; o teste do
      pino IA foi atualizado (o DP cego agora recupera a inversao sozinho — pinos daquele caso viraram
      redundantes, caminho around_pins segue coberto).
-  b) FASE 4 original (exercicios/listas/provas antigas, pedido do user 18/08): estava "depende da cobertura" —
-     cobertura agora esta estavel (55/57, regras medidas) -> DESTRAVADA.
+  b) **FASE 4: parte deterministica EXECUTADA 31/08; extracao de questoes via LLM = item novo da fila
+     (ruling do user 31/08: "deterministico agora, LLM depois").**
+     - RULING granularidade (pendente desde 18/08): prova inteira por enquanto; quebrar em questoes
+       individuais (LLM, habilita incidencia por topico) fica como item separado, sem data.
+     - EXERCISE_INDEX (repo.py): coluna Unidade = computed_unit_slug REAL (tags so fallback); pareamento
+       enunciado<->gabarito por stem do titulo (`_exercise_answer_stem`: X <-> X_respostas/gabarito/solucao/
+       resolucao); gabarito vira tipo proprio ("e o gabarito", "conferir apos tentar"); "Solucao: sim — <par>".
+     - EXAM_INDEX (repo.py): dedup por (arquivo, titulo) (CG tinha linha dupla); coluna "Unidades cobertas" =
+       coverage_units do motor (fallback computed_unit_slug); header prometia "incidencia por topico" e agora
+       promete o que entrega (por unidade; topico/questao = quando houver extracao).
+     - FileEntry ganhou `coverage_units` (round-trip from_dict->to_dict descartava o campo silenciosamente).
+     - Gate: regua intacta (199/200 conf-err 0 | 191/191 | 56/57 F1 0,982) · sentinela 0 campos nos 6 ·
+       suite **2136** (+2) · golden CG `__divisao_blocos` ATUALIZADO DE PROPOSITO (blocos 10/28 = provas
+       cujo escopo agora inclui u04 — consequencia correta do P2a, nao regressao).
   c) Housekeeping: **FEITO 31/08** — `scripts/artefato_razao/` (dados_artefato + patch_razao + template,
      caminhos relativos, saida gitignored; byte-identico ao publicado). Artefato: claude.ai/code/artifact/d2ef4eaa-...
   d) A1 "grande" (P4 + desempate no MESMO tokenizador/stem6): refactor de higiene; o ganho de regua ja veio no

@@ -79,6 +79,11 @@ class FileEntry:
     # destes campos (escritos pelo motor: apply_concept_resolver +
     # apply_unit_subunit_fields).
     computed_unit_slug: str = ""
+    # Cobertura N:N do motor (coverage_rules.derive_coverage_units): lista de
+    # {unit_slug, topics, confidence, rule}; None = nunca computada. Declarada
+    # para o round-trip from_dict -> to_dict parar de descarta-la (consumidor:
+    # EXAM_INDEX, FASE 4).
+    coverage_units: Optional[List[dict]] = None
     # Melhor candidato de subunidade (best-effort, pode estar abaixo do gate de
     # tag). Declarado aqui para sobreviver ao round-trip from_dict -> to_dict
     # (antes era descartado, deixando subunit_match_confidence orfa). A tag
