@@ -103,8 +103,8 @@ com ele antes de engenharia grande. Medicao em ~15 s sem reprocessar: `python sc
      local. Gate: `ablacao_rapida` (unidade nua) antes/depois; curado 191/191 intacto.
   b) FASE 4 original (exercicios/listas/provas antigas, pedido do user 18/08): estava "depende da cobertura" —
      cobertura agora esta estavel (55/57, regras medidas) -> DESTRAVADA.
-  c) Housekeeping: mover `dados_artefato.py` + `patch_razao.py` do scratch da sessao p/ `scripts/` (o
-     `harness_cobertura.py` ja foi movido 27/08). Artefato: claude.ai/code/artifact/d2ef4eaa-...
+  c) Housekeeping: **FEITO 31/08** — `scripts/artefato_razao/` (dados_artefato + patch_razao + template,
+     caminhos relativos, saida gitignored; byte-identico ao publicado). Artefato: claude.ai/code/artifact/d2ef4eaa-...
   d) A1 "grande" (P4 + desempate no MESMO tokenizador/stem6): refactor de higiene; o ganho de regua ja veio no
      recorte cirurgico. Sem numero prometido.
   e) MF 30/66 no LLM: ACEITO como fallback legitimo (30/30 certos). So revisitar com assinatura de bloco mais

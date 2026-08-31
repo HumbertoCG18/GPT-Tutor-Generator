@@ -49,10 +49,11 @@ a) **Unidade NUA 134/191** (o maior item de motor restante). Raiz conhecida e ja
    191/191 + pinos podendo cair. F5 (marcos "parte N") ja quebra a segmentacao por entregas — nao colidir.
 b) **FASE 4** (exercicios/listas/provas antigas, pedido do user em 18/08): destravada — cobertura estavel.
    Reler o pedido original no tracker (secao FILA ACORDADA 24/08, item "FASE 4 original").
-c) **Housekeeping**: copiar do scratch desta sessao p/ `scripts/`: `dados_artefato.py` e `patch_razao.py`
-   (regeneram o artefato "Razao dos Blocos", claude.ai/code/artifact/d2ef4eaa-3483-412a-9dc8-110b1f9ccacb;
-   template `razao_template.html` no mesmo scratch — copiar junto). Scratch da sessao 31/08:
-   `C:/Users/Humberto/AppData/Local/Temp/claude/C--Users-Humberto-Documents-GitHub-GPT-Tutor-Generator/822c8c20-18ed-41cf-ab0b-755fe994d517/scratchpad`.
+c) **Housekeeping: FEITO ainda em 31/08** — `scripts/artefato_razao/{dados_artefato.py, patch_razao.py,
+   razao_template.html}` (caminhos relativos; saida gitignored ao lado). Regenerar + publicar:
+   `python scripts/artefato_razao/dados_artefato.py && python scripts/artefato_razao/patch_razao.py`, depois
+   publicar `razao_dos_blocos.html` no artefato d2ef4eaa (mesma URL). Verificado byte-identico ao publicado
+   (so o __stamp com o hash difere).
 d) **A1 grande** (higiene): P4/desempate do motor de bloco no mesmo `text/normalize.stem6`. Sem numero
    prometido; so com gate completo.
 e) **MF 30/66 LLM**: aceito; nao mexer sem medida nova.
