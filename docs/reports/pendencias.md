@@ -35,9 +35,11 @@ serie numerada sem datas. Censo: data e o sinal mais frequente (cards/labels/arq
 sempre com data ou topico ao lado; "Aula N" em 4 (ja tratado); "Parte N" (MF/EU/Simulacao) e serie dentro de topico,
 nao posicao.
 
-**Em aberto, nesta ordem:** 4 (`U<n>` no card e "Laboratorio N"
-como sinal de 1a classe?), 4 (`moodle_pull` gravar `summary` de secao — lacuna, nao decisao), 6 (`build_course
---syllabus-url` e aposentar o PDF do SARC), 7 (jitter `ferramenta:` — bug, raiz a achar).
+**Em aberto (auditado 31/08 tarde):** SO resta `U<n>` no card como sinal de 1a classe — medir quando o
+Fund. Redes buildar (bloqueado no P3, decisao do user). JA FEITOS e o tracker nao registrava:
+`moodle_pull` grava `summary` de secao desde o F1 (`sections.json`, moodle_pull.py L166-176/282);
+`build_course --syllabus-url` existe desde o F12 30/08 (validado 340=340, ver P3); jitter `ferramenta:`
+resolvido 31/08 (era convergencia de 1 passo, nao nao-determinismo — obs. da sessao da madrugada).
 
 ## DISSECACAO 28/08: tres cadeiras novas (Lab Redes, Lab SO, Fund. Redes), fontes da formula do G1, 2 fixes de extracao
 
@@ -108,10 +110,12 @@ Teste novo `test_page_text_becomes_base_markdown_even_when_clone_fails`. Gate co
   TESTADO E REFUTADO 31/08: concatenar `ref_summary` (Gemini, PT) ao texto -> aws vai para u03 (transpilacao/
   cripto puxam u03) e eth2 enfraquece 0,938->0,726. Nao retentar sem dado novo. Fechar 57/57 exigiria pino de
   cobertura (mecanismo NAO existe; pinos 5 sao de unidade) — decisao do user se quiser.
-- Higiene NOVA (fila): import github-repo com clone OK sobrescreve `category` da entry via STUDENT_BRANCHES
-  (master/main => codigo-aluno — bibliografia viraria codigo!) e importa o repo INTEIRO como extracted_files.
-  Por isso o pin errado das 2 entries foi MANTIDO de proposito (clone falha inofensivo, texto vem da pagina).
-  Consertar categoria/escopo do import antes de limpar os pins.
+- **EXECUTADO 31/08 (tarde) — Higiene do import github-repo** (gerador `050f406`, MF pushed): clone SO
+  para entries com categoria em CODE_CATEGORIES (bibliografia nao clona — o valor e o texto da pagina,
+  rota P1); sub-entries herdam `entry.category`; a categoria da entry NUNCA e sobrescrita (heuristica
+  STUDENT_BRANCHES morta no import; +2 testes TDD). Pins tags='main' de eth2/aws LIMPOS no MF (eram
+  mantidos de proposito). Gate: regua intacta, sentinela 4 campos cosmeticos nos 2 alvos (token 'main'
+  saiu do tags_text, 2a casa decimal), determinismo 0, ablacao identica, suite 2150.
 
 **P2 — Fila antiga (sem bloqueio, ordem sugerida):**
   a) **EXECUTADO 31/08 — unidade NUA 134 -> 170/191 (+36).** DP ganhou 1 DESVIO DE JANELA
@@ -598,8 +602,9 @@ convencao ACEITA por ruling 31/08) · unidade **191/191 (100%)** · cobertura **
 aws-encryption-sdk — teto documentado, ver P1 EXECUTADO; eth2 fechou pelo motor com o texto da pagina) ·
 subunidade **90/93** (4 cursos com gold; +1 pelo gate meta/revisao — TCC aula-06 fechou; restam ES2 web/roteiro5
 e TCC aula-08, tetos documentados das familias B/C) · **pinos 5** · cards manuais **1** (TCC
-"Semana 12", MANTIDO por refutacao 31/08) · decisoes humanas de bloco **6** (eram 23) · suite **2145 passed**
-(baseline real era 2139; o "2138" das notas anteriores estava off-by-one) ·
+"Semana 12", MANTIDO por refutacao 31/08) · decisoes humanas de bloco **6** (eram 23) · suite **2150 passed**
+(baseline real era 2139; o "2138" das notas anteriores estava off-by-one; +6 gate meta/revisao, +3
+detecta_headings, +2 higiene import) ·
 determinismo **6/6** · 6 entries com `duplicate_of` (SO 1, TCC 2, CG 3 — confirmadas por hash e pelo user).
 MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py` nos 6): bloco display **194/200** conf-err 2 (205/212 por
 uuid, medido 27/08) · unidade **170/191 (89%)** — era 134, +36 pelo DP com desvio de janela (P2a 31/08) ·
@@ -610,8 +615,8 @@ nus: 3 ruido do voto (MF, aceitos, ficam os pinos) · 2 convencao sem texto (IA 
 31/08) · 2 dominio (TCC aula-17; alias Cook-Levin TESTADO E REFUTADO 31/08 — nao retentar sem sinal novo) ·
 1 teto de dado (MF aws, pagina raiz sem vocabulario de verificacao, ver P1 EXECUTADO).
 Gate curado nas copias: 5/6 + IA `p2-202402` (ruido de voto no cache da copia, excecao documentada).
-PUSH (as-of 2026-08-31d): gerador `f17956a`. **Os 6 tutores tem remote privado (HumbertoCG18) e estao 0/0 com
-origin**: MF `ccae023` · TCC `672024b` · IA `906e0c2` (intacta pelo gate) · SO `da92fe2` · ES2 `60e8f26` · CG `ea4af8d`.
+PUSH (as-of 2026-08-31d): gerador `050f406`. **Os 6 tutores tem remote privado (HumbertoCG18) e estao 0/0 com
+origin**: MF `bd902ab` · TCC `672024b` · IA `906e0c2` (intacta pelo gate) · SO `da92fe2` · ES2 `60e8f26` · CG `ea4af8d`.
 Antes: `docs/reports/2026-08-20-handoff-fechamento-campanha-motor.md`.
 Cobre a sessao inteira (`7e940f5e`, 63 prompts): poda do enxame, regua nova + sweep do gate,
 rotulagem dos 64 casos, limpeza do manifest, eixo de bloco, N:N nos consumidores, fix do
