@@ -166,6 +166,28 @@ Teste novo `test_page_text_becomes_base_markdown_even_when_clone_fails`. Gate co
        over-assignment em aula de revisao, gold vazio): teto do motor lexical; so fecham com sinal de outro
        tipo (papel/estrutura do material ou LLM lendo a tese). Documentado, revisitavel com desenho novo.
 
+**HIGIENE (31/08, achado na auditoria do T2):** as descricoes de IMAGENS ORFAS (secao "Imagens Curadas",
+`IMAGE_DESCRIPTION_ORPHANS`) entram no texto que o scorer le (`_entry_markdown_text_for_file_map` le o .md
+inteiro). Caso real: `trabalho-t2-enunciado` do TCC carrega 17 descricoes orfas de OUTRO material (DFA, PDA,
+hierarquia de Chomsky, brasoes da USP) — vocabulario de automatos dentro de um enunciado de NP-completude.
+Nao causou erro (score 22.8 dominante veio do texto principal), mas e ruido latente para subunidade/cobertura.
+Item: filtrar o bloco ORPHANS do texto do scorer (nao do arquivo). Medir antes/depois com a regua.
+
+**AUDITORIA aula-08-like (31/08, investigacao com o user — PADRAO ACHADO):** o motor de subunidade atribui
+por CONTAGEM de vocabulario e SEMPRE atribui 1 rotulo; nao reconhece a NATUREZA do material. 4 manifestacoes
+medidas: (1) tese escondida — aula-08 TCC, instrumento domina a contagem; caso UNICO no sistema (varredura
+score>=15 dominancia>=2.5x: 66 casos, todos os demais legitimos; T2 verificado no texto = correto);
+(2) material META/abrangente — SO `plano-de-ensino` e `programa` com subunit atribuida (evolucao-historica!)
+quando nao deviam ter nenhuma; a COBERTURA ja tem gate meta (META_CATEGORIES, regra A), a SUBUNIDADE nao —
+mesmo padrao do TCC aula-06 (revisao); (3) material AGREGADO multi-secao — ES2 `devops` (DEVOPS + GERENCIA DE
+CONFIGURACAO + CI num arquivo), campo comporta 1 subunit; (4) papel pedagogico vs vocabulario — ES2 roteiro5.
+Itens novos da fila (sem data, decisao de priorizar e do user):
+  - Gate de meta/abrangente na SUBUNIDADE (espelho da regra A da cobertura): categorias/nomes de plano,
+    programa, cronograma, revisao -> subunit vazia. Fecha SO plano/programa e TCC aula-06. Medir com gate.
+  - Detector de headings como script de auditoria (`heading nomeia subunit irma != atribuida, atribuida fora
+    dos headings`): achou os 2 meta do SO que NENHUM gold cobria; rodar pos-reprocess. Calibrar matching
+    label<->heading (substring nos 2 sentidos; caso `devops`).
+
 **P3 — Builds pagos (Datalab), quando o user autorizar:**
   - Lab Redes: PRONTO. Stash durable: `Desktop/Moodle/laboratorio-de-redes-de-computadores/stash` (6 arquivos +
     sidecar; roteiros HTML ja impressos em PDF). Cronograma: `--syllabus-url` (export 340, validado 340=340).
