@@ -176,6 +176,12 @@ campo `FileEntry.duplicate_of` (round-trip ok, testado); secundaria continua no 
 (golds/regua a referenciam — 0 campos de motor mudaram) e SAI dos indices navegacionais (all_entries da
 regeneracao + FILE_MAP). 6 secundarias marcadas; primaria = categoria/card mais correto. Suite 2138.
 
+**GAP VIDEO (31/08, achado do user ao comparar as duplicatas no olho — NAO iniciar sem decisao dele; e
+fundo):** apresentacoes do T2 do TCC sao SLIDES de uma explicacao em VIDEO; o PDF traz ate screenshot do
+player. O pipeline so ingere o PDF — o conteudo pedagogico principal (a fala) fica fora do tutor. Escopo
+real se um dia entrar: descobrir onde os videos moram (Moodle? links?), transcricao (caro), e o que a
+entry representa. Por ora: registrado como limite conhecido do material ingerido.
+
 **HIGIENE (31/08, achado na auditoria do T2):** as descricoes de IMAGENS ORFAS (secao "Imagens Curadas",
 `IMAGE_DESCRIPTION_ORPHANS`) entram no texto que o scorer le (`_entry_markdown_text_for_file_map` le o .md
 inteiro). Caso real: `trabalho-t2-enunciado` do TCC carrega 17 descricoes orfas de OUTRO material (DFA, PDA,
