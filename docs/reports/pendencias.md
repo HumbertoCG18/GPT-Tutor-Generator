@@ -114,9 +114,18 @@ Teste novo `test_page_text_becomes_base_markdown_even_when_clone_fails`. Gate co
   Consertar categoria/escopo do import antes de limpar os pins.
 
 **P2 — Fila antiga (sem bloqueio, ordem sugerida):**
-  a) Unidade NUA 134/191: raiz conhecida = DP monotonico assume ordem do plano == ordem do calendario (IA ensina
-     ML/u05 em marco; curada so fecha com pinos de unidade em IA/ES2). Item de motor: DP robusto a inversao
-     local. Gate: `ablacao_rapida` (unidade nua) antes/depois; curado 191/191 intacto.
+  a) **EXECUTADO 31/08 — unidade NUA 134 -> 170/191 (+36).** DP ganhou 1 DESVIO DE JANELA
+     (`unit_matcher.assign_units_positional` + `_dp_monotonic`): uma faixa contigua de blocos pode usar unidade
+     fora da ordem do plano pagando DETOUR_COST=2 (DETOUR_MIN_GAIN=2; desvio so vence com SOMA estritamente
+     maior que a monotonica — empate fica com o baseline, ancora espuria de 1 token nunca paga o custo).
+     Caso raiz: IA 2026/2 ensina u05/ML em 2o lugar (gold_units_IA: u01 -> u05 -> u02 -> u03); o DP esmagava
+     ML em u01 e o nu dava 3/42 -> agora 39/42. BONUS CG: bloco 5 "processo de visualizacao 2d recorte" saiu
+     de u02 (monotonia) para u04 (titulo da unidade nas sessoes!) — 14 entries corrigidas em cascata (vis2d,
+     recorte, instanciamento, mapeamento...), sentinela aceita como honesta. Regua curada INTACTA (199/200
+     conf-err 0 | 191/191 | 56/57 | 87/93), suite 2134, determinismo ok. Cobertura NUA 55 -> 54: trade honesto
+     (ver MOTOR NU no ESTADO). Teste: `test_positional_detour_window_recovers_local_inversion`; o teste do
+     pino IA foi atualizado (o DP cego agora recupera a inversao sozinho — pinos daquele caso viraram
+     redundantes, caminho around_pins segue coberto).
   b) FASE 4 original (exercicios/listas/provas antigas, pedido do user 18/08): estava "depende da cobertura" —
      cobertura agora esta estavel (55/57, regras medidas) -> DESTRAVADA.
   c) Housekeeping: **FEITO 31/08** — `scripts/artefato_razao/` (dados_artefato + patch_razao + template,
@@ -484,8 +493,10 @@ subunidade **87/93** (4 cursos com gold) · **pinos 5** · cards manuais **1** (
 "Semana 12", MANTIDO por refutacao 31/08) · decisoes humanas de bloco **6** (eram 23) · suite **2133 passed** ·
 determinismo **6/6** (o "jitter" ferramenta: era convergencia em 1 passo, resolvido 31/08).
 MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py` nos 6): bloco display **194/200** conf-err 2 (205/212 por
-uuid, medido 27/08) · unidade **134/191** · cobertura **55/57 F1 0,965** (eth2 fecha ate nu) · subunidade ~21/94
-(medida 26/08). Erros
+uuid, medido 27/08) · unidade **170/191 (89%)** — era 134, +36 pelo DP com desvio de janela (P2a 31/08) ·
+cobertura **54/57 F1 0,947** — era 55: knn/IA passou a acertar (bloco certo -> card certo) e as 2 entries u01
+do IA que acertavam POR ACIDENTE (DP esmagava tudo em u01) expuseram erro proprio de auto_map (oracle->u02,
+ia-responsavel->u05); trade honesto, o curado cobre os 3 · subunidade ~21/94 (medida 26/08). Erros
 nus: 3 ruido do voto (MF, aceitos, ficam os pinos) · 2 convencao sem texto (IA prova-1, ES2 azure — ACEITOS
 31/08) · 2 dominio (TCC aula-17; alias Cook-Levin TESTADO E REFUTADO 31/08 — nao retentar sem sinal novo) ·
 1 teto de dado (MF aws, pagina raiz sem vocabulario de verificacao, ver P1 EXECUTADO).

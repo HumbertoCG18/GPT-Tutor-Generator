@@ -59,6 +59,21 @@ def test_positional_empty_when_no_anchor():
     assert assign_units_positional(blocks, UNITS3) == []
 
 
+def test_positional_detour_window_recovers_local_inversion():
+    # P2a (caso real IA 2026/2): calendario ensina u3 ANTES de u2 (u1 -> u3 -> u2).
+    # DP monotonico puro esmagava a faixa de u3; o desvio de janela paga o custo
+    # e recupera, mantendo o resto monotonico.
+    blocks = [
+        _block("alfa primeiro"),
+        _block("gama quinto"),
+        _block("gama sexto"),
+        _block("beta terceiro"),
+        _block("beta quarto"),
+    ]
+    out = assign_units_positional(blocks, UNITS3)
+    assert [s for s, _ in out] == ["u1", "u3", "u3", "u2", "u2"]
+
+
 def test_positional_empty_when_single_unit():
     assert assign_units_positional([_block("alfa")], [UNITS3[0]]) == []
 
@@ -222,12 +237,14 @@ def test_pino_de_unidade_e_excecao_local_e_nao_propaga():
     busca1 = _block("busca informada heuristica")
     busca2 = _block("busca informada")
     blocks = [ml1, ml2, busca1, busca2]
-    # DP original (cego aos pinos): 2 blocos fortes de u05 antes -> tudo u05
+    # P2a (31/08): o DP cego aos pinos ja recupera a inversao sozinho, via
+    # desvio de janela (era exatamente este caso IA); os pinos viram redundantes
+    # aqui mas o caminho around_pins segue valido e nao pode regredir nada.
     for b, (slug, conf) in zip(blocks, assign_units_positional(blocks, units)):
         b["unit_slug"], b["unit_confidence"] = slug, conf
-    assert busca1["unit_slug"] == "u05"
+    assert busca1["unit_slug"] == "u02" and busca2["unit_slug"] == "u02"
     n = assign_units_around_pins(blocks, units, is_pinned=lambda b: bool(b.get("block_manual_unit_slug")))
-    assert n == 2 and busca1["unit_slug"] == "u02" and busca2["unit_slug"] == "u02"
+    assert busca1["unit_slug"] == "u02" and busca2["unit_slug"] == "u02"
     assert ml1["unit_slug"] == "u05"          # pinado: intocado
 
 

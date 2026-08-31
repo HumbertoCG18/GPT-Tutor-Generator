@@ -23,6 +23,14 @@ _UNIT_GENERIC = {"unidade", "aprendizagem", "visao", "geral"}
 ANCHOR_MIN_MARGIN = 1.0   # margem minima (winner - runnerup) p/ confianca ANCHOR no bloco
 STRONG_MARGIN = 3.0       # margem p/ ancora forte
 
+# Desvio de janela (P2a 2026-08-31): o calendario real inverte a ordem do plano
+# (IA 2026/2 ensina u05/ML em 2o lugar: u01 -> u05 -> u02 -> u03; o DP monotonico
+# esmagava os blocos de ML em u01 e o motor nu dava 3/42). UMA janela contigua de
+# blocos pode usar uma unidade fora da ordem, pagando custo fixo; o resto segue
+# monotonico. Ancora espuria de 1 token (ganho 1) nunca paga o custo.
+DETOUR_COST = 2.0
+DETOUR_MIN_GAIN = 2.0
+
 CONF_STRONG = 0.8   # ancora com margem forte
 CONF_ANCHOR = 0.6   # ancora normal
 CONF_FILL = 0.4     # preenchido por posicao (sem sinal proprio)
@@ -56,33 +64,15 @@ def _unit_tokens(unit: Mapping) -> set:
     return _tokens(" ".join(parts)) - _UNIT_GENERIC
 
 
-def assign_units_positional(
-    class_blocks: Sequence[Mapping], units: Sequence[Mapping]
-) -> List[Tuple[str, float]]:
-    """(unit_slug, confidence) por bloco-aula, em ordem. [] se inaplicavel.
+def _dp_monotonic(aff: List[List[float]], m: int) -> Tuple[Tuple[float, float], List[int]]:
+    """DP monotonico: assign de indice nao-decrescente maximizando (soma, soma^2).
 
-    Alinhamento monotonico GLOBAL (DP): atribui cada bloco-aula (ordem
-    cronologica) a uma unidade (ordem do plano) de indice nao-decrescente,
-    maximizando a soma de afinidade token-overlap. Robusto a ancora espuria
-    isolada (o otimo global mantem blocos fortes na unidade certa). Retorna []
-    se <2 unidades, sem blocos, ou nenhum sinal de afinidade em lugar nenhum
-    (sinaliza fallback).
+    Tie-break secundario por sinal concentrado (campanha 2 U1b): empate na
+    soma -> vence o caminho com maior soma de quadrados (sinal forte num
+    bloco > migalhas espalhadas; caso real bloco-16 MF). Empate duplo
+    mantem menor indice (nao avancar atoa).
     """
-    n = len(class_blocks)
-    m = len(units)
-    if m < 2 or n == 0:
-        return []
-    uslugs = [str(u.get("slug", "") or "") for u in units]
-    utoks = [_unit_tokens(u) for u in units]
-    aff = [[float(len(_block_tokens(b) & utoks[j])) for j in range(m)] for b in class_blocks]
-
-    if not any(aff[i][j] > 0 for i in range(n) for j in range(m)):
-        return []  # nenhum sinal -> fallback
-
-    # Tie-break secundario por sinal concentrado (campanha 2 U1b): empate na
-    # soma -> vence o caminho com maior soma de quadrados (sinal forte num
-    # bloco > migalhas espalhadas; caso real bloco-16 MF). Empate duplo
-    # mantem menor indice (nao avancar atoa).
+    n = len(aff)
     NEG = (float("-inf"), float("-inf"))
     dp = [[NEG] * m for _ in range(n)]
     par = [[-1] * m for _ in range(n)]
@@ -111,6 +101,55 @@ def assign_units_positional(
     assign[n - 1] = last
     for i in range(n - 1, 0, -1):
         assign[i - 1] = par[i][assign[i]]
+    return best, assign
+
+
+def assign_units_positional(
+    class_blocks: Sequence[Mapping], units: Sequence[Mapping]
+) -> List[Tuple[str, float]]:
+    """(unit_slug, confidence) por bloco-aula, em ordem. [] se inaplicavel.
+
+    Alinhamento monotonico GLOBAL (DP): atribui cada bloco-aula (ordem
+    cronologica) a uma unidade (ordem do plano) de indice nao-decrescente,
+    maximizando a soma de afinidade token-overlap. Robusto a ancora espuria
+    isolada (o otimo global mantem blocos fortes na unidade certa). Retorna []
+    se <2 unidades, sem blocos, ou nenhum sinal de afinidade em lugar nenhum
+    (sinaliza fallback).
+    """
+    n = len(class_blocks)
+    m = len(units)
+    if m < 2 or n == 0:
+        return []
+    uslugs = [str(u.get("slug", "") or "") for u in units]
+    utoks = [_unit_tokens(u) for u in units]
+    aff = [[float(len(_block_tokens(b) & utoks[j])) for j in range(m)] for b in class_blocks]
+
+    if not any(aff[i][j] > 0 for i in range(n) for j in range(m)):
+        return []  # nenhum sinal -> fallback
+
+    best_score, assign = _dp_monotonic(aff, m)
+
+    # 1 desvio de janela: uma faixa contigua de blocos numa unidade fora da
+    # ordem, resto monotonico pulando a faixa. So vence o baseline com SOMA
+    # estritamente maior que a monotonica (empate -> baseline: ancora espuria
+    # de 1 bloco nao pode vencer pelo tie-break de quadrados); entre desvios
+    # empatados vale a tupla completa.
+    baseline_sum = best_score[0]
+    for v in range(m):
+        for a in range(n):
+            for b in range(a, n):
+                if a == 0 and b == n - 1:
+                    continue  # janela total nao e desvio
+                gain = sum(aff[i][v] for i in range(a, b + 1))
+                if gain < DETOUR_MIN_GAIN:
+                    continue
+                rest = aff[:a] + aff[b + 1:]
+                (rs, rs2), rassign = _dp_monotonic(rest, m)
+                cand = (rs + gain - DETOUR_COST,
+                        rs2 + sum(aff[i][v] ** 2 for i in range(a, b + 1)))
+                if cand[0] > baseline_sum and cand > best_score:
+                    best_score = cand
+                    assign = rassign[:a] + [v] * (b - a + 1) + rassign[a:]
 
     out: List[Tuple[str, float]] = []
     for i in range(n):
