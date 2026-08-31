@@ -249,8 +249,12 @@ def normalize_document_profile(profile: str | None) -> str:
 
 def strip_accents(text: str) -> str:
     """NFKD + remove marcas combinantes. Fonte única do strip de acento
-    (antes reescrito byte-a-byte em 6 módulos — auditoria 2.12)."""
-    text = unicodedata.normalize("NFKD", text or "")
+    (antes reescrito byte-a-byte em 6 módulos — auditoria 2.12).
+
+    U+0131 (dotless i) não decompõe em NFKD e vazou pro id da aula-10 do TCC
+    ("Reconhecıveis" no PDF do professor) — translitera na fonte única."""
+    text = (text or "").replace("ı", "i")
+    text = unicodedata.normalize("NFKD", text)
     return "".join(ch for ch in text if not unicodedata.combining(ch))
 
 
