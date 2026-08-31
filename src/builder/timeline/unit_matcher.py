@@ -129,6 +129,59 @@ def assign_units_positional(
     return out
 
 
+# F5 (censo Lab SO 2026-08-28): cadeira SEM prova marca o fim de cada unidade com uma
+# ENTREGA numerada ("Fechamento da parte N", Atividade=Trabalho). O digito sobrevive
+# nos labels das sessoes (topic_text normalizado o perde).
+_PARTE_RE = re.compile(r"\bparte\s*0*(\d{1,2})\b")
+
+
+def _milestone_number(block: Mapping):
+    for sess in block.get("sessions") or []:
+        m = _PARTE_RE.search(norm_ascii_lower(str(sess.get("label") or "")))
+        if m:
+            return int(m.group(1))
+    m = _PARTE_RE.search(norm_ascii_lower(str(block.get("topic_text") or "")))
+    return int(m.group(1)) if m else None
+
+
+def assign_units_by_work_milestones(
+    runtime_blocks: Sequence[dict], class_candidates: Sequence[dict], units: Sequence[Mapping]
+) -> bool:
+    """F5: entregas numeradas segmentam as unidades — "parte N" fecha a unidade N.
+
+    So se aplica quando os marcos (blocos deliverable com "parte <n>") formam
+    exatamente 1..K na ordem do calendario E K == numero de unidades do plano
+    (Lab SO: 4 "Fechamento da parte N" <-> 4 unidades). A numeracao explicita e
+    autoridade (mesmo principio do U<n> no card, D3): bloco-aula entre o marco
+    N-1 e o N pertence a unidade N. Fora dessas condicoes retorna False e o DP
+    posicional decide como sempre ("parte" sem numero, SO 2026/1 com 4 partes e
+    7 unidades, "Parte 1" dentro de titulo de aula do MF — nada muda)."""
+    if len(units) < 2:
+        return False
+    marcos = []
+    for i, b in enumerate(runtime_blocks):
+        if str(b.get("source_kind") or "") != "deliverable" and str(b.get("kind") or "") != "deliverable":
+            continue
+        n = _milestone_number(b)
+        if n is not None:
+            marcos.append((i, n))
+    if [n for _, n in marcos] != list(range(1, len(units) + 1)):
+        return False
+    pos_marco = [i for i, _ in marcos]
+    idx_de = {id(b): i for i, b in enumerate(runtime_blocks)}
+    for b in class_candidates:
+        pos = idx_de.get(id(b))
+        if pos is None:
+            continue
+        u = sum(1 for pm in pos_marco if pm < pos)  # quantos marcos ja passaram
+        u = min(u, len(units) - 1)
+        b["unit_slug"] = str(units[u].get("slug", "") or "")
+        b["unit_confidence"] = CONF_STRONG
+        if b["unit_slug"]:
+            b["auto_unit_slug"] = b["unit_slug"]
+    return True
+
+
 def assign_units_around_pins(blocks: Sequence[dict], units: Sequence[Mapping], *, is_pinned) -> int:
     """Re-roda o DP monotonico SO nos blocos-aula sem pino de unidade. In-place.
 

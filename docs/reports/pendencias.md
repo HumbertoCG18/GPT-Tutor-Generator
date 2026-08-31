@@ -122,9 +122,14 @@ Dados: planos em `Desktop/claude-tutor/*.plano.md` (pymupdf4llm; lab-so e escane
 - F4 Lab Redes: Atividade=Trabalho nos DIAS DE LAB (praticas com material) -> `deliverable` via ATIVIDADE_KIND_MAP.
   deliverable nao esta em NEVER_HOSTS (material ancora), mas o bloco fica sem unit_slug: 11 de 17 blocos sem
   unidade, u03 (nivel de rede) com ZERO blocos. Em cadeira de lab a coluna Atividade nao separa aula de entrega.
-- F5 Lab SO: unidades por frase falham na segmentacao — blocos 8-11 (device drivers) cairam na u01, u02 fica com 0
-  blocos. Os 4 "Fechamento da parte N" delimitam as 4 unidades do plano de graca (parte N = unidade N) — sinal
-  estrutural de cadeira por trabalhos: entrega = fronteira de unidade, papel que a prova faz nas outras.
+- F5 **EXECUTADO (30/08)**: `assign_units_by_work_milestones` (unit_matcher) — entregas numeradas ("Fechamento da
+  parte N", digito preservado nos labels de sessao; o topic_text o perde) segmentam as unidades com autoridade,
+  SO quando formam exatamente 1..K e K == unidades do plano; senao o DP posicional decide como sempre (SO 2026/1
+  tem partes 1..4 e 7 unidades -> nao aplica; "Parte 1" em titulo de AULA do MF -> nao e marco). Medido no timeline
+  puro do Lab SO: u01=1-5, **u02=8-11 (device drivers, antes 0 blocos)**, u03=14-20, u04=22-29. Gate: suite 2127,
+  reprocess 6 = regua identica, sentinela 0 campos nos 6, ablacao nu identica, curado 5/6 + IA p2-202402.
+  F6 (prep/desenvolvimento de entrega — "duvidas do TP1", "Desenvolvimento do T1") ADIADO para depois do build dos
+  labs: sem curso construido nao ha como medir; o provedor t1/t2 e a heranca de vizinho ja cobrem parte.
 - F6 prep de entrega nao existe: "Aula reservada para duvidas do TP1" -> office_hours (ok) mas nada liga ao TP1;
   `_exam_number`/`is_exam_prep_material`/R6 so entendem P. "Desenvolvimento do T1" x2 -> class na unidade errada.
 - F7 **EXECUTADO (30/08, = D3a)**: `explicit_unit_number` em `auto_map_entry_unit` — U<n>/"Unidade N" explicito

@@ -13,7 +13,7 @@ from src.builder.timeline.signals import extract_timeline_session_signals
 from src.builder.timeline.classifier import classify_block, row_kind_from_text
 from src.builder.timeline.kinds import BlockKind
 from src.builder.timeline.curation import apply_block_curation, load_boundary_dates
-from src.builder.timeline.unit_matcher import assign_units_positional
+from src.builder.timeline.unit_matcher import assign_units_by_work_milestones, assign_units_positional
 from src.builder.text.normalize import (
     normalize_match_text as _normalize_match_text,
     signal_token_set as _signal_token_set,
@@ -2138,22 +2138,25 @@ def _build_timeline_index(
     # a valer (aula de conteudo que cita "revisao" nao vira review).
     units_ordered = list((content_taxonomy or {}).get("units", []) or [])
     class_candidates = [b for b in runtime_blocks if not b.get("source_kind")]
-    positional = assign_units_positional(class_candidates, units_ordered)
-    if positional:
-        for b, (slug, conf) in zip(class_candidates, positional):
-            b["unit_slug"] = slug
-            b["unit_confidence"] = conf
-            if slug:
-                b["auto_unit_slug"] = slug
-    else:
-        # Cutover passo 3 (2026-08-17): fallback keyword de unidade APOSENTADO
-        # (_assign_timeline_block_to_unit + _vote_unit_from_topic_candidates).
-        # Ramo só alcançável com assign_units_positional vazio (<2 unidades no
-        # plano / afinidade zero) — nunca dispara nos cursos reais (rebuild_diff
-        # 0 nos 5 no flip). Sem matcher, blocos ficam sem unidade (honesto).
-        for b in class_candidates:
-            b["unit_slug"] = ""
-            b["unit_confidence"] = 0.0
+    # F5: entregas numeradas ("Fechamento da parte N") segmentam as unidades com
+    # autoridade; so quando 1..K == unidades do plano. Senao, DP posicional.
+    if not assign_units_by_work_milestones(runtime_blocks, class_candidates, units_ordered):
+        positional = assign_units_positional(class_candidates, units_ordered)
+        if positional:
+            for b, (slug, conf) in zip(class_candidates, positional):
+                b["unit_slug"] = slug
+                b["unit_confidence"] = conf
+                if slug:
+                    b["auto_unit_slug"] = slug
+        else:
+            # Cutover passo 3 (2026-08-17): fallback keyword de unidade APOSENTADO
+            # (_assign_timeline_block_to_unit + _vote_unit_from_topic_candidates).
+            # Ramo só alcançável com assign_units_positional vazio (<2 unidades no
+            # plano / afinidade zero) — nunca dispara nos cursos reais (rebuild_diff
+            # 0 nos 5 no flip). Sem matcher, blocos ficam sem unidade (honesto).
+            for b in class_candidates:
+                b["unit_slug"] = ""
+                b["unit_confidence"] = 0.0
 
     for index, block in enumerate(runtime_blocks):
         if block.get("unit_slug") or not _timeline_block_is_soft_continuation(block):
