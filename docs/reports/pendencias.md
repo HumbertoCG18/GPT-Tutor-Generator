@@ -150,8 +150,21 @@ Teste novo `test_page_text_becomes_base_markdown_even_when_clone_fails`. Gate co
      diferente: regex findall sem truncar). Fim do item.
   e) MF 30/66 no LLM: ACEITO como fallback legitimo (30/30 certos). So revisitar com assinatura de bloco mais
      rica, MEDIDA (3 tentativas historicas: 2 pioraram).
-  f) Subunidade 6 residuais (IA): teto documentado; decisao do user pendente sobre gerar `.glossary_curation`
-     por LLM (user ve LLM como fallback).
+  f) **Subunidade residuais: EXECUTADO 31/08 — 87 -> 89/93.** Distribuicao REAL dos 6 era IA 2 / ES2 2 /
+     TCC 2 (o "6 do IA" deste tracker estava impreciso). Tres familias diagnosticadas com score em maos:
+     - Familia A (IA 2, lacuna de vocabulario): FECHADA. Sidecar `.glossary_curation.json` do IA (ja existia
+       desde 25/08!) ganhou "Introducao ao aprendizado de maquina" com sinonimos de analise exploratoria
+       (proposto-claude, ruling user 31/08). IA subunit 37 -> 39/39; regua IA intacta; determinismo ok;
+       cascata de confiancas na u05 esperada (aliases novos mudam margens; slugs intactos).
+     - Familia B (ES2 `web`, alias PODRE): heading de material "ARQUITETURA DE SISTEMAS WEB" vira alias de
+       "Arquitetura Serverless" pela rota de overlap fraco do heading->alias (content_taxonomy ~L572-616,
+       score 5.0+0.4/token, piso efetivo ~5.4) e ganha de cliente-servidor por 8.65 x 8.31. Piso 8.0
+       (igualdade/contencao) TESTADO E REFUTADO 31/08: 729 campos em 5 cursos — a rota fraca e LOAD-BEARING
+       (sustenta dezenas de aliases legitimos). Nao retentar piso global; um fix teria de ser cirurgico
+       (ex.: so heading multi-tema com overlap de 1 token) e MEDIDO. Teto documentado.
+     - Familia C (ES2 roteiro5 = proposito vs vocabulario 19.3x16.4; TCC aula-08 idem 35x4.6; TCC aula-06 =
+       over-assignment em aula de revisao, gold vazio): teto do motor lexical; so fecham com sinal de outro
+       tipo (papel/estrutura do material ou LLM lendo a tese). Documentado, revisitavel com desenho novo.
 
 **P3 — Builds pagos (Datalab), quando o user autorizar:**
   - Lab Redes: PRONTO. Stash durable: `Desktop/Moodle/laboratorio-de-redes-de-computadores/stash` (6 arquivos +
