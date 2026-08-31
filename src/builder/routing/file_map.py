@@ -412,6 +412,30 @@ def score_entry_against_unit(
     return score
 
 
+# D3/F7 (censo Fund. Redes 2026-08-28): numero de unidade EXPLICITO no card
+# ("U1 - Redes de Computadores"), no titulo ou no arquivo ("Lista de exercicios -
+# Unidade 1"). A numeracao vem do PLANO (autoridade) -> sinal de 1a classe do eixo
+# de unidade, decide antes do scorer. "aula01"/"qemu2"/"udp 1" nao casam (o "u"
+# exige fronteira antes e digito logo depois).
+_UNIT_NUM_NAME_RE = re.compile(r"(?:^|[\W_])(?:u\.?\s*|unidade(?:\s+de\s+aprendizagem)?\s+)0*(\d{1,2})(?:$|[\W_])", re.IGNORECASE)
+_UNIT_NUM_SLUG_RE = re.compile(r"^unidade(?:-de-aprendizagem)?-0*(\d{1,2})(?:$|[^0-9])")
+
+
+def explicit_unit_number(entry: dict):
+    """Numero de unidade explicito em card/titulo/arquivo; None se ausente."""
+    basename = re.split(r"[\\/]", str(entry.get("source_path") or ""))[-1]
+    for text in (str(entry.get("source_section") or ""), str(entry.get("title") or ""), basename):
+        m = _UNIT_NUM_NAME_RE.search(text)
+        if m:
+            return int(m.group(1))
+    return None
+
+
+def _unit_number_from_slug(slug: str):
+    m = _UNIT_NUM_SLUG_RE.match(str(slug or ""))
+    return int(m.group(1)) if m else None
+
+
 def auto_map_entry_unit(
     entry: dict,
     units: list,
@@ -430,6 +454,14 @@ def auto_map_entry_unit(
     indexed_units = build_file_map_unit_index(units)
     if not indexed_units:
         return unit_match_result_factory(slug="", confidence=0.0, ambiguous=True, reasons=["sem-unidades"])
+
+    numero = explicit_unit_number(entry)
+    if numero is not None:
+        alvo = [u for u in indexed_units if _unit_number_from_slug(str(u.get("slug") or "")) == numero]
+        if len(alvo) == 1:
+            return unit_match_result_factory(
+                slug=str(alvo[0].get("slug") or ""), confidence=0.95, ambiguous=False,
+                reasons=[f"unidade-explicita=u{numero}"])
 
     signals = collect_entry_unit_signals(entry, markdown_text)
     unit_tag_boosts: Dict[str, float] = {}

@@ -127,9 +127,12 @@ Dados: planos em `Desktop/claude-tutor/*.plano.md` (pymupdf4llm; lab-so e escane
   estrutural de cadeira por trabalhos: entrega = fronteira de unidade, papel que a prova faz nas outras.
 - F6 prep de entrega nao existe: "Aula reservada para duvidas do TP1" -> office_hours (ok) mas nada liga ao TP1;
   `_exam_number`/`is_exam_prep_material`/R6 so entendem P. "Desenvolvimento do T1" x2 -> class na unidade errada.
-- F7 FR: `U1 - Redes de Computadores` no card do Moodle e "Lista de exercicios - Unidade 1" no arquivo — numero de
-  unidade explicito, sem provedor no motor (analogo ao t1/t2). FR bloco-20 (Camada de Enlace) -> u04 errado (fusao
-  com vizinho); bloco-13 "Introducao ao roteamento IP" -> overview (stem "introduc" generico).
+- F7 **EXECUTADO (30/08, = D3a)**: `explicit_unit_number` em `auto_map_entry_unit` — U<n>/"Unidade N" explicito
+  no card/titulo/arquivo decide a unidade ANTES do scorer (conf 0.95, reason `unidade-explicita=uN`; numeracao do
+  plano = autoridade). Falsos positivos guardados ("aula01", "qemu 2", "UDP 1" nao casam). Medido: FR **19/20**
+  entries decididos pelo sinal (o 20o e o Programa, meta); 0 disparos nos 6 cursos velhos (inerte onde deve).
+  Restam do F7 original, agora renumerados: FR bloco-20 (Camada de Enlace -> u04, fusao com vizinho) e bloco-13
+  ("Introducao ao roteamento" -> overview, stem "introduc") — fronteiras de bloco, nao unidade; ficam p/ holdout.
 - F8 FR: "Prova PS" e "Prova G2" contam como prova principal (`_NOT_MAIN_EXAM` nao as filtra); formula do plano diz
   2 provas (P1, P2). A formula do G1 da os marcos derivados: termos P = provas, TPn/T/TF = entregas, "sem G2" =
   nao esperar final; contagem TPn bate com "Fechamento" do SARC (4=4 no Lab SO).
