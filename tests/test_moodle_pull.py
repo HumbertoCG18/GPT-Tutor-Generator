@@ -60,3 +60,28 @@ def test_turma_do_shortname_e_do_export():
     assert turma_do_shortname("sem-padrao") == ""
     assert turma_do_export("<div>4646I-4 Laborat\u00f3rio de Sistemas Operacionais (330) - 32/410</div>") == "330"
     assert turma_do_export("<div>sem turma</div>") == ""
+
+
+def test_resource_html_vai_para_print_nao_para_o_stash_cru():
+    """Roteiro .html de resource segue o caminho das paginas (print -> Datalab -> descricoes),
+    nunca cai cru no stash como codigo-professor (labs 2026/2)."""
+    import scripts.moodle_pull as mp
+    import types
+    pull = object.__new__(mp.Pull)
+    pull.stash = __import__("pathlib").Path("/tmp/stash"); pull.rawm = __import__("pathlib").Path("/tmp/raw")
+    pull.root = __import__("pathlib").Path("/tmp"); pull.links = []; pull.labels = []
+    pull.sections = []; pull.nomes = {}; pull.turma_moodle = ""; pull.dry = True; pull.browser = None
+    sec = {"name": "[10/08] - Wireshark", "section": 4, "summary": "", "modules": [
+        {"modname": "resource", "id": 1, "name": "Laboratório 1 - Wireshark",
+         "contents": [{"filename": "Lab 1 - Wireshark.html", "fileurl": "http://x/f"}]}]}
+    pull.c = types.SimpleNamespace(get_course_contents=lambda c: [sec],
+                                   _call=lambda *a, **k: {"courses": [{"shortname": "98710-02340262"}]})
+    import json as _json
+    pull.snap = types.SimpleNamespace(write_links=lambda: None, pages={}, print_all=lambda: None)
+    try:
+        pull.run(340)
+    except Exception:
+        pass  # escrita de arquivos fora do escopo do teste (dry escreve jsons)
+    rec = next(r for r in pull.links if r["nome"].startswith("Laborat"))
+    assert rec["tipo"] == "material-pagina-arquivo" and rec["acao"] == "print"
+    assert "Lab 1 - Wireshark.pdf" in "".join(pull.nomes.keys())

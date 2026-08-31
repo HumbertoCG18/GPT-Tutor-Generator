@@ -156,6 +156,14 @@ Preview nos novos: Lab Redes **4/6 ancorados** pelo card `[03/08]`; FR 0/20 (esp
   Horarios PUCRS confirmados nos exports: JK = 17:30-19:00, LM = 19:15-20:45. Lab SO 310 tem horario diferente
   por dia (qua LM, sex JK). Validacao independente p/ F12: dias do cronograma x grade do user, alem de turma do
   export x shortname. Falta ainda: export SARC da turma 310 do Lab SO (GUID nao derivavel; user vai copiar do SARC).
+- IMAGENS/HTML (30/08, pedido do user "imagens passam pelo Datalab p/ descricao"): CORRECAO de leitura minha — a
+  rota da CG (pagina HTML -> PDF impresso -> Datalab) JA entrega descricoes posicionadas: staging de "origens" tem
+  12 blocos IMAGE_DESCRIPTION no lugar das figuras (os ![]() sao removidos de proposito). O buraco era outro:
+  resource `.htm(l)` (os 6 roteiros/tutoriais dos labs) caia CRU no stash como codigo-professor, sem print e sem
+  descricao. **EXECUTADO**: `moodle_pull` agora manda resource-html pelo MESMO caminho das paginas (raw + print
+  PDF -> Datalab no build), tipo `material-pagina-arquivo`, sinal `resource-html`; sidecar de nomes aponta p/ o
+  .pdf. Rota HTML->markdown direta DESCARTADA por decisao do user (perderia a descricao de imagem do Datalab).
+  Validacao com pull real PENDENTE: token do Moodle EXPIROU (invalidtoken em site_info) — user renova em moddle/.env.
 - F14 **RESOLVIDO DE VEZ (30/08, descoberta do USER): o professor postou no Moodle o link do SARC da TURMA
   ERRADA.** Cabecalho do export: "4646I-4 Laboratorio de Sistemas Operacionais **(330)**"; shortname do Moodle:
   "4646I-04**310**262" (turma 310). A 330 e TER/QUI 17:30; a 310 do user e QUA/SEX — e as datas dos arquivos

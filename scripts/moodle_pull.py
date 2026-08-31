@@ -176,7 +176,34 @@ class Pull:
                     _sec_rec["labels"].append(txt)
                 elif mn == "resource":
                     for f in m.get("contents") or []:
-                        dest = self.stash / card / f.get("filename", "arquivo")
+                        fname = f.get("filename", "arquivo")
+                        # Resource .htm(l) (roteiros dos labs 2026/2) segue o MESMO caminho das
+                        # paginas: raw + print em PDF -> Datalab no build -> descricoes de imagem
+                        # posicionadas (IMAGE_DESCRIPTION), igual a CG. Cru no stash ele virava
+                        # `codigo-professor` sem texto nem descricao (pedido do user 2026-08-30).
+                        if fname.lower().endswith((".htm", ".html")):
+                            dest = self.stash / card / f"{Path(fname).stem}.pdf"
+                            self.nomes[f"{card}/{dest.name}"] = str(m.get("name") or "")
+                            rec = {"secao": sec.get("name"), "nome": m.get("name"), "url": f.get("fileurl", ""),
+                                   "tipo": "material-pagina-arquivo", "acao": "print", "destino": "", "sinal": "resource-html"}
+                            self.links.append(rec)
+                            if self.dry:
+                                continue
+                            raw = self.get(f["fileurl"])
+                            html = raw.decode(detect_encoding(raw, "utf-8"), errors="replace")
+                            pages_dir = self.rawm / "pages"; pages_dir.mkdir(parents=True, exist_ok=True)
+                            hp = pages_dir / f"{m['id']}-{slug(Path(fname).stem)}.html"
+                            hp.write_text(normalize_html(html), encoding="utf-8")
+                            rec["raw"] = str(hp.relative_to(self.root))
+                            if self.browser:
+                                dest.parent.mkdir(parents=True, exist_ok=True)
+                                if not dest.exists() and print_pdf(self.browser, hp, dest):
+                                    rec["destino"] = str(dest.relative_to(self.root))
+                                    rec["pdf_pages"], rec["pdf_images"] = pdf_stats(dest)
+                                elif dest.exists():
+                                    rec["destino"] = str(dest.relative_to(self.root))
+                            continue
+                        dest = self.stash / card / fname
                         self.nomes[f"{card}/{dest.name}"] = str(m.get("name") or "")
                         rec = {"secao": sec.get("name"), "nome": m.get("name"), "url": f.get("fileurl", ""), "tipo": "arquivo",
                                "acao": "download", "destino": str(dest.relative_to(self.root)), "sinal": "resource"}
