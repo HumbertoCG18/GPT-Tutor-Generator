@@ -10,7 +10,7 @@ from typing import List, Tuple
 
 from src.utils.helpers import norm_ascii_lower
 from src.builder.timeline.card_block import normalized_card_map
-from src.builder.text.normalize import normalize_match_text
+from src.builder.text.normalize import STEM_LEN, normalize_match_text, stem_set
 from src.builder.routing.motor.disambiguator import block_topic_tokens, block_session_tokens, _GENERIC_STEMS
 from src.builder.routing.sequence import extract_lecture_ordinal
 from src.builder.timeline.classifier import STRONG_EXAM_RE as _STRONG_EXAM_RE
@@ -91,7 +91,9 @@ def provider_date(entry: dict, ctx: MotorContext) -> List[str]:
 
 # P4 — topic-bridge (spec §3 [Δ item 9]; F-TCC: o N ordinal NUNCA vira janela).
 _SEMANA_TOPIC_RE = re.compile(r"^\s*semana\s*\d+\s*-\s*(.+)$", re.IGNORECASE)
-TOPIC_STEM_LEN: int = 6
+# A1/P2d (31/08): o radical do P4 e o stem6 COMPARTILHADO de text/normalize
+# (t[:6] e stem6 sao provadamente identicos; a constante local virou alias).
+TOPIC_STEM_LEN: int = STEM_LEN
 TOPIC_MIN_TOKEN: int = 3
 
 
@@ -130,7 +132,7 @@ def _unit_stems(block: dict) -> set:
 
 
 def _stems(tokens: set) -> set:
-    return {t[:TOPIC_STEM_LEN] for t in tokens}
+    return stem_set(tokens)
 
 
 # Exam-vocab fraco (par do ruling C1): sozinho não indica EXAME, só quando o

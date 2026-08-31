@@ -142,8 +142,12 @@ Teste novo `test_page_text_becomes_base_markdown_even_when_clone_fails`. Gate co
        cujo escopo agora inclui u04 — consequencia correta do P2a, nao regressao).
   c) Housekeeping: **FEITO 31/08** — `scripts/artefato_razao/` (dados_artefato + patch_razao + template,
      caminhos relativos, saida gitignored; byte-identico ao publicado). Artefato: claude.ai/code/artifact/d2ef4eaa-...
-  d) A1 "grande" (P4 + desempate no MESMO tokenizador/stem6): refactor de higiene; o ganho de regua ja veio no
-     recorte cirurgico. Sem numero prometido.
+  d) **A1 "grande": EXECUTADO 31/08 no recorte honesto.** P4 (`window_provider._stems`) agora usa o
+     `stem_set`/`STEM_LEN` compartilhado de text/normalize (t[:6] e stem6 sao provadamente identicos —
+     zero mudanca de comportamento; suite 2136, regua identica sem reprocess). NAO unificados de proposito:
+     `disambiguator` usa prefixo 8 para _GENERIC_STEMS (convencao DELIBERADA que espelha marco0 — mudar e
+     alterar comportamento sem hipotese de ganho) e `due_window._stems` (nome coincidente, semantica
+     diferente: regex findall sem truncar). Fim do item.
   e) MF 30/66 no LLM: ACEITO como fallback legitimo (30/30 certos). So revisitar com assinatura de bloco mais
      rica, MEDIDA (3 tentativas historicas: 2 pioraram).
   f) Subunidade 6 residuais (IA): teto documentado; decisao do user pendente sobre gerar `.glossary_curation`
