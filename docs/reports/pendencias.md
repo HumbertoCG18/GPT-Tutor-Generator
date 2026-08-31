@@ -682,9 +682,13 @@ original). Nada avanca com regua pior em qualquer eixo. Restaurou tutor por git 
    "Aula N"?) — o motor tem um provider por habito; se for um habito novo, e balde A/B de novo, nao curadoria.
 2. **Teto do cru — os 7 erros nus:** (a) MF x3 = ruido do voto: ACEITO, ficam os 3 pinos; (b) **RESOLVIDO (31/08,
    ruling do user): IA prova-1-2024-02 e ES2 azure FICAM COMO ESTAO** — IA com o pino existente, azure como o erro
-   honesto e visivel da regua (199/200). Sem scorable=no, sem pino novo; teto documentado, nao maquiado. (c) TCC
-   aula-17 x2 = Cook-Levin <-> NP-completude: testar alias no `.glossary_curation.json` do TCC e medir; se fechar,
-   o card manual "Semana 12" sai e o TCC fica com zero humano. (Unico sub-item ainda aberto.)
+   honesto e visivel da regua (199/200). Sem scorable=no, sem pino novo; teto documentado, nao maquiado. (c) **TESTADO E
+   REFUTADO (31/08)**: alias Cook-Levin (NP-completude/NP-completo/SAT/satisfatibilidade em 4.5.3) + remocao do
+   card manual "Semana 12" derruba o TCC de 25/25 p/ 24/25 com conf-err 1 (aula-17-np-completude vai ao bloco do
+   Cook-Levin; gold = escolha do professor via card) e FLIPA 5 subunidades (exercicios de reducao 4.5.5 viram
+   teorema-de-cook). Vocabulario compartilhado real: SAT/NP-completo aparecem em Cook-Levin E nas reducoes — o
+   card codifica um corte que o lexico nao decide. Revertido (25/25 conf-err 0 de volta); o card "Semana 12" FICA
+   como a ultima decisao humana de bloco do TCC. Nao retentar sem sinal novo (ex.: data real nas secoes).
 3. **RESOLVIDO (31/08, ruling final do user): `pthread` FICA no bloco-04** (card Threads, coerente com os 3
    `exemplo-threads-em-c`). O ruling de 25/08 (bloco-03) esta SUPERSEDIDO — nao reabrir. Custo zero (gold e motor
    ja estavam em 04).
