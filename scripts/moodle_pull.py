@@ -302,7 +302,13 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--pdf", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args(argv)
-    url, tok = load_moodle_token()
+    # Token com renovacao automatica (moodle_token.py); cai no load antigo sem credenciais.
+    try:
+        from scripts.moodle_token import ensure_moodle_token
+        url, tok = ensure_moodle_token()
+    except RuntimeError as exc:
+        print(f"[moodle] {exc}")
+        url, tok = load_moodle_token()
     if not tok:
         print("Faltando MOODLE_TOKEN"); return 2
     pull = Pull(MoodleClient(url, tok), tok, Path(args.root), args.pdf, args.dry_run)
