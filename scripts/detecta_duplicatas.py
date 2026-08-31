@@ -5,13 +5,16 @@
     python scripts/detecta_duplicatas.py --quase 0.85       # limiar do nivel 3
 
 Niveis (do certo para o provavel):
-  BYTES  sha256 do arquivo raw identico -> 100% o MESMO arquivo (dedup do motor
-         ja agrupa esses no voto via content_key/md5, mas nao reporta ao humano).
-  TEXTO  sha256 do markdown extraido NORMALIZADO identico -> mesmo documento em
-         arquivos diferentes (caso real: SO plano-de-ensino vs programa, o mesmo
-         plano postado 2x no Moodle; PDFs diferem em bytes, a extracao diverge so
-         em formatacao ****x**** vs **x** e descricoes de imagem).
-  QUASE  difflib ratio >= limiar entre textos normalizados -> triagem humana.
+  BYTES      sha256 do arquivo raw identico -> 100% o MESMO arquivo (dedup do
+             motor ja agrupa esses no voto via content_key/md5, sem reportar).
+  PDF-TEXTO  sha256 do texto POR PAGINA (pymupdf, mesmo extrator no mesmo
+             momento) identico -> 100% o mesmo documento; os bytes diferem so
+             em metadados (caso real CG: pares com 4-6 bytes de diferenca =
+             /Title com id do Moodle + /CreationDate + /ModDate).
+  TEXTO      sha256 do markdown extraido NORMALIZADO identico -> mesmo documento
+             em extracoes de builds diferentes (caso real: SO plano-de-ensino vs
+             programa; formatacao ****x**** vs **x**, descricoes de imagem).
+  QUASE      difflib ratio >= limiar entre textos normalizados -> triagem humana.
 
 Read-only: nao muda manifest nem motor. Saida = relatorio por curso.
 """
@@ -103,6 +106,33 @@ def rodar(siglas: list[str], quase: float) -> int:
         for ids in byte_dups.values():
             achados.append(("BYTES", ids))
             pareados.update(ids)
+
+        # PDF-TEXTO: texto por pagina via pymupdf (mesmo extrator, agora) —
+        # independe do markdown de builds antigos e ignora metadados do arquivo.
+        try:
+            import pymupdf
+        except ImportError:
+            pymupdf = None
+        if pymupdf is not None:
+            por_pdf: dict[str, list] = {}
+            for e in entries:
+                eid = str(e.get("id") or "")
+                if not eid or eid in pareados:
+                    continue
+                p = _raw_path(repo, e)
+                if p is None or p.suffix.lower() != ".pdf":
+                    continue
+                try:
+                    with pymupdf.open(p) as doc:
+                        h = hashlib.sha256(str(doc.page_count).encode())
+                        for pg in doc:
+                            h.update(pg.get_text().encode())
+                except Exception:
+                    continue
+                por_pdf.setdefault(h.hexdigest(), []).append(eid)
+            for ids in (v for v in por_pdf.values() if len(v) > 1):
+                achados.append(("PDF-TEXTO", ids))
+                pareados.update(ids)
 
         por_texto: dict[str, list] = {}
         for eid, t in textos.items():

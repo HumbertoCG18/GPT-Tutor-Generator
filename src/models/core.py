@@ -79,6 +79,11 @@ class FileEntry:
     # destes campos (escritos pelo motor: apply_concept_resolver +
     # apply_unit_subunit_fields).
     computed_unit_slug: str = ""
+    # Duplicata confirmada (scripts/detecta_duplicatas.py, 100% mesmo documento
+    # por bytes/PDF-texto): id da entry PRIMARIA. Secundaria marcada continua no
+    # manifest e no MOTOR (golds/regua a referenciam), mas sai dos indices
+    # navegacionais (EXAM/EXERCISE/FILE_MAP etc., ruling user 2026-08-31).
+    duplicate_of: str = ""
     # Cobertura N:N do motor (coverage_rules.derive_coverage_units): lista de
     # {unit_slug, topics, confidence, rule}; None = nunca computada. Declarada
     # para o round-trip from_dict -> to_dict parar de descarta-la (consumidor:

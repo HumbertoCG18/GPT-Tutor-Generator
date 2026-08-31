@@ -35,6 +35,17 @@ def test_extracoes_divergentes_do_mesmo_doc_normalizam_igual(tmp_path):
     assert ta and ta == tb
 
 
+def test_duplicate_of_sobrevive_ao_round_trip():
+    # Contrato do remedio (ruling 31/08): a marca no manifest nao pode sumir no
+    # from_dict -> to_dict do reprocess.
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from src.models.core import FileEntry
+    e = FileEntry.from_dict({"source_path": "raw/x.pdf", "file_type": "pdf",
+                             "category": "outros", "title": "X",
+                             "duplicate_of": "x-primaria"})
+    assert e.to_dict()["duplicate_of"] == "x-primaria"
+
+
 def test_documentos_diferentes_nao_colidem(tmp_path):
     a = "EMENTA: sistemas operacionais, processos, escalonamento e memoria. " * 8
     b = "Roteiro de laboratorio: configure o container e suba o compose. " * 8

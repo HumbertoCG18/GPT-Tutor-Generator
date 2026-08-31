@@ -166,6 +166,16 @@ Teste novo `test_page_text_becomes_base_markdown_even_when_clone_fails`. Gate co
        over-assignment em aula de revisao, gold vazio): teto do motor lexical; so fecham com sinal de outro
        tipo (papel/estrutura do material ou LLM lendo a tese). Documentado, revisitavel com desenho novo.
 
+**DUPLICATAS: EXECUTADO 31/08 (ruling user: marcar, nao apagar).** `scripts/detecta_duplicatas.py` com 4
+niveis (BYTES sha256 / PDF-TEXTO por pagina via pymupdf / TEXTO normalizado / QUASE ratio; pares
+enunciado<->gabarito excluidos). 6 grupos CONFIRMADOS 100%: SO plano-de-ensino=programa (bytes identicos),
+TCC 3dm e programacao-inteira (bytes identicos, apresentacoes T2 postadas 2x), CG 3 pares (PDF-TEXTO:
+bytes diferem em 4-6 bytes de /Title id-Moodle + CreationDate/ModDate, texto por pagina identico).
+Motor atribui os pares IDENTICAMENTE (unica divergencia entre copias: category do import). Remedio:
+campo `FileEntry.duplicate_of` (round-trip ok, testado); secundaria continua no manifest e no MOTOR
+(golds/regua a referenciam — 0 campos de motor mudaram) e SAI dos indices navegacionais (all_entries da
+regeneracao + FILE_MAP). 6 secundarias marcadas; primaria = categoria/card mais correto. Suite 2138.
+
 **HIGIENE (31/08, achado na auditoria do T2):** as descricoes de IMAGENS ORFAS (secao "Imagens Curadas",
 `IMAGE_DESCRIPTION_ORPHANS`) entram no texto que o scorer le (`_entry_markdown_text_for_file_map` le o .md
 inteiro). Caso real: `trabalho-t2-enunciado` do TCC carrega 17 descricoes orfas de OUTRO material (DFA, PDA,

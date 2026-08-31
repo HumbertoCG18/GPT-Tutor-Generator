@@ -570,7 +570,12 @@ def regenerate_pedagogical_files(
     manifest["entries"] = live_manifest_entries
 
     try:
-        all_entries = [FileEntry.from_dict(e) for e in live_manifest_entries]
+        # Duplicatas confirmadas (duplicate_of) ficam FORA dos indices
+        # navegacionais gerados abaixo; o motor (que ja rodou acima, sobre
+        # live_manifest_entries) segue processando as secundarias — golds e
+        # regua as referenciam.
+        all_entries = [FileEntry.from_dict(e) for e in live_manifest_entries
+                       if not str(e.get("duplicate_of") or "").strip()]
     except Exception:
         all_entries = []
 
@@ -666,7 +671,11 @@ def regenerate_pedagogical_files(
 
     write_text(
         builder.root_dir / "course" / "FILE_MAP.md",
-        file_map_md_fn(runtime_course_meta, live_manifest_entries, builder.subject_profile),
+        file_map_md_fn(
+            runtime_course_meta,
+            [e for e in live_manifest_entries if not str(e.get("duplicate_of") or "").strip()],
+            builder.subject_profile,
+        ),
     )
 
     if builder.student_profile:
