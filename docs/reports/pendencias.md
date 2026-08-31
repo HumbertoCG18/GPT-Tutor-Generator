@@ -654,10 +654,15 @@ PEDIDO ORIGINAL de 18/08 e segue intocada — depende da cobertura estar de pe.
 
 ## FILA VIVA (2026-08-26) — o que falta, em ordem, com gate
 
-0. **Nao-determinismo do catalogo `ferramenta:`** (`content_taxonomy.build_tag_catalog` / `_extract_tool_candidates`):
-   `ferramenta:animacao-v2` (CG) flipa entre dois reprocess identicos; `ferramenta:lemas` x7 (TCC) sumiu vs HEAD.
-   Propaga por `build_learned_unit_boosts` para confidencias e `computed_block_id` do scorer de conceito (nao a regua).
-   Gate de determinismo deveria ser 0 campos em 6/6 — hoje 5/6. Raiz provavel: ordem de set/dict nos headings fortes.
+0. **RESOLVIDO (31/08): "jitter" `ferramenta:` NAO era nao-determinismo — era CONVERGENCIA em 1 passo.** Medido:
+   2 reprocess seguidos da CG = **0 difs** (e todos os gates desde 28/08 = 0 campos nos 6). Mecanismo lido no codigo:
+   `write_tag_catalog` regenera o catalogo TODA rodada a partir de plano/mapa/glossario + `strong_headings` (4
+   primeiros headings dos MARKDOWNS das entries) — deterministico dado o mesmo estado; mas a MESMA rodada reescreve
+   markdowns DEPOIS de gerar o catalogo (injetores/navegacao), entao a rodada seguinte ve headings novos e o
+   catalogo muda UMA vez e estabiliza (ponto fixo). Os flips historicos (`animacao-v2` CG, `lemas` x7 TCC) foram
+   isso, logo apos mudancas de codigo que mexeram na emissao de markdown. Nao propaga para a regua; o gate de
+   determinismo (2a rodada = 0 campos) e exatamente o detector certo e passa a exigir **6/6**. Reordenar o pipeline
+   (catalogo depois da emissao final) so se os flips virarem rotina — hoje e 1 rodada de absorcao apos mudanca.
 
 **Gate unico entre itens (inalterado + 2 itens novos):** `eval_eixos.py` (4 eixos) · `pytest -q` (ler "N passed") ·
 sentinela campo a campo contra `git show HEAD:manifest.json` (nao contra `.bak`) · **determinismo** (2 reprocess
