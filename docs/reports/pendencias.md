@@ -198,13 +198,24 @@ quando nao deviam ter nenhuma; a COBERTURA ja tem gate meta (META_CATEGORIES, re
 mesmo padrao do TCC aula-06 (revisao); (3) material AGREGADO multi-secao — ES2 `devops` (DEVOPS + GERENCIA DE
 CONFIGURACAO + CI num arquivo), campo comporta 1 subunit; (4) papel pedagogico vs vocabulario — ES2 roteiro5.
 Itens novos da fila (sem data, decisao de priorizar e do user):
-  - Gate de meta/abrangente na SUBUNIDADE (espelho da regra A da cobertura): categorias/nomes de plano,
-    programa, cronograma, revisao -> subunit vazia. Fecha SO plano/programa e TCC aula-06. Medir com gate.
+  - **EXECUTADO 31/08 (tarde) — Gate de meta/abrangente na SUBUNIDADE: 89 -> 90/93.** Espelho da regra A
+    em 2 bracos, gerador `f17956a`: (i) meta-material em resolver_apply — coverage rule meta/
+    meta-por-conteudo => subunit vazia (categoria NAO bastava: SO `programa` e "outros"; o braco por
+    conteudo reusa a fracao >=0.8 de titulos de unidade citados que a cobertura ja calcula); (ii)
+    revisao-sem-assunto-dominante em auto_map_entry_subtopic — titulo/id com "revis" + winner_score <
+    T.SUBUNIT_REVISAO_FLOOR=7.0 => vazio (TCC aula-06 revisa AUTOMATOS da cadeira anterior, ws=3.24).
+    Piso MEDIDO no gap: revisoes mono-assunto legitimas >=8.97 (TCC aula-01, ES2 revisaoarquitetura),
+    multi-assunto/pre-requisito <=5.67; NAO e piso global (certos legitimos vivem com ws 1.04-4.32 —
+    armadilha (ii) do handoff respeitada, nenhum esvaziado). 16 entries tocadas nos 6 cursos, todas
+    honestas (SO plano/programa/apresentacao, planos MF/TCC/CG, cronograma CG, revisoes de prova
+    MF/ES2, TCC aula-06/aula-16); sentinela 49 campos so de subunit; determinismo 0 campos 6/6;
+    ablacao nu identica; curado 5/6 + IA excecao documentada. Suite 2145 (+6 testes TDD).
+    Convencao da regua de subunidade CONFIRMADA nesta sessao: conta so o gold PRIMARIO
+    (gold_subunits_extra nao pontua — e por isso que aula-08 e erro apesar do extra).
     NOTA (31/08, corrigida): SO `plano-de-ensino` e `programa` sao o MESMO ARQUIVO (sha256 dos raw
     IDENTICO — a versao anterior desta nota dizia "PDFs distintos", inferido dos markdowns que divergem
     por extracao de builds diferentes; `scripts/detecta_duplicatas.py` provou bytes iguais). Categorias
-    INCONSISTENTES ("cronograma" vs "outros") — o gate nao pode ser so por categoria; precisa de sinal
-    de conteudo (ementa/titulo).
+    INCONSISTENTES ("cronograma" vs "outros") — por isso o gate nao e so por categoria.
   - Detector de headings como script de auditoria (`heading nomeia subunit irma != atribuida, atribuida fora
     dos headings`): achou os 2 meta do SO que NENHUM gold cobria; rodar pos-reprocess. Calibrar matching
     label<->heading (substring nos 2 sentidos; caso `devops`).
@@ -558,11 +569,13 @@ producao e o proprio motor (flagados / llm-funil / conf-err -> fila de revisao).
 ## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
 **HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
-ESTADO (`scripts/eval_eixos.py`, as-of **2026-08-31c**): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
+ESTADO (`scripts/eval_eixos.py`, as-of **2026-08-31d**): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
 convencao ACEITA por ruling 31/08) · unidade **191/191 (100%)** · cobertura **56/57 F1 0,982** (resta SO
 aws-encryption-sdk — teto documentado, ver P1 EXECUTADO; eth2 fechou pelo motor com o texto da pagina) ·
-subunidade **89/93** (4 cursos com gold; +2 pelo glossario IA do P2f) · **pinos 5** · cards manuais **1** (TCC
-"Semana 12", MANTIDO por refutacao 31/08) · decisoes humanas de bloco **6** (eram 23) · suite **2138 passed** ·
+subunidade **90/93** (4 cursos com gold; +1 pelo gate meta/revisao — TCC aula-06 fechou; restam ES2 web/roteiro5
+e TCC aula-08, tetos documentados das familias B/C) · **pinos 5** · cards manuais **1** (TCC
+"Semana 12", MANTIDO por refutacao 31/08) · decisoes humanas de bloco **6** (eram 23) · suite **2145 passed**
+(baseline real era 2139; o "2138" das notas anteriores estava off-by-one) ·
 determinismo **6/6** · 6 entries com `duplicate_of` (SO 1, TCC 2, CG 3 — confirmadas por hash e pelo user).
 MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py` nos 6): bloco display **194/200** conf-err 2 (205/212 por
 uuid, medido 27/08) · unidade **170/191 (89%)** — era 134, +36 pelo DP com desvio de janela (P2a 31/08) ·
@@ -573,8 +586,8 @@ nus: 3 ruido do voto (MF, aceitos, ficam os pinos) · 2 convencao sem texto (IA 
 31/08) · 2 dominio (TCC aula-17; alias Cook-Levin TESTADO E REFUTADO 31/08 — nao retentar sem sinal novo) ·
 1 teto de dado (MF aws, pagina raiz sem vocabulario de verificacao, ver P1 EXECUTADO).
 Gate curado nas copias: 5/6 + IA `p2-202402` (ruido de voto no cache da copia, excecao documentada).
-PUSH (as-of 2026-08-31): gerador `f45fd31`. **Os 6 tutores tem remote privado (HumbertoCG18) e estao 0/0 com
-origin**: MF `0157a2c` · TCC `f90aa98` · IA `60f7271` · SO `b4c336c` · ES2 `3dbd45d` · CG `62c80a0`.
+PUSH (as-of 2026-08-31d): gerador `f17956a`. **Os 6 tutores tem remote privado (HumbertoCG18) e estao 0/0 com
+origin**: MF `ccae023` · TCC `672024b` · IA `906e0c2` (intacta pelo gate) · SO `da92fe2` · ES2 `60e8f26` · CG `ea4af8d`.
 Antes: `docs/reports/2026-08-20-handoff-fechamento-campanha-motor.md`.
 Cobre a sessao inteira (`7e940f5e`, 63 prompts): poda do enxame, regua nova + sweep do gate,
 rotulagem dos 64 casos, limpeza do manifest, eixo de bloco, N:N nos consumidores, fix do
