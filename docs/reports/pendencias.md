@@ -182,12 +182,19 @@ player. O pipeline so ingere o PDF — o conteudo pedagogico principal (a fala) 
 real se um dia entrar: descobrir onde os videos moram (Moodle? links?), transcricao (caro), e o que a
 entry representa. Por ora: registrado como limite conhecido do material ingerido.
 
-**HIGIENE (31/08, achado na auditoria do T2):** as descricoes de IMAGENS ORFAS (secao "Imagens Curadas",
-`IMAGE_DESCRIPTION_ORPHANS`) entram no texto que o scorer le (`_entry_markdown_text_for_file_map` le o .md
-inteiro). Caso real: `trabalho-t2-enunciado` do TCC carrega 17 descricoes orfas de OUTRO material (DFA, PDA,
-hierarquia de Chomsky, brasoes da USP) — vocabulario de automatos dentro de um enunciado de NP-completude.
-Nao causou erro (score 22.8 dominante veio do texto principal), mas e ruido latente para subunidade/cobertura.
-Item: filtrar o bloco ORPHANS do texto do scorer (nao do arquivo). Medir antes/depois com a regua.
+**HIGIENE (31/08, achado na auditoria do T2) — corte global TESTADO E REFUTADO 31/08 (tarde):** as
+descricoes de IMAGENS ORFAS (`IMAGE_DESCRIPTION_ORPHANS`) entram no texto que o scorer le
+(`_entry_markdown_text_for_file_map`). Caso real: `trabalho-t2-enunciado` do TCC com 17 descricoes de
+OUTRO material (DFA/PDA/Chomsky/brasoes USP) num enunciado de NP-completude. IMPLEMENTADO o corte do
+bloco no texto do scorer e MEDIDO: regua oficial intacta (5 cursos), MAS sentinela acusou 45 campos no
+CG — em docs image-heavy as orfas sao o CONTEUDO DO PROPRIO material (provas escaneadas: corpo =
+frontmatter + `![]()`; texto real vive nas descricoes "sem referencia markdown compativel no corpo").
+`resolucao-de-prova-2d`: conf 0.91 -> 0.0, coverage_units -> null, bloco trocado; `navegacao-em-
+ambientes-virtuais` cegou igual. O corte global e REMENDO que cega material legitimo; REVERTIDO (codigo
++ manifests, sentinela 0 vs HEAD). Raiz VERDADEIRA do caso T2: contaminacao NA ORIGEM (image_curation
+da entry carrega descricoes de outro documento) — fix cirurgico seria na curadoria/ingestao dessas
+descricoes, nao no consumo; corte condicional (so com texto principal grande) = tuning sem regua (CG
+nao tem gold). Nao retentar corte global sem dado novo.
 
 **AUDITORIA aula-08-like (31/08, investigacao com o user — PADRAO ACHADO):** o motor de subunidade atribui
 por CONTAGEM de vocabulario e SEMPRE atribui 1 rotulo; nao reconhece a NATUREZA do material. 4 manifestacoes
