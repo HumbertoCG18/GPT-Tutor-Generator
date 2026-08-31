@@ -4693,7 +4693,9 @@ class URLEntryDialog(tk.Toplevel):
         self.var_tags = tk.StringVar()
         self.var_notes = tk.StringVar()
         self.var_bundle = tk.BooleanVar(value=True)
-        self.var_branch = tk.StringVar(value="main")
+        # Vazio = auto-detect do branch default do remoto (git ls-remote); pinar
+        # "main" aqui gravava branch inexistente (eth2=master, aws=mainline).
+        self.var_branch = tk.StringVar(value="")
 
         self._build_ui()
 
@@ -4718,7 +4720,7 @@ class URLEntryDialog(tk.Toplevel):
         # GitHub repo branch field (hidden by default)
         self._github_lbl = ttk.Label(form, text="Branch:")
         self._github_entry = ttk.Entry(form, textvariable=self.var_branch, width=20)
-        self._github_hint = ttk.Label(form, text="(GitHub repo detectado)", style="Muted.TLabel")
+        self._github_hint = ttk.Label(form, text="(GitHub repo detectado; vazio = branch default)", style="Muted.TLabel")
         self._github_row = r
         # Don't grid yet — shown by _check_github
 

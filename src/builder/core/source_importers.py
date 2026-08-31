@@ -263,6 +263,13 @@ def process_github_repo(builder, entry: FileEntry) -> Dict[str, object]:
         "clone_error": None,
     }
     url = entry.source_path
+    # Texto da pagina do repo (README server-rendered) e a UNICA rota de texto
+    # de um github-repo: o clone importa so codigo e nunca preenche
+    # base_markdown, deixando o scorer de unidade/cobertura com 0 chars
+    # (eth2/aws-encryption-sdk no MF). Mesmo mecanismo de file_type=url.
+    url_item = builder._process_url(entry)
+    for key in ("base_markdown", "base_backend", "manual_review"):
+        item[key] = url_item.get(key)
     # tags pinam o branch explicitamente; vazio -> detecta o default do remoto.
     branch = entry.tags.strip() or _detect_default_branch(url)
     slug = entry.id()

@@ -24,6 +24,14 @@ class _Builder:
         self.root_dir = Path(root)
         self.logs = []
 
+    # process_github_repo busca o texto da pagina via a rota de URL do builder
+    def _process_url(self, entry):
+        return {
+            "base_markdown": f"staging/markdown-auto/url_fetcher/{entry.id()}.md",
+            "base_backend": "url_fetcher",
+            "manual_review": None,
+        }
+
 
 def _proc(returncode=0, stdout="", stderr=""):
     p = types.SimpleNamespace()
@@ -101,6 +109,25 @@ def test_clone_command_enables_longpaths(tmp_path):
 
     clone_cmd = next(c for c in calls if _is(c, "clone"))
     assert _is(clone_cmd, "-c") and _is(clone_cmd, "core.longpaths=true")
+
+
+def test_page_text_becomes_base_markdown_even_when_clone_fails(tmp_path):
+    """github-repo sem rota de texto deixava o scorer com 0 chars (eth2/aws no
+    MF): o texto da pagina (via _process_url) vira base_markdown SEMPRE, clone
+    falho incluso."""
+
+    def fake_run(cmd, **kw):
+        if _is(cmd, "ls-remote"):
+            return _proc(0, "ref: refs/heads/main\tHEAD\n")
+        return _proc(128, "", "fatal: Remote branch main not found")
+
+    with patch.object(si.subprocess, "run", side_effect=fake_run):
+        item = si.process_github_repo(_Builder(tmp_path), _github_entry(tags="main"))
+
+    assert item["clone_error"]
+    eid = _github_entry(tags="main").id()
+    assert item["base_markdown"] == f"staging/markdown-auto/url_fetcher/{eid}.md"
+    assert item["base_backend"] == "url_fetcher"
 
 
 def test_clone_uses_explicit_branch_override_without_detection(tmp_path):

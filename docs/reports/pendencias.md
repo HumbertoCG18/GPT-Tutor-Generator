@@ -92,10 +92,26 @@ sessoes (3 feriados + 6 desenvolvimento/apresentacao) — regua magra.
 Tudo abaixo e o que RESTA; o resto do arquivo e historico/executado. Unico bloqueio real do mapa:
 Lab SO <- SARC da turma 310 (user/professor). Nada mais bloqueia nada.
 
-**P1 — Cobertura 55 -> 57 (proximo da fila, handoff 31/08):** MF `eth2` e `aws-encryption-sdk`: bibliografia,
-0 chars ("PRECISA MOODLE" no gold), URLs do GitHub. Falta buscar o TEXTO da pagina (title/README) e dar ao
-scorer. ATENCAO: o gold dos dois e `provenance=proposto-claude` (18/08), NAO ruling do user — confirmar u02
-com ele antes de engenharia grande. Medicao em ~15 s sem reprocessar: `python scripts/harness_cobertura.py`.
+**P1 — Cobertura 55 -> 57: EXECUTADO 31/08, fechou em 56/57 F1 0,982 (teto documentado do aws).**
+Golds u02 CONFIRMADOS por ruling do user 31/08 (notas no material_gt_MF.csv). Raiz do 0 chars: github-repo
+NAO tinha rota de texto (`process_github_repo` clona codigo e nunca preenche `base_markdown`; o clone das 2
+ainda falhava por pin `tags="main"` legado da UI — defaults reais: eth2=master, aws=mainline). Fix de motor:
+`process_github_repo` agora busca o texto da PAGINA do repo (README server-rendered) via `builder._process_url`
+ANTES do clone — mesma rota de file_type=url; UI `URLEntryDialog` nao pina mais "main" (vazio = auto-detect).
+Teste novo `test_page_text_becomes_base_markdown_even_when_clone_fails`. Gate completo: eval_eixos bloco
+199/200 conf-err 0 · unidade 191/191 · **cobertura 56/57 F1 0,982** · subunidade 87/93 (0 campos nos 4 golds)
+· suite 2133 · sentinela = SO as 2 entries (campos honestos) · determinismo ok (2x reprocess, so generated_at).
+- `eth2` FECHOU pelo motor puro: auto_map u02 conf 0,938 com o texto real ("verification"≈"verificacao" via
+  stem6 da rota de topico do A1). coverage_units=u02 ✓.
+- `aws-encryption-sdk` NAO fecha = TETO COM O DADO DISPONIVEL: a pagina raiz (meta-repo) fala criptografia,
+  cita Dafny/verifier de passagem; 0 topicos de qualquer unidade casam; auto_map da u01 (0,637) -> R4.
+  TESTADO E REFUTADO 31/08: concatenar `ref_summary` (Gemini, PT) ao texto -> aws vai para u03 (transpilacao/
+  cripto puxam u03) e eth2 enfraquece 0,938->0,726. Nao retentar sem dado novo. Fechar 57/57 exigiria pino de
+  cobertura (mecanismo NAO existe; pinos 5 sao de unidade) — decisao do user se quiser.
+- Higiene NOVA (fila): import github-repo com clone OK sobrescreve `category` da entry via STUDENT_BRANCHES
+  (master/main => codigo-aluno — bibliografia viraria codigo!) e importa o repo INTEIRO como extracted_files.
+  Por isso o pin errado das 2 entries foi MANTIDO de proposito (clone falha inofensivo, texto vem da pagina).
+  Consertar categoria/escopo do import antes de limpar os pins.
 
 **P2 — Fila antiga (sem bloqueio, ordem sugerida):**
   a) Unidade NUA 134/191: raiz conhecida = DP monotonico assume ordem do plano == ordem do calendario (IA ensina
@@ -461,15 +477,18 @@ producao e o proprio motor (flagados / llm-funil / conf-err -> fila de revisao).
 ## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
 **HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
-ESTADO (`scripts/eval_eixos.py`, as-of **2026-08-31**): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
-convencao ACEITA por ruling 31/08) · unidade **191/191 (100%)** · cobertura **55/57 F1 0,965** (restam so eth2 e
-aws-encryption-sdk, 0 chars) · subunidade **87/93** (4 cursos com gold) · **pinos 5** · cards manuais **1** (TCC
-"Semana 12", MANTIDO por refutacao 31/08) · decisoes humanas de bloco **6** (eram 23) · suite **2132 passed** ·
+ESTADO (`scripts/eval_eixos.py`, as-of **2026-08-31b**): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
+convencao ACEITA por ruling 31/08) · unidade **191/191 (100%)** · cobertura **56/57 F1 0,982** (resta SO
+aws-encryption-sdk — teto documentado, ver P1 EXECUTADO; eth2 fechou pelo motor com o texto da pagina) ·
+subunidade **87/93** (4 cursos com gold) · **pinos 5** · cards manuais **1** (TCC
+"Semana 12", MANTIDO por refutacao 31/08) · decisoes humanas de bloco **6** (eram 23) · suite **2133 passed** ·
 determinismo **6/6** (o "jitter" ferramenta: era convergencia em 1 passo, resolvido 31/08).
 MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py` nos 6): bloco display **194/200** conf-err 2 (205/212 por
-uuid, medido 27/08) · unidade **134/191** · cobertura **54/57** · subunidade ~21/94 (medida 26/08). Dos 7 erros
+uuid, medido 27/08) · unidade **134/191** · cobertura **55/57 F1 0,965** (eth2 fecha ate nu) · subunidade ~21/94
+(medida 26/08). Erros
 nus: 3 ruido do voto (MF, aceitos, ficam os pinos) · 2 convencao sem texto (IA prova-1, ES2 azure — ACEITOS
-31/08) · 2 dominio (TCC aula-17; alias Cook-Levin TESTADO E REFUTADO 31/08 — nao retentar sem sinal novo).
+31/08) · 2 dominio (TCC aula-17; alias Cook-Levin TESTADO E REFUTADO 31/08 — nao retentar sem sinal novo) ·
+1 teto de dado (MF aws, pagina raiz sem vocabulario de verificacao, ver P1 EXECUTADO).
 Gate curado nas copias: 5/6 + IA `p2-202402` (ruido de voto no cache da copia, excecao documentada).
 PUSH (as-of 2026-08-31): gerador `f45fd31`. **Os 6 tutores tem remote privado (HumbertoCG18) e estao 0/0 com
 origin**: MF `0157a2c` · TCC `f90aa98` · IA `60f7271` · SO `b4c336c` · ES2 `3dbd45d` · CG `62c80a0`.
