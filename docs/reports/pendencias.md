@@ -216,9 +216,15 @@ Itens novos da fila (sem data, decisao de priorizar e do user):
     IDENTICO — a versao anterior desta nota dizia "PDFs distintos", inferido dos markdowns que divergem
     por extracao de builds diferentes; `scripts/detecta_duplicatas.py` provou bytes iguais). Categorias
     INCONSISTENTES ("cronograma" vs "outros") — por isso o gate nao e so por categoria.
-  - Detector de headings como script de auditoria (`heading nomeia subunit irma != atribuida, atribuida fora
-    dos headings`): achou os 2 meta do SO que NENHUM gold cobria; rodar pos-reprocess. Calibrar matching
-    label<->heading (substring nos 2 sentidos; caso `devops`).
+  - **EXECUTADO 31/08 (tarde) — Detector de headings virou `scripts/detecta_headings.py`** (read-only,
+    pos-reprocess, sem LLM; +3 testes do nucleo). Matching label<->heading CALIBRADO nos 2 sentidos com
+    piso de 5 chars no lado contido (caso `devops` fecha: heading "DevOps" agora casa "Conceito de
+    DevOps" e o doc legitimo NAO e flagado). Rodada de estreia nos 6 cursos: 11 suspeitos — ES2 `web`
+    FLAGADO (o erro real da familia B: headings citam cliente-servidor, o gold) provando que o padrao
+    seria achado sem gold; SO plano/programa ja nao aparecem (gate do item (a) esvaziou a subunit);
+    demais 10 = docs multi-topico legitimos (TCC aula-02/10 e IA batem gold) ou SEM-GOLD p/ triagem
+    (MF logicapredicados-sintaxe, SO definicao-e-historico, ES2 t1/microsservicos5, TCC aula-14,
+    CG modelos-de-iluminacao). Flag != erro; e fila de triagem humana.
 
 **P3 — Builds pagos (Datalab), quando o user autorizar:**
   - Lab Redes: PRONTO. Stash durable: `Desktop/Moodle/laboratorio-de-redes-de-computadores/stash` (6 arquivos +
