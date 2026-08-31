@@ -145,3 +145,57 @@ def test_clone_uses_explicit_branch_override_without_detection(tmp_path):
 
     clone_cmd = next(c for c in calls if _is(c, "clone"))
     assert _is(clone_cmd, "master")
+
+
+# --- higiene do import (fila 2026-08-31, item f) ----------------------------
+
+
+def test_categoria_nao_codigo_pula_o_clone(tmp_path):
+    """bibliografia (eth2/aws no MF): o valor e o texto da PAGINA; o clone
+    importava o repo INTEIRO como codigo e a heuristica de branch (main/master
+    em STUDENT_BRANCHES) sobrescrevia a categoria da entry para codigo-aluno.
+    Categoria fora de CODE_CATEGORIES: nenhum git roda."""
+    entry = FileEntry(
+        source_path="https://github.com/o/r",
+        file_type="github-repo",
+        category="bibliografia",
+        title="r",
+        tags="",
+    )
+
+    def fake_run(cmd, **kw):
+        raise AssertionError(f"nenhum git deve rodar para bibliografia: {cmd}")
+
+    with patch.object(si.subprocess, "run", side_effect=fake_run):
+        item = si.process_github_repo(_Builder(tmp_path), entry)
+
+    assert item["base_backend"] == "url_fetcher"
+    assert item["clone_error"] is None
+    assert item["extracted_files"] == []
+    assert "category" not in item  # categoria da entry NUNCA e sobrescrita
+
+
+def test_clone_nao_sobrescreve_categoria_e_subentry_herda(tmp_path):
+    """Branch default (main/master) nao diz nada sobre aluno x professor: a
+    categoria da ENTRY manda; sub-entries herdam. Antes: codigo-professor com
+    branch main gerava sub-entries codigo-aluno e trocava a categoria da entry."""
+    def fake_run(cmd, **kw):
+        if _is(cmd, "ls-remote"):
+            return _proc(0, "ref: refs/heads/main\tHEAD\n")
+        d = Path(cmd[-1])
+        d.mkdir(parents=True, exist_ok=True)
+        (d / "prova.py").write_text("print()", encoding="utf-8")
+        return _proc(0)
+
+    vistos = []
+
+    def fake_process_code(builder, sub_entry, raw_target):
+        vistos.append(sub_entry.category)
+        return {"id": sub_entry.id(), "category": sub_entry.category}
+
+    with patch.object(si.subprocess, "run", side_effect=fake_run), \
+         patch.object(si, "process_code", side_effect=fake_process_code):
+        item = si.process_github_repo(_Builder(tmp_path), _github_entry(tags=""))
+
+    assert vistos == ["codigo-professor"]
+    assert "category" not in item
