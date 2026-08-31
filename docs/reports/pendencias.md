@@ -87,6 +87,42 @@ entrega ("Fechamento da parte N", "Apresentacao do T1"); `_exam_number`/prep-pro
 a unica fonte e o Moodle — o pipeline precisa ler `summary` de secao; (6) Lab Redes com ~10 blocos de conteudo em 19
 sessoes (3 feriados + 6 desenvolvimento/apresentacao) — regua magra.
 
+## PENDENTE DE VERDADE (2026-08-31) — ordem de prioridade e bloqueios
+
+Tudo abaixo e o que RESTA; o resto do arquivo e historico/executado. Unico bloqueio real do mapa:
+Lab SO <- SARC da turma 310 (user/professor). Nada mais bloqueia nada.
+
+**P1 — Cobertura 55 -> 57 (proximo da fila, handoff 31/08):** MF `eth2` e `aws-encryption-sdk`: bibliografia,
+0 chars ("PRECISA MOODLE" no gold), URLs do GitHub. Falta buscar o TEXTO da pagina (title/README) e dar ao
+scorer. ATENCAO: o gold dos dois e `provenance=proposto-claude` (18/08), NAO ruling do user — confirmar u02
+com ele antes de engenharia grande. Medicao em ~15 s sem reprocessar: `python scripts/harness_cobertura.py`.
+
+**P2 — Fila antiga (sem bloqueio, ordem sugerida):**
+  a) Unidade NUA 134/191: raiz conhecida = DP monotonico assume ordem do plano == ordem do calendario (IA ensina
+     ML/u05 em marco; curada so fecha com pinos de unidade em IA/ES2). Item de motor: DP robusto a inversao
+     local. Gate: `ablacao_rapida` (unidade nua) antes/depois; curado 191/191 intacto.
+  b) FASE 4 original (exercicios/listas/provas antigas, pedido do user 18/08): estava "depende da cobertura" —
+     cobertura agora esta estavel (55/57, regras medidas) -> DESTRAVADA.
+  c) Housekeeping: mover `dados_artefato.py` + `patch_razao.py` do scratch da sessao p/ `scripts/` (o
+     `harness_cobertura.py` ja foi movido 27/08). Artefato: claude.ai/code/artifact/d2ef4eaa-...
+  d) A1 "grande" (P4 + desempate no MESMO tokenizador/stem6): refactor de higiene; o ganho de regua ja veio no
+     recorte cirurgico. Sem numero prometido.
+  e) MF 30/66 no LLM: ACEITO como fallback legitimo (30/30 certos). So revisitar com assinatura de bloco mais
+     rica, MEDIDA (3 tentativas historicas: 2 pioraram).
+  f) Subunidade 6 residuais (IA): teto documentado; decisao do user pendente sobre gerar `.glossary_curation`
+     por LLM (user ve LLM como fallback).
+
+**P3 — Builds pagos (Datalab), quando o user autorizar:**
+  - Lab Redes: PRONTO. Stash durable: `Desktop/Moodle/laboratorio-de-redes-de-computadores/stash` (6 arquivos +
+    sidecar; roteiros HTML ja impressos em PDF). Cronograma: `--syllabus-url` (export 340, validado 340=340).
+  - Fund. Redes: PRONTO. `Desktop/Moodle/fundamentos-de-redes-de-computadores/stash` (20 arquivos). U<n> cobre
+    19/20 (F7). Cronograma: `--syllabus-url` (320=320).
+  - Lab SO: stash pronto (`Desktop/Moodle/laboratorio-de-sistemas-operacionais/stash`, 19 arquivos, tutoriais
+    impressos) — **BLOQUEADO pelo SARC da turma 310** (o link no Moodle e da 330; ver F14). Nao buildar com o
+    da 330 nem com remap (testado 30/08: ordem bate, datas nao — off-by-one nas fronteiras).
+  - Planos de ensino dos 3: `Desktop/claude-tutor/*.plano.md` (+ PDFs originais e exports SARC em
+    `Desktop/claude-tutor/sarc/`).
+
 ## A1 EXECUTADO (recorte cirurgico): stem6 compartilhado fecha os 3 forks — cobertura 52 -> 55/57 (2026-08-31)
 
 `text/normalize.stem6` (radical de 6 chars, a MESMA convencao do TOPIC_STEM_LEN do motor de bloco) agora e o stem
@@ -425,14 +461,18 @@ producao e o proprio motor (flagados / llm-funil / conf-err -> fila de revisao).
 ## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
 **HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
-ESTADO (`scripts/eval_eixos.py`, as-of 2026-08-27): bloco **199/200** conf-err **0** (o erro = ES2 `azure`, convencao) ·
-unidade **191/191 (100%)** · cobertura **55/57 F1 0,965** · subunidade **87/93** (4 cursos com gold) · **pinos 5** ·
-cards manuais **1** (TCC "Semana 12") · decisoes humanas de bloco **6** (eram 23) · suite **2094 passed** (+1 golden TCC vermelho por jitter `ferramenta:`, ver 28/08).
-MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py`, 81 s): bloco **205/212 por uuid (96,7%)**, display 194/200,
-conf-err 2 · unidade 134/191 · cobertura 34/57 · subunidade ~21/94. Os 7 erros nus restantes: 3 ruido do voto LLM
-(MF), 2 convencao sem texto (IA prova-1-2024-02, ES2 azure), 2 dominio (TCC aula-17 = Cook-Levin).
-PUSH (as-of 2026-08-26): gerador `4ab9acc`; MF `ceffe1f`, IA, TCC sincronizados com `origin`. **SO (`099165a`) e ES2
-sem remote** — so em disco local, sem backup; criar os repos e ligar `origin` e decisao do user.
+ESTADO (`scripts/eval_eixos.py`, as-of **2026-08-31**): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
+convencao ACEITA por ruling 31/08) · unidade **191/191 (100%)** · cobertura **55/57 F1 0,965** (restam so eth2 e
+aws-encryption-sdk, 0 chars) · subunidade **87/93** (4 cursos com gold) · **pinos 5** · cards manuais **1** (TCC
+"Semana 12", MANTIDO por refutacao 31/08) · decisoes humanas de bloco **6** (eram 23) · suite **2132 passed** ·
+determinismo **6/6** (o "jitter" ferramenta: era convergencia em 1 passo, resolvido 31/08).
+MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py` nos 6): bloco display **194/200** conf-err 2 (205/212 por
+uuid, medido 27/08) · unidade **134/191** · cobertura **54/57** · subunidade ~21/94 (medida 26/08). Dos 7 erros
+nus: 3 ruido do voto (MF, aceitos, ficam os pinos) · 2 convencao sem texto (IA prova-1, ES2 azure — ACEITOS
+31/08) · 2 dominio (TCC aula-17; alias Cook-Levin TESTADO E REFUTADO 31/08 — nao retentar sem sinal novo).
+Gate curado nas copias: 5/6 + IA `p2-202402` (ruido de voto no cache da copia, excecao documentada).
+PUSH (as-of 2026-08-31): gerador `f45fd31`. **Os 6 tutores tem remote privado (HumbertoCG18) e estao 0/0 com
+origin**: MF `0157a2c` · TCC `f90aa98` · IA `60f7271` · SO `b4c336c` · ES2 `3dbd45d` · CG `62c80a0`.
 Antes: `docs/reports/2026-08-20-handoff-fechamento-campanha-motor.md`.
 Cobre a sessao inteira (`7e940f5e`, 63 prompts): poda do enxame, regua nova + sweep do gate,
 rotulagem dos 64 casos, limpeza do manifest, eixo de bloco, N:N nos consumidores, fix do
