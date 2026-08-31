@@ -263,7 +263,7 @@ def apply_unit_subunit_fields(
         # Eixo de COBERTURA (N unidades), separado do 1:1 acima. Prova, lista,
         # plano de ensino e serie de laboratorio cobrem mais de uma unidade —
         # forcar uma so e o erro de cardinalidade que travava a medicao.
-        from src.builder.routing.coverage_rules import derive_coverage_units
+        from src.builder.routing.coverage_rules import META_COVERAGE_RULES, derive_coverage_units
         from src.builder.text.normalize import normalize_match_text as _norm_cov
         cobertura = derive_coverage_units(
             entry, unit_index, texto_para_unidade,
@@ -322,11 +322,20 @@ def apply_unit_subunit_fields(
 
         # --- Subunit (rota de tópico, restrita à unidade FINAL reconciliada) ---
         manual_subunit = _collapse_ws(str(entry.get("manual_subunit_slug") or ""))
+        regra_meta = str(cobertura[0].get("rule") or "") if cobertura else ""
         if manual_subunit:
             preferred_topic_slug = manual_subunit
             best_subunit_slug = manual_subunit
             subunit_reasons = ["manual"]
             subunit_confidence = 1.0
+        elif regra_meta in META_COVERAGE_RULES:
+            # Espelho da regra A da cobertura (2026-08-31): doc meta descreve o
+            # curso INTEIRO — subunit vazia e a resposta honesta (SO plano/
+            # programa caiam em evolucao-historica por vocabulario da ementa).
+            preferred_topic_slug = ""
+            best_subunit_slug = ""
+            subunit_reasons = [f"meta-material:{regra_meta}"]
+            subunit_confidence = 0.0
         else:
             # Mesmo texto enriquecido da rota de unidade — montado uma vez só.
             topic_match = auto_map_entry_subtopic_fn(

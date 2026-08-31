@@ -149,6 +149,14 @@ class _Thresholds:
     # blocos de aula adjacentes quando data/topico estao ausentes, sem
     # sobrepor um match forte. Nao rebalanceia thresholds existentes.
     SEQUENCE_BOOST: float = 0.20
+    # Gate de subunit p/ material de REVISAO (2026-08-31): revisao cujo vencedor
+    # nao domina esta revisando conteudo de fora da taxonomia (pre-requisito,
+    # prova) — slug vazio e a resposta honesta. Medido nos 4 cursos com gold:
+    # revisoes mono-assunto legitimas pontuam >=8.97 (TCC aula-01, ES2
+    # revisaoarquiteturapadroes); as multi-assunto/pre-requisito <=5.67 (TCC
+    # aula-06 3.24, ES2 revisao-p1/p2 4.72-5.67). Piso no meio do gap; NAO e
+    # piso global — certos legitimos sem "revisao" vivem com ws 1.04-4.32.
+    SUBUNIT_REVISAO_FLOOR: float = 7.0
 
 
 T = _Thresholds()

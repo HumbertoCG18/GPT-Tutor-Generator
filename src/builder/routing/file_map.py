@@ -163,6 +163,11 @@ def build_file_map_unit_index(
     return indexed
 
 
+# "Revisão", "revisao", "revisões" no titulo ou no id (o id preserva fronteira
+# de palavra onde o titulo usa "_", mesmo criterio do _PROVA_RE da cobertura).
+_REVISAO_RE = re.compile(r"\brevis", re.IGNORECASE)
+
+
 def auto_map_entry_subtopic(
     entry: dict,
     taxonomy: dict,
@@ -217,6 +222,20 @@ def auto_map_entry_subtopic(
             confidence=0.0,
             ambiguous=True,
             reasons=[f"empate-exato {tied}x score={winner_score:.2f}"],
+        )
+    # Material de REVISAO sem assunto dominante revisa conteudo de fora da
+    # taxonomia (pre-requisito, prova) — caso real: TCC aula-06 revisa a
+    # cadeira de automatos e cairia em argumento-diagonal por vocabulario.
+    # Escopado a titulo/id de revisao: piso global e refutado (thresholds).
+    titulo_e_id = f"{entry.get('title') or ''} {entry.get('id') or ''}"
+    if _REVISAO_RE.search(titulo_e_id) and winner_score < T.SUBUNIT_REVISAO_FLOOR:
+        return topic_match_result_factory(
+            topic_slug="",
+            topic_label="",
+            unit_slug="",
+            confidence=0.0,
+            ambiguous=True,
+            reasons=[f"revisao-sem-assunto-dominante (winner_score={winner_score:.2f} < {T.SUBUNIT_REVISAO_FLOOR})"],
         )
     if len(scored) == 1:
         confidence = 0.72

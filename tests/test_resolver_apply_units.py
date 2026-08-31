@@ -202,3 +202,48 @@ def test_resumo_de_codigo_alimenta_a_rota_de_UNIDADE_tambem():
     assert "Service Discovery" in texto or "Microsservicos" in texto, (
         f"resumo do codigo nao chegou na rota de unidade: {texto!r}"
     )
+
+
+def test_meta_material_por_categoria_zera_subunit():
+    # Item (a) 2026-08-31, espelho da regra A da cobertura: doc meta (cronograma)
+    # descreve o curso INTEIRO — nao pertence a subunidade nenhuma. Caso real:
+    # SO/TCC plano-de-ensino (subunit indevida evolucao-historica).
+    e = _entry(category="cronograma")
+    m = SimpleNamespace(slug="u2", confidence=0.9, ambiguous=False, reasons=[])
+    fns = _fns(m)
+    fns["auto_map_entry_subtopic_fn"] = lambda e_, tax, md, winning_unit_slug="": SimpleNamespace(
+        topic_slug="t-indevido", topic_label="", unit_slug="u2",
+        confidence=0.9, ambiguous=False, reasons=["topico"])
+    out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **fns)
+    assert out[0]["computed_subunit_slug"] == ""
+    assert any(r.startswith("meta-material") for r in out[0]["subunit_match_reasons"])
+    assert not any(t.startswith("subunit:") for t in out[0]["auto_tags"])
+
+
+def test_meta_material_por_conteudo_zera_subunit():
+    # Braco por CONTEUDO (categoria nao basta: SO `programa` e categoria
+    # "outros" mas cita todas as unidades — mesmo arquivo do plano-de-ensino).
+    from pathlib import Path
+    e = _entry(category="outros")
+    m = SimpleNamespace(slug="u2", confidence=0.9, ambiguous=False, reasons=[])
+    fns = _fns(m)
+    fns["build_file_map_unit_index_from_course_fn"] = lambda cm, sp: [
+        {"slug": "u1", "normalized_title": "gerencia de processos"},
+        {"slug": "u2", "normalized_title": "gerencia de memoria"},
+    ]
+    fns["entry_markdown_text_for_file_map_fn"] = lambda root, e_: (
+        "EMENTA: gerencia de processos e gerencia de memoria"
+    )
+    fns["auto_map_entry_subtopic_fn"] = lambda e_, tax, md, winning_unit_slug="": SimpleNamespace(
+        topic_slug="t-indevido", topic_label="", unit_slug="u2",
+        confidence=0.9, ambiguous=False, reasons=["topico"])
+    out = apply_unit_subunit_fields([e], BLOCKS, {}, None, Path("."), {}, **fns)
+    assert out[0]["computed_subunit_slug"] == ""
+    assert any(r.startswith("meta-material") for r in out[0]["subunit_match_reasons"])
+
+
+def test_manual_subunit_vence_gate_de_meta():
+    e = _entry(category="cronograma", manual_subunit_slug="sman")
+    m = SimpleNamespace(slug="u2", confidence=0.9, ambiguous=False, reasons=[])
+    out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **_fns(m))
+    assert out[0]["computed_subunit_slug"] == "sman"

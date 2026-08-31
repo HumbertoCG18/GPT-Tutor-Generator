@@ -40,6 +40,10 @@ from src.builder.text.stopwords import UNIT_STRUCTURAL_TOKENS
 # So um atalho: a deteccao real e por conteudo (`_FRACAO_META`), porque
 # `apresentacao-da-disciplina` e `material-de-aula` e `programa` e `outros`.
 META_CATEGORIES: frozenset = frozenset({"cronograma"})
+# Rules de cobertura que marcam material META (descreve o curso inteiro).
+# Consumido tambem pelo gate de subunit (resolver_apply): doc meta nao
+# pertence a subunidade nenhuma.
+META_COVERAGE_RULES: frozenset = frozenset({"meta", "meta-por-conteudo"})
 # Fracao dos titulos de unidade que o texto precisa citar para ser meta.
 # Medido no SO: plano/programa/apresentacao citam 7 de 7; a lista P1 cita 1 de 7.
 _FRACAO_META = 0.8

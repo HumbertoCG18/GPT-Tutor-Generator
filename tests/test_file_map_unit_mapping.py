@@ -1803,3 +1803,95 @@ def test_topico_sem_vocabulario_proprio_nao_ganha_bonus_fantasma():
                "legacy_tags_text": "", "raw_text": ""}
 
     assert _score_entry_against_taxonomy_topic(signals, topico) == 0.0
+
+
+def _revisao_taxonomy():
+    return {
+        "version": 1,
+        "course_slug": "metodos-formais",
+        "units": [
+            {
+                "slug": "unidade-02-verificacao-de-programas",
+                "title": "Unidade 2 - Verificacao de Programas",
+                "topics": [
+                    {
+                        "slug": "topico-a",
+                        "label": "Alfa de Hoare",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    },
+                    {
+                        "slug": "topico-b",
+                        "label": "Gama de Dijkstra",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    },
+                ],
+            },
+        ],
+    }
+
+
+def test_auto_map_entry_subtopic_revisao_sem_assunto_dominante_fica_vazio():
+    # Item (a) 2026-08-31: aula de "revisao" cujo vocabulario nao acerta NENHUMA
+    # subunit com forca revisa conteudo de FORA da taxonomia (pre-requisito,
+    # prova) — slug vazio e a resposta honesta. Caso real: TCC aula-06 (revisao
+    # de automatos da cadeira anterior, winner_score=3.24, gold VAZIO).
+    entry = {
+        "title": "Revisão Alfabeto, Cadeia, Linguagem e Propriedades",
+        "category": "material-de-aula",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/pdfs/material-de-aula/revisao.pdf",
+    }
+    markdown = (
+        "# Alfabeto e cadeias\n\nConteudo extenso sobre automatos da cadeira "
+        "anterior.\n\nNo fim, uma mencao tardia a alfa de hoare.\n"
+    )
+    result = _auto_map_entry_subtopic(entry, _revisao_taxonomy(), markdown)
+
+    assert result.topic_slug == ""
+    assert result.confidence == 0.0
+    assert result.ambiguous is True
+    assert any("revisao-sem-assunto-dominante" in r for r in result.reasons)
+
+
+def test_auto_map_entry_subtopic_revisao_mono_assunto_legitima_mantem_slug():
+    # Armadilha (ii) do handoff 31/08: revisao LEGITIMAMENTE mono-assunto
+    # (TCC aula-01 ws=8.97, ES2 revisaoarquiteturapadroes ws=15.81) pontua
+    # acima do piso e NAO pode ser esvaziada.
+    entry = {
+        "title": "Revisão Alfa de Hoare",
+        "category": "material-de-aula",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/pdfs/material-de-aula/revisao-alfa.pdf",
+    }
+    markdown = "# Alfa de Hoare\n\nRevisao aprofundada de alfa de hoare.\n"
+    result = _auto_map_entry_subtopic(entry, _revisao_taxonomy(), markdown)
+
+    assert result.topic_slug == "topico-a"
+
+
+def test_auto_map_entry_subtopic_nao_revisao_fraca_mantem_slug():
+    # O piso e ESCOPADO a materiais de revisao: score fraco em material comum
+    # continua best-effort (certos legitimos medidos com ws 1.04-4.32).
+    entry = {
+        "title": "Exemplo de Uso no Unix",
+        "category": "material-de-aula",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/pdfs/material-de-aula/exemplo-unix.pdf",
+    }
+    markdown = (
+        "# Exemplo pratico\n\nCodigo extenso do exemplo no unix.\n\n"
+        "No fim, uma mencao tardia a alfa de hoare.\n"
+    )
+    result = _auto_map_entry_subtopic(entry, _revisao_taxonomy(), markdown)
+
+    assert result.topic_slug == "topico-a"
