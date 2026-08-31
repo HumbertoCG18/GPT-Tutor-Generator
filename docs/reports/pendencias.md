@@ -163,7 +163,11 @@ Preview nos novos: Lab Redes **4/6 ancorados** pelo card `[03/08]`; FR 0/20 (esp
   descricao. **EXECUTADO**: `moodle_pull` agora manda resource-html pelo MESMO caminho das paginas (raw + print
   PDF -> Datalab no build), tipo `material-pagina-arquivo`, sinal `resource-html`; sidecar de nomes aponta p/ o
   .pdf. Rota HTML->markdown direta DESCARTADA por decisao do user (perderia a descricao de imagem do Datalab).
-  Validacao com pull real PENDENTE: token do Moodle EXPIROU (invalidtoken em site_info) — user renova em moddle/.env.
+  Validado com pull real (31/08, token renovado AUTOMATICAMENTE via `moodle_token.ensure_moodle_token` +
+  MOODLE_USER/MOODLE_PASS no .env local): Lab Redes --pdf -> "Lab 1 - Wireshark" 4 pags/**6 imagens**, DHCP 3 pags,
+  DNS 3 pags, todos `material-pagina-arquivo -> print` no stash; cronograma SARC aceito (340=340); review restante
+  so wireshark.org (externo, correto). Cards sanitizados viram `[10.08]` (ponto) — o F9 ja aceita. Stash do Lab
+  Redes PRONTO para build.
 - F14 **RESOLVIDO DE VEZ (30/08, descoberta do USER): o professor postou no Moodle o link do SARC da TURMA
   ERRADA.** Cabecalho do export: "4646I-4 Laboratorio de Sistemas Operacionais **(330)**"; shortname do Moodle:
   "4646I-04**310**262" (turma 310). A 330 e TER/QUI 17:30; a 310 do user e QUA/SEX — e as datas dos arquivos
