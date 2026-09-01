@@ -144,6 +144,18 @@ class _Thresholds:
     MARGIN_K: float = 0.18
     MARGIN_K_TOPIC: float = 0.20
     # roteamento entry->unidade (file_map.auto_map_entry_unit)
+    # F-4 INVESTIGADO 2026-09-01 (era "2 constantes mortas" na auditoria 18/08;
+    # o sweep de 72 linhas nao via efeito). Veredito com prova:
+    # - UNIT_MATCH_REL_MARGIN e REDUNDANTE POR MATEMATICA com o gate UNIT_TAG:
+    #   relative_margin_confidence = rel*(0.55+0.45*strength) <= rel, entao
+    #   conf >= 0.50 EXIGE rel_margin >= 0.50 >> 0.15 — quando o criterio
+    #   marcaria ambiguo, a conf ja esta abaixo do gate. Efeito residual e so
+    #   display (cap 0.4 + reason "ambiguous" no editor). MANTIDO como
+    #   cinto-e-suspensorio barato; morre junto se a formula mudar.
+    # - UNIT_MATCH_MIN_WINNER e PROTECAO DE CAUDA viva em teoria: winner fraco
+    #   (0.4, 1 token acidental) com runner_up ~0 da rel~1.0 -> conf ~0.62 e
+    #   passaria sem o piso. Zero casos no corpus atual — e por isso o sweep
+    #   nao o via; MANTIDO pela cauda.
     # UNIT_MATCH_REL_MARGIN: gate de margem RELATIVA — winner deve superar o
     #   runner_up em >=15% para nao ser ambiguo (valor historico ja em uso).
     # UNIT_MATCH_MIN_WINNER: piso ABSOLUTO de score do vencedor. Sem ele, um

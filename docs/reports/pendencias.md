@@ -2284,11 +2284,17 @@ o ES2 fica igual (8/27) porque a reconciliacao segura.
   `MARGIN_K_TOPIC` 0.20 · `UNIT_MATCH_REL_MARGIN` 0.15 · `UNIT_MATCH_MIN_WINNER` 0.5 ·
   `SEQUENCE_BOOST` 0.20. `SUBUNIT_TAG` e o analogo direto do gate que acabou de mover 15 pontos
   — e nao existe regua de subunidade. Dois ja provados mortos (F-4).
-  > NOTA da triagem C (01/09): agora EXISTE regua de subunidade (93 golds, 90/93) — um sweep de
-  > SUBUNIT_TAG virou possivel; `SUBUNIT_REVISAO_FLOOR` novo ja nasceu com prova (gap medido).
+  > NOTA da triagem C (01/09): agora EXISTE regua de subunidade (93 golds, 90/93). **SWEEP DO
+  > SUBUNIT_TAG EXECUTADO (leva 1, 01/09): 0.60 -> 0.10 — tag-errada=0 em todo threshold, o 0.60
+  > so omitia 27 tags certas; tabela no thresholds.py; 54 campos de auto_tags nos 6, zero campo
+  > de motor.** `SUBUNIT_REVISAO_FLOOR` ja nasceu com prova (gap medido).
   > Os demais itens B-1/B-3/B-4/B-5/B-6/B-7/B-8, F-4, A-5, J-2, K-4 SEGUEM como higiene
   > documentada com dano zero medido — nada deles bloqueia; A-5 e familia-B-adjacente (teto).
-- [CODE] **F-4 · dois thresholds sao CONSTANTES MORTAS** (`as-of 2026-08-18b`).
+- [CODE] ~~F-4 · dois thresholds sao CONSTANTES MORTAS~~ **INVESTIGADO E FECHADO (leva 1, 01/09),
+  prova no thresholds.py**: REL_MARGIN e redundante POR MATEMATICA com o gate UNIT_TAG (conf>=0.50
+  exige rel>=0.50>>0.15 sob a formula relativa — por isso o sweep nunca via efeito); MIN_WINNER e
+  protecao de cauda viva em teoria (winner fraco + runner 0 -> conf 0.62 passaria), zero casos no
+  corpus. MANTIDOS os dois (cauda real; deletar = risco por zero ganho). Era:
   `UNIT_MATCH_MIN_WINNER` (0,5) e `UNIT_MATCH_REL_MARGIN` (0,15) dao resultado IDENTICO nas 72
   linhas do sweep (testados 0,5/0,3/0,15 e 0,15/0,10). Nenhum discrimina nada no corpus atual.
   Ou o piso esta frouxo demais para morder, ou `ambiguous` ja foi decidido antes por outra
@@ -2396,12 +2402,18 @@ ja existe: `semantic_defaults.json`, 11 entradas, todas provadores.
   vivo (`as-of 2026-08-18`): MF `formal`,`programas`,`modelos`,`invariantes`,`hoare`,`sobre` ·
   TCC `hierarquia`,`propriedades`,`cook-levin`,`np-completude` · SO `threads` · ES2
   `cliente-servidor`,`devops`. Fix: parar de inferir; usar defaults curados + override por curso.
-- [CODE] **B-3 · o filtro de ferramenta e SUBTRATIVO — erro categorico** (`content_taxonomy.py:159`).
+- [CODE] ~~B-3 · o filtro de ferramenta e SUBTRATIVO~~ **VENCIDO (leva 1, 01/09, re-medido): as 3
+  vitimas reais (multithreads SO, cook-levin e np-completude TCC) estao NA taxonomia — a isencao de
+  topico-do-plano (18/08) as salvou; o plano MF nao lista Dafny como topico; o filtro so alcanca
+  HEADING, onde e defensavel (heading 'Isabelle' nao deve virar topico).** Era:
   Ser ferramenta nunca deveria apagar topico. Dafny e ferramenta E topico do MF. Fix: tirar
   `_looks_like_tool_candidate` de `_is_valid_topic_candidate`; `known_tools` so ADICIONA
   `ferramenta:`. Derruba `tests/test_taxonomy_topic_loss.py:111-112` — que pina `Uso de threads`
   e `Provas de NP-Completude` como ferramenta, sendo ambos topico. Devem cair.
-- [CODE] **B-4 · fix assimetrico: `_extract_tool_candidates` ficou com substring cru**
+- [CODE] ~~B-4 · fix assimetrico: substring cru~~ **EXECUTADO (leva 1, 01/09): `_tool_matches`
+  fonte unica com fronteira nos 2 caminhos (+teste). Efeito no motor ZERO medido (regua identica,
+  sentinela 0); o lixo restante do catalogo (ferramenta:formal/sobre) e VOCABULARIO inferido —
+  B-1 — casando palavra exata, mais catalogo possivelmente stale (B-8).** Era:
   (`content_taxonomy.py:202` vs `:101` que ganhou fronteira). Duas copias da mesma logica de
   match — extrair helper. Efeito: `"Especificacao informal de requisitos"` -> `ferramenta:formal`.
   MF tem 20 `ferramenta:` contra 18 `topico:` no catalogo (`as-of 2026-08-18`).
