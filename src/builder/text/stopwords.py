@@ -115,3 +115,34 @@ UNIT_MATCHER_STOPWORDS: frozenset = frozenset({
 CARD_BLOCK_STOP: frozenset = frozenset({
     "a", "da", "de", "do", "e", "em", "o", "of", "para", "por", "the",
 })
+
+
+# Palavras-funcao PT curtas (2-3 chars): NUNCA viram vocabulario consagrado de
+# curso (short-vocab, 2026-09-01) mesmo aparecendo em label de topico — "Redes
+# SEM fio" consagra "fio", nao "sem". Preposicoes/artigos/conjuncoes apenas;
+# "pre"/"pos" (Pre e Pos Condicoes, MF) sao DISTINTIVOS e ficam de fora daqui.
+SHORT_FUNCTION_WORDS_PT: frozenset = frozenset({
+    "de", "e", "a", "o", "da", "do", "em", "com", "por", "as", "os",
+    "na", "no", "ao", "aos", "das", "dos", "um", "uma", "uns", "sem",
+    "sob", "ou", "que", "se", "ate", "mas", "ja", "la", "seu", "sua",
+})
+
+
+def short_vocab_from_topic_labels(labels) -> frozenset:
+    """Tokens CURTOS (2-3 chars) consagrados pelos LABELS de topico do curso.
+
+    Fenomeno medido no holdout FR (2026-09-01): os tokenizadores cortam
+    len<4 e o plano de redes so usa SIGLAS ("Protocolo TCP/UDP/ARP/ICMP",
+    "Modelos OSI e TCP/IP") — o unico token distintivo desses labels era
+    invisivel e o scorer de subunidade decidia por migalhas (02-modelos
+    conf 0.92 ERRADO; 05-dns em 'usuario' com dns invisivel). A allowlist e
+    POR CURSO e vem do proprio plano: "tcp" vale no FR porque um label o
+    consagra; segue ruido no MF, onde nenhum label o tem. CG (2d/3d/ray),
+    TCC (np) e ES2 (ci/cd) tem o mesmo fenomeno em menor grau.
+    """
+    vocab = set()
+    for label in labels or []:
+        for token in str(label or "").split():
+            if 2 <= len(token) <= 3 and token not in SHORT_FUNCTION_WORDS_PT and not token.isdigit():
+                vocab.add(token)
+    return frozenset(vocab)

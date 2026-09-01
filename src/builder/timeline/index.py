@@ -1724,8 +1724,14 @@ def _iter_content_taxonomy_topics(taxonomy: dict) -> List[dict]:
     seen = set()
     # A2: genericos de unidade POR CURSO (df sobre as unidades da taxonomia), carimbados em cada
     # topico para o scorer de subunidade; modo em UNIT_GENERIC_MODE (lista = constante de antes).
-    from src.builder.text.stopwords import resolve_unit_generic_tokens
+    from src.builder.text.stopwords import resolve_unit_generic_tokens, short_vocab_from_topic_labels
     _units = (taxonomy or {}).get("units", []) or []
+    # Short-vocab POR CURSO (2026-09-01): tokens curtos consagrados pelos labels
+    # ("Protocolo TCP" do FR consagra "tcp") — carimbado como generic_tokens.
+    _short_vocab = sorted(short_vocab_from_topic_labels([
+        _normalize_match_text(str(t.get("label") or ""))
+        for u in _units for t in (u.get("topics") or [])
+    ]))
     _resolved = resolve_unit_generic_tokens(
         [(str(u.get("title") or u.get("slug") or "").replace("-", " "),
           [str(t.get("label") or "") for t in (u.get("topics") or [])]) for u in _units],
@@ -1752,6 +1758,7 @@ def _iter_content_taxonomy_topics(taxonomy: dict) -> List[dict]:
                     "topic_code": str(topic.get("code", "") or ""),
                     "kind": str(topic.get("kind", "") or "topic"),
                     "generic_tokens": _generic,
+                    "short_vocab": _short_vocab,
                     "aliases": [str(alias) for alias in (topic.get("aliases", []) or []) if _collapse_ws(str(alias))],
                 }
             )
@@ -1804,38 +1811,52 @@ def _score_entry_against_taxonomy_topic(signals: dict, topic: dict, *, stem_fall
                 exact_hits += 1
 
     _generic = set(topic.get("generic_tokens") or []) or UNIT_GENERIC_TOKENS  # A2: por curso
+    # Short-vocab (2026-09-01): sigla consagrada por LABEL do curso conta como
+    # token apesar de len<4 — o plano do FR so usa siglas ("Protocolo TCP") e o
+    # corte deixava o scorer decidir por migalhas (02-modelos conf 0.92 errado).
+    _short = set(topic.get("short_vocab") or [])
+
+    def _conta(token: str) -> bool:
+        return len(token) >= 4 or token in _short
+
     topic_tokens = {
         token
         for token in _normalize_match_text(label).split()
-        if len(token) >= 4 and token not in _generic
+        if _conta(token) and token not in _generic
     }
     if topic_slug:
         topic_tokens.update(
             token
             for token in _normalize_match_text(topic_slug.replace("-", " ")).split()
-            if len(token) >= 4 and token not in _generic
+            if _conta(token) and token not in _generic
         )
     for alias in aliases:
         topic_tokens.update(
             token
             for token in _normalize_match_text(alias).split()
-            if len(token) >= 4 and token not in _generic
+            if _conta(token) and token not in _generic
         )
 
+    # Token curto consagrado so conta vindo de campo FORTE (heading/titulo/
+    # tags/nome de arquivo — onde a sigla e escolha deliberada do professor):
+    # sigla no heading e o caso FR; sigla solta no corpo/lead e ruido em
+    # qualquer texto do dominio (em doc curto o lead engole o corpo inteiro,
+    # e mencao tardia nao pode virar vencedor).
+    _campos = [
+        (markdown_headings_text, True),
+        (title_text, True),
+        (markdown_lead_text, False),
+        (manual_tags_text, True),
+        (markdown_text, False),
+        (auto_tags_text, True),
+        (legacy_tags_text, False),
+        (raw_text, True),
+    ]
     signal_tokens = {
         token
-        for text, _weight in [
-            (markdown_headings_text, 1.0),
-            (title_text, 1.0),
-            (markdown_lead_text, 1.0),
-            (manual_tags_text, 1.0),
-            (markdown_text, 1.0),
-            (auto_tags_text, 1.0),
-            (legacy_tags_text, 1.0),
-            (raw_text, 1.0),
-        ]
+        for text, forte in _campos
         for token in text.split()
-        if len(token) >= 4
+        if len(token) >= 4 or (forte and token in _short)
     }
     overlap = topic_tokens & signal_tokens
     if not topic_tokens:

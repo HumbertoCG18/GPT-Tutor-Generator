@@ -138,7 +138,12 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         # S1 (P4): split camelCase SÓ no título — "LogicaDeHoare2" vira
         # "logica de hoare 2" e casa com o topic do bloco. Markdown/tags intactos.
         "title_text": normalize_match_text(split_camel_case(entry.get("title", ""))),
-        "markdown_headings_text": normalize_match_text(" ".join(_extract_markdown_headings(markdown_text))),
+        # limit=24 (2026-09-01): o default 8 parava no 8o heading e num
+        # slide-deck (formato dominante das aulas) o corpo estrutural fica
+        # invisivel — FR 02-modelos tinha "TCP/IP" no 17o heading e a subunit
+        # certa perdia o token no campo forte. So AQUI (scorer de entry); os
+        # strong_headings da taxonomia seguem com o default.
+        "markdown_headings_text": normalize_match_text(" ".join(_extract_markdown_headings(markdown_text, limit=24))),
         "markdown_lead_text": normalize_match_text(extract_markdown_lead_text(markdown_text)),
         "category_text": normalize_match_text(entry.get("category", "")),
         "manual_tags_text": normalize_match_text("; ".join(manual_tags)),

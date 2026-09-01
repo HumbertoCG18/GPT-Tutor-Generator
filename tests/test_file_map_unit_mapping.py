@@ -1895,3 +1895,53 @@ def test_auto_map_entry_subtopic_nao_revisao_fraca_mantem_slug():
     result = _auto_map_entry_subtopic(entry, _revisao_taxonomy(), markdown)
 
     assert result.topic_slug == "topico-a"
+
+
+def test_auto_map_entry_subtopic_sigla_consagrada_pelo_plano_decide():
+    """Short-vocab (2026-09-01, fenomeno do holdout FR): o plano de redes so
+    usa SIGLAS e os tokenizadores cortavam len<4 — "Modelos OSI e TCP/IP"
+    reduzia a 'modelos' e o material de OSI/TCP-IP caia no label irmao de
+    tokens longos (02-modelos conf 0.92 ERRADO). Token curto consagrado por
+    LABEL do curso passa a contar."""
+    taxonomy = {
+        "version": 1,
+        "course_slug": "fundamentos-de-redes",
+        "units": [
+            {
+                "slug": "unidade-01-introducao",
+                "title": "Unidade 01 - Introducao a redes",
+                "topics": [
+                    {
+                        "slug": "conceitos-de-redes-de-computadores-e-internet",
+                        "label": "Conceitos de redes de computadores e Internet",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-01-introducao",
+                    },
+                    {
+                        "slug": "modelos-osi-e-tcpip",
+                        "label": "Modelos OSI e TCP/IP",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-01-introducao",
+                    },
+                ],
+            },
+        ],
+    }
+    entry = {
+        "title": "02 - Modelos de Referencia",
+        "category": "material-de-aula",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/pdfs/material-de-aula/02-modelos-de-referencia.pdf",
+    }
+    markdown = (
+        "# Modelos de Referencia\n\n## Modelo OSI\n\nAs redes de computadores da "
+        "internet usam camadas.\n\n## TCP/IP\n\nOSI versus TCP/IP nas redes de "
+        "computadores. O modelo OSI define camadas; TCP/IP define a arquitetura "
+        "da internet para computadores em rede.\n"
+    )
+    result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
+    assert result.topic_slug == "modelos-osi-e-tcpip"
