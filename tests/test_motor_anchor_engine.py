@@ -260,15 +260,25 @@ def test_trabalho_com_janela_multipla_nao_usa_token_de_conteudo():
 # antes da N-esima prova PRINCIPAL (substituicao/entrega nao contam; suspended,
 # feriado, atendimento e a propria prova nao hospedam). Gold: 7/7 nos 5 cursos.
 def _ctx_provas():
+    # Contrato real (dump 01/09 dos 6 cursos): bloco de prova principal tem
+    # topic_text VAZIO e o rotulo "prova pN" na LABEL da sessao; PS carrega
+    # "substituicao"; G2 "prova g2"; resquicio LightGrey vira assessment com
+    # label "aula" (SO-27/IA-24) e NAO conta como principal (D1).
     return MotorContext.from_artifacts(
         blocks=[{"id": "bloco-01", "kind": "class", "period_start": "2026-03-02"},
                 {"id": "bloco-02", "kind": "review", "period_start": "2026-04-15"},
                 {"id": "bloco-03", "kind": "suspended", "period_start": "2026-04-20", "topic_text": "suspensao"},
-                {"id": "bloco-04", "kind": "assessment", "period_start": "2026-04-22"},
+                {"id": "bloco-04", "kind": "assessment", "period_start": "2026-04-22",
+                 "sessions": [{"label": "prova p1 prova"}]},
                 {"id": "bloco-05", "kind": "class", "period_start": "2026-06-16"},
                 {"id": "bloco-06", "kind": "office_hours", "period_start": "2026-06-23"},
-                {"id": "bloco-07", "kind": "assessment", "period_start": "2026-06-25"},
-                {"id": "bloco-08", "kind": "assessment", "period_start": "2026-06-30", "topic_text": "substituicao"}],
+                {"id": "bloco-07", "kind": "assessment", "period_start": "2026-06-25",
+                 "sessions": [{"label": "prova p2 entrega do t2 prova"}]},
+                {"id": "bloco-08", "kind": "assessment", "period_start": "2026-06-30", "topic_text": "substituicao"},
+                {"id": "bloco-09", "kind": "assessment", "period_start": "2026-07-07",
+                 "sessions": [{"label": "prova g2 prova de g2"}]},
+                {"id": "bloco-10", "kind": "assessment", "period_start": "2026-07-14",
+                 "sessions": [{"label": "aula"}]}],
         card_block_map={}, lessons_index={})
 
 
@@ -326,7 +336,8 @@ def _ctx_prep_janela():
         blocks=[{"id": "bloco-05", "kind": "class", "period_start": "2026-03-30", "topic_text": "inducao arvores"},
                 {"id": "bloco-06", "kind": "class", "period_start": "2026-04-06", "topic_text": "isabelle"},
                 {"id": "bloco-07", "kind": "review", "period_start": "2026-04-15"},
-                {"id": "bloco-09", "kind": "assessment", "period_start": "2026-04-22"}],
+                {"id": "bloco-09", "kind": "assessment", "period_start": "2026-04-22",
+                 "sessions": [{"label": "prova p1 prova"}]}],
         card_block_map={}, lessons_index={})
 
 
@@ -357,3 +368,29 @@ def test_gabarito_da_revisao_e_preparacao_mesmo_com_categoria_provas(monkeypatch
 def test_prova_antiga_nao_e_material_de_preparacao():
     assert ae.is_exam_prep_material({"id": "prova-1-2024-02", "category": "provas",
                                      "title": "Prova 1 2024/02", "source_section": "TDE"}) is False
+
+
+def test_is_main_exam_block_d1_padroes_reais():
+    """D1: rotulo P<n>/'Prova N' decide; PS/G2/PF/mudo nunca. Padroes copiados
+    do dump real dos 6 cursos (01/09)."""
+    def bloco(label, kind="assessment", topic=""):
+        return {"kind": kind, "topic_text": topic, "sessions": [{"label": label}]}
+    assert ae.is_main_exam_block(bloco("prova p1 prova"))
+    assert ae.is_main_exam_block(bloco("p1 prova"))                       # SO
+    assert ae.is_main_exam_block(bloco("prova 1 prova"))                  # IA
+    assert ae.is_main_exam_block(bloco("prova p2 entrega do t2 prova", topic="entrega"))  # MF/ES2: entrega junto NAO derruba
+    assert not ae.is_main_exam_block(bloco("prova g2 prova de g2"))
+    assert not ae.is_main_exam_block(bloco("prova ps prova de substituicao", topic="substituicao"))
+    assert not ae.is_main_exam_block(bloco("aula"))                        # SO-27/IA-24: mudo
+    assert not ae.is_main_exam_block(bloco("atendimento a duvidas aula"))  # TCC-34
+    assert not ae.is_main_exam_block(bloco("prova p1 prova", kind="review"))
+    assert not ae.is_main_exam_block(bloco("prova final"))
+    assert not ae.is_main_exam_block(bloco("apresentacao tp1 parte 1"))    # tp1 nao e p1
+
+
+def test_prep_prova_p2_ancora_antes_da_p2_real_nao_da_g2():
+    """Antes do D1 a P2 do MF ('entrega' no topic) saia das mains e a G2 (topic
+    vazio) entrava — a prep-P2 ancorava na G2."""
+    d = ae.resolve_exam_prep({"id": "lista-exercicios-p2", "category": "listas",
+                              "source_section": "Informações Gerais"}, _ctx_provas())
+    assert d is not None and d.block_ref == "bloco-05"

@@ -52,7 +52,13 @@ AVALIACAO_CATEGORIES: frozenset = frozenset({"listas", "gabaritos", "provas"})
 # "P1", "Prova 2", "Av3", "Lista1" — avaliacao com escopo definido.
 _PROVA_RE = re.compile(r"\b(?:p|prova|av|lista)\s*-?\s*([12345])\b", re.IGNORECASE)
 # R7: avaliacao sem escopo parcial — cobre a disciplina inteira por natureza.
-_AVALIACAO_GLOBAL_RE = re.compile(r"\benade\b|\bconcurso\b|\b(?:prova|exame)\s+final\b", re.IGNORECASE)
+# D1 (ruling 28/08): PS (substitutiva) e G2 (recuperacao) cobrem o SEMESTRE
+# INTEIRO (mesmo conteudo, sem escopo parcial) — material delas e global.
+_AVALIACAO_GLOBAL_RE = re.compile(
+    r"\benade\b|\bconcurso\b|\b(?:prova|exame)\s+final\b"
+    r"|\bprova\s+(?:ps|g2)\b|\bsubstitutiva\b|\brecupera[cç][aã]o\b",
+    re.IGNORECASE,
+)
 # R5: material pratico (roteiro de lab) — "Roteiro2" nao tem fronteira de palavra apos o nome.
 _PRATICA_RE = re.compile(r"(?<![a-z])(?:roteiro|laborat[oó]rio|lab|pr[aá]tica|hands-?on|tutorial)(?![a-z])", re.IGNORECASE)
 # Um topico so nao sustenta a unidade inteira: exige 2 topicos OU o titulo dela.
@@ -98,11 +104,10 @@ def _casa(frase: str, alvo: str, generico: frozenset = frozenset()) -> bool:
 def _unidades_da_janela_da_prova(blocks: Optional[List[dict]], n: int) -> List[str]:
     """R6: unidades dos blocos de conteudo entre a prova principal N-1 e a N (ordem do
     calendario). Reusa o criterio de prova principal do prep-prova do motor de bloco."""
-    from src.builder.routing.motor.anchor_engine import _NOT_MAIN_EXAM
+    from src.builder.routing.motor.anchor_engine import is_main_exam_block
     if not blocks or n <= 0:
         return []
-    mains = [b for b in blocks if str(b.get("kind") or "") == "assessment"
-             and not any(w in str(b.get("topic_text") or "").lower() for w in _NOT_MAIN_EXAM)]
+    mains = [b for b in blocks if is_main_exam_block(b)]
     if n > len(mains):
         return []
     inicio = mains[n - 2] if n >= 2 else None

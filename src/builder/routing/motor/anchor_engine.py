@@ -66,7 +66,33 @@ _EXAM_CUE = re.compile(r"(?:^|[^a-z])(?:p\s?-?(\d)|prova\s?-?(\d)|revis[aã]o[- 
 # Nao hospedam preparacao de prova: kinds que nunca hospedam material (inclui a
 # aula suspensa — MF bloco-08 "suspensao" fica ENTRE a revisao e a P1) + a prova.
 _NOT_PREP_HOSTS = frozenset(NEVER_HOSTS_MATERIAL_KINDS) | {"assessment"}
-_NOT_MAIN_EXAM = ("substitui", "entrega", "trabalho", "recupera")
+
+# D1 (ruling 28/08, implementado 01/09): prova PRINCIPAL = rotulo P<n>/"Prova N"
+# no bloco (topic_text + labels de sessao — topic_text de bloco de prova e VAZIO
+# na maioria dos cursos reais); PS/G2/PF/substitutiva/recuperacao NUNCA contam
+# (cobrem o semestre inteiro — R7 da cobertura). A lista negativa antiga
+# (_NOT_MAIN_EXAM sobre topic_text) errava nos DOIS sentidos, medido nos 6
+# cursos em 01/09: G2 contava como principal em TODOS (topic vazio passa) e a
+# P2 de MF/ES2 ("entrega do t2" no topic) ficava DE FORA — a prep-P2 do MF
+# ancorava na G2. Bloco assessment SEM rotulo (SO-27/IA-24, resquicio
+# LightGrey com label "aula") tambem nao e principal.
+_MAIN_EXAM_LABEL_RE = re.compile(r"\bprova\s*-?\s*p?(\d)\b|\bp(\d)\b", re.I)
+_NEVER_MAIN_RE = re.compile(r"\bps\b|\bg2\b|\bsubstitui|\brecupera|\bprova\s+final\b|\bpf\b", re.I)
+
+
+def _block_exam_hay(block: dict) -> str:
+    labels = " ".join(str(s.get("label") or "") for s in (block.get("sessions") or []))
+    return f"{block.get('topic_text') or ''} {labels}".lower()
+
+
+def is_main_exam_block(block: dict) -> bool:
+    """Fonte unica da 'prova principal' (prep-prova aqui; R6 da cobertura)."""
+    if str(block.get("kind") or "") != "assessment":
+        return False
+    hay = _block_exam_hay(block)
+    if _NEVER_MAIN_RE.search(hay):
+        return False
+    return bool(_MAIN_EXAM_LABEL_RE.search(hay))
 
 
 def _exam_number(entry: dict) -> int:
@@ -103,8 +129,7 @@ def resolve_exam_prep(entry: dict, ctx: MotorContext) -> Optional[AnchorDecision
     n = _exam_number(entry)
     if n <= 0:
         return None
-    mains = [b for b in ctx.blocks if str(b.get("kind") or "") == "assessment"
-             and not any(w in str(b.get("topic_text") or "").lower() for w in _NOT_MAIN_EXAM)]
+    mains = [b for b in ctx.blocks if is_main_exam_block(b)]
     if n > len(mains):
         return None
     target = mains[n - 1]
