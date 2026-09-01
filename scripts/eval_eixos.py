@@ -110,6 +110,11 @@ def main(argv: list[str]) -> int:
     metodos = collections.Counter()
     print(f"{'curso':6}{'BLOCO':>10}{'conf-err':>9}{'UNIDADE':>10}{'COBERTURA':>12}{'F1':>6}{'pinos':>6}")
     for sigla, repo_name in alvos.items():
+        # Curso sem gold de bloco (LR/FR 2026/2) esta fora da regua por
+        # definicao — os watchdogs sem-gold e que os cobrem.
+        if not (ROOT / "docs" / "reports" / f"ground_truth_{sigla}.csv").exists():
+            print(f"{sigla:6}{'(sem gold — fora da regua)':>40}")
+            continue
         r = medir(sigla, repo_name)
         b, u, c = r["bloco"], r["unidade"], r["cobertura"]
         tot["b_ok"] += b["ok"]; tot["b_n"] += b["n"]; tot["conf"] += b["conf_err"]

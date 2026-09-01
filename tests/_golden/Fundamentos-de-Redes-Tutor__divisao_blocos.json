@@ -1,0 +1,182 @@
+[
+  {
+    "id": "bloco-01",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "disciplina"
+  },
+  {
+    "id": "bloco-02",
+    "n_sessoes": 2,
+    "span_dias": 5,
+    "topico": "arquitetura protocolos"
+  },
+  {
+    "id": "bloco-03",
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "protocolos aplicacao"
+  },
+  {
+    "id": "bloco-04",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "magna escola politecnica evento academico"
+  },
+  {
+    "id": "bloco-05",
+    "n_sessoes": 2,
+    "span_dias": 5,
+    "topico": "protocolos aplicacao"
+  },
+  {
+    "id": "bloco-06",
+    "n_sessoes": 2,
+    "span_dias": 5,
+    "topico": "camada transporte"
+  },
+  {
+    "id": "bloco-07",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "camada rede"
+  },
+  {
+    "id": "bloco-08",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "protocolo ipv4"
+  },
+  {
+    "id": "bloco-09",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "icmpv4"
+  },
+  {
+    "id": "bloco-10",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "duvidas"
+  },
+  {
+    "id": "bloco-11",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-01-introducao-a-redes-de-computadores, unidade-02-nivel-de-aplicacao, unidade-03-nivel-de-transporte, unidade-04-nivel-de-rede"
+  },
+  {
+    "id": "bloco-12",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "protocolos ipv6 icmpv6"
+  },
+  {
+    "id": "bloco-13",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "introducao roteamento"
+  },
+  {
+    "id": "bloco-14",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "tabela roteamento"
+  },
+  {
+    "id": "bloco-15",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "algoritmos roteamento"
+  },
+  {
+    "id": "bloco-16",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "feriado"
+  },
+  {
+    "id": "bloco-17",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "protocolos roteamento"
+  },
+  {
+    "id": "bloco-18",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "academica pucrs evento academico"
+  },
+  {
+    "id": "bloco-19",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "academica pucrs evento academico"
+  },
+  {
+    "id": "bloco-20",
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "camada enlace"
+  },
+  {
+    "id": "bloco-21",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "ethernet comutada vlan lacp"
+  },
+  {
+    "id": "bloco-22",
+    "n_sessoes": 2,
+    "span_dias": 2,
+    "topico": "camada fisica sockets"
+  },
+  {
+    "id": "bloco-23",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "trabalho trabalho"
+  },
+  {
+    "id": "bloco-24",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "trabalho trabalho"
+  },
+  {
+    "id": "bloco-25",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "trabalho trabalho"
+  },
+  {
+    "id": "bloco-26",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-05-nivel-de-enlace"
+  },
+  {
+    "id": "bloco-27",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "substituicao"
+  },
+  {
+    "id": "bloco-28",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "reserva tecnica"
+  },
+  {
+    "id": "bloco-29",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": ""
+  },
+  {
+    "id": "bloco-30",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-01-introducao-a-redes-de-computadores, unidade-02-nivel-de-aplicacao, unidade-03-nivel-de-transporte, unidade-04-nivel-de-rede, unidade-05-nivel-de-enlace"
+  }
+]

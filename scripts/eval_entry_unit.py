@@ -53,6 +53,10 @@ COURSES = {
     "IA": "Inteligencia-Artifical-Tutor",
     "ES2": "Engenharia-Software-2-Tutor",
     "TCC": "TCC-Tutor",
+    # 2026/2 (builds P3, 01/09) — sem gold: a regua pula ("sem rotulos");
+    # os watchdogs (detecta_duplicatas/detecta_headings) os cobrem por default.
+    "LR": "Laboratorio-de-Redes-Tutor",
+    "FR": "Fundamentos-de-Redes-Tutor",
 }
 
 
