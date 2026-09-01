@@ -202,3 +202,57 @@ class TestF10_NomeDoModuloNoSidecar:
         cats = self._monta(tmp_path, sidecar=None)
         assert cats["03 - Tipos de Redes.pdf"] == "outros"
         assert cats["aula03 - buildroot-intro.pdf"] == "material-de-aula"
+
+
+def test_tar_gz_e_classificado_como_zip_no_scan(tmp_path):
+    """FR 2026/2 (P3, 01/09): 5 tar.gz de codigo-exemplo (tcp_example.tar.gz)
+    eram pulados por extensao desconhecida — path.suffix de '.tar.gz' e so
+    '.gz', o classificador nunca via o duplo sufixo."""
+    from src.builder.core.stash_import import scan_stash_cards
+    card = tmp_path / "U2 - Camada de Aplicação"
+    card.mkdir()
+    (card / "tcp_example.tar.gz").write_bytes(b"x")
+    (card / "udp_example.tgz").write_bytes(b"x")
+    (card / "lixo.rar").write_bytes(b"x")
+    scan = scan_stash_cards(tmp_path)
+    tipos = {Path(i.source_path).name: i.file_type for i in scan.items}
+    assert tipos.get("tcp_example.tar.gz") == "zip"
+    assert tipos.get("udp_example.tgz") == "zip"
+    assert (card / "lixo.rar").as_posix() in [Path(s).as_posix() for s in scan.skipped]
+    # convencao do zip: codigo do professor
+    cats = {Path(i.source_path).name: i.category for i in scan.items}
+    assert cats["tcp_example.tar.gz"] == "codigo-professor"
+
+
+def test_process_zip_extrai_tar_gz(tmp_path, monkeypatch):
+    """process_zip decide o formato por CONTEUDO (is_zipfile -> is_tarfile):
+    o raw_target do tar.gz pode chegar nomeado so '.gz'."""
+    import tarfile
+    from types import SimpleNamespace
+    from src.builder.core import source_importers as si
+    from src.models.core import FileEntry
+
+    fonte = tmp_path / "pkg"
+    fonte.mkdir()
+    (fonte / "servidor.py").write_text("print('tcp')\n", encoding="utf-8")
+    alvo = tmp_path / "tcp_example.gz"  # nome truncado de proposito
+    with tarfile.open(alvo, "w:gz") as tf:
+        tf.add(fonte / "servidor.py", arcname="pkg/servidor.py")
+
+    vistos = []
+    monkeypatch.setattr(si, "process_code", lambda b, e, p: vistos.append(e.title) or {"id": e.id()})
+    builder = SimpleNamespace(root_dir=tmp_path / "repo", logs=[])
+    (tmp_path / "repo").mkdir()
+    entry = FileEntry(source_path=str(alvo), file_type="zip", category="codigo-professor", title="tcp_example")
+    item = si.process_zip(builder, entry, alvo)
+    assert item["extraction_error"] is None
+    assert item["file_count"] == 1
+
+
+def test_id_de_tar_gz_nao_carrega_tar():
+    """FileEntry.id() = slugify(stem do source_path); para 'x.tar.gz' o stem e
+    'x.tar' e o id herdava o tar (tcp-chat-ctar)."""
+    from src.models.core import FileEntry
+    e = FileEntry(source_path=r"C:\stash\tcp_chat_c.tar.gz", file_type="zip",
+                  category="codigo-professor", title="tcp_chat_c")
+    assert e.id() == "tcp-chat-c"

@@ -35,13 +35,18 @@ class StashScanResult:
     skipped: List[str] = field(default_factory=list)  # paths de ext. desconhecida
 
 
-def _classify_file_type(ext: str) -> str:
-    ext = ext.lower()
+def _classify_file_type(name: str) -> str:
+    """Tipo pelo NOME (nao por path.suffix: '.tar.gz' tem duplo sufixo e o
+    suffix ve so '.gz' — os 5 pacotes de codigo do FR 2026/2 eram pulados)."""
+    name = name.lower()
+    ext = Path(name).suffix
     if ext == ".pdf":
         return "pdf"
     if ext in IMAGE_EXTENSIONS:
         return "image"
-    if ext == ".zip":
+    # tar.gz/.tgz seguem o MESMO fluxo do zip (extrair -> sub-entries de
+    # codigo); process_zip decide o formato pelo CONTEUDO do arquivo.
+    if ext == ".zip" or name.endswith((".tar.gz", ".tgz")):
         return "zip"
     if ext in CODE_EXTENSIONS:
         return "code"
@@ -74,7 +79,7 @@ def scan_stash_cards(stash_root, frases_do_plano=None) -> StashScanResult:
     for path in sorted(root.rglob("*")):
         if not path.is_file():
             continue
-        ftype = _classify_file_type(path.suffix)
+        ftype = _classify_file_type(path.name)
         if not ftype:
             result.skipped.append(str(path))
             continue
@@ -114,11 +119,15 @@ def build_stash_entries(scan: StashScanResult, existing_source_paths, defaults=N
     for item in scan.items:
         if item.source_path in existing:
             continue
+        # ".tar.gz": stem devolve "x.tar" — o id herdaria o "tar" (tcp-chat-ctar).
+        stem = Path(item.source_path).stem
+        if stem.lower().endswith(".tar"):
+            stem = stem[:-4]
         entries.append(FileEntry(
             source_path=item.source_path,
             file_type=item.file_type,
             category=item.category,
-            title=Path(item.source_path).stem,
+            title=stem,
             source_section=item.card_name,
             processing_mode=defaults.get("processing_mode", "auto"),
             ocr_language=defaults.get("ocr_language", DEFAULT_OCR_LANGUAGE),

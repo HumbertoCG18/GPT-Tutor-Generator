@@ -152,7 +152,12 @@ class FileEntry:
             base = slugify(self.title) or "url"
             url_hash = hashlib.md5(self.source_path.encode()).hexdigest()[:6]
             return f"{base}-{url_hash}"
-        return slugify(Path(self.source_path).stem)
+        stem = Path(self.source_path).stem
+        # ".tar.gz": stem devolve "x.tar" — sem o corte o id herda o "tar"
+        # (tcp-chat-ctar, achado no import do FR 01/09).
+        if stem.lower().endswith(".tar"):
+            stem = stem[:-4]
+        return slugify(stem)
 
     def to_dict(self) -> Dict:
         from dataclasses import fields as _fields, MISSING

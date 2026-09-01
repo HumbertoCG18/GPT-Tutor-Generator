@@ -189,8 +189,16 @@ def process_zip(builder, entry: FileEntry, raw_target: Path) -> Dict[str, object
     extract_dir = builder.root_dir / "staging" / "zip-extract" / entry.id()
     ensure_dir(extract_dir)
     try:
-        with zipfile.ZipFile(raw_target, "r") as zf:
-            zf.extractall(extract_dir)
+        # Formato pelo CONTEUDO, nao pelo nome: o raw_target do tar.gz pode
+        # chegar nomeado so ".gz" (safe_name usa path.suffix). filter="data"
+        # bloqueia tar-slip/paths absolutos (backport de seguranca do 3.11.4+).
+        if zipfile.is_zipfile(raw_target):
+            with zipfile.ZipFile(raw_target, "r") as zf:
+                zf.extractall(extract_dir)
+        else:
+            import tarfile
+            with tarfile.open(raw_target, "r:*") as tf:
+                tf.extractall(extract_dir, filter="data")
     except Exception as exc:
         item["extraction_error"] = str(exc)
         builder.logs.append(
