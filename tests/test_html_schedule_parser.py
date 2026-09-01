@@ -189,10 +189,11 @@ def test_aspnet_color_exam_emits_kind_exam_no_ignore():
 
 
 def test_aspnet_color_ps_emits_kind_ps_ignored():
+    # D1 (ruling 28/08): PS = substitutiva, cobre o semestre inteiro — nao e
+    # prova principal nem marco. Cor propria #FF8C00 em 6/6 cronogramas.
     result = parse_html_schedule(ASPNET_COLOR_SAMPLES)
     assert "Prova PS" in result
-    assert "{kind=assessment}" in result
-    assert "{kind=ps}" not in result
+    assert "{kind=ps} ⊘" in result
 
 
 def test_aspnet_color_event_emits_kind_event_ignored():
@@ -207,13 +208,86 @@ def test_aspnet_color_assignment_emits_kind_assignment_no_ignore():
 
 
 def test_aspnet_color_g2_emits_kind_g2_ignored():
+    # D1 (ruling 28/08): G2 = recuperacao condicional, cobre o semestre — nao e
+    # N-esima prova. LightGrey com Atividade de prova (devolucao segue results).
     result = parse_html_schedule(ASPNET_COLOR_SAMPLES)
     assert "Prova G2" in result
-    assert "{kind=assessment}" in result
-    assert "{kind=g2}" not in result
+    assert "{kind=g2} ⊘" in result
 
 
 def test_aspnet_class_row_omits_kind_token():
     # Row sem cor especial não deve poluir syllabus com {kind=class}
     result = parse_html_schedule(ASPNET_SAMPLE)
     assert "{kind=" not in result
+
+
+ASPNET_BGCOLOR_2026_2 = """
+<table id="dgAulas">
+  <tr><td>#</td><td>Dia</td><td>Data</td><td>Hora</td><td>Descrição</td><td>Atividade</td><td>Recursos</td></tr>
+  <tr bgcolor="#FFA500">
+    <td><span id="dgAulas_ctl10_lblAula">10</span></td>
+    <td><span id="dgAulas_ctl10_lblDia">TER</span></td>
+    <td><span id="dgAulas_ctl10_lblData">24/09/2026</span></td>
+    <td><span id="dgAulas_ctl10_lblHora">LM</span></td>
+    <td><span id="dgAulas_ctl10_lblDescricao">Prova P1</span></td>
+    <td><span id="dgAulas_ctl10_lblAtividade">Prova</span></td>
+    <td><span id="dgAulas_ctl10_lblRecursos"></span></td>
+  </tr>
+  <tr bgcolor="#FF8C00">
+    <td><span id="dgAulas_ctl34_lblAula">34</span></td>
+    <td><span id="dgAulas_ctl34_lblDia">TER</span></td>
+    <td><span id="dgAulas_ctl34_lblData">01/12/2026</span></td>
+    <td><span id="dgAulas_ctl34_lblHora">LM</span></td>
+    <td><span id="dgAulas_ctl34_lblDescricao">Prova PS</span></td>
+    <td><span id="dgAulas_ctl34_lblAtividade">Prova de Substituição</span></td>
+    <td><span id="dgAulas_ctl34_lblRecursos"></span></td>
+  </tr>
+  <tr bgcolor="DarkBlue">
+    <td><span id="dgAulas_ctl05_lblAula">5</span></td>
+    <td><span id="dgAulas_ctl05_lblDia">TER</span></td>
+    <td><span id="dgAulas_ctl05_lblData">01/09/2026</span></td>
+    <td><span id="dgAulas_ctl05_lblHora">LM</span></td>
+    <td><span id="dgAulas_ctl05_lblDescricao">Protocolos de Aplicação</span></td>
+    <td><span id="dgAulas_ctl05_lblAtividade">Aula</span></td>
+    <td><span id="dgAulas_ctl05_lblRecursos"></span></td>
+  </tr>
+</table>
+"""
+
+
+def test_aspnet_bgcolor_attr_do_export_2026_2_e_lido():
+    # Exports 2026/2 (FR/Lab Redes/Lab SO) trocaram style="background-color:X"
+    # pelo ATRIBUTO bgcolor= — o parser de cor era cego a eles (medido nos .bin
+    # de Desktop/claude-tutor/sarc em 31/08).
+    result = parse_html_schedule(ASPNET_BGCOLOR_2026_2)
+    assert "— Prova P1 [Prova] {kind=assessment}" in result
+    assert "{kind=ps} ⊘" in result
+
+
+def test_aspnet_bgcolor_darkblue_e_aula_normal():
+    # DarkBlue = highlight de "proxima aula" do SARC, nao e kind.
+    result = parse_html_schedule(ASPNET_BGCOLOR_2026_2)
+    assert "Protocolos de Aplicação [Aula]" in result
+    assert "Protocolos de Aplicação [Aula] {kind=" not in result
+
+
+def test_aspnet_ff4500_e_suspensao():
+    # #FF4500 (orangered) aparece no export do IA como feriado/suspensao
+    # (censo D2 28/08) e nao estava no mapa — caia em aula.
+    html = ASPNET_BGCOLOR_2026_2.replace('bgcolor="DarkBlue"', 'bgcolor="#FF4500"')
+    result = parse_html_schedule(html)
+    assert "Protocolos de Aplicação [Aula] {kind=suspension} ⊘" in result
+
+
+def test_aspnet_lightgrey_devolucao_na_descricao_vira_results():
+    # Caso real MF 13/07: LightGrey, Atividade "Aula", Descricao "Devolução das
+    # provas" — o teste de "devolu" so olhava a Atividade e a linha virava g2.
+    html = ASPNET_COLOR_SAMPLES.replace(
+        '<td><span id="dgAulas_ctl39_lblDescricao">Prova G2</span></td>',
+        '<td><span id="dgAulas_ctl39_lblDescricao">Devolução das provas</span></td>',
+    ).replace(
+        '<td><span id="dgAulas_ctl39_lblAtividade">Prova de G2</span></td>',
+        '<td><span id="dgAulas_ctl39_lblAtividade">Aula</span></td>',
+    )
+    result = parse_html_schedule(html)
+    assert "Devolução das provas [Aula] {kind=results} ⊘" in result

@@ -33,7 +33,12 @@ SARC_COLS = ["#", "Dia", "Data", "Hora", "Descrição", "Atividade", "Recursos"]
 
 
 def sarc_html_to_table(html: str) -> tuple[str, str]:
-    """Export HTML do SARC -> (tabela markdown SARC, turma do cabecalho). Linha = <tr> com data DD/MM/AAAA."""
+    """Export HTML do SARC -> (tabela markdown SARC, turma do cabecalho). Linha = <tr> com data DD/MM/AAAA.
+
+    Cor da linha (style= 2026/1 ou bgcolor= 2026/2) vira `{kind=X}` na celula
+    Descricao — sem isso PS/G2/trabalho colapsam em assessment/aula no parser
+    de timeline (D1/D2, censo 28/08). Export sem spans lbl* cai no regex cru
+    (sem cor), que era o comportamento original."""
     import html as _html
     import re as _re
     turma = ""
@@ -41,11 +46,29 @@ def sarc_html_to_table(html: str) -> tuple[str, str]:
     if m:
         turma = m.group(1)
     rows = []
-    for r in _re.findall(r"<tr[^>]*>(.*?)</tr>", html, _re.S | _re.I):
-        cells = [" ".join(_html.unescape(_re.sub(r"<[^>]+>", " ", c)).split())
-                 for c in _re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", r, _re.S | _re.I)]
-        if len(cells) >= 7 and _re.fullmatch(r"\d{2}/\d{2}/\d{4}", cells[2]):
-            rows.append(cells[:7])
+    from bs4 import BeautifulSoup
+    from src.utils.helpers import _aspnet_row_canonical_kind, _aspnet_row_cell
+    soup = BeautifulSoup(html, "html.parser")
+    if soup.find("span", id=_re.compile(r"_lblData$")):
+        for tr in soup.find_all("tr"):
+            data = _aspnet_row_cell(tr, "Data")
+            if not _re.fullmatch(r"\d{2}/\d{2}/\d{4}", data or ""):
+                continue
+            descricao = _aspnet_row_cell(tr, "Descricao")
+            kind, _ignored = _aspnet_row_canonical_kind(tr)
+            if kind != "class":
+                descricao = f"{descricao} {{kind={kind}}}".strip()
+            rows.append([
+                _aspnet_row_cell(tr, "Aula"), _aspnet_row_cell(tr, "Dia"), data,
+                _aspnet_row_cell(tr, "Hora"), descricao,
+                _aspnet_row_cell(tr, "Atividade"), _aspnet_row_cell(tr, "Recursos"),
+            ])
+    else:
+        for r in _re.findall(r"<tr[^>]*>(.*?)</tr>", html, _re.S | _re.I):
+            cells = [" ".join(_html.unescape(_re.sub(r"<[^>]+>", " ", c)).split())
+                     for c in _re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", r, _re.S | _re.I)]
+            if len(cells) >= 7 and _re.fullmatch(r"\d{2}/\d{2}/\d{4}", cells[2]):
+                rows.append(cells[:7])
     if not rows:
         raise SystemExit("nenhuma linha com data no export HTML do SARC")
     out = ("| " + " | ".join(SARC_COLS) + " |\n| " + " | ".join("---" for _ in SARC_COLS) + " |\n"

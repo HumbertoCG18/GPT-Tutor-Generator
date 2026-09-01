@@ -100,3 +100,15 @@ def test_linha_suspensa_por_texto_nao_funde_com_a_aula_seguinte():
     rows = _build_timeline_candidate_rows([_row("suspensao jogo copa do mundo", "Aula", "19/06/2026"),
                                            _row("devops exercicios", "Aula", "26/06/2026")])
     assert _rows_belong_to_same_thematic_block(rows[0], rows[1], current_rows=[rows[0]]) is False
+
+
+def test_ps_e_g2_agregam_como_source_kind_nao_aula():
+    """A.1 (31/08): linhas {kind=ps}/{kind=g2} sao ignoradas nas SESSIONS, mas o
+    BLOCO delas nao pode virar candidato a aula — sem hint, o bloco da PS do MF
+    entrou no DP posicional e moveu a fronteira u02/u03 (5 entries fliparam,
+    regua 66->61; bisect 31/08). Traducao no agregador: ps->makeup (prova
+    substitutiva) e g2->assessment (recuperacao); a distincao fina (nao contar
+    como prova PRINCIPAL) e assunto do D1, nao do hint."""
+    assert _aggregate_source_kind([{"kind": "ps"}]) == "makeup"
+    assert _aggregate_source_kind([{"kind": "g2"}]) == "assessment"
+    assert _aggregate_source_kind([{"kind": "ps"}, {"kind": "class"}]) == "makeup"

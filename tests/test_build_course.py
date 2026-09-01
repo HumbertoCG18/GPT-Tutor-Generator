@@ -41,3 +41,48 @@ def test_sarc_html_vira_tabela_com_turma():
     assert linhas[0].startswith("| # | Dia | Data |")
     assert len(linhas) == 4  # header + separador + 2 datas
     assert "03/08/2026" in linhas[2] and "Wireshark" in linhas[3]
+
+
+def test_sarc_html_tabela_anota_kind_na_descricao():
+    # A tabela do perfil e o formato canonico do syllabus; sem {kind=} na
+    # Descricao, PS/G2/trabalhos colapsam em assessment/aula no parser de
+    # timeline (censo D2 28/08). bgcolor= e o formato dos exports 2026/2.
+    from scripts.build_course import sarc_html_to_table
+    html = """
+    <span>Turma (310)</span>
+    <table id="dgAulas">
+      <tr><td>#</td><td>Dia</td><td>Data</td><td>Hora</td><td>Descrição</td><td>Atividade</td><td>Recursos</td></tr>
+      <tr bgcolor="#FFA500">
+        <td><span id="dgAulas_ctl10_lblAula">10</span></td>
+        <td><span id="dgAulas_ctl10_lblDia">QUI</span></td>
+        <td><span id="dgAulas_ctl10_lblData">24/09/2026</span></td>
+        <td><span id="dgAulas_ctl10_lblHora">LM</span></td>
+        <td><span id="dgAulas_ctl10_lblDescricao">Prova P1</span></td>
+        <td><span id="dgAulas_ctl10_lblAtividade">Prova</span></td>
+        <td><span id="dgAulas_ctl10_lblRecursos"></span></td>
+      </tr>
+      <tr bgcolor="#FF8C00">
+        <td><span id="dgAulas_ctl34_lblAula">34</span></td>
+        <td><span id="dgAulas_ctl34_lblDia">TER</span></td>
+        <td><span id="dgAulas_ctl34_lblData">01/12/2026</span></td>
+        <td><span id="dgAulas_ctl34_lblHora">LM</span></td>
+        <td><span id="dgAulas_ctl34_lblDescricao">Prova PS</span></td>
+        <td><span id="dgAulas_ctl34_lblAtividade">Prova de Substituição</span></td>
+        <td><span id="dgAulas_ctl34_lblRecursos"></span></td>
+      </tr>
+      <tr>
+        <td><span id="dgAulas_ctl05_lblAula">5</span></td>
+        <td><span id="dgAulas_ctl05_lblDia">TER</span></td>
+        <td><span id="dgAulas_ctl05_lblData">01/09/2026</span></td>
+        <td><span id="dgAulas_ctl05_lblHora">LM</span></td>
+        <td><span id="dgAulas_ctl05_lblDescricao">Protocolos de Aplicação</span></td>
+        <td><span id="dgAulas_ctl05_lblAtividade">Aula</span></td>
+        <td><span id="dgAulas_ctl05_lblRecursos"></span></td>
+      </tr>
+    </table>
+    """
+    tabela, turma = sarc_html_to_table(html)
+    assert turma == "310"
+    assert "| Prova P1 {kind=assessment} | Prova |" in tabela
+    assert "| Prova PS {kind=ps} | Prova de Substituição |" in tabela
+    assert "| Protocolos de Aplicação | Aula |" in tabela  # aula normal sem token

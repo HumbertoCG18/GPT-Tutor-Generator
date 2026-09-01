@@ -301,9 +301,17 @@ _SOURCE_KIND_PRIORITY = [
 ]
 
 
+# ps/g2 sao tokens de LINHA (D1: nao contam como prova principal), mas o BLOCO
+# deles nao e aula — sem hint, o bloco da PS do MF entrava no DP posicional e
+# movia a fronteira u02/u03 (5 entries, bisect 31/08). Traducao p/ BlockKind:
+# ps = prova substitutiva (makeup), g2 = recuperacao (assessment).
+_IGNORED_KIND_AS_SOURCE = {"ps": "makeup", "g2": "assessment"}
+
+
 def _aggregate_source_kind(rows: List[Dict[str, object]]) -> str:
     """Maior-prioridade kind nao-class entre as linhas do bloco; '' se nenhum."""
     present = {str(r.get("kind", "")) for r in (rows or [])}
+    present |= {_IGNORED_KIND_AS_SOURCE[k] for k in present if k in _IGNORED_KIND_AS_SOURCE}
     for kind in _SOURCE_KIND_PRIORITY:
         if kind in present:
             return kind

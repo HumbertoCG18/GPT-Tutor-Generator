@@ -408,12 +408,18 @@ def _aspnet_row_cell(row, suffix: str) -> str:
 _ASPNET_COLOR_KIND_MAP = {
     "red": ("suspension", True),
     "#ff0000": ("suspension", True),
+    # #FF4500 (orangered): feriado/suspensao no export do IA (censo D2 28/08);
+    # fora do mapa caia em aula.
+    "#ff4500": ("suspension", True),
+    "orangered": ("suspension", True),
     "lightgrey": ("g2_or_results", False),
     "#d3d3d3": ("g2_or_results", False),
     "#ffa500": ("assessment", False),
     "orange": ("assessment", False),
-    "#ff8c00": ("assessment", False),
-    "darkorange": ("assessment", False),
+    # D1 (ruling 28/08): darkorange e a cor PROPRIA da PS em 6/6 cronogramas —
+    # substitutiva cobre o semestre inteiro, nao e prova principal nem marco.
+    "#ff8c00": ("ps", True),
+    "darkorange": ("ps", True),
     "#8b0000": ("event", True),
     "darkred": ("event", True),
     "#ffff00": ("deliverable", False),
@@ -422,13 +428,20 @@ _ASPNET_COLOR_KIND_MAP = {
 
 
 def _aspnet_row_kind(row) -> tuple[str, bool]:
-    """Return (kind, ignored) derived from row background-color. Default: ('class', False)."""
-    style = (row.get("style") or "").lower().replace(" ", "")
+    """Return (kind, ignored) derived from row background-color. Default: ('class', False).
+
+    Exports 2026/1 usam style="background-color:X"; os de 2026/2 (FR/labs)
+    trocaram pelo ATRIBUTO bgcolor= — os dois formatos contam."""
     import re as _re
+    color = ""
+    style = (row.get("style") or "").lower().replace(" ", "")
     match = _re.search(r"background-color:([^;]+)", style)
-    if not match:
+    if match:
+        color = match.group(1).strip().rstrip(";")
+    if not color:
+        color = str(row.get("bgcolor") or "").strip().lower()
+    if not color:
         return ("class", False)
-    color = match.group(1).strip().rstrip(";")
     return _ASPNET_COLOR_KIND_MAP.get(color, ("class", False))
 
 
@@ -470,8 +483,14 @@ def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:
     color_kind, ignored = _aspnet_row_kind(row)
     atividade = norm_ascii_lower(_aspnet_row_cell(row, "Atividade"))
     if color_kind == "g2_or_results":
-        # LightGrey = G2 (avaliação) OU devolução de provas. Atividade decide.
-        return ("results", True) if "devolu" in atividade else ("assessment", False)
+        # LightGrey = G2 (avaliação) OU devolução de provas. Atividade OU
+        # Descricao decidem (caso real MF 13/07: Atividade "Aula", Descricao
+        # "Devolução das provas").
+        # D1 (ruling 28/08): G2 = recuperacao condicional que cobre o semestre —
+        # nao e N-esima prova; linha ignorada como marco (consumidor ja tratava
+        # o token g2 em _IGNORED_KINDS; o produtor nunca emitia).
+        descricao = norm_ascii_lower(_aspnet_row_cell(row, "Descricao"))
+        return ("results", True) if "devolu" in f"{atividade} {descricao}" else ("g2", True)
     if ignored:
         return (color_kind, True)
     for needle, kind in ATIVIDADE_KIND_MAP.items():

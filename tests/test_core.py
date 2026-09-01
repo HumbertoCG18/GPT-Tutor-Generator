@@ -5117,17 +5117,20 @@ def _sarc_row(html):
     from bs4 import BeautifulSoup
     return BeautifulSoup(html, "html.parser").find("tr")
 
-def test_sarc_ps_is_assessment_not_ignored():
+def test_sarc_ps_is_ignored_marker_d1():
+    # D1 (ruling 28/08, implementado 31/08): PS cobre o semestre inteiro e nao
+    # e prova principal — cor propria #ff8c00 vira token ps ignorado.
     from src.utils.helpers import _aspnet_row_canonical_kind
     row = _sarc_row('<tr style="background-color:#ff8c00"><td><span id="x_lblAtividade">Prova PS</span></td></tr>')
     kind, ignored = _aspnet_row_canonical_kind(row)
-    assert kind == "assessment" and ignored is False
+    assert kind == "ps" and ignored is True
 
-def test_sarc_g2_lightgrey_is_assessment():
+def test_sarc_g2_lightgrey_is_ignored_marker_d1():
+    # D1: G2 = recuperacao condicional, cobre o semestre — nao e N-esima prova.
     from src.utils.helpers import _aspnet_row_canonical_kind
     row = _sarc_row('<tr style="background-color:lightgrey"><td><span id="x_lblAtividade">Prova G2</span></td></tr>')
     kind, ignored = _aspnet_row_canonical_kind(row)
-    assert kind == "assessment" and ignored is False
+    assert kind == "g2" and ignored is True
 
 def test_sarc_lightgrey_devolucao_is_results():
     from src.utils.helpers import _aspnet_row_canonical_kind
