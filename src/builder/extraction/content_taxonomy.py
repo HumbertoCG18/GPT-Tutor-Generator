@@ -86,19 +86,23 @@ def _strip_topic_prefix(text: str) -> str:
     return cleaned.strip(" -:\t")
 
 
+def _tool_matches(tool_norm: str, normalized_text: str) -> bool:
+    """Fonte unica do match de ferramenta (B-4, 01/09): fronteira alfanumerica
+    sempre — substring crua fazia `ementa` derrubar "implementacao", `threads`
+    derrubar "multithreads" e `formal` marcar "Especificacao inFORMAL" /
+    "Metodos FORMAIS". Separadores que o normalizador preserva (+-./) seguem
+    contando como fronteira, entao "isabelle" ainda casa em "Isabelle/HOL"."""
+    if not tool_norm:
+        return False
+    return bool(re.search(rf"(?<![0-9a-z]){re.escape(tool_norm)}(?![0-9a-z])", normalized_text))
+
+
 def _looks_like_tool_candidate(text: str, semantic_profile: Optional[dict] = None) -> bool:
     normalized = _normalize_match_text(text)
     effective_profile = merge_semantic_profile(semantic_profile)
     known_tools = list(effective_profile.get("known_tools") or [])
     for tool in known_tools:
-        tool_norm = _normalize_match_text(tool)
-        if not tool_norm:
-            continue
-        # Fronteira alfanumerica sempre: substring crua fazia `ementa` derrubar
-        # "implementacao" e `threads` derrubar "multithreads". Separadores que o
-        # normalizador preserva (+-./) seguem contando como fronteira, entao
-        # "isabelle" ainda casa em "Isabelle/HOL".
-        if re.search(rf"(?<![0-9a-z]){re.escape(tool_norm)}(?![0-9a-z])", normalized):
+        if _tool_matches(_normalize_match_text(tool), normalized):
             return True
     return False
 
@@ -199,7 +203,9 @@ def _extract_tool_candidates(*sources: str, semantic_profile: Optional[dict] = N
         normalized = _normalize_match_text(source or "")
         for tool in known_tools:
             tool_norm = _normalize_match_text(tool)
-            if tool_norm and tool_norm in normalized and tool_norm not in seen:
+            # B-4 (01/09): mesma fronteira do _looks_like_tool_candidate — as
+            # duas copias divergiam e este lado marcava ferramenta por substring.
+            if _tool_matches(tool_norm, normalized) and tool_norm not in seen:
                 seen.add(tool_norm)
                 found.append(tool)
     return found

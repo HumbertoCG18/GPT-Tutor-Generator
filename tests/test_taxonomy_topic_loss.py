@@ -189,3 +189,17 @@ def test_checkbox_markdown_nao_esconde_a_numeracao():
     assert {"1.1", "1.2"} <= _codes(plan)
     assert not any("projetor" in label for label in labels), labels
     assert not any("expositivas" in label for label in labels), labels
+
+
+def test_extract_tool_candidates_exige_fronteira_de_palavra():
+    """B-4 (01/09): `_extract_tool_candidates` usava substring cru enquanto
+    `_looks_like_tool_candidate` ja tinha fronteira — 'Especificacao informal'
+    dava ferramenta:formal e 'Metodos Formais' idem ('formais' != 'formal').
+    Helper unico de match nos dois caminhos."""
+    from src.builder.extraction.content_taxonomy import _extract_tool_candidates
+    perfil = {"known_tools": ["formal", "threads", "isabelle"]}
+    assert _extract_tool_candidates("Especificacao informal de requisitos", semantic_profile=perfil) == []
+    assert _extract_tool_candidates("Metodos Formais para Computacao", semantic_profile=perfil) == []
+    assert _extract_tool_candidates("Programas multithreads", semantic_profile=perfil) == []
+    assert _extract_tool_candidates("Uso de threads em C", semantic_profile=perfil) == ["threads"]
+    assert _extract_tool_candidates("Isabelle/HOL na pratica", semantic_profile=perfil) == ["isabelle"]
