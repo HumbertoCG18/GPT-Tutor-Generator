@@ -97,8 +97,7 @@ Lab SO <- SARC da turma 310 (user/professor). Nada mais bloqueia nada.
 **RESUMO 01/09b (o que sobrou de verdade — apos fila a-g, auditoria de dividas, campanha pre-P3 e
 levas 1+2 de higiene):**
 - **DECISOES DO USER** (nada me bloqueia): (1) P2b-LLM (extracao de questoes de provas; ruling era
-  "deterministico agora, LLM depois"); (2) P3 builds pagos — Lab Redes PRONTO e Fund. Redes PRONTO
-  (pre-requisitos D1/D2/cores ENTREGUES 01/09), Lab SO BLOQUEADO (SARC 310); (3) GAP VIDEO do T2;
+  "deterministico agora, LLM depois"); (2) P3: Lab Redes e FR BUILDADOS 01/09 (ver secao P3); resta Lab SO BLOQUEADO (SARC 310) + triagem dos achados; (3) GAP VIDEO do T2;
   (4) triagem dos 10 suspeitos SEM-GOLD do detecta_headings; (5) pino de cobertura p/ 57/57
   (mecanismo nao existe); (6) gold de bloco do CG (holdout nunca medido; rotulagem ~30 entries);
   (7) merge em main (checkpoint ja esta em new-features `399706e`).
@@ -321,11 +320,23 @@ Itens novos da fila (sem data, decisao de priorizar e do user):
     (MF logicapredicados-sintaxe, SO definicao-e-historico, ES2 t1/microsservicos5, TCC aula-14,
     CG modelos-de-iluminacao). Flag != erro; e fila de triagem humana.
 
-**P3 — Builds pagos (Datalab), quando o user autorizar:**
-  - Lab Redes: PRONTO. Stash durable: `Desktop/Moodle/laboratorio-de-redes-de-computadores/stash` (6 arquivos +
-    sidecar; roteiros HTML ja impressos em PDF). Cronograma: `--syllabus-url` (export 340, validado 340=340).
-  - Fund. Redes: PRONTO. `Desktop/Moodle/fundamentos-de-redes-de-computadores/stash` (20 arquivos). U<n> cobre
-    19/20 (F7). Cronograma: `--syllabus-url` (320=320).
+**P3 — Builds pagos (Datalab): Lab Redes e FR EXECUTADOS 01/09 (autorizacao do user); Lab SO bloqueado.**
+  - **Lab Redes BUILDADO**: `Laboratorio-de-Redes-Tutor` (6/6, 0 falhas; remote privado `0df5e03`, 0/0).
+    17 blocos com datas/feriados certos; labs amarelos = deliverable (A.1/D2 em curso novo); G2
+    institucional sem rotulo NAO e prova principal (D1 protege cadeira sem prova); 4 entries por
+    janela-1 (cards `[03.08]` = melhor caso confirmado). Determinismo build->reprocess 0. Watchdogs:
+    0 duplicatas, 0 headings suspeitos. NOTAS: export SARC "320-340" do stash ingerido como entry de
+    cronograma (triagem: manter/podar?); perfil sem professor preenchido (Angelo Elias Dal Zotto).
+  - **Fund. Redes BUILDADO**: `Fundamentos-de-Redes-Tutor` (16/16, 0 falhas; remote privado `f551dba`,
+    0/0; Moodle 95139, turma 320 validada). 30 blocos do semestre inteiro: P1 24/09 e P2 26/11
+    assessment, **PS 01/12 = makeup e G2 sem rotulo fora das principais (D1/cores em curso nunca
+    visto)**; unidades dos blocos u01->u05 monotonicas; gate meta esvaziou a subunit do plano.
+    **D3(a) RESPONDIDO estruturalmente: 16/16 entries consistentes com o U<n> do card SEM provedor
+    dedicado** (card-window + janela-1 entregam; sinal de 1a classe desnecessario neste corpus —
+    reabrir so se um curso futuro divergir card x conteudo). Determinismo 0; 0 duplicatas;
+    **1o achado real do detecta_headings em producao**: `02-modelos-de-referencia` atribuida
+    `conceitos-de-redes-...` com headings citando `modelos-osi-e-tcpip` -> TRIAGEM DO USER.
+    GAP anotado: 5 tar.gz de codigo-exemplo ignorados por extensao no import do stash.
   - Lab SO: stash pronto (`Desktop/Moodle/laboratorio-de-sistemas-operacionais/stash`, 19 arquivos, tutoriais
     impressos) — **BLOQUEADO pelo SARC da turma 310** (o link no Moodle e da 330; ver F14). Nao buildar com o
     da 330 nem com remap (testado 30/08: ordem bate, datas nao — off-by-one nas fronteiras).
