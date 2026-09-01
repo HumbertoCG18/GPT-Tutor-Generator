@@ -1784,6 +1784,25 @@ def _score_entry_against_taxonomy_topic(signals: dict, topic: dict, *, stem_fall
 
     score = 0.0
     exact_hits = 0
+    # Dedupe de frases por forma normalizada (2026-09-01): label cujo slug vira
+    # a MESMA frase ("Integração contínua (CI)" -> "integracao continua ci")
+    # contava label+slug (1.65x) por campo — inflacao estrutural a favor de
+    # labels "limpos" contra labels com meta-palavra ("Conceito de DevOps" so
+    # casa via alias 0.82x). Mesma frase conta UMA vez, no maior fator
+    # (label 1.0 > alias 0.82 > slug 0.65).
+    phrases: dict = {}
+    if label:
+        phrases[_normalize_match_text(label)] = (1.0, label)
+    for alias in aliases:
+        alias_norm = _normalize_match_text(alias)
+        if alias_norm and (alias_norm not in phrases or phrases[alias_norm][0] < 0.82):
+            phrases[alias_norm] = (0.82, alias_norm)
+    if topic_slug:
+        slug_phrase = topic_slug.replace("-", " ")
+        slug_norm = _normalize_match_text(slug_phrase)
+        if slug_norm and slug_norm not in phrases:
+            phrases[slug_norm] = (0.65, slug_phrase)
+    phrases.pop("", None)
     for text, weight in [
         (markdown_headings_text, 4.4),
         (title_text, 3.8),
@@ -1794,20 +1813,9 @@ def _score_entry_against_taxonomy_topic(signals: dict, topic: dict, *, stem_fall
         (legacy_tags_text, 0.15),
         (raw_text, 0.9),
     ]:
-        if label and _matches_normalized_phrase(text, label, stem_fallback):
-            score += weight
-            exact_hits += 1
-        if topic_slug:
-            slug_phrase = topic_slug.replace("-", " ")
-            if slug_phrase and _matches_normalized_phrase(text, slug_phrase, stem_fallback):
-                score += weight * 0.65
-                exact_hits += 1
-        for alias in aliases:
-            alias_norm = _normalize_match_text(alias)
-            if not alias_norm:
-                continue
-            if _matches_normalized_phrase(text, alias_norm, stem_fallback):
-                score += weight * 0.82
+        for factor, phrase in phrases.values():
+            if _matches_normalized_phrase(text, phrase, stem_fallback):
+                score += weight * factor
                 exact_hits += 1
 
     _generic = set(topic.get("generic_tokens") or []) or UNIT_GENERIC_TOKENS  # A2: por curso

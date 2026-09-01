@@ -242,7 +242,7 @@ def auto_map_entry_subtopic(
         ambiguous = False
     else:
         confidence = max(0.0, min(1.0, rel_margin))
-        ambiguous = rel_margin < 0.15
+        ambiguous = rel_margin < T.SUBUNIT_AMBIG_MARGIN
     if ambiguous:
         confidence = min(confidence, 0.45)
 

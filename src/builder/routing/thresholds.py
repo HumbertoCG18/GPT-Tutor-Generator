@@ -140,6 +140,13 @@ class _Thresholds:
     # A unica errada do primario-apenas e TCC aula-08 (familia C, teto), que JA
     # passava no 0.60 (conf 0.77) — e a tag dela e o extra legitimo do gold.
     SUBUNIT_TAG: float = 0.10
+    # Margem relativa minima para subunidade nao-ambigua. Era 0.15 hardcoded em
+    # auto_map_entry_subtopic, calibrado SOBRE a inflacao label==slug (1.65x);
+    # o dedupe de frases do scorer (2026-09-01) deflaciona a escala e comprime
+    # margens honestas: devops rel 0.136 e web rel 0.133 cairiam em ambiguo.
+    # Reancorado em 0.12 e MEDIDO na regua de 93 (projecao: flip unico devops
+    # ERRO->OK, zero colateral nas 82 linhas fieis; confirmar reprocess+eixos).
+    SUBUNIT_AMBIG_MARGIN: float = 0.12
     # K da formula de margem (padrao). Topico usa 0.20 historicamente.
     MARGIN_K: float = 0.18
     MARGIN_K_TOPIC: float = 0.20
