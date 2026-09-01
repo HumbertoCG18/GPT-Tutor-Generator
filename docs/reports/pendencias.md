@@ -219,6 +219,34 @@ score>=15 dominancia>=2.5x: 66 casos, todos os demais legitimos; T2 verificado n
 quando nao deviam ter nenhuma; a COBERTURA ja tem gate meta (META_CATEGORIES, regra A), a SUBUNIDADE nao —
 mesmo padrao do TCC aula-06 (revisao); (3) material AGREGADO multi-secao — ES2 `devops` (DEVOPS + GERENCIA DE
 CONFIGURACAO + CI num arquivo), campo comporta 1 subunit; (4) papel pedagogico vs vocabulario — ES2 roteiro5.
+**CAMPANHA PRE-P3 (autorizada pelo user 31/08 noite: A -> B -> C; bancada = 6 cursos com regua,
+holdout = cursos novos):**
+  - **A.1 EXECUTADO 01/09 — cores do SARC de ponta a ponta (gerador `00b276b`)**: produtor le
+    `bgcolor=` (formato exports 2026/2 — sem isso P3 nasceria SEM COR); #FF8C00 -> `{kind=ps}` e
+    LightGrey-avaliacao -> `{kind=g2}` (D1 parcial: PS/G2 fora das provas principais; testes antigos
+    tinham nome prometendo ps/g2 e assert do contrario); #FF4500 -> suspension; "devolu" lido na
+    Descricao; `sarc_html_to_table` anota {kind=} na tabela canonica; `_aggregate_source_kind` traduz
+    ps->makeup/g2->assessment (REGRESSAO DIAGNOSTICADA POR BISECT: sem hint o bloco da PS entrava no
+    DP como AULA e movia a fronteira u02/u03 do MF, 66->61; fix na raiz, 66/66 de volta). Syllabus dos
+    5 cursos 2026/1 + Lab Redes regenerados dos exports salvos (guard de datas 100%). Gate: reguas
+    intactas em todos os eixos · sentinela 11 campos honestos · determinismo 0 · **gate curado 6/6
+    PERFEITO (excecao historica do IA morreu)** · suite 2158 · goldens SO re-baseline de proposito
+    (PS/G2 viram blocos separados). CG sem export salvo: perfil intocado (PS/G2 dela seguem
+    colapsados — documentado).
+  - **A.2 (proximo)**: D1 completo — termos da formula do G1 (plano/summary sec0/label) substituem a
+    lista `_NOT_MAIN_EXAM`; PS/G2/PF na R7 da cobertura.
+  - A.3: D2 — marco de trabalho (termo numerado na linha amarela); cadeira sem prova ganha marcos.
+  - A.4: D5 — identidade do curso = Moodle id + codigo SARC (perfil nao achado por nome).
+  - A.5: pipeline consumir `summary` da secao 0 (formula do G1 de SO/Lab SO).
+  - B (minors): R11 write atomico no dashboard · warning boundary_dates · R12 join de data ·
+    residual `ia-responsavel` (pagina 258B nunca convertida).
+  - C: triagem da auditoria 18-19/08 (B-1..B-9, F-4/F-5, J-2/J-3, K-3/K-4) — marcar o que A2/glossario
+    ja mataram.
+
+DECISAO FECHADA 31/08 (noite): `.env` Moodle — MANTIDO `moddle/.env` como fonte unica (o bug era a
+DUALIDADE raiz+moddle com writer/reader trocados, nao o local; mover pra raiz exigiria mudar o writer
+da GUI sem ganho). Item da secao DECISION atualizado.
+
 Itens novos da fila (sem data, decisao de priorizar e do user):
   - **EXECUTADO 31/08 (tarde) — Gate de meta/abrangente na SUBUNIDADE: 89 -> 90/93.** Espelho da regra A
     em 2 bracos, gerador `f17956a`: (i) meta-material em resolver_apply — coverage rule meta/
@@ -3511,7 +3539,9 @@ gerador `scripts/make_coverage_labels.py`.
   não tem efeito enquanto a cópia stale viver no raiz (falha silenciosa). Recomendação do
   controller: remover as chaves MOODLE do `.env` raiz (zero código; `moddle/.env` vira fonte
   única). Alternativa [CODE]: `save_moodle_token` fazer merge no raiz e aposentar `moddle/.env`.
-  DECISÃO PENDENTE do user.
+  ~~DECISÃO PENDENTE do user.~~ **FECHADA 31/08 (noite, ruling user): MANTIDO `moddle/.env` como
+  fonte unica — o bug era a dualidade (writer GUI x reader runtime em arquivos diferentes), nao o
+  local; mover pra raiz exigiria mudar o writer sem ganho.**
 - ~~[USER] **`MOODLE_PRIVATE_TOKEN` é chave morta** — presente no `.env` raiz e documentada no
   `.env.exemple`, mas ZERO consumidores no código (grep 2026-07-22). Remover do `.env` e do
   template (o template hoje ensina a criar uma chave que não faz nada).~~
