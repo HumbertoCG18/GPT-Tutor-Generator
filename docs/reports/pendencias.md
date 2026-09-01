@@ -92,7 +92,10 @@ sessoes (3 feriados + 6 desenvolvimento/apresentacao) — regua magra.
 ## PENDENTE DE VERDADE (atualizado 2026-09-01a) — ordem de prioridade e bloqueios
 
 Tudo abaixo e o que RESTA; o resto do arquivo e historico/executado. Unico bloqueio real do mapa:
-Lab SO <- SARC da turma 310 (user/professor). Nada mais bloqueia nada.
+Lab SO <- SARC da turma 310 (user pega amanha na aula). Nada mais bloqueia nada.
+**HANDOFF DA PROXIMA SESSAO: `docs/reports/2026-09-01-handoff-tokens-curtos.md`** — foco decidido
+pelo user: investigacao profunda dos TOKENS CURTOS (devops/02-modelos/1-char/rotas so-longos),
+com armadilhas mapeadas e 2 harnesses promovidos a scripts/ (eval_subunit_gt, sentinela_manifests).
 
 **RESUMO 01/09b (o que sobrou de verdade — apos fila a-g, auditoria de dividas, campanha pre-P3 e
 levas 1+2 de higiene):**
