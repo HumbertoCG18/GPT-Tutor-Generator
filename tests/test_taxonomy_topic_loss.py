@@ -203,3 +203,52 @@ def test_extract_tool_candidates_exige_fronteira_de_palavra():
     assert _extract_tool_candidates("Programas multithreads", semantic_profile=perfil) == []
     assert _extract_tool_candidates("Uso de threads em C", semantic_profile=perfil) == ["threads"]
     assert _extract_tool_candidates("Isabelle/HOL na pratica", semantic_profile=perfil) == ["isabelle"]
+
+
+def _catalogo(plan: str) -> set:
+    from src.builder.extraction.content_taxonomy import build_tag_catalog
+    gerado = build_tag_catalog(teaching_plan=plan, course_map_md="", glossary_md="")
+    return set(gerado.get("tags") or [])
+
+
+def test_catalogo_topico_do_plano_com_numeracao_em_negrito():
+    """B-5 (01/09): '- **1.1** Evolucao historica' virava slug
+    `11-evolucao-historica` — 0 tags do SO casavam o unit_tag_index (boost de
+    unidade perdido). Topico do plano agora vem do parser oficial."""
+    plan = "\n".join([
+        "## **Nº. DA UNIDADE:** 01 **CONTEÚDO:** Introdução ",
+        "",
+        "- **1.1.** Evolução histórica ",
+        "- **1.2.** Chamadas de sistema ",
+    ])
+    tags = _catalogo(plan)
+    assert "topico:evolucao-historica" in tags, tags
+    assert "topico:chamadas-de-sistema" in tags
+    assert not any(t.startswith("topico:11-") or t.startswith("topico:12-") for t in tags)
+
+
+def test_catalogo_topico_do_plano_em_linha_solta():
+    """B-6 (01/09): plano do IA vem em linha solta (learning_unit) — o regex ad
+    hoc exigia marcador/numero e o IA ficava com 0 tags topico:."""
+    plan = "\n".join([
+        "Unidade de Aprendizagem 5: Aprendizado de máquina",
+        "Introdução ao aprendizado de máquina",
+        "",
+        "Paradigmas de aprendizado",
+    ])
+    tags = _catalogo(plan)
+    assert "topico:introducao-ao-aprendizado-de-maquina" in tags, tags
+    assert "topico:paradigmas-de-aprendizado" in tags
+
+
+def test_catalogo_topico_longo_do_plano_sobrevive_heuristica_de_forma():
+    """B-7 (01/09): '>6 palavras' e afins matavam topico que o plano JA numerou
+    (TCC: Argumento Diagonal de Cantor e Conjuntos Incontaveis). Heuristica de
+    forma e para HEADING, nao para fonte humana."""
+    plan = "\n".join([
+        "## Nº DA UNIDADE: 01 ",
+        "CONTEÚDO: Conjuntos ",
+        "1.2 Argumento Diagonal de Cantor e Conjuntos Incontáveis ",
+    ])
+    tags = _catalogo(plan)
+    assert "topico:argumento-diagonal-de-cantor-e-conjuntos-incontaveis" in tags, tags

@@ -308,12 +308,36 @@ def build_tag_catalog(
 ) -> dict:
     tags = set()
     heading_text = "\n".join(f"## {heading}" for heading in (strong_headings or []))
-    base_topic_candidates = _extract_topic_candidates(
-        teaching_plan, course_map_md, glossary_md, semantic_profile=semantic_profile
-    )
+    # B-5/B-6/B-7 (01/09): topicos do PLANO vem do parser OFICIAL (a mesma fonte
+    # da taxonomia) — labels limpos sem numeracao em negrito ("**1.1**" virava
+    # slug `11-...` e 0 tags do SO casavam o unit_tag_index), linha solta do IA
+    # reconhecida (0 tags antes), e SEM heuristica de forma (">6 palavras"
+    # matava "Argumento Diagonal de Cantor e Conjuntos Incontaveis" que o plano
+    # JA numerou; plano e fonte humana, filtro e para heading). O regex ad hoc
+    # continua so para course_map/glossario/headings.
+    from src.builder.extraction.teaching_plan import _parse_units_from_teaching_plan, _topic_text
+    plan_topic_candidates: List[str] = []
+    for _titulo, topicos in (_parse_units_from_teaching_plan(teaching_plan or "") or []):
+        for topico in topicos or []:
+            texto = _strip_topic_prefix(_collapse_ws(_topic_text(topico)))
+            if texto and slugify(texto):
+                plan_topic_candidates.append(texto)
+    if plan_topic_candidates:
+        outros = _extract_topic_candidates(course_map_md, glossary_md, semantic_profile=semantic_profile)
+    else:
+        # Plano sem estrutura que o parser entenda: regex antigo cobre o plano
+        # tambem (e o guard de suporte dos headings continua com base nao-vazia).
+        outros = _extract_topic_candidates(
+            teaching_plan, course_map_md, glossary_md, semantic_profile=semantic_profile
+        )
+    base_topic_candidates = plan_topic_candidates + outros
     heading_topic_candidates = _extract_topic_candidates(heading_text, semantic_profile=semantic_profile)
 
-    for raw_topic in base_topic_candidates:
+    for raw_topic in plan_topic_candidates:
+        slug = slugify(raw_topic)
+        if slug and len(slug) >= 4:
+            tags.add(f"topico:{slug}")
+    for raw_topic in outros:
         slug = slugify(raw_topic)
         if slug and _is_valid_topic_candidate(raw_topic, semantic_profile=semantic_profile):
             tags.add(f"topico:{slug}")
