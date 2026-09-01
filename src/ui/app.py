@@ -1081,11 +1081,6 @@ class App(tk.Tk):
         self._refresh_repo_task_views()
         self._set_status("Tasks finalizadas removidas da fila.")
 
-    def open_repo_dashboard_tab(self):
-        if hasattr(self, "_dashboard_tab"):
-            self.notebook.select(self._dashboard_tab)
-            self._refresh_repo_dashboard()
-
     def _handle_repo_task_event(self, event_name: str, task: RepoTask, error: Optional[Exception]):
         error_text = str(error) if error else ""
         self.after(0, lambda: self._apply_repo_task_event(event_name, task.task_id, error_text))
@@ -2388,7 +2383,8 @@ class App(tk.Tk):
 
         def worker():
             try:
-                builder = RepoBuilder(repo_dir, meta, [], {})
+                profile = SubjectStore().find_by_repo_root(repo_dir)
+                builder = RepoBuilder(repo_dir, meta, [], {}, subject_profile=profile)
                 ok = builder.unprocess(entry_id)
                 self.after(0, lambda: self._on_unprocess_done(entry_id, ok, None))
             except Exception as exc:
@@ -2745,23 +2741,6 @@ class App(tk.Tk):
             return
         self._open_path_in_system(repo_dir)
         self._set_status(f"Pasta do repositório aberta: {repo_dir}")
-
-    def open_file_map(self):
-        """Abre course/FILE_MAP.md do repositório da matéria ativa."""
-        repo_dir = self._repo_dir_from_active_subject()
-        if not repo_dir:
-            messagebox.showinfo(APP_NAME, "Nenhum repositório configurado para a matéria ativa.")
-            return
-        file_map_path = repo_dir / "course" / "FILE_MAP.md"
-        if not file_map_path.exists():
-            messagebox.showerror(
-                APP_NAME,
-                f"FILE_MAP.md não encontrado em:\n{file_map_path}\n\n"
-                f"Crie ou processe o repositório antes de tentar abrir esse arquivo."
-            )
-            return
-        self._open_path_in_system(file_map_path)
-        self._set_status(f"FILE_MAP aberto: {file_map_path}")
 
     def open_student_state_curator(self):
         repo_dir = self._repo_dir_from_active_subject()

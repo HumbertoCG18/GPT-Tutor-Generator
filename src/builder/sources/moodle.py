@@ -502,7 +502,8 @@ def backfill_repo_signals_consumed(repo_root, contents, info, write: bool = True
     try:
         from src.builder.sources.moodle_labels import (
             parse_card_dates, derive_card_block_map, merge_card_block_map,
-            extract_assign_deadlines,
+            extract_assign_deadlines, extract_assign_deadlines_detailed,
+            extract_file_dues,
         )
         ti_path = repo / "course" / ".timeline_index.json"
         map_path = repo / "course" / ".card_block_map.json"
@@ -515,6 +516,17 @@ def backfill_repo_signals_consumed(repo_root, contents, info, write: bool = True
                     derived[_card]["assign_due"] = _due
                 else:
                     derived[_card] = {"block_ids": [], "source": "labels", "assign_due": _due}
+            for _card, _lst in extract_assign_deadlines_detailed(contents, year).items():
+                if _card in derived:
+                    derived[_card]["assign_dues"] = _lst
+                else:
+                    derived[_card] = {"block_ids": [], "source": "labels", "assign_dues": _lst}
+            for _card, _fd in extract_file_dues(contents, year).items():
+                if _card in derived:
+                    derived[_card]["file_dues"] = _fd
+                else:
+                    derived[_card] = {"block_ids": [], "source": "labels",
+                                      "file_dues": _fd}
             existing = _json.loads(map_path.read_text(encoding="utf-8")) if map_path.is_file() else {}
             merged = merge_card_block_map(existing, derived)
             if merged != existing and write:

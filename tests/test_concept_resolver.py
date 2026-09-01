@@ -128,3 +128,28 @@ def test_assignment_shape_and_stub():
         resolve_material_assignment({}, UNIT1_BLOCKS, [], signals={})
     except NotImplementedError:
         return
+
+
+def test_pino_manual_em_uuid_vence_tier1():
+    blocks = [
+        {"id": "bloco-01", "block_uuid": "u-1", "unit_slug": "u1"},
+        {"id": "bloco-02", "block_uuid": "u-2", "unit_slug": "u2"},
+    ]
+    entry = {"id": "e1", "manual_timeline_block_id": "u-2"}
+    a = resolve_material_assignment(entry, blocks, [], signals={})
+    assert a["block_id"] == "u-2"
+    assert a["method"] == "manual"
+    assert a["confidence"] == 1.0
+    assert a["unit_slug"] == "u2"
+
+
+def test_pino_manual_em_display_segue_valendo():
+    blocks = [
+        {"id": "bloco-01", "block_uuid": "u-1", "unit_slug": "u1"},
+        {"id": "bloco-02", "block_uuid": "u-2", "unit_slug": "u2"},
+    ]
+    entry = {"id": "e1", "manual_timeline_block_id": "bloco-02"}
+    a = resolve_material_assignment(entry, blocks, [], signals={})
+    assert a["block_id"] == "u-2"          # canonico = uuid do bloco casado
+    assert a["method"] == "manual"
+    assert a["unit_slug"] == "u2"

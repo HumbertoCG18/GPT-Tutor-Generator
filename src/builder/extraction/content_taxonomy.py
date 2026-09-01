@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Callable, Dict, List, Optional
+
+logger = logging.getLogger(__name__)
 
 from src.builder.routing.thresholds import METHOD_CAPS, confidence_band, relative_margin_confidence, T
 from src.builder.routing.file_map import reconcile_unit_with_block
@@ -42,6 +45,24 @@ def _strip_outline_prefix(text: str) -> str:
     return cleaned.strip()
 
 
+# Exclusividade de nucleo de titulo (campanha 2 §4-U1): nucleo por TOKENS,
+# nunca regex de prefixo — titulos reais variam ("Unidade NN —", "Unidade de
+# Aprendizagem N —", "UNIDADE NN —") e nada garante padrao em curso futuro.
+_UNIT_TITLE_GENERIC = {"unidade", "aprendizagem", "modulo", "parte", "topico"}
+# _topic_support_tokens trunca tokens >=5 chars pro stem de 5 (mesma regra do
+# fuzzy-match do modulo); comparar contra a palavra cheia nunca bate ("unidade"
+# vira "unida" no toks, mas nao em _UNIT_TITLE_GENERIC) — TDD (Step 3) pegou:
+# _unit_title_core_tokens("Unidade de Aprendizagem 5 -- ...") vazava "unida"/
+# "apren" no nucleo. Pre-computa os mesmos stems pra comparar stem-a-stem.
+_UNIT_TITLE_GENERIC_STEMS = {w[:5] if len(w) >= 5 else w for w in _UNIT_TITLE_GENERIC}
+_TITLE_CORE_MIN_TOKENS = 2  # nucleo de 1 token ("Deadlock") nao move nada: falso-positivo > beneficio
+
+
+def _unit_title_core_tokens(title: str) -> set:
+    toks = _topic_support_tokens(_strip_topic_code(str(title or "")))
+    return {t for t in toks if t not in _UNIT_TITLE_GENERIC_STEMS and not t.isdigit()}
+
+
 def _extract_markdown_headings(raw_markdown: str, limit: int = 8) -> List[str]:
     headings: List[str] = []
     for line in (raw_markdown or "").splitlines():
@@ -69,17 +90,16 @@ def _looks_like_tool_candidate(text: str, semantic_profile: Optional[dict] = Non
     normalized = _normalize_match_text(text)
     effective_profile = merge_semantic_profile(semantic_profile)
     known_tools = list(effective_profile.get("known_tools") or [])
-    normalized_tokens = set(normalized.split())
     for tool in known_tools:
         tool_norm = _normalize_match_text(tool)
         if not tool_norm:
             continue
-        if len(tool_norm) < 4:
-            if tool_norm in normalized_tokens:
-                return True
-        else:
-            if tool_norm in normalized:
-                return True
+        # Fronteira alfanumerica sempre: substring crua fazia `ementa` derrubar
+        # "implementacao" e `threads` derrubar "multithreads". Separadores que o
+        # normalizador preserva (+-./) seguem contando como fronteira, entao
+        # "isabelle" ainda casa em "Isabelle/HOL".
+        if re.search(rf"(?<![0-9a-z]){re.escape(tool_norm)}(?![0-9a-z])", normalized):
+            return True
     return False
 
 
@@ -311,7 +331,7 @@ def build_tag_catalog(
 
 
 def _extract_topic_code(text: str) -> str:
-    match = re.match(r"^\s*(\d+(?:\.\d+)*)(?:\.)?\s+", _collapse_ws(text))
+    match = re.match(r"^\s*\**\s*(\d+(?:\.\d+)*)(?:\.)?\**\s+", _collapse_ws(text))
     return match.group(1) if match else ""
 
 
@@ -319,7 +339,14 @@ def _strip_topic_code(text: str) -> str:
     cleaned = _collapse_ws(text)
     if not cleaned:
         return ""
-    return re.sub(r"^\s*\d+(?:\.\d+)*\.?\s*", "", cleaned).strip()
+    return re.sub(r"^\s*\**\s*\d+(?:\.\d+)*\.?\**\s*", "", cleaned).strip()
+
+
+# O template do GLOSSARY.md escreve um travessão quando o campo está VAZIO
+# ("**Sinônimos aceitos:** —"). Sem isto o placeholder virava sinônimo, virava
+# alias do tópico e entrava na assinatura da unidade: 100 de 361 aliases dos 5
+# cursos eram travessão ou vazio (medido 2026-08-18).
+_GLOSSARY_EMPTY_MARKERS = {"—", "–", "-", "--", "n/a", "N/A", "nenhum", "Nenhum"}
 
 
 def _parse_glossary_terms(glossary_md: str) -> List[Dict[str, object]]:
@@ -348,7 +375,11 @@ def _parse_glossary_terms(glossary_md: str) -> List[Dict[str, object]]:
 
         match = re.match(r"^\*\*Sin[ôo]nimos aceitos:\*\*\s*(.+)$", line, flags=re.IGNORECASE)
         if match:
-            values = [item.strip() for item in re.split(r"[,;/|]", match.group(1)) if item.strip()]
+            values = [
+                item.strip()
+                for item in re.split(r"[,;/|]", match.group(1))
+                if item.strip() and item.strip() not in _GLOSSARY_EMPTY_MARKERS
+            ]
             current.setdefault("synonyms", []).extend(values)
             continue
 
@@ -384,7 +415,17 @@ def _glossary_aliases_for_topic(topic_label: str, unit_title: str, glossary_term
         if unit_hint and unit_hint not in unit_norm and unit_norm not in unit_hint:
             continue
 
-        if term_norm == topic_norm or term_norm in topic_norm or topic_norm in term_norm:
+        # R8 (2026-08-26): termo NUMERADO do plano casa so pelo nucleo EXATO.
+        # Por contencao, "3.3 Algoritmos de escalonamento" (e seus sinonimos
+        # FCFS/SJF) entrava tambem em "Escalonamento" e os dois topicos
+        # empatavam; "2.3 Variacoes de Maquinas de Turing" virava alias de
+        # "Maquinas de Turing". Termo sem numeracao mantem a contencao.
+        core_norm = _normalize_match_text(_strip_topic_code(term_text))
+        if _extract_topic_code(term_text):
+            matched = core_norm == topic_norm
+        else:
+            matched = term_norm == topic_norm or term_norm in topic_norm or topic_norm in term_norm
+        if matched:
             for candidate in [term_text, *list(term.get("synonyms", []) or [])]:
                 candidate_text = _collapse_ws(candidate)
                 candidate_slug = slugify(candidate_text)
@@ -449,6 +490,14 @@ def build_content_taxonomy(
     normalize_unit_slug: Callable[[str], str],
 ) -> dict:
     units = parse_units_from_teaching_plan(teaching_plan or "")
+    # O CONTEUDOS do plano e lista humana: nao passa pelo filtro de ruido de
+    # heading. Medido nos 5 cursos (2026-08-20): o filtro rejeitava 27 de 127
+    # topicos do plano, TODOS legitimos ("Logica de Hoare", "Teorema de
+    # Cook-Levin") e zero lixo; sobreviviam so pela isencao de codigo numerico.
+    # O plano do IA nao numera -> "Modelos Preditivos" sumia e 33 entries da u05
+    # colapsavam no topico "introducao". O filtro segue valendo para o fallback
+    # (COURSE_MAP e markdown gerado, onde heading de template e ruido real).
+    topics_from_plan = bool(units)
     if not units and course_map_md:
         units = parse_units_from_teaching_plan(course_map_md)
 
@@ -465,7 +514,7 @@ def build_content_taxonomy(
                 continue
             topic_code = _extract_topic_code(topic_text(topic))
             # Filtrar noise topics: sem código numérico e que não passam na validação
-            if not topic_code and not _is_valid_topic_candidate(
+            if not topics_from_plan and not topic_code and not _is_valid_topic_candidate(
                 current_topic_text, semantic_profile=semantic_profile
             ):
                 continue
@@ -485,15 +534,59 @@ def build_content_taxonomy(
 
         result_units.append({"slug": unit_slug, "title": unit_title, "topics": _dedupe_taxonomy_topics(topic_records)})
 
+    # (a) topico-preview cujo rotulo contem o nucleo do titulo de OUTRA unidade
+    # migra pra unidade dona (bug MF: "1.3.1. Verificacao de Modelos" na abertura
+    # da u01 empatava o DP 4x4 no bloco-16).
+    title_cores = {}
+    for unit in result_units:
+        core = _unit_title_core_tokens(unit.get("title", ""))
+        if len(core) >= _TITLE_CORE_MIN_TOKENS:
+            title_cores[unit["slug"]] = core
+    for unit in result_units:
+        kept = []
+        for topic in unit.get("topics", []) or []:
+            label_toks = _topic_support_tokens(str(topic.get("label", "") or ""))
+            owner = next(
+                (slug for slug, core in title_cores.items()
+                 if slug != unit["slug"] and core <= label_toks),
+                None,
+            )
+            if owner is None:
+                kept.append(topic)
+                continue
+            topic["unit_slug"] = owner
+            dest = next(u for u in result_units if u["slug"] == owner)
+            dest["topics"] = _dedupe_taxonomy_topics(list(dest.get("topics", []) or []) + [topic])
+        unit["topics"] = kept
+
+    # Heading institucional ("ENGENHARIA DE SOFTWARE II ---", "Trabalho
+    # FinalEngenharia de Software II") aparece no cabecalho de TODO material e,
+    # virando alias, transforma o topico dono num ima: no ES2 puxou Kubernetes e
+    # o T1 para a unidade de arquitetura (medicao 2026-08-18). O perfil ja marca
+    # o slug do curso como generico — aqui a checagem faltava.
+    effective_profile = merge_semantic_profile(semantic_profile)
+    generic_slugs = set(effective_profile.get("tag_generic_slugs") or [])
+    course_norm = _normalize_match_text(
+        str(effective_profile.get("course_slug") or "").replace("-", " ")
+    )
     for heading in heading_sources:
         heading_text = _collapse_ws(_strip_topic_code(heading))
         heading_slug = slugify(heading_text)
         if not heading_text or not heading_slug:
             continue
+        if heading_slug in generic_slugs:
+            continue
+        if course_norm and course_norm in _normalize_match_text(heading_text):
+            continue
         best_unit: Optional[dict] = None
         best_topic: Optional[dict] = None
         best_score = 0.0
-        for unit in result_units:
+        # (b) heading que contem nucleo de titulo de unidade so enriquece a dona
+        heading_toks = _topic_support_tokens(heading_text)
+        owner_units = [u for u in result_units
+                       if title_cores.get(u["slug"]) and title_cores[u["slug"]] <= heading_toks]
+        search_units = owner_units or result_units
+        for unit in search_units:
             candidate_topic = _select_supported_taxonomy_topic(
                 heading_text,
                 unit.get("topics", []) or [],
@@ -522,7 +615,11 @@ def build_content_taxonomy(
             best_topic["aliases"] = aliases
             best_unit["topics"] = _dedupe_taxonomy_topics(list(best_unit.get("topics", []) or []))
 
-    return {"version": 1, "course_slug": _infer_course_slug_from_units(units), "units": result_units}
+    # A2 (2026-08-27): nome do curso na raiz, para o scorer de subunidade tratar os tokens do nome
+    # como boilerplate por curso. Vem do semantic_profile (course_slug = slugify(course_name)); o
+    # `course_slug` desta raiz e inferido das UNIDADES (outra coisa) e fica como estava.
+    course_name = str((semantic_profile or {}).get("course_slug") or "").replace("-", " ")
+    return {"version": 1, "course_slug": _infer_course_slug_from_units(units), "course_name": course_name, "units": result_units}
 
 
 def write_internal_content_taxonomy(root_dir: Path, taxonomy: dict) -> None:
@@ -570,6 +667,29 @@ def extract_markdown_lead_text(markdown_text: str, max_chars: int = 2600) -> str
     return clipped.strip()
 
 
+_ADMIN_HEADING_NORMS = {
+    "plano de ensino", "professor", "professor es", "professores",
+    "sumario", "conteudo extraido", "imagens curadas", "referencias", "bibliografia",
+}
+_MD_LINK_RE = re.compile(r"\[([^\]]*)\]\([^)]*\)")
+
+
+def _clean_heading_text(text: str) -> str:
+    """Remove decoracao markdown (link, bold) e descarta heading administrativo
+    ou linha de tabela antes de entrar no alias-enrichment (campanha 2 U1c).
+    "" = descartar."""
+    t = _MD_LINK_RE.sub(r"\1", str(text or ""))
+    t = t.replace("**", "").replace("__", "")
+    if "|" in t:  # linha de tabela nunca e heading legitimo
+        return ""
+    t = _collapse_ws(t)
+    norm = _normalize_match_text(t)
+    norm_alpha = " ".join(w for w in norm.split() if w.isalpha())
+    if norm_alpha in _ADMIN_HEADING_NORMS:
+        return ""
+    return t
+
+
 def collect_strong_heading_candidates(root_dir: Optional[Path], manifest_entries: Optional[List[dict]]) -> List[str]:
     if not root_dir:
         return []
@@ -582,12 +702,14 @@ def collect_strong_heading_candidates(root_dir: Optional[Path], manifest_entries
                 continue
             md_path = root_dir / rel_path
             if not md_path.exists() or not md_path.is_file():
+                logger.warning("heading skip: %s aponta md inexistente (%s)", entry.get("id"), rel_path)
                 continue
             try:
                 file_headings = _extract_markdown_headings(md_path.read_text(encoding="utf-8"))
             except Exception:
                 file_headings = []
             for heading in file_headings[:4]:
+                heading = _clean_heading_text(heading)
                 heading_slug = slugify(heading)
                 if heading_slug and heading_slug not in seen:
                     seen.add(heading_slug)
@@ -808,108 +930,6 @@ def refresh_manifest_auto_tags(
     return refreshed
 
 
-def _best_instructional_block_fallback(
-    entry,
-    markdown_text,
-    instructional_blocks,
-    preferred_unit_slug,
-    preferred_topic_slug,
-):
-    """Spec "pega o melhor" (linhas 92-94/127-130): quando o scorer primario,
-    com seu portao best>=0.95 (legitimo para o roteamento do FILE_MAP em
-    navigation.py, mas inadequado aqui), recusa atribuir, ranqueia TODOS os
-    blocos instrucionais pelo MESMO scorer real (score_entry_against_timeline_block)
-    e atribui o melhor. Nada de scoring reimplementado nem numero magico: a
-    confianca vem de relative_margin_confidence(best, runner_up) — a mesma
-    formula de confianca de BLOCO usada pelo scorer primario (P2.1).
-
-    Retorna (block, confidence) do vencedor, ou (None, 0.0) se nao ha bloco.
-    """
-    if not instructional_blocks:
-        return None, 0.0
-    # Import tardio: entry_signals importa content_taxonomy no topo, entao um
-    # import de topo aqui criaria ciclo. So precisamos destes na hora do fallback.
-    from src.builder.routing.sequence import annotate_class_ordinals
-    annotate_class_ordinals(instructional_blocks)
-    from src.builder.routing.file_map import (
-        block_token_weights,
-        score_entry_against_timeline_block,
-        score_card_evidence_against_entry,
-    )
-    from src.builder.extraction.entry_signals import (
-        collect_entry_unit_signals,
-        score_text_against_row,
-    )
-    signals = collect_entry_unit_signals(entry, markdown_text)
-    # S2 (P4): IDF por raridade computado UMA vez por entry, sobre o conjunto
-    # de candidatos deste ranking (instructional_blocks ou o recorte do card).
-    # Repassa o mesmo normalize (keep="+-./") que o scorer usa neste caminho:
-    # tokens com hífen/data/outline não escapam do IDF por ausência no dict.
-    topic_token_weights = block_token_weights(instructional_blocks, normalize=_normalize_match_text)
-    scored = [
-        (
-            block,
-            score_entry_against_timeline_block(
-                signals,
-                block,
-                normalize_match_text=_normalize_match_text,
-                score_text_against_row=score_text_against_row,
-                score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
-                    s, items, normalize_match_text=_normalize_match_text
-                ),
-                preferred_unit_slug=preferred_unit_slug,
-                preferred_topic_slug=preferred_topic_slug,
-                topic_token_weights=topic_token_weights,
-            ),
-        )
-        for block in instructional_blocks
-    ]
-    scored.sort(key=lambda item: item[1], reverse=True)
-    best_block, best_score = scored[0]
-    runner_up_score = scored[1][1] if len(scored) > 1 else 0.0
-    confidence = relative_margin_confidence(best_score, runner_up_score)
-    return best_block, confidence
-
-
-# Gabarito 1-bloco: a confianca e o proprio teto do metodo "card" (P2.2) —
-# fonte unica em thresholds.METHOD_CAPS, sem literal duplicado.
-CARD_SINGLE_CONF = METHOD_CAPS["card"]
-
-
-def _card_scoped_block(entry, markdown_text, unit_index, instructional_blocks,
-                       card_map, score_fallback_fn):
-    """Degrau card->bloco. Retorna (block_id, confidence, method) ou ("", 0.0, "").
-
-    method (P2.2): "card" quando o gabarito tem 1 bloco (decisão direta);
-    "card+scorer" quando o scorer restrito desempatou entre 2+ blocos do card.
-
-    score_fallback_fn(entry, markdown_text, scoped_blocks, unit_slug, topic_slug)
-    -> (block, conf): o scorer real restrito aos blocos do card (sub-bloco).
-    """
-    from src.builder.timeline.card_block import lookup_card_blocks
-    card = str(entry.get("source_section") or "").strip()
-    if not card:
-        return "", 0.0, ""
-    # lookup_card_blocks retorna uuids (lazy compat Task 2). O join e o retorno
-    # casam por block_uuid (fallback id para blocos legados sem uuid).
-    ids = set(lookup_card_blocks(card, card_map, unit_index, instructional_blocks))
-    if not ids:
-        return "", 0.0, ""
-
-    def _block_key(b):
-        return str(b.get("block_uuid") or b.get("id") or "")
-
-    scoped = [b for b in instructional_blocks if _block_key(b) in ids]
-    if not scoped:
-        return "", 0.0, ""
-    if len(scoped) == 1:
-        return _block_key(scoped[0]), CARD_SINGLE_CONF, "card"
-    block, conf = score_fallback_fn(entry, markdown_text, scoped, "", "")
-    if block is None:
-        return "", 0.0, ""
-    return _block_key(block), float(conf), "card+scorer"
-
-
 def _exam_code_from_text(text: str) -> str:
     """Código canônico da avaliação a partir de texto livre: P1/P2/PS/G2/PF/EXAME ou ""."""
     t = _normalize_match_text(text)
@@ -975,381 +995,3 @@ def review_list_block_for_entry(entry: dict, blocks: list) -> str:
     return ""
 
 
-def resolve_unit_block_tags(
-    manifest_entries,
-    course_meta,
-    subject_profile=None,
-    *,
-    build_file_map_unit_index_from_course_fn,
-    build_file_map_timeline_context_from_course_fn,
-    iter_content_taxonomy_topics_fn,
-    auto_map_entry_subtopic_fn,
-    auto_map_entry_unit_fn,
-    select_probable_period_for_entry_fn,
-    resolve_entry_manual_timeline_block_fn,
-    entry_markdown_text_for_file_map_fn,
-):
-    """Adiciona tags gerenciadas unit:, subunit: e bloco: ao auto_tags de cada
-    entry no manifest.
-
-    Thresholds:
-    - unit:    confidence >= 0.65 AND nao ambiguo
-    - subunit: confidence >= 0.60 AND nao ambiguo
-    - bloco:   confidence >= 0.50 AND nao ambiguo (ou manual_timeline_block_id)
-
-    manual_tags nunca sao tocadas. Tags com outros prefixos em auto_tags sao
-    preservadas. manual_unit_slug e manual_timeline_block_id tem precedencia
-    absoluta (confidence = 1.0).
-    """
-    _UNIT_PREFIX = "unit:"
-    _SUBUNIT_PREFIX = "subunit:"
-    _BLOCO_PREFIX = "bloco:"
-    _MANAGED = (_UNIT_PREFIX, _SUBUNIT_PREFIX, _BLOCO_PREFIX)
-
-    unit_index = build_file_map_unit_index_from_course_fn(course_meta, subject_profile)
-    timeline_context = build_file_map_timeline_context_from_course_fn(
-        course_meta, subject_profile
-    )
-    content_taxonomy = (
-        course_meta.get("_content_taxonomy")
-        or course_meta.get("_content_taxonomy_for_tests")
-        or {}
-    )
-    # Dívida #5: callers como retag não passam _content_taxonomy. Sem fallback,
-    # o scorer de subunidade rodaria com taxonomia vazia e LIMPARIA os slugs já
-    # persistidos. Lê do disco do repo quando a versão em memória não veio.
-    if not content_taxonomy and course_meta.get("_repo_root"):
-        content_taxonomy = load_internal_content_taxonomy(course_meta["_repo_root"])
-    topic_index = iter_content_taxonomy_topics_fn(content_taxonomy)
-    blocks_by_unit = dict(timeline_context.get("blocks_by_unit") or {})
-    unassigned_blocks = list(timeline_context.get("unassigned_blocks") or [])
-    repo_root = course_meta.get("_repo_root")
-
-    from src.models.tag_profile import load_tag_profile, build_learned_unit_boosts
-    _tag_profile = None
-    if repo_root:
-        try:
-            _tag_profile = load_tag_profile(Path(repo_root) / "course")
-        except Exception:
-            _tag_profile = None
-
-    _card_block_map = {}
-    if repo_root:
-        try:
-            from src.builder.timeline.card_block import load_card_block_map
-            _card_block_map = load_card_block_map(Path(repo_root) / "course")
-        except Exception:
-            _card_block_map = {}
-
-    # Resumo de código curado (Gemini) como sinal de SUBUNIDADE — GERAL: zips e
-    # códigos não têm .md convertido, então o scorer só via título e empatava no
-    # ruído. Carregado 1x; aplicado só ao input do subunit scorer (bloco/unidade
-    # mantêm o markdown original p/ não mexer no golden de bloco).
-    _code_curation_entries = {}
-    if repo_root:
-        try:
-            from src.builder.core.code_summarization import load_code_curation
-            _code_curation_entries = load_code_curation(Path(repo_root)).get("entries", {}) or {}
-        except Exception:
-            _code_curation_entries = {}
-
-    updated = []
-    for entry in manifest_entries or []:
-        category = _collapse_ws(str(entry.get("category") or "")).lower()
-        if category in _NO_TIMELINE_CATEGORIES:
-            # Categoria fora da timeline: limpa atribuicao antiga (senao um
-            # manifest com historico carrega bloco orfao — caso real do B1).
-            for k in ("computed_block_id", "computed_block_confidence",
-                      "computed_block_band", "computed_block_method"):
-                entry.pop(k, None)
-            if entry.get("auto_tags"):
-                entry["auto_tags"] = [t for t in entry["auto_tags"] if not str(t).startswith("bloco:")]
-            updated.append(entry)
-            continue
-
-        markdown_text = entry_markdown_text_for_file_map_fn(repo_root, entry)
-
-        # Texto de subunidade = markdown + resumo de código curado (se houver).
-        # Só o caminho de SUBUNIDADE usa o texto enriquecido; bloco/unidade ficam
-        # com o markdown original (preserva o golden de bloco).
-        subunit_markdown_text = markdown_text
-        _curation_entry = _code_curation_entries.get(str(entry.get("id") or ""))
-        if _curation_entry:
-            from src.builder.core.code_summarization import code_curation_signal_text
-            _curation_text = code_curation_signal_text(_curation_entry)
-            if _curation_text:
-                subunit_markdown_text = (
-                    f"{markdown_text}\n\n{_curation_text}" if markdown_text else _curation_text
-                )
-
-        # --- Unit match (manual tem precedencia) ---
-        manual_unit = _collapse_ws(str(entry.get("manual_unit_slug") or ""))
-        if manual_unit:
-            resolved_unit_slug = manual_unit
-            unit_confidence = 1.0
-            unit_ambiguous = False
-            unit_reasons = ["manual"]
-        else:
-            _learned_boosts = build_learned_unit_boosts(_tag_profile, entry) if _tag_profile else {}
-            unit_match = auto_map_entry_unit_fn(
-                entry, unit_index, markdown_text, topic_index,
-                learned_unit_boosts=_learned_boosts,
-            )
-            resolved_unit_slug = unit_match.slug
-            unit_confidence = unit_match.confidence
-            unit_ambiguous = unit_match.ambiguous
-            unit_reasons = list(unit_match.reasons)
-
-        # --- Topic/subunit match (manual tem precedencia) ---
-        manual_subunit = _collapse_ws(str(entry.get("manual_subunit_slug") or ""))
-        if manual_subunit:
-            preferred_topic_slug = manual_subunit
-            subunit_reasons = ["manual"]
-            subunit_confidence = 1.0
-            best_subunit_slug = manual_subunit
-        else:
-            topic_match = auto_map_entry_subtopic_fn(
-                entry, content_taxonomy, subunit_markdown_text,
-                winning_unit_slug=resolved_unit_slug,
-            )
-            preferred_topic_slug = ""
-            subunit_reasons = list(getattr(topic_match, "reasons", []))
-            subunit_confidence = float(getattr(topic_match, "confidence", 0.0))
-            # Melhor candidato de subunidade (best-effort), independente do gate:
-            # surfaçado no editor com a confiança, mesmo ambíguo/baixo. A tag
-            # `subunit:` (roteamento) continua gated abaixo via preferred_topic_slug.
-            best_subunit_slug = str(getattr(topic_match, "topic_slug", "") or "")
-            if (
-                topic_match.topic_slug
-                and not topic_match.ambiguous
-                and topic_match.confidence >= T.SUBUNIT_TAG
-            ):
-                preferred_topic_slug = topic_match.topic_slug
-
-        # --- Block match: DESACOPLADO da unidade (Fase 1) ---
-        # O bloco e SEMPRE computado direto, rodando o scorer sobre TODOS os
-        # blocos instrucionais (nao-administrative_only). A unidade deixou de
-        # ser portao (gate unit_confidence>=0.55 removido) e entra apenas como
-        # BOOST aplicado DENTRO de score_entry_against_timeline_block: quando o
-        # unit_slug do BLOCO casa com preferred_unit, soma +0.35 + (unit_confidence
-        # DO BLOCO * 0.25) (file_map.py:716-719); caso contrario aplica -0.45.
-        # Nao usa a confianca da unidade da ENTRY — so o preferred_unit_slug.
-        period_block_id = ""
-        block_confidence = 0.0
-        # Método do funil (P2.3): manual > review_rule > card/card+scorer >
-        # scorer_only. Gravado em computed_block_method para QUALQUER entry
-        # com bloco (antes só o caminho de código Gemini gravava).
-        block_method = ""
-        manual_block = resolve_entry_manual_timeline_block_fn(entry, timeline_context)
-        if manual_block:
-            period_block_id = _collapse_ws(
-                str(manual_block.get("block_uuid") or manual_block.get("id") or "")
-            )
-            block_confidence = 1.0
-            block_method = "manual"
-        else:
-            # D2: aqui o timeline_index vem do runtime (_build_timeline_index, sem
-            # _serialize) -> blocos admin (feriado/prova) presentes COM rows e SEM a
-            # chave administrative_only. O key-lookup antigo era no-op e os deixava
-            # vazar como candidatos do scorer material->bloco. O predicado lê rows
-            # (filtra admin no runtime; inócuo no serializado, que ja removeu admin).
-            from src.builder.timeline.index import timeline_block_is_administrative_only
-            instructional_blocks = [
-                block
-                for block in (timeline_context.get("timeline_index") or {}).get("blocks", [])
-                or []
-                if not timeline_block_is_administrative_only(block)
-            ]
-            # S5 (P4): janela de assign para trabalhos. Quando a entry é
-            # trabalho (categoria) ou código cujo card tem deadline de entrega
-            # (assign_due no card map), os candidatos do scorer ficam restritos
-            # aos blocos com period_start < assign_due — o conteúdo foi dado
-            # ANTES da entrega. O due NUNCA decide o bloco sozinho (heurística
-            # "deadline 06/05 -> bloco-11" REPROVADA pelo usuário na demo de
-            # 12/06: é convenção, não conteúdo); o scorer ranqueia DENTRO da
-            # janela. Filtro que esvazia (nenhum bloco antes do due) não
-            # restringe nada — nunca produz órfão.
-            from src.builder.timeline.card_block import lookup_card_assign_due
-            _assign_due = lookup_card_assign_due(
-                entry.get("source_section"), _card_block_map)
-            if _assign_due and (
-                category in ASSIGN_WINDOW_CATEGORIES
-                or category.startswith("codigo")
-            ):
-                _windowed = [
-                    b for b in instructional_blocks
-                    if str(b.get("period_start") or "") < _assign_due
-                ]
-                if _windowed:
-                    instructional_blocks = _windowed
-            _review_bid = review_list_block_for_entry(entry, instructional_blocks)
-            if _review_bid:
-                # Lista de revisão para prova (nome casa revisão + Pk) -> bloco de
-                # revisão que precede a prova. Sinal léxico forte, vence card/score.
-                period_block_id = _review_bid
-                block_confidence = 0.95
-                block_method = "review_rule"
-            else:
-                _card_bid, _card_conf, _card_method = _card_scoped_block(
-                    entry, markdown_text, unit_index, instructional_blocks, _card_block_map,
-                    lambda e, md, scoped, us, ts: _best_instructional_block_fallback(e, md, scoped, us, ts),
-                )
-                if _card_bid:
-                    period_block_id = _card_bid
-                    block_confidence = _card_conf
-                    block_method = _card_method
-                elif instructional_blocks:
-                    # Passa a unidade resolvida (mesmo fraca) so para o boost; o
-                    # scorer ranqueia TODOS os blocos instrucionais.
-                    unit_obj = next(
-                        (u for u in unit_index if u.get("slug") == resolved_unit_slug),
-                        {"slug": resolved_unit_slug} if resolved_unit_slug else {},
-                    )
-                    _period, p_conf, _p_ambig, _ = select_probable_period_for_entry_fn(
-                        entry=entry,
-                        unit=unit_obj,
-                        candidate_rows=instructional_blocks,
-                        markdown_text=markdown_text,
-                        preferred_topic_slug=preferred_topic_slug,
-                    )
-                    # O scorer primario aplica um portao best>=0.95 (file_map.py:1098;
-                    # sessao-first em :1036) que e legitimo para o roteamento do
-                    # FILE_MAP (navigation.py exige match forte para nao rotear lixo),
-                    # mas viola a spec aqui: para atribuicao de bloco, SEMPRE se
-                    # atribui o melhor candidato e a baixa confianca vira flag de
-                    # revisao (band media/baixa), nunca orfao quando ha bloco
-                    # (spec linhas 92-94/127-130). Quando o portao recusa (_period
-                    # vazio), cai no "pega o melhor": ranqueia TODOS os blocos
-                    # instrucionais pelo MESMO scorer real e atribui o top.
-                    if _period:
-                        for block in instructional_blocks:
-                            if str(block.get("period_label") or "") == _period:
-                                period_block_id = _collapse_ws(
-                                    str(block.get("block_uuid") or block.get("id") or "")
-                                )
-                                # p_conf ja e relative_margin_confidence(best,
-                                # runner_up) computada dentro do scorer — reusada.
-                                block_confidence = float(p_conf)
-                                block_method = "scorer_only"
-                                break
-                    else:
-                        fallback_block, fallback_conf = _best_instructional_block_fallback(
-                            entry,
-                            markdown_text,
-                            instructional_blocks,
-                            resolved_unit_slug,
-                            preferred_topic_slug,
-                        )
-                        if fallback_block is not None:
-                            period_block_id = _collapse_ws(
-                                str(fallback_block.get("block_uuid") or fallback_block.get("id") or "")
-                            )
-                            block_confidence = float(fallback_conf)
-                            block_method = "scorer_only"
-
-        # --- computed_* sao a FONTE UNICA (Fase 1) ---
-        # O slug/id resolvido vive direto no entry; as tags unit:/bloco: abaixo
-        # sao ESPELHO destes campos, nao um caminho de scoring paralelo.
-        # block_confidence sempre vem de relative_margin_confidence(best,
-        # runner_up) (P2.1) — seja a computada DENTRO de
-        # select_probable_period_for_entry_fn (caminho do scorer aprovado), seja
-        # a do fallback "pega o melhor", que chama a MESMA
-        # thresholds.relative_margin_confidence sobre os scores do MESMO
-        # scorer real. Nunca recomputado/duplicado aqui.
-        computed_unit_slug = resolved_unit_slug if (not unit_ambiguous and unit_confidence >= T.UNIT_TAG) else ""
-        computed_block_id = period_block_id
-        # Teto por método (P2.2): léxico nunca passa do cap do seu degrau
-        # (METHOD_CAPS em thresholds.py). manual=1.0 e review_rule=0.95 ficam
-        # intactos; card/card+scorer/scorer_only são rebaixados quando a
-        # margem relativa inflaria acima do que o método permite saber.
-        computed_block_confidence = min(
-            float(block_confidence), METHOD_CAPS.get(block_method, 1.0)
-        )
-
-        # Reconciliação unidade×bloco (F1): bloco manual é autoritativo; no auto,
-        # bloco define a unidade só se block_confidence >= unit_confidence; senão
-        # mantém a unidade forte e marca conflito. Absorve a herança (unit vazio).
-        _blocks = (timeline_context.get("timeline_index") or {}).get("blocks", []) or []
-        _blk = next((b for b in _blocks if str(b.get("block_uuid") or "") == computed_block_id), None)
-        if _blk is None:
-            _blk = next((b for b in _blocks if str(b.get("id") or "") == computed_block_id), None)
-        _blk_unit = str((_blk or {}).get("unit_slug") or "").strip()
-        _reconciled_unit, _unit_reason_suffix, _unit_conflict = reconcile_unit_with_block(
-            computed_unit_slug=computed_unit_slug,
-            unit_confidence=float(unit_confidence),
-            computed_block_id=computed_block_id,
-            block_confidence=float(block_confidence),
-            block_unit_slug=_blk_unit,
-            block_is_manual=bool(manual_block),
-            has_manual_unit=bool(manual_unit),
-        )
-        computed_unit_slug = _reconciled_unit
-        if _unit_reason_suffix:
-            unit_reasons = list(unit_reasons) + _unit_reason_suffix
-        # Faixa (Fase 3): so faz sentido quando ha bloco atribuido. Cutoffs
-        # centralizados em thresholds.confidence_band (nada hardcoded aqui).
-        # media/baixa ficam flagados pra revisao via o proprio valor da faixa.
-        computed_block_band = confidence_band(computed_block_confidence) if computed_block_id else ""
-
-        # --- Monta novo auto_tags ESPELHANDO os computed_* ---
-        existing_auto = list(entry.get("auto_tags") or [])
-        kept = [t for t in existing_auto if not any(t.startswith(p) for p in _MANAGED)]
-
-        if computed_unit_slug:
-            kept.append(f"{_UNIT_PREFIX}{computed_unit_slug}")
-
-        if preferred_topic_slug:
-            kept.append(f"{_SUBUNIT_PREFIX}{preferred_topic_slug}")
-
-        if computed_block_id:
-            # CRÍTICO: a tag bloco: deve continuar DISPLAY (bloco-NN), nunca uuid.
-            # file_map.py:506 parseia bloco-(\d+) e QUEBRA com uuid. Resolve
-            # uuid->display via índice; fallback = computed_block_id (já era legado).
-            _display_id_for_tag = next(
-                (
-                    str(b.get("id") or "")
-                    for b in _blocks
-                    if str(b.get("block_uuid") or "") == computed_block_id
-                ),
-                computed_block_id,
-            )
-            kept.append(f"{_BLOCO_PREFIX}{_display_id_for_tag}")
-
-        new_entry = dict(entry)
-        new_entry["auto_tags"] = kept
-        new_entry["computed_unit_slug"] = computed_unit_slug
-        # computed_block_method (P2.3): ordem real de escrita —
-        # regenerate_pedagogical_files roda resolve_unit_block_tags (aqui) e
-        # DEPOIS attach_block_summary_fields, então no pipeline completo o
-        # caminho de CÓDIGO (consensus/llm_only, do code_curation) sempre
-        # reescreve por cima e vence, como hoje. O conflito real é o RETAG
-        # avulso (scripts/retag_manifest.py), que chama só esta função: sem
-        # proteção, apagaria um consensus/llm_only válido. Regra: preserva o
-        # method de código SE a entry já o tem E o bloco recomputado é o MESMO
-        # (curation continua válida); se o bloco mudou, o funil grava o seu.
-        _prev_method = str(entry.get("computed_block_method") or "")
-        if computed_block_id:
-            if _prev_method in {"consensus", "llm_only"} and computed_block_id == str(
-                entry.get("computed_block_id") or ""
-            ):
-                new_entry["computed_block_method"] = _prev_method
-            else:
-                new_entry["computed_block_method"] = block_method
-                if _prev_method in {"consensus", "llm_only"}:
-                    # campos do Gemini descrevem o bloco antigo — limpa; regeneração repõe
-                    new_entry.pop("computed_block_match_confidence", None)
-                    new_entry.pop("computed_block_rationale", None)
-        else:
-            new_entry.pop("computed_block_method", None)
-        new_entry["computed_block_id"] = computed_block_id
-        new_entry["computed_block_confidence"] = computed_block_confidence
-        new_entry["computed_block_band"] = computed_block_band
-        new_entry["unit_match_reasons"] = unit_reasons
-        new_entry["unit_match_confidence"] = unit_confidence
-        new_entry["unit_block_conflict"] = _unit_conflict
-        new_entry["computed_subunit_slug"] = best_subunit_slug
-        new_entry["subunit_match_reasons"] = subunit_reasons
-        new_entry["subunit_match_confidence"] = subunit_confidence
-        updated.append(new_entry)
-
-    return updated

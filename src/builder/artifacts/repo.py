@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
-from src.utils.helpers import json_str, safe_rel, slugify
+from src.utils.helpers import json_str, norm_ascii_lower, safe_rel, slugify
 from src.builder.artifacts.build_metrics import (
     collect_build_metrics,
     render_build_metrics_md,
@@ -331,7 +331,6 @@ def write_source_registry(
                 f"    processing_mode: {item.get('processing_mode', 'auto')}",
                 f"    effective_profile: {item.get('effective_profile', 'auto')}",
                 f"    include_in_bundle: {str(item.get('include_in_bundle', True)).lower()}",
-                f"    professor_signal: {json_str(item.get('professor_signal', ''))}",
             ]
         )
     write_text_fn(root_dir / "course" / "SOURCE_REGISTRY.yaml", "\n".join(lines) + "\n")
@@ -664,17 +663,18 @@ def bibliography_md(
                 lines.append(f"- **Tags:** {entry.tags}")
             if entry.notes:
                 lines.append(f"- **Nota:** {entry.notes}")
-            if entry.professor_signal:
-                lines.append(f"- **Indicação do professor:** {entry.professor_signal}")
             rec = _rec(entry)
             ref_summary = rec.get("ref_summary") or ""
             if ref_summary:
                 lines.append(f"- **Resumo:** {ref_summary}")
-            ref_unit = rec.get("computed_ref_unit") or ""
-            ref_topics = rec.get("computed_ref_topics") or []
-            if ref_unit or ref_topics:
-                rel = ref_unit + (f" / {', '.join(ref_topics)}" if ref_topics else "")
-                lines.append(f"- **Relevante para:** {rel}")
+            # N ancoras: uma referencia cobre mais de uma unidade (o eth2 do MF
+            # cobre verificacao de programas E metodos formais). Ate 2026-08-19
+            # so o espelho single-winner era exibido.
+            from src.builder.core.reference_navigation import _ancoras
+            ancoras = _ancoras(rec)
+            if ancoras:
+                partes = [u + (f" / {', '.join(t)}" if t else "") for u, t in ancoras]
+                lines.append(f"- **Relevante para:** {' · '.join(partes)}")
             lines.append(f"- **Incluir no bundle:** {'sim' if entry.include_in_bundle else 'não'}")
             lines.append("")
 
@@ -710,22 +710,30 @@ def exam_index_md(course_meta: dict, entries=None, *, clamp_navigation_artifact:
     lines = [
         f"# EXAM_INDEX — {course_name}",
         "",
-        "> **Como usar:** Índice de provas anteriores por tópico.",
+        "> **Como usar:** Índice de provas anteriores por unidade.",
         "> O tutor consulta este arquivo no modo `exam_prep` para identificar",
-        "> quais tópicos têm maior incidência e quais padrões de questão se repetem.",
+        "> quais unidades têm maior incidência. (Incidência por tópico/questão",
+        "> depende da extração de questões — item futuro da fila.)",
         "",
         "## Provas disponíveis",
         "",
     ]
 
     if entries:
-        lines.append("| Arquivo | Tipo | Prova | Observação | Padrão do professor |")
+        lines.append("| Arquivo | Tipo | Prova | Unidades cobertas | Observação |")
         lines.append("|---|---|---|---|---|")
+        seen = set()
         for entry in entries:
+            key = (Path(entry.source_path).name, entry.title)
+            if key in seen:  # FASE 4: fotos/duplicatas do mesmo arquivo = 1 linha
+                continue
+            seen.add(key)
             tipo = "foto" if entry.category == "fotos-de-prova" else "original"
+            cov = [str(c.get("unit_slug") or "") for c in (getattr(entry, "coverage_units", None) or [])]
+            unidades = ", ".join(u for u in cov if u) or str(getattr(entry, "computed_unit_slug", "") or "")
             lines.append(
                 f"| {Path(entry.source_path).name} | {tipo} | {entry.title} "
-                f"| {entry.notes or ''} | {entry.professor_signal or ''} |"
+                f"| {unidades} | {entry.notes or ''} |"
             )
     else:
         lines.append("_Nenhuma prova mapeada ainda._")
@@ -809,11 +817,10 @@ def code_index_md(
             lines += [
                 profile["code_index_section"],
                 "",
-                "| Arquivo | Linguagem | Unidade | Conceito demonstrado | Notas |",
-                "|---|---|---|---|---|",
+                "| Arquivo | Linguagem | Unidade | Notas |",
+                "|---|---|---|---|",
             ]
             for e in prof_entries:
-                conceito = e.professor_signal or ""
                 unit_str = ""
                 if e.notes and "Unidade:" in e.notes:
                     try:
@@ -821,7 +828,7 @@ def code_index_md(
                     except (IndexError, AttributeError):
                         pass
                 lines.append(
-                    f"| {Path(e.source_path).name} | {e.tags or ''} | {unit_str} | {conceito} | |"
+                    f"| {Path(e.source_path).name} | {e.tags or ''} | {unit_str} | |"
                 )
             lines.append("")
         else:
@@ -1085,7 +1092,7 @@ def whiteboard_index_md(course_meta: dict, entries=None, *, clamp_navigation_art
     if entries:
         lines += ["| Arquivo | Título | Unidade | Padrão identificado |", "|---|---|---|---|"]
         for e in entries:
-            lines.append(f"| {Path(e.source_path).name} | {e.title} | {e.tags or ''} | {e.professor_signal or ''} |")
+            lines.append(f"| {Path(e.source_path).name} | {e.title} | {e.tags or ''} |")
     else:
         lines.append("_Nenhum registro de quadro ainda._")
     lines.append("")
@@ -1126,16 +1133,57 @@ def extract_markdown_headings(
     return headings
 
 
+_EXEC_SUMMARY_RE = re.compile(r"<!-- EXEC_SUMMARY_START -->.*?<!-- EXEC_SUMMARY_END -->\n?", re.DOTALL)
+# Descricoes de imagem injetadas no build ("Uma seta descendente...", "Faded coat of
+# arms of the Holy See") nao sao frases do professor. Linhas de heading (# ...) sao
+# estrutura, nao prosa: fora do corpo (ficam em `headings`).
+_IMAGE_DESC_RE = re.compile(r"<!-- IMAGE_DESCRIPTION:.*?<!-- /IMAGE_DESCRIPTION -->\n?|^> \*\*\[Descrição de imagem\]\*\*.*$", re.DOTALL | re.MULTILINE)
+_HEADING_LINE_RE = re.compile(r"^#{1,6}\s+.*$", re.MULTILINE)
+# "1.2 Chamadas de sistema" -> "Chamadas de sistema"; "Unidade 01 — Titulo" -> "Titulo".
+_TOPIC_CODE_RE = re.compile(r"^\s*\**\s*\d+(?:\.\d+)*\.?\**\s*")
+_UNIT_PREFIX_RE = re.compile(r"^\s*unidade(?:\s+de\s+aprendizagem)?\s*\d+\s*[—:\-–]?\s*", re.IGNORECASE)
+
+
+def glossary_term_core(term: str) -> str:
+    """Nucleo do termo sem a numeracao do plano. O material real diz "chamadas de
+    sistema", nunca "1.2 Chamadas de sistema" — casar o termo numerado so
+    encontrava o proprio plano de ensino (2026-08-26)."""
+    return _TOPIC_CODE_RE.sub("", str(term or "")).strip()
+
+
+def _doc_is_meta(text_norm: str, unit_titles_norm: List[str]) -> bool:
+    """Doc que DESCREVE o curso (plano, programa, apresentacao): cita quase todos os
+    titulos de unidade. Mesmo criterio de conteudo da cobertura (coverage_rules,
+    `_FRACAO_META`), nao por nome de arquivo nem categoria."""
+    from src.builder.routing.coverage_rules import _FRACAO_META
+    titulos = [_UNIT_PREFIX_RE.sub("", t).strip() for t in unit_titles_norm]
+    titulos = [t for t in titulos if len(t) >= 6]
+    if not titulos or not text_norm:
+        return False
+    return sum(1 for t in titulos if t in text_norm) / len(titulos) >= _FRACAO_META
+
+
 def collect_glossary_evidence(
     root_dir: Optional[Path],
     *,
     manifest_entries: Optional[List[dict]] = None,
+    unit_titles: Optional[List[str]] = None,
     collapse_ws: Callable[[str], str],
     strip_frontmatter_block: Callable[[str], str],
     extract_markdown_headings_fn: Callable[[str], List[str]],
 ) -> List[Dict[str, str]]:
+    """Docs de `content/curated` como evidencia para definicoes do glossario.
+
+    2026-08-26 (censo nos 5 cursos: 73/132 definicoes genericas, 10 com lixo):
+    (1) o bloco EXEC_SUMMARY (TOC injetado no build) sai antes de extrair
+    frases/headings — "Sumario Introducao a IA: Visao Geral Roteiro..." virava
+    definicao; (2) docs META (plano de ensino, programa, apresentacao) saem —
+    contem a string de TODOS os topicos, ganhavam o +8 sempre e a "definicao"
+    de "Conjuntos Enumeraveis" era "CONTEUDOS: ### UNIDADE 01..." (TCC)."""
     if not root_dir:
         return []
+    from src.utils.helpers import norm_ascii_lower
+    titles_norm = [norm_ascii_lower(t) for t in (unit_titles or []) if t]
     curated_dir = root_dir / "content" / "curated"
     if not curated_dir.exists():
         return []
@@ -1160,10 +1208,14 @@ def collect_glossary_evidence(
             raw = md_path.read_text(encoding="utf-8")
         except Exception:
             continue
-        body = collapse_ws(strip_frontmatter_block(raw))
+        stripped = _IMAGE_DESC_RE.sub("", _EXEC_SUMMARY_RE.sub("", strip_frontmatter_block(raw)))
+        # meta: texto COM headings (o plano lista as unidades como "### UNIDADE 01: ...");
+        # frases: corpo SEM headings (estrutura nao e prosa).
+        if titles_norm and _doc_is_meta(norm_ascii_lower(collapse_ws(stripped)), titles_norm):
+            continue
+        body = collapse_ws(_HEADING_LINE_RE.sub("", stripped))
         if not body:
             continue
-        stripped = strip_frontmatter_block(raw)
         title_match = re.search(r"^#\s+(.+)$", stripped, flags=re.MULTILINE)
         title = collapse_ws(title_match.group(1)) if title_match else md_path.stem.replace("-", " ")
         docs.append({
@@ -1193,7 +1245,9 @@ def trim_glossary_prefix(text: str, prefixes: List[str], *, collapse_ws: Callabl
         prefix = collapse_ws(prefix)
         if not prefix:
             continue
-        if cleaned.lower().startswith(prefix.lower()):
+        # So e rotulo ("Titulo - texto") se vier separador; "Conceituacao estabelece..."
+        # e frase com o termo como sujeito e fica inteira.
+        if cleaned.lower().startswith(prefix.lower()) and re.match(r"\s*[-:|#]", cleaned[len(prefix):]):
             cleaned = cleaned[len(prefix):].lstrip(" -:|#")
     return collapse_ws(cleaned)
 
@@ -1215,6 +1269,10 @@ def is_bad_glossary_evidence(sentence: str, *, collapse_ws: Callable[[str], str]
     if sent.count("**") >= 2:
         return True
     if sent.lower().startswith("exemplo:"):
+        return True
+    # Ruido de extracao de PDF ("{4}------", marcador de pagina) e headings
+    # markdown embutidos no fluxo ("... # Algoritmos de Escalonamento Miguel ...").
+    if "----" in sent or re.search(r"\{\d+\}", sent) or " # " in f" {sent}" or sent.startswith("#"):
         return True
     if re.match(r"^[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ][\wÁÀÂÃÉÊÍÓÔÕÚÇáàâãéêíóôõúç-]+\s+[A-ZÁÀÂÃÉÊÍÓÔÕÚÇ]", sent):
         if re.search(r"\d", sent) and len(sent) <= 80:
@@ -1238,7 +1296,9 @@ def normalize_glossary_sentence(
         prefix = collapse_ws(prefix)
         if not prefix:
             continue
-        if sent.lower().startswith(prefix.lower()):
+        # So tira o prefixo quando e rotulo ("Termo - texto", "Termo: texto"); numa frase
+        # definicional ("Conceituacao estabelece o escopo...") o termo E o sujeito.
+        if sent.lower().startswith(prefix.lower()) and re.match(r"\s*[-:|#]", sent[len(prefix):]):
             sent = sent[len(prefix):].lstrip(" -:|#")
     sent = collapse_ws(sent)
     if not sent:
@@ -1265,13 +1325,15 @@ def best_glossary_sentence(
         doc.get("title", ""),
         *doc.get("headings", []),
     ]
+    # 2026-08-26: so o CORPO do texto e fonte de frase. Titulo e headings
+    # concatenados viravam "definicao" ("Escalonamento de Processos Definicao (1)
+    # Definicao (2) Troca de Contexto...", "Aula 02 - Conjuntos Enumeraveis...") —
+    # censo nos 5 cursos: das 47 definicoes "com evidencia", 2 eram frases reais.
     sources = [
-        doc.get("manifest_title", ""),
-        doc.get("title", ""),
-        " ".join(doc.get("headings", [])),
         trim_glossary_prefix_fn(doc.get("text", ""), prefixes),
     ]
-    term_tokens = glossary_tokens_fn(term) + glossary_tokens_fn(unit_title)
+    core = glossary_term_core(term)
+    term_tokens = glossary_tokens_fn(glossary_term_core(term)) + glossary_tokens_fn(_UNIT_PREFIX_RE.sub("", unit_title or ""))
     candidate_sentences: List[str] = []
     for source in sources:
         if not source:
@@ -1289,14 +1351,16 @@ def best_glossary_sentence(
         sent = normalize_glossary_sentence_fn(term, unit_title, sent)
         sent_lower = sent.lower()
         score = 0
-        if term.lower() in sent_lower:
+        if core.lower() in sent_lower:
             score += 6
         score += sum(1 for token in dict.fromkeys(term_tokens) if token in sent_lower)
         if score > best_score:
             best_score = score
             best_sentence = sent
-    fallback = trim_glossary_prefix_fn(doc.get("text", ""), prefixes)
-    return best_sentence or shorten_glossary_sentence_fn(fallback or collapse_ws(doc.get("text", "")), 180)
+    # 2026-08-26: sem frase candidata, sem evidencia. O fallback devolvia os
+    # primeiros 180 chars do documento ("{0}------ # Titulo Autor 2026") e isso
+    # virava "definicao" (SO 3.3, TCC 2.2/2.3/2.5/4.5.5). Generico honesto e melhor.
+    return best_sentence
 
 
 def find_glossary_evidence(
@@ -1310,8 +1374,8 @@ def find_glossary_evidence(
     if not docs:
         return ""
 
-    term_lower = (term or "").lower()
-    tokens = glossary_tokens_fn(term) + glossary_tokens_fn(unit_title)
+    term_lower = glossary_term_core(term).lower()
+    tokens = glossary_tokens_fn(glossary_term_core(term)) + glossary_tokens_fn(_UNIT_PREFIX_RE.sub("", unit_title or ""))
     best_score = 0
     best_text = ""
 
@@ -1347,19 +1411,21 @@ def refine_glossary_definition_from_evidence(
     compact = collapse_ws(evidence)
     if compact:
         sentences = re.split(r"(?<=[.!?])\s+", compact)
-        term_tokens = glossary_tokens_fn(term)
+        core = glossary_term_core(term)
+        term_tokens = glossary_tokens_fn(core)
         for sentence in sentences:
             sent = normalize_glossary_sentence_fn(term, unit_hint, sentence)
             sent_lower = sent.lower()
             if len(sent) < 40:
                 continue
-            if term.lower() in sent_lower or sum(1 for token in term_tokens if token in sent_lower) >= 2:
+            if core.lower() in sent_lower or sum(1 for token in term_tokens if token in sent_lower) >= 2:
                 cleaned = re.sub(r"^[^A-Za-zÀ-ÿ0-9]*", "", sent).rstrip(" .")
                 cleaned = shorten_glossary_sentence_fn(cleaned, 180)
                 if not cleaned.endswith("."):
                     cleaned += "."
                 return cleaned
-    return f"Conceito central de {unit_hint} que deve ser reconhecido e usado corretamente nas respostas e revisões."
+    de_hint = "desta unidade" if unit_hint.strip().lower() == "esta unidade" else f"de {unit_hint}"
+    return f"Conceito central {de_hint} que deve ser reconhecido e usado corretamente nas respostas e revisões."
 
 
 def seed_glossary_fields(
@@ -1572,6 +1638,55 @@ def seed_glossary_fields(
     )
 
 
+_GLOSSARY_CURATION_NAME = ".glossary_curation.json"
+_GLOSSARY_EMPTY = {"", "—", "-", "n/a", "N/A"}
+
+
+def _glossary_curation_key(term: str) -> str:
+    return " ".join(str(term or "").split()).casefold()
+
+
+def load_glossary_curation(root_dir: Optional[Path]) -> Dict[str, List[str]]:
+    """{termo (casefold): [sinonimos]} de `course/.glossary_curation.json`.
+
+    2026-08-25 (alavanca iii da subunidade): o GLOSSARY.md e artefato DERIVADO,
+    regravado a cada build a partir do plano + seed; a taxonomia consome o texto
+    gerado, nao o arquivo. Curadoria a mao no .md morre no proximo build. Este
+    sidecar e o lugar que sobrevive (mesmo padrao do .card_block_map): os
+    sinonimos entram em "Sinonimos aceitos" e viram alias do topico via
+    `_glossary_aliases_for_topic`. E conteudo por curso (vocabulario dos
+    algoritmos que o plano nao nomeia: "Modelos Preditivos" <- perceptron,
+    k-NN, arvore de decisao), nunca regra de motor. Medido no IA u05: 4 -> 37/39.
+    Formato: {"<Termo do plano>": {"synonyms": ["..."]}}."""
+    if not root_dir:
+        return {}
+    path = Path(root_dir) / "course" / _GLOSSARY_CURATION_NAME
+    if not path.is_file():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (ValueError, OSError):
+        return {}
+    out: Dict[str, List[str]] = {}
+    for term, info in (data or {}).items():
+        syn = info.get("synonyms") if isinstance(info, dict) else info
+        vals = [" ".join(str(s).split()) for s in (syn or []) if " ".join(str(s).split())]
+        if vals:
+            out[_glossary_curation_key(term)] = vals
+    return out
+
+
+def merge_glossary_synonyms(seed: str, curated: List[str]) -> str:
+    """Linha "Sinonimos aceitos" = seed + curadoria, sem repetir, sem marcador vazio."""
+    parts = [p.strip() for p in re.split(r"[,;/|]", str(seed or "")) if p.strip() not in _GLOSSARY_EMPTY]
+    seen = {p.casefold() for p in parts}
+    for s in curated or []:
+        if s.casefold() not in seen:
+            parts.append(s)
+            seen.add(s.casefold())
+    return ", ".join(parts) if parts else "—"
+
+
 def glossary_md(
     course_meta: dict,
     subject_profile=None,
@@ -1612,7 +1727,10 @@ def glossary_md(
 
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     units = parse_units_from_teaching_plan_fn(teaching_plan) if teaching_plan else []
-    evidence_docs = collect_glossary_evidence_fn(root_dir, manifest_entries=manifest_entries) if root_dir else []
+    evidence_docs = collect_glossary_evidence_fn(
+        root_dir, manifest_entries=manifest_entries, unit_titles=[title for title, _t in units],
+    ) if root_dir else []
+    curated_synonyms = load_glossary_curation(root_dir)
 
     candidates = []
     for unit_title, topics in units:
@@ -1626,6 +1744,7 @@ def glossary_md(
         for term, unit_title in candidates:
             evidence = find_glossary_evidence_fn(term, unit_title, evidence_docs)
             definition, synonyms, not_confuse = seed_glossary_fields_fn(term, unit_title, evidence=evidence)
+            synonyms = merge_glossary_synonyms(synonyms, curated_synonyms.get(_glossary_curation_key(term), []))
             lines += [
                 f"## {term}",
                 f"**Definição:** {definition}",
@@ -1790,7 +1909,6 @@ source_image: {json.dumps(image_path, ensure_ascii=False)}
 ## Metadados
 - Tags: `{entry.tags}`
 - Relevante para prova: `{entry.relevant_for_exam}`
-- Sinal do professor: `{entry.professor_signal}`
 
 ## Transcrição fiel
 <!-- Escreva o texto da imagem aqui -->
@@ -2005,6 +2123,16 @@ policy:
 """
 
 
+_ANSWER_SUFFIX_RE = re.compile(r"\s*(?:respostas?|gabaritos?|solucao|solucoes|resolucao)$")
+
+
+def _exercise_answer_stem(title: str) -> tuple:
+    """(stem normalizado, e_gabarito) do titulo — casa X com X_respostas."""
+    norm = re.sub(r"[^a-z0-9]+", " ", norm_ascii_lower(str(title or ""))).strip()
+    stripped = _ANSWER_SUFFIX_RE.sub("", norm).strip()
+    return stripped, stripped != norm and bool(stripped)
+
+
 def exercise_index_md(
     course_meta: dict,
     entries=None,
@@ -2026,6 +2154,13 @@ def exercise_index_md(
         "|---|---|---|---|---|---|",
     ]
     if entries:
+        # FASE 4: pareamento enunciado<->gabarito por stem do titulo
+        # ("ExerciciosEspecificacao" <-> "ExerciciosEspecificacao_respostas").
+        answer_by_stem = {}
+        for entry in entries:
+            stem, is_answer = _exercise_answer_stem(entry.title)
+            if is_answer:
+                answer_by_stem[stem] = entry.title
         for entry in entries:
             notes = collapse_ws_fn(entry.notes or "")
             tags = collapse_ws_fn(
@@ -2038,12 +2173,27 @@ def exercise_index_md(
             )
             category = collapse_ws_fn(entry.category or "")
             category_lower = category.lower()
-            kind = "prova" if "prova" in category_lower else "lista" if "lista" in category_lower else "exercício"
-            has_solution = "sim" if any(token in notes.lower() for token in ["gabarito", "resolu", "soluç"]) else "não"
-            priority = "alta" if "prova" in category_lower or has_solution == "sim" else "média"
-            usage = "revisão de prova" if "prova" in category_lower else "fixação por unidade"
+            stem, is_answer = _exercise_answer_stem(entry.title)
+            kind = ("gabarito" if is_answer
+                    else "prova" if "prova" in category_lower
+                    else "lista" if "lista" in category_lower else "exercício")
+            paired = answer_by_stem.get(stem) if not is_answer else None
+            if is_answer:
+                has_solution = "é o gabarito"
+            elif paired:
+                has_solution = f"sim — {paired}"
+            elif any(token in notes.lower() for token in ["gabarito", "resolu", "soluç"]):
+                has_solution = "sim"
+            else:
+                has_solution = "não"
+            # unidade REAL do motor; tags so como fallback (pre-FASE 4 a coluna
+            # inteira era tags cruas).
+            unidade = str(getattr(entry, "computed_unit_slug", "") or "") or tags or "não mapeado"
+            priority = "alta" if "prova" in category_lower or has_solution != "não" else "média"
+            usage = ("conferir após tentar" if is_answer
+                     else "revisão de prova" if "prova" in category_lower else "fixação por unidade")
             lines.append(
-                f"| {entry.title} | {kind} | {tags or 'não mapeado'} | {has_solution} | {priority} | {usage} |"
+                f"| {entry.title} | {kind} | {unidade} | {has_solution} | {priority} | {usage} |"
             )
     else:
         lines += [

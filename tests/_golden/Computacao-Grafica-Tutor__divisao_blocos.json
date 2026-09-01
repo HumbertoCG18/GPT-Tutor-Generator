@@ -1,0 +1,176 @@
+[
+  {
+    "id": "bloco-01",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "disciplina origens"
+  },
+  {
+    "id": "bloco-02",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "introducao opengl"
+  },
+  {
+    "id": "bloco-03",
+    "n_sessoes": 2,
+    "span_dias": 2,
+    "topico": "fundamentos matematicos para"
+  },
+  {
+    "id": "bloco-04",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "algoritmos deteccao colisao"
+  },
+  {
+    "id": "bloco-05",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "geometria computacional"
+  },
+  {
+    "id": "bloco-06",
+    "n_sessoes": 2,
+    "span_dias": 2,
+    "topico": "processo visualizacao"
+  },
+  {
+    "id": "bloco-07",
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "processamento imagens visao computacional"
+  },
+  {
+    "id": "bloco-08",
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "morfologia matematica"
+  },
+  {
+    "id": "bloco-09",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "duvidas"
+  },
+  {
+    "id": "bloco-10",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-01-introducao-ao-processamento-grafico, unidade-02-fundamentos-matematicos, unidade-04-processo-de-visualizacao-2d, unidade-03-processamento-de-imagens-e-visao-computacional, unidade-06-processo-de-visualizacao-3d"
+  },
+  {
+    "id": "bloco-11",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "duvidas"
+  },
+  {
+    "id": "bloco-12",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "trabalho trabalho"
+  },
+  {
+    "id": "bloco-13",
+    "n_sessoes": 2,
+    "span_dias": 2,
+    "topico": "curvas parametricas"
+  },
+  {
+    "id": "bloco-14",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "feriado"
+  },
+  {
+    "id": "bloco-15",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "modelagem geometrica"
+  },
+  {
+    "id": "bloco-16",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "academica evento academico"
+  },
+  {
+    "id": "bloco-17",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "academica evento academico"
+  },
+  {
+    "id": "bloco-18",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "visualizacao projecao"
+  },
+  {
+    "id": "bloco-19",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "visualizacao observador"
+  },
+  {
+    "id": "bloco-20",
+    "n_sessoes": 2,
+    "span_dias": 2,
+    "topico": "remocao elementos ocultos"
+  },
+  {
+    "id": "bloco-21",
+    "n_sessoes": 2,
+    "span_dias": 2,
+    "topico": "iluminacao"
+  },
+  {
+    "id": "bloco-22",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "duvidas"
+  },
+  {
+    "id": "bloco-23",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-08-sintese-de-imagens-realisticas"
+  },
+  {
+    "id": "bloco-24",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "substituicao"
+  },
+  {
+    "id": "bloco-25",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "duvidas"
+  },
+  {
+    "id": "bloco-26",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "trabalho trabalho"
+  },
+  {
+    "id": "bloco-27",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "duvidas"
+  },
+  {
+    "id": "bloco-28",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-01-introducao-ao-processamento-grafico, unidade-02-fundamentos-matematicos, unidade-04-processo-de-visualizacao-2d, unidade-03-processamento-de-imagens-e-visao-computacional, unidade-06-processo-de-visualizacao-3d, unidade-08-sintese-de-imagens-realisticas"
+  },
+  {
+    "id": "bloco-29",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": ""
+  }
+]

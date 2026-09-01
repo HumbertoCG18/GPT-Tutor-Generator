@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import re
-import unicodedata
+from src.utils.helpers import strip_accents
 from collections import Counter
 from pathlib import Path
 from typing import Iterable, Optional
@@ -72,9 +72,7 @@ _TOOL_CONTEXT_CUES = (
 
 
 def _normalize_text(text: str) -> str:
-    cleaned = unicodedata.normalize("NFKD", text or "")
-    cleaned = "".join(ch for ch in cleaned if not unicodedata.combining(ch))
-    cleaned = cleaned.lower()
+    cleaned = strip_accents(text).lower()
     cleaned = re.sub(r"[^a-z0-9#+.\-\s]", " ", cleaned)
     cleaned = re.sub(r"\s+", " ", cleaned).strip()
     return cleaned
@@ -245,7 +243,9 @@ def _infer_tool_candidates(
         has_special_shape = (
             any(ch in raw for ch in "+#.")
             or any(ch.isdigit() for ch in raw)
-            or any(ch.isupper() for ch in raw[1:])
+            # CamelCase (NuSMV, PySpark) e sinal de ferramenta; CAIXA ALTA e so
+            # formatacao de titulo do PDF e promovia EMENTA/PSPACE/HIERARQUIA.
+            or (any(ch.isupper() for ch in raw[1:]) and not raw.isupper())
         )
         if normalized in default_tools:
             accepted.append(normalized)
@@ -371,7 +371,9 @@ def resolve_semantic_profile(
     glossary_md: str = "",
     strong_headings: Optional[list[str]] = None,
 ) -> dict:
-    cached = read_internal_semantic_profile(root_dir)
+    # R11: NAO funde o `.semantic_profile.generated.json` da rodada anterior — ele e so o
+    # `inferred` gravado por write_tag_catalog, e fundi-lo tornava o build dependente do
+    # estado derivado anterior (1 passo de memoria: tags/confidencias mudavam entre 2 reprocess).
     override = read_semantic_profile_override(root_dir)
     inferred = infer_semantic_profile(
         course_name=course_name,
@@ -380,4 +382,4 @@ def resolve_semantic_profile(
         glossary_md=glossary_md,
         strong_headings=strong_headings,
     )
-    return merge_semantic_profile(cached, inferred, override)
+    return merge_semantic_profile(inferred, override)

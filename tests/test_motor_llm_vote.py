@@ -188,11 +188,37 @@ def test_voter_voto_fora_da_janela_cacheia_mas_nao_ancora(tmp_path: Path):
     client = FakeClient([FakeVotoResp("bloco-99")])
     voter = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=client)
     assert voter.vote(e, ["bloco-01"], ctx) is None       # bounded: mantem FLAG
-    assert load_material_curation(cache)["votes"]["e1"]["block_id"] == "bloco-99"
-    # re-rodada: cache hit, sem nova chamada
+    rec = load_material_curation(cache)["votes"]["e1"]
+    assert rec["block_id"] == "bloco-99" and rec["window"] == ["bloco-01"]
+    # re-rodada com a MESMA janela: cache hit, sem nova chamada (a pergunta e a mesma)
     voter2 = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([]))
     assert voter2.vote(e, ["bloco-01"], ctx) is None
     assert voter2.calls == 0
+
+
+def test_voter_reperg_quando_a_janela_muda_e_o_voto_ficou_fora(tmp_path: Path):
+    """2026-08-21: o voto e por conteudo, a pergunta e sobre uma janela. IA
+    `ag-feito`: voto "bloco-13" (evento) ficou fora de toda janela depois do
+    filtro de kind e a entry perdia o temporal para sempre. Janela diferente
+    (ou desconhecida: cache legado sem "window") com voto fora -> repergunta
+    uma vez e regrava; mesma janela -> cache."""
+    ctx = _ctx()
+    e = _entry("e1")
+    cache = tmp_path / "cur.json"
+    # cache LEGADO: voto em bloco-02, sem "window"
+    save_material_curation(cache, {"version": 1, "votes": {"e1": {"block_id": "bloco-02"}}})
+    client = FakeClient([FakeVotoResp("bloco-01")])
+    voter = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=client)
+    assert voter.vote(e, ["bloco-01"], ctx) == "bloco-01"   # reperguntou (janela desconhecida, voto fora)
+    assert voter.calls == 1
+    rec = load_material_curation(cache)["votes"]["e1"]
+    assert rec["block_id"] == "bloco-01" and rec["window"] == ["bloco-01"]
+    # mesma janela de novo: cache
+    voter2 = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([]))
+    assert voter2.vote(e, ["bloco-01"], ctx) == "bloco-01" and voter2.calls == 0
+    # voto dentro da janela nova (mesmo que a janela tenha mudado): nao repergunta
+    voter3 = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([]))
+    assert voter3.vote(e, ["bloco-01", "bloco-02"], ctx) == "bloco-01" and voter3.calls == 0
 
 
 def test_voter_cap_e_erro(tmp_path: Path):
@@ -282,3 +308,24 @@ def test_prune_preserves_concurrent_vote_from_other_instance(tmp_path):
     assert a.prune({"viva_b"}) == 1                  # so orfa e stale
     final = json.loads(cache.read_text(encoding="utf-8"))["votes"]
     assert set(final) == {"viva_b"}                  # voto de B sobrevive
+
+
+def test_voto_cacheado_segue_o_uuid_quando_o_display_renumera(tmp_path: Path):
+    """2026-08-25: um split de bloco renumera os bloco-NN seguintes. O voto
+    cacheado "bloco-02" (uuid-2 na epoca) passava a apontar para o bloco que
+    HOJE se chama bloco-02 — stale silencioso, sem revotar (IA: 3 entries do
+    card Semana 15 trocaram de bloco; o sidecar nao mudou). Identidade = uuid."""
+    e = _entry("e1", title="Lista 1")
+    cache = tmp_path / "cur.json"
+    voter = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([FakeVotoResp("bloco-02")]))
+    assert voter.vote(e, ["bloco-01", "bloco-02"], _ctx()) == "bloco-02"
+    assert load_material_curation(cache)["votes"]["e1"]["block_uuid"] == "uuid-2"
+    # renumeracao: um bloco novo entra antes; uuid-2 passa a chamar-se bloco-03
+    depois = MotorContext.from_artifacts(blocks=[
+        {"id": "bloco-01", "block_uuid": "uuid-1", "period_start": "2026-03-01", "period_end": "2026-03-04"},
+        {"id": "bloco-02", "block_uuid": "uuid-9", "period_start": "2026-03-05", "period_end": "2026-03-07"},
+        {"id": "bloco-03", "block_uuid": "uuid-2", "period_start": "2026-03-08", "period_end": "2026-03-14"},
+    ], card_block_map={}, lessons_index={})
+    voter2 = LlmVoter({}, cache_path=cache, repo_dir=tmp_path, client=FakeClient([]))
+    assert voter2.vote(e, ["bloco-02", "bloco-03"], depois) == "bloco-03"   # o uuid-2, nao o display
+    assert voter2.calls == 0

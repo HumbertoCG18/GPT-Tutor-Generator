@@ -7,6 +7,7 @@ Puro: sem I/O além do load/save do mapa persistido.
 from __future__ import annotations
 
 import json
+import logging
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -15,6 +16,8 @@ from typing import Dict, List
 from src.utils.helpers import norm_ascii_lower
 from src.builder.text.stopwords import CARD_BLOCK_STOP as _STOP
 from src.builder.timeline.block_identity import _POSITIONAL_RE, _is_uuid_ref
+
+logger = logging.getLogger(__name__)
 
 _DATE_RE = re.compile(r"\b(\d{1,2})/(\d{1,2})(?:/(\d{2,4}))?\b")
 _WEEK_RE = re.compile(r"\bsemana\s+(\d+)\b", re.IGNORECASE)
@@ -152,7 +155,10 @@ def load_card_block_map(course_dir) -> Dict[str, dict]:
         return {}
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception as exc:
+        # Mapa corrompido derruba o tier "card" do manifesto INTEIRO (shift em
+        # massa pra scorer_only) — nunca degradar sem rastro (auditoria 2.6).
+        logger.warning("Falha ao ler %s (%s: %s) — seguindo SEM overrides de card", path, type(exc).__name__, exc)
         return {}
 
 
@@ -169,10 +175,27 @@ def normalized_card_map(card_map) -> Dict[str, dict]:
     return out
 
 
+def card_entry_block_ids(entry: dict, blocks) -> List[str]:
+    """block_ids CRUS de uma entrada do card map, com as datas do rotulo mandando.
+
+    2026-08-25: card vindo de ROTULO do Moodle (`source: labels`) carrega as
+    datas; os block_ids gravados sao cache resolvido uma vez e ficam stale
+    quando um bloco e dividido (ES2 "DevOps": a aula nova de 26/06 nao entrava
+    na janela). Datas contra os blocos ATUAIS mandam; block_ids e fallback.
+    Unico ponto de leitura: lookup_card_blocks e o window_provider do motor."""
+    dates = [str(d) for d in ((entry or {}).get("dates") or []) if d]
+    if dates and blocks and str((entry or {}).get("source") or "") == "labels":
+        from src.builder.sources.moodle_labels import derive_card_block_map
+        hit = derive_card_block_map({"_": {"dates": dates, "format": (entry or {}).get("format", "")}}, blocks).get("_")
+        if hit and hit.get("block_ids"):
+            return [str(b) for b in hit["block_ids"]]
+    return [str(b) for b in ((entry or {}).get("block_ids") or []) if str(b)]
+
+
 def lookup_card_blocks(card_name, card_map, unit_index, blocks) -> List[str]:
     entry = normalized_card_map(card_map).get(norm_ascii_lower(str(card_name or "")))
     if entry and "block_ids" in entry:
-        raw_ids = [str(b) for b in (entry.get("block_ids") or [])]
+        raw_ids = card_entry_block_ids(entry, blocks)
         if not blocks:
             # fallback seguro: sem índice, retorna o raw
             return raw_ids

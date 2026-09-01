@@ -15,7 +15,7 @@ edges:
     condition: when understanding how technologies fit into the system
   - target: context/setup.md
     condition: when setup or run commands are needed
-last_updated: 2026-06-21
+last_updated: 2026-08-06
 ---
 
 # Stack
@@ -63,37 +63,9 @@ Do not invent dependency names, package versions, extras, or scripts. If a task 
 
 ## Known Test Entry Points
 
-The tracked test suite has 136 files. Representative entry points include:
-
-```text
-tests/__init__.py
-tests/test_datalab_image_extraction.py
-tests/test_cronograma_health.py
-tests/test_reference_summary.py
-tests/test_reference_navigation.py
-tests/test_unit_matcher.py
-tests/test_eval_ground_truth.py
-tests/test_unit_fallback.py
-tests/test_ui_queue_dashboard.py
-tests/test_timeline_signals.py
-tests/test_timeline_scoring_ignored.py
-tests/test_timeline_index_kind.py
-tests/test_task_queue.py
-tests/test_tag_catalog.py
-tests/test_student_state_v2.py
-tests/test_student_state_manual_import.py
-tests/test_moodle.py
-tests/test_moodle_labels.py
-tests/test_concept_resolver.py
-tests/test_resolver_wiring.py
-tests/test_block_identity.py
-tests/test_anchor_placement.py
-tests/test_temporal_block_wire.py
-tests/test_persist_gate.py
-tests/test_stash_import.py
-tests/test_migrate_signals.py
-tests/test_posting_date_probe.py
-```
+Inventário removido (dieta MEX 2026-08-06): lista de arquivos de teste envelhece a cada
+sessão. Descoberta: `Glob tests/test_*.py` ou `graphify query`. Convenção de nome em
+`context/conventions.md`.
 
 ## Integration Notes
 

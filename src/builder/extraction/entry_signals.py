@@ -77,11 +77,31 @@ def _merge_manual_and_auto_tags(
     return "; ".join(merged)
 
 
+# Prefixos que o PROPRIO motor escreve (`resolver_apply` espelha o que ele
+# computou). Realimentar o scorer com eles faz o sistema re-eleger a resposta
+# anterior: medido 2026-08-19 rodando o mesmo scorer sobre os manifests antes e
+# depois de um reprocess — 131 -> 129 acertos, toda a perda no MF, sem ninguem
+# ter mudado nada. `topico:`/`ferramenta:`/`tipo:` NAO entram aqui: vem do
+# catalogo/taxonomia, nao da atribuicao.
+_PREFIXOS_ESPELHO_DO_MOTOR = ("unit:", "subunit:", "bloco:", "block:")
+
+
+def _sem_eco(tags: List[str]) -> List[str]:
+    return [t for t in tags if not str(t).lower().startswith(_PREFIXOS_ESPELHO_DO_MOTOR)]
+
+
 def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str]:
     manual_tags = [str(tag).strip() for tag in (entry.get("manual_tags") or []) if str(tag).strip()]
     auto_tags = [str(tag).strip() for tag in (entry.get("auto_tags") or []) if str(tag).strip()]
-    # S4 (P4): valores das auto_tags `ferramenta:` em campo próprio — o scorer
-    # de bloco (file_map, TOOL_TOKENS) filtra quais são ferramentas de verdade.
+    # Lista SEM eco: so o que vira TEXTO de score. A lista crua segue inteira
+    # para `tool_values` e para quem le auto_tags fora daqui.
+    auto_tags_sem_eco = _sem_eco(auto_tags)
+    # S4 (P4): valores das auto_tags `ferramenta:` em campo próprio.
+    # ATENCAO: o comentario antigo dizia que "o scorer de bloco (file_map,
+    # TOOL_TOKENS) filtra quais sao ferramentas de verdade". `TOOL_TOKENS` NAO
+    # existe em `src/` (so sobrevivia num .pyc stale) — **nada filtra esta lista**.
+    # Ver B-9 em pendencias.md; o vocabulario de `ferramenta:` e auto-inferido do
+    # proprio corpus (B-1) e por isso vem sujo.
     tool_values = [
         tag.split(":", 1)[1].strip()
         for tag in auto_tags
@@ -102,7 +122,7 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
     ]
     merged_tags = _merge_manual_and_auto_tags(
         manual_tags,
-        auto_tags,
+        auto_tags_sem_eco,
         fallback_tags="; ".join(legacy_tags),
         limit=6,
     )
@@ -122,7 +142,7 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         "markdown_lead_text": normalize_match_text(extract_markdown_lead_text(markdown_text)),
         "category_text": normalize_match_text(entry.get("category", "")),
         "manual_tags_text": normalize_match_text("; ".join(manual_tags)),
-        "auto_tags_text": normalize_match_text("; ".join(auto_tags)),
+        "auto_tags_text": normalize_match_text("; ".join(auto_tags_sem_eco)),
         "tool_tags_text": normalize_match_text(" ".join(tool_values)),
         "legacy_tags_text": normalize_match_text("; ".join(legacy_tags)),
         "tags_text": normalize_match_text(merged_tags),
@@ -132,5 +152,9 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
         # alavanca 1: label do recurso Moodle (mod.name) — identidade LIMPA do
         # material (ex. "Exemplos (Lógica de Floyd-Hoare)"), pesa como conceito.
         "moodle_label_text": normalize_match_text(entry.get("moodle_label", "")),
+        # card do Moodle (secao onde o professor postou). Sinal de COBERTURA, nao
+        # temporal: o motor ja usa o card como janela por outra via. Consumido SO
+        # pelo scorer de unidade — ver test_card_nao_afeta_o_scorer_de_bloco_do_motor.
+        "card_text": normalize_match_text(entry.get("source_section", "")),
     }
 

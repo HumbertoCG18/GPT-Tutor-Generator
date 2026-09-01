@@ -120,3 +120,31 @@ def test_build_template_rows_prefills_true_with_predicted(tmp_path):
     for col in ("id", "title", "category", "markdown_path",
                 "predicted_block_id", "predicted_period", "predicted_band", "true_block_id"):
         assert col in rows[0]
+
+
+def test_band_e_a_do_metodo_que_decidiu_o_bloco(tmp_path):
+    """A predicao medida e resolve_temporal_block (ancora vence). Ler
+    computed_block_band para uma entry decidida pela ancora misturava a
+    confianca do scorer de conceito com o acerto do motor de janela e fabricava
+    uma 'banda invertida' (media < baixa) que nao existia (2026-08-20)."""
+    repo = tmp_path / "repo"
+    (repo / "course").mkdir(parents=True)
+    manifest = {"entries": [
+        {"id": "ancora", "computed_block_id": "bloco-01", "computed_block_band": "alta",
+         "computed_block_confidence": 0.9, "temporal_block_id": "bloco-02",
+         "temporal_block_band": "media", "temporal_block_confidence": 0.3},
+        {"id": "pino", "computed_block_id": "bloco-01", "computed_block_band": "baixa",
+         "manual_timeline_block_id": "bloco-03"},
+        {"id": "funil", "computed_block_id": "bloco-01", "computed_block_band": "baixa",
+         "computed_block_confidence": 0.1},
+    ]}
+    (repo / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+    timeline = {"version": 4, "blocks": [{"id": f"bloco-0{i}", "period_label": f"S{i}"} for i in (1, 2, 3)]}
+    (repo / "course" / ".timeline_index.json").write_text(json.dumps(timeline), encoding="utf-8")
+
+    preds = load_predictions(repo)
+    assert preds["ancora"]["block_id"] == "bloco-02"
+    assert preds["ancora"]["band"] == "media"
+    assert preds["pino"]["block_id"] == "bloco-03"
+    assert preds["pino"]["band"] == "manual"
+    assert preds["funil"]["band"] == "baixa"

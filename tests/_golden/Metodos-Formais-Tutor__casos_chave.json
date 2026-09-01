@@ -1,0 +1,38 @@
+{
+  "eth2": {
+    "band": "",
+    "computed_block_id": "",
+    "computed_unit_slug": "unidade-01-metodos-formais",
+    "moodle_label": "",
+    "presente": true,
+    "source_section": "",
+    "temporal_block_id": "c4bf9e4c-80f8-4e57-b2b1-a943c6656e52"
+  },
+  "introducao": {
+    "band": "baixa",
+    "computed_block_id": "5599d015-10e0-4f6e-ad17-c526b903dc09",
+    "computed_unit_slug": "unidade-01-metodos-formais",
+    "moodle_label": "Introdução",
+    "presente": true,
+    "source_section": "Introdução a Métodos Formais",
+    "temporal_block_id": "1e73625a-de3e-4c8a-87c4-d301a3138c0b"
+  },
+  "t1-2026-1": {
+    "band": "media",
+    "computed_block_id": "5599d015-10e0-4f6e-ad17-c526b903dc09",
+    "computed_unit_slug": "unidade-02-verificacao-de-programas",
+    "moodle_label": "Definição",
+    "presente": true,
+    "source_section": "TDE Trabalho Discente Efetivo",
+    "temporal_block_id": "c9f5f7cf-3477-4531-be7a-f7b68727009c"
+  },
+  "tiposindutivos": {
+    "band": "alta",
+    "computed_block_id": "95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0",
+    "computed_unit_slug": "unidade-02-verificacao-de-programas",
+    "moodle_label": "Exemplos (Tipos Indutivos)",
+    "presente": true,
+    "source_section": "Verificação de Programas",
+    "temporal_block_id": ""
+  }
+}

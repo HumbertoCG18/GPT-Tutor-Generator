@@ -81,3 +81,43 @@ def test_truncates_to_max_chars():
     with patch("src.builder.core.reference_content.fetch_github_readme", return_value="x" * 50000):
         out = fetch_reference_text(entry, max_chars=1000)
     assert len(out) <= 1000
+
+
+# --- texto LOCAL antes da rede (2026-08-18) ---------------------------------
+# Causa raiz medida: 1 de 15 refs mapeadas nos 5 repos. As referencias sao PDFs
+# do Moodle ja convertidos em markdown no proprio repo, mas o fetch so buscava
+# GitHub README / pagina HTML — texto vazio, zero conceito, zero mapeamento.
+
+def test_le_markdown_local_do_repo_antes_de_ir_na_rede(tmp_path):
+    from src.builder.core.reference_content import fetch_reference_text
+
+    md = tmp_path / "content" / "curated"
+    md.mkdir(parents=True)
+    (md / "pthread.md").write_text(
+        "<!-- EXEC_SUMMARY_START -->\n> boilerplate\n<!-- EXEC_SUMMARY_END -->\n"
+        "# Biblioteca em C - pthread\n\nNo Linux as threads sao referenciadas como tasks.\n",
+        encoding="utf-8")
+    entry = {"category": "bibliografia", "source_path": r"C:\Users\x\Desktop\pthread.pdf",
+             "approved_markdown": "content/curated/pthread.md"}
+
+    out = fetch_reference_text(entry, repo_root=tmp_path)
+
+    assert "threads" in out
+    assert "boilerplate" not in out          # sumario executivo injetado nao entra
+    assert "EXEC_SUMMARY" not in out
+
+
+def test_sem_markdown_local_continua_indo_na_rede(monkeypatch, tmp_path):
+    from src.builder.core import reference_content as rc
+
+    monkeypatch.setattr(rc, "fetch_github_readme", lambda *a, **k: "readme body")
+    entry = {"file_type": "github-repo", "source_path": "https://github.com/a/b"}
+    assert rc.fetch_reference_text(entry, repo_root=tmp_path) == "readme body"
+
+
+def test_markdown_local_ausente_no_disco_nao_quebra(tmp_path):
+    from src.builder.core.reference_content import fetch_reference_text
+
+    entry = {"category": "bibliografia", "source_path": "",
+             "approved_markdown": "content/curated/nao-existe.md"}
+    assert fetch_reference_text(entry, repo_root=tmp_path) == ""

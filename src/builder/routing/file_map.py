@@ -11,14 +11,9 @@ from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
 from src.builder.routing.dates import extract_dates
 from src.builder.text.normalize import normalize_match_text as _normalize_text
 from src.builder.text.normalize import split_camel_case
-from src.builder.routing.sequence import annotate_class_ordinals, score_sequence_match
 from src.builder.routing.thresholds import (
     DATE_STRONG_BOOST,
     DATE_WEAK_BOOST,
-    IDF_WEIGHT,
-    TOOL_BOOST,
-    TOOL_PENALTY,
-    TOOL_TOKENS,
     T,
     relative_margin_confidence,
 )
@@ -57,14 +52,45 @@ def build_file_map_unit_index(
     unit_generic_tokens: set[str],
 ) -> list:
     indexed = []
+    # Titulo normalizado de cada unidade: frase igual ao titulo de OUTRA unidade e
+    # sinal roubado (glossario e aliases injetavam `verificacao de programas` na u01
+    # do MF, titulo da u02 — 6 entries migravam para a unidade errada).
+    other_unit_titles = set()
     for unit in units or []:
+        raw_title = unit.get("title", "") if isinstance(unit, dict) else unit[0]
+        title_norm = normalize_match_text(strip_outline_prefix(raw_title))
+        if title_norm:
+            other_unit_titles.add(title_norm)
+
+    def _partes(unit):
         if isinstance(unit, dict):
-            title = unit.get("title", "")
-            topics = unit.get("topics", []) or []
-            extra_signals = unit.get("extra_signals", []) or []
-        else:
-            title, topics = unit
-            extra_signals = []
+            return (unit.get("title", ""), unit.get("topics", []) or [],
+                    unit.get("extra_signals", []) or [])
+        return (unit[0], unit[1], [])
+
+    def _frases(itens):
+        return {normalize_match_text(strip_outline_prefix(topic_text(i))) for i in itens} - {""}
+
+    # Frase presente em TODAS as unidades tem poder discriminante ZERO — so infla
+    # o score da unidade maior. Origens medidas (2026-08-18): a definicao
+    # auto-gerada do glossario, que e a MESMA frase-modelo para todo termo, e
+    # definicao que virou dump de sumario (ES2 injetava `camadas`, topico da u01,
+    # nas outras duas). Descarta so onde a frase NAO e topico proprio: a unidade
+    # dona mantem e volta a discriminar, as outras perdem.
+    proprias = [_frases(topics) for _, topics, _ in map(_partes, units or [])]
+    ubiquas: set = set()
+    if len(proprias) > 1:
+        ubiquas = set.intersection(
+            *(proprias[i] | _frases(extras)
+              for i, (_, _, extras) in enumerate(map(_partes, units or [])))
+        )
+
+    for unit_pos, unit in enumerate(units or []):
+        title, topics, extra_signals = _partes(unit)
+        # A2: conjunto de genericos POR CURSO carimbado no spec (build_file_map_unit_index_from_course);
+        # sem carimbo cai na constante injetada (comportamento de antes).
+        unit_generic = set((unit.get("generic_tokens") or []) if isinstance(unit, dict) else []) or set(unit_generic_tokens)
+        descartar = ubiquas - proprias[unit_pos]
         clean_title = strip_outline_prefix(title)
         topic_phrases = []
         topic_tokens = []
@@ -73,16 +99,22 @@ def build_file_map_unit_index(
             topic_norm = normalize_match_text(strip_outline_prefix(topic_text(topic)))
             if not topic_norm:
                 continue
+            if topic_norm != normalize_match_text(clean_title) and topic_norm in other_unit_titles:
+                continue
+            if topic_norm in descartar:
+                continue
             topic_phrases.append(topic_norm)
             if topic_norm not in seen_topic_tokens:
                 topic_tokens.append(topic_norm)
                 seen_topic_tokens.add(topic_norm)
             for token in topic_norm.split():
-                if len(token) >= 4 and token not in seen_topic_tokens and token not in unit_generic_tokens:
+                if len(token) >= 4 and token not in seen_topic_tokens and token not in unit_generic:
                     topic_tokens.append(token)
                     seen_topic_tokens.add(token)
         indexed.append({
             "title": title,
+            # carimbo so quando veio calculado por curso; None -> cada consumidor usa a sua constante
+            "generic_tokens": sorted(unit_generic) if (isinstance(unit, dict) and unit.get("generic_tokens")) else None,
             "slug": normalize_unit_slug(title),
             "normalized_title": normalize_match_text(clean_title),
             "topics": topics,
@@ -107,7 +139,7 @@ def build_file_map_unit_index(
         unit_tokens = set()
         for text in [unit["normalized_title"]] + unit.get("topic_tokens", []):
             for token in text.split():
-                if len(token) >= 4 and not token.isdigit() and token not in unit_generic_tokens:
+                if len(token) >= 4 and not token.isdigit() and token not in unit_generic:
                     unit_tokens.add(token)
         for token in unit_tokens:
             token_frequency[token] = token_frequency.get(token, 0) + 1
@@ -116,7 +148,7 @@ def build_file_map_unit_index(
         unit_tokens = set()
         for text in [unit["normalized_title"]] + unit.get("topic_tokens", []):
             for token in text.split():
-                if len(token) >= 4 and not token.isdigit() and token not in unit_generic_tokens:
+                if len(token) >= 4 and not token.isdigit() and token not in unit_generic:
                     unit_tokens.add(token)
         unit["token_weights"] = {
             token: 1.0 / token_frequency[token]
@@ -129,6 +161,11 @@ def build_file_map_unit_index(
             if freq == 1 and token in unit_tokens and len(token) >= 5
         )
     return indexed
+
+
+# "Revisão", "revisao", "revisões" no titulo ou no id (o id preserva fronteira
+# de palavra onde o titulo usa "_", mesmo criterio do _PROVA_RE da cobertura).
+_REVISAO_RE = re.compile(r"\brevis", re.IGNORECASE)
 
 
 def auto_map_entry_subtopic(
@@ -186,6 +223,20 @@ def auto_map_entry_subtopic(
             ambiguous=True,
             reasons=[f"empate-exato {tied}x score={winner_score:.2f}"],
         )
+    # Material de REVISAO sem assunto dominante revisa conteudo de fora da
+    # taxonomia (pre-requisito, prova) — caso real: TCC aula-06 revisa a
+    # cadeira de automatos e cairia em argumento-diagonal por vocabulario.
+    # Escopado a titulo/id de revisao: piso global e refutado (thresholds).
+    titulo_e_id = f"{entry.get('title') or ''} {entry.get('id') or ''}"
+    if _REVISAO_RE.search(titulo_e_id) and winner_score < T.SUBUNIT_REVISAO_FLOOR:
+        return topic_match_result_factory(
+            topic_slug="",
+            topic_label="",
+            unit_slug="",
+            confidence=0.0,
+            ambiguous=True,
+            reasons=[f"revisao-sem-assunto-dominante (winner_score={winner_score:.2f} < {T.SUBUNIT_REVISAO_FLOOR})"],
+        )
     if len(scored) == 1:
         confidence = 0.72
         ambiguous = False
@@ -223,6 +274,10 @@ def score_entry_against_unit(
     legacy_tags_text = signals.get("legacy_tags_text", "")
     tags_text = signals.get("tags_text", "")
     raw_text = signals.get("raw_text", "")
+    card_text = signals.get("card_text", "")
+    # A2: genericos de unidade POR CURSO (carimbados no indice); sem carimbo, a constante.
+    _neutral = set(unit.get("generic_tokens") or []) or set(timeline_unit_neutral_tokens)
+    card_tokens = {tok for tok in card_text.split() if len(tok) >= 4}
     title_tokens = {tok for tok in title_text.split() if len(tok) >= 4}
     markdown_headings_tokens = {tok for tok in markdown_headings_text.split() if len(tok) >= 4}
     markdown_lead_tokens = {tok for tok in markdown_lead_text.split() if len(tok) >= 4}
@@ -252,6 +307,10 @@ def score_entry_against_unit(
             score += 1.8
         if unit_title in title_text:
             score += 1.0
+        # O card do Moodle costuma nomear a UNIDADE (MF: "Verificacao de Programas",
+        # "Provas por Inducao") ou o TEMA (SO: "Threads"; IA: "Machine Learning").
+        if unit_title in card_text or (card_text and card_text in unit_title):
+            score += 1.5
 
     for topic_phrase in topic_phrases:
         if not topic_phrase:
@@ -266,6 +325,13 @@ def score_entry_against_unit(
             continue
         if topic_phrase in title_text:
             score += 2.7
+            exact_topic_hits += 1
+            continue
+        # Card: sinal humano (o professor postou o material naquela secao). So no
+        # nivel de FRASE — card administrativo ("Informacoes Gerais", 10x no SO)
+        # nao casa frase nenhuma e fica inerte.
+        if topic_phrase in card_text:
+            score += 2.5
             exact_topic_hits += 1
             continue
         if topic_phrase in markdown_text:
@@ -284,10 +350,11 @@ def score_entry_against_unit(
             score += 0.24
             exact_topic_hits += 1
             continue
-        score += score_timeline_unit_phrase(markdown_headings_text, markdown_headings_tokens, topic_phrase, token_weights) * 0.55
-        score += score_timeline_unit_phrase(markdown_lead_text, markdown_lead_tokens, topic_phrase, token_weights) * 0.48
-        score += score_timeline_unit_phrase(markdown_text, markdown_tokens, topic_phrase, token_weights) * 0.18
-        score += score_timeline_unit_phrase(title_text, title_tokens, topic_phrase, token_weights) * 0.45
+        score += score_timeline_unit_phrase(markdown_headings_text, markdown_headings_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.55
+        score += score_timeline_unit_phrase(markdown_lead_text, markdown_lead_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.48
+        score += score_timeline_unit_phrase(markdown_text, markdown_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.18
+        score += score_timeline_unit_phrase(title_text, title_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.45
+        score += score_timeline_unit_phrase(card_text, card_tokens, topic_phrase, token_weights, neutral_tokens=_neutral) * 0.40
         score += score_timeline_unit_phrase(manual_tags_text, manual_tags_tokens, topic_phrase, token_weights) * 0.35
         score += score_timeline_unit_phrase(auto_tags_text, auto_tags_tokens, topic_phrase, token_weights) * 0.04
         score += score_timeline_unit_phrase(legacy_tags_text, legacy_tags_tokens, topic_phrase, token_weights) * 0.02
@@ -364,6 +431,30 @@ def score_entry_against_unit(
     return score
 
 
+# D3/F7 (censo Fund. Redes 2026-08-28): numero de unidade EXPLICITO no card
+# ("U1 - Redes de Computadores"), no titulo ou no arquivo ("Lista de exercicios -
+# Unidade 1"). A numeracao vem do PLANO (autoridade) -> sinal de 1a classe do eixo
+# de unidade, decide antes do scorer. "aula01"/"qemu2"/"udp 1" nao casam (o "u"
+# exige fronteira antes e digito logo depois).
+_UNIT_NUM_NAME_RE = re.compile(r"(?:^|[\W_])(?:u\.?\s*|unidade(?:\s+de\s+aprendizagem)?\s+)0*(\d{1,2})(?:$|[\W_])", re.IGNORECASE)
+_UNIT_NUM_SLUG_RE = re.compile(r"^unidade(?:-de-aprendizagem)?-0*(\d{1,2})(?:$|[^0-9])")
+
+
+def explicit_unit_number(entry: dict):
+    """Numero de unidade explicito em card/titulo/arquivo; None se ausente."""
+    basename = re.split(r"[\\/]", str(entry.get("source_path") or ""))[-1]
+    for text in (str(entry.get("source_section") or ""), str(entry.get("title") or ""), basename):
+        m = _UNIT_NUM_NAME_RE.search(text)
+        if m:
+            return int(m.group(1))
+    return None
+
+
+def _unit_number_from_slug(slug: str):
+    m = _UNIT_NUM_SLUG_RE.match(str(slug or ""))
+    return int(m.group(1)) if m else None
+
+
 def auto_map_entry_unit(
     entry: dict,
     units: list,
@@ -382,6 +473,14 @@ def auto_map_entry_unit(
     indexed_units = build_file_map_unit_index(units)
     if not indexed_units:
         return unit_match_result_factory(slug="", confidence=0.0, ambiguous=True, reasons=["sem-unidades"])
+
+    numero = explicit_unit_number(entry)
+    if numero is not None:
+        alvo = [u for u in indexed_units if _unit_number_from_slug(str(u.get("slug") or "")) == numero]
+        if len(alvo) == 1:
+            return unit_match_result_factory(
+                slug=str(alvo[0].get("slug") or ""), confidence=0.95, ambiguous=False,
+                reasons=[f"unidade-explicita=u{numero}"])
 
     signals = collect_entry_unit_signals(entry, markdown_text)
     unit_tag_boosts: Dict[str, float] = {}
@@ -409,7 +508,9 @@ def auto_map_entry_unit(
             for topic in normalized_topic_index:
                 if normalize_unit_slug(str(topic.get("unit_slug", "") or "")) != unit_slug:
                     continue
-                topic_score = score_entry_against_taxonomy_topic(signals, topic)
+                # A1: rota de TOPICO do mapeador de UNIDADE usa o fallback por radical
+                # (stem6); a rota de SUBUNIDADE (score_entry_topics) continua exata.
+                topic_score = score_entry_against_taxonomy_topic(signals, topic, stem_fallback=True)
                 if topic_score > best_topic_score:
                     best_topic_score = topic_score
             if best_topic_score >= 0.25:
@@ -684,13 +785,52 @@ def reconcile_unit_with_block(
         return block_unit_slug, [f"herdada_do_bloco={computed_block_id}"], {}
     if block_unit_slug == computed_unit_slug:
         return computed_unit_slug, [], {}
-    if block_confidence >= unit_confidence:
-        return block_unit_slug, [f"reconciliada_do_bloco={computed_block_id}"], {}
+    # 2026-08-21: a verdade de unidade e, por construcao, a unidade do bloco
+    # (ground_truth |><| gold_units). Medido nos 5 cursos (188 entries): scorer
+    # de texto 130, unidade do bloco temporal 162, bloco + heranca do vizinho
+    # 178 — e o scorer nao acrescenta nada por cima do bloco. Comparar
+    # confiancas (block_confidence >= unit_confidence) so deixava o texto
+    # vencer onde ele erra. O bloco decide; o texto discordante vira registro
+    # de conflito para auditoria (unit_block_conflict), nunca decisao.
     return (
-        computed_unit_slug,
-        [],
+        block_unit_slug,
+        [f"reconciliada_do_bloco={computed_block_id}"],
         {"unit": computed_unit_slug, "block_unit": block_unit_slug, "block_id": computed_block_id},
     )
+
+
+_CONTENT_BLOCK_KINDS = frozenset({"class", "overview", ""})
+
+
+def unit_of_block_or_neighbor(block_id: str, blocks: List[Dict[str, object]]) -> Tuple[str, str]:
+    """(unit_slug, id_do_vizinho_de_onde_veio) para o bloco `block_id`.
+
+    Bloco de avaliacao/revisao/entrega/feriado nao recebe unit_slug por design
+    (timeline/index.py: so blocos de aula entram no posicional). O material
+    que cai nele pertence ao que veio ANTES (a prova/revisao fecha a unidade
+    anterior): herda do bloco de conteudo anterior. `overview` (apresentacao/
+    plano) abre o que vem: herda do proximo. Bloco com unit_slug proprio
+    devolve ("slug", ""). Medido 2026-08-21: 16 das 188 entries com gold caiam
+    em bloco sem unidade; a heranca acerta 11 delas (167 -> 178)."""
+    ordered = sorted(blocks or [], key=lambda b: str(b.get("period_start") or ""))
+    idx = next((i for i, b in enumerate(ordered)
+                if str(b.get("id") or "") == block_id or str(b.get("block_uuid") or "") == block_id), None)
+    if idx is None:
+        return "", ""
+    own = str(ordered[idx].get("unit_slug") or "").strip()
+    if own:
+        return own, ""
+    prefer_next = str(ordered[idx].get("kind") or "") == "overview"
+    before = range(idx - 1, -1, -1)
+    after = range(idx + 1, len(ordered))
+    for j in (list(after) + list(before)) if prefer_next else (list(before) + list(after)):
+        cand = ordered[j]
+        if str(cand.get("kind") or "") not in _CONTENT_BLOCK_KINDS:
+            continue
+        slug = str(cand.get("unit_slug") or "").strip()
+        if slug:
+            return slug, str(cand.get("id") or "")
+    return "", ""
 
 
 def score_entry_against_timeline_row(
@@ -779,7 +919,10 @@ def score_card_evidence_against_entry(
 
     score = 0.0
     for item in card_items:
-        normalized_title = normalize_match_text(str(item.get("normalized_title", "") or ""))
+        # normalized_title já sai normalizado da extração (card_evidence._build_item,
+        # canônico [a-z0-9 ]); renormalizar aqui era no-op pago O(entries×blocos×cards)
+        # — provado por probe nos 5 índices vivos (auditoria 2.8).
+        normalized_title = str(item.get("normalized_title", "") or "")
         if not normalized_title:
             continue
         title_tokens = [tok for tok in normalized_title.split() if len(tok) >= 4]
@@ -889,186 +1032,6 @@ def timeline_block_matches_preferred_topic(block: Dict[str, object], preferred_t
             return True
 
     return False
-
-
-def block_token_weights(
-    blocks: List[Dict[str, object]],
-    *,
-    normalize: Optional[Callable[[str], str]] = None,
-) -> Dict[str, float]:
-    """S2 (P4): IDF por raridade entre blocos CANDIDATOS.
-
-    token -> peso efetivo 1 + IDF_WEIGHT*(1/df - 1), onde df = nº de blocos
-    candidatos cujo topic_text normalizado contém o token (mesma mecânica do
-    token_weights do scorer de UNIDADE, peso=1/freq). Tokens de TODOS os
-    topic_texts dos candidatos entram; tokens curtos (<4) ficam fora (mesmo
-    filtro do scorer — linha topic_tokens). Tokens do nome do curso/área
-    (UNIT_GENERIC_TOKENS, ex. "metodos"/"formais" — presentes em TODO markdown
-    via header) recebem raridade ZERO (df infinito): aparecem em qualquer
-    entry, então não distinguem bloco nenhum — e o df dentro de um candidato
-    set pequeno (card de 2 blocos) não os amortece o bastante. Computar UMA
-    vez por entry, sobre o conjunto que será ranqueado, e repassar via
-    topic_token_weights= ao scorer.
-
-    `normalize`: normalize a usar para tokenizar topic_text; deve ser o MESMO
-    que o scorer do call site usa para tokenizar o topic (default = canônico).
-    Call sites que usam normalize com keep="+-./", como o fallback da taxonomy,
-    devem repassar seu normalize aqui — caso contrário tokens com hífen (ex.
-    "pre-condicao") divergem: presentes no topic tokenizado pelo scorer mas
-    ausentes no dict de pesos → default 1.0 (IDF escapa)."""
-    _norm = normalize if normalize is not None else _normalize_text
-    frequency: Dict[str, int] = {}
-    for block in blocks or []:
-        if not isinstance(block, dict):
-            continue
-        topic_norm = _norm(str(block.get("topic_text", "") or ""))
-        tokens = {
-            token
-            for token in topic_norm.split()
-            if len(token) >= 4
-        }
-        for token in tokens:
-            frequency[token] = frequency.get(token, 0) + 1
-    return {
-        token: 1.0 + IDF_WEIGHT * ((0.0 if token in UNIT_GENERIC_TOKENS else 1.0 / freq) - 1.0)
-        for token, freq in frequency.items()
-    }
-
-
-def score_entry_against_timeline_block(
-    signals: dict,
-    block: Dict[str, object],
-    *,
-    normalize_match_text: Callable[[str], str],
-    score_text_against_row: Callable[[str, List[str]], float],
-    score_card_evidence_against_entry_fn: Callable[[dict, List[Dict[str, str]]], float],
-    preferred_unit_slug: str = "",
-    preferred_topic_slug: str = "",
-    topic_token_weights: Optional[Dict[str, float]] = None,
-) -> float:
-    rows = timeline_block_rows_for_scoring(block)
-    if not rows:
-        return 0.0
-    row_scores = [
-        score_entry_against_timeline_row(
-            signals,
-            str(row.get("content", "")),
-            normalize_match_text=normalize_match_text,
-            score_text_against_row=score_text_against_row,
-        )
-        for row in rows
-    ]
-    runtime_block = dict(block)
-    runtime_block["rows"] = rows
-    runtime_block["scores"] = row_scores
-    score = score_timeline_block(
-        signals,
-        runtime_block,
-        normalize_match_text=normalize_match_text,
-        score_card_evidence_against_entry=score_card_evidence_against_entry_fn,
-    )
-
-    block_unit_slug = str(block.get("unit_slug", "") or "")
-    block_unit_confidence = float(block.get("unit_confidence", 0.0) or 0.0)
-    if preferred_unit_slug:
-        if block_unit_slug == preferred_unit_slug:
-            score += 0.35 + (block_unit_confidence * 0.25)
-        elif block_unit_slug:
-            score -= 0.45
-
-    preferred_topic_slug = str(preferred_topic_slug or "").strip()
-    if preferred_topic_slug:
-        block_topic_slug = str(block.get("primary_topic_slug", "") or "").strip()
-        block_topic_confidence = float(block.get("primary_topic_confidence", 0.0) or 0.0)
-        if block_topic_slug == preferred_topic_slug:
-            score += 0.8 + (block_topic_confidence * 0.35)
-        elif timeline_block_matches_preferred_topic(block, preferred_topic_slug):
-            score += 0.48
-        elif block_topic_slug:
-            score -= 0.18
-
-    topic_text = normalize_match_text(str(block.get("topic_text", "")))
-    if topic_text:
-        topic_tokens = [tok for tok in topic_text.split() if len(tok) >= 4]
-        if topic_token_weights is None:
-            # Comportamento anterior EXATO (chamadores que não passam pesos,
-            # ex. cronograma_health): só tags pontuam contra o topic.
-            score += score_text_against_row(signals.get("manual_tags_text", ""), topic_tokens, weight=0.35)
-            score += score_text_against_row(signals.get("auto_tags_text", ""), topic_tokens, weight=0.12)
-            score += score_text_against_row(signals.get("legacy_tags_text", ""), topic_tokens, weight=0.05)
-        else:
-            # S2 (P4): com pesos IDF (block_token_weights sobre os CANDIDATOS),
-            # título/markdown também pontuam contra o topic do bloco — é onde
-            # vivem os tokens raros (arrays/sequencias/conjuntos) que as rows
-            # de sessão diluem. Pesos espelham o row scorer (1.25/1.0); tokens
-            # comuns entre candidatos contribuem ~0 (peso 1/df), então o canal
-            # novo não infla blocos de topic verboso. Tokens da entry DEDUPADOS:
-            # match de topic é overlap de conjunto — sem dedupe, código que
-            # repete um identificador (ex. "arvores" num .thy) inunda o canal.
-            title_unique = " ".join(dict.fromkeys(str(signals.get("title_text", "") or "").split()))
-            markdown_unique = " ".join(dict.fromkeys(str(signals.get("markdown_text", "") or "").split()))
-            score += score_text_against_row(
-                title_unique, topic_tokens,
-                weight=1.25, token_weights=topic_token_weights,
-            )
-            score += score_text_against_row(
-                markdown_unique, topic_tokens,
-                weight=1.0, token_weights=topic_token_weights,
-            )
-            score += score_text_against_row(
-                signals.get("manual_tags_text", ""), topic_tokens,
-                weight=0.35, token_weights=topic_token_weights,
-            )
-            score += score_text_against_row(
-                signals.get("auto_tags_text", ""), topic_tokens,
-                weight=0.12, token_weights=topic_token_weights,
-            )
-            score += score_text_against_row(
-                signals.get("legacy_tags_text", ""), topic_tokens,
-                weight=0.05, token_weights=topic_token_weights,
-            )
-
-    # S4 (P4): sinal de ferramenta — atrás do MESMO guard do S2
-    # (topic_token_weights is not None = só caminhos de ranking; chamadores
-    # legados como cronograma_health ficam EXATAMENTE como antes). Ferramentas
-    # da entry = valores de `ferramenta:` (signals["tool_tags_text"]) que são
-    # chaves de TOOL_TOKENS — o resto é ruído do extrator e não conta. Topic
-    # com token da ferramenta da entry -> +TOOL_BOOST; topic com token de
-    # OUTRA ferramenta do mapa e nenhum da entry -> -TOOL_PENALTY.
-    if topic_token_weights is not None and topic_text:
-        entry_tools = {
-            tok
-            for tok in str(signals.get("tool_tags_text", "") or "").split()
-            if tok in TOOL_TOKENS
-        }
-        if entry_tools:
-            topic_token_set = set(topic_text.split())
-            if any(TOOL_TOKENS[tool] & topic_token_set for tool in entry_tools):
-                score += TOOL_BOOST
-            elif any(
-                TOOL_TOKENS[tool] & topic_token_set
-                for tool in TOOL_TOKENS
-                if tool not in entry_tools
-            ):
-                score -= TOOL_PENALTY
-
-    score += min(score_card_evidence_against_entry_fn(signals, block.get("card_evidence", []) or []), 0.45)
-
-    # Boost de data (substitui o antigo regex DD.MM-no-início): extrai datas de
-    # QUALQUER posição do material (título/markdown/raw via extract_dates) e
-    # compara com o período do bloco. Data exata dentro de
-    # period_start..period_end (ou que casa um date_text de row) → boost FORTE
-    # (DATE_STRONG_BOOST=+0.30, peso calibrável herdado do +0.30 original); mês
-    # compatível mas fora do range → boost FRACO (DATE_WEAK_BOOST). O ano do
-    # bloco resolve datas year-less do material (default_year), já que não há
-    # campo course_year no modelo — o ano vive no próprio período do bloco.
-    score += _score_block_date_match(signals, block)
-
-    score += score_sequence_match(signals, block)
-
-    return score
-
-
 
 
 def _block_period_bounds(block: Dict[str, object]) -> tuple[Optional[date], Optional[date]]:
@@ -1261,225 +1224,6 @@ def score_entry_against_timeline_sessions(
     return best_score, best_session, best_card_bonus
 
 
-def _is_prebuilt_block(item) -> bool:
-    """Bloco já construído (não linha crua de cronograma).
-
-    Legado: shape com 'rows'. Persistido (_serialize_timeline_index /
-    .timeline_index.json): 'id' + 'source_rows'/'sessions'. Aceitar ambos
-    conserta o bug B3 — o índice persistido era tratado como linha crua e a
-    predição degenerava (cf. re-análise 2026-06-11)."""
-    if not isinstance(item, dict):
-        return False
-    if "rows" in item:
-        return True
-    return "id" in item and ("source_rows" in item or "sessions" in item)
-
-
-def select_probable_period_for_entry(
-    entry: dict,
-    unit: dict,
-    candidate_rows: List[Dict[str, object]],
-    markdown_text: str,
-    *,
-    preferred_topic_slug: str = "",
-    collect_entry_unit_signals: Callable[[dict, str], dict],
-    build_timeline_index: Callable[[List[Dict[str, object]], Optional[list]], dict],
-    timeline_period_label: Callable[[str, str], str],
-    collapse_ws: Callable[[str], str],
-    normalize_match_text: Callable[[str], str],
-    score_text_against_row: Callable[[str, List[str]], float],
-    extract_date_range_signal: Callable[[str], dict],
-    extract_timeline_session_signals: Callable[[str], List[dict]],
-    parse_timeline_date_value: Callable[[str], object],
-) -> tuple[str, float, bool, List[str]]:
-    if not candidate_rows:
-        return "", 0.0, True, ["sem-linhas-candidato"]
-
-    signals = collect_entry_unit_signals(entry, markdown_text)
-    if candidate_rows and _is_prebuilt_block(candidate_rows[0]):
-        blocks = list(candidate_rows)
-    else:
-        timeline_index = build_timeline_index(candidate_rows, unit_index=[unit] if unit else [])
-        blocks = list(timeline_index.get("blocks", []) or [])
-    if not blocks:
-        return "", 0.0, True, ["sem-blocos-candidato"]
-
-    annotate_class_ordinals(blocks)
-
-    preferred_unit_slug = str(unit.get("slug", "") or "")
-    preferred_topic_slug = str(preferred_topic_slug or "").strip()
-    temporal_signals = collect_entry_temporal_signals(
-        entry,
-        markdown_text,
-        collapse_ws=collapse_ws,
-        normalize_match_text=normalize_match_text,
-        extract_date_range_signal=extract_date_range_signal,
-        extract_timeline_session_signals=extract_timeline_session_signals,
-    )
-    topic_filtered_blocks = [
-        block for block in blocks if timeline_block_matches_preferred_topic(block, preferred_topic_slug)
-    ]
-    scored_source_blocks = topic_filtered_blocks if topic_filtered_blocks else blocks
-    # S2 (P4): IDF computado UMA vez por entry, sobre os blocos que este
-    # ranking compara (não por bloco) — raridade é relativa ao conjunto.
-    # Repassa o mesmo normalize que o scorer usa: tokens divergentes (datas,
-    # hífens, outline) não escapam do IDF por ausência no dict de pesos.
-    topic_token_weights = block_token_weights(scored_source_blocks, normalize=normalize_match_text)
-    session_scored_blocks = []
-    for block in scored_source_blocks:
-        block_score = score_entry_against_timeline_block(
-            signals,
-            block,
-            normalize_match_text=normalize_match_text,
-            score_text_against_row=score_text_against_row,
-            score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
-                s,
-                items,
-                normalize_match_text=normalize_match_text,
-            ),
-            preferred_unit_slug=preferred_unit_slug,
-            preferred_topic_slug=preferred_topic_slug,
-            topic_token_weights=topic_token_weights,
-        )
-        session_score, matched_session, session_card_bonus = score_entry_against_timeline_sessions(
-            temporal_signals,
-            block,
-            normalize_match_text=normalize_match_text,
-            score_text_against_row=score_text_against_row,
-            score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
-                s,
-                items,
-                normalize_match_text=normalize_match_text,
-            ),
-            entry_temporal_range_contains_fn=lambda date_text, date_range: entry_temporal_range_contains(
-                date_text,
-                date_range,
-                parse_timeline_date_value=parse_timeline_date_value,
-            ),
-        )
-        if session_score >= 1.0:
-            session_scored_blocks.append((block, session_score, block_score, matched_session, session_card_bonus))
-
-    if session_scored_blocks:
-        session_scored_blocks.sort(key=lambda item: (item[1], item[2], item[4]), reverse=True)
-        best_block, best_score, best_block_score, best_session, best_session_card_bonus = session_scored_blocks[0]
-        runner_up_score = session_scored_blocks[1][1] if len(session_scored_blocks) > 1 else 0.0
-        if best_score < 1.0:
-            return "", best_score, True, [f"best={best_score:.2f}", "score-baixo"]
-        selected_rows = list(best_block.get("rows", []) or [])
-        period = str(best_block.get("period_label", "")).strip()
-        if not period:
-            selected_dates = [
-                str(row.get("date_text", "")).strip()
-                for row in selected_rows
-                if str(row.get("date_text", "")).strip()
-            ]
-            if selected_dates:
-                period = timeline_period_label(selected_dates[0], selected_dates[-1])
-        if not period:
-            return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
-
-        # Confianca de BLOCO: margem relativa x forca absoluta (P2.1) — a
-        # formula aditiva antiga saturava em 1.0 com scores 4-8.
-        # SEM piso (P1.3, removido 17/06): o antigo max(confidence, 0.72) p/
-        # single-block era um polegar-na-balanca invisivel. A band usa a conf
-        # CAPADA (scorer_only=0.70), entao o piso so afetava o block_confidence
-        # RAW da reconciliacao unit×bloco (reconcile_unit_with_block: bloco define
-        # a unidade se block_confidence >= unit_confidence). Como unit_confidence
-        # tambem e relative_margin_confidence (idea 1), a comparacao e simetrica
-        # por design — o piso quebrava essa simetria so na janela unit_conf in
-        # (0.70, 0.72]. Sem ele, discordancia marginal vira conflito flagado
-        # (conf honesta), nunca override silencioso. NAO re-adicionar.
-        confidence = relative_margin_confidence(best_score, runner_up_score)
-        ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
-        reasons = [
-            f"best={best_score:.2f}",
-            f"runner_up={runner_up_score:.2f}",
-            f"session_block={best_block_score:.2f}",
-            f"selected_rows={len(selected_rows)}",
-            f"selected_block_rows={len(selected_rows)}",
-            "session-first",
-        ]
-        if best_session and best_session.get("id"):
-            reasons.append(f"session={best_session.get('id')}")
-        if best_session_card_bonus >= 0.15:
-            reasons.append("card-evidence")
-        if preferred_topic_slug:
-            reasons.append(f"topic={preferred_topic_slug}")
-            if topic_filtered_blocks:
-                reasons.append("topic-filtered")
-        if ambiguous:
-            reasons.append("ambiguous")
-        return period, confidence, ambiguous, reasons
-
-    scored_blocks = [
-        (
-            block,
-            score_entry_against_timeline_block(
-                signals,
-                block,
-                normalize_match_text=normalize_match_text,
-                score_text_against_row=score_text_against_row,
-                score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
-                    s,
-                    items,
-                    normalize_match_text=normalize_match_text,
-                ),
-                preferred_unit_slug=preferred_unit_slug,
-                preferred_topic_slug=preferred_topic_slug,
-                topic_token_weights=topic_token_weights,
-            ),
-        )
-        for block in scored_source_blocks
-    ]
-    scored_blocks.sort(key=lambda item: item[1], reverse=True)
-
-    best_block, best_score = scored_blocks[0]
-    runner_up_score = scored_blocks[1][1] if len(scored_blocks) > 1 else 0.0
-    if best_score < 0.95:
-        return "", best_score, True, [f"best={best_score:.2f}", "score-baixo"]
-    selected_rows = list(best_block.get("rows", []) or [])
-    period = str(best_block.get("period_label", "")).strip()
-    if not period:
-        selected_dates = [
-            str(row.get("date_text", "")).strip()
-            for row in selected_rows
-            if str(row.get("date_text", "")).strip()
-        ]
-        if selected_dates:
-            period = timeline_period_label(selected_dates[0], selected_dates[-1])
-    if not period:
-        return "", best_score, True, [f"best={best_score:.2f}", "sem-datas"]
-
-    # Confianca de BLOCO: margem relativa x forca absoluta (P2.1) — a
-    # formula aditiva antiga saturava em 1.0 com scores 4-8.
-    confidence = relative_margin_confidence(best_score, runner_up_score)
-    ambiguous = best_score < 1.0 or abs(best_score - runner_up_score) < 0.35
-    best_block_card_bonus = min(
-        0.45,
-        score_card_evidence_against_entry(
-            signals,
-            best_block.get("card_evidence", []) or [],
-            normalize_match_text=normalize_match_text,
-        ),
-    )
-    reasons = [
-        f"best={best_score:.2f}",
-        f"runner_up={runner_up_score:.2f}",
-        f"selected_rows={len(selected_rows)}",
-        f"selected_block_rows={len(selected_rows)}",
-    ]
-    if best_block_card_bonus >= 0.15:
-        reasons.append("card-evidence")
-    if preferred_topic_slug:
-        reasons.append(f"topic={preferred_topic_slug}")
-        if topic_filtered_blocks:
-            reasons.append("topic-filtered")
-    if ambiguous:
-        reasons.append("ambiguous")
-    return period, confidence, ambiguous, reasons
-
-
 def build_file_map_content_taxonomy_from_course(
     course_meta: dict,
     subject_profile=None,
@@ -1498,6 +1242,7 @@ def build_file_map_content_taxonomy_from_course(
 
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     if not teaching_plan:
+        _logger.warning("sem teaching_plan no perfil — content_taxonomy vazia (curso perde estrutura de unidades)")
         return {"version": 1, "course_slug": "", "units": []}
 
     root_dir = course_meta.get("_repo_root")
@@ -1549,6 +1294,9 @@ def build_file_map_content_taxonomy_from_course(
 
 def _derive_unit_specs_from_repo(course_meta: dict) -> list:
     """Fallback: deriva unit_specs do COURSE_MAP.md + .timeline_index.json do repo."""
+    _logger.warning(
+        "unidades derivadas do repo gerado, nao do plano de ensino — fallback"
+    )
     from src.builder.extraction.teaching_plan import _normalize_unit_slug as _slug_fn
 
     repo_root = course_meta.get("_repo_root")
@@ -1626,11 +1374,18 @@ def build_file_map_unit_index_from_course(
     teaching_plan = getattr(subject_profile, "teaching_plan", "") if subject_profile else ""
     if not teaching_plan:
         unit_specs = _derive_unit_specs_from_repo(course_meta)
+        _logger.warning(
+            "sem teaching_plan — unit_index cai pro fallback repo-derived (%d specs)", len(unit_specs)
+        )
         if unit_specs:
             return build_file_map_unit_index_fn(unit_specs)
         return []
 
     parsed_units = parse_units_from_teaching_plan(teaching_plan)
+    from src.builder.text.stopwords import resolve_unit_generic_tokens
+    course_generic = resolve_unit_generic_tokens(parsed_units, set(unit_generic_tokens) | set(timeline_unit_neutral_tokens),
+                                                 course_name=str(course_meta.get("course_name") or ""))
+    _def_generic = course_generic if course_generic is not None else (set(unit_generic_tokens) | set(timeline_unit_neutral_tokens))
     root_dir = course_meta.get("_repo_root")
     glossary_text = ""
     try:
@@ -1646,11 +1401,22 @@ def build_file_map_unit_index_from_course(
         seen_signals = set()
         for term in glossary_terms:
             unit_hint = normalize_match_text_fn(str(term.get("unit_hint", "") or ""))
-            if unit_hint and unit_hint not in normalized_unit and normalized_unit not in unit_hint:
+            # Termo SEM `Aparece em` nao aponta unidade nenhuma — e secao do
+            # template (`## Formato de entrada`, `## Termos`), nao terminologia.
+            # O guard antigo (`if unit_hint and ...`) deixava passar e colava em
+            # TODA unidade dos 5 cursos (medido 2026-08-18).
+            if not unit_hint:
                 continue
+            if unit_hint not in normalized_unit and normalized_unit not in unit_hint:
+                continue
+            # 2026-08-26: sinonimos do glossario ficam FORA do indice de UNIDADE.
+            # Sao vocabulario de subtopico (alias na taxonomia, scorer de
+            # subunidade); no scorer de unidade puxam a unidade que por acaso tem
+            # sidecar curado (SO u02 com PCB/FCFS/threads dominou: cobertura
+            # 47 -> 36/57). Medido em memoria: sem sinonimos 43/57, sem
+            # sinonimos E sem definicao 42 — definicao honesta ainda ajuda.
             for candidate in [
                 str(term.get("term", "") or ""),
-                *list(term.get("synonyms", []) or []),
             ]:
                 cleaned = collapse_ws_fn(str(candidate))
                 normalized = normalize_match_text_fn(cleaned)
@@ -1661,12 +1427,14 @@ def build_file_map_unit_index_from_course(
 
             definition = normalize_match_text_fn(str(term.get("definition", "") or ""))
             for token in definition.split():
-                if len(token) < 5 or token in unit_generic_tokens or token in timeline_unit_neutral_tokens:
+                if len(token) < 5 or token in _def_generic:
                     continue
                 if token in seen_signals:
                     continue
                 seen_signals.add(token)
                 extra_signals.append(token)
 
-        unit_specs.append({"title": title, "topics": topics, "extra_signals": extra_signals})
+        unit_specs.append({"title": title, "topics": topics, "extra_signals": extra_signals,
+                           "generic_tokens": sorted(course_generic) if course_generic is not None else None})
+
     return build_file_map_unit_index_fn(unit_specs)

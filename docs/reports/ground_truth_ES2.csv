@@ -1,4 +1,4 @@
-id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante,true_block_uuid
+﻿id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante,true_block_uuid
 revisao-p1,revisao_p1.pdf,bloco-04,bloco-01,bloco-01,,subt-single:Roteiro (Moodle),clean,24/04,yes,yes,8a2e86f0-fb4a-4487-86ec-07e74c73d88a
 roteiro1,roteiro1.zip,bloco-02,bloco-04,bloco-04,,subt-single:Roteiro (Moodle),clean,27/03,yes,yes,b0e2cc0d-7442-4888-87f2-2a4694598b83
 roteiro2,roteiro2.zip,bloco-04,bloco-04,bloco-04,,subt-single:Roteiro (Moodle),clean,10/04,yes,no,8a2e86f0-fb4a-4487-86ec-07e74c73d88a
@@ -29,7 +29,7 @@ servicos,servicos.pdf,bloco-01,bloco-01,bloco-01,,subt-single:Roteiro (Moodle),c
 t1-2026-1,t1_2026_1.pdf,,bloco-12,bloco-12,,subt-STRADDLE:Roteiro (Moodle),clean,,no,no,
 web,web.pdf,bloco-01,bloco-01,bloco-01,,subt-single:Roteiro (Moodle),clean,13/03,yes,no,c47823dc-111f-4854-b46e-08acb7063909
 roteiro4,roteiro4.zip,bloco-07,bloco-04,bloco-04,,subt-single:Roteiro (Moodle),clean,15/05,yes,yes,a0d38bad-e123-4b82-b8d0-03f6724b9617
-devops,devops.pdf,bloco-11,bloco-11,bloco-11,,subt-single:Roteiro (Moodle),clean,26/06,yes,no,5ab3225a-26e9-40dd-b8f7-9c480bfa6c4f
+devops,devops.pdf,bloco-12,bloco-11,bloco-11,,subt-single:Roteiro (Moodle);relabel-2026-08-25-split(aula DevOps 26/06 separada da suspensao 19/06; gold segue a aula),clean,26/06,yes,no,22a44498-820a-4731-a0be-047f500a1f52
 ,Kubernets.pdf,,,,,subt-single:Roteiro (Moodle),clean,26/06,no,no,
 revisao-p1-respostas,revisao_p1_respostas.pdf,,bloco-01,bloco-01,,subt-STRADDLE:Roteiro (Moodle),clean,,no,no,
 revisao-p2,revisao_p2.pdf,,bloco-01,bloco-01,,subt-STRADDLE:Roteiro (Moodle),clean,,no,no,

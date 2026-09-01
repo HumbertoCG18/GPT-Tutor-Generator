@@ -60,8 +60,12 @@ def rebuild_course(name: str, subject_profile) -> bool:
     before = _old_health(index_path)
 
     try:
+        # read_only probe (Plano B): persist=WRITE — dry-run (padrao) fica
+        # honesto com o proprio print "não grava"; --write mantem o
+        # comportamento de hoje (ledger/manifest/curation migrados).
+        rich_taxonomy = engine._build_rich_content_taxonomy(repo_root, runtime_course_meta, subject_profile)
         ctx = engine._build_file_map_timeline_context_from_course(
-            runtime_course_meta, subject_profile, content_taxonomy=None
+            runtime_course_meta, subject_profile, content_taxonomy=rich_taxonomy, persist=WRITE
         )
     except Exception as exc:  # pragma: no cover - diagnóstico
         print(f"[FAIL] {name}: build falhou: {exc}")
@@ -89,6 +93,16 @@ def rebuild_course(name: str, subject_profile) -> bool:
             print(f"      schema: {e}")
 
     if WRITE:
+        from src.builder.ops.pedagogical_regeneration import (
+            _guard_units_not_silently_lost, UnitsShrinkError,
+        )
+        try:
+            _guard_units_not_silently_lost(
+                repo_root, name, len(rich_taxonomy.get("units") or []), serialized,
+            )
+        except UnitsShrinkError as exc:
+            print(f"[FAIL] {name}: {exc} — indice NAO gravado")
+            return False
         if index_path.exists():
             backup = index_path.with_suffix(".json.bak")
             backup.write_text(index_path.read_text(encoding="utf-8"), encoding="utf-8")
@@ -97,6 +111,11 @@ def rebuild_course(name: str, subject_profile) -> bool:
             json.dumps(serialized, ensure_ascii=False, indent=2), encoding="utf-8"
         )
         print(f"    GRAVADO -> {index_path}  (.bak salvo)")
+        # Item 8d (cutover passo 3): --write tambem atualiza o sidecar
+        # .content_taxonomy.json (antes so o W1 escrevia e o sidecar
+        # envelhecia; leitores: concept_resolver/compare_resolver/censo).
+        engine._write_internal_content_taxonomy(repo_root, rich_taxonomy)
+        print("    .content_taxonomy.json atualizado (8d)")
 
     return not errs
 

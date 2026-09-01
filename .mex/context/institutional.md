@@ -16,7 +16,7 @@ edges:
     condition: quando precisar de como os componentes processam estas fontes
   - target: context/repo-output.md
     condition: quando o foco é o formato do repo gerado
-last_updated: 2026-06-21
+last_updated: 2026-08-06
 ---
 
 # Contexto Institucional
@@ -81,6 +81,22 @@ atribuição (arquivo→bloco→unidade/subunidade).
 - **Avaliações (PUCRS Politécnica):** `P1` (Prova 1), `P2` (Prova 2), `P3` (Prova 3), `PS`
   (Prova Substituta), `G2` (prova de recuperação). Não há PF aqui (G2 = recuperação). Todas
   aparecem na Atividade com "Prova" → casam `assessment` via `ATIVIDADE_KIND_MAP`.
+- **REGRA (user, 2026-08-07): PS e G2 são provas OPCIONAIS/condicionais, não do fluxo
+  regular** — o sistema hoje não as trata distintamente ("não pega"). Semântica: **G2**
+  (recuperação) só existe se média final G1 < 7; nota final = (G1 + G2) / 2, aprovado se
+  ≥ 5, reprovado se < 5. **PS** (substituição) é pra quem PERDEU uma prova, e cobre **o
+  conteúdo do semestre inteiro** da cadeira. Consequências pro pipeline: (a) PS/G2 não
+  pertencem a NENHUMA unidade (conteúdo integral) — gold de unidade deixa `true_unit`
+  vazio nesses blocos; (b) material de PS/G2 não deve ancorar em unidade específica;
+  (c) due-window/priors de revisão valem pra P1/P2/P3, não pra PS/G2 (sem aula de revisão
+  própria garantida). Tratamento estrutural: item futuro (registrado na campanha 2, Task 13).
+- **REGRA (user, 2026-08-06): antes de toda prova há uma aula de revisão/tirar dúvidas** —
+  a ÚLTIMA aula antes do bloco `assessment` (pulando não-aula: suspensão/feriado) é a
+  revisão. Material "revisão de PN" pertence a ESSA aula (kind `review` quando o SARC marca).
+  Caso provado: MF `revisao-p1` → bloco-07 15/04 (review) com P1 em bloco-09 22/04 e
+  suspensão no meio (pino corrigido `751955f`, eval 97.0%/cw 0). Prior candidato pro motor:
+  material com stem `revis` + `\bp[12]\b` → âncora no último bloco de aula antes do
+  assessment correspondente (mesma família do D-H/D-I do due-window).
 
 - **Import na app (desde `939e483`):** o `HTMLImportDialog` aceita só a **URL do SARC**
   (auto-fetch via `fetch_schedule_html` → `parse_html_schedule` → `_parse_aspnet_schedule`,
@@ -212,3 +228,96 @@ atribuição (arquivo→bloco→unidade/subunidade).
 - Resíduo a tratar antes de deletar o fallback: a afinidade-zero, onde o scorer frágil
   ainda capta sinais que o posicional não tem (nº explícito de unidade "Unidade N",
   frases/âncoras). Fold desses sinais no posicional → deleção segura.
+
+---
+
+## Contratos de dados por fonte (colhido de payloads REAIS, 2026-08-06)
+
+Regra (ver `conventions.md` §Fixtures): fixture copia ESTES contratos, não inventa.
+Proveniência desta seção: `Metodos-Formais-Tutor` real (manifest.json, course/.timeline_index.json,
+course/.card_block_map.json, material_curation.json) + `%APPDATA%/GPTTutorGenerator/subjects.json`
+real + código de parse citado por linha. Re-colher com `python -c "json.load(...)"` quando suspeitar drift.
+
+### Encoding (armadilha nº 1)
+
+TUDO em disco é UTF-8 (`SubjectStore` lê/grava `encoding="utf-8"` explícito, `src/models/core.py:341,349`).
+Console Windows é cp1252 e renderiza mojibake ("Verifica��o") — **NUNCA diagnosticar corrupção por
+print/console**; conferir por codepoint (`tp.count('\ufffd')`). Caso real: U+FFFD "no subjects.json"
+falsificado em 2026-08-06 (era artefato de console; arquivo íntegro).
+
+### SubjectProfile — `subjects.json` (`%APPDATA%/GPTTutorGenerator/`, dict nome→profile)
+
+| campo | tipo | formato real (exemplo colhido) |
+|---|---|---|
+| `name` | str | `"Metodos-Formais"` (chave do dict também) |
+| `moodle_course_id` | str | `"92717"` — STRING aqui; int na API Moodle |
+| `schedule_url` | str | SARC `.../Export.aspx?id=<GUID>...` (GUID/ano/sem parseados por `parse_sarc_turma_key`) |
+| `schedule` | str | `"Seg/Qua 19:15-20:45"` |
+| `semester` | str | `"6"` |
+| `turma` | str | pode ser `""` |
+| `repo_root`/`stash_folder` | str | path com barras NORMAIS (`C:/Users/...`) |
+| `teaching_plan` | str | markdown UTF-8 acentuado (bullets `- N.N.N. Título`) |
+| `syllabus` | str | tabela markdown importada do SARC (`\| # \| Dia \| Data \| Hora \| Descrição \| Atividade \| Recursos`) |
+| `feature_flags` | dict[str,bool] | `{"use_anchor_engine": true, "use_llm_voter": true}`; legado: `use_anchor_placement` |
+| demais | str | `professor`, `institution`, `preferred_llm`, `default_backend`, `default_mode`, `default_datalab_mode`, `default_ocr_lang`, `processing_profile`, `m365_filter`, `github_url`, `slug` |
+
+### Manifest entry — `<repo-tutor>/manifest.json` (campos de atribuição)
+
+| campo | tipo | formato real |
+|---|---|---|
+| `id` | str | slug (`"formalizacaoalgoritmos-recursao2"`) |
+| `category` | str | pt-BR: `material-de-aula`, `trabalhos`, `provas`, `codigo-professor`, `codigo-aluno`, `listas`, `gabaritos`, `bibliografia`, `referencias`, `cronograma`, `outros` |
+| `auto_tags` | list[str] | prefixos `unit:`/`subunit:`/`bloco:`; bloco em DISPLAY (`"bloco:bloco-11"`), não uuid |
+| `computed_block_id` | str | **UUID** (migrado de bloco-NN em 2026-06) |
+| `computed_block_band` | str | `alta`/`media`/`baixa` |
+| `computed_block_confidence` | float | 0.0–1.0 |
+| `computed_block_method` | str | `card`, `card+scorer`, `scorer_only`, `llm_only`, ... |
+| `manual_timeline_block_id` | str | UUID = pino humano (vence tudo); refs legadas bloco-NN migradas uuid-first |
+| `temporal_block_id` | str\|None | UUID; escrito SÓ pelo motor flag-ON |
+| `temporal_block_provider` | str\|None | `manual`/`labels`/`llm`/`data`/`topic`/`due-window` |
+| `temporal_block_method` | str\|None | `janela-1`/`disamb`/`llm`/`due-contain`/`due-straddle` |
+| `temporal_block_band`/`temporal_block_flag` | str / bool | band idem computed; flag=True = fila humana |
+| `temporal_block_window` | list | janela de blocos da decisão |
+| `source_section` | str | nome REAL do card Moodle, acentuado (`"Especificações Indutivas e Recursivas"`) |
+| `moodle_label` | str | rótulo Moodle acentuado |
+| `posting_date`/`posting_date_created` | str | `"YYYY-MM-DD"` |
+| `source_path` | str | path Windows absoluto com `\`; `raw_target` = relativo ao repo |
+
+### Timeline index — `course/.timeline_index.json` (`{version, blocks[]}`)
+
+| campo | tipo | formato real / armadilha |
+|---|---|---|
+| `id` | str | `"bloco-NN"` POSICIONAL — cascateia em split; nunca usar como ref durável |
+| `block_uuid` | str | UUID durável (ledger `.block_identity.json`) |
+| `kind` | str | enum fechado `BlockKind` (`kinds.py:17-32`): class, assessment, review, holiday, suspended, makeup, academic_event, office_hours, workshop, deliverable, planning, reserved, results, overview, unknown |
+| `period_start`/`period_end` | str | `"YYYY-MM-DD"` (string, não datetime) |
+| `period_label` | str | display `"1 dia · 06/05/2026"` — separador é U+00B7 |
+| `topics` | list[str] | **OPCIONAL** — `[]` em bloco legítimo (lição T17: filtrar por `kind`, nunca por topics vazio) |
+| `unit_slug`/`auto_unit_slug` | str | slug acentuação-stripped (`"unidade-02-verificacao-de-programas"`) |
+| `unit_confidence` | float | **ARMADILHA**: DP real só produz 0.4/0.6/0.8; `1.0` no corpus = resíduo stale pré-DP (visto em bloco-11 E bloco-16 do MF real, 2026-08-06) |
+| `sessions[]` | list[dict] | `{id: "bloco-NN-sessao-YYYY-MM-DD", date: ISO str, kind, label: str minúsculo, signals: list}` |
+| `topic_text` | str | agregado lexical do bloco (pode absorver conteúdo de vizinho — caso deadlock SO) |
+
+### Card-block map — `course/.card_block_map.json` (dict card→dados)
+
+- **Chave** = nome REAL da seção Moodle, acentuado: `"TDE Trabalho Discente Efetivo"`.
+- `block_ids` list (pode `[]`); `source` str (`labels`/`manual`/`structured`) — card `source=="manual"` NUNCA ganha `assign_dues` (merge_card_block_map).
+- `assign_dues` list[{`name` str, `due` `"YYYY-MM-DD"` str, `source` `structured`/`named`}] — `name` é o título REAL que o professor deu; no MF os DOIS assigns chamam `"Sala de entrega"` (lição F5b: sem stem t1/t2 — matching posicional obrigatório). `assign_due` singular = legado.
+- `file_dues` dict[filename_original → {due, source}] — chave com nome real do arquivo (`"t1_2026_1.pdf"`, underscores).
+- Moodle cru: `duedate` é epoch int na API; convertido para ISO str no parse (`moodle_labels.py`/`moodle.py`).
+
+### Voter cache — `<repo-tutor>/material_curation.json` (`{version, votes}`)
+
+- `votes` = dict[**md5 content_key** → voto]; voto = `{block_id: "bloco-11"` (**DISPLAY, não uuid**)`, confianca: "alta"` (pt!)`, justificativa: str pt, model: "gemini-3.5-flash"}`.
+
+### Moodle API (cru, consumido em `src/builder/sources/moodle.py`)
+
+- Curso: id int; nome carrega turma/semestre (parse `parse_moodle_course` → `semester "2026/1"`).
+- Seções: `"Semana N - <título>"` (acentuado). Conteúdos: `contents[].fileurl`, `savename`, nomes originais.
+- Assigns: nome = texto livre do professor (NÃO padronizado). Submissões: `mod_assign_get_submission_status`.
+
+### SARC (HTML ASP.NET, parse em helpers)
+
+- Tabela `dgAulas`; colunas `# / Dia / Data / Hora / Descrição / Atividade / Recursos`; data `DD/MM/YYYY`.
+- COR da linha carrega kind (exclusão suspension/PS/G2/event vence `Atividade`); `"Evento Acadêmico"` acentuado (`ATIVIDADE_KIND_MAP`).
+- URL da turma: `Export.aspx?id=<GUID>` → `parse_sarc_turma_key` extrai GUID/ano/sem.

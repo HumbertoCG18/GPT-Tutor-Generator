@@ -296,3 +296,97 @@ def test_load_lessons_index_present_and_absent(tmp_path):
         '{"version": 1, "by_date": {"2026-05-09": "invariantes"}}', encoding="utf-8")
     idx = resolver_apply.load_lessons_index(tmp_path)
     assert idx["by_date"]["2026-05-09"] == "invariantes"
+
+
+# ---------------------------------------------------------------------------
+# Teste 6 — wiring F4: use_concept_resolver ON/OFF liga/desliga
+# apply_unit_subunit_fn dentro de regenerate_pedagogical_files. Builder
+# mínimo (padrão de test_code_review_profiles.py: RepoBuilder.__new__ +
+# atributos manuais, sem _create_structure/build inteiro) + monkeypatch do
+# alias module-level que o partial do engine resolve em cada chamada.
+# ---------------------------------------------------------------------------
+
+def _minimal_builder(tmp_path, options):
+    from src.builder.engine import RepoBuilder
+    from src.models.core import SubjectProfile
+
+    repo = tmp_path / "repo"
+    for rel in ["system", "course", "content", "build", "student"]:
+        (repo / rel).mkdir(parents=True, exist_ok=True)
+
+    builder = RepoBuilder.__new__(RepoBuilder)
+    builder.root_dir = repo
+    builder.course_meta = {
+        "course_name": "Métodos Formais", "course_slug": "metodos-formais",
+        "professor": "Prof", "institution": "PUCRS", "semester": "2026/1",
+    }
+    builder.student_profile = None
+    builder.subject_profile = SubjectProfile(name="Métodos Formais", slug="metodos-formais")
+    builder.logs = []
+    builder.progress_callback = None
+    builder.entries = []
+    builder.options = options
+    return builder
+
+
+def test_apply_unit_subunit_fn_called_when_flag_on(tmp_path, monkeypatch):
+    """use_concept_resolver ON -> pipeline chama apply_unit_subunit_fn com os
+    6 posicionais (entries, blocks, course_meta, subject_profile, root,
+    code_curation), logo após apply_concept_resolver."""
+    from src.builder import engine as engine_mod
+
+    builder = _minimal_builder(tmp_path, {"use_concept_resolver": True})
+
+    calls = []
+
+    def _sentinel(*args, **kwargs):
+        calls.append(args)
+        return args[0]
+
+    monkeypatch.setattr(engine_mod, "_apply_unit_subunit_fields", _sentinel)
+
+    builder._regenerate_pedagogical_files({"entries": [], "logs": []})
+
+    assert len(calls) == 1, "apply_unit_subunit_fn deve ser chamado exatamente 1x sob a flag ON"
+    entries, blocks, course_meta, subject_profile, root, code_curation = calls[0]
+    assert entries == []
+    assert isinstance(blocks, list)
+    assert course_meta.get("course_slug") == "metodos-formais"
+    assert subject_profile is builder.subject_profile
+    assert root == builder.root_dir
+    assert isinstance(code_curation, dict)
+
+
+def test_apply_unit_subunit_fn_called_when_flag_absent(tmp_path, monkeypatch):
+    """Cutover passo 3: flag AUSENTE de options -> default ON, motor roda.
+    Sentinela do flip (2026-08-17): ausente == ligado."""
+    from src.builder import engine as engine_mod
+
+    builder = _minimal_builder(tmp_path, {})
+
+    calls = []
+
+    def _sentinel(*args, **kwargs):
+        calls.append(args)
+        return args[0]
+
+    monkeypatch.setattr(engine_mod, "_apply_unit_subunit_fields", _sentinel)
+
+    builder._regenerate_pedagogical_files({"entries": [], "logs": []})
+
+    assert len(calls) == 1, "flag ausente = default ON: apply_unit_subunit_fn deve rodar"
+
+
+def test_apply_unit_subunit_fn_not_called_when_flag_explicit_off(tmp_path, monkeypatch):
+    """Opt-out pós-flip: use_concept_resolver=False EXPLICITO -> apply_unit_subunit_fn
+    NUNCA é invocado; sentinela explode se chamado."""
+    from src.builder import engine as engine_mod
+
+    builder = _minimal_builder(tmp_path, {"use_concept_resolver": False})
+
+    def _sentinel(*args, **kwargs):
+        raise AssertionError("apply_unit_subunit_fn NAO deve ser chamado com opt-out explicito")
+
+    monkeypatch.setattr(engine_mod, "_apply_unit_subunit_fields", _sentinel)
+
+    builder._regenerate_pedagogical_files({"entries": [], "logs": []})

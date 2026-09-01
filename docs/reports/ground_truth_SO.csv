@@ -1,43 +1,40 @@
-id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante,true_block_uuid
-0205-laminas-segmentacao,02.05 Lâminas Segmentação.pdf,bloco-12,bloco-11,bloco-11,,block-direct,clean,,yes,yes,a838bf45-b6d1-48fc-b70b-0bd4de35d1ef
-0206-laminas-gerencia-de-i-o-livro-texto,02.06 Lâminas Gerência de I O (Livro-texto).pdf,bloco-14,bloco-05,bloco-05,,block-direct,clean,,yes,yes,2455cd0a-52aa-4753-bf07-df6bbc8a0408
-0206-laminas-mecanismos-de-interrupcao,02.06 Lâminas Mecanismos de Interrupção.pdf,bloco-14,bloco-03,bloco-03,,block-direct,clean,,yes,yes,2455cd0a-52aa-4753-bf07-df6bbc8a0408
-0206-laminas-memoria-virtual-livro-texto,02.06 Lâminas Memória Virtual (Livro-texto).pdf,bloco-12,bloco-11,bloco-11,,block-direct,clean,,yes,yes,a838bf45-b6d1-48fc-b70b-0bd4de35d1ef
-0704-laminas-comunicacao-e-sincronizacao,07.04 Lâminas Comunicação e Sincronização.pdf,bloco-05,bloco-07,bloco-07,,block-direct,clean,,yes,yes,1945c228-4ca2-4a76-8d63-47c804459ecd
-0904-laminas-semaforos,09.04 Lâminas Semáforos.pdf,bloco-05,bloco-07,bloco-07,,block-direct,clean,,yes,yes,1945c228-4ca2-4a76-8d63-47c804459ecd
+﻿id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante,true_block_uuid
+0205-laminas-segmentacao,02.05 Lâminas Segmentação.pdf,bloco-16,bloco-11,bloco-11,,block-direct,clean,,yes,yes,a838bf45-b6d1-48fc-b70b-0bd4de35d1ef
+0206-laminas-gerencia-de-i-o-livro-texto,02.06 Lâminas Gerência de I O (Livro-texto).pdf,bloco-16,bloco-05,bloco-05,,block-direct;relabel-2026-08-17-data-no-nome,clean,,yes,yes,a838bf45-b6d1-48fc-b70b-0bd4de35d1ef
+0206-laminas-mecanismos-de-interrupcao,02.06 Lâminas Mecanismos de Interrupção.pdf,bloco-16,bloco-03,bloco-03,,block-direct;relabel-2026-08-17-data-no-nome,clean,,yes,yes,a838bf45-b6d1-48fc-b70b-0bd4de35d1ef
+0206-laminas-memoria-virtual-livro-texto,02.06 Lâminas Memória Virtual (Livro-texto).pdf,bloco-16,bloco-11,bloco-11,,block-direct,clean,,yes,yes,a838bf45-b6d1-48fc-b70b-0bd4de35d1ef
+0704-laminas-comunicacao-e-sincronizacao,07.04 Lâminas Comunicação e Sincronização.pdf,bloco-06,bloco-07,bloco-07,,block-direct,clean,,yes,yes,1945c228-4ca2-4a76-8d63-47c804459ecd
+0904-laminas-semaforos,09.04 Lâminas Semáforos.pdf,bloco-06,bloco-07,bloco-07,,block-direct,clean,,yes,yes,1945c228-4ca2-4a76-8d63-47c804459ecd
 1203-processos,12.03 Processos.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
-1205-laminas-gerencia-de-memoria,12.05 Lâminas Gerência de Memória.pdf,bloco-11,bloco-11,bloco-11,,block-direct,clean,,yes,no,fc0b5c7e-2071-490f-b65d-284ddc127963
-14-04-troca-de-mensagens,14 04 Troca de Mensagens.pdf,bloco-05,bloco-07,bloco-07,1404-troca-de-mensagens,block-direct,clean,,yes,yes,1945c228-4ca2-4a76-8d63-47c804459ecd
-1404-laminas-ipc,14.04 Lâminas IPC.pdf,bloco-05,bloco-07,bloco-07,,block-direct,clean,,yes,yes,1945c228-4ca2-4a76-8d63-47c804459ecd
-1404-troca-de-mensagens,14.04 Troca de Mensagens.pdf,bloco-05,bloco-07,bloco-07,1404-troca-de-mensagens,block-direct,clean,,yes,yes,1945c228-4ca2-4a76-8d63-47c804459ecd
+1205-laminas-gerencia-de-memoria,12.05 Lâminas Gerência de Memória.pdf,bloco-13,bloco-11,bloco-11,,block-direct,clean,,yes,no,fc0b5c7e-2071-490f-b65d-284ddc127963
+14-04-troca-de-mensagens,14 04 Troca de Mensagens.pdf,bloco-07,bloco-07,bloco-07,,block-direct;relabel-2026-08-17-data-no-nome;relabel-2026-08-25-fase1-par-desfeito(duplicata removida),clean,,yes,yes,6047b900-50d4-4aeb-bfbf-c74945eaa8b6
+1404-laminas-ipc,14.04 Lâminas IPC.pdf,bloco-07,bloco-07,bloco-07,,block-direct;relabel-2026-08-17-data-no-nome,clean,,yes,yes,6047b900-50d4-4aeb-bfbf-c74945eaa8b6
 1703-chamada-de-sistema,17.03 Chamada de Sistema.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
-1903-estruturas-de-controle,19.03 Estruturas de Controle.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
-2105-laminas-paginacao,21.05 Lâminas Paginação.pdf,bloco-11,bloco-11,bloco-11,,block-direct,clean,,yes,no,fc0b5c7e-2071-490f-b65d-284ddc127963
-2306-laminas-gerencia-de-arquivos,23.06 Lâminas Gerência de Arquivos.pdf,bloco-15,bloco-15,bloco-15,,block-direct,clean,,yes,no,599004b1-292b-4648-9221-9bc432b77937
-2306-laminas-laminas-armazenamento-em-massa,23.06 Lâminas Lâminas Armazenamento em Massa.pdf,bloco-15,bloco-15,bloco-15,,block-direct,clean,,yes,no,599004b1-292b-4648-9221-9bc432b77937
-2403-escalonamento-de-processos,24.03 Escalonamento de Processos.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
-2603-algoritmos-de-escalonamento,26.03 Algoritmos de Escalonamento.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
-3103-threads,31.03 Threads.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
+1903-estruturas-de-controle,19.03 Estruturas de Controle.pdf,bloco-04,bloco-03,bloco-03,,block-direct;relabel-2026-08-17-data-no-nome,clean,,yes,no,e4f7e22a-e091-46f8-b70e-a65f387dbf84
+2105-laminas-paginacao,21.05 Lâminas Paginação.pdf,bloco-16,bloco-11,bloco-11,,block-direct;relabel-2026-08-17-data-no-nome,clean,,yes,no,a838bf45-b6d1-48fc-b70b-0bd4de35d1ef
+2306-laminas-gerencia-de-arquivos,23.06 Lâminas Gerência de Arquivos.pdf,bloco-20,bloco-15,bloco-15,,block-direct,clean,,yes,no,599004b1-292b-4648-9221-9bc432b77937
+2306-laminas-laminas-armazenamento-em-massa,23.06 Lâminas Lâminas Armazenamento em Massa.pdf,bloco-20,bloco-15,bloco-15,,block-direct,clean,,yes,no,599004b1-292b-4648-9221-9bc432b77937
+2403-escalonamento-de-processos,24.03 Escalonamento de Processos.pdf,bloco-04,bloco-03,bloco-03,,block-direct;relabel-2026-08-17-data-no-nome,clean,,yes,no,e4f7e22a-e091-46f8-b70e-a65f387dbf84
+2603-algoritmos-de-escalonamento,26.03 Algoritmos de Escalonamento.pdf,bloco-04,bloco-03,bloco-03,,block-direct;relabel-2026-08-17-data-no-nome,clean,,yes,no,e4f7e22a-e091-46f8-b70e-a65f387dbf84
+3103-threads,31.03 Threads.pdf,bloco-04,bloco-03,bloco-03,,block-direct;relabel-2026-08-17-data-no-nome,clean,,yes,no,e4f7e22a-e091-46f8-b70e-a65f387dbf84
 apresentacao-da-disciplina,Apresentação da Disciplina.pdf,bloco-01,bloco-03,bloco-03,,block-direct,clean,,yes,yes,31997686-f3b5-4ecc-870c-0774732c3ee0
-biblioteca-em-c-pthread,Biblioteca em C - pthread.pdf,bloco-03,,bloco-03,,block-direct,clean,,yes,no,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
-definicao-e-historico,Definição e Histórico.pdf,bloco-02,bloco-03,bloco-03,,block-direct,clean,,yes,yes,f5346083-a19d-43f5-a894-8c9c8676d3ba
-exercicios,Exercícios.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
-exercicios-p2,Exercícios P2.pdf,bloco-17,bloco-03,bloco-03,,block-direct,clean,,yes,yes,3d303831-3770-467c-88d6-c60a8fa45ddd
-laminas-cs-4244-internet-programming-sockets-programming,Lâminas CS 4244 Internet Programming Sockets Programming.pdf,bloco-05,,bloco-05,,block-direct,clean,,yes,no,1945c228-4ca2-4a76-8d63-47c804459ecd
-laminas-sockets-material-alternativo-em-pt,Lâminas Sockets (material alternativo em PT).pdf,bloco-05,,bloco-05,,block-direct,clean,,yes,no,1945c228-4ca2-4a76-8d63-47c804459ecd
-lista-exercicios-p1,Lista Exercícios P1.pdf,bloco-07,bloco-03,bloco-03,,block-direct,clean,,yes,yes,cfb895fb-78a4-4adc-848a-065e975cd5bf
-lista-exercicios-p1-gabarito,Lista Exercícios P1 Gabarito.pdf,bloco-07,bloco-03,bloco-03,lista-exercicios-p1-gabarito,block-direct,clean,,yes,yes,cfb895fb-78a4-4adc-848a-065e975cd5bf
-lista-exercicios-p2,Lista Exercícios P2.pdf,bloco-17,bloco-11,bloco-11,lista-exercicios-p2,block-direct,clean,,yes,yes,3d303831-3770-467c-88d6-c60a8fa45ddd
-lista1-gab,lista1_gab.pdf,bloco-07,bloco-03,bloco-03,lista-exercicios-p1-gabarito,block-direct,clean,,yes,yes,cfb895fb-78a4-4adc-848a-065e975cd5bf
-lista2,lista2.pdf,bloco-17,bloco-11,bloco-11,lista-exercicios-p2,block-direct,clean,,yes,yes,3d303831-3770-467c-88d6-c60a8fa45ddd
+biblioteca-em-c-pthread,Biblioteca em C - pthread.pdf,bloco-04,,bloco-03,,block-direct,clean,,yes,no,e4f7e22a-e091-46f8-b70e-a65f387dbf84
+definicao-e-historico,Definição e Histórico.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,yes,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
+exercicios,Exercícios.pdf,bloco-04,bloco-03,bloco-03,,block-direct;relabel-2026-08-25-fase1,clean,,yes,no,e4f7e22a-e091-46f8-b70e-a65f387dbf84
+exercicios-p2,Exercícios P2.pdf,bloco-20,bloco-03,bloco-03,,block-direct;relabel-2026-08-25-fase1,clean,,yes,yes,599004b1-292b-4648-9221-9bc432b77937
+laminas-cs-4244-internet-programming-sockets-programming,Lâminas CS 4244 Internet Programming Sockets Programming.pdf,bloco-09,,bloco-05,,block-direct,clean,,yes,no,cfb895fb-78a4-4adc-848a-065e975cd5bf
+laminas-sockets-material-alternativo-em-pt,Lâminas Sockets (material alternativo em PT).pdf,bloco-09,,bloco-05,,block-direct,clean,,yes,no,cfb895fb-78a4-4adc-848a-065e975cd5bf
+lista-exercicios-p1,Lista Exercícios P1.pdf,bloco-09,bloco-03,bloco-03,,block-direct,clean,,yes,yes,cfb895fb-78a4-4adc-848a-065e975cd5bf
+lista-exercicios-p1-gabarito,Lista Exercícios P1 Gabarito.pdf,bloco-09,bloco-03,bloco-03,lista-exercicios-p1-gabarito,block-direct,clean,,yes,yes,cfb895fb-78a4-4adc-848a-065e975cd5bf
+lista-exercicios-p2,Lista Exercícios P2.pdf,bloco-20,bloco-11,bloco-11,lista-exercicios-p2,block-direct;relabel-2026-08-25-fase1,clean,,yes,yes,599004b1-292b-4648-9221-9bc432b77937
 plano-de-ensino,Plano de Ensino.pdf,bloco-01,,bloco-01,plano-de-ensino,block-direct,clean,,yes,no,31997686-f3b5-4ecc-870c-0774732c3ee0
 programa,Programa.pdf,bloco-01,bloco-03,bloco-03,plano-de-ensino,block-direct,clean,,yes,yes,31997686-f3b5-4ecc-870c-0774732c3ee0
 questoes-do-enade-sobre-sisop,Questões do ENADE sobre SISOP.pdf,bloco-01,bloco-03,bloco-03,,block-direct,clean,,yes,yes,31997686-f3b5-4ecc-870c-0774732c3ee0
-0704-exemplo-threads-em-java,07.04 Exemplo threads em Java.zip,bloco-05,bloco-03,bloco-03,,block-direct,clean,,yes,yes,1945c228-4ca2-4a76-8d63-47c804459ecd
+0704-exemplo-threads-em-java,07.04 Exemplo threads em Java.zip,bloco-06,bloco-03,bloco-03,,block-direct,clean,,yes,yes,1945c228-4ca2-4a76-8d63-47c804459ecd
 exemplo-criacao-de-processos-no-unix-linux-filho,Exemplo Criação de Processos no Unix Linux - filho.c,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
 exemplo-criacao-de-processos-no-unix-linux-teste01,Exemplo Criação de Processos no Unix Linux - teste01.c,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
 exemplo-criacao-de-processos-no-unix-linux-teste02,Exemplo Criação de Processos no Unix Linux - teste02.c,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
 exemplo-criacao-de-processos-no-unix-linux-teste03,Exemplo Criação de Processos no Unix Linux - teste03.c,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,bdcc7b26-25b0-4102-9c5b-d3af31606ad3
-exemplo-threads-em-c-exemplo1,Exemplo threads em C - exemplo1.c,bloco-05,bloco-03,bloco-03,,block-direct,clean,,yes,yes,1945c228-4ca2-4a76-8d63-47c804459ecd
-exemplo-threads-em-c-exemplo2,Exemplo threads em C - exemplo2.c,bloco-05,bloco-03,bloco-03,,block-direct,clean,,yes,yes,1945c228-4ca2-4a76-8d63-47c804459ecd
-exemplo-threads-em-c-exemplo3,Exemplo threads em C - exemplo3.c,bloco-05,bloco-03,bloco-03,,block-direct,clean,,yes,yes,1945c228-4ca2-4a76-8d63-47c804459ecd
+exemplo-threads-em-c-exemplo1,Exemplo threads em C - exemplo1.c,bloco-04,bloco-03,bloco-03,,"block-direct;relabel-2026-08-25-fase1(ruling user: aula de threads 26-31/03, nao sincronizacao/deadlock)",clean,,yes,yes,e4f7e22a-e091-46f8-b70e-a65f387dbf84
+exemplo-threads-em-c-exemplo2,Exemplo threads em C - exemplo2.c,bloco-04,bloco-03,bloco-03,,"block-direct;relabel-2026-08-25-fase1(ruling user: aula de threads 26-31/03, nao sincronizacao/deadlock)",clean,,yes,yes,e4f7e22a-e091-46f8-b70e-a65f387dbf84
+exemplo-threads-em-c-exemplo3,Exemplo threads em C - exemplo3.c,bloco-04,bloco-03,bloco-03,,"block-direct;relabel-2026-08-25-fase1(ruling user: aula de threads 26-31/03, nao sincronizacao/deadlock)",clean,,yes,yes,e4f7e22a-e091-46f8-b70e-a65f387dbf84

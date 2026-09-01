@@ -202,7 +202,7 @@ CODE_EXTENSIONS: set = {
     ".py", ".js", ".ts", ".jsx", ".tsx", ".java", ".c", ".cpp", ".h",
     ".hpp", ".cs", ".go", ".rs", ".rb", ".php", ".swift", ".kt",
     ".scala", ".r", ".m", ".sh", ".bat", ".ps1", ".sql", ".html",
-    ".css", ".scss", ".ipynb", ".thy", ".dfy",
+    ".css", ".scss", ".ipynb", ".thy", ".dfy", ".smv",
 }
 
 LANG_MAP: Dict[str, str] = {
@@ -213,7 +213,7 @@ LANG_MAP: Dict[str, str] = {
     "swift": "swift", "kt": "kotlin", "scala": "scala",
     "r": "r", "sh": "bash", "bat": "batch", "ps1": "powershell",
     "sql": "sql", "html": "html", "css": "css", "scss": "scss",
-    "ipynb": "json", "thy": "isabelle", "dfy": "dafny",
+    "ipynb": "json", "thy": "isabelle", "dfy": "dafny", "smv": "nusmv",
 }
 
 CODE_CATEGORIES       = ("codigo-professor", "codigo-aluno")
@@ -247,9 +247,19 @@ def normalize_document_profile(profile: str | None) -> str:
 
 # Utilities
 
+def strip_accents(text: str) -> str:
+    """NFKD + remove marcas combinantes. Fonte única do strip de acento
+    (antes reescrito byte-a-byte em 6 módulos — auditoria 2.12).
+
+    U+0131 (dotless i) não decompõe em NFKD e vazou pro id da aula-10 do TCC
+    ("Reconhecıveis" no PDF do professor) — translitera na fonte única."""
+    text = (text or "").replace("ı", "i")
+    text = unicodedata.normalize("NFKD", text)
+    return "".join(ch for ch in text if not unicodedata.combining(ch))
+
+
 def slugify(value: str) -> str:
-    value = unicodedata.normalize("NFKD", value or "")
-    value = "".join(ch for ch in value if not unicodedata.combining(ch))
+    value = strip_accents(value)
     value = value.strip().lower()
     value = re.sub(r"[^\w\s-]", "", value, flags=re.UNICODE)
     value = re.sub(r"[\s_]+", "-", value)
@@ -439,11 +449,11 @@ ATIVIDADE_KIND_MAP = {
 
 
 def norm_ascii_lower(text: str) -> str:
-    """NFKD + remove acentos + lower + strip. Para casar Atividade do SARC."""
-    import unicodedata as _ud
-    text = _ud.normalize("NFKD", text or "")
-    text = "".join(ch for ch in text if not _ud.combining(ch))
-    return text.lower().strip()
+    """NFKD + remove acentos + lower + strip. Para casar Atividade do SARC.
+
+    Preserva pontuação (≠ normalize_match_text, que reduz a [a-z0-9 ] para
+    matching fuzzy — precisa de chave exata? use este; matching? use aquele)."""
+    return strip_accents(text).lower().strip()
 
 
 def _aspnet_row_canonical_kind(row) -> tuple[str, bool]:
@@ -630,8 +640,13 @@ def get_app_data_dir() -> Path:
         base_dir = Path.home() / ".config" / "gpt_tutor_generator"
     ensure_dir(base_dir)
     return base_dir
-def auto_detect_category(name: str, is_image: bool = False) -> str:
-    """Detecta a categoria provável baseada no nome do arquivo."""
+def auto_detect_category(name: str, is_image: bool = False, frases_do_plano=None) -> str:
+    """Detecta a categoria provável baseada no nome do arquivo.
+
+    `frases_do_plano` (F11, opcional): frases de conteúdo do plano de ensino, minúsculas.
+    Cue de bibliografia não dispara quando o nome casa uma frase do plano que contém o
+    cue — "02 - Modelos de Referencia.pdf" é tópico da u01 do FR ("modelos de referência
+    de interconexão OSI/ISO"), não bibliografia. Sem o parâmetro, comportamento de antes."""
     if is_image:
         return "fotos-de-prova"
     
@@ -649,11 +664,23 @@ def auto_detect_category(name: str, is_image: bool = False) -> str:
         return "listas"
     if any(k in name for k in ["gabarito", "resol", "soluc", "key", "espelho"]):
         return "gabaritos"
-    if any(k in name for k in ["cronograma", "plano", "agenda", "schedule", "ementa"]):
+    # "ementa" so como palavra: "material-complementar" contem "ementa" (holdout CG 2026-08-26).
+    if any(k in name for k in ["cronograma", "plano", "agenda", "schedule"]) or _wb("ementa"):
         return "cronograma"
     if any(k in name for k in ["slide", "aula", "apresenta", "unidade", "modulo", "cap"]):
         return "material-de-aula"
-    if any(k in name for k in ["livro", "referencia", "biblio", "artigo", "paper"]):
+    def _cue_e_conteudo_do_plano(cue: str) -> bool:
+        for fr in (frases_do_plano or ()):
+            fr = str(fr or "").lower()
+            if cue in fr and any(len(t) >= 4 and cue not in t and t in name for t in fr.split()):
+                return True
+        return False
+
+    # "bibliogra", nao "biblio": "biblioteca" (library de codigo: "Biblioteca Grafica OpenGL",
+    # "ImageClass - biblioteca para manipulacao de imagens") virava bibliografia e saia do
+    # desempate de bloco (ref-generica -> 1o bloco). Achado no holdout CG 2026-08-26.
+    if any(k in name for k in ["livro", "referencia", "bibliogra", "artigo", "paper"]
+           if not _cue_e_conteudo_do_plano(k)):
         return "bibliografia"
 
     if any(k in name for k in ["trabalho", "projeto", "assignment",

@@ -13,7 +13,7 @@ edges:
     condition: when exact technology or manifest details are needed
   - target: context/architecture.md
     condition: when understanding runtime behavior after startup
-last_updated: 2026-06-21
+last_updated: 2026-08-06
 ---
 
 # Setup
@@ -64,36 +64,8 @@ The test runner is `pytest`.
 python -m pytest tests -q
 ```
 
-Representative targeted test entry points include:
-
-```powershell
-python -m pytest tests/test_datalab_image_extraction.py -q
-python -m pytest tests/test_cronograma_health.py -q
-python -m pytest tests/test_reference_summary.py -q
-python -m pytest tests/test_reference_navigation.py -q
-python -m pytest tests/test_unit_matcher.py -q
-python -m pytest tests/test_eval_ground_truth.py -q
-python -m pytest tests/test_unit_fallback.py -q
-python -m pytest tests/test_ui_queue_dashboard.py -q
-python -m pytest tests/test_timeline_signals.py -q
-python -m pytest tests/test_timeline_scoring_ignored.py -q
-python -m pytest tests/test_timeline_index_kind.py -q
-python -m pytest tests/test_task_queue.py -q
-python -m pytest tests/test_tag_catalog.py -q
-python -m pytest tests/test_student_state_v2.py -q
-python -m pytest tests/test_student_state_manual_import.py -q
-python -m pytest tests/test_moodle.py -q
-python -m pytest tests/test_moodle_labels.py -q
-python -m pytest tests/test_concept_resolver.py -q
-python -m pytest tests/test_resolver_wiring.py -q
-python -m pytest tests/test_block_identity.py -q
-python -m pytest tests/test_anchor_placement.py -q
-python -m pytest tests/test_temporal_block_wire.py -q
-python -m pytest tests/test_persist_gate.py -q
-python -m pytest tests/test_stash_import.py -q
-python -m pytest tests/test_migrate_signals.py -q
-python -m pytest tests/test_posting_date_probe.py -q
-```
+Teste dirigido: `python -m pytest tests/test_<topico>.py -q` (descoberta via
+`Glob tests/test_*.py`; inventário completo removido na dieta MEX 2026-08-06 — envelhecia).
 
 ## Operational Flow
 

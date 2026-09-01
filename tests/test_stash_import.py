@@ -168,3 +168,37 @@ def test_build_stash_entries_propagates_document_profile_pdf_only(tmp_path):
         res, existing_source_paths=set(), defaults={"document_profile": "math_heavy"})}
     assert entries["a.pdf"].document_profile == "math_heavy"   # pdf herda
     assert entries["x.dfy"].document_profile == "auto"          # código não
+
+
+class TestF10_NomeDoModuloNoSidecar:
+    """F10: .moodle_nomes.json ("card/arquivo" -> nome do modulo) refina a categoria;
+    sem sidecar, comportamento identico ao de antes."""
+
+    def _monta(self, tmp_path, sidecar=None):
+        card = tmp_path / "U1 - Redes de Computadores"
+        card.mkdir(parents=True)
+        (card / "03 - Tipos de Redes.pdf").write_bytes(b"%PDF")
+        (card / "aula03 - buildroot-intro.pdf").write_bytes(b"%PDF")
+        if sidecar is not None:
+            import json
+            (tmp_path / ".moodle_nomes.json").write_text(json.dumps(sidecar), encoding="utf-8")
+        from src.builder.core.stash_import import scan_stash_cards
+        return {i.source_path.rsplit("\\", 1)[-1].rsplit("/", 1)[-1]: i.category
+                for i in scan_stash_cards(tmp_path).items}
+
+    def test_modulo_com_slides_vira_material(self, tmp_path):
+        cats = self._monta(tmp_path, sidecar={
+            "U1 - Redes de Computadores/03 - Tipos de Redes.pdf": "Tipos de Redes (Slides)"})
+        assert cats["03 - Tipos de Redes.pdf"] == "material-de-aula"
+
+    def test_arquivo_aula_vence_modulo_livro(self, tmp_path):
+        """Lab SO: modulo "Livro-texto: Buildroot", arquivo "aula03 - ..." -> material
+        (cue "aula" vem antes de "livro" na ordem de prioridade)."""
+        cats = self._monta(tmp_path, sidecar={
+            "U1 - Redes de Computadores/aula03 - buildroot-intro.pdf": "Livro-texto: Buildroot"})
+        assert cats["aula03 - buildroot-intro.pdf"] == "material-de-aula"
+
+    def test_sem_sidecar_comportamento_antigo(self, tmp_path):
+        cats = self._monta(tmp_path, sidecar=None)
+        assert cats["03 - Tipos de Redes.pdf"] == "outros"
+        assert cats["aula03 - buildroot-intro.pdf"] == "material-de-aula"

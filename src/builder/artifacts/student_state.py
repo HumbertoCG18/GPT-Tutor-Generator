@@ -13,6 +13,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Iterable, Optional
 
+from src.builder.extraction.content_taxonomy import _strip_topic_code
 from src.builder.extraction.teaching_plan import (
     _normalize_unit_slug,
     _parse_units_from_teaching_plan,
@@ -156,7 +157,7 @@ def build_course_unit_topic_index(subject_profile) -> list[dict]:
         outline_labels = _topic_outline_label(unit_title, topics)
         topic_rows = []
         for idx, topic in enumerate(topics):
-            topic_title = _topic_text(topic).strip()
+            topic_title = _strip_topic_code(_topic_text(topic)).strip()
             if not topic_title:
                 continue
             topic_label = f"{outline_labels[idx]} - {topic_title}" if idx < len(outline_labels) else topic_title

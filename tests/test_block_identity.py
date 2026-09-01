@@ -277,3 +277,35 @@ def test_scan_returns_false_when_curation_has_empty_blocks(tmp_path):
         json.dumps(curation), encoding="utf-8"
     )
     assert scan_existing_block_refs(tmp_path, {}) is False
+
+
+# ---------------------------------------------------------------------------
+# split: a fatia MAIOR herda, mesmo vindo depois (2026-08-25, IA bloco-06)
+# ---------------------------------------------------------------------------
+
+
+def test_split_fatia_maior_herda_uuid_mesmo_vindo_depois():
+    """IA bloco-06: 'suspensao de aulas' 20/04 (1 dia) + aulas de ML 22-27/04
+    (6 dias) eram UM bloco. No split, a fatia de 1 dia vinha primeiro no laco,
+    capturava o uuid e ENCOLHIA a ancora do registro em tempo de laco; a fatia
+    de 6 dias chegava depois com overlap 0 e mintava — levando embora curadoria,
+    pino de unidade e 8 golds (todos por uuid). Best-overlap tem de ser global."""
+    ledger = [_record("uuid-A", "2026-04-20", "2026-04-27", tokens=["ml", "supervisionada"])]
+    blocks = [
+        _block("2026-04-20", "2026-04-20", topic_text="suspensao de aulas", display_id="bloco-06"),
+        _block("2026-04-22", "2026-04-27", topic_text="ml abordagem nao supervisionada", display_id="bloco-07"),
+    ]
+    out, led, flags = reattach_block_uuids(blocks, ledger, has_existing_refs=False, mint=_mint)
+    assert out[1]["block_uuid"] == "uuid-A"          # a fatia grande herda
+    assert out[0]["block_uuid"] != "uuid-A"          # a pequena minta
+    assert len({b["block_uuid"] for b in out}) == 2  # nunca dois blocos no mesmo uuid
+    rec = next(r for r in led if r["uuid"] == "uuid-A")
+    assert rec["anchor"]["period_start"] == "2026-04-22" and rec["display_id_last"] == "bloco-07"
+
+
+def test_registro_nunca_e_herdado_por_dois_blocos():
+    ledger = [_record("uuid-A", "2026-03-01", "2026-03-10")]
+    blocks = [_block("2026-03-01", "2026-03-05", display_id="bloco-01"),
+              _block("2026-03-06", "2026-03-10", display_id="bloco-02")]
+    out, led, flags = reattach_block_uuids(blocks, ledger, has_existing_refs=False, mint=_mint)
+    assert sorted(b["block_uuid"] == "uuid-A" for b in out) == [False, True]

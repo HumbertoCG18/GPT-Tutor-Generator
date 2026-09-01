@@ -1,0 +1,26 @@
+id,material,true_atual,tier,proposta,evidencia,decisao
+0205-laminas-segmentacao,02.05 Lâminas Segmentação.pdf,bloco-12,A,bloco-16,uuid a838bf45 vivo -> bloco-16 (2026-05-21..2026-06-02),auto
+0206-laminas-gerencia-de-i-o-livro-texto,02.06 Lâminas Gerência de I O (Livro-texto).pdf,bloco-14,A,bloco-18,uuid 2455cd0a vivo -> bloco-18 (2026-06-09..2026-06-09),auto
+0206-laminas-mecanismos-de-interrupcao,02.06 Lâminas Mecanismos de Interrupção.pdf,bloco-14,A,bloco-18,uuid 2455cd0a vivo -> bloco-18 (2026-06-09..2026-06-09),auto
+0206-laminas-memoria-virtual-livro-texto,02.06 Lâminas Memória Virtual (Livro-texto).pdf,bloco-12,A,bloco-16,uuid a838bf45 vivo -> bloco-16 (2026-05-21..2026-06-02),auto
+0704-laminas-comunicacao-e-sincronizacao,07.04 Lâminas Comunicação e Sincronização.pdf,bloco-05,A,bloco-06,uuid 1945c228 vivo -> bloco-06 (2026-04-07..2026-04-09),auto
+0904-laminas-semaforos,09.04 Lâminas Semáforos.pdf,bloco-05,A,bloco-06,uuid 1945c228 vivo -> bloco-06 (2026-04-07..2026-04-09),auto
+1205-laminas-gerencia-de-memoria,12.05 Lâminas Gerência de Memória.pdf,bloco-11,A,bloco-13,uuid fc0b5c7e vivo -> bloco-13 (2026-05-12..2026-05-12),auto
+14-04-troca-de-mensagens,14 04 Troca de Mensagens.pdf,bloco-05,A,bloco-06,uuid 1945c228 vivo -> bloco-06 (2026-04-07..2026-04-09),auto
+1404-laminas-ipc,14.04 Lâminas IPC.pdf,bloco-05,A,bloco-06,uuid 1945c228 vivo -> bloco-06 (2026-04-07..2026-04-09),auto
+1404-troca-de-mensagens,14.04 Troca de Mensagens.pdf,bloco-05,A,bloco-06,uuid 1945c228 vivo -> bloco-06 (2026-04-07..2026-04-09),auto
+2105-laminas-paginacao,21.05 Lâminas Paginação.pdf,bloco-11,A,bloco-13,uuid fc0b5c7e vivo -> bloco-13 (2026-05-12..2026-05-12),auto
+2306-laminas-gerencia-de-arquivos,23.06 Lâminas Gerência de Arquivos.pdf,bloco-15,A,bloco-20,uuid 599004b1 vivo -> bloco-20 (2026-06-16..2026-06-23),auto
+2306-laminas-laminas-armazenamento-em-massa,23.06 Lâminas Lâminas Armazenamento em Massa.pdf,bloco-15,A,bloco-20,uuid 599004b1 vivo -> bloco-20 (2026-06-16..2026-06-23),auto
+exercicios-p2,Exercícios P2.pdf,bloco-17,A,bloco-21,uuid 3d303831 vivo -> bloco-21 (2026-06-25..2026-06-25),auto
+laminas-cs-4244-internet-programming-sockets-programming,Lâminas CS 4244 Internet Programming Sockets Programming.pdf,bloco-05,A,bloco-06,uuid 1945c228 vivo -> bloco-06 (2026-04-07..2026-04-09),auto
+laminas-sockets-material-alternativo-em-pt,Lâminas Sockets (material alternativo em PT).pdf,bloco-05,A,bloco-06,uuid 1945c228 vivo -> bloco-06 (2026-04-07..2026-04-09),auto
+lista-exercicios-p1,Lista Exercícios P1.pdf,bloco-07,A,bloco-09,uuid cfb895fb vivo -> bloco-09 (2026-04-23..2026-04-28),auto
+lista-exercicios-p1-gabarito,Lista Exercícios P1 Gabarito.pdf,bloco-07,A,bloco-09,uuid cfb895fb vivo -> bloco-09 (2026-04-23..2026-04-28),auto
+lista-exercicios-p2,Lista Exercícios P2.pdf,bloco-17,A,bloco-21,uuid 3d303831 vivo -> bloco-21 (2026-06-25..2026-06-25),auto
+lista1-gab,lista1_gab.pdf,bloco-07,A,bloco-09,uuid cfb895fb vivo -> bloco-09 (2026-04-23..2026-04-28),auto
+lista2,lista2.pdf,bloco-17,A,bloco-21,uuid 3d303831 vivo -> bloco-21 (2026-06-25..2026-06-25),auto
+0704-exemplo-threads-em-java,07.04 Exemplo threads em Java.zip,bloco-05,A,bloco-06,uuid 1945c228 vivo -> bloco-06 (2026-04-07..2026-04-09),auto
+exemplo-threads-em-c-exemplo1,Exemplo threads em C - exemplo1.c,bloco-05,A,bloco-06,uuid 1945c228 vivo -> bloco-06 (2026-04-07..2026-04-09),auto
+exemplo-threads-em-c-exemplo2,Exemplo threads em C - exemplo2.c,bloco-05,A,bloco-06,uuid 1945c228 vivo -> bloco-06 (2026-04-07..2026-04-09),auto
+exemplo-threads-em-c-exemplo3,Exemplo threads em C - exemplo3.c,bloco-05,A,bloco-06,uuid 1945c228 vivo -> bloco-06 (2026-04-07..2026-04-09),auto

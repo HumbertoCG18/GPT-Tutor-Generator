@@ -14,7 +14,6 @@ from typing import Dict, List, Optional
 from PIL import Image, ImageTk
 
 from src.builder.vision.image_classifier import (
-    classify_image,
     extract_page_number,
     group_images_by_page,
 )
@@ -1259,29 +1258,6 @@ class ImageCuratorPanel(ttk.Frame):
                 f"{removed_count} imagem(ns) removida(s) e arvore atualizada."
             )
 
-    def _preclassify(self):
-        """Run heuristic pre-classification on all images for the current entry."""
-        if not self._current_entry:
-            messagebox.showinfo("Image Curator", "Selecione uma entry primeiro.")
-            return
-
-        groups = self._current_entry.get("_image_groups", {})
-        classified = 0
-        for images in groups.values():
-            for img_path in images:
-                result = classify_image(img_path)
-                fname = img_path.name
-                if fname in self._image_widgets:
-                    self._image_widgets[fname]["type_var"].set(result)
-                    self._image_widgets[fname]["include_var"].set(
-                        result != "decorativa"
-                    )
-                classified += 1
-
-        self.status_var.set(
-            f"Pre-classificacao concluida: {classified} imagens analisadas."
-        )
-
     def _save_curation(
         self, inject_markdown: bool = False, show_feedback: bool = False
     ):
@@ -1418,71 +1394,6 @@ class ImageCuratorPanel(ttk.Frame):
                     ),
                 )
                 self.after(0, lambda: self.status_var.set(f"Erro ao descrever {fname}."))
-            finally:
-                self._vision_busy = False
-
-        threading.Thread(target=_worker, daemon=True).start()
-
-    def _extract_latex_single(self, fname: str, img_path: Path):
-        """Extract text + LaTeX content from a scanned page image."""
-        if not self._current_entry or self._current_page is None:
-            return
-
-        client = self._get_vision_client()
-        if not client:
-            return
-
-        # Save current UI state first
-        self._save_curation()
-
-        entry_id = self._current_entry.get("id", "")
-        page_images = self._current_entry.get("_image_groups", {}).get(self._current_page, [])
-        curation = self._current_entry.get("image_curation", {})
-        page_key = _migrate_curation_page_key(curation, self._current_page, page_images)
-
-        # Get page context from adjacent pages
-        page_contexts = self._extract_page_contexts(entry_id)
-        page_ctx = page_contexts.get(page_key, "")
-
-        self.status_var.set(f"Extraindo LaTeX de {fname}...")
-        self._vision_busy = True
-        logger.info("[Vision] Iniciando extracao LaTeX: %s (modelo: %s)", fname, client.model)
-
-        def _worker():
-            try:
-                extracted = client.extract_to_latex(img_path, page_context=page_ctx)
-                curation.setdefault("pages", {}).setdefault(page_key, {"include_page": True, "images": {}})
-                curation["pages"][page_key]["images"].setdefault(fname, {})
-                curation["pages"][page_key]["images"][fname]["description"] = extracted
-                curation["pages"][page_key]["images"][fname]["described_at"] = (
-                    datetime.now().isoformat(timespec="seconds")
-                )
-                curation["pages"][page_key]["images"][fname]["type"] = "extracao-latex"
-                curation["pages"][page_key]["images"][fname]["include"] = True
-                if fname in self._image_widgets:
-                    self._image_widgets[fname]["type_var"].set("extracao-latex")
-                    self._image_widgets[fname]["include_var"].set(True)
-
-                preview = extracted[:120].replace("\n", " ")
-                logger.info("[Vision] Extracao LaTeX para %s: %s...", fname, preview)
-
-                def _on_done():
-                    self._write_manifest_entry(entry_id)
-                    groups = self._current_entry.get("_image_groups", {})
-                    images = groups.get(self._current_page, [])
-                    self._show_images(self._current_entry, self._current_page, images)
-                    self.status_var.set(f"Extracao LaTeX concluida para {fname}.")
-
-                self.after(0, _on_done)
-            except Exception as e:
-                logger.error("[Vision] Erro na extracao LaTeX de %s: %s", fname, e)
-                self.after(
-                    0,
-                    lambda: messagebox.showerror(
-                        "Erro", f"Falha na extracao LaTeX de {fname}:\n{e}", parent=self
-                    ),
-                )
-                self.after(0, lambda: self.status_var.set(f"Erro na extracao de {fname}."))
             finally:
                 self._vision_busy = False
 
@@ -1645,23 +1556,6 @@ class ImageCuratorPanel(ttk.Frame):
         clean_manifest["entries"] = clean_entries
 
         write_json_manifest(self._manifest_path, clean_manifest)
-
-
-class ImageCurator(tk.Toplevel):
-    def __init__(self, parent, repo_dir: str, theme_mgr):
-        super().__init__(parent)
-        self.title("Image Curator")
-        self.geometry("1400x800")
-        self.minsize(1000, 600)
-        self.panel = ImageCuratorPanel(
-            self,
-            repo_dir,
-            theme_mgr,
-            app_parent=parent,
-            bind_target=self,
-            apply_theme=True,
-        )
-        self.panel.pack(fill="both", expand=True)
 
 
 

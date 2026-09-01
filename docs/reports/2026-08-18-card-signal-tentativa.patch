@@ -1,0 +1,49 @@
+diff --git a/src/builder/extraction/entry_signals.py b/src/builder/extraction/entry_signals.py
+index 0dd2de6..c079b6e 100644
+--- a/src/builder/extraction/entry_signals.py
++++ b/src/builder/extraction/entry_signals.py
+@@ -132,5 +132,9 @@ def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str
+         # alavanca 1: label do recurso Moodle (mod.name) — identidade LIMPA do
+         # material (ex. "Exemplos (Lógica de Floyd-Hoare)"), pesa como conceito.
+         "moodle_label_text": normalize_match_text(entry.get("moodle_label", "")),
++        # card do Moodle (secao onde o professor postou). Sinal de COBERTURA, nao
++        # temporal: o motor ja usa o card como janela por outra via. Consumido SO
++        # pelo scorer de unidade — ver test_card_nao_afeta_o_scorer_de_bloco_do_motor.
++        "card_text": normalize_match_text(entry.get("source_section", "")),
+     }
+ 
+diff --git a/src/builder/routing/file_map.py b/src/builder/routing/file_map.py
+index 5b278c1..86d22f8 100644
+--- a/src/builder/routing/file_map.py
++++ b/src/builder/routing/file_map.py
+@@ -218,6 +218,8 @@ def score_entry_against_unit(
+     legacy_tags_text = signals.get("legacy_tags_text", "")
+     tags_text = signals.get("tags_text", "")
+     raw_text = signals.get("raw_text", "")
++    card_text = signals.get("card_text", "")
++    card_tokens = {tok for tok in card_text.split() if len(tok) >= 4}
+     title_tokens = {tok for tok in title_text.split() if len(tok) >= 4}
+     markdown_headings_tokens = {tok for tok in markdown_headings_text.split() if len(tok) >= 4}
+     markdown_lead_tokens = {tok for tok in markdown_lead_text.split() if len(tok) >= 4}
+@@ -263,6 +265,13 @@ def score_entry_against_unit(
+             score += 2.7
+             exact_topic_hits += 1
+             continue
++        # Card do Moodle: o professor postou o material naquela secao. Pesa perto do
++        # titulo e acima do corpo, mas so no nivel de FRASE — card administrativo
++        # ("Informacoes Gerais", 10x no SO) nao casa frase nenhuma e fica inerte.
++        if topic_phrase in card_text:
++            score += 2.5
++            exact_topic_hits += 1
++            continue
+         if topic_phrase in markdown_text:
+             score += 1.4
+             exact_topic_hits += 1
+@@ -283,6 +292,7 @@ def score_entry_against_unit(
+         score += score_timeline_unit_phrase(markdown_lead_text, markdown_lead_tokens, topic_phrase, token_weights) * 0.48
+         score += score_timeline_unit_phrase(markdown_text, markdown_tokens, topic_phrase, token_weights) * 0.18
+         score += score_timeline_unit_phrase(title_text, title_tokens, topic_phrase, token_weights) * 0.45
++        score += score_timeline_unit_phrase(card_text, card_tokens, topic_phrase, token_weights) * 0.40
+         score += score_timeline_unit_phrase(manual_tags_text, manual_tags_tokens, topic_phrase, token_weights) * 0.35
+         score += score_timeline_unit_phrase(auto_tags_text, auto_tags_tokens, topic_phrase, token_weights) * 0.04
+         score += score_timeline_unit_phrase(legacy_tags_text, legacy_tags_tokens, topic_phrase, token_weights) * 0.02

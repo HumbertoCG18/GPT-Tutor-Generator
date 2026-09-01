@@ -60,8 +60,9 @@ DATE_STRONG_BOOST: float = 0.30
 DATE_WEAK_BOOST: float = 0.10
 
 
-# S2 (P4): escala do IDF por raridade entre blocos CANDIDATOS
-# (file_map.block_token_weights). O peso bruto de um token do topic_text é
+# S2 (P4): escala do IDF por raridade entre blocos CANDIDATOS (hoje consumido
+# pelo scoring do concept_resolver; o produtor original block_token_weights
+# morreu no cutover passo 3). O peso bruto de um token do topic_text é
 # 1/df (df = nº de candidatos cujo topic contém o token); o peso EFETIVO é
 # 1 + IDF_WEIGHT*(1/df - 1) — interpolação entre "sem IDF" (0.0) e IDF puro
 # (1.0). Assim calibrar IDF_WEIGHT não muda o peso de tokens fora do
@@ -71,25 +72,6 @@ DATE_WEAK_BOOST: float = 0.10
 IDF_WEIGHT: float = 1.0
 
 
-# S4 (P4): sinal de ferramenta entry x topic do bloco
-# (file_map.score_entry_against_timeline_block, só nos caminhos de ranking —
-# mesmo guard do S2: topic_token_weights is not None). As auto_tags
-# `ferramenta:<valor>` do manifest viram ferramentas da entry APENAS quando o
-# valor é chave de TOOL_TOKENS — o extrator também emite ruído
-# (ferramenta:proposicional, ferramenta:formal, ferramenta:sobre...) que NÃO é
-# ferramenta de verdade e é ignorado. Boost quando o topic do bloco contém um
-# token da ferramenta da entry; penalidade quando o bloco tem token de OUTRA
-# ferramenta do mapa e nenhum da entry (material Isabelle não pertence a bloco
-# Dafny). 0.8/0.4 calibrados no golden Metodos-Formais (T9): boost na ordem do
-# boost de tópico exato (0.8), penalidade na ordem da de unidade errada (0.45).
-TOOL_BOOST: float = 0.8
-TOOL_PENALTY: float = 0.4
-TOOL_TOKENS: dict = {
-    "isabelle": {"isabelle"},
-    "dafny": {"dafny"},
-    "hoare": {"hoare"},
-}
-
 # S4b (P4): ferramenta derivada da EXTENSÃO do arquivo fonte
 # (entry_signals.collect_entry_unit_signals, união com as auto_tags
 # `ferramenta:`). Os .thy do manifest real NÃO têm ferramenta:isabelle nas
@@ -97,15 +79,17 @@ TOOL_TOKENS: dict = {
 TOOL_EXTENSIONS: dict = {
     ".thy": "isabelle",
     ".dfy": "dafny",
+    ".smv": "nusmv",
 }
 
 
-# Tetos de confiança por método de atribuição de bloco (P2.2):
-# "não há como ter certeza só com léxico" — o teto materializa isso.
-# Aplicado em content_taxonomy.resolve_unit_block_tags na consolidação:
-# computed_block_confidence = min(conf, METHOD_CAPS[method]). Métodos de
-# CÓDIGO (consensus/llm_only, gravados por pedagogical_regeneration) não
-# passam por aqui — a confiança deles vive em computed_block_match_confidence.
+# Vocabulário dos methods de atribuição de bloco (P2.2). O teto de escrita
+# (min(conf, METHOD_CAPS[method])) morreu com o funil no cutover passo 3 — o
+# motor tem modelo próprio de confiança. HOJE consumido como conjunto de
+# methods reconhecidos pelo guard do attach (pedagogical_regeneration: só
+# remove computed_block_method stale se o valor NÃO está aqui). Métodos de
+# CÓDIGO (consensus/llm_only) não passam por aqui — a confiança deles vive
+# em computed_block_match_confidence.
 METHOD_CAPS: dict = {
     "manual": 1.0,
     "review_rule": 0.95,
@@ -133,15 +117,19 @@ def confidence_band(confidence: float) -> str:
 
 @dataclass(frozen=True)
 class _Thresholds:
-    # tags gerenciadas (content_taxonomy.resolve_unit_block_tags)
-    UNIT_TAG: float = 0.65
+    # tags gerenciadas (hoje gravadas por resolver_apply.apply_unit_subunit_fields)
+    # UNIT_TAG calibrado 0.65 -> 0.50 em 2026-08-18, primeiro sweep contra uma
+    # regua entry->unidade (`scripts/eval_entry_unit.py`, 191 entries dos 5 cursos).
+    # Medido PONTA-A-PONTA, depois de reconcile_unit_with_block — baixar o gate nao
+    # e de graca: com o slug vazio a reconciliacao herda a unidade do BLOCO, que
+    # acerta mais que o scorer, entao medir so o scorer inflava o ganho em ~5x.
+    # gate  grava-certo  errado  vazio
+    # 0.65      126        46      19   <- anterior
+    # 0.55      129        47      15
+    # 0.50      132        47      12   <- escolhido: +6 certo, +1 errado
+    # 0.40      132        49      10   <- satura; abaixo daqui so cresce o errado
+    UNIT_TAG: float = 0.50
     SUBUNIT_TAG: float = 0.60
-    # bloco -> unidade (timeline._assign_timeline_block_to_unit)
-    BLOCK_UNIT_MIN_WINNER: float = 1.0
-    BLOCK_UNIT_MIN_GAP: float = 0.35
-    # voto de unidade (timeline._vote_unit_from_topic_candidates)
-    VOTE_DOMINANCE: float = 0.60
-    VOTE_MIN_SCORE: float = 0.10
     # K da formula de margem (padrao). Topico usa 0.20 historicamente.
     MARGIN_K: float = 0.18
     MARGIN_K_TOPIC: float = 0.20
@@ -161,6 +149,14 @@ class _Thresholds:
     # blocos de aula adjacentes quando data/topico estao ausentes, sem
     # sobrepor um match forte. Nao rebalanceia thresholds existentes.
     SEQUENCE_BOOST: float = 0.20
+    # Gate de subunit p/ material de REVISAO (2026-08-31): revisao cujo vencedor
+    # nao domina esta revisando conteudo de fora da taxonomia (pre-requisito,
+    # prova) — slug vazio e a resposta honesta. Medido nos 4 cursos com gold:
+    # revisoes mono-assunto legitimas pontuam >=8.97 (TCC aula-01, ES2
+    # revisaoarquiteturapadroes); as multi-assunto/pre-requisito <=5.67 (TCC
+    # aula-06 3.24, ES2 revisao-p1/p2 4.72-5.67). Piso no meio do gap; NAO e
+    # piso global — certos legitimos sem "revisao" vivem com ws 1.04-4.32.
+    SUBUNIT_REVISAO_FLOOR: float = 7.0
 
 
 T = _Thresholds()

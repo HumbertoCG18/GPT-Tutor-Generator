@@ -1,7 +1,9 @@
+from src.builder.routing.motor import window_provider as wp
 from src.builder.routing.motor.contracts import MotorContext
 from src.builder.routing.motor.window_provider import (
     provider_manual,
     provider_labels,
+    provider_topic,
     resolve_window,
 )
 from src.builder.timeline.card_block import normalized_card_map
@@ -174,6 +176,33 @@ class TestExtractDateInName:
         assert extract_date_in_name({"title": "Plano de Ensino"}) is None
         assert extract_date_in_name({}) is None
 
+    def test_data_com_barra_no_nome(self):
+        """F9: Lab SO nomeia '07/08 Slides: Revisão SISOP'."""
+        from src.builder.routing.motor.window_provider import extract_date_in_name
+        assert extract_date_in_name({"title": "07/08 Slides: Revisão SISOP"}) == (7, 8)
+
+    def test_data_entre_colchetes_no_card(self):
+        """F9: Lab Redes usa o card '[03/08] - Introdução'; title sem data."""
+        from src.builder.routing.motor.window_provider import extract_date_in_name
+        assert extract_date_in_name(
+            {"title": "Aula 01 - Introdução", "source_section": "[03/08] - Introdução"}
+        ) == (3, 8)
+
+    def test_card_semana_com_data_no_meio_nao_casa(self):
+        """Cards 'Semana 13/04/2026 a 17/04/2026' (MF/ES2) não começam com data."""
+        from src.builder.routing.motor.window_provider import extract_date_in_name
+        assert extract_date_in_name({"source_section": "Semana 13/04/2026 a 17/04/2026"}) is None
+
+    def test_numero_de_secao_cai_no_calendario(self):
+        """'Tutorial 1.2' extrai (1,2) mas o provider exige sessão real na data."""
+        from types import SimpleNamespace
+        from src.builder.routing.motor.window_provider import extract_date_in_name, provider_date
+        assert extract_date_in_name({"title": "1.2 - qemu-network"}) == (1, 2)
+        ctx = SimpleNamespace(blocks=[{"id": "bloco-01", "sessions": [{"date": "2026-08-07"}]}],
+                              _modal_years_cache=None)
+        assert provider_date({"title": "1.2 - qemu-network"}, ctx) == []
+        assert provider_date({"title": "07/08 Slides: Revisão"}, ctx) == ["bloco-01"]
+
 
 class TestProviderTopic:
     @staticmethod
@@ -208,11 +237,25 @@ class TestProviderTopic:
         # regex casa, mas tópico só-dígito não gera token útil -> sem janela
         assert provider_topic({"source_section": "Semana 5 - 2026"}, self._ctx()) == []
 
-    def test_section_sem_padrao_semana_rende_vazio(self):
+    def test_card_sem_semana_usa_o_nome_inteiro_como_topico(self):
         from src.builder.routing.motor.window_provider import provider_topic
-        # provider é do padrão "Semana N - Tópico"; outros cards ficam com P1/P2
+        # 2026-08-25: o prefixo "Semana N -" era vicio do formato do IA. Card
+        # de topico puro casa as sessoes; nome sem eco em bloco nenhum -> [].
         assert provider_topic(
             {"source_section": "Verificação de Programas"}, self._ctx()) == []
+        assert provider_topic({"source_section": "Reduções"}, self._ctx()) == ["bloco-21"]
+
+    def test_card_threads_do_so_vira_janela_1(self):
+        """SO: 3 `exemplo-threads-em-c` no card "Threads" iam ao funil (LLM
+        errava); o bloco das aulas de threads tem "threads" nas sessoes."""
+        from src.builder.routing.motor.window_provider import provider_topic
+        ctx = MotorContext.from_artifacts(blocks=[
+            {"id": "bloco-03", "period_start": "2026-03-10", "topic_text": "processos chamadas sistema",
+             "sessions": [{"date": "2026-03-10", "label": "estruturas processos chamadas de sistema aula"}]},
+            {"id": "bloco-04", "period_start": "2026-03-19", "topic_text": "escalonamento threads exclusao mutua",
+             "sessions": [{"date": "2026-03-26", "label": "gerencia do processador threads e exclusao mutua aula"}]},
+        ], card_block_map={}, lessons_index={})
+        assert provider_topic({"source_section": "Threads"}, ctx) == ["bloco-04"]
 
     def test_topico_de_revisao_casa_bloco_de_prova(self):
         from src.builder.routing.motor.window_provider import provider_topic
@@ -221,5 +264,122 @@ class TestProviderTopic:
         assert "bloco-16" in win
 
     def test_cascata_topic_por_ultimo(self):
+        """Ordem por CONFIABILIDADE. `ordinal` (P3b, "Aula N" -> N-esimo
+        encontro) entra depois de DATA — data aponta o dia exato — e antes de
+        TOPICO, que casa por stems e e o mais fraco."""
         from src.builder.routing.motor.window_provider import resolve_window, _CASCADE
-        assert [name for _, name in _CASCADE] == ["manual", "labels", "data", "topic"]
+        assert [name for _, name in _CASCADE] == ["manual", "labels", "data", "ordinal", "topic"]
+
+    def test_rotulo_taxonomia_rica_nao_vaza_prova_sem_sinal_forte(self):
+        """C6 (diagnóstico 2026-08-06, re-flip TCC tentativa 4): bloco de AULA
+        com primary_topic_label "Prova da Indecidibilidade..." (rótulo de
+        taxonomia rica) vaza "prova" pro stem-matching do P4 via
+        block_topic_tokens; sem sinal FORTE de exame no bloco (labels de
+        sessão sem P1-4/PF/G2/PS/"prova N"), o bloco NÃO pode casar o card
+        de PROVA."""
+        blocks = [
+            {"id": "bloco-13", "kind": "class", "period_start": "2026-05-06",
+             "primary_topic_label": "Prova da Indecidibilidade do Problema da Parada",
+             "topic_text": "problema da correspondencia de post",
+             "sessions": [{"date": "2026-05-06",
+                           "label": "problema da correspondencia de post aula"}]},
+        ]
+        ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+        win = provider_topic({"source_section": "Semana 10 - Revisão para P1 e Prova P1"}, ctx)
+        assert "bloco-13" not in win
+
+    def test_rotulo_taxonomia_rica_casa_prova_com_sinal_forte_no_bloco(self):
+        """Controle positivo: sinal forte (aqui "p1") no PRÓPRIO bloco (session
+        label) libera o token exam-vocab do lado topic também — o guard só
+        filtra quando o bloco não tem sinal forte algum."""
+        blocks = [
+            {"id": "bloco-13b", "kind": "assessment", "period_start": "2026-05-06",
+             "primary_topic_label": "Prova de Corretude do Algoritmo",
+             "topic_text": "",
+             "sessions": [{"date": "2026-05-06", "label": "prova p1 prova"}]},
+        ]
+        ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+        win = provider_topic({"source_section": "Semana 10 - Revisão para P1 e Prova P1"}, ctx)
+        assert "bloco-13b" in win
+
+
+# Identificador de trabalho (2026-08-26): "T2" do card casa "entrega t2" das sessoes,
+# em UNIAO com o topico (o card "Semana 3 - ... e Trabalho T1" precisa de [aula, entrega]).
+def _ctx_trabalhos():
+    return MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-03", "kind": "class", "period_start": "2026-03-11",
+                 "sessions": [{"date": "2026-03-11", "label": "minimizacao de funcoes recursivas parciais aula"}]},
+                {"id": "bloco-04", "kind": "deliverable", "period_start": "2026-03-20",
+                 "sessions": [{"date": "2026-03-20", "label": "t1 em aula trabalho"}]},
+                {"id": "bloco-21", "kind": "workshop", "period_start": "2026-05-29",
+                 "sessions": [{"date": "2026-05-29", "label": "oficina de problemas entrega t2 aula"}]},
+                {"id": "bloco-23", "kind": "deliverable", "period_start": "2026-06-05",
+                 "sessions": [{"date": "2026-06-05", "label": "complexidade de tempo classe np hard"}]},
+                {"id": "bloco-25", "kind": "deliverable", "period_start": "2026-06-12",
+                 "sessions": [{"date": "2026-06-12", "label": "oficina de problemas entrega t2 trabalho"}]}],
+        card_block_map={}, lessons_index={})
+
+
+def test_work_id_t2_do_card_casa_sessoes_entrega_t2():
+    win, prov = wp.resolve_window({"id": "3d-matching", "source_section": "Semana 14 - Apresentações T2"}, _ctx_trabalhos())
+    assert prov == "topic" and win == ["bloco-25"]  # bloco-21 (oficina) sai por never-hosts
+
+
+def test_work_id_em_uniao_com_topico():
+    win, prov = wp.resolve_window({"id": "t1-enunciado", "source_section": "Semana 3 - Operações de Minimização e Trabalho T1"}, _ctx_trabalhos())
+    assert prov == "topic" and win == ["bloco-03", "bloco-04"]
+
+
+def test_work_id_nao_casa_numero_solto_nem_pn():
+    assert wp._work_ids("Semana 14 - Apresentações T2") == {"t2"}
+    assert wp._work_ids("Trabalho TP1 e P1") == {"tp1"}
+    assert wp._work_ids("Aula 14") == set()
+
+
+# Holdout CG (2026-08-27): bloco de prova nao hospeda material; sai da janela como feriado/atendimento.
+def test_drop_never_hosts_tira_prova_da_janela_e_mantem_fallback():
+    ctx = MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-18", "kind": "class", "period_start": "2026-10-27", "sessions": [{"date": "2026-10-27", "label": "visualizacao 3d projecao aula"}]},
+                {"id": "bloco-23", "kind": "assessment", "period_start": "2026-11-19", "topic_text": "Conteúdo: unidade-08-sintese-de-imagens-realisticas", "sessions": []},
+                {"id": "bloco-28", "kind": "assessment", "period_start": "2026-12-08", "topic_text": "Conteúdo: unidade-01, unidade-08", "sessions": []}],
+        card_block_map={}, lessons_index={})
+    assert wp.drop_never_hosts(["bloco-18", "bloco-23", "bloco-28"], ctx) == ["bloco-18"]
+    assert wp.drop_never_hosts(["bloco-23", "bloco-28"], ctx) == ["bloco-23", "bloco-28"]
+
+
+# Holdout CG (2026-08-27): "3d"/"2d" discriminam; nome do curso e boilerplate; unit_slug do bloco entra.
+def _ctx_cg():
+    return MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-05", "kind": "class", "period_start": "2026-08-20", "unit_slug": "unidade-02-fundamentos-matematicos",
+                 "sessions": [{"date": "2026-08-20", "label": "geometria computacional aula"}]},
+                {"id": "bloco-06", "kind": "class", "period_start": "2026-08-25", "unit_slug": "unidade-04-processo-de-visualizacao-2d",
+                 "sessions": [{"date": "2026-08-25", "label": "processo de visualizacao 2d instanciamento aula"}]},
+                {"id": "bloco-07", "kind": "class", "period_start": "2026-09-01", "unit_slug": "unidade-03-processamento-de-imagens-e-visao-computacional",
+                 "sessions": [{"date": "2026-09-01", "label": "processamento de imagens e visao computacional aula"}]},
+                {"id": "bloco-18", "kind": "class", "period_start": "2026-10-27", "unit_slug": "unidade-06-processo-de-visualizacao-3d",
+                 "sessions": [{"date": "2026-10-27", "label": "visualizacao 3d projecao aula"}]},
+                {"id": "bloco-19", "kind": "class", "period_start": "2026-10-29", "unit_slug": "unidade-06-processo-de-visualizacao-3d",
+                 "sessions": [{"date": "2026-10-29", "label": "visualizacao 3d observador aula"}]},
+                {"id": "bloco-21", "kind": "class", "period_start": "2026-11-10", "unit_slug": "unidade-08-sintese-de-imagens-realisticas",
+                 "sessions": [{"date": "2026-11-10", "label": "iluminacao aula"}]}],
+        card_block_map={}, lessons_index={}, course_name="Computação Gráfica")
+
+
+def test_token_dimensional_3d_discrimina_e_nome_do_curso_e_boilerplate():
+    win, prov = wp.resolve_window({"id": "opengl-3d", "source_section": "13 - Computação Gráfica 3D"}, _ctx_cg())
+    assert prov == "topic" and win == ["bloco-18", "bloco-19"]
+
+
+def test_card_nomeado_pela_unidade_casa_os_blocos_da_unidade():
+    win, prov = wp.resolve_window({"id": "modelos-de-iluminacao", "source_section": "16 - Síntese de Imagens Realísticas"}, _ctx_cg())
+    assert prov == "topic" and "bloco-21" in win and "bloco-18" not in win
+
+
+def test_card_2d_nao_perde_o_bloco_2d():
+    win, prov = wp.resolve_window({"id": "vis2d", "source_section": "6 - Processo de Visualização 2D"}, _ctx_cg())
+    assert "bloco-06" in win
+
+
+def test_dimensao_sozinha_com_um_bloco_so_vai_ao_funil():
+    win, prov = wp.resolve_window({"id": "exercicios-de-geometria-computacional", "source_section": "Exercícios 2D"}, _ctx_cg())
+    assert win == [] and prov == ""

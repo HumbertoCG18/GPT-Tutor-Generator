@@ -213,71 +213,16 @@ def test_real_corpus_unknown_rate(course):
 
 
 # ---------------------------------------------------------------------------
-# Vote unit from topic_candidates (Phase 3 fix)
+# Topic fallback (Phase 4 fix). Os testes do voto de unidade
+# (_vote_unit_from_topic_candidates) morreram com o fallback keyword no
+# cutover passo 3 — cadeia topic-labels abaixo segue VIVA.
 # ---------------------------------------------------------------------------
 
 from src.builder.timeline.index import (  # noqa: E402
     _TOPIC_FALLBACK_MAX_LEN,
     _humanize_topic_text,
     _resolve_block_topic_label,
-    _vote_unit_from_topic_candidates,
 )
-
-
-def _idx(*slugs):
-    return [{"slug": s, "title": s} for s in slugs]
-
-
-def test_vote_unit_unanimous_candidates_assigns_unit():
-    block = {"topic_candidates": [
-        {"unit_slug": "unidade-01-arquitetura", "score": 0.20},
-        {"unit_slug": "unidade-01-arquitetura", "score": 0.20},
-        {"unit_slug": "unidade-01-arquitetura", "score": 0.20},
-    ]}
-    slug, conf = _vote_unit_from_topic_candidates(
-        block, _idx("unidade-01-arquitetura", "unidade-02-devops"))
-    assert slug == "unidade-01-arquitetura"
-    assert 0.30 <= conf <= 0.55
-
-
-def test_vote_unit_divided_candidates_abstains():
-    block = {"topic_candidates": [
-        {"unit_slug": "unidade-01-arquitetura", "score": 0.30},
-        {"unit_slug": "unidade-02-devops", "score": 0.28},
-    ]}
-    slug, conf = _vote_unit_from_topic_candidates(
-        block, _idx("unidade-01-arquitetura", "unidade-02-devops"))
-    assert slug == ""
-    assert conf == 0.0
-
-
-def test_vote_unit_no_candidates_abstains():
-    slug, conf = _vote_unit_from_topic_candidates(
-        {"topic_candidates": []}, _idx("u1", "u2"))
-    assert slug == ""
-
-
-def test_vote_unit_skips_unknown_slug():
-    block = {"topic_candidates": [
-        {"unit_slug": "ghost-unit", "score": 0.50},
-        {"unit_slug": "ghost-unit", "score": 0.50},
-    ]}
-    slug, _ = _vote_unit_from_topic_candidates(block, _idx("real-unit"))
-    assert slug == ""
-
-
-def test_vote_unit_below_min_score_filtered():
-    block = {"topic_candidates": [
-        {"unit_slug": "u1", "score": 0.05},
-        {"unit_slug": "u1", "score": 0.05},
-    ]}
-    slug, _ = _vote_unit_from_topic_candidates(block, _idx("u1"))
-    assert slug == ""
-
-
-# ---------------------------------------------------------------------------
-# Topic fallback (Phase 4 fix)
-# ---------------------------------------------------------------------------
 
 def test_humanize_strips_border_stopwords():
     assert _humanize_topic_text("de lógica de predicados") == "Lógica de predicados"

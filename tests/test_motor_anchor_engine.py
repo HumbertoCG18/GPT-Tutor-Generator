@@ -19,8 +19,14 @@ def _ctx():
     return MotorContext.from_artifacts(blocks=BLOCKS, card_block_map=CBM, lessons_index={})
 
 
-def test_bibliografia_routes_out_of_motor():
-    assert is_out_of_disamb_scope({"category": "bibliografia"}) is True
+def test_bibliografia_entra_no_motor_e_tde_continua_fora():
+    """B-5 (2026-08-21): bibliografia/references/cronograma/apoio passam pela
+    cascata — o gold da bloco a elas e 12/14 em producao ja tinham pino. Sem
+    voter e sem janela o resultado e None (funil), como antes; a diferenca e
+    que um card datado ou o llm-funil agora podem decidir. TDE segue fora."""
+    assert is_out_of_disamb_scope({"category": "bibliografia"}) is False
+    assert is_out_of_disamb_scope({"category": "cronograma"}) is False
+    assert is_out_of_disamb_scope({"category": "bibliografia", "source_section": "TDE 3"}) is True
     eng = AnchorEngine()
     assert eng.resolve({"category": "bibliografia", "source_section": "Bibliografia-Livros"}, _ctx()) is None
 
@@ -175,3 +181,179 @@ def test_janela_1_nao_entra_no_voto_mesmo_em_serie():
     assert d is not None and d.block_ref
     assert voter.calls == 0            # janela-1: voter NUNCA chamado
     assert d.provider != "llm" and d.method != "llm"
+
+
+# B-4 (2026-08-21): llm-funil — sem janela, o LLM vota com janela = blocos do curso.
+def _funil_ctx():
+    return MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-01"}, {"id": "bloco-02"}, {"id": "bloco-03"}],
+        card_block_map={}, lessons_index={})
+
+
+def test_llm_funil_vota_com_janela_de_todos_os_blocos():
+    """Medido 2026-08-21: funil concept-fused 6/26 -> LLM janela=tudo 13/26,
+    0 regressoes. band media + flag=True: 50% e honesto, fica na fila humana."""
+    voter = _FakeVoter("bloco-03")
+    d = ae.AnchorEngine(voter=voter).resolve_funnel(
+        {"id": "e1", "category": "material-de-aula"}, _funil_ctx())
+    assert d.block_ref == "bloco-03"
+    assert d.method == "llm-funil" and d.provider == "llm-funil"
+    assert d.band == "media" and d.flag is True
+    assert d.window == ["bloco-01", "bloco-02", "bloco-03"]
+    assert voter.seen == ["e1"]
+
+
+def test_llm_funil_sem_voter_ou_sem_voto_devolve_none():
+    ctx = _funil_ctx()
+    assert ae.AnchorEngine(voter=None).resolve_funnel({"id": "e1"}, ctx) is None
+    assert ae.AnchorEngine(voter=_FakeVoter(None)).resolve_funnel({"id": "e1"}, ctx) is None
+
+
+def test_resolve_sem_janela_cai_no_llm_funil(monkeypatch):
+    monkeypatch.setattr(ae, "resolve_window", lambda e, c: ([], ""))
+    voter = _FakeVoter("bloco-02")
+    d = ae.AnchorEngine(voter=voter).resolve({"id": "e1", "category": "m"}, _funil_ctx())
+    assert d is not None and d.method == "llm-funil" and d.block_ref == "bloco-02"
+
+
+# B-6 (2026-08-21): referencia sem card -> primeiro bloco overview/class.
+def test_referencia_sem_card_vai_para_o_primeiro_bloco():
+    """Convencao dos pinos manuais (aws/archive/o-que-e-IA/ia-responsavel, 4/5
+    no gold). IA e SO tem kind=overview no bloco-01 (plano/apresentacao)."""
+    ctx = MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-01", "kind": "overview", "period_start": "2026-03-02"},
+                {"id": "bloco-02", "kind": "class", "period_start": "2026-03-04"}],
+        card_block_map={}, lessons_index={})
+    d = ae.resolve_generic_reference({"category": "bibliografia", "title": "AFP"}, ctx)
+    assert d is not None and d.block_ref == "bloco-01"
+    assert d.method == "ref-generica" and d.flag is False
+    # com card segue a cascata normal (card datado do IA resolve `artigo` sozinho)
+    assert ae.resolve_generic_reference(
+        {"category": "bibliografia", "source_section": "Semana 8 - 20.04 a 24.04"}, ctx) is None
+    assert ae.resolve_generic_reference({"category": "material-de-aula"}, ctx) is None
+
+
+def test_trabalho_com_janela_multipla_nao_usa_token_de_conteudo():
+    """lexical=False (trabalhos/provas): enunciado descreve o CONTEUDO cobrado,
+    nao a entrega. TCC `t1-enunciado`: tokens "minimizacao/primitivas" casam a
+    aula 03; a entrega e o bloco-04. Com janela > 1 so o voto sobre a janela
+    decide; sem voter, None (funil/limpo). Janela-1 segue estrutural."""
+    ctx = MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-03", "period_start": "2026-03-11",
+                 "topic_text": "funcoes recursivas primitivas minimizacao", "sessions": []},
+                {"id": "bloco-04", "period_start": "2026-03-20", "kind": "deliverable",
+                 "topic_text": "entrega", "sessions": []}],
+        card_block_map={"Semana 3 - Trabalho T1": {"source": "manual", "block_ids": ["bloco-03", "bloco-04"]}},
+        lessons_index={})
+    entry = {"id": "t1", "category": "trabalhos", "title": "T1 - Enunciado",
+             "source_section": "Semana 3 - Trabalho T1"}
+    md = "minimizacao de funcoes recursivas primitivas e parciais"
+    # com token de conteudo, o lexico iria para bloco-03 (errado para uma entrega)
+    assert ae.AnchorEngine(voter=None).resolve_unscoped(entry, ctx, md, lexical=True).block_ref == "bloco-03"
+    assert ae.AnchorEngine(voter=None).resolve_unscoped(entry, ctx, md, lexical=False) is None
+    voter = _FakeVoter("bloco-04")
+    d = ae.AnchorEngine(voter=voter).resolve_unscoped(entry, ctx, md, lexical=False)
+    assert d.block_ref == "bloco-04" and d.method == "llm" and d.window == ["bloco-03", "bloco-04"]
+
+
+# prep-prova (2026-08-25): "lista/revisao pN" sem janela -> ultimo bloco hospedavel
+# antes da N-esima prova PRINCIPAL (substituicao/entrega nao contam; suspended,
+# feriado, atendimento e a propria prova nao hospedam). Gold: 7/7 nos 5 cursos.
+def _ctx_provas():
+    return MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-01", "kind": "class", "period_start": "2026-03-02"},
+                {"id": "bloco-02", "kind": "review", "period_start": "2026-04-15"},
+                {"id": "bloco-03", "kind": "suspended", "period_start": "2026-04-20", "topic_text": "suspensao"},
+                {"id": "bloco-04", "kind": "assessment", "period_start": "2026-04-22"},
+                {"id": "bloco-05", "kind": "class", "period_start": "2026-06-16"},
+                {"id": "bloco-06", "kind": "office_hours", "period_start": "2026-06-23"},
+                {"id": "bloco-07", "kind": "assessment", "period_start": "2026-06-25"},
+                {"id": "bloco-08", "kind": "assessment", "period_start": "2026-06-30", "topic_text": "substituicao"}],
+        card_block_map={}, lessons_index={})
+
+
+def test_prep_prova_p1_pula_suspended_e_para_na_revisao():
+    d = ae.resolve_exam_prep({"id": "revisao-p1", "category": "listas"}, _ctx_provas())
+    assert d is not None and d.block_ref == "bloco-02" and d.method == "prep-prova"
+
+
+def test_prep_prova_p2_ignora_substituicao_e_atendimento():
+    d = ae.resolve_exam_prep({"id": "lista-exercicios-p2", "category": "listas",
+                              "source_section": "Informações Gerais"}, _ctx_provas())
+    assert d is not None and d.block_ref == "bloco-05"
+
+
+def test_prep_prova_sem_cue_ou_prova_inexistente_devolve_none():
+    assert ae.resolve_exam_prep({"id": "exercicios", "category": "listas"}, _ctx_provas()) is None
+    assert ae.resolve_exam_prep({"id": "lista-p3", "category": "listas"}, _ctx_provas()) is None
+
+
+def test_resolve_sem_janela_tenta_prep_prova_antes_do_funil(monkeypatch):
+    monkeypatch.setattr(ae, "resolve_window", lambda e, c: ([], ""))
+    voter = _FakeVoter("bloco-01")     # o funil votaria 01; a regra decide antes
+    d = ae.AnchorEngine(voter=voter).resolve({"id": "lista-p1", "category": "listas"}, _ctx_provas())
+    assert d is not None and d.method == "prep-prova" and d.block_ref == "bloco-02"
+
+
+def test_prep_prova_nao_se_aplica_a_propria_prova(monkeypatch):
+    """provas/trabalhos sem due chegam aqui com lexical=False: a prova antiga do
+    IA (`prova-1-2024-02`, gold no TDE) nao e preparacao — cai no funil."""
+    monkeypatch.setattr(ae, "resolve_window", lambda e, c: ([], ""))
+    d = ae.AnchorEngine(voter=None).resolve_unscoped(
+        {"id": "prova-1-2024-02", "category": "provas"}, _ctx_provas(), lexical=False)
+    assert d is None
+
+
+def test_provider_labels_resolve_datas_contra_os_blocos_atuais():
+    """2026-08-25: o window_provider lia block_ids do card map direto; com o
+    split do ES2 bloco-11 a aula nova de 26/06 ficava fora da janela do card
+    "DevOps" mesmo com a data no rotulo. Datas mandam; block_ids e cache."""
+    from src.builder.routing.motor.window_provider import provider_labels
+    ctx = MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-11", "block_uuid": "u-11", "kind": "suspended", "period_start": "2026-06-19", "period_end": "2026-06-19"},
+                {"id": "bloco-12", "block_uuid": "u-12", "kind": "class", "period_start": "2026-06-26", "period_end": "2026-06-26"},
+                {"id": "bloco-13", "block_uuid": "u-13", "kind": "assessment", "period_start": "2026-07-03", "period_end": "2026-07-03"}],
+        card_block_map={"DevOps": {"source": "labels", "block_ids": ["u-11", "u-13"], "dates": ["2026-06-26", "2026-07-03"]}},
+        lessons_index={})
+    assert provider_labels({"id": "devops", "source_section": "DevOps"}, ctx) == ["u-12", "u-13"]
+
+
+# Balde B (2026-08-26): janela INDIRETA (topic/ordinal) + cue de preparacao de
+# prova -> prep-prova decide antes do desempate/voto. MF revisao-p1: card por
+# topico dava [05, 06] e o LLM votava 05 (gold 07); TCC aula-16: ordinal 19 (gold 16).
+def _ctx_prep_janela():
+    return MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-05", "kind": "class", "period_start": "2026-03-30", "topic_text": "inducao arvores"},
+                {"id": "bloco-06", "kind": "class", "period_start": "2026-04-06", "topic_text": "isabelle"},
+                {"id": "bloco-07", "kind": "review", "period_start": "2026-04-15"},
+                {"id": "bloco-09", "kind": "assessment", "period_start": "2026-04-22"}],
+        card_block_map={}, lessons_index={})
+
+
+def test_prep_prova_vence_janela_por_topico(monkeypatch):
+    monkeypatch.setattr(ae, "resolve_window", lambda e, c: (["bloco-05", "bloco-06"], "topic"))
+    entry = {"id": "revisao-p1", "category": "listas", "title": "Exercicios para P1",
+             "source_section": "Exercícios de Revisão para Prova"}
+    d = ae.AnchorEngine(voter=_FakeVoter("bloco-05")).resolve_unscoped(entry, _ctx_prep_janela(), "inducao")
+    assert d.block_ref == "bloco-07" and d.method == "prep-prova"
+
+
+def test_prep_prova_nao_sobrepoe_card_manual_ou_datado(monkeypatch):
+    monkeypatch.setattr(ae, "resolve_window", lambda e, c: (["bloco-05"], "labels"))
+    entry = {"id": "revisao-p1", "category": "listas", "source_section": "Semana 5"}
+    d = ae.AnchorEngine(voter=None).resolve_unscoped(entry, _ctx_prep_janela(), "")
+    assert d.block_ref == "bloco-05" and d.method == "janela-1"
+
+
+def test_gabarito_da_revisao_e_preparacao_mesmo_com_categoria_provas(monkeypatch):
+    monkeypatch.setattr(ae, "resolve_window", lambda e, c: (["bloco-05", "bloco-06"], "topic"))
+    gab = {"id": "revisao-p1-gabarito", "category": "provas", "title": "Respostas",
+           "source_section": "Exercícios de Revisão para Prova"}
+    assert ae.is_exam_prep_material(gab) is True
+    d = ae.AnchorEngine(voter=_FakeVoter("bloco-05")).resolve_unscoped(gab, _ctx_prep_janela(), "", lexical=False)
+    assert d.block_ref == "bloco-07" and d.method == "prep-prova"
+
+
+def test_prova_antiga_nao_e_material_de_preparacao():
+    assert ae.is_exam_prep_material({"id": "prova-1-2024-02", "category": "provas",
+                                     "title": "Prova 1 2024/02", "source_section": "TDE"}) is False

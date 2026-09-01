@@ -54,6 +54,7 @@ from src.builder.artifacts.prompts import (
 )
 from src.builder.artifacts.repo import rows_to_markdown_table, wrap_frontmatter
 from src.builder.extraction.teaching_plan import (
+    _normalize_unit_slug,
     _parse_units_from_teaching_plan,
     _topic_depth,
     _topic_text,
@@ -63,8 +64,6 @@ from src.builder.timeline.index import (
     _build_timeline_index,
     _parse_syllabus_timeline,
     _parse_timeline_date_value,
-    _score_timeline_row_against_unit,
-    _serialize_timeline_index,
 )
 from src.models.core import (
     DocumentProfileReport,
@@ -2368,7 +2367,12 @@ class TestBackendSelector:
             processing_mode="quick",
         )
         report = DocumentProfileReport(suggested_profile="auto")
-        decision = selector.decide(entry, report)
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True},
+        ):
+            decision = selector.decide(entry, report)
         assert decision.processing_mode == "quick"
         assert decision.advanced_backend is None
 
@@ -2382,7 +2386,12 @@ class TestBackendSelector:
             processing_mode="auto",
         )
         report = DocumentProfileReport(suggested_profile="auto")
-        decision = selector.decide(entry, report)
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True},
+        ):
+            decision = selector.decide(entry, report)
         assert decision.advanced_backend is None
 
     def test_auto_mode_math_heavy_tries_advanced(self):
@@ -2395,8 +2404,13 @@ class TestBackendSelector:
             processing_mode="auto",
         )
         report = DocumentProfileReport(suggested_profile="math_heavy")
-        decision = selector.decide(entry, report)
         # Even if no advanced backend is available, the logic should try
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": False, "docling": False, "marker": False},
+        ):
+            decision = selector.decide(entry, report)
         assert decision.effective_profile == "math_heavy"
 
     def test_formula_priority_activates_advanced(self):
@@ -2410,19 +2424,21 @@ class TestBackendSelector:
             formula_priority=True,
         )
         report = DocumentProfileReport(suggested_profile="auto")
-        decision = selector.decide(entry, report)
-        available = selector.available_backends()
-        has_advanced = available.get("datalab") or available.get("docling") or available.get("marker")
-        if has_advanced:
-            assert decision.advanced_backend is not None
-            assert "formula_priority" in " ".join(decision.reasons)
-        else:
-            # No advanced backend installed; formula_priority cannot activate one
-            assert decision.advanced_backend is None
+        with mock.patch.object(
+            BackendSelector,
+            "available_backends",
+            return_value={"pymupdf4llm": True, "pymupdf": True, "datalab": True, "docling": True, "marker": True},
+        ):
+            decision = selector.decide(entry, report)
+        assert decision.advanced_backend is not None
+        assert "formula_priority" in " ".join(decision.reasons)
 
     def test_available_backends_returns_dict(self):
         selector = BackendSelector()
-        available = selector.available_backends()
+        # Só o probe docling-python importa docling de verdade (~20s); o contrato
+        # do dict (chaves) não depende dele.
+        with mock.patch.object(engine_module, "has_docling_python_api", lambda: False):
+            available = selector.available_backends()
         assert isinstance(available, dict)
         assert "pymupdf4llm" in available
         assert "pymupdf" in available
@@ -2645,7 +2661,10 @@ class TestParseUnitsFromTeachingPlan:
     def test_pucrs_stops_at_markdown_section_heading(self):
         units = _parse_units_from_teaching_plan(PUCRS_PLAN_WITH_MARKDOWN_SECTIONS)
         all_topics = [_topic_text(t) for _, topics in units for t in topics]
-        assert "Sistemas Formais" in all_topics
+        # O texto do topico carrega o codigo ("1.1 Sistemas Formais"): sem ele,
+        # build_content_taxonomy nao reconhece o topico como vindo do plano e o
+        # joga no filtro de known_tools (perda medida em 2026-08-18).
+        assert "1.1 Sistemas Formais" in all_topics
         assert not any("PROCEDIMENTOS" in t for t in all_topics)
         assert not any("AVALIAÇÃO" in t for t in all_topics)
 
@@ -2680,6 +2699,33 @@ class TestParseUnitsFromTeachingPlan:
     def test_empty_string_returns_empty(self):
         assert _parse_units_from_teaching_plan("") == []
 
+
+class TestNormalizeUnitSlug:
+    def test_zero_pads_unit_number(self):
+        assert _normalize_unit_slug("Unidade 1 — Limites") == "unidade-01-limites"
+
+    def test_strips_workload_percent_from_title(self):
+        # Caso real IA: percentual de carga no título vazava pro slug
+        # ("...visao-geral-5"), poluindo display e fragilizando a chave.
+        assert (
+            _normalize_unit_slug("Unidade de Aprendizagem 1 — Visão Geral (5%)")
+            == "unidade-de-aprendizagem-01-visao-geral"
+        )
+        assert (
+            _normalize_unit_slug("Unidade de Aprendizagem 2 — Solução de Problemas (10%)")
+            == "unidade-de-aprendizagem-02-solucao-de-problemas"
+        )
+        assert (
+            _normalize_unit_slug("Unidade 3 — Tópicos Avançados (7,5%)")
+            == "unidade-03-topicos-avancados"
+        )
+
+    def test_title_without_percent_unchanged(self):
+        assert (
+            _normalize_unit_slug("UNIDADE 04 — Hierarquia de Classes de Complexidade de Problemas Computacionais")
+            == "unidade-04-hierarquia-de-classes-de-complexidade-de-problemas-computacionais"
+        )
+
     def test_no_units_returns_empty(self):
         assert _parse_units_from_teaching_plan("Texto sem unidades aqui.") == []
 
@@ -2696,7 +2742,7 @@ class TestParseUnitsFromTeachingPlan:
         """1.1. Sistemas Formais → depth 0 (tópico principal)"""
         units = _parse_units_from_teaching_plan(PUCRS_PLAN)
         topics_u1 = units[0][1]
-        sistemas = [t for t in topics_u1 if _topic_text(t) == "Sistemas Formais"]
+        sistemas = [t for t in topics_u1 if _topic_text(t) == "1.1 Sistemas Formais"]
         assert len(sistemas) == 1
         assert _topic_depth(sistemas[0]) == 0
 
@@ -2861,11 +2907,24 @@ class TestTimelineIndex:
         assert "2 dias · 06/04/2026 a 08/04/2026" in periods
 
     def test_build_timeline_index_assigns_matching_block_to_unit(self):
+        # Cutover passo 3: unidade vem SÓ do matcher posicional (fallback
+        # keyword morto) — o teste passa a alimentar content_taxonomy, como
+        # produção (montador único W1/W2 sempre fornece taxonomy).
         timeline = _parse_syllabus_timeline(METODOS_FORMAIS_SYLLABUS)
         candidate_rows = _build_timeline_candidate_rows(timeline)
         unit_index = _build_file_map_unit_index(METODOS_FORMAIS_UNITS)
+        taxonomy = {"units": [
+            {"slug": "unidade-01-metodos-formais",
+             "title": "Unidade 01 — Métodos Formais",
+             "topics": [{"label": "Especificação de Conjuntos Indutivos"},
+                        {"label": "Especificação de Funções Recursivas"}]},
+            {"slug": "unidade-02-prova-interativa-de-teoremas",
+             "title": "Unidade 02 — Prova Interativa de Teoremas",
+             "topics": [{"label": "Isabelle"}]},
+        ]}
 
-        timeline_index = _build_timeline_index(candidate_rows, unit_index=unit_index)
+        timeline_index = _build_timeline_index(
+            candidate_rows, unit_index=unit_index, content_taxonomy=taxonomy)
 
         recursion_block = next(
             block for block in timeline_index["blocks"]
@@ -2878,31 +2937,6 @@ class TestTimelineIndex:
 
         assert recursion_block["unit_slug"] == "unidade-01-metodos-formais"
         assert isabelle_block["unit_slug"] == "unidade-02-prova-interativa-de-teoremas"
-
-    def test_timeline_unit_scoring_is_conservative_for_generic_logic_and_admin_rows(self):
-        unit_index = _build_file_map_unit_index(_parse_units_from_teaching_plan(PUCRS_PLAN))
-        scores_by_slug = {
-            unit["slug"]: _score_timeline_row_against_unit("Lógica de Hoare", unit)
-            for unit in unit_index
-        }
-
-        assert scores_by_slug["unidade-02-verificacao-de-programas"] > scores_by_slug["unidade-01-metodos-formais"]
-        assert scores_by_slug["unidade-02-verificacao-de-programas"] > scores_by_slug["unidade-03-verificacao-de-modelos"]
-
-        predicados_scores = {
-            unit["slug"]: _score_timeline_row_against_unit("Lógica de Predicados", unit)
-            for unit in unit_index
-        }
-        assert predicados_scores["unidade-03-verificacao-de-modelos"] == 0.0
-        assert _score_timeline_row_against_unit(
-            "Lógica de Programas - coleções Dafny (conjuntos)",
-            next(unit for unit in unit_index if unit["slug"] == "unidade-01-metodos-formais"),
-        ) == 0.0
-
-        assert all(
-            _score_timeline_row_against_unit("Suspensão de aulas", unit) == 0.0
-            for unit in unit_index
-        )
 
     def test_timeline_index_does_not_assign_administrative_blocks(self):
         timeline = _parse_syllabus_timeline("""\
@@ -2917,8 +2951,22 @@ class TestTimelineIndex:
             ("Unidade 02 — Verificação de Programas", ["Lógica de Hoare"]),
             ("Unidade 03 — Verificação de Modelos", ["Modelos de Kripke"]),
         ])
+        # Cutover passo 3: rota posicional exige taxonomy (fallback keyword morto).
+        taxonomy = {"units": [
+            {"slug": "unidade-01-metodos-formais",
+             "title": "Unidade 01 — Métodos Formais",
+             "topics": [{"label": "Lógica de Predicados"}]},
+            {"slug": "unidade-02-verificacao-de-programas",
+             "title": "Unidade 02 — Verificação de Programas",
+             "topics": [{"label": "Lógica de Hoare"}]},
+            {"slug": "unidade-03-verificacao-de-modelos",
+             "title": "Unidade 03 — Verificação de Modelos",
+             "topics": [{"label": "Modelos de Kripke"}]},
+        ]}
 
-        timeline_index = _build_timeline_index(_build_timeline_candidate_rows(timeline), unit_index=unit_index)
+        timeline_index = _build_timeline_index(
+            _build_timeline_candidate_rows(timeline), unit_index=unit_index,
+            content_taxonomy=taxonomy)
         suspension_block = next(
             block for block in timeline_index["blocks"]
             if "suspensao" in block["topic_text"]
@@ -2936,10 +2984,12 @@ class TestTimelineIndex:
         assert hoare_block["unit_slug"] == "unidade-02-verificacao-de-programas"
         assert kripke_block["unit_slug"] == "unidade-03-verificacao-de-modelos"
 
-        serialized = _serialize_timeline_index(timeline_index)
-        assert all("suspensao" not in block["topic_text"] for block in serialized["blocks"])
+    def test_timeline_index_serialization_keeps_review_sessions_and_admin_events(self):
+        """Cutover passo 3: serializador unico (persist_enriched) NAO filtra
+        blocos admin (o filtro era do fantasma v4 so-testes, morto). Blocos
+        admin persistem e sao tratados a jusante (health/D2 predicado)."""
+        from src.builder.core.core_utils import persist_enriched_timeline_index
 
-    def test_timeline_index_serialization_keeps_review_sessions_but_drops_admin_events(self):
         timeline = _parse_syllabus_timeline("""\
 | Semana | Data | Conteúdo |
 |---|---|---|
@@ -2950,13 +3000,14 @@ class TestTimelineIndex:
         unit_index = _build_file_map_unit_index(_parse_units_from_teaching_plan(PUCRS_PLAN))
 
         timeline_index = _build_timeline_index(_build_timeline_candidate_rows(timeline), unit_index=unit_index)
-        serialized = _serialize_timeline_index(timeline_index)
+        serialized = persist_enriched_timeline_index(timeline_index)
 
         periods = [str(block.get("period_start", "")) for block in serialized["blocks"]]
         topics = [str(block.get("topic_text", "")) for block in serialized["blocks"]]
         assert "2026-04-15" in periods
         assert any("isabelle" in topic for topic in topics)
-        assert "2026-05-27" not in periods
+        assert "2026-05-27" in periods  # admin persiste (era filtrado pelo fantasma)
+        assert serialized["version"] == 4
 
     def test_timeline_index_keeps_weak_single_token_overlap_unassigned(self):
         timeline = _parse_syllabus_timeline("""\
@@ -3032,10 +3083,21 @@ class TestCourseMapTimeline:
 
     def test_timeline_section_present_for_learning_unit_format(self):
         from src.models.core import SubjectProfile
+        # Cutover passo 3: unidade só via matcher posicional (afinidade de
+        # conteúdo) — o syllabus da fixture precisa CASAR com o plano IA
+        # (antes o fallback keyword mascarava o descasamento MF×IA).
         sp = SubjectProfile(
             name="Inteligência Artificial",
             slug="inteligencia-artificial",
-            syllabus=SYLLABUS_TABLE,
+            syllabus="""\
+| Semana | Data | Conteúdo |
+|---|---|---|
+| 1 | 2026-03-02 | Conceituação e breve histórico de IA |
+| 2 | 2026-03-09 | Subáreas e disciplinas afins |
+| 3 | 2026-03-16 | Introdução a agentes em ambientes determinísticos |
+| 4 | 2026-03-23 | Representação de problemas |
+| 5 | 2026-03-30 | Busca informada (heurística) |
+""",
             teaching_plan=LEARNING_UNIT_PLAN,
         )
         result = course_map_md({"course_name": "Inteligência Artificial"}, sp)
@@ -3459,7 +3521,7 @@ class TestGlossarySeed:
         assert taxonomy["version"] == 1
         assert taxonomy["course_slug"]
         assert taxonomy["units"]
-        assert timeline_index["version"] == 3
+        assert timeline_index["version"] == 4  # bump 8a (cutover passo 3)
         assert isinstance(timeline_index["blocks"], list)
         assert timeline_index["blocks"][0]["card_evidence"]
         assert assessment_context["version"] == 1
@@ -3776,6 +3838,7 @@ class TestGeneratedRepoGitignore:
         assert "course/.assessment_context.json" in text
         assert "course/.tag_catalog.json" in text
         assert "setup/" in text
+        assert "*.bak" in text  # T19: backups de retag/reprocess nao versionados
         assert "manifest.json" not in text
         assert "course/FILE_MAP.md" not in text
         assert "course/COURSE_MAP.md" not in text
@@ -4211,10 +4274,16 @@ class TestCourseMapLowToken:
                 f"Subtópico {i}.3\n"
             )
 
+        # Cutover passo 3: syllabus sintético com afinidade de conteúdo com o
+        # plano sintético (o fallback keyword que casava com SYLLABUS_TABLE
+        # do MF morreu; o matcher posicional exige overlap real de tokens).
+        syllabus_rows = ["| Semana | Data | Conteúdo |", "|---|---|---|"]
+        for i in range(1, 10):
+            syllabus_rows.append(f"| {i} | 2026-03-{i:02d} | Tópico {i} e Subtópico {i}.1 |")
         sp = SubjectProfile(
             name="Teste",
             slug="teste",
-            syllabus=SYLLABUS_TABLE,
+            syllabus="\n".join(syllabus_rows) + "\n",
             teaching_plan="\n".join(teaching_plan_parts),
         )
         result = course_map_md({"course_name": "Teste"}, sp)
@@ -4259,6 +4328,34 @@ class TestExerciseIndexLowToken:
         assert "[a preencher]" not in result
         assert "Adicione listas ou provas antigas" in result
         assert "Mapeamento de exercícios por tópico" not in result
+
+    def test_exercise_index_pairs_statement_with_answer_and_uses_real_unit(self):
+        # FASE 4 (31/08): X <-> X_respostas pareados; coluna Unidade = motor.
+        entries = [
+            FileEntry(title="ExerciciosEspecificacao", source_path="raw/ee.pdf",
+                      category="listas", file_type="pdf",
+                      computed_unit_slug="unidade-01-metodos-formais"),
+            FileEntry(title="ExerciciosEspecificacao_respostas", source_path="raw/eer.pdf",
+                      category="listas", file_type="pdf"),
+        ]
+        result = exercise_index_md({"course_name": "Teste"}, entries)
+        assert "sim — ExerciciosEspecificacao_respostas" in result
+        assert "é o gabarito" in result
+        assert "| gabarito |" in result
+        assert "unidade-01-metodos-formais" in result
+        assert "conferir após tentar" in result
+
+    def test_exam_index_dedups_and_shows_coverage_units(self):
+        from src.builder.engine import exam_index_md
+        e1 = FileEntry(title="P1 2024", source_path="raw/p1.pdf", category="provas",
+                       file_type="pdf",
+                       coverage_units=[{"unit_slug": "u01", "rule": "avaliacao"},
+                                       {"unit_slug": "u02", "rule": "calendario"}])
+        dup = FileEntry(title="P1 2024", source_path="raw/p1.pdf", category="provas", file_type="pdf")
+        r = exam_index_md({"course_name": "Teste"}, [e1, dup])
+        assert r.count("| p1.pdf |") == 1
+        assert "u01, u02" in r
+        assert "unidades têm maior incidência" in r
 
     def test_exercise_index_uses_auto_tags_when_manual_tags_are_empty(self):
         entries = [
@@ -4374,7 +4471,7 @@ class TestIncrementalBuildLowTokenRollout:
         assert "Quando abrir" in file_map
         assert "Mapa pedagógico curto da disciplina" in course_map
         assert content_taxonomy["version"] == 1
-        assert timeline_index["version"] == 3
+        assert timeline_index["version"] == 4  # bump 8a (cutover passo 3)
         assert isinstance(timeline_index["blocks"], list)
         assert assessment_context["version"] == 1
         assert "Ordem de leitura econômica" in instructions
@@ -4548,11 +4645,10 @@ class TestNewGenerators:
         assert "[a preencher]" not in r
         assert "Preencha conforme analisar" not in r
 
-    def test_whiteboard_professor_signal(self):
+    def test_whiteboard_lista_entrada(self):
         from src.builder.engine import whiteboard_index_md
         e = self._e("quadro-branco", "AulaHash", ".png")
-        e.professor_signal = "usa colisão linear"
-        assert "colisão linear" in whiteboard_index_md(self.COURSE_META, [e])
+        assert "AulaHash" in whiteboard_index_md(self.COURSE_META, [e])
 
     def test_whiteboard_empty(self):
         from src.builder.engine import whiteboard_index_md
@@ -4568,9 +4664,8 @@ class TestNewGenerators:
     def test_whiteboard_entries_no_patterns_section(self):
         from src.builder.engine import whiteboard_index_md
         e = self._e("quadro-branco", "AulaHash", ".png")
-        e.professor_signal = "usa colisão linear"
         r = whiteboard_index_md(self.COURSE_META, [e])
-        assert "colisão linear" in r
+        assert "AulaHash" in r
         assert "Padrões pedagógicos" not in r
 
 
@@ -5180,6 +5275,120 @@ def test_demote_respects_manual_review_override():
     assert next(b for b in blocks if b["id"] == "rev")["kind"] == "review"
 
 
+def test_promote_preexam_session_review_to_review():
+    # RED real (TCC bloco-16/30, 2026-08-11): vespera com unidade herdada fica
+    # class porque o label de sessao ("revisao para prova p1") so era consultado
+    # sem unidade — falso negativo simetrico ao demote.
+    from src.builder.timeline.index import _promote_preexam_reviews
+    blocks = [
+        {"id": "c1", "kind": "class", "unit_slug": "u1",
+         "period_start": "2026-05-01", "sessions": [{"label": "conteudo aula"}]},
+        {"id": "vesp", "kind": "class", "unit_slug": "u1", "unit_confidence": 0.4,
+         "period_start": "2026-05-06",
+         "sessions": [{"label": "revisao para prova p1 aula"}]},
+        {"id": "p1", "kind": "assessment", "unit_slug": "",
+         "period_start": "2026-05-08", "sessions": [{"label": "prova p1"}]},
+    ]
+    _promote_preexam_reviews(blocks)
+    vesp = next(b for b in blocks if b["id"] == "vesp")
+    assert vesp["kind"] == "review"
+    assert vesp["unit_slug"] == ""          # vespera nao carrega unidade
+    assert vesp["unit_confidence"] == 0.0
+
+
+def test_promote_skips_content_review_far_from_exam():
+    # MF bloco-03 ("revisao de logica de predicados"): proximo decisivo e class
+    # -> NAO promove (revisao de conteudo segue aula).
+    from src.builder.timeline.index import _promote_preexam_reviews
+    blocks = [
+        {"id": "rev-cont", "kind": "class", "unit_slug": "u1",
+         "period_start": "2026-03-11",
+         "sessions": [{"label": "revisao de logica de predicados exercicios aula"}]},
+        {"id": "c2", "kind": "class", "unit_slug": "u1",
+         "period_start": "2026-03-13", "sessions": [{"label": "inducao aula"}]},
+        {"id": "p1", "kind": "assessment", "unit_slug": "",
+         "period_start": "2026-04-01", "sessions": [{"label": "prova p1"}]},
+    ]
+    _promote_preexam_reviews(blocks)
+    assert next(b for b in blocks if b["id"] == "rev-cont")["kind"] == "class"
+
+
+def test_promote_skips_correction_and_manual_override():
+    from src.builder.timeline.index import _promote_preexam_reviews
+    blocks = [
+        {"id": "corr", "kind": "class", "unit_slug": "u2",
+         "period_start": "2026-06-10",
+         "sessions": [{"label": "correcao da p1 revisao aula"}]},  # correcao: fica
+        {"id": "manual", "kind": "class", "manual_kind_override": "class",
+         "unit_slug": "u2", "period_start": "2026-06-12",
+         "sessions": [{"label": "revisao para prova p2"}]},
+        {"id": "p2", "kind": "assessment", "unit_slug": "",
+         "period_start": "2026-06-15", "sessions": [{"label": "prova p2"}]},
+    ]
+    _promote_preexam_reviews(blocks)
+    assert next(b for b in blocks if b["id"] == "corr")["kind"] == "class"
+    assert next(b for b in blocks if b["id"] == "manual")["kind"] == "class"
+
+
+def test_classify_planning_keyword_needs_no_unit_evidence():
+    # RED real (IA bloco-16, 2026-08-11): "introducao a agentes e planejamento"
+    # (TEMA de aula, Atividade=Aula, DP da unidade) virou kind=planning pela
+    # keyword — sequestro administrativo de aula de conteudo.
+    from src.builder.timeline.classifier import classify_block
+    from src.builder.timeline.kinds import BlockKind
+    aula = {
+        "topic_text": "introducao agentes planejamento",
+        "auto_unit_slug": "unidade-03",
+        "sessions": [{"label": "introducao a agentes e planejamento aula"}],
+    }
+    assert classify_block(aula) is BlockKind.CLASS
+    admin = {
+        "topic_text": "planejamento",
+        "sessions": [{"label": "planejamento do semestre"}],
+    }
+    assert classify_block(admin) is BlockKind.PLANNING
+
+
+def test_promote_idempotent_with_chained_reviews():
+    # Achado do review 2026-08-12: com R1-class "revisao" -> R2 "revisao" ->
+    # prova, cada run promovia um bloco a mais (REVIEW nao era decisivo no
+    # promote). Idempotencia: 2 runs = mesmo resultado.
+    from src.builder.timeline.index import _promote_preexam_reviews
+    def build():
+        return [
+            {"id": "r1", "kind": "class", "unit_slug": "u1",
+             "period_start": "2026-05-04", "sessions": [{"label": "revisao geral aula"}]},
+            {"id": "r2", "kind": "class", "unit_slug": "u1",
+             "period_start": "2026-05-06", "sessions": [{"label": "revisao para prova p1"}]},
+            {"id": "p1", "kind": "assessment", "unit_slug": "",
+             "period_start": "2026-05-08", "sessions": [{"label": "prova p1"}]},
+        ]
+    blocks = build()
+    _promote_preexam_reviews(blocks)
+    once = [(b["id"], b["kind"]) for b in blocks]
+    _promote_preexam_reviews(blocks)
+    twice = [(b["id"], b["kind"]) for b in blocks]
+    assert once == twice == [("r1", "class"), ("r2", "review"), ("p1", "assessment")]
+
+
+def test_review_inherits_manual_scope_of_next_exam():
+    # RED real (TCC vespera-P1, 2026-08-11): prova com manual_scope_unit_slugs
+    # ("P1 cobre u01+u02", note do gold) mas a revisao herdava o scope POR DATA
+    # (u01+u02+u03) — link_review_scope nao via o manual da prova.
+    from src.builder.timeline.index import apply_assessment_review_scope
+    blocks = [
+        {"id": "rev", "kind": "review", "unit_slug": "",
+         "period_start": "2026-05-06", "sessions": [{"label": "revisao para prova p1"}]},
+        {"id": "p1", "kind": "assessment", "unit_slug": "",
+         "period_start": "2026-05-08",
+         "block_manual_scope_slugs": ["u1", "u2"],
+         "sessions": [{"label": "prova p1"}]},
+    ]
+    apply_assessment_review_scope(blocks)
+    assert next(b for b in blocks if b["id"] == "p1")["scope_unit_slugs"] == ["u1", "u2"]
+    assert next(b for b in blocks if b["id"] == "rev")["scope_unit_slugs"] == ["u1", "u2"]
+
+
 def test_apply_assessment_review_scope_idempotent_and_manual_label():
     from src.builder.timeline.index import apply_assessment_review_scope
     blocks = [
@@ -5243,40 +5452,9 @@ def test_apply_scope_review_honors_manual_override():
     assert r1["primary_topic_label"] == "Conteúdo: u1"
 
 
-def test_serialize_attaches_scope_unit_slugs():
-    from src.builder.timeline.index import _serialize_timeline_index
-    ti = {"blocks": [
-        {"id": "b1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1", "topic_text": "Logica", "rows": []},
-        {"id": "p1", "kind": "assessment", "period_start": "2026-04-02", "topic_text": "Prova P1", "rows": []},
-        {"id": "rev", "kind": "review", "period_start": "2026-04-01", "topic_text": "Exercicios de revisao", "rows": []},
-    ]}
-    out = _serialize_timeline_index(ti)
-    by_id = {b["id"]: b for b in out["blocks"]}
-    assert by_id["p1"]["scope_unit_slugs"] == ["unidade-1"]
-    assert by_id["rev"]["scope_unit_slugs"] == ["unidade-1"]   # herda P1
-    assert "scope_unit_slugs" not in by_id["b1"] or by_id["b1"]["scope_unit_slugs"] == []
-
-
-def test_serialize_timeline_idempotent_scope():
-    """Regressão: re-serializar o output não muda scope nem rótulo (idempotente)."""
-    from src.builder.timeline.index import _serialize_timeline_index
-    ti = {"blocks": [
-        {"id": "b1", "kind": "class", "period_start": "2026-03-02", "unit_slug": "unidade-1", "topic_text": "Logica", "rows": []},
-        {"id": "p1", "kind": "assessment", "period_start": "2026-04-02", "topic_text": "Prova P1", "rows": []},
-        {"id": "ps", "kind": "assessment", "period_start": "2026-07-08", "topic_text": "Prova PS", "rows": []},
-        {"id": "rev", "kind": "review", "period_start": "2026-04-01", "topic_text": "Exercicios de revisao", "rows": []},
-    ]}
-    out1 = _serialize_timeline_index(ti)
-    out2 = _serialize_timeline_index(out1)
-    s1 = {b["id"]: b.get("scope_unit_slugs") for b in out1["blocks"]}
-    s2 = {b["id"]: b.get("scope_unit_slugs") for b in out2["blocks"]}
-    assert s1 == s2
-    assert s2["p1"] == ["unidade-1"]
-    assert s2["ps"] == ["unidade-1"]
-    assert s2["rev"] == ["unidade-1"]
-    l1 = {b["id"]: b.get("primary_topic_label") for b in out1["blocks"]}
-    l2 = {b["id"]: b.get("primary_topic_label") for b in out2["blocks"]}
-    assert l1 == l2
+# Cutover passo 3: os 2 testes de scope VIA _serialize_timeline_index (fantasma
+# v4, morto) foram removidos — a cobertura do invariante de escopo permanece no
+# teste direto de apply_assessment_review_scope acima.
 
 
 class _ProfCfg:
@@ -5405,6 +5583,44 @@ def test_appconfig_drops_removed_legacy_keys(tmp_path, monkeypatch):
     assert "profile_backends" not in cfg.data
 
 
+def test_appconfig_migrates_legacy_vision_model_via_table(tmp_path, monkeypatch):
+    """Migração de vision_model é tabela (_MODEL_MIGRATIONS), não if inline (T1b):
+    cada (backend, modelo_velho) da tabela migra para o novo; combinações fora
+    da tabela (backend diferente, ou modelo já novo) não mexem no valor."""
+    import json as _json
+    import src.ui.theme as theme_mod
+
+    for old_model in ("qwen3-vl", "qwen2.5vl:7b", "qwen3-vl:8b"):
+        cfg_path = tmp_path / f"cfg_{old_model.replace(':', '_')}.json"
+        cfg_path.write_text(_json.dumps({
+            "vision_backend": "ollama",
+            "vision_model": old_model,
+        }), encoding="utf-8")
+        monkeypatch.setattr(theme_mod, "CONFIG_PATH", cfg_path)
+        cfg = theme_mod.AppConfig()
+        assert cfg.get("vision_model") == "qwen3-vl:235b-cloud", old_model
+
+    # backend diferente com o mesmo modelo velho: fora da tabela, não migra
+    other_backend = tmp_path / "cfg_other_backend.json"
+    other_backend.write_text(_json.dumps({
+        "vision_backend": "gemini",
+        "vision_model": "qwen3-vl",
+    }), encoding="utf-8")
+    monkeypatch.setattr(theme_mod, "CONFIG_PATH", other_backend)
+    cfg = theme_mod.AppConfig()
+    assert cfg.get("vision_model") == "qwen3-vl"
+
+    # modelo já migrado: idempotente, não muda
+    already_new = tmp_path / "cfg_already_new.json"
+    already_new.write_text(_json.dumps({
+        "vision_backend": "ollama",
+        "vision_model": "qwen3-vl:235b-cloud",
+    }), encoding="utf-8")
+    monkeypatch.setattr(theme_mod, "CONFIG_PATH", already_new)
+    cfg = theme_mod.AppConfig()
+    assert cfg.get("vision_model") == "qwen3-vl:235b-cloud"
+
+
 def test_unit_block_conflict_roundtrip():
     from src.models.core import FileEntry
     e = FileEntry(source_path="C:/x/a.pdf", file_type="pdf", category="material", title="t",
@@ -5447,3 +5663,17 @@ def test_subjectprofile_turma_schedule_roundtrip():
     back = SubjectProfile.from_dict(d)
     assert back.turma == "031"
     assert back.schedule_url.endswith("sem=1")
+
+
+def test_auto_detect_category_biblioteca_nao_e_bibliografia():
+    from src.utils.helpers import auto_detect_category
+    assert auto_detect_category("biblioteca-grafica-opengl.pdf") != "bibliografia"
+    assert auto_detect_category("imageclass-biblioteca-para-manipulacao-de-imagens.pdf") != "bibliografia"
+    assert auto_detect_category("bibliografia-complementar.pdf") == "bibliografia"
+    assert auto_detect_category("Bibliography.pdf") == "bibliografia"
+
+
+def test_auto_detect_category_ementa_so_como_palavra():
+    from src.utils.helpers import auto_detect_category
+    assert auto_detect_category("material-complementar.pdf") != "cronograma"
+    assert auto_detect_category("ementa-2026.pdf") == "cronograma"

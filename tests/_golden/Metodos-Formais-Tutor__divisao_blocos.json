@@ -63,7 +63,7 @@
     "id": "bloco-11",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "logica programas correcao parcial correcao total terminacao invariantes laco"
+    "topico": "logica programas correcao parcial correcao total terminacao invariantes laco entrega trabalho"
   },
   {
     "id": "bloco-12",
@@ -91,38 +91,50 @@
   },
   {
     "id": "bloco-16",
-    "n_sessoes": 5,
-    "span_dias": 14,
-    "topico": "verificacao modelos logica temporal; verificacao modelos ferramenta"
+    "n_sessoes": 3,
+    "span_dias": 7,
+    "topico": "verificacao modelos logica temporal"
   },
   {
     "id": "bloco-17",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-02-verificacao-de-programas"
+    "topico": "suspensao jogo copa mundo"
   },
   {
     "id": "bloco-18",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-02-verificacao-de-programas"
+    "topico": "verificacao modelos ferramenta"
   },
   {
     "id": "bloco-19",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "substituicao"
+    "topico": "Conteúdo: unidade-02-verificacao-de-programas, unidade-03-verificacao-de-modelos"
   },
   {
     "id": "bloco-20",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "devolucao"
+    "topico": "entrega"
   },
   {
     "id": "bloco-21",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-01-metodos-formais, unidade-02-verificacao-de-programas"
+    "topico": "substituicao"
+  },
+  {
+    "id": "bloco-22",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "devolucao"
+  },
+  {
+    "id": "bloco-23",
+    "n_sessoes": 1,
+    "span_dias": 0,
+    "topico": "Conteúdo: unidade-01-metodos-formais, unidade-02-verificacao-de-programas, unidade-03-verificacao-de-modelos"
   }
 ]

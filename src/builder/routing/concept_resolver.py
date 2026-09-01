@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from typing import Callable, Dict, List, Optional, Sequence, TypedDict
 
+from src.builder.routing.dates import extract_dates
 from src.builder.routing.file_map import (
+    _block_period_bounds,
     _score_block_date_match,
     score_card_evidence_against_entry,
 )
@@ -14,6 +16,8 @@ from src.builder.routing.thresholds import (
 )
 from src.builder.text.normalize import normalize_match_text
 from src.builder.text.stopwords import TIMELINE_GENERIC_TOKENS, UNIT_GENERIC_TOKENS
+from src.builder.timeline.card_block import resolve_block_ref as _rbr
+from src.builder.timeline.block_identity import _POSITIONAL_RE as _POS_RE
 
 _STOPWORDS = TIMELINE_GENERIC_TOKENS | UNIT_GENERIC_TOKENS
 
@@ -157,6 +161,26 @@ def concept_token_weights(
     return weights
 
 
+
+def overlap_min(entry_vec: dict, block_vec: dict) -> float:
+    """Soma de min() sobre a interseccao, em ordem FIXA.
+
+    O `sorted()` NAO e cosmetico. `keys() & keys()` devolve set, e a ordem de
+    iteracao de um set de str muda a cada processo (hash randomization do
+    Python). Somar float em ordem diferente da resultados diferentes no ultimo
+    ULP — o bastante pra `computed_block_confidence` mudar entre duas rodadas
+    identicas do reprocess, a `band` flipar na fronteira baixa/media e, num
+    empate tecnico, o bloco VENCEDOR trocar (medido 2026-08-19: 6 entries do TCC
+    divergiam entre rodadas; TCC aula-06, confianca 0.084, trocava de bloco; com
+    PYTHONHASHSEED=0, zero divergencias). Reprocess so e idempotente com a soma
+    em ordem fixa. Coberto por tests/test_determinismo_do_score.py.
+    """
+    return sum(
+        min(entry_vec[tok], block_vec[tok])
+        for tok in sorted(entry_vec.keys() & block_vec.keys())
+    )
+
+
 def concept_vector(
     item: object,
     weights: Dict[str, float],
@@ -246,11 +270,17 @@ def _llm_vote(llm_curation: Optional[dict]) -> Dict[str, float]:
 
 
 def _manual_block_id(entry: dict, blocks: List[dict]) -> str:
+    """Pino manual em uuid OU display (bloco-NN legado); devolve o id CANONICO
+    (uuid quando o bloco tem) ou ''. Pinos migraram pra uuid na Fase 1
+    (file_map.py:498-513); casar so display matava o Tier 1 em producao
+    (review final F4, achado C1)."""
     raw = str(entry.get("manual_timeline_block_id") or "").strip()
     if not raw:
         return ""
-    ids = {str(b.get("id", "")).strip() for b in blocks or []}
-    return raw if raw in ids else ""
+    for b in blocks or []:
+        if raw in (str(b.get("id", "")).strip(), str(b.get("block_uuid", "")).strip()):
+            return str(b.get("block_uuid") or b.get("id") or "")
+    return ""
 
 
 def resolve_material_assignment(
@@ -269,7 +299,11 @@ def resolve_material_assignment(
     # Tier 1 (manual): override vence tudo.
     manual = _manual_block_id(entry, blocks)
     if manual:
-        winner = next((b for b in blocks if str(b.get("id", "")) == manual), None)
+        winner = next(
+            (b for b in blocks
+             if manual in (str(b.get("block_uuid") or ""), str(b.get("id") or ""))),
+            None,
+        )
         return Assignment(
             block_id=manual,
             unit_slug=_block_unit_slug(winner) if winner else "",
@@ -323,10 +357,8 @@ def resolve_material_assignment(
     votes = _llm_vote(llm_curation)
     # Lazy-resolve legacy bloco-NN vote keys to uuid
     if votes and blocks:
-        from src.builder.timeline.card_block import resolve_block_ref as _rbr
         _resolved_votes: Dict[str, float] = {}
         for _k, _v in votes.items():
-            from src.builder.timeline.block_identity import _POSITIONAL_RE as _POS_RE
             if _POS_RE.match(str(_k)):
                 _r = _rbr(_k, blocks)
                 _k = _r if _r else _k
@@ -336,13 +368,26 @@ def resolve_material_assignment(
     scored: List[tuple] = []
     for block in blocks:
         block_vec = concept_vector(block, weights, normalize=norm)
-        overlap = sum(
-            min(entry_vec[tok], block_vec[tok])
-            for tok in entry_vec.keys() & block_vec.keys()
-        )
+        overlap = overlap_min(entry_vec, block_vec)
         bid = str(block.get("block_uuid") or block.get("id") or "")
         llm_term = votes.get(bid, 0.0)
         date_term = _score_block_date_match(signals, block)
+        # Data do NOME do arquivo (title/raw_target CRUS) — unica fonte que
+        # vira tier autoritativo. Extraida com dm_two_digit_only ("07.04" sim;
+        # "5.4"/"2.1" sao secao/capitulo, nao data) e em QUALQUER posicao do
+        # titulo (o separador real sobrevive no texto cru; a forma com espaco
+        # segue ancorada no inicio, cf. dates.py). Data no MARKDOWN (enunciado:
+        # entrega/prova) fica so no boost do fused: "due nunca decide sozinho"
+        # (spec Tier 2 categoria; casos reais ES2 t1/TCC T2).
+        _start_b, _end_b = _block_period_bounds(block)
+        name_date_in_period = False
+        if _start_b and _end_b:
+            for _src in (str(entry.get("title") or ""), str(entry.get("raw_target") or "")):
+                if any(_start_b <= d <= _end_b
+                       for d in extract_dates(_src, default_year=_start_b.year,
+                                              dm_two_digit_only=True)):
+                    name_date_in_period = True
+                    break
         seq_term = score_sequence_match(signals, block)
         card_term = score_card_evidence_against_entry(
             signals, block.get("card_evidence", []) or [], normalize_match_text=norm
@@ -365,12 +410,19 @@ def resolve_material_assignment(
             "lesson": round(lesson_term, 4),
             "fused": round(fused, 4),
             "authoritative_card": card_term >= CARD_AUTHORITATIVE,
+            # Data NO NOME dentro do periodo do bloco (o nome de arquivo
+            # carrega a data da aula — ruling user 2026-08-17, caso SO
+            # 0704-threads: prova e "atrator de conceito" e vencia a aula).
+            "authoritative_date": name_date_in_period,
         }))
 
-    # Tier 2 (card/data autoritativo): se ALGUM bloco tem card-evidence forte,
-    # ele vence o concept-match. Senao, o fundido (Tier 3) decide. Posicional
-    # (Tier 4) e o fallback: empate/tudo-zero -> ordem dos blocos.
-    authoritative = [s for s in scored if s[2]["authoritative_card"]]
+    # Tier 2 (card/data autoritativo): se ALGUM bloco tem card-evidence forte
+    # OU data do material dentro do periodo, o pool encolhe pra esses — o
+    # concept-match nao compete de fora (fecha o gap do comentario original:
+    # so card estava implementado). Senao, o fundido (Tier 3) decide.
+    # Posicional (Tier 4) e o fallback: empate/tudo-zero -> ordem dos blocos.
+    authoritative = [s for s in scored
+                     if s[2]["authoritative_card"] or s[2]["authoritative_date"]]
     pool = authoritative if authoritative else scored
     pool.sort(key=lambda s: s[1], reverse=True)
 
@@ -378,7 +430,7 @@ def resolve_material_assignment(
     runner_up_score = pool[1][1] if len(pool) > 1 else 0.0
 
     if authoritative:
-        method = "card"
+        method = "card" if winner_breakdown["authoritative_card"] else "date"
     elif best_score <= 0.0:
         method = "positional"
     else:

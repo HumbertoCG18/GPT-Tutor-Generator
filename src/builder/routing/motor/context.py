@@ -6,9 +6,12 @@ lê os 3 artefatos gerados do repo-tutor, nunca escreve.
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 
 from src.builder.routing.motor.contracts import MotorContext
+
+logger = logging.getLogger(__name__)
 
 
 def load_repo_artifact(repo: Path, rel: str):
@@ -17,7 +20,8 @@ def load_repo_artifact(repo: Path, rel: str):
         return {}
     try:
         return json.loads(p.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception as exc:
+        logger.debug("artefato %s ilegivel: %s", rel, exc)
         return {}
 
 

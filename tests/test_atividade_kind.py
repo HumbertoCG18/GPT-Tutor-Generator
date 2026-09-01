@@ -66,3 +66,37 @@ def test_prova_rows_aggregate_to_assessment_source_kind():
     assert _aggregate_source_kind(rows) == "assessment"
     block = {"source_kind": _aggregate_source_kind(rows), "unit_slug": "u1"}
     assert classify_block(block) == BlockKind.ASSESSMENT
+
+
+# Raiz (2026-08-25): o kind da linha vinha SO do marcador {kind=} ou da coluna
+# Atividade; o TEXTO da linha nunca era lido. "suspensao jogo copa do mundo" com
+# Atividade "Aula" entrava como aula, fundia com a aula seguinte ("devops
+# exercicios" = continuacao) e o classificador so via o agregado: ES2 bloco-11
+# virou `suspended` inteiro, IA bloco-06 engoliu "suspensao de aulas" como class.
+# Censo nos 5 cursos: 4 blocos mistos (IA 06/15, SO 25, ES2 11).
+def test_texto_nao_academico_vence_atividade_aula_generica():
+    rows = _build_timeline_candidate_rows([_row("suspensao jogo copa do mundo", "Aula", "19/06/2026")])
+    assert rows[0]["kind"] == "suspended"
+
+
+def test_texto_feriado_sem_atividade_vira_holiday():
+    rows = _build_timeline_candidate_rows([_row("Feriado de Tiradentes", "", "21/04/2026")])
+    assert rows[0]["kind"] == "holiday"
+
+
+def test_texto_de_aula_continua_class():
+    rows = _build_timeline_candidate_rows([_row("Prova de teoremas em Isabelle", "Aula"),
+                                           _row("Correcao de exercicios", "Aula")])
+    assert [r["kind"] for r in rows] == ["class", "class"]
+
+
+def test_atividade_explicita_nao_class_continua_vencendo_o_texto():
+    rows = _build_timeline_candidate_rows([_row("suspensao jogo", "Prova")])
+    assert rows[0]["kind"] == "assessment"
+
+
+def test_linha_suspensa_por_texto_nao_funde_com_a_aula_seguinte():
+    from src.builder.timeline.index import _rows_belong_to_same_thematic_block
+    rows = _build_timeline_candidate_rows([_row("suspensao jogo copa do mundo", "Aula", "19/06/2026"),
+                                           _row("devops exercicios", "Aula", "26/06/2026")])
+    assert _rows_belong_to_same_thematic_block(rows[0], rows[1], current_rows=[rows[0]]) is False

@@ -10,7 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List
 from PIL import Image, ImageTk
-from src.models.core import FileEntry
+from src.models.core import FileEntry, SubjectStore
 from src.builder.artifacts.navigation import (
     _clean_extraction_noise,
     _inject_executive_summary,
@@ -933,9 +933,6 @@ class CuratorStudioPanel(ttk.Frame):
             # Campo novo e explícito para o backlog / viewers
             target["approved_markdown"] = approved_rel
             target["curated_markdown"] = approved_rel
-            target["approved_source_markdown"] = approved_source_rel
-            target["approved_at"] = datetime.now().isoformat(timespec="seconds")
-            target["review_status"] = "approved"
 
             # Limpa ponteiros antigos se eles foram apagados ou não existem mais
             for key in ("base_markdown", "advanced_markdown", "manual_review"):
@@ -1173,8 +1170,6 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
                 approved_rel = self._repo_relative(dest_path)
                 target["approved_markdown"] = approved_rel
                 target["curated_markdown"] = approved_rel
-                target["approved_at"] = datetime.now().isoformat(timespec="seconds")
-                target["review_status"] = "approved"
                 approved_count += 1
 
             # Limpar template de manual-review se existir
@@ -1282,34 +1277,33 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
             "Reprovar este arquivo?\n\n"
             "Isso irá:\n"
             "- remover os arquivos Markdown gerados\n"
-            "- remover o PDF/arquivo bruto copiado para o repositório\n"
             "- retirar a entry do manifest\n"
-            "- devolver o arquivo para a fila 'A Processar'\n"
+            "- devolver o arquivo para a fila 'A Processar'\n\n"
+            "O PDF/arquivo bruto em raw/ é MANTIDO de propósito: serve de rede para\n"
+            "reimportar sem depender do stash. Apague à mão se quiser limpar."
         )
         if not messagebox.askyesno("Reprovar arquivo", msg):
             return
 
+        # `reject(entry_id)` e a unica assinatura que existe (ops/lifecycle_ops.py:313).
+        # A chamada com `preserve_raw=False` SEMPRE levantava TypeError e caia num ramo
+        # de compatibilidade que remontava um RepoBuilder identico e chamava a mesma
+        # coisa — dois builders, um resultado. Colapsado.
+        # `reject` NAO apaga `raw_target` (a copia em `raw/`), so os derivados. Isso e
+        # DELIBERADO — ruling do user 2026-08-25, opcao (b): o bruto no repo e rede para
+        # reimportar sem depender do stash (`SubjectProfile.stash_folder`, por cadeira).
+        # O texto do dialogo acima foi corrigido para parar de prometer a delecao.
+        # Ver a secao do reject em pendencias.md.
         try:
+            profile = SubjectStore().find_by_repo_root(self.repo_dir)
             builder = RepoBuilder(
                 root_dir=self.repo_dir,
                 course_meta=self._repo_course_meta(),
                 entries=[],
                 options={},
+                subject_profile=profile,
             )
-            entry_data = builder.reject(entry_id, preserve_raw=False)
-        except TypeError:
-            # Compatibilidade se o engine local ainda estiver com assinatura antiga
-            try:
-                builder = RepoBuilder(
-                    root_dir=self.repo_dir,
-                    course_meta=self._repo_course_meta(),
-                    entries=[],
-                    options={},
-                )
-                entry_data = builder.reject(entry_id)
-            except Exception as e:
-                messagebox.showerror("Erro", f"Falha ao reprovar:\n{e}")
-                return
+            entry_data = builder.reject(entry_id)
         except Exception as e:
             messagebox.showerror("Erro", f"Falha ao reprovar:\n{e}")
             return
@@ -1455,20 +1449,3 @@ Selecione a fonte (Base ou Avançado) no seletor à direita para revisar.
             f"✅ Aprovado → {dest_label}{file_id}.md"
             + (f" | Removidos: {', '.join(deleted)}" if deleted else "")
         )
-
-
-class CuratorStudio(tk.Toplevel):
-    def __init__(self, parent, repo_dir: str, theme_mgr):
-        super().__init__(parent)
-        self.title("Curator Studio")
-        self.geometry("1600x900")
-        self.minsize(1100, 650)
-        self.panel = CuratorStudioPanel(
-            self,
-            repo_dir,
-            theme_mgr,
-            app_parent=parent,
-            bind_target=self,
-            apply_theme=True,
-        )
-        self.panel.pack(fill="both", expand=True)

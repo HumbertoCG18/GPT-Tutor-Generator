@@ -1,4 +1,4 @@
-id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante,true_block_uuid
+﻿id,material,true_block_id,computed_block_id,temporal_block_id,pair_key,provenance,scope,data_real,scorable,discriminante,true_block_uuid
 conjuntosindutivos,ConjuntosIndutivos.pdf,bloco-04,bloco-04,bloco-04,,block-direct,clean,,yes,no,7ccdaf5e-76b8-48e5-82b5-05f80b3f054b
 correcaoterminacao,CorrecaoTerminacao.pdf,bloco-11,bloco-11,bloco-11,,block-direct,clean,,yes,yes,c9f5f7cf-3477-4531-be7a-f7b68727009c
 exerciciosconjuntosindutivos,ExerciciosConjuntosIndutivos.pdf,bloco-04,bloco-04,bloco-04,,block-direct,clean,,yes,no,7ccdaf5e-76b8-48e5-82b5-05f80b3f054b
@@ -28,21 +28,20 @@ formalizacaoalgoritmos-recursao3,FormalizacaoAlgoritmos_Recursao3.pdf,bloco-04,b
 introducao,introducao.pdf,bloco-02,bloco-02,bloco-02,,block-direct,clean,,yes,no,1e73625a-de3e-4c8a-87c4-d301a3138c0b
 logicadehoare,LogicaDeHoare.pdf,bloco-10,bloco-10,bloco-10,,block-direct,clean,,yes,no,171a1a09-a72d-490d-b4d8-5843cfb301b4
 logicadehoare-exercicios-respostas,LogicaDeHoare_exercicios_respostas.pdf,bloco-10,bloco-10,bloco-10,logicadehoare-exercicios-respostas,block-direct,clean,,yes,no,171a1a09-a72d-490d-b4d8-5843cfb301b4
-logicadehoare1-exercicios-respostas,LogicaDeHoare1_exercicios_respostas.pdf,bloco-10,bloco-10,bloco-10,logicadehoare-exercicios-respostas,block-direct,clean,,yes,no,171a1a09-a72d-490d-b4d8-5843cfb301b4
 logicadehoare2,LogicaDeHoare2.pdf,bloco-10,bloco-10,bloco-10,,block-direct,clean,,yes,no,171a1a09-a72d-490d-b4d8-5843cfb301b4
 logicapredicados-semantica,logicaPredicados_semantica.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,2edd762f-2dc8-4437-90c7-c207b796434a
 logicapredicados-sintaxe,logicaPredicados_sintaxe.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,2edd762f-2dc8-4437-90c7-c207b796434a
 logicaproposicional-semantica,logicaProposicional_semantica.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,2edd762f-2dc8-4437-90c7-c207b796434a
 logicaproposicional-sintaxe,logicaProposicional_sintaxe.pdf,bloco-03,bloco-03,bloco-03,,block-direct,clean,,yes,no,2edd762f-2dc8-4437-90c7-c207b796434a
 plano,plano.pdf,bloco-01,,,,block-direct,clean,,yes,yes,c4bf9e4c-80f8-4e57-b2b1-a943c6656e52
-provasindutivas-especificacoesrecursivas,ProvasIndutivas_EspecificaçõesRecursivas.pdf,bloco-06,bloco-05,bloco-05,,block-direct,clean,,yes,yes,5599d015-10e0-4f6e-ad17-c526b903dc09
-provasindutivas-especificacoesrecursivas-arvores,ProvasIndutivas_EspecificaçõesRecursivas_Arvores.pdf,bloco-06,bloco-05,bloco-05,,block-direct,clean,,yes,yes,5599d015-10e0-4f6e-ad17-c526b903dc09
-provasindutivas-especificacoesrecursivas-listas,ProvasIndutivas_EspecificaçõesRecursivas_Listas.pdf,bloco-06,bloco-05,bloco-05,,block-direct,clean,,yes,yes,5599d015-10e0-4f6e-ad17-c526b903dc09
+provasindutivas-especificacoesrecursivas,ProvasIndutivas_EspecificaçõesRecursivas.pdf,bloco-05,bloco-05,bloco-05,,block-direct,clean,,yes,yes,7a5e29db-f228-4e96-bd4b-272d5b74e2ae
+provasindutivas-especificacoesrecursivas-arvores,ProvasIndutivas_EspecificaçõesRecursivas_Arvores.pdf,bloco-05,bloco-05,bloco-05,,block-direct,clean,,yes,yes,7a5e29db-f228-4e96-bd4b-272d5b74e2ae
+provasindutivas-especificacoesrecursivas-listas,ProvasIndutivas_EspecificaçõesRecursivas_Listas.pdf,bloco-05,bloco-05,bloco-05,,block-direct,clean,,yes,yes,7a5e29db-f228-4e96-bd4b-272d5b74e2ae
 revisao,revisao.pdf,bloco-03,bloco-02,bloco-02,,block-direct,clean,,yes,yes,2edd762f-2dc8-4437-90c7-c207b796434a
 revisao-p1,revisao_p1.pdf,bloco-07,bloco-06,bloco-06,,block-direct,clean,,yes,yes,1dd6f143-d239-45bb-8a05-391ef8acbba1
 revisao-p1-gabarito,revisao_p1_gabarito.pdf,bloco-07,bloco-07,bloco-07,,block-direct,clean,,yes,no,1dd6f143-d239-45bb-8a05-391ef8acbba1
-t1-2026-1,t1_2026_1.pdf,bloco-15,bloco-05,bloco-05,,block-direct,clean,,yes,yes,95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0
-t2-2026-1,t2_2026_1.pdf,bloco-16,bloco-02,bloco-02,,block-direct,clean,,yes,yes,a6ac04f2-7611-4bef-b74a-54390cef4084
+t1-2026-1,t1_2026_1.pdf,bloco-11,bloco-05,bloco-05,,block-direct,clean,,yes,yes,c9f5f7cf-3477-4531-be7a-f7b68727009c
+t2-2026-1,t2_2026_1.pdf,bloco-18,bloco-02,bloco-02,,block-direct;relabel-2026-08-25-fase1,clean,,yes,yes,37d49c0d-3cc1-4a8b-add6-d82ea868ec52
 verificacaomodelos,verificacaomodelos.pdf,bloco-16,bloco-16,bloco-16,,block-direct,clean,,yes,no,a6ac04f2-7611-4bef-b74a-54390cef4084
 arvores,arvores.thy,bloco-06,bloco-06,bloco-06,,block-direct,clean,,yes,no,5599d015-10e0-4f6e-ad17-c526b903dc09
 classes-parte1,classes_parte1.zip,bloco-15,bloco-15,bloco-15,,block-direct,clean,,yes,no,95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0
@@ -60,9 +59,9 @@ introducao-zip,introducao.zip,bloco-12,bloco-12,bloco-12,,block-direct,clean,,ye
 invariantes,invariantes.zip,bloco-11,bloco-11,bloco-11,,block-direct,clean,,yes,yes,c9f5f7cf-3477-4531-be7a-f7b68727009c
 listas,listas.thy,bloco-06,bloco-06,bloco-06,,block-direct,clean,,yes,no,5599d015-10e0-4f6e-ad17-c526b903dc09
 provas,provas.thy,bloco-06,bloco-05,bloco-05,,block-direct,clean,,yes,yes,5599d015-10e0-4f6e-ad17-c526b903dc09
-t1-2026-1-thy,T1_2026_1.thy,bloco-15,bloco-05,bloco-05,,block-direct,clean,,yes,yes,95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0
+t1-2026-1-thy,T1_2026_1.thy,bloco-11,bloco-05,bloco-05,,block-direct,clean,,yes,yes,c9f5f7cf-3477-4531-be7a-f7b68727009c
 terminacao,terminacao.zip,bloco-12,bloco-11,bloco-11,,block-direct,clean,,yes,yes,e3bc8a61-e729-4f25-9bc5-12b8a47151e3
 tiposindutivos,tiposindutivos.zip,bloco-15,bloco-15,bloco-15,,block-direct,clean,,yes,no,95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0
 archive-of-formal-proofs-355fb8,Archive of Formal Proofs,bloco-01,,bloco-01,,block-direct,clean,,yes,no,c4bf9e4c-80f8-4e57-b2b1-a943c6656e52
 aws-encryption-sdk,aws-encryption-sdk,bloco-01,,bloco-01,,block-direct,clean,,yes,no,c4bf9e4c-80f8-4e57-b2b1-a943c6656e52
-eth2,eth2.0-dafny,bloco-12,,bloco-01,,block-direct,clean,,yes,yes,e3bc8a61-e729-4f25-9bc5-12b8a47151e3
+eth2,eth2.0-dafny,bloco-01,,bloco-01,,block-direct;relabel-2026-08-25-fase1,clean,,yes,yes,c4bf9e4c-80f8-4e57-b2b1-a943c6656e52

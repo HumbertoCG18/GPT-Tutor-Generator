@@ -12,17 +12,28 @@ from __future__ import annotations
 
 import math
 import re
-from typing import List
+from typing import Optional, List
 
 from src.builder.text.normalize import normalize_match_text
 from src.builder.routing.motor.contracts import MotorContext, AnchorDecision
 from src.builder.routing.thresholds import confidence_band
 
 # Espelha marco0._GEN: stems (prefixo 8) que NÃO discriminam bloco.
+# Palavras-função PT: medição 2026-08-05 (docs/reports/2026-08-05-planob-investigacao.md
+# §2a) — lista conservadora zera confident-wrong com acurácia intacta (84.2%);
+# NÃO estender com demonstrativos/comparativos: a versão larga custou 2 casos (78.9%).
 _GENERIC_STEMS = frozenset({
     "introduc", "continua", "exercici", "revisao", "conteudo", "material",
     "aplicac", "apresent", "sobre", "parte", "exemplo", "usando", "aula",
     "para", "resposta", "solucao", "lista",
+    # boilerplate de curso (2026-08-21): "apresentacao da DISCIPLINA" e
+    # "ESTUDO de CASO" vivem na assinatura do bloco-01 de todo curso e puxavam
+    # material generico para la (MF `introducao`, ES2 `azure`).
+    "discipli", "estudo", "caso",
+    # "trabalho" e o nome da categoria, nao do assunto (ES2 `kubernetes` ia
+    # sozinho para "Entrega trabalho final" por esse unico token).
+    "trabalho",
+    "nao", "sim", "com", "sem", "por", "dos", "das", "nos", "nas", "uma", "que",
 })
 
 
@@ -112,7 +123,10 @@ def _score(mat: set, sig: dict, m: int, df: dict) -> float:
     """IDF local (log(1+m/df)) ponderado pelo peso do token, LEN-NORMalizado."""
     if not sig:
         return 0.0
-    raw = sum(sig[t] * math.log(1.0 + m / df[t]) for t in (mat & set(sig)))
+    # sorted(): mesmo defeito de concept_resolver.py:360 — soma de float sobre
+    # set de str, cuja ordem de iteracao muda a cada processo. Sem isto o score
+    # difere no ultimo ULP entre rodadas identicas.
+    raw = sum(sig[t] * math.log(1.0 + m / df[t]) for t in sorted(mat & set(sig)))
     return raw / math.sqrt(len(sig))
 
 
@@ -143,6 +157,26 @@ def _gated_window1_decision(entry: dict, block: dict, ctx: MotorContext,
                           method="janela-1", window=win)
 
 
+# R3 "titulo-topico" (2026-08-26): o professor nomeia o arquivo pelo TOPICO da aula
+# ("Logica de Hoare (parte 2)" <-> bloco "Logica de Hoare"). Se titulo+rotulo contem
+# TODOS os tokens do topico de exatamente 1 bloco da janela, e escolha confiante — sem
+# voto. Medido nos 5 (nu com markdown + curado): +1 (MF hoare2, que o voto punha no
+# bloco vizinho), 0 regressoes, 5 votos de LLM a menos onde o lexico ja acertava.
+_TOPIC_FILLER = frozenset({"introducao", "conceitos", "exercicios", "exercicio", "revisao", "aula", "parte"})
+
+
+def _block_named_in_title(entry: dict, blocks: List[dict]) -> Optional[dict]:
+    named = _toks(str(entry.get("title") or "") + " " + _moodle_label_text(entry))
+    if not named:
+        return None
+    hits = []
+    for b in blocks:
+        topic = _toks(str(b.get("primary_topic_label") or "")) - _TOPIC_FILLER
+        if topic and topic <= named:
+            hits.append(b)
+    return hits[0] if len(hits) == 1 else None
+
+
 def disambiguate(entry: dict, window: List[str], ctx: MotorContext,
                  markdown: str = "", provider: str = "") -> AnchorDecision:
     win = list(window or [])
@@ -161,6 +195,12 @@ def disambiguate(entry: dict, window: List[str], ctx: MotorContext,
         return AnchorDecision(block_ref=ref, conf=1.0, band="alta", flag=False,
                               method="janela-1", window=win)
 
+    named = _block_named_in_title(entry, blocks)
+    if named is not None:
+        ref = str(named.get("id") or named.get("block_uuid") or "")
+        return AnchorDecision(block_ref=ref, conf=1.0, band="alta", flag=False,
+                              method="titulo-topico", window=win)
+
     mat = entry_tokens(entry, markdown)
     sigs = [_block_signature(b, ctx) for b in blocks]
     m = len(blocks)
@@ -175,13 +215,22 @@ def disambiguate(entry: dict, window: List[str], ctx: MotorContext,
     s1 = scores[i1]
     s2 = scores[order[1]] if len(order) > 1 else 0.0
     rel_margin = (s1 - s2) / max(s1, _EPS)
-    # D4 literal (spec §3): confiança exige COMPETIÇÃO real (s2>0) E >=1 token
-    # DISCRIMINANTE — token do material que casa a assinatura do best e NÃO a
-    # do runner-up. Vitória só-por-peso/IDF (mesmos tokens) nunca é confiante.
+    # D4 (spec §3), relido 2026-08-21: confiança exige >=1 token DISCRIMINANTE
+    # — token do material que casa a assinatura do best e NÃO a do runner-up —
+    # e, HAVENDO competição (s2>0), margem >= MARGIN_TAU. Vitória só-por-peso/
+    # IDF (mesmos tokens) nunca é confiante. O `s2 > 0` obrigatório de antes
+    # confundia SEM COMPETIÇÃO com SEM EVIDÊNCIA: s1>0 com s2=0 (só o best casa
+    # algum token) é a evidência lexical mais exclusiva possível. Medido nos 5
+    # cursos (87 janelas >= 2): nesse balde o léxico acerta 21/23 e o LLM
+    # 22/23 — acurácia total igual (73/87) com 22 votos de LLM a menos.
     hits_best = mat & set(sigs[i1])
     hits_runner = mat & set(sigs[order[1]]) if len(order) > 1 else set()
     discriminante = hits_best - hits_runner
-    confident = s1 > 0 and s2 > 0 and rel_margin >= MARGIN_TAU and bool(discriminante)
+    # Janela degradada (ref fantasma: so 1 bloco resolve) nao tem runner-up —
+    # s2=0 ali nao e exclusividade, e ausencia de comparacao: segue flagada.
+    exclusivo = s2 <= 0 and len(blocks) >= 2
+    confident = s1 > 0 and bool(discriminante) and (
+        exclusivo or (s2 > 0 and rel_margin >= MARGIN_TAU))
 
     ref = str(blocks[i1].get("id") or blocks[i1].get("block_uuid") or win[i1])
     if confident:

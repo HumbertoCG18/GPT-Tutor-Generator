@@ -49,7 +49,6 @@ class FileEntry:
     manual_subunit_slug: str = ""
     manual_timeline_block_id: str = ""
     notes: str = ""
-    professor_signal: str = ""
     relevant_for_exam: bool = True
     include_in_bundle: bool = True
 
@@ -67,9 +66,9 @@ class FileEntry:
     ocr_language: str = DEFAULT_OCR_LANGUAGE
     enabled: bool = True
 
-    # Sinais de match persistidos no manifest.json (gravados por
-    # resolve_unit_block_tags). Declarados aqui para o round-trip from_dict ->
-    # to_dict parar de descarta-los silenciosamente.
+    # Sinais de match persistidos no manifest.json (gravados pelo motor,
+    # resolver_apply.apply_unit_subunit_fields). Declarados aqui para o
+    # round-trip from_dict -> to_dict parar de descarta-los silenciosamente.
     unit_match_confidence: float = 0.0
     unit_match_reasons: List[str] = field(default_factory=list)
     subunit_match_confidence: float = 0.0
@@ -77,8 +76,19 @@ class FileEntry:
 
     # Atribuicao first-class (Fase 1). Resolve "tudo e parse de tag": o slug/id
     # resolvido vive direto no entry, e auto_tags[unit:|bloco:] sao espelho
-    # destes campos (escritos por resolve_unit_block_tags).
+    # destes campos (escritos pelo motor: apply_concept_resolver +
+    # apply_unit_subunit_fields).
     computed_unit_slug: str = ""
+    # Duplicata confirmada (scripts/detecta_duplicatas.py, 100% mesmo documento
+    # por bytes/PDF-texto): id da entry PRIMARIA. Secundaria marcada continua no
+    # manifest e no MOTOR (golds/regua a referenciam), mas sai dos indices
+    # navegacionais (EXAM/EXERCISE/FILE_MAP etc., ruling user 2026-08-31).
+    duplicate_of: str = ""
+    # Cobertura N:N do motor (coverage_rules.derive_coverage_units): lista de
+    # {unit_slug, topics, confidence, rule}; None = nunca computada. Declarada
+    # para o round-trip from_dict -> to_dict parar de descarta-la (consumidor:
+    # EXAM_INDEX, FASE 4).
+    coverage_units: Optional[List[dict]] = None
     # Melhor candidato de subunidade (best-effort, pode estar abaixo do gate de
     # tag). Declarado aqui para sobreviver ao round-trip from_dict -> to_dict
     # (antes era descartado, deixando subunit_match_confidence orfa). A tag
@@ -363,6 +373,16 @@ class SubjectStore:
 
     def names(self) -> List[str]:
         return sorted(list(self._data.keys()))
+
+    def find_by_repo_root(self, repo_root) -> Optional[SubjectProfile]:
+        """Resolve o perfil da materia dono de um repo-tutor gerado (match por repo_root)."""
+        target = str(repo_root).replace("\\", "/").rstrip("/").casefold()
+        for name in self.names():
+            sp = self.get(name)
+            rr = str(getattr(sp, "repo_root", "") or "").replace("\\", "/").rstrip("/").casefold()
+            if rr and rr == target:
+                return sp
+        return None
 
 
 class StudentStore:

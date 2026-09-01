@@ -83,26 +83,6 @@ def _funil_unit(entry: dict) -> str:
     )
 
 
-def _inject_block_uuids_from_ledger(blocks: List[dict], ledger: List[dict]) -> None:
-    """Injeta block_uuid nos blocos do timeline via ledger (display_id_last -> uuid).
-
-    Usado quando o .timeline_index.json ainda nao foi rebuilt com block_uuid
-    (ex: MF antes do proximo rebuild). Nao sobrescreve block_uuid ja presente.
-    """
-    by_display: Dict[str, str] = {
-        str(rec.get("display_id_last") or ""): str(rec.get("uuid") or "")
-        for rec in (ledger or [])
-        if rec.get("display_id_last") and rec.get("uuid")
-    }
-    for block in blocks:
-        if block.get("block_uuid"):
-            continue
-        display_id = str(block.get("id") or "")
-        uuid = by_display.get(display_id)
-        if uuid:
-            block["block_uuid"] = uuid
-
-
 def _build_ledger_display_map(ledger: List[dict]) -> Dict[str, str]:
     """Retorna mapa display_id_last -> uuid a partir do ledger."""
     return {
@@ -140,9 +120,10 @@ def compare_repo(root: Path) -> Optional[dict]:
     display_map: Dict[str, str] = {}
     if ledger_path.exists():
         try:
+            # R4 (cutover passo 3): injecao de block_uuid via ledger APOSENTADA —
+            # todos os indices de producao ja carregam block_uuid nativo.
             ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
             ledger_list = ledger if isinstance(ledger, list) else []
-            _inject_block_uuids_from_ledger(blocks, ledger_list)
             display_map = _build_ledger_display_map(ledger_list)
         except Exception:
             pass

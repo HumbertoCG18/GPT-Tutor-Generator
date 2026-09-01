@@ -7,6 +7,7 @@ rede degradam para "" (nunca levantam para o caller do build).
 from __future__ import annotations
 
 import re
+from pathlib import Path
 from typing import Optional
 
 import requests
@@ -70,9 +71,40 @@ def _fetch_doc_text(url: str, *, timeout: float = 10.0) -> str:
         return ""
 
 
-def fetch_reference_text(entry: dict, *, max_chars: int = 16000) -> str:
-    """Conteúdo leve de uma referência. GitHub -> README; doc/URL -> texto de
-    página. "" se sem fonte ou em qualquer falha. Trunca em max_chars."""
+_MARKDOWN_FIELDS = ("approved_markdown", "curated_markdown", "base_markdown", "advanced_markdown")
+
+
+def read_local_markdown(entry: dict, repo_root) -> str:
+    """Markdown já convertido no próprio repo. As referências vindas do Moodle são
+    PDFs locais: sem esta leitura o texto sai vazio, nenhum conceito é extraído e a
+    referência nunca mapeia — causa de 1 de 15 refs mapeadas (medido 2026-08-18)."""
+    if not repo_root:
+        return ""
+    for field in _MARKDOWN_FIELDS:
+        rel = str(entry.get(field) or "").strip()
+        if not rel:
+            continue
+        path = Path(repo_root) / rel
+        if not path.is_file():
+            continue
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")
+        except Exception:
+            return ""
+        # o sumário executivo injetado no topo do curated é boilerplate do gerador
+        cut = text.find("EXEC_SUMMARY_END")
+        if cut >= 0:
+            text = text[cut:].partition(chr(10))[2]
+        return text
+    return ""
+
+
+def fetch_reference_text(entry: dict, *, max_chars: int = 16000, repo_root=None) -> str:
+    """Conteúdo leve de uma referência. Markdown local do repo -> GitHub README ->
+    texto de página. "" se sem fonte ou em qualquer falha. Trunca em max_chars."""
+    local = read_local_markdown(entry, repo_root)
+    if local.strip():
+        return local[:max_chars]
     source = str(entry.get("source_path") or "").strip()
     if not source:
         return ""

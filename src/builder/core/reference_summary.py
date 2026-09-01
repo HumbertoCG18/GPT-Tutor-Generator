@@ -57,8 +57,12 @@ import json
 import hashlib
 from pathlib import Path
 
-REFERENCE_MATCHER_VERSION = 1
-_REFERENCE_CATEGORIES = {"referencias", "bibliografia"}
+# v2 (2026-08-18): cobertura N:N, texto local do repo antes da rede, card no
+# fallback e casamento de frase por palavra. Bump invalida o cache antigo.
+REFERENCE_MATCHER_VERSION = 2
+# O dado real tem 3 grafias: a UI documenta `referencias`, o manifest tambem
+# traz `references` (MF 1, IA 2 entries vivas em 2026-08-18).
+_REFERENCE_CATEGORIES = {"referencias", "references", "bibliografia"}
 
 
 def load_reference_curation(repo_dir: Path) -> dict:
@@ -94,13 +98,20 @@ def summarize_all_reference_entries(builder, units: list, client, progress_cb=No
     curation = load_reference_curation(builder.root_dir)
     cache = curation.setdefault("entries", {})
 
-    refs = [e for e in manifest.get("entries", [])
+    entries = manifest.get("entries", []) or []
+    # Poda de orfaos: a curation guardava entries que sumiram do manifest (ES2 6/6,
+    # TCC 2/2 em 2026-08-18). code_curation ja podava; esta nao.
+    ids_vivos = {str(e.get("id") or "") for e in entries}
+    for eid in [k for k in cache if k not in ids_vivos]:
+        cache.pop(eid, None)
+
+    refs = [e for e in entries
             if str(e.get("category") or "").lower() in _REFERENCE_CATEGORIES]
     for idx, entry in enumerate(refs):
         eid = entry.get("id")
         if not eid:
             continue
-        text = fetch_reference_text(entry)
+        text = fetch_reference_text(entry, repo_root=builder.root_dir)
         h = _ref_hash(entry, text)
         existing = cache.get(eid, {})
         if (existing.get("content_hash") == h
@@ -111,11 +122,17 @@ def summarize_all_reference_entries(builder, units: list, client, progress_cb=No
             continue
         summary_dict = summarize_reference(text, client)
         concepts = (summary_dict or {}).get("concepts", []) or []
-        fallback = " ".join([str(entry.get("title", "") or ""), text])
+        # o card (`source_section`) e sinal humano forte: o professor postou o
+        # material naquela secao. Ja validado no eixo de unidade (2026-08-18).
+        fallback = " ".join([str(entry.get("title", "") or ""),
+                             str(entry.get("source_section", "") or ""), text])
         topic = assign_concepts_to_unit(concepts, fallback, units)
         cache[eid] = {
             "ref_summary": (summary_dict or {}).get("summary", "") or "",
             "ref_concepts": concepts,
+            # cobertura N:N; os dois campos abaixo sao a unidade vencedora e seguem
+            # existindo porque COURSE_MAP/BIBLIOGRAPHY consomem uma unidade so.
+            "coverage_units": topic.get("units", []),
             "computed_ref_unit": topic["unit_slug"],
             "computed_ref_topics": topic["topics"],
             "content_hash": h,

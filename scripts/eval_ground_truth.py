@@ -77,10 +77,27 @@ def load_predictions(repo_root: Path) -> dict:
         eid = str(e.get("id", ""))
         if not eid:
             continue
+        # A banda tem que ser a do METODO QUE DECIDIU o bloco medido. Ler
+        # computed_block_band para uma predicao que veio da ancora (temporal)
+        # misturava a confianca do scorer de conceito com o acerto do motor de
+        # janela — e produzia uma "banda invertida" (media 78% < baixa 85%) que
+        # nao existia: por fonte, temporal alta 99% / media 91%, e o funil
+        # (scorer sem janela) 23% (medido 2026-08-20, 190 entries, 5 cursos).
+        if str(e.get("manual_timeline_block_id") or "").strip():
+            source, band, conf = "manual", "manual", 1.0
+        elif str(e.get("temporal_block_id") or "").strip():
+            source = "temporal"
+            band = str(e.get("temporal_block_band", "") or "")
+            conf = float(e.get("temporal_block_confidence", 0.0) or 0.0)
+        else:
+            source = "funil"  # ancora devolveu None -> scorer de conceito decide
+            band = str(e.get("computed_block_band", ""))
+            conf = float(e.get("computed_block_confidence", 0.0) or 0.0)
         preds[eid] = {
             "block_id": _canon(resolve_temporal_block(e, blocks), u2d),
-            "band": str(e.get("computed_block_band", "")),
-            "confidence": float(e.get("computed_block_confidence", 0.0) or 0.0),
+            "source": source,
+            "band": band,
+            "confidence": conf,
             "title": str(e.get("title", "")),
             "category": str(e.get("category", "")),
             "markdown_path": str(e.get("markdown_path", "") or e.get("base_markdown", "")),
@@ -96,7 +113,10 @@ def load_block_period_map(repo_root: Path) -> dict:
 
 def load_labels_csv(path: Path) -> dict:
     labels = {}
-    with Path(path).open(encoding="utf-8", newline="") as f:
+    # utf-8-sig: o CSV pode vir com BOM (Excel/Windows gravam assim). Com
+    # `utf-8` puro a 1a coluna vira "﻿id", `row.get("id")` devolve None e a
+    # regua reporta 0/0 EM SILENCIO — aconteceu com 3 de 5 cursos em 2026-08-19c.
+    with Path(path).open(encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f):
             eid = str(row.get("id", "")).strip()
             true_block = str(row.get("true_block_id", "")).strip()
@@ -111,7 +131,10 @@ def load_pair_keys(path: Path) -> dict:
     `pair_key` = id canônico (Moodle original), gancho ESTRUTURADO do colapso de par.
     Definido por conteúdo na folha (gold_score.VERSION_PAIRS), nunca por bloco computado."""
     out = {}
-    with Path(path).open(encoding="utf-8", newline="") as f:
+    # utf-8-sig: o CSV pode vir com BOM (Excel/Windows gravam assim). Com
+    # `utf-8` puro a 1a coluna vira "﻿id", `row.get("id")` devolve None e a
+    # regua reporta 0/0 EM SILENCIO — aconteceu com 3 de 5 cursos em 2026-08-19c.
+    with Path(path).open(encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f):
             eid = str(row.get("id", "")).strip()
             pk = str(row.get("pair_key", "")).strip()
@@ -160,7 +183,8 @@ def _scoring_units(predictions: dict, labels: dict, pair_keys: dict) -> list:
     for eid, true_block in labels.items():
         pred = predictions.get(eid, {})
         rec = {"id": eid, "true": true_block, "predicted": str(pred.get("block_id", "")),
-               "band": str(pred.get("band", "")), "title": str(pred.get("title", ""))}
+               "band": str(pred.get("band", "")), "source": str(pred.get("source", "")),
+               "title": str(pred.get("title", ""))}
         pk = pair_keys.get(eid, "")
         if pk:
             groups.setdefault(pk, []).append(rec)
@@ -179,8 +203,8 @@ def _scoring_units(predictions: dict, labels: dict, pair_keys: dict) -> list:
                              "(divergente)")
         band = "alta" if any(m["band"] == "alta" for m in members) else canon["band"]
         units.append({"id": pk, "true": canon["true"], "predicted": predicted,
-                      "band": band, "title": canon["title"], "is_correct": is_correct,
-                      "pair": True})
+                      "band": band, "source": canon["source"], "title": canon["title"],
+                      "is_correct": is_correct, "pair": True})
     return units
 
 
@@ -189,6 +213,9 @@ def evaluate_ground_truth(predictions: dict, labels: dict, block_map: dict,
     bands = {"alta": {"correct": 0, "wrong": 0}, "media": {"correct": 0, "wrong": 0},
              "baixa": {"correct": 0, "wrong": 0}, "": {"correct": 0, "wrong": 0}}
     confusion: dict = {}
+    # Quem DECIDIU o bloco: manual > temporal (ancora) > funil (scorer de
+    # conceito sem janela). E a fonte, nao a band, que separa 99% de 23%.
+    sources: dict = {}
     rows = []
     correct = orphans = missed = confident_wrong = off_by_one = 0
 
@@ -214,10 +241,13 @@ def evaluate_ground_truth(predictions: dict, labels: dict, block_map: dict,
             off_by_one += 1
         bands.setdefault(band, {"correct": 0, "wrong": 0})
         bands[band]["correct" if is_correct else "wrong"] += 1
+        src = str(u.get("source", "") or "")
+        sources.setdefault(src, {"correct": 0, "wrong": 0})
+        sources[src]["correct" if is_correct else "wrong"] += 1
         key = f"{true_block}->{predicted or '(orfao)'}"
         confusion[key] = confusion.get(key, 0) + 1
         rows.append({"id": u["id"], "true": true_block, "predicted": predicted,
-                     "band": band, "correct": is_correct, "adjacente": adjacente,
+                     "band": band, "source": src, "correct": is_correct, "adjacente": adjacente,
                      "title": u["title"], "pair": u.get("pair", False)})
 
     total = len(units)
@@ -226,7 +256,7 @@ def evaluate_ground_truth(predictions: dict, labels: dict, block_map: dict,
         "block_accuracy": (correct / total) if total else 0.0,
         "orphans": orphans, "missed": missed, "confident_wrong": confident_wrong,
         "off_by_one": off_by_one,
-        "bands": bands, "confusion": confusion, "cases": rows,
+        "bands": bands, "sources": sources, "confusion": confusion, "cases": rows,
     }
 
 
@@ -241,9 +271,13 @@ def format_report(report: dict, block_map: dict) -> str:
     lines.append(f"Confiante e ERRADO (band alta, bloco errado): {report['confident_wrong']}")
     lines.append("")
     lines.append("Calibracao por band (correto / errado):")
-    for band in ("alta", "media", "baixa", ""):
+    for band in ("alta", "media", "baixa", "manual", ""):
         b = report["bands"].get(band, {"correct": 0, "wrong": 0})
         lines.append(f"  {(band or '(vazio)'):<8} {b['correct']:>3} ok / {b['wrong']:>3} erro")
+    lines.append("Por fonte da decisao (correto / errado):")
+    for src in ("manual", "temporal", "funil"):
+        s = report.get("sources", {}).get(src, {"correct": 0, "wrong": 0})
+        lines.append(f"  {src:<8} {s['correct']:>3} ok / {s['wrong']:>3} erro")
     wrong = [c for c in report["cases"] if not c["correct"]]
     lines.append("")
     if wrong:

@@ -1,0 +1,87 @@
+"""Passo 2 do holdout CG: classificacao de links e paginas internas do Moodle (casos reais da CG 2026/2)."""
+from scripts.moodle_pull import classify_page, classify_url
+
+HOSTS = {"inf.pucrs.br"}
+
+
+def test_url_pagina_do_site_do_professor_e_material():
+    assert classify_url("Página sobre Geometria Computacional", "5 - Geometria Computacional",
+                        "https://www.inf.pucrs.br/pinho/CG/Aulas/GeomComp/GeomComp.htm", HOSTS)[:2] == ("material-pagina", "snapshot")
+    assert classify_url("Exercício sobre Remoção de Ruído", "8 - Manipulação de Imagens",
+                        "https://www.inf.pucrs.br/pinho/CGII/Exercicios/RemocaoDeRuido/", HOSTS)[:2] == ("material-pagina", "snapshot")
+
+
+def test_url_pdf_no_site_do_professor_baixa_direto():
+    assert classify_url("Slides", "3 - Fundamentos", "http://www.inf.pucrs.br/pinho/CG/SlidesEmPDF/FundamentosMatematicos.pdf", HOSTS)[:2] == ("material-pdf", "download")
+
+
+def test_url_youtube_e_video_referencia():
+    assert classify_url("Aula gravada", "11 - Morfologia", "https://youtu.be/Wlorjfqy7Uw", HOSTS)[:2] == ("video", "referencia")
+
+
+def test_url_card_de_bibliografia_vence_dominio():
+    assert classify_url("Livro texto", "Bibliografia", "https://www.inf.pucrs.br/pinho/CG/Aulas/X.htm", HOSTS)[0] == "referencia"
+
+
+def test_url_repositorio_e_referencia_e_desconhecido_vai_para_review():
+    assert classify_url("Código", "2 - OpenGL", "https://github.com/x/y", HOSTS)[:2] == ("referencia", "referencia")
+    assert classify_url("Ferramenta", "2 - OpenGL", "https://exemplo.org/app", HOSTS)[1] == "review"
+
+
+def test_pagina_interna_nome_primeiro():
+    lista = "<p>Exercícios</p>" + "".join(f'<a href="https://youtu.be/abcdef{i}">v</a>' for i in range(4))
+    assert classify_page(lista, "Exercícios sobre Curvas")[0] == "material-pagina-moodle"
+    assert classify_page('<a href="https://youtu.be/abcdef1">a</a><a href="https://youtu.be/abcdef2">b</a>', "Página com Vídeos sobre Mapeamento")[0] == "indice-videos"
+    codigo = "<pre>" + "int main() { return 0; } " * 300 + "</pre>"
+    assert classify_page(codigo, "Página com vídeos sobre INSTANCIAMENTO")[0] == "material-pagina-moodle"
+
+
+def test_pagina_interna_sem_nome_decide_pelo_conteudo():
+    videos = "".join(f'<a href="https://www.youtube.com/watch?v=abcdef{i}">v</a>' for i in range(5))
+    assert classify_page(videos, "Sem pista")[0] == "indice-videos"
+    assert classify_page("<p>" + "texto " * 400 + "</p>", "Sem pista")[0] == "material-pagina-moodle"
+
+
+def test_url_do_sarc_e_cronograma_mesmo_em_card_de_plano():
+    """F12: o export do SARC postado no Moodle e o cronograma da disciplina."""
+    from scripts.moodle_pull import classify_url
+    tipo, acao, sinal = classify_url(
+        "Cronograma", "Plano de Ensino",
+        "https://sarc.pucrs.br/Default/Export.aspx?id=abc&ano=2026&sem=2", set())
+    assert (tipo, acao, sinal) == ("cronograma", "cronograma", "sarc")
+
+
+def test_turma_do_shortname_e_do_export():
+    """F12/F14: turma do shortname ("4646I-04310262" -> 310) x turma do cabecalho ("(330)")."""
+    from scripts.moodle_pull import turma_do_export, turma_do_shortname
+    assert turma_do_shortname("4646I-04310262") == "310"
+    assert turma_do_shortname("98710-02340262") == "340"
+    assert turma_do_shortname("4646M-04031261") == "031"
+    assert turma_do_shortname("sem-padrao") == ""
+    assert turma_do_export("<div>4646I-4 Laborat\u00f3rio de Sistemas Operacionais (330) - 32/410</div>") == "330"
+    assert turma_do_export("<div>sem turma</div>") == ""
+
+
+def test_resource_html_vai_para_print_nao_para_o_stash_cru():
+    """Roteiro .html de resource segue o caminho das paginas (print -> Datalab -> descricoes),
+    nunca cai cru no stash como codigo-professor (labs 2026/2)."""
+    import scripts.moodle_pull as mp
+    import types
+    pull = object.__new__(mp.Pull)
+    pull.stash = __import__("pathlib").Path("/tmp/stash"); pull.rawm = __import__("pathlib").Path("/tmp/raw")
+    pull.root = __import__("pathlib").Path("/tmp"); pull.links = []; pull.labels = []
+    pull.sections = []; pull.nomes = {}; pull.turma_moodle = ""; pull.dry = True; pull.browser = None
+    sec = {"name": "[10/08] - Wireshark", "section": 4, "summary": "", "modules": [
+        {"modname": "resource", "id": 1, "name": "Laboratório 1 - Wireshark",
+         "contents": [{"filename": "Lab 1 - Wireshark.html", "fileurl": "http://x/f"}]}]}
+    pull.c = types.SimpleNamespace(get_course_contents=lambda c: [sec],
+                                   _call=lambda *a, **k: {"courses": [{"shortname": "98710-02340262"}]})
+    import json as _json
+    pull.snap = types.SimpleNamespace(write_links=lambda: None, pages={}, print_all=lambda: None)
+    try:
+        pull.run(340)
+    except Exception:
+        pass  # escrita de arquivos fora do escopo do teste (dry escreve jsons)
+    rec = next(r for r in pull.links if r["nome"].startswith("Laborat"))
+    assert rec["tipo"] == "material-pagina-arquivo" and rec["acao"] == "print"
+    assert "Lab 1 - Wireshark.pdf" in "".join(pull.nomes.keys())

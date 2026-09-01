@@ -331,7 +331,8 @@ def load_code_curation(repo_dir: Path) -> dict:
         return {"version": 1, "entries": {}}
     try:
         return json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception as exc:
+        logger.warning("Falha ao ler %s (%s: %s) — curadoria de código vazia nesta rodada", path, type(exc).__name__, exc)
         return {"version": 1, "entries": {}}
 
 
@@ -349,7 +350,8 @@ def _load_timeline_blocks(builder) -> list[dict]:
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
             return data.get("blocks", []) or []
-        except Exception:
+        except Exception as exc:
+            logger.warning("Falha ao ler %s (%s: %s) — seguindo SEM blocos de cronograma", path, type(exc).__name__, exc)
             return []
     return []
 

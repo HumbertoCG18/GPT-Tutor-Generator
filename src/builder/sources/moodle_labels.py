@@ -10,7 +10,7 @@ import html
 import re
 from datetime import date
 
-from src.builder.sources.moodle import sanitize_folder_name
+from src.builder.sources.moodle import _savename_from_module, sanitize_folder_name
 
 _WEEK_FULL = re.compile(r"Semana\s+(\d{1,2}/\d{1,2}/\d{4})\s*a\s*(\d{1,2}/\d{1,2}/\d{4})")
 _LESSON_FULL = re.compile(r"\((\d{1,2}/\d{1,2}/\d{4})\)\s*:\s*(.+)")
@@ -192,6 +192,31 @@ def merge_card_block_map(existing: dict, derived: dict) -> dict:
 _DEADLINE_NAME = re.compile(r"\((\d{1,2}/\d{1,2}(?:/\d{4})?)\)")
 
 
+def _module_due(mod, year: int = 0) -> tuple:
+    """Cascata POR MÓDULO: (1) assign com dates[dataid=duedate] -> "structured";
+    (2) assign/forum com "entrega" no nome e data `(DD/MM[/AAAA])` -> "named".
+    Sem fonte -> ("", "")."""
+    from datetime import datetime
+    modname = str(mod.get("modname") or "")
+    mod_name = str(mod.get("name") or "")
+    if modname == "assign":
+        for d in mod.get("dates") or []:
+            if str(d.get("dataid") or "") == "duedate" and d.get("timestamp"):
+                try:
+                    return (datetime.fromtimestamp(
+                        int(d["timestamp"])).date().isoformat(), "structured")
+                except (ValueError, OSError, OverflowError):
+                    pass
+                break
+    if modname in ("assign", "forum") and "entrega" in mod_name.lower():
+        m = _DEADLINE_NAME.search(mod_name)
+        if m:
+            due = _iso(m.group(1), year)
+            if due:
+                return due, "named"
+    return "", ""
+
+
 def extract_assign_deadlines(contents, year: int = 0) -> dict:
     """{secao_sanitizada: iso_date} com o deadline de entrega de cada seção.
 
@@ -226,6 +251,67 @@ def extract_assign_deadlines(contents, year: int = 0) -> dict:
         due = structured or named
         if due:
             out[name] = due
+    return out
+
+
+def extract_assign_deadlines_detailed(contents, year: int = 0) -> dict:
+    """{secao_sanitizada: [{name, due, source}]} — UM item por módulo, sem colapsar.
+
+    Cascata por módulo em _module_due. Módulo sem fonte fica fora; seção sem
+    itens fica fora (nunca inventa). Consumidor: motor/due_window (fallback stem).
+    """
+    out: dict = {}
+    for sec in contents or []:
+        name = sanitize_folder_name(str(sec.get("name") or ""))
+        if not name:
+            continue
+        items: list = []
+        for mod in sec.get("modules", []) or []:
+            due, source = _module_due(mod, year)
+            if due:
+                items.append({"name": str(mod.get("name") or ""), "due": due,
+                              "source": source})
+        if items:
+            out[name] = items
+    return out
+
+
+def extract_file_dues(contents, year: int = 0) -> dict:
+    """{secao_sanitizada: {key_casefold: {"due", "source"}}} — posicional (D-G).
+
+    Cada arquivo herda o due do PRÓXIMO módulo-com-due da MESMA seção (grupo
+    `label → resources → assign`). Keys: filename original E savename de disco,
+    casefolded (mesma convenção do backfill de seções); key com 2+ ocorrências
+    na seção é DESCARTADA (nunca chuta). Arquivo sem módulo-com-due depois
+    fica fora. Consumidor: motor/due_window (matching posicional)."""
+    from collections import Counter
+    out: dict = {}
+    for sec in contents or []:
+        secname = sanitize_folder_name(str(sec.get("name") or ""))
+        if not secname:
+            continue
+        counts: Counter = Counter()
+        fdues: dict = {}
+        pending: list = []
+        for mod in sec.get("modules", []) or []:
+            files = [f for f in (mod.get("contents", []) or [])
+                     if f.get("type") == "file" and f.get("fileurl") and f.get("filename")]
+            for f in files:
+                original = str(f["filename"])
+                save = _savename_from_module(mod.get("name"), original, len(files))
+                keys = {original.casefold(), save.casefold()}
+                for k in keys:
+                    counts[k] += 1
+                pending.append(keys)
+            due, source = _module_due(mod, year)
+            if due:
+                for keys in pending:
+                    for k in keys:
+                        fdues.setdefault(k, {"due": due, "source": source})
+                pending = []
+        fdues = {k: v for k, v in fdues.items() if counts[k] == 1}
+        if fdues:
+            out[secname] = fdues
     return out
 
 

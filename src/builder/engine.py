@@ -50,12 +50,13 @@ from src.builder.routing.file_map import (
     resolve_entry_manual_timeline_block as _file_map_resolve_entry_manual_timeline_block,
     resolve_entry_manual_unit_slug as _file_map_resolve_entry_manual_unit_slug,
     score_card_evidence_against_entry as _file_map_score_card_evidence_against_entry,
-    score_entry_against_timeline_block as _file_map_score_entry_against_timeline_block,
     score_entry_against_unit as _file_map_score_entry_against_unit,
-    select_probable_period_for_entry as _file_map_select_probable_period_for_entry,
     strip_outline_prefix as _file_map_strip_outline_prefix,
     timeline_block_matches_preferred_topic as _file_map_timeline_block_matches_preferred_topic,
     timeline_block_rows_for_scoring as _file_map_timeline_block_rows_for_scoring,
+)
+from src.builder.routing.resolver_apply import (
+    apply_unit_subunit_fields as _apply_unit_subunit_fields,
 )
 from src.builder.runtime.backend_runtime import (
     MARKER_OLLAMA_SERVICE,
@@ -169,6 +170,9 @@ from src.builder.ops.url_and_cleanup import (
     process_url as _ops_process_url,
     remove_entry_consolidated_images as _ops_remove_entry_consolidated_images,
 )
+from src.builder.ops.taxonomy_inputs import (
+    build_rich_content_taxonomy as _ops_build_rich_content_taxonomy,
+)
 from src.builder.core.source_importers import (
     process_code as _source_importers_process_code,
     process_github_repo as _source_importers_process_github_repo,
@@ -238,14 +242,12 @@ from src.builder.timeline.index import (
     _build_timeline_candidate_rows as _timeline_build_timeline_candidate_rows,
     _build_file_map_timeline_context_from_course as _timeline_build_file_map_timeline_context_from_course,
     _build_timeline_index,
-    _derive_unit_from_topic_match,
     _empty_timeline_index,
     _iter_content_taxonomy_topics,
     _parse_syllabus_timeline as _timeline_parse_syllabus_timeline,
     _parse_timeline_date_value,
     _score_entry_against_taxonomy_topic,
     _score_timeline_unit_phrase,
-    _serialize_timeline_index as _timeline_serialize_timeline_index,
     _timeline_period_label,
     _TIMELINE_UNIT_NEUTRAL_TOKENS,
 )
@@ -306,9 +308,6 @@ _build_timeline_candidate_rows = _timeline_build_timeline_candidate_rows
 _parse_syllabus_timeline = _timeline_parse_syllabus_timeline
 
 
-_serialize_timeline_index = _timeline_serialize_timeline_index
-
-
 _parse_glossary_terms = _content_taxonomy._parse_glossary_terms
 
 def _build_content_taxonomy(
@@ -333,7 +332,6 @@ def _build_content_taxonomy(
 _write_internal_content_taxonomy = _content_taxonomy.write_internal_content_taxonomy
 _collect_strong_heading_candidates = _content_taxonomy.collect_strong_heading_candidates
 _build_unit_tag_index = _content_taxonomy.build_unit_tag_index
-_resolve_unit_block_tags = _content_taxonomy.resolve_unit_block_tags
 
 
 def _write_tag_catalog(
@@ -524,7 +522,9 @@ class PyMuPDF4LLMBackend(ExtractionBackend):
             kwargs.pop("image_path", None)
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
 
-        md = pymupdf4llm.to_markdown(str(ctx.raw_target), **kwargs)
+        from src.utils.pdf_markdown import respect_actualtext
+        with respect_actualtext():  # 2026-08-28: /ActualText -> glifos PUA sem isso
+            md = pymupdf4llm.to_markdown(str(ctx.raw_target), **kwargs)
         if isinstance(md, list):
             body = "\n\n".join(chunk.get("text", "") for chunk in md)
         else:
@@ -1833,7 +1833,10 @@ class RepoBuilder:
         try:
             data = _json.loads(path.read_text(encoding="utf-8"))
             return data.get("blocks", []) or []
-        except Exception:
+        except Exception as exc:
+            # Arquivo EXISTE mas falhou: sem o warning, o curso roda como se não
+            # tivesse cronograma e nenhum gate acusa (achado auditoria 2.4).
+            logger.warning("Falha ao ler %s (%s: %s) — seguindo SEM blocos de cronograma", path, type(exc).__name__, exc)
             return []
 
     def _summarize_code_entries(self, client, progress_cb=None) -> dict:
@@ -2118,7 +2121,7 @@ class RepoBuilder:
             self,
             manifest,
             filter_live_manifest_entries_fn=_filter_live_manifest_entries,
-            build_file_map_content_taxonomy_from_course_fn=_build_file_map_content_taxonomy_from_course,
+            build_rich_content_taxonomy_fn=_build_rich_content_taxonomy,
             write_internal_content_taxonomy_fn=_write_internal_content_taxonomy,
             build_file_map_timeline_context_from_course_fn=_build_file_map_timeline_context_from_course,
             persist_enriched_timeline_index_fn=_persist_enriched_timeline_index,
@@ -2138,15 +2141,12 @@ class RepoBuilder:
             glossary_md_fn=glossary_md,
             write_tag_catalog_fn=_write_tag_catalog,
             refresh_manifest_auto_tags_fn=_refresh_manifest_auto_tags,
-            resolve_unit_block_tags_fn=partial(
-                _resolve_unit_block_tags,
-                build_file_map_unit_index_from_course_fn=_build_file_map_unit_index_from_course,
-                build_file_map_timeline_context_from_course_fn=_build_file_map_timeline_context_from_course,
-                iter_content_taxonomy_topics_fn=_iter_content_taxonomy_topics,
-                auto_map_entry_subtopic_fn=_auto_map_entry_subtopic,
+            apply_unit_subunit_fn=partial(
+                _apply_unit_subunit_fields,
                 auto_map_entry_unit_fn=_auto_map_entry_unit,
-                select_probable_period_for_entry_fn=_select_probable_period_for_entry,
-                resolve_entry_manual_timeline_block_fn=_resolve_entry_manual_timeline_block,
+                auto_map_entry_subtopic_fn=_auto_map_entry_subtopic,
+                build_file_map_unit_index_from_course_fn=_build_file_map_unit_index_from_course,
+                iter_content_taxonomy_topics_fn=_iter_content_taxonomy_topics,
                 entry_markdown_text_for_file_map_fn=_entry_markdown_text_for_file_map,
             ),
             syllabus_md_fn=syllabus_md,
@@ -2272,6 +2272,17 @@ _normalize_unit_slug = _file_map_aliases["_normalize_unit_slug"]
 _build_file_map_unit_index = _file_map_aliases["_build_file_map_unit_index"]
 _collect_entry_unit_signals = _file_map_aliases["_collect_entry_unit_signals"]
 _build_file_map_content_taxonomy_from_course = _file_map_aliases["_build_file_map_content_taxonomy_from_course"]
+
+
+def _build_rich_content_taxonomy(repo_root, course_meta, subject_profile, *, entries=None):
+    return _ops_build_rich_content_taxonomy(
+        repo_root, course_meta, subject_profile,
+        taxonomy_fn=_build_file_map_content_taxonomy_from_course,
+        filter_live_fn=_filter_live_manifest_entries,
+        entries=entries,
+    )
+
+
 _auto_map_entry_subtopic = _file_map_aliases["_auto_map_entry_subtopic"]
 _score_entry_against_unit = _file_map_aliases["_score_entry_against_unit"]
 _auto_map_entry_unit = _file_map_aliases["_auto_map_entry_unit"]
@@ -2289,16 +2300,7 @@ _teaching_timeline_aliases = _build_teaching_timeline_aliases(
     file_map_timeline_block_rows_for_scoring=_file_map_timeline_block_rows_for_scoring,
     file_map_timeline_block_matches_preferred_topic=_file_map_timeline_block_matches_preferred_topic,
     file_map_score_card_evidence_against_entry=_file_map_score_card_evidence_against_entry,
-    file_map_score_entry_against_timeline_block=_file_map_score_entry_against_timeline_block,
-    file_map_select_probable_period_for_entry=_file_map_select_probable_period_for_entry,
-    collect_entry_unit_signals=_collect_entry_unit_signals,
-    build_timeline_index=_build_timeline_index,
-    timeline_period_label=_timeline_period_label,
-    collapse_ws=_collapse_ws,
     normalize_match_text=_normalize_match_text,
-    extract_date_range_signal=extract_date_range_signal,
-    extract_timeline_session_signals=extract_timeline_session_signals,
-    parse_timeline_date_value=_parse_timeline_date_value,
     timeline_aggregate_unit_periods_from_blocks=_timeline_aggregate_unit_periods_from_blocks,
     timeline_build_file_map_timeline_context_from_course=_timeline_build_file_map_timeline_context_from_course,
     build_file_map_unit_index_from_course=_build_file_map_unit_index_from_course,
@@ -2308,8 +2310,6 @@ _teaching_timeline_aliases = _build_teaching_timeline_aliases(
     repo_artifacts_module=_repo_artifacts,
     write_text_fn=write_text,
 )
-_score_entry_against_timeline_block = _teaching_timeline_aliases["_score_entry_against_timeline_block"]
-_select_probable_period_for_entry = _teaching_timeline_aliases["_select_probable_period_for_entry"]
 _aggregate_unit_periods_from_blocks = _teaching_timeline_aliases["_aggregate_unit_periods_from_blocks"]
 _build_file_map_timeline_context_from_course = _teaching_timeline_aliases["_build_file_map_timeline_context_from_course"]
 _parse_bibliography_from_teaching_plan = _teaching_timeline_aliases["_parse_bibliography_from_teaching_plan"]
@@ -2426,6 +2426,7 @@ __all__ = [
     "backend_policy_yaml",
     "UnitMatchResult",
     "TopicMatchResult",
+    "_apply_unit_subunit_fields",
     "_auto_map_entry_subtopic",
     "_auto_map_entry_unit",
     "_build_assessment_context_from_course",
@@ -2440,7 +2441,6 @@ __all__ = [
     "_collect_entry_unit_signals",
     "_compact_notebook_markdown",
     "_detect_latex_corruption",
-    "_derive_unit_from_topic_match",
     "_entry_markdown_text_for_file_map",
     "_file_map_markdown_cell",
     "_filter_live_manifest_entries",
@@ -2456,13 +2456,9 @@ __all__ = [
     "_parse_timeline_date_value",
     "_repair_mojibake_text",
     "_resolve_entry_manual_timeline_block",
-    "_resolve_unit_block_tags",
     "_sanitize_external_markdown_text",
-    "_score_entry_against_timeline_block",
     "_score_entry_against_unit",
     "_seed_glossary_fields",
-    "_select_probable_period_for_entry",
-    "_serialize_timeline_index",
     "_write_internal_content_taxonomy",
 ]
 

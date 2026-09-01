@@ -1,0 +1,26 @@
+﻿block_uuid,block_id,date_start,date_end,kind,topic_text,unit_slug_atual,true_unit,notes
+31997686-f3b5-4ecc-870c-0774732c3ee0,bloco-01,2026-03-03,2026-03-03,overview,disciplina introducao,,unidade-01-introducao-ao-estudo-de-sistemas-operacionais,
+f5346083-a19d-43f5-a894-8c9c8676d3ba,bloco-02,2026-03-05,2026-03-05,overview,introducao,,unidade-01-introducao-ao-estudo-de-sistemas-operacionais,
+bdcc7b26-25b0-4102-9c5b-d3af31606ad3,bloco-03,2026-03-10,2026-03-17,class,historico evolucao sistemas operacionais estruturas processos chamadas sistema,unidade-01-introducao-ao-estudo-de-sistemas-operacionais,unidade-01-introducao-ao-estudo-de-sistemas-operacionais,"RESOLVIDO T9c: split boundary_dates=19/03 (curadoria) separou u01 (10-17/03, este uuid, 1a fatia herda) de u02 (19-31/03, ver bloco-04 novo, uuid novo)"
+e4f7e22a-e091-46f8-b70e-a65f387dbf84,bloco-04,2026-03-19,2026-03-31,class,gerencia processador processos chamadas sistema escalonamento threads exclusao mutua,unidade-02-gerencia-do-processador,unidade-02-gerencia-do-processador,"RESOLVIDO T9c: 2a fatia do split de bloco-03 antigo (uuid bdcc7b26); uuid novo por regra (1a fatia cronologica herda, ver task-9b-investigacao.md)"
+64312a33-cd7d-4585-95ee-4559dc787bc2,bloco-05,2026-04-02,2026-04-02,holiday,feriado,,,
+1945c228-4ca2-4a76-8d63-47c804459ecd,bloco-06,2026-04-07,2026-04-09,class,gerencia processador sincronizacao deadlock,unidade-02-gerencia-do-processador,unidade-04-deadlock,"RESOLVIDO T9c: split boundary_dates=14/04 isolou o slice deadlock (2 aulas, este uuid, 1a fatia herda). Override manual_unit_slug=unidade-04-deadlock no .timeline_curation.json (uuid 1945c228): inversao LOCAL calendario-vs-plano (deadlock ensinado antes de programacao-concorrente/u03) -- DP monotonico nao alcanca sem pino (medido: M1/M2 no unit_matcher nao resolvem, ver task-9c-report.md fix-round); gold-backed, precedente aula-13 TCC/bloco-18 SO."
+6047b900-50d4-4aeb-bfbf-c74945eaa8b6,bloco-07,2026-04-14,2026-04-16,class,especificacao tp1 gerencia processador sincronizacao deadlock,unidade-02-gerencia-do-processador,,"especificacao TP1 (fora da regua de unidade -- nao e conteudo de u04 nem de u02 isolado; RULING USER 2026-08-08). uuid novo (2a fatia cronologica do split de bloco-05 antigo, uuid 1945c228)."
+75bd1571-aa39-41a6-a862-f0647d48dd1b,bloco-08,2026-04-21,2026-04-21,holiday,feriado,,,
+cfb895fb-78a4-4adc-848a-065e975cd5bf,bloco-09,2026-04-23,2026-04-28,class,comunicacao entre processos pipes filas,unidade-03-programacao-concorrente,unidade-03-programacao-concorrente,
+95ace88e-9616-4f8c-b1c8-21ff1be0deae,bloco-10,2026-04-30,2026-04-30,office_hours,Duvidas Prova,,,"FORA DA RÉGUA: u01, u02 (aula de duvidas)(kind=deliverable)"
+0e2ed3a0-614b-4404-9773-951fc47a5418,bloco-11,2026-05-05,2026-05-05,office_hours,Duvidas Prova P1 e T1,,,"FORA DA RÉGUA: u01, u02, u03, u04 (aula de duvidas) (kind=deliverable)"
+57df1003-b598-42f4-b58d-f465aea7fa20,bloco-12,2026-05-07,2026-05-07,assessment,Prova P1,,,"FORA DA RÉGUA: u01, u02, u03, u04 (kind=assessment)"
+fc0b5c7e-2071-490f-b65d-284ddc127963,bloco-13,2026-05-12,2026-05-12,class,gerencia memoria virtual paginacao,unidade-05-gerencia-de-memoria,unidade-05-gerencia-de-memoria,
+6a13a480-9302-4f16-8592-189eff2e5f56,bloco-14,2026-05-14,2026-05-14,deliverable,Apresentacao TP1,,,FORA DA RÉGUA (kind=deliverable)
+be2d9c60-4039-4e05-b9ef-b29cada41acf,bloco-15,2026-05-19,2026-05-19,deliverable,Apressentacao TP1,,,FORA DA RÉGUA (kind=deliverable)
+a838bf45-b6d1-48fc-b70b-0bd4de35d1ef,bloco-16,2026-05-21,2026-06-02,class,gerencia memoria virtual paginacao segmentacao paginada,unidade-07-gerencia-de-entrada-e-saida,unidade-05-gerencia-de-memoria,conteudo e MEMORIA (21/05-02/06); indice diz u07 = erro da cauda embaralhada
+47d76cbe-ed7e-43ad-b144-de0bb07a16a9,bloco-17,2026-06-04,2026-06-04,holiday,feriado,,,
+2455cd0a-52aa-4753-bf07-df6bbc8a0408,bloco-18,2026-06-09,2026-06-09,class,gerencia E/S; Enunciado T2,unidade-05-gerencia-de-memoria,unidade-07-gerencia-de-entrada-e-saida,E/S real; indice u05 = bug da barra em E/S
+b6a5d63d-a959-485e-961e-94dbb7749dad,bloco-19,2026-06-11,2026-06-11,class,gerencia E/S,unidade-05-gerencia-de-memoria,unidade-07-gerencia-de-entrada-e-saida,E/S real; indice u05 = bug da barra em E/S
+599004b1-292b-4648-9221-9bc432b77937,bloco-20,2026-06-16,2026-06-23,office_hours,gerencia arquivos duvidas para,,unidade-06-gerencia-de-arquivos,3 sessoes de arquivos; kind office_hours = bug keyword duvidas
+3d303831-3770-467c-88d6-c60a8fa45ddd,bloco-21,2026-06-25,2026-06-25,assessment,Prova P2,,,"FORA DA RÉGUA: u05, u06, u07(kind=assessment)"
+13791986-705a-47c1-9305-2a3f476c6c21,bloco-22,2026-06-30,2026-06-30,assessment,Prova PS,,,FORA DA RÉGUA: tudo (kind=assessment)
+87b755f4-28b3-4f84-a111-ed395c3ea40e,bloco-23,2026-07-02,2026-07-02,deliverable,Apresentacao TP2,,,FORA DA RÉGUA (kind=deliverable)
+2f88620d-0809-421a-936c-01251f202e78,bloco-24,2026-07-07,2026-07-07,deliverable,Apresentacao TP2,,,FORA DA RÉGUA (kind=deliverable)
+160eff04-bea9-4349-8a4b-992311cce6be,bloco-26,2026-07-09 00:00:00,2026-07-07,office_hours,Reserva Tecnica,,,

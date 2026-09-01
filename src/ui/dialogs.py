@@ -1552,8 +1552,8 @@ class SubjectManagerDialog(tk.Toplevel):
         
         def worker():
             try:
-                import pymupdf4llm
-                md_text = pymupdf4llm.to_markdown(pdf_path)
+                from src.utils.pdf_markdown import pdf_to_markdown
+                md_text = pdf_to_markdown(pdf_path)
 
                 def _apply():
                     try:
@@ -3623,7 +3623,6 @@ class FileEntryDialog(simpledialog.Dialog):
         self.var_category = tk.StringVar(value=self.initial.category if self.initial else auto_detect_category(src.name, self.file_type == "image"))
         self.var_tags = tk.StringVar(value=self.initial.tags if self.initial else "")
         self.var_notes = tk.StringVar(value=self.initial.notes if self.initial else "")
-        self.var_prof = tk.StringVar(value=self.initial.professor_signal if self.initial else "")
         self.var_bundle = tk.BooleanVar(value=self.initial.include_in_bundle if self.initial else True)
         self.var_exam = tk.BooleanVar(value=self.initial.relevant_for_exam if self.initial else True)
 
@@ -3732,12 +3731,6 @@ class FileEntryDialog(simpledialog.Dialog):
         lbl_notes.grid(row=row, column=0, sticky="w", pady=4)
         add_tooltip(lbl_notes, "Observação livre sobre o arquivo. Não afeta o processamento, apenas fica registrado nos metadados.")
         ttk.Entry(outer, textvariable=self.var_notes, width=54).grid(row=row, column=1, columnspan=3, sticky="ew")
-        row += 1
-
-        lbl_prof = ttk.Label(outer, text="Pista do professor")
-        lbl_prof.grid(row=row, column=0, sticky="w", pady=4)
-        add_tooltip(lbl_prof, "Padrões observados no estilo do professor: tipo de cobrança, notação preferida, nível de detalhe.\nExemplo: cobra demonstração formal; mistura indução e recursão")
-        ttk.Entry(outer, textvariable=self.var_prof, width=54).grid(row=row, column=1, columnspan=3, sticky="ew")
         row += 1
 
         cb_exam = ttk.Checkbutton(outer, text="Relevante para prova", variable=self.var_exam)
@@ -3960,7 +3953,6 @@ class FileEntryDialog(simpledialog.Dialog):
             title=self.var_title.get().strip() or Path(self.path).stem,
             tags=tags,
             notes=self.var_notes.get().strip(),
-            professor_signal=self.var_prof.get().strip(),
             relevant_for_exam=self.var_exam.get(),
             include_in_bundle=self.var_bundle.get(),
             processing_mode=self.var_mode.get(),
@@ -4701,7 +4693,9 @@ class URLEntryDialog(tk.Toplevel):
         self.var_tags = tk.StringVar()
         self.var_notes = tk.StringVar()
         self.var_bundle = tk.BooleanVar(value=True)
-        self.var_branch = tk.StringVar(value="main")
+        # Vazio = auto-detect do branch default do remoto (git ls-remote); pinar
+        # "main" aqui gravava branch inexistente (eth2=master, aws=mainline).
+        self.var_branch = tk.StringVar(value="")
 
         self._build_ui()
 
@@ -4726,7 +4720,7 @@ class URLEntryDialog(tk.Toplevel):
         # GitHub repo branch field (hidden by default)
         self._github_lbl = ttk.Label(form, text="Branch:")
         self._github_entry = ttk.Entry(form, textvariable=self.var_branch, width=20)
-        self._github_hint = ttk.Label(form, text="(GitHub repo detectado)", style="Muted.TLabel")
+        self._github_hint = ttk.Label(form, text="(GitHub repo detectado; vazio = branch default)", style="Muted.TLabel")
         self._github_row = r
         # Don't grid yet — shown by _check_github
 

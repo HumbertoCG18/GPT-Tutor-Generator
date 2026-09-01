@@ -14,9 +14,9 @@ from src.builder.core.code_summarization import (
 from src.builder.core.markdown_utils import compact_notebook_markdown
 from src.models.core import FileEntry
 from src.utils.helpers import (
+    CODE_CATEGORIES,
     CODE_EXTENSIONS,
     LANG_MAP,
-    STUDENT_BRANCHES,
     ensure_dir,
     json_str,
     safe_rel,
@@ -211,7 +211,6 @@ def process_zip(builder, entry: FileEntry, raw_target: Path) -> Dict[str, object
             title=relative_name,
             tags=entry.tags,
             notes=f"Extraído de: {entry.title}",
-            professor_signal=entry.professor_signal,
             include_in_bundle=entry.include_in_bundle,
         )
         code_subdir = "student" if entry.category == "codigo-aluno" else "professor"
@@ -264,6 +263,22 @@ def process_github_repo(builder, entry: FileEntry) -> Dict[str, object]:
         "clone_error": None,
     }
     url = entry.source_path
+    # Texto da pagina do repo (README server-rendered) e a UNICA rota de texto
+    # de um github-repo: o clone importa so codigo e nunca preenche
+    # base_markdown, deixando o scorer de unidade/cobertura com 0 chars
+    # (eth2/aws-encryption-sdk no MF). Mesmo mecanismo de file_type=url.
+    url_item = builder._process_url(entry)
+    for key in ("base_markdown", "base_backend", "manual_review"):
+        item[key] = url_item.get(key)
+    # Clone e SO para entries de CODIGO: para bibliografia/materiais o valor e
+    # o texto da pagina — clonar importava o repo INTEIRO como codigo e a
+    # heuristica de branch (main/master em STUDENT_BRANCHES) sobrescrevia a
+    # categoria da entry para codigo-aluno (higiene 2026-08-31; eth2/aws no MF
+    # ficaram com pin de branch errado DE PROPOSITO ate este fix).
+    if entry.category not in CODE_CATEGORIES:
+        builder.logs.append({"entry": entry.id(), "step": "github_clone", "status": "skip",
+                             "reason": f"categoria '{entry.category}' nao e de codigo"})
+        return item
     # tags pinam o branch explicitamente; vazio -> detecta o default do remoto.
     branch = entry.tags.strip() or _detect_default_branch(url)
     slug = entry.id()
@@ -289,7 +304,9 @@ def process_github_repo(builder, entry: FileEntry) -> Dict[str, object]:
         builder.logs.append({"entry": slug, "step": "github_clone", "status": "error", "error": err})
         return item
 
-    category = "codigo-aluno" if branch.lower() in STUDENT_BRANCHES else "codigo-professor"
+    # Branch default nao diz nada sobre aluno x professor — a categoria da
+    # ENTRY (escolhida no import) manda; sub-entries herdam.
+    category = entry.category
     processed = []
     for code_path in sorted(clone_dir.rglob("*")):
         if _should_skip_code_import_path(clone_dir, code_path):
@@ -303,7 +320,6 @@ def process_github_repo(builder, entry: FileEntry) -> Dict[str, object]:
             title=relative_name,
             tags=entry.tags,
             notes=f"Branch: {branch} — {url}",
-            professor_signal=entry.professor_signal,
             include_in_bundle=entry.include_in_bundle,
         )
         code_subdir = "student" if category == "codigo-aluno" else "professor"
@@ -319,6 +335,5 @@ def process_github_repo(builder, entry: FileEntry) -> Dict[str, object]:
 
     item["extracted_files"] = processed
     item["file_count"] = len(processed)
-    item["category"] = category
     builder.logs.append({"entry": slug, "step": "github_clone", "status": "ok", "file_count": len(processed)})
     return item

@@ -13,43 +13,33 @@ edges:
     condition: when deciding where new logic should live
   - target: context/decisions.md
     condition: when a convention comes from an architectural decision
-last_updated: 2026-06-21
+last_updated: 2026-08-06
 ---
 
 # Conventions
 
-## Source Organization
-
-Tracked repository layout:
-
-| Path | Role |
-|---|---|
-| `app.py` | Main application entry point. |
-| `src/` | Application source, 110 tracked files. |
-| `tests/` | Test suite, 136 files. |
-| `docs/` | Project documentation, 147 files. |
-| `scripts/` | Eval/diff harnesses and dev scripts, 29 files. |
-| `plans/` | Planning notes, 6 files. |
-| `.github/` | GitHub metadata, 2 files. |
-| `schemas/` | Data/model schemas, 1 file. |
-
 ## Naming
 
-Observed from the brief:
+Tests: `tests/test_<topic>.py`. Use existing topic names when adding tests (discover with
+`Glob tests/test_*.py`). Do not introduce a new naming scheme without a specific reason.
+Layout/inventário de diretórios: ver `graphify` (dieta MEX 2026-08-06 — contagens envelheciam).
 
-| Kind | Pattern |
-|---|---|
-| Tests | `tests/test_<topic>.py` |
-| Unit fallback tests | `tests/test_unit_fallback.py` |
-| Timeline tests | Examples include `tests/test_timeline_signals.py`, `tests/test_timeline_index_kind.py`, and `tests/test_timeline_scoring_ignored.py` |
-| Student state tests | Examples include `tests/test_student_state_v2.py`, `tests/test_student_state_manual_import.py`, and `tests/test_student_state_integration.py` |
-| Tag catalog tests | `tests/test_tag_catalog.py` |
-| Moodle/SARC signal tests | Examples include `tests/test_moodle.py`, `tests/test_moodle_labels.py`, `tests/test_migrate_signals.py`, and `tests/test_posting_date_probe.py` |
-| Concept resolver tests | Examples include `tests/test_concept_resolver.py`, `tests/test_resolver_fusion.py`, and `tests/test_resolver_wiring.py` |
-| Stable block/anchor tests | Examples include `tests/test_block_identity.py`, `tests/test_anchor_placement.py`, `tests/test_temporal_block_wire.py`, and `tests/test_persist_gate.py` |
-| Stash/card import tests | Examples include `tests/test_stash_import.py` and `tests/test_stash_backfill.py` |
+## Fixtures Copiam Contrato Real (NÃO-NEGOCIÁVEL, 2026-08-06)
 
-Use existing topic names when adding tests. Do not introduce a new naming scheme without a specific reason.
+Toda fixture/dado sintético de teste copia o contrato REAL da fonte que simula — nome
+exato do campo (casing incluso), tipo real, formato de armazenamento real (epoch int vs
+string ISO, lista vs dict, PT acentuado vs slug ASCII), encoding — e declara PROVENIÊNCIA
+(arquivo real conferido, payload real da API, ou linha de código que faz o parse).
+Dicionário campo-a-campo por fonte: `context/institutional.md` §Contratos de dados.
+
+- Nunca inventar nome/formato "genérico" — dado inventado enviesa o teste (caso F5b:
+  spec assumiu assigns "Entrega T1" com stem; Moodle real tinha ambos "Sala de entrega" →
+  matching nunca casou, FAIL 1/8 em produção).
+- Padrão de carimbo: docstring/comentário citando a conferência, como `_ctx_mf_real`
+  ("kind conferido em disco") em `tests/test_motor_due_window.py`.
+- Conjuntos duplicados da fonte em teste: iterar a fonte real (mata drift) E manter um
+  teste de contrato com o literal esperado (mata mudança acidental) — os dois modos de
+  falha são diferentes e cada um pega o que o outro deixa passar.
 
 ## Behavioral Patterns
 
@@ -68,7 +58,7 @@ The README flow establishes these project patterns:
 - Stash/card imports use the immediate folder name as `source_section`; ambiguous basename backfills should remain manual.
 - Timeline block references prefer stable `block_uuid`; positional `bloco-NN` ids are compatibility fallbacks, not new durable truth.
 - The concept resolver is feature-flagged; default routing behavior should not change unless the flag/cutover work is explicit.
-- Anchor placement is feature-flagged through `use_anchor_placement` and writes additive temporal fields; default KB routing should remain unchanged while the flag is off.
+- Motor de atribuição (AnchorEngine + LlmVoter) roda por curso atrás de `use_anchor_engine`/`use_llm_voter` (precedência sobre o legado `use_anchor_placement`); escreve SÓ campos `temporal_*` (nunca `computed_*`), pino manual sempre vence, funil legado intacto até o cutover F5.
 - Generated output is Markdown plus LLM instruction artifacts.
 
 ## Documentation Discipline
@@ -83,6 +73,7 @@ The README flow establishes these project patterns:
 Run this checklist after code or scaffold changes:
 
 - [ ] Manifest facts match the brief or the actual manifest that was read.
+- [ ] Fixture nova copia contrato real da fonte (nome/tipo/formato/encoding) e cita proveniência (ver §Fixtures acima + `institutional.md` §Contratos).
 - [ ] No undeclared dependency, script, linter, formatter, build backend, or package manager was invented.
 - [ ] Entry points and paths match repository spelling and separators.
 - [ ] New tests follow the `tests/test_<topic>.py` convention.

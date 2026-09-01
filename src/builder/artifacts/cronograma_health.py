@@ -10,7 +10,6 @@ from src.builder.timeline.conflicts import detect_timeline_conflicts
 # o suficiente para o revisor comparar o vencedor contra as 2 alternativas mais
 # próximas sem inflar o relatório; só é computado para materiais já flagados
 # (media/baixa), limitando o custo do scorer.
-_TOP_N_CANDIDATES = 3
 
 _NON_MATERIAL_CATEGORIES = {"cronograma", "bibliografia", "referencias"}
 
@@ -111,74 +110,16 @@ def _entry_title(entry: dict) -> str:
     return str(entry.get("title") or entry.get("source_path") or entry.get("id") or "—")
 
 
-def _top_candidate_blocks(entry: dict, blocks: list, n: int = _TOP_N_CANDIDATES) -> list:
-    """Top-N (block_id, score) para um material flagado.
-
-    REUSA score_entry_against_timeline_block (não reimplementa scoring) sobre os
-    blocos instrucionais — exatamente o mesmo scorer de _best_instructional_block_fallback
-    em content_taxonomy. Lazy-import para evitar ciclo. Computado SÓ para
-    materiais já flagados (chamador filtra), limitando o custo.
-
-    Degrada para [] se os blocos não trazem rows (ex.: fixtures mínimas / dados
-    sem cronograma scorável) — o relatório ainda lista o material como acionável.
-    """
-    # D2: predicado unico (filtra admin no runtime; inocuo nos blocos serializados
-    # deste artefato, que ja tiveram admin removido no _serialize).
-    from src.builder.timeline.index import timeline_block_is_administrative_only
-    instructional = [
-        b for b in (blocks or [])
-        if b.get("id") and not timeline_block_is_administrative_only(b)
-    ]
-    if not instructional:
-        return []
-    try:
-        from src.builder.routing.file_map import (
-            score_entry_against_timeline_block,
-            score_card_evidence_against_entry,
-        )
-        from src.builder.extraction.entry_signals import (
-            collect_entry_unit_signals,
-            score_text_against_row,
-        )
-        from src.builder.text.normalize import normalize_match_text
-    except Exception:
-        return []
-
-    # keep="+-./" replica a tokenização do funil real (content_taxonomy):
-    # datas, prefixos de outline e paths são tokens distintivos, e o score
-    # daqui precisa ser comparável ao do pipeline. Import da fonte canônica
-    # (text/normalize) com o keep explícito, em vez do wrapper privado.
-    def _normalize_match_text(text: str) -> str:
-        return normalize_match_text(text, keep="+-./")
-
-    markdown_text = ""
-    signals = collect_entry_unit_signals(entry, markdown_text)
-    preferred_unit = str(entry.get("computed_unit_slug") or "").strip()
-    scored = []
-    for block in instructional:
-        score = score_entry_against_timeline_block(
-            signals,
-            block,
-            normalize_match_text=_normalize_match_text,
-            score_text_against_row=score_text_against_row,
-            score_card_evidence_against_entry_fn=lambda s, items: score_card_evidence_against_entry(
-                s, items, normalize_match_text=_normalize_match_text
-            ),
-            preferred_unit_slug=preferred_unit,
-        )
-        scored.append((str(block.get("id") or ""), float(score)))
-    scored.sort(key=lambda item: item[1], reverse=True)
-    return scored[:n]
-
-
 def _candidate_refs(entry: dict, blocks: list) -> list:
-    """Candidatos p/ material flagado. Janela do motor (F4) quando serializada:
-    lista ordenada sem re-scoring — o S2 condenado (cutover F5) só roda p/
-    entries que não passaram pelo motor (flag OFF)."""
+    """Candidatos p/ material flagado: janela do motor (F4) quando serializada,
+    lista ordenada sem re-scoring. Cutover passo 3: o fallback S2
+    (_top_candidate_blocks via score_entry_against_timeline_block) foi
+    APOSENTADO junto com o scorer — sem janela, degrada para [] e o relatório
+    ainda lista o material como acionável (band/flag continuam no Dashboard)."""
     window = [str(r) for r in (entry.get("temporal_block_window") or []) if str(r)]
     if window:
         return [(ref, None) for ref in window]
-    return _top_candidate_blocks(entry, blocks)
+    return []
 
 
 def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:

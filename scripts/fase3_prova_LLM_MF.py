@@ -90,7 +90,7 @@ def main() -> int:
         if d is None:
             continue             # sem janela/decisao -> funil; NAO vota (spec §12)
         base[r["id"]] = (d, md)
-        if d.flag or r["id"] in series:
+        if (d.flag or r["id"] in series) and len(d.window) > 1:
             vote_rows.append(r)
 
     n_flag = sum(1 for r in vote_rows if base[r["id"]][0].flag)
@@ -101,7 +101,7 @@ def main() -> int:
         for r in vote_rows[:5]:
             d, md = base[r["id"]]
             print(f"\n===== {r['id']} =====")
-            print(build_vote_prompt(byid[r["id"]], d.window, ctx, md)[:900])
+            print(build_vote_prompt(byid[r["id"]], d.window, ctx, md))
         print(f"\n(dry-run: {len(vote_rows)} prompts montaveis; nada chamado)")
         return 0
 

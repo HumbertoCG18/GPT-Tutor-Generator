@@ -15,7 +15,7 @@ edges:
     condition: when understanding which build module generates each file
   - target: context/decisions.md
     condition: when understanding why the repo is structured this way
-last_updated: 2026-06-21
+last_updated: 2026-08-06
 ---
 
 # Repo Output Format
@@ -44,6 +44,7 @@ course/.assessment_context.json              # internal assessment scope/conflic
 course/.tag_catalog.json                     # internal tag vocabulary and manual-tag catalog
 course/.card_block_map.json                  # internal Moodle card-to-timeline map, may include assignment due dates
 course/.lessons_index.json                   # internal Moodle lesson date/topic index from course labels
+material_curation.json                       # motor voter vote cache at repo root, keyed by md5 content_key; reused across reprocess (0 new API calls when warm)
 course/SOURCE_REGISTRY.yaml                  # source registry for processed materials
 student/STUDENT_STATE.md                     # student profile, current position, and progress state
 student/STUDENT_PROFILE.md                   # student profile generated when available
@@ -133,6 +134,6 @@ profile, and repository feature flags in `src/builder/ops/pedagogical_regenerati
 
 - LLM API calls at build time are confined to optional Gemini enrichment layers. Code summaries and reference prose summaries are skipped without a configured key; deterministic reference mapping can still run from fetched text.
 - The concept resolver is not the default routing cutover; it is wired behind `use_concept_resolver` and only overwrites block fields when explicitly enabled.
-- Anchor placement is not the default routing cutover; it is wired behind `use_anchor_placement` and writes additive temporal fields without replacing `computed_block_id`.
+- O motor de atribuição (AnchorEngine/voter) não é o default global: roda por curso atrás de `use_anchor_engine`/`use_llm_voter` (precedência sobre o legado `use_anchor_placement`) e escreve só `temporal_block_id`/`provider`/`method`/`band`/`flag`/`window` sem tocar `computed_block_id`; pino manual (`manual_timeline_block_id`) vence tudo.
 - No manual tutor-side rewrite of the generated course map or routing index; regeneration owns these files.
 - `build/PROGRESS_SCHEMA.md` is legacy output cleaned from existing repos; current schema output is `student/PROGRESS_SCHEMA.md`.

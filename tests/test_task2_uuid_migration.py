@@ -229,10 +229,10 @@ def _stub_topic_match(slug="", confidence=0.0, ambiguous=True):
 def test_bloco_tag_is_display_not_uuid():
     """computed_block_id é uuid, mas a tag bloco: continua bloco-NN (display).
 
-    file_map.py:506 parseia bloco-(\\d+) e QUEBRA com uuid — a tag NÃO pode
-    virar bloco:<uuid>.
-    """
-    from src.builder.extraction.content_taxonomy import resolve_unit_block_tags
+    file_map parseia bloco-(\\d+) e QUEBRA com uuid — a tag NÃO pode virar
+    bloco:<uuid>. Re-versionado no cutover passo 3: invariante agora vale no
+    motor (resolver_apply.apply_concept_resolver, mirror de tag)."""
+    from src.builder.routing import resolver_apply
 
     uuid_v = "550e8400-e29b-41d4-a716-446655440777"
     block = {
@@ -241,28 +241,14 @@ def test_bloco_tag_is_display_not_uuid():
         "period_label": "01/01 a 15/01",
         "unit_slug": "unidade-01",
         "kind": "class",
+        "sessions": [],
+        "topic_candidates": [],
     }
     entries = [_make_pdf_entry("e1", "Slides")]
     entries[0]["manual_timeline_block_id"] = "bloco-05"
 
-    result = resolve_unit_block_tags(
-        entries,
-        course_meta={},
-        subject_profile=None,
-        build_file_map_unit_index_from_course_fn=lambda c, s: [],
-        build_file_map_timeline_context_from_course_fn=lambda c, s: {
-            "blocks_by_unit": {"unidade-01": [block]},
-            "unassigned_blocks": [],
-            "timeline_index": {"blocks": [block]},
-        },
-        iter_content_taxonomy_topics_fn=lambda t: [],
-        auto_map_entry_subtopic_fn=lambda e, t, m, winning_unit_slug="": _stub_topic_match(),
-        auto_map_entry_unit_fn=lambda e, u, m, ti, learned_unit_boosts=None: _stub_unit_match(
-            "unidade-01", confidence=0.80, ambiguous=False
-        ),
-        select_probable_period_for_entry_fn=lambda **kw: ("", 0.0, True, []),
-        resolve_entry_manual_timeline_block_fn=lambda e, tc: block,
-        entry_markdown_text_for_file_map_fn=lambda root, e: "",
+    result = resolver_apply.apply_concept_resolver(
+        entries, blocks=[block], units=[], code_curation={}, root=None,
     )
 
     out = result[0]

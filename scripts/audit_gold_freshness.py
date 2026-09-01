@@ -64,6 +64,13 @@ def norm(s: str) -> str:
     return s.lower()
 
 
+def _looks_like_assessment(material: str, pair_key: str) -> bool:
+    """Material de prova por titulo OU pair_key (ruling user 2026-08-04: lista2/SO)."""
+    return bool(
+        ASSESS_TITLE_RE.search(norm(material)) or ASSESS_TITLE_RE.search(norm(pair_key or ""))
+    )
+
+
 def tokens(s: str) -> set:
     out = set()
     for t in re.findall(r"[a-z0-9]+", norm(s)):
@@ -142,7 +149,7 @@ def audit_course(code: str, repo: Path, gold_csv: Path) -> list[dict]:
                     reasons.append("DATE_MISMATCH")
                     evidence.append(f"data_real={iso} periodo={start}..{end} sessoes={sess_dates}")
             kind = str(tb.get("kind") or "")
-            if kind in NON_INSTRUCTIONAL and not ASSESS_TITLE_RE.search(norm(material)):
+            if kind in NON_INSTRUCTIONAL and not _looks_like_assessment(material, r.get("pair_key") or ""):
                 reasons.append("ADMIN_TRUE")
                 evidence.append(f"kind={kind} label={tb.get('period_label') or tb.get('topic_text','')[:40]}")
 

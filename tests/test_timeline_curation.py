@@ -154,6 +154,40 @@ def test_apply_curation_overrides_sets_unit(tmp_path):
     assert blk["unit_confidence"] == 1.0
 
 
+def test_kind_override_to_class_promotes_auto_unit(tmp_path):
+    # RED real (bloco-16 IA, 2026-08-11): serialize zera unit_slug de nao-class
+    # ANTES da curadoria; kind override -> class deixava a unidade vazia mesmo
+    # com auto_unit_slug provando que o DP acertou. Workaround era pino junto.
+    from src.builder.timeline.index import _apply_curation_overrides
+    set_block_override(tmp_path, "bloco-16", "manual_kind_override", "class")
+    ti = {"version": 4, "blocks": [
+        {"id": "bloco-16", "kind": "planning", "unit_slug": "", "unit_confidence": 0.0,
+         "auto_unit_slug": "unidade-03-agentes", "topic_text": "agentes planejamento",
+         "sessions": [{"d": 1}]}
+    ]}
+    touched = _apply_curation_overrides(ti, tmp_path)
+    assert touched == 1
+    blk = ti["blocks"][0]
+    assert blk["kind"] == "class"
+    assert blk["unit_slug"] == "unidade-03-agentes"
+    assert blk["unit_confidence"] > 0.0
+
+
+def test_kind_override_to_class_respects_manual_unit(tmp_path):
+    # manual_unit_slug sempre vence a promocao do auto.
+    from src.builder.timeline.index import _apply_curation_overrides
+    set_block_override(tmp_path, "bloco-16", "manual_kind_override", "class")
+    set_block_override(tmp_path, "bloco-16", "manual_unit_slug", "unidade-05-pino")
+    ti = {"version": 4, "blocks": [
+        {"id": "bloco-16", "kind": "planning", "unit_slug": "", "unit_confidence": 0.0,
+         "auto_unit_slug": "unidade-03-agentes", "topic_text": "x",
+         "sessions": [{"d": 1}]}
+    ]}
+    _apply_curation_overrides(ti, tmp_path)
+    assert ti["blocks"][0]["unit_slug"] == "unidade-05-pino"
+    assert ti["blocks"][0]["unit_confidence"] == 1.0
+
+
 def test_kind_display_safe_lookup():
     from src.ui.timeline_dashboard import _kind_display
     assert _kind_display("class")["label"] == "Aula"

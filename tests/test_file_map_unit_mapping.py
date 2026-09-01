@@ -8,7 +8,6 @@ from src.builder.engine import (
     _build_timeline_index,
     _auto_map_entry_subtopic,
     _auto_map_entry_unit,
-    _derive_unit_from_topic_match,
     _file_map_markdown_cell,
     _build_file_map_timeline_context_from_course,
     _build_file_map_unit_index_from_course,
@@ -16,10 +15,7 @@ from src.builder.engine import (
     _collect_entry_unit_signals,
     _entry_markdown_text_for_file_map,
     _format_file_map_unit_cell,
-    _select_probable_period_for_entry,
     _score_entry_against_unit,
-    _score_entry_against_timeline_block,
-    _serialize_timeline_index,
     _write_internal_content_taxonomy,
     file_map_md,
     _resolve_entry_manual_timeline_block,
@@ -644,11 +640,9 @@ def test_auto_map_entry_subtopic_prefers_specific_topic_and_derives_unit():
     markdown = "# Exercicios\n\n## Logica de Hoare\n\n### Pre e Pos Condicoes\n"
 
     result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
-    derived_unit = _derive_unit_from_topic_match(result, taxonomy)
 
     assert isinstance(result, TopicMatchResult)
     assert result.topic_slug in {"logica-de-hoare", "pre-e-pos-condicoes"}
-    assert derived_unit == "unidade-02-verificacao-de-programas"
     assert result.confidence > 0
 
 
@@ -702,10 +696,8 @@ def test_auto_map_entry_subtopic_prefers_title_and_headings_over_late_body_menti
     )
 
     result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
-    derived_unit = _derive_unit_from_topic_match(result, taxonomy)
 
     assert result.topic_slug == "especificacao-de-funcoes-recursivas"
-    assert derived_unit == "unidade-01-metodos-formais"
 
 
 def test_auto_map_entry_subtopic_uses_heading_enriched_alias_for_logic_propositional():
@@ -729,16 +721,19 @@ def test_auto_map_entry_subtopic_uses_heading_enriched_alias_for_logic_propositi
     markdown = "# Lógica Proposicional\n\n# Sintaxe\n\nFórmulas bem-formadas."
 
     result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
-    derived_unit = _derive_unit_from_topic_match(result, taxonomy)
 
     assert result.topic_slug == "linguagens-de-especificacao-e-logicas"
-    assert derived_unit == "unidade-01-metodos-formais"
 
 
 def _tie_taxonomy():
-    """Dois tópicos com label idêntico, slugs neutros (que não casam o texto)
-    e MESMO kind → empate exato por construção (o scorer também casa
-    slug_phrase e dá +0.04 a kind subtopic)."""
+    """Dois tópicos DISTINTOS que casam o mesmo texto com o mesmo peso, slugs
+    neutros (que não casam o texto) e MESMO kind → empate exato por construção.
+
+    Labels distintos de propósito: desde o IDF intra-unidade (2026-08-19), label
+    REPETIDO entre irmãos não discrimina e é descartado dos dois — o empate
+    viraria "sem-sinal". `hoare` é comum aos dois e some; `alfa` e `beta`
+    são exclusivos e sustentam a frase (termos neutros de propósito: `logica`
+    está em UNIT_GENERIC_TOKENS e zeraria um dos lados)."""
     return {
         "version": 1,
         "course_slug": "metodos-formais",
@@ -749,14 +744,14 @@ def _tie_taxonomy():
                 "topics": [
                     {
                         "slug": "topico-a",
-                        "label": "Logica de Hoare",
+                        "label": "Alfa de Hoare",
                         "aliases": [],
                         "kind": "topic",
                         "unit_slug": "unidade-02-verificacao-de-programas",
                     },
                     {
                         "slug": "topico-b",
-                        "label": "Logica de Hoare",
+                        "label": "Beta de Hoare",
                         "aliases": [],
                         "kind": "topic",
                         "unit_slug": "unidade-02-verificacao-de-programas",
@@ -772,14 +767,14 @@ def test_auto_map_entry_subtopic_exact_tie_returns_no_slug():
     # exato entre tópicos → o sort estável elegia um vencedor ARBITRÁRIO
     # (menor índice na taxonomia) e o surfaçava com conf 0.0.
     entry = {
-        "title": "hoare",
+        "title": "Alfa de Hoare Beta de Hoare",
         "category": "codigo-professor",
         "tags": "",
         "manual_tags": [],
         "auto_tags": [],
         "raw_target": "raw/zip/hoare.zip",
     }
-    result = _auto_map_entry_subtopic(entry, _tie_taxonomy(), "Logica de Hoare")
+    result = _auto_map_entry_subtopic(entry, _tie_taxonomy(), "unidade-02-verificacao-de-programas")
 
     assert result.topic_slug == ""
     assert result.confidence == 0.0
@@ -804,36 +799,6 @@ def test_auto_map_entry_subtopic_zero_score_returns_no_slug():
     assert result.confidence == 0.0
     assert result.ambiguous is True
     assert any("sem-sinal" in r for r in result.reasons)
-
-
-def test_derive_unit_from_topic_match_uses_topic_unit_when_present():
-    taxonomy = {
-        "version": 1,
-        "course_slug": "metodos-formais",
-        "units": [
-            {
-                "slug": "unidade-02-verificacao-de-programas",
-                "title": "Unidade 2 - Verificacao de Programas",
-                "topics": [
-                    {
-                        "slug": "logica-de-hoare",
-                        "label": "Logica de Hoare",
-                        "aliases": ["pre e pos condicoes"],
-                        "kind": "topic",
-                        "unit_slug": "unidade-02-verificacao-de-programas",
-                    },
-                ],
-            },
-        ],
-    }
-    match = TopicMatchResult(
-        topic_slug="logica-de-hoare",
-        topic_label="Logica de Hoare",
-        unit_slug="unidade-02-verificacao-de-programas",
-        confidence=0.93,
-    )
-
-    assert _derive_unit_from_topic_match(match, taxonomy) == "unidade-02-verificacao-de-programas"
 
 
 def test_format_file_map_unit_cell_marks_ambiguous_result():
@@ -909,6 +874,8 @@ def test_file_map_md_refines_period_by_subtopic_within_unit(tmp_path):
     )
 
     course_meta = {"course_name": "Métodos Formais", "_repo_root": repo}
+    # Cutover passo 3: fixture ganhou uma 2ª unidade (fallback keyword de
+    # unidade morreu; matcher posicional exige >=2 unidades no plano).
     subject_profile = SubjectProfile(
         teaching_plan="""
 ### Unidade 1 — Métodos Formais
@@ -916,6 +883,10 @@ def test_file_map_md_refines_period_by_subtopic_within_unit(tmp_path):
 - Linguagens de Especificação e Lógicas
 - Especificação de Conjuntos Indutivos
 - Especificação de Funções Recursivas
+
+### Unidade 2 — Verificação de Programas
+- Lógica de Hoare
+- Invariantes de Laço
 """.strip()
         ,
         syllabus="""
@@ -927,6 +898,8 @@ def test_file_map_md_refines_period_by_subtopic_within_unit(tmp_path):
 | 4 | 2026-03-23 | definições indutivas e recursivas sobre árvores |
 | 5 | 2026-03-25 | exercícios |
 | 6 | 2026-03-27 | atividade assíncrona: complementar os estudos com as leituras recomendadas, realizar os exercícios. |
+| 7 | 2026-04-27 | Unidade 2: Lógica de Hoare |
+| 8 | 2026-05-06 | invariantes de laço |
 """.strip()
     )
     entries = [
@@ -955,63 +928,6 @@ def test_file_map_md_refines_period_by_subtopic_within_unit(tmp_path):
     assert "Exerciciosformalizacaoalgoritmosrecursao" in result
 
 
-def test_file_map_md_prefers_exercise_block_over_intro_row_in_realistic_schedule(tmp_path):
-    repo = tmp_path / "repo"
-    md_dir = repo / "exercises" / "lists"
-    md_dir.mkdir(parents=True)
-    md_file = md_dir / "exerciciosformalizacaoalgoritmosrecursao.md"
-    md_file.write_text(
-        "# Exercícios\n\n## Formalização de Algoritmos — Recursão\n\n### Exercícios\n",
-        encoding="utf-8",
-    )
-
-    course_meta = {"course_name": "Métodos Formais", "_repo_root": repo}
-    subject_profile = SubjectProfile(
-        teaching_plan="""
-### Unidade 1 — Métodos Formais
-- Sistemas Formais
-- Linguagens de Especificação e Lógicas
-- Especificação de Conjuntos Indutivos
-- Especificação de Funções Recursivas
-""".strip(),
-        syllabus="""
-| # | Dia | Data | Hora | Descrição | Atividade | Recursos |
-|---|---|---|---|---|---|---|
-| 4 | QUA | 11/03/2026 | LM 19:15 - 20:45 | Conjuntos indutivos e equações recursivas | Aula |  |
-| 5 | SEG | 16/03/2026 | LM 19:15 - 20:45 | Exercícios | Aula |  |
-| 6 | QUA | 18/03/2026 | LM 19:15 - 20:45 | Estudo de caso: listas | Aula |  |
-| 7 | SEG | 23/03/2026 | LM 19:15 - 20:45 | Estudo de caso: árvores | Aula |  |
-| 8 | QUA | 25/03/2026 | LM 19:15 - 20:45 | Exercícios | Aula |  |
-| 9 | SEG | 30/03/2026 | LM 19:15 - 20:45 | Provas por indução | Aula |  |
-""".strip(),
-    )
-    entries = [
-        {
-            "title": "Exerciciosformalizacaoalgoritmosrecursao",
-            "category": "listas",
-            "tags": "",
-            "base_markdown": "exercises/lists/exerciciosformalizacaoalgoritmosrecursao.md",
-            "raw_target": "raw/pdfs/listas/exerciciosformalizacaoalgoritmosrecursao.pdf",
-        }
-    ]
-
-    markdown_text = _entry_markdown_text_for_file_map(repo, entries[0])
-    unit_index = _build_file_map_unit_index_from_course(course_meta, subject_profile)
-    unit_match = _auto_map_entry_unit(entries[0], unit_index, markdown_text)
-    timeline_context = _build_file_map_timeline_context_from_course(course_meta, subject_profile)
-    unit_rows = timeline_context["rows_by_unit"][unit_match.slug]
-    unit_by_slug = {unit["slug"]: unit for unit in unit_index}
-
-    probable_period, _, period_ambiguous, _ = _select_probable_period_for_entry(
-        entry=entries[0],
-        unit=unit_by_slug[unit_match.slug],
-        candidate_rows=unit_rows,
-        markdown_text=markdown_text,
-    )
-
-    assert unit_match.slug == "unidade-01-metodos-formais"
-    assert period_ambiguous is False
-    assert probable_period == "5 dias · 11/03/2026 a 25/03/2026"
 
 
 def test_file_map_timeline_context_filters_rows_outside_unit_period():
@@ -1047,11 +963,18 @@ def test_file_map_timeline_context_filters_rows_outside_unit_period():
 
 def test_file_map_timeline_context_exposes_blocks_by_unit():
     course_meta = {"course_name": "Métodos Formais"}
+    # Cutover passo 3: fixture ganhou uma 2ª unidade — o fallback keyword que
+    # cobria plano de 1 unidade morreu; com <2 unidades o matcher posicional
+    # (m<2) recusa e nenhum bloco recebe unidade (comportamento honesto novo).
     subject_profile = SubjectProfile(
         teaching_plan="""
 ### Unidade 1 — Métodos Formais
 - Especificação de Conjuntos Indutivos
 - Especificação de Funções Recursivas
+
+### Unidade 2 — Verificação de Programas
+- Lógica de Hoare
+- Invariantes de Laço
 """.strip(),
         syllabus="""
 | # | Dia | Data | Hora | Descrição | Atividade | Recursos |
@@ -1061,6 +984,8 @@ def test_file_map_timeline_context_exposes_blocks_by_unit():
 | 6 | QUA | 18/03/2026 | LM 19:15 - 20:45 | Estudo de caso: listas | Aula |  |
 | 7 | SEG | 23/03/2026 | LM 19:15 - 20:45 | Estudo de caso: árvores | Aula |  |
 | 8 | QUA | 25/03/2026 | LM 19:15 - 20:45 | Exercícios | Aula |  |
+| 9 | SEG | 27/04/2026 | LM 19:15 - 20:45 | Lógica de Hoare | Aula |  |
+| 10 | QUA | 06/05/2026 | LM 19:15 - 20:45 | Invariantes de Laço | Aula |  |
 """.strip(),
     )
 
@@ -1094,7 +1019,9 @@ def test_build_timeline_index_serializes_sessions_inside_block():
     ]
 
     timeline_index = _build_timeline_index(candidate_rows, unit_index=[], content_taxonomy={})
-    serialized = _serialize_timeline_index(timeline_index)
+    # Cutover passo 3: serializador unico (persist_enriched, v4).
+    from src.builder.core.core_utils import persist_enriched_timeline_index
+    serialized = persist_enriched_timeline_index(timeline_index)
 
     assert timeline_index["version"] == 4
     assert serialized["version"] == 4
@@ -1143,360 +1070,12 @@ def test_file_map_timeline_context_extends_program_verification_unit_with_glossa
     assert context["unit_periods"]["unidade-02-verificacao-de-programas"] == "5 blocos · 27/04/2026 a 15/06/2026"
 
 
-def test_select_probable_period_for_entry_prefers_blocks_matching_subtopic():
-    unit = {
-        "slug": "unidade-01-metodos-formais",
-        "title": "Unidade 1 — Métodos Formais",
-    }
-    blocks = [
-        {
-            "id": "bloco-01",
-            "period_label": "16/03/2026 a 18/03/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "conjuntos-indutivos",
-            "primary_topic_label": "Conjuntos Indutivos",
-            "primary_topic_confidence": 0.92,
-            "topic_ambiguous": False,
-            "topic_candidates": [
-                {
-                    "topic_slug": "conjuntos-indutivos",
-                    "topic_label": "Conjuntos Indutivos",
-                    "unit_slug": "unidade-01-metodos-formais",
-                }
-            ],
-            "rows": [
-                {"index": 1, "date_text": "16/03/2026", "content": "Exercícios"},
-                {"index": 2, "date_text": "18/03/2026", "content": "Exercícios"},
-            ],
-        },
-        {
-            "id": "bloco-02",
-            "period_label": "23/03/2026 a 25/03/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "provadores-de-teoremas",
-            "primary_topic_label": "Provadores de Teoremas",
-            "primary_topic_confidence": 0.98,
-            "topic_ambiguous": False,
-            "topic_candidates": [
-                {
-                    "topic_slug": "provadores-de-teoremas",
-                    "topic_label": "Provadores de Teoremas",
-                    "unit_slug": "unidade-01-metodos-formais",
-                }
-            ],
-            "rows": [
-                {"index": 3, "date_text": "23/03/2026", "content": "Exercícios"},
-                {"index": 4, "date_text": "25/03/2026", "content": "Exercícios"},
-            ],
-        },
-    ]
-    entry = {
-        "title": "Isabelle",
-        "category": "listas",
-        "tags": "",
-        "raw_target": "raw/pdfs/listas/isabelle.pdf",
-    }
-
-    period, confidence, ambiguous, reasons = _select_probable_period_for_entry(
-        entry=entry,
-        unit=unit,
-        candidate_rows=blocks,
-        markdown_text="# Provadores de Teoremas\n\nIsabelle",
-        preferred_topic_slug="provadores-de-teoremas",
-    )
-
-    assert period == "23/03/2026 a 25/03/2026"
-    assert ambiguous is False
-    assert confidence > 0
-    assert any(reason == "topic=provadores-de-teoremas" for reason in reasons)
-    assert any(reason == "topic-filtered" for reason in reasons)
 
 
-def test_select_probable_period_for_entry_prefers_matching_session_over_stronger_block_text():
-    unit = {
-        "slug": "unidade-01-metodos-formais",
-        "title": "Unidade 1 — Métodos Formais",
-    }
-    blocks = [
-        {
-            "id": "bloco-01",
-            "period_label": "30/03/2026 a 03/04/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "",
-            "primary_topic_label": "",
-            "primary_topic_confidence": 0.0,
-            "topic_ambiguous": True,
-            "topic_candidates": [],
-            "rows": [
-                {"index": 1, "date_text": "30/03/2026", "content": "Aula"},
-                {"index": 2, "date_text": "01/04/2026", "content": "Aula"},
-            ],
-            "sessions": [
-                {
-                    "id": "bloco-01-sessao-2026-03-30",
-                    "date": "2026-03-30",
-                    "kind": "class",
-                    "label": "Especificações recursivas e provas por indução",
-                    "signals": [
-                        "2026-03-30",
-                        "especificacoes recursivas",
-                        "provas por inducao",
-                    ],
-                }
-            ],
-        },
-        {
-            "id": "bloco-02",
-            "period_label": "06/04/2026 a 10/04/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "",
-            "primary_topic_label": "",
-            "primary_topic_confidence": 0.0,
-            "topic_ambiguous": True,
-            "topic_candidates": [],
-            "rows": [
-                {
-                    "index": 3,
-                    "date_text": "06/04/2026",
-                    "content": "Especificações recursivas e provas por indução",
-                },
-                {
-                    "index": 4,
-                    "date_text": "08/04/2026",
-                    "content": "Especificações recursivas e provas por indução",
-                },
-            ],
-            "sessions": [
-                {
-                    "id": "bloco-02-sessao-2026-04-06",
-                    "date": "2026-04-06",
-                    "kind": "class",
-                    "label": "Aula de revisão",
-                    "signals": ["2026-04-06", "aula", "revisao"],
-                }
-            ],
-        },
-    ]
-    entry = {
-        "title": "Lista de revisão",
-        "category": "listas",
-        "tags": "",
-        "raw_target": "raw/pdfs/listas/lista-revisao.pdf",
-    }
-    markdown_text = """
-Semana 30/03/2026 a 03/04/2026
-(30/03/2026): Especificações recursivas e provas por indução
-""".strip()
-
-    period, confidence, ambiguous, reasons = _select_probable_period_for_entry(
-        entry=entry,
-        unit=unit,
-        candidate_rows=blocks,
-        markdown_text=markdown_text,
-        preferred_topic_slug="",
-    )
-
-    assert period == "30/03/2026 a 03/04/2026"
-    assert ambiguous is False
-    assert confidence > 0
-    assert any(reason == "session-first" for reason in reasons)
-    assert any(reason == "session=bloco-01-sessao-2026-03-30" for reason in reasons)
 
 
-def test_select_probable_period_for_entry_reports_card_evidence_when_it_reinforces_session():
-    unit = {"slug": "unidade-01-metodos-formais"}
-    blocks = [
-        {
-            "id": "bloco-01",
-            "period_label": "30/03/2026 a 03/04/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "",
-            "primary_topic_label": "",
-            "primary_topic_confidence": 0.0,
-            "topic_ambiguous": True,
-            "topic_candidates": [],
-            "rows": [
-                {"index": 1, "date_text": "30/03/2026", "content": "Aula"},
-                {"index": 2, "date_text": "01/04/2026", "content": "Aula"},
-            ],
-            "sessions": [
-                {
-                    "id": "bloco-01-sessao-2026-03-30",
-                    "date": "2026-03-30",
-                    "kind": "class",
-                    "label": "Especificações recursivas e provas por indução",
-                    "signals": [
-                        "2026-03-30",
-                        "especificacoes recursivas",
-                        "provas por inducao",
-                    ],
-                    "card_evidence": [
-                        {
-                            "title": "Especificações recursivas e provas por indução",
-                            "normalized_title": "especificacoes recursivas e provas por inducao",
-                            "date": "",
-                            "source_kind": "topic-title",
-                        }
-                    ],
-                }
-            ],
-            "card_evidence": [
-                {
-                    "title": "Especificações recursivas e provas por indução",
-                    "normalized_title": "especificacoes recursivas e provas por inducao",
-                    "date": "",
-                    "source_kind": "card-title",
-                }
-            ],
-        },
-        {
-            "id": "bloco-02",
-            "period_label": "06/04/2026 a 10/04/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "",
-            "primary_topic_label": "",
-            "primary_topic_confidence": 0.0,
-            "topic_ambiguous": True,
-            "topic_candidates": [],
-            "rows": [{"index": 3, "date_text": "06/04/2026", "content": "Revisao geral"}],
-            "sessions": [
-                {
-                    "id": "bloco-02-sessao-2026-04-06",
-                    "date": "2026-04-06",
-                    "kind": "class",
-                    "label": "Revisao geral",
-                    "signals": ["2026-04-06", "revisao", "geral"],
-                }
-            ],
-            "card_evidence": [],
-        },
-    ]
-    entry = {
-        "title": "Lista de revisão - Especificações recursivas e provas por indução",
-        "category": "listas",
-        "tags": "",
-        "raw_target": "raw/pdfs/listas/lista-revisao.pdf",
-    }
-    markdown_text = """
-Semana 30/03/2026 a 03/04/2026
-(30/03/2026): Especificações recursivas e provas por indução
-""".strip()
-
-    period, confidence, ambiguous, reasons = _select_probable_period_for_entry(
-        entry=entry,
-        unit=unit,
-        candidate_rows=blocks,
-        markdown_text=markdown_text,
-        preferred_topic_slug="",
-    )
-
-    assert period == "30/03/2026 a 03/04/2026"
-    assert ambiguous is False
-    assert confidence > 0
-    assert any(reason == "session-first" for reason in reasons)
-    assert any(reason == "card-evidence" for reason in reasons)
 
 
-def test_select_probable_period_for_entry_keeps_explicit_session_ahead_of_stronger_card_evidence():
-    unit = {"slug": "unidade-01-metodos-formais"}
-    blocks = [
-        {
-            "id": "bloco-01",
-            "period_label": "30/03/2026 a 03/04/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "",
-            "primary_topic_label": "",
-            "primary_topic_confidence": 0.0,
-            "topic_ambiguous": True,
-            "topic_candidates": [],
-            "rows": [
-                {"index": 1, "date_text": "30/03/2026", "content": "Especificações recursivas e provas por indução"},
-                {"index": 2, "date_text": "01/04/2026", "content": "Especificações recursivas e provas por indução"},
-            ],
-            "sessions": [
-                {
-                    "id": "bloco-01-sessao-2026-03-30",
-                    "date": "2026-03-30",
-                    "kind": "class",
-                    "label": "Especificações recursivas e provas por indução",
-                    "signals": [
-                        "2026-03-30",
-                        "especificacoes recursivas",
-                        "provas por inducao",
-                    ],
-                }
-            ],
-            "card_evidence": [],
-        },
-        {
-            "id": "bloco-02",
-            "period_label": "06/04/2026 a 10/04/2026",
-            "unit_slug": "unidade-01-metodos-formais",
-            "unit_confidence": 0.95,
-            "primary_topic_slug": "",
-            "primary_topic_label": "",
-            "primary_topic_confidence": 0.0,
-            "topic_ambiguous": True,
-            "topic_candidates": [],
-            "rows": [{"index": 3, "date_text": "06/04/2026", "content": "Aula de revisão"}],
-            "sessions": [
-                {
-                    "id": "bloco-02-sessao-2026-04-06",
-                    "date": "2026-04-06",
-                    "kind": "class",
-                    "label": "Aula de revisão",
-                    "signals": ["2026-04-06", "aula", "revisao"],
-                    "card_evidence": [
-                        {
-                            "title": "Especificações recursivas e provas por indução",
-                            "normalized_title": "especificacoes recursivas e provas por inducao",
-                            "date": "",
-                            "source_kind": "topic-title",
-                        }
-                    ],
-                }
-            ],
-            "card_evidence": [
-                {
-                    "title": "Especificações recursivas e provas por indução",
-                    "normalized_title": "especificacoes recursivas e provas por inducao",
-                    "date": "",
-                    "source_kind": "card-title",
-                }
-            ],
-        },
-    ]
-    entry = {
-        "title": "Lista de revisão - Especificações recursivas e provas por indução",
-        "category": "listas",
-        "tags": "",
-        "raw_target": "raw/pdfs/listas/lista-revisao.pdf",
-    }
-    markdown_text = """
-Semana 30/03/2026 a 03/04/2026
-(30/03/2026): Especificações recursivas e provas por indução
-""".strip()
-
-    period, confidence, ambiguous, reasons = _select_probable_period_for_entry(
-        entry=entry,
-        unit=unit,
-        candidate_rows=blocks,
-        markdown_text=markdown_text,
-        preferred_topic_slug="",
-    )
-
-    assert period == "30/03/2026 a 03/04/2026"
-    assert ambiguous is False
-    assert confidence > 0
-    assert any(reason == "session-first" for reason in reasons)
-    assert not any(reason == "card-evidence" for reason in reasons)
 
 
 def test_file_map_md_keeps_period_column_empty_without_subject_profile():
@@ -1691,22 +1270,6 @@ def test_file_map_skips_timeline_for_reference_categories():
         assert period_cell == ""
 
 
-def test_score_entry_against_timeline_block_ignores_rows_marked_ignored():
-    signals = {
-        "title_text": "Lista de exercicios",
-        "markdown_text": "Lista de exercicios",
-        "category_text": "",
-        "tags_text": "listas",
-        "raw_text": "",
-        "manual_tags_text": "",
-        "auto_tags_text": "",
-        "legacy_tags_text": "",
-    }
-    ignored_block = {"rows": [{"content": "Lista de exercicios", "ignored": True}]}
-    active_block = {"rows": [{"content": "Lista de exercicios"}]}
-
-    assert _score_entry_against_timeline_block(signals, ignored_block) == 0.0
-    assert _score_entry_against_timeline_block(signals, active_block) > 0.0
 
 
 def test_resolve_entry_manual_timeline_block_falls_back_to_nth_instructional_block():
@@ -1911,10 +1474,14 @@ def test_build_content_taxonomy_filters_noise_topics_without_code():
 
     unit = taxonomy["units"][0]
     slugs = [t["slug"] for t in unit["topics"]]
+    codes = {t["slug"]: t["code"] for t in unit["topics"]}
 
-    # Tópicos com código devem estar presentes
-    assert "11-evolucao-historica" in slugs
-    assert "12-chamadas-de-sistema" in slugs
+    # Tópicos com código devem estar presentes. O slug NAO carrega o codigo
+    # (forma de producao: `maquinas-de-turing` + code "2.1"); o `11-...` antigo
+    # era artefato do checkbox `[ ]` vazando para o texto do topico.
+    assert "evolucao-historica" in slugs
+    assert "chamadas-de-sistema" in slugs
+    assert codes["evolucao-historica"] == "1.1"
 
     # Noise topics sem código devem ter sido filtrados
     noise_slugs = [
@@ -1943,9 +1510,11 @@ def test_build_content_taxonomy_includes_topic_42_comunicacao():
 
     unit = taxonomy["units"][0]
     slugs = [t["slug"] for t in unit["topics"]]
-    assert "41-programas-multithreads" in slugs
-    assert "42-comunicacao-e-sincronizacao-de-processos" in slugs
-    assert "43-primitivas-de-sincronizacao" in slugs
+    # slug sem codigo (forma de producao); o codigo vive em `code`.
+    assert "programas-multithreads" in slugs
+    assert "comunicacao-e-sincronizacao-de-processos" in slugs
+    assert "primitivas-de-sincronizacao" in slugs
+    assert {t["code"] for t in unit["topics"]} == {"4.1", "4.2", "4.3"}
 
 
 def test_file_map_md_includes_subtopic_column_in_header():
@@ -2030,3 +1599,299 @@ def test_file_map_md_drops_low_confidence_suffix_keeps_confidence_column():
     assert "Baixa" in result  # Confiança column still flags low confidence
     # sanity: the mirrored slug itself is still present
     assert "unidade-01-programacao-denotacional" in result
+
+
+# Card do Moodle como sinal de unidade: TENTADO e REVERTIDO em 2026-08-18 — a
+# versao por frase e inerte (os `topic_phrases` do indice de unidade vem do dict
+# serializado do topico, ver `_topic_text`) e por via indireta regride o MF: 6
+# entries do card `Verificacao de Programas` saem de
+# `unidade-02-verificacao-de-programas`. Patch guardado no relatorio da medicao.
+# Reabrir SO depois de corrigir `_topic_text` e com a regua entry->unidade de pe.
+
+
+# --- topico como DICT no indice de unidade (bug achado em 2026-08-18) ---
+# `build_content_taxonomy` devolve cada topico como dict
+# {code, slug, label, aliases, kind, unit_slug}; `_topic_text` tratava tupla e
+# str, entao caia no `str(topic)` e o topic_phrase virava o dict serializado.
+
+_TOPICO_DICT = {
+    "code": "1.2",
+    "slug": "visoes-arquiteturais-estrutural-e-dinamica",
+    "label": "Visões arquiteturais: estrutural e dinâmica",
+    "aliases": ["1.2 Visões arquiteturais: estrutural e dinâmica"],
+    "kind": "topic",
+    "unit_slug": "unidade-01-arquitetura-de-software",
+}
+
+
+def test_topic_text_extrai_label_de_topico_dict():
+    from src.builder.extraction.teaching_plan import _topic_text as tt
+
+    assert tt(_TOPICO_DICT) == "Visões arquiteturais: estrutural e dinâmica"
+    assert tt(("2.1 Lógica de Hoare", 0)) == "2.1 Lógica de Hoare"
+    assert tt("texto solto") == "texto solto"
+
+
+def test_build_file_map_unit_index_nao_serializa_dict_do_topico():
+    index = _build_file_map_unit_index([
+        {"title": "Unidade 01 — Arquitetura de Software", "topics": [_TOPICO_DICT]},
+    ])
+
+    frases = index[0]["topic_phrases"]
+    assert frases == ["visoes arquiteturais estrutural e dinamica"]
+    # lixo estrutural do dict fora dos tokens
+    for sujeira in ("code", "slug", "label", "aliases", "kind"):
+        assert sujeira not in index[0]["topic_tokens"]
+
+
+def test_score_entry_against_unit_casa_frase_de_topico_dict():
+    """Com o dict serializado, `topic_phrase in headings_text` nunca casava e os
+    pesos altos de frase (3.0/2.8/2.7) ficavam inertes no eixo de unidade."""
+    unit = _build_file_map_unit_index([
+        {"title": "Unidade 01 — Arquitetura de Software", "topics": [_TOPICO_DICT]},
+    ])[0]
+    signals = _collect_entry_unit_signals(
+        {"title": "aula", "category": "material-de-aula"},
+        "# Visões arquiteturais: estrutural e dinâmica\n\nconteudo.")
+
+    assert _score_entry_against_unit(signals, unit) >= 3.0
+
+
+def test_unit_index_descarta_frase_que_e_titulo_de_outra_unidade():
+    """Glossario e aliases injetavam na u01 do MF duas frases `verificacao de
+    programas` — o titulo da u02. Qualquer sinal com o nome de OUTRA unidade
+    rouba material dela (medido 2026-08-18: card `Verificacao de Programas`
+    levava 6 entries da u02 para a u01)."""
+    index = _build_file_map_unit_index([
+        {"title": "Unidade 01 — Métodos Formais",
+         "topics": ["Sistemas Formais"],
+         "extra_signals": ["Verificação de Programas", "Provadores de Teoremas"]},
+        {"title": "Unidade 02 — Verificação de Programas",
+         "topics": ["Lógica de Hoare"]},
+    ])
+
+    u01 = next(u for u in index if u["slug"].startswith("unidade-01"))
+    u02 = next(u for u in index if u["slug"].startswith("unidade-02"))
+    assert "verificacao de programas" not in u01["topic_phrases"]
+    assert "sistemas formais" in u01["topic_phrases"]
+    assert "provadores de teoremas" in u01["topic_phrases"]
+    assert "logica de hoare" in u02["topic_phrases"]
+
+
+def _plano_duas_unidades():
+    return (
+        "Unidade 01 - Introducao\n"
+        "1.1 Evolucao historica\n"
+        "1.2 Chamadas de sistema\n"
+        "Unidade 02 - Gerencia do processador\n"
+        "2.1 Escalonamento\n"
+        "2.2 Algoritmos de escalonamento\n"
+    )
+
+
+def _glossario_com_template(definicao_boilerplate: str) -> str:
+    """GLOSSARY.md como o build gera: duas secoes de TEMPLATE sem `Aparece em`,
+    e termos reais cuja definicao e a mesma frase-modelo para todas as unidades."""
+    return (
+        "# GLOSSARY - Curso\n"
+        "\n"
+        "## Formato de entrada\n"
+        "```\n"
+        "## [Termo]\n"
+        "```\n"
+        "\n"
+        "## Termos\n"
+        "> Termos extraidos automaticamente do plano de ensino.\n"
+        "\n"
+        "## 1.1 Evolucao historica\n"
+        f"**Definicao:** {definicao_boilerplate}\n"
+        "**Sinonimos aceitos:** \u2014\n"
+        "**Aparece em:** Unidade 01 - Introducao\n"
+        "\n"
+        "## 2.1 Escalonamento\n"
+        f"**Definicao:** {definicao_boilerplate}\n"
+        "**Sinonimos aceitos:** \u2014\n"
+        "**Aparece em:** Unidade 02 - Gerencia do processador\n"
+    )
+
+
+def _indice(monkeypatch, glossario: str):
+    import src.builder.routing.file_map as fm
+
+    monkeypatch.setattr(
+        "src.builder.facade.file_map.glossary_md",
+        lambda *a, **k: glossario,
+        raising=False,
+    )
+    profile = SubjectProfile(name="Curso", teaching_plan=_plano_duas_unidades())
+    return _build_file_map_unit_index_from_course({"name": "Curso"}, profile)
+
+
+def test_secao_de_template_do_glossario_nao_vira_sinal_de_unidade(monkeypatch):
+    """`## Formato de entrada` e `## Termos` sao secoes do TEMPLATE, nao termos.
+
+    Nao tem `Aparece em`, entao o unit_hint fica vazio e o guard antigo
+    (`if unit_hint and ...`) as colava em TODA unidade — medido nos 5 cursos
+    de producao em 2026-08-18.
+    """
+    index = _indice(monkeypatch, _glossario_com_template("Definicao real e especifica."))
+
+    for unit in index:
+        frases = " | ".join(unit["topic_phrases"])
+        assert "formato de entrada" not in frases
+        assert frases.count("termos") == 0
+
+
+def test_sinal_presente_em_todas_as_unidades_e_descartado(monkeypatch):
+    """Token em TODAS as unidades tem poder discriminante ZERO.
+
+    A definicao auto-gerada e a MESMA frase-modelo para todo termo, entao
+    `conceito`/`central`/`reconhecido`/... viravam frase de todas as unidades.
+    """
+    boiler = (
+        "Conceito central de esta unidade que deve ser reconhecido e usado "
+        "corretamente nas respostas e revisoes."
+    )
+    index = _indice(monkeypatch, _glossario_com_template(boiler))
+
+    ubiquas = set.intersection(*(set(u["topic_phrases"]) for u in index))
+    assert not ubiquas, f"frases presentes em todas as unidades: {sorted(ubiquas)}"
+
+
+def test_travessao_de_formatacao_nao_vira_alias():
+    """`**Sinonimos aceitos:** \u2014` e placeholder de VAZIO, nao um sinonimo."""
+    from src.builder.extraction.content_taxonomy import _parse_glossary_terms
+
+    termos = _parse_glossary_terms(
+        "## Escalonamento\n"
+        "**Definicao:** Ordem de execucao.\n"
+        "**Sinonimos aceitos:** \u2014\n"
+        "**Aparece em:** Unidade 02\n"
+        "\n"
+        "## Deadlock\n"
+        "**Sinonimos aceitos:** impasse; \u2013\n"
+        "**Aparece em:** Unidade 04\n"
+    )
+
+    por_termo = {t["term"]: t["synonyms"] for t in termos}
+    assert por_termo["Escalonamento"] == []
+    assert por_termo["Deadlock"] == ["impasse"]
+
+
+def test_topico_sem_vocabulario_proprio_nao_ganha_bonus_fantasma():
+    """Topico cujos tokens sao TODOS genericos nao pode pontuar sem casar nada.
+
+    `topic_tokens` vazio caia em `len(overlap) >= len(topic_tokens)` -> `0 >= 0`
+    e somava +1.4 INCONDICIONAL. Vivo em producao (2026-08-19): 3 topicos do MF,
+    entre eles "Linguagens de Especificacao e Logicas".
+    """
+    from src.builder.engine import _score_entry_against_taxonomy_topic
+    from src.builder.timeline.index import UNIT_GENERIC_TOKENS
+
+    label = "Linguagens de Especificacao e Logicas"
+    assert all(
+        tok in UNIT_GENERIC_TOKENS
+        for tok in label.lower().split()
+        if len(tok) >= 4
+    ), "fixture depende de todos os tokens serem genericos"
+
+    topico = {"topic_label": label, "topic_slug": "linguagens-de-especificacao-e-logicas",
+              "aliases": [], "kind": "topic"}
+    signals = {"title_text": "conteudo totalmente sem relacao xyzqwabc",
+               "markdown_headings_text": "", "markdown_lead_text": "", "markdown_text": "",
+               "category_text": "", "manual_tags_text": "", "auto_tags_text": "",
+               "legacy_tags_text": "", "raw_text": ""}
+
+    assert _score_entry_against_taxonomy_topic(signals, topico) == 0.0
+
+
+def _revisao_taxonomy():
+    return {
+        "version": 1,
+        "course_slug": "metodos-formais",
+        "units": [
+            {
+                "slug": "unidade-02-verificacao-de-programas",
+                "title": "Unidade 2 - Verificacao de Programas",
+                "topics": [
+                    {
+                        "slug": "topico-a",
+                        "label": "Alfa de Hoare",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    },
+                    {
+                        "slug": "topico-b",
+                        "label": "Gama de Dijkstra",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-verificacao-de-programas",
+                    },
+                ],
+            },
+        ],
+    }
+
+
+def test_auto_map_entry_subtopic_revisao_sem_assunto_dominante_fica_vazio():
+    # Item (a) 2026-08-31: aula de "revisao" cujo vocabulario nao acerta NENHUMA
+    # subunit com forca revisa conteudo de FORA da taxonomia (pre-requisito,
+    # prova) — slug vazio e a resposta honesta. Caso real: TCC aula-06 (revisao
+    # de automatos da cadeira anterior, winner_score=3.24, gold VAZIO).
+    entry = {
+        "title": "Revisão Alfabeto, Cadeia, Linguagem e Propriedades",
+        "category": "material-de-aula",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/pdfs/material-de-aula/revisao.pdf",
+    }
+    markdown = (
+        "# Alfabeto e cadeias\n\nConteudo extenso sobre automatos da cadeira "
+        "anterior.\n\nNo fim, uma mencao tardia a alfa de hoare.\n"
+    )
+    result = _auto_map_entry_subtopic(entry, _revisao_taxonomy(), markdown)
+
+    assert result.topic_slug == ""
+    assert result.confidence == 0.0
+    assert result.ambiguous is True
+    assert any("revisao-sem-assunto-dominante" in r for r in result.reasons)
+
+
+def test_auto_map_entry_subtopic_revisao_mono_assunto_legitima_mantem_slug():
+    # Armadilha (ii) do handoff 31/08: revisao LEGITIMAMENTE mono-assunto
+    # (TCC aula-01 ws=8.97, ES2 revisaoarquiteturapadroes ws=15.81) pontua
+    # acima do piso e NAO pode ser esvaziada.
+    entry = {
+        "title": "Revisão Alfa de Hoare",
+        "category": "material-de-aula",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/pdfs/material-de-aula/revisao-alfa.pdf",
+    }
+    markdown = "# Alfa de Hoare\n\nRevisao aprofundada de alfa de hoare.\n"
+    result = _auto_map_entry_subtopic(entry, _revisao_taxonomy(), markdown)
+
+    assert result.topic_slug == "topico-a"
+
+
+def test_auto_map_entry_subtopic_nao_revisao_fraca_mantem_slug():
+    # O piso e ESCOPADO a materiais de revisao: score fraco em material comum
+    # continua best-effort (certos legitimos medidos com ws 1.04-4.32).
+    entry = {
+        "title": "Exemplo de Uso no Unix",
+        "category": "material-de-aula",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/pdfs/material-de-aula/exemplo-unix.pdf",
+    }
+    markdown = (
+        "# Exemplo pratico\n\nCodigo extenso do exemplo no unix.\n\n"
+        "No fim, uma mencao tardia a alfa de hoare.\n"
+    )
+    result = _auto_map_entry_subtopic(entry, _revisao_taxonomy(), markdown)
+
+    assert result.topic_slug == "topico-a"
