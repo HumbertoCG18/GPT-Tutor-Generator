@@ -89,10 +89,33 @@ entrega ("Fechamento da parte N", "Apresentacao do T1"); `_exam_number`/prep-pro
 a unica fonte e o Moodle — o pipeline precisa ler `summary` de secao; (6) Lab Redes com ~10 blocos de conteudo em 19
 sessoes (3 feriados + 6 desenvolvimento/apresentacao) — regua magra.
 
-## PENDENTE DE VERDADE (2026-08-31) — ordem de prioridade e bloqueios
+## PENDENTE DE VERDADE (atualizado 2026-09-01a) — ordem de prioridade e bloqueios
 
 Tudo abaixo e o que RESTA; o resto do arquivo e historico/executado. Unico bloqueio real do mapa:
 Lab SO <- SARC da turma 310 (user/professor). Nada mais bloqueia nada.
+
+**RESUMO 01/09 (o que sobrou de verdade, apos fila a-g + auditoria de dividas + campanha pre-P3):**
+- **DECISOES DO USER** (nada me bloqueia): (1) P2b-LLM (extracao de questoes de provas; ruling era
+  "deterministico agora, LLM depois"); (2) P3 builds pagos — Lab Redes PRONTO e Fund. Redes PRONTO
+  (pre-requisitos D1/D2/cores ENTREGUES 01/09), Lab SO BLOQUEADO (SARC 310); (3) GAP VIDEO do T2;
+  (4) triagem dos 10 suspeitos SEM-GOLD do detecta_headings; (5) pino de cobertura p/ 57/57
+  (mecanismo nao existe); (6) gold de bloco do CG (holdout nunca medido; rotulagem ~30 entries);
+  (7) merge em main (checkpoint ja esta em new-features `399706e`).
+- **DIVIDA EXECUTAVEL restante** (higiene, dano zero medido, gate obrigatorio): sweep de
+  SUBUNIT_TAG (F-5 — agora ha regua de 93 golds); B-3/B-4 (filtro de ferramenta subtrativo ->
+  aditivo + helper unico de match); B-5/B-6/B-7 (parsers do catalogo de tags); B-8 (tag_catalog
+  gitignored); B-1 (anti-topico auto-inferido); F-4 (2 constantes mortas — investigar);
+  3 scorers de unidade duplicados (Tasks D/E; file_map:209 + index:1620/1732); J-2 (auto_tags
+  entrada E saida — estrutural); K-4 (campos capturados mortos — poda com auditoria de consumo,
+  casa com item da campanha web); R2/R3/R7/R9 (dual-source menores); knowledge_graph.py ->
+  scripts/; minors da campanha 2; `manual_kind_override` nao re-deriva unidade (workaround
+  documentado); UI Parte B (baixo valor — GUI sera aposentada pela campanha web).
+- **TETOS documentados** (so com sinal novo): familias B (ES2 web + alias A-5 Floyd-Hoare) e C
+  (roteiro5, aula-08) · MF-LLM 30/66 · aws 56/57 · Cook-Levin · ref_summary · corte de orfas ·
+  guards de alias (2 desenhos) · piso global.
+- **ADIADOS COM DADO** (implementar e medir no holdout dos builds P3): prep-trabalho por marco e
+  T<n> segmentador (D2-ext) · formula do G1 como confirmacao do D1 + consumo do summary sec0 (A.5)
+  · codigo SARC como 2a chave de identidade (D5-ext) · U<n> no card (D3, medir no FR).
 
 **P1 — Cobertura 55 -> 57: EXECUTADO 31/08, fechou em 56/57 F1 0,982 (teto documentado do aws).**
 Golds u02 CONFIRMADOS por ruling do user 31/08 (notas no material_gt_MF.csv). Raiz do 0 chars: github-repo
@@ -642,15 +665,19 @@ producao e o proprio motor (flagados / llm-funil / conf-err -> fila de revisao).
 ## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
 **HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
-ESTADO (`scripts/eval_eixos.py`, as-of **2026-08-31d**): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
+ESTADO (`scripts/eval_eixos.py`, as-of **2026-09-01a**): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
 convencao ACEITA por ruling 31/08) · unidade **191/191 (100%)** · cobertura **56/57 F1 0,982** (resta SO
 aws-encryption-sdk — teto documentado, ver P1 EXECUTADO; eth2 fechou pelo motor com o texto da pagina) ·
 subunidade **90/93** (4 cursos com gold; +1 pelo gate meta/revisao — TCC aula-06 fechou; restam ES2 web/roteiro5
-e TCC aula-08, tetos documentados das familias B/C) · **pinos 5** · cards manuais **1** (TCC
-"Semana 12", MANTIDO por refutacao 31/08) · decisoes humanas de bloco **6** (eram 23) · suite **2150 passed**
-(baseline real era 2139; o "2138" das notas anteriores estava off-by-one; +6 gate meta/revisao, +3
-detecta_headings, +2 higiene import) ·
-determinismo **6/6** · 6 entries com `duplicate_of` (SO 1, TCC 2, CG 3 — confirmadas por hash e pelo user).
+e TCC aula-08, tetos documentados das familias B/C) · **pinos 5** de unidade (pino de SUBUNIDADE do MF
+`logicadehoare2` REMOVIDO 01/09 — slug stale, motor acerta sozinho) · cards manuais **1** (TCC
+"Semana 12", MANTIDO por refutacao 31/08) · decisoes humanas de bloco **6** (eram 23) · suite **2161 passed**
+(2139 baseline 31/08 +6 gate meta/revisao +3 detecta_headings +2 higiene import +2 translit +6 cores/D1
++1 boundary_dates +2 D1-motor) · determinismo **6/6** · **gate curado da ablacao 6/6 PERFEITO desde o A.2**
+(excecao historica do IA morreu — provas antigas separadas) · 6 entries com `duplicate_of` (SO 1, TCC 2,
+CG 3 — confirmadas por hash e pelo user) · syllabus dos 5 cursos 2026/1 + Lab Redes com CORES/{kind=}
+(A.1 01/09; CG sem export salvo, segue sem cor) · CHECKPOINT: new-features = `399706e` (merge --no-ff
+da campanha, 31/08 noite); main INTOCADA por decisao do user.
 MOTOR NU (zero curadoria, `scripts/ablacao_rapida.py` nos 6): bloco display **194/200** conf-err 2 (205/212 por
 uuid, medido 27/08) · unidade **170/191 (89%)** — era 134, +36 pelo DP com desvio de janela (P2a 31/08) ·
 cobertura **54/57 F1 0,947** — era 55: knn/IA passou a acertar (bloco certo -> card certo) e as 2 entries u01
@@ -660,8 +687,10 @@ nus: 3 ruido do voto (MF, aceitos, ficam os pinos) · 2 convencao sem texto (IA 
 31/08) · 2 dominio (TCC aula-17; alias Cook-Levin TESTADO E REFUTADO 31/08 — nao retentar sem sinal novo) ·
 1 teto de dado (MF aws, pagina raiz sem vocabulario de verificacao, ver P1 EXECUTADO).
 Gate curado nas copias: 5/6 + IA `p2-202402` (ruido de voto no cache da copia, excecao documentada).
-PUSH (as-of 2026-08-31d): gerador `050f406`. **Os 6 tutores tem remote privado (HumbertoCG18) e estao 0/0 com
-origin**: MF `bd902ab` · TCC `672024b` · IA `906e0c2` (intacta pelo gate) · SO `da92fe2` · ES2 `60e8f26` · CG `ea4af8d`.
+PUSH (as-of 2026-09-01a): gerador `96e6a1f` (branch feat/motor-atribuicao; new-features = checkpoint
+`399706e`). **Os 6 tutores tem remote privado (HumbertoCG18) e estao 0/0 com origin**: MF `4168f19` ·
+TCC `4829229` · IA `5b3080c` · SO `e79068a` · ES2 `d3566bb` · CG `ea4af8d` (intacta desde 31/08 —
+sem export SARC salvo, perfil sem cores).
 Antes: `docs/reports/2026-08-20-handoff-fechamento-campanha-motor.md`.
 Cobre a sessao inteira (`7e940f5e`, 63 prompts): poda do enxame, regua nova + sweep do gate,
 rotulagem dos 64 casos, limpeza do manifest, eixo de bloco, N:N nos consumidores, fix do
