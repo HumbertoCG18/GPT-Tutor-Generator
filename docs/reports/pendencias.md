@@ -2396,7 +2396,12 @@ nao discrimina BLOCO.** Teste: trocar por outra mantem o conteudo ensinado? Isab
 "Logica de Hoare" => ferramenta. Trocar "Logica de Hoare" muda o conteudo => topico. Lista certa
 ja existe: `semantic_defaults.json`, 11 entradas, todas provadores.
 
-- [CODE] **B-1 · `_infer_tool_candidates` e um gerador de anti-topico** (`semantic_config.py:196`).
+- [CODE] ~~B-1 · `_infer_tool_candidates` e um gerador de anti-topico~~ **EXECUTADO (leva 2, 01/09):
+  a inferencia por forma/contexto morreu — so DETECTA os 11 defaults curados no corpus; ferramenta
+  real de curso entra pelo override `course/.semantic_profile.override.json` (CG ganhou
+  opengl/webgl/glut e os 5 blocos de conceito voltaram). Ganho visivel: ferramenta:formal ->
+  topico:especificacao-formal, ferramenta:invariantes -> topico:invariantes-de-laco, morte de
+  ferramenta:transformacoesgeometricas/opengl-cpp/sobre. Regua identica, curado 6/6.** Era:
   Vocabulario auto-inferido do proprio corpus usado como filtro DESTRUTIVO sobre esse mesmo
   corpus. Realimentacao positiva: quanto mais central o termo, mais vira "ferramenta". Vocabulario
   vivo (`as-of 2026-08-18`): MF `formal`,`programas`,`modelos`,`invariantes`,`hoare`,`sobre` ·
@@ -2417,21 +2422,29 @@ ja existe: `semantic_defaults.json`, 11 entradas, todas provadores.
   (`content_taxonomy.py:202` vs `:101` que ganhou fronteira). Duas copias da mesma logica de
   match — extrair helper. Efeito: `"Especificacao informal de requisitos"` -> `ferramenta:formal`.
   MF tem 20 `ferramenta:` contra 18 `topico:` no catalogo (`as-of 2026-08-18`).
-- [CODE] **B-5 · segundo parser de topico sem normalizacao** (`content_taxonomy.py`
+- [CODE] ~~B-5 · segundo parser de topico sem normalizacao~~ **EXECUTADO (leva 2, 01/09, junto com
+  B-6/B-7): topicos do PLANO no catalogo vem do parser oficial — slugs limpos (lixo topico:NN-*
+  morto; SO 41->26 tags distintas), linha solta do IA reconhecida, sem heuristica de forma p/
+  fonte humana. MEDICAO HONESTA: tags casaveis com o unit_tag_index NAO mudaram nos cursos atuais
+  (SO 8->8, IA 2->2 — o claim '0 casando' era foto de 18/08); ganho = higiene no auto_tags_text
+  + robustez p/ cursos novos. Regua identica, curado 6/6, suite 2165.** Era: (`content_taxonomy.py`
   `_extract_topic_candidates`). Trata `## `, `- [ ] `, `- ` mas NAO `**`. Linha real do SO
   `- **1.1** Evolucao historica` -> slug `11-evolucao-historica` vs `evolucao-historica` da
   taxonomia. **SO: 36 topicos, 48 tags `topico:`, 0 casando** (`as-of 2026-08-18`); confirmado em
   producao (`topico:32-escalonamento`, 10 slugs). Fix: reusar
   `teaching_plan._normalize_teaching_plan_heading`. Impacto na regua: **nenhum** (medido).
-- [CODE] **B-6 · IA: 0 topicos do plano no catalogo de tags** (`as-of 2026-08-18`).
+- [CODE] ~~B-6 · IA: 0 topicos do plano no catalogo~~ **EXECUTADO (leva 2, 01/09 — ver B-5).** Era:
   `_extract_topic_candidates` exige marcador ou numero no inicio; o plano do IA vem em linha
   solta (`_parse_units_from_teaching_plan` trata via `current_style == "learning_unit"`,
   `content_taxonomy` nao). 19 topicos na taxonomia, 0 tags.
-- [CODE] **B-7 · heuristicas de forma sobre entrada autoritativa**. `>6 palavras` e
+- [CODE] ~~B-7 · heuristicas de forma sobre entrada autoritativa~~ **EXECUTADO (leva 2, 01/09 —
+  ver B-5; heuristica de forma agora so alcanca heading/course_map/glossario).** Era: `>6 palavras` e
   `>=2 hifens / >=9 espacos / ano 19xx-20xx` matam topico que o plano JA numerou sob uma unidade.
   Vitimas no TCC: `Argumento Diagonal de Cantor e Conjuntos Incontaveis`,
   `Prova da Indecidibilidade do Problema da Parada`. Fix: rodar so em candidato de heading.
-- [CODE] **B-8 · `.tag_catalog.json` e git-ignored e o rollout nao regenerou** (mtime 15:39,
+- [CODE] ~~B-8 · tag_catalog gitignored e o rollout nao regenerou~~ **VENCIDO (leva 2, 01/09):
+  `write_tag_catalog` regenera o catalogo TODA rodada (mtime confirmado no reprocess; e o achado
+  do jitter 31/08 — convergencia em 1 passo).** Era: (mtime 15:39,
   fix commit 16:19, rollout 16:48). Cache nao versionado consumido pelo scorer (S4).
 - [CODE] ~~B-9 · TOOL_TOKENS nao existe — o comentario mente~~ **VENCIDO (triagem C, 01/09): o
   comentario foi corrigido (entry_signals.py:100-104 hoje DIZ que nada filtra e aponta B-1/B-9).**
