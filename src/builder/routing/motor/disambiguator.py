@@ -72,7 +72,9 @@ def block_session_tokens(block: dict, ctx: MotorContext) -> set:
     out: set = set()
     for sess in block.get("sessions") or []:
         out |= _toks(str(sess.get("label") or ""))
-        topic = ctx.lessons_index.get(str(sess.get("date") or ""))
+        # R12: chave do lessons_index e a DATA (YYYY-MM-DD); llm_vote ja trunca
+        # [:10] — sem truncar aqui, um date com hora perde o roteiro do dia.
+        topic = ctx.lessons_index.get(str(sess.get("date") or "")[:10])
         if topic:
             out |= _toks(str(topic))
     return out

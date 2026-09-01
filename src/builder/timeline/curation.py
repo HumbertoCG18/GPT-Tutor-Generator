@@ -37,8 +37,12 @@ conceito, escopos diferentes; o rename desfaz a colisao de nome no bloco.
 from __future__ import annotations
 
 import json
+import logging
+import re
 from pathlib import Path
 from typing import Dict, Iterable, Optional
+
+logger = logging.getLogger(__name__)
 
 CURATION_FILENAME = ".timeline_curation.json"
 _CURATION_VERSION = 1
@@ -135,7 +139,18 @@ def load_boundary_dates(course_dir: Path) -> set[str]:
     dates = data.get("boundary_dates") if isinstance(data, dict) else None
     if not isinstance(dates, list):
         return set()
-    return {str(d).strip() for d in dates if str(d).strip()}
+    out = set()
+    for d in dates:
+        s = str(d).strip()
+        if not s:
+            continue
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", s):
+            # fail-open era SILENCIOSO: data fora do formato nunca casa com
+            # period_start e a fronteira pedida simplesmente nao acontece.
+            logger.warning("boundary_dates: %r fora do formato YYYY-MM-DD — ignorada", s)
+            continue
+        out.add(s)
+    return out
 
 
 def apply_block_curation(blocks: Iterable[dict], course_dir: Path) -> int:

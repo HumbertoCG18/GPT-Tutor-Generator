@@ -311,3 +311,20 @@ def test_apply_uuid_takes_priority_over_legacy_key(tmp_path):
     touched = apply_block_curation(blocks, tmp_path)
     assert touched == 1
     assert blocks[0]["manual_kind_override"] == "holiday"
+
+
+def test_boundary_dates_invalida_avisa_e_descarta(tmp_path, caplog):
+    # Item B (01/09): data fora do formato era fail-open SILENCIOSO — a
+    # fronteira pedida nunca acontecia e ninguem sabia.
+    import logging
+    from src.builder.timeline.curation import load_boundary_dates
+    course = tmp_path / "course"
+    course.mkdir()
+    (course / ".timeline_curation.json").write_text(
+        '{"version": 1, "boundary_dates": ["2026-03-19", "19/03/2026", ""]}',
+        encoding="utf-8",
+    )
+    with caplog.at_level(logging.WARNING):
+        dates = load_boundary_dates(course)
+    assert dates == {"2026-03-19"}
+    assert any("19/03/2026" in r.message for r in caplog.records)
