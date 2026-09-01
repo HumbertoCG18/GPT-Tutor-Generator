@@ -336,7 +336,9 @@ Itens novos da fila (sem data, decisao de priorizar e do user):
     reabrir so se um curso futuro divergir card x conteudo). Determinismo 0; 0 duplicatas;
     **1o achado real do detecta_headings em producao**: `02-modelos-de-referencia` atribuida
     `conceitos-de-redes-...` com headings citando `modelos-osi-e-tcpip` -> TRIAGEM DO USER.
-    GAP anotado: 5 tar.gz de codigo-exemplo ignorados por extensao no import do stash.
+    ~~GAP: 5 tar.gz ignorados~~ **FECHADO 01/09: tar.gz/.tgz seguem o fluxo do zip (scan por nome,
+    extracao por conteudo com filter=data, id sem o .tar residual); os 4 pacotes TCP/UDP
+    incorporados por import incremental e atribuidos a u03-nivel-de-transporte pelo conteudo.**
   - Lab SO: stash pronto (`Desktop/Moodle/laboratorio-de-sistemas-operacionais/stash`, 19 arquivos, tutoriais
     impressos) — **BLOQUEADO pelo SARC da turma 310** (o link no Moodle e da 330; ver F14). Nao buildar com o
     da 330 nem com remap (testado 30/08: ordem bate, datas nao — off-by-one nas fronteiras).
