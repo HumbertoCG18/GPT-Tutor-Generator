@@ -233,15 +233,32 @@ holdout = cursos novos):**
     PERFEITO (excecao historica do IA morreu)** · suite 2158 · goldens SO re-baseline de proposito
     (PS/G2 viram blocos separados). CG sem export salvo: perfil intocado (PS/G2 dela seguem
     colapsados — documentado).
-  - **A.2 (proximo)**: D1 completo — termos da formula do G1 (plano/summary sec0/label) substituem a
-    lista `_NOT_MAIN_EXAM`; PS/G2/PF na R7 da cobertura.
-  - A.3: D2 — marco de trabalho (termo numerado na linha amarela); cadeira sem prova ganha marcos.
-  - A.4: D5 — identidade do curso = Moodle id + codigo SARC (perfil nao achado por nome).
-  - A.5: pipeline consumir `summary` da secao 0 (formula do G1 de SO/Lab SO).
-  - B (minors): R11 write atomico no dashboard · warning boundary_dates · R12 join de data ·
-    residual `ia-responsavel` (pagina 258B nunca convertida).
-  - C: triagem da auditoria 18-19/08 (B-1..B-9, F-4/F-5, J-2/J-3, K-3/K-4) — marcar o que A2/glossario
-    ja mataram.
+  - **A.2 EXECUTADO 01/09 (gerador `00b276b`..)**: D1 completo — `is_main_exam_block` (fonte unica):
+    rotulo "prova pN"/"pN"/"prova N" em topic_text+LABELS DE SESSAO = principal; ps/g2/substitui/
+    recupera/final/bloco-mudo = nunca. A lista antiga errava nos 2 sentidos (G2 = principal nos 6;
+    P2 de MF/ES2 fora — prep-P2 do MF ancorava na G2). R7 ganha prova ps/g2/substitutiva/recuperacao.
+    Confirmacao pela CONTAGEM da formula do G1: adiada junto com A.5 (mesmo pacote). Gate verde,
+    curado 6/6, suite 2160.
+  - **A.3 FECHADO 01/09 no recorte honesto**: nucleo do D2 ja entregue pela cadeia A.1+F5 (amarelas
+    = deliverable; "parte N" segmenta unidades — Lab SO; trabalhos nunca contam como prova — D1).
+    Dado real do Lab Redes confirma o ruling (amarelas sem numero = dias de lab; "Apresentacao do
+    T1/TF" = marcos). EXTENSOES (prep-trabalho por marco; T<n> como segmentador) ADIADAS: sem caso
+    mensuravel na bancada — implementar e medir NO HOLDOUT quando FR/Lab SO buildarem (P3).
+  - **A.4 VERIFICADO JA IMPLEMENTADO**: `find_subject_for_course` (moodle.py:420) resolve por
+    moodle_course_id > slug > nome desde antes; nome e ultimo fallback (ruling D5). Runtime resolve
+    por repo_root. Codigo SARC como 2a chave: sem caso real (id Moodle e unico), adiado.
+  - **A.5 ADIADO (pacote P3-build-time)**: a formula do G1 nao tem consumidor mensuravel na bancada
+    (D1-confirmacao e D2-termos sao build-time dos cursos novos). `moodle_pull` ja grava
+    `sections.json`; build_course consumira quando o P3 abrir.
+  - **B EXECUTADO 01/09 (`3ce7c52`)**: R12 (join de data truncado no disambiguator — no-op nos dados
+    atuais, protege futuro) · boundary_dates com warning + descarte de formato invalido (+1 teste) ·
+    R11 ja estava resolvido (write_json_manifest atomico — vencido) · `ia-responsavel` ACEITO como
+    limite (bibliografia do IA, cadeira fora da grade — mesmo ruling do stash). Suite 2161.
+  - **C EXECUTADO 01/09**: triagem da auditoria 18-19/08 — A-3/G-5/K-3/B-9/J-3 VENCIDOS; G-4
+    RESOLVIDO (pino stale despinado, motor acerta sozinho, MF pushed); G-1 reclassificado (ha regua
+    de acerto agora; health = watchdog com falso positivo de slug duplicado anotado); B-1..B-8,
+    F-4/F-5 (agora com regua p/ sweep de SUBUNIT_TAG), A-5-alias, J-2, K-4 seguem como higiene de
+    dano zero. Vereditos nos itens.
 
 DECISAO FECHADA 31/08 (noite): `.env` Moodle — MANTIDO `moddle/.env` como fonte unica (o bug era a
 DUALIDADE raiz+moddle com writer/reader trocados, nao o local; mover pra raiz exigiria mudar o writer
@@ -2238,6 +2255,10 @@ o ES2 fica igual (8/27) porque a reconciliacao segura.
   `MARGIN_K_TOPIC` 0.20 · `UNIT_MATCH_REL_MARGIN` 0.15 · `UNIT_MATCH_MIN_WINNER` 0.5 ·
   `SEQUENCE_BOOST` 0.20. `SUBUNIT_TAG` e o analogo direto do gate que acabou de mover 15 pontos
   — e nao existe regua de subunidade. Dois ja provados mortos (F-4).
+  > NOTA da triagem C (01/09): agora EXISTE regua de subunidade (93 golds, 90/93) — um sweep de
+  > SUBUNIT_TAG virou possivel; `SUBUNIT_REVISAO_FLOOR` novo ja nasceu com prova (gap medido).
+  > Os demais itens B-1/B-3/B-4/B-5/B-6/B-7/B-8, F-4, A-5, J-2, K-4 SEGUEM como higiene
+  > documentada com dano zero medido — nada deles bloqueia; A-5 e familia-B-adjacente (teto).
 - [CODE] **F-4 · dois thresholds sao CONSTANTES MORTAS** (`as-of 2026-08-18b`).
   `UNIT_MATCH_MIN_WINNER` (0,5) e `UNIT_MATCH_REL_MARGIN` (0,15) dao resultado IDENTICO nas 72
   linhas do sweep (testados 0,5/0,3/0,15 e 0,15/0,10). Nenhum discrimina nada no corpus atual.
@@ -2247,7 +2268,9 @@ o ES2 fica igual (8/27) porque a reconciliacao segura.
   `logica-de-hoare` e topico da u02 (correto) E `Logica de Floyd-Hoare` e alias de
   `fundamentos-de-logica-de-primeira-ordem`, na u01. Mesmo conceito em duas unidades, uma errada.
   Quarta instancia da classe "sinal textual de uma unidade vazando para outra".
-- [DECISION] **A-3 · divergencia de eixo sai CONFIANTE — e o modo dominante do ES2**
+- [DECISION] ~~A-3 · divergencia de eixo sai CONFIANTE~~ **VENCIDO (triagem C, 01/09): o eixo
+  temporal virou autoridade na campanha (reconcile 21/08) e o ES2 esta 28/28 na unidade e 28/28
+  na subunidade — o modo dominante de erro descrito aqui nao existe mais.** Era:
   (`as-of 2026-08-18`). ES2 tem 16 de 27 confiante-e-errado (59%): serie de laboratorio
   `roteiro2..8` / `microsservicos2..7`, todas com card `Microsservicos`, todas preditas
   `unidade-01-arquitetura-de-software` com conf **0,86-0,95**, verdade temporal em u02/u03. O
@@ -2267,7 +2290,11 @@ TETO DE ACERTO da subunidade (condicao NECESSARIA — subtopico pertence a unida
 derivado dos golds existentes, sem rotular nada): **133/191 = 70%**. Por curso: IA 91% · MF 87% ·
 TCC 78% · SO 42% · ES2 26%. SO e ES2 herdam o erro de unidade (divergencia de eixo).
 
-- [CODE] **G-1 · COLAPSO em 3 unidades** (`as-of 2026-08-19`). IA `u05 aprendizado-de-maquina`:
+- [CODE · RECLASSIFICADO na triagem C 01/09] **G-1 · COLAPSO** — o mundo mudou: existe regua de
+  ACERTO de subunidade agora (90/93 primario; IA 39/39) e o colapso do IA u05 caiu de 95% para 68%
+  (glossario P2f). Colapso deixa de ser bloqueador: concentracao pode ser LEGITIMA (o gold decide).
+  `eval_subunit_health` vira WATCHDOG pos-reprocess (com o falso positivo de integridade anotado
+  no G-5). Era: IA `u05 aprendizado-de-maquina`:
   40 entries -> **2 subtopicos de 4, 95% num so**. SO `u06 gerencia-de-arquivos`: 5 entries ->
   **1 de 6, 100%**. SO `u02`: 9 entries -> 2 de 4, 89%. Nesses casos `computed_subunit_slug` nao
   e predicao, e constante. Gravado em **209 de 233 entries** dos 5 cursos.
@@ -2285,12 +2312,18 @@ TCC 78% · SO 42% · ES2 26%. SO e ES2 herdam o erro de unidade (divergencia de 
   (empate => nao vira alias de ninguem) medido: aliases do IA u05 `[9,2,2,2]` -> `[4,2,2,2]`,
   **colapso 95% -> 95% (nao muda)**, regua entry->unidade **132 -> 128 (-4)**. Custa 4 certas e
   nao move o colapso. O defeito de desempate CONTINUA existindo — so nao e a causa do colapso.
-- [CODE] **G-4 · B-5 tem consequencia real em producao, ao contrario do que medi**
+- [CODE] ~~G-4 · B-5 tem consequencia real em producao~~ **RESOLVIDO (triagem C, 01/09): o slug
+  `21-logica-de-hoare` era um PINO MANUAL stale (curadoria da epoca do B-5), nao o motor errando.
+  Despinado; o motor decide `logica-de-hoare` sozinho (ws 7.53), MF 66/66 intacto. O dano de
+  producao conhecido do B-5 morreu; B-5 segue como higiene do catalogo de tags.** Era:
   (`as-of 2026-08-19`). A regua achou `logicadehoare2` com subtopico **`21-logica-de-hoare`** —
   slug com o prefixo numerico grudado, o defeito de `_strip_topic_prefix` que eu tinha medido
   como INERTE na regua de unidade. Nao e inerte: corrompe subunidade. Sobe de prioridade.
-- [CODE] **G-5 · integridade** (`as-of 2026-08-19`): SO `programa` recebe subtopico
-  `estudo-de-casos` que pertence a OUTRA unidade. 1 caso, mas viola o invariante P0.2.
+- [CODE] ~~G-5 · integridade (SO `programa`)~~ **VENCIDO (triagem C, 01/09): o gate
+  meta/revisao (item a, 31/08) esvaziou a subunit de plano/programa.** NOTA da mesma triagem:
+  o `eval_subunit_health` tem FALSO POSITIVO conhecido de integridade — slug de topico duplicado
+  entre unidades (SO `conceitos-basicos` existe em u02 E u04; a entry de threads em u04 e
+  legitima) — o script compara slug global.
 - [REJEITADO 2026-08-19] **H · IDF intra-unidade** — implementado em DUAS variantes e medido
   contra as duas reguas. **Duro** (token comum sai do overlap E frase so-comum nao conta como
   hit): ponta-a-ponta **132/47/12 -> 130/50/11** (-2 certo, +3 errado); scorer isolado 109->112.
@@ -2359,7 +2392,9 @@ ja existe: `semantic_defaults.json`, 11 entradas, todas provadores.
   `Prova da Indecidibilidade do Problema da Parada`. Fix: rodar so em candidato de heading.
 - [CODE] **B-8 · `.tag_catalog.json` e git-ignored e o rollout nao regenerou** (mtime 15:39,
   fix commit 16:19, rollout 16:48). Cache nao versionado consumido pelo scorer (S4).
-- [CODE] **B-9 · `TOOL_TOKENS` nao existe — o comentario mente** (`entry_signals.py:84`). Diz que
+- [CODE] ~~B-9 · TOOL_TOKENS nao existe — o comentario mente~~ **VENCIDO (triagem C, 01/09): o
+  comentario foi corrigido (entry_signals.py:100-104 hoje DIZ que nada filtra e aponta B-1/B-9).**
+  Era: Diz que
   "o scorer de bloco (file_map, TOOL_TOKENS) filtra quais sao ferramentas de verdade". O simbolo
   so existe em `.pyc` stale. Nada filtra.
 
@@ -2613,7 +2648,9 @@ Matriz sinal x decisor, montada por grep sobre os tres scorers
   **0 entries mudam**. Causa: o label e o titulo com as palavras separadas
   (`conjuntosindutivos` vs `conjuntos indutivos`) e o pipeline JA aplica `split_camel_case` no
   titulo (`entry_signals.py:120`). Redundante por construcao. Revertido.
-- [CODE] **K-3 · `card_text` nao chega a SUBUNIDADE** (`as-of 2026-08-19`). Card presente em
+- [CODE] ~~K-3 · card_text nao chega a SUBUNIDADE~~ **VENCIDO (triagem C, 01/09):
+  `score_entry_against_taxonomy_topic` pontua card_text (contencao de titulo, frase de topico e
+  score de frase com peso 0.40 — file_map.py:277-357).** Era: Card presente em
   **228 de 233 (98%)** e casa um topico da taxonomia em **74 de 228 (32%)** — ES2 74%, MF 39%,
   TCC 22%, SO 19%, IA 15%. A UNIDADE le (peso 2.5 na frase); a SUBUNIDADE nao. **NAO
   implementado**: sem regua de ACERTO de subunidade, seria trocar ganho nao medido por risco.
