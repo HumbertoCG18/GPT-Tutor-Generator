@@ -334,8 +334,24 @@ Itens novos da fila (sem data, decisao de priorizar e do user):
     **D3(a) RESPONDIDO estruturalmente: 16/16 entries consistentes com o U<n> do card SEM provedor
     dedicado** (card-window + janela-1 entregam; sinal de 1a classe desnecessario neste corpus —
     reabrir so se um curso futuro divergir card x conteudo). Determinismo 0; 0 duplicatas;
-    **1o achado real do detecta_headings em producao**: `02-modelos-de-referencia` atribuida
-    `conceitos-de-redes-...` com headings citando `modelos-osi-e-tcpip` -> TRIAGEM DO USER.
+    **1o achado real do detecta_headings em producao** (`02-modelos-de-referencia`) INVESTIGADO
+    01/09 (madrugada) -> virou a 1a REGRA NASCIDA DO HOLDOUT, medida antes de codar:
+    - RAIZ 1: tokenizadores cortam len<4 e o plano de redes SO usa siglas (nunca por extenso;
+      "Protocolo TCP/UDP/ARP/ICMP" — o unico token distintivo era invisivel). Escopo medido nos 8:
+      FR 8/33 labels, LR 4/11, CG 16/59 (2d/3d/ray/bsp), TCC (p/np), ES2 (ci/cd).
+    - FIX 1: **short-vocab por curso** (`short_vocab_from_topic_labels`, stopwords): tokens 2-3 chars
+      consagrados por LABEL do curso contam no scorer de SUBUNIDADE, so vindos de campo forte
+      (heading/titulo/tags/arquivo); preposicoes PT nunca ("sem fio" consagra "fio").
+    - RAIZ 2: headings do scorer de entry paravam no 8o (slide-deck de 47 paginas!); "TCP/IP" no 17o.
+      FIX 2: limit=24 SO no entry_signals (strong_headings da taxonomia intactos).
+    - GATE: reguas identicas em todos os eixos; TROCA reveladora no ES2: `web` (familia B, "teto"
+      apos 2 refutacoes) CONSERTOU p/ cliente-servidor; `devops` (multi-secao) flipou p/ o tema
+      tardio CI — saldo zero, teto derrubado. FR: exercicios-dns vazia -> infraestrutura 0.85;
+      conf do erro do 02-modelos 0.92 -> 0.12 (segue errado, residual multi-tema honesto).
+    - RE-ESCOPO pos-fix (pedido do user): restam SO 3 tokens de 1 char (TCC `p` de "Classe P";
+      CG `b`/`z` de B-Spline/Z-Buffer — ja carregados pelo vizinho longo). len>=2 e limite
+      DELIBERADO (1 char = ruido); rotas de unidade/cobertura/catalogo seguem so-longos de
+      proposito — expandir apenas se regua pedir.
     ~~GAP: 5 tar.gz ignorados~~ **FECHADO 01/09: tar.gz/.tgz seguem o fluxo do zip (scan por nome,
     extracao por conteudo com filter=data, id sem o .tar residual); os 4 pacotes TCP/UDP
     incorporados por import incremental e atribuidos a u03-nivel-de-transporte pelo conteudo.**
