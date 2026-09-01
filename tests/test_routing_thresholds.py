@@ -15,7 +15,7 @@ def test_thresholds_present():
     # `scripts/eval_entry_unit.py` (191 entries, 5 cursos): +6 gravadas certas,
     # +1 errada, -7 vazias. Satura em 0.40. Ver thresholds.py para a tabela.
     assert T.UNIT_TAG == 0.50
-    assert T.SUBUNIT_TAG == 0.60
+    assert T.SUBUNIT_TAG == 0.10  # calibrado 01/09 (sweep 93 golds; ver thresholds.py)
 
 
 def test_margin_matches_old_inline_018():

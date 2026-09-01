@@ -129,7 +129,17 @@ class _Thresholds:
     # 0.50      132        47      12   <- escolhido: +6 certo, +1 errado
     # 0.40      132        49      10   <- satura; abaixo daqui so cresce o errado
     UNIT_TAG: float = 0.50
-    SUBUNIT_TAG: float = 0.60
+    # SUBUNIT_TAG calibrado 0.60 -> 0.10 em 2026-09-01, primeiro sweep contra a
+    # regua de subunidade (93 golds, subunit_gt_*.csv). A tag exige not-ambiguous,
+    # e os gates honestos (meta/revisao/empate/sem-sinal) ja zeram o slug do lixo
+    # ANTES — o piso de confianca nao protegia de nada:
+    # T     tag-certa  tag-errada  omite     (com extras | primario-apenas)
+    # 0.60      65|64       0|1      27      <- anterior: so omitia
+    # 0.20      85|84       0|1       7
+    # 0.10      86|85       0|1       6      <- escolhido (= 0.0; piso simbolico)
+    # A unica errada do primario-apenas e TCC aula-08 (familia C, teto), que JA
+    # passava no 0.60 (conf 0.77) — e a tag dela e o extra legitimo do gold.
+    SUBUNIT_TAG: float = 0.10
     # K da formula de margem (padrao). Topico usa 0.20 historicamente.
     MARGIN_K: float = 0.18
     MARGIN_K_TOPIC: float = 0.20

@@ -109,12 +109,14 @@ def test_subunit_gated_e_best_effort():
     e = _entry()
     m = SimpleNamespace(slug="u2", confidence=0.9, ambiguous=False, reasons=[])
     fns = _fns(m)
+    # Confianca RELATIVA ao threshold (recalibrado 0.60 -> 0.10 em 01/09):
+    # abaixo do gate a tag nao aparece, mas o computed best-effort persiste.
     fns["auto_map_entry_subtopic_fn"] = lambda e_, tax, md, winning_unit_slug="": SimpleNamespace(
         topic_slug="t-fraco", topic_label="", unit_slug="u2",
-        confidence=0.30, ambiguous=False, reasons=["topico"])
+        confidence=T.SUBUNIT_TAG - 0.05, ambiguous=False, reasons=["topico"])
     out = apply_unit_subunit_fields([e], BLOCKS, {}, None, None, {}, **fns)
     assert out[0]["computed_subunit_slug"] == "t-fraco"          # best-effort persiste
-    assert not any(t.startswith("subunit:") for t in out[0]["auto_tags"])  # gate 0.60 segura a tag
+    assert not any(t.startswith("subunit:") for t in out[0]["auto_tags"])  # gate segura a tag
 
 def test_subunit_restrita_a_unidade_reconciliada():
     seen = {}
