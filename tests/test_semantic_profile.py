@@ -20,7 +20,11 @@ def test_infer_semantic_profile_uses_course_corpus():
 
     assert profile["course_slug"] == "compiladores"
     assert "compiladores" in profile["tag_generic_slugs"]
-    assert "antlr" in profile["known_tools"]
+    # B-1 (01/09): ferramenta NAO e mais auto-inferida do corpus (realimentacao
+    # positiva promovia o termo mais central do curso a "ferramenta" e ele
+    # ganhava down-weight no conceito de bloco). ANTLR agora entra pelo
+    # override por curso (course/.semantic_profile.json), nunca sozinho.
+    assert "antlr" not in profile["known_tools"]
 
 
 def test_internal_semantic_profile_roundtrip(tmp_path: Path):
