@@ -1,0 +1,207 @@
+[
+ {
+  "secao": "",
+  "section": 0,
+  "summary": "Conteúdo digital de uso exclusivo da Pontifícia Universidade Católica do Rio Grande do Sul | PUCRS.&nbsp; Copyright © 2022. Todos os direitos reservados.",
+  "labels": []
+ },
+ {
+  "secao": "Plano de Ensino: Ementa, Objetivos, Conteúdo, Avaliação, Bibliografia e Cronograma das Aulas",
+  "section": 1,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Tutoriais",
+  "section": 2,
+  "summary": "",
+  "labels": [
+   "Para apoiar o processo de construção e de gerenciamento da comunidade virtual criada para a sua disciplina, disponibilizamos um conjunto de tutoriais que podem ser acessados na Barra de Menu Superior do&nbsp;Moodle.&nbsp; Quais funcionalidades você encontra nessa área? INFORMAÇÕES | SUPORTE | TUTORIAIS"
+  ]
+ },
+ {
+  "secao": "Avisos | Dúvidas | Notícias",
+  "section": 3,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "TDE | Trabalho Discente Efetivo",
+  "section": 4,
+  "summary": "",
+  "labels": [
+   "Trabalho Discente Efetivo | TDE Finalidade &nbsp; O&nbsp;Trabalho Discente Efetivo (TDE)&nbsp;tem como finalidade contribuir&nbsp;para o&nbsp;desenvolvimento das competências e habilidades previstas no PPI e PPC, especialmente no que&nbsp;tange&nbsp;à autonomia do estudante.&nbsp;Portanto, decorre&nbsp;das práticas pedagógicas que se utilizam, por exemplo,&nbsp;de metodologias ativas,&nbsp;assegurando&nbsp;a participação&nbsp;do estudante na construção de&nbsp;conhecimentos&nbsp;e saberes. &nbsp; &nbsp; Caracterização &nbsp; Estabelece relações com as disciplinas e componentes curriculares visando a integralização dos currículos; &nbsp; Está previsto e disponibilizado no plano de ensino e articulado às atividades acadêmicas das&nbsp;disciplinas; &nbsp; Constitui atividade integradora no processo de ensino e aprendizagem das disciplinas; &nbsp; Oportuniza a autonomia do estudante; &nbsp; Efetiva-se pela orientação e avaliação do docente. &nbsp;",
+   "Forma de Avaliação Para avaliação, usaremos uma forma intermediária. Para este semestre, vale a que estamos definindo aqui. Ela será calculada da seguinte forma:&nbsp;&nbsp; G1 = (4xP1 + 4xP2 + 2MT)/10 , onde: P1:&nbsp; prova realizada em aula&nbsp; P2 : prova realizada em aula MT : &nbsp;média de trabalhos",
+   "Provas",
+   "Pratique, resolvendo provas de semestres anteriores",
+   "Trabalhos",
+   "Correção pontuação T1: Dataset e Front End: 1.5 pontos cada um",
+   "Atividades"
+  ]
+ },
+ {
+  "secao": "Semana 1 - 02/03 a 06/03 - Plano de Ensino e Introdução a IA",
+  "section": 6,
+  "summary": "",
+  "labels": [
+   "Roteiro 02/03: Apresentação do plano de ensino, Histórico 04/03: Visão Geral"
+  ]
+ },
+ {
+  "secao": "Semana 2 - 09/03 a 13/03 - Introdução a IA (continuação) e Introdução a ML",
+  "section": 7,
+  "summary": "",
+  "labels": [
+   "Roteiro 09/03: Visão geral da IA (continuação) e Introdução a Machine Learning 11/03: Introdução a Machine Learning e a Dados"
+  ]
+ },
+ {
+  "secao": "Semana 3 - 16/03 a 20/03 - Machine Learning e Dados",
+  "section": 8,
+  "summary": "",
+  "labels": [
+   "Roteiro 16/03: ML e Dados (continuação) 18/03: Aprendizado Supervisionado",
+   "Slides de Aula e Artigo",
+   "Programas"
+  ]
+ },
+ {
+  "secao": "Semana 4 - 23/03 a 27/03 - Machine Learning : Aprendizado Supervisionado",
+  "section": 9,
+  "summary": "",
+  "labels": [
+   "Roteiro 23/03: Exercício k-NN 25/03: Introdução a redes neurais e Rede neural Perceptron",
+   "Exemplos com k-NN",
+   "Slides de Aula",
+   "Exemplos com Redes Neurais",
+   "Solução das atividades 2,3 e 4 propostas no pdf sobre redes Perceptron."
+  ]
+ },
+ {
+  "secao": "Semana 5 -30/03 a 01/04: ML - Aprendizado Supervisionado",
+  "section": 10,
+  "summary": "",
+  "labels": [
+   "Roteiro 30/03: Rede Perceptron; Exercicios 01/04: Rede MLP.",
+   "Slides de Aula",
+   "Exemplos com Redes Neurais"
+  ]
+ },
+ {
+  "secao": "Semana 6 - 06/04 a 10/04 - ML - Aprendizado Supervisionado",
+  "section": 11,
+  "summary": "",
+  "labels": [
+   "Roteiro 06/04 - Exercícios com MLP. Enunciado do T1. 08/04 - Métricas. Exercícios",
+   "Slides de Aula"
+  ]
+ },
+ {
+  "secao": "Semana 7 - 13/04 a 17/04 - ML - Aprendizado Supervisionado",
+  "section": 12,
+  "summary": "",
+  "labels": [
+   "Roteiro 13/04: Aprendizado Supervisionado: Exercicios 15/04: Aprendizado Supervisionado: Árvores de Decisao",
+   "Slides",
+   "Programas"
+  ]
+ },
+ {
+  "secao": "Semana 8 - 20/04 a 24/4 - ML - Aprendizado Não Supervisionado",
+  "section": 13,
+  "summary": "",
+  "labels": [
+   "Roteiro 20/04: Feriado 22/04: Aprendizado Não Supervisionado",
+   "Slides",
+   "Programas"
+  ]
+ },
+ {
+  "secao": "Semana 9 - 27/04 a 01/05  - ML - Aprendizado Não Supervisionado",
+  "section": 14,
+  "summary": "",
+  "labels": [
+   "Roteiro 27/04 - Agrupamento Hierárquico. Exercícios 29/04 - Exercícios e Dúvidas T1"
+  ]
+ },
+ {
+  "secao": "Semana 10 - 04/04 a 08/04 - Avaliações",
+  "section": 15,
+  "summary": "",
+  "labels": [
+   "Roteiro 04/04: Apresentação T1 06/04: Apresentação T1"
+  ]
+ },
+ {
+  "secao": "Semana 11 -11/05 a 15/05 - Avaliações",
+  "section": 16,
+  "summary": "",
+  "labels": [
+   "Roteiro 11/05: Exercícios Gerais 13/05: Prova 1"
+  ]
+ },
+ {
+  "secao": "Semana 12 - 18/05 a 22/05 - Algoritmos de Busca com Informação",
+  "section": 17,
+  "summary": "",
+  "labels": [
+   "Roteiro 18/05 - Algoritmos de Busca 20/05 - Algoritmos de Busca"
+  ]
+ },
+ {
+  "secao": "Semana 13 - 25/05 a 29/05  - Algoritmos de Busca com Informação",
+  "section": 18,
+  "summary": "",
+  "labels": [
+   "Roteiro 25/05 - Algoritmos de Busca 27/05 - ES Day"
+  ]
+ },
+ {
+  "secao": "Semana 14 - 01/06 a 05/06 - Algoritmos de Busca com Informação",
+  "section": 19,
+  "summary": "",
+  "labels": [
+   "Roteiro 01/06: Algoritmos de Busca: HC e SA. 03/06: Algoritmos de Busca"
+  ]
+ },
+ {
+  "secao": "Semana 15 - 08/06 a 12/06 - Algoritmos de Busca",
+  "section": 20,
+  "summary": "",
+  "labels": [
+   "Roteiro 08/06 - Algoritmos de Busca 10/06 - Exercicios"
+  ]
+ },
+ {
+  "secao": "Semana 16 - 15/06 a 19/06 - Algoritmos de Busca e Agentes",
+  "section": 21,
+  "summary": "",
+  "labels": [
+   "Roteiro 15/06 - Algoritmos de Busca. Exercícios e dúvidas T2 17/06 - Introdução a agentes"
+  ]
+ },
+ {
+  "secao": "Semana 17 - 22/06 a 26/06 - Exercicios",
+  "section": 22,
+  "summary": "",
+  "labels": [
+   "Roteiro 22/06 - Exercícios 24/06 - Suspensão de atividades"
+  ]
+ },
+ {
+  "secao": "Semana 18 - 29/06 a 03/07 - Avaliações",
+  "section": 24,
+  "summary": "",
+  "labels": [
+   "Roteiro 29/06 - T2 01/07 - P2"
+  ]
+ },
+ {
+  "secao": "Semana 19 e 20 - 06/07 a 13/07 - Avaliações Finais",
+  "section": 25,
+  "summary": "",
+  "labels": [
+   "Roteiro 06/07: Prova PS 08/07: Atendimento 09/07: Prazo limite para divulgacao Resultados de G1 13/07: Prova G2"
+  ]
+ }
+]

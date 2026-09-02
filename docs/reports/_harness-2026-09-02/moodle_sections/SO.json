@@ -1,0 +1,71 @@
+[
+ {
+  "secao": "Informações Gerais",
+  "section": 0,
+  "summary": "4647D-04 -&nbsp;Sistemas Operacionais Prof. Dr. Miguel Xavier (miguel.xavier@pucrs.br) Avaliação: G1 = (P1 + P2 + TP) / 3 Bibliografia básica: SILBERSCHATZ, GAVIN e GAGNE, Fundamentos de Sistemas Operacionais. SILBERSCHATZ, Abraham, GALVIN, Peter B, GAGNE, Greg. Sistemas Operacionais com Java.&nbsp; TANENBAUM, Sistemas Operacionais Modernos.",
+  "labels": [
+   "Trabalho(s)",
+   "Material de Apoio"
+  ]
+ },
+ {
+  "secao": "Introdução aos Sistemas Operacionais",
+  "section": 1,
+  "summary": "",
+  "labels": [
+   "Leitura indicada: Capítulo 1 do livro Sistemas Operacionais, 9ª edição (SILBERSCHATZ, GAVIN, GAGNE, 2012).",
+   "Um Sistema Operacional, por mais complexo que possa parecer, “é apenas um conjunto de rotinas executado pelo processador, de forma semelhante aos programas de usuário.” (MACHADO, MAIA, 2007)."
+  ]
+ },
+ {
+  "secao": "Processo e Estruturas de Controle",
+  "section": 2,
+  "summary": "",
+  "labels": [
+   "Leitura indicada : &nbsp; Seções &nbsp; 2.1 a 2.7 e&nbsp;3.1 a 3.3&nbsp; do livro&nbsp; Fundamentos de Sistemas Operacionais, 9ª edição &nbsp;(SILBERSCHATZ, GAVIN, GAGNE, 2013)"
+  ]
+ },
+ {
+  "secao": "Gerência de Processos / CPU",
+  "section": 3,
+  "summary": "",
+  "labels": [
+   "Leitura indicada : &nbsp; Seções 6.1 a 6.3 e 6.8 &nbsp;do livro&nbsp; Fundamentos de Sistemas Operacionais, 9ª edição &nbsp;(SILBERSCHATZ, GAVIN, GAGNE, 2013)"
+  ]
+ },
+ {
+  "secao": "Threads",
+  "section": 4,
+  "summary": "",
+  "labels": [
+   "Leitura indicada: Seções 4.1 a 4.4 do livro Fundamentos de Sistemas Operacionais, 9ª edição (SILBERSCHATZ, GAVIN, GAGNE, 2013)."
+  ]
+ },
+ {
+  "secao": "Sincronização e Comunicação de Processos",
+  "section": 5,
+  "summary": "",
+  "labels": [
+   "Leitura indicada: Seções 5.1 a 5.10 do livro Fundamentos de Sistemas Operacionais, 9ª edição (SILBERSCHATZ, GAVIN, GAGNE, 2013).",
+   "Sockets"
+  ]
+ },
+ {
+  "secao": "Gerência de Memória",
+  "section": 6,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Gerência de I/O",
+  "section": 7,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Gerência de Arquivos",
+  "section": 8,
+  "summary": "",
+  "labels": []
+ }
+]

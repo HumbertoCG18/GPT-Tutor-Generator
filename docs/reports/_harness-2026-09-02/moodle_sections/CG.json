@@ -1,0 +1,192 @@
+[
+ {
+  "secao": "",
+  "section": 0,
+  "summary": "Conteúdo digital de uso exclusivo da Pontifícia Universidade Católica do Rio Grande do Sul | PUCRS. Copyright © 2026. Todos os direitos reservados.",
+  "labels": []
+ },
+ {
+  "secao": "Plano de Ensino",
+  "section": 1,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Tutoriais",
+  "section": 2,
+  "summary": "",
+  "labels": [
+   "Para apoiar o processo de construção e de gerenciamento da comunidade virtual criada para a sua disciplina, disponibilizamos um conjunto de tutoriais que podem ser acessados na Barra de Menu Superior do Moodle. Quais funcionalidades você encontra nessa área? INFORMAÇÕES | SUPORTE | TUTORIAIS",
+   "Para apoiar o processo de construção e de gerenciamento da comunidade virtual criada para a sua disciplina, disponibilizamos um conjunto de tutoriais que podem ser acessados na Barra de Menu Superior do Moodle. Quais funcionalidades você encontra nessa área? INFORMAÇÕES | SUPORTE | TUTORIAIS",
+   "Para apoiar o processo de construção e de gerenciamento da comunidade virtual criada para a sua disciplina, disponibilizamos um conjunto de tutoriais que podem ser acessados na Barra de Menu Superior do&nbsp;Moodle.&nbsp; Quais funcionalidades você encontra nessa área? INFORMAÇÕES | SUPORTE | TUTORIAIS"
+  ]
+ },
+ {
+  "secao": "Avisos | Dúvidas | Notícias",
+  "section": 3,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "TDE",
+  "section": 4,
+  "summary": "",
+  "labels": [
+   "Trabalho Discente Efetivo | TDE Constitui um conjunto diversificado de atividades relacionadas ao ensino, que incorporam as práticas pedagógicas previstas nos mais diversos componentes curriculares, realizadas dentro ou fora de sala de aula, de forma individual ou coletiva, voltadas à integralização dos currículos dos cursos de graduação, favorecendo a apropriação do conhecimento e o desenvolvimento das competências e habilidades previstas nos projetos pedagógicos de curso (PPC).",
+   "Trabalho Discente Efetivo | TDE Finalidade &nbsp; O&nbsp;Trabalho Discente Efetivo (TDE)&nbsp;tem como finalidade contribuir&nbsp;para o&nbsp;desenvolvimento das competências e habilidades previstas no PPI e PPC, especialmente no que&nbsp;tange&nbsp;à autonomia do estudante.&nbsp;Portanto, decorre&nbsp;das práticas pedagógicas que se utilizam, por exemplo,&nbsp;de metodologias ativas,&nbsp;assegurando&nbsp;a participação&nbsp;do estudante na construção de&nbsp;conhecimentos&nbsp;e saberes. &nbsp; Caracterização &nbsp; Estabelece relações com as disciplinas e componentes curriculares visando a integralização dos currículos; &nbsp; Está previsto e disponibilizado no plano de ensino e articulado às atividades acadêmicas das&nbsp;disciplinas; &nbsp; Constitui atividade integradora no processo de ensino e aprendizagem das disciplinas; &nbsp; Oportuniza a autonomia do estudante; &nbsp; Efetiva-se pela orientação e avaliação do docente. &nbsp;"
+  ]
+ },
+ {
+  "secao": "1 - Origens da Computação Gráfica",
+  "section": 5,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "2 - Biblioteca OpenGL",
+  "section": 6,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "3 - Fundamentos Matemáticos para Computação Gráfica",
+  "section": 7,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "4 - Detecção de Colisão",
+  "section": 8,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "5 - Geometria Computacional",
+  "section": 9,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "section": 10,
+  "summary": "",
+  "labels": [
+   "INSTANCIAMENTO",
+   "RECORTE",
+   "MAPEAMENTO",
+   "EXERCÍCIOS"
+  ]
+ },
+ {
+  "secao": "7 - Curvas Paramétricas",
+  "section": 11,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Atividades de Processamento de Imagens",
+  "section": 12,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Provas Resolvidas",
+  "section": 13,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Gabarito de Provas",
+  "section": 14,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Exercícios 2D",
+  "section": 15,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "8 - Manipulação de Imagens",
+  "section": 16,
+  "summary": "",
+  "labels": [
+   "Biblioteca de Manipulação de Imagens em OpenGL"
+  ]
+ },
+ {
+  "secao": "9 - Introdução ao Processamento de Imagens",
+  "section": 17,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "10 - Segmentação de Imagens",
+  "section": 18,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "11 - Morfologia Matemática",
+  "section": 19,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Exercícios de Processamento de Imagens",
+  "section": 20,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "12 - Modelagem Geométrica",
+  "section": 21,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "13 - Computação Gráfica 3D",
+  "section": 22,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "14 - Exercícios sobre Modelagem Geométrica",
+  "section": 23,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "15 - Remoção de Elementos Ocultos",
+  "section": 24,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "16 - Síntese de Imagens Realísticas",
+  "section": 25,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "17 - Mapeamento de Texturas",
+  "section": 26,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Exercícios para P2",
+  "section": 27,
+  "summary": "",
+  "labels": [
+   "Lista de Exercícios"
+  ]
+ },
+ {
+  "secao": "Bloco 55",
+  "section": 55,
+  "summary": "",
+  "labels": []
+ }
+]

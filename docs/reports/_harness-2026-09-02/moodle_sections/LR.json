@@ -1,0 +1,54 @@
+[
+ {
+  "secao": "",
+  "section": 0,
+  "summary": "Conteúdo digital de uso exclusivo da Pontifícia Universidade Católica do Rio Grande do Sul | PUCRS. Copyright © 2026. Todos os direitos reservados.",
+  "labels": []
+ },
+ {
+  "secao": "Avisos | Dúvidas | Notícias",
+  "section": 1,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Plano de Ensino",
+  "section": 2,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "[03/08] - Introdução",
+  "section": 3,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "[10/08] - Wireshark",
+  "section": 4,
+  "summary": "",
+  "labels": [
+   "Material de apoio"
+  ]
+ },
+ {
+  "secao": "[17/08] - DHCP",
+  "section": 5,
+  "summary": "",
+  "labels": [
+   "Para disparar a configuração de DHCP no MAC: sudo ipconfig set en0 BOOTP &amp;&amp; sudo ipconfig set en0 DHCP Somente renovação: sudo ipconfig set en0 DHCP"
+  ]
+ },
+ {
+  "secao": "[24/08] - DNS",
+  "section": 6,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "[31/08] - HTTP",
+  "section": 7,
+  "summary": "",
+  "labels": []
+ }
+]

@@ -1,6 +1,60 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-02 (FASE 0 feita: `revisar` = campo derivado {duvida, llm, ok} gravado nos 8 manifests; `motor_puro.py` e `censo_motor_llm.py` promovidos a `scripts/`; baseline oficial das 3 metricas; gatilhos CALIBRADOS no gold do motor puro — conflito 56%, flag:disamb 63%, sem-bloco 100%; bug de perfil por caminho relativo corrigido).
+last_updated: 2026-09-02 (FASE 1b feita: vocabulario por LLM compilado, 3a regua 'puro + vocab' = subunidade 79/93; REGRESSAO 1 na cobertura (eth2) — veredito do user pendente, tutores sujos. MEDIDO 'o que falta para 200': 29/38 erros tem o bloco na janela, desempate flagado 51%; escada 165 -> 176 com 3 alavancas estruturais (card generico, ORDEM DAS SECOES do Moodle coletada nos 8, label unico) -> ~192-195 com LLM em 21/100.)
+
+## FASE 1b — vocabulario compilado por LLM + MEDICAO "o que falta para 200" (2026-09-02, sessao 3, parte 2)
+
+**Entregue (`86fc9b3`):** `src/builder/core/vocabulary_compile.py` (`compile_course_vocabulary`, 1 chamada por unidade COM
+material, prompt v2 medido, schema pydantic, client fake nos 25 testes de `tests/test_vocabulary_compile.py`). Sidecar
+`course/.glossary_curation.llm.json` (formato do loader, chave "<codigo> <label>", `_provenance`, `_raw`); loader funde manual +
+llm; flags de curso `compile_vocabulary` (ligada nos 8 perfis), `recompile_vocab`, `refilter_vocab`; kill switch
+`TUTOR_NO_VOCAB_COMPILE=1` nos harnesses; `motor_puro.py --com-vocab` = 3a linha da regua.
+**Desvios do plano, registrados:** arquivo SEPARADO do manual (o motor puro apaga curadoria e mantem o compilado; recompilar
+nunca sobrescreve trabalho humano); chave COM codigo (o glossario chaveia "1.2 Modelos OSI" — sem isso 68 termos gravaram 0
+aliases no FR; e sem codigo "3.1 Conceitos basicos" colidia com "5.1", quebrando R8 no SO); filtro de IDENTIDADE (termo igual
+ou contido em nome de OUTRA unidade/topico sai — a aula 1 do CG enumera as unidades e 48 materiais foram sugados para u01).
+**Limite descoberto:** o compile herda a unidade que o MOTOR deu (CG: Octrees/CSG viraram termos de u02 porque o motor pos
+modelagem em u02) — recompilar apos a Fase 2 (cronograma manda) e a saida; `refilter_vocab` reaplica filtros sem chamar.
+
+| regua (02/09) | bloco | unidade | cobertura | subunidade | revisar/100 |
+|---|---|---|---|---|---|
+| curada + LLM (originais COM vocab, 8) | 199/200 | 191/191 | **55/57** (eth2) | 93/93 | 53,2 (era 55,7) |
+| motor puro (sem vocab) | 161/200 | 158/191 | 51/57 | 26/93 · 21 prim. | 54,0 |
+| **puro + vocab compilado** | 162/200 | **167/191** | 50/57 | **79/93 · 75 prim.** (IA 35/39, ES2 24/28, TCC 11/11, SO 9/15) | — |
+
+Sidecars compilados: MF 77 termos, CG 77, LR 8, FR 53 (os 4 manuais intactos, 0 campos). CG subunidade taggada 55 -> 63, FR 12 -> 16.
+**REGRESSAO (lei: nada regride) — pendente do user:** cobertura 56 -> 55/57: MF `eth2` (referencia GitHub do Eth2.0 em Dafny,
+gold u02). A aula 1 cita "Eth2.0 spec" como exemplo de aplicacao -> termo de "1.4 Exemplos de Aplicacoes" (u01), correto pelo
+texto; o scorer de unidade empata u01/u02 (0.925 -> 0.483 < gate 0.5) -> cobertura cai no bloco (u01). Mesma excecao ja aceita
+no eixo BLOCO ("referencia especifica de Dafny, preco aceito para nao pinar"). Opcoes: teto documentado (como `aws`) ou aliases
+compilados so na rota de subunidade. Efeito colateral no FR (sem gold): `tcp-chat-c` u03 -> u05 (card diz U2; o bloco manda; a
+janela por topico mudou e o LLM votou enlace — erro estrutural pre-existente, o vocab trocou o erro). **Tutores: 8 sujos com o
+vocab aplicado, NAO commitados; 2 snapshots de caracterizacao (FR divisao, MF casos-chave) mudam com o estado sujo.**
+
+**MEDICAO "o que falta para chegar perto de 200"** (artifact "Raio-X da Atribuicao",
+https://claude.ai/code/artifact/399626ee-682b-43f8-9987-09c344f6c60f; harness `_harness-2026-09-02/mede_alavancas.py`,
+`mede_ordem_secoes.py`, `calibra_revisar.py`):
+- 38 erros de bloco no motor puro: **29 tem o bloco certo DENTRO da janela** (o desempate erra, nao a janela); 5 sem janela;
+  3 irmaos herdam erro; 1 janela-1 errada. Acerto por metodo: janela-1 96% (102/106), disamb confiante 92% (22/24),
+  **disamb flagado 51% (28/55)** = todo o gap. Por fonte: data no arquivo 100%, ordinal 94%, card datado 83%, card sem data 70%.
+- SARC repetido (mesmo texto em 2+ blocos da janela): 12/55 flagados (7 erram). 39 tem texto distinto e 20 erram assim mesmo.
+- Hipoteses REFUTADAS no gold: serie k -> k-esimo bloco (+5/-10); serie monotonica via DP (+1/-2; so-flagados 0); prova antiga
+  -> prep (0; gold b09, prep daria b11); label 1a classe em TODOS (+3/-2).
+- Alavancas que ENTRAM (Fase 3, medidas nos 203 golds, so agem onde o desempate esta flagado):
+  1. card generico ("Informacoes Gerais") sem janela -> bloco de apresentacao/1a aula, regra irma da meta-generica: **+3/0**.
+  2. **ORDEM DAS SECOES do Moodle** (dado coletado: `moodle_pull --dry-run` nos 8, `raw/moodle/sections.json` gravado nos 8
+     repos + `_harness-2026-09-02/moodle_sections/`): premissa "secoes seguem o semestre" vale em 44/46 golds de cards sem
+     data. Ancoras = cards de CONTEUDO com janela datada (utilitarios — TDE, Informacoes Gerais, Plano, Exercicios de Revisao —
+     fora); material sem data herda a faixa do proprio card (irmaos datados) ou fica entre ancoras, encadeado com os outros
+     cards sem data: **+7/-1** (SO exemplo-criacao x4, exercicios; MF logica proposicional x2; perde SO laminas-sockets-
+     alternativo, gold fora da faixa dos irmaos).
+  3. label/titulo com token unico a 1 bloco da janela decide, so flagados: **+2/0**.
+- **Escada: 165 -> 168 -> 174 -> 176/203; residual 43 flagados (21/100, era 23) -> LLM 69/70 -> ~192; os 3 zips roteiro1/2/4
+  seguem o irmao -> ~195/203.** Ficam: dafny2 (confiante em b11, label diria b13), azure (nao dedutivel), aula-17 (numeracao do
+  professor != calendario), recursao x2 e arvores/listas (janela de 2-3 blocos sem sinal: so data), e o erro do LLM (~1/70).
+- Captura faltante no produto: o import por stash (export do Moodle) nao traz a ordem das secoes; `moodle_pull` traz
+  (`sections.json`). Fase 3 precisa persistir o indice da secao (manifest ou `raw/moodle/sections.json`) e o motor ler isso
+  como prior de janela.
 
 ## FASE 0 — regua oficial + fila `revisar` (2026-09-02, sessao 3)
 

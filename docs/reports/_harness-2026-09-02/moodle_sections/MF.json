@@ -1,0 +1,120 @@
+[
+ {
+  "secao": "",
+  "section": 0,
+  "summary": "Conteúdo digital de uso exclusivo da Pontifícia Universidade Católica do Rio Grande do Sul | PUCRS. Copyright © 2026. Todos os direitos reservados.",
+  "labels": []
+ },
+ {
+  "secao": "Plano de Ensino",
+  "section": 1,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "Tutoriais",
+  "section": 2,
+  "summary": "",
+  "labels": [
+   "Para apoiar o processo de construção e de gerenciamento da comunidade virtual criada para a sua disciplina, disponibilizamos um conjunto de tutoriais que podem ser acessados na Barra de Menu Superior do Moodle. Quais funcionalidades você encontra nessa área? INFORMAÇÕES | SUPORTE | TUTORIAIS"
+  ]
+ },
+ {
+  "secao": "Avisos | Dúvidas | Notícias",
+  "section": 3,
+  "summary": "",
+  "labels": []
+ },
+ {
+  "secao": "TDE | Trabalho Discente Efetivo",
+  "section": 4,
+  "summary": "",
+  "labels": [
+   "Trabalho Discente Efetivo | TDE Constitui um conjunto diversificado de atividades relacionadas ao ensino, que incorporam as práticas pedagógicas previstas nos mais diversos componentes curriculares, realizadas dentro ou fora de sala de aula, de forma individual ou coletiva, voltadas à integralização dos currículos dos cursos de graduação, favorecendo a apropriação do conhecimento e o desenvolvimento das competências e habilidades previstas nos projetos pedagógicos de curso (PPC).",
+   "Trabalho 1:",
+   "Trabalho 2:"
+  ]
+ },
+ {
+  "secao": "Introdução a Métodos Formais",
+  "section": 5,
+  "summary": "",
+  "labels": [
+   "Semana 02/03/2026 a 06/03/2026: (02/03/2026): apresentação da disciplina; (04/03/2026): introdução a métodos formais.",
+   "Material de estudo: TER BEEK, M. H., et al. \"Formal Methods in Industry\", Form. Asp. Comput., vol. 37, no. 1, mar. 2025. (disponível on-line ) BROY, M., et al. \"Does Every Computer Scientist Need to Know Formal Methods?\", Form. Asp. Comput., vol. 37, no. 1, mar. 2025. (disponível on-line ) ALMEIDA, J. B., FRADE, M. J., PINTO, J. S., SOUSA, S. M de. \"Rigorous Software Development: An Introduction to Program Verification\", London: Springer-Verlag, 2011. Capítulos 1 e 2. (ver arquivo PDF a seguir) WING, J.M. \"A Specifier's Introduction to Formal Methods\", Computer, vol. 23, no. 9, 1990, pp. 8, 10–23. ( disponível on-line ) HINCHEY, J. F., MONIN, M. G. \"Understanding Formal Methods\", London: Springer, 2003. Capítulo 1. O'REGAN, G. Guide to Discrete Mathematics An Accessible Introduction to the History, Theory, Logic and Applications. Cham: Springer, 2016. Capítulos 17 (p.283-297), 18 (p.299-318). (disponível on-line )"
+  ]
+ },
+ {
+  "secao": "Revisão - Lógica e Especificação",
+  "section": 6,
+  "summary": "",
+  "labels": [
+   "Semana 09/03/2026 a 13/03/2026: (09/03/2026): revisão de fundamentos de lógica; (11/03/2026): conjuntos indutivos e equações recursivas; (atividade assíncrona): exercícios.",
+   "Material de estudo: Conjuntos. Portal da Matemática. Disponível&nbsp; on-line . Números Naturais: Contagem, Divisibilidade e Teorema da Divisão Euclidiana. Portal da Matemática. Disponível&nbsp; on-line . Números Inteiros e Números Racionais. Portal da Matemática. Disponível&nbsp; on-line . Funções: Noções Básicas. Portal da Matemática. Disponível&nbsp; on-line .",
+   "Material de estudo: MENEZES, P. B. Matemática Discreta para Computação e Informática. 4. ed. Porto Alegre: Bookman, 2013. Capítulos 3, 4, 5. SILVA, F. S. C. da; FINGER, M; MELO, A. C. V de. Lógica para computação. 2 ed. São Paulo: Cengage Learning, 2017. Capítulos 1, 2.3, 4.2, 4.3, 4.4. Disponível on-line (repositório Minha Biblioteca acessado via Biblioteca da PUCRS). ALMEIDA, J. B., FRADE, M. J., PINTO, J. S., SOUSA, S. M de. \"Rigorous Software Development: An Introduction to Program Verification\", London: Springer-Verlag, 2011. Capítulos 2.3, 3 e 4. HUTH, M. R. A; RYAN, M. D. Lógica em Ciência da Computação: Modelagem e Argumentação sobre Sistemas. 2ª ed. LTC, 2008. Capítulos 1 e 2."
+  ]
+ },
+ {
+  "secao": "Especificações Indutivas e Recursivas",
+  "section": 7,
+  "summary": "",
+  "labels": [
+   "Semana 09/03/2026 a 13/03/2026: (09/03/2026): revisão de fundamentos de lógica; (11/03/2026): conjuntos indutivos e equações recursivas; (atividade assíncrona): exercícios.",
+   "Semana 16/03/2026 a 20/03/2026: (16/03/2026): definições indutivas e recursivas, exercícios; (18/03/2026): definições indutivas e recursivas sobre listas; (atividade assíncrona): complementar os estudos com as leituras recomendadas, realizar os exercícios.",
+   "Semana 23/03/2026 a 27/03/2026: (23/03/2026): definições indutivas e recursivas sobre árvores; (25/03/2026): exercícios; (atividade assíncrona): Complementar os estudos com as leituras recomendadas.",
+   "Material de estudo: BEN-ARI, M. The Many Guises of Induction. Weizmann Institute of Science, 2021. Disponível on-line . LEHMAN, E.; LEIGHTON, F. T.; MEYER, A. Mathematics for Computer Science. 2018. Disponível on-line . Capítulos 5, 6, 7. OBMEP. Indução Matemática. Disponível on-line . GERSTING, J. L. Fundamentos Matemáticos para Ciência da Computação: matemática discreta e suas aplicações. 7 ed. Rio de Janeiro: LTC, 2017. Disponível on-line . Capítulo 3.1. HUTH, M. R. A; RYAN, M. D. Lógica em Ciência da Computação: Modelagem e Argumentação sobre Sistemas. 2. ed. Rio de Janeiro: LTC, 2008. Capítulo 1 (1.4.2). DE SOUZA, J. N. Lógica para Ciência da Computação: uma introdução concisa. Rio de Janeiro: Campus, 2008. Capítulo 5."
+  ]
+ },
+ {
+  "secao": "Provas por Indução",
+  "section": 8,
+  "summary": "",
+  "labels": [
+   "Semana 30/03/2026 a 03/04/2026: (30/03/2026): Especificações recursivas e provas por indução; (atividade assíncrona): Complementar os estudos com as leituras recomendadas. (01/04/2026): Especificações recursivas e provas por indução; (atividade assíncrona): Complementar os estudos com as leituras recomendadas.",
+   "Semana 06/04/2026 a 10/04/2026: (06/04/2026): Especificações recursivas e provas por indução em Isabelle; (08/04/2026): Especificações recursivas e provas por indução em Isabelle.",
+   "Semana 13/04/2026 a 17/04/2026: (13/04/2026): Provas em Isabelle, exercícios; (15/04/2026): Exercícios de revisão para P1.",
+   "Semana 20/04/2026 a 24/04/2026: (20/04/2026): Feriado; (22/04/2026): Prova P1.",
+   "Material de estudo: O'REGAN, G. Guide to Discrete Mathematics An Accessible Introduction to the History, Theory, Logic and Applications. Cham: Springer, 2016. Disponível on-line . Capítulo 4. BEN-ARI, M. The Many Guises of Induction. Weizmann Institute of Science, 2021. Disponível on-line . LEHMAN, E.; LEIGHTON, F. T.; MEYER, A. Mathematics for Computer Science. 2018. Disponível P DF a seguir. Capítulos 5, 6, 7. NIPKOW, T.; KLEIN, G. Concrete Semantics with Isabelle/HOL. Springer/Verlag, 2023. Disponível on-line . MARTINI, A. R. Reasoning about partial correctness assertions in Isabelle/HOL. In Revista de informática teórica e aplicada RITA, v. 27, n. 3, 2020, p.84-101. Disponível on-line . GEUVERS, H. Proof assistants: history, ideas and future. In: Sãdhanã, vol. 34, part 1, p.3-25, fev. 2009. Disponível on-line . SACHTLEBEN, R; HAXTHAUSEN, A; PELESKA, J. \"Mechanised Safety Verification for a Distributed Autonomous Railway Control System\", Form. Asp. Comput., vol. 37, no. 2, jun. 2025. Disponível on-line ."
+  ]
+ },
+ {
+  "secao": "Verificação de Programas",
+  "section": 9,
+  "summary": "",
+  "labels": [
+   "Semana 27/04/2026 a 01/05/2026: (27/04/2026): lógica de Hoare; (29/04/2026): lógica de Hoare.",
+   "Semana 04/05/2026 a 08/05/2026: (04/05/2026): lógica de Hoare, exercícios; (06/05/2026): correção parcial/total, terminação; (atividade assíncrona): complementar os estudos com as leituras recomendadas e tutoriais indicados.",
+   "Semana 11/05/2026 a 15/05/2026: (11/05/2026): Introdução ao Dafny; (13/05/2026): Introdução ao Dafny.",
+   "Semana 18/05/2026 a 22/05/2026: (18/05/2026): Arrays em Dafny; (20/05/2026): Coleções auxiliares em Dafny (sequências).",
+   "Semana 25/05/2026 a 29/05/2026: (25/05/2026): Coleções auxiliares em Dafny (conjuntos); (27/05/2026): ES Day.",
+   "Leituras recomendadas: ZIANI, Yani; et al. \"Towards Formal Verification of a TPM Software Stack: Achievements and Opportunities\", Form. Asp. Comput., vol. 37, no. 4, dec. 2025. (disponível on-line ) CERTEZEANU, R. et al. \"Quicksort Revisited\". In: Ábrahám, E., Bonsangue, M., Johnsen, E. (eds) Theory and Practice of Formal Methods. Lecture Notes in Computer Science, vol 9660, 2016, p. 407–426. Springer, Cham. (disponível on-line ) DE GOUW, S., et al. \"OpenJDK’s Java.utils.Collection.sort() Is Broken: The Good, the Bad and the Worst Case\". In: Kroening, D., Păsăreanu, C. (eds) Computer Aided Verification. CAV 2015. Lecture Notes in Computer Science(), vol 9206, 2015, p. 273–289. Springer, Cham. (disponível on-line ) HIEP, HD.A., et al. \"Verifying OpenJDK’s LinkedList using KeY (extended paper)\". Int J Softw Tools Technol Transfer, v. 24, n. 5, 2022, p. 783–802. (disponível on-line ) SILVA, F. S. C. da; FINGER, M; MELO, A. C. V de. Lógica para computação. 2 ed. São Paulo: Cengage Learning, 2017. Disponível on-line (repositório Minha Biblioteca acessado via Biblioteca da PUCRS). Capítulos 6, 7. ALMEIDA, J. B., FRADE, M. J., PINTO, J. S., SOUSA, S. M de. Rigorous Software Development: An Introduction to Program Verification. London: Springer-Verlag, 2011. Capítulos 5, 6. HUTH, M. R. A; Ryan, M. D. Lógica em Ciência da Computação: Modelagem e Argumentação sobre Sistemas. 2ª ed. LTC, 2008. Capítulo 4. HOARE, C. A. R. An axiomatic basis for computer programming. Communications of the ACM, v. 12, n. 10, p. 576–580, Oct. 1969. Disponível on-line . FLOYD, R. W. Assigning meanings to programs. Proceedings of the American Mathematical Society Symposia on Applied Mathematics, v. 19, p. 19-31, 1967. Disponível on-line .",
+   "Material de estudo:",
+   "Material para Dafny:",
+   "Tutoriais Dafny: Curso da AWS&nbsp; dafny.org/teaching-material/ Tutorial (introdução)&nbsp; https://dafny.org/latest/OnlineTutorial/guide Tutorial (tipos valor)&nbsp; https://dafny.org/latest/OnlineTutorial/ValueTypes Tutorial (conjuntos)&nbsp; https://dafny.org/latest/OnlineTutorial/Sets Tutorial (sequências)&nbsp; https://dafny.org/latest/OnlineTutorial/Sequences Tutorial (lemas e indução)&nbsp; https://dafny.org/latest/OnlineTutorial/Lemmas Tutorial (módulos)&nbsp; https://dafny.org/latest/OnlineTutorial/Modules Tutorial (terminação)&nbsp; https://dafny.org/latest/OnlineTutorial/Termination Verification Corner (YouTube)&nbsp; https://www.youtube.com/channel/UCP2eLEql4tROYmIYm5mA27A LUCIO, P.&nbsp;A Tutorial on Using Dafny to Construct Verified Software.&nbsp; https://arxiv.org/pdf/1701.04481.pdf SONNEX, W.; DROSSOPOULOU, S. Verified Programming in Dafny.&nbsp; http://www.doc.ic.ac.uk/~scd/Dafny_Material/Lectures.pdf Dafny Power User&nbsp; http://leino.science/dafny-power-user/",
+   "Outros sistemas: OpenJML&nbsp; http://www.openjml.org/ The KeY Project&nbsp; https://www.key-project.org/ Viper&nbsp; https://www.pm.inf.ethz.ch/research/viper.html Nagini&nbsp; https://www.pm.inf.ethz.ch/research/nagini.html Prusti&nbsp; https://www.pm.inf.ethz.ch/research/prusti.html Gobra:&nbsp; https://www.pm.inf.ethz.ch/research/gobra.html Frama-C&nbsp; http://frama-c.com/ Why3&nbsp; http://why3.lri.fr/ VerCors&nbsp; https://vercors.ewi.utwente.nl/ Boogie&nbsp; https://www.microsoft.com/en-us/research/project/boogie-an-intermediate-verification-language/",
+   "Semana 01/06/2026 a 05/06/2026: (01/06/2026): Classes e objetos em Dafny, ghosts e autocontrato; (03/06/2026): Exercícios.",
+   "Semana 08/06/2026 a 12/06/2026: (08/06/2026): Classes e objetos em Dafny, ghosts e autocontrato. (10/06/2026): Exercícios.",
+   "Leituras recomendadas: KASSIOS, I. T. Dynamic Frames and Automated Verification. In 2nd COST Action ICO701 Training School. COST Action ICO701. July, 2011. Disponível on-line ."
+  ]
+ },
+ {
+  "secao": "Especificação e Verificação de Modelos",
+  "section": 10,
+  "summary": "",
+  "labels": [
+   "Semana 15/06/2026 a 19/06/2026: (15/06/2026): Verificação de modelos, lógica temporal; (17/06/2026): Verificação de modelos, lógica temporal.",
+   "Semana 22/06/2026 a 26/06/2026: (22/06/2026): Exercícios ; (24/06/2026): Suspensão Copa do Mundo.",
+   "Semana 29/06/2026 a 03/07/2026: (29/06/2026): verificação de modelos, ferramenta; (01/07/2026): exercícios de revisão.",
+   "Material de estudo: SAADAT, M. G; DIXON, C; FISHER, M. \"Specification and Verification of the Alpha Swarm Algorithm using NuXMV and GROOVE\", Form. Asp. Comput., vol. 38, no. 1, mar. 2026. Disponível on-line . HUTH, M. R. A; Ryan, M. D. Lógica em Ciência da Computação: Modelagem e Argumentação sobre Sistemas. 2ª ed. LTC, 2008. Capítulo 3 (3.1, 3.2, 3.3.1, 3.4, 3.5). MULLER-OLM, M; SCHMIDT, D; STEFFEN, B. Model-Checking: a tutorial introduction. Lecture Notes in Computer Science, v. 1694, p. 330-354, 1999. Disponível on-line . FISHER, M. An introduction to practical formal methods using temporal logic. Wiley, 2011. Disponível on-line . Capítulos 1, 2, 3, 5. MANNA, Z.; PNUELI, A. The temporal logic of reactive and concurrent systems: specification. New York: Springer-Verlag, 1992. Disponível on-line . Capítulos 3, 4. BEN-ARI, M. Principles of Concurrent and Distributed Programming. Addison-Wesley: Harlow, 2006. Capítulo 1, 2 e 3. About Specification Patterns. Disponível on-line .",
+   "Tutoriais NuSMV/NuXMV: Geatti, L. A glimpse of nuXmv. 2023. Disponível on-line . Cimatti, A; Pistore, M; Roveri, M. Model Checking: a hands-on introduction, 2003. Disponível&nbsp; on-line . Magnago, E. Formal Methods 2020. Disponível&nbsp; on-line . NuSMV 2.6 Tutorial. Disponível&nbsp; on-line . NuSMV Examples. Disponível&nbsp; on-line .",
+   "Semana 06/07/2026 a 10/07/2026: (06/07/2026): prova P2, entrega do T2; (08/07/2026): prova PS.",
+   "Semana 13/07/2026 a 17/07/2026: (13/07/2026): devolução das provas. (15/07/2026): prova G2."
+  ]
+ },
+ {
+  "secao": "Exercícios de Revisão para Provas",
+  "section": 11,
+  "summary": "",
+  "labels": []
+ }
+]
