@@ -70,6 +70,15 @@ https://claude.ai/code/artifact/399626ee-682b-43f8-9987-09c344f6c60f; harness `_
   dafny2, revisao. Flagados/sem bloco em AULA depois da escada: 12 (6/100), 3 errados; erros confiantes 15.
   **Pergunta de definicao que decide os ~5 de (a): o gold de material de aula e "onde o professor postou" (estrutura)
   ou "a aula em que foi usado"? Se e a posicao, (a) deixa de ser erro e a regua sobe para ~95%.**
+- **AUDITORIA DO GOLD (pergunta do user: "o gold pode estar errado; Moodle/SARC sao a verdade").** Lado a lado
+  posicao do professor (label de semana / data no nome / secao-semana, do `contents.json`) x SARC x gold x motor, nos 189
+  golds de AULA (`_harness-2026-09-02/audita_gold.py` -> `auditoria_gold.csv`; artifact "Gold x Moodle x SARC"):
+  **concorda 148/148 onde ha posicao datada**; 38 sem posicao datada (SO cards sem data, TCC "Semana N"); **3 divergencias,
+  todas defeitos do MOODLE que o gold pegou**: ES2 `roteiro1`/`roteiro1-introducao` sob label "Semana 18/08/2025" (curso
+  clonado de 2025, a semana 23-27/03 ficou sem label) e MF `t2-2026-1` sob "Trabalho 1 (06/05/2026)" (label "Trabalho 2:"
+  sem data). Nao ha padrao de erro do gold em material de aula. Consequencias: (i) label com ano != ano do curso e ruido
+  estrutural detectavel — o leitor do card deve ignora-lo; (ii) onde o Moodle nao opina (38), o gold continua sendo a
+  unica verdade alem do texto.
   - Datas em que a cadeira acontece: ja usadas (sessoes do SARC); ordem de postagem NAO segue a ordem das aulas em semanas de
     2 aulas (IA Semana 3, SO Processo): so o topico da linha do SARC separa — dai a alavanca 4.
 - **Escada: 165 -> 168 -> 174 -> 176/203; residual 43 flagados (21/100, era 23) -> LLM 69/70 -> ~192; os 3 zips roteiro1/2/4
