@@ -1,0 +1,29 @@
+CARDAPIO FR — o que existe no repo (para preencher travessia_gt_FR.csv). bloco | id | titulo | categoria | subunidade | card
+Em 'esperado' use o id (1a coluna apos o bloco) ou um trecho do titulo; varios aceitos separados por |.
+
+--- bloco-01 08-04 Disciplina
+01-protocolos-de-rede                            | 01 - Protocolos de Rede                                      | material-de-aula | conceito-de-protocolo-de-redes-p | U1 - Redes de Computadores
+plano-de-ensino-20262                            | Plano de Ensino - 20262                                      | cronograma       |                                  | Plano de Ensino
+--- bloco-02 08-06 Funções
+02-modelos-de-referencia                         | 02 - Modelos de Referencia                                   | material-de-aula | modelos-osi-e-tcpip              | U1 - Redes de Computadores
+02-poster-network-protocols                      | 02 - poster-network-protocols                                | fotos-de-prova   |                                  | U1 - Redes de Computadores
+03-tipos-de-redes                                | 03 - Tipos de Redes                                          | material-de-aula | conceito-de-protocolo-de-redes-p | U1 - Redes de Computadores
+unidade1-exercicios                              | unidade1-exercicios                                          | listas           | modelos-osi-e-tcpip              | U1 - Redes de Computadores
+--- bloco-03 08-13 Protocolos de aplicação para infraestrut
+04-camada-de-aplicacao                           | 04 - Camada de Aplicação                                     | material-de-aula | paradigmas-clienteservidor-e-p2p | U2 - Camada de Aplicação
+04-protocolo-http                                | 04 - Protocolo HTTP                                          | material-de-aula | protocolos-de-aplicacao-para-o-u | U2 - Camada de Aplicação
+05-protocolo-dns                                 | 05 - Protocolo DNS                                           | material-de-aula | protocolos-de-aplicacao-para-inf | U2 - Camada de Aplicação
+06-protocolo-dhcp                                | 06 - Protocolo DHCP                                          | material-de-aula | protocolos-de-aplicacao-para-inf | U2 - Camada de Aplicação
+lista-de-exercicios-1-camada-de-aplicacao        | LIsta de exercícios 1 - Camada de Aplicação                  | listas           | protocolos-de-aplicacao-para-o-u | U2 - Camada de Aplicação
+unidade2-exercicios-dhcp                         | unidade2-exercicios-dhcp                                     | listas           | protocolos-de-aplicacao-para-inf | U2 - Camada de Aplicação
+unidade2-exercicios-dns                          | unidade2-exercicios-dns                                      | listas           | protocolos-de-aplicacao-para-inf | U2 - Camada de Aplicação
+unidade2-exercicios-http                         | unidade2-exercicios-http                                     | listas           | protocolos-de-aplicacao-para-o-u | U2 - Camada de Aplicação
+--- bloco-05 08-27 Protocolos de aplicação para o usuário (
+07-protocolos-de-e-mail                          | 07 - Protocolos de E-mail                                    | material-de-aula | protocolos-de-aplicacao-para-o-u | U2 - Camada de Aplicação
+08-desenvolvimento-de-aplicacoes                 | 08 - Desenvolvimento de Aplicações                           | material-de-aula | implementacao-de-sockets         | U2 - Camada de Aplicação
+--- bloco-06 09-03 Modelos OSI e TCP/IP
+udp-example-c                                    | udp_example_c                                                | codigo-professor | paradigmas-clienteservidor-e-p2p | U2 - Camada de Aplicação
+udp-example-java                                 | udp_example_java                                             | codigo-professor | paradigmas-clienteservidor-e-p2p | U2 - Camada de Aplicação
+--- bloco-22 11-10 Modelos OSI e TCP/IP
+tcp-chat-c                                       | tcp_chat_c                                                   | codigo-professor |                                  | U2 - Camada de Aplicação
+tcp-example                                      | tcp_example                                                  | codigo-professor |                                  | U2 - Camada de Aplicação

@@ -2,7 +2,7 @@
 
 date: 2026-06-28
 status: EM DISCUSSÃO (decisões sendo travadas uma a uma; reler no fim pra ver o sistema)
-contexto: continua de `2026-06-28-handoff-roteiro-como-base.md`. Branch `feat/block-stable-id`.
+contexto: continua de `_archive/2026-06-28-handoff-roteiro-como-base.md`. Branch `feat/block-stable-id`.
 
 > Documento vivo. Cada decisão é numerada (D0, D1, ...). Forks abertos ao fim.
 > Quando tudo travado → reler este arquivo e descrever o sistema completo.

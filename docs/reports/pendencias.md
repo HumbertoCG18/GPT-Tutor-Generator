@@ -240,7 +240,7 @@ imagens (gratis). O tutor em si (Claude/GPT/Gemini lendo o repo) e o produto, na
 
 ## TOKENS CURTOS — CAMPANHA FECHADA (2026-09-01c, sessao noturna)
 
-Fila do handoff `2026-09-01-handoff-tokens-curtos.md`, executada na ordem, TODAS as 4 vencidas:
+Fila do handoff `_archive/2026-09-01-handoff-tokens-curtos.md`, executada na ordem, TODAS as 4 vencidas:
 1. **devops (ES2) FECHADO** — raiz NAO era posicao de heading (hipotese refutada pela familia: aula-08 e
    roteiro5-conteiners tem o instrumento no titulo/1o heading — posicao REFORCARIA o erro). Raiz real:
    double-dip label==slug ("Integracao continua (CI)" normaliza IGUAL a "integracao continua ci" e contava
@@ -961,7 +961,7 @@ producao e o proprio motor (flagados / llm-funil / conf-err -> fila de revisao).
 
 ## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
-**HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
+**HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `_archive/2026-08-21-handoff-rumo-aos-100.md`.
 ESTADO (`scripts/eval_eixos.py`, as-of **2026-09-01d**; motor PURO = 158/200 · 154/191 · 51/57 · 26/93, ver secao
 acima; meta-generica `f166c4e` = −8 llm-funil): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
 convencao ACEITA por ruling 31/08) · unidade **191/191 (100%)** · cobertura **56/57 F1 0,982** (teto
