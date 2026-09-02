@@ -187,7 +187,7 @@ ficou com manifest parcial; restaurado do HEAD). Fix: `Path.resolve` nos dois la
 
 **Divida achada (nao mexida):** no reprocess dos 8 com manifest IDENTICO (sentinela 0 fora de `revisar`), o `course/COURSE_MAP.md` do ES2 reordenou a lista "Tambem cobre esta unidade" (`Roteiro2_nameserver` (+12) -> `roteiro2` (+13); `Roteiro1_introducao` perdeu o (+1)) — nao-determinismo do RENDERER (ordem de empate/set), nao do motor. Entra no corte 1 do refactor: ordenar por chave estavel e cobrir com teste de determinismo.
 
-**Proximo:** Fase 1b (`compile_course_vocabulary`) — handoff `2026-09-02-handoff-executar-plano.md` §Fase 1b.
+**Proximo:** Fase 1b (`compile_course_vocabulary`) — handoff `_archive/2026-09-02-handoff-executar-plano.md` §Fase 1b.
 
 ## MOTOR PURO — o numero honesto (2026-09-01d, sessao noturna 2)
 

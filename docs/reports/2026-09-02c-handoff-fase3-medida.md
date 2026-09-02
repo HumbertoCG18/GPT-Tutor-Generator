@@ -1,7 +1,6 @@
 # Handoff 2026-09-02c — PONTO DE ENTRADA da proxima sessao: fechar a rodada do motor (Fase 3 revisada)
 
-Substitui `2026-09-02-handoff-executar-plano.md` e `2026-09-02b-handoff-fase0-feita.md` (ficam como contexto; NAO reabrir
-a fila deles). **Leia nesta ordem:** (1) este arquivo; (2) `pendencias.md` §"SEQUENCIA ACORDADA" (a lista numerada) e
+Unico handoff vivo desta rodada; os dois anteriores de 02/09 estao em `_archive/` (contexto; NAO reabrir a fila deles). **Leia nesta ordem:** (1) este arquivo; (2) `pendencias.md` §"SEQUENCIA ACORDADA" (a lista numerada) e
 §"FASE 1b … MEDICAO" (numeros); (3) `2026-09-02-plano-fechar-o-motor.md` §"REVISAO 02/09 (noite)".
 Artifacts: "Raio-X da Atribuicao" (https://claude.ai/code/artifact/399626ee-682b-43f8-9987-09c344f6c60f) e
 "Gold x Moodle x SARC" (https://claude.ai/code/artifact/f53542b1-9061-4034-a1f3-e86ce001a81f).
