@@ -1,6 +1,55 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-01c (TOKENS CURTOS fechados: dedupe de frases + limiar 0.12 + artefato de slugify; subunidade 93/93 com-extras / 91/93 primario; 02-modelos do FR fechado).
+last_updated: 2026-09-01d (MOTOR PURO medido pela 1a vez: sem curadoria E sem LLM = bloco 158/200, unidade 154/191, subunidade 26/93 — a subunidade vive dos `.glossary_curation.json` escritos a mao; dissecacao dos 117 votos de LLM; meta-generica −8 votos; resumo Gemini na rota temporal REFUTADO).
+
+## MOTOR PURO — o numero honesto (2026-09-01d, sessao noturna 2)
+
+Pergunta do user: "o motor so funciona pelos golds?" Medido nas copias `.ablacao` dos 5 cursos com gold,
+zerando curadoria (pinos, cards manuais, `.timeline_curation`, `.glossary_curation`) E `use_llm_voter=False`
+(`scratchpad/motor_puro.py`; a ablacao "nu" de antes mantinha o voter e nunca media subunidade):
+
+| eixo | curado + LLM (hoje) | nu + LLM (31/08) | so sem LLM | **nu + sem LLM = motor puro** |
+|---|---|---|---|---|
+| bloco | 199/200 | 194/200 | 155/200 | **158/200 (79%)**, conf-err 3 |
+| unidade | 191/191 | 170/191 | 171/191 | **154/191 (81%)** |
+| cobertura | 56/57 | 54/57 | 53/57 | **51/57 F1 0,895** |
+| subunidade | 93/93 | (nunca medida) | 93/93 | **26/93 com-extras · 21/93 primario** |
+
+**A subunidade depende de curadoria manual, nao do bloco.** IA: unidade identica em 39/39 e subunidade cai
+39 -> **6/39** porque somem 34 aliases; SO 15 -> 4, ES2 28 -> 6, TCC 11 -> 10. Os aliases vem do
+`course/.glossary_curation.json` de SO/IA/ES2/TCC — listas de sinonimos **escritas a mao (proposto-claude,
+25-26/08) e medidas contra o gold** ("o plano nomeia CATEGORIAS, o material nomeia ALGORITMOS"; IA 4 -> 37/39
+com o sidecar). CG/FR/LR/MF NAO tem sidecar: os holdouts rodam no plano cru — e por isso FR tagga 12/20 e CG
+55/73. O 93/93 e real, mas e 93/93 COM um dicionario por curso feito a mao e calibrado no gold. Conclusao
+para o produto: a unica saida automatica e COMPILAR esse dicionario (LLM uma vez por curso, cacheado e
+revisavel — o tracker ja registrava "`.glossary_curation.json` por LLM" em 1027) ou aprende-lo dos headings
+dos materiais por bloco estrutural (deterministico; a medir). Decisao do user.
+
+**Bloco/unidade sem nada: 79%/81%.** O LLM vale +44 pares (22 pp) e a curadoria +5. Dissecacao dos 117
+votos (`scratchpad/disseca_llm.py|.csv`, artifact "Anatomia do Bloco" secao 6): margem baixa 56 (serie
+numerada em card largo ~20, janela binaria ~15, janela larga ~20) · sem janela 26 (8 meta, 5 provas antigas,
+~9 titulo-topico em card generico, 4 sem sinal) · sem token 21 (6 codigo sem texto, 15 assinatura fina) ·
+sem discriminante 8 · serie confiante 5 · prova/trabalho 1. Gold: LLM 69/70, motor flagado 29/70.
+
+**Regras faceis, medidas:**
+- **meta-generica (`f166c4e`)**: plano/cronograma -> bloco-01 sem voto. LLM escolhia bloco-01 em 8/8,
+  gold 4/4. −8 llm-funil (10 -> 6 no gold... 26 -> 18 nos 8). Reguas identicas, sentinela = os 8 methods.
+- **resumo Gemini na rota TEMPORAL — TESTADO E REFUTADO**: bloco 199 -> 194 (conf-err 1), unidade 191 ->
+  190, subunidade 93 -> 92, e votos de LLM SOBEM 68 -> 78. O resumo e parafrase com vocabulario generico
+  ("protocolo, socket, cliente") que casa varios blocos, quebra a exclusividade do lexico e derruba a heranca
+  de irmaos (ES2 roteiros irmao-card -> llm; FR tcp-chat-c -> enlace). Mais texto != mais discriminacao quando
+  a assinatura do bloco tem 3 palavras. Revertido. Licao: a rota temporal quer sinal ESTRUTURAL, nao semantico.
+- NAO feitas (fila): prova antiga -> prep (+2 IA, sem gold, tira a excecao p2-202402 do gate curado) ·
+  serie confiante nao vota (+5, −1 gold: refutada pela lei) · ordinal da serie <-> ordem dos blocos (provider
+  novo, premissa "1 arquivo por aula" — `roteiro1..8` em 7 blocos ja quebra; medir) · provider de titulo
+  (~9 funis) · aliases da taxonomia em `_block_signature` (~23; CUIDADO: mesma familia do resumo refutado —
+  vocabulario que espalha; so vale com alias EXCLUSIVO de 1 bloco).
+
+**Onde o builder chama API (censo):** Datalab/Marker cloud (PDF -> md, pago por pagina; alternativas locais
+existem no pipeline) · Gemini code summaries (`summarize_all_code_entries`, 85 entries nos 8, cache
+`code_curation.json`, opt-in) · Gemini reference summaries (degrada sem client) · Gemini voter (117 -> 109
+votos nos 8, cache `material_curation.json`, cap 60) · Gemini residual (OFF no reprocess) · Ollama local para
+imagens (gratis). O tutor em si (Claude/GPT/Gemini lendo o repo) e o produto, nao custo do builder.
 
 ## TOKENS CURTOS — CAMPANHA FECHADA (2026-09-01c, sessao noturna)
 
@@ -726,7 +775,8 @@ producao e o proprio motor (flagados / llm-funil / conf-err -> fila de revisao).
 ## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
 **HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
-ESTADO (`scripts/eval_eixos.py`, as-of **2026-09-01c**): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
+ESTADO (`scripts/eval_eixos.py`, as-of **2026-09-01d**; motor PURO = 158/200 · 154/191 · 51/57 · 26/93, ver secao
+acima; meta-generica `f166c4e` = −8 llm-funil): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
 convencao ACEITA por ruling 31/08) · unidade **191/191 (100%)** · cobertura **56/57 F1 0,982** (teto
 documentado do aws) · subunidade **93/93 com-extras (RECORDE)** / **91/93 primario** (restam ES2
 roteiro5-conteiners e TCC aula-08 — instrumento no titulo/1o heading, teto semantico; extras legitimos) ·
