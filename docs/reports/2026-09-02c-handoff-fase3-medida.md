@@ -3,12 +3,13 @@
 **Leia:** (1) `pendencias.md` §"FASE 1b … MEDICAO" (numeros, escada, alavancas); (2) artifact "Raio-X da Atribuicao"
 (https://claude.ai/code/artifact/399626ee-682b-43f8-9987-09c344f6c60f); (3) `2026-09-02-plano-fechar-o-motor.md`.
 
-## Primeiro: dois vereditos do user (nada foi commitado nos tutores)
-1. **eth2**: cobertura 56 -> 55/57 com o vocab compilado. Aceitar como teto documentado (como `aws`), ou restringir aliases
-   compilados a rota de subunidade? (`tcp-chat-c` no FR e o mesmo fenomeno sem gold.)
-2. **Tutores**: 8 repos sujos com o vocab aplicado (4 sidecars `.llm.json` novos, MF/CG/LR/FR reprocessados). Commitar
-   (veredito 1 = aceitar) ou `git checkout` + apagar os `.llm.json`. Depois: atualizar os 2 goldens de caracterizacao
-   (`tests/_golden/Fundamentos-de-Redes-Tutor__divisao_blocos.json`, `Metodos-Formais-Tutor__casos_chave.json`) de proposito.
+## Vereditos do user (02/09 noite)
+- **A — FEITO:** tutores commitados com o vocab compilado (MF `61a9104` SO `c81527f` IA `002c169` ES2 `09e3739` TCC `84670e4`
+  CG `19472d1` LR `0e3ab1a` FR `64990dc`); goldens de caracterizacao regenerados de proposito (FR bloco-11/30 perdem u03 no
+  escopo da prova porque tcp/udp-example mudaram de unidade; MF `introducao` band baixa -> media no resolver de conceito).
+  Cobertura de referencia (eth2/aws) = watchdog, nao gate. Foco = material de aula.
+- **B — pendente (nao trava):** gold de cobertura de referencias {u02} ou N:N {u01,u02}.
+- **C — pendente:** import pela API como caminho principal (token do Moodle no build). O plano revisado assume que sim.
 
 ## Fase 3 — bloco estrutural, na ordem medida (cada uma: TDD + regua tripla + sentinela + commit)
 1. Card generico sem janela -> bloco de apresentacao (irma da `resolve_generic_reference`; +3/0).
@@ -30,6 +31,6 @@ Run real do FR (decisao G) com vocab compilado + revisar; Fase 2 (cronograma man
 herda as unidades do motor); Fase 4 (LLM residual contado).
 
 ## Estado
-Gerador `feat/motor-atribuicao`: commits desta sessao ate `86fc9b3` + docs. Tutores: sujos (ver acima). Copias `.ablacao`
+Gerador `feat/motor-atribuicao`: commits desta sessao ate os goldens (ver log). Tutores: limpos, commitados com o vocab. Copias `.ablacao`
 dos 5: puro + vocab (sidecars compilados nas copias). `subjects.json`: `compile_vocabulary: true` nos 8.
 Harness da sessao em `docs/reports/_harness-2026-09-02/` (mede_alavancas, mede_ordem_secoes, calibra_revisar, moodle_sections/).

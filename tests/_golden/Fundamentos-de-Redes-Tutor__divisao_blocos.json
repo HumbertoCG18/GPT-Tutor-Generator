@@ -63,7 +63,7 @@
     "id": "bloco-11",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-01-introducao-a-redes-de-computadores, unidade-02-nivel-de-aplicacao, unidade-03-nivel-de-transporte, unidade-04-nivel-de-rede"
+    "topico": "Conteúdo: unidade-01-introducao-a-redes-de-computadores, unidade-02-nivel-de-aplicacao, unidade-04-nivel-de-rede"
   },
   {
     "id": "bloco-12",
@@ -177,6 +177,6 @@
     "id": "bloco-30",
     "n_sessoes": 1,
     "span_dias": 0,
-    "topico": "Conteúdo: unidade-01-introducao-a-redes-de-computadores, unidade-02-nivel-de-aplicacao, unidade-03-nivel-de-transporte, unidade-04-nivel-de-rede, unidade-05-nivel-de-enlace"
+    "topico": "Conteúdo: unidade-01-introducao-a-redes-de-computadores, unidade-02-nivel-de-aplicacao, unidade-04-nivel-de-rede, unidade-05-nivel-de-enlace"
   }
 ]
