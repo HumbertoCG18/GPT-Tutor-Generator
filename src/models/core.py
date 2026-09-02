@@ -136,6 +136,11 @@ class FileEntry:
     # {} quando não há conflito. Sinal de revisão exibido no editor; o build
     # mantém a unidade forte. Distinto da herança silenciosa (que não é conflito).
     unit_block_conflict: dict = field(default_factory=dict)
+    # Fila de revisao (Fase 0, 02/09): "duvida" | "llm" | "ok"; "" = nao-material.
+    # Derivado por routing.revisar.revisar_de em apply_unit_subunit_fields e
+    # recalculado a cada reprocess. Consumidores: secao de revisao (UI, depois)
+    # e scripts/censo_motor_llm.py ("revisar por 100 materiais").
+    revisar: str = ""
     # Override do id (bug B5): setado pelo import quando o id computado do
     # source_path colide com entry de OUTRO source_path. Quando não-vazio,
     # id() retorna este valor — assim assets/raw/manifest usam o id final
@@ -341,6 +346,10 @@ class PendingOperation:
         return op
 
 
+def _norm_repo_root(p) -> str:
+    return str(Path(p).resolve()).replace("\\", "/").rstrip("/").casefold()
+
+
 class SubjectStore:
     """Persistência de perfis de matérias em JSON."""
 
@@ -380,12 +389,15 @@ class SubjectStore:
         return sorted(list(self._data.keys()))
 
     def find_by_repo_root(self, repo_root) -> Optional[SubjectProfile]:
-        """Resolve o perfil da materia dono de um repo-tutor gerado (match por repo_root)."""
-        target = str(repo_root).replace("\\", "/").rstrip("/").casefold()
+        """Resolve o perfil da materia dono de um repo-tutor gerado (match por repo_root).
+        Relativo ou absoluto, tanto faz: os dois lados passam por Path.resolve (02/09:
+        `reprocess_assignments.py ../X-Tutor` nao achava o perfil e o guard de unidades
+        abortava a rodada)."""
+        target = _norm_repo_root(repo_root)
         for name in self.names():
             sp = self.get(name)
-            rr = str(getattr(sp, "repo_root", "") or "").replace("\\", "/").rstrip("/").casefold()
-            if rr and rr == target:
+            rr = str(getattr(sp, "repo_root", "") or "")
+            if rr and _norm_repo_root(rr) == target:
                 return sp
         return None
 
