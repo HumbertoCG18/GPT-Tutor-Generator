@@ -20,7 +20,9 @@
 4. Tokens curtos consagrados pelo cronograma sobrevivem em `disambiguator._toks` nos dois lados (+4/-2; IA k-NN x4).
 5. Card como documento ordenado (semana = faixa de blocos do label; alinhamento monotonico por fluxo; desempate dentro):
    +12/-5 so nos flagados. Depende de importar `contents.json` (API) — decidir onde persistir.
-Gate esperado: motor puro 165 -> ~176/203 (bloco), zero regressao na curada, votos/100 caem (residual 43 = 21/100).
+FOCO (decisao do user 02/09): materiais de AULA (189/203 golds) 100% sem LLM; referencias sao contexto. Regua propria:
+`_harness-2026-09-02/regua_aula.py` — hoje 152/189, com as 5 alavancas 171/189 (+3 irmaos = ~174). Ver pendencias.md.
+Gate esperado: motor puro 165 -> ~183/203 (bloco), AULA 152 -> ~174/189, zero regressao na curada, votos/100 caem (residual 43 = 21/100).
 NAO fazer (refutado no gold): serie k-esimo, serie monotonica, prova antiga -> prep, label em decisoes confiantes.
 
 ## Depois

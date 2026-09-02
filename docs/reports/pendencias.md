@@ -59,6 +59,17 @@ https://claude.ai/code/artifact/399626ee-682b-43f8-9987-09c344f6c60f; harness `_
      + tokens, desempate de producao dentro da semana. Medido so nos flagados: **+12/-5** (a tudo: +13/-10 — estrutura nunca
      sobrepoe decisao confiante). Perdas = professor fora de ordem (zips sob a semana errada, enunciado sob label de semana).
      Requisito de produto: importar pela API (`moodle_pull`), nao pelo export. Harness `mede_card_ordenado.py`.
+- **REGUA DE MATERIAIS DE AULA (decisao do user 02/09: foco = material de aula 100% sem LLM; referencia e contexto).**
+  189 dos 203 golds sao AULA (material-de-aula 88, codigo-professor 59, listas 26, trabalhos 7, gabaritos 4, provas 2, outros 3);
+  REF 10; BASE 4 (100%). Escada em AULA, so estrutura + lexico (`_harness-2026-09-02/regua_aula.py`):
+  152/189 (80%) -> card generico 155 -> ordem das secoes 162 -> card ordenado 167 -> tokens curtos **171/189 (90,5%)**;
+  +3 zips do ES2 que seguem o irmao consertado -> ~174 (92%). Ficam ~15: (a) posicao do professor != gold (MF zips de
+  "Provas por Indução" x4 postados sob a semana 1, gold semana 2; ES2 roteiro1-introducao; MF t2) — estrutura NAO sabe
+  sem data por material; (b) trabalhos/provas antigas (IA prova-1-2024-02, TCC t1-enunciado, MF t2); (c) janela de 2
+  blocos sem sinal (IA analise-exploratoria-ex1, MF introducao b01/b02, MF recursao-respostas); (d) azure, aula-17,
+  dafny2, revisao. Flagados/sem bloco em AULA depois da escada: 12 (6/100), 3 errados; erros confiantes 15.
+  **Pergunta de definicao que decide os ~5 de (a): o gold de material de aula e "onde o professor postou" (estrutura)
+  ou "a aula em que foi usado"? Se e a posicao, (a) deixa de ser erro e a regua sobe para ~95%.**
   - Datas em que a cadeira acontece: ja usadas (sessoes do SARC); ordem de postagem NAO segue a ordem das aulas em semanas de
     2 aulas (IA Semana 3, SO Processo): so o topico da linha do SARC separa — dai a alavanca 4.
 - **Escada: 165 -> 168 -> 174 -> 176/203; residual 43 flagados (21/100, era 23) -> LLM 69/70 -> ~192; os 3 zips roteiro1/2/4
