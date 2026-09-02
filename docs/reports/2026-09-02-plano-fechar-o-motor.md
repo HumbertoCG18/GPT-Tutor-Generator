@@ -176,3 +176,28 @@ G. **Ordem da run real (Fase 5):** FR primeiro (20 entries, SARC com cores, sem 
 H. **`concept_resolver`**: manter ou retirar (ver acima). Medir consumidores antes.
 I. **Definicao de "candidato forte"** para acionar o LLM na subunidade (Fase 4): score >= X do vencedor?
    Define-se com o dado dos 93 na hora — so registrar que e decisao de medicao, nao de opiniao.
+
+## DECISOES FECHADAS (02/09, uma a uma)
+- **A** (aceita): correcao na secao de revisao = override nos `manual_*` existentes E linha de gold com
+  proveniencia; motor puro mede sem overrides; "pinar menos" = o motor precisa de menos correcoes.
+- **B** (aceita): `revisar` = enum {duvida, llm, ok}. Camada 1 aberta (sem bloco, llm-funil, subunidade
+  ambigua, conflito), camada 2 colapsada "decidido por LLM — confira" (LLM-na-janela), camada 3 nao aparece.
+  Metrica = camadas 1+2 por 100 materiais.
+- **C — MEDIDA (02/09 madrugada), nao mais opiniao:**
+  - Co-heading (`scratchpad/coheading.py`, harness validado: nu=26 reproduz o motor puro, manual=83/83):
+    variante A (tese por titulo/1o heading) **26 -> 31**; variante B (tese por frase do label no corpo)
+    **26 -> 29**. REFUTADO: IA tem 1 documento com tese detectavel — reconhecer que o doc e sobre T exige
+    o vocabulario que se quer aprender (ovo e galinha). O dado do curso nao contem "k-NN e modelo
+    preditivo" em forma que token leia. Pela regua (< 40): **o LLM compila tudo**; co-heading descartado.
+  - Vocabulario por LLM (`scratchpad/compila_vocab_v2.py`, gemini-3.5-flash, 1 chamada por unidade COM
+    material; o LLM so classifica titulos/headings/lead dos materiais da unidade nos topicos do plano,
+    nao inventa; pos-filtro de exclusividade): **IA 5 -> 34/39 (v1) -> 37/39 (v2 = +titulos, variantes,
+    lead 300 chars; o unico ajuste de prompt permitido)** vs manual 39/39 (1 das 2 faltas e rota de
+    codigo). Precisao no verificavel (u05) ~80%; os ✗ sao lacunas da referencia ("Mapa auto-organizavel"
+    E descritivo). **FR: taggados 12 -> 17/19**; `05-protocolo-dns` corrige para infraestrutura,
+    `01-protocolos-de-rede` para conceito-de-protocolo, listas e exemplos ganham tag; `04-camada-de-
+    aplicacao` vira vazio honesto (multi-topico). Compilados salvos em `docs/reports/2026-09-02-vocab-
+    llm-{IA,FR}.json`. **Pendente: o user le o de FR e marca certo/errado (>= 80% = confia).** Lixo
+    visivel a filtrar no compile: nomes de ARQUIVO como termo (`tcp_chat_c`, `udp_example_java`).
+  - Consequencia para a Fase 1: 1a (co-heading) SAI; 1b vira `compile_course_vocabulary` com o prompt v2
+    + filtro de nome-de-arquivo; 1c = teste do FR pelo user + gate curado/motor puro nos 8.

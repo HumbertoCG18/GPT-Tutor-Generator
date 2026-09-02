@@ -1,0 +1,94 @@
+{
+  "Conceitos de redes de computadores e Internet": [
+    "Redes de Computadores",
+    "Internet",
+    "Redes de difusão",
+    "Redes ponto a ponto",
+    "Interconexão de redes"
+  ],
+  "Modelos OSI e TCP/IP": [
+    "Modelos de Referência",
+    "Modelo OSI",
+    "TCP/IP",
+    "Camada Física",
+    "Camada de Enlace",
+    "Camada de Redes",
+    "Camada de Transporte",
+    "Camada de Sessão",
+    "Camada de Apresentação",
+    "Camada Host/Rede",
+    "Camada Inter-redes",
+    "Hierarquias de protocolos"
+  ],
+  "Conceito de protocolo de redes pessoais, locais, metropolitanas e de longa distância": [
+    "Protocolos de Rede",
+    "Protocolos de Comunicação",
+    "Redes Pessoais",
+    "Redes Locais",
+    "Redes Metropolitanas",
+    "Redes Geograficamente Distribuídas",
+    "WPAN",
+    "Bluetooth",
+    "Serviços orientados a conexão",
+    "Serviços sem conexão"
+  ],
+  "Funções e características do nível de aplicação": [
+    "Arquiteturas de Aplicação",
+    "Protocolos de Camada de Aplicação",
+    "Comunicação entre Processos"
+  ],
+  "Paradigmas cliente/servidor e P2P": [
+    "Arquitetura Cliente-Servidor",
+    "Arquitetura Peer-to-Peer"
+  ],
+  "Implementação de sockets": [
+    "Socket",
+    "Socket UDP",
+    "Socket TCP"
+  ],
+  "Protocolos de aplicação para infraestrutura (DNS, DHCP, SNMP, NAT)": [
+    "Tradução de nomes",
+    "Nomes Canônicos",
+    "Apelidos",
+    "Hierarquia de Servidores DNS",
+    "Servidores Raiz",
+    "root servers",
+    "Servidores de Alto Nível",
+    "Servidores Autoritativos",
+    "Servidor Local",
+    "Consulta DNS",
+    "Cache DNS",
+    "DHCP",
+    "Dynamic Host Configuration Protocol",
+    "Processo DORA",
+    "dhclient",
+    "DHCP RELEASE",
+    "DHCP DISCOVERY",
+    "DHCP REQUEST",
+    "DHCP Relay",
+    "Lease"
+  ],
+  "Protocolos de aplicação para o usuário (HTTP, HTTPS, SMTP, POP3, IMAP)": [
+    "HTTP",
+    "Requisição HTTP",
+    "Cookies",
+    "E-mail",
+    "SMTP",
+    "Simple Mail Transfer Protocol",
+    "Comandos SMTP",
+    "Post Office Protocol",
+    "POP3",
+    "Download-and-delete",
+    "Download-and-keep"
+  ],
+  "Funções e características do nível de transporte": [],
+  "Protocolo TCP": [
+    "tcp_chat_c",
+    "tcp_example"
+  ],
+  "Controle de congestionamento TCP": [],
+  "Protocolo UDP": [
+    "udp_example_c",
+    "udp_example_java"
+  ]
+}

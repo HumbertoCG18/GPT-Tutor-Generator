@@ -1,0 +1,97 @@
+{
+  "Introdução a agentes em ambientes determinísticos": [
+    "Agentes e Algoritmos de Busca",
+    "Estados de mundo",
+    "Estado de Mundo"
+  ],
+  "Representação de problemas": [
+    "Espaço de Busca",
+    "Representação dos parâmetros",
+    "Representação real",
+    "Representação binária"
+  ],
+  "Busca informada (heurística)": [
+    "Algoritmos de Busca Informada",
+    "Busca Informada"
+  ],
+  "Algoritmos de Busca com Informação": [
+    "Algoritmo Hill-Climbing",
+    "Algoritmo Simulated Annealing",
+    "Algoritmos de Busca Local",
+    "Refinamentos Sucessivos",
+    "Dijkstra's algorithm",
+    "Algoritmo Dijkstra",
+    "NRainhas"
+  ],
+  "Problemas de Otimização": [
+    "Algoritmos Genéticos",
+    "Algoritmo Genético",
+    "Cálculo da Aptidão",
+    "Elitismo",
+    "Roda da Roleta",
+    "Crossover OBX",
+    "Crossover PBX",
+    "Crossover PMX",
+    "Crossover CX",
+    "Operações Genéticas",
+    "Otimização convencional",
+    "Mutação"
+  ],
+  "Busca Adversária": [
+    "Teoria dos Jogos",
+    "Árvore de Busca",
+    "Algoritmo Minimax",
+    "Minimax",
+    "Transposição",
+    "Redução por simetria"
+  ],
+  "Agentes em Lógica": [
+    "Agentes puramente reativos",
+    "Agentes Reativos",
+    "Ambientes",
+    "Russel & Norvig"
+  ],
+  "Planejamento Clássico": [],
+  "Introdução ao aprendizado de máquina": [
+    "Machine Learning",
+    "Deep Learning",
+    "aprendizado indutivo",
+    "Análise Exploratória",
+    "Exploração dos Dados",
+    "Dados Univalorados",
+    "Dados Multivalorados",
+    "Generalização"
+  ],
+  "Paradigmas de aprendizado": [
+    "Aprendizado Supervisionado",
+    "Aprendizado Não Supervisionado",
+    "Abordagem não supervisionada"
+  ],
+  "Modelos Preditivos": [
+    "Perceptron",
+    "MultiLayer Perceptron",
+    "Árvores de Decisão",
+    "Classificação",
+    "Regressão",
+    "k-NN",
+    "Classificador Linear",
+    "Rede neural",
+    "Redes Feed Forward",
+    "Redes Recorrentes",
+    "Backpropagation"
+  ],
+  "Modelos Descritivos": [
+    "Agrupamento",
+    "Agrupamento Hierárquico",
+    "Agrupamento Particional",
+    "k-Means",
+    "Clustering",
+    "Mapa auto-organizável"
+  ],
+  "Métricas de Avaliação": [
+    "Matriz de Confusão",
+    "Accuracy",
+    "Medidas de Avaliação",
+    "Evaluation Indicator"
+  ]
+}
