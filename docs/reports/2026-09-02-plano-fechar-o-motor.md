@@ -217,3 +217,10 @@ Gerador local ate este commit (nao pushed): `e6f847f` `98e3536` `a9687d3` `f166c
 Scratchpad da sessao (promover na Fase 0): `motor_puro.py`, `censo_motor_llm.py`, `disseca_llm.py`,
 `coheading.py` (refutado, guardar como prova), `compila_vocab_v2.py` (base do 1b), `sem_llm.py`,
 `projeta_regua.py`, `placar_devops.py`.
+- **G — fechada (02/09):** run real = **FR primeiro** (so precisa da Fase 1), **CG depois** (precisa da
+  Fase 2). Ordena as fases: 0 -> 1 -> run FR -> 2 -> 3 -> 4 -> run CG.
+- **D — fechada (02/09):** recompilar vocabulario = flag explicita no reprocess (CLI) por enquanto; botao
+  na UI quando a secao de revisao existir. Sem flag, o sidecar existente e cache.
+- **E, F, H, I — deliberadamente adiadas (decisao do user 02/09):** decidem-se com o dado da fase que as
+  produz (E: Fase 2 nos 8 · F: Fase 4 nos 2 tetos + gold · H: medicao de consumidores de
+  `computed_block_id` · I: sweep nos 93). Opinar antes seria o vicio que a campanha combate.
