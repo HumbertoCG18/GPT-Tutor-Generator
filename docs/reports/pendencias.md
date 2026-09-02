@@ -1,6 +1,30 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-08-26 (balde A/B fechados, 7 golds corrigidos, R3 titulo-topico, t1/t2, ablacao rapida, humano 23 -> 6).
+last_updated: 2026-09-01c (TOKENS CURTOS fechados: dedupe de frases + limiar 0.12 + artefato de slugify; subunidade 93/93 com-extras / 91/93 primario; 02-modelos do FR fechado).
+
+## TOKENS CURTOS — CAMPANHA FECHADA (2026-09-01c, sessao noturna)
+
+Fila do handoff `2026-09-01-handoff-tokens-curtos.md`, executada na ordem, TODAS as 4 vencidas:
+1. **devops (ES2) FECHADO** — raiz NAO era posicao de heading (hipotese refutada pela familia: aula-08 e
+   roteiro5-conteiners tem o instrumento no titulo/1o heading — posicao REFORCARIA o erro). Raiz real:
+   double-dip label==slug ("Integracao continua (CI)" normaliza IGUAL a "integracao continua ci" e contava
+   1.65x por campo vs alias 0.82x do "Conceito de DevOps"). **Dedupe de frases** (`e6f847f`): mesma frase
+   conta 1x, maior fator (label > alias > slug). Deflacao comprime margens honestas -> limiar de ambiguidade
+   reancorado 0.15 -> **T.SUBUNIT_AMBIG_MARGIN 0.12** (projetado nos 93 ANTES de codar: flip unico devops).
+2. **02-modelos (FR) FECHADO** — hipotese (a) morta com df medido ("internet" 1/6 unidades, distintivo
+   legitimo da u01); hipotese (b) morta pelos headings (deck 100% modelos: osi 10x, tcp ip 6x). Raiz real:
+   **token-artefato de slugify** ("TCP/IP" -> "tcpip") envenenava o bonus de cobertura-total (4/5; o 5o era
+   o artefato) e entregava ao label-aspirador (2/2 migalhas). Fix `98e3536`; escopo medido nos 8 cursos =
+   2 topicos, ambos FR (tcpip, clienteservidor); sentinela: 4 campos SO no FR, 1 slug = o alvo.
+3. **Tokens de 1 char: SEM ERRO MEDIDO** — regua 93/93; TCC `p` e CG `b`/`z` carregados pelos vizinhos
+   longos. Lei da campanha: sem alvo, nao mexe. Bigrama-frase segue sendo o desenho SE um erro real surgir.
+4. **Rotas so-longos: SEM ALVO** — unidade 191/191, cobertura 56/57 (teto aws). Mapa segue no handoff.
+Bonus sem gold: FR `06-protocolo-dhcp` desambiguou para dns-dhcp-snmp-nat (correto a olho); TCC `aula-17`
+cook-levin -> reducao-polinomial (tese do deck, mesma forma do devops); MF `introducao` -> exemplos-de-aplicacoes
+(Ariane/Therac/FDIV) — todos eyeball neutro-ou-melhor. Golden TCC casos-chave atualizado DE PROPOSITO
+(band aula-01 baixa->media, mesmo bloco, mais margem — veio do dedupe).
+Proxima fila (decisoes do user, sem ordem): Lab SO/SARC 310 · merge main · P2b-LLM · gap video T2 ·
+triagem detecta_headings · gold bloco CG · campanha web.
 **FILA VIVA: secao `## DECISOES 28/08 (user, uma a uma — le antes de tocar em prova/entrega/identidade)
 
 **D1 — Provas e notas (decidido).** Provas PRINCIPAIS sao P1, P2 (e P3 quando existe; raro). **PS** = prova
@@ -702,17 +726,19 @@ producao e o proprio motor (flagados / llm-funil / conf-err -> fila de revisao).
 ## FILA VIVA (2026-08-26) — o que falta` logo abaixo — le antes de escolher trabalho.**
 A fila de 24/08 (Fases 0-2) esta CONCLUIDA; a Fase 3 (cobertura) segue pendente e esta reescrita na fila viva.
 **HANDOFF: `docs/reports/2026-08-26-handoff-cg-holdout.md`** — le primeiro (plano CG passo a passo: site -> PDF -> stash -> CLI -> holdout; links do Moodle classificados). Historia e leis: `2026-08-21-handoff-rumo-aos-100.md`.
-ESTADO (`scripts/eval_eixos.py`, as-of **2026-09-01b**): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
+ESTADO (`scripts/eval_eixos.py`, as-of **2026-09-01c**): bloco **199/200** conf-err **0** (o erro = ES2 `azure`,
 convencao ACEITA por ruling 31/08) · unidade **191/191 (100%)** · cobertura **56/57 F1 0,982** (teto
-documentado do aws) · subunidade **90/93** (restam ES2 web/roteiro5 e TCC aula-08 — familias B/C, tetos) ·
-**pinos 5** de unidade (pino de subunidade do MF removido 01/09) · cards manuais **1** · decisoes humanas de
-bloco **6** · suite **2165 passed** · determinismo **6/6** · **gate curado 6/6 PERFEITO** · 6 `duplicate_of` ·
-syllabus 2026/1 + Lab Redes com CORES/{kind=} (CG sem export, segue sem cor; ganhou o 1o
-`.semantic_profile.override.json`: opengl/webgl/glut) · SUBUNIT_TAG **0.10** calibrado (sweep 93 golds) ·
-ferramenta so por defaults curados + override (B-1) · CHECKPOINT: new-features = `399706e`; main INTOCADA
-por decisao do user.
-PUSH (as-of 2026-09-01b): gerador `c488be3` (feat/motor-atribuicao). **Os 6 tutores 0/0 com origin**:
-MF `834eb04` · SO `afcffeb` · IA `8234fd2` · ES2 `c3ce10a` · TCC `3e7dc3b` · CG `7219a50`.
+documentado do aws) · subunidade **93/93 com-extras (RECORDE)** / **91/93 primario** (restam ES2
+roteiro5-conteiners e TCC aula-08 — instrumento no titulo/1o heading, teto semantico; extras legitimos) ·
+**pinos 5** de unidade · cards manuais **1** · decisoes humanas de bloco **6** · suite **2177 passed** ·
+determinismo **8/8** · **gate curado 6/6 PERFEITO** · 6 `duplicate_of` · SUBUNIT_TAG **0.10** ·
+**SUBUNIT_AMBIG_MARGIN 0.12** (reancorado com o dedupe de frases `e6f847f`; era 0.15 hardcoded calibrado
+sobre a inflacao label==slug) · dedupe de frases + token-artefato de slugify (`98e3536`) — 02-modelos do FR
+(erro-mae do holdout) FECHADO: modelos-osi-e-tcpip conf 0.193 · ferramenta so por defaults curados +
+override (B-1) · CHECKPOINT: new-features = `399706e`; main INTOCADA por decisao do user.
+PUSH (as-of 2026-09-01c): gerador `98e3536` (feat/motor-atribuicao, local). Tutores (local):
+MF `1a13b8e` · SO `c230b2f` · IA `9456acc` · ES2 `f499c67` · TCC `be62f36` · CG `fb25324` · LR `8201c80` ·
+FR `6c26414` (reprocess do dedupe; FR com o fix do artefato tcpip).
 Antes: `docs/reports/2026-08-20-handoff-fechamento-campanha-motor.md`.
 Cobre a sessao inteira (`7e940f5e`, 63 prompts): poda do enxame, regua nova + sweep do gate,
 rotulagem dos 64 casos, limpeza do manifest, eixo de bloco, N:N nos consumidores, fix do
