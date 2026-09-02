@@ -1,0 +1,133 @@
+# Plano 2026-09-02 — FECHAR O MOTOR: teto estrutural + vocabulario compilado + LLM residual + humano so na duvida
+
+**Origem:** conversa de 01/09 noite -> 02/09 madrugada (sessao dbdc7a63). Numeros-base em
+`pendencias.md` ("MOTOR PURO — o numero honesto") e no artifact "Anatomia do Bloco"
+(https://claude.ai/code/artifact/ba1de7bf-a802-49fc-b88b-6be358d4b796). Este documento e a FILA
+EXECUTAVEL das proximas sessoes; o handoff `2026-09-01d` continua valido para contexto.
+
+## Decisoes do user (02/09, registradas — nao reperguntar)
+1. **Pronto** = leitura MINIMA de uma secao de revisao no projeto da cadeira (UI a definir); o aluno
+   poe os arquivos, eles se organizam, e ele revisa SO o que o motor marcou como duvida.
+2. **LLM**: aceito UMA vez por curso, no build ou no reprocess quando necessario (compilar vocabulario).
+3. **Cronograma MANDA sobre a ordem do plano**: o plano diz O QUE se estuda; o cronograma diz a ORDEM,
+   e o professor muda a ordem todo semestre. Unidade do bloco segue o cronograma (explicito ou por
+   ancora), nunca a monotonia do plano.
+4. **Subunidade**: nem todo material precisa ter; multi-tema pode ir ao LLM. Modelo provavel:
+   **principal + extras** (confirmar na Fase 4 com dado).
+5. **Entradas**: SARC + Moodle + plano em ~95%; o motor tambem le cronograma vindo de ARQUIVO (caminho
+   PDF do CG ja existe). `posting_date` (timemodified do Moodle) e SINAL MORTO: 19-21% no gold, CG nem
+   tem. Nao usar.
+6. **Datalab fica** (md e o caminho de menor consumo de tokens no uso do tutor).
+7. **Reutilizar o maximo**: nada de recomecar do zero, salvo se for REALMENTE necessario e matar o
+   problema de vez. Veredito: NAO e necessario para as fases 1-4 (a unificacao acontece no dado —
+   `topic.aliases` — que as 4 rotas ja leem). Gatilho para o montador unico: uma correcao que precise
+   ser refeita em 2 rotas depois da Fase 3.
+8. **Vocabulario por LLM**: teste real de precisao/qualidade antes de confiar (Fase 1c).
+
+## Leis (inalteradas) + regua dupla
+Dado antes de codigo · raiz nunca remendo · sem regra por categoria/curso · pinar menos · gate: eixos
++ subunit_gt + pytest + sentinela + determinismo + ablacao nu/curado **+ motor puro** (`motor_puro.py`
+promovido a `scripts/`) · nada regride em NENHUMA das duas reguas · commits com trailers · [Humberto].
+Licao 01/09d: rota de bloco quer sinal ESTRUTURAL; texto semantico espalha (resumo Gemini refutado).
+
+## Alvos por eixo (motor puro -> com LLM residual)
+| eixo | hoje puro | alvo puro | com LLM residual | teto conhecido |
+|---|---|---|---|---|
+| bloco | 158/200 (+4 meta) | ~178/200 | ~198/200 | `azure` (convencao) |
+| unidade | 154/191 | ~180/191 | ~190/191 | segue o bloco |
+| cobertura | 51/57 | 54/57 | 56/57 | `aws` (teto documentado) |
+| subunidade | 26/93 | >= 80/93 (vocab compilado) | ~90/93 primario | tese-vs-instrumento -> LLM multi-tema |
+Metrica de PRODUTO (run real, sem gold): **itens "revisar" por 100 materiais** e **votos de LLM por 100
+materiais**. Hoje: 33 votos/100 no bloco; "revisar" nao e contado ainda.
+
+---
+
+## FASE 0 — regua e fila de duvidas (1 sessao curta)
+Reuso: `scratchpad/motor_puro.py`, campos `temporal_block_flag`/band, `subunit_match_reasons`
+("ambiguous", "empate-exato", "sem-sinal"), `unit_block_conflict`, `manual_review`.
+- Promover `motor_puro.py` a `scripts/motor_puro.py` (copias nu + voter OFF + 4 eixos + subunidade).
+- Definir `revisar` como CAMPO DERIVADO do manifest (funcao pura, testada): bloco flagado OU sem bloco
+  OU subunidade ambigua/empate com >= 2 candidatos fortes OU conflito unidade x bloco. Sem UI ainda —
+  a UI (secao de revisao no projeto da cadeira) vem depois e le esse campo.
+- `censo_motor_llm.py` -> `scripts/` com a linha "revisar por 100 materiais".
+Gate: nenhum (so leitura). Entrega: baseline oficial das 3 metricas nos 8 cursos.
+
+## FASE 1 — vocabulario por curso sem mao (2-3 sessoes) — O MAIOR BURACO
+Reuso: heading-enrichment em `content_taxonomy.py` (~600, `_select_supported_taxonomy_topic`,
+`heading_sources`), loader/formato de `.glossary_curation.json` (`repo.py` 1649, formato
+`{"<Termo>": {"synonyms": [...]}}`), `merge_glossary_synonyms`, client Gemini (`get_gemini_client`),
+padrao `summarize_bundle` + schema pydantic (`run_material_residual`).
+
+**1a. Co-heading (deterministico) — medir primeiro.**
+- Regra: documento cujo TITULO ou 1o heading e suportado por T (mesmo teste de suporte de hoje) doa os
+  DEMAIS headings dele como aliases de T. Filtros: (i) exclusividade — heading que aparece em documentos
+  de mais de 1 topico nao doa; (ii) genericos do curso (A2/df) e nome do curso fora; (iii) heading com
+  >= 2 tokens especificos (1 token solto e ruido); (iv) so materiais em escopo (nao meta/prova).
+- Onde: mesma passada de `heading_sources` em `content_taxonomy.py`; nova funcao pequena ao lado.
+- Medicao: taxonomia reconstruida SEM os 4 sidecars manuais (copias .ablacao) -> subunidade nos 93 em
+  motor puro. Baseline 26/93. Tambem: quantos aliases/curso nasceram e amostra de 20 para olhar.
+- Criterio: >= 60/93 = co-heading vira base e o LLM compila so o resto; < 40/93 = co-heading fica como
+  camada (se nao regredir) e o LLM compila tudo.
+**1b. Compilacao por LLM (1x por curso).**
+- Passo novo no build/reprocess: `compile_course_vocabulary(root)`: para cada topico SEM termo exclusivo
+  apos plano + co-heading + rotulos de sessao do SARC, UMA chamada por UNIDADE (nao por topico) com
+  prompt ANCORADO: plano da unidade (labels dos topicos) + headings dos materiais ja atribuidos a blocos
+  daquela unidade (estrutura, nao semantica) -> schema `{topico: [sinonimos]}`. Grava no MESMO
+  `.glossary_curation.json`, com `"_provenance": "llm"` por termo. Se o arquivo existe, NAO chama (cache
+  = o proprio sidecar; reprocess so recompila com flag explicita).
+- Termos manuais existentes (SO/IA/ES2/TCC) NAO sao sobrescritos; viram referencia do teste 1c.
+**1c. Teste real de qualidade (decisao 8 do user).**
+- IA (tem sidecar manual = referencia): compilar em copia SEM o manual; comparar termo a termo (precisao =
+  termos do LLM que estao no manual ou casam material da unidade; cobertura = termos do manual que o LLM
+  achou); subunidade nos 39 do gold com o sidecar do LLM vs 39/39 do manual.
+- FR (holdout, sem sidecar): compilar; user le o sidecar (20 entries) e marca certo/errado; subunidade
+  passa a taggar > 12/20? `02-modelos` e `06-dhcp` seguem certos?
+- Criterio para confiar: precisao >= 80% nos termos e subunidade IA >= 35/39. Abaixo: prompt ancorado
+  demais/de menos — ajustar 1x; se nao, LLM so propoe e o humano aprova (volta a curadoria, so que
+  assistida).
+Gate da fase: curado 93/93 intacto (sidecars manuais seguem la), motor puro sobe, 8 cursos com sidecar
+(4 manuais + 4 compilados: CG, FR, LR, MF), sentinela mostra SO taggagens novas em CG/FR/LR/MF.
+
+## FASE 2 — cronograma manda na unidade do bloco (1 sessao)
+Reuso: `unit_matcher.py` (ancoras ANCHOR_MIN_MARGIN/STRONG_MARGIN, CONF_*), `_timeline_unit_number_from_text`
+(ja le "Conteudo: unidade-01"/"U1"), `assign_units_around_pins`.
+- Hierarquia nova: (1) unidade EXPLICITA na linha do cronograma = ancora de 1a classe (conf 0,9);
+  (2) ancora lexica forte (margem >= STRONG) = 0,8; (3) ancora normal = 0,6; (4) DP monotonico so
+  PREENCHE entre ancoras (fill 0,4), sem limite de desvios — as ancoras podem ser nao-monotonicas
+  porque o cronograma manda. `DETOUR_*` some (era a gambiarra da monotonia).
+- Medicao: curado 191/191 intacto (obrigatorio) · nu 170/191 -> ? · CG blocos 13/15 -> u07 (eyeball) ·
+  sentinela nos 8.
+- Risco: ancora lexica ESPURIA de 1 token virando dona de bloco — o filtro "margem >= 1" ja existe;
+  medir confiante-errado.
+
+## FASE 3 — bloco estrutural (1-2 sessoes)
+Reuso: cascata `_CASCADE` em `window_provider.py`, `_block_named_in_title` (R3), `resolve_exam_prep`,
+`_sibling_key`/`_inherit_from_numbered_sibling`, `detect_same_theme_series`.
+- **provider_title**: titulo/moodle_label contem TODOS os tokens do topico de exatamente 1 bloco -> janela
+  [bloco] (R3 promovido a provider; hoje so age dentro de janela). Alvo: ~9 funis (CG listas, SO enade).
+- **provider_series_ordinal**: membros de serie numerada (mesmo card, mesmo radical, numeros 1..n) com
+  janela do card de m blocos-aula; se n <= m, membro k -> k-esimo bloco da janela. Premissa medida antes
+  no gold (ES2 microsservicos1..7, roteiroN-tema, MF recursao1..3). Se n > m: nao age.
+- **prova antiga** (ano no id < ano do calendario) -> `resolve_exam_prep` mesmo com lexical=False.
+- **serie confiante nao vota** SO depois do provider de serie existir (senao −1 gold: dafny2).
+- Alvo: motor puro bloco 158 -> ~178; votos 33 -> ~12 por 100.
+
+## FASE 4 — LLM residual, cacheado, contado (1 sessao)
+Reuso: `LlmVoter` + `material_curation.json` + cap + `round_summary`.
+- Bloco: como hoje (so flagado).
+- Subunidade multi-tema (decisao 4): quando cobertura N:N >= 2 unidades OU scorer em empate/ambiguo com
+  >= 2 candidatos fortes -> LLM escolhe principal (+ extras), grava no mesmo sidecar, conta. Modelo
+  **principal + extras** (campo novo `computed_subunit_extras`, lista) — confirmar com o dado dos 2
+  tetos (`aula-08`, `roteiro5-conteiners`) e do gold (extras ja existem la).
+- Relatorio: votos por 100 materiais (bloco e subunidade) no CRONOGRAMA_HEALTH.
+
+## FASE 5 — run real CG + FR (1 sessao + revisao do user)
+Protocolo do handoff 01d: build do zero, zero curadoria, summaries ON, vocabulario compilado, voter ON
+com cap e contagem, watchdogs; o user revisa a lista "revisar" (nao o FILE_MAP inteiro) e cada correcao
+vira gold-por-fenomeno. Videos do CG: fora. Cronograma do CG vem de arquivo (ja suportado).
+
+## Pergunta pendente (unica)
+**Voto do LLM e "duvida resolvida" ou "duvida a confirmar"?** Hoje o voto entra com band media e flag
+LIMPA (aceitacao cega). Para a secao de revisao: itens decididos por LLM aparecem como "decidido por
+LLM — confira" (mais itens, mais seguro) ou ficam fora (menos itens, o LLM erra ~2%)? Isso define o
+tamanho da lista que o aluno ve. Sugestao: aparecem, mas em grupo separado e colapsado.
