@@ -3,6 +3,8 @@ glossario) E sem voter LLM, nas copias `.ablacao` dos 5 cursos com gold.
 READ-ONLY nos originais. Promovido do scratchpad em 02/09 (Fase 0 do plano).
 
     python scripts/motor_puro.py                # 5 cursos: nu + voter OFF + 3 eixos + subunidade
+    python scripts/motor_puro.py --com-vocab    # 3a linha: puro + vocabulario compilado por LLM (Fase 1b)
+                                                # cache .glossary_curation.llm.json na copia; 1a vez chama a API
 
 Mede: bloco/unidade/cobertura (eval_eixos) + subunidade (subunit_gt_*.csv, com-extras
 e primario). Regua dupla: nada regride aqui NEM na curada (eval_eixos nos originais).
@@ -10,6 +12,7 @@ Baseline 01/09d: bloco 158/200 · unidade 154/191 · cobertura 51/57 · subunida
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import os
@@ -46,13 +49,20 @@ SUBUNIT_GOLD = {"SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artific
                 "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor"}
 
 
-def main() -> int:
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--com-vocab", action="store_true", help="puro + vocabulario compilado por LLM (Fase 1b)")
+    args = ap.parse_args(argv)
+    if args.com_vocab:
+        os.environ.pop("TUTOR_NO_VOCAB_COMPILE", None)
+    else:
+        os.environ["TUTOR_NO_VOCAB_COMPILE"] = "1"   # motor puro mede SEM vocabulario por definicao
     t0 = time.time()
     for sig in SIGS:
         src, dst = ORIG / ab.REPO[sig], COPY / ab.REPO[sig]
         ab.sync(src, dst)
-        n = ab.ablate(dst)
-        print(f"  [nu] {sig}: {n} pinos zerados", flush=True)
+        n = ab.ablate(dst, keep_llm_vocab=args.com_vocab)
+        print(f"  [nu] {sig}: {n} pinos zerados{' (vocab LLM mantido)' if args.com_vocab else ''}", flush=True)
     for sig in SIGS:
         ra.reprocess(COPY / ab.REPO[sig], [])
     print(f"reprocess x{len(SIGS)} sem voter: {time.time() - t0:.0f}s", flush=True)
@@ -60,7 +70,8 @@ def main() -> int:
     env = {**os.environ, "TUTOR_REPOS_DIR": str(COPY), "PYTHONIOENCODING": "utf-8"}
     ev = subprocess.run([sys.executable, str(GEN / "scripts/eval_eixos.py")], cwd=str(GEN), env=env,
                         capture_output=True, text=True, encoding="utf-8", errors="replace")
-    print("\n=== EIXOS — motor puro (sem curadoria, sem LLM) ===")
+    modo = "COM vocab compilado" if args.com_vocab else "sem vocab"
+    print(f"\n=== EIXOS — motor puro (sem curadoria, sem LLM voter, {modo}) ===")
     print(ev.stdout)
 
     tot_ok = tot_n = prim_ok = 0
@@ -77,7 +88,7 @@ def main() -> int:
                 p = pred.get(r["entry_id"], "(SUMIU)")
                 tot_ok += p in alvo
                 prim_ok += p == r["gold_subunit"]
-    print(f"SUBUNIDADE motor puro: {tot_ok}/{tot_n} com-extras · {prim_ok}/{tot_n} primario")
+    print(f"SUBUNIDADE motor puro ({modo}): {tot_ok}/{tot_n} com-extras · {prim_ok}/{tot_n} primario")
     print(f"total: {time.time() - t0:.0f}s")
     return 0
 

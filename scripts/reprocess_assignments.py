@@ -9,9 +9,12 @@ apply_unit_subunit -> indices), lendo o markdown ja gerado no repo.
 
 Uso:
     python scripts/reprocess_assignments.py "C:/.../X-Tutor"  ["C:/.../*-Tutor"] ...
+    python scripts/reprocess_assignments.py --flags recompile_vocab "C:/.../X-Tutor"   # Fase 1b, decisao D
 
 Faz backup de manifest.json (.bak) antes e imprime cobertura antes/depois.
 Deterministico: o residuo Gemini (enable_material_residual) NAO e ligado aqui.
+Vocabulario por LLM (flag de curso `compile_vocabulary`): compila 1x se nao ha sidecar
+(`course/.glossary_curation[.llm].json`); com sidecar e cache, so `recompile_vocab` rechama.
 """
 from __future__ import annotations
 

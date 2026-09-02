@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from pathlib import Path
 
 from src.builder.artifacts import student_state as student_state_v2
@@ -75,6 +76,31 @@ def _build_motor_voter(builder):
         )
     except Exception:
         return None
+
+
+def _run_vocabulary_compile_layer(builder, live_manifest_entries) -> None:
+    """Fase 1b (02/09): vocabulario por curso compilado por LLM, 1x por curso (cache =
+    `course/.glossary_curation.llm.json`). OPT-IN por flag de curso `compile_vocabulary`
+    (mesmo padrao do voter: roda na task queue, ~1 chamada por unidade). `recompile_vocab`
+    forca (decisao D); `refilter_vocab` reaplica os filtros sobre `_raw` sem chamar. Env TUTOR_NO_VOCAB_COMPILE=1 = kill switch dos harnesses (motor puro
+    mede SEM vocabulario por definicao). Roda ANTES da taxonomia: `glossary_md` le o sidecar
+    fresco e os termos viram alias do topico neste mesmo passe. Falha nunca derruba a build."""
+    options = getattr(builder, "options", {}) or {}
+    if not bool(options.get("compile_vocabulary", False)) or os.environ.get("TUTOR_NO_VOCAB_COMPILE"):
+        return
+    try:
+        client = _resolve_gemini_client(builder)
+        if client is None:
+            return
+        from src.builder.core import vocabulary_compile
+        from src.builder.extraction.content_taxonomy import load_internal_content_taxonomy
+        vocabulary_compile.compile_course_vocabulary(
+            builder.root_dir, live_manifest_entries, load_internal_content_taxonomy(builder.root_dir), client,
+            recompile=bool(options.get("recompile_vocab", False)),
+            refilter=bool(options.get("refilter_vocab", False)),
+        )
+    except Exception as exc:
+        logger.warning("vocab: compilacao pulada nesta regeneracao (%s: %s)", type(exc).__name__, exc, exc_info=True)
 
 
 def _run_anchor_engine_layer(builder, live_manifest_entries):
@@ -408,6 +434,7 @@ def regenerate_pedagogical_files(
     manifest["entries"] = live_manifest_entries
     runtime_course_meta = {**builder.course_meta, "_repo_root": builder.root_dir}
 
+    _run_vocabulary_compile_layer(builder, live_manifest_entries)
     content_taxonomy = build_rich_content_taxonomy_fn(
         builder.root_dir,
         runtime_course_meta,

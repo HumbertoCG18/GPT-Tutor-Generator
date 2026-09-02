@@ -43,7 +43,10 @@ def sync(src: Path, dst: Path) -> None:
         raise SystemExit(f"robocopy falhou ({rc}) em {src.name}")
 
 
-def ablate(repo: Path) -> int:
+def ablate(repo: Path, keep_llm_vocab: bool = False) -> int:
+    """Zera curadoria MANUAL na copia. keep_llm_vocab (motor_puro --com-vocab): o vocabulario
+    compilado por LLM (`.glossary_curation.llm.json`, produto, nao curadoria) fica; senao e
+    escondido (`.off`) para a regua "puro" medir SEM vocabulario, e restaurado no modo com."""
     m = json.loads((repo / "manifest.json").read_text(encoding="utf-8")); n = 0
     for e in m["entries"]:
         for k in ("manual_timeline_block_id", "manual_unit_slug", "manual_subunit_slug"):
@@ -62,11 +65,18 @@ def ablate(repo: Path) -> int:
     sc = repo / "course/.glossary_curation.json"
     if sc.exists():
         sc.unlink()
+    llm = repo / "course/.glossary_curation.llm.json"; off = llm.with_name(llm.name + ".off")
+    if keep_llm_vocab and off.exists() and not llm.exists():
+        off.rename(llm)
+    elif not keep_llm_vocab and llm.exists():
+        if off.exists():
+            off.unlink()
+        llm.rename(off)
     return n
 
 
 def reprocess_parallel(repos: list[Path], jobs: int) -> None:
-    env = {**os.environ, "TUTOR_REPOS_ORIG": str(ORIG), "PYTHONIOENCODING": "utf-8"}
+    env = {**os.environ, "TUTOR_REPOS_ORIG": str(ORIG), "PYTHONIOENCODING": "utf-8", "TUTOR_NO_VOCAB_COMPILE": "1"}
     pending = list(repos); running: list[tuple[Path, subprocess.Popen]] = []
     while pending or running:
         while pending and len(running) < jobs:

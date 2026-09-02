@@ -1639,11 +1639,17 @@ def seed_glossary_fields(
 
 
 _GLOSSARY_CURATION_NAME = ".glossary_curation.json"
+_GLOSSARY_LLM_NAME = ".glossary_curation.llm.json"
 _GLOSSARY_EMPTY = {"", "—", "-", "n/a", "N/A"}
 
 
 def _glossary_curation_key(term: str) -> str:
-    return " ".join(str(term or "").split()).casefold()
+    """Chave do sidecar = texto do topico como o glossario o escreve, COM o codigo de outline
+    ("1.2 Modelos OSI e TCP/IP"; R8: "3.1 Conceitos basicos" != "5.1 Conceitos basicos").
+    Normaliza so marcadores: `*` fora, "1.2." -> "1.2", espacos, casefold. Sem codigo, o label."""
+    text = " ".join(str(term or "").replace("*", "").split())
+    text = re.sub(r"^(\d+(?:\.\d+)*)\.(\s+)", r"\1\2", text)
+    return text.casefold()
 
 
 def load_glossary_curation(root_dir: Optional[Path]) -> Dict[str, List[str]]:
@@ -1660,19 +1666,31 @@ def load_glossary_curation(root_dir: Optional[Path]) -> Dict[str, List[str]]:
     Formato: {"<Termo do plano>": {"synonyms": ["..."]}}."""
     if not root_dir:
         return {}
-    path = Path(root_dir) / "course" / _GLOSSARY_CURATION_NAME
-    if not path.is_file():
-        return {}
-    try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-    except (ValueError, OSError):
-        return {}
     out: Dict[str, List[str]] = {}
-    for term, info in (data or {}).items():
-        syn = info.get("synonyms") if isinstance(info, dict) else info
-        vals = [" ".join(str(s).split()) for s in (syn or []) if " ".join(str(s).split())]
-        if vals:
-            out[_glossary_curation_key(term)] = vals
+    # Manual + compilado por LLM (Fase 1b, 02/09: `.glossary_curation.llm.json`, mesmo formato,
+    # chaves `_*` = metadados). Fundidos sem repetir; manual vem primeiro.
+    for name in (_GLOSSARY_CURATION_NAME, _GLOSSARY_LLM_NAME):
+        path = Path(root_dir) / "course" / name
+        if not path.is_file():
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (ValueError, OSError):
+            continue
+        for term, info in (data or {}).items():
+            if str(term).startswith("_"):
+                continue
+            syn = info.get("synonyms") if isinstance(info, dict) else info
+            vals = [" ".join(str(s).split()) for s in (syn or []) if " ".join(str(s).split())]
+            if not vals:
+                continue
+            key = _glossary_curation_key(term)
+            atual = out.setdefault(key, [])
+            seen = {v.casefold() for v in atual}
+            for v in vals:
+                if v.casefold() not in seen:
+                    atual.append(v)
+                    seen.add(v.casefold())
     return out
 
 
