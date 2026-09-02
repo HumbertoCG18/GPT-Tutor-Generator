@@ -1945,3 +1945,88 @@ def test_auto_map_entry_subtopic_sigla_consagrada_pelo_plano_decide():
     )
     result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
     assert result.topic_slug == "modelos-osi-e-tcpip"
+
+
+def test_auto_map_entry_subtopic_artefato_de_slugify_nao_bloqueia_cobertura_total():
+    """Artefato de slugify (2026-09-01, holdout FR): "TCP/IP" vira "tcpip" no
+    slug — um token que NUNCA existe no texto normalizado ("tcp ip"). Ele
+    entrava em topic_tokens e o bonus de cobertura-total nunca disparava
+    (02-modelos: 4/5 cobertos, o 5o era o proprio artefato), enquanto o
+    label-aspirador ("Conceitos de ... e Internet") cobria 2/2 migalhas e
+    ganhava. Token que o slug INVENTA fundindo tokens adjacentes do label
+    nao conta como topic_token."""
+    # 3 unidades para o df por curso nao engolir o vocabulario (com 1 unidade
+    # tudo vira generico e o cenario deixa de ser o do FR real, onde
+    # conceitos/internet/modelos sao distintivos da u01: df 1/6).
+    taxonomy = {
+        "version": 1,
+        "course_slug": "fundamentos-de-redes",
+        "course_name": "Fundamentos de Redes de Computadores",
+        "units": [
+            {
+                "slug": "unidade-01-introducao",
+                "title": "Unidade 01 - Introducao a redes",
+                "topics": [
+                    {
+                        "slug": "conceitos-de-redes-de-computadores-e-internet",
+                        "label": "Conceitos de redes de computadores e Internet",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-01-introducao",
+                    },
+                    {
+                        "slug": "modelos-osi-e-tcpip",
+                        "label": "Modelos OSI e TCP/IP",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-01-introducao",
+                    },
+                ],
+            },
+            {
+                "slug": "unidade-02-aplicacao",
+                "title": "Unidade 02 - Nivel de aplicacao",
+                "topics": [
+                    {
+                        "slug": "protocolo-http",
+                        "label": "Protocolo HTTP",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-02-aplicacao",
+                    },
+                ],
+            },
+            {
+                "slug": "unidade-03-transporte",
+                "title": "Unidade 03 - Nivel de transporte",
+                "topics": [
+                    {
+                        "slug": "controle-de-congestionamento",
+                        "label": "Controle de congestionamento",
+                        "aliases": [],
+                        "kind": "topic",
+                        "unit_slug": "unidade-03-transporte",
+                    },
+                ],
+            },
+        ],
+    }
+    entry = {
+        "title": "02 - Modelos de Referencia",
+        "category": "material-de-aula",
+        "tags": "",
+        "manual_tags": [],
+        "auto_tags": [],
+        "raw_target": "raw/pdfs/material-de-aula/02-modelos-de-referencia.pdf",
+    }
+    # Configuracao REAL do erro: lead com as migalhas do aspirador (conceitos +
+    # internet, 2/2 cobertos) e o assunto de verdade espalhado em headings que
+    # nao casam nenhuma frase de label — so tokens (modelos, osi, tcp, ip),
+    # 4/5 porque "tcpip" e artefato.
+    markdown = (
+        "Conceitos gerais sobre a internet e as camadas.\n\n"
+        "## Modelo OSI\n\nCamada fisica e de enlace.\n\n"
+        "## Camadas do TCP e do IP\n\nOSI versus modelos da arquitetura.\n"
+    )
+    result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
+    assert result.topic_slug == "modelos-osi-e-tcpip"

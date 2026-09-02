@@ -1832,17 +1832,34 @@ def _score_entry_against_taxonomy_topic(signals: dict, topic: dict, *, stem_fall
         for token in _normalize_match_text(label).split()
         if _conta(token) and token not in _generic
     }
-    if topic_slug:
-        topic_tokens.update(
-            token
-            for token in _normalize_match_text(topic_slug.replace("-", " ")).split()
-            if _conta(token) and token not in _generic
-        )
     for alias in aliases:
         topic_tokens.update(
             token
             for token in _normalize_match_text(alias).split()
             if _conta(token) and token not in _generic
+        )
+    if topic_slug:
+        # Artefato de slugify (2026-09-01, holdout FR): "TCP/IP" -> "tcpip",
+        # "cliente/servidor" -> "clienteservidor". Token que o slug INVENTA
+        # fundindo tokens adjacentes do label/alias nunca existe no texto
+        # normalizado ("tcp ip") e envenenava o bonus de cobertura-total
+        # (02-modelos: 4/5 cobertos, o 5o era o proprio artefato — perdia
+        # para o label-aspirador com 2/2 migalhas). Escopo medido nos 8
+        # cursos: 2 topicos, ambos FR.
+        _seqs = [_normalize_match_text(label).split()] + [
+            _normalize_match_text(alias).split() for alias in aliases
+        ]
+        _proprios = {tok for seq in _seqs for tok in seq}
+        _fusoes = {
+            "".join(seq[i:i + j])
+            for seq in _seqs
+            for j in (2, 3)
+            for i in range(len(seq) - j + 1)
+        } - _proprios
+        topic_tokens.update(
+            token
+            for token in _normalize_match_text(topic_slug.replace("-", " ")).split()
+            if _conta(token) and token not in _generic and token not in _fusoes
         )
 
     # Token curto consagrado so conta vindo de campo FORTE (heading/titulo/
