@@ -131,3 +131,48 @@ vira gold-por-fenomeno. Videos do CG: fora. Cronograma do CG vem de arquivo (ja 
 LIMPA (aceitacao cega). Para a secao de revisao: itens decididos por LLM aparecem como "decidido por
 LLM — confira" (mais itens, mais seguro) ou ficam fora (menos itens, o LLM erra ~2%)? Isso define o
 tamanho da lista que o aluno ve. Sugestao: aparecem, mas em grupo separado e colapsado.
+
+---
+
+## REFACTOR — veredito (02/09, decisao do user: registrar)
+Divida medida: 77 scripts · motor/roteamento ~9.700 linhas em 21 modulos (`timeline/index.py` 2.243,
+`file_map.py` 1.440 + copia paralela em `facade/`) · 10 funcoes tokenizadoras (`_toks`, 3x `_tokens`,
+`entry_tokens`, `_topic_tokens`, 2x `_stems`, `_topic_support_tokens`, `_tokens_distintivos`,
+`_timeline_specific_tokens`) · 21 limiares (9 em `T`, 12 soltos).
+**Reescrever o motor: NAO** — nao mata nenhum dos 3 problemas medidos (sinal estrutural, vocabulario,
+premissa de monotonia) e arrisca os 199/200. **Consolidacao dirigida em 4 cortes, cada um com gate
+"0 campos" na sentinela dos 8: SIM**, intercalada nas fases:
+1. `scripts/` 77 -> ~25: `eval/` (reguas oficiais), `watchdogs/`, `ops/` (build/reprocess/pull), arquivar
+   one-offs. Risco zero. Pode ser a proxima sessao curta.
+2. Limiares soltos -> `T` (movimento puro, meia sessao).
+3. Um tokenizador (`text/tokens.py`), estrategia strangler: cada rota chama a funcao unica COM OS SEUS
+   parametros atuais (byte-identico, sentinela 0), depois converge parametro a parametro com regua dupla.
+   Entra DEPOIS da Fase 1a (a medicao do co-heading define a interface).
+4. `timeline/index.py` -> 3 modulos (blocos / scorer de topico / periodos). Ultimo; so navegabilidade.
+NAO unificar: os providers de janela — cada um e regra medida no gold; unifica-se a tokenizacao deles.
+Candidato a REMOCAO (decidir): `concept_resolver.py` (487 linhas) — o bloco "concept-fused" e sobreposto
+pelo temporal em todo entry (`explain_entry` [2] -> resolve_temporal_block SOBREPOE); medir se alguem
+ainda consome `computed_block_id` antes de apagar.
+
+## DECISOES EM ABERTO (revisao do plano, 02/09) — na ordem em que travam uma fase
+A. **CONTRADICAO a resolver (trava Fase 0/5):** o plano diz "cada correcao vira gold-por-fenomeno, NAO
+   pino" — mas uma correcao que nao e aplicada nao muda o que o aluno ve. Proposta: correcao na secao de
+   revisao faz AS DUAS coisas — grava override (os campos `manual_*` que ja existem) E registra a linha de
+   gold com proveniencia; o motor puro mede sem os overrides. "Pinar menos" passa a significar "o motor
+   precisa de menos correcoes", nao "correcoes nao existem".
+B. **Voto do LLM na secao de revisao** (trava a definicao de `revisar`, Fase 0): aparece como "decidido
+   por LLM — confira" (grupo separado, colapsado) ou fica fora? Sugestao: aparece.
+C. **Criterios numericos da Fase 1** (confirmar): co-heading >= 60/93 vira base / < 40 o LLM compila tudo;
+   vocabulario por LLM confiavel se precisao >= 80% dos termos e IA >= 35/39; abaixo, LLM propoe e humano
+   aprova (curadoria assistida).
+D. **Recompilar vocabulario**: gatilho = flag explicita no reprocess (CLI) hoje; botao na UI depois. OK?
+E. **Periodos de unidade nao-contiguos (Fase 2):** com o cronograma mandando, u06 pode ter 2 periodos
+   (antes e depois de u07 no CG). `_aggregate_unit_periods_from_blocks` hoje colapsa em min/max — decidir
+   se COURSE_MAP/SYLLABUS mostram lista de periodos ou o envelope.
+F. **Modelo de subunidade multi-tema (Fase 4):** principal + extras (campo `computed_subunit_extras`) —
+   confirmar com os 2 tetos e o gold; e o tutor mostra extras?
+G. **Ordem da run real (Fase 5):** FR primeiro (20 entries, SARC com cores, sem video, so precisa da
+   Fase 1) e CG depois (precisa da Fase 2)? Sugestao: sim.
+H. **`concept_resolver`**: manter ou retirar (ver acima). Medir consumidores antes.
+I. **Definicao de "candidato forte"** para acionar o LLM na subunidade (Fase 4): score >= X do vencedor?
+   Define-se com o dado dos 93 na hora — so registrar que e decisao de medicao, nao de opiniao.
