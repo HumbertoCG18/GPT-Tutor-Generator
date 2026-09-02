@@ -72,3 +72,29 @@ que precisa acontecer ANTES, na ordem:
 `censo_motor_llm.py` (motor x LLM por eixo + acerto por metodo) · `sem_llm.py` (copias sem voter) ·
 `motor_puro.py` (copias nu + sem voter + subunidade) · `disseca_llm.py` (causa por material decidido por
 LLM, csv) · `anatomia-do-bloco.html` (artifact).
+
+## PLANO "TETO DO MOTOR PURO" (pergunta do user 01/09 23h: como subir 158/154/51/26 antes do LLM)
+Regua nova = `motor_puro.py` promovido a `scripts/` (copias nu + voter OFF + 4 eixos). Baseline: bloco
+158/200, unidade 154/191, cobertura 51/57, subunidade 26/93 (meta-generica ja soma +4 no bloco: planos).
+Cada passo se mede AQUI e no curado (nada pode piorar em nenhum dos dois).
+1. **Vocabulario de topico sem mao (subunidade, o maior buraco).** O dicionario existe em 3 camadas e so
+   a manual atravessa o buraco semantico: (i) parser do plano -> labels + variantes (28-57 aliases/curso,
+   automatico); (ii) heading-enrichment (`content_taxonomy.py` ~600): heading de material vira alias SO se
+   ja partilha tokens com o label (`_select_supported_taxonomy_topic`) — nao alcanca "k-NN -> Modelos
+   Preditivos"; GLOSSARY.md semeia sinonimos do evidence mas 93/132 vazios; (iii) `.glossary_curation.json`
+   manual (SO/IA/ES2/TCC) + `.semantic_profile.override.json` (CG). Experimento deterministico a fazer:
+   **propagacao por co-heading** — documento cujo titulo/1o heading casa o topico T (suporte lexical
+   existente) doa seus DEMAIS headings como aliases de T, com filtro de exclusividade (heading que aparece
+   em documentos de 1 topico so) e sem tokens genericos do curso. Medir: taxonomia reconstruida SEM sidecar
+   + subunidade nos 93 em motor puro. Meta honesta: >= 60/93. Se ficar longe, LLM compila o sidecar UMA
+   vez por curso (fallback no lugar certo: compile-time, ~9 chamadas, cacheado, revisavel).
+2. **Sinais estruturais para o bloco** (cada um +N medido, na ordem): ordinal de serie <-> ordem dos
+   blocos da janela (premissa a checar: n_membros <= n_blocos da janela; ES2 microsservicos1..7) ·
+   provider de TITULO (R3 promovido a provider: titulo casa TODOS os tokens do topico de 1 bloco) ·
+   prova antiga (ano < ano do curso) -> prep · K=2 desvios no DP de unidade (CG).
+3. **REFUTADOS, nao voltar sem premissa nova:** posting_date/timemodified (medido 01/09 23h: contem 19%,
+   ultimo<=data 21%, desempate na janela 47/100, nos 62 votos 28/62) · resumo Gemini na rota temporal ·
+   aliases semanticos na assinatura do bloco (mesma familia) · pesos/pisos globais.
+4. **Residual = LLM voter** como hoje (cap, cache, contagem por 100 materiais). Teto estimado do motor
+   puro no bloco com 1-2: ~175-180/200; o resto e semantica genuina (deck-survey, janela binaria de texto
+   parecido).
