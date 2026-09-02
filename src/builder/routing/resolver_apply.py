@@ -17,6 +17,7 @@ from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
 from src.builder.extraction.content_taxonomy import _NO_TIMELINE_CATEGORIES
 from src.builder.extraction.entry_signals import collect_entry_unit_signals
 from src.builder.routing.concept_resolver import resolve_material_assignment
+from src.builder.routing.revisar import revisar_de
 from src.builder.routing.sequence import annotate_class_ordinals
 from src.builder.timeline.card_block import resolve_block_ref
 from src.utils.helpers import collapse_ws as _collapse_ws_cat
@@ -361,4 +362,12 @@ def apply_unit_subunit_fields(
             tags.append(f"subunit:{preferred_topic_slug}")
         entry["auto_tags"] = tags
 
+    # `revisar` (Fase 0, 02/09): fila de revisao, derivada do que ficou gravado,
+    # em TODO material — inclusive os que o loop acima pulou por nao ter bloco
+    # (justamente os "duvida"). Nao-material nao tem eixo: campo some.
+    for entry in entries:
+        if _is_material(entry):
+            entry["revisar"] = revisar_de(entry)
+        else:
+            entry.pop("revisar", None)
     return entries

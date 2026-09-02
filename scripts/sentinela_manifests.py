@@ -17,7 +17,8 @@ REPOS = ["Metodos-Formais-Tutor", "Sistemas-Operacionais-Tutor", "Inteligencia-A
          "Laboratorio-de-Redes-Tutor", "Fundamentos-de-Redes-Tutor"]
 CAMPOS = ["temporal_block_id", "temporal_block_method", "computed_block_id", "computed_block_method",
           "computed_unit_slug", "computed_subunit_slug", "unit_match_confidence",
-          "subunit_match_confidence", "subunit_match_reasons", "auto_tags", "coverage_units", "duplicate_of"]
+          "subunit_match_confidence", "subunit_match_reasons", "auto_tags", "coverage_units", "duplicate_of",
+          "revisar"]
 
 total = 0
 for repo in REPOS:
