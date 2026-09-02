@@ -1,3 +1,5 @@
+> **SUPERADO em 02/09 (noite) por `2026-09-02c-handoff-fase3-medida.md`** — Fase 1b FEITA; ver 2026-09-02c. Vale so como contexto.
+
 # Handoff 2026-09-02b — Fase 0 FEITA; proxima sessao = Fase 1b (`compile_course_vocabulary`)
 
 **Leia nesta ordem:** (1) `pendencias.md` §"FASE 0 — regua oficial + fila `revisar`" (numeros + calibracao);

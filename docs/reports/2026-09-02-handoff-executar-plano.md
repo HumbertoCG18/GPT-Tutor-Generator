@@ -1,3 +1,5 @@
+> **SUPERADO em 02/09 (noite) por `2026-09-02c-handoff-fase3-medida.md`** — Fase 0 e 1b FEITAS; Fase 3 reescrita. Vale so como contexto.
+
 # Handoff 2026-09-02 — EXECUTAR o plano "fechar o motor": Fase 0 + Fase 1b, depois run real do FR
 
 **Para a proxima sessao. Leia nesta ordem:**

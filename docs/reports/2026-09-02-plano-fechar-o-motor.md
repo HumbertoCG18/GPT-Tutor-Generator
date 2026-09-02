@@ -261,13 +261,14 @@ Medido hoje (`pendencias.md` §FASE 1b + MEDICAO; artifacts "Raio-X da Atribuica
 - **Fase 2 (cronograma manda na unidade)**: mantida, DEPOIS da 3 — a ordem das secoes e as semanas do card ja dao a
   unidade por estrutura em parte dos casos; medir o que sobra.
 - **Fase 4 (LLM residual)**: mantida, menor: so flagados apos a 3 (alvo <= 8/100 em AULA), contado no CRONOGRAMA_HEALTH.
-- **Fase 5 (run real FR, depois CG)**: FR vira o 1o build pela API (`moodle_pull --pdf` + `build_course`), nao pelo export.
+- **Fase 5 (run real)**: rebuild pela API dos 3 cursos do SEMESTRE CORRENTE (FR -> LR -> CG), com diff de ids antes; os 5
+  encerrados NAO se rebuildam (regua de regressao) — recebem so o backfill estrutural (3a). Decisao C fechada.
 
 ### Decisoes que travam a execucao
 A. Tutores sujos com o vocab compilado: commitar (a regua de AULA esta intacta; a cobertura de referencia vira watchdog)
    ou reverter.
 B. Gold de cobertura de referencias (eth2/aws): manter {u02} (conteudo) ou N:N {u01, u02}. Nao trava a Fase 3.
-C. Import pela API como caminho principal (3a): exige token do Moodle no build; o export segue como fallback sem estrutura.
+C. **FECHADA (02/09 noite):** API-first para cursos em andamento; backfill nos encerrados; export = fallback sem estrutura.
 
 ### Sequencia acordada (02/09 noite) — fechada com o user
 Motor de AULA (Fase 3 revisada; gate numerico, nao "100%") -> referencias (regua propria) -> imagens e provas (rotular

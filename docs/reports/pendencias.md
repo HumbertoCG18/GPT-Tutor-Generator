@@ -1,35 +1,46 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-02 noite (veredito A: tutores commitados com o vocab; goldens regenerados; suite 2225; SEQUENCIA ACORDADA: motor de AULA -> referencias -> imagens/provas -> limpa pre-web; refactor medido: 79 scripts, 8.739 linhas, 13 tokenizadores, 17 limiares soltos, 8 consumidores de computed_block_*; vetores/grafos = adiado, precisa de regua de travessia).
+last_updated: 2026-09-02 noite (rodada do motor: Fase 0 e 1b feitas; Fase 3 reescrita pelo dado; decisao C fechada = API-first para cursos em andamento (CG/LR/FR) e backfill nos 5 encerrados; regua de AULA 152/189 e regua de travessia criadas; ponto de entrada = handoff 2026-09-02c).
 
-## SEQUENCIA ACORDADA (02/09 noite) — o que vem, em ordem, e o dado de cada etapa
+## SEQUENCIA ACORDADA (02/09 noite) — a lista, em ordem (detalhes no handoff 2026-09-02c)
 
-1. **Motor bloco/unidade/subunidade em MATERIAL DE AULA** (189/203 golds; regua `_harness-2026-09-02/regua_aula.py`).
-   Fase 3 revisada no plano (import pela API, card ordenado, ordem das secoes, tokens curtos, label unico). Gate por fase:
-   AULA sobe, curada intacta (199/200 · 191/191 · 93/93), residual flagado <= 8/100, sentinela 0. Teto medido sem LLM ~92%;
-   "100%" = LLM contado no residuo ou professor explicito. NAO esperar 100% para abrir a etapa 2: gate numerico e segue.
-2. **Referencias** (10 golds de bloco; cobertura por conteudo = watchdog; `revisar`). Regua propria antes de regra.
-3. **Imagens e consumo de provas** — hoje NAO existe regua (nem gold de imagem nem de "prova consumida certo"). Primeiro
-   passo obrigatorio: rotular (como bloco/subunidade), depois regra.
-4. **Limpa pre-web** — dado pela skill `auditoria-enxame` (codigo morto, campos nao consumidos, mapa do legado); cada
-   remocao com sentinela 0 nos 8.
+**Rodada atual = fechar o motor de MATERIAL DE AULA (189/203 golds; regua `_harness-2026-09-02/regua_aula.py`, hoje 152/189).**
+Gate por fase: AULA sobe, curada intacta (199/200 · 191/191 · 93/93), residual flagado <= 8/100, sentinela 0, motor puro
+± vocab. Teto medido sem LLM ~92%; "100%" = LLM contado no residuo ou professor explicito — gate numerico, nao "100%".
+
+Do user: escrever `travessia_gt_IA.csv` / `travessia_gt_FR.csv`; decisao B (gold eth2/aws) quando quiser; push.
+1. Baseline de travessia (`scripts/eval_travessia.py`, --sem-llm e LLM cacheado) = o "antes".
+2. Fase 3a — backfill estrutural nos 5 ENCERRADOS (reprocess; `raw/moodle/contents.json`+`sections.json` -> campos novos no
+   manifest; casamento modulo<->entry como em `audita_gold.py`; higiene: ano != curso e ruido, label sem data nao ancora).
+3. Fase 3b — card como documento ordenado = provider de janela (+12/-5 so flagados).
+4. Fase 3b — ordem das secoes para cards sem data (+7/-1) e card generico -> apresentacao (+3/0).
+5. Fase 3c — tokens curtos do cronograma no desempate (+4/-2), como strangler do tokenizador so no disambiguator.
+6. Fase 3d — label unico nos flagados (+2/0).
+7. Gate da Fase 3: AULA 152 -> ~174/189; residual <= 8/100; curada intacta; motor puro ± vocab; calibra_revisar; censo.
+8. Rebuild pela API dos 3 do SEMESTRE CORRENTE (FR -> LR -> CG; diff de ids antes; protocolo do run real; user revisa
+   `revisar`). Os 5 encerrados NAO se rebuildam (regua de regressao).
+9. Refactor corte 1 (scripts 79 -> ~25), sessao curta.
+10. Fase 2 — cronograma manda na unidade, no que sobrou; depois `recompile_vocab` no CG.
+11. Fase 4 — LLM residual so nos flagados, contado.
+12. Travessia "depois"; so aqui grafo renderizado / vetores, se a regua mostrar perguntas fora do alcance dos indices.
+Depois: referencias (regua propria) -> imagens e provas (gold antes de regra) -> limpa pre-web (`auditoria-enxame`,
+cortes 2 e 4, `concept_resolver` apos medir 8 consumidores) -> `graph.json` derivado (modelo de dados da fase web).
+
+**Decisao C (fechada 02/09 noite):** criterio nao e "novo x antigo", e "semestre em andamento x encerrado". API-first
+(`moodle_pull`) para todo curso em andamento — e o unico caminho que acompanha o semestre (pull incremental com estrutura);
+export so fallback sem estrutura. Encerrados: backfill.
 
 **Refactor — quanto e quando (medido 02/09 noite):** `scripts/` 79 .py (+14 harnesses versionados) · motor/roteamento
 8.739 linhas em 13 modulos (`timeline/index.py` 2.243, `file_map.py` 1.440, `content_taxonomy.py` 1.027) · **13 definicoes
 de tokenizador** (eram 10; o bug do k-NN vive em uma delas e nao nas outras) · 17 limiares soltos fora de `thresholds.py` ·
-`concept_resolver.py` 487 linhas com **8 consumidores** de `computed_block_*` fora do resolver (cronograma_health,
-navigation, repo, pedagogical_regeneration, anchor_placement, file_map, block_identity, UI) — decisao H nao pode ser
-"apagar" sem medir consumo. Antes da etapa 4 so entra o que a Fase 3 encosta: corte 3 (tokenizador unico) como strangler
-SO no disambiguator (Fase 3c precisa mexer em `_toks`); corte 1 (scripts) = sessao curta quando incomodar; cortes 2 e 4 e
-o concept_resolver ficam para a etapa 4.
+`concept_resolver.py` 487 linhas com **8 consumidores** de `computed_block_*` fora do resolver — decisao H nao pode ser
+"apagar" sem medir consumo. Antes da limpa so entra o que a Fase 3 encosta (corte 3 no disambiguator); corte 1 quando
+incomodar; cortes 2 e 4 e o concept_resolver na limpa pre-web.
 
-**Vetores / grafos / nodos para a travessia do tutor (ideia do user, 02/09):** registrado como ADIADO. Motivo: nao existe
-regua de travessia (nenhum gold "pergunta do aluno -> material/bloco certo"), entao nao ha como medir se a travessia por
-indices Markdown falha nem onde. Passo 1 e criar essa regua (~20 perguntas por curso). Evidencia contra vetores no MOTOR:
-resumo semantico na rota temporal foi REFUTADO (199 -> 194) e o vocab compilado ja faz a ponte semantica da subunidade
-barato e deterministico. Grafo explicito (nos tipados: semana/card/material/bloco/unidade/topico) e a forma natural do dado
-que a Fase 3 vai importar — vale como MODELO DE DADOS da fase web, nao como regra do motor agora (o plano ja adia o
-"montador unico" ate uma correcao precisar ser refeita em 2 rotas).
+**Vetores / grafos / nodos (ideia do user, 02/09):** ADIADO ate a regua de travessia dar numero. Contra vetores no MOTOR: resumo
+semantico na rota temporal foi REFUTADO (199 -> 194); o vocab compilado ja faz a ponte semantica barato e deterministico.
+Grafo explicito (semana/card/material/bloco/unidade/topico) e a forma natural do dado que a Fase 3 importa — vale como MODELO
+DE DADOS e visualizacao da fase web, nao como regra do motor. Regua de travessia: `scripts/eval_travessia.py` (feita).
 
 ## FASE 1b — vocabulario compilado por LLM + MEDICAO "o que falta para 200" (2026-09-02, sessao 3, parte 2)
 
