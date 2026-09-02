@@ -66,8 +66,11 @@ def ablate(repo: Path, keep_llm_vocab: bool = False) -> int:
     if sc.exists():
         sc.unlink()
     llm = repo / "course/.glossary_curation.llm.json"; off = llm.with_name(llm.name + ".off")
-    if keep_llm_vocab and off.exists() and not llm.exists():
-        off.rename(llm)
+    if keep_llm_vocab and off.exists():
+        if llm.exists():
+            off.unlink()          # sync ja trouxe o do original: o .off e orfao
+        else:
+            off.rename(llm)
     elif not keep_llm_vocab and llm.exists():
         if off.exists():
             off.unlink()
