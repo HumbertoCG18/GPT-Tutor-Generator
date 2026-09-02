@@ -26,8 +26,8 @@ primario · suite 2178 · votos LLM 109 nos 8 (33/100 no bloco). Motor puro: 158
 ### Fase 0 — regua e campo `revisar` (sessao curta)
 1. Promover do scratchpad para `scripts/`: `motor_puro.py` (regua oficial do produto: copias nu + voter OFF +
    4 eixos + subunidade), `censo_motor_llm.py` (motor x LLM por eixo, acerto por metodo, "revisar por 100").
-   Os arquivos estao em `C:\Users\Humberto\AppData\Local\Temp\claude\...\dbdc7a63-...\scratchpad\` — se o
-   scratchpad sumiu, reescrever a partir da descricao no tracker (ambos < 120 linhas).
+   Copias versionadas em `docs/reports/_harness-2026-09-02/` (o scratchpad e volatil). Promover = mover
+   para `scripts/`, ajustar imports/paths, e apagar a pasta `_harness` no corte 1 do refactor.
 2. `revisar` = funcao pura + testada, enum {duvida, llm, ok}: `duvida` = sem bloco OU `llm-funil` OU
    subunidade ambigua/empate OU `unit_block_conflict`; `llm` = `temporal_block_method == "llm"`; `ok` = resto.
    Gravar no manifest (campo derivado, recalculado no reprocess) e contar no `censo`.
@@ -66,7 +66,7 @@ E/F/H/I se decidem com o dado dessas fases (ver plano).
 2. Limiares soltos -> `T`. 3. Um tokenizador (strangler), DEPOIS da Fase 1b. 4. `timeline/index.py` em 3.
 Candidato a remocao: `concept_resolver.py` (decisao H, medir consumidores de `computed_block_id`).
 
-## Ferramentas (scratchpad desta sessao — promover as duas primeiras na Fase 0)
+## Ferramentas (versionadas em `docs/reports/_harness-2026-09-02/` — promover as duas primeiras na Fase 0)
 `motor_puro.py` · `censo_motor_llm.py` · `disseca_llm.py` (+csv) · `compila_vocab_v2.py` (base do 1b) ·
 `coheading.py`/`coheading_b.py` (refutados; guardar como prova) · `sem_llm.py` · `projeta_regua.py` ·
 `placar_devops.py` · `anatomia-do-bloco.html`.
