@@ -233,6 +233,22 @@ def test_referencia_sem_card_vai_para_o_primeiro_bloco():
     assert ae.resolve_generic_reference({"category": "material-de-aula"}, ctx) is None
 
 
+def test_plano_e_cronograma_vao_para_o_primeiro_bloco_mesmo_com_card():
+    """Meta-material (2026-09-01, dissecacao dos 117 votos): plano de ensino e
+    cronograma dos 8 cursos iam ao llm-funil e o LLM escolhia o bloco-01 em
+    8/8 (gold concorda 4/4). E a mesma convencao da referencia generica, mas
+    o card nao importa: o plano mora em "Plano de Ensino"/"Informacoes Gerais"
+    e continua sendo a apresentacao da disciplina."""
+    ctx = MotorContext.from_artifacts(
+        blocks=[{"id": "bloco-01", "kind": "class", "period_start": "2026-03-02"},
+                {"id": "bloco-02", "kind": "class", "period_start": "2026-03-04"}],
+        card_block_map={}, lessons_index={})
+    d = ae.resolve_generic_reference(
+        {"category": "cronograma", "title": "Plano de Ensino", "source_section": "Plano de Ensino"}, ctx)
+    assert d is not None and d.block_ref == "bloco-01"
+    assert d.method == "meta-generica" and d.flag is False
+
+
 def test_trabalho_com_janela_multipla_nao_usa_token_de_conteudo():
     """lexical=False (trabalhos/provas): enunciado descreve o CONTEUDO cobrado,
     nao a entrega. TCC `t1-enunciado`: tokens "minimizacao/primitivas" casam a

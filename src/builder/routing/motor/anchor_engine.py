@@ -33,6 +33,8 @@ def is_out_of_disamb_scope(entry: dict) -> bool:
 
 
 _REFERENCE_CATEGORIES = frozenset({"bibliografia", "references", "referencias"})
+# Meta-material da disciplina (plano de ensino, cronograma): o card nao importa.
+_META_CATEGORIES = frozenset({"cronograma"})
 
 
 def resolve_generic_reference(entry: dict, ctx: MotorContext) -> Optional[AnchorDecision]:
@@ -44,12 +46,20 @@ def resolve_generic_reference(entry: dict, ctx: MotorContext) -> Optional[Anchor
     contra o gold: 4/5 — a excecao e `eth2` (referencia ESPECIFICA de Dafny,
     gold no bloco do topico), preco aceito para nao pinar. Com card, a entry
     segue a cascata normal (o card datado do IA resolve `artigo` sozinho).
+
+    Meta-material (2026-09-01, dissecacao dos 117 votos de LLM): plano de
+    ensino/cronograma dos 8 cursos iam ao llm-funil e o LLM escolhia o
+    bloco-01 em 8/8 (gold 4/4). Mesma convencao, card ignorado (o plano mora
+    em "Plano de Ensino"/"Informacoes Gerais"). method "meta-generica" para a
+    regua vigiar em separado.
     """
     cat = str(entry.get("category") or "").strip().lower()
-    if cat not in _REFERENCE_CATEGORIES:
+    meta = cat in _META_CATEGORIES
+    if not meta and cat not in _REFERENCE_CATEGORIES:
         return None
-    if str(entry.get("source_section") or "").strip():
+    if not meta and str(entry.get("source_section") or "").strip():
         return None
+    method = "meta-generica" if meta else "ref-generica"
     # "overview" = apresentacao da disciplina/plano (IA e SO usam esse kind no
     # bloco-01); onde nao existe, o primeiro bloco de aula.
     first = next((b for b in ctx.blocks
@@ -58,7 +68,7 @@ def resolve_generic_reference(entry: dict, ctx: MotorContext) -> Optional[Anchor
         return None
     ref = str(first.get("id"))
     return AnchorDecision(block_ref=ref, conf=0.0, band="media", flag=False,
-                          provider="ref-generica", method="ref-generica", window=[ref])
+                          provider=method, method=method, window=[ref])
 
 
 # "p1" / "prova 2" / "revisao p1" / "revisão para P1" -> N
