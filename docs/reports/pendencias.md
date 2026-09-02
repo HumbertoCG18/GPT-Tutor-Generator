@@ -1,6 +1,35 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-02 (FASE 1b feita: vocabulario por LLM compilado, 3a regua 'puro + vocab' = subunidade 79/93; REGRESSAO 1 na cobertura (eth2) — veredito do user pendente, tutores sujos. MEDIDO 'o que falta para 200': 29/38 erros tem o bloco na janela, desempate flagado 51%; escada 165 -> 176 com 3 alavancas estruturais (card generico, ORDEM DAS SECOES do Moodle coletada nos 8, label unico) -> ~192-195 com LLM em 21/100.)
+last_updated: 2026-09-02 noite (veredito A: tutores commitados com o vocab; goldens regenerados; suite 2225; SEQUENCIA ACORDADA: motor de AULA -> referencias -> imagens/provas -> limpa pre-web; refactor medido: 79 scripts, 8.739 linhas, 13 tokenizadores, 17 limiares soltos, 8 consumidores de computed_block_*; vetores/grafos = adiado, precisa de regua de travessia).
+
+## SEQUENCIA ACORDADA (02/09 noite) — o que vem, em ordem, e o dado de cada etapa
+
+1. **Motor bloco/unidade/subunidade em MATERIAL DE AULA** (189/203 golds; regua `_harness-2026-09-02/regua_aula.py`).
+   Fase 3 revisada no plano (import pela API, card ordenado, ordem das secoes, tokens curtos, label unico). Gate por fase:
+   AULA sobe, curada intacta (199/200 · 191/191 · 93/93), residual flagado <= 8/100, sentinela 0. Teto medido sem LLM ~92%;
+   "100%" = LLM contado no residuo ou professor explicito. NAO esperar 100% para abrir a etapa 2: gate numerico e segue.
+2. **Referencias** (10 golds de bloco; cobertura por conteudo = watchdog; `revisar`). Regua propria antes de regra.
+3. **Imagens e consumo de provas** — hoje NAO existe regua (nem gold de imagem nem de "prova consumida certo"). Primeiro
+   passo obrigatorio: rotular (como bloco/subunidade), depois regra.
+4. **Limpa pre-web** — dado pela skill `auditoria-enxame` (codigo morto, campos nao consumidos, mapa do legado); cada
+   remocao com sentinela 0 nos 8.
+
+**Refactor — quanto e quando (medido 02/09 noite):** `scripts/` 79 .py (+14 harnesses versionados) · motor/roteamento
+8.739 linhas em 13 modulos (`timeline/index.py` 2.243, `file_map.py` 1.440, `content_taxonomy.py` 1.027) · **13 definicoes
+de tokenizador** (eram 10; o bug do k-NN vive em uma delas e nao nas outras) · 17 limiares soltos fora de `thresholds.py` ·
+`concept_resolver.py` 487 linhas com **8 consumidores** de `computed_block_*` fora do resolver (cronograma_health,
+navigation, repo, pedagogical_regeneration, anchor_placement, file_map, block_identity, UI) — decisao H nao pode ser
+"apagar" sem medir consumo. Antes da etapa 4 so entra o que a Fase 3 encosta: corte 3 (tokenizador unico) como strangler
+SO no disambiguator (Fase 3c precisa mexer em `_toks`); corte 1 (scripts) = sessao curta quando incomodar; cortes 2 e 4 e
+o concept_resolver ficam para a etapa 4.
+
+**Vetores / grafos / nodos para a travessia do tutor (ideia do user, 02/09):** registrado como ADIADO. Motivo: nao existe
+regua de travessia (nenhum gold "pergunta do aluno -> material/bloco certo"), entao nao ha como medir se a travessia por
+indices Markdown falha nem onde. Passo 1 e criar essa regua (~20 perguntas por curso). Evidencia contra vetores no MOTOR:
+resumo semantico na rota temporal foi REFUTADO (199 -> 194) e o vocab compilado ja faz a ponte semantica da subunidade
+barato e deterministico. Grafo explicito (nos tipados: semana/card/material/bloco/unidade/topico) e a forma natural do dado
+que a Fase 3 vai importar — vale como MODELO DE DADOS da fase web, nao como regra do motor agora (o plano ja adia o
+"montador unico" ate uma correcao precisar ser refeita em 2 rotas).
 
 ## FASE 1b — vocabulario compilado por LLM + MEDICAO "o que falta para 200" (2026-09-02, sessao 3, parte 2)
 

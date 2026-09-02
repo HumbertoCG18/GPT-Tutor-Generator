@@ -268,3 +268,9 @@ A. Tutores sujos com o vocab compilado: commitar (a regua de AULA esta intacta; 
    ou reverter.
 B. Gold de cobertura de referencias (eth2/aws): manter {u02} (conteudo) ou N:N {u01, u02}. Nao trava a Fase 3.
 C. Import pela API como caminho principal (3a): exige token do Moodle no build; o export segue como fallback sem estrutura.
+
+### Sequencia acordada (02/09 noite) — fechada com o user
+Motor de AULA (Fase 3 revisada; gate numerico, nao "100%") -> referencias (regua propria) -> imagens e provas (rotular
+antes de regra) -> limpa pre-web (`auditoria-enxame` + sentinela 0). Refactor antes disso: so o que a Fase 3 encosta
+(tokenizador unico como strangler no disambiguator); scripts quando incomodar; o resto na limpa. Numeros em
+`pendencias.md` §SEQUENCIA ACORDADA. Vetores/grafos para a travessia do tutor: adiado ate existir regua de travessia.
