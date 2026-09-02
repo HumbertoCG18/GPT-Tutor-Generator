@@ -82,13 +82,7 @@
     "Download-and-keep"
   ],
   "Funções e características do nível de transporte": [],
-  "Protocolo TCP": [
-    "tcp_chat_c",
-    "tcp_example"
-  ],
+  "Protocolo TCP": [],
   "Controle de congestionamento TCP": [],
-  "Protocolo UDP": [
-    "udp_example_c",
-    "udp_example_java"
-  ]
+  "Protocolo UDP": []
 }

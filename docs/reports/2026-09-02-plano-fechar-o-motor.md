@@ -201,3 +201,19 @@ I. **Definicao de "candidato forte"** para acionar o LLM na subunidade (Fase 4):
     visivel a filtrar no compile: nomes de ARQUIVO como termo (`tcp_chat_c`, `udp_example_java`).
   - Consequencia para a Fase 1: 1a (co-heading) SAI; 1b vira `compile_course_vocabulary` com o prompt v2
     + filtro de nome-de-arquivo; 1c = teste do FR pelo user + gate curado/motor puro nos 8.
+- **C — APROVADA pelo user (02/09):** FR lido e aceito; os 4 nomes de arquivo (`tcp_chat_c`,
+  `tcp_example`, `udp_example_c`, `udp_example_java`) riscados do compilado. Regra que nasce disso para o
+  `compile_course_vocabulary`: termo cujo normalizado e igual ao id/titulo de um arquivo do curso NAO
+  vira alias (nome de arquivo e identidade, nao conhecimento; os TOKENS do nome ja contam via
+  title_text/raw_text). Observacao para a Fase 3 (medir antes): empate entre topico e seu SUBTOPICO
+  ("Protocolo TCP" x "Controle de congestionamento TCP", caso `tcp-example`) deveria cair no pai; hoje o
+  scorer da +0,04 ao subtopico.
+- **D a I: PARADAS a pedido do user (02/09).** Retomar na proxima sessao a partir de D.
+
+## ESTADO ao parar (02/09 madrugada)
+Gerador local ate este commit (nao pushed): `e6f847f` `98e3536` `a9687d3` `f166c4e` `bb3a7ec` `aab91a5`
+`413ee1e` `9383c84` `097cc52` + este. Tutores: 8 commitados com o reprocess do meta-generica. Copias
+`.ablacao`: SO/ES2/TCC em estado nu+voter, IA em motor puro — a proxima `ablacao_rapida` re-sincroniza.
+Scratchpad da sessao (promover na Fase 0): `motor_puro.py`, `censo_motor_llm.py`, `disseca_llm.py`,
+`coheading.py` (refutado, guardar como prova), `compila_vocab_v2.py` (base do 1b), `sem_llm.py`,
+`projeta_regua.py`, `placar_devops.py`.
