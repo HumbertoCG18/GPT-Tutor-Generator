@@ -43,6 +43,7 @@ materiais**. Hoje: 33 votos/100 no bloco; "revisar" nao e contado ainda.
 ---
 
 ## FASE 0 — regua e fila de duvidas (1 sessao curta)
+**FEITA (02/09, sessao 3)** — ver `pendencias.md` §FASE 0: baseline curada 55.7/100 e motor puro 54.0/100; gatilhos calibrados no gold (conflito 56%, flag:disamb 63%, sem-bloco 100%; janela-1 27% e sub-ambigua 22% sao os fracos). Definicao = decisao B, sem ajuste — o ajuste espera o dado da run FR.
 Reuso: `scratchpad/motor_puro.py`, campos `temporal_block_flag`/band, `subunit_match_reasons`
 ("ambiguous", "empate-exato", "sem-sinal"), `unit_block_conflict`, `manual_review`.
 - Promover `motor_puro.py` a `scripts/motor_puro.py` (copias nu + voter OFF + 4 eixos + subunidade).

@@ -1,6 +1,65 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-01d (MOTOR PURO medido pela 1a vez: sem curadoria E sem LLM = bloco 158/200, unidade 154/191, subunidade 26/93 — a subunidade vive dos `.glossary_curation.json` escritos a mao; dissecacao dos 117 votos de LLM; meta-generica −8 votos; resumo Gemini na rota temporal REFUTADO).
+last_updated: 2026-09-02 (FASE 0 feita: `revisar` = campo derivado {duvida, llm, ok} gravado nos 8 manifests; `motor_puro.py` e `censo_motor_llm.py` promovidos a `scripts/`; baseline oficial das 3 metricas; gatilhos CALIBRADOS no gold do motor puro — conflito 56%, flag:disamb 63%, sem-bloco 100%; bug de perfil por caminho relativo corrigido).
+
+## FASE 0 — regua oficial + fila `revisar` (2026-09-02, sessao 3)
+
+Plano `2026-09-02-plano-fechar-o-motor.md` Fase 0, os 3 itens feitos. Suite 2201 (+23) · sentinela nos 8 =
+so o campo novo `revisar` · regua curada intacta (199/200 · 191/191 · 56/57 · 93/93) · motor puro reproduzido.
+
+**1. Promovidos** (`docs/reports/_harness-2026-09-02/` -> `scripts/`, paths por `__file__`, `main()`):
+`scripts/motor_puro.py` (regua oficial do produto: copias nu + voter OFF + 3 eixos + subunidade, 135 s) e
+`scripts/censo_motor_llm.py` (motor x LLM por eixo + **revisar por 100** + anatomia dos gatilhos; aceita
+`TUTOR_REPOS_DIR` para medir nas copias). Harness novo versionado: `_harness-2026-09-02/calibra_revisar.py`
+(gatilho x erro no gold, precisao/recall por eixo — rodar a cada fase, e a regua da fila).
+
+**2. `revisar`** = `src/builder/routing/revisar.py` (`revisar_de`, `motivos_de`; puro, 21 testes em
+`tests/test_revisar.py`), gravado por `apply_unit_subunit_fields` em TODO material (inclusive os sem bloco,
+que o loop de unidade pula), campo `FileEntry.revisar` (round-trip), vigiado pela sentinela. Decisao B como
+especificada: `duvida` = sem bloco em escopo (nao conta bibliografia/referencias/cronograma nem secao TDE) OU
+`temporal_block_flag` (inclui llm-funil) OU `unit_block_conflict` OU subunidade `ambiguous`/`empate-exato`
+(sem-sinal e revisao-sem-assunto NAO sao duvida — decisao 4) · `llm` = `temporal_block_method == "llm"` ·
+`ok` = resto. Pino manual = bloco (o motor limpa os temporal_*).
+
+**3. Baseline oficial (02/09):**
+
+| regua | bloco | unidade | cobertura | subunidade | revisar/100 | votos/100 |
+|---|---|---|---|---|---|---|
+| curada + LLM (8 cursos, 325 mat.) | 199/200 | 191/191 | 56/57 | 93/93 | **55.7** (duvida 113 + llm 68) | 33.5 |
+| motor puro (5 c/ gold, 226 mat.) | 161/200 conf-err 3 | 158/191 | 51/57 F1 0,895 | 26/93 · 21/93 prim. | **54.0** (duvida 122 + llm 0) | 0 |
+
+Por curso (curada): MF 62 · SO 59 · IA 34 · ES2 66 · TCC 41 · CG 66 · LR 67 · FR 55. Anatomia da duvida nos 8
+(um material pode ter >1): conflito 61 · sub-empate 31 · flag:janela-1 24 · flag:llm-funil 18 · sub-ambigua 16 ·
+sem-bloco 0 · flag:due-straddle 1. Motor puro 161 = 158 do 01/09d + meta-generica (4 nas copias).
+
+**Calibracao dos gatilhos (motor puro, gold dos 5) — o dado que valida a decisao B:**
+
+| gatilho | n | erro real | precisao | bloco/unid/sub errados |
+|---|---|---|---|---|
+| sem-bloco | 5 | 5 | **100%** | 4/3/1 |
+| flag:disamb | 57 | 36 | **63%** | 28/16/21 |
+| sub-empate | 14 | 8 | 57% | 2/1/6 |
+| conflito | 39 | 22 | **56%** | 3/10/13 |
+| flag:janela-1 | 11 | 3 | 27% | 0/3/0 |
+| sub-ambigua | 9 | 2 | 22% | 2/0/0 |
+| flag:due-straddle | 1 | 0 | 0% | — |
+
+Recall (erro real -> camada): bloco 32/39 em duvida, **7 escapam como ok** (`exerciciosdafny2`, IA `prova-1-
+2024-02` = prova antiga, ES2 `roteiro1/2/4` + `azure` = serie numerada, TCC `aula-17`) — todos alvos ja
+listados da Fase 3 · unidade 27/33 (6 escapam, os mesmos do ES2) · **subunidade 35/67: 32 escapam** (IA
+perceptron/mlp/k-means/agrupamento…: confiante-errado ou sem-sinal por falta de vocabulario = Fase 1b).
+Na regua CURADA a calibracao e cega (1 erro de bloco, 0 de unidade/subunidade): conflito 34 -> 1 erro. Ou
+seja, conflito e sinal REAL so enquanto o bloco erra; quando a Fase 3 subir o bloco, a precisao do conflito
+cai e ele vira ruido de 20% da fila — remedir entao, nao agora.
+`flag:janela-1` (27%) e `sub-ambigua` (22%) sao os gatilhos fracos; janela-1 NUNCA vota (D4), entao a flag
+dele nao tem quem a limpe — candidato a sair da fila quando houver dado da run real do FR.
+
+**Bug de raiz achado no caminho:** `SubjectStore.find_by_repo_root` comparava string — `reprocess_assignments.py
+../X-Tutor` nao achava o perfil, o plano parseava 0 unidades e `UnitsShrinkError` abortava a rodada (o MF
+ficou com manifest parcial; restaurado do HEAD). Fix: `Path.resolve` nos dois lados (`_norm_repo_root`,
+`tests/test_subject_store_repo_root.py`).
+
+**Proximo:** Fase 1b (`compile_course_vocabulary`) — handoff `2026-09-02-handoff-executar-plano.md` §Fase 1b.
 
 ## MOTOR PURO — o numero honesto (2026-09-01d, sessao noturna 2)
 
