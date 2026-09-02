@@ -167,3 +167,13 @@ Append-only log. When a decision changes, mark the old entry as superseded and a
 **Decision:** The repository builder generates instructions/artifacts for Claude, GPT, and Gemini.
 **Reasoning:** The README states that generated repositories are prepared for multiple LLM tutor targets.
 **Consequences:** Changes to generated instructions must account for all supported LLM outputs.
+
+---
+
+### Fila de revisao `revisar` como campo derivado do manifest
+
+**Date:** 2026-09-02
+**Status:** Active
+**Decision:** `revisar` ∈ {duvida, llm, ok} e calculado por `src/builder/routing/revisar.py` (funcao pura sobre o entry gravado) e persistido em todo material a cada reprocess. `duvida` = sem bloco em escopo | `temporal_block_flag` | `unit_block_conflict` | subunidade ambiguous/empate; `llm` = voto do LLM na janela; `ok` = resto. A UI (secao de revisao) le o campo, nao recalcula.
+**Reasoning:** Metrica de produto "revisar por 100 materiais" (decisao B do plano fechar-o-motor). Calibrado no gold do motor puro: sem-bloco 100%, flag:disamb 63%, sub-empate 57%, conflito 56% de precisao; janela-1 27% e sub-ambigua 22% sao fracos e se decidem com a run real do FR. Sem-sinal e revisao-sem-assunto NAO sao duvida (nem todo material tem subunidade).
+**Consequences:** Novo gatilho ou remocao exige remedir com `docs/reports/_harness-2026-09-02/calibra_revisar.py`; a sentinela vigia o campo; `scripts/censo_motor_llm.py` e a regua do numero.
