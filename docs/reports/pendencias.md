@@ -49,6 +49,18 @@ https://claude.ai/code/artifact/399626ee-682b-43f8-9987-09c344f6c60f; harness `_
      cards sem data: **+7/-1** (SO exemplo-criacao x4, exercicios; MF logica proposicional x2; perde SO laminas-sockets-
      alternativo, gold fora da faixa dos irmaos).
   3. label/titulo com token unico a 1 bloco da janela decide, so flagados: **+2/0**.
+  4. **tokens curtos consagrados pelo cronograma no desempate** (`short_vocab_from_topic_labels` sobre labels de sessao +
+     topic_text, aplicado a `_toks` do disambiguator nos DOIS lados): a linha do SARC da IA diz "abordagem supervisionada
+     k-NN" e `_toks` descarta "k"/"nn" (< 3 chars) — o unico token que separa a semana era invisivel; k-NN caia em b04 por
+     "dados/machine/learning" e `exemplo-com-k-nn` dava 0x0. Medido: **+4/-2** (IA k-NN x4, 3 viram CONFIANTES; perde 2
+     flagados do ES2 via "api"). Mesma familia da campanha tcp/ip do FR, agora na rota de bloco.
+  5. **card do Moodle como documento ordenado** (`contents.json` da API; o export apaga): semana = faixa de blocos com sessao
+     no intervalo do label "Semana dd/mm a dd/mm", materiais alinhados as semanas por ordem (monotonico, por fluxo/categoria)
+     + tokens, desempate de producao dentro da semana. Medido so nos flagados: **+12/-5** (a tudo: +13/-10 — estrutura nunca
+     sobrepoe decisao confiante). Perdas = professor fora de ordem (zips sob a semana errada, enunciado sob label de semana).
+     Requisito de produto: importar pela API (`moodle_pull`), nao pelo export. Harness `mede_card_ordenado.py`.
+  - Datas em que a cadeira acontece: ja usadas (sessoes do SARC); ordem de postagem NAO segue a ordem das aulas em semanas de
+    2 aulas (IA Semana 3, SO Processo): so o topico da linha do SARC separa — dai a alavanca 4.
 - **Escada: 165 -> 168 -> 174 -> 176/203; residual 43 flagados (21/100, era 23) -> LLM 69/70 -> ~192; os 3 zips roteiro1/2/4
   seguem o irmao -> ~195/203.** Ficam: dafny2 (confiante em b11, label diria b13), azure (nao dedutivel), aula-17 (numeracao do
   professor != calendario), recursao x2 e arvores/listas (janela de 2-3 blocos sem sinal: so data), e o erro do LLM (~1/70).

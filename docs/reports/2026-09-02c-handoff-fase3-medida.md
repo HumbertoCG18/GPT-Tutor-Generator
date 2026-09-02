@@ -17,6 +17,9 @@
    `build_motor_context`). Regra medida em `_harness-2026-09-02/mede_ordem_secoes.py --chain --only-flagged`: ancoras so de
    cards de conteudo com janela datada; faixa do proprio card > vizinhos + encadeamento; so estreita decisao FLAGADA.
 3. Label/titulo com token unico a 1 bloco da janela decide, so flagados (+2/0).
+4. Tokens curtos consagrados pelo cronograma sobrevivem em `disambiguator._toks` nos dois lados (+4/-2; IA k-NN x4).
+5. Card como documento ordenado (semana = faixa de blocos do label; alinhamento monotonico por fluxo; desempate dentro):
+   +12/-5 so nos flagados. Depende de importar `contents.json` (API) — decidir onde persistir.
 Gate esperado: motor puro 165 -> ~176/203 (bloco), zero regressao na curada, votos/100 caem (residual 43 = 21/100).
 NAO fazer (refutado no gold): serie k-esimo, serie monotonica, prova antiga -> prep, label em decisoes confiantes.
 
