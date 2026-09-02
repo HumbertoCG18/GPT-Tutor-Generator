@@ -225,3 +225,46 @@ Scratchpad da sessao (promover na Fase 0): `motor_puro.py`, `censo_motor_llm.py`
 - **E, F, H, I — deliberadamente adiadas (decisao do user 02/09):** decidem-se com o dado da fase que as
   produz (E: Fase 2 nos 8 · F: Fase 4 nos 2 tetos + gold · H: medicao de consumidores de
   `computed_block_id` · I: sweep nos 93). Opinar antes seria o vicio que a campanha combate.
+
+---
+
+## REVISAO 02/09 (noite) — o que o dado mudou. PROPOSTA, aguardando o user.
+
+Medido hoje (`pendencias.md` §FASE 1b + MEDICAO; artifacts "Raio-X da Atribuicao" e "Gold x Moodle x SARC"):
+1. **A verdade estrutural esta no Moodle e o export a apaga.** O `contents.json` da API traz o que o card do professor
+   diz por dentro: labels de semana datados intercalados com os materiais (ES2), semanas empilhadas + materiais em ordem
+   por tipo (MF), data no nome do modulo (SO), ordem das secoes (44/46 cronologicas). O stash do export vira pastas
+   alfabeticas e o motor recebe o card como saco (uniao das datas: 10 blocos). Gold x posicao do professor: 148/148
+   concordam onde ha posicao datada; as 3 divergencias sao labels defeituosos do Moodle (ano de 2025; label sem data).
+2. **O gap do bloco e o desempate, nao a janela.** 29/38 erros tem o bloco certo na janela; janela-1 acerta 96%,
+   desempate flagado 51%. Estrutura estreita, texto decide, estrutura NUNCA sobrepoe decisao confiante (medido: a tudo
+   +13/-10; so flagados +12/-5).
+3. **Foco = material de aula (189/203 golds); referencia e contexto.** Regua propria (`regua_aula.py`): 152 -> ~174/189
+   sem LLM com as alavancas medidas; residual flagado 12 (6/100). A cobertura de referencia (eth2/aws) deixa de ser gate
+   e vira watchdog; a definicao do gold dessas (posicao x conteudo, N:N) e decisao do user.
+
+### Fases revistas
+- **Fase 3 (bloco estrutural) — REESCRITA.** Sai: serie k-esimo (+5/-10), serie monotonica (+1/-2), prova antiga -> prep
+  (0), "serie confiante nao vota". Entra, na ordem medida, tudo agindo SO onde o desempate esta flagado:
+  3a. **Import estrutural**: `moodle_pull` (API) como caminho de import — `contents.json`/`sections.json` persistidos no
+      repo e lidos pelo `build_motor_context`; manifest ganha indice da secao e do modulo e o label de semana do material.
+      Higiene medida: label com ano != ano do curso e ruido (ES2 2025); label sem data nao ancora (MF "Trabalho 2:").
+  3b. **Card como documento ordenado** = provider de janela: semana do label -> faixa de blocos hospedaveis; materiais
+      alinhados as semanas por ordem (monotonico, por fluxo/categoria) + tokens; desempate de producao dentro da semana.
+      (+12/-5 flagados). Ordem das secoes como prior para cards sem data (+7/-1). Card generico -> apresentacao (+3/0).
+  3c. **Tokens curtos consagrados pelo cronograma** em `disambiguator._toks`, nos dois lados (+4/-2; IA k-NN x4).
+  3d. Label/titulo com token unico a 1 bloco decide, so flagados (+2/0).
+  Gate: **regua de AULA** 152 -> ~174/189 (bloco), curada intacta (199/200 · 191/191 · 93/93), votos/100 caem (AULA
+  residual ~6/100), sentinela, motor_puro + motor_puro --com-vocab.
+- **Fase 1 (vocabulario)**: FEITA e fica em todas as rotas (unidade +9, subunidade 26 -> 79/93). Recompilar no CG depois
+  da Fase 2 (o compile herda as unidades do motor). eth2/aws: cobertura de referencia = watchdog; gold N:N a decidir.
+- **Fase 2 (cronograma manda na unidade)**: mantida, DEPOIS da 3 — a ordem das secoes e as semanas do card ja dao a
+  unidade por estrutura em parte dos casos; medir o que sobra.
+- **Fase 4 (LLM residual)**: mantida, menor: so flagados apos a 3 (alvo <= 8/100 em AULA), contado no CRONOGRAMA_HEALTH.
+- **Fase 5 (run real FR, depois CG)**: FR vira o 1o build pela API (`moodle_pull --pdf` + `build_course`), nao pelo export.
+
+### Decisoes que travam a execucao
+A. Tutores sujos com o vocab compilado: commitar (a regua de AULA esta intacta; a cobertura de referencia vira watchdog)
+   ou reverter.
+B. Gold de cobertura de referencias (eth2/aws): manter {u02} (conteudo) ou N:N {u01, u02}. Nao trava a Fase 3.
+C. Import pela API como caminho principal (3a): exige token do Moodle no build; o export segue como fallback sem estrutura.
