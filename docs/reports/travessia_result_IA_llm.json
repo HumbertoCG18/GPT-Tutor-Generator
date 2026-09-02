@@ -1,0 +1,52 @@
+{
+ "curso": "IA",
+ "modo": "llm",
+ "n": 2,
+ "hit1": 2,
+ "hit3": 2,
+ "bloco_ok": 0,
+ "bloco_n": 0,
+ "chamadas": 0,
+ "linhas": [
+  {
+   "pergunta": "como funciona o algoritmo k-NN para classificar?",
+   "tipo": "conteudo",
+   "esperado": [
+    "algoritmo-de-classificacao-k-nn",
+    "artigo-usando-k-nn-em-texto",
+    "exemplo-2-k-nn-com-iriscsv-mais-completo",
+    "exemplo-com-k-nn",
+    "exemplo-de-programa-com-k-nn-em-java",
+    "k-nn-para-classificacao-exemplo-cardio",
+    "k-nn-para-regressao-exemplo-imc"
+   ],
+   "escolhido": [
+    "algoritmo-de-classificacao-k-nn"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": null,
+   "porque": "O Cronograma Detalhado lista códigos específicos sobre a classificação com o algoritmo k-NN na unidade de Modelos Preditivos."
+  },
+  {
+   "pergunta": "tem algum codigo de exemplo de analise exploratoria?",
+   "tipo": "codigo",
+   "esperado": [
+    "analise-exploratoria-de-dados-exemplo-1",
+    "analise-exploratoria-dos-dados-exemplo-2"
+   ],
+   "escolhido": [
+    "analise-exploratoria-de-dados-exemplo-1",
+    "analise-exploratoria-dos-dados-exemplo-2"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-04",
+   "bloco_ok": null,
+   "porque": "Encontrei os codigos de Analise Exploratoria de Dados no Cronograma Detalhado vinculados ao periodo de 11/03/2026 a 16/03/2026, cujo material correspondente do FILE_MAP e do bloco-04."
+  }
+ ]
+}

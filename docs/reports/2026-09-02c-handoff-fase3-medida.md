@@ -34,3 +34,12 @@ herda as unidades do motor); Fase 4 (LLM residual contado).
 Gerador `feat/motor-atribuicao`: commits desta sessao ate os goldens (ver log). Tutores: limpos, commitados com o vocab. Copias `.ablacao`
 dos 5: puro + vocab (sidecars compilados nas copias). `subjects.json`: `compile_vocabulary: true` nos 8.
 Harness da sessao em `docs/reports/_harness-2026-09-02/` (mede_alavancas, mede_ordem_secoes, calibra_revisar, moodle_sections/).
+
+## Regua de TRAVESSIA (criada 02/09 noite; decisao do user: gold agora + 1 baseline; otimizacao so depois da fila do motor)
+`scripts/eval_travessia.py` (+ `tests/test_eval_travessia.py`): pergunta do aluno -> arquivo/bloco esperado, medida sobre
+os indices que o tutor le (COURSE_MAP, SYLLABUS, CRONOGRAMA_DETALHADO, FILE_MAP), sem abrir materiais. Modos: `--sem-llm`
+(piso deterministico) e baseline com Gemini (cache em `docs/reports/_travessia_cache/<SIG>.json`: rerodar = 0 chamadas).
+Casamento da escolha do LLM e fuzzy (ele cita o texto do CRONOGRAMA, nao o Titulo). **Falta o gold: o user escreve
+`docs/reports/travessia_gt_IA.csv` e `travessia_gt_FR.csv`** (modelos criados; ~15 perguntas cada; separador ';';
+esperado = ids ou trechos de titulo separados por '|'). Depois: rodar os dois modos = o "antes"; rerodar apos a Fase 3 = o
+"depois". Vetores/grafo so se este numero mostrar perguntas que os indices nao alcancam.

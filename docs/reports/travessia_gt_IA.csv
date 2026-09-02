@@ -1,0 +1,6 @@
+pergunta;esperado;bloco;tipo;nota
+# Escreva uma pergunta de aluno por linha. 'esperado' = ids OU trechos do titulo/raw, separados por | (qualquer um vale).
+# 'bloco' e opcional (bloco-NN do CRONOGRAMA_DETALHADO). Linhas que comecam com # sao ignoradas.
+# Exemplos (APAGUE ou substitua):
+como funciona o algoritmo k-NN para classificar?;k-NN;;conteudo;exemplo — materia dada em aula
+tem algum codigo de exemplo de analise exploratoria?;analise exploratoria;;codigo;exemplo — notebook do professor

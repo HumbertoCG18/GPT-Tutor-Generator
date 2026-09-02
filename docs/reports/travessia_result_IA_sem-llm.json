@@ -1,0 +1,55 @@
+{
+ "curso": "IA",
+ "modo": "sem-llm",
+ "n": 2,
+ "hit1": 2,
+ "hit3": 2,
+ "bloco_ok": 0,
+ "bloco_n": 0,
+ "chamadas": 0,
+ "linhas": [
+  {
+   "pergunta": "como funciona o algoritmo k-NN para classificar?",
+   "tipo": "conteudo",
+   "esperado": [
+    "algoritmo-de-classificacao-k-nn",
+    "artigo-usando-k-nn-em-texto",
+    "exemplo-2-k-nn-com-iriscsv-mais-completo",
+    "exemplo-com-k-nn",
+    "exemplo-de-programa-com-k-nn-em-java",
+    "k-nn-para-classificacao-exemplo-cardio",
+    "k-nn-para-regressao-exemplo-imc"
+   ],
+   "escolhido": [
+    "algoritmo-de-classificacao-k-nn",
+    "algoritmo-dijkstra",
+    "algoritmo-genetico"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "tem algum codigo de exemplo de analise exploratoria?",
+   "tipo": "codigo",
+   "esperado": [
+    "analise-exploratoria-de-dados-exemplo-1",
+    "analise-exploratoria-dos-dados-exemplo-2"
+   ],
+   "escolhido": [
+    "analise-exploratoria-de-dados-exemplo-1",
+    "analise-exploratoria-dos-dados-exemplo-2",
+    "agrupamento-hierarquico-exemplo-1"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-04",
+   "bloco_ok": null,
+   "porque": ""
+  }
+ ]
+}

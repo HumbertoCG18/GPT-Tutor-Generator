@@ -1,0 +1,18 @@
+{
+ "64a4a176d430e60ab2ca7b1793299d6e3453b8ea": {
+  "arquivos": [
+   "Classificação com o algoritmo k-Nearest Neighbors (k-NN) usando o dataset Iris",
+   "Implementação completa de K-Nearest Neighbors (k-NN) para classificação de flores Iris"
+  ],
+  "bloco": "",
+  "porque": "O Cronograma Detalhado lista códigos específicos sobre a classificação com o algoritmo k-NN na unidade de Modelos Preditivos."
+ },
+ "00249efce1699363cbffff75ff9f05b42c81f40c": {
+  "arquivos": [
+   "Análise Exploratória de Dados - Exemplo 1.ipynb",
+   "Analise Exploratória dos Dados - Exemplo 2.ipynb"
+  ],
+  "bloco": "bloco-04",
+  "porque": "Encontrei os codigos de Analise Exploratoria de Dados no Cronograma Detalhado vinculados ao periodo de 11/03/2026 a 16/03/2026, cujo material correspondente do FILE_MAP e do bloco-04."
+ }
+}
