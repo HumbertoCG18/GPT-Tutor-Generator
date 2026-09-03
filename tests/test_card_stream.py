@@ -153,3 +153,27 @@ def test_engine_keeps_original_provider_when_card_agrees_and_stays_flagged():
     ctx._card_windows_cache = {"d": ["bloco-04"]}
     d = AnchorEngine().resolve(entry, ctx)
     assert (d.block_ref, d.provider, d.flag) == ("bloco-04", "data", True)
+
+
+# --- Fase 3b, item 4: secao 0 do Moodle (area geral do curso) sem sinal temporal -> bloco de apresentacao ---
+
+def _geral(eid, title, sec_idx):
+    e = _e(eid, title, 2, "", sec="Informações Gerais")
+    e["moodle_section_index"] = sec_idx
+    return e
+
+
+def test_general_section_without_window_goes_to_first_class_block():
+    d = AnchorEngine().resolve(_geral("programa", "Programa", 0), _ctx())
+    assert (d.block_ref, d.provider, d.method, d.band, d.flag) == ("bloco-03", "secao-geral", "secao-geral", "media", False)
+
+
+def test_non_general_section_without_window_stays_funil():
+    assert AnchorEngine().resolve(_geral("programa", "Programa", 5), _ctx()) is None
+
+
+def test_general_section_with_a_window_follows_the_cascade():
+    # secao 0 COM janela (card_block_map labels [03, 04]) e titulo que nomeia o bloco 04: a cascata decide, nao a secao 0
+    e = _e("sem", "Logica proposicional semantica", 2, "", sec="Logica"); e["moodle_section_index"] = 0
+    d = AnchorEngine().resolve(e, _engine_ctx())
+    assert (d.block_ref, d.provider) == ("bloco-04", "labels")

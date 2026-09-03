@@ -60,8 +60,12 @@ def resolve_generic_reference(entry: dict, ctx: MotorContext) -> Optional[Anchor
     if not meta and str(entry.get("source_section") or "").strip():
         return None
     method = "meta-generica" if meta else "ref-generica"
-    # "overview" = apresentacao da disciplina/plano (IA e SO usam esse kind no
-    # bloco-01); onde nao existe, o primeiro bloco de aula.
+    return _first_class_block_decision(ctx, method)
+
+
+def _first_class_block_decision(ctx: MotorContext, method: str) -> Optional[AnchorDecision]:
+    """Bloco de apresentacao: "overview" (IA e SO usam esse kind no bloco-01); onde
+    nao existe, o primeiro bloco de aula."""
     first = next((b for b in ctx.blocks
                   if str(b.get("kind") or "") in ("overview", "class", "") and b.get("id")), None)
     if first is None:
@@ -69,6 +73,18 @@ def resolve_generic_reference(entry: dict, ctx: MotorContext) -> Optional[Anchor
     ref = str(first.get("id"))
     return AnchorDecision(block_ref=ref, conf=0.0, band="media", flag=False,
                           provider=method, method=method, window=[ref])
+
+
+def resolve_general_section(entry: dict, ctx: MotorContext) -> Optional[AnchorDecision]:
+    """Fase 3b item 4 (03/09): material na SECAO 0 do Moodle (a area geral do curso,
+    `moodle_section_index` da Fase 3a) que chegou aqui SEM janela nenhuma mora na
+    apresentacao da disciplina — mesma convencao de meta/ref-generica. Sinal
+    estrutural, nao nome de card: o regex "informa|geral" do harness pegava
+    "Busca com Informacao" no IA. Medido (SO, 3 golds): +3/0; no curado tira 3
+    materiais do llm-funil."""
+    if entry.get("moodle_section_index") != 0:
+        return None
+    return _first_class_block_decision(ctx, "secao-geral")
 
 
 # "p1" / "prova 2" / "revisao p1" / "revisão para P1" -> N
@@ -221,7 +237,8 @@ class AnchorEngine:
                 return prep
             window, provider = provider_card(entry, ctx), "card"
             if not window:
-                return self.resolve_funnel(entry, ctx, markdown)
+                geral = resolve_general_section(entry, ctx) if lexical else None
+                return geral or self.resolve_funnel(entry, ctx, markdown)
         if prep_ok and provider in ("ordinal", "topic"):
             # Balde B (2026-08-26): janela INDIRETA (card por topico "Exercicios de
             # Revisao para Prova" -> [05, 06]; "Aula 16" -> 16o encontro) nao vence a

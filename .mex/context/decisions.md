@@ -240,3 +240,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Decision:** O card do Moodle lido em ordem (semana do label / modulo datado + posicao dos materiais, `card_stream.card_windows`) e um provider FORA da cascata: o `anchor_engine` o consulta (a) sem janela, depois de prep-prova e antes do llm-funil; (b) em decisao ainda FLAGADA **depois** do voter. Janela-1 do card e gateada como data/topic; decisao do card sem flag sai com banda "media"; card que repete bloco e duvida nao renomeia o provider.
 **Reasoning:** Medido 03/09 nos 5 golds: so-flagados +16/-5 (motor puro 161 -> 173, AULA 152 -> 163); a tudo, +13/-10 (02/09). Card ANTES do voter estreitava para 1 bloco e o LLM (que acertava) nao votava: curada 199 -> 187. Janela-1 incondicional: conf-err 3 -> 15; precisao das decisoes do card sem flag = 8/11, longe da banda "alta" (~98%).
 **Consequences:** Com o voter ligado o card nao muda a curada (o LLM ja decide o que ele decide); o ganho e do motor sem voter e do custo futuro (item 7 mede votos/100 em outro eixo). 5 erros do card escapam da fila com banda "media" sem flag — insumo da calibracao do `revisar` (item 7). Lei reafirmada: estrutura estreita, texto (e o LLM) decide, estrutura nunca sobrepoe decisao confiante.
+
+---
+
+### Secao 0 do Moodle e a area geral do curso: material sem sinal temporal mora na apresentacao (Fase 3b, item 4)
+
+**Date:** 2026-09-03
+**Status:** Active
+**Decision:** `resolve_general_section` (anchor_engine): entry com `moodle_section_index == 0` que chegou sem janela de provider nenhum (nem card) vai ao bloco de apresentacao (overview/1a aula), method `secao-geral`, banda media — irma de meta/ref-generica. So no caminho lexical (materiais), depois de prep-prova e antes do llm-funil. O sinal e ESTRUTURAL (a secao 0 e, por definicao do Moodle, a area geral do curso), nunca o nome do card.
+**Reasoning:** Medido 03/09 (SO, 3 golds): +3/0 no motor puro; no curado tira 3 materiais do llm-funil (50% de precisao, o degrau mais caro). O regex de nome do harness (`informa|geral|aviso`) casava "Semana 12 ... Busca com Informacao" no IA (9 entries) — regra por nome e remendo. Ordem das secoes como prior (H7, +7/-1 em 02/09) foi remedida depois do card ordenado: 0 efeito — nao entrou (nada sem numero).
+**Consequences:** Cursos cujo professor usa a secao 0 como card de conteudo teriam materiais na apresentacao — so quando NENHUM outro sinal existe (data, label, topico, card); nos 8 tutores hoje so o SO tem material na secao 0. A regua vigia `secao-geral` em separado.

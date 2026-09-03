@@ -146,7 +146,8 @@ atribuição (arquivo→bloco→unidade/subunidade).
   do próprio professor — sinal autoritativo de bloco por sessão, sub-aproveitado. Nem todo prof faz →
   extrator opcional com degradação honesta (cf. `docs/superpowers/specs/2026-06-17-signal-registry-design.md`).
 - **Estrutura do Moodle no manifest (Fase 3a, 2026-09-03):** `moodle_section_index` (= `section` da API,
-  ordinal da seção), `moodle_module_index` (posição do módulo na lista `modules` da seção; labels contam) e
+  ordinal da seção; **0 = área geral do curso** por definição do Moodle — SO "Informações Gerais"; MF/IA/ES2/TCC
+  deixam a 0 vazia e usam seções 1+ para plano/avisos), `moodle_module_index` (posição do módulo na lista `modules` da seção; labels contam) e
   `moodle_week_label` (texto do label DATADO mais próximo antes do módulo; labels consecutivos separados por
   ` || `; módulo com data no nome, "12/03 Processos", é âncora: seu nome vira o week_label dele e dos módulos sem
   data que o seguem — Fase 3b lê a data dali). Backfill a cada regeneração a partir de `raw/moodle/contents.json` (`backfill_moodle_structure_repo`,
