@@ -48,13 +48,20 @@ S1. ~~**Diff estrutural**~~ FEITO 03/09 (`2491596`): `src/builder/sources/moodle
     links 4} · CG {novos 19 = 15 paginas Moodle de videos + 4 arquivos (zip, 2 xlsx...); alterados 0; sumidos 26 = entries do EXPORT
     sem par por nome; iguais 47; links 27}. Modulos `page` contam como material no diff; o S2 usa a classificacao do pull
     (`links.json`: print x indice-videos) para decidir imprimir ou referenciar.
-S2. **Import do delta**: novos pelo caminho do stash (nome = titulo do modulo, `moodle_label`, `source_section`, `.html/.htm`
-    impressos); alterados re-baixam e re-extraem mantendo o id; sumidos: `sync_prune_removed` (some) ou `moodle_missing_since`
-    (fica marcado, fora dos indices); links/videos -> entries de referencia. Pre-requisito do CG aqui: `.htm` sem L classificado +
-    nomes dos ignorados listados (teste).
-S3. **Regeneracao + diff de decisoes**: `incremental_build` (extrai so o novo, motor em tudo); sentinela entry a entry antes ->
-    depois com motivo (estrutura nova / vizinho novo / voto); `course/SYNC_REPORT.md`; fila `revisar` recebe "mudou, confira".
-    Gate: sync sem delta = byte-identico (determinismo).
+S2. ~~**Import do delta**~~ FEITO 03/09 (`619488c`): `moodle_sync.plan_import(diff, contents, scan, links, entries, nomes=, defaults=,
+    prune_removed=)` -> `SyncPlan{add, readd, prune, mark, links, review, ignorados}` (puro; casa os itens do stash aos modulos
+    novos/alterados com o MESMO casador; links `acao == referencia` -> entries url `references` com card, sem duplicar URL;
+    `review` fica no manual-review; `ignorados` = stash.skipped por nome, dotfiles fora). `scripts/sync_moodle.py <slug> --apply
+    [--repo <copia>] [--no-prune]`: `moodle_pull --pdf` na raiz do curso (baixa/imprime SO o que nao existe), `scan_stash_cards`,
+    plano, `unprocess` dos alterados/sumidos (ou marca `moodle_missing_since` + `include_in_bundle=False`), copia `raw/moodle`
+    para o repo, `incremental_build` com novos + links. 5 testes (fixture LR + `links.json` real do FR).
+S3. ~~**Regeneracao + diff de decisoes**~~ FEITO 03/09: `snapshot_decisions` (bloco/unidade/subunidade/flag; pino vale como
+    bloco) antes do build; `decision_diff` (moved/added/removed) depois; `mark_sync_changes` grava `sync_changed`
+    ("bloco: X -> Y (sync AAAA-MM-DD)", campo novo do `FileEntry`) e recalcula `revisar`; estado novo **`mudou`** em
+    `routing/revisar.py` (duvida > mudou > llm > ok; censo conta mudou em revisar/100); `course/SYNC_REPORT.md` com 8 secoes.
+    6 testes. **Medido na COPIA do LR:** 1a sync = Lab 4 entra (`lab-4-http`, bloco-05 data/janela-1 sem flag, unidade-01), as 6
+    antigas so ganham os 3 campos de estrutura, 0 decisoes movidas, 0 falhas; 2a sync (sem delta) = manifest byte-identico
+    fora `updated_at`, relatorio "nenhum" em tudo. Gate do S3 batido.
 S4. **Primeira sync real = LR** (Lab 4, regua magra): commit do LR; subunidade/travessia nao mudam.
 S5. **FR = controle** (diff vazio; entram os 3 campos de estrutura + 2 videos como referencia); `subunit_gt_FR` 14/18 e
     `travessia_gt_FR` 15/15 intactos; commit.
