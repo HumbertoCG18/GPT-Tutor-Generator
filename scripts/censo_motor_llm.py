@@ -37,6 +37,45 @@ MOTOR = {"janela-1", "disamb", "prep-prova", "irmao-card", "titulo-topico", "ref
          "due-contain", "due-straddle", "d6", "funil", "meta-generica"}
 
 
+_INDICES_TIPO = {"code_index": "code/CODE_INDEX.md", "exam_index": "exams/EXAM_INDEX.md",
+                 "exercise_index": "exercises/EXERCISE_INDEX.md", "assignment_index": "assignments/ASSIGNMENT_INDEX.md"}
+
+
+def cobertura_indices(repo, entries: list) -> dict:
+    """Watchdog (02/09): quantos materiais do manifest o tutor consegue ACHAR pelos indices.
+    FILE_MAP conta pelo `raw:` da linha de rastreabilidade; indices por tipo, por raw ou id no texto.
+    `truncado` = a nota do clamp esta no FILE_MAP. `sem_indice` = em indice nenhum."""
+    import re
+    repo = Path(repo)
+    fm_path = repo / "course" / "FILE_MAP.md"
+    fm = fm_path.read_text(encoding="utf-8", errors="replace") if fm_path.is_file() else ""
+    raws = set(re.findall(r"raw:\s*`([^`]+)`", fm))
+    outros = ""
+    por_tipo = {}
+    for k, rel in _INDICES_TIPO.items():
+        p = repo / rel
+        txt = p.read_text(encoding="utf-8", errors="replace") if p.is_file() else ""
+        por_tipo[k] = txt
+        outros += "\n" + txt
+    mats = [e for e in entries if _is_material(e)]
+    ausentes, sem_indice = [], []
+    n_tipo = {k: 0 for k in _INDICES_TIPO}
+    for e in mats:
+        raw = str(e.get("raw_target") or ""); eid = str(e.get("id") or "")
+        no_fm = raw in raws
+        em_tipo = False
+        for k, txt in por_tipo.items():
+            # raw exato, ou id delimitado (nao substring: "c" casaria qualquer texto)
+            if txt and ((raw and raw in txt) or (eid and re.search(r"(?<![\w-])" + re.escape(eid) + r"(?![\w-])", txt))):
+                n_tipo[k] += 1; em_tipo = True
+        if not no_fm:
+            ausentes.append(eid)
+            if not em_tipo:
+                sem_indice.append(eid)
+    return {"materiais": len(mats), "file_map": len(mats) - len(ausentes), "ausentes": ausentes, "sem_indice": sem_indice,
+            "truncado": "truncado" in fm, **n_tipo}
+
+
 def main() -> int:
     tot_m = collections.Counter()
     tot_src = collections.defaultdict(lambda: {"correct": 0, "wrong": 0})
@@ -98,6 +137,15 @@ def main() -> int:
     print(f"REVISAR por 100 materiais: {r100:.1f}  (duvida {T['r_duv']} + llm {T['r_llm']} de {n}) · "
           f"votos por 100: {100.0 * (T['b_llm'] + T['b_funil']) / n:.1f}")
     print(f"anatomia da duvida (gatilhos, um material pode ter >1): {dict(motivos.most_common())}")
+    print("\nCOBERTURA DOS INDICES (o que o tutor consegue achar): curso  materiais  FILE_MAP  sem-indice-nenhum  truncado")
+    for sigla, nome in REPOS.items():
+        repo = GH / nome
+        if not (repo / "manifest.json").exists():
+            continue
+        m = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))
+        c = cobertura_indices(repo, m["entries"])
+        print(f"  {sigla:5} {c['materiais']:>4} {c['file_map']:>9}/{c['materiais']:<4} {len(c['sem_indice']):>6}  {'SIM' if c['truncado'] else 'nao'}"
+              + (f"   sem indice: {', '.join(c['sem_indice'][:6])}{' …' if len(c['sem_indice']) > 6 else ''}" if c["sem_indice"] else ""))
     print(f"metodos: {dict(tot_m.most_common())}")
     if tot_src:
         print("\nACERTO POR FONTE no gold de bloco:")

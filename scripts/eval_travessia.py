@@ -189,12 +189,21 @@ def escolher_sem_llm(pergunta: str, entries: list, k: int = 3) -> list:
     return [eid for _, eid in scored[:k]]
 
 
-def contexto_navegacao(repo: Path) -> str:
+COMPLETO_ANTES = ("README.md", "system/TUTOR_POLICY.md")
+COMPLETO_DEPOIS = ("code/CODE_INDEX.md", "exams/EXAM_INDEX.md", "exercises/EXERCISE_INDEX.md", "assignments/ASSIGNMENT_INDEX.md")
+
+
+def contexto_navegacao(repo: Path, completo: bool = False) -> str:
+    """Basico = os 4 indices da "ordem de consulta economica" do FILE_MAP. Completo = o que o tutor REAL tem:
+    README + TUTOR_POLICY antes, indices por tipo (codigo/provas/exercicios/trabalhos) depois."""
+    rels = [f"course/{n}" for n in INDICES]
+    if completo:
+        rels = list(COMPLETO_ANTES) + rels + list(COMPLETO_DEPOIS)
     parts = []
-    for name in INDICES:
-        p = Path(repo) / "course" / name
+    for rel in rels:
+        p = Path(repo) / rel
         if p.is_file():
-            parts.append(f"\n\n===== course/{name} =====\n" + p.read_text(encoding="utf-8", errors="replace"))
+            parts.append(f"\n\n===== {rel} =====\n" + p.read_text(encoding="utf-8", errors="replace"))
     return "".join(parts)[:MAX_CONTEXT]
 
 
@@ -231,12 +240,13 @@ def _picks_to_ids(resp: Resposta, entries: list, rows: Optional[dict] = None) ->
     return ids[:3]
 
 
-def rodar(sig: str, repo: Path, gold: list, *, client=None, cache_path: Optional[Path] = None, cap: int = 60) -> dict:
+def rodar(sig: str, repo: Path, gold: list, *, client=None, cache_path: Optional[Path] = None, cap: int = 60,
+          completo: bool = False) -> dict:
     entries = _materiais(repo)
     u2d = _bloco_display(repo)
     rows = filemap_rows(repo, entries)
-    modo = "llm" if client is not None else "sem-llm"
-    contexto = contexto_navegacao(repo) if client is not None else ""
+    modo = ("llm-completo" if completo else "llm") if client is not None else "sem-llm"
+    contexto = contexto_navegacao(repo, completo=completo) if client is not None else ""
     cache: dict = {}
     if cache_path and Path(cache_path).is_file():
         cache = json.loads(Path(cache_path).read_text(encoding="utf-8"))
@@ -308,6 +318,7 @@ def main(argv: list) -> int:
     ap.add_argument("--sem-llm", action="store_true")
     ap.add_argument("--template", action="store_true")
     ap.add_argument("--cap", type=int, default=60)
+    ap.add_argument("--contexto-completo", action="store_true", help="README + TUTOR_POLICY + indices por tipo (o que o tutor real ve)")
     args = ap.parse_args(argv[1:])
     sig = args.curso.upper()
     repo = GITHUB_DIR / COURSES[sig]
@@ -329,7 +340,8 @@ def main(argv: list) -> int:
         if client is None:
             print("sem client Gemini (chave); use --sem-llm"); return 2
     cache_path = REPORTS / "_travessia_cache" / f"{sig}.json"
-    r = rodar(sig, repo, gold, client=client, cache_path=cache_path if client else None, cap=args.cap)
+    r = rodar(sig, repo, gold, client=client, cache_path=cache_path if client else None, cap=args.cap,
+              completo=args.contexto_completo)
     out = REPORTS / f"travessia_result_{sig}_{r['modo']}.json"
     out.write_text(json.dumps(r, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"{sig} [{r['modo']}] perguntas={r['n']}  hit@1={r['hit1']}/{r['n']}  hit@3={r['hit3']}/{r['n']}  "

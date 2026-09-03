@@ -145,3 +145,16 @@ def test_casar_escolha_usa_linha_do_filemap_e_referencia_linha_n():
     assert casar_escolha("Comunicação Cliente-Servidor com Sockets UDP em C", ENTS_FM, rows) == "udp-example-c"
     assert casar_escolha("linha 18 do FILE_MAP", ENTS_FM, rows) == "tcp-chat-c"
     assert casar_escolha("#19", ENTS_FM, rows) == "udp-example-c"
+
+
+# --- contexto COMPLETO do tutor: README + politica + indices por tipo -------------------------
+
+def test_contexto_completo_inclui_politica_e_indices_por_tipo(tmp_path):
+    from scripts.eval_travessia import contexto_navegacao
+    for rel in ("course/COURSE_MAP.md", "course/FILE_MAP.md", "README.md", "system/TUTOR_POLICY.md", "code/CODE_INDEX.md", "exams/EXAM_INDEX.md"):
+        p = tmp_path / rel; p.parent.mkdir(parents=True, exist_ok=True); p.write_text(f"# {rel}\n", encoding="utf-8")
+    basico = contexto_navegacao(tmp_path)
+    assert "CODE_INDEX" not in basico and "TUTOR_POLICY" not in basico
+    completo = contexto_navegacao(tmp_path, completo=True)
+    assert "TUTOR_POLICY" in completo and "CODE_INDEX" in completo and "EXAM_INDEX" in completo
+    assert completo.index("README") < completo.index("COURSE_MAP") < completo.index("CODE_INDEX")

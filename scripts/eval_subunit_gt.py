@@ -13,7 +13,10 @@ from pathlib import Path
 GH = Path(r"C:\Users\Humberto\Documents\GitHub")
 REPORTS = GH / "GPT-Tutor-Generator" / "docs" / "reports"
 REPOS = {"SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artifical-Tutor",
-         "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor"}
+         "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor",
+         # 02/09: FR (holdout, 20 materiais, sidecar COMPILADO por LLM) — gold proposto-claude, revisar.
+         "FR": "Fundamentos-de-Redes-Tutor"}
+REPOS = {k: v for k, v in REPOS.items() if (REPORTS / f"subunit_gt_{k}.csv").exists()}
 
 tot_ok = tot_n = 0
 for sigla, repo in REPOS.items():

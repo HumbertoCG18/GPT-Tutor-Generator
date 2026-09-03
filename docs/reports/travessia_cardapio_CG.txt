@@ -1,0 +1,90 @@
+CARDAPIO CG — bloco | id | titulo | categoria | subunidade | card
+
+--- bloco-01 08-04 Origens
+cronograma2026-2                                 | Cronograma2026-2                                             | cronograma       |                                  | Plano de Ensino
+origens-da-computacao-grafica                    | origens-da-computacao-grafica                                | outros           | origens                          | 1 - Origens da Computação Gráfica
+origensdacomputacaografica                       | OrigensDaComputacaoGrafica                                   | outros           | origens                          | 1 - Origens da Computação Gráfica
+planodeensino-4645z-04-fundamentos-de-computacao-grafica | PlanoDeEnsino-4645Z-04-Fundamentos de Computação Gráfica  | cronograma       |                                  | Plano de Ensino
+videoscg-v2                                      | VideosCG-v2                                                  | outros           | conceitos                        | Plano de Ensino
+--- bloco-02 08-06 Introducao opengl
+exercicios                                       | exercicios                                                   | listas           | algoritmos-de-deteccao-e-calculo | 2 - Biblioteca OpenGL
+opengl-cpp                                       | OpenGL-CPP                                                   | codigo-professor | algoritmos-de-deteccao-e-calculo | 2 - Biblioteca OpenGL
+opengl-py                                        | OpenGL-PY                                                    | codigo-professor | algoritmos-de-geometria-computac | 2 - Biblioteca OpenGL
+openglbasico                                     | OpenGLBasico                                                 | outros           | entidades-geometricas            | 2 - Biblioteca OpenGL
+texturas-v3                                      | Texturas_v3                                                  | codigo-professor | algoritmos-de-deteccao-e-calculo | 2 - Biblioteca OpenGL
+--- bloco-03 08-11 Fundamentos matematicos
+exemplodemanipulacaodeimagens                    | ExemploDeManipulacaoDeImagens                                | codigo-professor |                                  | 3 - Fundamentos Matemáticos para C
+exercicio-com-animacao                           | exercicio-com-animacao                                       | listas           | algoritmos-de-poligonos          | 3 - Fundamentos Matemáticos para C
+exercicio-com-poligonos                          | exercicio-com-poligonos                                      | listas           | algoritmos-de-poligonos          | 3 - Fundamentos Matemáticos para C
+exercicio-de-animacao-foguete                    | exercicio-de-animacao-foguete                                | listas           | algoritmos-de-poligonos          | 3 - Fundamentos Matemáticos para C
+fundamentosmatematicos                           | FundamentosMatematicos                                       | outros           | operacoes-com-vetores            | 3 - Fundamentos Matemáticos para C
+--- bloco-04 08-18 Algoritmos deteccao colisao
+colisao                                          | Colisao                                                      | outros           | algoritmos-de-deteccao-e-calculo | 4 - Detecção de Colisão
+--- bloco-05 08-20 Geometria computacional
+computacao-grafica-geometria-computacional-plane-sweep | computacao-grafica-geometria-computacional-plane-sweep       | outros           | algoritmos-de-geometria-computac | 5 - Geometria Computacional
+disciplina-de-computacao-grafica-geometria-computacional | disciplina-de-computacao-grafica-geometria-computacional     | outros           | algoritmos-de-geometria-computac | 5 - Geometria Computacional
+exercicios-de-geometria-computacional            | exercicios-de-geometria-computacional                        | listas           | algoritmos-de-geometria-computac | Exercícios 2D
+geometria-computacional-dominancia               | geometria-computacional-dominancia                           | outros           | entidades-geometricas            | 5 - Geometria Computacional
+geometria-computacional-metodo-das-faixas        | geometria-computacional-metodo-das-faixas                    | outros           | entidades-geometricas            | 5 - Geometria Computacional
+--- bloco-06 08-25 Recorte
+animacao-v2                                      | Animacao-v2                                                  | codigo-professor | desenho-de-linhas                | 6 - Processo de Visualização 2D
+exercicios-teoricos-sobre-processo-de-visualizacao-2d | exercicios-teoricos-sobre-processo-de-visualizacao-2d        | listas           | desenho-de-linhas                | 6 - Processo de Visualização 2D
+exercicios-teoricos-sobre-processo-de-visualizacao-2d-pdf | exercicios-teoricos-sobre-processo-de-visualizacao-2d        | listas           | desenho-de-linhas                | Exercícios 2D
+instanciamento                                   | Instanciamento                                               | outros           | sistema-de-coordenadas-cartesian | 6 - Processo de Visualização 2D
+mapeamento                                       | Mapeamento                                                   | outros           | recorte                          | 6 - Processo de Visualização 2D
+mapeamento-de-texturas-em-opengl                 | mapeamento-de-texturas-em-opengl                             | outros           | sistema-de-coordenadas-cartesian | 17 - Mapeamento de Texturas
+pagina-com-videos-sobre-instanciamento           | pagina-com-videos-sobre-instanciamento                       | outros           | desenho-de-linhas                | 6 - Processo de Visualização 2D
+pucrs-escola-politecnica-computacao-grafica-exercicios | pucrs-escola-politecnica-computacao-grafica-exercicios       | listas           |                                  | Exercícios 2D
+recorte                                          | Recorte                                                      | outros           | recorte                          | 6 - Processo de Visualização 2D
+resolucao-de-prova-de-computacao-grafica-2d      | resolucao-de-prova-de-computacao-grafica-2d                  | provas           |                                  | Exercícios 2D
+resolucao-de-prova-de-computacao-grafica-2d-pdf  | resolucao-de-prova-de-computacao-grafica-2d                  | provas           |                                  | Provas Resolvidas
+transformacoes-geometricas-em-opengl             | transformacoes-geometricas-em-opengl                         | outros           | sistema-de-coordenadas-cartesian | 6 - Processo de Visualização 2D
+transformacoesgeometricas                        | TransformacoesGeometricas                                    | codigo-professor | sistema-de-coordenadas-cartesian | 6 - Processo de Visualização 2D
+vis2d                                            | Vis2d                                                        | outros           | recorte                          | 6 - Processo de Visualização 2D
+--- bloco-07 09-01 Processamento imagens visao computaciona
+computacao-grafica-exercicio-de-prenchimento-de-area | computacao-grafica-exercicio-de-prenchimento-de-area         | listas           | cores-e-tipos-de-imagens         | 8 - Manipulação de Imagens
+computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens | computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens  | listas           | cores-e-tipos-de-imagens         | 8 - Manipulação de Imagens
+computacao-grafica-i-exercicio-sobre-filtros     | computacao-grafica-i-exercicio-sobre-filtros                 | listas           | filtros                          | 8 - Manipulação de Imagens
+computacao-grafica-manipulacao-de-imagens        | computacao-grafica-manipulacao-de-imagens                    | outros           | filtros                          | 8 - Manipulação de Imagens
+exercicios-de-processamento-de-imagens           | exercicios-de-processamento-de-imagens                       | listas           | cores-e-tipos-de-imagens         | 9 - Introdução ao Processamento de
+imageclass-biblioteca-para-manipulacao-de-imagens | imageclass-biblioteca-para-manipulacao-de-imagens            | outros           | cores-e-tipos-de-imagens         | Exercícios 2D
+introducaoprocimg                                | IntroducaoProcImg                                            | outros           | filtros                          | 9 - Introdução ao Processamento de
+segmentacaodetexturas                            | SegmentacaoDeTexturas                                        | outros           | segmentacao                      | 10 - Segmentação de Imagens
+segmentacaopptx                                  | Segmentacao.pptx                                             | outros           | segmentacao                      | 10 - Segmentação de Imagens
+--- bloco-08 09-10 Áreas relacionadas
+matematica                                       | Matematica                                                   | codigo-professor | a-matematica-das-projecoes-plana | 3 - Fundamentos Matemáticos para C
+morfologiamatematicapptx                         | MorfologiaMatematica.pptx                                    | outros           | a-matematica-das-projecoes-plana | 11 - Morfologia Matemática
+--- bloco-13 10-06 Curvas parametricas
+bezier-animacao                                  | Bezier-Animacao                                              | codigo-professor | pipeline-de-visualizacao-3d      | 7 - Curvas Paramétricas
+bezier-cpp                                       | Bezier-CPP                                                   | codigo-professor | pipeline-de-visualizacao-3d      | 7 - Curvas Paramétricas
+bezier-py                                        | Bezier-PY                                                    | codigo-professor | projecoes                        | 7 - Curvas Paramétricas
+bezier-python                                    | Bezier-Python                                                | codigo-professor |                                  | 7 - Curvas Paramétricas
+computacao-grafica-curvas-parametricas           | computacao-grafica-curvas-parametricas                       | outros           | a-matematica-das-projecoes-plana | 7 - Curvas Paramétricas
+curvasparametricas                               | CurvasParametricas                                           | outros           | pipeline-de-visualizacao-3d      | 7 - Curvas Paramétricas
+exercicios-sobre-curvas                          | exercicios-sobre-curvas                                      | listas           | a-matematica-das-projecoes-plana | 7 - Curvas Paramétricas
+exercicios-sobre-curvas-pdf                      | exercicios-sobre-curvas                                      | listas           | a-matematica-das-projecoes-plana | Exercícios 2D
+--- bloco-15 10-15 Algoritmos de Geometria Computacional
+basico3d-cpp                                     | Basico3D-CPP                                                 | codigo-professor | perspectiva                      | 14 - Exercícios sobre Modelagem Ge
+basico3d-py-zip                                  | Basico3D-PY                                                  | codigo-professor | perspectiva                      | 14 - Exercícios sobre Modelagem Ge
+computacao-grafica-modelagem-de-solidos          | computacao-grafica-modelagem-de-solidos                      | outros           |                                  | 12 - Modelagem Geométrica
+csg                                              | CSG                                                          | outros           | pipeline-de-visualizacao-3d      | 12 - Modelagem Geométrica
+exerciciodemodelagem                             | ExercicioDeModelagem                                         | listas           |                                  | 14 - Exercícios sobre Modelagem Ge
+--- bloco-18 10-27 Pipeline de visualização 3D
+basico3d-py                                      | Basico3D-PY                                                  | codigo-professor | pipeline-de-visualizacao-3d      | 13 - Computação Gráfica 3D
+biblioteca-grafica-opengl                        | biblioteca-grafica-opengl                                    | outros           | pipeline-de-visualizacao-3d      | 13 - Computação Gráfica 3D
+computacao-grafica-visualizacao-3d               | computacao-grafica-visualizacao-3d                           | outros           | paralela                         | 13 - Computação Gráfica 3D
+opengl-3d                                        | opengl-3d                                                    | outros           | paralela                         | 13 - Computação Gráfica 3D
+opengl3dcpp                                      | OpenGL3DCPP                                                  | codigo-professor | perspectiva                      | 13 - Computação Gráfica 3D
+opengl3dcpp-vdi                                  | OpenGL3DCPP-VDI                                              | codigo-professor | pipeline-de-visualizacao-3d      | 13 - Computação Gráfica 3D
+--- bloco-19 10-29 Pipeline de visualização 3D
+atividade                                        | atividade                                                    | outros           | a-matematica-das-projecoes-plana | 13 - Computação Gráfica 3D
+computacao-grafica-opengl-navegacao-em-ambientes-virtuais | computacao-grafica-opengl-navegacao-em-ambientes-virtuais    | outros           | pipeline-de-visualizacao-3d      | 13 - Computação Gráfica 3D
+--- bloco-20 11-03 Algoritmos de Remoção de Elementos Ocult
+elemoculto                                       | ElemOculto                                                   | outros           | algoritmo-z-buffer               | 15 - Remoção de Elementos Ocultos
+exemplozbuffer                                   | ExemploZbuffer                                               | outros           | algoritmo-z-buffer               | 15 - Remoção de Elementos Ocultos
+--- bloco-21 11-10 Iluminacao
+listadeexercicios2026-1                          | ListaDeExercícios2026-1                                     | listas           |                                  | Exercícios para P2
+modelos-de-iluminacao                            | modelos-de-iluminacao                                        | outros           | modelos-de-reflexao-ambiente-dif | 16 - Síntese de Imagens Realística
+programabasico3d                                 | ProgramaBasico3D                                             | codigo-professor | metodos-de-sombreamento-flat-gou | 16 - Síntese de Imagens Realística
+--- bloco-29 12-10 
+resolucao-de-prova-de-computacao-grafica-3d      | resolucao-de-prova-de-computacao-grafica-3d                  | provas           | mapeamento-de-textura            | Provas Resolvidas
