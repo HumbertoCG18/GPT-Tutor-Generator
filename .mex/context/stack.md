@@ -15,7 +15,7 @@ edges:
     condition: when understanding how technologies fit into the system
   - target: context/setup.md
     condition: when setup or run commands are needed
-last_updated: 2026-08-06
+last_updated: 2026-09-03
 ---
 
 # Stack
@@ -64,8 +64,8 @@ Do not invent dependency names, package versions, extras, or scripts. If a task 
 ## Known Test Entry Points
 
 Inventário removido (dieta MEX 2026-08-06): lista de arquivos de teste envelhece a cada
-sessão. Descoberta: `Glob tests/test_*.py` ou `graphify query`. Convenção de nome em
-`context/conventions.md`.
+sessão. Descoberta: liste os testes com `rg --files tests` e filtre pelos nomes iniciados
+em `test_`, ou use `graphify query`. Convenção de nome em `context/conventions.md`.
 
 ## Integration Notes
 

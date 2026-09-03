@@ -13,7 +13,7 @@ edges:
     condition: when exact technology or manifest details are needed
   - target: context/architecture.md
     condition: when understanding runtime behavior after startup
-last_updated: 2026-08-06
+last_updated: 2026-09-03
 ---
 
 # Setup
@@ -64,8 +64,9 @@ The test runner is `pytest`.
 python -m pytest tests -q
 ```
 
-Teste dirigido: `python -m pytest tests/test_<topico>.py -q` (descoberta via
-`Glob tests/test_*.py`; inventário completo removido na dieta MEX 2026-08-06 — envelhecia).
+Teste dirigido: `python -m pytest tests/test_<topico>.py -q` (descubra os módulos com
+`rg --files tests` e filtre pelos nomes iniciados em `test_`; inventário completo removido
+na dieta MEX 2026-08-06 — envelhecia).
 
 ## Operational Flow
 

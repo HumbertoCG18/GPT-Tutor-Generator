@@ -17,7 +17,7 @@ edges:
     condition: when the UI feature triggers builder logic (understand the flow first)
   - target: patterns/add-builder-submodule.md
     condition: when the UI feature requires new processing logic in a builder subpackage
-last_updated: 2026-06-21
+last_updated: 2026-09-03
 ---
 
 # Add UI Feature

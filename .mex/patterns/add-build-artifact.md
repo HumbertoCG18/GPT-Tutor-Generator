@@ -10,7 +10,7 @@ edges:
     condition: when understanding the existing output structure
   - target: context/architecture.md
     condition: when identifying which module should own the new artifact
-last_updated: 2026-06-21
+last_updated: 2026-09-03
 ---
 
 # Add Build Artifact

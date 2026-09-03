@@ -16,7 +16,7 @@ edges:
     condition: quando precisar de como os componentes processam estas fontes
   - target: context/repo-output.md
     condition: quando o foco é o formato do repo gerado
-last_updated: 2026-08-06
+last_updated: 2026-09-03
 ---
 
 # Contexto Institucional
@@ -150,7 +150,7 @@ atribuição (arquivo→bloco→unidade/subunidade).
   deixam a 0 vazia e usam seções 1+ para plano/avisos), `moodle_module_index` (posição do módulo na lista `modules` da seção; labels contam) e
   `moodle_week_label` (texto do label DATADO mais próximo antes do módulo; labels consecutivos separados por
   ` || `; módulo com data no nome, "12/03 Processos", é âncora: seu nome vira o week_label dele e dos módulos sem
-  data que o seguem — Fase 3b lê a data dali). Backfill a cada regeneração a partir de `raw/moodle/contents.json` (`backfill_moodle_structure_repo`,
+  data que o seguem — Fase 3b lê a data dali). Backfill a cada regeneração a partir de `<repo-tutor>/raw/moodle/contents.json` (`backfill_moodle_structure_repo`,
   `moodle.py`): os 3 campos são limpos e refeitos (nunca cache); entry sem match fica sem eles. Casamento POR
   SEÇÃO (`source_section` = seção sanitizada): savename/filename do módulo → `moodle_label` == `mod.name` único
   → stem == `mod.name`; nada fuzzy. **Gotcha:** `mod.name` de um label é CACHE do texto original — ES2 tem
@@ -245,9 +245,9 @@ atribuição (arquivo→bloco→unidade/subunidade).
 
 ## Contratos de dados por fonte (colhido de payloads REAIS, 2026-08-06)
 
-Regra (ver `conventions.md` §Fixtures): fixture copia ESTES contratos, não inventa.
+Regra (ver `.mex/context/conventions.md` §Fixtures): fixture copia ESTES contratos, não inventa.
 Proveniência desta seção: `Metodos-Formais-Tutor` real (manifest.json, course/.timeline_index.json,
-course/.card_block_map.json, material_curation.json) + `%APPDATA%/GPTTutorGenerator/subjects.json`
+course/.card_block_map.json, material_curation.json) + `C:/Users/Humberto/AppData/Roaming/GPTTutorGenerator/subjects.json`
 real + código de parse citado por linha. Re-colher com `python -c "json.load(...)"` quando suspeitar drift.
 
 ### Encoding (armadilha nº 1)
@@ -257,7 +257,7 @@ Console Windows é cp1252 e renderiza mojibake ("Verifica��o") — **NUNCA d
 print/console**; conferir por codepoint (`tp.count('\ufffd')`). Caso real: U+FFFD "no subjects.json"
 falsificado em 2026-08-06 (era artefato de console; arquivo íntegro).
 
-### SubjectProfile — `subjects.json` (`%APPDATA%/GPTTutorGenerator/`, dict nome→profile)
+### SubjectProfile — `C:/Users/Humberto/AppData/Roaming/GPTTutorGenerator/subjects.json` (dict nome→profile)
 
 | campo | tipo | formato real (exemplo colhido) |
 |---|---|---|
@@ -267,7 +267,7 @@ falsificado em 2026-08-06 (era artefato de console; arquivo íntegro).
 | `schedule` | str | `"Seg/Qua 19:15-20:45"` |
 | `semester` | str | `"6"` |
 | `turma` | str | pode ser `""` |
-| `repo_root`/`stash_folder` | str | path com barras NORMAIS (`C:/Users/...`) |
+| `repo_root`/`stash_folder` | str | path com barras NORMAIS (`C:/Users/<usuario>/...`) |
 | `teaching_plan` | str | markdown UTF-8 acentuado (bullets `- N.N.N. Título`) |
 | `syllabus` | str | tabela markdown importada do SARC (`\| # \| Dia \| Data \| Hora \| Descrição \| Atividade \| Recursos`) |
 | `feature_flags` | dict[str,bool] | `{"use_anchor_engine": true, "use_llm_voter": true}`; legado: `use_anchor_placement` |
@@ -295,12 +295,12 @@ falsificado em 2026-08-06 (era artefato de console; arquivo íntegro).
 | `posting_date`/`posting_date_created` | str | `"YYYY-MM-DD"` |
 | `source_path` | str | path Windows absoluto com `\`; `raw_target` = relativo ao repo |
 
-### Timeline index — `course/.timeline_index.json` (`{version, blocks[]}`)
+### Timeline index — `<repo-tutor>/course/.timeline_index.json` (`{version, blocks[]}`)
 
 | campo | tipo | formato real / armadilha |
 |---|---|---|
 | `id` | str | `"bloco-NN"` POSICIONAL — cascateia em split; nunca usar como ref durável |
-| `block_uuid` | str | UUID durável (ledger `.block_identity.json`) |
+| `block_uuid` | str | UUID durável (ledger `<repo-tutor>/course/.block_identity.json`) |
 | `kind` | str | enum fechado `BlockKind` (`kinds.py:17-32`): class, assessment, review, holiday, suspended, makeup, academic_event, office_hours, workshop, deliverable, planning, reserved, results, overview, unknown |
 | `period_start`/`period_end` | str | `"YYYY-MM-DD"` (string, não datetime) |
 | `period_label` | str | display `"1 dia · 06/05/2026"` — separador é U+00B7 |
@@ -310,7 +310,7 @@ falsificado em 2026-08-06 (era artefato de console; arquivo íntegro).
 | `sessions[]` | list[dict] | `{id: "bloco-NN-sessao-YYYY-MM-DD", date: ISO str, kind, label: str minúsculo, signals: list}` |
 | `topic_text` | str | agregado lexical do bloco (pode absorver conteúdo de vizinho — caso deadlock SO) |
 
-### Card-block map — `course/.card_block_map.json` (dict card→dados)
+### Card-block map — `<repo-tutor>/course/.card_block_map.json` (dict card→dados)
 
 - **Chave** = nome REAL da seção Moodle, acentuado: `"TDE Trabalho Discente Efetivo"`.
 - `block_ids` list (pode `[]`); `source` str (`labels`/`manual`/`structured`) — card `source=="manual"` NUNCA ganha `assign_dues` (merge_card_block_map).
@@ -330,6 +330,6 @@ falsificado em 2026-08-06 (era artefato de console; arquivo íntegro).
 
 ### SARC (HTML ASP.NET, parse em helpers)
 
-- Tabela `dgAulas`; colunas `# / Dia / Data / Hora / Descrição / Atividade / Recursos`; data `DD/MM/YYYY`.
+- Tabela `dgAulas`; colunas **# · Dia · Data · Hora · Descrição · Atividade · Recursos**; data no formato **DD/MM/YYYY**.
 - COR da linha carrega kind (exclusão suspension/PS/G2/event vence `Atividade`); `"Evento Acadêmico"` acentuado (`ATIVIDADE_KIND_MAP`).
 - URL da turma: `Export.aspx?id=<GUID>` → `parse_sarc_turma_key` extrai GUID/ano/sem.

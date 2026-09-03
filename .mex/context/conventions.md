@@ -13,7 +13,7 @@ edges:
     condition: when deciding where new logic should live
   - target: context/decisions.md
     condition: when a convention comes from an architectural decision
-last_updated: 2026-08-06
+last_updated: 2026-09-03
 ---
 
 # Conventions
@@ -21,7 +21,7 @@ last_updated: 2026-08-06
 ## Naming
 
 Tests: `tests/test_<topic>.py`. Use existing topic names when adding tests (discover with
-`Glob tests/test_*.py`). Do not introduce a new naming scheme without a specific reason.
+`rg --files tests` and filter for names beginning with `test_`). Do not introduce a new naming scheme without a specific reason.
 Layout/inventário de diretórios: ver `graphify` (dieta MEX 2026-08-06 — contagens envelheciam).
 
 ## Fixtures Copiam Contrato Real (NÃO-NEGOCIÁVEL, 2026-08-06)
@@ -73,7 +73,7 @@ The README flow establishes these project patterns:
 Run this checklist after code or scaffold changes:
 
 - [ ] Manifest facts match the brief or the actual manifest that was read.
-- [ ] Fixture nova copia contrato real da fonte (nome/tipo/formato/encoding) e cita proveniência (ver §Fixtures acima + `institutional.md` §Contratos).
+- [ ] Fixture nova copia contrato real da fonte (nome/tipo/formato/encoding) e cita proveniência (ver §Fixtures acima + `.mex/context/institutional.md` §Contratos).
 - [ ] No undeclared dependency, script, linter, formatter, build backend, or package manager was invented.
 - [ ] Entry points and paths match repository spelling and separators.
 - [ ] New tests follow the `tests/test_<topic>.py` convention.

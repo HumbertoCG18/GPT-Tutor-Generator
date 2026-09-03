@@ -1,7 +1,7 @@
 ---
 name: architecture
 description: APOSENTADO (2026-08-06) — estrutura do código vive no graphify; este stub só preserva os edges do MEX
-last_updated: 2026-08-14
+last_updated: 2026-09-03
 ---
 
 # Architecture — aposentado

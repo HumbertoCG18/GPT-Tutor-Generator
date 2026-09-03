@@ -19,7 +19,7 @@ edges:
     condition: when the failure is in a specific PDF backend
   - target: patterns/ollama-vision.md
     condition: when the build failure occurs during image classification or vision processing
-last_updated: 2026-06-21
+last_updated: 2026-09-03
 ---
 
 # Debug Build Failure

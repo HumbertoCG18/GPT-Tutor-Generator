@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Points to the single source of truth for each kind of fact.
-last_updated: 2026-08-14
+last_updated: 2026-09-03
 ---
 
 # ROUTER.md - Session Bootstrap

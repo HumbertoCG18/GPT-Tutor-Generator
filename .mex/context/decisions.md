@@ -22,7 +22,7 @@ Append-only log. When a decision changes, mark the old entry as superseded and a
 
 ### [backfill 03/09] Sete decisões duráveis que viviam só no tracker (junho–agosto/2026; span-cap refutado entrou junto com "2 aulas = 1 bloco")
 
-Registradas originalmente em `docs/reports/pendencias.md` (hoje `_archive/pendencias-historico-ate-2026-09-02.md`);
+Registradas originalmente em `docs/reports/pendencias.md` (hoje `docs/reports/_archive/pendencias-historico-ate-2026-09-02.md`);
 movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 
 #### Dedup de materiais é por CONTEÚDO (md5), nunca por basename ou id
@@ -45,7 +45,7 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 
 #### `covered_units` é LISTA por avaliação/entrega, regra do plano de cada curso
 **Date:** 2026-08-08 · **Status:** Active
-**Decision:** Cobertura de prova/entrega é um conjunto de unidades vindo do plano (due-window + `.assessment_context.json` + notas do gold como verdade inicial). Regra IA: P1 = u01+u05; P2 CUMULATIVA = u01+u05+u02+u03; PS = tudo. MF/TCC não-cumulativo.
+**Decision:** Cobertura de prova/entrega é um conjunto de unidades vindo do plano (due-window + `<repo-tutor>/course/.assessment_context.json` + notas do gold como verdade inicial). Regra IA: P1 = u01+u05; P2 CUMULATIVA = u01+u05+u02+u03; PS = tudo. MF/TCC não-cumulativo.
 **Reasoning:** Uma prova cobre várias unidades; campo único mentiria.
 **Consequences:** Consumidores (EXAM_INDEX, "o que cai na P2") leem a lista; cumulatividade é por curso, nunca global.
 
@@ -67,7 +67,7 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 
 **Date:** 2026-08-06 (fases 0-5a entregues 07/07..08/05; rollout MF/SO 08/04)
 **Status:** Active
-**Decision:** A atribuição temporal nova vive em `src/builder/routing/motor/` (WindowProviders por curso, Disambiguator, gate D4, voter LLM TIER 3 bounded à janela, TIER 2 janela-de-prazo) e roda por curso atrás de `use_anchor_engine`/`use_llm_voter` em `SubjectProfile.feature_flags`, com precedência sobre o legado `use_anchor_placement`. Escreve SÓ campos `temporal_*` (+ sidecar `material_curation.json` de votos, keyed por md5); `computed_*` e pino manual intocados. Funil legado vive até o cutover F5 (deleção por lista nomeada de símbolos).
+**Decision:** A atribuição temporal nova vive em `src/builder/routing/motor/` (WindowProviders por curso, Disambiguator, gate D4, voter LLM TIER 3 bounded à janela, TIER 2 janela-de-prazo) e roda por curso atrás de `use_anchor_engine`/`use_llm_voter` em `SubjectProfile.feature_flags`, com precedência sobre o legado `use_anchor_placement`. Escreve SÓ campos `temporal_*` (+ sidecar `<repo-tutor>/material_curation.json` de votos, keyed por md5); `computed_*` e pino manual intocados. Funil legado vive até o cutover F5 (deleção por lista nomeada de símbolos).
 **Reasoning:** Cutover exige gold-gated por curso; flags por curso limitam blast-radius e permitem rollback barato (provado 2×: TCC 2026-08-04 e 2026-08-06).
 **Consequences:** Toda medição passa por `audit_gold_freshness` (pré-gate hard=0) + probes fase0-5 byte-idênticos; FAIL de gate = rollback + investigação, NUNCA re-tuning pós-hoc (spec §12); rollback de reprocess DEVE cobrir artefatos gitignored (índice/sidecars) — snapshot só de tracked é rede furada. Supersede na prática o "Anchor Placement Is Additive and Feature-Flagged" abaixo (o campo temporal aditivo e o princípio flag-off-byte-idêntico permanecem; o produtor mudou).
 
@@ -227,7 +227,7 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 
 **Date:** 2026-09-03
 **Status:** Active
-**Decision:** Os 5 cursos encerrados nao se rebuildam (regua de regressao); a posicao do professor (secao, modulo, label datado) entra por backfill de `raw/moodle/contents.json` a cada regeneracao (`backfill_moodle_structure_repo`, hook `_run_moodle_structure_backfill` antes do motor), em campos proprios do entry (`moodle_section_index`, `moodle_module_index`, `moodle_week_label`), consumidos pelo motor so a partir da Fase 3b. Casamento por secao (savename/filename -> `moodle_label` unico -> stem), nada fuzzy: entry sem match fica sem estrutura e e contada, nunca remendada. `description` do label manda sobre `name` (cache stale: ES2 2025 x 2026); label sem data nao ancora; ano != ano do cronograma e ruido.
+**Decision:** Os 5 cursos encerrados nao se rebuildam (regua de regressao); a posicao do professor (secao, modulo, label datado) entra por backfill de `<repo-tutor>/raw/moodle/contents.json` a cada regeneracao (`backfill_moodle_structure_repo`, hook `_run_moodle_structure_backfill` antes do motor), em campos proprios do entry (`moodle_section_index`, `moodle_module_index`, `moodle_week_label`), consumidos pelo motor so a partir da Fase 3b. Casamento por secao (savename/filename -> `moodle_label` unico -> stem), nada fuzzy: entry sem match fica sem estrutura e e contada, nunca remendada. `description` do label manda sobre `name` (cache stale: ES2 2025 x 2026); label sem data nao ancora; ano != ano do cronograma e ruido.
 **Reasoning:** Decisao C (02/09): a verdade estrutural esta no Moodle pela API e o export a apaga; para os encerrados a unica forma de importa-la sem invalidar golds e o backfill. Campos separados (e nao `moodle_label`/`source_section`) porque a semana do label nao existe em lugar nenhum do manifest; `data no nome` e `secao` ja estao em `moodle_label`/`source_section`, nao se duplicam.
 **Consequences:** Gate do item 2 (03/09): sentinela 0 fora dos 3 campos e TODAS as reguas identicas (estrutura sozinha nao muda decisao). Casamento nos encerrados 217/221 entries com card (4 sem match = arquivo renomeado no Moodle depois do stash). Quem consumir os campos (3b) age so em decisao flagada (lei "estrutura nunca sobrepoe decisao confiante").
 
@@ -257,7 +257,7 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 
 **Date:** 2026-09-03
 **Status:** Active
-**Decision:** `text/tokens.py::motor_tokens` e o tokenizador UNICO do motor; `disambiguator._toks` delega (byte-identico) e os demais 12 tokenizadores migram para ele em C4, um por vez, com sentinela 0. Tokens de 2-3 chars so contam quando o CRONOGRAMA do curso os consagra (`course_short_vocab`: topic_text + labels de sessao) e so no RETRY: `disambiguate` decide com tokens padrao; se flagado, refaz com o vocab curto nos dois lados e adota se muda o bloco ou tira a flag (`disamb-curto`).
+**Decision:** `src/builder/text/tokens.py` expõe `motor_tokens`, o tokenizador UNICO do motor; `disambiguator._toks` delega (byte-identico) e os demais 12 tokenizadores migram para ele em C4, um por vez, com sentinela 0. Tokens de 2-3 chars so contam quando o CRONOGRAMA do curso os consagra (`course_short_vocab`: topic_text + labels de sessao) e so no RETRY: `disambiguate` decide com tokens padrao; se flagado, refaz com o vocab curto nos dois lados e adota se muda o bloco ou tira a flag (`disamb-curto`).
 **Reasoning:** Medido 03/09: +4/0 nos 5 (IA k-NN x4) e +3/0 no holdout CG ("2d" das sessoes de recorte/instanciamento). Vocab curto global seria ruido (MF nao tem "tcp"); aplicar em toda decisao mexeria em confiantes sem gold que prove. No curado o retry preempta 3 votos de LLM no IA com o mesmo bloco — primeiro item que reduz votos/100 sem regredir a curada.
 **Consequences:** Nenhum outro tokenizador muda ate C4. Holdout CG vira regua fixa (`holdout_cg.py`, baseline 30/35).
 
@@ -267,6 +267,6 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 
 **Date:** 2026-09-03
 **Status:** Active
-**Decision:** `sync <curso>` = pull incremental (`moodle_pull`, ja pula o que existe) -> diff estrutural do `contents.json` contra o manifest (novo / alterado por `timemodified` > `posting_date` / sumido) -> import so do delta -> `incremental_build` (extrai o novo, motor em tudo) -> diff de decisoes entry a entry + `SYNC_REPORT.md` -> fila `revisar`. Rulings do user: modulo removido no Moodle SOME do tutor (flag por curso `sync_prune_removed`, default ligada; desligada = marcado e fora dos indices); decisao antiga que se moveu por material novo entra como "mudou, confira"; arquivo alterado re-extrai automatico com contagem e cap; links/videos entram como entries de referencia (atribuicao e C2); CG = primeira sync como rebuild limpo (ids novos, gold re-chaveado por `true_block_uuid`).
+**Decision:** `sync <curso>` = pull incremental (`moodle_pull`, ja pula o que existe) -> diff estrutural do `<repo-tutor>/raw/moodle/contents.json` contra o `<repo-tutor>/manifest.json` (novo / alterado por `timemodified` > `posting_date` / sumido) -> import so do delta -> `incremental_build` (extrai o novo, motor em tudo) -> diff de decisoes entry a entry + `<repo-tutor>/course/SYNC_REPORT.md` -> fila `revisar`. Rulings do user: modulo removido no Moodle SOME do tutor (flag por curso `sync_prune_removed`, default ligada; desligada = marcado e fora dos indices); decisao antiga que se moveu por material novo entra como "mudou, confira"; arquivo alterado re-extrai automatico com contagem e cap; links/videos entram como entries de referencia (atribuicao e C2); CG = primeira sync como rebuild limpo (ids novos, gold re-chaveado por `true_block_uuid`).
 **Reasoning:** Dry-runs de 03/09: FR tem os mesmos 20 arquivos (so o nome de gravacao mudou), LR esta sem o Lab 4 desde 31/08, CG veio do export. Sem uma operacao de sync o tutor de curso em andamento envelhece a cada semana; "rebuild pela API" nao e uma cerimonia, e o delta total.
 **Consequences:** Item 8 do C0 vira a campanha SYNC (S1-S6, handoff 2026-09-03). Sync sem delta tem que ser byte-identico (determinismo). Ids nao mudam por renome de gravacao: o casamento estrutural (basename/savename -> stem -> label) e o que liga entry a modulo.

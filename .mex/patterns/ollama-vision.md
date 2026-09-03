@@ -21,7 +21,7 @@ edges:
     condition: when vision is used after PDF image extraction and before Ollama classification
   - target: patterns/debug-build-failure.md
     condition: when a vision failure causes a build entry to fail
-last_updated: 2026-06-21
+last_updated: 2026-09-03
 ---
 
 # Ollama Vision
