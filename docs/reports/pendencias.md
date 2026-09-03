@@ -42,6 +42,27 @@ semantico na rota temporal foi REFUTADO (199 -> 194); o vocab compilado ja faz a
 Grafo explicito (semana/card/material/bloco/unidade/topico) e a forma natural do dado que a Fase 3 importa — vale como MODELO
 DE DADOS e visualizacao da fase web, nao como regra do motor. Regua de travessia: `scripts/eval_travessia.py` (feita).
 
+## REGUA DE TRAVESSIA — baseline "antes" (02/09 noite)
+
+Gold proposto-claude (revisar): `travessia_gt_IA.csv` e `travessia_gt_FR.csv`, 15 perguntas cada em 3 estilos (5 estruturadas,
+5 ambiguas, 5 malformadas — o aluno cansado pergunta pior). Cardapios: `travessia_cardapio_{IA,FR}.txt`. Harness
+`scripts/eval_travessia.py` (LLM so para medir, cache em `_travessia_cache/`; casamento da escolha por linha do FILE_MAP,
+"linha N" e tokens — o tutor cita a descricao da linha, nao o Titulo).
+
+| curso | modo | hit@1 | hit@3 | bloco | estruturada | ambigua | malformada |
+|---|---|---|---|---|---|---|---|
+| FR (20 mat.) | sem-llm | 9/15 | 11/15 | 5/6 | 4/5 | 2/5 | 3/5 |
+| FR | **LLM** | **15/15** | 15/15 | 6/6 | 5/5 | 5/5 | 5/5 |
+| IA (59 mat.) | sem-llm | 10/15 | 12/15 | 6/8 | 4/5 | 1/5 | 5/5 |
+| IA | **LLM** | **9/15** | 10/15 | 8/8 | 4/5 | 2/5 | 3/5 |
+
+Leitura: com 20 materiais os indices bastam (15/15). Com 59, o LLM lendo indices e PIOR que o piso por tokens (9 x 10): (a)
+prefere DECK a notebook quando o aluno pede "exemplo pratico"/"codigo" (3 dos 6 erros); (b) nao acha o deck de metricas por
+"acuracia/precisao/recall" (escolhe pelo periodo "abordagem supervisionada"); (c) "o que cai na P2?" responde com o
+CRONOGRAMA/SYLLABUS — nao e material; o gold tem que dizer se vale. Bloco: 8/8 e 6/6 — o "quando" o tutor acerta.
+Consequencia para a fase web/grafo: o problema de travessia medido NAO e "achar por semantica", e "escolher o TIPO certo de
+material (codigo x deck) e ler colunas do FILE_MAP" — informacao que ja esta no indice. Rerodar depois da Fase 3 = o "depois".
+
 ## FASE 1b — vocabulario compilado por LLM + MEDICAO "o que falta para 200" (2026-09-02, sessao 3, parte 2)
 
 **Entregue (`86fc9b3`):** `src/builder/core/vocabulary_compile.py` (`compile_course_vocabulary`, 1 chamada por unidade COM

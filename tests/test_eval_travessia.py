@@ -107,3 +107,41 @@ def test_casar_escolha_fuzzy_por_tokens():
     assert casar_escolha("Classificação com o algoritmo k-Nearest Neighbors (k-NN) usando o dataset Iris", ents) == "algoritmo-de-classificacao-k-nn"
     assert casar_escolha("Análise Exploratória de Dados - Exemplo 1.ipynb", ents) == "analise-exploratoria-de-dados-exemplo-1"
     assert casar_escolha("Teoria dos grafos planares", ents) == ""                                                # < limiar: nada
+
+
+# --- estilo da pergunta (estruturada / ambigua / malformada): o aluno cansado pergunta pior ---
+
+def test_resumo_por_estilo():
+    from scripts.eval_travessia import resumo_por_estilo
+    linhas = [{"estilo": "estruturada", "hit1": True, "hit3": True}, {"estilo": "estruturada", "hit1": False, "hit3": True},
+              {"estilo": "malformada", "hit1": False, "hit3": False}, {"pulada": "cap", "estilo": "ambigua"}]
+    assert resumo_por_estilo(linhas) == {"estruturada": {"n": 2, "hit1": 1, "hit3": 2}, "malformada": {"n": 1, "hit1": 0, "hit3": 0}}
+
+
+# --- o tutor cita a LINHA do FILE_MAP (descricao/"linha N"), nao o Titulo -------------------
+
+FILEMAP = """| # | Título | Categoria | Quando abrir | Prioridade | Markdown | Seções | Unidade | Subtópico | Confiança | Período |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 18 | tcp_chat_c | codigo-professor | Chat cliente-servidor TCP em C | alta | ok | main.c | u02 | sockets | Alta | 1 dia |
+|  | ↳ rastreabilidade |  | raw: `raw/code/tcp-chat-c.zip`; tags: `x` |  |  |  |  |  |  |  |
+| 19 | udp_example_c | codigo-professor | Comunicação Cliente-Servidor com Sockets UDP em C | alta | ok | client.c server.c | u02 | sockets | Alta | 1 dia |
+|  | ↳ rastreabilidade |  | raw: `raw/code/udp-example-c.zip`; tags: `x` |  |  |  |  |  |  |  |
+"""
+ENTS_FM = [{"id": "tcp-chat-c", "title": "tcp_chat_c", "category": "codigo-professor", "raw_target": "raw/code/tcp-chat-c.zip"},
+           {"id": "udp-example-c", "title": "udp_example_c", "category": "codigo-professor", "raw_target": "raw/code/udp-example-c.zip"}]
+
+
+def test_filemap_rows_mapeia_numero_e_texto_da_linha_para_entry(tmp_path):
+    from scripts.eval_travessia import filemap_rows
+    (tmp_path / "course").mkdir(); (tmp_path / "course" / "FILE_MAP.md").write_text(FILEMAP, encoding="utf-8")
+    rows = filemap_rows(tmp_path, ENTS_FM)
+    assert rows["udp-example-c"]["num"] == 19 and "Sockets UDP em C" in rows["udp-example-c"]["texto"]
+
+
+def test_casar_escolha_usa_linha_do_filemap_e_referencia_linha_n():
+    from scripts.eval_travessia import casar_escolha
+    rows = {"udp-example-c": {"num": 19, "texto": "udp_example_c codigo-professor Comunicação Cliente-Servidor com Sockets UDP em C client.c server.c"},
+            "tcp-chat-c": {"num": 18, "texto": "tcp_chat_c codigo-professor Chat cliente-servidor TCP em C main.c"}}
+    assert casar_escolha("Comunicação Cliente-Servidor com Sockets UDP em C", ENTS_FM, rows) == "udp-example-c"
+    assert casar_escolha("linha 18 do FILE_MAP", ENTS_FM, rows) == "tcp-chat-c"
+    assert casar_escolha("#19", ENTS_FM, rows) == "udp-example-c"

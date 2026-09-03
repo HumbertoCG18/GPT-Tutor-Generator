@@ -1,0 +1,304 @@
+{
+ "curso": "FR",
+ "modo": "sem-llm",
+ "n": 15,
+ "hit1": 9,
+ "hit3": 11,
+ "bloco_ok": 5,
+ "bloco_n": 6,
+ "chamadas": 0,
+ "linhas": [
+  {
+   "pergunta": "Quais são as camadas do modelo OSI e o que cada uma faz?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "02-modelos-de-referencia"
+   ],
+   "escolhido": [
+    "02-modelos-de-referencia",
+    "unidade1-exercicios"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-02",
+   "bloco_pred": "bloco-02",
+   "bloco_ok": true,
+   "porque": ""
+  },
+  {
+   "pergunta": "Como funciona a resolução de nomes no DNS, passo a passo, do cliente até o servidor autoritativo?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "05-protocolo-dns"
+   ],
+   "escolhido": [
+    "05-protocolo-dns",
+    "06-protocolo-dhcp",
+    "unidade2-exercicios-dhcp"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-03",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": true,
+   "porque": ""
+  },
+  {
+   "pergunta": "Tem algum exemplo de código de cliente e servidor UDP em C que eu possa estudar?",
+   "tipo": "codigo",
+   "estilo": "estruturada",
+   "esperado": [
+    "udp-example-c"
+   ],
+   "escolhido": [
+    "udp-example-c",
+    "udp-example-java",
+    "tcp-chat-c"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-06",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "Como o DHCP atribui um endereço IP para uma máquina nova na rede? Quero entender o DORA.",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "06-protocolo-dhcp"
+   ],
+   "escolhido": [
+    "05-protocolo-dns",
+    "06-protocolo-dhcp",
+    "unidade2-exercicios-dhcp"
+   ],
+   "hit1": false,
+   "hit3": true,
+   "bloco_gold": "bloco-03",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": true,
+   "porque": ""
+  },
+  {
+   "pergunta": "Quais são os protocolos de e-mail vistos em aula e qual a diferença entre POP3 e IMAP?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "07-protocolos-de-e-mail"
+   ],
+   "escolhido": [
+    "07-protocolos-de-e-mail",
+    "04-protocolo-http",
+    "lista-de-exercicios-1-camada-de-aplicacao"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-05",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": true,
+   "porque": ""
+  },
+  {
+   "pergunta": "me explica melhor os protocolos",
+   "tipo": "conteudo",
+   "estilo": "ambigua",
+   "esperado": [
+    "01-protocolos-de-rede",
+    "02-modelos-de-referencia",
+    "04-camada-de-aplicacao"
+   ],
+   "escolhido": [
+    "01-protocolos-de-rede",
+    "04-protocolo-http",
+    "05-protocolo-dns"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-01",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "tem exercício pra treinar a camada de aplicação?",
+   "tipo": "exercicio",
+   "estilo": "ambigua",
+   "esperado": [
+    "lista-de-exercicios-1-camada-de-aplicacao",
+    "unidade2-exercicios-dhcp",
+    "unidade2-exercicios-dns",
+    "unidade2-exercicios-http"
+   ],
+   "escolhido": [
+    "04-camada-de-aplicacao",
+    "04-protocolo-http",
+    "05-protocolo-dns"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "como que eu faço uma aplicação de rede?",
+   "tipo": "codigo",
+   "estilo": "ambigua",
+   "esperado": [
+    "08-desenvolvimento-de-aplicacoes",
+    "tcp-chat-c",
+    "udp-example-c",
+    "udp-example-java"
+   ],
+   "escolhido": [
+    "01-protocolos-de-rede",
+    "04-camada-de-aplicacao",
+    "04-protocolo-http"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-01",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "que tipos de rede existem?",
+   "tipo": "conteudo",
+   "estilo": "ambigua",
+   "esperado": [
+    "01-protocolos-de-rede",
+    "03-tipos-de-redes"
+   ],
+   "escolhido": [
+    "01-protocolos-de-rede",
+    "03-tipos-de-redes"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-02",
+   "bloco_pred": "bloco-01",
+   "bloco_ok": false,
+   "porque": ""
+  },
+  {
+   "pergunta": "o que cai na primeira prova?",
+   "tipo": "prova",
+   "estilo": "ambigua",
+   "esperado": [
+    "plano-de-ensino-20262",
+    "unidade1-exercicios"
+   ],
+   "escolhido": [
+    "02-poster-network-protocols"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-02",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "dns oq é",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "05-protocolo-dns"
+   ],
+   "escolhido": [
+    "05-protocolo-dns",
+    "06-protocolo-dhcp",
+    "unidade2-exercicios-dhcp"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "http exercicio",
+   "tipo": "exercicio",
+   "estilo": "malformada",
+   "esperado": [
+    "lista-de-exercicios-1-camada-de-aplicacao",
+    "unidade2-exercicios-http"
+   ],
+   "escolhido": [
+    "04-protocolo-http",
+    "07-protocolos-de-e-mail",
+    "lista-de-exercicios-1-camada-de-aplicacao"
+   ],
+   "hit1": false,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "socket tcp c exemplo?",
+   "tipo": "codigo",
+   "estilo": "malformada",
+   "esperado": [
+    "tcp-chat-c",
+    "tcp-example"
+   ],
+   "escolhido": [
+    "tcp-chat-c",
+    "tcp-example"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-22",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "osi tcp ip diferença",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "02-modelos-de-referencia"
+   ],
+   "escolhido": [
+    "02-modelos-de-referencia",
+    "tcp-chat-c",
+    "tcp-example"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-02",
+   "bloco_pred": "bloco-02",
+   "bloco_ok": true,
+   "porque": ""
+  },
+  {
+   "pergunta": "dhcp lista",
+   "tipo": "exercicio",
+   "estilo": "malformada",
+   "esperado": [
+    "unidade2-exercicios-dhcp"
+   ],
+   "escolhido": [
+    "05-protocolo-dns",
+    "06-protocolo-dhcp",
+    "lista-de-exercicios-1-camada-de-aplicacao"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": null,
+   "porque": ""
+  }
+ ]
+}

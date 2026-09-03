@@ -100,21 +100,72 @@ def _toks2(t: str) -> set:
     return {x for x in _norm(t).split() if len(x) >= 2 and x not in _STOP}
 
 
-def casar_escolha(pick: str, entries: list) -> str:
-    """Escolha do LLM -> 1 id. Exato/contido primeiro (casar); senao o material com mais tokens em comum
-    com titulo+label (>= 2 tokens), desempate pelo titulo mais curto e pelo id. '' = nada plausivel."""
+_LINHA_RE = re.compile(r"(?:linha|#|item)\s*(\d{1,3})\b", re.I)
+
+
+def filemap_rows(repo: Path, entries: list) -> dict:
+    """{entry_id: {"num": N, "texto": linha inteira do FILE_MAP}} — o tutor cita a LINHA (descricao, 'linha N'),
+    nao o Titulo. Linha de dados = '| N | Titulo | ...'; a de rastreabilidade seguinte traz o raw, que casa o entry."""
+    p = Path(repo) / "course" / "FILE_MAP.md"
+    if not p.is_file():
+        return {}
+    by_raw = {str(e.get("raw_target") or "").lower(): str(e.get("id") or "") for e in entries if e.get("raw_target")}
+    by_title = {_norm(e.get("title")): str(e.get("id") or "") for e in entries if e.get("title")}
+    out: dict = {}
+    pend = None
+    for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
+        m = re.match(r"^\|\s*(\d+)\s*\|(.*)$", line)
+        if m:
+            cells = [c.strip() for c in m.group(2).split("|")]
+            pend = {"num": int(m.group(1)), "texto": " ".join(cells), "titulo": cells[0] if cells else ""}
+            continue
+        if pend and "rastreabilidade" in line:
+            raw = re.search(r"raw:\s*`([^`]+)`", line)
+            eid = by_raw.get(str(raw.group(1)).lower(), "") if raw else ""
+            if not eid:
+                eid = by_title.get(_norm(pend["titulo"]), "")
+            if eid:
+                out[eid] = {"num": pend["num"], "texto": pend["texto"]}
+            pend = None
+    return out
+
+
+def casar_escolha(pick: str, entries: list, rows: Optional[dict] = None) -> str:
+    """Escolha do LLM -> 1 id. 'linha N'/'#N' do FILE_MAP -> entry da linha; senao exato/contido (casar);
+    senao o material com mais tokens em comum com titulo+label+linha do FILE_MAP (>= 2 tokens), desempate
+    pelo titulo mais curto e pelo id. '' = nada plausivel."""
+    rows = rows or {}
+    m = _LINHA_RE.search(str(pick or ""))
+    if m:
+        n = int(m.group(1))
+        for eid, r in rows.items():
+            if r.get("num") == n:
+                return eid
     exato = sorted(casar(pick, entries))
     if exato:
         return exato[0]
     q = _toks2(pick)
     best = []
     for e in entries:
-        hay = _toks2(str(e.get("title") or "") + " " + _label(e))
+        eid = str(e.get("id") or "")
+        hay = _toks2(str(e.get("title") or "") + " " + _label(e) + " " + str((rows.get(eid) or {}).get("texto") or ""))
         s = len(q & hay)
         if s >= 2:
-            best.append((-s, len(str(e.get("title") or "")), str(e.get("id") or "")))
+            best.append((-s, len(str(e.get("title") or "")), eid))
     best.sort()
     return best[0][2] if best else ""
+
+
+def resumo_por_estilo(linhas: list) -> dict:
+    """{estilo: {n, hit1, hit3}} sobre as linhas medidas (puladas fora). Estilo = estruturada | ambigua | malformada."""
+    out: dict = {}
+    for l in linhas:
+        if "pulada" in l:
+            continue
+        est = str(l.get("estilo") or "") or "(sem estilo)"
+        d = out.setdefault(est, {"n": 0, "hit1": 0, "hit3": 0})
+        d["n"] += 1; d["hit1"] += bool(l.get("hit1")); d["hit3"] += bool(l.get("hit3"))
+    return out
 
 
 def pontuar(esperado_ids: set, picks: list) -> tuple:
@@ -171,10 +222,10 @@ def load_gold(path: Path) -> list:
     return [r for r in rows if str(r.get("pergunta") or "").strip() and not str(r.get("pergunta")).startswith("#")]
 
 
-def _picks_to_ids(resp: Resposta, entries: list) -> list:
+def _picks_to_ids(resp: Resposta, entries: list, rows: Optional[dict] = None) -> list:
     ids: list = []
     for a in resp.arquivos or []:
-        eid = casar_escolha(a, entries)
+        eid = casar_escolha(a, entries, rows)
         if eid and eid not in ids:
             ids.append(eid)
     return ids[:3]
@@ -183,6 +234,7 @@ def _picks_to_ids(resp: Resposta, entries: list) -> list:
 def rodar(sig: str, repo: Path, gold: list, *, client=None, cache_path: Optional[Path] = None, cap: int = 60) -> dict:
     entries = _materiais(repo)
     u2d = _bloco_display(repo)
+    rows = filemap_rows(repo, entries)
     modo = "llm" if client is not None else "sem-llm"
     contexto = contexto_navegacao(repo) if client is not None else ""
     cache: dict = {}
@@ -199,6 +251,7 @@ def rodar(sig: str, repo: Path, gold: list, *, client=None, cache_path: Optional
             picks = escolher_sem_llm(pergunta, entries)
             bloco_llm = ""
             porque = ""
+            escolhido_raw = []
         else:
             k = chave_cache(sig, pergunta, contexto)
             if k in cache:
@@ -215,9 +268,10 @@ def rodar(sig: str, repo: Path, gold: list, *, client=None, cache_path: Optional
                     Path(cache_path).parent.mkdir(parents=True, exist_ok=True)
                     Path(cache_path).write_text(json.dumps(cache, ensure_ascii=False, indent=1), encoding="utf-8")
             resp = Resposta(**raw)
-            picks = _picks_to_ids(resp, entries)
+            picks = _picks_to_ids(resp, entries, rows)
             bloco_llm = str(resp.bloco or "")
             porque = str(resp.porque or "")
+            escolhido_raw = list(resp.arquivos or [])
         h1, h3 = pontuar(esperado, picks)
         hit1 += h1; hit3 += h3
         # bloco: o que o LLM disse; senao, o bloco do 1o material escolhido
@@ -231,8 +285,9 @@ def rodar(sig: str, repo: Path, gold: list, *, client=None, cache_path: Optional
         b_ok = None
         if gold_bloco:
             bloco_n += 1; b_ok = bloco_pred == gold_bloco; bloco_ok += bool(b_ok)
-        linhas.append({"pergunta": pergunta, "tipo": r.get("tipo", ""), "esperado": sorted(esperado), "escolhido": picks,
-                       "hit1": h1, "hit3": h3, "bloco_gold": gold_bloco, "bloco_pred": bloco_pred, "bloco_ok": b_ok, "porque": porque})
+        linhas.append({"pergunta": pergunta, "tipo": r.get("tipo", ""), "estilo": r.get("estilo", ""), "esperado": sorted(esperado), "escolhido": picks,
+                       "hit1": h1, "hit3": h3, "bloco_gold": gold_bloco, "bloco_pred": bloco_pred, "bloco_ok": b_ok, "porque": porque,
+                       "escolhido_raw": escolhido_raw})
     n = sum(1 for l in linhas if "pulada" not in l)
     return {"curso": sig, "modo": modo, "n": n, "hit1": hit1, "hit3": hit3, "bloco_ok": bloco_ok, "bloco_n": bloco_n,
             "chamadas": chamadas, "linhas": linhas}
@@ -283,8 +338,12 @@ def main(argv: list) -> int:
         if "pulada" in l:
             print(f"  (pulada: cap) {l['pergunta'][:60]}"); continue
         mark = "OK " if l["hit1"] else ("ok3" if l["hit3"] else "ERR")
-        print(f"  {mark} {l['pergunta'][:58]:58} esperado={','.join(l['esperado'])[:40]:40} escolhido={','.join(l['escolhido'])[:50]}"
+        print(f"  {mark} [{str(l.get('estilo') or '-')[:5]:5}] {l['pergunta'][:50]:50} esperado={','.join(l['esperado'])[:36]:36} escolhido={','.join(l['escolhido'])[:46]}"
               + (f"  bloco {l['bloco_pred'] or '-'}/{l['bloco_gold']}" if l["bloco_gold"] else ""))
+        if not l["hit3"] and l.get("escolhido_raw"):
+            print(f"       LLM disse: {' | '.join(str(a)[:70] for a in l['escolhido_raw'][:3])}  — {str(l.get('porque') or '')[:110]}")
+    for est, d in resumo_por_estilo(r["linhas"]).items():
+        print(f"  por estilo {est:12} hit@1={d['hit1']}/{d['n']}  hit@3={d['hit3']}/{d['n']}")
     print(f"resultado: {out}")
     return 0
 

@@ -1,6 +1,17 @@
-pergunta;esperado;bloco;tipo;nota
-# Escreva uma pergunta de aluno por linha. 'esperado' = ids OU trechos do titulo/raw, separados por | (qualquer um vale).
-# 'bloco' e opcional (bloco-NN do CRONOGRAMA_DETALHADO). Linhas que comecam com # sao ignoradas.
-# Exemplos (APAGUE ou substitua):
-como funciona o algoritmo k-NN para classificar?;k-NN;;conteudo;exemplo — materia dada em aula
-tem algum codigo de exemplo de analise exploratoria?;analise exploratoria;;codigo;exemplo — notebook do professor
+pergunta;esperado;bloco;tipo;estilo;nota
+# gold proposto-claude 02/09 (revisar). esperado = ids do cardapio, | = qualquer um vale. estilo = estruturada | ambigua | malformada
+Quais são as camadas do modelo OSI e o que cada uma faz?;02-modelos-de-referencia;bloco-02;conteudo;estruturada;
+Como funciona a resolução de nomes no DNS, passo a passo, do cliente até o servidor autoritativo?;05-protocolo-dns;bloco-03;conteudo;estruturada;
+Tem algum exemplo de código de cliente e servidor UDP em C que eu possa estudar?;udp-example-c;;codigo;estruturada;
+Como o DHCP atribui um endereço IP para uma máquina nova na rede? Quero entender o DORA.;06-protocolo-dhcp;bloco-03;conteudo;estruturada;
+Quais são os protocolos de e-mail vistos em aula e qual a diferença entre POP3 e IMAP?;07-protocolos-de-e-mail;bloco-05;conteudo;estruturada;
+me explica melhor os protocolos;01-protocolos-de-rede|04-camada-de-aplicacao|02-modelos-de-referencia;;conteudo;ambigua;vaga: qualquer deck sobre protocolos vale
+tem exercício pra treinar a camada de aplicação?;lista-de-exercicios-1-camada-de-aplicacao|unidade2-exercicios-http|unidade2-exercicios-dns|unidade2-exercicios-dhcp;;exercicio;ambigua;
+como que eu faço uma aplicação de rede?;08-desenvolvimento-de-aplicacoes|tcp-chat-c|udp-example-java|udp-example-c;;codigo;ambigua;
+que tipos de rede existem?;03-tipos-de-redes|01-protocolos-de-rede;bloco-02;conteudo;ambigua;
+o que cai na primeira prova?;plano-de-ensino-20262|unidade1-exercicios;;prova;ambigua;
+dns oq é;05-protocolo-dns;;conteudo;malformada;
+http exercicio;unidade2-exercicios-http|lista-de-exercicios-1-camada-de-aplicacao;;exercicio;malformada;
+socket tcp c exemplo?;tcp-chat-c|tcp-example;;codigo;malformada;
+osi tcp ip diferença;02-modelos-de-referencia;bloco-02;conteudo;malformada;
+dhcp lista;unidade2-exercicios-dhcp;;exercicio;malformada;

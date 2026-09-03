@@ -1,29 +1,128 @@
 {
  "curso": "IA",
  "modo": "sem-llm",
- "n": 2,
- "hit1": 2,
- "hit3": 2,
- "bloco_ok": 0,
- "bloco_n": 0,
+ "n": 15,
+ "hit1": 10,
+ "hit3": 12,
+ "bloco_ok": 6,
+ "bloco_n": 8,
  "chamadas": 0,
  "linhas": [
   {
-   "pergunta": "como funciona o algoritmo k-NN para classificar?",
+   "pergunta": "Como funciona o algoritmo k-NN para classificação e como eu escolho o valor de k?",
    "tipo": "conteudo",
+   "estilo": "estruturada",
    "esperado": [
-    "algoritmo-de-classificacao-k-nn",
-    "artigo-usando-k-nn-em-texto",
-    "exemplo-2-k-nn-com-iriscsv-mais-completo",
-    "exemplo-com-k-nn",
-    "exemplo-de-programa-com-k-nn-em-java",
-    "k-nn-para-classificacao-exemplo-cardio",
-    "k-nn-para-regressao-exemplo-imc"
+    "algoritmo-de-classificacao-k-nn"
    ],
    "escolhido": [
     "algoritmo-de-classificacao-k-nn",
-    "algoritmo-dijkstra",
+    "k-nn-para-classificacao-exemplo-cardio",
+    "algoritmo-dijkstra"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-05",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": true,
+   "porque": ""
+  },
+  {
+   "pergunta": "Qual a diferença entre acurácia, precisão, recall e F1, e quando devo olhar cada uma?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "como-analisar-resultados-acc-pr-re-e-f1"
+   ],
+   "escolhido": [],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "bloco-05",
+   "bloco_pred": "",
+   "bloco_ok": false,
+   "porque": ""
+  },
+  {
+   "pergunta": "Como uma rede Perceptron aprende os pesos e por que ela não consegue resolver o XOR?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "exercicio-2-solucao-com-rede-perceptron-atualizado",
+    "rede-perceptron",
+    "rede-perceptron-classificacao-de-cliente",
+    "rede-perceptron-classificacao-planta-iris",
+    "rede-perceptron-e-equacao-de-reta",
+    "rede-perceptron-exemplo-atualizado",
+    "rede-perceptron-or-em-python",
+    "rede-perceptron-reconhecendo-letras",
+    "xor-backpropagation-em-python"
+   ],
+   "escolhido": [
+    "exercicio-2-solucao-com-rede-perceptron-atualizado",
+    "rede-perceptron",
+    "rede-perceptron-classificacao-de-cliente"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-05",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": true,
+   "porque": ""
+  },
+  {
+   "pergunta": "Quais são as etapas de um algoritmo genético (seleção, cruzamento e mutação) e como cada uma funciona?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
     "algoritmo-genetico"
+   ],
+   "escolhido": [
+    "algoritmo-genetico",
+    "algoritmo-de-classificacao-k-nn",
+    "algoritmo-dijkstra"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-13",
+   "bloco_pred": "bloco-13",
+   "bloco_ok": true,
+   "porque": ""
+  },
+  {
+   "pergunta": "Como funciona o agrupamento k-means e como escolher o número de clusters?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "agrupamento-usando-k-means-exemplo-1-ipynb",
+    "aula-sobre-agrupamento-parte-1-particional"
+   ],
+   "escolhido": [
+    "agrupamento-usando-k-means-exemplo-1-ipynb",
+    "agrupamento-usando-k-means-exemplo-2-ipynb",
+    "agrupamento-hierarquico-exemplo-1"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-07",
+   "bloco_pred": "bloco-07",
+   "bloco_ok": true,
+   "porque": ""
+  },
+  {
+   "pergunta": "me dá um exemplo prático de classificação",
+   "tipo": "codigo",
+   "estilo": "ambigua",
+   "esperado": [
+    "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+    "exemplo-2-k-nn-com-iriscsv-mais-completo",
+    "k-nn-para-classificacao-exemplo-cardio",
+    "mlp-classificacao-iris-atualizado",
+    "rede-perceptron-classificacao-planta-iris"
+   ],
+   "escolhido": [
+    "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+    "exemplo-complementar-classificacao-com-arvores-de-decisao",
+    "k-nn-para-classificacao-exemplo-cardio"
    ],
    "hit1": true,
    "hit3": true,
@@ -33,21 +132,186 @@
    "porque": ""
   },
   {
-   "pergunta": "tem algum codigo de exemplo de analise exploratoria?",
-   "tipo": "codigo",
+   "pergunta": "como eu preparo os dados antes de treinar?",
+   "tipo": "conteudo",
+   "estilo": "ambigua",
    "esperado": [
+    "analise-exploratoria-de-dados-exemplo-1",
+    "analise-exploratoria-dos-dados-exemplo-2",
+    "caracteristicas-dos-dados"
+   ],
+   "escolhido": [
+    "algoritmo-de-classificacao-k-nn",
     "analise-exploratoria-de-dados-exemplo-1",
     "analise-exploratoria-dos-dados-exemplo-2"
    ],
+   "hit1": false,
+   "hit3": true,
+   "bloco_gold": "bloco-04",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": false,
+   "porque": ""
+  },
+  {
+   "pergunta": "tem algum código de rede neural pra eu me basear?",
+   "tipo": "codigo",
+   "estilo": "ambigua",
+   "esperado": [
+    "mlp-classificacao-iris-atualizado",
+    "mlp-regressao-cardio",
+    "mlp-xoripynb",
+    "rede-perceptron-exemplo-atualizado",
+    "xor-backpropagation-em-python"
+   ],
    "escolhido": [
-    "analise-exploratoria-de-dados-exemplo-1",
-    "analise-exploratoria-dos-dados-exemplo-2",
-    "agrupamento-hierarquico-exemplo-1"
+    "exercicio-2-solucao-com-rede-perceptron-atualizado",
+    "rede-perceptron-classificacao-de-cliente",
+    "rede-perceptron-classificacao-planta-iris"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "como eu resolvo um problema de busca?",
+   "tipo": "conteudo",
+   "estilo": "ambigua",
+   "esperado": [
+    "algoritmo-dijkstra",
+    "algoritmo-genetico",
+    "hill-climbing-e-simulated-annealing",
+    "introducao-a-busca-informada"
+   ],
+   "escolhido": [
+    "ag-feito-em-aula-pelo-luca",
+    "algoritmo-dijkstra",
+    "algoritmo-genetico"
+   ],
+   "hit1": false,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-13",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "o que cai na P2?",
+   "tipo": "prova",
+   "estilo": "ambigua",
+   "esperado": [
+    "lista-de-exercicios-i",
+    "p2-202401",
+    "p2-202402"
+   ],
+   "escolhido": [
+    "o-que-é-inteligência-artificial-ia-oracle-brasil-43437f"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-01",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "knn exemplo java",
+   "tipo": "codigo",
+   "estilo": "malformada",
+   "esperado": [
+    "exemplo-de-programa-com-k-nn-em-java"
+   ],
+   "escolhido": [
+    "exemplo-de-programa-com-k-nn-em-java",
+    "agrupamento-hierarquico-exemplo-1",
+    "agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "",
-   "bloco_pred": "bloco-04",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "arvore decisao regressao",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "arvores-de-decisao",
+    "exemplo-1-arvores-de-decisao-classificacao-planta-iris",
+    "exemplo-2-arvores-de-decisao-regressao-diabetes",
+    "exemplo-complementar-classificacao-com-arvores-de-decisao"
+   ],
+   "escolhido": [
+    "exemplo-2-arvores-de-decisao-regressao-diabetes",
+    "arvores-de-decisao",
+    "exemplo-1-arvores-de-decisao-classificacao-planta-iris"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": null,
+   "porque": ""
+  },
+  {
+   "pergunta": "minimax oq é",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "implementacaominimax",
+    "minimax-teoria"
+   ],
+   "escolhido": [
+    "minimax-teoria"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-16",
+   "bloco_pred": "bloco-16",
+   "bloco_ok": true,
+   "porque": ""
+  },
+  {
+   "pergunta": "kmeans vs hierarquico",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "agrupamento-hierarquico-exemplo-1",
+    "aula-sobre-agrupamento-parte-1-particional",
+    "aula-sobre-agrupamento-parte-2-hierarquico"
+   ],
+   "escolhido": [
+    "agrupamento-hierarquico-exemplo-1",
+    "agrupamento-hierarquico-exemplo-2-use-o-dataset-da-planta-iris",
+    "aula-sobre-agrupamento-parte-2-hierarquico"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-07",
+   "bloco_pred": "bloco-07",
+   "bloco_ok": true,
+   "porque": ""
+  },
+  {
+   "pergunta": "perceptron letras",
+   "tipo": "codigo",
+   "estilo": "malformada",
+   "esperado": [
+    "rede-perceptron-reconhecendo-letras"
+   ],
+   "escolhido": [
+    "rede-perceptron-reconhecendo-letras",
+    "exercicio-2-solucao-com-rede-perceptron-atualizado",
+    "rede-perceptron"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-05",
    "bloco_ok": null,
    "porque": ""
   }

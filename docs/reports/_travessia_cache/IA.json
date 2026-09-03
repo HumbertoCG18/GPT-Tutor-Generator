@@ -14,5 +14,124 @@
   ],
   "bloco": "bloco-04",
   "porque": "Encontrei os codigos de Analise Exploratoria de Dados no Cronograma Detalhado vinculados ao periodo de 11/03/2026 a 16/03/2026, cujo material correspondente do FILE_MAP e do bloco-04."
+ },
+ "479b13be2d82a3f6cda2b05c3d0faefaee669093": {
+  "arquivos": [
+   "Implementação completa de K-Nearest Neighbors (k-NN) para classificação de flores Iris",
+   "Classificação com o algoritmo k-Nearest Neighbors (k-NN) usando o dataset Iris",
+   "Implementação e avaliação do algoritmo K-NN para classificação de doenças cardiovasculares"
+  ],
+  "bloco": "bloco-05",
+  "porque": "O assunto k-NN é coberto no período de Modelos Preditivos (18/03 a 15/04), associado ao bloco-05, onde estão listados vários códigos práticos sobre o algoritmo."
+ },
+ "f00397cd17cab1ceaca3f098379276fef0f81114": {
+  "arquivos": [
+   "Árvores de Decisão",
+   "MLP",
+   "Rede Perceptron"
+  ],
+  "bloco": "bloco-05",
+  "porque": "A aula de Análise de Resultados (abordagem supervisionada) ocorre no período de 18/03 a 15/04, mapeada na rastreabilidade do FILE_MAP como bloco-05 sob os materiais de modelos preditivos."
+ },
+ "95ee62bdfc7c13f2a126616e06b449225d9bf987": {
+  "arquivos": [
+   "Rede Perceptron",
+   "MLP"
+  ],
+  "bloco": "",
+  "porque": "Linhas 6 e 7 do FILE_MAP especificam os materiais teóricos sobre Rede Perceptron e MLP, que tratam de aprendizado de pesos e limitações como o problema do XOR"
+ },
+ "8e864aa720be3d72cf7c2b9771900fac25eba30c": {
+  "arquivos": [
+   "Algoritmo Genetico",
+   "Cap. sobre Algoritmos Geneticos (Lacerda e outros)",
+   "Outros operadores"
+  ],
+  "bloco": "",
+  "porque": "Estes materiais tratam diretamente da fundamentação teórica de Algoritmos Genéticos e de seus operadores de mutação e cruzamento, conforme indicado em suas seções e tags no FILE_MAP."
+ },
+ "48422f9fd5692854d869bca815f7bf2fb9a99381": {
+  "arquivos": [
+   "Aula sobre Agrupamento - parte 1 (particional)"
+  ],
+  "bloco": "",
+  "porque": "O material 'Aula sobre Agrupamento - parte 1 (particional)' aborda diretamente o funcionamento do algoritmo k-means."
+ },
+ "9293ed30c914fded0afb1ea0dea8a0eca57179c3": {
+  "arquivos": [
+   "Árvores de Decisão"
+  ],
+  "bloco": "",
+  "porque": "O material 'Árvores de Decisão' aborda diretamente o aprendizado supervisionado e a aplicação prática do modelo aos dados de teste para classificação."
+ },
+ "defe0fb6c4b0c9d9d0d88a2256c2ebaf38fe843b": {
+  "arquivos": [
+   "Características dos Dados"
+  ],
+  "bloco": "bloco-04",
+  "porque": "O material 'Características dos Dados' é o conteúdo teórico principal para o período de preparação de dados, mapeado no bloco-04 do cronograma."
+ },
+ "a826d833b50e893db9704d89b4550822b2dfb9ef": {
+  "arquivos": [
+   "Rede Perceptron",
+   "MLP"
+  ],
+  "bloco": "bloco-05",
+  "porque": "As linhas 6 e 7 do FILE_MAP referenciam os materiais de Rede Perceptron e MLP associados ao bloco-05."
+ },
+ "4dc4fd0ee198603e86ecd8766d2ac39464ed223a": {
+  "arquivos": [
+   "Introducao a busca informada",
+   "Hill Climbing e Simulated Annealing"
+  ],
+  "bloco": "",
+  "porque": "O arquivo 'Introducao a busca informada' é o material base para o início do aprendizado de algoritmos de busca na Unidade 2."
+ },
+ "e1bf2dcb7a51e1375643965f6750129f07064715": {
+  "arquivos": [
+   "course/CRONOGRAMA_DETALHADO.md",
+   "course/SYLLABUS.md",
+   "course/COURSE_MAP.md"
+  ],
+  "bloco": "",
+  "porque": "O CRONOGRAMA_DETALHADO.md especifica no dia 01/07/2026 quais unidades de aprendizagem sao cobradas no conteudo da P2."
+ },
+ "5097ae26bfdef36352cd55eafccea71fe9dc3aa1": {
+  "arquivos": [
+   "Implementação do Algoritmo k-NN (K-Nearest Neighbors) para Classificação de Dados"
+  ],
+  "bloco": "bloco-05",
+  "porque": "O arquivo 'Implementação do Algoritmo k-NN (K-Nearest Neighbors) para Classificação de Dados' é um exemplo prático em Java ('Exemplo de programa com k-NN (em java).zip') e está associado ao bloco-05 na unidade de Aprendizado de Máquina."
+ },
+ "e3905b50c75c1dd3d5d79423d8b467e19134e494": {
+  "arquivos": [
+   "Árvores de Decisão"
+  ],
+  "bloco": "",
+  "porque": "O arquivo 'Árvores de Decisão' é o material de aula teórico principal listado no FILE_MAP que cobre o assunto de árvores de decisão dentro de modelos preditivos."
+ },
+ "3a41f0749f40b3d9b1f8ce4148cfcdc1d33fb1c0": {
+  "arquivos": [
+   "minimax-teoria",
+   "Implementação do Algoritmo Minimax com Poda Alpha-Beta para Jogo da Velha"
+  ],
+  "bloco": "",
+  "porque": "O arquivo minimax-teoria aborda diretamente o algoritmo e teoria do Minimax para busca adversária na Unidade 2."
+ },
+ "16af050bb3209ee3769d992fb8645ff63bf62453": {
+  "arquivos": [
+   "Aula sobre Agrupamento - parte 1 (particional)",
+   "Aula sobre Agrupamento - parte 2 (hierarquico)"
+  ],
+  "bloco": "",
+  "porque": "As linhas 9 e 10 do FILE_MAP tratam especificamente sobre os conceitos e algoritmos de agrupamento particional (k-Means) e hierárquico."
+ },
+ "132e3ecacf3e05fd6faaca2fc21679fc3eceb2d3": {
+  "arquivos": [
+   "Rede Perceptron",
+   "Rede Perceptron - Reconhecendo Letras.ipynb"
+  ],
+  "bloco": "bloco-05",
+  "porque": "A linha 6 do FILE_MAP indica o material teórico 'Rede Perceptron' sob o bloco-05, e o CRONOGRAMA_DETALHADO associa o código 'Rede Perceptron - Reconhecendo Letras.ipynb' a esse mesmo período de modelos preditivos."
  }
 }

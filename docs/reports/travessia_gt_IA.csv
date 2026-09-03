@@ -1,6 +1,17 @@
-pergunta;esperado;bloco;tipo;nota
-# Escreva uma pergunta de aluno por linha. 'esperado' = ids OU trechos do titulo/raw, separados por | (qualquer um vale).
-# 'bloco' e opcional (bloco-NN do CRONOGRAMA_DETALHADO). Linhas que comecam com # sao ignoradas.
-# Exemplos (APAGUE ou substitua):
-como funciona o algoritmo k-NN para classificar?;k-NN;;conteudo;exemplo — materia dada em aula
-tem algum codigo de exemplo de analise exploratoria?;analise exploratoria;;codigo;exemplo — notebook do professor
+pergunta;esperado;bloco;tipo;estilo;nota
+# gold proposto-claude 02/09 (revisar). esperado = ids do cardapio, | = qualquer um vale. estilo = estruturada | ambigua | malformada
+Como funciona o algoritmo k-NN para classificação e como eu escolho o valor de k?;algoritmo-de-classificacao-k-nn;bloco-05;conteudo;estruturada;
+Qual a diferença entre acurácia, precisão, recall e F1, e quando devo olhar cada uma?;como-analisar-resultados-acc-pr-re-e-f1;bloco-05;conteudo;estruturada;
+Como uma rede Perceptron aprende os pesos e por que ela não consegue resolver o XOR?;rede-perceptron|rede-perceptron-e-equacao-de-reta|xor-backpropagation-em-python;bloco-05;conteudo;estruturada;
+Quais são as etapas de um algoritmo genético (seleção, cruzamento e mutação) e como cada uma funciona?;algoritmo-genetico;bloco-13;conteudo;estruturada;
+Como funciona o agrupamento k-means e como escolher o número de clusters?;aula-sobre-agrupamento-parte-1-particional|agrupamento-usando-k-means-exemplo-1-ipynb;bloco-07;conteudo;estruturada;
+me dá um exemplo prático de classificação;exemplo-1-arvores-de-decisao-classificacao-planta-iris|exemplo-2-k-nn-com-iriscsv-mais-completo|mlp-classificacao-iris-atualizado|rede-perceptron-classificacao-planta-iris|k-nn-para-classificacao-exemplo-cardio;;codigo;ambigua;qualquer notebook de classificacao vale
+como eu preparo os dados antes de treinar?;caracteristicas-dos-dados|analise-exploratoria-de-dados-exemplo-1|analise-exploratoria-dos-dados-exemplo-2;bloco-04;conteudo;ambigua;
+tem algum código de rede neural pra eu me basear?;mlp-classificacao-iris-atualizado|mlp-xoripynb|rede-perceptron-exemplo-atualizado|xor-backpropagation-em-python|mlp-regressao-cardio;;codigo;ambigua;
+como eu resolvo um problema de busca?;introducao-a-busca-informada|algoritmo-dijkstra|hill-climbing-e-simulated-annealing|algoritmo-genetico;;conteudo;ambigua;
+o que cai na P2?;p2-202401|p2-202402|lista-de-exercicios-i;;prova;ambigua;
+knn exemplo java;exemplo-de-programa-com-k-nn-em-java;;codigo;malformada;
+arvore decisao regressao;exemplo-2-arvores-de-decisao-regressao-diabetes|arvores-de-decisao;;conteudo;malformada;
+minimax oq é;minimax-teoria|implementacaominimax;bloco-16;conteudo;malformada;
+kmeans vs hierarquico;aula-sobre-agrupamento-parte-2-hierarquico|aula-sobre-agrupamento-parte-1-particional|agrupamento-hierarquico-exemplo-1;bloco-07;conteudo;malformada;
+perceptron letras;rede-perceptron-reconhecendo-letras;;codigo;malformada;
