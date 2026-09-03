@@ -88,6 +88,8 @@ Run this checklist after code or scaffold changes:
 
 ## Fila de campanhas (user, 2026-09-03)
 
-UMA campanha aberta, UMA proxima, o resto ESTACIONADO com uma linha "pronto quando" no handoff vivo. Campanha so abre quando a
-anterior fecha (gate batido e registrado no tracker) ou e formalmente estacionada. Novo lote = novo handoff, o anterior vai para
+UMA campanha aberta, UMA proxima, o resto ESTACIONADO com uma linha "pronto quando" no handoff vivo. **Campanha so fecha
+quando 100% dos itens dela foram feitos**; item nao feito nao muda de campanha sozinho — ou e feito, ou o user o retira por
+decisao registrada. Ideia que surge no meio ("da para fazer X?") vai para a CAIXA DE IDEIAS do handoff (da para fazer? · quando?
+· o que resolve?) e so e triada na fronteira entre campanhas. Novo lote = novo handoff, o anterior vai para
 `docs/reports/_archive/`. Motivo: sete frentes "quase fechadas" ao mesmo tempo (03/09) — nenhuma fechava.

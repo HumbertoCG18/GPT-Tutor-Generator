@@ -2,10 +2,10 @@
 
 last_updated: 2026-09-03 (sessao 4, tarde). **Ponto de entrada = handoff `2026-09-03b-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
-**ENCERRADAS em 03/09:** C0 MOTOR (itens 2-7 + gate; 9 -> C4, 10 nao entra sem numero, 11 -> "LLM no residuo", 12 -> C1) e
-SYNC (S1-S5: `sync_moodle.py`, LR e FR sincronizados; S6 = gate de saida da campanha aberta).
-**FILA:** 1 ABERTA = PAGINAS+CG (HTML como material, H1-H5, termina com o CG sincronizado) · 2 PROXIMA = C1 travessia ·
-estacionadas: C3 provas/listas/imagens · C2 bibliografia · LLM no residuo · C4 limpa · C5 dividas de dados · C6 web.
+**Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 6/11 (faltam 9, 10, 11, 12);
+SYNC 5/6 (falta S6 = CG pela API, que engloba HTML como material, S6a-S6f).
+**FILA:** 1 ABERTA = SYNC (S6a-S6f) · 2 PROXIMA = C0 itens 9-12 · estacionadas: C1 travessia · C3 provas/listas/imagens ·
+C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
