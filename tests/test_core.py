@@ -4253,6 +4253,25 @@ class TestBundleSeedLowToken:
         assert item["formula_priority"] is True
         assert item["datalab_mode"] == "accurate"
 
+    def test_process_entry_persists_moodle_signals_set_before_the_build(self, tmp_path):
+        # SYNC 03/09: o Lab 4 do LR entrou com moodle_label do sidecar na FileEntry e o registro do
+        # manifest saiu sem ele — process_entry montava o dict com campos fixos e descartava o sinal.
+        from src.builder.engine import RepoBuilder
+        from src.models.core import FileEntry
+
+        repo = tmp_path / "repo"
+        repo.mkdir()
+        source = tmp_path / "Lab 4 - HTTP.pdf"
+        source.write_bytes(b"%PDF-1.4\n%fake\n")
+        builder = RepoBuilder(root_dir=repo, course_meta={"course_slug": "lr"}, entries=[], options={})
+        builder._process_pdf = lambda entry, raw_target: {"base_markdown": "staging/example.md"}
+        entry = FileEntry(source_path=str(source), file_type="pdf", category="outros", title="Lab 4 - HTTP",
+                          source_section="[31.08] - HTTP", moodle_label="Laboratório 04 - HTTP(S)", posting_date="2026-08-31")
+        item = builder._process_entry(entry)
+        assert item["moodle_label"] == "Laboratório 04 - HTTP(S)"
+        assert item["posting_date"] == "2026-08-31"
+        assert item["source_section"] == "[31.08] - HTTP"
+
 
 class TestCourseMapLowToken:
     def test_course_map_is_short_router_not_parallel_apostila(self):

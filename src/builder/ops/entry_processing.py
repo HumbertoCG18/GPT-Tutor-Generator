@@ -55,6 +55,12 @@ def process_entry(builder, entry, *, image_categories) -> Dict[str, object]:
     # recalculariam o id do source_path e divergiriam do id deduplicado.
     if entry.id_override:
         item["id_override"] = entry.id_override
+    # Sinais do Moodle ja presentes na entry (sync/import com sidecar): persistem no
+    # registro; antes o dict fixo os descartava (Lab 4 do LR entrou sem moodle_label, 03/09).
+    for key in ("moodle_label", "posting_date", "posting_date_created"):
+        value = getattr(entry, key, "")
+        if value:
+            item[key] = value
 
     src = Path(entry.source_path)
     if entry.file_type not in ("url", "github-repo") and not src.exists():
