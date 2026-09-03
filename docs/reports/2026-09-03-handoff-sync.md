@@ -41,10 +41,13 @@ Conclusao: "rebuild" e um caso particular de **sincronizar**; sem sync o tutor e
 
 ## FILA — CAMPANHA SYNC (1a a executar; 4-6 itens; TDD com os `contents.json`/`sections.json`/`links.json` REAIS dos 3 dry-runs de
    03/09, versionados em `_harness-2026-09-03/pulls/{FR,LR,CG}/`)
-S1. **Diff estrutural** `sync_diff(manifest, contents_novo)` -> {novos, alterados, sumidos, iguais}: casa entry <-> modulo como o
-    backfill (basename/savename -> stem -> moodle_label -> stem==nome); novo = modulo sem entry; alterado = `timemodified` do
-    arquivo > `posting_date` da entry (ou md5 diferente); sumido = entry casada sem modulo. Regua: LR = {1 novo (Lab 4), 0, 0},
-    FR = {0, 0, 0}, CG = delta total. Read-only, sem tocar repo.
+S1. ~~**Diff estrutural**~~ FEITO 03/09 (`2491596`): `src/builder/sources/moodle_sync.py::sync_diff` (novos/alterados/sumidos/iguais/links/fora);
+    casador UNICO extraido do backfill (`moodle.match_module_entries` + `iter_sections`, byte-identico nos 5 encerrados);
+    `scripts/sync_moodle.py <nome|slug> --dry-run` (pull da estrutura em raiz temporaria, sem downloads). 6 testes com a fixture
+    LR real (secoes 4 e 7, `timemodified`). **Baseline:** LR {novos 1 = Lab 4 HTTP, 0, 0; iguais 6; links 2} · FR {0, 0, 0; iguais 20;
+    links 4} · CG {novos 19 = 15 paginas Moodle de videos + 4 arquivos (zip, 2 xlsx...); alterados 0; sumidos 26 = entries do EXPORT
+    sem par por nome; iguais 47; links 27}. Modulos `page` contam como material no diff; o S2 usa a classificacao do pull
+    (`links.json`: print x indice-videos) para decidir imprimir ou referenciar.
 S2. **Import do delta**: novos pelo caminho do stash (nome = titulo do modulo, `moodle_label`, `source_section`, `.html/.htm`
     impressos); alterados re-baixam e re-extraem mantendo o id; sumidos: `sync_prune_removed` (some) ou `moodle_missing_since`
     (fica marcado, fora dos indices); links/videos -> entries de referencia. Pre-requisito do CG aqui: `.htm` sem L classificado +
