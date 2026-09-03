@@ -42,6 +42,12 @@ def sync_diff(manifest_entries: list, contents: list) -> Dict[str, list]:
                    "module_index": mi, "name": name, "modname": modname, "files": files}
             if modname == "url":
                 links.append(rec)
+                # entry url (referencia vinda do links.json) casa pelo URL do modulo, senao a sync
+                # seguinte a veria como "sumida" e a removeria (FR 03/09: 2 videos apagados na 2a sync)
+                urls = {str(c.get("fileurl") or "").strip() for c in (mod.get("contents") or [])} - {""}
+                for e in entries:
+                    if e.get("file_type") == "url" and str(e.get("source_path") or "").strip() in urls:
+                        matched[str(e.get("id") or "")] = rec
                 continue
             if modname in _IGNORED_MODNAMES or (modname not in _MATERIAL_MODNAMES and not files):
                 continue

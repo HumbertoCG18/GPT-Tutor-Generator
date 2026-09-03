@@ -159,3 +159,20 @@ def test_sync_report_has_the_four_sections():
 def test_plan_ignores_dotfiles_in_ignorados():
     scan = _scan(); scan.skipped.append(r"C:\stash\lr\.moodle_nomes.json")
     assert plan_import(sync_diff([_lab1()], LR), LR, scan, [], [_lab1()], nomes=NOMES).ignorados == ["extra.htm"]
+
+
+# --- entries url (referencias vindas de links.json) casam pelo URL do modulo `url`, nunca viram "sumidas" por engano ---
+
+def _url_entry(url, eid="pagina-do-wireshark-abc123"):
+    return {"id": eid, "source_path": url, "file_type": "url", "category": "references", "source_section": "[10.08] - Wireshark"}
+
+
+def test_url_entry_with_card_is_kept_when_its_link_module_still_exists():
+    # FR 03/09: a 2a sync REMOVEU as 2 entries de video criadas na 1a — entries url com card nao casavam modulo nenhum
+    d = sync_diff([_lab1(), _url_entry("https://www.wireshark.org/")], LR)
+    assert d["sumidos"] == [] and "pagina-do-wireshark-abc123" in d["iguais"]
+
+
+def test_url_entry_is_missing_only_when_the_link_left_the_moodle():
+    d = sync_diff([_lab1(), _url_entry("https://gone.example/", eid="gone-1")], LR)
+    assert d["sumidos"] == ["gone-1"]
