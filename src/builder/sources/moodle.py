@@ -229,6 +229,100 @@ def backfill_posting_date_from_api(manifest_entries, contents):
     return out
 
 
+_DATE_DMY = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
+_STRUCTURE_FIELDS = ("moodle_section_index", "moodle_module_index", "moodle_week_label")
+
+
+def _label_text(mod) -> str:
+    """Texto ATUAL do label: description sem HTML. O `name` da API e cache do texto
+    original (ES2: name diz 2025, description diz 2026) e so entra sem description."""
+    from src.builder.sources.moodle_labels import _strip_html
+    txt = re.sub(r"\s+", " ", _strip_html(str(mod.get("description") or ""))).strip()
+    return txt or re.sub(r"\s+", " ", str(mod.get("name") or "")).strip()
+
+
+def backfill_moodle_structure_from_api(manifest_entries, contents, year: int = 0) -> dict:
+    """Posicao do professor no Moodle -> {id: {moodle_section_index, moodle_module_index,
+    moodle_week_label}} (Fase 3a). Casamento POR SECAO (source_section == secao sanitizada):
+    basename == savename/filename do modulo -> moodle_label == mod.name (unico) -> stem == mod.name.
+    week_label = texto do label DATADO (dd/mm/aaaa do ano do curso; year=0 = qualquer) mais
+    proximo antes do modulo; labels consecutivos empilham (" || "); label sem data nao ancora
+    nem reseta. Entry sem match fica FORA (o chamador conta)."""
+    from collections import Counter
+    from src.builder.text.normalize import normalize_match_text
+
+    def norm(t):
+        return " ".join(normalize_match_text(str(t or "")).split())
+
+    def label_of(e):
+        ml = e.get("moodle_label")
+        return ml.get("text") if isinstance(ml, dict) else ml
+
+    out: dict = {}
+    for sec in contents or []:
+        sec_key = norm(sanitize_folder_name(str(sec.get("name") or "")))
+        in_sec = [e for e in manifest_entries or [] if norm(e.get("source_section")) == sec_key]
+        if not in_sec:
+            continue
+        mods = sec.get("modules") or []
+        n_name = Counter(norm(m.get("name")) for m in mods)
+        run, pending = "", []
+        for mi, mod in enumerate(mods):
+            name = str(mod.get("name") or "")
+            if mod.get("modname") == "label":
+                txt = _label_text(mod)
+                if any(not year or int(y) == year for _d, _m, y in _DATE_DMY.findall(txt)):
+                    pending.append(txt)
+                continue
+            if pending:
+                run, pending = " || ".join(pending), []
+            files = [str(c.get("filename") or "") for c in (mod.get("contents") or []) if c.get("type") == "file"]
+            keys = {f.casefold() for f in files} | {_savename_from_module(name, f, len(files)).casefold() for f in files}
+            ids = [e for e in in_sec if Path(str(e.get("source_path") or "")).name.casefold() in keys]
+            if not ids:
+                same = [e for e in in_sec if norm(label_of(e)) == norm(name)]
+                ids = same if (len(same) == 1 or n_name[norm(name)] == 1) else []
+            if not ids:
+                ids = [e for e in in_sec if norm(Path(str(e.get("source_path") or "")).stem) == norm(name)]
+            for e in ids:
+                eid = str(e.get("id") or "")
+                if eid and eid not in out:
+                    out[eid] = {"moodle_section_index": int(sec.get("section") or 0),
+                                "moodle_module_index": mi, "moodle_week_label": run}
+    return out
+
+
+def backfill_moodle_structure_repo(repo_root, entries):
+    """Aplica backfill_moodle_structure_from_api IN-PLACE nas entries a partir de
+    `raw/moodle/contents.json` (moodle_pull); ano = period_start do 1o bloco do
+    `.timeline_index.json` (SARC e a verdade). Sem contents.json -> None, nada muda.
+    Campos antigos sao LIMPOS antes (estrutura e verdade do Moodle, nunca cache):
+    entry sem match fica sem estrutura e sai em `unmatched`."""
+    repo = Path(repo_root)
+    cpath = repo / "raw" / "moodle" / "contents.json"
+    if not cpath.is_file():
+        return None
+    contents = json.loads(cpath.read_text(encoding="utf-8"))
+    year = 0
+    try:
+        tl = json.loads((repo / "course" / ".timeline_index.json").read_text(encoding="utf-8"))
+        blocks = tl if isinstance(tl, list) else (tl.get("blocks") or [])
+        year = int(str(blocks[0].get("period_start") or "")[:4]) if blocks else 0
+    except Exception:
+        year = 0
+    found = backfill_moodle_structure_from_api(entries, contents, year)
+    unmatched = []
+    for e in entries or []:
+        for f in _STRUCTURE_FIELDS:
+            e.pop(f, None)
+        hit = found.get(str(e.get("id") or ""))
+        if hit:
+            e.update(hit)
+        else:
+            unmatched.append(str(e.get("id") or ""))
+    return {"matched": len(found), "unmatched": unmatched}
+
+
 def section_file_index(contents) -> dict:
     """{casefold(filename): section} a partir de core_course_get_contents (metadados)."""
     idx = {}

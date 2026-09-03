@@ -220,3 +220,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Decision:** `revisar` ∈ {duvida, llm, ok} e calculado por `src/builder/routing/revisar.py` (funcao pura sobre o entry gravado) e persistido em todo material a cada reprocess. `duvida` = sem bloco em escopo | `temporal_block_flag` | `unit_block_conflict` | subunidade ambiguous/empate; `llm` = voto do LLM na janela; `ok` = resto. A UI (secao de revisao) le o campo, nao recalcula.
 **Reasoning:** Metrica de produto "revisar por 100 materiais" (decisao B do plano fechar-o-motor). Calibrado no gold do motor puro: sem-bloco 100%, flag:disamb 63%, sub-empate 57%, conflito 56% de precisao; janela-1 27% e sub-ambigua 22% sao fracos e se decidem com a run real do FR. Sem-sinal e revisao-sem-assunto NAO sao duvida (nem todo material tem subunidade).
 **Consequences:** Novo gatilho ou remocao exige remedir com `docs/reports/_harness-2026-09-02/calibra_revisar.py`; a sentinela vigia o campo; `scripts/censo_motor_llm.py` e a regua do numero.
+
+---
+
+### Estrutura do Moodle e sinal gravado no manifest, nao decisao (Fase 3a)
+
+**Date:** 2026-09-03
+**Status:** Active
+**Decision:** Os 5 cursos encerrados nao se rebuildam (regua de regressao); a posicao do professor (secao, modulo, label datado) entra por backfill de `raw/moodle/contents.json` a cada regeneracao (`backfill_moodle_structure_repo`, hook `_run_moodle_structure_backfill` antes do motor), em campos proprios do entry (`moodle_section_index`, `moodle_module_index`, `moodle_week_label`), consumidos pelo motor so a partir da Fase 3b. Casamento por secao (savename/filename -> `moodle_label` unico -> stem), nada fuzzy: entry sem match fica sem estrutura e e contada, nunca remendada. `description` do label manda sobre `name` (cache stale: ES2 2025 x 2026); label sem data nao ancora; ano != ano do cronograma e ruido.
+**Reasoning:** Decisao C (02/09): a verdade estrutural esta no Moodle pela API e o export a apaga; para os encerrados a unica forma de importa-la sem invalidar golds e o backfill. Campos separados (e nao `moodle_label`/`source_section`) porque a semana do label nao existe em lugar nenhum do manifest; `data no nome` e `secao` ja estao em `moodle_label`/`source_section`, nao se duplicam.
+**Consequences:** Gate do item 2 (03/09): sentinela 0 fora dos 3 campos e TODAS as reguas identicas (estrutura sozinha nao muda decisao). Casamento nos encerrados 217/221 entries com card (4 sem match = arquivo renomeado no Moodle depois do stash). Quem consumir os campos (3b) age so em decisao flagada (lei "estrutura nunca sobrepoe decisao confiante").

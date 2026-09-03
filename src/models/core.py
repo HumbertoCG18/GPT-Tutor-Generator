@@ -126,6 +126,13 @@ class FileEntry:
     # ANTES do redirect SharePoint que deixa só o filename. Identidade LIMPA do
     # material — pesa como conceito no resolver. NUNCA sobrescreve title. ""=ausente.
     moodle_label: str = ""
+    # Posicao do professor no Moodle (Fase 3a, backfill de raw/moodle/contents.json a
+    # cada regeneracao): numero da secao, posicao do modulo na secao e texto do label
+    # DATADO mais proximo antes do modulo. Estrutura, nao decisao (o motor le em 3b).
+    # None/"" = sem match no Moodle (to_dict omite).
+    moodle_section_index: Optional[int] = None
+    moodle_module_index: Optional[int] = None
+    moodle_week_label: str = ""
     # Data de upload/postagem (ISO YYYY-MM-DD) do timemodified Moodle/M365.
     # Capturada no import (S0). NAO consumida pela atribuicao (consumo = A2).
     # ""=ausente (HTML sem timestamp, ou fonte sem data).

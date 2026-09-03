@@ -145,6 +145,16 @@ atribuição (arquivo→bloco→unidade/subunidade).
   formatos A-D), mas `derive_card_block_map` usa só as `dates` e DROPA o `text`. É o mapa data→tópico
   do próprio professor — sinal autoritativo de bloco por sessão, sub-aproveitado. Nem todo prof faz →
   extrator opcional com degradação honesta (cf. `docs/superpowers/specs/2026-06-17-signal-registry-design.md`).
+- **Estrutura do Moodle no manifest (Fase 3a, 2026-09-03):** `moodle_section_index` (= `section` da API,
+  ordinal da seção), `moodle_module_index` (posição do módulo na lista `modules` da seção; labels contam) e
+  `moodle_week_label` (texto do label DATADO mais próximo antes do módulo; labels consecutivos separados por
+  ` || `). Backfill a cada regeneração a partir de `raw/moodle/contents.json` (`backfill_moodle_structure_repo`,
+  `moodle.py`): os 3 campos são limpos e refeitos (nunca cache); entry sem match fica sem eles. Casamento POR
+  SEÇÃO (`source_section` = seção sanitizada): savename/filename do módulo → `moodle_label` == `mod.name` único
+  → stem == `mod.name`; nada fuzzy. **Gotcha:** `mod.name` de um label é CACHE do texto original — ES2 tem
+  name "Semana 18/08/2025…" com `description` "Semana 23/03/2026…"; MF "Trabalho 1 (06/05/2026):" com
+  description "Trabalho 1:" → texto = `description` sem HTML, `name` só quando não há description. Label
+  sem dd/mm/aaaa não ancora nem reseta a semana; data de ano ≠ ano do 1º bloco do cronograma é ruído.
 
 ### Microsoft 365 (OneDrive/SharePoint)
 - Fonte de material/seção (`m365.py` → `source_section`). Alguns professores postam o material no

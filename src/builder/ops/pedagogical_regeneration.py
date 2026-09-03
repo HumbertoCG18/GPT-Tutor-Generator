@@ -78,6 +78,21 @@ def _build_motor_voter(builder):
         return None
 
 
+def _run_moodle_structure_backfill(builder, live_manifest_entries) -> None:
+    """Fase 3a: posicao do professor no Moodle (secao/modulo/label datado) gravada nas
+    entries a partir de `raw/moodle/contents.json`, a cada regeneracao (idempotente; sem o
+    arquivo nada muda). Roda ANTES do motor: e sinal de estrutura, nunca decisao. Falha
+    nunca derruba a build."""
+    try:
+        from src.builder.sources.moodle import backfill_moodle_structure_repo
+        res = backfill_moodle_structure_repo(builder.root_dir, live_manifest_entries)
+        if res is not None:
+            logger.info("estrutura moodle: %d entries casadas, %d sem match",
+                        res["matched"], len(res["unmatched"]))
+    except Exception as exc:
+        logger.warning("estrutura moodle: backfill pulado (%s: %s)", type(exc).__name__, exc, exc_info=True)
+
+
 def _run_vocabulary_compile_layer(builder, live_manifest_entries) -> None:
     """Fase 1b (02/09): vocabulario por curso compilado por LLM, 1x por curso (cache =
     `course/.glossary_curation.llm.json`). OPT-IN por flag de curso `compile_vocabulary`
@@ -434,6 +449,7 @@ def regenerate_pedagogical_files(
     manifest["entries"] = live_manifest_entries
     runtime_course_meta = {**builder.course_meta, "_repo_root": builder.root_dir}
 
+    _run_moodle_structure_backfill(builder, live_manifest_entries)
     _run_vocabulary_compile_layer(builder, live_manifest_entries)
     content_taxonomy = build_rich_content_taxonomy_fn(
         builder.root_dir,

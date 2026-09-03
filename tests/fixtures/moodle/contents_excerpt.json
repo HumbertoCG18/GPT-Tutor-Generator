@@ -1,0 +1,233 @@
+{
+ "_proveniencia": "Excertos de core_course_get_contents (Moodle PUCRS) puxados em 02/09/2026 e versionados em docs/reports/_harness-2026-09-02/moodle_contents/{MF,SO,ES2}.json; campos e valores reais, modulos recortados (fixture copia contrato real, conventions.md §Fixtures).",
+ "MF": [
+  {
+   "id": 7630305,
+   "name": "TDE | Trabalho Discente Efetivo",
+   "section": 4,
+   "modules": [
+    {
+     "id": 3540406,
+     "name": "Trabalho Discente Efetivo | TDEConstitui um conjun...",
+     "modname": "label",
+     "visible": 1,
+     "description": "<div class=\"no-overflow\"><h4 style=\"text-align: left;\">Trabalho Discente Efetivo | TDE</h4><p dir=\"ltr\" style=\"text-align: left;\">Constitui um conjunto diversificado de atividades\nrelacionadas ao ensino, que incorporam as práticas pedagógicas previstas\nnos mais diversos componentes curriculares, realizadas dentro ou fora de\nsala de aula, de forma individual ou coletiva, voltadas à integralização dos\ncurrículos dos cursos de graduação, favorecendo a apropriação do\nconhecimento e o desenvolvimento das competências e habilidades\nprevistas nos projetos pedagógicos de curso (PPC).<br></p></div>"
+    },
+    {
+     "id": 3698336,
+     "name": "Trabalho 1 (06/05/2026):",
+     "modname": "label",
+     "visible": 1,
+     "description": "<div class=\"no-overflow\"><p><strong>Trabalho 1:</strong></p></div>"
+    },
+    {
+     "id": 3698338,
+     "name": "Definição",
+     "modname": "resource",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "file",
+       "filename": "t1_2026_1.pdf",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5920619/mod_resource/content/1/t1_2026_1.pdf?forcedownload=1",
+       "timemodified": 1776282745,
+       "timecreated": 1776282743
+      }
+     ]
+    },
+    {
+     "id": 3698342,
+     "name": "Arquivo .thy",
+     "modname": "resource",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "file",
+       "filename": "T1_2026_1.thy",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5920623/mod_resource/content/1/T1_2026_1.thy?forcedownload=1",
+       "timemodified": 1776282833,
+       "timecreated": 1776282831
+      }
+     ]
+    },
+    {
+     "id": 3700646,
+     "name": "Sala de entrega",
+     "modname": "assign",
+     "visible": 1
+    },
+    {
+     "id": 3729190,
+     "name": "Trabalho 2:",
+     "modname": "label",
+     "visible": 1,
+     "description": "<div class=\"no-overflow\"><p><strong>Trabalho 2:</strong></p></div>"
+    },
+    {
+     "id": 3729193,
+     "name": "Definição",
+     "modname": "resource",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "file",
+       "filename": "t2_2026_1.pdf",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5961518/mod_resource/content/1/t2_2026_1.pdf?forcedownload=1",
+       "timemodified": 1781455454,
+       "timecreated": 1781455452
+      }
+     ]
+    },
+    {
+     "id": 3729194,
+     "name": "Sala de entrega",
+     "modname": "assign",
+     "visible": 1
+    }
+   ]
+  },
+  {
+   "id": 7630306,
+   "name": "Introdução a Métodos Formais",
+   "section": 5,
+   "modules": [
+    {
+     "id": 3559918,
+     "name": "Semana 02/03/2026 a 06/03/2026: (02/03/2026): apre...",
+     "modname": "label",
+     "visible": 1,
+     "description": "<div class=\"no-overflow\"><p>Semana 02/03/2026 a 06/03/2026:</p>\r\n<ul>\r\n<li><span style=\"font-size: 0.9375rem;\">(02/03/2026): apresentação da disciplina;</span></li>\r\n<li><span style=\"font-size: 0.9375rem;\">(04/03/2026): introdução a métodos formais.</span></li>\r\n</ul></div>"
+    },
+    {
+     "id": 3559922,
+     "name": "Motivação: The Bug That Destroyed a Rocket",
+     "modname": "resource",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "file",
+       "filename": "p58-ben-ari.pdf",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5746840/mod_resource/content/1/p58-ben-ari.pdf?forcedownload=1",
+       "timemodified": 1771435735,
+       "timecreated": 1771435735
+      }
+     ]
+    },
+    {
+     "id": 3559934,
+     "name": "Material de estudo:ALMEIDA, J. B., FRADE, M. J...",
+     "modname": "label",
+     "visible": 1,
+     "description": "<div class=\"no-overflow\"><p>Material de estudo:</p>\n<ul>\n<li>TER BEEK, M. H., et al. \"Formal Methods in Industry\", Form. Asp. Comput., vol. 37, no. 1, mar. 2025. (disponível <a href=\"https://doi.org/10.1145/3689374\">on-line</a>)</li>\n<li>BROY, M., et al. \"Does Every Computer Scientist Need to Know Formal Methods?\", Form. Asp. Comput., vol. 37, no. 1, mar. 2025. (disponível <a href=\"https://doi.org/10.1145/3670795\">on-line</a>)</li>\n<li>ALMEIDA, J. B., FRADE, M. J., PINTO, J. S., SOUSA, S. M de. \"Rigorous Software Development: An Introduction to Program Verification\", London: Springer-Verlag, 2011. Capítulos 1 e 2. (ver arquivo PDF a seguir)</li>\n<li>WING, J.M. \"A Specifier's Introduction to Formal Methods\", Computer, vol. 23, no. 9, 1990, pp. 8, 10–23. (<a href=\"http://www.cs.cmu.edu/~wing/publications/Wing90a.pdf\" target=\"_blank\" rel=\"noopener\">disponível on-line</a>)</li>\n<li>HINCHEY, J. F., MONIN, M. G. \"Understanding Formal Methods\", London: Springer, 2003. Capítulo 1.</li>\n<li>O'REGAN, G. Guide to Discrete Mathematics An Accessible Introduction to the History, Theory, Logic and Applications. Cham: Springer, 2016. <span style=\"font-size: 0.9375rem;\">Capítulos 17 (p.283-297), 18 (p.299-318). (disponível <a href=\"http://primo-pmtna01.hosted.exlibrisgroup.com/PUC01:PUC01:springerspringer_ebook_978-3-319-44561-8\" target=\"_blank\" rel=\"noopener\">on-line</a>)</span></li>\n</ul></div>"
+    },
+    {
+     "id": 3559935,
+     "name": "ALMEIDA, J. B., FRADE, M. J., PINTO, J. S., SOUSA, S. M de. \"Rigorous Software Development: An Introduction to Program Verification\", London: Springer-Verlag, 2011",
+     "modname": "resource",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "file",
+       "filename": "RigorousSoftwareDevelopment-chapters-1-2.pdf",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5746853/mod_resource/content/2/RigorousSoftwareDevelopment-chapters-1-2.pdf?forcedownload=1",
+       "timemodified": 1771435735,
+       "timecreated": 1771435735
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "SO": [
+  {
+   "id": 7674465,
+   "name": "Processo e Estruturas de Controle",
+   "section": 2,
+   "modules": [
+    {
+     "id": 3668863,
+     "name": "Leitura indicada:&nbsp;Seções &nbsp;2.1 a 2.7 e&amp;nb...",
+     "modname": "label",
+     "visible": 1,
+     "description": "<div class=\"no-overflow\"><p><u><span style=\"font-size: 0.9375rem;\">Leitura indicada</span><span style=\"font-size: 0.9375rem;\">:</span></u><span style=\"font-size: 0.9375rem;\">&nbsp;</span><span style=\"font-size: 0.9375rem;\">Seções &nbsp;</span><span style=\"font-size: 0.9375rem;\">2.1 a 2.7 e&nbsp;3.1 a 3.3&nbsp;</span><span style=\"font-size: 0.9375rem;\">do livro&nbsp;</span><span style=\"font-size: 0.9375rem;\"><a href=\"http://primo-pmtna01.hosted.exlibrisgroup.com/PUC01:PUC01:sfx3710000001052311\" target=\"_blank\">Fundamentos de Sistemas Operacionais, 9ª edição</a></span><span style=\"font-size: 0.9375rem;\">&nbsp;(SILBERSCHATZ, GAVIN, GAGNE, 2013)</span><br></p></div>"
+    },
+    {
+     "id": 3668864,
+     "name": "12/03 Processos",
+     "modname": "resource",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "file",
+       "filename": "slides.pdf",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876871/mod_resource/content/4/slides.pdf?forcedownload=1",
+       "timemodified": 1773179991,
+       "timecreated": 1773179991
+      }
+     ]
+    },
+    {
+     "id": 3668865,
+     "name": "17/03 Chamada de Sistema",
+     "modname": "resource",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "file",
+       "filename": "slides.pdf",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876872/mod_resource/content/7/slides.pdf?forcedownload=1",
+       "timemodified": 1773179991,
+       "timecreated": 1773179991
+      }
+     ]
+    },
+    {
+     "id": 3668866,
+     "name": "19/03 Estruturas de Controle",
+     "modname": "resource",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "file",
+       "filename": "slides.pdf",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876873/mod_resource/content/8/slides.pdf?forcedownload=1",
+       "timemodified": 1773179991,
+       "timecreated": 1773179991
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "ES2": [
+  {
+   "id": 7630238,
+   "name": "Microsserviços",
+   "section": 6,
+   "modules": [
+    {
+     "id": 3559343,
+     "name": "Semana 18/08/2025 a 22/08/2025: (atividade síncron...",
+     "modname": "label",
+     "visible": 1,
+     "description": "<div class=\"no-overflow\"><p dir=\"ltr\">Semana 23/03/2026 a 27/03/2026:</p>\r\n<ul>\r\n<li>(27/03/2026): microsserviços no Spring.</li>\r\n</ul></div>"
+    },
+    {
+     "id": 3559341,
+     "name": "Microsserviços",
+     "modname": "resource",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "file",
+       "filename": "microsservicos.pdf",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5746253/mod_resource/content/2/microsservicos.pdf?forcedownload=1",
+       "timemodified": 1771434608,
+       "timecreated": 1771434608
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
