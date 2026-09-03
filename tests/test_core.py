@@ -2102,6 +2102,22 @@ class TestRowsToMarkdownTable:
 # ---------------------------------------------------------------------------
 
 class TestUrlFetcherMarkdownFormatting:
+    def test_html_images_keep_their_reference_inline_and_in_blocks(self):
+        # Piloto Curvas (03/09): formulas das paginas do professor sao GIFs dentro de <span>/<p>;
+        # o conversor descartava todo <img>. A ref fica no lugar, chaveada pelo src, alt preservado.
+        html = """
+        <html><body><article>
+          <h1>Curvas</h1>
+          <p>A equacao <span><img src="Curvas_files/image001.gif" alt="bezier"></span> define a curva.</p>
+          <img src="reta.gif">
+          <table><tr><td><img src="Logotipos/SomenteBrasao.png"></td><td>texto</td></tr></table>
+        </article></body></html>
+        """
+        md = _html_to_structured_markdown(html, "https://www.inf.pucrs.br/pinho/CG/Aulas/Curvas/Curvas.htm", "Curvas")
+        assert "A equacao ![bezier](Curvas_files/image001.gif) define a curva." in md
+        assert "![](reta.gif)" in md
+        assert "SomenteBrasao.png" not in md   # celula de tabela continua so texto (logos em <td>)
+
     def test_html_is_rendered_as_structured_markdown(self):
         pytest.importorskip("bs4")
 

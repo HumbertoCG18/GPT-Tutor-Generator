@@ -118,6 +118,12 @@ def inline_html_to_markdown(node, *, collapse_ws: Callable[[str], str]) -> str:
     name = node.name.lower()
     if name == "br":
         return "\n"
+    if name == "img":
+        # Ref no lugar, chaveada pelo src: formulas das paginas do professor sao GIFs inline
+        # (piloto Curvas, 03/09). Quem descreve/OCRa a imagem substitui pelo nome do arquivo.
+        src = (node.get("src") or "").strip()
+        alt = collapse_ws(str(node.get("alt") or ""))
+        return f"![{alt}]({src})" if src else ""
 
     content = "".join(inline_html_to_markdown(child, collapse_ws=collapse_ws) for child in node.children)
     content = html_lib.unescape(content)
@@ -151,6 +157,9 @@ def render_html_block_to_markdown(tag, *, collapse_ws: Callable[[str], str]) -> 
 
     if name == "p":
         return collapse_ws(inline_html_to_markdown(tag, collapse_ws=collapse_ws))
+
+    if name == "img":
+        return inline_html_to_markdown(tag, collapse_ws=collapse_ws)
 
     if name in {"ul", "ol"}:
         lines: List[str] = []
@@ -214,7 +223,7 @@ def html_to_structured_markdown(
 
     blocks: List[str] = []
     seen: set[str] = set()
-    block_tags = ["h1", "h2", "h3", "h4", "h5", "h6", "p", "ul", "ol", "blockquote", "pre", "table"]
+    block_tags = ["h1", "h2", "h3", "h4", "h5", "h6", "p", "ul", "ol", "blockquote", "pre", "table", "img"]
     for tag in content_root.find_all(block_tags):
         if any(parent.name in block_tags for parent in tag.parents if getattr(parent, "name", None)):
             continue
