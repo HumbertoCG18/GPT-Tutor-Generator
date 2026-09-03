@@ -281,7 +281,9 @@
       {
        "type": "file",
        "filename": "Lab 1 - Wireshark.html",
-       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/6059096/mod_resource/content/14/Lab%201%20-%20Wireshark.html?forcedownload=1"
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/6059096/mod_resource/content/14/Lab%201%20-%20Wireshark.html?forcedownload=1",
+       "timemodified": 1786201053,
+       "timecreated": 1786201052
       }
      ]
     },
@@ -300,9 +302,39 @@
       {
        "type": "url",
        "filename": "Página do Wireshark",
-       "fileurl": "https://www.wireshark.org/"
+       "fileurl": "https://www.wireshark.org/",
+       "timemodified": 1786201017,
+       "timecreated": null
       }
      ]
+    }
+   ]
+  },
+  {
+   "id": 7747607,
+   "name": "[31/08] - HTTP",
+   "section": 7,
+   "modules": [
+    {
+     "id": 3814977,
+     "name": "Laboratório 04 - HTTP(S)",
+     "modname": "resource",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "file",
+       "filename": "Lab 4 - HTTP.html",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/6059108/mod_resource/content/3/Lab%204%20-%20HTTP.html?forcedownload=1",
+       "timemodified": 1787841617,
+       "timecreated": 1787841610
+      }
+     ]
+    },
+    {
+     "id": 3814979,
+     "name": "Sala de entrega",
+     "modname": "assign",
+     "visible": 1
     }
    ]
   }

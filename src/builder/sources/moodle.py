@@ -242,6 +242,51 @@ def _label_text(mod) -> str:
     return txt or re.sub(r"\s+", " ", str(mod.get("name") or "")).strip()
 
 
+def _norm_text(t) -> str:
+    from src.builder.text.normalize import normalize_match_text
+    return " ".join(normalize_match_text(str(t or "")).split())
+
+
+def _label_of(entry) -> str:
+    ml = entry.get("moodle_label")
+    return ml.get("text") if isinstance(ml, dict) else ml
+
+
+def module_files(mod) -> list:
+    """Nomes ORIGINAIS dos arquivos de um modulo (contents[].type == "file")."""
+    return [str(c.get("filename") or "") for c in (mod.get("contents") or []) if c.get("type") == "file"]
+
+
+def match_module_entries(in_sec, mod, n_name) -> list:
+    """Entries da secao que sao este modulo (casador UNICO do backfill e da sync): basename ==
+    savename/filename -> stem do arquivo (extensao trocada pelo pipeline) -> moodle_label == nome
+    do modulo (unico) -> stem da entry == nome do modulo. n_name = Counter dos nomes normalizados
+    dos modulos da secao."""
+    name = str(mod.get("name") or "")
+    files = module_files(mod)
+    keys = {f.casefold() for f in files} | {_savename_from_module(name, f, len(files)).casefold() for f in files}
+    ids = [e for e in in_sec if Path(str(e.get("source_path") or "")).name.casefold() in keys]
+    if not ids and files:
+        stems = {_norm_text(Path(k).stem) for k in keys}
+        ids = [e for e in in_sec if _norm_text(Path(str(e.get("source_path") or "")).stem) in stems]
+    if not ids:
+        same = [e for e in in_sec if _norm_text(_label_of(e)) == _norm_text(name)]
+        ids = same if (len(same) == 1 or n_name[_norm_text(name)] == 1) else []
+    if not ids:
+        ids = [e for e in in_sec if _norm_text(Path(str(e.get("source_path") or "")).stem) == _norm_text(name)]
+    return ids
+
+
+def iter_sections(manifest_entries, contents):
+    """(sec, entries da secao, modulos, Counter de nomes) por secao do contents.json."""
+    from collections import Counter
+    for sec in contents or []:
+        sec_key = _norm_text(sanitize_folder_name(str(sec.get("name") or "")))
+        in_sec = [e for e in manifest_entries or [] if _norm_text(e.get("source_section")) == sec_key]
+        mods = sec.get("modules") or []
+        yield sec, in_sec, mods, Counter(_norm_text(m.get("name")) for m in mods)
+
+
 def backfill_moodle_structure_from_api(manifest_entries, contents, year: int = 0) -> dict:
     """Posicao do professor no Moodle -> {id: {moodle_section_index, moodle_module_index,
     moodle_week_label}} (Fase 3a). Casamento POR SECAO (source_section == secao sanitizada):
@@ -250,24 +295,10 @@ def backfill_moodle_structure_from_api(manifest_entries, contents, year: int = 0
     proximo antes do modulo; labels consecutivos empilham (" || "); label sem data nao ancora
     nem reseta. Modulo com DATA no nome ("12/03 Processos") e ancora: seu nome vira o week_label
     dele e dos modulos sem data que o seguem. Entry sem match fica FORA (o chamador conta)."""
-    from collections import Counter
-    from src.builder.text.normalize import normalize_match_text
-
-    def norm(t):
-        return " ".join(normalize_match_text(str(t or "")).split())
-
-    def label_of(e):
-        ml = e.get("moodle_label")
-        return ml.get("text") if isinstance(ml, dict) else ml
-
     out: dict = {}
-    for sec in contents or []:
-        sec_key = norm(sanitize_folder_name(str(sec.get("name") or "")))
-        in_sec = [e for e in manifest_entries or [] if norm(e.get("source_section")) == sec_key]
+    for sec, in_sec, mods, n_name in iter_sections(manifest_entries, contents):
         if not in_sec:
             continue
-        mods = sec.get("modules") or []
-        n_name = Counter(norm(m.get("name")) for m in mods)
         run, pending = "", []
         for mi, mod in enumerate(mods):
             name = str(mod.get("name") or "")
@@ -280,20 +311,7 @@ def backfill_moodle_structure_from_api(manifest_entries, contents, year: int = 0
                 run, pending = " || ".join(pending), []
             if _DATE_PREFIX.match(name):
                 run = re.sub(r"\s+", " ", name).strip()
-            files = [str(c.get("filename") or "") for c in (mod.get("contents") or []) if c.get("type") == "file"]
-            keys = {f.casefold() for f in files} | {_savename_from_module(name, f, len(files)).casefold() for f in files}
-            ids = [e for e in in_sec if Path(str(e.get("source_path") or "")).name.casefold() in keys]
-            if not ids and files:
-                # Extensao trocada pelo pipeline (LR: "Lab 1 - Wireshark.html" impresso em PDF;
-                # CG: .htm): casa pelo STEM do arquivo do modulo.
-                stems = {norm(Path(k).stem) for k in keys}
-                ids = [e for e in in_sec if norm(Path(str(e.get("source_path") or "")).stem) in stems]
-            if not ids:
-                same = [e for e in in_sec if norm(label_of(e)) == norm(name)]
-                ids = same if (len(same) == 1 or n_name[norm(name)] == 1) else []
-            if not ids:
-                ids = [e for e in in_sec if norm(Path(str(e.get("source_path") or "")).stem) == norm(name)]
-            for e in ids:
+            for e in match_module_entries(in_sec, mod, n_name):
                 eid = str(e.get("id") or "")
                 if eid and eid not in out:
                     out[eid] = {"moodle_section_index": int(sec.get("section") or 0),
