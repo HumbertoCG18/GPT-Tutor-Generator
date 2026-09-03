@@ -67,6 +67,11 @@ Push quando quiser.
    temporaria e DIFF DE IDS contra o repo atual; se batem, troca limpa; se nao, build novo (sem gold, sem custo). Protocolo
    do run real: zero curadoria, summaries ON, vocab compilado, voter ON com cap e contagem, watchdogs; o user revisa a fila
    `revisar`; cada correcao = override + gold-por-fenomeno. Depois LR, depois CG.
+   **Pre-requisitos do CG (resgatados do historico em 03/09):** (a) `.htm` sem L nao e classificado por
+   `stash_import._classify_file_type` — cai em `skipped` e a UI so mostra a contagem; fix = extensao + listar os nomes dos
+   ignorados (teste); (b) "modals" do CG — investigar o que e tecnicamente antes de dizer que sobrevive a extracao;
+   (c) "em duvida 28/08" (PS/G2 como principais, cadeira sem prova, `U1 - ...`/"Laboratorio N", Lab SO sem avaliacao no plano)
+   — triar so nos flagados do rebuild, nao antes.
 9. Refactor corte 1 (`scripts/` 79 -> ~25; harnesses de `_harness-2026-09-02/` que viraram rotina sobem para `scripts/`,
    o resto arquiva) — sessao curta, sentinela 0.
 10. **Fase 2** cronograma manda na unidade (unidade explicita na linha > ancora forte > ancora > DP so preenche), medida no
@@ -74,9 +79,36 @@ Push quando quiser.
 11. **Fase 4** LLM residual so nos flagados, cacheado, contado no CRONOGRAMA_HEALTH (votos/100 e revisar/100).
 12. **Travessia "depois"** = rerodar o item 1; comparar (mede so o motor, FILE_MAP intacto). Depois abre a CAMPANHA DE
     TRAVESSIA (`pendencias.md` §PROXIMA CAMPANHA: FILE_MAP completo e magro primeiro, unico com numero; grafo/vetores nao).
-Depois da fila do motor (sequencia acordada): referencias (regua propria, 10 golds) -> imagens e provas (criar gold antes de
-regra) -> limpa pre-web (`auditoria-enxame`, cortes 2 e 4, `concept_resolver` so apos medir os 8 consumidores) -> `graph.json`
-derivado como modelo de dados da fase web.
+## CAMPANHAS DEPOIS DO MOTOR — lotes de pendencias, em ordem (definido 03/09)
+
+**Protocolo anti-regressao (vale para TODO lote; e o que impede "arrumar um eixo e quebrar outro"):**
+1. Gold antes de regra: a regua PROPRIA do lote existe e tem baseline medido antes do primeiro commit de codigo.
+2. Gate de saida = todas as reguas existentes rodam e NENHUMA regride: curada (bloco 199/200 conf-err 0 · unidade 191/191 ·
+   cobertura 55/57 · subunidade 93/93 + FR 14/18), AULA (`regua_aula.py`), travessia IA/FR/CG, revisar/100, sentinela 0 fora
+   do campo tocado, determinismo 2x, motor puro ± vocab, ablacao, suite pytest. Numeros das 3 linhas no tracker a cada item.
+3. Tutores: reprocess em COPIA (`.ablacao`) primeiro; diff de manifest (sentinela) antes de tocar originais; commit dos 8
+   so no fim do lote. Nada pushed sem o user.
+4. Tamanho: 4-7 itens, <= 3 sessoes. Item que crescer vira lote proprio. Nada entra num lote sem numero ou sem gold.
+5. 1 handoff vivo: novo lote = novo handoff, o anterior vai para `_archive/`; tracker registra numero e commit de cada item.
+
+**C0 — MOTOR (em curso) = itens 2-12 acima.** Gate = item 7 + item 12. Push/merge em main e decisao do user no fim de C0.
+**C1 — TRAVESSIA (1 sessao).** FILE_MAP completo e magro (unico com numero: IA 9 -> 14/15): rastreabilidade -> `FILE_MAP_TRACE.md`,
+   coluna "Secoes" limitada, clamp 80 KB + aviso. Gate: IA >= 14/15, FR 15/15, CG rerodado, sentinela 0 no motor. Indice por
+   unidade / de termos / "quando abrir" por LLM SO se a regua pos-C1 mostrar erros dessa forma. Vai ANTES de C2/C3 porque
+   esses lotes adicionam o que o tutor precisa ACHAR (referencias, provas); indice cortado esconderia o ganho.
+**C2 — REFERENCIAS (4 itens).** Vetar o gold `coverage_gt_{SO,MF,IA}.csv` (9/10; MF/IA proposto-claude); decisao B (eth2/aws
+   {u02} ou N:N); pino de cobertura 57/57 (mecanismo, ou 55/57 aceito como teto documentado); consumo de bibliografia
+   (decisao 22/07 "caso a parte": desenho + medicao, sem estourar o Project). Gate: regua de referencias sobe de 0/9; cobertura
+   curada nao cai.
+**C3 — PROVAS E IMAGENS (4 itens).** Ruling da granularidade (prova inteira x questao a questao); P2b-LLM (extracao de questoes,
+   cacheado, contado); EXAM_INDEX "incidencia por topico" honesto; imagens: descricao do Datalab consumida pelo tutor. Gold
+   ANTES: ~10 provas + ~10 imagens rotuladas. Gate: gold medido; curada intacta.
+**C4 — LIMPA PRE-WEB (refactor, 6 itens).** Cortes 2 e 4; 13 tokenizadores -> 1; 17 limiares -> `thresholds.py`;
+   `concept_resolver` so apos medir os 8 consumidores de `computed_block_*`; CODE_INDEX "sem aula atribuida" (decisao H);
+   `auditoria-enxame`. Gate: BYTE-IDENTICO (determinismo, sentinela 0 total, ablacao identica, suite verde) — zero mudanca de numero.
+**C5 — DIVIDAS DE DADOS (dependem do user; paralelizavel).** Lab SO (SARC da turma 310); GAP VIDEO do T2; 10 suspeitos do
+   `detecta_headings`; sobras do "em duvida 28/08" que o item 8 nao encostar. Gate: gold proprio por item.
+**C6 — WEB.** Backlog vivo (`pendencias.md` §CAMPANHA FUTURA) + `graph.json` derivado como modelo de dados. Depois de C4.
 
 ## NAO fazer (refutado no gold em 02/09)
 Serie `k -> k-esimo bloco` (+5/-10) · serie monotonica por DP (+1/-2; so-flagados 0) · prova antiga -> prep (0) · label em

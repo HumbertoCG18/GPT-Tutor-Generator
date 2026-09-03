@@ -11,12 +11,55 @@ edges:
     condition: when a decision affects system structure
   - target: context/stack.md
     condition: when a decision affects technology choice
-last_updated: 2026-08-06
+last_updated: 2026-09-03
 ---
 
 # Decisions
 
 Append-only log. When a decision changes, mark the old entry as superseded and add the new decision above it.
+
+---
+
+### [backfill 03/09] Sete decisões duráveis que viviam só no tracker (junho–agosto/2026; span-cap refutado entrou junto com "2 aulas = 1 bloco")
+
+Registradas originalmente em `docs/reports/pendencias.md` (hoje `_archive/pendencias-historico-ate-2026-09-02.md`);
+movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
+
+#### Dedup de materiais é por CONTEÚDO (md5), nunca por basename ou id
+**Date:** 2026-06-23 · **Status:** Active
+**Decision:** Duplicata só existe com hash igual; nome de arquivo ou id iguais/diferentes não decidem nada.
+**Reasoning:** Causa confirmada no IA: o stash migrou de uma pasta nomeada pelo TÍTULO do PDF para a pasta do Moodle (nomes reais + semanas); o manifest acumulou os dois e ninguém podou o velho. Dedup por nome não pega (nomes diferem); só md5.
+**Consequences:** Toda migração de stash exige poda por conteúdo; duplicata sem hash é palpite e não entra.
+
+#### Regra "2 aulas = 1 bloco" aposentada: bloco = unidade pedagógica, sessão = átomo do render
+**Date:** 2026-06-22 · **Status:** Active
+**Decision:** A granularidade fina vive em `sessions[]` (por semana ISO), não em mais blocos. Junto: span-cap de over-merge REFUTADO por evidência (IA bloco-05 de 28 dias é unidade COESA de ML supervisionado; span não separa coeso-longo de qualquer-longo sem quebrar o coeso).
+**Reasoning:** Nenhum limiar temporal distingue bloco coeso de mis-merge; a cauda errada do bloco-05 é caso de conteúdo, não de duração.
+**Consequences:** Não reintroduzir cap de span nem contagem de aulas como critério de corte de bloco.
+
+#### Bibliografia é caso à parte, fora do motor temporal
+**Date:** 2026-07-22 (brainstorm F5) · **Status:** Active
+**Decision:** Bibliografia/references/cronograma ficam fora do provider de janela-de-prazo e do motor de bloco. O tutor deve passar a CONSUMIR bibliografias sem estourar o limite do Project, com brainstorm/spec próprios.
+**Reasoning:** Referência não tem "quando"; forçar bloco gera o residual conhecido (MF eth2 → bloco-12, aws → bloco-01). Ver spec `docs/superpowers/specs/2026-07-22-janela-de-prazo-tier2-design.md` §7.
+**Consequences:** Régua de cobertura das referências é separada (campanha própria); eth2/aws são exceção documentada, não bug do motor.
+
+#### `covered_units` é LISTA por avaliação/entrega, regra do plano de cada curso
+**Date:** 2026-08-08 · **Status:** Active
+**Decision:** Cobertura de prova/entrega é um conjunto de unidades vindo do plano (due-window + `.assessment_context.json` + notas do gold como verdade inicial). Regra IA: P1 = u01+u05; P2 CUMULATIVA = u01+u05+u02+u03; PS = tudo. MF/TCC não-cumulativo.
+**Reasoning:** Uma prova cobre várias unidades; campo único mentiria.
+**Consequences:** Consumidores (EXAM_INDEX, "o que cai na P2") leem a lista; cumulatividade é por curso, nunca global.
+
+#### PS e G2 têm tratamento estrutural, sem unidade
+**Date:** 2026-08-08 (regra institucional) · **Status:** Active
+**Decision:** Provas opcionais não recebem unidade: PS = semestre inteiro; G2 condicional (G1 < 7 e (G1+G2)/2 ≥ 5).
+**Reasoning:** São instrumentos institucionais, não avaliações de conteúdo delimitado.
+**Consequences:** `_NOT_MAIN_EXAM` e a fórmula do G1 devem tratá-las como não-principais (pendência aberta: FR contaria 4 principais; a fórmula diz 2).
+
+#### Modo não-monotônico por curso: descartado
+**Date:** 2026-08-11 (ruling T11, opção C) · **Status:** Active (reavaliar só se a família de cursos crescer)
+**Decision:** Não implementar inversão de ordem por curso no caminho bloco→unidade.
+**Reasoning:** 1 em 5 cursos inverte; o scorer puro erra sob co-ocorrência; o caminho já empilha ~8 camadas (DP global, fallbacks, heranças, curadoria, demote) — overengineering confirmado no código.
+**Consequences:** Curso que inverter é caso de curadoria/pino, não de modo novo.
 
 ---
 

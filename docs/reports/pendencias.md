@@ -30,8 +30,9 @@ decisao B (gold eth2/aws) quando quiser; push.
 10. Fase 2 — cronograma manda na unidade, no que sobrou; depois `recompile_vocab` no CG.
 11. Fase 4 — LLM residual so nos flagados, contado.
 12. Travessia "depois"; so aqui grafo renderizado / vetores, se a regua mostrar perguntas fora do alcance dos indices.
-Depois: referencias (regua propria) -> imagens e provas (gold antes de regra) -> limpa pre-web (`auditoria-enxame`,
-cortes 2 e 4, `concept_resolver` apos medir 8 consumidores) -> `graph.json` derivado (modelo de dados da fase web).
+Depois do motor: LOTES C1..C6 com protocolo anti-regressao — handoff 2026-09-02c §CAMPANHAS DEPOIS DO MOTOR (C1 travessia
+FILE_MAP -> C2 referencias -> C3 provas e imagens -> C4 limpa pre-web -> C5 dividas de dados -> C6 web). Cada pendencia deste
+arquivo tem dono la; nada entra num lote sem gold e numero.
 
 **PROXIMA CAMPANHA — TRAVESSIA (adiada 03/09; abre depois do item 12).** Runtime = Claude Project; FR (48k tokens) cabe na
 janela, CG (206k) e IA (729k) estouram e dependem do retrieval do Project + indices. A regua (`eval_travessia.py`) mede so
