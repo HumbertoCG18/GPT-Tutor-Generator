@@ -1,5 +1,10 @@
 # Plano 2026-09-02 — FECHAR O MOTOR: teto estrutural + vocabulario compilado + LLM residual + humano so na duvida
 
+> **Carimbo 03/09:** este documento e o DESENHO das fases e o registro das decisoes. A fila viva, o estado atual e a ordem
+> executavel estao no handoff `2026-09-02c-handoff-fase3-medida.md` + `pendencias.md` §SEQUENCIA ACORDADA. As secoes
+> "ESTADO ao parar" e "REVISAO 02/09 (noite)" abaixo foram ABSORVIDAS pelo handoff (revisao aceita: decisao C, sequencia
+> acordada); ficam como historico, nao como estado.
+
 **Origem:** conversa de 01/09 noite -> 02/09 madrugada (sessao dbdc7a63). Numeros-base em
 `pendencias.md` ("MOTOR PURO — o numero honesto") e no artifact "Anatomia do Bloco"
 (https://claude.ai/code/artifact/ba1de7bf-a802-49fc-b88b-6be358d4b796). Este documento e a FILA
@@ -211,7 +216,7 @@ I. **Definicao de "candidato forte"** para acionar o LLM na subunidade (Fase 4):
   scorer da +0,04 ao subtopico.
 - **D a I: PARADAS a pedido do user (02/09).** Retomar na proxima sessao a partir de D.
 
-## ESTADO ao parar (02/09 madrugada)
+## ESTADO ao parar (02/09 madrugada) — HISTORICO; estado atual no handoff 2026-09-02c
 Gerador local ate este commit (nao pushed): `e6f847f` `98e3536` `a9687d3` `f166c4e` `bb3a7ec` `aab91a5`
 `413ee1e` `9383c84` `097cc52` + este. Tutores: 8 commitados com o reprocess do meta-generica. Copias
 `.ablacao`: SO/ES2/TCC em estado nu+voter, IA em motor puro — a proxima `ablacao_rapida` re-sincroniza.
@@ -228,7 +233,7 @@ Scratchpad da sessao (promover na Fase 0): `motor_puro.py`, `censo_motor_llm.py`
 
 ---
 
-## REVISAO 02/09 (noite) — o que o dado mudou. PROPOSTA, aguardando o user.
+## REVISAO 02/09 (noite) — o que o dado mudou. ACEITA pelo user em 02/09 (decisao C + sequencia acordada); fila no handoff 2026-09-02c
 
 Medido hoje (`pendencias.md` §FASE 1b + MEDICAO; artifacts "Raio-X da Atribuicao" e "Gold x Moodle x SARC"):
 1. **A verdade estrutural esta no Moodle e o export a apaga.** O `contents.json` da API traz o que o card do professor

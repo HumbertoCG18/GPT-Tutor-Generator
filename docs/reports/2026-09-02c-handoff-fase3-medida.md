@@ -12,6 +12,13 @@ com trailers · [Humberto]. Acrescentado: (a) **estrutura estreita, texto decide
 (medido: a tudo +13/-10; so flagados +12/-5); (b) a verdade estrutural esta no Moodle pela API (labels de semana, ordem dos
 modulos, ordem das secoes) — o export a apaga; (c) foco = material de AULA (189/203 golds); referencia e contexto (watchdog).
 
+## Documentos (arrumados 03/09 — "1 -> 2 -> 3")
+Vivos: este handoff (fila + estado) · `pendencias.md` (tracker, ~400 linhas: SEQUENCIA, REGUA DE TRAVESSIA, FASE 1b, FASE 0,
+PENDENCIAS ANTIGAS AINDA ABERTAS, CAMPANHA FUTURA web) · `2026-09-02-plano-fechar-o-motor.md` (desenho das fases e decisoes;
+secoes ESTADO/REVISAO carimbadas como historico). Historico: `_archive/` (35 handoffs + `pendencias-historico-ate-2026-09-02.md`,
+4.8k linhas cortadas do tracker). Os 4 worktrees de junho em `.claude/worktrees/` foram removidos (commits ja na `main` ou
+equivalentes; branches `worktree-*` mantidos). Regra: 1 handoff vivo; novo handoff = o anterior vai para `_archive/`.
+
 ## Estado ao comecar (tudo commitado, NADA pushed)
 Gerador `feat/motor-atribuicao` (ver `git log`; ultimo desta sessao = docs consolidados). Tutores: MF `61a9104` SO `c81527f`
 IA `002c169` ES2 `09e3739` TCC `84670e4` CG `19472d1` LR `0e3ab1a` FR `64990dc` (com o vocab compilado;
