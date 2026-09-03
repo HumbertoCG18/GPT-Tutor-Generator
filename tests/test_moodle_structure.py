@@ -153,3 +153,12 @@ def test_regeneration_layer_calls_repo_backfill(tmp_path):
     ents = [dict(e) for e in MF_ENTRIES]
     _run_moodle_structure_backfill(SimpleNamespace(root_dir=repo), ents)
     assert ents[0]["moodle_section_index"] == 4
+
+
+def test_matches_by_stem_when_the_pipeline_changed_the_extension():
+    # LR: resource "Laboratório 1 - Wireshark" e um "Lab 1 - Wireshark.html" que o moodle_pull imprime como
+    # "Lab 1 - Wireshark.pdf"; o nome do modulo nao e o stem, so a extensao mudou (mesmo fenomeno do .htm do CG)
+    ents = [{"id": "lab-1-wireshark", "source_path": r"C:\stash\lr\[10.08] - Wireshark\Lab 1 - Wireshark.pdf",
+             "source_section": "[10.08] - Wireshark", "moodle_label": None}]
+    out = backfill_moodle_structure_from_api(ents, FX["LR"], year=2026)
+    assert out["lab-1-wireshark"]["moodle_section_index"] == 4 and out["lab-1-wireshark"]["moodle_module_index"] == 0

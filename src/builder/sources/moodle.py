@@ -283,6 +283,11 @@ def backfill_moodle_structure_from_api(manifest_entries, contents, year: int = 0
             files = [str(c.get("filename") or "") for c in (mod.get("contents") or []) if c.get("type") == "file"]
             keys = {f.casefold() for f in files} | {_savename_from_module(name, f, len(files)).casefold() for f in files}
             ids = [e for e in in_sec if Path(str(e.get("source_path") or "")).name.casefold() in keys]
+            if not ids and files:
+                # Extensao trocada pelo pipeline (LR: "Lab 1 - Wireshark.html" impresso em PDF;
+                # CG: .htm): casa pelo STEM do arquivo do modulo.
+                stems = {norm(Path(k).stem) for k in keys}
+                ids = [e for e in in_sec if norm(Path(str(e.get("source_path") or "")).stem) in stems]
             if not ids:
                 same = [e for e in in_sec if norm(label_of(e)) == norm(name)]
                 ids = same if (len(same) == 1 or n_name[norm(name)] == 1) else []

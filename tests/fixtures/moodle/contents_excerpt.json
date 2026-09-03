@@ -1,5 +1,5 @@
 {
- "_proveniencia": "Excertos de core_course_get_contents (Moodle PUCRS) puxados em 02/09/2026 e versionados em docs/reports/_harness-2026-09-02/moodle_contents/{MF,SO,ES2}.json; campos e valores reais, modulos recortados (fixture copia contrato real, conventions.md §Fixtures).",
+ "_proveniencia": "Excertos de core_course_get_contents (Moodle PUCRS) puxados em 02/09/2026 e versionados em docs/reports/_harness-2026-09-02/moodle_contents/{MF,SO,ES2}.json; campos e valores reais, modulos recortados (fixture copia contrato real, conventions.md §Fixtures). LR: secao 4 '[10/08] - Wireshark' (resource .html impresso em PDF pelo moodle_pull).",
  "MF": [
   {
    "id": 7630305,
@@ -260,6 +260,47 @@
        "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5746253/mod_resource/content/2/microsservicos.pdf?forcedownload=1",
        "timemodified": 1771434608,
        "timecreated": 1771434608
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "LR": [
+  {
+   "id": 7747604,
+   "name": "[10/08] - Wireshark",
+   "section": 4,
+   "modules": [
+    {
+     "id": 3814965,
+     "name": "Laboratório 1 - Wireshark",
+     "modname": "resource",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "file",
+       "filename": "Lab 1 - Wireshark.html",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/6059096/mod_resource/content/14/Lab%201%20-%20Wireshark.html?forcedownload=1"
+      }
+     ]
+    },
+    {
+     "id": 3814966,
+     "name": "Material de apoio",
+     "modname": "label",
+     "visible": 1
+    },
+    {
+     "id": 3814967,
+     "name": "Página do Wireshark",
+     "modname": "url",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "url",
+       "filename": "Página do Wireshark",
+       "fileurl": "https://www.wireshark.org/"
       }
      ]
     }
