@@ -13,8 +13,7 @@ estrutural) · nada regride em regua nenhuma · estrutura estreita, texto decide
 ## Estado ao comecar (tudo commitado, NADA pushed)
 Gerador `feat/motor-atribuicao`: itens 2-7 do C0 = `fe2c4fb` (3a) · `b802a68` (3b card) · `79fc92a` (secao 0) · `fdf28af` (3c tokens
 curtos + holdout CG) · `b1d565a` (ancora como faixa) · `a1bcc25` (casamento por stem) + commits de docs. Tutores: MF `e39e14a`
-SO `603d914` IA `ca1f765` ES2 `2212f9f` TCC `b9af3c3` (5 encerrados com estrutura do Moodle no manifest) · CG `19472d1` LR `040b2dd` (sincronizado 03/09)
-FR `64990dc` (semestre corrente: SEM os campos; entram na sync). Suite 2295. Copias `.ablacao` dos 5 + CG.
+SO `603d914` IA `ca1f765` ES2 `2212f9f` TCC `b9af3c3` (5 encerrados com estrutura do Moodle no manifest) · CG `19472d1` (SEM os campos; entra no S6) LR `040b2dd` FR `89db35d` (sincronizados 03/09). Suite 2297. Copias `.ablacao` dos 5 + CG.
 **Reguas (5 golds):** curada 199/200 conf-err 0 · 191/191 · 55/57 · 93/93 · motor+vocab 183/178/53/82 · motor sem vocab
 184/168/54/30 · AULA 174/189 (175 sem vocab) · REF 8/10 · holdout CG puro 30/35, curado 34/35 · censo revisar/100 51,7,
 votos/100 32,0. Residual flagado em AULA 18,5/100 (meta <= 8 nao batida; balde do item 11).
@@ -67,8 +66,12 @@ S4. ~~**Primeira sync real = LR**~~ FEITO 03/09 (LR `040b2dd`; gerador `91867b7`
     sem flag, unidade-01, categoria `outros` como os labs 1-3), 6 antigas so com os 3 campos de estrutura, 0 decisoes movidas;
     2a sync sem delta = byte-identico; sentinela 0 nos 5 encerrados; suite 2295. Achado: o LR (e os labs 1-3) nao tem markdown
     de material em `content/` (so em `staging/`, gitignored) — estado pre-existente, etapa de consolidacao e da UI, fora da sync.
-S5. **FR = controle** (diff vazio; entram os 3 campos de estrutura + 2 videos como referencia); `subunit_gt_FR` 14/18 e
-    `travessia_gt_FR` 15/15 intactos; commit.
+S5. ~~**FR = controle**~~ FEITO 03/09 (FR `89db35d`; gerador `e593ee7`): diff vazio (20 iguais), 2 videos entram como entries url
+    `references` com card "Sugestao de Conteudo Online" (llm-funil, duvida — atribuicao de referencia e C2; "Piratas do Vale do
+    Silicio" no manual-review); 20 antigas so com os 3 campos; 0 decisoes movidas; `subunit_gt_FR` 14/18 igual. **Bug pego pelo
+    gate de determinismo:** a 2a sync REMOVIA as 2 entries url (nao casavam modulo nenhum -> "sumidas"); `sync_diff` agora casa
+    entry url pelo `fileurl` do modulo `url`; 4a sync byte-identica. `travessia_gt_FR` nao rerodada (cache invalida com 2 entries
+    novas no FILE_MAP; medir no item 12).
 S6. **CG = rebuild limpo pela API** (`--pdf`: 40 downloads, 30 impressoes/snapshots, Datalab); zero curadoria, summaries ON,
     vocab compilado, voter ON com cap; `ground_truth_CG.csv` re-chaveado por `true_block_uuid` (35 scorable) e holdout rerodado;
     o user revisa a fila `revisar` (cada correcao = override + gold-por-fenomeno). "Em duvida 28/08" e "modals" triados so aqui.
