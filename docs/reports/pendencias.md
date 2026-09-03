@@ -280,6 +280,35 @@ agora, LLM depois") — entra em "imagens e provas" depois da fila do motor; (2)
 dos achados de P3; (3) GAP VIDEO do T2; (4) triagem dos 10 suspeitos SEM-GOLD do `detecta_headings`; (5) pino de cobertura
 p/ 57/57 (mecanismo nao existe; ligado a decisao B eth2/aws); (7) merge em main / push (nada pushed desde 01/09).
 FECHOU: (6) gold de bloco do CG — `ground_truth_CG.csv` 03/09 (35 scorable, motor 34/35).
+
+**Resgatadas do historico em 03/09 (varredura por [USER]/[DECISION]/BLOQUEADO/aguardando; so o que ainda vale), por dono na fila:**
+- **Item 8 (rebuild CG/LR/FR pela API) — pre-requisitos do CG:** (a) **CG publica `.htm` (sem L)** e `stash_import._classify_file_type`
+  nao conhece a extensao: arquivo cai em `skipped` e a UI mostra so a CONTAGEM ("N ignorado(s) por extensao"), nunca os
+  nomes — material some sem ninguem saber qual (user 25/08; **ainda sem `htm` no codigo em 03/09**). Fix = extensao + listar
+  nomes. (b) **"modals" do CG** — forma de material que nao sabemos o que e tecnicamente (janela modal? conteudo por JS?);
+  investigar so quando CG entrar de verdade (adiado pelo user 25/08). (c) **"Em duvida 28/08" das 3 cadeiras novas, nunca
+  triado:** `_NOT_MAIN_EXAM` trata "Prova PS"/"Prova G2" como principais (FR teria 4; a formula do G1 diz 2 — ler os termos
+  do plano); cadeira sem prova: marco = entrega ("Fechamento da parte N", "Apresentacao do T1"), `_exam_number`/prep-prova/R6
+  so entendem P; provedor de unidade-no-card (`U1 - ...`) e ordinal "Laboratorio N"/"Tutorial 1.2" (a Fase 3b encosta nisso);
+  identidade de curso = Moodle id + codigo SARC (98709 vs 98710), nunca nome; plano do Lab SO sem avaliacao: unica fonte e o
+  `summary` de secao do Moodle (a Fase 3a passa a ler `sections.json`); Lab Redes ~10 blocos de conteudo em 19 sessoes = regua magra.
+- **"Depois: referencias" — gold JA EXISTE, aguardando veto:** `coverage_gt_{SO,MF,IA}.csv`, 9/10 preenchidos (SO 3/3 pelo
+  plano de ensino; MF 3/3 e IA 3/3 `proposto-claude`: MF1=1,2 · MF2=1,2 · MF3=1 · IA1=1 · IA2=1 · IA3=5; IA4 fantasma = skip).
+  Baseline medido em 18/08: 0/9 exact-set, 8/9 sem predicao nenhuma. Junto com a decisao 22/07 "bibliografia = caso a parte"
+  e a decisao B (eth2/aws).
+- **"Depois: imagens e provas":** alem de P2b-LLM, a [DECISION] **granularidade da cobertura de avaliacoes** (prova inteira
+  com um conjunto de topicos, barato e deterministico, x questao a questao, caro/LLM, que e o que o header do EXAM_INDEX ja
+  promete "incidencia por topico") — perguntada 18/08, sem ruling.
+- **Residual de bloco na curada (para a Fase 4, LLM contado):** ES2 27/28 (1 off-by-one nao confiante; `azure`, PDF de 877k
+  chars sobre cloud, hoje metodo `llm`); SO `exemplo-threads` x3 e IA `Cap. Algoritmos Geneticos` FECHARAM (SO 38/38, IA 43/43 em 03/09).
+FECHADOS na varredura (nao voltam): sujeira pre-existente em ES2/IA (0 entradas sujas em 03/09; decisao A commitou os 8);
+branch `feat/block-stable-id` (ja mergeada em HEAD); subunidade IA "6 residuais teto" (Fase 1b, 93/93); card_block_map do MF
+"Verificacao de Programas" (morta 08/07); bloco-15/bloco-12x13 do IA (junho; IA 43/43 hoje); gold IA congelado / xlsx stale /
+102 suspeitas soft (superados pela auditoria gold x Moodle x SARC de 02/09, 148/148); rollout flag-ON TCC/SO (cutover 17/08).
+**Decisoes DURAVEIS que estavam so no historico e nao em `.mex/context/decisions.md`** (mover quando quiser, nao e pendencia):
+dedup por CONTEUDO (md5), nunca por basename/id (23/06); regra "2 aulas = 1 bloco" aposentada (bloco = unidade pedagogica);
+bibliografia = caso a parte (22/07); `covered_units` lista p/ avaliacao/entrega (08/08); tratamento estrutural PS/G2 (08/08);
+modo nao-monotonico por curso descartado (ruling T11); span-cap de over-merge refutado (22/06).
 Tudo o mais abaixo de FASE 0 no arquivo antigo (MOTOR PURO, TOKENS CURTOS, DISSECACOES, campanhas 1-3, Plano B, auditorias)
 esta executado ou superado pela SEQUENCIA ACORDADA; le o historico so para "por que" de uma regra.
 
