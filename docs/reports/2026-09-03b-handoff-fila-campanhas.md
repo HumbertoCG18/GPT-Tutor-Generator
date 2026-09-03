@@ -11,6 +11,26 @@ anterior vai para `_archive/`. Tracker registra numero e commit de cada item.
 **Caixa de IDEIAS (secao no fim):** o que surge no meio do caminho ("da para fazer X?") NAO entra na campanha aberta: vai para a
 caixa com 3 campos — da para fazer? · quando (qual campanha)? · o que resolve no sistema? — e e triado so na fronteira entre campanhas.
 
+## COMECE POR (proxima sessao) — SYNC S6a/S6b, TDD, copia antes do original
+0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` pode estar sujo), `git log --oneline -3` (HEAD = docs
+   do criterio estrito), HEAD dos 8 tutores iguais aos de "Estado ao comecar", `python scripts/censo_motor_llm.py` (revisar/100 51,7).
+1. **S6a**: `html_to_structured_markdown` ganha `max_chars` (default 15 000 = comportamento das entries url; arquivo local passa
+   sem teto). Teste: a `Curvas.htm` real converte inteira (11 179 chars com refs, 24 refs de imagem).
+2. **S6b, TDD com fixture real** (`_harness-2026-09-03/piloto-curvas/`: `Curvas.htm`, 27 imagens em `images/`, `datalab_cache.json` =
+   gold das 12 formulas + 9 legendas + 3 vazias, `Curvas.piloto.md` = saida esperada, `piloto_curvas.py` = como foi gerado):
+   (a) `stash_import._classify_file_type`: `.html`/`.htm` -> `"html"`; (b) `RepoBuilder._process_html` (ops, nao engine) = HTML salvo ->
+   conversor -> markdown; imagens: md5 -> dedupe de logos (aparecem em toda pagina do curso) -> Datalab CRU por imagem com cache por
+   md5 (`course/.image_curation` ou sidecar proprio) e cap por build (400) -> `$$` vira bloco + `<sub>fonte: [x.gif](images/x.gif)</sub>`;
+   legenda -> Gemini PT-BR -> `![Figura: ...](images/x.gif)`; vazia -> Gemini descreve; falha -> `![x.gif — nao capturada](images/x.gif)`;
+   imagens copiadas para `content/images/`. Clientes Datalab/Gemini FALSOS nos testes (o cache do piloto e a resposta).
+   (c) `manual-review/formulas/<id>.md` (S6c) sai da mesma funcao: LaTeX + link da imagem + caixa "conferir com o professor".
+3. Gate do S6b antes de commitar: suite verde; a Curvas de ponta a ponta numa COPIA do CG (`.ablacao/Computacao-Grafica-Tutor`)
+   produz o `Curvas.piloto.md` (modulo 12 formulas); curada dos 5 intacta; sentinela 0 nos 8; determinismo.
+4. Depois: S6d (pull grava `.html` no stash; snapshot so na subarvore), S6e (fixtures), S6f (CG rebuild — gasto autorizado pelo user
+   em 03/09: Datalab ~21 PDFs + ~250 imagens ≈ US$ 3; Gemini codigos + traducoes; cap por rodada).
+Regras que valem para o codigo novo: `_process_html` mora em `src/builder/ops/` ou `core/`, nunca em `engine.py` (fachada); tokens
+nunca impressos; nenhum tutor original antes da copia passar; cada commit com o numero no tracker.
+
 ## Leis (inalteradas)
 Dado antes de codigo · raiz nunca remendo · sem regra por categoria/curso · gold nao e oraculo (Moodle/SARC sao a verdade
 estrutural) · nada regride em regua nenhuma · estrutura estreita, texto decide, estrutura NUNCA sobrepoe decisao confiante nem
@@ -19,7 +39,7 @@ Datalab/Gemini `.env`) nunca impressos · [Humberto] · nao corrigir conteudo do
 
 ## Estado ao comecar (dados de 03/09, tudo commitado, NADA pushed)
 Gerador `feat/motor-atribuicao`, **805 commits a frente de `main`** (4 atras). Rodada do motor: `fe2c4fb` `b802a68` `79fc92a` `fdf28af`
-`b1d565a` `a1bcc25`; SYNC: `2491596` `619488c` `91867b7` `e593ee7` + docs. Suite 2298.
+`b1d565a` `a1bcc25`; SYNC: `2491596` `619488c` `91867b7` `e593ee7` + `53f5db1` (img no conversor) + docs (`0c5129b`). Suite 2298.
 Tutores: MF `e39e14a` · SO `603d914` · IA `ca1f765` · ES2 `2212f9f` · TCC `b9af3c3` (encerrados, estrutura do Moodle no manifest) ·
 LR `040b2dd` (sincronizado: Lab 4 entrou) · FR `89db35d` (sincronizado: 2 videos como referencia) · CG `19472d1` (EXPORT; e o
 alvo da campanha aberta). Copias `.ablacao` dos 5 + CG + LR + FR.
