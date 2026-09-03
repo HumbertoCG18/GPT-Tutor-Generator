@@ -4,7 +4,8 @@ last_updated: 2026-09-02 noite (rodada do motor: Fase 0 e 1b feitas; Fase 3 rees
 fecharam (§REGUA DE TRAVESSIA, bloco MEDICOES FECHADAS); watchdog do censo casa por nome de arquivo; 1b adiado para a campanha
 de travessia. 03/09 sessao 4: **item 2 (Fase 3a) FEITO** (gerador `fe2c4fb`, 5 tutores reprocessados; §FASE 3a);
 item 3 (Fase 3b, card ordenado) FEITO na mesma sessao (§FASE 3b; AULA 152 -> 163, curada intacta);
-**proximo = item 4 (Fase 3b, ordem das secoes + card generico -> apresentacao)**. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3, 4.8k linhas)
+item 4 FEITO (ordem das secoes: 0 efeito pos-item 3, nao entrou; secao 0 do Moodle -> apresentacao: +3/0, AULA 167);
+**proximo = item 5 (Fase 3c, tokens curtos do cronograma no desempate)**. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3, 4.8k linhas)
 em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-02c + plano
 2026-09-02 (desenho/decisoes, carimbado).
 
@@ -23,7 +24,8 @@ decisao B (gold eth2/aws) quando quiser; push.
    regeneracao; encerrados 217/221 entries com card casadas; todas as reguas identicas; sentinela 0.
 3. ~~Fase 3b — card como documento ordenado = provider de janela~~ FEITO 03/09 (§FASE 3b): AULA 152 -> 163/189, motor puro
    161 -> 173/200, curada intacta; card so depois do voter (antes dele regrediu a curada e foi revertido).
-4. Fase 3b — ordem das secoes para cards sem data (+7/-1) e card generico -> apresentacao (+3/0).
+4. ~~Fase 3b — ordem das secoes para cards sem data (+7/-1) e card generico -> apresentacao (+3/0)~~ FEITO 03/09 (§FASE 3b
+   item 4): ordem das secoes agiu em 0 pos-item 3 (nao entrou); secao 0 do Moodle sem janela -> apresentacao (+3/0, AULA 167).
 5. Fase 3c — tokens curtos do cronograma no desempate (+4/-2), como strangler do tokenizador so no disambiguator.
 6. Fase 3d — label unico nos flagados (+2/0).
 7. Gate da Fase 3: AULA 152 -> ~174/189; residual <= 8/100; curada intacta; motor puro ± vocab; calibra_revisar; censo.
@@ -117,6 +119,22 @@ Com o card ANTES do voter (1a versao): curada 199 -> 187, 191 -> 185, 55 -> 52, 
 acertava: MF arvores/intro/listas/provas, SO exemplo-criacao x4). Revertido para "card depois do voter"; regra nova.
 **Tutores:** so o SO muda no manifest (`moodle_week_label` 0 -> 30 pelas ancoras "dd/mm"; nenhum campo do motor); MF/IA/ES2/
 TCC byte-identicos (revertido o `updated_at`). Determinismo (8 tutores, 2x, codigo final): 0 arquivos. Suite 2265.
+
+**Item 4 (mesma sessao; gerador `79fc92a`, tutor SO `603d914`, os outros 4 byte-identicos).** (a) Ordem das secoes como prior (H7): `mede_ordem_secoes.py --chain --only-flagged` nas copias
+pos-item 3 = **GANHO 0 PERDA 0** (21 golds em cards sem data, todos "sem efeito": os +7/-1 de 02/09 eram flagados que o card
+ordenado ja decide). Sem numero, nao entrou — nenhum codigo. (b) Card generico -> apresentacao (H1, +3/0: SO
+`apresentacao-da-disciplina`, `questoes-do-enade-sobre-sisop`, `programa`, todos SEM-BLOCO no puro e llm-funil no curado).
+Raiz: os 3 estao na **secao 0 do Moodle** = area geral do curso (`moodle_section_index == 0`, Fase 3a); o regex de nome
+`informa|geral|aviso` do harness casava "Semana 12 ... Busca com Informacao" no IA (9 entries, falso positivo). Regra:
+`resolve_general_section` — secao 0, sem janela de provider nenhum (nem card), so caminho lexical, depois de prep-prova
+(listas P1/P2 do mesmo card continuam prep-prova) e antes do llm-funil; method/provider `secao-geral`, banda media;
+`_first_class_block_decision` extraida de `resolve_generic_reference` (byte-identico). 3 testes em `test_card_stream.py`.
+Numeros: motor puro sem vocab 173 -> **176**/200 (conf-err 3), unidade 161 -> **164** (herdam do bloco), cobertura 51,
+sub 26; +vocab 172 -> **175** · 171 -> **174** · 50 · 82; AULA 164 -> **167**/189 sem vocab, 163 -> **166** com vocab; curada 199/200 · 191/191 · 55/57 · 93/93 intacta; sentinela: so SO (3 entries
+llm-funil -> secao-geral, flag True -> False); censo nos 8: llm-funil 18 -> 15, revisar/100 53,2 -> 52,6, votos/100
+33,8 -> 32,9. Divida achada: a escada da `regua_aula.py` (H1/H7/H9 via picks) esta STALE — os picks H9 do harness
+"desflagam" entries que a producao ja decide e inflam "erros CONFIANTES" (12 -> 16 sem erro novo); a linha limpa e
+"motor puro hoje". Podar no item 9 (refactor).
 
 ## REGUA DE TRAVESSIA — baseline "antes" (02/09 noite)
 

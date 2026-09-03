@@ -20,8 +20,8 @@ secoes ESTADO/REVISAO carimbadas como historico). Historico: `_archive/` (35 han
 equivalentes; branches `worktree-*` mantidos). Regra: 1 handoff vivo; novo handoff = o anterior vai para `_archive/`.
 
 ## Estado ao comecar (tudo commitado, NADA pushed)
-Gerador `feat/motor-atribuicao` (ver `git log`; item 2 = `fe2c4fb`, item 3 = `b802a68`, + docs). Tutores: MF `e39e14a`
-SO `5809cca` IA `ffd9fdb` ES2 `2212f9f` TCC `b9af3c3` (os 5 com estrutura do Moodle no manifest, 03/09) CG `19472d1` LR `0e3ab1a`
+Gerador `feat/motor-atribuicao` (ver `git log`; item 2 = `fe2c4fb`, item 3 = `b802a68`, item 4 = `79fc92a`, + docs). Tutores:
+MF `e39e14a` SO `603d914` IA `ffd9fdb` ES2 `2212f9f` TCC `b9af3c3` (os 5 com estrutura do Moodle no manifest, 03/09) CG `19472d1` LR `0e3ab1a`
 FR `64990dc` (os 3 do semestre corrente ganham os campos no rebuild do item 8; hook ja roda) (com o vocab compilado;
 `.glossary_curation.llm.json` em MF/CG/LR/FR). `subjects.json`: `compile_vocabulary: true` nos 8. `raw/moodle/{sections,
 contents,labels}.json` gravados nos 8 (gitignored; copia versionada em `_harness-2026-09-02/moodle_sections/` e
@@ -44,7 +44,7 @@ Push quando quiser.
    Rerodar = `python scripts/eval_travessia.py {IA,FR,CG} [--sem-llm|--contexto-completo]` (cache: 0 chamadas se o contexto nao mudou).
 1b. ~~FILE_MAP completo~~ MOVIDO para a campanha de travessia (user, 03/09: "terminar a campanha do motor"; assim o item 12
    mede so o motor). Watchdog de cobertura ja esta no censo. Candidatos em `pendencias.md` §PROXIMA CAMPANHA — TRAVESSIA.
-   **PROXIMO ITEM = 4 (Fase 3b, ordem das secoes + card generico -> apresentacao).**
+   **PROXIMO ITEM = 5 (Fase 3c, tokens curtos do cronograma no desempate; H8 agiu em 4 na regua pos-item 4).**
 2. ~~**3a Backfill estrutural nos 5 encerrados**~~ FEITO 03/09 (tracker §FASE 3a): `backfill_moodle_structure_repo` em
    `sources/moodle.py` + hook `_run_moodle_structure_backfill` na regeneracao (antes do motor, idempotente, so se
    `raw/moodle/contents.json` existe); 3 campos em `FileEntry` (`moodle_section_index`, `moodle_module_index`,
@@ -69,9 +69,16 @@ Push quando quiser.
    curada 199/200 · 191/191 · 55/57 · 93/93 intacta, sentinela 0, censo 53,2 (o voter ja decidia tudo que o card decide —
    o ganho e do motor puro / sem voter). 5 erros do card que ESCAPAM da fila (band media sem flag: MF revisao, arvores,
    intro, listas, terminacao) — insumo do item 7 (`calibra_revisar`).
-4. **3b Ordem das secoes** como prior para cards sem data (`mede_ordem_secoes.py --chain --only-flagged`, +7/-1: ancoras so de
-   cards de conteudo com janela datada; faixa do proprio card > vizinhos + encadeamento) e **card generico sem janela ->
-   bloco de apresentacao** (irma da `resolve_generic_reference`, +3/0).
+4. ~~**3b Ordem das secoes** + **card generico -> apresentacao**~~ FEITO 03/09 (tracker §FASE 3b item 4). (a) Ordem das
+   secoes: `mede_ordem_secoes.py --chain --only-flagged` agiu em **0** depois do item 3 (os +7/-1 eram flagados que o card
+   ja decide) — sem numero, NAO entrou (nada de codigo). (b) Card generico: raiz e a **secao 0 do Moodle** (area geral do
+   curso; `moodle_section_index == 0`), nao o nome do card (o regex `informa|geral` pegava "Busca com Informacao" no IA):
+   `resolve_general_section` no `anchor_engine`, sem janela nenhuma, depois de prep-prova e card, antes do llm-funil,
+   so no caminho lexical; method `secao-geral`, banda media, irma de meta/ref-generica (`_first_class_block_decision`
+   extraida). Numeros: motor puro 173 -> **176**/200, unidade 161 -> 164; +vocab 172 -> 175 · 171 -> 174; AULA 164 -> **167**/189
+   sem vocab, 163 -> **166** com vocab;
+   curada 199/200 · 191/191 · 55/57 · 93/93 intacta; no curado SO `apresentacao-da-disciplina`, `questoes-do-enade`,
+   `programa` saem do llm-funil (18 -> 15 nos 8; revisar/100 53,2 -> 52,6; votos/100 33,8 -> 32,9).
 5. **3c Tokens curtos consagrados pelo cronograma** em `disambiguator._toks` nos DOIS lados (`short_vocab_from_topic_labels`
    sobre labels de sessao + topic_text; +4/-2, IA k-NN x4) — implementar como corte 3 do refactor (tokenizador unico como
    strangler SO no disambiguator, byte-identico primeiro, sentinela 0, depois o vocab curto).
