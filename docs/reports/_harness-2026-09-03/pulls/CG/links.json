@@ -1,0 +1,1156 @@
+[
+ {
+  "secao": "Plano de Ensino",
+  "nome": "Plano de Ensino",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009603/mod_resource/content/4/PlanoDeEnsino-4645Z-04-Fundamentos%20de%20Computac%CC%A7a%CC%83o%20Gra%CC%81fica.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\Plano de Ensino\\PlanoDeEnsino-4645Z-04-Fundamentos de Computação Gráfica.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "Plano de Ensino",
+  "nome": "Playlist da Disciplina - Vídeos",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009604/mod_resource/content/6/VideosCG-v2.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\Plano de Ensino\\VideosCG-v2.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "Plano de Ensino",
+  "nome": "Cronograma",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009605/mod_resource/content/5/Cronograma2026-2.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\Plano de Ensino\\Cronograma2026-2.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "1 - Origens da Computação Gráfica",
+  "nome": "Slides",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009623/mod_resource/content/1/OrigensDaComputacaoGrafica.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\1 - Origens da Computação Gráfica\\OrigensDaComputacaoGrafica.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "1 - Origens da Computação Gráfica",
+  "nome": "Página sobre Origens da Computação Gráfica",
+  "url": "http://www.inf.pucrs.br/pinho/CG/Aulas/Intro/intro.htm",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "1 - Origens da Computação Gráfica",
+  "nome": "Vídeo sobre Origens da Computação Gráfica",
+  "url": "https://youtu.be/vjTe2O_Dvr0",
+  "tipo": "video",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "dominio"
+ },
+ {
+  "secao": "2 - Biblioteca OpenGL",
+  "nome": "Tutorial Introdutório de OpenGL",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009626/mod_resource/content/12/OpenGLBasico.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\2 - Biblioteca OpenGL\\OpenGLBasico.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "2 - Biblioteca OpenGL",
+  "nome": "Exemplo Básico de OpenGL em Python",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009627/mod_resource/content/13/OpenGL-PY.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\2 - Biblioteca OpenGL\\OpenGL-PY.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "2 - Biblioteca OpenGL",
+  "nome": "Exemplo Básico de OpenGL em C++",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009628/mod_resource/content/15/OpenGL-CPP.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\2 - Biblioteca OpenGL\\OpenGL-CPP.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "2 - Biblioteca OpenGL",
+  "nome": "Vídeo com instruções para usar OpenGL na VDI da PUCRS",
+  "url": "https://youtu.be/F8hUevviLw4",
+  "tipo": "video",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "dominio"
+ },
+ {
+  "secao": "2 - Biblioteca OpenGL",
+  "nome": "Teste de texturas em Python",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009633/mod_resource/content/8/Texturas_v3.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\2 - Biblioteca OpenGL\\Texturas_v3.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "2 - Biblioteca OpenGL",
+  "nome": "Exercícios",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770138",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+0 videos, 141 palavras",
+  "videos": []
+ },
+ {
+  "secao": "3 - Fundamentos Matemáticos para Computação Gráfica",
+  "nome": "Página com Vídeos sobre Fundamentos Matemáticos para Computação Gráfica",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770139",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+18 videos, 101 palavras",
+  "videos": [
+   "-xRpPshSGx0",
+   "9lrLSLtKkKc",
+   "QfJQg9ab4ww",
+   "Rtn_pmhPdRE",
+   "STYSwbPyHAg",
+   "Zj--nzyXs3c",
+   "ag_TxTkwxYI",
+   "eMrfBq3tq_A",
+   "fuZPNvnVG1A",
+   "l73pdyJhpJE",
+   "m0XOTJtQK1I",
+   "mt7qmFe2zq0",
+   "oFqePUSweck",
+   "sI8qzzC6wXg",
+   "sqEN2EsNQwI",
+   "uzIbORlyQ7c",
+   "y7SAtLt-hi0",
+   "z-RC9_RKzb0"
+  ]
+ },
+ {
+  "secao": "3 - Fundamentos Matemáticos para Computação Gráfica",
+  "nome": "Slides",
+  "url": "http://www.inf.pucrs.br/pinho/CG/SlidesEmPDF/FundamentosMatematicos.pdf",
+  "tipo": "material-pdf",
+  "acao": "download",
+  "destino": "",
+  "sinal": "dominio+pdf"
+ },
+ {
+  "secao": "3 - Fundamentos Matemáticos para Computação Gráfica",
+  "nome": "Classe Vetor",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009637/mod_resource/content/1/ExemploDeManipulacaoDeImagens.cpp?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\3 - Fundamentos Matemáticos para Computação Gráfica\\ExemploDeManipulacaoDeImagens.cpp",
+  "sinal": "resource"
+ },
+ {
+  "secao": "3 - Fundamentos Matemáticos para Computação Gráfica",
+  "nome": "Produto Escalar",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009638/mod_resource/content/2/Matematica.cpp?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\3 - Fundamentos Matemáticos para Computação Gráfica\\Matematica.cpp",
+  "sinal": "resource"
+ },
+ {
+  "secao": "3 - Fundamentos Matemáticos para Computação Gráfica",
+  "nome": "Exercício com Polígonos",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770143",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+0 videos, 38 palavras",
+  "videos": []
+ },
+ {
+  "secao": "3 - Fundamentos Matemáticos para Computação Gráfica",
+  "nome": "Exercício com Animação",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770144",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+0 videos, 76 palavras",
+  "videos": []
+ },
+ {
+  "secao": "3 - Fundamentos Matemáticos para Computação Gráfica",
+  "nome": "Exercício de Animação - Foguete",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770145",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+0 videos, 77 palavras",
+  "videos": []
+ },
+ {
+  "secao": "4 - Detecção de Colisão",
+  "nome": "Slides sobre Detecção de Colisão",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009642/mod_resource/content/2/Colisao.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\4 - Detecção de Colisão\\Colisao.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "4 - Detecção de Colisão",
+  "nome": "Vídeos sobre Algoritmos de Deteção de Colisão",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770147",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+29 videos, 147 palavras",
+  "videos": [
+   "-8we9VFayYY",
+   "11FZI3NfD7Y",
+   "2tqs5Vug9Ng",
+   "4BqHUdOoN5E",
+   "4UfrMfe_IQU",
+   "BMvxgHnPaNI",
+   "DI4omBlQIy8",
+   "DVF173QSXDs",
+   "DYDAn8AC76E",
+   "H1quvu95pPU",
+   "MTOoq4sIkdY",
+   "NG2oSY6rBhg",
+   "OBJJzWBBPRs",
+   "R1OpaMBw7Wc",
+   "VbpvtAHYjvY",
+   "WHlJQU16LTk",
+   "WORdJgSrBag",
+   "aF9K3QzaNlg",
+   "atW2I92EQSI",
+   "gSUGkHIvbXY",
+   "i38VemStXIs",
+   "iw_9adpwhCY",
+   "lTjxGpgBzME",
+   "nSlaZLsaItE",
+   "pFjXp4XrH4s",
+   "pjnb61SIHK4",
+   "touA_t5Zhzg",
+   "y14W6OKDiO0",
+   "z2kyY-7cLeU"
+  ]
+ },
+ {
+  "secao": "5 - Geometria Computacional",
+  "nome": "Página sobre Geometria Computacional",
+  "url": "https://www.inf.pucrs.br/pinho/CG/Aulas/GeomComp/GeomComp.htm",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "5 - Geometria Computacional",
+  "nome": "Página com Videos Sobre Geometria Computacional ",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770149",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+6 videos, 37 palavras",
+  "videos": [
+   "3GWjbkpOrz8",
+   "9xAdt2Efc8k",
+   "VHXjgYyZjcQ",
+   "YtRsE9wDgQE",
+   "e4epDHCABso",
+   "naFSnuvrYCY"
+  ]
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Introdução",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009646/mod_resource/content/1/Vis2d.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\6 - Processo de Visualização 2D\\Vis2d.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Instanciamento",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009648/mod_resource/content/3/Instanciamento.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\6 - Processo de Visualização 2D\\Instanciamento.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Página com vídeos sobre INSTANCIAMENTO",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770153",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "0 videos, 1010 palavras",
+  "videos": []
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Página sobre TRANSFORMAÇÕES GEOMÉTRICAS em OpenGL",
+  "url": "https://www.inf.pucrs.br/pinho/CG/Aulas/OpenGL/TransformacoesGeometricas/TransformacoesGL.html",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Recorte",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009652/mod_resource/content/4/Recorte.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\6 - Processo de Visualização 2D\\Recorte.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Página com Vídeos sobre RECORTE",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770157",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+3 videos, 14 palavras",
+  "videos": [
+   "8lnc8gPe2DU",
+   "8ug-tgGAkqg",
+   "W_5vDKdbpnQ"
+  ]
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Vídeo sobre o Algoritmo de Recorte por Subdivisão Binária",
+  "url": "https://youtu.be/6PXnrjSxb-I",
+  "tipo": "video",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "dominio"
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Mapeamento",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009656/mod_resource/content/5/Mapeamento.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\6 - Processo de Visualização 2D\\Mapeamento.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Página com Vídeos sobre Mapeamento",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770161",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+2 videos, 7 palavras",
+  "videos": [
+   "ZI3ecTHEI38",
+   "eO_X3ClaEzU"
+  ]
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Vídeo sobre MAPEAMENTO em OpenGL",
+  "url": "https://youtu.be/PeJm70QOETU",
+  "tipo": "video",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "dominio"
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Exemplo de Código para Instanciamento",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009660/mod_resource/content/4/TransformacoesGeometricas.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\6 - Processo de Visualização 2D\\TransformacoesGeometricas.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Exercícios Teóricos sobre Processo de Visualização 2D",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770165",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+2 videos, 116 palavras",
+  "videos": [
+   "ltSL1jVQdMA",
+   "vW9DxFBDFPU"
+  ]
+ },
+ {
+  "secao": "6 - Processo de Visualização 2D",
+  "nome": "Exemplo de Código para Animação",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009662/mod_resource/content/2/Animacao-v2.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\6 - Processo de Visualização 2D\\Animacao-v2.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "7 - Curvas Paramétricas",
+  "nome": "Página sobre curvas Paramétricas",
+  "url": "https://www.inf.pucrs.br/pinho/CG/Aulas/Curvas/Curvas.htm",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "7 - Curvas Paramétricas",
+  "nome": "Slides sobre Curvas Paramétricas",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009664/mod_resource/content/3/CurvasParametricas.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\7 - Curvas Paramétricas\\CurvasParametricas.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "7 - Curvas Paramétricas",
+  "nome": "Exercícios sobre Curvas",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770169",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+3 videos, 172 palavras",
+  "videos": [
+   "S5GopgUzh3c",
+   "pjbjpFeSIVE",
+   "srohPI8Lm4w"
+  ]
+ },
+ {
+  "secao": "7 - Curvas Paramétricas",
+  "nome": "Página com Vídeos sobre Curvas Paramétricas",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770170",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+20 videos, 130 palavras",
+  "videos": [
+   "3OgRTBaQ6II",
+   "5tFIbWAnrh8",
+   "CM-qjP4U4Lg",
+   "I09E0NRRTlI",
+   "K6ujpcVGMaU",
+   "Nam9aV58-E8",
+   "OYLzj8-xAu0",
+   "VO1hgow0lQw",
+   "Z-WvfFuJ3-8",
+   "ZN2Tv2FVC9M",
+   "_XA8lgH1tiE",
+   "bNJBA_XGeF0",
+   "dGDyGzMF1hY",
+   "ihq7ZrbpJT0",
+   "p6VFtcTlfQc",
+   "qKbsuUWQJAs",
+   "s9_eR3TRc1g",
+   "vHab9PGtcME",
+   "waxGohodJh4",
+   "wpf5FVADpLw"
+  ]
+ },
+ {
+  "secao": "7 - Curvas Paramétricas",
+  "nome": "Código CPP com Exemplo de Traçado com Curvas Bèzier",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009667/mod_resource/content/7/Bezier-CPP.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\7 - Curvas Paramétricas\\Bezier-CPP.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "7 - Curvas Paramétricas",
+  "nome": "Código PYTHON com Exemplo de Traçado com Curvas Bèzier",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009668/mod_resource/content/7/Bezier-PY.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\7 - Curvas Paramétricas\\Bezier-PY.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "7 - Curvas Paramétricas",
+  "nome": "Código PYTHON com Exemplo de ANIMAÇÃO com Curvas Bèzier",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009669/mod_resource/content/6/Bezier-Python.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\7 - Curvas Paramétricas\\Bezier-Python.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "7 - Curvas Paramétricas",
+  "nome": "Código CPP com Exemplo de ANIMAÇÃO com Curvas Bèzier",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009670/mod_resource/content/6/Bezier-Animacao.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\7 - Curvas Paramétricas\\Bezier-Animacao.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "Provas Resolvidas",
+  "nome": "Resolução de Prova de Computação Gráfica 2D",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770178",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+10 videos, 10 palavras",
+  "videos": [
+   "7ry72cyfY_E",
+   "IvY301fEscY",
+   "NjVkXYkdrYA",
+   "_xyqegQ0VXg",
+   "ax1x75b0Jxs",
+   "hNvENn7nZ_g",
+   "rrDzG-w1Uhs",
+   "uSvOfiyVtjU",
+   "umZffOR7KZY",
+   "vW9DxFBDFPU"
+  ]
+ },
+ {
+  "secao": "Provas Resolvidas",
+  "nome": "Resolução de Prova de Computação Gráfica 3D",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770179",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+10 videos, 10 palavras",
+  "videos": [
+   "6-ba_tCPkkM",
+   "69RLHd64s1g",
+   "B_A2FWgqChM",
+   "FBDQCbsORyU",
+   "H0z70ppA78c",
+   "VqcCaIsHMig",
+   "Zl89C7-E6zo",
+   "h0nGd5ndnCQ",
+   "lN4okYwbF44",
+   "oNKSf-dNmU0"
+  ]
+ },
+ {
+  "secao": "Exercícios 2D",
+  "nome": "Exercícios de Geometria Computacional",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770182",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+4 videos, 111 palavras",
+  "videos": [
+   "LpEMykLTx2k",
+   "NBM000u-SSA",
+   "Uql0JL561_0",
+   "otoWXpHBoBg"
+  ]
+ },
+ {
+  "secao": "Exercícios 2D",
+  "nome": "Resolução de Prova de Computação Gráfica 2D",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770183",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+10 videos, 10 palavras",
+  "videos": [
+   "7ry72cyfY_E",
+   "IvY301fEscY",
+   "NjVkXYkdrYA",
+   "_xyqegQ0VXg",
+   "ax1x75b0Jxs",
+   "hNvENn7nZ_g",
+   "rrDzG-w1Uhs",
+   "uSvOfiyVtjU",
+   "umZffOR7KZY",
+   "vW9DxFBDFPU"
+  ]
+ },
+ {
+  "secao": "Exercícios 2D",
+  "nome": "Exercícios sobre Curvas",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770184",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+3 videos, 172 palavras",
+  "videos": [
+   "S5GopgUzh3c",
+   "pjbjpFeSIVE",
+   "srohPI8Lm4w"
+  ]
+ },
+ {
+  "secao": "Exercícios 2D",
+  "nome": "Exercícios Teóricos sobre Processo de Visualização 2D",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770185",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+2 videos, 116 palavras",
+  "videos": [
+   "ltSL1jVQdMA",
+   "vW9DxFBDFPU"
+  ]
+ },
+ {
+  "secao": "Exercícios 2D",
+  "nome": "Exercicios sobre Fundamentos Matemáticos",
+  "url": "https://www.inf.pucrs.br/pinho/CG/Exercicios/Lista2D/FundMatematicos/ExerciciosFundamentosMatematicos.html",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "8 - Manipulação de Imagens",
+  "nome": "Página sobre Manipulação de Imagens",
+  "url": "http://www.inf.pucrs.br/pinho/CG/Aulas/Img/IMG.htm",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "8 - Manipulação de Imagens",
+  "nome": "Página com Vídeos sobre Manipulação de Imagens",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770188",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+13 videos, 83 palavras",
+  "videos": [
+   "3VZmYGJflv4",
+   "Cps_2JP4QQQ",
+   "E8KlTMj6x60",
+   "JUddhGuEcvE",
+   "VF2JFCpMtYw",
+   "XZYtn1AqcNs",
+   "bYI7Jq_oLaQ",
+   "dz6elCq44O8",
+   "gsydb9tkkYU",
+   "jqu-zIhtEks",
+   "rYbNxdBvkEs",
+   "yT14tddfLrg",
+   "yze7t3zccSw"
+  ]
+ },
+ {
+  "secao": "8 - Manipulação de Imagens",
+  "nome": "Exemplos da execução dos algoritmos de Halftone, Ditther e Difusão de Erro",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009685/mod_resource/content/1/ImpressaoMonocromatica.xlsx?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\8 - Manipulação de Imagens\\ImpressaoMonocromatica.xlsx",
+  "sinal": "resource"
+ },
+ {
+  "secao": "8 - Manipulação de Imagens",
+  "nome": "Exercício sobre preenchimento de área",
+  "url": "https://www.inf.pucrs.br/pinho/CGII/Exercicios/FloodFill/index.html",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "8 - Manipulação de Imagens",
+  "nome": "Exercício sobre Remoção de Ruído",
+  "url": "https://www.inf.pucrs.br/pinho/CGII/Exercicios/RemocaoDeRuido/",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "9 - Introdução ao Processamento de Imagens",
+  "nome": "Slides",
+  "url": "https://www.inf.pucrs.br/pinho/CG/SlidesEmPDF/IntroducaoProcImg.pdf",
+  "tipo": "material-pdf",
+  "acao": "download",
+  "destino": "",
+  "sinal": "dominio+pdf"
+ },
+ {
+  "secao": "9 - Introdução ao Processamento de Imagens",
+  "nome": "Página com Vídeos sobre Introdução ao Processamento de Imagens",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770194",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+20 videos, 130 palavras",
+  "videos": [
+   "1oTAsO95RfA",
+   "5rsHP6a0G3I",
+   "5vNbjUliw5I",
+   "CEBfiDNyJck",
+   "IxSCiv2gKO8",
+   "M-lPz-s9G4c",
+   "MezV275KgAo",
+   "OOLDSH1b-IY",
+   "Rj-XXI_PQ80",
+   "XJ12NQKKhUI",
+   "XJh2tPfQroY",
+   "f46wNVzllKY",
+   "j6wlsY8EYZ8",
+   "pAahUBC3sXw",
+   "qIB1xj4JqEg",
+   "tY3DezWpDNw",
+   "tjblyjnTH90",
+   "u6dZJVBJ1PQ",
+   "y_FJDBIhNEc",
+   "zobZ_0hC5js"
+  ]
+ },
+ {
+  "secao": "9 - Introdução ao Processamento de Imagens",
+  "nome": "Exercícios de Processamento de Imagens",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770195",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+1 videos, 52 palavras",
+  "videos": [
+   "-72pAJFb3gk"
+  ]
+ },
+ {
+  "secao": "10 - Segmentação de Imagens",
+  "nome": "Slides",
+  "url": "https://www.inf.pucrs.br/~pinho/CGII/PDFs/Segmentacao.pptx.pdf",
+  "tipo": "material-pdf",
+  "acao": "download",
+  "destino": "",
+  "sinal": "dominio+pdf"
+ },
+ {
+  "secao": "10 - Segmentação de Imagens",
+  "nome": "Página com Vídeos sobre Segmentação de Imagens ",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770197",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+8 videos, 62 palavras",
+  "videos": [
+   "4OWk-zW1Tn0",
+   "5vNbjUliw5I",
+   "6ibBHkj1o6A",
+   "DpouwfwxMio",
+   "TtaK6-pShu8",
+   "fIzIk950gUs",
+   "ibrpCAnST-E",
+   "urbbFBzbovQ"
+  ]
+ },
+ {
+  "secao": "10 - Segmentação de Imagens",
+  "nome": "Página com Vídeos sobre Segmentação por Texturas ",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770198",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+11 videos, 113 palavras",
+  "videos": [
+   "5vNbjUliw5I",
+   "6vwfpW0xWmU",
+   "7JohMv0GJH0",
+   "AQTQXywUwkg",
+   "GBUXmYSTMI8",
+   "Kimo_SRPGpw",
+   "QThU0cLfxTs",
+   "cGs4chWAC2s",
+   "hy4SEnh7lKw",
+   "tMRLc_jYM-8",
+   "ypAXfjoKc7A"
+  ]
+ },
+ {
+  "secao": "10 - Segmentação de Imagens",
+  "nome": "Texto sobre Matrizes de Co-ocorrência de Níveis de Cinza",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009695/mod_resource/content/1/SegmentacaoDeTexturas.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\10 - Segmentação de Imagens\\SegmentacaoDeTexturas.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "11 - Morfologia Matemática",
+  "nome": "Slides",
+  "url": "https://www.inf.pucrs.br/~pinho/CGII/PDFs/MorfologiaMatematica.pptx.pdf",
+  "tipo": "material-pdf",
+  "acao": "download",
+  "destino": "",
+  "sinal": "dominio+pdf"
+ },
+ {
+  "secao": "11 - Morfologia Matemática",
+  "nome": "Aula gravada",
+  "url": "https://youtu.be/Wlorjfqy7Uw",
+  "tipo": "video",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "dominio"
+ },
+ {
+  "secao": "11 - Morfologia Matemática",
+  "nome": "Página com Vídeos sobre Morfologia Matemática",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770202",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+6 videos, 52 palavras",
+  "videos": [
+   "I_neARWzuHQ",
+   "WyazzWToW9w",
+   "XpsFEWhFfY0",
+   "gui3MTfxjU0",
+   "iqyaOQ4lBJg",
+   "ry5L8gsnsdo"
+  ]
+ },
+ {
+  "secao": "Exercícios de Processamento de Imagens",
+  "nome": "Exercício sobre Remoção de Ruído em Imagens",
+  "url": "https://www.inf.pucrs.br/pinho/CGII/Exercicios/RemocaoDeRuido/",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "Exercícios de Processamento de Imagens",
+  "nome": "Exercícios de Preenchimento de Área",
+  "url": "https://www.inf.pucrs.br/pinho/CGII/Exercicios/FloodFill/index.html",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "Exercícios de Processamento de Imagens",
+  "nome": "Vídeo sobre Prechimento de Áreas (Duração 3:30)",
+  "url": "https://www.youtube.com/watch?v=tY3DezWpDNw",
+  "tipo": "video",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "dominio"
+ },
+ {
+  "secao": "Exercícios de Processamento de Imagens",
+  "nome": "Vídeo sobre Prechimento de Áreas (Duração: 13:00)",
+  "url": "https://www.youtube.com/watch?v=M4a4wOZC1u0",
+  "tipo": "video",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "dominio"
+ },
+ {
+  "secao": "12 - Modelagem Geométrica",
+  "nome": "Página sobre Modelagem Geométrica",
+  "url": "http://www.inf.pucrs.br/pinho/CG/Aulas/Modelagem/Modelagem3D.htm",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "12 - Modelagem Geométrica",
+  "nome": "Páginas com Vídeos sobre Modelagem Geométrica",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770208",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+17 videos, 134 palavras",
+  "videos": [
+   "5n_sewcGhag",
+   "9PsHtJz17Qw",
+   "Ir8WXEUi14o",
+   "JE7Xn5kCZ6Y",
+   "OOB_xfj6pZs",
+   "WaVJA9chvUg",
+   "XrcEidgY_To",
+   "YErIG7o5VGw",
+   "asnLSJi23lY",
+   "awwkons6MEg",
+   "huuouv18o5s",
+   "iSJUllzHONw",
+   "mCH9xl6QYp8",
+   "sm7RuQEs2oE",
+   "so0PtAMiSak",
+   "uddPseTGXv4",
+   "wD86_ZzSRDQ"
+  ]
+ },
+ {
+  "secao": "12 - Modelagem Geométrica",
+  "nome": "Modelagem por CSG com Polígonos",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009705/mod_resource/content/1/CSG.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\12 - Modelagem Geométrica\\CSG.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "13 - Computação Gráfica 3D",
+  "nome": "Visualização 3D - Projeção",
+  "url": "http://www.inf.pucrs.br/pinho/CG/Aulas/Vis3d/Vis3d.htm",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "13 - Computação Gráfica 3D",
+  "nome": "Introdução à OpenGL 3D",
+  "url": "http://www.inf.pucrs.br/pinho/CG/Aulas/OpenGL/Basico3D/OpenGL3D.html",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "13 - Computação Gráfica 3D",
+  "nome": "Página com Vídeos sobre Visualização 3D",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770212",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+22 videos, 187 palavras",
+  "videos": [
+   "69pMqOoTE38",
+   "6mU6LZKIUGI",
+   "81lvn7DHoEQ",
+   "BKrA-jeJPy0",
+   "BwPBp5PES-E",
+   "DCFHkY4RnWU",
+   "EeU_TM61V0w",
+   "UvCkESMm20E",
+   "UzNDLfRdpqM",
+   "ZYy2rpf-wEA",
+   "aoptiSLsQmE",
+   "f5qYyS1POdo",
+   "fIqlB_UZeNE",
+   "jutw9XBHnII",
+   "mbmRHXEHows",
+   "pHUI5GLYTxU",
+   "q8im9vVpMDc",
+   "rdECJKXQbWQ",
+   "u1Yh5m_pIik",
+   "uojTJYgPzZQ",
+   "vexfQ6d_4ek",
+   "zYoK4ntqzt0"
+  ]
+ },
+ {
+  "secao": "13 - Computação Gráfica 3D",
+  "nome": "Projeto de OpenGL 3D em C++",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009709/mod_resource/content/4/OpenGL3DCPP.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\13 - Computação Gráfica 3D\\OpenGL3DCPP.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "13 - Computação Gráfica 3D",
+  "nome": "Projeto VDI de OpenGL 3D em C++",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009710/mod_resource/content/6/OpenGL3DCPP-VDI.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\13 - Computação Gráfica 3D\\OpenGL3DCPP-VDI.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "13 - Computação Gráfica 3D",
+  "nome": "Projeto de OpenGL 3D em Python",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009711/mod_resource/content/5/Basico3D-PY.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\13 - Computação Gráfica 3D\\Basico3D-PY.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "13 - Computação Gráfica 3D",
+  "nome": "Cálculo de Projeção em Perspectiva",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009712/mod_resource/content/1/ProjecaoPerspectiva.xlsx?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\13 - Computação Gráfica 3D\\ProjecaoPerspectiva.xlsx",
+  "sinal": "resource"
+ },
+ {
+  "secao": "13 - Computação Gráfica 3D",
+  "nome": "Atividade",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770217",
+  "tipo": "material-pagina-moodle",
+  "acao": "print",
+  "destino": "",
+  "sinal": "nome+0 videos, 40 palavras",
+  "videos": []
+ },
+ {
+  "secao": "14 - Exercícios sobre Modelagem Geométrica",
+  "nome": "Descrição da Atividade",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009714/mod_resource/content/2/ExercicioDeModelagem.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\14 - Exercícios sobre Modelagem Geométrica\\ExercicioDeModelagem.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "14 - Exercícios sobre Modelagem Geométrica",
+  "nome": "Projeto em C++",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009715/mod_resource/content/1/Basico3D-CPP.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\14 - Exercícios sobre Modelagem Geométrica\\Basico3D-CPP.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "14 - Exercícios sobre Modelagem Geométrica",
+  "nome": "Projeto em Python",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009716/mod_resource/content/1/Basico3D-PY.zip?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\14 - Exercícios sobre Modelagem Geométrica\\Basico3D-PY.zip",
+  "sinal": "resource"
+ },
+ {
+  "secao": "15 - Remoção de Elementos Ocultos",
+  "nome": "Slides",
+  "url": "http://www.inf.pucrs.br/pinho/CG/SlidesEmPDF/ElemOculto.pdf",
+  "tipo": "material-pdf",
+  "acao": "download",
+  "destino": "",
+  "sinal": "dominio+pdf"
+ },
+ {
+  "secao": "15 - Remoção de Elementos Ocultos",
+  "nome": "Página com Vídeos sobre Remoção de Elementos Ocultos",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770222",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+12 videos, 58 palavras",
+  "videos": [
+   "7aJe2cSKlSo",
+   "OaLEUPMdb4I",
+   "UPouzgqzFbQ",
+   "Ujh1F24x1hg",
+   "WWKZjtKH9TY",
+   "ZfgjcFlOnrU",
+   "_1Ue9HdZER4",
+   "aOvxJXONMnM",
+   "m83yr-oJUkI",
+   "wZEDCCcmQgU",
+   "z2HyILZeLfo",
+   "zSuJ3ApWHFU"
+  ]
+ },
+ {
+  "secao": "15 - Remoção de Elementos Ocultos",
+  "nome": "Exemplo de Zbuffer",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009719/mod_resource/content/1/ExemploZbuffer.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\15 - Remoção de Elementos Ocultos\\ExemploZbuffer.pdf",
+  "sinal": "resource"
+ },
+ {
+  "secao": "16 - Síntese de Imagens Realísticas",
+  "nome": "Página sobre Síntese de Imagens Realísticas - Iluminação e Sobreamento",
+  "url": "https://www.inf.pucrs.br/pinho/CG/Aulas/Iluminacao/Iluminacao.html",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "16 - Síntese de Imagens Realísticas",
+  "nome": "Código utilizado em aula ",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009721/mod_resource/content/1/ProgramaBasico3D.cpp?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\16 - Síntese de Imagens Realísticas\\ProgramaBasico3D.cpp",
+  "sinal": "resource"
+ },
+ {
+  "secao": "16 - Síntese de Imagens Realísticas",
+  "nome": "Página com Vídeos sobre Síntese de Imagens Realísticas",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770226",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+23 videos, 144 palavras",
+  "videos": [
+   "1Z_6N3x4FZA",
+   "7gOz_druPNw",
+   "8hteTo3G5Lw",
+   "8kW-f_gsE24",
+   "8lB5OIhu7Gs",
+   "Cubsk7xayRc",
+   "DEaOfK_d3Bs",
+   "DXvOQsB7Ixc",
+   "FSZBVx1dqKc",
+   "H5mz9VEHy6s",
+   "IykM2V1flbs",
+   "OwLWXIIaz98",
+   "PQy7alK_1kY",
+   "XY5NvpNs92g",
+   "ZXYH8LsjqFk",
+   "eJz3BeVBSTo",
+   "ffA_IfjtbgA",
+   "kZYhxQeMYpM",
+   "lS3rXEOZHYY",
+   "nr1EI8kiz3k",
+   "tCluwmoAMiM",
+   "wvslpg0Dr6I",
+   "yCfpcKty2_8"
+  ]
+ },
+ {
+  "secao": "17 - Mapeamento de Texturas",
+  "nome": "Página sobre texturas em OpenGL",
+  "url": "https://www.inf.pucrs.br/pinho/CG/Aulas/OpenGL/Texturas/MapTextures.html",
+  "tipo": "material-pagina",
+  "acao": "snapshot",
+  "destino": "",
+  "sinal": "dominio+pagina"
+ },
+ {
+  "secao": "17 - Mapeamento de Texturas",
+  "nome": "Página com Vídeos sobre Mapeamento de Texturas ",
+  "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770228",
+  "tipo": "indice-videos",
+  "acao": "referencia",
+  "destino": "",
+  "sinal": "nome+6 videos, 33 palavras",
+  "videos": [
+   "LvoRlKUE60M",
+   "Um-v52HvmgA",
+   "alIYUM4K_Yo",
+   "jADPtF2mivc",
+   "sLBEEQCLT7I",
+   "vozCkCuIoos"
+  ]
+ },
+ {
+  "secao": "Exercícios para P2",
+  "nome": "Lista 2026/2",
+  "url": "https://moodle.pucrs.br/webservice/pluginfile.php/6009726/mod_resource/content/4/ListaDeExerci%CC%81cios2026-1.pdf?forcedownload=1",
+  "tipo": "arquivo",
+  "acao": "download",
+  "destino": "stash\\Exercícios para P2\\ListaDeExercícios2026-1.pdf",
+  "sinal": "resource"
+ }
+]

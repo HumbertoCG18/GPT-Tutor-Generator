@@ -1,0 +1,87 @@
+# Handoff 2026-09-03 — PONTO DE ENTRADA: campanha SYNC (Moodle -> tutor), depois C1 travessia
+
+Unico handoff vivo. O anterior (`_archive/2026-09-02c-handoff-fase3-medida.md`) fechou a rodada do motor (C0, itens 2-7);
+NAO reabrir a fila dele. **Leia nesta ordem:** (1) este arquivo; (2) `pendencias.md` §SEQUENCIA ACORDADA e §GATE DA FASE 3
+(numeros); (3) `.mex/context/decisions.md` (as 6 decisoes de 03/09 estao la). Rode `mem-search` para as sessoes de 03/09.
+
+## Leis (inalteradas)
+Dado antes de codigo · raiz nunca remendo · sem regra por categoria/curso · gold nao e oraculo (Moodle/SARC sao a verdade
+estrutural) · nada regride em regua nenhuma · estrutura estreita, texto decide, estrutura NUNCA sobrepoe decisao confiante
+(e NUNCA preempta o voto do LLM — medido 03/09: card antes do voter derrubou a curada 199 -> 187) · nada pushed sem o user ·
+`.claude/settings.local.json` intocado · token do Moodle (`moddle/.env`) nunca impresso · [Humberto].
+
+## Estado ao comecar (tudo commitado, NADA pushed)
+Gerador `feat/motor-atribuicao`: itens 2-7 do C0 = `fe2c4fb` (3a) · `b802a68` (3b card) · `79fc92a` (secao 0) · `fdf28af` (3c tokens
+curtos + holdout CG) · `b1d565a` (ancora como faixa) · `a1bcc25` (casamento por stem) + commits de docs. Tutores: MF `e39e14a`
+SO `603d914` IA `ca1f765` ES2 `2212f9f` TCC `b9af3c3` (5 encerrados com estrutura do Moodle no manifest) · CG `19472d1` LR `0e3ab1a`
+FR `64990dc` (semestre corrente: SEM os campos; entram na sync). Suite 2277. Copias `.ablacao` dos 5 + CG.
+**Reguas (5 golds):** curada 199/200 conf-err 0 · 191/191 · 55/57 · 93/93 · motor+vocab 183/178/53/82 · motor sem vocab
+184/168/54/30 · AULA 174/189 (175 sem vocab) · REF 8/10 · holdout CG puro 30/35, curado 34/35 · censo revisar/100 51,7,
+votos/100 32,0. Residual flagado em AULA 18,5/100 (meta <= 8 nao batida; balde do item 11).
+
+## Decisoes de 03/09 (detalhe em `decisions.md`)
+- Card ordenado age so sem janela ou em decisao ainda flagada DEPOIS do voter; janela-1 do card gateada; banda "media".
+- Secao 0 do Moodle = area geral -> apresentacao. Tokens curtos so no retry flagado. Ancora "dd/mm" = faixa da secao.
+- Holdout CG (`_harness-2026-09-02/holdout_cg.py <GEN> <COPY> [--curado]`) e regua fixa: puro 30/35, curado 34/35.
+- **SYNC (user, 03/09):** modulo removido no Moodle SOME do tutor (flag por curso `sync_prune_removed`, default ligada; desligada =
+  fica marcado e fora dos indices); decisao antiga que se moveu por material novo entra na fila como **"mudou, confira"**;
+  arquivo alterado (`timemodified` > `posting_date`) re-extrai AUTOMATICO com contagem e cap; links/videos entram como
+  entries de referencia (so import; atribuicao e C2); CG = primeira sync como REBUILD LIMPO (ids novos, gold re-chaveado
+  por `true_block_uuid`, historico git preservado).
+- **Ordem das campanhas (user, 03/09):** materiais de aula -> listas/trabalhos/provas -> bibliografia por ultimo. Logo C3 antes
+  de C2. Registrado o contraponto: nos 5 encerrados os 3 eixos ja estao em ~100% na curada; o "100%" que falta e nos cursos
+  do semestre (sem gold) e na travessia (IA 9 -> 14/15 medido).
+
+## O que o item 8 mostrou (dry-runs de 03/09; nenhum tutor tocado)
+Estrutura identica a 02/09 nos 3. **FR:** mesmos 20 arquivos (nomes originais no repo; o pull grava pelo titulo do modulo) — ids
+0/20 mas bytes iguais; faltam 2 videos + cronograma como referencia. **LR:** 3 labs sao `.html` impressos em PDF (casamento por
+stem corrigido em `a1bcc25`, 6/6); **Lab 4 (HTTP, 31/08) nunca entrou** — ninguem sincronizou. **CG:** repo veio do EXPORT (37/69
+arquivos sem par por nome; ids 14/69); pull da API = 40 arquivos + 15 paginas Moodle + 15 snapshots + 23 videos/indices.
+Conclusao: "rebuild" e um caso particular de **sincronizar**; sem sync o tutor envelhece toda semana.
+
+## FILA — CAMPANHA SYNC (1a a executar; 4-6 itens; TDD com os `contents.json`/`sections.json`/`links.json` REAIS dos 3 dry-runs de
+   03/09, versionados em `_harness-2026-09-03/pulls/{FR,LR,CG}/`)
+S1. **Diff estrutural** `sync_diff(manifest, contents_novo)` -> {novos, alterados, sumidos, iguais}: casa entry <-> modulo como o
+    backfill (basename/savename -> stem -> moodle_label -> stem==nome); novo = modulo sem entry; alterado = `timemodified` do
+    arquivo > `posting_date` da entry (ou md5 diferente); sumido = entry casada sem modulo. Regua: LR = {1 novo (Lab 4), 0, 0},
+    FR = {0, 0, 0}, CG = delta total. Read-only, sem tocar repo.
+S2. **Import do delta**: novos pelo caminho do stash (nome = titulo do modulo, `moodle_label`, `source_section`, `.html/.htm`
+    impressos); alterados re-baixam e re-extraem mantendo o id; sumidos: `sync_prune_removed` (some) ou `moodle_missing_since`
+    (fica marcado, fora dos indices); links/videos -> entries de referencia. Pre-requisito do CG aqui: `.htm` sem L classificado +
+    nomes dos ignorados listados (teste).
+S3. **Regeneracao + diff de decisoes**: `incremental_build` (extrai so o novo, motor em tudo); sentinela entry a entry antes ->
+    depois com motivo (estrutura nova / vizinho novo / voto); `course/SYNC_REPORT.md`; fila `revisar` recebe "mudou, confira".
+    Gate: sync sem delta = byte-identico (determinismo).
+S4. **Primeira sync real = LR** (Lab 4, regua magra): commit do LR; subunidade/travessia nao mudam.
+S5. **FR = controle** (diff vazio; entram os 3 campos de estrutura + 2 videos como referencia); `subunit_gt_FR` 14/18 e
+    `travessia_gt_FR` 15/15 intactos; commit.
+S6. **CG = rebuild limpo pela API** (`--pdf`: 40 downloads, 30 impressoes/snapshots, Datalab); zero curadoria, summaries ON,
+    vocab compilado, voter ON com cap; `ground_truth_CG.csv` re-chaveado por `true_block_uuid` (35 scorable) e holdout rerodado;
+    o user revisa a fila `revisar` (cada correcao = override + gold-por-fenomeno). "Em duvida 28/08" e "modals" triados so aqui.
+Gate da campanha: curada intacta; holdout CG >= 30/35 puro, 34/35 curado; sentinela 0 nos 5 encerrados; determinismo; suite.
+Script: `scripts/sync_moodle.py <curso> [--dry-run]` (headless, como o reprocess); botao na UI so com a secao de revisao.
+
+## DEPOIS DA SYNC (ordem decidida 03/09)
+- **C0 restante:** 9 (refactor corte 1: `scripts/` 79 -> ~25 + podar a escada stale da `regua_aula.py`), 10 (Fase 2 unidade),
+  11 (Fase 4 LLM so nos flagados — decidir a ordem motor <-> LLM: hoje o card so age depois do voter), 12 (travessia "depois").
+- **C1 — TRAVESSIA (1 sessao, recomendacao: logo apos a sync).** FILE_MAP completo e magro (IA 9 -> 14/15 medido).
+- **C3 — LISTAS/TRABALHOS/PROVAS e imagens** (antes de C2 por decisao do user): granularidade da cobertura (prova inteira x
+  questao), P2b-LLM, EXAM_INDEX honesto, imagens do Datalab. Gold ANTES: ~10 provas + ~10 imagens.
+- **C2 — REFERENCIAS/BIBLIOGRAFIA (por ultimo):** decisao B (eth2/aws), `coverage_gt` vetado, pino de cobertura, consumo de bibliografia.
+- **C4 limpa pre-web** (byte-identico) · **C5 dividas de dados** (Lab SO SARC 310, GAP VIDEO T2, headings) · **C6 web**.
+Protocolo anti-regressao de todo lote: `_archive/2026-09-02c-handoff-fase3-medida.md` §CAMPANHAS (gold antes de regra; todas
+as reguas rodam e nenhuma regride; copia antes dos originais; 4-7 itens; 1 handoff vivo).
+
+## Decisoes ABERTAS (do user)
+- Regua por item: motor COM vocab + curada + holdout, ablacao sem vocab so em gate de fase? (proposto 03/09; `motor_puro.py`
+  passaria a rodar com vocab por default). Hoje rodam as 3 linhas.
+- Decisao B (eth2/aws) · golds proposto-claude (`travessia_gt_*`, `subunit_gt_FR`, `ground_truth_CG`) · push/merge em main.
+
+## NAO fazer (refutado no gold)
+Serie k -> k-esimo bloco · serie monotonica (+1/-2) · prova antiga -> prep (0) · H7 ordem das secoes pos-item 3 (0/0) · H6 label
+unico (0/0) · label em decisao confiante · card ANTES do voter · regex de nome para card generico (secao 0 e o sinal).
+
+## Ferramentas
+`scripts/motor_puro.py [--com-vocab]` · `scripts/censo_motor_llm.py` · `scripts/sentinela_manifests.py` · `scripts/eval_eixos.py` ·
+`scripts/reprocess_assignments.py` · `scripts/moodle_pull.py --course N --root R [--dry-run|--pdf]` ·
+`_harness-2026-09-02/{regua_aula,holdout_cg,calibra_revisar,mede_alavancas,determinismo}.py`.

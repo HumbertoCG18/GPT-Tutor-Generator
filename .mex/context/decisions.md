@@ -260,3 +260,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Decision:** `text/tokens.py::motor_tokens` e o tokenizador UNICO do motor; `disambiguator._toks` delega (byte-identico) e os demais 12 tokenizadores migram para ele em C4, um por vez, com sentinela 0. Tokens de 2-3 chars so contam quando o CRONOGRAMA do curso os consagra (`course_short_vocab`: topic_text + labels de sessao) e so no RETRY: `disambiguate` decide com tokens padrao; se flagado, refaz com o vocab curto nos dois lados e adota se muda o bloco ou tira a flag (`disamb-curto`).
 **Reasoning:** Medido 03/09: +4/0 nos 5 (IA k-NN x4) e +3/0 no holdout CG ("2d" das sessoes de recorte/instanciamento). Vocab curto global seria ruido (MF nao tem "tcp"); aplicar em toda decisao mexeria em confiantes sem gold que prove. No curado o retry preempta 3 votos de LLM no IA com o mesmo bloco — primeiro item que reduz votos/100 sem regredir a curada.
 **Consequences:** Nenhum outro tokenizador muda ate C4. Holdout CG vira regua fixa (`holdout_cg.py`, baseline 30/35).
+
+---
+
+### Sincronizar e a operacao; rebuild e o caso particular do delta total (campanha SYNC)
+
+**Date:** 2026-09-03
+**Status:** Active
+**Decision:** `sync <curso>` = pull incremental (`moodle_pull`, ja pula o que existe) -> diff estrutural do `contents.json` contra o manifest (novo / alterado por `timemodified` > `posting_date` / sumido) -> import so do delta -> `incremental_build` (extrai o novo, motor em tudo) -> diff de decisoes entry a entry + `SYNC_REPORT.md` -> fila `revisar`. Rulings do user: modulo removido no Moodle SOME do tutor (flag por curso `sync_prune_removed`, default ligada; desligada = marcado e fora dos indices); decisao antiga que se moveu por material novo entra como "mudou, confira"; arquivo alterado re-extrai automatico com contagem e cap; links/videos entram como entries de referencia (atribuicao e C2); CG = primeira sync como rebuild limpo (ids novos, gold re-chaveado por `true_block_uuid`).
+**Reasoning:** Dry-runs de 03/09: FR tem os mesmos 20 arquivos (so o nome de gravacao mudou), LR esta sem o Lab 4 desde 31/08, CG veio do export. Sem uma operacao de sync o tutor de curso em andamento envelhece a cada semana; "rebuild pela API" nao e uma cerimonia, e o delta total.
+**Consequences:** Item 8 do C0 vira a campanha SYNC (S1-S6, handoff 2026-09-03). Sync sem delta tem que ser byte-identico (determinismo). Ids nao mudam por renome de gravacao: o casamento estrutural (basename/savename -> stem -> label) e o que liga entry a modulo.

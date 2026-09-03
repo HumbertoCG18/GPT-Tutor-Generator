@@ -6,12 +6,12 @@ de travessia. 03/09 sessao 4: **item 2 (Fase 3a) FEITO** (gerador `fe2c4fb`, 5 t
 item 3 (Fase 3b, card ordenado) FEITO na mesma sessao (§FASE 3b; AULA 152 -> 163, curada intacta);
 item 4 FEITO (ordem das secoes: 0 efeito pos-item 3, nao entrou; secao 0 do Moodle -> apresentacao: +3/0, AULA 167);
 item 5 FEITO (tokens curtos: AULA 171/170, IA k-NN x4; tokenizador unico `text/tokens.py`); HOLDOUT CG criado (27 -> 30/35);
-item 6 NAO ENTRA (H6 0/0); ancora como faixa da secao (+4/0, refinamento do item 3); **item 7 (gate da Fase 3) REGISTRADO: AULA 152 -> 174/189 com vocab (175 sem), curada intacta, votos/100 caem — residual flagado 18,5/100 (meta <= 8 NAO batida; vai para o item 11)**; **proximo = item 8 (rebuild FR -> LR -> CG pela API)**.
+item 6 NAO ENTRA (H6 0/0); ancora como faixa da secao (+4/0, refinamento do item 3); **item 7 (gate da Fase 3) REGISTRADO: AULA 152 -> 174/189 com vocab (175 sem), curada intacta, votos/100 caem — residual flagado 18,5/100 (meta <= 8 NAO batida; vai para o item 11)**; item 8 (rebuild) virou a **CAMPANHA SYNC** (dry-runs de 03/09: FR mesmos 20 arquivos, LR sem o Lab 4, CG e o unico rebuild real; casamento por stem `a1bcc25`); **proximo = SYNC S1 (diff estrutural, TDD com os contents.json reais)**; depois C1 -> C3 -> C2 -> C4 -> C5 -> C6 (ordem do user 03/09: provas antes de bibliografia). **Ponto de entrada = handoff `2026-09-03-handoff-sync.md`** (o 02c foi para `_archive/`).
 Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3, 4.8k linhas)
-em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-02c + plano
+em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03-sync + plano
 2026-09-02 (desenho/decisoes, carimbado).
 
-## SEQUENCIA ACORDADA (02/09 noite) — a lista, em ordem (detalhes no handoff 2026-09-02c)
+## SEQUENCIA ACORDADA (02/09 noite; C0 fechado em 03/09) — a lista, em ordem (detalhes: `_archive/2026-09-02c-...`; fila viva no handoff 2026-09-03-sync)
 
 **Rodada atual = fechar o motor de MATERIAL DE AULA (189/203 golds; regua `_harness-2026-09-02/regua_aula.py`, hoje 152/189).**
 Gate por fase: AULA sobe, curada intacta (199/200 · 191/191 · 93/93), residual flagado <= 8/100, sentinela 0, motor puro
@@ -34,15 +34,17 @@ decisao B (gold eth2/aws) quando quiser; push.
    (ja certo 3: os +2/0 foram absorvidos pelos itens 3-5). Sem numero, sem codigo. H5 serie monotonica +1/-2 e H2 prova
    antiga 0/0 continuam refutados.
 7. ~~Gate da Fase 3~~ REGISTRADO 03/09 (§GATE DA FASE 3): AULA 152 -> 174/189 (meta ~174 batida); curada intacta; motor puro 161/158/51/26 -> 184/168/54/30, +vocab 162/167/50/79 -> 183/178/53/82; censo votos/100 33,8 -> 32,0; **residual flagado em AULA 18,5/100 (meta <= 8/100 NAO batida: 35 flagados, 7 errados)** — e o balde do item 11.
-8. Rebuild pela API dos 3 do SEMESTRE CORRENTE (FR -> LR -> CG; diff de ids antes; protocolo do run real; user revisa
-   `revisar`). Os 5 encerrados NAO se rebuildam (regua de regressao).
+8. ~~Rebuild pela API dos 3 do SEMESTRE CORRENTE~~ VIROU A CAMPANHA SYNC (03/09; handoff 2026-09-03-sync §FILA): S1 diff
+   estrutural -> S2 import do delta -> S3 regeneracao + diff de decisoes + SYNC_REPORT -> S4 LR (Lab 4) -> S5 FR (controle) ->
+   S6 CG (rebuild limpo, gold re-chaveado). Decisoes do user: sumido some (flag), "mudou, confira", alterado re-extrai
+   automatico com cap, links entram como referencia. Os 5 encerrados NAO se rebuildam (regua de regressao).
 9. Refactor corte 1 (scripts 79 -> ~25), sessao curta.
 10. Fase 2 — cronograma manda na unidade, no que sobrou; depois `recompile_vocab` no CG.
 11. Fase 4 — LLM residual so nos flagados, contado.
 12. Travessia "depois"; so aqui grafo renderizado / vetores, se a regua mostrar perguntas fora do alcance dos indices.
-Depois do motor: LOTES C1..C6 com protocolo anti-regressao — handoff 2026-09-02c §CAMPANHAS DEPOIS DO MOTOR (C1 travessia
-FILE_MAP -> C2 referencias -> C3 provas e imagens -> C4 limpa pre-web -> C5 dividas de dados -> C6 web). Cada pendencia deste
-arquivo tem dono la; nada entra num lote sem gold e numero.
+Depois do motor: SYNC -> C1 travessia -> **C3 provas/listas/trabalhos** -> **C2 bibliografia (por ultimo, user 03/09)** -> C4 limpa
+pre-web -> C5 dividas de dados -> C6 web (protocolo anti-regressao em `_archive/2026-09-02c-...` §CAMPANHAS). Cada pendencia
+deste arquivo tem dono la; nada entra num lote sem gold e numero.
 
 **PROXIMA CAMPANHA — TRAVESSIA (adiada 03/09; abre depois do item 12).** Runtime = Claude Project; FR (48k tokens) cabe na
 janela, CG (206k) e IA (729k) estouram e dependem do retrieval do Project + indices. A regua (`eval_travessia.py`) mede so

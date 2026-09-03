@@ -1,0 +1,829 @@
+[
+ {
+  "id": 7747600,
+  "name": "",
+  "visible": 1,
+  "summary": "<p><img class=\"img-responsive atto_image_button_left\" role=\"presentation\" src=\"https://moodle.pucrs.br/webservice/pluginfile.php/6008104/course/section/7747600/BrasaoPUCRS.jpg\" alt=\"\" width=\"60\" height=\"89\"><br><span class=\"\" style=\"font-size: small;\">Conteúdo digital de uso exclusivo da Pontifícia Universidade Católica do Rio Grande do Sul | PUCRS. </span><br><span class=\"\" style=\"font-size: small;\">Copyright © 2026. Todos os direitos reservados.</span></p>",
+  "summaryformat": 1,
+  "section": 0,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": []
+ },
+ {
+  "id": 7747601,
+  "name": "Avisos | Dúvidas | Notícias",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 1,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3814957,
+    "url": "https://moodle.pucrs.br/mod/forum/view.php?id=3814957",
+    "name": "Avisos",
+    "instance": 212930,
+    "contextid": 6059088,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/forum/1788184683/monologo?filtericon=1",
+    "modname": "forum",
+    "purpose": "collaboration",
+    "branded": false,
+    "modplural": "Fóruns",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"trackingtype\":\"1\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3814958,
+    "url": "https://moodle.pucrs.br/mod/forum/view.php?id=3814958",
+    "name": "Fórum de  Dúvidas",
+    "instance": 212931,
+    "contextid": 6059089,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/forum/1788184683/monologo?filtericon=1",
+    "modname": "forum",
+    "purpose": "collaboration",
+    "branded": false,
+    "modplural": "Fóruns",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"trackingtype\":\"1\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   }
+  ]
+ },
+ {
+  "id": 7747602,
+  "name": "Plano de Ensino",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 2,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3814959,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3814959",
+    "name": "Plano de ensino",
+    "instance": 1901871,
+    "contextid": 6059090,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3814959&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "320-340.pdf",
+      "filepath": "/",
+      "filesize": 84811,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/6059090/mod_resource/content/12/320-340.pdf?forcedownload=1",
+      "timecreated": 1785542283,
+      "timemodified": 1785542283,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 321601,
+      "author": "Angelo Elias Dal Zotto",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 84811,
+     "lastmodified": 1785542283,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3814960,
+    "url": "https://moodle.pucrs.br/mod/url/view.php?id=3814960",
+    "name": "Cronograma",
+    "instance": 491433,
+    "contextid": 6059091,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/url/1788184683/monologo?filtericon=1",
+    "modname": "url",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "URLs",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/url/view.php?id=3814960&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "customdata": "{\"display\":\"3\",\"filtericon\":true}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "url",
+      "filename": "Cronograma",
+      "filepath": null,
+      "filesize": 0,
+      "fileurl": "https://sarc.pucrs.br/Default/Export.aspx?id=282a108b-cd17-40c1-aeb4-202b2da1e479&ano=2026&sem=2",
+      "timecreated": null,
+      "timemodified": 1785542348,
+      "sortorder": null,
+      "userid": null,
+      "author": null,
+      "license": null
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 0,
+     "lastmodified": 1785542348,
+     "mimetypes": [],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3820922,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3820922",
+    "name": "Aula 0 - Apresentação da Disciplina",
+    "instance": 1904404,
+    "contextid": 6065334,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3820922&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "Aula 0 - Apresentação da Disciplina.pdf",
+      "filepath": "/",
+      "filesize": 385241,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/6065334/mod_resource/content/2/Aula%200%20-%20Apresenta%C3%A7%C3%A3o%20da%20Disciplina.pdf?forcedownload=1",
+      "timecreated": 1785792271,
+      "timemodified": 1785792272,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 321601,
+      "author": "Angelo Elias Dal Zotto",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 385241,
+     "lastmodified": 1785792272,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   }
+  ]
+ },
+ {
+  "id": 7747603,
+  "name": "[03/08] - Introdução",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 3,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3814961,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3814961",
+    "name": "Aula 01 - Introdução",
+    "instance": 1901872,
+    "contextid": 6059092,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/pdf?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3814961&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "Aula 01 - Introdução.pdf",
+      "filepath": "/",
+      "filesize": 457937,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/6059092/mod_resource/content/4/Aula%2001%20-%20Introdu%C3%A7%C3%A3o.pdf?forcedownload=1",
+      "timecreated": 1785792360,
+      "timemodified": 1785792361,
+      "sortorder": 1,
+      "mimetype": "application/pdf",
+      "isexternalfile": false,
+      "userid": 321601,
+      "author": "Angelo Elias Dal Zotto",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 457937,
+     "lastmodified": 1785792361,
+     "mimetypes": [
+      "application/pdf"
+     ],
+     "repositorytype": ""
+    }
+   }
+  ]
+ },
+ {
+  "id": 7747604,
+  "name": "[10/08] - Wireshark",
+  "visible": 1,
+  "summary": "<p></p>\n<p></p>",
+  "summaryformat": 1,
+  "section": 4,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3814965,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3814965",
+    "name": "Laboratório 1 - Wireshark",
+    "instance": 1901874,
+    "contextid": 6059096,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/markup?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3814965&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "Lab 1 - Wireshark.html",
+      "filepath": "/",
+      "filesize": 330061,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/6059096/mod_resource/content/14/Lab%201%20-%20Wireshark.html?forcedownload=1",
+      "timecreated": 1786201052,
+      "timemodified": 1786201053,
+      "sortorder": 1,
+      "mimetype": "text/html",
+      "isexternalfile": false,
+      "userid": 321601,
+      "author": "Angelo Elias Dal Zotto",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 330061,
+     "lastmodified": 1786201053,
+     "mimetypes": [
+      "text/html"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3814966,
+    "name": "Material de apoio",
+    "instance": 660679,
+    "contextid": 6059097,
+    "description": "<div class=\"no-overflow\"><p dir=\"ltr\" style=\"text-align: left;\"><strong>Material de apoio</strong></p></div>",
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/label/1788184683/monologo?filtericon=1",
+    "modname": "label",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Áreas de texto e mídia",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": true,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3814967,
+    "url": "https://moodle.pucrs.br/mod/url/view.php?id=3814967",
+    "name": "Página do Wireshark",
+    "instance": 491435,
+    "contextid": 6059098,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/url/1788184683/monologo?filtericon=1",
+    "modname": "url",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "URLs",
+    "indent": 1,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/url/view.php?id=3814967&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "customdata": "{\"display\":\"3\",\"filtericon\":true}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "url",
+      "filename": "Página do Wireshark",
+      "filepath": null,
+      "filesize": 0,
+      "fileurl": "https://www.wireshark.org/",
+      "timecreated": null,
+      "timemodified": 1786201017,
+      "sortorder": null,
+      "userid": null,
+      "author": null,
+      "license": null
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 0,
+     "lastmodified": 1786201017,
+     "mimetypes": [],
+     "repositorytype": ""
+    }
+   }
+  ]
+ },
+ {
+  "id": 7747605,
+  "name": "[17/08] - DHCP",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 5,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3884522,
+    "url": "https://moodle.pucrs.br/mod/groupselect/view.php?id=3884522",
+    "name": "Escolha de duplas para os laboratórios do semestre",
+    "instance": 8765,
+    "contextid": 6138755,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/groupselect/1788184683/monologo?filtericon=1",
+    "modname": "groupselect",
+    "purpose": "collaboration",
+    "branded": false,
+    "modplural": "Escolha de grupos",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3814968,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3814968",
+    "name": "Laboratório 2 - DHCP",
+    "instance": 1901875,
+    "contextid": 6059099,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/markup?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3814968&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "Lab 2 - DHCP.html",
+      "filepath": "/",
+      "filesize": 13073,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/6059099/mod_resource/content/3/Lab%202%20-%20DHCP.html?forcedownload=1",
+      "timecreated": 1786544753,
+      "timemodified": 1786544754,
+      "sortorder": 1,
+      "mimetype": "text/html",
+      "isexternalfile": false,
+      "userid": 321601,
+      "author": "Angelo Elias Dal Zotto",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 13073,
+     "lastmodified": 1786544754,
+     "mimetypes": [
+      "text/html"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3890137,
+    "name": "Para disparar a configuração de DHCP no MAC:sudo i...",
+    "instance": 673189,
+    "contextid": 6146842,
+    "description": "<div class=\"no-overflow\"><p>Para disparar a configuração de DHCP no MAC:<br><br>sudo ipconfig set en0 BOOTP &amp;&amp; sudo ipconfig set en0 DHCP</p>\r\n<p></p>\r\n<p>Somente renovação:</p>\r\n<p>sudo ipconfig set en0 DHCP<br><br> </p></div>",
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/label/1788184683/monologo?filtericon=1",
+    "modname": "label",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Áreas de texto e mídia",
+    "indent": 0,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "\"\"",
+    "noviewlink": true,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0
+   },
+   {
+    "id": 3814970,
+    "url": "https://moodle.pucrs.br/mod/assign/view.php?id=3814970",
+    "name": "Sala de entrega",
+    "instance": 219322,
+    "contextid": 6059101,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/assign/1788184683/monologo?filtericon=1",
+    "modname": "assign",
+    "purpose": "assessment",
+    "branded": false,
+    "modplural": "Tarefas",
+    "indent": 1,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "{\"customcompletionrules\":{\"completionsubmit\":\"1\"},\"duedate\":1787108340,\"cutoffdate\":\"1787108340\",\"allowsubmissionsfromdate\":\"1787007600\"}",
+    "noviewlink": false,
+    "completion": 2,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1787009412,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": true,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [
+      {
+       "rulename": "completionsubmit",
+       "rulevalue": {
+        "status": 1,
+        "description": "Fazer um envio"
+       }
+      }
+     ],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [
+     {
+      "label": "Aberto:",
+      "timestamp": 1787007600,
+      "dataid": "allowsubmissionsfromdate"
+     },
+     {
+      "label": "Vencimento:",
+      "timestamp": 1787108340,
+      "dataid": "duedate"
+     }
+    ],
+    "groupmode": 0
+   }
+  ]
+ },
+ {
+  "id": 7747606,
+  "name": "[24/08] - DNS",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 6,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3814975,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3814975",
+    "name": "Laboratório 3 - DNS",
+    "instance": 1901880,
+    "contextid": 6059106,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/markup?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3814975&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "Lab 3a - DNS.html",
+      "filepath": "/",
+      "filesize": 12882,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/6059106/mod_resource/content/4/Lab%203a%20-%20DNS.html?forcedownload=1",
+      "timecreated": 1787568645,
+      "timemodified": 1787568647,
+      "sortorder": 1,
+      "mimetype": "text/html",
+      "isexternalfile": false,
+      "userid": 321601,
+      "author": "Angelo Elias Dal Zotto",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 12882,
+     "lastmodified": 1787568647,
+     "mimetypes": [
+      "text/html"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3814976,
+    "url": "https://moodle.pucrs.br/mod/assign/view.php?id=3814976",
+    "name": "Sala de entrega",
+    "instance": 219323,
+    "contextid": 6059107,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/assign/1788184683/monologo?filtericon=1",
+    "modname": "assign",
+    "purpose": "assessment",
+    "branded": false,
+    "modplural": "Tarefas",
+    "indent": 2,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "{\"customcompletionrules\":{\"completionsubmit\":\"1\"},\"duedate\":1787615100,\"cutoffdate\":\"1790391540\",\"allowsubmissionsfromdate\":\"1787612400\"}",
+    "noviewlink": false,
+    "completion": 2,
+    "completiondata": {
+     "state": 1,
+     "timecompleted": 1787615009,
+     "overrideby": null,
+     "valueused": false,
+     "hascompletion": true,
+     "isautomatic": true,
+     "istrackeduser": true,
+     "uservisible": true,
+     "details": [
+      {
+       "rulename": "completionsubmit",
+       "rulevalue": {
+        "status": 0,
+        "description": "Fazer um envio"
+       }
+      }
+     ],
+     "isoverallcomplete": true
+    },
+    "downloadcontent": 1,
+    "dates": [
+     {
+      "label": "Aberto:",
+      "timestamp": 1787612400,
+      "dataid": "allowsubmissionsfromdate"
+     },
+     {
+      "label": "Vencimento:",
+      "timestamp": 1787615100,
+      "dataid": "duedate"
+     }
+    ],
+    "groupmode": 0
+   }
+  ]
+ },
+ {
+  "id": 7747607,
+  "name": "[31/08] - HTTP",
+  "visible": 1,
+  "summary": "",
+  "summaryformat": 1,
+  "section": 7,
+  "hiddenbynumsections": 0,
+  "uservisible": true,
+  "component": null,
+  "itemid": null,
+  "modules": [
+   {
+    "id": 3814977,
+    "url": "https://moodle.pucrs.br/mod/resource/view.php?id=3814977",
+    "name": "Laboratório 04 - HTTP(S)",
+    "instance": 1901881,
+    "contextid": 6059108,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/core/1788184683/f/markup?filtericon=1",
+    "modname": "resource",
+    "purpose": "content",
+    "branded": false,
+    "modplural": "Arquivos",
+    "indent": 0,
+    "onclick": "window.open('https://moodle.pucrs.br/mod/resource/view.php?id=3814977&amp;redirect=1'); return false;",
+    "afterlink": null,
+    "activitybadge": [],
+    "customdata": "{\"filtericon\":true,\"displayoptions\":\"a:0:{}\",\"display\":\"3\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [],
+    "groupmode": 0,
+    "contents": [
+     {
+      "type": "file",
+      "filename": "Lab 4 - HTTP.html",
+      "filepath": "/",
+      "filesize": 11766,
+      "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/6059108/mod_resource/content/3/Lab%204%20-%20HTTP.html?forcedownload=1",
+      "timecreated": 1787841610,
+      "timemodified": 1787841617,
+      "sortorder": 1,
+      "mimetype": "text/html",
+      "isexternalfile": false,
+      "userid": 321601,
+      "author": "Angelo Elias Dal Zotto",
+      "license": "allrightsreserved"
+     }
+    ],
+    "contentsinfo": {
+     "filescount": 1,
+     "filessize": 11766,
+     "lastmodified": 1787841617,
+     "mimetypes": [
+      "text/html"
+     ],
+     "repositorytype": ""
+    }
+   },
+   {
+    "id": 3814979,
+    "url": "https://moodle.pucrs.br/mod/assign/view.php?id=3814979",
+    "name": "Sala de entrega",
+    "instance": 219324,
+    "contextid": 6059110,
+    "visible": 1,
+    "uservisible": true,
+    "visibleoncoursepage": 1,
+    "modicon": "https://moodle.pucrs.br/theme/image.php/moove/assign/1788184683/monologo?filtericon=1",
+    "modname": "assign",
+    "purpose": "assessment",
+    "branded": false,
+    "modplural": "Tarefas",
+    "indent": 1,
+    "onclick": "",
+    "afterlink": null,
+    "customdata": "{\"duedate\":1788231540,\"cutoffdate\":\"1788317940\",\"allowsubmissionsfromdate\":\"1788214500\"}",
+    "noviewlink": false,
+    "completion": 0,
+    "downloadcontent": 1,
+    "dates": [
+     {
+      "label": "Aberto:",
+      "timestamp": 1788214500,
+      "dataid": "allowsubmissionsfromdate"
+     },
+     {
+      "label": "Vencimento:",
+      "timestamp": 1788231540,
+      "dataid": "duedate"
+     }
+    ],
+    "groupmode": 0
+   }
+  ]
+ }
+]
