@@ -5,7 +5,9 @@ fecharam (§REGUA DE TRAVESSIA, bloco MEDICOES FECHADAS); watchdog do censo casa
 de travessia. 03/09 sessao 4: **item 2 (Fase 3a) FEITO** (gerador `fe2c4fb`, 5 tutores reprocessados; §FASE 3a);
 item 3 (Fase 3b, card ordenado) FEITO na mesma sessao (§FASE 3b; AULA 152 -> 163, curada intacta);
 item 4 FEITO (ordem das secoes: 0 efeito pos-item 3, nao entrou; secao 0 do Moodle -> apresentacao: +3/0, AULA 167);
-**proximo = item 5 (Fase 3c, tokens curtos do cronograma no desempate)**. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3, 4.8k linhas)
+item 5 FEITO (tokens curtos: AULA 171/170, IA k-NN x4; tokenizador unico `text/tokens.py`); HOLDOUT CG criado (27 -> 30/35);
+**proximo = item 6 (Fase 3d, label unico; H6 agiu em 0 — medir, provavelmente nao entra) e depois o gate do item 7**.
+Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3, 4.8k linhas)
 em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-02c + plano
 2026-09-02 (desenho/decisoes, carimbado).
 
@@ -26,7 +28,8 @@ decisao B (gold eth2/aws) quando quiser; push.
    161 -> 173/200, curada intacta; card so depois do voter (antes dele regrediu a curada e foi revertido).
 4. ~~Fase 3b — ordem das secoes para cards sem data (+7/-1) e card generico -> apresentacao (+3/0)~~ FEITO 03/09 (§FASE 3b
    item 4): ordem das secoes agiu em 0 pos-item 3 (nao entrou); secao 0 do Moodle sem janela -> apresentacao (+3/0, AULA 167).
-5. Fase 3c — tokens curtos do cronograma no desempate (+4/-2), como strangler do tokenizador so no disambiguator.
+5. ~~Fase 3c — tokens curtos do cronograma no desempate (+4/-2), como strangler do tokenizador so no disambiguator~~ FEITO
+   03/09 (§FASE 3c): +4/0 (IA k-NN x4), AULA 171 sem vocab / 170 com vocab; `text/tokens.py` = tokenizador unico (corte 3).
 6. Fase 3d — label unico nos flagados (+2/0).
 7. Gate da Fase 3: AULA 152 -> ~174/189; residual <= 8/100; curada intacta; motor puro ± vocab; calibra_revisar; censo.
 8. Rebuild pela API dos 3 do SEMESTRE CORRENTE (FR -> LR -> CG; diff de ids antes; protocolo do run real; user revisa
@@ -135,6 +138,40 @@ llm-funil -> secao-geral, flag True -> False); censo nos 8: llm-funil 18 -> 15, 
 33,8 -> 32,9. Divida achada: a escada da `regua_aula.py` (H1/H7/H9 via picks) esta STALE — os picks H9 do harness
 "desflagam" entries que a producao ja decide e inflam "erros CONFIANTES" (12 -> 16 sem erro novo); a linha limpa e
 "motor puro hoje". Podar no item 9 (refactor).
+
+## FASE 3c (item 5) — TOKENS CURTOS DO CRONOGRAMA + TOKENIZADOR UNICO (03/09 sessao 4, FEITO)
+
+**Entregue (gerador `fdf28af`; tutor IA `ca1f765`, os outros 4 byte-identicos):** `src/builder/text/tokens.py::motor_tokens(text, generic_stems, short_vocab, min_len=3)` — tokenizador UNICO do
+motor (corte 3 do refactor, strangler: `disambiguator._toks` delega byte-identico; os outros 12 tokenizadores migram um a um
+em C4 com sentinela 0). `disambiguator.course_short_vocab(ctx)` (tokens de 2-3 chars consagrados por topic_text +
+primary_topic_label + labels de sessao via `short_vocab_from_topic_labels`, memoizado em `MotorContext._short_vocab_cache`).
+`disambiguate`: desempate D4 (`_lexical_decision`) com tokens padrao; se FLAGADO e o curso tem vocab curto, refaz com o vocab
+curto nos DOIS lados (material e assinatura) e adota se muda o bloco ou tira a flag, method `disamb-curto` (regua vigia em
+separado); janela-1 e titulo-topico intocados. 6 testes em `tests/test_motor_tokens.py`. `regua_aula.py`: monkeypatch H8
+adaptado a assinatura nova (H8 agora e producao; agiu em 0 na escada).
+**Medido (copias):** motor puro sem vocab 176 -> **180**/200 (IA 37 -> 41: `algoritmo-de-classificacao-k-nn`, `exemplo-de-programa-
+com-k-nn-em-java`, `exemplo-2-k-nn-com-iriscsv`, `exemplo-com-k-nn` — "nn" de "k-NN" -> "k nn", consagrado pelo cronograma; vocab curto do IA = es, g1, g2, ia, ml, nn, p1, p2, ps, t1, t2), conf-err 3, unidade
+164, cobertura 51, sub 26; +vocab 175 -> **179** · 174 · 50 · 82. AULA 167 -> **171** sem vocab, 166 -> **170** com vocab; REF 8/10;
+BASE 4/4. 0 perdas. Acumulado dos itens 2-5 vs snapshot pre-item 3: GANHO 23 · PERDA 5 · err->err 6.
+**Curada:** 199/200 conf-err 0 · 191/191 · 55/57 · 93/93 intacta; sentinela so IA (3 entries `llm` -> `disamb-curto`, mesmo
+bloco, banda alta, revisar llm -> ok); censo nos 8: llm 71 -> 68, llm-funil 15, revisar/100 52,6 -> **51,7**, votos/100
+32,9 -> **32,0**. Aqui o texto curto preempta o voto e acerta — e o primeiro item que reduz votos no curado.
+
+## HOLDOUT — CG, curso do semestre corrente (pedido do user 03/09: "ver se nao estamos fazendo overfitting")
+
+Regua nova, roda a cada item: `_harness-2026-09-02/holdout_cg.py <GEN> <COPY_DIR> [--no-sync]` = motor puro (sem curadoria,
+sem voter, sem vocab) numa copia do CG, gold `ground_truth_CG.csv` scorable=yes (35). Baseline com o gerador PRE-item 2
+(`b0b3b42`, worktree temporario): **27/35**, conf-err 1, flagados/sem bloco 19. Com o HEAD (itens 2-5): **30/35**, conf-err 1,
+flagados 16. Ganhos = `animacao-v2`, `instanciamento`, `transformacoesgeometricas` (janela por topico de 9 blocos; "2d"
+consagrado pelas sessoes do bloco-06 "processo de visualizacao 2d ..." — item 5, `disamb-curto`). Itens 3-4 NAO agem no CG:
+o professor nao usa label datado nem data no nome (week_label vazio em 73/73) e nao ha material na secao 0 — ausencia de
+sinal, nao overfitting; para testar 3-4 fora dos 5 e preciso um curso do semestre com labels datados (FR/LR: medir o Moodle
+antes). Sobram: `matematica` (08 x 03, confiante-errado pre-existente), `transformacoes-geometricas-em-opengl` (15 x 06,
+flagada, sem "2d" no texto), `modelagem-de-solidos`/`basico3d-cpp`/`basico3d-py-zip` (05 x 15, flagadas, janela de 2: "3d"
+nao esta na assinatura de nenhum dos dois blocos). Precisao por faixa (HEAD, puro): confiantes 18/19 = 94,7%, flagadas 12/16 = 75%.
+**CURADO + LLM** (`--curado`: sem ablacao, voter com cache, copia): **34/35 = 97,1%**, conf-err 1 (`matematica`), flagados 5,
+metodos llm 15 · llm-funil 9 · disamb-curto 2 — igual ao 34/35 medido 03/09 madrugada com o codigo antigo; a linha do produto
+nao mudou, o ganho dos itens 2-5 esta no piso sem LLM (27 -> 30).
 
 ## REGUA DE TRAVESSIA — baseline "antes" (02/09 noite)
 

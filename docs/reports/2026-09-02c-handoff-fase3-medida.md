@@ -20,8 +20,8 @@ secoes ESTADO/REVISAO carimbadas como historico). Historico: `_archive/` (35 han
 equivalentes; branches `worktree-*` mantidos). Regra: 1 handoff vivo; novo handoff = o anterior vai para `_archive/`.
 
 ## Estado ao comecar (tudo commitado, NADA pushed)
-Gerador `feat/motor-atribuicao` (ver `git log`; item 2 = `fe2c4fb`, item 3 = `b802a68`, item 4 = `79fc92a`, + docs). Tutores:
-MF `e39e14a` SO `603d914` IA `ffd9fdb` ES2 `2212f9f` TCC `b9af3c3` (os 5 com estrutura do Moodle no manifest, 03/09) CG `19472d1` LR `0e3ab1a`
+Gerador `feat/motor-atribuicao` (ver `git log`; item 2 = `fe2c4fb`, item 3 = `b802a68`, item 4 = `79fc92a`, item 5 = `fdf28af`,
++ docs). Tutores: MF `e39e14a` SO `603d914` IA `ca1f765` ES2 `2212f9f` TCC `b9af3c3` (os 5 com estrutura do Moodle no manifest, 03/09) CG `19472d1` LR `0e3ab1a`
 FR `64990dc` (os 3 do semestre corrente ganham os campos no rebuild do item 8; hook ja roda) (com o vocab compilado;
 `.glossary_curation.llm.json` em MF/CG/LR/FR). `subjects.json`: `compile_vocabulary: true` nos 8. `raw/moodle/{sections,
 contents,labels}.json` gravados nos 8 (gitignored; copia versionada em `_harness-2026-09-02/moodle_sections/` e
@@ -44,7 +44,8 @@ Push quando quiser.
    Rerodar = `python scripts/eval_travessia.py {IA,FR,CG} [--sem-llm|--contexto-completo]` (cache: 0 chamadas se o contexto nao mudou).
 1b. ~~FILE_MAP completo~~ MOVIDO para a campanha de travessia (user, 03/09: "terminar a campanha do motor"; assim o item 12
    mede so o motor). Watchdog de cobertura ja esta no censo. Candidatos em `pendencias.md` §PROXIMA CAMPANHA — TRAVESSIA.
-   **PROXIMO ITEM = 5 (Fase 3c, tokens curtos do cronograma no desempate; H8 agiu em 4 na regua pos-item 4).**
+   **PROXIMO ITEM = 6 (Fase 3d, label/titulo com token unico a 1 bloco da janela; H6 agiu em 0 na regua pos-item 5 —
+   medir antes, provavelmente nao entra).**
 2. ~~**3a Backfill estrutural nos 5 encerrados**~~ FEITO 03/09 (tracker §FASE 3a): `backfill_moodle_structure_repo` em
    `sources/moodle.py` + hook `_run_moodle_structure_backfill` na regeneracao (antes do motor, idempotente, so se
    `raw/moodle/contents.json` existe); 3 campos em `FileEntry` (`moodle_section_index`, `moodle_module_index`,
@@ -79,9 +80,18 @@ Push quando quiser.
    sem vocab, 163 -> **166** com vocab;
    curada 199/200 · 191/191 · 55/57 · 93/93 intacta; no curado SO `apresentacao-da-disciplina`, `questoes-do-enade`,
    `programa` saem do llm-funil (18 -> 15 nos 8; revisar/100 53,2 -> 52,6; votos/100 33,8 -> 32,9).
-5. **3c Tokens curtos consagrados pelo cronograma** em `disambiguator._toks` nos DOIS lados (`short_vocab_from_topic_labels`
-   sobre labels de sessao + topic_text; +4/-2, IA k-NN x4) — implementar como corte 3 do refactor (tokenizador unico como
-   strangler SO no disambiguator, byte-identico primeiro, sentinela 0, depois o vocab curto).
+5. ~~**3c Tokens curtos consagrados pelo cronograma**~~ FEITO 03/09 (tracker §FASE 3c): `text/tokens.py::motor_tokens` = tokenizador
+   unico (corte 3, strangler: `disambiguator._toks` delega, byte-identico; os outros 12 migram em C4); `course_short_vocab(ctx)`
+   (2-3 chars consagrados por topic_text + labels de sessao, memoizado); `disambiguate` refaz o desempate D4 com o vocab curto
+   nos DOIS lados SO quando o lexico padrao ficou flagado, adota se muda o bloco ou tira a flag, method `disamb-curto`.
+   Numeros: motor puro 176 -> **180**/200 (IA k-NN x4, 0 perdas; conf-err 3), +vocab 175 -> **179**; AULA 167 -> **171** sem
+   vocab, 166 -> **170** com vocab; curada 199/200 · 191/191 · 55/57 · 93/93 intacta (IA: 3 votos de LLM viram disamb-curto,
+   mesmo bloco); censo llm 71 -> 68, revisar/100 52,6 -> 51,7, votos/100 32,9 -> 32,0.
+   **HOLDOUT CG (pedido do user 03/09, curso do semestre NAO usado para afinar):** `_harness-2026-09-02/holdout_cg.py <GEN> <COPY>`
+   (motor puro, sem voter/vocab, gold `ground_truth_CG.csv` scorable 35): codigo pre-item 2 (`b0b3b42`) **27/35** -> HEAD
+   **30/35**, conf-err 1 = 1, flagados 19 -> 16. Os 3 ganhos sao do item 5 ("2d" consagrado pelas sessoes do bloco-06);
+   itens 3-4 nao agem no CG porque o professor nao usa label datado nem data no nome (week_label vazio) — ausencia de
+   sinal, nao overfitting. Regua nova: roda a cada item daqui em diante (baseline 30/35).
 6. **3d Label/titulo com token unico a 1 bloco da janela** decide, so flagados (+2/0).
 7. **Gate da Fase 3**: AULA 152 -> ~174/189; residual flagado <= 8/100 em AULA; curada 199/191/93 intacta; `motor_puro.py` e
    `--com-vocab`; `calibra_revisar.py .ablacao`; censo (votos/100 caem). Registrar as 3 linhas da regua no tracker.
