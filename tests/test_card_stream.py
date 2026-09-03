@@ -177,3 +177,21 @@ def test_general_section_with_a_window_follows_the_cascade():
     e = _e("sem", "Logica proposicional semantica", 2, "", sec="Logica"); e["moodle_section_index"] = 0
     d = AnchorEngine().resolve(e, _engine_ctx())
     assert (d.block_ref, d.provider) == ("bloco-04", "labels")
+
+
+# --- ancora datada (modulo "dd/mm Topico") = FAIXA da secao para os modulos sem data; texto decide dentro dela ---
+
+def test_undated_module_after_anchors_gets_the_section_anchor_range_not_the_last_anchor():
+    ents = [_e("a1", "16/03 Sintaxe", 1, "16/03 Sintaxe"),                    # ancora propria -> so o seu bloco
+            _e("a2", "23/03 Semantica", 2, "23/03 Semantica"),                # ancora propria
+            _e("ex", "Exemplos de sintaxe", 3, "23/03 Semantica")]            # sem data: herda o texto da ultima ancora
+    out = card_windows(ents, _ctx())
+    assert out["a1"] == ["bloco-03"] and out["a2"] == ["bloco-04"]
+    assert out["ex"] == ["bloco-03", "bloco-04"]   # faixa da secao; o disambiguator decide pelo texto ("sintaxe" -> 03)
+
+
+def test_entry_with_its_own_date_in_the_title_keeps_its_own_block_even_without_moodle_label():
+    # SO curado (03/09): "14 04 Troca de Mensagens" (M365, moodle_label vazio) caiu na faixa [06, 07] e regrediu 199 -> 198
+    e = _e("t", "23 03 Semantica", 2, "23/03 Semantica"); e["moodle_label"] = ""
+    ents = [_e("a1", "16/03 Sintaxe", 1, "16/03 Sintaxe"), e]
+    assert card_windows(ents, _ctx())["t"] == ["bloco-04"]

@@ -19,7 +19,7 @@ from typing import Dict, List
 
 from src.builder.routing.motor.contracts import MotorContext
 from src.builder.routing.motor.disambiguator import _block_signature, _moodle_label_text, _toks
-from src.builder.routing.motor.window_provider import _modal_years, hosts_material
+from src.builder.routing.motor.window_provider import _modal_years, extract_date_in_name, hosts_material
 
 _DATE_DMY = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
 _RANGE = re.compile(r"\d{1,2}/\d{1,2}/\d{4}\s*a\s*\d{1,2}/\d{1,2}/\d{4}")
@@ -28,6 +28,11 @@ _DATE_DM = re.compile(r"^\s*\[?\s*(\d{1,2})[./](\d{1,2})(?![./]?\d)")
 
 def _bid(b: dict) -> str:
     return str(b.get("id") or "")
+
+
+def _is_anchor(week_label: str) -> bool:
+    """week_label vindo de um modulo datado ("12/03 Processos"), nao de um label "Semana dd/mm/aaaa"."""
+    return bool(week_label) and not _DATE_DMY.search(week_label) and bool(_DATE_DM.match(week_label))
 
 
 def _blocks_in_range(ctx: MotorContext, d1: date, d2: date) -> List[str]:
@@ -113,8 +118,17 @@ def card_windows(entries: list, ctx: MotorContext) -> Dict[str, List[str]]:
             continue
         by_sec.setdefault(int(si), []).append((int(mi), eid, e, wl))
     out: Dict[str, List[str]] = {}
+    order = {_bid(b): k for k, b in enumerate(ctx.blocks)}
     for si in sorted(by_sec):
         items = sorted(by_sec[si], key=lambda t: (t[0], t[1]))
+        # Ancoras da secao (modulos "dd/mm Topico"): a FAIXA da secao para os modulos sem data.
+        # Medido 03/09 (SO exemplo-criacao x4): o modulo sem data postado depois da ultima
+        # ancora nao e da ultima aula — e da secao; o texto decide dentro da faixa (+4/0).
+        anchor_range: List[str] = []
+        for _mi, _eid, _e, wl in items:
+            if _is_anchor(wl):
+                anchor_range += [b for b in _week_blocks(wl, ctx) if b not in anchor_range]
+        anchor_range.sort(key=lambda b: order.get(b, 10**9))
         i = 0
         while i < len(items):
             wl = items[i][3]
@@ -122,6 +136,17 @@ def card_windows(entries: list, ctx: MotorContext) -> Dict[str, List[str]]:
             while i < len(items) and items[i][3] == wl:
                 group.append(items[i])
                 i += 1
+            if _is_anchor(wl):
+                own = _week_blocks(wl, ctx)
+                for _mi, eid, e, _wl in group:
+                    # Data PROPRIA = mesmo sinal do provider_date (titulo/moodle_label/card/
+                    # basename): "14 04 Troca de Mensagens" (M365, moodle_label vazio) e ancora.
+                    if extract_date_in_name(e) is not None:
+                        if own:
+                            out[eid] = list(own)          # modulo datado: o proprio bloco
+                    elif anchor_range:
+                        out[eid] = list(anchor_range)     # sem data: faixa da secao
+                continue
             weeks = [(bl, part) for part in wl.split(" || ") for bl in [_week_blocks(part, ctx)] if bl]
             if not weeks:
                 continue
