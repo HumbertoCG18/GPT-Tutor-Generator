@@ -291,6 +291,18 @@ _CASCADE = (
 )
 
 
+def hosts_material(block) -> bool:
+    """Bloco que pode hospedar material: nem kinds.NEVER_HOSTS_MATERIAL_KINDS nem prova."""
+    kind = str((block or {}).get("kind") or "")
+    return bool(block) and kind not in NEVER_HOSTS_MATERIAL_KINDS and kind != "assessment"
+
+
+def provider_card(entry: dict, ctx: MotorContext) -> List[str]:
+    """Card do Moodle como documento ordenado (Fase 3b, card_stream.card_windows). FORA da
+    cascata: o anchor_engine so o consulta sem janela ou com decisao FLAGADA."""
+    return list((ctx._card_windows_cache or {}).get(str(entry.get("id") or ""), []))
+
+
 def drop_never_hosts(window: List[str], ctx: MotorContext) -> List[str]:
     """Tira da janela os kinds que nunca hospedam material (feriado, atendimento,
     oficina, evento, administrativos — kinds.NEVER_HOSTS_MATERIAL_KINDS). So
@@ -305,8 +317,7 @@ def drop_never_hosts(window: List[str], ctx: MotorContext) -> List[str]:
     kept = []
     for ref in window:
         b = ctx.block_by_ref(ref)
-        kind = str(b.get("kind") or "") if b is not None else ""
-        if b is not None and (kind in NEVER_HOSTS_MATERIAL_KINDS or kind == "assessment"):
+        if b is not None and not hosts_material(b):
             continue
         kept.append(ref)
     return kept or list(window)

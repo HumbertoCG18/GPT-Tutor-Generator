@@ -195,6 +195,42 @@
        "timecreated": 1773179991
       }
      ]
+    },
+    {
+     "id": 3668867,
+     "name": "Exemplo: Criação de Processos no Unix/Linux",
+     "modname": "folder",
+     "visible": 1,
+     "contents": [
+      {
+       "type": "file",
+       "filename": "filho.c",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876874/mod_folder/content/2/filho.c?forcedownload=1",
+       "timemodified": 1773179991,
+       "timecreated": 1773179991
+      },
+      {
+       "type": "file",
+       "filename": "teste03.c",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876874/mod_folder/content/2/teste03.c?forcedownload=1",
+       "timemodified": 1773179991,
+       "timecreated": 1773179991
+      },
+      {
+       "type": "file",
+       "filename": "teste02.c",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876874/mod_folder/content/2/teste02.c?forcedownload=1",
+       "timemodified": 1773179991,
+       "timecreated": 1773179991
+      },
+      {
+       "type": "file",
+       "filename": "teste01.c",
+       "fileurl": "https://moodle.pucrs.br/webservice/pluginfile.php/5876874/mod_folder/content/2/teste01.c?forcedownload=1",
+       "timemodified": 1773179991,
+       "timecreated": 1773179991
+      }
+     ]
     }
    ]
   }

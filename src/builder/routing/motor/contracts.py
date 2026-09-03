@@ -47,6 +47,9 @@ class MotorContext:
     _stems_cache: Optional[dict] = field(default=None, repr=False, compare=False)
     # ordinal de ENCONTRO -> ref do bloco (provider_ordinal, P3b)
     _session_ordinal_cache: Optional[dict] = field(default=None, repr=False, compare=False)
+    # entry id -> janela DISPLAY do card lido como documento ordenado (card_stream.card_windows,
+    # Fase 3b); preenchido por apply_anchor_engine a partir das entries. None = provider "card" mudo.
+    _card_windows_cache: Optional[dict] = field(default=None, repr=False, compare=False)
 
     @classmethod
     def from_artifacts(

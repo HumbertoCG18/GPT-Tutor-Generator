@@ -10,7 +10,7 @@ from typing import Optional, Set
 
 from src.builder.timeline.kinds import NEVER_HOSTS_MATERIAL_KINDS
 from src.builder.routing.motor.contracts import AnchorDecision, MotorContext, LlmVoterProtocol
-from src.builder.routing.motor.window_provider import resolve_window, drop_never_hosts
+from src.builder.routing.motor.window_provider import resolve_window, drop_never_hosts, provider_card
 from src.builder.routing.motor.disambiguator import disambiguate
 
 # Categorias que NUNCA entram no disambiguator (spec §3 TIER 2 + marco0).
@@ -214,9 +214,14 @@ class AnchorEngine:
         prep_ok = lexical or is_exam_prep_material(entry)
         if not window:
             # sem janela -> preparacao de prova (deterministico; nunca para a
-            # PROPRIA prova/trabalho, lexical=False) -> llm-funil ou None
+            # PROPRIA prova/trabalho, lexical=False) -> card como documento
+            # ordenado (Fase 3b) -> llm-funil ou None
             prep = resolve_exam_prep(entry, ctx) if prep_ok else None
-            return prep or self.resolve_funnel(entry, ctx, markdown)
+            if prep is not None:
+                return prep
+            window, provider = provider_card(entry, ctx), "card"
+            if not window:
+                return self.resolve_funnel(entry, ctx, markdown)
         if prep_ok and provider in ("ordinal", "topic"):
             # Balde B (2026-08-26): janela INDIRETA (card por topico "Exercicios de
             # Revisao para Prova" -> [05, 06]; "Aula 16" -> 16o encontro) nao vence a
@@ -252,4 +257,24 @@ class AnchorEngine:
                 decision.flag = False
                 decision.provider = "llm"
                 decision.method = "llm"
+        if decision.flag and provider != "card":
+            # Fase 3b (item 3): decisao ainda FLAGADA (sem voter, ou voto sem resposta) ->
+            # o card lido como documento ordenado (semana do label / modulo datado + ordem
+            # dos materiais, card_stream) estreita a janela e o texto decide dentro dela.
+            # Nunca sobrepoe decisao confiante (medido 02/09: a tudo +13/-10, so flagados
+            # +12/-5) e NUNCA preempta o voto: com o card antes do voter a janela-1 do card
+            # calava o LLM e a curada caiu 199 -> 187 (03/09).
+            card = provider_card(entry, ctx)
+            if card:
+                alt = disambiguate(entry, card, ctx, markdown, provider="card")
+                # Mesmo bloco e mesma duvida = nada novo: o provider original (mais direto,
+                # ex. data/janela-1 no SO) fica; so adota quando muda o bloco ou tira a flag.
+                if alt.block_ref and (alt.block_ref != decision.block_ref or not alt.flag):
+                    decision, provider = alt, "card"
+                    decision.provider = "card"
+        if provider == "card" and not decision.flag and decision.band == "alta":
+            # Calibracao medida (motor puro dos 5, 03/09): das decisoes do card sem flag,
+            # 8/11 certas (73%) — banda "alta" e ~98% no resto do motor. "media" e o
+            # numero honesto; a decisao fica e nao entra na fila de duvida.
+            decision.band = "media"
         return decision

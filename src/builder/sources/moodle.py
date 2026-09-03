@@ -230,6 +230,7 @@ def backfill_posting_date_from_api(manifest_entries, contents):
 
 
 _DATE_DMY = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
+_DATE_PREFIX = re.compile(r"^\s*\[?\s*\d{1,2}[./]\d{1,2}(?:[./]\d{2,4})?\b")   # "12/03 Processos", "[03/08] - Intro"
 _STRUCTURE_FIELDS = ("moodle_section_index", "moodle_module_index", "moodle_week_label")
 
 
@@ -247,7 +248,8 @@ def backfill_moodle_structure_from_api(manifest_entries, contents, year: int = 0
     basename == savename/filename do modulo -> moodle_label == mod.name (unico) -> stem == mod.name.
     week_label = texto do label DATADO (dd/mm/aaaa do ano do curso; year=0 = qualquer) mais
     proximo antes do modulo; labels consecutivos empilham (" || "); label sem data nao ancora
-    nem reseta. Entry sem match fica FORA (o chamador conta)."""
+    nem reseta. Modulo com DATA no nome ("12/03 Processos") e ancora: seu nome vira o week_label
+    dele e dos modulos sem data que o seguem. Entry sem match fica FORA (o chamador conta)."""
     from collections import Counter
     from src.builder.text.normalize import normalize_match_text
 
@@ -276,6 +278,8 @@ def backfill_moodle_structure_from_api(manifest_entries, contents, year: int = 0
                 continue
             if pending:
                 run, pending = " || ".join(pending), []
+            if _DATE_PREFIX.match(name):
+                run = re.sub(r"\s+", " ", name).strip()
             files = [str(c.get("filename") or "") for c in (mod.get("contents") or []) if c.get("type") == "file"]
             keys = {f.casefold() for f in files} | {_savename_from_module(name, f, len(files)).casefold() for f in files}
             ids = [e for e in in_sec if Path(str(e.get("source_path") or "")).name.casefold() in keys]

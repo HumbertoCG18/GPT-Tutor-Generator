@@ -74,7 +74,19 @@ def test_matches_by_savename_derived_from_module_title():
              "source_path": r"C:\stash\so\Processo e Estruturas de Controle\17.03 Chamada de Sistema.pdf",
              "source_section": "Processo e Estruturas de Controle", "moodle_label": "17/03 Chamada de Sistema"}]
     out = backfill_moodle_structure_from_api(ents, FX["SO"], year=2026)
-    assert out["1703-chamada-de-sistema"] == {"moodle_section_index": 2, "moodle_module_index": 2, "moodle_week_label": ""}
+    # modulo com data no nome e a propria ancora: week_label = seu nome (Fase 3b le a data dali)
+    assert out["1703-chamada-de-sistema"] == {"moodle_section_index": 2, "moodle_module_index": 2,
+                                              "moodle_week_label": "17/03 Chamada de Sistema"}
+
+
+def test_dated_module_name_anchors_following_undated_modules():
+    # SO: pasta "Exemplo: Criacao de Processos no Unix/Linux" (sem data) vem depois de "19/03 Estruturas de Controle"
+    ents = [{"id": "exemplo-criacao-de-processos-no-unix-linux-filho",
+             "source_path": r"C:\stash\so\Processo e Estruturas de Controle\Exemplo Criação de Processos no Unix Linux - filho.c",
+             "source_section": "Processo e Estruturas de Controle", "moodle_label": "Exemplo: Criação de Processos no Unix/Linux"}]
+    out = backfill_moodle_structure_from_api(ents, FX["SO"], year=2026)
+    assert out["exemplo-criacao-de-processos-no-unix-linux-filho"] == {
+        "moodle_section_index": 2, "moodle_module_index": 4, "moodle_week_label": "19/03 Estruturas de Controle"}
 
 
 def test_falls_back_to_unique_moodle_label_in_section():

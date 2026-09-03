@@ -22,6 +22,7 @@ from typing import Callable, Optional
 from src.builder.routing.motor.anchor_engine import (
     AnchorEngine, is_out_of_disamb_scope, resolve_generic_reference,
 )
+from src.builder.routing.motor.card_stream import card_windows
 from src.builder.routing.motor.context import build_motor_context
 from src.builder.routing.motor.contracts import AnchorDecision, MotorContext
 from src.builder.routing.motor.due_window import resolve_due_window, tier2_due_scope
@@ -68,6 +69,7 @@ def apply_anchor_engine(
     ctx = build_motor_context(repo, course_name)
     if not ctx.blocks:
         return entries
+    ctx._card_windows_cache = card_windows(entries, ctx)   # Fase 3b: provider "card" (so flagados/sem janela)
     series = detect_same_theme_series(entries)
     engine = AnchorEngine(voter=voter, series_ids=series)
     md_of = markdown_fn or (lambda e: "")

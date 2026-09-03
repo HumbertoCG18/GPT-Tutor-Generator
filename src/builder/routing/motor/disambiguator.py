@@ -191,7 +191,10 @@ def disambiguate(entry: dict, window: List[str], ctx: MotorContext,
     # INDIRETO (data/topic) passa pelo gate de concordância D4; manual/labels
     # (verdade humana / datado) mantêm o fast-path incondicional.
     if len(win) == 1 and len(blocks) == 1:
-        if provider in ("data", "topic"):
+        # "card" (Fase 3b): semana do label + ORDEM dos materiais e sinal inferido como
+        # data/topic — sem token discriminante fica flagado (medido 03/09: janela-1
+        # incondicional levou conf-err de 3 a 15 no motor puro; SO exemplo-criacao x4).
+        if provider in ("data", "topic", "card"):
             return _gated_window1_decision(entry, blocks[0], ctx, markdown, win)
         ref = str(blocks[0].get("id") or blocks[0].get("block_uuid") or win[0])
         return AnchorDecision(block_ref=ref, conf=1.0, band="alta", flag=False,
