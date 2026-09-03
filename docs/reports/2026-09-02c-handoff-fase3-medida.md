@@ -20,11 +20,12 @@ secoes ESTADO/REVISAO carimbadas como historico). Historico: `_archive/` (35 han
 equivalentes; branches `worktree-*` mantidos). Regra: 1 handoff vivo; novo handoff = o anterior vai para `_archive/`.
 
 ## Estado ao comecar (tudo commitado, NADA pushed)
-Gerador `feat/motor-atribuicao` (ver `git log`; ultimo desta sessao = docs consolidados). Tutores: MF `61a9104` SO `c81527f`
-IA `002c169` ES2 `09e3739` TCC `84670e4` CG `19472d1` LR `0e3ab1a` FR `64990dc` (com o vocab compilado;
+Gerador `feat/motor-atribuicao` (ver `git log`; item 2 = `fe2c4fb` + docs). Tutores: MF `e39e14a` SO `9c320b0`
+IA `ffd9fdb` ES2 `2212f9f` TCC `b9af3c3` (os 5 com estrutura do Moodle no manifest, 03/09) CG `19472d1` LR `0e3ab1a`
+FR `64990dc` (os 3 do semestre corrente ganham os campos no rebuild do item 8; hook ja roda) (com o vocab compilado;
 `.glossary_curation.llm.json` em MF/CG/LR/FR). `subjects.json`: `compile_vocabulary: true` nos 8. `raw/moodle/{sections,
 contents,labels}.json` gravados nos 8 (gitignored; copia versionada em `_harness-2026-09-02/moodle_sections/` e
-`moodle_contents/`). Copias `.ablacao` dos 5: puro + vocab. Suite 2232.
+`moodle_contents/`). Copias `.ablacao` dos 5: puro + vocab (com os 3 campos). Suite 2250.
 Reguas: curada 199/200 · 191/191 · 55/57 (eth2 = referencia, watchdog) · 93/93 · revisar 53,2/100 · motor puro 161/158/51/26 ·
 puro+vocab 162/167/50/79 · **AULA 152/189**.
 
@@ -43,13 +44,19 @@ Push quando quiser.
    Rerodar = `python scripts/eval_travessia.py {IA,FR,CG} [--sem-llm|--contexto-completo]` (cache: 0 chamadas se o contexto nao mudou).
 1b. ~~FILE_MAP completo~~ MOVIDO para a campanha de travessia (user, 03/09: "terminar a campanha do motor"; assim o item 12
    mede so o motor). Watchdog de cobertura ja esta no censo. Candidatos em `pendencias.md` §PROXIMA CAMPANHA — TRAVESSIA.
-   **PROXIMO ITEM = 2 (Fase 3a).**
-2. **3a Backfill estrutural nos 5 encerrados** (reprocess, nao rebuild): ler `raw/moodle/contents.json` + `sections.json`;
-   casar modulo <-> entry (nome do arquivo primeiro, depois `moodle_label` se unico na secao, depois stem — ver
-   `_harness-2026-09-02/audita_gold.py`, que casou 151/189 golds de aula); gravar no manifest `moodle_section_index`,
-   `moodle_module_index`, `moodle_week_label` (texto do label datado mais proximo antes do modulo / data no nome / secao-semana)
-   e `FileEntry` correspondente; `build_motor_context` le. Higiene medida: label com ano != ano do curso e ruido (ES2 2025);
-   label sem data nao ancora (MF "Trabalho 2:"). Gate: sentinela = SO os campos novos; entry sem match = sem estrutura, contado.
+   **PROXIMO ITEM = 3 (Fase 3b, card ordenado).**
+2. ~~**3a Backfill estrutural nos 5 encerrados**~~ FEITO 03/09 (tracker §FASE 3a): `backfill_moodle_structure_repo` em
+   `sources/moodle.py` + hook `_run_moodle_structure_backfill` na regeneracao (antes do motor, idempotente, so se
+   `raw/moodle/contents.json` existe); 3 campos em `FileEntry` (`moodle_section_index`, `moodle_module_index`,
+   `moodle_week_label` = texto do label DATADO antes do modulo; "data no nome" = `moodle_label` e "secao" = `source_section`,
+   ja no manifest — nao duplicados; `MotorContext` nao mudou: o entry carrega os campos e o provider de 3b le do entry).
+   Casamento por secao: savename/filename -> `moodle_label` unico -> stem. Higiene: `description` manda sobre `name` (cache
+   stale: ES2 name 2025/description 2026, MF "Trabalho 1 (06/05/2026):"/"Trabalho 1:"); sem data nao ancora; ano != cronograma
+   e ruido. Encerrados: MF 62/63 · SO 38/39 · IA 57/57 · ES2 35/35 · TCC 25/27 entries com card casadas (4 sem match =
+   renomeados no Moodle depois do stash); week_label em MF 56, ES2 30 (SO/IA/TCC: labels sem data). Gate: sentinela 0 nos 8,
+   diff total = so os 3 campos, curada 199/200 · 191/191 · 55/57 · 93/93, puro 161/158/51/26, +vocab 162/167/50/79, AULA
+   152/189, censo 53,2, suite 2250, determinismo 0. 12 testes em `tests/test_moodle_structure.py` (fixture real
+   `tests/fixtures/moodle/contents_excerpt.json`).
 3. **3b Card como documento ordenado = provider de janela** (posicao na `_CASCADE` a MEDIR: entre `labels` e `data`?):
    semana do label -> faixa de blocos hospedaveis com sessao no intervalo; materiais alinhados as semanas por ordem
    (monotonico, por fluxo = categoria) + tokens; `disambiguate` de producao dentro da semana; so age onde a decisao atual e

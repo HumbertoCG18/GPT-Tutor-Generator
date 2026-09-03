@@ -2,7 +2,8 @@
 
 last_updated: 2026-09-02 noite (rodada do motor: Fase 0 e 1b feitas; Fase 3 reescrita pelo dado; decisao C fechada = API-first para cursos em andamento (CG/LR/FR) e backfill nos 5 encerrados; regua de AULA 152/189 e regua de travessia criadas; ponto de entrada = handoff 2026-09-02c). 03/09 madrugada: as 6 medicoes
 fecharam (§REGUA DE TRAVESSIA, bloco MEDICOES FECHADAS); watchdog do censo casa por nome de arquivo; 1b adiado para a campanha
-de travessia; **proximo = item 2 (Fase 3a)**. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3, 4.8k linhas)
+de travessia. 03/09 sessao 4: **item 2 (Fase 3a) FEITO** (gerador `fe2c4fb`, 5 tutores reprocessados; §FASE 3a);
+**proximo = item 3 (Fase 3b, card como documento ordenado)**. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3, 4.8k linhas)
 em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-02c + plano
 2026-09-02 (desenho/decisoes, carimbado).
 
@@ -17,8 +18,8 @@ decisao B (gold eth2/aws) quando quiser; push.
 1. ~~Baseline de travessia~~ FEITO 02-03/09: IA/FR/CG x sem-llm/LLM/contexto completo (§REGUA DE TRAVESSIA). E o "antes".
 1b. ~~FILE_MAP completo~~ MOVIDO para a CAMPANHA DE TRAVESSIA (decisao do user 03/09: terminar o motor primeiro; assim o
    item 12 mede o efeito do motor sozinho). Detalhe e candidatos em §PROXIMA CAMPANHA abaixo.
-2. Fase 3a — backfill estrutural nos 5 ENCERRADOS (reprocess; `raw/moodle/contents.json`+`sections.json` -> campos novos no
-   manifest; casamento modulo<->entry como em `audita_gold.py`; higiene: ano != curso e ruido, label sem data nao ancora).
+2. ~~Fase 3a — backfill estrutural nos 5 ENCERRADOS~~ FEITO 03/09 (`fe2c4fb`; §FASE 3a): 3 campos no manifest a cada
+   regeneracao; encerrados 217/221 entries com card casadas; todas as reguas identicas; sentinela 0.
 3. Fase 3b — card como documento ordenado = provider de janela (+12/-5 so flagados).
 4. Fase 3b — ordem das secoes para cards sem data (+7/-1) e card generico -> apresentacao (+3/0).
 5. Fase 3c — tokens curtos do cronograma no desempate (+4/-2), como strangler do tokenizador so no disambiguator.
@@ -62,6 +63,31 @@ incomodar; cortes 2 e 4 e o concept_resolver na limpa pre-web.
 semantico na rota temporal foi REFUTADO (199 -> 194); o vocab compilado ja faz a ponte semantica barato e deterministico.
 Grafo explicito (semana/card/material/bloco/unidade/topico) e a forma natural do dado que a Fase 3 importa — vale como MODELO
 DE DADOS e visualizacao da fase web, nao como regra do motor. Regua de travessia: `scripts/eval_travessia.py` (feita).
+
+## FASE 3a — ESTRUTURA DO MOODLE NO MANIFEST (03/09 sessao 4, item 2, FEITO)
+
+**Entregue (gerador `fe2c4fb`; tutores MF `e39e14a` SO `9c320b0` IA `ffd9fdb` ES2 `2212f9f` TCC `b9af3c3`):**
+`backfill_moodle_structure_from_api` + `backfill_moodle_structure_repo` (`src/builder/sources/moodle.py`), hook
+`_run_moodle_structure_backfill` na regeneracao (antes do motor; so se `raw/moodle/contents.json` existe; idempotente: limpa e
+refaz), 3 campos em `FileEntry`: `moodle_section_index` (= `section` da API), `moodle_module_index` (posicao na lista de
+modulos da secao, labels contam), `moodle_week_label` (texto do label DATADO mais proximo antes do modulo; consecutivos
+= ` || `). 12 testes (`tests/test_moodle_structure.py`, fixture real `tests/fixtures/moodle/contents_excerpt.json`).
+Contrato em `.mex/context/institutional.md` §Moodle; decisao em `decisions.md`.
+**Desvios do handoff, registrados:** (a) week_label guarda SO o label — "data no nome" ja e `moodle_label` e "secao" ja e
+`source_section`, nao se duplica; (b) `MotorContext` nao mudou: o entry carrega os campos e o provider de 3b le do entry
+(so `sections.json` nao foi lido: tudo que ele tem esta em `contents.json`); (c) texto do label = `description` sem HTML,
+nao `name` — o `name` e cache stale (ES2 name "Semana 18/08/2025" com description "Semana 23/03/2026"; MF name "Trabalho 1
+(06/05/2026):" com description "Trabalho 1:", que portanto NAO ancora).
+**Casamento (entries com card):** MF 62/63 · SO 38/39 · IA 57/57 · ES2 35/35 · TCC 25/27 = **217/221**; 4 sem match = arquivo
+renomeado/trocado no Moodle depois do stash (MF `logicadehoare-exercicios-respostas` -> hoje "respostas 1/2"; SO
+`plano-de-ensino` -> hoje "Programa"; TCC `cubic-3-edge-coloring` -> "3-Edge Coloring", `3d-matching` -> "3-Dimensional
+Matching") — sem estrutura, contados, sem fuzzy. week_label: MF 56, ES2 30, SO/IA/TCC 0 (labels sem data: SO tem a data no
+nome do modulo = `moodle_label`; IA/TCC nem isso). Informativo p/ item 8 (hook ja roda, campos entram no rebuild): CG 48/73,
+LR 3/6 (labs), FR 20/20.
+**Gate (copia `.ablacao` primeiro, depois originais):** diff das copias e dos originais vs HEAD = SO os 3 campos (+ `updated_at`,
+`last_seen`, `updated:`); sentinela 0 nos 8; curada 199/200 conf-err 0 · 191/191 · 55/57 · 93/93; motor puro 161/158/51/26;
++vocab 162/167/50/79 (subunidade 79/93); AULA 152/189 (151 sem vocab); censo revisar/100 53,2, votos/100 33,8;
+suite 2250; determinismo 0/8 arquivos. Estrutura sozinha nao muda decisao — e o esperado do item 2.
 
 ## REGUA DE TRAVESSIA — baseline "antes" (02/09 noite)
 
