@@ -6,6 +6,9 @@ Funcao pura sobre o entry GRAVADO; recalculada a cada reprocess em
 
   duvida  camada 1, aberta:  sem bloco (em escopo) | bloco flagado (inclui
           llm-funil) | subunidade ambigua/empate | conflito unidade x bloco
+  mudou   camada 1b, "mudou, confira" (SYNC 03/09): decisao confiante que se moveu numa
+          sincronizacao (campo `sync_changed`, gravado por moodle_sync.mark_sync_changes;
+          a sync seguinte limpa se nada mover de novo)
   llm     camada 2, colapsada "decidido por LLM — confira": voto na janela
   ok      nao aparece
 
@@ -18,7 +21,7 @@ from __future__ import annotations
 from src.builder.extraction.content_taxonomy import _NO_TIMELINE_CATEGORIES
 from src.builder.routing.motor.anchor_engine import _TDE_PREFIX
 
-DUVIDA, LLM, OK = "duvida", "llm", "ok"
+DUVIDA, MUDOU, LLM, OK = "duvida", "mudou", "llm", "ok"
 
 
 def _sem_bloco_honesto(entry: dict) -> bool:
@@ -56,6 +59,8 @@ def revisar_de(entry: dict) -> str:
     """Entry = material (o chamador filtra com `_is_material`)."""
     if motivos_de(entry):
         return DUVIDA
+    if str(entry.get("sync_changed") or "").strip():
+        return MUDOU
     if str(entry.get("temporal_block_method") or "") == "llm":
         return LLM
     return OK

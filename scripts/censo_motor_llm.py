@@ -27,7 +27,7 @@ from eval_ground_truth import (  # noqa: E402
     evaluate_ground_truth, load_block_period_map, load_labels_csv, load_pair_keys, load_predictions,
 )
 from src.builder.routing.resolver_apply import _is_material  # noqa: E402
-from src.builder.routing.revisar import DUVIDA, LLM, motivos_de, revisar_de  # noqa: E402
+from src.builder.routing.revisar import DUVIDA, LLM, MUDOU, motivos_de, revisar_de  # noqa: E402
 
 GH = Path(os.environ.get("TUTOR_REPOS_DIR") or ROOT.parent)
 REPOS = {"MF": "Metodos-Formais-Tutor", "SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artifical-Tutor",
@@ -112,12 +112,12 @@ def main() -> int:
         rev = collections.Counter(revisar_de(e) for e in ents)
         for e in ents:
             motivos.update(motivos_de(e))
-        r_duv, r_llm = rev.get(DUVIDA, 0), rev.get(LLM, 0)
-        r100 = 100.0 * (r_duv + r_llm) / max(len(ents), 1)
+        r_duv, r_llm, r_mud = rev.get(DUVIDA, 0), rev.get(LLM, 0), rev.get(MUDOU, 0)
+        r100 = 100.0 * (r_duv + r_llm + r_mud) / max(len(ents), 1)   # mudou (sync) conta como revisao
         tot_m.update(meth)
         tot.update({"mat": len(ents), "b_motor": b_motor, "b_llm": b_llm, "b_funil": b_funil, "pinos": pinos,
                     "b_vazio": b_vazio, "u_manual": u_manual, "u_auto": u_auto, "u_vazio": u_vazio,
-                    "s_tag": s_tag, "s_vazio": s_vazio, "gemini": gemini, "r_duv": r_duv, "r_llm": r_llm})
+                    "s_tag": s_tag, "s_vazio": s_vazio, "gemini": gemini, "r_duv": r_duv, "r_llm": r_llm, "r_mud": r_mud})
         print(f"{sigla:5} {len(ents):>4} | {b_motor:>11} {b_llm:>8} {b_funil:>9} {pinos:>5} {b_vazio:>5} | "
               f"{u_manual:>11} {u_auto:>5} {u_vazio:>5} | {s_tag:>7} {s_vazio:>5} | {gemini:>6} | "
               f"{r_duv:>14} {r_llm:>4} {r100:>5.0f}")
@@ -130,13 +130,13 @@ def main() -> int:
                 tot_src[src]["wrong"] += v["wrong"]
     T = tot
     n = max(T["mat"], 1)
-    r100 = 100.0 * (T["r_duv"] + T["r_llm"]) / n
+    r100 = 100.0 * (T["r_duv"] + T["r_llm"] + T["r_mud"]) / n
     print(f"{'TOTAL':5} {T['mat']:>4} | {T['b_motor']:>11} {T['b_llm']:>8} {T['b_funil']:>9} {T['pinos']:>5} {T['b_vazio']:>5} | "
           f"{T['u_manual']:>11} {T['u_auto']:>5} {T['u_vazio']:>5} | {T['s_tag']:>7} {T['s_vazio']:>5} | {T['gemini']:>6} | "
           f"{T['r_duv']:>14} {T['r_llm']:>4} {r100:>5.0f}")
     print(f"\nBLOCO nos 8 ({n} materiais): motor {T['b_motor']} ({T['b_motor']/n:.0%}) · llm-na-janela {T['b_llm']} "
           f"({T['b_llm']/n:.0%}) · llm-funil {T['b_funil']} ({T['b_funil']/n:.0%}) · pinos {T['pinos']} · sem bloco {T['b_vazio']}")
-    print(f"REVISAR por 100 materiais: {r100:.1f}  (duvida {T['r_duv']} + llm {T['r_llm']} de {n}) · "
+    print(f"REVISAR por 100 materiais: {r100:.1f}  (duvida {T['r_duv']} + llm {T['r_llm']} + mudou {T['r_mud']} de {n}) · "
           f"votos por 100: {100.0 * (T['b_llm'] + T['b_funil']) / n:.1f}")
     print(f"anatomia da duvida (gatilhos, um material pode ter >1): {dict(motivos.most_common())}")
     print("\nCOBERTURA DOS INDICES (o que o tutor consegue achar): curso  materiais  FILE_MAP  sem-indice-nenhum  truncado")

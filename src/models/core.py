@@ -148,6 +148,10 @@ class FileEntry:
     # recalculado a cada reprocess. Consumidores: secao de revisao (UI, depois)
     # e scripts/censo_motor_llm.py ("revisar por 100 materiais").
     revisar: str = ""
+    # SYNC (03/09): "bloco: X -> Y (sync AAAA-MM-DD)" quando uma sincronizacao moveu uma decisao
+    # confiante desta entry (material novo mudou a estrutura/vizinhanca). revisar_de -> "mudou".
+    # A sync seguinte limpa se nada mover; "" = sem mudanca.
+    sync_changed: str = ""
     # Override do id (bug B5): setado pelo import quando o id computado do
     # source_path colide com entry de OUTRO source_path. Quando não-vazio,
     # id() retorna este valor — assim assets/raw/manifest usam o id final
