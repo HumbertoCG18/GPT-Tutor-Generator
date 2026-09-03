@@ -20,8 +20,8 @@ secoes ESTADO/REVISAO carimbadas como historico). Historico: `_archive/` (35 han
 equivalentes; branches `worktree-*` mantidos). Regra: 1 handoff vivo; novo handoff = o anterior vai para `_archive/`.
 
 ## Estado ao comecar (tudo commitado, NADA pushed)
-Gerador `feat/motor-atribuicao` (ver `git log`; item 2 = `fe2c4fb` + docs). Tutores: MF `e39e14a` SO `9c320b0`
-IA `ffd9fdb` ES2 `2212f9f` TCC `b9af3c3` (os 5 com estrutura do Moodle no manifest, 03/09) CG `19472d1` LR `0e3ab1a`
+Gerador `feat/motor-atribuicao` (ver `git log`; item 2 = `fe2c4fb`, item 3 = `b802a68`, + docs). Tutores: MF `e39e14a`
+SO `5809cca` IA `ffd9fdb` ES2 `2212f9f` TCC `b9af3c3` (os 5 com estrutura do Moodle no manifest, 03/09) CG `19472d1` LR `0e3ab1a`
 FR `64990dc` (os 3 do semestre corrente ganham os campos no rebuild do item 8; hook ja roda) (com o vocab compilado;
 `.glossary_curation.llm.json` em MF/CG/LR/FR). `subjects.json`: `compile_vocabulary: true` nos 8. `raw/moodle/{sections,
 contents,labels}.json` gravados nos 8 (gitignored; copia versionada em `_harness-2026-09-02/moodle_sections/` e
@@ -44,7 +44,7 @@ Push quando quiser.
    Rerodar = `python scripts/eval_travessia.py {IA,FR,CG} [--sem-llm|--contexto-completo]` (cache: 0 chamadas se o contexto nao mudou).
 1b. ~~FILE_MAP completo~~ MOVIDO para a campanha de travessia (user, 03/09: "terminar a campanha do motor"; assim o item 12
    mede so o motor). Watchdog de cobertura ja esta no censo. Candidatos em `pendencias.md` §PROXIMA CAMPANHA — TRAVESSIA.
-   **PROXIMO ITEM = 3 (Fase 3b, card ordenado).**
+   **PROXIMO ITEM = 4 (Fase 3b, ordem das secoes + card generico -> apresentacao).**
 2. ~~**3a Backfill estrutural nos 5 encerrados**~~ FEITO 03/09 (tracker §FASE 3a): `backfill_moodle_structure_repo` em
    `sources/moodle.py` + hook `_run_moodle_structure_backfill` na regeneracao (antes do motor, idempotente, so se
    `raw/moodle/contents.json` existe); 3 campos em `FileEntry` (`moodle_section_index`, `moodle_module_index`,
@@ -57,10 +57,18 @@ Push quando quiser.
    diff total = so os 3 campos, curada 199/200 · 191/191 · 55/57 · 93/93, puro 161/158/51/26, +vocab 162/167/50/79, AULA
    152/189, censo 53,2, suite 2250, determinismo 0. 12 testes em `tests/test_moodle_structure.py` (fixture real
    `tests/fixtures/moodle/contents_excerpt.json`).
-3. **3b Card como documento ordenado = provider de janela** (posicao na `_CASCADE` a MEDIR: entre `labels` e `data`?):
-   semana do label -> faixa de blocos hospedaveis com sessao no intervalo; materiais alinhados as semanas por ordem
-   (monotonico, por fluxo = categoria) + tokens; `disambiguate` de producao dentro da semana; so age onde a decisao atual e
-   flagada. Regra e harness: `mede_card_ordenado.py --stream --only-flagged` (+12/-5).
+3. ~~**3b Card como documento ordenado = provider de janela**~~ FEITO 03/09 (tracker §FASE 3b): `routing/motor/card_stream.py`
+   (`card_windows(entries, ctx)`: por secao, grupo de entries com o mesmo `moodle_week_label` = run de semanas; DP monotonica
+   por categoria, tokens material x semana + assinatura SARC) -> `provider_card` FORA da `_CASCADE`: o `anchor_engine` so o
+   consulta (a) sem janela, antes do llm-funil, e (b) em decisao ainda FLAGADA **depois do voter** (card antes do voter
+   calava o LLM em janela-1 e a curada caiu 199 -> 187; medido e revertido). Janela-1 do card e gateada como data/topic;
+   decisao do card sem flag sai com banda "media" (precisao medida 8/11); card que repete o bloco e a duvida nao renomeia
+   o provider. 3a estendido: modulo com data no nome ("12/03 Processos") ancora os seguintes (SO week_label 0 -> 30).
+   Numeros: motor puro 161 -> **173**/200 (conf-err 3 = 3), unidade 158 -> 161, +vocab 162 -> 172 · 167 -> 171 · sub 79 -> 82;
+   AULA 152 -> **163**/189 (+16/-5 nos golds; REF 9 -> 8: SO laminas-sockets, bibliografia, flagada antes e depois);
+   curada 199/200 · 191/191 · 55/57 · 93/93 intacta, sentinela 0, censo 53,2 (o voter ja decidia tudo que o card decide —
+   o ganho e do motor puro / sem voter). 5 erros do card que ESCAPAM da fila (band media sem flag: MF revisao, arvores,
+   intro, listas, terminacao) — insumo do item 7 (`calibra_revisar`).
 4. **3b Ordem das secoes** como prior para cards sem data (`mede_ordem_secoes.py --chain --only-flagged`, +7/-1: ancoras so de
    cards de conteudo com janela datada; faixa do proprio card > vizinhos + encadeamento) e **card generico sem janela ->
    bloco de apresentacao** (irma da `resolve_generic_reference`, +3/0).

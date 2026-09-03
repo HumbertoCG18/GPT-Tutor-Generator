@@ -3,7 +3,8 @@
 last_updated: 2026-09-02 noite (rodada do motor: Fase 0 e 1b feitas; Fase 3 reescrita pelo dado; decisao C fechada = API-first para cursos em andamento (CG/LR/FR) e backfill nos 5 encerrados; regua de AULA 152/189 e regua de travessia criadas; ponto de entrada = handoff 2026-09-02c). 03/09 madrugada: as 6 medicoes
 fecharam (§REGUA DE TRAVESSIA, bloco MEDICOES FECHADAS); watchdog do censo casa por nome de arquivo; 1b adiado para a campanha
 de travessia. 03/09 sessao 4: **item 2 (Fase 3a) FEITO** (gerador `fe2c4fb`, 5 tutores reprocessados; §FASE 3a);
-**proximo = item 3 (Fase 3b, card como documento ordenado)**. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3, 4.8k linhas)
+item 3 (Fase 3b, card ordenado) FEITO na mesma sessao (§FASE 3b; AULA 152 -> 163, curada intacta);
+**proximo = item 4 (Fase 3b, ordem das secoes + card generico -> apresentacao)**. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3, 4.8k linhas)
 em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-02c + plano
 2026-09-02 (desenho/decisoes, carimbado).
 
@@ -20,7 +21,8 @@ decisao B (gold eth2/aws) quando quiser; push.
    item 12 mede o efeito do motor sozinho). Detalhe e candidatos em §PROXIMA CAMPANHA abaixo.
 2. ~~Fase 3a — backfill estrutural nos 5 ENCERRADOS~~ FEITO 03/09 (`fe2c4fb`; §FASE 3a): 3 campos no manifest a cada
    regeneracao; encerrados 217/221 entries com card casadas; todas as reguas identicas; sentinela 0.
-3. Fase 3b — card como documento ordenado = provider de janela (+12/-5 so flagados).
+3. ~~Fase 3b — card como documento ordenado = provider de janela~~ FEITO 03/09 (§FASE 3b): AULA 152 -> 163/189, motor puro
+   161 -> 173/200, curada intacta; card so depois do voter (antes dele regrediu a curada e foi revertido).
 4. Fase 3b — ordem das secoes para cards sem data (+7/-1) e card generico -> apresentacao (+3/0).
 5. Fase 3c — tokens curtos do cronograma no desempate (+4/-2), como strangler do tokenizador so no disambiguator.
 6. Fase 3d — label unico nos flagados (+2/0).
@@ -88,6 +90,33 @@ LR 3/6 (labs), FR 20/20.
 `last_seen`, `updated:`); sentinela 0 nos 8; curada 199/200 conf-err 0 · 191/191 · 55/57 · 93/93; motor puro 161/158/51/26;
 +vocab 162/167/50/79 (subunidade 79/93); AULA 152/189 (151 sem vocab); censo revisar/100 53,2, votos/100 33,8;
 suite 2250; determinismo 0/8 arquivos. Estrutura sozinha nao muda decisao — e o esperado do item 2.
+
+## FASE 3b (item 3) — CARD COMO DOCUMENTO ORDENADO (03/09 sessao 4, FEITO)
+
+**Entregue (gerador `b802a68`; tutor SO `5809cca`, os outros 4 byte-identicos):** `src/builder/routing/motor/card_stream.py` (`card_windows(entries, ctx)` -> {id: janela}; por secao, entries
+consecutivas com o mesmo `moodle_week_label` = grupo alinhado ao run de semanas "W1 || W2"; DP monotonica por FLUXO
+(categoria), score = tokens(moodle_label + titulo) x tokens(texto da semana + assinatura SARC dos blocos); semana dd/mm/aaaa
+-> blocos hospedeiros com sessao no intervalo; "dd/mm Topico" -> ano modal); `MotorContext._card_windows_cache` preenchido
+em `apply_anchor_engine`; `provider_card` FORA da `_CASCADE` (window_provider); `anchor_engine.resolve_unscoped` consulta o
+card (a) sem janela, depois de prep-prova e antes do llm-funil, (b) em decisao ainda FLAGADA depois do voter. Janela-1 do
+card gateada como data/topic (`_gated_window1_decision`); decisao do card sem flag = banda "media"; card que repete bloco e
+flag nao renomeia o provider. 3a estendido: modulo com data no nome e ancora dos seguintes (`_DATE_PREFIX` no backfill).
+14 testes em `tests/test_card_stream.py` + 2 em `test_moodle_structure.py`. Contrato/decisao em `.mex`.
+**Medido (copias `.ablacao`, golds de bloco):** +16/-5, err->err 6 (3 ganhos vieram do irmao-card em cascata: ES2 roteiro1/2/4).
+Motor puro sem vocab 161 -> 173/200, conf-err 3 -> 3 (foi a 15 com janela-1 incondicional e a 8 com gate; a banda "media"
+fecha), unidade 158 -> 161, cobertura 51 = 51, subunidade 26 = 26. +vocab 162 -> 172 · 167 -> 171 · 50 = 50 · 79 -> 82.
+AULA 152 -> 163/189 (sem vocab 151 -> 164); REF 9 -> 8 (SO `laminas-sockets-material-alternativo`, bibliografia, flagada antes
+e depois: topic/disamb janela 5 -> card janela-1 07, gold 09); BASE 4/4. Perdas: MF exerciciosformalizacao-res (04 -> 03),
+intro (06 -> 05), introducao-zip (12 -> 10, flagada), terminacao (12 -> 11), SO laminas-sockets — 4 delas = "gold DEPOIS da
+postagem" (material postado na semana anterior a aula; padrao ja medido no `audita_gold`). Precisao das decisoes do card SEM
+flag: 8/11 (73%) — por isso banda "media" (alta ~98%). Escapam da fila (errados, band media, sem flag): MF revisao, arvores,
+intro, listas, terminacao — insumo do item 7 (`calibra_revisar .ablacao` hoje: 41,6/100, 6 erros de bloco em "ok").
+**Curada (originais, voter ON):** 199/200 conf-err 0 · 191/191 · 55/57 · 93/93 — INTACTA; sentinela 0 nos 8; censo 53,2 e
+votos/100 33,8 iguais. Leitura honesta: o voter ja decidia (certo) tudo que o card decide — o card so age onde nao ha voto.
+Com o card ANTES do voter (1a versao): curada 199 -> 187, 191 -> 185, 55 -> 52, 93 -> 89 (janela-1 do card calava o LLM que
+acertava: MF arvores/intro/listas/provas, SO exemplo-criacao x4). Revertido para "card depois do voter"; regra nova.
+**Tutores:** so o SO muda no manifest (`moodle_week_label` 0 -> 30 pelas ancoras "dd/mm"; nenhum campo do motor); MF/IA/ES2/
+TCC byte-identicos (revertido o `updated_at`). Determinismo (8 tutores, 2x, codigo final): 0 arquivos. Suite 2265.
 
 ## REGUA DE TRAVESSIA — baseline "antes" (02/09 noite)
 
