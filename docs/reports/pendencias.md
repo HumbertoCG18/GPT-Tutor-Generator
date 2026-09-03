@@ -6,7 +6,7 @@ de travessia. 03/09 sessao 4: **item 2 (Fase 3a) FEITO** (gerador `fe2c4fb`, 5 t
 item 3 (Fase 3b, card ordenado) FEITO na mesma sessao (§FASE 3b; AULA 152 -> 163, curada intacta);
 item 4 FEITO (ordem das secoes: 0 efeito pos-item 3, nao entrou; secao 0 do Moodle -> apresentacao: +3/0, AULA 167);
 item 5 FEITO (tokens curtos: AULA 171/170, IA k-NN x4; tokenizador unico `text/tokens.py`); HOLDOUT CG criado (27 -> 30/35);
-**proximo = item 6 (Fase 3d, label unico; H6 agiu em 0 — medir, provavelmente nao entra) e depois o gate do item 7**.
+item 6 NAO ENTRA (H6 0/0); ancora como faixa da secao (+4/0, refinamento do item 3); **item 7 (gate da Fase 3) REGISTRADO: AULA 152 -> 174/189 com vocab (175 sem), curada intacta, votos/100 caem — residual flagado 18,5/100 (meta <= 8 NAO batida; vai para o item 11)**; **proximo = item 8 (rebuild FR -> LR -> CG pela API)**.
 Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3, 4.8k linhas)
 em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-02c + plano
 2026-09-02 (desenho/decisoes, carimbado).
@@ -30,8 +30,10 @@ decisao B (gold eth2/aws) quando quiser; push.
    item 4): ordem das secoes agiu em 0 pos-item 3 (nao entrou); secao 0 do Moodle sem janela -> apresentacao (+3/0, AULA 167).
 5. ~~Fase 3c — tokens curtos do cronograma no desempate (+4/-2), como strangler do tokenizador so no disambiguator~~ FEITO
    03/09 (§FASE 3c): +4/0 (IA k-NN x4), AULA 171 sem vocab / 170 com vocab; `text/tokens.py` = tokenizador unico (corte 3).
-6. Fase 3d — label unico nos flagados (+2/0).
-7. Gate da Fase 3: AULA 152 -> ~174/189; residual <= 8/100; curada intacta; motor puro ± vocab; calibra_revisar; censo.
+6. ~~Fase 3d — label unico nos flagados (+2/0)~~ NAO ENTRA (03/09): `mede_alavancas.py` pos-item 5 = conserta 0, quebra 0
+   (ja certo 3: os +2/0 foram absorvidos pelos itens 3-5). Sem numero, sem codigo. H5 serie monotonica +1/-2 e H2 prova
+   antiga 0/0 continuam refutados.
+7. ~~Gate da Fase 3~~ REGISTRADO 03/09 (§GATE DA FASE 3): AULA 152 -> 174/189 (meta ~174 batida); curada intacta; motor puro 161/158/51/26 -> 184/168/54/30, +vocab 162/167/50/79 -> 183/178/53/82; censo votos/100 33,8 -> 32,0; **residual flagado em AULA 18,5/100 (meta <= 8/100 NAO batida: 35 flagados, 7 errados)** — e o balde do item 11.
 8. Rebuild pela API dos 3 do SEMESTRE CORRENTE (FR -> LR -> CG; diff de ids antes; protocolo do run real; user revisa
    `revisar`). Os 5 encerrados NAO se rebuildam (regua de regressao).
 9. Refactor corte 1 (scripts 79 -> ~25), sessao curta.
@@ -156,6 +158,46 @@ BASE 4/4. 0 perdas. Acumulado dos itens 2-5 vs snapshot pre-item 3: GANHO 23 · 
 **Curada:** 199/200 conf-err 0 · 191/191 · 55/57 · 93/93 intacta; sentinela so IA (3 entries `llm` -> `disamb-curto`, mesmo
 bloco, banda alta, revisar llm -> ok); censo nos 8: llm 71 -> 68, llm-funil 15, revisar/100 52,6 -> **51,7**, votos/100
 32,9 -> **32,0**. Aqui o texto curto preempta o voto e acerta — e o primeiro item que reduz votos no curado.
+
+## ITEM 6 (nao entra) + ANCORA COMO FAIXA DA SECAO (refinamento do item 3; 03/09 sessao 4, "buscar o maior numero no motor puro")
+
+**Item 6 (H6 label unico):** `mede_alavancas.py` pos-item 5 = conserta 0, quebra 0 (ja certo 3). Nao entra. H5 serie +1/-2 e H2
+prova antiga 0/0 seguem refutados. Motor puro (com vocab) nos 203 golds antes deste refinamento: 182/203, 21 erros = 8
+confiantes + 13 flagados; residual para o LLM 35 (17/100); teto com LLM ~195/203.
+**Ancora como faixa (medido antes de codar, +4/0, 2 err->err, 0 perdas):** os 4 `exemplo-criacao-de-processos` do SO (pasta
+sem data postada DEPOIS de "19/03 Estruturas de Controle") caiam na janela-1 da ultima ancora (bloco-04); o texto ("processos")
+aponta o bloco-03. Regra (em `card_stream.card_windows`): modulo DATADO ("dd/mm Topico") fica no proprio bloco; modulo SEM data
+da mesma secao recebe a FAIXA da secao (uniao dos blocos de todas as ancoras da secao, em ordem) e o desempate D4 decide —
+"estrutura estreita, texto decide". Data PROPRIA = `extract_date_in_name` (titulo/moodle_label/card/basename), o mesmo sinal
+do provider_date: a 1a versao olhava so o `moodle_label` e `14-04-troca-de-mensagens` (M365, label vazio) caiu na faixa
+[06, 07] — curada 199 -> 198, corrigido no mesmo passe (teste `own_date`). Caveat: os 4 ganhos sao 1 pasta = 1 decisao;
+o holdout CG nao tem ancoras (30/35 igual); FR/LR validam no item 8.
+**Numeros (copias):** motor puro sem vocab 180 -> **183**/200 (SO 32 -> 35; conf-err 3), unidade 164 -> **168**, cobertura 51 ->
+**54** (os exemplos passam a cobrir "processos"), subunidade 26 -> **30**; AULA 171 -> **175**/189 sem vocab (TODOS 187/203);
+com vocab 179 -> **183** · 174 -> **178** · 50 -> **53** · 82, AULA 170 -> **174**/189 (TODOS 186/203). Gerador `b1d565a`. Curada 199/200 conf-err 0 · 191/191 · 55/57 · 93/93; sentinela 0 nos 8 (nenhum tutor muda: no curado o
+voter ja decidia os 4). Suite 2276.
+
+## GATE DA FASE 3 (item 7) — REGISTRADO 03/09 sessao 4 (gerador `b1d565a` + docs)
+
+As 3 linhas da regua (5 cursos com gold; "antes" = handoff 2026-09-02c, "depois" = HEAD):
+
+| linha | bloco | conf-err | unidade | cobertura | subunidade | AULA (189) | TODOS (203) |
+|---|---|---|---|---|---|---|---|
+| motor puro sem vocab | 161 -> **184**/200 | 3 -> 3 | 158 -> **168** | 51 -> **54** | 26 -> **30** | 151 -> **175** | — -> 187 |
+| motor puro + vocab (= o motor do produto) | 162 -> **183** | 3 -> 3 | 167 -> **178** | 50 -> **53** | 79 -> **82** | 152 -> **174** | — -> 186 |
+| curada + LLM (originais) | 199 -> 199 | 0 -> 0 | 191 -> 191 | 55 -> 55 | 93 -> 93 | — | — |
+
+Holdout CG (curso do semestre, gold 35): puro 27 -> 30, curado+LLM 34 = 34, conf-err 1 = 1. Censo nos 8 (originais): revisar/100
+53,2 -> **51,7**, votos/100 33,8 -> **32,0**, llm-funil 18 -> 15, llm-na-janela 92 -> 89. `calibra_revisar .ablacao`: 39,4/100.
+Criterios do gate: AULA ~174 **batido** (174 com vocab, 175 sem); curada intacta **batido**; motor puro ± vocab sem regressao
+**batido** (REF 9 -> 8/10: 1 bibliografia do SO, flagada antes e depois); censo votos/100 caem **batido**; **residual flagado
+em AULA <= 8/100 NAO batido: 35/189 = 18,5/100 (7 errados) + 8 errados nao flagados** — a meta supunha que as alavancas
+desflagariam; elas decidiram e mantiveram a duvida honesta (janela-1 do card gateada, banda media). O balde e o do item 11
+(LLM so nos flagados, contado). Perdas acumuladas dos itens 2-6 (6, todas MF/SO, 4 = "gold DEPOIS da postagem"):
+MF exerciciosformalizacao-res, intro, introducao-zip, provas, terminacao; SO laminas-sockets-material-alternativo (bibliografia).
+Ganhos 27, err->err 2. Erros confiantes fora do alcance do LLM (8): MF exerciciosdafny2, revisao, arvores, intro, listas,
+terminacao, ES2 azure, TCC aula-17. Tutores: nenhum muda neste passe (sentinela 0 nos 8). Determinismo 0/8. Suite 2276.
+Divida: escada da `regua_aula.py` stale (picks H9) — podar no item 9.
 
 ## HOLDOUT — CG, curso do semestre corrente (pedido do user 03/09: "ver se nao estamos fazendo overfitting")
 

@@ -21,7 +21,7 @@ equivalentes; branches `worktree-*` mantidos). Regra: 1 handoff vivo; novo hando
 
 ## Estado ao comecar (tudo commitado, NADA pushed)
 Gerador `feat/motor-atribuicao` (ver `git log`; item 2 = `fe2c4fb`, item 3 = `b802a68`, item 4 = `79fc92a`, item 5 = `fdf28af`,
-+ docs). Tutores: MF `e39e14a` SO `603d914` IA `ca1f765` ES2 `2212f9f` TCC `b9af3c3` (os 5 com estrutura do Moodle no manifest, 03/09) CG `19472d1` LR `0e3ab1a`
+ancora-faixa = `b1d565a`, + docs). Tutores: MF `e39e14a` SO `603d914` IA `ca1f765` ES2 `2212f9f` TCC `b9af3c3` (os 5 com estrutura do Moodle no manifest, 03/09) CG `19472d1` LR `0e3ab1a`
 FR `64990dc` (os 3 do semestre corrente ganham os campos no rebuild do item 8; hook ja roda) (com o vocab compilado;
 `.glossary_curation.llm.json` em MF/CG/LR/FR). `subjects.json`: `compile_vocabulary: true` nos 8. `raw/moodle/{sections,
 contents,labels}.json` gravados nos 8 (gitignored; copia versionada em `_harness-2026-09-02/moodle_sections/` e
@@ -44,8 +44,7 @@ Push quando quiser.
    Rerodar = `python scripts/eval_travessia.py {IA,FR,CG} [--sem-llm|--contexto-completo]` (cache: 0 chamadas se o contexto nao mudou).
 1b. ~~FILE_MAP completo~~ MOVIDO para a campanha de travessia (user, 03/09: "terminar a campanha do motor"; assim o item 12
    mede so o motor). Watchdog de cobertura ja esta no censo. Candidatos em `pendencias.md` §PROXIMA CAMPANHA — TRAVESSIA.
-   **PROXIMO ITEM = 6 (Fase 3d, label/titulo com token unico a 1 bloco da janela; H6 agiu em 0 na regua pos-item 5 —
-   medir antes, provavelmente nao entra).**
+   **PROXIMO ITEM = 8 (rebuild FR -> LR -> CG pela API; gate da Fase 3 registrado no tracker §GATE DA FASE 3).**
 2. ~~**3a Backfill estrutural nos 5 encerrados**~~ FEITO 03/09 (tracker §FASE 3a): `backfill_moodle_structure_repo` em
    `sources/moodle.py` + hook `_run_moodle_structure_backfill` na regeneracao (antes do motor, idempotente, so se
    `raw/moodle/contents.json` existe); 3 campos em `FileEntry` (`moodle_section_index`, `moodle_module_index`,
@@ -92,9 +91,17 @@ Push quando quiser.
    **30/35**, conf-err 1 = 1, flagados 19 -> 16. Os 3 ganhos sao do item 5 ("2d" consagrado pelas sessoes do bloco-06);
    itens 3-4 nao agem no CG porque o professor nao usa label datado nem data no nome (week_label vazio) — ausencia de
    sinal, nao overfitting. Regua nova: roda a cada item daqui em diante (baseline 30/35).
-6. **3d Label/titulo com token unico a 1 bloco da janela** decide, so flagados (+2/0).
-7. **Gate da Fase 3**: AULA 152 -> ~174/189; residual flagado <= 8/100 em AULA; curada 199/191/93 intacta; `motor_puro.py` e
-   `--com-vocab`; `calibra_revisar.py .ablacao`; censo (votos/100 caem). Registrar as 3 linhas da regua no tracker.
+6. ~~**3d Label/titulo com token unico a 1 bloco da janela**~~ NAO ENTRA (03/09): `mede_alavancas.py` pos-item 5 = 0/0 (ja
+   certo 3); H5 serie +1/-2 e H2 prova antiga 0/0 seguem refutados. Motor puro (com vocab) nos 203 golds: **182/203**, 21 erros
+   = 8 confiantes (MF exerciciosdafny2/revisao/arvores/intro/listas/terminacao, ES2 azure, TCC aula-17) + 13 flagados; residual
+   para o LLM 35 materiais (17/100); teto com LLM nos residuais ~195/203. **Refinamento do item 3 (mesma sessao, tracker
+   §ITEM 6 + ANCORA):** modulo sem data depois de ancoras "dd/mm" recebe a FAIXA da secao (uniao das ancoras) e o texto decide;
+   modulo com data propria (`extract_date_in_name`) fica no seu bloco. +4/0 (SO exemplo-criacao x4): motor puro 180 -> 183,
+   unidade 168, cobertura 54, sub 30; AULA 171 -> 174 sem vocab; curada intacta, sentinela 0.
+7. ~~**Gate da Fase 3**~~ REGISTRADO 03/09 (tracker §GATE DA FASE 3): AULA 152 -> **174**/189 (175 sem vocab) — batido; curada
+   199/200 · 191/191 · 55/57 · 93/93 — intacta; motor puro 161/158/51/26 -> **184/168/54/30**, +vocab 162/167/50/79 ->
+   **183/178/53/82**; censo votos/100 33,8 -> 32,0 — caem; holdout CG 27 -> 30 (curado 34/35). **Residual flagado em AULA
+   18,5/100 (meta <= 8 NAO batida)**: as alavancas decidem mantendo a duvida honesta; o balde e o item 11.
 8. **Rebuild dos 3 do semestre corrente pela API**, comecando pelo FR (menor, SARC com cores): antes, pull do FR em pasta
    temporaria e DIFF DE IDS contra o repo atual; se batem, troca limpa; se nao, build novo (sem gold, sem custo). Protocolo
    do run real: zero curadoria, summaries ON, vocab compilado, voter ON com cap e contagem, watchdogs; o user revisa a fila
