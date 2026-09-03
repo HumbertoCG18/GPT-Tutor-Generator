@@ -50,6 +50,8 @@ class MotorContext:
     # entry id -> janela DISPLAY do card lido como documento ordenado (card_stream.card_windows,
     # Fase 3b); preenchido por apply_anchor_engine a partir das entries. None = provider "card" mudo.
     _card_windows_cache: Optional[dict] = field(default=None, repr=False, compare=False)
+    # tokens CURTOS (2-3 chars) consagrados pelo cronograma (disambiguator.course_short_vocab, Fase 3c)
+    _short_vocab_cache: Optional[frozenset] = field(default=None, repr=False, compare=False)
 
     @classmethod
     def from_artifacts(

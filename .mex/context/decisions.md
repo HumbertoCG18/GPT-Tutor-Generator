@@ -250,3 +250,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Decision:** `resolve_general_section` (anchor_engine): entry com `moodle_section_index == 0` que chegou sem janela de provider nenhum (nem card) vai ao bloco de apresentacao (overview/1a aula), method `secao-geral`, banda media — irma de meta/ref-generica. So no caminho lexical (materiais), depois de prep-prova e antes do llm-funil. O sinal e ESTRUTURAL (a secao 0 e, por definicao do Moodle, a area geral do curso), nunca o nome do card.
 **Reasoning:** Medido 03/09 (SO, 3 golds): +3/0 no motor puro; no curado tira 3 materiais do llm-funil (50% de precisao, o degrau mais caro). O regex de nome do harness (`informa|geral|aviso`) casava "Semana 12 ... Busca com Informacao" no IA (9 entries) — regra por nome e remendo. Ordem das secoes como prior (H7, +7/-1 em 02/09) foi remedida depois do card ordenado: 0 efeito — nao entrou (nada sem numero).
 **Consequences:** Cursos cujo professor usa a secao 0 como card de conteudo teriam materiais na apresentacao — so quando NENHUM outro sinal existe (data, label, topico, card); nos 8 tutores hoje so o SO tem material na secao 0. A regua vigia `secao-geral` em separado.
+
+---
+
+### Tokens curtos consagrados pelo cronograma so onde o lexico padrao ficou em duvida; tokenizador unico nasce no disambiguator (Fase 3c)
+
+**Date:** 2026-09-03
+**Status:** Active
+**Decision:** `text/tokens.py::motor_tokens` e o tokenizador UNICO do motor; `disambiguator._toks` delega (byte-identico) e os demais 12 tokenizadores migram para ele em C4, um por vez, com sentinela 0. Tokens de 2-3 chars so contam quando o CRONOGRAMA do curso os consagra (`course_short_vocab`: topic_text + labels de sessao) e so no RETRY: `disambiguate` decide com tokens padrao; se flagado, refaz com o vocab curto nos dois lados e adota se muda o bloco ou tira a flag (`disamb-curto`).
+**Reasoning:** Medido 03/09: +4/0 nos 5 (IA k-NN x4) e +3/0 no holdout CG ("2d" das sessoes de recorte/instanciamento). Vocab curto global seria ruido (MF nao tem "tcp"); aplicar em toda decisao mexeria em confiantes sem gold que prove. No curado o retry preempta 3 votos de LLM no IA com o mesmo bloco — primeiro item que reduz votos/100 sem regredir a curada.
+**Consequences:** Nenhum outro tokenizador muda ate C4. Holdout CG vira regua fixa (`holdout_cg.py`, baseline 30/35).

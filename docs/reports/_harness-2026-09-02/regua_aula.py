@@ -60,8 +60,8 @@ for sig, nome in REPOS.items():
             txts.append(normalize_match_text(str(s.get("label") or "")))
     short = set(short_vocab_from_topic_labels(txts))
 
-    def toks_short(text, _o=orig_toks, _s=short):
-        out = _o(text)
+    def toks_short(text, short_vocab=frozenset(), _o=orig_toks, _s=short):   # H8 ja e producao (item 5); assinatura nova de _toks
+        out = _o(text, short_vocab)
         for t in normalize_match_text(re.sub(r"(?<=[a-z])(?=[A-Z])", " ", str(text or ""))).split():
             if t in _s:
                 out.add(t)

@@ -15,6 +15,7 @@ import re
 from typing import Optional, List
 
 from src.builder.text.normalize import normalize_match_text
+from src.builder.text.tokens import motor_tokens
 from src.builder.routing.motor.contracts import MotorContext, AnchorDecision
 from src.builder.routing.thresholds import confidence_band
 
@@ -37,16 +38,26 @@ _GENERIC_STEMS = frozenset({
 })
 
 
-def _toks(text: str) -> set:
-    """Tokens normalizados >=3 chars, sem dígitos-puros nem stems genéricos.
+def _toks(text: str, short_vocab=frozenset()) -> set:
+    """Tokens normalizados >=3 chars (ou curtos consagrados em short_vocab), sem dígitos-puros
+    nem stems genéricos. Fonte única: text.tokens.motor_tokens (corte 3 do refactor)."""
+    return motor_tokens(text, generic_stems=_GENERIC_STEMS, short_vocab=short_vocab)
 
-    Quebra camelCase ANTES do fold (LogicaDeHoare -> logica de hoare)."""
-    text = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", str(text or ""))
-    out: set = set()
-    for t in normalize_match_text(text).split():
-        if len(t) >= 3 and not t.isdigit() and t[:8] not in _GENERIC_STEMS:
-            out.add(t)
-    return out
+
+def course_short_vocab(ctx: MotorContext) -> frozenset:
+    """Tokens CURTOS (2-3 chars) consagrados pelo CRONOGRAMA do curso: topic_text +
+    primary_topic_label + labels de sessao (Fase 3c). "ag"/"hc"/"sa" valem no IA porque
+    uma sessao os consagra; seguem ruido onde nenhuma o faz. Memoizado no ctx."""
+    if ctx._short_vocab_cache is not None:
+        return ctx._short_vocab_cache
+    from src.builder.text.stopwords import short_vocab_from_topic_labels
+    texts = []
+    for b in ctx.blocks:
+        texts.append(normalize_match_text(str(b.get("topic_text") or "") + " " + str(b.get("primary_topic_label") or "")))
+        for s in b.get("sessions") or []:
+            texts.append(normalize_match_text(str(s.get("label") or "")))
+    ctx._short_vocab_cache = frozenset(short_vocab_from_topic_labels(texts))
+    return ctx._short_vocab_cache
 
 
 def _moodle_label_text(entry: dict) -> str:
@@ -54,29 +65,29 @@ def _moodle_label_text(entry: dict) -> str:
     return ml.get("text", "") if isinstance(ml, dict) else str(ml or "")
 
 
-def entry_tokens(entry: dict, markdown: str = "") -> set:
+def entry_tokens(entry: dict, markdown: str = "", short_vocab=frozenset()) -> set:
     """Sinal LIMPO do material: título + moodle_label + markdown (capado fora)."""
     parts = [str(entry.get("title") or ""), _moodle_label_text(entry), str(markdown or "")]
-    return _toks(" ".join(p for p in parts if p))
+    return _toks(" ".join(p for p in parts if p), short_vocab)
 
 
-def block_topic_tokens(block: dict) -> set:
+def block_topic_tokens(block: dict, short_vocab=frozenset()) -> set:
     """Assinatura GROSSA do bloco: topic_text + primary_topic_label."""
     return _toks(
-        str(block.get("topic_text") or "") + " " + str(block.get("primary_topic_label") or "")
+        str(block.get("topic_text") or "") + " " + str(block.get("primary_topic_label") or ""), short_vocab
     )
 
 
-def block_session_tokens(block: dict, ctx: MotorContext) -> set:
+def block_session_tokens(block: dict, ctx: MotorContext, short_vocab=frozenset()) -> set:
     """Assinatura FINA (1ª classe): sessions[].label + roteiro do dia (lessons_index)."""
     out: set = set()
     for sess in block.get("sessions") or []:
-        out |= _toks(str(sess.get("label") or ""))
+        out |= _toks(str(sess.get("label") or ""), short_vocab)
         # R12: chave do lessons_index e a DATA (YYYY-MM-DD); llm_vote ja trunca
         # [:10] — sem truncar aqui, um date com hora perde o roteiro do dia.
         topic = ctx.lessons_index.get(str(sess.get("date") or "")[:10])
         if topic:
-            out |= _toks(str(topic))
+            out |= _toks(str(topic), short_vocab)
     return out
 
 
@@ -106,17 +117,17 @@ _EPS: float = 1e-9
 DATE_DF_MAX: int = 2
 
 
-def _block_signature(block: dict, ctx: MotorContext) -> dict:
+def _block_signature(block: dict, ctx: MotorContext, short_vocab=frozenset()) -> dict:
     """{token: peso} do bloco: session-label (1ª classe) sobrepõe topic (grosso).
 
     Tokens do NOME DO CURSO (ctx.course_name) saem da assinatura: são
     boilerplate local (2 confiante-errado externos na FASE 0 vinham do
     topic "introducao metodos formais" do bloco-02 — dívida do tracker)."""
-    drop = _toks(ctx.course_name)
+    drop = _toks(ctx.course_name, short_vocab)
     sig: dict = {}
-    for t in block_topic_tokens(block) - drop:
+    for t in block_topic_tokens(block, short_vocab) - drop:
         sig[t] = W_TOPIC
-    for t in block_session_tokens(block, ctx) - drop:
+    for t in block_session_tokens(block, ctx, short_vocab) - drop:
         sig[t] = W_SESSION_LABEL  # 1ª classe: substitui o peso grosso se colidir
     return sig
 
@@ -206,8 +217,25 @@ def disambiguate(entry: dict, window: List[str], ctx: MotorContext,
         return AnchorDecision(block_ref=ref, conf=1.0, band="alta", flag=False,
                               method="titulo-topico", window=win)
 
-    mat = entry_tokens(entry, markdown)
-    sigs = [_block_signature(b, ctx) for b in blocks]
+    decision = _lexical_decision(entry, blocks, ctx, markdown, win)
+    if decision.flag:
+        # Fase 3c (item 5): tokens CURTOS consagrados pelo cronograma entram nos DOIS
+        # lados (material e assinatura) so onde o lexico padrao ficou em duvida; adota
+        # se muda o bloco ou tira a flag. Medido 02/09 (H8, so flagados): +4/-2, IA k-NN x4.
+        short = course_short_vocab(ctx)
+        if short:
+            alt = _lexical_decision(entry, blocks, ctx, markdown, win, short)
+            if alt.block_ref and (alt.block_ref != decision.block_ref or not alt.flag):
+                alt.method = "disamb-curto"
+                return alt
+    return decision
+
+
+def _lexical_decision(entry: dict, blocks: List[dict], ctx: MotorContext, markdown: str,
+                      win: List[str], short_vocab=frozenset()) -> AnchorDecision:
+    """Desempate lexical D4 dentro da janela (>= 2 blocos resolviveis)."""
+    mat = entry_tokens(entry, markdown, short_vocab)
+    sigs = [_block_signature(b, ctx, short_vocab) for b in blocks]
     m = len(blocks)
     df: dict = {}
     for sig in sigs:
