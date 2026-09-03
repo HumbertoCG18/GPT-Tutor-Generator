@@ -34,9 +34,9 @@ Push quando quiser.
    `travessia_result_*.json`, tabela + as 6 medicoes em `pendencias.md` §REGUA DE TRAVESSIA). Resumo: FR 15/15; IA 9/15 e
    CG 8/15 com LLM (abaixo do piso por tokens, 10/15) porque o alvo esta fora do FILE_MAP cortado; IA 14/15 com FILE_MAP completo.
    Rerodar = `python scripts/eval_travessia.py {IA,FR,CG} [--sem-llm|--contexto-completo]` (cache: 0 chamadas se o contexto nao mudou).
-1b. **FILE_MAP completo** (clamp de 12 KB esconde 2/3 dos materiais; IA 9 -> 14/15 sem clamp — `pendencias.md` §REGUA DE
-   TRAVESSIA): rastreabilidade -> `FILE_MAP_TRACE.md`, clamp 80 KB + aviso, watchdog de cobertura no censo. Gate: travessia
-   IA >= 14/15, FR 15/15, sentinela 0.
+1b. ~~FILE_MAP completo~~ MOVIDO para a campanha de travessia (user, 03/09: "terminar a campanha do motor"; assim o item 12
+   mede so o motor). Watchdog de cobertura ja esta no censo. Candidatos em `pendencias.md` §PROXIMA CAMPANHA — TRAVESSIA.
+   **PROXIMO ITEM = 2 (Fase 3a).**
 2. **3a Backfill estrutural nos 5 encerrados** (reprocess, nao rebuild): ler `raw/moodle/contents.json` + `sections.json`;
    casar modulo <-> entry (nome do arquivo primeiro, depois `moodle_label` se unico na secao, depois stem — ver
    `_harness-2026-09-02/audita_gold.py`, que casou 151/189 golds de aula); gravar no manifest `moodle_section_index`,
@@ -65,7 +65,8 @@ Push quando quiser.
 10. **Fase 2** cronograma manda na unidade (unidade explicita na linha > ancora forte > ancora > DP so preenche), medida no
     que a estrutura nao resolveu; depois `--flags recompile_vocab` no CG.
 11. **Fase 4** LLM residual so nos flagados, cacheado, contado no CRONOGRAMA_HEALTH (votos/100 e revisar/100).
-12. **Travessia "depois"** = rerodar o item 1; comparar. So aqui decidir grafo renderizado / vetores.
+12. **Travessia "depois"** = rerodar o item 1; comparar (mede so o motor, FILE_MAP intacto). Depois abre a CAMPANHA DE
+    TRAVESSIA (`pendencias.md` §PROXIMA CAMPANHA: FILE_MAP completo e magro primeiro, unico com numero; grafo/vetores nao).
 Depois da fila do motor (sequencia acordada): referencias (regua propria, 10 golds) -> imagens e provas (criar gold antes de
 regra) -> limpa pre-web (`auditoria-enxame`, cortes 2 e 4, `concept_resolver` so apos medir os 8 consumidores) -> `graph.json`
 derivado como modelo de dados da fase web.

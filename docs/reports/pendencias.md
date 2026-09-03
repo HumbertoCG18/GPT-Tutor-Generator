@@ -12,10 +12,8 @@ Gate por fase: AULA sobe, curada intacta (199/200 · 191/191 · 93/93), residual
 Do user: revisar os golds proposto-claude (`travessia_gt_{IA,FR,CG}.csv`, `subunit_gt_FR.csv`, `ground_truth_CG.csv`);
 decisao B (gold eth2/aws) quando quiser; push.
 1. ~~Baseline de travessia~~ FEITO 02-03/09: IA/FR/CG x sem-llm/LLM/contexto completo (§REGUA DE TRAVESSIA). E o "antes".
-1b. **FILE_MAP completo** (medido 02/09 noite: o clamp de 12 KB esconde 2/3 dos materiais em 6 dos 8 cursos; IA 9 -> 14/15
-   sem clamp). Conserto: linhas de rastreabilidade -> `course/FILE_MAP_TRACE.md`; clamp so rede de seguranca (80 KB) com aviso
-   no BUILD_REPORT; watchdog "materiais no manifest x linhas no FILE_MAP" no censo. Gate: travessia IA >= 14/15, FR 15/15,
-   sentinela 0 no motor (so artefatos mudam). Uma constante + uma linha movida; TDD.
+1b. ~~FILE_MAP completo~~ MOVIDO para a CAMPANHA DE TRAVESSIA (decisao do user 03/09: terminar o motor primeiro; assim o
+   item 12 mede o efeito do motor sozinho). Detalhe e candidatos em §PROXIMA CAMPANHA abaixo.
 2. Fase 3a — backfill estrutural nos 5 ENCERRADOS (reprocess; `raw/moodle/contents.json`+`sections.json` -> campos novos no
    manifest; casamento modulo<->entry como em `audita_gold.py`; higiene: ano != curso e ruido, label sem data nao ancora).
 3. Fase 3b — card como documento ordenado = provider de janela (+12/-5 so flagados).
@@ -31,6 +29,19 @@ decisao B (gold eth2/aws) quando quiser; push.
 12. Travessia "depois"; so aqui grafo renderizado / vetores, se a regua mostrar perguntas fora do alcance dos indices.
 Depois: referencias (regua propria) -> imagens e provas (gold antes de regra) -> limpa pre-web (`auditoria-enxame`,
 cortes 2 e 4, `concept_resolver` apos medir 8 consumidores) -> `graph.json` derivado (modelo de dados da fase web).
+
+**PROXIMA CAMPANHA — TRAVESSIA (adiada 03/09; abre depois do item 12).** Runtime = Claude Project; FR (48k tokens) cabe na
+janela, CG (206k) e IA (729k) estouram e dependem do retrieval do Project + indices. A regua (`eval_travessia.py`) mede so
+indices = piso. Candidatos, por custo, so o 1o com numero:
+1. **FILE_MAP completo e magro** (medido: IA 9 -> 14/15): rastreabilidade -> `course/FILE_MAP_TRACE.md` (45% dos bytes);
+   coluna "Secoes" e lixo em slide ("Roteiro A conversa com voce ChatGPT Copilot icon Copilot"), limitar ou tirar; clamp so
+   rede de seguranca (80 KB) com aviso no BUILD_REPORT. Gate: IA >= 14/15, FR 15/15, CG rerodado, sentinela 0 no motor.
+2. Indice por unidade (2 saltos) — so se 80 KB pesar. Nao medido.
+3. Indice de termos -> arquivo, renderizado do vocabulario compilado (`.glossary_curation.llm.json`, ja existe) — ataca
+   "acuracia/precisao/recall" nao achar o deck de metricas. Nao medido; 1 tarde na regua.
+4. Coluna "Quando abrir" por LLM 1x cacheada (hoje heuristica; e a coluna que o tutor cita) — ataca deck x notebook. Nao medido.
+NAO: vetores proprios (o Project ja faz; o problema medido nao e semantica) e grafo para o tutor (manifest ja e o grafo;
+FILE_MAP/COURSE_MAP sao projecoes; grafo visual e fase web). Limite da regua: nao mede o retrieval do Project.
 
 **Decisao C (fechada 02/09 noite):** criterio nao e "novo x antigo", e "semestre em andamento x encerrado". API-first
 (`moodle_pull`) para todo curso em andamento — e o unico caminho que acompanha o semestre (pull incremental com estrutura);
