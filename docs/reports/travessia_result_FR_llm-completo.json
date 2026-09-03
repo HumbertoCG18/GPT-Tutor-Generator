@@ -1,0 +1,354 @@
+{
+ "curso": "FR",
+ "modo": "llm-completo",
+ "n": 15,
+ "hit1": 15,
+ "hit3": 15,
+ "bloco_ok": 6,
+ "bloco_n": 6,
+ "chamadas": 15,
+ "linhas": [
+  {
+   "pergunta": "Quais são as camadas do modelo OSI e o que cada uma faz?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "02-modelos-de-referencia"
+   ],
+   "escolhido": [
+    "02-modelos-de-referencia",
+    "unidade1-exercicios"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-02",
+   "bloco_pred": "bloco-02",
+   "bloco_ok": true,
+   "porque": "O arquivo '02 - Modelos de Referencia' possui as seções teóricas 'Modelos de referência' e 'Modelo OSI' no FILE_MAP.",
+   "escolhido_raw": [
+    "02 - Modelos de Referencia",
+    "unidade1-exercicios"
+   ]
+  },
+  {
+   "pergunta": "Como funciona a resolução de nomes no DNS, passo a passo, do cliente até o servidor autoritativo?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "05-protocolo-dns"
+   ],
+   "escolhido": [
+    "05-protocolo-dns",
+    "unidade2-exercicios-dns"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-03",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": true,
+   "porque": "O arquivo '05 - Protocolo DNS' contem a teoria especifica sobre traducao de nomes e utilizacao do DNS.",
+   "escolhido_raw": [
+    "05 - Protocolo DNS",
+    "unidade2-exercicios-dns"
+   ]
+  },
+  {
+   "pergunta": "Tem algum exemplo de código de cliente e servidor UDP em C que eu possa estudar?",
+   "tipo": "codigo",
+   "estilo": "estruturada",
+   "esperado": [
+    "udp-example-c"
+   ],
+   "escolhido": [
+    "udp-example-c"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-06",
+   "bloco_ok": null,
+   "porque": "Linha 19 do FILE_MAP indica o exemplo de código do professor de sockets UDP em C sob o título exato",
+   "escolhido_raw": [
+    "Comunicação Cliente-Servidor com Sockets UDP em C"
+   ]
+  },
+  {
+   "pergunta": "Como o DHCP atribui um endereço IP para uma máquina nova na rede? Quero entender o DORA.",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "06-protocolo-dhcp"
+   ],
+   "escolhido": [
+    "06-protocolo-dhcp",
+    "unidade2-exercicios-dhcp"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-03",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": true,
+   "porque": "O arquivo '06 - Protocolo DHCP' possui na coluna Seções a descrição explícita do 'Processo DORA'.",
+   "escolhido_raw": [
+    "06 - Protocolo DHCP",
+    "unidade2-exercicios-dhcp"
+   ]
+  },
+  {
+   "pergunta": "Quais são os protocolos de e-mail vistos em aula e qual a diferença entre POP3 e IMAP?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "07-protocolos-de-e-mail"
+   ],
+   "escolhido": [
+    "07-protocolos-de-e-mail",
+    "lista-de-exercicios-1-camada-de-aplicacao"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-05",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": true,
+   "porque": "Linha 11 do FILE_MAP aponta para '07 - Protocolos de E-mail' com subtópico sobre e-mail (SMTP, POP3, IMAP) e a linha 13 aponta para a lista de exercícios da camada de aplicação.",
+   "escolhido_raw": [
+    "07 - Protocolos de E-mail",
+    "LIsta de exercícios 1 - Camada de Aplicação"
+   ]
+  },
+  {
+   "pergunta": "me explica melhor os protocolos",
+   "tipo": "conteudo",
+   "estilo": "ambigua",
+   "esperado": [
+    "01-protocolos-de-rede",
+    "02-modelos-de-referencia",
+    "04-camada-de-aplicacao"
+   ],
+   "escolhido": [
+    "01-protocolos-de-rede",
+    "02-modelos-de-referencia"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-01",
+   "bloco_ok": null,
+   "porque": "A pergunta é conceitual sobre protocolos de rede, tema inicial da Unidade 1 tratado no material '01 - Protocolos de Rede' e complementado em '02 - Modelos de Referencia'.",
+   "escolhido_raw": [
+    "01 - Protocolos de Rede",
+    "02 - Modelos de Referencia"
+   ]
+  },
+  {
+   "pergunta": "tem exercício pra treinar a camada de aplicação?",
+   "tipo": "exercicio",
+   "estilo": "ambigua",
+   "esperado": [
+    "lista-de-exercicios-1-camada-de-aplicacao",
+    "unidade2-exercicios-dhcp",
+    "unidade2-exercicios-dns",
+    "unidade2-exercicios-http"
+   ],
+   "escolhido": [
+    "lista-de-exercicios-1-camada-de-aplicacao",
+    "unidade2-exercicios-http",
+    "unidade2-exercicios-dns"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": null,
+   "porque": "As linhas 13, 15 e 16 do FILE_MAP mapeiam as listas de exercícios específicas para a Unidade 2 (Camada de Aplicação).",
+   "escolhido_raw": [
+    "LIsta de exercícios 1 - Camada de Aplicação",
+    "unidade2-exercicios-http",
+    "unidade2-exercicios-dns"
+   ]
+  },
+  {
+   "pergunta": "como que eu faço uma aplicação de rede?",
+   "tipo": "codigo",
+   "estilo": "ambigua",
+   "esperado": [
+    "08-desenvolvimento-de-aplicacoes",
+    "tcp-chat-c",
+    "udp-example-c",
+    "udp-example-java"
+   ],
+   "escolhido": [
+    "08-desenvolvimento-de-aplicacoes",
+    "udp-example-c",
+    "tcp-example"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": null,
+   "porque": "No FILE_MAP, o material '08 - Desenvolvimento de Aplicações' aborda sockets e comunicação entre processos na unidade-02 (implementação de sockets).",
+   "escolhido_raw": [
+    "08 - Desenvolvimento de Aplicações",
+    "Comunicação Cliente-Servidor com Sockets UDP em C",
+    "Comunicação Cliente-Servidor com Sockets TCP em Java"
+   ]
+  },
+  {
+   "pergunta": "que tipos de rede existem?",
+   "tipo": "conteudo",
+   "estilo": "ambigua",
+   "esperado": [
+    "01-protocolos-de-rede",
+    "03-tipos-de-redes"
+   ],
+   "escolhido": [
+    "03-tipos-de-redes"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-02",
+   "bloco_pred": "bloco-02",
+   "bloco_ok": true,
+   "porque": "A linha 5 do FILE_MAP aponta o arquivo '03 - Tipos de Redes' focado especificamente na teoria e classificação dos tipos de rede (redes de difusão, ponto a ponto).",
+   "escolhido_raw": [
+    "03 - Tipos de Redes"
+   ]
+  },
+  {
+   "pergunta": "o que cai na primeira prova?",
+   "tipo": "prova",
+   "estilo": "ambigua",
+   "esperado": [
+    "plano-de-ensino-20262",
+    "unidade1-exercicios"
+   ],
+   "escolhido": [
+    "plano-de-ensino-20262"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-01",
+   "bloco_ok": null,
+   "porque": "O Plano de Ensino detalha o cronograma de avaliacoes, as datas e o conteudo programatico cobrado na P1.",
+   "escolhido_raw": [
+    "Plano de Ensino - 20262"
+   ]
+  },
+  {
+   "pergunta": "dns oq é",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "05-protocolo-dns"
+   ],
+   "escolhido": [
+    "05-protocolo-dns",
+    "unidade2-exercicios-dns"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": null,
+   "porque": "A linha 9 do FILE_MAP aponta diretamente para o material teórico '05 - Protocolo DNS' e a linha 15 para os exercícios práticos correspondentes.",
+   "escolhido_raw": [
+    "05 - Protocolo DNS",
+    "unidade2-exercicios-dns"
+   ]
+  },
+  {
+   "pergunta": "http exercicio",
+   "tipo": "exercicio",
+   "estilo": "malformada",
+   "esperado": [
+    "lista-de-exercicios-1-camada-de-aplicacao",
+    "unidade2-exercicios-http"
+   ],
+   "escolhido": [
+    "unidade2-exercicios-http",
+    "lista-de-exercicios-1-camada-de-aplicacao"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": null,
+   "porque": "O arquivo FILE_MAP.md lista 'unidade2-exercicios-http' e 'LIsta de exercícios 1 - Camada de Aplicação' como as listas de exercícios que cobrem o protocolo HTTP.",
+   "escolhido_raw": [
+    "unidade2-exercicios-http",
+    "LIsta de exercícios 1 - Camada de Aplicação"
+   ]
+  },
+  {
+   "pergunta": "socket tcp c exemplo?",
+   "tipo": "codigo",
+   "estilo": "malformada",
+   "esperado": [
+    "tcp-chat-c",
+    "tcp-example"
+   ],
+   "escolhido": [
+    "tcp-chat-c",
+    "08-desenvolvimento-de-aplicacoes"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-22",
+   "bloco_ok": null,
+   "porque": "O arquivo FILE_MAP lista o código 'Implementação de Chat Cliente/Servidor TCP com Sockets em C' e o material teórico '08 - Desenvolvimento de Aplicações' que aborda Sockets.",
+   "escolhido_raw": [
+    "Implementação de Chat Cliente/Servidor TCP com Sockets em C",
+    "08 - Desenvolvimento de Aplicações"
+   ]
+  },
+  {
+   "pergunta": "osi tcp ip diferença",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "02-modelos-de-referencia"
+   ],
+   "escolhido": [
+    "02-modelos-de-referencia",
+    "unidade1-exercicios"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-02",
+   "bloco_pred": "bloco-02",
+   "bloco_ok": true,
+   "porque": "A linha 3 do FILE_MAP indica que o arquivo '02 - Modelos de Referencia' cobre o subtópico 'Modelos OSI e TCP/IP' na Unidade 1.",
+   "escolhido_raw": [
+    "02 - Modelos de Referencia",
+    "unidade1-exercicios"
+   ]
+  },
+  {
+   "pergunta": "dhcp lista",
+   "tipo": "exercicio",
+   "estilo": "malformada",
+   "esperado": [
+    "unidade2-exercicios-dhcp"
+   ],
+   "escolhido": [
+    "unidade2-exercicios-dhcp",
+    "lista-de-exercicios-1-camada-de-aplicacao",
+    "06-protocolo-dhcp"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": null,
+   "porque": "Localizei a lista de exercícios específica sobre DHCP (unidade2-exercicios-dhcp) na linha 14 do FILE_MAP associada ao bloco-03.",
+   "escolhido_raw": [
+    "unidade2-exercicios-dhcp",
+    "LIsta de exercícios 1 - Camada de Aplicação",
+    "06 - Protocolo DHCP"
+   ]
+  }
+ ]
+}

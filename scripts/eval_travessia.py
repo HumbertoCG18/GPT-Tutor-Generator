@@ -127,6 +127,26 @@ def filemap_rows(repo: Path, entries: list) -> dict:
             if eid:
                 out[eid] = {"num": pend["num"], "texto": pend["texto"]}
             pend = None
+    # CODE_INDEX: "| Titulo-resumo | Linguagem | Conceitos | `arquivo` |" — o arquivo casa o entry pelo nome no source_path
+    ci = Path(repo) / "code" / "CODE_INDEX.md"
+    if ci.is_file():
+        by_file = {}
+        for e in entries:
+            sp = Path(str(e.get("source_path") or ""))
+            if sp.name:
+                by_file[sp.name.lower()] = str(e.get("id") or ""); by_file[_norm(sp.stem)] = str(e.get("id") or "")
+        for line in ci.read_text(encoding="utf-8", errors="replace").splitlines():
+            m = re.match(r"^\|\s*([^|]+?)\s*\|[^|]*\|[^|]*\|\s*`([^`]+)`", line)
+            if not m or m.group(1).strip().lower() in ("título", "titulo", "---"):
+                continue
+            fn = m.group(2).strip()
+            eid = by_file.get(fn.lower()) or by_file.get(_norm(Path(fn).stem)) or ""
+            if not eid:
+                # prefixo do nome (o CODE_INDEX pode truncar o arquivo)
+                eid = next((v for k, v in by_file.items() if k.startswith(_norm(Path(fn).stem)[:30]) and _norm(Path(fn).stem)[:30]), "")
+            if eid:
+                cur = out.setdefault(eid, {"num": 0, "texto": ""})
+                cur["texto"] = (cur["texto"] + " " + m.group(1).strip()).strip()
     return out
 
 

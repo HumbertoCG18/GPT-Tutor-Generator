@@ -28,10 +28,12 @@ puro+vocab 162/167/50/79 · **AULA 152/189**.
   fallback sem estrutura.**
 
 ## FILA (ordem; cada item do motor = TDD + regua de AULA + curada intacta + sentinela 0 + commit + tracker)
-**Do user, destrava medicoes:** escrever `docs/reports/travessia_gt_IA.csv` e `travessia_gt_FR.csv` (~15 perguntas cada;
-modelos criados). Push quando quiser.
-1. **Baseline de travessia ("antes")**: `python scripts/eval_travessia.py IA --sem-llm` e sem `--sem-llm` (Gemini, cacheado em
-   `docs/reports/_travessia_cache/`); idem FR. Versionar os `travessia_result_*.json`.
+**Do user:** revisar os golds proposto-claude (`travessia_gt_{IA,FR,CG}.csv`, `subunit_gt_FR.csv`, `ground_truth_CG.csv`).
+Push quando quiser.
+1. ~~**Baseline de travessia ("antes")**~~ FEITO 02-03/09 (IA/FR/CG x sem-llm/LLM/`--contexto-completo`; resultados em
+   `travessia_result_*.json`, tabela + as 6 medicoes em `pendencias.md` §REGUA DE TRAVESSIA). Resumo: FR 15/15; IA 9/15 e
+   CG 8/15 com LLM (abaixo do piso por tokens, 10/15) porque o alvo esta fora do FILE_MAP cortado; IA 14/15 com FILE_MAP completo.
+   Rerodar = `python scripts/eval_travessia.py {IA,FR,CG} [--sem-llm|--contexto-completo]` (cache: 0 chamadas se o contexto nao mudou).
 1b. **FILE_MAP completo** (clamp de 12 KB esconde 2/3 dos materiais; IA 9 -> 14/15 sem clamp — `pendencias.md` §REGUA DE
    TRAVESSIA): rastreabilidade -> `FILE_MAP_TRACE.md`, clamp 80 KB + aviso, watchdog de cobertura no censo. Gate: travessia
    IA >= 14/15, FR 15/15, sentinela 0.

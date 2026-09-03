@@ -1,0 +1,246 @@
+{
+ "371c13f40b674dad3f1d251218dcf46b8a753a2d": {
+  "arquivos": [
+   "course/COURSE_MAP.md",
+   "course/CRONOGRAMA_DETALHADO.md",
+   "Transformações Geométricas e Modelagem de Instâncias em OpenGL 2D"
+  ],
+  "bloco": "",
+  "porque": "O assunto de recorte de retas pertence à Unidade 4 (Processo de Visualização 2D) que é abordada no período de 25/08/2026 a 27/08/2026 no cronograma detalhado."
+ },
+ "91799c016aa114502871745045b7600b6e9f7e88": {
+  "arquivos": [
+   "Representação e Manipulação de Vetores 2D em C++"
+  ],
+  "bloco": "",
+  "porque": "O arquivo 'Representação e Manipulação de Vetores 2D em C++' é o material prático focado especificamente na representação e manipulação de vetores 2D, conforme indicado no Cronograma Detalhado."
+ },
+ "7149fe5952cbb09dcd615147607de1790f0f28fa": {
+  "arquivos": [
+   "Práticas de Computação Gráfica 2D/3D: Curvas, Transformações, Colisões e Processamento de Imagens",
+   "Estruturas de Computação Gráfica 2D/3D, Curvas de Bézier e Processamento de Imagens com OpenGL"
+  ],
+  "bloco": "bloco-04",
+  "porque": "A aula sobre algoritmos de detecção de colisão do dia 18/08 está associada a códigos de colisão identificados com a tag bloco-04 no FILE_MAP."
+ },
+ "4c7102a50c51d601c38223e850bfff85e285931a": {
+  "arquivos": [
+   "ElemOculto",
+   "ExemploZbuffer"
+  ],
+  "bloco": "bloco-20",
+  "porque": "O arquivo ElemOculto trata especificamente de Remoção de Elementos Ocultos com foco no algoritmo Z-Buffer."
+ },
+ "5192fa3bfb94342fbf8413c9d7e81564ea2b527b": {
+  "arquivos": [
+   "Visualização Interativa de Curvas de Bézier com PyOpenGL",
+   "Animação de Objetos e Renderização de Curvas de Bézier em OpenGL"
+  ],
+  "bloco": "",
+  "porque": "Encontrei no Cronograma Detalhado na aula de Curvas Paramétricas os códigos de exemplo em Python/PyOpenGL para curvas de Bézier."
+ },
+ "ad9dd4a7763ab7b827ffbc751dfe7051269c6366": {
+  "arquivos": [
+   "computacao-grafica-visualizacao-3d"
+  ],
+  "bloco": "",
+  "porque": "O título trata exatamente sobre Visualização 3D, contendo introdução e projeções."
+ },
+ "a1583722dca82f5f41de0b7a53bd4088cdc444e9": {
+  "arquivos": [
+   "ExemploDeManipulacaoDeImagens.cpp",
+   "Práticas de Computação Gráfica 2D/3D: Curvas, Transformações, Colisões e Processamento de Imagens",
+   "Segmentacao.pptx"
+  ],
+  "bloco": "bloco-03",
+  "porque": "O template de manipulação de imagens ExemploDeManipulacaoDeImagens.cpp e o material Segmentacao.pptx cobrem tópicos práticos e teóricos de processamento de imagens."
+ },
+ "8d83d23c3fffbd4a0c975471b044a2526f10d540": {
+  "arquivos": [
+   "biblioteca-grafica-opengl",
+   "opengl-3d"
+  ],
+  "bloco": "",
+  "porque": "O arquivo biblioteca-grafica-opengl e focado na introducao a biblioteca e ao GLUT, sendo ideal para iniciar no assunto."
+ },
+ "1825c635fb6f2cfbd2cd23cfe2387e2016bb0e5a": {
+  "arquivos": [
+   "computacao-grafica-modelagem-de-solidos",
+   "CSG",
+   "ExercicioDeModelagem"
+  ],
+  "bloco": "bloco-15",
+  "porque": "O arquivo 'computacao-grafica-modelagem-de-solidos' contem a secao especifica sobre Modelagem de Solidos no FILE_MAP"
+ },
+ "9af2b589aba055e16b7af382e201b71f3e5e93e1": {
+  "arquivos": [
+   "course/CRONOGRAMA_DETALHADO.md",
+   "course/SYLLABUS.md"
+  ],
+  "bloco": "",
+  "porque": "O cronograma detalhado lista explicitamente as unidades de conteúdo cobradas na sessão do dia 24/09/2026 destinada à Prova P1."
+ },
+ "3d3e7d3742c2d18e17494367486fb5b6a1c73c58": {
+  "arquivos": [
+   "Segmentacao.pptx",
+   "SegmentacaoDeTexturas"
+  ],
+  "bloco": "bloco-03",
+  "porque": "Localizei os arquivos Segmentacao.pptx e SegmentacaoDeTexturas no FILE_MAP sob a unidade-03-processamento-de-imagens-e-visao-computacional associados ao bloco-03."
+ },
+ "e7077bb719a7b2371d525196df75da2a1ab0c43f": {
+  "arquivos": [
+   "modelos-de-iluminacao"
+  ],
+  "bloco": "",
+  "porque": "O arquivo modelos-de-iluminacao está mapeado para a Unidade 08 (Síntese de Imagens Realísticas), que cobre modelos de reflexão e sombreamento de Phong."
+ },
+ "3f2693a09f05040da644f0daec786d62dc4704af": {
+  "arquivos": [
+   "Segmentacao.pptx"
+  ],
+  "bloco": "bloco-03",
+  "porque": "O assunto de Filtros (Passa-Baixa por convolução) pertence à Unidade 03, que é coberta no bloco-03 e tem Convolução listada nas seções de Segmentacao.pptx."
+ },
+ "a21e39c7a2b4909e385695bb669c0fc0f68aec3c": {
+  "arquivos": [
+   "computacao-grafica-geometria-computacional-plane-sweep"
+  ],
+  "bloco": "bloco-05",
+  "porque": "O material 'computacao-grafica-geometria-computacional-plane-sweep' e citado na Unidade 02 do COURSE_MAP, correspondendo a Geometria Computacional dada no bloco-05 do CRONOGRAMA_DETALHADO."
+ },
+ "a8c233f702d3f426dc7cca75ed065a892cdbf920": {
+  "arquivos": [
+   "Visualização 3D, Transformações e Matrizes com PyOpenGL",
+   "Práticas de Computação Gráfica 2D/3D: Curvas, Transformações, Colisões e Processamento de Imagens",
+   "Estruturas de Computação Gráfica 2D/3D, Curvas de Bézier e Processamento de Imagens com OpenGL"
+  ],
+  "bloco": "",
+  "porque": "O item 9 do FILE_MAP trata especificamente de Transformações e Matrizes com PyOpenGL, enquanto os itens 14 e 15 contêm práticas e estruturas de código de computação gráfica 2D/3D com transformações."
+ },
+ "12e52e52aa07abfd66967a50c1dfa584da7cf18e": {
+  "arquivos": [
+   "exercicios-teoricos-sobre-processo-de-visualizacao-2d",
+   "pucrs-escola-politecnica-computacao-grafica-exercicios"
+  ],
+  "bloco": "",
+  "porque": "O algoritmo de recorte de Cohen-Sutherland faz parte do Processo de Visualização 2D (Unidade 04), conforme o COURSE_MAP.md e os materiais de exercícios correspondentes no EXERCISE_INDEX.md."
+ },
+ "5ad144104b548b268fdf8b7720214049c53b47ec": {
+  "arquivos": [
+   "Representação e Manipulação de Vetores 2D em C++"
+  ],
+  "bloco": "",
+  "porque": "O arquivo de código Representação e Manipulação de Vetores 2D em C++ aborda conceitos de geometria analítica e vetores bidimensionais."
+ },
+ "3c6e8e9456925843d00760d3352947e0e935c835": {
+  "arquivos": [
+   "Práticas de Computação Gráfica 2D/3D: Curvas, Transformações, Colisões e Processamento de Imagens",
+   "Estruturas de Computação Gráfica 2D/3D, Curvas de Bézier e Processamento de Imagens com OpenGL"
+  ],
+  "bloco": "bloco-04",
+  "porque": "Os códigos de Práticas de Computação Gráfica contêm conceitos de detecção de colisão e estão associados ao bloco-04 no FILE_MAP."
+ },
+ "d3aaa740a893acf47216ad6377432b066d04012d": {
+  "arquivos": [
+   "ElemOculto",
+   "ExemploZbuffer"
+  ],
+  "bloco": "bloco-20",
+  "porque": "O arquivo ElemOculto trata especificamente de Remoção de Elementos Ocultos e Algoritmo Z-Buffer, mapeado no bloco-20 do FILE_MAP."
+ },
+ "bf21969b82cf161b141091ac4d44c576565ffe13": {
+  "arquivos": [
+   "Visualização Interativa de Curvas de Bézier com PyOpenGL",
+   "Animação de Objetos e Renderização de Curvas de Bézier em OpenGL",
+   "Animação de Instâncias ao longo de Curvas de Bézier com OpenGL"
+  ],
+  "bloco": "",
+  "porque": "Linhas do CODE_INDEX que indicam exemplos de Curvas de Bézier em Python (Bezier-PY.zip, Bezier-Python.zip, Bezier-Animacao.zip)."
+ },
+ "d2fe591ab0e6d041b0a01e38d4c644c7d3f0312b": {
+  "arquivos": [
+   "computacao-grafica-visualizacao-3d",
+   "computacao-grafica-opengl-navegacao-em-ambientes-virtuais",
+   "Visualização 3D, Transformações e Matrizes com PyOpenGL"
+  ],
+  "bloco": "",
+  "porque": "O arquivo computacao-grafica-visualizacao-3d contem a base teorica principal para visualizacao 3D, complementado pelos conceitos de camera/navegacao e codigo em PyOpenGL."
+ },
+ "be4eb6a0b6786924d2f767a2f6ba9f7e42969932": {
+  "arquivos": [
+   "exercicios-de-processamento-de-imagens",
+   "computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens",
+   "computacao-grafica-i-exercicio-sobre-filtros"
+  ],
+  "bloco": "",
+  "porque": "O arquivo EXERCISE_INDEX.md lista múltiplos exercícios de fixação para a Unidade 03, como 'exercicios-de-processamento-de-imagens' e 'computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens'."
+ },
+ "3b35fa968bd7db5ec42bec2ec244ccf8cf4720a9": {
+  "arquivos": [
+   "biblioteca-grafica-opengl",
+   "opengl-3d"
+  ],
+  "bloco": "",
+  "porque": "A linha 10 do FILE_MAP indica o material 'biblioteca-grafica-opengl' que aborda a introducao à biblioteca OpenGL e GLUT."
+ },
+ "83229b33a23d3aed0f48d42499cd7493f12fcebe": {
+  "arquivos": [
+   "computacao-grafica-modelagem-de-solidos",
+   "CSG"
+  ],
+  "bloco": "",
+  "porque": "O arquivo 'computacao-grafica-modelagem-de-solidos' possui seção específica sobre Modelagem de Sólidos no FILE_MAP, enquanto o arquivo 'CSG' aborda Geometria Sólida Construtiva."
+ },
+ "6a530b128b3f2a4ab9b038c5d412370d7ba9e6e3": {
+  "arquivos": [
+   "origens-da-computacao-grafica",
+   "Segmentacao.pptx"
+  ],
+  "bloco": "",
+  "porque": "O cronograma detalhado de 24/09 indica que a P1 engloba as unidades 1, 2, 4, 3 e 6, representadas por esses materiais de estudo."
+ },
+ "ce4a0d6b554df2a2d4a8adf05c5c15540286a874": {
+  "arquivos": [
+   "Segmentacao.pptx",
+   "SegmentacaoDeTexturas"
+  ],
+  "bloco": "bloco-03",
+  "porque": "As linhas 3 e 4 do FILE_MAP detalham os arquivos Segmentacao.pptx e SegmentacaoDeTexturas como os materiais curados para a unidade de Processamento de Imagens e Visão Computacional."
+ },
+ "255b6b7f40e2b9bf58d1935b98d82970aca9a03a": {
+  "arquivos": [
+   "modelos-de-iluminacao",
+   "Estrutura de Aplicações 3D com OpenGL, Projeções e Iluminação"
+  ],
+  "bloco": "",
+  "porque": "O arquivo modelos-de-iluminacao no FILE_MAP aborda diretamente a sintese de imagens realistas e iluminacao, e o codigo Estrutura de Aplicacoes 3D exemplifica a iluminacao de Phong."
+ },
+ "d4bb67d74632f7861db0fff5c612ec2e944d7e4a": {
+  "arquivos": [
+   "computacao-grafica-i-exercicio-sobre-filtros",
+   "exercicios-de-processamento-de-imagens",
+   "computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens"
+  ],
+  "bloco": "bloco-03",
+  "porque": "Localizei as listas de exercicios sobre filtros e processamento de imagens associadas a Unidade 03 no EXERCISE_INDEX e os metadados de bloco correspondentes no FILE_MAP"
+ },
+ "b14937daf7ea9610db502423126ea7fd4d8e302a": {
+  "arquivos": [
+   "computacao-grafica-geometria-computacional-plane-sweep",
+   "disciplina-de-computacao-grafica-geometria-computacional",
+   "exercicios-de-geometria-computacional"
+  ],
+  "bloco": "",
+  "porque": "O COURSE_MAP.md indica que a Unidade 02 de Fundamentos Matemáticos é coberta explicitamente pelos materiais de geometria computacional e plane sweep citados."
+ },
+ "2e96d17e1ed510ed7282396c836779595e1fa25d": {
+  "arquivos": [
+   "Visualização 3D, Transformações e Matrizes com PyOpenGL",
+   "Práticas de Computação Gráfica 2D/3D: Curvas, Transformações, Colisões e Processamento de Imagens",
+   "biblioteca-grafica-opengl"
+  ],
+  "bloco": "",
+  "porque": "Linha 9 e 14 do FILE_MAP contêm códigos e materiais práticos focados em transformações geométricas e matrizes com OpenGL."
+ }
+}

@@ -158,3 +158,24 @@ def test_contexto_completo_inclui_politica_e_indices_por_tipo(tmp_path):
     completo = contexto_navegacao(tmp_path, completo=True)
     assert "TUTOR_POLICY" in completo and "CODE_INDEX" in completo and "EXAM_INDEX" in completo
     assert completo.index("README") < completo.index("COURSE_MAP") < completo.index("CODE_INDEX")
+
+
+# --- o tutor tambem cita o CODE_INDEX (titulo-resumo do Gemini + `arquivo`) -------------------
+
+CODEINDEX = """| Título | Linguagem | Conceitos | Arquivo |
+|---|---|---|---|
+| Implementação do Algoritmo k-NN (K-Nearest Neighbors) para Classificação de Dados | java | k-NN, Iris | `Exemplo de programa com k-NN (em java).zip` |
+"""
+
+
+def test_filemap_rows_inclui_code_index_por_arquivo(tmp_path):
+    from scripts.eval_travessia import casar_escolha, filemap_rows
+    (tmp_path / "course").mkdir(); (tmp_path / "code").mkdir()
+    (tmp_path / "course" / "FILE_MAP.md").write_text("", encoding="utf-8")
+    (tmp_path / "code" / "CODE_INDEX.md").write_text(CODEINDEX, encoding="utf-8")
+    ents = [{"id": "exemplo-de-programa-com-k-nn-em-java", "title": "Exemplo de programa com k-NN (em java)",
+             "source_path": "C:/stash/Semana 3/Exemplo de programa com k-NN (em java).zip", "raw_target": "raw/code/exemplo.zip"},
+            {"id": "algoritmo-de-classificacao-k-nn", "title": "Algoritmo de Classificação k-NN", "raw_target": "raw/pdfs/knn.pdf"}]
+    rows = filemap_rows(tmp_path, ents)
+    assert "K-Nearest Neighbors" in rows["exemplo-de-programa-com-k-nn-em-java"]["texto"]
+    assert casar_escolha("Implementação do Algoritmo k-NN (K-Nearest Neighbors) para Classificação de Dados", ents, rows) == "exemplo-de-programa-com-k-nn-em-java"

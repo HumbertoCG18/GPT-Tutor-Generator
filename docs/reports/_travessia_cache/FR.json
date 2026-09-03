@@ -115,5 +115,125 @@
   ],
   "bloco": "",
   "porque": "A linha 14 do FILE_MAP indica o material 'unidade2-exercicios-dhcp' sob a categoria listas e tópico de DHCP."
+ },
+ "f9a4487a03d2c17dbde45cf0a0c7db4dadf427db": {
+  "arquivos": [
+   "02 - Modelos de Referencia",
+   "unidade1-exercicios"
+  ],
+  "bloco": "",
+  "porque": "O arquivo '02 - Modelos de Referencia' possui as seções teóricas 'Modelos de referência' e 'Modelo OSI' no FILE_MAP."
+ },
+ "1e89bea22c838505c4b835d8a3c17f6d5dd4309f": {
+  "arquivos": [
+   "05 - Protocolo DNS",
+   "unidade2-exercicios-dns"
+  ],
+  "bloco": "",
+  "porque": "O arquivo '05 - Protocolo DNS' contem a teoria especifica sobre traducao de nomes e utilizacao do DNS."
+ },
+ "54f285f0f7ed80137cbe1cad7c98cc7c05674a5e": {
+  "arquivos": [
+   "Comunicação Cliente-Servidor com Sockets UDP em C"
+  ],
+  "bloco": "",
+  "porque": "Linha 19 do FILE_MAP indica o exemplo de código do professor de sockets UDP em C sob o título exato"
+ },
+ "1823a3b6d0f2a47c9fafbdba34f934bc7089ad6d": {
+  "arquivos": [
+   "06 - Protocolo DHCP",
+   "unidade2-exercicios-dhcp"
+  ],
+  "bloco": "",
+  "porque": "O arquivo '06 - Protocolo DHCP' possui na coluna Seções a descrição explícita do 'Processo DORA'."
+ },
+ "a9a71b9eda44fd3eb35cbb73141f2577c7d54407": {
+  "arquivos": [
+   "07 - Protocolos de E-mail",
+   "LIsta de exercícios 1 - Camada de Aplicação"
+  ],
+  "bloco": "",
+  "porque": "Linha 11 do FILE_MAP aponta para '07 - Protocolos de E-mail' com subtópico sobre e-mail (SMTP, POP3, IMAP) e a linha 13 aponta para a lista de exercícios da camada de aplicação."
+ },
+ "a05b9253fd986bf0e941cef9ff617073a32b3cd5": {
+  "arquivos": [
+   "01 - Protocolos de Rede",
+   "02 - Modelos de Referencia"
+  ],
+  "bloco": "",
+  "porque": "A pergunta é conceitual sobre protocolos de rede, tema inicial da Unidade 1 tratado no material '01 - Protocolos de Rede' e complementado em '02 - Modelos de Referencia'."
+ },
+ "504f5dead753a524e3a1e90040889d6bea7c15f7": {
+  "arquivos": [
+   "LIsta de exercícios 1 - Camada de Aplicação",
+   "unidade2-exercicios-http",
+   "unidade2-exercicios-dns"
+  ],
+  "bloco": "",
+  "porque": "As linhas 13, 15 e 16 do FILE_MAP mapeiam as listas de exercícios específicas para a Unidade 2 (Camada de Aplicação)."
+ },
+ "e062c17d5e79ff479c1ad0965e89cbc045f8bbf0": {
+  "arquivos": [
+   "08 - Desenvolvimento de Aplicações",
+   "Comunicação Cliente-Servidor com Sockets UDP em C",
+   "Comunicação Cliente-Servidor com Sockets TCP em Java"
+  ],
+  "bloco": "",
+  "porque": "No FILE_MAP, o material '08 - Desenvolvimento de Aplicações' aborda sockets e comunicação entre processos na unidade-02 (implementação de sockets)."
+ },
+ "4e822a0712227a3ece5db8d6b7e5e5f51e8a32cf": {
+  "arquivos": [
+   "03 - Tipos de Redes"
+  ],
+  "bloco": "",
+  "porque": "A linha 5 do FILE_MAP aponta o arquivo '03 - Tipos de Redes' focado especificamente na teoria e classificação dos tipos de rede (redes de difusão, ponto a ponto)."
+ },
+ "f9813eb7ea3a4a2f551a4820b886fa4766b6bc90": {
+  "arquivos": [
+   "Plano de Ensino - 20262"
+  ],
+  "bloco": "",
+  "porque": "O Plano de Ensino detalha o cronograma de avaliacoes, as datas e o conteudo programatico cobrado na P1."
+ },
+ "b40085b8c4e8e4d453a782a18d047872213791c6": {
+  "arquivos": [
+   "05 - Protocolo DNS",
+   "unidade2-exercicios-dns"
+  ],
+  "bloco": "",
+  "porque": "A linha 9 do FILE_MAP aponta diretamente para o material teórico '05 - Protocolo DNS' e a linha 15 para os exercícios práticos correspondentes."
+ },
+ "c9b0c8b95fc1decdb852e3b4f3ad49324ce37956": {
+  "arquivos": [
+   "unidade2-exercicios-http",
+   "LIsta de exercícios 1 - Camada de Aplicação"
+  ],
+  "bloco": "",
+  "porque": "O arquivo FILE_MAP.md lista 'unidade2-exercicios-http' e 'LIsta de exercícios 1 - Camada de Aplicação' como as listas de exercícios que cobrem o protocolo HTTP."
+ },
+ "06e99e5f6874c83cf50581094679062958ef1b36": {
+  "arquivos": [
+   "Implementação de Chat Cliente/Servidor TCP com Sockets em C",
+   "08 - Desenvolvimento de Aplicações"
+  ],
+  "bloco": "",
+  "porque": "O arquivo FILE_MAP lista o código 'Implementação de Chat Cliente/Servidor TCP com Sockets em C' e o material teórico '08 - Desenvolvimento de Aplicações' que aborda Sockets."
+ },
+ "9efbe50643a2e86bea9bfcb55948500c4bcbc14c": {
+  "arquivos": [
+   "02 - Modelos de Referencia",
+   "unidade1-exercicios"
+  ],
+  "bloco": "",
+  "porque": "A linha 3 do FILE_MAP indica que o arquivo '02 - Modelos de Referencia' cobre o subtópico 'Modelos OSI e TCP/IP' na Unidade 1."
+ },
+ "43a8dfae7d27cb77a592d3a549654840130d7af6": {
+  "arquivos": [
+   "unidade2-exercicios-dhcp",
+   "LIsta de exercícios 1 - Camada de Aplicação",
+   "06 - Protocolo DHCP"
+  ],
+  "bloco": "bloco-03",
+  "porque": "Localizei a lista de exercícios específica sobre DHCP (unidade2-exercicios-dhcp) na linha 14 do FILE_MAP associada ao bloco-03."
  }
 }

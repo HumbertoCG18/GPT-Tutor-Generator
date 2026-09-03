@@ -1,0 +1,322 @@
+{
+ "curso": "CG",
+ "modo": "sem-llm",
+ "n": 15,
+ "hit1": 10,
+ "hit3": 11,
+ "bloco_ok": 8,
+ "bloco_n": 11,
+ "chamadas": 0,
+ "linhas": [
+  {
+   "pergunta": "Como funciona o algoritmo de recorte de retas de Cohen-Sutherland?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "recorte",
+    "vis2d"
+   ],
+   "escolhido": [
+    "elemoculto",
+    "exemplozbuffer",
+    "mapeamento"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "bloco-06",
+   "bloco_pred": "bloco-20",
+   "bloco_ok": false,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "Quais são os fundamentos matemáticos (vetores, produto escalar) usados em computação gráfica?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "fundamentosmatematicos"
+   ],
+   "escolhido": [
+    "fundamentosmatematicos",
+    "exemplodemanipulacaodeimagens",
+    "exercicio-com-animacao"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-03",
+   "bloco_pred": "bloco-03",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "Como detectar colisão entre dois objetos usando envelopes (AABB e OOBB)?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "colisao"
+   ],
+   "escolhido": [
+    "colisao"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-04",
+   "bloco_pred": "bloco-04",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "Como funciona o algoritmo Z-Buffer para remoção de elementos ocultos?",
+   "tipo": "conteudo",
+   "estilo": "estruturada",
+   "esperado": [
+    "elemoculto",
+    "exemplozbuffer"
+   ],
+   "escolhido": [
+    "elemoculto",
+    "exemplozbuffer",
+    "computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-20",
+   "bloco_pred": "bloco-20",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "Tem algum código de exemplo de curva de Bézier em Python?",
+   "tipo": "codigo",
+   "estilo": "estruturada",
+   "esperado": [
+    "bezier-animacao",
+    "bezier-py",
+    "bezier-python"
+   ],
+   "escolhido": [
+    "bezier-python",
+    "bezier-animacao",
+    "bezier-cpp"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-13",
+   "bloco_pred": "bloco-13",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "me explica visualização 3D",
+   "tipo": "conteudo",
+   "estilo": "ambigua",
+   "esperado": [
+    "biblioteca-grafica-opengl",
+    "computacao-grafica-visualizacao-3d",
+    "opengl-3d"
+   ],
+   "escolhido": [
+    "animacao-v2",
+    "basico3d-py",
+    "bezier-animacao"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-06",
+   "bloco_ok": null,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "tem exercício de imagem?",
+   "tipo": "exercicio",
+   "estilo": "ambigua",
+   "esperado": [
+    "computacao-grafica-exercicio-de-prenchimento-de-area",
+    "computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens",
+    "computacao-grafica-i-exercicio-sobre-filtros",
+    "exercicios-de-processamento-de-imagens"
+   ],
+   "escolhido": [
+    "computacao-grafica-exercicio-de-prenchimento-de-area",
+    "computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens",
+    "computacao-grafica-i-exercicio-sobre-filtros"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-07",
+   "bloco_ok": null,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "como eu começo com OpenGL?",
+   "tipo": "codigo",
+   "estilo": "ambigua",
+   "esperado": [
+    "biblioteca-grafica-opengl",
+    "opengl-cpp",
+    "opengl-py",
+    "openglbasico"
+   ],
+   "escolhido": [
+    "biblioteca-grafica-opengl",
+    "computacao-grafica-opengl-navegacao-em-ambientes-virtuais",
+    "exercicio-com-animacao"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-02",
+   "bloco_pred": "bloco-18",
+   "bloco_ok": false,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "o que é modelagem de sólidos?",
+   "tipo": "conteudo",
+   "estilo": "ambigua",
+   "esperado": [
+    "computacao-grafica-modelagem-de-solidos",
+    "csg"
+   ],
+   "escolhido": [
+    "computacao-grafica-modelagem-de-solidos",
+    "basico3d-cpp",
+    "basico3d-py-zip"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-15",
+   "bloco_pred": "bloco-15",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "o que cai na P1?",
+   "tipo": "prova",
+   "estilo": "ambigua",
+   "esperado": [
+    "cronograma2026-2",
+    "planodeensino-4645z-04-fundamentos-de-computacao-grafica",
+    "resolucao-de-prova-de-computacao-grafica-2d",
+    "resolucao-de-prova-de-computacao-grafica-2d-pdf"
+   ],
+   "escolhido": [],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "",
+   "bloco_pred": "",
+   "bloco_ok": null,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "segmentacao imagem",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "segmentacaodetexturas",
+    "segmentacaopptx"
+   ],
+   "escolhido": [
+    "segmentacaodetexturas",
+    "segmentacaopptx"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-07",
+   "bloco_pred": "bloco-07",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "iluminacao phong",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "modelos-de-iluminacao"
+   ],
+   "escolhido": [
+    "modelos-de-iluminacao",
+    "programabasico3d"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-21",
+   "bloco_pred": "bloco-21",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "filtro passa baixa exercicio",
+   "tipo": "exercicio",
+   "estilo": "malformada",
+   "esperado": [
+    "computacao-grafica-i-exercicio-sobre-filtros"
+   ],
+   "escolhido": [
+    "computacao-grafica-exercicio-de-prenchimento-de-area",
+    "computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens",
+    "computacao-grafica-i-exercicio-sobre-filtros"
+   ],
+   "hit1": false,
+   "hit3": true,
+   "bloco_gold": "",
+   "bloco_pred": "bloco-07",
+   "bloco_ok": null,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "geometria computacional plane sweep",
+   "tipo": "conteudo",
+   "estilo": "malformada",
+   "esperado": [
+    "computacao-grafica-geometria-computacional-plane-sweep"
+   ],
+   "escolhido": [
+    "computacao-grafica-geometria-computacional-plane-sweep",
+    "disciplina-de-computacao-grafica-geometria-computacional",
+    "exercicios-de-geometria-computacional"
+   ],
+   "hit1": true,
+   "hit3": true,
+   "bloco_gold": "bloco-05",
+   "bloco_pred": "bloco-05",
+   "bloco_ok": true,
+   "porque": "",
+   "escolhido_raw": []
+  },
+  {
+   "pergunta": "transformacoes opengl codigo",
+   "tipo": "codigo",
+   "estilo": "malformada",
+   "esperado": [
+    "transformacoes-geometricas-em-opengl",
+    "transformacoesgeometricas"
+   ],
+   "escolhido": [
+    "opengl-cpp",
+    "opengl-py",
+    "texturas-v3"
+   ],
+   "hit1": false,
+   "hit3": false,
+   "bloco_gold": "bloco-06",
+   "bloco_pred": "bloco-02",
+   "bloco_ok": false,
+   "porque": "",
+   "escolhido_raw": []
+  }
+ ]
+}

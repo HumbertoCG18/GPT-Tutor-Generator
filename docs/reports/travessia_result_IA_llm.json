@@ -2,8 +2,8 @@
  "curso": "IA",
  "modo": "llm",
  "n": 15,
- "hit1": 9,
- "hit3": 10,
+ "hit1": 14,
+ "hit3": 15,
  "bloco_ok": 8,
  "bloco_n": 8,
  "chamadas": 0,
@@ -16,18 +16,18 @@
     "algoritmo-de-classificacao-k-nn"
    ],
    "escolhido": [
-    "algoritmo-de-classificacao-k-nn"
+    "algoritmo-de-classificacao-k-nn",
+    "exemplo-com-k-nn"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "bloco-05",
    "bloco_pred": "bloco-05",
    "bloco_ok": true,
-   "porque": "O assunto k-NN é coberto no período de Modelos Preditivos (18/03 a 15/04), associado ao bloco-05, onde estão listados vários códigos práticos sobre o algoritmo.",
+   "porque": "A linha 22 do FILE_MAP indica o material de aula teórico 'Algoritmo de Classificação k-NN' focado em Classificação com k-NN e Aprendizado Supervisionado.",
    "escolhido_raw": [
-    "Implementação completa de K-Nearest Neighbors (k-NN) para classificação de flores Iris",
-    "Classificação com o algoritmo k-Nearest Neighbors (k-NN) usando o dataset Iris",
-    "Implementação e avaliação do algoritmo K-NN para classificação de doenças cardiovasculares"
+    "Algoritmo de Classificação k-NN",
+    "Classificação com o algoritmo k-Nearest Neighbors (k-NN) usando o dataset Iris"
    ]
   },
   {
@@ -38,20 +38,16 @@
     "como-analisar-resultados-acc-pr-re-e-f1"
    ],
    "escolhido": [
-    "arvores-de-decisao",
-    "mlp",
-    "exercicio-2-solucao-com-rede-perceptron-atualizado"
+    "como-analisar-resultados-acc-pr-re-e-f1"
    ],
-   "hit1": false,
-   "hit3": false,
+   "hit1": true,
+   "hit3": true,
    "bloco_gold": "bloco-05",
    "bloco_pred": "bloco-05",
    "bloco_ok": true,
-   "porque": "A aula de Análise de Resultados (abordagem supervisionada) ocorre no período de 18/03 a 15/04, mapeada na rastreabilidade do FILE_MAP como bloco-05 sob os materiais de modelos preditivos.",
+   "porque": "O título do material 'Como analisar resultados Acc, Pr, Re e F1' no FILE_MAP corresponde exatamente ao assunto das métricas de avaliação (Acurácia, Precisão, Recall e F1) questionado pelo aluno.",
    "escolhido_raw": [
-    "Árvores de Decisão",
-    "MLP",
-    "Rede Perceptron"
+    "Como analisar resultados Acc, Pr, Re e F1"
    ]
   },
   {
@@ -71,6 +67,7 @@
    ],
    "escolhido": [
     "exercicio-2-solucao-com-rede-perceptron-atualizado",
+    "rede-perceptron-e-equacao-de-reta",
     "mlp"
    ],
    "hit1": true,
@@ -78,9 +75,10 @@
    "bloco_gold": "bloco-05",
    "bloco_pred": "bloco-05",
    "bloco_ok": true,
-   "porque": "Linhas 6 e 7 do FILE_MAP especificam os materiais teóricos sobre Rede Perceptron e MLP, que tratam de aprendizado de pesos e limitações como o problema do XOR",
+   "porque": "Os itens 6, 27 e 7 do FILE_MAP tratam da teoria do Perceptron, limites de linearidade e a arquitetura MLP necessária para resolver o problema XOR.",
    "escolhido_raw": [
     "Rede Perceptron",
+    "Rede Perceptron e Equação de Reta",
     "MLP"
    ]
   },
@@ -93,19 +91,19 @@
    ],
    "escolhido": [
     "algoritmo-genetico",
-    "cap-sobre-algoritmos-geneticos-lacerda-e-outros",
-    "outros-operadores"
+    "outros-operadores",
+    "cap-sobre-algoritmos-geneticos-lacerda-e-outros"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "bloco-13",
    "bloco_pred": "bloco-13",
    "bloco_ok": true,
-   "porque": "Estes materiais tratam diretamente da fundamentação teórica de Algoritmos Genéticos e de seus operadores de mutação e cruzamento, conforme indicado em suas seções e tags no FILE_MAP.",
+   "porque": "A linha 11 do FILE_MAP indica o material de aula teórico 'Algoritmo Genetico' e a linha 13 indica 'Outros operadores' que trata das operações genéticas e mutação.",
    "escolhido_raw": [
     "Algoritmo Genetico",
-    "Cap. sobre Algoritmos Geneticos (Lacerda e outros)",
-    "Outros operadores"
+    "Outros operadores",
+    "Cap. sobre Algoritmos Geneticos (Lacerda e outros)"
    ]
   },
   {
@@ -117,16 +115,20 @@
     "aula-sobre-agrupamento-parte-1-particional"
    ],
    "escolhido": [
-    "aula-sobre-agrupamento-parte-1-particional"
+    "aula-sobre-agrupamento-parte-1-particional",
+    "agrupamento-usando-k-means-exemplo-1-ipynb",
+    "survey-on-clustering"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "bloco-07",
    "bloco_pred": "bloco-07",
    "bloco_ok": true,
-   "porque": "O material 'Aula sobre Agrupamento - parte 1 (particional)' aborda diretamente o funcionamento do algoritmo k-means.",
+   "porque": "A linha 9 do FILE_MAP aponta para a teoria do k-means em 'Aula sobre Agrupamento - parte 1 (particional)' e a linha 29 apresenta a seleção do número ótimo de clusters em 'Agrupamento k-Means e seleção do número ótimo de clusters'.",
    "escolhido_raw": [
-    "Aula sobre Agrupamento - parte 1 (particional)"
+    "Aula sobre Agrupamento - parte 1 (particional)",
+    "Agrupamento k-Means e seleção do número ótimo de clusters",
+    "Survey on Clustering"
    ]
   },
   {
@@ -141,16 +143,20 @@
     "rede-perceptron-classificacao-planta-iris"
    ],
    "escolhido": [
-    "arvores-de-decisao"
+    "exemplo-complementar-classificacao-com-arvores-de-decisao",
+    "exemplo-com-k-nn",
+    "rede-perceptron-classificacao-planta-iris"
    ],
    "hit1": false,
-   "hit3": false,
+   "hit3": true,
    "bloco_gold": "",
    "bloco_pred": "bloco-05",
    "bloco_ok": null,
-   "porque": "O material 'Árvores de Decisão' aborda diretamente o aprendizado supervisionado e a aplicação prática do modelo aos dados de teste para classificação.",
+   "porque": "Linha 57 do FILE_MAP traz o título exato 'Exemplo Prático de Classificação com Árvores de Decisão' sob a categoria de exemplos de código de modelos preditivos.",
    "escolhido_raw": [
-    "Árvores de Decisão"
+    "Exemplo Prático de Classificação com Árvores de Decisão",
+    "Classificação com o algoritmo k-Nearest Neighbors (k-NN) usando o dataset Iris",
+    "Classificação da Planta Iris usando Rede Perceptron"
    ]
   },
   {
@@ -163,16 +169,18 @@
     "caracteristicas-dos-dados"
    ],
    "escolhido": [
-    "caracteristicas-dos-dados"
+    "caracteristicas-dos-dados",
+    "analise-exploratoria-dos-dados-exemplo-2"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "bloco-04",
    "bloco_pred": "bloco-04",
    "bloco_ok": true,
-   "porque": "O material 'Características dos Dados' é o conteúdo teórico principal para o período de preparação de dados, mapeado no bloco-04 do cronograma.",
+   "porque": "O material 'Características dos Dados' está mapeado para a aula de preparação e exploração de dados no bloco-04.",
    "escolhido_raw": [
-    "Características dos Dados"
+    "Características dos Dados",
+    "Análise Exploratória de Dados com ydata-profiling em Python"
    ]
   },
   {
@@ -187,18 +195,20 @@
     "xor-backpropagation-em-python"
    ],
    "escolhido": [
-    "exercicio-2-solucao-com-rede-perceptron-atualizado",
-    "mlp"
+    "mlp-classificacao-iris-atualizado",
+    "mlp-xoripynb",
+    "exercicio-2-solucao-com-rede-perceptron-atualizado"
    ],
-   "hit1": false,
-   "hit3": false,
+   "hit1": true,
+   "hit3": true,
    "bloco_gold": "",
    "bloco_pred": "bloco-05",
    "bloco_ok": null,
-   "porque": "As linhas 6 e 7 do FILE_MAP referenciam os materiais de Rede Perceptron e MLP associados ao bloco-05.",
+   "porque": "Localizei no FILE_MAP códigos do tipo 'codigo-professor' relacionados a Perceptron e MultiLayer Perceptron (MLP).",
    "escolhido_raw": [
-    "Rede Perceptron",
-    "MLP"
+    "Classificação de plantas Iris usando MultiLayer Perceptron (MLP)",
+    "Implementação e Treinamento de uma Rede Neural Perceptron Multicamadas para o Problema XOR",
+    "Implementação e Treinamento de um Perceptron para Classificação Binária"
    ]
   },
   {
@@ -213,17 +223,19 @@
    ],
    "escolhido": [
     "introducao-a-busca-informada",
-    "hill-climbing-e-simulated-annealing"
+    "hill-climbing-e-simulated-annealing",
+    "algoritmo-dijkstra"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "",
    "bloco_pred": "bloco-13",
    "bloco_ok": null,
-   "porque": "O arquivo 'Introducao a busca informada' é o material base para o início do aprendizado de algoritmos de busca na Unidade 2.",
+   "porque": "Estes materiais tratam diretamente de algoritmos de busca e resolucao de problemas na Unidade 2 (Solucao de Problemas).",
    "escolhido_raw": [
     "Introducao a busca informada",
-    "Hill Climbing e Simulated Annealing"
+    "Hill Climbing e Simulated Annealing",
+    "Algoritmo Dijkstra"
    ]
   },
   {
@@ -235,17 +247,19 @@
     "p2-202401",
     "p2-202402"
    ],
-   "escolhido": [],
-   "hit1": false,
-   "hit3": false,
+   "escolhido": [
+    "p2-202402",
+    "p2-202401"
+   ],
+   "hit1": true,
+   "hit3": true,
    "bloco_gold": "",
-   "bloco_pred": "",
+   "bloco_pred": "bloco-19",
    "bloco_ok": null,
-   "porque": "O CRONOGRAMA_DETALHADO.md especifica no dia 01/07/2026 quais unidades de aprendizagem sao cobradas no conteudo da P2.",
+   "porque": "O FILE_MAP possui as edições anteriores da Prova 2 (P2 2024.02 e P2 2024.01) que servem de base para identificar o conteúdo cobrado.",
    "escolhido_raw": [
-    "course/CRONOGRAMA_DETALHADO.md",
-    "course/SYLLABUS.md",
-    "course/COURSE_MAP.md"
+    "P2 2024.02",
+    "P2 2024.01"
    ]
   },
   {
@@ -256,14 +270,14 @@
     "exemplo-de-programa-com-k-nn-em-java"
    ],
    "escolhido": [
-    "algoritmo-de-classificacao-k-nn"
+    "exemplo-de-programa-com-k-nn-em-java"
    ],
-   "hit1": false,
-   "hit3": false,
+   "hit1": true,
+   "hit3": true,
    "bloco_gold": "",
    "bloco_pred": "bloco-05",
    "bloco_ok": null,
-   "porque": "O arquivo 'Implementação do Algoritmo k-NN (K-Nearest Neighbors) para Classificação de Dados' é um exemplo prático em Java ('Exemplo de programa com k-NN (em java).zip') e está associado ao bloco-05 na unidade de Aprendizado de Máquina.",
+   "porque": "Linha 25 do FILE_MAP indica a implementação em java do algoritmo k-NN para classificação de dados.",
    "escolhido_raw": [
     "Implementação do Algoritmo k-NN (K-Nearest Neighbors) para Classificação de Dados"
    ]
@@ -279,6 +293,7 @@
     "exemplo-complementar-classificacao-com-arvores-de-decisao"
    ],
    "escolhido": [
+    "exemplo-2-arvores-de-decisao-regressao-diabetes",
     "arvores-de-decisao"
    ],
    "hit1": true,
@@ -286,8 +301,9 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-05",
    "bloco_ok": null,
-   "porque": "O arquivo 'Árvores de Decisão' é o material de aula teórico principal listado no FILE_MAP que cobre o assunto de árvores de decisão dentro de modelos preditivos.",
+   "porque": "O arquivo 'Regressão com Árvores de Decisão no Dataset Diabetes' trata especificamente do uso de árvores de decisão para problemas de regressão no dataset Diabetes.",
    "escolhido_raw": [
+    "Regressão com Árvores de Decisão no Dataset Diabetes",
     "Árvores de Decisão"
    ]
   },
@@ -308,7 +324,7 @@
    "bloco_gold": "bloco-16",
    "bloco_pred": "bloco-16",
    "bloco_ok": true,
-   "porque": "O arquivo minimax-teoria aborda diretamente o algoritmo e teoria do Minimax para busca adversária na Unidade 2.",
+   "porque": "O arquivo minimax-teoria explica o conceito e a teoria do Algoritmo Minimax e Busca Adversária.",
    "escolhido_raw": [
     "minimax-teoria",
     "Implementação do Algoritmo Minimax com Poda Alpha-Beta para Jogo da Velha"
@@ -325,17 +341,19 @@
    ],
    "escolhido": [
     "aula-sobre-agrupamento-parte-1-particional",
-    "aula-sobre-agrupamento-parte-2-hierarquico"
+    "aula-sobre-agrupamento-parte-2-hierarquico",
+    "survey-on-clustering"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "bloco-07",
    "bloco_pred": "bloco-07",
    "bloco_ok": true,
-   "porque": "As linhas 9 e 10 do FILE_MAP tratam especificamente sobre os conceitos e algoritmos de agrupamento particional (k-Means) e hierárquico.",
+   "porque": "Decidi com base nos itens 9, 10 e 32 do FILE_MAP, que abordam as teorias de agrupamento particional (k-means) e hierárquico.",
    "escolhido_raw": [
     "Aula sobre Agrupamento - parte 1 (particional)",
-    "Aula sobre Agrupamento - parte 2 (hierarquico)"
+    "Aula sobre Agrupamento - parte 2 (hierarquico)",
+    "Survey on Clustering"
    ]
   },
   {
@@ -346,18 +364,18 @@
     "rede-perceptron-reconhecendo-letras"
    ],
    "escolhido": [
-    "exercicio-2-solucao-com-rede-perceptron-atualizado",
-    "rede-perceptron-reconhecendo-letras"
+    "rede-perceptron-reconhecendo-letras",
+    "exercicio-2-solucao-com-rede-perceptron-atualizado"
    ],
-   "hit1": false,
+   "hit1": true,
    "hit3": true,
    "bloco_gold": "",
    "bloco_pred": "bloco-05",
    "bloco_ok": null,
-   "porque": "A linha 6 do FILE_MAP indica o material teórico 'Rede Perceptron' sob o bloco-05, e o CRONOGRAMA_DETALHADO associa o código 'Rede Perceptron - Reconhecendo Letras.ipynb' a esse mesmo período de modelos preditivos.",
+   "porque": "A linha 49 do FILE_MAP aponta exatamente para o exemplo de código de implementação e treinamento de Perceptron para reconhecimento de letras.",
    "escolhido_raw": [
-    "Rede Perceptron",
-    "Rede Perceptron - Reconhecendo Letras.ipynb"
+    "Implementação e Treinamento de Perceptron para Reconhecimento de Padrões Visuais (Letras)",
+    "Rede Perceptron"
    ]
   }
  ]

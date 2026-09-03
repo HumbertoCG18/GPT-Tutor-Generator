@@ -62,11 +62,13 @@ def cobertura_indices(repo, entries: list) -> dict:
     n_tipo = {k: 0 for k in _INDICES_TIPO}
     for e in mats:
         raw = str(e.get("raw_target") or ""); eid = str(e.get("id") or "")
+        nome = Path(str(e.get("source_path") or "")).name  # CODE_INDEX cita `arquivo.py`, nao raw nem id
         no_fm = raw in raws
         em_tipo = False
         for k, txt in por_tipo.items():
-            # raw exato, ou id delimitado (nao substring: "c" casaria qualquer texto)
-            if txt and ((raw and raw in txt) or (eid and re.search(r"(?<![\w-])" + re.escape(eid) + r"(?![\w-])", txt))):
+            # raw exato, nome do arquivo, ou id delimitado (nao substring: "c" casaria qualquer texto)
+            if txt and ((raw and raw in txt) or (nome and nome in txt)
+                        or (eid and re.search(r"(?<![\w-])" + re.escape(eid) + r"(?![\w-])", txt))):
                 n_tipo[k] += 1; em_tipo = True
         if not no_fm:
             ausentes.append(eid)

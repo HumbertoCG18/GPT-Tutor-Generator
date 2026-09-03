@@ -1,6 +1,7 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-02 noite (rodada do motor: Fase 0 e 1b feitas; Fase 3 reescrita pelo dado; decisao C fechada = API-first para cursos em andamento (CG/LR/FR) e backfill nos 5 encerrados; regua de AULA 152/189 e regua de travessia criadas; ponto de entrada = handoff 2026-09-02c).
+last_updated: 2026-09-02 noite (rodada do motor: Fase 0 e 1b feitas; Fase 3 reescrita pelo dado; decisao C fechada = API-first para cursos em andamento (CG/LR/FR) e backfill nos 5 encerrados; regua de AULA 152/189 e regua de travessia criadas; ponto de entrada = handoff 2026-09-02c). 03/09 madrugada: as 6 medicoes
+fecharam (§REGUA DE TRAVESSIA, bloco MEDICOES FECHADAS); watchdog do censo casa por nome de arquivo; proximo = item 1b.
 
 ## SEQUENCIA ACORDADA (02/09 noite) — a lista, em ordem (detalhes no handoff 2026-09-02c)
 
@@ -8,8 +9,9 @@ last_updated: 2026-09-02 noite (rodada do motor: Fase 0 e 1b feitas; Fase 3 rees
 Gate por fase: AULA sobe, curada intacta (199/200 · 191/191 · 93/93), residual flagado <= 8/100, sentinela 0, motor puro
 ± vocab. Teto medido sem LLM ~92%; "100%" = LLM contado no residuo ou professor explicito — gate numerico, nao "100%".
 
-Do user: escrever `travessia_gt_IA.csv` / `travessia_gt_FR.csv`; decisao B (gold eth2/aws) quando quiser; push.
-1. Baseline de travessia (`scripts/eval_travessia.py`, --sem-llm e LLM cacheado) = o "antes".
+Do user: revisar os golds proposto-claude (`travessia_gt_{IA,FR,CG}.csv`, `subunit_gt_FR.csv`, `ground_truth_CG.csv`);
+decisao B (gold eth2/aws) quando quiser; push.
+1. ~~Baseline de travessia~~ FEITO 02-03/09: IA/FR/CG x sem-llm/LLM/contexto completo (§REGUA DE TRAVESSIA). E o "antes".
 1b. **FILE_MAP completo** (medido 02/09 noite: o clamp de 12 KB esconde 2/3 dos materiais em 6 dos 8 cursos; IA 9 -> 14/15
    sem clamp). Conserto: linhas de rastreabilidade -> `course/FILE_MAP_TRACE.md`; clamp so rede de seguranca (80 KB) com aviso
    no BUILD_REPORT; watchdog "materiais no manifest x linhas no FILE_MAP" no censo. Gate: travessia IA >= 14/15, FR 15/15,
@@ -53,22 +55,40 @@ Gold proposto-claude (revisar): `travessia_gt_IA.csv` e `travessia_gt_FR.csv`, 1
 `scripts/eval_travessia.py` (LLM so para medir, cache em `_travessia_cache/`; casamento da escolha por linha do FILE_MAP,
 "linha N" e tokens — o tutor cita a descricao da linha, nao o Titulo).
 
+Tabela fechada 03/09 madrugada (3 cursos x 3 modos; "contexto completo" = README + TUTOR_POLICY + os 4 indices por tipo alem
+dos 4 de navegacao; matcher entende linha do FILE_MAP, "linha N" e titulo-resumo do CODE_INDEX — IA/FR rerodados do cache):
+
 | curso | modo | hit@1 | hit@3 | bloco | estruturada | ambigua | malformada |
 |---|---|---|---|---|---|---|---|
-| FR (20 mat.) | sem-llm | 9/15 | 11/15 | 5/6 | 4/5 | 2/5 | 3/5 |
+| FR (20 mat., FILE_MAP 20/20) | sem-llm | 9/15 | 11/15 | 5/6 | 4/5 | 2/5 | 3/5 |
 | FR | **LLM** | **15/15** | 15/15 | 6/6 | 5/5 | 5/5 | 5/5 |
-| IA (59 mat.) | sem-llm | 10/15 | 12/15 | 6/8 | 4/5 | 1/5 | 5/5 |
-| IA | **LLM** | **9/15** | 10/15 | 8/8 | 4/5 | 2/5 | 3/5 |
+| FR | LLM + contexto completo | 15/15 | 15/15 | 6/6 | 5/5 | 5/5 | 5/5 |
+| IA (59 mat., FILE_MAP 19/59) | sem-llm | 10/15 | 12/15 | 6/8 | 4/5 | 1/5 | 5/5 |
+| IA | **LLM** | **9/15** | 10/15 | 8/8 | 3/5 | 2/5 | 4/5 |
+| IA | LLM + contexto completo | 10/15 | 10/15 | 8/8 | 3/5 | 2/5 | 5/5 |
+| IA | LLM + **FILE_MAP completo** (59 linhas, experimento em copia) | **14/15** | 15/15 | 8/8 | 5/5 | 4/5 | 5/5 |
+| CG (73 mat., FILE_MAP 20/73) | sem-llm | 10/15 | 11/15 | 8/11 | 4/5 | 3/5 | 3/5 |
+| CG | **LLM** | **8/15** | 8/15 | 7/11 | 2/5 | 3/5 | 3/5 |
+| CG | LLM + contexto completo | 10/15 | 10/15 | 7/11 | 2/5 | 4/5 | 4/5 |
 
-Leitura: com 20 materiais os indices bastam (15/15). Com 59, o LLM lendo indices e PIOR que o piso por tokens (9 x 10): (a)
-prefere DECK a notebook quando o aluno pede "exemplo pratico"/"codigo" (3 dos 6 erros); (b) nao acha o deck de metricas por
-"acuracia/precisao/recall" (escolhe pelo periodo "abordagem supervisionada"); (c) "o que cai na P2?" responde com o
-CRONOGRAMA/SYLLABUS — nao e material; o gold tem que dizer se vale. Bloco: 8/8 e 6/6 — o "quando" o tutor acerta.
+Leitura: com 20 materiais os indices bastam (15/15). Com 59 e 73, o LLM lendo indices e PIOR que o piso por tokens (IA 9 x 10,
+CG 8 x 10) e o contexto completo so devolve o empate (10 x 10): os indices por tipo fazem o tutor citar CODIGO, nao achar o deck.
+IA: (a) prefere notebook a deck quando pergunta "como funciona" e deck a notebook quando pede "exemplo pratico"/"codigo";
+(b) nao acha o deck de metricas por "acuracia/precisao/recall" (escolhe pelo periodo "abordagem supervisionada"); (c) "o que
+cai na P2?" responde com o CRONOGRAMA/SYLLABUS — nao e material; o gold tem que dizer se vale. CG: nos 7 erros com LLM o alvo
+do gold esta FORA do FILE_MAP cortado (posicoes 32-57 do manifest: recorte, vis2d, fundamentosmatematicos, colisao, os 2
+exercicios, transformacoes-geometricas-em-opengl) e a escolha errada esta DENTRO (`segmentacaopptx` pos. 2, `opengl3dcpp`
+pos. 14, o pacote "Praticas 2D/3D"). Bloco: 8/8, 6/6, 7/11 — o "quando" o tutor acerta quando o material existe no indice.
 **RAIZ DA PERDA COM O TAMANHO (medida 02/09 noite): o FILE_MAP e CORTADO em 12 KB** (`clamp_navigation_artifact(max_chars=12000)`,
-`navigation.budgeted_file_map_md`, de abril/2026, "compacto e roteavel", sem medicao). O corte e pela cauda, sem relevancia:
-cobertura hoje MF 23/66, SO 22/39, IA 21/59, ES2 21/35, TCC 18/27, CG 21/73; so LR 6/6 e FR 20/20 cabem. No IA faltam os 27
-notebooks (so no CODE_INDEX, que o tutor e mandado ler apenas "ao revisar codigo do aluno") e 13 materiais em indice NENHUM
-(deck de k-NN, metricas, redes neurais, perceptron/reta, P1/P2, lista I, gabarito, agentes). **Experimento** (copia do IA,
+`navigation.budgeted_file_map_md`, de abril/2026, "compacto e roteavel", sem medicao). O renderer emite TODOS os materiais
+(1 linha + 1 linha de rastreabilidade, ~570 B cada); o clamp corta o TEXTO em 12 KB pela cauda, sem relevancia — sobrevivem
+as ~20 primeiras linhas na ordem do manifest (IA posicoes 2-20, MF 3-22, CG 0-19). Cobertura (watchdog `cobertura_indices`
+do censo, 03/09; casa por raw, nome de arquivo e id delimitado): FILE_MAP MF 20/66, SO 22/39, IA 19/59, ES2 21/35, TCC 18/27,
+CG 20/73; so LR 6/6 e FR 20/20 cabem. Em indice NENHUM (nem FILE_MAP nem CODE/EXAM/EXERCISE/ASSIGNMENT_INDEX): MF 24, SO 13,
+IA 12, ES2 11, TCC 9, CG 25 — e material-de-aula/"outros"/listas/provas: os indices por tipo cobrem so codigo, prova,
+exercicio e trabalho, entao slide fora do corte fica invisivel. No IA faltam os 28 notebooks (so no CODE_INDEX, que o tutor e
+mandado ler apenas "ao revisar codigo do aluno") e 12 materiais em indice NENHUM (deck de k-NN, metricas, redes neurais,
+perceptron/reta, P1/P2, lista I, gabarito, agentes). **Experimento** (copia do IA,
 FILE_MAP completo = 59 linhas / 33,7 KB; `_harness-2026-09-02/filemap_sem_clamp{,2}.py`): LLM **9/15 -> 14/15 hit@1, 10 -> 15/15
 hit@3**; ambiguas 2 -> 4/5, malformadas 3 -> 5/5. A perda nao era do LLM nem do tamanho: era do indice incompleto. O piso
 sem-llm nao muda (le o manifest, nao o FILE_MAP). Conserto candidato (medir na regua): FILE_MAP COMPLETO sempre (~570 B por
@@ -76,6 +96,21 @@ material; CG 73 -> ~42 KB), com a linha de rastreabilidade (~45% dos bytes; raw/
 `FILE_MAP_TRACE.md`, e clamp so como rede de seguranca alta (ex.: 80 KB) com aviso no BUILD_REPORT.
 Consequencia para a fase web/grafo: o problema de travessia medido NAO e "achar por semantica"; com o indice completo o
 LLM acha 14/15 lendo Markdown. Rerodar depois da Fase 3 = o "depois".
+
+**MEDICOES FECHADAS 02-03/09 (os 6 itens, "faz na sua ordem, todos entram"):**
+1. Subunidade FR (sidecar compilado por LLM, producao; gold `subunit_gt_FR.csv` proposto-claude): **14/18**. Erros = codigos de
+   socket (udp-example-c/java -> `paradigmas-clienteservidor-e-p2p`; tcp-chat-c/tcp-example vazio). Total 5 cursos 107/111.
+2. Gold de bloco do CG por ESTRUTURA (`ground_truth_CG.csv`; secao numerada do Moodle <-> topico do SARC, `gold_cg_estrutura.py`):
+   61 materiais, **35 scorable** (26 a revisar: secoes 2, 5, 8, 10, 13, 16, 17 sem bloco unico); motor curado+LLM **34/35**, conf-err 1.
+3. Travessia com contexto completo: tabela acima (IA 9 -> 10, FR 15, CG 8 -> 10). Nao substitui o FILE_MAP completo (14/15).
+4. Travessia CG (`travessia_gt_CG.csv`, cardapio, 15 perguntas): tabela acima; 3o curso, mesmo padrao do IA.
+5. Determinismo (8 tutores, 2x reprocess em copia, `_harness-2026-09-02/determinismo.py`): **0 arquivos** nao deterministicos
+   (SO: so o `updated:` do STUDENT_STATE, rodada cruzou a meia-noite). A reordenacao do COURSE_MAP do ES2 (divida de 02/09) NAO
+   reproduziu — fica como divida sem repro, nao como bug confirmado.
+6. Watchdog de cobertura dos indices no censo (`cobertura_indices`): numeros acima. Divida achada: `code/CODE_INDEX.md` do IA
+   diz "⚠ Sem aula atribuida (requer atribuicao manual)" em codigo que TEM bloco temporal — consumidor de campo antigo
+   (`computed_block_id`, decisao H) desatualizado; entra no corte 1 do refactor.
+Resultados versionados: `travessia_result_{IA,FR,CG}_{sem-llm,llm,llm-completo}.json` + `_travessia_cache/`.
 
 ## FASE 1b — vocabulario compilado por LLM + MEDICAO "o que falta para 200" (2026-09-02, sessao 3, parte 2)
 
