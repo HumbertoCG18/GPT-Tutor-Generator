@@ -1,7 +1,7 @@
 # Handoff 2026-09-03b — PONTO DE ENTRADA: a FILA de campanhas (uma aberta, uma proxima, o resto estacionado)
 
-Unico handoff vivo. Substitui `_archive/2026-09-03-handoff-sync.md` (SYNC, encerrada) e `_archive/2026-09-02c-handoff-fase3-medida.md`
-(C0 motor, encerrada). **Leia nesta ordem:** (1) este arquivo; (2) `pendencias.md` §GATE DA FASE 3 e §HOLDOUT (numeros);
+Unico handoff vivo. Substitui `_archive/2026-09-03-handoff-sync.md` (SYNC: 5/6 feitos, continua ABERTA aqui) e `_archive/2026-09-02c-handoff-fase3-medida.md`
+(C0 motor: 6/11 feitos, e a PROXIMA aqui). **Leia nesta ordem:** (1) este arquivo; (2) `pendencias.md` §GATE DA FASE 3 e §HOLDOUT (numeros);
 (3) `.mex/context/decisions.md` (decisoes de 03/09). Rode `mem-search` para as sessoes de 03/09.
 
 **Regra de fila (user, 03/09, contra o acumulo de frentes):** UMA campanha aberta, UMA proxima, o resto ESTACIONADO. **Campanha
