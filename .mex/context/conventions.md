@@ -85,3 +85,9 @@ Run this checklist after code or scaffold changes:
 - [ ] If changing stable block identity, UUID migration, or dry-run persistence behavior, update or add coverage near `tests/test_block_identity.py`, `tests/test_task2_uuid_migration.py`, `tests/test_task3_human_truth_migration.py`, `tests/test_task4_eval_uuid.py`, and `tests/test_persist_gate.py`.
 - [ ] If changing anchor placement or temporal block behavior, update or add coverage near `tests/test_anchor_placement.py` and `tests/test_temporal_block_wire.py`.
 - [ ] If changing stash/card import behavior, update or add coverage near `tests/test_stash_import.py` and `tests/test_stash_backfill.py`.
+
+## Fila de campanhas (user, 2026-09-03)
+
+UMA campanha aberta, UMA proxima, o resto ESTACIONADO com uma linha "pronto quando" no handoff vivo. Campanha so abre quando a
+anterior fecha (gate batido e registrado no tracker) ou e formalmente estacionada. Novo lote = novo handoff, o anterior vai para
+`docs/reports/_archive/`. Motivo: sete frentes "quase fechadas" ao mesmo tempo (03/09) — nenhuma fechava.

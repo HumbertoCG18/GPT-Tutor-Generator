@@ -1,17 +1,16 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-02 noite (rodada do motor: Fase 0 e 1b feitas; Fase 3 reescrita pelo dado; decisao C fechada = API-first para cursos em andamento (CG/LR/FR) e backfill nos 5 encerrados; regua de AULA 152/189 e regua de travessia criadas; ponto de entrada = handoff 2026-09-02c). 03/09 madrugada: as 6 medicoes
-fecharam (§REGUA DE TRAVESSIA, bloco MEDICOES FECHADAS); watchdog do censo casa por nome de arquivo; 1b adiado para a campanha
-de travessia. 03/09 sessao 4: **item 2 (Fase 3a) FEITO** (gerador `fe2c4fb`, 5 tutores reprocessados; §FASE 3a);
-item 3 (Fase 3b, card ordenado) FEITO na mesma sessao (§FASE 3b; AULA 152 -> 163, curada intacta);
-item 4 FEITO (ordem das secoes: 0 efeito pos-item 3, nao entrou; secao 0 do Moodle -> apresentacao: +3/0, AULA 167);
-item 5 FEITO (tokens curtos: AULA 171/170, IA k-NN x4; tokenizador unico `text/tokens.py`); HOLDOUT CG criado (27 -> 30/35);
-item 6 NAO ENTRA (H6 0/0); ancora como faixa da secao (+4/0, refinamento do item 3); **item 7 (gate da Fase 3) REGISTRADO: AULA 152 -> 174/189 com vocab (175 sem), curada intacta, votos/100 caem — residual flagado 18,5/100 (meta <= 8 NAO batida; vai para o item 11)**; item 8 (rebuild) virou a **CAMPANHA SYNC** (dry-runs de 03/09: FR mesmos 20 arquivos, LR sem o Lab 4, CG e o unico rebuild real; casamento por stem `a1bcc25`); SYNC S1 FEITO (`sync_diff` + `sync_moodle.py --dry-run`; LR 1 novo = Lab 4, FR 0, CG 19 novos/26 sumidos por nome); SYNC S2+S3 FEITOS (plano de import, `--apply`, diff de decisoes, `mudou`, SYNC_REPORT; copia do LR: Lab 4 entra, 2a sync byte-identica); S4 FEITO (LR `040b2dd`: Lab 4 entrou; fix `process_entry` `91867b7`; suite 2295 — o commit `619488c` diz 2299, e 2294); S5 FEITO (FR `89db35d`: 2 videos como referencia; bug da 2a sync apagando entries url corrigido, `e593ee7`); **proximo = S6 (CG rebuild limpo pela API; custo Datalab, decisao do user)**; depois C1 -> C3 -> C2 -> C4 -> C5 -> C6 (ordem do user 03/09: provas antes de bibliografia). **Ponto de entrada = handoff `2026-09-03-handoff-sync.md`** (o 02c foi para `_archive/`).
-Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3, 4.8k linhas)
-em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03-sync + plano
-2026-09-02 (desenho/decisoes, carimbado).
+last_updated: 2026-09-03 (sessao 4, tarde). **Ponto de entrada = handoff `2026-09-03b-handoff-fila-campanhas.md`** (regra
+de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
+**ENCERRADAS em 03/09:** C0 MOTOR (itens 2-7 + gate; 9 -> C4, 10 nao entra sem numero, 11 -> "LLM no residuo", 12 -> C1) e
+SYNC (S1-S5: `sync_moodle.py`, LR e FR sincronizados; S6 = gate de saida da campanha aberta).
+**FILA:** 1 ABERTA = PAGINAS+CG (HTML como material, H1-H5, termina com o CG sincronizado) · 2 PROXIMA = C1 travessia ·
+estacionadas: C3 provas/listas/imagens · C2 bibliografia · LLM no residuo · C4 limpa · C5 dividas de dados · C6 web.
+Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
+4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
+plano 2026-09-02 (desenho/decisoes, carimbado).
 
-## SEQUENCIA ACORDADA (02/09 noite; C0 fechado em 03/09) — a lista, em ordem (detalhes: `_archive/2026-09-02c-...`; fila viva no handoff 2026-09-03-sync)
+## SEQUENCIA ACORDADA (02/09 noite) — HISTORICO: C0 e SYNC encerradas em 03/09 (fila viva no handoff 2026-09-03b)
 
 **Rodada atual = fechar o motor de MATERIAL DE AULA (189/203 golds; regua `_harness-2026-09-02/regua_aula.py`, hoje 152/189).**
 Gate por fase: AULA sobe, curada intacta (199/200 · 191/191 · 93/93), residual flagado <= 8/100, sentinela 0, motor puro
