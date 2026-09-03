@@ -32,6 +32,9 @@ puro+vocab 162/167/50/79 · **AULA 152/189**.
 modelos criados). Push quando quiser.
 1. **Baseline de travessia ("antes")**: `python scripts/eval_travessia.py IA --sem-llm` e sem `--sem-llm` (Gemini, cacheado em
    `docs/reports/_travessia_cache/`); idem FR. Versionar os `travessia_result_*.json`.
+1b. **FILE_MAP completo** (clamp de 12 KB esconde 2/3 dos materiais; IA 9 -> 14/15 sem clamp — `pendencias.md` §REGUA DE
+   TRAVESSIA): rastreabilidade -> `FILE_MAP_TRACE.md`, clamp 80 KB + aviso, watchdog de cobertura no censo. Gate: travessia
+   IA >= 14/15, FR 15/15, sentinela 0.
 2. **3a Backfill estrutural nos 5 encerrados** (reprocess, nao rebuild): ler `raw/moodle/contents.json` + `sections.json`;
    casar modulo <-> entry (nome do arquivo primeiro, depois `moodle_label` se unico na secao, depois stem — ver
    `_harness-2026-09-02/audita_gold.py`, que casou 151/189 golds de aula); gravar no manifest `moodle_section_index`,

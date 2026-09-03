@@ -10,6 +10,10 @@ Gate por fase: AULA sobe, curada intacta (199/200 · 191/191 · 93/93), residual
 
 Do user: escrever `travessia_gt_IA.csv` / `travessia_gt_FR.csv`; decisao B (gold eth2/aws) quando quiser; push.
 1. Baseline de travessia (`scripts/eval_travessia.py`, --sem-llm e LLM cacheado) = o "antes".
+1b. **FILE_MAP completo** (medido 02/09 noite: o clamp de 12 KB esconde 2/3 dos materiais em 6 dos 8 cursos; IA 9 -> 14/15
+   sem clamp). Conserto: linhas de rastreabilidade -> `course/FILE_MAP_TRACE.md`; clamp so rede de seguranca (80 KB) com aviso
+   no BUILD_REPORT; watchdog "materiais no manifest x linhas no FILE_MAP" no censo. Gate: travessia IA >= 14/15, FR 15/15,
+   sentinela 0 no motor (so artefatos mudam). Uma constante + uma linha movida; TDD.
 2. Fase 3a — backfill estrutural nos 5 ENCERRADOS (reprocess; `raw/moodle/contents.json`+`sections.json` -> campos novos no
    manifest; casamento modulo<->entry como em `audita_gold.py`; higiene: ano != curso e ruido, label sem data nao ancora).
 3. Fase 3b — card como documento ordenado = provider de janela (+12/-5 so flagados).
