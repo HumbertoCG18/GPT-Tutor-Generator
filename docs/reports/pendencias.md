@@ -60,8 +60,18 @@ Leitura: com 20 materiais os indices bastam (15/15). Com 59, o LLM lendo indices
 prefere DECK a notebook quando o aluno pede "exemplo pratico"/"codigo" (3 dos 6 erros); (b) nao acha o deck de metricas por
 "acuracia/precisao/recall" (escolhe pelo periodo "abordagem supervisionada"); (c) "o que cai na P2?" responde com o
 CRONOGRAMA/SYLLABUS — nao e material; o gold tem que dizer se vale. Bloco: 8/8 e 6/6 — o "quando" o tutor acerta.
-Consequencia para a fase web/grafo: o problema de travessia medido NAO e "achar por semantica", e "escolher o TIPO certo de
-material (codigo x deck) e ler colunas do FILE_MAP" — informacao que ja esta no indice. Rerodar depois da Fase 3 = o "depois".
+**RAIZ DA PERDA COM O TAMANHO (medida 02/09 noite): o FILE_MAP e CORTADO em 12 KB** (`clamp_navigation_artifact(max_chars=12000)`,
+`navigation.budgeted_file_map_md`, de abril/2026, "compacto e roteavel", sem medicao). O corte e pela cauda, sem relevancia:
+cobertura hoje MF 23/66, SO 22/39, IA 21/59, ES2 21/35, TCC 18/27, CG 21/73; so LR 6/6 e FR 20/20 cabem. No IA faltam os 27
+notebooks (so no CODE_INDEX, que o tutor e mandado ler apenas "ao revisar codigo do aluno") e 13 materiais em indice NENHUM
+(deck de k-NN, metricas, redes neurais, perceptron/reta, P1/P2, lista I, gabarito, agentes). **Experimento** (copia do IA,
+FILE_MAP completo = 59 linhas / 33,7 KB; `_harness-2026-09-02/filemap_sem_clamp{,2}.py`): LLM **9/15 -> 14/15 hit@1, 10 -> 15/15
+hit@3**; ambiguas 2 -> 4/5, malformadas 3 -> 5/5. A perda nao era do LLM nem do tamanho: era do indice incompleto. O piso
+sem-llm nao muda (le o manifest, nao o FILE_MAP). Conserto candidato (medir na regua): FILE_MAP COMPLETO sempre (~570 B por
+material; CG 73 -> ~42 KB), com a linha de rastreabilidade (~45% dos bytes; raw/tags/markdown-base, uso humano) movida para
+`FILE_MAP_TRACE.md`, e clamp so como rede de seguranca alta (ex.: 80 KB) com aviso no BUILD_REPORT.
+Consequencia para a fase web/grafo: o problema de travessia medido NAO e "achar por semantica"; com o indice completo o
+LLM acha 14/15 lendo Markdown. Rerodar depois da Fase 3 = o "depois".
 
 ## FASE 1b — vocabulario compilado por LLM + MEDICAO "o que falta para 200" (2026-09-02, sessao 3, parte 2)
 
