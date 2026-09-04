@@ -11,25 +11,28 @@ anterior vai para `_archive/`. Tracker registra numero e commit de cada item.
 **Caixa de IDEIAS (secao no fim):** o que surge no meio do caminho ("da para fazer X?") NAO entra na campanha aberta: vai para a
 caixa com 3 campos — da para fazer? · quando (qual campanha)? · o que resolve no sistema? — e e triado so na fronteira entre campanhas.
 
-## COMECE POR (proxima sessao) — SYNC S6a/S6b, TDD, copia antes do original
-0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` pode estar sujo), `git log --oneline -3` (HEAD = docs
-   do criterio estrito), HEAD dos 8 tutores iguais aos de "Estado ao comecar", `python scripts/censo_motor_llm.py` (revisar/100 51,7).
-1. **S6a**: `html_to_structured_markdown` ganha `max_chars` (default 15 000 = comportamento das entries url; arquivo local passa
-   sem teto). Teste: a `Curvas.htm` real converte inteira (11 179 chars com refs, 24 refs de imagem).
-2. **S6b, TDD com fixture real** (`_harness-2026-09-03/piloto-curvas/`: `Curvas.htm`, 27 imagens em `images/`, `datalab_cache.json` =
-   gold das 12 formulas + 9 legendas + 3 vazias, `Curvas.piloto.md` = saida esperada, `piloto_curvas.py` = como foi gerado):
-   (a) `stash_import._classify_file_type`: `.html`/`.htm` -> `"html"`; (b) `RepoBuilder._process_html` (ops, nao engine) = HTML salvo ->
-   conversor -> markdown; imagens: md5 -> dedupe de logos (aparecem em toda pagina do curso) -> Datalab CRU por imagem com cache por
-   md5 (`course/.image_curation` ou sidecar proprio) e cap por build (400) -> `$$` vira bloco + `<sub>fonte: [x.gif](images/x.gif)</sub>`;
-   legenda -> Gemini PT-BR -> `![Figura: ...](images/x.gif)`; vazia -> Gemini descreve; falha -> `![x.gif — nao capturada](images/x.gif)`;
-   imagens copiadas para `content/images/`. Clientes Datalab/Gemini FALSOS nos testes (o cache do piloto e a resposta).
-   (c) `manual-review/formulas/<id>.md` (S6c) sai da mesma funcao: LaTeX + link da imagem + caixa "conferir com o professor".
-3. Gate do S6b antes de commitar: suite verde; a Curvas de ponta a ponta numa COPIA do CG (`.ablacao/Computacao-Grafica-Tutor`)
-   produz o `Curvas.piloto.md` (modulo 12 formulas); curada dos 5 intacta; sentinela 0 nos 8; determinismo.
-4. Depois: S6d (pull grava `.html` no stash; snapshot so na subarvore), S6e (fixtures), S6f (CG rebuild — gasto autorizado pelo user
-   em 03/09: Datalab ~21 PDFs + ~250 imagens ≈ US$ 3; Gemini codigos + traducoes; cap por rodada).
-Regras que valem para o codigo novo: `_process_html` mora em `src/builder/ops/` ou `core/`, nunca em `engine.py` (fachada); tokens
-nunca impressos; nenhum tutor original antes da copia passar; cada commit com o numero no tracker.
+## COMECE POR (proxima sessao) — SYNC S6c/S6d (S6a e S6b FEITOS em 03/09 sessao 5)
+0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` pode estar sujo; `.codex/` e o spec `docs/superpowers/specs/
+   2026-09-03-auditoria-enxame-codex-skill-design.md` sao de outro agente, nao toque), `git log --oneline -4` (HEAD = docs desta sessao
+   por cima de `a10a6ca` `0a8ae2e` `6111b46`), HEAD dos 8 tutores iguais aos de "Estado ao comecar" (nenhum mudou), suite 2316,
+   `python scripts/censo_motor_llm.py` (revisar/100 51,8).
+1. **Feito na sessao 5** (numeros e achados: `pendencias.md` §SYNC S6a/S6b; decisao: `decisions.md` §"HTML salvo e material"):
+   S6a `6111b46` conversor sem teto / sem VML / cabecalho web so com URL; S6b `0a8ae2e` `core/html_material.process_html` (tipo `html`
+   antes de code, Datalab cru por imagem com cache md5 em `course/.image_transcriptions.json` e cap 400, `$$` + fonte + review por
+   formula, legenda/vazia pelo Gemini, `data:` decodificado, resolver conta link para content/images); fix `a10a6ca` (referencia url
+   sem cabecalho web: determinismo 8/8). Gate: Curvas na copia `.ablacao/CG-gate-html` (gitignored): 12 formulas + 9 legendas + 3
+   descritas, 0 nao capturadas, idempotente. **Para voce conferir:** `.ablacao/CG-gate-html/staging/markdown-auto/html/curvas.md` e
+   `.ablacao/CG-gate-html/manual-review/formulas/` (12; `Image2.gif` tem o erro do professor nos expoentes, transcrito fiel), ou
+   `_harness-2026-09-03/piloto-curvas/Curvas.s6b.md` (mesmo markdown, versionado).
+2. **S6c**: indice das formulas transcritas + nao capturadas no `SYNC_REPORT` (`render_sync_report` em `sources/moodle_sync.py`;
+   dado = `html_images` de cada entry html no manifest + `manual-review/formulas/*.md`). TDD com o manifest do gate como fixture.
+3. **S6d** (pull): `moodle_pull.py` grava `.html` no stash em vez de imprimir PDF (resource `.htm(l)` e `mod_page`; hoje linhas
+   184-205 e 265-273), `.orig` do snapshot NAO vai para o stash, snapshot segue so a SUBARVORE da pagina (hoje `same_site` vaza
+   `CGII/`, `~manssour/`, `CG-PPGCC/`), indices de video como `references`; decidir http do mesmo host -> mirror (12 refs em 20
+   paginas ficam "nao capturada" hoje). Dry-run antes de tocar em qualquer stash real; copia antes do original.
+4. Gate de cada sub-etapa: suite verde; sentinela 0 nos 8; determinismo 8/8; curada intacta; commit com o numero no tracker.
+Regras que valem para o codigo novo: `_process_html` mora em `core/html_material.py` (fachada de 2 linhas no engine); tokens nunca
+impressos; nenhum tutor original antes da copia passar.
 
 ## Leis (inalteradas)
 Dado antes de codigo · raiz nunca remendo · sem regra por categoria/curso · gold nao e oraculo (Moodle/SARC sao a verdade
@@ -38,7 +41,7 @@ preempta o voto do LLM · nada pushed sem o user · `.claude/settings.local.json
 Datalab/Gemini `.env`) nunca impressos · [Humberto] · nao corrigir conteudo do professor em silencio (marcar para review).
 
 ## Estado ao comecar (dados de 03/09, tudo commitado, NADA pushed)
-Gerador `feat/motor-atribuicao`, **805 commits a frente de `main`** (4 atras). Rodada do motor: `fe2c4fb` `b802a68` `79fc92a` `fdf28af`
+Gerador `feat/motor-atribuicao`, **805 commits a frente de `main`** (4 atras); sessao 5 (03/09 noite) acrescentou `6111b46` `0a8ae2e` `a10a6ca` + docs (suite 2316). Rodada do motor: `fe2c4fb` `b802a68` `79fc92a` `fdf28af`
 `b1d565a` `a1bcc25`; SYNC: `2491596` `619488c` `91867b7` `e593ee7` + `53f5db1` (img no conversor) + docs (`0c5129b`). Suite 2298.
 Tutores: MF `e39e14a` · SO `603d914` · IA `ca1f765` · ES2 `2212f9f` · TCC `b9af3c3` (encerrados, estrutura do Moodle no manifest) ·
 LR `040b2dd` (sincronizado: Lab 4 entrou) · FR `89db35d` (sincronizado: 2 videos como referencia) · CG `19472d1` (EXPORT; e o
@@ -56,7 +59,8 @@ AULA 174/189 (175 sem vocab) · REF 8/10 · holdout CG puro 30/35, curado 34/35 
   "depois" = rerodar o item 1 e comparar).
 - **SYNC — 5/6 feitos, ABERTA.** Feitos: S1 diff, S2 import do delta, S3 regeneracao + diff de decisoes + `mudou` + SYNC_REPORT,
   S4 LR sincronizado (Lab 4), S5 FR controle (2 videos). Falta: S6 (CG rebuild pela API), que DEPENDE de tratar HTML como
-  material — por isso a "PAGINAS+CG" nao e campanha: e a sub-etapa S6a-S6f dentro da SYNC (abaixo).
+  material — por isso a "PAGINAS+CG" nao e campanha: e a sub-etapa S6a-S6f dentro da SYNC (abaixo). **S6a e S6b FEITOS** (sessao 5);
+  faltam S6c-S6f.
 
 ## FILA DE CAMPANHAS (ordem decidida 03/09)
 
@@ -67,9 +71,9 @@ professor; formulas em GIF). Piloto Curvas (03/09): 24 imagens -> Datalab cru a 
 texto voltam vazios. GIF cru funciona (sem PNG/upscale). Decisoes do user: legendas traduzidas pelo Gemini; vazias descritas pelo
 Gemini; formula -> bloco `$$...$$` + `<sub>fonte: [x.gif](images/x.gif)</sub>`; snapshots do site entram como material; `.xlsx` (2)
 ficam ignorados e listados; **toda formula transcrita vai para `manual-review/formulas/` para o user conferir com o professor**.
-- S6a (=H1). Conversor `text/url_markdown.py`: refs `![alt](src)` inline e em bloco (FEITO 03/09, `src` sem aspas coberto); teto de 15 000
+- S6a (=H1) **FEITO `6111b46`**. Conversor `text/url_markdown.py`: refs `![alt](src)` inline e em bloco (FEITO 03/09, `src` sem aspas coberto); teto de 15 000
   chars vira parametro (arquivo local sem teto).
-- S6b (=H2). Tipo `html`/`htm` em `stash_import._classify_file_type` + `_process_html` (HTML salvo -> conversor -> `base_markdown`); imagens
+- S6b (=H2) **FEITO `0a8ae2e`** (logos: regra de descarte NAO entrou, 0 no dado; `data:` base64 entrou; review por formula ja sai daqui). Tipo `html`/`htm` em `stash_import._classify_file_type` + `_process_html` (HTML salvo -> conversor -> `base_markdown`); imagens
   da pagina: logos deduplicados por md5 e descartados; cada imagem -> Datalab CRU com cache por md5 e cap por build (400);
   `$$` -> bloco + fonte; legenda -> Gemini PT-BR -> `![Figura: ...](images/x.gif)`; vazia -> Gemini descreve; falha -> `![x.gif — nao
   capturada](images/x.gif)`; imagens copiadas para `content/images/`.
@@ -129,6 +133,9 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
   lista de formulas para review (S6c) ja da o caminho humano.
 - Regua por item so com vocab (ablacao sem vocab em gate de fase) · sim, 1 flag · C0 item 11 · corta 2,5 min por item.
 - Merge/push dos 805 commits em `main` · sim · fronteira SYNC -> C0 · tira o risco de branch longa.
+- Bold aninhado do Word vira `**P(****0) = P0**` no conversor (Curvas.htm) · sim, conversor · C4 limpa (ou S6f se atrapalhar o tutor) · legibilidade do material HTML.
+- Imagem http do MESMO host da pagina -> arquivo do mirror do snapshot (hoje "nao capturada": 12 refs em 20 paginas do CG) · sim · S6d · menos "nao capturada".
+- FILE_MAP nao lista o html novo (clamp 12 KB; nem o PDF irmao aparece) · ja e o item da C1 · C1 · indice completo.
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
 - **Push/merge em `main`:** 805 commits verdes na branch. Proposta: merge ao fechar a campanha 1.
@@ -145,4 +152,4 @@ professor (entra so o que um card do Moodle aponta).
 `scripts/sync_moodle.py` · `scripts/motor_puro.py [--com-vocab]` · `scripts/censo_motor_llm.py` · `scripts/sentinela_manifests.py` ·
 `scripts/eval_eixos.py` · `scripts/reprocess_assignments.py` · `scripts/moodle_pull.py --course N --root R [--dry-run|--pdf]` ·
 `scripts/eval_travessia.py` · `_harness-2026-09-02/{regua_aula,holdout_cg,calibra_revisar,mede_alavancas,determinismo}.py` ·
-pulls reais em `_harness-2026-09-03/pulls/{FR,LR,CG}/` · piloto Curvas no scratchpad de 03/09 (cache Datalab com as 12 formulas).
+pulls reais em `_harness-2026-09-03/pulls/{FR,LR,CG}/` · piloto Curvas versionado em `_harness-2026-09-03/piloto-curvas/` (Curvas.htm, 27 imagens, gold Datalab, `gate_s6b_curvas.py` = Curvas de ponta a ponta numa copia do CG, `Curvas.s6b.md` = saida do S6b).

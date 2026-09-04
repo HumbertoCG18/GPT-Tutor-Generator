@@ -328,7 +328,7 @@
 <div class="pipe">
   <div class="stage">
     <h4>① ENTRADA — fontes</h4>
-    <div class="io">PDFs locais · imagens · código/.ipynb · ZIPs · repositórios GitHub · URLs · import Moodle/M365 (stash)<br>
+    <div class="io">PDFs locais · imagens · código/.ipynb · ZIPs · repositórios GitHub · URLs · páginas HTML do stash (.htm/.html → <code>core/html_material.py</code>: texto pelo conversor, imagens pelo Datalab cru; SYNC S6b) · import Moodle/M365 (stash)<br>
     <b>Roteador:</b> <code>ops/entry_processing.py — process_entry()</code> despacha por <code>FileEntry.file_type</code> e copia bruto para <code>raw/</code></div>
   </div>
   <div class="arrow">↓</div>

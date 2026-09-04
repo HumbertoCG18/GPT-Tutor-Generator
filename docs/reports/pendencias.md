@@ -1,14 +1,37 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-03 (sessao 4, tarde). **Ponto de entrada = handoff `2026-09-03b-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-03 (sessao 5, noite). **Ponto de entrada = handoff `2026-09-03b-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 6/11 (faltam 9, 10, 11, 12);
-SYNC 5/6 (falta S6 = CG pela API, que engloba HTML como material, S6a-S6f).
+SYNC 5/6 (falta S6 = CG pela API, que engloba HTML como material: **S6a e S6b FEITOS** na sessao 5, faltam S6c-S6f; §SYNC S6a/S6b).
 **FILA:** 1 ABERTA = SYNC (S6a-S6f) · 2 PROXIMA = C0 itens 9-12 · estacionadas: C1 travessia · C3 provas/listas/imagens ·
 C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## SYNC S6a/S6b — HTML COMO MATERIAL (03/09 sessao 5, FEITOS; S6c parcial)
+
+Commits: S6a `6111b46` (conversor: `truncate_markdown_blocks(max_chars=None)`, Comment/Declaration nao vazam, cabecalho web so
+com URL) · S6b `0a8ae2e` (`core/html_material.process_html`, tipo `html` antes de code, `GeminiClient.generate_text`, resolver conta
+link para content/images) · fix `a10a6ca` (referencia url sem cabecalho web: hash estavel, sem re-sumarizar a cada regeneracao).
+Decisao: `decisions.md` §"HTML salvo e material". Testes: `test_url_markdown.py`, `test_html_material.py`, `test_gemini_generate_text.py`.
+**Dado antes de codigo** (51 paginas reais do CG = 20 do site + 31 do Moodle): 0/51 passam de 15 000 chars (Vis3d 14 183); VML
+vazava em 4; 3 paginas do Moodle ("resolucao de prova") com 20 PNGs `data:` inline (0,6-2 MB de markdown); 139 imagens no mirror,
+0 duplicadas por md5, 0 logos sobrevivem ao conversor (todos em `<td>`) — regra "logos descartados por md5" NAO entrou; gold do
+Datalab: 12/12 formulas com `$$`, 0/9 legendas (legendas tem `$C_1$` inline). Custo real estimado do CG: ~160 imagens ≈ US$ 1,60.
+**Gate:** suite 2316 · Curvas.htm na copia `.ablacao/CG-gate-html` (layout real do mirror, cache semeado do gold): 24 imagens ->
+12 formulas + 9 legendas + 3 descritas, 0 nao capturadas, 24 copias em content/images, 12 reviews em manual-review/formulas,
+0 Datalab, 12 Gemini; unprocess + re-add = 0 chamadas, markdown byte-identico, mesmo bloco (bloco-15 por janela-1, igual ao irmao
+`computacao-grafica-curvas-parametricas`; o irmao `curvasparametricas` esta em bloco-13 — ambiguidade pre-existente do CG, C0) ·
+curada 199/200 conf-err 0 · 191/191 · 55/57 · motor puro +vocab 183/178/53/82 · sentinela 0/8 · determinismo 8/8 (FR estava com 4
+arquivos por causa pre-existente do S5: referencia url re-sumarizada toda rodada; corrigida em `a10a6ca`; FR original re-sumariza
+UMA vez na proxima sync). Tutores: nenhum muda neste passe.
+Achados no gate: (1) `resolve_content_images` apagava as 12 GIFs de formula (fonte e link `[..]`, nao `![..]`) — raiz corrigida;
+(2) FILE_MAP nao lista `curvas` — clamp de 12 KB (nem o PDF irmao aparece): C1, nao S6.
+**Faltam no S6:** S6c (indice das formulas/nao capturadas no SYNC_REPORT), S6d (pull grava `.html` no stash em vez de imprimir PDF;
+`.orig` nao vai; snapshot so na SUBARVORE; http do mesmo host -> mirror?), S6e (gold do S6c/S6d; as fixtures do S6a/S6b ja estao),
+S6f (CG rebuild). Evidencia versionada: `_harness-2026-09-03/piloto-curvas/{gate_s6b_curvas.py,Curvas.s6b.md}`.
 
 ## SEQUENCIA ACORDADA (02/09 noite) — HISTORICO: C0 e SYNC encerradas em 03/09 (fila viva no handoff 2026-09-03b)
 
