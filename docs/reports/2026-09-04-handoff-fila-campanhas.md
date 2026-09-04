@@ -65,9 +65,9 @@ Itens: rastreabilidade (`FILE_MAP_TRACE.md`), coluna "Secoes" limitada, clamp 80
 regua pos-C1 mostrar erro dessa forma. `python scripts/eval_travessia.py {IA,FR,CG} [--sem-llm|--contexto-completo]`.
 **Pronto quando:** IA >= 14/15, FR 15/15, CG rerodado, sentinela 0 no motor. 1 sessao.
 
-### 3. ESTACIONADA — C3 PROVAS, LISTAS, TRABALHOS E IMAGENS (antes de C2, ordem do user)
+### 3. ESTACIONADA — C3 PROVAS, LISTAS E TRABALHOS (antes de C2, ordem do user)
 Granularidade da cobertura (prova inteira x questao a questao — decisao aberta desde 18/08), P2b-LLM (extracao de questoes,
-cacheado, contado), EXAM_INDEX "incidencia por topico" honesto, imagens do Datalab consumidas pelo tutor, triagem "em duvida
+cacheado, contado), EXAM_INDEX "incidencia por topico" honesto, triagem "em duvida
 28/08" (PS/G2 como principais, cadeira sem prova, `U1 - ...`/"Laboratorio N"). **Pronto quando:** gold de ~10 provas + ~10
 imagens medido e curada intacta.
 
@@ -88,12 +88,26 @@ Lab SO (SARC da turma 310), GAP VIDEO do T2, 10 suspeitos do `detecta_headings`,
 ### 7. ESTACIONADA — C6 WEB
 Backlog vivo em `pendencias.md` §CAMPANHA FUTURA; `graph.json` derivado como modelo de dados. Depois de C4.
 
+### 8. ESTACIONADA — C7 IMAGENS (decisao do user 04/09: campanha propria; posicao na fila a decidir na fronteira)
+Objetivo do user: nenhuma imagem captada 2 ou mais vezes, e logos/imagens de template fora do tutor. Dado medido 04/09 (CG, 977 imagens):
+3 familias por PDF (`page-NNN-img` do pymupdf, `-datalab-<md5>_img`, `<arquivo>.pdf-NNNN-NN`), 359 orfas (213+146) nunca citadas; 299 logos
+(296 curados pelo user em `content/images/logos/` + 3 achados por dHash<=8, conferidos na imagem; galeria PARCIAL, "tem mais"), 0 citados em
+markdown, entram pelo bloco de `resolve_content_images` que copia toda imagem extraida para o Image Curator; 39 logos nos bundles do stash
+(0 lidos); 7 alts de logo virando texto (CG 2 `PUCRS logo`, TCC 5 `watermark of the USP crest`); mesma pagina do Moodle em 2 secoes = 2
+entries (Resolucao de Prova 2D, modulos 3770178/3770183). Galeria dHash<=8 nos 8 tutores: CG 3, TCC 25, SO 2, IA 1, outros 0; 0 citados.
+**REFUTADO:** cluster dHash automatico sem galeria (flagaria 191 fora do dir, 84 citadas, GIFs de formula das Curvas); md5 exato pega so
+203/296 (logo com numero de slide queimado); "169 refs a template no CG" (03/09) nao se reproduz: 0 grupos template entre as 322 citadas.
+Itens: (1) medir duplicacao entre as 3 familias (md5 + dHash) e decidir UMA fonte por PDF; (2) galeria `data/image_templates/` (42
+representantes dHash<=4, 1 MB, seed = `logos/` do user) + `is_template_image` (md5 ou dHash<=8, PIL, sem lib nova) na copia para
+`content/images`, na ref `![]`/descricao Gemini e em `save_material`; (3) pagina repetida -> 1 entry (md5 do html sem ids de player);
+(4) imagens do Datalab consumidas pelo tutor (era C3); (5) limpar os 8 tutores rodando so a etapa de imagens, copia `.ablacao` antes.
+Gate: curada, holdout, sentinela e determinismo identicos; por tutor contar `content/images` (esperado CG -299, TCC -25, SO -2, IA -1),
+refs md alteradas (esperado so os 7 alts), stash CG -39. **Pronto quando:** 0 duplicata por md5 em `content/images` dos 8 e 0 hit de galeria.
+
 ## CAIXA DE IDEIAS (fora da campanha aberta; triagem so na fronteira)
 Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no sistema?
 - Conferencia das 37 formulas do CG por LLM (Gemini ve a imagem e compara com a transcricao do Datalab; ~37 chamadas) · sim · C3 · segunda opiniao
   depois da aprovacao humana de 04/09; so lista divergencias, nao corrige.
-- Mesma pagina do Moodle em 2 secoes vira 2 entries (CG: `Resolucao de Prova 2D`, modulos 3770178 em Provas Resolvidas e 3770183 em Exercicios 2D;
-  html difere so no id aleatorio do player de video; 6 imagens duplicadas em `content/images`) · sim: md5 do texto do html sem ids de player · C3 · junto com a dedupe de imagens.
 - Watchdog de formula transcrita x texto ao redor (erro do professor vs OCR) · sim, heuristica fraca · C3 · so listaria suspeitas; a
   lista de formulas para review (S6c) ja da o caminho humano.
 - Regua por item so com vocab (ablacao sem vocab em gate de fase) · sim, 1 flag · C0 item 11 · corta 2,5 min por item.
@@ -107,7 +121,7 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
 - Migrar os 4 labs `.htm` do LR de PDF impresso para html (regra (a) do S6d) · sim: readd dos 4 · fronteira C0 -> C1 · fidelidade das imagens dos roteiros.
 - Sobras `.ablacao/CG-rebuild` (365 MB) e `CG-export-backup` (440 MB) · apagar quando o user confirmar o CG novo (gate-html e rebuild-holdout ja foram) · agora · disco.
 - `sync_diff` lista como NOVO modulo cujos arquivos sao todos de extensao ignorada (2 xlsx do CG) · sim: classificar como ignorado · fronteira C0 -> C1 · relatorio sem ruido.
-- **Imagens-template (logos PUCRS) fora do tutor** (user 04/09; refinado com os 8 tutores). Dado: 4056 imagens em `content/images`, 903 (22%) em 228 grupos byte-identicos; 104 grupos atravessam >1 documento (template do CURSO); TCC 52% duplicado, SO 33%, CG 25%, MF 2%; tamanho nao separa (47 pequenas, 94 medias, 87 grandes repetidas). Origem: extracao de pagina do PDF (pymupdf), nao as paginas html (0/142 com logo; os `<td>` derrubam) — e `save_material` copia 39 logos para os bundles do stash (medido 04/09 por md5: `SomenteBrasao` x16, `SomentePoliAzul` x16, `logo_grv_low5` x7, em 16 dos 17 bundles; nenhum logo com outro nome; 0 chegam ao tutor). User 04/09: "quero tirar logos, imagens de template e etc" — decisao de fila pendente (C3 ou puxar). **Regra refinada, generica:** md5 repetido >= 3x no mesmo documento OU presente em >= 2 documentos = template -> nao entra em `content/images` e a ref `![]` sai do markdown; par exato (2x no mesmo doc) = dedupe, guarda 1 (pode ser diagrama reusado). Efeito medido: 761 arquivos template + 71 dedupe = -20% (4056 -> 3224); refs de markdown a template: CG 169, FR 16, LR 9, os outros 5 tutores 0 (arquivos orfaos do `images_dir`). Onde: `resolve_content_images` (skip + drop da ref; `prune_stale_image_curation` limpa a curadoria) e `save_material` (imagem em >= 2 paginas do mesmo pull nao entra no bundle). Gate: curada, holdout, sentinela e determinismo identicos; medir FILE_MAP (image_description e fallback de texto). · sim · C3 · tutor sem lixo visual, -832 arquivos nos 8 repos.
+- Imagens-template, logos e duplicatas -> virou campanha propria **C7 IMAGENS** (fila, item 8); dados e refutacoes estao la.
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
 - **Push/merge em `main`:** ~825 commits verdes na branch; a fronteira SYNC -> C0 chegou. Proposta: merge/push agora.
