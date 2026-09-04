@@ -11,10 +11,10 @@ anterior vai para `_archive/`. Tracker registra numero e commit de cada item.
 **Caixa de IDEIAS (secao no fim):** o que surge no meio do caminho ("da para fazer X?") NAO entra na campanha aberta: vai para a
 caixa com 3 campos — da para fazer? · quando (qual campanha)? · o que resolve no sistema? — e e triado so na fronteira entre campanhas.
 
-## COMECE POR (proxima sessao) — SYNC S6c/S6d (S6a e S6b FEITOS em 03/09 sessao 5)
+## COMECE POR (proxima sessao) — SYNC S6d (S6a, S6b e S6c FEITOS em 03/09 sessao 5)
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` pode estar sujo; `.codex/` e o spec `docs/superpowers/specs/
    2026-09-03-auditoria-enxame-codex-skill-design.md` sao de outro agente, nao toque), `git log --oneline -4` (HEAD = docs desta sessao
-   por cima de `a10a6ca` `0a8ae2e` `6111b46`), HEAD dos 8 tutores iguais aos de "Estado ao comecar" (nenhum mudou), suite 2316,
+   por cima de `12990ed` `a10a6ca` `0a8ae2e` `6111b46`), HEAD dos 8 tutores iguais aos de "Estado ao comecar" (nenhum mudou), suite 2318,
    `python scripts/censo_motor_llm.py` (revisar/100 51,8).
 1. **Feito na sessao 5** (numeros e achados: `pendencias.md` §SYNC S6a/S6b; decisao: `decisions.md` §"HTML salvo e material"):
    S6a `6111b46` conversor sem teto / sem VML / cabecalho web so com URL; S6b `0a8ae2e` `core/html_material.process_html` (tipo `html`
@@ -24,8 +24,7 @@ caixa com 3 campos — da para fazer? · quando (qual campanha)? · o que resolv
    descritas, 0 nao capturadas, idempotente. **Para voce conferir:** `.ablacao/CG-gate-html/staging/markdown-auto/html/curvas.md` e
    `.ablacao/CG-gate-html/manual-review/formulas/` (12; `Image2.gif` tem o erro do professor nos expoentes, transcrito fiel), ou
    `_harness-2026-09-03/piloto-curvas/Curvas.s6b.md` (mesmo markdown, versionado).
-2. **S6c**: indice das formulas transcritas + nao capturadas no `SYNC_REPORT` (`render_sync_report` em `sources/moodle_sync.py`;
-   dado = `html_images` de cada entry html no manifest + `manual-review/formulas/*.md`). TDD com o manifest do gate como fixture.
+2. **S6c FEITO `12990ed`**: `formula_index` + secao "Formulas transcritas (conferir com o professor)" no `SYNC_REPORT`.
 3. **S6d** (pull): `moodle_pull.py` grava `.html` no stash em vez de imprimir PDF (resource `.htm(l)` e `mod_page`; hoje linhas
    184-205 e 265-273), `.orig` do snapshot NAO vai para o stash, snapshot segue so a SUBARVORE da pagina (hoje `same_site` vaza
    `CGII/`, `~manssour/`, `CG-PPGCC/`), indices de video como `references`; decidir http do mesmo host -> mirror (12 refs em 20
@@ -60,7 +59,7 @@ AULA 174/189 (175 sem vocab) · REF 8/10 · holdout CG puro 30/35, curado 34/35 
 - **SYNC — 5/6 feitos, ABERTA.** Feitos: S1 diff, S2 import do delta, S3 regeneracao + diff de decisoes + `mudou` + SYNC_REPORT,
   S4 LR sincronizado (Lab 4), S5 FR controle (2 videos). Falta: S6 (CG rebuild pela API), que DEPENDE de tratar HTML como
   material — por isso a "PAGINAS+CG" nao e campanha: e a sub-etapa S6a-S6f dentro da SYNC (abaixo). **S6a e S6b FEITOS** (sessao 5);
-  faltam S6c-S6f.
+  S6c FEITO; faltam S6d-S6f.
 
 ## FILA DE CAMPANHAS (ordem decidida 03/09)
 
@@ -77,7 +76,7 @@ ficam ignorados e listados; **toda formula transcrita vai para `manual-review/fo
   da pagina: logos deduplicados por md5 e descartados; cada imagem -> Datalab CRU com cache por md5 e cap por build (400);
   `$$` -> bloco + fonte; legenda -> Gemini PT-BR -> `![Figura: ...](images/x.gif)`; vazia -> Gemini descreve; falha -> `![x.gif — nao
   capturada](images/x.gif)`; imagens copiadas para `content/images/`.
-- S6c (=H3). `manual-review/formulas/<id>.md`: cada formula (LaTeX + link da imagem-fonte + caixa "conferir com o professor") e as nao
+- S6c (=H3) **FEITO `0a8ae2e` + `12990ed`**. `manual-review/formulas/<id>.md`: cada formula (LaTeX + link da imagem-fonte + caixa "conferir com o professor") e as nao
   capturadas; indice no `SYNC_REPORT`. Sem detector de erro: a lista e para o user.
 - S6d (=H4). Pull: paginas do Moodle e snapshots do site entram no stash como `.html` (nao impressos); indices de video idem, categoria
   `references`; snapshot segue so links na SUBARVORE da pagina (hoje `same_site` = mesmo host: vazaria `Aulas/` e outras cadeiras).

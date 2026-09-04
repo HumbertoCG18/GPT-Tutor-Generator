@@ -3,14 +3,17 @@
 last_updated: 2026-09-03 (sessao 5, noite). **Ponto de entrada = handoff `2026-09-03b-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 6/11 (faltam 9, 10, 11, 12);
-SYNC 5/6 (falta S6 = CG pela API, que engloba HTML como material: **S6a e S6b FEITOS** na sessao 5, faltam S6c-S6f; §SYNC S6a/S6b).
+SYNC 5/6 (falta S6 = CG pela API, que engloba HTML como material: **S6a, S6b e S6c FEITOS** na sessao 5, faltam S6d-S6f; §SYNC S6a/S6b/S6c).
 **FILA:** 1 ABERTA = SYNC (S6a-S6f) · 2 PROXIMA = C0 itens 9-12 · estacionadas: C1 travessia · C3 provas/listas/imagens ·
 C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
-## SYNC S6a/S6b — HTML COMO MATERIAL (03/09 sessao 5, FEITOS; S6c parcial)
+## SYNC S6a/S6b/S6c — HTML COMO MATERIAL (03/09 sessao 5, FEITOS)
+
+S6c `12990ed`: `formula_index` + secao "Formulas transcritas (conferir com o professor)" no SYNC_REPORT (por entry html: n formulas,
+n nao capturadas, arquivos de review). Na copia do gate: curvas 12 · 0 · 12 reviews. Suite 2318.
 
 Commits: S6a `6111b46` (conversor: `truncate_markdown_blocks(max_chars=None)`, Comment/Declaration nao vazam, cabecalho web so
 com URL) · S6b `0a8ae2e` (`core/html_material.process_html`, tipo `html` antes de code, `GeminiClient.generate_text`, resolver conta
@@ -29,7 +32,7 @@ arquivos por causa pre-existente do S5: referencia url re-sumarizada toda rodada
 UMA vez na proxima sync). Tutores: nenhum muda neste passe.
 Achados no gate: (1) `resolve_content_images` apagava as 12 GIFs de formula (fonte e link `[..]`, nao `![..]`) — raiz corrigida;
 (2) FILE_MAP nao lista `curvas` — clamp de 12 KB (nem o PDF irmao aparece): C1, nao S6.
-**Faltam no S6:** S6c (indice das formulas/nao capturadas no SYNC_REPORT), S6d (pull grava `.html` no stash em vez de imprimir PDF;
+**Faltam no S6:** S6d (pull grava `.html` no stash em vez de imprimir PDF;
 `.orig` nao vai; snapshot so na SUBARVORE; http do mesmo host -> mirror?), S6e (gold do S6c/S6d; as fixtures do S6a/S6b ja estao),
 S6f (CG rebuild). Evidencia versionada: `_harness-2026-09-03/piloto-curvas/{gate_s6b_curvas.py,Curvas.s6b.md}`.
 
