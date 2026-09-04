@@ -25,6 +25,10 @@ iguais do export com nome quase igual, mesmo bloco): 42 -> 33 linhas, 27 scorabl
 25 = 27 menos 2 pares colapsados por `pair_key`); reguas identicas antes/depois (TCC 25/25 · 18/18 · 3/3). (3) IA tem 17 linhas sem id,
 todas scorable=no (materiais nao rotulados) — ok. MF/SO/ES2 e os golds de subunidade/material/cobertura: sem duplicata. (4) N difere
 entre reguas para os mesmos golds (200 / 203 / 238): todo numero carrega sua regua e seu N.
+**Deixado para tras e fechado antes do C0 (04/09):** o dry-run da sync no CG novo marcava as 4 folhas como SUMIDO (o casador parava no
+basename do hub e nao chegava ao label): `match_module_entries` agora une o casamento por label unico ao do basename — dry-run: sumidos
+0 · iguais 93 · novos 2 (os xlsx, por desenho); motor puro dos 5 identico (183/178/53/82, conf-err 3); suite 2333. Temporarios
+`.determinismo`, `.ablacao/CG-gate-html`, `CG-rebuild-holdout` apagados; ficam `CG-rebuild` (365 MB) e `CG-export-backup` (440 MB) ate o user liberar.
 
 ## SYNC S6f — REBUILD LIMPO DO CG PELA API (04/09 sessao 5, FEITO NA COPIA; decisao do user pendente)
 

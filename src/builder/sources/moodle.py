@@ -277,9 +277,11 @@ def match_module_entries(in_sec, mod, n_name) -> list:
         ids = [e for e in in_sec if any(
             _norm_text(Path(str(e.get("source_path") or "")).stem) == st
             and _ext_compatible(Path(str(e.get("source_path") or "")).suffix.lower(), ext) for st, ext in stems)]
-    if not ids:
-        same = [e for e in in_sec if _norm_text(_label_of(e)) == _norm_text(name)]
-        ids = same if (len(same) == 1 or n_name[_norm_text(name)] == 1) else []
+    # Label do sidecar == nome do modulo: entry ROTULADA pertence ao modulo mesmo quando outro arquivo ja casou
+    # pelo basename (folhas da subarvore levam o label do hub, S6d; sem a uniao viravam "sumidas" na sync, 04/09).
+    same = [e for e in in_sec if _norm_text(_label_of(e)) == _norm_text(name)]
+    if same and (len(same) == 1 or n_name[_norm_text(name)] == 1):
+        ids = ids + [e for e in same if e not in ids]
     if not ids:
         ids = [e for e in in_sec if _norm_text(Path(str(e.get("source_path") or "")).stem) == _norm_text(name)]
     return ids

@@ -101,7 +101,8 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
 - Regra `exclusivo` do disamb (s2=0 -> alta) com UM token: 22 decisoes nos 6 golds, 5 erradas (77% x ~98% prometido pela banda alta; 2+ tokens e margem dao 94%) · sim: 1 token -> banda media + flag, medir motor_puro + eval_eixos + holdout · C0 item 11 · -5 conf-err no puro, 17 certas viram duvida (+~22 votos); `unit_block_conflict` nao separa (2/7 x 5/51). `s6f/mede_exclusivo.py`, `s6f/mede_conflito.py`.
 - Imagem de prova (texto OCR) vira `![Figura: <texto>]` longo em vez de bloco de texto · sim · C3 provas · legibilidade das resolucoes de prova.
 - Migrar os 4 labs `.htm` do LR de PDF impresso para html (regra (a) do S6d) · sim: readd dos 4 · fronteira C0 -> C1 · fidelidade das imagens dos roteiros.
-- Sobras `.ablacao/CG-gate-html`, `CG-rebuild-holdout`, `CG-export-backup` (~1,2 GB) · apagar quando o user confirmar o CG novo · agora · disco.
+- Sobras `.ablacao/CG-rebuild` (365 MB) e `CG-export-backup` (440 MB) · apagar quando o user confirmar o CG novo (gate-html e rebuild-holdout ja foram) · agora · disco.
+- `sync_diff` lista como NOVO modulo cujos arquivos sao todos de extensao ignorada (2 xlsx do CG) · sim: classificar como ignorado · fronteira C0 -> C1 · relatorio sem ruido.
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
 - **Push/merge em `main`:** ~825 commits verdes na branch; a fronteira SYNC -> C0 chegou. Proposta: merge/push agora.

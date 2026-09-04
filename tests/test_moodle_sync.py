@@ -251,3 +251,18 @@ def test_sync_diff_page_attachment_does_not_steal_the_zip_of_another_module():
     d = sync_diff(ents, _cg_contents())
     assert d["sumidos"] == []
     assert not any(n["files"] == ["TransformacoesGeometricas.zip"] for n in d["novos"])
+
+
+def test_sync_diff_keeps_subtree_leaves_labeled_with_the_hub_module():
+    # Dry-run no CG novo (04/09): as 4 folhas (Slab, Dominancia, PlaneSweep, ExercicioDuasCores) apareciam como SUMIDO — o casador
+    # para no basename do hub e nunca chega ao label, que e o que liga a folha ao mesmo modulo `url`.
+    contents = [{"name": "5 - Geometria Computacional", "section": 9, "modules": [
+        {"modname": "url", "id": 1, "name": "Página sobre Geometria Computacional", "url": "http://www.inf.pucrs.br/pinho/CG/Aulas/GeomComp/GeomComp.htm",
+         "contents": [{"type": "url", "fileurl": "http://www.inf.pucrs.br/pinho/CG/Aulas/GeomComp/GeomComp.htm"}]}]}]
+    sec = "5 - Geometria Computacional"
+    ents = [_ent("geomcomp", "GeomComp\GeomComp.htm", "html", "Página sobre Geometria Computacional", sec),
+            _ent("slab", "Slab\Slab.html", "html", "Página sobre Geometria Computacional", sec),
+            _ent("domina", "Domina\Domina.html", "html", "Página sobre Geometria Computacional", sec)]
+    d = sync_diff(ents, contents)
+    assert d["sumidos"] == []
+    assert set(d["iguais"]) == {"geomcomp", "slab", "domina"}
