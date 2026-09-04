@@ -231,11 +231,14 @@ class Snapshot:
         marca "nao capturada"). O bundle e 1 item html no scan; as imagens sao dele, nao entries."""
         page_url = rec["url"]
         page_local = self.root / rec["local"]
-        bundle = stash / (rec["card"] or "sem-card") / page_local.stem
-        bundle.mkdir(parents=True, exist_ok=True)
-        dest = bundle / page_local.name
-        dest.write_bytes(page_local.read_bytes())
         page_dir = unquote(urlparse(page_url).path).rsplit("/", 1)[0] + "/"
+        # `.../RemocaoDeRuido/` -> index.html: o nome vem do diretorio da URL, senao 4 links do CG
+        # colapsavam num so bundle `index/index.html` (pull real, 03/09).
+        stem = page_local.stem if page_local.stem.lower() != "index" else (Path(page_dir.rstrip("/")).name or "index")
+        bundle = stash / (rec["card"] or "sem-card") / stem
+        bundle.mkdir(parents=True, exist_ok=True)
+        dest = bundle / f"{stem}{page_local.suffix}"
+        dest.write_bytes(page_local.read_bytes())
         for img in rec.get("images") or []:
             if not same_site(img, page_url):
                 continue

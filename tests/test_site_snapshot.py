@@ -79,3 +79,26 @@ def test_save_material_copies_page_bundle_without_orig(tmp_path):
     assert (bundle / "perspectiva2.png").is_file()            # mesmo host, fora do dir: entra pelo basename
     assert not (bundle / "sphere.gif").exists()                # outro host: nao capturada no build
     assert not list(bundle.rglob("*.orig"))
+
+
+def test_save_material_names_index_pages_by_their_directory(tmp_path):
+    # Pull real do CG (03/09): 4 links `.../CGII/Exercicios/{FloodFill,RemocaoDeRuido}/` viraram um so bundle `index/index.html`
+    # (o ultimo sobrescreveu os outros). Pagina `index.*` recebe o nome do diretorio da URL.
+    from scripts.site_snapshot import Snapshot
+    root = tmp_path / "pull"
+    for d in ("FloodFill", "RemocaoDeRuido"):
+        pd = root / "raw/site/www.inf.pucrs.br/pinho/CGII/Exercicios" / d
+        pd.mkdir(parents=True)
+        (pd / "index.html").write_text(f"<html><body><p>{d}</p></body></html>", encoding="utf-8")
+        (pd / f"{d}.png").write_bytes(b"PNG")
+    snap = Snapshot(root, depth=1, pdf=False)
+    dests = []
+    for d in ("FloodFill", "RemocaoDeRuido"):
+        rec = {"url": f"https://www.inf.pucrs.br/pinho/CGII/Exercicios/{d}/", "local": f"raw/site/www.inf.pucrs.br/pinho/CGII/Exercicios/{d}/index.html",
+               "card": "8 - Manipulação de Imagens", "title": d, "images": [f"https://www.inf.pucrs.br/pinho/CGII/Exercicios/{d}/{d}.png"]}
+        dests.append(snap.save_material(rec, root / "stash"))
+    card = root / "stash" / "8 - Manipulação de Imagens"
+    assert dests == [card / "FloodFill" / "FloodFill.html", card / "RemocaoDeRuido" / "RemocaoDeRuido.html"]
+    assert "FloodFill" in dests[0].read_text(encoding="utf-8") and "RemocaoDeRuido" in dests[1].read_text(encoding="utf-8")
+    assert (card / "FloodFill" / "FloodFill.png").is_file() and (card / "RemocaoDeRuido" / "RemocaoDeRuido.png").is_file()
+    assert not (card / "index").exists()
