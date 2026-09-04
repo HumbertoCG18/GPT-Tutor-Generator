@@ -90,6 +90,10 @@ Backlog vivo em `pendencias.md` §CAMPANHA FUTURA; `graph.json` derivado como mo
 
 ## CAIXA DE IDEIAS (fora da campanha aberta; triagem so na fronteira)
 Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no sistema?
+- Conferencia das 37 formulas do CG por LLM (Gemini ve a imagem e compara com a transcricao do Datalab; ~37 chamadas) · sim · C3 · segunda opiniao
+  depois da aprovacao humana de 04/09; so lista divergencias, nao corrige.
+- Mesma pagina do Moodle em 2 secoes vira 2 entries (CG: `Resolucao de Prova 2D`, modulos 3770178 em Provas Resolvidas e 3770183 em Exercicios 2D;
+  html difere so no id aleatorio do player de video; 6 imagens duplicadas em `content/images`) · sim: md5 do texto do html sem ids de player · C3 · junto com a dedupe de imagens.
 - Watchdog de formula transcrita x texto ao redor (erro do professor vs OCR) · sim, heuristica fraca · C3 · so listaria suspeitas; a
   lista de formulas para review (S6c) ja da o caminho humano.
 - Regua por item so com vocab (ablacao sem vocab em gate de fase) · sim, 1 flag · C0 item 11 · corta 2,5 min por item.
@@ -103,12 +107,12 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
 - Migrar os 4 labs `.htm` do LR de PDF impresso para html (regra (a) do S6d) · sim: readd dos 4 · fronteira C0 -> C1 · fidelidade das imagens dos roteiros.
 - Sobras `.ablacao/CG-rebuild` (365 MB) e `CG-export-backup` (440 MB) · apagar quando o user confirmar o CG novo (gate-html e rebuild-holdout ja foram) · agora · disco.
 - `sync_diff` lista como NOVO modulo cujos arquivos sao todos de extensao ignorada (2 xlsx do CG) · sim: classificar como ignorado · fronteira C0 -> C1 · relatorio sem ruido.
-- **Imagens-template (logos PUCRS) fora do tutor** (user 04/09; refinado com os 8 tutores). Dado: 4056 imagens em `content/images`, 903 (22%) em 228 grupos byte-identicos; 104 grupos atravessam >1 documento (template do CURSO); TCC 52% duplicado, SO 33%, CG 25%, MF 2%; tamanho nao separa (47 pequenas, 94 medias, 87 grandes repetidas). Origem: extracao de pagina do PDF (pymupdf), nao as paginas html (0/142 com logo; os `<td>` derrubam) — e `save_material` copia 40 logos para os bundles do stash (tutor nao le). **Regra refinada, generica:** md5 repetido >= 3x no mesmo documento OU presente em >= 2 documentos = template -> nao entra em `content/images` e a ref `![]` sai do markdown; par exato (2x no mesmo doc) = dedupe, guarda 1 (pode ser diagrama reusado). Efeito medido: 761 arquivos template + 71 dedupe = -20% (4056 -> 3224); refs de markdown a template: CG 169, FR 16, LR 9, os outros 5 tutores 0 (arquivos orfaos do `images_dir`). Onde: `resolve_content_images` (skip + drop da ref; `prune_stale_image_curation` limpa a curadoria) e `save_material` (imagem em >= 2 paginas do mesmo pull nao entra no bundle). Gate: curada, holdout, sentinela e determinismo identicos; medir FILE_MAP (image_description e fallback de texto). · sim · C3 · tutor sem lixo visual, -832 arquivos nos 8 repos.
+- **Imagens-template (logos PUCRS) fora do tutor** (user 04/09; refinado com os 8 tutores). Dado: 4056 imagens em `content/images`, 903 (22%) em 228 grupos byte-identicos; 104 grupos atravessam >1 documento (template do CURSO); TCC 52% duplicado, SO 33%, CG 25%, MF 2%; tamanho nao separa (47 pequenas, 94 medias, 87 grandes repetidas). Origem: extracao de pagina do PDF (pymupdf), nao as paginas html (0/142 com logo; os `<td>` derrubam) — e `save_material` copia 39 logos para os bundles do stash (medido 04/09 por md5: `SomenteBrasao` x16, `SomentePoliAzul` x16, `logo_grv_low5` x7, em 16 dos 17 bundles; nenhum logo com outro nome; 0 chegam ao tutor). User 04/09: "quero tirar logos, imagens de template e etc" — decisao de fila pendente (C3 ou puxar). **Regra refinada, generica:** md5 repetido >= 3x no mesmo documento OU presente em >= 2 documentos = template -> nao entra em `content/images` e a ref `![]` sai do markdown; par exato (2x no mesmo doc) = dedupe, guarda 1 (pode ser diagrama reusado). Efeito medido: 761 arquivos template + 71 dedupe = -20% (4056 -> 3224); refs de markdown a template: CG 169, FR 16, LR 9, os outros 5 tutores 0 (arquivos orfaos do `images_dir`). Onde: `resolve_content_images` (skip + drop da ref; `prune_stale_image_curation` limpa a curadoria) e `save_material` (imagem em >= 2 paginas do mesmo pull nao entra no bundle). Gate: curada, holdout, sentinela e determinismo identicos; medir FILE_MAP (image_description e fallback de texto). · sim · C3 · tutor sem lixo visual, -832 arquivos nos 8 repos.
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
 - **Push/merge em `main`:** ~825 commits verdes na branch; a fronteira SYNC -> C0 chegou. Proposta: merge/push agora.
-- Revisao humana do CG novo: `_harness-2026-09-03/s6f/revisar_queue.md` (45) e `formulas_index.md` (37; `Image2.gif` da Curvas tem o erro
-  do professor nos expoentes) — nao trava o C0.
+- Revisao humana do CG novo: **formulas 37/37 APROVADAS pelo user (04/09)** (`s6f/formulas_index.md`; `Image2.gif` da Curvas mantem o erro
+  do professor nos expoentes, fonte nao corrigida). Falta o veredito da fila `revisar_queue.md` (45) — nao trava o C0.
 - Regua por item com vocab (campanha 5) · decisao B (campanha 4) · golds proposto-claude — revisao sua, quando quiser.
 
 ## NAO fazer (refutado no gold)

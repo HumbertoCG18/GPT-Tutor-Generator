@@ -65,7 +65,7 @@ banda media + flag (voter e card agem): no puro -5 conf-err e 17 certas viram du
 Tutor CG `a16051b` (66 entries), perfil `stash_folder` -> `computacao-grafica/stash`, `ground_truth_CG.csv` = re-chaveado (export em
 `_archive/`), `course/SYNC_REPORT.md` com as 37 formulas. Reguas no CG novo (`.ablacao` re-sincronizado): holdout **puro 31/35 (conf-err 2, flagados 9) · curado
 33/35 (conf-err 2, flagados 1)** · sentinela 0/8 · censo revisar/100 51,8 -> 54,0 (321 -> 348 materiais), votos/100 32,3 -> 29,9. Export antigo em `.ablacao/CG-export-backup`.
-Pendente (nao trava): revisao humana de `revisar_queue.md` (45) e `formulas_index.md` (37); o antigo pendente (3) a copia virar o original
+Revisao humana: `formulas_index.md` 37/37 APROVADAS pelo user (04/09; conferencia por LLM na caixa, C3). Pendente (nao trava): `revisar_queue.md` (45); o antigo pendente (3) a copia virar o original
 **Complemento do rebuild (04/09, achado pela pergunta "73 -> 66, por que?"):** 3 paginas sairam por regra (nao apontadas por card:
 OpenGL.html, Navega, ImageClass); 4 folhas da subarvore (Slab, Dominancia, PlaneSweep, ExercicioDuasCores) ficavam so no mirror —
 bug do S6d corrigido em `1d14353` (folha vira bundle no modulo do hub); 23 referencias (7 videos + 16 indices de video) nao entram

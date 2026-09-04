@@ -2,6 +2,8 @@
 
 Arquivos em `.ablacao/CG-rebuild/Computacao-Grafica-Tutor/manual-review/formulas/` (fonte NÃO corrigida; `Image2.gif` da Curvas tem o erro do professor nos expoentes).
 
+**Revisão humana (user, 04/09/2026): 37/37 aprovadas.** Conferência por LLM (imagem × transcrição) fica na caixa de ideias (C3).
+
 ## Formulas transcritas (conferir com o professor)
 - intro: 0 formulas · 0 nao capturadas
 - modelagem3d: 0 formulas · 0 nao capturadas
