@@ -310,3 +310,14 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Decision:** O rebuild limpo do CG pela API vira o original (`Computacao-Grafica-Tutor` `a16051b`, 66 entries); o perfil aponta para o stash novo; `ground_truth_CG.csv` passa a ser o re-chaveado (35 scorable). O criterio "holdout curado 34/35" e aceito em 33/35 COM a causa medida e registrada (regra `exclusivo` do disamb por 1 token, C0 item 11a), sem rebaixar o criterio para lotes futuros: o 34 volta a valer quando o item 11a entrar.
 **Reasoning:** O user reverteu "segurar ate o C0" porque manter o CG no export antigo nao faz sentido: o stash novo e o material real (paginas como html, formulas transcritas, 0 impressao em PDF) e o 34/35 anterior dependia de um token de boilerplate ("imagens") que criava competicao falsa. Aceitar o numero honesto com a causa documentada e diferente de dobrar a regua ao numero. Holdout puro 31/35 (conf-err 2, flagados 9) e curado 33/35 (conf-err 2, flagados 1) no CG novo; curada dos 5, sentinela e determinismo intactos.
 **Consequences:** SYNC 6/6 fechada; C0 aberta com o 11a primeiro; export antigo em `.ablacao/CG-export-backup`; revisao humana das 45 duvidas e 37 formulas fica aberta sem travar campanha.
+
+---
+
+### C7 IMAGENS: campanha propria para duplicatas e logos, estacionada (nao entra na C0)
+
+**Date:** 2026-09-04
+**Status:** Active
+**Decision:** Imagens saem da caixa de ideias e do escopo da C3 e viram campanha C7 (estacionada, posicao decidida na fronteira). Objetivo do user: nenhuma imagem captada 2 ou mais vezes e logos/templates fora do tutor, via galeria curada por ele (`content/images/logos/`, parcial) com dHash<=8 — nao regra automatica.
+**Reasoning:** Medido no CG (977 imagens): 299 logos em `content/images`, 0 citados em markdown, chegam pelo bloco de `resolve_content_images` que copia toda imagem extraida para o Image Curator; 3 familias de extracao por PDF (pymupdf, Datalab, `.pdf-NNNN-NN`) deixam 359 orfas. Cluster dHash automatico sem galeria flagaria 84 imagens citadas (GIFs de formula) -> refutado; md5 exato pega so 203/296; a galeria do user com dHash<=8 deu 0 falso positivo nos 8 tutores (CG 3, TCC 25, SO 2, IA 1, conferidos na imagem).
+**Consequences:** C0 segue aberta com o 11a; C3 perde "imagens"; a galeria e dado (`data/image_templates/`) que o user amplia; gate da C7 no handoff 2026-09-04 (fila, item 8).
+
