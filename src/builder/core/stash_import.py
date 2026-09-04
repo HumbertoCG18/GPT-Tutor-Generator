@@ -25,8 +25,9 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff", "
 class StashItem:
     source_path: str
     card_name: str
-    file_type: str   # "pdf" | "image" | "zip" | "code"
+    file_type: str   # "pdf" | "image" | "zip" | "code" | "html"
     category: str
+    moodle_label: str = ""   # nome do modulo no Moodle (sidecar .moodle_nomes.json), S6f
 
 
 @dataclass
@@ -107,6 +108,7 @@ def scan_stash_cards(stash_root, frases_do_plano=None) -> StashScanResult:
             card_name=_card_for(path, root),
             file_type=ftype,
             category=category,
+            moodle_label=str(nomes_moodle.get(f"{_card_for(path, root)}/{path.name}") or ""),
         ))
     return result
 
@@ -138,6 +140,8 @@ def build_stash_entries(scan: StashScanResult, existing_source_paths, defaults=N
             file_type=item.file_type,
             category=item.category,
             title=stem,
+            # Sem o label o casador nao liga materiais de modulo url/page (rebuild do CG: 19/66 sem estrutura, 04/09).
+            moodle_label=getattr(item, "moodle_label", "") or "",
             source_section=item.card_name,
             processing_mode=defaults.get("processing_mode", "auto"),
             ocr_language=defaults.get("ocr_language", DEFAULT_OCR_LANGUAGE),

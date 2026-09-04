@@ -27,6 +27,15 @@ def _iso(ts) -> str:
     return posting_date_iso(ts)
 
 
+def _url_basename(url: str) -> str:
+    from pathlib import Path
+    from urllib.parse import unquote, urlparse
+    path = unquote(urlparse(url).path)
+    if path.endswith("/") or not Path(path).suffix:
+        return f"{Path(path.rstrip('/')).name or 'index'}.html"
+    return Path(path).name
+
+
 def sync_diff(manifest_entries: list, contents: list) -> Dict[str, list]:
     entries = list(manifest_entries or [])
     matched: Dict[str, dict] = {}
@@ -48,11 +57,27 @@ def sync_diff(manifest_entries: list, contents: list) -> Dict[str, list]:
                 for e in entries:
                     if e.get("file_type") == "url" and str(e.get("source_path") or "").strip() in urls:
                         matched[str(e.get("id") or "")] = rec
+                # S6d/S6f: o link vira MATERIAL no stash (bundle html do snapshot, pdf baixado): casa pelo basename da URL
+                # (index.html -> nome do diretorio), savename ou moodle_label, como um resource. Sem isto os 19 materiais
+                # do CG rebuild eram "sumidos" a cada sync.
+                pseudo = dict(mod)
+                pseudo["contents"] = [{"type": "file", "filename": _url_basename(u)} for u in sorted(urls)]
+                for e in match_module_entries(in_sec, pseudo, n_name):
+                    if e.get("file_type") != "url" and str(e.get("id") or "") not in matched:
+                        matched[str(e.get("id") or "")] = rec
                 continue
+            if modname == "page":
+                # indice de videos entra como entry url (referencia) apontando para a URL da pagina
+                page_url = str(mod.get("url") or "").strip()
+                for e in entries:
+                    if page_url and e.get("file_type") == "url" and str(e.get("source_path") or "").strip() == page_url:
+                        matched[str(e.get("id") or "")] = rec
             if modname in _IGNORED_MODNAMES or (modname not in _MATERIAL_MODNAMES and not files):
                 continue
             ids = [e for e in match_module_entries(in_sec, mod, n_name) if str(e.get("id") or "") not in matched]
             if not ids:
+                if modname == "page" and any(v is rec for v in matched.values()):
+                    continue   # a pagina ja casou pela entry url de referencia
                 novos.append(rec)
                 continue
             newest = max((int(c.get("timemodified") or 0) for c in (mod.get("contents") or []) if c.get("type") == "file"), default=0)

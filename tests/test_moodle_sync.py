@@ -205,3 +205,49 @@ def test_sync_report_lists_formulas_to_check_with_the_professor():
     assert "  - manual-review/formulas/curvas-Image2.md" in md
     vazio = render_sync_report(diff, dd, when="2026-09-03", curso="Computação Gráfica")
     assert "## Formulas transcritas (conferir com o professor)\n- nenhuma" in vazio
+
+
+# --- S6f (04/09): sync_diff no CG rebuild — materiais vindos de modulo `url`/`page` casam, senao sao "sumidos" na proxima sync ---
+
+def _cg_contents():
+    return [{"name": "6 - Processo de Visualização 2D", "section": 10, "modules": [
+        {"modname": "url", "id": 1, "name": "Página sobre Transformações", "url": "https://www.inf.pucrs.br/pinho/CG/Aulas/OpenGL/TransformacoesGeometricas/TransformacoesGL.html",
+         "contents": [{"type": "url", "fileurl": "https://www.inf.pucrs.br/pinho/CG/Aulas/OpenGL/TransformacoesGeometricas/TransformacoesGL.html"}]},
+        {"modname": "url", "id": 2, "name": "Slides de Recorte", "url": "http://www.inf.pucrs.br/pinho/CG/SlidesEmPDF/Recorte.pdf",
+         "contents": [{"type": "url", "fileurl": "http://www.inf.pucrs.br/pinho/CG/SlidesEmPDF/Recorte.pdf"}]},
+        {"modname": "page", "id": 3, "name": "Página com Vídeos sobre RECORTE", "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770157",
+         "contents": [{"type": "file", "filename": "index.html", "fileurl": "http://x/p", "timemodified": 1}]},
+        {"modname": "page", "id": 4, "name": "Página com vídeos sobre INSTANCIAMENTO", "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770153",
+         "contents": [{"type": "file", "filename": "TransformacoesGeometricas.cpp", "fileurl": "http://x/c", "timemodified": 1},
+                      {"type": "file", "filename": "index.html", "fileurl": "http://x/q", "timemodified": 1}]},
+        {"modname": "resource", "id": 5, "name": "Exemplo de Código para Instanciamento",
+         "contents": [{"type": "file", "filename": "TransformacoesGeometricas.zip", "fileurl": "http://x/z", "timemodified": 1}]},
+    ]}]
+
+
+def _ent(eid, name, ftype, label="", sec="6 - Processo de Visualização 2D"):
+    return {"id": eid, "source_path": rf"C:\stash\{sec}\{name}", "file_type": ftype, "source_section": sec, "moodle_label": label}
+
+
+def test_sync_diff_matches_html_bundle_and_pdf_from_url_modules():
+    ents = [_ent("transformacoesgl", "TransformacoesGL\TransformacoesGL.html", "html", "Página sobre Transformações"),
+            _ent("recorte", "Recorte.pdf", "pdf", "Slides de Recorte")]
+    d = sync_diff(ents, _cg_contents())
+    assert d["sumidos"] == []
+    assert {"transformacoesgl", "recorte"} <= set(d["iguais"])
+
+
+def test_sync_diff_matches_url_reference_entry_of_a_page_module():
+    ents = [{"id": "pagina-com-videos-sobre-recorte-abc123", "source_path": "https://moodle.pucrs.br/mod/page/view.php?id=3770157",
+             "file_type": "url", "category": "references", "source_section": "6 - Processo de Visualização 2D"}]
+    d = sync_diff(ents, _cg_contents())
+    assert d["sumidos"] == []
+    assert not any(n["name"] == "Página com Vídeos sobre RECORTE" for n in d["novos"])
+
+
+def test_sync_diff_page_attachment_does_not_steal_the_zip_of_another_module():
+    ents = [_ent("pagina-com-videos-sobre-instanciamento", "pagina-com-videos-sobre-instanciamento.html", "html", "Página com vídeos sobre INSTANCIAMENTO"),
+            _ent("transformacoesgeometricas", "TransformacoesGeometricas.zip", "zip", "Exemplo de Código para Instanciamento")]
+    d = sync_diff(ents, _cg_contents())
+    assert d["sumidos"] == []
+    assert not any(n["files"] == ["TransformacoesGeometricas.zip"] for n in d["novos"])

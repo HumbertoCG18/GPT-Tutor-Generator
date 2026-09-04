@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from src.builder.core.stash_import import scan_stash_cards, StashItem, build_stash_entries, filter_already_processed
 from src.models.core import FileEntry
@@ -290,3 +291,19 @@ def test_scan_treats_page_bundle_dir_as_one_html_item(tmp_path):
     assert set(by_name) == {"Curvas.htm", "slides.pdf", "exercicios.html"}
     assert by_name["Curvas.htm"].file_type == "html" and by_name["Curvas.htm"].card_name == "7 - Curvas Parametricas"
     assert res.skipped == []
+
+
+def test_build_entries_carry_moodle_label_from_sidecar(tmp_path):
+    # S6f (04/09): o rebuild do CG pelo caminho de build deixou os 66 entries sem moodle_label embora o sidecar
+    # tivesse os 66 nomes; sem o label o casador nao liga materiais de modulo `url`/`page` (19 sem estrutura).
+    card = tmp_path / "7 - Curvas Parametricas"
+    (card / "Curvas").mkdir(parents=True)
+    (card / "Curvas" / "Curvas.htm").write_text("<p>x</p>", encoding="utf-8")
+    (card / "slides.pdf").write_text("x", encoding="utf-8")
+    (tmp_path / ".moodle_nomes.json").write_text(json.dumps({
+        "7 - Curvas Parametricas/Curvas.htm": "Página sobre Curvas Paramétricas",
+        "7 - Curvas Parametricas/slides.pdf": "Slides de Curvas"}, ensure_ascii=False), encoding="utf-8")
+    entries = build_stash_entries(scan_stash_cards(tmp_path), set(), {})
+    by_name = {Path(e.source_path).name: e for e in entries}
+    assert by_name["Curvas.htm"].moodle_label == "Página sobre Curvas Paramétricas"
+    assert by_name["slides.pdf"].moodle_label == "Slides de Curvas"

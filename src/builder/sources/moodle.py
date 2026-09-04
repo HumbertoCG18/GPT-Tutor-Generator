@@ -242,6 +242,10 @@ def _label_text(mod) -> str:
     return txt or re.sub(r"\s+", " ", str(mod.get("name") or "")).strip()
 
 
+def _ext_compatible(a: str, b: str) -> bool:
+    return a == b or ({a, b} <= {".pdf", ".htm", ".html"})
+
+
 def _norm_text(t) -> str:
     from src.builder.text.normalize import normalize_match_text
     return " ".join(normalize_match_text(str(t or "")).split())
@@ -267,8 +271,12 @@ def match_module_entries(in_sec, mod, n_name) -> list:
     keys = {f.casefold() for f in files} | {_savename_from_module(name, f, len(files)).casefold() for f in files}
     ids = [e for e in in_sec if Path(str(e.get("source_path") or "")).name.casefold() in keys]
     if not ids and files:
-        stems = {_norm_text(Path(k).stem) for k in keys}
-        ids = [e for e in in_sec if _norm_text(Path(str(e.get("source_path") or "")).stem) in stems]
+        # Stem so com extensao COMPATIVEL: identica, ou o par html<->pdf da pagina impressa. Sem isto o anexo
+        # TransformacoesGeometricas.cpp de uma pagina roubava o TransformacoesGeometricas.zip de outro modulo (CG 04/09).
+        stems = {(_norm_text(Path(k).stem), Path(k).suffix.lower()) for k in keys}
+        ids = [e for e in in_sec if any(
+            _norm_text(Path(str(e.get("source_path") or "")).stem) == st
+            and _ext_compatible(Path(str(e.get("source_path") or "")).suffix.lower(), ext) for st, ext in stems)]
     if not ids:
         same = [e for e in in_sec if _norm_text(_label_of(e)) == _norm_text(name)]
         ids = same if (len(same) == 1 or n_name[_norm_text(name)] == 1) else []
