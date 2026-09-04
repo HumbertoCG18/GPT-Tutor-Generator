@@ -85,6 +85,17 @@ def same_site(url: str, base: str) -> bool:
     return a.netloc == b.netloc
 
 
+def in_subtree(url: str, base: str) -> bool:
+    """Mesmo host E caminho sob o DIRETORIO da pagina-base (S6d): `same_site` seguia links para
+    `Aulas/` inteiro, `CGII/`, `~manssour/` — entra so o que o card do Moodle aponta e o que vive abaixo dele."""
+    a, b = urlparse(url), urlparse(base)
+    if a.netloc != b.netloc:
+        return False
+    base_path = unquote(b.path)
+    base_dir = base_path if base_path.endswith("/") else base_path.rsplit("/", 1)[0] + "/"
+    return unquote(a.path).startswith(base_dir)
+
+
 def slug(text: str) -> str:
     from src.utils.helpers import slugify
     return slugify(text) or "pagina"
@@ -181,7 +192,7 @@ class Snapshot:
             if href.startswith(("mailto:", "javascript:", "#")):
                 continue
             full = urljoin(url, href)
-            if same_site(full, url) and full.lower().split("?")[0].endswith(PAGE_EXT):
+            if in_subtree(full, url) and full.lower().split("?")[0].endswith(PAGE_EXT):
                 links.append(full)
         for im in soup.find_all("img", src=True):
             full = urljoin(url, im["src"].strip())
@@ -212,6 +223,31 @@ class Snapshot:
             lp.write_bytes(raw)
         except Exception as exc:
             print(f"  !! imagem {url}: {exc}")
+
+    def save_material(self, rec: dict, stash: Path) -> Path:
+        """S6d: a pagina vira MATERIAL no stash como bundle `stash/<card>/<Stem>/` = copia normalizada + imagens do
+        mesmo host (as do dir da pagina no caminho relativo; as de fora pelo basename — ExercicioDuasCores escreve as
+        proprias imagens como URL absoluta `~pinho/...`). Nunca `.orig`; imagem de outro host fica de fora (o build
+        marca "nao capturada"). O bundle e 1 item html no scan; as imagens sao dele, nao entries."""
+        page_url = rec["url"]
+        page_local = self.root / rec["local"]
+        bundle = stash / (rec["card"] or "sem-card") / page_local.stem
+        bundle.mkdir(parents=True, exist_ok=True)
+        dest = bundle / page_local.name
+        dest.write_bytes(page_local.read_bytes())
+        page_dir = unquote(urlparse(page_url).path).rsplit("/", 1)[0] + "/"
+        for img in rec.get("images") or []:
+            if not same_site(img, page_url):
+                continue
+            src = local_path(self.raw, img)
+            if not src.is_file():
+                continue
+            img_path = unquote(urlparse(img).path)
+            rel = img_path[len(page_dir):] if img_path.startswith(page_dir) else Path(img_path).name
+            out = bundle / rel
+            out.parent.mkdir(parents=True, exist_ok=True)
+            out.write_bytes(src.read_bytes())
+        return dest
 
     def print_all(self) -> None:
         if not self.browser:

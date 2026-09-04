@@ -98,7 +98,16 @@ class _PageImages:
             copy.write_bytes(raw)
             to_datalab = copy
         elif src.startswith(("http://", "https://")):
-            return self._nao_capturada(Path(src.split("?", 1)[0]).name, src)
+            # URL absoluta: o bundle do snapshot (S6d) copia a imagem do mesmo host pelo basename para o dir da
+            # pagina (ExercicioDuasCores escreve as proprias imagens como `https://.../~pinho/.../x.gif`).
+            local = self.html_dir / Path(unquote(src.split("?", 1)[0])).name
+            name = local.name
+            if not local.is_file():
+                return self._nao_capturada(name, src)
+            raw = local.read_bytes()
+            copy = self.images_dir / f"{self.entry_id}-{name}"
+            shutil.copyfile(local, copy)
+            to_datalab = local
         else:
             local = self.html_dir / unquote(src).replace("\\", "/")
             name = local.name

@@ -80,8 +80,14 @@ def scan_stash_cards(stash_root, frases_do_plano=None) -> StashScanResult:
             nomes_moodle = json.loads(sidecar.read_text(encoding="utf-8")) or {}
         except Exception:
             nomes_moodle = {}
+    # S6d: bundle de pagina = subdir (abaixo do card) com .htm/.html no topo; as imagens dentro dele sao da
+    # pagina (Curvas.fld/, irmas), nao itens — cru elas virariam entries `image`.
+    bundles = {p.parent for p in root.rglob("*") if p.is_file() and p.suffix.lower() in (".htm", ".html")
+               and len(p.relative_to(root).parts) >= 3}
     for path in sorted(root.rglob("*")):
         if not path.is_file():
+            continue
+        if path.suffix.lower() not in (".htm", ".html") and any(b in path.parents for b in bundles):
             continue
         ftype = _classify_file_type(path.name)
         if not ftype:

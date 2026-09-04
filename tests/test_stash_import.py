@@ -273,3 +273,20 @@ def test_scan_classifies_html_pages_as_material_not_code(tmp_path):
     assert by_name["exercicios-sobre-curvas.html"].file_type == "html"
     assert by_name["exercicios-sobre-curvas.html"].category == "listas"
     assert res.skipped == []
+
+
+def test_scan_treats_page_bundle_dir_as_one_html_item(tmp_path):
+    # S6d: snapshot grava `stash/<card>/<Pagina>/<Pagina>.htm` + imagens (Curvas.fld/, irmas). As imagens do bundle
+    # sao da pagina, nao itens (antes virariam entries `image`/fotos-de-prova). PDF e .html soltos no card seguem itens.
+    card = tmp_path / "7 - Curvas Parametricas"
+    (card / "Curvas" / "Curvas.fld").mkdir(parents=True)
+    (card / "Curvas" / "Curvas.htm").write_text("<p>x</p>", encoding="utf-8")
+    (card / "Curvas" / "Image1.gif").write_bytes(b"GIF89a")
+    (card / "Curvas" / "Curvas.fld" / "image003.gif").write_bytes(b"GIF89a")
+    (card / "slides.pdf").write_text("x", encoding="utf-8")
+    (card / "exercicios.html").write_text("<p>x</p>", encoding="utf-8")
+    res = scan_stash_cards(tmp_path)
+    by_name = {Path(i.source_path).name: i for i in res.items}
+    assert set(by_name) == {"Curvas.htm", "slides.pdf", "exercicios.html"}
+    assert by_name["Curvas.htm"].file_type == "html" and by_name["Curvas.htm"].card_name == "7 - Curvas Parametricas"
+    assert res.skipped == []

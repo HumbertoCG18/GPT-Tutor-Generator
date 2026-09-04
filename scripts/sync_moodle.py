@@ -6,7 +6,7 @@
 
 --dry-run (S1): pull da estrutura (moodle_pull --dry-run numa raiz temporaria, sem downloads), diff contra o manifest
 (novos / alterados / sumidos / iguais / links / fora) e nada mais. Token lido de moddle/.env, nunca impresso.
---apply (S2/S3): pull --pdf na raiz do curso (pai do stash do perfil; baixa/imprime SO o que nao existe), varre o
+--apply (S2/S3): pull --pdf na raiz do curso (pai do stash do perfil; baixa SO o que nao existe; paginas entram como .html, S6d), varre o
 stash, monta o plano (plan_import), executa: unprocess dos alterados e dos sumidos (--no-prune: so marca
 `moodle_missing_since`), incremental_build com os novos + links de referencia (extrai so o novo; motor em tudo).
 --repo aponta para uma COPIA do tutor (protocolo: copia antes do original).

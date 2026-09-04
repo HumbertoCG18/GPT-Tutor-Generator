@@ -1,10 +1,12 @@
 """Puxa um curso do Moodle pela API e monta o stash: arquivos, paginas internas e links CLASSIFICADOS.
 
     python scripts/moodle_pull.py --course 95106 --root <dir> --dry-run      # so classifica: links.json + resumo
-    python scripts/moodle_pull.py --course 95106 --root <dir> --pdf          # baixa/imprime tudo
+    python scripts/moodle_pull.py --course 95106 --root <dir> --pdf          # baixa tudo (flag historica: nada e impresso)
 
 Saida (debaixo de --root):
-    stash/<secao>/<arquivo>          resources baixados + paginas (site/Moodle) impressas em PDF (--pdf)
+    stash/<secao>/<arquivo>          resources baixados; paginas do Moodle e resources .htm(l) como `.html` (material, S6d);
+    stash/<secao>/<Pagina>/<Pagina>.htm  snapshot do site do professor como BUNDLE (pagina + imagens do mesmo host)
+                                     Regra (a) 03/09: onde ja existe <stem>.pdf impresso, o PDF fica e o .html nao entra.
     raw/moodle/contents.json         core_course_get_contents cru
     raw/moodle/pages/<cmid>.html     HTML das paginas internas (mod_page)
     raw/moodle/labels.json           labels (sub-cards) na ordem em que aparecem
@@ -41,13 +43,13 @@ import urllib.parse
 import urllib.request
 from collections import Counter
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from scripts.migrate_signals import load_moodle_token  # noqa: E402
-from scripts.site_snapshot import Snapshot, detect_encoding, find_browser, normalize_html, print_pdf, pdf_stats, slug  # noqa: E402
+from scripts.site_snapshot import Snapshot, detect_encoding, normalize_html, slug  # noqa: E402
 from src.builder.sources.moodle import MoodleClient, sanitize_folder_name  # noqa: E402
 
 VIDEO_HOSTS = ("youtube.com", "youtu.be", "vimeo.com")
@@ -119,12 +121,12 @@ def classify_page(html: str, name: str = "") -> tuple[str, str, str]:
     videos = len(set(YT_RE.findall(html)))
     stats = f"{videos} videos, {words} palavras"
     if PAGE_MATERIAL_NAME_RE.search(name):
-        return "material-pagina-moodle", "print", "nome+" + stats
+        return "material-pagina-moodle", "html", "nome+" + stats
     if PAGE_VIDEO_NAME_RE.search(name) and (videos >= 1 or words < 300):
         return "indice-videos", "referencia", "nome+" + stats
     if videos >= 3 and words < 300:
         return "indice-videos", "referencia", stats
-    return "material-pagina-moodle", "print", stats
+    return "material-pagina-moodle", "html", stats
 
 
 class Pull:
@@ -137,8 +139,25 @@ class Pull:
         self.sections: list[dict] = []
         self.nomes: dict[str, str] = {}  # F10: "card/arquivo-no-disco" -> nome do modulo
         self.turma_moodle = ""
-        self.browser = find_browser() if pdf else None
-        self.snap = Snapshot(root, depth=1, pdf=pdf)
+        self.snap = Snapshot(root, depth=1, pdf=False)   # S6d: paginas nao sao mais impressas em PDF
+
+    def _save_html_material(self, card: str, fname: str, html: str, modname: str, rec: dict) -> None:
+        """S6d: pagina (resource .htm(l) ou mod_page) entra no stash como `.html` normalizado UTF-8 — material
+        (tipo `html`), nao mais impressa em PDF. Regra (a) do user (03/09): onde ja existe `<stem>.pdf` impresso
+        (LR, 4 labs) o PDF fica e o .html nao entra; migracao so na fronteira."""
+        dest = self.stash / card / f"{Path(fname).stem}.html"
+        pdf = dest.with_suffix(".pdf")
+        if pdf.exists():
+            rec["acao"], rec["sinal"], rec["destino"] = "pdf-existente", rec["sinal"] + "+pdf", str(pdf.relative_to(self.root))
+            return
+        self.nomes[f"{card}/{dest.name}"] = modname
+        rec["acao"] = "html"
+        rec["destino"] = str(dest.relative_to(self.root))
+        if self.dry:
+            return
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        if not dest.exists():
+            dest.write_text(normalize_html(html), encoding="utf-8")
 
     def get(self, fileurl: str) -> bytes:
         sep = "&" if "?" in fileurl else "?"
@@ -182,26 +201,18 @@ class Pull:
                         # posicionadas (IMAGE_DESCRIPTION), igual a CG. Cru no stash ele virava
                         # `codigo-professor` sem texto nem descricao (pedido do user 2026-08-30).
                         if fname.lower().endswith((".htm", ".html")):
-                            dest = self.stash / card / f"{Path(fname).stem}.pdf"
-                            self.nomes[f"{card}/{dest.name}"] = str(m.get("name") or "")
                             rec = {"secao": sec.get("name"), "nome": m.get("name"), "url": f.get("fileurl", ""),
-                                   "tipo": "material-pagina-arquivo", "acao": "print", "destino": "", "sinal": "resource-html"}
+                                   "tipo": "material-pagina-arquivo", "acao": "html", "destino": "", "sinal": "resource-html"}
                             self.links.append(rec)
-                            if self.dry:
-                                continue
-                            raw = self.get(f["fileurl"])
-                            html = raw.decode(detect_encoding(raw, "utf-8"), errors="replace")
-                            pages_dir = self.rawm / "pages"; pages_dir.mkdir(parents=True, exist_ok=True)
-                            hp = pages_dir / f"{m['id']}-{slug(Path(fname).stem)}.html"
-                            hp.write_text(normalize_html(html), encoding="utf-8")
-                            rec["raw"] = str(hp.relative_to(self.root))
-                            if self.browser:
-                                dest.parent.mkdir(parents=True, exist_ok=True)
-                                if not dest.exists() and print_pdf(self.browser, hp, dest):
-                                    rec["destino"] = str(dest.relative_to(self.root))
-                                    rec["pdf_pages"], rec["pdf_images"] = pdf_stats(dest)
-                                elif dest.exists():
-                                    rec["destino"] = str(dest.relative_to(self.root))
+                            html = ""
+                            if not self.dry:
+                                raw = self.get(f["fileurl"])
+                                html = raw.decode(detect_encoding(raw, "utf-8"), errors="replace")
+                                pages_dir = self.rawm / "pages"; pages_dir.mkdir(parents=True, exist_ok=True)
+                                hp = pages_dir / f"{m['id']}-{slug(Path(fname).stem)}.html"
+                                hp.write_text(normalize_html(html), encoding="utf-8")
+                                rec["raw"] = str(hp.relative_to(self.root))
+                            self._save_html_material(card, fname, html, str(m.get("name") or ""), rec)
                             continue
                         dest = self.stash / card / fname
                         self.nomes[f"{card}/{dest.name}"] = str(m.get("name") or "")
@@ -251,7 +262,16 @@ class Pull:
                     elif acao == "snapshot":
                         self.snap.stash = self.stash
                         page = self.snap.save_page(ext, card, "hub", 0, follow=True)
-                        rec["destino"] = page["local"] if page else ""
+                        if page:
+                            # S6d: bundle (pagina + imagens) no stash como material html; PDF so se ja impresso (regra a)
+                            stem = Path(unquote(urlparse(ext).path)).stem or "index"
+                            pdf = self.stash / card / f"{slug(page.get('title') or stem)}.pdf"
+                            if pdf.exists():
+                                rec["acao"], rec["sinal"], rec["destino"] = "pdf-existente", rec["sinal"] + "+pdf", str(pdf.relative_to(self.root))
+                            else:
+                                dest = Path(self.snap.save_material(page, self.stash))
+                                self.nomes[f"{card}/{dest.name}"] = str(m.get("name") or "")
+                                rec["destino"] = str(dest.relative_to(self.root)) if dest.is_absolute() else str(dest)
                 elif mn == "page":
                     fu = (m.get("contents") or [{}])[0].get("fileurl", "")
                     raw = self.get(fu) if fu else b""
@@ -261,22 +281,15 @@ class Pull:
                            "destino": "", "sinal": sinal, "videos": sorted(set(YT_RE.findall(html)))}
                     self.links.append(rec)
                     if self.dry:
+                        if acao == "html":   # so o destino/plano; nada gravado
+                            self._save_html_material(card, f"{slug(m.get('name', 'pagina'))}.html", html, str(m.get("name") or ""), rec)
                         continue
                     pages_dir = self.rawm / "pages"; pages_dir.mkdir(parents=True, exist_ok=True)
                     hp = pages_dir / f"{m['id']}-{slug(m.get('name', 'pagina'))}.html"
                     hp.write_text(normalize_html(html), encoding="utf-8")
                     rec["raw"] = str(hp.relative_to(self.root))
-                    if acao == "print" and self.browser:
-                        out = self.stash / card / f"{slug(m.get('name', 'pagina'))}.pdf"
-                        self.nomes[f"{card}/{out.name}"] = str(m.get("name") or "")
-                        if print_pdf(self.browser, hp, out):
-                            rec["destino"] = str(out.relative_to(self.root)); rec["pdf_pages"], rec["pdf_images"] = pdf_stats(out)
-        if not self.dry and self.pdf:
-            self.snap.print_all()
-            for p in self.snap.pages.values():
-                for rec in self.links:
-                    if rec.get("url") == p["url"]:
-                        rec["destino"] = p.get("pdf", "") or rec["destino"]; rec["pdf_pages"] = p.get("pdf_pages"); rec["pdf_images"] = p.get("pdf_images")
+                    if acao == "html":
+                        self._save_html_material(card, f"{slug(m.get('name', 'pagina'))}.html", html, str(m.get("name") or ""), rec)
         self.snap.write_links()
         (self.rawm / "labels.json").write_text(json.dumps(self.labels, ensure_ascii=False, indent=1), encoding="utf-8")
         (self.rawm / "sections.json").write_text(json.dumps(self.sections, ensure_ascii=False, indent=1), encoding="utf-8")

@@ -233,3 +233,15 @@ def test_resolve_content_images_keeps_formula_images_linked_from_fonte(tmp_path)
     builder._resolve_content_images()
     copied = sorted(p.name for p in (builder.root_dir / "content" / "images").iterdir())
     assert copied == sorted(f"curvas-{n}" for n in FORMULAS | LEGENDAS | VAZIAS)
+
+
+def test_absolute_same_host_image_resolves_by_basename_in_page_dir(tmp_path):
+    # ExercicioDuasCores.html (CG) escreve imagens do PROPRIO diretorio como URL absoluta (~pinho/.../x.gif);
+    # o bundle do snapshot (S6d) copia pelo basename e aqui a URL absoluta resolve para o arquivo ao lado da pagina.
+    p = _page(tmp_path, '<p><img src="https://www.inf.pucrs.br/%7Epinho/CG/Aulas/Img/bezier4pontos.gif"></p>')
+    shutil.copy(PILOTO / "images" / "bezier4pontos.gif", p.parent / "bezier4pontos.gif")
+    datalab = FakeDatalab()
+    _, item, md = _run(tmp_path, p, datalab)
+    assert datalab.calls == ["bezier4pontos.gif"]
+    assert "![Figura: " in md and "não capturada" not in md
+    assert (tmp_path / "repo" / "content" / "images" / "pagina-bezier4pontos.gif").is_file()
