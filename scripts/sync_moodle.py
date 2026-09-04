@@ -59,8 +59,8 @@ def apply_sync(prof, repo: Path, manifest: dict, store, *, root=None, prune: boo
     from src.builder.core.stash_import import scan_stash_cards
     from src.builder.engine import RepoBuilder
     from src.builder.extraction.teaching_plan import _parse_units_from_teaching_plan
-    from src.builder.sources.moodle_sync import (decision_diff, mark_sync_changes, plan_import, render_sync_report,
-                                                 snapshot_decisions)
+    from src.builder.sources.moodle_sync import (decision_diff, formula_index, mark_sync_changes, plan_import,
+                                                 render_sync_report, snapshot_decisions)
     from src.utils.helpers import write_json_manifest
 
     stash = Path(getattr(prof, "stash_folder", "") or "")
@@ -118,6 +118,7 @@ def apply_sync(prof, repo: Path, manifest: dict, store, *, root=None, prune: boo
     n_mark = mark_sync_changes(m.get("entries", []), dd["moved"], when=when)
     write_json_manifest(repo / "manifest.json", m)
     report = render_sync_report(diff, dd, when=when, curso=prof.name, ignorados=plan.ignorados, review=plan.review,
+                                formulas=formula_index(m.get("entries", []), repo),
                                 plan_counts=f"add {len(plan.add)} readd {len(plan.readd)} prune {len(plan.prune)} mark {len(plan.mark)} links {len(plan.links)}")
     (repo / "course").mkdir(parents=True, exist_ok=True)
     (repo / "course" / "SYNC_REPORT.md").write_text(report, encoding="utf-8")

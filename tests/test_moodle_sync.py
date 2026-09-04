@@ -176,3 +176,32 @@ def test_url_entry_with_card_is_kept_when_its_link_module_still_exists():
 def test_url_entry_is_missing_only_when_the_link_left_the_moodle():
     d = sync_diff([_lab1(), _url_entry("https://gone.example/", eid="gone-1")], LR)
     assert d["sumidos"] == ["gone-1"]
+
+
+# --- S6c: indice das formulas transcritas (HTML como material) no SYNC_REPORT ---
+
+def test_formula_index_lists_reviews_per_html_entry(tmp_path):
+    from src.builder.sources.moodle_sync import formula_index
+    d = tmp_path / "manual-review" / "formulas"
+    d.mkdir(parents=True)
+    for n in ("curvas-Image2.md", "curvas-Image1.md", "outra-x.md"):
+        (d / n).write_text("x", encoding="utf-8")
+    entries = [{"id": "curvas", "file_type": "html", "html_images": {"total": 24, "formulas": 2, "nao_capturadas": 1}},
+               {"id": "pdf1", "file_type": "pdf"}]
+    assert formula_index(entries, tmp_path) == [{
+        "id": "curvas", "formulas": 2, "nao_capturadas": 1,
+        "reviews": ["manual-review/formulas/curvas-Image1.md", "manual-review/formulas/curvas-Image2.md"],
+    }]
+
+
+def test_sync_report_lists_formulas_to_check_with_the_professor():
+    diff = {"novos": [], "alterados": [], "sumidos": [], "iguais": [], "links": [], "fora": []}
+    dd = {"moved": [], "added": ["curvas"], "removed": []}
+    formulas = [{"id": "curvas", "formulas": 2, "nao_capturadas": 1,
+                 "reviews": ["manual-review/formulas/curvas-Image1.md", "manual-review/formulas/curvas-Image2.md"]}]
+    md = render_sync_report(diff, dd, when="2026-09-03", curso="Computação Gráfica", formulas=formulas)
+    assert "## Formulas transcritas (conferir com o professor)" in md
+    assert "- curvas: 2 formulas · 1 nao capturada" in md
+    assert "  - manual-review/formulas/curvas-Image2.md" in md
+    vazio = render_sync_report(diff, dd, when="2026-09-03", curso="Computação Gráfica")
+    assert "## Formulas transcritas (conferir com o professor)\n- nenhuma" in vazio

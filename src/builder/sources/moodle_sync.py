@@ -204,8 +204,25 @@ def mark_sync_changes(entries: list, moved: list, *, when: str) -> int:
     return n
 
 
+def formula_index(entries: list, repo_root) -> list:
+    """S6c: por entry html, quantas formulas o Datalab transcreveu, quantas imagens ficaram sem captura e os
+    arquivos de review (`manual-review/formulas/<id>-<img>.md`) — a lista e para o user conferir com o professor."""
+    from pathlib import Path
+    out = []
+    formulas_dir = Path(repo_root) / "manual-review" / "formulas"
+    for e in entries or []:
+        stats = e.get("html_images")
+        if not isinstance(stats, dict):
+            continue
+        eid = str(e.get("id") or "")
+        reviews = sorted(f"manual-review/formulas/{p.name}" for p in formulas_dir.glob(f"{eid}-*.md")) if formulas_dir.is_dir() else []
+        out.append({"id": eid, "formulas": int(stats.get("formulas") or 0),
+                    "nao_capturadas": int(stats.get("nao_capturadas") or 0), "reviews": reviews})
+    return out
+
+
 def render_sync_report(diff: Dict[str, list], dd: Dict[str, list], *, when: str, curso: str,
-                       ignorados=(), review=(), plan_counts=None) -> str:
+                       ignorados=(), review=(), plan_counts=None, formulas=()) -> str:
     L = [f"# SYNC {when} — {curso}", "",
          f"Moodle x manifest: novos {len(diff['novos'])} · alterados {len(diff['alterados'])} · sumidos {len(diff['sumidos'])} · "
          f"iguais {len(diff['iguais'])} · links {len(diff['links'])}" + (f" · plano {plan_counts}" if plan_counts else ""), ""]
@@ -215,6 +232,14 @@ def render_sync_report(diff: Dict[str, list], dd: Dict[str, list], *, when: str,
     L += ["## Entries novas no tutor"] + ([f"- {e}" for e in dd["added"]] or ["- nenhuma"]) + [""]
     L += ["## Decisoes antigas que se moveram (mudou, confira)"] + ([f"- {m['id']}: {m['campo']} {m['antes'] or '-'} -> {m['depois'] or '-'}" for m in dd["moved"]] or ["- nenhuma"]) + [""]
     L += ["## Removidas do tutor"] + ([f"- {e}" for e in dd["removed"]] or ["- nenhuma"]) + [""]
-    L += ["## Ignorados (sem tipo; .html/.htm nao impressos)"] + ([f"- {i}" for i in ignorados] or ["- nenhum"]) + [""]
+    L += ["## Ignorados (sem tipo: .xlsx etc.)"] + ([f"- {i}" for i in ignorados] or ["- nenhum"]) + [""]
     L += ["## Links para decidir (manual-review)"] + ([f"- {r.get('nome')} -> {r.get('url')}" for r in review] or ["- nenhum"]) + [""]
+    L += ["## Formulas transcritas (conferir com o professor)"]
+    for f in formulas:
+        nc = int(f.get("nao_capturadas") or 0)
+        L.append(f"- {f['id']}: {f.get('formulas', 0)} formulas · {nc} nao capturada" + ("" if nc == 1 else "s"))
+        L += [f"  - {r}" for r in f.get("reviews", [])]
+    if not formulas:
+        L.append("- nenhuma")
+    L.append("")
     return "\n".join(L)
