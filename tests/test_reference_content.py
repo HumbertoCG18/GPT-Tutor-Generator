@@ -121,3 +121,21 @@ def test_markdown_local_ausente_no_disco_nao_quebra(tmp_path):
     entry = {"category": "bibliografia", "source_path": "",
              "approved_markdown": "content/curated/nao-existe.md"}
     assert fetch_reference_text(entry, repo_root=tmp_path) == ""
+
+
+def test_fetch_doc_text_has_no_capture_header_so_reference_hash_is_stable(monkeypatch):
+    # Determinismo (gate S6b, 03/09): o texto da referencia entra em _ref_hash (references_curation.json);
+    # com o cabecalho web do conversor ("Capturado em: <agora>") as 2 referencias url do FR eram
+    # re-sumarizadas pelo Gemini a cada regeneracao e COURSE_MAP mudava entre rodadas.
+    from src.builder.core import reference_content
+
+    class _Resp:
+        status_code = 200
+        text = "<html><head><title>Video</title></head><body><p>descricao do video</p></body></html>"
+
+    monkeypatch.setattr(reference_content.requests, "get", lambda *a, **k: _Resp())
+    text = reference_content._fetch_doc_text("https://www.youtube.com/watch?v=x")
+    assert "descricao do video" in text
+    for line in ("- URL:", "- Domínio:", "- Capturado em:"):
+        assert line not in text
+    assert text == reference_content._fetch_doc_text("https://www.youtube.com/watch?v=x")

@@ -61,9 +61,11 @@ def _fetch_doc_text(url: str, *, timeout: float = 10.0) -> str:
     if resp.status_code != 200 or not resp.text:
         return ""
     from src.builder.text.url_markdown import html_to_structured_markdown, truncate_markdown_blocks
+    # url="" = sem cabecalho web (URL/dominio/"Capturado em: <agora>"): o texto entra no hash de
+    # references_curation e o carimbo re-sumarizava toda referencia url a cada regeneracao (FR, 03/09).
     try:
         return html_to_structured_markdown(
-            resp.text, url, "",
+            resp.text, "", "",
             collapse_ws=_collapse_ws,
             truncate_markdown_blocks=truncate_markdown_blocks,
         )
