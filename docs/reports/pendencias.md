@@ -1,10 +1,10 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-04 (sessao 5, madrugada). **Ponto de entrada = handoff `2026-09-03b-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-04 (sessao 5, madrugada; SYNC fechada). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 6/11 (faltam 9, 10, 11, 12);
-SYNC 5/6 (S6a-S6e FEITOS; S6f feito na COPIA, holdout puro 30/35 e curado 33/35 [gate 34]; **SEGURADA pelo user ate o C0 item 11**; §SYNC S6f).
-**Em execucao: C0 itens 9-12** (ordem proposta 11 -> 10 -> 9 -> 12).
+**SYNC 6/6 FECHADA em 04/09** (S6f promovido: CG `a16051b`; holdout curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
+**FILA:** 1 ABERTA = C0 itens 9-12 (ordem proposta 11 -> 10 -> 9 -> 12) · 2 PROXIMA = C1 travessia.
 **FILA:** 1 ABERTA = SYNC (S6a-S6f) · 2 PROXIMA = C0 itens 9-12 · estacionadas: C1 travessia · C3 provas/listas/imagens ·
 C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
@@ -42,8 +42,19 @@ exclusivo por 1 token 22 (5 erradas = 77%: MF `terminacao`, ES2 `azure` "servico
 de JANELA (bloco-03 fora dos 9 blocos), nao de banda. Candidato para o C0 item 11, a medir antes de entrar: exclusivo por 1 token ->
 banda media + flag (voter e card agem): no puro -5 conf-err e 17 certas viram duvida (revisar/100 e votos/100 sobem, ~+22 votos nos
 6 cursos); no curado o LLM decide (22/23 no balde parecido, medido em 21/08). Sem regra por curso; nada entra sem esse numero.
-**Decisao do user (04/09): SYNC SEGURADA ate o C0 item 11** (criterio 34/35 mantido; a copia `.ablacao/CG-rebuild` fica). Pendentes
-quando a SYNC voltar: (1) fila `revisar` e lista de formulas; (2) rerodar o holdout do rebuild com o gerador novo; (3) a copia virar o original (`Computacao-Grafica-Tutor`, commit no
+**Decisao final do user (04/09): 33/35 ACEITO com causa medida e o rebuild PROMOVIDO** (nao fazia sentido ficar com o export velho).
+Tutor CG `a16051b` (66 entries), perfil `stash_folder` -> `computacao-grafica/stash`, `ground_truth_CG.csv` = re-chaveado (export em
+`_archive/`), `course/SYNC_REPORT.md` com as 37 formulas. Reguas no CG novo (`.ablacao` re-sincronizado): holdout **puro 31/35 (conf-err 2, flagados 9) · curado
+33/35 (conf-err 2, flagados 1)** · sentinela 0/8 · censo revisar/100 51,8 -> 54,0 (321 -> 348 materiais), votos/100 32,3 -> 29,9. Export antigo em `.ablacao/CG-export-backup`.
+Pendente (nao trava): revisao humana de `revisar_queue.md` (45) e `formulas_index.md` (37); o antigo pendente (3) a copia virar o original
+**Complemento do rebuild (04/09, achado pela pergunta "73 -> 66, por que?"):** 3 paginas sairam por regra (nao apontadas por card:
+OpenGL.html, Navega, ImageClass); 4 folhas da subarvore (Slab, Dominancia, PlaneSweep, ExercicioDuasCores) ficavam so no mirror —
+bug do S6d corrigido em `1d14353` (folha vira bundle no modulo do hub); 23 referencias (7 videos + 16 indices de video) nao entram
+pelo caminho de build, so pela sync. Dry-run da sync no rebuild expos 19 "sumidos"/19 "novos" num repo recem-construido: tres raizes
+corrigidas em `bff1fa4` (moodle_label no build; `sync_diff` casa materiais de modulo url/page; stem so com extensao compativel —
+o anexo .cpp de uma pagina roubava o .zip de outro modulo). `s6f/sync_complete_cg.py` leva folhas + referencias + labels ao repo:
+CG final 93 entries, tutor `e3d02ed`; sumidos 0, novos 18 por desenho (16 indices ja referencias + 2 xlsx).
+ (`Computacao-Grafica-Tutor`, commit no
 tutor) e o perfil apontar `stash_folder` para `computacao-grafica/stash`. Ate la o CG original NAO muda.
 
 ## SYNC S6a-S6e — HTML COMO MATERIAL (03/09 sessao 5, FEITOS)

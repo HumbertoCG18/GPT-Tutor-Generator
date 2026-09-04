@@ -296,7 +296,17 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 ### SYNC segurada com o rebuild do CG medido na copia: o criterio 34/35 nao se ajusta ao numero, o motor se ajusta ao criterio
 
 **Date:** 2026-09-04
-**Status:** Active
+**Status:** Superseded em 04/09 (entrada seguinte: o user aceitou 33/35 com causa e promoveu o rebuild)
 **Decision:** O rebuild limpo do CG pela API (S6f) fica na copia `.ablacao/CG-rebuild` ate o C0 item 11 calibrar a regra `exclusivo` do disambiguator; a SYNC so fecha com holdout curado >= 34/35 SEM ruido. O CG original, o perfil e o gold versionado nao mudam ate la.
 **Reasoning:** O 34/35 do baseline dependia de um token de boilerplate ("imagens") que criava competicao falsa e flagava `transformacoesgl`; o motor honesto da 33/35 porque `exclusivo` (s2=0) da banda alta a UM token generico ("geometrica" -> bloco-15). Medido nos 6 golds: 22 decisoes alta por 1 token, 5 erradas (77%), contra 94% dos outros baldes. Aceitar 33 rebaixaria o criterio para caber no motor; segurar mantem "gold nao e oraculo, mas regua nao se dobra".
 **Consequences:** C0 vira o trabalho em execucao (ordem proposta 11 -> 10 -> 9 -> 12). Quando a SYNC voltar: rerodar `s6f/holdout_cg_rebuild.py` com o gerador novo, revisar `revisar_queue.md` e `formulas_index.md`, promover a copia, apontar `stash_folder` para `computacao-grafica/stash`, trocar `ground_truth_CG.csv` pelo re-chaveado.
+
+---
+
+### SYNC fechada com o rebuild do CG promovido: 33/35 aceito porque o 34 do criterio era ruido, nao regua
+
+**Date:** 2026-09-04
+**Status:** Active
+**Decision:** O rebuild limpo do CG pela API vira o original (`Computacao-Grafica-Tutor` `a16051b`, 66 entries); o perfil aponta para o stash novo; `ground_truth_CG.csv` passa a ser o re-chaveado (35 scorable). O criterio "holdout curado 34/35" e aceito em 33/35 COM a causa medida e registrada (regra `exclusivo` do disamb por 1 token, C0 item 11a), sem rebaixar o criterio para lotes futuros: o 34 volta a valer quando o item 11a entrar.
+**Reasoning:** O user reverteu "segurar ate o C0" porque manter o CG no export antigo nao faz sentido: o stash novo e o material real (paginas como html, formulas transcritas, 0 impressao em PDF) e o 34/35 anterior dependia de um token de boilerplate ("imagens") que criava competicao falsa. Aceitar o numero honesto com a causa documentada e diferente de dobrar a regua ao numero. Holdout puro 31/35 (conf-err 2, flagados 9) e curado 33/35 (conf-err 2, flagados 1) no CG novo; curada dos 5, sentinela e determinismo intactos.
+**Consequences:** SYNC 6/6 fechada; C0 aberta com o 11a primeiro; export antigo em `.ablacao/CG-export-backup`; revisao humana das 45 duvidas e 37 formulas fica aberta sem travar campanha.
