@@ -1,14 +1,36 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-04 (sessao 5, madrugada; SYNC fechada). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-04 (sessao 5, noite; C0 11a registrado nos 8 tutores). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
-**Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 6/11 (faltam 9, 10, 11, 12);
+**Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 6/11 + 11a FEITO (faltam 9, 10, 11b, 12; §C0 ITEM 11a);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
-**FILA:** 1 ABERTA = C0 itens 9-12 (ordem proposta 11 -> 10 -> 9 -> 12) · 2 PROXIMA = C1 travessia · estacionadas: C3 provas/listas/imagens ·
+**FILA:** 1 ABERTA = C0 itens 9-12 (ordem proposta 11 -> 10 -> 9 -> 12) · 2 PROXIMA = C1 travessia · estacionadas: C3 provas/listas · C7 imagens ·
 C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## C0 ITEM 11a — `exclusivo` DO DISAMB EXIGE 2+ TOKENS (04/09 sessao 5 noite, FEITO E REGISTRADO NOS 8)
+Gerador `728c0f1` (1 linha em `routing/motor/disambiguator.py:264` + 2 testes; suite 2335). Dado ANTES do codigo (`s6f/mede_exclusivo.py`):
+22 decisoes "disamb alta" apoiadas em UM token de contato nos 6 golds, 5 erradas (77%); com 2+ tokens ou margem, 94%. Regra: `exclusivo`
+(s1>0, s2=0) so e confiante com `len(discriminante) >= 2`; 1 token -> banda media + flag (o best fica; voter e card agem). Vocab curto sozinho
+e indicio, e o segundo token que decide (teste de `test_motor_tokens.py` ajustado + teste novo).
+**Copias `.ablacao`, antes -> depois na MESMA base (`c0-11a/flags_antes_depois_11a.log`):** bloco 183/200 = · conf-err 3 -> 2 · unidade 178 -> 179/191
+· cobertura 53/57 = · subunidade 82/93 = · flags 40 -> 48 (5 cursos, 226 entries). AULA 174/189 = · REF 8/10 = (`regua_aula`, linha "motor puro
+hoje"; residual pos-escada 35 -> 16 porque H9 so age em flagados — nao e ganho da regra). `mede_exclusivo` depois: excl1 = 0 em todos; restam 2
+conf-err (MF `revisao` com 2 tokens, MF `exerciciosdafny2` por margem). Holdout CG puro 31/35 = com conf-err 2 -> 0 (flagados 9 -> 14); curado
+33 -> **35/35** (conf-err 0, flagado 1).
+**Originais (reprocess registrado, `c0-11a/reprocess_11a.py`, commits "reprocess: exclusivo com 1 so token vira flag ... (gerador 728c0f1, C0 11a)"):**
+MF `fa85ce0` · SO `393f135` · IA `f00c53e` · ES2 `4ef7ead` · TCC `56faba3` · LR `1d7bafe` · FR `d876645` · CG `0bc78a4`. Flagadas 38 -> 38 (o
+voter resolveu todas; 23 votos novos: MF 2, IA 3, FR 2, CG 16). 5 blocos mudaram: CG `matematica` e `transformacoesgl` (os 2 erros do gold — CG
+original agora **35/35**), CG `pagina-com-videos-sintese-realistica` (proc. imagens -> iluminacao), FR `udp-example-c` (transporte bloco-06 ->
+sockets bloco-22, com `unit_block_conflict`) e `udp-example-java` (-> aplicacao bloco-05): **os gemeos foram separados pelo voter, sem gold —
+olhar na C1 (travessia FR).** Gate nos originais: curada 199/200 conf-err 0 · 191/191 · 55/57 = · sentinela 0/8 · determinismo 8/8 (0 arquivos nao deterministicos) · censo revisar/100
+54,0 -> 58,3 · votos/100 29,9 -> 36,5 (custo declarado no plano: ~22 votos; medido 23). Harness: `_harness-2026-09-04/c0-11a/`.
+**Divida de higiene achada no caminho (nao mexida):** `tests/test_unit_matcher.py` (~linhas 168-199) monta a timeline dos tutores REAIS
+(`GitHub/Sistemas-Operacionais-Tutor`, `Metodos-Formais-Tutor`) e grava `course/.block_identity.json` do MF original (`last_seen`) a cada
+suite — medido arquivo a arquivo (unico que reescreve; 04/09 20:34). Teste de unidade escrevendo em repo de producao: corrigir com copia para
+tmp ou `TUTOR_COURSES_DIR` obrigatorio (1 linha) — C4, ou antes se incomodar.
 
 ## AUDITORIA DAS REGUAS (04/09 sessao 5, a pedido do user, antes do C0)
 

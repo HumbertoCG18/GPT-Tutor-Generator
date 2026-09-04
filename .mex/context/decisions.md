@@ -321,3 +321,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Reasoning:** Medido no CG (977 imagens): 299 logos em `content/images`, 0 citados em markdown, chegam pelo bloco de `resolve_content_images` que copia toda imagem extraida para o Image Curator; 3 familias de extracao por PDF (pymupdf, Datalab, `.pdf-NNNN-NN`) deixam 359 orfas. Cluster dHash automatico sem galeria flagaria 84 imagens citadas (GIFs de formula) -> refutado; md5 exato pega so 203/296; a galeria do user com dHash<=8 deu 0 falso positivo nos 8 tutores (CG 3, TCC 25, SO 2, IA 1, conferidos na imagem).
 **Consequences:** C0 segue aberta com o 11a; C3 perde "imagens"; a galeria e dado (`data/image_templates/`) que o user amplia; gate da C7 no handoff 2026-09-04 (fila, item 8).
 
+---
+
+### C0 11a: exclusividade lexical com um so token deixa de ser confianca
+
+**Date:** 2026-09-04
+**Status:** Active
+**Decision:** No disambiguator, `exclusivo` (s1>0, s2=0) so e banda alta com 2+ tokens discriminantes; com 1 token o best fica, mas sai em banda media e flagado (voter e card decidem). Entrou no gerador (`728c0f1`) e nos 8 tutores por reprocess registrado.
+**Reasoning:** Medido antes do codigo: 22 decisoes alta em 1 token nos 6 golds, 5 erradas (77%) contra 94% com 2+ tokens ou margem. Depois, na mesma base: conf-err 3 -> 2 (motor puro), holdout CG puro conf-err 2 -> 0 e curado 33 -> 35/35, bloco/AULA/REF/curada iguais, unidade +1. Custo medido: 23 votos de LLM a mais (votos/100 29,9 -> 36,5; revisar/100 54,0 -> 58,3). determinismo 8/8 (0 arquivos nao deterministicos).
+**Consequences:** C0 segue com 11b (LLM so nos flagados, contado). FR `udp-example-c/java` separados pelo voter sem gold — observar na C1. Divida: `tests/test_unit_matcher.py` grava o ledger do MF real a cada suite (corrigir em C4 ou antes).
+

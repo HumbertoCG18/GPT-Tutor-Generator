@@ -8,14 +8,12 @@ Unico handoff vivo. Substitui `_archive/2026-09-03b-handoff-fila-campanhas.md` (
 (criterio estrito); item nao feito nao muda de dono sozinho — ou e feito, ou o user o RETIRA por decisao registrada. Novo lote = novo
 handoff, o anterior vai para `_archive/`. Ideia que surge no meio vai para a CAIXA DE IDEIAS (da para fazer? · quando? · o que resolve?).
 
-## COMECE POR (proxima sessao) — C0 item 11a: calibracao da regra `exclusivo` do disambiguator (TDD + medida antes de entrar)
+## COMECE POR (proxima sessao) — C0 item 11b: LLM so nos flagados, cacheado, contado (11a FEITO 04/09 noite, gerador `728c0f1`)
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` e `.codex/` podem aparecer), `git log --oneline -3`, HEAD dos 8
-   tutores iguais aos de "Estado ao comecar" (CG agora e `e3d02ed`), `python scripts/censo_motor_llm.py` (revisar/100 54,0). Suite 2332.
-1. **11a**: em `routing/motor/disambiguator.py::_lexical_decision`, `exclusivo` (s1>0, s2=0) com UM token de contato deixa de ser alta:
-   banda media + flag (voter e card agem). Teste RED com os 5 casos errados do dado (MF `terminacao`, ES2 `azure`, CG `matematica`,
-   CG `transformacoesgl`) e os 17 certos (nao podem mudar de bloco). Regua: `motor_puro.py --com-vocab` (baseline 183/178/53/82,
-   conf-err 3), `eval_eixos.py` (curada 199/200 · 191/191 · 55/57), `_harness-2026-09-02/regua_aula.py` (AULA 174/189), `holdout_cg.py
-   <GEN> <GEN>/.ablacao` puro (baseline 31/35 (conf-err 2, flagados 9)) e `--curado` (33/35 (conf-err 2, flagados 1)). Custo declarado: votos/100 sobe (~22 votos a mais nos 6 cursos).
+   tutores iguais aos de "Estado ao comecar" (CG agora e `0bc78a4`), `python scripts/censo_motor_llm.py` (revisar/100 58,3). Suite 2335.
+1. **11a FEITO** (`728c0f1`, §C0 ITEM 11a no tracker): `exclusivo` exige 2+ tokens; 1 token = banda media + flag. Copias: conf-err 3 -> 2,
+   unidade 178 -> 179, resto igual; holdout puro conf-err 2 -> 0, curado 33 -> 35/35; originais reprocessados e commitados (8 HEADs abaixo);
+   custo medido: votos/100 29,9 -> 36,5 (23 votos). Observar na C1: FR `udp-example-c/java` separados pelo voter (sem gold).
 2. **11b**: LLM so nos flagados, cacheado, contado no CRONOGRAMA_HEALTH; ordem motor <-> LLM <-> card com numero. Gate: residual flagado
    em AULA <= 8/100 (hoje 18,5).
 3. Depois: 10 (medir os 13 erros de unidade antes de codigo), 9 (refactor corte 1, byte-identico), 12 (travessia "depois").
@@ -30,19 +28,19 @@ Datalab/Gemini `.env`) nunca impressos · [Humberto] · nao corrigir conteudo do
 
 ## Estado ao comecar (04/09, tudo commitado, NADA pushed)
 Gerador `feat/motor-atribuicao`, ~825 commits a frente de `main`. Sessao 5 (03-04/09): `6111b46` `0a8ae2e` `a10a6ca` `12990ed`
-`5799035` `d7b2f87` `1d14353` `bff1fa4` + docs. Suite 2332.
-Tutores: MF `e39e14a` · SO `603d914` · IA `ca1f765` · ES2 `2212f9f` · TCC `b9af3c3` (encerrados) · LR `040b2dd` · FR `89db35d` ·
-**CG `e3d02ed` = rebuild limpo pela API + complemento** (93 entries: 66 do build + 4 folhas + 23 referencias; stash novo `Desktop/Moodle/computacao-grafica/
+`5799035` `d7b2f87` `1d14353` `bff1fa4` + docs; noite: `728c0f1` (C0 11a). Suite 2335.
+Tutores (reprocess 11a, 04/09 noite): MF `fa85ce0` · SO `393f135` · IA `f00c53e` · ES2 `4ef7ead` · TCC `56faba3` (encerrados) · LR `1d7bafe` ·
+FR `d876645` · **CG `0bc78a4` (= `e3d02ed` rebuild limpo pela API + complemento, + reprocess 11a)** (93 entries: 66 do build + 4 folhas + 23 referencias; stash novo `Desktop/Moodle/computacao-grafica/
 stash/`, perfil ja aponta; export antigo em `.ablacao/CG-export-backup`). Copias `.ablacao` dos 5 + CG (re-sincronizada) + LR + FR.
-**Reguas:** curada 199/200 conf-err 0 · 191/191 · 55/57 · motor puro +vocab 183/178/53/82 · AULA 174/189 (residual flagado 18,5/100) ·
-holdout CG (gold re-chaveado `ground_truth_CG.csv`, 35 scorable) **puro 31/35 (conf-err 2, flagados 9) · curado 33/35 (conf-err 2, flagados 1)** · censo revisar/100 54,0 · votos/100
-29,9 (348 materiais). Gold do CG anterior (export) em `_archive/ground_truth_CG.export.csv`.
+**Reguas (pos-11a):** curada 199/200 conf-err 0 · 191/191 · 55/57 · motor puro +vocab 183/179/53/82 conf-err 2 · AULA 174/189 · REF 8/10 ·
+holdout CG (gold re-chaveado `ground_truth_CG.csv`, 35 scorable) **puro 31/35 (conf-err 0, flagados 14) · curado 35/35 (conf-err 0, flagado 1)** · censo revisar/100 58,3 · votos/100
+36,5 (348 materiais). Gold do CG anterior (export) em `_archive/ground_truth_CG.export.csv`.
 
 ## BALANCO em 04/09
 - **SYNC — 6/6, FECHADA.** S1-S5 (03/09), S6a-S6f (03-04/09). S6f: rebuild do CG pela API promovido a original com holdout curado
   33/35 **aceito pelo user com causa medida** (o 34 do baseline dependia do token de boilerplate "imagens"; regra `exclusivo` por 1 token
   e o balde — C0 item 11a). Detalhe: `pendencias.md` §SYNC S6f e §SYNC S6a-S6e.
-- **C0 MOTOR — 6/11, ABERTA.** Feitos 2-7; faltam 9, 10, 11, 12 (ordem proposta 11 -> 10 -> 9 -> 12).
+- **C0 MOTOR — 6/11 + 11a, ABERTA.** Feitos 2-7 e 11a (04/09 noite, `728c0f1`, 8 tutores reprocessados); faltam 9, 10, 11b, 12 (ordem 11b -> 10 -> 9 -> 12).
 
 ## FILA DE CAMPANHAS (ordem decidida 03/09, atualizada 04/09)
 
@@ -55,7 +53,8 @@ holdout CG (gold re-chaveado `ground_truth_CG.csv`, 35 scorable) **puro 31/35 (c
    do voter) e a regua por item (com vocab + curada + holdout; ablacao so em gate). Gate: residual flagado em AULA <= 8/100.
    **11a (primeiro, medido 04/09 em `_harness-2026-09-03/s6f/mede_exclusivo.py`):** regra `exclusivo` do disamb (s2=0 -> alta) com UM
    token: 22 decisoes nos 6 golds, 5 erradas (77%; 2+ tokens e margem dao 94%) -> 1 token vira banda media + flag; medir motor_puro
-   +vocab, eval_eixos, regua_aula, holdout CG (gold re-chaveado). Entra so se conf-err cai sem AULA/curada regredir.
+   +vocab, eval_eixos, regua_aula, holdout CG (gold re-chaveado). Entra so se conf-err cai sem AULA/curada regredir. **FEITO 04/09 noite
+   (`728c0f1`): entrou — conf-err 3 -> 2 (puro), holdout puro conf-err 2 -> 0, curado 35/35, nenhuma regua regrediu; custo votos/100 29,9 -> 36,5.**
 12. Travessia "depois": rerodar `eval_travessia.py {IA,FR,CG}` e comparar com o "antes" (tracker, REGUA DE TRAVESSIA).
 **C0 fecha quando:** 9-12 feitos ou retirados pelo user, com numero no tracker.
 
