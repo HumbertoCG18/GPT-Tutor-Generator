@@ -3,14 +3,14 @@
 last_updated: 2026-09-03 (sessao 5, noite). **Ponto de entrada = handoff `2026-09-03b-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 6/11 (faltam 9, 10, 11, 12);
-SYNC 5/6 (falta S6 = CG pela API, que engloba HTML como material: **S6a, S6b e S6c FEITOS** na sessao 5, faltam S6d-S6f; §SYNC S6a/S6b/S6c).
+SYNC 5/6 (falta S6 = CG pela API, que engloba HTML como material: **S6a-S6e FEITOS** na sessao 5, falta S6f = rebuild do CG; §SYNC S6a-S6e).
 **FILA:** 1 ABERTA = SYNC (S6a-S6f) · 2 PROXIMA = C0 itens 9-12 · estacionadas: C1 travessia · C3 provas/listas/imagens ·
 C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
-## SYNC S6a/S6b/S6c — HTML COMO MATERIAL (03/09 sessao 5, FEITOS)
+## SYNC S6a-S6e — HTML COMO MATERIAL (03/09 sessao 5, FEITOS; falta S6f)
 
 S6c `12990ed`: `formula_index` + secao "Formulas transcritas (conferir com o professor)" no SYNC_REPORT (por entry html: n formulas,
 n nao capturadas, arquivos de review). Na copia do gate: curvas 12 · 0 · 12 reviews. Suite 2318.
@@ -32,9 +32,21 @@ arquivos por causa pre-existente do S5: referencia url re-sumarizada toda rodada
 UMA vez na proxima sync). Tutores: nenhum muda neste passe.
 Achados no gate: (1) `resolve_content_images` apagava as 12 GIFs de formula (fonte e link `[..]`, nao `![..]`) — raiz corrigida;
 (2) FILE_MAP nao lista `curvas` — clamp de 12 KB (nem o PDF irmao aparece): C1, nao S6.
-**Faltam no S6:** S6d (pull grava `.html` no stash em vez de imprimir PDF;
-`.orig` nao vai; snapshot so na SUBARVORE; http do mesmo host -> mirror?), S6e (gold do S6c/S6d; as fixtures do S6a/S6b ja estao),
-S6f (CG rebuild). Evidencia versionada: `_harness-2026-09-03/piloto-curvas/{gate_s6b_curvas.py,Curvas.s6b.md}`.
+S6d `5799035`: pull grava `stash/<card>/<nome>.html` (resource .htm(l) e mod_page; acao `html`, antes `print`), snapshot vira
+bundle `stash/<card>/<Stem>/` (pagina + imagens do mesmo host, do dir da pagina no caminho relativo e de fora pelo basename; nunca
+`.orig`) e segue links so na SUBARVORE da pagina (`in_subtree`; `same_site` vazava `Aulas/`, `CGII/`, `~manssour/`, `CG-PPGCC/`);
+**regra (a) do user:** onde ja existe `<stem>.pdf` impresso (LR, 4 labs) o PDF fica e o `.html` nao entra (`pdf-existente`), migracao
+na fronteira; scan trata o bundle como 1 item html (imagens nao viram entries); URL absoluta do mesmo host resolve pelo basename no
+dir da pagina (4 refs no CG). Nenhuma pagina e mais impressa em PDF. Dry-run real do CG (93 links): 15 paginas do Moodle -> html,
+15 snapshot, 23 referencia, 40 download, 0 gravado. Suite 2326.
+S6e (fixtures) FEITO por construcao no TDD de S6a-S6d: `test_url_markdown.py` (Curvas.htm real), `test_html_material.py` (gold Datalab
+do piloto + clientes falsos), `test_site_snapshot.py` (mirror real), `test_moodle_pull.py`, `test_moodle_sync.py`, `test_stash_import.py`.
+**Falta no S6:** S6f = CG rebuild limpo pela API (gasto real: Datalab 21 PDFs + ~160 imagens ~ US$ 3,60; Gemini 18 codigos +
+traducoes + voter com cap): `moodle_pull --pdf` na raiz do perfil (stash novo em `computacao-grafica/stash/`, o export fica),
+`build_course.py` numa COPIA (zero curadoria, summaries ON, vocab, voter com cap), gold `ground_truth_CG.csv` re-chaveado (ids novos
+vem do nome do modulo; `true_block_uuid` como chave de bloco), holdout >= 30/35 puro e 34/35 curado, curada dos 5 intacta,
+sentinela 0, user revisa `revisar` e a lista de formulas do SYNC_REPORT; so entao a copia vira o original. Evidencia versionada:
+`_harness-2026-09-03/piloto-curvas/{gate_s6b_curvas.py,Curvas.s6b.md}`.
 
 ## SEQUENCIA ACORDADA (02/09 noite) — HISTORICO: C0 e SYNC encerradas em 03/09 (fila viva no handoff 2026-09-03b)
 

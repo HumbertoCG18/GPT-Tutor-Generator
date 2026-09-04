@@ -11,10 +11,10 @@ anterior vai para `_archive/`. Tracker registra numero e commit de cada item.
 **Caixa de IDEIAS (secao no fim):** o que surge no meio do caminho ("da para fazer X?") NAO entra na campanha aberta: vai para a
 caixa com 3 campos — da para fazer? · quando (qual campanha)? · o que resolve no sistema? — e e triado so na fronteira entre campanhas.
 
-## COMECE POR (proxima sessao) — SYNC S6d (S6a, S6b e S6c FEITOS em 03/09 sessao 5)
+## COMECE POR (proxima sessao) — SYNC S6f, o rebuild do CG (S6a-S6e FEITOS em 03/09 sessao 5)
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` pode estar sujo; `.codex/` e o spec `docs/superpowers/specs/
    2026-09-03-auditoria-enxame-codex-skill-design.md` sao de outro agente, nao toque), `git log --oneline -4` (HEAD = docs desta sessao
-   por cima de `12990ed` `a10a6ca` `0a8ae2e` `6111b46`), HEAD dos 8 tutores iguais aos de "Estado ao comecar" (nenhum mudou), suite 2318,
+   por cima de `5799035` `12990ed` `a10a6ca` `0a8ae2e` `6111b46`), HEAD dos 8 tutores iguais aos de "Estado ao comecar" (nenhum mudou), suite 2326,
    `python scripts/censo_motor_llm.py` (revisar/100 51,8).
 1. **Feito na sessao 5** (numeros e achados: `pendencias.md` §SYNC S6a/S6b; decisao: `decisions.md` §"HTML salvo e material"):
    S6a `6111b46` conversor sem teto / sem VML / cabecalho web so com URL; S6b `0a8ae2e` `core/html_material.process_html` (tipo `html`
@@ -25,11 +25,17 @@ caixa com 3 campos — da para fazer? · quando (qual campanha)? · o que resolv
    `.ablacao/CG-gate-html/manual-review/formulas/` (12; `Image2.gif` tem o erro do professor nos expoentes, transcrito fiel), ou
    `_harness-2026-09-03/piloto-curvas/Curvas.s6b.md` (mesmo markdown, versionado).
 2. **S6c FEITO `12990ed`**: `formula_index` + secao "Formulas transcritas (conferir com o professor)" no `SYNC_REPORT`.
-3. **S6d** (pull): `moodle_pull.py` grava `.html` no stash em vez de imprimir PDF (resource `.htm(l)` e `mod_page`; hoje linhas
-   184-205 e 265-273), `.orig` do snapshot NAO vai para o stash, snapshot segue so a SUBARVORE da pagina (hoje `same_site` vaza
-   `CGII/`, `~manssour/`, `CG-PPGCC/`), indices de video como `references`; decidir http do mesmo host -> mirror (12 refs em 20
-   paginas ficam "nao capturada" hoje). Dry-run antes de tocar em qualquer stash real; copia antes do original.
-4. Gate de cada sub-etapa: suite verde; sentinela 0 nos 8; determinismo 8/8; curada intacta; commit com o numero no tracker.
+3. **S6d FEITO `5799035`** (paginas como `.html` no stash, bundle do snapshot na subarvore, regra (a) para PDFs ja impressos) e
+   **S6e FEITO** por construcao (fixtures reais + clientes falsos no TDD de S6a-S6d). Numeros: `pendencias.md` §SYNC S6a-S6e.
+4. **S6f = CG rebuild limpo pela API — GASTO REAL, espere o ok do user antes de cada rodada paga:**
+   (a) `python scripts/moodle_pull.py --course 95106 --root "C:/Users/Humberto/Desktop/Moodle/computacao-grafica" --pdf` (stash
+   novo em `computacao-grafica/stash/`; o export atual fica onde esta; conferir `links.json`: 15 html + 15 snapshot + 40 download);
+   (b) `build_course.py` numa COPIA (ex.: `.ablacao/CG-rebuild`) com o perfil do CG (datalab balanced, high_fidelity, flags
+   anchor+voter+vocab), zero curadoria, summaries ON — Datalab so nos 21 PDFs reais + ~160 imagens (cap 400), Gemini nos 18 codigos
+   + traducoes; (c) gold `ground_truth_CG.csv` re-chaveado: os ids novos vem do NOME DO MODULO (savename), casar pela coluna
+   `material` e pelo `true_block_uuid`; (d) `holdout_cg.py <GEN> <COPY_DIR> --no-sync` >= 30/35 puro e `--curado` 34/35; curada dos 5
+   intacta; sentinela 0 nos 7 outros; determinismo; (e) user revisa a fila `revisar` e a secao "Formulas transcritas" do SYNC_REPORT;
+   (f) so entao a copia vira o original (`Computacao-Grafica-Tutor`, commit no tutor) e a SYNC fecha (criterio 100%).
 Regras que valem para o codigo novo: `_process_html` mora em `core/html_material.py` (fachada de 2 linhas no engine); tokens nunca
 impressos; nenhum tutor original antes da copia passar.
 
@@ -40,7 +46,7 @@ preempta o voto do LLM · nada pushed sem o user · `.claude/settings.local.json
 Datalab/Gemini `.env`) nunca impressos · [Humberto] · nao corrigir conteudo do professor em silencio (marcar para review).
 
 ## Estado ao comecar (dados de 03/09, tudo commitado, NADA pushed)
-Gerador `feat/motor-atribuicao`, **805 commits a frente de `main`** (4 atras); sessao 5 (03/09 noite) acrescentou `6111b46` `0a8ae2e` `a10a6ca` + docs (suite 2316). Rodada do motor: `fe2c4fb` `b802a68` `79fc92a` `fdf28af`
+Gerador `feat/motor-atribuicao`, **805 commits a frente de `main`** (4 atras); sessao 5 (03/09 noite) acrescentou `6111b46` `0a8ae2e` `a10a6ca` `12990ed` `5799035` + docs (suite 2326). Rodada do motor: `fe2c4fb` `b802a68` `79fc92a` `fdf28af`
 `b1d565a` `a1bcc25`; SYNC: `2491596` `619488c` `91867b7` `e593ee7` + `53f5db1` (img no conversor) + docs (`0c5129b`). Suite 2298.
 Tutores: MF `e39e14a` · SO `603d914` · IA `ca1f765` · ES2 `2212f9f` · TCC `b9af3c3` (encerrados, estrutura do Moodle no manifest) ·
 LR `040b2dd` (sincronizado: Lab 4 entrou) · FR `89db35d` (sincronizado: 2 videos como referencia) · CG `19472d1` (EXPORT; e o
@@ -59,7 +65,7 @@ AULA 174/189 (175 sem vocab) · REF 8/10 · holdout CG puro 30/35, curado 34/35 
 - **SYNC — 5/6 feitos, ABERTA.** Feitos: S1 diff, S2 import do delta, S3 regeneracao + diff de decisoes + `mudou` + SYNC_REPORT,
   S4 LR sincronizado (Lab 4), S5 FR controle (2 videos). Falta: S6 (CG rebuild pela API), que DEPENDE de tratar HTML como
   material — por isso a "PAGINAS+CG" nao e campanha: e a sub-etapa S6a-S6f dentro da SYNC (abaixo). **S6a e S6b FEITOS** (sessao 5);
-  S6c FEITO; faltam S6d-S6f.
+  S6a-S6e FEITOS; falta S6f.
 
 ## FILA DE CAMPANHAS (ordem decidida 03/09)
 
@@ -78,9 +84,9 @@ ficam ignorados e listados; **toda formula transcrita vai para `manual-review/fo
   capturada](images/x.gif)`; imagens copiadas para `content/images/`.
 - S6c (=H3) **FEITO `0a8ae2e` + `12990ed`**. `manual-review/formulas/<id>.md`: cada formula (LaTeX + link da imagem-fonte + caixa "conferir com o professor") e as nao
   capturadas; indice no `SYNC_REPORT`. Sem detector de erro: a lista e para o user.
-- S6d (=H4). Pull: paginas do Moodle e snapshots do site entram no stash como `.html` (nao impressos); indices de video idem, categoria
+- S6d (=H4) **FEITO `5799035`** (regra (a): PDF ja impresso fica; LR migra na fronteira). Pull: paginas do Moodle e snapshots do site entram no stash como `.html` (nao impressos); indices de video idem, categoria
   `references`; snapshot segue so links na SUBARVORE da pagina (hoje `same_site` = mesmo host: vazaria `Aulas/` e outras cadeiras).
-- S6e (=H5). Fixtures: `Curvas.htm` real + cache do piloto como gold (12 formulas); clientes Datalab/Gemini falsos nos testes; suite verde.
+- S6e (=H5) **FEITO** (TDD de S6a-S6d). Fixtures: `Curvas.htm` real + cache do piloto como gold (12 formulas); clientes Datalab/Gemini falsos nos testes; suite verde.
 - S6f. CG = primeira sync como REBUILD LIMPO pela API: Datalab so nos 21 PDFs reais + ~250 imagens (~US$ 3); Gemini nos 18 codigos +
   traducoes; zero curadoria, summaries ON, vocab, voter com cap; `ground_truth_CG.csv` re-chaveado por `true_block_uuid`; copia
   antes do original. "Em duvida 28/08" e "modals" triados aqui.
