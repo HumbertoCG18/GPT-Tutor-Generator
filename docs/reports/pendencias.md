@@ -3,7 +3,8 @@
 last_updated: 2026-09-04 (sessao 5, madrugada). **Ponto de entrada = handoff `2026-09-03b-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 6/11 (faltam 9, 10, 11, 12);
-SYNC 5/6 (S6a-S6e FEITOS; **S6f feito na COPIA**, holdout puro 30/35 e curado 33/35 [gate 34], decisao do user pendente; §SYNC S6f).
+SYNC 5/6 (S6a-S6e FEITOS; S6f feito na COPIA, holdout puro 30/35 e curado 33/35 [gate 34]; **SEGURADA pelo user ate o C0 item 11**; §SYNC S6f).
+**Em execucao: C0 itens 9-12** (ordem proposta 11 -> 10 -> 9 -> 12).
 **FILA:** 1 ABERTA = SYNC (S6a-S6f) · 2 PROXIMA = C0 itens 9-12 · estacionadas: C1 travessia · C3 provas/listas/imagens ·
 C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
@@ -41,8 +42,8 @@ exclusivo por 1 token 22 (5 erradas = 77%: MF `terminacao`, ES2 `azure` "servico
 de JANELA (bloco-03 fora dos 9 blocos), nao de banda. Candidato para o C0 item 11, a medir antes de entrar: exclusivo por 1 token ->
 banda media + flag (voter e card agem): no puro -5 conf-err e 17 certas viram duvida (revisar/100 e votos/100 sobem, ~+22 votos nos
 6 cursos); no curado o LLM decide (22/23 no balde parecido, medido em 21/08). Sem regra por curso; nada entra sem esse numero.
-**Pendente (decisao do user):** (1) fila `revisar` e lista de formulas; (2) criterio 34/35: aceitar 33/35 com a causa documentada
-(estrutura x calibracao, C0) ou segurar a SYNC ate o item 11; (3) a copia virar o original (`Computacao-Grafica-Tutor`, commit no
+**Decisao do user (04/09): SYNC SEGURADA ate o C0 item 11** (criterio 34/35 mantido; a copia `.ablacao/CG-rebuild` fica). Pendentes
+quando a SYNC voltar: (1) fila `revisar` e lista de formulas; (2) rerodar o holdout do rebuild com o gerador novo; (3) a copia virar o original (`Computacao-Grafica-Tutor`, commit no
 tutor) e o perfil apontar `stash_folder` para `computacao-grafica/stash`. Ate la o CG original NAO muda.
 
 ## SYNC S6a-S6e — HTML COMO MATERIAL (03/09 sessao 5, FEITOS)

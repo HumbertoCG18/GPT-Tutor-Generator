@@ -11,7 +11,15 @@ anterior vai para `_archive/`. Tracker registra numero e commit de cada item.
 **Caixa de IDEIAS (secao no fim):** o que surge no meio do caminho ("da para fazer X?") NAO entra na campanha aberta: vai para a
 caixa com 3 campos — da para fazer? · quando (qual campanha)? · o que resolve no sistema? — e e triado so na fronteira entre campanhas.
 
-## COMECE POR (proxima sessao) — SYNC S6f: rebuild FEITO na copia; falta a decisao do user e a promocao (S6a-S6e FEITOS)
+## COMECE POR (proxima sessao) — C0 MOTOR itens 9-12; SYNC SEGURADA (decisao do user 04/09) ate o C0 item 11
+**Decisao do user (04/09 madrugada):** a SYNC NAO fecha com 33/35 — fica SEGURADA, com o S6f medido na copia
+`.ablacao/CG-rebuild/Computacao-Grafica-Tutor` (gitignored; nao apagar `.ablacao/CG-rebuild*`), ate o C0 item 11 calibrar a regra
+`exclusivo` do disamb (1 token -> banda media + flag) e o holdout curado do rebuild bater 34/35 sem ruido. O criterio 34/35 fica.
+Ate la: CG original, perfil e `ground_truth_CG.csv` intocados; stash novo em `computacao-grafica/stash/` fica pronto. Ao voltar a SYNC:
+rerodar `s6f/holdout_cg_rebuild.py` (puro e `--curado`) com o gerador novo e so entao os passos (a)-(c) abaixo.
+**Ordem de trabalho agora: C0 (secao 2 da FILA).** Proposta de ordem: 11 (calibracao `exclusivo` + LLM so nos flagados, contado) ->
+10 (medicao dos 13 erros de unidade) -> 9 (refactor corte 1, byte-identico) -> 12 (travessia "depois", por ultimo).
+
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` pode estar sujo; `.codex/` e o spec `docs/superpowers/specs/
    2026-09-03-auditoria-enxame-codex-skill-design.md` sao de outro agente, nao toque), `git log --oneline -4` (HEAD = docs desta sessao
    por cima de `5799035` `12990ed` `a10a6ca` `0a8ae2e` `6111b46`), HEAD dos 8 tutores iguais aos de "Estado ao comecar" (nenhum mudou), suite 2326,
