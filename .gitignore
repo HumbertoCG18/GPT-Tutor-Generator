@@ -250,6 +250,7 @@ staging/
 !moddle/.env.example
 moddle/.m365_token.json
 .superpowers/
+.worktrees/
 .ablacao/
 scripts/artefato_razao/dados.json
 scripts/artefato_razao/razao_dos_blocos.html
