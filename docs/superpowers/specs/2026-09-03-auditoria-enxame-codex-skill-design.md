@@ -1,7 +1,7 @@
 # Auditoria-enxame como skill nativa do Codex
 
 **Data:** 2026-09-03
-**Status:** aguardando revisão do usuário
+**Status:** aprovado para plano
 **Fonte funcional:** `.claude/workflows/auditoria-enxame.js`
 
 ## Objetivo
