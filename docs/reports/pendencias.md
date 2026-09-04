@@ -34,6 +34,13 @@ flag -> o voter nao vota e o card da secao 6 nao age (estrutura so em decisao fl
 o token "imagens" pontuava bloco-07 — RUIDO, nao evidencia (a hipotese anterior do "2d" no nome de arquivo estava errada: "2dfa6ac3"
 e um token so). O 34/35 do baseline dependia desse ruido; o motor honesto da 33/35. Balde: C0 item 11 (calibracao: `exclusivo`
 por 1 token generico; `unit_block_conflict` ja registra unidade-05 x bloco de unidade-06 com 0,95 e nao rebaixa a banda).
+**Medido nos 6 golds (motor puro, `s6f/mede_exclusivo.py` e `s6f/mede_conflito.py`, 04/09):** decisoes `disamb` ALTA com gold = 58:
+exclusivo por 1 token 22 (5 erradas = 77%: MF `terminacao`, ES2 `azure` "servicos", CG `matematica` x2 versoes, CG `transformacoesgl`)
+· exclusivo por 2+ tokens 18 (1 errada, 94%) · margem >= 0,55 18 (1 errada, 94%); a banda alta promete ~98% — o furo e SO o balde de
+1 token. `unit_block_conflict` NAO separa (erradas com conflito 2/7; certas com conflito 5/51): nao e alavanca. `matematica` e caso
+de JANELA (bloco-03 fora dos 9 blocos), nao de banda. Candidato para o C0 item 11, a medir antes de entrar: exclusivo por 1 token ->
+banda media + flag (voter e card agem): no puro -5 conf-err e 17 certas viram duvida (revisar/100 e votos/100 sobem, ~+22 votos nos
+6 cursos); no curado o LLM decide (22/23 no balde parecido, medido em 21/08). Sem regra por curso; nada entra sem esse numero.
 **Pendente (decisao do user):** (1) fila `revisar` e lista de formulas; (2) criterio 34/35: aceitar 33/35 com a causa documentada
 (estrutura x calibracao, C0) ou segurar a SYNC ate o item 11; (3) a copia virar o original (`Computacao-Grafica-Tutor`, commit no
 tutor) e o perfil apontar `stash_folder` para `computacao-grafica/stash`. Ate la o CG original NAO muda.

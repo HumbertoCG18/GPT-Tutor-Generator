@@ -142,7 +142,7 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
 - Imagem http do MESMO host da pagina -> arquivo do mirror do snapshot (hoje "nao capturada": 12 refs em 20 paginas do CG) · sim · S6d · menos "nao capturada".
 - FILE_MAP nao lista o html novo (clamp 12 KB; nem o PDF irmao aparece) · ja e o item da C1 · C1 · indice completo.
 - Imagem do mesmo host numa pagina do Moodle SOLTA (`Window1.png`, 2 refs) · sim: pagina do Moodle como bundle quando tem `<img>` externo · S6 futuro/C3 · menos "nao capturada".
-- Regra `exclusivo` do disamb (s2=0 -> alta) com UM token generico (transformacoesgl: "geometrica" -> bloco-15 x secao 6; `unit_block_conflict` 0,95 ignorado) · sim, calibracao medida nos 6 golds · C0 item 11 · confiante-errado fica fora do alcance do LLM e do card.
+- Regra `exclusivo` do disamb (s2=0 -> alta) com UM token: 22 decisoes nos 6 golds, 5 erradas (77% x ~98% prometido pela banda alta; 2+ tokens e margem dao 94%) · sim: 1 token -> banda media + flag, medir motor_puro + eval_eixos + holdout · C0 item 11 · -5 conf-err no puro, 17 certas viram duvida (+~22 votos); `unit_block_conflict` nao separa (2/7 x 5/51). `s6f/mede_exclusivo.py`, `s6f/mede_conflito.py`.
 - Imagem de prova (texto OCR) vira `![Figura: <texto>]` longo em vez de bloco de texto · sim · C3 provas · legibilidade das resolucoes de prova.
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
