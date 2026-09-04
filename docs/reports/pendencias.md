@@ -25,11 +25,15 @@ mesma numeracao e datas; 61 linhas -> 48, **35/35 scorable** (4 aliases: paginas
 ambiguidade resolvida pela secao original). Revisao do user: `s6f/formulas_index.md` (37) e `s6f/revisar_queue.md` (45).
 **Reguas:** holdout **puro 30/35** (gate >= 30 batido), conf-err 2 (baseline 1); holdout **curado+LLM 33/35** (gate 34/35 NAO
 batido), conf-err 2 · curada dos 5 199/200 · 191/191 · 55/57 intacta · sentinela 0/8 · determinismo do rebuild 0 arquivos (2 rodadas).
-**Achado (raiz do 33):** `transformacoesgl` (pagina "Transformacoes Geometricas em OpenGL", secao 6 do Moodle, gold bloco-06) decide
-bloco-15 CONFIANTE (`disamb`/topic, banda alta) -> o voter nao vota. No export a MESMA pagina impressa em PDF ficava flagada (banda
-media) porque o texto tinha um "2d" — que vinha do NOME DE ARQUIVO de uma imagem do Datalab (`datalab-2dfa6ac3...jpg`) num comentario
-HTML: ruido. O 34/35 do baseline era inflado por acaso; o motor honesto da 33/35 e o erro e do balde "confiante fora do alcance do
-LLM" (C0 item 11: calibracao da banda do `disamb` sem token discriminante; o card da secao 6 so age em decisao flagada).
+**Achado (raiz do 33, reproduzido em `_harness-2026-09-03/s6f/disseca_transformacoes.py`):** `transformacoesgl` (pagina "Transformacoes
+Geometricas em OpenGL", secao 6 do Moodle, gold bloco-06) toca UMA assinatura de bloco no curso inteiro: o token "geometrica" de
+bloco-15 ("modelagem geometrica") — coincidencia lexical, nao topico. Na janela de 9 blocos s2=0, e a regra `exclusivo` do
+`_lexical_decision` (D4 relido 21/08: s1>0 com s2=0 = "evidencia mais exclusiva possivel", 21/23 nos 5 cursos) da banda ALTA sem
+flag -> o voter nao vota e o card da secao 6 nao age (estrutura so em decisao flagada). No export a MESMA pagina ficava flagada
+(margem 0,29 < 0,55) porque o texto impresso trazia o boilerplate do gerador ("Descricoes preservadas para imagens detectadas..."):
+o token "imagens" pontuava bloco-07 — RUIDO, nao evidencia (a hipotese anterior do "2d" no nome de arquivo estava errada: "2dfa6ac3"
+e um token so). O 34/35 do baseline dependia desse ruido; o motor honesto da 33/35. Balde: C0 item 11 (calibracao: `exclusivo`
+por 1 token generico; `unit_block_conflict` ja registra unidade-05 x bloco de unidade-06 com 0,95 e nao rebaixa a banda).
 **Pendente (decisao do user):** (1) fila `revisar` e lista de formulas; (2) criterio 34/35: aceitar 33/35 com a causa documentada
 (estrutura x calibracao, C0) ou segurar a SYNC ate o item 11; (3) a copia virar o original (`Computacao-Grafica-Tutor`, commit no
 tutor) e o perfil apontar `stash_folder` para `computacao-grafica/stash`. Ate la o CG original NAO muda.

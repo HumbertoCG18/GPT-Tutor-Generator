@@ -30,8 +30,8 @@ caixa com 3 campos — da para fazer? · quando (qual campanha)? · o que resolv
 4. **S6f — feito ate a medicao (04/09; `pendencias.md` §SYNC S6f):** pull real OK (stash novo em `computacao-grafica/stash/`), build na
    copia `.ablacao/CG-rebuild/Computacao-Grafica-Tutor` (66 entries, ~US$ 1,70 de Datalab), gold re-chaveado 35/35
    (`_harness-2026-09-03/s6f/ground_truth_CG.rebuild.csv`), holdout puro 30/35 (gate OK), **curado 33/35 (gate 34 NAO batido)**,
-   curada intacta, sentinela 0, determinismo do rebuild 0 arquivos (2 rodadas). Causa do 33: `transformacoesgl` confiante-errado; o 34 do baseline dependia de um "2d" que era
-   nome de arquivo do Datalab (ruido). **Decisoes do user antes de continuar:** (a) revisar `s6f/formulas_index.md` (37) e
+   curada intacta, sentinela 0, determinismo do rebuild 0 arquivos (2 rodadas). Causa do 33 (reproduzida, `s6f/disseca_transformacoes.py`): `transformacoesgl` toca so "geometrica" (bloco-15) e a regra
+   `exclusivo` (s2=0) do disamb da alta; no export o boilerplate "imagens" do gerador pontuava bloco-07 e flagava (ruido). **Decisoes do user antes de continuar:** (a) revisar `s6f/formulas_index.md` (37) e
    `s6f/revisar_queue.md` (45); (b) aceitar 33/35 com causa documentada (calibracao do `disamb` = C0 item 11) ou segurar a SYNC;
    (c) promover a copia a original: copiar `.ablacao/CG-rebuild/Computacao-Grafica-Tutor` sobre `Computacao-Grafica-Tutor` (git do tutor
    preserva historico), commit no tutor "rebuild pela API (gerador <hash>)", perfil `stash_folder` -> `computacao-grafica/stash`,
@@ -142,7 +142,7 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
 - Imagem http do MESMO host da pagina -> arquivo do mirror do snapshot (hoje "nao capturada": 12 refs em 20 paginas do CG) · sim · S6d · menos "nao capturada".
 - FILE_MAP nao lista o html novo (clamp 12 KB; nem o PDF irmao aparece) · ja e o item da C1 · C1 · indice completo.
 - Imagem do mesmo host numa pagina do Moodle SOLTA (`Window1.png`, 2 refs) · sim: pagina do Moodle como bundle quando tem `<img>` externo · S6 futuro/C3 · menos "nao capturada".
-- Banda "alta" do `disamb`/topic sem token discriminante (transformacoesgl: bloco-15 x secao 6) · sim, calibracao · C0 item 11 · o card so age em decisao flagada; confiante-errado fica fora do alcance do LLM.
+- Regra `exclusivo` do disamb (s2=0 -> alta) com UM token generico (transformacoesgl: "geometrica" -> bloco-15 x secao 6; `unit_block_conflict` 0,95 ignorado) · sim, calibracao medida nos 6 golds · C0 item 11 · confiante-errado fica fora do alcance do LLM e do card.
 - Imagem de prova (texto OCR) vira `![Figura: <texto>]` longo em vez de bloco de texto · sim · C3 provas · legibilidade das resolucoes de prova.
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
