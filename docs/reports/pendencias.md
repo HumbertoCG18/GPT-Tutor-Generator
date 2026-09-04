@@ -10,6 +10,22 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## AUDITORIA DAS REGUAS (04/09 sessao 5, a pedido do user, antes do C0)
+
+Tudo remedido em 04/09 (gerador `09feaca`+): curada dos 5 (`eval_eixos`, N=200) **199/200 conf-err 0 · 191/191 · 55/57**; motor puro
++vocab (`motor_puro`, N=200) **183/200 conf-err 3 · 178/191 · 53/57 · sub 82/93** (78 primario); AULA (`regua_aula` linha "motor puro hoje",
+N=189) **174/189** = 92,1%, residual flagados 35 (18,5/100), erros flagados 7, erros nao flagados 8 (banda alta 3); REF 8/10 (flagados 3);
+BASE 4/4; por escopo do motor no PRODUTO dos 6 golds (N=238): material 211/214 (conf-err 2 = CG `exclusivo`, flagados 16) · prazo 10/10
+(flagados 5) · referencia 10/10 · meta 4/4; por tipo: pdf 152/153 · code 38/39 · zip 30/30 · html 10/11 · url 3/3 · github 2/2;
+holdout CG puro 31/35 (flag 9) · curado 33/35 (flag 1), conf-err 2; unidade CG 33/35; censo revisar/100 54,0 · votos/100 29,9 (348);
+sentinela 0/8; **determinismo 8/8 = 0 arquivos**. Tudo igual ao gate de 03/09: nenhuma regua regrediu com S6a-S6f.
+**Defeitos de regua/gold achados e tratados:** (1) `regua_aula` aplica a escada stale (H9 `picks_card.json` de 02/09 "agiu em 54") e
+imprime 170/189 no fim — so a linha "motor puro hoje" vale; podar no C0 item 9. (2) Gold do TCC tinha 9 ids duplicados (pares de PDFs
+iguais do export com nome quase igual, mesmo bloco): 42 -> 33 linhas, 27 scorable unicos (o "36" nunca foi medido; `eval_eixos` conta
+25 = 27 menos 2 pares colapsados por `pair_key`); reguas identicas antes/depois (TCC 25/25 · 18/18 · 3/3). (3) IA tem 17 linhas sem id,
+todas scorable=no (materiais nao rotulados) — ok. MF/SO/ES2 e os golds de subunidade/material/cobertura: sem duplicata. (4) N difere
+entre reguas para os mesmos golds (200 / 203 / 238): todo numero carrega sua regua e seu N.
+
 ## SYNC S6f — REBUILD LIMPO DO CG PELA API (04/09 sessao 5, FEITO NA COPIA; decisao do user pendente)
 
 Pull real (`moodle_pull --pdf`, raiz `Desktop/Moodle/computacao-grafica`, export intacto): 93 links -> 40 download, 15 html, 15 snapshot,
