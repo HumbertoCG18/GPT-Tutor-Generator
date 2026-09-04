@@ -261,7 +261,10 @@ def _lexical_decision(entry: dict, blocks: List[dict], ctx: MotorContext, markdo
     discriminante = hits_best - hits_runner
     # Janela degradada (ref fantasma: so 1 bloco resolve) nao tem runner-up —
     # s2=0 ali nao e exclusividade, e ausencia de comparacao: segue flagada.
-    exclusivo = s2 <= 0 and len(blocks) >= 2
+    # C0 11a (medido 04/09, s6f/mede_exclusivo.py): exclusividade apoiada em UM so
+    # token de contato acerta 17/22 nos 6 golds (77%; 2+ tokens ou margem: 94%).
+    # Um token e indicio, nao evidencia: o best fica, mas sai banda media + flag.
+    exclusivo = s2 <= 0 and len(blocks) >= 2 and len(discriminante) >= 2
     confident = s1 > 0 and bool(discriminante) and (
         exclusivo or (s2 > 0 and rel_margin >= MARGIN_TAU))
 

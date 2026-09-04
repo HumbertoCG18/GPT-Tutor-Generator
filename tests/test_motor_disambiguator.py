@@ -267,6 +267,23 @@ def test_evidencia_exclusiva_sem_competicao_e_confiante():
     assert d.flag is False and d.band == "alta"
 
 
+def test_exclusivo_com_um_so_token_nao_e_confiante():
+    """C0 item 11a (medido 04/09, `s6f/mede_exclusivo.py`): `exclusivo` (s1>0, s2=0)
+    apoiado em UM so token de contato acerta 17/22 nos 6 golds (77%); com 2+ tokens
+    ou margem, 94%. Um token e indicio, nao evidencia: o bloco continua o best, mas
+    a decisao sai em banda media e flagada (voter e card agem)."""
+    blocks = [
+        {"id": "bloco-A", "period_start": "2026-03-01",
+         "topic_text": "logica hoare triplas", "sessions": []},
+        {"id": "bloco-B", "period_start": "2026-03-08",
+         "topic_text": "modelos kripke temporal", "sessions": []},
+    ]
+    ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={})
+    d = disambiguate({"title": "exercicios de hoare"}, ["bloco-A", "bloco-B"], ctx)
+    assert d.block_ref == "bloco-A"          # o best nao muda
+    assert d.flag is True and d.band == "media"
+
+
 def test_silencio_total_continua_flagado():
     """s1 = 0 (nenhum token casa bloco nenhum) NAO e evidencia: segue flag."""
     blocks = [

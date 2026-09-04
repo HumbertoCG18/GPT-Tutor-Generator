@@ -42,9 +42,19 @@ def _entry(title):
 
 
 def test_short_vocab_decides_a_flagged_tie_and_is_watched_separately():
+    # "geneticos" sozinho e UM token de contato -> flagado (C0 11a); o curto "ag"
+    # consagrado pelo cronograma e o segundo token que decide o desempate.
+    ctx = _ctx()
+    d = disambiguate(_entry("Exercicios AG geneticos"), ["bloco-13", "bloco-15"], ctx, provider="labels")
+    assert (d.block_ref, d.method, d.flag) == ("bloco-13", "disamb-curto", False)
+
+
+def test_short_vocab_sozinho_e_um_token_e_nao_tira_a_flag():
+    """C0 11a: o token curto e sinal, nao evidencia — "AG" sem outro token de
+    contato continua flagado (voter e card agem)."""
     ctx = _ctx()
     d = disambiguate(_entry("Exercicios AG"), ["bloco-13", "bloco-15"], ctx, provider="labels")
-    assert (d.block_ref, d.method, d.flag) == ("bloco-13", "disamb-curto", False)
+    assert d.block_ref == "bloco-13" and d.flag is True
 
 
 def test_confident_standard_decision_is_not_recomputed():
