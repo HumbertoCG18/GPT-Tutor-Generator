@@ -173,6 +173,10 @@ from src.builder.ops.url_and_cleanup import (
 from src.builder.ops.taxonomy_inputs import (
     build_rich_content_taxonomy as _ops_build_rich_content_taxonomy,
 )
+from src.builder.core.html_material import (
+    datalab_image_markdown as _core_html_material_datalab_image_markdown,
+    process_html as _core_html_material_process_html,
+)
 from src.builder.core.source_importers import (
     process_code as _source_importers_process_code,
     process_github_repo as _source_importers_process_github_repo,
@@ -1985,6 +1989,18 @@ class RepoBuilder:
 
     def _process_image(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
         return _source_importers_process_image(self, entry, raw_target)
+
+    def _process_html(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
+        from src.builder.ops.pedagogical_regeneration import _resolve_gemini_client
+
+        client = _resolve_gemini_client(self)
+        return _core_html_material_process_html(
+            self,
+            entry,
+            raw_target,
+            datalab_image_fn=_core_html_material_datalab_image_markdown,
+            gemini_text_fn=client.generate_text if client else (lambda prompt, image_path=None: ""),
+        )
 
     def _process_code(self, entry: FileEntry, raw_target: Path) -> Dict[str, object]:
         return _source_importers_process_code(self, entry, raw_target)

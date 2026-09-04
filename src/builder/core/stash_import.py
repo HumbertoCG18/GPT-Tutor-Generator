@@ -48,6 +48,10 @@ def _classify_file_type(name: str) -> str:
     # codigo); process_zip decide o formato pelo CONTEUDO do arquivo.
     if ext == ".zip" or name.endswith((".tar.gz", ".tgz")):
         return "zip"
+    # Pagina do professor / do Moodle salva no stash e MATERIAL (SYNC S6b, 03/09). Antes de code:
+    # ".html" esta em CODE_EXTENSIONS (virava codigo-professor sem texto) e ".htm" era ignorado.
+    if ext in (".htm", ".html"):
+        return "html"
     if ext in CODE_EXTENSIONS:
         return "code"
     return ""  # desconhecido -> skip

@@ -76,6 +76,14 @@ def process_entry(builder, entry, *, image_categories) -> Dict[str, object]:
 
     safe_name = f"{entry.id()}{src.suffix.lower()}"
 
+    if entry.file_type == "html":
+        raw_target = builder.root_dir / "raw" / "html" / safe_name
+        ensure_dir(raw_target.parent)
+        shutil.copy2(src, raw_target)
+        item["raw_target"] = safe_rel(raw_target, builder.root_dir)
+        item.update(builder._process_html(entry, raw_target))
+        return item
+
     if entry.file_type == "code":
         code_subdir = "student" if entry.category == "codigo-aluno" else "professor"
         raw_target = builder.root_dir / "raw" / "code" / code_subdir / safe_name

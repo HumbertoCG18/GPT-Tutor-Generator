@@ -256,3 +256,20 @@ def test_id_de_tar_gz_nao_carrega_tar():
     e = FileEntry(source_path=r"C:\stash\tcp_chat_c.tar.gz", file_type="zip",
                   category="codigo-professor", title="tcp_chat_c")
     assert e.id() == "tcp-chat-c"
+
+
+def test_scan_classifies_html_pages_as_material_not_code(tmp_path):
+    # SYNC S6b (03/09): paginas do professor (Curvas.htm) e do Moodle (.html) salvas no stash sao MATERIAL.
+    # `.html` esta em CODE_EXTENSIONS (virava codigo-professor sem texto; por isso o pull imprimia PDF)
+    # e `.htm` era ignorado.
+    card = tmp_path / "7 - Curvas Parametricas"
+    card.mkdir()
+    (card / "Curvas.htm").write_text("<p>x</p>", encoding="utf-8")
+    (card / "exercicios-sobre-curvas.html").write_text("<p>x</p>", encoding="utf-8")
+    res = scan_stash_cards(tmp_path)
+    by_name = {Path(i.source_path).name: i for i in res.items}
+    assert by_name["Curvas.htm"].file_type == "html"
+    assert by_name["Curvas.htm"].category == "outros"
+    assert by_name["exercicios-sobre-curvas.html"].file_type == "html"
+    assert by_name["exercicios-sobre-curvas.html"].category == "listas"
+    assert res.skipped == []

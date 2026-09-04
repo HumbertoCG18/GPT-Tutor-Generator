@@ -672,7 +672,9 @@ def auto_detect_category(name: str, is_image: bool = False, frases_do_plano=None
     import re as _re
     name = name.lower()
     ext = Path(name).suffix.lower()
-    if ext in CODE_EXTENSIONS:
+    # ".htm/.html" solto no stash e pagina (material), nao codigo (SYNC S6b, 03/09); dentro de zip
+    # o process_zip decide por CODE_EXTENSIONS e nao passa por aqui.
+    if ext in CODE_EXTENSIONS and ext not in (".htm", ".html"):
         return "codigo-professor"
 
     # Use word-boundary regex for short codes to avoid false positives (e.g. "cap1" matching "p1")
