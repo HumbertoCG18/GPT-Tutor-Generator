@@ -3,9 +3,8 @@
 last_updated: 2026-09-04 (sessao 5, madrugada; SYNC fechada). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 6/11 (faltam 9, 10, 11, 12);
-**SYNC 6/6 FECHADA em 04/09** (S6f promovido: CG `a16051b`; holdout curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
-**FILA:** 1 ABERTA = C0 itens 9-12 (ordem proposta 11 -> 10 -> 9 -> 12) · 2 PROXIMA = C1 travessia.
-**FILA:** 1 ABERTA = SYNC (S6a-S6f) · 2 PROXIMA = C0 itens 9-12 · estacionadas: C1 travessia · C3 provas/listas/imagens ·
+**SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
+**FILA:** 1 ABERTA = C0 itens 9-12 (ordem proposta 11 -> 10 -> 9 -> 12) · 2 PROXIMA = C1 travessia · estacionadas: C3 provas/listas/imagens ·
 C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
