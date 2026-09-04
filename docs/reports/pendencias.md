@@ -1,16 +1,40 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-03 (sessao 5, noite). **Ponto de entrada = handoff `2026-09-03b-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-04 (sessao 5, madrugada). **Ponto de entrada = handoff `2026-09-03b-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 6/11 (faltam 9, 10, 11, 12);
-SYNC 5/6 (falta S6 = CG pela API, que engloba HTML como material: **S6a-S6e FEITOS** na sessao 5, falta S6f = rebuild do CG; §SYNC S6a-S6e).
+SYNC 5/6 (S6a-S6e FEITOS; **S6f feito na COPIA**, holdout puro 30/35 e curado 33/35 [gate 34], decisao do user pendente; §SYNC S6f).
 **FILA:** 1 ABERTA = SYNC (S6a-S6f) · 2 PROXIMA = C0 itens 9-12 · estacionadas: C1 travessia · C3 provas/listas/imagens ·
 C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
-## SYNC S6a-S6e — HTML COMO MATERIAL (03/09 sessao 5, FEITOS; falta S6f)
+## SYNC S6f — REBUILD LIMPO DO CG PELA API (04/09 sessao 5, FEITO NA COPIA; decisao do user pendente)
+
+Pull real (`moodle_pull --pdf`, raiz `Desktop/Moodle/computacao-grafica`, export intacto): 93 links -> 40 download, 15 html, 15 snapshot,
+23 referencia, 0 review, 0 erro; stash 218 arquivos (21 PDF, 14 zip, 3 cpp, 2 xlsx ignorados, 15 html do Moodle, 13 bundles de pagina
+com 146 imagens, 0 `.orig`). Fix no caminho: pagina `index.*` leva o nome do diretorio da URL (`d7b2f87`; 4 links colapsavam).
+Build na COPIA `.ablacao/CG-rebuild/Computacao-Grafica-Tutor` (`_harness-2026-09-03/s6f/rebuild_cg.py`, mesmo caminho da UI, perfil
+real, zero curadoria): 2052 s, 0 falhas, 66 entries (28 html, 21 pdf, 14 zip, 3 code); Datalab 115 chamadas = 229 paginas de PDF
+(~0,33 c/pagina) + 94 imagens (1 c) ~ US$ 1,70; Gemini 72 textos (legendas/descricoes) + 41 bundles. Imagens das paginas: 136 ->
+37 formulas (37 reviews em `manual-review/formulas/`), 84 figuras, 5 descritas, 10 nao capturadas (8 do `cs.uic.edu` na Iluminacao,
+2 `Window1.png` do mesmo host numa pagina do Moodle solta — caixa de ideias). revisar: duvida 38 · ok 21 · llm 7 (68/100).
+Gold re-chaveado (`s6f/rekey_gold_cg.py` -> `s6f/ground_truth_CG.rebuild.csv`, NAO substitui o versionado): blocos 29 = 29 com a
+mesma numeracao e datas; 61 linhas -> 48, **35/35 scorable** (4 aliases: paginas do site impressas no export -> bundle html;
+ambiguidade resolvida pela secao original). Revisao do user: `s6f/formulas_index.md` (37) e `s6f/revisar_queue.md` (45).
+**Reguas:** holdout **puro 30/35** (gate >= 30 batido), conf-err 2 (baseline 1); holdout **curado+LLM 33/35** (gate 34/35 NAO
+batido), conf-err 2 · curada dos 5 199/200 · 191/191 · 55/57 intacta · sentinela 0/8 · determinismo do rebuild 0 arquivos (2 rodadas).
+**Achado (raiz do 33):** `transformacoesgl` (pagina "Transformacoes Geometricas em OpenGL", secao 6 do Moodle, gold bloco-06) decide
+bloco-15 CONFIANTE (`disamb`/topic, banda alta) -> o voter nao vota. No export a MESMA pagina impressa em PDF ficava flagada (banda
+media) porque o texto tinha um "2d" — que vinha do NOME DE ARQUIVO de uma imagem do Datalab (`datalab-2dfa6ac3...jpg`) num comentario
+HTML: ruido. O 34/35 do baseline era inflado por acaso; o motor honesto da 33/35 e o erro e do balde "confiante fora do alcance do
+LLM" (C0 item 11: calibracao da banda do `disamb` sem token discriminante; o card da secao 6 so age em decisao flagada).
+**Pendente (decisao do user):** (1) fila `revisar` e lista de formulas; (2) criterio 34/35: aceitar 33/35 com a causa documentada
+(estrutura x calibracao, C0) ou segurar a SYNC ate o item 11; (3) a copia virar o original (`Computacao-Grafica-Tutor`, commit no
+tutor) e o perfil apontar `stash_folder` para `computacao-grafica/stash`. Ate la o CG original NAO muda.
+
+## SYNC S6a-S6e — HTML COMO MATERIAL (03/09 sessao 5, FEITOS)
 
 S6c `12990ed`: `formula_index` + secao "Formulas transcritas (conferir com o professor)" no SYNC_REPORT (por entry html: n formulas,
 n nao capturadas, arquivos de review). Na copia do gate: curvas 12 · 0 · 12 reviews. Suite 2318.

@@ -1,0 +1,73 @@
+# Fórmulas transcritas no rebuild do CG (S6f, 2026-09-04) — conferir com o professor
+
+Arquivos em `.ablacao/CG-rebuild/Computacao-Grafica-Tutor/manual-review/formulas/` (fonte NÃO corrigida; `Image2.gif` da Curvas tem o erro do professor nos expoentes).
+
+## Formulas transcritas (conferir com o professor)
+- intro: 0 formulas · 0 nao capturadas
+- modelagem3d: 0 formulas · 0 nao capturadas
+- atividade: 0 formulas · 0 nao capturadas
+- opengl3d: 0 formulas · 0 nao capturadas
+- vis3d: 10 formulas · 0 nao capturadas
+  - manual-review/formulas/vis3d-CalculoDeU.md
+  - manual-review/formulas/vis3d-VersorDeU.md
+  - manual-review/formulas/vis3d-image016.md
+  - manual-review/formulas/vis3d-image031.md
+  - manual-review/formulas/vis3d-image032.md
+  - manual-review/formulas/vis3d-image033.md
+  - manual-review/formulas/vis3d-image034.md
+  - manual-review/formulas/vis3d-image037.md
+  - manual-review/formulas/vis3d-image038.md
+  - manual-review/formulas/vis3d-image040.md
+- iluminacao: 6 formulas · 8 nao capturadas
+  - manual-review/formulas/iluminacao-Image39.md
+  - manual-review/formulas/iluminacao-Image41.md
+  - manual-review/formulas/iluminacao-Image45.md
+  - manual-review/formulas/iluminacao-Image46.md
+  - manual-review/formulas/iluminacao-Image49.md
+  - manual-review/formulas/iluminacao-Image57.md
+- maptextures: 0 formulas · 0 nao capturadas
+- exercicios: 0 formulas · 0 nao capturadas
+- exercicio-com-animacao: 0 formulas · 0 nao capturadas
+- exercicio-com-poligonos: 0 formulas · 0 nao capturadas
+- exercicio-de-animacao-foguete: 0 formulas · 0 nao capturadas
+- geomcomp: 0 formulas · 0 nao capturadas
+- exercicios-teoricos-sobre-processo-de-visualizacao-2d: 0 formulas · 1 nao capturada
+- pagina-com-videos-sobre-instanciamento: 0 formulas · 0 nao capturadas
+- transformacoesgl: 0 formulas · 0 nao capturadas
+- curvas: 12 formulas · 0 nao capturadas
+  - manual-review/formulas/curvas-EquacaoHermite.md
+  - manual-review/formulas/curvas-Image1.md
+  - manual-review/formulas/curvas-Image11.md
+  - manual-review/formulas/curvas-Image2.md
+  - manual-review/formulas/curvas-Image3.md
+  - manual-review/formulas/curvas-Image4.md
+  - manual-review/formulas/curvas-Image5.md
+  - manual-review/formulas/curvas-Image6.md
+  - manual-review/formulas/curvas-Image7.md
+  - manual-review/formulas/curvas-Image8.md
+  - manual-review/formulas/curvas-Image9.md
+  - manual-review/formulas/curvas-image007.md
+- exercicios-sobre-curvas: 0 formulas · 0 nao capturadas
+- floodfill: 0 formulas · 0 nao capturadas
+- img: 2 formulas · 0 nao capturadas
+  - manual-review/formulas/img-Image6.md
+  - manual-review/formulas/img-image5.md
+- remocaoderuido: 0 formulas · 0 nao capturadas
+- exercicios-de-processamento-de-imagens: 0 formulas · 0 nao capturadas
+- exercicios-de-geometria-computacional: 0 formulas · 0 nao capturadas
+- exercicios-sobre-curvas-html: 0 formulas · 0 nao capturadas
+- exercicios-teoricos-sobre-processo-de-visualizacao-2d-html: 0 formulas · 1 nao capturada
+- exerciciosfundamentosmatematicos: 1 formulas · 0 nao capturadas
+  - manual-review/formulas/exerciciosfundamentosmatematicos-Img00003.md
+- resolucao-de-prova-de-computacao-grafica-2d: 3 formulas · 0 nao capturadas
+  - manual-review/formulas/resolucao-de-prova-de-computacao-grafica-2d-data-00a123ff.md
+  - manual-review/formulas/resolucao-de-prova-de-computacao-grafica-2d-data-09e0dbe8.md
+  - manual-review/formulas/resolucao-de-prova-de-computacao-grafica-2d-data-bbd9b753.md
+  - manual-review/formulas/resolucao-de-prova-de-computacao-grafica-2d-html-data-00a123ff.md
+  - manual-review/formulas/resolucao-de-prova-de-computacao-grafica-2d-html-data-09e0dbe8.md
+  - manual-review/formulas/resolucao-de-prova-de-computacao-grafica-2d-html-data-bbd9b753.md
+- resolucao-de-prova-de-computacao-grafica-2d-html: 3 formulas · 0 nao capturadas
+  - manual-review/formulas/resolucao-de-prova-de-computacao-grafica-2d-html-data-00a123ff.md
+  - manual-review/formulas/resolucao-de-prova-de-computacao-grafica-2d-html-data-09e0dbe8.md
+  - manual-review/formulas/resolucao-de-prova-de-computacao-grafica-2d-html-data-bbd9b753.md
+- resolucao-de-prova-de-computacao-grafica-3d: 0 formulas · 0 nao capturadas
