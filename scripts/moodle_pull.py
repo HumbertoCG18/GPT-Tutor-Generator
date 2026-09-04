@@ -272,6 +272,16 @@ class Pull:
                                 dest = Path(self.snap.save_material(page, self.stash))
                                 self.nomes[f"{card}/{dest.name}"] = str(m.get("name") or "")
                                 rec["destino"] = str(dest.relative_to(self.root)) if dest.is_absolute() else str(dest)
+                                # S6d: folhas seguidas na SUBARVORE do hub (GeomComp -> Slab/Dominancia/PlaneSweep; IMG ->
+                                # ExercicioDuasCores) sao material do MESMO modulo; sem isto ficavam so no mirror (pull CG 04/09).
+                                for child_url in page.get("links") or []:
+                                    child = self.snap.pages.get(child_url)
+                                    if child and child.get("kind") == "folha" and not child.get("_material"):
+                                        child["_material"] = True
+                                        dest_c = Path(self.snap.save_material(child, self.stash))
+                                        self.nomes[f"{card}/{dest_c.name}"] = str(m.get("name") or "")
+                                        rec.setdefault("folhas", []).append(
+                                            str(dest_c.relative_to(self.root)) if dest_c.is_absolute() else str(dest_c))
                 elif mn == "page":
                     fu = (m.get("contents") or [{}])[0].get("fileurl", "")
                     raw = self.get(fu) if fu else b""

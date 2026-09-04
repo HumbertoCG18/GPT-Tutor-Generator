@@ -177,3 +177,39 @@ def test_snapshot_de_pagina_do_professor_vira_bundle_no_stash(tmp_path):
     rec = next(r for r in pull.links if r["nome"] == "Página sobre Curvas Paramétricas")
     assert rec["acao"] == "snapshot" and rec["destino"].endswith("Curvas.htm")
     assert pull.nomes["7 - Curvas Paramétricas/Curvas.htm"] == "Página sobre Curvas Paramétricas"
+
+
+def test_folhas_da_subarvore_seguidas_pelo_hub_tambem_viram_bundle_no_stash(tmp_path):
+    # Pull real do CG (04/09): GeomComp.htm (card do Moodle) tem 3 folhas na subarvore (Slab, Dominancia, PlaneSweep) e IMG.htm
+    # tem ExercicioDuasCores; o snapshot as segue e grava no mirror, mas so o hub virava bundle -> 4 materiais fora do stash.
+    contents = [{"name": "5 - Geometria Computacional", "section": 5, "summary": "", "modules": [
+        {"modname": "url", "id": 1, "name": "Página sobre Geometria Computacional",
+         "contents": [{"type": "url", "fileurl": "https://www.inf.pucrs.br/pinho/CG/Aulas/GeomComp/GeomComp.htm"}]},
+        {"modname": "url", "id": 2, "name": "Outra", "contents": [{"type": "url", "fileurl": "https://www.inf.pucrs.br/pinho/CG/Aulas/Intro/intro.htm"}]}]}]
+    pull = _pull(tmp_path, contents, b"")
+    hub_url = "https://www.inf.pucrs.br/pinho/CG/Aulas/GeomComp/GeomComp.htm"
+    folha_url = "https://www.inf.pucrs.br/pinho/CG/Aulas/GeomComp/Slab/Slab.html"
+    materialized = []
+
+    def fake_save_page(url, card, kind, level, follow=True):
+        stem = url.rsplit("/", 1)[-1].rsplit(".", 1)[0]
+        rec = {"url": url, "local": f"raw/site/x/{stem}.htm", "card": card, "title": stem, "images": [], "kind": kind, "links": []}
+        if url == hub_url:
+            rec["links"] = [folha_url]
+            pull.snap.pages[folha_url] = {"url": folha_url, "local": "raw/site/x/Slab.html", "card": card, "title": "Slab",
+                                         "images": [], "kind": "folha", "links": []}
+        pull.snap.pages[url] = rec
+        return rec
+
+    def fake_save_material(rec, stash):
+        materialized.append(rec["url"])
+        stem = rec["local"].rsplit("/", 1)[-1].rsplit(".", 1)[0]
+        return stash / rec["card"] / stem / f"{stem}.html"
+
+    pull.snap.save_page = fake_save_page
+    pull.snap.save_material = fake_save_material
+    pull.run(95106)
+    assert hub_url in materialized and folha_url in materialized
+    assert pull.nomes["5 - Geometria Computacional/GeomComp.html"] == "Página sobre Geometria Computacional"
+    assert pull.nomes["5 - Geometria Computacional/Slab.html"] == "Página sobre Geometria Computacional"
+    assert materialized.count(folha_url) == 1
