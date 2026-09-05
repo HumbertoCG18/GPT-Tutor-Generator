@@ -91,3 +91,11 @@ def test_titulo_repetido_com_mesmo_topic_text_usa_a_sessao():
     heads = [l for l in repo.cronograma_detalhado_md({"course_name": "SO"}, [], {}, blocks).splitlines() if l.startswith("## ")]
     assert heads[0].endswith("— Paginação · Paginacao conceitos aula")
     assert heads[1].endswith("— Paginação · Paginacao exercicios aula")
+
+
+def test_bloco_nao_aula_repetido_nao_ganha_qualificador():
+    # feriado/entrega/evento repetem label por natureza; qualificar seria ruido ("Feriado · Feriado aula")
+    a = _blk("bloco-05", "Feriado", "feriado", "feriado aula", "2026-04-21"); a["kind"] = "holiday"
+    b = _blk("bloco-08", "Feriado", "feriado", "feriado aula", "2026-05-01"); b["kind"] = "holiday"
+    heads = [l for l in repo.cronograma_detalhado_md({"course_name": "SO"}, [], {}, [a, b]).splitlines() if l.startswith("## ")]
+    assert all(h.endswith("— Feriado") for h in heads)

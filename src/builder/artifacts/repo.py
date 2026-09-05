@@ -952,17 +952,23 @@ def cronograma_detalhado_md(
     def _cw(s) -> str:
         return " ".join(str(s or "").split())
 
+    # So blocos de AULA: feriado/entrega/evento/avaliacao repetem label por natureza ("Feriado" x3) e o
+    # qualificador ali e ruido ("Feriado · Feriado aula"). Medido 05/09: 62 cabecalhos qualificados sem o
+    # filtro x 16 colisoes reais de aula.
+    def _e_aula(b: dict) -> bool:
+        return str(b.get("kind") or "class") == "class"
+
     _label_count: dict[str, int] = {}
     for blk in timeline_blocks:
         _lbl = str(blk.get("primary_topic_label") or "").strip().lower()
-        if _lbl:
+        if _lbl and _e_aula(blk):
             _label_count[_lbl] = _label_count.get(_lbl, 0) + 1
 
     def _qualificador(blk: dict) -> str:
         _lbl = str(blk.get("primary_topic_label") or "").strip().lower()
-        if not _lbl or _label_count.get(_lbl, 0) < 2:
+        if not _lbl or not _e_aula(blk) or _label_count.get(_lbl, 0) < 2:
             return ""
-        irmaos = [b for b in timeline_blocks if str(b.get("primary_topic_label") or "").strip().lower() == _lbl]
+        irmaos = [b for b in timeline_blocks if _e_aula(b) and str(b.get("primary_topic_label") or "").strip().lower() == _lbl]
         textos = {_cw(str(b.get("topic_text") or "")).lower() for b in irmaos}
         if len(textos) == len(irmaos) and all(textos):
             return _cw(str(blk.get("topic_text") or ""))
