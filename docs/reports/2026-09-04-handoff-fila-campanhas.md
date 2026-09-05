@@ -137,6 +137,8 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
   `find_spec` no lugar do import · sim · campanha futura (C4) · determinismo ~10 -> ~1-2 min, reprocess dos 8 ~8 -> ~2 min.
 - Janela do card = secao inteira: REFUTADA 05/09 com numero (todos os materiais da secao 72 -> 56; so janela-1 por card 21 -> 15, 25/27 flagados). A
   janela-1 pelo label do card e a melhor aposta estrutural; o resto e voto cacheado ou humano. Nao repetir sem sinal novo (ex.: data por material no Moodle).
+- **Data de entrega dos trabalhos (user 05/09: postagem + entrega como alavanca de T1/T2):** nenhum manifest tem `duedate`; capturar `dates` de assign/quiz
+  no pull da API e persistir por entry, depois medir contra o gold (hoje prazo vem do SARC: 7/9) · sim · SYNC/C3 · trabalhos sem chute.
 - Peso do label do Moodle no desempate: REFUTADO 05/09 (50 -> 47/48 em 58 disamb; quebra k-NN do IA). Nao repetir.
 - Matcher bloco->topico absorvido por aliases genericos da taxonomia (FR: topico "Modelos OSI e TCP/IP" herda os nomes de todas as camadas e pontua 1,0 para
   qualquer aula "camada X"; o topico certo fica em 0,14) · corrigir exige GOLD DE TOPICO por bloco (nao existe) · campanha futura · labels de bloco certos, menos colisao.

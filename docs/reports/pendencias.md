@@ -34,6 +34,12 @@ flagados 4/9 (conserta MF `introducao-zip` e `terminacao`, erra 5). Como decisor
 alcanca os 2 (gold fora da janela). Nao entra.
 **Sinais por erro (medido):** H9 contem o gold em 5 dos 14 erros de AULA (revisao, introducao, exerciciosformalizacao, dafny2, terminacao) mas 2 deles
 sao confiantes (revisao, dafny2) e o card nao sobrepoe confianca (medido 02/09: a tudo +13/-10). Nos 5 `.thy` nenhum sinal estrutural aponta o 06.
+**Perguntas do user (05/09 ~04h) medidas:** (1) trabalhos por postagem+entrega: nenhum manifest tem `duedate` (export nao traz; pull da API do CG nao tem
+modulos assign/dates) — a janela de prazo hoje vem do SARC e acerta 7/9 trabalhos/provas do gold; **dado a capturar na SYNC** (`dates` de assign/quiz do
+`core_course_get_contents`) antes de virar alavanca. (2) `revisao` fora dos stems genericos: 50 -> 50, nada muda; o titulo do card ja e a janela [03, 04].
+(3) H9 sobre decisao confiante que contradiz o card ordenado: 2 casos — `dafny2` vira flag (voter acerta) e `exemplos` quebra (06 -> 05): saldo 0.
+(4) `.thy`: o titulo do card "Provas por Inducao" e a sessao do SARC do bloco-05 ("provas por inducao listas e arvores") sao o que manda para o 05;
+so o tipo de arquivo (.thy = Isabelle) aponta o 06, e a janela e de 1 bloco. Vocab compilado ja esta ligado no motor puro +vocab.
 **Fecho da frente 'corrigir os erros do motor puro' (user 05/09):** 4 alavancas medidas, 4 refutadas com numero (label x2/x3; janela = secao, 2 formas;
 data de postagem). O que sobra e voto cacheado (produto: curada 199/199) ou pino humano. Sem sinal novo do Moodle, nao ha o que codar.
 **Alavanca medida e REFUTADA:** peso do label do Moodle no desempate lexical (tokens de titulo+label x2/x3): 58 entries disamb com gold, acerto
