@@ -381,3 +381,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Reasoning:** Medido: com 12 KB o FILE_MAP citava CG 26/93, IA 22/59, MF 31/66 e a travessia do CG errava exatamente os alvos fora do corte (8/8). Cada material custava ~480 chars por causa da linha de rastreabilidade; sem ela e com Secoes limitada, os 8 tutores completos cabem em 3,7-21,8 KB. Travessia depois: ver tracker §C1 ITEM 1. determinismo 8/8 (0 arquivos nao deterministicos).
 **Consequences:** Medicoes que dependiam da linha '↳' (harness da travessia, watchdog do censo) passaram a ler o TRACE pelo numero e o label. Proximos da C1: label de bloco duplicado no cronograma; title do material html = label no manifest (piso sem-llm).
 
+---
+
+### C1 item 2: titulo de bloco qualificado so em colisao; CRONOGRAMA_DETALHADO nao depende de haver codigo
+
+**Date:** 2026-09-05
+**Status:** Active
+**Decision:** No CRONOGRAMA_DETALHADO, blocos com o mesmo label no curso ganham um qualificador do proprio bloco (topic_text; senao a 1a sessao); o artefato passa a ser gravado sempre que ha blocos (estava dentro de `if code_entries`, TCC e LR nao o tinham). Sem LLM: o efeito no 'quando' da travessia espera a recarga. A raiz da colisao do FR (aliases de todas as camadas no topico 'Modelos OSI e TCP/IP') fica na caixa: exige gold de topico.
+**Reasoning:** Medido nos 8: 7 labels repetidos, 16 blocos, 33 materiais; o flip 'osi tcp ip' do item 12 veio dai. Mudanca deterministica, byte-identica fora das colisoes.
+**Consequences:** determinismo 8/8 (0 arquivos nao deterministicos); proximo C1 item 3 (title = label no manifest, medir antes). Ideia registrada na caixa: Datalab para imagens, Gemini so fallback (custo).
+

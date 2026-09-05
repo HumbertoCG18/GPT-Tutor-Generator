@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-05 (sessao 5, madrugada; C0 FECHADA 11/11; C1 item 1 FEITO; item 2 MEDIDO, decisao pendente; Gemini sem credito). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-05 (sessao 5, madrugada; C0 FECHADA 11/11; C1 itens 1 e 2 FEITOS; Gemini sem credito). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: **C0 MOTOR 11/11 FECHADA em 05/09** (§C0 ITEM 12, 9, 10, 11a, 11b);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
@@ -10,7 +10,7 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
-## C1 ITEM 2 — LABEL DE BLOCO DUPLICADO NO CRONOGRAMA (05/09 madrugada, MEDIDO sem LLM; decisao do user pendente)
+## C1 ITEM 2 — LABEL DE BLOCO DUPLICADO NO CRONOGRAMA (05/09 madrugada, MEDIDO sem LLM; **FEITO: as 2 propostas entraram**)
 **Medido nos 8 (`c1-2/`):** 6 cursos tem blocos-AULA com o mesmo `primary_topic_label`: 7 labels, 16 blocos, **33 materiais** ancorados neles
 (MF 5 "Verificacao de modelos" x2 · SO 6 "Paginacao" x2 · ES2 17 "Estudo de caso: integracao..." x4 · FR 5 "Modelos OSI e TCP/IP" x2 + "Enderecamento" x2 ·
 TCC "Correcao" x2 e LR "Desenvolvimento" x2 sem materiais). Em 5 das 7 colisoes o `topic_text`/sessoes diferem (qualificador disponivel); em SO/TCC/LR
@@ -28,6 +28,7 @@ artefato** (35 e 17 blocos com data, 0 code entries na lista). O "quando" desses
 colisao, com o `topic_text` humanizado ou a 1a sessao ("Modelos OSI e TCP/IP · camada transporte"), deterministico, 16 blocos em 6 cursos, byte-identico
 no resto; (b) mover a escrita do CRONOGRAMA_DETALHADO para fora do `if code_entries` (TCC e LR ganham o artefato). Gate: suite, sentinela 0, determinismo;
 efeito no "quando" medido na travessia quando houver credito.
+**FEITO (gerador `333d635`, reprocess registrado `c1-2/reprocess_c1_2.py`):** MF `62a73ea` · SO `0921948` · IA `3f549bf` · ES2 `ba7d2c8` · TCC `d9126af` · LR `d139547` · FR `fd7814f` · CG `0986874`. CRONOGRAMA_DETALHADO por tutor: MF 23 blocos, 2 qualificados · SO 27 blocos, 2 qualificados · IA 24 blocos, 0 qualificados · ES2 15 blocos, 4 qualificados · TCC 35 blocos, 2 qualificados · LR 17 blocos, 2 qualificados · FR 30 blocos, 4 qualificados · CG 29 blocos, 0 qualificados. Manifest intocado; sentinela 0/8; determinismo 8/8 (0 arquivos nao deterministicos); suite 2322 (2 testes RED/GREEN). Medicao do "quando" na travessia: pendente de credito Gemini.
 
 ## C1 ITEM 1 — FILE_MAP COMPLETO E MAGRO (05/09 madrugada, FEITO E REGISTRADO NOS 8)
 Gerador `0ff832a` (renderer) · `4db9a6c` (harness da travessia) · `df0e34f` (watchdog do censo) · `6afdcff` (titulo com `|`). **Medido antes

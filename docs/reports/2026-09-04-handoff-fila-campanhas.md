@@ -8,7 +8,7 @@ Unico handoff vivo. Substitui `_archive/2026-09-03b-handoff-fila-campanhas.md` (
 (criterio estrito); item nao feito nao muda de dono sozinho — ou e feito, ou o user o RETIRA por decisao registrada. Novo lote = novo
 handoff, o anterior vai para `_archive/`. Ideia que surge no meio vai para a CAIXA DE IDEIAS (da para fazer? · quando? · o que resolve?).
 
-## COMECE POR (proxima sessao) — C1 TRAVESSIA: decisao do user sobre o item 2 (§C1 ITEM 2: qualificar titulo em colisao + CRONOGRAMA_DETALHADO fora do `if code_entries`); depois item 3 (title = label no manifest). **Gemini sem credito desde 05/09 00:45: so medicao sem LLM ate a recarga.**
+## COMECE POR (proxima sessao) — C1 TRAVESSIA, item 3: title do material html = moodle_label no MANIFEST (medir antes; piso sem-llm do CG 5/15 le o manifest). Itens 1 e 2 FEITOS 05/09. **Gemini sem credito desde 05/09 00:45: so medicao sem LLM ate a recarga; a travessia pos-itens 1-3 roda quando houver credito, so no modo LLM.**
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` e `.codex/` podem aparecer), `git log --oneline -3`, HEAD dos 8
    tutores iguais aos de "Estado ao comecar" (CG agora e `2efddcb`), `python scripts/censo_motor_llm.py` (revisar/100 58,0). Suite 2312 (25 testes de scripts arquivados sairam com eles).
 1. **11a FEITO** (`728c0f1`, §C0 ITEM 11a no tracker): `exclusivo` exige 2+ tokens; 1 token = banda media + flag. Copias: conf-err 3 -> 2,
@@ -28,7 +28,8 @@ handoff, o anterior vai para `_archive/`. Ideia que surge no meio vai para a CAI
    de arquivo); label de bloco duplicado (FR bloco-06/20).
 6. **C1 item 1 FEITO** (`0ff832a` + `4db9a6c` + `df0e34f` + `6afdcff`; §C1 ITEM 1): FILE_MAP completo (80 KB, aviso), TRACE separado, titulo = label,
    Secoes 3/80; 8 tutores reprocessados (manifest intocado); travessia: ver tabela no tracker.
-7. **C1 proximos**: (2) medir label de bloco duplicado nos 8 cronogramas (FR bloco-06/20) e o "quando" da travessia; (3) title do material html
+7. **C1 item 2 FEITO** (`333d635`; §C1 ITEM 2): titulo de bloco repetido qualificado so em colisao (topic_text/sessao); CRONOGRAMA_DETALHADO fora do
+   `if code_entries` (TCC e LR ganharam o artefato). Raiz do FR (aliases de camadas no topico) na caixa. Proximos: (3) title do material html
    = moodle_label no MANIFEST (piso sem-llm do CG 5/15 le o manifest) — medir antes; (4) indice por unidade/termos so se a regua mostrar erro
    dessa forma. Fronteira: triagem da CAIXA (C7 IMAGENS, posicao = decisao do user).
 4. Gate de cada item: suite verde; sentinela 0 nos 8; determinismo 8/8; curada intacta; commit com o numero no tracker; tutores so
@@ -125,6 +126,15 @@ refs md alteradas (esperado so os 7 alts), stash CG -39. **Pronto quando:** 0 du
 Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no sistema?
 - Conferencia das 37 formulas do CG por LLM (Gemini ve a imagem e compara com a transcricao do Datalab; ~37 chamadas) · sim · C3 · segunda opiniao
   depois da aprovacao humana de 04/09; so lista divergencias, nao corrige.
+- **Custo do Gemini (user 05/09: R$43 em poucos dias para um fallback):** imagens dos materiais deveriam passar pelo Datalab (descricao ja vem no
+  markdown do arquivo) e o Gemini ficar so como fallback; travessia so no modo LLM e uma rodada por item; medir chamadas por funcao antes de mexer
+  · sim · discutir com a C7 IMAGENS · menos API por rebuild. Dado desta sessao: travessia 165 chamadas x ~11-13k tokens; voter 23 votos (cache 205).
+- **Tempo de reprocess (user 05/09: "vale auditoria"; medido com cProfile nas copias):** CG 111 s, dos quais 92,5 s (83%) em
+  `apply_unit_subunit_fields` -> `_score_entry_against_taxonomy_topic` -> `normalize_match_text` (85,6 s: normalizacao refeita por par
+  entry x topico x frase, sem cache); LR 11,6 s, dos quais 8,8 s em `write_build_report` -> `load_docling_python_api` (importa o docling so
+  para dizer se existe). Determinismo = 16 reprocess sequenciais (~10 min); reprocess dos 8 sequencial. Correcoes byte-identicas: cache da
+  normalizacao (lru), determinismo com 1 rodada comparada ao original commitado, paralelismo por tutor (`ablacao_rapida.reprocess_parallel`),
+  `find_spec` no lugar do import · sim · campanha futura (C4) · determinismo ~10 -> ~1-2 min, reprocess dos 8 ~8 -> ~2 min.
 - Matcher bloco->topico absorvido por aliases genericos da taxonomia (FR: topico "Modelos OSI e TCP/IP" herda os nomes de todas as camadas e pontua 1,0 para
   qualquer aula "camada X"; o topico certo fica em 0,14) · corrigir exige GOLD DE TOPICO por bloco (nao existe) · campanha futura · labels de bloco certos, menos colisao.
 - Reprocess registrado commita quando so o `updated_at` do manifest muda (7 commits de ruido em 05/09) · sim: comparar sem `updated_at` antes de commitar · C4 · historico limpo.
