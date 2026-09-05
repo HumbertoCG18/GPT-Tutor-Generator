@@ -371,3 +371,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Reasoning:** Travessia rerodada nos 3 cursos x 3 modos com a mesma regua de 03/09: IA identico (0 chamadas novas, indices iguais), FR material 15/15, CG com LLM 7/15 onde os 7 acertos tem alvo dentro do FILE_MAP e os 8 erros tem alvo fora do corte (26/93 citados). O motor (C0) melhorou o 'quando' (CG bloco 8 -> 10/11 sem-llm, 7 -> 8/11 LLM) e nada regrediu por ele. O piso sem-llm do CG caiu 10 -> 5 porque o rebuild grava `title` = nome do arquivo.
 **Consequences:** Reguas finais da C0 (motor puro +vocab): bloco 183/200 conf-err 2 · unidade 183/191 · cobertura 53/57 · subunidade 82/93 · AULA 174/189 · holdout CG puro 31/35 conf-err 0 / curado 35/35 · curada 199/200 · 191/191 · 55/57 · censo revisar/100 58,0 · votos/100 36,5. Handoff 2026-09-04 segue vivo com C1 aberta.
 
+---
+
+### C1 item 1: FILE_MAP completo e magro — o roteador lista todos os materiais, a rastreabilidade vai para o TRACE
+
+**Date:** 2026-09-05
+**Status:** Active
+**Decision:** Teto do FILE_MAP 12 KB -> 80 KB (aviso mantido); linha de rastreabilidade sai para course/FILE_MAP_TRACE.md (mesma numeracao, sem clamp); titulo = moodle_label com fallback title; Secoes <= 3 headers / 80 chars; '|' no titulo vira '/'. Entrou no gerador (`0ff832a`) e nos 8 tutores.
+**Reasoning:** Medido: com 12 KB o FILE_MAP citava CG 26/93, IA 22/59, MF 31/66 e a travessia do CG errava exatamente os alvos fora do corte (8/8). Cada material custava ~480 chars por causa da linha de rastreabilidade; sem ela e com Secoes limitada, os 8 tutores completos cabem em 3,7-21,8 KB. Travessia depois: ver tracker §C1 ITEM 1. determinismo 8/8 (0 arquivos nao deterministicos).
+**Consequences:** Medicoes que dependiam da linha '↳' (harness da travessia, watchdog do censo) passaram a ler o TRACE pelo numero e o label. Proximos da C1: label de bloco duplicado no cronograma; title do material html = label no manifest (piso sem-llm).
+

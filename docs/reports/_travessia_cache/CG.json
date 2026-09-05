@@ -484,5 +484,262 @@
   ],
   "bloco": "",
   "porque": "O FILE_MAP lista esses arquivos de código do professor contendo explicitamente transformações com OpenGL e PyOpenGL."
+ },
+ "aa54f707d2209cf020846759d7f03b73f0a1fd01": {
+  "arquivos": [
+   "Recorte",
+   "Página com Vídeos sobre RECORTE"
+  ],
+  "bloco": "",
+  "porque": "A linha 40 do FILE_MAP indica o material 'Recorte' associado à Unidade 04 (Processo de Visualização 2D), que aborda diretamente o algoritmo de recorte."
+ },
+ "d32daa66a3ae8e9cfc0437a40774d4026c3d4eee": {
+  "arquivos": [
+   "Slides",
+   "Representação e Operações Básicas de Vetores Bidimensionais em C++",
+   "Página com Vídeos sobre Fundamentos Matemáticos para Computação Gráfica"
+  ],
+  "bloco": "",
+  "porque": "A linha 31 (Slides) aborda Pontos e Vetores, e a linha 32 detalha a representação de vetores em C++ na Unidade 02."
+ },
+ "ca516c4acc20b5e6e35e33225122604fd529e060": {
+  "arquivos": [
+   "Slides sobre Detecção de Colisão",
+   "Vídeos sobre Algoritmos de Deteção de Colisão"
+  ],
+  "bloco": "",
+  "porque": "O arquivo 'Slides sobre Detecção de Colisão' possui no campo seções a descrição explícita de testes com AABB (Axis Aligned Bounding Boxes)."
+ },
+ "3f344109932815c94ff43558651fc78471465516": {
+  "arquivos": [
+   "Slides",
+   "Exemplo de Zbuffer",
+   "Página com Vídeos sobre Remoção de Elementos Ocultos"
+  ],
+  "bloco": "",
+  "porque": "As linhas 17, 18 e 91 do FILE_MAP mapeiam especificamente materiais sobre o algoritmo Z-Buffer e remoção de elementos ocultos na Unidade 6."
+ },
+ "6619527e8e69f6d32a46ab2d03ef28fd109c7a96": {
+  "arquivos": [
+   "Visualização e Interação com Curvas de Bézier Quadráticas usando PyOpenGL",
+   "Animação de Objetos com Curvas de Bezier em OpenGL",
+   "Visualização Interativa de Curvas de Bézier Quadráticas com PyOpenGL"
+  ],
+  "bloco": "",
+  "porque": "O FILE_MAP e o CRONOGRAMA_DETALHADO listam códigos específicos de Curvas de Bézier em Python (PyOpenGL/Bezier-Python) sob a Unidade 07."
+ },
+ "160a1c3a9d0b07b3d4f69a59a773882f2309277c": {
+  "arquivos": [
+   "Visualização 3D - Projeção",
+   "Página com Vídeos sobre Visualização 3D"
+  ],
+  "bloco": "",
+  "porque": "As linhas 13 e 90 do FILE_MAP tratam diretamente do tema de visualização 3D e suas projeções associadas."
+ },
+ "cd8a09f83a07a477d8d81f613771e1f44c95fa0a": {
+  "arquivos": [
+   "Exercícios de Processamento de Imagens",
+   "Página sobre Manipulação de Imagens",
+   "Exercício sobre Remoção de Ruído"
+  ],
+  "bloco": "",
+  "porque": "A linha 54 do FILE_MAP indica a existência do arquivo 'Exercícios de Processamento de Imagens' na categoria listas."
+ },
+ "0db72851a23f83315ffb3748e59551a441da6745": {
+  "arquivos": [
+   "Tutorial Introdutório de OpenGL",
+   "Exercícios",
+   "Fundamentos de Computação Gráfica 2D/3D, Algoritmos Geométricos e Processamento de Imagens com OpenGL"
+  ],
+  "bloco": "",
+  "porque": "A linha 25 do FILE_MAP aponta diretamente para o 'Tutorial Introdutório de OpenGL', ideal para quem está iniciando na ferramenta."
+ },
+ "d4c53d30c8fa2b18dcd12f5bc31b58133ef1202b": {
+  "arquivos": [
+   "Página sobre Modelagem Geométrica",
+   "Modelagem por CSG com Polígonos"
+  ],
+  "bloco": "",
+  "porque": "As linhas 7 e 6 do FILE_MAP contêm os materiais 'Página sobre Modelagem Geométrica' e 'Modelagem por CSG com Polígonos', focando em modelagem 3D e representações de sólidos."
+ },
+ "d2e038c6af179c6c6a1b69762f7e6ad71196411f": {
+  "arquivos": [
+   "Cronograma",
+   "Plano de Ensino"
+  ],
+  "bloco": "",
+  "porque": "O Cronograma e o Plano de Ensino detalham a estrutura de avaliações e os tópicos de cada unidade cobrados na prova P1."
+ },
+ "2bf3b0f1e410baed2b4eb826c6e92481057722ec": {
+  "arquivos": [
+   "Página com Vídeos sobre Segmentação de Imagens",
+   "Página com Vídeos sobre Segmentação por Texturas",
+   "Texto sobre Matrizes de Co-ocorrência de Níveis de Cinza"
+  ],
+  "bloco": "",
+  "porque": "Linhas 3, 4, 83 e 84 do FILE_MAP tratam especificamente do tema de segmentação de imagens e texturas dentro da Unidade 03."
+ },
+ "a8f1296f3b07b9f9783a7802dc9f1f75d5921a01": {
+  "arquivos": [
+   "Página sobre Síntese de Imagens Realísticas - Iluminação e Sobreamento",
+   "Visualização 3D, Iluminação e Projeções com OpenGL e GLUT"
+  ],
+  "bloco": "",
+  "porque": "A linha 19 e a linha 20 do FILE_MAP referem-se diretamente à iluminação, sombreamento e ao modelo Phong na Unidade 08."
+ },
+ "7c46676b55a2909a7a220d245ea07d077ca023ae": {
+  "arquivos": [
+   "Exercício sobre Remoção de Ruído",
+   "Exercícios de Processamento de Imagens",
+   "Página sobre Manipulação de Imagens"
+  ],
+  "bloco": "",
+  "porque": "O item 53 do FILE_MAP é um exercício focado em Remoção de Ruído (filtros passa-baixa) na Unidade 3 (Processamento de Imagens e Visão Computacional)."
+ },
+ "d0c87bc93aab6334a8b811a95711fc62a6965968": {
+  "arquivos": [
+   "Página sobre Geometria Computacional",
+   "Página com Videos Sobre Geometria Computacional"
+  ],
+  "bloco": "",
+  "porque": "A linha 34 do FILE_MAP direciona para o material 'Página sobre Geometria Computacional' sob a unidade de Fundamentos Matemáticos, onde os algoritmos dessa área são abordados."
+ },
+ "2a615ce89e154e1d9df129ef4f637adac12942c1": {
+  "arquivos": [
+   "Modelagem 2D e Transformações Geométricas em OpenGL",
+   "Página sobre TRANSFORMAÇÕES GEOMÉTRICAS em OpenGL",
+   "Introdução a Computação Gráfica 3D e Transformações com PyOpenGL"
+  ],
+  "bloco": "",
+  "porque": "A linha 41 do FILE_MAP detalha o código do professor sobre Transformações Geométricas em OpenGL, acompanhado pelas referências correlatas nas linhas 42 e 9."
+ },
+ "6f3b4715d9a6aee78f6f0faccd393982755bef2f": {
+  "arquivos": [
+   "Recorte",
+   "Página com Vídeos sobre RECORTE",
+   "Exercícios Teóricos sobre Processo de Visualização 2D"
+  ],
+  "bloco": "",
+  "porque": "Linha 40 do FILE_MAP indica que o arquivo 'Recorte' cobre a teoria desse tópico na Unidade 04."
+ },
+ "bc285bce6e421614845ab1055d6981cf952aa1f2": {
+  "arquivos": [
+   "Slides",
+   "Representação e Operações Básicas de Vetores Bidimensionais em C++",
+   "Exercicios sobre Fundamentos Matemáticos"
+  ],
+  "bloco": "",
+  "porque": "A linha 31 do FILE_MAP indica slides de aula cobrindo Pontos e Vetores, e a linha 32 detalha a representação e operações de vetores."
+ },
+ "171578a94bda5f78f2dec2f38fdd91c399652791": {
+  "arquivos": [
+   "Slides sobre Detecção de Colisão",
+   "Vídeos sobre Algoritmos de Deteção de Colisão"
+  ],
+  "bloco": "",
+  "porque": "A linha 33 do FILE_MAP indica 'Slides sobre Detecção de Colisão', cobrindo explicitamente o assunto AABB (Axis Aligned Bounding Boxes)."
+ },
+ "74b16283a2efdf5b2041cb47ee656ac135f82b34": {
+  "arquivos": [
+   "Slides",
+   "Exemplo de Zbuffer"
+  ],
+  "bloco": "",
+  "porque": "As linhas 17 e 18 do FILE_MAP abordam especificamente o Algoritmo Z-Buffer e a Remoção de Elementos Ocultos."
+ },
+ "c6487e9d517abbb1a7f43e2648f1fcc936e24c15": {
+  "arquivos": [
+   "Animação Gráfica e Interpolação com Curvas de Bézier em OpenGL",
+   "Visualização Interativa de Curvas de Bézier Quadráticas com PyOpenGL",
+   "Visualização e Interação com Curvas de Bézier Quadráticas usando PyOpenGL"
+  ],
+  "bloco": "",
+  "porque": "Linhas 44, 45 e 46 do FILE_MAP referem-se a exemplos de código do professor sobre Curvas de Bézier utilizando Python/PyOpenGL"
+ },
+ "3e6d52b4f64a2fb2661bcd48490ed55f0193d96f": {
+  "arquivos": [
+   "Visualização 3D - Projeção",
+   "Página com Vídeos sobre Visualização 3D",
+   "Visualização 3D, Iluminação e Projeções com OpenGL e GLUT"
+  ],
+  "bloco": "",
+  "porque": "A pergunta solicita uma explicação sobre visualização 3D, o que nos leva diretamente ao material teórico específico de Projeções 3D (unidade-06)."
+ },
+ "e404ba7f66d4c647d60cd41592cba927e23c05ef": {
+  "arquivos": [
+   "Exercícios de Processamento de Imagens",
+   "Exercício sobre preenchimento de área",
+   "Exercício sobre Remoção de Ruído"
+  ],
+  "bloco": "",
+  "porque": "As linhas 51, 53 e 54 do FILE_MAP detalham listas de exercícios voltadas ao Processamento de Imagens na Unidade 03."
+ },
+ "27b846c299ac3503518c5c3c0b43537a670b8779": {
+  "arquivos": [
+   "Tutorial Introdutório de OpenGL",
+   "Vídeo com instruções para usar OpenGL na VDI da PUCRS",
+   "Introdução à OpenGL 3D"
+  ],
+  "bloco": "",
+  "porque": "A linha 25 do FILE_MAP aponta diretamente para o 'Tutorial Introdutório de OpenGL', ideal para quem quer iniciar na tecnologia."
+ },
+ "4adb0f6eacf50e8d1f0671207fc6d6ff37432de1": {
+  "arquivos": [
+   "Página sobre Modelagem Geométrica",
+   "Modelagem por CSG com Polígonos"
+  ],
+  "bloco": "",
+  "porque": "As linhas 6 e 7 do FILE_MAP listam materiais específicos sobre Modelagem Geométrica e Modelagem por CSG (Geometria Sólida Construtiva)."
+ },
+ "f9e8621bbecd99b17043ef5f3c281e0601d6ecd1": {
+  "arquivos": [
+   "Cronograma",
+   "Plano de Ensino"
+  ],
+  "bloco": "",
+  "porque": "O Cronograma e o Plano de Ensino indicam a data da P1 (24/09) e quais unidades (1 a 4) são ministradas até esta data."
+ },
+ "0b43b134c27b6c0193e6e639f80818f0ddc9ae2f": {
+  "arquivos": [
+   "Texto sobre Matrizes de Co-ocorrência de Níveis de Cinza",
+   "Exercício sobre preenchimento de área",
+   "Página com Vídeos sobre Segmentação de Imagens"
+  ],
+  "bloco": "",
+  "porque": "O FILE_MAP indica que estes materiais pertencem à Unidade 03, focados especificamente em Segmentação de Imagens e Texturas."
+ },
+ "4500b1cbd3b23f6ac7b4e670eb2756b2d9c46f3a": {
+  "arquivos": [
+   "Página sobre Síntese de Imagens Realísticas - Iluminação e Sobreamento",
+   "Visualização 3D, Iluminação e Projeções com OpenGL e GLUT"
+  ],
+  "bloco": "",
+  "porque": "As linhas 19 e 20 do FILE_MAP estão associadas à unidade de Síntese de Imagens Realísticas, cobrindo modelos de reflexão e iluminação Phong."
+ },
+ "807e5b430403312be8366c551ed5bd455a77b3f9": {
+  "arquivos": [
+   "Exercício sobre Remoção de Ruído",
+   "Exercícios de Processamento de Imagens",
+   "Página sobre Manipulação de Imagens"
+  ],
+  "bloco": "bloco-07",
+  "porque": "A linha 53 do FILE_MAP indica 'Exercício sobre Remoção de Ruído' na unidade de Processamento de Imagens (subtópico Filtros), que comumente aborda filtros passa-baixa."
+ },
+ "3f634a64bee4a3f7851fc3032caedfbdfcbc23d3": {
+  "arquivos": [
+   "Página sobre Geometria Computacional",
+   "Exercícios de Geometria Computacional"
+  ],
+  "bloco": "bloco-05",
+  "porque": "A aula de Geometria Computacional ocorre em 20/08/2026, mapeada como o quinto bloco no cronograma, e possui materiais específicos como a 'Página sobre Geometria Computacional'."
+ },
+ "58b1c2dd1e5f737cdfc1aec385e8924215bb02eb": {
+  "arquivos": [
+   "Modelagem 2D e Transformações Geométricas em OpenGL",
+   "Página sobre TRANSFORMAÇÕES GEOMÉTRICAS em OpenGL",
+   "Introdução a Computação Gráfica 3D e Transformações com PyOpenGL"
+  ],
+  "bloco": "",
+  "porque": "Linhas 41, 42 e 9 do FILE_MAP tratam especificamente de transformacoes geometricas em OpenGL, tanto em C++ quanto em Python."
  }
 }

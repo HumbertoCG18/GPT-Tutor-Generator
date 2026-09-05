@@ -8,7 +8,7 @@ Unico handoff vivo. Substitui `_archive/2026-09-03b-handoff-fila-campanhas.md` (
 (criterio estrito); item nao feito nao muda de dono sozinho — ou e feito, ou o user o RETIRA por decisao registrada. Novo lote = novo
 handoff, o anterior vai para `_archive/`. Ideia que surge no meio vai para a CAIXA DE IDEIAS (da para fazer? · quando? · o que resolve?).
 
-## COMECE POR (proxima sessao) — **C1 TRAVESSIA, item 1: FILE_MAP completo** (C0 MOTOR FECHADA 11/11 em 05/09; entrada = tracker §C0 ITEM 12)
+## COMECE POR (proxima sessao) — C1 TRAVESSIA, item 2: label de bloco duplicado (FR bloco-06/20) + title do html = label no manifest (item 1 FEITO 05/09)
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` e `.codex/` podem aparecer), `git log --oneline -3`, HEAD dos 8
    tutores iguais aos de "Estado ao comecar" (CG agora e `2efddcb`), `python scripts/censo_motor_llm.py` (revisar/100 58,0). Suite 2312 (25 testes de scripts arquivados sairam com eles).
 1. **11a FEITO** (`728c0f1`, §C0 ITEM 11a no tracker): `exclusivo` exige 2+ tokens; 1 token = banda media + flag. Copias: conf-err 3 -> 2,
@@ -26,9 +26,11 @@ handoff, o anterior vai para `_archive/`. Ideia que surge no meio vai para a CAI
    cronograma), CG com LLM 7/15 = exatamente os alvos dentro do FILE_MAP (26/93; 8/8 erros fora do corte de 12 KB); bloco melhorou (8 -> 10/11).
    Nada regrediu pelo motor. Entradas da C1: FILE_MAP completo (clamp 12 -> 80 KB); linha com `moodle_label` (piso CG 10 -> 5 por `title` = nome
    de arquivo); label de bloco duplicado (FR bloco-06/20).
-6. **C1 (aberta)**: comece pelo item 1 — clamp 12 KB -> 80 KB + aviso em `clamp_navigation_artifact`/`budgeted_file_map_md`, rastreabilidade
-   (`FILE_MAP_TRACE.md`), coluna "Secoes" limitada; regua = `eval_travessia.py {IA,FR,CG}` (alvo IA >= 14/15, FR 15/15, CG rerodado) + sentinela 0.
-   Plano em 5 linhas antes de codigo; triagem da CAIXA DE IDEIAS na fronteira (C7 IMAGENS: posicao na fila e decisao do user).
+6. **C1 item 1 FEITO** (`0ff832a` + `4db9a6c` + `df0e34f` + `6afdcff`; §C1 ITEM 1): FILE_MAP completo (80 KB, aviso), TRACE separado, titulo = label,
+   Secoes 3/80; 8 tutores reprocessados (manifest intocado); travessia: ver tabela no tracker.
+7. **C1 proximos**: (2) medir label de bloco duplicado nos 8 cronogramas (FR bloco-06/20) e o "quando" da travessia; (3) title do material html
+   = moodle_label no MANIFEST (piso sem-llm do CG 5/15 le o manifest) — medir antes; (4) indice por unidade/termos so se a regua mostrar erro
+   dessa forma. Fronteira: triagem da CAIXA (C7 IMAGENS, posicao = decisao do user).
 4. Gate de cada item: suite verde; sentinela 0 nos 8; determinismo 8/8; curada intacta; commit com o numero no tracker; tutores so
    mudam por reprocess registrado (copia `.ablacao` antes).
 
@@ -40,8 +42,8 @@ Datalab/Gemini `.env`) nunca impressos · [Humberto] · nao corrigir conteudo do
 
 ## Estado ao comecar (04/09, tudo commitado, NADA pushed)
 Gerador `feat/motor-atribuicao`, ~825 commits a frente de `main`. Sessao 5 (03-04/09): `6111b46` `0a8ae2e` `a10a6ca` `12990ed`
-`5799035` `d7b2f87` `1d14353` `bff1fa4` + docs; noite: `728c0f1` (C0 11a), `86dab7e` (C0 11b), `4a14d8b` (C0 10), `557be23` `599ff10` `1284b26` (C0 9). Suite 2312.
-Tutores (reprocess 11a+11b+10, 04/09 noite): MF `7f17ccf` · SO `9c0b1bb` · IA `270975d` · ES2 `d5f96a5` · TCC `a438a52` · LR `c0df4a6` · FR `a6f3db0` · CG `2efddcb` (CG = `e3d02ed` rebuild limpo pela API + complemento + reprocess 11a/11b/10) (93 entries: 66 do build + 4 folhas + 23 referencias; stash novo `Desktop/Moodle/computacao-grafica/
+`5799035` `d7b2f87` `1d14353` `bff1fa4` + docs; noite: `728c0f1` (C0 11a), `86dab7e` (C0 11b), `4a14d8b` (C0 10), `557be23` `599ff10` `1284b26` (C0 9), `0ff832a` `4db9a6c` `df0e34f` `6afdcff` (C1 item 1). Suite 2319.
+Tutores (reprocess C1 item 1, 05/09): MF `acbfdc2` · SO `7c91082` · IA `1c2869a` · ES2 `ac3862c` · TCC `6d04f4e` · LR `42cdb8a` · FR `ca7f9fd` · CG `0136790` (CG = `e3d02ed` rebuild pela API + complemento + reprocess 11a/11b/10/C1) (93 entries: 66 do build + 4 folhas + 23 referencias; stash novo `Desktop/Moodle/computacao-grafica/
 stash/`, perfil ja aponta; export antigo em `.ablacao/CG-export-backup`). Copias `.ablacao` dos 5 + CG (re-sincronizada) + LR + FR.
 **Reguas (pos-11a):** curada 199/200 conf-err 0 · 191/191 · 55/57 · motor puro +vocab 183/183/53/82 conf-err 2 · AULA 174/189 · REF 8/10 ·
 holdout CG (gold re-chaveado `ground_truth_CG.csv`, 35 scorable) **puro 31/35 (conf-err 0, flagados 14) · curado 35/35 (conf-err 0, flagado 1)** · censo revisar/100 58,3 · votos/100
@@ -52,7 +54,7 @@ holdout CG (gold re-chaveado `ground_truth_CG.csv`, 35 scorable) **puro 31/35 (c
   33/35 **aceito pelo user com causa medida** (o 34 do baseline dependia do token de boilerplate "imagens"; regra `exclusivo` por 1 token
   e o balde — C0 item 11a). Detalhe: `pendencias.md` §SYNC S6f e §SYNC S6a-S6e.
 - **C0 MOTOR — 11/11, FECHADA em 05/09.** Feitos 2-7 (03/09), 11a `728c0f1`, 11b `86dab7e`, 10 `4a14d8b`, 9 `557be23`/`1284b26`, 12 (medicao; §C0 ITEM 12).
-- **C1 TRAVESSIA — ABERTA em 05/09.** Entrada medida: CG FILE_MAP 26/93 e 8/8 erros fora do corte; IA 19/59 (14/15 com indice completo, 03/09).
+- **C1 TRAVESSIA — ABERTA em 05/09; item 1 FEITO.** FILE_MAP completo nos 8 (345/345 materiais; 3,7-21,8 KB); travessia: tabela no tracker §C1 ITEM 1.
 
 ## FILA DE CAMPANHAS (ordem decidida 03/09, atualizada 04/09)
 

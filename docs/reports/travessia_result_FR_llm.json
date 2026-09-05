@@ -24,7 +24,7 @@
    "bloco_gold": "bloco-02",
    "bloco_pred": "bloco-02",
    "bloco_ok": true,
-   "porque": "O material de aula '02 - Modelos de Referencia' possui as seções específicas sobre o 'Modelo OSI' e a 'Camada Física' no FILE_MAP.",
+   "porque": "A linha 3 do FILE_MAP indica que o material '02 - Modelos de Referencia' trata especificamente do Modelo OSI no subtópico correspondente",
    "escolhido_raw": [
     "02 - Modelos de Referencia",
     "unidade1-exercicios"
@@ -46,7 +46,7 @@
    "bloco_gold": "bloco-03",
    "bloco_pred": "bloco-03",
    "bloco_ok": true,
-   "porque": "O arquivo '05 - Protocolo DNS' e listado no FILE_MAP com as secoes de Traducao de nomes e Utilizacao do DNS para a teoria de aplicacao.",
+   "porque": "A linha 9 do FILE_MAP aponta diretamente para o slide de aula '05 - Protocolo DNS' na Unidade 2, cobrindo Tradução de nomes e DNS.",
    "escolhido_raw": [
     "05 - Protocolo DNS",
     "unidade2-exercicios-dns"
@@ -67,7 +67,7 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-22",
    "bloco_ok": null,
-   "porque": "A linha 19 do FILE_MAP indica exatamente a existência do arquivo de exemplo com o título 'Comunicação Cliente-Servidor com Sockets UDP em C'.",
+   "porque": "A linha 19 do FILE_MAP contém exatamente o exemplo de código em C para sockets UDP solicitado pelo aluno.",
    "escolhido_raw": [
     "Comunicação Cliente-Servidor com Sockets UDP em C"
    ]
@@ -88,7 +88,7 @@
    "bloco_gold": "bloco-03",
    "bloco_pred": "bloco-03",
    "bloco_ok": true,
-   "porque": "A linha 10 do FILE_MAP indica que o arquivo '06 - Protocolo DHCP' cobre explicitamente o Processo DORA do DHCP.",
+   "porque": "O arquivo '06 - Protocolo DHCP' contem a teoria sobre o funcionamento do protocolo DHCP e a lista de exercicios 'unidade2-exercicios-dhcp' reforca esses conceitos.",
    "escolhido_raw": [
     "06 - Protocolo DHCP",
     "unidade2-exercicios-dhcp"
@@ -109,7 +109,7 @@
    "bloco_gold": "bloco-05",
    "bloco_pred": "bloco-05",
    "bloco_ok": true,
-   "porque": "O material '07 - Protocolos de E-mail' está mapeado na Unidade 2 para o período correspondente ao bloco-05, tratando diretamente dos protocolos SMTP, POP3 e IMAP.",
+   "porque": "O arquivo '07 - Protocolos de E-mail' no FILE_MAP aborda diretamente o tema de e-mails, SMTP, POP3 e IMAP na Unidade 2.",
    "escolhido_raw": [
     "07 - Protocolos de E-mail"
    ]
@@ -132,7 +132,7 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-01",
    "bloco_ok": null,
-   "porque": "A linha 2 do FILE_MAP indica o material de aula '01 - Protocolos de Rede' que aborda especificamente conceitos de protocolos e suas hierarquias.",
+   "porque": "O arquivo '01 - Protocolos de Rede' trata especificamente de conceitos básicos e exemplos de protocolos de comunicação na Unidade 1.",
    "escolhido_raw": [
     "01 - Protocolos de Rede",
     "02 - Modelos de Referencia"
@@ -158,7 +158,7 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-03",
    "bloco_ok": null,
-   "porque": "A linha 13 do FILE_MAP indica a existencia da LIsta de exercícios 1 - Camada de Aplicação especificamente para esse topico.",
+   "porque": "O FILE_MAP lista explicitamente a 'LIsta de exercícios 1 - Camada de Aplicação' e outros exercicios especificos como de HTTP e DNS na unidade-02.",
    "escolhido_raw": [
     "LIsta de exercícios 1 - Camada de Aplicação",
     "unidade2-exercicios-http",
@@ -177,19 +177,17 @@
    ],
    "escolhido": [
     "08-desenvolvimento-de-aplicacoes",
-    "tcp-example",
-    "udp-example-java"
+    "04-camada-de-aplicacao"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "",
    "bloco_pred": "bloco-05",
    "bloco_ok": null,
-   "porque": "O item 12 do FILE_MAP (08 - Desenvolvimento de Aplicações) aborda o desenvolvimento de aplicações com sockets e os itens 18 e 20 fornecem exemplos práticos de sockets em Java.",
+   "porque": "A linha 12 do FILE_MAP indica que '08 - Desenvolvimento de Aplicações' trata de Comunicação entre Processos e Sockets, essencial para criar uma aplicação de rede.",
    "escolhido_raw": [
     "08 - Desenvolvimento de Aplicações",
-    "Comunicação Cliente-Servidor com Sockets TCP em Java",
-    "Comunicação Cliente-Servidor via Sockets UDP em Java"
+    "04 - Camada de Aplicação"
    ]
   },
   {
@@ -201,18 +199,16 @@
     "03-tipos-de-redes"
    ],
    "escolhido": [
-    "03-tipos-de-redes",
-    "unidade1-exercicios"
+    "03-tipos-de-redes"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "bloco-02",
    "bloco_pred": "bloco-02",
    "bloco_ok": true,
-   "porque": "O arquivo '03 - Tipos de Redes' possui seções dedicadas a 'Tipos de Rede', 'Redes de difusão' e 'Redes ponto a ponto'.",
+   "porque": "O arquivo '03 - Tipos de Redes' possui seções dedicadas a 'Tipos de Rede' no FILE_MAP, associado ao período de 06/08/2026 a 11/08/2026.",
    "escolhido_raw": [
-    "03 - Tipos de Redes",
-    "unidade1-exercicios"
+    "03 - Tipos de Redes"
    ]
   },
   {
@@ -231,11 +227,9 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-01",
    "bloco_ok": null,
-   "porque": "O Plano de Ensino define a estrutura de avaliações, enquanto o Cronograma Detalhado lista explicitamente as unidades cobertas na prova de 24/09.",
+   "porque": "O Plano de Ensino detalha o conteudo programatico e o cronograma indica as unidades avaliadas na P1 (Unidades 1, 2 e parte da 4).",
    "escolhido_raw": [
-    "Plano de Ensino - 20262",
-    "course/CRONOGRAMA_DETALHADO.md",
-    "course/SYLLABUS.md"
+    "Plano de Ensino - 20262"
    ]
   },
   {
@@ -255,7 +249,7 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-03",
    "bloco_ok": null,
-   "porque": "O arquivo '05 - Protocolo DNS' e o material de aula especifico focado em explicar o conceito, traducao de nomes e funcionamento do DNS.",
+   "porque": "A linha 9 do FILE_MAP indica o arquivo de aula teórica específico sobre o funcionamento e definição do protocolo DNS.",
    "escolhido_raw": [
     "05 - Protocolo DNS",
     "unidade2-exercicios-dns",
@@ -280,7 +274,7 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-03",
    "bloco_ok": null,
-   "porque": "O FILE_MAP lista o arquivo 'unidade2-exercicios-http' especificamente para exercícios de fixação da Unidade 2 sobre o protocolo HTTP.",
+   "porque": "A linha 16 do FILE_MAP identifica especificamente a lista de exercicios de fixacao para o protocolo HTTP.",
    "escolhido_raw": [
     "unidade2-exercicios-http",
     "LIsta de exercícios 1 - Camada de Aplicação",
@@ -296,18 +290,16 @@
     "tcp-example"
    ],
    "escolhido": [
-    "tcp-chat-c",
-    "08-desenvolvimento-de-aplicacoes"
+    "tcp-chat-c"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "",
    "bloco_pred": "bloco-22",
    "bloco_ok": null,
-   "porque": "A linha 17 do FILE_MAP mapeia diretamente a Implementação de Chat Cliente/Servidor TCP com Sockets em C.",
+   "porque": "Linha 17 do FILE_MAP indica exatamente a implementação de chat TCP com sockets em C.",
    "escolhido_raw": [
-    "Implementação de Chat Cliente/Servidor TCP com Sockets em C",
-    "08 - Desenvolvimento de Aplicações"
+    "Implementação de Chat Cliente/Servidor TCP com Sockets em C"
    ]
   },
   {
@@ -326,7 +318,7 @@
    "bloco_gold": "bloco-02",
    "bloco_pred": "bloco-02",
    "bloco_ok": true,
-   "porque": "O arquivo '02 - Modelos de Referencia' possui as secoes sobre Modelos de referencia e Modelo OSI sob a Unidade 1.",
+   "porque": "O arquivo '02 - Modelos de Referencia' contem seções sobre Modelos de referencia e Modelo OSI na Unidade 01.",
    "escolhido_raw": [
     "02 - Modelos de Referencia",
     "unidade1-exercicios"
@@ -348,7 +340,7 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-03",
    "bloco_ok": null,
-   "porque": "A linha 14 do FILE_MAP identifica a lista de exercicios especifica de DHCP (unidade2-exercicios-dhcp) e a linha 10 apresenta o material de aula correspondente.",
+   "porque": "A linha 14 do FILE_MAP possui a lista de exercicios especifica sobre DHCP (unidade2-exercicios-dhcp).",
    "escolhido_raw": [
     "unidade2-exercicios-dhcp",
     "06 - Protocolo DHCP"

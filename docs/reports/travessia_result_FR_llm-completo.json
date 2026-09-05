@@ -4,7 +4,7 @@
  "n": 15,
  "hit1": 15,
  "hit3": 15,
- "bloco_ok": 5,
+ "bloco_ok": 6,
  "bloco_n": 6,
  "chamadas": 15,
  "linhas": [
@@ -24,7 +24,7 @@
    "bloco_gold": "bloco-02",
    "bloco_pred": "bloco-02",
    "bloco_ok": true,
-   "porque": "O arquivo '02 - Modelos de Referencia' possui uma seção explícita sobre o Modelo OSI e as funções de suas camadas na Unidade 1.",
+   "porque": "O arquivo '02 - Modelos de Referencia' possui as seções explicitamente dedicadas ao Modelo OSI e modelos de referência na Unidade 1.",
    "escolhido_raw": [
     "02 - Modelos de Referencia",
     "unidade1-exercicios"
@@ -46,7 +46,7 @@
    "bloco_gold": "bloco-03",
    "bloco_pred": "bloco-03",
    "bloco_ok": true,
-   "porque": "A linha 9 do FILE_MAP indica o material de aula '05 - Protocolo DNS' para a teoria detalhada sobre a tradução de nomes e funcionamento do DNS.",
+   "porque": "A linha 9 do FILE_MAP indica o material de aula '05 - Protocolo DNS' cobrindo o tema DNS na unidade-02.",
    "escolhido_raw": [
     "05 - Protocolo DNS",
     "unidade2-exercicios-dns"
@@ -67,7 +67,7 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-22",
    "bloco_ok": null,
-   "porque": "O FILE_MAP lista o material 'Comunicação Cliente-Servidor com Sockets UDP em C' na linha 19, que trata exatamente do exemplo de sockets UDP na linguagem C.",
+   "porque": "A linha 19 do FILE_MAP aponta exatamente para a implementação de sockets UDP em C sob a categoria de código do professor.",
    "escolhido_raw": [
     "Comunicação Cliente-Servidor com Sockets UDP em C"
    ]
@@ -88,7 +88,7 @@
    "bloco_gold": "bloco-03",
    "bloco_pred": "bloco-03",
    "bloco_ok": true,
-   "porque": "O FILE_MAP aponta o arquivo '06 - Protocolo DHCP' como o material de aula contendo especificamente a seção sobre o Processo DORA",
+   "porque": "O arquivo '06 - Protocolo DHCP' aborda a teoria do protocolo DHCP, e o assunto é ensinado no bloco de Protocolos de aplicação para infraestrutura (bloco-03).",
    "escolhido_raw": [
     "06 - Protocolo DHCP",
     "unidade2-exercicios-dhcp"
@@ -109,7 +109,7 @@
    "bloco_gold": "bloco-05",
    "bloco_pred": "bloco-05",
    "bloco_ok": true,
-   "porque": "O arquivo '07 - Protocolos de E-mail' no FILE_MAP cobre diretamente a teoria e os conceitos de e-mail (SMTP, POP3 e IMAP) na unidade-02-nivel-de-aplicacao.",
+   "porque": "Linha 11 do FILE_MAP indica o material de aula específico sobre Protocolos de E-mail para a unidade de nível de aplicação.",
    "escolhido_raw": [
     "07 - Protocolos de E-mail"
    ]
@@ -132,7 +132,7 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-01",
    "bloco_ok": null,
-   "porque": "A linha 2 do FILE_MAP indica o material '01 - Protocolos de Rede' como a teoria base para entender os conceitos de protocolos de comunicação.",
+   "porque": "A linha 2 do FILE_MAP indica o material '01 - Protocolos de Rede' como a teoria base para entender o conceito e exemplos de protocolos.",
    "escolhido_raw": [
     "01 - Protocolos de Rede",
     "02 - Modelos de Referencia"
@@ -158,7 +158,7 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-03",
    "bloco_ok": null,
-   "porque": "O arquivo EXERCISE_INDEX.md indica listas de exercicios especificas para a unidade-02-nivel-de-aplicacao (Camada de Aplicacao).",
+   "porque": "Localizei no FILE_MAP e no EXERCISE_INDEX as listas de exercicios vinculadas a unidade-02-nivel-de-aplicacao",
    "escolhido_raw": [
     "LIsta de exercícios 1 - Camada de Aplicação",
     "unidade2-exercicios-http",
@@ -178,18 +178,18 @@
    "escolhido": [
     "08-desenvolvimento-de-aplicacoes",
     "tcp-example",
-    "udp-example-c"
+    "udp-example-java"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "",
    "bloco_pred": "bloco-05",
    "bloco_ok": null,
-   "porque": "O arquivo '08 - Desenvolvimento de Aplicações' apresenta a teoria de comunicação entre processos e implementação de sockets para criar aplicações de rede.",
+   "porque": "O arquivo 08 - Desenvolvimento de Aplicações cobre sockets e comunicação entre processos no nível de aplicação.",
    "escolhido_raw": [
     "08 - Desenvolvimento de Aplicações",
     "Comunicação Cliente-Servidor com Sockets TCP em Java",
-    "Comunicação Cliente-Servidor com Sockets UDP em C"
+    "Comunicação Cliente-Servidor via Sockets UDP em Java"
    ]
   },
   {
@@ -201,16 +201,18 @@
     "03-tipos-de-redes"
    ],
    "escolhido": [
-    "03-tipos-de-redes"
+    "03-tipos-de-redes",
+    "01-protocolos-de-rede"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "bloco-02",
    "bloco_pred": "bloco-02",
    "bloco_ok": true,
-   "porque": "Linha 5 do FILE_MAP indica o arquivo '03 - Tipos de Redes' contendo as seções 'Tipos de Rede' e tipos de rede específicos.",
+   "porque": "A linha 5 do FILE_MAP aponta o material '03 - Tipos de Redes' com foco específico em Tipos de Rede e Redes de difusão.",
    "escolhido_raw": [
-    "03 - Tipos de Redes"
+    "03 - Tipos de Redes",
+    "01 - Protocolos de Rede"
    ]
   },
   {
@@ -229,8 +231,9 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-01",
    "bloco_ok": null,
-   "porque": "O Plano de Ensino - 20262 contém as regras de avaliação e conteúdo programático oficial, enquanto o SYLLABUS detalha o cronograma de aulas e conteúdos ministrados até a data da Prova P1 (24/09/2026).",
+   "porque": "O arquivo CRONOGRAMA_DETALHADO.md mapeia explicitamente o conteúdo cobrado na prova P1 do dia 24/09/2026.",
    "escolhido_raw": [
+    "course/CRONOGRAMA_DETALHADO.md",
     "Plano de Ensino - 20262",
     "course/SYLLABUS.md"
    ]
@@ -244,19 +247,17 @@
    ],
    "escolhido": [
     "05-protocolo-dns",
-    "unidade2-exercicios-dns",
-    "04-camada-de-aplicacao"
+    "unidade2-exercicios-dns"
    ],
    "hit1": true,
    "hit3": true,
    "bloco_gold": "",
    "bloco_pred": "bloco-03",
    "bloco_ok": null,
-   "porque": "O arquivo '05 - Protocolo DNS' contem a apresentacao teorica do funcionamento e traducao de nomes do DNS.",
+   "porque": "O material de aula '05 - Protocolo DNS' apresenta a teoria e conceitos do protocolo, enquanto 'unidade2-exercicios-dns' traz exercicios praticos sobre o tema.",
    "escolhido_raw": [
     "05 - Protocolo DNS",
-    "unidade2-exercicios-dns",
-    "04 - Camada de Aplicação"
+    "unidade2-exercicios-dns"
    ]
   },
   {
@@ -276,7 +277,7 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-03",
    "bloco_ok": null,
-   "porque": "A linha 16 do FILE_MAP aponta para 'unidade2-exercicios-http' como a lista de exercícios específica de fixação para o protocolo HTTP.",
+   "porque": "Linha 16 do FILE_MAP aponta diretamente para o arquivo de exercicios de HTTP da unidade 2",
    "escolhido_raw": [
     "unidade2-exercicios-http",
     "LIsta de exercícios 1 - Camada de Aplicação"
@@ -298,7 +299,7 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-22",
    "bloco_ok": null,
-   "porque": "A linha 17 do FILE_MAP indica que o arquivo 'Implementação de Chat Cliente/Servidor TCP com Sockets em C' é o código de exemplo do professor para socket TCP em linguagem C.",
+   "porque": "A linha 17 do FILE_MAP lista o material exato contendo a implementação de chat com Sockets TCP em C.",
    "escolhido_raw": [
     "Implementação de Chat Cliente/Servidor TCP com Sockets em C"
    ]
@@ -317,9 +318,9 @@
    "hit1": true,
    "hit3": true,
    "bloco_gold": "bloco-02",
-   "bloco_pred": "bloco-20",
-   "bloco_ok": false,
-   "porque": "Linha 3 e linha 6 do FILE_MAP cobrem diretamente o tema 'Modelos OSI e TCP/IP' no bloco-20.",
+   "bloco_pred": "bloco-02",
+   "bloco_ok": true,
+   "porque": "O material '02 - Modelos de Referencia' cobre diretamente Modelos OSI e TCP/IP na Unidade 01, conforme indicado no FILE_MAP.",
    "escolhido_raw": [
     "02 - Modelos de Referencia",
     "unidade1-exercicios"
@@ -340,7 +341,7 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-03",
    "bloco_ok": null,
-   "porque": "A linha 14 do FILE_MAP indica o arquivo de exercícios 'unidade2-exercicios-dhcp' focado em DHCP.",
+   "porque": "A linha 14 do FILE_MAP indica a lista de exercícios específica para DHCP com o título unidade2-exercicios-dhcp.",
    "escolhido_raw": [
     "unidade2-exercicios-dhcp"
    ]

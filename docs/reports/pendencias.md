@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-05 (sessao 5, madrugada; **C0 MOTOR FECHADA 11/11**; C1 TRAVESSIA aberta). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-05 (sessao 5, madrugada; C0 FECHADA 11/11; **C1 item 1 FEITO e registrado nos 8**). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: **C0 MOTOR 11/11 FECHADA em 05/09** (§C0 ITEM 12, 9, 10, 11a, 11b);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
@@ -9,6 +9,64 @@ C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao p
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## C1 ITEM 1 — FILE_MAP COMPLETO E MAGRO (05/09 madrugada, FEITO E REGISTRADO NOS 8)
+Gerador `0ff832a` (renderer) · `4db9a6c` (harness da travessia) · `df0e34f` (watchdog do censo) · `6afdcff` (titulo com `|`). **Medido antes
+(passo 1, `c1-1/simula_filemap_c1.py`):** cada material ocupava 2 linhas (tabela ~250 chars + "↳ rastreabilidade" ~230); com o clamp de 12 KB
+cabiam 20-30 (CG 26/93, IA 22/59, MF 31/66); sem clamp o formato antigo ia de 5,5 KB (LR) a 42,5 KB (CG); "magro" projetado 3-21 KB. Das 157
+Secoes renderizadas, 62 passavam de 80 chars (max 321). `moodle_label` preenchido em 288/348 (FR 0/22); `title` = nome de arquivo em MF 57,
+ES2 35, CG 69 — titulo = label muda 211/348 linhas.
+**Regra (TDD, 7 testes novos + 3 antigos movidos):** teto 12 KB -> 80 KB (`FILE_MAP_MAX_CHARS`, aviso do clamp mantido) · rastreabilidade
+(raw, tags, markdown-base, pinos) sai para `course/FILE_MAP_TRACE.md`, mesma numeracao, sem clamp · titulo = `moodle_label` (fallback `title`;
+`inferred_title` da curadoria de codigo continua acima) · Secoes <= 3 headers / 80 chars · `|` no titulo vira `/` (IA "O que e IA? | Oracle
+Brasil" deslocava 10 colunas). Escritores (`build_workflow`, `pedagogical_regeneration`) gravam o TRACE; README do tutor lista o arquivo.
+**Originais (reprocess registrado `c1-1/reprocess_c1.py`):** MF `acbfdc2` · SO `7c91082` · IA `1c2869a` · ES2 `ac3862c` · TCC `6d04f4e` · LR `42cdb8a` · FR `ca7f9fd` · CG `0136790`. Manifest intocado (0 flags, 0 blocos): MF 66 linhas 18.6 KB (+ TRACE 11.3 KB) · SO 38 linhas 12.2 KB (+ TRACE 7.1 KB) · IA 59 linhas 20.5 KB (+ TRACE 12.2 KB) · ES2 35 linhas 11.9 KB (+ TRACE 6.1 KB) · TCC 25 linhas 10.4 KB (+ TRACE 6.1 KB) · LR 7 linhas 3.6 KB (+ TRACE 2.1 KB) · FR 22 linhas 7.3 KB (+ TRACE 5.1 KB) · CG 93 linhas 21.3 KB (+ TRACE 21.8 KB). Watchdog
+`cobertura_indices` (censo): FILE_MAP MF 66/66 · SO 38/39 (`programa` = duplicata excluida) · IA 59/59 · ES2 35/35 · TCC 27/27 · CG 93/93 · LR 7/7 · FR 22/22.
+Sentinela 0/8 · determinismo 8/8 (0 arquivos nao deterministicos) · suite 2319. Reprocess final com a correcao do `|`: so o IA mudou (2 linhas); os outros 7 commits
+sao `updated_at` do manifest (ruido de timestamp — caixa: reprocess registrado nao commitar quando so o updated_at muda). Medicao que dependia da linha "↳": harness `filemap_rows` e watchdog passaram a ler o TRACE pelo numero e o label.
+**Regua da C1 — travessia antes (item 12, 05/09) -> depois (FILE_MAP completo), mesma regua, ~90 chamadas Gemini:**
+
+curso modo          | hit@1 antes->depois    hit@3          bloco        | estrut  ambig  malf   | chamadas
+FR    sem-llm       |  9/15 ->  9/15          11 -> 11       5/6 -> 5/6   | 4->4   2->2   3->3   | 0
+FR    llm           | 15/15 -> 15/15          15 -> 15       6/6 -> 6/6   | 5->5   5->5   5->5   | 15
+FR    llm-completo  | 15/15 -> 15/15          15 -> 15       5/6 -> 6/6   | 5->5   5->5   5->5   | 15
+IA    sem-llm       | 10/15 -> 10/15          12 -> 12       6/8 -> 6/8   | 4->4   1->1   5->5   | 0
+IA    llm           |  9/15 -> 14/15          10 -> 14       8/8 -> 8/8   | 3->5   2->4   4->5   | 15
+IA    llm-completo  | 10/15 -> 13/15          10 -> 15       8/8 -> 8/8   | 3->5   2->3   5->5   | 15
+CG    sem-llm       |  5/15 ->  5/15           6 ->  6     10/11 -> 10/11  | 4->4   0->0   1->1   | 0
+CG    llm           |  7/15 -> 10/15           7 -> 13      8/11 -> 9/11  | 2->3   3->5   2->2   | 15
+CG    llm-completo  |  7/15 -> 11/15           8 -> 14      7/11 -> 9/11  | 2->3   3->5   2->3   | 15
+
+Flips por pergunta:
+flip + [estruturada] 'Como funciona o algoritmo k-NN para classificação e como e' esperado=['algoritmo-de-classificacao-k-nn'] antes=['exemplo-2-k-nn-com-iriscsv-mais-completo', 'exemplo-com-k-nn'] depois=['algoritmo-de-classificacao-k-nn', 'exemplo-com-k-nn']
+flip + [estruturada] 'Qual a diferença entre acurácia, precisão, recall e F1, e ' esperado=['como-analisar-resultados-acc-pr-re-e-f1'] antes=['arvores-de-decisao', 'mlp'] depois=['como-analisar-resultados-acc-pr-re-e-f1']
+flip + [ambigua] 'tem algum código de rede neural pra eu me basear?' esperado=['mlp-classificacao-iris-atualizado', 'mlp-regressao-cardio', 'mlp-xoripynb', 'rede-perceptron-exemplo-atualizado', 'xor-backpropagation-em-python'] antes=['exercicio-2-solucao-com-rede-perceptron-atualizado', 'mlp'] depois=['mlp-classificacao-iris-atualizado', 'exercicio-2-solucao-com-rede-perceptron-atualizado']
+flip + [ambigua] 'o que cai na P2?' esperado=['lista-de-exercicios-i', 'p2-202401', 'p2-202402'] antes=[] depois=['p2-202402', 'p2-202401']
+flip + [malformada] 'perceptron letras' esperado=['rede-perceptron-reconhecendo-letras'] antes=['exercicio-2-solucao-com-rede-perceptron-atualizado', 'rede-perceptron-reconhecendo-letras'] depois=['rede-perceptron-reconhecendo-letras']
+flip + [estruturada] 'Como funciona o algoritmo k-NN para classificação e como e' esperado=['algoritmo-de-classificacao-k-nn'] antes=['exemplo-com-k-nn', 'exemplo-2-k-nn-com-iriscsv-mais-completo'] depois=['algoritmo-de-classificacao-k-nn', 'exemplo-com-k-nn']
+flip + [estruturada] 'Qual a diferença entre acurácia, precisão, recall e F1, e ' esperado=['como-analisar-resultados-acc-pr-re-e-f1'] antes=['arvores-de-decisao'] depois=['como-analisar-resultados-acc-pr-re-e-f1']
+flip + [ambigua] 'o que cai na P2?' esperado=['lista-de-exercicios-i', 'p2-202401', 'p2-202402'] antes=[] depois=['p2-202402', 'p2-202401']
+flip + [estruturada] 'Como funciona o algoritmo de recorte de retas de Cohen-Sut' esperado=['pagina-com-videos-sobre-recorte-e257d3', 'recorte', 'video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e', 'vis2d'] antes=['maptextures'] depois=['pagina-com-videos-sobre-recorte-e257d3']
+flip + [estruturada] 'Como detectar colisão entre dois objetos usando envelopes ' esperado=['colisao', 'videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84'] antes=['opengl-cpp', 'opengl3dcpp-vdi'] depois=['colisao', 'videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84']
+flip - [estruturada] 'Como funciona o algoritmo Z-Buffer para remoção de element' esperado=['elemoculto', 'exemplozbuffer'] antes=['elemoculto', 'exemplozbuffer'] depois=['colisao', 'exemplozbuffer']
+flip + [ambigua] 'tem exercício de imagem?' esperado=['exercicios-de-processamento-de-imagens', 'floodfill', 'remocaoderuido'] antes=['exercicios'] depois=['exercicios-de-processamento-de-imagens', 'exercicioduascores']
+flip + [ambigua] 'o que cai na P1?' esperado=['cronograma2026-2', 'planodeensino-4645z-04-fundamentos-de-computacao-grafica', 'resolucao-de-prova-de-computacao-grafica-2d', 'resolucao-de-prova-de-computacao-grafica-2d-html'] antes=[] depois=['cronograma2026-2', 'planodeensino-4645z-04-fundamentos-de-computacao-grafica']
+flip - [malformada] 'segmentacao imagem' esperado=['segmentacaodetexturas', 'segmentacaopptx'] antes=['segmentacaopptx', 'segmentacaodetexturas'] depois=['pagina-com-videos-sobre-segmentacao-de-imagens-d0627f', 'pagina-com-videos-sobre-segmentacao-por-texturas-e03566']
+flip + [malformada] 'transformacoes opengl codigo' esperado=['transformacoesgeometricas', 'transformacoesgl'] antes=['basico3d-py', 'opengl-py'] depois=['transformacoesgeometricas', 'transformacoesgl']
+flip + [estruturada] 'Como funciona o algoritmo de recorte de retas de Cohen-Sut' esperado=['pagina-com-videos-sobre-recorte-e257d3', 'recorte', 'video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e', 'vis2d'] antes=['maptextures', 'exercicios-teoricos-sobre-processo-de-visualizacao-2d'] depois=['pagina-com-videos-sobre-recorte-e257d3', 'exercicios-teoricos-sobre-processo-de-visualizacao-2d']
+flip + [estruturada] 'Como detectar colisão entre dois objetos usando envelopes ' esperado=['colisao', 'videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84'] antes=['opengl-cpp', 'opengl3dcpp-vdi'] depois=['colisao', 'videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84']
+flip - [estruturada] 'Como funciona o algoritmo Z-Buffer para remoção de element' esperado=['elemoculto', 'exemplozbuffer'] antes=['elemoculto', 'exemplozbuffer'] depois=['colisao', 'exemplozbuffer']
+flip + [ambigua] 'tem exercício de imagem?' esperado=['exercicios-de-processamento-de-imagens', 'floodfill', 'remocaoderuido'] antes=[] depois=['exercicios-de-processamento-de-imagens', 'floodfill']
+flip + [ambigua] 'o que cai na P1?' esperado=['cronograma2026-2', 'planodeensino-4645z-04-fundamentos-de-computacao-grafica', 'resolucao-de-prova-de-computacao-grafica-2d', 'resolucao-de-prova-de-computacao-grafica-2d-html'] antes=[] depois=['cronograma2026-2', 'planodeensino-4645z-04-fundamentos-de-computacao-grafica']
+flip + [malformada] 'transformacoes opengl codigo' esperado=['transformacoesgeometricas', 'transformacoesgl'] antes=['basico3d-py', 'basico3d-cpp'] depois=['transformacoesgeometricas', 'transformacoesgl']
+**Leitura:** alvo do handoff ATINGIDO — IA com LLM 9 -> **14/15** (hit@3 10 -> 14), FR 15/15 nos dois modos com LLM (bloco 6/6, o flip do item 12
+sumiu), CG com LLM 7 -> **10/15** (hit@3 7 -> 13) e com contexto completo 7 -> **11/15** (hit@3 8 -> 14); bloco do CG 8 -> 9/11. Flips negativos:
+CG `zbuffer` (escolheu `colisao`, 2a escolha certa) e `segmentacao imagem` (escolheu a pagina de videos sobre segmentacao, irma do alvo) —
+2 perdas contra 5-6 ganhos por modo. **Ressalva medida:** a celula IA + contexto completo (13/15, hit@3 15) e da rodada sobre o FILE_MAP anterior
+a correcao do `|` (1 celula de titulo); a rerodada falhou com Gemini 429 `prepayment credits are depleted` — creditos da API esgotados em
+05/09 00:45; as outras 8 celulas estao no FILE_MAP final. Custo desta regua: 105 chamadas (IA 45, FR 30, CG 30). CG sem-llm nao move (5/15): o piso por tokens le title/label/
+subtopico/secoes do MANIFEST, nao o FILE_MAP; o `title` = nome de arquivo do rebuild e a causa (entrada para a SYNC/C1 item 2: title do
+material html = label do Moodle no manifest).
 
 ## C0 ITEM 12 — TRAVESSIA "DEPOIS" (05/09 madrugada, FEITO; **C0 FECHADA 11/11**)
 Mesma regua de 02-03/09 (`scripts/eval_travessia.py`, 3 cursos x 3 modos; LLM so para medir, cache por hash do contexto). Gold do CG
