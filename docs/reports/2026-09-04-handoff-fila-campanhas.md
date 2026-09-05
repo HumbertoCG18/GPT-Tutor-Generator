@@ -135,8 +135,10 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
   para dizer se existe). Determinismo = 16 reprocess sequenciais (~10 min); reprocess dos 8 sequencial. Correcoes byte-identicas: cache da
   normalizacao (lru), determinismo com 1 rodada comparada ao original commitado, paralelismo por tutor (`ablacao_rapida.reprocess_parallel`),
   `find_spec` no lugar do import · sim · campanha futura (C4) · determinismo ~10 -> ~1-2 min, reprocess dos 8 ~8 -> ~2 min.
-- Janela do card generico + token de ferramenta pela extensao (`.thy` isabelle, `.dfy` dafny): MF "Provas por Inducao" abrange 3 blocos (gold 8/4/7)
-  mas o label casa 1 sessao e da janela-1 no bloco-05; 5 `.thy` sao do bloco-06 Isabelle. 3 conf-err do motor puro · desenho necessario · C0-2 · motor puro +3.
+- **Janela do card = secao inteira do Moodle** (auditoria 05/09): a `moodle_week_label` e da secao e secoes abrangem varias semanas (MF "Verificacao de
+  Programas" blocos 11-15 com 24 materiais; "Provas por Inducao" 04-06; ES2 "Microsservicos" 07-10); hoje o label casa 1 sessao e vira janela-1. Concentra
+  8 dos 17 erros do motor puro. Desenho: janela = blocos entre a semana da secao e a semana da proxima secao; texto decide dentro · sim · C0-2 · motor puro ate +8.
+- Peso do label do Moodle no desempate: REFUTADO 05/09 (50 -> 47/48 em 58 disamb; quebra k-NN do IA). Nao repetir.
 - Matcher bloco->topico absorvido por aliases genericos da taxonomia (FR: topico "Modelos OSI e TCP/IP" herda os nomes de todas as camadas e pontua 1,0 para
   qualquer aula "camada X"; o topico certo fica em 0,14) · corrigir exige GOLD DE TOPICO por bloco (nao existe) · campanha futura · labels de bloco certos, menos colisao.
 - Reprocess registrado commita quando so o `updated_at` do manifest muda (7 commits de ruido em 05/09) · sim: comparar sem `updated_at` antes de commitar · C4 · historico limpo.

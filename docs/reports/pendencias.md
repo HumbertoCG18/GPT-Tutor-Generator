@@ -10,6 +10,21 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## AUDITORIA GOLD x MOODLE/SARC (05/09 madrugada, sem LLM; regra do user: SARC e Moodle sao o oraculo, gold e humano)
+**Metodo:** para cada linha pontuavel dos 5 golds, o bloco do gold cai na `moodle_week_label` do card? 203 linhas, 82 com semana (MF, ES2; SO/IA/TCC
+sem o campo), **27 "fora" — todas explicadas: a semana e da SECAO, nao do material**, e as secoes abrangem varias semanas (MF "Verificacao de Programas"
+24 materiais nos blocos 11-15; MF "Provas por Inducao" blocos 04-06; ES2 "Microsservicos" blocos 07-10). Nenhuma contradicao gold x Moodle.
+**Retratacao (minha leitura de 05/09 ~02h):** eu disse que os `.thy` do MF eram do bloco-05 pela "semana 30/03-03/04"; essa semana e da secao inteira,
+que abrange 3 blocos. O gold (bloco-06, aula de Isabelle) fica. O erro do motor nesses 5 e a JANELA DO CARD = 1 sessao casada pelo label, quando a
+secao cobre 3 blocos — alavanca ja na caixa, agora com dado: 3 secoes multi-semana concentram 24+11+9 materiais e 8 dos 17 erros do motor puro.
+**Casos decididos (user 05/09):** IA `prova-1-2024-02` = prova antiga 2024/2 -> gold `scorable=no`, pino manual removido do original, reprocess
+(IA `d7d81ed`; sem credito o voter nao votou e ficou sem bloco — com credito voltaria a votar como prova/trabalho sem prazo: registrar se o user quer
+"prova antiga nunca vota"). MF `exerciciosdafny2`: gold 13 CONFIRMADO pelo SARC (sessao "colecoes dafny arrays" = label do Moodle "arrays no Dafny");
+bloco-11 nao tem Dafny. MF `revisao`: gold 03 consistente com a sessao "revisao de logica de predicados". TCC `aula-17-np-completude`: SARC tem
+"np complete" no bloco-19 (motor) e Cook-Levin no 22 (gold); postado 22/05 — ambiguo, gold mantido, decisao do user. ES2 `azure`: imagens (C7).
+**Alavanca medida e REFUTADA:** peso do label do Moodle no desempate lexical (tokens de titulo+label x2/x3): 58 entries disamb com gold, acerto
+50 -> 47 (x2) / 48 (x3) — conserta `dafny2` e `analise-exploratoria` mas quebra 4 exemplos k-NN do IA. Nao entra.
+
 ## MEDICAO — OS 17 ERROS DO MOTOR PURO (183/200) E O 1 DA CURADA (05/09 madrugada, sem LLM; pergunta do user "como chegar a 200?")
 **200 = tamanho do gold pontuavel** (MF 66, SO 38, IA 43, ES2 28, TCC 25; pares colapsados), nao o total de materiais (226 nos 5 cursos). 200/200 e 100% do gold,
 e o gold e amostra humana, nao oraculo. Os 17 do motor puro: 7 flagados (duvida honesta; no produto o voter resolve), 2 sem bloco (prova/trabalho sem
