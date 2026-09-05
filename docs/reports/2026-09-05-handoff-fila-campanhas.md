@@ -1,7 +1,7 @@
 # Handoff 2026-09-05 — PONTO DE ENTRADA: a FILA de campanhas (C1 aberta, C3 proxima, o resto estacionado)
 
-Unico handoff vivo. Substitui `_archive/2026-09-04-handoff-fila-campanhas.md` (C0 FECHADA 11/11 em 05/09; C1 itens 1-2 feitos). **Leia nesta
-ordem:** (1) este arquivo; (2) `pendencias.md` §GOLD PELO ORACULO, §C1 ITEM 1-2, §C0 ITEM 12 (numeros); (3) `.mex/context/decisions.md`
+Unico handoff vivo. Substitui `_archive/2026-09-04-handoff-fila-campanhas.md` (C0 FECHADA 11/11 em 05/09; C1 itens 1-3 feitos, o 3 refutado por medicao). **Leia nesta
+ordem:** (1) este arquivo; (2) `pendencias.md` §C1 ITEM 3, §GOLD PELO ORACULO, §C1 ITEM 1-2, §C0 ITEM 12 (numeros); (3) `.mex/context/decisions.md`
 (decisoes de 04-05/09). Rode `mem-search` para a sessao de 04-05/09.
 
 **Regra de fila (user, 03/09):** UMA campanha aberta, UMA proxima, o resto ESTACIONADO. **Campanha so fecha com 100% dos itens**; item nao
@@ -12,18 +12,19 @@ vai para a CAIXA DE IDEIAS (da para fazer? · quando? · o que resolve?).
 depende de LLM e fica na fila: travessia pos-itens 1-3 da C1 (so modo LLM, 1 rodada por item, ~45-105 chamadas) e re-voto do voter onde um
 pino nao resolver. Custo medido da sessao 04-05/09: travessia 270 chamadas x ~11-13k tokens; voter 23 votos novos; rebuild do CG ~110 chamadas.
 
-## COMECE POR (proxima sessao) — C1 TRAVESSIA, item 3: `title` do material html = `moodle_label` no MANIFEST (medir antes, sem LLM)
+## COMECE POR (proxima sessao) — C1 TRAVESSIA: itens 1-3 FEITOS (3 por medicao); o que falta e LLM (decisao do user: liberar Gemini)
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json`, `.codex/` e `.mex/patterns/*` de outro agente podem aparecer),
-   `git log --oneline -3`, HEAD dos 8 tutores iguais aos de "Estado ao comecar", `python scripts/censo_motor_llm.py` (revisar/100 58,0; FILE_MAP
-   100% nos 8, SO 38/39 por duplicata), `python -m pytest tests -q` (2324). Nada pushed.
-1. **Item 3, o dado:** o rebuild grava `title` = nome do arquivo (CG 69/93, MF 57/66, ES2 35/35 sem espaco); o `moodle_label` humano existe em
-   288/348 (FR 0/22, LR 1/7). O FILE_MAP ja imprime o label (item 1), mas o piso sem-llm da travessia e o disambiguator leem `title`+`label` do
-   manifest — piso do CG caiu de 10 para 5/15 no rebuild. Medir: com `title` = label (fallback nome), o piso sem-llm nos 3 cursos e o motor puro
-   nos 6 (bloco/unidade nao podem regredir; `entry_tokens` ja soma title+label, entao o efeito esperado e pequeno — se for 0, o item vira so o
-   FILE_MAP, que ja esta feito, e fecha por medicao). Onde: `stash_import.build_stash_entries` (title na entrada) ou render — decidir pelo numero.
-2. **Item 4 (condicional):** indice por unidade/termos so se a travessia pos-item 3 mostrar erro dessa forma (precisa LLM: espera liberacao).
-3. **Fechamento da C1 (precisa LLM, so quando o user liberar):** travessia IA/FR/CG modo LLM, alvo IA >= 14/15, FR 15/15, CG rerodado
-   (ja medido apos o item 1: IA 14, FR 15, CG 10-11). Depois: fronteira -> triagem da CAIXA (C7 IMAGENS: posicao na fila e decisao do user).
+   `git log --oneline -3`, HEAD dos 8 tutores iguais aos de "Estado ao comecar", `python scripts/censo_motor_llm.py` (revisar/100 57,8; votos/100
+   35,9; FILE_MAP 100% nos 8, SO 38/39 por duplicata), `python -m pytest tests -q` (2324). Nada pushed.
+1. **Item 3 FEITO por medicao (05/09 tarde, §C1 ITEM 3 no tracker): REFUTADO, 0 codigo.** Piso sem-llm com title := label: 0 flip nos 3 cursos;
+   motor puro bloco 186 -> 184/199 (MF, label "Respostas" perde `conjuntos`/`arrays`), sub 82 -> 81, 2 confiantes viram flag; holdout CG igual.
+   Nome do arquivo e label sao COMPLEMENTARES (103 entries tem token so no title); o motor ja soma os dois; o FILE_MAP ja mostra o label (item 1).
+2. **Com Gemini liberado (decisao do user), nesta ordem, 1 rodada cada:** (a) travessia final IA/FR/CG modo LLM (~90 chamadas; alvo IA >= 14/15,
+   FR 15/15, CG rerodado; ja medido apos o item 1: IA 14, FR 15, CG 10-11) — fecha a C1 se bater; (b) so se a travessia errar por indice: item 4
+   (indice por unidade/termos) ou "FILE_MAP titulo = label · stem" (103 linhas); (c) prompt do voter com `label do Moodle` (90/125 votados tem
+   label != title; re-voto <= 90 chamadas; entra so se conf-err cai sem regua regredir).
+3. **Sem Gemini:** a C1 nao tem item sem LLM. Opcoes do user: liberar Gemini; ou adiantar da caixa um item byte-identico (reprocess nao commitar
+   quando so `updated_at` muda; cache da normalizacao; `find_spec` no `write_build_report`) — e decisao de fila (C4 esta estacionada).
 4. Gate de cada item: suite verde; sentinela 0 nos 8; determinismo 8/8 (so se `src/` mudar); curada intacta (198/199); commit com numero no
    tracker; tutores so mudam por reprocess registrado (copia `.ablacao` antes); reprocess NAO commita quando so `updated_at` muda (caixa).
 
@@ -35,7 +36,7 @@ sobrepoe decisao confiante nem preempta o voto do LLM · nada pushed sem o user 
 `moddle/.env`, Datalab/Gemini `.env`) nunca impressos · [Humberto] · nao corrigir conteudo do professor em silencio (marcar para review).
 
 ## Estado ao comecar (05/09 manha, tudo commitado, NADA pushed)
-Gerador `feat/motor-atribuicao` @ `77865a0`, 871 commits a frente de `main`. Sessao 5 (03-05/09), commits de codigo: `728c0f1` (11a)
+Gerador `feat/motor-atribuicao` @ `7c76a00` + docs do item 3 (sessao 6, 05/09 tarde), 871+ commits a frente de `main`. Sessao 5 (03-05/09), commits de codigo: `728c0f1` (11a)
 `86dab7e` (11b) `4a14d8b` (10) `557be23` `1284b26` (9) `0ff832a` `4db9a6c` `df0e34f` `6afdcff` `d5d7629` (C1 item 1) `333d635` `09415da` (C1 item 2)
 `734ca8b` (gold pelo oraculo + regua honra `scorable`). Suite 2324.
 Tutores: MF `afb83cb` · SO `0921948` · IA `d7d81ed` · ES2 `ba7d2c8` · TCC `13ced08` · LR `d139547` · FR `fd7814f` · CG `0986874` (CG = `e3d02ed`
@@ -43,15 +44,16 @@ rebuild pela API + complemento + reprocess 11a/11b/10/C1; 93 entries; stash `Des
 CG + LR + FR (estado motor puro pos-item 10). `.ablacao/CG-rebuild` (365 MB) e `CG-export-backup` (440 MB): apagar e decisao do user.
 **Reguas (gold pelo oraculo, 199 pontuaveis):** curada **198/199 conf-err 0** (falta ES2 `azure`, imagem sem texto) · unidade 191/191 · cobertura
 55/57 · motor puro +vocab **186/199 conf-err 1** · unidade 183/191 · cobertura 53/57 · sub 82/93 · AULA 174/189 (flagados no puro 45/189) · REF 8/10 ·
-holdout CG puro 31/35 conf-err 0 (flagados 14) · curado 35/35 · censo revisar/100 58,0 · votos/100 36,5 · FILE_MAP 345/345 materiais nos 8 ·
+holdout CG puro 31/35 conf-err 0 (flagados 14) · curado 35/35 · censo revisar/100 57,8 · votos/100 35,9 (remedido 05/09 tarde; 2 pinos MF) · FILE_MAP 345/345 materiais nos 8 ·
 travessia pos-C1-item-1: IA 14/15 · FR 15/15 · CG 10/15 (completo 11) com LLM; sem-llm IA 10 · FR 9 · CG 5.
 
 ## BALANCO em 05/09
 - **SYNC — 6/6, FECHADA (04/09).** CG rebuild pela API promovido; formulas 37/37 aprovadas pelo user.
 - **C0 MOTOR — 11/11, FECHADA (05/09).** 11a exclusivo 2+ tokens · 11b voter so em flagada/serie/prazo/funil + votos no CRONOGRAMA_HEALTH · 10 ancora
   lexical exclusiva no mapa bloco->unidade · 9 scripts 81 -> 37 + regua AULA podada · 12 travessia "depois" (limite era o FILE_MAP, nao o motor).
-- **C1 TRAVESSIA — ABERTA; itens 1 e 2 FEITOS.** FILE_MAP completo e magro (80 KB, TRACE, titulo = label, Secoes 3/80) · titulo de bloco qualificado
-  so em colisao de aula (16) + CRONOGRAMA_DETALHADO em TCC e LR. Falta: item 3 (medir), item 4 (condicional), travessia final (LLM).
+- **C1 TRAVESSIA — ABERTA; itens 1, 2 e 3 FEITOS.** FILE_MAP completo e magro (80 KB, TRACE, titulo = label, Secoes 3/80) · titulo de bloco qualificado
+  so em colisao de aula (16) + CRONOGRAMA_DETALHADO em TCC e LR · item 3 medido e REFUTADO (title := label regride o motor puro 186 -> 184; piso 0).
+  Falta: travessia final (LLM), item 4 (condicional, LLM).
 - **Gold pelo oraculo (05/09):** TCC aula-17 -> 19, MF arvores/listas -> 05, IA prova antiga fora; curadoria: pinos MF + card TCC; regua de bloco honra
   `scorable`. 4 alavancas estruturais para o motor puro medidas e REFUTADAS (ver NAO fazer).
 
@@ -73,7 +75,7 @@ travessia pos-C1-item-1: IA 14/15 · FR 15/15 · CG 10/15 (completo 11) com LLM;
 12. **FEITO 05/09 (§C0 ITEM 12).** Travessia "depois" = "antes" no IA e no FR (material); CG limitado pelo FILE_MAP (26/93), bloco melhorou.
 **C0 FECHOU em 05/09: 11/11 feitos, cada um com numero no tracker.**
 
-### 1. ABERTA (05/09) — C1 TRAVESSIA (FILE_MAP completo e magro) — itens 1 e 2 FEITOS; falta 3 (medir, sem LLM), 4 (condicional) e a travessia final (LLM, so com liberacao do user)
+### 1. ABERTA (05/09) — C1 TRAVESSIA (FILE_MAP completo e magro) — itens 1, 2 e 3 FEITOS (3 refutado por medicao, §C1 ITEM 3); falta a travessia final (LLM) e o 4 (condicional, LLM) — so com liberacao do user
 Entrada medida no item 12 da C0: CG FILE_MAP 26/93 e 8/8 erros da travessia fora do corte; linha do FILE_MAP imprime `title` (nome de arquivo)
 e nao `moodle_label`; label de bloco duplicado no cronograma do FR (bloco-06/20).
 Unico item com numero de PRODUTO grande ja medido: IA 9 -> 14/15 com o indice completo (o corte de 12 KB esconde 40/59 materiais).
@@ -122,6 +124,10 @@ refs md alteradas (esperado so os 7 alts), stash CG -39. **Pronto quando:** 0 du
 
 ## CAIXA DE IDEIAS (fora da campanha aberta; triagem so na fronteira)
 Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no sistema?
+- **Prompt do voter sem o `moodle_label`** (`llm_vote.py:241` mostra so `titulo`; 90/125 votados tem label != title: CG 31, MF 31, ES2 16 — o voter ve "Vis3d")
+  · sim, 1 linha no prompt + re-voto <= 90 chamadas · C1 fechamento (LLM) · voto com o nome humano; entra so se conf-err cai sem regua regredir.
+- **FILE_MAP titulo = label perde o stem** (103 linhas com token so no title; 7 com label sem conteudo: MF "Respostas" x6, CG `vis2d` "Introducao")
+  · sim: "label · stem" quando o title tem token que o label nao tem · C1 item 4 (so se a travessia LLM errar dessa forma) · roteador com os dois sinais.
 - Conferencia das 37 formulas do CG por LLM (Gemini ve a imagem e compara com a transcricao do Datalab; ~37 chamadas) · sim · C3 · segunda opiniao
   depois da aprovacao humana de 04/09; so lista divergencias, nao corrige.
 - **Custo do Gemini (user 05/09: R$43 em poucos dias para um fallback):** imagens dos materiais deveriam passar pelo Datalab (descricao ja vem no
@@ -166,7 +172,9 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
 - Regua por item com vocab (campanha 5) · decisao B (campanha 4) · golds proposto-claude — revisao sua, quando quiser.
 
 ## NAO fazer (refutado no gold)
-**Medido e refutado em 05/09 (motor puro, copias):** peso do label do Moodle no desempate x2/x3 (50 -> 47/48 em 58) · janela do card = secao inteira,
+**Medido e refutado em 05/09 (motor puro, copias):** `title` do manifest := `moodle_label` (C1 item 3: piso 0; bloco 186 -> 184, sub 82 -> 81, 2 confiantes
+viram flag; label generico como "Respostas" apaga o assunto que o nome do arquivo carrega — stem e label sao complementares, o motor ja soma os dois) ·
+peso do label do Moodle no desempate x2/x3 (50 -> 47/48 em 58) · janela do card = secao inteira,
 todos os materiais (72 -> 56, 45 flagados) e so janela-1 por card (21 -> 15, 25/27 flagados) · data de postagem como decisor (33/52 = 63%; flagados 4/9)
 · "revisao" fora dos stems genericos (50 -> 50) · H9 sobre decisao confiante que contradiz o card ordenado (2 casos, saldo 0). A janela-1 pelo label do
 card e a melhor aposta estrutural (21/27); o que sobra no motor puro e voto cacheado ou pino. Nao repetir sem dado NOVO do Moodle (data/`duedate` por material).

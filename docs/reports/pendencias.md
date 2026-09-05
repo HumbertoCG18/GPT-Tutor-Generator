@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-05 (sessao 5 encerrada; C0 FECHADA 11/11; C1 itens 1 e 2 FEITOS; gold pelo oraculo; Gemini com credito mas NAO usar ate o user mandar). **Ponto de entrada = `2026-09-05-handoff-fila-campanhas.md`.** **Ponto de entrada = handoff `2026-09-05-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-05 tarde (sessao 6; C0 FECHADA 11/11; C1 itens 1-3 FEITOS — o 3 por medicao, REFUTADO; gold pelo oraculo; Gemini com credito mas NAO usar ate o user mandar). **Ponto de entrada = `2026-09-05-handoff-fila-campanhas.md`.** **Ponto de entrada = handoff `2026-09-05-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: **C0 MOTOR 11/11 FECHADA em 05/09** (§C0 ITEM 12, 9, 10, 11a, 11b);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
@@ -9,6 +9,35 @@ C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao p
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## C1 ITEM 3 — `title` DO MANIFEST = `moodle_label` (05/09 tarde, sessao 6, MEDIDO sem LLM; **FECHADO POR MEDICAO: REFUTADO, 0 codigo**)
+**Premissa do handoff:** o rebuild grava `title` = nome do arquivo e o piso sem-llm do CG caiu 10 -> 5; "medir title := label (fallback nome); se 0, fecha".
+**Lido antes de medir:** o piso (`eval_travessia.escolher_sem_llm`) e o `entry_tokens` do disamb somam title + label num CONJUNTO; title := label
+nao ACRESCENTA token, so REMOVE os que vinham do nome do arquivo. Leitores do `title` sozinho no motor: 9 (`leitores_title.py`); em 211/348
+entries reescriviveis, mudam de saida: ordinal 0 · `_exam_number` 0 · prep 0 · stems do due 0 · datas 0 · numero de unidade 0 · `_REVISAO_RE` 2 (ES2
+`servicos`/`web`, label "revisao de conceitos") · `split_camel_case(title)` no texto combinado 133 · `entry_tokens` 103 (token so do title perdido).
+**Medicao A — piso sem-llm, title := label em memoria (0 chamadas):** IA (14 titles) 10/15 -> 10/15, hit@3 12 -> 12, bloco 6/8 -> 6/8 · FR (0
+titles: sem label) 9 -> 9 · CG (67 titles) 5 -> 5, hit@3 6 -> 6, bloco 10/11 -> 10/11. **0 flip.** A queda 10 -> 5 do CG foi medida entre manifests
+diferentes (export 73 x rebuild 93, gold re-chaveado) e NAO e o title.
+**Medicao B — motor puro +vocab nas copias (baseline reproduzido 186/199 conf-err 1 · 183/191 · 53/57 · sub 82/93; holdout CG 31/35 conf-err 0 flagados 14):**
+| regua | antes | title := label (143 titles nos 5; 67 no CG) |
+|---|---|---|
+| bloco | 186/199, conf-err 1 | **184/199**, conf-err 1 — MF `exercicios-conjuntos`, `exercicios-arrays` 13 -> 12 (gold 13; label "Respostas" perde `conjuntos`/`arrays`) |
+| confiantes | — | MF `colecoes-arrays`, `colecoes-sequences` alta -> media + flag (label "Exemplos (Arrays)" perde `colecoes`) |
+| unidade · cobertura | 183/191 · 53/57 | iguais |
+| subunidade | 82/93 | **81/93** — SO `0704-exemplo-threads-em-java` conceitos-basicos -> escalonamento (0 token perdido; texto combinado) |
+| holdout CG | 31/35, conf-err 0, flag 14 | iguais; 10 subunidades mudam sem gold (4 somem, 3 nascem, 3 trocam) |
+**0 flip positivo em regua nenhuma.** O nome do arquivo e o label do Moodle sao sinais COMPLEMENTARES: o label e generico onde o professor nomeia o
+modulo pela funcao ("Respostas", "Exemplos (Arrays)", "Introducao"); o stem carrega o assunto. Nos 8: 103 entries tem token no title que o label nao
+tem (MF 35, CG 34, ES2 23); 7 tem label sem token de conteudo e title com (MF 6 "Respostas", CG `vis2d` "Introducao").
+**Decisao (registrada em decisions.md):** `title` do manifest FICA o stem; o label e coluna (FILE_MAP, item 1), nao substituto. Item 3 fecha por medicao,
+sem codigo; entra em NAO fazer. Achados para a fila LLM (so com Gemini liberado): (a) prompt do voter (`llm_vote.py:241`) mostra so `titulo`: 90/125
+materiais votados tem label != title (CG 31, MF 31, ES2 16, SO 7, IA 5) — o voter ve "Vis3d", nao "Visualizacao 3D - Projecao"; adicionar linha `label
+do Moodle` ao prompt e re-votar (<= 90 chamadas) e a alavanca com numero; (b) FILE_MAP titulo = label perde o stem em 103 linhas (7 sem token de
+conteudo): "label · stem quando o title tem token que o label nao tem" so se a travessia LLM errar dessa forma.
+**Censo remedido nesta sessao (originais):** revisar/100 **57,8** (handoff 58,0) · votos/100 **35,9** (36,5): MF pinos 4 -> 6 (arvores, listas, gold pelo
+oraculo) = 2 votos a menos (2/348 = 0,6) — consistente, nao isolado. FILE_MAP 100% nos 8 (SO 38/39 duplicata). Suite 2324 · `src/` intocado.
+Harness: `_harness-2026-09-04/c1-3/` (medicao A, shim da B, snapshot/diff, leitores, logs).
 
 ## GOLD PELO ORACULO (05/09 ~04h30, decisao do user: SARC e Moodle mandam; gold e humano)
 **Mudancas no gold (nota `SARC/Moodle 05/09 (user)` na coluna provenance):** TCC `aula-17-np-completude-pdf` bloco-22 -> **bloco-19** (SARC: sessao

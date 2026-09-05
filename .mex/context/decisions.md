@@ -401,3 +401,12 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Reasoning:** 4 alavancas estruturais para os erros restantes do motor puro foram medidas e refutadas (label x2/x3; janela = secao em 2 formas; data de postagem). O que sobra e duvida legitima (voter) ou juizo humano (pino). Curadoria e desenho da arquitetura, e fixes especificos ali sao legitimos; fixes de raiz vao para o motor so com saldo medido.
 **Consequences:** Reguas: motor puro 186/199 conf-err 1; curada 198/199 conf-err 0 (falta azure = imagens, C7). Caixa: capturar `duedate` na SYNC (trabalhos), janela do card so com dado novo.
 
+---
+
+### C1 item 3: o `title` do manifest fica o nome do arquivo; o label do Moodle e coluna, nao substituto
+
+**Date:** 2026-09-05
+**Status:** Active
+**Decision:** Nao substituir `title` por `moodle_label` no manifest (nem em `build_stash_entries`, nem por reprocess). O label ja e a coluna Titulo do FILE_MAP (item 1); o motor soma title + label em conjunto. Item 3 da C1 fecha por medicao, sem codigo; entra em NAO fazer.
+**Reasoning:** Medido antes de codigo (sessao 6): piso sem-llm da travessia com title := label em memoria, 0 flip em IA/FR/CG; motor puro +vocab nas copias, bloco 186 -> 184/199 (MF `exercicios-conjuntos`/`exercicios-arrays`: label "Respostas" apaga `conjuntos`/`arrays`), sub 82 -> 81, 2 decisoes confiantes viram flag; holdout CG identico; 0 flip positivo. Nome de arquivo e label sao sinais complementares (103 entries tem token so no title; 7 labels sem token de conteudo). A queda do piso CG 10 -> 5 foi entre manifests diferentes, nao efeito do title.
+**Consequences:** C1 so tem trabalho com LLM (travessia final; prompt do voter com label — 90/125 votados tem label != title; FILE_MAP "label · stem" so se a travessia errar). Sem Gemini, a proxima acao e decisao de fila do user.
