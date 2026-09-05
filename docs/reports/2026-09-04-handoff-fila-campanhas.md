@@ -46,7 +46,7 @@ Gerador `feat/motor-atribuicao`, ~825 commits a frente de `main`. Sessao 5 (03-0
 `5799035` `d7b2f87` `1d14353` `bff1fa4` + docs; noite: `728c0f1` (C0 11a), `86dab7e` (C0 11b), `4a14d8b` (C0 10), `557be23` `599ff10` `1284b26` (C0 9), `0ff832a` `4db9a6c` `df0e34f` `6afdcff` (C1 item 1). Suite 2319.
 Tutores (reprocess C1 item 1, 05/09): MF `acbfdc2` · SO `7c91082` · IA `1c2869a` · ES2 `ac3862c` · TCC `6d04f4e` · LR `42cdb8a` · FR `ca7f9fd` · CG `0136790` (CG = `e3d02ed` rebuild pela API + complemento + reprocess 11a/11b/10/C1) (93 entries: 66 do build + 4 folhas + 23 referencias; stash novo `Desktop/Moodle/computacao-grafica/
 stash/`, perfil ja aponta; export antigo em `.ablacao/CG-export-backup`). Copias `.ablacao` dos 5 + CG (re-sincronizada) + LR + FR.
-**Reguas (pos-C0, gold re-oraculado 05/09 — §GOLD PELO ORACULO):** curada **195/199** conf-err 1 · 191/191 · 55/57 · motor puro +vocab **186/199** conf-err 1 · unidade 183/191 · cobertura 53/57 · sub 82/93 · AULA 174/189 · REF 8/10 ·
+**Reguas (pos-C0, gold re-oraculado 05/09 — §GOLD PELO ORACULO):** curada **198/199** conf-err 0 (falta ES2 `azure`, imagem) · 191/191 · 55/57 · motor puro +vocab **186/199** conf-err 1 · unidade 183/191 · cobertura 53/57 · sub 82/93 · AULA 174/189 · REF 8/10 ·
 holdout CG (gold re-chaveado `ground_truth_CG.csv`, 35 scorable) **puro 31/35 (conf-err 0, flagados 14) · curado 35/35 (conf-err 0, flagado 1)** · censo revisar/100 58,3 · votos/100
 36,5 (348 materiais). Gold do CG anterior (export) em `_archive/ground_truth_CG.export.csv`.
 

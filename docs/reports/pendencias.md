@@ -21,8 +21,11 @@ plano 2026-09-02 (desenho/decisoes, carimbado).
 | motor puro +vocab (copias) | 183/200 (91,5%), conf-err 2 | **186/199 (93,5%), conf-err 1** |
 | curada (originais) | 199/200 (99,5%), conf-err 0 | **195/199 (98,0%), conf-err 1** — MF 64/66 (arvores, listas: produto respondeu 06 por voto), TCC 24/25 (22, agora conf-err) |
 | unidade · cobertura | 183/191 · 53/57 (puro); 191/191 · 55/57 (curada) | iguais |
-**Leitura:** o gold agora segue o professor; o produto seguia o gold antigo (votos cacheados). Para a curada voltar a 100% nesses 3 e curadoria: pino
-manual (arvores/listas -> 05, aula-17 -> 19) ou re-voto quando houver credito. Decisao do user pendente.
+**Curadoria aplicada (user 05/09 ~05h):** MF pinos `arvores`/`listas` -> bloco-05 (MF `afb83cb`); TCC card "Semana 12 - NP-completude" no
+`.card_block_map.json` de [21, 22] -> [bloco-19] (TCC `13ced08`; o produto vinha por janela-1 desse card curado, nao por voto). Reprocess sem LLM (votos
+cacheados; sem chamada nova). **Curada 195 -> 198/199 (99,5%), conf-err 0**; o 1 que falta e ES2 `azure` (imagem sem texto -> C7). Sentinela 0/8.
+Natureza: fixes ESPECIFICOS por desenho — pino e mapa de card sao a camada humana da arquitetura; a raiz aqui era humana (card curado errado; voto sem
+sinal estrutural). Fixes de raiz desta sessao ficaram no motor (11a, item 10) e no roteador (C1 itens 1-2).
 
 ## AUDITORIA GOLD x MOODLE/SARC (05/09 madrugada, sem LLM; regra do user: SARC e Moodle sao o oraculo, gold e humano)
 **Metodo:** para cada linha pontuavel dos 5 golds, o bloco do gold cai na `moodle_week_label` do card? 203 linhas, 82 com semana (MF, ES2; SO/IA/TCC

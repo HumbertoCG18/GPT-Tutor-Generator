@@ -391,3 +391,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Reasoning:** Medido nos 8: 7 labels repetidos, 16 blocos, 33 materiais; o flip 'osi tcp ip' do item 12 veio dai. Mudanca deterministica, byte-identica fora das colisoes.
 **Consequences:** determinismo 8/8 (0 arquivos nao deterministicos); proximo C1 item 3 (title = label no manifest, medir antes). Ideia registrada na caixa: Datalab para imagens, Gemini so fallback (custo).
 
+---
+
+### Gold pelo oraculo: SARC e Moodle mandam; gold e humano e se corrige; curadoria e a camada humana, nao remendo no motor
+
+**Date:** 2026-09-05
+**Status:** Active
+**Decision:** Quando gold e SARC/Moodle divergem, vale o professor: TCC aula-17 -> bloco-19, MF arvores/listas -> bloco-05, IA prova antiga fora do gold. A regua de bloco honra `scorable`. Onde o produto seguia o gold antigo, o alinhamento veio por curadoria registrada (pinos MF, card do TCC), nao por regra no motor.
+**Reasoning:** 4 alavancas estruturais para os erros restantes do motor puro foram medidas e refutadas (label x2/x3; janela = secao em 2 formas; data de postagem). O que sobra e duvida legitima (voter) ou juizo humano (pino). Curadoria e desenho da arquitetura, e fixes especificos ali sao legitimos; fixes de raiz vao para o motor so com saldo medido.
+**Consequences:** Reguas: motor puro 186/199 conf-err 1; curada 198/199 conf-err 0 (falta azure = imagens, C7). Caixa: capturar `duedate` na SYNC (trabalhos), janela do card so com dado novo.
+
