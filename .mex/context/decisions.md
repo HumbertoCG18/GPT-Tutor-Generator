@@ -341,3 +341,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Reasoning:** Medido nos 8 originais recomputando o motor sem voter: dos 22 votos de serie, 17 caem onde o motor ja decidia sem flag, mas em 1 deles (MF exerciciosdafny2) o motor confiante erra e o voto acerta. Cortar poupa 17 votos (13%) e cria 1 conf-err na curada — regride, nao entra. O residual flagado em AULA no produto e 7,9/100 (15/189, todos sem 2o candidato), abaixo do gate de 8. determinismo 8/8 (0 arquivos nao deterministicos).
 **Consequences:** Item 11 fechado (11a+11b); C0 segue com o 10 (medir os 12 erros de unidade antes de codigo). Regua por item (com vocab + curada + holdout, ablacao so em gate) continua decisao aberta do user.
 
+---
+
+### C0 10: ancora lexical exclusiva vence a ordem do plano no mapa bloco->unidade
+
+**Date:** 2026-09-04
+**Status:** Active
+**Decision:** Em `assign_units_positional`, depois da DP monotonica, um bloco com >= 2 tokens na unidade argmax, margem >= 1 e um token que so essa unidade tem no plano recebe essa unidade (so ele). Um token continua indicio; token exclusivo de duas unidades e ambiguo e fica com o otimo global. Entrou no gerador (`4a14d8b`) e nos 8 tutores.
+**Reasoning:** Dos 12 erros de unidade do motor puro, 10 eram o mapa bloco->unidade errado onde o professor sai da ordem do plano (SO Arquivos depois de E/S) e a curada corrigia com pino manual. A DP segmentada por ancoras muda 12-14 blocos e perde pino; a ancora so no proprio bloco muda 3 blocos nos 8 tutores, todos confirmados por pino ou secao do Moodle, unidade 179 -> 183/191 e nenhuma outra regua se move. determinismo 8/8 (0 arquivos nao deterministicos).
+**Consequences:** C0 em 8/11; proximo item 9 (refactor corte 1, byte-identico). Sem alavanca estrutural: SO bloco-06 (deadlock e juizo humano), IA blocos 01-02, SO sockets.
+

@@ -1,14 +1,36 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-04 (sessao 5, noite; C0 11a e 11b registrados nos 8 tutores). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-04 (sessao 5, noite; C0 11a, 11b e 10 registrados nos 8 tutores). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
-**Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 7/11 (feitos 2-7 e 11 = 11a+11b; faltam 10, 9, 12; §C0 ITEM 11a, §C0 ITEM 11b);
+**Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 8/11 (feitos 2-7, 10 e 11; faltam 9, 12; §C0 ITEM 10, 11a, 11b);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
 **FILA:** 1 ABERTA = C0 itens 9-12 (ordem proposta 11 -> 10 -> 9 -> 12) · 2 PROXIMA = C1 travessia · estacionadas: C3 provas/listas · C7 imagens ·
 C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## C0 ITEM 10 — UNIDADE: ANCORA LEXICAL EXCLUSIVA NO MAPA BLOCO->UNIDADE (04/09 sessao 5 noite, FEITO E REGISTRADO NOS 8)
+Gerador `4a14d8b`. **Medido ANTES do codigo (`c0-10/disseca_unidade_10.py`):** dos 12 erros de unidade do motor puro +vocab (179/191), 10 tinham
+BLOCO CERTO e unidade errada: o mapa bloco->unidade da DP posicional (`unit_matcher.assign_units_positional`, monotonica na ordem do plano, 1 desvio)
+erra onde o professor sai da ordem, e a curada corrige com PINO MANUAL de unidade no bloco (14 pinos nos 8 tutores; o auto erra em 3, todos do SO:
+bloco-06 -> 04 deadlock, bloco-12 prova, bloco-20 "Arquivos" -> 06); no IA os blocos 01-03 deslocam sem os pinos. Os outros 2 eram bloco errado
+(SO sockets; o voto resolve na curada). O texto do material acertaria a verdade em 5/12 — a reconciliacao impoe a unidade do bloco.
+**Simulacao (`c0-10/simula_ancora_unidade_10.py`, DP atual reproduzida 133/133):** 8 variantes. DP segmentada por ancoras (C/D) chega a 185/191
+mas muda 12-14 blocos e perde 1 pino do IA — fora. Ancora so no proprio bloco, com afinidade >= 2 tokens e token exclusivo da unidade (F/H): muda 3
+blocos e da 183/191, 0 flip negativo; com afinidade 1 mudaria TCC 33 ("prova") e CG 15 — fora. Bloco com token exclusivo de DUAS unidades e ambiguo
+e fica com o otimo global da DP (2 testes existentes protegem isso).
+**Regra (1 constante + 8 linhas):** apos a DP (com desvio), bloco com >= `ANCHOR_MIN_AFF`=2 tokens na unidade argmax, margem >= `ANCHOR_MIN_MARGIN`=1
+e um token que SO essa unidade tem no plano recebe o argmax; so ele, a DP dos vizinhos fica. Funcao antiga x nova nos 8 (mesmos blocos e taxonomia):
+**3 blocos** — SO bloco-20 Arquivos 07 -> 06 (pino manual confirma; 4 entries do gold), CG bloco-08 Morfologia 06 -> 01 e CG bloco-13 Curvas 06 -> 07
+(secoes do Moodle "11 - Morfologia" e "7 - Curvas" confirmam; 12 materiais), conf 0,4 -> 0,6. Teste novo; fixture do teste de otimo global movida
+para 1 token (a fronteira da "ancora espuria" passou a ser 1 token, mesma leitura do 11a).
+**Copias:** bloco 183/200 conf-err 2 = · **unidade 179 -> 183/191 (95,8%)** (SO 28 -> 32/37) · cobertura 53/57 = · subunidade 82/93 = · AULA 174/189 =
+· holdout CG puro 31/35 conf-err 0 = · curado 35/35 =. Suite 2337.
+**Originais (reprocess registrado `c0-10/reprocess_10.py`):** MF `7f17ccf` · SO `9c0b1bb` · IA `270975d` · ES2 `d5f96a5` · TCC `a438a52` · LR `c0df4a6` · FR `a6f3db0` · CG `2efddcb`. flagadas 38 -> 38 (+0) | blocos mudados 0 | unidades mudadas 12; unidades mudadas por tutor: nenhuma. Gate: curada 199/200 conf-err 0 · 191/191 · 55/57 intacta ·
+sentinela 0/8 · determinismo 8/8 (0 arquivos nao deterministicos) · censo revisar/100 58,3 -> 58,0 · votos/100 36,5 =.
+**Fica sem alavanca estrutural (registrado, nao vira regra):** SO bloco-06 (3 entries: o texto diz "gerencia do processador", o pino diz deadlock —
+juizo humano) · IA blocos 01-02 (3 entries: a DP sem ancora desloca a introducao para a unidade 05) · SO sockets (2 entries: erro de bloco).
 
 ## C0 ITEM 11b — LLM SO NOS FLAGADOS + VOTOS CONTADOS NO CRONOGRAMA_HEALTH (04/09 sessao 5 noite, FEITO E REGISTRADO NOS 8)
 Gerador `86dab7e`. **Dado ANTES do codigo:** o voter (`anchor_engine.py:252-259, 268-269`, `resolve_funnel`) JA vota so em decisao
