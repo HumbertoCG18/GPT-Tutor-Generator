@@ -132,6 +132,9 @@ refs md alteradas (esperado so os 7 alts), stash CG -39. **Pronto quando:** 0 du
 Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no sistema?
 - **Prompt do voter sem o `moodle_label`** (`llm_vote.py:241` mostra so `titulo`; 90/125 votados tem label != title: CG 31, MF 31, ES2 16 — o voter ve "Vis3d")
   · sim, 1 linha no prompt + re-voto <= 90 chamadas · C1 fechamento (LLM) · voto com o nome humano; entra so se conf-err cai sem regua regredir.
+- **Propagacao de vocabulario por headings para a subunidade (sem LLM):** +5/-0 no gold (82 -> 87/93), curada intacta, mas MF 6 e CG 9 mudancas
+  sem gold com varias erradas a olho (tracker §OS 32 ERROS) · sim, ~40 linhas em `apply_unit_subunit_fields` (2a passada) · **C5: so depois de gold de
+  subunidade do CG/MF proposto-claude + aprovado pelo user** · +4 IA +1 SO no puro; risco medido no CG sem gold.
 - **FILE_MAP titulo = label perde o stem** (103 linhas com token so no title; 7 com label sem conteudo: MF "Respostas" x6, CG `vis2d` "Introducao")
   · sim: "label · stem" quando o title tem token que o label nao tem · C1 item 4 (so se a travessia LLM errar dessa forma) · roteador com os dois sinais.
 - Conferencia das 37 formulas do CG por LLM (Gemini ve a imagem e compara com a transcricao do Datalab; ~37 chamadas) · sim · C3 · segunda opiniao
@@ -169,8 +172,9 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
 - Imagens-template, logos e duplicatas -> virou campanha propria **C7 IMAGENS** (fila, item 8); dados e refutacoes estao la.
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
-- **Desligar `gemini_auto_summarize` na UI enquanto o Gemini estiver bloqueado** (incidente de 60 chamadas em 05/09 tarde; sem isso qualquer
-  reprocess que mude hash de codigo chama a API). O tripwire cobre so as medicoes com o shim.
+- ~~Desligar `gemini_auto_summarize` na UI~~ **FEITO 05/09 tarde pelo user** (`~/.gpt_tutor_config.json`: False, verificado). Religar so quando liberar o Gemini.
+- **Gold de subunidade do CG (93) e MF (66) proposto-claude para sua aprovacao** (C5): destrava a propagacao de vocabulario (+5 no gold atual)
+  e da regua a 4 cursos que hoje so listam flips. Custo: revisao humana; 0 LLM.
 - **Gemini:** credito recarregado 05/09; liberar uso (travessia final da C1 e re-votos) e decisao sua. Ate la, so medicao sem LLM.
 - **Apagar** `.ablacao/CG-rebuild` (365 MB) e `.ablacao/CG-export-backup` (440 MB). **Posicao da C7 IMAGENS** na fila (hoje 8a). IA `prova-1-2024-02`
   ficou com `manual_unit_slug` (unidade pinada); pino de bloco removido.

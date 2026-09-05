@@ -31,7 +31,19 @@ de tokens genericos sai) **+1 -5** (+ ES2 `devops` -> `gerenciamento-da-configur
 **Raiz dos 4 do IA e VOCABULARIO, nao scorer:** na copia (motor puro +vocab) `modelos-preditivos` nao tem `perceptron`, `rede neural`, `MLP`, `kNN` —
 esses termos so existem no glossario MANUAL `.glossary_curation.json` (curadoria 25/08, "o plano nomeia CATEGORIAS; o material nomeia ALGORITMOS"),
 que a ablacao remove; o vocab compilado por LLM tem "MultiLayer Perceptron" (frase) e nao o token. Teto da subunidade no motor puro = vocabulario
-(camada humana, ou re-compilacao por LLM quando liberado). Fora disso, o que sobra e voto (LLM) ou pino (camada humana), por desenho.
+(camada humana, ou re-compilacao por LLM quando liberado).
+**PROPAGACAO DE VOCABULARIO POR HEADINGS (sem LLM, 05/09 tarde; `c1-3/simula_propaga_headings*.py`, em memoria pela rota real):** tokens
+EXCLUSIVOS dos headings/titulo dos materiais que o motor ja atribuiu com confianca a um subtopico viram aliases desse subtopico (2 passadas;
+token em > 25% dos materiais do curso = generico; 2a passada so onde a 1a nao decidiu com confianca). **Gold (93): 82 -> 87/93, +5 -0**
+(IA perceptron x3 + mlp-xor via `rede`/`nearest`/`neighbors`; SO `exemplo3`) no ponto (conf >= 0,7; token em >= 2 confiantes; df <= 25%);
+curada 93/93 intacta. Grade df 0,25 (8 pontos): (0,5;2) +5/-3 · (0,5;3) +3/0 · (0,6;2) +5/-3 · **(0,7;2) +5/0** · (0,7;3) +4/0 · (0,8;2) +5/-1 ·
+(0,9;2) 0/0 · (0,9;3) 0/0; sem o teto de df, (0,9;2) dava -20 (poucos confiantes = exclusividade vazia). **MAS nos 4 cursos SEM gold de
+subunidade (weak-only, `simula_propaga_semgold_weak.log`): MF 6 mudancas, CG 9, FR 0, LR 0 — varias visivelmente erradas** (CG
+`transformacoesgeometricas` -> recorte, `aula-gravada` da Morfologia -> a-matematica-das-projecoes, `slab` geometria-comp -> operacoes-com-
+vetores; MF `hoare` logica-de-hoare -> verificacao-de-programas). Sem rescore dos confiantes o CG ainda perdia 8 decisoes confiantes (19 mudancas).
+**Nao entra no motor: saldo nos 8 desconhecido sem gold.** Caminho sem LLM = humano: gold de subunidade do CG (e MF) proposto-claude para
+aprovacao do user (formato de 25/08), depois remedir nos 8 (C5, "gold proprio ou ruling"); ou pino/glossario manual para os 4 do IA (curadoria).
+Fora disso, o que sobra e voto (LLM) ou pino (camada humana), por desenho.
 
 ## C1 ITEM 3 — `title` DO MANIFEST = `moodle_label` (05/09 tarde, sessao 6, MEDIDO sem LLM; **FECHADO POR MEDICAO: REFUTADO, 0 codigo**)
 **Premissa do handoff:** o rebuild grava `title` = nome do arquivo e o piso sem-llm do CG caiu 10 -> 5; "medir title := label (fallback nome); se 0, fecha".

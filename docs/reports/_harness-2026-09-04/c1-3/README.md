@@ -11,3 +11,6 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
   (V1 0/0, V2 +1/-5, V2s 0/0); raiz dos 4 do IA e vocabulario do glossario manual.
 - **Incidente Gemini:** a 1a rodada da B (`b_title_*.log`, `diff_b.log`) disparou 60 resumos de codigo (config `gemini_auto_summarize`); `shim_b.py`
   ganhou tripwire; rodada limpa em `b_title2_*.log` + `diff_b2.log` (0 chamadas, `check_gemini_hoje.py`). Vale a rodada limpa.
+- `simula_propaga_headings.py <snapshot> conf min_entries df_max [orig]` / `_weak.py` (2a passada so nos nao-confiantes) / `_semgold.py` (MF, CG, FR,
+  LR: lista o que mudaria): propagacao de vocabulario por headings — gold 82 -> 87/93 (+5/-0) em (0,7; 2; 0,25) weak-only, curada 93/93;
+  grades em `simula_propaga_grid*.log`; sem gold MF 6 / CG 9 mudancas (`simula_propaga_semgold_weak.log`). Nao entra sem gold CG/MF.

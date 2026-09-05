@@ -420,3 +420,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Decision:** Nao entra IDF intra-unidade no scorer de subtopico. A subunidade do motor puro (82/93) fica como teto de vocabulario: os termos que decidem os 4 notebooks do IA (`perceptron`, `rede neural`, `MLP`, `kNN`) existem so no glossario MANUAL, camada humana que a ablacao remove por desenho. Toda medicao em copia `.ablacao` roda com o tripwire Gemini do `shim_b.py` e o pos-check `check_gemini_hoje.py`.
 **Reasoning:** Simulado em memoria pela rota real (base reproduz 92/93): V1 tokens 0 flip; V2 frases +1/-5 (o token `Agrupamento` e compartilhado com aliases-sessao do topico de introducao e V2 tira o dono legitimo); V2s 0/0. Duas variantes de card ja tinham dado 0/+ 23/- e 0/+ 2/-. Incidente: o reprocess chama Gemini para re-resumir codigo quando o hash da entry muda (`gemini_auto_summarize` na UI); a medicao title := label custou 60 resumos nao autorizados e contaminou a 1a rodada (sub 81, CG 10 mudancas); refeita limpa, bloco 184/199 e 2 confiantes iguais, sub 82 = 82.
 **Consequences:** §OS 32 ERROS e §C1 ITEM 3 (INCIDENTE) no tracker; NAO fazer do handoff ganha as duas refutacoes; decisao aberta do user: desligar `gemini_auto_summarize` na UI enquanto o Gemini estiver bloqueado. Sem LLM, bloco/unidade/subunidade do motor puro nao sobem: o que resta e voto ou pino.
+
+---
+
+### Propagacao de vocabulario por headings (sem LLM) fica na caixa: +5 no gold de subunidade, mas sem gold nos outros 4 cursos nao entra
+
+**Date:** 2026-09-05
+**Status:** Active
+**Decision:** A 2a passada de subunidade (tokens exclusivos dos headings dos confiantes viram aliases; teto de df 25%; so onde a 1a passada nao decidiu) NAO entra no motor agora, apesar de 82 -> 87/93 no gold e curada intacta. Entra so depois de gold de subunidade do CG e do MF (proposto-claude, aprovado pelo user) e saldo medido nos 8.
+**Reasoning:** No gold o ganho e real e estavel em conf >= 0,7 (min 2-3 entries), mas nos cursos sem gold a mesma regra muda MF 6 e CG 9 subunidades, varias visivelmente erradas (self-training amplifica o boilerplate de headings do OpenGL); sem o teto de df, (0,9;2) dava -20. "Saldo medido nos 8" e lei; 4 cursos sem regua nao contam como saldo.
+**Consequences:** Caixa do handoff + decisao aberta do user (gold CG/MF, C5). Ate la, subunidade do motor puro = 82/93 por vocabulario. `gemini_auto_summarize` desligado na UI pelo user em 05/09 tarde.
