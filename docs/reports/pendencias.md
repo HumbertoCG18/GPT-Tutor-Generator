@@ -1,14 +1,32 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-04 (sessao 5, noite; C0 11a registrado nos 8 tutores). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-04 (sessao 5, noite; C0 11a e 11b registrados nos 8 tutores). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
-**Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 6/11 + 11a FEITO (faltam 9, 10, 11b, 12; §C0 ITEM 11a);
+**Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 7/11 (feitos 2-7 e 11 = 11a+11b; faltam 10, 9, 12; §C0 ITEM 11a, §C0 ITEM 11b);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
 **FILA:** 1 ABERTA = C0 itens 9-12 (ordem proposta 11 -> 10 -> 9 -> 12) · 2 PROXIMA = C1 travessia · estacionadas: C3 provas/listas · C7 imagens ·
 C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## C0 ITEM 11b — LLM SO NOS FLAGADOS + VOTOS CONTADOS NO CRONOGRAMA_HEALTH (04/09 sessao 5 noite, FEITO E REGISTRADO NOS 8)
+Gerador `86dab7e`. **Dado ANTES do codigo:** o voter (`anchor_engine.py:252-259, 268-269`, `resolve_funnel`) JA vota so em decisao
+FLAGADA ∪ membro de serie same-theme (mesmo confiante) ∪ prova/trabalho sem due (`lexical=False`) ∪ funil sem janela; janela-1 nunca vota.
+Votos hoje nos 8 originais: **127** = flag 88 · serie flagada 5 · serie com motor confiante 17 (recomputo sem voter — a leitura por
+`computed_block_band` engana: e o scorer legado concept-fused, nao o motor) · funil 16 · prazo 1; acerto no gold 78/79.
+**Passo 1 (`c0-11b/mede_serie_11b.py`, read-only):** dos 22 votos de serie, 17 caem onde o motor ja decidia sem flag; motor 15/16 no gold,
+voto 16/16. O caso: MF `exerciciosdafny2` (motor alta bloco-11 por margem — um dos 2 conf-err do motor puro; voto = gold bloco-13). Cortar
+a via "serie confiante" poupa 17 votos (13%) e cria 1 conf-err na curada (MF 66 -> 65/66): **nao entra** (nada regride). "LLM so nos
+flagados" ja e o desenho — item fecha SEM mexer no motor.
+**Codigo:** `cronograma_health.llm_vote_summary(entries)` (pura) + secao "Votos de LLM (motor TIER 3)": decisoes por `llm`/`llm-funil` e
+flagados, por 100 entries — mesma regua do censo. Teste RED/GREEN; suite 2336. Previa nos 8 = censo: 127/348 = 36,5/100 · flagados 38 =
+10,9/100 (MF 50,0 · ES2 48,6 · FR 54,5 · CG 43,0 · SO 23,1 · IA 23,7 · LR 14,3 · TCC 3,7). Reprocess registrado (variante 11b de
+`c0-11a/reprocess_11a.py`): MF `8eda277` · SO `33d7b4a` · IA `89ee427` · ES2 `b47ba76` · TCC `417c4a8` · LR `fdc4f8b` · FR `b6e68cd` · CG `b4dee75`. Resultado: flagadas 38 -> 38 (+0) | blocos mudados 0. Gate: determinismo 8/8 (0 arquivos nao deterministicos) · sentinela 0/8 · curada/holdout intactos (relatorio derivado; motor nao mudou).
+**Decisoes do item, registradas sem re-medir:** ordem motor -> LLM -> card FICA (card antes do voter derrubou a curada 199 -> 187, 03/09).
+Gate "residual flagado em AULA <= 8/100": produto apos 11a = 15/189 = **7,9/100**, os 15 sao janela-1 (SO 8, TCC 5), due-straddle (MF 1) e
+llm-funil (SO 1) — sem 2o candidato para votar; atendido (o "18,5" do plano era o motor puro sem LLM). Regua por item: proposta = com-vocab
++ curada + holdout a cada item, ablacao so em gate — **decisao aberta do user** (ja listada no handoff).
 
 ## C0 ITEM 11a — `exclusivo` DO DISAMB EXIGE 2+ TOKENS (04/09 sessao 5 noite, FEITO E REGISTRADO NOS 8)
 Gerador `728c0f1` (1 linha em `routing/motor/disambiguator.py:264` + 2 testes; suite 2335). Dado ANTES do codigo (`s6f/mede_exclusivo.py`):

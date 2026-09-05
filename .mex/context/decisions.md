@@ -331,3 +331,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Reasoning:** Medido antes do codigo: 22 decisoes alta em 1 token nos 6 golds, 5 erradas (77%) contra 94% com 2+ tokens ou margem. Depois, na mesma base: conf-err 3 -> 2 (motor puro), holdout CG puro conf-err 2 -> 0 e curado 33 -> 35/35, bloco/AULA/REF/curada iguais, unidade +1. Custo medido: 23 votos de LLM a mais (votos/100 29,9 -> 36,5; revisar/100 54,0 -> 58,3). determinismo 8/8 (0 arquivos nao deterministicos).
 **Consequences:** C0 segue com 11b (LLM so nos flagados, contado). FR `udp-example-c/java` separados pelo voter sem gold — observar na C1. Divida: `tests/test_unit_matcher.py` grava o ledger do MF real a cada suite (corrigir em C4 ou antes).
 
+---
+
+### C0 11b: a via 'serie confiante' do voter fica; votos contados no CRONOGRAMA_HEALTH
+
+**Date:** 2026-09-04
+**Status:** Active
+**Decision:** O voter continua votando em decisao flagada, membro de serie same-theme (mesmo confiante), prova/trabalho sem due e funil; nenhuma mudanca no motor. O CRONOGRAMA_HEALTH ganha a secao 'Votos de LLM' (decisoes por llm/llm-funil e flagados, por 100 entries) na mesma regua do censo (`86dab7e`).
+**Reasoning:** Medido nos 8 originais recomputando o motor sem voter: dos 22 votos de serie, 17 caem onde o motor ja decidia sem flag, mas em 1 deles (MF exerciciosdafny2) o motor confiante erra e o voto acerta. Cortar poupa 17 votos (13%) e cria 1 conf-err na curada — regride, nao entra. O residual flagado em AULA no produto e 7,9/100 (15/189, todos sem 2o candidato), abaixo do gate de 8. determinismo 8/8 (0 arquivos nao deterministicos).
+**Consequences:** Item 11 fechado (11a+11b); C0 segue com o 10 (medir os 12 erros de unidade antes de codigo). Regua por item (com vocab + curada + holdout, ablacao so em gate) continua decisao aberta do user.
+

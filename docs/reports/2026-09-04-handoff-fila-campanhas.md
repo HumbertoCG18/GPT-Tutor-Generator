@@ -8,15 +8,17 @@ Unico handoff vivo. Substitui `_archive/2026-09-03b-handoff-fila-campanhas.md` (
 (criterio estrito); item nao feito nao muda de dono sozinho — ou e feito, ou o user o RETIRA por decisao registrada. Novo lote = novo
 handoff, o anterior vai para `_archive/`. Ideia que surge no meio vai para a CAIXA DE IDEIAS (da para fazer? · quando? · o que resolve?).
 
-## COMECE POR (proxima sessao) — C0 item 11b: LLM so nos flagados, cacheado, contado (11a FEITO 04/09 noite, gerador `728c0f1`)
+## COMECE POR (proxima sessao) — C0 item 10: medir os 12 erros de unidade ANTES de codigo (11a e 11b FEITOS 04/09 noite)
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` e `.codex/` podem aparecer), `git log --oneline -3`, HEAD dos 8
-   tutores iguais aos de "Estado ao comecar" (CG agora e `0bc78a4`), `python scripts/censo_motor_llm.py` (revisar/100 58,3). Suite 2335.
+   tutores iguais aos de "Estado ao comecar" (CG agora e `b4dee75`), `python scripts/censo_motor_llm.py` (revisar/100 58,3). Suite 2336.
 1. **11a FEITO** (`728c0f1`, §C0 ITEM 11a no tracker): `exclusivo` exige 2+ tokens; 1 token = banda media + flag. Copias: conf-err 3 -> 2,
    unidade 178 -> 179, resto igual; holdout puro conf-err 2 -> 0, curado 33 -> 35/35; originais reprocessados e commitados (8 HEADs abaixo);
    custo medido: votos/100 29,9 -> 36,5 (23 votos). Observar na C1: FR `udp-example-c/java` separados pelo voter (sem gold).
-2. **11b**: LLM so nos flagados, cacheado, contado no CRONOGRAMA_HEALTH; ordem motor <-> LLM <-> card com numero. Gate: residual flagado
-   em AULA <= 8/100 (hoje 18,5).
-3. Depois: 10 (medir os 13 erros de unidade antes de codigo), 9 (refactor corte 1, byte-identico), 12 (travessia "depois").
+2. **11b FEITO** (`86dab7e`, §C0 ITEM 11b): voter ja votava so em flagada/serie/prazo/funil; serie confiante paga (17 votos evitam 1 conf-err,
+   MF `exerciciosdafny2`) e fica; CRONOGRAMA_HEALTH ganhou "Votos de LLM" (36,5/100 = censo); ordem motor -> LLM -> card fica (199 -> 187
+   medido 03/09); residual flagado AULA = 7,9/100 (gate <= 8 atendido). Regua por item = decisao sua (aberta).
+3. **10 (proximo)**: medir os 12 erros de unidade do motor puro +vocab (179/191) ANTES de codigo: quais, por que, alavanca com numero;
+   sem alavanca, o user retira o item. Depois 9 (refactor corte 1, byte-identico) e 12 (travessia "depois").
 4. Gate de cada item: suite verde; sentinela 0 nos 8; determinismo 8/8; curada intacta; commit com o numero no tracker; tutores so
    mudam por reprocess registrado (copia `.ablacao` antes).
 
@@ -28,9 +30,8 @@ Datalab/Gemini `.env`) nunca impressos · [Humberto] · nao corrigir conteudo do
 
 ## Estado ao comecar (04/09, tudo commitado, NADA pushed)
 Gerador `feat/motor-atribuicao`, ~825 commits a frente de `main`. Sessao 5 (03-04/09): `6111b46` `0a8ae2e` `a10a6ca` `12990ed`
-`5799035` `d7b2f87` `1d14353` `bff1fa4` + docs; noite: `728c0f1` (C0 11a). Suite 2335.
-Tutores (reprocess 11a, 04/09 noite): MF `fa85ce0` · SO `393f135` · IA `f00c53e` · ES2 `4ef7ead` · TCC `56faba3` (encerrados) · LR `1d7bafe` ·
-FR `d876645` · **CG `0bc78a4` (= `e3d02ed` rebuild limpo pela API + complemento, + reprocess 11a)** (93 entries: 66 do build + 4 folhas + 23 referencias; stash novo `Desktop/Moodle/computacao-grafica/
+`5799035` `d7b2f87` `1d14353` `bff1fa4` + docs; noite: `728c0f1` (C0 11a), `86dab7e` (C0 11b). Suite 2336.
+Tutores (reprocess 11a+11b, 04/09 noite): MF `8eda277` · SO `33d7b4a` · IA `89ee427` · ES2 `b47ba76` · TCC `417c4a8` · LR `fdc4f8b` · FR `b6e68cd` · CG `b4dee75` (CG = `e3d02ed` rebuild limpo pela API + complemento + reprocess 11a/11b) (93 entries: 66 do build + 4 folhas + 23 referencias; stash novo `Desktop/Moodle/computacao-grafica/
 stash/`, perfil ja aponta; export antigo em `.ablacao/CG-export-backup`). Copias `.ablacao` dos 5 + CG (re-sincronizada) + LR + FR.
 **Reguas (pos-11a):** curada 199/200 conf-err 0 · 191/191 · 55/57 · motor puro +vocab 183/179/53/82 conf-err 2 · AULA 174/189 · REF 8/10 ·
 holdout CG (gold re-chaveado `ground_truth_CG.csv`, 35 scorable) **puro 31/35 (conf-err 0, flagados 14) · curado 35/35 (conf-err 0, flagado 1)** · censo revisar/100 58,3 · votos/100
@@ -40,7 +41,7 @@ holdout CG (gold re-chaveado `ground_truth_CG.csv`, 35 scorable) **puro 31/35 (c
 - **SYNC — 6/6, FECHADA.** S1-S5 (03/09), S6a-S6f (03-04/09). S6f: rebuild do CG pela API promovido a original com holdout curado
   33/35 **aceito pelo user com causa medida** (o 34 do baseline dependia do token de boilerplate "imagens"; regra `exclusivo` por 1 token
   e o balde — C0 item 11a). Detalhe: `pendencias.md` §SYNC S6f e §SYNC S6a-S6e.
-- **C0 MOTOR — 6/11 + 11a, ABERTA.** Feitos 2-7 e 11a (04/09 noite, `728c0f1`, 8 tutores reprocessados); faltam 9, 10, 11b, 12 (ordem 11b -> 10 -> 9 -> 12).
+- **C0 MOTOR — 7/11, ABERTA.** Feitos 2-7 e 11 (11a `728c0f1` + 11b `86dab7e`, 04/09 noite, 8 tutores reprocessados); faltam 10, 9, 12 (ordem 10 -> 9 -> 12).
 
 ## FILA DE CAMPANHAS (ordem decidida 03/09, atualizada 04/09)
 
@@ -49,8 +50,9 @@ holdout CG (gold re-chaveado `ground_truth_CG.csv`, 35 scorable) **puro 31/35 (c
    `regua_aula.py` (picks H9/H7). Gate: byte-identico (determinismo, sentinela 0, suite).
 10. Fase 2 unidade: ANTES de codigo, medir o que a estrutura nao resolveu na unidade (motor+vocab 178/191: 13 erros, quais e por
    que). Se a medicao nao der alavanca com numero, o user retira o item.
-11. Fase 4: LLM so nos flagados, cacheado, contado no CRONOGRAMA_HEALTH; decidir a ordem motor <-> LLM (hoje o card so age depois
-   do voter) e a regua por item (com vocab + curada + holdout; ablacao so em gate). Gate: residual flagado em AULA <= 8/100.
+11. **FEITO 04/09 noite (11a `728c0f1` + 11b `86dab7e`; §C0 ITEM 11a/11b no tracker).** Fase 4: LLM so nos flagados (ja era o desenho; serie
+   confiante fica, paga 1 conf-err), contado no CRONOGRAMA_HEALTH (36,5/100); ordem motor -> LLM -> card fica (199 -> 187 em 03/09); residual
+   flagado AULA 7,9/100 (gate <= 8 atendido). Regua por item (com vocab + curada + holdout; ablacao so em gate) = decisao aberta do user.
    **11a (primeiro, medido 04/09 em `_harness-2026-09-03/s6f/mede_exclusivo.py`):** regra `exclusivo` do disamb (s2=0 -> alta) com UM
    token: 22 decisoes nos 6 golds, 5 erradas (77%; 2+ tokens e margem dao 94%) -> 1 token vira banda media + flag; medir motor_puro
    +vocab, eval_eixos, regua_aula, holdout CG (gold re-chaveado). Entra so se conf-err cai sem AULA/curada regredir. **FEITO 04/09 noite
