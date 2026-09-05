@@ -351,3 +351,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Reasoning:** Dos 12 erros de unidade do motor puro, 10 eram o mapa bloco->unidade errado onde o professor sai da ordem do plano (SO Arquivos depois de E/S) e a curada corrigia com pino manual. A DP segmentada por ancoras muda 12-14 blocos e perde pino; a ancora so no proprio bloco muda 3 blocos nos 8 tutores, todos confirmados por pino ou secao do Moodle, unidade 179 -> 183/191 e nenhuma outra regua se move. determinismo 8/8 (0 arquivos nao deterministicos).
 **Consequences:** C0 em 8/11; proximo item 9 (refactor corte 1, byte-identico). Sem alavanca estrutural: SO bloco-06 (deadlock e juizo humano), IA blocos 01-02, SO sockets.
 
+---
+
+### C0 9: scripts/ cortado por grafo de dependencias medido, nao por lista de gosto
+
+**Date:** 2026-09-04
+**Status:** Active
+**Decision:** `scripts/` fica com 37 (handoff §Ferramentas + dependencias + utilitarios e ferramental de gold com teste vivo); 44 + `artefato_razao/` vao para `docs/reports/_archive/scripts-2026-09-04/` por `git mv` com README; testes que so testavam scripts arquivados vao junto. A regua AULA perde a escada (H1/H7 refutados, H8/H9 ja producao) e fica so com o numero do motor puro.
+**Reasoning:** O grafo completo (import, `from scripts.X import`, subprocess por caminho) achou 5 dependencias que o scan simples nao via; arquivar por lista quebraria `moodle_pull`, a ablacao e 2 ferramentas de gold. O alvo ~25 do plano era estimativa; o dado deu 37. `src/` intocado, logo tutores byte-identicos; suite 2312 verde; sentinela 0/8.
+**Consequences:** C0 em 9/11; falta o item 12 (travessia "depois", medicao). Licao registrada: a suite do gate roda depois do reprocess registrado (o baseline de caracterizacao do CG ficou stale no item 10 e foi regenerado em `599ff10`).
+

@@ -1,14 +1,32 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-04 (sessao 5, noite; C0 11a, 11b e 10 registrados nos 8 tutores). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-04 (sessao 5, noite; C0 11a, 11b, 10 e 9 feitos). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
-**Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 8/11 (feitos 2-7, 10 e 11; faltam 9, 12; §C0 ITEM 10, 11a, 11b);
+**Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 9/11 (feitos 2-7, 9, 10 e 11; falta 12; §C0 ITEM 9, 10, 11a, 11b);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
 **FILA:** 1 ABERTA = C0 itens 9-12 (ordem proposta 11 -> 10 -> 9 -> 12) · 2 PROXIMA = C1 travessia · estacionadas: C3 provas/listas · C7 imagens ·
 C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## C0 ITEM 9 — REFACTOR CORTE 1: scripts/ 81 -> 37 + ESCADA DA REGUA AULA PODADA (04/09 sessao 5 noite, FEITO)
+Gerador `557be23` (corte) · `599ff10` (baseline CG do teste de caracterizacao apos o item 10) · `1284b26` (regua). **Criterio medido, nao gosto:**
+grafo completo de dependencias entre scripts (`import X`, `from scripts.X import`, subprocess por caminho) + citacao em `src/`, testes vivos e
+docs vivos (handoff/tracker). O primeiro scan (so `import X`) errou 5 dependencias reais (`compare_resolver` <- 2 ferramentas de gold,
+`erros_motor_nu` <- ablacao por subprocess, `eval_units` <- check_sarc_freshness, `migrate_signals` <- moodle_pull, `expand_card_gold` <- gold_by_card);
+o scan completo pegou. Ficam **37** (o plano dizia ~25; a diferenca e o acoplamento por teste e por import, listado no commit): 8 do handoff
+§Ferramentas, 5 dependencias, 13 utilitarios de produto com teste, 6 de gold/auditoria com teste, 5 dependencias do scan. Arquivados **44 +
+`artefato_razao/`** em `docs/reports/_archive/scripts-2026-09-04/` por `git mv` (historico com `--follow`), README com 1 linha por script (linhas,
+ultimo commit, docstring); 4 arquivos de teste que so testavam scripts arquivados foram junto (`tests/` do archive; `testpaths=tests` nao os
+coleta): **suite 2337 -> 2312**. `true_of` (gold por uuid) subiu de `fase0_prova_motor_MF` para `eval_ground_truth`; `.gitignore` acompanhou 2 saidas do
+`artefato_razao`. `src/` intocado: tutores byte-identicos por construcao; py_compile 37/37; sentinela 0/8; determinismo nao rodou (nada em `src/`).
+**Achado no caminho:** `tests/test_caracterizacao_blocos_atual.py` compara a divisao de blocos dos tutores REAIS com `tests/_golden/`; o reprocess do
+item 10 mudou o CG (blocos 08/13) DEPOIS da suite do item 10 -> baseline regenerado e commitado (`599ff10`), mudanca esperada. Licao: a suite do
+gate roda DEPOIS do reprocess registrado, nao antes.
+**Regua AULA podada:** saem H1 e H7 (refutados no gold), H9 e H8 (ja producao desde a Fase 3) e os picks velhos de `moodle_sections/`; fica a linha
+"motor puro hoje" (TODOS/AULA/REF/BASE), o RESTO por categoria x metodo e os flagados do motor puro. Antes: escada stale imprimia 170/189 e
+"16 (8/100) depois da escada"; agora: motor puro hoje TODOS 186/203 · AULA 174/189 · REF 8/10 · BASE 4/4; flagados no motor puro 45/189 = 23,8/100 (errados 9), erros confiantes 6. Imports de `disambiguator`/`navigation`/`stopwords` sairam da regua (era recalculo de H8).
 
 ## C0 ITEM 10 — UNIDADE: ANCORA LEXICAL EXCLUSIVA NO MAPA BLOCO->UNIDADE (04/09 sessao 5 noite, FEITO E REGISTRADO NOS 8)
 Gerador `4a14d8b`. **Medido ANTES do codigo (`c0-10/disseca_unidade_10.py`):** dos 12 erros de unidade do motor puro +vocab (179/191), 10 tinham

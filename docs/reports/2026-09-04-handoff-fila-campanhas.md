@@ -8,9 +8,9 @@ Unico handoff vivo. Substitui `_archive/2026-09-03b-handoff-fila-campanhas.md` (
 (criterio estrito); item nao feito nao muda de dono sozinho — ou e feito, ou o user o RETIRA por decisao registrada. Novo lote = novo
 handoff, o anterior vai para `_archive/`. Ideia que surge no meio vai para a CAIXA DE IDEIAS (da para fazer? · quando? · o que resolve?).
 
-## COMECE POR (proxima sessao) — C0 item 9: refactor corte 1, byte-identico (10, 11a e 11b FEITOS 04/09 noite)
+## COMECE POR (proxima sessao) — C0 item 12: travessia "depois" (9, 10, 11a e 11b FEITOS 04/09 noite; C0 fecha com o 12)
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` e `.codex/` podem aparecer), `git log --oneline -3`, HEAD dos 8
-   tutores iguais aos de "Estado ao comecar" (CG agora e `2efddcb`), `python scripts/censo_motor_llm.py` (revisar/100 58,3). Suite 2337.
+   tutores iguais aos de "Estado ao comecar" (CG agora e `2efddcb`), `python scripts/censo_motor_llm.py` (revisar/100 58,0). Suite 2312 (25 testes de scripts arquivados sairam com eles).
 1. **11a FEITO** (`728c0f1`, §C0 ITEM 11a no tracker): `exclusivo` exige 2+ tokens; 1 token = banda media + flag. Copias: conf-err 3 -> 2,
    unidade 178 -> 179, resto igual; holdout puro conf-err 2 -> 0, curado 33 -> 35/35; originais reprocessados e commitados (8 HEADs abaixo);
    custo medido: votos/100 29,9 -> 36,5 (23 votos). Observar na C1: FR `udp-example-c/java` separados pelo voter (sem gold).
@@ -20,8 +20,10 @@ handoff, o anterior vai para `_archive/`. Ideia que surge no meio vai para a CAI
 3. **10 FEITO** (`4a14d8b`, §C0 ITEM 10): 10 dos 12 erros eram o mapa bloco->unidade da DP sem pinos; ancora lexical exclusiva (>= 2 tokens,
    token so da unidade) muda 3 blocos nos 8 (SO 20, CG 08, CG 13, todos confirmados) — unidade 179 -> 183/191, resto igual. Sem alavanca: SO
    bloco-06 (juizo humano), IA 01-02, SO sockets (bloco).
-4. **9 (proximo)**: refactor corte 1 — `scripts/` 79 -> ~25 (harnesses que viraram rotina sobem, o resto arquiva), podar a escada stale da
-   `regua_aula.py`. Gate: byte-identico (determinismo, sentinela 0, suite). Depois 12 (travessia "depois").
+4. **9 FEITO** (`557be23` + `599ff10` + `1284b26`, §C0 ITEM 9): scripts/ 81 -> 37 (44 + artefato_razao arquivados com README e 4 testes), true_of
+   subiu para eval_ground_truth, regua AULA sem escada stale (so "motor puro hoje"). src/ intocado; suite 2312; sentinela 0/8.
+5. **12 (proximo, fecha a C0)**: travessia "depois" — rerodar `eval_travessia.py {IA,FR,CG}` e comparar com o "antes" (tracker §REGUA DE
+   TRAVESSIA). Sem codigo previsto: e medicao + registro. Se o numero pedir codigo, e a C1 (FILE_MAP completo), nao a C0.
 4. Gate de cada item: suite verde; sentinela 0 nos 8; determinismo 8/8; curada intacta; commit com o numero no tracker; tutores so
    mudam por reprocess registrado (copia `.ablacao` antes).
 
@@ -33,7 +35,7 @@ Datalab/Gemini `.env`) nunca impressos · [Humberto] · nao corrigir conteudo do
 
 ## Estado ao comecar (04/09, tudo commitado, NADA pushed)
 Gerador `feat/motor-atribuicao`, ~825 commits a frente de `main`. Sessao 5 (03-04/09): `6111b46` `0a8ae2e` `a10a6ca` `12990ed`
-`5799035` `d7b2f87` `1d14353` `bff1fa4` + docs; noite: `728c0f1` (C0 11a), `86dab7e` (C0 11b), `4a14d8b` (C0 10). Suite 2337.
+`5799035` `d7b2f87` `1d14353` `bff1fa4` + docs; noite: `728c0f1` (C0 11a), `86dab7e` (C0 11b), `4a14d8b` (C0 10), `557be23` `599ff10` `1284b26` (C0 9). Suite 2312.
 Tutores (reprocess 11a+11b+10, 04/09 noite): MF `7f17ccf` · SO `9c0b1bb` · IA `270975d` · ES2 `d5f96a5` · TCC `a438a52` · LR `c0df4a6` · FR `a6f3db0` · CG `2efddcb` (CG = `e3d02ed` rebuild limpo pela API + complemento + reprocess 11a/11b/10) (93 entries: 66 do build + 4 folhas + 23 referencias; stash novo `Desktop/Moodle/computacao-grafica/
 stash/`, perfil ja aponta; export antigo em `.ablacao/CG-export-backup`). Copias `.ablacao` dos 5 + CG (re-sincronizada) + LR + FR.
 **Reguas (pos-11a):** curada 199/200 conf-err 0 · 191/191 · 55/57 · motor puro +vocab 183/183/53/82 conf-err 2 · AULA 174/189 · REF 8/10 ·
@@ -44,13 +46,14 @@ holdout CG (gold re-chaveado `ground_truth_CG.csv`, 35 scorable) **puro 31/35 (c
 - **SYNC — 6/6, FECHADA.** S1-S5 (03/09), S6a-S6f (03-04/09). S6f: rebuild do CG pela API promovido a original com holdout curado
   33/35 **aceito pelo user com causa medida** (o 34 do baseline dependia do token de boilerplate "imagens"; regra `exclusivo` por 1 token
   e o balde — C0 item 11a). Detalhe: `pendencias.md` §SYNC S6f e §SYNC S6a-S6e.
-- **C0 MOTOR — 8/11, ABERTA.** Feitos 2-7, 11 (11a `728c0f1` + 11b `86dab7e`) e 10 (`4a14d8b`), 04/09 noite, 8 tutores reprocessados; faltam 9, 12 (ordem 9 -> 12).
+- **C0 MOTOR — 9/11, ABERTA.** Feitos 2-7, 11 (11a `728c0f1` + 11b `86dab7e`), 10 (`4a14d8b`) e 9 (`557be23`), 04/09 noite; falta o 12 (travessia "depois").
 
 ## FILA DE CAMPANHAS (ordem decidida 03/09, atualizada 04/09)
 
 ### 1. ABERTA — C0 MOTOR, itens 9-12 (o que falta para fechar a rodada do motor)
-9. Refactor corte 1: `scripts/` 79 -> ~25 (harnesses que viraram rotina sobem, o resto arquiva); podar a escada stale da
-   `regua_aula.py` (picks H9/H7). Gate: byte-identico (determinismo, sentinela 0, suite).
+9. **FEITO 04/09 noite (`557be23`, `599ff10`, `1284b26`; §C0 ITEM 9).** `scripts/` 81 -> 37 por grafo de dependencias medido (44 + artefato_razao
+   arquivados em `_archive/scripts-2026-09-04/` com README; 4 testes foram junto, suite 2337 -> 2312); escada stale da `regua_aula.py` podada.
+   src/ intocado = byte-identico por construcao; sentinela 0/8.
 10. **FEITO 04/09 noite (`4a14d8b`; §C0 ITEM 10).** Medido: 10/12 erros = mapa bloco->unidade da DP sem pinos. Alavanca com numero: ancora
    lexical exclusiva (>= 2 tokens + token so da unidade), 3 blocos nos 8, unidade 179 -> 183/191, 0 regressao. Resto sem alavanca estrutural.
 11. **FEITO 04/09 noite (11a `728c0f1` + 11b `86dab7e`; §C0 ITEM 11a/11b no tracker).** Fase 4: LLM so nos flagados (ja era o desenho; serie
@@ -141,7 +144,7 @@ professor (entra so o que um card do Moodle aponta). · `unit_block_conflict` co
 04/09).
 
 ## Ferramentas
-`scripts/sync_moodle.py` · `scripts/motor_puro.py [--com-vocab]` · `scripts/censo_motor_llm.py` · `scripts/sentinela_manifests.py` ·
+`scripts/` tem 37 (corte 1 em 04/09; arquivo em `_archive/scripts-2026-09-04/README.md`): `scripts/sync_moodle.py` · `scripts/motor_puro.py [--com-vocab]` · `scripts/censo_motor_llm.py` · `scripts/sentinela_manifests.py` ·
 `scripts/eval_eixos.py` · `scripts/reprocess_assignments.py` · `scripts/moodle_pull.py --course N --root R [--dry-run|--pdf]` ·
 `scripts/eval_travessia.py` · `_harness-2026-09-02/{regua_aula,holdout_cg,calibra_revisar,mede_alavancas,determinismo}.py` ·
 pulls reais em `_harness-2026-09-03/pulls/{FR,LR,CG}/` · piloto Curvas versionado em `_harness-2026-09-03/piloto-curvas/` (Curvas.htm, 27 imagens, gold Datalab, `gate_s6b_curvas.py` = Curvas de ponta a ponta numa copia do CG, `Curvas.s6b.md` = saida do S6b).
