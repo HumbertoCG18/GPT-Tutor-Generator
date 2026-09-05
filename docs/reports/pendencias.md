@@ -23,6 +23,20 @@ processamento de imagens; (c) convencao Dafny: listas 'Programacao e Verificacao
 mapeamento, transformacoes) e o motor poe tudo em u04 (8 entries); modelagem (csg, modelagem3d, exercicio de extrusao, basico3d x2, pagina de
 videos) em u06 em vez de u07 (6); texturas (maptextures, texturas-v3, pagina de videos) em u04/u01 em vez de u08 (3); morfologia (slides, aula
 gravada, pagina) em u01 em vez de u03 (3); animacao-v2 e transformacoes em u04 em vez de u05. Candidato a gold de unidade do CG (C5).
+**CG 22/93 UNIDADES ERRADAS — DISSECADO (05/09 tarde, `c1-3/simula_unidade_sem_alias.py`):** 3 blocos explicam 19: bloco-06 'Recorte' u04 (10 entries
+que o PLANO poe em u05: instanciamento/mapeamento/transformacoes — o SARC chama tudo de 'Processo de Visualizacao 2D' = nome de u04: RULING),
+bloco-15 'Modelagem geometrica' u06 (6; verdade u07; ancora falha: 1 token exclusivo 'modelagem', aff 1 < 2), bloco-08 rotulado 'Areas relacionadas'
+conf 1,0 u01 (3; verdade u03); + 3 de texturas (2 no bloco-06 por colisao do token 'mapeamento' com a sessao 'processo de visualizacao 2d mapeamento';
+1 por conteudo). **RAIZ = DADO: o vocab compilado por LLM do CG (`.glossary_curation.llm.json`) poe 'Morfologia Matematica' e 'Manipulacao de Imagens'
+como sinonimos de 'Areas relacionadas' (u01) e 'Mapeamento de Texturas', 'OpenGL', 'OpenGL 3D' de 'Conceitos' (u01)** — envenena `_unit_tokens`
+(ancora), o scorer de unidade (texturas-v3 -> u01) e o rotulador de bloco (bloco-08). Censo nos 8: so o CG tem esse padrao (topicos genericos
+com titulos de material de OUTRA unidade). **Alavancas genericas no motor, medidas e REFUTADAS:** unidade sem aliases no mapa bloco->unidade
+(183 -> 136/191, pinos 12 -> 5/13: IA e ES2 dependem dos sinonimos) · radicais (6 chars) nos dois lados (183 = 183; CG bloco-15 -> u07 +4, mas
+bloco-06 -> u03 por 'proces~processamento' -4; saldo 0). **Simulado o conserto de DADO (veto dos 5 + sinonimos: u07 tecnicas-de-modelagem-3d <-
+'Modelagem Geometrica/de Solidos/Extrusao', u08 mapeamento-de-textura <- 'Mapeamento de Texturas/Texturas', u03 segmentacao <- 'Morfologia
+Matematica/Dilatacao/Erosao'):** bloco-08 -> u03 e bloco-15 -> u07 (9 entries), mas bloco-06 cai para u02 (DP monotonica: u04 antes de u03 e
+inversao; ancora bloqueada porque 'instanciamento' e exclusivo de u07) -> precisa de PINO de unidade no bloco-06 (u04, ou u05 por ruling).
+Falta no loader do glossario um VETO (manual so ADICIONA sinonimos): feature de ~5 linhas em `load_glossary_curation` (chave `exclude`).
 **BUG (medido): zips do MF extraidos SEM subpasta -> colisao de nomes.** `raw/code/professor/` e plano (36 arquivos): `colecoes_arrays/ex1.dfy`,
 `colecoes_sequences/ex1.dfy`, `invariantes/ex1.dfy`, `terminacao/ex1.dfy` e `tiposindutivos/ex1.dfy` viram UM `ex1.dfy` (o ultimo vence:
 `code/professor/ex1.md` tem 'datatype Cor' = tiposindutivos; 'new nat[5]' dos arrays nao existe em lugar nenhum). Resultado: 4 zips (20 .dfy)
