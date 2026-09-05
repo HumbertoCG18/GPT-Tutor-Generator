@@ -122,6 +122,20 @@ def _candidate_refs(entry: dict, blocks: list) -> list:
     return []
 
 
+def llm_vote_summary(entries: Iterable[dict]) -> dict:
+    """Contagem dos votos do voter (TIER 3) pelo estado GRAVADO: decisoes com
+    `temporal_block_method` `llm`/`llm-funil` e flagados, por 100 entries — a
+    mesma regua de scripts/censo_motor_llm.py (votos/100, revisar). Read-only."""
+    es = list(entries or [])
+    llm = sum(1 for e in es if str(e.get("temporal_block_method") or "") == "llm")
+    funil = sum(1 for e in es if str(e.get("temporal_block_method") or "") == "llm-funil")
+    flagged = sum(1 for e in es if bool(e.get("temporal_block_flag")))
+    total = len(es)
+    per100 = lambda n: (100.0 * n / total) if total else 0.0  # noqa: E731
+    return {"total": total, "llm": llm, "llm_funil": funil, "votes": llm + funil,
+            "votes_per_100": per100(llm + funil), "flagged": flagged, "flagged_per_100": per100(flagged)}
+
+
 def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:
     rep = material_coverage(entries, blocks)
     dist = band_distribution(entries, blocks)
@@ -151,6 +165,18 @@ def cronograma_health_md(course_meta: dict, entries: list, blocks: list) -> str:
         f"| alta | {dist['alta']} |",
         f"| media | {dist['media']} |",
         f"| baixa | {dist['baixa']} |",
+    ]
+
+    # Votos de LLM (C0 11b): custo do voter visivel no tutor, na regua do censo
+    # (scripts/censo_motor_llm.py: decisoes por `llm`/`llm-funil` e flagados, por 100 entries).
+    votes = llm_vote_summary(entries)
+    lines += [
+        "",
+        "## Votos de LLM (motor TIER 3)",
+        "",
+        f"- **Decisões por voto**: {votes['votes']}/{votes['total']} entries ({votes['votes_per_100']:.1f} por 100)"
+        f" — `llm` {votes['llm']} · `llm-funil` {votes['llm_funil']}",
+        f"- **Flagados (fila de dúvida)**: {votes['flagged']}/{votes['total']} entries ({votes['flagged_per_100']:.1f} por 100)",
     ]
 
     # Lista acionável de baixa-confiança (media/baixa): cada material vira tarefa,

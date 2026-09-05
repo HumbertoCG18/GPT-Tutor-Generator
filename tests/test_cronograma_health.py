@@ -110,3 +110,23 @@ def test_gate_flags_low_coverage():
 def test_gate_passes_high_coverage():
     entries = [{"id": "a", "auto_tags": ["bloco:bloco-01"], "file_type": "pdf", "category": "material-de-aula"}]
     assert coverage_gate_failures(entries) == []
+
+
+def test_health_md_conta_votos_de_llm_e_flagados():
+    """C0 11b: o relatorio conta os votos do voter (decisoes por `llm`/`llm-funil`) e os flagados,
+    na mesma regua do censo (por 100 entries), para o custo do LLM ficar visivel no tutor."""
+    entries = [
+        {"id": "a", "auto_tags": ["bloco:bloco-01"], "file_type": "pdf", "category": "material-de-aula",
+         "temporal_block_method": "llm"},
+        {"id": "b", "auto_tags": ["bloco:bloco-01"], "file_type": "pdf", "category": "material-de-aula",
+         "temporal_block_method": "llm"},
+        {"id": "c", "auto_tags": ["bloco:bloco-02"], "file_type": "pdf", "category": "material-de-aula",
+         "temporal_block_method": "llm-funil", "temporal_block_flag": True},
+        {"id": "d", "auto_tags": ["bloco:bloco-02"], "file_type": "pdf", "category": "material-de-aula",
+         "temporal_block_method": "disamb"},
+    ]
+    blocks = [{"id": "bloco-01"}, {"id": "bloco-02"}]
+    md = cronograma_health_md({"name": "X"}, entries, blocks)
+    assert "## Votos de LLM" in md
+    assert "3/4 entries (75.0 por 100)" in md and "`llm` 2" in md and "`llm-funil` 1" in md
+    assert "Flagados" in md and "1/4 entries (25.0 por 100)" in md
