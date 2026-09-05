@@ -16,7 +16,7 @@ edges:
     condition: quando precisar de como os componentes processam estas fontes
   - target: context/repo-output.md
     condition: quando o foco é o formato do repo gerado
-last_updated: 2026-09-03
+last_updated: 2026-09-05
 ---
 
 # Contexto Institucional
@@ -223,7 +223,8 @@ atribuição (arquivo→bloco→unidade/subunidade).
   é ruído: SARC e Plano realmente discordam de unidade nesses tópicos. Consequência p/ a atribuição:
   a reconciliação precisa eleger uma fonte pra `unit` (proposta: o bloco/agendado vence) e **flagar o
   conflito**; a subunit nunca deve escapar pra outra unidade. É a face concreta da divergência latente
-  `unit_index`×`content_taxonomy`. Medido por `scripts/eval_subunit_census.py`.
+  `unit_index`×`content_taxonomy`. Medido por
+  `docs/reports/_archive/scripts-2026-09-04/eval_subunit_census.py`.
 
 ## Consequência para o sistema de atribuição
 
