@@ -10,6 +10,23 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## OS 32 ERROS DO MOTOR PURO POR REGUA, SEM LLM (05/09 tarde, sessao 6; pergunta do user "da para subir bloco/unidade/subunidade sem LLM?")
+**Bloco 13/199:** 1 conf-err (MF `exerciciosdafny2`, voto acerta no produto) · 9 flagados (duvida legitima: voter no produto, pino na curada) · 3 media
+sem flag: MF `revisao` 04 -> 03 ("revisao" fora dos genericos: refutado 50 -> 50), MF `intro` 05 -> 06 (.thy: so o TIPO DE ARQUIVO aponta Isabelle = regra
+por categoria, vetada), TCC `t1-enunciado` sem bloco (unico caso do `duedate`; manifests sem modname/dates; 8 `trabalhos` nos 8 tutores, so este erra
+no gold). Frente fechada com 5 alavancas refutadas em 05/09 + title := label hoje.
+**Unidade 8/191 (os mesmos do §C0 ITEM 10):** SO bloco-06 x3 + sockets x2 · IA blocos 01-02 x3 (`visao-geral-introducao-e-historico` e 2 links sem card:
+conteudo aponta u01, a reconciliacao impoe a unidade do bloco). Registrado como sem alavanca estrutural; a curada resolve por pino (191/191).
+**Subunidade 11/93 = 3 familias:** SO fork/exec x4 (`estudo-de-casos` por "Unix/Linux" no texto; gold `chamadas-de-sistema` pela regra humana "apoio rotula
+pelo card") + SO `exemplo-threads-em-c-exemplo3` (empate-exato 3x 0,11, texto curto) · IA notebooks x4 (perceptron x3, mlp-xor: score 2,3-2,7 `ambiguous`,
+caem no topico que duplica o vocabulario da unidade — causa G-3 de 19/08, "falta IDF intra-unidade", NAO implementada: `grep -i idf` em
+`timeline/index.py` = 0) · ES2 `devops`/`kubernetes` (quase-empate 0,04/0,26; "Conceito de DevOps" so casa por alias 0,82). **Simuladas em memoria e
+REFUTADAS (`c1-3/simula_sub_card.py`):** (A) codigo herda subunidade pelo NOME do card: 0 '+', 23 '-' (IA "Semana N - ML Aprendizado Supervisionado" casa
+`introducao-ao-aprendizado-de-maquina`); (B) codigo herda do irmao principal do card: 0 '+', 2 '-'; o SO fork x4 nao muda em nenhuma (card nao nomeia o
+topico; irmaos tambem em `estudo-de-casos`). O scorer de subunidade (`_score_entry_against_taxonomy_topic`) nao le o card — e por medida, nao deve.
+**Unica alavanca sem LLM ainda NAO medida:** IDF intra-unidade no scorer de subtopico (causa diagnosticada; teto +4 IA, +1 SO exemplo3; risco nos 35 IA
+certos) — exige shim no scorer + motor_puro (~5 min). Fora disso, o que sobra e voto (LLM) ou pino (camada humana), por desenho.
+
 ## C1 ITEM 3 — `title` DO MANIFEST = `moodle_label` (05/09 tarde, sessao 6, MEDIDO sem LLM; **FECHADO POR MEDICAO: REFUTADO, 0 codigo**)
 **Premissa do handoff:** o rebuild grava `title` = nome do arquivo e o piso sem-llm do CG caiu 10 -> 5; "medir title := label (fallback nome); se 0, fecha".
 **Lido antes de medir:** o piso (`eval_travessia.escolher_sem_llm`) e o `entry_tokens` do disamb somam title + label num CONJUNTO; title := label

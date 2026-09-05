@@ -172,7 +172,8 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
 - Regua por item com vocab (campanha 5) · decisao B (campanha 4) · golds proposto-claude — revisao sua, quando quiser.
 
 ## NAO fazer (refutado no gold)
-**Medido e refutado em 05/09 (motor puro, copias):** `title` do manifest := `moodle_label` (C1 item 3: piso 0; bloco 186 -> 184, sub 82 -> 81, 2 confiantes
+**Medido e refutado em 05/09 (motor puro, copias):** subunidade de codigo de apoio pelo card — nome do card (0 '+', 23 '-') e irmao principal do card (0 '+', 2 '-')
+(§OS 32 ERROS; o scorer de subtopico nao le o card e nao deve) · `title` do manifest := `moodle_label` (C1 item 3: piso 0; bloco 186 -> 184, sub 82 -> 81, 2 confiantes
 viram flag; label generico como "Respostas" apaga o assunto que o nome do arquivo carrega — stem e label sao complementares, o motor ja soma os dois) ·
 peso do label do Moodle no desempate x2/x3 (50 -> 47/48 em 58) · janela do card = secao inteira,
 todos os materiais (72 -> 56, 45 flagados) e so janela-1 por card (21 -> 15, 25/27 flagados) · data de postagem como decisor (33/52 = 63%; flagados 4/9)
