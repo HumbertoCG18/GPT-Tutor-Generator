@@ -58,3 +58,36 @@ def test_render_session_with_empty_date_does_not_crash():
     md = repo.cronograma_detalhado_md({"course_name": "ED"}, [], {}, blocks)
     assert "atividade ead" in md
     assert "(sem data)" in md
+
+
+def _blk(bid, label, topic_text, sess_label, date):
+    return {"id": bid, "kind": "class", "period_label": f"Semana {date[8:]}/{date[5:7]}", "period_start": date,
+            "primary_topic_label": label, "topic_text": topic_text, "topics": [], "unit_slug": "unidade-01",
+            "sessions": [{"id": f"s-{bid}", "date": date, "kind": "class", "label": sess_label, "signals": []}]}
+
+
+def test_titulo_de_bloco_repetido_ganha_qualificador_so_na_colisao():
+    """C1 item 2 (05/09): 6 dos 8 cursos tem blocos-aula com o mesmo label (16 blocos, 33 materiais); o LLM le o
+    CRONOGRAMA_DETALHADO para o "quando" e trocou bloco-02 por bloco-20 no FR ("Modelos OSI e TCP/IP" x2). Em colisao,
+    o titulo ganha o topic_text do bloco; sem colisao, nada muda."""
+    blocks = [
+        _blk("bloco-06", "Modelos OSI e TCP/IP", "camada transporte", "camada de transporte udp tcp aula", "2026-09-03"),
+        _blk("bloco-07", "Endereçamento", "camada rede enderecamento", "camada de rede enderecamento ip aula", "2026-09-10"),
+        _blk("bloco-22", "Modelos OSI e TCP/IP", "camada fisica sockets", "camada fisica e raw sockets aula", "2026-11-10"),
+    ]
+    md = repo.cronograma_detalhado_md({"course_name": "FR"}, [], {}, blocks)
+    heads = [l for l in md.splitlines() if l.startswith("## ")]
+    assert heads[0].endswith("— Modelos OSI e TCP/IP · Camada transporte")
+    assert heads[2].endswith("— Modelos OSI e TCP/IP · Camada fisica sockets")
+    assert heads[1].endswith("— Endereçamento")            # sem colisao: intacto
+
+
+def test_titulo_repetido_com_mesmo_topic_text_usa_a_sessao():
+    # SO "Paginacao" x2: topic_text igual, sessoes diferentes -> qualifica pela 1a sessao
+    blocks = [
+        _blk("bloco-13", "Paginação", "paginacao", "paginacao conceitos aula", "2026-05-12"),
+        _blk("bloco-16", "Paginação", "paginacao", "paginacao exercicios aula", "2026-05-21"),
+    ]
+    heads = [l for l in repo.cronograma_detalhado_md({"course_name": "SO"}, [], {}, blocks).splitlines() if l.startswith("## ")]
+    assert heads[0].endswith("— Paginação · Paginacao conceitos aula")
+    assert heads[1].endswith("— Paginação · Paginacao exercicios aula")

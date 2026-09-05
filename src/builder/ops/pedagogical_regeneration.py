@@ -655,9 +655,9 @@ def regenerate_pedagogical_files(
         )
 
     code_entries = [e for e in all_entries if e.category in code_categories]
+    _code_curation = builder._load_code_curation()
+    _timeline_blocks = builder._load_timeline_blocks()
     if code_entries:
-        _code_curation = builder._load_code_curation()
-        _timeline_blocks = builder._load_timeline_blocks()
         write_text(
             builder.root_dir / "code" / "CODE_INDEX.md",
             code_index_md_fn(
@@ -668,18 +668,20 @@ def regenerate_pedagogical_files(
                 timeline_blocks=_timeline_blocks,
             ),
         )
-        if _timeline_blocks:
-            from src.builder.artifacts.repo import cronograma_detalhado_md as _cronograma_detalhado_md
-            write_text(
-                builder.root_dir / "course" / "CRONOGRAMA_DETALHADO.md",
-                _cronograma_detalhado_md(
-                    builder.course_meta,
-                    code_entries,
-                    _code_curation,
-                    _timeline_blocks,
-                    builder.subject_profile,
-                ),
-            )
+    # C1 item 2 (05/09): o CRONOGRAMA_DETALHADO e o "quando" do tutor e nao depende de haver codigo —
+    # aninhado em `if code_entries` deixava TCC e LR (35 e 17 blocos datados) sem o artefato.
+    if _timeline_blocks:
+        from src.builder.artifacts.repo import cronograma_detalhado_md as _cronograma_detalhado_md
+        write_text(
+            builder.root_dir / "course" / "CRONOGRAMA_DETALHADO.md",
+            _cronograma_detalhado_md(
+                builder.course_meta,
+                code_entries,
+                _code_curation,
+                _timeline_blocks,
+                builder.subject_profile,
+            ),
+        )
 
     from src.builder.artifacts.repo import code_health_md as _code_health_md
     write_text(

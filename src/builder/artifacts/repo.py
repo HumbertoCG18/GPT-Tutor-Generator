@@ -945,6 +945,30 @@ def cronograma_detalhado_md(
         "",
     ]
 
+    # C1 item 2 (05/09): 6 dos 8 cursos tem blocos-aula com o MESMO label (7 labels, 16 blocos, 33 materiais;
+    # FR "Modelos OSI e TCP/IP" x2 fez o LLM trocar bloco-02 por bloco-20 no "quando"). Em colisao dentro do
+    # curso, o titulo ganha um qualificador do proprio bloco: topic_text (humanizado) se distinguir, senao a 1a
+    # sessao. Sem colisao, nada muda — byte-identico nos outros blocos.
+    def _cw(s) -> str:
+        return " ".join(str(s or "").split())
+
+    _label_count: dict[str, int] = {}
+    for blk in timeline_blocks:
+        _lbl = str(blk.get("primary_topic_label") or "").strip().lower()
+        if _lbl:
+            _label_count[_lbl] = _label_count.get(_lbl, 0) + 1
+
+    def _qualificador(blk: dict) -> str:
+        _lbl = str(blk.get("primary_topic_label") or "").strip().lower()
+        if not _lbl or _label_count.get(_lbl, 0) < 2:
+            return ""
+        irmaos = [b for b in timeline_blocks if str(b.get("primary_topic_label") or "").strip().lower() == _lbl]
+        textos = {_cw(str(b.get("topic_text") or "")).lower() for b in irmaos}
+        if len(textos) == len(irmaos) and all(textos):
+            return _cw(str(blk.get("topic_text") or ""))
+        sess = [str(s.get("label") or "") for s in (blk.get("sessions") or []) if str(s.get("label") or "").strip()]
+        return _cw(sess[0]) if sess else ""
+
     for blk in timeline_blocks:
         bid = blk["id"]
         # Lookup por uuid (computed_block_id/secondary_block_ids já são uuid pós-Task 2);
@@ -958,6 +982,9 @@ def cronograma_detalhado_md(
         header = f"## {period}"
         if topic:
             header += f" — {topic}"
+            _q = _qualificador(blk)
+            if _q:
+                header += f" · {_q[:1].upper()}{_q[1:60]}"
         lines += [header, ""]
 
         if unit_slug:
