@@ -5,7 +5,7 @@
 - `snapshot.py` + `diff_b.py antes title` -> `diff_b.log`: flips por entry (bloco com veredito do gold; unidade/sub).
 - `leitores_title.py` -> `leitores_title.log`: por leitor de `title` SOZINHO no motor, quantas entries mudam de saida.
 - `docs_c1_3.py`: registro no tracker, handoff e decisions (idempotente por assert).
-Resultado: piso 0 flip nos 3; motor puro bloco 186 -> 184/199, sub 82 -> 81/93, 2 confiantes viram flag; holdout CG igual. Ver tracker §C1 ITEM 3.
+Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 confiantes viram flag; sub 82 = 82, unidade e holdout CG iguais. Ver tracker §C1 ITEM 3.
 - `simula_sub_card.py {A|B}`: subunidade de codigo pelo card (nome / irmao principal) — refutadas (0/+ 23/-; 0/+ 2/-).
 - `simula_idf_sub.py <snapshot_antes>` -> `simula_idf_sub.log`: IDF intra-unidade no scorer de subtopico, em memoria pela rota real — refutado
   (V1 0/0, V2 +1/-5, V2s 0/0); raiz dos 4 do IA e vocabulario do glossario manual.
