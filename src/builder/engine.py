@@ -215,6 +215,7 @@ from src.builder.artifacts.navigation import (
     budgeted_file_map_md as _navigation_budgeted_file_map_md,
     course_map_md as _navigation_course_map_md,
     file_map_md as _navigation_file_map_md,
+    file_map_trace_md as _navigation_file_map_trace_md,
     low_token_course_map_md as _navigation_low_token_course_map_md,
     low_token_course_map_md_v2 as _navigation_low_token_course_map_md_v2,
     low_token_file_map_md as _navigation_low_token_file_map_md,
@@ -1772,6 +1773,7 @@ class RepoBuilder:
             has_docling_python_api_fn=has_docling_python_api,
             marker_cli=MARKER_CLI,
             file_map_md_fn=file_map_md,
+            file_map_trace_md_fn=file_map_trace_md,
         )
 
     def _create_structure(self) -> None:
@@ -2173,6 +2175,7 @@ class RepoBuilder:
             code_index_md_fn=code_index_md,
             whiteboard_index_md_fn=whiteboard_index_md,
             file_map_md_fn=file_map_md,
+            file_map_trace_md_fn=file_map_trace_md,
             student_profile_md_fn=student_profile_md,
             student_state_md_fn=student_state_md,
             parse_units_from_teaching_plan_fn=_parse_units_from_teaching_plan,
@@ -2360,6 +2363,7 @@ _navigation_template_aliases = _build_navigation_template_aliases(
     navigation_low_token_course_map_md_v2=_navigation_low_token_course_map_md_v2,
     navigation_course_map_md=_navigation_course_map_md,
     navigation_file_map_md=_navigation_file_map_md,
+    navigation_file_map_trace_md=_navigation_file_map_trace_md,
     json_str_fn=json_str,
     safe_rel_fn=safe_rel,
     ensure_dir_fn=ensure_dir,
@@ -2398,6 +2402,7 @@ backend_architecture_md = _navigation_template_aliases["backend_architecture_md"
 backend_policy_yaml = _navigation_template_aliases["backend_policy_yaml"]
 course_map_md = _navigation_template_aliases["course_map_md"]
 file_map_md = _navigation_template_aliases["file_map_md"]
+file_map_trace_md = _navigation_template_aliases["file_map_trace_md"]
 exercise_index_md = _navigation_template_aliases["exercise_index_md"]
 
 

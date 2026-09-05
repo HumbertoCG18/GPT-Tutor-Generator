@@ -12,6 +12,7 @@ def build_navigation_template_aliases(
     navigation_low_token_course_map_md_v2,
     navigation_course_map_md,
     navigation_file_map_md,
+    navigation_file_map_trace_md=None,
     json_str_fn,
     safe_rel_fn,
     ensure_dir_fn,
@@ -107,6 +108,11 @@ def build_navigation_template_aliases(
         navigation_file_map_md,
         budgeted_file_map_md_fn=budgeted_file_map_md,
     )
+    # C1 item 1 (05/09): rastreabilidade por material saiu do FILE_MAP para course/FILE_MAP_TRACE.md
+    file_map_trace_md = (
+        partial(navigation_file_map_trace_md, merge_manual_and_auto_tags=merge_manual_and_auto_tags)
+        if navigation_file_map_trace_md is not None else None
+    )
     exercise_index_md = exercise_index_md_v2
 
     return {
@@ -127,6 +133,7 @@ def build_navigation_template_aliases(
         "_exercise_index_md_v2": exercise_index_md_v2,
         "course_map_md": course_map_md,
         "file_map_md": file_map_md,
+        "file_map_trace_md": file_map_trace_md,
         "exercise_index_md": exercise_index_md,
     }
 

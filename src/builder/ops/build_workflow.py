@@ -24,6 +24,7 @@ def build_impl(
     has_docling_python_api_fn,
     marker_cli,
     file_map_md_fn,
+    file_map_trace_md_fn=None,
 ) -> None:
     logger.info("Building repository at %s", builder.root_dir)
     logger.info("Creating directory structure...")
@@ -112,6 +113,11 @@ def build_impl(
             builder.subject_profile,
         ),
     )
+    if file_map_trace_md_fn is not None:   # C1 item 1: rastreabilidade por material, fora do roteador
+        write_text(
+            builder.root_dir / "course" / "FILE_MAP_TRACE.md",
+            file_map_trace_md_fn({**builder.course_meta, "_repo_root": builder.root_dir}, manifest["entries"]),
+        )
 
     removed = builder._prune_stale_image_curation()
     if removed:

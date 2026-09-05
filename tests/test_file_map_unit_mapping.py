@@ -1173,7 +1173,9 @@ def test_file_map_md_respects_manual_unit_override(tmp_path):
     # Período espelha o manifest: manual_unit_slug não dispara mais recomputação
     # de período via scorer — sem computed_block_id/bloco manual a coluna fica vazia.
     assert "2026-05-06" not in result
-    assert "unidade-manual" in result
+    # C1 item 1 (05/09): a rastreabilidade (pino manual) saiu do FILE_MAP para o FILE_MAP_TRACE
+    from src.builder.engine import file_map_trace_md
+    assert "unidade-manual" in file_map_trace_md(course_meta, entries)
 
 
 def test_file_map_md_respects_manual_timeline_block_override(tmp_path):
@@ -1218,7 +1220,9 @@ def test_file_map_md_respects_manual_timeline_block_override(tmp_path):
     result = file_map_md(course_meta, entries, subject_profile)
 
     assert "2026-03-04 a 2026-03-25" in result
-    assert "bloco-manual" in result
+    # C1 item 1 (05/09): a rastreabilidade (pino manual) saiu do FILE_MAP para o FILE_MAP_TRACE
+    from src.builder.engine import file_map_trace_md
+    assert "bloco-manual" in file_map_trace_md(course_meta, entries)
 
 
 def test_file_map_skips_timeline_for_reference_categories():

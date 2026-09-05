@@ -420,6 +420,7 @@ def regenerate_pedagogical_files(
     whiteboard_index_md_fn,
     file_map_md_fn,
     student_profile_md_fn,
+    file_map_trace_md_fn=None,
     student_state_md_fn,
     parse_units_from_teaching_plan_fn,
     topic_text_fn,
@@ -712,14 +713,16 @@ def regenerate_pedagogical_files(
     if wb_entries:
         write_text(builder.root_dir / "whiteboard" / "WHITEBOARD_INDEX.md", whiteboard_index_md_fn(builder.course_meta, wb_entries))
 
+    _fm_entries = [e for e in live_manifest_entries if not str(e.get("duplicate_of") or "").strip()]
     write_text(
         builder.root_dir / "course" / "FILE_MAP.md",
-        file_map_md_fn(
-            runtime_course_meta,
-            [e for e in live_manifest_entries if not str(e.get("duplicate_of") or "").strip()],
-            builder.subject_profile,
-        ),
+        file_map_md_fn(runtime_course_meta, _fm_entries, builder.subject_profile),
     )
+    if file_map_trace_md_fn is not None:   # C1 item 1: rastreabilidade por material, fora do roteador
+        write_text(
+            builder.root_dir / "course" / "FILE_MAP_TRACE.md",
+            file_map_trace_md_fn(runtime_course_meta, _fm_entries),
+        )
 
     if builder.student_profile:
         write_text(builder.root_dir / "student" / "STUDENT_PROFILE.md", student_profile_md_fn(builder.student_profile))

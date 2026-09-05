@@ -1820,6 +1820,7 @@ Compatível com **Claude Projects**, **ChatGPT Projects** e **Gemini Gems**.
 | `student/STUDENT_STATE.md` | Estado atual do aluno — atualizar após cada sessão |
 | `course/COURSE_MAP.md` | Mapa pedagógico curto gerado pelo app |
 | `course/FILE_MAP.md` | Roteador operacional com seções e confiança |
+| `course/FILE_MAP_TRACE.md` | Rastreabilidade por material (raw, tags, markdown-base) — auditoria, não roteamento |
 | `course/GLOSSARY.md` | Glossário semeado e refinado a partir do conteúdo |
 | `content/BIBLIOGRAPHY.md` | Referências bibliográficas |
 

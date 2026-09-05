@@ -294,7 +294,10 @@ def _clean_extraction_noise(content: str) -> str:
     return "\n".join(result)
 
 
-def _get_entry_sections(md_path: Path, max_h2: int = 4) -> str:
+_SECTIONS_MAX_CHARS = 80   # C1 item 1 (05/09): coluna Secoes magra — 62/157 linhas passavam de 80 chars (max 321)
+
+
+def _get_entry_sections(md_path: Path, max_h2: int = 3) -> str:
     if not md_path or not md_path.exists():
         return ""
     try:
@@ -302,7 +305,8 @@ def _get_entry_sections(md_path: Path, max_h2: int = 4) -> str:
     except Exception:
         return ""
     h2 = [header["title"] for header in _extract_section_headers(text) if header["level"] == 2][:max_h2]
-    return "  ".join(h2) if h2 else ""
+    out = "  ".join(h2) if h2 else ""
+    return out[:_SECTIONS_MAX_CHARS].rstrip() if len(out) > _SECTIONS_MAX_CHARS else out
 
 
 def _emit_support_lines(lines, refs, shown_ids, indent):
@@ -613,7 +617,10 @@ def render_low_token_file_map_md(
     ]
 
     for i, entry in enumerate(manifest_entries, 1):
-        title = entry.get("title", "")
+        # C1 item 1 (05/09): o rebuild grava title = nome do arquivo ("Vis3d", "PlaneSweep");
+        # o nome humano do Moodle esta em moodle_label (288/348 materiais) — e o que o tutor
+        # e o aluno reconhecem. Fallback: title. Curadoria de codigo (inferred_title) segue acima.
+        title = _file_map_title(entry)
         category = entry.get("category", "")
         # Override with inferred_title from code curation when available.
         if category in ("codigo-professor", "codigo-aluno", "codigo-trabalho-aluno"):
@@ -621,13 +628,6 @@ def render_low_token_file_map_md(
             _inferred = (((_code_curation_entries.get(_eid) or {}).get("summary") or {}).get("inferred_title") or "")
             if _inferred:
                 title = _inferred
-        tags = entry.get("tags", "")
-        effective_tags = merge_manual_and_auto_tags(
-            list(entry.get("manual_tags") or []),
-            list(entry.get("auto_tags") or []),
-            fallback_tags=tags,
-            limit=3,
-        )
         md_path = (
             entry.get("approved_markdown")
             or entry.get("curated_markdown")
@@ -635,7 +635,6 @@ def render_low_token_file_map_md(
             or entry.get("advanced_markdown")
             or ""
         )
-        raw_path = entry.get("raw_target") or ""
         if category in _NO_TIMELINE_CATEGORIES:
             unit = "curso-inteiro"
             skip_timeline = True
@@ -691,30 +690,16 @@ def render_low_token_file_map_md(
             f"{entry_priority_label(entry)} | {md_cell} | {sections or ''} | "
             f"{unit or ''} | {subtopic_label or ''} | {confidence} | {period or ''} |"
         )
-        if (
-            raw_path
-            or effective_tags
-            or str(entry.get("manual_unit_slug") or "").strip()
-            or str(entry.get("manual_timeline_block_id") or "").strip()
-            or (md_path and md_path.replace('\\', '/').startswith("staging/"))
-        ):
-            details = []
-            if raw_path:
-                details.append(f"raw: `{raw_path}`")
-            if effective_tags:
-                details.append(f"tags: `{effective_tags}`")
-            if str(entry.get("manual_unit_slug") or "").strip():
-                details.append(f"unidade-manual: `{entry.get('manual_unit_slug')}`")
-            if str(entry.get("manual_timeline_block_id") or "").strip():
-                details.append(f"bloco-manual: `{entry.get('manual_timeline_block_id')}`")
-            if md_path and md_path.replace('\\', '/').startswith("staging/"):
-                details.append(f"markdown-base: `{md_path}`")
-            lines.append(f"|  | ↳ rastreabilidade |  | {'; '.join(details)} |  |  |  |  |  |  |  |")
+        # C1 item 1 (05/09): a linha "↳ rastreabilidade" (raw, tags, markdown-base; ~230 chars
+        # por material) saiu daqui para course/FILE_MAP_TRACE.md (file_map_trace_md). Com ela,
+        # cada material custava ~480 chars e o clamp de 12 KB deixava 20-30 materiais visiveis
+        # (CG 26/93, IA 22/59); sem ela e com Secoes limitada, os 8 tutores cabem em 3-21 KB.
 
     lines += [
         "",
         "## Legenda",
         "",
+        "- **Rastreabilidade** (raw, tags, markdown-base, pinos manuais): em `course/FILE_MAP_TRACE.md`, um por material.",
         "- **Quando abrir**: atalho semântico para reduzir leitura desnecessária.",
         "- **Prioridade**: `alta` costuma merecer contexto antes dos demais.",
         "- **Seções**: principais headers `##` do markdown aprovado/curado.",
@@ -729,9 +714,55 @@ def render_low_token_file_map_md(
     result = "\n".join(lines)
     return clamp_navigation_artifact(
         result,
-        max_chars=12000,
+        max_chars=FILE_MAP_MAX_CHARS,
         label="course/FILE_MAP.md",
     )
+
+
+# C1 item 1 (05/09): 12 KB cortava pela cauda, sem relevancia (CG 26/93, IA 22/59, MF 31/66 visiveis;
+# travessia do CG: 8/8 erros com alvo fora do corte). Medido nos 8 tutores, o FILE_MAP completo e magro
+# vai de 3 a 21 KB; 80 KB e teto de seguranca, e o clamp continua avisando quando cortar.
+FILE_MAP_MAX_CHARS = 80_000
+
+
+def _file_map_title(entry: dict) -> str:
+    ml = entry.get("moodle_label")
+    ml = ml.get("text") if isinstance(ml, dict) else ml
+    return str(ml or "").strip() or str(entry.get("title") or "")
+
+
+def _trace_details(entry: dict, effective_tags: str) -> list:
+    """Rastreabilidade de um material (era a linha "↳" do FILE_MAP)."""
+    md_path = (entry.get("approved_markdown") or entry.get("curated_markdown") or entry.get("base_markdown")
+               or entry.get("advanced_markdown") or "")
+    details = []
+    if entry.get("raw_target"):
+        details.append(f"raw: `{entry.get('raw_target')}`")
+    if effective_tags:
+        details.append(f"tags: `{effective_tags}`")
+    if str(entry.get("manual_unit_slug") or "").strip():
+        details.append(f"unidade-manual: `{entry.get('manual_unit_slug')}`")
+    if str(entry.get("manual_timeline_block_id") or "").strip():
+        details.append(f"bloco-manual: `{entry.get('manual_timeline_block_id')}`")
+    if md_path and str(md_path).replace("\\", "/").startswith("staging/"):
+        details.append(f"markdown-base: `{md_path}`")
+    return details
+
+
+def file_map_trace_md(course_meta: dict, manifest_entries: list, *, merge_manual_and_auto_tags: Callable[..., str]) -> str:
+    """course/FILE_MAP_TRACE.md — rastreabilidade por material, na MESMA ordem e numeracao do FILE_MAP.
+    Para humano/auditoria; o tutor le o FILE_MAP (magro). Sem clamp: e registro, nao roteador."""
+    course_name = course_meta.get("course_name", "Curso")
+    lines = [f"# FILE_MAP_TRACE — {course_name}", "",
+             "> Rastreabilidade de cada linha do `course/FILE_MAP.md` (mesmo número): arquivo bruto, tags, markdown-base e pinos manuais.",
+             "", "| # | Título | Rastreabilidade |", "|---|---|---|"]
+    for i, entry in enumerate(manifest_entries or [], 1):
+        effective_tags = merge_manual_and_auto_tags(
+            list(entry.get("manual_tags") or []), list(entry.get("auto_tags") or []),
+            fallback_tags=entry.get("tags", ""), limit=3,
+        )
+        lines.append(f"| {i} | {_file_map_title(entry)} | {'; '.join(_trace_details(entry, effective_tags)) or '—'} |")
+    return "\n".join(lines) + "\n"
 
 
 def low_token_course_map_md(
@@ -828,7 +859,7 @@ def budgeted_file_map_md(
             filter_live_manifest_entries(course_meta.get("_repo_root"), manifest_entries),
             subject_profile=subject_profile,
         ),
-        max_chars=12000,
+        max_chars=FILE_MAP_MAX_CHARS,
         label="course/FILE_MAP.md",
     )
 

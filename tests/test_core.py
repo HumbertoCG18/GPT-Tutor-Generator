@@ -3885,7 +3885,10 @@ class TestFileMapMd:
         assert "Prova 1" in result
         assert "material-de-aula" in result
         assert "`content/aula-1.md`" in result
-        assert "unidade-01" in result
+        # C1 item 1 (05/09): tags/raw sairam do FILE_MAP para o FILE_MAP_TRACE (rastreabilidade)
+        from src.builder.engine import file_map_trace_md
+        assert "unidade-01" not in result
+        assert "unidade-01" in file_map_trace_md(self.META, entries)
 
     def test_cronograma_auto_tagged(self):
         entries = [
@@ -3917,11 +3920,16 @@ class TestFileMapMd:
             }
             for i in range(200)
         ]
+        # C1 item 1 (05/09): o teto subiu de 12 KB para 80 KB — 200 materiais (~30 KB) cabem inteiros;
+        # o clamp continua avisando quando ainda corta (1200 materiais).
         result = file_map_md(self.META, entries)
         assert "FILE_MAP" in result
         assert "Quando abrir" in result
-        assert "Conteúdo truncado" in result
-        assert len(result) <= 12000
+        assert "Conteúdo truncado" not in result
+        assert "| 200 |" in result
+        big = file_map_md(self.META, [{**e, "title": f"Aula {i:04d}"} for i, e in enumerate(entries * 6)])
+        assert "Conteúdo truncado" in big
+        assert len(big) <= 80_000
 
     def test_filters_orphan_manifest_entries_when_repo_root_is_known(self, tmp_path):
         repo = tmp_path / "repo"
