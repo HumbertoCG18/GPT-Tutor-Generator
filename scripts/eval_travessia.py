@@ -111,6 +111,17 @@ def filemap_rows(repo: Path, entries: list) -> dict:
         return {}
     by_raw = {str(e.get("raw_target") or "").lower(): str(e.get("id") or "") for e in entries if e.get("raw_target")}
     by_title = {_norm(e.get("title")): str(e.get("id") or "") for e in entries if e.get("title")}
+    # C1 item 1 (05/09): o FILE_MAP mostra o moodle_label (nome humano) e a rastreabilidade foi para
+    # course/FILE_MAP_TRACE.md, com a MESMA numeracao. Casa a linha pelo raw do TRACE (numero) ou pelo
+    # titulo/label; o ramo "rastreabilidade" abaixo segue para FILE_MAPs antigos (comparacao antes/depois).
+    by_label = {_norm(_label(e)): str(e.get("id") or "") for e in entries if _label(e)}
+    trace_raw: dict = {}
+    tp = Path(repo) / "course" / "FILE_MAP_TRACE.md"
+    if tp.is_file():
+        for line in tp.read_text(encoding="utf-8", errors="replace").splitlines():
+            mt = re.match(r"^\|\s*(\d+)\s*\|.*?raw:\s*`([^`]+)`", line)
+            if mt:
+                trace_raw[int(mt.group(1))] = mt.group(2).strip().lower()
     out: dict = {}
     pend = None
     for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
@@ -118,6 +129,11 @@ def filemap_rows(repo: Path, entries: list) -> dict:
         if m:
             cells = [c.strip() for c in m.group(2).split("|")]
             pend = {"num": int(m.group(1)), "texto": " ".join(cells), "titulo": cells[0] if cells else ""}
+            eid = (by_raw.get(trace_raw.get(pend["num"], ""), "") or by_label.get(_norm(pend["titulo"]), "")
+                   or by_title.get(_norm(pend["titulo"]), ""))
+            if eid:
+                out[eid] = {"num": pend["num"], "texto": pend["texto"]}
+                pend = None
             continue
         if pend and "rastreabilidade" in line:
             raw = re.search(r"raw:\s*`([^`]+)`", line)

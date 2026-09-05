@@ -179,3 +179,26 @@ def test_filemap_rows_inclui_code_index_por_arquivo(tmp_path):
     rows = filemap_rows(tmp_path, ents)
     assert "K-Nearest Neighbors" in rows["exemplo-de-programa-com-k-nn-em-java"]["texto"]
     assert casar_escolha("Implementação do Algoritmo k-NN (K-Nearest Neighbors) para Classificação de Dados", ents, rows) == "exemplo-de-programa-com-k-nn-em-java"
+
+
+def test_filemap_rows_casa_pelo_label_e_pelo_trace_sem_linha_de_rastreabilidade(tmp_path):
+    """C1 item 1 (05/09): o FILE_MAP mostra o moodle_label e a rastreabilidade mora em FILE_MAP_TRACE.md
+    (mesma numeracao). O harness tem de mapear linha -> material sem a antiga linha '↳ rastreabilidade'."""
+    from scripts.eval_travessia import filemap_rows
+    (tmp_path / "course").mkdir()
+    (tmp_path / "course" / "FILE_MAP.md").write_text(
+        "| # | Título | Categoria |\n|---|---|---|\n"
+        "| 1 | Visualização 3D - Projeção | outros |\n"
+        "| 2 | Recorte | material-de-aula |\n", encoding="utf-8")
+    (tmp_path / "course" / "FILE_MAP_TRACE.md").write_text(
+        "| # | Título | Rastreabilidade |\n|---|---|---|\n"
+        "| 1 | Visualização 3D - Projeção | raw: `raw/html/vis3d.htm`; tags: `x` |\n"
+        "| 2 | Recorte | raw: `raw/pdfs/recorte.pdf` |\n", encoding="utf-8")
+    entries = [
+        {"id": "vis3d", "title": "Vis3d", "moodle_label": "Visualização 3D - Projeção", "raw_target": "raw/html/vis3d.htm"},
+        {"id": "recorte", "title": "Recorte", "raw_target": "raw/pdfs/recorte.pdf"},
+        {"id": "outro", "title": "Outro", "raw_target": "raw/pdfs/outro.pdf"},
+    ]
+    rows = filemap_rows(tmp_path, entries)
+    assert rows["vis3d"]["num"] == 1 and rows["recorte"]["num"] == 2 and "outro" not in rows
+    assert "Visualização 3D - Projeção" in rows["vis3d"]["texto"]
