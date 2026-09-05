@@ -728,7 +728,9 @@ FILE_MAP_MAX_CHARS = 80_000
 def _file_map_title(entry: dict) -> str:
     ml = entry.get("moodle_label")
     ml = ml.get("text") if isinstance(ml, dict) else ml
-    return str(ml or "").strip() or str(entry.get("title") or "")
+    title = str(ml or "").strip() or str(entry.get("title") or "")
+    # "|" dentro do titulo quebra a celula da tabela (IA: "O que e IA? | Oracle Brasil" deslocava 10 colunas)
+    return title.replace("|", "/")
 
 
 def _trace_details(entry: dict, effective_tags: str) -> list:

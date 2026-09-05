@@ -85,3 +85,10 @@ def test_clamp_sobe_para_80kb_e_avisa_quando_corta():
     assert len(_rows(ok)) == 300 and "Conteúdo truncado" not in ok
     cut = file_map_md(META, [_entry(i) for i in range(1, 1201)])     # ~180 KB: corta e avisa
     assert "Conteúdo truncado" in cut and len(cut) <= 80_000 + 200
+
+
+def test_titulo_com_barra_vertical_nao_quebra_a_tabela():
+    # caso real IA: "O que é Inteligência Artificial (IA)? | Oracle Brasil" deslocava as 10 colunas seguintes
+    rows = _rows(file_map_md(META, [_entry(1, title="O que é IA? | Oracle Brasil")]))
+    assert len(rows[0].split("|")) == 13                     # 11 colunas + bordas
+    assert _cell(rows[0], 2) == "O que é IA? / Oracle Brasil"
