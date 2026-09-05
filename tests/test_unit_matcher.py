@@ -92,7 +92,11 @@ def test_positional_strong_out_of_order_dp_prefers_global_optimum():
     # monotonica, o otimo global e u1/u1 (soma 5) -- o bloco forte domina e puxa o
     # fraco anterior pra baixo, em vez de travar o cursor em u3 como o guloso fazia.
     # Esta e exatamente a robustez a ancora espuria que o DP introduz.
-    blocks = [_block("gama quinto tema"), _block("alfa primeiro tema segundo")]
+    # C0 item 10 (04/09): a fronteira da "ancora espuria" passou a ser UM token da
+    # unidade (aff [0,0,1]): cede ao otimo global. Com 2+ tokens e token exclusivo o
+    # bloco e evidencia e fica na sua unidade (caso real SO bloco-20 "Arquivos";
+    # test_positional_ancora_exclusiva_com_dois_tokens_vence_a_ordem).
+    blocks = [_block("gama"), _block("alfa primeiro tema segundo")]
     out = assign_units_positional(blocks, UNITS3)
     assert out[0][0] == "u1"
     assert out[1][0] == "u1"
@@ -253,3 +257,26 @@ def test_sem_pino_around_pins_e_noop():
     units = [_unit("u01", "A", "alfa"), _unit("u02", "B", "beta")]
     blocks = [_block("alfa"), _block("beta")]
     assert assign_units_around_pins(blocks, units, is_pinned=lambda b: False) == 0
+
+
+def test_positional_ancora_exclusiva_com_dois_tokens_vence_a_ordem():
+    """C0 item 10 (caso real SO bloco-20 "Arquivos"): o professor ensina Arquivos (u2) DEPOIS de
+    Entrada e Saida (u3). A DP monotonica e o desvio de janela (ganho 2 - custo 2 nao supera o
+    baseline 1) deixavam o bloco em u3. Um bloco com afinidade >= 2 tokens, margem >= 1 e um token
+    EXCLUSIVO da unidade no plano ("arquivos") e evidencia estrutural: recebe essa unidade. Um so
+    token continua indicio (test_positional_weak_out_of_order_anchor_demoted). Medido nos 8:
+    unidade 179 -> 183/191, pinos manuais 11 -> 12/13, 3 blocos mudam, 0 regressao."""
+    units = [
+        _unit("u1", "Gerência do processador", "escalonamento"),
+        _unit("u2", "Gerência de arquivos", "sistemas de arquivos"),
+        _unit("u3", "Gerência de entrada e saída", "dispositivos"),
+    ]
+    blocks = [
+        _block("gerencia do processador escalonamento"),
+        _block("gerencia de entrada e saida dispositivos"),
+        _block("gerencia de entrada e saida dispositivos"),
+        _block("gerencia de arquivos aula"),          # 2 tokens (gerencia, arquivos); 'arquivos' so em u2
+    ]
+    out = assign_units_positional(blocks, units)
+    assert [s for s, _ in out] == ["u1", "u3", "u3", "u2"]
+    assert out[3][1] >= 0.6   # ancora, nao preenchimento posicional

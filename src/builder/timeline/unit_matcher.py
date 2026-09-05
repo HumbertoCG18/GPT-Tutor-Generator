@@ -22,6 +22,7 @@ _UNIT_GENERIC = {"unidade", "aprendizagem", "visao", "geral"}
 
 ANCHOR_MIN_MARGIN = 1.0   # margem minima (winner - runnerup) p/ confianca ANCHOR no bloco
 STRONG_MARGIN = 3.0       # margem p/ ancora forte
+ANCHOR_MIN_AFF = 2.0      # ancora EXCLUSIVA (C0 item 10): >= 2 tokens na unidade + 1 so dela no plano
 
 # Desvio de janela (P2a 2026-08-31): o calendario real inverte a ordem do plano
 # (IA 2026/2 ensina u05/ML em 2o lugar: u01 -> u05 -> u02 -> u03; o DP monotonico
@@ -122,7 +123,8 @@ def assign_units_positional(
         return []
     uslugs = [str(u.get("slug", "") or "") for u in units]
     utoks = [_unit_tokens(u) for u in units]
-    aff = [[float(len(_block_tokens(b) & utoks[j])) for j in range(m)] for b in class_blocks]
+    btoks = [_block_tokens(b) for b in class_blocks]
+    aff = [[float(len(btoks[i] & utoks[j])) for j in range(m)] for i in range(n)]
 
     if not any(aff[i][j] > 0 for i in range(n) for j in range(m)):
         return []  # nenhum sinal -> fallback
@@ -150,6 +152,28 @@ def assign_units_positional(
                 if cand[0] > baseline_sum and cand > best_score:
                     best_score = cand
                     assign = rassign[:a] + [v] * (b - a + 1) + rassign[a:]
+
+    # C0 item 10 (2026-09-04): ancora lexical EXCLUSIVA vence a ordem do plano. O
+    # professor sai da ordem em mais de um ponto (SO ensina Arquivos DEPOIS de E/S) e
+    # o desvio de janela nao paga com afinidade 2 (ganho 2 - custo 2 < baseline 1).
+    # Bloco com >= ANCHOR_MIN_AFF tokens na unidade argmax, margem >= ANCHOR_MIN_MARGIN
+    # e um token que SO essa unidade tem no plano e evidencia estrutural: recebe o
+    # argmax, so ele (a DP dos vizinhos fica). Um token e indicio, nao evidencia
+    # (test_positional_weak_out_of_order_anchor_demoted; mesma leitura do 11a); bloco
+    # com token exclusivo de DUAS unidades e ambiguo e fica com o otimo global da DP
+    # (test_positional_confidence_is_fill_when_assigned_not_argmax).
+    # Medido nos 8 tutores (c0-10/simula_ancora_unidade_10.py): unidade 179 -> 183/191,
+    # pinos manuais de unidade 11 -> 12/13, 3 blocos mudam (SO 20, CG 08, CG 13), 0
+    # regressao; com afinidade 1 mudariam TCC 33 ("prova") e CG 15 — fora.
+    exclusive = [utoks[j] - set().union(*(utoks[k] for k in range(m) if k != j)) for j in range(m)]
+    for i in range(n):
+        row = aff[i]
+        srt = sorted(row, reverse=True)
+        margin = (srt[0] - srt[1]) if m > 1 else srt[0]
+        j = row.index(srt[0])
+        so_dela = {k for k in range(m) if btoks[i] & exclusive[k]} == {j}
+        if srt[0] >= ANCHOR_MIN_AFF and margin >= ANCHOR_MIN_MARGIN and so_dela:
+            assign[i] = j
 
     out: List[Tuple[str, float]] = []
     for i in range(n):
