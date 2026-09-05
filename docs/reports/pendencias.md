@@ -37,6 +37,21 @@ bloco-06 -> u03 por 'proces~processamento' -4; saldo 0). **Simulado o conserto d
 Matematica/Dilatacao/Erosao'):** bloco-08 -> u03 e bloco-15 -> u07 (9 entries), mas bloco-06 cai para u02 (DP monotonica: u04 antes de u03 e
 inversao; ancora bloqueada porque 'instanciamento' e exclusivo de u07) -> precisa de PINO de unidade no bloco-06 (u04, ou u05 por ruling).
 Falta no loader do glossario um VETO (manual so ADICIONA sinonimos): feature de ~5 linhas em `load_glossary_curation` (chave `exclude`).
+**O QUE O ORACULO DIZ (SARC = cronograma no SYLLABUS; Moodle = secoes):** sessoes 7-8 'Processo de Visualizacao 2D - Instanciamento' e '... - Recorte e
+mapeamento' + secao 6 'Processo de Visualizacao 2D' (13 modulos) -> o professor chama TUDO de u04 (o plano poe mapeamento/transformacoes em u05);
+sessao 12 'Morfologia Matematica' entre 'Processamento de Imagens' (9-10) e exercicios + secao 11 entre 10-Segmentacao e 12-Modelagem -> u03 (plano
+sem topico; vizinho = segmentacao); sessao 21 'Modelagem Geometrica' entre Curvas (19-20, u07) e Visualizacao 3D (24-25, u06) + secoes 12 e 14 -> u07;
+texturas: sem sessao no SARC, secao 17, plano u08/mapeamento-de-textura. **Raiz dos sinonimos envenenados:** o compilador de vocabulario (LLM, Fase 1b)
+recebeu NOMES DE SECAO do Moodle como termos e, sem topico que casasse, pendurou-os nos topicos genericos de u01 — 3 no CG ('Mapeamento de
+Texturas' -> Conceitos; 'Manipulacao de Imagens', 'Morfologia Matematica' -> Areas relacionadas), 0 nos outros 3 tutores com vocab LLM (censo com
+numeracao removida; MF tem 4 sinonimos = titulo de material, mas CORRETOS e uteis).
+**Raiz sem LLM, medida em memoria nos 8 (`c1-3/simula_raiz_unidade.py`):** H = higiene (sinonimo compilado que e nome de secao do Moodle nao vira
+alias): unidade 183 = 183/191, pinos 12/13 =, remove exatamente os 3 do CG; bloco-08 perde o u01 errado mas cai em u06 (plano sem topico de
+morfologia) — neutro na regua, limpa o rotulo do bloco e o scorer. V = preencher pelo vizinho ancorado em vez da DP monotonica: **REFUTADO**
+(183 -> 163/191; CG 71 -> 41/93: Origens/Conceitos herdam u02); VX (exclusividade relaxada): 179/191, CG 47 — REFUTADO. **Conclusao:** a DP monotonica
+e o melhor prior estrutural; a inversao de ordem do CG (u04 -> u07 -> u03 -> u07 -> u06 -> u07) so se resolve pela camada humana = PINOS DE UNIDADE nos
+blocos 06 (u04, pelo nome do SARC), 08 (u03) e 15 (u07) — o mesmo mecanismo que os outros 7 tutores ja usam (13 pinos) — + higiene generica no codigo +
+sinonimos manuais no CG (u08 <- 'Texturas'/'Mapeamento de Texturas'; u03/segmentacao <- 'Morfologia Matematica').
 **BUG (medido): zips do MF extraidos SEM subpasta -> colisao de nomes.** `raw/code/professor/` e plano (36 arquivos): `colecoes_arrays/ex1.dfy`,
 `colecoes_sequences/ex1.dfy`, `invariantes/ex1.dfy`, `terminacao/ex1.dfy` e `tiposindutivos/ex1.dfy` viram UM `ex1.dfy` (o ultimo vence:
 `code/professor/ex1.md` tem 'datatype Cor' = tiposindutivos; 'new nat[5]' dos arrays nao existe em lugar nenhum). Resultado: 4 zips (20 .dfy)
