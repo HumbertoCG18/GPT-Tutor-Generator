@@ -8,7 +8,7 @@ Unico handoff vivo. Substitui `_archive/2026-09-03b-handoff-fila-campanhas.md` (
 (criterio estrito); item nao feito nao muda de dono sozinho — ou e feito, ou o user o RETIRA por decisao registrada. Novo lote = novo
 handoff, o anterior vai para `_archive/`. Ideia que surge no meio vai para a CAIXA DE IDEIAS (da para fazer? · quando? · o que resolve?).
 
-## COMECE POR (proxima sessao) — C0 item 12: travessia "depois" (9, 10, 11a e 11b FEITOS 04/09 noite; C0 fecha com o 12)
+## COMECE POR (proxima sessao) — **C1 TRAVESSIA, item 1: FILE_MAP completo** (C0 MOTOR FECHADA 11/11 em 05/09; entrada = tracker §C0 ITEM 12)
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` e `.codex/` podem aparecer), `git log --oneline -3`, HEAD dos 8
    tutores iguais aos de "Estado ao comecar" (CG agora e `2efddcb`), `python scripts/censo_motor_llm.py` (revisar/100 58,0). Suite 2312 (25 testes de scripts arquivados sairam com eles).
 1. **11a FEITO** (`728c0f1`, §C0 ITEM 11a no tracker): `exclusivo` exige 2+ tokens; 1 token = banda media + flag. Copias: conf-err 3 -> 2,
@@ -22,8 +22,13 @@ handoff, o anterior vai para `_archive/`. Ideia que surge no meio vai para a CAI
    bloco-06 (juizo humano), IA 01-02, SO sockets (bloco).
 4. **9 FEITO** (`557be23` + `599ff10` + `1284b26`, §C0 ITEM 9): scripts/ 81 -> 37 (44 + artefato_razao arquivados com README e 4 testes), true_of
    subiu para eval_ground_truth, regua AULA sem escada stale (so "motor puro hoje"). src/ intocado; suite 2312; sentinela 0/8.
-5. **12 (proximo, fecha a C0)**: travessia "depois" — rerodar `eval_travessia.py {IA,FR,CG}` e comparar com o "antes" (tracker §REGUA DE
-   TRAVESSIA). Sem codigo previsto: e medicao + registro. Se o numero pedir codigo, e a C1 (FILE_MAP completo), nao a C0.
+5. **12 FEITO (05/09; §C0 ITEM 12) — C0 FECHADA.** Travessia "depois": IA identico (0 chamadas), FR 15/15 (1 flip de bloco por label duplicado no
+   cronograma), CG com LLM 7/15 = exatamente os alvos dentro do FILE_MAP (26/93; 8/8 erros fora do corte de 12 KB); bloco melhorou (8 -> 10/11).
+   Nada regrediu pelo motor. Entradas da C1: FILE_MAP completo (clamp 12 -> 80 KB); linha com `moodle_label` (piso CG 10 -> 5 por `title` = nome
+   de arquivo); label de bloco duplicado (FR bloco-06/20).
+6. **C1 (aberta)**: comece pelo item 1 — clamp 12 KB -> 80 KB + aviso em `clamp_navigation_artifact`/`budgeted_file_map_md`, rastreabilidade
+   (`FILE_MAP_TRACE.md`), coluna "Secoes" limitada; regua = `eval_travessia.py {IA,FR,CG}` (alvo IA >= 14/15, FR 15/15, CG rerodado) + sentinela 0.
+   Plano em 5 linhas antes de codigo; triagem da CAIXA DE IDEIAS na fronteira (C7 IMAGENS: posicao na fila e decisao do user).
 4. Gate de cada item: suite verde; sentinela 0 nos 8; determinismo 8/8; curada intacta; commit com o numero no tracker; tutores so
    mudam por reprocess registrado (copia `.ablacao` antes).
 
@@ -46,11 +51,12 @@ holdout CG (gold re-chaveado `ground_truth_CG.csv`, 35 scorable) **puro 31/35 (c
 - **SYNC — 6/6, FECHADA.** S1-S5 (03/09), S6a-S6f (03-04/09). S6f: rebuild do CG pela API promovido a original com holdout curado
   33/35 **aceito pelo user com causa medida** (o 34 do baseline dependia do token de boilerplate "imagens"; regra `exclusivo` por 1 token
   e o balde — C0 item 11a). Detalhe: `pendencias.md` §SYNC S6f e §SYNC S6a-S6e.
-- **C0 MOTOR — 9/11, ABERTA.** Feitos 2-7, 11 (11a `728c0f1` + 11b `86dab7e`), 10 (`4a14d8b`) e 9 (`557be23`), 04/09 noite; falta o 12 (travessia "depois").
+- **C0 MOTOR — 11/11, FECHADA em 05/09.** Feitos 2-7 (03/09), 11a `728c0f1`, 11b `86dab7e`, 10 `4a14d8b`, 9 `557be23`/`1284b26`, 12 (medicao; §C0 ITEM 12).
+- **C1 TRAVESSIA — ABERTA em 05/09.** Entrada medida: CG FILE_MAP 26/93 e 8/8 erros fora do corte; IA 19/59 (14/15 com indice completo, 03/09).
 
 ## FILA DE CAMPANHAS (ordem decidida 03/09, atualizada 04/09)
 
-### 1. ABERTA — C0 MOTOR, itens 9-12 (o que falta para fechar a rodada do motor)
+### 0. FECHADA 05/09 — C0 MOTOR 11/11 (historico dos itens abaixo; detalhe no tracker §C0 ITEM 9-12)
 9. **FEITO 04/09 noite (`557be23`, `599ff10`, `1284b26`; §C0 ITEM 9).** `scripts/` 81 -> 37 por grafo de dependencias medido (44 + artefato_razao
    arquivados em `_archive/scripts-2026-09-04/` com README; 4 testes foram junto, suite 2337 -> 2312); escada stale da `regua_aula.py` podada.
    src/ intocado = byte-identico por construcao; sentinela 0/8.
@@ -63,16 +69,18 @@ holdout CG (gold re-chaveado `ground_truth_CG.csv`, 35 scorable) **puro 31/35 (c
    token: 22 decisoes nos 6 golds, 5 erradas (77%; 2+ tokens e margem dao 94%) -> 1 token vira banda media + flag; medir motor_puro
    +vocab, eval_eixos, regua_aula, holdout CG (gold re-chaveado). Entra so se conf-err cai sem AULA/curada regredir. **FEITO 04/09 noite
    (`728c0f1`): entrou — conf-err 3 -> 2 (puro), holdout puro conf-err 2 -> 0, curado 35/35, nenhuma regua regrediu; custo votos/100 29,9 -> 36,5.**
-12. Travessia "depois": rerodar `eval_travessia.py {IA,FR,CG}` e comparar com o "antes" (tracker, REGUA DE TRAVESSIA).
-**C0 fecha quando:** 9-12 feitos ou retirados pelo user, com numero no tracker.
+12. **FEITO 05/09 (§C0 ITEM 12).** Travessia "depois" = "antes" no IA e no FR (material); CG limitado pelo FILE_MAP (26/93), bloco melhorou.
+**C0 FECHOU em 05/09: 11/11 feitos, cada um com numero no tracker.**
 
-### 2. PROXIMA — C1 TRAVESSIA (FILE_MAP completo e magro)
+### 1. ABERTA (05/09) — C1 TRAVESSIA (FILE_MAP completo e magro)
+Entrada medida no item 12 da C0: CG FILE_MAP 26/93 e 8/8 erros da travessia fora do corte; linha do FILE_MAP imprime `title` (nome de arquivo)
+e nao `moodle_label`; label de bloco duplicado no cronograma do FR (bloco-06/20).
 Unico item com numero de PRODUTO grande ja medido: IA 9 -> 14/15 com o indice completo (o corte de 12 KB esconde 40/59 materiais).
 Itens: rastreabilidade (`FILE_MAP_TRACE.md`), coluna "Secoes" limitada, clamp 80 KB + aviso; indice por unidade/termos so se a
 regua pos-C1 mostrar erro dessa forma. `python scripts/eval_travessia.py {IA,FR,CG} [--sem-llm|--contexto-completo]`.
 **Pronto quando:** IA >= 14/15, FR 15/15, CG rerodado, sentinela 0 no motor. 1 sessao.
 
-### 3. ESTACIONADA — C3 PROVAS, LISTAS E TRABALHOS (antes de C2, ordem do user)
+### 2. PROXIMA — C3 PROVAS, LISTAS E TRABALHOS (ordem registrada em 03/09; a posicao da C7 IMAGENS e decisao do user na fronteira)
 Granularidade da cobertura (prova inteira x questao a questao — decisao aberta desde 18/08), P2b-LLM (extracao de questoes,
 cacheado, contado), EXAM_INDEX "incidencia por topico" honesto, triagem "em duvida
 28/08" (PS/G2 como principais, cadeira sem prova, `U1 - ...`/"Laboratorio N"). **Pronto quando:** gold de ~10 provas + ~10

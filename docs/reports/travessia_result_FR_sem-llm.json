@@ -24,7 +24,8 @@
    "bloco_gold": "bloco-02",
    "bloco_pred": "bloco-02",
    "bloco_ok": true,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "Como funciona a resolução de nomes no DNS, passo a passo, do cliente até o servidor autoritativo?",
@@ -43,7 +44,8 @@
    "bloco_gold": "bloco-03",
    "bloco_pred": "bloco-03",
    "bloco_ok": true,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "Tem algum exemplo de código de cliente e servidor UDP em C que eu possa estudar?",
@@ -60,9 +62,10 @@
    "hit1": true,
    "hit3": true,
    "bloco_gold": "",
-   "bloco_pred": "bloco-06",
+   "bloco_pred": "bloco-22",
    "bloco_ok": null,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "Como o DHCP atribui um endereço IP para uma máquina nova na rede? Quero entender o DORA.",
@@ -81,7 +84,8 @@
    "bloco_gold": "bloco-03",
    "bloco_pred": "bloco-03",
    "bloco_ok": true,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "Quais são os protocolos de e-mail vistos em aula e qual a diferença entre POP3 e IMAP?",
@@ -100,7 +104,8 @@
    "bloco_gold": "bloco-05",
    "bloco_pred": "bloco-05",
    "bloco_ok": true,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "me explica melhor os protocolos",
@@ -121,7 +126,8 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-01",
    "bloco_ok": null,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "tem exercício pra treinar a camada de aplicação?",
@@ -143,7 +149,8 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-03",
    "bloco_ok": null,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "como que eu faço uma aplicação de rede?",
@@ -165,7 +172,8 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-01",
    "bloco_ok": null,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "que tipos de rede existem?",
@@ -184,7 +192,8 @@
    "bloco_gold": "bloco-02",
    "bloco_pred": "bloco-01",
    "bloco_ok": false,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "o que cai na primeira prova?",
@@ -202,7 +211,8 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-02",
    "bloco_ok": null,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "dns oq é",
@@ -221,7 +231,8 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-03",
    "bloco_ok": null,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "http exercicio",
@@ -241,7 +252,8 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-03",
    "bloco_ok": null,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "socket tcp c exemplo?",
@@ -260,7 +272,8 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-22",
    "bloco_ok": null,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "osi tcp ip diferença",
@@ -279,7 +292,8 @@
    "bloco_gold": "bloco-02",
    "bloco_pred": "bloco-02",
    "bloco_ok": true,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   },
   {
    "pergunta": "dhcp lista",
@@ -298,7 +312,8 @@
    "bloco_gold": "",
    "bloco_pred": "bloco-03",
    "bloco_ok": null,
-   "porque": ""
+   "porque": "",
+   "escolhido_raw": []
   }
  ]
 }

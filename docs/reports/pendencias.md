@@ -1,14 +1,48 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-04 (sessao 5, noite; C0 11a, 11b, 10 e 9 feitos). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-05 (sessao 5, madrugada; **C0 MOTOR FECHADA 11/11**; C1 TRAVESSIA aberta). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
-**Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: C0 MOTOR 9/11 (feitos 2-7, 9, 10 e 11; falta 12; §C0 ITEM 9, 10, 11a, 11b);
+**Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: **C0 MOTOR 11/11 FECHADA em 05/09** (§C0 ITEM 12, 9, 10, 11a, 11b);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
-**FILA:** 1 ABERTA = C0 itens 9-12 (ordem proposta 11 -> 10 -> 9 -> 12) · 2 PROXIMA = C1 travessia · estacionadas: C3 provas/listas · C7 imagens ·
+**FILA:** 1 ABERTA = **C1 TRAVESSIA** (FILE_MAP completo e magro; entrada = §C0 ITEM 12) · 2 PROXIMA = C3 provas/listas (ordem registrada; posicao da C7 e decisao do user na fronteira) · estacionadas: C7 imagens ·
 C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## C0 ITEM 12 — TRAVESSIA "DEPOIS" (05/09 madrugada, FEITO; **C0 FECHADA 11/11**)
+Mesma regua de 02-03/09 (`scripts/eval_travessia.py`, 3 cursos x 3 modos; LLM so para medir, cache por hash do contexto). Gold do CG
+re-chaveado para o rebuild (10 alvos de ids do export para ids novos, `esperado` so; export em `_archive/travessia_gt_CG.export.csv`).
+Chamadas Gemini novas: 60 (FR 30 + CG 30; IA 0 = indices do IA nao mudaram desde 03/09, o cache bateu nos 3 modos).
+
+| curso | modo | hit@1 antes -> depois | hit@3 | bloco | estruturada | ambigua | malformada |
+|---|---|---|---|---|---|---|---|
+| FR (22 mat., FILE_MAP 20/22) | sem-llm | 9/15 -> 9/15 | 11 -> 11 | 5/6 -> 5/6 | 4 -> 4 | 2 -> 2 | 3 -> 3 |
+| FR | LLM | 15/15 -> 15/15 | 15 -> 15 | 6/6 -> 6/6 | 5 -> 5 | 5 -> 5 | 5 -> 5 |
+| FR | LLM + contexto completo | 15/15 -> 15/15 | 15 -> 15 | 6/6 -> **5/6** | 5 -> 5 | 5 -> 5 | 5 -> 5 |
+| IA (59 mat., FILE_MAP 19/59) | sem-llm | 10/15 -> 10/15 | 12 -> 12 | 6/8 -> 6/8 | 4 -> 4 | 1 -> 1 | 5 -> 5 |
+| IA | LLM | 9/15 -> 9/15 | 10 -> 10 | 8/8 -> 8/8 | 3 -> 3 | 2 -> 2 | 4 -> 4 |
+| IA | LLM + contexto completo | 10/15 -> 10/15 | 10 -> 10 | 8/8 -> 8/8 | 3 -> 3 | 2 -> 2 | 5 -> 5 |
+| CG (export 73 -> **rebuild 93 mat.**, FILE_MAP 26/93) | sem-llm | 10/15 -> **5/15** | 11 -> 6 | 8/11 -> **10/11** | 4 -> 4 | 3 -> 0 | 3 -> 1 |
+| CG | LLM | 8/15 -> 7/15 | 8 -> 7 | 7/11 -> **8/11** | 2 -> 2 | 3 -> 3 | 3 -> 2 |
+| CG | LLM + contexto completo | 10/15 -> 7/15 | 10 -> 8 | 7/11 -> 7/11 | 2 -> 2 | 4 -> 3 | 4 -> 2 |
+
+**Leitura (medida, por pergunta — `_harness-2026-09-04/c0-12/`):**
+- **IA identico** nos 3 modos com 0 chamadas: os itens 2-11 nao mexeram no FILE_MAP do IA (blocos/unidades iguais). FR: material 15/15 nos dois
+  modos com LLM; **1 flip de bloco** no contexto completo ("osi tcp ip diferenca": material certo `02-modelos-de-referencia`, bloco respondido
+  bloco-20 em vez de bloco-02 — o cronograma do FR tem DOIS blocos rotulados "Modelos OSI e TCP/IP", set e nov, e o FILE_MAP do FR mudou no 11a
+  (os `udp-example` migraram para o bloco-20 pelo voter). Achado para a C1: label de bloco duplicado no cronograma confunde o "quando".
+- **CG com LLM: 7 acertos, TODOS com alvo dentro do FILE_MAP; 8 erros, TODOS com alvo FORA do corte** (FILE_MAP.md 11 964 chars = clamp 12 KB;
+  cita 26/93 materiais). Mesmo diagnostico de 03/09 (era 20/73), agora no rebuild: recorte, colisao, fundamentosmatematicos, transformacoesgl,
+  planesweep, exercicios-de-processamento-de-imagens, cronograma/plano ("o que cai na P1?") — nenhum esta no indice que o tutor le.
+- **CG sem-llm 10 -> 5:** o piso por tokens casa a pergunta com o `title`, e no rebuild o `title` e o nome do arquivo ("Vis3d", "PlaneSweep",
+  "FundamentosMatematicos"); o `moodle_label` humano existe no manifest ("Visualizacao 3D - Projecao", "Pagina sobre Geometria Computacional",
+  "Slides sobre Deteccao de Colisao") e **o FILE_MAP imprime o `title`, nao o label**. Achado para a C1: linha do FILE_MAP com o label do Moodle.
+- **Bloco ("quando") MELHOROU no CG** onde o material existe: sem-llm 8/11 -> 10/11, LLM 7/11 -> 8/11 — essa e a parte do motor (C0) na travessia.
+**Conclusao do item:** nada regrediu por causa do motor; a travessia e limitada pelo indice, nao pela atribuicao. **C0 fecha 11/11.** Entradas
+numeradas para a C1: (1) FILE_MAP completo (clamp 12 KB -> 80 KB + aviso; CG 26/93, IA 19/59, MF 20/66, SO 22/39, ES2 21/35, TCC 18/27);
+(2) linha do FILE_MAP com `moodle_label` (piso CG 5 -> medir); (3) label de bloco duplicado no cronograma (FR bloco-06/20). Alvo da C1 ja
+medido em copia (03/09): IA 9 -> 14/15 com o indice completo.
 
 ## C0 ITEM 9 — REFACTOR CORTE 1: scripts/ 81 -> 37 + ESCADA DA REGUA AULA PODADA (04/09 sessao 5 noite, FEITO)
 Gerador `557be23` (corte) · `599ff10` (baseline CG do teste de caracterizacao apos o item 10) · `1284b26` (regua). **Criterio medido, nao gosto:**
@@ -400,7 +434,7 @@ nao esta na assinatura de nenhum dos dois blocos). Precisao por faixa (HEAD, pur
 metodos llm 15 · llm-funil 9 · disamb-curto 2 — igual ao 34/35 medido 03/09 madrugada com o codigo antigo; a linha do produto
 nao mudou, o ganho dos itens 2-5 esta no piso sem LLM (27 -> 30).
 
-## REGUA DE TRAVESSIA — baseline "antes" (02/09 noite)
+## REGUA DE TRAVESSIA — baseline "antes" (02/09 noite) — **"depois" da C0 medido em 05/09: §C0 ITEM 12 (IA identico; FR 15/15; CG limitado pelo FILE_MAP 26/93)**
 
 Gold proposto-claude (revisar): `travessia_gt_IA.csv` e `travessia_gt_FR.csv`, 15 perguntas cada em 3 estilos (5 estruturadas,
 5 ambiguas, 5 malformadas — o aluno cansado pergunta pior). Cardapios: `travessia_cardapio_{IA,FR}.txt`. Harness

@@ -361,3 +361,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Reasoning:** O grafo completo (import, `from scripts.X import`, subprocess por caminho) achou 5 dependencias que o scan simples nao via; arquivar por lista quebraria `moodle_pull`, a ablacao e 2 ferramentas de gold. O alvo ~25 do plano era estimativa; o dado deu 37. `src/` intocado, logo tutores byte-identicos; suite 2312 verde; sentinela 0/8.
 **Consequences:** C0 em 9/11; falta o item 12 (travessia "depois", medicao). Licao registrada: a suite do gate roda depois do reprocess registrado (o baseline de caracterizacao do CG ficou stale no item 10 e foi regenerado em `599ff10`).
 
+---
+
+### C0 MOTOR fechada 11/11; travessia 'depois' mostra que o limite agora e o indice, nao a atribuicao
+
+**Date:** 2026-09-05
+**Status:** Active
+**Decision:** C0 fecha com o item 12 (medicao). C1 TRAVESSIA vira a campanha aberta com entrada numerada: FILE_MAP completo (clamp 12 KB -> 80 KB), linha do FILE_MAP com `moodle_label`, label de bloco duplicado no cronograma. C3 e a proxima pela ordem registrada; a posicao da C7 IMAGENS e decisao do user.
+**Reasoning:** Travessia rerodada nos 3 cursos x 3 modos com a mesma regua de 03/09: IA identico (0 chamadas novas, indices iguais), FR material 15/15, CG com LLM 7/15 onde os 7 acertos tem alvo dentro do FILE_MAP e os 8 erros tem alvo fora do corte (26/93 citados). O motor (C0) melhorou o 'quando' (CG bloco 8 -> 10/11 sem-llm, 7 -> 8/11 LLM) e nada regrediu por ele. O piso sem-llm do CG caiu 10 -> 5 porque o rebuild grava `title` = nome do arquivo.
+**Consequences:** Reguas finais da C0 (motor puro +vocab): bloco 183/200 conf-err 2 · unidade 183/191 · cobertura 53/57 · subunidade 82/93 · AULA 174/189 · holdout CG puro 31/35 conf-err 0 / curado 35/35 · curada 199/200 · 191/191 · 55/57 · censo revisar/100 58,0 · votos/100 36,5. Handoff 2026-09-04 segue vivo com C1 aberta.
+

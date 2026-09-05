@@ -2,9 +2,9 @@
  "curso": "CG",
  "modo": "sem-llm",
  "n": 15,
- "hit1": 10,
- "hit3": 11,
- "bloco_ok": 8,
+ "hit1": 5,
+ "hit3": 6,
+ "bloco_ok": 10,
  "bloco_n": 11,
  "chamadas": 0,
  "linhas": [
@@ -13,19 +13,21 @@
    "tipo": "conteudo",
    "estilo": "estruturada",
    "esperado": [
+    "pagina-com-videos-sobre-recorte-e257d3",
     "recorte",
+    "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e",
     "vis2d"
    ],
    "escolhido": [
+    "video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e",
     "elemoculto",
-    "exemplozbuffer",
-    "mapeamento"
+    "exemplozbuffer"
    ],
-   "hit1": false,
-   "hit3": false,
+   "hit1": true,
+   "hit3": true,
    "bloco_gold": "bloco-06",
-   "bloco_pred": "bloco-20",
-   "bloco_ok": false,
+   "bloco_pred": "bloco-06",
+   "bloco_ok": true,
    "porque": "",
    "escolhido_raw": []
   },
@@ -34,15 +36,16 @@
    "tipo": "conteudo",
    "estilo": "estruturada",
    "esperado": [
+    "exerciciosfundamentosmatematicos",
     "fundamentosmatematicos"
    ],
    "escolhido": [
-    "fundamentosmatematicos",
+    "matematica",
     "exemplodemanipulacaodeimagens",
     "exercicio-com-animacao"
    ],
-   "hit1": true,
-   "hit3": true,
+   "hit1": false,
+   "hit3": false,
    "bloco_gold": "bloco-03",
    "bloco_pred": "bloco-03",
    "bloco_ok": true,
@@ -54,10 +57,12 @@
    "tipo": "conteudo",
    "estilo": "estruturada",
    "esperado": [
-    "colisao"
+    "colisao",
+    "videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84"
    ],
    "escolhido": [
-    "colisao"
+    "colisao",
+    "videos-sobre-algoritmos-de-detecao-de-colisao-bd7d84"
    ],
    "hit1": true,
    "hit3": true,
@@ -78,7 +83,7 @@
    "escolhido": [
     "elemoculto",
     "exemplozbuffer",
-    "computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens"
+    "pagina-com-videos-sobre-remocao-de-elementos-ocultos-20c34a"
    ],
    "hit1": true,
    "hit3": true,
@@ -98,9 +103,9 @@
     "bezier-python"
    ],
    "escolhido": [
+    "bezier-py",
     "bezier-python",
-    "bezier-animacao",
-    "bezier-cpp"
+    "bezier-animacao"
    ],
    "hit1": true,
    "hit3": true,
@@ -115,14 +120,16 @@
    "tipo": "conteudo",
    "estilo": "ambigua",
    "esperado": [
-    "biblioteca-grafica-opengl",
-    "computacao-grafica-visualizacao-3d",
-    "opengl-3d"
+    "opengl3d",
+    "opengl3dcpp",
+    "opengl3dcpp-vdi",
+    "openglbasico",
+    "vis3d"
    ],
    "escolhido": [
     "animacao-v2",
-    "basico3d-py",
-    "bezier-animacao"
+    "exercicios-teoricos-sobre-processo-de-visualizacao-2d",
+    "exercicios-teoricos-sobre-processo-de-visualizacao-2d-html"
    ],
    "hit1": false,
    "hit3": false,
@@ -137,20 +144,19 @@
    "tipo": "exercicio",
    "estilo": "ambigua",
    "esperado": [
-    "computacao-grafica-exercicio-de-prenchimento-de-area",
-    "computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens",
-    "computacao-grafica-i-exercicio-sobre-filtros",
-    "exercicios-de-processamento-de-imagens"
+    "exercicios-de-processamento-de-imagens",
+    "floodfill",
+    "remocaoderuido"
    ],
    "escolhido": [
-    "computacao-grafica-exercicio-de-prenchimento-de-area",
-    "computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens",
-    "computacao-grafica-i-exercicio-sobre-filtros"
+    "exercicio-com-animacao",
+    "exercicio-com-poligonos",
+    "exercicio-de-animacao-foguete"
    ],
-   "hit1": true,
-   "hit3": true,
+   "hit1": false,
+   "hit3": false,
    "bloco_gold": "",
-   "bloco_pred": "bloco-07",
+   "bloco_pred": "bloco-03",
    "bloco_ok": null,
    "porque": "",
    "escolhido_raw": []
@@ -160,21 +166,20 @@
    "tipo": "codigo",
    "estilo": "ambigua",
    "esperado": [
-    "biblioteca-grafica-opengl",
     "opengl-cpp",
     "opengl-py",
     "openglbasico"
    ],
    "escolhido": [
-    "biblioteca-grafica-opengl",
-    "computacao-grafica-opengl-navegacao-em-ambientes-virtuais",
-    "exercicio-com-animacao"
+    "video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758",
+    "basico3d-py",
+    "bezier-animacao"
    ],
-   "hit1": true,
-   "hit3": true,
+   "hit1": false,
+   "hit3": false,
    "bloco_gold": "bloco-02",
-   "bloco_pred": "bloco-18",
-   "bloco_ok": false,
+   "bloco_pred": "bloco-02",
+   "bloco_ok": true,
    "porque": "",
    "escolhido_raw": []
   },
@@ -183,15 +188,15 @@
    "tipo": "conteudo",
    "estilo": "ambigua",
    "esperado": [
-    "computacao-grafica-modelagem-de-solidos",
-    "csg"
+    "csg",
+    "modelagem3d"
    ],
    "escolhido": [
-    "computacao-grafica-modelagem-de-solidos",
     "basico3d-cpp",
-    "basico3d-py-zip"
+    "basico3d-py-zip",
+    "csg"
    ],
-   "hit1": true,
+   "hit1": false,
    "hit3": true,
    "bloco_gold": "bloco-15",
    "bloco_pred": "bloco-15",
@@ -207,7 +212,7 @@
     "cronograma2026-2",
     "planodeensino-4645z-04-fundamentos-de-computacao-grafica",
     "resolucao-de-prova-de-computacao-grafica-2d",
-    "resolucao-de-prova-de-computacao-grafica-2d-pdf"
+    "resolucao-de-prova-de-computacao-grafica-2d-html"
    ],
    "escolhido": [],
    "hit1": false,
@@ -227,11 +232,12 @@
     "segmentacaopptx"
    ],
    "escolhido": [
-    "segmentacaodetexturas",
-    "segmentacaopptx"
+    "floodfill",
+    "pagina-com-videos-sobre-segmentacao-de-imagens-d0627f",
+    "pagina-com-videos-sobre-segmentacao-por-texturas-e03566"
    ],
-   "hit1": true,
-   "hit3": true,
+   "hit1": false,
+   "hit3": false,
    "bloco_gold": "bloco-07",
    "bloco_pred": "bloco-07",
    "bloco_ok": true,
@@ -243,11 +249,10 @@
    "tipo": "conteudo",
    "estilo": "malformada",
    "esperado": [
-    "modelos-de-iluminacao"
+    "iluminacao"
    ],
    "escolhido": [
-    "modelos-de-iluminacao",
-    "programabasico3d"
+    "iluminacao"
    ],
    "hit1": true,
    "hit3": true,
@@ -262,17 +267,17 @@
    "tipo": "exercicio",
    "estilo": "malformada",
    "esperado": [
-    "computacao-grafica-i-exercicio-sobre-filtros"
+    "exercicios-de-processamento-de-imagens"
    ],
    "escolhido": [
-    "computacao-grafica-exercicio-de-prenchimento-de-area",
-    "computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens",
-    "computacao-grafica-i-exercicio-sobre-filtros"
+    "exercicio-com-animacao",
+    "exercicio-com-poligonos",
+    "exercicio-de-animacao-foguete"
    ],
    "hit1": false,
-   "hit3": true,
+   "hit3": false,
    "bloco_gold": "",
-   "bloco_pred": "bloco-07",
+   "bloco_pred": "bloco-03",
    "bloco_ok": null,
    "porque": "",
    "escolhido_raw": []
@@ -282,15 +287,15 @@
    "tipo": "conteudo",
    "estilo": "malformada",
    "esperado": [
-    "computacao-grafica-geometria-computacional-plane-sweep"
+    "planesweep"
    ],
    "escolhido": [
-    "computacao-grafica-geometria-computacional-plane-sweep",
-    "disciplina-de-computacao-grafica-geometria-computacional",
-    "exercicios-de-geometria-computacional"
+    "domina",
+    "exercicios-de-geometria-computacional",
+    "geomcomp"
    ],
-   "hit1": true,
-   "hit3": true,
+   "hit1": false,
+   "hit3": false,
    "bloco_gold": "bloco-05",
    "bloco_pred": "bloco-05",
    "bloco_ok": true,
@@ -302,18 +307,18 @@
    "tipo": "codigo",
    "estilo": "malformada",
    "esperado": [
-    "transformacoes-geometricas-em-opengl",
-    "transformacoesgeometricas"
+    "transformacoesgeometricas",
+    "transformacoesgl"
    ],
    "escolhido": [
+    "basico3d-py",
     "opengl-cpp",
-    "opengl-py",
-    "texturas-v3"
+    "opengl-py"
    ],
    "hit1": false,
    "hit3": false,
    "bloco_gold": "bloco-06",
-   "bloco_pred": "bloco-02",
+   "bloco_pred": "bloco-18",
    "bloco_ok": false,
    "porque": "",
    "escolhido_raw": []

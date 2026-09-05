@@ -242,5 +242,247 @@
   ],
   "bloco": "",
   "porque": "Linha 9 e 14 do FILE_MAP contêm códigos e materiais práticos focados em transformações geométricas e matrizes com OpenGL."
+ },
+ "5418dfd85f935747283dc40f4a51b51b68a2fd8e": {
+  "arquivos": [
+   "MapTextures",
+   "content/BIBLIOGRAPHY.md"
+  ],
+  "bloco": "bloco-06",
+  "porque": "O assunto de Recorte e Mapeamento 2D é abordado na Unidade 4 no período de 25/08 a 27/08/2026, mapeado ao bloco-06."
+ },
+ "99a46527056ac8d399346eae131352246658289e": {
+  "arquivos": [
+   "Representação e Operações Básicas de Vetores Bidimensionais em C++"
+  ],
+  "bloco": "bloco-03",
+  "porque": "O arquivo 'Representação e Operações Básicas de Vetores Bidimensionais em C++' (Matematica.cpp) é o código vinculado no cronograma detalhado para as aulas de Fundamentos Matemáticos (11/08 a 13/08, bloco-03)."
+ },
+ "5f9abb99c80a7f63d903617ee36eeb6e6c45e924": {
+  "arquivos": [
+   "Fundamentos de Computação Gráfica 2D/3D, Algoritmos Geométricos e Processamento de Imagens com OpenGL",
+   "Práticas de Computação Gráfica 2D/3D, Curvas de Bezier e Processamento de Imagens com OpenGL",
+   "Fundamentos de Computação Gráfica 2D/3D e Algoritmos Geométricos com OpenGL"
+  ],
+  "bloco": "bloco-04",
+  "porque": "O assunto de colisão é abordado na aula de 18/08/2026, correspondente ao bloco-04 do cronograma detalhado, com suporte nos códigos de algoritmos geométricos e detecção de colisão."
+ },
+ "baf2dd649dc595af79a1d7173aaac9ed1911a4e6": {
+  "arquivos": [
+   "ElemOculto",
+   "ExemploZbuffer"
+  ],
+  "bloco": "bloco-20",
+  "porque": "O FILE_MAP associa os materiais ElemOculto e ExemploZbuffer ao assunto Algoritmo Z-Buffer da Unidade 06 no bloco-20."
+ },
+ "600b8338b1a60d68319bef02e2ef12c98488d1bf": {
+  "arquivos": [
+   "Visualização e Interação com Curvas de Bézier Quadráticas usando PyOpenGL",
+   "Animação de Objetos com Curvas de Bezier em OpenGL"
+  ],
+  "bloco": "bloco-13",
+  "porque": "O cronograma detalhado no bloco de Curvas paramétricas (bloco-13) lista os códigos de exemplo em Python Bezier-PY.zip e Bezier-Python.zip."
+ },
+ "cee76cbb14fb29269a15448b239962cf9b18715c": {
+  "arquivos": [
+   "Vis3d",
+   "OpenGL3D",
+   "ElemOculto"
+  ],
+  "bloco": "",
+  "porque": "O arquivo Vis3d contém os conceitos fundamentais de introdução e projeções para o processo de Visualização 3D na Unidade 6."
+ },
+ "be288850fac303add21e02610617b6f5f67b6a7a": {
+  "arquivos": [
+   "exercicios"
+  ],
+  "bloco": "bloco-03",
+  "porque": "Linha 22 do FILE_MAP indica a lista 'exercicios' e o bloco-03 (Unidade 03) no cronograma detalhado contempla o assunto de Processamento de Imagens com aulas de exercicios."
+ },
+ "cecb971c24b5ae54271f9aa8f2d90c582bd373a5": {
+  "arquivos": [
+   "Fundamentos de Computação Gráfica 2D/3D, Algoritmos Geométricos e Processamento de Imagens com OpenGL",
+   "Modelagem, Projeções e Texturização 3D com PyOpenGL"
+  ],
+  "bloco": "bloco-02",
+  "porque": "A aula de 'Introdução à OpenGL' ocorre no dia 06/08/2026, correspondente ao bloco-02 do cronograma, que vincula esses códigos demonstrativos."
+ },
+ "93152bfc2c710649295ebedcab52c6c094c964eb": {
+  "arquivos": [
+   "Modelagem3D",
+   "CSG"
+  ],
+  "bloco": "",
+  "porque": "A modelagem de sólidos (como CSG - Constructive Solid Geometry) é abordada nos materiais de Modelagem3D e CSG indicados no FILE_MAP."
+ },
+ "5c045eaa679f74947147c629f096e6dfd363878e": {
+  "arquivos": [
+   "course/CRONOGRAMA_DETALHADO.md",
+   "course/SYLLABUS.md"
+  ],
+  "bloco": "",
+  "porque": "O CRONOGRAMA_DETALHADO.md lista explicitamente as unidades cobradas na sessão de 24/09/2026, que corresponde à prova P1."
+ },
+ "21212def61e21bdf9949f2d20873c0661c8c7616": {
+  "arquivos": [
+   "Segmentacao.pptx",
+   "SegmentacaoDeTexturas"
+  ],
+  "bloco": "bloco-03",
+  "porque": "Os materiais Segmentacao.pptx e SegmentacaoDeTexturas constam no FILE_MAP associados à Unidade 03 com foco em Segmentação e estão identificados com a tag bloco-03."
+ },
+ "16ded4409f389b3f145a2d6ea7a9401f8855176f": {
+  "arquivos": [
+   "Iluminacao",
+   "Visualização 3D, Iluminação e Projeções com OpenGL e GLUT"
+  ],
+  "bloco": "bloco-19",
+  "porque": "O arquivo de texto Iluminacao trata da Unidade 8 e o arquivo de código correspondente aborda iluminação Phong."
+ },
+ "3f4d20614fae94640801ad15bd6c827cdc30271b": {
+  "arquivos": [
+   "Segmentacao.pptx",
+   "SegmentacaoDeTexturas"
+  ],
+  "bloco": "bloco-03",
+  "porque": "A Unidade 3 aborda Processamento de Imagens (incluindo Filtros e Convolução), sendo mapeada no bloco-03 das tags de rastreabilidade de Segmentacao.pptx."
+ },
+ "c1cdb818a819bccf0c34e69881d35c4e9619a7ed": {
+  "arquivos": [
+   "Fundamentos de Computação Gráfica 2D/3D e Algoritmos Geométricos com OpenGL",
+   "Fundamentos de Computação Gráfica 2D/3D, Algoritmos Geométricos e Processamento de Imagens com OpenGL"
+  ],
+  "bloco": "bloco-05",
+  "porque": "A aula de Geometria Computacional está agendada para o dia 20/08/2026 no CRONOGRAMA_DETALHADO, correspondendo ao bloco-05 dos tópicos teóricos apresentados."
+ },
+ "8d9110cdbb994ecf90f0fe7d8d8b2f15197a67ff": {
+  "arquivos": [
+   "Introdução a Computação Gráfica 3D e Transformações com PyOpenGL",
+   "Modelagem, Projeções e Texturização 3D com PyOpenGL"
+  ],
+  "bloco": "",
+  "porque": "O item 9 do FILE_MAP é um código de exemplo do professor focado especificamente em Transformações com PyOpenGL."
+ },
+ "43440b9d83e762b3b6af1f4a2e8552a3ae3d22a4": {
+  "arquivos": [
+   "MapTextures",
+   "exercicios-teoricos-sobre-processo-de-visualizacao-2d",
+   "resolucao-de-prova-de-computacao-grafica-2d.html"
+  ],
+  "bloco": "bloco-06",
+  "porque": "O assunto de Recorte de retas pertence a Unidade 04 (Processo de Visualizacao 2D), lecionado entre 25/08 e 27/08 correspondente ao bloco-06."
+ },
+ "ae0ecb983371d55bc959c8edc636765e1c6668f5": {
+  "arquivos": [
+   "Representação e Operações Básicas de Vetores Bidimensionais em C++"
+  ],
+  "bloco": "",
+  "porque": "O arquivo Matematica.cpp no índice de códigos aborda diretamente vetores bidimensionais e álgebra linear computacional para a Unidade 02."
+ },
+ "f49a7b18475c3265c6627f4c46864ef798b533df": {
+  "arquivos": [
+   "Fundamentos de Computação Gráfica 2D/3D, Algoritmos Geométricos e Processamento de Imagens com OpenGL",
+   "Práticas de Computação Gráfica 2D/3D, Curvas de Bezier e Processamento de Imagens com OpenGL",
+   "Fundamentos de Computação Gráfica 2D/3D, Curvas de Bézier e Processamento de Imagens com OpenGL"
+  ],
+  "bloco": "",
+  "porque": "As linhas 23, 11 e 14 do FILE_MAP contêm códigos do professor cujos conceitos associados incluem explicitamente Detecção de Colisão e Interseção."
+ },
+ "d653cbe0d714f8433c912ad43d7e78f269d47c1b": {
+  "arquivos": [
+   "ElemOculto",
+   "ExemploZbuffer"
+  ],
+  "bloco": "bloco-20",
+  "porque": "O material ElemOculto e o ExemploZbuffer tratam especificamente do algoritmo Z-Buffer e estao associados ao bloco-20 de remocao de elementos ocultos."
+ },
+ "88e0b62c055f6e1cb7cba76d8d650d63b77ac086": {
+  "arquivos": [
+   "Visualização e Interação com Curvas de Bézier Quadráticas usando PyOpenGL",
+   "Animação de Objetos com Curvas de Bezier em OpenGL",
+   "Animação Gráfica e Interpolação com Curvas de Bézier em OpenGL"
+  ],
+  "bloco": "",
+  "porque": "O arquivo CODE_INDEX lista estes títulos exatos como códigos em Python para o assunto de Curvas de Bézier."
+ },
+ "73c1bf3e229d8502e2dc068a1124d12741625c53": {
+  "arquivos": [
+   "Vis3d",
+   "OpenGL3D"
+  ],
+  "bloco": "",
+  "porque": "O arquivo Vis3d contem a introducao teorica e as projecoes de visualizacao 3D mapeadas no FILE_MAP."
+ },
+ "83c41a99112204350f265c649bffc12f786bccf2": {
+  "arquivos": [
+   "exercises/EXERCISE_INDEX.md"
+  ],
+  "bloco": "bloco-03",
+  "porque": "O arquivo exercises/EXERCISE_INDEX.md lista diretamente vários exercícios de imagem, como exercicios-de-processamento-de-imagens, FloodFill e RemocaoDeRuido."
+ },
+ "4dc4da4ebfa3fec8d071c3781014b0981a961129": {
+  "arquivos": [
+   "Fundamentos de Computação Gráfica 2D/3D, Algoritmos Geométricos e Processamento de Imagens com OpenGL",
+   "Modelagem, Projeções e Texturização 3D com PyOpenGL"
+  ],
+  "bloco": "",
+  "porque": "Linha 23 e 24 do FILE_MAP contêm códigos introdutórios do professor de OpenGL (C++ e Python) vinculados à aula de Introdução à OpenGL"
+ },
+ "f5f7d440e908effae63b142cd5f852d879139d1c": {
+  "arquivos": [
+   "CSG",
+   "Modelagem3D"
+  ],
+  "bloco": "",
+  "porque": "Os arquivos CSG (Geometria Sólida Construtiva) e Modelagem3D no FILE_MAP abordam as técnicas e conceitos de modelagem de sólidos em 3D."
+ },
+ "bbcb4bd8a45ac9a095597216e03a71ca922f305c": {
+  "arquivos": [
+   "course/CRONOGRAMA_DETALHADO.md",
+   "course/SYLLABUS.md"
+  ],
+  "bloco": "",
+  "porque": "O CRONOGRAMA_DETALHADO.md lista explicitamente as unidades cobertas na aula da prova P1 em 24/09/2026."
+ },
+ "016f0941ac02b0fd502db6d2b1db4c9e38b65180": {
+  "arquivos": [
+   "Segmentacao.pptx",
+   "SegmentacaoDeTexturas"
+  ],
+  "bloco": "bloco-03",
+  "porque": "O FILE_MAP mapeia diretamente Segmentacao.pptx e SegmentacaoDeTexturas na Unidade 3 de Processamento de Imagens e Visão Computacional."
+ },
+ "327fc06478c6879910e4505d9b5e4c1c60ceddae": {
+  "arquivos": [
+   "Iluminacao",
+   "Visualização 3D, Iluminação e Projeções com OpenGL e GLUT"
+  ],
+  "bloco": "bloco-19",
+  "porque": "A linha 19 do FILE_MAP referencia o material 'Iluminacao' sob a unidade de síntese de imagens realísticas no bloco-19."
+ },
+ "426d0e4ebb215e717b1918594441f2cb50c97d46": {
+  "arquivos": [
+   "RemocaoDeRuido",
+   "exercicios-de-processamento-de-imagens"
+  ],
+  "bloco": "bloco-03",
+  "porque": "Filtros passa-baixa pertencem à Unidade 03 (Processamento de Imagens), mapeada no bloco-03, cujos exercícios práticos estão em RemocaoDeRuido e exercicios-de-processamento-de-imagens no EXERCISE_INDEX."
+ },
+ "bf3079179c390e6f558d03f3ae4d1ab05220821f": {
+  "arquivos": [
+   "Fundamentos de Computação Gráfica 2D/3D e Algoritmos Geométricos com OpenGL",
+   "Representação e Operações Básicas de Vetores Bidimensionais em C++"
+  ],
+  "bloco": "bloco-05",
+  "porque": "A aula de Geometria Computacional ocorre em 20/08/2026 (bloco-05) e envolve algoritmos geométricos e interseção de segmentos, cobertos no código de fundamentos."
+ },
+ "70165f0b1d02488668fc43f38d8664079902b467": {
+  "arquivos": [
+   "Introdução a Computação Gráfica 3D e Transformações com PyOpenGL",
+   "Fundamentos de Computação Gráfica 2D/3D, Curvas de Bézier e Processamento de Imagens com OpenGL",
+   "Fundamentos de Computação Gráfica 3D e Modelagem por Extrusão com PyOpenGL"
+  ],
+  "bloco": "",
+  "porque": "O FILE_MAP lista esses arquivos de código do professor contendo explicitamente transformações com OpenGL e PyOpenGL."
  }
 }
