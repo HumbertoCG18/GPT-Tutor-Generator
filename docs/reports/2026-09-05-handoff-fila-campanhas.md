@@ -132,6 +132,8 @@ refs md alteradas (esperado so os 7 alts), stash CG -39. **Pronto quando:** 0 du
 Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no sistema?
 - **Prompt do voter sem o `moodle_label`** (`llm_vote.py:241` mostra so `titulo`; 90/125 votados tem label != title: CG 31, MF 31, ES2 16 — o voter ve "Vis3d")
   · sim, 1 linha no prompt + re-voto <= 90 chamadas · C1 fechamento (LLM) · voto com o nome humano; entra so se conf-err cai sem regua regredir.
+- **Zips extraidos sem subpasta colidem nomes** (MF: 5 zips x `ex1.dfy`; `.smv` ignorado) · sim: `<id>/<membro>` na extracao + `.smv` como codigo ·
+  SYNC/C5 · conteudo certo no tutor e resumo certo por zip (hoje 4 zips do MF mostram o codigo de outro).
 - **Propagacao de vocabulario por headings para a subunidade (sem LLM):** +5/-0 no gold (82 -> 87/93), curada intacta, mas MF 6 e CG 9 mudancas
   sem gold com varias erradas a olho (tracker §OS 32 ERROS) · sim, ~40 linhas em `apply_unit_subunit_fields` (2a passada) · **C5: so depois de gold de
   subunidade do CG/MF proposto-claude + aprovado pelo user** · +4 IA +1 SO no puro; risco medido no CG sem gold.
@@ -173,8 +175,10 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
 - ~~Desligar `gemini_auto_summarize` na UI~~ **FEITO 05/09 tarde pelo user** (`~/.gpt_tutor_config.json`: False, verificado). Religar so quando liberar o Gemini.
-- **Gold de subunidade do CG (93) e MF (66) proposto-claude para sua aprovacao** (C5): destrava a propagacao de vocabulario (+5 no gold atual)
-  e da regua a 4 cursos que hoje so listam flips. Custo: revisao humana; 0 LLM.
+- **APROVAR o gold de subunidade do CG (63 pontuaveis) e MF (58) — PROPOSTO em 05/09 tarde** (`docs/reports/gold_subunidade_CG_MF_proposta_2026-09-05.md`,
+  4 rulings marcados). So depois entra em `motor_puro.py` e destrava a medicao da propagacao de vocabulario nos 8 (tracker §GOLD DE SUBUNIDADE CG E MF).
+- **BUG dos zips do MF (colisao `ex1.dfy` entre 5 zips; `.smv` ignorado): 4 zips sem conteudo no tutor, 5 resumos errados** — corrigir na
+  extracao (SYNC/C5) e re-resumir quando o Gemini for liberado; decisao de fila sua (tracker, mesma secao).
 - **Gemini:** credito recarregado 05/09; liberar uso (travessia final da C1 e re-votos) e decisao sua. Ate la, so medicao sem LLM.
 - **Apagar** `.ablacao/CG-rebuild` (365 MB) e `.ablacao/CG-export-backup` (440 MB). **Posicao da C7 IMAGENS** na fila (hoje 8a). IA `prova-1-2024-02`
   ficou com `manual_unit_slug` (unidade pinada); pino de bloco removido.
