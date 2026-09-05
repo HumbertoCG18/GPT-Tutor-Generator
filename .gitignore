@@ -252,5 +252,5 @@ moddle/.m365_token.json
 .superpowers/
 .worktrees/
 .ablacao/
-scripts/artefato_razao/dados.json
-scripts/artefato_razao/razao_dos_blocos.html
+docs/reports/_archive/scripts-2026-09-04/artefato_razao/dados.json
+docs/reports/_archive/scripts-2026-09-04/artefato_razao/razao_dos_blocos.html

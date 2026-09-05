@@ -64,6 +64,19 @@ def _canon(ref: str, u2d: dict) -> str:
     return u2d.get(ref, ref)
 
 
+def true_of(ctx, row: dict) -> str:
+    """Verdade do gold em DISPLAY: uuid-first (estavel a drift posicional), fallback
+    true_block_id legado enquanto a coluna nao existe. `ctx` = MotorContext (ou
+    qualquer objeto com block_by_ref). Subiu de fase0_prova_motor_MF (C0 item 9,
+    corte 1): as provas de fase foram arquivadas, o helper e rotina do gold."""
+    uid = str(row.get("true_block_uuid") or "").strip()
+    if uid:
+        b = ctx.block_by_ref(uid)
+        if b is not None:
+            return str(b.get("id") or uid)
+    return str(row.get("true_block_id") or "").strip()
+
+
 def load_predictions(repo_root: Path) -> dict:
     # Mede contra o bloco TEMPORAL (resolve_temporal_block: temporal_block_id da âncora
     # vence; fallback resolve_effective_block honra manual>computed), canonicalizado para

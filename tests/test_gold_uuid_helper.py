@@ -3,7 +3,7 @@ com fallback true_block_id legado. O uuid não muda em reprocess; o display
 (bloco-NN) pode driftar posicionalmente — true_of deve devolver o display
 ATUAL do bloco quando o uuid resolve, não o rótulo stale gravado no CSV."""
 from src.builder.routing.motor.contracts import MotorContext
-from scripts.fase0_prova_motor_MF import true_of
+from scripts.eval_ground_truth import true_of   # subiu de fase0_prova_motor_MF (C0 item 9)
 
 
 def _ctx() -> MotorContext:
