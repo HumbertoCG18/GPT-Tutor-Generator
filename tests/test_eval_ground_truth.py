@@ -148,3 +148,13 @@ def test_band_e_a_do_metodo_que_decidiu_o_bloco(tmp_path):
     assert preds["pino"]["block_id"] == "bloco-03"
     assert preds["pino"]["band"] == "manual"
     assert preds["funil"]["band"] == "baixa"
+
+
+def test_load_labels_csv_ignora_linha_scorable_no(tmp_path):
+    """05/09: `scorable=no` (ex.: prova antiga de outro semestre) sai do denominador da regua de bloco,
+    como ja acontecia na regua de unidade (_load_truth)."""
+    from scripts.eval_ground_truth import load_labels_csv
+    p = tmp_path / "gt.csv"
+    p.write_text("id,true_block_id,scorable\na,bloco-01,yes\nb,bloco-02,no\nc,bloco-03,\n", encoding="utf-8")
+    labels = load_labels_csv(p)
+    assert labels == {"a": "bloco-01", "c": "bloco-03"}

@@ -43,7 +43,7 @@ revisao-p1-gabarito,revisao_p1_gabarito.pdf,bloco-07,bloco-07,bloco-07,,block-di
 t1-2026-1,t1_2026_1.pdf,bloco-11,bloco-05,bloco-05,,block-direct,clean,,yes,yes,c9f5f7cf-3477-4531-be7a-f7b68727009c
 t2-2026-1,t2_2026_1.pdf,bloco-18,bloco-02,bloco-02,,block-direct;relabel-2026-08-25-fase1,clean,,yes,yes,37d49c0d-3cc1-4a8b-add6-d82ea868ec52
 verificacaomodelos,verificacaomodelos.pdf,bloco-16,bloco-16,bloco-16,,block-direct,clean,,yes,no,a6ac04f2-7611-4bef-b74a-54390cef4084
-arvores,arvores.thy,bloco-06,bloco-06,bloco-06,,block-direct,clean,,yes,no,5599d015-10e0-4f6e-ad17-c526b903dc09
+arvores,arvores.thy,bloco-05,bloco-06,bloco-06,,SARC/Moodle 05/09 (user): bloco-06 -> bloco-05; era block-direct,clean,,yes,no,7a5e29db-f228-4e96-bd4b-272d5b74e2ae
 classes-parte1,classes_parte1.zip,bloco-15,bloco-15,bloco-15,,block-direct,clean,,yes,no,95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0
 classes-parte2,classes_parte2.zip,bloco-15,bloco-15,bloco-15,,block-direct,clean,,yes,no,95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0
 colecoes-arrays,colecoes_arrays.zip,bloco-13,bloco-13,bloco-13,,block-direct,clean,,yes,no,de7d1b70-fb58-4a18-ad49-d1a64c6c7684
@@ -57,7 +57,7 @@ hoare,hoare.zip,bloco-10,bloco-10,bloco-10,,block-direct,clean,,yes,yes,171a1a09
 intro,intro.thy,bloco-06,bloco-06,bloco-06,,block-direct,clean,,yes,no,5599d015-10e0-4f6e-ad17-c526b903dc09
 introducao-zip,introducao.zip,bloco-12,bloco-12,bloco-12,,block-direct,clean,,yes,no,e3bc8a61-e729-4f25-9bc5-12b8a47151e3
 invariantes,invariantes.zip,bloco-11,bloco-11,bloco-11,,block-direct,clean,,yes,yes,c9f5f7cf-3477-4531-be7a-f7b68727009c
-listas,listas.thy,bloco-06,bloco-06,bloco-06,,block-direct,clean,,yes,no,5599d015-10e0-4f6e-ad17-c526b903dc09
+listas,listas.thy,bloco-05,bloco-06,bloco-06,,SARC/Moodle 05/09 (user): bloco-06 -> bloco-05; era block-direct,clean,,yes,no,7a5e29db-f228-4e96-bd4b-272d5b74e2ae
 provas,provas.thy,bloco-06,bloco-05,bloco-05,,block-direct,clean,,yes,yes,5599d015-10e0-4f6e-ad17-c526b903dc09
 t1-2026-1-thy,T1_2026_1.thy,bloco-11,bloco-05,bloco-05,,block-direct,clean,,yes,yes,c9f5f7cf-3477-4531-be7a-f7b68727009c
 terminacao,terminacao.zip,bloco-12,bloco-11,bloco-11,,block-direct,clean,,yes,yes,e3bc8a61-e729-4f25-9bc5-12b8a47151e3

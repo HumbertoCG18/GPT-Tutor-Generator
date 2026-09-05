@@ -133,6 +133,10 @@ def load_labels_csv(path: Path) -> dict:
         for row in csv.DictReader(f):
             eid = str(row.get("id", "")).strip()
             true_block = str(row.get("true_block_id", "")).strip()
+            # 05/09: honra `scorable` como a regua de unidade (_load_truth) — linha marcada "no"
+            # (ex.: IA prova antiga 2024/2) sai do denominador em vez de contar como erro.
+            if str(row.get("scorable", "yes") or "yes").strip().lower() == "no":
+                continue
             if eid and true_block:
                 labels[eid] = true_block
     return labels

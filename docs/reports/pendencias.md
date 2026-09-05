@@ -10,6 +10,20 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## GOLD PELO ORACULO (05/09 ~04h30, decisao do user: SARC e Moodle mandam; gold e humano)
+**Mudancas no gold (nota `SARC/Moodle 05/09 (user)` na coluna provenance):** TCC `aula-17-np-completude-pdf` bloco-22 -> **bloco-19** (SARC: sessao
+"complexidade de tempo np complete" no 19; postado 22/05); MF `arvores` e `listas` bloco-06 -> **bloco-05** (SARC: "provas por inducao listas e arvores");
+`intro`, `exemplos`, `provas` ficam no 06 (Isabelle). IA `prova-1-2024-02` -> `scorable=no` (prova antiga 2024/2). **Regua de bloco passou a honrar
+`scorable`** (`load_labels_csv`; a de unidade ja honrava) — denominador 200 -> 199; teste novo.
+**Reguas remedidas (mesmos manifests, so o gold mudou):**
+| regua | antes | depois |
+|---|---|---|
+| motor puro +vocab (copias) | 183/200 (91,5%), conf-err 2 | **186/199 (93,5%), conf-err 1** |
+| curada (originais) | 199/200 (99,5%), conf-err 0 | **195/199 (98,0%), conf-err 1** — MF 64/66 (arvores, listas: produto respondeu 06 por voto), TCC 24/25 (22, agora conf-err) |
+| unidade · cobertura | 183/191 · 53/57 (puro); 191/191 · 55/57 (curada) | iguais |
+**Leitura:** o gold agora segue o professor; o produto seguia o gold antigo (votos cacheados). Para a curada voltar a 100% nesses 3 e curadoria: pino
+manual (arvores/listas -> 05, aula-17 -> 19) ou re-voto quando houver credito. Decisao do user pendente.
+
 ## AUDITORIA GOLD x MOODLE/SARC (05/09 madrugada, sem LLM; regra do user: SARC e Moodle sao o oraculo, gold e humano)
 **Metodo:** para cada linha pontuavel dos 5 golds, o bloco do gold cai na `moodle_week_label` do card? 203 linhas, 82 com semana (MF, ES2; SO/IA/TCC
 sem o campo), **27 "fora" — todas explicadas: a semana e da SECAO, nao do material**, e as secoes abrangem varias semanas (MF "Verificacao de Programas"
