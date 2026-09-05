@@ -10,6 +10,26 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## MEDICAO — OS 17 ERROS DO MOTOR PURO (183/200) E O 1 DA CURADA (05/09 madrugada, sem LLM; pergunta do user "como chegar a 200?")
+**200 = tamanho do gold pontuavel** (MF 66, SO 38, IA 43, ES2 28, TCC 25; pares colapsados), nao o total de materiais (226 nos 5 cursos). 200/200 e 100% do gold,
+e o gold e amostra humana, nao oraculo. Os 17 do motor puro: 7 flagados (duvida honesta; no produto o voter resolve), 2 sem bloco (prova/trabalho sem
+prazo casado), 6 confiantes errados, 2 fora de AULA (REF 8/10). Dissecados (`c1-2/`, read-only):
+- **MF `revisao`** (card "Revisao - Logica e Especificacao", janela [03, 04]): texto casa {conjuntos, especificacao} so no 04; gold 03. Revisao que cobre os
+  dois blocos e o gold escolhe o primeiro — sem regra sem virar categoria.
+- **MF `exerciciosdafny2`** (janela 5 por labels): texto casa {correcao, invariantes, laco, total} no bloco-11 (teoria) x {arrays, dafny} no 13 (gold). O
+  vocabulario do exercicio e o da teoria, nao o da aula em que foi dado; o voter acerta (serie, 11b). Serie monotonica ja refutada no gold.
+- **MF `arvores`, `intro`, `listas`** (`.thy` = Isabelle; card "Provas por Inducao", janela-1 = bloco-05 porque o label do card casa a sessao "provas por
+  inducao aula"): gold bloco-06 "prova interativa de teoremas isabelle". O card NAO esta no `card_block_map` e abrange 3 blocos pelo gold (04: 8 materiais,
+  05: 4, 06: 7). Alavanca candidata, nao medida em codigo: token de ferramenta pela extensao (`.thy` -> isabelle, `.dfy` -> dafny) + janela do card = blocos
+  das sessoes que o label casa E os seguintes ate o proximo card — exige desenho; **caixa (C0-2)**.
+- **TCC `aula-17-np-completude`** (ordinal "aula 17" -> 17o bloco = 19; gold 22 "Cook-Levin"): o numero da aula do professor deriva do calendario
+  (feriados/adiamentos). Card "Semana 12": semana do card == semana do bloco gold em **17/26** materiais do TCC (65%; deslocamentos +2) — "Semana N" sem
+  data nao e sinal confiavel; IA tem "Semana N" com datas (54/54) e ja usa o card datado.
+- **ES2 `azure`** (o 1 erro da curada; card "Microsservicos" -> janela-1 bloco-08, gold 09): o markdown do deck e so hash de imagem, sem texto — o
+  motor nao tem sinal e o LLM chutou igual. **Causa = imagens sem descricao -> C7 IMAGENS (Datalab para imagens).**
+**Conclusao:** nenhuma alavanca estrutural com numero hoje; 200 no motor puro nao e meta (teto estrutura+texto ~190-193). Metas honestas: conf-err 0 no
+puro (hoje 2, ambos lexico), flagados pequenos (45/189 puro, 15/189 produto), curada 200 (falta 1 = imagens).
+
 ## C1 ITEM 2 — LABEL DE BLOCO DUPLICADO NO CRONOGRAMA (05/09 madrugada, MEDIDO sem LLM; **FEITO: as 2 propostas entraram**)
 **Medido nos 8 (`c1-2/`):** 6 cursos tem blocos-AULA com o mesmo `primary_topic_label`: 7 labels, 16 blocos, **33 materiais** ancorados neles
 (MF 5 "Verificacao de modelos" x2 · SO 6 "Paginacao" x2 · ES2 17 "Estudo de caso: integracao..." x4 · FR 5 "Modelos OSI e TCP/IP" x2 + "Enderecamento" x2 ·
