@@ -24,6 +24,9 @@ regra de banda) e medida numa COPIA, com baseline reproduzido na mesma rodada, a
    versionar scripts e logs em `docs/reports/_harness-<data>/<item>/` com README.
 
 ## Gotchas
+- **O reprocess chama Gemini** (auto-resumo de codigo e referencias, `_run_auto_code_summarization`) para toda entry cujo hash muda quando a UI tem
+  `gemini_auto_summarize` ligado — 60 chamadas nao autorizadas em 05/09 por title := label. Shim SEMPRE com o tripwire de
+  `_harness-2026-09-04/c1-3/shim_b.py` e `check_gemini_hoje.py` como pos-check; o tripwire tambem protege a medicao de resumo novo (contaminacao).
 - `ab.sync` (robocopy) reescreve o manifest da copia a cada rodada: a alavanca de dado tem que entrar DEPOIS do `ablate`.
 - Nao rode duas medicoes em paralelo na mesma copia; em copias diferentes pode, mas o tempo de reprocess deixa de ser comparavel.
 - Regua sem gold (subunidade do CG, LR/FR) so lista flips; nao pontua.

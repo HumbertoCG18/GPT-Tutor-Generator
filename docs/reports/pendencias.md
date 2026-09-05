@@ -24,8 +24,14 @@ caem no topico que duplica o vocabulario da unidade — causa G-3 de 19/08, "fal
 REFUTADAS (`c1-3/simula_sub_card.py`):** (A) codigo herda subunidade pelo NOME do card: 0 '+', 23 '-' (IA "Semana N - ML Aprendizado Supervisionado" casa
 `introducao-ao-aprendizado-de-maquina`); (B) codigo herda do irmao principal do card: 0 '+', 2 '-'; o SO fork x4 nao muda em nenhuma (card nao nomeia o
 topico; irmaos tambem em `estudo-de-casos`). O scorer de subunidade (`_score_entry_against_taxonomy_topic`) nao le o card — e por medida, nao deve.
-**Unica alavanca sem LLM ainda NAO medida:** IDF intra-unidade no scorer de subtopico (causa diagnosticada; teto +4 IA, +1 SO exemplo3; risco nos 35 IA
-certos) — exige shim no scorer + motor_puro (~5 min). Fora disso, o que sobra e voto (LLM) ou pino (camada humana), por desenho.
+**IDF intra-unidade MEDIDO (05/09 tarde, `c1-3/simula_idf_sub.py`: em memoria pela rota real `auto_map_entry_subtopic`, 0 chamadas; base
+reproduz 92/93 do snapshot):** V1 (tokens do titulo da unidade + tokens em >= 2 irmaos viram genericos) **0 flip** · V2 (V1 + alias repetido ou so
+de tokens genericos sai) **+1 -5** (+ ES2 `devops` -> `gerenciamento-da-configuracao`, extra do gold; - IA k-means/agrupamento caem em introducao:
+`Agrupamento` e compartilhado com os aliases-sessao do topico de introducao) · V2s (so alias repetido verbatim em >= 2 irmaos) **0/0**. **REFUTADO.**
+**Raiz dos 4 do IA e VOCABULARIO, nao scorer:** na copia (motor puro +vocab) `modelos-preditivos` nao tem `perceptron`, `rede neural`, `MLP`, `kNN` —
+esses termos so existem no glossario MANUAL `.glossary_curation.json` (curadoria 25/08, "o plano nomeia CATEGORIAS; o material nomeia ALGORITMOS"),
+que a ablacao remove; o vocab compilado por LLM tem "MultiLayer Perceptron" (frase) e nao o token. Teto da subunidade no motor puro = vocabulario
+(camada humana, ou re-compilacao por LLM quando liberado). Fora disso, o que sobra e voto (LLM) ou pino (camada humana), por desenho.
 
 ## C1 ITEM 3 — `title` DO MANIFEST = `moodle_label` (05/09 tarde, sessao 6, MEDIDO sem LLM; **FECHADO POR MEDICAO: REFUTADO, 0 codigo**)
 **Premissa do handoff:** o rebuild grava `title` = nome do arquivo e o piso sem-llm do CG caiu 10 -> 5; "medir title := label (fallback nome); se 0, fecha".
@@ -42,11 +48,19 @@ diferentes (export 73 x rebuild 93, gold re-chaveado) e NAO e o title.
 | bloco | 186/199, conf-err 1 | **184/199**, conf-err 1 — MF `exercicios-conjuntos`, `exercicios-arrays` 13 -> 12 (gold 13; label "Respostas" perde `conjuntos`/`arrays`) |
 | confiantes | — | MF `colecoes-arrays`, `colecoes-sequences` alta -> media + flag (label "Exemplos (Arrays)" perde `colecoes`) |
 | unidade · cobertura | 183/191 · 53/57 | iguais |
-| subunidade | 82/93 | **81/93** — SO `0704-exemplo-threads-em-java` conceitos-basicos -> escalonamento (0 token perdido; texto combinado) |
-| holdout CG | 31/35, conf-err 0, flag 14 | iguais; 10 subunidades mudam sem gold (4 somem, 3 nascem, 3 trocam) |
+| subunidade | 82/93 | **82/93** (a 1a rodada deu 81: era resumo de codigo NOVO do Gemini, nao o title — ver INCIDENTE abaixo) |
+| holdout CG | 31/35, conf-err 0, flag 14 | iguais; 2 mudancas sem gold (`intro` sub, `fundamentosmatematicos` metodo); as outras 8 da 1a rodada eram resumo novo |
 **0 flip positivo em regua nenhuma.** O nome do arquivo e o label do Moodle sao sinais COMPLEMENTARES: o label e generico onde o professor nomeia o
 modulo pela funcao ("Respostas", "Exemplos (Arrays)", "Introducao"); o stem carrega o assunto. Nos 8: 103 entries tem token no title que o label nao
 tem (MF 35, CG 34, ES2 23); 7 tem label sem token de conteudo e title com (MF 6 "Respostas", CG `vis2d` "Introducao").
+**INCIDENTE (05/09 tarde): 60 chamadas Gemini NAO autorizadas.** O reprocess (`incremental_build` -> `_run_auto_code_summarization`) re-resume por
+Gemini todo material de codigo cujo `content_hash` (bundle inclui o `title`) muda, quando a config da UI tem `gemini_auto_summarize=True` + chave
+(estava: modelo `gemini-3.5-flash`; nao ha interruptor de ambiente). title := label mudou o hash de 60 entries de codigo nas copias (MF 19, SO 8,
+IA 8, ES2 8, CG 17; 11:45-11:54) e a 1a rodada da B mediu com resumos NOVOS — dai SO sub 81 e as 10 mudancas do CG. Referencias: cache intacto (0
+diferentes). Originais intactos (0 resumo de hoje). Correcao: tripwire em `c1-3/shim_b.py` (`get_gemini_client` -> None, `GeminiClient.__init__`
+explode) + `c1-3/check_gemini_hoje.py` como pos-check; B REFEITA LIMPA (0 chamadas, `diff_b2.log`): bloco 184/199 e os 2 confiantes iguais, sub 82 = 82,
+unidade/cobertura/holdout iguais. **Regra:** todo reprocess (registrado ou de medicao) que mude `title` ou conteudo de codigo chama Gemini com essa
+config — medir SEMPRE com tripwire, ou desligar `gemini_auto_summarize` na UI enquanto o Gemini estiver bloqueado (decisao do user).
 **Decisao (registrada em decisions.md):** `title` do manifest FICA o stem; o label e coluna (FILE_MAP, item 1), nao substituto. Item 3 fecha por medicao,
 sem codigo; entra em NAO fazer. Achados para a fila LLM (so com Gemini liberado): (a) prompt do voter (`llm_vote.py:241`) mostra so `titulo`: 90/125
 materiais votados tem label != title (CG 31, MF 31, ES2 16, SO 7, IA 5) — o voter ve "Vis3d", nao "Visualizacao 3D - Projecao"; adicionar linha `label

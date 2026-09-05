@@ -7,6 +7,15 @@ sys.path.insert(0, str(GEN)); sys.path.insert(0, str(GEN / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 MODE, TARGET = sys.argv[1], sys.argv[2]
 import ablacao_rapida as ab
+# Tripwire Gemini (05/09 tarde): o reprocess auto-resume codigo (e referencias) quando o hash da entry muda
+# (config `gemini_auto_summarize` + chave). title := label mudou o hash e custou 60 resumos na 1a rodada.
+# Aqui NENHUMA chamada e possivel: sem client e construtor que explode.
+import src.builder.runtime.gemini_client as _gc
+_gc.get_gemini_client = lambda config=None: None
+_gc.has_gemini_api_key = lambda config=None: False
+def _bloqueado(*a, **k):
+    raise RuntimeError("Gemini bloqueado nesta medicao (tripwire)")
+_gc.GeminiClient.__init__ = _bloqueado
 _ablate = ab.ablate
 def ablate(repo, keep_llm_vocab=False):
     n = _ablate(repo, keep_llm_vocab)

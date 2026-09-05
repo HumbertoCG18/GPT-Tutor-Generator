@@ -408,5 +408,15 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Date:** 2026-09-05
 **Status:** Active
 **Decision:** Nao substituir `title` por `moodle_label` no manifest (nem em `build_stash_entries`, nem por reprocess). O label ja e a coluna Titulo do FILE_MAP (item 1); o motor soma title + label em conjunto. Item 3 da C1 fecha por medicao, sem codigo; entra em NAO fazer.
-**Reasoning:** Medido antes de codigo (sessao 6): piso sem-llm da travessia com title := label em memoria, 0 flip em IA/FR/CG; motor puro +vocab nas copias, bloco 186 -> 184/199 (MF `exercicios-conjuntos`/`exercicios-arrays`: label "Respostas" apaga `conjuntos`/`arrays`), sub 82 -> 81, 2 decisoes confiantes viram flag; holdout CG identico; 0 flip positivo. Nome de arquivo e label sao sinais complementares (103 entries tem token so no title; 7 labels sem token de conteudo). A queda do piso CG 10 -> 5 foi entre manifests diferentes, nao efeito do title.
+**Reasoning:** Medido antes de codigo (sessao 6): piso sem-llm da travessia com title := label em memoria, 0 flip em IA/FR/CG; motor puro +vocab nas copias, bloco 186 -> 184/199 (MF `exercicios-conjuntos`/`exercicios-arrays`: label "Respostas" apaga `conjuntos`/`arrays`), 2 decisoes confiantes viram flag; subunidade, unidade e holdout CG identicos (remedido limpo, 0 chamadas Gemini, apos o incidente de 60 resumos); 0 flip positivo. Nome de arquivo e label sao sinais complementares (103 entries tem token so no title; 7 labels sem token de conteudo). A queda do piso CG 10 -> 5 foi entre manifests diferentes, nao efeito do title.
 **Consequences:** C1 so tem trabalho com LLM (travessia final; prompt do voter com label — 90/125 votados tem label != title; FILE_MAP "label · stem" so se a travessia errar). Sem Gemini, a proxima acao e decisao de fila do user.
+
+---
+
+### Subunidade do motor puro: IDF intra-unidade refutado; o teto e vocabulario (glossario manual = curadoria); medicao em copia roda com tripwire Gemini
+
+**Date:** 2026-09-05
+**Status:** Active
+**Decision:** Nao entra IDF intra-unidade no scorer de subtopico. A subunidade do motor puro (82/93) fica como teto de vocabulario: os termos que decidem os 4 notebooks do IA (`perceptron`, `rede neural`, `MLP`, `kNN`) existem so no glossario MANUAL, camada humana que a ablacao remove por desenho. Toda medicao em copia `.ablacao` roda com o tripwire Gemini do `shim_b.py` e o pos-check `check_gemini_hoje.py`.
+**Reasoning:** Simulado em memoria pela rota real (base reproduz 92/93): V1 tokens 0 flip; V2 frases +1/-5 (o token `Agrupamento` e compartilhado com aliases-sessao do topico de introducao e V2 tira o dono legitimo); V2s 0/0. Duas variantes de card ja tinham dado 0/+ 23/- e 0/+ 2/-. Incidente: o reprocess chama Gemini para re-resumir codigo quando o hash da entry muda (`gemini_auto_summarize` na UI); a medicao title := label custou 60 resumos nao autorizados e contaminou a 1a rodada (sub 81, CG 10 mudancas); refeita limpa, bloco 184/199 e 2 confiantes iguais, sub 82 = 82.
+**Consequences:** §OS 32 ERROS e §C1 ITEM 3 (INCIDENTE) no tracker; NAO fazer do handoff ganha as duas refutacoes; decisao aberta do user: desligar `gemini_auto_summarize` na UI enquanto o Gemini estiver bloqueado. Sem LLM, bloco/unidade/subunidade do motor puro nao sobem: o que resta e voto ou pino.

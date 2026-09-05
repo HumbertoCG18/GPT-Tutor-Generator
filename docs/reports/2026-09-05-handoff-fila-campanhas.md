@@ -11,13 +11,19 @@ vai para a CAIXA DE IDEIAS (da para fazer? · quando? · o que resolve?).
 **GEMINI (user, 05/09 manha): credito recarregado, mas NAO USAR ate o user mandar.** Tudo que segue e medicao/codigo sem LLM. O que
 depende de LLM e fica na fila: travessia pos-itens 1-3 da C1 (so modo LLM, 1 rodada por item, ~45-105 chamadas) e re-voto do voter onde um
 pino nao resolver. Custo medido da sessao 04-05/09: travessia 270 chamadas x ~11-13k tokens; voter 23 votos novos; rebuild do CG ~110 chamadas.
+**INCIDENTE 05/09 tarde (sessao 6): 60 chamadas Gemini NAO autorizadas.** O reprocess re-resume codigo por Gemini quando o hash da entry muda
+(config da UI `gemini_auto_summarize=True` + chave; sem interruptor de ambiente); a medicao title := label nas copias disparou 60 resumos (MF 19,
+SO 8, IA 8, ES2 8, CG 17). Originais intactos; referencias com cache intacto. Tripwire em `_harness-2026-09-04/c1-3/shim_b.py` + pos-check
+`check_gemini_hoje.py`. **Regra nova: toda medicao ou reprocess que mude `title`/conteudo de codigo roda com tripwire, ou com
+`gemini_auto_summarize` desligado na UI** (decisao do user, abaixo). Detalhe no tracker §C1 ITEM 3 (INCIDENTE).
 
 ## COMECE POR (proxima sessao) — C1 TRAVESSIA: itens 1-3 FEITOS (3 por medicao); o que falta e LLM (decisao do user: liberar Gemini)
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json`, `.codex/` e `.mex/patterns/*` de outro agente podem aparecer),
    `git log --oneline -3`, HEAD dos 8 tutores iguais aos de "Estado ao comecar", `python scripts/censo_motor_llm.py` (revisar/100 57,8; votos/100
    35,9; FILE_MAP 100% nos 8, SO 38/39 por duplicata), `python -m pytest tests -q` (2324). Nada pushed.
 1. **Item 3 FEITO por medicao (05/09 tarde, §C1 ITEM 3 no tracker): REFUTADO, 0 codigo.** Piso sem-llm com title := label: 0 flip nos 3 cursos;
-   motor puro bloco 186 -> 184/199 (MF, label "Respostas" perde `conjuntos`/`arrays`), sub 82 -> 81, 2 confiantes viram flag; holdout CG igual.
+   motor puro bloco 186 -> 184/199 (MF, label "Respostas" perde `conjuntos`/`arrays`), 2 confiantes viram flag; sub/unidade/holdout iguais (remedido
+   LIMPO apos o incidente Gemini, ver acima).
    Nome do arquivo e label sao COMPLEMENTARES (103 entries tem token so no title); o motor ja soma os dois; o FILE_MAP ja mostra o label (item 1).
 2. **Com Gemini liberado (decisao do user), nesta ordem, 1 rodada cada:** (a) travessia final IA/FR/CG modo LLM (~90 chamadas; alvo IA >= 14/15,
    FR 15/15, CG rerodado; ja medido apos o item 1: IA 14, FR 15, CG 10-11) — fecha a C1 se bater; (b) so se a travessia errar por indice: item 4
@@ -163,6 +169,8 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
 - Imagens-template, logos e duplicatas -> virou campanha propria **C7 IMAGENS** (fila, item 8); dados e refutacoes estao la.
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
+- **Desligar `gemini_auto_summarize` na UI enquanto o Gemini estiver bloqueado** (incidente de 60 chamadas em 05/09 tarde; sem isso qualquer
+  reprocess que mude hash de codigo chama a API). O tripwire cobre so as medicoes com o shim.
 - **Gemini:** credito recarregado 05/09; liberar uso (travessia final da C1 e re-votos) e decisao sua. Ate la, so medicao sem LLM.
 - **Apagar** `.ablacao/CG-rebuild` (365 MB) e `.ablacao/CG-export-backup` (440 MB). **Posicao da C7 IMAGENS** na fila (hoje 8a). IA `prova-1-2024-02`
   ficou com `manual_unit_slug` (unidade pinada); pino de bloco removido.
@@ -173,8 +181,9 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
 
 ## NAO fazer (refutado no gold)
 **Medido e refutado em 05/09 (motor puro, copias):** subunidade de codigo de apoio pelo card — nome do card (0 '+', 23 '-') e irmao principal do card (0 '+', 2 '-')
-(§OS 32 ERROS; o scorer de subtopico nao le o card e nao deve) · `title` do manifest := `moodle_label` (C1 item 3: piso 0; bloco 186 -> 184, sub 82 -> 81, 2 confiantes
-viram flag; label generico como "Respostas" apaga o assunto que o nome do arquivo carrega — stem e label sao complementares, o motor ja soma os dois) ·
+(§OS 32 ERROS; o scorer de subtopico nao le o card e nao deve) · IDF intra-unidade no scorer de subtopico (V1 0/0, V2 +1/-5, V2s 0/0; a raiz dos 4
+do IA e vocabulario do glossario MANUAL, camada humana) · `title` do manifest := `moodle_label` (C1 item 3: piso 0; bloco 186 -> 184, 2 confiantes
+viram flag, sub/unidade iguais; label generico como "Respostas" apaga o assunto que o nome do arquivo carrega — stem e label sao complementares, o motor ja soma os dois) ·
 peso do label do Moodle no desempate x2/x3 (50 -> 47/48 em 58) · janela do card = secao inteira,
 todos os materiais (72 -> 56, 45 flagados) e so janela-1 por card (21 -> 15, 25/27 flagados) · data de postagem como decisor (33/52 = 63%; flagados 4/9)
 · "revisao" fora dos stems genericos (50 -> 50) · H9 sobre decisao confiante que contradiz o card ordenado (2 casos, saldo 0). A janela-1 pelo label do
