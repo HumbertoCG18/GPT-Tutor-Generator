@@ -135,9 +135,8 @@ Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no s
   para dizer se existe). Determinismo = 16 reprocess sequenciais (~10 min); reprocess dos 8 sequencial. Correcoes byte-identicas: cache da
   normalizacao (lru), determinismo com 1 rodada comparada ao original commitado, paralelismo por tutor (`ablacao_rapida.reprocess_parallel`),
   `find_spec` no lugar do import · sim · campanha futura (C4) · determinismo ~10 -> ~1-2 min, reprocess dos 8 ~8 -> ~2 min.
-- **Janela do card = secao inteira do Moodle** (auditoria 05/09): a `moodle_week_label` e da secao e secoes abrangem varias semanas (MF "Verificacao de
-  Programas" blocos 11-15 com 24 materiais; "Provas por Inducao" 04-06; ES2 "Microsservicos" 07-10); hoje o label casa 1 sessao e vira janela-1. Concentra
-  8 dos 17 erros do motor puro. Desenho: janela = blocos entre a semana da secao e a semana da proxima secao; texto decide dentro · sim · C0-2 · motor puro ate +8.
+- Janela do card = secao inteira: REFUTADA 05/09 com numero (todos os materiais da secao 72 -> 56; so janela-1 por card 21 -> 15, 25/27 flagados). A
+  janela-1 pelo label do card e a melhor aposta estrutural; o resto e voto cacheado ou humano. Nao repetir sem sinal novo (ex.: data por material no Moodle).
 - Peso do label do Moodle no desempate: REFUTADO 05/09 (50 -> 47/48 em 58 disamb; quebra k-NN do IA). Nao repetir.
 - Matcher bloco->topico absorvido por aliases genericos da taxonomia (FR: topico "Modelos OSI e TCP/IP" herda os nomes de todas as camadas e pontua 1,0 para
   qualquer aula "camada X"; o topico certo fica em 0,14) · corrigir exige GOLD DE TOPICO por bloco (nao existe) · campanha futura · labels de bloco certos, menos colisao.

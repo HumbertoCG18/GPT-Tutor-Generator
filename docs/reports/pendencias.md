@@ -22,6 +22,12 @@ secao cobre 3 blocos — alavanca ja na caixa, agora com dado: 3 secoes multi-se
 "prova antiga nunca vota"). MF `exerciciosdafny2`: gold 13 CONFIRMADO pelo SARC (sessao "colecoes dafny arrays" = label do Moodle "arrays no Dafny");
 bloco-11 nao tem Dafny. MF `revisao`: gold 03 consistente com a sessao "revisao de logica de predicados". TCC `aula-17-np-completude`: SARC tem
 "np complete" no bloco-19 (motor) e Cook-Levin no 22 (gold); postado 22/05 — ambiguo, gold mantido, decisao do user. ES2 `azure`: imagens (C7).
+**Alavanca 'janela do card = secao inteira' medida e REFUTADA (05/09 ~03h, copias motor puro, MF+ES2 = os 2 cursos com `moodle_week_label`):**
+(a) janela = blocos entre a semana da secao e a da proxima, desempate lexical dentro dela, para TODOS os materiais da secao: 72 -> 56 acertos (-16),
+45 flagados — perde card datado/ordinal/titulo-topico que hoje acertam; e a semana da secao nao delimita ("Provas por Inducao" comeca 30/03 e tem 8
+materiais no bloco-04 de 11/03). (b) so onde o motor decide por card com janela-1 (27 casos com gold), janela = blocos dos irmaos confiantes da
+secao: 21 -> 15 acertos, 25/27 flagados; `.thy` se dividem (`intro`/`provas` -> 06 certo, `arvores`/`listas` ficam no 05). **A janela-1 pelo label do
+card e, com numero, a melhor aposta estrutural (21/27); o resto e voto (cacheado) ou humano.** Sai da caixa.
 **Alavanca medida e REFUTADA:** peso do label do Moodle no desempate lexical (tokens de titulo+label x2/x3): 58 entries disamb com gold, acerto
 50 -> 47 (x2) / 48 (x3) — conserta `dafny2` e `analise-exploratoria` mas quebra 4 exemplos k-NN do IA. Nao entra.
 
