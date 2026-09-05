@@ -49,7 +49,21 @@ def cobertura_indices(repo, entries: list) -> dict:
     repo = Path(repo)
     fm_path = repo / "course" / "FILE_MAP.md"
     fm = fm_path.read_text(encoding="utf-8", errors="replace") if fm_path.is_file() else ""
-    raws = set(re.findall(r"raw:\s*`([^`]+)`", fm))
+    raws = set(re.findall(r"raw:\s*`([^`]+)`", fm))   # FILE_MAP antigo (linha de rastreabilidade)
+    # C1 item 1 (05/09): a rastreabilidade mora em course/FILE_MAP_TRACE.md com a MESMA numeracao, e a
+    # linha do FILE_MAP mostra o moodle_label. Conta como "no FILE_MAP" o raw do TRACE cuja linha existe
+    # no FILE_MAP (o TRACE nao e cortado; o FILE_MAP pode ser) e o titulo/label presente numa linha.
+    fm_nums = {int(m) for m in re.findall(r"^\|\s*(\d+)\s*\|", fm, re.M)}
+    fm_titles = {m.strip().lower() for m in re.findall(r"^\|\s*\d+\s*\|\s*([^|]+?)\s*\|", fm, re.M)}
+    tr_path = repo / "course" / "FILE_MAP_TRACE.md"
+    if tr_path.is_file():
+        for m in re.finditer(r"^\|\s*(\d+)\s*\|.*?raw:\s*`([^`]+)`", tr_path.read_text(encoding="utf-8", errors="replace"), re.M):
+            if int(m.group(1)) in fm_nums:
+                raws.add(m.group(2).strip())
+
+    def _label(e):
+        ml = e.get("moodle_label"); ml = ml.get("text") if isinstance(ml, dict) else ml
+        return str(ml or "").strip().lower()
     outros = ""
     por_tipo = {}
     for k, rel in _INDICES_TIPO.items():
@@ -63,7 +77,7 @@ def cobertura_indices(repo, entries: list) -> dict:
     for e in mats:
         raw = str(e.get("raw_target") or ""); eid = str(e.get("id") or "")
         nome = Path(str(e.get("source_path") or "")).name  # CODE_INDEX cita `arquivo.py`, nao raw nem id
-        no_fm = raw in raws
+        no_fm = (raw in raws) or (_label(e) and _label(e) in fm_titles) or (str(e.get("title") or "").strip().lower() in fm_titles)
         em_tipo = False
         for k, txt in por_tipo.items():
             # raw exato, nome do arquivo, ou id delimitado (nao substring: "c" casaria qualquer texto)
