@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-05 (sessao 5, madrugada; C0 FECHADA 11/11; **C1 item 1 FEITO e registrado nos 8**). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-05 (sessao 5, madrugada; C0 FECHADA 11/11; C1 item 1 FEITO; item 2 MEDIDO, decisao pendente; Gemini sem credito). **Ponto de entrada = handoff `2026-09-04-handoff-fila-campanhas.md`** (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: **C0 MOTOR 11/11 FECHADA em 05/09** (§C0 ITEM 12, 9, 10, 11a, 11b);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
@@ -9,6 +9,25 @@ C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao p
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## C1 ITEM 2 — LABEL DE BLOCO DUPLICADO NO CRONOGRAMA (05/09 madrugada, MEDIDO sem LLM; decisao do user pendente)
+**Medido nos 8 (`c1-2/`):** 6 cursos tem blocos-AULA com o mesmo `primary_topic_label`: 7 labels, 16 blocos, **33 materiais** ancorados neles
+(MF 5 "Verificacao de modelos" x2 · SO 6 "Paginacao" x2 · ES2 17 "Estudo de caso: integracao..." x4 · FR 5 "Modelos OSI e TCP/IP" x2 + "Enderecamento" x2 ·
+TCC "Correcao" x2 e LR "Desenvolvimento" x2 sem materiais). Em 5 das 7 colisoes o `topic_text`/sessoes diferem (qualificador disponivel); em SO/TCC/LR
+o texto e igual e so a data distingue. **O que o tutor le para o "quando"** e o `CRONOGRAMA_DETALHADO.md` (`## <periodo> — <label>`): titulos repetidos
+de conteudo em MF 1, SO 1, ES2 1, FR 2 (alem de feriado/duvidas/trabalho/evento, repeticoes legitimas). Foi isso que fez o flip "osi tcp ip" do item 12
+(bloco-20 em vez de 02) — sumiu no item 1 com o FILE_MAP completo, por sorte do LLM, nao por estrutura.
+**Raiz da colisao do FR (medida):** a taxonomia do plano da ao topico "Modelos OSI e TCP/IP" os aliases de TODAS as camadas ("Camada de Transporte",
+"Camada de Enlace", "Camada Fisica"...; sub-itens do 1.2). Bloco-06 (`topic_text` "camada transporte", sessoes "camada de transporte udp tcp") pontua
+1,0 nesse topico e so 0,14 em "Funcoes e caracteristicas do nivel de transporte" (unidade 3); bloco-22 ("camada fisica sockets") idem; bloco-20 (enlace)
+cai em "Enderecamento" 1,0 x "Protocolos de enlace (Ethernet)" 0,13. O matcher bloco->topico (`_score_entry_against_taxonomy_topic`) e absorvido por
+aliases genericos — corrigir exige gold de topico (nao existe): **caixa**, com esta evidencia.
+**Achado colateral (bug):** `CRONOGRAMA_DETALHADO.md` so e gravado dentro de `if code_entries:` (`pedagogical_regeneration.py`) — **TCC e LR nao tem o
+artefato** (35 e 17 blocos com data, 0 code entries na lista). O "quando" desses cursos so existe na coluna Periodo do FILE_MAP.
+**Propostas (sem codigo ainda; a regua do "quando" exige LLM, creditos esgotados):** (a) qualificar o titulo do bloco no CRONOGRAMA_DETALHADO so em
+colisao, com o `topic_text` humanizado ou a 1a sessao ("Modelos OSI e TCP/IP · camada transporte"), deterministico, 16 blocos em 6 cursos, byte-identico
+no resto; (b) mover a escrita do CRONOGRAMA_DETALHADO para fora do `if code_entries` (TCC e LR ganham o artefato). Gate: suite, sentinela 0, determinismo;
+efeito no "quando" medido na travessia quando houver credito.
 
 ## C1 ITEM 1 — FILE_MAP COMPLETO E MAGRO (05/09 madrugada, FEITO E REGISTRADO NOS 8)
 Gerador `0ff832a` (renderer) · `4db9a6c` (harness da travessia) · `df0e34f` (watchdog do censo) · `6afdcff` (titulo com `|`). **Medido antes

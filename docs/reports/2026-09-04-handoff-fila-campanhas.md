@@ -8,7 +8,7 @@ Unico handoff vivo. Substitui `_archive/2026-09-03b-handoff-fila-campanhas.md` (
 (criterio estrito); item nao feito nao muda de dono sozinho — ou e feito, ou o user o RETIRA por decisao registrada. Novo lote = novo
 handoff, o anterior vai para `_archive/`. Ideia que surge no meio vai para a CAIXA DE IDEIAS (da para fazer? · quando? · o que resolve?).
 
-## COMECE POR (proxima sessao) — C1 TRAVESSIA, item 2: label de bloco duplicado (FR bloco-06/20) + title do html = label no manifest (item 1 FEITO 05/09)
+## COMECE POR (proxima sessao) — C1 TRAVESSIA: decisao do user sobre o item 2 (§C1 ITEM 2: qualificar titulo em colisao + CRONOGRAMA_DETALHADO fora do `if code_entries`); depois item 3 (title = label no manifest). **Gemini sem credito desde 05/09 00:45: so medicao sem LLM ate a recarga.**
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json` e `.codex/` podem aparecer), `git log --oneline -3`, HEAD dos 8
    tutores iguais aos de "Estado ao comecar" (CG agora e `2efddcb`), `python scripts/censo_motor_llm.py` (revisar/100 58,0). Suite 2312 (25 testes de scripts arquivados sairam com eles).
 1. **11a FEITO** (`728c0f1`, §C0 ITEM 11a no tracker): `exclusivo` exige 2+ tokens; 1 token = banda media + flag. Copias: conf-err 3 -> 2,
@@ -125,6 +125,9 @@ refs md alteradas (esperado so os 7 alts), stash CG -39. **Pronto quando:** 0 du
 Formato: **ideia** · da para fazer? · quando (campanha)? · o que resolve no sistema?
 - Conferencia das 37 formulas do CG por LLM (Gemini ve a imagem e compara com a transcricao do Datalab; ~37 chamadas) · sim · C3 · segunda opiniao
   depois da aprovacao humana de 04/09; so lista divergencias, nao corrige.
+- Matcher bloco->topico absorvido por aliases genericos da taxonomia (FR: topico "Modelos OSI e TCP/IP" herda os nomes de todas as camadas e pontua 1,0 para
+  qualquer aula "camada X"; o topico certo fica em 0,14) · corrigir exige GOLD DE TOPICO por bloco (nao existe) · campanha futura · labels de bloco certos, menos colisao.
+- Reprocess registrado commita quando so o `updated_at` do manifest muda (7 commits de ruido em 05/09) · sim: comparar sem `updated_at` antes de commitar · C4 · historico limpo.
 - Watchdog de formula transcrita x texto ao redor (erro do professor vs OCR) · sim, heuristica fraca · C3 · so listaria suspeitas; a
   lista de formulas para review (S6c) ja da o caminho humano.
 - Regua por item so com vocab (ablacao sem vocab em gate de fase) · sim, 1 flag · C0 item 11 · corta 2,5 min por item.
