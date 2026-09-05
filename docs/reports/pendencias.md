@@ -28,6 +28,14 @@ bloco-11 nao tem Dafny. MF `revisao`: gold 03 consistente com a sessao "revisao 
 materiais no bloco-04 de 11/03). (b) so onde o motor decide por card com janela-1 (27 casos com gold), janela = blocos dos irmaos confiantes da
 secao: 21 -> 15 acertos, 25/27 flagados; `.thy` se dividem (`intro`/`provas` -> 06 certo, `arvores`/`listas` ficam no 05). **A janela-1 pelo label do
 card e, com numero, a melhor aposta estrutural (21/27); o resto e voto (cacheado) ou humano.** Sai da caixa.
+**Alavanca 'data de postagem -> ultimo bloco-aula ate a data' medida e REFUTADA (05/09 ~03h30):** so 52 materiais com gold tem data real (a modal e a
+data de montagem do curso: MF 46/66 em 18/02, IA 45/59, SO 33/39; CG sem datas); acerta 33/52 (63%): SO 4/4, IA 7/7, ES2 5/7, TCC 11/19, MF 6/15; nos
+flagados 4/9 (conserta MF `introducao-zip` e `terminacao`, erra 5). Como decisor criaria confiantes errados; como desempate dentro da janela nao
+alcanca os 2 (gold fora da janela). Nao entra.
+**Sinais por erro (medido):** H9 contem o gold em 5 dos 14 erros de AULA (revisao, introducao, exerciciosformalizacao, dafny2, terminacao) mas 2 deles
+sao confiantes (revisao, dafny2) e o card nao sobrepoe confianca (medido 02/09: a tudo +13/-10). Nos 5 `.thy` nenhum sinal estrutural aponta o 06.
+**Fecho da frente 'corrigir os erros do motor puro' (user 05/09):** 4 alavancas medidas, 4 refutadas com numero (label x2/x3; janela = secao, 2 formas;
+data de postagem). O que sobra e voto cacheado (produto: curada 199/199) ou pino humano. Sem sinal novo do Moodle, nao ha o que codar.
 **Alavanca medida e REFUTADA:** peso do label do Moodle no desempate lexical (tokens de titulo+label x2/x3): 58 entries disamb com gold, acerto
 50 -> 47 (x2) / 48 (x3) — conserta `dafny2` e `analise-exploratoria` mas quebra 4 exemplos k-NN do IA. Nao entra.
 
