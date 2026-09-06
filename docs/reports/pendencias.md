@@ -24,7 +24,7 @@ que para em 7.1.2) + 2 por erro de BLOCO (maptextures e pagina de videos no bloc
 bloco-06 sao u04 pelo oraculo (o plano poe transformacoes/instanciamento em u05: gold de subunidade vazio para 5, mapeamento -> sistema-de-coordenadas).
 **Gates (todos com tripwire, 0 chamadas):** motor puro +vocab 186/199 conf-err 1 · 183/191 · 53/57 · sub 82/93 (iguais) · holdout CG 31/35 conf-err 0
 flag 14 (igual) · curada 198/199 conf-err 0 · 191/191 · 55/57 (igual) · sentinela 0/8 · suite 2325 · censo revisar/100 58,3 ('mudou' 13) votos 35,9 ·
-determinismo pos-higiene: DETERMINISMO_PLACEHOLDER.
+determinismo pos-higiene: **8/8, 0 arquivos nao deterministicos** (`c1-3/determinismo_higiene.log`, tripwire; 0 chamadas nos originais e nas copias).
 **Gold de subunidade v2 (proposto, aguarda aprovacao):** CG 93 materiais, **82 pontuaveis** (1 unidade errada + 2 bloco errado + 8 meta), produto acerta
 49/82 com extras (36 primario); MF 66, 58 pontuaveis, 51/58 (36). Revisao: `gold_subunidade_CG_MF_proposta_2026-09-05.md`; atribuicoes do CG por entry:
 `2026-09-05-cg-atribuicoes.md`. Alavancas genericas no motor para a unidade: 5 medidas e refutadas (ver §CG 22/93 abaixo e NAO fazer do handoff).

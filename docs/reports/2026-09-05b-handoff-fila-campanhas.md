@@ -51,7 +51,7 @@ Copias `.ablacao` dos 5 + CG + LR + FR (motor puro pos-higiene). `.ablacao/CG-re
 **186/199 conf-err 1** · unidade 183/191 · cobertura 53/57 · sub 82/93 · holdout CG puro 31/35 conf-err 0 (flagados 14) · censo revisar/100 58,3
 ('mudou' 13 do reprocess do CG; era 57,8) · votos/100 35,9 · FILE_MAP 345/345 · **CG unidade: 22/93 erradas -> 1** (`texturas-v3`) + 2 por erro de bloco
 (texturas no bloco-06, flagadas) · travessia pos-C1-item-1: IA 14/15 · FR 15/15 · CG 10/15 (11 completo) com LLM; sem-llm IA 10 · FR 9 · CG 5.
-Golds propostos (NAO na regua): `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt_MF.csv` 58. Determinismo pos-higiene: ver §CURADORIA DE UNIDADE DO CG.
+Golds propostos (NAO na regua): `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt_MF.csv` 58. Determinismo pos-higiene **8/8, 0 arquivos nao deterministicos**; 0 resumos de codigo de hoje nos originais e nas copias.
 
 ## BALANCO da sessao 6 (05/09 tarde)
 - **C1 item 3 (title := label): REFUTADO por medicao, 0 codigo.** Piso sem-llm 0 flip; motor puro bloco 186 -> 184, 2 confiantes viram flag (label
