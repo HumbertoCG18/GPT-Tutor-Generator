@@ -10,6 +10,18 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## CONTRIBUICAO POR CAMADA (06/09, pedido do user: "os numeros obtidos sem LLM" antes de uma materia 100% nova)
+| camada (copias, tripwire, 0 chamadas) | bloco (199) | unidade (191) | cobertura (57) | subunidade (93) | holdout CG (35) |
+|---|---|---|---|---|---|
+| 100% sem LLM: motor puro SEM vocab compilado (`b_semvocab_puro.log`) | 187 conf-err 1 | 173 (ES2 18/28) | 54 | **26 (28%)** | 31 |
+| + vocab compilado por LLM (cache; ~1 chamada por unidade) | 186 | 183 | 53 | **87** | 31 |
+| + voter com cache (~35% dos materiais votados) = AUTOMATICA v2 | **193 conf-err 0** | **185** | 53 | 87 | **35** |
+| + curadoria (pinos, glossario manual) = produto | 198 | 191 | 55 | (IA 39/39) | 35 |
+**Leitura:** o vocabulario compilado e a camada que sustenta a SUBUNIDADE (26 -> 87) e boa parte da UNIDADE (173 -> 183; ES2 18 -> 28): sem ele o plano
+nao tem os nomes dos algoritmos. O voter sustenta o BLOCO (186 -> 193, conf-err 1 -> 0; holdout 31 -> 35). A curadoria vale 5 blocos (MF 6 pinos) e 6
+unidades (SO 3 + IA 3). Para uma materia nova, o custo de LLM medido no rebuild do CG (93 materiais): vocab ~9 (1/unidade) + resumos de codigo 17
+(1/zip ou arquivo) + voter ~40 (flagados/serie/funil) ~= 66 chamadas; travessia (opcional, medicao) +45.
+
 ## SUBUNIDADE SEM LLM — PROPAGACAO DE VOCABULARIO POR HEADINGS NO MOTOR (05/09 noite, sessao 6, FEITO; gerador `4a239d9`)
 **Pedido do user:** arrumar as subunidades de maneira automatica, sem LLM. **Raiz:** o plano nomeia categorias e o material nomeia algoritmos; o vocab
 compilado por LLM nao emitiu 'perceptron'/'rede neural'/'MLP' para o IA e o remendo era o glossario MANUAL (curadoria).
