@@ -10,6 +10,24 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## CG CONFIANTES ERRADOS — TITULO NOMEIA OUTRO SUBTOPICO (06/09, sessao 6, FEITO; gerador `34d8b19`; user: "vamos medir essa alavanca")
+**Regra (2a passada, `resolver_apply._subtopico_nomeado_no_titulo`):** decisao CONFIANTE da 1a passada cai quando o titulo + label do Moodle do
+material contem uma parte de rotulo (decomposicao) de OUTRO subtopico Y da mesma unidade, Y e unico, e NENHUMA frase (rotulo/aliases) do vencedor
+esta no titulo. Reason `titulo-nomeia-subtopico`. Caso: CG "Exercicios de geometria computacional" ia para `entidades-geometricas` (7,74, por
+'Vetor/Pontos/Retas' no corpo) com o gold `algoritmos-de-geometria-computacional` em 0,96.
+**Simulado (`c1-3/simula_titulo_confiante.py`, rota real: 1a passada + 2a passada REAL + regra por cima; base reproduz o gravado 192/233, 0 divergencias):**
+T1 (parte no titulo, vencedor ausente do titulo) **+2 -0** · T1b (T1 e Y > 0 no corpo) +2 -0 · T2 (T1 so com margem pequena, 2o >= 50% do 1o) 0/0
+— a margem nao separa (7,74 x 0,96). Entrou T1 (mais simples; T1b exigiria re-pontuar). Os outros 5 confiantes errados do CG NAO tem parte de rotulo
+no titulo (exercicios-sobre-curvas x2 "Exercicios sobre curvas" com hermite 4,92 x catmull-rom 4,27 ambos no texto; vis2d x2; basico3d-py) e
+seguem: sao escolha entre dois assuntos presentes, sem sinal generico.
+**Gates (copias, tripwire, 0 chamadas; `titulo_*.log`):** motor puro +vocab 186/199 conf-err 1 · 183/191 · 53/57 · sub 5 cursos 138/151 (117) · holdout CG
+puro 31/35 · CG sub puro 45/82 · automatica 193 conf-err 0 · 185 · 53 · 138/151 · holdout 35/35 · **CG sub automatica 54 -> 56/82 (42 primario)** ·
+**automatica x 233: 192 -> 194 (83,3%)** · suite 2333 · determinismo 8/8, 0 arquivos nao deterministicos · sentinela 0.
+**Reprocess registrado dos 8 (`c1-3/reprocess_8_titulo.py`, tripwire de produto):** subunidade mudou 2 (CG: exercicios-de-geometria-computacional, domina), bloco 0, unidade 0, revisar 0; CG HEAD e598a3c, demais so updated_at. **Produto x 6 golds: 199/233 (85,4%), primario 166; CG 56/82, ES2 27/28, MF 51/58.** Fila 33,0 (115/348) por 100.
+**CG, o que resta (26/82):** 9 gold-vazio (5 pelo alias 'OpenGL' do vocab LLM em `conceitos`: Gemini) · 5 paginas de LOGIN (SYNC) · 3 morfologia (unidade a
+montante) · 5 confiantes entre dois assuntos presentes · curvasparametricas (empate hermite = b-spline, gold e o pai) · 3 vazias sem alias no texto
+(intro, exercicio-com-animacao, aula-gravada). Sem LLM e sem dado novo, o teto do CG na automatica e ~56-58/82.
+
 ## CG SUBUNIDADE 60% — DIAGNOSTICO DOS 33 E DECOMPOSICAO DE ROTULOS NO MOTOR (06/09, sessao 6, FEITO; gerador `ff3eda7`)
 **Pedido do user:** "vamos resolver o problema de subunidades de CG; o que mais me preocupa e o 60%". **Diagnostico pela rota real
 (`c1-3/diag_cg_sub.py CG`, copia na regua automatica, 0 chamadas) — os 33 erros por familia:** (a) **gold vazio, motor preencheu 9**: OpenGL x5 vao

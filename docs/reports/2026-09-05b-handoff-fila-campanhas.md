@@ -23,7 +23,8 @@ medido nos 8 — ou fica registrado como residuo humano com nome. Golds novos so
 Resto sem LLM: SO fork/exec x4 (regra humana do gold contradiz o IA) e ES2 quase-empates x2. Caminhos com LLM: vocab compilado melhor · voto de LLM para
 unidade de bloco sem evidencia lexical (CG bloco-08; 1 chamada por bloco assim).
 **06/09 noite — golds CG/MF aprovados (regua 233) · fila sem a camada llm (57,5 -> 33,0 por 100; `0673150`) · decomposicao de rotulos na 2a passada
-(`ff3eda7`): automatica x 233 187 -> 192 (82,4%), CG 49 -> 54/82, produto 193 -> 197 (84,5%); tracker §CG SUBUNIDADE 60% e §FILA DE REVISAO — CAMADA LLM CORTADA.**
+(`ff3eda7`): automatica x 233 187 -> 192 (82,4%), CG 49 -> 54/82, produto 193 -> 197 (84,5%); tracker §CG SUBUNIDADE 60% e §FILA DE REVISAO — CAMADA LLM CORTADA.
+Regra do titulo (`34d8b19`, +2 -0): automatica x 233 194 (83,3%), CG 56/82; produto 199/233 (85,4%), primario 166; CG 56/82, ES2 27/28, MF 51/58; tracker §CG CONFIANTES ERRADOS. Teto do CG sem LLM/sem dado novo ~56-58/82.**
 **Camada 3 (resumos de codigo) medida (06/09, tracker §NO MAXIMO DUAS CAMADAS):** so a subunidade a sente: 87 -> 71 sem resumo, 79/78 com substituto
 deterministico (mesma rota, produtor diferente); bloco/unidade/cobertura/holdout iguais. Os 8 que so o Gemini acerta sao vocabulario de categoria que
 o codigo nao contem ('classificacao', 'chamadas de sistema', 'microsservicos'). Peso: 85 resumos / 205 votos / 1 vocab por curso nos 8.
