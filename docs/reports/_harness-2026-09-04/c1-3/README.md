@@ -16,3 +16,7 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
   grades em `simula_propaga_grid*.log`; sem gold MF 6 / CG 9 mudancas (`simula_propaga_semgold_weak.log`). Nao entra sem gold CG/MF.
 - `gera_gold_subunidade.py [--write]`: gold de subunidade CG/MF proposto-claude (05/09) -> `docs/reports/subunit_gt_{CG,MF}.csv` +
   revisao em `docs/reports/gold_subunidade_CG_MF_proposta_2026-09-05.md`. Aguarda aprovacao; nao esta em `motor_puro.py`.
+- `simula_unidade_sem_alias.py` / `simula_raiz_unidade.py [sec-only]`: mapa bloco->unidade nos 8 com variantes (sem aliases, radicais, higiene por
+  secao, vizinho ancorado, exclusividade relaxada) — so a higiene sobrevive (neutra); as outras regridem.
+- `reprocess_cg_unidade.py` (tripwire de PRODUTO: voter so com cache, 0 chamadas) -> `reprocess_cg_unidade.log`: 3 reprocess registrados do CG
+  (pinos; sinonimo de morfologia; reverso). `determinismo_tripwire.py` -> `determinismo_higiene.log`. `b_higiene_{puro,holdout}.log`: gates pos-higiene.

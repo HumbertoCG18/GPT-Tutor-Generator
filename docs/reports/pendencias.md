@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-05 tarde (sessao 6; C0 FECHADA 11/11; C1 itens 1-3 FEITOS — o 3 por medicao, REFUTADO; gold pelo oraculo; Gemini com credito mas NAO usar ate o user mandar). **Ponto de entrada = `2026-09-05-handoff-fila-campanhas.md`.** **Ponto de entrada = handoff `2026-09-05-handoff-fila-campanhas.md`** (regra
+last_updated: 2026-09-05 tarde (sessao 6; C0 FECHADA 11/11; C1 itens 1-3 FEITOS — o 3 por medicao, REFUTADO; gold pelo oraculo; Gemini com credito mas NAO usar ate o user mandar). **Ponto de entrada = handoff `2026-09-05b-handoff-fila-campanhas.md`** (sessao 6; o de 05/09 manha esta em `_archive/`) (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: **C0 MOTOR 11/11 FECHADA em 05/09** (§C0 ITEM 12, 9, 10, 11a, 11b);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
@@ -9,6 +9,25 @@ C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao p
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## CURADORIA DE UNIDADE DO CG + HIGIENE DO VOCAB (05/09 tarde, sessao 6, FEITO; CG `2c5e01e`, gerador `e0c433c`)
+**Codigo (`e0c433c`, `load_glossary_curation`):** sinonimo COMPILADO por LLM igual a nome de secao do Moodle (sem numeracao) nao vira alias; manual fica.
+Teste `tests/test_glossary_curation.py::test_sinonimo_compilado_igual_a_secao_do_moodle_nao_entra`. Remove exatamente os 3 do CG; 0 nos outros.
+**Curadoria (CG `.timeline_curation.json`, pelo oraculo):** pinos de unidade bloco-06 -> u04 (SARC 7-8 e secao 6 'Processo de Visualizacao 2D'),
+bloco-08 -> u03 (SARC 12 entre processamento de imagens e exercicios), bloco-15 -> u07 (SARC 21 entre curvas e visualizacao 3D). Glossario manual do CG
+so com `_nota`: o sinonimo 'Morfologia Matematica' em '3.5 Segmentacao' (`ee4c276`) rotulou o bloco-08 como Segmentacao e moveu 4 materiais de
+segmentacao do bloco-07 (aula certa, 01-03/09) para o 08 — REVERTIDO em `2c5e01e` (lei nova: sinonimo manual nunca renomeia bloco).
+**Reprocess registrado (`c1-3/reprocess_cg_unidade.py`, tripwire de produto: voter so com cache):** unidade mudou 9 (morfologia x3 -> u03, modelagem x6 ->
+u07), bloco 0, flagadas 15 = 15, votos 42 = 42, 0 resumo de codigo; subunidade mudou 10 (csg -> geometria-solida-construtiva-csg, exercicio de
+modelagem -> tecnicas-de-modelagem-3d ...). **CG unidade: 22/93 erradas -> 1** (`texturas-v3`: sem bloco, u01 por conteudo; u08 sem termo no GLOSSARY.md,
+que para em 7.1.2) + 2 por erro de BLOCO (maptextures e pagina de videos no bloco-06 pela colisao 'mapeamento'; flagadas, voter decide). Os 10 do
+bloco-06 sao u04 pelo oraculo (o plano poe transformacoes/instanciamento em u05: gold de subunidade vazio para 5, mapeamento -> sistema-de-coordenadas).
+**Gates (todos com tripwire, 0 chamadas):** motor puro +vocab 186/199 conf-err 1 · 183/191 · 53/57 · sub 82/93 (iguais) · holdout CG 31/35 conf-err 0
+flag 14 (igual) · curada 198/199 conf-err 0 · 191/191 · 55/57 (igual) · sentinela 0/8 · suite 2325 · censo revisar/100 58,3 ('mudou' 13) votos 35,9 ·
+determinismo pos-higiene: DETERMINISMO_PLACEHOLDER.
+**Gold de subunidade v2 (proposto, aguarda aprovacao):** CG 93 materiais, **82 pontuaveis** (1 unidade errada + 2 bloco errado + 8 meta), produto acerta
+49/82 com extras (36 primario); MF 66, 58 pontuaveis, 51/58 (36). Revisao: `gold_subunidade_CG_MF_proposta_2026-09-05.md`; atribuicoes do CG por entry:
+`2026-09-05-cg-atribuicoes.md`. Alavancas genericas no motor para a unidade: 5 medidas e refutadas (ver §CG 22/93 abaixo e NAO fazer do handoff).
 
 ## GOLD DE SUBUNIDADE CG E MF — PROPOSTO-CLAUDE (05/09 tarde, sessao 6; **AGUARDA APROVACAO DO USER**) + BUG: ZIPS DO MF COLIDEM
 **Arquivos:** `docs/reports/subunit_gt_CG.csv` (93 materiais, **63 pontuaveis**, 22 com UNIDADE computada errada -> `scorable=no` com a unidade

@@ -430,3 +430,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Decision:** A 2a passada de subunidade (tokens exclusivos dos headings dos confiantes viram aliases; teto de df 25%; so onde a 1a passada nao decidiu) NAO entra no motor agora, apesar de 82 -> 87/93 no gold e curada intacta. Entra so depois de gold de subunidade do CG e do MF (proposto-claude, aprovado pelo user) e saldo medido nos 8.
 **Reasoning:** No gold o ganho e real e estavel em conf >= 0,7 (min 2-3 entries), mas nos cursos sem gold a mesma regra muda MF 6 e CG 9 subunidades, varias visivelmente erradas (self-training amplifica o boilerplate de headings do OpenGL); sem o teto de df, (0,9;2) dava -20. "Saldo medido nos 8" e lei; 4 cursos sem regua nao contam como saldo.
 **Consequences:** Caixa do handoff + decisao aberta do user (gold CG/MF, C5). Ate la, subunidade do motor puro = 82/93 por vocabulario. `gemini_auto_summarize` desligado na UI pelo user em 05/09 tarde.
+
+---
+
+### CG: unidade pela camada humana (pinos de bloco pelo oraculo) + higiene generica do vocab compilado; sinonimo manual nunca renomeia bloco
+
+**Date:** 2026-09-05
+**Status:** Active
+**Decision:** As 22/93 unidades erradas do CG se resolvem com (a) higiene generica no loader do glossario — sinonimo compilado por LLM igual a nome de secao do Moodle nao vira alias (`e0c433c`) — e (b) pinos de unidade nos blocos 06 (u04), 08 (u03) e 15 (u07), derivados do SARC/Moodle, o mesmo mecanismo dos outros 7 tutores. Nenhuma regra nova no mapa bloco->unidade. Sinonimo manual e vocabulario de SUBtopico e nunca pode renomear um bloco.
+**Reasoning:** Raiz medida: o compilador de vocabulario pendurou nomes de secao ('Morfologia Matematica', 'Manipulacao de Imagens', 'Mapeamento de Texturas') nos topicos genericos de u01 e o mapa, o scorer e o rotulo do bloco-08 seguiam a secao errada; a ordem do professor (u04 -> u07 -> u03 -> u07 -> u06) inverte o plano e a DP monotonica so aceita um desvio. Cinco alavancas genericas medidas nos 8 e refutadas: sem aliases 183 -> 136/191; radicais saldo 0; vizinho ancorado 183 -> 163; exclusividade relaxada 179; higiene sozinha neutra. O sinonimo 'Morfologia' em '3.5 Segmentacao' rotulou o bloco-08 e moveu 4 materiais do bloco certo: revertido.
+**Consequences:** CG `2c5e01e`: unidade 22 -> 1 errada (+2 por erro de bloco flagado); todas as reguas iguais (motor puro 186/199, holdout 31/35, curada 198/199); 0 chamadas Gemini (tripwire de produto). Dividas de dados novas (C5): GLOSSARY.md do CG para em 7.1.2 (u08 sem termo); zips do MF colidem nomes; gold de unidade do CG.

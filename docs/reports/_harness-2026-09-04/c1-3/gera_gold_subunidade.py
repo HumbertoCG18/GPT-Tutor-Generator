@@ -192,6 +192,38 @@ MF = {
 }
 
 
+# v2 (05/09 tarde, apos curadoria de unidade do CG): RULING pelo oraculo — bloco-06 e u04 (nome do SARC/Moodle); u04 nao tem subtopico de
+# transformacoes/instanciamento (o plano os poe em u05) -> gold vazio; mapeamento window/viewport -> sistema-de-coordenadas-cartesianas.
+# Blocos 08 (u03) e 15 (u07) pinados: entries voltam a ser pontuaveis. Texturas: 2 no bloco-06 por erro de BLOCO (colisao 'mapeamento') e
+# texturas-v3 por conteudo (u08 sem termo no GLOSSARY.md, sem sinonimo manual possivel) ficam fora com a causa na nota.
+_U04_VAZIO = ("", "", "conteudo", "yes", "u04 pelo oraculo (SARC/Moodle 'Processo de Visualizacao 2D'); o plano poe transformacoes/instanciamento em u05: u04 nao tem subtopico -> vazio")
+_U04_MAP = ("sistema-de-coordenadas-cartesianas", "", "conteudo", "yes", "u04 pelo oraculo; mapeamento window/viewport = mudanca de sistema de coordenadas (plano: u05/mapeamento-window-e-viewport)")
+CG.update({
+    "morfologiamatematicapptx": ("segmentacao", "filtros", "conteudo", "yes", "u03 por pino (oraculo: sessao 12 entre processamento de imagens e exercicios); plano sem topico de morfologia -> segmentacao (dilatacao/erosao sobre imagens binarias)"),
+    "aula-gravada-975b85": ("segmentacao", "filtros", "titulo", "yes", "u03 por pino; aula gravada de morfologia"),
+    "pagina-com-videos-sobre-morfologia-matematica-06265a": ("segmentacao", "filtros", "titulo", "yes", "u03 por pino; conteudo capturado = login do Moodle"),
+    "csg": ("geometria-solida-construtiva-csg", "tecnicas-de-modelagem-3d", "conteudo", "yes", "u07 por pino; CSG com poligonos"),
+    "modelagem3d": ("formas-de-representacao", "tecnicas-de-modelagem-3d;representacao-aramada;superficies-limitantes", "conteudo", "yes", "u07 por pino; pagina 'Modelagem de Solidos': formas de armazenamento de solidos"),
+    "basico3d-cpp": ("tecnicas-de-modelagem-3d", "varredura;bezier-e-algoritmo-de-casteljau", "conteudo", "yes", "u07 por pino; card 14 'Exercicios sobre Modelagem'; resumo: extrusao de poligonos, Bezier"),
+    "basico3d-py-zip": ("tecnicas-de-modelagem-3d", "varredura", "conteudo", "yes", "u07 por pino; modelagem por extrusao"),
+    "exerciciodemodelagem": ("varredura", "tecnicas-de-modelagem-3d", "conteudo", "yes", "u07 por pino; CriaObjetoPorExtrusao (extrusao = varredura)"),
+    "paginas-com-videos-sobre-modelagem-geometrica-f2614a": ("tecnicas-de-modelagem-3d", "formas-de-representacao", "titulo", "yes", "u07 por pino; conteudo capturado = login do Moodle"),
+    "animacao-v2": _U04_VAZIO,
+    "instanciamento": _U04_VAZIO,
+    "pagina-com-videos-sobre-instanciamento": _U04_VAZIO,
+    "transformacoesgeometricas": _U04_VAZIO,
+    "transformacoesgl": _U04_VAZIO,
+    "mapeamento": _U04_MAP,
+    "exercicios-teoricos-sobre-processo-de-visualizacao-2d": _U04_MAP,
+    "exercicios-teoricos-sobre-processo-de-visualizacao-2d-html": _U04_MAP,
+    "pagina-com-videos-sobre-mapeamento-9f410e": _U04_MAP,
+    "video-sobre-mapeamento-em-opengl-1dad3c": _U04_MAP,
+    "maptextures": ("", "", "conteudo", NO, "BLOCO ERRADO: bloco-06 por colisao do token 'mapeamento' com a sessao 'processo de visualizacao 2d mapeamento' (flagado; voter decide); unidade herdada u04; verdade u08/mapeamento-de-textura, secao 17 sem sessao no SARC"),
+    "pagina-com-videos-sobre-mapeamento-de-texturas-07bbe3": ("", "", "titulo", NO, "BLOCO ERRADO (idem maptextures): verdade u08/mapeamento-de-textura"),
+    "texturas-v3": ("", "", "conteudo", NO, "UNIDADE ERRADA: computada u01 (card 2 OpenGL, sem bloco); conteudo texturas+iluminacao = u08; GLOSSARY.md do CG para em 7.1.2 -> u08 sem termo, sem sinonimo manual possivel (divida de dados)"),
+})
+
+
 def build(sig, repo, dec, write):
     root = GH / repo
     ents = json.loads((root / "manifest.json").read_text(encoding="utf-8"))["entries"]
