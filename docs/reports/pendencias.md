@@ -20,7 +20,13 @@ secao nomeia exatamente o subtopico do gold em 94 materiais: motor certo 86, err
 S1 (1a passada nao confiante: secao que nomeia exatamente UM subtopico decide, sobrepondo a 2a passada) **+5 -3** (perde SO threads x1 e IA k-nn x2:
 a secao "Threads"/"Semana 3 ..." casa aliases errados) · **S1b (so se DEPOIS da 2a passada a subunidade ainda esta vazia ou ambigua) +3 -0** (MF
 exemplos-zip, CG intro, CG curvasparametricas; 197/233) · S2 (tambem sobre decisao confiante) **+5 -13: REFUTADA** (a secao nomeia o pai quando o gold e o
-filho: z-buffer, k-nn, escalonamento). Candidata a entrar: S1b (ultimo recurso; mesma rota da 2a passada; reason `secao-nomeia-subtopico`).
+filho: z-buffer, k-nn, escalonamento). **ENTROU (`4d649c4`, `resolver_apply._secao_nomeia_subtopico` no fim da 2a passada; reason `secao-nomeia-subtopico`; a 2a passada perdeu o
+retorno antecipado `if not extra` para a regra do titulo e a da secao valerem sempre; teste `test_secao_do_moodle_decide_so_onde_nada_decidiu`).
+**Gates (copias, tripwire, 0 chamadas; `secao_*.log`):** motor puro +vocab 186/199 · 183/191 · 53/57 · sub 5 cursos 138/151 (117) · holdout CG puro 31/35 ·
+CG sub puro (sem vocab) 45 -> 47/82 · automatica 193 · 185 · 53 · 138/151 · holdout 35/35 · **CG sub automatica 56 -> 58/82 (45 primario)** ·
+**automatica x 233: 194 -> 196 (84,1%)** · suite 2334 · determinismo 8/8, 0 arquivos nao deterministicos · sentinela 0. (O +1 do MF `exemplos-zip` da simulacao nao se
+reproduziu no motor: o filtro de genericos do motor e o do curso, nao a lista da simulacao.)
+**Reprocess registrado dos 8 (`c1-3/reprocess_8_secao.py`):** subunidade mudou 7 (SO 1: laminas-sockets -> comunicacao-e-sincronizacao; IA 3: outros-operadores, programa-exemplo-ag, lista-de-exercicios-i -> algoritmos-de-busca-com-informacao; CG 3: intro -> origens, curvasparametricas -> representacao-de-curvas-parametricas, slab -> algoritmos-de-geometria-computacional), bloco 0, unidade 0, fila 115 -> 110; HEADs SO db71737, IA d88cc53, CG 73ab72e, demais so updated_at. **Produto x 6 golds: 201/233 (86,3%), primario 169; CG 58/82, SO 15/15, IA 39/39, ES2 27/28, TCC 11/11, MF 51/58.** Fila 31,6 (110/348) por 100.
 
 ## O MOTOR SEM GOLD — REGUA PELA POSICAO DO PROFESSOR NO MOODLE (06/09, sessao 6; pergunta do user "o motor se sustenta sem os golds?")
 **Regua sem gold (`c1-3/coerencia_moodle.py`, read-only, 0 chamadas):** para cada material, a POSICAO DO PROFESSOR no Moodle (label datado, data no
