@@ -40,6 +40,9 @@ class MotorContext:
     card_block_map: Dict[str, dict]
     lessons_index: Dict[str, str]  # {date_iso: topico} (by_date do .lessons_index.json)
     course_name: str = ""
+    # unidades do plano [{slug, title}] (2026-09-06): a secao do Moodle que NOMEIA a unidade ('U2 - ...' ou o
+    # titulo da unidade) restringe a janela de bloco aos blocos dessa unidade (window_provider.narrow_window_by_unit)
+    units: List[dict] = field(default_factory=list)
     _by_ref: Dict[str, dict] = field(default_factory=dict, repr=False)
     _global_df_cache: Optional[dict] = field(default=None, repr=False, compare=False)
     _modal_years_cache: Optional[list] = field(default=None, repr=False, compare=False)
@@ -61,6 +64,7 @@ class MotorContext:
         card_block_map: Dict[str, dict],
         lessons_index: Dict[str, str],
         course_name: str = "",
+        units: Optional[List[dict]] = None,
     ) -> "MotorContext":
         ordered = sorted(blocks or [], key=lambda b: str(b.get("period_start") or ""))
         by_ref: Dict[str, dict] = {}
@@ -73,6 +77,7 @@ class MotorContext:
             card_block_map=dict(card_block_map or {}),
             lessons_index=dict(lessons_index or {}),
             course_name=str(course_name or ""),
+            units=list(units or []),
             _by_ref=by_ref,
         )
 

@@ -30,7 +30,10 @@ def build_motor_context(repo: Path, course_name: str = "") -> MotorContext:
     blocks = tl if isinstance(tl, list) else (tl.get("blocks") or [])
     cbm = load_repo_artifact(repo, "course/.card_block_map.json")
     lessons = (load_repo_artifact(repo, "course/.lessons_index.json") or {}).get("by_date", {})
+    tax = load_repo_artifact(repo, "course/.content_taxonomy.json") or {}
+    units = [{"slug": str(u.get("slug") or ""), "title": str(u.get("title") or "")}
+             for u in ((tax.get("units") or []) if isinstance(tax, dict) else []) if isinstance(u, dict)]
     return MotorContext.from_artifacts(
         blocks=blocks, card_block_map=cbm, lessons_index=lessons,
-        course_name=course_name,
+        course_name=course_name, units=units,
     )

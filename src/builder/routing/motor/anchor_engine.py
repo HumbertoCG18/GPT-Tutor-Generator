@@ -10,7 +10,7 @@ from typing import Optional, Set
 
 from src.builder.timeline.kinds import NEVER_HOSTS_MATERIAL_KINDS
 from src.builder.routing.motor.contracts import AnchorDecision, MotorContext, LlmVoterProtocol
-from src.builder.routing.motor.window_provider import resolve_window, drop_never_hosts, provider_card
+from src.builder.routing.motor.window_provider import resolve_window, drop_never_hosts, provider_card, narrow_window_by_unit
 from src.builder.routing.motor.disambiguator import disambiguate
 
 # Categorias que NUNCA entram no disambiguator (spec §3 TIER 2 + marco0).
@@ -227,6 +227,7 @@ class AnchorEngine:
         de 1 bloco a estrutura (card/data) decide; com mais, so o voto sobre a
         janela, nunca o token."""
         window, provider = resolve_window(entry, ctx)
+        window = narrow_window_by_unit(entry, window, ctx)   # 06/09: secao que nomeia a unidade limita a janela
         prep_ok = lexical or is_exam_prep_material(entry)
         if not window:
             # sem janela -> preparacao de prova (deterministico; nunca para a

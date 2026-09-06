@@ -51,9 +51,12 @@ def test_bloco_flagado_e_duvida():
     assert revisar_de(_mat(temporal_block_flag=True, temporal_block_method="disamb")) == "duvida"
 
 
-def test_llm_funil_e_duvida():
-    # resolve_funnel grava flag=True de proposito (50% e honesto).
-    assert revisar_de(_mat(temporal_block_flag=True, temporal_block_method="llm-funil")) == "duvida"
+def test_llm_funil_com_voto_e_janela1_flagada_nao_sao_pendencia():
+    # 06/09 (decisao do user): funil com voto 1/1 (+5/5) e janela-1 flagada 14/14 certos no gold de bloco dos 8;
+    # eram 37 avisos por 0 erros. A flag fica gravada (informacao), mas nao entra na fila.
+    assert revisar_de(_mat(temporal_block_flag=True, temporal_block_method="llm-funil")) == "ok"
+    assert revisar_de(_mat(temporal_block_flag=True, temporal_block_method="janela-1")) == "ok"
+    assert revisar_de(_mat(temporal_block_flag=True, temporal_block_method="disamb")) == "duvida"
 
 
 def test_llm_na_janela_nao_e_pendencia():
@@ -146,9 +149,9 @@ def test_file_entry_omite_revisar_vazio():
 
 def test_motivos_lista_cada_gatilho_disparado():
     from src.builder.routing.revisar import motivos_de
-    e = _mat(temporal_block_flag=True, temporal_block_method="llm-funil",
+    e = _mat(temporal_block_flag=True, temporal_block_method="disamb",
              unit_block_conflict={"unit": "u1"}, subunit_match_reasons=["empate-exato 2x score=0.30"])
-    assert motivos_de(e) == ["flag:llm-funil", "conflito", "sub-empate"]
+    assert motivos_de(e) == ["flag:disamb", "conflito", "sub-empate"]
 
 
 def test_motivos_vazio_no_material_limpo():

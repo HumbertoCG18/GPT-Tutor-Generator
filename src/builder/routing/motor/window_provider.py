@@ -363,3 +363,55 @@ def extract_date_in_name(entry: dict):
         if 1 <= dd <= 31 and 1 <= mm <= 12:
             return dd, mm
     return None
+
+
+_UNIT_TITLE_PREFIX_RE = re.compile(r"^\s*unidade(\s+de\s+aprendizagem)?\s*\d+\s*[\u2014\-\u2013:]?\s*", re.I)
+_SECTION_NUM_PREFIX_RE = re.compile(r"^\s*\d+(\.\d+)*\s*[-.:]?\s*")
+_UNIT_NUM_SLUG_RE = re.compile(r"^unidade(?:-de-aprendizagem)?-0*(\d{1,2})(?:$|[^0-9])")
+
+
+def _unit_number(slug: str):
+    m = _UNIT_NUM_SLUG_RE.match(str(slug or ""))
+    return int(m.group(1)) if m else None
+
+
+def unit_named_by_section(entry: dict, ctx: MotorContext) -> str:
+    """Slug da unidade que a SECAO do Moodle nomeia: 'U2 - ...' (numero explicito, file_map.explicit_unit_number)
+    ou secao igual ao/contida no titulo da unidade do plano (frase inteira). "" se nenhuma ou mais de uma."""
+    from src.builder.routing.file_map import explicit_unit_number
+    from src.builder.text.normalize import normalize_match_text
+    units = list(getattr(ctx, "units", None) or [])
+    if not units:
+        return ""
+    numero = explicit_unit_number(entry)
+    if numero is not None:
+        alvo = [str(x.get("slug") or "") for x in units if _unit_number(str(x.get("slug") or "")) == numero]
+        return alvo[0] if len(alvo) == 1 else ""
+    sec = normalize_match_text(_SECTION_NUM_PREFIX_RE.sub("", str(entry.get("source_section") or "")))
+    if not sec:
+        return ""
+    hits = []
+    for x in units:
+        core = normalize_match_text(_UNIT_TITLE_PREFIX_RE.sub("", str(x.get("title") or "")))
+        if core and (re.search(r"(^|\s)" + re.escape(core) + r"(\s|$)", sec) or re.search(r"(^|\s)" + re.escape(sec) + r"(\s|$)", core)):
+            hits.append(str(x.get("slug") or ""))
+    return hits[0] if len(hits) == 1 else ""
+
+
+def narrow_window_by_unit(entry: dict, window: List[str], ctx: MotorContext) -> List[str]:
+    """Janela ∩ blocos da unidade que a secao nomeia (2026-09-06). Causa raiz medida no FR do zero: o provider
+    'topic' monta a janela pelos tokens do nome da secao ('camada', 'aplicacao'), que aparecem em sessoes do SARC de
+    setembro a novembro -> 6 blocos em 4 unidades, rotulos repetidos, desempate flagado (8 dos 10 avisos de bloco).
+    O motor ja sabia a unidade (U2 = blocos 03 e 05) e nao a usava na janela. So encolhe quando a janela tem blocos
+    da unidade E de outras; nunca esvazia. Alcance medido: FR do zero 8 janelas (as 8 flagadas), CG 23, SO 1, FR 10;
+    onde ha gold de bloco, o bloco do gold estava dentro da janela encolhida em 16/16."""
+    if len(window) < 2:
+        return window
+    unit = unit_named_by_section(entry, ctx)
+    if not unit:
+        return window
+    inside = [r for r in window if str((ctx.block_by_ref(r) or {}).get("unit_slug") or "") == unit]
+    if inside and len(inside) < len(window):
+        return inside
+    return window
+

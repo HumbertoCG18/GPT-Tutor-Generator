@@ -120,7 +120,8 @@ def _mat(eid, block, flag=False, unit="unidade-01", sub="", method="janela-1", *
 
 def test_revisar_mudou_only_for_confident_decisions_that_moved():
     assert revisar_de(_mat("a", "u-01", sync_changed="bloco: bloco-02 -> bloco-03 (sync 2026-09-03)")) == MUDOU
-    assert revisar_de(_mat("b", "u-01", flag=True, sync_changed="bloco: bloco-02 -> bloco-03 (sync 2026-09-03)")) == DUVIDA
+    # flag de DESEMPATE e duvida (janela-1 flagada deixou de ser em 06/09)
+    assert revisar_de(_mat("b", "u-01", flag=True, method="disamb", sync_changed="bloco: bloco-02 -> bloco-03 (sync 2026-09-03)")) == DUVIDA
     assert revisar_de(_mat("c", "u-01")) == OK
 
 
@@ -139,7 +140,7 @@ def test_decision_diff_is_empty_when_nothing_changed():
 
 
 def test_mark_sync_changes_sets_and_clears_the_flag_and_recomputes_revisar():
-    ents = [_mat("a", "u-05", sync_changed="velho"), _mat("b", "u-03", sync_changed="velho"), _mat("c", "u-01", flag=True)]
+    ents = [_mat("a", "u-05", sync_changed="velho"), _mat("b", "u-03", sync_changed="velho"), _mat("c", "u-01", flag=True, method="disamb")]
     moved = [{"id": "a", "campo": "bloco", "antes": "u-02", "depois": "u-05"}]
     mark_sync_changes(ents, moved, when="2026-09-03")
     assert ents[0]["sync_changed"] == "bloco: u-02 -> u-05 (sync 2026-09-03)" and ents[0]["revisar"] == MUDOU
