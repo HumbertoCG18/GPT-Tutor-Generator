@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-05 tarde (sessao 6; C0 FECHADA 11/11; C1 itens 1-3 FEITOS — o 3 por medicao, REFUTADO; gold pelo oraculo; Gemini com credito mas NAO usar ate o user mandar). **Ponto de entrada = handoff `2026-09-05b-handoff-fila-campanhas.md`** (sessao 6; o de 05/09 manha esta em `_archive/`) (regra
+last_updated: 2026-09-05 tarde (sessao 6; REGUA AUTOMATICA = oficial: bloco 192/199, unidade 185/191, holdout CG 35/35, sub 82/93; C1 itens 1-3 FEITOS; gold pelo oraculo; Gemini com credito mas NAO usar ate o user mandar). **Ponto de entrada = handoff `2026-09-05b-handoff-fila-campanhas.md`** (sessao 6; o de 05/09 manha esta em `_archive/`) (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: **C0 MOTOR 11/11 FECHADA em 05/09** (§C0 ITEM 12, 9, 10, 11a, 11b);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
@@ -9,6 +9,27 @@ C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao p
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## REGUA AUTOMATICA (05/09 tarde, sessao 6; decisao do user: "gold so mede; nao criar curadoria por curso") — MEDIDA, VIRA A OFICIAL
+**Definicao:** motor + voter com CACHE de votos, SEM pinos (bloco/unidade/sub), SEM glossario manual, COM vocab compilado por LLM; copias `.ablacao`;
+tripwire (cache miss = voto pulado e contado; 0 pulados nesta rodada; 0 chamadas). Ferramenta: `_harness-2026-09-04/c1-3/motor_auto.py {puro5|holdout}`.
+| regua | motor puro | **AUTOMATICA** | curada (produto) |
+|---|---|---|---|
+| bloco (199) | 186 conf-err 1 | **192 = 96,5%, conf-err 0** | 198 |
+| unidade (191) | 183 | **185 = 96,9%** | 191 |
+| cobertura (57) | 53 | 53 | 55 |
+| subunidade (93) | 82 | **82 = 88%** | (sem regua curada; IA 39/39 com glossario manual) |
+| holdout CG (35) | 31 | **35 = 100%** | 35 |
+**Leitura:** o pipeline automatico ja passa de 95% em bloco, unidade e no curso nao usado para afinar; o que falta para a curada e o territorio dos
+pinos (MF 6 de bloco: arvores/listas e cia.; SO 3 + IA 3 de unidade) — o voter resolve os flagados de bloco (holdout 31 -> 35) mas NAO existe voto de
+UNIDADE para bloco sem evidencia lexical. **Onde esta abaixo de 95%: subunidade (88%) = vocabulario** (o plano nomeia categorias, o material nomeia
+algoritmos; o vocab compilado por LLM nao emitiu 'perceptron'/'rede neural'/'MLP' para o IA; o glossario manual foi o remendo humano).
+**Regras genericas x pinos do CG (medido nos 8, `c1-3/simula_radical_fallback.py` + combo em memoria):** bloco-06 (u04) ja nao precisa de pino
+(a higiene resolveu; base = u04) · bloco-15 (u07) e coberto por RADICAL SO COMO FALLBACK (1 bloco muda nos 8, 0 colateral, unidade 183 = 183) ·
+bloco-08 (morfologia -> u03) NAO tem sinal lexical generico possivel: o plano nao menciona morfologia e o unico token que casa e 'matematica' no
+label do topico u06 'A matematica das projecoes'; higiene por titulo/secao no mapa, heranca por afinidade zero (Z0) e exclusividade relaxada (XR)
+nao o alcancam (0 efeito nos 8). Caminho generico para esse residuo = LLM decidindo a UNIDADE de bloco sem evidencia lexical (1 chamada por bloco
+assim; CG tem 1) — precisa de Gemini. Ate la o pino do bloco-08 e andaime, nao arquitetura.
 
 ## CURADORIA DE UNIDADE DO CG + HIGIENE DO VOCAB (05/09 tarde, sessao 6, FEITO; CG `2c5e01e`, gerador `e0c433c`)
 **Codigo (`e0c433c`, `load_glossary_curation`):** sinonimo COMPILADO por LLM igual a nome de secao do Moodle (sem numeracao) nao vira alias; manual fica.

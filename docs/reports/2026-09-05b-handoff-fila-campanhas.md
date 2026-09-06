@@ -14,6 +14,14 @@ tripwire** (`_harness-2026-09-04/c1-3/shim_b.py` para copias — client nulo; `r
 voter so com cache, construtor do client explode) **e termina com `check_gemini_hoje.py` = 0.** Custo medido em 04-05/09: travessia 270 chamadas
 x ~11-13k tokens; voter 23 votos; rebuild do CG ~110 chamadas.
 
+## REGUA OFICIAL A PARTIR DE AGORA: a AUTOMATICA (user, 05/09 tarde: "gold so mede; nao criar curadoria por curso")
+Motor + voter com cache, sem pino, sem glossario manual, com vocab LLM (`_harness-2026-09-04/c1-3/motor_auto.py`): **bloco 192/199 = 96,5% conf-err 0 ·
+unidade 185/191 = 96,9% · cobertura 53/57 · subunidade 82/93 = 88% · holdout CG 35/35**. Motor puro (sem voter) segue como regua de diagnostico; curada
+(com pinos) e o produto de hoje, nao a meta. Pinos e glossario manual sao ANDAIME: cada um deve ter regra generica ou voto de LLM que o substitua,
+medido nos 8 — ou fica registrado como residuo humano com nome. Golds novos so para MEDIR (CG/MF subunidade: aprovar uma vez, nunca curar por curso).
+**Abaixo de 95% so a subunidade (vocabulario). Caminhos genericos:** vocab compilado melhor (LLM; hoje nao emite 'perceptron'/'MLP' para o IA) ·
+propagacao por headings (+5/-0 no gold, valida com o gold CG/MF) · voto de LLM para unidade de bloco sem evidencia lexical (CG bloco-08; 1 chamada por bloco assim).
+
 ## COMECE POR (proxima sessao) — tres decisoes do user antes de qualquer codigo
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json`, `.codex/` e `.mex/patterns/*` de outro agente), `git log --oneline -3`,
    HEAD dos 8 tutores = "Estado ao terminar", `python scripts/censo_motor_llm.py` (revisar/100 58,3 com 'mudou' 13; votos/100 35,9; FILE_MAP 100%
@@ -51,7 +59,7 @@ Copias `.ablacao` dos 5 + CG + LR + FR (motor puro pos-higiene). `.ablacao/CG-re
 **186/199 conf-err 1** · unidade 183/191 · cobertura 53/57 · sub 82/93 · holdout CG puro 31/35 conf-err 0 (flagados 14) · censo revisar/100 58,3
 ('mudou' 13 do reprocess do CG; era 57,8) · votos/100 35,9 · FILE_MAP 345/345 · **CG unidade: 22/93 erradas -> 1** (`texturas-v3`) + 2 por erro de bloco
 (texturas no bloco-06, flagadas) · travessia pos-C1-item-1: IA 14/15 · FR 15/15 · CG 10/15 (11 completo) com LLM; sem-llm IA 10 · FR 9 · CG 5.
-Golds propostos (NAO na regua): `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt_MF.csv` 58. Determinismo pos-higiene **8/8, 0 arquivos nao deterministicos**; 0 resumos de codigo de hoje nos originais e nas copias.
+Golds propostos (NAO na regua): `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt_MF.csv` 58. **Regua automatica: bloco 192/199 · unidade 185/191 · sub 82/93 · holdout 35/35.** Determinismo pos-higiene **8/8, 0 arquivos nao deterministicos**; 0 resumos de codigo de hoje nos originais e nas copias.
 
 ## BALANCO da sessao 6 (05/09 tarde)
 - **C1 item 3 (title := label): REFUTADO por medicao, 0 codigo.** Piso sem-llm 0 flip; motor puro bloco 186 -> 184, 2 confiantes viram flag (label
@@ -87,6 +95,7 @@ normalizacao, `find_spec`; reprocess nao commitar so por `updated_at`) · **C5 d
 Formato: **ideia** · da para fazer? · quando? · o que resolve?
 - **Propagacao de vocabulario por headings para a subunidade (sem LLM)** · +5/-0 no gold de 93 (conf >= 0,7, token em >= 2 confiantes, df <= 25%, so nos
   nao-confiantes), curada intacta; MF 6 / CG 9 mudancas sem gold com erros a olho · sim, ~40 linhas em `apply_unit_subunit_fields` · **depois do gold CG/MF aprovado**.
+- **Voto de LLM para a UNIDADE de bloco sem evidencia lexical** (CG bloco-08 morfologia: plano nao menciona; unico caso nos 8) · 1 chamada por bloco assim · substitui o pino do bloco-08 · precisa de Gemini.
 - **Radical (6 chars) so como fallback no mapa bloco->unidade** (tokens exatos decidem; sem ancora exata, ancora por radical exclusivo) · 1 bloco muda
   nos 8 (CG bloco-15 = pino), 0 colateral, unidade 183 = 183 · ~15 linhas em `assign_units_positional` · ganho hoje 0 (pino), valor = proximo curso sem pino · C4/C5.
 - **Prompt do voter sem o `moodle_label`** (`llm_vote.py:241`; 90/125 votados tem label != title) · 1 linha + re-voto <= 90 chamadas · C1 fechamento (LLM).

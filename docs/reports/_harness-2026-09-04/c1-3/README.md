@@ -20,3 +20,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
   secao, vizinho ancorado, exclusividade relaxada) — so a higiene sobrevive (neutra); as outras regridem.
 - `reprocess_cg_unidade.py` (tripwire de PRODUTO: voter so com cache, 0 chamadas) -> `reprocess_cg_unidade.log`: 3 reprocess registrados do CG
   (pinos; sinonimo de morfologia; reverso). `determinismo_tripwire.py` -> `determinismo_higiene.log`. `b_higiene_{puro,holdout}.log`: gates pos-higiene.
+- `motor_auto.py {puro5|holdout}` -> `auto_*.log`: REGUA AUTOMATICA (motor + voter cacheado, sem pino, sem glossario manual): bloco 192/199, unidade 185/191, sub 82/93, holdout CG 35/35; 0 chamadas.
