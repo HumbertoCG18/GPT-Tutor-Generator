@@ -56,8 +56,10 @@ def test_llm_funil_e_duvida():
     assert revisar_de(_mat(temporal_block_flag=True, temporal_block_method="llm-funil")) == "duvida"
 
 
-def test_llm_na_janela_e_camada_llm():
-    assert revisar_de(_mat(temporal_block_method="llm")) == "llm"
+def test_llm_na_janela_nao_e_pendencia():
+    # 06/09 (decisao do user): voto de LLM na janela acerta 75/76 blocos no gold dos 8 tutores;
+    # a camada "llm" era 79 dos 200 itens da fila por 2 erros (de subunidade, por acaso). Vira ok.
+    assert revisar_de(_mat(temporal_block_method="llm")) == "ok"
 
 
 def test_conflito_unidade_bloco_e_duvida():

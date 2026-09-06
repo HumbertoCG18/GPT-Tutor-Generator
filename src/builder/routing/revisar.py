@@ -9,10 +9,15 @@ Funcao pura sobre o entry GRAVADO; recalculada a cada reprocess em
   mudou   camada 1b, "mudou, confira" (SYNC 03/09): decisao confiante que se moveu numa
           sincronizacao (campo `sync_changed`, gravado por moodle_sync.mark_sync_changes;
           a sync seguinte limpa se nada mover de novo)
-  llm     camada 2, colapsada "decidido por LLM — confira": voto na janela
+  llm     (DESATIVADA 06/09, decisao do user) era a camada 2 "decidido por LLM —
+          confira": voto na janela. Medida contra os golds nos 8 tutores
+          (`_harness-2026-09-04/c1-3/fila_rendimento.py`): 79 materiais na fila,
+          71 com gold, 2 errados (ambos de subunidade, por acaso); o voto de bloco
+          acerta 75/76. Era 40% da fila por 2 erros: vira `ok`. A UI segue lendo
+          `temporal_block_method == "llm"` como INFORMACAO, nao como pendencia.
   ok      nao aparece
 
-Metrica de produto = (duvida + llm) por 100 materiais (`scripts/censo_motor_llm.py`).
+Metrica de produto = (duvida + mudou) por 100 materiais (llm nao conta desde 06/09) (`scripts/censo_motor_llm.py`).
 "Sem bloco" honesto (nao e duvida): categorias sem eixo temporal
 (_NO_TIMELINE_CATEGORIES) e secao TDE (fora de escopo do motor).
 """
@@ -61,6 +66,4 @@ def revisar_de(entry: dict) -> str:
         return DUVIDA
     if str(entry.get("sync_changed") or "").strip():
         return MUDOU
-    if str(entry.get("temporal_block_method") or "") == "llm":
-        return LLM
-    return OK
+    return OK   # voto de LLM na janela nao e pendencia (06/09: 75/76 no gold; era 79 dos 200 da fila)
