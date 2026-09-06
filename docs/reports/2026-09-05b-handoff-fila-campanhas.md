@@ -15,8 +15,8 @@ voter so com cache, construtor do client explode) **e termina com `check_gemini_
 x ~11-13k tokens; voter 23 votos; rebuild do CG ~110 chamadas.
 
 ## REGUA OFICIAL A PARTIR DE AGORA: a AUTOMATICA (user, 05/09 tarde: "gold so mede; nao criar curadoria por curso")
-Motor + voter com cache, sem pino, sem glossario manual, com vocab LLM (`_harness-2026-09-04/c1-3/motor_auto.py`): **bloco 192/199 = 96,5% conf-err 0 ·
-unidade 185/191 = 96,9% · cobertura 53/57 · subunidade 82/93 = 88% · holdout CG 35/35**. Motor puro (sem voter) segue como regua de diagnostico; curada
+Motor + voter com cache, sem pino, sem glossario manual, com vocab LLM (`_harness-2026-09-04/c1-3/motor_auto.py`): **bloco 193/199 = 97,0% conf-err 0 ·
+unidade 185/191 = 96,9% · cobertura 53/57 · subunidade 82/93 = 88% · holdout CG 35/35** (v2: vocab tambem no holdout, cache de votos do produto; 192 era com o cache antigo da copia). Motor puro (sem voter) segue como regua de diagnostico; curada
 (com pinos) e o produto de hoje, nao a meta. Pinos e glossario manual sao ANDAIME: cada um deve ter regra generica ou voto de LLM que o substitua,
 medido nos 8 — ou fica registrado como residuo humano com nome. Golds novos so para MEDIR (CG/MF subunidade: aprovar uma vez, nunca curar por curso).
 **Abaixo de 95% so a subunidade (vocabulario). Caminhos genericos:** vocab compilado melhor (LLM; hoje nao emite 'perceptron'/'MLP' para o IA) ·
@@ -58,7 +58,7 @@ Copias `.ablacao` dos 5 + CG + LR + FR (motor puro pos-higiene). `.ablacao/CG-re
 **Reguas (gold pelo oraculo, 199 pontuaveis):** curada **198/199 conf-err 0** (falta ES2 `azure`) · unidade 191/191 · cobertura 55/57 · motor puro +vocab
 **186/199 conf-err 1** · unidade 183/191 · cobertura 53/57 · sub 82/93 · holdout CG puro 31/35 conf-err 0 (flagados 14) · censo revisar/100 58,3
 ('mudou' 13 do reprocess do CG; era 57,8) · votos/100 35,9 · FILE_MAP 345/345 · **CG unidade: produto 1/93 errada (+2 por erro de bloco); AUTOMATICA (sem pino) 22/93 -> 6/93** (morfologia x3, texturas x3) · travessia pos-C1-item-1: IA 14/15 · FR 15/15 · CG 10/15 (11 completo) com LLM; sem-llm IA 10 · FR 9 · CG 5.
-Golds propostos (NAO na regua): `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt_MF.csv` 58. **Regua automatica: bloco 192/199 · unidade 185/191 · sub 82/93 · holdout 35/35.** Determinismo pos-higiene **8/8, 0 arquivos nao deterministicos**; 0 resumos de codigo de hoje nos originais e nas copias.
+Golds propostos (NAO na regua): `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt_MF.csv` 58. **Regua automatica (v2): bloco 193/199 · unidade 185/191 · sub 82/93 · holdout 35/35 · CG unidade 6/93 erradas sem pino.** Determinismo pos-higiene **8/8, 0 arquivos nao deterministicos**; 0 resumos de codigo de hoje nos originais e nas copias.
 
 ## BALANCO da sessao 6 (05/09 tarde)
 - **C1 item 3 (title := label): REFUTADO por medicao, 0 codigo.** Piso sem-llm 0 flip; motor puro bloco 186 -> 184, 2 confiantes viram flag (label
