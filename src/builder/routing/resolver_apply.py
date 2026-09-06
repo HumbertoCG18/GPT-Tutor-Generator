@@ -9,6 +9,7 @@ engine.py é reservado para orquestração de alto nível (non-negotiable do pro
 from __future__ import annotations
 
 import copy
+import re
 import json
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -167,11 +168,50 @@ def apply_concept_resolver(
 
 
 _PROPAG_REASON = "propagado-headings"
+_DECOMP_REASON = "rotulo-decomposto"
 
 
 def _tokens_headings(signals: dict, generic_stems) -> set:
     txt = f"{signals.get('markdown_headings_text', '')} {signals.get('title_text', '')}"
     return {t for t in txt.split() if len(t) >= 4 and not any(t.startswith(s) for s in generic_stems)}
+
+
+def _partes_de_rotulo(units: dict, passe1: list, df_max: float) -> dict:
+    """Subunidade, 2a fonte de aliases da 2a passada (2026-09-06). O plano nomeia o subtopico por uma FRASE
+    composta ('Bezier e Algoritmo de Casteljau', 'Algoritmos de Geometria Computacional') e o material nomeia a
+    parte ('bezier-cpp'); o scorer casa frases inteiras, entao a parte sozinha valia 0. Cada parte do rotulo
+    (`timeline.index._label_parts`) vira alias do proprio topico se: tem token especifico; nao nomeia mais nada
+    no curso (nao esta contida no rotulo/aliases de outro topico nem no titulo de uma unidade — sem isso 'saida'
+    de "Dispositivos de entrada e saida" no SO e 'Internet' do rotulo-aspirador do FR viravam aliases); e aparece
+    em <= df_max dos materiais (mesmo teto da propagacao: 'internet' num curso de redes nao discrimina).
+    Medido em memoria pela 1a passada nos 6 golds (233): +9 -1; entra pela 2a passada (so onde a 1a nao decidiu),
+    o que preserva a decisao confiante. Devolve {(unit_slug, topic_slug): {partes}}."""
+    from src.builder.timeline.index import _label_parts, _specific_tokens
+    heads: Counter = Counter()
+    todos = [(str(u.get("slug") or ""), t) for u in units.values() for t in (u.get("topics") or [])]
+    for _, t in todos:
+        m = re.match(r"^(\w+)\s+(de|da|do|das|dos|para|em)\s+", str(t.get("label") or ""), re.I)
+        if m:
+            heads[normalize_match_text(m.group(1))] += 1
+    generic_heads = {h for h, n in heads.items() if n >= 2}
+    vocab = {id(t): {normalize_match_text(x) for x in [str(t.get("label") or "")] + list(t.get("aliases") or [])} for _, t in todos}
+    titulos = " | ".join(normalize_match_text(str(u.get("title") or "")) for u in units.values())
+    textos = [normalize_match_text(texto or "") for _, texto, _, _ in passe1]
+    out: dict = defaultdict(set)
+    for unit_slug, t in todos:
+        outros = " | ".join(x for _, o in todos if o is not t for x in vocab[id(o)])
+        for part in _label_parts(str(t.get("label") or ""), generic_heads):
+            n = normalize_match_text(part)
+            if not n or n in vocab[id(t)] or not _specific_tokens(part):
+                continue
+            pat = r"(^|\s)" + re.escape(n) + r"(\s|$)"
+            if re.search(pat, outros) or re.search(pat, titulos):
+                continue
+            if sum(1 for x in textos if n in x) > df_max * max(1, len(textos)):
+                continue
+            out[(unit_slug, str(t.get("slug") or ""))].add(part)
+            vocab[id(t)].add(n)
+    return out
 
 
 def propagar_vocabulario_por_headings(passe1: list, content_taxonomy: dict, auto_map_entry_subtopic_fn, *,
@@ -216,6 +256,9 @@ def propagar_vocabulario_por_headings(passe1: list, content_taxonomy: dict, auto
         for tok, subs in toks.items():
             if len(subs) == 1 and n_conf[(unit_slug, next(iter(subs)), tok)] >= min_entries:
                 extra[(unit_slug, next(iter(subs)))].add(tok)
+    partes = _partes_de_rotulo(units, passe1, df_max)   # 2a fonte (06/09): partes do rotulo composto do plano
+    for key, ps in partes.items():
+        extra[key] |= ps
     if not extra:
         return 0
     tax = copy.deepcopy(content_taxonomy)
@@ -234,7 +277,9 @@ def propagar_vocabulario_por_headings(passe1: list, content_taxonomy: dict, auto
         if not slug_novo or (slug_novo == slug_ant and float(novo.confidence) <= float(match.confidence)):
             continue
         entry["computed_subunit_slug"] = slug_novo
-        entry["subunit_match_reasons"] = list(novo.reasons) + [_PROPAG_REASON]
+        texto_norm = normalize_match_text(texto or "")
+        por_parte = any(normalize_match_text(p) in texto_norm for p in partes.get((unit_slug, slug_novo), ()))
+        entry["subunit_match_reasons"] = list(novo.reasons) + [_DECOMP_REASON if por_parte else _PROPAG_REASON]
         entry["subunit_match_confidence"] = float(novo.confidence)
         tags = [t for t in (entry.get("auto_tags") or []) if not str(t).startswith("subunit:")]
         if not novo.ambiguous and float(novo.confidence) >= T.SUBUNIT_TAG:

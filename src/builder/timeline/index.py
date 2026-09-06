@@ -1765,6 +1765,35 @@ def _iter_content_taxonomy_topics(taxonomy: dict) -> List[dict]:
     return topics
 
 
+_LABEL_SEP_RE = re.compile(r"\s+e\s+|\s+ou\s+|:|\(|\)|/|,|\s+-\s+", re.I)
+_LABEL_NUM_RE = re.compile(r"^\d+(\.\d+)*\s+")
+_LABEL_HEAD_RE = re.compile(r"^(\w+)\s+(de|da|do|das|dos|para|em)\s+(.+)$", re.I)
+_LABEL_STOP = frozenset({"de", "da", "do", "das", "dos", "e", "ou", "em", "para", "com", "a", "o", "as", "os", "um", "uma"})
+
+
+def _label_parts(label: str, generic_heads: set) -> List[str]:
+    """Partes de um rotulo composto: 'Bezier e Algoritmo de Casteljau' -> ['Bezier', 'Algoritmo de Casteljau'];
+    'Algoritmos de Geometria Computacional' -> ['Geometria Computacional'] quando 'algoritmos' e cabeca de >= 2
+    rotulos do curso (cabeca generica). Separadores: ' e ', ' ou ', ':', parenteses, '/', ',', ' - '.
+    Consumidor: `resolver_apply.propagar_vocabulario_por_headings` (2a passada da subunidade, com teto de df)."""
+    base = _LABEL_NUM_RE.sub("", label or "").strip()
+    out: List[str] = []
+    for part in _LABEL_SEP_RE.split(base):
+        part = (part or "").strip(" .;")
+        if part and _normalize_match_text(part) != _normalize_match_text(base) and _specific_tokens(part):
+            out.append(part)
+    m = _LABEL_HEAD_RE.match(base)
+    if m and _normalize_match_text(m.group(1)) in generic_heads and _specific_tokens(m.group(3)):
+        out.append(m.group(3).strip())
+    return out
+
+
+def _specific_tokens(text: str) -> set:
+    return {tok for tok in _normalize_match_text(text or "").split() if len(tok) >= 4 and tok not in _LABEL_STOP}
+
+
+
+
 def _score_entry_against_taxonomy_topic(signals: dict, topic: dict, *, stem_fallback: bool = False) -> float:
     title_text = signals.get("title_text", "")
     markdown_headings_text = signals.get("markdown_headings_text", "")
