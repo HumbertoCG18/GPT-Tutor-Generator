@@ -41,3 +41,20 @@ def test_nunca_esvazia_e_nao_mexe_sem_secao_ou_sem_bloco_da_unidade():
     e2 = {"id": "z", "title": "slides", "source_section": "U5 - Enlace"}
     assert narrow_window_by_unit(e2, ["bloco-03", "bloco-05"], ctx) == ["bloco-03", "bloco-05"]   # nenhum bloco de U5 na janela
     assert narrow_window_by_unit(e2, ["bloco-22"], ctx) == ["bloco-22"]                            # janela de 1 nao muda
+
+
+def test_bloco_sem_unidade_entrega_fica_na_janela():
+    """MF: janela [10, 11(entrega, sem unidade), 12, 13] com secao = unidade 2: a entrega fica; so sai bloco de outra unidade."""
+    blocks = [
+        {"id": "bloco-10", "block_uuid": "a", "period_start": "2026-04-27", "unit_slug": "unidade-02-verificacao-de-programas"},
+        {"id": "bloco-11", "block_uuid": "b", "period_start": "2026-05-06", "unit_slug": "", "kind": "deliverable"},
+        {"id": "bloco-12", "block_uuid": "c", "period_start": "2026-05-11", "unit_slug": "unidade-02-verificacao-de-programas"},
+        {"id": "bloco-16", "block_uuid": "d", "period_start": "2026-06-15", "unit_slug": "unidade-03-verificacao-de-modelos"},
+    ]
+    units = [{"slug": "unidade-01-metodos-formais", "title": "Unidade 01 — Métodos Formais"},
+             {"slug": "unidade-02-verificacao-de-programas", "title": "Unidade 02 — Verificação de Programas"},
+             {"slug": "unidade-03-verificacao-de-modelos", "title": "Unidade 03 — Verificação de Modelos"}]
+    ctx = MotorContext.from_artifacts(blocks=blocks, card_block_map={}, lessons_index={}, course_name="MF", units=units)
+    e = {"id": "ex", "title": "ExerciciosCorrecaoTerminacao", "source_section": "Verificação de Programas"}
+    assert unit_named_by_section(e, ctx) == "unidade-02-verificacao-de-programas"
+    assert narrow_window_by_unit(e, ["bloco-10", "bloco-11", "bloco-12", "bloco-16"], ctx) == ["bloco-10", "bloco-11", "bloco-12"]

@@ -410,7 +410,13 @@ def narrow_window_by_unit(entry: dict, window: List[str], ctx: MotorContext) -> 
     unit = unit_named_by_section(entry, ctx)
     if not unit:
         return window
-    inside = [r for r in window if str((ctx.block_by_ref(r) or {}).get("unit_slug") or "") == unit]
+    # Bloco SEM unidade (entrega, revisao, prova: `unit_slug` vazio por desenho) fica na janela — ele hospeda material
+    # de qualquer unidade. Medido: sem isso o MF `exercicioscorrecaoterminacao` perdia a entrega bloco-11 (gold) da
+    # janela e virava erro confiante. So sai o bloco que e de OUTRA unidade.
+    unit_of = {r: str((ctx.block_by_ref(r) or {}).get("unit_slug") or "") for r in window}
+    if not any(u_ == unit for u_ in unit_of.values()):
+        return window
+    inside = [r for r in window if unit_of[r] in (unit, "")]
     if inside and len(inside) < len(window):
         return inside
     return window
