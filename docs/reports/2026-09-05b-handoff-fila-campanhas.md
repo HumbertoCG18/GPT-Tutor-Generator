@@ -100,7 +100,9 @@ Formato: **ideia** · da para fazer? · quando? · o que resolve?
   nos 8 (CG bloco-15 = pino), 0 colateral, unidade 183 = 183 · ~15 linhas em `assign_units_positional` · ganho hoje 0 (pino), valor = proximo curso sem pino · C4/C5.
 - **Prompt do voter sem o `moodle_label`** (`llm_vote.py:241`; 90/125 votados tem label != title) · 1 linha + re-voto <= 90 chamadas · C1 fechamento (LLM).
 - **FILE_MAP titulo = label perde o stem** (103 linhas; 7 labels sem conteudo) · "label · stem" quando o title tem token que o label nao tem · C1 item 4, so se a travessia errar.
-- **Zips extraidos sem subpasta colidem nomes** (MF 5 zips x `ex1.dfy`; `.smv` ignorado) · `<id>/<membro>` + `.smv` como codigo · SYNC/C5.
+- **Zips extraidos sem subpasta colidem nomes** — nos 8: CG 168 nomes repetidos entre 14 zips, ES2 38, MF 10, SO 3; `.smv` ignorado · `<id>/<membro>` + `.smv` como codigo · SYNC/C5 · codigo e resumo certos por zip.
+- **Paginas do Moodle (`mod/page`) capturadas como tela de login** (CG 16/16; unico tutor com paginas) · capturar com sessao autenticada no pull · SYNC/C5 · conteudo real para rotear.
+- **Saude de curso novo sem gold**: revisar/100 (CG 74-76 x media 58) + fracao de blocos preenchidos por posicao + conflitos texto x bloco no CRONOGRAMA_HEALTH · sim, so leitura · C4/C6 · sinal de 'olhar este curso' sem gold.
 - **GLOSSARY.md para no ultimo termo que o parser do plano entende** (CG: 7.1.2; u08/u09 sem termo) · investigar o parser do plano do CG · C5 · sinonimo manual para texturas.
 - **Gold de unidade do CG** (22 erros vieram a luz pelo gold de subunidade) · proposto-claude a partir de `2026-09-05-cg-atribuicoes.md` · C5.
 - Custo do Gemini (Datalab para imagens, Gemini so fallback; medir chamadas por funcao) · C7/C3. Tempo de reprocess (CG 111 s, 83% em `normalize_match_text`

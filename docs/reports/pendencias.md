@@ -102,6 +102,15 @@ ancora exata possivel, aff < 2, ganha ancora por radical com >= 2, margem >= 1, 
 bloco-15 Modelagem -> u07, = pino), 0 colateral**, pinos 12 -> 13 (sem contar o pino novo do CG), unidade 183 = 183/191. E a unica unificacao que
 sobrevive: cobre sem pino o caso que hoje o pino cobre. Candidato (caixa): ~15 linhas em `assign_units_positional`, ganho atual 0 (pino ja
 resolve), valor = proximo curso sem pino. `c1-3/simula_radical_fallback.py`.
+**MATERIA NOVA (pergunta do user 05/09 tarde) — evidencia e bugs de dado medidos nos 8:** o unico teste de generalizacao e o holdout CG (curso nao
+usado para afinar): bloco automatico 35/35, mas unidade 22/93 erradas (so vistas ao montar o gold de subunidade) e subunidade ~49/82 no gold proposto.
+O censo ja sinalizava: CG revisar/100 = 74-76 (maior dos 8; media 58) — um curso novo com revisar/100 alto e o sinal para olhar, sem gold. Dados que
+uma materia nova traz quebrados: (1) **paginas do Moodle (`mod/page`) capturadas como TELA DE LOGIN**: CG 16/16 (unico tutor com paginas; o tutor so
+roteia essas 16 pelo titulo); (2) **colisao de nomes de membro ENTRE zips** na extracao plana: CG 168 nomes repetidos em 14 zips (projetos OpenGL
+com os mesmos arquivos), ES2 38 em 8, MF 10 em 13, SO 3 — o codigo do tutor e o resumo de codigo desses zips estao trocados/incompletos.
+Tag [CODE] SYNC/C5. Condicoes para o automatico funcionar: SARC com sessoes datadas, Moodle com secoes e labels (FR tem 0 labels), plano
+parseavel ate o fim (CG para em 7.1.2), Gemini para voter/vocab/resumos (~100-150 chamadas por curso de 90 materiais); professor sem sinal
+temporal (MF: tudo postado em 18/02) empurra 30/66 para o LLM.
 **BUG (medido): zips do MF extraidos SEM subpasta -> colisao de nomes.** `raw/code/professor/` e plano (36 arquivos): `colecoes_arrays/ex1.dfy`,
 `colecoes_sequences/ex1.dfy`, `invariantes/ex1.dfy`, `terminacao/ex1.dfy` e `tiposindutivos/ex1.dfy` viram UM `ex1.dfy` (o ultimo vence:
 `code/professor/ex1.md` tem 'datatype Cor' = tiposindutivos; 'new nat[5]' dos arrays nao existe em lugar nenhum). Resultado: 4 zips (20 .dfy)
