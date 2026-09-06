@@ -45,8 +45,8 @@ def _merge_sem_voter(options, profile):
 ra._merge_profile_flags = _merge_sem_voter
 
 SIGS = ["MF", "SO", "IA", "ES2", "TCC"]
-SUBUNIT_GOLD = {"SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artifical-Tutor",
-                "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor"}
+SUBUNIT_GOLD = {"MF": "Metodos-Formais-Tutor", "SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artifical-Tutor",
+                "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor"}   # MF aprovado pelo user em 06/09 (CG no holdout_cg.py)
 
 
 def main(argv=None) -> int:
@@ -74,20 +74,7 @@ def main(argv=None) -> int:
     print(f"\n=== EIXOS — motor puro (sem curadoria, sem LLM voter, {modo}) ===")
     print(ev.stdout)
 
-    tot_ok = tot_n = prim_ok = 0
-    for sigla, repo in SUBUNIT_GOLD.items():
-        m = json.loads((COPY / repo / "manifest.json").read_text(encoding="utf-8"))
-        pred = {str(e.get("id")): str(e.get("computed_subunit_slug") or "") for e in m["entries"]}
-        with open(GEN / "docs" / "reports" / f"subunit_gt_{sigla}.csv", encoding="utf-8-sig") as f:
-            for r in csv.DictReader(f):
-                if r["scorable"] != "yes":
-                    continue
-                tot_n += 1
-                extras = set(filter(None, (r.get("gold_subunits_extra") or "").split(";")))
-                alvo = ({r["gold_subunit"]} | extras) if r["gold_subunit"] else {""}
-                p = pred.get(r["entry_id"], "(SUMIU)")
-                tot_ok += p in alvo
-                prim_ok += p == r["gold_subunit"]
+    tot_ok, tot_n, prim_ok = ab.score_subunit(COPY, SUBUNIT_GOLD, GEN)
     print(f"SUBUNIDADE motor puro ({modo}): {tot_ok}/{tot_n} com-extras · {prim_ok}/{tot_n} primario")
     print(f"total: {time.time() - t0:.0f}s")
     return 0

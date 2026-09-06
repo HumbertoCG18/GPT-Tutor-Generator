@@ -105,6 +105,28 @@ def diff_fields(a_path: Path, b_path: Path) -> list[tuple[str, str]]:
     return out
 
 
+
+def score_subunit(copy: Path, gold: dict, gen: Path) -> tuple:
+    """(com_extras, n, primario) da subunidade nas copias contra `docs/reports/subunit_gt_<sigla>.csv`
+    (gold = {sigla: nome do repo}). Mesma conta do motor_puro e do holdout: scorable=yes; alvo = gold + extras."""
+    import csv
+    import json
+    ok = n = prim = 0
+    for sigla, repo in gold.items():
+        m = json.loads((copy / repo / "manifest.json").read_text(encoding="utf-8"))
+        pred = {str(e.get("id")): str(e.get("computed_subunit_slug") or "") for e in m["entries"]}
+        with open(gen / "docs" / "reports" / f"subunit_gt_{sigla}.csv", encoding="utf-8-sig") as f:
+            for r in csv.DictReader(f):
+                if r["scorable"] != "yes":
+                    continue
+                n += 1
+                extras = set(filter(None, (r.get("gold_subunits_extra") or "").split(";")))
+                alvo = ({r["gold_subunit"]} | extras) if r["gold_subunit"] else {""}
+                p = pred.get(r["entry_id"], "(SUMIU)")
+                ok += p in alvo
+                prim += p == r["gold_subunit"]
+    return ok, n, prim
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--curado", action="store_true", help="gate: sem ablacao; copia reprocessada deve == original")

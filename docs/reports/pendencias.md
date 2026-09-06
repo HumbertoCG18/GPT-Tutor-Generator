@@ -10,6 +10,25 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## GOLDS CG E MF APROVADOS — REGUA DE SUBUNIDADE PASSA A 233; REMEDIDO (06/09, sessao 6; user: "Eu aprovo o gold de MF e CG")
+**Ligacao:** `scripts/ablacao_rapida.score_subunit` (scorer compartilhado) · MF em `scripts/motor_puro.py` (`SUBUNIT_GOLD`) · CG no fim de
+`_harness-2026-09-02/holdout_cg.py` (imprime `SUBUNIDADE CG`). Proposta marcada como aprovada (4 rulings como propostos). Suite 2328.
+**Remedido (copias, tripwire, 0 chamadas; `c1-3/regua_tripwire.py {puro|holdout}` + `motor_auto.py {puro5|holdout}`, logs `gold6_*.log`):**
+| regua | bloco (199) | unidade (191) | cobertura (57) | subunidade 5 cursos (151) | CG bloco (35) | CG subunidade (82) |
+|---|---|---|---|---|---|---|
+| motor puro + vocab (holdout CG sem vocab por definicao) | 186 conf-err 1 | 183 | 53 | **138 (91,4%) · 118 primario** | 31 | **39 (48%) · 27** |
+| automatica v2 | 193 conf-err 0 | 185 | 53 | 138 · 118 | 35 | **49 (60%) · 36** |
+| produto | 198 | 191 | 55 | 144 (93 + MF 51) | 35 | 49 · 36 |
+**Automatica x 6 golds (233): 187 (80,3%) · primario 154. Produto: 193 (83%) · 162.** Por curso (automatica): SO 11/15 · IA 39/39 · ES2 26/28 ·
+TCC 11/11 · MF 51/58 · CG 49/82. **Causa dos 46 erros da automatica:** SO 4 confiantes (fork/exec, regra humana) · ES2 1 ambigua + 1 confiante ·
+MF 5 confiantes + 1 fraca + 1 vazia · **CG 11 vazias + 10 confiantes + 9 em que o GOLD E VAZIO e o motor preencheu (OpenGL/transformacoes sem
+subtopico) + 2 ambiguas + 1 fraca.** Sem vocab (holdout puro) o CG cai para 39: o vocab vale 10 no CG.
+**Numeros sem gold (censo do produto 06/09, `scripts/censo_motor_llm.py` + sinais do scorer):** subunidade vazia 44/348 (CG 17, SO 7, FR 6) ·
+empate 20 (CG 10, IA 5) · ambigua 17 · score < 1: 40 (CG 22) · propagadas 25 · subtopicos no plano 229 (CG 59, SO 36, FR 33) = 1,3 material por
+subtopico. **Duvida do motor x erro no gold (produto, 233):** 40 errados, 47 com sinal de duvida, 20 errados-e-com-duvida, 20 errados confiantes
+(CG 15 de 33), 27 alarmes falsos: o sinal aponta o CURSO (revisar/100 CG 76, FR 59) e filtra revisao; nao mede acerto.
+**Relatorio consolidado (artefato, pedido do user "todos os numeros, facil de entender"):** https://claude.ai/code/artifact/231d161b-96dc-4061-84a1-cdb8e0ec91de
+
 ## NO MAXIMO DUAS CAMADAS LLM — CAMADA 3 (RESUMOS DE CODIGO) MEDIDA: ABLACAO E SUBSTITUTO DETERMINISTICO (06/09, sessao 6; DECISAO DO USER)
 **Pedido do user:** "quero o motor o mais automatico possivel, LLM para 3 camadas fica pesado, queria deixar no maximo duas"; "nao quero ficar criando
 novas rotas para o motor". **Peso medido no produto (8 tutores):** vocab = 1 compilacao por curso · resumos de codigo = 85 (1 por arquivo/zip, cache por
@@ -134,7 +153,7 @@ determinismo pos-higiene: **8/8, 0 arquivos nao deterministicos** (`c1-3/determi
 49/82 com extras (36 primario); MF 66, 58 pontuaveis, 51/58 (36). Revisao: `gold_subunidade_CG_MF_proposta_2026-09-05.md`; atribuicoes do CG por entry:
 `2026-09-05-cg-atribuicoes.md`. Alavancas genericas no motor para a unidade: 5 medidas e refutadas (ver §CG 22/93 abaixo e NAO fazer do handoff).
 
-## GOLD DE SUBUNIDADE CG E MF — PROPOSTO-CLAUDE (05/09 tarde, sessao 6; **AGUARDA APROVACAO DO USER**) + BUG: ZIPS DO MF COLIDEM
+## GOLD DE SUBUNIDADE CG E MF — PROPOSTO-CLAUDE (05/09 tarde, sessao 6; **APROVADO PELO USER EM 06/09**, ver secao acima) + BUG: ZIPS DO MF COLIDEM
 **Arquivos:** `docs/reports/subunit_gt_CG.csv` (93 materiais, **63 pontuaveis**, 22 com UNIDADE computada errada -> `scorable=no` com a unidade
 verdadeira na nota) e `subunit_gt_MF.csv` (66, **58 pontuaveis**, 5 unidade errada); revisao humana em
 `docs/reports/gold_subunidade_CG_MF_proposta_2026-09-05.md` (coluna `ok?`). Gerador: `_harness-2026-09-04/c1-3/gera_gold_subunidade.py`

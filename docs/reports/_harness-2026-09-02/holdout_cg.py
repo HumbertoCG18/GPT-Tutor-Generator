@@ -48,3 +48,5 @@ with GOLD.open(encoding="utf-8-sig", newline="") as f:
 print(f"HOLDOUT CG {'CURADO+LLM' if CURADO else 'motor puro'} ({GEN.name} @ {COPY}): bloco {ok}/{n} | conf-err {conf_err} | flagados/sem bloco {flagged} | metodos: "
       + str(__import__('collections').Counter(str(man[r].get('temporal_block_method') or 'SEM') for r in man)))
 print("\n".join(errs))
+ok_s, n_s, prim_s = ab.score_subunit(COPY, {"CG": REPO}, GEN)   # gold de subunidade do CG aprovado pelo user em 06/09
+print(f"SUBUNIDADE CG {'CURADO+LLM' if CURADO else 'motor puro'}: {ok_s}/{n_s} com-extras · {prim_s}/{n_s} primario")

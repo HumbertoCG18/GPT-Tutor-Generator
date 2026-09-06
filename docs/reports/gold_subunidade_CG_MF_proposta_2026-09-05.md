@@ -1,4 +1,6 @@
-# Gold de subunidade CG e MF — PROPOSTA v2 (proposto-claude 2026-09-05, apos curadoria de unidade do CG; aguarda aprovacao)
+# Gold de subunidade CG e MF — PROPOSTA v2 (proposto-claude 2026-09-05, apos curadoria de unidade do CG; **APROVADO PELO USER EM 06/09/2026, como proposto, incluindo os 4 rulings**)
+
+**Status:** aprovado 06/09 (user: "Eu aprovo o gold de MF e CG"). `subunit_gt_CG.csv` (82 pontuaveis) e `subunit_gt_MF.csv` (58) passam a ser regua permanente: MF em `scripts/motor_puro.py` (`SUBUNIT_GOLD`), CG em `_harness-2026-09-02/holdout_cg.py`. Gold so mede; o motor nao o le.
 
 Regras: subtopico dentro da UNIDADE COMPUTADA (CG com pinos nos blocos 06/08/15); unidade errada -> `scorable=no` com a causa; meta -> `scorable=no`;
 ferramenta sem subtopico (OpenGL) -> vazio; bloco-06 = u04 pelo oraculo (transformacoes/instanciamento sem subtopico em u04 -> vazio; mapeamento ->

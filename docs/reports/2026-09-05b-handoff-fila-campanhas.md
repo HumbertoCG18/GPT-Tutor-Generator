@@ -30,7 +30,9 @@ o codigo nao contem ('classificacao', 'chamadas de sistema', 'microsservicos'). 
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json`, `.codex/` e `.mex/patterns/*` de outro agente), `git log --oneline -3`,
    HEAD dos 8 tutores = "Estado ao terminar", `python scripts/censo_motor_llm.py` (revisar/100 58,3 com 'mudou' 13; votos/100 35,9; FILE_MAP 100%
    nos 8, SO 38/39 por duplicata), `python -m pytest tests -q` (2325), `python scripts/sentinela_manifests.py` (0). Nada pushed.
-1. **APROVAR os golds de subunidade propostos** (`docs/reports/gold_subunidade_CG_MF_proposta_2026-09-05.md`, coluna `ok?`): CG 82 pontuaveis
+1. ~~APROVAR os golds de subunidade propostos~~ **FEITO 06/09: aprovados pelo user, ligados na regua (MF em `motor_puro.py`, CG em `holdout_cg.py`,
+   scorer `ablacao_rapida.score_subunit`); automatica x 233 = 187 (80,3%), CG 49/82, MF 51/58; causas no tracker §GOLDS CG E MF APROVADOS.**
+   (texto original:) (`docs/reports/gold_subunidade_CG_MF_proposta_2026-09-05.md`, coluna `ok?`): CG 82 pontuaveis
    (produto acerta 49 com extras, 36 primario), MF 58 (51, 36); 4 rulings marcados (bundle misto pelo card; `exemplodemanipulacaodeimagens`
    label 'Classe Vetor' x conteudo; convencao Dafny = `softwares-de-suporte` com extra `verificacao-de-programas`; OpenGL = vazio). Aprovado:
    ligar `subunit_gt_{CG,MF}.csv` em `scripts/motor_puro.py` (`SUBUNIT_GOLD`): a propagacao ja entrou (medida +5/-0 nos 6 golds com os propostos);
@@ -66,7 +68,7 @@ Copias `.ablacao` dos 5 + CG + LR + FR (motor puro pos-higiene). `.ablacao/CG-re
 **Reguas (gold pelo oraculo, 199 pontuaveis):** curada **198/199 conf-err 0** (falta ES2 `azure`) · unidade 191/191 · cobertura 55/57 · motor puro +vocab
 **186/199 conf-err 1** · unidade 183/191 · cobertura 53/57 · sub 82/93 · holdout CG puro 31/35 conf-err 0 (flagados 14) · censo revisar/100 58,3
 ('mudou' 13 do reprocess do CG; era 57,8) · votos/100 35,9 · FILE_MAP 345/345 · **CG unidade: produto 1/93 errada (+2 por erro de bloco); AUTOMATICA (sem pino) 22/93 -> 6/93** (morfologia x3, texturas x3) · travessia pos-C1-item-1: IA 14/15 · FR 15/15 · CG 10/15 (11 completo) com LLM; sem-llm IA 10 · FR 9 · CG 5.
-Golds propostos (NAO na regua): `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt_MF.csv` 58. **Regua automatica (v2, pos-propagacao): bloco 193/199 (97,0%, conf-err 0) · unidade 185/191 · cobertura 53/57 · **sub 87/93 (93,5%)** · holdout 35/35 · CG unidade 6/93 erradas sem pino.** Determinismo pos-higiene **8/8, 0 arquivos nao deterministicos**; 0 resumos de codigo de hoje nos originais e nas copias.
+Golds de subunidade APROVADOS 06/09 e na regua: `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt_MF.csv` 58 (regua = 233; automatica 187 = 80,3%). **Regua automatica (v2, pos-propagacao): bloco 193/199 (97,0%, conf-err 0) · unidade 185/191 · cobertura 53/57 · **sub 87/93 (93,5%)** · holdout 35/35 · CG unidade 6/93 erradas sem pino.** Determinismo pos-higiene **8/8, 0 arquivos nao deterministicos**; 0 resumos de codigo de hoje nos originais e nas copias.
 
 ## BALANCO da sessao 6 (05/09 tarde)
 - **C1 item 3 (title := label): REFUTADO por medicao, 0 codigo.** Piso sem-llm 0 flip; motor puro bloco 186 -> 184, 2 confiantes viram flag (label
@@ -113,7 +115,7 @@ Formato: **ideia** · da para fazer? · quando? · o que resolve?
   commita so `updated_at` · C4. Apagar `.ablacao/CG-*` (805 MB) · agora, decisao do user. Merge/push dos ~840 commits em `main` · fronteira.
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
-- Aprovar os golds de subunidade CG/MF (COMECE POR 1). Corrigir a extracao dos zips (2). Gemini (3). Religar `gemini_auto_summarize` so com o Gemini liberado.
+- ~~Aprovar os golds de subunidade CG/MF~~ (feito 06/09). Corrigir a extracao dos zips (2). Gemini (3). Religar `gemini_auto_summarize` so com o Gemini liberado.
 - Qual camada LLM cortar para ficar em duas (COMECE POR 3b). Apagar `.ablacao/CG-rebuild` e `CG-export-backup`. Posicao da C7 IMAGENS. Push/merge em `main`. Revisao da fila `revisar_queue.md` (45) do CG.
 
 ## NAO fazer (refutado no gold)

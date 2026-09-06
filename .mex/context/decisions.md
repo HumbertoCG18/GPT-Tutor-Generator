@@ -480,3 +480,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Decision:** Medido em copias com tripwire (0 chamadas), motor puro + vocab + propagacao: sem resumos de codigo a subunidade cai 87 -> 71/93; com `code_curation.json` produzido deterministicamente a partir dos `.md` que o motor ja gera (mesmo bundle que o Gemini recebe, mesma rota `code_curation_signal_text`) 78-79/93; bloco 186, unidade 183, cobertura 53 e holdout CG 31/35 iguais nos 4 regimes.
 **Reasoning:** Pedido do user: motor o mais automatico possivel, no maximo duas camadas LLM, sem rotas novas. Peso no produto (8 tutores): 1 compilacao de vocab por curso, 85 resumos (1 por arquivo, cache por hash), 205 votos. Ganho por camada: vocab +57 sub/+10 unidade; voter +7 bloco/+4 holdout/conf-err 0; resumos +8 sub e 0 no resto. Os 8 que so o Gemini acerta (SO threads x3, IA perceptron x5, ES2 roteiro1) dependem de vocabulario de categoria que o codigo nao contem ('classificacao', 'chamadas de sistema', 'microsservicos') — o resumo e um remendo da camada 2. "% de similaridade vocab x nome do material" tambem medido: e o que o scorer ja faz; Jaccard >= 0,5 acerta 27/0 mas deixa 66 sem atribuicao; label do plano sem LLM 9/0/84.
 **Consequences:** Se o user cortar a camada 3: trocar o produtor de `code_curation.json` (`c1-3/shim_codigo.py` v2 como base), manter a rota; custo -8/93 na subunidade. Alternativa que mantem duas camadas sem perder os 8: compilacao do vocab ver o bundle de codigo (exige Gemini para remedir). Nenhuma rota nova.
+
+---
+
+### Golds de subunidade CG e MF aprovados: a regua de subunidade passa a 233 e o numero de referencia vira o da automatica nos 6 (80,3%), nao 87/93
+
+**Date:** 2026-09-06
+**Status:** Active
+**Decision:** User aprovou os golds propostos (com os 4 rulings). `subunit_gt_MF.csv` entra em `scripts/motor_puro.py` e `subunit_gt_CG.csv` no `holdout_cg.py`, ambos pelo scorer compartilhado `ablacao_rapida.score_subunit`. Remedido com tripwire: automatica x 233 = 187 (80,3%; SO 11/15, IA 39/39, ES2 26/28, TCC 11/11, MF 51/58, CG 49/82); produto 193 (83%); CG puro sem vocab 39/82.
+**Reasoning:** Os 87/93 eram in-sample (golds nascidos com a curadoria dos 4 cursos; regras e prompt afinados neles). O CG, unico curso nao usado para afinar, da 60%. Gold so mede: o motor nao o le; sem gold nao ha numero, so os sinais de duvida do motor, que apontam o curso (revisar/100) mas acertam so metade dos erros (20/40) e erram confiantes nos outros 20.
+**Consequences:** Alvo da subunidade passa a ser o CG (33 erros: 11 vazias, 10 confiantes, 9 gold-vazio-preenchido, 2 ambiguas, 1 fraca) e o MF (7). Bloco e unidade seguem >= 96,9% na automatica. Um curso 100% novo deve esperar o numero do CG, nao o dos 93.
