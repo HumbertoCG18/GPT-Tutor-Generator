@@ -116,3 +116,28 @@ def test_titulo_que_nomeia_outro_subtopico_vence_decisao_confiante():
     assert e["computed_subunit_slug"] == "algoritmos-de-geometria-computacional"
     assert "titulo-nomeia-subtopico" in e["subunit_match_reasons"]
     assert e2["computed_subunit_slug"] == "entidades-geometricas"
+
+
+def test_secao_do_moodle_decide_so_onde_nada_decidiu():
+    """S1b (06/09): empate hermite = bezier no texto; a secao "7 - Curvas Parametricas" nomeia exatamente o subtopico
+    'representacao-de-curvas-parametricas' -> decide. Com secao que nao nomeia nada ("Semana 3"), continua empatado."""
+    tax = {"units": [{"slug": "u7", "title": "Modelagem de objetos", "topics": [
+        {"slug": "representacao-de-curvas-parametricas", "label": "Representacao de curvas parametricas", "aliases": []},
+        {"slug": "hermite", "label": "Hermite", "aliases": []},
+        {"slug": "bezier", "label": "Bezier", "aliases": []},
+    ]}]}
+    e_sec = {"id": "cp", "title": "curvasparametricas", "source_section": "7 - Curvas Parametricas"}
+    e_sem = {"id": "cp2", "title": "aula", "source_section": "Semana 3"}
+    fillers = [({"id": f"f{i}", "title": f"Aula {i}"}, f"hermite {i}", "u7") for i in range(8)]
+    entries = [(e_sec, "hermite e bezier lado a lado", "u7"), (e_sem, "hermite e bezier lado a lado", "u7")] + fillers
+    p1 = []
+    for ent, texto, unit in entries:
+        m = _stub(ent, tax, texto, winning_unit_slug=unit)
+        ent["computed_subunit_slug"] = m.topic_slug
+        p1.append((ent, texto, unit, m))
+    assert p1[0][3].ambiguous and p1[1][3].ambiguous
+    mudou = propagar_vocabulario_por_headings(p1, tax, _stub, conf_min=0.7, min_entries=2, df_max=0.25)
+    assert mudou == 1
+    assert e_sec["computed_subunit_slug"] == "representacao-de-curvas-parametricas"
+    assert "secao-nomeia-subtopico" in e_sec["subunit_match_reasons"]
+    assert e_sem["computed_subunit_slug"] == p1[1][3].topic_slug        # sem secao que nomeie: nada muda

@@ -170,6 +170,8 @@ def apply_concept_resolver(
 _PROPAG_REASON = "propagado-headings"
 _DECOMP_REASON = "rotulo-decomposto"
 _TITULO_REASON = "titulo-nomeia-subtopico"
+_SECAO_REASON = "secao-nomeia-subtopico"
+_SECAO_NUM_RE = re.compile(r"^\s*\d+(\.\d+)*\s*[-.:]?\s*")
 
 
 def _tokens_headings(signals: dict, generic_stems) -> set:
@@ -234,6 +236,29 @@ def _subtopico_nomeado_no_titulo(entry: dict, unit_slug: str, vencedor: str, par
     return cand[0]
 
 
+def _secao_nomeia_subtopico(entry: dict, topicos_da_unidade: list, generic_stems) -> str:
+    """Subtopico que a SECAO do Moodle do material nomeia, se for exatamente um (06/09; oraculo: a secao "Curvas
+    Parametricas" do CG nomeia o subtopico). 'Nomeia' = rotulo/alias contido na secao ou secao contida nele (palavra
+    inteira), ou os tokens especificos de um contidos nos do outro (fora genericos do motor e do curso). "" se 0 ou 2+."""
+    sec = normalize_match_text(_SECAO_NUM_RE.sub("", str(entry.get("source_section") or "")))
+    if not sec:
+        return ""
+    def _toks(text: str, generic: set) -> set:
+        return {t for t in normalize_match_text(text).split() if len(t) >= 4 and t not in generic
+                and not any(t.startswith(g) for g in generic_stems)}
+    hits = []
+    for t in topicos_da_unidade:
+        generic = set(t.get("generic_tokens") or [])
+        frases = [normalize_match_text(x) for x in [t.get("topic_label") or ""] + list(t.get("aliases") or [])]
+        if any(f and (_frase_no_texto(sec, f) or _frase_no_texto(f, sec)) for f in frases):
+            hits.append(t["topic_slug"])
+            continue
+        st, lt = _toks(sec, generic), _toks(t.get("topic_label") or "", generic)
+        if st and lt and (st <= lt or lt <= st):
+            hits.append(t["topic_slug"])
+    return hits[0] if len(hits) == 1 else ""
+
+
 def propagar_vocabulario_por_headings(passe1: list, content_taxonomy: dict, auto_map_entry_subtopic_fn, *,
                                       conf_min: float, min_entries: int, df_max: float) -> int:
     """2a passada da subunidade (sessao 6, 2026-09-05). Token EXCLUSIVO dos headings/titulo dos materiais
@@ -279,8 +304,7 @@ def propagar_vocabulario_por_headings(passe1: list, content_taxonomy: dict, auto
     partes = _partes_de_rotulo(units, passe1, df_max)   # 2a fonte (06/09): partes do rotulo composto do plano
     for key, ps in partes.items():
         extra[key] |= ps
-    if not extra:
-        return 0
+    # (sem `if not extra: return 0`: a regra do titulo e a da secao, abaixo, valem mesmo sem alias novo)
     tax = copy.deepcopy(content_taxonomy)
     for u in tax.get("units", []) or []:
         for t in u.get("topics") or []:
@@ -290,6 +314,7 @@ def propagar_vocabulario_por_headings(passe1: list, content_taxonomy: dict, auto
     mudou = 0
     frases_topico = {str(t.get("slug") or ""): [str(t.get("label") or "")] + list(t.get("aliases") or [])
                      for u in units.values() for t in (u.get("topics") or [])}
+    decididos_na_2a: set = set()
     for entry, texto, unit_slug, match in passe1:
         if match and match.topic_slug and not match.ambiguous and match.confidence >= conf_min:
             # Decisao confiante da 1a passada so cai quando o TITULO do material nomeia outro subtopico da unidade por
@@ -317,6 +342,30 @@ def propagar_vocabulario_por_headings(passe1: list, content_taxonomy: dict, auto
         if not novo.ambiguous and float(novo.confidence) >= T.SUBUNIT_TAG:
             tags.append(f"subunit:{slug_novo}")
         entry["auto_tags"] = tags
+        decididos_na_2a.add(id(entry))
+        mudou += 1
+    # Ultimo recurso (06/09, S1b): onde NEM a 1a NEM a 2a passada decidiram (vazia ou empatada), a SECAO do Moodle que
+    # nomeia exatamente um subtopico da unidade decide. Medido pela rota real nos 6 golds: +3 -0 (MF exemplos-zip, CG intro,
+    # CG curvasparametricas). Versoes mais agressivas (sobrepor a 2a passada: +5 -3; sobrepor decisao confiante: +5 -13)
+    # REFUTADAS: a secao do professor nomeia o pai quando o gold quer o filho (z-buffer, k-nn, escalonamento).
+    from src.builder.timeline.index import _iter_content_taxonomy_topics
+    por_unidade: dict = defaultdict(list)
+    for t in _iter_content_taxonomy_topics(content_taxonomy) or []:
+        por_unidade[str(t.get("unit_slug") or "")].append(t)
+    for entry, texto, unit_slug, match in passe1:
+        reasons = [str(r) for r in (entry.get("subunit_match_reasons") or [])]
+        indecisa_2a = any(r == "ambiguous" or r.startswith("empate-exato") for r in reasons)
+        indecisa_1a = id(entry) not in decididos_na_2a and (not match or not match.topic_slug or match.ambiguous)
+        if entry.get("computed_subunit_slug") and not indecisa_2a and not indecisa_1a:
+            continue
+        y = _secao_nomeia_subtopico(entry, por_unidade.get(unit_slug, []), _GENERIC_STEMS)
+        if not y or y == str(entry.get("computed_subunit_slug") or ""):
+            continue
+        entry["computed_subunit_slug"] = y
+        entry["subunit_match_reasons"] = [r for r in reasons if r != "ambiguous" and not r.startswith("empate-exato")] + [_SECAO_REASON]
+        entry["subunit_match_confidence"] = float(conf_min)
+        tags = [t for t in (entry.get("auto_tags") or []) if not str(t).startswith("subunit:")]
+        entry["auto_tags"] = tags + [f"subunit:{y}"]
         mudou += 1
     return mudou
 
