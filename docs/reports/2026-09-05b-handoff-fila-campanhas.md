@@ -131,6 +131,13 @@ tokens do mapa (saldo 0: 'proces~processamento') · preenchimento pelo vizinho a
 -> prep · H7 ordem das secoes · H6 label unico · label em decisao confiante · card ANTES do voter · regex de nome para card generico · imprimir HTML em PDF
 para o Datalab · rastrear `Aulas/` do site do professor · `unit_block_conflict` como alavanca de banda.
 
+## Artefatos publicados (todos atualizados em 06/09 noite)
+- Placar do Motor de Atribuicao (consolidado da sessao 6): https://claude.ai/code/artifact/231d161b-96dc-4061-84a1-cdb8e0ec91de
+- Razao dos Blocos (estado curado dos 8, regenerado pelo gerador `_archive/scripts-2026-09-04/artefato_razao/`, gerador d079604): https://claude.ai/code/artifact/d2ef4eaa-3483-412a-9dc8-110b1f9ccacb
+- Gold x Moodle x SARC (auditoria regenerada: `_harness-2026-09-02/audita_gold.py` sobre motor puro + vocab de 06/09; 188 AULA, 148 concorda, 3 divergem, 37 sem posicao): https://claude.ai/code/artifact/f53542b1-9061-4034-a1f3-e86ce001a81f
+- Anatomia do Bloco (leitura de 01/09 + faixa de atualizacao 06/09): https://claude.ai/code/artifact/ba1de7bf-a802-49fc-b88b-6be358d4b796
+- Raio-X da Atribuicao (leitura de 02/09 + faixa de atualizacao 06/09; HTML-fonte reescrito, o original nao estava mais em disco): https://claude.ai/code/artifact/399626ee-682b-43f8-9987-09c344f6c60f
+
 ## Ferramentas
 `scripts/` (37): `sync_moodle.py` · `motor_puro.py [--com-vocab]` · `censo_motor_llm.py` · `sentinela_manifests.py` · `eval_eixos.py` · `reprocess_assignments.py` ·
 `moodle_pull.py` · `eval_travessia.py` · `_harness-2026-09-02/{regua_aula,holdout_cg,calibra_revisar,mede_alavancas,determinismo}.py`.
