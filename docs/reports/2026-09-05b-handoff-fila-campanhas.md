@@ -115,7 +115,8 @@ Formato: **ideia** · da para fazer? · quando? · o que resolve?
   commita so `updated_at` · C4. Apagar `.ablacao/CG-*` (805 MB) · agora, decisao do user. Merge/push dos ~840 commits em `main` · fronteira.
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
-- ~~Aprovar os golds de subunidade CG/MF~~ (feito 06/09). Corrigir a extracao dos zips (2). Gemini (3). Religar `gemini_auto_summarize` so com o Gemini liberado.
+- ~~Aprovar os golds de subunidade CG/MF~~ (feito 06/09). **Fila de revisao: cortar a camada `llm` da metrica (57,5 -> 34,8; perde 2 de 41 erros;
+  tracker §FILA DE REVISAO)** — decisao do user, muda metrica de produto (decisao B 02/09). Corrigir a extracao dos zips (2). Gemini (3). Religar `gemini_auto_summarize` so com o Gemini liberado.
 - Qual camada LLM cortar para ficar em duas (COMECE POR 3b). Apagar `.ablacao/CG-rebuild` e `CG-export-backup`. Posicao da C7 IMAGENS. Push/merge em `main`. Revisao da fila `revisar_queue.md` (45) do CG.
 
 ## NAO fazer (refutado no gold)
