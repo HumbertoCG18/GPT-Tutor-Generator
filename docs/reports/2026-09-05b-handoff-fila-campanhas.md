@@ -22,6 +22,8 @@ medido nos 8 — ou fica registrado como residuo humano com nome. Golds novos so
 **Subunidade: propagacao por headings ENTROU no motor (`4a239d9`): motor puro 82 -> 87/93; o IA automatico iguala o glossario manual (39/39).**
 Resto sem LLM: SO fork/exec x4 (regra humana do gold contradiz o IA) e ES2 quase-empates x2. Caminhos com LLM: vocab compilado melhor · voto de LLM para
 unidade de bloco sem evidencia lexical (CG bloco-08; 1 chamada por bloco assim).
+**06/09 noite — golds CG/MF aprovados (regua 233) · fila sem a camada llm (57,5 -> 33,0 por 100; `0673150`) · decomposicao de rotulos na 2a passada
+(`ff3eda7`): automatica x 233 187 -> 192 (82,4%), CG 49 -> 54/82, produto 193 -> 197 (84,5%); tracker §CG SUBUNIDADE 60% e §FILA DE REVISAO — CAMADA LLM CORTADA.**
 **Camada 3 (resumos de codigo) medida (06/09, tracker §NO MAXIMO DUAS CAMADAS):** so a subunidade a sente: 87 -> 71 sem resumo, 79/78 com substituto
 deterministico (mesma rota, produtor diferente); bloco/unidade/cobertura/holdout iguais. Os 8 que so o Gemini acerta sao vocabulario de categoria que
 o codigo nao contem ('classificacao', 'chamadas de sistema', 'microsservicos'). Peso: 85 resumos / 205 votos / 1 vocab por curso nos 8.
@@ -61,7 +63,7 @@ silencio (marcar para review).
 ## Estado ao terminar (05/09 tarde, tudo commitado, NADA pushed)
 Gerador `feat/motor-atribuicao` @ `4a239d9` (codigo: higiene `e0c433c` + radical-fallback `ff21cab` + propagacao por headings `4a239d9`) + docs da sessao 6. Sessao 6 (05/09 tarde), commits: `d511357` `8d61d28`
 `75b9955` `7a19208` `dc98c15` `ef4628c` `009b627` `d880f1b` `17afd2e` (docs/medicoes) · `e0c433c` (feat higiene + teste) · `ff21cab` (feat radical-fallback + teste) · `4a239d9` (feat propagacao por headings + teste). Suite 2328.
-Tutores: **MF `7a8707a` · SO `0921948` · IA `0075334` · ES2 `4c8011b` · TCC `621c292`** · LR `d139547` · FR `fd7814f` · **CG `0d2020a`** (reprocess da propagacao:
+Tutores (06/09 noite, apos fila + decomposicao): **MF `ed31d99` · SO `f513ba0` · IA `74fec68` · ES2 `0fe0f53` · TCC `082b728` · LR `d139547` · FR `4c64ed6` · CG `929cdc3`** (antes: MF `7a8707a` · SO `0921948` · IA `0075334` · ES2 `4c8011b` · TCC `621c292` · LR `d139547` · FR `fd7814f` · CG `0d2020a`) (reprocess da propagacao:
 MF/IA/ES2/TCC commitados, SO/LR/FR/CG so `updated_at` e nao commitados; CG: 4 reprocess
 registrados: `c566dc3` pinos 06/08/15, `ee4c276` sinonimo de morfologia — REVERTIDO em `2c5e01e`, `0d2020a` pinos 06 e 15 REMOVIDOS, fica so o 08; 0 chamadas Gemini; votos 42 = 42).
 Copias `.ablacao` dos 5 + CG + LR + FR (motor puro pos-higiene). `.ablacao/CG-rebuild` (365 MB) e `CG-export-backup` (440 MB): apagar e decisao do user.
@@ -115,8 +117,7 @@ Formato: **ideia** · da para fazer? · quando? · o que resolve?
   commita so `updated_at` · C4. Apagar `.ablacao/CG-*` (805 MB) · agora, decisao do user. Merge/push dos ~840 commits em `main` · fronteira.
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
-- ~~Aprovar os golds de subunidade CG/MF~~ (feito 06/09). **Fila de revisao: cortar a camada `llm` da metrica (57,5 -> 34,8; perde 2 de 41 erros;
-  tracker §FILA DE REVISAO)** — decisao do user, muda metrica de produto (decisao B 02/09). Corrigir a extracao dos zips (2). Gemini (3). Religar `gemini_auto_summarize` so com o Gemini liberado.
+- ~~Aprovar os golds de subunidade CG/MF~~ (feito 06/09). ~~Fila de revisao: cortar a camada `llm`~~ (feito 06/09, `0673150`). Corrigir a extracao dos zips (2). Gemini (3). Religar `gemini_auto_summarize` so com o Gemini liberado.
 - Qual camada LLM cortar para ficar em duas (COMECE POR 3b). Apagar `.ablacao/CG-rebuild` e `CG-export-backup`. Posicao da C7 IMAGENS. Push/merge em `main`. Revisao da fila `revisar_queue.md` (45) do CG.
 
 ## NAO fazer (refutado no gold)
