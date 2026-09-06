@@ -169,6 +169,7 @@ def apply_concept_resolver(
 
 _PROPAG_REASON = "propagado-headings"
 _DECOMP_REASON = "rotulo-decomposto"
+_TITULO_REASON = "titulo-nomeia-subtopico"
 
 
 def _tokens_headings(signals: dict, generic_stems) -> set:
@@ -212,6 +213,25 @@ def _partes_de_rotulo(units: dict, passe1: list, df_max: float) -> dict:
             out[(unit_slug, str(t.get("slug") or ""))].add(part)
             vocab[id(t)].add(n)
     return out
+
+
+def _frase_no_texto(texto_norm: str, frase: str) -> bool:
+    n = normalize_match_text(frase or "")
+    return bool(n) and re.search(r"(^|\s)" + re.escape(n) + r"(\s|$)", texto_norm) is not None
+
+
+def _subtopico_nomeado_no_titulo(entry: dict, unit_slug: str, vencedor: str, partes: dict, frases_topico: dict) -> str:
+    """Subtopico Y (!= vencedor, mesma unidade) cuja parte de rotulo esta no titulo + label do Moodle do material,
+    desde que nenhuma frase (rotulo/aliases) do vencedor esteja no titulo e Y seja unico. "" se nao houver."""
+    ml = entry.get("moodle_label")
+    ml = ml.get("text") if isinstance(ml, dict) else ml
+    tit = normalize_match_text(f"{entry.get('title') or ''} {ml or ''}")
+    if not tit:
+        return ""
+    cand = [y for (u, y), ps in partes.items() if u == unit_slug and y != vencedor and any(_frase_no_texto(tit, p) for p in ps)]
+    if len(cand) != 1 or any(_frase_no_texto(tit, f) for f in frases_topico.get(vencedor, [])):
+        return ""
+    return cand[0]
 
 
 def propagar_vocabulario_por_headings(passe1: list, content_taxonomy: dict, auto_map_entry_subtopic_fn, *,
@@ -268,9 +288,21 @@ def propagar_vocabulario_por_headings(passe1: list, content_taxonomy: dict, auto
             if add:
                 t["aliases"] = list(t.get("aliases") or []) + sorted(add)
     mudou = 0
+    frases_topico = {str(t.get("slug") or ""): [str(t.get("label") or "")] + list(t.get("aliases") or [])
+                     for u in units.values() for t in (u.get("topics") or [])}
     for entry, texto, unit_slug, match in passe1:
         if match and match.topic_slug and not match.ambiguous and match.confidence >= conf_min:
-            continue  # decisao confiante da 1a passada nunca e sobreposta
+            # Decisao confiante da 1a passada so cai quando o TITULO do material nomeia outro subtopico da unidade por
+            # uma parte do rotulo e NAO nomeia o vencedor (06/09, `simula_titulo_confiante.py`: +2 -0 nos 6 golds; CG
+            # "Exercicios de geometria computacional" ia para `entidades-geometricas` por 'Vetor/Pontos/Retas' no corpo).
+            y = _subtopico_nomeado_no_titulo(entry, unit_slug, str(match.topic_slug), partes, frases_topico)
+            if y:
+                entry["computed_subunit_slug"] = y
+                entry["subunit_match_reasons"] = list(match.reasons) + [_TITULO_REASON]
+                tags = [t for t in (entry.get("auto_tags") or []) if not str(t).startswith("subunit:")]
+                entry["auto_tags"] = tags + [f"subunit:{y}"]
+                mudou += 1
+            continue  # fora isso, decisao confiante da 1a passada nunca e sobreposta
         novo = auto_map_entry_subtopic_fn(entry, tax, texto, winning_unit_slug=unit_slug)
         slug_novo = str(getattr(novo, "topic_slug", "") or "")
         slug_ant = str(getattr(match, "topic_slug", "") or "") if match else ""

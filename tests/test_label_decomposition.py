@@ -91,3 +91,28 @@ def test_segunda_passada_usa_a_parte_so_onde_a_primeira_nao_decidiu():
     assert "rotulo-decomposto" in e_vazio["subunit_match_reasons"]
     assert e_conf["computed_subunit_slug"] == "hermite"              # decisao confiante nunca e sobreposta
     assert TAX["units"][0]["topics"][0]["aliases"] == []             # taxonomia original intacta (copia)
+
+
+def test_titulo_que_nomeia_outro_subtopico_vence_decisao_confiante():
+    """CG 'Exercicios de geometria computacional': corpo cheio de 'Vetor/Pontos/Retas' (entidades-geometricas, confiante),
+    titulo nomeia a parte 'Geometria Computacional' de "Algoritmos de Geometria Computacional" e nao nomeia o vencedor."""
+    tax = {"units": [{"slug": "u2", "title": "Fundamentos matematicos", "topics": [
+        {"slug": "algoritmos-de-geometria-computacional", "label": "Algoritmos de Geometria Computacional", "aliases": []},
+        {"slug": "algoritmos-de-poligonos", "label": "Algoritmos de Poligonos", "aliases": []},
+        {"slug": "entidades-geometricas", "label": "Entidades geometricas", "aliases": ["Vetores"]},
+    ]}]}
+    e = {"id": "ex", "title": "Exercicios de geometria computacional"}
+    e2 = {"id": "ex2", "title": "Exercicios de geometria computacional sobre entidades geometricas"}   # titulo nomeia o vencedor: fica
+    fillers = [({"id": f"f{i}", "title": f"Aula {i}"}, f"vetores {i}", "u2") for i in range(8)]
+    entries = [(e, "vetores vetores vetores", "u2"), (e2, "vetores vetores", "u2")] + fillers
+    p1 = []
+    for ent, texto, unit in entries:
+        m = _stub(ent, tax, texto, winning_unit_slug=unit)
+        ent["computed_subunit_slug"] = m.topic_slug
+        p1.append((ent, texto, unit, m))
+    assert e["computed_subunit_slug"] == "entidades-geometricas" and not p1[0][3].ambiguous
+    mudou = propagar_vocabulario_por_headings(p1, tax, _stub, conf_min=0.7, min_entries=2, df_max=0.25)
+    assert mudou == 1
+    assert e["computed_subunit_slug"] == "algoritmos-de-geometria-computacional"
+    assert "titulo-nomeia-subtopico" in e["subunit_match_reasons"]
+    assert e2["computed_subunit_slug"] == "entidades-geometricas"
