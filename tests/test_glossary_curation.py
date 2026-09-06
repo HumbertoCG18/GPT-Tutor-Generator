@@ -61,3 +61,21 @@ def test_sinonimos_curados_nao_entram_no_indice_de_unidade(tmp_path):
     assert "modelos preditivos" in extras and "perceptron" not in extras
     tax = engine._build_content_taxonomy(PLAN, "", engine.glossary_md({"course_name": "IA"}, sp, root_dir=root))
     assert "perceptron" in next(t for u in tax["units"] for t in u["topics"] if t["slug"] == "modelos-preditivos")["aliases"]
+
+
+def test_sinonimo_compilado_igual_a_secao_do_moodle_nao_entra(tmp_path):
+    """Higiene (CG 05/09): o compilador por LLM pendurou nomes de SECAO do Moodle ("Morfologia
+    Matematica", "Mapeamento de Texturas") em topicos genericos de u01 e o bloco seguia a secao errada.
+    Secao e estrutura: o sinonimo COMPILADO igual a uma secao (sem numeracao) cai; o manual fica."""
+    from src.builder.artifacts.repo import load_glossary_curation
+    (tmp_path / "course").mkdir()
+    (tmp_path / "manifest.json").write_text(json.dumps({"entries": [
+        {"id": "a", "source_section": "17 - Mapeamento de Texturas"}, {"id": "b", "source_section": "11 - Morfologia Matemática"}]}),
+        encoding="utf-8")
+    (tmp_path / "course" / ".glossary_curation.llm.json").write_text(json.dumps(
+        {"_provenance": "llm", "Conceitos": {"synonyms": ["Mapeamento de Texturas", "OpenGL"]},
+         "Áreas relacionadas": {"synonyms": ["Morfologia Matemática"]}}, ensure_ascii=False), encoding="utf-8")
+    assert load_glossary_curation(tmp_path) == {"conceitos": ["OpenGL"]}
+    (tmp_path / "course" / ".glossary_curation.json").write_text(json.dumps(
+        {"Mapeamento de Textura": {"synonyms": ["Mapeamento de Texturas"]}}, ensure_ascii=False), encoding="utf-8")
+    assert load_glossary_curation(tmp_path)["mapeamento de textura"] == ["Mapeamento de Texturas"]

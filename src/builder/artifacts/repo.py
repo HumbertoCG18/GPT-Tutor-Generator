@@ -1673,6 +1673,24 @@ def seed_glossary_fields(
 
 _GLOSSARY_CURATION_NAME = ".glossary_curation.json"
 _GLOSSARY_LLM_NAME = ".glossary_curation.llm.json"
+_SECAO_NUM_RE = re.compile(r"^\s*\d+(\.\d+)*\s*[-–.:)]?\s*")
+
+
+def _normalize_secao(text: str) -> str:
+    from src.builder.text.normalize import normalize_match_text
+    return normalize_match_text(_SECAO_NUM_RE.sub("", str(text or "")))
+
+
+def _moodle_section_names(root_dir: Optional[Path]) -> set:
+    """Nomes das secoes do Moodle (`source_section`, sem numeracao), normalizados; vazio sem manifest."""
+    path = Path(root_dir) / "manifest.json"
+    if not path.is_file():
+        return set()
+    try:
+        entries = json.loads(path.read_text(encoding="utf-8")).get("entries") or []
+    except (ValueError, OSError, AttributeError):
+        return set()
+    return {_normalize_secao(e.get("source_section")) for e in entries if isinstance(e, dict) and e.get("source_section")} - {""}
 _GLOSSARY_EMPTY = {"", "—", "-", "n/a", "N/A"}
 
 
@@ -1700,6 +1718,7 @@ def load_glossary_curation(root_dir: Optional[Path]) -> Dict[str, List[str]]:
     if not root_dir:
         return {}
     out: Dict[str, List[str]] = {}
+    secoes = _moodle_section_names(root_dir)
     # Manual + compilado por LLM (Fase 1b, 02/09: `.glossary_curation.llm.json`, mesmo formato,
     # chaves `_*` = metadados). Fundidos sem repetir; manual vem primeiro.
     for name in (_GLOSSARY_CURATION_NAME, _GLOSSARY_LLM_NAME):
@@ -1715,6 +1734,12 @@ def load_glossary_curation(root_dir: Optional[Path]) -> Dict[str, List[str]]:
                 continue
             syn = info.get("synonyms") if isinstance(info, dict) else info
             vals = [" ".join(str(s).split()) for s in (syn or []) if " ".join(str(s).split())]
+            if name == _GLOSSARY_LLM_NAME and secoes:
+                # Higiene (CG 05/09): o compilador recebe NOMES DE SECAO do Moodle como termos e, sem
+                # topico que case, pendura-os no topico generico da unidade 1 ("Morfologia Matematica"
+                # virou alias de "Areas relacionadas" e puxava o bloco para u01). Secao e estrutura, nao
+                # vocabulario; so o sinonimo COMPILADO e filtrado — o manual e decisao humana.
+                vals = [v for v in vals if _normalize_secao(v) not in secoes]
             if not vals:
                 continue
             key = _glossary_curation_key(term)
