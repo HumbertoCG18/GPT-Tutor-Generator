@@ -22,6 +22,9 @@ medido nos 8 — ou fica registrado como residuo humano com nome. Golds novos so
 **Subunidade: propagacao por headings ENTROU no motor (`4a239d9`): motor puro 82 -> 87/93; o IA automatico iguala o glossario manual (39/39).**
 Resto sem LLM: SO fork/exec x4 (regra humana do gold contradiz o IA) e ES2 quase-empates x2. Caminhos com LLM: vocab compilado melhor · voto de LLM para
 unidade de bloco sem evidencia lexical (CG bloco-08; 1 chamada por bloco assim).
+**Camada 3 (resumos de codigo) medida (06/09, tracker §NO MAXIMO DUAS CAMADAS):** so a subunidade a sente: 87 -> 71 sem resumo, 79/78 com substituto
+deterministico (mesma rota, produtor diferente); bloco/unidade/cobertura/holdout iguais. Os 8 que so o Gemini acerta sao vocabulario de categoria que
+o codigo nao contem ('classificacao', 'chamadas de sistema', 'microsservicos'). Peso: 85 resumos / 205 votos / 1 vocab por curso nos 8.
 
 ## COMECE POR (proxima sessao) — tres decisoes do user antes de qualquer codigo
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json`, `.codex/` e `.mex/patterns/*` de outro agente), `git log --oneline -3`,
@@ -38,6 +41,9 @@ unidade de bloco sem evidencia lexical (CG bloco-08; 1 chamada por bloco assim).
 3. **Liberar ou nao o Gemini** para fechar a C1: travessia final IA/FR/CG modo LLM (~90 chamadas; alvo IA >= 14/15, FR 15/15, CG rerodado — ja medido
    apos o item 1: IA 14, FR 15, CG 10-11); depois, so se a travessia errar por indice: item 4 ou "FILE_MAP titulo = label · stem"; e o prompt do voter
    com `label do Moodle` (90/125 votados tem label != title; re-voto <= 90 chamadas). Sem Gemini a C1 nao tem item.
+   **3b. 'No maximo duas camadas LLM' (user 06/09):** qual cortar. Numeros: vocab +57 sub/+10 unidade · voter +7 bloco/+4 holdout · resumos +8 sub
+   (0 no resto). Recomendacao: cortar a 3 trocando o produtor de `code_curation.json` pelo deterministico v2 (`c1-3/shim_codigo.py`, -8/93 sub);
+   ou, para nao perder os 8, a compilacao do vocab ver o bundle de codigo (mesma chamada; exige Gemini para medir).
 4. Gate de cada item: suite verde; sentinela 0 nos 8; determinismo 8/8 (so se `src/` mudar); curada intacta (198/199); commit com numero no tracker;
    tutores so mudam por reprocess registrado com tripwire (copia `.ablacao` antes); reprocess NAO commita quando so `updated_at` muda (caixa).
 
@@ -108,7 +114,7 @@ Formato: **ideia** · da para fazer? · quando? · o que resolve?
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
 - Aprovar os golds de subunidade CG/MF (COMECE POR 1). Corrigir a extracao dos zips (2). Gemini (3). Religar `gemini_auto_summarize` so com o Gemini liberado.
-- Apagar `.ablacao/CG-rebuild` e `CG-export-backup`. Posicao da C7 IMAGENS. Push/merge em `main`. Revisao da fila `revisar_queue.md` (45) do CG.
+- Qual camada LLM cortar para ficar em duas (COMECE POR 3b). Apagar `.ablacao/CG-rebuild` e `CG-export-backup`. Posicao da C7 IMAGENS. Push/merge em `main`. Revisao da fila `revisar_queue.md` (45) do CG.
 
 ## NAO fazer (refutado no gold)
 **05/09 tarde (sessao 6):** `title` do manifest := `moodle_label` (piso 0; bloco 186 -> 184; 2 confiantes viram flag) · subunidade de codigo pelo card (nome 0/+

@@ -10,6 +10,34 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## NO MAXIMO DUAS CAMADAS LLM — CAMADA 3 (RESUMOS DE CODIGO) MEDIDA: ABLACAO E SUBSTITUTO DETERMINISTICO (06/09, sessao 6; DECISAO DO USER)
+**Pedido do user:** "quero o motor o mais automatico possivel, LLM para 3 camadas fica pesado, queria deixar no maximo duas"; "nao quero ficar criando
+novas rotas para o motor". **Peso medido no produto (8 tutores):** vocab = 1 compilacao por curso · resumos de codigo = 85 (1 por arquivo/zip, cache por
+hash, so re-roda se o arquivo mudar) · votos = 205 (1 por material incerto, cache). Curso novo do tamanho do CG: 1 + 17 + 42.
+**Ablacao da camada 3 (`c1-3/shim_codigo.py {sem|determ} {puro|holdout}`, copias, tripwire, 0 chamadas; motor puro + vocab + propagacao):**
+| regime | bloco (199) | unidade (191) | cobertura (57) | subunidade (93) | holdout CG (35) |
+|---|---|---|---|---|---|
+| COM resumos do Gemini (referencia, `b_prop_*.log`) | 186 | 183 | 53 | **87** (83 primario) | 31 |
+| SEM resumos (`code_curation.json` vazio, `codigo_sem_*.log`) | 186 | 183 | 53 | **71** (67) | 31 |
+| substituto deterministico v1: zip/ipynb crus (`codigo_determ_*.log`) | 186 | 183 | 53 | 79 (75) | 31 |
+| substituto deterministico v2: os `.md` que o motor JA gera para codigo/zip = o mesmo bundle que o Gemini recebe (`codigo_determ2_*.log`) | 186 | 183 | 53 | 78 (74) | 31 |
+**Leitura:** a camada 3 so sustenta a SUBUNIDADE (+16 sobre nada, +8 sobre o melhor substituto); bloco, unidade, cobertura e holdout nao a sentem.
+Os 8 que SO o resumo do Gemini acerta (listados na copia, `winner_score`/`empate`): SO threads x3 (empate exato 0,11: 'pthread' esta no vocab mas
+empata; o Gemini injeta 'gerenciamento de processos'/'programacao concorrente') · IA perceptron x4 + mlp-xor (na copia 'perceptron' NAO e alias de
+`modelos-preditivos`, so 'MultiLayer Perceptron'; o notebook tem 'Generalizacao', alias de `introducao`; o Gemini injeta 'Perceptron'/'Classificacao')
+· ES2 roteiro1 (zip Spring: o codigo so tem 'currency/exchange'; o Gemini injeta 'Microsservicos'). Ou seja: o resumo vale pelo VOCABULARIO DE
+CATEGORIA que o codigo nao contem — e um remendo da camada 2 (vocab), nao sinal proprio do codigo. Os outros 6 erros sao os mesmos com ou sem Gemini.
+**Decisao do user (aberta): qual camada cortar.** Recomendacao com numero: cortar a 3 (menor ganho das tres: +8 sub; vocab vale +57 sub/+10 unidade;
+voter vale +7 bloco/+4 holdout) e trocar o PRODUTOR de `code_curation.json` pelo deterministico v2 — mesma rota (`code_curation_signal_text` +
+`entry["concepts"]`), produtor diferente, 0 rotas novas; custo -8/93 na subunidade, 0 no resto. Para nao perder os 8 mantendo duas camadas: a
+compilacao do vocab (camada 2) passar a ver o bundle de codigo (`vocabulary_compile` le `_entry_markdown_text_for_file_map`, que para zip devolve
+vazio) — mesma chamada, mais insumo; exige Gemini para remedir -> decisao 3 do handoff.
+**"% de similaridade vocab x nome do material" (pergunta do user; `c1-3/simula_similaridade_nome.py`, 93 pontuaveis, 0 chamadas):** Jaccard de tokens
+do nome (title + label) x label do plano (sem LLM): limiar 0,5 -> 9 certos 0 errados 84 sem atribuicao; 0,2 -> 16/1/76. x label + aliases do vocab LLM:
+0,5 -> 27/0/66; 0,3 -> 46/3/44; 0,2 -> 63/6/24. `difflib` 0,3 -> 46 certos 41 errados. O scorer do motor (mesma ideia, texto inteiro + pesos): 87 com
+vocab, 30 sem. **Leitura:** faz sentido e JA E o que o scorer faz (sobreposicao de tokens material x vocab, por topico); um indice explicito nao
+acrescenta informacao — o teto e o vocabulario, nao a funcao de similaridade. Nenhuma rota nova proposta.
+
 ## CONTRIBUICAO POR CAMADA (06/09, pedido do user: "os numeros obtidos sem LLM" antes de uma materia 100% nova)
 | camada (copias, tripwire, 0 chamadas) | bloco (199) | unidade (191) | cobertura (57) | subunidade (93) | holdout CG (35) |
 |---|---|---|---|---|---|
