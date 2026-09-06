@@ -50,15 +50,14 @@ user · `.claude/settings.local.json` intocado · tokens (`moddle/.env`, `.env`)
 silencio (marcar para review).
 
 ## Estado ao terminar (05/09 tarde, tudo commitado, NADA pushed)
-Gerador `feat/motor-atribuicao` @ `e0c433c` (codigo: higiene do glossario) + docs da sessao 6. Sessao 6 (05/09 tarde), commits: `d511357` `8d61d28`
-`75b9955` `7a19208` `dc98c15` `ef4628c` `009b627` `d880f1b` `17afd2e` (docs/medicoes) · `e0c433c` (feat higiene + teste). Suite 2325.
-Tutores: MF `afb83cb` · SO `0921948` · IA `d7d81ed` · ES2 `ba7d2c8` · TCC `13ced08` · LR `d139547` · FR `fd7814f` · **CG `2c5e01e`** (3 reprocess
-registrados: `c566dc3` pinos de unidade 06/08/15, `ee4c276` sinonimo de morfologia — REVERTIDO em `2c5e01e`; 0 chamadas Gemini; votos 42 = 42).
+Gerador `feat/motor-atribuicao` @ `ff21cab` (codigo: higiene do glossario `e0c433c` + radical-fallback `ff21cab`) + docs da sessao 6. Sessao 6 (05/09 tarde), commits: `d511357` `8d61d28`
+`75b9955` `7a19208` `dc98c15` `ef4628c` `009b627` `d880f1b` `17afd2e` (docs/medicoes) · `e0c433c` (feat higiene + teste) · `ff21cab` (feat radical-fallback + teste). Suite 2326.
+Tutores: MF `afb83cb` · SO `0921948` · IA `d7d81ed` · ES2 `ba7d2c8` · TCC `13ced08` · LR `d139547` · FR `fd7814f` · **CG `0d2020a`** (4 reprocess
+registrados: `c566dc3` pinos 06/08/15, `ee4c276` sinonimo de morfologia — REVERTIDO em `2c5e01e`, `0d2020a` pinos 06 e 15 REMOVIDOS, fica so o 08; 0 chamadas Gemini; votos 42 = 42).
 Copias `.ablacao` dos 5 + CG + LR + FR (motor puro pos-higiene). `.ablacao/CG-rebuild` (365 MB) e `CG-export-backup` (440 MB): apagar e decisao do user.
 **Reguas (gold pelo oraculo, 199 pontuaveis):** curada **198/199 conf-err 0** (falta ES2 `azure`) · unidade 191/191 · cobertura 55/57 · motor puro +vocab
 **186/199 conf-err 1** · unidade 183/191 · cobertura 53/57 · sub 82/93 · holdout CG puro 31/35 conf-err 0 (flagados 14) · censo revisar/100 58,3
-('mudou' 13 do reprocess do CG; era 57,8) · votos/100 35,9 · FILE_MAP 345/345 · **CG unidade: 22/93 erradas -> 1** (`texturas-v3`) + 2 por erro de bloco
-(texturas no bloco-06, flagadas) · travessia pos-C1-item-1: IA 14/15 · FR 15/15 · CG 10/15 (11 completo) com LLM; sem-llm IA 10 · FR 9 · CG 5.
+('mudou' 13 do reprocess do CG; era 57,8) · votos/100 35,9 · FILE_MAP 345/345 · **CG unidade: produto 1/93 errada (+2 por erro de bloco); AUTOMATICA (sem pino) 22/93 -> 6/93** (morfologia x3, texturas x3) · travessia pos-C1-item-1: IA 14/15 · FR 15/15 · CG 10/15 (11 completo) com LLM; sem-llm IA 10 · FR 9 · CG 5.
 Golds propostos (NAO na regua): `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt_MF.csv` 58. **Regua automatica: bloco 192/199 · unidade 185/191 · sub 82/93 · holdout 35/35.** Determinismo pos-higiene **8/8, 0 arquivos nao deterministicos**; 0 resumos de codigo de hoje nos originais e nas copias.
 
 ## BALANCO da sessao 6 (05/09 tarde)
@@ -69,8 +68,8 @@ Golds propostos (NAO na regua): `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt
   gold aprovado).
 - **CG unidade 22/93 -> 1:** raiz = vocab compilado por LLM com nomes de secao pendurados em topicos genericos de u01 + ordem do professor invertida
   (DP monotonica). Motor: 5 alavancas genericas medidas e refutadas (sem aliases 183 -> 136; radicais saldo 0; vizinho ancorado 183 -> 163; exclusividade
-  relaxada 179; higiene sozinha neutra; radical so como fallback: +1 bloco, 0 colateral, unica unificacao que sobrevive, caixa). Solucao = higiene generica (codigo, `e0c433c`) + pinos de unidade nos blocos 06 (u04, nome do SARC), 08 (u03),
-  15 (u07) — o mesmo mecanismo dos outros 7 tutores (13 pinos). Gates: motor puro 186/199 = · holdout 31/35 = · curada 198/199 = · sentinela 0 · suite 2325.
+  relaxada 179; higiene sozinha neutra). **Entrou no motor: higiene (`e0c433c`) e radical so como fallback (`ff21cab`, +1 bloco, 0 colateral).** Pinos 06 e 15
+  removidos (produto identico); fica so o 08 (morfologia: plano nao menciona, residuo para voto de LLM de unidade). CG automatico: 22 -> 6 unidades erradas. Gates: motor puro 186/199 = · holdout 31/35 = · curada 198/199 = · sentinela 0 · suite 2325.
 - **Golds de subunidade CG (82) e MF (58) propostos** para aprovacao; bug dos zips do MF medido; `gemini_auto_summarize` desligado pelo user.
 
 ## FILA DE CAMPANHAS (ordem decidida 03/09, atualizada 05/09 tarde)
@@ -96,8 +95,6 @@ Formato: **ideia** · da para fazer? · quando? · o que resolve?
 - **Propagacao de vocabulario por headings para a subunidade (sem LLM)** · +5/-0 no gold de 93 (conf >= 0,7, token em >= 2 confiantes, df <= 25%, so nos
   nao-confiantes), curada intacta; MF 6 / CG 9 mudancas sem gold com erros a olho · sim, ~40 linhas em `apply_unit_subunit_fields` · **depois do gold CG/MF aprovado**.
 - **Voto de LLM para a UNIDADE de bloco sem evidencia lexical** (CG bloco-08 morfologia: plano nao menciona; unico caso nos 8) · 1 chamada por bloco assim · substitui o pino do bloco-08 · precisa de Gemini.
-- **Radical (6 chars) so como fallback no mapa bloco->unidade** (tokens exatos decidem; sem ancora exata, ancora por radical exclusivo) · 1 bloco muda
-  nos 8 (CG bloco-15 = pino), 0 colateral, unidade 183 = 183 · ~15 linhas em `assign_units_positional` · ganho hoje 0 (pino), valor = proximo curso sem pino · C4/C5.
 - **Prompt do voter sem o `moodle_label`** (`llm_vote.py:241`; 90/125 votados tem label != title) · 1 linha + re-voto <= 90 chamadas · C1 fechamento (LLM).
 - **FILE_MAP titulo = label perde o stem** (103 linhas; 7 labels sem conteudo) · "label · stem" quando o title tem token que o label nao tem · C1 item 4, so se a travessia errar.
 - **Zips extraidos sem subpasta colidem nomes** — nos 8: CG 168 nomes repetidos entre 14 zips, ES2 38, MF 10, SO 3; `.smv` ignorado · `<id>/<membro>` + `.smv` como codigo · SYNC/C5 · codigo e resumo certos por zip.

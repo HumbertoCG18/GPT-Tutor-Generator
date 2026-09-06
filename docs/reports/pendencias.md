@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-05 tarde (sessao 6; REGUA AUTOMATICA = oficial: bloco 192/199, unidade 185/191, holdout CG 35/35, sub 82/93; C1 itens 1-3 FEITOS; gold pelo oraculo; Gemini com credito mas NAO usar ate o user mandar). **Ponto de entrada = handoff `2026-09-05b-handoff-fila-campanhas.md`** (sessao 6; o de 05/09 manha esta em `_archive/`) (regra
+last_updated: 2026-09-05 tarde (sessao 6; REGUA AUTOMATICA = oficial: bloco 192/199, unidade 185/191, holdout CG 35/35, sub 82/93; CG unidade automatica 6/93 erradas; radical-fallback no motor; C1 itens 1-3 FEITOS; gold pelo oraculo; Gemini com credito mas NAO usar ate o user mandar). **Ponto de entrada = handoff `2026-09-05b-handoff-fila-campanhas.md`** (sessao 6; o de 05/09 manha esta em `_archive/`) (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: **C0 MOTOR 11/11 FECHADA em 05/09** (§C0 ITEM 12, 9, 10, 11a, 11b);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
@@ -9,6 +9,27 @@ C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao p
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## CG UNIDADE SEM LLM E SEM PINO — RADICAL-FALLBACK NO MOTOR + 2 PINOS REMOVIDOS (05/09 tarde, sessao 6, FEITO; gerador `ff21cab`, CG `0d2020a`)
+**Pedido do user:** o maior numero possivel sem LLM, sem curadoria por curso. **Medido antes (`c1-3/simula_cg_unidade_generico.py`, nos 8):** radical so como
+fallback (RF) +1 bloco (CG 15 -> u07), 0 colateral, unidade 183 = 183 · generico por radical entre unidades (SG) 183 -> 172, SO 32 -> 21: REFUTADO · heranca
+por afinidade zero (Z0) 0 efeito (o bloco-08 tem afinidade 1 via 'matematica' no label de u06) · alias boilerplate ('OpenGL' em > 25% dos materiais) 0
+efeito no mapa · bloco flagado nao impoe unidade: texto certo 3 x bloco certo 4 (puro), 0 x 4 (produto): REFUTADO · gate por confianca do texto
+(>= 0,6 a 0,95): saldo -17 a -2 em toda a varredura: REFUTADO (o 'bloco decide' de 21/08 segue certo).
+**Codigo (`ff21cab`, `assign_units_positional`):** bloco sem ancora exata possivel (aff < 2) ancora por radical de 6 chars com as mesmas exigencias
+(>= 2, margem >= 1, radical exclusivo de UMA unidade), conf 0,6. Teste `test_positional_radical_so_como_fallback_ancora_bloco_sem_token_exato`.
+No codigo real muda so o bloco-15 do CG nos 8. Suite 2326.
+**Curadoria do CG:** pinos dos blocos 06 e 15 REMOVIDOS (`0d2020a`; a mensagem do commit repete a anterior — e a remocao); fica so o bloco-08
+(morfologia -> u03), residuo com nome. Reprocess registrado (tripwire): unidade mudou 0, bloco 0, sub 0, votos 42 = 42, 0 resumo: o produto
+ficou identico sem os 2 pinos.
+**Gates:** motor puro +vocab 186/199 conf-err 1 · 183/191 · 53/57 · sub 82/93 (iguais) · holdout CG puro 31/35 (igual) · curada 198/199 · 191/191 ·
+55/57 (igual) · sentinela 0 · censo 58,3/35,9 · determinismo 8/8, 0 arquivos nao deterministicos.
+**Regua automatica remedida (`motor_auto.py` v2: COM vocab tambem no holdout e cache de votos DO PRODUTO copiado para a copia — a copia acumulava
+votos antigos, CG 2/42 diferentes, e o holdout puro roda SEM vocab por definicao, o que fazia o bloco-02 ficar sem unidade):** 5 cursos bloco 193/199 (97,0%, conf-err 0) · unidade 185/191 · cobertura 53/57 · sub 82/93 (0 votos pulados; era 192 com o cache antigo da copia) ·
+holdout CG 35/35 · **CG unidade automatica: 22/93 -> 6/93 erradas** = morfologia x3 (bloco-08 -> u06; plano nao menciona morfologia) + texturas x3
+(`maptextures` e pagina de videos no bloco-06 por colisao 'mapeamento'; `texturas-v3` u01 por conteudo). A primeira medicao (11/93) estava
+contaminada pela falta do vocab na copia: corrigida.
+**Residuo sem LLM (com nome):** 3 de morfologia (so voto de LLM de unidade ou pino) + 3 de texturas (2 erro de bloco flagado -> voter; 1 conteudo).
 
 ## REGUA AUTOMATICA (05/09 tarde, sessao 6; decisao do user: "gold so mede; nao criar curadoria por curso") — MEDIDA, VIRA A OFICIAL
 **Definicao:** motor + voter com CACHE de votos, SEM pinos (bloco/unidade/sub), SEM glossario manual, COM vocab compilado por LLM; copias `.ablacao`;
