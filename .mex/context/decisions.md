@@ -460,3 +460,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Decision:** `assign_units_positional` ganha ancora por radical de 6 chars SO para bloco sem ancora exata possivel (aff < 2), com as mesmas exigencias da ancora exata (`ff21cab`). Os pinos de unidade dos blocos 06 e 15 do CG saem (a higiene e o radical-fallback os cobrem; produto identico); o pino do bloco-08 fica como residuo com nome ate existir voto de LLM de unidade para bloco sem evidencia lexical.
 **Reasoning:** Medido nos 8 antes do codigo: RF muda 1 bloco (CG 15 -> u07 = pino), 0 colateral, unidade 183 = 183/191; radical em tudo, generico por radical entre unidades (183 -> 172), heranca por afinidade zero, alias boilerplate, bloco flagado sem imposicao e gate por confianca do texto (saldo -17 a -2) foram refutados. Regua automatica remedida com vocab e cache do produto: CG unidade 22 -> 6 erradas (morfologia x3, texturas x3), holdout 35/35, 5 cursos bloco 193/199 (97,0%, conf-err 0) · unidade 185/191 · cobertura 53/57 · sub 82/93 (0 votos pulados; era 192 com o cache antigo da copia); determinismo 8/8, 0 arquivos nao deterministicos.
 **Consequences:** CG `0d2020a` com 1 pino; motor puro/curada/holdout iguais; suite 2326. Caixa: voto de LLM de unidade para bloco sem evidencia (Gemini).
+
+---
+
+### Subunidade: propagacao de vocabulario por headings entra no motor como 2a passada (so onde a 1a nao decidiu); glossario manual deixa de ser necessario no IA
+
+**Date:** 2026-09-05
+**Status:** Active
+**Decision:** `apply_unit_subunit_fields` ganha uma 2a passada: tokens exclusivos dos headings/titulo dos materiais confiantes (>= 0,7) de um subtopico viram aliases dele e so os materiais vazios/ambiguos/fracos sao repontuados (`4a239d9`, limiares em `thresholds.T`). Decisao confiante nunca e sobreposta. Reason gravada `propagado-headings`.
+**Reasoning:** Pedido do user: subunidade automatica sem LLM, gold so mede. Medido em memoria pela rota real nos 6 golds (233): +5 -0 (IA perceptron x3 + mlp-xor, SO exemplo3), FR/LR 0 mudancas; grade de 8 pontos estavel em conf 0,7; cada salvaguarda tem a perda que evita medida (stems genericos, df 25%, minimo 2 confiantes, exclusividade, so nao-confiantes). Gates: motor puro sub 82 -> 87/93 com bloco/unidade iguais; automatica bloco 193/199 (97,0%, conf-err 0) · unidade 185/191 · cobertura 53/57 · **sub 87/93 (93,5%)**; holdout 35/35; curada igual; produto x 6 golds 193/233 igual; determinismo 8/8.
+**Consequences:** Reprocess registrado dos 8 (MF/IA/ES2/TCC commitados; 4 tutores so `updated_at`, sem commit). Residuo da subunidade no puro: SO fork/exec x4 (regra humana do gold que o IA contradiz) e ES2 quase-empates x2.

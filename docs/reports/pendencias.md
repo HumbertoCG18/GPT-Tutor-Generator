@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-05 tarde (sessao 6; REGUA AUTOMATICA = oficial: bloco 192/199, unidade 185/191, holdout CG 35/35, sub 82/93; CG unidade automatica 6/93 erradas; radical-fallback no motor; C1 itens 1-3 FEITOS; gold pelo oraculo; Gemini com credito mas NAO usar ate o user mandar). **Ponto de entrada = handoff `2026-09-05b-handoff-fila-campanhas.md`** (sessao 6; o de 05/09 manha esta em `_archive/`) (regra
+last_updated: 2026-09-05 tarde (sessao 6; REGUA AUTOMATICA = oficial: bloco 192/199, unidade 185/191, holdout CG 35/35, sub 82/93; CG unidade automatica 6/93 erradas; radical-fallback no motor; propagacao por headings no motor: sub puro 82 -> 87/93; C1 itens 1-3 FEITOS; gold pelo oraculo; Gemini com credito mas NAO usar ate o user mandar). **Ponto de entrada = handoff `2026-09-05b-handoff-fila-campanhas.md`** (sessao 6; o de 05/09 manha esta em `_archive/`) (regra
 de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
 **Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: **C0 MOTOR 11/11 FECHADA em 05/09** (§C0 ITEM 12, 9, 10, 11a, 11b);
 **SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
@@ -9,6 +9,27 @@ C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao p
 Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
+
+## SUBUNIDADE SEM LLM — PROPAGACAO DE VOCABULARIO POR HEADINGS NO MOTOR (05/09 noite, sessao 6, FEITO; gerador `4a239d9`)
+**Pedido do user:** arrumar as subunidades de maneira automatica, sem LLM. **Raiz:** o plano nomeia categorias e o material nomeia algoritmos; o vocab
+compilado por LLM nao emitiu 'perceptron'/'rede neural'/'MLP' para o IA e o remendo era o glossario MANUAL (curadoria).
+**Regra (`resolver_apply.propagar_vocabulario_por_headings`, 2a passada):** token EXCLUSIVO dos headings/titulo dos materiais que a 1a passada atribuiu
+com confianca (>= 0,7) a um subtopico vira alias desse subtopico; so materiais vazios/ambiguos/fracos sao repontuados; decisao confiante nunca e
+sobreposta. Salvaguardas medidas, cada uma: sem stems genericos do motor ('exemplo'/'respostas' viravam alias: CG `slab` e MF `respostas` caiam) · df
+<= 25% dos materiais ('sumario'/'aula' do TCC) · >= 2 confiantes · exclusivo de UM subtopico · so nos nao-confiantes (o CG perdia 8 confiantes sem isso).
+Limiares em `thresholds.T` (SUBUNIT_PROPAG_CONF 0,7 · MIN_ENTRIES 2 · DF_MAX 0,25; grade de 8 pontos em `c1-3/simula_propaga_grid_df025.log`).
+Teste `tests/test_subunit_propagacao.py` (2). Suite 2328. Reason gravada: `propagado-headings`.
+**Medido antes de entrar (`c1-3/simula_propaga_headings_6golds.py`, 6 golds = 233, CG/MF propostos):** 182 -> 187, **+5 -0**, 4 mudancas erro->erro;
+FR/LR 0 mudancas. Alias = label de sessao do SARC (`simula_alias_sessao_sub.py`): 0 efeito nos 93.
+**Gates (tripwire, 0 chamadas):** motor puro +vocab bloco 186/199 · unidade 183/191 · cobertura 53/57 · **sub 82 -> 87/93 (83 primario)** · automatica bloco 193/199 (97,0%, conf-err 0) · unidade 185/191 · cobertura 53/57 · **sub 87/93 (93,5%)**
+· holdout CG puro 31/35 · automatico 35/35 · CG sub automatico 49/82 (1 propagado) · curada bloco 198/199 · 191/191 · 55/57 · produto x 6 golds de
+subunidade 193/233 com extras (igual; primario 162) · sentinela 0 · censo revisar/100 57,5 (sub-empate 24 -> 20, sub-ambigua 19 -> 17) · determinismo 8/8, 0 arquivos.
+**Reprocess registrado dos 8 (`c1-3/reprocess_8_propagacao.py`, tripwire de produto; NAO commita quando so `updated_at` muda — caixa aplicada):**
+MF `7a8707a` (sub mudou 4: t1-thy, hoare, invariantes, terminacao -> verificacao-de-programas; os zips com resumo colidido) · IA `0075334` (2: lista-de-
+exercicios-i, p2-202401 -> busca-adversaria) · ES2 `4c8011b` (6, todos dentro dos extras do gold) · TCC `621c292` (1: aula-16 -> prova-da-indecidibilidade) ·
+SO/LR/FR/CG so `updated_at`, sem commit. Bloco 0 · unidade 0 · flagadas iguais · propagados 26 nos 8.
+**O que sobra na subunidade do motor puro (6/93):** SO fork/exec x4 (gold pela regra humana 'apoio rotula pelo card', que o IA contradiz: sem regra
+generica), ES2 `devops`/`kubernetes` (quase-empate). No IA o automatico agora iguala o glossario manual (39/39) — o remendo humano deixou de ser necessario.
 
 ## CG UNIDADE SEM LLM E SEM PINO — RADICAL-FALLBACK NO MOTOR + 2 PINOS REMOVIDOS (05/09 tarde, sessao 6, FEITO; gerador `ff21cab`, CG `0d2020a`)
 **Pedido do user:** o maior numero possivel sem LLM, sem curadoria por curso. **Medido antes (`c1-3/simula_cg_unidade_generico.py`, nos 8):** radical so como

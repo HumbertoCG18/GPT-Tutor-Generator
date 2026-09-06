@@ -19,8 +19,9 @@ Motor + voter com cache, sem pino, sem glossario manual, com vocab LLM (`_harnes
 unidade 185/191 = 96,9% · cobertura 53/57 · subunidade 82/93 = 88% · holdout CG 35/35** (v2: vocab tambem no holdout, cache de votos do produto; 192 era com o cache antigo da copia). Motor puro (sem voter) segue como regua de diagnostico; curada
 (com pinos) e o produto de hoje, nao a meta. Pinos e glossario manual sao ANDAIME: cada um deve ter regra generica ou voto de LLM que o substitua,
 medido nos 8 — ou fica registrado como residuo humano com nome. Golds novos so para MEDIR (CG/MF subunidade: aprovar uma vez, nunca curar por curso).
-**Abaixo de 95% so a subunidade (vocabulario). Caminhos genericos:** vocab compilado melhor (LLM; hoje nao emite 'perceptron'/'MLP' para o IA) ·
-propagacao por headings (+5/-0 no gold, valida com o gold CG/MF) · voto de LLM para unidade de bloco sem evidencia lexical (CG bloco-08; 1 chamada por bloco assim).
+**Subunidade: propagacao por headings ENTROU no motor (`4a239d9`): motor puro 82 -> 87/93; o IA automatico iguala o glossario manual (39/39).**
+Resto sem LLM: SO fork/exec x4 (regra humana do gold contradiz o IA) e ES2 quase-empates x2. Caminhos com LLM: vocab compilado melhor · voto de LLM para
+unidade de bloco sem evidencia lexical (CG bloco-08; 1 chamada por bloco assim).
 
 ## COMECE POR (proxima sessao) — tres decisoes do user antes de qualquer codigo
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json`, `.codex/` e `.mex/patterns/*` de outro agente), `git log --oneline -3`,
@@ -29,8 +30,8 @@ propagacao por headings (+5/-0 no gold, valida com o gold CG/MF) · voto de LLM 
 1. **APROVAR os golds de subunidade propostos** (`docs/reports/gold_subunidade_CG_MF_proposta_2026-09-05.md`, coluna `ok?`): CG 82 pontuaveis
    (produto acerta 49 com extras, 36 primario), MF 58 (51, 36); 4 rulings marcados (bundle misto pelo card; `exemplodemanipulacaodeimagens`
    label 'Classe Vetor' x conteudo; convencao Dafny = `softwares-de-suporte` com extra `verificacao-de-programas`; OpenGL = vazio). Aprovado:
-   ligar `subunit_gt_{CG,MF}.csv` em `scripts/motor_puro.py` (`SUBUNIT_GOLD`) e REMEDIR a propagacao de vocabulario por headings nos 8
-   (`c1-3/simula_propaga_headings*.py`: +5/-0 no gold de 93, mas MF 6 / CG 9 mudancas sem gold — o gold novo e o que decide).
+   ligar `subunit_gt_{CG,MF}.csv` em `scripts/motor_puro.py` (`SUBUNIT_GOLD`): a propagacao ja entrou (medida +5/-0 nos 6 golds com os propostos);
+   o gold aprovado passa a ser regua permanente de CG/MF.
 2. **BUG dos zips do MF (SYNC/C5):** extracao sem subpasta colide `ex1.dfy` entre 5 zips (4 zips sem conteudo no tutor; 5 resumos de codigo errados)
    e `.smv` (NuSMV) e ignorado. Corrigir na extracao (`<id>/<membro>` + `.smv` como codigo), re-resumir quando o Gemini for liberado, reprocess do MF.
    Decisao de fila (C5 esta estacionada).
@@ -50,15 +51,16 @@ user · `.claude/settings.local.json` intocado · tokens (`moddle/.env`, `.env`)
 silencio (marcar para review).
 
 ## Estado ao terminar (05/09 tarde, tudo commitado, NADA pushed)
-Gerador `feat/motor-atribuicao` @ `ff21cab` (codigo: higiene do glossario `e0c433c` + radical-fallback `ff21cab`) + docs da sessao 6. Sessao 6 (05/09 tarde), commits: `d511357` `8d61d28`
-`75b9955` `7a19208` `dc98c15` `ef4628c` `009b627` `d880f1b` `17afd2e` (docs/medicoes) · `e0c433c` (feat higiene + teste) · `ff21cab` (feat radical-fallback + teste). Suite 2326.
-Tutores: MF `afb83cb` · SO `0921948` · IA `d7d81ed` · ES2 `ba7d2c8` · TCC `13ced08` · LR `d139547` · FR `fd7814f` · **CG `0d2020a`** (4 reprocess
+Gerador `feat/motor-atribuicao` @ `4a239d9` (codigo: higiene `e0c433c` + radical-fallback `ff21cab` + propagacao por headings `4a239d9`) + docs da sessao 6. Sessao 6 (05/09 tarde), commits: `d511357` `8d61d28`
+`75b9955` `7a19208` `dc98c15` `ef4628c` `009b627` `d880f1b` `17afd2e` (docs/medicoes) · `e0c433c` (feat higiene + teste) · `ff21cab` (feat radical-fallback + teste) · `4a239d9` (feat propagacao por headings + teste). Suite 2328.
+Tutores: **MF `7a8707a` · SO `0921948` · IA `0075334` · ES2 `4c8011b` · TCC `621c292`** · LR `d139547` · FR `fd7814f` · **CG `0d2020a`** (reprocess da propagacao:
+MF/IA/ES2/TCC commitados, SO/LR/FR/CG so `updated_at` e nao commitados; CG: 4 reprocess
 registrados: `c566dc3` pinos 06/08/15, `ee4c276` sinonimo de morfologia — REVERTIDO em `2c5e01e`, `0d2020a` pinos 06 e 15 REMOVIDOS, fica so o 08; 0 chamadas Gemini; votos 42 = 42).
 Copias `.ablacao` dos 5 + CG + LR + FR (motor puro pos-higiene). `.ablacao/CG-rebuild` (365 MB) e `CG-export-backup` (440 MB): apagar e decisao do user.
 **Reguas (gold pelo oraculo, 199 pontuaveis):** curada **198/199 conf-err 0** (falta ES2 `azure`) · unidade 191/191 · cobertura 55/57 · motor puro +vocab
 **186/199 conf-err 1** · unidade 183/191 · cobertura 53/57 · sub 82/93 · holdout CG puro 31/35 conf-err 0 (flagados 14) · censo revisar/100 58,3
 ('mudou' 13 do reprocess do CG; era 57,8) · votos/100 35,9 · FILE_MAP 345/345 · **CG unidade: produto 1/93 errada (+2 por erro de bloco); AUTOMATICA (sem pino) 22/93 -> 6/93** (morfologia x3, texturas x3) · travessia pos-C1-item-1: IA 14/15 · FR 15/15 · CG 10/15 (11 completo) com LLM; sem-llm IA 10 · FR 9 · CG 5.
-Golds propostos (NAO na regua): `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt_MF.csv` 58. **Regua automatica (v2): bloco 193/199 · unidade 185/191 · sub 82/93 · holdout 35/35 · CG unidade 6/93 erradas sem pino.** Determinismo pos-higiene **8/8, 0 arquivos nao deterministicos**; 0 resumos de codigo de hoje nos originais e nas copias.
+Golds propostos (NAO na regua): `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt_MF.csv` 58. **Regua automatica (v2, pos-propagacao): bloco 193/199 (97,0%, conf-err 0) · unidade 185/191 · cobertura 53/57 · **sub 87/93 (93,5%)** · holdout 35/35 · CG unidade 6/93 erradas sem pino.** Determinismo pos-higiene **8/8, 0 arquivos nao deterministicos**; 0 resumos de codigo de hoje nos originais e nas copias.
 
 ## BALANCO da sessao 6 (05/09 tarde)
 - **C1 item 3 (title := label): REFUTADO por medicao, 0 codigo.** Piso sem-llm 0 flip; motor puro bloco 186 -> 184, 2 confiantes viram flag (label
@@ -92,8 +94,6 @@ normalizacao, `find_spec`; reprocess nao commitar so por `updated_at`) · **C5 d
 
 ## CAIXA DE IDEIAS (fora da campanha aberta; triagem so na fronteira)
 Formato: **ideia** · da para fazer? · quando? · o que resolve?
-- **Propagacao de vocabulario por headings para a subunidade (sem LLM)** · +5/-0 no gold de 93 (conf >= 0,7, token em >= 2 confiantes, df <= 25%, so nos
-  nao-confiantes), curada intacta; MF 6 / CG 9 mudancas sem gold com erros a olho · sim, ~40 linhas em `apply_unit_subunit_fields` · **depois do gold CG/MF aprovado**.
 - **Voto de LLM para a UNIDADE de bloco sem evidencia lexical** (CG bloco-08 morfologia: plano nao menciona; unico caso nos 8) · 1 chamada por bloco assim · substitui o pino do bloco-08 · precisa de Gemini.
 - **Prompt do voter sem o `moodle_label`** (`llm_vote.py:241`; 90/125 votados tem label != title) · 1 linha + re-voto <= 90 chamadas · C1 fechamento (LLM).
 - **FILE_MAP titulo = label perde o stem** (103 linhas; 7 labels sem conteudo) · "label · stem" quando o title tem token que o label nao tem · C1 item 4, so se a travessia errar.

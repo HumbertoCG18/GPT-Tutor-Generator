@@ -22,3 +22,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
   (pinos; sinonimo de morfologia; reverso). `determinismo_tripwire.py` -> `determinismo_higiene.log`. `b_higiene_{puro,holdout}.log`: gates pos-higiene.
 - `motor_auto.py {puro5|holdout}` -> `auto_*.log`: REGUA AUTOMATICA (motor + voter cacheado, sem pino, sem glossario manual): bloco 192/199, unidade 185/191, sub 82/93, holdout CG 35/35; 0 chamadas.
 - `simula_cg_unidade_generico.py`: RF/SG/Z0/DF no mapa bloco->unidade nos 8 (so RF sobrevive). `motor_auto.py` v2: vocab tambem no holdout + cache de votos do produto. Logs `b_rf_*.log`, `auto_rf_*.log`, `determinismo_rf.log`.
+- `simula_propaga_headings_6golds.py` (6 golds, filtro de stems genericos) · `simula_alias_sessao_sub.py` (0 efeito) · `reprocess_8_propagacao.py` (registrado, tripwire; pula commit so `updated_at`). Logs `b_prop_*.log`, `auto_prop_*.log`, `determinismo_prop.log`, `reprocess_8_propagacao.log`.
