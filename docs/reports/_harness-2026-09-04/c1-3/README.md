@@ -30,3 +30,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
 - `simula_titulo_confiante.py` (T1 +2/-0, T1b +2/-0, T2 0/0) · `reprocess_8_titulo.py`. Logs `titulo_*.log`, `reprocess_8_titulo.log`.
 - `coerencia_moodle.py [--lista]`: regua sem gold (posicao do professor no Moodle) x bloco do produto nos 8 — 188/195 coerentes, 7 incoerentes = Moodle quebrado, CG/LR/FR 0 posicoes. `fila_rendimento.py` ganhou P3/P4/P5. Log `coerencia_moodle.log`.
 - `simula_secao_sub.py` (S1 +5/-3, S1b +3/-0, S2 +5/-13) · `reprocess_8_secao.py`. Logs `secao_*.log`, `reprocess_8_secao.log`, `determinismo_secao.log`.
+- `rebuild_fr.py [--dry-run] [--fresh]`: FR do zero em `.ablacao/FR-rebuild/` pelo caminho da UI, 0 chamadas (tripwire Gemini + Datalab, vocab off); compara com o produto. Log `rebuild_fr.log`.

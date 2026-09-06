@@ -10,6 +10,23 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## FR DO ZERO — RUN A (06/09, sessao 6; user: "faca FR em sandbox, numeros de precisao, sem gold")
+**Como (`c1-3/rebuild_fr.py --fresh`, 771 s):** stash do Moodle do FR (20 arquivos: 15 pdf, 1 png, 4 tar.gz; os 2 links do youtube nao entram pelo stash)
+-> mesmo caminho da UI (scan_stash_cards -> build_stash_entries -> RepoBuilder.build), perfil real do FR, pymupdf4llm (o FR atual ja era pymupdf4llm),
+em `.ablacao/FR-rebuild/`. **Zero chamada externa** (tripwire de Gemini e de Datalab: 0 tentativas), vocab NAO compilado, sem votos, sem resumos, sem
+pino, sem gold. O FR atual (produto) fica como comparacao: ele tem vocab LLM (53 sinonimos), 13 votos e 4 resumos.
+**Numeros crus (20 materiais):** fila 11/20 (duvida: conflito 9, flag disamb 8, sub-empate 3, sem bloco 2) · concordancia com o produto: bloco 11/20,
+unidade 11/20, subunidade 7/20 · **regua sem gold que existe no FR: a SECAO do Moodle nomeia a UNIDADE ("U1 - Redes de Computadores", "U2 - Camada de
+Aplicacao"): rebuild 10/19, produto 16/19** (os 3 zips de sockets do produto estao em u05 enlace; a secao diz u02). Os 9 erros de unidade do rebuild
+(poster e unidade1-exercicios sem bloco -> u04; 4 zips -> u03 transporte; unidade2-exercicios dhcp/dns/http -> u03/u04) estao TODOS na fila: a fila
+funciona, o motor nao. Bloco: sem o voter, unidade2-exercicios-dns/http caem em blocos de setembro/outubro (bloco-07/20) por texto; o produto os tem em
+bloco-03 por voto.
+**Leitura:** sem nenhuma chamada, num curso sem data no Moodle, o motor puro entrega unidade 10/19 pela regua do professor e 11 avisos em 20; com as
+duas camadas de LLM (produto) 16/19 e 8 avisos. **Alavanca deterministica que a regua revela:** a secao que NOMEIA a unidade ("U<n> - ..." ou titulo da
+unidade) e estrutura do professor e o motor nao a usa para a unidade (so para a janela de bloco): corrigiria os 9 do rebuild e os 3 do produto. Medir
+nos 5 golds de unidade + CG + FR-oraculo antes de entrar (risco: secao = unidade x bloco de outra unidade; hoje 'bloco decide').
+**Run B (Gemini so para o FR, ~20 chamadas) aguarda liberacao.** Sandbox fica em `.ablacao/FR-rebuild/` (nao apagado o FR original).
+
 ## GOLD DE SUBUNIDADE DO CG x MOODLE (oraculo) E REGRA DA SECAO (06/09, sessao 6; pedido do user)
 **Comparacao (`c1-3` inline, 93 linhas do gold do CG):** onde a SECAO do Moodle nomeia um subtopico do plano, gold = secao em 27, gold != secao em 2
 (`intro`: secao "Origens", gold "Conceitos" -> **gold corrigido pelo user: primario `origens`, conceitos/areas-relacionadas viram extras**;
