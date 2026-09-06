@@ -280,3 +280,25 @@ def test_positional_ancora_exclusiva_com_dois_tokens_vence_a_ordem():
     out = assign_units_positional(blocks, units)
     assert [s for s, _ in out] == ["u1", "u3", "u3", "u2"]
     assert out[3][1] >= 0.6   # ancora, nao preenchimento posicional
+
+
+def test_positional_radical_so_como_fallback_ancora_bloco_sem_token_exato():
+    """Sessao 6 (2026-09-05, caso real CG bloco-15 "Modelagem geometrica"): 'modelagem' e exclusivo de u3
+    mas e UM token exato (aff 1 < 2); a DP, presa a ordem do plano (curvas u3 antes de projecoes u2),
+    deixava o bloco em u1. Radical de 6 chars SO como fallback: 'modela' + 'geomet' (~ geometria solida)
+    dao 2, margem 1, 'modela' exclusivo -> u3. Radical em tudo foi refutado ('proces' ~ 'processamento').
+    Medido nos 8: 1 bloco muda (este), 0 colateral, unidade 183 = 183/191."""
+    units = [
+        _unit("u1", "Fundamentos matemáticos", "entidades geométricas", "geometria computacional"),
+        _unit("u2", "Processo de visualização 3D", "projeções", "câmera sintética"),
+        _unit("u3", "Representação e modelagem de objetos", "curvas paramétricas", "geometria sólida construtiva"),
+    ]
+    blocks = [
+        _block("fundamentos matematicos entidades geometricas"),
+        _block("curvas parametricas aula"),
+        _block("modelagem geometrica aula"),
+        _block("visualizacao 3d projecoes camera sintetica"),
+    ]
+    out = assign_units_positional(blocks, units)
+    assert [s for s, _ in out] == ["u1", "u3", "u3", "u2"]
+    assert out[2][1] >= 0.6   # ancora por radical, nao preenchimento posicional

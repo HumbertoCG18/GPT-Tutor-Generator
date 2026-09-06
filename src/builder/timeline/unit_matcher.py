@@ -23,6 +23,7 @@ _UNIT_GENERIC = {"unidade", "aprendizagem", "visao", "geral"}
 ANCHOR_MIN_MARGIN = 1.0   # margem minima (winner - runnerup) p/ confianca ANCHOR no bloco
 STRONG_MARGIN = 3.0       # margem p/ ancora forte
 ANCHOR_MIN_AFF = 2.0      # ancora EXCLUSIVA (C0 item 10): >= 2 tokens na unidade + 1 so dela no plano
+_STEM_FALLBACK_LEN = 6    # radical so no fallback (sessao 6): bloco sem ancora exata possivel
 
 # Desvio de janela (P2a 2026-08-31): o calendario real inverte a ordem do plano
 # (IA 2026/2 ensina u05/ML em 2o lugar: u01 -> u05 -> u02 -> u03; o DP monotonico
@@ -175,6 +176,28 @@ def assign_units_positional(
         if srt[0] >= ANCHOR_MIN_AFF and margin >= ANCHOR_MIN_MARGIN and so_dela:
             assign[i] = j
 
+    # Sessao 6 (2026-09-05, caso real CG bloco-15 "Modelagem geometrica"): RADICAL so como FALLBACK.
+    # Bloco sem ancora exata possivel (afinidade exata < ANCHOR_MIN_AFF em toda unidade) pode ancorar
+    # por radical de 6 chars ("modela" + "geomet" ~ "geometria solida") com as MESMAS exigencias da
+    # ancora exata. Radical em TUDO foi medido e refutado ("proces" ~ "processamento": CG bloco-06 ia
+    # para u03, saldo 0); como fallback muda 1 bloco nos 8 (CG 15 -> u07, = pino), 0 colateral,
+    # unidade 183 = 183/191 (c1-3/simula_radical_fallback.py).
+    ustem = [{t[:_STEM_FALLBACK_LEN] for t in toks} for toks in utoks]
+    bstem = [{t[:_STEM_FALLBACK_LEN] for t in toks} for toks in btoks]
+    sexcl = [ustem[j] - set().union(*(ustem[k] for k in range(m) if k != j)) for j in range(m)]
+    stem_anchored: set = set()
+    for i in range(n):
+        if max(aff[i]) >= ANCHOR_MIN_AFF:
+            continue
+        srow = [float(len(bstem[i] & ustem[j])) for j in range(m)]
+        srt = sorted(srow, reverse=True)
+        margin = (srt[0] - srt[1]) if m > 1 else srt[0]
+        j = srow.index(srt[0])
+        so_dela = {k for k in range(m) if bstem[i] & sexcl[k]} == {j}
+        if srt[0] >= ANCHOR_MIN_AFF and margin >= ANCHOR_MIN_MARGIN and so_dela:
+            assign[i] = j
+            stem_anchored.add(i)
+
     out: List[Tuple[str, float]] = []
     for i in range(n):
         u = assign[i]
@@ -182,7 +205,9 @@ def assign_units_positional(
         srt = sorted(row, reverse=True)
         margin = (srt[0] - srt[1]) if len(srt) > 1 else srt[0]
         is_argmax = row[u] > 0 and row[u] >= max(row)
-        if is_argmax and margin >= STRONG_MARGIN:
+        if i in stem_anchored:
+            conf = CONF_ANCHOR
+        elif is_argmax and margin >= STRONG_MARGIN:
             conf = CONF_STRONG
         elif is_argmax and margin >= ANCHOR_MIN_MARGIN:
             conf = CONF_ANCHOR
