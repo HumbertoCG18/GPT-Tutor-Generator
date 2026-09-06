@@ -186,6 +186,12 @@ class _Thresholds:
     # aula-06 3.24, ES2 revisao-p1/p2 4.72-5.67). Piso no meio do gap; NAO e
     # piso global — certos legitimos sem "revisao" vivem com ws 1.04-4.32.
     SUBUNIT_REVISAO_FLOOR: float = 7.0
+    # Propagacao de vocabulario por headings (sessao 6, 2026-09-05): 2a passada da subunidade.
+    # Grade medida (c1-3/simula_propaga_grid_df025.log, 8 pontos): estavel em conf 0,7 com 2-3
+    # entries; conf <= 0,6 com 2 perde 3; conf 0,9 zera; sem o teto de df (0,9; 2) dava -20.
+    SUBUNIT_PROPAG_CONF: float = 0.7          # 1a passada "confiante" (doa vocabulario; nunca e sobreposta)
+    SUBUNIT_PROPAG_MIN_ENTRIES: int = 2       # token precisa aparecer em >= 2 confiantes do MESMO subtopico
+    SUBUNIT_PROPAG_DF_MAX: float = 0.25       # token em > 25% dos materiais do curso e boilerplate
 
 
 T = _Thresholds()

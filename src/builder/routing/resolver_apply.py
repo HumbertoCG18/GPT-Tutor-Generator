@@ -10,12 +10,14 @@ from __future__ import annotations
 
 import copy
 import json
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import List, Optional, Tuple
 
 from src.builder.artifacts.navigation import _entry_markdown_text_for_file_map
 from src.builder.extraction.content_taxonomy import _NO_TIMELINE_CATEGORIES
 from src.builder.extraction.entry_signals import collect_entry_unit_signals
+from src.builder.text.normalize import normalize_match_text
 from src.builder.routing.concept_resolver import resolve_material_assignment
 from src.builder.routing.revisar import revisar_de
 from src.builder.routing.sequence import annotate_class_ordinals
@@ -164,6 +166,84 @@ def apply_concept_resolver(
     return entries
 
 
+_PROPAG_REASON = "propagado-headings"
+
+
+def _tokens_headings(signals: dict, generic_stems) -> set:
+    txt = f"{signals.get('markdown_headings_text', '')} {signals.get('title_text', '')}"
+    return {t for t in txt.split() if len(t) >= 4 and not any(t.startswith(s) for s in generic_stems)}
+
+
+def propagar_vocabulario_por_headings(passe1: list, content_taxonomy: dict, auto_map_entry_subtopic_fn, *,
+                                      conf_min: float, min_entries: int, df_max: float) -> int:
+    """2a passada da subunidade (sessao 6, 2026-09-05). Token EXCLUSIVO dos headings/titulo dos materiais
+    que a 1a passada atribuiu com confianca a um subtopico vira alias desse subtopico; so os materiais em
+    que a 1a passada NAO decidiu (vazio, ambiguo ou conf < conf_min) sao repontuados. O plano nomeia
+    categorias e o material nomeia algoritmos ("Modelos Preditivos" <- perceptron, rede neural); sem isto
+    esse vocabulario so existia por glossario manual (IA). Medido nos 6 golds (233): +5 -0, FR/LR 0.
+    Salvaguardas, cada uma medida: sem stems genericos do motor ('exemplo'/'respostas' viravam alias e
+    derrubavam CG slab e MF respostas), df <= df_max dos materiais ('sumario'/'aula' do TCC), >= min_entries
+    confiantes, exclusivo de UM subtopico da unidade, e nunca sobre decisao confiante (o CG perdia 8).
+    Devolve quantos materiais mudaram."""
+    from src.builder.routing.motor.disambiguator import _GENERIC_STEMS
+    from src.builder.routing.thresholds import T
+    units = {str(u.get("slug") or ""): u for u in (content_taxonomy or {}).get("units", []) or []}
+    if not units or not passe1:
+        return 0
+    toks_by_entry: dict = {}
+    df: Counter = Counter()
+    for entry, texto, unit_slug, match in passe1:
+        toks = _tokens_headings(collect_entry_unit_signals(entry, texto), _GENERIC_STEMS)
+        toks_by_entry[id(entry)] = toks
+        df.update(toks)
+    vocab_unit = {}
+    for slug, u in units.items():
+        parts = [str(u.get("title") or "")] + [f"{t.get('label', '')} {' '.join(t.get('aliases') or [])}"
+                                                for t in (u.get("topics") or [])]
+        vocab_unit[slug] = {x for x in normalize_match_text(" ".join(parts)).split() if len(x) >= 4}
+    owners: dict = defaultdict(lambda: defaultdict(set))
+    n_conf: Counter = Counter()
+    for entry, texto, unit_slug, match in passe1:
+        if not match or not match.topic_slug or match.ambiguous or match.confidence < conf_min:
+            continue
+        for tok in toks_by_entry[id(entry)] - vocab_unit.get(unit_slug, set()):
+            if df[tok] > df_max * len(passe1):
+                continue
+            owners[unit_slug][tok].add(match.topic_slug)
+            n_conf[(unit_slug, match.topic_slug, tok)] += 1
+    extra: dict = defaultdict(set)
+    for unit_slug, toks in owners.items():
+        for tok, subs in toks.items():
+            if len(subs) == 1 and n_conf[(unit_slug, next(iter(subs)), tok)] >= min_entries:
+                extra[(unit_slug, next(iter(subs)))].add(tok)
+    if not extra:
+        return 0
+    tax = copy.deepcopy(content_taxonomy)
+    for u in tax.get("units", []) or []:
+        for t in u.get("topics") or []:
+            add = extra.get((str(u.get("slug") or ""), str(t.get("slug") or "")))
+            if add:
+                t["aliases"] = list(t.get("aliases") or []) + sorted(add)
+    mudou = 0
+    for entry, texto, unit_slug, match in passe1:
+        if match and match.topic_slug and not match.ambiguous and match.confidence >= conf_min:
+            continue  # decisao confiante da 1a passada nunca e sobreposta
+        novo = auto_map_entry_subtopic_fn(entry, tax, texto, winning_unit_slug=unit_slug)
+        slug_novo = str(getattr(novo, "topic_slug", "") or "")
+        slug_ant = str(getattr(match, "topic_slug", "") or "") if match else ""
+        if not slug_novo or (slug_novo == slug_ant and float(novo.confidence) <= float(match.confidence)):
+            continue
+        entry["computed_subunit_slug"] = slug_novo
+        entry["subunit_match_reasons"] = list(novo.reasons) + [_PROPAG_REASON]
+        entry["subunit_match_confidence"] = float(novo.confidence)
+        tags = [t for t in (entry.get("auto_tags") or []) if not str(t).startswith("subunit:")]
+        if not novo.ambiguous and float(novo.confidence) >= T.SUBUNIT_TAG:
+            tags.append(f"subunit:{slug_novo}")
+        entry["auto_tags"] = tags
+        mudou += 1
+    return mudou
+
+
 def apply_unit_subunit_fields(
     entries: list,
     blocks: List[dict],
@@ -202,6 +282,7 @@ def apply_unit_subunit_fields(
         from src.builder.extraction.content_taxonomy import load_internal_content_taxonomy
         content_taxonomy = load_internal_content_taxonomy(course_meta["_repo_root"])
     topic_index = iter_content_taxonomy_topics_fn(content_taxonomy)
+    passe1: list = []   # (entry, texto, unidade, TopicMatchResult) da rota automatica, para a 2a passada
 
     tag_profile = None
     if root:
@@ -342,6 +423,7 @@ def apply_unit_subunit_fields(
             topic_match = auto_map_entry_subtopic_fn(
                 entry, content_taxonomy, texto_para_unidade, winning_unit_slug=reconciled,
             )
+            passe1.append((entry, texto_para_unidade, reconciled, topic_match))
             best_subunit_slug = str(getattr(topic_match, "topic_slug", "") or "")
             subunit_reasons = list(getattr(topic_match, "reasons", []))
             subunit_confidence = float(getattr(topic_match, "confidence", 0.0))
@@ -361,6 +443,11 @@ def apply_unit_subunit_fields(
         if preferred_topic_slug:
             tags.append(f"subunit:{preferred_topic_slug}")
         entry["auto_tags"] = tags
+
+    propagar_vocabulario_por_headings(
+        passe1, content_taxonomy, auto_map_entry_subtopic_fn,
+        conf_min=T.SUBUNIT_PROPAG_CONF, min_entries=T.SUBUNIT_PROPAG_MIN_ENTRIES, df_max=T.SUBUNIT_PROPAG_DF_MAX,
+    )
 
     # `revisar` (Fase 0, 02/09): fila de revisao, derivada do que ficou gravado,
     # em TODO material — inclusive os que o loop acima pulou por nao ter bloco
