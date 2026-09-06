@@ -86,6 +86,9 @@ POL = {
     "P1 + sub-vazia": lambda m, mu, ll: bool(base(m) | (m & {"sub-vazia"})) or mu,
     "P1 + sub-vazia + sub-fraca": lambda m, mu, ll: bool(m) or mu,
     "P2 + sub-vazia + sub-fraca": lambda m, mu, ll: bool(m - {"conflito"}) or mu,
+    "P3 P1 sem sub-ambigua e due-straddle": lambda m, mu, ll: bool(base(m) - {"sub-ambigua", "flag:due-straddle"}) or mu,
+    "P4 P2 sem sub-ambigua (so flags+empate+sem-bloco+mudou)": lambda m, mu, ll: bool(base(m) - {"conflito", "sub-ambigua", "flag:due-straddle"}) or mu,
+    "P5 P4 + sub-empate->tambem sub-vazia": lambda m, mu, ll: bool((base(m) - {"conflito", "sub-ambigua", "flag:due-straddle"}) | (m & {"sub-vazia"})) or mu,
 }
 print("=== politica: na fila · /100 · erros pegos · perdidos · CG/100 · MF/100 ===")
 tot = Counter(r[0] for r in rows)

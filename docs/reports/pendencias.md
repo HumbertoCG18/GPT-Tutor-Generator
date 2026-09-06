@@ -10,6 +10,24 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## O MOTOR SEM GOLD — REGUA PELA POSICAO DO PROFESSOR NO MOODLE (06/09, sessao 6; pergunta do user "o motor se sustenta sem os golds?")
+**Regua sem gold (`c1-3/coerencia_moodle.py`, read-only, 0 chamadas):** para cada material, a POSICAO DO PROFESSOR no Moodle (label datado, data no
+nome do modulo, secao-semana, faixa dos irmaos datados — a mesma logica da auditoria de 02/09, `contents.json` da API) vira o conjunto de blocos
+admissiveis; o bloco do produto e "coerente" se esta nele. Nos 8 tutores (348 materiais): **posicao existe em 195 (56%)**, todos nos 5 cursos com gold;
+**CG, LR e FR: 0 posicoes** (o professor nao data labels nem secoes) — a regua nao cobre esses cursos. **Coerencia: 188/195 = 96,4%.** Calibracao
+contra o gold onde ambos existem: coerente-e-certo 170, coerente-e-errado 1, **incoerente-e-certo 7, incoerente-e-errado 0** — as 7 incoerencias sao
+defeitos do proprio Moodle ja conhecidos (MF t2 sob label do Trabalho 1; ES2 roteiro1 x2 sob label de 2025; SO laminas de sockets x2 fora da faixa do
+card; TCC 2 sob secao-semana errada). **Leitura:** onde o professor deixa data, o motor coincide com ele em 100% dos casos em que o Moodle nao esta
+quebrado; para BLOCO, o motor se sustenta sem gold nesses cursos. Para unidade e subunidade nao existe oraculo sem gold (o professor nao as declara):
+sobra o sinal de duvida do motor (pega ~metade dos erros). Num curso novo, a regua so funciona se o professor datar labels/secoes; sem isso, so o
+teste com gold pelo SARC (protocolo do curso novo).
+**Fila de revisao no estado atual (`fila_rendimento.py`, 35 materiais errados em algum eixo nos golds):** gatilhos: conflito 53 na fila / 42 com gold /
+9 errados (21%; unidade 0, todos subunidade) · flag janela-1 21/19/5 (26%) · llm-funil 16/5/2 · sub-ambigua 15/13/1 (8%) · sub-empate 12/8/4 (50%) ·
+due-straddle 1/1/0. Contrafactual: **P1 atual 115 (33,0/100) pega 23** · P3 = P1 sem sub-ambigua e due-straddle **105 (30,2) pega 23** (custo 0) · P2 = sem
+conflito 76 (21,8) pega 16 · **P4 = sem conflito e sem sub-ambigua 65 (18,7) pega 16** (perde 7: subunidade do CG) · P5 = P4 + gatilho sub-vazia 85 (24,4)
+pega 20. **Sem LLM, a fila cai por politica (o que conta como duvida), nao pelo motor:** as duvidas restantes sao blocos flagados (37: territorio do
+voter/estrutura do Moodle) e empates reais da subunidade (12). Decisao do user: P3 (gratis) e/ou P4 (−50 itens, −7 erros pegos, todos do CG).
+
 ## CG CONFIANTES ERRADOS — TITULO NOMEIA OUTRO SUBTOPICO (06/09, sessao 6, FEITO; gerador `34d8b19`; user: "vamos medir essa alavanca")
 **Regra (2a passada, `resolver_apply._subtopico_nomeado_no_titulo`):** decisao CONFIANTE da 1a passada cai quando o titulo + label do Moodle do
 material contem uma parte de rotulo (decomposicao) de OUTRO subtopico Y da mesma unidade, Y e unico, e NENHUMA frase (rotulo/aliases) do vencedor
