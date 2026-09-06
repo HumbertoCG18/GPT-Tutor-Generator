@@ -71,6 +71,16 @@ morfologia) — neutro na regua, limpa o rotulo do bloco e o scorer. V = preench
 e o melhor prior estrutural; a inversao de ordem do CG (u04 -> u07 -> u03 -> u07 -> u06 -> u07) so se resolve pela camada humana = PINOS DE UNIDADE nos
 blocos 06 (u04, pelo nome do SARC), 08 (u03) e 15 (u07) — o mesmo mecanismo que os outros 7 tutores ja usam (13 pinos) — + higiene generica no codigo +
 sinonimos manuais no CG (u08 <- 'Texturas'/'Mapeamento de Texturas'; u03/segmentacao <- 'Morfologia Matematica').
+**UNIFICAR ALAVANCAS? (pergunta do user 05/09 tarde: 'uma acerta, a outra remede e erra') — medido:** (1) Unidade, conflito texto x bloco
+(`unit_block_conflict`, gold de 191): motor puro 33 conflitos -> bloco certo 27, texto certo 3 (SO sockets x2 bibliografia, IA visao-geral), nenhum 3;
+produto 25 -> bloco 25, texto 0. Gate 'texto vence quando bloco conf <= 0,4': +1 (IA) -1 (MF) = saldo 0. A decisao de 21/08 ('bloco decide, texto vira
+registro de conflito') segue certa: 9:1. (2) Higiene de aliases por label de SESSAO/titulo de material: IA tem 5 aliases 'Aula NN - ...' (aspirador
+do topico de busca), mas os aliases = titulo sao UTEIS (MF 8: 'Conjuntos Indutivos', 'Inducao Estrutural...'; IA 'MLP', 'arvores de decisao'; ES2
+'Kubernetes', 'DEVOPS') -> nao generalizar. (3) **Radical (6 chars) SO como fallback no mapa bloco->unidade** (tokens exatos decidem; bloco sem
+ancora exata possivel, aff < 2, ganha ancora por radical com >= 2, margem >= 1, radical exclusivo de UMA unidade): nos 8, **1 bloco muda (CG
+bloco-15 Modelagem -> u07, = pino), 0 colateral**, pinos 12 -> 13 (sem contar o pino novo do CG), unidade 183 = 183/191. E a unica unificacao que
+sobrevive: cobre sem pino o caso que hoje o pino cobre. Candidato (caixa): ~15 linhas em `assign_units_positional`, ganho atual 0 (pino ja
+resolve), valor = proximo curso sem pino. `c1-3/simula_radical_fallback.py`.
 **BUG (medido): zips do MF extraidos SEM subpasta -> colisao de nomes.** `raw/code/professor/` e plano (36 arquivos): `colecoes_arrays/ex1.dfy`,
 `colecoes_sequences/ex1.dfy`, `invariantes/ex1.dfy`, `terminacao/ex1.dfy` e `tiposindutivos/ex1.dfy` viram UM `ex1.dfy` (o ultimo vence:
 `code/professor/ex1.md` tem 'datatype Cor' = tiposindutivos; 'new nat[5]' dos arrays nao existe em lugar nenhum). Resultado: 4 zips (20 .dfy)

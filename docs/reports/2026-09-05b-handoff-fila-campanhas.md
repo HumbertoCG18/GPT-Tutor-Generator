@@ -61,7 +61,7 @@ Golds propostos (NAO na regua): `subunit_gt_CG.csv` 82 pontuaveis · `subunit_gt
   gold aprovado).
 - **CG unidade 22/93 -> 1:** raiz = vocab compilado por LLM com nomes de secao pendurados em topicos genericos de u01 + ordem do professor invertida
   (DP monotonica). Motor: 5 alavancas genericas medidas e refutadas (sem aliases 183 -> 136; radicais saldo 0; vizinho ancorado 183 -> 163; exclusividade
-  relaxada 179; higiene sozinha neutra). Solucao = higiene generica (codigo, `e0c433c`) + pinos de unidade nos blocos 06 (u04, nome do SARC), 08 (u03),
+  relaxada 179; higiene sozinha neutra; radical so como fallback: +1 bloco, 0 colateral, unica unificacao que sobrevive, caixa). Solucao = higiene generica (codigo, `e0c433c`) + pinos de unidade nos blocos 06 (u04, nome do SARC), 08 (u03),
   15 (u07) — o mesmo mecanismo dos outros 7 tutores (13 pinos). Gates: motor puro 186/199 = · holdout 31/35 = · curada 198/199 = · sentinela 0 · suite 2325.
 - **Golds de subunidade CG (82) e MF (58) propostos** para aprovacao; bug dos zips do MF medido; `gemini_auto_summarize` desligado pelo user.
 
@@ -87,6 +87,8 @@ normalizacao, `find_spec`; reprocess nao commitar so por `updated_at`) · **C5 d
 Formato: **ideia** · da para fazer? · quando? · o que resolve?
 - **Propagacao de vocabulario por headings para a subunidade (sem LLM)** · +5/-0 no gold de 93 (conf >= 0,7, token em >= 2 confiantes, df <= 25%, so nos
   nao-confiantes), curada intacta; MF 6 / CG 9 mudancas sem gold com erros a olho · sim, ~40 linhas em `apply_unit_subunit_fields` · **depois do gold CG/MF aprovado**.
+- **Radical (6 chars) so como fallback no mapa bloco->unidade** (tokens exatos decidem; sem ancora exata, ancora por radical exclusivo) · 1 bloco muda
+  nos 8 (CG bloco-15 = pino), 0 colateral, unidade 183 = 183 · ~15 linhas em `assign_units_positional` · ganho hoje 0 (pino), valor = proximo curso sem pino · C4/C5.
 - **Prompt do voter sem o `moodle_label`** (`llm_vote.py:241`; 90/125 votados tem label != title) · 1 linha + re-voto <= 90 chamadas · C1 fechamento (LLM).
 - **FILE_MAP titulo = label perde o stem** (103 linhas; 7 labels sem conteudo) · "label · stem" quando o title tem token que o label nao tem · C1 item 4, so se a travessia errar.
 - **Zips extraidos sem subpasta colidem nomes** (MF 5 zips x `ex1.dfy`; `.smv` ignorado) · `<id>/<membro>` + `.smv` como codigo · SYNC/C5.
