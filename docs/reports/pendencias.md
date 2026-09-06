@@ -21,6 +21,15 @@ card; TCC 2 sob secao-semana errada). **Leitura:** onde o professor deixa data, 
 quebrado; para BLOCO, o motor se sustenta sem gold nesses cursos. Para unidade e subunidade nao existe oraculo sem gold (o professor nao as declara):
 sobra o sinal de duvida do motor (pega ~metade dos erros). Num curso novo, a regua so funciona se o professor datar labels/secoes; sem isso, so o
 teste com gold pelo SARC (protocolo do curso novo).
+**Rebate do user ("nao estamos usando o SARC para obter as posicoes datadas?") — checado:** o SARC data as AULAS (todo bloco tem periodo e sessoes) e
+e a metade que converte uma data em bloco; a data do MATERIAL so existe do lado do Moodle (label datado, data no nome, secao-semana) — e o motor ja
+usa essas mesmas datas como providers de janela, por isso o SARC nao pode ser a regua das decisoes que ele mesmo alimenta. **Quarta marca medida:
+data de upload (`timecreated` no `contents.json`).** Existe nos 8, mas: CG 93 modulos, so 2 uploads dentro do semestre (33 em 28/07 antes do inicio +
+arquivos clonados de 2020-2025); FR 24/24 em 04/08 (upload em bloco); LR 7/9 progressivos; MF 42/116 (57 em 18/02), SO 38/40, IA 29/87, ES2 18/44,
+TCC 32/37. Onde o upload cai no semestre e casa com um gold (25 materiais, MF/ES2/TCC): a aula do gold esta a <= 21 dias do upload em 25/25, <= 7 dias
+em 18/25 (72%), no mesmo bloco em 12/25 (48%) — regua FROUXA (janela de ~3 semanas), nao de bloco. Para CG e FR, justamente os cursos sem as outras
+marcas, o upload e em bloco: nenhuma posicao datada de material existe. Conclusao mantida: a regua sem gold de bloco existe quando o professor deixa
+data no Moodle (label, nome, secao ou upload progressivo); CG e FR nao deixaram.
 **Fila de revisao no estado atual (`fila_rendimento.py`, 35 materiais errados em algum eixo nos golds):** gatilhos: conflito 53 na fila / 42 com gold /
 9 errados (21%; unidade 0, todos subunidade) · flag janela-1 21/19/5 (26%) · llm-funil 16/5/2 · sub-ambigua 15/13/1 (8%) · sub-empate 12/8/4 (50%) ·
 due-straddle 1/1/0. Contrafactual: **P1 atual 115 (33,0/100) pega 23** · P3 = P1 sem sub-ambigua e due-straddle **105 (30,2) pega 23** (custo 0) · P2 = sem
