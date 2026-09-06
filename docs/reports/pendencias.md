@@ -13,11 +13,13 @@ plano 2026-09-02 (desenho/decisoes, carimbado).
 ## CONTRIBUICAO POR CAMADA (06/09, pedido do user: "os numeros obtidos sem LLM" antes de uma materia 100% nova)
 | camada (copias, tripwire, 0 chamadas) | bloco (199) | unidade (191) | cobertura (57) | subunidade (93) | holdout CG (35) |
 |---|---|---|---|---|---|
-| 100% sem LLM: motor puro SEM vocab compilado (`b_semvocab_puro.log`) | 187 conf-err 1 | 173 (ES2 18/28) | 54 | **26 (28%)** | 31 |
+| 100% sem LLM: motor puro SEM vocab compilado, SEM propagacao (`b_semvocab_semprop_puro.log`) | 187 conf-err 1 | 173 (ES2 18/28) | 54 | **30 (32%)** | 31 |
+| idem COM propagacao por headings (`b_semvocab_puro.log`) | 187 | 173 | 54 | 26 — **regride 4**: sem vocab as sementes 'confiantes' erram e a propagacao amplifica | 31 |
 | + vocab compilado por LLM (cache; ~1 chamada por unidade) | 186 | 183 | 53 | **87** | 31 |
 | + voter com cache (~35% dos materiais votados) = AUTOMATICA v2 | **193 conf-err 0** | **185** | 53 | 87 | **35** |
 | + curadoria (pinos, glossario manual) = produto | 198 | 191 | 55 | (IA 39/39) | 35 |
-**Leitura:** o vocabulario compilado e a camada que sustenta a SUBUNIDADE (26 -> 87) e boa parte da UNIDADE (173 -> 183; ES2 18 -> 28): sem ele o plano
+**Leitura:** a propagacao PRESSUPOE o vocab compilado (com ele +5, sem ele -4): se um dia o pipeline rodar sem a camada 2, desligar a 2a passada.
+O vocabulario compilado e a camada que sustenta a SUBUNIDADE (30 -> 87) e boa parte da UNIDADE (173 -> 183; ES2 18 -> 28): sem ele o plano
 nao tem os nomes dos algoritmos. O voter sustenta o BLOCO (186 -> 193, conf-err 1 -> 0; holdout 31 -> 35). A curadoria vale 5 blocos (MF 6 pinos) e 6
 unidades (SO 3 + IA 3). Para uma materia nova, o custo de LLM medido no rebuild do CG (93 materiais): vocab ~9 (1/unidade) + resumos de codigo 17
 (1/zip ou arquivo) + voter ~40 (flagados/serie/funil) ~= 66 chamadas; travessia (opcional, medicao) +45.
