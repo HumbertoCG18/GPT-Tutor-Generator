@@ -10,6 +10,18 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## GOLD DE SUBUNIDADE DO CG x MOODLE (oraculo) E REGRA DA SECAO (06/09, sessao 6; pedido do user)
+**Comparacao (`c1-3` inline, 93 linhas do gold do CG):** onde a SECAO do Moodle nomeia um subtopico do plano, gold = secao em 27, gold != secao em 2
+(`intro`: secao "Origens", gold "Conceitos" -> **gold corrigido pelo user: primario `origens`, conceitos/areas-relacionadas viram extras**;
+`exemplozbuffer`: secao nomeia o pai, gold o filho z-buffer: fica); "Biblioteca OpenGL" 5 com gold vazio (ruling mantido: o plano nao tem OpenGL;
+o 'conceitos' do motor vem do alias do vocab LLM); 48 a secao e a unidade inteira ou assunto fora do plano (Morfologia); 11 fora do gold. Nos 6 golds a
+secao nomeia exatamente o subtopico do gold em 94 materiais: motor certo 86, errado 8.
+**Regra da secao simulada (`c1-3/simula_secao_sub.py`, rota real: 1a + 2a passada REAL + regra; base reproduz o gravado 194/233):**
+S1 (1a passada nao confiante: secao que nomeia exatamente UM subtopico decide, sobrepondo a 2a passada) **+5 -3** (perde SO threads x1 e IA k-nn x2:
+a secao "Threads"/"Semana 3 ..." casa aliases errados) · **S1b (so se DEPOIS da 2a passada a subunidade ainda esta vazia ou ambigua) +3 -0** (MF
+exemplos-zip, CG intro, CG curvasparametricas; 197/233) · S2 (tambem sobre decisao confiante) **+5 -13: REFUTADA** (a secao nomeia o pai quando o gold e o
+filho: z-buffer, k-nn, escalonamento). Candidata a entrar: S1b (ultimo recurso; mesma rota da 2a passada; reason `secao-nomeia-subtopico`).
+
 ## O MOTOR SEM GOLD — REGUA PELA POSICAO DO PROFESSOR NO MOODLE (06/09, sessao 6; pergunta do user "o motor se sustenta sem os golds?")
 **Regua sem gold (`c1-3/coerencia_moodle.py`, read-only, 0 chamadas):** para cada material, a POSICAO DO PROFESSOR no Moodle (label datado, data no
 nome do modulo, secao-semana, faixa dos irmaos datados — a mesma logica da auditoria de 02/09, `contents.json` da API) vira o conjunto de blocos
