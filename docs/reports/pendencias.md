@@ -25,7 +25,17 @@ bloco-03 por voto.
 duas camadas de LLM (produto) 16/19 e 8 avisos. **Alavanca deterministica que a regua revela:** a secao que NOMEIA a unidade ("U<n> - ..." ou titulo da
 unidade) e estrutura do professor e o motor nao a usa para a unidade (so para a janela de bloco): corrigiria os 9 do rebuild e os 3 do produto. Medir
 nos 5 golds de unidade + CG + FR-oraculo antes de entrar (risco: secao = unidade x bloco de outra unidade; hoje 'bloco decide').
-**Run B (Gemini so para o FR, ~20 chamadas) aguarda liberacao.** Sandbox fica em `.ablacao/FR-rebuild/` (nao apagado o FR original).
+**Alavanca ENTROU (`1b41003`, `file_map.reconcile_unit_with_block(unit_is_explicit=...)`):** o motor JA detectava a unidade explicita da secao
+(`unidade-explicita=u2`, conf 0,95, `explicit_unit_number`) e a reconciliacao a sobrepunha pelo bloco — inclusive bloco FLAGADO ou herdado do
+vizinho. Agora a explicita vence e o conflito fica registrado (`explicita-vence-bloco=<id>`). So o FR tem secoes 'U<n>'; nos outros 7 a secao
+nomeia a unidade por titulo em 60 materiais (MF 29, CG 23, SO 6, ES2 2) e em todos a unidade final ja era a da secao (0 diferem): a regra por
+titulo seria no-op hoje, fica como candidata. Teste `test_unidade_explicita_da_secao_vence_bloco_discordante`. Suite 2335.
+**Run A2 do FR (`rebuild_fr.py --fresh`, 888 s, 0 chamadas):** unidade x secao do professor **10/19 -> 19/19** · concordancia com o produto
+bloco 11/20, unidade 11 -> 17/20, subunidade 7 -> 10/20 · fila 11/20 (conflito 9 — agora 'explicita-vence-bloco' — flag disamb 8, sem bloco 2,
+sub-empate 2). **Gates (copias, tripwire):** 5 cursos e holdout CG identicos (186/183/53/138 · 193/185/53/138 · 31/35 · 35/35 · CG sub 58/82).
+**Reprocess registrado dos 8 (`c1-3/reprocess_8_explicita.py`):** so o FR mudou: 3 zips de sockets u05 -> u02 (unidade) e subunidade preenchida (sockets / cliente-servidor); bloco 0; fila 110 = 110; FR HEAD 1cad69d, demais so updated_at. Fila 31,6 (110/348)/100. Determinismo 8/8, 0 arquivos nao deterministicos.
+**Run B do FR (`rebuild_fr_b.py --fresh`, Gemini liberado pelo user so para o FR, contado; Datalab bloqueado):** build 840 s + 2 reprocess; chamadas Gemini: 10 summarize_bundle no build (code_curation.json NAO gravado — a investigar) + 2 na compilacao do vocab (68 sinonimos) + 10 votos gravados em material_curation.json (voter usa outro metodo, nao contado pelo interceptor) ~= 22; resultado: unidade x secao do professor 19/19, concordancia com o produto bloco 19/20 · unidade 20/20 · subunidade 17/20, sub vazias 2/20, fila 6/20 (2 flag llm-funil + 4 conflito 'explicita-vence-bloco' nos zips). Run A2 (0 chamadas): unidade 19/19, fila 11/20 = 8 blocos flagados por texto + 2 sem bloco + 1 empate — nenhuma politica de fila os toca; e o voter que os resolve
+Sandboxes: `.ablacao/FR-rebuild/` (A2) e `.ablacao/FR-rebuild-B/` (B); o FR original nao foi apagado.
 
 ## GOLD DE SUBUNIDADE DO CG x MOODLE (oraculo) E REGRA DA SECAO (06/09, sessao 6; pedido do user)
 **Comparacao (`c1-3` inline, 93 linhas do gold do CG):** onde a SECAO do Moodle nomeia um subtopico do plano, gold = secao em 27, gold != secao em 2

@@ -26,6 +26,7 @@ unidade de bloco sem evidencia lexical (CG bloco-08; 1 chamada por bloco assim).
 (`ff3eda7`): automatica x 233 187 -> 192 (82,4%), CG 49 -> 54/82, produto 193 -> 197 (84,5%); tracker §CG SUBUNIDADE 60% e §FILA DE REVISAO — CAMADA LLM CORTADA.
 Regua SEM GOLD (posicao do professor no Moodle): coerencia 188/195 = 96,4% nos 5 cursos, 7 incoerencias = defeitos do Moodle (gold da razao ao motor);
 CG/LR/FR sem posicao datada (regua nao cobre). Fila: P3 (sem sub-ambigua) 30,2/100 custo 0; P4 (sem conflito) 18,7/100 perde 7 erros do CG — decisao do user.
+Unidade explicita da secao vence bloco (`1b41003`): FR do zero unidade x secao 10/19 -> 19/19; 7 cursos iguais. FR run A2 fila 11/20; run B (Gemini, so FR): build 840 s + 2 reprocess; chamadas Gemini: 10 summarize_bundle no build (code_curation.json NAO gravado — a investigar).
 Regra da secao S1b (`4d649c4`, +3 -0 simulado, +2 no motor): automatica x 233 196 (84,1%), CG 58/82; produto 201/233 (86,3%), primario 169; CG 58/82, SO 15/15, IA 39/39, ES2 27/28, TCC 11/11, MF 51/58; gold `intro` corrigido pelo oraculo (origens).
 Regra do titulo (`34d8b19`, +2 -0): automatica x 233 194 (83,3%), CG 56/82; produto 199/233 (85,4%), primario 166; CG 56/82, ES2 27/28, MF 51/58; tracker §CG CONFIANTES ERRADOS. Teto do CG sem LLM/sem dado novo ~56-58/82.**
 **Camada 3 (resumos de codigo) medida (06/09, tracker §NO MAXIMO DUAS CAMADAS):** so a subunidade a sente: 87 -> 71 sem resumo, 79/78 com substituto

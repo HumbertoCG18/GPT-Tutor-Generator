@@ -17,6 +17,7 @@ sys.path.insert(0, str(GEN))
 sys.path.insert(0, str(GEN / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 os.environ.pop("TUTOR_NO_VOCAB_COMPILE", None)
+os.environ["TUTOR_REPOS_ORIG"] = str(Path(r"C:\Users\Humberto\Documents\GitHub"))   # perfil/plano do FR pelo nome da pasta (reprocess)
 import src.utils.helpers  # noqa: F401,E402  (.env)
 from src.builder import engine as engine_module  # noqa: E402
 from src.builder.runtime import datalab_client, gemini_client  # noqa: E402
@@ -33,6 +34,7 @@ STASH = Path.home() / "Desktop/Moodle/fundamentos-de-redes-de-computadores/stash
 REPO = GEN / ".ablacao" / "FR-rebuild-B" / "Fundamentos-de-Redes-Tutor"
 PROD = GH / "Fundamentos-de-Redes-Tutor"
 FRESH = "--fresh" in sys.argv
+NOBUILD = "--no-build" in sys.argv   # reaproveita o build (resumos ja pagos); so reprocess + comparacao
 calls = collections.Counter()
 
 
@@ -83,10 +85,13 @@ if FRESH and REPO.exists():
     shutil.rmtree(REPO)
 REPO.mkdir(parents=True, exist_ok=True)
 t0 = time.time()
-b = RepoBuilder(root_dir=REPO, course_meta=meta, entries=entries, options=options, subject_profile=sp,
-                progress_callback=lambda i, n, t: None)
-b.build()
-print(f"[build] {time.time() - t0:.0f}s | falhas {len(b.failed_entries)} | chamadas {dict(calls)}", flush=True)
+if NOBUILD and (REPO / "manifest.json").exists():
+    print("[build] pulado (--no-build): reaproveita o build anterior", flush=True)
+else:
+    b = RepoBuilder(root_dir=REPO, course_meta=meta, entries=entries, options=options, subject_profile=sp,
+                    progress_callback=lambda i, n, t: None)
+    b.build()
+    print(f"[build] {time.time() - t0:.0f}s | falhas {len(b.failed_entries)} | chamadas {dict(calls)}", flush=True)
 for passo in (1, 2):
     c0 = dict(calls)
     ra.reprocess(REPO, [])
