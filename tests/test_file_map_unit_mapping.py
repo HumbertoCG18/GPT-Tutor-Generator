@@ -2034,3 +2034,22 @@ def test_auto_map_entry_subtopic_artefato_de_slugify_nao_bloqueia_cobertura_tota
     )
     result = _auto_map_entry_subtopic(entry, taxonomy, markdown)
     assert result.topic_slug == "modelos-osi-e-tcpip"
+
+
+def test_unidade_explicita_da_secao_vence_bloco_discordante():
+    """06/09: secao do Moodle "U2 - Camada de Aplicacao" -> unidade-explicita=u2 (conf 0,95). O bloco (flagado ou
+    herdado do vizinho) apontava outra unidade e a reconciliacao a sobrepunha: no FR do zero, os 9 erros de unidade
+    eram exatamente isso. Explicita vence; o conflito fica registrado para auditoria."""
+    from src.builder.routing.file_map import reconcile_unit_with_block
+    unit, reasons, conflict = reconcile_unit_with_block(
+        computed_unit_slug="unidade-02-nivel-de-aplicacao", unit_confidence=0.95, computed_block_id="bloco-22",
+        block_confidence=1.0, block_unit_slug="unidade-05-nivel-de-enlace", block_is_manual=False, has_manual_unit=False,
+        unit_is_explicit=True)
+    assert unit == "unidade-02-nivel-de-aplicacao"
+    assert reasons == ["explicita-vence-bloco=bloco-22"]
+    assert conflict == {"unit": "unidade-02-nivel-de-aplicacao", "block_unit": "unidade-05-nivel-de-enlace", "block_id": "bloco-22"}
+    # sem explicita, o bloco segue decidindo (regra de 21/08)
+    unit2, reasons2, _ = reconcile_unit_with_block(
+        computed_unit_slug="unidade-02-nivel-de-aplicacao", unit_confidence=0.95, computed_block_id="bloco-22",
+        block_confidence=1.0, block_unit_slug="unidade-05-nivel-de-enlace", block_is_manual=False, has_manual_unit=False)
+    assert unit2 == "unidade-05-nivel-de-enlace" and reasons2 == ["reconciliada_do_bloco=bloco-22"]

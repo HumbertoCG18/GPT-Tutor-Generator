@@ -758,6 +758,7 @@ def reconcile_unit_with_block(
     block_unit_slug: str,
     block_is_manual: bool,
     has_manual_unit: bool,
+    unit_is_explicit: bool = False,
 ) -> Tuple[str, List[str], Dict[str, str]]:
     """Reconcilia a unidade efetiva com o bloco atribuído (F1, spec linhas 36-52).
 
@@ -772,8 +773,13 @@ def reconcile_unit_with_block(
          - discordam: block_confidence >= unit_confidence -> unidade do bloco
            ("reconciliada_do_bloco=<id>"); senão mantém a unidade forte e devolve
            conflict {unit, block_unit, block_id}.
+         - discordam e a unidade e EXPLICITA (2026-09-06: a secao do Moodle diz
+           "U2 - ..."; `unit_is_explicit`) -> a unidade explicita vence o bloco
+           ("explicita-vence-bloco=<id>") e o conflito fica registrado. Medido no
+           FR reconstruido do zero: os 9 erros de unidade eram todos explicita
+           sobreposta por bloco flagado ou herdado do vizinho; no produto, 3.
 
-    conflict é {} exceto no último caso (unidade forte venceu bloco discordante).
+    conflict é {} exceto nos casos em que a unidade venceu bloco discordante.
     """
     if block_is_manual and block_unit_slug:
         return block_unit_slug, ["unidade_do_bloco_manual"], {}
@@ -785,6 +791,12 @@ def reconcile_unit_with_block(
         return block_unit_slug, [f"herdada_do_bloco={computed_block_id}"], {}
     if block_unit_slug == computed_unit_slug:
         return computed_unit_slug, [], {}
+    if unit_is_explicit:
+        return (
+            computed_unit_slug,
+            [f"explicita-vence-bloco={computed_block_id}"],
+            {"unit": computed_unit_slug, "block_unit": block_unit_slug, "block_id": computed_block_id},
+        )
     # 2026-08-21: a verdade de unidade e, por construcao, a unidade do bloco
     # (ground_truth |><| gold_units). Medido nos 5 cursos (188 entries): scorer
     # de texto 130, unidade do bloco temporal 162, bloco + heranca do vizinho

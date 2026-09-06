@@ -512,6 +512,7 @@ def apply_unit_subunit_fields(
             block_unit_slug=block_unit,
             block_is_manual=block_is_manual,
             has_manual_unit=bool(manual_unit),
+            unit_is_explicit=any(str(r).startswith("unidade-explicita=") for r in (unit_reasons or [])),
         )
         if vizinho and reconciled == block_unit and not manual_unit:
             suffix = list(suffix) + [f"herdada_do_vizinho={vizinho}"]
