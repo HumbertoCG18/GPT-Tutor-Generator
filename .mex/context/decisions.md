@@ -550,3 +550,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Decision:** `moodle_sync.plan_import(root=...)`: pagina do Moodle (`mod/page`) com HTML salvo em `raw/moodle/pages/<id>-*.html` vira entry `html` com o mesmo id (`id_override`); URL so quando nao ha HTML (`6d68578`, teste). CG reparado por script registrado (`c1-3/repara_paginas_cg.py`, CG `404f5f9`): 16 entries url -> html, ids/golds intactos, 0 chamadas.
 **Reasoning:** Pergunta do user ("como assim tela de login? timeout?"). Medido: a entry url era buscada sem sessao pelo `url_fetcher`; o pull ja tinha o HTML real. Tratar a raiz na sync serve o curso novo automaticamente.
 **Consequences:** CG com texto nas 16 paginas. No gold de subunidade do CG o texto real custou 2 no produto (58 -> 56: +3 -5) e 3 na automatica (58 -> 55): 5 paginas-indice de videos vao para o filho mais citado e o gold (= secao) e o pai — classe pai x filho, 10 dos 27 residuais; candidata registrada, nao medida. Fila 27,6/100. Placar por material (`placar_100.py`): zero LLM 155/288, automatica 238/288, produto 253/288.
+
+---
+
+### SARC e Moodle valem mais que o gold; bloco de prova hospeda entrega
+
+**Date:** 2026-09-06
+**Status:** Active
+**Decision:** (1) Lei reafirmada pelo user: onde o gold diverge do SARC/Moodle, o gold e que esta errado (o professor controla SARC e Moodle; o gold foi feito pelo user). (2) Bloco de prova (kind assessment) pode hospedar entrega de trabalho quando o vencimento cai nele.
+**Reasoning:** ES2: 7 materiais postados antes da P1, que pelo plano contempla so a secao 1 (label do Moodle "exercicios de revisao para P1"), estavam no gold na unidade 02 porque o LLM pendurou 'API gateway' na 2.7 e a curadoria seguiu; o motor puro acertava. MF: SARC "prova P2, entrega do T2" em 06/07 e 'Sala de entrega' com vencimento 06/07; o gold bloco-18 era relabel de conteudo sem evidencia do professor.
+**Consequences:** Golds corrigidos (`gold_units_ES2`, `subunit_gt_ES2`, `ground_truth_MF`). Produto: bloco 197/199, unidade 183/190, sub 193/233; placar por material zero 155 · automatica 230 · produto 245 / 288. Candidata C: `due_window` deixa bloco assessment ancorar quando contem o vencimento (inverte o T17 de 2026-08-06). As 6 outras divergencias gold x Moodle de 06/09 foram revistas e mantidas (artefatos da heuristica da auditoria; SARC concorda com o gold).

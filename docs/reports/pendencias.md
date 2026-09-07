@@ -10,6 +10,21 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## BLOCO DE PROVA HOSPEDA ENTREGA (decisao do user 06/09 noite) — GOLD DO T2 DO MF -> BLOCO 20; DATAS DE ENTREGA JA ESTAO NO PULL
+**Gold (docs):** `ground_truth_MF.csv` t2-2026-1 true_block bloco-18 -> **bloco-20** ("prova P2, entrega do T2", 06/07, kind assessment; Moodle
+'Sala de entrega' vencimento 06/07/2026 23:59). Bloco de prova nao tem unidade (gold_units 'FORA DA REGUA'): o T2 sai da regua de unidade
+(191 -> 190). **Remedido:** produto bloco 198 -> **197/199** (o motor ancora o T2 em bloco-18 por desenho, abaixo), unidade 183/190, sub 193/233;
+placar por material zero 156 -> 155 · automatica 231 -> 230 · produto 246 -> 245 (`placar_100_gold_mf.log`).
+**Datas de entrega pela API (pergunta do user):** SIM, e ja estao no pull: `core_course_get_contents` devolve, em cada modulo `assign` ("Sala de
+entrega"), `dates: [{label: 'Vencimento:', dataid: 'duedate', timestamp}]`. Nos pulls de 06/09: IA 18/18 assigns com vencimento · LR 3/3 · MF 2/2
+(06/05 e 06/07) · SO 2/3 · ES2 1/1 (Trabalho Final 06/07) · TCC 0/3 (salas sem prazo) · CG 0 · FR 0. `mod_assign_get_assignments` daria ainda
+allowsubmissionsfromdate/cutoffdate/intro; nao e necessario para a data de entrega.
+**O motor ja usa a data (tier 2 `motor/due_window.py`, spec 2026-07-22 + F5b):** casa arquivo -> vencimento por filename/stem e, por desenho
+(T17, 2026-08-06), **so bloco de CONTEUDO ancora**: vencimento dentro de prova/revisao -> "ultimo bloco de conteudo anterior", confianca media +
+FLAG (method `due-straddle`). Foi exatamente isso no T2: vencimento 06/07 dentro do bloco-20 (P2) -> bloco-18 (29/06). **Candidata C (a
+decisao do user inverte o T17):** vencimento contido em bloco `assessment` ancora nele (review/feriado seguem excluidos). Alcance estatico: MF T2;
+ES2 Trabalho Final (vencimento 06/07 dentro do bloco-13 "prova P2, entrega trabalho final"); TCC sem prazo nas salas. Gate: motor puro + suite.
+
 ## LEI REAFIRMADA: SARC E MOODLE > GOLD — GOLD DO ES2 CORRIGIDO PELO ORACULO E CRIVO DAS 7 DIVERGENCIAS (06/09 noite, sessao 6; user: "se o gold estiver diferente do SARC/Moodle, e mais provavel que eu tenha errado o gold")
 **Correcao (docs, gold so mede):** `tests/fixtures/eval/gold_units_ES2.csv` bloco-04 (10/04-24/04: discovery, api gateway, exercicios de revisao
 para P1) true_unit unidade-02 -> **unidade-01-arquitetura-de-software** (7 materiais: revisao-p1, roteiro2, roteiro3, microsservicos2,

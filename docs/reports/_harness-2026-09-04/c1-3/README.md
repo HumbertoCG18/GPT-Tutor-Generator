@@ -37,3 +37,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
 - `diag_zero.py [zero|vocab|auto]` (decomposicao dos materiais que nao estao 100% por eixo e causa) · logs `diag_zero.log`, `diag_zero_texto.log` (onde o nome do subtopico do gold aparece).
 - `simula_cerca_provas.py` (cerca de provas: escopo do plano x data no SARC, estatico nos snapshots zero + FR do zero) · log `simula_cerca_provas.log`.
 - `placar_100_gold_es2.log` (placar com o gold do ES2 corrigido pelo oraculo) · `docs_c1_3u.py`.
+- `placar_100_gold_mf.log` (placar com o gold do T2 do MF no bloco da P2) · `docs_c1_3v.py`.

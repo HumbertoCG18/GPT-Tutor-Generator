@@ -41,7 +41,7 @@ revisao,revisao.pdf,bloco-03,bloco-02,bloco-02,,block-direct,clean,,yes,yes,2edd
 revisao-p1,revisao_p1.pdf,bloco-07,bloco-06,bloco-06,,block-direct,clean,,yes,yes,1dd6f143-d239-45bb-8a05-391ef8acbba1
 revisao-p1-gabarito,revisao_p1_gabarito.pdf,bloco-07,bloco-07,bloco-07,,block-direct,clean,,yes,no,1dd6f143-d239-45bb-8a05-391ef8acbba1
 t1-2026-1,t1_2026_1.pdf,bloco-11,bloco-05,bloco-05,,block-direct,clean,,yes,yes,c9f5f7cf-3477-4531-be7a-f7b68727009c
-t2-2026-1,t2_2026_1.pdf,bloco-18,bloco-02,bloco-02,,block-direct;relabel-2026-08-25-fase1,clean,,yes,yes,37d49c0d-3cc1-4a8b-add6-d82ea868ec52
+t2-2026-1,t2_2026_1.pdf,bloco-20,bloco-02,bloco-02,,"block-direct;relabel-2026-08-25-fase1;oraculo-2026-09-06 SARC 'prova P2, entrega do T2' 06/07 + Moodle 'Sala de entrega' vencimento 06/07 (bloco de prova hospeda entrega: decisao do user)",clean,,yes,yes,dd52ff18-4d6c-4dcd-a7c2-c154f19ea314
 verificacaomodelos,verificacaomodelos.pdf,bloco-16,bloco-16,bloco-16,,block-direct,clean,,yes,no,a6ac04f2-7611-4bef-b74a-54390cef4084
 arvores,arvores.thy,bloco-05,bloco-06,bloco-06,,SARC/Moodle 05/09 (user): bloco-06 -> bloco-05; era block-direct,clean,,yes,no,7a5e29db-f228-4e96-bd4b-272d5b74e2ae
 classes-parte1,classes_parte1.zip,bloco-15,bloco-15,bloco-15,,block-direct,clean,,yes,no,95d7c9fb-d9e3-43cd-b1fb-5fcebddb49f0
