@@ -10,6 +10,28 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## REGUA SEM GOLD — O PRODUTO REAL (07/09; user: "sem o gold na jogada; as informacoes tem que vir do SARC/Moodle ou do cronograma")
+`c1-3/regua_sem_gold.py` (read-only, 0 chamadas; log `regua_sem_gold.log`). Quatro fontes do PROFESSOR, nenhuma criada pelo aluno:
+
+| eixo | fonte | cobertura | produto |
+|---|---|---|---|
+| bloco (datado) | posicao do professor no Moodle: label datado, data no nome do modulo, secao-semana, faixa dos irmaos | 195/348 | **188/195 = 96,4%** (onde a posicao e UNICA: 91/94 = 96,8%) |
+| bloco (por assunto) | secao do Moodle x assunto do bloco no cronograma (`syllabus` do perfil) — para quem nao tem data | 66 | **64/66 = 97%**; **CG 58/59 = 98,3%**, alvo unico em 58 |
+| unidade | numero explicito na secao ("U2 - ...") ou titulo da unidade contido na secao | 67 | 67/67, mas **19 circulares** (FR: a regra da unidade explicita e a propria fonte) → 48/48 independentes |
+| subunidade | secao numerada do Moodle que nomeia um TOPICO do plano ("6 - Processo de Visualizacao 2D") | 57 | **31/57 = 54%** (CG 14/30), 6 circulares (S1b) |
+
+**Fonte do cronograma do CG (achado):** nao e SARC nem plano — e o campo `syllabus` do `SubjectProfile` (2696 chars, tabela
+`| # | Dia | Data | Hora | Descricao | Atividade | Recursos |`). E dele que saem as 29 datas dos blocos. A regua "bloco por assunto" cruza
+Moodle (secao) com syllabus (assunto do bloco): duas fontes do professor, independentes entre si.
+**LEITURA:** com a regua do professor o CG deixa de ser o curso ruim — **98,3% de coerencia de bloco**, contra os 67% de "materiais 100%
+certos" do gold (que exige acertar tambem a subunidade). **Bloco e unidade estao resolvidos; a subunidade e o unico eixo fraco (54%)** e e
+exatamente onde o vocabulario pesa. Confirma sem gold o que os golds diziam.
+**DIVERGENCIA HONESTA entre as duas reguas:** remover as descricoes do Datalab da **+2 pelo gold** (CG sub 56 -> 58/82) e **-1 pela regua da
+secao** (CG sub 14 -> 13/30); bloco e unidade nao mudam em nenhuma. Pela lei do user (SARC/Moodle > gold) o ganho NAO esta comprovado: fica
+como candidata a medir com mais cobertura, nao como decisao.
+**Circularidade declarada:** o motor tem regras que leem a secao (unidade explicita, S1b da subunidade); a regua conta quantos acertos vem de
+material onde a regra AGIU e reporta separado (19 na unidade do FR, 6 na subunidade). Fora esses, a fonte e independente do motor.
+
 ## AUDITORIA DO SISTEMA E CUSTO DAS IMAGENS DE HTML (07/09; user: "faca a auditoria completa e salva no mex" / "como baratear a pagina HTML?")
 **Auditoria salva no `.mex`** (commit `a487732`): `context/audit-2026-09-07.md` (retrato verificado), `context/text-chain.md` (cadeia do
 texto), `context/external-services.md` (servicos externos por eixo). `ROUTER.md` passa a apontar para os tres + o inventario do motor;
