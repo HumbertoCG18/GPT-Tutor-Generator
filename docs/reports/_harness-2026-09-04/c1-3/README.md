@@ -39,3 +39,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
 - `placar_100_gold_es2.log` (placar com o gold do ES2 corrigido pelo oraculo) · `docs_c1_3u.py`.
 - `placar_100_gold_mf.log` (placar com o gold do T2 do MF no bloco da P2) · `docs_c1_3v.py`.
 - `mede_salas.py` (salas de entrega dos 8 cursos pela API x SARC; nunca imprime o token) · log `mede_salas.log` · `salas_api.json` (gitignored).
+- `fila_zero.py [zero|auto]` (fila do regime por motivo, rendimento, erros confiantes) · `posicao_duvidas_zero.py` (duvidas de bloco x posicao do professor) · logs `fila_zero*.log`, `posicao_duvidas_zero.log`.

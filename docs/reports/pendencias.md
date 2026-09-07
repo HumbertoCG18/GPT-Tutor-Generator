@@ -10,6 +10,27 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## FILA DE REVISAO DO REGIME ZERO (SEM LLM) — ANATOMIA E RAIZES (07/09 madrugada; user: "um motor, camada LLM on/off; teto do puro; fila menor pela raiz")
+**Regua (`c1-3/fila_zero.py zero`, snapshots de 06/09, 6 cursos, 319 materiais):** fila **137 (42,9/100)** vs automatica (LLM em cache) 90 (28,2).
+Motivos: conflito 57 · flag:disamb 53 · '?' 11 · sub-empate 10 · sem-bloco 10 · sub-ambigua 6 · disamb-curto 4 · due-straddle 1. Rendimento:
+fila&erra 64 · fila&certo (aviso vazio) 58 · sem gold 15. **ERROS CONFIANTES (fora da fila) 69: sub 65 (IA 29, ES2 13, CG 11, MF 7), bloco 4
+(MF), unidade 4.** Os 11 '?' sao 'mudou' do CG herdado do produto no snapshot (artefato): fila real do zero = **126 (39,5/100)**.
+**Por motivo (`fila_zero_motivos.log`):** conflito 57 -> erra 28 (unidade 5, sub 21, bloco 3), certo 22 · flag:disamb 53 -> erra 21 (bloco 8, unidade 3,
+sub 15), certo 28 · sub-empate 10 -> erra 8 · sem-bloco 10 -> erra 4 (4 sem gold) · disamb-curto 4 -> erra 4 · due-straddle 1 -> erra 1 (MF t2, C1 resolve).
+**Raiz 1 — 'conflito' (`fila_zero_conflito*.log`):** 40/57 tem bloco ancorado (>= 0,6); erro de unidade em 5/57 (SO 4 no bloco-06 cujo SARC diz
+"gerencia do processador, sincronizacao E deadlock" = duas unidades; IA 1 em bloco de conf 0). Politica raiz simulada: conflito so e duvida se o
+bloco e fill (< 0,6) OU o label do SARC do bloco toca >= 2 unidades (tokens exclusivos): **saem 26, ficam 31 com os 5 erros; 0 erro escondido**.
+**Raiz 2 — duvidas de bloco x posicao do professor (`posicao_duvidas_zero.py`, 68 itens):** sem posicao 35 (CG 34: Moodle sem data) · posicao
+com 2-4 blocos 31 (MF/IA: label "Semana X a Y" cobre 2 aulas; contem o gold 25/31; estreita a janela atual em so 5: o provider 'labels' ja usa)
+· posicao unica 2 (1 != gold). Os 4 erros confiantes de bloco (MF) tambem estao em posicao multipla. => O que resta de duvida de bloco e escolher
+entre as 2-4 aulas da mesma semana/secao: o unico sinal deterministico nao usado e a ORDEM dos modulos dentro do label/secao (alavanca medida em
+02/09: +7/-1 e +12/-5, fora do motor). No CG, sem datas, a ordem das secoes x ordem do SARC.
+**Raiz 3 — subunidade:** 20 duvidas (empate 10, ambigua 6, curto 4; erram 15) e 65 erros confiantes: ima de headings (IA 29), pai x filho (CG 10),
+'OpenGL' (CG 9, vocab), 48 sem o nome em fonte nenhuma. Sinais deterministicos para desempate: sessao do SARC do bloco nomeia o subtopico
+(9 inteiros / 36 parciais), secao (S1b ja entrou), titulo (ja entrou).
+**Tensao a decidir:** as correcoes de raiz para erro confiante (ima, token compartilhado) AUMENTAM a fila (viram duvida) antes de diminui-la; as
+que diminuem sem esconder erro sao: politica do conflito (-26), cerca (+3 acertos), C1 (-1), artefato 'mudou' (-11), ordem dos modulos (a medir).
+
 ## MEDICAO DAS SALAS NOS 8 CURSOS (06/09 noite; user: "concordo com os 5; medir para fundar e ver se replica") — `c1-3/mede_salas.py`, log `mede_salas.log`
 **Cobertura:** 30 salas em 6 cursos (IA 18, SO 3, TCC 3, LR 3, MF 2, ES2 1; CG e FR 0 visiveis — 87 modulos "sem acesso" na conta do aluno).
 **C3 (duracao abertura -> vencimento) replica onde o professor define abertura:** IA e LR definem (21 salas): atividade de aula (<= 26 h) 12 ·
