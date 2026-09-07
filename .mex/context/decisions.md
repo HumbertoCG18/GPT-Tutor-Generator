@@ -560,3 +560,13 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Decision:** (1) Lei reafirmada pelo user: onde o gold diverge do SARC/Moodle, o gold e que esta errado (o professor controla SARC e Moodle; o gold foi feito pelo user). (2) Bloco de prova (kind assessment) pode hospedar entrega de trabalho quando o vencimento cai nele.
 **Reasoning:** ES2: 7 materiais postados antes da P1, que pelo plano contempla so a secao 1 (label do Moodle "exercicios de revisao para P1"), estavam no gold na unidade 02 porque o LLM pendurou 'API gateway' na 2.7 e a curadoria seguiu; o motor puro acertava. MF: SARC "prova P2, entrega do T2" em 06/07 e 'Sala de entrega' com vencimento 06/07; o gold bloco-18 era relabel de conteudo sem evidencia do professor.
 **Consequences:** Golds corrigidos (`gold_units_ES2`, `subunit_gt_ES2`, `ground_truth_MF`). Produto: bloco 197/199, unidade 183/190, sub 193/233; placar por material zero 155 · automatica 230 · produto 245 / 288. Candidata C: `due_window` deixa bloco assessment ancorar quando contem o vencimento (inverte o T17 de 2026-08-06). As 6 outras divergencias gold x Moodle de 06/09 foram revistas e mantidas (artefatos da heuristica da auditoria; SARC concorda com o gold).
+
+---
+
+### Um motor, camada LLM on/off; consolidacao antes de alavanca; gate zero-diff
+
+**Date:** 2026-09-07
+**Status:** Active
+**Decision:** (1) Nao ha "duas versoes" do motor: o mesmo codigo com as camadas LLM (vocab, voter, resumos) ligadas ou desligadas; o nucleo deterministico deve ser honesto (duvida em vez de palpite) e a camada LLM so preenche duvida/vazio e acrescenta aliases, nunca vira decisao tomada pela estrutura do professor (secao, escopo de prova, vencimento). (2) Antes de qualquer alavanca nova, consolidar duplicacoes; refactor so com zero-diff nos 8 tutores (`c1-3/zero_diff.py`). (3) Nenhum filtro de token ou provedor novo: reusar `text/stopwords.py`, `text/patterns.py`, `text/tokens.motor_tokens`; religar codigo morto antes de escrever regra nova.
+**Reasoning:** Pedido do user ("um motor, camada LLM on/off", "nao quero band-aid"). Inventario (`c1-3/inventario_motor_2026-09-07.md`): 14 duplicacoes, 8 tokenizadores, 5+ listas de genericos, codigo morto. ES2 mostrou o LLM vencendo o calendario do professor (7 unidades); IA mostrou o puro confiante-errado por ima de headings.
+**Consequences:** Commits A1 4f60bd0 · A2 0efa29a · B 46499aa · C 35cb99c (comportamento identico por gate); mapa do que fica diferente por semantica no tracker. Plano seguinte: ima de headings (taxonomia), religar block_confidence + token compartilhado, prova como marco no F5 + due-window em prova, religar topico do bloco na subunidade, medir residuo do card_stream.

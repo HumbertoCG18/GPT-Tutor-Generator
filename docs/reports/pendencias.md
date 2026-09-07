@@ -10,6 +10,45 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## CONSOLIDACAO DAS DUPLICACOES DO MOTOR (07/09; user: "vamos antes resolver essas duplicacoes"; inventario em `c1-3/inventario_motor_2026-09-07.md`)
+**Metodo:** refactor SEM mudanca de comportamento, um grupo por commit. Gate por commit: suite verde + **zero-diff nos 8 tutores**
+(`c1-3/zero_diff.py --base|--check`: copia com `staging/`, 1 reprocess com tripwire, snapshot de 1017 artefatos derivados sem build/, raw/,
+BUILD_REPORT, STUDENT_STATE, updated_at, last_seen; compara com a referencia do mesmo dia). Achado no caminho: o `determinismo.py` de
+02/09 ignorava `staging/` e reprocessava LR/CG/FR/MF SEM o texto dos materiais (base_markdown em staging) — valia como determinismo, nao
+como fidelidade; a referencia contra o original dava 56 arquivos por isso + datas. Auto-consistencia do gate novo: 0/1017.
+**Commits (gerador, nada pushed): A1 4f60bd0 · A2 0efa29a · B 46499aa · C 35cb99c.**
+- **A1** tokenizador de card/bloco unico (`text.tokens.card_stop_tokens`; `_tokens` era byte-identico em `timeline/card_block` e
+  `timeline/block_identity`) · regex de numero de unidade so em `file_map` (`window_provider` importa) · leitor unico de `moodle_label`
+  (`models.core.moodle_label_text`; 6 copias: disambiguator, window_provider, sources/moodle, resolver_apply, artifacts/navigation,
+  core/vocabulary_compile). Suite 2341 · zero-diff 0.
+- **A2** removido o caminho legado `routing/anchor_placement.py` (412 linhas atras de `use_anchor_placement`, default False, nunca ligado em
+  produto) + `tests/test_anchor_placement.py` + ramo da flag em `ops/pedagogical_regeneration.py`; comentarios em `models/core.py` e
+  `file_map.py`. Suite 2335 · zero-diff 0.
+- **B** listas de genericos/stopwords centralizadas em `text/stopwords.py` com conteudo identico (bloco recortado, nao retipado) e alias no
+  modulo de origem: `UNIT_MATCHER_GENERIC` (unit_matcher), `UNIT_TITLE_GENERIC` (content_taxonomy), `SEMANTIC_TOKEN_STOPWORDS`
+  (semantic_config), `LABEL_PART_STOP` e `TOPIC_FALLBACK_STOPWORDS` (index), `MOTOR_GENERIC_STEMS` (disambiguator; coverage_rules e
+  resolver_apply importam o canonico), `TOPIC_SUPPORT_STOP` (content_taxonomy inline), `FILE_MAP_TITLE_ANCHOR_STOP` e
+  `FILE_MAP_TOPIC_ANCHOR_STOP` (file_map inline). Guard de identidade em `tests/test_stopwords_consolidation.py`. Suite 2336 · zero-diff 0.
+- **C (mecanico)** regex identicas viram uma so em `text/patterns.py`: `SECTION_NUM_PREFIX_RE` (window_provider = resolver_apply) e
+  `DATE_DMY_RE` (sources/moodle = motor/card_stream). Suite 2336 · zero-diff 0.
+**Ficam DOCUMENTADAS, nao unificadas (semantica diferente; unificar = mudar comportamento = medir antes):**
+- tokenizadores: `text.tokens.motor_tokens` (normalize_match_text, camelCase, digitos fora, stems genericos, short_vocab) x
+  `unit_matcher._tokens` (norm_ascii_lower + `[a-z]+` >= 3 + UNIT_MATCHER_STOPWORDS) x `content_taxonomy._topic_support_tokens` (stem-5,
+  >= 4) x `index._specific_tokens`/`_timeline_specific_tokens` x `resolver_apply._tokens_headings`/`_toks` x `concept_resolver._concept_tokens`.
+  Regra daqui em diante: quem tocar um deles migra ESSE call site para `motor_tokens` parametrizado, com zero-diff ou medida.
+- "data no nome": `window_provider._DATE_PREFIX_RE` (dd/mm prefixo, `\b`) x `moodle._DATE_PREFIX` (aceita ano) x `card_stream._DATE_DM`
+  (lookahead negativo) — tres contratos.
+- "nome do curso e boilerplate": `window_provider._course_stems` (stems de _topic_tokens) x `disambiguator drop = _toks(course_name)` x
+  `content_taxonomy course_norm` x `stopwords.resolve_unit_generic_tokens`.
+- IDF/raridade x3 (file_map 1/df entre unidades; concept_resolver 1/freq entre blocos; stopwords df >= 0,4) e "token exclusivo" x3
+  (unit_matcher, file_map distinctive, resolver_apply subtopico): eixos diferentes, formulas parecidas — candidatos a um helper quando um
+  passo do plano os tocar.
+- "a secao nomeia X" x2 (`window_provider.unit_named_by_section`, `resolver_apply._secao_nomeia_subtopico`): mesma forma, eixos diferentes;
+  o passo 4 do plano (topico do bloco como ultimo recurso da subunidade) e o momento de unificar a forma.
+- heranca de unidade por vizinho x2 (`file_map.unit_of_block_or_neighbor`, `index` soft-continuation): entry x bloco.
+- codigo morto que FICA de proposito: `file_map.timeline_block_matches_preferred_topic` (passo 4 religa) e o parametro `block_confidence`
+  de `reconcile_unit_with_block` (passo 2 religa).
+
 ## FILA DE REVISAO DO REGIME ZERO (SEM LLM) — ANATOMIA E RAIZES (07/09 madrugada; user: "um motor, camada LLM on/off; teto do puro; fila menor pela raiz")
 **Regua (`c1-3/fila_zero.py zero`, snapshots de 06/09, 6 cursos, 319 materiais):** fila **137 (42,9/100)** vs automatica (LLM em cache) 90 (28,2).
 Motivos: conflito 57 · flag:disamb 53 · '?' 11 · sub-empate 10 · sem-bloco 10 · sub-ambigua 6 · disamb-curto 4 · due-straddle 1. Rendimento:

@@ -40,3 +40,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
 - `placar_100_gold_mf.log` (placar com o gold do T2 do MF no bloco da P2) · `docs_c1_3v.py`.
 - `mede_salas.py` (salas de entrega dos 8 cursos pela API x SARC; nunca imprime o token) · log `mede_salas.log` · `salas_api.json` (gitignored).
 - `fila_zero.py [zero|auto]` (fila do regime por motivo, rendimento, erros confiantes) · `posicao_duvidas_zero.py` (duvidas de bloco x posicao do professor) · logs `fila_zero*.log`, `posicao_duvidas_zero.log`.
+- `zero_diff.py --base|--check` (gate do refactor: 1 reprocess nas copias COM staging x referencia do dia; 0 = comportamento preservado) · logs `zero_diff_*.log`, `tier*_pytest.log` · `inventario_motor_2026-09-07.md` · `docs_c1_3w.py`.
