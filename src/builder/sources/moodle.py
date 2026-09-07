@@ -251,9 +251,7 @@ def _norm_text(t) -> str:
     return " ".join(normalize_match_text(str(t or "")).split())
 
 
-def _label_of(entry) -> str:
-    ml = entry.get("moodle_label")
-    return ml.get("text") if isinstance(ml, dict) else ml
+from src.models.core import moodle_label_text as _label_of  # leitor unico (07/09)
 
 
 def module_files(mod) -> list:

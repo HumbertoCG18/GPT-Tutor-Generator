@@ -346,9 +346,7 @@ def resolve_window(entry: dict, ctx: MotorContext) -> Tuple[List[str], str]:
 _DATE_PREFIX_RE = re.compile(r"^\s*\[?\s*(\d{1,2})[./ ](\d{1,2})\b")
 
 
-def _moodle_label_text(entry: dict) -> str:
-    ml = entry.get("moodle_label")
-    return ml.get("text", "") if isinstance(ml, dict) else str(ml or "")
+from src.models.core import moodle_label_text as _moodle_label_text  # leitor unico (07/09)
 
 
 def extract_date_in_name(entry: dict):
@@ -367,25 +365,17 @@ def extract_date_in_name(entry: dict):
 
 _UNIT_TITLE_PREFIX_RE = re.compile(r"^\s*unidade(\s+de\s+aprendizagem)?\s*\d+\s*[\u2014\-\u2013:]?\s*", re.I)
 _SECTION_NUM_PREFIX_RE = re.compile(r"^\s*\d+(\.\d+)*\s*[-.:]?\s*")
-_UNIT_NUM_SLUG_RE = re.compile(r"^unidade(?:-de-aprendizagem)?-0*(\d{1,2})(?:$|[^0-9])")
-
-
-def _unit_number(slug: str):
-    m = _UNIT_NUM_SLUG_RE.match(str(slug or ""))
-    return int(m.group(1)) if m else None
-
-
 def unit_named_by_section(entry: dict, ctx: MotorContext) -> str:
     """Slug da unidade que a SECAO do Moodle nomeia: 'U2 - ...' (numero explicito, file_map.explicit_unit_number)
     ou secao igual ao/contida no titulo da unidade do plano (frase inteira). "" se nenhuma ou mais de uma."""
-    from src.builder.routing.file_map import explicit_unit_number
+    from src.builder.routing.file_map import explicit_unit_number, _unit_number_from_slug
     from src.builder.text.normalize import normalize_match_text
     units = list(getattr(ctx, "units", None) or [])
     if not units:
         return ""
     numero = explicit_unit_number(entry)
     if numero is not None:
-        alvo = [str(x.get("slug") or "") for x in units if _unit_number(str(x.get("slug") or "")) == numero]
+        alvo = [str(x.get("slug") or "") for x in units if _unit_number_from_slug(str(x.get("slug") or "")) == numero]
         return alvo[0] if len(alvo) == 1 else ""
     sec = normalize_match_text(_SECTION_NUM_PREFIX_RE.sub("", str(entry.get("source_section") or "")))
     if not sec:

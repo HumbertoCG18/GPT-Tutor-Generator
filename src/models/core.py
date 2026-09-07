@@ -462,3 +462,12 @@ class PendingOperationStore:
                 self._path.unlink()
         except Exception as e:
             logger.warning("Failed to clear pending operation %s: %s", self._path, e)
+
+
+def moodle_label_text(entry) -> str:
+    """Texto do `moodle_label` (str ou {"text": ...}); "" quando ausente. Leitor unico — era reimplementado em disambiguator,
+    window_provider, sources/moodle, resolver_apply, artifacts/navigation e vocabulary_compile (consolidacao 07/09)."""
+    ml = entry.get("moodle_label") if isinstance(entry, dict) else getattr(entry, "moodle_label", "")
+    if isinstance(ml, dict):
+        return str(ml.get("text") or "")
+    return str(ml or "")

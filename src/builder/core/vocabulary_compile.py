@@ -39,6 +39,7 @@ from src.builder.extraction.content_taxonomy import _extract_markdown_headings, 
 from src.builder.routing.resolver_apply import _is_material
 from src.builder.text.normalize import normalize_match_text
 from src.utils.helpers import write_text
+from src.models.core import moodle_label_text  # leitor unico (07/09)
 
 logger = logging.getLogger(__name__)
 
@@ -162,8 +163,7 @@ def _bundle(taxonomy: dict, unit: dict, labels: List[str], mats: List[dict], roo
     for e in mats:
         md = _entry_markdown_text_for_file_map(root, e) or ""
         heads = _extract_markdown_headings(md, limit=24)
-        ml = e.get("moodle_label")
-        ml = ml.get("text", "") if isinstance(ml, dict) else str(ml or "")
+        ml = moodle_label_text(e)
         linhas.append(f"- TITULO: {e.get('title')} | LABEL MOODLE: {ml}\n  HEADINGS: "
                       + " | ".join(h[:60] for h in heads[:24]))
     return (f"DISCIPLINA: {taxonomy.get('course_name') or ''}\nUNIDADE: {unit.get('title')}\nTOPICOS DO PLANO:\n"

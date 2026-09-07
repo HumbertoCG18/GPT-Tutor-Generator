@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Dict, List
 
 from src.utils.helpers import norm_ascii_lower
-from src.builder.text.stopwords import CARD_BLOCK_STOP as _STOP
+from src.builder.text.tokens import card_stop_tokens as _tokens
 from src.builder.timeline.block_identity import _POSITIONAL_RE, _is_uuid_ref
 
 logger = logging.getLogger(__name__)
@@ -28,10 +28,6 @@ class CardBlockResolution:
     block_ids: List[str] = field(default_factory=list)
     confidence: float = 0.0
     reason: str = "needs-confirmation"
-
-
-def _tokens(text: str) -> set:
-    return {t for t in norm_ascii_lower(text).split() if t and t not in _STOP and len(t) > 2}
 
 
 def _block_topic_tokens(block: dict) -> set:

@@ -54,7 +54,15 @@ def test_unit_matcher_stopwords_membership():
 
 
 def test_card_block_stop_membership():
-    from src.builder.timeline.card_block import _STOP
+    from src.builder.text.stopwords import CARD_BLOCK_STOP as _STOP
     assert _STOP == {
         "a", "da", "de", "do", "e", "em", "o", "of", "para", "por", "the",
     }
+
+
+def test_card_block_e_block_identity_usam_o_tokenizador_unico():
+    """Consolidacao 07/09: o `_tokens` duplicado byte a byte virou `text.tokens.card_stop_tokens`."""
+    from src.builder.text.tokens import card_stop_tokens
+    from src.builder.timeline import block_identity, card_block
+    assert card_block._tokens is card_stop_tokens and block_identity._tokens is card_stop_tokens
+    assert card_stop_tokens("A Logica de Hoare para o Dafny") == {"logica", "hoare", "dafny"}

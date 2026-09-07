@@ -60,9 +60,7 @@ def course_short_vocab(ctx: MotorContext) -> frozenset:
     return ctx._short_vocab_cache
 
 
-def _moodle_label_text(entry: dict) -> str:
-    ml = entry.get("moodle_label")
-    return ml.get("text", "") if isinstance(ml, dict) else str(ml or "")
+from src.models.core import moodle_label_text as _moodle_label_text  # leitor unico (07/09)
 
 
 def entry_tokens(entry: dict, markdown: str = "", short_vocab=frozenset()) -> set:

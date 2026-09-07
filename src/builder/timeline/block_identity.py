@@ -16,8 +16,7 @@ from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 from uuid import uuid4
 
-from src.utils.helpers import norm_ascii_lower
-from src.builder.text.stopwords import CARD_BLOCK_STOP as _STOP
+from src.builder.text.tokens import card_stop_tokens as _tokens
 
 _LEDGER_NAME = ".block_identity.json"
 _CURATION_NAME = ".timeline_curation.json"
@@ -35,10 +34,6 @@ class BlockIdentityError(Exception):
 
 def _today() -> str:
     return date.today().isoformat()
-
-
-def _tokens(text: str) -> set:
-    return {t for t in norm_ascii_lower(text).split() if t and t not in _STOP and len(t) > 2}
 
 
 def _block_topic_tokens(block: dict) -> set:

@@ -24,6 +24,7 @@ from src.builder.routing.revisar import revisar_de
 from src.builder.routing.sequence import annotate_class_ordinals
 from src.builder.timeline.card_block import resolve_block_ref
 from src.utils.helpers import collapse_ws as _collapse_ws_cat
+from src.models.core import moodle_label_text  # leitor unico (07/09)
 
 
 def _display_id_for_block(block_id: str, blocks: List[dict]) -> str:
@@ -225,8 +226,7 @@ def _frase_no_texto(texto_norm: str, frase: str) -> bool:
 def _subtopico_nomeado_no_titulo(entry: dict, unit_slug: str, vencedor: str, partes: dict, frases_topico: dict) -> str:
     """Subtopico Y (!= vencedor, mesma unidade) cuja parte de rotulo esta no titulo + label do Moodle do material,
     desde que nenhuma frase (rotulo/aliases) do vencedor esteja no titulo e Y seja unico. "" se nao houver."""
-    ml = entry.get("moodle_label")
-    ml = ml.get("text") if isinstance(ml, dict) else ml
+    ml = moodle_label_text(entry)
     tit = normalize_match_text(f"{entry.get('title') or ''} {ml or ''}")
     if not tit:
         return ""

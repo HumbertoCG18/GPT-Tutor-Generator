@@ -19,6 +19,7 @@ from src.builder.core.reference_navigation import (
     _REF_CAP_PER_ANCHOR,
 )
 from src.builder.extraction.content_taxonomy import _NO_TIMELINE_CATEGORIES
+from src.models.core import moodle_label_text  # leitor unico (07/09)
 
 
 def _display_subunit_slug(entry: dict) -> str:
@@ -726,9 +727,7 @@ FILE_MAP_MAX_CHARS = 80_000
 
 
 def _file_map_title(entry: dict) -> str:
-    ml = entry.get("moodle_label")
-    ml = ml.get("text") if isinstance(ml, dict) else ml
-    title = str(ml or "").strip() or str(entry.get("title") or "")
+    title = moodle_label_text(entry).strip() or str(entry.get("title") or "")
     # "|" dentro do titulo quebra a celula da tabela (IA: "O que e IA? | Oracle Brasil" deslocava 10 colunas)
     return title.replace("|", "/")
 

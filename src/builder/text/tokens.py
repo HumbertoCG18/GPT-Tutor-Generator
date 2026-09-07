@@ -9,6 +9,8 @@ from __future__ import annotations
 import re
 
 from src.builder.text.normalize import normalize_match_text
+from src.builder.text.stopwords import CARD_BLOCK_STOP
+from src.utils.helpers import norm_ascii_lower
 
 _CAMEL_RE = re.compile(r"(?<=[a-z])(?=[A-Z])")
 
@@ -24,3 +26,9 @@ def motor_tokens(text: str, *, generic_stems=frozenset(), short_vocab=frozenset(
         if len(t) >= min_len or t in short_vocab:
             out.add(t)
     return out
+
+
+def card_stop_tokens(text: str) -> set:
+    """Tokens de card/bloco: `norm_ascii_lower`, > 2 chars, fora de CARD_BLOCK_STOP. Era `_tokens`, duplicado byte a byte em
+    timeline/card_block.py e timeline/block_identity.py (consolidacao 07/09, comportamento identico)."""
+    return {t for t in norm_ascii_lower(text).split() if t and t not in CARD_BLOCK_STOP and len(t) > 2}
