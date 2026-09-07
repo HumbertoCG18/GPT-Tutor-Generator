@@ -2,7 +2,8 @@
 Tres eixos, tres fontes independentes do motor:
   BLOCO      posicao datada do professor no Moodle (label datado, data no nome do modulo, secao-semana, faixa dos irmaos datados)
              — mesma logica de `coerencia_moodle.py`; cobre onde o professor datou.
-  UNIDADE    numero explicito de unidade na secao ("U2 - ...") ou titulo da unidade contido na secao.
+  UNIDADE    numero explicito de unidade na secao ("U2 - ..."), titulo da unidade contido na secao, ou — quando a secao nomeia um
+             TOPICO do plano — a unidade DONA desse topico (o plano numera X.Y: "3.5 Segmentacao" pertence a unidade 03).
   SUBUNIDADE secao numerada do Moodle que nomeia um TOPICO do plano ("6 - Processo de Visualizacao 2D") — caso CG.
 Reporta cobertura (quantos materiais a fonte alcanca) e concordancia (motor x professor), por curso e por regime.
 CIRCULARIDADE declarada: o motor tem regras que leem a secao (unidade explicita, S1b da subunidade). A regua marca quantos
@@ -122,8 +123,12 @@ def mede(root: Path, sig: str, tax: dict):
             c["bloco: posicao unica"] += len(bl) == 1
             if len(bl) == 1:
                 c["bloco: coerente (posicao unica)"] += atual == bl[0]
-        # UNIDADE
+        # UNIDADE — direto (numero/titulo na secao) ou HERDADA do topico que a secao nomeia (o plano numera X.Y)
         u_prof = secao_nomeia_unidade(e, tax)
+        u_topico = secao_nomeia_topico(e.get("source_section"), tax)[0]
+        if not u_prof and u_topico:
+            u_prof = u_topico
+            c["unidade: herdada do topico da secao"] += 1
         if u_prof:
             c["unidade: secao nomeia"] += 1
             c["unidade: coerente"] += str(e.get("computed_unit_slug") or "") == u_prof

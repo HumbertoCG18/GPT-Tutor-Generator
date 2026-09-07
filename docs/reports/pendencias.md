@@ -10,6 +10,38 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## NUMERACAO HIERARQUICA DO PLANO (X.Y / X.Y.Z) — UNIDADE HERDADA DO TOPICO (07/09; observacao do user na matriz)
+**Observacao do user:** na coluna de referencia a subunidade vinha preenchida e a unidade nao; se o plano diz "3.5 Segmentacao", a unidade
+e a 03 mesmo que o professor nao a nomeie. **Estava certo, e era furo meu:** `secao_nomeia_topico` ja devolvia `(unit_slug, topic_slug)` e a
+matriz descartava o `unit_slug`.
+**Estado da numeracao na taxonomia (`c1-3/numeracao_plano.log`, campo `code`, ja parseado por `_extract_topic_code`):**
+
+| curso | unidades | topicos | com code | X.Y | X.Y.Z | code bate o numero da unidade |
+|---|---|---|---|---|---|---|
+| MF | 3 | 23 | 23 | 10 | 13 | 21 |
+| SO | 7 | 36 | 36 | 30 | 6 | **4** |
+| IA | 5 | 20 | **0** | 0 | 0 | 0 |
+| ES2 | 3 | 21 | 21 | 13 | 8 | 21 |
+| TCC | 4 | 26 | 26 | 19 | 7 | 26 |
+| CG | 9 | 59 | 59 | 35 | 24 | **59** |
+| LR | 3 | 11 | **0** | 0 | 0 | 0 |
+| FR | 6 | 33 | 33 | 23 | 10 | 32 |
+
+**A hierarquia ja esta correta onde ha numeracao:** no CG, `4.1 Sistema de Coordenadas Cartesianas` e `kind=topic` e `4.1.1 2D, 3D (mao
+direita)...` e `kind=subtopic` — o X.Y.Z ja nasce como filho. Isso e a base que faltava para a regra pai x filho (10 residuais do CG).
+**ANOMALIA DO SO (a corrigir):** o numero do slug da unidade nao bate com o code do plano — unidade-02 "Gerencia do Processador" tem codes
+3.x, unidade-03 tem 4.x, unidade-04 tem 5.x, unidade-05 tem 6.x, unidade-06 tem 7.x e **unidade-07 "Gerencia de E/S" tem 2.x**. Ou o plano
+lista os conteudos numa ordem e o parser numerou as unidades por ordem de aparicao, ou ha um conteudo 2 fora de lugar. E o unico curso com
+esse desalinhamento; MF/ES2/TCC/CG/FR batem em quase 100%. IA e LR nao numeram o plano (0 codes) — o parser nao tem o que extrair.
+**ALAVANCA MEDIDA (`c1-3/unidade_pelo_topico.log`): secao nomeia um TOPICO -> a unidade e a DONA do topico.** 57 materiais tem secao que
+nomeia topico; em 55 a unidade NAO vinha por outra via. O motor concorda com essa unidade em **43/55 (78%)**; onde ha gold de unidade,
+concorda com o gold em **9/11**; onde as duas leituras coexistem, concordam 2/2.
+**Efeito na regua sem gold (ja aplicado):** cobertura de unidade **67 -> 122** materiais, concordancia do produto **110/122**. Por curso o
+CG vai de 16 para 46 (39/46) e o SO de 6 para 13 (9/13). A matriz marca essas celulas com "↑ topico".
+**A FAZER (nesta ordem):** (1) padronizar a numeracao entre repos e corrigir o SO — decidir se a autoridade e o code do plano ou a ordem de
+aparicao; (2) medir a mesma alavanca DENTRO do motor (hoje `unit_named_by_section` so le numero explicito e titulo da unidade; passaria a ler
+tambem "secao nomeia topico -> unidade dona"), com gate no motor puro; (3) usar `kind=subtopic` + code X.Y.Z para a regra pai x filho.
+
 ## POR QUE REMOVER A DESCRICAO DO DATALAB MUDA A SUBUNIDADE — EFEITO DE SEGUNDA ORDEM (07/09; pergunta do user)
 **Sim, os termos da descricao sao usados**: o markdown inteiro e o insumo do scorer (`entry_signals` le markdown, lead e headings; o lead
 tem teto de 2600 chars). Mas nos 2 casos medidos do CG o efeito NAO foi competicao direta de termo dentro do proprio material:

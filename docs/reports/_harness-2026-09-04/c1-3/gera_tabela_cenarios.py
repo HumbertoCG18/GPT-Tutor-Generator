@@ -83,12 +83,15 @@ for sig, repo in REPO.items():
             alvo = bloco_por_assunto(e.get("source_section"), ctx.blocks)
             if alvo:
                 bl, fonte = alvo, "assunto da secao x cronograma"
+        u_direta = secao_nomeia_unidade(e, tax)
+        u_dona, t_top = secao_nomeia_topico(e.get("source_section"), tax)
+        u_prof = u_direta or u_dona
         row = {
             "curso": sig, "id": eid, "titulo": str(e.get("title") or "")[:70],
             "secao": str(e.get("source_section") or "")[:44], "categoria": str(e.get("category") or ""),
             "oraculo_bloco": "/".join(bl[:3]) + ("+" if len(bl) > 3 else ""), "oraculo_fonte": fonte,
-            "oraculo_unidade": curto(secao_nomeia_unidade(e, tax) or ""),
-            "oraculo_sub": curto(secao_nomeia_topico(e.get("source_section"), tax)[1] or ""),
+            "oraculo_unidade": curto(u_prof or ""), "oraculo_unidade_fonte": ("secao" if u_direta else ("topico" if u_prof else "")),
+            "oraculo_sub": curto(t_top or ""),
             "gold_bloco": gb.get(eid, ""), "gold_unidade": curto(gu.get(eid, "")), "gold_sub": curto(gs.get(eid, "")),
             "revisar": revisar_de(e),
         }
