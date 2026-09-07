@@ -51,6 +51,39 @@ def _normalize_teaching_plan_heading(line: str) -> str:
     return normalized
 
 
+_ENFASE_RE = re.compile(r"(?<!\w)([_*]{1,2})(\S(?:.*?\S)?)\1(?!\w)")
+_PERCENT_SUFIXO_RE = re.compile(r"\s*\(\s*\d{1,3}\s*%\s*\)\s*$")
+_UNIDADE_CAP_RE = re.compile(r"^(unidade(?:\s+de\s+aprendizagem)?)\s+(\d{1,2})(?![0-9])", re.IGNORECASE)
+
+
+def limpar_formatacao(texto: str) -> str:
+    """Tira enfase markdown residual do PDF ("_Swapping_" -> "Swapping", "**X**" -> "X") e espacos duplos.
+    So APARENCIA: o slug ja normaliza esses caracteres, entao label e titulo mudam e a chave nao (medido 07/09)."""
+    s = str(texto or "")
+    for _ in range(3):
+        novo = _ENFASE_RE.sub(r"\2", s)
+        if novo == s:
+            break
+        s = novo
+    return re.sub(r"\s{2,}", " ", s).strip()
+
+
+def padronizar_titulo_unidade(titulo: str) -> str:
+    """Formato unico: "Unidade N — Titulo" (ou "Unidade de Aprendizagem N", quando o professor usa esse nome).
+    Padroniza a CAIXA do rotulo ("UNIDADE" -> "Unidade") e tira o sufixo de percentual que vaza do template
+    ("Visao Geral (5%)"). Nao mexe no numero (ver comentario abaixo). O SLUG nunca muda: `normalize_unit_slug` ja
+    faz lower, zero-pad e descarta o percentual — medido nos 8 cursos em 07/09."""
+    s = limpar_formatacao(_PERCENT_SUFIXO_RE.sub("", str(titulo or "")))
+    m = _UNIDADE_CAP_RE.match(s)
+    if not m:
+        return s
+    # O NUMERO fica como o professor escreveu: zero-pad aqui quebra o filtro `unit_hint` do glossario
+    # (`_glossary_aliases_for_topic` casa o titulo contra o "Aparece em:" do GLOSSARY, que traz o texto
+    # original) e alias e o sinal de maior peso da subunidade. Medido em 07/09 por teste vermelho.
+    nome = "Unidade de Aprendizagem" if "aprendizagem" in m.group(1).lower() else "Unidade"
+    return f"{nome} {m.group(2)}{s[m.end():]}"
+
+
 def _split_numbered_items(line: str) -> list:
     """[(codigo, texto)] de UMA linha. A extracao de PDF cola varios itens numa
     linha so ("4.6.1 Definicao da Classe 4.6.2 Exemplos ..."), entao um item por
@@ -59,7 +92,7 @@ def _split_numbered_items(line: str) -> list:
         return []
     items = []
     for match in _NUMBERED_ITEM_RE.finditer(line):
-        text = match.group(2).strip(" .")
+        text = limpar_formatacao(match.group(2).strip(" ."))
         if text:
             items.append((match.group(1), text))
     return items
@@ -125,7 +158,7 @@ def _parse_units_from_teaching_plan(text: str):
             # "N°. DA UNIDADE: 07 N°. DE HORAS: 10% CONTEÚDO: Gerência de E/S"
             rest = normalized_line[m.end():].strip()
             mc = pucrs_content_re.search(rest)
-            current_title = f"Unidade {current_unit_num} {_EM_DASH} {mc.group(1).strip()}" if mc else None
+            current_title = padronizar_titulo_unidade(f"Unidade {current_unit_num} {_EM_DASH} {mc.group(1).strip()}") if mc else None
             continue
 
         if current_unit_num is not None and current_title is None:
@@ -134,14 +167,14 @@ def _parse_units_from_teaching_plan(text: str):
             # perdia 2 de 3 unidades por isso.
             m = pucrs_content_re.search(normalized_line)
             if m:
-                current_title = f"Unidade {current_unit_num} {_EM_DASH} {m.group(1).strip()}"
+                current_title = padronizar_titulo_unidade(f"Unidade {current_unit_num} {_EM_DASH} {m.group(1).strip()}")
                 continue
 
         m = generic_unit_re.match(normalized_line)
         if m:
             if current_title is not None:
                 units.append((current_title, _finalize_topics(current_topics)))
-            current_title = f"{m.group(1).strip()} {_EM_DASH} {m.group(2).strip()}"
+            current_title = padronizar_titulo_unidade(f"{m.group(1).strip()} {_EM_DASH} {m.group(2).strip()}")
             current_unit_num = None
             current_topics = []
             current_style = "learning_unit" if "aprendizagem" in m.group(1).lower() else "generic"
