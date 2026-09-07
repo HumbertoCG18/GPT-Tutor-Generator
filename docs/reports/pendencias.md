@@ -10,6 +10,28 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## DESCRICAO DE IMAGEM FORA DO SCORER — ENTROU (07/09; decisao do user; gerador `44ed407`)
+**Regra:** `entry_signals.texto_para_score` remove os blocos `<!-- IMAGE_DESCRIPTION -->` dentro de
+`collect_entry_unit_signals` — o ponto UNICO por onde passam o scorer de unidade (`file_map:486`), o de subunidade
+(`file_map:196`) e a propagacao por headings (`resolver_apply:281`). **O markdown entregue ao aluno nao muda**: a descricao
+serve para ele entender a figura (confirmado pelo user).
+**Raiz (medida antes):** a caption generica do Datalab, em ingles, entra no vocabulario propagado do CURSO — os aliases
+nascem dos materiais confiantes — e desvia a subunidade de materiais que NEM TEM imagem. Os dois casos do CG
+(`morfologiamatematicapptx`, `aula-gravada`) tinham texto identico com e sem descricao: o efeito era de segunda ordem.
+**Medido pela rota real antes de commitar (`mede_filtro_descricao.log`, 6 cursos com gold, tripwire, 0 chamadas):**
+materiais 100% certos 245 -> 247/288 · subunidade 193 -> 195/233 · erro confiante 19 -> 18 · fila 91 -> 89; bloco e unidade
+inalterados. Suite 2337 + teste novo em `test_stopwords_consolidation.py`.
+**Reprocess registrado dos 8 (`reprocess_8_taxonomia.py`, 0 chamadas Gemini, votos estaveis):** subunidade mudou 3, todas no
+CG e todas para o gold — `morfologiamatematicapptx` e `aula-gravada` para `segmentacao`, `intro` de `origens` para
+`conceitos` (extra aceito do gold); bloco 0, unidade 0; SO e TCC perderam 1 item da fila cada.
+**Tutores:** MF `3584f89` · SO `c44640d` · IA `3b7ffbd` · ES2 `3cde146` · TCC `a7a26cd` · LR `ae5fead` · FR `7468cd8` ·
+CG `c56b6cb`.
+**Reguas no produto depois:** bloco **197/199** conf-err 0 · unidade **183/190** · cobertura 55/57 · subunidade **195/233**
+(SO 15/15 · IA 39/39 · ES2 21/28 · TCC 11/11 · MF 51/58 · **CG 58/82**) · fila **27,0/100** (era 27,6).
+**Ressalva mantida:** pela regua da secao do professor o CG ia de 14 para 13/30 na medicao de ablacao. A divergencia entre as
+duas reguas neste ponto fica registrada; o user decidiu pelo ganho medido no gold, com o efeito real (3 mudancas, 3 certas)
+confirmando a direcao.
+
 ## PISO DE FORCA NA 1a PASSADA — SEM EFEITO, NAO ENTRA (07/09; `c1-3/simula_piso_1a.py`, `mede_piso_grade.py`)
 **Diagnostico (certo):** o gate que faz a 1a passada bloquear a 2a e `confidence >= 0,7` e nao-ambigua — e `confidence` e
 MARGEM, nao forca. Por isso um vencedor unico e fraco (winner_score 0,91, vindo de descricao de imagem em ingles) trava a
