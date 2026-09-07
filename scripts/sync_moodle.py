@@ -81,7 +81,7 @@ def apply_sync(prof, repo: Path, manifest: dict, store, *, root=None, prune: boo
     scan = scan_stash_cards(stash, frases_do_plano=[f for f in frases if len(f) >= 6])
     defaults = {"processing_mode": prof.default_mode, "ocr_language": prof.default_ocr_lang,
                 "preferred_backend": prof.default_backend, "datalab_mode": prof.default_datalab_mode, "document_profile": ""}
-    plan = plan_import(diff, contents, scan, links, entries, nomes=nomes, defaults=defaults, prune_removed=prune)
+    plan = plan_import(diff, contents, scan, links, entries, nomes=nomes, defaults=defaults, prune_removed=prune, root=root)
     print(f"[plano] add {len(plan.add)} · readd {len(plan.readd)} · prune {len(plan.prune)} · mark {len(plan.mark)} · "
           f"links {len(plan.links)} · review {len(plan.review)} · ignorados {plan.ignorados[:8]}")
     # raw/moodle do pull vai para o repo: e a estrutura que o hook da Fase 3a le na regeneracao

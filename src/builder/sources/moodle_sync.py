@@ -122,14 +122,19 @@ class SyncPlan:
     ignorados: list = field(default_factory=list)  # nomes de arquivos do stash sem tipo (.html/.htm nao impressos)
 
 
-def plan_import(diff, contents, scan, links, manifest_entries, *, nomes=None, defaults=None, prune_removed: bool = True) -> SyncPlan:
+def plan_import(diff, contents, scan, links, manifest_entries, *, nomes=None, defaults=None, prune_removed: bool = True, root=None) -> SyncPlan:
     """Traduz o diff (S1) + o stash varrido + links.json num plano de import. Puro: nao toca disco.
 
     novos/alterados -> FileEntry a partir dos itens do stash que CASAM o modulo (mesmo casador do
     backfill, com o item do stash como pseudo-entry: source_path, card, moodle_label do sidecar);
     alterados tambem em `readd` (unprocess antes); sumidos -> prune ou mark; links com acao
     "referencia" -> entries url (category references, card = secao), sem duplicar URL ja no manifest;
-    acao "review" -> `review`; stash.skipped -> `ignorados` por nome."""
+    acao "review" -> `review`; stash.skipped -> `ignorados` por nome.
+
+    2026-09-06 (raiz da "tela de login"): pagina do Moodle (mod_page) com `raw` salvo pelo pull (baixado COM o token)
+    vira entry de ARQUIVO html (`root/<raw>`), nunca url — o conversor de URL busca `moodle.pucrs.br` sem sessao e
+    recebe a tela de login (CG: 16 paginas, 0 texto). Se ja existe entry url para o mesmo URL, ela sai (`prune`) e a
+    nova herda o id (`id_override`) para golds/curadoria nao quebrarem. `root` = raiz do pull (pai do stash)."""
     from pathlib import Path
     from src.builder.core.stash_import import StashScanResult, build_stash_entries
     from src.builder.sources.moodle import sanitize_folder_name
@@ -164,13 +169,30 @@ def plan_import(diff, contents, scan, links, manifest_entries, *, nomes=None, de
         plan.prune = list(diff.get("sumidos", []))
     else:
         plan.mark = list(diff.get("sumidos", []))
-    known_urls = {str(e.get("source_path") or "").strip() for e in manifest_entries or [] if e.get("file_type") == "url"}
+    url_entries = {str(e.get("source_path") or "").strip(): e for e in manifest_entries or [] if e.get("file_type") == "url"}
+    known_urls = set(url_entries)
     for l in links or []:
         acao = str(l.get("acao") or "")
+        url = str(l.get("url") or "").strip()
         if acao == "review":
             plan.review.append(l)
-        elif acao == "referencia" and str(l.get("url") or "").strip() and str(l.get("url")).strip() not in known_urls:
-            plan.links.append(FileEntry(source_path=str(l["url"]).strip(), file_type="url", category="references",
+            continue
+        if acao != "referencia" or not url:
+            continue
+        raw = str(l.get("raw") or "").strip()
+        raw_path = (Path(root) / raw) if (root and raw) else None
+        if raw_path is not None and raw_path.is_file():
+            antiga = url_entries.get(url)
+            if antiga is not None and str(antiga.get("file_type") or "") == "url":
+                plan.prune.append(str(antiga.get("id") or ""))     # a entry url (login) sai; a html herda o id
+            elif url in known_urls or str(raw_path) in existing:
+                continue
+            plan.links.append(FileEntry(source_path=str(raw_path), file_type="html", category="references",
+                                        title=str(l.get("nome") or "").strip(),
+                                        source_section=sanitize_folder_name(str(l.get("secao") or "")),
+                                        id_override=str((antiga or {}).get("id") or "")))
+        elif url not in known_urls:
+            plan.links.append(FileEntry(source_path=url, file_type="url", category="references",
                                         title=str(l.get("nome") or "").strip(),
                                         source_section=sanitize_folder_name(str(l.get("secao") or ""))))
     plan.ignorados = [Path(p).name for p in scan.skipped if not Path(p).name.startswith(".")]

@@ -267,3 +267,21 @@ def test_sync_diff_keeps_subtree_leaves_labeled_with_the_hub_module():
     d = sync_diff(ents, contents)
     assert d["sumidos"] == []
     assert set(d["iguais"]) == {"geomcomp", "slab", "domina"}
+
+
+def test_pagina_do_moodle_com_html_salvo_vira_entry_html_com_o_mesmo_id(tmp_path):
+    """06/09, raiz da 'tela de login': links.json de mod_page traz `raw` (HTML baixado com o token). A entry vira
+    ARQUIVO html com o id da entry url antiga (que sai em prune), nunca url — o conversor de URL nao tem sessao."""
+    (tmp_path / "raw" / "moodle" / "pages").mkdir(parents=True)
+    (tmp_path / "raw" / "moodle" / "pages" / "3770139-pagina.html").write_text("<h1>Vetores</h1>", encoding="utf-8")
+    link = {"secao": "3 - Fundamentos", "nome": "Página com Vídeos", "url": "https://moodle.pucrs.br/mod/page/view.php?id=3770139",
+            "tipo": "indice-videos", "acao": "referencia", "raw": "raw/moodle/pages/3770139-pagina.html"}
+    antiga = {"id": "pagina-com-videos-abc123", "file_type": "url", "source_path": link["url"], "category": "references"}
+    diff = sync_diff([_lab1()], LR)
+    plan = plan_import(diff, LR, _scan(), [link], [_lab1(), antiga], nomes=NOMES, root=tmp_path)
+    assert plan.prune == ["pagina-com-videos-abc123"]
+    assert len(plan.links) == 1 and plan.links[0].file_type == "html" and plan.links[0].id() == "pagina-com-videos-abc123"
+    assert plan.links[0].source_path.endswith("3770139-pagina.html") and plan.links[0].category == "references"
+    # sem `root` (ou sem o arquivo), o comportamento antigo: entry url (e sem duplicar URL conhecida)
+    plan2 = plan_import(diff, LR, _scan(), [link], [_lab1()], nomes=NOMES)
+    assert len(plan2.links) == 1 and plan2.links[0].file_type == "url"
