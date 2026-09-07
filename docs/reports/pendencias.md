@@ -27,6 +27,17 @@ fonte; o sistema tem de ser robusto a ela.
 **Contrato escrito em `.mex/context/institutional.md` §Numeracao do plano:** a unidade vem do cabecalho `Nº DA UNIDADE`; o
 `code` e numeracao livre e serve so para profundidade (`kind`) e casamento por nucleo exato; **nunca inferir unidade de
 `code.split(".")[0]`**; codigo tem no maximo 2 digitos por nivel. Tabela do estado real dos 8 junto.
+**PLANO DO SO CONFERIDO CONTRA O PDF DO PROFESSOR (07/09) — NAO HA O QUE CORRIGIR.** O user pediu para corrigir o plano; a
+comparacao entre o `teaching_plan` do perfil e o PDF em `content/curated/plano-de-ensino.md` (o proprio documento do professor,
+13.271 chars) mostra numeracao IDENTICA: unidade 02 com 3.x, 03 com 4.x, 04 com 5.x, 05 com 6.x, 06 com 7.x, **07 com 2.x**, e o
+`1.1` repetido em "Evolucao historica" e "Servicos dos sistemas operacionais". **Nao e erro de extracao: e o documento.** O
+professor manteve a numeracao de um plano anterior e reordenou as unidades sem renumerar os itens.
+Checado tambem o unico suspeito de perda: `6.2.2 Segmentacao` e `6.3 Estudo de casos` aparecem numa linha solta apos uma quebra
+de pagina, mas **estao integralmente na taxonomia** da unidade 05 (9 topicos, de 6.1 a 6.3). Nada se perdeu.
+**Recomendacao: NAO editar o plano.** (1) E a fonte do professor, e a lei da casa e que a fonte manda; (2) o efeito no motor
+seria ZERO, porque nada usa `code.split(".")[0]` como unidade (contrato escrito em `institutional.md`); (3) a edicao se perderia
+no proximo import do plano. Se algum dia for preciso padronizar, o caminho seguro e um campo DERIVADO (ex.: `unit_number` do
+cabecalho + `topic_path` por posicao) ao lado do `code` original — nunca reescrever o `teaching_plan`.
 **Fica para depois:** IA e LR sem numeracao — sem `code` todo topico fica no nivel 0 e nao ha hierarquia; a alternativa seria
 derivar profundidade da indentacao do plano (`_topic_depth` ja existe e aceita `(texto, depth)`), a medir.
 
