@@ -46,17 +46,29 @@ def toks(s):
     return {t for t in norm(s).split() if len(t) > 3 and t not in _GEN}
 
 
+def _genericos_do_curso(tax: dict) -> set:
+    """Boilerplate do curso: tokens do NOME DO CURSO + genericos de unidade por df — REUSA `text.stopwords`
+    (`resolve_unit_generic_tokens`), o mesmo filtro do motor. Sem isso a secao "13 - Computacao Grafica 3D" casa o topico
+    "Temas Atuais e Avancados de Computacao Grafica" por 'computacao'+'grafica' (7 falsos positivos no CG, medidos 07/09)."""
+    from src.builder.text.stopwords import UNIT_GENERIC_TOKENS, resolve_unit_generic_tokens
+    units = [(str(u.get("title") or ""), [str(t.get("label") or "") for t in (u.get("topics") or [])]) for u in (tax.get("units") or [])]
+    base = set(resolve_unit_generic_tokens(units, UNIT_GENERIC_TOKENS, course_name=str(tax.get("course_name") or "")) or [])
+    return base | toks(tax.get("course_name") or "") | toks(str(tax.get("course_slug") or "").replace("-", " "))
+
+
 def secao_nomeia_topico(secao: str, tax: dict):
-    """(unit_slug, topic_slug) do topico do plano que a SECAO do Moodle nomeia; (None, None) se nao houver 1 so."""
+    """(unit_slug, topic_slug) do topico do plano que a SECAO do Moodle nomeia; (None, None) se nao houver 1 so.
+    Exige >= 1 token ESPECIFICO em comum (fora o boilerplate do curso) — contencao por token generico dava falso positivo."""
     m = _SEC_NUM.match(str(secao or ""))
     corpo = m.group(2) if m else str(secao or "")
-    st = toks(corpo)
+    gen = _genericos_do_curso(tax)
+    st = toks(corpo) - gen
     if not st:
         return None, None
     achados = []
     for u in tax.get("units") or []:
         for t in u.get("topics") or []:
-            tt = toks(t.get("label"))
+            tt = toks(t.get("label")) - gen
             if tt and (tt <= st or st <= tt):
                 achados.append((u["slug"], t["slug"]))
     return achados[0] if len(achados) == 1 else (None, None)

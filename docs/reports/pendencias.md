@@ -38,9 +38,27 @@ nomeia topico; em 55 a unidade NAO vinha por outra via. O motor concorda com ess
 concorda com o gold em **9/11**; onde as duas leituras coexistem, concordam 2/2.
 **Efeito na regua sem gold (ja aplicado):** cobertura de unidade **67 -> 122** materiais, concordancia do produto **110/122**. Por curso o
 CG vai de 16 para 46 (39/46) e o SO de 6 para 13 (9/13). A matriz marca essas celulas com "↑ topico".
-**A FAZER (nesta ordem):** (1) padronizar a numeracao entre repos e corrigir o SO — decidir se a autoridade e o code do plano ou a ordem de
-aparicao; (2) medir a mesma alavanca DENTRO do motor (hoje `unit_named_by_section` so le numero explicito e titulo da unidade; passaria a ler
-tambem "secao nomeia topico -> unidade dona"), com gate no motor puro; (3) usar `kind=subtopic` + code X.Y.Z para a regra pai x filho.
+**ALAVANCA REFUTADA NO MOTOR (dado antes do codigo, 07/09).** Antes de escrever qualquer linha, a checagem do inventario achou DOIS
+mecanismos que ja leem "a secao diz a unidade" e a cascata a jusante: `file_map.auto_map_entry_unit:478` (numero explicito -> curto-circuito
+conf 0,95 -> `unit_is_explicit` faz a unidade VENCER o bloco no reconcile) e `window_provider.unit_named_by_section:369` (numero OU titulo da
+unidade -> encolhe a janela de bloco). E a subunidade e escolhida DENTRO da unidade ja reconciliada (`winning_unit_slug=reconciled`), entao
+mexer na unidade move os tres eixos. Alem disso, `resolver_apply.py:347` ja registra a refutacao de 06/09: "a secao do professor nomeia o PAI
+quando o gold quer o FILHO (z-buffer, k-nn, escalonamento)".
+**Caso a caso dos que MUDARIAM (`unidade_pelo_topico.log`): a regra erra 5 em 5 onde ha gold.** Todos no SO: `2403-escalonamento`,
+`2603-algoritmos-de-escalonamento`, `exercicios` (motor e gold = Gerencia do Processador; regra = Programacao Concorrente) e
+`0704-laminas-comunicacao`, `0904-laminas-semaforos` (motor e gold = Deadlock; regra = Programacao Concorrente). Causa: a secao
+"Sincronizacao e Comunicacao de Processos" e um agrupamento do professor que abrange material de TRES unidades do plano — a secao do Moodle
+nao e uma particao das unidades. **Nao entra no motor.**
+**ERRO MEU NA REGUA, corrigido (o mesmo que a auditoria alerta):** a primeira versao de `secao_nomeia_topico` usava uma lista propria de 18
+genericos em vez do filtro do motor, e casava "13 - Computacao Grafica 3D" com o topico "Temas Atuais e Avancados de Computacao Grafica" pelos
+tokens do NOME DO CURSO — 7 falsos positivos no CG. Corrigido reusando `text.stopwords.resolve_unit_generic_tokens` (df por curso + nome do
+curso), o mesmo filtro do motor, e exigindo token especifico em comum. Efeito na regua: **CG unidade 39/46 -> 44/44**; cobertura de subunidade
+57 -> 73 com concordancia 31 (42%); total de unidade 114/122.
+**A regua herda a unidade do topico, mas com ressalva por curso:** onde a secao do Moodle espelha o plano (CG) a heranca e solida (44/44);
+onde a secao e agrupamento proprio (SO) ela erra. A matriz marca essas celulas com "↑ topico" e a nota do artefato explica a ressalva.
+**A FAZER (revisto):** (1) padronizar a numeracao entre repos e corrigir o SO — e o mesmo curso onde a heranca falha, provavelmente a mesma
+raiz (unidade-02 tem code 3.x, unidade-07 tem 2.x); (2) NAO implementar a alavanca de unidade pelo topico; (3) usar `kind=subtopic` + code
+X.Y.Z para a regra pai x filho, que e sobre SUBUNIDADE dentro da mesma unidade e nao sofre desta refutacao.
 
 ## POR QUE REMOVER A DESCRICAO DO DATALAB MUDA A SUBUNIDADE — EFEITO DE SEGUNDA ORDEM (07/09; pergunta do user)
 **Sim, os termos da descricao sao usados**: o markdown inteiro e o insumo do scorer (`entry_signals` le markdown, lead e headings; o lead
