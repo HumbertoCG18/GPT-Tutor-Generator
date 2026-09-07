@@ -10,6 +10,26 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## PADRONIZACAO DA NUMERACAO — CONTRATO ESCRITO + 1 BUG CORRIGIDO (07/09; user: "vamos fazer a padronizacao")
+**Pergunta do user respondida com dado: "inferir a unidade quando ela esta vazia e a subunidade nao" NAO TEM ONDE AGIR** —
+`unidade_vazia_sub_cheia.log`: unidade vazia em **0 de 348** materiais no produto, 0/319 no zero, 0/319 no auto. Causa:
+`reconcile_unit_with_block` ja faz a unidade herdar do bloco quando esta vazia (`herdada_do_bloco=`) e o bloco quase sempre tem
+unidade. O caso so existe na REGUA (oraculo), e ali ja foi implementado.
+**Anomalias de numeracao nos 8 (`anomalias_numeracao.log`):** ES2/TCC/CG limpos · FR 1 (CORRIGIDO) · MF 2 desalinhados + 2
+orfaos · SO 33 desalinhados + 1 duplicado · IA 20 e LR 11 sem code. **Todas as restantes estao no documento do professor**, nao
+no parser: o plano do SO lista mesmo `3.x` sob a unidade 02 e `2.x` sob a 07, e repete `1.1`. Pela lei da casa nao se corrige a
+fonte; o sistema tem de ser robusto a ela.
+**BUG REAL CORRIGIDO (gerador `3effde1`):** `_NUMBERED_ITEM_RE` aceitava qualquer numero como codigo, entao
+`5.3 Protocolos ... (IEEE 802.11 e Bluetooth)` do FR virava DOIS topicos — o 5.3 truncado em "(IEEE" e um fantasma
+"e Bluetooth)" com code 802.11, que entrava no vocabulario do curso. Teto de 2 digitos por nivel; teste novo; suite 2337.
+**Gate zero-diff nos 8:** so o FR muda, e apenas 7 artefatos (taxonomia, glossario, course map, tag catalog, semantic profile);
+**o manifest ficou inalterado em todos os 8 — nenhuma atribuicao mudou.**
+**Contrato escrito em `.mex/context/institutional.md` §Numeracao do plano:** a unidade vem do cabecalho `Nº DA UNIDADE`; o
+`code` e numeracao livre e serve so para profundidade (`kind`) e casamento por nucleo exato; **nunca inferir unidade de
+`code.split(".")[0]`**; codigo tem no maximo 2 digitos por nivel. Tabela do estado real dos 8 junto.
+**Fica para depois:** IA e LR sem numeracao — sem `code` todo topico fica no nivel 0 e nao ha hierarquia; a alternativa seria
+derivar profundidade da indentacao do plano (`_topic_depth` ja existe e aceita `(texto, depth)`), a medir.
+
 ## NUMERACAO HIERARQUICA DO PLANO (X.Y / X.Y.Z) — UNIDADE HERDADA DO TOPICO (07/09; observacao do user na matriz)
 **Observacao do user:** na coluna de referencia a subunidade vinha preenchida e a unidade nao; se o plano diz "3.5 Segmentacao", a unidade
 e a 03 mesmo que o professor nao a nomeie. **Estava certo, e era furo meu:** `secao_nomeia_topico` ja devolvia `(unit_slug, topic_slug)` e a

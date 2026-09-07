@@ -274,6 +274,32 @@ falsificado em 2026-08-06 (era artefato de console; arquivo íntegro).
 | `feature_flags` | dict[str,bool] | `{"use_anchor_engine": true, "use_llm_voter": true}`; legado: `use_anchor_placement` |
 | demais | str | `professor`, `institution`, `preferred_llm`, `default_backend`, `default_mode`, `default_datalab_mode`, `default_ocr_lang`, `processing_profile`, `m365_filter`, `github_url`, `slug` |
 
+### Numeração do plano de ensino — `code` do tópico (medido nos 8 cursos, 07/09/2026)
+
+O plano PUCRS traz o número da unidade num cabeçalho próprio (`Nº DA UNIDADE: 03`) e os conteúdos como itens numerados
+(`3.1`, `3.2`, `4.1.1`). São **duas numerações independentes**, e o parser trata assim:
+
+- **A unidade vem do cabeçalho**, nunca do prefixo do item (`teaching_plan._parse_units_from_teaching_plan`).
+- **O `code` do tópico é numeração livre do professor.** Serve para derivar a profundidade (`kind = "subtopic"` quando tem
+  dois pontos ou mais) e para o casamento por núcleo exato de alias. **Nunca infira a unidade de `code.split(".")[0]`.**
+- Código de tópico tem **no máximo dois dígitos por nível**. Sem esse teto, um número técnico no texto vira código: no FR,
+  `5.3 Protocolos ... (IEEE 802.11 e Bluetooth)` virava dois tópicos, o 5.3 truncado e um fantasma `e Bluetooth)` com
+  código `802.11` (corrigido em 07/09).
+
+Estado real dos 8, para quem for confiar na numeração:
+
+| curso | tópicos com `code` | primeiro número bate a unidade | anomalias |
+|---|---|---|---|
+| ES2, TCC, CG | 100% | 100% | nenhuma |
+| FR | 100% | 32/33 | corrigida em 07/09 |
+| MF | 100% | 21/23 | `1.3.1` na unidade 3 e `1.3.2` na unidade 2, ambos sem o pai `1.3` |
+| SO | 100% | **4/36** | a unidade 02 lista itens `3.x`, a 03 lista `4.x`, a 07 lista `2.x`; e `1.1` aparece duas vezes |
+| IA, LR | **0%** | — | o plano não numera; sem `code`, todo tópico fica no nível 0 e não há hierarquia |
+
+O desalinhamento do SO e os órfãos do MF **estão no documento do professor**, não no parser. Pela regra da casa (a fonte do
+professor manda), o sistema tem de ser robusto a eles, não corrigi-los. Como nada no motor usa o primeiro número do código
+como unidade, hoje eles são inofensivos — o risco é uma alavanca futura confiar nisso.
+
 ### Manifest entry — `<repo-tutor>/manifest.json` (campos de atribuição)
 
 | campo | tipo | formato real |
