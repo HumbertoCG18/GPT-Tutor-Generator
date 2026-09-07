@@ -41,3 +41,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
 - `mede_salas.py` (salas de entrega dos 8 cursos pela API x SARC; nunca imprime o token) · log `mede_salas.log` · `salas_api.json` (gitignored).
 - `fila_zero.py [zero|auto]` (fila do regime por motivo, rendimento, erros confiantes) · `posicao_duvidas_zero.py` (duvidas de bloco x posicao do professor) · logs `fila_zero*.log`, `posicao_duvidas_zero.log`.
 - `zero_diff.py --base|--check` (gate do refactor: 1 reprocess nas copias COM staging x referencia do dia; 0 = comportamento preservado) · logs `zero_diff_*.log`, `tier*_pytest.log` · `inventario_motor_2026-09-07.md` · `docs_c1_3w.py`.
+- `simula_aprovacao.py` (pos-processamento da aprovacao aplicado em copia + reprocess + medida antes/depois) · log `simula_aprovacao.log` · `fonte_do_texto.log` (precedencia, Datalab, sumario, descricoes por LLM) · `docs_c1_3x.py`.
