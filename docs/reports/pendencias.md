@@ -10,6 +10,28 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## ZERO LLM — DIAGNOSTICO DOS 133 QUE NAO ESTAO 100% (06/09 noite, sessao 6; user: "como aumentar o 100% no zero LLM?")
+**Decomposicao (`c1-3/diag_zero.py zero`, snapshot `snap_placar/zero`, log `diag_zero.log`):** so sub 102 · unidade+sub 9 · bloco+sub 5 · so unidade 7 ·
+so bloco 8 · bloco+unidade 2. Sub: 97 erradas, 10 vazias, 9 gold-vazio, 8 empates. Unidade 18: ES2 10 (blocos 04/07 sem sinal proprio), SO 5 (so o
+voter resolve), IA 3. Bloco 15: 10 flagados (o voter resolve), 5 confiantes; 6 com o gold fora da janela, 2 sem bloco.
+**Onde o nome do subtopico do gold aparece (`diag_zero_texto.log`, 107 erros com gold nao vazio):** em fonte NENHUMA 48 (IA 27, CG 14, SO 4, MF 3)
+— irredutivel sem ponte de conceito (vocab LLM, glossario humano, ou dicionario de dominio compilado uma vez e reaproveitado; hipotese); em alguma
+fonte 59: texto do material (rotulo inteiro) 26, sessao do SARC 9 inteiros / 36 parciais, secao 6 / 33, titulo 4 / 15.
+**Ima de headings na taxonomia (raiz lida em `content_taxonomy.py`, laco `for heading in heading_sources`):** heading do Moodle e grudado no
+topico com maior sobreposicao de tokens (5,0 + 0,4 por token), e a sobreposicao pode ser um unico token que e do titulo da unidade
+('aprendizado'); empate vai para o primeiro da lista. IA: 'Introducao ao aprendizado de maquina' recebe 'Aprendizado Supervisionado', 'Aula 02 -
+... k-Means', ... e vira ima: 35 erros confiantes (score ate 90). Estatico nos 6 (aliases nao-LLM grudados so por token da unidade): MF 8, TCC 7,
+IA 6, SO 1, ES2 1, CG 0 = 23. Correcao candidata: sobreposicao sem tokens do titulo da unidade, sem grudar em empate. NAO MEDIDA (gate: motor
+puro sem vocab nos 6, 0 chamadas). Expectativa: IA 35 confiantes viram vazio/empate (fila), 8 com 'Modelos Preditivos' no texto podem acertar.
+**ES2 unidade — 'microservicos' (SARC) x 'microsserviços' (plano), pergunta do user:** o normalizador faz o que o user disse (microsserviços ->
+microsservicos); o SARC escreve 'microservicos' (um s) em 3 de 4 sessoes e um s de diferenca nao casa por token exato. MAS nao e a causa da unidade
+errada: medido com `assign_units_positional` sem vocab LLM e o SARC reescrito na grafia do plano, os blocos 04 e 07 continuam na unidade 01 com
+conf 0,4 (fill posicional), porque 'microsservicos' esta nas DUAS unidades (1.3.4/1.5 e 2.7) e token em duas unidades nao decide; o bloco 02, que
+ja usa a grafia do plano, prova (unidade 01, 0,4, nos dois regimes). O que decide com vocab sao os aliases LLM de 2.7 ('API gateway', 'discovery').
+Sem LLM, as palavras do SARC dessas sessoes (spring, discovery, gateway, circuit breaker) nao existem no plano. Casamento tolerante (ss ~ s) e
+barato mas rende 0 aqui.
+**Ressalva:** o regime zero le o GLOSSARY.md do tutor (sinonimos escritos no build original); o unico build zero de verdade e o FR do zero run A.
+
 ## PLACAR CONSISTENTE POR MATERIAL x REGIME + TELA DE LOGIN (raiz e correcao) + REPARO DO CG (06/09 noite, sessao 6; user: "quantos arquivos estao 100%? qual versao do motor deu qual resultado?")
 **Tela de login — raiz medida (nao e timeout nem desconexao):** a sync (`moodle_sync.plan_import`) criava, para cada pagina do Moodle
 (`mod/page`), uma entry `url` -> `moodle.pucrs.br/mod/page/view.php?id=N`; o conversor de URL (`url_fetcher`) busca sem sessao e o Moodle
