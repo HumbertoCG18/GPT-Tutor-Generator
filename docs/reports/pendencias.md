@@ -30,8 +30,15 @@ ML") e `T2_AlgoritmosDeBusca_2026_01.pdf` (2 pag, "T2 - Algoritmos de Busca: Oli
 tutor); mais dados da Atividade 1 (19 MB), `cardio_v2.csv`, A* v2, casos de teste. **SO: `TP1_20261.pdf` e `TP2_20261.pdf` (enunciados dos
 trabalhos) tambem so existem como anexo da sala** + o codigo do "Somatorio em Java". Os tutores de IA e SO nao tem os enunciados dos trabalhos.
 Correcao na sync/pull: baixar `introattachments` (fileurl + token) e o `intro` de cada sala como material (categoria trabalhos/exercicios por C3).
-**Achado colateral:** no MF o card "Verificacao de Programas" tem 54 arquivos com vencimento 10/06 pela fonte 'named' do card_block_map (uma data
-nomeada no card virou vencimento de todos os arquivos); o due-window so olha trabalhos/provas/codigo-TDE, por isso nao doeu. A apurar.
+**Achado colateral APURADO (`file_dues_exposicao.log`):** causa = o card "Verificacao de Programas" do MF termina num FORUM "Sala de Entrega (10/06)";
+`_module_due` (moodle_labels.py) aceita assign/forum com "entrega" + "(DD/MM)" no nome como vencimento 'named', e `extract_file_dues` e posicional
+SEM fronteira de grupo: cada arquivo herda o vencimento do PROXIMO modulo-com-due da secao. Como o forum e o ultimo modulo, os 30 arquivos
+(54 chaves = filename + savename) de 27/04 a 12/06 herdam 10/06. Exposicao hoje: ZERO (nenhum entry desse card esta no escopo do due-window;
+os 3 entries em escopo do MF sao do TDE, fonte 'structured'). Nos 8 cursos so o MF tem `file_dues`; SO e IA tem `assign_due` por card mas nenhum
+arquivo ligado (TP1/TP2 do SO e atividades da IA sao ANEXOS da sala, que a sync nao traz); ES2/TCC nada; LR/CG/FR sem card_block_map (sync
+antiga). Conclusao: a ligacao arquivo -> vencimento hoje so existe por acidente de layout (recurso antes do assign na mesma secao). Correcao
+(dentro do item 4): ligar anexos e arquivos do MESMO grupo de label ao assign (estruturado) e limitar a heranca posicional ao grupo; forum
+nomeado so vale para o grupo dele. Os "31 sem entry" da primeira apuracao eram savenames duplicados, nao lacuna.
 
 ## SALAS DE ENTREGA PELA API — ABERTURA / VENCIMENTO / FECHAMENTO, ATIVIDADE DE AULA x TRABALHO, ANEXOS AUSENTES (06/09 noite; perguntas do user)
 **API (medido ao vivo, token do aluno, 0 chamadas Gemini):** `mod_assign_get_assignments(courseids)` devolve por sala `allowsubmissionsfromdate`

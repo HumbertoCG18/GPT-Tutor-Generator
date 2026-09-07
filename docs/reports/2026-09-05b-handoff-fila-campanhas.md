@@ -34,6 +34,26 @@ Regra do titulo (`34d8b19`, +2 -0): automatica x 233 194 (83,3%), CG 56/82; prod
 deterministico (mesma rota, produtor diferente); bloco/unidade/cobertura/holdout iguais. Os 8 que so o Gemini acerta sao vocabulario de categoria que
 o codigo nao contem ('classificacao', 'chamadas de sistema', 'microsservicos'). Peso: 85 resumos / 205 votos / 1 vocab por curso nos 8.
 
+## DESCOBERTAS DA NOITE DE 06/09 (indice; detalhe nas secoes do tracker `pendencias.md`, todas datadas 06/09 noite)
+1. **Tela de login** era a sync criando entry de URL e o buscador pedindo a pagina sem sessao; corrigido na sync (`6d68578`), CG reparado (`404f5f9`,
+   16 paginas com texto). Custou 2 no gold do CG: paginas-indice de videos vao para o filho mais citado (classe pai x filho, 10 dos 27 residuais).
+2. **Placar por material** (`placar_100.py`; todos os golds do material certos, 288): zero LLM 155 · automatica 230 · produto 245; CG automatica 56/83.
+3. **Zero LLM, os 133:** 116 falham em subunidade; em 48 o nome do subtopico do gold nao aparece em fonte nenhuma (IA 27, CG 14); ima de headings na
+   taxonomia (heading grudado por token do titulo da unidade; 23 aliases; IA 35 confiantes) — raiz lida, correcao nao medida.
+4. **ES2 unidade sem LLM:** 'microsservicos' esta em 2 unidades do plano (5 ocorrencias); a grafia (1 s no SARC) NAO e a causa (medido); o DP de
+   blocos preenche por posicao (0,4) e o scorer da entry decide confiante (11 dos 18 erros de unidade do zero sao confiantes). Candidata A.
+5. **Cerca de provas** (plano AVALIACAO x data no SARC): dura quebra o MF (17); como desempate de bloco sem sinal +3/-0. Candidata B.
+6. **Lei reafirmada: SARC e Moodle > gold.** ES2: 7 materiais antes da P1 (secao 1) estavam no gold na unidade 02 porque o LLM pendurou 'API gateway'
+   na 2.7 — corrigidos (produto perde 7 unidades e 6 subs: erros do LLM escondidos pelo gold). MF t2 -> bloco-20. 6 outras divergencias mantidas.
+7. **Decisoes:** bloco de prova hospeda entrega (inverte o T17); bloco de prova tem unidade = escopo da prova (calendario > plano, a medir).
+8. **API das salas** (`mede_salas.py`, 30 salas): abertura/vencimento/fechamento/enunciado/anexos por `mod_assign_get_assignments`; duracao separa
+   atividade de aula (12) x trabalho (4) onde ha abertura (IA, LR); MF/SO/ES2 so vencimento; TCC so fechamento; vencimento x SARC 10/11 coerentes.
+9. **Lacuna de material:** 10 anexos de salas fora do tutor — enunciados T1/T2 da IA e TP1/TP2 do SO so existem na sala (baixados e conferidos).
+10. **Achado colateral:** vencimento posicional sem fronteira (MF 30 arquivos herdam 10/06 de um forum); exposicao 0 hoje; so o MF tem file_dues.
+**Proximos, na ordem acordada:** item 4 (pull/sync: anexos + enunciado das salas viram material; ligacao estruturada arquivo -> sala; fronteira de
+grupo) em copia · C1/C3/C5 no motor com gate · C2 com precedencia calendario > plano · candidatas A/B do zero LLM · regra pai x filho · vocab do
+CG sem 'OpenGL' (Gemini) · fila 'conflito' · zips · push.
+
 ## COMECE POR (proxima sessao) — tres decisoes do user antes de qualquer codigo
 **Placar por material (06/09 noite, gold do ES2 corrigido pelo oraculo):** `python docs/reports/_harness-2026-09-04/c1-3/placar_100.py` (snapshots em `c1-3/snap_placar/`; zero LLM 156/288 · automatica 231/288 · produto 246/288 com todos os golds certos; CG automatica 56/83; produto unidade 184/191, sub 193/233). Tracker §PLACAR CONSISTENTE e §LEI REAFIRMADA. **Lei: SARC e Moodle > gold** (user, 06/09 noite).
 **Salas de entrega pela API (06/09 noite):** abertura/vencimento/fechamento/enunciado/anexos via `mod_assign_get_assignments`; LACUNA: anexos das salas (enunciados T1/T2 da IA) nao entram no tutor; propostas C1-C5 no tracker §SALAS DE ENTREGA PELA API.
