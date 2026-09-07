@@ -10,6 +10,47 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## PLACAR CONSISTENTE POR MATERIAL x REGIME + TELA DE LOGIN (raiz e correcao) + REPARO DO CG (06/09 noite, sessao 6; user: "quantos arquivos estao 100%? qual versao do motor deu qual resultado?")
+**Tela de login — raiz medida (nao e timeout nem desconexao):** a sync (`moodle_sync.plan_import`) criava, para cada pagina do Moodle
+(`mod/page`), uma entry `url` -> `moodle.pucrs.br/mod/page/view.php?id=N`; o conversor de URL (`url_fetcher`) busca sem sessao e o Moodle
+devolve a tela de login. O pull ja salvava o HTML real (com token) em `<pull>/raw/moodle/pages/<N>-<slug>.html` e a sync nao o usava.
+**Correcao definitiva na sync (`6d68578`):** `plan_import(root=...)` prefere o HTML salvo (entry `html`, MESMO id via `id_override`) e so cai
+para URL quando nao ha HTML; teste `test_pagina_do_moodle_com_html_salvo_vira_entry_html_com_o_mesmo_id`. Curso novo: a pagina nasce com texto.
+**Reparo registrado do CG (`c1-3/repara_paginas_cg.py`, CG `404f5f9`, tripwire, 0 chamadas):** 16 entries url -> html com o texto real
+(275-2281 chars, login=nao), ids/golds/curadoria intactos; bloco 0 mudancas; build incremental local + reprocess.
+**Efeito do reparo no gold de subunidade do CG (82):** produto 58 -> 56 (+3 -5) · automatica 58 -> 55 · holdout puro 47 -> 45. Ganhou 3
+(deteccao de colisao, introducao ao processamento, morfologia: paginas antes vazias). **Perdeu 5 paginas-INDICE de videos** (curvas
+parametricas -> hermite 4,84; manipulacao de imagens -> segmentacao 4,46; modelagem geometrica -> csg 8,58; visualizacao 3d -> paralela 12,40;
+mapeamento -> empate exato 4x): o texto real lista videos de varios filhos do topico, o vocabulario puxa o filho mais citado, e o gold (= a
+secao do Moodle) e o topico-pai. Antes, com o texto de login, o titulo sozinho caia no pai por acaso (winner_score 0,12-0,94). E a classe
+"pai x filho" ja diagnosticada (5): agora 10 dos 27 residuais. **Candidata (hipotese, nao medi):** texto que cobre >= N irmaos com forca
+comparavel -> subtopico-pai / o que a secao nomeia (S1 "sempre" foi medida em 06/09 e perdia; esta e mais estreita). Fila: 93 -> 96 (+3
+sub-empate/ambigua nas paginas com texto) = **27,6/100** (CG 47 = duvida 25 + mudou 22 · MF 11 · SO 10 · IA 4 · ES2 12 · TCC 7 · LR 0 · FR 5).
+**Placar consistente (`c1-3/placar_100_runs.py` + `placar_100.py`; snapshots `snap_placar/{zero,vocab,auto}/`, produto = originais; tripwire, 0
+chamadas; CG apos o reparo):** 288 materiais com algum gold nos 6 cursos (bloco 237, unidade 191, subunidade 233); 146 com os TRES golds
+(so nos 5 cursos: o CG nao tem gold de unidade). "100% certo" = acerta todos os eixos em que tem gold.
+
+| regime (o que usa de LLM) | 100% certo / 288 | 3 golds certos / 146 | bloco | unidade | subunidade |
+|---|---|---|---|---|---|
+| zero LLM: sem vocab, sem voter, sem curadoria | **155 (53,8%)** | 65 (44,5%) | 222/237 | 173/191 | 117/233 |
+| vocab (1 chamada por curso), so os 5 cursos | 173/205 (84,4%) | 125 (85,6%) | 188/202 | 183/191 | 138/151 |
+| automatica = vocab + voter com cache (tutor novo) | **238 (82,6%)** | 131 (89,7%) | 231/237 | 185/191 | 193/233 |
+| produto = + curadoria humana | **253 (87,8%)** | 138 (94,5%) | 236/237 | 191/191 | 199/233 |
+
+Por curso (100% certo / com gold), zero -> automatica -> produto: MF 50 -> 56 -> 59 /66 · SO 27 -> 32 -> 39 /39 · IA 3 -> 39 -> 42 /42 ·
+ES2 6 -> 28 -> 29 /31 · TCC 23 -> 27 -> 27 /27 · **CG 46 -> 56 -> 57 /83**. Leitura: sem vocab a subunidade e 50% e a IA vai a 4/39 (o plano
+nomeia categorias, o material nomeia algoritmos; ES2 unidade 18/28 sem vocab, 28/28 com); o vocab (1 chamada) leva os 5 cursos afinados a 85%
+por material; o voter paga bloco (+7 nos 5: 189 -> 196/202; CG 33 -> 35) e nada de subunidade; a curadoria paga 15 materiais. **O numero para planejar um tutor
+novo e o do CG automatica: 56/83 = 67% dos materiais com bloco E subunidade certos (bloco 35/35, sub 55/82); sem LLM nenhum, 46/83 = 55%.**
+Os 4 cursos afinados dao 94-100% no produto porque a curadoria nasceu com o gold (in-sample).
+**Sem gold (FR do zero, 20 materiais, sandbox):** run A (0 chamadas) unidade 19/19 pela secao do professor; concorda com o FR curado em bloco
+13/20, sub 11/20; fila 10/20. Run B (Gemini ~22 chamadas) concorda 19/20, 20/20, 17/20; fila 6/20.
+**O que falta para o tutor 100% automatico (medido, nao opiniao):** (1) a ponte de vocabulario categoria -> algoritmo, unica coisa que hoje so o
+LLM da (+57 sub/+10 unidade nos 93; sem ela IA 4/39); fontes deterministicas ja tentadas e refutadas: IDF/similaridade/card/stem; (2) posicao
+datada no Moodle (labels "Semana dd/mm"): existe em 5 cursos, nao em CG/LR/FR, e e o que faz o bloco sem voter (CG puro 33/35); (3) ordem dos
+modulos na secao (API do Moodle, ja no pull): alavancas medidas em 02/09 (+7/-1 e +12/-5) e ainda fora do motor; (4) regra pai x filho acima.
+Gold: so mede; o aluno nunca cria gold.
+
 ## CAUSA RAIZ DAS DUVIDAS DE BLOCO — JANELA ∩ UNIDADE DA SECAO + FILA SEM CERIMONIA (06/09, sessao 6; user: "encontrar o real motivo")
 **Anatomia medida (produto, 8 cursos, 38 duvidas de bloco; gold de bloco onde existe):** janela-1 flagada 21 ("sinal indireto" por desenho; janela de
 1 bloco por data no nome 9 / topico da secao 12) **14/14 certos** · funil com voto 16 (flag mantida por desenho apos o LLM decidir) **1/1 (+5/5 em

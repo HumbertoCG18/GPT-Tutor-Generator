@@ -35,6 +35,7 @@ deterministico (mesma rota, produtor diferente); bloco/unidade/cobertura/holdout
 o codigo nao contem ('classificacao', 'chamadas de sistema', 'microsservicos'). Peso: 85 resumos / 205 votos / 1 vocab por curso nos 8.
 
 ## COMECE POR (proxima sessao) — tres decisoes do user antes de qualquer codigo
+**Placar por material (06/09 noite):** `python docs/reports/_harness-2026-09-04/c1-3/placar_100.py` (snapshots em `c1-3/snap_placar/`; zero LLM 155/288 · automatica 238/288 · produto 253/288 com todos os golds certos; CG automatica 56/83). Tracker §PLACAR CONSISTENTE.
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json`, `.codex/` e `.mex/patterns/*` de outro agente), `git log --oneline -3`,
    HEAD dos 8 tutores = "Estado ao terminar", `python scripts/censo_motor_llm.py` (revisar/100 58,3 com 'mudou' 13; votos/100 35,9; FILE_MAP 100%
    nos 8, SO 38/39 por duplicata), `python -m pytest tests -q` (2325), `python scripts/sentinela_manifests.py` (0). Nada pushed.
@@ -69,7 +70,7 @@ silencio (marcar para review).
 ## Estado ao terminar (05/09 tarde, tudo commitado, NADA pushed)
 Gerador `feat/motor-atribuicao` @ `4a239d9` (codigo: higiene `e0c433c` + radical-fallback `ff21cab` + propagacao por headings `4a239d9`) + docs da sessao 6. Sessao 6 (05/09 tarde), commits: `d511357` `8d61d28`
 `75b9955` `7a19208` `dc98c15` `ef4628c` `009b627` `d880f1b` `17afd2e` (docs/medicoes) · `e0c433c` (feat higiene + teste) · `ff21cab` (feat radical-fallback + teste) · `4a239d9` (feat propagacao por headings + teste). Suite 2328.
-Tutores (06/09 noite, apos fila + decomposicao): **MF `ed31d99` · SO `f513ba0` · IA `74fec68` · ES2 `0fe0f53` · TCC `082b728` · LR `d139547` · FR `4c64ed6` · CG `929cdc3`** (antes: MF `7a8707a` · SO `0921948` · IA `0075334` · ES2 `4c8011b` · TCC `621c292` · LR `d139547` · FR `fd7814f` · CG `0d2020a`) (reprocess da propagacao:
+Tutores (06/09 noite, apos o reparo do CG): **MF `ed31d99` · SO `c60e2d1` · IA `d88cc53` · ES2 `0fe0f53` · TCC `79a9696` · LR `5201deb` · FR `5c9372a` · CG `404f5f9`** (reparo registrado das 16 paginas do Moodle, `c1-3/repara_paginas_cg.py`, 0 chamadas; gerador `6d68578` corrige a sync). Historico — Tutores (06/09 noite, apos fila + decomposicao): **MF `ed31d99` · SO `f513ba0` · IA `74fec68` · ES2 `0fe0f53` · TCC `082b728` · LR `d139547` · FR `4c64ed6` · CG `929cdc3`** (antes: MF `7a8707a` · SO `0921948` · IA `0075334` · ES2 `4c8011b` · TCC `621c292` · LR `d139547` · FR `fd7814f` · CG `0d2020a`) (reprocess da propagacao:
 MF/IA/ES2/TCC commitados, SO/LR/FR/CG so `updated_at` e nao commitados; CG: 4 reprocess
 registrados: `c566dc3` pinos 06/08/15, `ee4c276` sinonimo de morfologia — REVERTIDO em `2c5e01e`, `0d2020a` pinos 06 e 15 REMOVIDOS, fica so o 08; 0 chamadas Gemini; votos 42 = 42).
 Copias `.ablacao` dos 5 + CG + LR + FR (motor puro pos-higiene). `.ablacao/CG-rebuild` (365 MB) e `CG-export-backup` (440 MB): apagar e decisao do user.
@@ -124,7 +125,7 @@ Formato: **ideia** · da para fazer? · quando? · o que resolve?
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
 - ~~Aprovar os golds de subunidade CG/MF~~ (feito 06/09). ~~Fila: camada `llm`~~ (`0673150`), ~~janela-1 flagada e funil com voto~~ (`8856d89`). Resta: 'conflito' (53, 0 erros de unidade) e sub-ambigua (13, 1 erro). Corrigir a extracao dos zips (2). Gemini (3). Religar `gemini_auto_summarize` so com o Gemini liberado.
-- Qual camada LLM cortar para ficar em duas (COMECE POR 3b). Apagar `.ablacao/CG-rebuild` e `CG-export-backup`. Posicao da C7 IMAGENS. Push/merge em `main`. Revisao da fila `revisar_queue.md` (45) do CG.
+- Qual camada LLM cortar para ficar em duas (COMECE POR 3b). Apagar `.ablacao/CG-rebuild` e `CG-export-backup`. Posicao da C7 IMAGENS. Push/merge em `main`. Revisao da fila `revisar_queue.md` (45) do CG. Fila 'conflito' (50, 0 erros de unidade) e sub-ambigua (13, 1 erro). Regra pai x filho para paginas-indice (10 dos 27 residuais do CG apos o reparo; hipotese, nao medida). Recompilar o vocab do CG sem o alias 'OpenGL' (9 gold-vazio; exige Gemini). Blocos sem unidade (entrega/revisao): adiado pelo user.
 
 ## NAO fazer (refutado no gold)
 **05/09 tarde (sessao 6):** `title` do manifest := `moodle_label` (piso 0; bloco 186 -> 184; 2 confiantes viram flag) · subunidade de codigo pelo card (nome 0/+
@@ -136,7 +137,7 @@ tokens do mapa (saldo 0: 'proces~processamento') · preenchimento pelo vizinho a
 -> prep · H7 ordem das secoes · H6 label unico · label em decisao confiante · card ANTES do voter · regex de nome para card generico · imprimir HTML em PDF
 para o Datalab · rastrear `Aulas/` do site do professor · `unit_block_conflict` como alavanca de banda.
 
-## Artefatos publicados (todos atualizados em 06/09 noite)
+## Artefatos publicados (todos atualizados em 06/09 noite; 2a rodada apos o reparo do CG e o placar por material)
 - Placar do Motor de Atribuicao (consolidado da sessao 6): https://claude.ai/code/artifact/231d161b-96dc-4061-84a1-cdb8e0ec91de
 - Razao dos Blocos (estado curado dos 8, regenerado pelo gerador `_archive/scripts-2026-09-04/artefato_razao/`, gerador d079604): https://claude.ai/code/artifact/d2ef4eaa-3483-412a-9dc8-110b1f9ccacb
 - Gold x Moodle x SARC (auditoria regenerada: `_harness-2026-09-02/audita_gold.py` sobre motor puro + vocab de 06/09; 188 AULA, 148 concorda, 3 divergem, 37 sem posicao): https://claude.ai/code/artifact/f53542b1-9061-4034-a1f3-e86ce001a81f
