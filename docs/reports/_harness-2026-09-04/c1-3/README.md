@@ -38,3 +38,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
 - `simula_cerca_provas.py` (cerca de provas: escopo do plano x data no SARC, estatico nos snapshots zero + FR do zero) · log `simula_cerca_provas.log`.
 - `placar_100_gold_es2.log` (placar com o gold do ES2 corrigido pelo oraculo) · `docs_c1_3u.py`.
 - `placar_100_gold_mf.log` (placar com o gold do T2 do MF no bloco da P2) · `docs_c1_3v.py`.
+- `mede_salas.py` (salas de entrega dos 8 cursos pela API x SARC; nunca imprime o token) · log `mede_salas.log` · `salas_api.json` (gitignored).

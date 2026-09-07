@@ -10,6 +10,29 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## MEDICAO DAS SALAS NOS 8 CURSOS (06/09 noite; user: "concordo com os 5; medir para fundar e ver se replica") — `c1-3/mede_salas.py`, log `mede_salas.log`
+**Cobertura:** 30 salas em 6 cursos (IA 18, SO 3, TCC 3, LR 3, MF 2, ES2 1; CG e FR 0 visiveis — 87 modulos "sem acesso" na conta do aluno).
+**C3 (duracao abertura -> vencimento) replica onde o professor define abertura:** IA e LR definem (21 salas): atividade de aula (<= 26 h) 12 ·
+curta (1-5 dias) 6 · trabalho (>= 7 dias) 4 (IA T1 672 h, T2 645 h, 3b, video do T2). MF, SO e ES2 so definem vencimento (4 + 1 curta): o
+classificador precisa de fallback por nome ("T1", "Trabalho", "TP") e secao (TDE, "Informacoes Gerais"). **TCC so define FECHAMENTO** (cutoffdate:
+20/03, 25/06, 08/07) — sem duedate; fallback para cutoffdate.
+**C5 (vencimento x SARC) replica: 10 de 11 trabalhos coerentes sem gold.** MF T1 06/05 -> bloco-11 deliverable · MF T2 06/07 -> bloco-20 "prova
+p2, entrega do t2" · SO TP1 14/05 -> bloco-14 "apresentacao tp1" · SO TP2 02/07 -> bloco-23 "apresentacao tp2" · IA T1 04/05 -> bloco-09
+"apresentacao do t1" · IA T2 29/06 -> bloco-19 "apresentacao t2" · ES2 Trabalho Final 06/07 -> bloco-13 "prova p2, entrega trabalho final" ·
+LR 3 salas -> blocos deliverable do proprio dia · TCC T1 fechamento 20/03 -> bloco-04 "t1 em aula". Unico desvio: TCC T2 fecha 25/06 e o SARC
+entrega em 12/06 (fechamento e posterior a apresentacao). Vencimento por kind do bloco: deliverable 10 · class 11 (atividades de aula) ·
+assessment 2 (C1: MF T2, ES2 TF) · office_hours 2 (IA atividades 8/9 em "duvidas para t1") · holiday 1 (IA "integrantes", 26/06 suspensao).
+**C1 replica:** 2 de 11 trabalhos vencem dentro do bloco da prova (MF T2, ES2 TF); hoje o due-window os manda para a aula anterior (T17).
+**C2:** escopo da prova por data ja existe (`scope_unit_slugs`); o plano declara em MF/TCC/ES2/FR; conflito com o calendario em MF (U2 depois da
+P1) e no FR do zero (IP/ICMP antes da P1 com U4). Precedencia proposta: calendario (SARC) > plano.
+**C4 — LACUNA CONFIRMADA e maior que a IA:** 10 anexos de salas, 10 fora do tutor. IA: `T1_IA_2026_01_t32.pdf` (3 pag, "T1 - Tic Tac Toe com
+ML") e `T2_AlgoritmosDeBusca_2026_01.pdf` (2 pag, "T2 - Algoritmos de Busca: Olimpiada") baixados pela API e conferidos (scratchpad, fora do
+tutor); mais dados da Atividade 1 (19 MB), `cardio_v2.csv`, A* v2, casos de teste. **SO: `TP1_20261.pdf` e `TP2_20261.pdf` (enunciados dos
+trabalhos) tambem so existem como anexo da sala** + o codigo do "Somatorio em Java". Os tutores de IA e SO nao tem os enunciados dos trabalhos.
+Correcao na sync/pull: baixar `introattachments` (fileurl + token) e o `intro` de cada sala como material (categoria trabalhos/exercicios por C3).
+**Achado colateral:** no MF o card "Verificacao de Programas" tem 54 arquivos com vencimento 10/06 pela fonte 'named' do card_block_map (uma data
+nomeada no card virou vencimento de todos os arquivos); o due-window so olha trabalhos/provas/codigo-TDE, por isso nao doeu. A apurar.
+
 ## SALAS DE ENTREGA PELA API — ABERTURA / VENCIMENTO / FECHAMENTO, ATIVIDADE DE AULA x TRABALHO, ANEXOS AUSENTES (06/09 noite; perguntas do user)
 **API (medido ao vivo, token do aluno, 0 chamadas Gemini):** `mod_assign_get_assignments(courseids)` devolve por sala `allowsubmissionsfromdate`
 (abertura), `duedate` (vencimento), `cutoffdate` (fechamento), `gradingduedate`, `timemodified`, `intro` (enunciado HTML) e `introattachments`
