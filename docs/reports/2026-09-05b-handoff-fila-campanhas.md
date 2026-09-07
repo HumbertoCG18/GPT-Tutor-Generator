@@ -161,7 +161,8 @@ tokens do mapa (saldo 0: 'proces~processamento') · preenchimento pelo vizinho a
 -> prep · H7 ordem das secoes · H6 label unico · label em decisao confiante · card ANTES do voter · regex de nome para card generico · imprimir HTML em PDF
 para o Datalab · rastrear `Aulas/` do site do professor · `unit_block_conflict` como alavanca de banda.
 
-## Artefatos publicados (todos atualizados em 06/09 noite; 2a rodada apos o reparo do CG e o placar por material)
+## Artefatos publicados (06/09 noite; + Matriz de Atribuicao em 07/09)
+- Matriz de Atribuicao (348 materiais x 5 regimes x 3 eixos + professor e gold como referencia): https://claude.ai/code/artifact/4ddad807-e2fe-4ede-a3ca-c175916f7ca6
 - Placar do Motor de Atribuicao (consolidado da sessao 6): https://claude.ai/code/artifact/231d161b-96dc-4061-84a1-cdb8e0ec91de
 - Razao dos Blocos (estado curado dos 8, regenerado pelo gerador `_archive/scripts-2026-09-04/artefato_razao/`, gerador d079604): https://claude.ai/code/artifact/d2ef4eaa-3483-412a-9dc8-110b1f9ccacb
 - Gold x Moodle x SARC (auditoria regenerada: `_harness-2026-09-02/audita_gold.py` sobre motor puro + vocab de 06/09; 188 AULA, 148 concorda, 3 divergem, 37 sem posicao): https://claude.ai/code/artifact/f53542b1-9061-4034-a1f3-e86ce001a81f

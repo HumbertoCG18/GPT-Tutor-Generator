@@ -10,6 +10,25 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## POR QUE REMOVER A DESCRICAO DO DATALAB MUDA A SUBUNIDADE — EFEITO DE SEGUNDA ORDEM (07/09; pergunta do user)
+**Sim, os termos da descricao sao usados**: o markdown inteiro e o insumo do scorer (`entry_signals` le markdown, lead e headings; o lead
+tem teto de 2600 chars). Mas nos 2 casos medidos do CG o efeito NAO foi competicao direta de termo dentro do proprio material:
+**os dois arquivos que mudaram tem texto IDENTICO com e sem descricao** (`morfologiamatematicapptx` 6717 chars nos dois,
+`aula-gravada-975b85` 351 nos dois) — a descricao removida estava em OUTROS 18 materiais do curso.
+**Mecanismo:** a 2a passada da subunidade (`propagar_vocabulario_por_headings`) compila aliases A PARTIR DOS MATERIAIS CONFIANTES DO CURSO.
+As descricoes do Datalab (em ingles, genericas: "A sequence of four binary images illustrating the closing operation", "A 4x4 grid showing
+the result of erosion", "Logos for GRU and PUCRS") entram nesse conjunto e desviam a propagacao de outros materiais. Antes:
+`morfologiamatematicapptx` -> `cores-e-tipos-de-imagens` com winner_score **0,91** (sinal fraquissimo, mas suficiente para a 1a passada
+"decidir" e BLOQUEAR a 2a passada, que so age em indeciso); `aula-gravada` -> vazio, `sem-sinal (winner_score=0)`. Depois da remocao:
+ambos -> `segmentacao` (gold) com 4,27 e 3,45, reason **`propagado-headings`**.
+**Duas licoes:** (1) ruido fraco e pior que ruido nenhum, porque decisao fraca trava a regra melhor — a 1a passada deveria exigir um piso
+para bloquear a 2a; (2) texto de terceiros no material contamina o vocabulario do CURSO INTEIRO, nao so daquele material.
+**Confirmado com o user:** a descricao FICA no markdown entregue (o tutor precisa do contexto da figura); o que muda e o scorer nao pontuar
+esses blocos. Implementacao candidata: filtrar `_IMAGE_DESC_BLOCK_RE` em `entry_signals` antes de pontuar (a medir com gate).
+**Artefato "Matriz de Atribuicao"** (`c1-3/gera_tabela_cenarios.py` -> `dados_cenarios.json`): os 348 materiais dos 8 tutores, arquivo por
+arquivo, com bloco/unidade/subunidade em 5 regimes (zero, vocab, auto, produto, sem-descricao) ao lado das DUAS referencias (professor pelo
+SARC/Moodle/cronograma e gold), com filtros por curso, eixo, divergencia e fila: https://claude.ai/code/artifact/4ddad807-e2fe-4ede-a3ca-c175916f7ca6
+
 ## REGUA SEM GOLD — O PRODUTO REAL (07/09; user: "sem o gold na jogada; as informacoes tem que vir do SARC/Moodle ou do cronograma")
 `c1-3/regua_sem_gold.py` (read-only, 0 chamadas; log `regua_sem_gold.log`). Quatro fontes do PROFESSOR, nenhuma criada pelo aluno:
 
