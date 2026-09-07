@@ -10,6 +10,39 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## REGRA PAI x FILHO — REFUTADA POR MEDICAO, NAO ENTRA (07/09; `c1-3/mede_pai_filho.py` e `simula_pai_filho.py`)
+**Alcance primeiro (`mede_pai_filho.log`, produto, 40 erros de subunidade nos 6 golds):** sem parentesco 10 · gold vazio 9 ·
+irmaos do mesmo pai 7 · mesma unidade e ramos diferentes 6 · motor vazio 4 · **escolheu FILHO e o gold quer o PAI 3** ·
+escolheu PAI e o gold quer o FILHO 1. A relacao pai/filho estrita alcanca 4 dos 40.
+**Simulacao da regra "texto cobre varios FILHOS do mesmo pai -> sobe para o PAI", 8 configuracoes (`simula_pai_filho.log`):**
+
+| forca relativa | min. de irmaos | agiria | ganha | perde |
+|---|---|---|---|---|
+| 50% | 1 | 26 | 7 | 13 |
+| 60% | 1 | 22 | 7 | 10 |
+| 70% | 1 | 21 | 7 | 9 |
+| 80% | 1 | 19 | 6 | 8 |
+| 60% | 2 | 13 | 3 | 5 |
+| 80% | 2 | 12 | 3 | 5 |
+| 60% / 80% | 3 | 3 | 0 | 2 |
+| 60% / 80% | 4 | 0 | 0 | 0 |
+
+**NENHUMA configuracao tem saldo positivo** — e o padrao e curso-dependente, o que a regra da casa ja proibe: o MF perde
+sempre (o gold quer o FILHO especifico: `provadores-de-teoremas` 1.3.3, `logica-de-hoare`, `especificacao-de-funcoes-recursivas`),
+o CG ganha as vezes (`basico3d-py`, `opengl3dcpp` -> `conceito-de-camera-sintetica`). **Nao entra no motor.**
+**A hipotese que motivou a regra tambem cai:** dos 3 casos "escolheu FILHO, gold quer PAI" (todos paginas de video do CG),
+so 1 e alcancado pela regra; os outros 2 nao tem irmaos fortes suficientes. Ou seja, quando o gold e o pai NAO e porque o
+texto cobre varios filhos — e outra coisa. **Candidata que resta (nao medida):** detectar o TIPO do material (pagina-indice,
+texto majoritariamente links de video) em vez da distribuicao de score.
+**Ganho colateral da medicao:** a numeracao X.Y.Z do plano, que o reprocess de 07/09 colocou em disco, agora permite medir
+qualquer hipotese de hierarquia em minutos — foi o que refutou esta em duas rodadas.
+
+## LIMPEZA DAS COPIAS (07/09, decisao do user)
+Apagados 4,7 GB: `.ablacao/aprovado` e `.ablacao/sem-descricao` (experimentos de 07/09, ja medidos e registrados; os scripts
+recriam com `rmtree` + `copytree`), `.ablacao/CG-export-backup` e `.ablacao/CG-rebuild` (pendencia do user desde 04/09),
+`.determinismo` e `.zerodiff` (temporarios de gate, recriaveis com `--base`). **Ficam** as 8 copias `.ablacao/<Tutor>` (regime
+automatico das reguas) e `FR-rebuild` / `FR-rebuild-B` (medicoes do FR do zero, citadas no tracker). De 6,9 GB para 2,2 GB.
+
 ## FORMATACAO PADRONIZADA + REPROCESS REGISTRADO DA TAXONOMIA NOS 8 (07/09; user: "padrao para melhor leitura, sem quebrar nem regredir")
 **Onde o padrao entrou: na EXIBICAO, nunca na chave.** O user pediu "(numero da unidade - nome)" e "(numero unidade - numero
 subunidade - nome)". Medido antes de implementar: por na CHAVE quebra tudo — titulo `01 - Metodos Formais` gera slug
