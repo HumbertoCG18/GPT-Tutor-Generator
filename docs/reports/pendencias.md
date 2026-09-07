@@ -10,6 +10,61 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## GARGALO DA SUBUNIDADE E DA FILA — DIAGNOSTICO MEDIDO (07/09; user: "qual e o maior gargalo? tratar o problema, nao o sintoma")
+**Resposta curta: o gargalo NAO e a regra de decisao, e o INSUMO — e, na fila, nao e nem subunidade.**
+
+### 1. A fila (94 itens = 27,0/100) nao e feita de subunidade (`diag_gargalo.py`)
+| motivo | itens | onde |
+|---|---|---|
+| `conflito` (unidade x bloco) | **45** | 6 dos 8 cursos (CG 13, ES2 11, SO 8, MF 6, IA 3, TCC 3, FR 1) |
+| `mudou` (sync_changed) | 22 | so CG; TRANSITORIO — a proxima sync limpa se nada mover |
+| `sub-ambigua` | 13 | CG 4, MF 4, TCC 3, ES2 1, FR 1 |
+| `sub-empate` | 9 | CG 4, MF 2, SO 1, IA 1, FR 1 |
+| `flag:disamb` | 9 | CG 6, FR 3 |
+| `flag:due-straddle` | 1 | MF |
+Subunidade responde por **22 dos 72 `duvida`**. Melhorar o scorer de subunidade quase nao move o numero da fila.
+
+### 2. Os 38 erros de subunidade, por causa x evidencia do gold no texto (`diag_gargalo.log`)
+| causa | n | leitura |
+|---|---|---|
+| `gold-vazio` | 9 | o gold quer NENHUMA subunidade e o motor preencheu (CG: OpenGL, animacao, instanciamento) |
+| `confiante/COM-evidencia` | 7 | o alias do gold esta no texto e outro venceu (Isabelle -> ferramentas x provadores; Catmull-Rom x Hermite) |
+| `gold-fora-da-unidade` | 6 | **1 erro de UNIDADE arrastando 6** (ES2: secao 'Microsservicos', unidade herdada do bloco com conf 0,26) |
+| `confiante/SEM-evidencia` | 6 | nem o rotulo nem os aliases do gold aparecem no texto |
+| `gold-pontua-zero` | 4 | o gold pontua exatamente 0 |
+| `fraca` + `vazia` | 6 | empate exato / sinal ~0,1 |
+**21 dos 38 (55%) sao materiais que nao SAO sobre um subtopico** (gold vazio, ou pagina-indice que cobre varios).
+
+### 3. Onde o erro mora: a classe do INSUMO (`mede_classe_material.log`)
+| corte | n | acerto |
+|---|---|---|
+| `.pdf` | 109 | **94%** |
+| `.zip` (codigo) | 35 | 66% |
+| `.html` (paginas-indice) | 37 | **62%** — 14 erros, todos CG |
+| material com link de YouTube | 28 | **57%** — 12 erros |
+| texto proprio | 184 | 88% |
+| 3000-8000 chars | 37 | 97% · 0-500 chars: 62% |
+**Confundimento desfeito:** aprovado 93% x staging 71% NAO e causal — dentro do CG, aprovado 2/4 e staging 56/78 (72%).
+Bate com `simula_aprovacao.py` (245 -> 245). Aprovar o CG na GUI nao e alavanca de atribuicao.
+
+### 4. Cinco alavancas de regra medidas HOJE — todas refutadas (nao reabrir sem dado novo)
+- **Piso de score no resultado final** (`mede_atribuir_vazio.log`): TODO piso perde. Melhor piso = 0. Em 0,15 ja perde 4;
+  em 1,0 perde 12 e ganha 1. A faixa de score >= 10 acerta 92%, mas as faixas baixas ainda acertam 60-89%: nao ha corte.
+- **Titulo com vocabulario COMPLETO** (`simula_titulo_completo.log`): teto de **3 em 38**. T1 +3/-3 = 0; T1c -2; T1v 0.
+  A regra atual (`_subtopico_nomeado_no_titulo`, so partes de rotulo) nao esta deixando ganho na mesa.
+- **Material-INDICE + cabecalho decide** (`simula_indice.log`): teto do cabecalho (secao + titulo + H1) = **6 em 38**.
+  12 variantes; melhor = `AMBOS+nv` **+2** (197/233) com 17 mudancas e 2 perdas. Marginal e caro; nao entra sem rota real.
+- **Titulo do video no lugar do hash** (`mede_titulo_video.log`): 91% dos 246 links de video no markdown tem como rotulo
+  o ID de 11 chars. Recuperados **183/183** titulos reais pelo oEmbed publico (sem chave, sem LLM) e injetados no texto:
+  **ganha 0, perde 2** em 18 materiais. Mais texto do corpo PIORA — o corpo do indice fala dos FILHOS.
+- **(sessao anterior)** pai x filho, piso de forca na 1a passada, secao->unidade dona, zero-pad, numero na chave.
+
+### 5. O que os dados dizem
+O motor ja extrai quase tudo que o texto permite: onde o material e um PDF de aula com prosa, acerta 94%. O residuo
+esta em material que **nao tem uma subunidade unica** (indice de 243 videos no CG, prova de OpenGL, roteiro de laboratorio)
+ou **nao tem texto que descreva o assunto**. O modelo de dados obriga um escalar (`computed_subunit_slug`); o gold ja
+admite vazio (11) e alternativas (`gold_subunits_extra`). A assimetria e o que sobra de estrutural.
+
 ## DESCRICAO DE IMAGEM FORA DO SCORER — ENTROU (07/09; decisao do user; gerador `44ed407`)
 **Regra:** `entry_signals.texto_para_score` remove os blocos `<!-- IMAGE_DESCRIPTION -->` dentro de
 `collect_entry_unit_signals` — o ponto UNICO por onde passam o scorer de unidade (`file_map:486`), o de subunidade
