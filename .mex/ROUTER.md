@@ -28,6 +28,11 @@ com atribuição arquivo→bloco→unidade dirigida por sinais Moodle/SARC/plano
 | Como escrever/verificar código e fixtures | `context/conventions.md` |
 | Saída gerada (formato do repo-tutor) | `context/repo-output.md` |
 | Pipeline de PDF (backends, falhas conhecidas) | `context/pdf-pipeline.md` |
+| Cadeia do TEXTO (staging → Curator Studio → o que o motor pontua; descrições de imagem) | `context/text-chain.md` |
+| Retrato verificado do sistema (o que existe, o que está inerte, o que não existe, código morto) | `context/audit-2026-09-07.md` |
+| Serviço externo, custo, API paga, backend de extração, descrição de imagem | `context/external-services.md` |
+| Histórico de arquitetura, roadmap e changelogs (retrato de 03/09, parcialmente vencido) | `docs/Overview-Sistema.html` |
+| Inventário do motor de atribuição (quem decide cada eixo, o que já existe) | `docs/reports/_harness-2026-09-04/c1-3/inventario_motor_2026-09-07.md` |
 | Setup/stack/manifest | `context/setup.md`, `context/stack.md` |
 
 Estado atual (branch, números de suite, fases, rollouts, foco da campanha): SEMPRE no
@@ -49,6 +54,10 @@ arquivo não carrega snapshot — snapshot aqui envelhece e mente.
 | Setting up or running the project | `context/setup.md` |
 | Understanding the generated repo output format | `context/repo-output.md` |
 | PDF processing, backends, conversion failures | `context/pdf-pipeline.md` |
+| Curadoria de markdown, aprovação, staging, descrição de imagem | `context/text-chain.md` |
+| "Isso já existe no sistema?" antes de construir/refatorar | `context/audit-2026-09-07.md` (retrato verificado) — só então `docs/Overview-Sistema.html` (histórico) |
+| Custo, API paga, trocar backend (Marker/MinerU/docling), provedor de descrição | `context/external-services.md` |
+| Mexer no motor de atribuição (bloco/unidade/subunidade) | `docs/reports/_harness-2026-09-04/c1-3/inventario_motor_2026-09-07.md` |
 | Any specific repeatable task | Check `patterns/INDEX.md` |
 
 ---
