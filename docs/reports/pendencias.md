@@ -16,6 +16,11 @@ plano 2026-09-02 (desenho/decisoes, carimbado).
 BUILD_REPORT, STUDENT_STATE, updated_at, last_seen; compara com a referencia do mesmo dia). Achado no caminho: o `determinismo.py` de
 02/09 ignorava `staging/` e reprocessava LR/CG/FR/MF SEM o texto dos materiais (base_markdown em staging) — valia como determinismo, nao
 como fidelidade; a referencia contra o original dava 56 arquivos por isso + datas. Auto-consistencia do gate novo: 0/1017.
+**Adendo do user (07/09):** os arquivos estao em `staging/` porque NAO passaram pelo Curator Studio (aprovacao do MD; aprovar move para
+`content/curated/` e grava `approved_markdown`). Estado medido no manifest: LR 7/7 em staging · CG 76/93 (5 aprovados, 12 sem MD) · FR 17/22
+· MF 2/66 (51 aprovados) · SO/IA/ES2/TCC 100% aprovados. Implicacao: o motor le `base_markdown` onde estiver, entao os numeros de CG/LR/FR
+(holdout, placar, fila) sao sobre MD nao aprovado; a aprovacao pode editar o texto e mover o motor — remedir esses cursos apos a curadoria.
+O gate zero-diff e o determinismo tem de copiar `staging/` para reproduzir o que o motor ve hoje (feito no zero_diff.py).
 **Commits (gerador, nada pushed): A1 4f60bd0 · A2 0efa29a · B 46499aa · C 35cb99c.**
 - **A1** tokenizador de card/bloco unico (`text.tokens.card_stop_tokens`; `_tokens` era byte-identico em `timeline/card_block` e
   `timeline/block_identity`) · regex de numero de unidade so em `file_map` (`window_provider` importa) · leitor unico de `moodle_label`
