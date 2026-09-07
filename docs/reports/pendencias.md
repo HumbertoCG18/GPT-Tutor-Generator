@@ -10,6 +10,28 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## AUDITORIA DO SISTEMA E CUSTO DAS IMAGENS DE HTML (07/09; user: "faca a auditoria completa e salva no mex" / "como baratear a pagina HTML?")
+**Auditoria salva no `.mex`** (commit `a487732`): `context/audit-2026-09-07.md` (retrato verificado), `context/text-chain.md` (cadeia do
+texto), `context/external-services.md` (servicos externos por eixo). `ROUTER.md` passa a apontar para os tres + o inventario do motor;
+`docs/Overview-Sistema.html` (03/09) fica como HISTORICO — ja estava vencido (listava como pendente a consolidacao de `_tokens` feita em 07/09).
+**Achados que mudam o plano de trocar o Datalab:** Marker esta instalado e TOTALMENTE wired (chunking, --use_llm por Ollama, fallback para
+docling, fusao hibrida com o base) e nunca e escolhido; docling idem. Causa: `preferred_backend` da entry (do `SubjectProfile.default_backend`)
+e avaliado ANTES da fila por perfil (`engine.py:1651`) — razao gravada em 772 de 838 decisoes: "Backend preferido manualmente: datalab".
+**Trocar para Marker e configuracao da materia, nao implementacao.** MinerU NAO existe (so backlog no README). `effective_profile` = "auto"
+em 772: o profiler roda e e descartado. Promocao para `content/curated/` so pela GUI Tkinter (nenhum caminho headless).
+**Por que o Datalab nunca entrou no eixo de atribuicao (pergunta do user):** nao foi falta de aprovacao. O Curator Studio monta o seletor na
+ordem Base > Avancado > Template e pre-seleciona o primeiro (`curator_studio.py:687`, comentario "prefer base markdown"); aprovar sem trocar
+promove o pymupdf4llm. Medido 198/198. O Datalab entra por OUTRA porta: as descricoes de imagem, injetadas em TODOS os markdowns da entry.
+**Custo das imagens de HTML (`c1-3/custo_html_imagens.log`, CG):** 147 imagens, **105 chamadas pagas** (cache md5 evitou 42 = 28%); renderam
+34 formulas, 74 legendas, 4 vazias. **O filtro local `classify_image` e ARMADILHA aqui:** classifica 99 de 137 como "decorativa" incluindo
+GIFs didaticos de 1-2 KB (bezier3pontos, DuasBz3Ptos) — foi calibrado para imagem de PDF, nao para site antigo de professor.
+**DECISAO (a implementar depois do motor):** inverter a ordem — Ollama LOCAL como primeira linha (classifica + descreve, gratis, em portugues)
+e Datalab so para o que o Ollama marcar como formula/tabela: ~105 -> ~34 chamadas no CG, corte de 2/3. Requisitos: fixar `qwen3-vl:8b` local e
+desarmar a migracao de `theme.py:89-93` que reescreve a escolha local para `qwen3-vl:235b-cloud`. Menores: cache de transcricao global (hoje
+por curso) e usar o `alt` do HTML (112 referencias ja tem) para legenda sem transcrever.
+**Confirmado pelo user:** a descricao de imagem SERVE ao tutor (contexto da figura) e fica no markdown entregue; o que muda e o scorer nao
+pontuar esses blocos (medido: +2 materiais 100% certos, -1 conf-err, -2 fila).
+
 ## DE ONDE VEM O TEXTO QUE O MOTOR LE — STAGING x APROVADO, ONDE O DATALAB ENTRA, SUMARIO INJETADO (07/09; user: "automatizar a curadoria; o produto nao pode se moldar a uma API paga; medir com os aprovados antes do passo 1")
 **Precedencia (medida, `navigation._entry_markdown_path_for_file_map:71`):** `approved_markdown` > `curated_markdown` > `base_markdown` >
 `advanced_markdown`. Estado nos 8 (`c1-3/fonte_do_texto.log`): MF le approved 51 + base 2 · SO 38 approved · IA 55 · ES2 27 · TCC 27 ·

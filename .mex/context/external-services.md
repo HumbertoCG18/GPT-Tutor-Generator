@@ -72,6 +72,28 @@ Para atender "escolher entre Datalab, Gemini e Ollama" faltam três coisas, toda
 - **Datalab ausente** → `DatalabCloudBackend.available()` é `False` e o seletor cai para marker/docling/pymupdf, todos locais. Em runtime, erro do Datalab é registrado e a build segue com o `base_markdown`. Exceção: imagens de HTML ficam sem transcrição, sem alternativa.
 - **Ollama ausente** → a ação da UI aborta com erro; se o modelo cloud não estiver disponível, troca sozinho para `qwen3-vl:8b` local (`ollama_client.py:180`). Cuidado: em lote, o texto de erro vira a própria descrição no manifest e **é injetado no markdown**.
 
+## Custo das imagens de página HTML (medido 07/09 no CG)
+
+Único curso com material HTML hoje. 48 entradas, 147 imagens em páginas, **105 chamadas Datalab pagas**; o cache por md5
+(`course/.image_transcriptions.json`, 129 imagens) já evitou 42, ou 28%. O que as chamadas renderam: fórmula `$$` em 34, legenda em 74,
+vazio em 4.
+
+**O filtro óbvio é armadilha.** `vision/image_classifier.py:83 classify_image` é local e gratuito, mas foi calibrado para imagem de PDF:
+corta por tamanho de arquivo, dimensão, proporção e número de cores. Rodado nas imagens de HTML do CG classifica **99 de 137 como
+"decorativa"** — e entre elas estão GIFs didáticos de 1 a 2 KB (`curvas-bezier3pontos.gif`, `curvas-DuasBz3Ptos.gif`), que são exatamente a
+figura da aula. Site antigo de professor usa GIF pequeno para conteúdo. **Não usar esse filtro como gate de custo sem recalibrar.**
+
+**Barateamento recomendado: inverter a ordem, Ollama primeiro.** O caminho local já existe (`vision/ollama_client.py:294 describe_image`,
+`:316 extract_to_latex`, com prompts por tipo em `:19 IMAGE_TYPE_PROMPTS`). Usar o Ollama como primeira linha para classificar e descrever,
+e chamar o Datalab **apenas** para o que o Ollama marcar como fórmula ou tabela, levaria as 105 chamadas do CG para cerca de 34, corte de
+aproximadamente dois terços, sem perder o caso de uso que motivou o Datalab ali (transcrever fórmula). Ganho colateral: o Ollama descreve em
+português; a caption do Datalab vem em inglês e é justamente o texto que polui o scorer.
+Riscos a medir antes: o Ollama errar a classificação e perder fórmula; e o tempo local por imagem. Requisito: fixar o modelo local
+(`qwen3-vl:8b`) e desarmar a migração para cloud (armadilha 1 abaixo).
+
+Outras alavancas, menores: cache de transcrição é **por curso** (`course/.image_transcriptions.json`) — o mesmo GIF do site do professor é
+repago em outro curso; e 112 das referências de imagem do CG já trazem `alt` no HTML, suficiente para legenda sem transcrever.
+
 ## Armadilhas conhecidas (verificadas, não corrigidas)
 
 1. `ui/theme.py:89-93` reescreve ativamente o modelo de visão local `qwen3-vl:8b` para `qwen3-vl:235b-cloud` a cada load. Quem configura local perde a escolha.
