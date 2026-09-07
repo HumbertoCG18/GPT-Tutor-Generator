@@ -229,7 +229,7 @@ def backfill_posting_date_from_api(manifest_entries, contents):
     return out
 
 
-_DATE_DMY = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
+from src.builder.text.patterns import DATE_DMY_RE as _DATE_DMY  # regex unica (07/09)
 _DATE_PREFIX = re.compile(r"^\s*\[?\s*\d{1,2}[./]\d{1,2}(?:[./]\d{2,4})?\b")   # "12/03 Processos", "[03/08] - Intro"
 _STRUCTURE_FIELDS = ("moodle_section_index", "moodle_module_index", "moodle_week_label")
 

@@ -21,7 +21,7 @@ from src.builder.routing.motor.contracts import MotorContext
 from src.builder.routing.motor.disambiguator import _block_signature, _moodle_label_text, _toks
 from src.builder.routing.motor.window_provider import _modal_years, extract_date_in_name, hosts_material
 
-_DATE_DMY = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
+from src.builder.text.patterns import DATE_DMY_RE as _DATE_DMY  # regex unica (07/09)
 _RANGE = re.compile(r"\d{1,2}/\d{1,2}/\d{4}\s*a\s*\d{1,2}/\d{1,2}/\d{4}")
 _DATE_DM = re.compile(r"^\s*\[?\s*(\d{1,2})[./](\d{1,2})(?![./]?\d)")
 

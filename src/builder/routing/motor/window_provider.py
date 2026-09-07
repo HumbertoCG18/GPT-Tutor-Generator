@@ -364,7 +364,7 @@ def extract_date_in_name(entry: dict):
 
 
 _UNIT_TITLE_PREFIX_RE = re.compile(r"^\s*unidade(\s+de\s+aprendizagem)?\s*\d+\s*[\u2014\-\u2013:]?\s*", re.I)
-_SECTION_NUM_PREFIX_RE = re.compile(r"^\s*\d+(\.\d+)*\s*[-.:]?\s*")
+from src.builder.text.patterns import SECTION_NUM_PREFIX_RE as _SECTION_NUM_PREFIX_RE  # regex unica (07/09)
 def unit_named_by_section(entry: dict, ctx: MotorContext) -> str:
     """Slug da unidade que a SECAO do Moodle nomeia: 'U2 - ...' (numero explicito, file_map.explicit_unit_number)
     ou secao igual ao/contida no titulo da unidade do plano (frase inteira). "" se nenhuma ou mais de uma."""

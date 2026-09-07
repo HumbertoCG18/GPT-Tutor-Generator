@@ -172,7 +172,7 @@ _PROPAG_REASON = "propagado-headings"
 _DECOMP_REASON = "rotulo-decomposto"
 _TITULO_REASON = "titulo-nomeia-subtopico"
 _SECAO_REASON = "secao-nomeia-subtopico"
-_SECAO_NUM_RE = re.compile(r"^\s*\d+(\.\d+)*\s*[-.:]?\s*")
+from src.builder.text.patterns import SECTION_NUM_PREFIX_RE as _SECAO_NUM_RE  # regex unica (07/09)
 
 
 def _tokens_headings(signals: dict, generic_stems) -> set:
