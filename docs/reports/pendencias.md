@@ -10,6 +10,40 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## LEI REAFIRMADA: SARC E MOODLE > GOLD — GOLD DO ES2 CORRIGIDO PELO ORACULO E CRIVO DAS 7 DIVERGENCIAS (06/09 noite, sessao 6; user: "se o gold estiver diferente do SARC/Moodle, e mais provavel que eu tenha errado o gold")
+**Correcao (docs, gold so mede):** `tests/fixtures/eval/gold_units_ES2.csv` bloco-04 (10/04-24/04: discovery, api gateway, exercicios de revisao
+para P1) true_unit unidade-02 -> **unidade-01-arquitetura-de-software** (7 materiais: revisao-p1, roteiro2, roteiro3, microsservicos2,
+microsservicos3, roteiro2-nameserver, roteiro3-gateway). `docs/reports/subunit_gt_ES2.csv`: os 6 pontuaveis 2.7 -> **1.5
+`estudo-de-caso-arquitetura-orientada-a-microsservicos`** (revisao-p1 segue scorable=no). Evidencia do professor: plano "P1 contempla a secao 1",
+P1 no SARC em 08/05, label do Moodle de 24/04 "exercicios de revisao para P1". Bloco-07 (circuit breaker, 15/05, apos a P1) fica na 2.7.
+**Remedido (`placar_100_gold_es2.log`, snapshots de 06/09; produto `eval_eixos`):**
+
+| regime | 100% certo / 288 | 3 golds certos / 146 | bloco | unidade | subunidade |
+|---|---|---|---|---|---|
+| zero LLM | 155 -> **156** | 65 | 222/237 | 173 -> **180/191** | 117/233 |
+| vocab (5 cursos, 205) | 173 -> 166 | 125 -> 119 | 188/202 | 183 -> 176/191 | 138 -> 132/151 |
+| automatica | 238 -> **231** | 131 -> 125 | 231/237 | 185 -> 178/191 | 193 -> 187/233 |
+| produto | 253 -> **246** | 138 -> 132 | 236/237 | 191 -> **184/191** | 199 -> 193/233 |
+
+ES2: zero 6 -> 7/31 (unidade 18 -> 25/28) · automatica 28 -> 21 (unidade 28 -> 21, sub 26 -> 20) · produto 29 -> 22 (unidade 28 -> 21, sub 27 -> 21).
+Leitura: o produto e a automatica seguiam o alias 'API gateway'/'discovery' que o vocab LLM pendurou na 2.7; o gold, feito junto com a curadoria,
+concordava (in-sample). O oraculo discorda dos dois: **7 erros de unidade e 6 de subunidade do LLM estavam escondidos pelo gold**; o motor puro
+sem vocab, que preenche por posicao, estava certo. Nos 93 dos 4 cursos afinados o produto passa de 93/93 para 86/93 e a automatica de 87 para 81.
+**Crivo das outras 7 divergencias gold x posicao no Moodle (`coerencia_moodle.log` / `auditoria_gold.csv`), pela mesma lei:**
+- ES2 roteiro1, roteiro1-introducao (Moodle -> bloco-01; gold bloco-02): MANTIDO. Na secao 'Microsservicos' o Roteiro 1 esta entre o label
+  "Semana 30/03 a 03/04: feriado" e o label "10/04: discovery"; a auditoria pulou o label do feriado (sem bloco-aula) ate o de 20/03. O
+  professor o pos logo apos a aula de 27/03 "microsservicos no Spring (introducao)" = bloco-02. Artefato da heuristica, nao do professor.
+- TCC 3dm-caetano..., programacao-inteira-01-20260617 (Moodle 'secao' -> bloco-22/23; gold bloco-25): MANTIDO. Secao "Semana 14 - Apresentacoes
+  T2" sem data; SARC "oficina de problemas, entrega T2" em 12/06 = bloco-25.
+- SO laminas-cs-4244-sockets, laminas-sockets-alternativo (Moodle 'faixa de irmaos' -> bloco-06/07; gold bloco-09): MANTIDO. No card, o label
+  "Sockets" vem depois de "14/04 IPC (pipes, fifo)"; o SARC de 23/04 (bloco-09) e "comunicacao entre processos, pipes, filas". A 'faixa' e o
+  intervalo dos irmaos datados, nao uma afirmacao sobre sockets.
+- MF t2-2026-1 (Moodle label "Trabalho 1 (06/05)" -> bloco-11; gold bloco-18): a posicao do Moodle e artefato (o label "Trabalho 2:" nao tem
+  data e a auditoria herdou o do T1). Mas o gold bloco-18 (aula "verificacao de modelos, ferramenta", 29/06; relabel de 25/08) nao tem
+  evidencia do professor: o SARC diz "prova P2, entrega do T2" em **06/07 = bloco-20 (kind assessment)**, e o texto do T2 cita Dafny 3x (nao
+  cita NuSMV/Kripke). Nenhum gold dos 6 cursos aponta para bloco de prova (kinds no gold: class, deliverable, review, overview). **ABERTO
+  (decisao do user):** gold -> bloco-20 (bloco de prova passa a hospedar entrega) ou scorable=no.
+
 ## ES2 UNIDADE SEM LLM — 'MICROSSERVICOS' EM DUAS UNIDADES, CERCA DE PROVAS E GOLD SUSPEITO (06/09 noite, sessao 6; user: "como arrumar esse tipo de erro? o plano tem 3 entradas?")
 **Plano de ES2 (fonte `subjects.json`):** 5 ocorrencias de 'microsservicos' (sempre com dois s): 3 topicos (1.3.4 Orientada a Microsservicos e 1.5
 Estudo de caso, na unidade 01; 2.7 Estudo de Caso: integracao e implantacao, na unidade 02), 1 na ementa, 1 na bibliografia. Token presente em

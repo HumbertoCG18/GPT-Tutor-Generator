@@ -35,7 +35,8 @@ deterministico (mesma rota, produtor diferente); bloco/unidade/cobertura/holdout
 o codigo nao contem ('classificacao', 'chamadas de sistema', 'microsservicos'). Peso: 85 resumos / 205 votos / 1 vocab por curso nos 8.
 
 ## COMECE POR (proxima sessao) — tres decisoes do user antes de qualquer codigo
-**Placar por material (06/09 noite):** `python docs/reports/_harness-2026-09-04/c1-3/placar_100.py` (snapshots em `c1-3/snap_placar/`; zero LLM 155/288 · automatica 238/288 · produto 253/288 com todos os golds certos; CG automatica 56/83). Tracker §PLACAR CONSISTENTE.
+**Placar por material (06/09 noite, gold do ES2 corrigido pelo oraculo):** `python docs/reports/_harness-2026-09-04/c1-3/placar_100.py` (snapshots em `c1-3/snap_placar/`; zero LLM 156/288 · automatica 231/288 · produto 246/288 com todos os golds certos; CG automatica 56/83; produto unidade 184/191, sub 193/233). Tracker §PLACAR CONSISTENTE e §LEI REAFIRMADA. **Lei: SARC e Moodle > gold** (user, 06/09 noite).
+**Aberto:** gold do MF `t2-2026-1` (SARC: entrega do T2 em 06/07 dentro do bloco da P2; gold bloco-18 sem evidencia do professor).
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json`, `.codex/` e `.mex/patterns/*` de outro agente), `git log --oneline -3`,
    HEAD dos 8 tutores = "Estado ao terminar", `python scripts/censo_motor_llm.py` (revisar/100 58,3 com 'mudou' 13; votos/100 35,9; FILE_MAP 100%
    nos 8, SO 38/39 por duplicata), `python -m pytest tests -q` (2325), `python scripts/sentinela_manifests.py` (0). Nada pushed.

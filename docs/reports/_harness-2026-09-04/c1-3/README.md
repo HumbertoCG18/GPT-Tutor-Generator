@@ -36,3 +36,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
 - `placar_100_runs.py` (snapshots por regime em `snap_placar/`, gitignored) + `placar_100.py` (placar por material: 100% certo por regime) · `repara_paginas_cg.py [--dry-run]` (reparo registrado das 16 paginas do Moodle do CG, 0 chamadas) · `docs_c1_3t.py`. Logs `placar_100_runs.log`, `placar_cg_zero.log`, `placar_cg_auto.log`, `audita_gold_pos_reparo.log` (auditoria identica a de 06/09).
 - `diag_zero.py [zero|vocab|auto]` (decomposicao dos materiais que nao estao 100% por eixo e causa) · logs `diag_zero.log`, `diag_zero_texto.log` (onde o nome do subtopico do gold aparece).
 - `simula_cerca_provas.py` (cerca de provas: escopo do plano x data no SARC, estatico nos snapshots zero + FR do zero) · log `simula_cerca_provas.log`.
+- `placar_100_gold_es2.log` (placar com o gold do ES2 corrigido pelo oraculo) · `docs_c1_3u.py`.

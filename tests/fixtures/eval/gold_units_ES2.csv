@@ -2,7 +2,7 @@
 c47823dc-111f-4854-b46e-08acb7063909,bloco-01,2026-03-06,2026-03-20,class,disciplina conceitos arquitetura baseada servicos monolitica microservicos,unidade-01-arquitetura-de-software,unidade-01-arquitetura-de-software,
 b0e2cc0d-7442-4888-87f2-2a4694598b83,bloco-02,2026-03-27,2026-03-27,class,microsservicos spring introducao,unidade-01-arquitetura-de-software,unidade-01-arquitetura-de-software,
 05c47442-e3e3-4fda-ab6b-019acdc07c87,bloco-03,2026-04-03,2026-04-03,holiday,feriado,,,
-8a2e86f0-fb4a-4487-86ec-07e74c73d88a,bloco-04,2026-04-10,2026-04-24,class,microservicos spring discovery gateway,unidade-01-arquitetura-de-software,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,
+8a2e86f0-fb4a-4487-86ec-07e74c73d88a,bloco-04,2026-04-10,2026-04-24,class,microservicos spring discovery gateway,unidade-01-arquitetura-de-software,unidade-01-arquitetura-de-software,"oraculo 06/09: bloco 04 (10/04-24/04) vem antes da P1 de 08/05, que pelo plano contempla so a secao 1; label do Moodle de 24/04 = 'exercicios de revisao para P1'"
 852bbdd6-4c53-4c6a-b237-6be58e5852db,bloco-05,2026-05-01,2026-05-01,holiday,feriado,,,
 5f282140-9baa-481b-9f0c-565864226e06,bloco-06,2026-05-08,2026-05-08,assessment,Prova P1,,,"FORA DA RÉGUA: u01, u02 (kind=assessment)"
 a0d38bad-e123-4b82-b8d0-03f6724b9617,bloco-07,2026-05-15,2026-05-15,class,microservicos spring circuit breaker,unidade-01-arquitetura-de-software,unidade-02-integracao-de-desenvolvimento-e-operacao-devops,
