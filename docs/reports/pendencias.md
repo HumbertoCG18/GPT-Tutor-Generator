@@ -10,6 +10,29 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## SALAS DE ENTREGA PELA API — ABERTURA / VENCIMENTO / FECHAMENTO, ATIVIDADE DE AULA x TRABALHO, ANEXOS AUSENTES (06/09 noite; perguntas do user)
+**API (medido ao vivo, token do aluno, 0 chamadas Gemini):** `mod_assign_get_assignments(courseids)` devolve por sala `allowsubmissionsfromdate`
+(abertura), `duedate` (vencimento), `cutoffdate` (fechamento), `gradingduedate`, `timemodified`, `intro` (enunciado HTML) e `introattachments`
+(arquivos do enunciado); 29 modulos vieram como "sem acesso" (ocultos ao aluno). `core_course_get_contents.dates` ja traz "Aberto:" e
+"Vencimento:" (IA 18, LR 3, ES2 1; MF e SO so vencimento; TCC/CG/FR nada). Fechamento: so 1 sala da IA (Atividade 1); MF nenhum.
+**IA (18 salas) — o catch do user, separavel pela duracao abertura -> vencimento:** <= 26 h = ATIVIDADE DE AULA (10: Atividades 1, 3a, 4, 5, 6, 7,
+10, 11, 12 e Casos de Teste; vencem 21:50-22:30 do dia da aula) · 3-5 dias (4: Atividades 2, 8, 9 e "integrantes") · >= 7 dias = TRABALHO (T1 672 h,
+06/04 -> 04/05; T2 645 h, 03/06 -> 29/06; Atividade 3b 168 h; video do T2 189 h). Nome ("T1", "Atividade de Aula N") e secao (TDE) confirmam.
+Coerencia com o SARC sem gold: T1 vence 04/05 = "apresentacao do T1" 04/05-06/05 (blocos 09/10); T2 vence 29/06 = "apresentacao T2" 29/06 (bloco 19).
+Para o bloco, a regra "bloco que contem o vencimento hospeda" serve aos dois casos: atividade de aula vence no dia da aula -> bloco-aula do dia;
+trabalho vence na entrega -> bloco da entrega (deliverable ou prova). O catch e de CATEGORIA (exercicio de aula x trabalho da media), nao de bloco.
+**LACUNA (medida):** os `introattachments` nao entram no pull nem no tutor: IA `T1_IA_2026_01_t32.pdf`, `T2_AlgoritmosDeBusca_2026_01.pdf`,
+`Atividade_Dados2026.zip`, `AlgoritmoAStar_v2.zip`, `casoDeTeste32.zip` ausentes; manifest da IA tem 0 entries 'trabalhos'. O aluno nao tem os
+enunciados dos trabalhos da IA no tutor (`cardio_v2.csv` existe por outro caminho). Sync/pull: trazer anexos e `intro` das salas.
+**Bloco de prova com unidade (pergunta do user):** faz sentido = escopo da prova. O motor ja calcula `scope_unit_slugs` por data
+(`apply_assessment_review_scope`); o plano declara o escopo em MF/TCC/ES2/FR (AVALIACAO). Conflito real: MF plano "P2 = unidade 3" x calendario
+(unidade 2 ensinada depois da P1: escopo por data = U2+U3). Precedencia a decidir: calendario (SARC) > plano.
+**Conclusoes para o motor (propostas; so C1 decidida; nada medido):** C1 vencimento dentro de bloco de prova hospeda (inverte T17). C2 bloco de prova
+recebe `unit_slugs` = escopo, e material hospedado escolhe a unidade DENTRO do escopo pelo conteudo (unit DP restrito). C3 sala com span <= 1 dia =
+atividade de aula -> bloco-aula do dia, categoria exercicios; span >= 7 dias ou TDE/"T<n>" = trabalho -> bloco do vencimento. C4 sync traz
+`introattachments` + `intro` como material e descricao do professor (texto deterministico para bloco/subunidade). C5 regua sem gold: vencimento x
+sessao "apresentacao/entrega" do SARC. Gate: motor puro + suite; gold so mede.
+
 ## BLOCO DE PROVA HOSPEDA ENTREGA (decisao do user 06/09 noite) — GOLD DO T2 DO MF -> BLOCO 20; DATAS DE ENTREGA JA ESTAO NO PULL
 **Gold (docs):** `ground_truth_MF.csv` t2-2026-1 true_block bloco-18 -> **bloco-20** ("prova P2, entrega do T2", 06/07, kind assessment; Moodle
 'Sala de entrega' vencimento 06/07/2026 23:59). Bloco de prova nao tem unidade (gold_units 'FORA DA REGUA'): o T2 sai da regua de unidade

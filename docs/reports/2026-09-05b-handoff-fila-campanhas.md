@@ -36,6 +36,7 @@ o codigo nao contem ('classificacao', 'chamadas de sistema', 'microsservicos'). 
 
 ## COMECE POR (proxima sessao) — tres decisoes do user antes de qualquer codigo
 **Placar por material (06/09 noite, gold do ES2 corrigido pelo oraculo):** `python docs/reports/_harness-2026-09-04/c1-3/placar_100.py` (snapshots em `c1-3/snap_placar/`; zero LLM 156/288 · automatica 231/288 · produto 246/288 com todos os golds certos; CG automatica 56/83; produto unidade 184/191, sub 193/233). Tracker §PLACAR CONSISTENTE e §LEI REAFIRMADA. **Lei: SARC e Moodle > gold** (user, 06/09 noite).
+**Salas de entrega pela API (06/09 noite):** abertura/vencimento/fechamento/enunciado/anexos via `mod_assign_get_assignments`; LACUNA: anexos das salas (enunciados T1/T2 da IA) nao entram no tutor; propostas C1-C5 no tracker §SALAS DE ENTREGA PELA API.
 **Decidido (06/09 noite): bloco de prova hospeda entrega.** Gold do MF `t2-2026-1` -> bloco-20; produto bloco 197/199 (o due-window ancora na aula anterior por desenho T17: candidata C no tracker). Placar: zero 155 · automatica 230 · produto 245 / 288; unidade 183/190; sub 193/233.
 0. Confirme o estado: `git status --short` (so `.claude/settings.local.json`, `.codex/` e `.mex/patterns/*` de outro agente), `git log --oneline -3`,
    HEAD dos 8 tutores = "Estado ao terminar", `python scripts/censo_motor_llm.py` (revisar/100 58,3 com 'mudou' 13; votos/100 35,9; FILE_MAP 100%
