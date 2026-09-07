@@ -45,3 +45,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
 - `reprocess_8_taxonomia.py` (reprocess registrado da taxonomia padronizada nos 8) · logs `reprocess_8_taxonomia.log`, `formatacao_taxonomia.log`, `anomalias_numeracao.log`, `numeracao_plano.log`, `unidade_vazia_sub_cheia.log` · `gera_tabela_cenarios.py` + `dados_cenarios.json` (matriz por cenario).
 - `mede_pai_filho.py [regime]` (parentesco dos erros de subunidade) e `simula_pai_filho.py` (a regra em 8 configuracoes) · logs homonimos.
 - `simula_piso_1a.py` (distribuicao de forca das decisoes que bloqueiam a 2a passada) e `mede_piso_grade.py` (grade do piso pela rota real, 6 cursos x 5 pisos) · logs homonimos.
+- `mede_filtro_descricao.py` (efeito do filtro pela rota real) · log homonimo. ATENCAO: importar `simula_aprovacao` EXECUTA o experimento dele (falta guard `__main__`) — o log traz duas rodadas, a segunda e a valida.

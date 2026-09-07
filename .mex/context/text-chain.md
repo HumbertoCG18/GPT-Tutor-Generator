@@ -87,10 +87,13 @@ Duas portas, e o resultado é diferente em cada uma:
    até 1634 chars. O Ollama também sabe descrever (`src/builder/vision/ollama_client.py:294 describe_image`), mas hoje só entra pelo Image
    Curator na UI — **não há seleção de provedor no build**.
 
-**Medido (`c1-3/ablate_descricoes.py`): remover as descrições MELHORA a atribuição** — produto 245 → 247/288 materiais 100% certos,
-subunidade 193 → 195/233, erros confiantes 19 → 18, fila 91 → 89. A descrição genérica em inglês é ruído para o scorer.
-Conclusão de arquitetura: a descrição serve ao **aluno**, não ao scorer — o motor deve pontuar o texto sem esses blocos, mantendo-os no
-markdown entregue.
+**Resolvido em 07/09 (`entry_signals.texto_para_score`, gerador `44ed407`):** o motor pontua o texto SEM os blocos
+`<!-- IMAGE_DESCRIPTION -->`, e o markdown entregue ao aluno continua com eles. O filtro fica em
+`collect_entry_unit_signals`, ponto único por onde passam o scorer de unidade, o de subunidade e a propagação por
+headings. Medido pela rota real antes de entrar: produto 245 → 247/288 materiais totalmente certos, subunidade
+193 → 195/233, erros confiantes 19 → 18, fila 91 → 89; bloco e unidade inalterados. O efeito é de **segunda ordem**:
+a caption em inglês entra no vocabulário propagado do curso, porque os apelidos nascem dos materiais confiantes, e
+desvia materiais que nem têm imagem — os dois casos do CG tinham texto idêntico com e sem descrição.
 
 ## 5. Regras ao medir acurácia
 
