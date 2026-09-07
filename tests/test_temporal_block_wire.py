@@ -1,4 +1,4 @@
-"""TDD — Stage B: wire anchor_placement via campo aditivo temporal_block_id.
+"""TDD — Stage B: campo aditivo temporal_block_id e helper resolve_temporal_block (o modulo anchor_placement foi removido em 07/09/2026).
 
 Invariantes do gate:
 - computed_block_id NUNCA é tocado pelo anchor pass (KB byte-idêntico).

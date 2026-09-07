@@ -111,8 +111,8 @@ class FileEntry:
     computed_block_method: str = ""
     computed_block_match_confidence: float = 0.0
     # Bloco TEMPORAL (cronograma) resolvido pela camada de âncora, ADITIVO e
-    # disjunto de computed_block_id (KB). Escrito SÓ com flag use_anchor_placement
-    # e method anchor/manual; "" (omitido do to_dict) quando scorer ou flag OFF
+    # disjunto de computed_block_id (KB). Escrito pelo motor (use_anchor_engine)
+    # com method do provider, ou manual; "" (omitido do to_dict) quando scorer ou flag OFF
     # -> resolve_temporal_block cai no fallback resolve_effective_block. NUNCA
     # alimenta file->card/unit (não re-conflaciona temporal vs KB).
     temporal_block_id: str = ""
@@ -271,7 +271,7 @@ class SubjectProfile:
     preferred_llm: str = "claude"  # Plataforma principal: "claude", "gpt", "gemini"
     # Flags de feature por matéria (durável). Ausente/{} → todas False. Injetadas
     # nas builder.options por _build_options_from_config. Liga capacidades wired
-    # atrás de flag (ex.: use_anchor_placement) sem schema novo por flag.
+    # atrás de flag (ex.: use_anchor_engine) sem schema novo por flag.
     feature_flags: Dict[str, bool] = field(default_factory=dict)
     queue: List[FileEntry] = field(default_factory=list)
 

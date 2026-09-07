@@ -721,8 +721,8 @@ def resolve_temporal_block(
 ) -> str:
     """Bloco TEMPORAL (cronograma) efetivo do material.
 
-    Precedência: `temporal_block_id` (âncora cronograma-validada, escrito só com
-    a flag use_anchor_placement) sobrepõe; ausente → cai na FONTE ÚNICA
+    Precedência: `temporal_block_id` (escrito pelo motor com use_anchor_engine)
+    sobrepõe; ausente → cai na FONTE ÚNICA
     compartilhada `resolve_effective_block` (manual > computed). Com a flag OFF
     o campo nunca existe → este helper é byte-idêntico ao resolve_effective_block
     de hoje. Disjunto de KB: NÃO chama reconcile_unit_with_block.

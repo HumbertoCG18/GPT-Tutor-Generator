@@ -583,17 +583,11 @@ def regenerate_pedagogical_files(
         )
 
     # Camada de placement por âncora (TEMPORAL-only, aditiva). Escreve
-    # temporal_* sem tocar computed_block_id (KB). Precedência: motor D9
-    # (use_anchor_engine, FASE 4) > legado (use_anchor_placement, morre no
-    # cutover FASE 5). Imports function-local sob o gate (padrão existente).
+    # temporal_* sem tocar computed_block_id (KB). Motor D9 (use_anchor_engine,
+    # FASE 4); o legado use_anchor_placement foi removido em 07/09/2026
+    # (nunca ligado em produto; flag desconhecida e ignorada).
     if bool(builder.options.get("use_anchor_engine", False)):
         live_manifest_entries = _run_anchor_engine_layer(builder, live_manifest_entries)
-    elif bool(builder.options.get("use_anchor_placement", False)):
-        from src.builder.routing.anchor_placement import apply_anchor_placement
-        live_manifest_entries = apply_anchor_placement(
-            live_manifest_entries,
-            enriched_timeline_index.get("blocks") or [],
-        )
 
     # F4: unit/subunit do motor, reconciliados contra o bloco TEMPORAL.
     # 2026-08-21: esta fase rodava ANTES da camada temporal e reconciliava
