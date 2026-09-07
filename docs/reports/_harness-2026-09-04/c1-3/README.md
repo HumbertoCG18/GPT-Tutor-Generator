@@ -44,3 +44,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
 - `simula_aprovacao.py` (pos-processamento da aprovacao aplicado em copia + reprocess + medida antes/depois) · log `simula_aprovacao.log` · `fonte_do_texto.log` (precedencia, Datalab, sumario, descricoes por LLM) · `docs_c1_3x.py`.
 - `reprocess_8_taxonomia.py` (reprocess registrado da taxonomia padronizada nos 8) · logs `reprocess_8_taxonomia.log`, `formatacao_taxonomia.log`, `anomalias_numeracao.log`, `numeracao_plano.log`, `unidade_vazia_sub_cheia.log` · `gera_tabela_cenarios.py` + `dados_cenarios.json` (matriz por cenario).
 - `mede_pai_filho.py [regime]` (parentesco dos erros de subunidade) e `simula_pai_filho.py` (a regra em 8 configuracoes) · logs homonimos.
+- `simula_piso_1a.py` (distribuicao de forca das decisoes que bloqueiam a 2a passada) e `mede_piso_grade.py` (grade do piso pela rota real, 6 cursos x 5 pisos) · logs homonimos.

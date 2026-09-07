@@ -10,6 +10,25 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## PISO DE FORCA NA 1a PASSADA — SEM EFEITO, NAO ENTRA (07/09; `c1-3/simula_piso_1a.py`, `mede_piso_grade.py`)
+**Diagnostico (certo):** o gate que faz a 1a passada bloquear a 2a e `confidence >= 0,7` e nao-ambigua — e `confidence` e
+MARGEM, nao forca. Por isso um vencedor unico e fraco (winner_score 0,91, vindo de descricao de imagem em ingles) trava a
+propagacao por headings, que so age em indeciso.
+**Distribuicao (`simula_piso_1a.log`, 178 decisoes que bloqueiam a 2a e tem gold; 148 certas, 30 erradas):** a forca NAO
+separa — certas tem min 0,12 e mediana 16,61; erradas min 0,12 e mediana 7,14. Qualquer piso libera mais CERTAS do que
+ERRADAS (piso 1,0: 4 erradas e 11 certas; piso 1,5: 8 e 15).
+**Medido pela rota REAL do motor (`mede_piso_grade.log`, 6 cursos com gold, reprocess completo em copia por valor, tripwire,
+~18 min):** subunidade **193/233 em TODOS os pisos (0 · 0,5 · 1,0 · 1,5 · 3,0)**, identico curso a curso. Com piso 3,0 no CG,
+**0 entries mudam — nem as reasons**. Ou seja: liberar a decisao fraca para a 2a passada nao faz a 2a trocar nada, porque o
+re-scoring com a taxonomia enriquecida devolve o mesmo vencedor.
+**Conclusao: o gate NAO e o gargalo; o vocabulario e.** No experimento das descricoes do Datalab o que mudou foi o
+VOCABULARIO propagado (os aliases nascem dos materiais confiantes, cujo texto trazia a prosa em ingles), nao a permissao.
+Codigo sem efeito nao entra: patch revertido, suite 2337 verde.
+**Alavanca que RESTA com efeito medido:** filtrar os blocos `<!-- IMAGE_DESCRIPTION -->` do texto que o SCORER pontua,
+mantendo-os no markdown entregue ao aluno — pelo gold +2 materiais 100% certos, sub 193 -> 195, conf-err 19 -> 18, fila
+91 -> 89; **pela regua da secao do professor -1 no CG** (14 -> 13/30). A divergencia entre as duas reguas segue aberta:
+decisao do user, com a lei SARC/Moodle > gold pesando contra.
+
 ## REGRA PAI x FILHO — REFUTADA POR MEDICAO, NAO ENTRA (07/09; `c1-3/mede_pai_filho.py` e `simula_pai_filho.py`)
 **Alcance primeiro (`mede_pai_filho.log`, produto, 40 erros de subunidade nos 6 golds):** sem parentesco 10 · gold vazio 9 ·
 irmaos do mesmo pai 7 · mesma unidade e ramos diferentes 6 · motor vazio 4 · **escolheu FILHO e o gold quer o PAI 3** ·
