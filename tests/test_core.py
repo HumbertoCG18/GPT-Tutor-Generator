@@ -3365,7 +3365,7 @@ class TestAssessmentConflicts:
 
         result = file_map_md(course_meta, [entry], sp)
 
-        assert "unidade-01-metodos-formais" in result
+        assert "01 - Metodos Formais" in result or "01 - Métodos Formais" in result
         assert "02/03/2026 a 25/03/2026" in result
         assert "Isabelle" in result
 
@@ -3613,9 +3613,9 @@ class TestGlossarySeed:
 
         result = file_map_md(course_meta, [entry], subject_profile)
 
-        assert "unidade-01-metodos-formais" in result
+        assert "01 - Metodos Formais" in result or "01 - Métodos Formais" in result
         assert "02/03/2026 a 25/03/2026" not in result
-        assert "| unidade-01-metodos-formais |" in result
+        assert "| 01 - Metodos Formais |" in result or "| 01 - Métodos Formais |" in result
         assert "| Alta |  |" in result
 
     def test_build_passes_manifest_entries_to_glossary(self, tmp_path, monkeypatch):

@@ -545,14 +545,12 @@ def render_low_token_file_map_md(
         or course_meta.get("_timeline_context_for_tests")
         or build_file_map_timeline_context_from_course(course_meta, subject_profile)
     )
+    # Rotulos de LEITURA (07/09): "03 - Nome" e "3.5 - Nome", compostos de code + label pelo text/rotulos.
+    # So a celula exibida muda; slug, label, code e todo o matching seguem intactos.
+    from src.builder.text.rotulos import mapa_rotulos
     _bold_re = re.compile(r"\*\*([^*]+)\*\*")
-    topic_labels: dict = {}
-    for _u in content_taxonomy.get("units", []) or []:
-        for _t in (_u.get("topics", []) or []):
-            _slug = str(_t.get("slug", "") or "")
-            _label = str(_t.get("label", "") or "")
-            if _slug and _label:
-                topic_labels[_slug] = _bold_re.sub(r"\1", _label).strip()
+    _unit_labels, _topic_rotulos = mapa_rotulos(content_taxonomy)
+    topic_labels: dict = {k: _bold_re.sub(r"\1", v).strip() for k, v in _topic_rotulos.items() if k and v}
     blocks_by_unit = temporal_context.get("blocks_by_unit", {}) if temporal_context else {}
     unassigned_blocks = temporal_context.get("unassigned_blocks", []) if temporal_context else []
     # Lookup id->period_label cobrindo TODOS os blocos do timeline (atribuídos e
@@ -689,7 +687,7 @@ def render_low_token_file_map_md(
         lines.append(
             f"| {i} | {title} | {category} | {entry_usage_hint(entry)} | "
             f"{entry_priority_label(entry)} | {md_cell} | {sections or ''} | "
-            f"{unit or ''} | {subtopic_label or ''} | {confidence} | {period or ''} |"
+            f"{_unit_labels.get(unit, unit) or ''} | {subtopic_label or ''} | {confidence} | {period or ''} |"
         )
         # C1 item 1 (05/09): a linha "↳ rastreabilidade" (raw, tags, markdown-base; ~230 chars
         # por material) saiu daqui para course/FILE_MAP_TRACE.md (file_map_trace_md). Com ela,

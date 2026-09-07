@@ -856,7 +856,7 @@ def test_file_map_md_auto_fills_unit_column_from_subject_profile(tmp_path):
 
     result = file_map_md(course_meta, entries, subject_profile)
 
-    assert "unidade-02-verificacao-de-programas" in result
+    assert "02 - Verificacao de Programas" in result or "02 - Verificação de Programas" in result
     # Período espelha o manifest: sem computed_block_id/manual o FILE_MAP não
     # recomputa mais o período via scorer — coluna fica em branco.
     assert "2026-03-16" not in result
@@ -923,7 +923,7 @@ def test_file_map_md_refines_period_by_subtopic_within_unit(tmp_path):
 
     result = file_map_md(course_meta, entries, subject_profile)
 
-    assert "unidade-01-metodos-formais" in result
+    assert "01 - Metodos Formais" in result or "01 - Métodos Formais" in result
     assert target_block["period_label"] in result
     assert "Exerciciosformalizacaoalgoritmosrecursao" in result
 
@@ -1169,7 +1169,7 @@ def test_file_map_md_respects_manual_unit_override(tmp_path):
 
     result = file_map_md(course_meta, entries, subject_profile)
 
-    assert "unidade-02-verificacao-de-programas" in result
+    assert "02 - Verificacao de Programas" in result or "02 - Verificação de Programas" in result
     # Período espelha o manifest: manual_unit_slug não dispara mais recomputação
     # de período via scorer — sem computed_block_id/bloco manual a coluna fica vazia.
     assert "2026-05-06" not in result
