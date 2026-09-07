@@ -83,3 +83,22 @@ def test_listas_de_genericos_moram_so_em_stopwords():
     assert sw.TOPIC_SUPPORT_STOP == {"sobre", "para", "com", "sem", "entre"}
     assert sw.FILE_MAP_TITLE_ANCHOR_STOP == {"unidade", "aprendizagem", "verificacao"}
 
+
+
+def test_descricao_de_imagem_sai_do_texto_que_o_scorer_pontua():
+    """07/09: a descricao de imagem serve ao ALUNO e fica no markdown, mas nao pontua — a caption generica em ingles
+    entrava no vocabulario propagado do curso e desviava a subunidade de materiais que nem tem imagem."""
+    from src.builder.extraction.entry_signals import texto_para_score
+    md = (
+        "# Morfologia\n\n"
+        "<!-- IMAGE_DESCRIPTION: datalab-abc_img.jpg -->\n"
+        "<!-- Tipo: generico -->\n"
+        "> **[Descricao de imagem]** A 4x4 grid showing the result of erosion.\n"
+        "<!-- /IMAGE_DESCRIPTION -->\n\n"
+        "Segmentacao de imagens por limiarizacao.\n"
+    )
+    limpo = texto_para_score(md)
+    assert "IMAGE_DESCRIPTION" not in limpo and "erosion" not in limpo
+    assert "Segmentacao de imagens por limiarizacao." in limpo and "# Morfologia" in limpo
+    # texto sem bloco passa intacto (no-op barato)
+    assert texto_para_score("# so texto") == "# so texto"

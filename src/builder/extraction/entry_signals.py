@@ -7,6 +7,7 @@ from src.builder.extraction.content_taxonomy import (
     _extract_markdown_headings,
     extract_markdown_lead_text,
 )
+from src.builder.extraction.image_markdown import _IMAGE_DESC_BLOCK_RE, _IMAGE_DESC_ORPHANS_RE
 from src.builder.routing.thresholds import TOOL_EXTENSIONS
 from src.builder.text.normalize import (  # noqa: F401  (re-export)
     normalize_match_text,
@@ -90,7 +91,20 @@ def _sem_eco(tags: List[str]) -> List[str]:
     return [t for t in tags if not str(t).lower().startswith(_PREFIXOS_ESPELHO_DO_MOTOR)]
 
 
+def texto_para_score(markdown_text: str) -> str:
+    """Markdown sem os blocos de DESCRICAO DE IMAGEM. A descricao serve ao ALUNO (contexto da figura no tutor) e fica no
+    arquivo; ela nao deve pontuar. Medido em 07/09: a caption generica do Datalab, em ingles ("A 4x4 grid showing the
+    result of erosion", "Logos for GRU and PUCRS"), entra no vocabulario propagado do CURSO — os materiais confiantes doam
+    alias — e desvia a subunidade de materiais que nem tem imagem. Ablando os blocos: +2 materiais 100% certos, subunidade
+    193 -> 195/233, erro confiante 19 -> 18, fila 91 -> 89 (`c1-3/ablate_descricoes.log`)."""
+    texto = str(markdown_text or "")
+    if "IMAGE_DESCRIPTION" not in texto:
+        return texto
+    return _IMAGE_DESC_ORPHANS_RE.sub("\n", _IMAGE_DESC_BLOCK_RE.sub("", texto))
+
+
 def collect_entry_unit_signals(entry: dict, markdown_text: str) -> Dict[str, str]:
+    markdown_text = texto_para_score(markdown_text)
     manual_tags = [str(tag).strip() for tag in (entry.get("manual_tags") or []) if str(tag).strip()]
     auto_tags = [str(tag).strip() for tag in (entry.get("auto_tags") or []) if str(tag).strip()]
     # Lista SEM eco: so o que vira TEXTO de score. A lista crua segue inteira
