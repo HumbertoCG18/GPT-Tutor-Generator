@@ -10,6 +10,29 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## CAUSA RAIZ DAS DUVIDAS DE BLOCO — JANELA ∩ UNIDADE DA SECAO + FILA SEM CERIMONIA (06/09, sessao 6; user: "encontrar o real motivo")
+**Anatomia medida (produto, 8 cursos, 38 duvidas de bloco; gold de bloco onde existe):** janela-1 flagada 21 ("sinal indireto" por desenho; janela de
+1 bloco por data no nome 9 / topico da secao 12) **14/14 certos** · funil com voto 16 (flag mantida por desenho apos o LLM decidir) **1/1 (+5/5 em
+05/09)** · due-straddle 1 (1/1). **37 avisos por 0 erros de bloco = cerimonia**, como a camada llm. Nas copias automaticas: identico (14/14, 1/1).
+**FR do zero (A2), 10 duvidas de bloco, causa ESTRUTURAL:** 8 vem do provider 'topic': os tokens do nome da secao ('camada', 'aplicacao') casam sessoes
+do SARC de setembro a novembro -> janela de 6 blocos em 4 unidades com rotulos repetidos -> desempate flagado. O motor ja sabia a unidade (secao
+'U2' = blocos 03 e 05) e nao a usava na janela. 2 sao sem janela nenhuma (poster png sem texto; lista da U1).
+**Alavanca ENTROU (`8856d89` + fix `b421e92`, `window_provider.narrow_window_by_unit` no `anchor_engine.resolve_unscoped` logo apos
+`resolve_window`; `MotorContext.units` carregado de `.content_taxonomy.json`):** janela ∩ blocos da unidade que a secao nomeia ('U<n>' via
+`explicit_unit_number`, ou secao contida no/igual ao titulo da unidade). Nunca esvazia; **bloco SEM unidade (entrega/revisao/prova) fica na
+janela** — a 1a versao o descartava e o MF `exercicioscorrecaoterminacao` perdeu a entrega bloco-11 (gold) da janela e virou erro confiante
+(conf-err 0 -> 1 na automatica): corrigido, 4 testes (`tests/test_window_unit.py`). Alcance estatico: FR do zero 8 janelas, CG 23, SO 1, FR 10; gold
+de bloco dentro da janela encolhida 16/16.
+**Fila (`revisar.motivos_de`, `8856d89`):** janela-1 flagada e llm-funil com voto deixam de ser pendencia (a flag fica gravada como informacao).
+Censo antes do reprocess: 57,5 -> 26,7 por 100 (duvida 71 + mudou 22). Testes adaptados (`test_revisar`, `test_moodle_sync`). Suite 2339.
+**Gates (copias, tripwire, 0 chamadas; `janela2_*.log`):** motor puro +vocab 186/199 conf-err 1 · 183/191 · 53/57 · sub 138/151 · **holdout CG puro
+bloco 31 -> 33/35** · CG sub puro 47 · automatica 193 conf-err 0 · 185 · 53 · 138 · holdout 35/35 · CG sub 58/82. Determinismo 8/8, 0 arquivos nao deterministicos.
+**FR do zero A4 (`rebuild_fr_a4.log`, 0 chamadas):** fila 11 -> 10/20 · concordancia com o produto bloco 11 -> 13/20, unidade 20/20, sub 11/20 ·
+todos os materiais de U2 caem em blocos 03/05 (a janela encolhida). O que resta: 7 desempates 03 x 05 flagados (13/08 x 27/08: o SARC nao separa
+"protocolos de aplicacao" de "desenvolvimento de aplicacoes" no texto de um zip de sockets) · 2 sem janela (poster png; lista da U1) · 1 empate de
+subunidade. Candidata: sem janela + unidade nomeada -> janela = blocos da unidade (poster/lista da U1 -> [01, 02]).
+**Reprocess registrado dos 8 (`c1-3/reprocess_8_janela.py`):** bloco mudou so no FR (3 zips de sockets: bloco-22 11/10 -> bloco-05 27/08, a aula de desenvolvimento de aplicacoes); unidade 0; subunidade 0; revisar mudou 26; fila 110 -> 93; HEADs SO c60e2d1, TCC 79a9696, LR 5201deb, FR 5c9372a, CG 3c2c932 (MF/IA/ES2 so updated_at). **Produto:** curada bloco 198/199 conf-err 0 · unidade 191/191 · cobertura 55/57; subunidade x 6 golds 201/233 (86,3%) igual; sentinela 0. **Fila 26,7 (93/348: duvida 71 + mudou 22; por curso MF 11, SO 10, IA 4, ES2 12, TCC 7, LR 0, FR 5, CG 44; anatomia conflito 50, sub-ambigua 13, sub-empate 8, flag disamb 3) por 100.**
+
 ## FR DO ZERO — RUN A (06/09, sessao 6; user: "faca FR em sandbox, numeros de precisao, sem gold")
 **Como (`c1-3/rebuild_fr.py --fresh`, 771 s):** stash do Moodle do FR (20 arquivos: 15 pdf, 1 png, 4 tar.gz; os 2 links do youtube nao entram pelo stash)
 -> mesmo caminho da UI (scan_stash_cards -> build_stash_entries -> RepoBuilder.build), perfil real do FR, pymupdf4llm (o FR atual ja era pymupdf4llm),

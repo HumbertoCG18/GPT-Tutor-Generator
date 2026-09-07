@@ -32,3 +32,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
 - `simula_secao_sub.py` (S1 +5/-3, S1b +3/-0, S2 +5/-13) · `reprocess_8_secao.py`. Logs `secao_*.log`, `reprocess_8_secao.log`, `determinismo_secao.log`.
 - `rebuild_fr.py [--dry-run] [--fresh]`: FR do zero em `.ablacao/FR-rebuild/` pelo caminho da UI, 0 chamadas (tripwire Gemini + Datalab, vocab off); compara com o produto. Log `rebuild_fr.log`.
 - `rebuild_fr_b.py --fresh` (run B, Gemini contado, Datalab bloqueado) · `reprocess_8_explicita.py`. Logs `rebuild_fr_a2.log`, `rebuild_fr_b.log`, `explicita_*.log`, `reprocess_8_explicita.log`.
+- `reprocess_8_janela.py`; logs `janela_*.log` (v1, conf-err 1 no MF), `janela2_*.log` (fix), `rebuild_fr_a3.log`, `rebuild_fr_a4.log`, `reprocess_8_janela.log`, `determinismo_janela.log`.

@@ -26,6 +26,7 @@ unidade de bloco sem evidencia lexical (CG bloco-08; 1 chamada por bloco assim).
 (`ff3eda7`): automatica x 233 187 -> 192 (82,4%), CG 49 -> 54/82, produto 193 -> 197 (84,5%); tracker §CG SUBUNIDADE 60% e §FILA DE REVISAO — CAMADA LLM CORTADA.
 Regua SEM GOLD (posicao do professor no Moodle): coerencia 188/195 = 96,4% nos 5 cursos, 7 incoerencias = defeitos do Moodle (gold da razao ao motor);
 CG/LR/FR sem posicao datada (regua nao cobre). Fila: P3 (sem sub-ambigua) 30,2/100 custo 0; P4 (sem conflito) 18,7/100 perde 7 erros do CG — decisao do user.
+Janela ∩ unidade da secao (`8856d89`+`b421e92`) + fila sem janela-1 flagada/funil com voto: holdout CG puro 31 -> 33/35, FR do zero fila 11 -> 10, 26,7 (93/348: duvida 71 + mudou 22; por curso MF 11, SO 10, IA 4, ES2 12, TCC 7, LR 0, FR 5, CG 44; anatomia conflito 50, sub-ambigua 13, sub-empate 8, flag disamb 3)/100; produto curada bloco 198/199 conf-err 0 · unidade 191/191 · cobertura 55/57; subunidade x 6 golds 201/233 (8.
 Unidade explicita da secao vence bloco (`1b41003`): FR do zero unidade x secao 10/19 -> 19/19; 7 cursos iguais. FR run A2 fila 11/20; run B (Gemini, so FR): build 840 s + 2 reprocess; chamadas Gemini: 10 summarize_bundle no build (code_curation.json NAO gravado — a investigar).
 Regra da secao S1b (`4d649c4`, +3 -0 simulado, +2 no motor): automatica x 233 196 (84,1%), CG 58/82; produto 201/233 (86,3%), primario 169; CG 58/82, SO 15/15, IA 39/39, ES2 27/28, TCC 11/11, MF 51/58; gold `intro` corrigido pelo oraculo (origens).
 Regra do titulo (`34d8b19`, +2 -0): automatica x 233 194 (83,3%), CG 56/82; produto 199/233 (85,4%), primario 166; CG 56/82, ES2 27/28, MF 51/58; tracker §CG CONFIANTES ERRADOS. Teto do CG sem LLM/sem dado novo ~56-58/82.**
@@ -122,7 +123,7 @@ Formato: **ideia** · da para fazer? · quando? · o que resolve?
   commita so `updated_at` · C4. Apagar `.ablacao/CG-*` (805 MB) · agora, decisao do user. Merge/push dos ~840 commits em `main` · fronteira.
 
 ## Decisoes ABERTAS do user (nao travam a campanha 1)
-- ~~Aprovar os golds de subunidade CG/MF~~ (feito 06/09). ~~Fila de revisao: cortar a camada `llm`~~ (feito 06/09, `0673150`). Corrigir a extracao dos zips (2). Gemini (3). Religar `gemini_auto_summarize` so com o Gemini liberado.
+- ~~Aprovar os golds de subunidade CG/MF~~ (feito 06/09). ~~Fila: camada `llm`~~ (`0673150`), ~~janela-1 flagada e funil com voto~~ (`8856d89`). Resta: 'conflito' (53, 0 erros de unidade) e sub-ambigua (13, 1 erro). Corrigir a extracao dos zips (2). Gemini (3). Religar `gemini_auto_summarize` so com o Gemini liberado.
 - Qual camada LLM cortar para ficar em duas (COMECE POR 3b). Apagar `.ablacao/CG-rebuild` e `CG-export-backup`. Posicao da C7 IMAGENS. Push/merge em `main`. Revisao da fila `revisar_queue.md` (45) do CG.
 
 ## NAO fazer (refutado no gold)
