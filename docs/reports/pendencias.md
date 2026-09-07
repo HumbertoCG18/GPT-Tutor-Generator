@@ -10,6 +10,26 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## ES2 UNIDADE SEM LLM — 'MICROSSERVICOS' EM DUAS UNIDADES, CERCA DE PROVAS E GOLD SUSPEITO (06/09 noite, sessao 6; user: "como arrumar esse tipo de erro? o plano tem 3 entradas?")
+**Plano de ES2 (fonte `subjects.json`):** 5 ocorrencias de 'microsservicos' (sempre com dois s): 3 topicos (1.3.4 Orientada a Microsservicos e 1.5
+Estudo de caso, na unidade 01; 2.7 Estudo de Caso: integracao e implantacao, na unidade 02), 1 na ementa, 1 na bibliografia. Token presente em
+duas unidades nao e evidencia: o DP de blocos ja o trata assim (fill 0,4), mas o scorer de unidade da ENTRY nao — as 10 unidades erradas do ES2 no
+zero sao CONFIANTES (uconf 0,77-0,98, winner_score 15-58) porque a unidade 01 tem mais aliases contendo a palavra (1.3.4 + 1.5). Dos 18 erros de
+unidade no zero, 11 confiantes e 7 na fila. Candidata A (nao medida): token compartilhado por >= 2 unidades vale 0 tambem na entry -> vira duvida.
+**Moodle de ES2:** secoes sem nome; labels com 'secao' = 'Revisao' / 'Microsservicos' (20/03 a 12/06, tudo) / 'DevOps' (22/06+). Nao separa 1.5 de 2.7.
+**Cerca de provas (`c1-3/simula_cerca_provas.py`, estatico, snapshots zero + FR do zero):** o plano diz o escopo (MF P1 = U1+U2, P2 = U3; TCC
+P1 = U1-3, P2 = U4; ES2 P1 = secao 1, P2 = 2 e 3; FR P1 = U01-03, P2 = U04-06; IA 'ate a data'; SO/LR/CG nada) e o SARC da a data. Como regra
+DURA: MF blocos 10/12/13/15 (Hoare, Dafny; U2, conf 0,6-0,8) ficam entre P1 e P2 e o gold confirma U2 em 17/17 -> quebraria 17; TCC bloco-18
+'correcao prova p1' (U3 apos P1, 0 gold); FR do zero blocos 07-09 (IP, ICMP; U4 antes da P1, 0 gold); ES2 bloco-07 (circuit breaker, fill 0,4,
+apos P1) -> U2/U3, gold 3/3 concorda. Como DESEMPATE so de bloco sem sinal proprio (conf 0,4): +3 (ES2 bloco-07), 0 perdas nos 101 golds dos 4
+cursos. Candidata B, gate pendente (motor puro sem vocab).
+**GOLD SUSPEITO (decisao do user):** ES2 bloco-04 (10/04 discovery, 17/04 api gateway, 24/04 'exercicios de revisao para P1' no label do Moodle)
+vem ANTES da P1 de 08/05, que pelo plano contempla so a secao 1. O gold de unidade poe os 7 materiais desse bloco (revisao-p1, roteiro2, roteiro3,
+microsservicos2, microsservicos3, roteiro2-nameserver, roteiro3-gateway) na unidade 02 (sub 2.7). Pelo oraculo (plano AVALIACAO + SARC + label do
+Moodle), sao unidade 01, subtopico 1.5 'Estudo de caso: arquitetura orientada a microsservicos'; circuit breaker (15/05) e implantacao (22/05)
+ficam na 2.7. Se o gold mudar: zero +7 unidade; produto/automatica (que seguem os aliases LLM 'API gateway' da 2.7) -7. 'revisao-p1' na unidade 02
+com a P1 cobrindo a secao 1 e o sinal mais claro de que o gold esta errado ali.
+
 ## ZERO LLM — DIAGNOSTICO DOS 133 QUE NAO ESTAO 100% (06/09 noite, sessao 6; user: "como aumentar o 100% no zero LLM?")
 **Decomposicao (`c1-3/diag_zero.py zero`, snapshot `snap_placar/zero`, log `diag_zero.log`):** so sub 102 · unidade+sub 9 · bloco+sub 5 · so unidade 7 ·
 so bloco 8 · bloco+unidade 2. Sub: 97 erradas, 10 vazias, 9 gold-vazio, 8 empates. Unidade 18: ES2 10 (blocos 04/07 sem sinal proprio), SO 5 (so o
