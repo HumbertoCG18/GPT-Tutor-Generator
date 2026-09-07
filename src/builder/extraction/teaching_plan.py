@@ -15,8 +15,11 @@ _U_ACUTE_UPPER = "\u00da"
 
 _ZERO_WIDTH_TABLE = {ord(ch): None for ch in "​‌‍﻿"}
 _LINE_STARTS_NUMBERED = re.compile(r"^[-•*\s]*\d+(?:\.\d+)+\.?\s")
+# Codigo de topico tem no maximo 2 digitos por nivel: plano nao tem unidade 802. Sem esse teto,
+# "5.3 Protocolos ... (IEEE 802.11 e Bluetooth)" virava DOIS topicos — o 5.3 truncado em "(IEEE" e
+# um fantasma "e Bluetooth)" com code 802.11, que ainda entrava no vocabulario do curso (FR, 07/09).
 _NUMBERED_ITEM_RE = re.compile(
-    r"(?<![\w.])(\d+(?:\.\d+)+)\.?\s+(.+?)(?=\s+\d+(?:\.\d+)+\.?\s+|$)"
+    r"(?<![\w.])(\d{1,2}(?:\.\d{1,2})+)\.?\s+(.+?)(?=\s+\d{1,2}(?:\.\d{1,2})+\.?\s+|$)"
 )
 _NUMBERED_PREFIX_RE = re.compile(r"^\d+(?:\.\d+)+\s")
 # Topico de UM nivel ("1. HTTP e HTTPS"): template PUCRS "N. DA UNIDADE" do Lab de Redes

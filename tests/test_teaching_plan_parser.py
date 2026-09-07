@@ -47,3 +47,16 @@ def test_topico_de_um_nivel_nao_vira_codigo_de_taxonomia():
     # numerado multinivel presente => o de um nivel e descartado como nao-conteudo (regra existente
     # de _finalize_topics); o multinivel mantem o codigo no texto
     assert tops == [("4.1 Roteamento estático", 0)]
+
+
+def test_numero_tecnico_no_texto_nao_vira_codigo_de_topico():
+    """FR 07/09: "5.3 ... (IEEE 802.11 e Bluetooth)" virava dois topicos, o 5.3 truncado e um fantasma
+    "e Bluetooth)" com code 802.11 — que ainda entrava no vocabulario do curso. Code tem <= 2 digitos por nivel."""
+    from src.builder.extraction.teaching_plan import _split_numbered_items
+    itens = _split_numbered_items("- 5.3 Protocolos de enlace para redes locais sem fio (IEEE 802.11 e Bluetooth)")
+    assert itens == [("5.3", "Protocolos de enlace para redes locais sem fio (IEEE 802.11 e Bluetooth)")]
+    # itens colados na mesma linha continuam separados
+    assert _split_numbered_items("4.6.1 Definicao da Classe 4.6.2 Exemplos de uso") == [
+        ("4.6.1", "Definicao da Classe"), ("4.6.2", "Exemplos de uso")]
+    # dois digitos por nivel continuam valendo
+    assert _split_numbered_items("- 1.10 Topico com dois digitos") == [("1.10", "Topico com dois digitos")]
