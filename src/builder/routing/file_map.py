@@ -18,6 +18,7 @@ from src.builder.routing.thresholds import (
     relative_margin_confidence,
 )
 from src.builder.text.stopwords import UNIT_GENERIC_TOKENS
+from src.builder.text.stopwords import FILE_MAP_TITLE_ANCHOR_STOP, FILE_MAP_TOPIC_ANCHOR_STOP
 
 
 @dataclass
@@ -124,12 +125,12 @@ def build_file_map_unit_index(
             "title_anchor_tokens": [
                 token
                 for token in normalize_match_text(clean_title).split()
-                if len(token) >= 4 and token not in {"unidade", "aprendizagem", "verificacao"}
+                if len(token) >= 4 and token not in FILE_MAP_TITLE_ANCHOR_STOP
             ],
             "topic_anchor_tokens": [
                 token
                 for token in {token for text in topic_phrases for token in text.split()}
-                if len(token) >= 4 and token not in {"de", "para", "com", "sem", "sobre", "entre"}
+                if len(token) >= 4 and token not in FILE_MAP_TOPIC_ANCHOR_STOP
             ],
             "distinctive_tokens": [],
         })

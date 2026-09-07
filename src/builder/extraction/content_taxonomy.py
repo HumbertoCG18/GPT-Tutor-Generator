@@ -48,7 +48,8 @@ def _strip_outline_prefix(text: str) -> str:
 # Exclusividade de nucleo de titulo (campanha 2 §4-U1): nucleo por TOKENS,
 # nunca regex de prefixo — titulos reais variam ("Unidade NN —", "Unidade de
 # Aprendizagem N —", "UNIDADE NN —") e nada garante padrao em curso futuro.
-_UNIT_TITLE_GENERIC = {"unidade", "aprendizagem", "modulo", "parte", "topico"}
+from src.builder.text.stopwords import UNIT_TITLE_GENERIC as _UNIT_TITLE_GENERIC
+from src.builder.text.stopwords import TOPIC_SUPPORT_STOP
 # _topic_support_tokens trunca tokens >=5 chars pro stem de 5 (mesma regra do
 # fuzzy-match do modulo); comparar contra a palavra cheia nunca bate ("unidade"
 # vira "unida" no toks, mas nao em _UNIT_TITLE_GENERIC) — TDD (Step 3) pegou:
@@ -216,7 +217,7 @@ def _topic_support_tokens(text: str) -> set:
     return {
         token[:5] if len(token) >= 5 else token
         for token in normalized.split()
-        if len(token) >= 4 and token not in {"sobre", "para", "com", "sem", "entre"}
+        if len(token) >= 4 and token not in TOPIC_SUPPORT_STOP
     }
 
 

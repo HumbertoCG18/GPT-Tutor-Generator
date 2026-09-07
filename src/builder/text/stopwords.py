@@ -146,3 +146,72 @@ def short_vocab_from_topic_labels(labels) -> frozenset:
             if 2 <= len(token) <= 3 and token not in SHORT_FUNCTION_WORDS_PT and not token.isdigit():
                 vocab.add(token)
     return frozenset(vocab)
+
+# origem: src/builder/timeline/unit_matcher.py `_UNIT_GENERIC` (consolidacao 07/09; conteudo identico, modulo de origem importa por alias)
+UNIT_MATCHER_GENERIC = {"unidade", "aprendizagem", "visao", "geral"}
+
+# origem: src/builder/extraction/content_taxonomy.py `_UNIT_TITLE_GENERIC` (consolidacao 07/09; conteudo identico, modulo de origem importa por alias)
+UNIT_TITLE_GENERIC = {"unidade", "aprendizagem", "modulo", "parte", "topico"}
+
+# origem: src/builder/core/semantic_config.py `_SEMANTIC_TOKEN_STOPWORDS` (consolidacao 07/09; conteudo identico, modulo de origem importa por alias)
+SEMANTIC_TOKEN_STOPWORDS = {
+    "curso",
+    "disciplina",
+    "aula",
+    "aulas",
+    "material",
+    "materiais",
+    "conteudo",
+    "conteudos",
+    "introducao",
+    "fundamentos",
+    "teoria",
+    "pratica",
+    "revisao",
+    "exercicios",
+    "atividade",
+    "atividades",
+    "lista",
+    "listas",
+    "prova",
+    "provas",
+    "projeto",
+    "projetos",
+    "sistema",
+    "sistemas",
+    "analise",
+    "estudo",
+}
+
+# origem: src/builder/timeline/index.py `_LABEL_STOP` (consolidacao 07/09; conteudo identico, modulo de origem importa por alias)
+LABEL_PART_STOP = frozenset({"de", "da", "do", "das", "dos", "e", "ou", "em", "para", "com", "a", "o", "as", "os", "um", "uma"})
+
+# origem: src/builder/timeline/index.py `_TOPIC_FALLBACK_STOPWORDS` (consolidacao 07/09; conteudo identico, modulo de origem importa por alias)
+TOPIC_FALLBACK_STOPWORDS = {
+    "a", "o", "as", "os", "um", "uma", "de", "do", "da", "dos", "das",
+    "e", "ou", "em", "no", "na", "nos", "nas", "para", "por", "com",
+    "sobre", "ao", "aos", "que", "se", "ate", "como",
+}
+
+# origem: src/builder/routing/motor/disambiguator.py `_GENERIC_STEMS` (consolidacao 07/09; conteudo identico, modulo de origem importa por alias)
+MOTOR_GENERIC_STEMS = frozenset({
+    "introduc", "continua", "exercici", "revisao", "conteudo", "material",
+    "aplicac", "apresent", "sobre", "parte", "exemplo", "usando", "aula",
+    "para", "resposta", "solucao", "lista",
+    # boilerplate de curso (2026-08-21): "apresentacao da DISCIPLINA" e
+    # "ESTUDO de CASO" vivem na assinatura do bloco-01 de todo curso e puxavam
+    # material generico para la (MF `introducao`, ES2 `azure`).
+    "discipli", "estudo", "caso",
+    # "trabalho" e o nome da categoria, nao do assunto (ES2 `kubernetes` ia
+    # sozinho para "Entrega trabalho final" por esse unico token).
+    "trabalho",
+    "nao", "sim", "com", "sem", "por", "dos", "das", "nos", "nas", "uma", "que",
+})
+
+# origem: src/builder/extraction/content_taxonomy.py `_topic_support_tokens` (inline; consolidacao 07/09)
+TOPIC_SUPPORT_STOP = {"sobre", "para", "com", "sem", "entre"}
+
+# origem: src/builder/routing/file_map.py `build_file_map_unit_index` (inline x2; consolidacao 07/09)
+FILE_MAP_TITLE_ANCHOR_STOP = {"unidade", "aprendizagem", "verificacao"}
+FILE_MAP_TOPIC_ANCHOR_STOP = {"de", "para", "com", "sem", "sobre", "entre"}
+

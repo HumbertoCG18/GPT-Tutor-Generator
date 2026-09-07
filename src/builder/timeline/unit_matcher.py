@@ -18,7 +18,7 @@ from typing import List, Mapping, Sequence, Tuple
 
 from src.utils.helpers import norm_ascii_lower
 from src.builder.text.stopwords import UNIT_MATCHER_STOPWORDS as _STOPWORDS
-_UNIT_GENERIC = {"unidade", "aprendizagem", "visao", "geral"}
+from src.builder.text.stopwords import UNIT_MATCHER_GENERIC as _UNIT_GENERIC
 
 ANCHOR_MIN_MARGIN = 1.0   # margem minima (winner - runnerup) p/ confianca ANCHOR no bloco
 STRONG_MARGIN = 3.0       # margem p/ ancora forte

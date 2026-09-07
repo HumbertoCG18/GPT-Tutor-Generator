@@ -79,7 +79,7 @@ def _generico_do_curso(unit_index: List[dict]) -> frozenset:
 def _tokens_distintivos(frase: str, generico: frozenset) -> List[str]:
     """Tokens da frase que carregam significado proprio: fora do generico do curso
     e fora dos radicais de atividade (exercici/exemplo/revisao/lista/aula...)."""
-    from src.builder.routing.motor.disambiguator import _GENERIC_STEMS
+    from src.builder.text.stopwords import MOTOR_GENERIC_STEMS as _GENERIC_STEMS
     return [t for t in frase.split() if len(t) >= 3 and t not in generico and t[:8] not in _GENERIC_STEMS]
 
 

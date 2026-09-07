@@ -27,34 +27,7 @@ _PROFILE_ALIASES = {
     "tag_structural_headings": "structural_stop_headings",
 }
 
-_SEMANTIC_TOKEN_STOPWORDS = {
-    "curso",
-    "disciplina",
-    "aula",
-    "aulas",
-    "material",
-    "materiais",
-    "conteudo",
-    "conteudos",
-    "introducao",
-    "fundamentos",
-    "teoria",
-    "pratica",
-    "revisao",
-    "exercicios",
-    "atividade",
-    "atividades",
-    "lista",
-    "listas",
-    "prova",
-    "provas",
-    "projeto",
-    "projetos",
-    "sistema",
-    "sistemas",
-    "analise",
-    "estudo",
-}
+from src.builder.text.stopwords import SEMANTIC_TOKEN_STOPWORDS as _SEMANTIC_TOKEN_STOPWORDS
 
 _TOOL_CANDIDATE_RE = re.compile(r"\b[A-Za-z][A-Za-z0-9.+#-]{1,24}\b")
 _TOOL_CONTEXT_CUES = (

@@ -23,19 +23,7 @@ from src.builder.routing.thresholds import confidence_band
 # Palavras-função PT: medição 2026-08-05 (docs/reports/2026-08-05-planob-investigacao.md
 # §2a) — lista conservadora zera confident-wrong com acurácia intacta (84.2%);
 # NÃO estender com demonstrativos/comparativos: a versão larga custou 2 casos (78.9%).
-_GENERIC_STEMS = frozenset({
-    "introduc", "continua", "exercici", "revisao", "conteudo", "material",
-    "aplicac", "apresent", "sobre", "parte", "exemplo", "usando", "aula",
-    "para", "resposta", "solucao", "lista",
-    # boilerplate de curso (2026-08-21): "apresentacao da DISCIPLINA" e
-    # "ESTUDO de CASO" vivem na assinatura do bloco-01 de todo curso e puxavam
-    # material generico para la (MF `introducao`, ES2 `azure`).
-    "discipli", "estudo", "caso",
-    # "trabalho" e o nome da categoria, nao do assunto (ES2 `kubernetes` ia
-    # sozinho para "Entrega trabalho final" por esse unico token).
-    "trabalho",
-    "nao", "sim", "com", "sem", "por", "dos", "das", "nos", "nas", "uma", "que",
-})
+from src.builder.text.stopwords import MOTOR_GENERIC_STEMS as _GENERIC_STEMS
 
 
 def _toks(text: str, short_vocab=frozenset()) -> set:

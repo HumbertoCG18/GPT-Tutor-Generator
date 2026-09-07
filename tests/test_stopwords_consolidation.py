@@ -66,3 +66,20 @@ def test_card_block_e_block_identity_usam_o_tokenizador_unico():
     from src.builder.timeline import block_identity, card_block
     assert card_block._tokens is card_stop_tokens and block_identity._tokens is card_stop_tokens
     assert card_stop_tokens("A Logica de Hoare para o Dafny") == {"logica", "hoare", "dafny"}
+
+
+def test_listas_de_genericos_moram_so_em_stopwords():
+    """Consolidacao 07/09 (tier B): os modulos importam por alias; a definicao e uma so."""
+    from src.builder.text import stopwords as sw
+    from src.builder.timeline import unit_matcher, index
+    from src.builder.extraction import content_taxonomy
+    from src.builder.core import semantic_config
+    from src.builder.routing.motor import disambiguator
+    assert unit_matcher._UNIT_GENERIC is sw.UNIT_MATCHER_GENERIC
+    assert content_taxonomy._UNIT_TITLE_GENERIC is sw.UNIT_TITLE_GENERIC
+    assert semantic_config._SEMANTIC_TOKEN_STOPWORDS is sw.SEMANTIC_TOKEN_STOPWORDS
+    assert index._LABEL_STOP is sw.LABEL_PART_STOP and index._TOPIC_FALLBACK_STOPWORDS is sw.TOPIC_FALLBACK_STOPWORDS
+    assert disambiguator._GENERIC_STEMS is sw.MOTOR_GENERIC_STEMS
+    assert sw.TOPIC_SUPPORT_STOP == {"sobre", "para", "com", "sem", "entre"}
+    assert sw.FILE_MAP_TITLE_ANCHOR_STOP == {"unidade", "aprendizagem", "verificacao"}
+

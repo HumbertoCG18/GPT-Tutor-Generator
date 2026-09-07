@@ -1768,7 +1768,7 @@ def _iter_content_taxonomy_topics(taxonomy: dict) -> List[dict]:
 _LABEL_SEP_RE = re.compile(r"\s+e\s+|\s+ou\s+|:|\(|\)|/|,|\s+-\s+", re.I)
 _LABEL_NUM_RE = re.compile(r"^\d+(\.\d+)*\s+")
 _LABEL_HEAD_RE = re.compile(r"^(\w+)\s+(de|da|do|das|dos|para|em)\s+(.+)$", re.I)
-_LABEL_STOP = frozenset({"de", "da", "do", "das", "dos", "e", "ou", "em", "para", "com", "a", "o", "as", "os", "um", "uma"})
+from src.builder.text.stopwords import LABEL_PART_STOP as _LABEL_STOP
 
 
 def _label_parts(label: str, generic_heads: set) -> List[str]:
@@ -1981,11 +1981,7 @@ def _score_timeline_block_against_taxonomy_topic(block: Dict[str, object], topic
 
 # Stopwords PT-BR pra limpar fallback de topic_text. Conservador — só
 # conectivos comuns que poluem o label, mantem termos tecnicos.
-_TOPIC_FALLBACK_STOPWORDS = {
-    "a", "o", "as", "os", "um", "uma", "de", "do", "da", "dos", "das",
-    "e", "ou", "em", "no", "na", "nos", "nas", "para", "por", "com",
-    "sobre", "ao", "aos", "que", "se", "ate", "como",
-}
+from src.builder.text.stopwords import TOPIC_FALLBACK_STOPWORDS as _TOPIC_FALLBACK_STOPWORDS
 
 _TOPIC_FALLBACK_MAX_LEN = 60
 

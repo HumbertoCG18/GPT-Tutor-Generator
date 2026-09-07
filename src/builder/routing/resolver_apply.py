@@ -270,7 +270,7 @@ def propagar_vocabulario_por_headings(passe1: list, content_taxonomy: dict, auto
     derrubavam CG slab e MF respostas), df <= df_max dos materiais ('sumario'/'aula' do TCC), >= min_entries
     confiantes, exclusivo de UM subtopico da unidade, e nunca sobre decisao confiante (o CG perdia 8).
     Devolve quantos materiais mudaram."""
-    from src.builder.routing.motor.disambiguator import _GENERIC_STEMS
+    from src.builder.text.stopwords import MOTOR_GENERIC_STEMS as _GENERIC_STEMS
     from src.builder.routing.thresholds import T
     units = {str(u.get("slug") or ""): u for u in (content_taxonomy or {}).get("units", []) or []}
     if not units or not passe1:
