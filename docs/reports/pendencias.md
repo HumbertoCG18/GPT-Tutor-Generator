@@ -10,15 +10,23 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
-## PLANO ESCRITO: CONFIANCA ANTES DE ACURACIA (08/09; user: "vamos escrever esse plano")
-Documento: **`docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md`**.
+## PLANO ESCRITO + ARTEFATOS ATUALIZADOS (08/09; user: "atualize os artefatos, e depois reescreva o plano")
+Documento: **`docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md`** (reescrito apos os artefatos).
 Fase 1 honestidade da confianca (gate: precisao do confiante da subunidade >= 90%) -> Fase 2 acuracia (2.1 propagacao
 por similaridade +5 · 2.2 filtro do vocabulario +2 · 2.3 `conflito` 48 itens · 2.4 compilador nos 4 cursos, 16 chamadas)
--> Fase 3 cobertura da regua (3.1 FR no conjunto padrao · 3.2 gold de unidade do CG).
-**Nao e campanha nova:** encaixa como continuacao da C1 (1.x, 2.1-2.3) e da C5 (3.x).
-**ABERTO e travando:** liberar o Gemini (toda a 2.4) · qual camada LLM cortar · push/merge dos 962 commits · posicao da
-C7 · **os 6 artefatos publicados sao de 07/09, de ANTES da descontaminacao: mostram 254/288 e sub 201/233 quando hoje e
-199/288 e 161/251 — estao enganando quem abrir o link**.
+-> Fase 3 cobertura da regua (3.1 FR no conjunto padrao · 3.2 gold de unidade do CG). Nao e campanha nova: continua a
+C1 (1.x, 2.1-2.3) e a C5 (3.x).
+
+**Artefatos (08/09):**
+| artefato | acao |
+|---|---|
+| Placar do Motor | REESCRITO: estado de 08/09 no topo, historico de 06/09 abaixo marcado como tal |
+| Matriz de Atribuicao | coluna `produto` REGENERADA do disco (`gera_tabela_cenarios.py`) + nota da descontaminacao; `zero`/`vocab`/`auto` seguem de snapshots de 06/09 |
+| Gold x Moodle x SARC · Razao dos Blocos | aviso datado de 08/09 com link para o Placar |
+| Raio-X · Anatomia do Bloco | **nao tocados** — ja se declaram leitura de 01-02/09 e ja linkam o Placar; a nota interna de 06/09 deles cita numeros superados. Vieram inline (sem arquivo salvo) e tem SVG desenhado a mao: reescrever a mao arriscaria corromper os diagramas |
+
+**ABERTO e travando:** liberar o Gemini (toda a 2.4) · qual camada LLM cortar · push/merge dos ~965 commits · posicao da C7 ·
+revisao da fila do CG · extracao dos zips.
 
 ## DA PARA VIVER SEM GOLD? PARA A UNIDADE, JA VIVEMOS (08/09; user: "nao quero que a atribuicao de unidade precise de gold manual")
 ### Primeiro, desfazer uma confusao de papeis
