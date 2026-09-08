@@ -10,6 +10,47 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## DA PARA VIVER SEM GOLD? PARA A UNIDADE, JA VIVEMOS (08/09; user: "nao quero que a atribuicao de unidade precise de gold manual")
+### Primeiro, desfazer uma confusao de papeis
+O gold **nao e insumo do motor** — o motor nunca o le. Ele nao e "a maneira do motor saber se acertou"; e a maneira de
+NOS sabermos. A maneira do MOTOR saber e a confianca dele, que vira a fila. Tres coisas distintas, sempre:
+| papel | quem faz | regra |
+|---|---|---|
+| **insumo** | plano, SARC, Moodle | o gold NUNCA pode entrar aqui (entrou 2x e foi tirado em 07-08/09) |
+| **referencia** | gold, ou sinal independente do professor | tem de ser independente do insumo |
+| **sinal de duvida** | a propria fila (`revisar`) | nao precisa de referencia nenhuma |
+
+### A medicao que responde: a fila como detector de erro (`calibra_fila_como_regua.log`)
+"Num curso NOVO, sem gold, se eu aceitar tudo que o motor NAO poe na fila, quanto esta certo?"
+| eixo | precisao do confiante | recall da fila | alarme falso |
+|---|---|---|---|
+| **unidade** | **157/157 = 100%** | 0/0 (nao ha erro) | 33/33 |
+| bloco | 177/178 = **99,4%** | 1/2 | 58/59 |
+| **subunidade** | **117/181 = 64,6%** | 26/90 = 29% | 44/70 |
+| qualquer eixo | 153/218 = 70,2% | 27/92 = 29% | 61/88 |
+
+### A resposta
+**Para a UNIDADE o objetivo do user JA ESTA ATINGIDO.** Toda decisao de unidade que o motor toma com confianca esta
+certa — 157 de 157. Um curso novo nao precisa de gold de unidade para ser confiavel: precisa que alguem olhe a fila.
+**Para a SUBUNIDADE, nao.** O confiante acerta so 64,6%: **64 materiais saem errados sem aviso**. O motor nao sabe que
+nao sabe. Esse, e nao o gold, e o defeito a consertar.
+
+### Sobre as duas opcoes do user
+1. **"Automatizar a criacao do gold com Moodle + SARC" e um erro de categoria, e ja esta medido.** Um gold derivado das
+   MESMAS fontes que o motor le deixa de ser referencia independente e vira espelho. Prova: a regua sem gold (secao do
+   Moodle x plano) acerta **39/44** onde o motor acerta **44/44**. Um gold automatico desses teria INTRODUZIDO 5 erros
+   no SO. Nao se mede um instrumento com uma copia pior dele mesmo.
+2. **"Chegar a um ponto onde o gold nao e necessario" — o caminho existe, e nao e remover o gold: e CALIBRAR a
+   confianca.** O gold e necessario UMA VEZ, para descobrir onde a confianca mente. Depois disso a confianca viaja
+   sozinha para cursos novos. Na unidade essa calibracao ja foi feita e o resultado e 100%. Na subunidade ela mostra
+   64,6%, e o conserto e fazer o motor mandar para a fila o que hoje ele entrega calado.
+
+### O alvo concreto que isso define
+Hoje: subunidade 161/251 certos · **64 errados entregues como confiantes** · fila 96.
+Alvo: que os 64 caiam para perto de zero, mesmo que a fila cresca. **Produto que erra calado e pior que produto que
+pergunta.** E, diferente de acuracia, isso e verificavel sem gold em curso novo: basta que a taxa de confiante caia
+onde o sinal e fraco.
+
 ## A UNIDADE SE SUSTENTA SEM GOLD? PARCIALMENTE — E DEPENDE MUITO DO CURSO (08/09; pergunta do user)
 `regua_sem_gold.py` compara o motor com o PROFESSOR (secao do Moodle x plano), sem gold. Rodada no produto de hoje:
 **unidade 114/122 coerentes**. Mas o numero cru engana por dois motivos, e os dois foram medidos.
