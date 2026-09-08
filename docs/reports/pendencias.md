@@ -10,6 +10,16 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## PLANO ESCRITO: CONFIANCA ANTES DE ACURACIA (08/09; user: "vamos escrever esse plano")
+Documento: **`docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md`**.
+Fase 1 honestidade da confianca (gate: precisao do confiante da subunidade >= 90%) -> Fase 2 acuracia (2.1 propagacao
+por similaridade +5 · 2.2 filtro do vocabulario +2 · 2.3 `conflito` 48 itens · 2.4 compilador nos 4 cursos, 16 chamadas)
+-> Fase 3 cobertura da regua (3.1 FR no conjunto padrao · 3.2 gold de unidade do CG).
+**Nao e campanha nova:** encaixa como continuacao da C1 (1.x, 2.1-2.3) e da C5 (3.x).
+**ABERTO e travando:** liberar o Gemini (toda a 2.4) · qual camada LLM cortar · push/merge dos 962 commits · posicao da
+C7 · **os 6 artefatos publicados sao de 07/09, de ANTES da descontaminacao: mostram 254/288 e sub 201/233 quando hoje e
+199/288 e 161/251 — estao enganando quem abrir o link**.
+
 ## DA PARA VIVER SEM GOLD? PARA A UNIDADE, JA VIVEMOS (08/09; user: "nao quero que a atribuicao de unidade precise de gold manual")
 ### Primeiro, desfazer uma confusao de papeis
 O gold **nao e insumo do motor** — o motor nunca o le. Ele nao e "a maneira do motor saber se acertou"; e a maneira de
