@@ -10,6 +10,55 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## RESTRICAO UNIDADE -> SUBUNIDADE: JA EXISTE. E O MOODLE NAO DA A UNIDADE NA MAIORIA DAS VEZES (08/09; user: "nao chute, traga dados reais")
+### 1. A restricao ja e assim, e e absoluta
+`src/builder/routing/file_map.py:184` — `auto_map_entry_subtopic` recebe `winning_unit_slug` e faz
+`topic_index = [t for t in topic_index if t["unit_slug"] == winning_unit_slug]`. A subunidade **nunca** e disputada
+por topicos de outra unidade. Se a unidade nao tem topico, devolve vazio com razao `sem-topicos-para-unidade:<slug>`.
+O user esta certo no raciocinio, e o motor ja o implementa desde antes desta campanha.
+
+### 2. O efeito colateral, medido: pequeno hoje
+Como a restricao e absoluta, **errar a unidade torna a subunidade inalcancavel**. Dos 77 erros de subunidade atuais,
+**4 (5%)** tem o gold fora da unidade atribuida — os 4 no SO, todos no bloco-04 ("gerencia do processador, processos,
+chamadas de sistema"), onde o gold quer `unidade-04-deadlock`. Era 6 a mais no ES2 ate 07/09, corrigidos com o pino.
+Ou seja: o custo da restricao hoje e 5% dos erros, e o beneficio (reduzir a amostra) ja esta embutido em todo numero
+que medimos.
+
+### 3. "O Moodle ja da a unidade (nome do card / label)" — MEDIDO, e a resposta e NAO
+190 materiais com gold de unidade, criterio deterministico de `window_provider.unit_named_by_section`:
+| fonte | acerta / arrisca | cobertura |
+|---|---|---|
+| **SECAO** (card do Moodle) | **43 / 43** | **23%** |
+| LABEL (`moodle_label`, `moodle_week_label`) | 12 / 12 | 6% |
+| secao OU label | 44 / 44 | 23% |
+| **BLOCO (o que o motor usa hoje)** | 190 | **100%** |
+Por curso a secao vai de **0% (IA)** e 4% (ES2) a 45% (MF). **Quando a secao arrisca, ela acerta 100% (43/43)** — e
+sinal de precisao altissima e cobertura baixa, e por isso o motor a usa como override explicito
+(`explicita-vence-bloco`), nao como fonte primaria. Mas ela nao da a unidade "na maioria das vezes": da em 23%.
+
+### 4. A descricao do user esta INVERTIDA
+"O Moodle da a unidade, o SARC diz quando" — medido, e o contrario:
+- **O SARC da a UNIDADE**: o cronograma vira blocos, `unit_matcher.assign_units_positional` alinha bloco -> unidade por
+  DP monotonico, e `reconcile_unit_with_block` faz o bloco decidir (o texto discordante so vira `unit_block_conflict`).
+- **O Moodle da o QUANDO**: a data no label ("21/05 Laminas: Paginacao") e o que coloca o arquivo no bloco.
+Distribuicao real de quem coloca o arquivo no bloco (`temporal_block_provider`, 348 materiais):
+| provider | n | % |
+|---|---|---|
+| **llm** | **96** | **28%** |
+| topic | 80 | 23% |
+| labels | 58 | 17% |
+| ordinal | 26 | 8% |
+| data | 23 | 7% |
+| llm-funil | 16 | 5% |
+| resto (prep-prova, irmao-card, meta/ref-generica, secao-geral, due-window, manual) | 42 | 12% |
+
+### 5. RESSALVA QUE MUDA O PLACAR: a unidade NAO e livre de LLM
+**96 dos 348 materiais (28%) tiveram o BLOCO decidido por voto de LLM** (`routing/motor/llm_vote.py`, TIER 3, cache por
+md5 do conteudo, gravado no manifest como `temporal_block_provider=llm`). Como o bloco decide a unidade, a regua
+"unidade 190/190" **repousa em parte sobre votos de LLM ja gastos e cacheados**. O reprocess com tripwire nao rechama:
+reusa o voto guardado. Ao dizer "sem LLM" daqui para frente, isso precisa vir junto — o eixo livre de LLM de verdade
+e menor do que o placar sugere, no bloco tanto quanto na subunidade.
+
 ## "PALAVRAS-CHAVE DOS ARQUIVOS -> GLOSSARIO -> SUBUNIDADE": DESTRINCHADA E MEDIDA (08/09; user: "faz sentido isso?")
 Proposta do user, em 4 passos. Onde cada um esta hoje:
 
