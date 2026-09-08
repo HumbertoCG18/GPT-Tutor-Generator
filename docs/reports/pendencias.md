@@ -10,6 +10,65 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## ESTADO CONSOLIDADO 08/09 — FECHAMENTO DA CAMPANHA DO VOCABULARIO (respostas do user + 2 correcoes minhas)
+
+### 1. "Unidade esta 100% e bloco quase?" — SIM DENTRO DO GOLD, e o gold cobre pouco
+| eixo | acerto | gold cobre | do universo |
+|---|---|---|---|
+| bloco | **235/237** | 237 de 348 materiais | **68%** |
+| unidade | **190/190** | 190 de 348 | **55%** |
+| subunidade | **161/251** | 251 de 348 | **72%** |
+Faltam 2 no bloco (1 MF, 1 ES2). A unidade nao tem UM erro onde ha gold. **Mas CG (93 materiais) e LR (7) nao tem gold
+de unidade nenhum, e LR nao tem gold de bloco** — 158 materiais fora da regua de unidade. "Unidade 100%" e verdade
+verificavel em 55% do repo; nos outros 45% nao ha como afirmar nada.
+
+### 2. CORRECAO MINHA: a regua de subunidade e 251, nao 233
+O `subunit_gt_FR.csv` tem **18 materiais pontuaveis que nunca entraram em nenhuma medicao desta campanha** (o conjunto
+de 6 cursos era SO/IA/ES2/TCC/MF/CG). Medido agora: **FR 15/18**. Entao o numero correto de hoje e **161/251**, nao
+146/233. Todos os deltas medidos continuam validos (foram comparacoes na mesma base), mas o ABSOLUTO estava incompleto.
+
+### 3. "O que significa fila e sem bloco?"
+**Fila = `duvida` + `mudou`** (`routing/revisar.py`), recalculada a cada reprocess. Hoje **96 em 348 = 27,6 por 100**,
+sendo 74 duvida e 22 mudou.
+| motivo | n | significado |
+|---|---|---|
+| **conflito** | **48** | o TEXTO do material aponta uma unidade e o BLOCO aponta outra. O bloco decide por desenho (`reconcile_unit_with_block`); o desacordo fica gravado em `unit_block_conflict` para auditoria |
+| sub-ambigua | 13 | 2+ subtopicos empataram acima do limiar |
+| sub-empate | 10 | empate EXATO de score |
+| flag:disamb | 9 | o bloco saiu de um desempate, nao de sinal direto |
+| flag:due-straddle | 1 | a data de entrega cai entre dois blocos |
+| **mudou** | **22** | decisao confiante que SE MOVEU na ultima sync (so CG). Transitorio: a proxima sync limpa se nada mover |
+**`sem-bloco`** e outro motivo de duvida: o material nao caiu em nenhum bloco do cronograma E nao e categoria fora do
+eixo temporal. Categoria sem eixo (`_NO_TIMELINE_CATEGORIES`) e secao TDE **nao contam** — sao "sem bloco honesto".
+
+### 4. CORRECAO MINHA: sem bloco de verdade e 1 material, nao 7
+Eu reportei "sem-bloco 7 -> 19" contando so `temporal_block_id` vazio. **6 daqueles 7 sao materiais do MF com PINO
+manual de bloco** (`manual_timeline_block_id`: arvores, listas, exercicioscorrecaoterminacao, logicadehoare2,
+terminacao, tiposindutivos) — tem bloco, so nao pelo caminho automatico.
+**O unico material sem bloco hoje e `IA / prova-1-2024-02`**, categoria `provas`, secao "TDE Trabalho Discente
+Efetivo": fora do eixo temporal por desenho, **nao e pendencia**. Nao ha nenhum material sem bloco por falha.
+
+### 5. Placar dos regimes, com Gemini bloqueado (`mede_sem_voto_llm.log`)
+| regime | 100% certos | bloco | unidade | subunidade | fila |
+|---|---|---|---|---|---|
+| produto (voto em cache + vocabulario) | 199/288 | 235/237 | 190/190 | 146/233 | 91 |
+| sem o voto de LLM | 184/288 | 221/237 | **188/190** | 143/233 | 136 |
+| zero LLM (sem voto e sem vocabulario) | 165/288 | 222/237 | 188/190 | 121/233 | 143 |
+(esses tres usam a base antiga de 233; o FR entra na proxima rodada)
+**O voto de LLM vale 14 no bloco e 2 na unidade.** Sem ele o motor nao erra mais, DESISTE mais: a fila vai de 91 a 136.
+
+### 6. O que abre a proxima campanha (medido, nao implementado)
+1. **Propagacao por similaridade** (`simula_propaga_similaridade.log`): material indeciso herda do vizinho mais similar
+   entre os confiantes. **+5 no regime atual (ganha 6, perde 1)**, +4 no regime limpo. Deterministico, 0 chamadas.
+2. **Filtro mais duro no vocabulario compilado** (`triagem_vocab_llm.log`): cortar termo cujo nucleo aparece em outra
+   unidade e recusar doacao a topico de rotulo meta ("Areas relacionadas", "Conceitos"). Recupera os **2 pontos** da
+   chamada prejudicial do CG e talvez as 3 neutras. Deterministico, 0 chamadas.
+3. **`conflito` (48 itens, metade da fila)**: nunca foi atacado. Hoje o bloco sempre vence e o texto so vira registro.
+   Vale medir quem acerta quando os dois discordam — ha gold de unidade em 190 materiais para arbitrar.
+4. **Ligar o compilador de vocabulario nos 4 cursos bloqueados**: 16 chamadas, uma vez. **Depende da decisao do user
+   sobre o Gemini** e de tirar o sidecar do professor da frente (`vocabulary_compile.py:222`).
+5. **Gold de unidade para o CG** (93 materiais, 27% do repo, hoje sem regua nenhuma nesse eixo).
+
 ## O NUMERO SEM O VOTO DE LLM EM CACHE (08/09; user: "e se fizermos sem esse cache, qual seria o numero?")
 Voter desligado de verdade (`use_llm_voter=False`, o mesmo mecanismo de `scripts/motor_puro.py`), entao o cache de votos
 nunca e consultado. Gemini bloqueado, 0 chamadas, 6 cursos com gold. `mede_sem_voto_llm.log`.
