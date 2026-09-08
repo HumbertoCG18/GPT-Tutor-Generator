@@ -10,6 +10,46 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## GLOSSARY DESCONTAMINADO + GERADOR DE VOCABULARIO SEM GOLD (07/09; user: "vamos fazer isso e descontaminar o GLOSSARY, penso em colocar SARC + Moodle + Headings")
+**Feito.** Os 4 sidecars "proposto-claude a partir de subunit_gt" sairam do caminho do motor (arquivados em
+`course/.glossary_curation.gold.json`, restauraveis) e no lugar entrou um gerado so de fontes do professor.
+Tutores: SO `c0718a5` · IA `0858418` · ES2 `8cfaf2b` · TCC `73fe7b0`.
+
+### O gerador (`c1-3/gera_sidecar_professor.py`)
+Regra de doacao: a **secao do Moodle** que nomeia exatamente um topico da unidade dominante dos seus materiais recebe o
+vocabulario daqueles materiais (titulo + label do Moodle + headings); o **label da sessao do SARC** que nomeia um topico
+doa os tokens restantes. Filtros do ruido: boilerplate academico (`SEMANTIC_TOKEN_STOPWORDS` + `TIMELINE_GENERIC_TOKENS`),
+document frequency > 15% dos materiais, token que ja aparece no vocabulario de outro topico, e **concentracao**: >= 80%
+das ocorrencias do token no curso tem de estar na secao que doa (foi esse filtro que tirou "slides", "pagina", "videos").
+Cada sinonimo carrega `_origem`. Rende 11 a 24 sinonimos por curso (o curado tinha 4 a 5 termos, de qualidade muito maior).
+
+### O que foi medido antes de aplicar (`mede_sidecar_professor.log`, rota real, tripwire, 6 cursos)
+| modo | subunidade | erro confiante | fila |
+|---|---|---|---|
+| ATUAL, sidecar do gold | 201/233 | 16 | 88 |
+| LIMPO, sem sidecar | 135/233 | 65 | 100 |
+| **PROF, SARC+Moodle+headings** | **146/233** | 65 | 93 |
+Por curso, LIMPO -> PROF: SO 9->10 · **ES2 5->15** · IA 4->4 · TCC 8->8 · MF 51->52 · CG 58->57.
+**As fontes do professor recuperam 11 dos 66 pontos.** Funciona onde o professor nomeia bem as secoes (ES2 +10);
+nao funciona no IA, onde o plano nomeia CATEGORIAS ("Modelos Descritivos") e o material nomeia ALGORITMOS ("K-Means"):
+esse mapa nao esta no plano, nem no SARC, nem no Moodle — e conhecimento de dominio.
+
+### Reguas no produto AGORA (numero honesto, sem gold no vocabulario)
+materiais 100% certos **199/288** · bloco 235/237 · **unidade 190/190** · **subunidade 146/233** (SO 10/15 · IA 4/39 ·
+ES2 15/28 · TCC 8/11 · MF 51/58 · CG 58/82) · fila **27,6/100** · **erro confiante 64**.
+**O custo de produto esta no erro confiante: 16 -> 64.** Sao 64 materiais mal classificados que o tutor entrega sem por
+na fila. O IA sozinho responde por 34. Se o objetivo for produto e nao regua, a decisao de restaurar o sidecar do gold
+(ou de escrever um sidecar de dominio a mao, sem olhar o gold) e do user.
+
+### Refutado no caminho
+- **Nomeacao por SARC/Moodle e circular**: com a taxonomia limpa, o SARC so nomeia o subtopico certo em 21% (era 40%) e
+  no IA em 0% (era 95%). O texto do professor so "nomeia" o topico quando o vocabulario concreto ja esta la.
+- **Alinhamento posicional aula -> topico** (DP monotonico dentro da unidade, como `assign_units_positional` faz para
+  bloco -> unidade): acerta 47% e doa vocabulario sujo ("escalonamento <- chamadas, exclusao, mutua, processador").
+  Alinhamento proporcional puro: 36%.
+- **Headings ja entravam**: `collect_strong_heading_candidates` e a segunda fonte de aliases desde sempre; incluir
+  headings no sidecar nao era novidade, e a doacao so ajuda quando a SECAO delimita o escopo.
+
 ## DE ONDE A TAXONOMIA VEM x DE ONDE DEVERIA VIR — MEDIDO (07/09; user: "o ideal e pegar as taxonomias a partir do plano de ensino, SARC e talvez do titulo dos arquivos ou label do Moodle, para o motor puro ter mais precisao")
 
 ### Fontes de HOJE (leitura de `extraction/content_taxonomy.build_content_taxonomy`)

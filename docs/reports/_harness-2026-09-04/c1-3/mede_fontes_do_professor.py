@@ -38,6 +38,7 @@ from src.builder.text.stopwords import MOTOR_GENERIC_STEMS  # noqa: E402
 from src.models.core import moodle_label_text  # noqa: E402
 
 H_RE = re.compile(r"^#{1,3}\s+(.+)$", re.M)
+LIMPO = "--limpo" in sys.argv  # avalia SARC/SECAO/TITULO/HEADINGS contra a taxonomia SEM os aliases curados
 
 
 def nomeia(texto: str, tops: list) -> str:
@@ -78,6 +79,12 @@ for sig, repo in GOLD.items():
         lab = " ".join(str(s.get("label") or "") for s in (b.get("sessions") or []))
         ses[b["id"]] = lab
         ses[str(b.get("block_uuid") or "")] = lab
+    lim = collections.defaultdict(list)
+    for u, ts in por_unidade.items():
+        for tp in ts:
+            c2 = dict(tp)
+            c2["aliases"] = [a for a in (tp.get("aliases") or []) if N(a) not in curados]
+            lim[u].append(c2)
     rows = [r for r in csv.DictReader((GEN / "docs/reports" / f"subunit_gt_{sig}.csv").open(encoding="utf-8-sig", newline="")) if r["scorable"] == "yes"]
     c = collections.Counter()
     for r in rows:
@@ -88,6 +95,7 @@ for sig, repo in GOLD.items():
         c["n"] += 1
         unit = str(e.get("computed_unit_slug") or "")
         tops = por_unidade.get(unit, [])
+        tops_limpos = lim.get(unit, [])
         gt = next((t for t in tops if t["topic_slug"] == gold), None)
         if not gt:
             c["gold-fora-da-unidade"] += 1
@@ -107,10 +115,11 @@ for sig, repo in GOLD.items():
         hit["AL-CURADO"] = any(f and frase_no(tn, f) for f in cur_al)
         hit["AL-HEADING"] = any(f and frase_no(tn, f) for f in outros_al)
         bid = str(e.get("manual_timeline_block_id") or e.get("temporal_block_id") or "")
-        hit["SARC"] = nomeia(ses.get(bid, ""), tops) == gold
-        hit["SECAO"] = nomeia(str(e.get("source_section") or ""), tops) == gold
-        hit["TITULO"] = nomeia(f"{e.get('title') or ''} {moodle_label_text(e) or ''}", tops) == gold
-        hit["HEADINGS"] = nomeia(" ".join(H_RE.findall(md)[:12]), tops) == gold
+        tops_ev = tops_limpos if LIMPO else tops
+        hit["SARC"] = nomeia(ses.get(bid, ""), tops_ev) == gold
+        hit["SECAO"] = nomeia(str(e.get("source_section") or ""), tops_ev) == gold
+        hit["TITULO"] = nomeia(f"{e.get('title') or ''} {moodle_label_text(e) or ''}", tops_ev) == gold
+        hit["HEADINGS"] = nomeia(" ".join(H_RE.findall(md)[:12]), tops_ev) == gold
         for f in FONTES:
             c[f] += hit[f]
         c["QUALQUER"] += any(hit.values())
@@ -121,7 +130,7 @@ for sig, repo in GOLD.items():
     POR_CURSO[sig] = c
     TOT.update(c)
 
-print("O SUBTOPICO CERTO E ALCANCAVEL POR CADA FONTE DO PROFESSOR? (% dos materiais com gold)")
+print(f"O SUBTOPICO CERTO E ALCANCAVEL POR CADA FONTE DO PROFESSOR? {'[TAXONOMIA LIMPA: sem aliases curados]' if LIMPO else '[taxonomia como esta]'}")
 cols = FONTES + ["PLANO+SARC+MOODLE", "SEM-CURADO", "QUALQUER", "NENHUMA"]
 print(f"{'':5} {'n':>4} " + " ".join(f"{f[:9]:>10}" for f in cols))
 for sig, c in POR_CURSO.items():
