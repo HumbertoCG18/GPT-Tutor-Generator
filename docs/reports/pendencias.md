@@ -10,6 +10,49 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## A UNIDADE SE SUSTENTA SEM GOLD? PARCIALMENTE — E DEPENDE MUITO DO CURSO (08/09; pergunta do user)
+`regua_sem_gold.py` compara o motor com o PROFESSOR (secao do Moodle x plano), sem gold. Rodada no produto de hoje:
+**unidade 114/122 coerentes**. Mas o numero cru engana por dois motivos, e os dois foram medidos.
+
+### A regua tem DOIS caminhos, e so um e confiavel
+| caminho | o que faz | precisao contra o gold |
+|---|---|---|
+| **A** | a secao nomeia a UNIDADE (numero "U2 -" ou titulo dela) | **sem erro nos casos medidos** |
+| **B** | a secao nomeia um TOPICO e a regua assume a unidade DONA dele | **erra 5 de 5 divergencias** |
+O caminho B ja tinha sido refutado como REGRA DO MOTOR em 07/09 ("secao -> unidade dona: 5/5 errado"). A medicao de hoje
+mostra que ele e igualmente ruim como REGUA. As 5 divergencias sao todas do SO, todas do caminho B, e **o gold da razao
+ao MOTOR nas 5** (secao "Sincronizacao e Comunicacao de Processos" -> a regua chuta u03, motor e gold dizem u04).
+
+### Calibracao onde as duas reguas existem (44 materiais)
+| | acerto |
+|---|---|
+| **MOTOR** | **44/44 = 100%** |
+| regua sem gold (A+B) | 39/44 = 89% |
+**O motor e MELHOR que a regua sem gold.** Consequencia pratica: a regua serve para CONFIRMAR o motor, nunca para
+corrigi-lo. Onde as duas discordam, a aposta certa e o motor.
+
+### Cobertura nos 3 cursos SEM gold de unidade — a resposta honesta
+| curso | materiais | a regua fala | concorda | caminho A (confiavel) | caminho B (refutado) | circular? |
+|---|---|---|---|---|---|---|
+| **CG** | 93 | 44 (47%) | 44/44 | **16** | 28 | nao |
+| **FR** | 22 | 19 (86%) | 19/19 | 19 | 0 | **SIM, 19/19** — a regra da secao do proprio motor agiu |
+| **LR** | 7 | 2 (29%) | 2/2 | 0 | 2 | nao |
+- **CG: confirmacao independente de verdade em 16 de 93 materiais (17%).** Os outros 28 vem do caminho B, que erra.
+  **83% dos materiais do CG nao tem nenhuma verificacao de unidade** — nem gold, nem professor.
+- **FR: confirmacao ZERO.** Os 19 sao circulares: o motor decidiu lendo a secao e a regua confere lendo a mesma secao.
+- **LR: praticamente zero.**
+
+### O que sustenta a unidade do CG mesmo assim (indireto, mas real)
+A unidade vem do BLOCO, e o bloco do CG tem regua propria sem gold: assunto da secao x assunto do cronograma
+(`bloco2`), **58/59 coerentes**. Nao prova a unidade material a material, mas mostra que a espinha temporal do curso
+esta alinhada com o que o professor escreveu no cronograma.
+
+### Resposta em uma linha
+**Onde ha gold (55% do repo) a unidade e 190/190 e isso e solido. Fora dele, a confirmacao independente cobre 17% do CG,
+0% do FR e ~0% do LR.** O motor nunca foi pego errado por uma fonte do professor — venceu 5 a 0 nas divergencias —
+mas "nao foi pego errado" em 17% dos casos nao e o mesmo que "esta certo em 100%".
+**Pendencia que isso abre:** gold de unidade para o CG (93 materiais, 27% do repo) e o unico jeito de fechar a questao.
+
 ## ESTADO CONSOLIDADO 08/09 — FECHAMENTO DA CAMPANHA DO VOCABULARIO (respostas do user + 2 correcoes minhas)
 
 ### 1. "Unidade esta 100% e bloco quase?" — SIM DENTRO DO GOLD, e o gold cobre pouco
