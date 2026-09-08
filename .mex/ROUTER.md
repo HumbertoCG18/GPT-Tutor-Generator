@@ -1,7 +1,7 @@
 ---
 name: router
 description: Session bootstrap. Read this before any task. Points to the single source of truth for each kind of fact.
-last_updated: 2026-09-03
+last_updated: 2026-09-08
 ---
 
 # ROUTER.md - Session Bootstrap
@@ -23,7 +23,7 @@ com atribuição arquivo→bloco→unidade dirigida por sinais Moodle/SARC/plano
 | Estado vivo, pendências, dívidas, números de gate | `docs/reports/pendencias.md` (tracker, sempre atualizado) |
 | O que a última sessão fez e a fila decidida | **`docs/reports/2026-09-08-handoff-confianca.md`** (ponto de entrada vivo) |
 | O plano a revisar antes de executar | `docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md` |
-| Estrutura do código (quem chama quem, onde vive) | `graphify query "<pergunta>"` / `graphify-out/` |
+| Estrutura do código (quem chama quem, onde vive) | `graphify explain "<símbolo>"` ou `graphify path "A" "B"`; `query` aberto só com `--budget` |
 | Por que cada escolha existe | `context/decisions.md` |
 | Contratos de dados reais (Moodle/SARC/manifest/índices) | `context/institutional.md` §Contratos |
 | Como escrever/verificar código e fixtures | `context/conventions.md` |
@@ -46,7 +46,7 @@ arquivo não carrega snapshot — snapshot aqui envelhece e mente.
 
 | Task type | Load |
 |---|---|
-| Understanding how the system works | `graphify query`/`graphify explain` (estrutura) + `context/decisions.md` (intenção) |
+| Understanding how the system works | `graphify explain` (estrutura) + `context/decisions.md` (intenção) |
 | Understanding the faculty/source platforms (Moodle, SARC, Plano de Ensino) | `context/institutional.md` |
 | Writing tests or fixtures with third-party data | `context/institutional.md` §Contratos + `context/conventions.md` |
 | Working with a specific technology or backend | `context/stack.md` |
@@ -60,6 +60,44 @@ arquivo não carrega snapshot — snapshot aqui envelhece e mente.
 | Custo, API paga, trocar backend (Marker/MinerU/docling), provedor de descrição | `context/external-services.md` |
 | Mexer no motor de atribuição (bloco/unidade/subunidade) | `docs/reports/_harness-2026-09-04/c1-3/inventario_motor_2026-09-07.md` |
 | Any specific repeatable task | Check `patterns/INDEX.md` |
+
+## Harness Ownership
+
+Uma fase, um dono. Configurado em `~/.claude/settings.json` via `skillOverrides`.
+Este arquivo roteia; o settings.json é a fonte do que está ligado.
+
+| Fase | Dono |
+|---|---|
+| Critérios de aceite antes de codar | `ecc:intent-driven-development` (substituiu `superpowers:brainstorming`) |
+| Capacidade que ainda não existe | `ecc:orch-add-feature` |
+| Estrutura melhora, comportamento não muda | `ecc:orch-refine-code` |
+| Comportamento quebrado ou errado | `ecc:orch-fix-defect` (primeira jogada: teste de regressão vermelho) |
+| Medição repetida em N cursos ou N tutores | `ecc:parallel-execution-optimizer` |
+| Implementação TDD dentro dos `orch-*` | agent `ecc:tdd-guide` (dono único da fase 4) |
+| Review | agent `ecc:python-reviewer` + `/code-review` nativo |
+| Governança dos relatórios em `docs/reports/` | `ecc:living-docs-governance` |
+| Contratos e fixtures | `ecc:contract-first` |
+
+Os `orch-*` param em Gate 1 (plano aprovado antes de escrever código) e Gate 2
+(diff confirmado antes do commit). Entre os dois o pipeline corre sem parar.
+Os gates são instrução dentro do SKILL.md, não hook: nada no `hooks.json` do ECC
+os impõe. O risco é pular o gate, não travar nele.
+
+Deriva de acurácia agregada não é defeito reproduzível e não vai por
+`orch-fix-defect`. Vai por harness de medição (`ecc:eval-harness`).
+
+MCP ativo: `context7` apenas. `code-review-graph` foi removido em 08/09 por uso
+zero medido em 15.840 chamadas de ferramenta registradas. Estrutura de código
+continua no `graphify`, conforme a tabela de fonte única acima.
+
+Busca estrutural, ordem medida em 08/09: `Grep` para localizar o símbolo, então
+`graphify explain` ou `graphify path`, e `Read` com offset só no que sobrar.
+`graphify explain` custou 379 tokens contra 58.838 de ler `src/ui/dialogs.py`
+inteiro. `graphify query` aberto truncou em 64 de 607 nós e avisou que a resposta
+podia estar entre os 543 cortados: é indício, não resultado. O grafo indexa
+`docs/` junto com o código, então pergunta de código volta com ruído de relatório.
+`claude-mem:smart-explore` fica desligada: o tree-sitter dela falha em Python e
+JavaScript nesta instalação, com as gramáticas presentes em disco.
 
 ---
 
