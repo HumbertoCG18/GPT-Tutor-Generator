@@ -10,6 +10,58 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## ES2 CORRIGIDO NA CAUSA — UNIDADE 190/190 (07/09; user: "nao trate so o sintoma, e sim a causa real")
+**Sintoma:** 6 materiais da secao "Microsservicos" (`microsservicos2/3`, `roteiro2`, `roteiro2-nameserver`, `roteiro3`,
+`roteiro3-gateway`) com unidade 02 (DevOps) e subunidade 2.7, quando os DOIS golds do user dizem unidade 01 e 1.5.
+
+**Cadeia da falha, verificada passo a passo (nao e o motor — sao dois dados de CURADORIA derivados do gold):**
+1. `course/.timeline_curation.json` **pina** o bloco-04 (`8a2e86f0`, aulas de 10/04 "discovery" e 17/04 "api gateway")
+   na unidade 02. Criado em **10/08, commit `b06b264` "cura unidades: 4 pinos gold-backed u02/u03"**. O pino contradiz
+   os dois golds atuais (unidade e subunidade, ambos coerentes entre si nos 25 materiais do ES2): e residuo de uma
+   versao antiga do gold, nao decisao do professor.
+2. `course/.glossary_curation.json` (**26/08**, cabecalho: "Proposto-claude a partir de subunit_gt_ES2; revisar a mao")
+   poe `service discovery`, `name server`, `service registry`, `API gateway`, `gateway` sob **2.7** ("integracao e
+   IMPLANTACAO"). O DP posicional (`timeline/unit_matcher.assign_units_positional`) casa esses tokens com os labels do
+   cronograma e da ao bloco-04 afinidade **u02=3 x u01=0**.
+3. Os 6 materiais herdam a unidade do bloco (`herdada_do_bloco=bloco-04`, o scorer de texto deles nao decidiu) e a
+   subunidade cai em 2.7.
+**As duas correcoes sao necessarias, e isso foi medido:** so os sinonimos -> 21/28, nada muda (o pino sobrepoe o DP);
+so o pino -> a afinidade ainda aponta u02. Juntas, `auto_unit_slug` do bloco-04 vira u01 com conf 0,8.
+**Justificativa independente do gold (essencial, porque a curadoria ja nasceu do gold):** o ROTULO do professor separa
+1.5 "arquitetura orientada a microsservicos" de 2.7 "integracao e implantacao" — discovery, name server/registry e API
+gateway sao padroes de ARQUITETURA; e o CRONOGRAMA poe discovery (10/04) e api gateway (17/04) antes da P1 (08/05), com
+circuit breaker (15/05), conteineres (22/05), filas (05/06) e autenticacao (12/06) depois.
+**Medido pela rota real (tripwire, 0 chamadas), ES2:** unidade **21/28 -> 28/28** · subunidade **21/28 -> 27/28** ·
+fila 12 -> 11 · conf-err 3 -> 1 · **zero perdas**. Aplicado em `ea0701f` (repo do ES2).
+**Reguas no produto depois:** materiais 100% certos **254/288** · **unidade 190/190** · subunidade **201/233**
+(SO 15/15 · IA 39/39 · ES2 27/28 · TCC 11/11 · MF 51/58 · CG 58/82) · fila **26,7/100** · conf-err 16.
+Os pinos dos blocos 07/09/10 ficam: concordam com o automatico (redundantes).
+
+## CIRCULARIDADE: 60 DOS 93 ACERTOS DE SUBUNIDADE EM SO/IA/ES2/TCC VINHAM DO GOLD (07/09, medido)
+Achado colateral da investigacao do ES2, e o mais serio da campanha.
+**Quatro dos seis cursos com gold tem `course/.glossary_curation.json` cujo cabecalho diz "Proposto-claude a partir de
+subunit_gt_<curso>"** (SO e ES2 e TCC em 26/08, IA em 25/08). Esses sinonimos viram alias da taxonomia
+(`_glossary_aliases_for_topic`), e alias e o sinal de MAIOR PESO da subunidade. O motor e medido contra o mesmo gold que
+os originou.
+**Ablacao pela rota real (`ablate_curadoria_gold.py`, 17 termos removidos, tripwire):**
+| curso | sub com curadoria | sem curadoria |
+|---|---|---|
+| SO | 15/15 | **9/15** |
+| IA | 39/39 | **4/39** |
+| ES2 | 21/28 | **5/28** |
+| TCC | 11/11 | **8/11** |
+| **soma** | **86/93** | **26/93** |
+Bloco (135/136) e unidade (118/125) **nao mudam**: o efeito e 100% na subunidade.
+**Leitura:** 60 dos 93 acertos desses 4 cursos vem de vocabulario plantado a partir da resposta. A regua 201/233 tem
+esses 60 dentro. O numero do motor sem vocabulario vindo do gold seria da ordem de **141/233**.
+**MF e CG nao tem curadoria de glossario** — MF 51/58 (88%) e CG 58/82 (71%) sao numeros limpos. O CG nao esta "pior":
+e o unico curso grande NAO contaminado, e 71% e o que o motor entrega num curso novo.
+**Consequencia para o produto (o user ja dizia: "o aluno nunca criara gold"):** se a acuracia depende de um sidecar que
+so existe porque alguem tinha o gold, ela nao se transporta para curso novo. O CG e a prova disso.
+**Nao decidido (do user):** manter as curadorias como feature de produto e medir SEM elas, apagar as 4 e assumir o
+numero limpo, ou reescreve-las a partir do plano/cronograma (sem olhar o gold). Enquanto nao decidir, todo numero de
+subunidade de SO/IA/ES2/TCC deve vir com a ressalva.
+
 ## GARGALO DA SUBUNIDADE E DA FILA — DIAGNOSTICO MEDIDO (07/09; user: "qual e o maior gargalo? tratar o problema, nao o sintoma")
 **Resposta curta: o gargalo NAO e a regra de decisao, e o INSUMO — e, na fila, nao e nem subunidade.**
 
