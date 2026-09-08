@@ -10,6 +10,58 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## TRIAGEM DA CHAMADA DE LLM — 4 DE 9 SAO DESPERDICIO, MAS NAO DA PARA SABER ANTES (08/09; user: "minimo de LLM possivel, so nos arquivos que nao da para concluir")
+Ablacao do `.glossary_curation.llm.json` **uma unidade por vez** em MF e CG (`triagem_vocab_llm.log`, 0 chamadas).
+`delta` = quanto a subunidade muda SEM o vocabulario daquela unidade. `sinal-fraco` = indicador DETERMINISTICO
+disponivel ANTES de chamar (fracao dos materiais da unidade que a 1a passada deixa sem decisao forte).
+
+| curso | unidade | mat | delta | sinal-fraco |
+|---|---|---|---|---|
+| CG | 06-processo-de-visualizacao-3d | 10 | **-5** | 50% |
+| MF | 01-metodos-formais | 30 | **-4** | **7%** |
+| CG | 03-processamento-de-imagens | 17 | **-3** | 35% |
+| CG | 02-fundamentos-matematicos | 15 | **-2** | 27% |
+| CG | 04-processo-de-visualizacao-2d | 14 | **-2** | 36% |
+| MF | 02-verificacao-de-programas | 24 | 0 | 33% |
+| MF | 03-verificacao-de-modelos | 4 | 0 | **50%** |
+| CG | 08-sintese-de-imagens-realisticas | 3 | 0 | 0% |
+| **CG** | **01-introducao-ao-processamento** | 8 | **+2 (PREJUDICA)** | 12% |
+**5 rendem (16 pontos) · 3 nao mudam nada · 1 CUSTA 2 pontos.** Liquido +14, que bate com a ablacao inteira (109 x 95).
+
+### REFUTADO: triagem por sinal deterministico
+O `sinal-fraco` **nao prediz** o `delta`. MF-01 tem 7% de sinal fraco e e a segunda mais valiosa (-4); MF-03 tem 50% e
+nao rende nada. "Chamar so as unidades onde o motor esta fraco" nao funciona — o valor da chamada nao esta em quantos
+materiais estao em duvida, e em se o LEXICO daquela unidade e nomeavel pelo plano.
+
+### A CHAMADA PREJUDICIAL: diagnostico gold-free
+CG unidade-01 doou `1.3 Areas relacionadas <- Manipulacao de Imagens, Morfologia Matematica` e
+`1.2 Conceitos <- Mapeamento de Texturas`. **O LLM nao errou como prosa** — a unidade se chama literalmente "Areas
+relacionadas", e listar essas areas e correto. Como VOCABULARIO de matcher e veneno: sao assuntos da unidade 03 e da
+unidade de rendering, e o topico da u01 vira ima. O docstring da Fase 1b ja registra esse modo de falha
+("CG: a aula 1 enumera as outras unidades e 48 materiais foram sugados para u01") e tem filtro de identidade — mas ele
+e casamento EXATO com label de topico, e "Morfologia Matematica" nao e label de topico do CG (checado: 0 termos doados
+sao nome exato de outro topico). **Alavanca deterministica e gratuita, nao medida ainda:** endurecer o filtro para
+cortar termo cujo nucleo aparece no vocabulario/materiais de outra unidade, e cortar doacao para topico cujo rotulo e
+meta ("Areas relacionadas", "Conceitos", "Introducao").
+
+### Por que per-unidade e mais barato que per-arquivo (a pergunta do user)
+O que falta ao motor nao e informacao DO arquivo: o arquivo do CG diz "z-buffer". Falta o MAPA de "z-buffer" para
+"Algoritmos de Remocao de Elementos Ocultos" do plano. Esse mapa e **compartilhado** por todos os materiais da unidade,
+entao uma chamada por unidade serve todos. Comparacao de custo, medida:
+| estrategia | chamadas |
+|---|---|
+| vocabulario por unidade (4 cursos bloqueados) | **16** |
+| LLM por arquivo, so no residuo de erro (87) | 87 |
+| LLM por arquivo, so na fila de duvida (96) | 96 |
+E o vocabulario tambem melhora arquivos que NAO estao no residuo. **Fallback por arquivo e 5x mais caro e mais
+estreito.** A intuicao do user esta certa; a implementacao mais barata dela ja e a que existe.
+
+### Conclusao para "aumentar o sem-LLM"
+O numero de chamadas ja e minimo (16, uma vez, com cache) e a triagem por unidade nao tem sinal que a guie. O ganho
+real de "mais deterministico" nao vem de cortar chamadas, vem de (a) endurecer o filtro do que o LLM doa — gratis e
+gold-free, recupera os 2 pontos da chamada prejudicial e possivelmente as 3 neutras; (b) melhorar o insumo, que e o
+gargalo ja medido em 07/09 (pdf 94%, html 62%, video 57%).
+
 ## A TAXONOMIA AUTOMATICA COM LLM JA EXISTE — E ESTA DESLIGADA EM 4 CURSOS (08/09; user: "quero taxonomia totalmente automatica, LLM so como fallback")
 **Descoberta, nao construcao.** `src/builder/core/vocabulary_compile.py` (Fase 1b, plano 02/09) e exatamente a
 arquitetura pedida: **1 chamada de LLM por UNIDADE COM MATERIAL**, resultado em `course/.glossary_curation.llm.json`

@@ -51,3 +51,4 @@ Resultado (rodada limpa): piso 0 flip nos 3; motor puro bloco 186 -> 184/199, 2 
 - `mede_fontes_do_professor.py` (teto de cada fonte: plano 12%, SARC 40%, titulo/Moodle 42%, nenhuma 22%) · log homonimo.
 - Descontaminacao (07/09): `mede_sarc_posicional.py` (alinhamento aula->topico, 47%), `mede_doacao_secao.py` (secao do Moodle: 19/76 secoes nomeiam, 78% de acerto onde cobre), `gera_sidecar_professor.py` (gerador sem gold), `mede_sidecar_professor.py` (rota real: 201 -> 135 -> 146), `descontamina_glossary.py --aplicar`, `mede_fontes_do_professor.py --limpo`. Logs homonimos.
 - `ablate_vocab_llm.py` (08/09): quanto vale o `.glossary_curation.llm.json` que MF/CG/LR/FR ja tem — MF 51->47, CG 58->48, soma 109->95/140; bloco e unidade nao mudam. Log homonimo.
+- `triagem_vocab_llm.py` (08/09): ablacao do vocabulario LLM unidade por unidade — 5 rendem (16 pts), 3 neutras, 1 prejudicial (CG u01, +2). Sinal deterministico NAO prediz o valor da chamada. Log homonimo.
