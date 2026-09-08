@@ -10,6 +10,54 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## "PALAVRAS-CHAVE DOS ARQUIVOS -> GLOSSARIO -> SUBUNIDADE": DESTRINCHADA E MEDIDA (08/09; user: "faz sentido isso?")
+Proposta do user, em 4 passos. Onde cada um esta hoje:
+
+| passo | estado |
+|---|---|
+| 1. definir subunidades pelo plano | **ja e assim** — `build_content_taxonomy` parseia o plano; e a unica fonte dos topicos |
+| 2. atribuir palavras-chave a cada subunidade | **este e O problema** — nao ha fonte deterministica (medido 07/09: o rotulo literal do plano alcanca 12% dos materiais) |
+| 3. extrair palavras-chave dos arquivos | **ja existe** — o scorer tokeniza, e a 2a passada extrai tokens exclusivos de heading |
+| 4. casar os dois | **e o scorer** |
+O passo 2 e o gargalo, e nao e um detalhe de implementacao: e a informacao que nao existe em fonte nenhuma do professor.
+
+### O que a proposta acrescenta de novo: propagar por SIMILARIDADE (nao por heading)
+A 2a passada (`propagar_vocabulario_por_headings`) e semeada: so propaga a partir de material que a 1a passada decidiu
+com confianca. Onde o vocabulario e fraco nao ha semente. A ideia do user dispensa a semente se os arquivos se agruparem
+sozinhos. **Medido, e o sinal existe:**
+| medida (taxonomia limpa, sem LLM e sem sidecar) | |
+|---|---|
+| vizinho mais similar tem a MESMA subunidade | **177/233 = 76%** |
+| majoritaria entre os 3 mais similares | 160/233 = 69% |
+| vizinho que o motor ja acerta, herdado | 82/110 = 75% |
+Por curso: MF 84% · SO 80% · IA 79% · ES2 79% · CG 68% · TCC 64%. Similaridade = Jaccard dos tokens distintivos
+(df <= 20% do curso), dentro da unidade.
+
+### REFUTADO: agrupar para SUBSTITUIR o scorer
+Componentes conexas por >= K tokens distintivos em comum degeneram: a IA vira **1 grupo de 39 materiais**, o ES2 2
+grupos. Pureza dos pares 52%. **Mesmo com ORACULO** dando a cada grupo a subunidade majoritaria do gold, o teto e
+**151/233 = 65%**; a atribuicao deterministica real da 85/233, PIOR que os 114/233 do motor por arquivo.
+Motivo: dentro de uma unidade os materiais compartilham vocabulario por construcao — falam todos do mesmo assunto.
+Palavra-chave discrimina unidade, nao subunidade. (`mede_cluster_keywords.log`)
+
+### ENTRA COMO ALAVANCA (medido, `simula_propaga_similaridade.log`)
+Material que continua indeciso depois da 1a e da 2a passada herda a subunidade do vizinho mais similar **entre os que o
+motor decidiu com confianca**. Rota real em memoria (1a + 2a passada REAL + regra por cima), 6 golds:
+| regime | base | piso 0,05 | piso 0,10 | piso 0,20 |
+|---|---|---|---|---|
+| LIMPO (sem vocabulario nenhum) | 114/233 | **118 (+4)** | 116 (+2) | 115 (+1) |
+| ATUAL (produto como esta) | 135/233 | **140 (+5)** | **140 (+5)** | 138 (+3) |
+No melhor piso: **ganha 6, perde 1**. Pequeno, positivo, deterministico e de graca. **Nao implementado** — decisao do user.
+
+### O NUMERO QUE FECHA A DISCUSSAO DO LLM
+Medicoes convergentes de que o vocabulario e o jogo inteiro, e o passo 2 nao tem fonte deterministica:
+- `simula_similaridade_nome.py` (06/09, ja registrado): **87/93 com vocabulario, 30/93 sem**.
+- Agora, 6 golds: **114/233 (49%) sem vocabulario nenhum** · 135/233 (58%) produto atual · **109/140 (78%) em MF+CG,
+  que tem o vocabulario compilado por LLM**.
+- Fontes do professor sozinhas (07/09): 146/233, e no IA 4/39.
+Nenhuma engenharia deterministica produziu o mapa "z-buffer -> Algoritmos de Remocao de Elementos Ocultos". Esse mapa e
+conhecimento de dominio; o lugar minimo e correto do LLM e produzi-lo **uma vez por unidade**, e nao decidir arquivo.
+
 ## TRIAGEM DA CHAMADA DE LLM — 4 DE 9 SAO DESPERDICIO, MAS NAO DA PARA SABER ANTES (08/09; user: "minimo de LLM possivel, so nos arquivos que nao da para concluir")
 Ablacao do `.glossary_curation.llm.json` **uma unidade por vez** em MF e CG (`triagem_vocab_llm.log`, 0 chamadas).
 `delta` = quanto a subunidade muda SEM o vocabulario daquela unidade. `sinal-fraco` = indicador DETERMINISTICO
