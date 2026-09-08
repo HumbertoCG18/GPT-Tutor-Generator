@@ -10,6 +10,33 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## O NUMERO SEM O VOTO DE LLM EM CACHE (08/09; user: "e se fizermos sem esse cache, qual seria o numero?")
+Voter desligado de verdade (`use_llm_voter=False`, o mesmo mecanismo de `scripts/motor_puro.py`), entao o cache de votos
+nunca e consultado. Gemini bloqueado, 0 chamadas, 6 cursos com gold. `mede_sem_voto_llm.log`.
+
+| regime | 100% certos | bloco | unidade | subunidade | fila | conf-err | sem bloco |
+|---|---|---|---|---|---|---|---|
+| **PRODUTO** (voto em cache + vocabulario + curadoria) | **199/288** | 235/237 | 190/190 | 146/233 | 91 | 64 | 7 |
+| **SEM-VOTO** (voter OFF, vocabulario fica) | **184/288** | **221/237** | **188/190** | 143/233 | 136 | 59 | 19 |
+| **ZERO-LLM** (voter OFF + sem `.glossary_curation*`) | **165/288** | 222/237 | 188/190 | **121/233** | 143 | 61 | 19 |
+
+### Leitura
+1. **O voto vale 14 no BLOCO e apenas 2 na UNIDADE** (235 -> 221 e 190 -> 188). O DP posicional recupera quase tudo: o
+   bloco perde precisao, a unidade quase nao sente. **A unidade e, na pratica, quase livre de LLM** — a ressalva de
+   ontem sobre os 28% de blocos votados por LLM continua verdadeira como fato, mas o impacto dela na unidade e 2/190.
+2. **O custo real do voto esta na FILA:** 91 -> 136 (+45) e materiais sem bloco 7 -> 19. Sem voto o motor nao erra
+   mais, ele **desiste mais** — e desistir vai para a fila, que e o comportamento correto.
+3. **O zero-LLM de verdade hoje e 165/288, com subunidade 121/233 (52%).**
+
+### Comparacao com o zero-LLM de 06/09: o trabalho deterministico rendeu
+| | 06/09 | 08/09 |
+|---|---|---|
+| zero-LLM | 155/288 | **165/288** |
+| produto | 253/288 | 199/288 |
+O zero subiu 10 por engenharia deterministica (taxonomia padronizada, filtro da descricao de imagem, correcao do ES2,
+rotulos). O produto caiu 54 porque tiramos o vocabulario derivado do gold — o numero antigo media, em parte, o proprio
+gold. **Um numero subiu porque o motor melhorou; o outro caiu porque a regua ficou honesta.**
+
 ## RESTRICAO UNIDADE -> SUBUNIDADE: JA EXISTE. E O MOODLE NAO DA A UNIDADE NA MAIORIA DAS VEZES (08/09; user: "nao chute, traga dados reais")
 ### 1. A restricao ja e assim, e e absoluta
 `src/builder/routing/file_map.py:184` — `auto_map_entry_subtopic` recebe `winning_unit_slug` e faz
