@@ -136,7 +136,7 @@ Todo script do harness que hoje usa 6 cursos passa a usar 7. **Sem isso, todo ab
 | **Push/merge** dos ~965 commits locais | nada técnico; é decisão de fronteira |
 | **Posição da C7 (imagens)** na fila de campanhas | ordenação |
 | Revisão da fila do CG (`revisar_queue.md`) | trabalho humano |
-| Correção da extração dos zips | bug conhecido: CG 168 nomes colidem entre 14 zips |
+| Correção da extração dos zips | **32 dos 35 zips** afetados; 99 nomes de conteúdo colidem entre zips do mesmo curso (CG 60, ES2 29, MF 10) |
 
 ## 4. Campanha formal e a próxima
 

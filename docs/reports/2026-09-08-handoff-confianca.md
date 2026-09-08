@@ -225,7 +225,7 @@ colisões de zip antes incluía duplicatas dentro do mesmo zip e dotfiles.
 | **Push/merge** dos ~965 commits locais | decisão de fronteira |
 | **Posição da C7 (imagens)** na fila | ordenação |
 | Revisão da fila do CG (`revisar_queue.md`) | trabalho humano |
-| Correção da extração dos zips | CG 168 nomes colidem entre 14 zips; ES2 38; MF 10; `.smv` ignorado |
+| Correção da extração dos zips | **32 dos 35 zips** afetados; 99 nomes de conteúdo colidem entre zips do mesmo curso (CG 60, ES2 29, MF 10); `.smv` ignorado |
 
 ---
 
