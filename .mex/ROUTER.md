@@ -21,7 +21,8 @@ com atribuição arquivo→bloco→unidade dirigida por sinais Moodle/SARC/plano
 | Fato | Fonte única |
 |---|---|
 | Estado vivo, pendências, dívidas, números de gate | `docs/reports/pendencias.md` (tracker, sempre atualizado) |
-| O que a última sessão fez e a fila decidida | handoff mais recente em `docs/reports/` |
+| O que a última sessão fez e a fila decidida | **`docs/reports/2026-09-08-handoff-confianca.md`** (ponto de entrada vivo) |
+| O plano a revisar antes de executar | `docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md` |
 | Estrutura do código (quem chama quem, onde vive) | `graphify query "<pergunta>"` / `graphify-out/` |
 | Por que cada escolha existe | `context/decisions.md` |
 | Contratos de dados reais (Moodle/SARC/manifest/índices) | `context/institutional.md` §Contratos |
@@ -29,7 +30,7 @@ com atribuição arquivo→bloco→unidade dirigida por sinais Moodle/SARC/plano
 | Saída gerada (formato do repo-tutor) | `context/repo-output.md` |
 | Pipeline de PDF (backends, falhas conhecidas) | `context/pdf-pipeline.md` |
 | Cadeia do TEXTO (staging → Curator Studio → o que o motor pontua; descrições de imagem) | `context/text-chain.md` |
-| Retrato verificado do sistema (o que existe, o que está inerte, o que não existe, código morto) | `context/audit-2026-09-07.md` |
+| Retrato verificado do sistema (o que existe, o que está inerte, o que não existe, código morto) | `context/audit-2026-09-07.md` (inclui os achados de 08/09: circularidade do gold, calibração da confiança, cobertura da régua) |
 | Serviço externo, custo, API paga, backend de extração, descrição de imagem | `context/external-services.md` |
 | Histórico de arquitetura, roadmap e changelogs (retrato de 03/09, parcialmente vencido) | `docs/Overview-Sistema.html` |
 | Inventário do motor de atribuição (quem decide cada eixo, o que já existe) | `docs/reports/_harness-2026-09-04/c1-3/inventario_motor_2026-09-07.md` |

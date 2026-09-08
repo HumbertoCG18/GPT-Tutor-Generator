@@ -1,15 +1,21 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-05 tarde (sessao 6; REGUA AUTOMATICA = oficial: bloco 192/199, unidade 185/191, holdout CG 35/35, sub 82/93; CG unidade automatica 6/93 erradas; radical-fallback no motor; propagacao por headings no motor: sub puro 82 -> 87/93; C1 itens 1-3 FEITOS; gold pelo oraculo; Gemini com credito mas NAO usar ate o user mandar). **Ponto de entrada = handoff `2026-09-05b-handoff-fila-campanhas.md`** (sessao 6; o de 05/09 manha esta em `_archive/`) (regra
-de fila do user: UMA campanha aberta, UMA proxima, o resto estacionado com "pronto quando"; anteriores em `_archive/`).
-**Criterio estrito (user, 03/09 tarde): campanha so fecha com 100% dos itens.** Balanco: **C0 MOTOR 11/11 FECHADA em 05/09** (§C0 ITEM 12, 9, 10, 11a, 11b);
-**SYNC 6/6 FECHADA em 04/09** (S6f promovido + complemento: CG `e3d02ed`, 93 entries; holdout puro 31/35, curado 33/35 aceito pelo user com causa medida; §SYNC S6f).
-**FILA:** 1 ABERTA = **C1 TRAVESSIA** (FILE_MAP completo e magro; entrada = §C0 ITEM 12) · 2 PROXIMA = C3 provas/listas (ordem registrada; posicao da C7 e decisao do user na fronteira) · estacionadas: C7 imagens ·
-C2 bibliografia · C4 limpa · C5 dividas de dados · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
-Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTADO em 03/09: historico (MOTOR PURO ate campanhas 1-3,
-4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
-plano 2026-09-02 (desenho/decisoes, carimbado).
+last_updated: 2026-09-08 (descontaminacao do gold + plano "confianca antes de acuracia"). **PONTO DE ENTRADA =
+`2026-09-08-handoff-confianca.md`**; o `2026-09-05b-handoff-fila-campanhas.md` passa a ser historico.
+**Plano a REVISAR antes de executar: `2026-09-08-plano-confianca-antes-de-acuracia.md`.**
 
+**Reguas no produto (08/09, Gemini bloqueado):** materiais 100% certos **199/288** · bloco **235/237** · unidade
+**190/190** · subunidade **161/251** · fila **27,6/100** · **erros confiantes 64**.
+**Cobertura do gold:** bloco 68% do repo · unidade 55% (CG, LR e FR sem gold de unidade) · subunidade 72%.
+**Base da subunidade e 251, nao 233** — o `subunit_gt_FR.csv` tem 18 materiais que nunca foram medidos (FR 15/18).
+**Precisao do confiante:** unidade 157/157 · bloco 177/178 · **subunidade 117/181 = 64,6%** — e isto que ordena o plano.
+
+**FILA:** 1 ABERTA = **C1 TRAVESSIA** (o plano de 08/09 e o conteudo dela) · 2 PROXIMA = C3 provas/listas pela ordem de
+03/09, **mas os dados de 07-08/09 sugerem promover a C5 DIVIDAS DE DADOS** (o gargalo e o insumo: pdf 94% x html 62% x
+video 57%; e o gold de unidade do CG vive la) — decisao do user na fronteira. Estacionadas: C7 imagens · C2 bibliografia ·
+C4 limpa · C5 dividas · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
+**Criterio estrito (user, 03/09): campanha so fecha com 100% dos itens.** C0 MOTOR 11/11 e SYNC 6/6 FECHADAS.
+Historico anterior a 03/09 em `_archive/pendencias-historico-ate-2026-09-02.md`.
 ## PLANO ESCRITO + ARTEFATOS ATUALIZADOS (08/09; user: "atualize os artefatos, e depois reescreva o plano")
 Documento: **`docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md`** (reescrito apos os artefatos).
 Fase 1 honestidade da confianca (gate: precisao do confiante da subunidade >= 90%) -> Fase 2 acuracia (2.1 propagacao

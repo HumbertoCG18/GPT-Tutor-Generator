@@ -1,6 +1,8 @@
 # Handoff 2026-09-05b — PONTO DE ENTRADA: a FILA de campanhas (C1 aberta e BLOQUEADA em LLM; C3 proxima; decisoes do user na frente)
 
-Unico handoff vivo. Substitui `_archive/2026-09-05-handoff-fila-campanhas.md` (sessao 6, 05/09 tarde). **Leia nesta ordem:** (1) este arquivo;
+> **HISTORICO (08/09).** O handoff vivo agora e `2026-09-08-handoff-confianca.md`. Os numeros deste arquivo sao de 05-07/09 e foram superados: em 07-08/09 descobrimos que parte da acuracia vinha do proprio gold, tiramos a contaminacao, e o placar passou a 199/288 · bloco 235/237 · unidade 190/190 · subunidade 161/251. Este arquivo fica pelo raciocinio e pelas alavancas refutadas.
+
+Era o unico handoff vivo. Substitui `_archive/2026-09-05-handoff-fila-campanhas.md` (sessao 6, 05/09 tarde). **Leia nesta ordem:** (1) este arquivo;
 (2) `pendencias.md` §CURADORIA DE UNIDADE DO CG, §GOLD DE SUBUNIDADE CG E MF, §OS 32 ERROS, §C1 ITEM 3 (numeros); (3) `.mex/context/decisions.md`
 (entradas de 05/09). Rode `mem-search` para a sessao de 05/09 tarde (sessao 6).
 
