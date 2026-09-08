@@ -10,6 +10,56 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## DE ONDE A TAXONOMIA VEM x DE ONDE DEVERIA VIR — MEDIDO (07/09; user: "o ideal e pegar as taxonomias a partir do plano de ensino, SARC e talvez do titulo dos arquivos ou label do Moodle, para o motor puro ter mais precisao")
+
+### Fontes de HOJE (leitura de `extraction/content_taxonomy.build_content_taxonomy`)
+| o que | de onde vem | fonte legitima? |
+|---|---|---|
+| **topicos** (code, label, slug) | `parse_units_from_teaching_plan(teaching_plan)` — o PLANO. Fallback: COURSE_MAP | sim, do professor |
+| **aliases (1)** | `_glossary_aliases_for_topic` <- `GLOSSARY.md` <- sidecar `course/.glossary_curation.json` | **contaminado em SO/IA/ES2/TCC** |
+| **aliases (2)** | `strong_headings` = `collect_strong_heading_candidates` — HEADINGS dos proprios materiais | sim, e do material |
+**O SARC nao entra na taxonomia**: os labels de sessao do cronograma alimentam so o alinhamento bloco->UNIDADE
+(`timeline/unit_matcher.assign_units_positional`), nunca o vocabulario do subtopico.
+**O Moodle nao entra na taxonomia**: titulo, label e secao entram como SINAL no scorer de entrada e na regra S1b
+(`_secao_nomeia_subtopico`, so quando a decisao esta vazia ou ambigua), nunca como alias.
+Ou seja: o unico canal que injeta vocabulario CONCRETO na taxonomia e o sidecar — que e exatamente o contaminado.
+
+### Teto de cada fonte (`mede_fontes_do_professor.log`, 222 materiais com gold de subunidade)
+Criterio = a fonte NOMEIA o subtopico certo pela regra deterministica do proprio motor (`_secao_nomeia_subtopico`),
+restrito aos topicos da unidade. Nao e teto de acuracia (o scorer soma evidencia parcial e acerta sem nomear); e a
+comparacao relativa entre fontes que importa.
+| fonte | alcanca o subtopico certo |
+|---|---|
+| **PLANO** (rotulo literal do plano, com e sem codigo) | **27/222 = 12%** |
+| alias CURADO (sidecar derivado do gold) | 74 = 33% |
+| alias de HEADING (dos materiais) | 76 = 34% |
+| **SARC** (label da sessao do bloco) | **88 = 40%** |
+| **TITULO + label do Moodle** | **94 = 42%** |
+| SECAO do Moodle | 44 = 20% |
+| headings do markdown | 82 = 37% |
+| **plano + SARC + Moodle** (sem curadoria) | **138 = 62%** |
+| tudo menos o curado | 171 = 77% |
+| **nenhuma fonte do professor** | **48 = 22%** |
+Por curso, o plano literal: SO 27% · IA **0%** · ES2 7% · TCC 20% · MF 7% · CG 21%.
+
+### A conclusao que isso obriga
+1. **O plano de ensino e a fonte MAIS FRACA de todas: 12%.** O plano nomeia a categoria ("Modelos Descritivos",
+   "Estudo de caso: arquitetura orientada a microsservicos") e o material nomeia o objeto ("K-Means",
+   "roteiro2-nameserver"). A expectativa "taxonomia do plano basta" nao se sustenta em nenhum dos 6 cursos.
+2. **As fontes que o user suspeitou valem 3x o plano**: titulo/label do Moodle 42%, SARC 40%. E nenhuma das duas
+   alimenta a taxonomia hoje.
+3. O tópico primario do BLOCO (que vem do cronograma) acerta a subunidade em 99/222 = 45%, e so 59% dos materiais
+   estao num bloco que tem topico primario. No CG (curso limpo) o bloco acerta 19% e o motor 79%: o cronograma
+   sozinho nao substitui o texto.
+4. **22% (48 materiais) nao sao alcancaveis por fonte nenhuma do professor.** Esse e o piso duro sem LLM.
+
+### Proximo experimento (nao feito)
+Gerar o sidecar de sinonimos AUTOMATICAMENTE do SARC + Moodle, sem olhar o gold, e medir contra as duas bases:
+produto atual (201/233, contaminado) e limpo (~141/233). O mecanismo de injecao ja existe e sobrevive ao reprocess;
+o que falta e a regra de doacao (qual texto do professor doa vocabulario a qual topico) — o criterio estrito de
+nomeacao quase nunca dispara, entao provavelmente precisa de alinhamento posicional sessao->topico dentro da unidade,
+como `assign_units_positional` ja faz para bloco->unidade.
+
 ## ES2 CORRIGIDO NA CAUSA — UNIDADE 190/190 (07/09; user: "nao trate so o sintoma, e sim a causa real")
 **Sintoma:** 6 materiais da secao "Microsservicos" (`microsservicos2/3`, `roteiro2`, `roteiro2-nameserver`, `roteiro3`,
 `roteiro3-gateway`) com unidade 02 (DevOps) e subunidade 2.7, quando os DOIS golds do user dizem unidade 01 e 1.5.
