@@ -10,6 +10,74 @@ Numeros vivos: §GATE DA FASE 3, §HOLDOUT, §REGUA DE TRAVESSIA. Tracker CORTAD
 4.8k linhas) em `_archive/pendencias-historico-ate-2026-09-02.md`; aqui so o vivo. Documentos vivos = este + handoff 2026-09-03b +
 plano 2026-09-02 (desenho/decisoes, carimbado).
 
+## A TAXONOMIA AUTOMATICA COM LLM JA EXISTE — E ESTA DESLIGADA EM 4 CURSOS (08/09; user: "quero taxonomia totalmente automatica, LLM so como fallback")
+**Descoberta, nao construcao.** `src/builder/core/vocabulary_compile.py` (Fase 1b, plano 02/09) e exatamente a
+arquitetura pedida: **1 chamada de LLM por UNIDADE COM MATERIAL**, resultado em `course/.glossary_curation.llm.json`
+(arquivo SEPARADO do manual; o loader funde os dois), com cache — so a flag `recompile_vocab` rechama. O LLM **nao
+decide atribuicao**: ele classifica titulos/headings dos materiais nos topicos DO PLANO, e o motor deterministico
+segue decidindo material a material. Filtros ja implementados: exclusividade (termo em >1 topico cai), identidade
+(termo igual ao nome de outra unidade), termo == label, termo que e id/titulo de arquivo, termo so com genericos.
+
+### Estado real (08/09)
+| curso | `.llm.json` | manual (bloqueia) | topicos/sinonimos |
+|---|---|---|---|
+| MF | **SIM** | nao | 17 / 77 |
+| CG | **SIM** | sim (so pinos) | 24 / 86 |
+| LR | **SIM** | nao | 3 / 8 |
+| FR | **SIM** | nao | 8 / 53 |
+| SO, IA, ES2, TCC | **nao** | sim | — |
+`_provenance: llm`, `_modelo: gemini-3.5-flash`. Amostra do CG: `1.1 Origens <- WHIRLWIND, SAGE, Sketchpad, Invencao
+do mouse`. E vocabulario de dominio tirado dos materiais e ancorado no plano — nao ve gold nenhum.
+
+### CORRECAO DE UM ERRO MEU DE 07/09
+Eu disse "MF e CG nao tem curadoria de glossario, 51/58 e 58/82 sao os numeros limpos". **Errado.** Eles nao tem o
+sidecar derivado do GOLD, mas rodam com o vocabulario compilado por LLM. Ablacao medida agora (`ablate_vocab_llm.log`,
+0 chamadas, so remove o arquivo e reprocessa):
+
+| | com `.llm.json` | sem |
+|---|---|---|
+| MF subunidade | 51/58 | **47/58** |
+| CG subunidade | 58/82 | **48/82** |
+| soma | 109/140 | **95/140** |
+
+Bloco (100/101) e unidade (65/65) **nao mudam**: a camada e 100% subunidade. **O CG sem vocabulario nenhum e 59%, nao
+71%.** O "motor puro" verdadeiro e mais baixo do que eu reportei em 07/09.
+
+### Por que SO/IA/ES2/TCC nunca compilaram
+`vocabulary_compile.py:222` — `if manual.is_file(): return None`. O portao existe para nunca sobrescrever trabalho
+humano, e esta certo. So que o arquivo que ocupava esse lugar nesses 4 cursos era o sidecar **derivado do gold**. O
+remendo circular estava, literalmente, bloqueando o caminho honesto. **E o sidecar que eu gerei em 07/09
+(`gera_sidecar_professor.py`) ocupa o MESMO arquivo e bloqueia igual.**
+
+### Custo de ligar (medido)
+1 chamada por unidade com material: SO 6 + IA 4 + ES2 2 + TCC 4 = **16 chamadas, uma vez**, depois cache.
+Referencia do docstring da Fase 1b (medicao de 02/09, `_harness-2026-09-02/compila_vocab_v2.py`): este prompt levou
+**IA de 5 para 37/39** e **FR de 12 para 17/19**; o co-heading deterministico foi refutado (26 -> 31/93). O IA e
+exatamente o curso onde as fontes do professor deram 4/39 em 07/09 — plano nomeia categoria, material nomeia algoritmo.
+
+### O que falta decidir (do user, nao meu)
+1. **Liberar o Gemini** para as 16 chamadas (decisao aberta desde 06/09; toda medicao minha roda com tripwire).
+2. O que fazer com o sidecar do professor nos 4: sai da frente (renomear) para o compilador rodar, ou fica e o
+   compilador segue desligado. Os dois arquivos se FUNDEM no loader — nao sao alternativas, sao camadas.
+3. Regra de reporte: com `.llm.json` o numero e legitimo (nao ve gold), mas **nao e "sem LLM"**. O placar precisa de
+   uma coluna a mais: zero-LLM real (95/140 nos 2 cursos com gold), vocab compilado (109/140), produto.
+
+### A PREMISSA DA UNIDADE, CHECADA
+O user disse "as unidades estao 100%". **Verdadeiro onde ha gold, e o gold cobre pouco:**
+
+| curso | materiais | gold de unidade |
+|---|---|---|
+| SO+IA+ES2+TCC+MF | 226 | 190 |
+| **CG** | **93** | **0** |
+| **LR** | 7 | **0** |
+| **FR** | 22 | **0** |
+
+190/190 mede 190 de 348 materiais; **os 93 do CG nao tem uma unica medicao de unidade**. Alem disso a unidade e
+decidida pelo BLOCO por desenho (`file_map.reconcile_unit_with_block`: o texto discordante vira `unit_block_conflict`,
+nunca decisao) — e `conflito` e o maior motivo da fila, 45 itens. Pinos de unidade que divergem do automatico: 2
+(SO bloco-06, pino u04-deadlock x auto u02-gerencia-do-processador, aula "gerencia do processador sincronizacao e
+deadlock" — o label nomeia os dois, e juizo legitimo; CG 1). **Leitura honesta: a unidade esta forte, nao resolvida.**
+
 ## GLOSSARY DESCONTAMINADO + GERADOR DE VOCABULARIO SEM GOLD (07/09; user: "vamos fazer isso e descontaminar o GLOSSARY, penso em colocar SARC + Moodle + Headings")
 **Feito.** Os 4 sidecars "proposto-claude a partir de subunit_gt" sairam do caminho do motor (arquivados em
 `course/.glossary_curation.gold.json`, restauraveis) e no lugar entrou um gerado so de fontes do professor.
