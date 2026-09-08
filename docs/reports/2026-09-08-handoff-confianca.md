@@ -196,10 +196,31 @@ Confundimento desfeito: aprovado 93% × staging 71% **não é causal** — dentr
 
 ---
 
+## 5b. DECISÕES JÁ TOMADAS pelo user em 08/09 — não reabrir
+
+### Gemini LIBERADO, com protocolo de contenção
+Gasto: `vocabulary_compile`, **1 chamada por unidade com material** = SO 6 + IA 4 + ES2 2 + TCC 4 = **16, uma vez**.
+1. Um curso por vez, conferindo o contador logado (`vocab: <curso> — N chamada(s)`); se N passar do número de unidades
+   do curso, **parar**.
+2. `TUTOR_NO_VOCAB_COMPILE=1` continua em todo script de medição.
+3. O voter **não** é rechamado (96 votos em cache por md5; `DEFAULT_CAP = 20` como rede).
+4. `gemini_auto_summarize` continua desligado (incidente de 05/09: 60 arquivos re-resumidos).
+5. Pós-check: contar chamadas do dia antes e depois e registrar no tracker.
+6. O sidecar do professor sai da frente por **renomeação**, nunca apagando.
+
+### A próxima campanha é a C5 DÍVIDAS DE DADOS, não a C3
+Medido em `compara_c3_c5.log`: **C3 cobre 71 materiais (20%) e carrega 8 dos 92 erros (9%)**, com taxa de erro de 14%
+contra 34% no resto — é já a parte mais saudável do repositório. A C5 tem defeito com tamanho medido (**32 dos 35 zips**
+com colisão de nome de conteúdo; 99 nomes: CG 60, ES2 29, MF 10), a dívida de régua (**122 materiais sem gold de
+unidade**) e o gargalo do insumo (pdf 94% × html 62% × vídeo 57%).
+**Ressalva registrada:** o ganho de acurácia de corrigir esses defeitos **não foi medido**. É a aposta melhor
+fundamentada, não uma certeza.
+**Dois números meus corrigidos no caminho:** "43 sem texto" era **1** (42 são código com resumo); a contagem de
+colisões de zip antes incluía duplicatas dentro do mesmo zip e dotfiles.
+
 ## 6. Decisões ABERTAS do user (travam trabalho)
 | item | o que trava |
 |---|---|
-| **Liberar o Gemini** | Fase 2.4 inteira (16 chamadas), recompilar o vocabulário do CG, `gemini_auto_summarize` |
 | **Qual camada LLM cortar** para ficar em duas | decisão de arquitetura aberta desde 06/09 |
 | **Push/merge** dos ~965 commits locais | decisão de fronteira |
 | **Posição da C7 (imagens)** na fila | ordenação |
@@ -219,9 +240,9 @@ Confundimento desfeito: aprovado 93% × staging 71% **não é causal** — dentr
 ### Estacionadas
 C7 imagens · C2 bibliografia · C4 limpa · C5 dívidas de dados · C6 web.
 
-### O que os dados de 07–08/09 sugerem para DEPOIS deste plano
-A ordem registrada é de 03/09 e não conhecia o que medimos. Três candidatas, com o dado que as sustenta — **a escolha é
-do user, na fronteira**:
+### DECIDIDO em 08/09: a próxima é a C5 (fundamento medido em §5b)
+A ordem de 03/09 punha a C3. Os dados mostraram que a C3 é já a parte mais saudável do repositório: 20% dos materiais
+e 9% dos erros. As três candidatas, com o dado que as sustenta:
 
 1. **C5 DÍVIDAS DE DADOS, promovida.** O gargalo medido é o insumo: PDF 94%, HTML 62%, vídeo 57%. E há bugs conhecidos
    com tamanho medido: 168 colisões de nome em 14 zips do CG, `.smv` ignorado, páginas do Moodle. Além disso o gold de
@@ -230,8 +251,9 @@ do user, na fronteira**:
    HTML (Ollama primeiro: 105 → 34 chamadas). Entra se o critério for custo.
 3. **C3 provas/listas**, como registrado. Entra se o critério for cobertura de categorias.
 
-**Recomendação, com o dado na mão:** C5 antes de C3. Todo ganho de motor que sobrou é de segunda ordem (2 a 5 pontos),
-enquanto o insumo responde por diferenças de 30 pontos entre classes de material.
+**Decidido: C5 antes de C3.** Todo ganho de motor que sobrou é de segunda ordem (2 a 5 pontos), enquanto o insumo
+responde por diferenças de 30 pontos entre classes de material — e a C3 não tem massa de erro para justificar
+prioridade.
 
 ---
 

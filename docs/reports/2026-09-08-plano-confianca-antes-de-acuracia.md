@@ -99,11 +99,19 @@ rótulo meta ("Áreas relacionadas", "Conceitos", "Introdução").
 Quando o texto aponta uma unidade e o bloco aponta outra, o bloco vence por desenho e o desacordo só vira registro.
 Há gold de unidade em 190 materiais para arbitrar quem acerta nesses casos. **Medir antes de mexer.**
 
-### 2.4 Ligar o compilador de vocabulário nos 4 cursos bloqueados · 16 chamadas
-SO 6 + IA 4 + ES2 2 + TCC 4, uma vez, depois cache.
-Exige duas coisas: **liberar o Gemini** (decisão aberta do user) e tirar o sidecar do professor da frente
-(`vocabulary_compile.py:222` não compila quando existe sidecar manual).
+### 2.4 Ligar o compilador de vocabulário nos 4 cursos bloqueados · 16 chamadas · **GEMINI LIBERADO (user, 08/09)**
+SO 6 + IA 4 + ES2 2 + TCC 4, uma vez, cacheadas em `course/.glossary_curation.llm.json`.
 Referência de 02/09 citada no próprio código: este prompt levou o IA de 5 para 37/39.
+
+**Protocolo de contenção, não negociável nesta campanha:**
+1. **Um curso por vez**, conferindo o contador que o compilador loga (`vocab: <curso> — N chamada(s)`) antes do próximo.
+   Se N passar do número de unidades com material daquele curso, **parar e investigar**.
+2. `TUTOR_NO_VOCAB_COMPILE=1` continua em **todo** script de medição. Medição nunca compila.
+3. O voter **não** é rechamado: os 96 votos de bloco já estão em cache por md5, e `llm_vote.DEFAULT_CAP = 20` por rodada
+   segue como rede.
+4. `gemini_auto_summarize` continua **desligado** (incidente de 05/09: um reprocess re-resumiu 60 arquivos).
+5. Pós-check obrigatório: contar chamadas do dia antes e depois, e registrar o número no tracker junto do resultado.
+6. Para o sidecar do professor sair da frente (`vocabulary_compile.py:222`), **renomear**, nunca apagar.
 
 ---
 
@@ -124,19 +132,34 @@ Todo script do harness que hoje usa 6 cursos passa a usar 7. **Sem isso, todo ab
 
 | item | o que trava |
 |---|---|
-| **Liberar o Gemini** | Fase 2.4 inteira, recompilar o vocabulário do CG, `gemini_auto_summarize` |
 | **Qual camada LLM cortar** para ficar em duas | decisão de arquitetura aberta desde 06/09 |
 | **Push/merge** dos ~965 commits locais | nada técnico; é decisão de fronteira |
 | **Posição da C7 (imagens)** na fila de campanhas | ordenação |
 | Revisão da fila do CG (`revisar_queue.md`) | trabalho humano |
 | Correção da extração dos zips | bug conhecido: CG 168 nomes colidem entre 14 zips |
 
-## 4. Campanha formal
+## 4. Campanha formal e a próxima
 
-Pela fila do tracker: **C1 TRAVESSIA** é a única aberta, **C3 provas/listas** é a próxima, e estão estacionadas
-C7 imagens, C2 bibliografia, C4 limpa, C5 dívidas de dados, C6 web.
-Este plano não é campanha nova: é o conteúdo do que fazer no motor. Os itens 1.x e 2.1–2.3 continuam a C1; os 3.x
-continuam a C5.
+**C1 TRAVESSIA** é a única aberta; este plano é o conteúdo dela (1.x e 2.1–2.3). Os itens 3.x continuam a C5.
+
+**Decidido pelo user em 08/09: a próxima é a C5 DÍVIDAS DE DADOS, não a C3.** Fundamento medido
+(`compara_c3_c5.log`), depois de corrigir dois números meus que estavam inflados:
+
+| grupo | materiais | errados | % erro |
+|---|---|---|---|
+| **C3** (provas, listas, trabalhos, gabaritos) | 71 (20%) | **8 (9% dos erros)** | **14%** |
+| resto | 277 | 84 | **34%** |
+
+1. **C3 não tem massa de erro:** é já a parte mais saudável do repositório.
+2. **A C5 tem defeito com tamanho medido:** **32 dos 35 zips** têm colisão de nome de conteúdo entre si (99 nomes:
+   CG 60, ES2 29, MF 10). O código extraído e o resumo desses materiais podem estar trocados.
+3. **A C5 tem a dívida de régua:** 122 materiais sem gold de unidade (CG 93, FR 22, LR 7), 35% do repositório.
+4. **O gargalo é o insumo:** pdf 94% · zip 66% · html 62% · com link de YouTube 57%.
+
+**Ressalva honesta:** os itens 2 e 4 são defeitos de dado com tamanho medido; **o ganho de acurácia que corrigi-los
+traz não foi medido**. A C5 é a aposta melhor fundamentada, não uma certeza.
+**Dois números meus corrigidos:** "43 materiais sem texto" era 1 (42 são código com resumo); e a contagem de colisões
+de zip antes incluía duplicata dentro do mesmo zip e dotfiles.
 
 ## 5. Estado dos artefatos publicados (08/09)
 
