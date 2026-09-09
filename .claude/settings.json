@@ -6,28 +6,28 @@
     "code-review@claude-plugins-official": true
   },
   "hooks": {
-    "PostToolUse": [
+    "PreToolUse": [
       {
         "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/code-review-graph.exe\" ] && \"$HOME/.local/bin/code-review-graph.exe\" update --skip-flows >/dev/null 2>&1 || true",
-            "timeout": 30
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/engine-facade-guard.js\"",
+            "timeout": 10
           }
-        ]
-      }
-    ],
-    "SessionStart": [
+        ],
+        "description": "engine.py e fachada (.mex/AGENTS.md)"
+      },
       {
-        "matcher": "",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "[ -x \"$HOME/.local/bin/code-review-graph.exe\" ] && \"$HOME/.local/bin/code-review-graph.exe\" status 2>/dev/null || true",
-            "timeout": 10
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/gemini-antipattern-guard.js\"",
+            "timeout": 15
           }
-        ]
+        ],
+        "description": "anti-padroes Gemini no staged (.mex/AGENTS.md)"
       }
     ]
   }

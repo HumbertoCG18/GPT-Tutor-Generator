@@ -19,6 +19,7 @@ dependencies = [
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.1",
+    "ruff>=0.6",
 ]
 # Optional: enable Gemini-based code summarization (course/code_curation.json).
 # Without this extra, the build still works — code summaries are simply skipped.
@@ -29,3 +30,12 @@ code-summarization = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# Comeco conservador: erro real, nao estilo. 108k LOC sem lint ate hoje —
+# ligar regra de estilo agora produziria milhares de achados e zero sinal.
+select = ["E9", "F", "B"]

@@ -63,7 +63,7 @@ arquivo não carrega snapshot — snapshot aqui envelhece e mente.
 
 ## Harness Ownership
 
-Uma fase, um dono. Configurado em `~/.claude/settings.json` via `skillOverrides`.
+Uma fase, um dono. Configurado no settings.json pessoal do Claude Code, via skillOverrides.
 Este arquivo roteia; o settings.json é a fonte do que está ligado.
 
 | Fase | Dono |
@@ -80,7 +80,7 @@ Este arquivo roteia; o settings.json é a fonte do que está ligado.
 
 Os `orch-*` param em Gate 1 (plano aprovado antes de escrever código) e Gate 2
 (diff confirmado antes do commit). Entre os dois o pipeline corre sem parar.
-Os gates são instrução dentro do SKILL.md, não hook: nada no `hooks.json` do ECC
+Os gates são instrução dentro do SKILL.md, não hook: nada no arquivo de hooks do ECC
 os impõe. O risco é pular o gate, não travar nele.
 
 Deriva de acurácia agregada não é defeito reproduzível e não vai por
