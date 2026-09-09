@@ -4,7 +4,7 @@
 const { execSync } = require('child_process');
 const NL = String.fromCharCode(10);
 const ALVOS = ['google.generativeai', 'genai.GenerativeModel'];
-const ISENTOS = ['.claude/hooks/gemini-antipattern-guard.js'];
+const ISENTOS = ['scripts/hooks/gemini-antipattern-guard.js'];
 
 let raw = '';
 process.stdin.on('data', (c) => (raw += c));

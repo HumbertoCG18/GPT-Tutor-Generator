@@ -12,7 +12,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/engine-facade-guard.js\"",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/engine-facade-guard.js\"",
             "timeout": 10
           }
         ],
@@ -23,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/gemini-antipattern-guard.js\"",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/hooks/gemini-antipattern-guard.js\"",
             "timeout": 15
           }
         ],

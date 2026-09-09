@@ -1,0 +1,4 @@
+
+[mcp_servers.graphify]
+command = "graphify"
+args = ["\\\\?\\C:\\Users\\Humberto\\Documents\\GitHub\\GPT-Tutor-Generator", "--mcp"]
