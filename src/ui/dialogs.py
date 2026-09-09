@@ -3906,9 +3906,9 @@ class FileEntryDialog(simpledialog.Dialog):
                     doc.close()
                     canvas.after(0, lambda ph=photos: _display(ph))
                 except Exception as ex:
-                    canvas.after(0, lambda: ttk.Label(
+                    canvas.after(0, lambda exc=ex: ttk.Label(
                         parent,
-                        text="Erro ao renderizar PDF:\n{}".format(ex),
+                        text="Erro ao renderizar PDF:\n{}".format(exc),
                         style="Muted.TLabel",
                         justify="center").pack(expand=True))
 

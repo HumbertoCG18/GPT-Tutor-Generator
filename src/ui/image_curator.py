@@ -1389,8 +1389,8 @@ class ImageCuratorPanel(ttk.Frame):
                 logger.error("[Vision] Erro ao descrever %s: %s", fname, e)
                 self.after(
                     0,
-                    lambda: messagebox.showerror(
-                        "Erro", f"Falha ao descrever {fname}:\n{e}", parent=self
+                    lambda exc=e: messagebox.showerror(
+                        "Erro", f"Falha ao descrever {fname}:\n{exc}", parent=self
                     ),
                 )
                 self.after(0, lambda: self.status_var.set(f"Erro ao descrever {fname}."))

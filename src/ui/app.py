@@ -2449,7 +2449,7 @@ class App(tk.Tk):
                 builder.incremental_build()
                 self.after(0, lambda: self._on_reprocess_done(None))
             except Exception as e:
-                self.after(0, lambda: self._on_reprocess_done(e))
+                self.after(0, lambda exc=e: self._on_reprocess_done(exc))
 
         if active_subj:
             self._set_status(f"Reprocessando repositório com perfil da matéria: {active_subj.name}...")
