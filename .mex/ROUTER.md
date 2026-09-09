@@ -60,6 +60,7 @@ arquivo não carrega snapshot — snapshot aqui envelhece e mente.
 | Custo, API paga, trocar backend (Marker/MinerU/docling), provedor de descrição | `context/external-services.md` |
 | Mexer no motor de atribuição (bloco/unidade/subunidade) | `docs/reports/_harness-2026-09-04/c1-3/inventario_motor_2026-09-07.md` |
 | Any specific repeatable task | Check `patterns/INDEX.md` |
+| Sessão passada que não está no tracker nem no handoff | `mem-search` (quarta fonte, não a primeira) |
 
 ## Harness Ownership
 

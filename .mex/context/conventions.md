@@ -13,7 +13,7 @@ edges:
     condition: when deciding where new logic should live
   - target: context/decisions.md
     condition: when a convention comes from an architectural decision
-last_updated: 2026-09-03
+last_updated: 2026-09-09
 ---
 
 # Conventions
@@ -77,13 +77,14 @@ Run this checklist after code or scaffold changes:
 - [ ] No undeclared dependency, script, linter, formatter, build backend, or package manager was invented.
 - [ ] Entry points and paths match repository spelling and separators.
 - [ ] New tests follow the `tests/test_<topic>.py` convention.
+- [ ] `python -m ruff check src/ tests/ scripts/` nao introduz achado novo (base medida em 09/09: 154, dos quais 13 sao falso positivo de anotacao em string).
 - [ ] Generated-repository behavior remains compatible with the README flow.
 - [ ] If changing tag behavior, update or add coverage near `tests/test_tag_catalog.py` and relevant unit/timeline scoring tests.
 - [ ] If changing timeline allocation behavior, update or add coverage near `tests/test_unit_matcher.py`, `tests/test_cronograma_health.py`, and relevant timeline scoring tests.
 - [ ] If changing Moodle/SARC signal capture or consumed attribution signals, update or add coverage near `tests/test_moodle.py`, `tests/test_moodle_labels.py`, and `tests/test_migrate_signals.py`.
 - [ ] If changing concept-resolver behavior, update or add coverage near `tests/test_concept_resolver.py`, `tests/test_resolver_fusion.py`, and `tests/test_resolver_wiring.py`.
 - [ ] If changing stable block identity, UUID migration, or dry-run persistence behavior, update or add coverage near `tests/test_block_identity.py`, `tests/test_task2_uuid_migration.py`, `tests/test_task3_human_truth_migration.py`, `tests/test_task4_eval_uuid.py`, and `tests/test_persist_gate.py`.
-- [ ] If changing anchor placement or temporal block behavior, update or add coverage near `tests/test_anchor_placement.py` and `tests/test_temporal_block_wire.py`.
+- [ ] If changing anchor placement or temporal block behavior, update or add coverage near `tests/test_motor_anchor_engine.py` and `tests/test_temporal_block_wire.py`.
 - [ ] If changing stash/card import behavior, update or add coverage near `tests/test_stash_import.py` and `tests/test_stash_backfill.py`.
 
 ## Fila de campanhas (user, 2026-09-03)

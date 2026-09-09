@@ -15,7 +15,7 @@ edges:
     condition: when understanding which build module generates each file
   - target: context/decisions.md
     condition: when understanding why the repo is structured this way
-last_updated: 2026-09-03
+last_updated: 2026-09-09
 ---
 
 # Repo Output Format
@@ -90,7 +90,7 @@ README.md                                    # generated repository readme
 | `src/builder/timeline/curation.py` | Persists manual timeline curation in the generated course directory. |
 | `src/builder/extraction/entry_signals.py` | Collects normalized entry signals, including `moodle_label`, for resolver and routing layers. |
 | `src/builder/routing/concept_resolver.py` and `src/builder/routing/resolver_apply.py` | Optional, feature-flagged concept resolver that can overwrite block fields only when `use_concept_resolver` is enabled. |
-| `src/builder/routing/anchor_placement.py` | Optional, feature-flagged temporal placement layer that writes additive temporal block fields. |
+| `src/builder/routing/motor/anchor_engine.py` | Motor de atribuicao temporal por curso atras de `use_anchor_engine`; escreve so campos `temporal_*` sem tocar `computed_*`. |
 | `src/builder/core/stash_import.py` and `src/builder/core/stash_backfill.py` | Import and backfill source sections from subject stash/card folders. |
 
 ## How the Tutor Uses These Files
