@@ -16,7 +16,7 @@ edges:
     condition: quando precisar de como os componentes processam estas fontes
   - target: context/repo-output.md
     condition: quando o foco é o formato do repo gerado
-last_updated: 2026-09-05
+last_updated: 2026-09-09
 ---
 
 # Contexto Institucional
@@ -250,6 +250,39 @@ Regra (ver `.mex/context/conventions.md` §Fixtures): fixture copia ESTES contra
 Proveniência desta seção: `Metodos-Formais-Tutor` real (manifest.json, course/.timeline_index.json,
 course/.card_block_map.json, material_curation.json) + `C:/Users/Humberto/AppData/Roaming/GPTTutorGenerator/subjects.json`
 real + código de parse citado por linha. Re-colher com `python -c "json.load(...)"` quando suspeitar drift.
+
+### HTML exportado do Moodle — contrato estrutural (medido nos 42 do CG, 09/09/2026)
+
+Proveniencia: `.ablacao/Computacao-Grafica-Tutor/raw/html/`, 42 arquivos, 387 B a 2,5 MB
+(mediana 8,6 KB). Perfilado por contagem de tags, classes e primeiro elemento.
+
+**Tres familias, nao uma:**
+
+| familia | n | marca de deteccao |
+|---|---|---|
+| export de page/label do Moodle | 30 | primeiro elemento e `<div class="no-overflow">` |
+| documento Word salvo como HTML | 6 | namespace `<w:...>`/`<o:...>`, `xmlns:w`, tags `<font>` |
+| outro (inclui codigo com extensao .html) | 6 | um comeca com `#include`/`<iostream>` |
+
+**A armadilha: 32 dos 42 nao tem `<h1>`-`<h4>` nenhum.** Destes, 25 usam `<strong>`/`<b>`
+como titulo de secao (`<p style="text-align: center;"><strong>Tarefas</strong></p>`) e 7
+nao tem titulo de tipo algum.
+
+Consequencia medida na cadeia do texto, nao inferida:
+- `text/url_markdown.py:161` converte `<h1>`-`<h6>` em `# Titulo`.
+- `text/url_markdown.py:145` converte `<strong>`/`<b>` em `**negrito**` — enfase inline,
+  nao titulo. Entao `Tarefas` vira `**Tarefas**`, e quem le estrutura depois nao ve secao.
+- `text/url_markdown.py:84` pontua o bloco de conteudo com `heading_count * 120`; esse
+  termo e zero em 32 dos 42.
+
+Isto e um mecanismo candidato para `html 62%` contra `pdf 94%`, **nao uma causa provada**:
+falta a ablacao que meça o ganho de tratar `<strong>` isolado em paragrafo como titulo.
+
+**Video domina o resto:** 25 dos 42 tem `<iframe>` ou `<video>`, e a classe
+`mediaplugin_videojs`/`video-js`/`mediafallbacklink` aparece 260 vezes. Casa com
+`video 57%` na mesma tabela de dividas.
+
+Outras presencas: link 36, imagem 16, tabela 11, lista 9, codigo 1.
 
 ### Encoding (armadilha nº 1)
 
