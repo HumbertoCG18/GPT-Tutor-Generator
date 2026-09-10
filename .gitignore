@@ -259,3 +259,8 @@ moddle/.m365_token.json
 docs/reports/_archive/scripts-2026-09-04/artefato_razao/dados.json
 docs/reports/_archive/scripts-2026-09-04/artefato_razao/razao_dos_blocos.html
 .zerodiff/
+# Hooks do agy (Antigravity CLI): os guardas de scripts/hooks/ registrados para o
+# terceiro CLI. A regra .agents/ acima e de template e esconderia isto de git status.
+!.agents/
+.agents/*
+!.agents/hooks.json
