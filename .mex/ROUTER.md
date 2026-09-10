@@ -87,9 +87,14 @@ os impõe. O risco é pular o gate, não travar nele.
 Deriva de acurácia agregada não é defeito reproduzível e não vai por
 `orch-fix-defect`. Vai por harness de medição (`ecc:eval-harness`).
 
-MCP ativo: `context7` apenas. `code-review-graph` foi removido em 08/09 por uso
-zero medido em 15.840 chamadas de ferramenta registradas. Estrutura de código
-continua no `graphify`, conforme a tabela de fonte única acima.
+MCP ativo no Claude Code: `context7` e, desde 10/09, `graphify` (`.mcp.json` do
+projeto, gitignored; servidor `python -m graphify.serve graph.json`). `code-review-graph`
+foi removido em 08/09 por uso zero medido em 15.840 chamadas de ferramenta registradas.
+No agy o mesmo servidor entrou via `agy mcp add`. No Codex está `enabled = false` no
+config.toml global do Codex (pasta ~/.codex): o Alethe reescreve a entrada do projeto com um comando
+que não existe; a skill `$graphify-windows` cobre. Detalhes em
+`patterns/debug-graphify-mcp.md`. Estrutura de código continua no `graphify`, conforme
+a tabela de fonte única acima.
 
 Busca estrutural, ordem medida em 08/09: `Grep` para localizar o símbolo, então
 `graphify explain` ou `graphify path`, e `Read` com offset só no que sobrar.

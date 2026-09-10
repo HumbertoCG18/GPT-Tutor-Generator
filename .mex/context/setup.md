@@ -48,6 +48,10 @@ For Gemini-backed code/reference summarization, install the optional extra:
 pip install -e .[code-summarization]
 ```
 
+Servidor MCP do graphify no Windows: `mcp` 2.x importa `pywintypes`; sem `pywin32` o
+processo morre antes do `initialize`. `python -m pip check` acusa; `pip install pywin32`
+resolve (medido 2026-09-10).
+
 ## Run
 
 The application main entry point is:

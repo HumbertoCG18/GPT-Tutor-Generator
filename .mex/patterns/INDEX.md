@@ -10,7 +10,7 @@ Lookup table for all pattern files in this directory. Check here before starting
 | [add-builder-submodule.md](add-builder-submodule.md) | Adding new processing logic to any `src/builder/` subpackage |
 | [add-ui-feature.md](add-ui-feature.md) | Adding dialogs, tabs, dashboard widgets, or new entry controls to the Tkinter UI |
 | [debug-build-failure.md](debug-build-failure.md) | Diagnosing failures during repository builds — manifest errors, conversion errors, stalls |
-| [debug-graphify-mcp.md](debug-graphify-mcp.md) | Diagnosing Graphify MCP startup, stdio, and initialize handshake failures |
+| [debug-graphify-mcp.md](debug-graphify-mcp.md) | Diagnosing Graphify MCP startup, stdio, and initialize handshake failures; Alethe rewriting `.codex/config.toml` |
 | [pdf-backend-integration.md#task-add-a-new-backend](pdf-backend-integration.md#task-add-a-new-backend) | Adding a new PDF conversion backend |
 | [pdf-backend-integration.md#task-modify-existing-backend-behavior](pdf-backend-integration.md#task-modify-existing-backend-behavior) | Modifying Marker, Docling, Datalab, or PyMuPDF behavior |
 | [ollama-vision.md#task-add-or-modify-vision-behavior](ollama-vision.md#task-add-or-modify-vision-behavior) | Adding image types, prompt changes, or heuristic classifier tweaks |

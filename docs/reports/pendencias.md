@@ -2554,3 +2554,17 @@ VITRINE e CUSTO — nada de migrar pra catalogação+LLM-runtime.
     repos-tutor/subjects.json são locais e acoplados; empacotar exige o "Settings —
     one control plane" (config única apontando pros dados do usuário) e garantir que
     NENHUM dado pessoal/material de curso vai dentro do pacote/imagem.
+
+## HARNESS 10/09 — GRAPHIFY MCP NOS 3 CLIs (user: "quero usar ele no claude code, no codex e no agy")
+Estado: Claude Code via `.mcp.json` (local) · agy via `agy mcp add` · Codex `enabled = false` no global porque o
+Alethe reescreve o `.codex/config.toml` do projeto com `graphify <cwd> --mcp` (comando inexistente). Skill
+`$graphify-windows` cobre o Codex. Causa secundaria corrigida: `pywin32` faltava para o `mcp` 2.1.1.
+Pendente:
+- Reportar em `Kc1t/alethe-agents` (v1.6.0): `graphify_codex_config_write` deveria gravar `graphify-mcp <graph.json>`
+  e respeitar `graphifyEnabled`. Ao corrigir, apagar o `enabled = false` do global.
+- `.codex/config.toml` fica sujo no working tree a cada lancamento pelo Alethe; `git checkout` antes de commitar,
+  ou `git update-index --skip-worktree .codex/config.toml`.
+- Codex acusou "hook returned invalid pre-tool-use JSON output" ao rodar `$graphify-windows`: um dos guards em
+  `scripts/hooks/` responde JSON invalido no protocolo do Codex. Nao medido qual.
+- A sessao do Codex "replicar skills e MCPs do Claude Code para o Codex" (18:45) deixou `google-developer-knowledge`
+  com `command = ""` no global (removido 19:2x). Conferir o que mais ela gravou.

@@ -6,6 +6,10 @@
 #
 # O interpretador e o fixado em graphify-out/.graphify_python; um lookup por PATH
 # pode escolher outra instalacao. Detalhes em .mex/patterns/debug-graphify-mcp.md.
+#
+# Se esta secao voltar a `graphify <cwd> --mcp`, foi o Alethe ao lancar o Codex; ele
+# ignora os toggles. O interruptor real e `enabled = false` no ~/.codex/config.toml
+# global. Medido em 10/09/2026.
 [mcp_servers.graphify]
 command = "C:\\Users\\Humberto\\AppData\\Local\\Programs\\Python\\Python311\\python.exe"
 args = [
