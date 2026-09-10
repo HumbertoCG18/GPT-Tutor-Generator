@@ -1,10 +1,4 @@
 {
-  "enabledPlugins": {
-    "superpowers@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
-    "github@claude-plugins-official": false,
-    "code-review@claude-plugins-official": true
-  },
   "hooks": {
     "PreToolUse": [
       {
