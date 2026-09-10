@@ -9,6 +9,24 @@ nossa, diga qual e por quê.
 
 ---
 
+## 0. O objetivo, antes de tudo
+
+**Tornar a atribuição o mais automática possível SEM LLM, e usar LLM apenas nos casos em que o dado disponível não
+permite concluir.** Concretamente:
+
+- O motor é determinístico por padrão. Toda regra tem de ser explicável, reproduzível e testável sem chamada de API.
+- LLM é uma camada opcional, barata e cacheada: hoje, um voto por arquivo flagado no bloco (teto de 20 por rodada) e
+  uma chamada por unidade para compilar vocabulário. Nunca um decisor por arquivo em regime normal.
+- O usuário final é um aluno que só faz login. Não existe curadoria humana no fluxo real. Tudo tem de vir do plano de
+  ensino, do cronograma (SARC) e do Moodle.
+- Um número medido vale mais que uma regra bonita. Nada entra no motor sem ser medido antes pela rota real; o que
+  perde, não entra, e fica registrado para não ser tentado de novo.
+
+Qualquer proposta que dependa de LLM por arquivo, de embeddings em tempo de execução para cada material, ou de alguém
+anotar dados por curso, **não atende ao objetivo** — a menos que você mostre por que o objetivo está errado.
+
+---
+
 ## 1. O que é o projeto
 
 O **GPT-Tutor-Generator** gera, para cada disciplina de graduação, um "tutor": um repositório organizado com todos os
@@ -148,6 +166,19 @@ Os três regimes (base de 233 na subunidade, medida antes de incluir o FR):
 
 **O voto de LLM vale 14 no bloco e apenas 2 na unidade.** Sem ele o motor não erra mais, desiste mais: a fila vai de 91
 a 136.
+
+Por curso (subunidade no produto, base de 251; unidade só onde há gold):
+
+| curso | materiais | subunidade | unidade | observação |
+|---|---|---|---|---|
+| SO | 39 | 10/15 | 37/37 | vocabulário do gold retirado em 08/09 |
+| IA | 59 | **4/39** | 42/42 | o plano nomeia categorias, o material nomeia algoritmos; sem vocabulário de domínio não há como |
+| ES2 | 35 | 15/28 | 28/28 | corrigido na causa em 07/09 (era 21/28 de unidade) |
+| TCC | 27 | 8/11 | 18/18 | |
+| MF | 66 | 51/58 | 65/65 | tem vocabulário compilado por LLM; sem ele 47/58 |
+| CG | 93 | 58/82 | sem gold | tem vocabulário compilado; sem ele 48/82. 243 vídeos do YouTube em 31 páginas-índice |
+| LR | 7 | sem gold | sem gold | |
+| FR | 22 | 15/18 | sem gold | descoberto em 08/09 que nunca havia sido medido |
 
 Anatomia da fila (96 itens):
 
@@ -404,3 +435,182 @@ Dado tudo acima, o que você faria? Especificamente:
 6. **O que você mediria antes de qualquer coisa** que nós ainda não medimos?
 
 Não implemente. Não gere código. Queremos o raciocínio, o plano, e as discordâncias.
+
+---
+
+## Anexo A — as funções que encarnam as decisões em dúvida (código real, comentários cortados)
+
+### A.1 O bloco decide a unidade — `routing/file_map.py`, `reconcile_unit_with_block`
+```python
+def reconcile_unit_with_block(*, computed_unit_slug, unit_confidence, computed_block_id, block_confidence,
+                              block_unit_slug, block_is_manual, has_manual_unit, unit_is_explicit=False):
+    if block_is_manual and block_unit_slug:
+        return block_unit_slug, ["unidade_do_bloco_manual"], {}
+    if has_manual_unit:
+        return computed_unit_slug, [], {}
+    if not computed_block_id or not block_unit_slug:
+        return computed_unit_slug, [], {}
+    if not computed_unit_slug:
+        return block_unit_slug, [f"herdada_do_bloco={computed_block_id}"], {}
+    if block_unit_slug == computed_unit_slug:
+        return computed_unit_slug, [], {}
+    if unit_is_explicit:   # a secao do Moodle diz "U2 - ..."
+        return computed_unit_slug, [f"explicita-vence-bloco={computed_block_id}"],
+               {"unit": computed_unit_slug, "block_unit": block_unit_slug, "block_id": computed_block_id}
+    # 2026-08-21: medido nos 5 cursos (188 entries): scorer de texto 130, unidade do bloco 162,
+    # bloco + heranca do vizinho 178. Comparar confiancas so deixava o texto vencer onde ele erra.
+    # O bloco decide; o texto discordante vira registro de conflito (unit_block_conflict), nunca decisao.
+    return block_unit_slug, [f"reconciliada_do_bloco={computed_block_id}"],
+           {"unit": computed_unit_slug, "block_unit": block_unit_slug, "block_id": computed_block_id}
+```
+
+### A.2 Bloco → unidade por alinhamento posicional — `timeline/unit_matcher.py`
+```python
+# Afinidade = |tokens(rotulos das aulas do bloco + topic_text)  ∩  tokens(titulo da unidade + labels + aliases dos topicos)|
+# assign_units_positional: DP monotonico GLOBAL sobre blocos-aula em ordem cronologica x unidades na ordem do plano,
+# maximizando (soma de afinidade, soma dos quadrados), indice de unidade nao-decrescente.
+# Uma janela contigua pode desviar da ordem pagando DETOUR_COST=2.0 (o calendario do IA ensina u05 em 2o lugar).
+ANCHOR_MIN_MARGIN = 1.0   # margem winner - runnerup para confianca ANCHOR (0.6)
+STRONG_MARGIN = 3.0       # ancora forte (0.8)
+CONF_FILL = 0.4           # preenchido por posicao, sem sinal proprio
+```
+Consequência medida: os aliases do sidecar entram em `_unit_tokens`, então um sinônimo no tópico errado move a
+unidade de um bloco inteiro (foi exatamente o caso ES2: `discovery`, `gateway` sob 2.7 deram afinidade u02=3 × u01=0).
+
+### A.3 O scorer de subunidade — `timeline/index.py`, `_score_entry_against_taxonomy_topic`
+```python
+# Frases do topico, deduplicadas por forma normalizada, com fator: label 1.0 > alias 0.82 > slug 0.65
+phrases = {norm(label): (1.0, label)}
+for alias in aliases: phrases.setdefault(norm(alias), (0.82, alias))
+phrases.setdefault(norm(slug.replace("-", " ")), (0.65, slug))
+
+# Campos do material, com peso; frase casada (palavra inteira, normalizada) soma peso * fator
+for text, weight in [(markdown_headings_text, 4.4), (title_text, 3.8), (markdown_lead_text, 2.8),
+                     (manual_tags_text, 3.0), (markdown_text, 1.1), (auto_tags_text, 0.22),
+                     (legacy_tags_text, 0.15), (raw_text, 0.9)]:
+    for factor, phrase in phrases.values():
+        if _matches_normalized_phrase(text, phrase):
+            score += weight * factor
+# + um bonus de sobreposicao de TOKENS (>= 4 chars, fora dos genericos do curso) entre topico e campos fortes
+# (heading, titulo, tags), com bonus de cobertura total quando todos os tokens do topico aparecem.
+```
+Depois, em `auto_map_entry_subtopic` (restrito aos tópicos de `winning_unit_slug`):
+```python
+margin = winner_score - runner_up_score
+rel_margin = margin / max(winner_score, 1e-6)
+if winner_score <= 0.0:        -> vazio, ambiguous, "sem-sinal"
+if margin == 0.0:              -> vazio, ambiguous, "empate-exato Nx"
+confidence = rel_margin;  ambiguous = rel_margin < 0.12   # SUBUNIT_AMBIG_MARGIN
+if ambiguous: confidence = min(confidence, 0.45)
+```
+**Leia junto com 5.2:** a confiança é a margem relativa entre o 1º e o 2º. Ela é 100% honesta na unidade e 64,6% na
+subunidade. Nossa hipótese, não medida, é que margem alta vem de alias longo casando em texto curto.
+
+### A.4 A segunda passada — `routing/resolver_apply.py`, `propagar_vocabulario_por_headings`
+```
+Token EXCLUSIVO dos headings/titulo dos materiais que a 1a passada atribuiu com confianca (conf >= 0.7) a um subtopico
+vira alias desse subtopico, se: aparece em >= 2 materiais confiantes do MESMO subtopico; df <= 25% dos materiais do curso;
+e exclusivo de UM subtopico da unidade. So os materiais em que a 1a passada NAO decidiu sao repontuados;
+nunca sobrepoe decisao confiante. Medido: +5/-0 nos 6 golds.
+```
+É a ideia "extrair palavras-chave dos arquivos e propagar", já implementada — mas **semeada**: precisa de materiais
+confiantes para doar. Onde o vocabulário é fraco não há semente.
+
+### A.5 O portão do compilador — `core/vocabulary_compile.py`
+```python
+def compile_course_vocabulary(root, entries, taxonomy, client, *, recompile=False, refilter=False):
+    manual = root / "course" / ".glossary_curation.json"
+    out_path = root / "course" / ".glossary_curation.llm.json"
+    if manual.is_file():
+        logger.info("vocab: sidecar manual presente em %s — nao compila", root.name)
+        return None                      # <- por isso nunca rodou em SO/IA/ES2/TCC
+    if out_path.is_file() and not recompile:
+        return _load(out_path)           # cache
+    # 1 chamada por unidade com material: o LLM classifica titulos/headings dos materiais nos topicos do plano;
+    # filtros: termo == label; termo em > 1 topico (exclusividade); termo que e id/titulo de arquivo;
+    # termo sem token especifico; identidade com nome de OUTRA unidade/topico.
+```
+
+### A.6 A fila — `routing/revisar.py`
+```python
+def motivos_de(entry):
+    m = []
+    if not bloco and not _sem_bloco_honesto(entry):           m.append("sem-bloco")
+    if entry["temporal_block_flag"] and metodo not in ("janela-1", "llm-funil"):  m.append("flag:" + metodo)
+    if entry["unit_block_conflict"]:                          m.append("conflito")
+    if subunit_reasons tem "ambiguous" ou "empate-exato":     m.append("sub-ambigua" | "sub-empate")
+    return m
+
+def revisar_de(entry):
+    if motivos_de(entry): return "duvida"
+    if entry.get("sync_changed"): return "mudou"
+    return "ok"
+```
+Repare: **não há motivo de dúvida para "subunidade com margem baixa mas acima de 0,12"**. É por isso que 64 erros saem
+como confiantes. A fila só pega ambíguo (< 0,12) e empate exato.
+
+---
+
+## Anexo B — casos reais de erro de subunidade (do log `diag_gargalo.log`, produto de 07/09)
+
+Formato: `[causa/evidência] curso material unit=... pred=(score) gold=(score) txt=chars ev=aliases_do_gold_no_texto`.
+"COM-evidência" = o alias do gold **está** no texto e outro venceu; "SEM-evidência" = nada do gold aparece no texto.
+
+```
+[confiante/COM-evidencia] CG  basico3d-py                 pred=perspectiva (8.98)            gold=sistema-de-camera-sintetica (4.46)  txt=454   ev=['Câmera Sintética']
+[confiante/COM-evidencia] CG  exercicios-sobre-curvas     pred=hermite (4.92)                gold=catmull-rom (4.27)                  txt=1148  ev=['Catmull-Rom']
+[confiante/COM-evidencia] CG  pagina-com-videos-fundament pred=algoritmos-de-poligonos(18.93) gold=entidades-geometricas (11.03)       txt=1524  ev=['Pontos','Retas']
+[confiante/COM-evidencia] ES2 devops                      pred=integracao-continua-ci(10.14) gold=conceito-de-devops (11.74)          txt=36596 ev=['DEVOPS']   why=rotulo-decomposto
+[confiante/COM-evidencia] MF  archive-of-formal-proofs    pred=ferramentas-verif-formal(16.31) gold=provadores-de-teoremas (7.28)     txt=473   ev=['Isabelle']
+[confiante/COM-evidencia] MF  exemplos                    pred=exemplos-de-aplicacoes(11.09) gold=provadores-de-teoremas (8.11)       txt=2025  ev=['Isabelle']
+[confiante/SEM-evidencia] CG  opengl3dcpp                 pred=perspectiva (8.98)            gold=sistema-de-camera-sintetica (1.04)  txt=661   ev=[]
+[confiante/SEM-evidencia] CG  pagina-com-videos-curvas    pred=hermite (4.84)                gold=tipos-de-curvas-parametricas (0.94) txt=1670  ev=[]
+[confiante/SEM-evidencia] CG  pagina-com-videos-manipulac pred=segmentacao (4.46)            gold=cores-e-tipos-de-imagens (1.04)     txt=1101  ev=[]
+```
+Leituras que tiramos daqui: (a) `Isabelle` é alias de dois tópicos e vence o mais frequente, não o certo; (b) as
+páginas-índice de vídeos (`pagina-com-videos-*`) elegem o filho mais citado e o gold é o assunto da página; (c) no
+caso `devops`, o gold pontua **mais alto** (11,74 × 10,14) e mesmo assim perdeu, porque a decomposição de rótulos
+mudou o vencedor depois — a regra de desempate sobrepôs o scorer.
+
+Distribuição dos 38 erros de então por causa × evidência:
+
+| causa | n | % |
+|---|---|---|
+| gold quer VAZIO e o motor preencheu | 9 | 24% |
+| confiante, COM evidência do gold no texto | 7 | 18% |
+| gold fora da unidade atribuída (erro de unidade a montante; resolvido no ES2) | 6 | 16% |
+| confiante, SEM evidência | 6 | 16% |
+| gold pontua exatamente zero | 4 | 11% |
+| fraca / vazia / empate | 6 | 16% |
+
+---
+
+## Anexo C — a calibração da confiança, saída literal (`calibra_fila_como_regua.log`)
+
+```
+eixo             PRECISAO do confiante   RECALL da fila   alarme falso
+bloco             177/178     99.4%    1/2      50%   58/59    98%
+unidade           157/157    100.0%    0/0       0%   33/33   100%
+subunidade        117/181     64.6%   26/90     29%   44/70    63%
+qualquer eixo     153/218     70.2%   27/92     29%   61/88    69%
+```
+"Alarme falso" alto na unidade e no bloco não é defeito: aqueles materiais estão na fila por `conflito` (texto ×
+bloco), e o bloco está certo. É o custo de auditar o desacordo.
+
+## Anexo D — o valor de cada chamada do compilador de vocabulário, unidade a unidade (`triagem_vocab_llm.log`)
+
+```
+curso unidade                          mat  termos  com  sem  delta  sinal-fraco
+MF    01-metodos-formais                30     50   51   47     -4    7%
+MF    02-verificacao-de-programas       24     16   51   51     +0   33%
+MF    03-verificacao-de-modelos          4     11   51   51     +0   50%
+CG    06-processo-de-visualizacao-3d    10     19   58   53     -5   50%
+CG    02-fundamentos-matematicos        15     21   58   56     -2   27%
+CG    01-introducao-ao-processamento     8     10   58   60     +2   12%   <- PREJUDICA
+CG    03-processamento-de-imagens       17     27   58   55     -3   35%
+CG    04-processo-de-visualizacao-2d    14      7   58   56     -2   36%
+CG    08-sintese-de-imagens-realisticas  3      2   58   58     +0    0%
+```
+`delta` = subunidade sem o vocabulário daquela unidade menos com ele. `sinal-fraco` = fração dos materiais da unidade
+sem decisão forte na 1ª passada, ANTES de chamar. **O sinal não prediz o valor da chamada** (MF-01: 7% fraco, vale
+−4; MF-03: 50% fraco, vale 0). Triagem por esse sinal foi refutada.
