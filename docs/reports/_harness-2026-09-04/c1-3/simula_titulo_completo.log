@@ -1,0 +1,29 @@
+base 195/233 · erros 38
+
+T0 TETO — o titulo nomeia o gold, em quantos erros?
+   titulo nomeia o gold em 3/38 erros: ES2/devops, MF/invariantes, MF/exemplos-zip
+   destes, o titulo NAO nomeia o vencedor atual: 3
+
+modo   certos  delta  ganha  perde   muda
+T1        195     +0      3      3     10
+   + ES2  devops                             integracao-continua-ci   -> conceito-de-devops       gold=ciamento-da-configuracao
+   + MF   exemplos-zip                                                -> icacao-formal-de-modelos gold=e-modelos-model-checking
+   + MF   invariantes                        verificacao-de-programas -> iante-e-variante-de-laco gold=iante-e-variante-de-laco
+   - MF   arvores                            provadores-de-teoremas   -> exemplos-de-aplicacoes   gold=provadores-de-teoremas
+   - MF   intro                              ao-de-funcoes-recursivas -> exemplos-de-aplicacoes   gold=provadores-de-teoremas
+   - MF   listas                             provadores-de-teoremas   -> exemplos-de-aplicacoes   gold=provadores-de-teoremas
+   ~ CG   intro                              conceitos                -> origens                  gold=areas-relacionadas
+   ~ CG   vis3d                              paralela                 -> projecoes                gold=a-das-projecoes-planares
+   ~ MF   archive-of-formal-proofs-355fb8    -para-verificacao-formal -> sistemas-formais         gold=provadores-de-teoremas
+   ~ MF   hoare                              verificacao-de-programas -> logica-de-hoare          gold=verificacao-de-programas
+T1c       193     -2      1      3      5
+   + MF   exemplos-zip                                                -> icacao-formal-de-modelos gold=e-modelos-model-checking
+   - MF   arvores                            provadores-de-teoremas   -> exemplos-de-aplicacoes   gold=provadores-de-teoremas
+   - MF   intro                              ao-de-funcoes-recursivas -> exemplos-de-aplicacoes   gold=provadores-de-teoremas
+   - MF   listas                             provadores-de-teoremas   -> exemplos-de-aplicacoes   gold=provadores-de-teoremas
+   ~ CG   intro                              conceitos                -> origens                  gold=areas-relacionadas
+T1v       195     +0      1      1      4
+   + MF   invariantes                        verificacao-de-programas -> iante-e-variante-de-laco gold=iante-e-variante-de-laco
+   - MF   verificacaomodelos                 quenciais-e-concorrentes -> logica-temporal-linear   gold=tos-de-logicas-temporais
+   ~ MF   archive-of-formal-proofs-355fb8    -para-verificacao-formal -> sistemas-formais         gold=provadores-de-teoremas
+   ~ MF   hoare                              verificacao-de-programas -> logica-de-hoare          gold=verificacao-de-programas

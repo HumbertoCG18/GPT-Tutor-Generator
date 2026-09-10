@@ -1,0 +1,4 @@
+=== PURO
+HOLDOUT CG motor puro (GPT-Tutor-Generator @ C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.ablacao): bloco 31/35 | conf-err 0 | flagados/sem bloco 14 | metodos: Counter({'disamb': 36, 'janela-1': 24, 'titulo-topico': 14, 'SEM': 8, 'disamb-curto': 6, 
+=== CURADO
+HOLDOUT CG CURADO+LLM (GPT-Tutor-Generator @ C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.ablacao): bloco 35/35 | conf-err 0 | flagados/sem bloco 1 | metodos: Counter({'llm': 32, 'janela-1': 24, 'titulo-topico': 13, 'disamb': 8, 'llm-funil': 8, 'dis

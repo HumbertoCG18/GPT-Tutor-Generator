@@ -1,0 +1,32 @@
+=== TITULO DE UNIDADE: padrao por curso
+  MF   3 unidades · ex: 'Unidade 01 — Métodos Formais' | 'Unidade 03 — Verificação de Modelos'
+  SO   7 unidades · ex: 'Unidade 01 — Introdução ao estudo de sistemas operaciona' | 'Unidade 07 — Gerência de entrada e saída'
+  IA   5 unidades · ex: 'Unidade de Aprendizagem 1 — Visão Geral (5%)' | 'Unidade de Aprendizagem 5 — Aprendizado de m'
+  ES2  3 unidades · ex: 'Unidade 01 — Arquitetura de Software' | 'Unidade 03 — Testes de Software'
+  TCC  4 unidades · ex: 'UNIDADE 01 — Conjuntos Enumeráveis e Funções Recursivas' | 'UNIDADE 04 — Hierarquia de Classes de Comple'
+  CG   9 unidades · ex: 'Unidade 01 — Introdução ao Processamento Gráfico' | 'Unidade 9 — Tópicos Especiais em Pesquisa em'
+  LR   3 unidades · ex: 'Unidade 01 — Nível de aplicação - Configuração e análise' | 'Unidade 03 — Nível de rede'
+  FR   6 unidades · ex: 'Unidade 01 — Introdução a redes de computadores' | 'Unidade 06 — Nível físico'
+
+=== SUJEIRA NOS LABELS DE TOPICO
+  [MF] limpo
+  [SO] 3 labels
+      markdown _italico_ ou **negrito**  'Programas _multithreads_' -> slug programas-multithreads
+      markdown _italico_ ou **negrito**  '_Swapping_' -> slug swapping
+      markdown _italico_ ou **negrito**  '_Drivers_ dos dispositivos' -> slug drivers-dos-dispositivos
+  [IA] limpo
+  [ES2] limpo
+  [TCC] limpo
+  [CG] 5 labels
+      markdown _italico_ ou **negrito**  'Mapeamento _Window_ e _Viewport_' -> slug mapeamento-window-e-viewport
+      markdown _italico_ ou **negrito**  'Algoritmo _Z-Buffer_' -> slug algoritmo-z-buffer
+      markdown _italico_ ou **negrito**  'Modelos de Iluminação: luz pontual, direcional' -> slug modelos-de-iluminacao-luz-pontual-
+      markdown _italico_ ou **negrito**  'Métodos de sombreamento: _Flat_ , Gouraud, Pho' -> slug metodos-de-sombreamento-flat-goura
+      markdown _italico_ ou **negrito**  'Conceitos Básicos de _Ray Tracing_ e Radiosida' -> slug conceitos-basicos-de-ray-tracing-e
+  [LR] limpo
+  [FR] 3 labels
+      parenteses desbalanceados          'Protocolos de enlace para redes locais sem fio' -> slug protocolos-de-enlace-para-redes-lo
+      parenteses desbalanceados          'e Bluetooth)' -> slug e-bluetooth
+      comeca com minuscula               'e Bluetooth)' -> slug e-bluetooth
+
+TOTAL {'markdown _italico_ ou **negrito**': 8, 'parenteses desbalanceados': 2, 'comeca com minuscula': 1}

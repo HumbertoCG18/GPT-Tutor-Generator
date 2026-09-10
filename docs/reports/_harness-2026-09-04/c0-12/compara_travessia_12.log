@@ -1,0 +1,22 @@
+curso modo          | hit@1 antes->depois    hit@3          bloco        | estrut  ambig  malf   | chamadas
+FR    sem-llm       |  9/15 ->  9/15          11 -> 11       5/6 -> 5/6   | 4->4   2->2   3->3   | 0
+FR    llm           | 15/15 -> 15/15          15 -> 15       6/6 -> 6/6   | 5->5   5->5   5->5   | 15
+FR    llm-completo  | 15/15 -> 15/15          15 -> 15       6/6 -> 5/6   | 5->5   5->5   5->5   | 15
+IA    sem-llm       | 10/15 -> 10/15          12 -> 12       6/8 -> 6/8   | 4->4   1->1   5->5   | 0
+IA    llm           |  9/15 ->  9/15          10 -> 10       8/8 -> 8/8   | 3->3   2->2   4->4   | 0
+      (JSON do HEAD nao bate com a tabela 'antes' — hit1 14; sem flips por pergunta)
+IA    llm-completo  | 10/15 -> 10/15          10 -> 10       8/8 -> 8/8   | 3->3   2->2   5->5   | 0
+CG    sem-llm       | 10/15 ->  5/15          11 ->  6      8/11 -> 10/11  | 4->4   3->0   3->1   | 0
+      flip + [estruturada] 'Como funciona o algoritmo de recorte de retas de Cohen-Sut' esperado=['pagina-com-videos-sobre-recorte-e257d3', 'recorte', 'video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e', 'vis2d'] antes=['elemoculto', 'exemplozbuffer'] depois=['video-sobre-o-algoritmo-de-recorte-por-subdivisao-binaria-db7e2e', 'elemoculto']
+      flip - [estruturada] 'Quais são os fundamentos matemáticos (vetores, produto esc' esperado=['exerciciosfundamentosmatematicos', 'fundamentosmatematicos'] antes=['fundamentosmatematicos', 'exemplodemanipulacaodeimagens'] depois=['matematica', 'exemplodemanipulacaodeimagens']
+      flip - [ambigua] 'tem exercício de imagem?' esperado=['exercicios-de-processamento-de-imagens', 'floodfill', 'remocaoderuido'] antes=['computacao-grafica-exercicio-de-prenchimento-de-area', 'computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens'] depois=['exercicio-com-animacao', 'exercicio-com-poligonos']
+      flip - [ambigua] 'como eu começo com OpenGL?' esperado=['opengl-cpp', 'opengl-py', 'openglbasico'] antes=['biblioteca-grafica-opengl', 'computacao-grafica-opengl-navegacao-em-ambientes-virtuais'] depois=['video-com-instrucoes-para-usar-opengl-na-vdi-da-pucrs-3a8758', 'basico3d-py']
+      flip - [ambigua] 'o que é modelagem de sólidos?' esperado=['csg', 'modelagem3d'] antes=['computacao-grafica-modelagem-de-solidos', 'basico3d-cpp'] depois=['basico3d-cpp', 'basico3d-py-zip']
+      flip - [malformada] 'segmentacao imagem' esperado=['segmentacaodetexturas', 'segmentacaopptx'] antes=['segmentacaodetexturas', 'segmentacaopptx'] depois=['floodfill', 'pagina-com-videos-sobre-segmentacao-de-imagens-d0627f']
+      flip - [malformada] 'geometria computacional plane sweep' esperado=['planesweep'] antes=['computacao-grafica-geometria-computacional-plane-sweep', 'disciplina-de-computacao-grafica-geometria-computacional'] depois=['domina', 'exercicios-de-geometria-computacional']
+CG    llm           |  8/15 ->  7/15           8 ->  7      7/11 -> 8/11  | 2->2   3->3   3->2   | 0
+      flip - [malformada] 'geometria computacional plane sweep' esperado=['planesweep'] antes=['computacao-grafica-geometria-computacional-plane-sweep'] depois=['opengl-cpp']
+CG    llm-completo  | 10/15 ->  7/15          10 ->  8      7/11 -> 7/11  | 2->2   4->3   4->2   | 0
+      flip - [ambigua] 'tem exercício de imagem?' esperado=['exercicios-de-processamento-de-imagens', 'floodfill', 'remocaoderuido'] antes=['exercicios-de-processamento-de-imagens', 'computacao-grafica-exercicio-de-remocao-de-ruido-em-imagens'] depois=[]
+      flip - [malformada] 'filtro passa baixa exercicio' esperado=['exercicios-de-processamento-de-imagens'] antes=['computacao-grafica-i-exercicio-sobre-filtros', 'exercicios-de-processamento-de-imagens'] depois=['remocaoderuido', 'exercicios-de-processamento-de-imagens']
+      flip - [malformada] 'geometria computacional plane sweep' esperado=['planesweep'] antes=['computacao-grafica-geometria-computacional-plane-sweep', 'disciplina-de-computacao-grafica-geometria-computacional'] depois=['opengl-cpp', 'matematica']

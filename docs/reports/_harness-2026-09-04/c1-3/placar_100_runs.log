@@ -1,0 +1,82 @@
+[snap] auto: 6 manifests
+  [nu] MF: 9 pinos zerados
+  [nu] SO: 0 pinos zerados
+  [nu] IA: 1 pinos zerados
+  [nu] ES2: 0 pinos zerados
+  [nu] TCC: 0 pinos zerados
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+reprocess x5 sem voter: 132s
+
+=== EIXOS — motor puro (sem curadoria, sem LLM voter, sem vocab) ===
+curso      BLOCO conf-err   UNIDADE   COBERTURA    F1 pinos
+MF      59/66           1   66/66         12/13 0.923     0
+SO      36/38           0   32/37         19/19 1.000     0
+       unidade errada: 0704-laminas-comunicacao-e-sincronizacao, 0904-laminas-semaforos, laminas-cs-4244-internet-programming-sockets-programming, laminas-sockets-material-alternativo-em-pt, 0704-exemplo-threads-em-java
+IA      41/42           0   39/42           1/3 0.333     0
+       unidade errada: ia-responsável-7c4626, o-que-é-inteligência-artificial-ia-oracle-brasil-43437f, visao-geral-introducao-e-historico
+ES2     27/28           0   18/28         19/19 1.000     0
+       unidade errada: revisao-p1, roteiro2, roteiro3, microsservicos2, microsservicos3, microsservicos4, roteiro2-nameserver, roteiro3-gateway ...
+TCC     24/25           0   18/18           3/3 1.000     0
+LR                  (sem gold — fora da regua)
+FR                  (sem gold — fora da regua)
+-------------------------------------------------------
+TOTAL  bloco 187/199 (94.0%) conf-err 1 | unidade 173/191 (90.6%) | cobertura 54/57 F1 0.947 sem-pred 0 | pinos 0
+metodos temporais: {'janela-1': 117, 'disamb': 55, 'titulo-topico': 11, 'prep-prova': 11, 'irmao-card': 8, 'ref-generica': 5, 'meta-generica': 4, 'disamb-curto': 4, 'secao-geral': 3, 'due-contain': 2, 'due-straddle': 1}
+
+SUBUNIDADE motor puro (sem vocab): 72/151 com-extras · 45/151 primario
+total: 134s
+[snap] zero: 5 manifests
+[nu] CG: 0 pinos zerados
+[profile] Computacao-Grafica-Tutor: perfil 'Computação Gráfica' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+reprocess: 27s
+HOLDOUT CG motor puro (GPT-Tutor-Generator @ C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\.ablacao): bloco 33/35 | conf-err 0 | flagados/sem bloco 13 | metodos: Counter({'janela-1': 37, 'disamb': 31, 'titulo-topico': 11, 'SEM': 8, 'irmao-card': 2, 'meta-generica': 2, 'disamb-curto': 1, 'prep-prova': 1})
+   basico3d-cpp                                 pred=bloco-05  gold=bloco-15  topic/disamb flag=True band=baixa
+   basico3d-py-zip                              pred=bloco-05  gold=bloco-15  topic/disamb flag=True band=baixa
+SUBUNIDADE CG motor puro: 47/82 com-extras · 34/82 primario
+[snap] zero: 1 manifests
+  [nu] MF: 9 pinos zerados (vocab LLM mantido)
+  [nu] SO: 0 pinos zerados (vocab LLM mantido)
+  [nu] IA: 1 pinos zerados (vocab LLM mantido)
+  [nu] ES2: 0 pinos zerados (vocab LLM mantido)
+  [nu] TCC: 0 pinos zerados (vocab LLM mantido)
+[profile] Metodos-Formais-Tutor: perfil 'Metodos-Formais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+[profile] Sistemas-Operacionais-Tutor: perfil 'Sistemas Operacionais' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+[profile] Inteligencia-Artifical-Tutor: perfil 'Inteligencia Artificial' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+[profile] Engenharia-Software-2-Tutor: perfil 'Engenharia de Software II' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+[profile] TCC-Tutor: perfil 'Teoria da Computabilidade e Complexidade' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+reprocess x5 sem voter: 231s
+
+=== EIXOS — motor puro (sem curadoria, sem LLM voter, COM vocab compilado) ===
+curso      BLOCO conf-err   UNIDADE   COBERTURA    F1 pinos
+MF      58/66           1   66/66         11/13 0.846     0
+SO      36/38           0   32/37         19/19 1.000     0
+       unidade errada: 0704-laminas-comunicacao-e-sincronizacao, 0904-laminas-semaforos, laminas-cs-4244-internet-programming-sockets-programming, laminas-sockets-material-alternativo-em-pt, 0704-exemplo-threads-em-java
+IA      41/42           0   39/42           1/3 0.333     0
+       unidade errada: ia-responsável-7c4626, o-que-é-inteligência-artificial-ia-oracle-brasil-43437f, visao-geral-introducao-e-historico
+ES2     27/28           0   28/28         19/19 1.000     0
+TCC     24/25           0   18/18           3/3 1.000     0
+LR                  (sem gold — fora da regua)
+FR                  (sem gold — fora da regua)
+-------------------------------------------------------
+TOTAL  bloco 186/199 (93.5%) conf-err 1 | unidade 183/191 (95.8%) | cobertura 53/57 F1 0.930 sem-pred 0 | pinos 0
+metodos temporais: {'janela-1': 118, 'disamb': 53, 'titulo-topico': 12, 'prep-prova': 11, 'irmao-card': 8, 'ref-generica': 5, 'meta-generica': 4, 'disamb-curto': 4, 'secao-geral': 3, 'due-contain': 2, 'due-straddle': 1}
+
+SUBUNIDADE motor puro (COM vocab compilado): 138/151 com-extras · 117/151 primario
+total: 233s
+[snap] vocab: 5 manifests
+[fim runs zero+vocab]

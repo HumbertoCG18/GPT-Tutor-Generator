@@ -57,6 +57,10 @@ cover/
 
 # Django stuff:
 *.log
+# Logs de harness sao a derivacao dos numeros publicados: versionar.
+# A convencao esta em .mex/patterns/medir-alavanca-ablacao.md:24; a regra
+# generica acima a derrotava em silencio (203 logs em disco, 0 no git, 09/09).
+!docs/reports/_harness-*/**/*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal

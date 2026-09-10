@@ -1,0 +1,29 @@
+QUAL TEXTO O MOTOR LE (precedencia navigation._entry_markdown_path_for_file_map)
+curso  mat |                         campo lido | com EXEC_SUMMARY | texto = Datalab/marker
+MF      66 | {'base_markdown': 2, 'approved_mar |     19/53        |     0/53              
+SO      39 | {'approved_markdown': 38, '(sem md |     28/38        |     0/38              
+IA      59 | {'approved_markdown': 55, '(sem md |     25/55        |     0/55              
+ES2     35 | {'approved_markdown': 27, '(sem md |     24/27        |     0/27              
+TCC     27 |          {'approved_markdown': 27} |     26/27        |     0/27              
+CG      93 | {'base_markdown': 76, '(sem md)':  |      0/81        |     0/81              
+LR       7 |               {'base_markdown': 7} |      0/7         |     0/7               
+FR      22 | {'base_markdown': 17, '(sem md)':  |      0/17        |     0/17              
+TOTAL 348 materiais · 305 com md · 122 com sumario injetado · 0 cujo texto lido = advanced (Datalab/marker)
+
+DE ONDE VEIO O TEXTO APROVADO (jaccard de linhas, sem sumario/frontmatter)
+  MF   {'= base (pymupdf4llm)': 51}
+  SO   {'= base (pymupdf4llm)': 38}
+  IA   {'= base (pymupdf4llm)': 55}
+  ES2  {'= base (pymupdf4llm)': 27}
+  TCC  {'= base (pymupdf4llm)': 27}
+  TOTAL {'= base (pymupdf4llm)': 198}
+
+DESCRICOES DE IMAGEM (geradas por LLM) NO TEXTO QUE O MOTOR LE — regex: <!-- IMAGE_DESCRIPTION: (?P<fname>[^\s]+) -->\n<!-- Tipo: [^\n]+ -->\n(?:>.*\n)+<!-- /IMAG
+  MF   textos lidos  53 · com descricao injetada  11 · chars medios 186
+  SO   textos lidos  38 · com descricao injetada  27 · chars medios 552
+  IA   textos lidos  55 · com descricao injetada  23 · chars medios 1634
+  ES2  textos lidos  27 · com descricao injetada  24 · chars medios 474
+  TCC  textos lidos  27 · com descricao injetada  26 · chars medios 420
+  CG   textos lidos  81 · com descricao injetada  18 · chars medios 760
+  LR   textos lidos   7 · com descricao injetada   3 · chars medios 240
+  FR   textos lidos  17 · com descricao injetada  10 · chars medios 604

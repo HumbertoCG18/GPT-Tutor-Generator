@@ -1,0 +1,12 @@
+titulos: 183/183 recuperados (cache titulos_video.json)
+materiais de gold com link de video: 18 · videos 190
+acerto atual nesses: 10/18
+
+     material                            vid gravado                1a passada c/ titulo   gold                  
+~ CG  pagina-com-videos-sobre-mapeamento    2 -                      direita-e-mao-esquerda oordenadas-cartesianas
+- CG  pagina-com-videos-sobre-morfologia    6 segmentacao            -                      segmentacao           
+- CG  pagina-com-videos-sobre-remocao-de   11 o-de-elementos-ocultos algoritmo-do-pintor    o-de-elementos-ocultos
+~ CG  paginas-com-videos-sobre-modelagem   13 solida-construtiva-csg ciamento-de-primitivas ormas-de-representacao
+
+sem mudanca 14 · muda 4 · ganha 0 · perde 2
+NOTA: comparacao contra a 1a passada isolada; a 2a passada e as regras podem mover o resultado final.

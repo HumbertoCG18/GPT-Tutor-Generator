@@ -1,0 +1,32 @@
+regime                 curso c/gold 100% certo 3 golds 3 certos |     bloco   unidade  subunid.
+zero LLM               MF        66         50      58       42 |     59/66     66/66     47/58
+zero LLM               SO        39         27      15        8 |     36/39     32/37      8/15
+zero LLM               IA        42          3      39        3 |     41/42     39/42      4/39
+zero LLM               ES2       31          7      25        5 |     27/28     25/28      5/28
+zero LLM               TCC       27         23       9        7 |     26/27     18/18      8/11
+zero LLM               CG        83         46       0        0 |     33/35       0/0     45/82
+zero LLM               TOTAL    288        156     146       65 |   222/237   180/191   117/233
+
+vocab (1 LLM)          MF        66         52      58       44 |     58/66     66/66     51/58
+vocab (1 LLM)          SO        39         29      15       10 |     36/39     32/37     11/15
+vocab (1 LLM)          IA        42         38      39       38 |     41/42     39/42     39/39
+vocab (1 LLM)          ES2       31         21      25       18 |     27/28     21/28     20/28
+vocab (1 LLM)          TCC       27         26       9        9 |     26/27     18/18     11/11
+vocab (1 LLM)          TOTAL    205        166     146      119 |   188/202   176/191   132/151
+
+auto (vocab+voter)     MF        66         56      58       48 |     61/66     66/66     51/58
+auto (vocab+voter)     SO        39         32      15       11 |     39/39     34/37     11/15
+auto (vocab+voter)     IA        42         39      39       39 |     42/42     39/42     39/39
+auto (vocab+voter)     ES2       31         21      25       18 |     27/28     21/28     20/28
+auto (vocab+voter)     TCC       27         27       9        9 |     27/27     18/18     11/11
+auto (vocab+voter)     CG        83         56       0        0 |     35/35       0/0     55/82
+auto (vocab+voter)     TOTAL    288        231     146      125 |   231/237   178/191   187/233
+
+produto (curadoria)    MF        66         59      58       51 |     66/66     66/66     51/58
+produto (curadoria)    SO        39         39      15       15 |     39/39     37/37     15/15
+produto (curadoria)    IA        42         42      39       39 |     42/42     42/42     39/39
+produto (curadoria)    ES2       31         22      25       18 |     27/28     21/28     21/28
+produto (curadoria)    TCC       27         27       9        9 |     27/27     18/18     11/11
+produto (curadoria)    CG        83         57       0        0 |     35/35       0/0     56/82
+produto (curadoria)    TOTAL    288        246     146      132 |   236/237   184/191   193/233
+

@@ -1,0 +1,35 @@
+MF: bloco 58/66 conf-err 1 -> 56/66 conf-err 1
+   = verificacaomodelos                       bloco bloco-16->bloco-16 gold=bloco-16 computed_subunit_slug:especificacao-de-propriedades-para-sistemas-sequenciais-e-concorrentes->verificacao-de-modelos-model-checking
+   = exerciciosnusmv                          bloco bloco-16->bloco-16 gold=bloco-16 computed_subunit_slug:softwares-de-suporte-a-verificacao-formal-de-modelos->verificacao-de-modelos-model-checking
+   = classes-parte1                           bloco bloco-15->bloco-15 gold=bloco-15 computed_subunit_slug:verificacao-de-programas->
+   = colecoes-arrays                          bloco bloco-13->bloco-13 gold=bloco-13 temporal_block_band:alta->media; temporal_block_flag:False->True; computed_subunit_slug:verificacao-de-programas->logica-de-hoare
+   = colecoes-conjuntos                       bloco bloco-13->bloco-13 gold=bloco-13 computed_subunit_slug:verificacao-de-programas->logica-de-hoare
+   = colecoes-sequences                       bloco bloco-13->bloco-13 gold=bloco-13 temporal_block_band:alta->media; temporal_block_flag:False->True
+   - exercicios-conjuntos                     bloco bloco-13->bloco-12 gold=bloco-13 temporal_block_band:media->baixa; computed_subunit_slug:invariante-e-variante-de-laco->verificacao-de-programas
+   = introducao-zip                           bloco bloco-10->bloco-10 gold=bloco-12 computed_subunit_slug:verificacao-de-programas->
+   = invariantes                              bloco bloco-11->bloco-11 gold=bloco-11 computed_subunit_slug:->invariante-e-variante-de-laco
+   = tiposindutivos                           bloco bloco-15->bloco-15 gold=bloco-15 computed_subunit_slug:verificacao-de-programas->
+   = exemplos-zip                             bloco bloco-16->bloco-16 gold=bloco-16 computed_subunit_slug:->verificacao-de-modelos-model-checking
+   = classes-parte2                           bloco bloco-15->bloco-15 gold=bloco-15 computed_subunit_slug:correcao-parcial-e-total->verificacao-de-programas
+   - exercicios-arrays                        bloco bloco-13->bloco-12 gold=bloco-13 temporal_block_band:media->baixa; computed_subunit_slug:verificacao-de-programas->logica-de-hoare
+SO: bloco 37/39 conf-err 0 -> 37/39 conf-err 0 | sub 10/15 -> 9/15
+   = 0704-exemplo-threads-em-java             bloco bloco-06->bloco-06 gold=bloco-06 computed_subunit_slug:conceitos-basicos->escalonamento
+   = exemplo-threads-em-c-exemplo1            bloco bloco-04->bloco-04 gold=bloco-04 computed_subunit_slug:conceitos-basicos->
+IA: bloco 41/42 conf-err 0 -> 41/42 conf-err 0 | sub 35/39 -> 35/39
+ES2: bloco 27/28 conf-err 0 -> 27/28 conf-err 0 | sub 26/28 -> 26/28
+   = roteiro8-autenticacao-autorizacao        bloco bloco-10->bloco-10 gold=bloco-10 temporal_block_band:alta->media; temporal_block_method:titulo-topico->janela-1
+   = devops                                   bloco bloco-12->bloco-12 gold=bloco-12 temporal_block_method:titulo-topico->disamb
+TCC: bloco 26/27 conf-err 0 -> 26/27 conf-err 0 | sub 11/11 -> 11/11
+CG: bloco 31/35 conf-err 0 -> 31/35 conf-err 0
+   = intro                                    bloco bloco-01->bloco-01 gold=bloco-01 computed_subunit_slug:->origens
+     opengl3dcpp-vdi                          bloco bloco-18->bloco-18 gold=- computed_subunit_slug:projecoes->perspectiva
+   = basico3d-cpp                             bloco bloco-05->bloco-05 gold=bloco-15 computed_subunit_slug:algoritmos-de-poligonos->
+   = basico3d-py-zip                          bloco bloco-05->bloco-05 gold=bloco-15 computed_subunit_slug:entidades-geometricas->algoritmos-de-poligonos
+     opengl-cpp                               bloco bloco-02->bloco-02 gold=- computed_subunit_slug:algoritmos-de-deteccao-e-calculo-de-interseccao->algoritmos-de-poligonos
+     opengl-py                                bloco bloco-02->bloco-02 gold=- computed_subunit_slug:algoritmos-de-poligonos->
+   = exemplodemanipulacaodeimagens            bloco bloco-03->bloco-03 gold=bloco-03 computed_subunit_slug:algoritmos-de-deteccao-e-calculo-de-interseccao->
+   = fundamentosmatematicos                   bloco bloco-03->bloco-03 gold=bloco-03 temporal_block_method:titulo-topico->disamb
+   = bezier-py                                bloco bloco-13->bloco-13 gold=bloco-13 computed_subunit_slug:->representacao-de-curvas-parametricas
+   = bezier-python                            bloco bloco-13->bloco-13 gold=bloco-13 computed_subunit_slug:->representacao-de-curvas-parametricas
+
+[exited with code 0]

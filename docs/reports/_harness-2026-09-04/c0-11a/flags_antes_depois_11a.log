@@ -1,0 +1,21 @@
+=== ANTES (HEAD)
+curso      BLOCO conf-err   UNIDADE   COBERTURA    F1 pinos
+TOTAL  bloco 183/200 (91.5%) conf-err 3 | unidade 178/191 (93.2%) | cobertura 53/57 F1 0.930 sem-pred 0 | pinos 0
+  flags Metodos-Formais-Tutor       11/66
+  flags Sistemas-Operacionais-Tuto  13/39
+  flags Inteligencia-Artifical-Tut   9/59
+  flags Engenharia-Software-2-Tuto   2/35
+  flags TCC-Tutor                    5/27
+  FLAGS TOTAL 5 cursos: 40
+=== DEPOIS (11a)
+curso      BLOCO conf-err   UNIDADE   COBERTURA    F1 pinos
+TOTAL  bloco 183/200 (91.5%) conf-err 2 | unidade 179/191 (93.7%) | cobertura 53/57 F1 0.930 sem-pred 0 | pinos 0
+  flags Metodos-Formais-Tutor       15/66
+  flags Sistemas-Operacionais-Tuto  13/39
+  flags Inteligencia-Artifical-Tut  12/59
+  flags Engenharia-Software-2-Tuto   3/35
+  flags TCC-Tutor                    5/27
+  FLAGS TOTAL 5 cursos: 48
+ src/builder/routing/motor/disambiguator.py | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+fim

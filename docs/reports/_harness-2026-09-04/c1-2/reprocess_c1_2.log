@@ -1,0 +1,35 @@
+== Metodos-Formais-Tutor: 66 entries | flagadas 1 | git sujo: 0
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+   flagadas 1 -> 1 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD ebd1296
+== Sistemas-Operacionais-Tutor: 39 entries | flagadas 9 | git sujo: 0
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+   flagadas 9 -> 9 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD ab62b16
+== Inteligencia-Artifical-Tutor: 59 entries | flagadas 2 | git sujo: 0
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+   flagadas 2 -> 2 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD 2e547f4
+== Engenharia-Software-2-Tutor: 35 entries | flagadas 0 | git sujo: 0
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+   flagadas 0 -> 0 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD af72f38
+== TCC-Tutor: 27 entries | flagadas 5 | git sujo: 0
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+   flagadas 5 -> 5 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD 8a391bb
+== Laboratorio-de-Redes-Tutor: 7 entries | flagadas 2 | git sujo: 0
+[ok] Laboratorio-de-Redes-Tutor: bloco 6/7 -> 6/7 (backup: manifest.json.bak)
+   flagadas 2 -> 2 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD ff908b4
+== Fundamentos-de-Redes-Tutor: 22 entries | flagadas 4 | git sujo: 0
+[ok] Fundamentos-de-Redes-Tutor: bloco 19/22 -> 19/22 (backup: manifest.json.bak)
+   flagadas 4 -> 4 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD 9108a96
+== Computacao-Grafica-Tutor: 93 entries | flagadas 15 | git sujo: 0
+[ok] Computacao-Grafica-Tutor: bloco 68/93 -> 68/93 (backup: manifest.json.bak)
+   flagadas 15 -> 15 (+0) | bloco mudou 0 [] | metodo mudou {}
+   commit: ok | HEAD 1070aa2
+TOTAL 8 tutores: flagadas 38 -> 38 (+0) | blocos mudados 0
+[fim]
+exit 0

@@ -1,0 +1,18 @@
+A FONTE NOMEIA A UNIDADE CORRETA? (materiais com gold de unidade)
+         n        SECAO        LABEL   SECAO+LABEL   BLOCO (hoje)
+SO      37     7/7    19%     2/2     5%     7/7    19%       37 100%
+IA      42     0/0     0%     1/1     2%     1/1     2%       42 100%
+ES2     28     1/1     4%     0/0     0%     1/1     4%       28 100%
+TCC     18     6/6    33%     4/4    22%     6/6    33%       18 100%
+MF      65    29/29   45%     5/5     8%    29/29   45%       65 100%
+TOT    190    43/43   23%    12/12    6%    44/44   23%      190 100%
+  (x/y = acertos / vezes que a fonte arriscou um palpite; % = sobre TODOS os materiais)
+
+EFEITO COLATERAL DA RESTRICAO (file_map.py:184): erro de subunidade com o gold FORA da unidade atribuida
+  SO   erros=  5  destes, gold fora da unidade atribuida:  4
+  IA   erros= 35  destes, gold fora da unidade atribuida:  0
+  ES2  erros= 13  destes, gold fora da unidade atribuida:  0
+  TCC  erros=  2  destes, gold fora da unidade atribuida:  0
+  MF   erros=  7  destes, gold fora da unidade atribuida:  0
+  CG   erros= 15  destes, gold fora da unidade atribuida:  0
+  TOT  erros= 77  destes, gold fora da unidade atribuida:  4 (5% dos erros de subunidade sao, na verdade, erro de UNIDADE)

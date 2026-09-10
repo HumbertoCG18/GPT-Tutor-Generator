@@ -1,0 +1,142 @@
+=== IA --sem-llm
+IA [sem-llm] perguntas=15  hit@1=10/15  hit@3=12/15  bloco=6/8  chamadas novas=0
+  OK  [estru] Como funciona o algoritmo k-NN para classificação  esperado=algoritmo-de-classificacao-k-nn      escolhido=algoritmo-de-classificacao-k-nn,k-nn-para-clas  bloco bloco-05/bloco-05
+  ERR [estru] Qual a diferença entre acurácia, precisão, recall  esperado=como-analisar-resultados-acc-pr-re-e escolhido=  bloco -/bloco-05
+  OK  [estru] Como uma rede Perceptron aprende os pesos e por qu esperado=exercicio-2-solucao-com-rede-percept escolhido=exercicio-2-solucao-com-rede-perceptron-atuali  bloco bloco-05/bloco-05
+  OK  [estru] Quais são as etapas de um algoritmo genético (sele esperado=algoritmo-genetico                   escolhido=algoritmo-genetico,algoritmo-de-classificacao-  bloco bloco-13/bloco-13
+  OK  [estru] Como funciona o agrupamento k-means e como escolhe esperado=agrupamento-usando-k-means-exemplo-1 escolhido=agrupamento-usando-k-means-exemplo-1-ipynb,agr  bloco bloco-07/bloco-07
+  OK  [ambig] me dá um exemplo prático de classificação          esperado=exemplo-1-arvores-de-decisao-classif escolhido=exemplo-1-arvores-de-decisao-classificacao-pla
+  ok3 [ambig] como eu preparo os dados antes de treinar?         esperado=analise-exploratoria-de-dados-exempl escolhido=algoritmo-de-classificacao-k-nn,analise-explor  bloco bloco-05/bloco-04
+  ERR [ambig] tem algum código de rede neural pra eu me basear?  esperado=mlp-classificacao-iris-atualizado,ml escolhido=exercicio-2-solucao-com-rede-perceptron-atuali
+  ok3 [ambig] como eu resolvo um problema de busca?              esperado=algoritmo-dijkstra,algoritmo-genetic escolhido=ag-feito-em-aula-pelo-luca,algoritmo-dijkstra,
+  ERR [ambig] o que cai na P2?                                   esperado=lista-de-exercicios-i,p2-202401,p2-2 escolhido=o-que-é-inteligência-artificial-ia-oracle-bras
+  OK  [malfo] knn exemplo java                                   esperado=exemplo-de-programa-com-k-nn-em-java escolhido=exemplo-de-programa-com-k-nn-em-java,agrupamen
+  OK  [malfo] arvore decisao regressao                           esperado=arvores-de-decisao,exemplo-1-arvores escolhido=exemplo-2-arvores-de-decisao-regressao-diabete
+  OK  [malfo] minimax oq é                                       esperado=implementacaominimax,minimax-teoria  escolhido=minimax-teoria  bloco bloco-16/bloco-16
+  OK  [malfo] kmeans vs hierarquico                              esperado=agrupamento-hierarquico-exemplo-1,au escolhido=agrupamento-hierarquico-exemplo-1,agrupamento-  bloco bloco-07/bloco-07
+  OK  [malfo] perceptron letras                                  esperado=rede-perceptron-reconhecendo-letras  escolhido=rede-perceptron-reconhecendo-letras,exercicio-
+  por estilo estruturada  hit@1=4/5  hit@3=4/5
+  por estilo ambigua      hit@1=1/5  hit@3=3/5
+  por estilo malformada   hit@1=5/5  hit@3=5/5
+resultado: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\travessia_result_IA_sem-llm.json
+exit 0
+=== IA 
+IA [llm] perguntas=15  hit@1=9/15  hit@3=10/15  bloco=8/8  chamadas novas=0
+  ERR [estru] Como funciona o algoritmo k-NN para classificação  esperado=algoritmo-de-classificacao-k-nn      escolhido=exemplo-2-k-nn-com-iriscsv-mais-completo,exemp  bloco bloco-05/bloco-05
+       LLM disse: Implementação completa de K-Nearest Neighbors (k-NN) para classificaçã | Classificação com o algoritmo k-Nearest Neighbors (k-NN) usando o data | Implementação e avaliação do algoritmo K-NN para classificação de doen  — O assunto k-NN é coberto no período de Modelos Preditivos (18/03 a 15/04), associado ao bloco-05, onde estão l
+  ERR [estru] Qual a diferença entre acurácia, precisão, recall  esperado=como-analisar-resultados-acc-pr-re-e escolhido=arvores-de-decisao,mlp,exercicio-2-solucao-com  bloco bloco-05/bloco-05
+       LLM disse: Árvores de Decisão | MLP | Rede Perceptron  — A aula de Análise de Resultados (abordagem supervisionada) ocorre no período de 18/03 a 15/04, mapeada na rast
+  OK  [estru] Como uma rede Perceptron aprende os pesos e por qu esperado=exercicio-2-solucao-com-rede-percept escolhido=exercicio-2-solucao-com-rede-perceptron-atuali  bloco bloco-05/bloco-05
+  OK  [estru] Quais são as etapas de um algoritmo genético (sele esperado=algoritmo-genetico                   escolhido=algoritmo-genetico,cap-sobre-algoritmos-geneti  bloco bloco-13/bloco-13
+  OK  [estru] Como funciona o agrupamento k-means e como escolhe esperado=agrupamento-usando-k-means-exemplo-1 escolhido=aula-sobre-agrupamento-parte-1-particional  bloco bloco-07/bloco-07
+  ERR [ambig] me dá um exemplo prático de classificação          esperado=exemplo-1-arvores-de-decisao-classif escolhido=arvores-de-decisao
+       LLM disse: Árvores de Decisão  — O material 'Árvores de Decisão' aborda diretamente o aprendizado supervisionado e a aplicação prática do model
+  OK  [ambig] como eu preparo os dados antes de treinar?         esperado=analise-exploratoria-de-dados-exempl escolhido=caracteristicas-dos-dados  bloco bloco-04/bloco-04
+  ERR [ambig] tem algum código de rede neural pra eu me basear?  esperado=mlp-classificacao-iris-atualizado,ml escolhido=exercicio-2-solucao-com-rede-perceptron-atuali
+       LLM disse: Rede Perceptron | MLP  — As linhas 6 e 7 do FILE_MAP referenciam os materiais de Rede Perceptron e MLP associados ao bloco-05.
+  OK  [ambig] como eu resolvo um problema de busca?              esperado=algoritmo-dijkstra,algoritmo-genetic escolhido=introducao-a-busca-informada,hill-climbing-e-s
+  ERR [ambig] o que cai na P2?                                   esperado=lista-de-exercicios-i,p2-202401,p2-2 escolhido=
+       LLM disse: course/CRONOGRAMA_DETALHADO.md | course/SYLLABUS.md | course/COURSE_MAP.md  — O CRONOGRAMA_DETALHADO.md especifica no dia 01/07/2026 quais unidades de aprendizagem sao cobradas no conteudo
+  OK  [malfo] knn exemplo java                                   esperado=exemplo-de-programa-com-k-nn-em-java escolhido=exemplo-de-programa-com-k-nn-em-java
+  OK  [malfo] arvore decisao regressao                           esperado=arvores-de-decisao,exemplo-1-arvores escolhido=arvores-de-decisao
+  OK  [malfo] minimax oq é                                       esperado=implementacaominimax,minimax-teoria  escolhido=minimax-teoria,implementacaominimax  bloco bloco-16/bloco-16
+  OK  [malfo] kmeans vs hierarquico                              esperado=agrupamento-hierarquico-exemplo-1,au escolhido=aula-sobre-agrupamento-parte-1-particional,aul  bloco bloco-07/bloco-07
+  ok3 [malfo] perceptron letras                                  esperado=rede-perceptron-reconhecendo-letras  escolhido=exercicio-2-solucao-com-rede-perceptron-atuali
+  por estilo estruturada  hit@1=3/5  hit@3=3/5
+  por estilo ambigua      hit@1=2/5  hit@3=2/5
+  por estilo malformada   hit@1=4/5  hit@3=5/5
+resultado: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\travessia_result_IA_llm.json
+exit 0
+=== IA --contexto-completo
+IA [llm-completo] perguntas=15  hit@1=10/15  hit@3=10/15  bloco=8/8  chamadas novas=0
+  ERR [estru] Como funciona o algoritmo k-NN para classificação  esperado=algoritmo-de-classificacao-k-nn      escolhido=exemplo-com-k-nn,exemplo-2-k-nn-com-iriscsv-ma  bloco bloco-05/bloco-05
+       LLM disse: Classificação com o algoritmo k-Nearest Neighbors (k-NN) usando o data | Implementação completa de K-Nearest Neighbors (k-NN) para classificaçã | Implementação e avaliação do algoritmo K-NN para classificação de doen  — Linhas do CODE_INDEX.md detalhando implementações práticas e análises do algoritmo k-NN para classificação.
+  ERR [estru] Qual a diferença entre acurácia, precisão, recall  esperado=como-analisar-resultados-acc-pr-re-e escolhido=arvores-de-decisao  bloco bloco-05/bloco-05
+       LLM disse: Árvores de Decisão  — A seção 'Aplicando o Modelo aos Dados de Teste' do material de 'Árvores de Decisão' é o local mais provável pa
+  OK  [estru] Como uma rede Perceptron aprende os pesos e por qu esperado=exercicio-2-solucao-com-rede-percept escolhido=exercicio-2-solucao-com-rede-perceptron-atuali  bloco bloco-05/bloco-05
+  OK  [estru] Quais são as etapas de um algoritmo genético (sele esperado=algoritmo-genetico                   escolhido=algoritmo-genetico,cap-sobre-algoritmos-geneti  bloco bloco-13/bloco-13
+  OK  [estru] Como funciona o agrupamento k-means e como escolhe esperado=agrupamento-usando-k-means-exemplo-1 escolhido=aula-sobre-agrupamento-parte-1-particional,agr  bloco bloco-07/bloco-07
+  ERR [ambig] me dá um exemplo prático de classificação          esperado=exemplo-1-arvores-de-decisao-classif escolhido=arvores-de-decisao,exemplo-complementar-classi
+       LLM disse: Árvores de Decisão | Exemplo Prático de Classificação com Árvores de Decisão  — O FILE_MAP possui o material teórico 'Árvores de Decisão' focado em classificação supervisionada, e o CODE_IND
+  OK  [ambig] como eu preparo os dados antes de treinar?         esperado=analise-exploratoria-de-dados-exempl escolhido=caracteristicas-dos-dados  bloco bloco-04/bloco-04
+  ERR [ambig] tem algum código de rede neural pra eu me basear?  esperado=mlp-classificacao-iris-atualizado,ml escolhido=exercicio-2-solucao-com-rede-perceptron-atuali
+       LLM disse: Rede Perceptron | MLP  — O FILE_MAP possui materiais dedicados especificamente para Redes Neurais sob os títulos exatos 'Rede Perceptro
+  OK  [ambig] como eu resolvo um problema de busca?              esperado=algoritmo-dijkstra,algoritmo-genetic escolhido=introducao-a-busca-informada,hill-climbing-e-s
+  ERR [ambig] o que cai na P2?                                   esperado=lista-de-exercicios-i,p2-202401,p2-2 escolhido=
+       LLM disse: course/CRONOGRAMA_DETALHADO.md | exams/EXAM_INDEX.md | course/COURSE_MAP.md  — O CRONOGRAMA_DETALHADO.md detalha o conteudo programatico cobrado na data da P2 (01/07/2026), enquanto o EXAM_
+  OK  [malfo] knn exemplo java                                   esperado=exemplo-de-programa-com-k-nn-em-java escolhido=exemplo-de-programa-com-k-nn-em-java
+  OK  [malfo] arvore decisao regressao                           esperado=arvores-de-decisao,exemplo-1-arvores escolhido=arvores-de-decisao,exemplo-2-arvores-de-decisa
+  OK  [malfo] minimax oq é                                       esperado=implementacaominimax,minimax-teoria  escolhido=minimax-teoria,implementacaominimax  bloco bloco-16/bloco-16
+  OK  [malfo] kmeans vs hierarquico                              esperado=agrupamento-hierarquico-exemplo-1,au escolhido=aula-sobre-agrupamento-parte-1-particional,aul  bloco bloco-07/bloco-07
+  OK  [malfo] perceptron letras                                  esperado=rede-perceptron-reconhecendo-letras  escolhido=rede-perceptron-reconhecendo-letras,exercicio-
+  por estilo estruturada  hit@1=3/5  hit@3=3/5
+  por estilo ambigua      hit@1=2/5  hit@3=2/5
+  por estilo malformada   hit@1=5/5  hit@3=5/5
+resultado: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\travessia_result_IA_llm-completo.json
+exit 0
+=== FR --sem-llm
+FR [sem-llm] perguntas=15  hit@1=9/15  hit@3=11/15  bloco=5/6  chamadas novas=0
+  OK  [estru] Quais são as camadas do modelo OSI e o que cada um esperado=02-modelos-de-referencia             escolhido=02-modelos-de-referencia,unidade1-exercicios  bloco bloco-02/bloco-02
+  OK  [estru] Como funciona a resolução de nomes no DNS, passo a esperado=05-protocolo-dns                     escolhido=05-protocolo-dns,06-protocolo-dhcp,unidade2-ex  bloco bloco-03/bloco-03
+  OK  [estru] Tem algum exemplo de código de cliente e servidor  esperado=udp-example-c                        escolhido=udp-example-c,udp-example-java,tcp-chat-c
+  ok3 [estru] Como o DHCP atribui um endereço IP para uma máquin esperado=06-protocolo-dhcp                    escolhido=05-protocolo-dns,06-protocolo-dhcp,unidade2-ex  bloco bloco-03/bloco-03
+  OK  [estru] Quais são os protocolos de e-mail vistos em aula e esperado=07-protocolos-de-e-mail              escolhido=07-protocolos-de-e-mail,04-protocolo-http,list  bloco bloco-05/bloco-05
+  OK  [ambig] me explica melhor os protocolos                    esperado=01-protocolos-de-rede,02-modelos-de- escolhido=01-protocolos-de-rede,04-protocolo-http,05-pro
+  ERR [ambig] tem exercício pra treinar a camada de aplicação?   esperado=lista-de-exercicios-1-camada-de-apli escolhido=04-camada-de-aplicacao,04-protocolo-http,05-pr
+  ERR [ambig] como que eu faço uma aplicação de rede?            esperado=08-desenvolvimento-de-aplicacoes,tcp escolhido=01-protocolos-de-rede,04-camada-de-aplicacao,0
+  OK  [ambig] que tipos de rede existem?                         esperado=01-protocolos-de-rede,03-tipos-de-re escolhido=01-protocolos-de-rede,03-tipos-de-redes  bloco bloco-01/bloco-02
+  ERR [ambig] o que cai na primeira prova?                       esperado=plano-de-ensino-20262,unidade1-exerc escolhido=02-poster-network-protocols
+  OK  [malfo] dns oq é                                           esperado=05-protocolo-dns                     escolhido=05-protocolo-dns,06-protocolo-dhcp,unidade2-ex
+  ok3 [malfo] http exercicio                                     esperado=lista-de-exercicios-1-camada-de-apli escolhido=04-protocolo-http,07-protocolos-de-e-mail,list
+  OK  [malfo] socket tcp c exemplo?                              esperado=tcp-chat-c,tcp-example               escolhido=tcp-chat-c,tcp-example
+  OK  [malfo] osi tcp ip diferença                               esperado=02-modelos-de-referencia             escolhido=02-modelos-de-referencia,tcp-chat-c,tcp-exampl  bloco bloco-02/bloco-02
+  ERR [malfo] dhcp lista                                         esperado=unidade2-exercicios-dhcp             escolhido=05-protocolo-dns,06-protocolo-dhcp,lista-de-ex
+  por estilo estruturada  hit@1=4/5  hit@3=5/5
+  por estilo ambigua      hit@1=2/5  hit@3=2/5
+  por estilo malformada   hit@1=3/5  hit@3=4/5
+resultado: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\travessia_result_FR_sem-llm.json
+exit 0
+=== FR 
+FR [llm] perguntas=15  hit@1=15/15  hit@3=15/15  bloco=6/6  chamadas novas=15
+  OK  [estru] Quais são as camadas do modelo OSI e o que cada um esperado=02-modelos-de-referencia             escolhido=02-modelos-de-referencia,unidade1-exercicios  bloco bloco-02/bloco-02
+  OK  [estru] Como funciona a resolução de nomes no DNS, passo a esperado=05-protocolo-dns                     escolhido=05-protocolo-dns,unidade2-exercicios-dns  bloco bloco-03/bloco-03
+  OK  [estru] Tem algum exemplo de código de cliente e servidor  esperado=udp-example-c                        escolhido=udp-example-c
+  OK  [estru] Como o DHCP atribui um endereço IP para uma máquin esperado=06-protocolo-dhcp                    escolhido=06-protocolo-dhcp,unidade2-exercicios-dhcp  bloco bloco-03/bloco-03
+  OK  [estru] Quais são os protocolos de e-mail vistos em aula e esperado=07-protocolos-de-e-mail              escolhido=07-protocolos-de-e-mail  bloco bloco-05/bloco-05
+  OK  [ambig] me explica melhor os protocolos                    esperado=01-protocolos-de-rede,02-modelos-de- escolhido=01-protocolos-de-rede,02-modelos-de-referencia
+  OK  [ambig] tem exercício pra treinar a camada de aplicação?   esperado=lista-de-exercicios-1-camada-de-apli escolhido=lista-de-exercicios-1-camada-de-aplicacao,unid
+  OK  [ambig] como que eu faço uma aplicação de rede?            esperado=08-desenvolvimento-de-aplicacoes,tcp escolhido=08-desenvolvimento-de-aplicacoes,tcp-example,u
+  OK  [ambig] que tipos de rede existem?                         esperado=01-protocolos-de-rede,03-tipos-de-re escolhido=03-tipos-de-redes,unidade1-exercicios  bloco bloco-02/bloco-02
+  OK  [ambig] o que cai na primeira prova?                       esperado=plano-de-ensino-20262,unidade1-exerc escolhido=plano-de-ensino-20262
+  OK  [malfo] dns oq é                                           esperado=05-protocolo-dns                     escolhido=05-protocolo-dns,unidade2-exercicios-dns,04-ca
+  OK  [malfo] http exercicio                                     esperado=lista-de-exercicios-1-camada-de-apli escolhido=unidade2-exercicios-http,lista-de-exercicios-1
+  OK  [malfo] socket tcp c exemplo?                              esperado=tcp-chat-c,tcp-example               escolhido=tcp-chat-c,08-desenvolvimento-de-aplicacoes
+  OK  [malfo] osi tcp ip diferença                               esperado=02-modelos-de-referencia             escolhido=02-modelos-de-referencia,unidade1-exercicios  bloco bloco-02/bloco-02
+  OK  [malfo] dhcp lista                                         esperado=unidade2-exercicios-dhcp             escolhido=unidade2-exercicios-dhcp,06-protocolo-dhcp
+  por estilo estruturada  hit@1=5/5  hit@3=5/5
+  por estilo ambigua      hit@1=5/5  hit@3=5/5
+  por estilo malformada   hit@1=5/5  hit@3=5/5
+resultado: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\travessia_result_FR_llm.json
+exit 0
+=== FR --contexto-completo
+FR [llm-completo] perguntas=15  hit@1=15/15  hit@3=15/15  bloco=5/6  chamadas novas=15
+  OK  [estru] Quais são as camadas do modelo OSI e o que cada um esperado=02-modelos-de-referencia             escolhido=02-modelos-de-referencia,unidade1-exercicios  bloco bloco-02/bloco-02
+  OK  [estru] Como funciona a resolução de nomes no DNS, passo a esperado=05-protocolo-dns                     escolhido=05-protocolo-dns,unidade2-exercicios-dns  bloco bloco-03/bloco-03
+  OK  [estru] Tem algum exemplo de código de cliente e servidor  esperado=udp-example-c                        escolhido=udp-example-c
+  OK  [estru] Como o DHCP atribui um endereço IP para uma máquin esperado=06-protocolo-dhcp                    escolhido=06-protocolo-dhcp,unidade2-exercicios-dhcp  bloco bloco-03/bloco-03
+  OK  [estru] Quais são os protocolos de e-mail vistos em aula e esperado=07-protocolos-de-e-mail              escolhido=07-protocolos-de-e-mail  bloco bloco-05/bloco-05
+  OK  [ambig] me explica melhor os protocolos                    esperado=01-protocolos-de-rede,02-modelos-de- escolhido=01-protocolos-de-rede,02-modelos-de-referencia
+  OK  [ambig] tem exercício pra treinar a camada de aplicação?   esperado=lista-de-exercicios-1-camada-de-apli escolhido=lista-de-exercicios-1-camada-de-aplicacao,unid
+  OK  [ambig] como que eu faço uma aplicação de rede?            esperado=08-desenvolvimento-de-aplicacoes,tcp escolhido=08-desenvolvimento-de-aplicacoes,tcp-example,u
+  OK  [ambig] que tipos de rede existem?                         esperado=01-protocolos-de-rede,03-tipos-de-re escolhido=03-tipos-de-redes  bloco bloco-02/bloco-02
+  OK  [ambig] o que cai na primeira prova?                       esperado=plano-de-ensino-20262,unidade1-exerc escolhido=plano-de-ensino-20262
+  OK  [malfo] dns oq é                                           esperado=05-protocolo-dns                     escolhido=05-protocolo-dns,unidade2-exercicios-dns,04-ca
+  OK  [malfo] http exercicio                                     esperado=lista-de-exercicios-1-camada-de-apli escolhido=unidade2-exercicios-http,lista-de-exercicios-1
+  OK  [malfo] socket tcp c exemplo?                              esperado=tcp-chat-c,tcp-example               escolhido=tcp-chat-c
+  OK  [malfo] osi tcp ip diferença                               esperado=02-modelos-de-referencia             escolhido=02-modelos-de-referencia,unidade1-exercicios  bloco bloco-20/bloco-02
+  OK  [malfo] dhcp lista                                         esperado=unidade2-exercicios-dhcp             escolhido=unidade2-exercicios-dhcp
+  por estilo estruturada  hit@1=5/5  hit@3=5/5
+  por estilo ambigua      hit@1=5/5  hit@3=5/5
+  por estilo malformada   hit@1=5/5  hit@3=5/5
+resultado: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\travessia_result_FR_llm-completo.json
+exit 0

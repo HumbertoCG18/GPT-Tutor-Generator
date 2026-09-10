@@ -1,0 +1,8 @@
+  T1  + CG  exercicios-de-geometria-computacional    entidades-geometricas      -> de-geometria-computacional gold=-geometria-computacional | titulo='exercicios de geometria computacional exercicios d'
+  T1b + CG  exercicios-de-geometria-computacional    entidades-geometricas      -> de-geometria-computacional gold=-geometria-computacional | titulo='exercicios de geometria computacional exercicios d'
+  T1  + CG  domina                                   entidades-geometricas      -> de-geometria-computacional gold=-geometria-computacional | titulo='domina pagina sobre geometria computacional'
+  T1b + CG  domina                                   entidades-geometricas      -> de-geometria-computacional gold=-geometria-computacional | titulo='domina pagina sobre geometria computacional'
+base subunidade 192/233  diverge_do_gravado=0
+T1   subunidade 194/233  flips + 2 - 0 ~ 0
+T1b  subunidade 194/233  flips + 2 - 0 ~ 0
+T2   subunidade 192/233  flips + 0 - 0 ~ 0

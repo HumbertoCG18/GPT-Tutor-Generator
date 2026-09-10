@@ -1,0 +1,40 @@
+[0.5,2,df0.25] SO  confiantes=25/39 aliases novos=12 | sub 10/15 -> 11/15  + 1  - 0  ~ 0
+[0.5,2,df0.25] IA  confiantes=39/59 aliases novos=24 | sub 35/39 -> 36/39  + 4  - 3  ~ 0
+[0.5,2,df0.25] ES2 confiantes=25/35 aliases novos=31 | sub 26/28 -> 26/28  + 0  - 0  ~ 0
+[0.5,2,df0.25] TCC confiantes=18/27 aliases novos=15 | sub 11/11 -> 11/11  + 0  - 0  ~ 0
+[0.5,2,df0.25] TOTAL conf_min=0.5 min_entries=2 df_max=0.25: sub 82/93 -> 84/93  + 5  - 3  ~ 0
+[0.5,3,df0.25] SO  confiantes=25/39 aliases novos=1 | sub 10/15 -> 10/15  + 0  - 0  ~ 0
+[0.5,3,df0.25] IA  confiantes=39/59 aliases novos=6 | sub 35/39 -> 38/39  + 3  - 0  ~ 0
+[0.5,3,df0.25] ES2 confiantes=25/35 aliases novos=17 | sub 26/28 -> 26/28  + 0  - 0  ~ 0
+[0.5,3,df0.25] TCC confiantes=18/27 aliases novos=0 | sub 11/11 -> 11/11  + 0  - 0  ~ 0
+[0.5,3,df0.25] TOTAL conf_min=0.5 min_entries=3 df_max=0.25: sub 82/93 -> 85/93  + 3  - 0  ~ 0
+[0.6,2,df0.25] SO  confiantes=22/39 aliases novos=12 | sub 10/15 -> 11/15  + 1  - 0  ~ 0
+[0.6,2,df0.25] IA  confiantes=35/59 aliases novos=23 | sub 35/39 -> 36/39  + 4  - 3  ~ 0
+[0.6,2,df0.25] ES2 confiantes=23/35 aliases novos=29 | sub 26/28 -> 26/28  + 0  - 0  ~ 0
+[0.6,2,df0.25] TCC confiantes=15/27 aliases novos=14 | sub 11/11 -> 11/11  + 0  - 0  ~ 0
+[0.6,2,df0.25] TOTAL conf_min=0.6 min_entries=2 df_max=0.25: sub 82/93 -> 84/93  + 5  - 3  ~ 0
+[0.7,2,df0.25] SO  confiantes=19/39 aliases novos=10 | sub 10/15 -> 11/15  + 1  - 0  ~ 0
+[0.7,2,df0.25] IA  confiantes=25/59 aliases novos=9 | sub 35/39 -> 39/39  + 4  - 0  ~ 0
+[0.7,2,df0.25] ES2 confiantes=21/35 aliases novos=29 | sub 26/28 -> 26/28  + 0  - 0  ~ 0
+[0.7,2,df0.25] TCC confiantes=12/27 aliases novos=14 | sub 11/11 -> 11/11  + 0  - 0  ~ 0
+[0.7,2,df0.25] TOTAL conf_min=0.7 min_entries=2 df_max=0.25: sub 82/93 -> 87/93  + 5  - 0  ~ 0
+[0.7,3,df0.25] SO  confiantes=19/39 aliases novos=0 | sub 10/15 -> 10/15  + 0  - 0  ~ 0
+[0.7,3,df0.25] IA  confiantes=25/59 aliases novos=4 | sub 35/39 -> 39/39  + 4  - 0  ~ 0
+[0.7,3,df0.25] ES2 confiantes=21/35 aliases novos=17 | sub 26/28 -> 26/28  + 0  - 0  ~ 0
+[0.7,3,df0.25] TCC confiantes=12/27 aliases novos=0 | sub 11/11 -> 11/11  + 0  - 0  ~ 0
+[0.7,3,df0.25] TOTAL conf_min=0.7 min_entries=3 df_max=0.25: sub 82/93 -> 86/93  + 4  - 0  ~ 0
+[0.8,2,df0.25] SO  confiantes=14/39 aliases novos=7 | sub 10/15 -> 11/15  + 1  - 0  ~ 0
+[0.8,2,df0.25] IA  confiantes=20/59 aliases novos=8 | sub 35/39 -> 38/39  + 4  - 1  ~ 0
+[0.8,2,df0.25] ES2 confiantes=19/35 aliases novos=25 | sub 26/28 -> 26/28  + 0  - 0  ~ 0
+[0.8,2,df0.25] TCC confiantes=9/27 aliases novos=14 | sub 11/11 -> 11/11  + 0  - 0  ~ 0
+[0.8,2,df0.25] TOTAL conf_min=0.8 min_entries=2 df_max=0.25: sub 82/93 -> 86/93  + 5  - 1  ~ 0
+[0.9,2,df0.25] SO  confiantes=7/39 aliases novos=4 | sub 10/15 -> 10/15  + 0  - 0  ~ 0
+[0.9,2,df0.25] IA  confiantes=11/59 aliases novos=1 | sub 35/39 -> 35/39  + 0  - 0  ~ 0
+[0.9,2,df0.25] ES2 confiantes=13/35 aliases novos=18 | sub 26/28 -> 26/28  + 0  - 0  ~ 0
+[0.9,2,df0.25] TCC confiantes=5/27 aliases novos=5 | sub 11/11 -> 11/11  + 0  - 0  ~ 0
+[0.9,2,df0.25] TOTAL conf_min=0.9 min_entries=2 df_max=0.25: sub 82/93 -> 82/93  + 0  - 0  ~ 0
+[0.9,3,df0.25] SO  confiantes=7/39 aliases novos=0 | sub 10/15 -> 10/15  + 0  - 0  ~ 0
+[0.9,3,df0.25] IA  confiantes=11/59 aliases novos=0 | sub 35/39 -> 35/39  + 0  - 0  ~ 0
+[0.9,3,df0.25] ES2 confiantes=13/35 aliases novos=7 | sub 26/28 -> 26/28  + 0  - 0  ~ 0
+[0.9,3,df0.25] TCC confiantes=5/27 aliases novos=0 | sub 11/11 -> 11/11  + 0  - 0  ~ 0
+[0.9,3,df0.25] TOTAL conf_min=0.9 min_entries=3 df_max=0.25: sub 82/93 -> 82/93  + 0  - 0  ~ 0

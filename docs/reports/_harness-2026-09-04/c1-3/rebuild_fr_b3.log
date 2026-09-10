@@ -1,0 +1,37 @@
+[stash] 20 entries | gemini_auto_summarize=True | client=ok
+[build] 840s | falhas 0 | chamadas {'gemini_bundle': 10}
+[profile] Fundamentos-de-Redes-Tutor: perfil 'Fundamentos de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Fundamentos-de-Redes-Tutor: bloco 19/20 -> 19/20 (backup: manifest.json.bak)
+[reprocess 1] chamadas acumuladas {'gemini_bundle': 12} (neste passo: {'gemini_bundle': 2})
+[profile] Fundamentos-de-Redes-Tutor: perfil 'Fundamentos de Redes de Computadores' aplicado (feature_flags={'use_anchor_engine': True, 'use_llm_voter': True, 'compile_vocabulary': True})
+[ok] Fundamentos-de-Redes-Tutor: bloco 19/20 -> 19/20 (backup: manifest.json.bak)
+[reprocess 2] chamadas acumuladas {'gemini_bundle': 12} (neste passo: {'gemini_bundle': 0})
+revisar: {'ok': 14, 'duvida': 6} | metodos: {'meta-generica': 1, 'janela-1': 9, 'llm-funil': 2, 'llm': 8}
+   course/.glossary_curation.llm.json: existe (5737 bytes)
+   material_curation.json: existe (10693 bytes)
+   code_curation.json: ausente
+
+entry                              bloco B   bloco prod unidade B              unidade prod           sub B                  sub prod               revisar B
+plano-de-ensino-20262              bloco-01  bloco-01   -redes-de-computadores -redes-de-computadores -                      -                      ok       
+01-protocolos-de-rede              bloco-01  bloco-01   -redes-de-computadores -redes-de-computadores s-e-de-longa-distancia s-e-de-longa-distancia ok       
+02-modelos-de-referencia           bloco-02  bloco-02   -redes-de-computadores -redes-de-computadores modelos-osi-e-tcpip    modelos-osi-e-tcpip    ok       
+02-poster-network-protocols        bloco-02  bloco-02   -redes-de-computadores -redes-de-computadores -                      -                      duvida   
+03-tipos-de-redes                  bloco-02  bloco-02   -redes-de-computadores -redes-de-computadores s-e-de-longa-distancia s-e-de-longa-distancia ok       
+unidade1-exercicios                bloco-02  bloco-02   -redes-de-computadores -redes-de-computadores modelos-osi-e-tcpip    modelos-osi-e-tcpip    duvida   
+04-camada-de-aplicacao             bloco-03  bloco-03   -02-nivel-de-aplicacao -02-nivel-de-aplicacao -clienteservidor-e-p2p -clienteservidor-e-p2p ok       
+04-protocolo-http                  bloco-03  bloco-03   -02-nivel-de-aplicacao -02-nivel-de-aplicacao p-https-smtp-pop3-imap p-https-smtp-pop3-imap ok       
+05-protocolo-dns                   bloco-03  bloco-03   -02-nivel-de-aplicacao -02-nivel-de-aplicacao tura-dns-dhcp-snmp-nat tura-dns-dhcp-snmp-nat ok       
+06-protocolo-dhcp                  bloco-03  bloco-03   -02-nivel-de-aplicacao -02-nivel-de-aplicacao tura-dns-dhcp-snmp-nat tura-dns-dhcp-snmp-nat ok       
+07-protocolos-de-e-mail            bloco-05  bloco-05   -02-nivel-de-aplicacao -02-nivel-de-aplicacao p-https-smtp-pop3-imap p-https-smtp-pop3-imap ok       
+08-desenvolvimento-de-aplicacoes   bloco-05  bloco-05   -02-nivel-de-aplicacao -02-nivel-de-aplicacao plementacao-de-sockets plementacao-de-sockets ok       
+lista-de-exercicios-1-camada-de-ap bloco-03  bloco-03   -02-nivel-de-aplicacao -02-nivel-de-aplicacao p-https-smtp-pop3-imap p-https-smtp-pop3-imap ok       
+tcp-chat-c                         bloco-22  bloco-22   -02-nivel-de-aplicacao -02-nivel-de-aplicacao plementacao-de-sockets plementacao-de-sockets duvida   
+tcp-example                        bloco-22  bloco-22   -02-nivel-de-aplicacao -02-nivel-de-aplicacao plementacao-de-sockets -clienteservidor-e-p2p duvida   
+udp-example-c                      bloco-22  bloco-22   -02-nivel-de-aplicacao -02-nivel-de-aplicacao plementacao-de-sockets -clienteservidor-e-p2p duvida   
+udp-example-java                   bloco-22  bloco-05   -02-nivel-de-aplicacao -02-nivel-de-aplicacao plementacao-de-sockets -clienteservidor-e-p2p duvida   
+unidade2-exercicios-dhcp           bloco-03  bloco-03   -02-nivel-de-aplicacao -02-nivel-de-aplicacao tura-dns-dhcp-snmp-nat tura-dns-dhcp-snmp-nat ok       
+unidade2-exercicios-dns            bloco-03  bloco-03   -02-nivel-de-aplicacao -02-nivel-de-aplicacao tura-dns-dhcp-snmp-nat tura-dns-dhcp-snmp-nat ok       
+unidade2-exercicios-http           bloco-03  bloco-03   -02-nivel-de-aplicacao -02-nivel-de-aplicacao p-https-smtp-pop3-imap p-https-smtp-pop3-imap ok       
+
+concordancia com o produto: bloco 19/20 · unidade 20/20 · subunidade 17/20
+[fim] chamadas Gemini: {'gemini_bundle': 12}

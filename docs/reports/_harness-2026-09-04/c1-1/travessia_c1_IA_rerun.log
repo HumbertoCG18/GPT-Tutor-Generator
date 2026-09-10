@@ -1,0 +1,73 @@
+=== IA --sem-llm
+IA [sem-llm] perguntas=15  hit@1=10/15  hit@3=12/15  bloco=6/8  chamadas novas=0
+  OK  [estru] Como funciona o algoritmo k-NN para classificação  esperado=algoritmo-de-classificacao-k-nn      escolhido=algoritmo-de-classificacao-k-nn,k-nn-para-clas  bloco bloco-05/bloco-05
+  ERR [estru] Qual a diferença entre acurácia, precisão, recall  esperado=como-analisar-resultados-acc-pr-re-e escolhido=  bloco -/bloco-05
+  OK  [estru] Como uma rede Perceptron aprende os pesos e por qu esperado=exercicio-2-solucao-com-rede-percept escolhido=exercicio-2-solucao-com-rede-perceptron-atuali  bloco bloco-05/bloco-05
+  OK  [estru] Quais são as etapas de um algoritmo genético (sele esperado=algoritmo-genetico                   escolhido=algoritmo-genetico,algoritmo-de-classificacao-  bloco bloco-13/bloco-13
+  OK  [estru] Como funciona o agrupamento k-means e como escolhe esperado=agrupamento-usando-k-means-exemplo-1 escolhido=agrupamento-usando-k-means-exemplo-1-ipynb,agr  bloco bloco-07/bloco-07
+  OK  [ambig] me dá um exemplo prático de classificação          esperado=exemplo-1-arvores-de-decisao-classif escolhido=exemplo-1-arvores-de-decisao-classificacao-pla
+  ok3 [ambig] como eu preparo os dados antes de treinar?         esperado=analise-exploratoria-de-dados-exempl escolhido=algoritmo-de-classificacao-k-nn,analise-explor  bloco bloco-05/bloco-04
+  ERR [ambig] tem algum código de rede neural pra eu me basear?  esperado=mlp-classificacao-iris-atualizado,ml escolhido=exercicio-2-solucao-com-rede-perceptron-atuali
+  ok3 [ambig] como eu resolvo um problema de busca?              esperado=algoritmo-dijkstra,algoritmo-genetic escolhido=ag-feito-em-aula-pelo-luca,algoritmo-dijkstra,
+  ERR [ambig] o que cai na P2?                                   esperado=lista-de-exercicios-i,p2-202401,p2-2 escolhido=o-que-é-inteligência-artificial-ia-oracle-bras
+  OK  [malfo] knn exemplo java                                   esperado=exemplo-de-programa-com-k-nn-em-java escolhido=exemplo-de-programa-com-k-nn-em-java,agrupamen
+  OK  [malfo] arvore decisao regressao                           esperado=arvores-de-decisao,exemplo-1-arvores escolhido=exemplo-2-arvores-de-decisao-regressao-diabete
+  OK  [malfo] minimax oq é                                       esperado=implementacaominimax,minimax-teoria  escolhido=minimax-teoria  bloco bloco-16/bloco-16
+  OK  [malfo] kmeans vs hierarquico                              esperado=agrupamento-hierarquico-exemplo-1,au escolhido=agrupamento-hierarquico-exemplo-1,agrupamento-  bloco bloco-07/bloco-07
+  OK  [malfo] perceptron letras                                  esperado=rede-perceptron-reconhecendo-letras  escolhido=rede-perceptron-reconhecendo-letras,exercicio-
+  por estilo estruturada  hit@1=4/5  hit@3=4/5
+  por estilo ambigua      hit@1=1/5  hit@3=3/5
+  por estilo malformada   hit@1=5/5  hit@3=5/5
+resultado: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\travessia_result_IA_sem-llm.json
+exit 0
+=== IA 
+IA [llm] perguntas=15  hit@1=14/15  hit@3=14/15  bloco=8/8  chamadas novas=15
+  OK  [estru] Como funciona o algoritmo k-NN para classificação  esperado=algoritmo-de-classificacao-k-nn      escolhido=algoritmo-de-classificacao-k-nn,exemplo-com-k-  bloco bloco-05/bloco-05
+  OK  [estru] Qual a diferença entre acurácia, precisão, recall  esperado=como-analisar-resultados-acc-pr-re-e escolhido=como-analisar-resultados-acc-pr-re-e-f1  bloco bloco-05/bloco-05
+  OK  [estru] Como uma rede Perceptron aprende os pesos e por qu esperado=exercicio-2-solucao-com-rede-percept escolhido=rede-perceptron-e-equacao-de-reta,exercicio-2-  bloco bloco-05/bloco-05
+  OK  [estru] Quais são as etapas de um algoritmo genético (sele esperado=algoritmo-genetico                   escolhido=algoritmo-genetico,cap-sobre-algoritmos-geneti  bloco bloco-13/bloco-13
+  OK  [estru] Como funciona o agrupamento k-means e como escolhe esperado=agrupamento-usando-k-means-exemplo-1 escolhido=aula-sobre-agrupamento-parte-1-particional,agr  bloco bloco-07/bloco-07
+  ERR [ambig] me dá um exemplo prático de classificação          esperado=exemplo-1-arvores-de-decisao-classif escolhido=exemplo-complementar-classificacao-com-arvores
+       LLM disse: Exemplo Prático de Classificação com Árvores de Decisão | Árvores de Decisão  — A linha 57 do FILE_MAP traz o título 'Exemplo Prático de Classificação com Árvores de De
+  OK  [ambig] como eu preparo os dados antes de treinar?         esperado=analise-exploratoria-de-dados-exempl escolhido=caracteristicas-dos-dados,analise-exploratoria  bloco bloco-04/bloco-04
+  OK  [ambig] tem algum código de rede neural pra eu me basear?  esperado=mlp-classificacao-iris-atualizado,ml escolhido=mlp-classificacao-iris-atualizado,exercicio-2-
+  OK  [ambig] como eu resolvo um problema de busca?              esperado=algoritmo-dijkstra,algoritmo-genetic escolhido=introducao-a-busca-informada,algoritmo-genetic
+  OK  [ambig] o que cai na P2?                                   esperado=lista-de-exercicios-i,p2-202401,p2-2 escolhido=p2-202402,p2-202401
+  OK  [malfo] knn exemplo java                                   esperado=exemplo-de-programa-com-k-nn-em-java escolhido=exemplo-de-programa-com-k-nn-em-java
+  OK  [malfo] arvore decisao regressao                           esperado=arvores-de-decisao,exemplo-1-arvores escolhido=exemplo-2-arvores-de-decisao-regressao-diabete
+  OK  [malfo] minimax oq é                                       esperado=implementacaominimax,minimax-teoria  escolhido=implementacaominimax  bloco bloco-16/bloco-16
+  OK  [malfo] kmeans vs hierarquico                              esperado=agrupamento-hierarquico-exemplo-1,au escolhido=aula-sobre-agrupamento-parte-1-particional,aul  bloco bloco-07/bloco-07
+  OK  [malfo] perceptron letras                                  esperado=rede-perceptron-reconhecendo-letras  escolhido=rede-perceptron-reconhecendo-letras
+  por estilo estruturada  hit@1=5/5  hit@3=5/5
+  por estilo ambigua      hit@1=4/5  hit@3=4/5
+  por estilo malformada   hit@1=5/5  hit@3=5/5
+resultado: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\travessia_result_IA_llm.json
+exit 0
+=== IA --contexto-completo
+[Gemini] 429 attempt 1/5, sleeping 1.0s
+[Gemini] 429 attempt 1/5, sleeping 1.0s
+[Gemini] 429 attempt 1/5, sleeping 1.0s
+[Gemini] 429 attempt 1/5, sleeping 1.0s
+[Gemini] 429 attempt 2/5, sleeping 2.0s
+[Gemini] 429 attempt 3/5, sleeping 4.0s
+[Gemini] 429 attempt 4/5, sleeping 8.0s
+[Gemini] 429 attempt 5/5, sleeping 16.0s
+Traceback (most recent call last):
+    resp = self._client.models.generate_content(
+    response = self._generate_content(
+    response = self._api_client.request(
+    response = self._request(http_request, http_options, stream=False)
+    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]
+    do = self.iter(retry_state=retry_state)
+    result = action(retry_state)
+    return self.__get_result()
+    result = fn(*args, **kwargs)
+    cls.raise_error(response.status_code, response_json, response)
+google.genai.errors.ClientError: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your p
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+    resp = client.summarize_bundle(bundle_text=f"{contexto}\n\nPERGUNTA: {pergunta}", schema=Resposta,
+RuntimeError: Gemini falhou ap�s 5 tentativas
+exit 1

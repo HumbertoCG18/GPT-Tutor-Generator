@@ -1,0 +1,85 @@
+=== CG --sem-llm
+CG [sem-llm] perguntas=15  hit@1=5/15  hit@3=6/15  bloco=10/11  chamadas novas=0
+  OK  [estru] Como funciona o algoritmo de recorte de retas de C esperado=pagina-com-videos-sobre-recorte-e257 escolhido=video-sobre-o-algoritmo-de-recorte-por-subdivi  bloco bloco-06/bloco-06
+  ERR [estru] Quais são os fundamentos matemáticos (vetores, pro esperado=exerciciosfundamentosmatematicos,fun escolhido=matematica,exemplodemanipulacaodeimagens,exerc  bloco bloco-03/bloco-03
+  OK  [estru] Como detectar colisão entre dois objetos usando en esperado=colisao,videos-sobre-algoritmos-de-d escolhido=colisao,videos-sobre-algoritmos-de-detecao-de-  bloco bloco-04/bloco-04
+  OK  [estru] Como funciona o algoritmo Z-Buffer para remoção de esperado=elemoculto,exemplozbuffer            escolhido=elemoculto,exemplozbuffer,pagina-com-videos-so  bloco bloco-20/bloco-20
+  OK  [estru] Tem algum código de exemplo de curva de Bézier em  esperado=bezier-animacao,bezier-py,bezier-pyt escolhido=bezier-py,bezier-python,bezier-animacao  bloco bloco-13/bloco-13
+  ERR [ambig] me explica visualização 3D                         esperado=opengl3d,opengl3dcpp,opengl3dcpp-vdi escolhido=animacao-v2,exercicios-teoricos-sobre-processo
+  ERR [ambig] tem exercício de imagem?                           esperado=exercicios-de-processamento-de-image escolhido=exercicio-com-animacao,exercicio-com-poligonos
+  ERR [ambig] como eu começo com OpenGL?                         esperado=opengl-cpp,opengl-py,openglbasico    escolhido=video-com-instrucoes-para-usar-opengl-na-vdi-d  bloco bloco-02/bloco-02
+  ok3 [ambig] o que é modelagem de sólidos?                      esperado=csg,modelagem3d                      escolhido=basico3d-cpp,basico3d-py-zip,csg  bloco bloco-15/bloco-15
+  ERR [ambig] o que cai na P1?                                   esperado=cronograma2026-2,planodeensino-4645z escolhido=
+  ERR [malfo] segmentacao imagem                                 esperado=segmentacaodetexturas,segmentacaoppt escolhido=floodfill,pagina-com-videos-sobre-segmentacao-  bloco bloco-07/bloco-07
+  OK  [malfo] iluminacao phong                                   esperado=iluminacao                           escolhido=iluminacao  bloco bloco-21/bloco-21
+  ERR [malfo] filtro passa baixa exercicio                       esperado=exercicios-de-processamento-de-image escolhido=exercicio-com-animacao,exercicio-com-poligonos
+  ERR [malfo] geometria computacional plane sweep                esperado=planesweep                           escolhido=domina,exercicios-de-geometria-computacional,g  bloco bloco-05/bloco-05
+  ERR [malfo] transformacoes opengl codigo                       esperado=transformacoesgeometricas,transforma escolhido=basico3d-py,opengl-cpp,opengl-py  bloco bloco-18/bloco-06
+  por estilo estruturada  hit@1=4/5  hit@3=4/5
+  por estilo ambigua [re-chaveado 04/09 para o CG rebuild] hit@1=0/4  hit@3=1/4
+  por estilo ambigua      hit@1=0/1  hit@3=0/1
+  por estilo malformada   hit@1=0/1  hit@3=0/1
+  por estilo malformada [re-chaveado 04/09 para o CG rebuild] hit@1=1/4  hit@3=1/4
+resultado: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\travessia_result_CG_sem-llm.json
+exit 0
+=== CG 
+CG [llm] perguntas=15  hit@1=7/15  hit@3=7/15  bloco=8/11  chamadas novas=15
+  ERR [estru] Como funciona o algoritmo de recorte de retas de C esperado=pagina-com-videos-sobre-recorte-e257 escolhido=maptextures  bloco bloco-06/bloco-06
+       LLM disse: MapTextures | content/BIBLIOGRAPHY.md  — O assunto de Recorte e Mapeamento 2D é abordado na Unidade 4 no período de 25/08 a 27/08/2026, mapeado ao bloc
+  ERR [estru] Quais são os fundamentos matemáticos (vetores, pro esperado=exerciciosfundamentosmatematicos,fun escolhido=matematica  bloco bloco-03/bloco-03
+       LLM disse: Representação e Operações Básicas de Vetores Bidimensionais em C++  — O arquivo 'Representação e Operações Básicas de Vetores Bidimensionais em C++' (Matematica.cpp) é o código vin
+  ERR [estru] Como detectar colisão entre dois objetos usando en esperado=colisao,videos-sobre-algoritmos-de-d escolhido=opengl-cpp,opengl3dcpp-vdi  bloco bloco-04/bloco-04
+       LLM disse: Fundamentos de Computação Gráfica 2D/3D, Algoritmos Geométricos e Proc | Práticas de Computação Gráfica 2D/3D, Curvas de Bezier e Processamento | Fundamentos de Computação Gráfica 2D/3D e Algoritmos Geométricos com O  — O assunto de colisão é abordado na aula de 18/08/2026, correspondente ao bloco-04 do cronograma detalhado, com
+  OK  [estru] Como funciona o algoritmo Z-Buffer para remoção de esperado=elemoculto,exemplozbuffer            escolhido=elemoculto,exemplozbuffer  bloco bloco-20/bloco-20
+  OK  [estru] Tem algum código de exemplo de curva de Bézier em  esperado=bezier-animacao,bezier-py,bezier-pyt escolhido=bezier-py,bezier-python  bloco bloco-13/bloco-13
+  OK  [ambig] me explica visualização 3D                         esperado=opengl3d,opengl3dcpp,opengl3dcpp-vdi escolhido=vis3d,opengl3d,elemoculto
+  ERR [ambig] tem exercício de imagem?                           esperado=exercicios-de-processamento-de-image escolhido=exercicios
+       LLM disse: exercicios  — Linha 22 do FILE_MAP indica a lista 'exercicios' e o bloco-03 (Unidade 03) no cronograma detalhado contempla o
+  OK  [ambig] como eu começo com OpenGL?                         esperado=opengl-cpp,opengl-py,openglbasico    escolhido=opengl-cpp,opengl-py  bloco bloco-02/bloco-02
+  OK  [ambig] o que é modelagem de sólidos?                      esperado=csg,modelagem3d                      escolhido=modelagem3d,csg  bloco bloco-15/bloco-15
+  ERR [ambig] o que cai na P1?                                   esperado=cronograma2026-2,planodeensino-4645z escolhido=
+       LLM disse: course/CRONOGRAMA_DETALHADO.md | course/SYLLABUS.md  — O CRONOGRAMA_DETALHADO.md lista explicitamente as unidades cobradas na sessão de 24/09/2026, que corresponde à
+  OK  [malfo] segmentacao imagem                                 esperado=segmentacaodetexturas,segmentacaoppt escolhido=segmentacaopptx,segmentacaodetexturas  bloco bloco-03/bloco-07
+  OK  [malfo] iluminacao phong                                   esperado=iluminacao                           escolhido=iluminacao,programabasico3d  bloco bloco-19/bloco-21
+  ERR [malfo] filtro passa baixa exercicio                       esperado=exercicios-de-processamento-de-image escolhido=segmentacaopptx,segmentacaodetexturas
+       LLM disse: Segmentacao.pptx | SegmentacaoDeTexturas  — A Unidade 3 aborda Processamento de Imagens (incluindo Filtros e Convolução), sendo mapeada no bloco-03 das ta
+  ERR [malfo] geometria computacional plane sweep                esperado=planesweep                           escolhido=opengl-cpp  bloco bloco-05/bloco-05
+       LLM disse: Fundamentos de Computação Gráfica 2D/3D e Algoritmos Geométricos com O | Fundamentos de Computação Gráfica 2D/3D, Algoritmos Geométricos e Proc  — A aula de Geometria Computacional está agendada para o dia 20/08/2026 no CRONOGRAMA_DETALHADO, correspondendo 
+  ERR [malfo] transformacoes opengl codigo                       esperado=transformacoesgeometricas,transforma escolhido=basico3d-py,opengl-py  bloco bloco-18/bloco-06
+       LLM disse: Introdução a Computação Gráfica 3D e Transformações com PyOpenGL | Modelagem, Projeções e Texturização 3D com PyOpenGL  — O item 9 do FILE_MAP é um código de exemplo do professor focado especificamente em Transformações com PyOpenGL
+  por estilo estruturada  hit@1=2/5  hit@3=2/5
+  por estilo ambigua [re-chaveado 04/09 para o CG rebuild] hit@1=3/4  hit@3=3/4
+  por estilo ambigua      hit@1=0/1  hit@3=0/1
+  por estilo malformada   hit@1=1/1  hit@3=1/1
+  por estilo malformada [re-chaveado 04/09 para o CG rebuild] hit@1=1/4  hit@3=1/4
+resultado: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\travessia_result_CG_llm.json
+exit 0
+=== CG --contexto-completo
+CG [llm-completo] perguntas=15  hit@1=7/15  hit@3=8/15  bloco=7/11  chamadas novas=15
+  ERR [estru] Como funciona o algoritmo de recorte de retas de C esperado=pagina-com-videos-sobre-recorte-e257 escolhido=maptextures,exercicios-teoricos-sobre-processo  bloco bloco-06/bloco-06
+       LLM disse: MapTextures | exercicios-teoricos-sobre-processo-de-visualizacao-2d | resolucao-de-prova-de-computacao-grafica-2d.html  — O assunto de Recorte de retas pertence a Unidade 04 (Processo de Visualizacao 2D), lecionado entre 25/08 e 27/
+  ERR [estru] Quais são os fundamentos matemáticos (vetores, pro esperado=exerciciosfundamentosmatematicos,fun escolhido=matematica  bloco bloco-03/bloco-03
+       LLM disse: Representação e Operações Básicas de Vetores Bidimensionais em C++  — O arquivo Matematica.cpp no índice de códigos aborda diretamente vetores bidimensionais e álgebra linear compu
+  ERR [estru] Como detectar colisão entre dois objetos usando en esperado=colisao,videos-sobre-algoritmos-de-d escolhido=opengl-cpp,opengl3dcpp-vdi,basico3d-cpp  bloco bloco-02/bloco-04
+       LLM disse: Fundamentos de Computação Gráfica 2D/3D, Algoritmos Geométricos e Proc | Práticas de Computação Gráfica 2D/3D, Curvas de Bezier e Processamento | Fundamentos de Computação Gráfica 2D/3D, Curvas de Bézier e Processame  — As linhas 23, 11 e 14 do FILE_MAP contêm códigos do professor cujos conceitos associados incluem explicitament
+  OK  [estru] Como funciona o algoritmo Z-Buffer para remoção de esperado=elemoculto,exemplozbuffer            escolhido=elemoculto,exemplozbuffer  bloco bloco-20/bloco-20
+  OK  [estru] Tem algum código de exemplo de curva de Bézier em  esperado=bezier-animacao,bezier-py,bezier-pyt escolhido=bezier-py,bezier-python,bezier-animacao  bloco bloco-13/bloco-13
+  OK  [ambig] me explica visualização 3D                         esperado=opengl3d,opengl3dcpp,opengl3dcpp-vdi escolhido=vis3d,opengl3d
+  ERR [ambig] tem exercício de imagem?                           esperado=exercicios-de-processamento-de-image escolhido=
+       LLM disse: exercises/EXERCISE_INDEX.md  — O arquivo exercises/EXERCISE_INDEX.md lista diretamente vários exercícios de imagem, como exercicios-de-proces
+  OK  [ambig] como eu começo com OpenGL?                         esperado=opengl-cpp,opengl-py,openglbasico    escolhido=opengl-cpp,opengl-py  bloco bloco-02/bloco-02
+  OK  [ambig] o que é modelagem de sólidos?                      esperado=csg,modelagem3d                      escolhido=csg,modelagem3d  bloco bloco-15/bloco-15
+  ERR [ambig] o que cai na P1?                                   esperado=cronograma2026-2,planodeensino-4645z escolhido=
+       LLM disse: course/CRONOGRAMA_DETALHADO.md | course/SYLLABUS.md  — O CRONOGRAMA_DETALHADO.md lista explicitamente as unidades cobertas na aula da prova P1 em 24/09/2026.
+  OK  [malfo] segmentacao imagem                                 esperado=segmentacaodetexturas,segmentacaoppt escolhido=segmentacaopptx,segmentacaodetexturas  bloco bloco-03/bloco-07
+  OK  [malfo] iluminacao phong                                   esperado=iluminacao                           escolhido=iluminacao,programabasico3d  bloco bloco-19/bloco-21
+  ok3 [malfo] filtro passa baixa exercicio                       esperado=exercicios-de-processamento-de-image escolhido=remocaoderuido,exercicios-de-processamento-de-
+  ERR [malfo] geometria computacional plane sweep                esperado=planesweep                           escolhido=opengl-cpp,matematica  bloco bloco-05/bloco-05
+       LLM disse: Fundamentos de Computação Gráfica 2D/3D e Algoritmos Geométricos com O | Representação e Operações Básicas de Vetores Bidimensionais em C++  — A aula de Geometria Computacional ocorre em 20/08/2026 (bloco-05) e envolve algoritmos geométricos e interseçã
+  ERR [malfo] transformacoes opengl codigo                       esperado=transformacoesgeometricas,transforma escolhido=basico3d-py,basico3d-cpp,basico3d-py-zip  bloco bloco-18/bloco-06
+       LLM disse: Introdução a Computação Gráfica 3D e Transformações com PyOpenGL | Fundamentos de Computação Gráfica 2D/3D, Curvas de Bézier e Processame | Fundamentos de Computação Gráfica 3D e Modelagem por Extrusão com PyOp  — O FILE_MAP lista esses arquivos de código do professor contendo explicitamente transformações com OpenGL e PyO
+  por estilo estruturada  hit@1=2/5  hit@3=2/5
+  por estilo ambigua      hit@1=3/5  hit@3=3/5
+  por estilo malformada   hit@1=2/5  hit@3=3/5
+resultado: C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator\docs\reports\travessia_result_CG_llm-completo.json
+exit 0

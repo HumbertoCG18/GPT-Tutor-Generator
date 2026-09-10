@@ -1,0 +1,25 @@
+[ok] Metodos-Formais-Tutor: bloco 62/66 -> 62/66 (backup: manifest.json.bak)
+[ok] Sistemas-Operacionais-Tutor: bloco 35/39 -> 35/39 (backup: manifest.json.bak)
+[ok] Inteligencia-Artifical-Tutor: bloco 55/59 -> 55/59 (backup: manifest.json.bak)
+[ok] Engenharia-Software-2-Tutor: bloco 34/35 -> 34/35 (backup: manifest.json.bak)
+[ok] TCC-Tutor: bloco 26/27 -> 26/27 (backup: manifest.json.bak)
+reprocess x5 sem voter: 232s
+
+=== EIXOS — motor puro (sem curadoria, sem LLM voter, COM vocab compilado) ===
+curso      BLOCO conf-err   UNIDADE   COBERTURA    F1 pinos
+MF      56/66           1   66/66         11/13 0.846     0
+SO      36/38           0   28/37         19/19 1.000     0
+       unidade errada: 0704-laminas-comunicacao-e-sincronizacao, 0904-laminas-semaforos, 2306-laminas-gerencia-de-arquivos, 2306-laminas-laminas-armazenamento-em-massa, exercicios-p2, laminas-cs-4244-internet-programming-sockets-programming, laminas-sockets-material-alternativo-em-pt, lista-exercicios-p2 ...
+IA      41/43           0   39/42           1/3 0.333     0
+       unidade errada: ia-responsável-7c4626, o-que-é-inteligência-artificial-ia-oracle-brasil-43437f, visao-geral-introducao-e-historico
+ES2     27/28           0   28/28         19/19 1.000     0
+TCC     23/25           1   18/18           3/3 1.000     0
+LR                  (sem gold — fora da regua)
+FR                  (sem gold — fora da regua)
+-------------------------------------------------------
+TOTAL  bloco 183/200 (91.5%) conf-err 2 | unidade 179/191 (93.7%) | cobertura 53/57 F1 0.930 sem-pred 0 | pinos 0
+metodos temporais: {'janela-1': 118, 'disamb': 53, 'titulo-topico': 12, 'prep-prova': 11, 'irmao-card': 8, 'ref-generica': 5, 'meta-generica': 4, 'disamb-curto': 4, 'secao-geral': 3, 'due-contain': 2, 'due-straddle': 1}
+
+SUBUNIDADE motor puro (COM vocab compilado): 82/93 com-extras · 78/93 primario
+total: 233s
+exit 0

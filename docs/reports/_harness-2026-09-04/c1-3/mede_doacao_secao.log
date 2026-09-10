@@ -1,0 +1,37 @@
+A) SECOES QUE NOMEIAM UM TOPICO (taxonomia limpa) e B) TETO da atribuicao direta
+       secoes  nomeiam  mat.cobertos       acerta   motor hoje
+SO          9        0     0/15          0    0%     15  100%
+IA         15        5     7/39          2   29%     39  100%
+ES2         6        1    23/28         14   61%     27   96%
+TCC        15        6     4/10          4  100%     10  100%
+MF          9        1    11/58         11  100%     51   88%
+CG         22        6    23/72         22   96%     57   79%
+TOT        76       19    68/222        53   78%    199   90%
+
+C) VOCABULARIO DOADO (o que viraria sinonimo, por topico):
+
+  SO (0 topicos recebem doacao):
+
+  IA (2 topicos recebem doacao):
+     algoritmos-de-busca-com-informacao     <- ['agente', 'algorithm', 'algoritmo', 'aluna', 'annealing', 'anteriores', 'artificial', 'atividade']
+     introducao-ao-aprendizado-de-maquina   <- ['algoritmo', 'analise', 'artificial', 'artigo', 'categ', 'categorizacao', 'celula', 'classificacao']
+
+  ES2 (1 topicos recebem doacao):
+     estudo-de-caso-integracao-e-implantaca <- ['acoes', 'alternativo', 'api', 'arquitetura', 'arquiteturais', 'assincrona', 'ativando', 'atraves']
+
+  TCC (5 topicos recebem doacao):
+     hierarquia-de-classes-de-complexidade- <- ['aritmetica', 'automatos', 'classicos', 'detalhado', 'exemplo', 'grafos', 'logica', 'mensagem']
+     funcoes-recursivas-primitivas-e-funcoe <- ['ackermann', 'central', 'church', 'definicao', 'funcao', 'motivacao', 'observacao', 'pergunta']
+     maquinas-de-turing                     <- ['alfabeto', 'automatos', 'cadeia', 'chomsky', 'computacao', 'computador', 'computaveis', 'contexto']
+     prova-da-indecidibilidade-do-problema- <- ['exemplo', 'instrucoes', 'questoes', 'revisao', 'sumario']
+     teoremas-de-godel                      <- ['desfechos', 'hilbert', 'impacto', 'kurt', 'objetivo', 'programa', 'revisitado', 'sumario']
+
+  MF (1 topicos recebem doacao):
+     especificacao-de-funcoes-recursivas    <- ['definicoes', 'especificacoesrecursivas', 'exemplo', 'exercicios', 'exercicioscorrecaoinducaomatematica', 'exerciciosisabelle', 'generalizada', 'indutivas']
+
+  CG (6 topicos recebem doacao):
+     origens                                <- ['communication', 'computacao', 'conteudo', 'curadas', 'extraido', 'grafica', 'graphical', 'imagens']
+     segmentacao                            <- ['aritmetica', 'base', 'cada', 'conteudo', 'editado', 'elaborado', 'equacao', 'extraido']
+     algoritmos-de-remocao-de-elementos-ocu <- ['conteudo', 'elemoculto', 'exemplo', 'exemplozbuffer', 'extraido', 'pagina', 'slides', 'videos']
+     conceitos                              <- ['basico', 'condicoes', 'conteudo', 'cpp', 'eventos', 'execucao', 'exemplo', 'exercicios']
+     algoritmos-de-geometria-computacional  <- ['conteudo', 'domina', 'extraido', 'geomcomp', 'pagina', 'planesweep', 'slab', 'videos']

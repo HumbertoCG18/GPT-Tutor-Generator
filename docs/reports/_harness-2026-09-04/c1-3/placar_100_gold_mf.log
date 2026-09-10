@@ -1,0 +1,8 @@
+zero LLM               MF        66         49      58       42 |     58/66     65/65     47/58
+zero LLM               TOTAL    288        155     146       65 |   221/237   179/190   117/233
+vocab (1 LLM)          MF        66         51      58       44 |     57/66     65/65     51/58
+vocab (1 LLM)          TOTAL    205        165     146      119 |   187/202   175/190   132/151
+auto (vocab+voter)     MF        66         55      58       48 |     60/66     65/65     51/58
+auto (vocab+voter)     TOTAL    288        230     146      125 |   230/237   177/190   187/233
+produto (curadoria)    MF        66         58      58       51 |     65/66     65/65     51/58
+produto (curadoria)    TOTAL    288        245     146      132 |   235/237   183/190   193/233
