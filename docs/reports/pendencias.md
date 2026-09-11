@@ -58,6 +58,32 @@ Nao medido: erros confiantes e voter ligado (o shim mede motor puro); CG holdout
 com o vocab novo. Recomendacao: cortar.
 **Nao medido:** CG (holdout) para o fim do veto e para rotulos meta; LR/FR sem gold; `.llm.json` de CG/LR/FR nao refiltrados. Merge em main: user, "nao agora".
 
+**CORTE FEITO E ROLLOUT NOS 8 TUTORES (11/09, noite; user: "corta"):** produtor deterministico no produto
+(`code_summarization.synthesize_all_code_entries`, roda em todo build/reprocess antes da atribuicao; resumo Gemini de codigo removido do
+build, botao manual da UI fica; kill switch `TUTOR_NO_CODE_SYNTH`). Commit `f637a11`. `process_zip`: id do membro = zip + caminho +
+extensao (3 iteracoes: nome-base colidia entre zips; `src/main.py` x `tests/main.py`; `Bezier.cpp` x `Bezier.h`), teste
+`test_process_zip_membros_de_zips_diferentes_nao_colidem`. Rollout `c1-3/rollout_camada3.py` (re-importa zips, apaga orfaos de codigo,
+reprocessa pela rota do produto, detector que BLOQUEIA e conta qualquer chamada Gemini): 0 chamadas gastas; colisao 0 nos 8 (CG 273/273).
+| tutor | subunidade HEAD -> agora | voter bloqueado |
+|---|---|---|
+| SO | 10/15 -> 15/15 | 0 |
+| IA | 4/39 -> 36/39 | 1 |
+| ES2 | 15/28 -> 25/28 | 0 |
+| MF | 51/58 -> 55/58 | 0 |
+| TCC | 8/11 -> 10/11 | 0 |
+| FR | 15/18 -> 18/18 | 3 |
+| CG | 58/82 -> 55/82 | 6 |
+| total | 161 -> 214 | 10 |
+Bloco igual em todos. **CG -3, todos zips, causas lidas nos resumos:** `transformacoesgeometricas` e um dos 2 zips do CG com `.md` proprio
+(regra 'sem resumo quando ha .md proprio' nunca medida para zip: o texto proprio sozinho da `desenho-de-linhas`, gold vazio);
+`bezier-python`: nenhum alias do CG contem 'bezier' (o label do topico nao entra em `course_aliases`, e o codigo diz `desenhaBezier`, que a
+regra de identificador so pega no INICIO do identificador); `opengl3dcpp-vdi`: frase literal `PROJEÇÃO PARALELA` no codigo puxa para
+`paralela`, o Gemini injetava `Câmera Sintética`. Alavancas candidatas, 0 chamadas, a medir no replay + CG: labels no conjunto de aliases,
+alias igual a parte CamelCase do identificador, zip com `.md` proprio tambem sintetiza.
+**10 votos do voter bloqueados** (materiais sem voto em cache: 6 paginas do Moodle do CG, 3 FR, 1 IA `prova-1-2024-02`): bloco deles saiu
+deterministico. Decisao do user: liberar os 10 (cap 20) ou aceitar. Golden regenerados de proposito: SO `divisao_blocos`, TCC `casos_chave`.
+Orfaos de codigo apagados nos tutores (nao referenciados pelo manifest; `exemplo1..3.md` do SO estavam orfaos desde 21/06).
+
 ## PLANO ESCRITO + ARTEFATOS ATUALIZADOS (08/09; user: "atualize os artefatos, e depois reescreva o plano")
 Documento: **`docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md`** (reescrito apos os artefatos).
 Fase 1 honestidade da confianca (gate: precisao do confiante da subunidade >= 90%) -> Fase 2 acuracia (2.1 propagacao
@@ -73,7 +99,7 @@ C1 (1.x, 2.1-2.3) e a C5 (3.x).
 | Gold x Moodle x SARC · Razao dos Blocos | aviso datado de 08/09 com link para o Placar |
 | Raio-X · Anatomia do Bloco | **nao tocados** — ja se declaram leitura de 01-02/09 e ja linkam o Placar; a nota interna de 06/09 deles cita numeros superados. Vieram inline (sem arquivo salvo) e tem SVG desenhado a mao: reescrever a mao arriscaria corromper os diagramas |
 
-**ABERTO e travando (11/09):** cortar a camada 3 (determ v3 + zips corrigidos 142 x Gemini 137, recomendado cortar) · reprocessar os 4 tutores com o vocab novo · posicao da C7 ·
+**ABERTO e travando (11/09, noite):** commits dos 8 tutores (Gate 2) · 10 votos do voter bloqueados no rollout · CG -3 em zips (alavancas a medir) · reprocessar os 4 tutores com o vocab novo · posicao da C7 ·
 revisao da fila do CG · extracao dos zips.
 
 ## DA PARA VIVER SEM GOLD? PARA A UNIDADE, JA VIVEMOS (08/09; user: "nao quero que a atribuicao de unidade precise de gold manual")

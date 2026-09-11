@@ -267,10 +267,13 @@ def test_process_zip_membros_de_zips_diferentes_nao_colidem(tmp_path, monkeypatc
         z = tmp_path / f"{nome}.zip"
         with zipfile.ZipFile(z, "w") as zf:
             zf.writestr("ex1.dfy", corpo)
+            if nome == "terminacao":
+                zf.writestr("src/ex1.dfy", "method S()")      # mesmo nome-base DENTRO do zip (CG: 87 de 273 assim)
+                zf.writestr("ex1.h", "// header")             # mesmo stem, extensao diferente (CG: Bezier.cpp x Bezier.h, 150 membros)
         si.process_zip(builder, FileEntry(source_path=str(z), file_type="zip", category="codigo-professor", title=nome), z)
-    assert ids == ["colecoes-arrays-ex1", "terminacao-ex1"]
-    assert [r.name for r in raws] == ["colecoes-arrays-ex1.dfy", "terminacao-ex1.dfy"]
-    assert [r.read_text() for r in raws] == ["method A()", "method T()"]
+    assert ids == ["colecoes-arrays-ex1-dfy", "terminacao-ex1-dfy", "terminacao-ex1-h", "terminacao-src-ex1-dfy"]
+    assert [r.name for r in raws] == ["colecoes-arrays-ex1-dfy.dfy", "terminacao-ex1-dfy.dfy", "terminacao-ex1-h.h", "terminacao-src-ex1-dfy.dfy"]
+    assert [r.read_text() for r in raws] == ["method A()", "method T()", "// header", "method S()"]
 
 
 def test_id_de_tar_gz_nao_carrega_tar():

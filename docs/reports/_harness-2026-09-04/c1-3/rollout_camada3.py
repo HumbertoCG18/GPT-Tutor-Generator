@@ -68,6 +68,34 @@ def reimporta_zips(repo: Path) -> tuple:
     return n, m, len(set(mds))
 
 
+def limpa_orfaos(repo: Path) -> int:
+    """Apaga .md e raw de codigo que nenhuma entrada do manifest referencia: membros das rodadas anteriores (id por nome-base,
+    depois por caminho sem extensao). So em code/{professor,student} e raw/code/{professor,student}."""
+    man = json.loads((repo / "manifest.json").read_text(encoding="utf-8"))["entries"]
+    ref = set()
+    for e in man:
+        for k in ("base_markdown", "raw_target"):
+            if e.get(k):
+                ref.add(str(e[k]).replace("\\", "/"))
+        for f in e.get("extracted_files") or []:
+            bm = f.get("base_markdown")
+            if not bm:
+                continue
+            ref.add(str(bm).replace("\\", "/"))
+            sub = Path(bm).parent.name
+            ref.add(f"raw/code/{sub}/{Path(bm).stem}{Path(str(f.get('title') or '')).suffix.lower()}")
+    n = 0
+    for pasta in ("code/professor", "code/student", "raw/code/professor", "raw/code/student"):
+        d = repo / pasta
+        if not d.is_dir():
+            continue
+        for f in d.iterdir():
+            if f.is_file() and f.relative_to(repo).as_posix() not in ref:
+                f.unlink()
+                n += 1
+    return n
+
+
 def git_sujo(repo: Path) -> int:
     out = subprocess.run(["git", "-C", str(repo), "status", "--short"], capture_output=True, text=True).stdout
     return len([l for l in out.splitlines() if l.strip()])
@@ -79,6 +107,7 @@ for sig in sigs:
     repo = GH / TUTORES[sig]
     antes = git_sujo(repo)
     n, m, d = reimporta_zips(repo)
+    orf = limpa_orfaos(repo)
     t1 = time.time()
     ra.reprocess(repo, [])
     cc = json.loads((repo / "code_curation.json").read_text(encoding="utf-8")) if (repo / "code_curation.json").exists() else {}
@@ -86,5 +115,5 @@ for sig in sigs:
     for v in (cc.get("entries") or {}).values():
         modelos[v.get("model", "?")] = modelos.get(v.get("model", "?"), 0) + 1
     print(f"[{sig}] zips {n}, membros {m}, md distintos {d} ({'ok' if d == m else 'COLISAO'}) · reprocess {time.time() - t1:.0f}s · "
-          f"code_curation {modelos} · git sujo {antes} -> {git_sujo(repo)} · tentativas Gemini {len(TENTATIVAS)}", flush=True)
+          f"orfaos apagados {orf} · code_curation {modelos} · git sujo {antes} -> {git_sujo(repo)} · tentativas Gemini {len(TENTATIVAS)}", flush=True)
 print(f"total {time.time() - t0:.0f}s · tentativas de chamada Gemini: {TENTATIVAS or 0}")

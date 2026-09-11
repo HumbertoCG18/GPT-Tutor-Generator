@@ -16,6 +16,7 @@ from src.models.core import FileEntry
 from src.utils.helpers import (
     CODE_CATEGORIES,
     CODE_EXTENSIONS,
+    slugify,
     LANG_MAP,
     ensure_dir,
     json_str,
@@ -221,9 +222,13 @@ def process_zip(builder, entry: FileEntry, raw_target: Path) -> Dict[str, object
             notes=f"Extraído de: {entry.title}",
             include_in_bundle=entry.include_in_bundle,
         )
-        # 11/09: o id do membro leva o id do zip. So o nome-base colidia entre zips do mesmo curso (ex1.dfy em 5 zips do MF):
-        # 129 arquivos em 23/44 zips mostravam conteudo de OUTRO zip (c1-3/mede_zips_conteudo_perdido.log).
-        sub_entry.id_override = f"{entry.id()}-{sub_entry.id()}"
+        # 11/09: o id do membro = id do zip + caminho relativo + extensao. So o nome-base colidia entre zips (ex1.dfy em 5
+        # zips do MF: 129 arquivos em 23/44 zips com conteudo de OUTRO zip), dentro do mesmo zip (CG: src/main.py x
+        # tests/main.py) e entre fonte e cabecalho (CG: Bezier.cpp x Bezier.h, 150 de 273 membros). Logs em c1-3/.
+        # ponytail: id longo em arvore Java funda (~110 chars); se bater no limite de caminho do Windows, encurtar por hash.
+        rel = Path(relative_name)
+        partes = [*rel.parts[:-1], rel.stem, rel.suffix.lstrip(".")]
+        sub_entry.id_override = "-".join([entry.id(), *(slugify(q) for q in partes if slugify(q))])
         code_subdir = "student" if entry.category == "codigo-aluno" else "professor"
         safe_name_c = f"{sub_entry.id()}{code_path.suffix.lower()}"
         raw_target_c = builder.root_dir / "raw" / "code" / code_subdir / safe_name_c
