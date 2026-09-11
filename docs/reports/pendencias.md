@@ -42,6 +42,24 @@ NAO entra na fila por esse gatilho — hoje sem efeito (0 erros com predicao vaz
 se aplica?", os 4 gold vazio + `SUBUNIT_TAG`) e as 3 alavancas do CG (labels como aliases, CamelCase, zip com .md proprio) no replay + CG.
 Corrigir o gatilho latente (`revisao-sem-assunto-dominante`) e 1 linha com teste, quando entrar codigo de motor.
 
+**DUAS FRENTES MEDIDAS (11/09, fim da tarde; user: "segue pelas duas frentes"), 0 chamadas:**
+**A. Abstencao (`c1-3/mede_abstencao.{py,log}`, produto real):** 11 materiais com gold vazio, o motor gravou subunidade nos 11 (7 na fila,
+4 confiantes); 3 omissoes, todas na fila. Piso de RESULTADO em score ou conf perde sempre: melhor saldo -7 (`score<0,5`: 1 FP vira acerto,
+8 acertos viram omissao), pior -36; ha 8 acertos com score < 0,5. **Causa dos FPs:** 5 dos 11 caem em "1.2 Conceitos" do CG, que recebeu
+`OpenGL`/`OpenGL 3D` do vocab LLM ("1.3 Areas relacionadas" recebeu Manipulacao de Imagens/Morfologia) = rotulo meta doado, o caso do SO.
+`desenho-de-linhas` (3 FPs) vence so pelo token do label em texto curto, score 1,35; nao ha piso que separe.
+**B. Alavancas do CG no replay (`c1-3/replay_exp_cg.{py,log}`, copias re-sincronizadas = produto, 6 cursos):** L1 labels como aliases 0 ·
+L2 alias igual a parte CamelCase 0 · L3 zip com .md proprio sintetiza 0 · **M1 rotulo meta do CG (conceitos, areas relacionadas) sem doacao
++1 (CG `exercicios`), 0 perdas nos 6**. Os 3 zips que o CG perdeu no rollout (`transformacoesgeometricas`, `bezier-python`, `opengl3dcpp-vdi`)
+nao voltam com nenhuma das alavancas: precisavam do vocabulario que o Gemini injetava (Curvas de Bezier, Camera Sintetica). Registrado.
+**Proposta (Gate 1):** META_LABELS += {conceitos, areas relacionadas} em `vocabulary_compile.py` (ajustar o fixture do teste de identidade,
+que usa "Conceitos" como chave), refiltrar o `.llm.json` do CG e reprocessar o CG: +1 medido, 0 perdas. Fase 1 fecha no gate.
+**M1 APLICADO (user: "aplica o M1"):** `META_LABELS` += conceitos, areas relacionadas; refiltro do CG (`c1-3/refiltra_vocab_CG.log`: saiu OpenGL/OpenGL 3D/
+Mapeamento de Texturas de "1.2 Conceitos", Manipulacao de Imagens/Morfologia de "1.3"; o fim do veto de titulo devolveu Colisao, GeomComp, FloodFill);
+reprocesso do CG com detector, 0 chamadas (`rollout_camada3_CG_m1.log`). **CG subunidade 55 -> 57/82** (`exercicios` e `video-opengl-vdi` passam a
+se abster, gold vazio), 0 perdas; bloco contra o gold 35/35 igual (8 `computed_block_id` mudaram, `temporal_block_id` nao). Golden do CG verde.
+**FASE 1 FECHADA no gate de subunidade** (precisao do confiante 90,6% -> a remedir apos M1). Proximo: 2.1 propagacao, 2.3 conflito, ou C5.
+
 ## CAMADA 3 MEDIDA COM VOCAB NOVO: DETERM v3 138 x GEMINI 137 EM 151 — O CORTE PASSA NA REGRA (11/09; user: "vamos fazer a medicao da 1 e decidir")
 **Entrou no produto (11/09):** `vocabulary_compile._bundle` inclui os nomes-base dos membros do zip (42/44 zips entravam vazios) ·
 `filter_terms`: rotulo meta ("estudo de casos", so o medido) nao recebe doacao do LLM · veto "termo igual a nome de arquivo"

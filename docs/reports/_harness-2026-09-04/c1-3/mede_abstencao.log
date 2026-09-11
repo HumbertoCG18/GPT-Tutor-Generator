@@ -1,0 +1,36 @@
+materiais com gold 251 · gold vazio 11 (o motor se absteve em 0, gravou subunidade em 11 = falsos positivos) · gold cheio sem subunidade gravada (omissoes) 3
+
+falsos positivos (gold vazio, motor gravou):
+  CG   exercicios                                       html  -> conceitos                      conf 1.00 score   7.14 fila
+  CG   opengl-cpp                                       zip   -> conceitos                      conf 0.85 score  32.89 fila
+  CG   opengl-py                                        zip   -> conceitos                      conf 1.00 score  15.90 fila
+  CG   openglbasico                                     pdf   -> conceitos                      conf 0.72 score   7.06 fila
+  CG   animacao-v2                                      zip   -> desenho-de-linhas              conf 0.23 score   1.35 confiante
+  CG   instanciamento                                   pdf   -> 2d-3d-mao-direita-e-mao-esquer conf 0.26 score   8.29 fila
+  CG   pagina-com-videos-sobre-instanciamento           html  -> desenho-de-linhas              conf 0.91 score   1.35 confiante
+  CG   transformacoesgeometricas                        zip   -> desenho-de-linhas              conf 0.14 score   0.12 fila
+  CG   transformacoesgl                                 html  -> sistema-de-coordenadas-cartesi conf 0.98 score   0.91 fila
+  CG   video-com-instrucoes-para-usar-opengl-na-vdi-da- url   -> conceitos                      conf 1.00 score   7.06 confiante
+  TCC  aula-06-revisao-alfabeto-cadeia-linguagem-hierar pdf   -> maquinas-de-turing             conf 0.43 score  20.54 confiante
+
+omissoes (gold cheio, motor nao gravou):
+  CG   exercicio-com-animacao                           html  gold-cheio conf 0.00 score   0.00 fila
+  CG   pagina-com-videos-sobre-mapeamento-9f410e        html  gold-cheio conf 0.00 score   0.00 fila
+  IA   mlp-xoripynb                                     code  gold-cheio conf 0.00 score   0.00 fila
+
+score dos falsos positivos: min 0.12 · q1 1.35 · med 7.06 · q3 15.90
+score dos acertos com subunidade (n=214): min 0.00 · q1 8.20 · med 15.71 · q3 29.50
+conf dos falsos positivos: min 0.14 · q1 0.26 · med 0.85 · q3 1.00
+conf dos acertos com subunidade: min 0.01 · q1 0.59 · med 0.82 · q3 0.96
+
+piso de RESULTADO (abster se ...)   FP que viram acerto  acertos que viram omissao  saldo
+score < 0.5                                    1/11                      8/214         -7
+score < 1.0                                    2/11                     21/214        -19
+score < 1.5                                    4/11                     22/214        -18
+score < 2.0                                    4/11                     23/214        -19
+score < 3.0                                    4/11                     23/214        -19
+score < 5.0                                    4/11                     40/214        -36
+conf < 0.15                                    1/11                     10/214         -9
+conf < 0.2                                     1/11                     10/214         -9
+conf < 0.25                                    2/11                     12/214        -10
+conf < 0.3                                     3/11                     15/214        -12

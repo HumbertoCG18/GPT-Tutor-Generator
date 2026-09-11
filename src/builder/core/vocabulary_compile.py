@@ -50,9 +50,10 @@ OUT_CATS = frozenset({"cronograma", "provas", "trabalhos", "fotos-de-prova"})
 # Rotulo meta = topico sem sujeito proprio ("Estudo de casos", "Introducao"): nao recebe doacao do LLM. Medido 11/09 no SO:
 # "Estudo de casos" x5 recebia Linux/Unix/Pthreads e puxava 7 exemplos; sem doacao 8 -> 15/15, 0 perdas nos 5 cursos
 # (c1-3/replay_exp_regras2.log). Comparacao e pelo rotulo normalizado inteiro, sem o codigo: "Estudo de caso: X" nao e meta.
-# ponytail: so o rotulo medido. "Conceitos", "Areas relacionadas" e "Introducao" (plano 08/09 §2.2) existem no CG e nao foram
-# medidos no holdout; entram aqui quando o shim_codigo.py holdout disser que nao perdem.
-META_LABELS = frozenset({"estudo de casos", "estudo de caso", "estudos de caso"})
+# "Conceitos" e "Areas relacionadas" medidos no CG em 11/09 (tarde): "1.2 Conceitos" recebia OpenGL/OpenGL 3D e era ima de 5 falsos
+# positivos (gold vazio); sem doacao +1 e 0 perdas em 6 cursos (c1-3/replay_exp_cg.log). ponytail: so rotulo medido; "Introducao"
+# (plano 08/09 §2.2) nao existe como rotulo inteiro em nenhum dos 8 cursos e fica fora ate aparecer.
+META_LABELS = frozenset({"estudo de casos", "estudo de caso", "estudos de caso", "conceitos", "areas relacionadas"})
 MAX_BUNDLE_CHARS = 24000
 _UNIT_PREFIX_WORDS = {"unidade", "de", "aprendizagem", "modulo", "parte", "topico", "ua"}
 

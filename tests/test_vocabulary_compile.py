@@ -204,10 +204,14 @@ def test_filtro_nome_de_arquivo_fica():
 def test_filtro_rotulo_meta_nao_recebe_doacao():
     # 11/09: no SO, "Estudo de casos" (x5) recebia Linux/Unix/Pthreads e puxava 7 exemplos para si.
     # Rotulo meta (sem sujeito) nao recebe doacao; "Conceitos básicos" (x2) recebe (c1-3/replay_exp_regras2.log).
+    # 11/09 tarde, CG: "1.2 Conceitos" recebia OpenGL/OpenGL 3D e virava ima de 5 falsos positivos; "1.3 Areas relacionadas" recebia
+    # Manipulacao de Imagens/Morfologia. Sem doacao: +1, 0 perdas em 6 cursos (c1-3/replay_exp_cg.log, mede_abstencao.log).
     out = filter_terms({"1.3 Estudo de casos": ["Linux", "Unix"], "3.1 Conceitos básicos": ["Processos", "Pipes"],
-                        "1.5 Estudo de caso: arquitetura orientada a microsserviços": ["Netflix Eureka"]}, generic=set())
+                        "1.5 Estudo de caso: arquitetura orientada a microsserviços": ["Netflix Eureka"],
+                        "1.2 Conceitos": ["OpenGL", "OpenGL 3D"], "1.3 Áreas relacionadas": ["Morfologia Matemática"]}, generic=set())
     assert out == {"1.3 Estudo de casos": [], "3.1 Conceitos básicos": ["Processos", "Pipes"],
-                   "1.5 Estudo de caso: arquitetura orientada a microsserviços": ["Netflix Eureka"]}   # rotulo com sujeito fica
+                   "1.5 Estudo de caso: arquitetura orientada a microsserviços": ["Netflix Eureka"],   # rotulo com sujeito fica
+                   "1.2 Conceitos": [], "1.3 Áreas relacionadas": []}
 
 
 def test_filtro_generico_e_dedupe():
@@ -295,8 +299,8 @@ TAX_CG = {
     "version": 1, "course_slug": "cg", "course_name": "CG",
     "units": [
         {"slug": "u01", "title": "Unidade 01 — Introdução ao Processamento Gráfico", "topics": [
-            {"slug": "conceitos", "label": "Conceitos", "aliases": []},
-            {"slug": "areas", "label": "Áreas relacionadas", "aliases": []}]},
+            {"slug": "conceitos", "label": "Conceitos de OpenGL", "aliases": []},      # rotulo com sujeito: nao e meta
+            {"slug": "areas", "label": "Áreas afins", "aliases": []}]},
         {"slug": "u02", "title": "Unidade 02 — Fundamentos Matemáticos", "topics": [
             {"slug": "geo", "label": "Algoritmos de Geometria Computacional", "aliases": []},
             {"slug": "poligonos", "label": "Algoritmos de polígonos", "aliases": []}]},
@@ -317,15 +321,15 @@ def _ident():
 
 
 def test_identidade_nome_de_outra_unidade_sai():
-    out = filter_terms({"Conceitos": ["Fundamentos Matemáticos", "Processo de Visualização 2D", "OpenGL"]},
+    out = filter_terms({"Conceitos de OpenGL": ["Fundamentos Matemáticos", "Processo de Visualização 2D", "OpenGL"]},
                        generic=set(), identities=_ident())
-    assert out["Conceitos"] == ["OpenGL"]
+    assert out["Conceitos de OpenGL"] == ["OpenGL"]
 
 
 def test_identidade_contido_em_label_de_outro_topico_sai():
-    out = filter_terms({"Áreas relacionadas": ["Geometria Computacional", "Morfologia Matemática"]},
+    out = filter_terms({"Áreas afins": ["Geometria Computacional", "Morfologia Matemática"]},
                        generic=set(), identities=_ident())
-    assert out["Áreas relacionadas"] == ["Morfologia Matemática"]
+    assert out["Áreas afins"] == ["Morfologia Matemática"]
 
 
 def test_identidade_contido_no_proprio_label_fica_e_um_token_fica():

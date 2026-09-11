@@ -12,7 +12,7 @@ from src.builder.core import vocabulary_compile as vc  # noqa: E402
 from src.builder.extraction.content_taxonomy import load_internal_content_taxonomy  # noqa: E402
 
 TUTORES = {"SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artifical-Tutor",
-           "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor", "MF": "Metodos-Formais-Tutor"}
+           "ES2": "Engenharia-Software-2-Tutor", "TCC": "TCC-Tutor", "MF": "Metodos-Formais-Tutor", "CG": "Computacao-Grafica-Tutor"}
 sig = sys.argv[1]; chamar = "--chamar" in sys.argv
 root = REPO.parent / TUTORES[sig]
 entries = json.loads((root / "manifest.json").read_text(encoding="utf-8"))["entries"]
