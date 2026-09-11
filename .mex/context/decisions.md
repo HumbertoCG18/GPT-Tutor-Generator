@@ -11,7 +11,7 @@ edges:
     condition: when a decision affects system structure
   - target: context/stack.md
     condition: when a decision affects technology choice
-last_updated: 2026-09-05
+last_updated: 2026-09-11
 ---
 
 # Decisions
@@ -147,9 +147,9 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 
 **Date:** 2026-06-02
 **Status:** Active
-**Decision:** Code entries can be summarized at build time through `google-genai`'s structured-output mode (`response_schema=CodeSummary`) with a content-hash cache in the generated repo's course/code_curation.json. Timeline block assignment is done locally via concept overlap, not via a second LLM call.
+**Decision:** Code entries can be summarized at build time through `google-genai`'s structured-output mode (`response_schema=CodeSummary`) with a content-hash cache in the generated repo's `<repo-tutor>/course/code_curation.json`. Timeline block assignment is done locally via concept overlap, not via a second LLM call.
 **Reasoning:** Code bundles benefit from semantic enrichment (inferred title, role, concepts) for richer downstream artifacts (CODE_INDEX, CRONOGRAMA_DETALHADO, CODE_HEALTH) and tutor grounding. Structured output prevents JSON parsing failures; the local matcher keeps the per-build cost bounded to one LLM call per changed entry. Without an API key the entire layer is bypassed via lazy import.
-**Consequences:** Build pipeline must keep the no-key path identical to current behavior. New artifacts must be tolerant of empty code_curation.json. Future material types (PDF, exercises) follow the same hash-cache + local-link pattern.
+**Consequences:** Build pipeline must keep the no-key path identical to current behavior. New artifacts must be tolerant of empty `<repo-tutor>/course/code_curation.json`. Future material types (PDF, exercises) follow the same hash-cache + local-link pattern.
 
 ---
 
@@ -297,7 +297,7 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 
 **Date:** 2026-09-04
 **Status:** Superseded em 04/09 (entrada seguinte: o user aceitou 33/35 com causa e promoveu o rebuild)
-**Decision:** O rebuild limpo do CG pela API (S6f) fica na copia `.ablacao/CG-rebuild` ate o C0 item 11 calibrar a regra `exclusivo` do disambiguator; a SYNC so fecha com holdout curado >= 34/35 SEM ruido. O CG original, o perfil e o gold versionado nao mudam ate la.
+**Decision:** O rebuild limpo do CG pela API (S6f) fica na copia [.ablacao/CG-rebuild] ate o C0 item 11 calibrar a regra `exclusivo` do disambiguator; a SYNC so fecha com holdout curado >= 34/35 SEM ruido. O CG original, o perfil e o gold versionado nao mudam ate la.
 **Reasoning:** O 34/35 do baseline dependia de um token de boilerplate ("imagens") que criava competicao falsa e flagava `transformacoesgl`; o motor honesto da 33/35 porque `exclusivo` (s2=0) da banda alta a UM token generico ("geometrica" -> bloco-15). Medido nos 6 golds: 22 decisoes alta por 1 token, 5 erradas (77%), contra 94% dos outros baldes. Aceitar 33 rebaixaria o criterio para caber no motor; segurar mantem "gold nao e oraculo, mas regua nao se dobra".
 **Consequences:** C0 vira o trabalho em execucao (ordem proposta 11 -> 10 -> 9 -> 12). Quando a SYNC voltar: rerodar `docs/reports/_harness-2026-09-03/s6f/holdout_cg_rebuild.py` com o gerador novo, revisar `revisar_queue.md` e `formulas_index.md`, promover a copia, apontar `stash_folder` para `C:/Users/Humberto/Desktop/Moodle/computacao-grafica/stash`, trocar `ground_truth_CG.csv` pelo re-chaveado.
 
@@ -309,7 +309,7 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 **Status:** Active
 **Decision:** O rebuild limpo do CG pela API vira o original (`Computacao-Grafica-Tutor` `a16051b`, 66 entries); o perfil aponta para o stash novo; `ground_truth_CG.csv` passa a ser o re-chaveado (35 scorable). O criterio "holdout curado 34/35" e aceito em 33/35 COM a causa medida e registrada (regra `exclusivo` do disamb por 1 token, C0 item 11a), sem rebaixar o criterio para lotes futuros: o 34 volta a valer quando o item 11a entrar.
 **Reasoning:** O user reverteu "segurar ate o C0" porque manter o CG no export antigo nao faz sentido: o stash novo e o material real (paginas como html, formulas transcritas, 0 impressao em PDF) e o 34/35 anterior dependia de um token de boilerplate ("imagens") que criava competicao falsa. Aceitar o numero honesto com a causa documentada e diferente de dobrar a regua ao numero. Holdout puro 31/35 (conf-err 2, flagados 9) e curado 33/35 (conf-err 2, flagados 1) no CG novo; curada dos 5, sentinela e determinismo intactos.
-**Consequences:** SYNC 6/6 fechada; C0 aberta com o 11a primeiro; export antigo em `.ablacao/CG-export-backup`; revisao humana das 45 duvidas e 37 formulas fica aberta sem travar campanha.
+**Consequences:** SYNC 6/6 fechada; C0 aberta com o 11a primeiro; export antigo em [.ablacao/CG-export-backup]; revisao humana das 45 duvidas e 37 formulas fica aberta sem travar campanha.
 
 ---
 
@@ -477,9 +477,9 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 
 **Date:** 2026-09-06
 **Status:** Proposed (decisao do user: qual camada cortar)
-**Decision:** Medido em copias com tripwire (0 chamadas), motor puro + vocab + propagacao: sem resumos de codigo a subunidade cai 87 -> 71/93; com `code_curation.json` produzido deterministicamente a partir dos `.md` que o motor ja gera (mesmo bundle que o Gemini recebe, mesma rota `code_curation_signal_text`) 78-79/93; bloco 186, unidade 183, cobertura 53 e holdout CG 31/35 iguais nos 4 regimes.
+**Decision:** Medido em copias com tripwire (0 chamadas), motor puro + vocab + propagacao: sem resumos de codigo a subunidade cai 87 -> 71/93; com `<repo-tutor>/course/code_curation.json` produzido deterministicamente a partir dos arquivos Markdown que o motor ja gera (mesmo bundle que o Gemini recebe, mesma rota `code_curation_signal_text`) 78-79/93; bloco 186, unidade 183, cobertura 53 e holdout CG 31/35 iguais nos 4 regimes.
 **Reasoning:** Pedido do user: motor o mais automatico possivel, no maximo duas camadas LLM, sem rotas novas. Peso no produto (8 tutores): 1 compilacao de vocab por curso, 85 resumos (1 por arquivo, cache por hash), 205 votos. Ganho por camada: vocab +57 sub/+10 unidade; voter +7 bloco/+4 holdout/conf-err 0; resumos +8 sub e 0 no resto. Os 8 que so o Gemini acerta (SO threads x3, IA perceptron x5, ES2 roteiro1) dependem de vocabulario de categoria que o codigo nao contem ('classificacao', 'chamadas de sistema', 'microsservicos') — o resumo e um remendo da camada 2. "% de similaridade vocab x nome do material" tambem medido: e o que o scorer ja faz; Jaccard >= 0,5 acerta 27/0 mas deixa 66 sem atribuicao; label do plano sem LLM 9/0/84.
-**Consequences:** Se o user cortar a camada 3: trocar o produtor de `code_curation.json` (`c1-3/shim_codigo.py` v2 como base), manter a rota; custo -8/93 na subunidade. Alternativa que mantem duas camadas sem perder os 8: compilacao do vocab ver o bundle de codigo (exige Gemini para remedir). Nenhuma rota nova.
+**Consequences:** Se o user cortar a camada 3: trocar o produtor de `<repo-tutor>/course/code_curation.json` (`docs/reports/_harness-2026-09-04/c1-3/shim_codigo.py` v2 como base), manter a rota; custo -8/93 na subunidade. Alternativa que mantem duas camadas sem perder os 8: compilacao do vocab ver o bundle de codigo (exige Gemini para remedir). Nenhuma rota nova.
 
 ---
 
@@ -527,9 +527,9 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 
 **Date:** 2026-09-06
 **Status:** Active
-**Decision:** `reconcile_unit_with_block` recebe `unit_is_explicit`; quando a unidade veio de `unidade-explicita=u<n>` (secao 'U<n>' do Moodle), ela vence o bloco discordante e o conflito fica registrado (`1b41003`). FR reconstruido do zero em sandbox (`.ablacao/FR-rebuild/`, run A, 0 chamadas) e com Gemini (`FR-rebuild-B/`, run B); o FR original nao foi apagado.
+**Decision:** `reconcile_unit_with_block` recebe `unit_is_explicit`; quando a unidade veio de `unidade-explicita=u<n>` (secao 'U<n>' do Moodle), ela vence o bloco discordante e o conflito fica registrado (`1b41003`). FR reconstruido do zero em sandbox (`.ablacao/FR-rebuild/`, run A, 0 chamadas) e com Gemini (`.ablacao/FR-rebuild-B/`, run B); o FR original nao foi apagado.
 **Reasoning:** Pedido do user: FR do zero, numeros sem gold, maximo sem LLM. A unica regua sem gold no FR e a secao do professor ('U1', 'U2'); na run A o motor acertava 10/19 e os 9 erros eram todos a unidade explicita (conf 0,95) sobreposta por bloco flagado ou herdado do vizinho. Com a regra: 19/19; 5 cursos e CG identicos (a secao 'U<n>' so existe no FR; onde a secao nomeia a unidade por titulo, 60 materiais, a unidade final ja coincidia).
-**Consequences:** Reprocess registrado: so o FR mudou: 3 zips de sockets u05 -> u02 (unidade) e subunidade preenchida (sockets / cliente-servidor); bloco 0; fila 110 = 110; FR HEAD 1cad69d, demais so updated_at. Run B: build 840 s + 2 reprocess; chamadas Gemini: 10 summarize_bundle no build (code_curation.json NAO gravado — a investigar) + 2 na compilacao do vocab (68 sinonimos) + 10 votos gravados em material_curation.json (voter usa outro metodo, nao contado pelo interceptor) ~= 22; resultado: unidade x secao do. Fila do FR do zero segue 11/20: blocos flagados e conflitos (estrutura do Moodle sem datas) — territorio do voter ou de dado.
+**Consequences:** Reprocess registrado: so o FR mudou: 3 zips de sockets u05 -> u02 (unidade) e subunidade preenchida (sockets / cliente-servidor); bloco 0; fila 110 = 110; FR HEAD 1cad69d, demais so updated_at. Run B: build 840 s + 2 reprocess; chamadas Gemini: 10 summarize_bundle no build (`<repo-tutor>/course/code_curation.json` NAO gravado — a investigar) + 2 na compilacao do vocab (68 sinonimos) + 10 votos gravados em material_curation.json (voter usa outro metodo, nao contado pelo interceptor) ~= 22; resultado: unidade x secao do. Fila do FR do zero segue 11/20: blocos flagados e conflitos (estrutura do Moodle sem datas) — territorio do voter ou de dado.
 
 ---
 
@@ -547,7 +547,7 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 
 **Date:** 2026-09-06
 **Status:** Active
-**Decision:** `moodle_sync.plan_import(root=...)`: pagina do Moodle (`mod/page`) com HTML salvo em `raw/moodle/pages/<id>-*.html` vira entry `html` com o mesmo id (`id_override`); URL so quando nao ha HTML (`6d68578`, teste). CG reparado por script registrado (`c1-3/repara_paginas_cg.py`, CG `404f5f9`): 16 entries url -> html, ids/golds intactos, 0 chamadas.
+**Decision:** `moodle_sync.plan_import(root=...)`: pagina do Moodle [mod/page] com HTML salvo em `<repo-tutor>/raw/moodle/pages/<id>-*.html` vira entry `html` com o mesmo id (`id_override`); URL so quando nao ha HTML (`6d68578`, teste). CG reparado por script registrado (`docs/reports/_harness-2026-09-04/c1-3/repara_paginas_cg.py`, CG `404f5f9`): 16 entries url -> html, ids/golds intactos, 0 chamadas.
 **Reasoning:** Pergunta do user ("como assim tela de login? timeout?"). Medido: a entry url era buscada sem sessao pelo `url_fetcher`; o pull ja tinha o HTML real. Tratar a raiz na sync serve o curso novo automaticamente.
 **Consequences:** CG com texto nas 16 paginas. No gold de subunidade do CG o texto real custou 2 no produto (58 -> 56: +3 -5) e 3 na automatica (58 -> 55): 5 paginas-indice de videos vao para o filho mais citado e o gold (= secao) e o pai — classe pai x filho, 10 dos 27 residuais; candidata registrada, nao medida. Fila 27,6/100. Placar por material (`placar_100.py`): zero LLM 155/288, automatica 238/288, produto 253/288.
 
@@ -567,6 +567,6 @@ movidas para cá em 2026-09-03 sem mudar o teor. Datas são as originais.
 
 **Date:** 2026-09-07
 **Status:** Active
-**Decision:** (1) Nao ha "duas versoes" do motor: o mesmo codigo com as camadas LLM (vocab, voter, resumos) ligadas ou desligadas; o nucleo deterministico deve ser honesto (duvida em vez de palpite) e a camada LLM so preenche duvida/vazio e acrescenta aliases, nunca vira decisao tomada pela estrutura do professor (secao, escopo de prova, vencimento). (2) Antes de qualquer alavanca nova, consolidar duplicacoes; refactor so com zero-diff nos 8 tutores (`c1-3/zero_diff.py`). (3) Nenhum filtro de token ou provedor novo: reusar `text/stopwords.py`, `text/patterns.py`, `text/tokens.motor_tokens`; religar codigo morto antes de escrever regra nova.
-**Reasoning:** Pedido do user ("um motor, camada LLM on/off", "nao quero band-aid"). Inventario (`c1-3/inventario_motor_2026-09-07.md`): 14 duplicacoes, 8 tokenizadores, 5+ listas de genericos, codigo morto. ES2 mostrou o LLM vencendo o calendario do professor (7 unidades); IA mostrou o puro confiante-errado por ima de headings.
+**Decision:** (1) Nao ha "duas versoes" do motor: o mesmo codigo com as camadas LLM (vocab, voter, resumos) ligadas ou desligadas; o nucleo deterministico deve ser honesto (duvida em vez de palpite) e a camada LLM so preenche duvida/vazio e acrescenta aliases, nunca vira decisao tomada pela estrutura do professor (secao, escopo de prova, vencimento). (2) Antes de qualquer alavanca nova, consolidar duplicacoes; refactor so com zero-diff nos 8 tutores (`docs/reports/_harness-2026-09-04/c1-3/zero_diff.py`). (3) Nenhum filtro de token ou provedor novo: reusar `src/builder/text/stopwords.py`, `src/builder/text/patterns.py`, `src/builder/text/tokens.py` (`motor_tokens`); religar codigo morto antes de escrever regra nova.
+**Reasoning:** Pedido do user ("um motor, camada LLM on/off", "nao quero band-aid"). Inventario (`docs/reports/_harness-2026-09-04/c1-3/inventario_motor_2026-09-07.md`): 14 duplicacoes, 8 tokenizadores, 5+ listas de genericos, codigo morto. ES2 mostrou o LLM vencendo o calendario do professor (7 unidades); IA mostrou o puro confiante-errado por ima de headings.
 **Consequences:** Commits A1 4f60bd0 · A2 0efa29a · B 46499aa · C 35cb99c (comportamento identico por gate); mapa do que fica diferente por semantica no tracker. Plano seguinte: ima de headings (taxonomia), religar block_confidence + token compartilhado, prova como marco no F5 + due-window em prova, religar topico do bloco na subunidade, medir residuo do card_stream.

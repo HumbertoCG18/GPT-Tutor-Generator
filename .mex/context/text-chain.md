@@ -20,7 +20,7 @@ edges:
     condition: when the question is who generates image descriptions
   - target: context/repo-output.md
     condition: when the question is the final shape of the tutor repo
-last_updated: 2026-09-07
+last_updated: 2026-09-10
 ---
 
 # Cadeia do Texto
@@ -31,7 +31,7 @@ redescoberta. Estado vivo e números ficam no tracker; aqui só o contrato.
 
 ## 1. Qual arquivo o motor pontua
 
-Fonte única da resolução: `src/builder/artifacts/navigation.py:71 _entry_markdown_path_for_file_map`.
+Fonte única da resolução: `src/builder/artifacts/navigation.py` (`_entry_markdown_path_for_file_map`, linha 71).
 
 Precedência, primeiro que existir vence:
 
@@ -40,18 +40,18 @@ approved_markdown  >  curated_markdown  >  base_markdown  >  advanced_markdown
 ```
 
 O mesmo helper alimenta `_entry_markdown_text_for_file_map` (`navigation.py:84`), que é o texto consumido por
-`extraction/entry_signals.py` e, por ele, por todo o scorer de unidade/subunidade. **`advanced_markdown` é o último da fila: na prática
+`src/builder/extraction/entry_signals.py` e, por ele, por todo o scorer de unidade/subunidade. **`advanced_markdown` é o último da fila: na prática
 nunca é lido**, porque todo material com PDF tem `base_markdown`.
 
 ## 2. Os quatro estados de um material
 
 | campo | quem escreve | onde vive | backend típico |
 |---|---|---|---|
-| `base_markdown` | build, extração base | `staging/markdown-auto/` (ou `content/`, `code/`, `exercises/` conforme categoria) | `pymupdf4llm` (livre), `html_converter`, `url_fetcher` |
-| `advanced_markdown` | build, extração avançada | `staging/` | `datalab` (pago), `marker`, `docling` |
-| `approved_markdown` = `curated_markdown` | Curator Studio, ao aprovar | `content/curated/`, `exercises/lists/`, `exams/past-exams/` | cópia da fonte escolhida na GUI |
+| `base_markdown` | build, extração base | `<repo-tutor>/staging/markdown-auto/` (ou `<repo-tutor>/content/`, `<repo-tutor>/code/`, `<repo-tutor>/exercises/` conforme categoria) | `pymupdf4llm` (livre), `html_converter`, `url_fetcher` |
+| `advanced_markdown` | build, extração avançada | `<repo-tutor>/staging/` | `datalab` (pago), `marker`, `docling` |
+| `approved_markdown` = `curated_markdown` | Curator Studio, ao aprovar | `<repo-tutor>/content/curated/`, `<repo-tutor>/exercises/lists/`, `<repo-tutor>/exams/past-exams/` | cópia da fonte escolhida na GUI |
 
-`staging/` = **material que nunca foi aprovado na GUI**. Não é erro nem pendência de build: é o estado natural de quem não passou pelo
+`<repo-tutor>/staging/` = **material que nunca foi aprovado na GUI**. Não é erro nem pendência de build: é o estado natural de quem não passou pelo
 Curator Studio. Medido em 07/09: MF 2 · CG 76 · LR 7 · FR 17 ainda em staging; SO/IA/ES2/TCC 100% aprovados.
 
 ## 3. O que a aprovação faz com o texto (dois caminhos DIVERGENTES)
@@ -68,7 +68,7 @@ Curator Studio. Medido em 07/09: MF 2 · CG 76 · LR 7 · FR 17 ainda em staging
 Consequência: "aprovado" não é um estado único — o texto final depende de qual botão foi usado. Medido: materiais com sumário injetado
 MF 19/53 · SO 28/38 · IA 25/55 · ES2 24/27 · TCC 26/27 · CG/LR/FR 0.
 
-**Impacto no motor: nenhum, medido.** `c1-3/simula_aprovacao.py` aplicou o pós-processamento em cópia dos 6 cursos com gold e reprocessou:
+**Impacto no motor: nenhum, medido.** `docs/reports/_harness-2026-09-04/c1-3/simula_aprovacao.py` aplicou o pós-processamento em cópia dos 6 cursos com gold e reprocessou:
 bloco, unidade e subunidade idênticos (245/288 → 245/288); só a fila de revisão sobe 3. O sumário duplica headings dentro do lead (capado em
 2600 chars por `extract_markdown_lead_text`), mas não move decisão.
 
@@ -83,8 +83,8 @@ Duas portas, e o resultado é diferente em cada uma:
    aprovação; foi o default da GUI.
 2. **Porta da imagem: aberta.** As descrições de imagem são geradas pelo **Datalab** durante o build
    (`image_curation.pages[].images[].source == "datalab"`, 2011 imagens nos 8 tutores) e **injetadas no markdown que o motor lê**, como
-   bloco `<!-- IMAGE_DESCRIPTION: … -->` (`src/builder/extraction/image_markdown.py:10`). Presentes em 142 de 305 materiais, em inglês,
-   até 1634 chars. O Ollama também sabe descrever (`src/builder/vision/ollama_client.py:294 describe_image`), mas hoje só entra pelo Image
+   bloco `<!-- IMAGE_DESCRIPTION: … -->` (`src/builder/extraction/image_markdown.py`, linha 10). Presentes em 142 de 305 materiais, em inglês,
+   até 1634 chars. O Ollama também sabe descrever (`src/builder/vision/ollama_client.py`, `describe_image`, linha 294), mas hoje só entra pelo Image
    Curator na UI — **não há seleção de provedor no build**.
 
 **Resolvido em 07/09 (`entry_signals.texto_para_score`, gerador `44ed407`):** o motor pontua o texto SEM os blocos
@@ -97,8 +97,8 @@ desvia materiais que nem têm imagem — os dois casos do CG tinham texto idênt
 
 ## 5. Regras ao medir acurácia
 
-- Toda cópia para medição/gate precisa incluir `staging/`: sem ela, LR/CG/FR/parte do MF reprocessam **sem texto** e o número mente.
-  (O `docs/reports/_harness-2026-09-02/determinismo.py` tinha esse furo; `c1-3/zero_diff.py` copia `staging/`.)
+- Toda cópia para medição/gate precisa incluir `<repo-tutor>/staging/`: sem ela, LR/CG/FR/parte do MF reprocessam **sem texto** e o número mente.
+  (O `docs/reports/_harness-2026-09-02/determinismo.py` tinha esse furo; `docs/reports/_harness-2026-09-04/c1-3/zero_diff.py` copia `<repo-tutor>/staging/`.)
 - "Sem LLM" / "sem API paga" descreve **as chamadas do motor**, não o insumo: 142/305 materiais carregam prosa do Datalab no texto.
   O regime realmente livre é o de `ablate_descricoes.py`.
 - Comparar in-sample (5 cursos) com holdout (CG) é legítimo quanto ao texto: o estado de aprovação não muda os eixos (§3).

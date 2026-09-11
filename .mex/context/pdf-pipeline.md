@@ -25,7 +25,7 @@ edges:
     condition: when adding or modifying a PDF backend
   - target: patterns/debug-build-failure.md
     condition: when a pipeline stage fails and you need to trace the error through manifest logs
-last_updated: 2026-09-03
+last_updated: 2026-09-11
 ---
 
 # PDF Pipeline
@@ -70,7 +70,7 @@ Built-in advanced fallback order:
 
 Backend availability is detected at runtime:
 - `has_datalab_api_key()` — checks `DATALAB_API_KEY` env var
-- `has_docling_python_api_fn()` — tries importing the API
+- `has_docling_python_api()` — checks if the API can be imported
 - `detect_marker_capabilities()` — checks CLI and Python API availability; result cached in `_MARKER_CAPABILITIES_CACHE`
 
 ## Page Chunking

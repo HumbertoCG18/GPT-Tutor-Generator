@@ -1,7 +1,7 @@
 ---
 name: agents
 description: Project identity, non-negotiables, commands, and scaffold growth instructions
-last_updated: 2026-09-03
+last_updated: 2026-09-11
 ---
 
 # GPT-Tutor-Generator

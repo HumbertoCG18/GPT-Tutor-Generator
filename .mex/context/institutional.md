@@ -16,7 +16,7 @@ edges:
     condition: quando precisar de como os componentes processam estas fontes
   - target: context/repo-output.md
     condition: quando o foco é o formato do repo gerado
-last_updated: 2026-09-09
+last_updated: 2026-09-10
 ---
 
 # Contexto Institucional
@@ -269,10 +269,10 @@ como titulo de secao (`<p style="text-align: center;"><strong>Tarefas</strong></
 nao tem titulo de tipo algum.
 
 Consequencia medida na cadeia do texto, nao inferida:
-- `text/url_markdown.py:161` converte `<h1>`-`<h6>` em `# Titulo`.
-- `text/url_markdown.py:145` converte `<strong>`/`<b>` em `**negrito**` — enfase inline,
+- `src/builder/text/url_markdown.py` (linha 161) converte `<h1>`-`<h6>` em `# Titulo`.
+- `src/builder/text/url_markdown.py` (linha 145) converte `<strong>`/`<b>` em `**negrito**` — enfase inline,
   nao titulo. Entao `Tarefas` vira `**Tarefas**`, e quem le estrutura depois nao ve secao.
-- `text/url_markdown.py:84` pontua o bloco de conteudo com `heading_count * 120`; esse
+- `src/builder/text/url_markdown.py` (linha 84) pontua o bloco de conteudo com `heading_count * 120`; esse
   termo e zero em 32 dos 42.
 
 Isto e um mecanismo candidato para `html 62%` contra `pdf 94%`, **nao uma causa provada**:
