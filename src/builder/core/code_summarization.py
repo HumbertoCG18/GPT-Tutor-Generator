@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import functools
+from collections import Counter
 import logging
 import re
 import unicodedata
@@ -522,3 +524,136 @@ def prune_stale_code_curation(builder) -> int:
         )
         logger.info("[CodeCuration] Pruned %d stale entries", len(stale))
     return len(stale)
+
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Produtor DETERMINISTICO de code_curation.json (determ v3, 11/09) — a camada 3 (resumo de codigo por Gemini) foi cortada.
+# Mesmo formato do resumo do Gemini (inferred_title / summary / concepts / language), mesma rota no resolvedor, produtor
+# diferente e 0 chamadas. Medido em copias (motor puro, regua de 151): 142 com zips corrigidos x 137 do Gemini; material
+# a material o determ acerta 6 que o Gemini erra e erra 1 (c1-3/codigo_determ_puro_e.log, replay_subunidade.py).
+# v1 lia o zip cru; v2 tokenizava os .md dos membros (124); v3 = v2 + (a) material com .md proprio NAO ganha resumo, o
+# leitor ja entrega o texto e duplicar promovia o label Moodle a heading; (b) alias do curso presente em identificador
+# CamelCase (RabbitMQConfig) ou como frase literal (circuit breaker fallback) entra em concepts na forma do alias.
+# ---------------------------------------------------------------------------------------------------------------------
+_CAMEL = re.compile(r"(?<=[a-z0-9])(?=[A-Z])|[_\-./\\ ]+")
+_COMMENT = re.compile(r"^\s*(//|#|\*|/\*|--|\(\*|%|;)\s*(.*)$")
+_WORD = re.compile(r"[A-Za-z\u00c0-\u00ff][A-Za-z\u00c0-\u00ff0-9]{3,}")
+_STOP = {"return", "import", "include", "public", "private", "static", "void", "int", "float", "double", "string", "const", "class",
+         "self", "this", "true", "false", "null", "none", "print", "printf", "main", "args", "argv", "using", "namespace", "from",
+         "while", "else", "elif", "break", "continue", "define", "ifdef", "endif", "begin", "end", "then", "with", "that"}
+_FRONT = re.compile(r"^---\n.*?\n---\n", re.S)
+_FENCE = re.compile(r"^```.*$", re.M)
+_HEAD = re.compile(r"^#{1,6}\s+(.*)$")
+_CELULA = re.compile(r"^C.lula \d+ . ", re.I)
+DETERM_MODEL = "determ-v3"
+
+
+def _bundle_md(entry: dict, root: Path) -> list:
+    """(nome do arquivo, texto) dos .md que o motor JA gerou para o material: o mesmo bundle de `_build_bundle_text`."""
+    out = []
+    bm = entry.get("base_markdown")
+    if bm and (root / bm).is_file():
+        out.append((str(entry.get("title") or ""), (root / bm).read_text(encoding="utf-8", errors="replace")))
+    for ef in entry.get("extracted_files") or []:
+        em = ef.get("base_markdown")
+        if em and (root / em).is_file():
+            out.append((Path(str(ef.get("title") or em).replace("\\", "/")).name,
+                        (root / em).read_text(encoding="utf-8", errors="replace")))
+    return out
+
+
+def course_aliases(root: Path) -> set:
+    """Aliases dos topicos da taxonomia + sinonimos do vocabulario compilado por LLM. So os de 4+ chars."""
+    from src.builder.extraction.content_taxonomy import load_internal_content_taxonomy
+    tax = load_internal_content_taxonomy(root)
+    als = {a for u in tax.get("units", []) for t in u.get("topics", []) for a in t.get("aliases", [])}
+    llm = Path(root) / "course" / ".glossary_curation.llm.json"
+    if llm.is_file():
+        try:
+            als |= {a for k, v in json.loads(llm.read_text(encoding="utf-8")).items()
+                    if not k.startswith("_") and isinstance(v, dict) for a in v.get("synonyms", [])}
+        except Exception:
+            pass
+    return {a for a in als if len(a) >= 4}
+
+
+@functools.lru_cache(maxsize=200000)
+def _frase(raw: str, alias: str) -> bool:
+    from src.builder.timeline.index import _matches_normalized_phrase
+    return bool(_matches_normalized_phrase(raw, alias))
+
+
+def synthesize_code_entry(entry: dict, root: Path, aliases: set) -> Optional[dict]:
+    """Resumo deterministico (determ v3) de um material de codigo/zip, ou None quando o material tem .md proprio."""
+    if entry.get("base_markdown"):
+        return None
+    root = Path(root)
+    ml = entry.get("moodle_label")
+    ml = ml.get("text") if isinstance(ml, dict) else ml
+    nomes, prosa, ids, lang, bruto = [], [], Counter(), "", []
+    for nome, md in _bundle_md(entry, root):
+        bruto.append(md)
+        nomes.append(" ".join(p for p in _CAMEL.split(Path(nome).stem) if p))
+        body = _FRONT.sub("", md, count=1)
+        m = re.search(r"\*\*Linguagem:\*\*\s*(\w+)", body)
+        if m and not lang:
+            lang = m.group(1)
+        em_codigo = False
+        for line in body.splitlines()[:800]:
+            if _FENCE.match(line):
+                em_codigo = not em_codigo
+                continue
+            h = _HEAD.match(line)
+            if h:
+                if not _CELULA.match(h.group(1)):
+                    prosa.append(h.group(1).strip())
+                continue
+            if em_codigo:
+                c = _COMMENT.match(line)
+                if c and c.group(2).strip():
+                    prosa.append(c.group(2).strip())
+                for w in _WORD.findall(line):
+                    for part in _CAMEL.split(w):
+                        q = part.lower()
+                        if len(q) >= 4 and q not in _STOP and not q.isdigit():
+                            ids[q] += 1
+            elif line.strip() and not line.startswith(">") and not line.startswith("|"):
+                prosa.append(line.strip())      # prosa de celula markdown do notebook / README
+    if not bruto:
+        return None
+    raw = " ".join(bruto)
+    words = set(re.findall(r"[A-Za-z][A-Za-z0-9_]*", raw))
+    hits = {a for a in aliases if re.search(r"[A-Za-z]", a) and any(
+        re.search(r"(?<![a-z])" + re.escape(a.replace(" ", "")) + r"(?=[A-Z_0-9]|$)", w) for w in words)}
+    hits |= {a for a in aliases if _frase(raw, a)}
+    title = f"{ml or entry.get('title') or ''} {' '.join(dict.fromkeys(nomes))}".strip()
+    return {"inferred_title": title[:200], "summary": " ".join(dict.fromkeys(prosa))[:1500],
+            "concepts": [w for w, _ in ids.most_common(30)] + sorted(hits), "language": lang}
+
+
+def synthesize_all_code_entries(builder) -> dict:
+    """Reescreve as entradas de code_curation.json com o produtor deterministico: zips ganham resumo, codigo com .md proprio
+    nao; entradas antigas (Gemini, ou de ids que sumiram) saem. Cache por hash do bundle. 0 chamadas."""
+    root = Path(builder.root_dir)
+    manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+    curation = load_code_curation(root)
+    antigas = curation.get("entries") or {}
+    aliases = course_aliases(root)
+    entries: dict = {}
+    for e in _collect_code_entries(manifest):
+        eid = e.get("id")
+        if not eid or e.get("base_markdown"):
+            continue
+        new_hash = compute_entry_hash(e, builder)
+        atual = antigas.get(eid) or {}
+        if atual.get("model") == DETERM_MODEL and atual.get("content_hash") == new_hash and atual.get("summary"):
+            entries[eid] = atual
+            continue
+        s = synthesize_code_entry(e, root, aliases)
+        if s is None:
+            continue
+        entries[eid] = {"content_hash": new_hash, "matcher_version": MATCHER_VERSION, "model": DETERM_MODEL,
+                        "generated_at": datetime.now().isoformat(timespec="seconds"), "summary": s}
+    curation["entries"] = entries
+    write_code_curation(root, curation)
+    return curation

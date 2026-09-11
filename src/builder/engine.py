@@ -193,7 +193,6 @@ from src.builder.core.image_resolution import (
 from src.builder.core.code_summarization import (
     prune_stale_code_curation as _core_code_summarization_prune_stale,
     load_code_curation as _core_code_summarization_load,
-    summarize_all_code_entries as _core_code_summarization_summarize_all,
 )
 from src.builder.artifacts import student_state as student_state_v2
 from src.builder.artifacts.pedagogy import (
@@ -1844,9 +1843,6 @@ class RepoBuilder:
             # tivesse cronograma e nenhum gate acusa (achado auditoria 2.4).
             logger.warning("Falha ao ler %s (%s: %s) — seguindo SEM blocos de cronograma", path, type(exc).__name__, exc)
             return []
-
-    def _summarize_code_entries(self, client, progress_cb=None) -> dict:
-        return _core_code_summarization_summarize_all(self, client, progress_cb)
 
     def _find_image(self, raw_path: str, md_file: Path) -> Optional[Path]:
         return _core_image_resolution_find_image(self.root_dir, raw_path, md_file)

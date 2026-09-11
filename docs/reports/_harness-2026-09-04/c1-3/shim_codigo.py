@@ -21,6 +21,8 @@ sys.path.insert(0, str(GEN))
 sys.path.insert(0, str(GEN / "scripts"))
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 MODE, TARGET = sys.argv[1], sys.argv[2]
+if MODE in ("sem", "com"):
+    os.environ["TUTOR_NO_CODE_SYNTH"] = "1"   # 11/09: o produto sintetiza (determ v3) em todo reprocess; sem/com medem sem isso
 import src.builder.runtime.gemini_client as _gc  # noqa: E402
 _gc.get_gemini_client = lambda config=None: None
 

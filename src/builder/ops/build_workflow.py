@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 import json
 import logging
 import sys
@@ -143,12 +145,16 @@ def build_impl(
 
 
 def _run_auto_code_summarization(builder, logger) -> None:
-    """Auto-run enrichment if opted-in via config.
-
-    Resumo de codigo exige Gemini (pula sem client). Enriquecimento de
-    referencias roda mesmo sem client: mapeia unidade/topico por texto
-    (deterministico) e so pula o resumo Gemini — modo degradado do spec.
+    """Resumo de CODIGO e deterministico e roda sempre (camada 3 por Gemini cortada em 11/09: determ v3 142 x 137 na
+    subunidade, 0 chamadas; ver code_summarization.synthesize_all_code_entries). O que segue opt-in por config e so o
+    enriquecimento de REFERENCIAS: mapeia unidade/topico por texto mesmo sem client e so pula o resumo Gemini.
     """
+    try:
+        if not os.environ.get("TUTOR_NO_CODE_SYNTH"):   # kill switch dos harnesses que medem sem/com resumo
+            from src.builder.core.code_summarization import synthesize_all_code_entries
+            synthesize_all_code_entries(builder)
+    except Exception as exc:
+        logger.warning("[code] resumo deterministico pulado: %s", exc)
     try:
         from src.ui.theme import AppConfig
         config = AppConfig()
@@ -160,9 +166,6 @@ def _run_auto_code_summarization(builder, logger) -> None:
         def _progress(idx, total, title, status):
             if status in ("calling_api", "done"):
                 logger.info("[Gemini] [%d/%d] %s: %s", idx, total, status, title)
-
-        if client is not None:
-            builder._summarize_code_entries(client, progress_cb=_progress)
 
         # Referencias mapeiam por texto mesmo sem Gemini (client pode ser None).
         from src.builder.core.reference_summary import summarize_all_reference_entries
