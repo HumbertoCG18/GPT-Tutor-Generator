@@ -58,7 +58,10 @@ que usa "Conceitos" como chave), refiltrar o `.llm.json` do CG e reprocessar o C
 Mapeamento de Texturas de "1.2 Conceitos", Manipulacao de Imagens/Morfologia de "1.3"; o fim do veto de titulo devolveu Colisao, GeomComp, FloodFill);
 reprocesso do CG com detector, 0 chamadas (`rollout_camada3_CG_m1.log`). **CG subunidade 55 -> 57/82** (`exercicios` e `video-opengl-vdi` passam a
 se abster, gold vazio), 0 perdas; bloco contra o gold 35/35 igual (8 `computed_block_id` mudaram, `temporal_block_id` nao). Golden do CG verde.
-**FASE 1 FECHADA no gate de subunidade** (precisao do confiante 90,6% -> a remedir apos M1). Proximo: 2.1 propagacao, 2.3 conflito, ou C5.
+**Remedido apos M1 (`c1-3/calibra_fila_como_regua_11-09b.log`):** precisao do confiante da subunidade **174/192 = 90,6%, igual**; erros confiantes
+18 -> 18 mas nao os mesmos: sairam `video-opengl-vdi` (abstem, certo) e `bezier-python` (foi para a fila); entraram `basico3d-py` (conf 0,62) e
+`video-sobre-mapeamento-em-opengl` (conf 0,86), que estavam na fila errados e ficaram confiantes errados. fila&errado 19 -> 17, total certo
+214 -> 216. Bloco confiante 188 -> 186 (2 foram para a fila, certos). **FASE 1 FECHADA no gate de subunidade.** Proximo: 2.1 propagacao, 2.3 conflito, ou C5.
 
 ## CAMADA 3 MEDIDA COM VOCAB NOVO: DETERM v3 138 x GEMINI 137 EM 151 — O CORTE PASSA NA REGRA (11/09; user: "vamos fazer a medicao da 1 e decidir")
 **Entrou no produto (11/09):** `vocabulary_compile._bundle` inclui os nomes-base dos membros do zip (42/44 zips entravam vazios) ·

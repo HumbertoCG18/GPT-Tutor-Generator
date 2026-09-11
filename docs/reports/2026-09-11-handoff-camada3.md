@@ -3,7 +3,7 @@
 Único handoff vivo. Substitui `2026-09-08-handoff-confianca.md` (que passa a ser histórico).
 **Leia nesta ordem:** (1) este arquivo; (2) `pendencias.md`, seção "CAMADA 3 MEDIDA COM VOCAB NOVO" (11/09) e o bloco
 "CORTE FEITO E ROLLOUT"; (3) `2026-09-08-plano-confianca-antes-de-acuracia.md` — 2.2 e 2.4 fechadas, 2.1 e 2.3 abertas,
-Fase 1 (confiança) e Fase 3 (cobertura) não tocadas.
+Fase 1 FECHADA no gate (ver §2b); Fase 3 (cobertura) não tocada.
 
 ---
 
@@ -30,10 +30,16 @@ Chamadas Gemini do dia: **26** (16 de compilação de vocabulário em SO/IA/ES2/
 | MF | 51/58 | **55/58** |
 | TCC | 8/11 | **10/11** |
 | FR | 15/18 | **18/18** |
-| CG | 58/82 | 55/82 |
-| **total** | **161/251** | **214/251** |
+| CG | 58/82 | **57/82** (55 no rollout; +2 com o rótulo meta do CG à noite) |
+| **total** | **161/251** | **216/251** |
 
 Bloco: igual nos 8 antes e depois (os 10 votos liberados não mudaram nenhum bloco). Unidade: não remedida no produto hoje.
+
+### 2b. Fase 1 remedida e fechada (11/09, tarde)
+Precisão do confiante da subunidade **174/192 = 90,6%** (08/09: 64,6%), erros confiantes 64 → 18, fila 22,4/100. Limiar de
+confiança NÃO generaliza por curso (leave-one-course-out: o ganho é quase todo CG); abstenção por piso perde sempre; a causa dos falsos
+positivos era rótulo meta recebendo doação ("1.2 Conceitos" do CG com `OpenGL`), corrigida: `META_LABELS` += conceitos, áreas relacionadas
+(CG 55 → 57, 0 perdas). Segunda opinião do astra em `c1-3/resposta_codex_astra_fase1.clean.md`. Detalhe: `pendencias.md`, seção da Fase 1.
 
 ### De onde vem o 214 (medido em cópias, rota do produto, 0 chamadas; `c1-3/mede_contribuicao_llm.py`)
 | regime | subunidade /251 |
@@ -119,8 +125,8 @@ Tutores: 8 commits "chore(motor): vocab LLM compilado, zips sem colisao, resumo 
 ---
 
 ## 7. FILA DE CAMPANHAS
-**C1 TRAVESSIA**: 2.2 e 2.4 fechadas; 2.1 propagação por similaridade (+5 medido em 08/09) e 2.3 `conflito` abertas; Fase 1
-(honestidade da confiança) não tocada em 11/09 e continua sendo a primeira do plano. **Próxima decidida: C5 dívidas de dados** —
+**C1 TRAVESSIA**: 2.2 e 2.4 fechadas; Fase 1 fechada no gate; 2.1 propagação por similaridade (+5 medido em 08/09) e 2.3 `conflito`
+abertas e são o próximo do plano. **Próxima decidida: C5 dívidas de dados** —
 os zips fecharam hoje; falta o gold de unidade do CG e a fila do CG. Estacionadas: C7, C2, C4, C6.
 
 ## 8. Leis (reafirmadas + uma nova)
