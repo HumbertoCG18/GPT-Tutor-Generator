@@ -3,6 +3,7 @@ de LLM por unidade COM material, gravado em `course/.glossary_curation.llm.json`
 formato do loader; `_provenance: llm`). Cache = o proprio arquivo; recompila so com flag.
 Sidecar MANUAL (`.glossary_curation.json`) presente = o curso ja tem vocabulario: nao chama.
 Sem chamada real: client fake."""
+import copy
 import json
 import os
 from pathlib import Path
@@ -183,26 +184,35 @@ LABELS = {"Modelos OSI e TCP/IP": "unidade-01", "Conceitos de redes": "unidade-0
 
 
 def test_filtro_termo_igual_ao_label_sai():
-    out = filter_terms({"Modelos OSI e TCP/IP": ["modelos osi e tcp/ip", "Camada de Enlace"]}, generic=set(), file_names=set())
+    out = filter_terms({"Modelos OSI e TCP/IP": ["modelos osi e tcp/ip", "Camada de Enlace"]}, generic=set())
     assert out["Modelos OSI e TCP/IP"] == ["Camada de Enlace"]
 
 
 def test_filtro_exclusividade_termo_em_dois_topicos_sai():
     out = filter_terms({"Modelos OSI e TCP/IP": ["Internet", "Camada de Enlace"],
-                        "Conceitos de redes": ["internet", "Redes locais"]}, generic=set(), file_names=set())
+                        "Conceitos de redes": ["internet", "Redes locais"]}, generic=set())
     assert out == {"Modelos OSI e TCP/IP": ["Camada de Enlace"], "Conceitos de redes": ["Redes locais"]}
 
 
-def test_filtro_nome_de_arquivo_sai():
-    # decisao C (02/09): nome de arquivo e identidade, nao vocabulario (tcp_chat_c, udp_example_java).
-    fn = {"tcp chat c", "udp example java"}
-    out = filter_terms({"Implementação de sockets": ["tcp_chat_c", "Socket TCP", "UDP Example Java"]}, generic=set(), file_names=fn)
-    assert out["Implementação de sockets"] == ["Socket TCP"]
+def test_filtro_nome_de_arquivo_fica():
+    # 11/09: o veto "termo igual a titulo de material" (decisao C, 02/09) derrubava Rede Perceptron, MLP e Kubernetes;
+    # sem o veto: +1 IA, +1 ES2, 0 perdas em 4 cursos (c1-3/replay_exp_regras.log). O termo fica.
+    out = filter_terms({"Implementação de sockets": ["tcp_chat_c", "Socket TCP", "UDP Example Java"]}, generic=set())
+    assert out["Implementação de sockets"] == ["tcp_chat_c", "Socket TCP", "UDP Example Java"]
+
+
+def test_filtro_rotulo_meta_nao_recebe_doacao():
+    # 11/09: no SO, "Estudo de casos" (x5) recebia Linux/Unix/Pthreads e puxava 7 exemplos para si.
+    # Rotulo meta (sem sujeito) nao recebe doacao; "Conceitos básicos" (x2) recebe (c1-3/replay_exp_regras2.log).
+    out = filter_terms({"1.3 Estudo de casos": ["Linux", "Unix"], "3.1 Conceitos básicos": ["Processos", "Pipes"],
+                        "1.5 Estudo de caso: arquitetura orientada a microsserviços": ["Netflix Eureka"]}, generic=set())
+    assert out == {"1.3 Estudo de casos": [], "3.1 Conceitos básicos": ["Processos", "Pipes"],
+                   "1.5 Estudo de caso: arquitetura orientada a microsserviços": ["Netflix Eureka"]}   # rotulo com sujeito fica
 
 
 def test_filtro_generico_e_dedupe():
     out = filter_terms({"Modelos OSI e TCP/IP": ["Introdução", "Camada de Enlace", "camada de enlace", ""]},
-                       generic={"intro"}, file_names=set())
+                       generic={"intro"})
     assert out["Modelos OSI e TCP/IP"] == ["Camada de Enlace"]
 
 
@@ -308,20 +318,20 @@ def _ident():
 
 def test_identidade_nome_de_outra_unidade_sai():
     out = filter_terms({"Conceitos": ["Fundamentos Matemáticos", "Processo de Visualização 2D", "OpenGL"]},
-                       generic=set(), file_names=set(), identities=_ident())
+                       generic=set(), identities=_ident())
     assert out["Conceitos"] == ["OpenGL"]
 
 
 def test_identidade_contido_em_label_de_outro_topico_sai():
     out = filter_terms({"Áreas relacionadas": ["Geometria Computacional", "Morfologia Matemática"]},
-                       generic=set(), file_names=set(), identities=_ident())
+                       generic=set(), identities=_ident())
     assert out["Áreas relacionadas"] == ["Morfologia Matemática"]
 
 
 def test_identidade_contido_no_proprio_label_fica_e_um_token_fica():
     out = filter_terms({"Algoritmos de polígonos": ["Polígonos", "Geometria"],
                         "Algoritmos de Geometria Computacional": ["Plane Sweep"]},
-                       generic=set(), file_names=set(), identities=_ident())
+                       generic=set(), identities=_ident())
     assert out["Algoritmos de polígonos"] == ["Polígonos", "Geometria"]   # 1 token: contencao nao vale
     assert out["Algoritmos de Geometria Computacional"] == ["Plane Sweep"]
 
@@ -330,15 +340,16 @@ def test_identidade_contido_no_proprio_label_fica_e_um_token_fica():
 
 def test_refilter_reaplica_filtros_a_partir_do_raw_sem_chamar(tmp_path):
     root = _repo(tmp_path)
-    c = FakeClient({"Unidade 01": _resp(**{"Modelos OSI e TCP/IP": ["Camada de Enlace", "tcp_chat_c"]})})
+    c = FakeClient({"Unidade 01": _resp(**{"Modelos OSI e TCP/IP": ["Camada de Enlace", "Roteamento"]})})
     out = compile_course_vocabulary(root, ENTRIES, TAX, c)
-    assert out["Modelos OSI e TCP/IP"]["synonyms"] == ["Camada de Enlace"]      # tcp_chat_c = nome de arquivo
-    assert out["_raw"]["Modelos OSI e TCP/IP"] == ["Camada de Enlace", "tcp_chat_c"]
+    assert out["Modelos OSI e TCP/IP"]["synonyms"] == ["Camada de Enlace", "Roteamento"]
+    assert out["_raw"]["Modelos OSI e TCP/IP"] == ["Camada de Enlace", "Roteamento"]
     n = len(c.bundles)
-    ents = [e for e in ENTRIES if e["id"] != "tcp-chat-c"]                       # arquivo sumiu: termo volta
-    out2 = compile_course_vocabulary(root, ents, TAX, c, refilter=True)
+    tax2 = copy.deepcopy(TAX)                                                    # unidade nova com esse nome: termo vira identidade e sai
+    tax2["units"].append({"slug": "unidade-04", "title": "Unidade 04 - Roteamento", "topics": []})
+    out2 = compile_course_vocabulary(root, ENTRIES, tax2, c, refilter=True)
     assert len(c.bundles) == n
-    assert out2["Modelos OSI e TCP/IP"]["synonyms"] == ["Camada de Enlace", "tcp_chat_c"]
+    assert out2["Modelos OSI e TCP/IP"]["synonyms"] == ["Camada de Enlace"]
 
 
 def test_hook_passa_refilter(tmp_path, monkeypatch):
@@ -354,3 +365,21 @@ def test_hook_passa_refilter(tmp_path, monkeypatch):
 
     pr._run_vocabulary_compile_layer(B(), ENTRIES)
     assert kw == [{"recompile": False, "refilter": True}]
+
+
+def test_bundle_zip_leva_nomes_base_dos_membros(tmp_path):
+    """process_zip deixa base_markdown=None no zip (so os membros tem .md): sem isto o zip entra vazio no bundle.
+    Nome-base, nao o caminho: _bundle corta cada heading em 60 chars e o caminho Java estoura antes da classe."""
+    root = _repo(tmp_path)
+    zipe = {"id": "threads-java", "file_type": "zip", "category": "codigo-professor", "title": "Exemplo threads",
+            "computed_unit_slug": "unidade-02", "extracted_files": [
+                {"title": "JavaThread\src\javathread\JavaThread.java", "base_markdown": "code/professor/javathread.md"},
+                {"title": "JavaThread\src\javathread\MyFirstThread.java", "base_markdown": "code/professor/myfirstthread.md"},
+                {"title": "JavaThread\test\javathread\JavaThread.java", "base_markdown": "code/professor/javathread-2.md"},
+            ]}
+    c = FakeClient()
+    compile_course_vocabulary(root, ENTRIES + [zipe], TAX, c)
+    b2 = next(b for b in c.bundles if "Unidade 02" in b)
+    assert "JavaThread.java" in b2 and "MyFirstThread.java" in b2
+    assert "JavaThread\src" not in b2                 # nome-base, nao o caminho
+    assert b2.count("JavaThread.java") == 1            # membro repetido em outra pasta nao duplica

@@ -10,19 +10,19 @@ Artefatos: [Placar](https://claude.ai/code/artifact/231d161b-96dc-4061-84a1-cdb8
 
 ## 1. A tese, e por que esta ordem
 
-O gold nunca foi insumo do motor. Ele mede. O que o motor tem de próprio para saber se acertou é a **confiança**, que
+O gold deixou de ser insumo do motor em 07/09 (`baab4ac`, `ea0701f`); os números abaixo são pós-limpeza. Ele mede. O que o motor tem de próprio para saber se acertou é a **confiança**, que
 vira a fila de revisão. Medido em 08/09 (`c1-3/calibra_fila_como_regua.log`):
 
 | eixo | precisão do confiante | leitura |
 |---|---|---|
-| unidade | **157/157 = 100%** | um curso novo já dispensa gold de unidade |
+| unidade | **157/157 = 100%** | inferência: CG 93, LR 7 e FR 22 não têm gold e ficam fora da conta; testa em 3.2 |
 | bloco | 177/178 = 99,4% | idem, na prática |
 | **subunidade** | **117/181 = 64,6%** | **64 materiais saem errados sem aviso** |
 
 Subir acurácia com a confiança mentindo aumenta os acertos **e** os erros silenciosos. Produto que erra calado é pior
 que produto que pergunta: o aluno não tem como saber que aquele material está no lugar errado. **Confiança primeiro.**
 
-Isso também é o que responde ao objetivo de fundo: *a atribuição não deve depender de gold feito à mão*. Na unidade já
+Isso também é o que responde ao objetivo de fundo: *a atribuição não deve depender de gold feito à mão*. Na unidade, nos cursos com gold, já
 não depende. Na subunidade, o caminho não é remover o gold, é usá-lo **uma vez** para descobrir onde a confiança mente;
 depois disso a confiança viaja sozinha para cursos novos.
 
@@ -90,10 +90,10 @@ Material indeciso depois da 1ª e da 2ª passada herda a subunidade do vizinho m
 com confiança. Similaridade = Jaccard dos tokens distintivos, dentro da unidade.
 `simula_propaga_similaridade.log`: regime atual 135 → 140, ganha 6 perde 1, piso 0,05–0,10.
 
-### 2.2 Filtro mais duro no vocabulário compilado — **+2 medido** · 0 chamadas
+### 2.2 Filtro mais duro no vocabulário compilado — **teto +2 por ablação; filtro não medido** · 0 chamadas
 Cortar termo doado cujo núcleo aparece no vocabulário ou nos materiais de outra unidade, e recusar doação a tópico de
 rótulo meta ("Áreas relacionadas", "Conceitos", "Introdução").
-`triagem_vocab_llm.log`: a unidade 01 do CG custa 2 pontos hoje; outras 3 chamadas são neutras.
+`triagem_vocab_llm.log` l.20 mede remover o vocabulário LLM inteiro da unidade 01 do CG (+2), não o filtro; outras 3 chamadas são neutras. Medir o filtro em si antes de executar este item.
 
 ### 2.3 `conflito` — 48 itens, metade da fila, nunca atacado · 0 chamadas
 Quando o texto aponta uma unidade e o bloco aponta outra, o bloco vence por desenho e o desacordo só vira registro.

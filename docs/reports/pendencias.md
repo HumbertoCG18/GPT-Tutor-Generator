@@ -1,6 +1,6 @@
 # Pendências — tracker vivo
 
-last_updated: 2026-09-08 (descontaminacao do gold + plano "confianca antes de acuracia"). **PONTO DE ENTRADA =
+last_updated: 2026-09-11 (2.4 executada com b, filtro do vocabulario, determ v3 138 x Gemini 137; ver secao de 11/09). **PONTO DE ENTRADA =
 `2026-09-08-handoff-confianca.md`**; o `2026-09-05b-handoff-fila-campanhas.md` passa a ser historico.
 **Plano a REVISAR antes de executar: `2026-09-08-plano-confianca-antes-de-acuracia.md`.**
 
@@ -16,6 +16,40 @@ video 57%; e o gold de unidade do CG vive la) — decisao do user na fronteira. 
 C4 limpa · C5 dividas · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 **Criterio estrito (user, 03/09): campanha so fecha com 100% dos itens.** C0 MOTOR 11/11 e SYNC 6/6 FECHADAS.
 Historico anterior a 03/09 em `_archive/pendencias-historico-ate-2026-09-02.md`.
+## CAMADA 3 MEDIDA COM VOCAB NOVO: DETERM v3 138 x GEMINI 137 EM 151 — O CORTE PASSA NA REGRA (11/09; user: "vamos fazer a medicao da 1 e decidir")
+**Entrou no produto (11/09):** `vocabulary_compile._bundle` inclui os nomes-base dos membros do zip (42/44 zips entravam vazios) ·
+`filter_terms`: rotulo meta ("estudo de casos", so o medido) nao recebe doacao do LLM · veto "termo igual a nome de arquivo"
+(decisao C, 02/09) REMOVIDO. `tests/test_vocabulary_compile.py` 26/26, suite 2341. **Tutores NAO reprocessados** (so as copias).
+**2.4 executada com o insumo de b:** 16 chamadas gemini-3.5-flash (SO 6, IA 4, ES2 2, TCC 4), `c1-3/compila_vocab_um_curso.py`, sidecar
+manual renomeado so durante a chamada. `.llm.json` dos 5 cursos com gold REFILTRADOS (0 chamadas, `--refiltrar`, backup `.bak-11-09`):
+SO 112->99 (saiu Linux/Unix/Pthreads de "Estudo de casos"), IA 76->80 (voltou Rede Perceptron), ES2 56->60 (Kubernetes), TCC 96, MF 77->81.
+**Regua:** motor puro (sem curadoria manual, sem voter) em copias com tripwire, subunidade 151 (MF 58, SO 15, IA 39, ES2 28, TCC 11);
+os 87/93 de 06/09 NAO sao comparaveis (gold do MF entrou depois). Logs `c1-3/codigo_{sem,com,determ}_puro_{b,c,d}.log`, `codigo_com_puro_vocabantigo.log`.
+| regime (com-extras, primario) | vocab antigo = nenhum nos 4 | vocab novo (b) | vocab refiltrado |
+|---|---|---|---|
+| com resumos Gemini | 76 (56) | 128 (105) | **137 (115)** |
+| sem resumos (zip sem texto nenhum) | - | 122 (103) | - |
+| determ v2 (tokens dos .md dos membros) | - | 124 (105) | 131 (115) |
+| **determ v3** (sem resumo duplicado; alias em identificador CamelCase e frase literal) | - | - | **138 (121)** |
+Final por curso, determ v3: MF 51/58 · SO 15/15 · IA 37/39 · ES2 25/28 · TCC 10/11. Bloco e unidade nao se movem entre regimes.
+**Material a material, determ v3 x Gemini:** determ ganha ES2 roteiro1/2/3, MF classes-parte2, exemplos-zip, hoare (6); perde IA mlp-xoripynb
+e MF colecoes-arrays/-conjuntos/-sequences, introducao-zip (5) — **os 4 do MF sao zips com conteudo de OUTRO zip** (colisao, abaixo). Saldo +1, primario +6.
+**Regra combinada `determ >= com - 2`: 138 >= 135, PASSA.** Criterio mais duro do astra (max 2 perdas individuais, 0 erro novo de bloco/unidade/confiante) NAO passa: 5 perdas, 4 delas a colisao.
+**Erro meu, corrigido pelo astra:** refutei "o vocab novo causou os 7 erros do SO" pela soma (8/15 nos dois regimes); os CONJUNTOS eram outros
+(5 corrigidos, 5 novos, 2 mantidos) e a unidade do SO caiu 32->30. Causa: o LLM doou Linux/Unix/Pthreads/threads em C a "Estudo de casos" (x5 no SO).
+Regra de rotulo meta (`c1-3/replay_exp_regras2.log`): SO 8->15/15 nos 3 regimes, 0 perdas em 5 cursos. Generalizar para todo rotulo repetido
+PERDE (`conceitos basicos` x2 e alvo real): `replay_exp_regras.log`. "Conceitos"/"Areas relacionadas"/"Introducao" existem no CG e NAO foram medidos: ficam fora.
+**Colisao de zip (medida, `c1-3/mede_zips_conteudo_perdido.{py,log}`):** `process_zip` grava raw pelo nome-base do membro; 129 arquivos mostram
+conteudo de outro zip em 23/44 zips (CG 88 em 11, MF 35 em 8, ES2 6 em 4). `.smv` e aceito desde 20/08 (`201cd8e`); MF `exemplos-zip` tem 0 membros
+no manifest com 10 `.smv` em staging = reprocesso pendente. Correcao: prefixar `entry.id()` do zip em `safe_name_c` + reprocessar CG/MF/ES2.
+**Segunda opiniao:** Codex `gpt-6-astra`/high, read-only, 179k tokens, sessao `01a08ea5-b1db-74e3-9bee-642b8e217a61`. Brief e resposta:
+`c1-3/brief_codex_astra_camada3.md`, `c1-3/resposta_codex_astra_camada3{,.clean}.md`. O replay em memoria que ele montou virou
+`c1-3/replay_subunidade.py` (17 s, reproduz os 3 regimes; TCC diverge 11 x 10, conhecido); `replay_exp_regras{,2}.py` medem as regras acima.
+Alavancas dele ja aplicadas: 1 (rotulo meta), 2 e 3 (`_sintetico` v3 no `shim_codigo.py`), 4 (fim do veto de titulo). Falta a 5 (colisao).
+**DECISAO DO USER (aberta):** cortar a camada 3 agora (determ v3 vira o produtor de `code_curation.json`) ou corrigir a colisao dos zips
+primeiro e remedir. Ordem recomendada: colisao -> reprocesso MF/CG/ES2 (0 chamadas se a camada 3 sair) -> remedir determ v3 -> cortar.
+**Nao medido:** CG (holdout) para o fim do veto e para rotulos meta; LR/FR sem gold; `.llm.json` de CG/LR/FR nao refiltrados. Merge em main: user, "nao agora".
+
 ## PLANO ESCRITO + ARTEFATOS ATUALIZADOS (08/09; user: "atualize os artefatos, e depois reescreva o plano")
 Documento: **`docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md`** (reescrito apos os artefatos).
 Fase 1 honestidade da confianca (gate: precisao do confiante da subunidade >= 90%) -> Fase 2 acuracia (2.1 propagacao
@@ -31,7 +65,7 @@ C1 (1.x, 2.1-2.3) e a C5 (3.x).
 | Gold x Moodle x SARC · Razao dos Blocos | aviso datado de 08/09 com link para o Placar |
 | Raio-X · Anatomia do Bloco | **nao tocados** — ja se declaram leitura de 01-02/09 e ja linkam o Placar; a nota interna de 06/09 deles cita numeros superados. Vieram inline (sem arquivo salvo) e tem SVG desenhado a mao: reescrever a mao arriscaria corromper os diagramas |
 
-**ABERTO e travando:** liberar o Gemini (toda a 2.4) · qual camada LLM cortar · push/merge dos ~965 commits · posicao da C7 ·
+**ABERTO e travando (11/09):** cortar a camada 3 agora ou apos a colisao dos zips (determ v3 138 x 137) · reprocessar os 4 tutores com o vocab novo · posicao da C7 ·
 revisao da fila do CG · extracao dos zips.
 
 ## DA PARA VIVER SEM GOLD? PARA A UNIDADE, JA VIVEMOS (08/09; user: "nao quero que a atribuicao de unidade precise de gold manual")

@@ -47,6 +47,12 @@ LLM_VOCAB_NAME = ".glossary_curation.llm.json"
 MANUAL_VOCAB_NAME = ".glossary_curation.json"
 # Fora do vocabulario: avaliacoes e meta-material nao descrevem UM topico.
 OUT_CATS = frozenset({"cronograma", "provas", "trabalhos", "fotos-de-prova"})
+# Rotulo meta = topico sem sujeito proprio ("Estudo de casos", "Introducao"): nao recebe doacao do LLM. Medido 11/09 no SO:
+# "Estudo de casos" x5 recebia Linux/Unix/Pthreads e puxava 7 exemplos; sem doacao 8 -> 15/15, 0 perdas nos 5 cursos
+# (c1-3/replay_exp_regras2.log). Comparacao e pelo rotulo normalizado inteiro, sem o codigo: "Estudo de caso: X" nao e meta.
+# ponytail: so o rotulo medido. "Conceitos", "Areas relacionadas" e "Introducao" (plano 08/09 §2.2) existem no CG e nao foram
+# medidos no holdout; entram aqui quando o shim_codigo.py holdout disser que nao perdem.
+META_LABELS = frozenset({"estudo de casos", "estudo de caso", "estudos de caso"})
 MAX_BUNDLE_CHARS = 24000
 _UNIT_PREFIX_WORDS = {"unidade", "de", "aprendizagem", "modulo", "parte", "topico", "ua"}
 
@@ -125,9 +131,11 @@ def _generic_tokens(taxonomy: dict) -> set:
         return set()
 
 
-def filter_terms(compilado: Dict[str, List[str]], *, generic: set, file_names: set,
+def filter_terms(compilado: Dict[str, List[str]], *, generic: set,
                  identities: Optional[dict] = None) -> Dict[str, List[str]]:
-    """Pos-filtro (decisao C + identidade). `compilado` = {chave: [termos crus]} -> {chave: [termos]}."""
+    """Pos-filtro: dedupe, termo igual ao label, exclusividade entre topicos, generico, identidade e rotulo meta (11/09).
+    O veto "termo igual a nome de arquivo" (decisao C, 02/09) saiu em 11/09: derrubava Rede Perceptron, MLP e Kubernetes;
+    sem ele +2 na subunidade e 0 perdas em 4 cursos (c1-3/replay_exp_regras.log). `compilado` = {chave: [termos crus]}."""
     ids = identities or {"labels": {}, "units": {}}
     label_norm = {key: ids["labels"].get(key, ("", _norm(_strip_code(key))))[1] for key in compilado}
     onde: Dict[str, set] = collections.defaultdict(set)
@@ -138,6 +146,9 @@ def filter_terms(compilado: Dict[str, List[str]], *, generic: set, file_names: s
                 onde[tn].add(key)
     out: Dict[str, List[str]] = {}
     for key, termos in compilado.items():
+        if label_norm[key] in META_LABELS:
+            out[key] = []
+            continue
         own_unit = ids["labels"].get(key, ("", ""))[0]
         others = {v[1] for k, v in ids["labels"].items() if k != key} | \
                  {core for u, core in ids["units"].items() if u != own_unit}
@@ -146,7 +157,7 @@ def filter_terms(compilado: Dict[str, List[str]], *, generic: set, file_names: s
         for t in termos:
             t = " ".join(str(t or "").split())
             tn = _norm(t)
-            if not tn or tn in seen or tn == label_norm[key] or len(onde[tn]) > 1 or tn in file_names:
+            if not tn or tn in seen or tn == label_norm[key] or len(onde[tn]) > 1:
                 continue
             if tn in others or (len(tn.split()) >= 2 and any(tn in o for o in others)):
                 continue
@@ -163,6 +174,10 @@ def _bundle(taxonomy: dict, unit: dict, labels: List[str], mats: List[dict], roo
     for e in mats:
         md = _entry_markdown_text_for_file_map(root, e) or ""
         heads = _extract_markdown_headings(md, limit=24)
+        # zip nao tem .md proprio (process_zip deixa base_markdown=None): os membros entram pelo nome-base,
+        # nao pelo caminho -- o corte de 60 chars abaixo comeria o nome da classe numa arvore Java.
+        heads = list(heads) + list(dict.fromkeys(Path(str(f.get("title") or "").replace("\\", "/")).name
+                                                 for f in (e.get("extracted_files") or []) if f.get("title")))
         ml = moodle_label_text(e)
         linhas.append(f"- TITULO: {e.get('title')} | LABEL MOODLE: {ml}\n  HEADINGS: "
                       + " | ".join(h[:60] for h in heads[:24]))
@@ -178,20 +193,9 @@ def _load(path: Path) -> Optional[dict]:
         return None
 
 
-def _file_names(entries: list) -> set:
-    out = set()
-    for e in entries:
-        for k in ("id", "title"):
-            n = _norm(str(e.get(k) or ""))
-            if n:
-                out.add(n)
-    return out
-
-
 def _write(out_path: Path, root: Path, raw: Dict[str, List[str]], entries: list, taxonomy: dict, *,
            modelo: str, erros: List[str], chamadas: int) -> dict:
-    filtrado = filter_terms(raw, generic=_generic_tokens(taxonomy), file_names=_file_names(entries),
-                            identities=identities_of(taxonomy))
+    filtrado = filter_terms(raw, generic=_generic_tokens(taxonomy), identities=identities_of(taxonomy))
     out: dict = {
         "_provenance": "llm",
         "_modelo": modelo,
