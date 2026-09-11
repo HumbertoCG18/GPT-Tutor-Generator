@@ -126,7 +126,7 @@ Tutores: 8 commits "chore(motor): vocab LLM compilado, zips sem colisao, resumo 
 
 ## 7. FILA DE CAMPANHAS
 **C1 TRAVESSIA**: 2.2 (rótulo meta aplicado; corte por núcleo em outra unidade medido à noite, 212 → 206/251, descartado) e 2.4 fechadas; Fase 1 fechada no gate; 2.1 medido de novo no produto (+1 real, não vira código) e 2.3 medido
-(bloco acerta 20/22 conflitos com gold; regra mantida): fechados sem código. Sobra a Fase 3, cujo item 3.2 é o gold de unidade do CG. **Próxima decidida: C5 dívidas de dados** —
+(bloco acerta 20/22 conflitos com gold; regra mantida): fechados sem código. Sobra a Fase 3; 3.2 em curso: 3.2 FECHADO: gold de unidade do CG em `docs/reports/material_gt_CG.csv` (93 materiais pela seção do Moodle e plano de ensino, revisado pelo astra, aprovado pelo user 11/09 à noite; produto acerta 84/93; 9 erros = 5 OpenGL u02 × u01, 3 texturas × u08, 1 exemplo × u03). 1.4 virou gold de subunidade dos 5 OpenGL: CG 57 → 55/82, 216 → 214/251 por mudança de gold. Próximo: Gate 1 para `_load_truth` fundir `material_gt` e o CG entrar na régua de unidade e astra revisou a Fase 2 (veredito, 3 correções e abstenção refutada de novo em `pendencias.md`). **Próxima decidida: C5 dívidas de dados** —
 os zips fecharam hoje; falta o gold de unidade do CG e a fila do CG. Estacionadas: C7, C2, C4, C6.
 
 ## 8. Leis (reafirmadas + uma nova)

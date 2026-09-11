@@ -3,7 +3,7 @@
 > **Estado em 11/09:** 2.2 (filtro do vocabulário: rótulo meta + fim do veto de título; corte por núcleo em outra unidade medido à noite, 212 → 206/251, descartado) e 2.4 (compilador nos 4 cursos, 16
 > chamadas, com os membros do zip no bundle) FECHADAS; camada 3 cortada (produtor determinístico, 142 × 137 em 151); zips sem
 > colisão. Fase 1 fechada no gate (90,6%). 2.1 medido: +1 no produto, não vira código. 2.3 medido: bloco acerta 20/22 conflitos com gold,
-> regra mantida. Sobra a Fase 3. Ver `2026-09-11-handoff-camada3.md` e `pendencias.md`.
+> regra mantida. Fase 3: 3.2 fechado em 11/09 à noite (gold de unidade do CG, 93 materiais, aprovado; produto 84/93). Ver `2026-09-11-handoff-camada3.md` e `pendencias.md`.
 
 last_updated: 2026-09-08 (reescrito depois da atualização dos artefatos)
 Entrada: `docs/reports/pendencias.md` (tracker vivo) · `.mex/context/audit-2026-09-07.md` (memória) ·
