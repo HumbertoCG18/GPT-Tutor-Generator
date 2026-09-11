@@ -2568,3 +2568,12 @@ Pendente:
   `scripts/hooks/` responde JSON invalido no protocolo do Codex. Nao medido qual.
 - A sessao do Codex "replicar skills e MCPs do Claude Code para o Codex" (18:45) deixou `google-developer-knowledge`
   com `command = ""` no global (removido 19:2x). Conferir o que mais ela gravou.
+- claude-mem 13.24.5 veio com o bundle estampado `"13.24.1"` (upstream #3940/#3951, PR #3952 aberta): o hook
+  reciclava o worker a cada evento (452 reinicios em 21h; "unreachable for 7 consecutive hooks" no Claude,
+  "hook exited with code 1" a cada comando no Codex — este ultimo e hipotese). Patch local 10/09 20:48: `"13.24.1"` ->
+  `"13.24.5"` nos .cjs das 3 copias (cache Claude, marketplace, cache Codex), backups `.bak-13241` ao lado. Worker
+  passou a reportar 13.24.5 sem recicla. FECHADO 21:36: o 13.24.6 (release 21:28, fix #3940/#3961, bundle
+  estampado certo, recicla persistida) chegou pelo auto-update no Claude; Codex reinstalado a mao
+  (`codex plugin add claude-mem@claude-mem-local`) para nao ficar 13.24.5 x 13.24.6 matando o worker um do outro.
+- Guards `scripts/hooks/*-guard.js` nao ecoam mais o input no stdout (Codex acusava "invalid pre-tool-use JSON
+  output"). Alterado 10/09, nao commitado.

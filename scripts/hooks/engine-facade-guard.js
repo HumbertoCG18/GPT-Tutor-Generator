@@ -6,7 +6,7 @@ const BARRA = String.fromCharCode(92);
 let raw = '';
 process.stdin.on('data', (c) => (raw += c));
 process.stdin.on('end', () => {
-  const passa = () => process.stdout.write(raw);
+  const passa = () => {}; // stdout vazio = allow no Claude, Codex e agy; eco do input quebra o Codex
   let d;
   try {
     d = JSON.parse(raw);
