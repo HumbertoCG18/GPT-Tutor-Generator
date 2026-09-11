@@ -143,6 +143,29 @@ def _sintetico(entry: dict, repo: Path) -> dict:
 import functools
 import src.builder.timeline.index as _ti
 _frase = functools.lru_cache(maxsize=200000)(_ti._matches_normalized_phrase)
+def _reimporta_zips(repo: Path) -> None:
+    """11/09 (REIMPORTA_ZIPS=1): re-extrai cada zip da copia com o process_zip corrigido (membro leva o id do zip) e
+    atualiza extracted_files no manifest. 0 chamadas: process_code nao chama LLM; code_curation.json segue por id do zip."""
+    from types import SimpleNamespace
+    from src.builder.core import source_importers as si
+    from src.models.core import FileEntry
+    mp = repo / "manifest.json"; man = json.loads(mp.read_text(encoding="utf-8"))
+    b = SimpleNamespace(root_dir=repo, logs=[]); n = m = 0
+    for e in man["entries"]:
+        raw = repo / str(e.get("raw_target") or "")
+        if e.get("file_type") != "zip" or not e.get("raw_target") or not raw.is_file():
+            continue
+        fe = FileEntry(source_path=str(raw), file_type="zip", category=e.get("category") or "codigo-professor",
+                       title=e.get("title") or e["id"], id_override=e["id"])
+        item = si.process_zip(b, fe, raw)
+        if item.get("extraction_error"):
+            print(f"  [zip] {repo.name}/{e['id']}: {item['extraction_error']}", flush=True); continue
+        e["extracted_files"] = item["extracted_files"]; e["file_count"] = item["file_count"]; n += 1; m += item["file_count"]
+    mp.write_text(json.dumps(man, ensure_ascii=False, indent=2), encoding="utf-8")
+    mds = [f.get("base_markdown") for e in man["entries"] if e.get("file_type") == "zip" for f in (e.get("extracted_files") or [])]
+    print(f"  [zip] {repo.name}: {n} zips re-extraidos, {m} membros, md distintos {len(set(mds))}", flush=True)
+
+
 _ablate_orig = ab.ablate
 
 
@@ -152,6 +175,8 @@ def _ablate_codigo(repo, keep_llm_vocab=False):
     if repo.name in os.environ.get("VOCAB_ANTIGO", "").split(","):   # 11/09: regime "vocab antigo" sem tocar no original
         (repo / "course/.glossary_curation.llm.json").unlink(missing_ok=True)
         print(f"  [vocab:antigo] {repo.name}: .llm.json removido da copia", flush=True)
+    if os.environ.get("REIMPORTA_ZIPS"):
+        _reimporta_zips(repo)
     src = GH / repo.name / "material_curation.json"
     if src.exists():
         shutil.copy2(src, repo / "material_curation.json")

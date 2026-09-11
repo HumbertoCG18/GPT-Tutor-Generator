@@ -250,6 +250,29 @@ def test_process_zip_extrai_tar_gz(tmp_path, monkeypatch):
     assert item["file_count"] == 1
 
 
+def test_process_zip_membros_de_zips_diferentes_nao_colidem(tmp_path, monkeypatch):
+    """11/09: dois zips do mesmo curso com um membro de mesmo nome (ex1.dfy em colecoes_arrays e em terminacao) viravam
+    UM raw/code/professor/ex1.dfy e um .md, o ultimo vencia: 129 arquivos com conteudo de outro zip em 23/44 zips
+    (c1-3/mede_zips_conteudo_perdido.log). O id do membro passa a levar o id do zip."""
+    import zipfile
+    from types import SimpleNamespace
+    from src.builder.core import source_importers as si
+    from src.models.core import FileEntry
+
+    builder = SimpleNamespace(root_dir=tmp_path / "repo", logs=[])
+    (tmp_path / "repo").mkdir()
+    ids, raws = [], []
+    monkeypatch.setattr(si, "process_code", lambda b, e, p: (ids.append(e.id()), raws.append(p)) and {"id": e.id()})
+    for nome, corpo in (("colecoes_arrays", "method A()"), ("terminacao", "method T()")):
+        z = tmp_path / f"{nome}.zip"
+        with zipfile.ZipFile(z, "w") as zf:
+            zf.writestr("ex1.dfy", corpo)
+        si.process_zip(builder, FileEntry(source_path=str(z), file_type="zip", category="codigo-professor", title=nome), z)
+    assert ids == ["colecoes-arrays-ex1", "terminacao-ex1"]
+    assert [r.name for r in raws] == ["colecoes-arrays-ex1.dfy", "terminacao-ex1.dfy"]
+    assert [r.read_text() for r in raws] == ["method A()", "method T()"]
+
+
 def test_id_de_tar_gz_nao_carrega_tar():
     """FileEntry.id() = slugify(stem do source_path); para 'x.tar.gz' o stem e
     'x.tar' e o id herdava o tar (tcp-chat-ctar)."""

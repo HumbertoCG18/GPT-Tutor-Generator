@@ -46,8 +46,16 @@ no manifest com 10 `.smv` em staging = reprocesso pendente. Correcao: prefixar `
 `c1-3/brief_codex_astra_camada3.md`, `c1-3/resposta_codex_astra_camada3{,.clean}.md`. O replay em memoria que ele montou virou
 `c1-3/replay_subunidade.py` (17 s, reproduz os 3 regimes; TCC diverge 11 x 10, conhecido); `replay_exp_regras{,2}.py` medem as regras acima.
 Alavancas dele ja aplicadas: 1 (rotulo meta), 2 e 3 (`_sintetico` v3 no `shim_codigo.py`), 4 (fim do veto de titulo). Falta a 5 (colisao).
-**DECISAO DO USER (aberta):** cortar a camada 3 agora (determ v3 vira o produtor de `code_curation.json`) ou corrigir a colisao dos zips
-primeiro e remedir. Ordem recomendada: colisao -> reprocesso MF/CG/ES2 (0 chamadas se a camada 3 sair) -> remedir determ v3 -> cortar.
+**Colisao CORRIGIDA e remedida (11/09, mais tarde):** `process_zip` da ao membro o id do zip (`sub_entry.id_override`; teste
+`test_process_zip_membros_de_zips_diferentes_nao_colidem`, suite 2342). Nas copias, re-extraidos pelo shim (`REIMPORTA_ZIPS=1`): MF 13 zips,
+70 membros em 70 `.md` (antes 65 em 30), os 5 `.smv` entram. **determ v3 + zips corrigidos = 142/151 (primario 121)**, MF 51->55
+(`colecoes-*`, `introducao-zip`), 0 perdas (`c1-3/codigo_determ_puro_e.log`). Contra o Gemini 137 (resumos do conteudo colidido; re-resumir
+custaria ate 32 chamadas): determ acerta e Gemini erra 6 (ES2 roteiro1/2/3, MF classes-parte2, exemplos-zip, hoare), Gemini acerta e determ
+erra 1 (IA mlp-xoripynb). Passa na regra combinada (142 >= 135) e no criterio do astra (1 perda individual <= 2; bloco e unidade iguais).
+Nao medido: erros confiantes e voter ligado (o shim mede motor puro); CG holdout.
+**DECISAO DO USER (aberta, com o numero pronto):** cortar a camada 3 = portar `_sintetico` v3 do shim para o produto como produtor de
+`code_curation.json` e desligar o resumo por Gemini; re-importar os zips nos 8 tutores (0 chamadas com a camada cortada) e reprocessar
+com o vocab novo. Recomendacao: cortar.
 **Nao medido:** CG (holdout) para o fim do veto e para rotulos meta; LR/FR sem gold; `.llm.json` de CG/LR/FR nao refiltrados. Merge em main: user, "nao agora".
 
 ## PLANO ESCRITO + ARTEFATOS ATUALIZADOS (08/09; user: "atualize os artefatos, e depois reescreva o plano")
@@ -65,7 +73,7 @@ C1 (1.x, 2.1-2.3) e a C5 (3.x).
 | Gold x Moodle x SARC · Razao dos Blocos | aviso datado de 08/09 com link para o Placar |
 | Raio-X · Anatomia do Bloco | **nao tocados** — ja se declaram leitura de 01-02/09 e ja linkam o Placar; a nota interna de 06/09 deles cita numeros superados. Vieram inline (sem arquivo salvo) e tem SVG desenhado a mao: reescrever a mao arriscaria corromper os diagramas |
 
-**ABERTO e travando (11/09):** cortar a camada 3 agora ou apos a colisao dos zips (determ v3 138 x 137) · reprocessar os 4 tutores com o vocab novo · posicao da C7 ·
+**ABERTO e travando (11/09):** cortar a camada 3 (determ v3 + zips corrigidos 142 x Gemini 137, recomendado cortar) · reprocessar os 4 tutores com o vocab novo · posicao da C7 ·
 revisao da fila do CG · extracao dos zips.
 
 ## DA PARA VIVER SEM GOLD? PARA A UNIDADE, JA VIVEMOS (08/09; user: "nao quero que a atribuicao de unidade precise de gold manual")

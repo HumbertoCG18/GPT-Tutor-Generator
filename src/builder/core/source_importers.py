@@ -221,6 +221,9 @@ def process_zip(builder, entry: FileEntry, raw_target: Path) -> Dict[str, object
             notes=f"Extraído de: {entry.title}",
             include_in_bundle=entry.include_in_bundle,
         )
+        # 11/09: o id do membro leva o id do zip. So o nome-base colidia entre zips do mesmo curso (ex1.dfy em 5 zips do MF):
+        # 129 arquivos em 23/44 zips mostravam conteudo de OUTRO zip (c1-3/mede_zips_conteudo_perdido.log).
+        sub_entry.id_override = f"{entry.id()}-{sub_entry.id()}"
         code_subdir = "student" if entry.category == "codigo-aluno" else "professor"
         safe_name_c = f"{sub_entry.id()}{code_path.suffix.lower()}"
         raw_target_c = builder.root_dir / "raw" / "code" / code_subdir / safe_name_c
