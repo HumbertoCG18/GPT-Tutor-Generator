@@ -16,6 +16,32 @@ video 57%; e o gold de unidade do CG vive la) — decisao do user na fronteira. 
 C4 limpa · C5 dividas · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 **Criterio estrito (user, 03/09): campanha so fecha com 100% dos itens.** C0 MOTOR 11/11 e SYNC 6/6 FECHADAS.
 Historico anterior a 03/09 em `_archive/pendencias-historico-ate-2026-09-02.md`.
+## FASE 1 REMEDIDA NO PRODUTO DE 11/09: GATE BATIDO (90,6%), LIMIAR DE CONFIANCA NAO GENERALIZA (11/09, tarde; user: "vamos para a Fase 1")
+**Regua (`c1-3/calibra_fila_como_regua_11-09.log`):** precisao do confiante bloco 188/189 (99,5%) · unidade 160/162 (98,8%; em 08/09 era 157/157)
+· **subunidade 174/192 = 90,6%** (08/09: 117/181 = 64,6%; erros confiantes 64 -> 18). Fila 78/348 = 22,4/100 (08/09: 27,6). Recall da fila na
+subunidade 19/37 = 51% (29%). O gate de subunidade (>= 90%) foi batido pelo trabalho de acuracia, sem regra nova.
+**1.1 (`c1-3/erros_confiantes_11-09.log`):** 18 erros confiantes de subunidade: CG 11 (8 HTML, 7 com menos de 2 KB), ES2 3 (pdf, gold "estudo de
+caso" vizinho do predito), MF 3, TCC 1. **4 tem gold vazio** (o motor devia se abster; conf 0,23 / 0,43 / 0,91 / 1,00). `desenho-de-linhas` e ima em 4.
+Margem alta com score infimo existe (`tiposindutivos` score 0,12, conf 0,86): a confianca e margem relativa e nao sabe que o vencedor e fraco
+(`file_map.py:241-248`). Unidade: 2 erros confiantes novos, SO `lista-exercicios-p1` + gabarito (mesma atividade = 1 falha), conf 0,24 e 0,19.
+**1.2 (`c1-3/varre_limiar_subunidade_11-09.log`):** regra "confiante com subunidade e conf < t -> fila": t=0,30 pega 8/18 e manda 8/174 acertos,
+fila 29,9/100, precisao 94,3%; t=0,35 pega 10, manda 11, fila 31,9, 95,3%; t=0,50 pega 12, manda 28, fila 41,4, 96,1%. Score < 1,5 pega 5 e
+manda 13. A precisao sobe porque o denominador encolhe: acima de 0,35 compra revisao humana, nao acerto.
+**Validacao deixando um curso de fora (`c1-3/varre_limiar_loco_11-09.log`):** escolhendo t nos outros cursos (custo 1:1) e testando no curso de
+fora, o limiar pega 1 erro no MF e 0 nos demais, mandando 1 a 4 acertos por curso para a fila; sem CG e ES2 nenhum t satisfaz o criterio.
+**O ganho do limiar e quase todo CG (8 dos 10 erros pegos a 0,35): nao generaliza.** 1.3 NAO entra como limiar global.
+**Segunda opiniao (astra, `c1-3/brief_codex_astra_fase1.md`, `resposta_codex_astra_fase1{,.clean}.md`, 30k tokens, 2,5 min com o brief
+"julga, nao explora"):** (a) gate historico de unidade nao passou (100% -> 98,8%), julgar o par do SO como 1 falha; (b) mandar para a fila
+contem o erro mas nao implementa abstencao: falta separar "qual candidato vence" de "algum candidato se aplica" (os 4 gold vazio);
+(c) calibrar no mesmo gold e ajuste; validar por curso de fora — feito acima, confirmou; (d) `conf<0,35 ou score<1,5` bate `conf<0,50`
+(mesmos 12 erros, 4 acertos a mais, 15 revisoes a menos); (e) risco confirmado no codigo: `_subunidade_em_duvida` (`revisar.py:39-43`)
+so reconhece `ambiguous` e `empate-exato`; o caminho `revisao-sem-assunto-dominante` (`file_map.py:232-239`, ambiguous=True, conf 0)
+NAO entra na fila por esse gatilho — hoje sem efeito (0 erros com predicao vazia), latente. (f) 26 revisoes novas a t=0,30 excedem 8+8 em
+10 materiais sem gold: custo de qualidade desconhecida.
+**Proximo (decisao do user):** Fase 1 fecha no gate de subunidade com registro, ou segue por duas frentes medidas: abstencao ("algum candidato
+se aplica?", os 4 gold vazio + `SUBUNIT_TAG`) e as 3 alavancas do CG (labels como aliases, CamelCase, zip com .md proprio) no replay + CG.
+Corrigir o gatilho latente (`revisao-sem-assunto-dominante`) e 1 linha com teste, quando entrar codigo de motor.
+
 ## CAMADA 3 MEDIDA COM VOCAB NOVO: DETERM v3 138 x GEMINI 137 EM 151 — O CORTE PASSA NA REGRA (11/09; user: "vamos fazer a medicao da 1 e decidir")
 **Entrou no produto (11/09):** `vocabulary_compile._bundle` inclui os nomes-base dos membros do zip (42/44 zips entravam vazios) ·
 `filter_terms`: rotulo meta ("estudo de casos", so o medido) nao recebe doacao do LLM · veto "termo igual a nome de arquivo"

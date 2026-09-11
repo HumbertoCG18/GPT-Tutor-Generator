@@ -1,0 +1,28 @@
+SUBUNIDADE: confiante & errado (18 esperados)
+curso material                                     tipo  predito                    gold                        conf  score    txt
+ES2  microsservicos2                              pdf   orientada-a-microsservicos estudo-de-caso-arquitetura  0.51  30.69  16423
+ES2  microsservicos3                              pdf   estilos-e-padroes-arquitet estudo-de-caso-arquitetura  0.19  15.05  20767
+ES2  roteiro3-gateway                             pdf   cliente-servidor           estudo-de-caso-arquitetura  0.27   9.32  16137
+TCC  aula-06-revisao-alfabeto-cadeia-linguagem-hi pdf   maquinas-de-turing                                     0.43  20.54  38357
+MF   archive-of-formal-proofs-355fb8              url   abordagens-para-verificaca provadores-de-teoremas      0.30  16.31    487
+MF   exemplos                                     code  exemplos-de-aplicacoes     provadores-de-teoremas      0.67  13.74   1458
+MF   tiposindutivos                               zip   verificacao-de-programas   softwares-de-suporte-a-ver  0.86   0.12      0
+CG   animacao-v2                                  zip   desenho-de-linhas                                      0.23   1.35  11586
+CG   exercicios-teoricos-sobre-processo-de-visual html  desenho-de-linhas          sistema-de-coordenadas-car  0.30   1.41    957
+CG   pagina-com-videos-sobre-instanciamento       html  desenho-de-linhas                                      0.91   1.35  10638
+CG   bezier-python                                zip   tecnicas-de-modelagem-3d   bezier-e-algoritmo-de-cast  0.28  15.12      0
+CG   exercicios-teoricos-sobre-processo-de-visual html  desenho-de-linhas          sistema-de-coordenadas-car  0.30   1.41    957
+CG   video-com-instrucoes-para-usar-opengl-na-vdi url   conceitos                                              1.00   7.06    438
+CG   pagina-com-videos-sobre-fundamentos-matemati html  algoritmos-de-poligonos    entidades-geometricas       0.42  18.93   1620
+CG   pagina-com-videos-sobre-curvas-parametricas- html  hermite                    representacao-de-curvas-pa  0.13   4.84   1745
+CG   pagina-com-videos-sobre-manipulacao-de-image html  segmentacao                cores-e-tipos-de-imagens    0.77   4.46   1151
+CG   paginas-com-videos-sobre-modelagem-geometric html  geometria-solida-construti tecnicas-de-modelagem-3d    0.33   8.58   1463
+CG   pagina-com-videos-sobre-visualizacao-3d-35a8 html  paralela                   pipeline-de-visualizacao-3  0.28  12.40   2013
+total 18
+
+UNIDADE: confiante & errado (2 esperados)
+MF sem unit_gt
+SO sem unit_gt
+IA sem unit_gt
+ES2 sem unit_gt
+TCC sem unit_gt
