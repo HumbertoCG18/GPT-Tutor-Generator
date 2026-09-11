@@ -1,8 +1,9 @@
 # Plano — confiança antes de acurácia
 
-> **Estado em 11/09:** 2.2 (filtro do vocabulário: rótulo meta + fim do veto de título) e 2.4 (compilador nos 4 cursos, 16
+> **Estado em 11/09:** 2.2 (filtro do vocabulário: rótulo meta + fim do veto de título; corte por núcleo em outra unidade medido à noite, 212 → 206/251, descartado) e 2.4 (compilador nos 4 cursos, 16
 > chamadas, com os membros do zip no bundle) FECHADAS; camada 3 cortada (produtor determinístico, 142 × 137 em 151); zips sem
-> colisão. 2.1, 2.3, Fase 1 e Fase 3 continuam. Ver `2026-09-11-handoff-camada3.md`.
+> colisão. Fase 1 fechada no gate (90,6%). 2.1 medido: +1 no produto, não vira código. 2.3 medido: bloco acerta 20/22 conflitos com gold,
+> regra mantida. Sobra a Fase 3. Ver `2026-09-11-handoff-camada3.md` e `pendencias.md`.
 
 last_updated: 2026-09-08 (reescrito depois da atualização dos artefatos)
 Entrada: `docs/reports/pendencias.md` (tracker vivo) · `.mex/context/audit-2026-09-07.md` (memória) ·
@@ -94,10 +95,11 @@ Material indeciso depois da 1ª e da 2ª passada herda a subunidade do vizinho m
 com confiança. Similaridade = Jaccard dos tokens distintivos, dentro da unidade.
 `simula_propaga_similaridade.log`: regime atual 135 → 140, ganha 6 perde 1, piso 0,05–0,10.
 
-### 2.2 Filtro mais duro no vocabulário compilado — **teto +2 por ablação; filtro não medido** · 0 chamadas
+### 2.2 Filtro mais duro no vocabulário compilado — **rótulo meta aplicado (11/09); corte por núcleo em outra unidade medido em 11/09: 212 → 206/251, descartado** · 0 chamadas
 Cortar termo doado cujo núcleo aparece no vocabulário ou nos materiais de outra unidade, e recusar doação a tópico de
 rótulo meta ("Áreas relacionadas", "Conceitos", "Introdução").
 `triagem_vocab_llm.log` l.20 mede remover o vocabulário LLM inteiro da unidade 01 do CG (+2), não o filtro; outras 3 chamadas são neutras. Medir o filtro em si antes de executar este item.
+**Medido em 11/09 à noite (`c1-3/mede_corte_nucleo_outra_unidade.log`, replay determ, 7 cursos):** núcleo no vocab de outra unidade 212 → 206 (1 ganho, 7 perdas), em título/headings 206 (0/6), no texto inteiro 180 (3/35), vocab|headings 204. Corta `processos`, `multithread`, `sincronização`, `retas`: sinal, não ruído. Descartado; a metade do rótulo meta já tinha passado do teto +2 (SO +7, CG +2).
 
 ### 2.3 `conflito` — 48 itens, metade da fila, nunca atacado · 0 chamadas
 Quando o texto aponta uma unidade e o bloco aponta outra, o bloco vence por desenho e o desacordo só vira registro.

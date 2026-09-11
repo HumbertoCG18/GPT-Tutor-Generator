@@ -125,8 +125,8 @@ Tutores: 8 commits "chore(motor): vocab LLM compilado, zips sem colisao, resumo 
 ---
 
 ## 7. FILA DE CAMPANHAS
-**C1 TRAVESSIA**: 2.2 e 2.4 fechadas; Fase 1 fechada no gate; 2.1 propagação por similaridade (+5 medido em 08/09) e 2.3 `conflito`
-abertas e são o próximo do plano. **Próxima decidida: C5 dívidas de dados** —
+**C1 TRAVESSIA**: 2.2 (rótulo meta aplicado; corte por núcleo em outra unidade medido à noite, 212 → 206/251, descartado) e 2.4 fechadas; Fase 1 fechada no gate; 2.1 medido de novo no produto (+1 real, não vira código) e 2.3 medido
+(bloco acerta 20/22 conflitos com gold; regra mantida): fechados sem código. Sobra a Fase 3, cujo item 3.2 é o gold de unidade do CG. **Próxima decidida: C5 dívidas de dados** —
 os zips fecharam hoje; falta o gold de unidade do CG e a fila do CG. Estacionadas: C7, C2, C4, C6.
 
 ## 8. Leis (reafirmadas + uma nova)

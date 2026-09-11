@@ -20,7 +20,8 @@ from pathlib import Path
 GEN = Path(r"C:\Users\Humberto\Documents\GitHub\GPT-Tutor-Generator")
 GH = GEN.parent
 GOLD = {"SO": "Sistemas-Operacionais-Tutor", "IA": "Inteligencia-Artifical-Tutor", "ES2": "Engenharia-Software-2-Tutor",
-        "TCC": "TCC-Tutor", "MF": "Metodos-Formais-Tutor", "CG": "Computacao-Grafica-Tutor"}
+        "TCC": "TCC-Tutor", "MF": "Metodos-Formais-Tutor", "CG": "Computacao-Grafica-Tutor",
+        "FR": "Fundamentos-de-Redes-Tutor"}   # 11/09: FR entrou na regua (251)
 DF_MAX = 0.20
 PISOS = [0.05, 0.10, 0.20, 0.30]
 sys.path.insert(0, str(GEN))
@@ -94,6 +95,11 @@ def roda(regime: str):
         for eid, e in man.items():
             por_u[str(e.get("computed_unit_slug") or "")].append(eid)
         base = sum(1 for eid in gs if dec.get(eid, "") in gs[eid])
+        if regime == "ATUAL":   # 11/09: onde a simulacao difere do produto (manifest), so nos materiais com gold
+            prod = {eid: str(man[eid].get("computed_subunit_slug") or "") for eid in gs if eid in man}
+            vazio_sim_cheio_prod = [eid for eid in gs if not dec.get(eid) and prod.get(eid)]
+            print(f"  [{sig}] sim {base}/{len(gs)} · produto {sum(1 for eid in gs if prod.get(eid, chr(0)) in gs[eid])}/{len(gs)} · "
+                  f"sim vazio & produto cheio: {len(vazio_sim_cheio_prod)} (certos no produto: {sum(1 for eid in vazio_sim_cheio_prod if prod[eid] in gs[eid])})", flush=True)
         TOT["base"] += base
         TOT["n"] += len(gs)
         for piso in PISOS:
@@ -107,6 +113,12 @@ def roda(regime: str):
                     if sims and sims[0][0] >= piso:
                         novo[a] = dec[sims[0][1]]
             ok = sum(1 for eid in gs if novo.get(eid, "") in gs[eid])
+            if regime == "ATUAL" and piso == 0.10:
+                for eid in gs:
+                    if novo.get(eid, "") in gs[eid] and dec.get(eid, "") not in gs[eid]:
+                        print(f"      GANHA {sig} {eid[:50]} -> {novo[eid][:30]} | produto tem: {str(man[eid].get(chr(99)+chr(111)+chr(109)+chr(112)+chr(117)+chr(116)+chr(101)+chr(100)+chr(95)+chr(115)+chr(117)+chr(98)+chr(117)+chr(110)+chr(105)+chr(116)+chr(95)+chr(115)+chr(108)+chr(117)+chr(103)) or chr(45))[:30]}", flush=True)
+                    elif dec.get(eid, "") in gs[eid] and novo.get(eid, "") not in gs[eid]:
+                        print(f"      PERDE {sig} {eid[:50]} {dec[eid][:30]} -> {novo[eid][:30]}", flush=True)
             mud = sum(1 for eid in gs if novo.get(eid, "") != dec.get(eid, ""))
             g = sum(1 for eid in gs if novo.get(eid, "") in gs[eid] and dec.get(eid, "") not in gs[eid])
             p = sum(1 for eid in gs if dec.get(eid, "") in gs[eid] and novo.get(eid, "") not in gs[eid])

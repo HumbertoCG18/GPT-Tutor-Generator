@@ -1,0 +1,27 @@
+
+=== regime LIMPO (sem vocabulario nenhum) ===
+  base (1a + 2a passada real): 116/251
+    piso  certos  delta  ganha  perde  muda
+    0.05     121     +5      7      2    31
+    0.10     118     +2      2      0    16
+    0.20     117     +1      1      0    10
+    0.30     116     +0      0      0     8
+  [SO] sim 12/15 · produto 15/15 · sim vazio & produto cheio: 3 (certos no produto: 3)
+  [IA] sim 36/39 · produto 36/39 · sim vazio & produto cheio: 0 (certos no produto: 0)
+      GANHA IA mlp-xoripynb -> modelos-preditivos | produto tem: -
+  [ES2] sim 25/28 · produto 25/28 · sim vazio & produto cheio: 0 (certos no produto: 0)
+  [TCC] sim 10/11 · produto 10/11 · sim vazio & produto cheio: 0 (certos no produto: 0)
+  [MF] sim 55/58 · produto 55/58 · sim vazio & produto cheio: 0 (certos no produto: 0)
+  [CG] sim 45/82 · produto 57/82 · sim vazio & produto cheio: 11 (certos no produto: 9)
+      GANHA CG morfologiamatematicapptx -> filtros | produto tem: segmentacao
+      GANHA CG aula-gravada-975b85 -> segmentacao | produto tem: segmentacao
+      GANHA CG pagina-com-videos-sobre-morfologia-matematica-0626 -> segmentacao | produto tem: segmentacao
+  [FR] sim 18/18 · produto 18/18 · sim vazio & produto cheio: 0 (certos no produto: 0)
+
+=== regime ATUAL (produto como esta hoje) ===
+  base (1a + 2a passada real): 201/251
+    piso  certos  delta  ganha  perde  muda
+    0.05     204     +3      4      1    12
+    0.10     205     +4      4      0     7
+    0.20     202     +1      1      0     4
+    0.30     201     +0      0      0     2

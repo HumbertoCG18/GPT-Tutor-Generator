@@ -16,6 +16,20 @@ video 57%; e o gold de unidade do CG vive la) — decisao do user na fronteira. 
 C4 limpa · C5 dividas · C6 web. Ideias novas vao para a CAIXA DE IDEIAS do handoff.
 **Criterio estrito (user, 03/09): campanha so fecha com 100% dos itens.** C0 MOTOR 11/11 e SYNC 6/6 FECHADAS.
 Historico anterior a 03/09 em `_archive/pendencias-historico-ate-2026-09-02.md`.
+## 2.1 E 2.3 MEDIDOS NO PRODUTO DE 11/09: FECHAM SEM CODIGO DE MOTOR (11/09, noite; user: "vamos para a 2.1 antes da 2.3")
+**2.1 propagacao por similaridade (`c1-3/simula_propaga_similaridade_11-09.log`, FR incluido, regua 251):** o simulador de 08/09 roda 1a + 2a
+passada em memoria; base 201/251 contra 216 no produto porque o produto ainda aplica `secao-nomeia-subtopico` na 1a passada (CG: 11 materiais
+onde a simulacao fica vazia e o produto acerta 9; SO 3/3). Terceira via (indeciso herda do vizinho mais similar, Jaccard, mesma unidade):
+piso 0,10 ganha 4 e perde 0 na simulacao, **mas 3 dos 4 o produto ja acerta**; ganho real no produto = **1** (IA `mlp-xoripynb`, omissao na
+fila). Regime limpo: +5 a 0,05 (7/2). O +5 de 08/09 era da regua de 233 sem `secao-nomeia-subtopico`. **Nao vira 3a passada por +1**: registrado.
+**2.3 `conflito` (`c1-3/mede_conflito_unidade.{py,log}`):** 43 conflitos hoje (CG 14, MF 10, SO 8, ES2 7, TCC 2, IA 1, FR 1; 08/09: 48). Dos 28
+nos cursos com gold de unidade, 22 tem gold: **o bloco (decisao atual) acerta 20/22, o texto acertaria 2/22** — SO `laminas-cs-4244-internet-
+programming-sockets` e `laminas-sockets-material-alternativo-em-pt` (texto = unidade 03 = gold; bloco = 02). Nos 20 restantes o texto
+erraria. "Bloco vence" e a regra certa; sem sinal que separe os 2 do SO dos 20, nao ha regra. CG (14) e FR (1) sem gold de unidade: cegos.
+**2.2 regra 2, corte por nucleo em outra unidade (`c1-3/mede_corte_nucleo_outra_unidade.{py,log}`, 11/09 noite; user: "faca a medicao dessa regra antes de comecarmos a 3"):** o §2.2 do plano tinha DUAS regras e so a 1 (rotulo meta) entrou; a 2 (cortar termo doado pelo LLM cujo nucleo aparece no vocabulario ou nos materiais de OUTRA unidade) nunca tinha sido medida. Replay determ, produtor do produto, 7 cursos (251), 4 variantes: **base 212** · V1 vocab de outra unidade **206** (1 ganho, 7 perdas: SO 4 threads, MF `hoare`, CG 2) · V2 titulo/headings de outra unidade **206** (0/6) · V3 texto inteiro **180** (3/35) · V1|V2 **204** (0/8). **Perde em toda variante: descartada.** O que ela corta e sinal, nao ruido: `processos`, `multithread`, `sincronizacao` (SO), `retas`, `poligonos` (CG), `logica de floyd hoare` (MF) aparecem nos materiais vizinhos por natureza. Os falsos positivos que ela mirava (CG u01) ja cairam pela regra 1 + identidade. Tempo: 42 s, 0 chamadas.
+**Fase 2 do plano fica:** 2.2 (regra 1 aplicada, regra 2 medida e descartada) e 2.4 fechadas em 11/09; 2.1 e 2.3 medidos e fechados sem codigo. Proximo: Fase 3 (3.1 FR ja esta na regua;
+3.2 gold de unidade do CG = trabalho humano, 93 materiais) e a C5 formal.
+
 ## FASE 1 REMEDIDA NO PRODUTO DE 11/09: GATE BATIDO (90,6%), LIMIAR DE CONFIANCA NAO GENERALIZA (11/09, tarde; user: "vamos para a Fase 1")
 **Regua (`c1-3/calibra_fila_como_regua_11-09.log`):** precisao do confiante bloco 188/189 (99,5%) · unidade 160/162 (98,8%; em 08/09 era 157/157)
 · **subunidade 174/192 = 90,6%** (08/09: 117/181 = 64,6%; erros confiantes 64 -> 18). Fila 78/348 = 22,4/100 (08/09: 27,6). Recall da fila na
