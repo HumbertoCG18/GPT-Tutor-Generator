@@ -24,6 +24,7 @@ com atribuição arquivo→bloco→unidade dirigida por sinais Moodle/SARC/plano
 | O que a última sessão fez e a fila decidida | **`docs/reports/2026-09-08-handoff-confianca.md`** (ponto de entrada vivo) |
 | O plano a revisar antes de executar | `docs/reports/2026-09-08-plano-confianca-antes-de-acuracia.md` |
 | Estrutura do código (quem chama quem, onde vive) | `graphify explain "<símbolo>"` ou `graphify path "A" "B"`; `query` aberto só com `--budget` |
+| Segunda opinião de diff (Codex) ou leitura de corpus (agy) | `patterns/delegar-codex-agy.md` |
 | Por que cada escolha existe | `context/decisions.md` |
 | Contratos de dados reais (Moodle/SARC/manifest/índices) | `context/institutional.md` §Contratos |
 | Como escrever/verificar código e fixtures | `context/conventions.md` |

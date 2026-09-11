@@ -2575,5 +2575,15 @@ Pendente:
   passou a reportar 13.24.5 sem recicla. FECHADO 21:36: o 13.24.6 (release 21:28, fix #3940/#3961, bundle
   estampado certo, recicla persistida) chegou pelo auto-update no Claude; Codex reinstalado a mao
   (`codex plugin add claude-mem@claude-mem-local`) para nao ficar 13.24.5 x 13.24.6 matando o worker um do outro.
+- Modelos (auditoria 10/09): Codex default passou de `gpt-6-astra`/high para `gpt-5.6-terra`/medium no
+  `~/.codex/config.toml`; Astra sob demanda em `~/.codex/astra.config.toml` (`codex --profile astra`, formato v2 do
+  0.153; carga do arquivo nao medida, conferir com /model na sessao). `santa-loop` pedia `-m gpt-5.4`, que saiu do
+  catalogo: trocado para `gpt-5.6-terra` so na copia de cache do ECC (`~/.claude/plugins/cache/ecc/ecc/2.2.1`);
+  update do ECC desfaz. agy: Gemini 3.8/3.7/3.6 Flash, 3.1 Pro, Claude 4.6, GPT-OSS 120B.
+- Fluxo 3 CLIs fechado 10/09: Claude escreve; Codex revisa (`codex exec` terra provado, 12.854 tokens); agy le
+  (stdin e `--add-dir` absoluto provados, `permissions.allow: read_file(*)`). Receita em `patterns/delegar-codex-agy.md`.
+  Perfil astra provado 23:55 (rollout: model=gpt-6-astra, effort=high, 12.407 tokens). Tabela Stack do
+  ~/.claude/CLAUDE.md ganhou as linhas "Segunda opiniao de diff" e "Leitura de corpus grande"; gemeo ~/.codex/AGENTS.md
+  reconstruido, cmp identico.
 - Guards `scripts/hooks/*-guard.js` nao ecoam mais o input no stdout (Codex acusava "invalid pre-tool-use JSON
   output"). Alterado 10/09, nao commitado.
